@@ -1,0 +1,9 @@
+
+set -x
+cd dwarfdump ; sh BLD
+cd ..
+cd dwarfdump2 ; sh BLD
+cd ..
+cd dwarfexample
+make
+cd ..

@@ -1,0 +1,10 @@
+
+When ready to create a new distro,
+do
+./CPTOPUBLIC
+./BLDLIBDWARF yyyymmdd
+where that would be
+	./BLDLIBDWARF 20061224
+as an example.
+
+David Anderson.  December 2006.
