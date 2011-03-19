@@ -1,0 +1,11 @@
+2011-01-13  DavidAnderson <davea42@earthlink.net>
+      * fderegs.h: Ensure regTable_ is zeroed.
+      * print_frames.cc: Ensure cfadata local variable
+        is zeroed.
+      * print_die.cc: Fix up DW_FORM_ref_sig8 and DW_FORM_sec_offset
+        output.
+2011-01-13  DavidAnderson <davea42@earthlink.net>
+      * print_die.cc:  Handle DW_FORM_exprloc properly. 
+      * dwarfdump.cc:  Update version string.
+      * print_frames.c: Add comments about address size
+        issue. Move some instance variables to first-use location.

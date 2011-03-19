@@ -1,0 +1,21 @@
+January 26, 2010
+    Changed the default frame-data register names from MIPS to
+    a generic set of registers.  
+    Try  '-x abi=mips' to get the traditional old MIPS register
+    naming.
+June 22, 2009
+    Added the -S option to dwarfdump.
+June 10, 2009
+    Moved the gennames.c code to libdwarf.
+May 4, 2009
+    Replaced awk source-generation of certain functions 
+    with new gennames.c code.
+April 04, 2009
+    Now frame printing (-f and -F) uses a different interface
+    to libdwarf which is far more efficient for the particular
+    purpose of printing all the register rules.  Reduces
+    MxN print time to M (one extreme case reduces from 2 hours
+    to 2 minutes).
+Feb 28, 2009
+    Created this new source base in C++ (from dwarfdump, which
+    is C).

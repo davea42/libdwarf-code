@@ -1,0 +1,136 @@
+/* 
+  Copyright 2010 David Anderson. All rights reserved.
+
+  This program is free software; you can redistribute it and/or modify it
+  under the terms of version 2 of the GNU General Public License as
+  published by the Free Software Foundation.
+
+  This program is distributed in the hope that it would be useful, but
+  WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+  Further, this software is distributed without any warranty that it is
+  free of the rightful claim of any third person regarding infringement
+  or the like.  Any license provided herein, whether implied or
+  otherwise, applies only to this software file.  Patent licenses, if
+  any, provided herein do not apply to combinations of this program with
+  other software, or any other product whatsoever.
+
+  You should have received a copy of the GNU General Public License along
+  with this program; if not, write the Free Software Foundation, Inc., 51
+  Franklin Street - Fifth Floor, Boston MA 02110-1301, USA.
+
+*/
+
+/* If memory full  we do not exit, we just keep going as if
+all were well. */
+
+#include "globals.h"
+#include <stdio.h>
+#include "addrmap.h"
+#ifndef HAVE_TSEARCH
+struct Addr_Map_Entry * addr_map_insert( Dwarf_Unsigned addr,
+    char *name,void **tree1)
+{ return 0; }
+struct Addr_Map_Entry * addr_map_find(Dwarf_Unsigned addr,void **tree1)
+{ return 0; }
+void addr_map_destroy(void *map)
+{ return;}
+
+
+   
+#else /* HAVE_TSEARCH */
+#define __USE_GNU 1 
+#include <search.h>
+
+char firststringcontent[100];
+char *firststring = 0;
+struct Addr_Map_Entry *firstaddr = 0;
+
+static struct Addr_Map_Entry * 
+addr_map_create_entry(Dwarf_Unsigned k,char *name)
+{
+    struct Addr_Map_Entry *mp = 
+        (struct Addr_Map_Entry *)malloc(sizeof(struct Addr_Map_Entry));
+    if(!mp) {
+        return 0;
+    }
+    mp->mp_key = k;
+    if(name) {
+        mp->mp_name = strdup(name);
+    } else {
+        mp->mp_name = 0;
+    }
+    return mp;
+}
+static void
+addr_map_free_func(void *mx)
+{
+    struct Addr_Map_Entry *m = mx;
+    if(!m) {
+        return;
+    }
+    free(m->mp_name);
+    m->mp_name = 0;
+    free(m);
+    return;
+}
+
+static void
+DUMPFIRST(int line)
+{
+   if(!firststring) {
+       return;
+   }
+}
+
+static int 
+addr_map_compare_func(const void *l, const void *r)
+{
+    const struct Addr_Map_Entry *ml = l;
+    const struct Addr_Map_Entry *mr = r;
+    if(ml->mp_key < mr->mp_key) {
+        return -1;
+    }
+    if(ml->mp_key > mr->mp_key) {
+        return 1;
+    }
+    return 0;
+}
+struct Addr_Map_Entry * 
+addr_map_insert( Dwarf_Unsigned addr,char *name,void **tree1)
+{
+        void *retval = 0;
+        struct Addr_Map_Entry *re = 0;
+        struct Addr_Map_Entry *e = addr_map_create_entry(addr,name);
+        DUMPFIRST(__LINE__);
+        /* tsearch records e's contents. We must not free it till
+           destroy time. */
+        retval = tsearch(e,tree1, addr_map_compare_func);
+        if(retval) {
+          re = *(struct Addr_Map_Entry **)retval;
+        }
+        return re;
+}
+struct Addr_Map_Entry * 
+addr_map_find(Dwarf_Unsigned addr,void **tree1)
+{
+        void *retval = 0;
+        struct Addr_Map_Entry *re = 0;
+        struct Addr_Map_Entry *e = addr_map_create_entry(addr,NULL);
+        DUMPFIRST(__LINE__);
+        retval = tfind(e,tree1, addr_map_compare_func);
+        if(retval) {
+          re = *(struct Addr_Map_Entry **)retval;
+        }
+        return re;
+}
+
+void
+addr_map_destroy(void *map)
+{
+    /* tdestroy is not part of Posix, it is a GNU libc function. */
+    tdestroy(map,addr_map_free_func);
+}
+
+#endif /* HAVE_TSEARCH */

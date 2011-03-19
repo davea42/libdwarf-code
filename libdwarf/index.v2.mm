@@ -1,0 +1,266 @@
+.ds fB IN-%
+.PF "''\s10\\\\*(fB\s0''"
+.PH
+.ce
+\s12INDEX\s0
+
+.\" %W% %P% %E% %I% %U%
+.\" Copyright 1993 UNIX System Laboratories, Inc.
+.\"  XX macro marks new index entry.
+.de XX
+.	br
+.	ti 0
+.	ne 2
+.	vs 12
+\s10\f1\\$1\0 \s8\fR\\$2\f1
+..
+.\"  header between letters of the alphabet
+.de YY
+.	sp 2
+.	ne 4
+\fR\s16\\$2\s0\f1
+.	sp 0.5
+..
+.\"  markup surrounding book acronym
+.\"  markup surrounding chapter number
+.vs 12
+.ps 8
+.CH "Index" IN
+.2C
+.in +2
+.\" SCCS path name:	/lfs/doc/DMG/Projects/Indexing/sccs/bin/s.index.head
+.\" SCCS version SID:	1.8
+.\" Date this version:	92/08/10
+.\" Time this version:	13:06:03
+.YY a A
+.XX "\&abbreviations table" "\*(C{\*(}C4, 66\-67"
+.XX "\&ABI" "\*(C{\*(}C10, 60"
+.XX "\&accelerated access" "\*(C{\*(}C49"
+.XX "\&access declarations" "\*(C{\*(}C41"
+.XX "\&accessibility" "\*(C{\*(}C18, 41, 74"
+.XX "\&activations" "\*(C{\*(}C5, 59"
+.XX "\&address space" ""
+.XX "\&\0 contiguous" "\*(C{\*(}C23, 26"
+.XX "\&\0 flat" "\*(C{\*(}C19"
+.XX "\&\0 multiple" "\*(C{\*(}C13"
+.XX "\&\0 segmented" "\*(C{\*(}C5, 19, 26, 33, 50, 66"
+.XX "\&addresses" ""
+.XX "\&\0 class" "\*(C{\*(}C19, 26, 38, 75"
+.XX "\&\0 offset portion" "\*(C{\*(}C19, 50, 66, 77"
+.XX "\&\0 size of" "\*(C{\*(}C50, 66, 77"
+.XX "\&anonymous types" "\*(C{\*(}C30"
+.XX "\&anonymous unions" "\*(C{\*(}C33, 41"
+.XX "\&arrays" "\*(C{\*(}C5, 39"
+.XX "\&\0 dimensions" "\*(C{\*(}C39"
+.XX "\&\0 ordering" "\*(C{\*(}C39, 77"
+.XX "\&\0 stride" "\*(C{\*(}C39"
+.XX "\&artificial entries" "\*(C{\*(}C19"
+.XX "\&attributes" "\*(C{\*(}C3, 7, 67"
+.XX "\&\0 addresses" "\*(C{\*(}C8, 67"
+.XX "\&\0 blocks" "\*(C{\*(}C8, 67"
+.XX "\&\0 constants" "\*(C{\*(}C8, 68"
+.XX "\&\0 flags" "\*(C{\*(}C8, 69"
+.XX "\&\0 forms" "\*(C{\*(}C4, 7, 67"
+.XX "\&\0 names" "\*(C{\*(}C4, 7, 67"
+.XX "\&\0 ordering" "\*(C{\*(}C9, 27"
+.XX "\&\0 references" "\*(C{\*(}C8, 69"
+.XX "\&\0 strings" "\*(C{\*(}C9, 70"
+.XX "\&\0 values" "\*(C{\*(}C4, 7, 66"
+.YY b B
+.XX "\&base types" "\*(C{\*(}C18, 24, 37, 65, 74"
+.XX "\&bit fields" "\*(C{\*(}C42"
+.YY c C
+.XX "\&C " "\*(C{\*(}C3, 26, 33, 39\-40, 45, 47, 57"
+.XX "\&C++ " "\*(C{\*(}C3, 5, 18\-19, 21, 28, 32\-33, 40\-41, 43, 47, 49, 57"
+.XX "\&call frame information" "\*(C{\*(}C5, 59, 65, 78"
+.XX "\&\0 Common Information Entry" "\*(C{\*(}C61"
+.XX "\&\0 Frame Description Entry" "\*(C{\*(}C62"
+.XX "\&\0 instructions" "\*(C{\*(}C62, 78"
+.XX "\&\0 register rules" "\*(C{\*(}C61"
+.XX "\&\0 structure" "\*(C{\*(}C60"
+.XX "\&\0 usage" "\*(C{\*(}C64"
+.XX "\&calling conventions" "\*(C{\*(}C26, 65, 76"
+.XX "\&catch blocks" "\*(C{\*(}C32"
+.XX "\&classes" "\*(C{\*(}C33, 40"
+.XX "\&\0 derived" "\*(C{\*(}C40"
+.XX "\&\0 friends" "\*(C{\*(}C41"
+.XX "\&\0 incomplete" "\*(C{\*(}C40"
+.XX "\&\0 virtual base" "\*(C{\*(}C41"
+.XX "\&common blocks" "\*(C{\*(}C27, 35"
+.XX "\&compatibility" "\*(C{\*(}C3, 65"
+.XX "\&compilation units" "\*(C{\*(}C23, 28, 44, 66"
+.XX "\&\0 header" "\*(C{\*(}C66"
+.XX "\&constants" "\*(C{\*(}C33\-34"
+.YY d D
+.XX "\&\f(CW.debug\fP " "\*(C{\*(}C4"
+.XX "\&\f(CW.debug_abbrev\fP " "\*(C{\*(}C66\-67, 79"
+.XX "\&\f(CW.debug_aranges\fP " "\*(C{\*(}C49, 77, 79"
+.XX "\&\f(CW.debug_frame\fP " "\*(C{\*(}C61, 79"
+.XX "\&\f(CW.debug_info\fP " "\*(C{\*(}C3\-4, 7, 49\-50, 66, 79"
+.XX "\&\f(CW.debug_line\fP " "\*(C{\*(}C4, 50, 79"
+.XX "\&\f(CW.debug_loc\fP " "\*(C{\*(}C17, 79"
+.XX "\&\f(CW.debug_macinfo\fP " "\*(C{\*(}C57, 79"
+.XX "\&\f(CW.debug_pubnames\fP " "\*(C{\*(}C49, 77, 79"
+.XX "\&\f(CW.debug_str\fP " "\*(C{\*(}C70, 79"
+.XX "\&debugging information entries" "\*(C{\*(}C3, 7, 9, 66"
+.XX "\&\0 child entries" "\*(C{\*(}C4, 9, 67"
+.XX "\&\0 null entries" "\*(C{\*(}C9, 66\-67"
+.XX "\&\0 siblings" "\*(C{\*(}C4, 9, 67"
+.XX "\&declarations" ""
+.XX "\&\0 accessibility" "\*(C{\*(}C18, 74"
+.XX "\&\0 coordinates" "\*(C{\*(}C20, 28, 30, 44"
+.XX "\&\0 defining" "\*(C{\*(}C20, 33, 40, 43"
+.XX "\&\0 external" "\*(C{\*(}C25, 33"
+.XX "\&\0 imported" "\*(C{\*(}C35"
+.XX "\&\0 non-defining" "\*(C{\*(}C4, 20, 26, 33, 38, 40"
+.XX "\&\0 scope" "\*(C{\*(}C34, 37"
+.XX "\&\0 types of" "\*(C{\*(}C4, 18"
+.XX "\&\0 visibility" "\*(C{\*(}C18, 75"
+.XX "\&discriminants" "\*(C{\*(}C44, 77"
+.XX "\&discriminated unions" "\*(C{\*(}C40, 44, 77"
+.YY e E
+.XX "\&entry points" "\*(C{\*(}C25"
+.XX "\&\0 declarations owned by" "\*(C{\*(}C27"
+.XX "\&\0 locations" "\*(C{\*(}C26"
+.XX "\&\0 return types" "\*(C{\*(}C26"
+.XX "\&enumerations" "\*(C{\*(}C5, 39, 45"
+.XX "\&error values" "\*(C{\*(}C65"
+.XX "\&exceptions" "\*(C{\*(}C5, 28, 32"
+.YY f F
+.XX "\&file types" "\*(C{\*(}C48"
+.XX "\&flat address space" "\*(C{\*(}C19"
+.XX "\&Fortran" "\*(C{\*(}C3, 27, 35, 46\-47"
+.XX "\&FORTRAN77" "\*(C{\*(}C3"
+.XX "\&Fortran90" "\*(C{\*(}C3, 34\-35"
+.XX "\&friends" "\*(C{\*(}C41"
+.YY i I
+.XX "\&identifiers" ""
+.XX "\&\0 case" "\*(C{\*(}C24, 76"
+.XX "\&\0 names" "\*(C{\*(}C21, 49"
+.XX "\&imports" "\*(C{\*(}C35"
+.XX "\&inheritance" "\*(C{\*(}C40"
+.YY l L
+.XX "\&labels" "\*(C{\*(}C31"
+.XX "\&languages" "\*(C{\*(}C3, 23, 75"
+.XX "\&LEB128" "\*(C{\*(}C8, 51, 68, 70"
+.XX "\&lexical blocks" "\*(C{\*(}C31"
+.XX "\&line number information" "\*(C{\*(}C4, 20, 23, 50, 77"
+.XX "\&\0 definitions" "\*(C{\*(}C51, 77"
+.XX "\&\0 extended opcodes" "\*(C{\*(}C52, 56, 78"
+.XX "\&\0 general rules" "\*(C{\*(}C59"
+.XX "\&\0 prologue" "\*(C{\*(}C52"
+.XX "\&\0 special opcodes" "\*(C{\*(}C52, 54"
+.XX "\&\0 standard opcodes" "\*(C{\*(}C52, 55, 78"
+.XX "\&\0 state machine registers" "\*(C{\*(}C51"
+.XX "\&locations" ""
+.XX "\&\0 arithmetic operations" "\*(C{\*(}C13"
+.XX "\&\0 control flow operations" "\*(C{\*(}C14"
+.XX "\&\0 descriptions" "\*(C{\*(}C4, 10, 19, 41, 72"
+.XX "\&\0 examples" "\*(C{\*(}C15\-16"
+.XX "\&\0 expressions" "\*(C{\*(}C10, 41, 65, 72"
+.XX "\&\0 lists" "\*(C{\*(}C4, 10, 17, 74"
+.XX "\&\0 literal encodings" "\*(C{\*(}C11"
+.XX "\&\0 logical operations" "\*(C{\*(}C13"
+.XX "\&\0 register based addressing" "\*(C{\*(}C12"
+.XX "\&\0 register name operators" "\*(C{\*(}C10"
+.XX "\&\0 special operations" "\*(C{\*(}C15"
+.XX "\&\0 stack" "\*(C{\*(}C11\-12, 15"
+.XX "\&lookup" ""
+.XX "\&\0 by address" "\*(C{\*(}C49, 77"
+.XX "\&\0 by name" "\*(C{\*(}C49, 77"
+.YY m M
+.XX "\&macro information" "\*(C{\*(}C4, 24, 57, 78"
+.XX "\&\0 base source entries" "\*(C{\*(}C58"
+.XX "\&\0 command line options" "\*(C{\*(}C58"
+.XX "\&\0 define and undefine entries" "\*(C{\*(}C57"
+.XX "\&\0 end file entries" "\*(C{\*(}C58"
+.XX "\&\0 start file entries" "\*(C{\*(}C58"
+.XX "\&\0 vendor extensions" "\*(C{\*(}C58"
+.XX "\&main programs" "\*(C{\*(}C26"
+.XX "\&members" "\*(C{\*(}C30"
+.XX "\&\0 bit fields" "\*(C{\*(}C42"
+.XX "\&\0 data" "\*(C{\*(}C40\-41"
+.XX "\&\0 functions" "\*(C{\*(}C25, 40, 43"
+.XX "\&\0 locations" "\*(C{\*(}C11, 43"
+.XX "\&\0 pointers to" "\*(C{\*(}C47"
+.XX "\&\0 static data" "\*(C{\*(}C33, 40, 49"
+.XX "\&Modula2" "\*(C{\*(}C3, 18, 25, 32"
+.XX "\&modules" "\*(C{\*(}C25"
+.XX "\&\0 definition" "\*(C{\*(}C25"
+.XX "\&\0 priority" "\*(C{\*(}C25"
+.YY n N
+.XX "\&namelists" "\*(C{\*(}C35"
+.YY o O
+.XX "\&optimized code" "\*(C{\*(}C10, 18, 33"
+.YY p P
+.XX "\&parameters" ""
+.XX "\&\0 default value" "\*(C{\*(}C34"
+.XX "\&\0 formal" "\*(C{\*(}C27, 32\-33, 45"
+.XX "\&\0 optional" "\*(C{\*(}C34"
+.XX "\&\0 unspecified" "\*(C{\*(}C27, 32, 46"
+.XX "\&\0 variable" "\*(C{\*(}C34"
+.XX "\&Pascal" "\*(C{\*(}C3, 32, 40, 46, 48"
+.XX "\&pointers to members" "\*(C{\*(}C47"
+.XX "\&pre-processor" "\*(C{\*(}C4, 57"
+.YY r R
+.XX "\&records" "\*(C{\*(}C40"
+.YY s S
+.XX "\&scope" "\*(C{\*(}C34, 37"
+.XX "\&segmented address space" "\*(C{\*(}C5, 19, 26, 33, 50, 66"
+.XX "\&set types" "\*(C{\*(}C46"
+.XX "\&source" ""
+.XX "\&\0 columns" "\*(C{\*(}C20, 51"
+.XX "\&\0 files" "\*(C{\*(}C20, 23, 51, 53, 56, 58, 78"
+.XX "\&\0 lines" "\*(C{\*(}C20, 51, 57"
+.XX "\&string table" "\*(C{\*(}C70"
+.XX "\&string types" "\*(C{\*(}C46"
+.XX "\&structures" "\*(C{\*(}C33, 40"
+.XX "\&\0 derived" "\*(C{\*(}C40"
+.XX "\&\0 incomplete" "\*(C{\*(}C40"
+.XX "\&subranges" "\*(C{\*(}C39, 46"
+.XX "\&subroutines" "\*(C{\*(}C19, 25"
+.XX "\&\0 declarations owned by" "\*(C{\*(}C27"
+.XX "\&\0 frame base" "\*(C{\*(}C12, 27"
+.XX "\&\0 inline" "\*(C{\*(}C28, 76"
+.XX "\&\0 inlined" "\*(C{\*(}C29"
+.XX "\&\0 locations" "\*(C{\*(}C26"
+.XX "\&\0 members" "\*(C{\*(}C25, 43"
+.XX "\&\0 nested" "\*(C{\*(}C27"
+.XX "\&\0 out-of-line" "\*(C{\*(}C30"
+.XX "\&\0 prototypes" "\*(C{\*(}C26, 45"
+.XX "\&\0 return addresses" "\*(C{\*(}C27"
+.XX "\&\0 return types" "\*(C{\*(}C26, 45"
+.XX "\&\0 types" "\*(C{\*(}C19, 45"
+.YY t T
+.XX "\&tags" "\*(C{\*(}C4, 7, 65, 67"
+.XX "\&templates" "\*(C{\*(}C5, 28, 43"
+.XX "\&try blocks" "\*(C{\*(}C32"
+.XX "\&type modifiers" "\*(C{\*(}C18, 38"
+.XX "\&typedefs" "\*(C{\*(}C38"
+.XX "\&types" ""
+.XX "\&\0 base" "\*(C{\*(}C18, 24, 37, 65, 74"
+.XX "\&\0 constant" "\*(C{\*(}C18, 38"
+.XX "\&\0 modifiers" "\*(C{\*(}C18, 38"
+.XX "\&\0 packed" "\*(C{\*(}C18, 38"
+.XX "\&\0 pointer" "\*(C{\*(}C18\-19, 38"
+.XX "\&\0 reference" "\*(C{\*(}C18\-19, 38"
+.XX "\&\0 user-defined" "\*(C{\*(}C18"
+.XX "\&\0 volatile" "\*(C{\*(}C18, 38"
+.YY u U
+.XX "\&unions" "\*(C{\*(}C33, 40, 42"
+.XX "\&\0 anonymous" "\*(C{\*(}C33, 41"
+.XX "\&\0 incomplete" "\*(C{\*(}C40"
+.XX "\&user-defined types" "\*(C{\*(}C18"
+.YY v V
+.XX "\&variable length data" "\*(C{\*(}C4, 8, 68, 70"
+.XX "\&variables" "\*(C{\*(}C33"
+.XX "\&variants" "\*(C{\*(}C40, 44, 77"
+.XX "\&vendor extensions" "\*(C{\*(}C4, 58, 60, 65"
+.XX "\&Version 1" "\*(C{\*(}C3\-4, 10, 66"
+.XX "\&Version 2" "\*(C{\*(}C3, 10, 66, 78"
+.XX "\&virtual functions" "\*(C{\*(}C3, 19, 43"
+.XX "\&virtuality" "\*(C{\*(}C19, 41, 43, 75"
+.XX "\&visibility" "\*(C{\*(}C18, 75"
+.YY w W
+.XX "\&with statements" "\*(C{\*(}C32"
+.1C

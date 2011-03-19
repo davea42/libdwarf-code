@@ -1,0 +1,14 @@
+2011-01-13  DavidAnderson <davea42@earthlink.net>
+     * dwarf_print_lines.c: Handles DW_FORM_exprloc now. With -vvv
+       it now prints the dwarf version of the line table header.
+     * dwarf_line.c:  Handles DW_FORM_exprloc now.
+2011-01-13  DavidAnderson <davea42@earthlink.net>
+     * libdwarf.h: Added new function dwarf_get_die_address_size().
+     * libdwarf2.1.mm: Documented new function dwarf_get_die_address_size().
+       Rev 1.91, 12 January 2011
+     * libdwarf2.1.pdf: Regenerated.
+     * dwarf_form.c: Corrected handling of DW_FORM_exprloc.
+     * dwarf_query.c: Implemented dwarf_get_die_address_size().
+       Corected handling of DW_FORM_exprloc.
+     * dwarf_util.c: Added handling of DW_FORM_exprloc and
+       DW_FORM_flag_present.

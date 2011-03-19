@@ -1,0 +1,77 @@
+2010-09-30  DavidAnderson <davea42@earthlink.net>
+      * dwarfdump.cc: Now -a no longer implies -c because
+        the -c option is not guaranteed to work by the DWARF spec,
+        nor is -c really necessary.
+      * README: More tweaks on the 'install' issue.
+2010-09-29  DavidAnderson <davea42@earthlink.net>
+      * README, Makefile.in: Amplified make install instructions.
+2010-09-20  DavidAnderson <davea42@earthlink.net>
+      * dwarfdump.1: The -c option is not guaranteed to work.
+        Because .debug_loc can have garbage bytes in areas
+        not referenced by .debug_info.
+2010-04-22  DavidAnderson <davea42@earthlink.net>
+      * print_die.cc: If a location form is wrong report
+        an error but continue operating.
+      * dwarfdump.cc: Implement print_error_and_continue().
+        Fix typos in usage message.
+      * globals.h: Declare print_error_and_continue().
+2010-04-02  DavidAnderson <davea42@earthlink.net>
+      * dwarfdump.cc,print_lines.cc: Ensure that
+        the error checks counts are as accurate as possible.
+        New version date.
+      * print_frames.cc: Ensure that
+        the error checks counts are as accurate as possible.
+        Modify a message about fdes to get the strings to match 
+        print_frames.c dwarfdump.
+2010-03-31  DavidAnderson <davea42@earthlink.net>
+      * dwarfdump.1: Added some text about 'harmless'
+        errors.
+      * dwarfdump.c: Change the harmless error list maximum
+        to 50. Change harmless error reporting to be associated
+        with -k flags.
+      * print_frames.cc: Change harmless error reporting to be 
+        associated with -k flags.
+      * print_aranges.cc: Call dwarf_get_arange_info_b allowing
+        for segmented architectures which are really only
+        defined properly in aranges for DWARF4.
+        Change harmless error reporting to be
+        associated with -k flags.
+      * globals.h: Declarations added for 'harmless' error
+        reporting.
+2010-03-28  DavidAnderson <davea42@earthlink.net>
+      * dwarf_globals.h: Added interface to print_any_harmless_errors().
+      * dwarfdump.cc: Added print_any_harmless_errors() implementation
+        and we call it just before closing libdwarf.
+      * print_frames.cc: Call print_any_harmless_errors after
+        getting cie/fde list.
+      * dwarfdump.conf: Add abi named 'arm' for Arm users.
+2010-02-14  DavidAnderson <davea42@earthlink.net>
+      * print_die.cc: Add newer DW_OP operators, remove
+        bogus test of DW_OP_nop as the highest valid operator.
+        Add table of DW_OPs to simplify testing for zero-operand
+        operators.
+        Revise so that the FORM of all attributes print with -M.
+      * tag_attr.list: Updated copyright.
+      * tag_tree_ext.list, tag_attr_ext.list: Added GNU template 
+        parameter tags, attributes. Updated copyright.
+      * tag_tree.list: Added template parameter tags. Added
+        entry for nested classes. Updated copyright.
+      * tag_common.h: Increased STD_TAG_TABLE_COLUMNS and 
+        EXT_ATTR_TABLE_COLS.
+2010-01-30  DavidAnderson  <davea42@earthlink.net>
+      * print_die.c: Changed the spelling of one
+        'DW_AT_type offset does not point to type info' error message so
+        one can distinguish which check lead to the message.
+2010-01-26  DavidAnderson <davea42@earthlink.net>
+      * dwconf.cc, fderegs.h, dwconf.h, dwarfdump.1,
+        dwarfdump.conf: The default frame values in frame
+        output are now generic registers like r0 to r99
+        instead of MIPS register names.  
+        For the MIPS register names use '-x abi=mips'.
+2010-01-17  DavidAnderson <davea42@earthlink.net>
+      * print_die.cc: The special case DW_AT_SUN_func_offsets
+        now prints identically in dwarfdump and dwarfdump2.
+2010-01-03  DavidAnderson <davea42@earthlink.net>
+      * tag_common.cc, common.cc, common.h: Remove <cr>
+        line terminator characters and update copyright year. 
+      * All other files: Update copyright year.

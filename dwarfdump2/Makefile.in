@@ -1,0 +1,163 @@
+#
+#  Makefile for dwarfdump
+#  This is made very simple so it should work with
+#  any 'make'.
+
+#
+
+srcdir =	@srcdir@
+VPATH =		@srcdir@
+
+prefix =	@prefix@
+exec_prefix =	@exec_prefix@
+bindir =	$(exec_prefix)/bin
+libdir =	$(exec_prefix)/lib
+mandir = 	$(exec_prefix)/share/man
+man1dir =       $(mandir)/man1
+
+INSTALL =	@INSTALL@
+INSTALL_PROGRAM = @INSTALL_PROGRAM@
+INSTALL_DATA =	@INSTALL_DATA@
+DATAROOT =      @datarootdir@
+SHELL =		/bin/sh
+CXX =		@CXX@
+AR =		@AR@
+ARFLAGS =	@ARFLAGS@
+RM =		rm
+RANLIB =	@RANLIB@
+DEFS =		@DEFS@
+LIBS =		@LIBS@ -L../libdwarf -ldwarf -lelf
+INCLUDES =	-I. -I$(srcdir) -I$(srcdir)/../libdwarf
+CXXFLAGS =	@CXXFLAGS@ $(INCLUDES) -DCONFPREFIX=${libdir}
+LDFLAGS =	@LDFLAGS@  $(LIBS)
+
+# ../libdwarf gets us to local headers
+
+DIRINC =  $(srcdir)/../libdwarf
+INSTALL = cp
+
+binprefix =
+
+BASE_CFILES = naming.cc
+
+FINALOBJECTS = \
+	dwarfdump.o \
+	dwconf.o \
+	print_abbrevs.o \
+	print_aranges.o \
+	print_die.o \
+	print_frames.o  \
+	print_lines.o \
+	print_locs.o \
+	print_macros.o \
+	print_pubnames.o \
+	print_ranges.o \
+	print_reloc.o \
+	print_sections.o \
+	print_static_funcs.o \
+	print_static_vars.o \
+	print_strings.o \
+	print_types.o \
+	print_weaknames.o \
+	strstrnocase.o
+GEN_HFILES = \
+	tmp-tt-table.cc \
+	tmp-ta-table.cc \
+	tmp-ta-ext-table.cc \
+	tmp-tt-ext-table.cc 
+
+all: dwarfdump
+
+HEADERS = $(srcdir)/globals.h \
+        $(srcdir)/dieholder.h \
+        $(srcdir)/srcfilesholder.h \
+        $(srcdir)/print_frames.h \
+        $(srcdir)/dwconf.h \
+        $(srcdir)/fderegs.h \
+        $(srcdir)/common.h \
+        $(srcdir)/naming.h \
+        $(srcdir)/tag_common.h \
+        $(srcdir)/print_frames.h
+
+$(FINALOBJECTS): $(BASE_CFILES) $(GEN_HFILES) $(HEADERS)
+
+default: $(TARGETS)
+
+
+dwarfdump: $(FINALOBJECTS)  naming.o
+	$(CXX) $(CXXFLAGS) -o $@ $(FINALOBJECTS) naming.o  common.o tag_common.o $(LDFLAGS) 
+
+tag_common.o: $(srcdir)/tag_common.cc $(HEADERS)  
+	$(CXX) $(CXXFLAGS) -c $(srcdir)/tag_common.cc
+common.o:  $(srcdir)/common.cc $(srcdir)/common.h
+	$(CXX) $(CXXFLAGS) -c $(srcdir)/common.cc
+
+tag_tree_build:  $(srcdir)/tag_tree.cc $(DIRINC)/dwarf.h $(HEADERS) tag_common.o naming.o common.o
+	$(CXX) $(CXXFLAGS) $(srcdir)/tag_tree.cc naming.o tag_common.o common.o $(LDFLAGS) -o tag_tree_build 
+
+tag_attr_build:  $(srcdir)/tag_attr.cc $(DIRINC)/dwarf.h $(HEADERS) tag_common.o naming.o common.o
+	$(CXX) $(CXXFLAGS) $(srcdir)/tag_attr.cc naming.o tag_common.o common.o $(LDFLAGS) -o tag_attr_build 
+
+tmp-tt-table.cc tmp-tt-ext-table.cc: $(srcdir)/tag_tree_ext.list $(srcdir)/tag_tree.list tag_tree_build
+	# gcc -E tag_tree.list does not work, so use a .cc name
+	-rm -f  tmp-t1.cc
+	cp $(srcdir)/tag_tree.list tmp-t1.cc
+	$(CXX) $(CXXFLAGS) -E tmp-t1.cc  > ./tmp-tag-tree-build1.tmp
+	./tag_tree_build -s  -i tmp-tag-tree-build1.tmp  -o tmp-tt-table.cc
+	-rm -f tmp-t4.cc
+	cp $(srcdir)/tag_tree_ext.list tmp-t4.cc
+	$(CXX) $(CXXFLAGS) -E tmp-t4.cc  > ./tmp-tag-tree-build4.tmp
+	./tag_tree_build -e  -i tmp-tag-tree-build4.tmp -o tmp-tt-ext-table.cc
+
+tmp-ta-table.cc tmp-ta-ext-table.cc: $(srcdir)/tag_attr_ext.list $(srcdir)/tag_attr.list tag_attr_build
+	# gcc -E tag_attr.list does not work, so use a .cc name
+	-rm -f tmp-t2.cc
+	cp $(srcdir)/tag_attr.list tmp-t2.cc
+	$(CXX) $(CXXFLAGS)  -E tmp-t2.cc  > ./tmp-tag-attr-build2.tmp
+	./tag_attr_build -s -i tmp-tag-attr-build2.tmp -o tmp-ta-table.cc
+	-rm -f tmp-t3.cc
+	cp $(srcdir)/tag_attr_ext.list tmp-t3.cc
+	$(CXX) $(CXXFLAGS)  -E tmp-t3.cc  > ./tmp-tag-attr-build3.tmp
+	./tag_attr_build -e -i tmp-tag-attr-build3.tmp -o tmp-ta-ext-table.cc
+
+# This simply assumes that a default INSTALL (cp) command
+# will work and leave sensible permissions on the resulting files.
+# Some adjustment might be required, see README.
+install: all
+	$(INSTALL) dwarfdump $(bindir)/dwarfdump
+	$(INSTALL) $(srcdir)/dwarfdump.1 $(man1dir)/dwarfdump.1
+	$(INSTALL) $(srcdir)/dwarfdump.conf $(libdir)/dwarfdump.conf
+
+uninstall:
+	-rm -f $(bindir)/dwarfdump
+	-rm -f $(man1dir)/dwarfdump.1
+	-rm -f $(libdir)/dwarfdump.conf
+
+clean:
+	rm -f *.o dwarfdump
+	rm -f _tag_attr_table.cc 
+	rm -f _tag_attr_ext_table.cc 
+	rm -f _tag_tree_table.cc 
+	rm -f _tag_tree_table.cc 
+	-rm -f tag_attr_build*.tmp
+	-rm -f tag_tree_build*.tmp
+	rm -f tag_tree_build
+	rm -f tag_attr_build
+	rm -f printfuncs
+	-rm -f _*.cc _*.h
+	-rm -f tmp-*.cc tmp-*.h tmp-*.tmp
+	rm -f gennames
+	rm -f dwarf_names_enum.h  dwarf_names_new.cc  dwarf_names_new.h
+	rm -f dwarf_names.cc dwarf_names.h
+
+distclean: clean
+	rm -f config.log config.h config.cache config.status 
+
+shar:
+	@echo "shar not set up yet"
+dist:
+	@echo "dist not set up yet"
+
+test:
+	$(CXX) $(CXXFLAGS) $(srcdir)/test_printfuncs.cc -o printfuncs
+	./printfuncs

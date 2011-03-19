@@ -1,0 +1,70 @@
+I would prefer you try using ../dwarfdump2, not this source.
+If you  must use this for some reason, could you let me know why?
+Thanks.
+
+To build dwarfdump, first build libdwarf in the neighboring
+directory then type
+	./configure
+	make
+
+Installation is a bit primitive.
+      sudo make install
+may or may not work.   
+Some or all of the following might be required on Unix or Linux or MacOS:
+      sudo mkdir -p /usr/local/share/man/man1/
+      sudo mkdir -p /usr/local/lib
+      sudo mkdir -p /usr/local/bin
+Then retry the 'sudo make install' and (if necessary) try
+      sudo chmod a+x /usr/local/bin/dwarfdump
+      sudo chmod a+r /usr/local/share/man/man1/dwarfdump.1
+      sudo chmod a+r /usr/local/lib/dwarfdump.conf
+You don't really need the dwarfdump.1 man page,
+but you might as well have it. If the man page is not visible
+with 'man dwarfdump' try  'man manpath' for hints.
+
+If you don't need others using dwarfdump on your computer,
+just 
+    cp dwarfdump $HOME/bin/dwarfdump 
+(by convention many people put personal executables in $HOME/bin
+and fix up $PATH to refer there) which suffices as 'installation'.
+
+To use dwarf or libdwarf, you may want to install dwarf.h
+and libdwarf.h somewhere convenient.
+You can just copy those two headers to /usr/local/include by hand
+(you may need to use -I/usr/local/include on compile lines
+to reference them there, but see below on configure).
+
+Notice that dwarf_names.c and dwarf_names.h are supplied by
+the release though the Makefile can and may rebuild them.
+Some users find it difficult to get a reliable awk(1) program,
+so for them these prebuilt versions may be useful.
+
+If your headers or libelf/libdwarf are not in the expected places,
+use the configure script to access them (and to add other ld
+or C flags).
+For example, using csh syntax:
+	setenv PRIVATE_LIBDIR /home/davea/lib
+	./configure LDFLAGS="-L$PRIVATE_LIBDIR" \
+		CPPFLAGS="-I/home/davea/inc" CFLAGS="-I/home/davea/inc"
+Set both CFLAGS and CPPFLAGS so that configure works properly.
+
+If your primary target cpu architecture ( of objects that you
+are using dwarfdump on) is not MIPS, you will probably want
+to add   -DDWARFDUMP_TURN_OFF_MIPS_REG_NAMES=1 to CPPFLAGS
+and CFLAGS  to avoid using misleading register names.
+See print_sections.c.
+
+
+If $PRIVATE_LIBDIR  has both libelf.so and libelf.a, the libelf.so
+will be picked up and 
+  "./tag_tree_build: error while loading shared libraries: 
+	libelf.so.0: cannot open shared object file: 
+	No such file or directory"
+will probably result.
+Either: remove libelf.so.* from your $PRIVATE_LIBDIR or set
+LD_LIBRARY_PATH to $PRIVATE_LIBDIR, or use LDFLAGS to set
+rpath.   Much simpler all around to ensure that $PRIVATE_LIBDIR
+only has archive libelf, not shared-library libelf.
+
+
+David Anderson.  davea42  at  earthlink dot net.
