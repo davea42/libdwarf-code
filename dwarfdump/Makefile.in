@@ -60,7 +60,8 @@ FINALOBJECTS = \
 	print_strings.o \
 	print_types.o \
 	print_weaknames.o  \
-        strstrnocase.o
+        strstrnocase.o \
+        uri.o
 GEN_HFILES = \
 	tmp-tt-table.c \
 	tmp-ta-table.c \
@@ -75,7 +76,8 @@ HEADERS = $(srcdir)/globals.h \
         $(srcdir)/esb.h \
         $(srcdir)/common.h \
         $(srcdir)/makename.h \
-        $(srcdir)/print_frames.h
+        $(srcdir)/print_frames.h \
+        $(srcdir)/uri.h
 
 $(FINALOBJECTS):  $(GEN_HFILES)  $(HEADERS) $(srcdir)/naming.c
 
@@ -172,6 +174,8 @@ clean:
 
 distclean: clean
 	rm -f config.log config.h config.cache config.status 
+	rm -rf autom4te.cache
+	rm -rf Makefile
 
 shar:
 	@echo "shar not set up yet"

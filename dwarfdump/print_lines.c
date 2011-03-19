@@ -45,6 +45,8 @@ $Header: /plroot/cmplrs.src/v7.4.5m/.RCS/PL/dwarfdump/RCS/print_sections.c,v 1.6
 #include "naming.h"
 #include "dwconf.h"
 #include "esb.h"
+#include "uri.h"
+#include <ctype.h>
 
 #include "print_sections.h"
 
@@ -81,7 +83,6 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
     Dwarf_Addr pc = 0;
     Dwarf_Unsigned lineno = 0;
     Dwarf_Signed column = 0;
-    string filename;
     Dwarf_Bool newstatement = 0;
     Dwarf_Bool lineendsequence = 0;
     Dwarf_Bool new_basic_block = 0;
@@ -126,6 +127,7 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
     } else if (lres == DW_DLV_NO_ENTRY) {
         /* no line information is included */
     } else {
+        struct esb_s lastsrc;
         print_source_intro(cu_die);
         if (verbose) {
             print_one_die(dbg, cu_die, 
@@ -134,12 +136,15 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
                 /* srcfiles= */ 0, /* cnt= */ 0, 
                 /* ignore_die_stack= */TRUE);
         }
-        printf
-            ("<source>\t[row,column]\t<pc>\t//<new statement or basic block\n");
-
+        esb_constructor(&lastsrc);
+        printf("<pc>        [row,col] "
+              "NS BB ET uri: filepath\n");
+        printf("NS new statement, BB new basic block, "
+               "ET end of text sequence\n");
         for (i = 0; i < linecount; i++) {
             Dwarf_Line line = linebuf[i];
-            int nsres;
+            string filename = 0;
+            int nsres = 0;
 
             sres = dwarf_linesrc(line, &filename, &err);
             ares = dwarf_lineaddr(line, &pc, &err);
@@ -169,25 +174,22 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
             if (cores == DW_DLV_NO_ENTRY) {
                 column = -1LL;
             }
-            printf("%s:\t[%3" DW_PR_DUu ",%2" DW_PR_DSd "]\t0x%" DW_PR_DUx ,
-                filename, lineno,
-                column, (Dwarf_Unsigned)pc);
-            if (sres == DW_DLV_OK)
-                dwarf_dealloc(dbg, filename, DW_DLA_STRING);
+            printf("0x%08" DW_PR_DUx 
+                "  [%4" DW_PR_DUu ",%2" DW_PR_DSd "]", pc, lineno,
+                column);
 
             nsres = dwarf_linebeginstatement(line, &newstatement, &err);
             if (nsres == DW_DLV_OK) {
                 if (newstatement) {
-                    printf("\t// new statement");
+                        printf(" %s","NS");
                 }
             } else if (nsres == DW_DLV_ERROR) {
-                print_error(dbg, "linebeginstatment failed", nsres,
-                            err);
+                print_error(dbg, "linebeginstatment failed", nsres, err);
             }
             nsres = dwarf_lineblock(line, &new_basic_block, &err);
             if (nsres == DW_DLV_OK) {
                 if (new_basic_block) {
-                    printf("\t// new basic block");
+                        printf(" %s","BB");
                 }
             } else if (nsres == DW_DLV_ERROR) {
                 print_error(dbg, "lineblock failed", nsres, err);
@@ -195,15 +197,29 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
             nsres = dwarf_lineendsequence(line, &lineendsequence, &err);
             if (nsres == DW_DLV_OK) {
                 if (lineendsequence) {
-                    printf("\t// end of text sequence");
+                        printf(" %s", "ET");
                 }
             } else if (nsres == DW_DLV_ERROR) {
                 print_error(dbg, "lineblock failed", nsres, err);
             }
+            if (i > 0 &&  verbose == 0  &&
+                strcmp(filename,esb_get_string(&lastsrc)) == 0) {
+            } else {
+                    struct esb_s urs;
+                    esb_constructor(&urs);
+                    esb_append(&urs, " uri: ");
+                    translate_to_uri(filename,&urs);
+                    printf("%s",esb_get_string(&urs));
+                    esb_destructor(&urs);
+                    esb_empty_string(&lastsrc);
+                    esb_append(&lastsrc,filename);
+            }
+            if (sres == DW_DLV_OK)
+                dwarf_dealloc(dbg, filename, DW_DLA_STRING);
             printf("\n");
 
         }
+        esb_destructor(&lastsrc);
         dwarf_srclines_dealloc(dbg, linebuf, linecount);
     }
 }
-

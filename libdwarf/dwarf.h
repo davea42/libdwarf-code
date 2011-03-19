@@ -1,7 +1,7 @@
 /*
   Copyright (C) 2000,2001,2003,2004,2005,2006 Silicon Graphics, Inc.  All Rights Reserved.
   Portions Copyright 2002-2010 Sun Microsystems, Inc. All rights reserved.
-  Portions Copyright 2007-2010 David Anderson. All rights reserved.
+  Portions Copyright 2007-2011 David Anderson. All rights reserved.
 
   This program is free software; you can redistribute it and/or modify it
   under the terms of version 2.1 of the GNU Lesser General Public License
@@ -440,6 +440,16 @@ extern "C" {
 #define DW_AT_PGI_lbase                         0x3a00 /* PGI. Block, constant, reference. This attribute is an ASTPLAB extension used to describe the array local base.  */
 #define DW_AT_PGI_soffset                       0x3a01  /* PGI. Block, constant, reference. ASTPLAB adds this attribute to describe the section offset, or the offset to the first element in the dimension. */ 
 #define DW_AT_PGI_lstride                       0x3a02  /* PGI. Block, constant, reference. ASTPLAB adds this attribute to describe the linear stride or the distance between elements in the dimension. */
+
+/* There are two groups of Apple extensions here, it is
+   unclear what exactly is correct.  */
+#define DW_AT_APPLE_optimized                   0x3fe1 /* Apple */
+#define DW_AT_APPLE_flags                       0x3fe2 /* Apple */
+#define DW_AT_APPLE_isa                         0x3fe3 /* Apple */
+#define DW_AT_APPLE_block                       0x3fe4 /* Apple */
+#define DW_AT_APPLE_major_runtime_vers          0x3fe5 /* Apple */
+#define DW_AT_APPLE_runtime_class               0x3fe6 /* Apple */
+#define DW_AT_APPLE_omit_frame_ptr              0x3fe7 /* Apple */
 
 /* Apple Extensions for closures  */
 #define DW_AT_APPLE_closure                     0x3fe4 /* Apple */

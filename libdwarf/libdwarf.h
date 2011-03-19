@@ -1033,11 +1033,12 @@ struct Dwarf_Obj_Access_Interface_s {
 #define DW_DLE_FORM_SEC_OFFSET_LENGTH_BAD      225
 #define DW_DLE_NOT_REF_FORM                    226
 #define DW_DLE_DEBUG_FRAME_LENGTH_NOT_MULTIPLE 227
+#define DW_DLE_DEBUG_FRAME_POSSIBLE_ADDRESS_BOTCH 228
 
 
 
     /* DW_DLE_LAST MUST EQUAL LAST ERROR NUMBER */
-#define DW_DLE_LAST        227
+#define DW_DLE_LAST        228
 #define DW_DLE_LO_USER     0x10000
 
    /* Taken as meaning 'undefined value', this is not

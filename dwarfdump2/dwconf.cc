@@ -290,7 +290,7 @@ find_a_file(const std::string &named_file, const char **defaults,
             char *homedir = getenv("HOME");
             if (homedir) {
                 string tname;
-                canonical_append(tname,homedir, lname.substr(5));
+                canonical_append(tname,homedir, lname2.substr(5));
                 lname2 = tname;
             }
         }

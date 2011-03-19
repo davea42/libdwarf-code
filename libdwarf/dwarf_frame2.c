@@ -195,23 +195,23 @@ static void
 print_prefix(struct cie_fde_prefix_s *prefix, int line)
 {
     printf("prefix-print, prefix at 0x%lx, line %d\n",
-           (long) prefix, line);
+           (unsigned long) prefix, line);
     printf("  start addr 0x%lx after prefix 0x%lx\n",
-           (long) prefix->cf_start_addr,
-           (long) prefix->cf_addr_after_prefix);
+           (unsigned long) prefix->cf_start_addr,
+           (unsigned long) prefix->cf_addr_after_prefix);
     printf("  length 0x%" DW_PR_DUx ", len size %d ext size %d\n", 
            (Dwarf_Unsigned) prefix->cf_length,
            prefix->cf_local_length_size,
            prefix->cf_local_extension_size);
     printf("  cie_id 0x%" DW_PR_DUx " cie_id  cie_id_addr 0x%lx\n",
            (Dwarf_Unsigned) prefix->cf_cie_id,
-           (long) prefix->cf_cie_id_addr);
+           (unsigned long) prefix->cf_cie_id_addr);
     printf
         ("  sec ptr 0x%lx sec index %" DW_PR_DSd " sec len 0x%" DW_PR_DUx " sec past end 0x%lx\n",
-         (long) prefix->cf_section_ptr,
+         (unsigned long) prefix->cf_section_ptr,
          (Dwarf_Signed) prefix->cf_section_index,
          (Dwarf_Unsigned) prefix->cf_section_length,
-         (long) prefix->cf_section_ptr + prefix->cf_section_length);
+         (unsigned long) (prefix->cf_section_ptr + prefix->cf_section_length));
 }
 #endif
 
@@ -348,7 +348,7 @@ _dwarf_get_fde_list_internal(Dwarf_Debug dbg, Dwarf_Cie ** cie_data,
                 cie_ptr_to_use->ci_extension_size;
             continue;
         } else {
-            /* this is an FDE, Frame Description Entry, see the Dwarf
+            /* This is an FDE, Frame Description Entry, see the Dwarf
                Spec, section 6.4.1 */
             int res = DW_DLV_ERROR;
             Dwarf_Cie cie_ptr_to_use = 0;
@@ -416,6 +416,16 @@ _dwarf_get_fde_list_internal(Dwarf_Debug dbg, Dwarf_Cie ** cie_data,
                 fde_ptr_to_use->fd_length +
                 fde_ptr_to_use->fd_length_size +
                 fde_ptr_to_use->fd_extension_size;
+            if (frame_ptr  <  fde_ptr_to_use->fd_fde_instr_start) {
+                /* Sanity check. With a really short fde instruction
+                   set and address_size we think is 8 
+                   as it is ELF64 (but is
+                   really 4, as in DWARF{2,3} where we have
+                   no FDE address_size) we emit an error. 
+                   This error means things will not go well. */
+                _dwarf_error(dbg,error,DW_DLE_DEBUG_FRAME_POSSIBLE_ADDRESS_BOTCH);
+                return DW_DLV_ERROR;
+            }
             continue;
 
         }

@@ -313,7 +313,8 @@ const char *_dwarf_errmsgs[] = {
     "DW_DLE_ATTR_EXPRLOC_FORM_BAD(224)",
     "DW_DLE_FORM_SEC_OFFSET_LENGTH_BAD(225)",
     "DW_DLE_NOT_REF_FORM(226)",
-    "DW_DLE_DEBUG_FRAME_LENGTH_NOT_MULTIPLE(227)"
+    "DW_DLE_DEBUG_FRAME_LENGTH_NOT_MULTIPLE(227)",
+    "DW_DLE_DEBUG_FRAME_POSSIBLE_ADDRESS_BOTCH(228)"
 };
 
 
@@ -402,7 +403,7 @@ dwarf_errmsg(Dwarf_Error error)
         return "Dwarf_Error is NULL";
     }
 
-    if (error->er_errval > (sizeof(_dwarf_errmsgs) / sizeof(char *))) {
+    if (error->er_errval >= (sizeof(_dwarf_errmsgs) / sizeof(char *))) {
         return "Dwarf_Error value out of range";
     }
 

@@ -1,7 +1,22 @@
+2011-01-17  DavidAnderson <davea42@earthlink.net>
+      * dwarfdump.1: Amplify the -l line table description.
+      * Makefile.in: Add uri.h, uri.c.
+      * dwarfdump.c: Update version string.
+      * uri.c, uri.h: Implemented translate_to_uri()
+        so file pathnames with difficult characters print
+        using the url/uri %xx form.
+      * print_lines.c: call translate_to_uri().
+        Rearrange the order of the line flags and the filepath.
+        Abbreviate the line flags.
+2011-01-15  DavidAnderson <davea42@earthlink.net>
+      * print_lines.c: Alter line printing to a new format
+        and with plain -l (no -v) print long pathnames in
+        line output as <file path at pc 0xnnnnnnn> after
+        the first occurance of a name.
+      * dwarfdump.c: update version string.
 2011-01-13  DavidAnderson <davea42@earthlink.net>
       * print_die.c: Fix up DW_FORM_ref_sig8 and DW_FORM_sec_offset
         output.
-
 2011-01-13  DavidAnderson <davea42@earthlink.net>
       * dwarfdump.c: Update version string.
       * print_die.c: Fix DW_FORM_exprloc handling.

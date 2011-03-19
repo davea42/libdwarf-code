@@ -445,7 +445,10 @@ _dwarf_internal_srclines(Dwarf_Die die,
 
     lres = dwarf_formudata(stmt_list_attr, &line_offset, error);
     if (lres != DW_DLV_OK) {
-        return lres;
+        lres = dwarf_global_formref(stmt_list_attr,&line_offset,error);
+        if (lres != DW_DLV_OK) {
+                return lres;
+        }
     }
 
     if (line_offset >= dbg->de_debug_line.dss_size) {

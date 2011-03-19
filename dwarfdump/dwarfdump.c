@@ -51,7 +51,7 @@ $Header: /plroot/cmplrs.src/v7.4.5m/.RCS/PL/dwarfdump/RCS/dwarfdump.c,v 1.48 200
 #include "makename.h"
 #include "dwconf.h"
 
-#define DWARFDUMP_VERSION " Thu Jan 13 16:21:01 PST 2011  "
+#define DWARFDUMP_VERSION " Tue Jan 18 07:59:38 PST 2011  "
 
 extern char *optarg;
 

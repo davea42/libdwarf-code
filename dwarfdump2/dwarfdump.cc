@@ -54,7 +54,7 @@ $Header: /plroot/cmplrs.src/v7.4.5m/.RCS/PL/dwarfdump/RCS/dwarfdump.c,v 1.48 200
 #include <unistd.h>             /* For getopt. */
 #include "dwconf.h"
 #include "naming.h"
-#define DWARFDUMP_VERSION " Thu Jan 13 16:21:01 PST 2011  "
+#define DWARFDUMP_VERSION " Tue Jan 18 07:59:38 PST 2011  "
 
 using std::string;
 using std::cout;
@@ -146,8 +146,9 @@ static string config_file_path;
 static string config_file_abi;
 static const char *  config_file_defaults[] = {
     "./dwarfdump.conf",
-    /* Note: HOME location uses .dwarfdump.  */
+    /* Note: HOME location uses .dwarfdump.conf or dwarfdump.conf.  */
     "HOME/.dwarfdump.conf",
+    "HOME/dwarfdump.conf",
 #ifdef CONFPREFIX
 /* See Makefile.in  "libdir"  and CFLAGS  */
 /* We need 2 levels of macro to get the name turned into

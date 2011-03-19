@@ -1,3 +1,11 @@
+2011-03-13  DavidAnderson <davea42@earthlink.net>
+     * dwarf_frame2.c: Add a check so a mistake in address_size
+       does not lead to chaos.
+     * dwarf_line.c: Handles DW_FORM_sec_offset a bit better.
+     * libdwarf.h, dwarf_error.c: New error code.
+     * dwarf_util.h: Fix indents and READ_AREA_LENGTH.
+2011-01-20  DavidAnderson <davea42@earthlink.net>
+     * dwarf.h: Added some Apple attribute extensions.
 2011-01-13  DavidAnderson <davea42@earthlink.net>
      * dwarf_print_lines.c: Handles DW_FORM_exprloc now. With -vvv
        it now prints the dwarf version of the line table header.

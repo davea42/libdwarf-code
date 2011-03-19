@@ -102,6 +102,12 @@ the compiler has emitted invalid DWARF.
 .TP
 .B \-l
 Dumps the .debug_line information.  
+Abbreviates the line flags (see the output legend lines
+for each compilation unit line listing) and changes
+some path characters into a URI style (space prints as %20
+for example). When successive lines have the same file path
+the file path is omitted.  With -v the file path is never
+omitted.
 .TP
 .B \-m
 Dumps the .debug_macinfo section.

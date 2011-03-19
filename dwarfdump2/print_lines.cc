@@ -44,6 +44,7 @@ $Header: /plroot/cmplrs.src/v7.4.5m/.RCS/PL/dwarfdump/RCS/print_sections.c,v 1.6
 #include "globals.h"
 #include <vector>
 #include "naming.h"
+#include "uri.h"
 #include "dwconf.h"
 
 #include "print_frames.h"
@@ -68,7 +69,6 @@ print_source_intro(Dwarf_Die cu_die)
             endl;
     }
 }
-
 
 /*
  * Print line number information:
@@ -130,9 +130,14 @@ print_line_numbers_this_cu(DieHolder & hcudie)
                 /* ignore_die_printed_flag= */true);
         }
         cout <<
-            "<source>\t[row,column]\t<pc>\t//<new statement or basic block"<<
-            endl;
+            "<pc>        [row,col] NS BB ET uri: filepath"
+            << endl;
+        cout << 
+            "NS new statement, BB new basic block, ET end of text sequence"
+            << endl;
+ 
 
+        string lastsrc = ""; 
         for (Dwarf_Signed i = 0; i < linecount; i++) {
             Dwarf_Line line = linebuf[i];
             char *filenamearg = 0;
@@ -168,9 +173,11 @@ print_line_numbers_this_cu(DieHolder & hcudie)
             if (cores == DW_DLV_NO_ENTRY) {
                 column = -1LL;
             }
-            cout <<filename << ":\t[" << IToDec(lineno,3)<<
-                  "," << IToDec(column,2) <<
-                  "]\t" << IToHex(pc);
+            cout << IToHex0N(pc,10) << "  ["  <<
+                IToDec(lineno,4) << "," <<
+                IToDec(column,2) <<
+                "]" ;
+
             if (sres == DW_DLV_OK) {
                 dwarf_dealloc(dbg, filenamearg, DW_DLA_STRING);
             }
@@ -178,7 +185,7 @@ print_line_numbers_this_cu(DieHolder & hcudie)
             int nsres = dwarf_linebeginstatement(line, &newstatement, &err);
             if (nsres == DW_DLV_OK) {
                 if (newstatement) {
-                    cout << "\t// new statement";
+                    cout <<" NS";
                 }
             } else if (nsres == DW_DLV_ERROR) {
                 print_error(dbg, "linebeginstatment failed", nsres,
@@ -188,7 +195,7 @@ print_line_numbers_this_cu(DieHolder & hcudie)
             nsres = dwarf_lineblock(line, &new_basic_block, &err);
             if (nsres == DW_DLV_OK) {
                 if (new_basic_block) {
-                    cout << "\t// new basic block";
+                    cout <<" BB";
                 }
             } else if (nsres == DW_DLV_ERROR) {
                 print_error(dbg, "lineblock failed", nsres, err);
@@ -197,10 +204,20 @@ print_line_numbers_this_cu(DieHolder & hcudie)
             nsres = dwarf_lineendsequence(line, &lineendsequence, &err);
             if (nsres == DW_DLV_OK) {
                 if (lineendsequence) {
-                    cout << "\t// end of text sequence";
+                    cout <<" ET";
                 }
             } else if (nsres == DW_DLV_ERROR) {
                 print_error(dbg, "lineblock failed", nsres, err);
+            }
+            // Here avoid so much duplication of long file paths.
+            if (i > 0 
+                && verbose == 0
+                && filename ==lastsrc ){
+            } else {
+                string urs(" uri: ");
+                translate_to_uri(filename.c_str(),urs);
+                cout << urs ;
+                lastsrc = filename;
             }
             cout << endl;
         }

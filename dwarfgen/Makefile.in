@@ -78,7 +78,9 @@ uninstall:
 	-rm -f $(bindir)/dwarfgen
 
 distclean: clean
-	-rm -f config.log config.h config.cache config.status autom4te.cache
+	-rm -f config.log config.h config.cache config.status 
+	rm -rf autom4te.cache	
+	rm -f Makefile
 
 shar:
 	@echo "shar not set up."
