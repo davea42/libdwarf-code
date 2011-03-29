@@ -3,8 +3,9 @@
 bldone () {
   t=$1 
   cd $t
-  #rm $t
-  touch *.c *.cc *.h
+  # The following distclean will fail on a clean directory
+  # Ignore the failure
+  make distclean
   ./configure
   if [ $? != 0 ]
   then

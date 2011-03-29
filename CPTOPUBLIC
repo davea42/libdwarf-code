@@ -1,10 +1,11 @@
-
-if [ $# == 1 ]
+#!/bin/sh
+if [ $# -eq 1 ]
 then
-  t=$1  
+  t=$1
 else
   t=/var/tmp/dwarf
 fi
+
 echo target is $t
 sh UPDATEDWARFDUMPVERSION.sh
 rm -rf $t
@@ -15,6 +16,7 @@ mkdir $t/libdwarf
 mkdir $t/dwarfgen
 mkdir $t/dwarfexample
 mkdir $t/libdwarf/cmplrs
+cp BLDLIBDWARF $t
 for i in dwarfexample/NEWS \
 dwarfexample/ChangeLog2010 \
 dwarfexample/ChangeLog2009 \
@@ -103,6 +105,8 @@ dwarfdump/tag_common.c  \
 dwarfdump/tag_attr.list  \
 dwarfdump/Makefile.in  \
 dwarfdump/tag_tree.c  \
+dwarfdump/checkutil.c  \
+dwarfdump/checkutil.h  \
 dwarfdump/configure  \
 dwarfdump/configure.in \
 dwarfdump/common.h  \
@@ -119,6 +123,7 @@ dwarfdump/print_locs.c \
 dwarfdump/print_macros.c \
 dwarfdump/print_pubnames.c \
 dwarfdump/print_ranges.c \
+dwarfdump/print_reloc.h \
 dwarfdump/print_static_funcs.c \
 dwarfdump/print_static_vars.c \
 dwarfdump/print_strings.c \
@@ -146,6 +151,7 @@ dwarfdump/GPL.txt \
 dwarfdump/makename.h \
 dwarfdump/install.sh  \
 dwarfdump/uri.c \
+dwarfdump/uritablebuild.c \
 dwarfdump/uri.h 
 do
 	cp -p $i $t/$i
