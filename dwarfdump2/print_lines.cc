@@ -2,7 +2,7 @@
   Copyright (C) 2000-2006 Silicon Graphics, Inc.  All Rights Reserved.
   Portions Copyright 2007-2010 Sun Microsystems, Inc. All rights reserved.
   Portions Copyright 2009-2010 SN Systems Ltd. All rights reserved.
-  Portions Copyright 2008-2010 David Anderson. All rights reserved.
+  Portions Copyright 2008-2011 David Anderson. All rights reserved.
 
   This program is free software; you can redistribute it and/or modify it
   under the terms of version 2 of the GNU General Public License as
@@ -35,11 +35,11 @@
 
 
 $Header: /plroot/cmplrs.src/v7.4.5m/.RCS/PL/dwarfdump/RCS/print_sections.c,v 1.69 2006/04/17 00:09:56 davea Exp $ */
-/* The address of the Free Software Foundation is
- * Free Software Foundation, Inc., 51 Franklin St, Fifth Floor, 
- * Boston, MA 02110-1301, USA.  
- * SGI has moved from the Crittenden Lane address.
- */
+/*  The address of the Free Software Foundation is
+    Free Software Foundation, Inc., 51 Franklin St, Fifth Floor, 
+    Boston, MA 02110-1301, USA.  
+    SGI has moved from the Crittenden Lane address.
+*/
 
 #include "globals.h"
 #include <vector>
@@ -70,12 +70,12 @@ print_source_intro(Dwarf_Die cu_die)
     }
 }
 
-/*
- * Print line number information:
- *      filename
- *      new basic-block
- *      [line] [address] <new statement>
- */
+/*  Print line number information:
+
+    filename
+    new basic-block
+    [line] [address] <new statement>
+*/
 
 void
 print_line_numbers_this_cu(DieHolder & hcudie)
@@ -90,14 +90,14 @@ print_line_numbers_this_cu(DieHolder & hcudie)
         print_source_intro(cu_die);
         SrcfilesHolder hsrcfiles;
         print_one_die(hcudie, /* print_information= */ 1,
-             /* indent_level= */ 0,
-             hsrcfiles,
-             /* ignore_die_printed_flag= */true);
+            /* indent_level= */ 0,
+            hsrcfiles,
+            /* ignore_die_printed_flag= */true);
         lines_result.checks++;
         int lres = dwarf_print_lines(cu_die, &err,&errcount);
         if(errcount > 0) {
-             lines_result.errors += errcount;
-             lines_result.checks += (errcount-1);
+            lines_result.errors += errcount;
+            lines_result.checks += (errcount-1);
         }
         if (lres == DW_DLV_ERROR) {
             print_error(dbg, "dwarf_srclines details", lres, err);
@@ -130,7 +130,7 @@ print_line_numbers_this_cu(DieHolder & hcudie)
                 /* ignore_die_printed_flag= */true);
         }
         cout <<
-            "<pc>        [row,col] NS BB ET uri: filepath"
+            "<pc>        [row,col] NS BB ET uri: \"filepath\""
             << endl;
         cout << 
             "NS new statement, BB new basic block, ET end of text sequence"
@@ -189,7 +189,7 @@ print_line_numbers_this_cu(DieHolder & hcudie)
                 }
             } else if (nsres == DW_DLV_ERROR) {
                 print_error(dbg, "linebeginstatment failed", nsres,
-                            err);
+                    err);
             }
             Dwarf_Bool new_basic_block = 0;
             nsres = dwarf_lineblock(line, &new_basic_block, &err);
@@ -210,12 +210,12 @@ print_line_numbers_this_cu(DieHolder & hcudie)
                 print_error(dbg, "lineblock failed", nsres, err);
             }
             // Here avoid so much duplication of long file paths.
-            if (i > 0 
-                && verbose == 0
-                && filename ==lastsrc ){
+            if (i > 0 && verbose < 3  && filename == lastsrc ){
+                /* print no name, leave blank. */
             } else {
-                string urs(" uri: ");
+                string urs(" uri: \"");
                 translate_to_uri(filename.c_str(),urs);
+                urs.append("\"");
                 cout << urs ;
                 lastsrc = filename;
             }

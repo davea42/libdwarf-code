@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2006 Silicon Graphics, Inc.  All Rights Reserved.
-  Portions Copyright 2009-2010 David Anderson. All rights reserved.
+  Portions Copyright 2009-2011 David Anderson. All rights reserved.
 
   This program is free software; you can redistribute it and/or modify it
   under the terms of version 2 of the GNU General Public License as
@@ -70,8 +70,8 @@ struct comtable_s {
     string name;
 };
 
-static int errcount = 0;        /* Count errors found in this scan of
-                                   the configuration file. */
+/* Count errors found in this scan of the configuration file. */
+static int errcount = 0;        
 
 static string name_begin_abi("beginabi:");
 static string name_reg("reg:");
@@ -98,9 +98,9 @@ static unsigned size_of_comtable = sizeof(comtable) / sizeof(comtable[0]);
 
 
 static FILE *find_a_file(const string &named_file, const char **defaults,
-                         string & name_used);
+    string & name_used);
 static bool find_abi_start(FILE * stream, const string &abi_name, long *offset,
-                          unsigned long *lineno_out);
+    unsigned long *lineno_out);
 static bool parse_abi(FILE * stream, const std::string &fname, 
     const std::string &abiname,
     struct dwconf_s *out, unsigned long lineno);
@@ -125,9 +125,9 @@ static char * get_token(char *cp, token_s *tok);
 */
 int
 find_conf_file_and_read_config(const string &named_file,
-                               const string &named_abi, 
-                               const char **defaults,
-                               struct dwconf_s *conf_out)
+    const string &named_abi, 
+    const char **defaults,
+    struct dwconf_s *conf_out)
 {
 
     errcount = 0;
@@ -171,21 +171,20 @@ find_conf_file_and_read_config(const string &named_file,
     return errcount;
 }
 
-/* Given path strings, attempt to make a canonical file name:
-   that is, avoid superfluous '/' so that no
+/*  Given path strings, attempt to make a canonical file name:
+    that is, avoid superfluous '/' so that no
     '//' (or worse) is created in the output. The path components
     are to be separated so at least one '/'
     is to appear between the two 'input strings' when
-    creating the output.
-*/
+    creating the output.  */
 static bool
 canonical_append(string &target,
-                 const string &first_string, const string &second_string)
+    const string &first_string, const string &second_string)
 {
     // Do not take any ending /
     size_t firstlen = first_string.size();
     for (; firstlen > 0 && first_string[firstlen - 1] == '/';
-         --firstlen) {
+        --firstlen) {
     }
 
     // Do not take any leading /
@@ -229,7 +228,7 @@ test_canonical_append(void)
 
         string targ;
         bool ok = canonical_append(targ, canap[i].first,
-                               canap[i].second);
+            canap[i].second);
         if (ok) {
             if (canap[i].res_exp == 0) {
                 /* GOOD */
@@ -237,8 +236,8 @@ test_canonical_append(void)
             } else {
                 ++failcount;
                 cout << "FAIL: entry " << i <<
-                     " wrong, expected " << canap[i].res_exp <<
-                     " got NULL " << endl;
+                    " wrong, expected " << canap[i].res_exp <<
+                    " got NULL " << endl;
             }
         } else {
             // Impossible now.
@@ -340,9 +339,8 @@ skipwhite(char *cp)
     return cp;
 }
 
-/* Return TRUE if ok. FALSE if find more tokens.
-   Emit error message if error.
-*/
+/*  Return TRUE if ok. FALSE if find more tokens.
+    Emit error message if error.  */
 static bool
 ensure_has_no_more_tokens(char *cp, const string &fname, unsigned long lineno)
 {
@@ -350,9 +348,9 @@ ensure_has_no_more_tokens(char *cp, const string &fname, unsigned long lineno)
     get_token(cp, &tok);
     if (!tok.tk_data.empty() ) {
         cout << "dwarfdump.conf error: " <<
-               "extra characters after command operands, found " <<
-               "\"" << tok.tk_data << "\" in " << fname <<
-               " line " << lineno << endl;
+            "extra characters after command operands, found " <<
+            "\"" << tok.tk_data << "\" in " << fname <<
+            " line " << lineno << endl;
         ++errcount;
         return false;
     }
@@ -360,10 +358,8 @@ ensure_has_no_more_tokens(char *cp, const string &fname, unsigned long lineno)
 }
 
 
-/*
-        There may be many  beginabi: lines in a dwarfdump.conf file,
-        find the one we want and return it's file offset.
-*/
+/*  There may be many  beginabi: lines in a dwarfdump.conf file,
+    find the one we want and return it's file offset.  */
 static bool
 find_abi_start(FILE * stream, const string &abi_name, 
     long *offset, unsigned long *lineno_out)
@@ -403,9 +399,7 @@ find_abi_start(FILE * stream, const string &abi_name,
     return false;
 }
 
-/*
-    The tokenizer for our simple parser.
-*/
+/* The tokenizer for our simple parser.  */
 static char *
 get_token(char *cp, token_s *outtok)
 {
@@ -422,11 +416,9 @@ get_token(char *cp, token_s *outtok)
 
 }
 
-/*
-    Given  a line of the table, determine if it is a command
+/*  Given  a line of the table, determine if it is a command
     or not, and if a command, which one is it.
-    Return LT_ERROR if it's not recognized.
-*/
+    Return LT_ERROR if it's not recognized.  */
 static enum linetype_e
 which_command(char *cp, struct comtable_s **tableentry)
 {
@@ -448,12 +440,11 @@ which_command(char *cp, struct comtable_s **tableentry)
     return LT_ERROR;
 }
 
-/* We are promised it's an abiname: command
-   find the name on the line.
-*/
+/*  We are promised it's an abiname: command
+    find the name on the line.  */
 static bool
 parsebeginabi(char *cp, const string &fname, const string &abiname,
-              unsigned long lineno, struct comtable_s *comtab)
+    unsigned long lineno, struct comtable_s *comtab)
 {
     size_t clen = comtab->name.size();
     size_t abinamelen = abiname.size();
@@ -466,8 +457,8 @@ parsebeginabi(char *cp, const string &fname, const string &abiname,
         strncmp(cp, abiname.c_str(), abinamelen) != 0) {
         ++errcount;
         cout << "dwarfdump internal error: mismatch " <<
-           cp << " with " << tok.tk_data << "   " <<
-           fname << " line " << lineno  <<endl;
+            cp << " with " << tok.tk_data << "   " <<
+            fname << " line " << lineno  <<endl;
         return false;
     }
     bool res = ensure_has_no_more_tokens(cp + tok.tk_data.size(), 
@@ -475,9 +466,8 @@ parsebeginabi(char *cp, const string &fname, const string &abiname,
     return res;
 }
 
-/* This expands register names as required, but does not
-   ensure no names duplicated.
-*/
+/*  This expands register names as required, but does not
+    ensure no names duplicated.  */
 static void
 add_to_reg_table(struct dwconf_s *conf,
     const string &rname, unsigned long rval, 
@@ -485,15 +475,14 @@ add_to_reg_table(struct dwconf_s *conf,
     unsigned long lineno)
 {
     if( rval >= conf->cf_regs.size()) {
-          conf->cf_regs.resize(rval+1);
+        conf->cf_regs.resize(rval+1);
     }
     conf->cf_regs[rval] = rname;
     return;
 }
 
-/* Our input is supposed to be a number.
-   Determine the value (and return it) or generate an error message.
-*/
+/*  Our input is supposed to be a number.
+    Determine the value (and return it) or generate an error message.  */
 static int
 make_a_number(const string &cmd, const string &filename, 
     unsigned long lineno, struct token_s *tok, unsigned long *val_out)
@@ -505,17 +494,17 @@ make_a_number(const string &cmd, const string &filename,
     if (val == 0 && endnum == begin) {
         ++errcount;
         cout << "dwarfdump.conf error: " <<
-               cmd << " missing register number (\"" <<
-               tok->tk_data << "\" not valid)  " <<
-               filename << " line " << lineno <<endl;
+            cmd << " missing register number (\"" <<
+            tok->tk_data << "\" not valid)  " <<
+            filename << " line " << lineno <<endl;
         return false;
     }
     if (endnum != (begin + tok->tk_data.size())) {
         ++errcount;
         cout << "dwarfdump.conf error: " <<
-               cmd << " Missing register number (\"" <<
-               tok->tk_data << "\" not valid)  " <<
-               filename << " line " << lineno <<endl;
+            cmd << " Missing register number (\"" <<
+            tok->tk_data << "\" not valid)  " <<
+            filename << " line " << lineno <<endl;
         return false;
     }
     *val_out = val;
@@ -525,12 +514,11 @@ make_a_number(const string &cmd, const string &filename,
 
 }
 
-/* We are guaranteed it's a reg: command, so parse that command
-    and record the interesting data.
-*/
+/*  We are guaranteed it's a reg: command, so parse that command
+    and record the interesting data.  */
 static bool
 parsereg(char *cp, const string &fname, unsigned long lineno,
-         struct dwconf_s *conf, struct comtable_s *comtab)
+    struct dwconf_s *conf, struct comtable_s *comtab)
 {
     size_t clen = comtab->name.size();
     token_s regnum;
@@ -542,14 +530,14 @@ parsereg(char *cp, const string &fname, unsigned long lineno,
     if (tokreg.tk_data.empty()) {
         ++errcount;
         cout << "dwarfdump.conf error: reg: missing register name  " <<
-               fname << " line " << lineno  <<endl;
+            fname << " line " << lineno  <<endl;
         return false;
 
     }
     if (regnum.tk_data.empty()) {
         ++errcount;
         cout << "dwarfdump.conf error: reg: Missing register name  " <<
-               fname << " line " << lineno  <<endl;
+            fname << " line " << lineno  <<endl;
         return false;
     }
 
@@ -570,13 +558,11 @@ parsereg(char *cp, const string &fname, unsigned long lineno,
     }
 }
 
-/*
-   We are guaranteed it's an frame_interface: command.
-   Parse it and record the value data.
-*/
+/*  We are guaranteed it's an frame_interface: command.
+    Parse it and record the value data.  */
 static bool
 parseframe_interface(char *cp, const string &fname, unsigned long lineno,
-                     struct dwconf_s *conf, struct comtable_s *comtab)
+    struct dwconf_s *conf, struct comtable_s *comtab)
 {
     size_t clen = comtab->name.size();
     cp = cp + clen + 1;
@@ -614,13 +600,11 @@ parseframe_interface(char *cp, const string &fname, unsigned long lineno,
     return res;
 }
 
-/*
-   We are guaranteed it's a cfa_reg: command. Parse it
-   and record the important data.
-*/
+/*  We are guaranteed it's a cfa_reg: command. Parse it
+    and record the important data.  */
 static bool
 parsecfa_reg(char *cp, const string &fname, unsigned long lineno,
-             struct dwconf_s *conf, struct comtable_s *comtab)
+    struct dwconf_s *conf, struct comtable_s *comtab)
 {
     size_t clen = comtab->name.size();
     token_s tok;
@@ -650,13 +634,13 @@ parsecfa_reg(char *cp, const string &fname, unsigned long lineno,
 }
 
 
-/* We are guaranteed it's an initial_reg_value: command,
-   parse it and put the reg value where it will be remembered. 
+/*  We are guaranteed it's an initial_reg_value: command,
+    parse it and put the reg value where it will be remembered. 
 */
 static bool
 parseinitial_reg_value(char *cp, const string &fname,
-                       unsigned long lineno,
-                       struct dwconf_s *conf, struct comtable_s *comtab)
+    unsigned long lineno,
+    struct dwconf_s *conf, struct comtable_s *comtab)
 {
     size_t clen = comtab->name.size();
     cp = cp + clen + 1;
@@ -666,8 +650,8 @@ parseinitial_reg_value(char *cp, const string &fname,
         ++errcount;
         cout << "dwarfdump.conf error: " <<
             comtab->name <<
-           " missing initial reg value " <<
-           fname << " line " << lineno << endl; 
+            " missing initial reg value " <<
+            fname << " line " << lineno << endl; 
         return false;
     }
 
@@ -682,13 +666,12 @@ parseinitial_reg_value(char *cp, const string &fname,
     bool res = ensure_has_no_more_tokens(cp, fname, lineno);
     return res;
 }
-/* We are guaranteed it's an initial_reg_value: command,
- *    parse it and put the reg value where it will be remembered. 
- *    */
+/*  We are guaranteed it's an initial_reg_value: command,
+    parse it and put the reg value where it will be remembered.  */
 static bool
 parsesame_val_reg(char *cp, const string &fname,
-                       unsigned long lineno,
-                       struct dwconf_s *conf, struct comtable_s *comtab)
+    unsigned long lineno,
+    struct dwconf_s *conf, struct comtable_s *comtab)
 {
     size_t clen = comtab->name.size();
     cp = cp + clen + 1;
@@ -698,8 +681,8 @@ parsesame_val_reg(char *cp, const string &fname,
         ++errcount;
         cout << "dwarfdump.conf error: " <<
             comtab->name <<
-           " missing same_val_reg value " <<
-           fname << " line " << lineno << endl;
+            " missing same_val_reg value " <<
+            fname << " line " << lineno << endl;
         return false;
     }
 
@@ -714,13 +697,12 @@ parsesame_val_reg(char *cp, const string &fname,
     bool res = ensure_has_no_more_tokens(cp, fname, lineno);
     return res;
 }
-/* We are guaranteed it's an initial_reg_value: command,
- *  *    parse it and put the reg value where it will be remembered. 
- *   *    */
+/*  We are guaranteed it's an initial_reg_value: command,
+    parse it and put the reg value where it will be remembered.  */
 static bool
 parseundefined_val_reg(char *cp, const string &fname,
-                       unsigned long lineno,
-                       struct dwconf_s *conf, struct comtable_s *comtab)
+    unsigned long lineno,
+    struct dwconf_s *conf, struct comtable_s *comtab)
 {
     size_t clen = comtab->name.size();
     cp = cp + clen + 1;
@@ -730,8 +712,8 @@ parseundefined_val_reg(char *cp, const string &fname,
         ++errcount;
         cout << "dwarfdump.conf error: " <<
             comtab->name <<
-           " missing undefined_val_reg value " <<
-           fname << " line " << lineno << endl;
+            " missing undefined_val_reg value " <<
+            fname << " line " << lineno << endl;
         return false;
     }
 
@@ -755,7 +737,7 @@ parseundefined_val_reg(char *cp, const string &fname,
 */
 static bool
 parsereg_table_size(char *cp, const string &fname, unsigned long lineno,
-                    struct dwconf_s *conf, struct comtable_s *comtab)
+    struct dwconf_s *conf, struct comtable_s *comtab)
 {
     size_t clen = comtab->name.size();
     token_s tok;
@@ -766,8 +748,8 @@ parsereg_table_size(char *cp, const string &fname, unsigned long lineno,
         ++errcount;
         cout << "dwarfdump.conf error: " <<
             comtab->name <<
-           " missing reg table size value " <<
-           fname << " line " << lineno << endl;
+            " missing reg table size value " <<
+            fname << " line " << lineno << endl;
         return false;
     }
 
@@ -801,11 +783,11 @@ parseendabi(char *cp, const string &fname,
     if (abiname != tok.tk_data) {
         ++errcount;
         cout << comtab->name <<
-           " error: mismatch abi name " <<
-           tok.tk_data << " (here) vs. " <<
-           abiname <<
-           " (beginabi:)  " <<
-           fname << " line " << lineno << endl;
+            " error: mismatch abi name " <<
+            tok.tk_data << " (here) vs. " <<
+            abiname <<
+            " (beginabi:)  " <<
+            fname << " line " << lineno << endl;
         return false;
     }
     bool res = ensure_has_no_more_tokens(cp, fname, lineno);
@@ -832,7 +814,7 @@ parseendabi(char *cp, const string &fname,
 */
 static bool
 parse_abi(FILE * stream, const string &fname, const string &abiname,
-          struct dwconf_s *out, unsigned long lineno)
+    struct dwconf_s *out, unsigned long lineno)
 {
     struct dwconf_s localconf;
     unsigned long regcount = 0;
@@ -861,7 +843,7 @@ parse_abi(FILE * stream, const string &fname, const string &abiname,
         if (!line) {
             ++errcount;
             cout << "dwarfdump: end of file or error before endabi: in "<<
-                 fname << ", line " << lineno << endl;
+                fname << ", line " << lineno << endl;
             return false;
         }
         ++lineno;
@@ -874,8 +856,8 @@ parse_abi(FILE * stream, const string &fname, const string &abiname,
         case LT_ERROR:
             ++errcount;
             cout << "dwarfdump: Unknown text in "<<
-                 fname << " is \"" <<
-                 line << "\" at line " <<  lineno << endl;
+                fname << " is \"" <<
+                line << "\" at line " <<  lineno << endl;
             break;
         case LT_COMMENT:
             break;
@@ -885,10 +867,10 @@ parse_abi(FILE * stream, const string &fname, const string &abiname,
             if (beginabi_lineno > 0) {
                 ++errcount;
                 cout << "dwarfdump: Encountered beginabi: when not expected. "
-                     << fname <<
-                     " line " << lineno <<
-                     " previous beginabi line " <<
-                     beginabi_lineno << endl;
+                    << fname <<
+                    " line " << lineno <<
+                    " previous beginabi line " <<
+                    beginabi_lineno << endl;
             }
             beginabi_lineno = lineno;
             parsebeginabi(line, fname, abiname, lineno, comtabp);
@@ -902,23 +884,23 @@ parse_abi(FILE * stream, const string &fname, const string &abiname,
             if (frame_interface_lineno > 0) {
                 ++errcount;
                 cout << "dwarfdump: Encountered duplicate frame_interface: " 
-                     << fname <<
-                     " line " << lineno <<
-                     " previous frame_interface: line " <<
-                     frame_interface_lineno << endl;
+                    << fname <<
+                    " line " << lineno <<
+                    " previous frame_interface: line " <<
+                    frame_interface_lineno << endl;
             }
             frame_interface_lineno = lineno;
             parseframe_interface(line, fname,
-                                 lineno, &localconf, comtabp);
+                lineno, &localconf, comtabp);
             break;
         case LT_CFA_REG:
             if (cfa_reg_lineno > 0) {
                 ++errcount;
                 cout << "dwarfdump: Encountered duplicate cfa_reg: " 
-                     << fname <<
-                     " line " << lineno <<
-                     " previous cfa_reg line " <<
-                     cfa_reg_lineno << endl;
+                    << fname <<
+                    " line " << lineno <<
+                    " previous cfa_reg line " <<
+                    cfa_reg_lineno << endl;
             }
             cfa_reg_lineno = lineno;
             parsecfa_reg(line, fname, lineno, &localconf, comtabp);
@@ -927,60 +909,60 @@ parse_abi(FILE * stream, const string &fname, const string &abiname,
             if (initial_reg_value_lineno > 0) {
                 ++errcount;
                 cout << 
-                     "dwarfdump: Encountered duplicate " <<
-                     "initial_reg_value: " <<
-                     fname <<
-                     " line " << lineno <<
-                     " previous initial_reg_value: line " <<
-                     initial_reg_value_lineno<< endl;
+                    "dwarfdump: Encountered duplicate " <<
+                    "initial_reg_value: " <<
+                    fname <<
+                    " line " << lineno <<
+                    " previous initial_reg_value: line " <<
+                    initial_reg_value_lineno<< endl;
             }
             initial_reg_value_lineno = lineno;
             parseinitial_reg_value(line, fname,
-                                   lineno, &localconf, comtabp);
+                lineno, &localconf, comtabp);
             break;
         case LT_SAME_VAL_REG:
             if (same_val_reg_lineno > 0) {
                 ++errcount;
                 cout << 
-                     "dwarfdump: Encountered duplicate " <<
-                     "same_val_reg: " <<
-                     fname <<
-                     " line " << lineno <<
-                     " previous same_reg_value: line " <<
-                     same_val_reg_lineno << endl;
+                    "dwarfdump: Encountered duplicate " <<
+                    "same_val_reg: " <<
+                    fname <<
+                    " line " << lineno <<
+                    " previous same_reg_value: line " <<
+                    same_val_reg_lineno << endl;
             }
             same_val_reg_lineno = lineno;
             parsesame_val_reg(line, fname,
-                                   lineno, &localconf, comtabp);
+                lineno, &localconf, comtabp);
             break;
         case LT_UNDEFINED_VAL_REG:
             if (undefined_val_reg_lineno > 0) {
                 ++errcount;
                 cout << 
-                     "dwarfdump: Encountered duplicate " <<
-                     "undefined_val_reg: " <<
-                     fname <<
-                     " line " << lineno <<
-                     " previous same_val_reg: line " <<
-                     same_val_reg_lineno << endl;
+                    "dwarfdump: Encountered duplicate " <<
+                    "undefined_val_reg: " <<
+                    fname <<
+                    " line " << lineno <<
+                    " previous same_val_reg: line " <<
+                    same_val_reg_lineno << endl;
             }
             undefined_val_reg_lineno = lineno;
             parseundefined_val_reg(line, fname,
-                                   lineno, &localconf, comtabp);
+                lineno, &localconf, comtabp);
             break;
 
         case LT_REG_TABLE_SIZE:
             if (reg_table_size_lineno > 0) {
                 ++errcount;
                 cout << "dwarfdump: duplicate reg_table_size: " 
-                     << fname <<
-                     " line " << lineno <<
-                     " previous reg_table_size: line " <<
-                     reg_table_size_lineno << endl;
+                    << fname <<
+                    " line " << lineno <<
+                    " previous reg_table_size: line " <<
+                    reg_table_size_lineno << endl;
             }
             reg_table_size_lineno = lineno;
             parsereg_table_size(line, fname,
-                                lineno, &localconf, comtabp);
+                lineno, &localconf, comtabp);
             break;
         case LT_ENDABI:
             parseendabi(line, fname, abiname, lineno, comtabp);
@@ -988,12 +970,12 @@ parse_abi(FILE * stream, const string &fname, const string &abiname,
             if (regcount > localconf.cf_table_entry_count) {
                 ++errcount;
                 cout << "dwarfdump: more registers named than  in  "
-                     << abiname <<
-                     "  ( " << regcount <<
-                     " named vs  " << name_reg_table_size <<
-                     " " << localconf.cf_table_entry_count <<
-                     ")  " <<
-                     fname << " line " << lineno << endl;
+                    << abiname <<
+                    "  ( " << regcount <<
+                    " named vs  " << name_reg_table_size <<
+                    " " << localconf.cf_table_entry_count <<
+                    ")  " <<
+                    fname << " line " << lineno << endl;
             }
 
             *out = localconf;
@@ -1011,9 +993,9 @@ parse_abi(FILE * stream, const string &fname, const string &abiname,
     return false;
 }
 
-/* MIPS/IRIX frame register names.
-   For alternate name sets, use dwarfdump.conf or
-   revise dwarf.h and libdwarf.h and this table.
+/*  MIPS/IRIX frame register names.
+    For alternate name sets, use dwarfdump.conf or
+    revise dwarf.h and libdwarf.h and this table.
 */
 static const char *mipsregnames[] = {
     "cfa",
@@ -1045,17 +1027,17 @@ static const char *mipsregnames[] = {
     "ra", "slk",
 };
 
-/* Naming a few registers makes printing these just
-   a little bit faster.
+/*  Naming a few registers makes printing these just
+    a little bit faster.
 */
 static const char *genericregnames[] = {
-  "r0", "r1", "r2", "r3", "r4", "r5", "r6", "r7", "r8", "r9",
-  "r10", "r11", "r12", "r13", "r14", "r15", "r16", "r17", "r18", "r19",
-  "r20"
+    "r0", "r1", "r2", "r3", "r4", "r5", "r6", "r7", "r8", "r9",
+    "r10", "r11", "r12", "r13", "r14", "r15", "r16", "r17", "r18", "r19",
+    "r20"
 };
 
-/* This is a simple generic set of registers.  The 
-   table entry count is pretty arbitrary.
+/*  This is a simple generic set of registers.  The 
+    table entry count is pretty arbitrary.
 */
 void
 init_conf_file_data(struct dwconf_s *config_file_data) 
@@ -1075,19 +1057,19 @@ init_conf_file_data(struct dwconf_s *config_file_data)
     }
 }
 
-/* These defaults match MIPS/IRIX ABI defaults, but this
-   function is not actually used.
-   For a 'generic' ABI, see -R or init_conf_file_data().
-   To really get the old MIPS, use '-x abi=mips'. 
-   For other ABIs, see -x abi=<whatever>
-   to configure dwarfdump (and libdwarf) frame 
-   data reporting at runtime.
+/*  These defaults match MIPS/IRIX ABI defaults, but this
+    function is not actually used.
+    For a 'generic' ABI, see -R or init_conf_file_data().
+    To really get the old MIPS, use '-x abi=mips'. 
+    For other ABIs, see -x abi=<whatever>
+    to configure dwarfdump (and libdwarf) frame 
+    data reporting at runtime.
 */
 void
 init_mips_conf_file_data(struct dwconf_s *config_file_data)
 {
-    /* Interface 2 is deprecated, but for testing purposes
-       is acceptable. */
+    /*  Interface 2 is deprecated, but for testing purposes
+        is acceptable. */
     config_file_data->cf_interface_number = 2;
     config_file_data->cf_table_entry_count = DW_REG_TABLE_SIZE;
     config_file_data->cf_initial_rule_value =
@@ -1113,12 +1095,12 @@ init_generic_config_1200_regs(struct dwconf_s *config_file_data)
 {
     config_file_data->cf_interface_number = 3;
     config_file_data->cf_table_entry_count = 1200;
-    /* There is no defined name for cf_initial_rule_value,
-       cf_same_val, or cf_undefined_val in libdwarf.h, 
-       these must just be high enough to be higher than 
-       any real register number. 
-       DW_FRAME_CFA_COL3 must also be higher than any
-       real register number. */
+    /*  There is no defined name for cf_initial_rule_value,
+        cf_same_val, or cf_undefined_val in libdwarf.h, 
+        these must just be high enough to be higher than 
+        any real register number. 
+        DW_FRAME_CFA_COL3 must also be higher than any
+        real register number. */
     config_file_data->cf_initial_rule_value = 1235; /* SAME VALUE */
     config_file_data->cf_cfa_reg =  DW_FRAME_CFA_COL3;
     config_file_data->cf_same_val = 1235;
@@ -1138,7 +1120,7 @@ init_generic_config_1200_regs(struct dwconf_s *config_file_data)
 */
 void
 print_reg_from_config_data(Dwarf_Signed reg,
-                           struct dwconf_s *config_data)
+    struct dwconf_s *config_data)
 {
 
     if (reg == config_data->cf_cfa_reg) {

@@ -1,41 +1,41 @@
 /* 
- * Copyright (C) 2009-2010 David Anderson. All Rights Reserved.
- *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of version 2 of the GNU General Public License as
- * published by the Free Software Foundation.
- *
- * This program is distributed in the hope that it would be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- *
- * Further, this software is distributed without any warranty that it is
- * free of the rightful claim of any third person regarding infringement
- * or the like.  Any license provided herein, whether implied or
- * otherwise, applies only to this software file.  Patent licenses, if
- * any, provided herein do not apply to combinations of this program with
- * other software, or any other product whatsoever.
- *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write the Free Software Foundation, Inc., 51
- * Franklin Street - Fifth Floor, Boston MA 02110-1301, USA.
- *
- * Contact information:  Silicon Graphics, Inc., 1500 Crittenden Lane,
- * Mountain View, CA 94043, or:
- *
- * http://www.sgi.com
+   Copyright (C) 2009-2011 David Anderson. All Rights Reserved.
+  
+   This program is free software; you can redistribute it and/or modify it
+   under the terms of version 2 of the GNU General Public License as
+   published by the Free Software Foundation.
+  
+   This program is distributed in the hope that it would be useful, but
+   WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+  
+   Further, this software is distributed without any warranty that it is
+   free of the rightful claim of any third person regarding infringement
+   or the like.  Any license provided herein, whether implied or
+   otherwise, applies only to this software file.  Patent licenses, if
+   any, provided herein do not apply to combinations of this program with
+   other software, or any other product whatsoever.
+  
+   You should have received a copy of the GNU General Public License along
+   with this program; if not, write the Free Software Foundation, Inc., 51
+   Franklin Street - Fifth Floor, Boston MA 02110-1301, USA.
+  
+   Contact information:  Silicon Graphics, Inc., 1500 Crittenden Lane,
+   Mountain View, CA 94043, or:
+  
+   http://www.sgi.com
 
- *  For further information regarding this notice, see:
- *
- *  http://oss.sgi.com/projects/GenInfo/NoticeExplan
- *
- */
+    For further information regarding this notice, see:
+  
+    http://oss.sgi.com/projects/GenInfo/NoticeExplan
+  
+*/
 
-/* The address of the Free Software Foundation is
- * Free Software Foundation, Inc., 51 Franklin St, Fifth Floor, 
- * Boston, MA 02110-1301, USA.
- * SGI has moved from the Crittenden Lane address.
- * */
+/*  The address of the Free Software Foundation is
+    Free Software Foundation, Inc., 51 Franklin St, Fifth Floor, 
+    Boston, MA 02110-1301, USA.
+    SGI has moved from the Crittenden Lane address.
+*/
 
 #include "globals.h"
 #include  <string>
@@ -131,10 +131,10 @@ test_ints()
         }
         string res = IToDec(x.val,x.definedlen);
         if( res != string(x.expected) ) {
-           cout << "FAIL: test " << i << " got \"" << res <<
-              "\" but expected \"" << x.expected <<
-              "\"  line "  << __LINE__ << endl;
-           errcount++;
+            cout << "FAIL: test " << i << " got \"" << res <<
+                "\" but expected \"" << x.expected <<
+                "\"  line "  << __LINE__ << endl;
+            errcount++;
         }
     }
     return errcount;
@@ -151,10 +151,10 @@ test_ints_hex()
         }
         string res = IToHex(x.val,x.definedlen);
         if( res != string(x.expected) ) {
-           cout << "FAIL: test " << i << " got \"" << res <<
-              "\" but expected \"" << x.expected <<
-              "\"  line "  << __LINE__ << endl;
-           errcount++;
+            cout << "FAIL: test " << i << " got \"" << res <<
+                "\" but expected \"" << x.expected <<
+                "\"  line "  << __LINE__ << endl;
+            errcount++;
         }
     }
     return errcount;
@@ -170,10 +170,10 @@ test_uints()
         }
         string res = IToDec(x.val,x.definedlen);
         if( res != string(x.expected) ) {
-           cout << "FAIL: test " << i << " got \"" << res <<
-              "\" but expected \"" << x.expected <<
-              "\"  line "  << __LINE__ << endl;
-           errcount++;
+            cout << "FAIL: test " << i << " got \"" << res <<
+                "\" but expected \"" << x.expected <<
+                "\"  line "  << __LINE__ << endl;
+            errcount++;
         }
     }
     return errcount;
@@ -190,10 +190,10 @@ test_uints_hex()
         }
         string res = IToHex(x.val,x.definedlen);
         if( res != string(x.expected) ) {
-           cout << "FAIL: test " << i << " got \"" << res <<
-              "\" but expected \"" << x.expected <<
-              "\"  line "  << __LINE__ << endl;
-           errcount++;
+            cout << "FAIL: test " << i << " got \"" << res <<
+                "\" but expected \"" << x.expected <<
+                "\"  line "  << __LINE__ << endl;
+            errcount++;
         }
     }
     return errcount;
@@ -209,10 +209,10 @@ test_uints_02hex()
         }
         string res = IToHex02(x.val);
         if( res != string(x.expected) ) {
-           cout << "FAIL: test " << i << " got \"" << res <<
-              "\" but expected \"" << x.expected <<
-              "\"  line "  << __LINE__ << endl;
-           errcount++;
+            cout << "FAIL: test " << i << " got \"" << res <<
+                "\" but expected \"" << x.expected <<
+                "\"  line "  << __LINE__ << endl;
+            errcount++;
         }
     }
     return errcount;
@@ -229,10 +229,10 @@ test_uints_0Nhex()
         }
         string res = IToHex0N(x.val,x.definedlen);
         if( res != string(x.expected) ) {
-           cout << "FAIL: test " << i << " got \"" << res <<
-              "\" but expected \"" << x.expected <<
-              "\"  line "  << __LINE__ << endl;
-           errcount++;
+            cout << "FAIL: test " << i << " got \"" << res <<
+                "\" but expected \"" << x.expected <<
+                "\"  line "  << __LINE__ << endl;
+            errcount++;
         }
     }
     return errcount;
@@ -260,10 +260,10 @@ test_ints_0Ndec()
         }
         string res = IToDec0N(x.val,x.definedlen);
         if( res != string(x.expected) ) {
-           cout << "FAIL: test " << i << " got \"" << res <<
-              "\" but expected \"" << x.expected <<
-              "\"  line "  << __LINE__ << endl;
-           errcount++;
+            cout << "FAIL: test " << i << " got \"" << res <<
+                "\" but expected \"" << x.expected <<
+                "\"  line "  << __LINE__ << endl;
+            errcount++;
         }
     }
     return errcount;
@@ -291,12 +291,12 @@ test_leftalign()
         }
         std::string res = LeftAlign(x.definedlen,x.val);
         if( res != std::string(x.expected) ) {
-           cout << "FAIL: test " << i << " got \"" << res <<
-              "\" length: " << res.size() << 
-              "  but expected \"" << x.expected <<
-              "\" length: " << strlen(x.expected) << 
-              "  line "  << __LINE__ << endl;
-           errcount++;
+            cout << "FAIL: test " << i << " got \"" << res <<
+                "\" length: " << res.size() << 
+                "  but expected \"" << x.expected <<
+                "\" length: " << strlen(x.expected) << 
+                "  line "  << __LINE__ << endl;
+            errcount++;
         }
     }
     return errcount;
@@ -305,19 +305,19 @@ test_leftalign()
 
 int main()
 {
-   int errcount = 0;
-   errcount += test_ints();
-   errcount += test_ints_hex();
-   errcount += test_uints();
-   errcount += test_uints_hex();
-   errcount += test_uints_02hex();
-   errcount += test_uints_0Nhex();
-   errcount += test_ints_0Ndec();
-   errcount += test_leftalign();
-   if(errcount) {
-       cout << "FAIL " << errcount << " tests" << endl;
-       exit(1);
-   }
-   cout << "PASS "  << endl;
-   exit(0);
+    int errcount = 0;
+    errcount += test_ints();
+    errcount += test_ints_hex();
+    errcount += test_uints();
+    errcount += test_uints_hex();
+    errcount += test_uints_02hex();
+    errcount += test_uints_0Nhex();
+    errcount += test_ints_0Ndec();
+    errcount += test_leftalign();
+    if(errcount) {
+        cout << "FAIL " << errcount << " tests" << endl;
+        exit(1);
+    }
+    cout << "PASS "  << endl;
+    exit(0);
 }

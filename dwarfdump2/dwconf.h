@@ -1,5 +1,6 @@
 /*
   Copyright (C) 2006 Silicon Graphics, Inc.  All Rights Reserved.
+  Portions Copyright 2011 David Anderson. All Rights Reserved.
 
   This program is free software; you can redistribute it and/or modify it
   under the terms of version 2 of the GNU General Public License as
@@ -33,13 +34,12 @@
 $Header: /plroot/cmplrs.src/v7.4.5m/.RCS/PL/dwarfdump/RCS/dwconf.h,v 1.2 2006/04/18 04:29:39 davea Exp $ */
 
 
-/*
-    declarations helping configure the frame reader.
+/*  declarations helping configure the frame reader.
 */
 struct dwconf_s {
     dwconf_s():cf_interface_number(0),
-       cf_table_entry_count(0),cf_initial_rule_value(0),
-       cf_same_val(0),cf_undefined_val(0), cf_cfa_reg(0) {};
+        cf_table_entry_count(0),cf_initial_rule_value(0),
+        cf_same_val(0),cf_undefined_val(0), cf_cfa_reg(0) {};
     ~dwconf_s() {};
 
     std::string cf_config_file_path;
@@ -82,13 +82,13 @@ struct dwconf_s {
 
 // Returns DW_DLV_OK if works. DW_DLV_ERROR if cannot do what is asked. 
 int find_conf_file_and_read_config(const std::string & named_file,
-                                   const std::string &named_abi, 
-                                   const char **defaults,
-                                   struct dwconf_s *conf_out);
+    const std::string &named_abi, 
+    const char **defaults,
+    struct dwconf_s *conf_out);
 void init_conf_file_data(struct dwconf_s *config_file_data);
 void init_mips_conf_file_data(struct dwconf_s *config_file_data);
 
 void print_reg_from_config_data(Dwarf_Signed reg,
-                struct dwconf_s *config_data);
+    struct dwconf_s *config_data);
 
 void init_generic_config_1200_regs(struct dwconf_s *conf);

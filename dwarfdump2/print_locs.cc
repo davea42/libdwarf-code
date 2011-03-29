@@ -35,11 +35,11 @@
 
 
 $Header: /plroot/cmplrs.src/v7.4.5m/.RCS/PL/dwarfdump/RCS/print_sections.c,v 1.69 2006/04/17 00:09:56 davea Exp $ */
-/* The address of the Free Software Foundation is
- * Free Software Foundation, Inc., 51 Franklin St, Fifth Floor, 
- * Boston, MA 02110-1301, USA.  
- * SGI has moved from the Crittenden Lane address.
- */
+/*  The address of the Free Software Foundation is
+    Free Software Foundation, Inc., 51 Franklin St, Fifth Floor, 
+    Boston, MA 02110-1301, USA.  
+    SGI has moved from the Crittenden Lane address.
+*/
 
 #include "globals.h"
 #include <vector>
@@ -86,17 +86,18 @@ print_locs(Dwarf_Debug dbg)
 
 
     cout << endl;
-    cout << ".debug_loc format <i o b e l> means "
+    cout << ".debug_loc format <i o b e l>: "
         "index section-offset begin-addr end-addr length-of-block-entry";
     cout << endl;
     while ((lres = dwarf_get_loclist_entry(dbg, offset,
-            &hipc_offset, &lopc_offset,
-            &data, &entry_len,
-            &next_entry,
-            &err)) == DW_DLV_OK) {
+        &hipc_offset, &lopc_offset,
+        &data, &entry_len,
+        &next_entry,
+        &err)) == DW_DLV_OK) {
+
         string exprstring;
         get_string_from_locs(dbg,data,entry_len,address_size,exprstring);
-        cout <<"    <iobel> [" << IToDec(index,4);
+        cout <<" <iobel> [" << IToDec(index,4);
         cout <<"] " << IToHex0N(offset,10);
         if( verbose) {
             // We print this offset so it matches what the debug_info
@@ -106,9 +107,9 @@ print_locs(Dwarf_Debug dbg)
                 BracketSurround(string("expr-off ") +
                     IToHex(next_entry - entry_len));
         }
-        cout <<" "<< IToHex0N(lopc_offset,11);
+        cout <<" "<< IToHex0N(lopc_offset,10);
         cout <<" "<< IToHex0N(hipc_offset,10);
-        cout <<" "<< IToDec(entry_len,3);
+        cout <<" "<< IToDec(entry_len,8);
         cout <<" "<< exprstring;
         cout << endl;
         index++;

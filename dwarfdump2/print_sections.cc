@@ -35,11 +35,11 @@
 
 
 $Header: /plroot/cmplrs.src/v7.4.5m/.RCS/PL/dwarfdump/RCS/print_sections.c,v 1.69 2006/04/17 00:09:56 davea Exp $ */
-/* The address of the Free Software Foundation is
- * Free Software Foundation, Inc., 51 Franklin St, Fifth Floor, 
- * Boston, MA 02110-1301, USA.  
- * SGI has moved from the Crittenden Lane address.
- */
+/*  The address of the Free Software Foundation is
+    Free Software Foundation, Inc., 51 Franklin St, Fifth Floor, 
+    Boston, MA 02110-1301, USA.  
+    SGI has moved from the Crittenden Lane address.
+*/
 
 // Contains functions that support printing.
 // Actual section-print code is in other print_*.cc files.
@@ -117,18 +117,17 @@ get_info_max_offset(Dwarf_Debug dbg)
     Dwarf_Unsigned debug_pubtypes_size = 0;
 
     dwarf_get_section_max_offsets(dbg,
-                                  &debug_info_size,
-                                  &debug_abbrev_size,
-                                  &debug_line_size,
-                                  &debug_loc_size,
-                                  &debug_aranges_size,
-                                  &debug_macinfo_size,
-                                  &debug_pubnames_size,
-                                  &debug_str_size,
-                                  &debug_frame_size,
-                                  &debug_ranges_size,
-                                  &debug_pubtypes_size);
-
+        &debug_info_size,
+        &debug_abbrev_size,
+        &debug_line_size,
+        &debug_loc_size,
+        &debug_aranges_size,
+        &debug_macinfo_size,
+        &debug_pubnames_size,
+        &debug_str_size,
+        &debug_frame_size,
+        &debug_ranges_size,
+        &debug_pubtypes_size);
     return debug_info_size;
 }
 
@@ -138,7 +137,7 @@ get_info_max_offset(Dwarf_Debug dbg)
 */
 Dwarf_Unsigned
 local_dwarf_decode_u_leb128(unsigned char *leb128,
-                            unsigned int *leb128_length)
+    unsigned int *leb128_length)
 {
     unsigned char byte = 0;
     Dwarf_Unsigned number = 0;
@@ -164,7 +163,7 @@ local_dwarf_decode_u_leb128(unsigned char *leb128,
 #define BITSINBYTE 8
 Dwarf_Signed
 local_dwarf_decode_s_leb128(unsigned char *leb128,
-                            unsigned int *leb128_length)
+    unsigned int *leb128_length)
 {
     Dwarf_Signed number = 0;
     Dwarf_Bool sign = 0;
@@ -172,8 +171,8 @@ local_dwarf_decode_s_leb128(unsigned char *leb128,
     unsigned char byte = *leb128;
     Dwarf_Signed byte_length = 1;
 
-    /* byte_length being the number of bytes of data absorbed so far in
-       turning the leb into a Dwarf_Signed. */
+    /*  byte_length being the number of bytes of data absorbed so far in
+        turning the leb into a Dwarf_Signed. */
 
     for (;;) {
         sign = byte & 0x40;

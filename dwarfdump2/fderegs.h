@@ -1,5 +1,5 @@
 /*
-  Copyright (C) 2009-2010 David Anderson.  All Rights Reserved.
+  Copyright (C) 2009-2011 David Anderson.  All Rights Reserved.
  
   This program is free software; you can redistribute it and/or modify it
   under the terms of version 2 of the GNU General Public License as
@@ -29,7 +29,7 @@
  
   http://oss.sgi.com/projects/GenInfo/NoticeExplan
  
- */
+*/
  
 
 // Abstracts out calling dwarf to get fde register values
@@ -43,15 +43,15 @@
 class FdeRegs {
 public:
     FdeRegs(Dwarf_Fde fde,struct dwconf_s *config_data):
-       fde_(fde),interfaceNumber_(config_data->cf_interface_number),
-       confData_(*config_data),pcAddr_(0),rowPc_(0) {
-       // regTable_ is a C struct from libdwarf.h
-       memset(&regTable_,0,sizeof(regTable_));
-       unsigned count = confData_.cf_table_entry_count;
-       regTable_.rt3_reg_table_size = count;
-       regTable_.rt3_rules = new Dwarf_Regtable_Entry3_s[count];
-       tableByteCount_ = sizeof(Dwarf_Regtable_Entry3_s) *count;
-       zeroRegTab();
+        fde_(fde),interfaceNumber_(config_data->cf_interface_number),
+        confData_(*config_data),pcAddr_(0),rowPc_(0) {
+        // regTable_ is a C struct from libdwarf.h
+        memset(&regTable_,0,sizeof(regTable_));
+        unsigned count = confData_.cf_table_entry_count;
+        regTable_.rt3_reg_table_size = count;
+        regTable_.rt3_rules = new Dwarf_Regtable_Entry3_s[count];
+        tableByteCount_ = sizeof(Dwarf_Regtable_Entry3_s) *count;
+        zeroRegTab();
     };
     ~FdeRegs() { delete [] regTable_.rt3_rules;};
 
@@ -66,14 +66,14 @@ public:
             Dwarf_Regtable regtab2;
             regtab2 = t;
             int res = dwarf_get_fde_info_for_all_regs(fde_,
-              pcAddr_, &regtab2  ,&rowPc_,err);
+                pcAddr_, &regtab2  ,&rowPc_,err);
             if(res == DW_DLV_OK) {
                 // Transform to form 3.
                 for(unsigned i = 0; i < confData_.cf_table_entry_count; ++i) {
                     Dwarf_Regtable_Entry3 *out = 
-                       regTable_.rt3_rules+i;
+                        regTable_.rt3_rules+i;
                     Dwarf_Regtable_Entry *in =
-                       &regtab2.rules[i];
+                        &regtab2.rules[i];
                     out->dw_offset_relevant = in->dw_offset_relevant;
                     out->dw_value_type = in->dw_value_type;
                     out->dw_regnum = in->dw_regnum;
@@ -85,36 +85,36 @@ public:
         } else if(interfaceNumber_ == 3) {
             //int rulecount = confData_.cf_table_entry_count;
             int res = dwarf_get_fde_info_for_all_regs3(fde_,
-              pcAddr_, &regTable_,&rowPc_,err);
+                pcAddr_, &regTable_,&rowPc_,err);
             return res;
         } else {
             return DW_DLV_ERROR;
         }
-   };
+    };
 
-   // Interface number 3 only. 
-   int getCfaRegdata( Dwarf_Regtable_Entry3 * entry_out, 
-      Dwarf_Addr * rowpc_out, 
-      Dwarf_Error *err) {
-      if (interfaceNumber_ != 3) {
-          // Really a programmer botch here.
-          return DW_DLV_NO_ENTRY;
-      };
-      *rowpc_out = rowPc_;
-      *entry_out = regTable_.rt3_cfa_rule;
-      return DW_DLV_OK;
-   };
-   // Interfaces 2 and 3.
-   int getRegdata(unsigned table_col,
-      Dwarf_Regtable_Entry3 * entry_out, Dwarf_Addr * rowpc_out, 
-      Dwarf_Error *err) {
-      if ( table_col >= confData_.cf_table_entry_count) {
-          return DW_DLV_ERROR;
-      }  
-      *rowpc_out = rowPc_;
-      *entry_out = regTable_.rt3_rules[table_col];
-      return DW_DLV_OK;
-   };
+    // Interface number 3 only. 
+    int getCfaRegdata( Dwarf_Regtable_Entry3 * entry_out, 
+        Dwarf_Addr * rowpc_out, 
+        Dwarf_Error *err) {
+        if (interfaceNumber_ != 3) {
+            // Really a programmer botch here.
+            return DW_DLV_NO_ENTRY;
+        };
+        *rowpc_out = rowPc_;
+        *entry_out = regTable_.rt3_cfa_rule;
+        return DW_DLV_OK;
+    };
+    // Interfaces 2 and 3.
+    int getRegdata(unsigned table_col,
+        Dwarf_Regtable_Entry3 * entry_out, Dwarf_Addr * rowpc_out, 
+        Dwarf_Error *err) {
+        if ( table_col >= confData_.cf_table_entry_count) {
+            return DW_DLV_ERROR;
+        }  
+        *rowpc_out = rowPc_;
+        *entry_out = regTable_.rt3_rules[table_col];
+        return DW_DLV_OK;
+    };
 
 private:
     Dwarf_Fde fde_;

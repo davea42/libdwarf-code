@@ -1,6 +1,6 @@
-2011-03-13  DavidAnderson <davea42@earthlink.net>
-      * dwconf.cc: Fix the code looking for HOME and its env var.
-      * dwarfdump.cc: Add HOME/dwarfdump.conf to search list for dwconf.
+2011-03-29  DavidAnderson <davea42@earthlink.net>
+      * everything.  All the code and headers had indentations
+        changed for a consistent appearance.
 2011-01-17  DavidAnderson <davea42@earthlink.net>
       * dwarfdump.1: Amplify the -l line table description.
       * Makefile.in: Add uri.cc, uri.h.

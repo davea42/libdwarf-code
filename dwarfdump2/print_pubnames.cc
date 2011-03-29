@@ -2,7 +2,7 @@
   Copyright (C) 2000-2006 Silicon Graphics, Inc.  All Rights Reserved.
   Portions Copyright 2007-2010 Sun Microsystems, Inc. All rights reserved.
   Portions Copyright 2009-2010 SN Systems Ltd. All rights reserved.
-  Portions Copyright 2008-2010 David Anderson. All rights reserved.
+  Portions Copyright 2008-2011 David Anderson. All rights reserved.
 
   This program is free software; you can redistribute it and/or modify it
   under the terms of version 2 of the GNU General Public License as
@@ -35,11 +35,11 @@
 
 
 $Header: /plroot/cmplrs.src/v7.4.5m/.RCS/PL/dwarfdump/RCS/print_sections.c,v 1.69 2006/04/17 00:09:56 davea Exp $ */
-/* The address of the Free Software Foundation is
- * Free Software Foundation, Inc., 51 Franklin St, Fifth Floor, 
- * Boston, MA 02110-1301, USA.  
- * SGI has moved from the Crittenden Lane address.
- */
+/*  The address of the Free Software Foundation is
+    Free Software Foundation, Inc., 51 Franklin St, Fifth Floor, 
+    Boston, MA 02110-1301, USA.  
+    SGI has moved from the Crittenden Lane address.
+*/
 
 #include "globals.h"
 #include <vector>
@@ -54,9 +54,9 @@ using std::cout;
 using std::cerr;
 using std::endl;
 
-/* This unifies the code for some error checks to
- *    avoid code duplication.
- *    */
+/*  This unifies the code for some error checks to
+    avoid code duplication.
+*/
 void
 check_info_offset_sanity(const string & sec,
     const string &field,
@@ -75,7 +75,7 @@ check_info_offset_sanity(const string & sec,
     }
     if (offset >= maxoff) {
         cout << "Warning: section " << sec << " " <<
-                field << " " << global;
+            field << " " << global;
         cout << " offset "<< IToHex(offset);
         cout << " larger than max of " << IToHex(maxoff) << endl;
     }
@@ -83,21 +83,21 @@ check_info_offset_sanity(const string & sec,
 
 
 
-/* Unified pubnames style output.
-   The error checking here against maxoff may be useless
-   (in that libdwarf may return an error if the offset is bad
-   and we will not get called here).
-   But we leave it in nonetheless as it looks sensible.
-   In at least one gigantic executable such offsets turned out wrong.
+/*  Unified pubnames style output.
+    The error checking here against maxoff may be useless
+    (in that libdwarf may return an error if the offset is bad
+    and we will not get called here).
+    But we leave it in nonetheless as it looks sensible.
+    In at least one gigantic executable such offsets turned out wrong.
 */
 void
 print_pubname_style_entry(Dwarf_Debug dbg,
-                          const string & line_title,
-                          const string & name,
-                          Dwarf_Unsigned die_off,
-                          Dwarf_Unsigned cu_off,
-                          Dwarf_Unsigned global_cu_offset,
-                          Dwarf_Unsigned maxoff)
+    const string & line_title,
+    const string & name,
+    Dwarf_Unsigned die_off,
+    Dwarf_Unsigned cu_off,
+    Dwarf_Unsigned global_cu_offset,
+    Dwarf_Unsigned maxoff)
 {
     Dwarf_Die die = NULL;
     Dwarf_Die cu_die = NULL;
@@ -105,20 +105,32 @@ print_pubname_style_entry(Dwarf_Debug dbg,
 
     /* get die at die_off */
     int dres = dwarf_offdie(dbg, die_off, &die, &err);
-    if (dres != DW_DLV_OK)
-        print_error(dbg, "dwarf_offdie", dres, err);
+    if (dres != DW_DLV_OK) {
+        string details = string(line_title) + string(" dwarf_offdie : "
+            "die offset does not reference valid DIE.  ")
+ 
+            + IToHex(die_off,0) +
+            string(".");
+        print_error(dbg, details.c_str(), dres, err);
+    }
+
 
     /* get offset of die from its cu-header */
     int ddres = dwarf_die_CU_offset(die, &die_CU_off, &err);
     if (ddres != DW_DLV_OK) {
-        print_error(dbg, "dwarf_die_CU_offset", ddres, err);
+        string details = string(line_title) + " cannot get CU die offset";
+        print_error(dbg, details.c_str(), ddres, err);
     }
 
     /* get die at offset cu_off */
     int cudres = dwarf_offdie(dbg, cu_off, &cu_die, &err);
     if (cudres != DW_DLV_OK) {
+        string details =  string(line_title) + string(" dwarf_offdie: "
+            "die offset does not reference valid CU DIE.  ")
+            + IToHex(cu_off,0) +
+            string(".");
         dwarf_dealloc(dbg, die, DW_DLA_DIE);
-        print_error(dbg, "dwarf_offdie", cudres, err);
+        print_error(dbg, details.c_str(), cudres, err);
     }
     cout << line_title ;
     cout << " " <<  LeftAlign(15,name);
@@ -128,7 +140,7 @@ print_pubname_style_entry(Dwarf_Debug dbg,
     cout << ", cu-header-in-sect " << ((Dwarf_Signed) (die_off - die_CU_off));
 
     if ((die_off - die_CU_off) != global_cu_offset) {
-        cout << " error: real cuhdr "<<  global_cu_offset << endl;
+        cout << line_title <<  " error: real cuhdr "<<  global_cu_offset << endl;
         exit(1);
     }
     if (verbose) {
@@ -140,12 +152,12 @@ print_pubname_style_entry(Dwarf_Debug dbg,
     dwarf_dealloc(dbg, cu_die, DW_DLA_DIE);
 
     check_info_offset_sanity(line_title,
-                             "die offset", name, die_off, maxoff);
+        "die offset", name, die_off, maxoff);
     check_info_offset_sanity(line_title,
-                             "die cu offset", name, die_CU_off, maxoff);
+        "die cu offset", name, die_CU_off, maxoff);
     check_info_offset_sanity(line_title,
-                             "cu offset", name,
-                             (die_off - die_CU_off), maxoff);
+        "cu offset", name,
+        (die_off - die_CU_off), maxoff);
 }
 
 
@@ -167,8 +179,8 @@ print_pubnames(Dwarf_Debug dbg)
     if (res == DW_DLV_ERROR) {
         print_error(dbg, "dwarf_get_globals", res, err);
     } else if (res == DW_DLV_NO_ENTRY) {
-        /* (err == 0 && count == DW_DLV_NOCOUNT) means there are no
-           pubnames.  */
+        /*  (err == 0 && count == DW_DLV_NOCOUNT) means there are no
+            pubnames.  */
     } else {
         Dwarf_Unsigned maxoff = get_info_max_offset(dbg);
 
@@ -178,21 +190,20 @@ print_pubnames(Dwarf_Debug dbg)
             Dwarf_Off global_cu_off = 0;
 
             nres = dwarf_global_name_offsets(globbuf[i],
-                                             &name, &die_off, &cu_off,
-                                             &err);
-            deal_with_name_offset_err(dbg, "dwarf_global_name_offsets",
-                                      name, die_off, nres, err);
-
+                &name, &die_off, &cu_off, &err);
+            deal_with_name_offset_err(dbg, "pubnames dwarf_global_name_offsets",
+                name, die_off, nres, err);
             cures3 = dwarf_global_cu_offset(globbuf[i],
-                                            &global_cu_off, &err);
+                &global_cu_off, &err);
             if (cures3 != DW_DLV_OK) {
-                print_error(dbg, "dwarf_global_cu_offset", cures3, err);
+                print_error(dbg, "pubnames dwarf_global_cu_offset", 
+                    cures3, err);
             }
 
             print_pubname_style_entry(dbg,
-                                      "global",
-                                      name, die_off, cu_off,
-                                      global_cu_off, maxoff);
+                "global",
+                name, die_off, cu_off,
+                global_cu_off, maxoff);
 
             /* print associated die too? */
 
@@ -205,6 +216,12 @@ print_pubnames(Dwarf_Debug dbg)
                 /* get die at die_off */
                 dres = dwarf_offdie(dbg, die_off, &die, &err);
                 if (dres != DW_DLV_OK) {
+                    string details = string("dwarf_offdie in "
+                        "checking pubnames attribute: "
+                        "die offset does not reference valid DIE.  ")
+                        + IToHex(die_off,0) +
+                        string(".");
+                    print_error(dbg, details.c_str(), dres, err);
                     print_error(dbg, "dwarf_offdie", dres, err);
                 }
 
@@ -212,15 +229,15 @@ print_pubnames(Dwarf_Debug dbg)
                 ares =
                     dwarf_hasattr(die, DW_AT_external, &has_attr, &err);
                 if (ares == DW_DLV_ERROR) {
-                    print_error(dbg, "hassattr on DW_AT_external", ares,
-                                err);
+                    print_error(dbg, "pubnames hassattr on DW_AT_external", ares,
+                        err);
                 }
                 pubname_attr_result.checks++;
                 if (ares == DW_DLV_OK && has_attr) {
                     /* Should the value of flag be examined? */
                 } else {
                     DWARF_CHECK_ERROR2(pubname_attr_result,name,
-                                       "pubname does not have DW_AT_external")
+                        "pubname does not have DW_AT_external")
                 }
                 dwarf_dealloc(dbg, die, DW_DLA_DIE);
             }

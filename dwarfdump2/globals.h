@@ -1,6 +1,6 @@
 /* 
   Copyright (C) 2000-2005 Silicon Graphics, Inc.  All Rights Reserved.
-  Portions Copyright (C) 2007-2010 David Anderson. All Rights Reserved.
+  Portions Copyright (C) 2007-2011 David Anderson. All Rights Reserved.
 
   This program is free software; you can redistribute it and/or modify it
   under the terms of version 2 of the GNU General Public License as
@@ -39,22 +39,22 @@ $Header: /plroot/cmplrs.src/v7.4.5m/.RCS/PL/dwarfdump/RCS/globals.h,v 1.25 2006/
 
 #include "config.h"
 #if (!defined(HAVE_RAW_LIBELF_OK) && defined(HAVE_LIBELF_OFF64_OK) )
-/* At a certain point libelf.h requires _GNU_SOURCE.
-   here we assume the criteria in configure determine that
-   usefully.
+/*  At a certain point libelf.h requires _GNU_SOURCE.
+    here we assume the criteria in configure determine that
+    usefully.
 */
 #define _GNU_SOURCE 1
 #endif
 
 
-/* We want __uint32_t and __uint64_t and __int32_t __int64_t
-   properly defined but not duplicated, since duplicate typedefs
-   are not legal C.
+/*  We want __uint32_t and __uint64_t and __int32_t __int64_t
+    properly defined but not duplicated, since duplicate typedefs
+    are not legal C.
 */
 /*
- HAVE___UINT32_T
- HAVE___UINT64_T will be set by configure if
- our 4 types are predefined in compiler
+    HAVE___UINT32_T
+    HAVE___UINT64_T will be set by configure if
+    our 4 types are predefined in compiler
 */
 
 
@@ -68,8 +68,8 @@ $Header: /plroot/cmplrs.src/v7.4.5m/.RCS/PL/dwarfdump/RCS/globals.h,v 1.25 2006/
 
 #if (!defined(HAVE___UINT32_T)) && defined(HAVE_SYS_TYPES_H) && defined(HAVE___UINT32_T_IN_SYS_TYPES_H)
 #  include <sys/types.h>
-/* we assume __[u]int32_t and __[u]int64_t defined 
-   since __uint32_t defined in the sys/types.h in use */
+/*  We assume __[u]int32_t and __[u]int64_t defined 
+    since __uint32_t defined in the sys/types.h in use */
 #define HAVE___UINT32_T 1
 #define HAVE___UINT64_T 1
 #endif
@@ -191,7 +191,7 @@ extern bool dwarf_names_print_on_error;
 extern void print_line_numbers_this_cu (DieHolder &hdie);
 struct dwconf_s;
 extern void print_frames (Dwarf_Debug dbg, int print_debug_frame,
-                int print_eh_frame,struct dwconf_s *);
+    int print_eh_frame,struct dwconf_s *);
 extern void print_ranges (Dwarf_Debug dbg);
 extern void print_pubnames (Dwarf_Debug dbg);
 extern void print_macinfo (Dwarf_Debug dbg);
@@ -217,56 +217,56 @@ extern bool should_skip_this_cu(DieHolder &cu_die, Dwarf_Error err);
 
 
 extern void print_die_and_children(
-        DieHolder &in_die,
-        SrcfilesHolder &srcfiles);
+    DieHolder &in_die,
+    SrcfilesHolder &srcfiles);
 extern bool print_one_die(
-        DieHolder &hdie_in,
-        bool print_information,
-        int indent_level,
-        SrcfilesHolder &srcfiles,
-        bool ignore_die_printed_flag);
+    DieHolder &hdie_in,
+    bool print_information,
+    int indent_level,
+    SrcfilesHolder &srcfiles,
+    bool ignore_die_printed_flag);
 
 #define DWARF_CHECK_ERROR(var,str) {\
-        var.errors++; \
-        cout << "*** DWARF CHECK: " << str << " ***" << endl;\
-        check_error ++; \
+    var.errors++; \
+    cout << "*** DWARF CHECK: " << str << " ***" << endl;\
+    check_error ++; \
 }
 
 #define DWARF_CHECK_ERROR2(var,str1, str2) {\
-        var.errors++; \
-        cout << "*** DWARF CHECK: " << str1 << ": " << \
-            str2 << " ***" << endl;\
-        check_error ++; \
+    var.errors++; \
+    cout << "*** DWARF CHECK: " << str1 << ": " << \
+        str2 << " ***" << endl;\
+    check_error ++; \
 }
 
 #define DWARF_CHECK_ERROR3(var,str1, str2,strexpl) {\
-        var.errors++; \
-        cout << "*** DWARF CHECK: " << str1 << " -> " << \
-           str2 << ": " << strexpl << " ***" << endl;\
-        check_error ++; \
+    var.errors++; \
+    cout << "*** DWARF CHECK: " << str1 << " -> " << \
+        str2 << ": " << strexpl << " ***" << endl;\
+    check_error ++; \
 }
 
 extern void printreg(Dwarf_Signed reg,struct dwconf_s *config_data);
 extern void print_frame_inst_bytes(Dwarf_Debug dbg,
-                       Dwarf_Ptr cie_init_inst, Dwarf_Signed len,
-                       Dwarf_Signed data_alignment_factor,
-                       int code_alignment_factor, Dwarf_Half addr_size,
-                        struct dwconf_s *config_data);
+    Dwarf_Ptr cie_init_inst, Dwarf_Signed len,
+    Dwarf_Signed data_alignment_factor,
+    int code_alignment_factor, Dwarf_Half addr_size,
+    struct dwconf_s *config_data);
 
 
 extern Dwarf_Unsigned local_dwarf_decode_u_leb128(unsigned char *leb128,
-                            unsigned int *leb128_length);
+    unsigned int *leb128_length);
 
 extern Dwarf_Signed local_dwarf_decode_s_leb128(unsigned char *leb128,
-                            unsigned int *leb128_length);
+    unsigned int *leb128_length);
 
 extern void dump_block(const std::string &prefix, char *data, Dwarf_Signed len);
 
 int
 dwarfdump_print_one_locdesc(Dwarf_Debug dbg,
-                         Dwarf_Locdesc * llbuf,
-                         int skip_locdesc_header,
-                         std::string &string_out);
+    Dwarf_Locdesc * llbuf,
+    int skip_locdesc_header,
+    std::string &string_out);
 void clean_up_syms_malloc_data();
 
 void print_any_harmless_errors(Dwarf_Debug dbg);
@@ -291,7 +291,7 @@ std::string IToHex(T v,unsigned l=0)
         // So we do zeroes here.
         std::string out = "0x0";
         if(l > 3)  {
-           out.append(l-3,'0');
+            out.append(l-3,'0');
         }
         return out;
     }
@@ -299,7 +299,7 @@ std::string IToHex(T v,unsigned l=0)
     s.setf(std::ios::hex,std::ios::basefield); 
     s.setf(std::ios::showbase); 
     if (l > 0) {
-         s << std::setw(l);
+        s << std::setw(l);
     }
     s << v ;
     return s.str();
@@ -322,9 +322,9 @@ std::string IToHex0N(T v,unsigned len=0)
     //s.setf(std::ios::showbase); 
     s << std::setfill('0');
     if(len > 2 ) {
-      s << std::setw(len-2) << v;
+        s << std::setw(len-2) << v;
     } else {
-      s << v;
+        s << v;
     }
     return std::string("0x") + s.str();
 }
@@ -343,10 +343,10 @@ std::string IToDec0N(T v,unsigned len=0)
             std::string::size_type zeroscount = len - (rest.size()+1); 
             std::string final;
             if(zeroscount > 0) {
-               final.append(zeroscount,'0');
-               final.append(rest);
+                final.append(zeroscount,'0');
+                final.append(rest);
             } else {
-               final = rest;
+                final = rest;
             }
             return std::string("-") + final;
         } 
@@ -354,9 +354,9 @@ std::string IToDec0N(T v,unsigned len=0)
     }
     s << std::setfill('0');
     if(len > 0) {
-      s << std::setw(len) << v;
+        s << std::setw(len) << v;
     } else {
-      s << v;
+        s << v;
     }
     return s.str();
 }

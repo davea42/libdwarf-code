@@ -1,6 +1,6 @@
 /* 
   Copyright (C) 2000-2005 Silicon Graphics, Inc.  All Rights Reserved.
-  Portions Copyright (C) 2007-2010 David Anderson. All Rights Reserved.
+  Portions Copyright (C) 2007-2011 David Anderson. All Rights Reserved.
   Portions Copyright 2007-2010 Sun Microsystems, Inc. All rights reserved.
   
 
@@ -54,7 +54,7 @@ $Header: /plroot/cmplrs.src/v7.4.5m/.RCS/PL/dwarfdump/RCS/dwarfdump.c,v 1.48 200
 #include <unistd.h>             /* For getopt. */
 #include "dwconf.h"
 #include "naming.h"
-#define DWARFDUMP_VERSION " Tue Jan 18 07:59:38 PST 2011  "
+#define DWARFDUMP_VERSION " Thu Mar 24 13:50:45 PDT 2011  "
 
 using std::string;
 using std::cout;
@@ -72,10 +72,12 @@ std::string program_name;
 int check_error = 0;
 
 bool info_flag = false;
-bool use_old_dwarf_loclist = false;  /* This so both dwarf_loclist() 
-                                           and dwarf_loclist_n() can be
-                                           tested. Defaults to new
-                                           dwarf_loclist_n() */
+
+/*  This so both dwarf_loclist() 
+    and dwarf_loclist_n() can be
+    tested. Defaults to new
+    dwarf_loclist_n() */
+bool use_old_dwarf_loclist = false;  
 
 bool line_flag = false;
 static bool abbrev_flag = false;
@@ -118,14 +120,13 @@ bool suppress_check_extensions_tables = false;
 */
 bool suppress_nested_name_search = false;
 
-/* break_after_n_units is mainly for testing.
-   It enables easy limiting of output size/running time
-   when one wants the output limited. 
-   For example,
-     -H 2
-   limits the -i output to 2 compilation units and 
-   the -f or -F output to 2 FDEs and 2 CIEs.
-*/
+/*  break_after_n_units is mainly for testing.
+    It enables easy limiting of output size/running time
+    when one wants the output limited. 
+    For example,
+        -H 2
+    limits the -i output to 2 compilation units and 
+    the -f or -F output to 2 FDEs and 2 CIEs.  */
 int break_after_n_units = INT_MAX;
 
 static bool dwarf_check = false;
@@ -139,20 +140,19 @@ regex_t search_re;
 #endif
 
 
-/* These configure items are for the 
-   frame data.
-*/
+/*  These configure items are for the 
+    frame data.  */
 static string config_file_path;
 static string config_file_abi;
 static const char *  config_file_defaults[] = {
     "./dwarfdump.conf",
-    /* Note: HOME location uses .dwarfdump.conf or dwarfdump.conf.  */
+    /* Note: HOME location uses .dwarfdump.conf or dwarfdump.conf .  */
     "HOME/.dwarfdump.conf",
     "HOME/dwarfdump.conf",
 #ifdef CONFPREFIX
-/* See Makefile.in  "libdir"  and CFLAGS  */
-/* We need 2 levels of macro to get the name turned into
-   the string we want. */
+/*  See Makefile.in  "libdir"  and CFLAGS  */
+/*  We need 2 levels of macro to get the name turned into
+    the string we want. */
 #define STR2(s) # s
 #define STR(s)  STR2(s)
     STR(CONFPREFIX)
@@ -177,31 +177,31 @@ Dwarf_Check_Result type_offset_result;
 Dwarf_Check_Result decl_file_result;
 Dwarf_Check_Result ranges_result;
 Dwarf_Check_Result aranges_result;
-/* Harmless errors are errors detected inside libdwarf but
-   not reported via DW_DLE_ERROR returns because the errors
-   won't really affect client code.  The 'harmless' errors
-   are reported and otherwise ignored.  It is difficult to report
-   the error when the error is noticed by libdwarf, the error
-   is reported at a later time.
-   The other errors dwarfdump reports are also generally harmless 
-   but are detected by dwarfdump so it's possble to report the
-   error as soon as the error is discovered. */
+/*  Harmless errors are errors detected inside libdwarf but
+    not reported via DW_DLE_ERROR returns because the errors
+    won't really affect client code.  The 'harmless' errors
+    are reported and otherwise ignored.  It is difficult to report
+    the error when the error is noticed by libdwarf, the error
+    is reported at a later time.
+    The other errors dwarfdump reports are also generally harmless 
+    but are detected by dwarfdump so it's possble to report the
+    error as soon as the error is discovered. */
 Dwarf_Check_Result harmless_result;
 Dwarf_Check_Result fde_duplication;
-/* The lines_result errors could be transformed into 'harmless errors'
-   quite easily (with a change to libdwarf and dwarfdump). */
+/*  The lines_result errors could be transformed into 'harmless errors'
+    quite easily (with a change to libdwarf and dwarfdump). */
 Dwarf_Check_Result lines_result;
 
 Dwarf_Error err;
 
 #define PRINT_CHECK_RESULT(str,result)  { \
-    cerr << LeftAlign(24,str) << " " <<     \
+    cerr << LeftAlign(24,str) << " " <<   \
         IToDec(result.checks,8) << " " << \
         IToDec(result.errors,8) << endl;  \
 }
 
 static int process_one_file(Elf * elf, const string &file_name, int archive,
-                            struct dwconf_s *conf);
+    struct dwconf_s *conf);
 static int
 open_a_file(const string &name)
 {
@@ -216,9 +216,7 @@ open_a_file(const string &name)
 
 }
 
-/*
- * Iterate through dwarf and print all info.
- */
+/* Iterate through dwarf and print all info.  */
 int
 main(int argc, char *argv[])
 {
@@ -234,7 +232,7 @@ main(int argc, char *argv[])
     int f = open_a_file(file_name);
     if (f == -1) {
         cerr << program_name << " ERROR:  can't open " <<
-                file_name << endl;
+            file_name << endl;
         return (FAILED);
     }
 
@@ -260,12 +258,12 @@ main(int argc, char *argv[])
                 /* dwarfdump is quiet when not an object */
             } else {
                 process_one_file(elf, file_name, archive,
-                                 &config_file_data);
+                    &config_file_data);
             }
 #endif /* HAVE_ELF64_GETEHDR */
         } else {
             process_one_file(elf, file_name, archive,
-                             &config_file_data);
+                &config_file_data);
         }
         cmd = elf_next(elf);
         elf_end(elf);
@@ -284,14 +282,14 @@ void
 print_any_harmless_errors(Dwarf_Debug dbg)
 {
 #define LOCAL_PTR_ARY_COUNT 50
-    /* We do not need to initialize the local array,
-       libdwarf does it. */
+    /*  We do not need to initialize the local array,
+        libdwarf does it. */
     const char *buf[LOCAL_PTR_ARY_COUNT];
     unsigned totalcount = 0;
     unsigned i = 0;
     unsigned printcount = 0;
     int res = dwarf_get_harmless_error_list(dbg,LOCAL_PTR_ARY_COUNT,buf,
-       &totalcount);
+        &totalcount);
     if(res == DW_DLV_NO_ENTRY) {
         return;
     }
@@ -302,7 +300,7 @@ print_any_harmless_errors(Dwarf_Debug dbg)
     }
     if(totalcount > printcount) {
         harmless_result.errors += (totalcount - printcount);
-	harmless_result.checks += (totalcount - printcount);
+        harmless_result.checks += (totalcount - printcount);
     }
 }
 
@@ -313,10 +311,10 @@ print_any_harmless_errors(Dwarf_Debug dbg)
 */
 static int
 process_one_file(Elf * elf,const  string & file_name, int archive,
-                 struct dwconf_s *config_file_data)
+    struct dwconf_s *config_file_data)
 {
     Dwarf_Debug dbg;
-    int dres;
+    int dres = 0;
 
     dres = dwarf_elf_init(elf, DW_DLC_READ, NULL, NULL, &dbg, &err);
     if (dres == DW_DLV_NO_ENTRY) {
@@ -332,18 +330,18 @@ process_one_file(Elf * elf,const  string & file_name, int archive,
 
         cout << endl;
         cout << "archive member \t" << 
-               (mem_header ? mem_header->ar_name : "") << endl;
+            (mem_header ? mem_header->ar_name : "") << endl;
     }
     dwarf_set_frame_rule_initial_value(dbg,
         config_file_data->cf_initial_rule_value);
     dwarf_set_frame_rule_table_size(dbg,
         config_file_data->cf_table_entry_count);
     dwarf_set_frame_cfa_value(dbg,
-         config_file_data->cf_cfa_reg);
+        config_file_data->cf_cfa_reg);
     dwarf_set_frame_same_value(dbg,
-         config_file_data->cf_same_val);
+        config_file_data->cf_same_val);
     dwarf_set_frame_undefined_value(dbg,
-         config_file_data->cf_undefined_val);
+        config_file_data->cf_undefined_val);
     dwarf_set_harmless_error_list_size(dbg,50);
     print_any_harmless_errors(dbg);
 
@@ -370,9 +368,9 @@ process_one_file(Elf * elf,const  string & file_name, int archive,
         print_static_funcs(dbg);
     if (static_var_flag)
         print_static_vars(dbg);
-    /* DWARF_PUBTYPES is the standard typenames dwarf section.
-       SGI_TYPENAME is the same concept but is SGI specific ( it was
-       defined 10 years before dwarf pubtypes). */
+    /*  DWARF_PUBTYPES is the standard typenames dwarf section.
+        SGI_TYPENAME is the same concept but is SGI specific ( it was
+        defined 10 years before dwarf pubtypes). */
 
     if (type_flag) {
         print_types(dbg, DWARF_PUBTYPES);
@@ -427,15 +425,15 @@ process_one_file(Elf * elf,const  string & file_name, int archive,
 
 static void do_all()
 {
-        info_flag = line_flag = frame_flag = abbrev_flag = true;
-        pubnames_flag = aranges_flag = macinfo_flag = true;
-        // Do not do loc_flag = TRUE because nothing in
-        // the DWARF spec guarantees .debug_loc is free of random bytes
-        // in areas not referenced by .debug_info 
-        string_flag = true;
-        reloc_flag = true;
-        static_func_flag = static_var_flag = true;
-        type_flag = weakname_flag = true;
+    info_flag = line_flag = frame_flag = abbrev_flag = true;
+    pubnames_flag = aranges_flag = macinfo_flag = true;
+    // Do not do loc_flag = TRUE because nothing in
+    // the DWARF spec guarantees .debug_loc is free of random bytes
+    // in areas not referenced by .debug_info 
+    string_flag = true;
+    reloc_flag = true;
+    static_func_flag = static_var_flag = true;
+    type_flag = weakname_flag = true;
 }
 
 /* process arguments and return object filename */
@@ -451,12 +449,13 @@ process_args(int argc, char *argv[])
 
     /* j q unused */
     if (argv[1] != NULL && argv[1][0] != '-') {
-                do_all();
+        do_all();
     }
 
     while ((c =
-            getopt(argc, argv,
-                   "abcCdefFgGhH:ik:lmMnNoprRsS:t:u:vVwx:yz")) != EOF) {
+        getopt(argc, argv,
+        "abcCdefFgGhH:ik:lmMnNoprRsS:t:u:vVwx:yz")) != EOF) {
+
         switch (c) {
         case 'M':
             show_form_used =  true;
@@ -466,9 +465,9 @@ process_args(int argc, char *argv[])
                 string path;
                 string abi;
 
-                /* -x name=<path> meaning name dwarfdump.conf file -x
-                   abi=<abi> meaning select abi from dwarfdump.conf
-                   file. Must always select abi to use dwarfdump.conf */
+                /*  -x name=<path> meaning name dwarfdump.conf file -x
+                    abi=<abi> meaning select abi from dwarfdump.conf
+                    file. Must always select abi to use dwarfdump.conf */
                 if (strncmp(optarg, "name=", 5) == 0) {
                     path = &optarg[5];
                     if (path.empty())
@@ -481,7 +480,8 @@ process_args(int argc, char *argv[])
                     config_file_abi = abi;
                     break;
                 } else {
-                  badopt:
+
+                    badopt:
                     cerr << "-x name=<path-to-conf>" <<endl;
                     cerr << " and  " << endl;
                     cerr << "-x abi=<abi-in-conf> " << endl;
@@ -796,7 +796,7 @@ static void
 print_usage_message(void)
 {
     cerr  << "Usage:  " << program_name << 
-         " <options> <object file>" << endl;
+        " <options> <object file>" << endl;
     for (unsigned i = 0; usage_text[i]; ++i) {
         cerr << usage_text[i] << endl;
     }
@@ -806,7 +806,7 @@ print_usage_message(void)
 /* ARGSUSED */
 void
 print_error(Dwarf_Debug dbg, const string & msg, int dwarf_code,
-            Dwarf_Error err)
+    Dwarf_Error err)
 {
     print_error_and_continue(dbg,msg,dwarf_code,err);
     exit(FAILED);
@@ -814,7 +814,7 @@ print_error(Dwarf_Debug dbg, const string & msg, int dwarf_code,
 /* ARGSUSED */
 void
 print_error_and_continue(Dwarf_Debug dbg, const string & msg, int dwarf_code,
-            Dwarf_Error err)
+    Dwarf_Error err)
 {
     cout.flush();
     cerr.flush();
@@ -836,10 +836,10 @@ print_error_and_continue(Dwarf_Debug dbg, const string & msg, int dwarf_code,
     cerr.flush();
 }
 
-/* Predicate function. Returns 'true' if the CU should
- * be skipped as the DW_AT_name of the CU
- * does not match the command-line-supplied
- * cu name.  Else returns false.*/
+/*  Predicate function. Returns 'true' if the CU should
+    be skipped as the DW_AT_name of the CU
+    does not match the command-line-supplied
+    cu name.  Else returns false.*/
 bool
 should_skip_this_cu(DieHolder& hcu_die, Dwarf_Error err)
 {
@@ -878,20 +878,20 @@ should_skip_this_cu(DieHolder& hcu_die, Dwarf_Error err)
                     }
                 }
                 if (strcmp(cu_name.c_str(), p)) {
-                   // skip this cu.
-                   return true;
+                    // skip this cu.
+                    return true;
                 }
             } else {
                 print_error(dbg,
                 "arange: string missing",
                 sres, err);
             }
-         }
-     } else {
-         print_error(dbg,
-             "dwarf_whatform unexpected value",
-             fres, err);
-     }
-     dwarf_dealloc(dbg, attrib, DW_DLA_ATTR);
-     return false;
+        }
+    } else {
+        print_error(dbg,
+            "dwarf_whatform unexpected value",
+            fres, err);
+    }
+    dwarf_dealloc(dbg, attrib, DW_DLA_ATTR);
+    return false;
 }

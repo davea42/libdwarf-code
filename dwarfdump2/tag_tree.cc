@@ -1,7 +1,7 @@
 /* 
   Copyright (C) 2000-2005 Silicon Graphics, Inc.  All Rights Reserved.
   Portions Copyright 2009-2010 SN Systems Ltd. All rights reserved.
-  Portions Copyright 2009-2010 David Anderson. All rights reserved.
+  Portions Copyright 2009-2011 David Anderson. All rights reserved.
 
   This program is free software; you can redistribute it and/or modify it
   under the terms of version 2 of the GNU General Public License as
@@ -36,9 +36,9 @@
 $Header: /plroot/cmplrs.src/v7.4.5m/.RCS/PL/dwarfdump/RCS/tag_tree.c,v 1.8 2005/12/01 17:34:59 davea Exp $ */
 #include <dwarf.h>
 #include <stdio.h>
-#include <stdlib.h>             /* For exit() declaration etc. */
-#include <errno.h>              /* For errno declaration. */
-#include <unistd.h>             /* For getopt. */
+#include <stdlib.h>   /* For exit() declaration etc. */
+#include <errno.h>    /* For errno declaration. */
+#include <unistd.h>   /* For getopt. */
 
 #include "globals.h"
 #include "naming.h"
@@ -192,11 +192,11 @@ main(int argc, char **argv)
         }
         if(standard_flag) {
             if (tag >= table_rows ) {
-               bad_line_input("tag value exceeds standard table size");
+                bad_line_input("tag value exceeds standard table size");
             }
         } else {
             if(current_row >= table_rows) {
-               bad_line_input("too many extended table rows.");
+                bad_line_input("too many extended table rows.");
             }
             tag_tree_combination_table[current_row][0] = tag;
         }
@@ -235,19 +235,19 @@ main(int argc, char **argv)
     fprintf(fileOut,"/* Generated code, do not edit. */\n");
     fprintf(fileOut,"/* Generated on %s  %s */\n",__DATE__,__TIME__);
     if (standard_flag) {
-      fprintf(fileOut,"#define TAG_TREE_COLUMN_COUNT %d\n\n",table_columns);
-      fprintf(fileOut,"#define TAG_TREE_ROW_COUNT %d\n\n",table_rows);
-      fprintf(fileOut,
-          "static unsigned int tag_tree_combination_table"
-          "[TAG_TREE_ROW_COUNT][TAG_TREE_COLUMN_COUNT] = {\n");
+        fprintf(fileOut,"#define TAG_TREE_COLUMN_COUNT %d\n\n",table_columns);
+        fprintf(fileOut,"#define TAG_TREE_ROW_COUNT %d\n\n",table_rows);
+        fprintf(fileOut,
+            "static unsigned int tag_tree_combination_table"
+            "[TAG_TREE_ROW_COUNT][TAG_TREE_COLUMN_COUNT] = {\n");
     } else {
-      fprintf(fileOut,"#define TAG_TREE_EXT_COLUMN_COUNT %d\n\n",
-         table_columns);
-      fprintf(fileOut,"#define TAG_TREE_EXT_ROW_COUNT %d\n\n",table_rows);
-      fprintf(fileOut,"/* Common extensions */\n");
-      fprintf(fileOut,
-          "static unsigned int tag_tree_combination_ext_table"
-          "[TAG_TREE_EXT_ROW_COUNT][TAG_TREE_EXT_COLUMN_COUNT] = {\n");
+        fprintf(fileOut,"#define TAG_TREE_EXT_COLUMN_COUNT %d\n\n",
+            table_columns);
+        fprintf(fileOut,"#define TAG_TREE_EXT_ROW_COUNT %d\n\n",table_rows);
+        fprintf(fileOut,"/* Common extensions */\n");
+        fprintf(fileOut,
+            "static unsigned int tag_tree_combination_ext_table"
+            "[TAG_TREE_EXT_ROW_COUNT][TAG_TREE_EXT_COLUMN_COUNT] = {\n");
     }
 
     for (unsigned i = 0; i < table_rows; i++) {
@@ -259,7 +259,7 @@ main(int argc, char **argv)
             fprintf(fileOut,"/* %u %-37s*/\n",
                 tag_tree_combination_table[i][0],
                 get_TAG_name(
-                   tag_tree_combination_table[i][0],printonerr).c_str());
+                    tag_tree_combination_table[i][0],printonerr).c_str());
         }
         fprintf(fileOut,"    { ");
         for(unsigned j = 0; j < table_columns; ++j ) {

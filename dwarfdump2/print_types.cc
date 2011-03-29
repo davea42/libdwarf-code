@@ -2,7 +2,7 @@
   Copyright (C) 2000-2006 Silicon Graphics, Inc.  All Rights Reserved.
   Portions Copyright 2007-2010 Sun Microsystems, Inc. All rights reserved.
   Portions Copyright 2009-2010 SN Systems Ltd. All rights reserved.
-  Portions Copyright 2008-2010 David Anderson. All rights reserved.
+  Portions Copyright 2008-2011 David Anderson. All rights reserved.
 
   This program is free software; you can redistribute it and/or modify it
   under the terms of version 2 of the GNU General Public License as
@@ -35,11 +35,11 @@
 
 
 $Header: /plroot/cmplrs.src/v7.4.5m/.RCS/PL/dwarfdump/RCS/print_sections.c,v 1.69 2006/04/17 00:09:56 davea Exp $ */
-/* The address of the Free Software Foundation is
- * Free Software Foundation, Inc., 51 Franklin St, Fifth Floor, 
- * Boston, MA 02110-1301, USA.  
- * SGI has moved from the Crittenden Lane address.
- */
+/*  The address of the Free Software Foundation is
+    Free Software Foundation, Inc., 51 Franklin St, Fifth Floor, 
+    Boston, MA 02110-1301, USA.  
+    SGI has moved from the Crittenden Lane address.
+*/
 
 #include "globals.h"
 #include <vector>
@@ -63,10 +63,9 @@ print_types(Dwarf_Debug dbg, enum type_type_e type_type)
     string section_open_name;
     string print_name_prefix;
     int (*get_types) (Dwarf_Debug, Dwarf_Type **, Dwarf_Signed *,
-                      Dwarf_Error *)
-        = 0;
+        Dwarf_Error *) = 0;
     int (*get_offset) (Dwarf_Type, char **, Dwarf_Off *, Dwarf_Off *,
-                       Dwarf_Error *) = 0;
+        Dwarf_Error *) = 0;
     int (*get_cu_offset) (Dwarf_Type, Dwarf_Off *, Dwarf_Error *) =
         0;
     void (*dealloctype) (Dwarf_Debug, Dwarf_Type *, Dwarf_Signed) =
@@ -106,9 +105,9 @@ print_types(Dwarf_Debug dbg, enum type_type_e type_type)
     } else {
         Dwarf_Unsigned maxoff = get_info_max_offset(dbg);
 
-        /* Before July 2005, the section name was printed
-           unconditionally, now only prints if non-empty section really 
-           exists. */
+        /*  Before July 2005, the section name was printed
+            unconditionally, now only prints if non-empty section really 
+            exists. */
         cout << endl;
         cout << section_name << endl;
 
@@ -120,7 +119,7 @@ print_types(Dwarf_Debug dbg, enum type_type_e type_type)
             int tnres =
                 get_offset(typebuf[i], &name, &die_off, &cu_off, &err);
             deal_with_name_offset_err(dbg, offset_err_name, name,
-                                      die_off, tnres, err);
+                die_off, tnres, err);
 
             int cures3 = get_cu_offset(typebuf[i], &global_cu_off, &err);
 
@@ -128,9 +127,9 @@ print_types(Dwarf_Debug dbg, enum type_type_e type_type)
                 print_error(dbg, "dwarf_var_cu_offset", cures3, err);
             }
             print_pubname_style_entry(dbg,
-                                      print_name_prefix,
-                                      name, die_off, cu_off,
-                                      global_cu_off, maxoff);
+                print_name_prefix,
+                name, die_off, cu_off,
+                global_cu_off, maxoff);
 
             /* print associated die too? */
         }

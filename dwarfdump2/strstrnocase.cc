@@ -1,5 +1,5 @@
 /*
-  Copyright (C) 2009-2010 David Anderson.  All Rights Reserved.
+  Copyright (C) 2009-2011 David Anderson.  All Rights Reserved.
 
   This program is free software; you can redistribute it and/or modify it
   under the terms of version 2 of the GNU General Public License as
@@ -30,10 +30,10 @@
   http://oss.sgi.com/projects/GenInfo/NoticeExplan
 
 */
-/* The address of the Free Software Foundation is
- * Free Software Foundation, Inc., 51 Franklin St, Fifth Floor, 
- * Boston, MA 02110-1301, USA.  
- */
+/*  The address of the Free Software Foundation is
+    Free Software Foundation, Inc., 51 Franklin St, Fifth Floor, 
+    Boston, MA 02110-1301, USA.  
+*/
 
 
 
@@ -72,13 +72,13 @@ is_strstrnocase(const char * container, const char * contained)
         bool innerwrong = true;
         for(  ; *cntnd; ++cntnd,++ct) 
         {
-             unsigned char lct = tolower(*ct);
-             unsigned char tlc = tolower(*cntnd);
-             if(lct != tlc) {
-                 innerwrong=true;
-                 break; /* Go to outer loop */
-             }
-             innerwrong=false;
+            unsigned char lct = tolower(*ct);
+            unsigned char tlc = tolower(*cntnd);
+            if(lct != tlc) {
+                innerwrong=true;
+                break; /* Go to outer loop */
+            }
+            innerwrong=false;
         }
         if(!innerwrong) {
             return true;
@@ -91,25 +91,25 @@ is_strstrnocase(const char * container, const char * contained)
 static void
 test(const  char *t1, const char *t2,int resexp)
 {
-     bool  res = is_strstrnocase(t1,t2);
-     if (res == resexp) {
-           return;
+    bool  res = is_strstrnocase(t1,t2);
+    if (res == resexp) {
+        return;
     }
     printf("Error,mismatch %s and %s.  Expected %d got %d\n",
-         t1,t2,resexp,res);
+        t1,t2,resexp,res);
 }
 
 int main()
 {
-     test("aaaaa","a",1);
-     test("aaaaa","b",0);
-     test("abaaba","ba",1);
-     test("abaabA","Ba",1);
-     test("a","ab",0);
-     test("b","c",0);
-     test("b","",0);
-     test("","c",0);
-     test("","",0);
-     test("aaaaa","aaaaaaaa",0);
+    test("aaaaa","a",1);
+    test("aaaaa","b",0);
+    test("abaaba","ba",1);
+    test("abaabA","Ba",1);
+    test("a","ab",0);
+    test("b","c",0);
+    test("b","",0);
+    test("","c",0);
+    test("","",0);
+    test("aaaaa","aaaaaaaa",0);
 }
 #endif

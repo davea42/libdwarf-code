@@ -34,10 +34,10 @@
 
 $Header: /plroot/cmplrs.src/v7.4.5m/.RCS/PL/dwarfdump/RCS/print_reloc.c,v 1.11 2005/08/04 05:09:37 davea Exp $ */
 
-/* The address of the Free Software Foundation is
-   Free Software Foundation, Inc., 51 Franklin St, Fifth Floor, 
-   Boston, MA 02110-1301, USA.
-   SGI has moved from the Crittenden Lane address.
+/*  The address of the Free Software Foundation is
+    Free Software Foundation, Inc., 51 Franklin St, Fifth Floor, 
+    Boston, MA 02110-1301, USA.
+    SGI has moved from the Crittenden Lane address.
 */
 
 
@@ -95,16 +95,15 @@ static const char *error_msg_null[] = {
 };
 
 #define SECT_DATA_SET(x) { \
-            if (sect_data[(x)].buf != NULL) { \
-                print_error(dbg, error_msg_duplicate[(x)],DW_DLV_OK, err); \
-            } \
-            if ((data = elf_getdata(scn, 0)) == NULL || data->d_size == 0) { \
-                print_error(dbg, error_msg_null[(x)],DW_DLV_OK, err); \
-            } \
-            sect_data[(x)].buf = \
-                reinterpret_cast<Dwarf_Small *>(data -> d_buf); \
-            sect_data[(x)].size = data -> d_size; \
-            }
+    if (sect_data[(x)].buf != NULL) {                                \
+        print_error(dbg, error_msg_duplicate[(x)],DW_DLV_OK, err);   \
+    }                                                                \
+    if ((data = elf_getdata(scn, 0)) == NULL || data->d_size == 0) { \
+        print_error(dbg, error_msg_null[(x)],DW_DLV_OK, err);        \
+    }                                                                \
+        sect_data[(x)].buf = reinterpret_cast<Dwarf_Small *>(data -> d_buf); \
+        sect_data[(x)].size = data -> d_size;                        \
+    }
 
 static const char *mips_reloc_type_names[] = {
     "R_MIPS_NONE", "R_MIPS_16", "R_MIPS_32", "R_MIPS_REL32",
@@ -133,10 +132,9 @@ static const char *mips_reloc_type_names[] = {
     "R_MIPS_ADD_IMMEDIATE",     /* 34 */
 };
 
-/*
-        return valid reloc type names. 
-        if buf is used, it is static, so beware it
-        will be overrwritten by the next call.
+/*  return valid reloc type names. 
+    if buf is used, it is static, so beware it
+    will be overrwritten by the next call.
 */
 static string
 get_reloc_type_names(int index)
@@ -193,15 +191,15 @@ typedef struct {
 } SYM64;
 
 static void print_reloc_information_64(int section_no,
-                                       Dwarf_Small * buf,
-                                       Dwarf_Unsigned size);
+    Dwarf_Small * buf,
+    Dwarf_Unsigned size);
 static void print_reloc_information_32(int section_no,
-                                       Dwarf_Small * buf,
-                                       Dwarf_Unsigned size);
+    Dwarf_Small * buf,
+    Dwarf_Unsigned size);
 static SYM *readsyms(Elf32_Sym * data, size_t num, Elf * elf,
-                     Elf32_Word link);
+    Elf32_Word link);
 static SYM64 *read_64_syms(Elf64_Sym * data, size_t num, Elf * elf,
-                           Elf64_Word link);
+    Elf64_Word link);
 static void *get_scndata(Elf_Scn * fd_scn, size_t * scn_size);
 static void print_relocinfo_64(Dwarf_Debug dbg, Elf * elf);
 static void print_relocinfo_32(Dwarf_Debug dbg, Elf * elf);
@@ -257,22 +255,22 @@ print_relocinfo_64(Dwarf_Debug dbg, Elf * elf)
 
     while ((scn = elf_nextscn(elf, scn)) != NULL) {
 
-        if ((shdr64 = elf64_getshdr(scn)) == NULL) {
+        shdr64 = elf64_getshdr(scn);
+        if (shdr64  == NULL) {
             print_error(dbg, "DW_ELF_GETSHDR_ERROR", DW_DLV_OK, err);
         }
-        if ((scn_name =
-             elf_strptr(elf, ehdr64->e_shstrndx, shdr64->sh_name))
-            == NULL) {
+        scn_name = elf_strptr(elf, ehdr64->e_shstrndx, shdr64->sh_name);
+        if (scn_name == NULL) {
             print_error(dbg, "DW_ELF_STRPTR_ERROR", DW_DLV_OK, err);
         }
         if (shdr64->sh_type == SHT_SYMTAB) {
             size_t sym_size = 0;
             size_t count = 0;
 
-            if ((sym_64 =
-                 (Elf64_Sym *) get_scndata(scn, &sym_size)) == NULL) {
+            sym_64 = (Elf64_Sym *) get_scndata(scn, &sym_size);
+            if (sym_64 == NULL) {
                 print_error(dbg, "no symbol table data", DW_DLV_OK,
-                            err);
+                    err);
             }
             count = sym_size / sizeof(Elf64_Sym);
             sym_64++;
@@ -281,7 +279,7 @@ print_relocinfo_64(Dwarf_Debug dbg, Elf * elf)
             sym_data_64_entry_count = count;
             if (sym_data_64  == NULL) {
                 print_error(dbg, "problem reading symbol table data",
-                            DW_DLV_OK, err);
+                    DW_DLV_OK, err);
             }
         } else if (strncmp(scn_name, ".rel.debug_", 11))
             continue;
@@ -298,12 +296,11 @@ print_relocinfo_64(Dwarf_Debug dbg, Elf * elf)
         } else if (strcmp(scn_name, ".rel.debug_frame") == 0) {
             SECT_DATA_SET(DW_SECTION_REL_DEBUG_FRAME)
         }
-    }                           /* while */
-
+    } /* while */
     for (i = 0; i < DW_SECTION_REL_DEBUG_NUM; i++) {
         if (sect_data[i].buf != NULL && sect_data[i].size > 0) {
             print_reloc_information_64(i, sect_data[i].buf,
-                                       sect_data[i].size);
+                sect_data[i].size);
         }
     }
 #endif
@@ -324,22 +321,22 @@ print_relocinfo_32(Dwarf_Debug dbg, Elf * elf)
         print_error(dbg, "DW_ELF_GETEHDR_ERROR", DW_DLV_OK, err);
     }
     while ((scn = elf_nextscn(elf, scn)) != NULL) {
-        if ((shdr32 = elf32_getshdr(scn)) == NULL) {
+        shdr32 = elf32_getshdr(scn);
+        if (shdr32 == NULL) {
             print_error(dbg, "DW_ELF_GETSHDR_ERROR", DW_DLV_OK, err);
         }
-        if ((scn_name =
-             elf_strptr(elf, ehdr32->e_shstrndx, shdr32->sh_name)
-            ) == NULL) {
+        scn_name = elf_strptr(elf, ehdr32->e_shstrndx, shdr32->sh_name);
+        if (scn_name == NULL) {
             print_error(dbg, "DW_ELF_STRPTR_ERROR", DW_DLV_OK, err);
         }
         if (shdr32->sh_type == SHT_SYMTAB) {
             size_t sym_size = 0;
             size_t count = 0;
 
-            if ((sym =
-                 (Elf32_Sym *) get_scndata(scn, &sym_size)) == NULL) {
+            sym = (Elf32_Sym *) get_scndata(scn, &sym_size);
+            if (sym == NULL) {
                 print_error(dbg, "no symbol table data", DW_DLV_OK,
-                            err);
+                    err);
             }
             sym = (Elf32_Sym *) get_scndata(scn, &sym_size);
             count = sym_size / sizeof(Elf32_Sym);
@@ -349,7 +346,7 @@ print_relocinfo_32(Dwarf_Debug dbg, Elf * elf)
             sym_data_entry_count = count;
             if (sym_data  == NULL) {
                 print_error(dbg, "problem reading symbol table data",
-                            DW_DLV_OK, err);
+                    DW_DLV_OK, err);
             }
         } else if (strncmp(scn_name, ".rel.debug_", 11))
             continue;
@@ -371,7 +368,7 @@ print_relocinfo_32(Dwarf_Debug dbg, Elf * elf)
     for (i = 0; i < DW_SECTION_REL_DEBUG_NUM; i++) {
         if (sect_data[i].buf != NULL && sect_data[i].size > 0) {
             print_reloc_information_32(i, sect_data[i].buf,
-                                       sect_data[i].size);
+                sect_data[i].size);
         }
     }
 }
@@ -394,7 +391,7 @@ print_relocinfo_32(Dwarf_Debug dbg, Elf * elf)
 
 static void
 print_reloc_information_64(int section_no, Dwarf_Small * buf,
-                           Dwarf_Unsigned size)
+    Dwarf_Unsigned size)
 {
     Dwarf_Unsigned off;
 
@@ -407,15 +404,15 @@ print_reloc_information_64(int section_no, Dwarf_Small * buf,
         Elf64_Rel *p = (Elf64_Rel *) (buf + off);
         string name = "<no name>";
         if(sym_data ) {
-           size_t index = ELF64_R_SYM(p->r_info) - 1;
-           if(index < sym_data_entry_count) {
-              name = sym_data[index].name;
-           }
+            size_t index = ELF64_R_SYM(p->r_info) - 1;
+            if(index < sym_data_entry_count) {
+                name = sym_data[index].name;
+            }
         } else if (sym_data_64) {
-           size_t index = ELF64_R_SYM(p->r_info) - 1;
-           if(index < sym_data_64_entry_count) {
-              name = sym_data_64[index].name;
-           }
+            size_t index = ELF64_R_SYM(p->r_info) - 1;
+            if(index < sym_data_64_entry_count) {
+                name = sym_data_64[index].name;
+            }
         }
 
         cout << IToDec(p->r_offset,5);
@@ -424,21 +421,21 @@ print_reloc_information_64(int section_no, Dwarf_Small * buf,
         cout << get_reloc_type_names(ELF64_R_TYPE(p->r_info));
         cout << endl;
 #else
-        /* sgi/mips -64 does not have r_info in the 64bit relocations,
-           but seperate fields, with 3 types, actually. Only one of
-           which prints here, as only one really used with dwarf */
+        /*  sgi/mips -64 does not have r_info in the 64bit relocations,
+            but seperate fields, with 3 types, actually. Only one of
+            which prints here, as only one really used with dwarf */
         Elf64_Rel *p = (Elf64_Rel *) (buf + off);
         string name = "<no name>";
         if(sym_data ) {
-           size_t index = p->r_sym - 1;
-           if(index < sym_data_entry_count) {
-              name = sym_data[index].name;
-           }
+            size_t index = p->r_sym - 1;
+            if(index < sym_data_entry_count) {
+                name = sym_data[index].name;
+            }
         } else if (sym_data_64) {
-           size_t index = p->r_sym - 1;
-           if(index < sym_data_64_entry_count) {
-               name = sym_data_64[index].name;
-           }
+            size_t index = p->r_sym - 1;
+            if(index < sym_data_64_entry_count) {
+                name = sym_data_64[index].name;
+            }
         }
         cout << IToDec(p->r_offset,5);
         cout << "\t" << BracketSurround(IToDec(ELF64_R_SYM(p->r_info),3));
@@ -452,7 +449,7 @@ print_reloc_information_64(int section_no, Dwarf_Small * buf,
 
 static void
 print_reloc_information_32(int section_no, Dwarf_Small * buf,
-                           Dwarf_Unsigned size)
+    Dwarf_Unsigned size)
 {
     Dwarf_Unsigned off;
 
@@ -462,10 +459,10 @@ print_reloc_information_32(int section_no, Dwarf_Small * buf,
         Elf32_Rel *p = (Elf32_Rel *) (buf + off);
         string name("<no name>");
         if(sym_data) {
-           size_t index = ELF32_R_SYM(p->r_info) - 1;
-           if(index < sym_data_entry_count) {
-               name = sym_data[index].name;
-           }
+            size_t index = ELF32_R_SYM(p->r_info) - 1;
+            if(index < sym_data_entry_count) {
+                name = sym_data[index].name;
+            }
         }
 
         cout << IToDec(p->r_offset,5);

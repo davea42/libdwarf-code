@@ -1,7 +1,7 @@
 /* 
   Copyright (C) 2000-2005 Silicon Graphics, Inc.  All Rights Reserved.
   Portions Copyright (C) 2009-2010 SN Systems Ltd. All Rights Reserved.
-  Portions Copyright (C) 2009-2010 David Anderson. All Rights Reserved.
+  Portions Copyright (C) 2009-2011 David Anderson. All Rights Reserved.
 
   This program is free software; you can redistribute it and/or modify it
   under the terms of version 2 of the GNU General Public License as
@@ -193,11 +193,11 @@ main(int argc, char **argv)
         }
         if(standard_flag) {
             if (tag >= table_rows ) {
-               bad_line_input("tag value exceeds standard table size");
+                bad_line_input("tag value exceeds standard table size");
             }
         } else {
             if(current_row >= table_rows) {
-               bad_line_input("too many extended table rows.");
+                bad_line_input("too many extended table rows.");
             }
             tag_attr_combination_table[current_row][0] = tag;
         }
@@ -235,20 +235,20 @@ main(int argc, char **argv)
     fprintf(fileOut,"/* Generated code, do not edit. */\n");
     fprintf(fileOut,"/* Generated on %s  %s */\n",__DATE__,__TIME__);
     if (standard_flag) {
-      fprintf(fileOut,"#define ATTR_TREE_ROW_COUNT %u\n\n",table_rows);
-      fprintf(fileOut,"#define ATTR_TREE_COLUMN_COUNT %u\n\n",table_columns);
-      fprintf(fileOut,
-          "static unsigned int tag_attr_combination_table"
-          "[ATTR_TREE_ROW_COUNT][ATTR_TREE_COLUMN_COUNT] = {\n");
+        fprintf(fileOut,"#define ATTR_TREE_ROW_COUNT %u\n\n",table_rows);
+        fprintf(fileOut,"#define ATTR_TREE_COLUMN_COUNT %u\n\n",table_columns);
+        fprintf(fileOut,
+            "static unsigned int tag_attr_combination_table"
+            "[ATTR_TREE_ROW_COUNT][ATTR_TREE_COLUMN_COUNT] = {\n");
     }
     else {
-      fprintf(fileOut,"/* Common extensions */\n");
-      fprintf(fileOut,"#define ATTR_TREE_EXT_ROW_COUNT %u\n\n",table_rows);
-      fprintf(fileOut,"#define ATTR_TREE_EXT_COLUMN_COUNT %d\n\n",
-          table_columns);
-      fprintf(fileOut,
-          "static unsigned int tag_attr_combination_ext_table"
-          "[ATTR_TREE_EXT_ROW_COUNT][ATTR_TREE_EXT_COLUMN_COUNT] = {\n");
+        fprintf(fileOut,"/* Common extensions */\n");
+        fprintf(fileOut,"#define ATTR_TREE_EXT_ROW_COUNT %u\n\n",table_rows);
+        fprintf(fileOut,"#define ATTR_TREE_EXT_COLUMN_COUNT %d\n\n",
+            table_columns);
+        fprintf(fileOut,
+            "static unsigned int tag_attr_combination_ext_table"
+            "[ATTR_TREE_EXT_ROW_COUNT][ATTR_TREE_EXT_COLUMN_COUNT] = {\n");
     }
 
     for (unsigned int i = 0; i < table_rows; i++) {

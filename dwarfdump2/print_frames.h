@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2006 Silicon Graphics, Inc.  All Rights Reserved.
-  Portions Copyright (C) 2009-2010 David Anderson.  All Rights Reserved.
+  Portions Copyright (C) 2009-2011 David Anderson.  All Rights Reserved.
 
   This program is free software; you can redistribute it and/or modify it
   under the terms of version 2 of the GNU General Public License as
@@ -35,19 +35,19 @@
 $Header: /plroot/cmplrs.src/v7.4.5m/.RCS/PL/dwarfdump/RCS/print_frames.h,v 1.2 2006/04/17 00:09:56 davea Exp $ */
 
 int
-  print_one_fde(Dwarf_Debug dbg, Dwarf_Fde fde,
-                Dwarf_Unsigned fde_index,
-                Dwarf_Cie * cie_data,
-                Dwarf_Signed cie_element_count,
-                Dwarf_Half address_size, 
-                int is_eh,
-                struct dwconf_s * config_data);
+print_one_fde(Dwarf_Debug dbg, Dwarf_Fde fde,
+    Dwarf_Unsigned fde_index,
+    Dwarf_Cie * cie_data,
+    Dwarf_Signed cie_element_count,
+    Dwarf_Half address_size, 
+    int is_eh,
+    struct dwconf_s * config_data);
 
 int
-  print_one_cie(Dwarf_Debug dbg, Dwarf_Cie cie,
-                Dwarf_Unsigned cie_index, 
-                Dwarf_Half address_size,
-                struct dwconf_s * config_data);
+print_one_cie(Dwarf_Debug dbg, Dwarf_Cie cie,
+    Dwarf_Unsigned cie_index, 
+    Dwarf_Half address_size,
+    struct dwconf_s * config_data);
 
 void
 get_string_from_locs(Dwarf_Debug dbg,

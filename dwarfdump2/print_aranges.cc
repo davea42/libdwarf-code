@@ -2,7 +2,7 @@
   Copyright (C) 2000-2006 Silicon Graphics, Inc.  All Rights Reserved.
   Portions Copyright 2007-2010 Sun Microsystems, Inc. All rights reserved.
   Portions Copyright 2009-2010 SN Systems Ltd. All rights reserved.
-  Portions Copyright 2008-2010 David Anderson. All rights reserved.
+  Portions Copyright 2008-2011 David Anderson. All rights reserved.
 
   This program is free software; you can redistribute it and/or modify it
   under the terms of version 2 of the GNU General Public License as
@@ -35,11 +35,11 @@
 
 
 $Header: /plroot/cmplrs.src/v7.4.5m/.RCS/PL/dwarfdump/RCS/print_sections.c,v 1.69 2006/04/17 00:09:56 davea Exp $ */
-/* The address of the Free Software Foundation is
- * Free Software Foundation, Inc., 51 Franklin St, Fifth Floor, 
- * Boston, MA 02110-1301, USA.  
- * SGI has moved from the Crittenden Lane address.
- */
+/*  The address of the Free Software Foundation is
+    Free Software Foundation, Inc., 51 Franklin St, Fifth Floor, 
+    Boston, MA 02110-1301, USA.  
+    SGI has moved from the Crittenden Lane address.
+*/
 
 #include "globals.h"
 #include <vector>
@@ -76,9 +76,9 @@ print_aranges(Dwarf_Debug dbg)
         Dwarf_Unsigned segment_entry_size = 0;
         for (Dwarf_Signed i = 0; i < count; i++) {
             int aires = dwarf_get_arange_info_b(arange_buf[i],
-                                          &segment,&segment_entry_size,
-                                          &start, &length,
-                                          &cu_die_offset, &err);
+                &segment,&segment_entry_size,
+                &start, &length,
+                &cu_die_offset, &err);
             if (aires != DW_DLV_OK) {
                 print_error(dbg, "dwarf_get_arange_info", aires, err);
             } else {
@@ -139,12 +139,18 @@ print_aranges(Dwarf_Debug dbg)
                 Dwarf_Die cu_die = NULL;
                 dres = dwarf_offdie(dbg, cu_die_offset, &cu_die, &err);
                 if (dres != DW_DLV_OK) {
-                    print_error(dbg, "dwarf_offdie", dres, err);
+                    string details = 
+                        string("dwarf_offdie in aranges: " 
+                            "cu_die offset does not reference valid CU DIE.  ") 
+                            + IToHex(cu_die_offset,0) +
+                            string(".");
+                    print_error(dbg, details.c_str(),
+                        dres, err);
                 } else {
                     DieHolder hcu_die(dbg,cu_die);
                     if (cu_name_flag) {
                         if (should_skip_this_cu(hcu_die,err)) {
-                             continue;
+                            continue;
                         }
                     }
                     cout << endl;
@@ -157,17 +163,17 @@ print_aranges(Dwarf_Debug dbg)
                     }
                     cout << ", length of " << length;
                     cout << ", cu_die_offset = " << cu_die_offset;
-                    /* Get the offset of the cu header itself in the
-                       section, but not for end-entries. */
+                    /*  Get the offset of the cu header itself in the
+                        section, but not for end-entries. */
                     if (start || length) {
                         Dwarf_Off off = 0;
                         int cures3 =
                             dwarf_get_arange_cu_header_offset(arange_buf[i],
-                                                              &off,
-                                                              &err);
+                                &off,
+                                &err);
                         if (cures3 != DW_DLV_OK) {
                             print_error(dbg, "dwarf_get_cu_hdr_offset",
-                                        cures3, err);
+                                cures3, err);
                         }
                         if (verbose) {
                             cout << " cuhdr " << off;

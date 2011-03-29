@@ -2,7 +2,7 @@
   Copyright (C) 2000-2006 Silicon Graphics, Inc.  All Rights Reserved.
   Portions Copyright 2007-2010 Sun Microsystems, Inc. All rights reserved.
   Portions Copyright 2009-2010 SN Systems Ltd. All rights reserved.
-  Portions Copyright 2008-2010 David Anderson. All rights reserved.
+  Portions Copyright 2008-2011 David Anderson. All rights reserved.
 
   This program is free software; you can redistribute it and/or modify it
   under the terms of version 2 of the GNU General Public License as
@@ -35,11 +35,11 @@
 
 
 $Header: /plroot/cmplrs.src/v7.4.5m/.RCS/PL/dwarfdump/RCS/print_sections.c,v 1.69 2006/04/17 00:09:56 davea Exp $ */
-/* The address of the Free Software Foundation is
- * Free Software Foundation, Inc., 51 Franklin St, Fifth Floor, 
- * Boston, MA 02110-1301, USA.  
- * SGI has moved from the Crittenden Lane address.
- */
+/*  The address of the Free Software Foundation is
+    Free Software Foundation, Inc., 51 Franklin St, Fifth Floor, 
+    Boston, MA 02110-1301, USA.  
+    SGI has moved from the Crittenden Lane address.
+*/
 
 #include "globals.h"
 #include <vector>
@@ -73,8 +73,8 @@ print_abbrevs(Dwarf_Debug dbg)
     cout << endl;
     cout << ".debug_abbrev" << endl;
     while ((abres = dwarf_get_abbrev(dbg, offset, &ab,
-                                     &length, &attr_count,
-                                     &err)) == DW_DLV_OK) {
+        &length, &attr_count,
+        &err)) == DW_DLV_OK) {
 
         if (attr_count == 0) {
             /* Simple innocuous zero : null abbrev entry */
@@ -114,7 +114,7 @@ print_abbrevs(Dwarf_Debug dbg)
             cout << BracketSurround(IToDec(offset));
             cout << BracketSurround(IToDec(abbrev_code));
             cout << BracketSurround(get_TAG_name(tag,
-               dwarf_names_print_on_error));
+                dwarf_names_print_on_error));
         }
         else {
             cout << BracketSurround(IToDec(abbrev_num,4));
@@ -122,14 +122,14 @@ print_abbrevs(Dwarf_Debug dbg)
             cout << BracketSurround(string("code: ") +IToDec(abbrev_code,2));
             cout << " ";
             cout << LeftAlign(20,get_TAG_name(tag,
-               dwarf_names_print_on_error));
+                dwarf_names_print_on_error));
         }
         ++abbrev_num;
         int acres = dwarf_get_abbrev_children_flag(ab, &child_flag, &err);
         if (acres == DW_DLV_ERROR) {
             dwarf_dealloc(dbg, ab, DW_DLA_ABBREV);
             print_error(dbg, "dwarf_get_abbrev_children_flag", acres,
-                        err);
+                err);
         }
         if (acres == DW_DLV_NO_ENTRY) {
             child_flag = 0;
@@ -140,9 +140,9 @@ print_abbrevs(Dwarf_Debug dbg)
         if (!dense) {
             cout << endl;
         }
-        /* Abbrev just contains the format of a die, which debug_info
-           then points to with the real data. So here we just print the 
-           given format. */
+        /*  Abbrev just contains the format of a die, which debug_info
+            then points to with the real data. So here we just print the 
+            given format. */
         for (Dwarf_Unsigned i = 0; i < attr_count; i++) {
             int aeres =
                 dwarf_get_abbrev_entry(ab, i, &attr, &form, &off, &err);
@@ -158,14 +158,14 @@ print_abbrevs(Dwarf_Debug dbg)
                 cout << " " << BracketSurround(IToDec(off));
                 cout << get_AT_name(attr,dwarf_names_print_on_error);
                 cout << BracketSurround(get_FORM_name((Dwarf_Half) form,
-                           dwarf_names_print_on_error));
+                    dwarf_names_print_on_error));
             } else {
                 cout << "      " << BracketSurround(IToDec(off,5));
                 cout << "\t";
                 cout << LeftAlign(28,get_AT_name(
-                     attr,dwarf_names_print_on_error));
+                    attr,dwarf_names_print_on_error));
                 cout << get_FORM_name(form,
-                           dwarf_names_print_on_error);
+                    dwarf_names_print_on_error);
                 cout << endl;
             }
         }
