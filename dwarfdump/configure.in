@@ -52,6 +52,7 @@ AC_TRY_COMPILE([#include <sys/types.h>
 		[Define 1 if regex seems to be defined]))
 AC_TRY_LINK([#include <stdio.h>
 #include <stdlib.h>
+/* On Ubuntu 10.x, tsearch is in package libc6-dev. */
 /* The tdestroy function is GNU, not POSIX. */
 #define __USE_GNU 1
 #include <search.h>

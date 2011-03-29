@@ -1,3 +1,12 @@
+March 29, 2011
+  Added many new correctness tests.  Changed the format of
+  various items (line data prints in a more compact form, numbers
+  are more uniformly hexadecimal fixed length where that makes sense).
+  All the source files are uniformly indented to a multiple of 4
+  characters and all intent-tabs in the source have been removed.
+  Major logic changes involved changing error-reporting to be
+  more detailed and adding new tests for incorrect DWARF.
+  Now reports error summary by the compiler name, not just overall.
 January 26, 2010
   Changed the default frame-data register names from MIPS to
   a generic set of registers.  

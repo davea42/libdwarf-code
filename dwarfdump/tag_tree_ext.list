@@ -1,7 +1,7 @@
 /* 
   Copyright (C) 2000-2010 Silicon Graphics, Inc.  All Rights Reserved.
   Portions Copyright 2009-2010 SN Systems Ltd. All rights reserved.
-  Portions Copyright (C) 2009-2010 David Anderson. All Rights Reserved.
+  Portions Copyright (C) 2009-2011 David Anderson. All Rights Reserved.
 
   This program is free software; you can redistribute it and/or modify it
   under the terms of version 2.1 of the GNU Lesser General Public License
@@ -37,11 +37,10 @@ $Header: /plroot/cmplrs.src/v7.4.5m/.RCS/PL/dwarfdump/RCS/tag_attr.list,v 1.7 20
 */
 #include <dwarf.h>
 
-/*
-   list for semantic check of tag-tree relation.  
-   See tag_tree.list for details.
+/*  list for semantic check of tag-tree relation.  
+    See tag_tree.list for details.
    
- */
+*/
 
 /* Common DWARF extensions */
 

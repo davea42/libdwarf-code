@@ -1,48 +1,47 @@
 /* 
- * Copyright (C) 2000-2005 Silicon Graphics, Inc. All Rights Reserved.
- * Portions Copyright (C) 2007-2010 David Anderson. All Rights Reserved.
- *         
- * 
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of version 2 of the GNU General Public License as
- * published by the Free Software Foundation.
- * 
- * This program is distributed in the hope that it would be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- *      
- * Further, this software is distributed without any warranty that it is
- * free of the rightful claim of any third person regarding infringement
- * or the like.  Any license provided herein, whether implied or
- * otherwise, applies only to this software file.  Patent licenses, if
- * any, provided herein do not apply to combinations of this program with
- * other software, or any other product whatsoever.
- *   
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write the Free Software Foundation, Inc., 51
- * Franklin Street - Fifth Floor, Boston MA 02110-1301, USA.
- * 
- * Contact information:  Silicon Graphics, Inc., 1500 Crittenden Lane,
- * Mountain View, CA 94043, or:
- *      
- * http://www.sgi.com
- *      
- * For further information regarding this notice, see:
- *          
- * http://oss.sgi.com/projects/GenInfo/NoticeExplan 
- *      
- */     
+   Copyright (C) 2000-2005 Silicon Graphics, Inc. All Rights Reserved.
+   Portions Copyright (C) 2007-2011 David Anderson. All Rights Reserved.
+   Portions Copyright (C) 2010-2011 SN Systems Ltd. All Rights Reserved.
+   
+   This program is free software; you can redistribute it and/or modify it
+   under the terms of version 2 of the GNU General Public License as
+   published by the Free Software Foundation.
+   
+   This program is distributed in the hope that it would be useful, but
+   WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
         
-/* The address of the Free Software Foundation is
- * Free Software Foundation, Inc., 51 Franklin St, Fifth Floor, 
- * Boston, MA 02110-1301, USA.
- * SGI has moved from the Crittenden Lane address.
- */ 
+   Further, this software is distributed without any warranty that it is
+   free of the rightful claim of any third person regarding infringement
+   or the like.  Any license provided herein, whether implied or
+   otherwise, applies only to this software file.  Patent licenses, if
+   any, provided herein do not apply to combinations of this program with
+   other software, or any other product whatsoever.
+     
+   You should have received a copy of the GNU General Public License along
+   with this program; if not, write the Free Software Foundation, Inc., 51
+   Franklin Street - Fifth Floor, Boston MA 02110-1301, USA.
+   
+   Contact information:  Silicon Graphics, Inc., 1500 Crittenden Lane,
+   Mountain View, CA 94043, or:
+        
+   http://www.sgi.com
+        
+   For further information regarding this notice, see:
+            
+   http://oss.sgi.com/projects/GenInfo/NoticeExplan 
+        
+*/     
+        
+/*  The address of the Free Software Foundation is
+    Free Software Foundation, Inc., 51 Franklin St, Fifth Floor, 
+    Boston, MA 02110-1301, USA.
+    SGI has moved from the Crittenden Lane address.
+*/ 
 
 
 
-/* naming.c 
- */
+/* naming.c */
 #include "globals.h"
 #include "dwarf.h"
 #include "libdwarf.h"
@@ -51,30 +50,47 @@
 static const char *
 skipunder(const char *v)
 {
-     const char *cp = v;
-     int undercount = 0;
-     for(  ; *cp ; ++cp) {
+    const char *cp = v;
+    int undercount = 0;
+    for(  ; *cp ; ++cp) {
         if( *cp == '_') {
-             ++undercount;
-             if(undercount == 2) {
-                  return cp+1;
-             }
+            ++undercount;
+            if(undercount == 2) {
+                return cp+1;
+            }
         }
-     }
-     return "";
+    }
+    return "";
 }
 
 static const char *
 ellipname(int res, int val_in, const char *v,const char *ty,int printonerr)
 {
+#ifndef TRIVIAL_NAMING
+    if (check_dwarf_constants && checking_this_compiler()) {
+        DWARF_CHECK_COUNT(dwarf_constants_result,1);
+    }
+#endif
     if(res != DW_DLV_OK) {
         char buf[100];
         char *n;
         snprintf(buf,sizeof(buf),"<Unknown %s value 0x%x>",ty,val_in);
+        /* Capture any name error in DWARF constants */
+#ifndef TRIVIAL_NAMING
+        if(printonerr && check_dwarf_constants && checking_this_compiler()) {
+            if (check_verbose_mode)
+                fprintf(stderr,"%s of %d (0x%x) is unknown to dwarfdump. "
+                    "Continuing. \n",ty,val_in,val_in );
+            DWARF_ERROR_COUNT(dwarf_constants_result,1);
+            DWARF_CHECK_ERROR_PRINT_CU();
+        }
+#else
+        /* This is for the tree-generation, not dwarfdump itself. */
         if(printonerr) {
             fprintf(stderr,"%s of %d (0x%x) is unknown to dwarfdump. "
-                  "Continuing. \n",ty,val_in,val_in );
+                "Continuing. \n",ty,val_in,val_in );
         }
+#endif
         n = makename(buf);
         return n;
     }

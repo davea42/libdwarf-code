@@ -41,6 +41,7 @@ binprefix =
 
 FINALOBJECTS = \
 	addrmap.o \
+        checkutil.o \
 	dwarfdump.o \
 	dwconf.o \
 	esb.o \
@@ -62,7 +63,7 @@ FINALOBJECTS = \
 	print_weaknames.o  \
         strstrnocase.o \
         uri.o
-GEN_HFILES = \
+GEN_HFILES = common.o \
 	tmp-tt-table.c \
 	tmp-ta-table.c \
 	tmp-ta-ext-table.c \
@@ -70,21 +71,21 @@ GEN_HFILES = \
 
 all: dwarfdump
 
-HEADERS = $(srcdir)/globals.h \
-        $(srcdir)/print_frames.h \
+HEADERS = $(srcdir)/checkutil.h \
+        $(srcdir)/common.h \
         $(srcdir)/dwconf.h \
         $(srcdir)/esb.h \
-        $(srcdir)/common.h \
+        $(srcdir)/globals.h \
         $(srcdir)/makename.h \
         $(srcdir)/print_frames.h \
         $(srcdir)/uri.h
 
-$(FINALOBJECTS):  $(GEN_HFILES)  $(HEADERS) $(srcdir)/naming.c
+$(FINALOBJECTS): $(GEN_HFILES)  $(HEADERS) $(srcdir)/naming.c
 
 default: $(TARGETS)
 
-dwarfdump: $(FINALOBJECTS) makename.o naming.o
-	$(CC) $(CFLAGS) -o $@ $(FINALOBJECTS) makename.o naming.o $(LDFLAGS) 
+dwarfdump: $(FINALOBJECTS) makename.o naming.o common.o
+	$(CC) $(CFLAGS) -o $@ $(FINALOBJECTS) common.o makename.o naming.o $(LDFLAGS) 
 
 #tag_common.o: $(srcdir)/tag_common.c $(HEADERS)  dwarf_names.h
 #	$(CC) $(CFLAGS) -c $(srcdir)/tag_common.c
@@ -97,11 +98,16 @@ gennames: $(srcdir)/gennames.c $(DIRINC)/dwarf.h $(HEADERS) common.o
 naming.o:  $(srcdir)/naming.c $(srcdir)/naming.h
 	$(CC) $(CFLAGS) -c $(srcdir)/naming.c
 
-tag_tree_build:  $(srcdir)/tag_tree.c $(DIRINC)/dwarf.h $(HEADERS) tag_common.o makename.o common.o naming.o
-	$(CC) $(CFLAGS) $(srcdir)/tag_tree.c tag_common.o common.o makename.o naming.o $(LDFLAGS) -o tag_tree_build 
+# We need this as naming.o has external references we cannot have
+# in the tree builds.
+trivial_naming.o: $(srcdir)/naming.c
+	$(CC) $(CFLAGS) -DTRIVIAL_NAMING  -c $(srcdir)/naming.c -o trivial_naming.o 
 
-tag_attr_build:  $(srcdir)/tag_attr.c $(DIRINC)/dwarf.h $(HEADERS) tag_common.o makename.o common.o naming.o
-	$(CC) $(CFLAGS) $(srcdir)/tag_attr.c tag_common.o common.o makename.o naming.o $(LDFLAGS) -o tag_attr_build 
+tag_tree_build:  $(srcdir)/tag_tree.c $(DIRINC)/dwarf.h $(HEADERS) tag_common.o makename.o common.o trivial_naming.o
+	$(CC) $(CFLAGS) $(srcdir)/tag_tree.c tag_common.o common.o makename.o trivial_naming.o $(LDFLAGS) -o tag_tree_build 
+
+tag_attr_build:  $(srcdir)/tag_attr.c $(DIRINC)/dwarf.h $(HEADERS) tag_common.o makename.o common.o trivial_naming.o
+	$(CC) $(CFLAGS) $(srcdir)/tag_attr.c tag_common.o common.o makename.o trivial_naming.o $(LDFLAGS) -o tag_attr_build 
 
 tmp-tt-table.c tmp-tt-ext-table.c: $(srcdir)/tag_tree_ext.list $(srcdir)/tag_tree.list tag_tree_build
 	# gcc -E tag_tree.list does not work, so use a .c name

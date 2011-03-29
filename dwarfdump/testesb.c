@@ -20,19 +20,19 @@ check(string msg, struct esb_s *data, string v)
 
     if (strcmp(b, v)) {
         fprintf(stderr, "ERROR: %s  content error  %s != %s\n", msg, b,
-                v);
+            v);
     }
 
     l = esb_string_len(data);
 
     if (l != strlen(v)) {
         fprintf(stderr, "ERROR: %s length error  %lu != %lu\n", msg,
-                (unsigned long) l, (unsigned long) strlen(v));
+            (unsigned long) l, (unsigned long) strlen(v));
     }
     alloc = esb_get_allocated_size(data);
     if (l > alloc) {
         fprintf(stderr, "ERROR: %s allocation error  %lu > %lu\n", msg,
-                (unsigned long) l, (unsigned long) alloc);
+            (unsigned long) l, (unsigned long) alloc);
 
     }
 
@@ -70,9 +70,9 @@ main(void)
 
     esb_append(&data, "abcdefghij" "0123456789");
     check("test 3", &data, "abcdefghij"
-          "0123456789"
-          "abcdefghij"
-          "0123456789"
-          "abcdefghij" "0123456789" "abcdefghij" "0123456789");
+        "0123456789"
+        "abcdefghij"
+        "0123456789"
+        "abcdefghij" "0123456789" "abcdefghij" "0123456789");
     return 0;
 }

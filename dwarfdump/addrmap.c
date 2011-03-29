@@ -1,5 +1,5 @@
 /* 
-  Copyright 2010 David Anderson. All rights reserved.
+  Copyright 2010-2011 David Anderson. All rights reserved.
 
   This program is free software; you can redistribute it and/or modify it
   under the terms of version 2 of the GNU General Public License as
@@ -22,8 +22,8 @@
 
 */
 
-/* If memory full  we do not exit, we just keep going as if
-all were well. */
+/*  If memory full  we do not exit, we just keep going as if
+    all were well. */
 
 #include "globals.h"
 #include <stdio.h>
@@ -79,9 +79,9 @@ addr_map_free_func(void *mx)
 static void
 DUMPFIRST(int line)
 {
-   if(!firststring) {
-       return;
-   }
+    if(!firststring) {
+        return;
+    }
 }
 
 static int 
@@ -100,30 +100,30 @@ addr_map_compare_func(const void *l, const void *r)
 struct Addr_Map_Entry * 
 addr_map_insert( Dwarf_Unsigned addr,char *name,void **tree1)
 {
-        void *retval = 0;
-        struct Addr_Map_Entry *re = 0;
-        struct Addr_Map_Entry *e = addr_map_create_entry(addr,name);
-        DUMPFIRST(__LINE__);
-        /* tsearch records e's contents. We must not free it till
-           destroy time. */
-        retval = tsearch(e,tree1, addr_map_compare_func);
-        if(retval) {
-          re = *(struct Addr_Map_Entry **)retval;
-        }
-        return re;
+    void *retval = 0;
+    struct Addr_Map_Entry *re = 0;
+    struct Addr_Map_Entry *e = addr_map_create_entry(addr,name);
+    DUMPFIRST(__LINE__);
+    /*  tsearch records e's contents. We must not free it till
+        destroy time. */
+    retval = tsearch(e,tree1, addr_map_compare_func);
+    if(retval) {
+        re = *(struct Addr_Map_Entry **)retval;
+    }
+    return re;
 }
 struct Addr_Map_Entry * 
 addr_map_find(Dwarf_Unsigned addr,void **tree1)
 {
-        void *retval = 0;
-        struct Addr_Map_Entry *re = 0;
-        struct Addr_Map_Entry *e = addr_map_create_entry(addr,NULL);
-        DUMPFIRST(__LINE__);
-        retval = tfind(e,tree1, addr_map_compare_func);
-        if(retval) {
-          re = *(struct Addr_Map_Entry **)retval;
-        }
-        return re;
+    void *retval = 0;
+    struct Addr_Map_Entry *re = 0;
+    struct Addr_Map_Entry *e = addr_map_create_entry(addr,NULL);
+    DUMPFIRST(__LINE__);
+    retval = tfind(e,tree1, addr_map_compare_func);
+    if(retval) {
+        re = *(struct Addr_Map_Entry **)retval;
+    }
+    return re;
 }
 
 void

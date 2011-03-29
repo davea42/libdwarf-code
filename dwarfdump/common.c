@@ -1,6 +1,7 @@
 /* 
   Copyright (C) 2008-2010 SN Systems.  All Rights Reserved.
-  Portions Copyright (C) 2008-2010 David Anderson.  All Rights Reserved.
+  Portions Copyright (C) 2008-2011 David Anderson.  All Rights Reserved.
+  Portions Copyright (C) 2011 SN Systems Ltd.  .  All Rights Reserved.
 
   This program is free software; you can redistribute it and/or modify it
   under the terms of version 2 of the GNU General Public License as
@@ -32,39 +33,55 @@
 
 */
 
+/* These do little except on Windows */
+
 #include "common.h"
+#include <stdio.h>
+#define DWARFDUMP_VERSION " Thu Mar 24 16:31:46 PDT 2011  "
 
+/* The Linux/Unix version does not want a version string to print
+   unless -V is on the command line. */
 void
-print_version(const char * name)
+print_version_details(const char * name,int alwaysprint)
 {
-#ifdef _DEBUG
+#ifdef WIN32
+#   ifdef _DEBUG
     char *acType = "Debug";
-#else
+#   else
     char *acType = "Release";
-#endif /* _DEBUG */
-
-    char acVersion[60];
-    snprintf(acVersion,sizeof(acVersion),"[%s %s %s]",
-        __DATE__,__TIME__,acType);
+#   endif /* _DEBUG */
+    static char acVersion[32];
+    sprintf(acVersion,"[%s %s %s]",__DATE__,__TIME__,acType);
     printf("%s %s\n",name,acVersion);
+#else  /* !WIN32 */
+    if(alwaysprint) {
+        printf("%s\n",DWARFDUMP_VERSION); 
+    }
+#endif /* WIN32 */
 }
+
 
 void
 print_args(int argc, char *argv[])
 {
-    int index;
+#ifdef WIN32
+    int index = 1;
     printf("Arguments: ");
     for (index = 1; index < argc; ++index) {
         printf("%s ",argv[index]);
     }
     printf("\n");
+#endif /* WIN32 */
 }
 
 void
-print_usage_message(const char *options[])
+print_usage_message(const char *program_name, const char **text)
 {
-    int index;
-    for (index = 0; *options[index]; ++index) {
-        printf("%s\n",options[index]);
+    unsigned i = 0;
+#ifndef WIN32
+    fprintf(stderr,"Usage:  %s  <options> <object file>\n", program_name);
+#endif
+    for (i = 0; *text[i]; ++i) {
+        fprintf(stderr,"%s\n", text[i]);
     }
 }

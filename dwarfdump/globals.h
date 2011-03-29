@@ -46,15 +46,12 @@ $Header: /plroot/cmplrs.src/v7.4.5m/.RCS/PL/dwarfdump/RCS/globals.h,v 1.25 2006/
 #define _GNU_SOURCE 1
 #endif
 
-
-/* We want __uint32_t and __uint64_t and __int32_t __int64_t
-   properly defined but not duplicated, since duplicate typedefs
-   are not legal C.
-*/
-/*
- HAVE___UINT32_T
- HAVE___UINT64_T will be set by configure if
- our 4 types are predefined in compiler
+/*  We want __uint32_t and __uint64_t and __int32_t __int64_t
+    properly defined but not duplicated, since duplicate typedefs
+    are not legal C.
+    HAVE___UINT32_T
+    HAVE___UINT64_T will be set by configure if
+    our 4 types are predefined in compiler
 */
 
 
@@ -89,6 +86,12 @@ typedef unsigned long long  __uint64_t;
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+/* Windows specific */
+#ifdef WIN32
+#include "stdafx.h"
+#endif /* WIN32 */
+
 #ifdef HAVE_ELF_H
 #include <elf.h>
 #endif
@@ -104,12 +107,16 @@ typedef unsigned long long  __uint64_t;
 #ifdef HAVE_REGEX
 #include <regex.h>
 #endif
-
 typedef char * string;
+
+#include "checkutil.h"
+#ifndef BOOLEAN_TYPEDEFED
+#define BOOLEAN_TYPEDEFED
 typedef int boolean;
+#endif /* BOOLEAN_TYPEDEFED */
 #ifndef FALSE
 #define FALSE 0
-#endif 
+#endif
 #ifndef TRUE
 #define TRUE 1
 #endif
@@ -125,7 +132,64 @@ typedef struct {
     int errors;
 } Dwarf_Check_Result;
 
+extern boolean do_check_dwarf;
+extern boolean do_print_dwarf;
+
+extern boolean record_dwarf_error;   /* A test has failed, this
+  is normally set FALSE shortly after being set TRUE, it is
+  a short-range hint we should print something we might not
+  otherwise print (under the circumstances). */
+
+/* Compilation Unit information for improved error messages.
+   If the strings are too short we just truncate so fixed length
+   here is fine.  */
+#define COMPILE_UNIT_NAME_LEN 512
+extern char PU_name[COMPILE_UNIT_NAME_LEN]; /* PU Name */
+extern char CU_name[COMPILE_UNIT_NAME_LEN]; /* CU Name */
+extern char CU_producer[COMPILE_UNIT_NAME_LEN];  /* CU Producer Name */
+
+extern boolean seen_PU;                     /* Detected a PU. */
+extern boolean seen_CU;                     /* Detected a CU. */
+extern boolean need_CU_name;                /* Need CU name. */
+extern boolean need_CU_base_address;        /* Need CU Base address. */
+extern boolean need_CU_high_address;        /* Need CU High address. */
+extern boolean need_PU_valid_code;          /* Need PU valid code. */
+
+extern boolean seen_PU_base_address;        /* Detected a Base address for PU */
+extern boolean seen_PU_high_address;        /* Detected a High address for PU */
+extern Dwarf_Addr PU_base_address;          /* PU Base address */
+extern Dwarf_Addr PU_high_address;          /* PU High address */
+
+extern Dwarf_Off  DIE_offset;               /* DIE offset in compile unit. */
+extern Dwarf_Off  DIE_overall_offset;       /* DIE offset in .debug_info. */
+
+/* Current CU information for better error reporting. */
+extern Dwarf_Off  DIE_CU_offset;            /* CU DIE offset in compile unit */
+extern Dwarf_Off  DIE_CU_overall_offset;    /* CU DIE offset in .debug_info */
+extern int current_section_id;              /* Section being process. */
+
+extern Dwarf_Addr CU_base_address;          /* CU Base address. */
+extern Dwarf_Addr CU_high_address;          /* CU High address. */
+
+extern Dwarf_Addr elf_max_address;          /* Largest representable 
+    address offset. */
+extern Dwarf_Half elf_address_size;         /* Target pointer size. */
+
+/*  Ranges and Location tables for better error checking: see
+    dwarfdump.c comments for more information. */
+extern Bucket_Group *pRangesInfo;
+extern Bucket_Group *pLinkonceInfo;
+extern Bucket_Group *pVisitedInfo;
+
+/*  Display parent/children when in wide format. */
+extern boolean display_parent_tree;
+extern boolean display_children_tree;
+extern int stop_indent_level;
+
+/*  Print search results when in wide format. */
+extern boolean search_wide_format;
 extern boolean search_is_on;
+
 extern char *search_any_text;
 extern char *search_match_text;
 extern char *search_regex_text;
@@ -134,12 +198,44 @@ extern regex_t search_re;
 #endif
 extern boolean is_strstrnocase(const char *data, const char *pattern);
 
+/* Options to enable debug tracing. */
+#define MAX_TRACE_LEVEL 10
+extern int nTrace[MAX_TRACE_LEVEL + 1];
+
+#define DUMP_RANGES_INFO            1   /* Dump RangesInfo Table. */
+#define DUMP_LOCATION_SECTION_INFO  2   /* Dump Location (.debug_loc) Info. */
+#define DUMP_RANGES_SECTION_INFO    3   /* Dump Ranges (.debug_ranges) Info. */
+#define DUMP_LINKONCE_INFO          4   /* Dump Linkonce Table. */
+#define DUMP_VISITED_INFO           5   /* Dump Visited Info. */
+
+#define dump_ranges_info            nTrace[DUMP_RANGES_INFO]
+#define dump_location_section_info  nTrace[DUMP_LOCATION_SECTION_INFO]
+#define dump_ranges_section_info    nTrace[DUMP_RANGES_SECTION_INFO]
+#define dump_linkonce_info          nTrace[DUMP_LINKONCE_INFO]
+#define dump_visited_info           nTrace[DUMP_VISITED_INFO]
+
+/* Section IDs */
+#define DEBUG_ABBREV      1
+#define DEBUG_ARANGES     2
+#define DEBUG_FRAME       3
+#define DEBUG_INFO        4
+#define DEBUG_LINE        5
+#define DEBUG_LOC         6
+#define DEBUG_MACINFO     7
+#define DEBUG_PUBNAMES    8
+#define DEBUG_RANGES      9
+#define DEBUG_STATIC_VARS 10
+#define DEBUG_STATIC_FUNC 11
+#define DEBUG_STR         12
+#define DEBUG_WEAKNAMES   13
+
 extern int verbose;
 extern boolean dense;
 extern boolean ellipsis;
 extern boolean use_mips_regnames;
 extern boolean show_global_offsets;
 extern boolean show_form_used;
+extern boolean display_offsets;  
 
 extern boolean check_pubname_attr;
 extern boolean check_attr_tag;
@@ -147,30 +243,65 @@ extern boolean check_tag_tree;
 extern boolean check_type_offset;
 extern boolean check_decl_file;
 extern boolean check_lines;
+extern boolean check_ranges;       /* Ranges (aranges & ranges) check */
 extern boolean check_fdes;
 extern boolean check_aranges;
 extern boolean check_harmless;
+extern boolean check_abbreviations; 
+extern boolean check_dwarf_constants;  
+extern boolean check_di_gaps; 
+extern boolean check_forward_decl; 
+extern boolean check_self_references; 
 extern boolean suppress_nested_name_search;
 extern boolean suppress_check_extensions_tables;
 
 extern int break_after_n_units;
 
-extern Dwarf_Check_Result abbrev_code_result;
-extern Dwarf_Check_Result pubname_attr_result;
-extern Dwarf_Check_Result reloc_offset_result;
-extern Dwarf_Check_Result attr_tag_result;
-extern Dwarf_Check_Result tag_tree_result;
-extern Dwarf_Check_Result type_offset_result;
-extern Dwarf_Check_Result decl_file_result;
-extern Dwarf_Check_Result ranges_result;
-extern Dwarf_Check_Result lines_result;
-extern Dwarf_Check_Result aranges_result;
-extern Dwarf_Check_Result harmless_result;
-extern Dwarf_Check_Result fde_duplication;
+extern boolean check_names;          /* Check for invalid names */
+extern boolean check_verbose_mode;   /* During '-k' mode, display errors */
+extern boolean check_frames;         /* Frames check */
+extern boolean check_frames_extended;/* Extensive frames check */
+extern boolean check_locations;      /* Location list check */
+
+/* Check categories corresponding to the -k option */
+typedef enum /* Dwarf_Check_Categories */ {
+    abbrev_code_result,
+    pubname_attr_result,
+    reloc_offset_result,
+    attr_tag_result,
+    tag_tree_result,
+    type_offset_result,
+    decl_file_result,
+    ranges_result,
+    lines_result,
+    aranges_result,
+    /*  Harmless errors are errors detected inside libdwarf but
+        not reported via DW_DLE_ERROR returns because the errors
+        won't really affect client code.  The 'harmless' errors
+        are reported and otherwise ignored.  It is difficult to report
+        the error when the error is noticed by libdwarf, the error
+        is reported at a later time.
+        The other errors dwarfdump reports are also generally harmless 
+        but are detected by dwarfdump so it's possble to report the
+        error as soon as the error is discovered. */
+    harmless_result,
+    fde_duplication,
+    frames_result,
+    locations_result,
+    names_result,
+    abbreviations_result,
+    dwarf_constants_result,
+    di_gaps_result,
+    forward_decl_result,
+    self_references_result,
+    total_check_result,
+    LAST_CATEGORY  /* Must be last */
+} Dwarf_Check_Categories;
 
 extern boolean info_flag;
 extern boolean line_flag;
 extern boolean use_old_dwarf_loclist;
+extern boolean producer_children_flag;   /* List of CUs per compiler */
 
 extern char cu_name[ ];
 extern boolean cu_name_flag;
@@ -178,6 +309,9 @@ extern Dwarf_Unsigned cu_offset;
 extern Dwarf_Off fde_offset_for_cu_low;
 extern Dwarf_Off fde_offset_for_cu_high;
 
+/* Process TAGs for checking mode and reset pRangesInfo table 
+   if appropriate. */
+extern void tag_specific_checks_setup(Dwarf_Half val,int die_indent_level);
 
 extern char *program_name;
 extern int check_error;
@@ -186,9 +320,10 @@ extern void print_error_and_continue (Dwarf_Debug dbg, string msg,int res, Dwarf
 extern void print_error (Dwarf_Debug dbg, string msg,int res, Dwarf_Error err);
 
 extern void print_line_numbers_this_cu (Dwarf_Debug dbg, Dwarf_Die in_die);
+
 struct dwconf_s;
 extern void print_frames (Dwarf_Debug dbg, int print_debug_frame,
-                int print_eh_frame,struct dwconf_s *);
+    int print_eh_frame,struct dwconf_s *);
 extern void print_ranges (Dwarf_Debug dbg);
 extern void print_pubnames (Dwarf_Debug dbg);
 extern void print_macinfo (Dwarf_Debug dbg);
@@ -197,13 +332,14 @@ extern void print_locs (Dwarf_Debug dbg);
 extern void print_abbrevs (Dwarf_Debug dbg);
 extern void print_strings (Dwarf_Debug dbg);
 extern void print_aranges (Dwarf_Debug dbg);
-extern void print_relocinfo (Dwarf_Debug dbg);
+extern void print_relocinfo (Dwarf_Debug dbg,unsigned reloc_map);
 extern void print_static_funcs(Dwarf_Debug dbg);
 extern void print_static_vars(Dwarf_Debug dbg);
 enum type_type_e {SGI_TYPENAME, DWARF_PUBTYPES} ;
 extern void print_types(Dwarf_Debug dbg,enum type_type_e type_type);
 extern void print_weaknames(Dwarf_Debug dbg);
 extern void print_exception_tables(Dwarf_Debug dbg);
+
 struct esb_s;
 extern void print_ranges_list_to_extra(Dwarf_Debug dbg,
     Dwarf_Unsigned off,
@@ -213,70 +349,105 @@ extern void print_ranges_list_to_extra(Dwarf_Debug dbg,
     struct esb_s *stringbuf);
 boolean should_skip_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die, Dwarf_Error err);
 
+/* Returns the DW_AT_name of the CU */
+string old_get_cu_name(Dwarf_Debug dbg,Dwarf_Die cu_die,Dwarf_Error err);
+
+/* Returns the producer of the CU */
+int get_cu_name(Dwarf_Debug dbg,Dwarf_Die cu_die,
+    Dwarf_Error err,char **short_name,char **long_name);
+int get_producer_name(Dwarf_Debug dbg,Dwarf_Die cu_die,
+    Dwarf_Error err,char **producer_name);
+
+/* Get number of abbreviations for a CU */
+extern void get_abbrev_array_info(Dwarf_Debug dbg,Dwarf_Unsigned offset);
+/* Validate an abbreviation */
+extern void validate_abbrev_code(Dwarf_Debug dbg,Dwarf_Unsigned abbrev_code);
 
 extern void print_die_and_children(
-        Dwarf_Debug dbg, 
-        Dwarf_Die in_die,
-        char **srcfiles,
-        Dwarf_Signed cnt);
+    Dwarf_Debug dbg, 
+    Dwarf_Die in_die,
+    char **srcfiles,
+    Dwarf_Signed cnt);
 extern boolean print_one_die(
-        Dwarf_Debug dbg, 
-        Dwarf_Die die, 
-        boolean print_information,
-        int die_indent_level,
-        char **srcfiles,
-        Dwarf_Signed cnt,
-        boolean ignore_die_stack);
+    Dwarf_Debug dbg, 
+    Dwarf_Die die, 
+    boolean print_information,
+    int die_indent_level,
+    char **srcfiles,
+    Dwarf_Signed cnt,
+    boolean ignore_die_stack);
 
-#define DWARF_CHECK_ERROR(var,str) {\
-        var.errors++; \
-        printf("*** DWARF CHECK: %s ***\n", str);\
-        check_error ++; \
-}
+/* Check for specific compiler */
+extern boolean checking_this_compiler();
+extern void update_compiler_target(const char *producer_name);
+extern void add_cu_name_compiler_target(char *name);
 
-#define DWARF_CHECK_ERROR2(var,str1, str2) {\
-        var.errors++; \
-        printf("*** DWARF CHECK: %s: %s ***\n", str1, str2);\
-        check_error ++; \
-}
-
-#define DWARF_CHECK_ERROR3(var,str1, str2,strexpl) {\
-        var.errors++; \
-        printf("*** DWARF CHECK: %s -> %s: %s ***\n", str1, str2,strexpl);\
-        check_error ++; \
-}
+/*  General error reporting routines. These were
+    macros for a short time and when changed into functions 
+    they kept (for now) their capitalization. 
+    The capitalization will likely change. */
+extern void PRINT_CU_INFO();
+extern void DWARF_CHECK_COUNT(Dwarf_Check_Categories category, int inc);
+extern void DWARF_ERROR_COUNT(Dwarf_Check_Categories category, int inc);
+extern void DWARF_CHECK_ERROR_PRINT_CU();
+extern void DWARF_CHECK_ERROR(Dwarf_Check_Categories category,
+    const char *str);
+extern void DWARF_CHECK_ERROR2(Dwarf_Check_Categories category,
+    const char *str1, const char *str2);
+extern void DWARF_CHECK_ERROR3(Dwarf_Check_Categories category,
+    const char *str1, const char *str2, const char *strexpl);
 
 struct esb_s;
+
 extern Dwarf_Die current_cu_die_for_print_frames; /* This is
-        an awful hack, making this public. But it enables
-        cleaning up (doing all dealloc needed). */
+    an awful hack, making current_cu_die_for_print_frames public. 
+    But it enables cleaning up (doing all dealloc needed). */
+
 extern void printreg(Dwarf_Signed reg,struct dwconf_s *config_data);
 extern void print_frame_inst_bytes(Dwarf_Debug dbg,
-                       Dwarf_Ptr cie_init_inst, Dwarf_Signed len,
-                       Dwarf_Signed data_alignment_factor,
-                       int code_alignment_factor, Dwarf_Half addr_size,
-                        struct dwconf_s *config_data);
+    Dwarf_Ptr cie_init_inst, Dwarf_Signed len,
+    Dwarf_Signed data_alignment_factor,
+    int code_alignment_factor, Dwarf_Half addr_size,
+    struct dwconf_s *config_data);
+
+int
+get_proc_name(Dwarf_Debug dbg, Dwarf_Die die, Dwarf_Addr low_pc,
+    char *proc_name_buf, int proc_name_buf_len, void **pcMap);
+
+void get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
+    Dwarf_Die die,
+    Dwarf_Attribute attrib,
+    char **srcfiles,
+    Dwarf_Signed cnt, struct esb_s *esbp,
+    int show_form);
 
 
 extern Dwarf_Unsigned local_dwarf_decode_u_leb128(unsigned char *leb128,
-                            unsigned int *leb128_length);
+    unsigned int *leb128_length);
 
 extern Dwarf_Signed local_dwarf_decode_s_leb128(unsigned char *leb128,
-                            unsigned int *leb128_length);
+    unsigned int *leb128_length);
 
 extern void dump_block(char *prefix, char *data, Dwarf_Signed len);
 
 int
 dwarfdump_print_one_locdesc(Dwarf_Debug dbg,
-                         Dwarf_Locdesc * llbuf,
-                         int skip_locdesc_header,
-                         struct esb_s *string_out);
+    Dwarf_Locdesc * llbuf,
+    int skip_locdesc_header,
+    struct esb_s *string_out);
 void clean_up_die_esb();
 void clean_up_syms_malloc_data();
 
 void print_any_harmless_errors(Dwarf_Debug dbg);
 
-
-
+/* Definitions for printing relocations.  */
+#define DW_SECTION_REL_DEBUG_INFO     0
+#define DW_SECTION_REL_DEBUG_LINE     1
+#define DW_SECTION_REL_DEBUG_PUBNAMES 2
+#define DW_SECTION_REL_DEBUG_ABBREV   3
+#define DW_SECTION_REL_DEBUG_ARANGES  4
+#define DW_SECTION_REL_DEBUG_FRAME    5
+#define DW_SECTION_REL_DEBUG_LOC      6
+#define DW_SECTION_REL_DEBUG_RANGES   7
 
 #endif /* globals_INCLUDED */

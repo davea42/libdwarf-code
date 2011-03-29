@@ -2,7 +2,7 @@
   Copyright (C) 2000-2006 Silicon Graphics, Inc.  All Rights Reserved.
   Portions Copyright 2007-2010 Sun Microsystems, Inc. All rights reserved.
   Portions Copyright 2009-2010 SN Systems Ltd. All rights reserved.
-  Portions Copyright 2008-2010 David Anderson. All rights reserved.
+  Portions Copyright 2008-2011 David Anderson. All rights reserved.
 
   This program is free software; you can redistribute it and/or modify it
   under the terms of version 2 of the GNU General Public License as
@@ -35,11 +35,11 @@
 
 
 $Header: /plroot/cmplrs.src/v7.4.5m/.RCS/PL/dwarfdump/RCS/print_sections.c,v 1.69 2006/04/17 00:09:56 davea Exp $ */
-/* The address of the Free Software Foundation is
- * Free Software Foundation, Inc., 51 Franklin St, Fifth Floor, 
- * Boston, MA 02110-1301, USA.  
- * SGI has moved from the Crittenden Lane address.
- */
+/*  The address of the Free Software Foundation is
+    Free Software Foundation, Inc., 51 Franklin St, Fifth Floor, 
+    Boston, MA 02110-1301, USA.  
+    SGI has moved from the Crittenden Lane address.
+*/
 
 #include "globals.h"
 #include "naming.h"
@@ -50,11 +50,11 @@ $Header: /plroot/cmplrs.src/v7.4.5m/.RCS/PL/dwarfdump/RCS/print_sections.c,v 1.6
 #include "print_frames.h"
 
 /*
- * Print line number information:
- *      filename
- *      new basic-block
- *      [line] [address] <new statement>
- */
+    Print line number information:
+        filename
+        new basic-block
+        [line] [address] <new statement>
+*/
 
 int dwarf_names_print_on_error = 1;
 
@@ -63,16 +63,16 @@ Dwarf_Die current_cu_die_for_print_frames;
 
 void
 deal_with_name_offset_err(Dwarf_Debug dbg,
-                          char *err_loc,
-                          char *name, Dwarf_Unsigned die_off,
-                          int nres, Dwarf_Error err)
+    char *err_loc,
+    char *name, Dwarf_Unsigned die_off,
+    int nres, Dwarf_Error err)
 {
     if (nres == DW_DLV_ERROR) {
         Dwarf_Unsigned myerr = dwarf_errno(err);
 
         if (myerr == DW_DLE_OFFSET_BAD) {
             printf("Error: bad offset %s, %s %" DW_PR_DUu 
-                " (0x%" DW_PR_DUx ")\n",
+                " (0x%08" DW_PR_DUx ")\n",
                 err_loc,
                 name,
                 die_off, 
@@ -107,17 +107,17 @@ get_info_max_offset(Dwarf_Debug dbg)
     Dwarf_Unsigned debug_pubtypes_size = 0;
 
     dwarf_get_section_max_offsets(dbg,
-                                  &debug_info_size,
-                                  &debug_abbrev_size,
-                                  &debug_line_size,
-                                  &debug_loc_size,
-                                  &debug_aranges_size,
-                                  &debug_macinfo_size,
-                                  &debug_pubnames_size,
-                                  &debug_str_size,
-                                  &debug_frame_size,
-                                  &debug_ranges_size,
-                                  &debug_pubtypes_size);
+        &debug_info_size,
+        &debug_abbrev_size,
+        &debug_line_size,
+        &debug_loc_size,
+        &debug_aranges_size,
+        &debug_macinfo_size,
+        &debug_pubnames_size,
+        &debug_str_size,
+        &debug_frame_size,
+        &debug_ranges_size,
+        &debug_pubtypes_size);
 
     return debug_info_size;
 }
@@ -127,7 +127,7 @@ get_info_max_offset(Dwarf_Debug dbg)
 */
 Dwarf_Unsigned
 local_dwarf_decode_u_leb128(unsigned char *leb128,
-                            unsigned int *leb128_length)
+    unsigned int *leb128_length)
 {
     unsigned char byte = 0;
     Dwarf_Unsigned number = 0;
@@ -153,7 +153,7 @@ local_dwarf_decode_u_leb128(unsigned char *leb128,
 #define BITSINBYTE 8
 Dwarf_Signed
 local_dwarf_decode_s_leb128(unsigned char *leb128,
-                            unsigned int *leb128_length)
+    unsigned int *leb128_length)
 {
     Dwarf_Signed number = 0;
     Dwarf_Bool sign = 0;
@@ -161,8 +161,8 @@ local_dwarf_decode_s_leb128(unsigned char *leb128,
     unsigned char byte = *leb128;
     Dwarf_Signed byte_length = 1;
 
-    /* byte_length being the number of bytes of data absorbed so far in
-       turning the leb into a Dwarf_Signed. */
+    /*  byte_length being the number of bytes of data absorbed so far in
+        turning the leb into a Dwarf_Signed. */
 
     for (;;) {
         sign = byte & 0x40;

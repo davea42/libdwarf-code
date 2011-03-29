@@ -41,6 +41,7 @@ $Header: /plroot/cmplrs.src/v7.4.5m/.RCS/PL/dwarfdump/RCS/esb.c,v 1.1 2005/08/04
 */
 
 #include "globals.h"
+#include <stdarg.h>  /* For va_start etc. */
 #include "esb.h"
 
 #define INITIAL_ALLOC 1024
@@ -61,8 +62,8 @@ init_esb_string(struct esb_s *data, size_t min_len)
     d = malloc(min_len);
     if (!d) {
         fprintf(stderr,
-                "dwarfdump is out of memory allocating %lu bytes\n",
-                (unsigned long) min_len);
+            "dwarfdump is out of memory allocating %lu bytes\n",
+            (unsigned long) min_len);
         exit(5);
     }
     data->esb_string = d;
@@ -84,7 +85,7 @@ allocate_more(struct esb_s *data, size_t len)
     newd = realloc(data->esb_string, new_size);
     if (!newd) {
         fprintf(stderr, "dwarfdump is out of memory re-allocating "
-                "%lu bytes\n", (unsigned long) new_size);
+            "%lu bytes\n", (unsigned long) new_size);
         exit(5);
     }
     data->esb_string = newd;
@@ -92,7 +93,7 @@ allocate_more(struct esb_s *data, size_t len)
 }
 
 static void
-  esb_appendn_internal(struct esb_s *data, const char * in_string, size_t len);
+esb_appendn_internal(struct esb_s *data, const char * in_string, size_t len);
 
 void
 esb_appendn(struct esb_s *data, const char * in_string, size_t len)
@@ -101,15 +102,15 @@ esb_appendn(struct esb_s *data, const char * in_string, size_t len)
 
     if (full_len < len) {
         fprintf(stderr, "dwarfdump internal error, bad string length "
-                " %lu  < %lu \n",
-                (unsigned long) full_len, (unsigned long) len);
+            " %lu  < %lu \n",
+            (unsigned long) full_len, (unsigned long) len);
         len = full_len;
     }
 
     esb_appendn_internal(data, in_string, len);
 }
 
-/* The length is gotten from the in_string itself. */
+/*  The length is gotten from the in_string itself. */
 void
 esb_append(struct esb_s *data, const char * in_string)
 {
@@ -118,7 +119,7 @@ esb_append(struct esb_s *data, const char * in_string)
     esb_appendn_internal(data, in_string, len);
 }
 
-/* The 'len' is believed. Do not pass in strings < len bytes long. */
+/*  The 'len' is believed. Do not pass in strings < len bytes long. */
 static void
 esb_appendn_internal(struct esb_s *data, const char * in_string, size_t len)
 {
@@ -140,7 +141,7 @@ esb_appendn_internal(struct esb_s *data, const char * in_string, size_t len)
     data->esb_string[data->esb_used_bytes] = 0;
 }
 
-/* Always returns an empty string or a non-empty string. Never 0. */
+/*  Always returns an empty string or a non-empty string. Never 0. */
 string
 esb_get_string(struct esb_s *data)
 {
@@ -151,8 +152,8 @@ esb_get_string(struct esb_s *data)
 }
 
 
-/* Sets esb_used_bytes to zero. The string is not freed and
-   esb_allocated_size is unchanged.  */
+/*  Sets esb_used_bytes to zero. The string is not freed and
+    esb_allocated_size is unchanged.  */
 void
 esb_empty_string(struct esb_s *data)
 {
@@ -165,7 +166,7 @@ esb_empty_string(struct esb_s *data)
 }
 
 
-/* Return esb_used_bytes. */
+/*  Return esb_used_bytes. */
 size_t
 esb_string_len(struct esb_s *data)
 {
@@ -173,10 +174,10 @@ esb_string_len(struct esb_s *data)
 }
 
 
-/* The following are for testing esb, not use by dwarfdump. */
+/*  The following are for testing esb, not use by dwarfdump. */
 
-/* *data is presumed to contain garbage, not values, and
-   is properly initialized. */
+/*  *data is presumed to contain garbage, not values, and
+    is properly initialized. */
 void
 esb_constructor(struct esb_s *data)
 {
@@ -194,9 +195,9 @@ esb_destructor(struct esb_s *data)
 }
 
 
-/* To get all paths in the code tested, this sets the
-   allocation/reallocation to the given value, which can be quite small
-   but must not be zero. */
+/*  To get all paths in the code tested, this sets the
+    allocation/reallocation to the given value, which can be quite small
+    but must not be zero. */
 void
 esb_alloc_size(size_t size)
 {
@@ -207,4 +208,35 @@ size_t
 esb_get_allocated_size(struct esb_s *data)
 {
     return data->esb_allocated_size;
+}
+
+/*  Append a formatted string */
+void
+esb_append_printf(struct esb_s *data,const char *in_string, ...)
+{
+#if WIN32
+    #define NULL_DEVICE_FILE "NUL"
+#else
+    #define NULL_DEVICE_FILE "/dev/null"
+#endif /* WIN32 */
+
+    static FILE *null_file = NULL;
+
+    int needed_size = 0;
+    int length = 0;
+    va_list ap;
+    va_start(ap,in_string);
+    if (null_file == NULL) {
+        null_file = fopen(NULL_DEVICE_FILE,"w");
+    }
+    length = vfprintf(null_file,in_string,ap);
+
+    /* Check if we require allocate more space */
+    needed_size = data->esb_used_bytes + length;
+    if (needed_size > data->esb_allocated_size) {
+        allocate_more(data,length);
+    }
+    vsprintf(&data->esb_string[data->esb_used_bytes],in_string,ap);
+    data->esb_used_bytes += length;
+    va_end(ap);
 }

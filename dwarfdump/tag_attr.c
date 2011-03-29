@@ -1,7 +1,7 @@
 /* 
   Copyright (C) 2000-2005 Silicon Graphics, Inc.  All Rights Reserved.
   Portions Copyright (C) 2009-2010 SN Systems Ltd. All Rights Reserved.
-  Portions Copyright (C) 2009-2010 David Anderson. All Rights Reserved.
+  Portions Copyright (C) 2009-2011 David Anderson. All Rights Reserved.
 
   This program is free software; you can redistribute it and/or modify it
   under the terms of version 2 of the GNU General Public License as
@@ -41,11 +41,11 @@ $Header: /plroot/cmplrs.src/v7.4.5m/.RCS/PL/dwarfdump/RCS/tag_attr.c,v 1.8 2005/
 #include <unistd.h>             /* For getopt. */  
 
 #include "globals.h"
-#include "naming.h"
+#include "libdwarf.h"
 #include "common.h"
 #include "tag_common.h"
 
-boolean ellipsis = FALSE; /* So we can use naming.c */
+boolean ellipsis = FALSE; /* So we can use dwarf_names.c */
 
 /* Expected input format 
 
@@ -69,14 +69,15 @@ unsigned int tag_attr_combination_table[ATTR_TABLE_ROW_MAXIMUM][ATTR_TABLE_COLUM
 
 
 static const char *usage[] = {
-  "Usage: tag_attr_build <options>\n",
-  "    -i input-table-path\n",
-  "    -o output-table-path\n",
-  "    -s (Generate standard attribute table)\n",
-  "    -e (Generate extended attribute table (common extensions))\n",
+  "Usage: tag_attr_build <options>",
+  "    -i input-table-path",
+  "    -o output-table-path",
+  "    -s (Generate standard attribute table)",
+  "    -e (Generate extended attribute table (common extensions))",
   ""
 };
 
+char *program_name = 0;
 char *input_name = 0;
 char *output_name = 0;
 int standard_flag = FALSE;
@@ -88,6 +89,8 @@ process_args(int argc, char *argv[])
 {
     int c = 0;
     boolean usage_error = FALSE;
+
+    program_name = argv[0];
 
     while ((c = getopt(argc, argv, "i:o:se")) != EOF) {
         switch (c) {
@@ -110,7 +113,7 @@ process_args(int argc, char *argv[])
     }
 
     if (usage_error || 1 == optind || optind != argc) {
-        print_usage_message(usage);
+        print_usage_message(argv[0],usage);
         exit(FAILED);
     }
 }
@@ -129,41 +132,41 @@ main(int argc, char **argv)
     FILE * fileInp = 0;
     FILE * fileOut = 0;
 
-    print_version(argv[0]);
+    print_version_details(argv[0],FALSE);
     process_args(argc,argv);
     print_args(argc,argv);
 
     if (!input_name ) {
         fprintf(stderr,"Input name required, not supplied.\n");
-        print_usage_message(usage);
+        print_usage_message(argv[0],usage);
         exit(FAILED);
     }
     fileInp = fopen(input_name,"r");
     if (!fileInp) {
         fprintf(stderr,"Invalid input filename, could not open '%s'\n",
             input_name);
-        print_usage_message(usage);
+        print_usage_message(argv[0],usage);
         exit(FAILED);
     }
 
 
     if (!output_name ) {
         fprintf(stderr,"Output name required, not supplied.\n");
-        print_usage_message(usage);
+        print_usage_message(argv[0],usage);
         exit(FAILED);
     }
     fileOut = fopen(output_name,"w");
     if (!fileOut) {
         fprintf(stderr,"Invalid output filename, could not open: '%s'\n",
             output_name);
-        print_usage_message(usage);
+        print_usage_message(argv[0],usage);
         exit(FAILED);
     }
     if ((standard_flag && extended_flag) || 
         (!standard_flag && !extended_flag)) {
         fprintf(stderr,"Invalid table type\n");
         fprintf(stderr,"Choose -e  or -s .\n"); 
-        print_usage_message(usage);
+        print_usage_message(argv[0],usage);
         exit(FAILED);
     }
 
@@ -194,11 +197,11 @@ main(int argc, char **argv)
         }
         if(standard_flag) {
             if (tag >= table_rows ) {
-               bad_line_input("tag value exceeds standard table size");
+                bad_line_input("tag value exceeds standard table size");
             }
         } else {
             if(current_row >= table_rows) {
-               bad_line_input("too many extended table rows.");
+                bad_line_input("too many extended table rows.");
             }
             tag_attr_combination_table[current_row][0] = tag;
         }
@@ -235,21 +238,22 @@ main(int argc, char **argv)
     }
     fprintf(fileOut,"/* Generated code, do not edit. */\n");
     fprintf(fileOut,"/* Generated on %s  %s */\n",__DATE__,__TIME__);
+    fprintf(fileOut,"\n/* BEGIN FILE */\n\n");
     if (standard_flag) {
-      fprintf(fileOut,"#define ATTR_TREE_ROW_COUNT %d\n\n",table_rows);
-      fprintf(fileOut,"#define ATTR_TREE_COLUMN_COUNT %d\n\n",table_columns);
-      fprintf(fileOut,
-          "static unsigned int tag_attr_combination_table"
-          "[ATTR_TREE_ROW_COUNT][ATTR_TREE_COLUMN_COUNT] = {\n");
+        fprintf(fileOut,"#define ATTR_TREE_ROW_COUNT %d\n\n",table_rows);
+        fprintf(fileOut,"#define ATTR_TREE_COLUMN_COUNT %d\n\n",table_columns);
+        fprintf(fileOut,
+            "static unsigned int tag_attr_combination_table"
+            "[ATTR_TREE_ROW_COUNT][ATTR_TREE_COLUMN_COUNT] = {\n");
     }
     else {
-      fprintf(fileOut,"/* Common extensions */\n");
-      fprintf(fileOut,"#define ATTR_TREE_EXT_ROW_COUNT %d\n\n",table_rows);
-      fprintf(fileOut,"#define ATTR_TREE_EXT_COLUMN_COUNT %d\n\n",
-          table_columns);
-      fprintf(fileOut,
-          "static unsigned int tag_attr_combination_ext_table"
-          "[ATTR_TREE_EXT_ROW_COUNT][ATTR_TREE_EXT_COLUMN_COUNT] = {\n");
+        fprintf(fileOut,"/* Common extensions */\n");
+        fprintf(fileOut,"#define ATTR_TREE_EXT_ROW_COUNT %d\n\n",table_rows);
+        fprintf(fileOut,"#define ATTR_TREE_EXT_COLUMN_COUNT %d\n\n",
+            table_columns);
+        fprintf(fileOut,
+            "static unsigned int tag_attr_combination_ext_table"
+            "[ATTR_TREE_EXT_ROW_COUNT][ATTR_TREE_EXT_COLUMN_COUNT] = {\n");
     }
 
     for (i = 0; i < table_rows; i++) {
@@ -257,11 +261,11 @@ main(int argc, char **argv)
         int printonerr = 0;
         const char *name = 0;
         if(standard_flag) {
-            name = get_TAG_name(i,printonerr);
+            dwarf_get_TAG_name(i,&name);
             fprintf(fileOut,"/* %d %-37s*/\n",i,name); 
         } else {
             int k = tag_attr_combination_table[i][0];
-            name = get_TAG_name(k,printonerr);           
+            dwarf_get_TAG_name(k,&name);           
             fprintf(fileOut,"/* %u %-37s*/\n",k,name);
         }
         fprintf(fileOut,"    { ");
@@ -271,6 +275,9 @@ main(int argc, char **argv)
         fprintf(fileOut,"},\n");
     }
     fprintf(fileOut,"};\n");
+    fprintf(fileOut,"\n/* END FILE */\n");
+    fclose(fileInp);
+    fclose(fileOut);
     return (0);
 }
 /* A fake so we can use dwarf_names.c */

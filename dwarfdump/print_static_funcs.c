@@ -1,8 +1,8 @@
 /* 
   Copyright (C) 2000-2006 Silicon Graphics, Inc.  All Rights Reserved.
   Portions Copyright 2007-2010 Sun Microsystems, Inc. All rights reserved.
-  Portions Copyright 2009-2010 SN Systems Ltd. All rights reserved.
-  Portions Copyright 2008-2010 David Anderson. All rights reserved.
+  Portions Copyright 2009-2011 SN Systems Ltd. All rights reserved.
+  Portions Copyright 2008-2011 David Anderson. All rights reserved.
 
   This program is free software; you can redistribute it and/or modify it
   under the terms of version 2 of the GNU General Public License as
@@ -35,11 +35,11 @@
 
 
 $Header: /plroot/cmplrs.src/v7.4.5m/.RCS/PL/dwarfdump/RCS/print_sections.c,v 1.69 2006/04/17 00:09:56 davea Exp $ */
-/* The address of the Free Software Foundation is
- * Free Software Foundation, Inc., 51 Franklin St, Fifth Floor, 
- * Boston, MA 02110-1301, USA.  
- * SGI has moved from the Crittenden Lane address.
- */
+/*  The address of the Free Software Foundation is
+    Free Software Foundation, Inc., 51 Franklin St, Fifth Floor, 
+    Boston, MA 02110-1301, USA.  
+    SGI has moved from the Crittenden Lane address.
+*/
 
 #include "globals.h"
 #include "naming.h"
@@ -63,6 +63,12 @@ print_static_funcs(Dwarf_Debug dbg)
     Dwarf_Off cu_off = 0;
     int gfres = 0;
 
+    current_section_id = DEBUG_STATIC_FUNC;
+
+    if (!do_print_dwarf) {
+        return;
+    }
+  
     printf("\n.debug_static_func\n");
     gfres = dwarf_get_funcs(dbg, &funcbuf, &count, &err);
     if (gfres == DW_DLV_ERROR) {
@@ -73,29 +79,21 @@ print_static_funcs(Dwarf_Debug dbg)
         Dwarf_Unsigned maxoff = get_info_max_offset(dbg);
 
         for (i = 0; i < count; i++) {
-            int fnres;
-            int cures3;
+            int fnres = 0;
+            int cures3 = 0;
             Dwarf_Unsigned global_cu_off = 0;
             char *name = 0;
 
-            fnres =
-                dwarf_func_name_offsets(funcbuf[i], &name, &die_off,
-                                        &cu_off, &err);
+            fnres = dwarf_func_name_offsets(funcbuf[i], &name, &die_off,
+                &cu_off, &err);
             deal_with_name_offset_err(dbg, "dwarf_func_name_offsets",
-                                      name, die_off, fnres, err);
-
+                name, die_off, fnres, err);
             cures3 = dwarf_func_cu_offset(funcbuf[i],
-                                          &global_cu_off, &err);
+                &global_cu_off, &err);
             if (cures3 != DW_DLV_OK) {
                 print_error(dbg, "dwarf_global_cu_offset", cures3, err);
             }
 
-            print_pubname_style_entry(dbg,
-                                      "static-func", name, die_off,
-                                      cu_off, global_cu_off, maxoff);
-
-
-            /* print associated die too? */
             if (check_pubname_attr) {
                 Dwarf_Bool has_attr;
                 int ares;
@@ -113,16 +111,25 @@ print_static_funcs(Dwarf_Debug dbg)
                     dwarf_hasattr(die, DW_AT_external, &has_attr, &err);
                 if (ares == DW_DLV_ERROR) {
                     print_error(dbg, "hassattr on DW_AT_external", ares,
-                                err);
+                        err);
                 }
-                pubname_attr_result.checks++;
-                if (ares == DW_DLV_OK && has_attr) {
-                    /* Should the value of flag be examined? */
-                } else {
-                    DWARF_CHECK_ERROR2(pubname_attr_result,name,
-                                       "pubname does not have DW_AT_external")
+                if (checking_this_compiler()) {
+                    DWARF_CHECK_COUNT(pubname_attr_result,1);
+                    if (ares == DW_DLV_OK && has_attr) {
+                        /* Should the value of flag be examined? */
+                    } else {
+                        DWARF_CHECK_ERROR2(pubname_attr_result,name,
+                            "pubname does not have DW_AT_external");
+                    }
                 }
                 dwarf_dealloc(dbg, die, DW_DLA_DIE);
+            }
+
+            if (do_print_dwarf || record_dwarf_error) {
+                print_pubname_style_entry(dbg,
+                    "static-func", name, die_off,
+                    cu_off, global_cu_off, maxoff);
+                record_dwarf_error = FALSE;  /* Clear error condition */
             }
         }
         dwarf_funcs_dealloc(dbg, funcbuf, count);

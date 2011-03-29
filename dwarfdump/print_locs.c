@@ -2,7 +2,7 @@
   Copyright (C) 2000-2006 Silicon Graphics, Inc.  All Rights Reserved.
   Portions Copyright 2007-2010 Sun Microsystems, Inc. All rights reserved.
   Portions Copyright 2009-2010 SN Systems Ltd. All rights reserved.
-  Portions Copyright 2008-2010 David Anderson. All rights reserved.
+  Portions Copyright 2008-2011 David Anderson. All rights reserved.
 
   This program is free software; you can redistribute it and/or modify it
   under the terms of version 2 of the GNU General Public License as
@@ -35,11 +35,11 @@
 
 
 $Header: /plroot/cmplrs.src/v7.4.5m/.RCS/PL/dwarfdump/RCS/print_sections.c,v 1.69 2006/04/17 00:09:56 davea Exp $ */
-/* The address of the Free Software Foundation is
- * Free Software Foundation, Inc., 51 Franklin St, Fifth Floor, 
- * Boston, MA 02110-1301, USA.  
- * SGI has moved from the Crittenden Lane address.
- */
+/*  The address of the Free Software Foundation is
+    Free Software Foundation, Inc., 51 Franklin St, Fifth Floor, 
+    Boston, MA 02110-1301, USA.  
+    SGI has moved from the Crittenden Lane address.
+*/
 
 #include "globals.h"
 #include "naming.h"
@@ -71,41 +71,52 @@ print_locs(Dwarf_Debug dbg)
     Dwarf_Unsigned entry_len = 0;
     Dwarf_Unsigned next_entry = 0;
     struct esb_s  exprstring;
-    int index = 0;
+    int index = 0; 
     int lres = 0;
     int fres = 0;
 
     /* This is sometimes wrong, we need a frame-specific size. */
     Dwarf_Half address_size = 0;
+
+    current_section_id = DEBUG_LOC;
+
+    /* Do nothing if not printing. */
+    if (!do_print_dwarf) {
+        return;
+    }
+
     fres = dwarf_get_address_size(dbg, &address_size, &err);
     if (fres != DW_DLV_OK) {
         print_error(dbg, "dwarf_get_address_size", fres, err);
     }
 
-    printf("\n.debug_loc format <i o b e l> means "
-           "index section-offset begin-addr end-addr length-of-block-entry\n");
+    printf("\n.debug_loc");
+  
+    printf("\nFormat <i o b e l>: "
+        "index section-offset begin-addr end-addr length-of-block-entry\n");
     esb_constructor(&exprstring);
     while ((lres = dwarf_get_loclist_entry(dbg, offset,
-                                           &hipc_offset, &lopc_offset,
-                                           &data, &entry_len,
-                                           &next_entry,
-                                           &err)) == DW_DLV_OK) {
+        &hipc_offset, &lopc_offset,
+        &data, &entry_len,
+        &next_entry,
+        &err)) == DW_DLV_OK) {
         get_string_from_locs(dbg,data,entry_len,address_size,
-              &exprstring);
-        printf("    <iobel> [%4d] 0x%08" DW_PR_DUx,
-               index,
-               offset);
-        if(verbose) {
-            printf(" <expr-off 0x%" DW_PR_DUx ">",
-                next_entry - entry_len);
+            &exprstring);
+        /* Display offsets */
+        if (display_offsets) {
+            printf("\t <iobel> [%8d] 0x%" DW_PR_XZEROS DW_PR_DUx,
+                ++index, offset);
+            if(verbose) {
+                printf(" <expr-off 0x%"  DW_PR_XZEROS  DW_PR_DUx ">",
+                    next_entry - entry_len);
+            }
         }
-        printf(" 0x%09" DW_PR_DUx 
-               " 0x%08" DW_PR_DUx  
-               " %3" DW_PR_DUu " %s\n",
-               (Dwarf_Unsigned) lopc_offset,
-               (Dwarf_Unsigned) hipc_offset,  entry_len,
-               esb_get_string(&exprstring));
-        index++;
+        printf(" 0x%"  DW_PR_XZEROS  DW_PR_DUx 
+            " 0x%" DW_PR_XZEROS DW_PR_DUx  
+            " %8" DW_PR_DUu " %s\n",
+            (Dwarf_Unsigned) lopc_offset,
+            (Dwarf_Unsigned) hipc_offset,  entry_len,
+            esb_get_string(&exprstring));
         esb_empty_string(&exprstring);
         offset = next_entry;
     }

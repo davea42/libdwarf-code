@@ -32,14 +32,11 @@
 
 */
 
-#ifndef common_INCLUDED
-#define common_INCLUDED
-
-#include <stdio.h>
-
+#ifndef COMMON_INCLUDED_H
+#define COMMON_INCLUDED_H
 
 void print_args(int argc, char *argv[]);
-void print_usage_message(const char *options[]);
-void print_version(const char * name);
+void print_version_details(const char *name, int alwaysprint);
+void print_usage_message(const char *program_name, const char **text);
 
-#endif /* common_INCLUDED */
+#endif /* COMMON_INCLUDED_H */

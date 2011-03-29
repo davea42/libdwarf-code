@@ -66,6 +66,10 @@ Same as
 .TP
 .B \-b
 Dumps the .debug_abbrev section.  
+There is no guarantee in the DWARF standard that
+just scanning the bytes like this will print the section
+correctly, only the -i output is really guaranteed by DWARF to
+find ranges correctly. But it will often work
 .TP
 .B \-c
 Dumps the .debug_loc section.

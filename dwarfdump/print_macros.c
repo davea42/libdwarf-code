@@ -1,8 +1,8 @@
 /* 
   Copyright (C) 2000-2006 Silicon Graphics, Inc.  All Rights Reserved.
   Portions Copyright 2007-2010 Sun Microsystems, Inc. All rights reserved.
-  Portions Copyright 2009-2010 SN Systems Ltd. All rights reserved.
-  Portions Copyright 2008-2010 David Anderson. All rights reserved.
+  Portions Copyright 2009-2011 SN Systems Ltd. All rights reserved.
+  Portions Copyright 2008-2011 David Anderson. All rights reserved.
 
   This program is free software; you can redistribute it and/or modify it
   under the terms of version 2 of the GNU General Public License as
@@ -35,11 +35,11 @@
 
 
 $Header: /plroot/cmplrs.src/v7.4.5m/.RCS/PL/dwarfdump/RCS/print_sections.c,v 1.69 2006/04/17 00:09:56 davea Exp $ */
-/* The address of the Free Software Foundation is
- * Free Software Foundation, Inc., 51 Franklin St, Fifth Floor, 
- * Boston, MA 02110-1301, USA.  
- * SGI has moved from the Crittenden Lane address.
- */
+/*  The address of the Free Software Foundation is
+    Free Software Foundation, Inc., 51 Franklin St, Fifth Floor, 
+    Boston, MA 02110-1301, USA.  
+    SGI has moved from the Crittenden Lane address.
+*/
 
 #include "globals.h"
 #include "naming.h"
@@ -62,8 +62,8 @@ struct macro_counts_s {
 
 static void
 print_one_macro_entry_detail(long i,
-                             char *type,
-                             struct Dwarf_Macro_Details_s *mdp)
+    char *type,
+    struct Dwarf_Macro_Details_s *mdp)
 {
     /* "DW_MACINFO_*: section-offset file-index [line] string\n" */
     if (mdp->dmd_macro) {
@@ -75,19 +75,19 @@ print_one_macro_entry_detail(long i,
             mdp->dmd_fileindex, mdp->dmd_lineno, mdp->dmd_macro);
     } else {
         printf("%3ld %s: %6" DW_PR_DUu " %2" DW_PR_DSd " [%4" 
-               DW_PR_DSd "] 0\n",
-               i,
-               type,
-               (Dwarf_Unsigned)mdp->dmd_offset, 
-               mdp->dmd_fileindex, mdp->dmd_lineno);
+            DW_PR_DSd "] 0\n",
+            i,
+            type,
+            (Dwarf_Unsigned)mdp->dmd_offset, 
+            mdp->dmd_fileindex, mdp->dmd_lineno);
     }
 
 }
 
 static void
 print_one_macro_entry(long i,
-                      struct Dwarf_Macro_Details_s *mdp,
-                      struct macro_counts_s *counts)
+    struct Dwarf_Macro_Details_s *mdp,
+    struct macro_counts_s *counts)
 {
 
     switch (mdp->dmd_type) {
@@ -127,18 +127,17 @@ print_one_macro_entry(long i,
 
             counts->mc_unknown++;
             snprintf(create_type, sizeof(create_type),
-                     "DW_MACINFO_0x%x", mdp->dmd_type);
+                "DW_MACINFO_0x%x", mdp->dmd_type);
             print_one_macro_entry_detail(i, create_type, mdp);
         }
         break;
     }
 }
 
-/* print data in .debug_macinfo */
-/* FIXME: should print name of file whose index is in macro data
-   here  --  somewhere.
-*/
- /*ARGSUSED*/ extern void
+/*  print data in .debug_macinfo */
+/*  FIXME: should print name of file whose index is in macro data
+    here  --  somewhere.  */
+/*ARGSUSED*/ extern void
 print_macinfo(Dwarf_Debug dbg)
 {
     Dwarf_Off offset = 0;
@@ -148,12 +147,17 @@ print_macinfo(Dwarf_Debug dbg)
     Dwarf_Macro_Details *maclist = NULL;
     int lres = 0;
 
+    current_section_id = DEBUG_MACINFO;
+    if (!do_print_dwarf) {
+        return;
+    }
+  
     printf("\n.debug_macinfo\n");
 
     while ((lres = dwarf_get_macro_details(dbg, offset,
-                                           max, &count, &maclist,
-                                           &err)) == DW_DLV_OK) {
-        long i;
+        max, &count, &maclist,
+        &err)) == DW_DLV_OK) {
+        long i = 0;
         struct macro_counts_s counts;
 
 
@@ -175,27 +179,27 @@ print_macinfo(Dwarf_Debug dbg)
         }
         if (counts.mc_start_file != counts.mc_end_file) {
             printf("Counts of DW_MACINFO file (%ld) end_file (%ld) "
-                   "do not match!.\n",
-                   counts.mc_start_file, counts.mc_end_file);
+                "do not match!.\n",
+                counts.mc_start_file, counts.mc_end_file);
         }
         if (counts.mc_code_zero < 1) {
             printf("Count of zeros in macro group should be non-zero "
-                   "(1 preferred), count is %ld\n",
-                   counts.mc_code_zero);
+                "(1 preferred), count is %ld\n",
+                counts.mc_code_zero);
         }
         printf("Macro counts: start file %ld, "
-               "end file %ld, "
-               "define %ld, "
-               "undef %ld, "
-               "ext %ld, "
-               "code-zero %ld, "
-               "unknown %ld\n",
-               counts.mc_start_file,
-               counts.mc_end_file,
-               counts.mc_define,
-               counts.mc_undef,
-               counts.mc_extension,
-               counts.mc_code_zero, counts.mc_unknown);
+            "end file %ld, "
+            "define %ld, "
+            "undef %ld, "
+            "ext %ld, "
+            "code-zero %ld, "
+            "unknown %ld\n",
+            counts.mc_start_file,
+            counts.mc_end_file,
+            counts.mc_define,
+            counts.mc_undef,
+            counts.mc_extension,
+            counts.mc_code_zero, counts.mc_unknown);
 
 
         /* int type= maclist[count - 1].dmd_type; */
