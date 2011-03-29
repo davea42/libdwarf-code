@@ -1,79 +1,78 @@
 /* 
- Copyright 2009-2010 SN Systems Ltd. All rights reserved.
- Portions Copyright 2009-2010 David Anderson. All rights reserved.
+    Copyright 2009-2010 SN Systems Ltd. All rights reserved.
+    Portions Copyright 2009-2011 David Anderson. All rights reserved.
  
- This program is free software; you can redistribute it and/or modify it
- under the terms of version 2.1 of the GNU Lesser General Public License 
- as published by the Free Software Foundation.
+    This program is free software; you can redistribute it and/or modify it
+    under the terms of version 2.1 of the GNU Lesser General Public License 
+    as published by the Free Software Foundation.
  
- This program is distributed in the hope that it would be useful, but
- WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+    This program is distributed in the hope that it would be useful, but
+    WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  
- Further, this software is distributed without any warranty that it is
- free of the rightful claim of any third person regarding infringement
- or the like.  Any license provided herein, whether implied or
- otherwise, applies only to this software file.  Patent licenses, if
- any, provided herein do not apply to combinations of this program with
- other software, or any other product whatsoever.
+    Further, this software is distributed without any warranty that it is
+    free of the rightful claim of any third person regarding infringement
+    or the like.  Any license provided herein, whether implied or
+    otherwise, applies only to this software file.  Patent licenses, if
+    any, provided herein do not apply to combinations of this program with
+    other software, or any other product whatsoever.
  
- You should have received a copy of the GNU Lesser General Public 
- License along with this program; if not, write the Free Software 
- Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston MA 02110-1301,
- USA.
+    You should have received a copy of the GNU Lesser General Public 
+    License along with this program; if not, write the Free Software 
+    Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston MA 02110-1301,
+    USA.
 
- Contact information:  Silicon Graphics, Inc., 1500 Crittenden Lane,
- Mountain View, CA 94043, or:
+    Contact information:  Silicon Graphics, Inc., 1500 Crittenden Lane,
+    Mountain View, CA 94043, or:
  
- http://www.sgi.com
+    http://www.sgi.com
  
- For further information regarding this notice, see:
+    For further information regarding this notice, see:
  
- http://oss.sgi.com/projects/GenInfo/NoticeExplan
+    http://oss.sgi.com/projects/GenInfo/NoticeExplan
  
 */ 
  
-/* The address of the Free Software Foundation is
- *    Free Software Foundation, Inc., 51 Franklin St, Fifth Floor, 
- *    Boston, MA 02110-1301, USA.  
- *    SGI has moved from the Crittenden Lane address.
- */
+/*  The address of the Free Software Foundation is
+    Free Software Foundation, Inc., 51 Franklin St, Fifth Floor, 
+    Boston, MA 02110-1301, USA.  
+    SGI has moved from the Crittenden Lane address.
+*/
 
 #include <stdio.h>
-#include <stdlib.h>             /* For exit() declaration etc. */
-#include <errno.h>              /* For errno declaration. */
+#include <stdlib.h>  /* For exit() declaration etc. */
+#include <errno.h>   /* For errno declaration. */
 #include <ctype.h>
 #include <string.h>
 #include <unistd.h>  /* For getopt */  
 #include "dwarf.h"
 #include "common.h"
 
-/* gennames.c
- * Prints routines to return constant name for the associated value
- * (such as the TAG name string for a particular tag).
- *
- * The input is dwarf.h
- * For each set of names with a common prefix, we create a routine
- * to return the name given the value.
- * Also print header file that gives prototypes of routines.
- * To handle cases where there are multiple names for a single
- * value (DW_AT_* has some due to ambiguities in the DWARF2 spec)
- * we take the first of a given value as the definitive name.
- * TAGs, Attributes, etc are given distinct checks.
- *
- * There are multiple output files as some people find one
- * form more pleasant than the other.
- *
- * The doprinting argument is so that when used by tag_tree.c,
- * and tag_attr.c that we don't get irritating messages on stderr
- * when those dwarfdump built-time applications are run.
- *
- * Some compilers generate better code for switch statements than
- * others, so the -s and -t options let the user decide which
- * is better for their compiler (when building dwarfdump):
- * a simple switch or code doing binary search.
- * This choice affects the runtime speed of dwarfdump.
- */
+/*  gennames.c
+    Prints routines to return constant name for the associated value
+    (such as the TAG name string for a particular tag).
+  
+    The input is dwarf.h
+    For each set of names with a common prefix, we create a routine
+    to return the name given the value.
+    Also print header file that gives prototypes of routines.
+    To handle cases where there are multiple names for a single
+    value (DW_AT_* has some due to ambiguities in the DWARF2 spec)
+    we take the first of a given value as the definitive name.
+    TAGs, Attributes, etc are given distinct checks.
+  
+    There are multiple output files as some people find one
+    form more pleasant than the other.
+  
+    The doprinting argument is so that when used by tag_tree.c,
+    and tag_attr.c that we don't get irritating messages on stderr
+    when those dwarfdump built-time applications are run.
+  
+    Some compilers generate better code for switch statements than
+    others, so the -s and -t options let the user decide which
+    is better for their compiler (when building dwarfdump):
+    a simple switch or code doing binary search.
+    This choice affects the runtime speed of dwarfdump.  */
 
 typedef int boolean;
 #define TRUE 1
@@ -102,9 +101,9 @@ typedef struct {
     unsigned value; /* value */
 } array_data;
 
-/* A group_array is a grouping from dwarf.h.
-   All the TAGs are one group, all the
-   FORMs are another group, and so on. */
+/*  A group_array is a grouping from dwarf.h.
+    All the TAGs are one group, all the
+    FORMs are another group, and so on. */
 static array_data group_array[ARRAY_SIZE];
 static unsigned array_count = 0;
 
@@ -172,8 +171,8 @@ process_args(int argc, char *argv[])
     }
 
     if (usage_error || 1 == optind || optind != argc) {
-      print_usage_message(usage);
-      exit(FAILED);
+        print_usage_message(usage);
+        exit(FAILED);
     }
 }
 
@@ -222,8 +221,8 @@ static FILE *
 open_path(const char *base, const char *file, const char *direction)
 {
     FILE *f = 0;
-    /* POSIX PATH_MAX  would suffice, normally stdio BUFSIZ is larger
-       than PATH_MAX */
+    /*  POSIX PATH_MAX  would suffice, normally stdio BUFSIZ is larger
+        than PATH_MAX */
     char path_name[BUFSIZ];
     snprintf(path_name,sizeof(path_name),"%s/%s",base,file);
     f = fopen(path_name,direction);
@@ -295,7 +294,7 @@ GenerateInitialFileLines()
         /* Generate code to find an entry */
         fprintf(f_names_c,"/* Use standard binary search to get entry */\n");
         fprintf(f_names_c,"static int\nfind_entry(Names_Data *table,"
-                  "const int last,unsigned value, const char **s_out)\n");
+            "const int last,unsigned value, const char **s_out)\n");
         fprintf(f_names_c,"{\n");
         fprintf(f_names_c,"    int low = 0;\n");
         fprintf(f_names_c,"    int high = last;\n");
@@ -364,10 +363,9 @@ GenerateOneSet()
     PrintArray();
 #endif /* TRACE_ARRAY */
 
-    /* Sort the array, because the values in 'libdwarf.h' are not in
-     * ascending order; if we use '-t' we must be sure the values are
-     * sorted, for the binary search to work properly
-     */
+    /*  Sort the array, because the values in 'libdwarf.h' are not in
+        ascending order; if we use '-t' we must be sure the values are
+        sorted, for the binary search to work properly */
     qsort((void *)&group_array,array_count,sizeof(array_data),(compfn)Compare);
 
 #ifdef TRACE_ARRAY
@@ -462,13 +460,13 @@ is_skippable_line(char *pLine)
 static void safe_strncpy(char *out, unsigned out_len,
 char *in,unsigned in_len) 
 {
-     if(in_len >= out_len) {
-         fprintf(stderr,"Impossible input line from dwarf.h. Giving up. \n");
-         fprintf(stderr,"Length %u is too large, limited to %u.\n",
-             in_len,out_len);
-         exit(1);
-     }
-     strncpy(out,in,in_len);
+    if(in_len >= out_len) {
+        fprintf(stderr,"Impossible input line from dwarf.h. Giving up. \n");
+        fprintf(stderr,"Length %u is too large, limited to %u.\n",
+            in_len,out_len);
+        exit(1);
+    }
+    strncpy(out,in,in_len);
 }
 
 

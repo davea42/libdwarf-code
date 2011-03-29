@@ -1,7 +1,7 @@
 /*
 
   Copyright (C) 2000-2004 Silicon Graphics, Inc.  All Rights Reserved.
-  Portions Copyright (C) 2007-2010 David Anderson. All Rights Reserved.
+  Portions Copyright (C) 2007-2011 David Anderson. All Rights Reserved.
 
   This program is free software; you can redistribute it and/or modify it
   under the terms of version 2.1 of the GNU Lesser General Public License 
@@ -56,12 +56,11 @@
 #define RIGHTPAREN ')'
 #define SPACE ' '
 
-/*
-        Given the dwarf macro string, return a pointer to
-        the value.  Returns pointer to 0 byte at end of string
-        if no value found (meaning the value is the empty string).
+/*  Given the dwarf macro string, return a pointer to
+    the value.  Returns pointer to 0 byte at end of string
+    if no value found (meaning the value is the empty string).
 
-        Only understands well-formed dwarf macinfo strings.
+    Only understands well-formed dwarf macinfo strings.
 */
 char *
 dwarf_find_macro_value_start(char *str)
@@ -78,16 +77,16 @@ dwarf_find_macro_value_start(char *str)
             /* lcp+1 must be a space, and following char is the value */
             return lcp + 2;
         case SPACE:
-            /* we allow extraneous spaces inside macro parameter **
-               list, just in case... This is not really needed. */
+            /*  We allow extraneous spaces inside macro parameter **
+                list, just in case... This is not really needed. */
             if (!funclike) {
                 return lcp + 1;
             }
             break;
         }
     }
-    /* never found value: returns pointer to the 0 byte at end of
-       string */
+    /*  Never found value: returns pointer to the 0 byte at end of
+        string. */
     return lcp;
 
 }
@@ -140,7 +139,7 @@ _dwarf_macro_stack_push_index(Dwarf_Debug dbg, Dwarf_Signed indx,
         new_size = ms->max * 2;
         newbase =
             _dwarf_get_alloc(dbg, DW_DLA_STRING,
-                             new_size * sizeof(Dwarf_Signed));
+                new_size * sizeof(Dwarf_Signed));
         if (newbase == 0) {
             /* just leave the old array in place */
             ms->was_fault = 1;
@@ -148,7 +147,7 @@ _dwarf_macro_stack_push_index(Dwarf_Debug dbg, Dwarf_Signed indx,
         }
         if(ms->st_base) {
             memcpy(newbase, ms->st_base,
-               ms->next_to_use * sizeof(Dwarf_Signed));
+                ms->next_to_use * sizeof(Dwarf_Signed));
             dwarf_dealloc(dbg, ms->st_base, DW_DLA_STRING);
         }
         ms->st_base = newbase;
@@ -174,12 +173,11 @@ _dwarf_macro_stack_pop_index(struct macro_stack_s *ms)
     return -1;
 }
 
-/* starting at macro_offset in .debug_macinfo,
-        if maximum_count is 0, treat as if it is infinite.
-        get macro data up thru
-        maximum_count entries or the end of a compilation
-        unit's entries (whichever comes first). 
-*/
+/*  Starting at macro_offset in .debug_macinfo,
+    if maximum_count is 0, treat as if it is infinite.
+    get macro data up thru
+    maximum_count entries or the end of a compilation
+    unit's entries (whichever comes first).  */
 
 int
 dwarf_get_macro_details(Dwarf_Debug dbg,
@@ -315,10 +313,11 @@ dwarf_get_macro_details(Dwarf_Debug dbg,
 
         case DW_MACINFO_end_file:
             if (--depth == 0) {
-                /* done = 1; no, do not stop here, at least one gcc had 
-                   the wrong depth settings in the gcc 3.4 timeframe. */
+                /*  done = 1; no, do not stop here, at least one gcc had 
+                    the wrong depth settings in the gcc 3.4 timeframe. */
             }
-            break;              /* no string or number here */
+            /* no string or number here */
+            break; 
         case 0:
             /* end of cu's entries */
             done = 1;
@@ -345,8 +344,8 @@ dwarf_get_macro_details(Dwarf_Debug dbg,
         return (DW_DLV_ERROR);
     }
 
-    /* we have 'count' array entries to allocate and str_space bytes of 
-       string space to provide for. */
+    /*  We have 'count' array entries to allocate and str_space bytes of 
+        string space to provide for. */
 
     string_offset = count * sizeof(Dwarf_Macro_Details);
 
@@ -431,9 +430,9 @@ dwarf_get_macro_details(Dwarf_Debug dbg,
             v1 = _dwarf_decode_u_leb128(pnext, &len);
             pdmd->dmd_fileindex = v1;
             (void) _dwarf_macro_stack_push_index(dbg, fileindex,
-                                                 &msdata);
-            /* We ignore the error, we just let fileindex ** be -1 when 
-               we pop this one. */
+                &msdata);
+            /*  We ignore the error, we just let fileindex ** be -1 when 
+                we pop this one. */
             fileindex = v1;
             pnext += len;
             if (((pnext - macro_base)) >= dbg->de_debug_macinfo.dss_size) {

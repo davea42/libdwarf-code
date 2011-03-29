@@ -3,6 +3,7 @@
   Copyright (C) 2000,2002,2004 Silicon Graphics, Inc.  All Rights Reserved.
   Portions Copyright 2002-2010 Sun Microsystems, Inc. All rights reserved.
   Portions Copyright 2008-2010 David Anderson. All rights reserved.
+  Portions Copyright 2010 SN Systems Ltd. All rights reserved.
 
   This program is free software; you can redistribute it and/or modify it
   under the terms of version 2.1 of the GNU Lesser General Public License 
@@ -35,13 +36,15 @@
 
 */
 
-
 #ifdef HAVE_ELF_H
 #include <elf.h>
 #elif defined(HAVE_LIBELF_H) 
 /* On one platform without elf.h this gets Elf32_Rel 
    type defined (a required type). */
 #include <libelf.h>
+/* Consider the other known directory too */
+#elif defined(HAVE_LIBELF_LIBELF_H)
+#include <libelf/libelf.h>
 #endif
 
 #if defined(sun)
@@ -55,9 +58,9 @@
 #ifdef WORDS_BIGENDIAN
 #define WRITE_UNALIGNED(dbg,dest,source, srclength,len_out) \
     { \
-      dbg->de_copy_word(dest, \
-                        ((char *)source) +srclength-len_out,  \
-			len_out) ; \
+        dbg->de_copy_word(dest,                   \
+            ((char *)source) +srclength-len_out,  \
+            len_out) ;                            \
     }
 
 
@@ -65,9 +68,9 @@
 
 #define WRITE_UNALIGNED(dbg,dest,source, srclength,len_out) \
     { \
-      dbg->de_copy_word( (dest) , \
-                        ((char *)source) ,  \
-			len_out) ; \
+        dbg->de_copy_word( (dest) , \
+            ((char *)source) ,      \
+            len_out) ;              \
     }
 #endif
 

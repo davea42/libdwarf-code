@@ -42,25 +42,23 @@
 */
 #define MAX_6_BIT_VALUE		0x3f
 
-/*
-	This struct holds debug_frame instructions
-*/
+/* This struct holds debug_frame instructions */
 typedef struct Dwarf_P_Frame_Pgm_s *Dwarf_P_Frame_Pgm;
 
 struct Dwarf_P_Frame_Pgm_s {
-    Dwarf_Ubyte dfp_opcode;	/* opcode - includes reg # */
-    char *dfp_args;		/* operands */
-    int dfp_nbytes;		/* number of bytes in args */
+    Dwarf_Ubyte dfp_opcode; /* opcode - includes reg # */
+    char *dfp_args;	 /* operands */
+    int dfp_nbytes;	 /* number of bytes in args */
 #if 0
-    Dwarf_Unsigned dfp_sym_index;	/* 0 unless reloc needed */
+    Dwarf_Unsigned dfp_sym_index; /* 0 unless reloc needed */
 #endif
     Dwarf_P_Frame_Pgm dfp_next;
 };
 
 
 /*
-	This struct has cie related information. Used to gather data 
-	from user program, and later to transform to disk form
+    This struct has cie related information. Used to gather data 
+    from user program, and later to transform to disk form
 */
 struct Dwarf_P_Cie_s {
     Dwarf_Ubyte cie_version;
@@ -85,13 +83,12 @@ struct Dwarf_P_Fde_s {
     /* index to asso. cie */
     Dwarf_Word fde_cie;
 
-    /* Address of first location of the code this frame applies to If
-       fde_end_symbol non-zero, this represents the offset from the
-       symbol indicated by fde_r_symidx */
+    /*  Address of first location of the code this frame applies to If
+        fde_end_symbol non-zero, this represents the offset from the
+        symbol indicated by fde_r_symidx */
     Dwarf_Addr fde_initloc;
 
-    /* Relocation symbol for address of the code this frame applies to. 
-     */
+    /* Relocation symbol for address of the code this frame applies to.  */
     Dwarf_Unsigned fde_r_symidx;
 
     /* Bytes of instr for this fde, if known */
@@ -117,16 +114,16 @@ struct Dwarf_P_Fde_s {
 
     Dwarf_P_Fde fde_next;
 
-    /* The symbol and offset of the end symbol. When fde_end_symbol is
-       non-zero we must represent the */
+    /*  The symbol and offset of the end symbol. When fde_end_symbol is
+        non-zero we must represent the */
     Dwarf_Addr fde_end_symbol_offset;
     Dwarf_Unsigned fde_end_symbol;
 
     int fde_uwordb_size;
     Dwarf_P_Debug fde_dbg;
 
-    /* If fde_block is non-null, then it is the set of instructions.
-       so we should use it rather than fde_inst. */
+    /*  If fde_block is non-null, then it is the set of instructions.
+        so we should use it rather than fde_inst. */
     Dwarf_Unsigned fde_inst_block_size;
     void *fde_block;
 };

@@ -1,6 +1,7 @@
 /*
 
   Copyright (C) 2000,2004 Silicon Graphics, Inc.  All Rights Reserved.
+  Portions Copyright 2011 David Anderson. All Rights Reserved.
 
   This program is free software; you can redistribute it and/or modify it
   under the terms of version 2.1 of the GNU Lesser General Public License 
@@ -40,9 +41,7 @@
 #include <stdio.h>
 
 
-/*
-    decode ULEB
-*/
+/* Decode ULEB */
 Dwarf_Unsigned
 _dwarf_decode_u_leb128(Dwarf_Small * leb128, Dwarf_Word * leb128_length)
 {
@@ -52,10 +51,10 @@ _dwarf_decode_u_leb128(Dwarf_Small * leb128, Dwarf_Word * leb128_length)
     Dwarf_Sword shift;
     Dwarf_Sword byte_length;
 
-    /* The following unrolls-the-loop for the first few bytes and
-       unpacks into 32 bits to make this as fast as possible.
-       word_number is assumed big enough that the shift has a defined
-       result. */
+    /*  The following unrolls-the-loop for the first few bytes and
+        unpacks into 32 bits to make this as fast as possible.
+        word_number is assumed big enough that the shift has a defined
+        result. */
     if ((*leb128 & 0x80) == 0) {
         if (leb128_length != NULL)
             *leb128_length = 1;
@@ -86,9 +85,9 @@ _dwarf_decode_u_leb128(Dwarf_Small * leb128, Dwarf_Word * leb128_length)
         return (word_number);
     }
 
-    /* The rest handles long numbers Because the 'number' may be larger 
-       than the default int/unsigned, we must cast the 'byte' before
-       the shift for the shift to have a defined result. */
+    /*  The rest handles long numbers Because the 'number' may be larger 
+        than the default int/unsigned, we must cast the 'byte' before
+        the shift for the shift to have a defined result. */
     number = 0;
     shift = 0;
     byte_length = 1;
@@ -111,9 +110,7 @@ _dwarf_decode_u_leb128(Dwarf_Small * leb128, Dwarf_Word * leb128_length)
 
 #define BITSINBYTE 8
 
-/*
-    decode SLEB
-*/
+/*  decode SLEB */
 Dwarf_Signed
 _dwarf_decode_s_leb128(Dwarf_Small * leb128, Dwarf_Word * leb128_length)
 {
@@ -123,8 +120,8 @@ _dwarf_decode_s_leb128(Dwarf_Small * leb128, Dwarf_Word * leb128_length)
     unsigned char byte = *leb128;
     Dwarf_Sword byte_length = 1;
 
-    /* byte_length being the number of bytes of data absorbed so far in 
-       turning the leb into a Dwarf_Signed. */
+    /*  byte_length being the number of bytes of data absorbed so far in 
+        turning the leb into a Dwarf_Signed. */
 
     for (;;) {
         sign = byte & 0x40;

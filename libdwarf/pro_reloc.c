@@ -1,7 +1,7 @@
 /*
 
   Copyright (C) 2000,2004 Silicon Graphics, Inc.  All Rights Reserved.
-  Portions Copyright 2008-2010 David Anderson, Inc. All rights reserved.
+  Portions Copyright 2008-2011 David Anderson, Inc. All rights reserved.
 
   This program is free software; you can redistribute it and/or modify it
   under the terms of version 2.1 of the GNU Lesser General Public License 
@@ -80,14 +80,10 @@ _dwarf_pro_pre_alloc_n_reloc_slots(Dwarf_P_Debug dbg,
         return DW_DLV_ERROR;
     }
     data->rb_slots_in_block = slots_in_blk;     /* could use default
-                                                   here, as fallback in 
-                                                   case our origininal
-                                                   estimate wrong. When 
-                                                   we call this we
-                                                   presumably know what 
-                                                   we are doing, so
-                                                   keep this count for
-                                                   now */
+        here, as fallback in case our origininal
+        estimate wrong. When we call this we
+        presumably know what we are doing, so
+        keep this count for now */
     data->rb_next_slot_to_use = 0;
     data->rb_where_to_add_next =
         ((char *) data) + sizeof(struct Dwarf_P_Relocation_Block_s);
@@ -149,14 +145,12 @@ _dwarf_pro_alloc_reloc_slots(Dwarf_P_Debug dbg, int rel_sec_index)
 
 }
 
-/*
-        Reserve a slot. return DW_DLV_OK if succeeds.
+/*  Reserve a slot. return DW_DLV_OK if succeeds.
 
-        Return DW_DLV_ERROR if fails (malloc error).
+    Return DW_DLV_ERROR if fails (malloc error).
 
-        Use the relrec_to_fill to pass back a pointer to
-        a slot space to use.
-*/
+    Use the relrec_to_fill to pass back a pointer to
+    a slot space to use.  */
 int
 _dwarf_pro_reloc_get_a_slot(Dwarf_P_Debug dbg,
     int base_sec_index, void **relrec_to_fill)
@@ -210,7 +204,7 @@ _dwarf_pro_reloc_get_a_slot(Dwarf_P_Debug dbg,
 
 */
 
- /*ARGSUSED*/ int
+/*ARGSUSED*/ int
 dwarf_get_relocation_info_count(Dwarf_P_Debug dbg,
     Dwarf_Unsigned *
     count_of_relocation_sections,

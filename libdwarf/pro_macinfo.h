@@ -37,4 +37,4 @@
 
 
 int _dwarf_pro_transform_macro_info_to_disk(Dwarf_P_Debug dbg,
-					    Dwarf_Error * error);
+    Dwarf_Error * error);

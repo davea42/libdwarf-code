@@ -2,6 +2,7 @@
 
   Copyright (C) 2000,2004 Silicon Graphics, Inc.  All Rights Reserved.
   Portions Copyright 2002-2010 Sun Microsystems, Inc. All rights reserved.
+  Portions Copyright 2011 David Anderson.  All Rights Reserved.
 
   This program is free software; you can redistribute it and/or modify it
   under the terms of version 2.1 of the GNU Lesser General Public License 
@@ -46,23 +47,22 @@
 #endif /* HAVE_STRING_H */
 #include <malloc.h>
 
-/*
- When each block is allocated, there is a two-word structure
- allocated at the beginning so the block can go on a list.
- The address returned is the address *after* the two pointers
- at the start.  But this allows us to be given a pointer to
- a generic block, and go backwards to find the list-node.  Then
- we can remove this block from it's list without the need to search
- through a linked list in order to remove the node.  It also allows
- us to 'delete' a memory block without needing the dbg structure.
- We still need the dbg structure on allocation so that we know which
- linked list to add the block to.
+/*  When each block is allocated, there is a two-word structure
+    allocated at the beginning so the block can go on a list.
+    The address returned is the address *after* the two pointers
+    at the start.  But this allows us to be given a pointer to
+    a generic block, and go backwards to find the list-node.  Then
+    we can remove this block from it's list without the need to search
+    through a linked list in order to remove the node.  It also allows
+    us to 'delete' a memory block without needing the dbg structure.
+    We still need the dbg structure on allocation so that we know which
+    linked list to add the block to.
 
- Only the allocation of the dbg structure itself cannot use _dwarf_p_get_alloc.
- That structure should be set up by hand, and the two list pointers
- should be initialized to point at the node itself.  That initializes
- the doubly linked list.
-*/
+    Only the allocation of the dbg structure itself cannot use 
+    _dwarf_p_get_alloc.  
+    That structure should be set up by hand, and the two list pointers
+    should be initialized to point at the node itself.  That initializes
+    the doubly linked list.  */
 
 #define LIST_TO_BLOCK(lst) ((void*) (((char *)lst) + sizeof(memory_list_t)))
 #define BLOCK_TO_LIST(blk) ((memory_list_t*) (((char*)blk) - sizeof(memory_list_t)))

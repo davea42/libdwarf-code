@@ -2,7 +2,7 @@
 
   Copyright (C) 2000,2004 Silicon Graphics, Inc.  All Rights Reserved.
   Portions Copyright 2002-2010 Sun Microsystems, Inc. All rights reserved.
-  Portions Copyright 2008-2010 David Anderson, Inc. All rights reserved.
+  Portions Copyright 2008-2011 David Anderson, Inc. All rights reserved.
 
   This program is free software; you can redistribute it and/or modify it
   under the terms of version 2.1 of the GNU Lesser General Public License 
@@ -51,39 +51,36 @@ static void common_init(Dwarf_P_Debug dbg, Dwarf_Unsigned flags);
 
 void *_dwarf_memcpy_swap_bytes(void *s1, const void *s2, size_t len);
 
-/*--------------------------------------------------------------------
-        This function sets up a new dwarf producing region. 
-        flags: Indicates type of access method, one of DW_DLC* macros
-        func(): Used to create a new object file, a call back function
-        errhand(): Error Handler provided by user
-        errarg: Argument to errhand()
-        error: returned error value
---------------------------------------------------------------------*/
-    /* We want the following to have an elf section number that matches 
-       'nothing' */
+/*  This function sets up a new dwarf producing region. 
+    flags: Indicates type of access method, one of DW_DLC* macros
+    func(): Used to create a new object file, a call back function
+    errhand(): Error Handler provided by user
+    errarg: Argument to errhand()
+    error: returned error value */
+    /*  We want the following to have an elf section number that matches 
+        'nothing' */
 static struct Dwarf_P_Section_Data_s init_sect = {
     MAGIC_SECT_NO, 0, 0, 0, 0
 };
 
 Dwarf_P_Debug
 dwarf_producer_init_b(Dwarf_Unsigned flags,
-                      Dwarf_Callback_Func_b func,
-                      Dwarf_Handler errhand,
-                      Dwarf_Ptr errarg, Dwarf_Error * error)
+    Dwarf_Callback_Func_b func,
+    Dwarf_Handler errhand,
+    Dwarf_Ptr errarg, Dwarf_Error * error)
 {
     Dwarf_P_Debug dbg;
     dbg = (Dwarf_P_Debug) _dwarf_p_get_alloc(NULL,
-                                             sizeof(struct
-                                                    Dwarf_P_Debug_s));
+        sizeof(struct Dwarf_P_Debug_s));
     if (dbg == NULL) {
         DWARF_P_DBG_ERROR(dbg, DW_DLE_DBG_ALLOC,
-                          (Dwarf_P_Debug) DW_DLV_BADADDR);
+            (Dwarf_P_Debug) DW_DLV_BADADDR);
     }
     memset((void *) dbg, 0, sizeof(struct Dwarf_P_Debug_s));
     /* For the time being */
     if (func == NULL) {
         DWARF_P_DBG_ERROR(dbg, DW_DLE_NO_CALLBACK_FUNC,
-                          (Dwarf_P_Debug) DW_DLV_BADADDR);
+            (Dwarf_P_Debug) DW_DLV_BADADDR);
     }
     dbg->de_callback_func_b = func;
     dbg->de_errhand = errhand;
@@ -95,27 +92,23 @@ dwarf_producer_init_b(Dwarf_Unsigned flags,
 
 Dwarf_P_Debug
 dwarf_producer_init(Dwarf_Unsigned flags,
-                    Dwarf_Callback_Func func,
-                    Dwarf_Handler errhand,
-                    Dwarf_Ptr errarg, Dwarf_Error * error)
+    Dwarf_Callback_Func func,
+    Dwarf_Handler errhand,
+    Dwarf_Ptr errarg, Dwarf_Error * error)
 {
-
-    Dwarf_P_Debug dbg;
-
-
+    Dwarf_P_Debug dbg = 0;
 
     dbg = (Dwarf_P_Debug) _dwarf_p_get_alloc(NULL,
-                                             sizeof(struct
-                                                    Dwarf_P_Debug_s));
+        sizeof(struct Dwarf_P_Debug_s));
     if (dbg == NULL) {
         DWARF_P_DBG_ERROR(dbg, DW_DLE_DBG_ALLOC,
-                          (Dwarf_P_Debug) DW_DLV_BADADDR);
+            (Dwarf_P_Debug) DW_DLV_BADADDR);
     }
     memset((void *) dbg, 0, sizeof(struct Dwarf_P_Debug_s));
     /* For the time being */
     if (func == NULL) {
         DWARF_P_DBG_ERROR(dbg, DW_DLE_NO_CALLBACK_FUNC,
-                          (Dwarf_P_Debug) DW_DLV_BADADDR);
+            (Dwarf_P_Debug) DW_DLV_BADADDR);
     }
     dbg->de_callback_func = func;
     dbg->de_errhand = errhand;
@@ -126,8 +119,7 @@ dwarf_producer_init(Dwarf_Unsigned flags,
 static void
 common_init(Dwarf_P_Debug dbg, Dwarf_Unsigned flags)
 {
-    unsigned int k;
-
+    unsigned int k = 0;
 
     dbg->de_version_magic_number = PRO_VERSION_MAGIC;
     dbg->de_n_debug_sect = 0;
@@ -140,25 +132,25 @@ common_init(Dwarf_P_Debug dbg, Dwarf_Unsigned flags)
 
 
 #if defined(HAVE_STRICT_DWARF2_32BIT_OFFSET)
-    /* This is cygnus 32bit offset, as specified in pure dwarf2 v2.0.0.
-       It is consistent with normal DWARF2/3 generation of always
-       generating 32 bit offsets. */
+    /*  This is cygnus 32bit offset, as specified in pure dwarf2 v2.0.0.
+        It is consistent with normal DWARF2/3 generation of always
+        generating 32 bit offsets. */
     dbg->de_64bit_extension = 0;
     dbg->de_pointer_size = (IS_64BIT(dbg) ? 8 : 4);
     dbg->de_offset_size = (IS_64BIT(dbg) ? 4 : 4);
     dbg->de_ptr_reloc =
         IS_64BIT(dbg) ? Get_REL64_isa(dbg) : Get_REL32_isa(dbg);
-    /* non-MIPS, dwarf lengths and offsets are 32 bits even for 64bit
-       pointer environments. */
-    /* Get_REL32_isa here supports 64-bit-pointer dwarf with pure
-       dwarf2 v2.0.0 32bit offsets, as emitted by cygnus tools. And
-       pure 32 bit offset dwarf for 32bit pointer apps. */
+    /*  non-MIPS, dwarf lengths and offsets are 32 bits even for 64bit
+        pointer environments. */
+    /*  Get_REL32_isa here supports 64-bit-pointer dwarf with pure
+        dwarf2 v2.0.0 32bit offsets, as emitted by cygnus tools. And
+        pure 32 bit offset dwarf for 32bit pointer apps. */
 
     dbg->de_offset_reloc = Get_REL32_isa(dbg);
 #elif defined(HAVE_SGI_IRIX_OFFSETS) 
-    /* MIPS-SGI-IRIX 32 or 64, where offsets and lengths are both 64 bit for 
-       64bit pointer objects and both 32 bit for 32bit pointer objects. 
-       And a dwarf-reader must check elf info to tell which applies. */
+    /*  MIPS-SGI-IRIX 32 or 64, where offsets and lengths are both 64 bit for 
+        64bit pointer objects and both 32 bit for 32bit pointer objects. 
+        And a dwarf-reader must check elf info to tell which applies. */
     dbg->de_64bit_extension = 0;
     dbg->de_pointer_size = (IS_64BIT(dbg) ? 8 : 4);
     dbg->de_offset_size = (IS_64BIT(dbg) ? 8 : 4);
@@ -166,14 +158,14 @@ common_init(Dwarf_P_Debug dbg, Dwarf_Unsigned flags)
         IS_64BIT(dbg) ? Get_REL64_isa(dbg) : Get_REL32_isa(dbg);
     dbg->de_offset_reloc = dbg->de_ptr_reloc;
 #else /* HAVE_DWARF2_99_EXTENSION or default. */ 
-    /* Revised 64 bit output, using distingushed values. Per 1999
-       dwarf3.  This allows run-time selection of offset size.  */
+    /*  Revised 64 bit output, using distingushed values. Per 1999
+        dwarf3.  This allows run-time selection of offset size.  */
     dbg->de_64bit_extension = (IS_64BIT(dbg) ? 1 : 0);
     dbg->de_pointer_size = (IS_64BIT(dbg) ? 8 : 4);
     if( flags & DW_DLC_OFFSET_SIZE_64 && (dbg->de_pointer_size == 8)) {
-        /* When it's 64 bit address, a 64bit offset is sensible.
-           Arguably a 32 bit address with 64 bit offset could be
-           sensible, but who would want that? */
+        /*  When it's 64 bit address, a 64bit offset is sensible.
+            Arguably a 32 bit address with 64 bit offset could be
+            sensible, but who would want that? */
         dbg->de_offset_size = 8;
         dbg->de_64bit_extension = 1;
     }  else {
@@ -182,10 +174,10 @@ common_init(Dwarf_P_Debug dbg, Dwarf_Unsigned flags)
     }
     dbg->de_ptr_reloc =
         IS_64BIT(dbg) ? Get_REL64_isa(dbg) : Get_REL32_isa(dbg);
-    /* Non-MIPS, dwarf lengths and offsets are 32 bits even for 64bit
-       pointer environments. */
-    /* Get_REL??_isa here supports 64bit-offset dwarf. For 64bit, we
-       emit the extension bytes. */
+    /*  Non-MIPS, dwarf lengths and offsets are 32 bits even for 64bit
+        pointer environments. */
+    /*  Get_REL??_isa here supports 64bit-offset dwarf. For 64bit, we
+        emit the extension bytes. */
 
     dbg->de_offset_reloc = IS_64BIT(dbg) ? Get_REL64_isa(dbg)
         : Get_REL32_isa(dbg);

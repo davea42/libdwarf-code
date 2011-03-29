@@ -1,6 +1,7 @@
 /*
 
   Copyright (C) 2000,2004 Silicon Graphics, Inc.  All Rights Reserved.
+  Portions Copyright 2011 David Anderson.  All Rights Reserved.
 
   This program is free software; you can redistribute it and/or modify it
   under the terms of version 2.1 of the GNU Lesser General Public License 
@@ -46,18 +47,15 @@
 #define SIGN_BIT        0x40
 
 
-/*-------------------------------------------------------------
-        Encode val as a leb128. This encodes it as an unsigned 
-        number.
----------------------------------------------------------------*/
-/* return DW_DLV_ERROR or DW_DLV_OK.
-** space to write leb number is provided by caller, with caller
-** passing length.
-** number of bytes used returned thru nbytes arg
-*/
+/*  Encode val as a leb128. This encodes it as an unsigned 
+    number. */
+/*  Return DW_DLV_ERROR or DW_DLV_OK.
+    space to write leb number is provided by caller, with caller
+    passing length.
+    number of bytes used returned thru nbytes arg */
 int
 _dwarf_pro_encode_leb128_nm(Dwarf_Unsigned val, int *nbytes,
-                            char *space, int splen)
+    char *space, int splen)
 {
     char *a;
     char *end = space + splen;
@@ -89,7 +87,7 @@ _dwarf_pro_encode_leb128_nm(Dwarf_Unsigned val, int *nbytes,
 */
 int
 _dwarf_pro_encode_signed_leb128_nm(Dwarf_Signed value, int *nbytes,
-                                   char *space, int splen)
+    char *space, int splen)
 {
     char *str;
     Dwarf_Signed sign = -(value < 0);
@@ -106,10 +104,8 @@ _dwarf_pro_encode_signed_leb128_nm(Dwarf_Signed value, int *nbytes,
         if (str >= end) {
             return DW_DLV_ERROR;
         }
-        /* 
-         * Remaining chunks would just contain the sign bit, and this chunk
-         * has already captured at least one sign bit.
-         */
+        /*  Remaining chunks would just contain the sign bit, and this chunk
+            has already captured at least one sign bit.  */
         if (value == sign && ((byte & SIGN_BIT) == (sign & SIGN_BIT))) {
             more = 0;
         } else {

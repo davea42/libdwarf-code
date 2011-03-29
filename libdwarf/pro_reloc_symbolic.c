@@ -1,6 +1,7 @@
 /*
 
   Copyright (C) 2000,2004 Silicon Graphics, Inc.  All Rights Reserved.
+  Portions Copyright 2011 David Anderson.  All Rights Reserved.
 
   This program is free software; you can redistribute it and/or modify it
   under the terms of version 2.1 of the GNU Lesser General Public License 
@@ -45,10 +46,8 @@
 #include "pro_reloc.h"
 #include "pro_reloc_symbolic.h"
 
-/*
-        Return DW_DLV_ERROR on malloc error.
-        Return DW_DLV_OK otherwise
-*/
+/*  Return DW_DLV_ERROR on malloc error.
+    Return DW_DLV_OK otherwise */
 
 int
 _dwarf_pro_reloc_name_symbolic(Dwarf_P_Debug dbg, 
@@ -64,7 +63,7 @@ _dwarf_pro_reloc_name_symbolic(Dwarf_P_Debug dbg,
     struct Dwarf_Relocation_Data_s *slotp;
 
     res = _dwarf_pro_reloc_get_a_slot(dbg, base_sec_index,
-                                      &relrec_to_fill);
+        &relrec_to_fill);
     if (res != DW_DLV_OK)
         return res;
     slotp = (struct Dwarf_Relocation_Data_s *) relrec_to_fill;
@@ -77,10 +76,8 @@ _dwarf_pro_reloc_name_symbolic(Dwarf_P_Debug dbg,
 
 
 
-/*
-        Return DW_DLV_ERROR on malloc error.
-        Return DW_DLV_OK otherwise
-*/
+/*  Return DW_DLV_ERROR on malloc error.
+    Return DW_DLV_OK otherwise */
 int
 _dwarf_pro_reloc_length_symbolic(Dwarf_P_Debug dbg, 
     int base_sec_index, 
@@ -97,12 +94,12 @@ _dwarf_pro_reloc_length_symbolic(Dwarf_P_Debug dbg,
     struct Dwarf_Relocation_Data_s *slotp2 = 0;
 
     res = _dwarf_pro_reloc_get_a_slot(dbg, base_sec_index,
-                                      &relrec_to_fill);
+        &relrec_to_fill);
     if (res != DW_DLV_OK)
         return res;
     slotp1 = (struct Dwarf_Relocation_Data_s *) relrec_to_fill;
     res = _dwarf_pro_reloc_get_a_slot(dbg, base_sec_index,
-                                      &relrec_to_fill);
+        &relrec_to_fill);
     if (res != DW_DLV_OK)
         return res;
     slotp2 = (struct Dwarf_Relocation_Data_s *) relrec_to_fill;
@@ -120,12 +117,9 @@ _dwarf_pro_reloc_length_symbolic(Dwarf_P_Debug dbg,
     return DW_DLV_OK;
 }
 
-/*
-   Reset whatever fields of Dwarf_P_Per_Reloc_Sect_s
-   we must to allow adding a fresh new single
-   block easily (block consolidation use only).
-
-*/
+/*  Reset whatever fields of Dwarf_P_Per_Reloc_Sect_s
+    we must to allow adding a fresh new single
+    block easily (block consolidation use only).  */
 static void
 _dwarf_reset_reloc_sect_info(struct Dwarf_P_Per_Reloc_Sect_s *pblk,
     unsigned long ct)
@@ -140,8 +134,7 @@ _dwarf_reset_reloc_sect_info(struct Dwarf_P_Per_Reloc_Sect_s *pblk,
     pblk->pr_slots_per_block_to_alloc = ct;
 }
 
-/*
-    Ensure each stream is a single buffer and
+/*  Ensure each stream is a single buffer and
     add that single buffer to the set of stream buffers.
 
     By creating a new buffer and copying if necessary.
@@ -156,8 +149,7 @@ _dwarf_reset_reloc_sect_info(struct Dwarf_P_Per_Reloc_Sect_s *pblk,
     Return -1 on error (malloc failure)
 
     Return DW_DLV_OK on success. Any other return indicates 
-    malloc failed.
-*/
+    malloc failed.  */
 int
 _dwarf_symbolic_relocs_to_disk(Dwarf_P_Debug dbg,
     Dwarf_Signed * new_sec_count)
@@ -186,41 +178,40 @@ _dwarf_symbolic_relocs_to_disk(Dwarf_P_Debug dbg,
         /* total_size = ct *len; */
         sec_index = p_reloc->pr_sect_num_of_reloc_sect;
         if (sec_index == 0) {
-            /* Call de_callback_func or de_callback_func_b, 
-               getting section number of reloc section. */
+            /*  Call de_callback_func or de_callback_func_b, 
+                getting section number of reloc section. */
             int rel_section_index = 0;
             int int_name = 0;
             Dwarf_Unsigned name_idx = 0;
 
-            /* 
-               This is a bit of a fake, as we do not really have true
-               elf sections at all. Just the data such might contain.
-               But this lets the caller eventually link things
-               together: without this call we would not know what rel
-               data goes with what section when we are asked for the
-               real arrays. */
+            /*  This is a bit of a fake, as we do not really have true
+                elf sections at all. Just the data such might contain.
+                But this lets the caller eventually link things
+                together: without this call we would not know what rel
+                data goes with what section when we are asked for the
+                real arrays. */
 
             if (dbg->de_callback_func_b) {
                 rel_section_index =
                     dbg->de_callback_func_b(_dwarf_rel_section_names[i],
-                                   dbg->de_relocation_record_size,
-                                   /* type */ SHT_REL,
-                                   /* flags */ 0,
-                                   /* link to symtab, which we cannot
-                                      know */ SHN_UNDEF,
-                                   /* sec rels apply to */
-                                   dbg->de_elf_sects[i],
-                                   &name_idx, &err);
+                        dbg->de_relocation_record_size,
+                        /* type */ SHT_REL,
+                        /* flags */ 0,
+                        /* link to symtab, which we cannot
+                            know */ SHN_UNDEF,
+                        /* sec rels apply to */
+                        dbg->de_elf_sects[i],
+                        &name_idx, &err);
             } else {
                 rel_section_index =
                     dbg->de_callback_func(_dwarf_rel_section_names[i],
-                                 dbg->de_relocation_record_size,
-                                 /* type */ SHT_REL,
-                                 /* flags */ 0,
-                                 /* link to symtab, which we cannot
-                                    know */ SHN_UNDEF,
-                                 /* sec rels apply to, in elf, sh_info */
-                                 dbg->de_elf_sects[i], &int_name, &err);
+                        dbg->de_relocation_record_size,
+                        /* type */ SHT_REL,
+                        /* flags */ 0,
+                        /* link to symtab, which we cannot
+                            know */ SHN_UNDEF,
+                        /* sec rels apply to, in elf, sh_info */
+                        dbg->de_elf_sects[i], &int_name, &err);
                 name_idx = int_name;
             }
             if (rel_section_index == -1) {
@@ -238,8 +229,8 @@ _dwarf_symbolic_relocs_to_disk(Dwarf_P_Debug dbg,
         if (p_reloc->pr_block_count > 1) {
             struct Dwarf_P_Relocation_Block_s *new_blk;
 
-            /* HACK , not normal interfaces, trashing p_reloc current
-               contents! */
+            /*  HACK , not normal interfaces, trashing p_reloc current
+                contents! */
             _dwarf_reset_reloc_sect_info(p_reloc, ct);
 
             /* Creating new single block for all 'ct' entries */
@@ -251,8 +242,8 @@ _dwarf_symbolic_relocs_to_disk(Dwarf_P_Debug dbg,
 
             data = (Dwarf_Small *) new_blk->rb_data;
 
-            /* The following loop does the consolidation to a single
-               block and frees the input block(s). */
+            /*  The following loop does the consolidation to a single
+                block and frees the input block(s). */
             do {
                 unsigned long len =
                     p_blk->rb_where_to_add_next - p_blk->rb_data;
@@ -267,8 +258,8 @@ _dwarf_symbolic_relocs_to_disk(Dwarf_P_Debug dbg,
             new_blk->rb_where_to_add_next = (char *) data;
             p_reloc->pr_reloc_total_count = ct;
 
-            /* have now created a single block, but no change in slots
-               used (pr_reloc_total_count) */
+            /*  Have now created a single block, but no change in slots
+                used (pr_reloc_total_count) */
         }
     }
     *new_sec_count = 0;

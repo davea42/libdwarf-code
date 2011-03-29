@@ -1,6 +1,7 @@
 /*
 
   Copyright (C) 2000-2004 Silicon Graphics, Inc.  All Rights Reserved.
+  Portions Copyright 2011 David Anderson. All Rights Reserved.
 
   This program is free software; you can redistribute it and/or modify it
   under the terms of version 2.1 of the GNU Lesser General Public License 
@@ -32,8 +33,11 @@
   http://oss.sgi.com/projects/GenInfo/NoticeExplan
 
 */
-/* This code used by SGI-IRIX rqs processing, not needed by
-   any other system or application.
+/*  This code used by SGI-IRIX rqs processing, not needed by
+    any other system or application.
+    The 'We need' and 'FIX' here are left in for historical
+    interest, the code is not really used in the public libdwarf
+    or applications.
 */
 
 #include "config.h"
@@ -55,24 +59,30 @@
 typedef unsigned long long ull;
 
 static int do_this_die_and_dealloc(Dwarf_Debug dbg, Dwarf_Die die,
-                                   int *errval);
-static int
-  handle_debug_info(Dwarf_Debug dbg, int *errval);
-static int
-  handle_debug_frame(Dwarf_Debug dbg, Dwarf_addr_callback_func cb_func, int *errval);
-static int
-  handle_debug_aranges(Dwarf_Debug dbg, Dwarf_addr_callback_func cb_func, int *errval);
-static int
-  handle_debug_line(Dwarf_Debug dbg, Dwarf_Die cu_die, Dwarf_addr_callback_func cb_func, int *errval);
-static int
-  handle_debug_loc(void);
+    int *errval);
+static int handle_debug_info(Dwarf_Debug dbg, int *errval);
+static int handle_debug_frame(Dwarf_Debug dbg, 
+    Dwarf_addr_callback_func cb_func, int *errval);
+static int handle_debug_aranges(Dwarf_Debug dbg, 
+    Dwarf_addr_callback_func cb_func, int *errval);
+static int handle_debug_line(Dwarf_Debug dbg, 
+    Dwarf_Die cu_die, Dwarf_addr_callback_func cb_func, int *errval);
+static int handle_debug_loc(void);
 
 
+/*  A static variable is not thread-safe, but this is only
+    used by SGI-internal software which is single-threaded
+    so the static variable is safe.
+*/
 static Dwarf_addr_callback_func send_addr_note;
 
+/*  A function which should probably not be used outside
+    of SGI.   Intended to be used by executable and
+    shared-library post-processor software.
+*/
 int
 _dwarf_addr_finder(dwarf_elf_handle elf_file_ptr,
-                   Dwarf_addr_callback_func cb_func, int *dwerr)
+    Dwarf_addr_callback_func cb_func, int *dwerr)
 {
 
     Dwarf_Error err = 0;
@@ -82,18 +92,15 @@ _dwarf_addr_finder(dwarf_elf_handle elf_file_ptr,
     int sections_found = 0;
 
     res = dwarf_elf_init(elf_file_ptr, DW_DLC_READ, /* errhand */ 0,
-                         /* errarg */ 0, &dbg, &err);
+        /* errarg */ 0, &dbg, &err);
     if (res == DW_DLV_ERROR) {
         int errv = (int) dwarf_errno(err);
-
         return errv;
     }
     if (res == DW_DLV_NO_ENTRY) {
         return res;
     }
-
     send_addr_note = cb_func;
-
     res = handle_debug_info(dbg, &errval);
     switch (res) {
     case DW_DLV_OK:
@@ -166,9 +173,7 @@ _dwarf_addr_finder(dwarf_elf_handle elf_file_ptr,
 
 }
 
-/*
-        Return DW_DLV_OK, ERROR, or NO_ENTRY.
-*/
+/*  Return DW_DLV_OK, ERROR, or NO_ENTRY.  */
 static int
 handle_debug_info(Dwarf_Debug dbg, int *errval)
 {
@@ -186,17 +191,16 @@ handle_debug_info(Dwarf_Debug dbg, int *errval)
 
 
     for (nres = dwarf_next_cu_header(dbg, &hdr_length, &version_stamp,
-                                     &abbrev_offset,
-                                     &addr_size, &nxtoff, &err);
-         terminate_now == 0 && nres == DW_DLV_OK;
-         nres = dwarf_next_cu_header(dbg, &hdr_length, &version_stamp,
-                                     &abbrev_offset,
-                                     &addr_size, &nxtoff, &err)
-        ) {
+        &abbrev_offset,
+        &addr_size, &nxtoff, &err);
+        terminate_now == 0 && nres == DW_DLV_OK;
+        nres = dwarf_next_cu_header(dbg, &hdr_length, &version_stamp,
+            &abbrev_offset,
+            &addr_size, &nxtoff, &err)) {
 
         Dwarf_Die curdie = 0;
 
-        /* try to get the compilation unit die */
+        /* Try to get the compilation unit die */
         sibres = dwarf_siblingof(dbg, curdie, &sibdie, &err);
         if (sibres == DW_DLV_OK) {
             res = do_this_die_and_dealloc(dbg, sibdie, errval);
@@ -232,8 +236,7 @@ static int
     DW_AT_high_pc,
     DW_AT_low_pc,
 };
-static int
-  might_have_locdesc[] = {
+static int might_have_locdesc[] = {
     DW_AT_segment,
     DW_AT_return_addr,
     DW_AT_frame_base,
@@ -245,12 +248,10 @@ static int
     DW_AT_vtable_elem_location,
 };
 
-/*
-        Return DW_DLV_OK if handling this went ok.
-*/
+/*  Return DW_DLV_OK if handling this went ok.  */
 static int
 handle_attr_addr(Dwarf_Debug dbg, Dwarf_Die die, Dwarf_Half attrnum,
-                 Dwarf_Error * perr)
+    Dwarf_Error * perr)
 {
     int res = DW_DLV_OK;
     Dwarf_Off offset;
@@ -283,31 +284,30 @@ handle_attr_addr(Dwarf_Debug dbg, Dwarf_Die die, Dwarf_Half attrnum,
                     send_addr_note(DW_SECTION_INFO, offset, addr);
                 } else if (ares == DW_DLV_ERROR) {
                     return ares;
-                }               /* no entry: ok. */
+                }               
+                /* no entry: ok. */
             } else {
-                res = DW_DLV_ERROR;     /* NO_ENTRY is impossible. */
+                /* NO_ENTRY is impossible. */
+                res = DW_DLV_ERROR;     
             }
             break;
 
         default:
-            /* surprising! An error? */
-
-            ;                   /* do nothing */
+            /* surprising! An error? */ 
+            /* do nothing */ 
+            ;
         }
         dwarf_dealloc(dbg, attr, DW_DLA_ATTR);
-
     } else {
         res = ares;
     }
     return res;
 }
 
-/*
-        Return DW_DLV_OK if handling this went ok.
-*/
+/* Return DW_DLV_OK if handling this went ok.  */
 static int
 handle_attr_locdesc(Dwarf_Debug dbg, Dwarf_Die die, Dwarf_Half attrnum,
-                    Dwarf_Error * perr)
+    Dwarf_Error * perr)
 {
     int retval = DW_DLV_OK;
     Dwarf_Attribute attr;
@@ -343,7 +343,7 @@ handle_attr_locdesc(Dwarf_Debug dbg, Dwarf_Die die, Dwarf_Half attrnum,
                         /* this cannot happen! */
                         /* perr? */
                         _dwarf_error(dbg, perr,
-                                     DW_DLE_LOCDESC_COUNT_WRONG);
+                            DW_DLE_LOCDESC_COUNT_WRONG);
                         retval = DW_DLV_ERROR;
                         return retval;
                     }
@@ -357,12 +357,12 @@ handle_attr_locdesc(Dwarf_Debug dbg, Dwarf_Die die, Dwarf_Half attrnum,
                             llocp = locp + entindx;
                             if (llocp->lr_atom == DW_OP_addr) {
                                 send_addr_note(DW_SECTION_INFO, offset +
-                                               llocp->lr_offset + 1
-                                               /* The offset is the
-                                                  offset of the atom,
-                                                  ** and we know the
-                                                  addr is 1 past it. */
-                                               , llocp->lr_number);
+                                    llocp->lr_offset + 1
+                                    /*  The offset is the
+                                        offset of the atom,
+                                        ** and we know the
+                                        addr is 1 past it. */
+                                        , llocp->lr_number);
                             }
                         }
                     }
@@ -371,7 +371,7 @@ handle_attr_locdesc(Dwarf_Debug dbg, Dwarf_Die die, Dwarf_Half attrnum,
                     if (count > 0) {
                         for (i = 0; i < count; ++i) {
                             dwarf_dealloc(dbg, llbuf[i].ld_s,
-                                          DW_DLA_LOC_BLOCK);
+                                DW_DLA_LOC_BLOCK);
                         }
                         dwarf_dealloc(dbg, llbuf, DW_DLA_LOCDESC);
                     }
@@ -382,10 +382,10 @@ handle_attr_locdesc(Dwarf_Debug dbg, Dwarf_Die die, Dwarf_Half attrnum,
 
             default:
                 /* must be a const offset in debug_loc */
-                ;               /* do nothing */
+                ; /* do nothing */
             }
             dwarf_dealloc(dbg, attr, DW_DLA_ATTR);
-        }                       /* else error or no entry */
+        }   /* else error or no entry */
         retval = fres;
     } else {
         retval = ares;
@@ -393,11 +393,9 @@ handle_attr_locdesc(Dwarf_Debug dbg, Dwarf_Die die, Dwarf_Half attrnum,
     return retval;
 }
 
-/*
-  Return DW_DLV_OK, or DW_DLV_ERROR
+/*  Return DW_DLV_OK, or DW_DLV_ERROR
 
-  Handle the addrs in a single die.
-*/
+    Handle the addrs in a single die.  */
 static int
 process_this_die_attrs(Dwarf_Debug dbg, Dwarf_Die newdie, int *errval)
 {
@@ -422,11 +420,11 @@ process_this_die_attrs(Dwarf_Debug dbg, Dwarf_Die newdie, int *errval)
         return tres;
     }
     if (DW_TAG_compile_unit == ltag) {
-        /* because of the way the dwarf_line code works, we do lines 
-           only per compile unit. This may turn out to be wrong if
-           we have lines left unconnected to a CU. of course such 
-           lines will not, at present, be used by gnome. This is
-           not ideal as coded due to the dwarf_line.c issue. */
+        /*  Because of the way the dwarf_line code works, we do lines 
+            only per compile unit. This may turn out to be wrong if
+            we have lines left unconnected to a CU. of course such 
+            lines will not, at present, be used by gnome. This is
+            not ideal as coded due to the dwarf_line.c issue. */
         int lres = handle_debug_line(dbg, newdie, send_addr_note, errval);
         if (lres == DW_DLV_ERROR) {
             return lres;
@@ -482,17 +480,15 @@ process_this_die_attrs(Dwarf_Debug dbg, Dwarf_Die newdie, int *errval)
     return DW_DLV_OK;
 }
 
-/*
-        Handle siblings as a list,
-        Do children by recursing.
-        Effectively this is walking the tree preorder.
+/*  Handle siblings as a list,
+    Do children by recursing.
+    Effectively this is walking the tree preorder.
 
-        This dealloc's any die passed to it, so the
-        caller should not do that dealloc.
-        It seems more logical to have the one causing
-        the alloc to do the dealloc, but that way this
-        routine became a mess.
-
+    This dealloc's any die passed to it, so the
+    caller should not do that dealloc.
+    It seems more logical to have the one causing
+    the alloc to do the dealloc, but that way this
+    routine became a mess.
 */
 static int
 do_this_die_and_dealloc(Dwarf_Debug dbg, Dwarf_Die die, int *errval)
@@ -551,7 +547,7 @@ do_this_die_and_dealloc(Dwarf_Debug dbg, Dwarf_Die die, int *errval)
             }
             dwarf_dealloc(dbg, err, DW_DLA_ERROR);
             return DW_DLV_ERROR;
-        }                       /* else was NO ENTRY */
+        }  /* else was NO ENTRY */
         prevdie = newdie;
         sibdie = 0;
         sibres = dwarf_siblingof(dbg, newdie, &sibdie, &err);
@@ -579,7 +575,7 @@ do_this_die_and_dealloc(Dwarf_Debug dbg, Dwarf_Die die, int *errval)
 
 static int
 handle_debug_frame(Dwarf_Debug dbg, Dwarf_addr_callback_func cb_func,
-                   int *errval)
+    int *errval)
 {
     int retval = DW_DLV_OK;
     int res;
@@ -591,7 +587,7 @@ handle_debug_frame(Dwarf_Debug dbg, Dwarf_addr_callback_func cb_func,
 
     res =
         _dwarf_frame_address_offsets(dbg, &addrlist, &offsetlist,
-                                     &count, &err);
+            &count, &err);
     if (res == DW_DLV_OK) {
         for (i = 0; i < count; i++) {
             cb_func(DW_SECTION_FRAME, offsetlist[i], addrlist[i]);
@@ -609,7 +605,7 @@ handle_debug_frame(Dwarf_Debug dbg, Dwarf_addr_callback_func cb_func,
 }
 static int
 handle_debug_aranges(Dwarf_Debug dbg, Dwarf_addr_callback_func cb_func,
-                     int *errval)
+    int *errval)
 {
     int retval = DW_DLV_OK;
     Dwarf_Error err;
@@ -620,20 +616,20 @@ handle_debug_aranges(Dwarf_Debug dbg, Dwarf_addr_callback_func cb_func,
 
     retval =
         _dwarf_get_aranges_addr_offsets(dbg, &aranges, &offsets, &count,
-                                        &err);
+            &err);
     if (retval == DW_DLV_OK) {
         if (count == 0) {
             retval = DW_DLV_NO_ENTRY;
         } else {
             for (indx = 0; indx < count; indx++) {
                 cb_func(DW_SECTION_ARANGES, offsets[indx],
-                        aranges[indx]);
+                    aranges[indx]);
             }
         }
         dwarf_dealloc(dbg, aranges, DW_DLA_ADDR);
         dwarf_dealloc(dbg, offsets, DW_DLA_ADDR);
     } else if (retval == DW_DLV_NO_ENTRY) {
-        ;                       /* do nothing */
+        ; /* do nothing */
     } else {
         *errval = (int) dwarf_errno(err);
         retval = DW_DLV_ERROR;
@@ -642,7 +638,7 @@ handle_debug_aranges(Dwarf_Debug dbg, Dwarf_addr_callback_func cb_func,
 }
 static int
 handle_debug_line(Dwarf_Debug dbg, Dwarf_Die cu_die,
-                  Dwarf_addr_callback_func cb_func, int *errval)
+    Dwarf_addr_callback_func cb_func, int *errval)
 {
     int retval = DW_DLV_OK;
     int res;
@@ -654,7 +650,7 @@ handle_debug_line(Dwarf_Debug dbg, Dwarf_Die cu_die,
 
     res =
         _dwarf_line_address_offsets(dbg, cu_die, &addrlist, &offsetlist,
-                                    &count, &err);
+            &count, &err);
     if (res == DW_DLV_OK) {
         for (i = 0; i < count; i++) {
             cb_func(DW_SECTION_LINE, offsetlist[i], addrlist[i]);
@@ -671,10 +667,9 @@ handle_debug_line(Dwarf_Debug dbg, Dwarf_Die cu_die,
     return retval;
 }
 
-/*
-        We need to add support for this. Currently we do not
-        generate this section.
-        FIX!
+/*  We need to add support for this. Currently we do not
+    generate this section.
+    FIX!
 */
 static int
 handle_debug_loc(void)

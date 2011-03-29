@@ -1,6 +1,7 @@
 /*
 
   Copyright (C) 2000,2002,2004 Silicon Graphics, Inc.  All Rights Reserved.
+  Portions Copyright 2011 David Anderson. All Rights Reserved.
 
   This program is free software; you can redistribute it and/or modify it
   under the terms of version 2.1 of the GNU Lesser General Public License 
@@ -58,21 +59,22 @@ extern char *_dwarf_errmsgs[];
 */
 void
 _dwarf_p_error(Dwarf_P_Debug dbg,
-               Dwarf_Error * error, Dwarf_Word errval)
+    Dwarf_Error * error, Dwarf_Word errval)
 {
     Dwarf_Error errptr;
 
-    /* Allow NULL dbg on entry, since sometimes that can happen and we
-       want to report the upper-level error, not this one. */
-    if ((Dwarf_Sword) errval < 0)
+    /*  Allow NULL dbg on entry, since sometimes that can happen and we
+        want to report the upper-level error, not this one. */
+    if ((Dwarf_Sword) errval < 0) {
         printf("ERROR VALUE: %ld - %s\n",
-               (long) errval, _dwarf_errmsgs[-errval - 1]);
+            (long) errval, _dwarf_errmsgs[-errval - 1]);
+    }
     if (error != NULL) {
         errptr = (Dwarf_Error)
             _dwarf_p_get_alloc(dbg, sizeof(struct Dwarf_Error_s));
         if (errptr == NULL) {
             fprintf(stderr,
-                    "Could not allocate Dwarf_Error structure\n");
+                "Could not allocate Dwarf_Error structure\n");
             abort();
         }
         errptr->er_errval = (Dwarf_Sword) errval;
@@ -85,7 +87,7 @@ _dwarf_p_error(Dwarf_P_Debug dbg,
             _dwarf_p_get_alloc(dbg, sizeof(struct Dwarf_Error_s));
         if (errptr == NULL) {
             fprintf(stderr,
-                    "Could not allocate Dwarf_Error structure\n");
+                "Could not allocate Dwarf_Error structure\n");
             abort();
         }
         errptr->er_errval = (Dwarf_Sword) errval;

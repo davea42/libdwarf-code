@@ -36,28 +36,26 @@
 
 
 
-int _dwarf_pro_reloc_name_stream64(Dwarf_P_Debug dbg, int base_sec_index, Dwarf_Unsigned offset,	/* r_offset 
-													   of 
-													   reloc 
-													 */
-				   Dwarf_Unsigned symidx,
-				   enum Dwarf_Rel_Type,
-				   int reltarget_length);
-int _dwarf_pro_reloc_name_stream32(Dwarf_P_Debug dbg, int base_sec_index, Dwarf_Unsigned offset,	/* r_offset 
-													   of 
-													   reloc 
-													 */
-				   Dwarf_Unsigned symidx,
-				   enum Dwarf_Rel_Type,
-				   int reltarget_length);
-int _dwarf_pro_reloc_length_stream(Dwarf_P_Debug dbg, int base_sec_index, Dwarf_Unsigned offset,	/* r_offset 
-													   of 
-													   reloc 
-													 */
-				   Dwarf_Unsigned start_symidx,
-				   Dwarf_Unsigned end_symidx,
-				   enum Dwarf_Rel_Type,
-				   int reltarget_length);
+int _dwarf_pro_reloc_name_stream64(Dwarf_P_Debug dbg, 
+    int base_sec_index, 
+    Dwarf_Unsigned offset,/* r_offset of reloc */
+    Dwarf_Unsigned symidx,
+    enum Dwarf_Rel_Type,
+    int reltarget_length);
+int _dwarf_pro_reloc_name_stream32(Dwarf_P_Debug dbg, 
+    int base_sec_index, 
+    Dwarf_Unsigned offset,/* r_offset of reloc */
+    Dwarf_Unsigned symidx,
+    enum Dwarf_Rel_Type,
+    int reltarget_length);
+
+int _dwarf_pro_reloc_length_stream(Dwarf_P_Debug dbg, 
+    int base_sec_index, 
+    Dwarf_Unsigned offset,	/* r_offset of reloc */ 
+    Dwarf_Unsigned start_symidx,
+    Dwarf_Unsigned end_symidx,
+    enum Dwarf_Rel_Type,
+    int reltarget_length);
 
 int _dwarf_stream_relocs_to_disk(Dwarf_P_Debug dbg,
-				 Dwarf_Signed * new_sec_count);
+    Dwarf_Signed * new_sec_count);

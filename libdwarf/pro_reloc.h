@@ -37,11 +37,11 @@
 
 
 int _dwarf_pro_pre_alloc_n_reloc_slots(Dwarf_P_Debug dbg,
-				       int rel_sec_index,
-				       Dwarf_Unsigned newslots);
+    int rel_sec_index,
+    Dwarf_Unsigned newslots);
 
 int _dwarf_pro_alloc_reloc_slots(Dwarf_P_Debug dbg, int rel_sec_index);
 
 int _dwarf_pro_reloc_get_a_slot(Dwarf_P_Debug dbg,
-				int base_sec_index,
-				void **relrec_to_fill);
+    int base_sec_index,
+    void **relrec_to_fill);

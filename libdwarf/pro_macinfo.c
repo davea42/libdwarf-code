@@ -1,6 +1,7 @@
 /*
 
   Copyright (C) 2000,2004 Silicon Graphics, Inc.  All Rights Reserved.
+  Portions Copyright 2011 David Anderson.  All Rights Reserved.
 
   This program is free software; you can redistribute it and/or modify it
   under the terms of version 2.1 of the GNU Lesser General Public License 
@@ -43,12 +44,11 @@
 #include "pro_section.h"
 #include "pro_macinfo.h"
 
-/*
-        I don't much like the error strings this generates, since
-        like the rest of libdwarf they are simple strings with
-        no useful numbers in them. But that's not something I can
-        fix without more work than I have time for
-        right now.  davea Nov 94.
+/*  I don't much like the error strings this generates, since
+    like the rest of libdwarf they are simple strings with
+    no useful numbers in them. But that's not something I can
+    fix without more work than I have time for
+    right now.  davea Nov 94.
 */
 
 /* these are gross overestimates of the number of
@@ -64,7 +64,7 @@
 
 static int
 libdwarf_compose_begin(Dwarf_P_Debug dbg, int code,
-                       size_t maxlen, int *compose_error_type)
+    size_t maxlen, int *compose_error_type)
 {
     unsigned char *nextchar;
     struct dw_macinfo_block_s *curblk = dbg->de_current_macinfo;
@@ -152,7 +152,7 @@ libdwarf_compose_add_string(Dwarf_P_Debug dbg, char *string, size_t len)
 }
 static int
 libdwarf_compose_add_line(Dwarf_P_Debug dbg,
-                          Dwarf_Unsigned line, int *compose_error_type)
+    Dwarf_Unsigned line, int *compose_error_type)
 {
     struct dw_macinfo_block_s *curblk = dbg->de_current_macinfo;
     unsigned char *nextchar;
@@ -162,13 +162,13 @@ libdwarf_compose_add_line(Dwarf_P_Debug dbg,
     nextchar =
         (unsigned char *) (curblk->mb_data + dbg->de_compose_used_len);
 
-    /* Put the created leb number directly into the macro buffer If
-       dbg->de_compose_avail is > INT_MAX this will not work as the
-       'int' will look negative to _dwarf_pro_encode_leb128_nm! */
+    /*  Put the created leb number directly into the macro buffer If
+        dbg->de_compose_avail is > INT_MAX this will not work as the
+        'int' will look negative to _dwarf_pro_encode_leb128_nm! */
 
     res = _dwarf_pro_encode_leb128_nm(line, &nbytes,
-                                      (char *) nextchar,
-                                      (int) dbg->de_compose_avail);
+        (char *) nextchar,
+        (int) dbg->de_compose_avail);
     if (res != DW_DLV_OK) {
         *compose_error_type = DW_DLE_MACINFO_INTERNAL_ERROR_SPACE;
         return DW_DLV_ERROR;
@@ -179,10 +179,8 @@ libdwarf_compose_add_line(Dwarf_P_Debug dbg,
     return DW_DLV_OK;
 }
 
-/*
-   This function actually 'commits' the space used by the
-   preceeding calls.
-*/
+/*  This function actually 'commits' the space used by the
+    preceeding calls.  */
 static int
 libdwarf_compose_complete(Dwarf_P_Debug dbg, int *compose_error_type)
 {
@@ -201,8 +199,8 @@ libdwarf_compose_complete(Dwarf_P_Debug dbg, int *compose_error_type)
 
 int
 dwarf_def_macro(Dwarf_P_Debug dbg,
-                Dwarf_Unsigned line,
-                char *macname, char *macvalue, Dwarf_Error * error)
+    Dwarf_Unsigned line,
+    char *macname, char *macvalue, Dwarf_Error * error)
 {
     size_t len;
     size_t len2;
@@ -228,14 +226,12 @@ dwarf_def_macro(Dwarf_P_Debug dbg,
     } else {
         len2 = 0;
     }
-    length_est = COMMAND_LEN + LINE_LEN + len + len2 + 1;       /* 1
-                                                                   for
-                                                                   space 
-                                                                   character 
-                                                                   we
-                                                                   add */
+
+    /* 1 for space character we add */
+    length_est = COMMAND_LEN + LINE_LEN + len + len2 + 1;   
+
     res = libdwarf_compose_begin(dbg, DW_MACINFO_define, length_est,
-                                 &compose_error_type);
+        &compose_error_type);
     if (res != DW_DLV_OK) {
         _dwarf_p_error(NULL, error, compose_error_type);
         return (DW_DLV_ERROR);
@@ -261,8 +257,8 @@ dwarf_def_macro(Dwarf_P_Debug dbg,
 
 int
 dwarf_undef_macro(Dwarf_P_Debug dbg,
-                  Dwarf_Unsigned line,
-                  char *macname, Dwarf_Error * error)
+    Dwarf_Unsigned line,
+    char *macname, Dwarf_Error * error)
 {
 
     size_t len;
@@ -285,7 +281,7 @@ dwarf_undef_macro(Dwarf_P_Debug dbg,
     }
     length_est = COMMAND_LEN + LINE_LEN + len;
     res = libdwarf_compose_begin(dbg, DW_MACINFO_undef, length_est,
-                                 &compose_error_type);
+        &compose_error_type);
     if (res != DW_DLV_OK) {
         _dwarf_p_error(NULL, error, compose_error_type);
         return (DW_DLV_ERROR);
@@ -306,8 +302,8 @@ dwarf_undef_macro(Dwarf_P_Debug dbg,
 
 int
 dwarf_start_macro_file(Dwarf_P_Debug dbg,
-                       Dwarf_Unsigned fileindex,
-                       Dwarf_Unsigned linenumber, Dwarf_Error * error)
+    Dwarf_Unsigned fileindex,
+    Dwarf_Unsigned linenumber, Dwarf_Error * error)
 {
     size_t length_est;
     int res;
@@ -319,19 +315,19 @@ dwarf_start_macro_file(Dwarf_P_Debug dbg,
     }
     length_est = COMMAND_LEN + LINE_LEN + LINE_LEN;
     res = libdwarf_compose_begin(dbg, DW_MACINFO_start_file, length_est,
-                                 &compose_error_type);
+        &compose_error_type);
     if (res != DW_DLV_OK) {
         _dwarf_p_error(NULL, error, compose_error_type);
         return (DW_DLV_ERROR);
     }
     res = libdwarf_compose_add_line(dbg, fileindex,
-                                    &compose_error_type);
+        &compose_error_type);
     if (res != DW_DLV_OK) {
         _dwarf_p_error(NULL, error, compose_error_type);
         return (DW_DLV_ERROR);
     }
     res = libdwarf_compose_add_line(dbg, linenumber,
-                                    &compose_error_type);
+        &compose_error_type);
     if (res != DW_DLV_OK) {
         _dwarf_p_error(NULL, error, compose_error_type);
         return (DW_DLV_ERROR);
@@ -352,7 +348,7 @@ dwarf_end_macro_file(Dwarf_P_Debug dbg, Dwarf_Error * error)
     }
     length_est = COMMAND_LEN;
     res = libdwarf_compose_begin(dbg, DW_MACINFO_end_file, length_est,
-                                 &compose_error_type);
+        &compose_error_type);
     if (res != DW_DLV_OK) {
         _dwarf_p_error(NULL, error, compose_error_type);
         return (DW_DLV_ERROR);
@@ -367,8 +363,8 @@ dwarf_end_macro_file(Dwarf_P_Debug dbg, Dwarf_Error * error)
 
 int
 dwarf_vendor_ext(Dwarf_P_Debug dbg,
-                 Dwarf_Unsigned constant,
-                 char *string, Dwarf_Error * error)
+    Dwarf_Unsigned constant,
+    char *string, Dwarf_Error * error)
 {
     size_t len;
     size_t length_est;
@@ -390,7 +386,7 @@ dwarf_vendor_ext(Dwarf_P_Debug dbg,
     }
     length_est = COMMAND_LEN + LINE_LEN + len;
     res = libdwarf_compose_begin(dbg, DW_MACINFO_vendor_ext, length_est,
-                                 &compose_error_type);
+        &compose_error_type);
     if (res != DW_DLV_OK) {
         _dwarf_p_error(NULL, error, compose_error_type);
         return (DW_DLV_ERROR);
@@ -413,7 +409,7 @@ dwarf_vendor_ext(Dwarf_P_Debug dbg,
 
 int
 _dwarf_pro_transform_macro_info_to_disk(Dwarf_P_Debug dbg,
-                                        Dwarf_Error * error)
+    Dwarf_Error * error)
 {
     /* Total num of bytes in .debug_macinfo section. */
     Dwarf_Unsigned mac_num_bytes;
@@ -433,15 +429,15 @@ _dwarf_pro_transform_macro_info_to_disk(Dwarf_P_Debug dbg,
     /* Get the size of the debug_macinfo data */
     mac_num_bytes = 0;
     for (m_sect = dbg->de_first_macinfo; m_sect != NULL;
-         m_sect = m_sect->mb_next) {
+        m_sect = m_sect->mb_next) {
         mac_num_bytes += m_sect->mb_used_len;
     }
-    /* Tthe final entry has a type code of 0 to indicate It is final
-       for this CU Takes just 1 byte. */
+    /*  The final entry has a type code of 0 to indicate It is final
+        for this CU Takes just 1 byte. */
     mac_num_bytes += 1;
 
     GET_CHUNK(dbg, dbg->de_elf_sects[DEBUG_MACINFO],
-              macinfo, (unsigned long) mac_num_bytes, error);
+        macinfo, (unsigned long) mac_num_bytes, error);
     if (macinfo == NULL) {
         _dwarf_p_error(dbg, error, DW_DLE_ALLOC_FAIL);
         return (0);
@@ -450,7 +446,7 @@ _dwarf_pro_transform_macro_info_to_disk(Dwarf_P_Debug dbg,
     macinfo_ptr = macinfo;
     m_prev = 0;
     for (m_sect = dbg->de_first_macinfo; m_sect != NULL;
-         m_sect = m_sect->mb_next) {
+        m_sect = m_sect->mb_next) {
         memcpy(macinfo_ptr, m_sect->mb_data, m_sect->mb_used_len);
         macinfo_ptr += m_sect->mb_used_len;
         if (m_prev) {

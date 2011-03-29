@@ -1,6 +1,7 @@
 /*
 
   Copyright (C) 2000,2004 Silicon Graphics, Inc.  All Rights Reserved.
+  Portions Copyright 2011 David Anderson.  All Rights Reserved.
 
   This program is free software; you can redistribute it and/or modify it
   under the terms of version 2.1 of the GNU Lesser General Public License 
@@ -46,18 +47,16 @@
 #include "pro_section.h"
 
 
-/*
-    This function adds another public name to the 
+/*  This function adds another public name to the 
     list of public names for the given Dwarf_P_Debug.  
-    It returns 0 on error, and 1 otherwise.
-*/
+    It returns 0 on error, and 1 otherwise.  */
 
 Dwarf_Unsigned
 dwarf_add_pubname(Dwarf_P_Debug dbg,
-                  Dwarf_P_Die die,
-                  char *pubname_name, Dwarf_Error * error)
+    Dwarf_P_Die die,
+    char *pubname_name, Dwarf_Error * error)
 {
     return
         _dwarf_add_simple_name_entry(dbg, die, pubname_name,
-                                     dwarf_snk_pubname, error);
+            dwarf_snk_pubname, error);
 }

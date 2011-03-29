@@ -1,7 +1,7 @@
 /*
 
   Copyright (C) 2000-2005 Silicon Graphics, Inc.  All Rights Reserved.
-  Portions Copyright (C) 2007-2010  David Anderson. All Rights Reserved.
+  Portions Copyright (C) 2007-2011  David Anderson. All Rights Reserved.
 
   This program is free software; you can redistribute it and/or modify it
   under the terms of version 2.1 of the GNU Lesser General Public License 
@@ -50,8 +50,7 @@
 #include <stdio.h>
 #include "malloc_check.h"
 
-/*
-    These files are included to get the sizes
+/*  These files are included to get the sizes
     of structs to set the ah_bytes_one_struct field
     of the Dwarf_Alloc_Hdr_s structs for each
     allocation type.
@@ -86,8 +85,7 @@ void _dwarf_simple_malloc_botch(int err);
 
 
 
-/*
-    This macro adds the size of a pointer to the size of a
+/*  This macro adds the size of a pointer to the size of a
     struct that is given to it.  It rounds up the size to
     be a multiple of the size of a pointer.  This is done
     so that every struct returned by _dwarf_get_alloc()
@@ -107,49 +105,48 @@ void _dwarf_simple_malloc_botch(int err);
     long long or pointer grows beyound 8 bytes.
     Unclear what to do with wierd requirements, like
     36 bit pointers.
-
-
 */
 #define DW_RESERVE 8
 
-/* Round size up to the next multiple of DW_RESERVE bytes 
+/*  Round size up to the next multiple of DW_RESERVE bytes 
 */
-#define ROUND_SIZE(inputsize)                 \
-        (((inputsize) % (DW_RESERVE)) == 0 ? \
-            (inputsize):                      \
-            ((inputsize)  +                   \
-               (DW_RESERVE) - ((inputsize) % (DW_RESERVE)) ))
+#define ROUND_SIZE(inputsize)            \
+    (((inputsize) % (DW_RESERVE)) == 0 ? \
+    (inputsize):                         \
+    ((inputsize)  +                      \
+    (DW_RESERVE) - ((inputsize) % (DW_RESERVE)) ))
 
 #define ROUND_SIZE_WITH_POINTER(i_size) (ROUND_SIZE(i_size) + DW_RESERVE)
 
-/* SMALL_ALLOC is for trivia where allocation is a waste.
-   Things that should be removed, really. */
+/*  SMALL_ALLOC is for trivia where allocation is a waste.
+    Things that should be removed, really. */
 #define SMALL_ALLOC 2
 
-/* BASE_ALLOC is where a basic allocation makes sense, but 'not too large'. 
-   No thorough evaluation of this value has been done, though
-   it was found wasteful of memory to have BASE_ALLOC be as large as
-   BIG_ALLOC. */
+/*  BASE_ALLOC is where a basic allocation makes sense, 
+    but 'not too large'. 
+    No thorough evaluation of this value has been done, though
+    it was found wasteful of memory to have BASE_ALLOC be as large as
+    BIG_ALLOC. */
 #define BASE_ALLOC 64
 
-/* BIG_ALLOC is where a larger-than-BASE_ALLOC 
-   allocation makes sense, but still 'not too large'.
-   No thorough evaluation of this value has been done. */
+/*  BIG_ALLOC is where a larger-than-BASE_ALLOC 
+    allocation makes sense, but still 'not too large'.
+    No thorough evaluation of this value has been done. */
 #define BIG_ALLOC  128
 
-/* This translates into de_alloc_hdr index 
-** the 0,1,1 entries are special: they don't use the
-** table values at all.
-** Rearranging the DW_DLA values would break binary compatibility
-** so that is not an option.
+/*  This translates into de_alloc_hdr index 
+    the 0,1,1 entries are special: they don't use the
+    table values at all.
+    Rearranging the DW_DLA values would break binary compatibility
+    so that is not an option.
 */
 struct ial_s {
-    int ia_al_num;              /* Index into de_alloc_hdr table. */
+    int ia_al_num;   /* Index into de_alloc_hdr table. */
 
-    /* In bytes, one struct instance. This does not account for extra
-       space needed per block, but that (DW_RESERVE) will be added in
-       later where it is needed (DW_RESERVE space never added in here). 
-     */
+    /*  In bytes, one struct instance. This does not account for extra
+        space needed per block, but that (DW_RESERVE) will be added in
+        later where it is needed 
+        (DW_RESERVE space never added in here).  */
     int ia_struct_size;
 
 
@@ -162,114 +159,126 @@ struct ial_s {
 
 static const
 struct ial_s index_into_allocated[ALLOC_AREA_INDEX_TABLE_MAX] = {
-    {0, 1, 1, 0, 0},            /* none */
+    {0, 1, 1, 0, 0},            /* 0  none */
     {0, 1, 1, 0, 0},            /* 1 DW_DLA_STRING */
-    {1, sizeof(Dwarf_Loc), BASE_ALLOC, 0, 0}
-    ,                           /* 2 DW_DLA_LOC */
-    {2, sizeof(Dwarf_Locdesc), BASE_ALLOC, 0, 0}
-    ,                           /* 3 DW_DLA_LOCDESC */
-    {0, 1, 1, 0, 0}
-    ,                           /* not used *//* 4 DW_DLA_ELLIST */
-    {0, 1, 1, 0, 0}
-    ,                           /* not used *//* 5 DW_DLA_BOUNDS */
-    {3, sizeof(Dwarf_Block), BASE_ALLOC, 0, 0}
-    ,                           /* 6 DW_DLA_BLOCK */
-    {0, 1, 1, 0, 0}
-    ,                           /* the actual dwarf_debug structure *//* 7 DW_DLA_DEBUG */
-    {4, sizeof(struct Dwarf_Die_s), BIG_ALLOC, 0, 0},   /* 8 DW_DLA_DIE 
-                                                         */
-    {5, sizeof(struct Dwarf_Line_s), BIG_ALLOC, 0, 0},  /* 9
-                                                           DW_DLA_LINE */
-    {6, sizeof(struct Dwarf_Attribute_s), BIG_ALLOC * 2, 0, 0},
+    {1, sizeof(Dwarf_Loc), BASE_ALLOC, 0, 0} ,/* 2 DW_DLA_LOC */
+    {2, sizeof(Dwarf_Locdesc), BASE_ALLOC, 0, 0} , /* 3 DW_DLA_LOCDESC */
+    {0, 1, 1, 0, 0} , /* not used *//* 4 DW_DLA_ELLIST */
+    {0, 1, 1, 0, 0} , /* not used *//* 5 DW_DLA_BOUNDS */
+    {3, sizeof(Dwarf_Block), BASE_ALLOC, 0, 0} , /* 6 DW_DLA_BLOCK */ 
+
+    /* the actual dwarf_debug structure */ /* 7 DW_DLA_DEBUG */
+    {0, 1, 1, 0, 0} , 
+
+    {4, sizeof(struct Dwarf_Die_s), BIG_ALLOC, 0, 0},/* 8 DW_DLA_DIE */
+    {5, sizeof(struct Dwarf_Line_s), BIG_ALLOC, 0, 0},/* 9 DW_DLA_LINE */
+
     /* 10 DW_DLA_ATTR */
-    {0, 1, 1, 0, 0},            /* not used *//* 11 DW_DLA_TYPE */
-    {0, 1, 1, 0, 0},            /* not used *//* 12 DW_DLA_SUBSCR */
-    {7, sizeof(struct Dwarf_Global_s), BASE_ALLOC, 0, 0},       /* 13
-                                                                   DW_DLA_GLOBAL 
-                                                                 */
-    {8, sizeof(struct Dwarf_Error_s), BASE_ALLOC, 0, 0},        /* 14
-                                                                   DW_DLA_ERROR 
-                                                                 */
+    {6, sizeof(struct Dwarf_Attribute_s), BIG_ALLOC * 2, 0, 0},
+
+    {0, 1, 1, 0, 0}, /* not used */ /* 11 DW_DLA_TYPE */
+    {0, 1, 1, 0, 0}, /* not used */ /* 12 DW_DLA_SUBSCR */
+
+    /* 13 DW_DLA_GLOBAL */
+    {7, sizeof(struct Dwarf_Global_s), BASE_ALLOC, 0, 0},
+
+    /* 14 DW_DLA_ERROR */
+    {8, sizeof(struct Dwarf_Error_s), BASE_ALLOC, 0, 0},
+
     {0, 1, 1, 0, 0},            /* 15 DW_DLA_LIST */
     {0, 1, 1, 0, 0},            /* not used *//* 16 DW_DLA_LINEBUF */
-    {9, sizeof(struct Dwarf_Arange_s), BASE_ALLOC, 0, 0},       /* 17
-                                                                   DW_DLA_ARANGE 
-                                                                 */
-    {10, sizeof(struct Dwarf_Abbrev_s), BIG_ALLOC, 0, 0},       /* 18
-                                                                   DW_DLA_ABBREV 
-                                                                 */
-    {11, sizeof(Dwarf_Frame_Op), BIG_ALLOC, 0, 0}
-    ,                           /* 19 DW_DLA_FRAME_OP */
-    {12, sizeof(struct Dwarf_Cie_s), BASE_ALLOC, 0, 0}, /* 20
-                                                           DW_DLA_CIE */
-    {13, sizeof(struct Dwarf_Fde_s), BASE_ALLOC, 0, 0}, /* 21 DW_DLA_FDE */
+
+    /* 17 DW_DLA_ARANGE */
+    {9, sizeof(struct Dwarf_Arange_s), BASE_ALLOC, 0, 0},
+
+    /* 18 DW_DLA_ABBREV */
+    {10, sizeof(struct Dwarf_Abbrev_s), BIG_ALLOC, 0, 0},
+
+    /* 19 DW_DLA_FRAME_OP */ 
+    {11, sizeof(Dwarf_Frame_Op), BIG_ALLOC, 0, 0} , 
+
+    /* 20 DW_DLA_CIE */
+    {12, sizeof(struct Dwarf_Cie_s), BASE_ALLOC, 0, 0}, 
+
+    {13, sizeof(struct Dwarf_Fde_s), BASE_ALLOC, 0, 0},/* 21 DW_DLA_FDE */
     {0, 1, 1, 0, 0},            /* 22 DW_DLA_LOC_BLOCK */
     {0, 1, 1, 0, 0},            /* 23 DW_DLA_FRAME_BLOCK */
-    {14, sizeof(struct Dwarf_Global_s), BASE_ALLOC, 0, 0}, /* 24 DW_DLA_FUNC 
-                                                              UNUSED */
-    {15, sizeof(struct Dwarf_Global_s), BASE_ALLOC, 0, 0}, /* 25 
-                                                              DW_DLA_TYPENAME
-                                                              UNUSED */
-    {16, sizeof(struct Dwarf_Global_s), BASE_ALLOC, 0, 0}, /* 26 DW_DLA_VAR 
-                                                              UNUSED */
-    {17, sizeof(struct Dwarf_Global_s), BASE_ALLOC, 0, 0}, /* 27 DW_DLA_WEAK 
-                                                              UNUSED */
+
+    /* 24 DW_DLA_FUNC UNUSED */
+    {14, sizeof(struct Dwarf_Global_s), BASE_ALLOC, 0, 0}, 
+
+    /* 25 DW_DLA_TYPENAME UNUSED */
+    {15, sizeof(struct Dwarf_Global_s), BASE_ALLOC, 0, 0}, 
+
+    /* 26 DW_DLA_VAR UNUSED */
+    {16, sizeof(struct Dwarf_Global_s), BASE_ALLOC, 0, 0}, 
+    
+    /* 27 DW_DLA_WEAK UNUSED */
+    {17, sizeof(struct Dwarf_Global_s), BASE_ALLOC, 0, 0}, 
+
     {0, 1, 1, 0, 0},            /* 28 DW_DLA_ADDR */
     {0, 1,1,0,0 },              /* 29 DW_DLA_RANGES */
 
-    /* The following DW_DLA data types
-       are known only inside libdwarf.  */
+    /*  The following DW_DLA data types
+        are known only inside libdwarf.  */
     
-    {18, sizeof(struct Dwarf_Abbrev_List_s), BIG_ALLOC, 0, 0},
     /* 30 DW_DLA_ABBREV_LIST */
+    {18, sizeof(struct Dwarf_Abbrev_List_s), BIG_ALLOC, 0, 0},
 
-    {19, sizeof(struct Dwarf_Chain_s), BIG_ALLOC, 0, 0}, /* 31 DW_DLA_CHAIN */
-    {20, sizeof(struct Dwarf_CU_Context_s), BASE_ALLOC, 0, 0},
+    /* 31 DW_DLA_CHAIN */
+    {19, sizeof(struct Dwarf_Chain_s), BIG_ALLOC, 0, 0}, 
+
     /* 32 DW_DLA_CU_CONTEXT */
+    {20, sizeof(struct Dwarf_CU_Context_s), BASE_ALLOC, 0, 0},
+
     {21, sizeof(struct Dwarf_Frame_s), BASE_ALLOC,
-     _dwarf_frame_constructor,
-     _dwarf_frame_destructor},  /* 33 DW_DLA_FRAME */
-    {22, sizeof(struct Dwarf_Global_Context_s), BASE_ALLOC, 0, 0},
+        _dwarf_frame_constructor,
+        _dwarf_frame_destructor},  /* 33 DW_DLA_FRAME */
+
     /* 34 DW_DLA_GLOBAL_CONTEXT */
-    {23, sizeof(struct Dwarf_File_Entry_s), BASE_ALLOC, 0, 0},  /* 34 */
+    {22, sizeof(struct Dwarf_Global_Context_s), BASE_ALLOC, 0, 0},
+
     /* 35 DW_DLA_FILE_ENTRY */
-    {24, sizeof(struct Dwarf_Line_Context_s), BASE_ALLOC, 0, 0},
+    {23, sizeof(struct Dwarf_File_Entry_s), BASE_ALLOC, 0, 0},
+
     /* 36 DW_DLA_LINE_CONTEXT */
-    {25, sizeof(struct Dwarf_Loc_Chain_s), BASE_ALLOC, 0, 0},   /* 36 */
+    {24, sizeof(struct Dwarf_Line_Context_s), BASE_ALLOC, 0, 0},
+
     /* 37 DW_DLA_LOC_CHAIN */
+    {25, sizeof(struct Dwarf_Loc_Chain_s), BASE_ALLOC, 0, 0},  
 
-    {26, sizeof(struct Dwarf_Hash_Table_s),BASE_ALLOC, 0, 0},   /* 37 */
     /* 38 DW_DLA_HASH_TABLE */
+    {26, sizeof(struct Dwarf_Hash_Table_s),BASE_ALLOC, 0, 0},  
 
-/* The following really use Global struct: used to be unique struct
-   per type, but now merged (11/99).  The opaque types
-   are visible in the interface. The types  for
-   DW_DLA_FUNC,
-   DW_DLA_TYPENAME, DW_DLA_VAR, DW_DLA_WEAK also use
-   the global types.
-  
-*/
-    {27, sizeof(struct Dwarf_Global_Context_s), BASE_ALLOC, 0, 0},
+    /*  The following really use Global struct: used to be unique struct
+    per type, but now merged (11/99).  The opaque types
+    are visible in the interface. The types  for
+    DW_DLA_FUNC, DW_DLA_TYPENAME, DW_DLA_VAR, DW_DLA_WEAK also use
+    the global types.  */
+
     /* 39 DW_DLA_FUNC_CONTEXT */
-    {28, sizeof(struct Dwarf_Global_Context_s), BASE_ALLOC, 0, 0},
-    /* 40 DW_DLA_TYPENAME_CONTEXT */
-    {29, sizeof(struct Dwarf_Global_Context_s), BASE_ALLOC, 0, 0},
-    /* 41 DW_DLA_VAR_CONTEXT */
-    {30, sizeof(struct Dwarf_Global_Context_s), BASE_ALLOC, 0, 0},
-    /* 42 DW_DLA_WEAK_CONTEXT */
-    {31, sizeof(struct Dwarf_Global_Context_s), BASE_ALLOC, 0, 0},
-    /* 43 DW_DLA_PUBTYPES_CONTEXT DWARF3 */
+    {27, sizeof(struct Dwarf_Global_Context_s), BASE_ALLOC, 0, 0},
 
-    {0,1,1,0,0 },
-    /* 44 DW_DLA_HASH_TABLE_ENTRY */
+    /* 40 DW_DLA_TYPENAME_CONTEXT */
+    {28, sizeof(struct Dwarf_Global_Context_s), BASE_ALLOC, 0, 0},
+
+    /* 41 DW_DLA_VAR_CONTEXT */
+    {29, sizeof(struct Dwarf_Global_Context_s), BASE_ALLOC, 0, 0},
+
+    /* 42 DW_DLA_WEAK_CONTEXT */
+    {30, sizeof(struct Dwarf_Global_Context_s), BASE_ALLOC, 0, 0},
+
+    /* 43 DW_DLA_PUBTYPES_CONTEXT DWARF3 */
+    {31, sizeof(struct Dwarf_Global_Context_s), BASE_ALLOC, 0, 0},
+
+    {0,1,1,0,0 }, /* 44 DW_DLA_HASH_TABLE_ENTRY */
 
 
 };
 
 #ifndef DWARF_SIMPLE_MALLOC
 
-/*
-    This function is given a pointer to the header
+/*  This function is given a pointer to the header
     structure that is used to allocate 1 struct of
     the type given by alloc_type.  It first checks
     if a struct is available in its free list.  If
@@ -305,26 +314,25 @@ struct ial_s index_into_allocated[ALLOC_AREA_INDEX_TABLE_MAX] = {
 static Dwarf_Ptr
 _dwarf_find_memory(Dwarf_Alloc_Hdr alloc_hdr)
 {
-    /* Pointer to the struct allocated. */
+    /*  Pointer to the struct allocated. */
     Dwarf_Small *ret_mem = 0;
 
-    /* Pointer to info about chunks allocated. */
+    /*  Pointer to info about chunks allocated. */
     Dwarf_Alloc_Area alloc_area;
 
-    /* Size of chunk malloc'ed when no free structs left. */
+    /*  Size of chunk malloc'ed when no free structs left. */
     Dwarf_Signed mem_block_size;
 
-    /* Pointer to block malloc'ed. */
+    /*  Pointer to block malloc'ed. */
     Dwarf_Small *mem_block;
 
-    /* 
-       Check the alloc_area from which the last allocation was made
-       (most recent new block). If that is not successful, then search
-       the list of alloc_area's from alloc_header. */
+    /*  Check the alloc_area from which the last allocation was made
+        (most recent new block). If that is not successful, then search
+        the list of alloc_area's from alloc_header. */
     alloc_area = alloc_hdr->ah_last_alloc_area;
     if (alloc_area == NULL || alloc_area->aa_free_structs_in_chunk == 0)
         for (alloc_area = alloc_hdr->ah_alloc_area_head;
-             alloc_area != NULL; alloc_area = alloc_area->aa_next) {
+            alloc_area != NULL; alloc_area = alloc_area->aa_next) {
 
             if (alloc_area->aa_free_structs_in_chunk > 0) {
                 break;          /* found a free entry! */
@@ -338,32 +346,30 @@ _dwarf_find_memory(Dwarf_Alloc_Hdr alloc_hdr)
         if (alloc_area->aa_free_list != NULL) {
             ret_mem = alloc_area->aa_free_list;
 
-            /* 
-               Update the free list.  The initial part of the struct is 
-               used to hold a pointer to the next struct on the free
-               list.  In this way, the free list chain is maintained at
-               0 memory cost. */
+            /*  Update the free list.  The initial part of the struct is 
+                used to hold a pointer to the next struct on the free
+                list.  In this way, the free list chain is maintained at
+                0 memory cost. */
             alloc_area->aa_free_list =
                 ((Dwarf_Free_List) ret_mem)->fl_next;
         } else if (alloc_area->aa_blob_start < alloc_area->aa_blob_end) {
             ret_mem = alloc_area->aa_blob_start;
 
-            /* 
-               Store pointer to chunk this struct belongs to in the
-               first few bytes.  Return pointer to bytes after this
-               pointer storage. */
+            /*  Store pointer to chunk this struct belongs to in the
+                first few bytes.  Return pointer to bytes after this
+                pointer storage. */
             *(Dwarf_Alloc_Area *) ret_mem = alloc_area;
             ret_mem += DW_RESERVE;
 
             alloc_area->aa_blob_start += alloc_hdr->ah_bytes_one_struct;
         } else {
-            /* else fall thru , though it should be impossible to fall
-               thru. And represents a disastrous programming error if
-               we get here. */
+            /*  else fall thru , though it should be impossible to fall
+                thru. And represents a disastrous programming error if
+                we get here. */
 #ifdef DEBUG
             fprintf(stderr, "libdwarf Internal error start %x end %x\n",
-                    (int) alloc_area->aa_blob_start,
-                    (int) alloc_area->aa_blob_end);
+                (int) alloc_area->aa_blob_start,
+                (int) alloc_area->aa_blob_end);
 #endif
         }
     }
@@ -374,16 +380,15 @@ _dwarf_find_memory(Dwarf_Alloc_Hdr alloc_hdr)
 
         alloc_hdr->ah_chunks_allocated++;
 
-        {                       /* this nonsense avoids a warning */
+        {   /* this nonsense avoids a warning */
             /* CONSTCOND would be better */
             unsigned long v = sizeof(struct Dwarf_Alloc_Area_s);
 
             rounded_area_hdr_size = ROUND_SIZE(v);
         }
 
-        /* 
-           Allocate memory to contain the required number of structs
-           and the Dwarf_Alloc_Area_s to control it. */
+        /*  Allocate memory to contain the required number of structs
+            and the Dwarf_Alloc_Area_s to control it. */
         mem_block_size = alloc_hdr->ah_bytes_malloc_per_chunk +
             rounded_area_hdr_size;
 
@@ -393,10 +398,9 @@ _dwarf_find_memory(Dwarf_Alloc_Hdr alloc_hdr)
         }
 
 
-        /* 
-           Attach the Dwarf_Alloc_Area_s struct to the list of chunks
-           malloc'ed for this struct type. Also initialize the fields
-           of the Dwarf_Alloc_Area_s. */
+        /*  Attach the Dwarf_Alloc_Area_s struct to the list of chunks
+            malloc'ed for this struct type. Also initialize the fields
+            of the Dwarf_Alloc_Area_s. */
         alloc_area = (Dwarf_Alloc_Area) mem_block;
         alloc_area->aa_prev = 0;
         if (alloc_hdr->ah_alloc_area_head != NULL) {
@@ -410,28 +414,26 @@ _dwarf_find_memory(Dwarf_Alloc_Hdr alloc_hdr)
         alloc_area->aa_free_structs_in_chunk =
             (Dwarf_Sword) alloc_hdr->ah_structs_per_chunk - 1;
         if (alloc_area->aa_free_structs_in_chunk < 1) {
-            /* If we get here, there is a disastrous programming error
-               somewhere. */
+            /*  If we get here, there is a disastrous programming error
+                somewhere. */
 #ifdef DEBUG
             fprintf(stderr,
-                    "libdwarf Internal error: free structs in chunk %d\n",
-                    (int) alloc_area->aa_free_structs_in_chunk);
+                "libdwarf Internal error: free structs in chunk %d\n",
+                (int) alloc_area->aa_free_structs_in_chunk);
 #endif
             return NULL;
         }
 
-        /* 
-           The struct returned begins immediately after the
-           Dwarf_Alloc_Area_s struct. */
+        /*  The struct returned begins immediately after the
+            Dwarf_Alloc_Area_s struct. */
         ret_mem = mem_block + rounded_area_hdr_size;
         alloc_area->aa_blob_start =
             ret_mem + alloc_hdr->ah_bytes_one_struct;
         alloc_area->aa_blob_end = mem_block + mem_block_size;
 
-        /* 
-           Store pointer to chunk this struct belongs to in the first
-           few bytes.  Return pointer to bytes after this pointer
-           storage. */
+        /*  Store pointer to chunk this struct belongs to in the first
+            few bytes.  Return pointer to bytes after this pointer
+            storage. */
         *(Dwarf_Alloc_Area *) ret_mem = alloc_area;
         ret_mem += DW_RESERVE;
     }
@@ -444,8 +446,7 @@ _dwarf_find_memory(Dwarf_Alloc_Hdr alloc_hdr)
 
 #endif /* ndef DWARF_SIMPLE_MALLOC */
 
-/*
-    This function returns a pointer to a region
+/*  This function returns a pointer to a region
     of memory.  For alloc_types that are not
     strings or lists of pointers, only 1 struct
     can be requested at a time.  This is indicated
@@ -459,12 +460,10 @@ _dwarf_find_memory(Dwarf_Alloc_Hdr alloc_hdr)
     is the count of the number of structs needed.
 
     This function cannot be used to allocate a 
-    Dwarf_Debug_s struct.
-
-*/
+    Dwarf_Debug_s struct.  */
 Dwarf_Ptr
 _dwarf_get_alloc(Dwarf_Debug dbg,
-                 Dwarf_Small alloc_type, Dwarf_Unsigned count)
+    Dwarf_Small alloc_type, Dwarf_Unsigned count)
 {
     Dwarf_Alloc_Hdr alloc_hdr;
 
@@ -483,12 +482,12 @@ _dwarf_get_alloc(Dwarf_Debug dbg,
         return NULL;
     }
     index = index_into_allocated[type].ia_al_num;
-    /* zero also illegal but not tested for */
+    /*  Zero also illegal but not tested for */
 
-    /* If the Dwarf_Debug is not fully set up, we will get index 0 for
-       any type and must do something.  'Not fully set up' can only
-       happen for DW_DLA_ERROR, I (davea) believe, and for that we call 
-       special code here.. */
+    /*  If the Dwarf_Debug is not fully set up, we will get index 0 for
+        any type and must do something.  'Not fully set up' can only
+        happen for DW_DLA_ERROR, I (davea) believe, and for that we call 
+        special code here.. */
 
     if (index == 0) {
         if (alloc_type == DW_DLA_STRING) {
@@ -504,7 +503,7 @@ _dwarf_get_alloc(Dwarf_Debug dbg,
         } else if (alloc_type == DW_DLA_ADDR) {
             size = count *
                 (sizeof(Dwarf_Addr) > sizeof(Dwarf_Off) ?
-                 sizeof(Dwarf_Addr) : sizeof(Dwarf_Off));
+                sizeof(Dwarf_Addr) : sizeof(Dwarf_Off));
         } else if (alloc_type == DW_DLA_RANGES) {
             size = count * sizeof(Dwarf_Ranges);
         } else if (alloc_type == DW_DLA_ERROR) {
@@ -514,12 +513,12 @@ _dwarf_get_alloc(Dwarf_Debug dbg,
             return m;
 
         } else {
-            /* If we get here, there is a disastrous programming error
-               somewhere. */
+            /*  If we get here, there is a disastrous programming error
+                somewhere. */
 #ifdef DEBUG
             fprintf(stderr,
-                    "libdwarf Internal error: type %d  unexpected\n",
-                    (int) type);
+                "libdwarf Internal error: type %d  unexpected\n",
+                (int) type);
 #endif
         }
     } else {
@@ -537,8 +536,8 @@ _dwarf_get_alloc(Dwarf_Debug dbg,
                         index_into_allocated[type].
                         specialconstructor(dbg, m);
                     if (res != DW_DLV_OK) {
-                        /* We leak what we allocated in
-                           _dwarf_find_memory when constructor fails. */
+                        /*  We leak what we allocated in
+                            _dwarf_find_memory when constructor fails. */
                         return NULL;
                     }
                 }
@@ -549,22 +548,22 @@ _dwarf_get_alloc(Dwarf_Debug dbg,
         } else {
             /* Special case: should not really happen at all. */
             if (type == DW_DLA_ERROR) {
-                /* dwarf_init failure. Because dbg is incomplete we
-                   won't use it to record the malloc. */
+                /*  dwarf_init failure. Because dbg is incomplete we
+                    won't use it to record the malloc. */
                 void *m = _dwarf_special_no_dbg_error_malloc();
 
                 dwarf_malloc_check_alloc_data(m, DW_DLA_ERROR);
                 return m;
             } else {
-                /* If we get here, there is a disastrous programming
-                   error somewhere. */
+                /*  If we get here, there is a disastrous programming
+                    error somewhere. */
 #ifdef DWARF_SIMPLE_MALLOC
                 _dwarf_simple_malloc_botch(3);
 #endif
 #ifdef DEBUG
                 fprintf(stderr,
-                        "libdwarf Internal error: Type %d  unexpected\n",
-                        (int) type);
+                    "libdwarf Internal error: Type %d  unexpected\n",
+                    (int) type);
 #endif
             }
         }
@@ -572,8 +571,8 @@ _dwarf_get_alloc(Dwarf_Debug dbg,
 
     ret_mem = malloc(size);
 #ifdef DWARF_SIMPLE_MALLOC
-    _dwarf_simple_malloc_add_to_list(dbg, ret_mem, (unsigned long) size,
-                                     type);
+    _dwarf_simple_malloc_add_to_list(dbg, ret_mem, 
+        (unsigned long) size, type);
 #endif
     if (ret_mem != NULL)
         memset(ret_mem, 0, size);
@@ -583,8 +582,8 @@ _dwarf_get_alloc(Dwarf_Debug dbg,
         int res =
             index_into_allocated[type].specialconstructor(dbg, ret_mem);
         if (res != DW_DLV_OK) {
-            /* We leak what we allocated in _dwarf_find_memory when
-               constructor fails. */
+            /*  We leak what we allocated in _dwarf_find_memory when
+                constructor fails. */
             return NULL;
         }
     }
@@ -624,7 +623,7 @@ _dwarf_get_alloc(Dwarf_Debug dbg,
 */
 void
 dwarf_dealloc(Dwarf_Debug dbg,
-              Dwarf_Ptr space, Dwarf_Unsigned alloc_type)
+    Dwarf_Ptr space, Dwarf_Unsigned alloc_type)
 {
     Dwarf_Alloc_Hdr alloc_hdr;
     Dwarf_Alloc_Area alloc_area;
@@ -635,16 +634,21 @@ dwarf_dealloc(Dwarf_Debug dbg,
         return;
     }
     if (type == DW_DLA_ERROR) {
-        /* Get pointer to Dwarf_Alloc_Area this struct came from. See
-           dwarf_alloc.h ROUND_SIZE_WITH_POINTER stuff */
+        /*  Get pointer to Dwarf_Alloc_Area this struct came from. See
+            dwarf_alloc.h ROUND_SIZE_WITH_POINTER stuff */
+#ifdef DWARF_SIMPLE_MALLOC
+        _dwarf_simple_malloc_delete_from_list(dbg, space, type);
+        free(space);
+        return;
+#endif
         alloc_area =
             *(Dwarf_Alloc_Area *) ((char *) space - DW_RESERVE);
         if (alloc_area == 0) {
-            /* This is the special case of a failed dwarf_init(). Also
-               (and more signficantly) there are a variety of other
-               situations where libdwarf does not *know* what dbg is
-               involved (because of a libdwarf-caller-error) so
-               libdwarf uses NULL as the dbg. Those too wind up here. */
+            /*  This is the special case of a failed dwarf_init(). Also
+                (and more signficantly) there are a variety of other
+                situations where libdwarf does not *know* what dbg is
+                involved (because of a libdwarf-caller-error) so
+                libdwarf uses NULL as the dbg. Those too wind up here. */
             _dwarf_free_special_error(space);
             dwarf_malloc_check_dealloc_data(space, type);
             return;
@@ -652,8 +656,8 @@ dwarf_dealloc(Dwarf_Debug dbg,
 
     }
     if (dbg == NULL) {
-        /* App error, or an app that failed to succeed in a
-           dwarf_init() call. */
+        /*  App error, or an app that failed to succeed in a
+            dwarf_init() call. */
         return;
     }
     if (type >= ALLOC_AREA_INDEX_TABLE_MAX) {
@@ -662,9 +666,8 @@ dwarf_dealloc(Dwarf_Debug dbg,
     }
 
     index = index_into_allocated[type].ia_al_num;
-    /* 
-       A string pointer may point into .debug_info or .debug_string.
-       Otherwise, they are directly malloc'ed. */
+    /*  A string pointer may point into .debug_info or .debug_string.
+        Otherwise, they are directly malloc'ed. */
     dwarf_malloc_check_dealloc_data(space, type);
     if (index == 0) {
         if (type == DW_DLA_STRING) {
@@ -768,29 +771,28 @@ dwarf_dealloc(Dwarf_Debug dbg,
 #else /* !DWARF_SIMPLE_MALLOC */
     alloc_hdr = &dbg->de_alloc_hdr[index];
 
-    /* Get pointer to Dwarf_Alloc_Area this struct came from. See
-       dwarf_alloc.h ROUND_SIZE_WITH_POINTER stuff */
+    /*  Get pointer to Dwarf_Alloc_Area this struct came from. See
+        dwarf_alloc.h ROUND_SIZE_WITH_POINTER stuff */
     alloc_area = *(Dwarf_Alloc_Area *) ((char *) space - DW_RESERVE);
 
-    /* ASSERT: alloc_area != NULL If NULL we could abort, let it
-       coredump below, or return, pretending all is well. We go on,
-       letting program crash. Is caller error. */
+    /*  ASSERT: alloc_area != NULL If NULL we could abort, let it
+        coredump below, or return, pretending all is well. We go on,
+        letting program crash. Is caller error. */
 
-    /* 
-       Check that the alloc_hdr field of the alloc_area we have is
-       pointing to the right alloc_hdr.  This is used to catch use of
-       incorrect deallocation code by the user. */
+    /*  Check that the alloc_hdr field of the alloc_area we have is
+        pointing to the right alloc_hdr.  This is used to catch use of
+        incorrect deallocation code by the user. */
     if (alloc_area->aa_alloc_hdr != alloc_hdr) {
-        /* If we get here, the user has called dwarf_dealloc wrongly or 
-           there is some other disastrous error. By leaking mem here we 
-           try to be safe... */
+        /*  If we get here, the user has called dwarf_dealloc wrongly or 
+            there is some other disastrous error. By leaking mem here we 
+            try to be safe... */
 #ifdef DEBUG
         fprintf(stderr,
-                "libdwarf Internal error: type %d hdr mismatch %lx %lx "
-                "area ptr %lx\n",
-                (int) type,
-                (long) alloc_area->aa_alloc_hdr,
-                (long) alloc_hdr, (long) alloc_area);
+            "libdwarf Internal error: type %d hdr mismatch %lx %lx "
+            "area ptr %lx\n",
+            (int) type,
+            (long) alloc_area->aa_alloc_hdr,
+            (long) alloc_hdr, (long) alloc_area);
 #endif
         return;
     }
@@ -798,8 +800,7 @@ dwarf_dealloc(Dwarf_Debug dbg,
     alloc_hdr->ah_struct_user_holds--;
     alloc_area->aa_free_structs_in_chunk++;
 
-    /* 
-       Give chunk back to malloc only when every struct is freed */
+    /* Give chunk back to malloc only when every struct is freed */
     if (alloc_area->aa_free_structs_in_chunk ==
         alloc_hdr->ah_structs_per_chunk) {
         if (alloc_area->aa_prev != NULL) {
@@ -840,10 +841,11 @@ _dwarf_get_debug(void
     Dwarf_Debug dbg;
 
     dbg = (Dwarf_Debug) malloc(sizeof(struct Dwarf_Debug_s));
-    if (dbg == NULL)
+    if (dbg == NULL) {
         return (NULL);
-    else
+    } else {
         memset(dbg, 0, sizeof(struct Dwarf_Debug_s));
+    }
     return (dbg);
 }
 
@@ -910,9 +912,8 @@ dwarf_print_memory_stats(Dwarf_Debug dbg)
     Dwarf_Alloc_Hdr alloc_hdr;
     Dwarf_Shalf i;
 
-    /* 
-       Alloc types start at 1, not 0. Hence, the first NULL string, and 
-       also a size of MAX_DW_DLA + 1. */
+    /*  Alloc types start at 1, not 0. Hence, the first NULL string, and 
+        also a size of MAX_DW_DLA + 1. */
     char *alloc_type_name[MAX_DW_DLA + 1] = {
         "",
         "DW_DLA_STRING",
@@ -965,11 +966,11 @@ dwarf_print_memory_stats(Dwarf_Debug dbg)
         return;
 
     printf("Size of Dwarf_Debug        %4ld bytes\n",
-           (long) sizeof(*dbg));
+        (long) sizeof(*dbg));
     printf("Size of Dwarf_Alloc_Hdr_s  %4ld bytes\n",
-           (long) sizeof(struct Dwarf_Alloc_Hdr_s));
+        (long) sizeof(struct Dwarf_Alloc_Hdr_s));
     printf("size of Dwarf_Alloc_Area_s %4ld bytes\n",
-           (long) sizeof(struct Dwarf_Alloc_Area_s));
+        (long) sizeof(struct Dwarf_Alloc_Area_s));
 
     printf("   Alloc Type                   Curr  Structs byt   str\n");
     printf("   ----------                   ----  ------- per   per\n");
@@ -979,12 +980,12 @@ dwarf_print_memory_stats(Dwarf_Debug dbg)
         alloc_hdr = &dbg->de_alloc_hdr[indx];
         if (alloc_hdr->ah_bytes_one_struct != 1) {
             printf("%2d %-25s   %6d %8d %6d %6d\n",
-                   (int) i,
-                   alloc_type_name[i],
-                   (int) alloc_hdr->ah_chunks_allocated,
-                   (int) alloc_hdr->ah_struct_user_holds,
-                   (int) alloc_hdr->ah_bytes_malloc_per_chunk,
-                   (int) alloc_hdr->ah_structs_per_chunk);
+                (int) i,
+                alloc_type_name[i],
+                (int) alloc_hdr->ah_chunks_allocated,
+                (int) alloc_hdr->ah_struct_user_holds,
+                (int) alloc_hdr->ah_bytes_malloc_per_chunk,
+                (int) alloc_hdr->ah_structs_per_chunk);
         }
     }
 }
@@ -1040,13 +1041,13 @@ _dwarf_free_all_of_one_debug(Dwarf_Debug dbg)
     if (dbg == NULL)
         return (DW_DLV_ERROR);
 
-    /* To do complete validation that we have no surprising missing or
-       erroneous deallocs it is advisable to do the dwarf_deallocs here 
-       that are not things the user can otherwise request.
-       Housecleaning.  */
+    /*  To do complete validation that we have no surprising missing or
+        erroneous deallocs it is advisable to do the dwarf_deallocs here 
+        that are not things the user can otherwise request.
+        Housecleaning.  */
 
     for (context = dbg->de_cu_context_list;
-         context; context = nextcontext) {
+        context; context = nextcontext) {
         Dwarf_Hash_Table hash_table = context->cc_abbrev_hash_table;
         _dwarf_free_abbrev_hash_table_contents(dbg,hash_table);
         nextcontext = context->cc_next;
@@ -1112,23 +1113,21 @@ _dwarf_free_all_of_one_debug(Dwarf_Debug dbg)
     return (DW_DLV_OK);
 }
 
-/* A special case: we have no dbg, no alloc header etc.
-   So create something out of thin air that we can recognize
-   in dwarf_dealloc.
-   Something with the prefix (prefix space hidden from caller).
+/*  A special case: we have no dbg, no alloc header etc.
+    So create something out of thin air that we can recognize
+    in dwarf_dealloc.
+    Something with the prefix (prefix space hidden from caller).
 
-   Only applies to DW_DLA_ERROR, making up an error record.
-*/
-
+    Only applies to DW_DLA_ERROR, making up an error record.  */
 struct Dwarf_Error_s *
 _dwarf_special_no_dbg_error_malloc(void)
 {
-    /* the union unused things are to guarantee proper alignment */
+    /* The union unused things are to guarantee proper alignment */
     union u {
         Dwarf_Alloc_Area ptr_not_used;
         struct Dwarf_Error_s base_not_used;
         char data_space[sizeof(struct Dwarf_Error_s) +
-                        (DW_RESERVE * 2)];
+            (DW_RESERVE * 2)];
     };
     char *mem;
 
@@ -1161,12 +1160,12 @@ _dwarf_free_special_error(Dwarf_Ptr space)
 void
 _dwarf_simple_malloc_botch(int err)
 {
-       fprintf(stderr,"simple malloc botch %d\n",err);
+    fprintf(stderr,"simple malloc botch %d\n",err);
 }
 static void
 _dwarf_simple_malloc_add_to_list(Dwarf_Debug dbg,
-                                 Dwarf_Ptr addr,
-                                 unsigned long size, short alloc_type)
+    Dwarf_Ptr addr,
+    unsigned long size, short alloc_type)
 {
     struct simple_malloc_record_s *cur;
     struct simple_malloc_entry_s *newentry;
@@ -1180,7 +1179,7 @@ _dwarf_simple_malloc_add_to_list(Dwarf_Debug dbg,
             return;             /* no memory, give up */
         }
         memset(dbg->de_simple_malloc_base,
-               0, sizeof(struct simple_malloc_record_s));
+            0, sizeof(struct simple_malloc_record_s));
     }
     cur = dbg->de_simple_malloc_base;
 
@@ -1196,8 +1195,8 @@ _dwarf_simple_malloc_add_to_list(Dwarf_Debug dbg,
             return;             /* Can do nothing, out of memory */
         }
         memset(newblock, 0, sizeof(struct simple_malloc_record_s));
-        /* Link the new block at the head of the chain, and make it
-           'current' */
+        /*  Link the new block at the head of the chain, and make it
+            'current' */
         dbg->de_simple_malloc_base = newblock;
         newblock->sr_next = cur;
         cur = newblock;
@@ -1224,7 +1223,7 @@ _dwarf_simple_malloc_add_to_list(Dwarf_Debug dbg,
 */
 static void
 _dwarf_simple_malloc_delete_from_list(Dwarf_Debug dbg,
-                                      Dwarf_Ptr space, short alloc_type)
+    Dwarf_Ptr space, short alloc_type)
 {
     if (space == 0) {
         _dwarf_simple_malloc_botch(6);

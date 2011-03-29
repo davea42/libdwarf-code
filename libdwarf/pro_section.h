@@ -43,25 +43,22 @@ extern char *_dwarf_rel_section_names[];
 /* section names */
 extern char *_dwarf_sectnames[];
 
-/* struct to hold relocation entries. Its mantained as a linked
-   list of relocation structs, and will then be written at as a 
-   whole into the relocation section. Whether its 32 bit or
-   64 bit will be obtained from Dwarf_Debug pointer.
-*/
+/*  struct to hold relocation entries. Its mantained as a linked
+    list of relocation structs, and will then be written at as a 
+    whole into the relocation section. Whether its 32 bit or
+    64 bit will be obtained from Dwarf_Debug pointer.  */
 
 
 
 
 
-/*
-	struct stores a chunk of data pertaining to a section 
-*/
+/* struct stores a chunk of data pertaining to a section */
 struct Dwarf_P_Section_Data_s {
-    int ds_elf_sect_no;		/* elf section number */
-    char *ds_data;		/* data contained in section */
-    unsigned long ds_nbytes;	/* bytes of data used so far */
-    unsigned long ds_orig_alloc;	/* bytes allocated originally */
-    Dwarf_P_Section_Data ds_next;	/* next on the list */
+    int ds_elf_sect_no; /* elf section number */
+    char *ds_data;      /* data contained in section */
+    unsigned long ds_nbytes; /* bytes of data used so far */
+    unsigned long ds_orig_alloc; /* bytes allocated originally */
+    Dwarf_P_Section_Data ds_next; /* next on the list */
 };
 
 /* Used to allow a dummy initial struct (which we
@@ -75,32 +72,32 @@ struct Dwarf_P_Section_Data_s {
    Used to be just 4096 for user data, the section data struct
    was a separate malloc.
 */
-#define 	CHUNK_SIZE (4096 - sizeof (struct Dwarf_P_Section_Data_s))
+#define CHUNK_SIZE (4096 - sizeof (struct Dwarf_P_Section_Data_s))
 
 /*
-	chunk alloc routine - 
-	if chunk->ds_data is nil, it will alloc CHUNK_SIZE bytes, 
-	and return pointer to the beginning. If chunk is not nil, 
-	it will see if there's enoungh space for nbytes in current 
-	chunk, if not, add new chunk to linked list, and return 
-	a char * pointer to it. Return null if unsuccessful.
+    chunk alloc routine - 
+    if chunk->ds_data is nil, it will alloc CHUNK_SIZE bytes, 
+    and return pointer to the beginning. If chunk is not nil, 
+    it will see if there's enoungh space for nbytes in current 
+    chunk, if not, add new chunk to linked list, and return 
+    a char * pointer to it. Return null if unsuccessful.
 */
 Dwarf_Small *_dwarf_pro_buffer(Dwarf_P_Debug dbg, int sectno,
-			       unsigned long nbytes);
+    unsigned long nbytes);
 
 #define GET_CHUNK(dbg,sectno,ptr,nbytes,error) \
-	{ \
-	    (ptr) = _dwarf_pro_buffer((dbg),(sectno),(nbytes)); \
-	    if ((ptr) == NULL) { \
-		DWARF_P_DBG_ERROR(dbg,DW_DLE_CHUNK_ALLOC,-1); \
-	    } \
-	}
+{ \
+    (ptr) = _dwarf_pro_buffer((dbg),(sectno),(nbytes)); \
+    if ((ptr) == NULL) { \
+        DWARF_P_DBG_ERROR(dbg,DW_DLE_CHUNK_ALLOC,-1); \
+    } \
+}
 
 
 
 int
   _dwarf_transform_arange_to_disk(Dwarf_P_Debug dbg,
-				  Dwarf_Error * error);
+    Dwarf_Error * error);
 
 /* These are for creating ELF section type codes.
 */

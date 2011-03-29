@@ -1,6 +1,7 @@
 /*
 
   Copyright (C) 2000,2004 Silicon Graphics, Inc.  All Rights Reserved.
+  Portions Copyright 2011  David Anderson. All Rights Reserved.
 
   This program is free software; you can redistribute it and/or modify it
   under the terms of version 2.1 of the GNU Lesser General Public License 
@@ -52,11 +53,11 @@
 */
 Dwarf_Unsigned
 dwarf_add_varname(Dwarf_P_Debug dbg,
-                  Dwarf_P_Die die, char *var_name, Dwarf_Error * error)
+    Dwarf_P_Die die, char *var_name, Dwarf_Error * error)
 {
     return
         _dwarf_add_simple_name_entry(dbg, die, var_name,
-                                     dwarf_snk_varname, error);
+            dwarf_snk_varname, error);
 
 
 }

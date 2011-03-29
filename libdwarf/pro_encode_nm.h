@@ -42,7 +42,7 @@
 
 
 int _dwarf_pro_encode_leb128_nm(Dwarf_Unsigned val, int *nbytes,
-				char *space, int splen);
+    char *space, int splen);
 
 int _dwarf_pro_encode_signed_leb128_nm(Dwarf_Signed value, int *nbytes,
-				       char *space, int splen);
+    char *space, int splen);

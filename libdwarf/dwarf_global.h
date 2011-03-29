@@ -1,6 +1,8 @@
 /*
 
   Copyright (C) 2000,2004,2005 Silicon Graphics, Inc.  All Rights Reserved.
+  Portions Copyright (C) 2011 David Anderson. All Rights Reserved.
+
 
   This program is free software; you can redistribute it and/or modify it
   under the terms of version 2.1 of the GNU Lesser General Public License 
@@ -53,24 +55,23 @@ typedef struct Dwarf_Global_Context_s *Dwarf_Global_Context;
 */
 struct Dwarf_Global_Context_s {
 
-    /* Length in .debug_pubnames (etc) of a set of names for a
-       compilation-unit. Dwarf_Word pu_length; The value is not made
-       available outside libdwarf and not used inside, so no need to
-       record it. */
+    /*  Length in .debug_pubnames (etc) of a set of names for a
+        compilation-unit. Dwarf_Word pu_length; The value is not made
+        available outside libdwarf and not used inside, so no need to
+        record it. */
 
-    /* For this context, size of a length. 4 or 8 */
+    /*  For this context, size of a length. 4 or 8 */
     unsigned char pu_length_size;
 
-    /* For this CU, size of the extension 0 except for dwarf2 extension 
-       64bit, in which case is 4. */
+    /*  For this CU, size of the extension 0 except for dwarf2 extension 
+        64bit, in which case is 4. */
     unsigned char pu_extension_size;
 
-    /* 
-       Offset into .debug_info of the compilation-unit header (not DIE) 
-       for this set of pubnames. */
+    /*  Offset into .debug_info of the compilation-unit header (not DIE) 
+        for this set of pubnames. */
     Dwarf_Off pu_offset_of_cu_header;
 
-    /* Size of compilation-unit that these pubnames are in. */
+    /*  Size of compilation-unit that these pubnames are in. */
     Dwarf_Unsigned pu_info_length;
 
     Dwarf_Debug pu_dbg;
@@ -80,9 +81,8 @@ struct Dwarf_Global_Context_s {
 /* This struct contains information for a single pubname. */
 struct Dwarf_Global_s {
 
-    /* 
-       Offset from the start of the corresponding compilation-unit of
-       the DIE for the given pubname CU. */
+    /*  Offset from the start of the corresponding compilation-unit of
+        the DIE for the given pubname CU. */
     Dwarf_Off gl_named_die_offset_within_cu;
 
     /* Points to the given pubname. */
@@ -93,30 +93,30 @@ struct Dwarf_Global_s {
 };
 
 int _dwarf_internal_get_pubnames_like_data(Dwarf_Debug dbg,
-					   Dwarf_Small *
-					   section_data_ptr,
-					   Dwarf_Unsigned
-					   section_length,
-					   Dwarf_Global ** globals,
-					   Dwarf_Signed * return_count,
-					   Dwarf_Error * error,
-					   int context_code,
-					   int global_code,
-					   int length_err_num,
-					   int version_err_num);
+    Dwarf_Small *
+    section_data_ptr,
+    Dwarf_Unsigned
+    section_length,
+    Dwarf_Global ** globals,
+    Dwarf_Signed * return_count,
+    Dwarf_Error * error,
+    int context_code,
+    int global_code,
+    int length_err_num,
+    int version_err_num);
 
 void
 _dwarf_internal_globals_dealloc( Dwarf_Debug dbg, Dwarf_Global *dwgl,
-        Dwarf_Signed count,
-        int context_code,
-        int global_code,
-        int list_code);
+    Dwarf_Signed count,
+    int context_code,
+    int global_code,
+    int list_code);
 
 
 #ifdef __sgi  /* __sgi should only be defined for IRIX/MIPS. */
 void _dwarf_fix_up_offset_irix(Dwarf_Debug dbg,
-        Dwarf_Unsigned *varp,
-        char *caller_site_name);
+    Dwarf_Unsigned *varp,
+    char *caller_site_name);
 #define FIX_UP_OFFSET_IRIX_BUG(ldbg,var,name) _dwarf_fix_up_offset_irix(ldbg,&var,name)
 #else
 #define FIX_UP_OFFSET_IRIX_BUG(ldbg,var,name)

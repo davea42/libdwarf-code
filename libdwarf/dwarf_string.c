@@ -1,7 +1,7 @@
 /*
 
   Copyright (C) 2000-2004 Silicon Graphics, Inc.  All Rights Reserved.
-  Portions Copyright (C) 2009-2010 David Anderson. All Rights Reserved.
+  Portions Copyright (C) 2009-2011 David Anderson. All Rights Reserved.
 
   This program is free software; you can redistribute it and/or modify it
   under the terms of version 2.1 of the GNU Lesser General Public License 
@@ -41,9 +41,9 @@
 
 int
 dwarf_get_str(Dwarf_Debug dbg,
-              Dwarf_Off offset,
-              char **string,
-              Dwarf_Signed * returned_str_len, Dwarf_Error * error)
+   Dwarf_Off offset,
+   char **string,
+   Dwarf_Signed * returned_str_len, Dwarf_Error * error)
 {
     int res = DW_DLV_ERROR;
 
@@ -53,8 +53,8 @@ dwarf_get_str(Dwarf_Debug dbg,
     }
 
     if (offset == dbg->de_debug_str.dss_size) {
-        /* Normal (if we've iterated thru the set of strings using
-           dwarf_get_str and are at the end). */
+        /*  Normal (if we've iterated thru the set of strings using
+            dwarf_get_str and are at the end). */
         return DW_DLV_NO_ENTRY;
     }
     if (offset > dbg->de_debug_str.dss_size) {

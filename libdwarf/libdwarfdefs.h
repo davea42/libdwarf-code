@@ -45,33 +45,33 @@
    are not legal C.
 */
 /*
- HAVE___UINT32_T
- HAVE___UINT64_T will be set by configure if
- our 4 types are predefined in compiler
+   HAVE___UINT32_T
+   HAVE___UINT64_T will be set by configure if
+   our 4 types are predefined in compiler
 */
 
 
 #if (!defined(HAVE___UINT32_T)) && defined(HAVE___UINT32_T_IN_SGIDEFS_H)
-#include <sgidefs.h>		/* sgidefs.h defines them */
+#include <sgidefs.h> /* sgidefs.h defines them */
 #define HAVE___UINT32_T 1
 #endif
 
 #if (!defined(HAVE___UINT64_T)) && defined(HAVE___UINT64_T_IN_SGIDEFS_H)
-#include <sgidefs.h>		/* sgidefs.h defines them */
+#include <sgidefs.h> /* sgidefs.h defines them */
 #define HAVE___UINT64_T 1
 #endif
 
 
 #if (!defined(HAVE___UINT32_T)) &&   \
-	defined(HAVE_SYS_TYPES_H) &&   \
-	defined(HAVE___UINT32_T_IN_SYS_TYPES_H)
+    defined(HAVE_SYS_TYPES_H) &&   \
+    defined(HAVE___UINT32_T_IN_SYS_TYPES_H)
 #  include <sys/types.h>
 #define HAVE___UINT32_T 1
 #endif
 
 #if (!defined(HAVE___UINT64_T)) &&   \
-	defined(HAVE_SYS_TYPES_H) &&   \
-	defined(HAVE___UINT64_T_IN_SYS_TYPES_H)
+    defined(HAVE_SYS_TYPES_H) &&   \
+    defined(HAVE___UINT64_T_IN_SYS_TYPES_H)
 #  include <sys/types.h>
 #define HAVE___UINT64_T 1
 #endif

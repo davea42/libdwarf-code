@@ -1,7 +1,7 @@
 /*
 
   Copyright (C) 2000-2005 Silicon Graphics, Inc.  All Rights Reserved.
-  Portions Copyright (C) 2009-2010 David Anderson. All Rights Reserved.
+  Portions Copyright (C) 2009-2011 David Anderson. All Rights Reserved.
 
   This program is free software; you can redistribute it and/or modify it
   under the terms of version 2.1 of the GNU Lesser General Public License 
@@ -68,8 +68,8 @@ dwarf_get_abbrev(Dwarf_Debug dbg,
         return (DW_DLV_ERROR);
     }
     if (dbg->de_debug_abbrev.dss_data == 0) {
-        /* Loads abbrev section (and .debug_info as we do those
-           together). */
+        /*  Loads abbrev section (and .debug_info as we do those
+            together). */
         int res = _dwarf_load_debug_info(dbg, error);
 
         if (res != DW_DLV_OK) {
@@ -131,7 +131,7 @@ dwarf_get_abbrev(Dwarf_Debug dbg,
             (labbr_count)++;
 
     } while (abbrev_ptr < abbrev_section_end &&
-             (attr != 0 || attr_form != 0));
+        (attr != 0 || attr_form != 0));
 
     if (abbrev_ptr > abbrev_section_end) {
         dwarf_dealloc(dbg, ret_abbrev, DW_DLA_ABBREV);
@@ -161,8 +161,8 @@ dwarf_get_abbrev_code(Dwarf_Abbrev abbrev,
     return (DW_DLV_OK);
 }
 
-/* DWARF defines DW_TAG_hi_user as 0xffff so no tag should be
-   over 16 bits.  */
+/*  DWARF defines DW_TAG_hi_user as 0xffff so no tag should be
+    over 16 bits.  */
 int
 dwarf_get_abbrev_tag(Dwarf_Abbrev abbrev,
     Dwarf_Half * returned_tag, Dwarf_Error * error)
@@ -228,9 +228,9 @@ dwarf_get_abbrev_entry(Dwarf_Abbrev abbrev,
         abbrev->ab_dbg->de_debug_abbrev.dss_size;
 
     for (attr = 1, attr_form = 1;
-         index >= 0 && abbrev_ptr < abbrev_end && (attr != 0 ||
-             attr_form != 0);
-         index--) {
+        index >= 0 && abbrev_ptr < abbrev_end && (attr != 0 ||
+            attr_form != 0);
+        index--) {
         Dwarf_Unsigned utmp4;
 
         mark_abbrev_ptr = abbrev_ptr;
@@ -257,3 +257,33 @@ dwarf_get_abbrev_entry(Dwarf_Abbrev abbrev,
     *returned_attr_num = (attr);
     return DW_DLV_OK;
 }
+
+/*  This function is not entirely safe to call. 
+    The problem is that the DWARF[234] specification does not insist
+    that bytes in .debug_abbrev that are not referenced by .debug_info
+    or .debug_types need to be initialized to anything specific.
+    Any garbage bytes may cause trouble.  Not all compilers/linkers
+    leave unreferenced garbage bytes in .debug_abbrev, so this may
+    work for most objects. */
+int
+dwarf_get_abbrev_count(Dwarf_Debug dbg)
+{
+    Dwarf_Abbrev ab;
+    Dwarf_Unsigned offset = 0;
+    Dwarf_Unsigned length = 0;
+    Dwarf_Unsigned attr_count = 0;
+    Dwarf_Unsigned abbrev_count = 0;
+    int abres = DW_DLV_OK;
+    Dwarf_Error err;
+
+    while ((abres = dwarf_get_abbrev(dbg, offset, &ab,
+        &length, &attr_count,
+        &err)) == DW_DLV_OK) {
+
+        ++abbrev_count;
+        offset += length;
+        dwarf_dealloc(dbg, ab, DW_DLA_ABBREV);
+    }
+    return abbrev_count;
+}
+

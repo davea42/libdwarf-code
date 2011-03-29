@@ -1,6 +1,7 @@
 /*
 
   Copyright (C) 2000 Silicon Graphics, Inc.  All Rights Reserved.
+  Portions Copyright (C) 2011 David Anderson. All Rights Reserved.
 
   This program is free software; you can redistribute it and/or modify it
   under the terms of version 2.1 of the GNU Lesser General Public License 
@@ -36,7 +37,7 @@
 
 
 void _dwarf_error(Dwarf_Debug dbg, Dwarf_Error * error,
-		  Dwarf_Sword errval);
+    Dwarf_Sword errval);
 
 struct Dwarf_Error_s {
     Dwarf_Sword er_errval;

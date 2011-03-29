@@ -1,3 +1,10 @@
+March 29,2011
+  All the code changed a lot because indentations were all over
+  the map, now they are consistent.  
+  Additions were made to DWARF4 support.
+  Now we use dicheck (a new open source application) to check indentation.
+  Library users will not see any change, all interfaces remain
+  as before.
 January 12,2010
   A libdwarf user has noticed that the April 4, 2009 
   consumer function changes introduced

@@ -1,7 +1,7 @@
 /*
-
   Copyright (C) 2000,2004,2006 Silicon Graphics, Inc.  All Rights Reserved.
   Portions Copyright 2007-2010 Sun Microsystems, Inc. All rights reserved.
+  Portions Copyright 2011 David Anderson. All rights reserved.
 
   This program is free software; you can redistribute it and/or modify it
   under the terms of version 2.1 of the GNU Lesser General Public License 
@@ -73,41 +73,36 @@ dwarf_new_expr(Dwarf_P_Debug dbg, Dwarf_Error * error)
 
 Dwarf_Unsigned
 dwarf_add_expr_gen(Dwarf_P_Expr expr,
-                   Dwarf_Small opcode,
-                   Dwarf_Unsigned val1,
-                   Dwarf_Unsigned val2, Dwarf_Error * error)
+    Dwarf_Small opcode,
+    Dwarf_Unsigned val1,
+    Dwarf_Unsigned val2, Dwarf_Error * error)
 {
-    char encode_buffer[2 * ENCODE_SPACE_NEEDED];        /* 2* since
-                                                           used to
-                                                           concatenate
-                                                           2 leb's
-                                                           below */
+    /* 2* since used to concatenate 2 leb's below */
+    char encode_buffer[2 * ENCODE_SPACE_NEEDED];        
+
     char encode_buffer2[ENCODE_SPACE_NEEDED];
-    int res;
+    int res = 0;
     Dwarf_P_Debug dbg = expr->ex_dbg;
 
-    /* 
-       Give the buffer where the operands are first going to be
-       assembled the largest alignment. */
+    /*  Give the buffer where the operands are first going to be
+        assembled the largest alignment. */
     Dwarf_Unsigned operand_buffer[10];
 
-    /* 
-       Size of the byte stream buffer that needs to be memcpy-ed. */
-    int operand_size;
+    /* Size of the byte stream buffer that needs to be memcpy-ed. */
+    int operand_size = 0;
 
-    /* 
-       Points to the byte stream for the first operand, and finally to
-       the buffer that is memcp-ed into the Dwarf_P_Expr_s struct. */
-    Dwarf_Small *operand;
+    /*  Points to the byte stream for the first operand, and finally to
+        the buffer that is memcp-ed into the Dwarf_P_Expr_s struct. */
+    Dwarf_Small *operand = 0;
 
-    /* Size of the byte stream for second operand. */
-    int operand2_size;
+    /*  Size of the byte stream for second operand. */
+    int operand2_size = 0;
 
-    /* Points to next byte to be written in Dwarf_P_Expr_s struct. */
-    Dwarf_Small *next_byte_ptr;
+    /*  Points to next byte to be written in Dwarf_P_Expr_s struct. */
+    Dwarf_Small *next_byte_ptr = 0;
 
-    /* Offset past the last byte written into Dwarf_P_Expr_s. */
-    int next_byte_offset;
+    /*  Offset past the last byte written into Dwarf_P_Expr_s. */
+    int next_byte_offset = 0;
 
     /* ***** BEGIN CODE ***** */
 
@@ -192,9 +187,7 @@ dwarf_add_expr_gen(Dwarf_P_Expr expr,
     case DW_OP_breg30:
     case DW_OP_breg31:
         res = _dwarf_pro_encode_signed_leb128_nm(val1,
-                                                 &operand_size,
-                                                 encode_buffer,
-                                                 sizeof(encode_buffer));
+            &operand_size, encode_buffer, sizeof(encode_buffer));
         if (res != DW_DLV_OK) {
             _dwarf_p_error(expr->ex_dbg, error, DW_DLE_EXPR_LENGTH_BAD);
             return (DW_DLV_NOCOUNT);
@@ -204,8 +197,7 @@ dwarf_add_expr_gen(Dwarf_P_Expr expr,
 
     case DW_OP_regx:
         res = _dwarf_pro_encode_leb128_nm(val1, &operand_size,
-                                          encode_buffer,
-                                          sizeof(encode_buffer));
+            encode_buffer, sizeof(encode_buffer));
         if (res != DW_DLV_OK) {
             _dwarf_p_error(expr->ex_dbg, error, DW_DLE_EXPR_LENGTH_BAD);
             return (DW_DLV_NOCOUNT);
@@ -281,9 +273,7 @@ dwarf_add_expr_gen(Dwarf_P_Expr expr,
 
     case DW_OP_constu:
         res = _dwarf_pro_encode_leb128_nm(val1,
-                                          &operand_size,
-                                          encode_buffer,
-                                          sizeof(encode_buffer));
+            &operand_size, encode_buffer, sizeof(encode_buffer));
         if (res != DW_DLV_OK) {
             _dwarf_p_error(expr->ex_dbg, error, DW_DLE_EXPR_LENGTH_BAD);
             return (DW_DLV_NOCOUNT);
@@ -293,9 +283,9 @@ dwarf_add_expr_gen(Dwarf_P_Expr expr,
 
     case DW_OP_consts:
         res = _dwarf_pro_encode_signed_leb128_nm(val1,
-                                                 &operand_size,
-                                                 encode_buffer,
-                                                 sizeof(encode_buffer));
+            &operand_size,
+            encode_buffer,
+            sizeof(encode_buffer));
         if (res != DW_DLV_OK) {
             _dwarf_p_error(expr->ex_dbg, error, DW_DLE_EXPR_LENGTH_BAD);
             return (DW_DLV_NOCOUNT);
@@ -305,9 +295,9 @@ dwarf_add_expr_gen(Dwarf_P_Expr expr,
 
     case DW_OP_fbreg:
         res = _dwarf_pro_encode_signed_leb128_nm(val1,
-                                                 &operand_size,
-                                                 encode_buffer,
-                                                 sizeof(encode_buffer));
+            &operand_size,
+            encode_buffer,
+            sizeof(encode_buffer));
         if (res != DW_DLV_OK) {
             _dwarf_p_error(expr->ex_dbg, error, DW_DLE_EXPR_LENGTH_BAD);
             return (DW_DLV_NOCOUNT);
@@ -317,8 +307,8 @@ dwarf_add_expr_gen(Dwarf_P_Expr expr,
 
     case DW_OP_bregx:
         res = _dwarf_pro_encode_leb128_nm(val1, &operand_size,
-                                          encode_buffer,
-                                          sizeof(encode_buffer));
+            encode_buffer,
+            sizeof(encode_buffer));
         if (res != DW_DLV_OK) {
             _dwarf_p_error(expr->ex_dbg, error, DW_DLE_EXPR_LENGTH_BAD);
             return (DW_DLV_NOCOUNT);
@@ -326,10 +316,9 @@ dwarf_add_expr_gen(Dwarf_P_Expr expr,
         operand = (Dwarf_Small *) encode_buffer;
         /* put this one directly into 'operand' at tail of prev value */
         res = _dwarf_pro_encode_signed_leb128_nm(val2, &operand2_size,
-                                                 ((char *) operand) +
-                                                 operand_size,
-                                                 sizeof
-                                                 (encode_buffer2));
+            ((char *) operand) +
+            operand_size,
+            sizeof(encode_buffer2));
         if (res != DW_DLV_OK) {
             _dwarf_p_error(expr->ex_dbg, error, DW_DLE_EXPR_LENGTH_BAD);
             return (DW_DLV_NOCOUNT);
@@ -343,7 +332,7 @@ dwarf_add_expr_gen(Dwarf_P_Expr expr,
     case DW_OP_pick:
         operand = (Dwarf_Small *) & operand_buffer[0];
         WRITE_UNALIGNED(dbg, operand, (const void *) &val1,
-                        sizeof(val1), 1);
+            sizeof(val1), 1);
         operand_size = 1;
         break;
 
@@ -358,7 +347,7 @@ dwarf_add_expr_gen(Dwarf_P_Expr expr,
     case DW_OP_xderef_size:
         operand = (Dwarf_Small *) & operand_buffer[0];
         WRITE_UNALIGNED(dbg, operand, (const void *) &val1,
-                        sizeof(val1), 1);
+            sizeof(val1), 1);
         operand_size = 1;
         break;
 
@@ -376,8 +365,8 @@ dwarf_add_expr_gen(Dwarf_P_Expr expr,
 
     case DW_OP_plus_uconst:
         res = _dwarf_pro_encode_leb128_nm(val1, &operand_size,
-                                          encode_buffer,
-                                          sizeof(encode_buffer));
+            encode_buffer,
+            sizeof(encode_buffer));
         if (res != DW_DLV_OK) {
             _dwarf_p_error(expr->ex_dbg, error, DW_DLE_EXPR_LENGTH_BAD);
             return (DW_DLV_NOCOUNT);
@@ -407,8 +396,8 @@ dwarf_add_expr_gen(Dwarf_P_Expr expr,
 
     case DW_OP_piece:
         res = _dwarf_pro_encode_leb128_nm(val1, &operand_size,
-                                          encode_buffer,
-                                          sizeof(encode_buffer));
+            encode_buffer,
+            sizeof(encode_buffer));
         if (res != DW_DLV_OK) {
             _dwarf_p_error(expr->ex_dbg, error, DW_DLE_EXPR_LENGTH_BAD);
             return (DW_DLV_NOCOUNT);
@@ -435,7 +424,7 @@ dwarf_add_expr_gen(Dwarf_P_Expr expr,
     case DW_OP_call_ref:        /* DWARF3 */
         operand = (Dwarf_Small *) & operand_buffer[0];
         WRITE_UNALIGNED(dbg, operand, &val1, sizeof(val1),
-                        dbg->de_offset_size);
+            dbg->de_offset_size);
         operand_size = dbg->de_offset_size;
         break;
     case DW_OP_form_tls_address:        /* DWARF3f */
@@ -444,8 +433,8 @@ dwarf_add_expr_gen(Dwarf_P_Expr expr,
         break;
     case DW_OP_bit_piece:       /* DWARF3f */
         res = _dwarf_pro_encode_leb128_nm(val1, &operand_size,
-                                          encode_buffer,
-                                          sizeof(encode_buffer));
+            encode_buffer,
+            sizeof(encode_buffer));
         if (res != DW_DLV_OK) {
             _dwarf_p_error(expr->ex_dbg, error, DW_DLE_EXPR_LENGTH_BAD);
             return (DW_DLV_NOCOUNT);
@@ -453,9 +442,9 @@ dwarf_add_expr_gen(Dwarf_P_Expr expr,
         operand = (Dwarf_Small *) encode_buffer;
         /* put this one directly into 'operand' at tail of prev value */
         res = _dwarf_pro_encode_leb128_nm(val2, &operand2_size,
-                                          ((char *) operand) +
-                                          operand_size,
-                                          sizeof(encode_buffer2));
+            ((char *) operand) +
+            operand_size,
+            sizeof(encode_buffer2));
         if (res != DW_DLV_OK) {
             _dwarf_p_error(expr->ex_dbg, error, DW_DLE_EXPR_LENGTH_BAD);
             return (DW_DLV_NOCOUNT);
@@ -488,8 +477,8 @@ dwarf_add_expr_gen(Dwarf_P_Expr expr,
 
 Dwarf_Unsigned
 dwarf_add_expr_addr_b(Dwarf_P_Expr expr,
-                      Dwarf_Unsigned addr,
-                      Dwarf_Unsigned sym_index, Dwarf_Error * error)
+    Dwarf_Unsigned addr,
+    Dwarf_Unsigned sym_index, Dwarf_Error * error)
 {
     Dwarf_P_Debug dbg;
     Dwarf_Small *next_byte_ptr;
@@ -520,7 +509,7 @@ dwarf_add_expr_addr_b(Dwarf_P_Expr expr,
     *next_byte_ptr = DW_OP_addr;
     next_byte_ptr++;
     WRITE_UNALIGNED(dbg, next_byte_ptr, (const void *) &addr,
-                    sizeof(addr), upointer_size);
+        sizeof(addr), upointer_size);
 
     if (expr->ex_reloc_offset != 0) {
         _dwarf_p_error(dbg, error, DW_DLE_MULTIPLE_RELOC_IN_EXPR);
@@ -536,12 +525,12 @@ dwarf_add_expr_addr_b(Dwarf_P_Expr expr,
 
 Dwarf_Unsigned
 dwarf_add_expr_addr(Dwarf_P_Expr expr,
-                    Dwarf_Unsigned addr,
-                    Dwarf_Signed sym_index, Dwarf_Error * error)
+    Dwarf_Unsigned addr,
+    Dwarf_Signed sym_index, Dwarf_Error * error)
 {
     return
         dwarf_add_expr_addr_b(expr, addr, (Dwarf_Unsigned) sym_index,
-                              error);
+            error);
 }
 
 
@@ -564,17 +553,17 @@ dwarf_expr_current_offset(Dwarf_P_Expr expr, Dwarf_Error * error)
 void
 dwarf_expr_reset(Dwarf_P_Expr expr, Dwarf_Error * error)
 {
-   if (expr == NULL) {
-      _dwarf_p_error(NULL, error, DW_DLE_EXPR_NULL);
-      return;
-   }
-   expr->ex_next_byte_offset=0;
+    if (expr == NULL) {
+        _dwarf_p_error(NULL, error, DW_DLE_EXPR_NULL);
+        return;
+    }
+    expr->ex_next_byte_offset=0;
 }
 
 
 Dwarf_Addr
 dwarf_expr_into_block(Dwarf_P_Expr expr,
-                      Dwarf_Unsigned * length, Dwarf_Error * error)
+    Dwarf_Unsigned * length, Dwarf_Error * error)
 {
     if (expr == NULL) {
         _dwarf_p_error(NULL, error, DW_DLE_EXPR_NULL);
@@ -588,9 +577,9 @@ dwarf_expr_into_block(Dwarf_P_Expr expr,
 
     if (length != NULL)
         *length = expr->ex_next_byte_offset;
-    /* The following cast from pointer to integer is ok as long as
-       Dwarf_Addr is at least as large as a pointer. Which is a
-       requirement of libdwarf so must be satisfied (some compilers
-       emit a warning about the following line). */
+    /*  The following cast from pointer to integer is ok as long as
+        Dwarf_Addr is at least as large as a pointer. Which is a
+        requirement of libdwarf so must be satisfied (some compilers
+        emit a warning about the following line). */
     return ((Dwarf_Addr) & (expr->ex_byte_stream[0]));
 }

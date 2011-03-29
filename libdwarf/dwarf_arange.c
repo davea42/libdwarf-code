@@ -1,7 +1,7 @@
 /*
 
   Copyright (C) 2000-2004 Silicon Graphics, Inc.  All Rights Reserved.
-  Portions Copyright (C) 2007-2010 David Anderson. All Rights Reserved.
+  Portions Copyright (C) 2007-2011 David Anderson. All Rights Reserved.
 
   This program is free software; you can redistribute it and/or modify it
   under the terms of version 2.1 of the GNU Lesser General Public License 
@@ -48,13 +48,13 @@
 #include "dwarf_incl.h"
 #include <stdio.h>
 #include "dwarf_arange.h"
-#include "dwarf_global.h"       /* for _dwarf_fixup_* */
+#include "dwarf_global.h"  /* for _dwarf_fixup_* */
 
 
-/* Common code for two user-visible routines to share. 
-   Errors here result in memory leaks, but errors here
-   are serious (making aranges unusable) so we assume
-   callers will not repeat the error often or mind the leaks.
+/*  Common code for two user-visible routines to share. 
+    Errors here result in memory leaks, but errors here
+    are serious (making aranges unusable) so we assume
+    callers will not repeat the error often or mind the leaks.
 */
 static int
 dwarf_get_aranges_list(Dwarf_Debug dbg,
@@ -66,28 +66,28 @@ dwarf_get_aranges_list(Dwarf_Debug dbg,
     Dwarf_Small *arange_ptr = 0;
     Dwarf_Small *arange_ptr_start = 0;
 
-    /* Start of arange header.  Used for rounding offset of arange_ptr
-       to twice the tuple size.  Libdwarf requirement. */
+    /*  Start of arange header.  Used for rounding offset of arange_ptr
+        to twice the tuple size.  Libdwarf requirement. */
     Dwarf_Small *header_ptr = 0;
 
-    /* Version of .debug_aranges header. */
+    /*  Version of .debug_aranges header. */
     Dwarf_Half version = 0;
 
-    /* Offset of current set of aranges into .debug_info. */
+    /*  Offset of current set of aranges into .debug_info. */
     Dwarf_Off info_offset = 0;
 
-    /* Size in bytes of addresses in target. */
+    /*  Size in bytes of addresses in target. */
     Dwarf_Small address_size = 0;
 
-    /* Size in bytes of segment offsets in target. */
+    /*  Size in bytes of segment offsets in target. */
     Dwarf_Small segment_size = 0;
 
-    /* Count of total number of aranges. */
+    /*  Count of total number of aranges. */
     Dwarf_Unsigned arange_count = 0;
 
     Dwarf_Arange arange = 0;
 
-    /* Used to chain Dwarf_Aranges structs. */
+    /*  Used to chain Dwarf_Aranges structs. */
     Dwarf_Chain curr_chain = NULL;
     Dwarf_Chain prev_chain = NULL;
     Dwarf_Chain head_chain = NULL;
@@ -103,7 +103,7 @@ dwarf_get_aranges_list(Dwarf_Debug dbg,
 
         int local_length_size;
 
-         /*REFERENCED*/ /* Not used in this instance of the macro */
+        /*REFERENCED*/ /* Not used in this instance of the macro */
         int local_extension_size = 0;
 
         header_ptr = arange_ptr;
@@ -138,8 +138,8 @@ dwarf_get_aranges_list(Dwarf_Debug dbg,
         }
 
         address_size = *(Dwarf_Small *) arange_ptr;
-        /* It is not an error if the sizes differ.
-           Unusual, but not an error. */
+        /*  It is not an error if the sizes differ.
+            Unusual, but not an error. */
         arange_ptr = arange_ptr + sizeof(Dwarf_Small);
         length = length - sizeof(Dwarf_Small);
 
@@ -163,8 +163,8 @@ dwarf_get_aranges_list(Dwarf_Debug dbg,
             Dwarf_Addr range_address = 0;
             Dwarf_Unsigned segment_selector = 0;
             Dwarf_Unsigned range_length = 0;
-            /* For segmented address spaces, the first field to
-               read is a segment selector (new in DWARF4) */
+            /*  For segmented address spaces, the first field to
+                read is a segment selector (new in DWARF4) */
             if(version == 4 && segment_size != 0) {
                 READ_UNALIGNED(dbg, segment_selector, Dwarf_Unsigned,
                     arange_ptr, segment_size);
@@ -182,9 +182,10 @@ dwarf_get_aranges_list(Dwarf_Debug dbg,
             arange_ptr += address_size;
             length = length - address_size;
 
-            { /* We used to suppress all-zero entries, but
-                 now we return all aranges entries so we show
-                 the entire content.  March 31, 2010. */
+            { 
+                /*  We used to suppress all-zero entries, but
+                    now we return all aranges entries so we show
+                    the entire content.  March 31, 2010. */
 
                 arange = (Dwarf_Arange)
                     _dwarf_get_alloc(dbg, DW_DLA_ARANGE, 1);
@@ -216,33 +217,32 @@ dwarf_get_aranges_list(Dwarf_Debug dbg,
                     prev_chain = curr_chain;
                 }
             }
-            /* The current set of ranges is terminated by
-               range_address 0 and range_length 0, but that
-               does not necessarily terminate the ranges for this CU! 
-               There can be multiple sets in that DWARF
-               does not explicitly forbid multiple sets. 
-               DWARF2,3,4 section 7.20 
-               We stop short to avoid overrun of the end of the CU.
-               */
+            /*  The current set of ranges is terminated by
+                range_address 0 and range_length 0, but that
+                does not necessarily terminate the ranges for this CU! 
+                There can be multiple sets in that DWARF
+                does not explicitly forbid multiple sets. 
+                DWARF2,3,4 section 7.20 
+                We stop short to avoid overrun of the end of the CU.  */
               
         } while (arange_ptr_past_end >= (arange_ptr + range_entry_size));
 
-        /* A compiler could emit some padding bytes here. dwarf2/3
-           (dwarf4 sec 7.20) does not clearly make extra padding 
-           bytes illegal. */
+        /*  A compiler could emit some padding bytes here. dwarf2/3
+            (dwarf4 sec 7.20) does not clearly make extra padding 
+            bytes illegal. */
         if (arange_ptr_past_end < arange_ptr) {
             char buf[200];
             Dwarf_Unsigned pad_count = arange_ptr - arange_ptr_past_end;
             Dwarf_Unsigned offset = arange_ptr - arange_ptr_start;
             snprintf(buf,sizeof(buf),"DW_DLE_ARANGE_LENGTH_BAD."
-                " 0x%" DW_PR_DUx 
-                " pad bytes at offset 0x%" DW_PR_DUx 
+                " 0x%" DW_PR_XZEROS DW_PR_DUx 
+                " pad bytes at offset 0x%" DW_PR_XZEROS DW_PR_DUx 
                 " in .debug_aranges",
                 pad_count, offset);
             dwarf_insert_harmless_error(dbg,buf);
         }
-        /* For most compilers, arange_ptr == arange_ptr_past_end at
-           this point. But not if there were padding bytes */
+        /*  For most compilers, arange_ptr == arange_ptr_past_end at
+            this point. But not if there were padding bytes */
         arange_ptr = arange_ptr_past_end;
     } while (arange_ptr <
         dbg->de_debug_aranges.dss_data + dbg->de_debug_aranges.dss_size);
@@ -472,15 +472,13 @@ dwarf_get_cu_die_offset(Dwarf_Arange arange,
     return DW_DLV_OK;
 }
 
-/*
-    This function takes an Dwarf_Arange,
+/*  This function takes an Dwarf_Arange,
     and returns the offset of the CU header
     in the compilation-unit that the
     arange belongs to.  Returns DW_DLV_ERROR
     on error.   
     Ensures .debug_info loaded so
-    the cu_offset is meaningful.
-*/
+    the cu_offset is meaningful.  */
 int
 dwarf_get_arange_cu_header_offset(Dwarf_Arange arange,
     Dwarf_Off * cu_header_offset_returned,
@@ -492,13 +490,13 @@ dwarf_get_arange_cu_header_offset(Dwarf_Arange arange,
         return (DW_DLV_ERROR);
     }
     dbg = arange->ar_dbg;
-    /* Like dwarf_get_arange_info this ensures debug_info loaded:
-       the cu_header is in debug_info and will be used else
-       we would not call dwarf_get_arange_cu_header_offset. */
+    /*  Like dwarf_get_arange_info this ensures debug_info loaded:
+        the cu_header is in debug_info and will be used else
+        we would not call dwarf_get_arange_cu_header_offset. */
     if (!dbg->de_debug_info.dss_data) {
         int res = _dwarf_load_debug_info(dbg, error);
         if (res != DW_DLV_OK) {
-                return res;
+            return res;
         }
     }
     *cu_header_offset_returned = arange->ar_info_offset;
@@ -567,10 +565,10 @@ dwarf_get_arange_info_b(Dwarf_Arange arange,
     }
     
     if(segment != NULL) {
-       *segment = arange->ar_segment_selector;
+        *segment = arange->ar_segment_selector;
     }
     if(segment_entry_size != NULL) {
-       *segment_entry_size = arange->ar_segment_selector_size;
+        *segment_entry_size = arange->ar_segment_selector_size;
     }
     if (start != NULL)
         *start = arange->ar_address;

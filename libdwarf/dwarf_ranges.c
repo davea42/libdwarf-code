@@ -1,6 +1,6 @@
 /*
 
-  Copyright (C) 2008-2010 David Anderson. All Rights Reserved.
+  Copyright (C) 2008-2011 David Anderson. All Rights Reserved.
 
   This program is free software; you can redistribute it and/or modify it
   under the terms of version 2.1 of the GNU Lesser General Public License 
@@ -101,19 +101,19 @@ int dwarf_get_ranges_a(Dwarf_Debug dbg,
         }
         entry_count++;
         READ_UNALIGNED(dbg,re->cur.dwr_addr1,
-                       Dwarf_Addr, rangeptr,
-                       address_size);
+            Dwarf_Addr, rangeptr,
+            address_size);
         rangeptr +=  address_size;
         READ_UNALIGNED(dbg,re->cur.dwr_addr2 ,
-                       Dwarf_Addr, rangeptr,
-                       address_size);
+            Dwarf_Addr, rangeptr,
+            address_size);
         rangeptr +=  address_size;
         if(!base) {
-           base = re;
-           last = re;
+            base = re;
+            last = re;
         } else {
-           last->next = re;
-           last = re;
+            last->next = re;
+            last = re;
         }
         if(re->cur.dwr_addr1 == 0 && re->cur.dwr_addr2 == 0) {
             re->cur.dwr_type =  DW_RANGES_END;
@@ -128,8 +128,8 @@ int dwarf_get_ranges_a(Dwarf_Debug dbg,
     ranges_data_out =   (Dwarf_Ranges *)
     _dwarf_get_alloc(dbg,DW_DLA_RANGES,entry_count);
     if(!ranges_data_out) {
-            _dwarf_error(dbg, error, DW_DLE_DEBUG_RANGES_OUT_OF_MEM);
-            return (DW_DLV_ERROR);
+        _dwarf_error(dbg, error, DW_DLE_DEBUG_RANGES_OUT_OF_MEM);
+        return (DW_DLV_ERROR);
     }
     curre = base;
     *rangesbuf = ranges_data_out;

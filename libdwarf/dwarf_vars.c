@@ -1,7 +1,7 @@
 /*
 
   Copyright (C) 2000,2002,2004,2005 Silicon Graphics, Inc.  All Rights Reserved.
-  Portions Copyright (C) 2009-2010 David Anderson. All Rights Reserved.
+  Portions Copyright (C) 2009-2011 David Anderson. All Rights Reserved.
 
   This program is free software; you can redistribute it and/or modify it
   under the terms of version 2.1 of the GNU Lesser General Public License 
@@ -72,7 +72,7 @@ dwarf_get_vars(Dwarf_Debug dbg,
 
 void
 dwarf_vars_dealloc(Dwarf_Debug dbg, Dwarf_Var * dwgl,
-                   Dwarf_Signed count)
+    Dwarf_Signed count)
 {
     _dwarf_internal_globals_dealloc(dbg, (Dwarf_Global *) dwgl,
         count,
@@ -99,7 +99,7 @@ dwarf_varname(Dwarf_Var var_in, char **ret_varname, Dwarf_Error * error)
 
 int
 dwarf_var_die_offset(Dwarf_Var var_in,
-        Dwarf_Off * returned_offset, Dwarf_Error * error)
+    Dwarf_Off * returned_offset, Dwarf_Error * error)
 {
     Dwarf_Global var = (Dwarf_Global) var_in;
 
@@ -110,7 +110,7 @@ dwarf_var_die_offset(Dwarf_Var var_in,
 
 int
 dwarf_var_cu_offset(Dwarf_Var var_in,
-                    Dwarf_Off * returned_offset, Dwarf_Error * error)
+    Dwarf_Off * returned_offset, Dwarf_Error * error)
 {
     Dwarf_Global var = (Dwarf_Global) var_in;
 
@@ -120,9 +120,9 @@ dwarf_var_cu_offset(Dwarf_Var var_in,
 
 int
 dwarf_var_name_offsets(Dwarf_Var var_in,
-        char **returned_name,
-        Dwarf_Off * die_offset,
-        Dwarf_Off * cu_offset, Dwarf_Error * error)
+    char **returned_name,
+    Dwarf_Off * die_offset,
+    Dwarf_Off * cu_offset, Dwarf_Error * error)
 {
     Dwarf_Global var = (Dwarf_Global) var_in;
 

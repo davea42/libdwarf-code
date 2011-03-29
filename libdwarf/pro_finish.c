@@ -2,6 +2,7 @@
 
   Copyright (C) 2000,2004 Silicon Graphics, Inc.  All Rights Reserved.
   Portions Copyright 2002-2010 Sun Microsystems, Inc. All rights reserved.
+  Portions Copyright 2011 David Anderson. All rights reserved.
 
   This program is free software; you can redistribute it and/or modify it
   under the terms of version 2.1 of the GNU Lesser General Public License 
@@ -40,11 +41,9 @@
 #include "libdwarfdefs.h"
 #include "pro_incl.h"
 
-/*---------------------------------------------------------------
-        This routine deallocates all memory, and does some 
-        finishing up
------------------------------------------------------------------*/
- /*ARGSUSED*/ Dwarf_Unsigned
+/*  This routine deallocates all memory, and does some 
+    finishing up */
+/*ARGSUSED*/ Dwarf_Unsigned
 dwarf_producer_finish(Dwarf_P_Debug dbg, Dwarf_Error * error)
 {
     if (dbg->de_version_magic_number != PRO_VERSION_MAGIC) {

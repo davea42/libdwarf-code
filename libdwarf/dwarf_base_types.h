@@ -1,7 +1,7 @@
 /*
 
   Copyright (C) 2000,2005 Silicon Graphics, Inc.  All Rights Reserved.
-  Portions Copyright (C) 2008-2010  David Anderson. All Rights Reserved.
+  Portions Copyright (C) 2008-2011  David Anderson. All Rights Reserved.
 
   This program is free software; you can redistribute it and/or modify it
   under the terms of version 2.1 of the GNU Lesser General Public License 
@@ -41,7 +41,7 @@
 #define true                    1
 #define false                   0
 
-/* to identify a cie */
+/* To identify a cie */
 #define DW_CIE_ID 		~(0x0)
 #define DW_CIE_VERSION		1 /* DWARF2 */
 #define DW_CIE_VERSION3		3 /* DWARF3 */
@@ -59,10 +59,8 @@
 #define DW_LINE_VERSION4   4
 
 
-/* 
-    These are allocation type codes for structs that
-    are internal to the Libdwarf Consumer library.
-*/
+/*  These are allocation type codes for structs that
+    are internal to the Libdwarf Consumer library.  */
 #define DW_DLA_ABBREV_LIST	DW_DLA_RANGES + 1
 #define DW_DLA_CHAIN		DW_DLA_RANGES + 2
 #define DW_DLA_CU_CONTEXT	DW_DLA_RANGES + 3
@@ -84,10 +82,9 @@
 
 /*Dwarf_Word  is unsigned word usable for index, count in memory */
 /*Dwarf_Sword is   signed word usable for index, count in memory */
-/* The are 32 or 64 bits depending if 64 bit longs or not, which
-** fits the  ILP32 and LP64 models
-** These work equally well with ILP64.
-*/
+/*  The are 32 or 64 bits depending if 64 bit longs or not, which
+    fits the  ILP32 and LP64 models
+    These work equally well with ILP64.  */
 
 typedef unsigned long Dwarf_Word;
 typedef signed long Dwarf_Sword;
@@ -97,17 +94,15 @@ typedef unsigned char Dwarf_Ubyte;
 typedef signed short Dwarf_Shalf;
 typedef Dwarf_Small *Dwarf_Byte_Ptr;
 
-/* these 2 are fixed sizes which must not vary with the
-** ILP32/LP64 model. Between these two, stay at 32 bit.
-*/
+/*  These 2 are fixed sizes which must not vary with the
+    ILP32/LP64 model. Between these two, stay at 32 bit.  */
 typedef __uint32_t Dwarf_ufixed;
 typedef __int32_t Dwarf_sfixed;
 
-/*
-        In various places the code mistakenly associates
-        forms 8 bytes long with Dwarf_Signed or Dwarf_Unsigned
-	This is not a very portable assumption.
-        The following should be used instead for 64 bit integers.
+/*  In various places the code mistakenly associates
+    forms 8 bytes long with Dwarf_Signed or Dwarf_Unsigned
+    This is not a very portable assumption.
+    The following should be used instead for 64 bit integers.
 */
 typedef __uint64_t Dwarf_ufixed64;
 typedef __int64_t Dwarf_sfixed64;

@@ -1,7 +1,7 @@
 /*
 
   Copyright (C) 2000-2006 Silicon Graphics, Inc.  All Rights Reserved.
-  Portions Copyright (C) 2009-2010 David Anderson. All Rights Reserved.
+  Portions Copyright (C) 2009-2011 David Anderson. All Rights Reserved.
 
   This program is free software; you can redistribute it and/or modify it
   under the terms of version 2.1 of the GNU Lesser General Public License 
@@ -43,8 +43,7 @@
 #include "dwarf_frame.h"
 #include "dwarf_arange.h" /* using Arange as a way to build a list */
 
-/*
-    Used by rqs (an IRIX application).  
+/*  Used by rqs (an IRIX application).  
     Not needed except for that one application.
     Should be moved to its own source file since
     it is so rarely needed.
@@ -58,9 +57,9 @@
 */
 int
 _dwarf_frame_address_offsets(Dwarf_Debug dbg, Dwarf_Addr ** addrlist,
-                             Dwarf_Off ** offsetlist,
-                             Dwarf_Signed * returncount,
-                             Dwarf_Error * err)
+    Dwarf_Off ** offsetlist,
+    Dwarf_Signed * returncount,
+    Dwarf_Error * err)
 {
     int retval = DW_DLV_OK;
     int res = DW_DLV_ERROR;
@@ -81,7 +80,7 @@ _dwarf_frame_address_offsets(Dwarf_Debug dbg, Dwarf_Addr ** addrlist,
     Dwarf_Off *arange_offsets = 0;
 
     res = dwarf_get_fde_list(dbg, &cie_data, &cie_count,
-                             &fde_data, &fde_count, err);
+        &fde_data, &fde_count, err);
     if (res != DW_DLV_OK) {
         return res;
     }

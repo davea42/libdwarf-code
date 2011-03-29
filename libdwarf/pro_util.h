@@ -98,14 +98,12 @@
 #define DWARF_PRO_R_IA64_SEGREL32LSB 0
 #endif
 
-/*
- * The default "I don't know" value can't be zero.
- * Because that's the sentinel value that means "no relocation".
- * In order to use this library in 'symbolic relocation mode we
- * don't care if this value is the right relocation value,
- * only that it's non-NULL.  So at the end, we define it
- * to something sensible.
- */
+/*  The default "I don't know" value can't be zero.
+    Because that's the sentinel value that means "no relocation".
+    In order to use this library in 'symbolic relocation mode we
+    don't care if this value is the right relocation value,
+    only that it's non-NULL.  So at the end, we define it
+    to something sensible.  */
 
 
 

@@ -1,7 +1,7 @@
 /*
 
   Copyright (C) 2000 Silicon Graphics, Inc.  All Rights Reserved.
-  Portions Copyright (C) 2008-2010  David Anderson. All Rights Reserved.
+  Portions Copyright (C) 2008-2011  David Anderson. All Rights Reserved.
 
   This program is free software; you can redistribute it and/or modify it
   under the terms of version 2.1 of the GNU Lesser General Public License 
@@ -43,14 +43,12 @@
     a compile-unit.
 */
 struct Dwarf_Abbrev_List_s {
-
     Dwarf_Unsigned ab_code;
     Dwarf_Half ab_tag;
     Dwarf_Half ab_has_child;
 
-    /* 
-       Points to start of attribute and form pairs in the .debug_abbrev 
-       section for the abbrev. */
+    /*  Points to start of attribute and form pairs in the .debug_abbrev 
+        section for the abbrev. */
     Dwarf_Byte_Ptr ab_abbrev_ptr;
 
     struct Dwarf_Abbrev_List_s *ab_next;

@@ -42,25 +42,24 @@ extern "C" {
 #endif
 
 /*
-        dwarf.h   DWARF  debugging information values
-        $Revision: 1.41 $    $Date: 2006/04/17 00:09:56 $
+    dwarf.h   DWARF  debugging information values
+    $Revision: 1.41 $    $Date: 2006/04/17 00:09:56 $
 
-        The comment "DWARF3" appears where there are
-        new entries from DWARF3 as of 2004, "DWARF3f"
-        where there are new entries as of the November 2005
-        public review document and other comments apply
-        where extension entries appear.
+    The comment "DWARF3" appears where there are
+    new entries from DWARF3 as of 2004, "DWARF3f"
+    where there are new entries as of the November 2005
+    public review document and other comments apply
+    where extension entries appear.
 
-        Extensions part of DWARF4 are marked DWARF4.
+    Extensions part of DWARF4 are marked DWARF4.
 
-        A few extension names have omitted the 'vendor id'
-        (See chapter 7, "Vendor Extensibility"). Please
-        always use a 'vendor id' string in extension names.
+    A few extension names have omitted the 'vendor id'
+    (See chapter 7, "Vendor Extensibility"). Please
+    always use a 'vendor id' string in extension names.
 
-        Vendors should use a vendor string in names and
-        whereever possible avoid duplicating values used by
-        other vendor extensions
-
+    Vendors should use a vendor string in names and
+    whereever possible avoid duplicating values used by
+    other vendor extensions
 */
 
 
@@ -101,14 +100,14 @@ extern "C" {
 #define DW_TAG_file_type                0x29
 #define DW_TAG_friend                   0x2a
 #define DW_TAG_namelist                 0x2b
-        /* Early releases of this header had the following
-           misspelled with a trailing 's' */
+        /*  Early releases of this header had the following
+            misspelled with a trailing 's' */
 #define DW_TAG_namelist_item            0x2c /* DWARF3/2 spelling */
 #define DW_TAG_namelist_items           0x2c /* SGI misspelling/typo */
 #define DW_TAG_packed_type              0x2d
 #define DW_TAG_subprogram               0x2e
-        /* The DWARF2 document had two spellings of the following
-           two TAGs, DWARF3 specifies the longer spelling. */
+        /*  The DWARF2 document had two spellings of the following
+            two TAGs, DWARF3 specifies the longer spelling. */
 #define DW_TAG_template_type_parameter  0x2f /* DWARF3/2 spelling*/
 #define DW_TAG_template_type_param      0x2f /* DWARF2   spelling*/
 #define DW_TAG_template_value_parameter 0x30 /* DWARF3/2 spelling*/
@@ -126,7 +125,7 @@ extern "C" {
 #define DW_TAG_unspecified_type         0x3b  /* DWARF3 */
 #define DW_TAG_partial_unit             0x3c  /* DWARF3 */
 #define DW_TAG_imported_unit            0x3d  /* DWARF3 */
-        /* Do not use DW_TAG_mutable_type */
+        /*  Do not use DW_TAG_mutable_type */
 #define DW_TAG_mutable_type 0x3e /* Withdrawn from DWARF3 by DWARF3f. */
 #define DW_TAG_condition                0x3f  /* DWARF3f */
 #define DW_TAG_shared_type              0x40  /* DWARF3f */
@@ -699,10 +698,9 @@ extern "C" {
 #define DW_END_lo_user                  0x40 /* DWARF3f */
 #define DW_END_hi_user                  0xff /* DWARF3f */
 
-/* For use with DW_TAG_SUN_codeflags
- * If DW_TAG_SUN_codeflags is accepted as a dwarf standard, then
- * standard dwarf ATCF entries start at 0x01
- */
+/*  For use with DW_TAG_SUN_codeflags
+    If DW_TAG_SUN_codeflags is accepted as a dwarf standard, then
+    standard dwarf ATCF entries start at 0x01 */
 #define DW_ATCF_lo_user                 0x40 /* SUN */
 #define DW_ATCF_SUN_mop_bitfield        0x41 /* SUN */
 #define DW_ATCF_SUN_mop_spill           0x42 /* SUN */
@@ -1018,6 +1016,53 @@ extern "C" {
 #define DW_FRAME_FREG30 62 /* 64-bit floating point reg 30 */
 #define DW_FRAME_FREG31 63 /* 64-bit floating point reg 31 */
 
+#define DW_FRAME_FREG32 64 /* 64-bit floating point reg 18 */
+#define DW_FRAME_FREG33 65 /* 64-bit floating point reg 19 */
+#define DW_FRAME_FREG34 66 /* 64-bit floating point reg 20 */
+#define DW_FRAME_FREG35 67 /* 64-bit floating point reg 21 */
+#define DW_FRAME_FREG36 68 /* 64-bit floating point reg 22 */
+#define DW_FRAME_FREG37 69 /* 64-bit floating point reg 23 */
+#define DW_FRAME_FREG38 70 /* 64-bit floating point reg 24 */
+#define DW_FRAME_FREG39 71 /* 64-bit floating point reg 25 */
+#define DW_FRAME_FREG40 72 /* 64-bit floating point reg 26 */
+#define DW_FRAME_FREG41 73 /* 64-bit floating point reg 27 */
+#define DW_FRAME_FREG42 74 /* 64-bit floating point reg 28 */
+#define DW_FRAME_FREG43 75 /* 64-bit floating point reg 29 */
+#define DW_FRAME_FREG44 76 /* 64-bit floating point reg 30 */
+#define DW_FRAME_FREG45 77 /* 64-bit floating point reg 31 */
+#define DW_FRAME_FREG46 78 /* 64-bit floating point reg 18 */
+#define DW_FRAME_FREG47 79 /* 64-bit floating point reg 19 */
+#define DW_FRAME_FREG48 80 /* 64-bit floating point reg 20 */
+#define DW_FRAME_FREG49 81 /* 64-bit floating point reg 21 */
+#define DW_FRAME_FREG50 82 /* 64-bit floating point reg 22 */
+#define DW_FRAME_FREG51 83 /* 64-bit floating point reg 23 */
+#define DW_FRAME_FREG52 84 /* 64-bit floating point reg 24 */
+#define DW_FRAME_FREG53 85 /* 64-bit floating point reg 25 */
+#define DW_FRAME_FREG54 86 /* 64-bit floating point reg 26 */
+#define DW_FRAME_FREG55 87 /* 64-bit floating point reg 27 */
+#define DW_FRAME_FREG56 88 /* 64-bit floating point reg 28 */
+#define DW_FRAME_FREG57 89 /* 64-bit floating point reg 29 */
+#define DW_FRAME_FREG58 90 /* 64-bit floating point reg 30 */
+#define DW_FRAME_FREG59 91 /* 64-bit floating point reg 31 */
+#define DW_FRAME_FREG60 92 /* 64-bit floating point reg 22 */
+#define DW_FRAME_FREG61 93 /* 64-bit floating point reg 23 */
+#define DW_FRAME_FREG62 94 /* 64-bit floating point reg 24 */
+#define DW_FRAME_FREG63 95 /* 64-bit floating point reg 25 */
+#define DW_FRAME_FREG64 96 /* 64-bit floating point reg 26 */
+#define DW_FRAME_FREG65 97 /* 64-bit floating point reg 27 */
+#define DW_FRAME_FREG66 98 /* 64-bit floating point reg 28 */
+#define DW_FRAME_FREG67 99 /* 64-bit floating point reg 29 */
+#define DW_FRAME_FREG68 100 /* 64-bit floating point reg 30 */
+#define DW_FRAME_FREG69 101 /* 64-bit floating point reg 31 */
+#define DW_FRAME_FREG70 102 /* 64-bit floating point reg 22 */
+#define DW_FRAME_FREG71 103 /* 64-bit floating point reg 23 */
+#define DW_FRAME_FREG72 104 /* 64-bit floating point reg 24 */
+#define DW_FRAME_FREG73 105 /* 64-bit floating point reg 25 */
+#define DW_FRAME_FREG74 106 /* 64-bit floating point reg 26 */
+#define DW_FRAME_FREG75 107 /* 64-bit floating point reg 27 */
+#define DW_FRAME_FREG76 108 /* 64-bit floating point reg 28 */
+
+
 /*  ***IMPORTANT NOTE, TARGET DEPENDENCY ****
     The following 4 #defines are dependent on 
     the target cpu(s) that you apply libdwarf to.
@@ -1037,7 +1082,7 @@ extern "C" {
 */
 
 #ifndef DW_FRAME_HIGHEST_NORMAL_REGISTER
-#define DW_FRAME_HIGHEST_NORMAL_REGISTER 63
+#define DW_FRAME_HIGHEST_NORMAL_REGISTER 188
 #endif
 /* This is the number of columns in the Frame Table. 
    This constant should
