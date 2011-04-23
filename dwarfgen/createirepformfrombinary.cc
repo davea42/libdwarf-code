@@ -1,5 +1,5 @@
 /*
-  Copyright (C) 2010 David Anderson.  
+  Copyright (C) 2010-2011 David Anderson.  
 
   This program is free software; you can redistribute it and/or modify it
   under the terms of version 2 of the GNU General Public License as
@@ -68,99 +68,99 @@ private:
 IRForm *formFactory(Dwarf_Debug dbg,
     Dwarf_Attribute attr,IRCUdata &cudata,IRAttr & irattr)
 {
-     Dwarf_Error err = 0;
-     IRFormInterface interface(dbg,attr,cudata,irattr);
-     enum Dwarf_Form_Class cl = irattr.getFormClass();
-     switch(cl) {
-     case DW_FORM_CLASS_UNKNOWN:   
-         break;
-     case DW_FORM_CLASS_ADDRESS:
-         {
-             IRFormAddress *f = new IRFormAddress(&interface);
-             // FIXME: do we need to do anything about the symbol here?
-             return f;
-         }
-         break;
-     case DW_FORM_CLASS_BLOCK:     
-         {
-             IRFormBlock *f = new IRFormBlock(&interface);
-             //FIXME
-             return f;
-         }
-         break;
-     case DW_FORM_CLASS_CONSTANT:
-         {
-             IRFormConstant *f = new IRFormConstant(&interface);
-             //FIXME
-             return f;
-         }
-         break;
-     case DW_FORM_CLASS_EXPRLOC:   
-         {
-             IRFormExprloc *f = new IRFormExprloc(&interface);
-             //FIXME
-             return f;
-         }
-         break;
-     case DW_FORM_CLASS_FLAG:
-         {
-             IRFormFlag *f = new IRFormFlag(&interface);
-             //FIXME
-             return f;
-         }
-         break;
-     case DW_FORM_CLASS_LINEPTR:   
-         {
-             IRFormLinePtr *f = new IRFormLinePtr(&interface);
-             //FIXME
-             return f;
-         }
-         break;
-     case DW_FORM_CLASS_LOCLISTPTR:
-         {
-             IRFormLoclistPtr *f = new IRFormLoclistPtr(&interface);
-             //FIXME
-             return f;
-         }
-         break;
-     case DW_FORM_CLASS_MACPTR:    
-         {
-             IRFormMacPtr *f = new IRFormMacPtr(&interface);
-             //FIXME
-             return f;
-         }
-         break;
-     case DW_FORM_CLASS_RANGELISTPTR:
-         {
-             IRFormRangelistPtr *f = new IRFormRangelistPtr(&interface);
-             //FIXME
-             return f;
-         }
-         break;
-     case DW_FORM_CLASS_REFERENCE: 
-         {
-             IRFormReference *f  = new IRFormReference(&interface);
-             //FIXME
-             return f;
-         }
-         break;
-     case DW_FORM_CLASS_STRING:
-         {
-             IRFormString *f = new IRFormString(&interface);
-             return f;
-         }
-         break;
-     case DW_FORM_CLASS_FRAMEPTR: /* SGI/IRIX extension. */
-         {
-             IRFormFramePtr *f = new IRFormFramePtr(&interface);
-             //FIXME
-             return f;
-         }
-         break;
-     default:
-         break;
-     }
-     return new IRFormUnknown();
+    Dwarf_Error err = 0;
+    IRFormInterface interface(dbg,attr,cudata,irattr);
+    enum Dwarf_Form_Class cl = irattr.getFormClass();
+    switch(cl) {
+    case DW_FORM_CLASS_UNKNOWN:   
+        break;
+    case DW_FORM_CLASS_ADDRESS:
+        {
+            IRFormAddress *f = new IRFormAddress(&interface);
+            // FIXME: do we need to do anything about the symbol here?
+            return f;
+        }
+        break;
+    case DW_FORM_CLASS_BLOCK:     
+        {
+            IRFormBlock *f = new IRFormBlock(&interface);
+            //FIXME
+            return f;
+        }
+        break;
+    case DW_FORM_CLASS_CONSTANT:
+        {
+            IRFormConstant *f = new IRFormConstant(&interface);
+            //FIXME
+            return f;
+        }
+        break;
+    case DW_FORM_CLASS_EXPRLOC:   
+        {
+            IRFormExprloc *f = new IRFormExprloc(&interface);
+            //FIXME
+            return f;
+        }
+        break;
+    case DW_FORM_CLASS_FLAG:
+        {
+            IRFormFlag *f = new IRFormFlag(&interface);
+            //FIXME
+            return f;
+        }
+        break;
+    case DW_FORM_CLASS_LINEPTR:   
+        {
+            IRFormLinePtr *f = new IRFormLinePtr(&interface);
+            //FIXME
+            return f;
+        }
+        break;
+    case DW_FORM_CLASS_LOCLISTPTR:
+        {
+            IRFormLoclistPtr *f = new IRFormLoclistPtr(&interface);
+            //FIXME
+            return f;
+        }
+        break;
+    case DW_FORM_CLASS_MACPTR:    
+        {
+            IRFormMacPtr *f = new IRFormMacPtr(&interface);
+            //FIXME
+            return f;
+        }
+        break;
+    case DW_FORM_CLASS_RANGELISTPTR:
+        {
+            IRFormRangelistPtr *f = new IRFormRangelistPtr(&interface);
+            //FIXME
+            return f;
+        }
+        break;
+    case DW_FORM_CLASS_REFERENCE: 
+        {
+            IRFormReference *f  = new IRFormReference(&interface);
+            //FIXME
+            return f;
+        }
+        break;
+    case DW_FORM_CLASS_STRING:
+        {
+            IRFormString *f = new IRFormString(&interface);
+            return f;
+        }
+        break;
+    case DW_FORM_CLASS_FRAMEPTR: /* SGI/IRIX extension. */
+        {
+            IRFormFramePtr *f = new IRFormFramePtr(&interface);
+            //FIXME
+            return f;
+        }
+        break;
+    default:
+        break;
+    }
+    return new IRFormUnknown();
 }
 
 IRFormAddress::IRFormAddress(IRFormInterface * interface)
@@ -253,9 +253,9 @@ get_section_offset(IRFormInterface * interface)
     // we really want to allow here, but that is
     // harmless, we believe.
     int resgf = dwarf_global_formref(interface->attr_,
-         &sectionoffset, &error);
+        &sectionoffset, &error);
     if(resgf == DW_DLV_OK ) {
-         return sectionoffset;
+        return sectionoffset;
     }
     resu = dwarf_formudata(interface->attr_, &uval,&error);
     if(resu != DW_DLV_OK ) {
@@ -326,8 +326,8 @@ IRFormReference::IRFormReference(IRFormInterface * interface)
     // a local CU offset, and we record it as such..
     int res = dwarf_formref(interface->attr_,&val, &error);
     if(res != DW_DLV_OK) {
-            cerr << "Unable to read reference. Impossible error.\n" << endl;
-            exit(1);
+        cerr << "Unable to read reference. Impossible error.\n" << endl;
+        exit(1);
     }
     setCUOffset(val);
 }
@@ -338,7 +338,7 @@ static Dwarf_Sig8  zero_sig8;
 void
 IRFormReference::initSig8() 
 {
-     typeSig8_ = zero_sig8;
+    typeSig8_ = zero_sig8;
 }
 
 IRFormString::IRFormString(IRFormInterface * interface)

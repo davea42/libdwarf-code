@@ -1,5 +1,5 @@
 /*
-  Copyright (C) 2010 David Anderson.  
+  Copyright (C) 2010-2011 David Anderson.  
 
   This program is free software; you can redistribute it and/or modify it
   under the terms of version 2 of the GNU General Public License as
@@ -51,20 +51,20 @@ HandleOneDieAndChildren(Dwarf_P_Debug dbg,
     IRepresentation & Irep,
     IRDie &inDie, unsigned level)
 {
-   list<IRDie>& children = inDie.getChildren();
-   // We create our target DIE first so we can link
-   // children to it, but add no content yet.
-   Dwarf_P_Die ourdie = dwarf_new_die(dbg,inDie.getTag(),NULL,NULL,
-       NULL,NULL,&error);
-   if (reinterpret_cast<int>(ourdie) == DW_DLV_BADADDR) {
-       cerr << "Die creation failure.  "<< endl;
-       exit(1);
-   }
+    list<IRDie>& children = inDie.getChildren();
+    // We create our target DIE first so we can link
+    // children to it, but add no content yet.
+    Dwarf_P_Die ourdie = dwarf_new_die(dbg,inDie.getTag(),NULL,NULL,
+        NULL,NULL,&error);
+    if (reinterpret_cast<int>(ourdie) == DW_DLV_BADADDR) {
+        cerr << "Die creation failure.  "<< endl;
+        exit(1);
+    }
        
-   Dwarf_P_Die lastch = 0;
-   for ( list<IRDie>::iterator it = children.begin();
-          it != children.end();
-          it++) {
+    Dwarf_P_Die lastch = 0;
+    for ( list<IRDie>::iterator it = children.begin();
+        it != children.end();
+        it++) {
         IRDie & ch = *it;
         Dwarf_P_Die chp = HandleOneDieAndChildren(dbg,Irep,ch,level+1);
         Dwarf_P_Die res = 0;
@@ -77,20 +77,20 @@ HandleOneDieAndChildren(Dwarf_P_Debug dbg,
         }
         // Bad cast here, FIXME
         if (reinterpret_cast<int>(res) == DW_DLV_BADADDR) {
-           cerr << "Die link failure.  "<< endl;
-           exit(1);
+            cerr << "Die link failure.  "<< endl;
+            exit(1);
         }
         lastch = chp;
-   }
-   list<IRAttr>& attrs = inDie.getAttributes();
-   // Now we add attributes (content), if any, to the 'ourdie'.
-   for ( list<IRAttr>::iterator it = attrs.begin();
-          it != attrs.end();
-          it++) {
-       IRAttr & attr = *it;
-       AddAttrToDie(dbg,Irep,ourdie,inDie,attr);
-   }
-   return ourdie; 
+    }
+    list<IRAttr>& attrs = inDie.getAttributes();
+    // Now we add attributes (content), if any, to the 'ourdie'.
+    for (list<IRAttr>::iterator it = attrs.begin();
+        it != attrs.end();
+        it++) {
+        IRAttr & attr = *it;
+        AddAttrToDie(dbg,Irep,ourdie,inDie,attr);
+    }
+    return ourdie; 
 }
 
 // This emits the DIEs for a single CU.
@@ -132,8 +132,8 @@ transform_debug_info(Dwarf_P_Debug dbg,
     // For now,  just one CU we write (as spoken by Yoda).
     
     for ( list<IRCUdata>::iterator it = culist.begin();
-          it != culist.end();
-          it++,cu_number++) {
+        it != culist.end();
+        it++,cu_number++) {
         if(cu_number == cu_of_input_we_output) { 
             IRCUdata & primecu = *it;
             emitOneCU(dbg,irep,primecu,cu_of_input_we_output);
@@ -143,7 +143,7 @@ transform_debug_info(Dwarf_P_Debug dbg,
 }
 static void
 transform_cie_fde(Dwarf_P_Debug dbg,
-   IRepresentation & Irep,int cu_of_input_we_output)
+    IRepresentation & Irep,int cu_of_input_we_output)
 {
     Dwarf_Error err = 0;
     std::vector<IRCie> &cie_vec = Irep.framedata().get_cie_vec();
@@ -170,8 +170,8 @@ transform_cie_fde(Dwarf_P_Debug dbg,
             bytes,bytes_len,
             &err);
         if(out_cie_index == DW_DLV_NOCOUNT) {
-             cerr << "Error creating cie from input cie " << i << endl;
-             exit(1);
+            cerr << "Error creating cie from input cie " << i << endl;
+            exit(1);
         }
         vector<int> fdeindex;
         // This inner loop is C*F so a bit slow.
@@ -183,8 +183,8 @@ transform_cie_fde(Dwarf_P_Debug dbg,
             fdein.get_fde_base_data(&code_virt_addr,
                 &code_len, &cie_input_index);
             if(cie_input_index != i) {
-                 // Wrong cie, ignore this fde right now.
-                 continue;
+                // Wrong cie, ignore this fde right now.
+                continue;
             }
 
             
@@ -208,7 +208,7 @@ transform_cie_fde(Dwarf_P_Debug dbg,
             Dwarf_Signed irix_table_offset = 0;
             Dwarf_Unsigned irix_excep_sym = 0;
             Dwarf_Unsigned code_virt_addr_symidx = 
-                     Irep.getBaseTextSymbol();
+                Irep.getBaseTextSymbol();
             Dwarf_Unsigned fde_index = dwarf_add_frame_info(
                 dbg, fdeout,irix_die,
                 out_cie_index, code_virt_addr,
@@ -230,11 +230,11 @@ transform_macro_info(Dwarf_P_Debug dbg,
     IRMacro &macrodata = Irep.macrodata();
     std::vector<IRMacroRecord> &macrov = macrodata.getMacroVec();
     for(size_t m = 0; m < macrov.size() ; m++ ) {
-          // FIXME: we need to coordinate with generated
-          // CUs .
-          cout << "FIXME: macros not really output yet " << 
-              m << " " <<
-              macrov.size() << endl;
+        // FIXME: we need to coordinate with generated
+        // CUs .
+        cout << "FIXME: macros not really output yet " << 
+            m << " " <<
+            macrov.size() << endl;
     }
     Dwarf_Unsigned reloc_count = 0;
     int drd_version = 0;

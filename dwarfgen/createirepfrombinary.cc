@@ -1,5 +1,5 @@
 /*
-  Copyright (C) 2010 David Anderson.  
+  Copyright (C) 2010-2011 David Anderson.  
 
   This program is free software; you can redistribute it and/or modify it
   under the terms of version 2 of the GNU General Public License as
@@ -51,15 +51,15 @@ static void readCUDataFromBinary(Dwarf_Debug dbg, IRepresentation & irep);
 
 class DbgInAutoCloser {
 public:
-     DbgInAutoCloser(Dwarf_Debug dbg,int fd): dbg_(dbg),fd_(fd) {};
-     ~DbgInAutoCloser() { 
-          Dwarf_Error err = 0;
-          dwarf_finish(dbg_,&err);
-          close(fd_);
-     };
+    DbgInAutoCloser(Dwarf_Debug dbg,int fd): dbg_(dbg),fd_(fd) {};
+    ~DbgInAutoCloser() { 
+        Dwarf_Error err = 0;
+        dwarf_finish(dbg_,&err);
+        close(fd_);
+    };
 private:
-     Dwarf_Debug dbg_;
-     int fd_;
+    Dwarf_Debug dbg_;
+    int fd_;
 };
  
 
@@ -121,59 +121,59 @@ readFrameDataFromBinary(Dwarf_Debug dbg, IRepresentation & irep)
     }
 
     for(Dwarf_Signed i =0; i < cie_count; ++i) {
-         Dwarf_Unsigned bytes_in_cie = 0;
-         Dwarf_Small    version = 0;
-         char *         augmentation = 0;
-         Dwarf_Unsigned code_alignment_factor = 0;
-         Dwarf_Signed   data_alignment_factor = 0;
-         Dwarf_Half     return_address_register_rule = 0;
-         Dwarf_Ptr      initial_instructions = 0;
-         Dwarf_Unsigned initial_instructions_length = 0;
-         res = dwarf_get_cie_info(cie_data[i], &bytes_in_cie,
-             &version,&augmentation, &code_alignment_factor,
-             &data_alignment_factor,&return_address_register_rule,
-             &initial_instructions,&initial_instructions_length,
-             &err);
-         if(res != DW_DLV_OK) {
-             cerr << "Error reading frame data cie index " << i << endl;
-             exit(1);
-         }
-         // Index in cie_data must match index in ciedata_, here
-         // correct by construction.
-         IRCie cie(bytes_in_cie,version,augmentation,code_alignment_factor,
-             data_alignment_factor,return_address_register_rule,
-             initial_instructions,initial_instructions_length);
-         irep.framedata().insert_cie(cie);
+        Dwarf_Unsigned bytes_in_cie = 0;
+        Dwarf_Small    version = 0;
+        char *         augmentation = 0;
+        Dwarf_Unsigned code_alignment_factor = 0;
+        Dwarf_Signed   data_alignment_factor = 0;
+        Dwarf_Half     return_address_register_rule = 0;
+        Dwarf_Ptr      initial_instructions = 0;
+        Dwarf_Unsigned initial_instructions_length = 0;
+        res = dwarf_get_cie_info(cie_data[i], &bytes_in_cie,
+            &version,&augmentation, &code_alignment_factor,
+            &data_alignment_factor,&return_address_register_rule,
+            &initial_instructions,&initial_instructions_length,
+            &err);
+        if(res != DW_DLV_OK) {
+            cerr << "Error reading frame data cie index " << i << endl;
+            exit(1);
+        }
+        // Index in cie_data must match index in ciedata_, here
+        // correct by construction.
+        IRCie cie(bytes_in_cie,version,augmentation,code_alignment_factor,
+            data_alignment_factor,return_address_register_rule,
+            initial_instructions,initial_instructions_length);
+        irep.framedata().insert_cie(cie);
     } 
     for(Dwarf_Signed i =0; i < fde_count; ++i) {
-         Dwarf_Addr low_pc = 0;
-         Dwarf_Unsigned    func_length = 0;
-         Dwarf_Ptr         fde_bytes = 0;
-         Dwarf_Unsigned    fde_byte_length = 0;
-         Dwarf_Off   cie_offset = 0;
-         Dwarf_Signed     cie_index = 0;
-         Dwarf_Off      fde_offset = 0;
-         res = dwarf_get_fde_range(fde_data[i], &low_pc,
-             &func_length,&fde_bytes, &fde_byte_length,
-             &cie_offset,&cie_index,
-             &fde_offset,
-             &err);
-         if(res != DW_DLV_OK) {
-             cerr << "Error reading frame data fde index " << i << endl;
-             exit(1);
-         }
-         IRFde fde(low_pc,func_length,fde_bytes,fde_byte_length,
-             cie_offset, cie_index,fde_offset);
-         Dwarf_Ptr instr_in = 0;
-         Dwarf_Unsigned instr_len = 0;
-         res = dwarf_get_fde_instr_bytes(fde_data[i], 
-             &instr_in, &instr_len, &err);
-         if(res != DW_DLV_OK) {
-             cerr << "Error reading frame data fde instructions " << i << endl;
-             exit(1);
-         }
-         fde.get_fde_instrs_into_ir(instr_in,instr_len);
-         irep.framedata().insert_fde(fde);
+        Dwarf_Addr low_pc = 0;
+        Dwarf_Unsigned    func_length = 0;
+        Dwarf_Ptr         fde_bytes = 0;
+        Dwarf_Unsigned    fde_byte_length = 0;
+        Dwarf_Off   cie_offset = 0;
+        Dwarf_Signed     cie_index = 0;
+        Dwarf_Off      fde_offset = 0;
+        res = dwarf_get_fde_range(fde_data[i], &low_pc,
+            &func_length,&fde_bytes, &fde_byte_length,
+            &cie_offset,&cie_index,
+            &fde_offset,
+            &err);
+        if(res != DW_DLV_OK) {
+            cerr << "Error reading frame data fde index " << i << endl;
+            exit(1);
+        }
+        IRFde fde(low_pc,func_length,fde_bytes,fde_byte_length,
+            cie_offset, cie_index,fde_offset);
+        Dwarf_Ptr instr_in = 0;
+        Dwarf_Unsigned instr_len = 0;
+        res = dwarf_get_fde_instr_bytes(fde_data[i], 
+            &instr_in, &instr_len, &err);
+        if(res != DW_DLV_OK) {
+            cerr << "Error reading frame data fde instructions " << i << endl;
+            exit(1);
+        }
+        fde.get_fde_instrs_into_ir(instr_in,instr_len);
+        irep.framedata().insert_fde(fde);
     } 
     dwarf_fde_cie_list_dealloc(dbg,cie_data,cie_count,
         fde_data,fde_count);
@@ -196,9 +196,6 @@ readCUMacroDataFromBinary(Dwarf_Debug dbg, IRepresentation & irep,
         IRMacro &macrodata = irep.macrodata();
         vector<IRMacroRecord> mvec = macrodata.getMacroVec();
         mvec.reserve(mcount);
-if (mcount > 0 ) { //dadebug
-cerr << "dadebug cu getting attrs: " << cu.getCUName() << " count: " << mcount << " max: " << maxcount << endl;
-} //dadebug
         Dwarf_Unsigned dieoffset = cu.baseDie().getGlobalOffset();
         Dwarf_Macro_Details *mdp = md;
         for(int i = 0; i < mcount; ++i, mdp++ ) {
@@ -278,49 +275,48 @@ get_basic_die_data(Dwarf_Debug dbg,Dwarf_Die indie,IRDie &irdie)
 
 static void
 get_attrs_of_die(Dwarf_Die in_die,IRDie &irdie,
-   IRCUdata &data, IRepresentation &irep,
-   Dwarf_Debug dbg)
+    IRCUdata &data, IRepresentation &irep,
+    Dwarf_Debug dbg)
 {
-   Dwarf_Error error = 0;
-   Dwarf_Attribute *atlist = 0;
-   Dwarf_Signed atcnt = 0;
-   std::list<IRAttr> &attrlist = irdie.getAttributes();
-   int res = dwarf_attrlist(in_die, &atlist,&atcnt,&error);
-   if(res == DW_DLV_NO_ENTRY) {
-       return;
-   }
-   if(res == DW_DLV_ERROR) {
-       cerr << "dwarf_attrlist failed " << endl;
-       exit(1);
-   }
-   for (Dwarf_Signed i = 0; i < atcnt; ++i) {
+    Dwarf_Error error = 0;
+    Dwarf_Attribute *atlist = 0;
+    Dwarf_Signed atcnt = 0;
+    std::list<IRAttr> &attrlist = irdie.getAttributes();
+    int res = dwarf_attrlist(in_die, &atlist,&atcnt,&error);
+    if(res == DW_DLV_NO_ENTRY) {
+        return;
+    }
+    if(res == DW_DLV_ERROR) {
+        cerr << "dwarf_attrlist failed " << endl;
+        exit(1);
+    }
+    for (Dwarf_Signed i = 0; i < atcnt; ++i) {
         Dwarf_Attribute attr = atlist[i];
         IRAttr irattr;
         get_basic_attr_data_one_attr(dbg,attr,data,irattr);
         attrlist.push_back(irattr);
 
-   }
-   dwarf_dealloc(dbg,atlist, DW_DLA_LIST);
-   
+    }
+    dwarf_dealloc(dbg,atlist, DW_DLA_LIST);
 }
 
 // Invariant: IRDie and IRCUdata  is in the irep tree,
 // not local record references to local scopes.
 static void
 get_children_of_die(Dwarf_Die in_die,IRDie&irdie, 
-   IRCUdata &ircudata,
-   IRepresentation &irep,
-   Dwarf_Debug dbg)
+    IRCUdata &ircudata,
+    IRepresentation &irep,
+    Dwarf_Debug dbg)
 {
     Dwarf_Die curchilddie = 0;
     Dwarf_Error error = 0;
     int res = dwarf_child(in_die,&curchilddie,&error);
     if(res == DW_DLV_NO_ENTRY) {
-       return;
+        return;
     }
     if(res == DW_DLV_ERROR) {
-       cerr << "dwarf_child failed " << endl;
-       exit(1);
+        cerr << "dwarf_child failed " << endl;
+        exit(1);
     }
     //std::list<IRDie> & childlist =  irdie.getChildren();
     int childcount = 0;
@@ -337,11 +333,11 @@ get_children_of_die(Dwarf_Die in_die,IRDie&irdie,
         Dwarf_Die tchild = 0;
         res = dwarf_siblingof(dbg,curchilddie,&tchild,&error);
         if(res == DW_DLV_NO_ENTRY) {
-           break;
+            break;
         }
         if(res == DW_DLV_ERROR) {
-           cerr << "dwarf_siblingof failed " << endl;
-           exit(1);
+            cerr << "dwarf_siblingof failed " << endl;
+            exit(1);
         }
         dwarf_dealloc(dbg,curchilddie,DW_DLA_DIE);
         curchilddie = tchild;
@@ -380,15 +376,14 @@ readCUDataFromBinary(Dwarf_Debug dbg, IRepresentation & irep)
         }
         if(res == DW_DLV_NO_ENTRY) {
             /* Done. */
-cerr << " Done, end of CUs " << endl;
             return;
         }
         IRCUdata cudata(cu_header_length,version_stamp,
             abbrev_offset,address_size, offset_size,
             extension_size,next_cu_header);
 
-        /* The CU will have a single sibling (well, it is
-           not exactly a sibling, but close enough), a cu_die. */
+        //  The CU will have a single sibling (well, it is
+        //  not exactly a sibling, but close enough), a cu_die. 
         res = dwarf_siblingof(dbg,no_die,&cu_die,&error);
         if(res == DW_DLV_ERROR) {
             cerr <<"Error in dwarf_siblingof on CU die "<< endl;
@@ -428,7 +423,7 @@ cerr << " Done, end of CUs " << endl;
             exit(1);
         }
         if(foundmsect) {
-             cudata.setMacroData(macrooffset,dieoff);
+            cudata.setMacroData(macrooffset,dieoff);
         }
         culist.push_back(cudata);
         IRCUdata & treecu = irep.infodata().lastCU();

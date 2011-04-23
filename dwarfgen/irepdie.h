@@ -1,5 +1,5 @@
 /*
-  Copyright (C) 2010 David Anderson.  
+  Copyright (C) 2010-2011 David Anderson.  
 
   This program is free software; you can redistribute it and/or modify it
   under the terms of version 2 of the GNU General Public License as
@@ -28,35 +28,35 @@ public:
         formclass_(DW_FORM_CLASS_UNKNOWN),formdata_(0) {
         };
     IRAttr(Dwarf_Half attr,Dwarf_Half dirform, Dwarf_Half indirform):
-       attr_(attr),directform_(dirform),indirectform_(indirform),
-       formclass_(DW_FORM_CLASS_UNKNOWN),formdata_(0) {
+        attr_(attr),directform_(dirform),indirectform_(indirform),
+        formclass_(DW_FORM_CLASS_UNKNOWN),formdata_(0) {
     };
     IRAttr(const IRAttr &r) {
-         attr_ = r.attr_;
-         directform_ = r.directform_;
-         indirectform_ = r.indirectform_;
-         formclass_ = r.formclass_;
-         if(r.formdata_) {
+        attr_ = r.attr_;
+        directform_ = r.directform_;
+        indirectform_ = r.indirectform_;
+        formclass_ = r.formclass_;
+        if(r.formdata_) {
             formdata_ =  r.formdata_->clone();
-         } else {
+        } else {
             formdata_ = 0;
-         }
+        }
     };
     ~IRAttr() { delete formdata_; };
     IRAttr & operator=( const IRAttr &r) {
-         if(this == &r) {
-             return *this;
-         }
-         attr_ = r.attr_;
-         directform_ = r.directform_;
-         indirectform_ = r.indirectform_;
-         formclass_ = r.formclass_;
-         if(r.formdata_) {
+        if(this == &r) {
+            return *this;
+        }
+        attr_ = r.attr_;
+        directform_ = r.directform_;
+        indirectform_ = r.indirectform_;
+        formclass_ = r.formclass_;
+        if(r.formdata_) {
             formdata_ =  r.formdata_->clone();
-         } else {
+        } else {
             formdata_ = 0;
-         }
-         return *this;
+        }
+        return *this;
     }
     void setBaseData(Dwarf_Half attr, Dwarf_Half dirform, 
         Dwarf_Half indirform){
@@ -88,19 +88,19 @@ public:
     IRDie():tag_(0),globalOffset_(0), cuRelativeOffset_(0) {};
     ~IRDie() {};
     void addChild(const IRDie & newdie ) {
-       children_.push_back(newdie);
+        children_.push_back(newdie);
     };
     std::string  getName() {
         std::list<IRAttr>::iterator it = attrs_.begin(); 
         for( ; it != attrs_.end() ; ++it) {
-           if (it->getAttrNum() == DW_AT_name) {
-               IRForm *f = it->getFormData();
-               const IRFormString * isv = 
-                   dynamic_cast<const IRFormString *>(f);
-               if(isv) {
-                   return isv->getString();
-               }
-           }
+            if (it->getAttrNum() == DW_AT_name) {
+                IRForm *f = it->getFormData();
+                const IRFormString * isv = 
+                    dynamic_cast<const IRFormString *>(f);
+                if(isv) {
+                    return isv->getString();
+                }
+            }
         }
         return "";
     };
@@ -147,25 +147,25 @@ public:
         cudie_offset_(0)
         {};
     IRCUdata(Dwarf_Unsigned len,Dwarf_Half version,
-         Dwarf_Unsigned abbrev_offset,
-         Dwarf_Half addr_size,
-         Dwarf_Half length_size,
-         Dwarf_Half extension_size,
-         Dwarf_Unsigned next_cu_header): 
-           cu_header_length_(len),
-           abbrev_offset_(abbrev_offset),
-           next_cu_header_offset_(addr_size),
-           version_stamp_(version),
-           address_size_(addr_size),
-           length_size_(length_size),
-           extension_size_(extension_size),
-           has_macrodata_(false),
-           macrodata_offset_(0),cudie_offset_(0) {};
+        Dwarf_Unsigned abbrev_offset,
+        Dwarf_Half addr_size,
+        Dwarf_Half length_size,
+        Dwarf_Half extension_size,
+        Dwarf_Unsigned next_cu_header): 
+            cu_header_length_(len),
+            abbrev_offset_(abbrev_offset),
+            next_cu_header_offset_(addr_size),
+            version_stamp_(version),
+            address_size_(addr_size),
+            length_size_(length_size),
+            extension_size_(extension_size),
+            has_macrodata_(false),
+            macrodata_offset_(0),cudie_offset_(0) {};
     ~IRCUdata() { };
     bool hasMacroData(Dwarf_Unsigned *offset_out,Dwarf_Unsigned *cudie_off) {
-         *offset_out = macrodata_offset_;
-         *cudie_off = cudie_offset_; 
-         return has_macrodata_;
+        *offset_out = macrodata_offset_;
+        *cudie_off = cudie_offset_; 
+        return has_macrodata_;
     }
     void setMacroData(Dwarf_Unsigned offset,Dwarf_Unsigned cudieoff) {
         has_macrodata_ = true;

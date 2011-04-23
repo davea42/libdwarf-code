@@ -1,7 +1,7 @@
 #ifndef STRTABDATA_H
 #define STRTABDATA_H
 /*
-  Copyright (C) 2010 David Anderson.  
+  Copyright (C) 2010-2011 David Anderson.  
 
   This program is free software; you can redistribute it and/or modify it
   under the terms of version 2 of the GNU General Public License as
@@ -24,42 +24,42 @@
 
 class strtabdata {
 public:
-   strtabdata(): data_(new char[1000]),
-     datalen_(1000), nexttouse_(0) { data_[0] = 0; nexttouse_ = 1;};
-   ~strtabdata()  { delete[]data_; };
-   unsigned addString(const std::string & newstr) {
-       // The 1 is for the terminating null byte.
-       unsigned nsz = newstr.size() +1;
-       unsigned needed = nexttouse_ + nsz;
-       if (needed >= datalen_) {
-           unsigned baseincr = nsz;
-           unsigned altincr = datalen_*2;
-           if(altincr> baseincr) {
-               baseincr = altincr;
-           }
-           unsigned newsize = datalen_ + baseincr;
-           char *newdata = new char [newsize];
-           memcpy(newdata, data_, nexttouse_);
-           delete [] data_;
-           data_ = newdata;
-           datalen_ = newsize;
-       }
-       memcpy(data_ + nexttouse_, newstr.c_str(),nsz);
-       unsigned newstrindex = nexttouse_;
-       nexttouse_ += nsz;
-       return newstrindex;
-   };
-   void *exposedata() {return (void *)data_;};
-   unsigned exposelen() const {return nexttouse_;};
+    strtabdata(): data_(new char[1000]),
+        datalen_(1000), nexttouse_(0) { data_[0] = 0; nexttouse_ = 1;};
+    ~strtabdata()  { delete[]data_; };
+    unsigned addString(const std::string & newstr) {
+        // The 1 is for the terminating null byte.
+        unsigned nsz = newstr.size() +1;
+        unsigned needed = nexttouse_ + nsz;
+        if (needed >= datalen_) {
+            unsigned baseincr = nsz;
+            unsigned altincr = datalen_*2;
+            if(altincr> baseincr) {
+                baseincr = altincr;
+            }
+            unsigned newsize = datalen_ + baseincr;
+            char *newdata = new char [newsize];
+            memcpy(newdata, data_, nexttouse_);
+            delete [] data_;
+            data_ = newdata;
+            datalen_ = newsize;
+        }
+        memcpy(data_ + nexttouse_, newstr.c_str(),nsz);
+        unsigned newstrindex = nexttouse_;
+        nexttouse_ += nsz;
+        return newstrindex;
+    };
+    void *exposedata() {return (void *)data_;};
+    unsigned exposelen() const {return nexttouse_;};
 private:
-   char *   data_;
+    char *   data_;
 
-   // datalen_ is the size in bytes pointed to by data_ .
-   unsigned datalen_;
+    // datalen_ is the size in bytes pointed to by data_ .
+    unsigned datalen_;
 
-   // nexttouse_ is the index of the next (unused) byte in
-   // data_ , so it is also the amount of space in data_ that
-   // is in use.
-   unsigned nexttouse_;
+    // nexttouse_ is the index of the next (unused) byte in
+    // data_ , so it is also the amount of space in data_ that
+    // is in use.
+    unsigned nexttouse_;
 };
 #endif /* STRTABDATA_H */

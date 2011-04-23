@@ -1,5 +1,5 @@
 /*
-  Copyright (C) 2010 David Anderson.  
+  Copyright (C) 2010-2011 David Anderson.  
 
   This program is free software; you can redistribute it and/or modify it
   under the terms of version 2 of the GNU General Public License as
@@ -50,7 +50,7 @@ public:
         formclass_ = r.formclass_;
     }
     virtual IRFormUnknown * clone() const {
-         return new IRFormUnknown(*this);
+        return new IRFormUnknown(*this);
     }
     IRFormUnknown & operator=(const IRFormUnknown &r) {
         if(this == &r) return *this;
@@ -97,7 +97,7 @@ public:
         address_ = r.address_;
     }
     virtual IRFormAddress * clone() const {
-         return new IRFormAddress(*this);
+        return new IRFormAddress(*this);
     };
     Dwarf_Addr  getAddress() { return address_;};
     enum Dwarf_Form_Class getFormClass() const { return formclass_; };
@@ -137,7 +137,7 @@ public:
         sectionoffset_ = r.sectionoffset_;
     }
     virtual IRFormBlock * clone() const {
-         return new IRFormBlock(*this);
+        return new IRFormBlock(*this);
     }
     enum Dwarf_Form_Class getFormClass() const { return formclass_; };
 private:        
@@ -151,12 +151,12 @@ private:
     Dwarf_Unsigned sectionoffset_;
 
     void insertBlock(Dwarf_Block *bl) {
-          char *d = static_cast<char *>(bl->bl_data);
-          Dwarf_Unsigned len = bl->bl_len;
-          blockdata_.clear();
-          blockdata_.insert(blockdata_.end(),d+0,d+len);
-          fromloclist_ = bl->bl_from_loclist;
-          sectionoffset_ = bl->bl_section_offset;
+        char *d = static_cast<char *>(bl->bl_data);
+        Dwarf_Unsigned len = bl->bl_len;
+        blockdata_.clear();
+        blockdata_.insert(blockdata_.end(),d+0,d+len);
+        fromloclist_ = bl->bl_from_loclist;
+        sectionoffset_ = bl->bl_section_offset;
     };
 };  
 class IRFormConstant : public IRForm {
@@ -187,7 +187,7 @@ public:
         sval_ = r.sval_;
     }
     virtual IRFormConstant * clone() const {
-         return new IRFormConstant(*this);
+        return new IRFormConstant(*this);
     }
     enum Dwarf_Form_Class getFormClass() const { return formclass_; };
 private:        
@@ -236,7 +236,7 @@ public:
         
     }
     virtual IRFormExprloc * clone() const {
-         return new IRFormExprloc(*this);
+        return new IRFormExprloc(*this);
     }
     enum Dwarf_Form_Class getFormClass() const { return formclass_; };
 private:        
@@ -247,9 +247,9 @@ private:
     enum Dwarf_Form_Class formclass_;
     std::vector<char> exprlocdata_;
     void insertBlock(Dwarf_Unsigned len, Dwarf_Ptr data) {
-          char *d = static_cast<char *>(data);
-          exprlocdata_.clear();
-          exprlocdata_.insert(exprlocdata_.end(),d+0,d+len);
+        char *d = static_cast<char *>(data);
+        exprlocdata_.clear();
+        exprlocdata_.insert(exprlocdata_.end(),d+0,d+len);
     };
 };  
 
@@ -277,7 +277,7 @@ public:
         flagval_ = r.flagval_;
     }
     virtual IRFormFlag * clone() const {
-         return new IRFormFlag(*this);
+        return new IRFormFlag(*this);
     }
     enum Dwarf_Form_Class getFormClass() const { return formclass_; };
     Dwarf_Bool getFlagVal() { return flagval_; }
@@ -314,7 +314,7 @@ public:
         debug_line_offset_ = r.debug_line_offset_;
     }
     virtual IRFormLinePtr * clone() const {
-         return new IRFormLinePtr(*this);
+        return new IRFormLinePtr(*this);
     }
     enum Dwarf_Form_Class getFormClass() const { return formclass_; };
 private:        
@@ -326,7 +326,7 @@ private:
     Dwarf_Off debug_line_offset_;
 
     void setOffset(Dwarf_Unsigned uval) {
-          debug_line_offset_ = uval;
+        debug_line_offset_ = uval;
     };
 };  
 
@@ -354,7 +354,7 @@ public:
         loclist_offset_ = r.loclist_offset_;
     }
     virtual IRFormLoclistPtr * clone() const {
-         return new IRFormLoclistPtr(*this);
+        return new IRFormLoclistPtr(*this);
     }
     enum Dwarf_Form_Class getFormClass() const { return formclass_; };
 private:        
@@ -366,7 +366,7 @@ private:
     Dwarf_Off loclist_offset_;
 
     void setOffset(Dwarf_Unsigned uval) {
-          loclist_offset_ = uval;
+        loclist_offset_ = uval;
     };
 };  
 
@@ -394,7 +394,7 @@ public:
         macro_offset_ = r.macro_offset_;
     }
     virtual IRFormMacPtr * clone() const {
-         return new IRFormMacPtr(*this);
+        return new IRFormMacPtr(*this);
     }
     enum Dwarf_Form_Class getFormClass() const { return formclass_; };
 private:        
@@ -406,7 +406,7 @@ private:
     Dwarf_Off macro_offset_;
 
     void setOffset(Dwarf_Unsigned uval) {
-          macro_offset_ = uval;
+        macro_offset_ = uval;
     };
 };  
 
@@ -434,7 +434,7 @@ public:
         rangelist_offset_ = r.rangelist_offset_;
     }
     virtual IRFormRangelistPtr * clone() const {
-         return new IRFormRangelistPtr(*this);
+        return new IRFormRangelistPtr(*this);
     }
     enum Dwarf_Form_Class getFormClass() const { return formclass_; };
 private:        
@@ -446,7 +446,7 @@ private:
     Dwarf_Off rangelist_offset_;
 
     void setOffset(Dwarf_Unsigned uval) {
-          rangelist_offset_ = uval;
+        rangelist_offset_ = uval;
     };
 };  
 
@@ -473,7 +473,7 @@ public:
         frame_offset_ = r.frame_offset_;
     }
     virtual IRFormFramePtr * clone() const {
-         return new IRFormFramePtr(*this);
+        return new IRFormFramePtr(*this);
     }
     enum Dwarf_Form_Class getFormClass() const { return formclass_; };
 private:
@@ -485,7 +485,7 @@ private:
     Dwarf_Off frame_offset_;
 
     void setOffset(Dwarf_Unsigned uval) {
-          frame_offset_ = uval;
+        frame_offset_ = uval;
     };
 }; 
 
@@ -521,7 +521,7 @@ public:
         typeSig8_ = r.typeSig8_;
     }
     virtual IRFormReference * clone() const {
-         return new IRFormReference(*this);
+        return new IRFormReference(*this);
     }
     void setOffset(Dwarf_Off off) { globalOffset_ = off; 
         reftype_ = RT_GLOBAL;};
@@ -562,7 +562,7 @@ public:
         strpoffset_= r.strpoffset_;
     }
     virtual IRFormString * clone() const {
-         return new IRFormString(*this);
+        return new IRFormString(*this);
     }
     IRFormString & operator=(const IRFormString &r) {
         if(this == &r) return *this;

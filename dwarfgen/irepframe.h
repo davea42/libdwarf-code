@@ -1,5 +1,5 @@
 /*
-  Copyright (C) 2010 David Anderson.  
+  Copyright (C) 2010-2011 David Anderson.  
 
   This program is free software; you can redistribute it and/or modify it
   under the terms of version 2 of the GNU General Public License as
@@ -84,27 +84,27 @@ public:
         Dwarf_Off fde_offset): low_pc_(low_pc), func_length_(func_length),
         cie_offset_(cie_offset), cie_index_(cie_index),
         fde_offset_(fde_offset)  {
-           const Dwarf_Small *x =
+            const Dwarf_Small *x =
                 reinterpret_cast<const Dwarf_Small *>(fde_bytes);
             for(Dwarf_Unsigned i = 0; i < fde_length; ++i) {
                 fde_bytes_.push_back(x[i]);
             }
         };
-   ~IRFde() {};
-   Dwarf_Signed cie_index() { return cie_index_; };
-   void get_fde_base_data(Dwarf_Addr *lowpc, Dwarf_Unsigned * funclen,
-       Dwarf_Signed *cie_index_input) {
-           *lowpc = low_pc_;
-           *funclen = func_length_;
-           *cie_index_input = cie_index_;
-       };
-   void get_fde_instrs_into_ir(Dwarf_Ptr ip,Dwarf_Unsigned len   )  {
-           const Dwarf_Small *x =
-                reinterpret_cast<const Dwarf_Small *>(ip);
-            for(Dwarf_Unsigned i = 0; i < len; ++i) {
-                fde_instrs_.push_back(x[i]);
-            }
-       };
+    ~IRFde() {};
+    Dwarf_Signed cie_index() { return cie_index_; };
+    void get_fde_base_data(Dwarf_Addr *lowpc, Dwarf_Unsigned * funclen,
+        Dwarf_Signed *cie_index_input) {
+            *lowpc = low_pc_;
+            *funclen = func_length_;
+            *cie_index_input = cie_index_;
+        };
+    void get_fde_instrs_into_ir(Dwarf_Ptr ip,Dwarf_Unsigned len   )  {
+        const Dwarf_Small *x =
+        reinterpret_cast<const Dwarf_Small *>(ip);
+        for(Dwarf_Unsigned i = 0; i < len; ++i) {
+            fde_instrs_.push_back(x[i]);
+        }
+        };
   
     void get_fde_instructions(Dwarf_Unsigned *len,
         void **bytes) {
@@ -115,19 +115,19 @@ public:
         };  
  
 private:
-   Dwarf_Addr low_pc_;
-   Dwarf_Unsigned func_length_;
-   // fde_bytes_ may be empty if content bytes not yet created.
-   std::vector<Dwarf_Small> fde_bytes_; 
+    Dwarf_Addr low_pc_;
+    Dwarf_Unsigned func_length_;
+    // fde_bytes_ may be empty if content bytes not yet created.
+    std::vector<Dwarf_Small> fde_bytes_; 
 
-   std::vector<Dwarf_Small> fde_instrs_; 
-   // cie_offset may be 0 if not known yet.
-   Dwarf_Off  cie_offset_;
-   // cie_index is the index in ciedata_  of
-   // the applicable CIE. Begins with index 0.
-   Dwarf_Signed cie_index_;
-   // fde_offset may be 0 if not yet known.
-   Dwarf_Off   fde_offset_;
+    std::vector<Dwarf_Small> fde_instrs_; 
+    // cie_offset may be 0 if not known yet.
+    Dwarf_Off  cie_offset_;
+    // cie_index is the index in ciedata_  of
+    // the applicable CIE. Begins with index 0.
+    Dwarf_Signed cie_index_;
+    // fde_offset may be 0 if not yet known.
+    Dwarf_Off   fde_offset_;
 };
 
 class IRFrame {
@@ -142,8 +142,8 @@ public:
         unsigned findex = fdedata_.size() -1;
         Dwarf_Signed cindex = fdedata.cie_index();
         if( cindex != -1) {
-             IRCie & mycie =  ciedata_[cindex];
-             mycie.insert_fde_index(findex);
+            IRCie & mycie =  ciedata_[cindex];
+            mycie.insert_fde_index(findex);
         }
     }
     std::vector<IRCie> &get_cie_vec() { return ciedata_; };

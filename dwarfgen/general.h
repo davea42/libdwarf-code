@@ -1,5 +1,5 @@
 /*
-  Copyright (C) 2010 David Anderson.  
+  Copyright (C) 2010-2011 David Anderson.  
 
   This program is free software; you can redistribute it and/or modify it
   under the terms of version 2 of the GNU General Public License as
@@ -28,7 +28,7 @@ std::string IToHex(T v,unsigned l=0)
         // So we do zeroes here.
         std::string out = "0x0";
         if(l > 3)  {
-           out.append(l-3,'0');
+            out.append(l-3,'0');
         }
         return out;
     }
@@ -36,7 +36,7 @@ std::string IToHex(T v,unsigned l=0)
     s.setf(std::ios::hex,std::ios::basefield);
     s.setf(std::ios::showbase);
     if (l > 0) {
-         s << std::setw(l);
+        s << std::setw(l);
     }
     s << v ;
     return s.str();

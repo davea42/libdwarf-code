@@ -1,5 +1,5 @@
 /*
-  Copyright (C) 2010 David Anderson.  
+  Copyright (C) 2010-2011 David Anderson.  
 
   This program is free software; you can redistribute it and/or modify it
   under the terms of version 2 of the GNU General Public License as
@@ -93,7 +93,6 @@ public:
     ElfSymIndex getBaseTextSymbol() const {return baseTextAddressSymbol_;};
     ElfSymIndex addElfSymbol(Dwarf_Unsigned val, const std::string&name) {
         elfSymbols_.push_back(ElfSymbol(val,name,symstrtab_));
-//std::cout << "dadebug created sym " << name << " symid=" << elfSymbols_.size()-1 << std::endl;
         ElfSymIndex indx(elfSymbols_.size()-1);
         return indx;
         
@@ -115,19 +114,19 @@ private:
 
 class IRepresentation {
 public:
-   IRepresentation() {};
-   ~IRepresentation(){};
-   IRFrame &framedata() { return framedata_; };
-   IRMacro &macrodata() { return macrodata_; };
-   IRDInfo &infodata() { return debuginfodata_; };
-   ElfSymbols &getElfSymbols() { return elfSymbols_;};
-   unsigned getBaseTextSymbol() {
-       return elfSymbols_.getBaseTextSymbol().getSymIndex();};
+    IRepresentation() {};
+    ~IRepresentation(){};
+    IRFrame &framedata() { return framedata_; };
+    IRMacro &macrodata() { return macrodata_; };
+    IRDInfo &infodata() { return debuginfodata_; };
+    ElfSymbols &getElfSymbols() { return elfSymbols_;};
+    unsigned getBaseTextSymbol() {
+        return elfSymbols_.getBaseTextSymbol().getSymIndex();};
 private:
-   // The Elf symbols data to use for relocations 
-   ElfSymbols elfSymbols_;
+    // The Elf symbols data to use for relocations 
+    ElfSymbols elfSymbols_;
 
-   IRFrame  framedata_;
-   IRMacro  macrodata_;
-   IRDInfo  debuginfodata_;
+    IRFrame  framedata_;
+    IRMacro  macrodata_;
+    IRDInfo  debuginfodata_;
 };

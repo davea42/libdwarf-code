@@ -1,7 +1,7 @@
 #ifndef IREPATTRTODBG_H
 #define IREPATTRTODBG_H
 /*
-  Copyright (C) 2010 David Anderson.  
+  Copyright (C) 2010-2011 David Anderson.  
 
   This program is free software; you can redistribute it and/or modify it
   under the terms of version 2 of the GNU General Public License as

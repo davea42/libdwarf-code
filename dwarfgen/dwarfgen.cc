@@ -1,5 +1,5 @@
 /*
-  Copyright (C) 2010 David Anderson.
+  Copyright (C) 2010-2011 David Anderson.
 
   This program is free software; you can redistribute it and/or modify it
   under the terms of version 2 of the GNU General Public License as
@@ -88,46 +88,45 @@ static Elf32_Ehdr * ehp = 0;
 static strtabdata secstrtab;
 class SectionFromDwarf {
 public:
-     std::string name_;
-     Dwarf_Unsigned section_name_itself_;
-     ElfSymIndex section_name_symidx_;
-     int size_;
-     Dwarf_Unsigned type_;
-     Dwarf_Unsigned flags_;
-     Dwarf_Unsigned link_;
-     Dwarf_Unsigned info_;
+    std::string name_;
+    Dwarf_Unsigned section_name_itself_;
+    ElfSymIndex section_name_symidx_;
+    int size_;
+    Dwarf_Unsigned type_;
+    Dwarf_Unsigned flags_;
+    Dwarf_Unsigned link_;
+    Dwarf_Unsigned info_;
 private:
-     ElfSectIndex elf_sect_index_;
-     Dwarf_Unsigned lengthWrittenToElf_;
+    ElfSectIndex elf_sect_index_;
+    Dwarf_Unsigned lengthWrittenToElf_;
 public:
-     Dwarf_Unsigned getNextOffset() { return lengthWrittenToElf_; }
-     void setNextOffset(Dwarf_Unsigned v) { lengthWrittenToElf_ = v; }
+    Dwarf_Unsigned getNextOffset() { return lengthWrittenToElf_; }
+    void setNextOffset(Dwarf_Unsigned v) { lengthWrittenToElf_ = v; }
 
-
-     unsigned getSectionNameSymidx() { 
-         return section_name_symidx_.getSymIndex(); };
-     SectionFromDwarf():section_name_itself_(0),
-         section_name_symidx_(0),
-         size_(0),type_(0),flags_(0),
-         link_(0), info_(0), elf_sect_index_(0),
-         lengthWrittenToElf_(0) {} ;
-     ~SectionFromDwarf() {};
-     void setSectIndex(ElfSectIndex v) { elf_sect_index_ = v;}
-     ElfSectIndex getSectIndex() const { return elf_sect_index_;}
-     SectionFromDwarf(const std::string&name,
-         int size,Dwarf_Unsigned type,Dwarf_Unsigned flags,
-         Dwarf_Unsigned link, Dwarf_Unsigned info):
-         name_(name),
-         size_(size),type_(type),flags_(flags),
-         link_(link), info_(info), elf_sect_index_(0),
-         lengthWrittenToElf_(0) {
-             // Now create section name string section.
-             section_name_itself_ = secstrtab.addString(name.c_str());
-             ElfSymbols& es = Irep.getElfSymbols();
-             // Now creat a symbol for the section name.
-             // (which has its own string table)
-             section_name_symidx_  = es.addElfSymbol(0,name);
-         } ;
+    unsigned getSectionNameSymidx() { 
+        return section_name_symidx_.getSymIndex(); };
+    SectionFromDwarf():section_name_itself_(0),
+        section_name_symidx_(0),
+        size_(0),type_(0),flags_(0),
+        link_(0), info_(0), elf_sect_index_(0),
+        lengthWrittenToElf_(0) {} ;
+    ~SectionFromDwarf() {};
+    void setSectIndex(ElfSectIndex v) { elf_sect_index_ = v;}
+    ElfSectIndex getSectIndex() const { return elf_sect_index_;}
+    SectionFromDwarf(const std::string&name,
+        int size,Dwarf_Unsigned type,Dwarf_Unsigned flags,
+        Dwarf_Unsigned link, Dwarf_Unsigned info):
+        name_(name),
+        size_(size),type_(type),flags_(flags),
+        link_(link), info_(info), elf_sect_index_(0),
+        lengthWrittenToElf_(0) {
+            // Now create section name string section.
+            section_name_itself_ = secstrtab.addString(name.c_str());
+            ElfSymbols& es = Irep.getElfSymbols();
+            // Now creat a symbol for the section name.
+            // (which has its own string table)
+            section_name_symidx_  = es.addElfSymbol(0,name);
+    } ;
 };
 
 vector<SectionFromDwarf> dwsectab;
@@ -138,7 +137,7 @@ static SectionFromDwarf & FindMySection(const ElfSectIndex & elf_section_index)
 {
     for(unsigned i =0; i < dwsectab.size(); ++i) {
         if(elf_section_index.getSectIndex() != 
-           dwsectab[i].getSectIndex().getSectIndex()) {
+            dwsectab[i].getSectIndex().getSectIndex()) {
             continue;
         }
         return dwsectab[i];
@@ -209,8 +208,8 @@ int CallbackFunc(
     // in the elf symtab .symtab and its strings .strtab.
 
     if (0 == strncmp(name,".rel",4))  {
-         // It is relocation, create no section!
-         return 0;
+        // It is relocation, create no section!
+        return 0;
     }
     SectionFromDwarf ds(name,size,type,flags,link,info) ;
     *sect_name_symbol_index = ds.getSectionNameSymidx();
@@ -260,24 +259,24 @@ void ErrorHandler(Dwarf_Error err,Dwarf_Ptr errarg)
 
 static void
 setinput(enum  WhichInputSource *src,
-   const string &type,
-   bool *pathreq)
+    const string &type,
+    bool *pathreq)
 {
-   if(type == "txt") {
-      *src = OptReadText;
-      *pathreq = true;
-      return;
-   } else if (type == "obj") {
-      *src = OptReadBin;
-      *pathreq = true;
-      return;
-   } else if (type == "def") {
-      *src = OptPredefined;
-      *pathreq = false;
-      return;
-   }
-   cout << "Giving up, only txt obj or def accepted after -t" << endl;
-   exit(1);
+    if(type == "txt") {
+        *src = OptReadText;
+        *pathreq = true;
+        return;
+    } else if (type == "obj") {
+        *src = OptReadBin;
+        *pathreq = true;
+        return;
+    } else if (type == "def") {
+        *src = OptPredefined;
+        *pathreq = false;
+        return;
+    }
+    cout << "Giving up, only txt obj or def accepted after -t" << endl;
+    exit(1);
 }
 
 int 
@@ -322,10 +321,10 @@ main(int argc, char **argv)
     if(whichinput == OptReadBin) {
         createIrepFromBinary(infile,Irep);
     } else if (whichinput == OptReadText) {
-        cerr << "dadebug text read not supported yet" << endl;
+        cerr << "text read not supported yet" << endl;
         exit(EXIT_FAILURE);
     } else if (whichinput == OptPredefined) {
-        cerr << "dadebug predefined not supported yet" << endl;
+        cerr << "predefined not supported yet" << endl;
         exit(EXIT_FAILURE);
     } else {
         cerr << "Impossible: unknown input style." << endl;
@@ -500,22 +499,22 @@ InsertDataIntoElf(Dwarf_Signed d,Dwarf_P_Debug dbg,Elf *elf)
 static string
 printable_rel_type(unsigned char reltype)
 {
-     enum Dwarf_Rel_Type t = (enum Dwarf_Rel_Type)reltype;
-     switch(t) {
-     case   dwarf_drt_none:
-          return "dwarf_drt_none";
-     case   dwarf_drt_data_reloc:
-          return "dwarf_drt_data_reloc";
-     case   dwarf_drt_segment_rel:
-          return "dwarf_drt_segment_rel";
-     case   dwarf_drt_first_of_length_pair:
-          return "dwarf_drt_first_of_length_pair";
-     case   dwarf_drt_second_of_length_pair:
-          return "dwarf_drt_second_of_length_pair";
-     default:
-          break;
-     }
-     return "drt-unknown (impossible case)";
+    enum Dwarf_Rel_Type t = (enum Dwarf_Rel_Type)reltype;
+    switch(t) {
+    case   dwarf_drt_none:
+        return "dwarf_drt_none";
+    case   dwarf_drt_data_reloc:
+        return "dwarf_drt_data_reloc";
+    case   dwarf_drt_segment_rel:
+        return "dwarf_drt_segment_rel";
+    case   dwarf_drt_first_of_length_pair:
+        return "dwarf_drt_first_of_length_pair";
+    case   dwarf_drt_second_of_length_pair:
+        return "dwarf_drt_second_of_length_pair";
+    default:
+        break;
+    }
+    return "drt-unknown (impossible case)";
 }
 
 static Dwarf_Unsigned  
@@ -529,26 +528,24 @@ FindSymbolValue(ElfSymIndex symi,IRepresentation &irep)
 
 static void
 bitreplace(char *buf, Dwarf_Unsigned newval,
-           size_t newvalsize,int length)
+    size_t newvalsize,int length)
 {
-     uint64_t my8;
-     if(length == 4) {
-         uint32_t my4 = newval; 
-         uint32_t * p = reinterpret_cast<uint32_t *>(buf );
-         uint32_t oldval = *p;
-         *p = oldval + my4;
-//cout << "dadebug old val " << IToHex(oldval) << "  newval " << IToHex(*p )<< endl;
-     } else if (length == 8) {
-         uint64_t my8 = newval; 
-         uint64_t * p = reinterpret_cast<uint64_t *>(buf );
-         uint64_t oldval = *p;
-         *p = oldval + my8;
-//cout << "dadebug old val " << IToHex(oldval) << "  newval " << IToHex(*p) << endl;
-     } else {
-         cerr << " Relocation is length " << length << 
-             " which we do not yet handle." << endl;
-         exit(1);
-     }
+    uint64_t my8 = 0;
+    if(length == 4) {
+        uint32_t my4 = newval; 
+        uint32_t * p = reinterpret_cast<uint32_t *>(buf );
+        uint32_t oldval = *p;
+        *p = oldval + my4;
+    } else if (length == 8) {
+        uint64_t my8 = newval; 
+        uint64_t * p = reinterpret_cast<uint64_t *>(buf );
+        uint64_t oldval = *p;
+        *p = oldval + my8;
+    } else {
+        cerr << " Relocation is length " << length << 
+            " which we do not yet handle." << endl;
+        exit(1);
+    }
 }
 
 // This remembers nothing, so is dreadfully slow.
@@ -559,28 +556,25 @@ findelfbuf(Elf *elf,Elf_Scn *scn,Dwarf_Unsigned offset, unsigned length)
     Elf_Data * ed = elf_getdata(scn,edbase);
     unsigned bct = 0;
     for (;ed; ed = elf_getdata(scn,ed)) {
-          bct++;
-          if(offset >= (ed->d_off + ed->d_size) ) {
-//cout << "dadebug ignore buf, count " << bct << " off " << ed->d_off << "  size " << ed->d_size << "  end  " << (ed->d_off +ed->d_size) << endl;
-              continue;
-          }
-          if(offset < ed->d_off) {
-              cerr << " Relocation at offset  " << 
-               offset << " cannot be accomplished, no buffer. " 
-               << endl; 
-              exit(1);
-          }
-          Dwarf_Unsigned localoff = offset - ed->d_off;
-          if((localoff + length) > ed->d_size) {
-              cerr << " Relocation at offset  " << 
-               offset << " cannot be accomplished, size mismatch. " 
-               << endl; 
-              exit(1);
-          }
-//cout << "dadebug found buf, count " << bct << " off " << ed->d_off << "  size " << ed->d_size << "  end  " << (ed->d_off +ed->d_size) << endl;
-          char *lclptr = reinterpret_cast<char *>(ed->d_buf) + localoff;
-          return lclptr;
-         
+        bct++;
+        if(offset >= (ed->d_off + ed->d_size) ) {
+            continue;
+        }
+        if(offset < ed->d_off) {
+            cerr << " Relocation at offset  " << 
+                offset << " cannot be accomplished, no buffer. " 
+                << endl; 
+            exit(1);
+        }
+        Dwarf_Unsigned localoff = offset - ed->d_off;
+        if((localoff + length) > ed->d_size) {
+            cerr << " Relocation at offset  " << 
+                offset << " cannot be accomplished, size mismatch. " 
+                << endl; 
+            exit(1);
+        }
+        char *lclptr = reinterpret_cast<char *>(ed->d_buf) + localoff;
+        return lclptr;
     }
     cerr << " Relocation at offset  " << offset  << 
         " cannot be accomplished,  past end of buffers" << endl; 
@@ -616,51 +610,46 @@ write_generated_dbg(Dwarf_P_Debug dbg,Elf * elf,IRepresentation &irep)
     cout << "Relocations sections count= " << reloc_sections_count << 
         " relversion=" << drd_version << endl;
     for( Dwarf_Unsigned ct = 0; ct < reloc_sections_count ; ++ct) {
-          // elf_section_index is the elf index of the relocations
-          // themselves. 
-          Dwarf_Signed elf_section_index = 0;
-          // elf_section_index_link is the elf index of the section
-          // the relocations apply to.
-          Dwarf_Signed elf_section_index_link = 0;
-          // relocation_buffer_count is the number of relocations
-          // of this section.
-          Dwarf_Unsigned relocation_buffer_count = 0;
-          Dwarf_Relocation_Data reld;
-          res = dwarf_get_relocation_info(dbg,&elf_section_index,
-              &elf_section_index_link,
-              &relocation_buffer_count,
-              &reld,&err);
-          if (res != DW_DLV_OK) {
-             cerr << "Error getting relocation record " <<
-                  ct << "."  << endl;
-             exit(1);
-          }
-          ElfSectIndex si(elf_section_index_link);
-          SectionFromDwarf & sfd  = FindMySection(si);
-          cout << "Relocs for sec " << ct << " elf-sec=" << elf_section_index <<
-              " link="      << elf_section_index_link <<
-              " bufct="     << relocation_buffer_count << endl;
-          Elf_Scn *scn =  elf_getscn(elf,si.getSectIndex());
-          if(!scn) {
-              cerr << "Unable to elf_getscn  # " << si.getSectIndex() << endl;
-              exit(1);
-          }
+        // elf_section_index is the elf index of the relocations
+        // themselves. 
+        Dwarf_Signed elf_section_index = 0;
+        // elf_section_index_link is the elf index of the section
+        // the relocations apply to.
+        Dwarf_Signed elf_section_index_link = 0;
+        // relocation_buffer_count is the number of relocations
+        // of this section.
+        Dwarf_Unsigned relocation_buffer_count = 0;
+        Dwarf_Relocation_Data reld;
+        res = dwarf_get_relocation_info(dbg,&elf_section_index,
+            &elf_section_index_link,
+            &relocation_buffer_count,
+            &reld,&err);
+        if (res != DW_DLV_OK) {
+            cerr << "Error getting relocation record " <<
+                ct << "."  << endl;
+            exit(1);
+        }
+        ElfSectIndex si(elf_section_index_link);
+        SectionFromDwarf & sfd  = FindMySection(si);
+        cout << "Relocs for sec " << ct << " elf-sec=" << elf_section_index <<
+            " link="      << elf_section_index_link <<
+            " bufct="     << relocation_buffer_count << endl;
+        Elf_Scn *scn =  elf_getscn(elf,si.getSectIndex());
+        if(!scn) {
+            cerr << "Unable to elf_getscn  # " << si.getSectIndex() << endl;
+            exit(1);
+        }
 
-          for (Dwarf_Unsigned r = 0; r < relocation_buffer_count; ++r) {
-              Dwarf_Relocation_Data rec = reld+r;
-//cout << " dadebug " << " type= " << static_cast<int>(rec->drd_type) <<
- //                 "  len= " << static_cast<int>(rec->drd_length) <<
-  //                "  offset= " << rec->drd_offset <<
-   //               "  symindex= " << rec->drd_symbol_index << endl;
-              ElfSymIndex symi(rec->drd_symbol_index);
-              Dwarf_Unsigned newval = FindSymbolValue(symi,irep);
-              char *buf_to_update = findelfbuf(elf,scn,
-                  rec->drd_offset,rec->drd_length);
-              if(buf_to_update) {
-                  bitreplace(buf_to_update, newval,sizeof(newval),
-                  rec->drd_length);
-              }
-          }
+        for (Dwarf_Unsigned r = 0; r < relocation_buffer_count; ++r) {
+            Dwarf_Relocation_Data rec = reld+r;
+            ElfSymIndex symi(rec->drd_symbol_index);
+            Dwarf_Unsigned newval = FindSymbolValue(symi,irep);
+            char *buf_to_update = findelfbuf(elf,scn,
+                rec->drd_offset,rec->drd_length);
+            if(buf_to_update) {
+                bitreplace(buf_to_update, newval,sizeof(newval),
+                    rec->drd_length);
+            }
+        }
     }
-
 }
