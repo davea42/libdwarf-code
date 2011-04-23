@@ -37,7 +37,7 @@
 
 
 #define VERSION				2
-#ifdef __i386
+#if defined(__i386) || defined(__x86_64)
 #define MIN_INST_LENGTH			1
 #else
 #define MIN_INST_LENGTH			4
