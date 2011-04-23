@@ -1,3 +1,10 @@
+2011-04-23  DavidAnderson <davea42@earthlink.net>
+     * pro_error.c (_dwarf_p_error): The code attempting to deal with
+       an unexpected error code was doing an inappropriate cast and
+       an inappropriate (possibly out-of-bounds) reference to an array
+       of strings.  Removed the cast and removed the questionable 
+       array reference.
+     * dwarf_frame.c: A couple lines were indented badly. Fixed the indentation.
 2011-03-29  DavidAnderson <davea42@earthlink.net>
      * everything:   Redid all indentations for
        consistency.  Updated copyrights.  Interfaces

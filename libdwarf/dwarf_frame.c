@@ -292,9 +292,9 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
             cfa_reg = cie->ci_initial_table->fr_cfa_rule;
         } else {
             dwarf_init_reg_rules_ru(localregtab,0,reg_count,
-                  dbg->de_frame_rule_initial_value);
+                dbg->de_frame_rule_initial_value);
             dwarf_init_reg_rules_ru(&cfa_reg,0, 1,
-                  dbg->de_frame_rule_initial_value);
+                dbg->de_frame_rule_initial_value);
         }
     }
 

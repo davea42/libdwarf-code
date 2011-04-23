@@ -15,5 +15,8 @@ $0 !~ /^#define DWARFDUMP_VERSION/ { print $0 }
 EOF
 awk -f UPD.awk  "$x"  dwarfdump/dwarfdump.c >t
 mv t dwarfdump/dwarfdump.c
+awk -f UPD.awk  "$x"  dwarfdump/common.c >t
+mv t dwarfdump/common.c
 awk -f UPD.awk  "$x"  dwarfdump2/dwarfdump.cc > t
 mv t dwarfdump2/dwarfdump.cc
+

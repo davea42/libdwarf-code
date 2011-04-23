@@ -1,3 +1,5 @@
+2010-04-23  DavidAnderson <davea42@earthlink.net>
+      * dwarfdump.c, common.c: Updated DWARF_VERSION string.
 2010-01-04  DavidAnderson <davea42@earthlink.net>
       * print_frames.h print_static_vars.c Makefile.in
         print_static_funcs.c print_sections.c print_strings.c print_locs.c

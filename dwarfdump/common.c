@@ -37,7 +37,7 @@
 
 #include "common.h"
 #include <stdio.h>
-#define DWARFDUMP_VERSION " Thu Mar 24 16:31:46 PDT 2011  "
+#define DWARFDUMP_VERSION " Sat Apr 23 08:58:33 PDT 2011  "
 
 /* The Linux/Unix version does not want a version string to print
    unless -V is on the command line. */
