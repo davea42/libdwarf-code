@@ -331,6 +331,34 @@ dwarf_srcfiles(Dwarf_Die die,
     return (DW_DLV_OK);
 }
 
+/*  A function as this code is used twice. */
+static void
+update_file_entry(Dwarf_File_Entry  cur_file_entry,
+    Dwarf_File_Entry *file_entries,
+    Dwarf_File_Entry *prev_file_entry,
+    Dwarf_Sword      *file_entry_count)
+{
+    if (*file_entries == NULL) {
+        *file_entries = cur_file_entry;
+    } else {
+        (*prev_file_entry)->fi_next = cur_file_entry;
+    }
+    *prev_file_entry = cur_file_entry;
+    (*file_entry_count)++;
+}
+
+static void 
+update_chain_list( Dwarf_Chain chain_line,
+    Dwarf_Chain *head_chain, Dwarf_Chain *curr_chain)
+{
+    if (*head_chain == NULL) {
+        *head_chain = chain_line;
+    } else {
+        (*curr_chain)->ch_next = chain_line;
+    }
+    *curr_chain = chain_line;
+}
+
 
 /*  Feturn DW_DLV_OK if ok. else DW_DLV_NO_ENTRY or DW_DLV_ERROR */
 int
@@ -382,7 +410,8 @@ _dwarf_internal_srclines(Dwarf_Die die,
     /*  These pointers are used to build the list of files names by this 
         cu.  cur_file_entry points to the file name being added, and
         prev_file_entry to the previous one. */
-    Dwarf_File_Entry cur_file_entry, prev_file_entry;
+    Dwarf_File_Entry cur_file_entry = 0; 
+    Dwarf_File_Entry prev_file_entry = 0;
 
     Dwarf_Sword i = 0;
     Dwarf_Sword file_entry_count = 0;
@@ -545,13 +574,8 @@ _dwarf_internal_srclines(Dwarf_Die die,
 
         cur_file_entry->fi_file_length = pfxfile->lte_length_of_file;
 
-        if (file_entries == NULL)
-            file_entries = cur_file_entry;
-        else
-            prev_file_entry->fi_next = cur_file_entry;
-        prev_file_entry = cur_file_entry;
-
-        file_entry_count++;
+        update_file_entry(cur_file_entry,&file_entries,
+            &prev_file_entry,&file_entry_count);
     }
 
 
@@ -638,13 +662,7 @@ _dwarf_internal_srclines(Dwarf_Die die,
                     return (DW_DLV_ERROR);
                 }
                 chain_line->ch_item = curr_line;
-
-                if (head_chain == NULL)
-                    head_chain = curr_chain = chain_line;
-                else {
-                    curr_chain->ch_next = chain_line;
-                    curr_chain = chain_line;
-                }
+                update_chain_list(chain_line,&head_chain,&curr_chain);
             }
 
             basic_block = false;
@@ -695,12 +713,7 @@ _dwarf_internal_srclines(Dwarf_Die die,
                         return (DW_DLV_ERROR);
                     }
                     chain_line->ch_item = curr_line;
-                    if (head_chain == NULL) {
-                        head_chain = curr_chain = chain_line;
-                    } else {
-                        curr_chain->ch_next = chain_line;
-                        curr_chain = chain_line;
-                    }
+                    update_chain_list(chain_line,&head_chain,&curr_chain);
                 }
 
                 basic_block = false;
@@ -845,12 +858,7 @@ _dwarf_internal_srclines(Dwarf_Die die,
                     }
                     chain_line->ch_item = curr_line;
 
-                    if (head_chain == NULL) {
-                        head_chain = curr_chain = chain_line;
-                    } else {
-                        curr_chain->ch_next = chain_line;
-                        curr_chain = chain_line;
-                    }
+                    update_chain_list(chain_line,&head_chain,&curr_chain);
                 }
 
                 address = 0;
@@ -897,12 +905,7 @@ _dwarf_internal_srclines(Dwarf_Die die,
                     }
                     chain_line->ch_item = curr_line;
 
-                    if (head_chain == NULL) {
-                        head_chain = curr_chain = chain_line;
-                    } else {
-                        curr_chain->ch_next = chain_line;
-                        curr_chain = chain_line;
-                    }
+                    update_chain_list(chain_line,&head_chain,&curr_chain);
                 }
                 line_ptr += address_size;
                 }
@@ -928,14 +931,8 @@ _dwarf_internal_srclines(Dwarf_Die die,
                     cur_file_entry->fi_file_length =
                         _dwarf_decode_u_leb128(line_ptr, &leb128_length);
                     line_ptr = line_ptr + leb128_length;
-    
-                    if (file_entries == NULL) {
-                        file_entries = cur_file_entry;
-                    } else {
-                        prev_file_entry->fi_next = cur_file_entry;
-                        prev_file_entry = cur_file_entry;
-                        file_entry_count++;
-                    }
+                    update_file_entry(cur_file_entry,&file_entries,
+                        &prev_file_entry,&file_entry_count);
                 }
                 }
                 break;
@@ -1207,8 +1204,9 @@ dwarf_linesrc(Dwarf_Line line, char **ret_linesrc, Dwarf_Error * error)
         and this loop finds the file_entry we need (2 (1 based) in this
         case). Because lc_file_entries are in reverse order and
         effectively zero based as a count whereas li_file is 1 based. */
-    for (i = line->li_addr_line.li_l_data.li_file - 1; i > 0; i--)
+    for (i = line->li_addr_line.li_l_data.li_file - 1; i > 0; i--) {
         file_entry = file_entry->fi_next;
+    }
 
     if (file_entry->fi_file_name == NULL) {
         _dwarf_error(dbg, error, DW_DLE_NO_FILE_NAME);
