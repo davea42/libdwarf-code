@@ -2345,7 +2345,7 @@ dwarf_initialize_fde_table(Dwarf_Debug dbg,
     Dwarf_Error * error)
 {
     unsigned entry_size = sizeof(struct Dwarf_Frame_s);
-    memset(fde_table,0,sizeof(struct Dwarf_Frame_s));
+    memset(fde_table,0,entry_size);
     fde_table->fr_loc = 0;
     fde_table->fr_next = 0;
 

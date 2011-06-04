@@ -249,7 +249,6 @@ dwarf_convert_to_global_offset(Dwarf_Attribute attr,
     Dwarf_Off offset, Dwarf_Off * ret_offset, Dwarf_Error * error)
 {
     Dwarf_Debug dbg;
-    Dwarf_Addr ref_addr;
     Dwarf_CU_Context cu_context;
   
     if (attr == NULL) {
@@ -483,7 +482,6 @@ dwarf_global_formref(Dwarf_Attribute attr,
 {
     Dwarf_Debug dbg = 0;
     Dwarf_Unsigned offset = 0;
-    Dwarf_Addr ref_addr = 0;
     Dwarf_CU_Context cu_context = 0;
     Dwarf_Half context_version = 0;
 

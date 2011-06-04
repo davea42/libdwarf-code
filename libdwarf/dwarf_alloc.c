@@ -66,6 +66,7 @@
 #include "dwarf_types.h"
 #include "dwarf_vars.h"
 #include "dwarf_weaks.h"
+#include "dwarf_harmless.h"
 
 
 static void _dwarf_free_special_error(Dwarf_Ptr space);

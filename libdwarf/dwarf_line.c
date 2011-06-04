@@ -239,8 +239,10 @@ dwarf_srcfiles(Dwarf_Die die,
                     fe->lte_directory_index - 1];
         }
 
-        /*  dir_name can be NULL if there is no DW_AT_comp_dir */
-        if(dir_name == 0 || file_name_is_full_path(file_name)) { 
+        /*  dir_name can be NULL if there is no DW_AT_comp_dir. 
+            file_name == fe->lte_filename aside from char signedness.
+        */
+        if(dir_name == 0 || file_name_is_full_path(fe->lte_filename)) { 
             /*  This is safe because dwarf_dealloc is careful to not
                 dealloc strings which are part of the raw .debug_* data.  
             */

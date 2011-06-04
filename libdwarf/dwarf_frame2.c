@@ -276,9 +276,6 @@ _dwarf_get_fde_list_internal(Dwarf_Debug dbg, Dwarf_Cie ** cie_data,
 
         struct cie_fde_prefix_s prefix;
 
-        /*  Record start of frame */
-        Dwarf_Small *framestart  = frame_ptr;
-
         /*  First read in the 'common prefix' to figure out what we are
             to do with this entry. */
         memset(&prefix, 0, sizeof(prefix));

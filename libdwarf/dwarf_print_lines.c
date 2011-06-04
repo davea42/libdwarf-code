@@ -600,7 +600,7 @@ int * err_count_out, int only_line_header)
                     return (DW_DLV_ERROR);
                 }
                 printf("DW_LNE extended op 0x%x ",ext_opcode);
-                printf("Bytecount: " DW_PR_DUu , instr_length);
+                printf("Bytecount: %" DW_PR_DUu , (Dwarf_Unsigned)instr_length);
                 if(remaining_bytes > 0) {
                     printf(" linedata: 0x");
                     while (remaining_bytes > 0) {
