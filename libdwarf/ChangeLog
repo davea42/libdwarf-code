@@ -1,9 +1,9 @@
 2011-06-04  DavidAnderson <davea42@earthlink.net>
      * dwarf_line.c (_dwarf_internal_srclines): Created new local functions
-       to unify some repeated code in into single sequences.  One of the
-       earlier inline-repetitions was wrong.  Added {} to ensure clarity
-       on the intended scope a couple places.  Added an 'arange end'
-       to the -vvv arange printing because that is a real arange record.  
+       to unify some repeated code in into function calls.  One of the
+       earlier inline-repetitions was coded wrong.  Added {} to ensure clarity
+       on the intended scope a couple places. Added initializers to
+       a couple of local variables.
 2011-06-04  DavidAnderson <davea42@earthlink.net>
      * dwarf_alloc.c: Added include "dwarf_harmless.h" so
        a prototype is visible here.
