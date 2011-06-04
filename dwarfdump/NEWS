@@ -1,3 +1,9 @@
+June 04, 2011
+  Error checking is now distinct from section printing, making
+  error checking (the -k options) much easier to work with on
+  large objects.
+  So compiler-created errors can be found, the error reporting
+  now prints context information.
 March 29, 2011
   Added many new correctness tests.  Changed the format of
   various items (line data prints in a more compact form, numbers
