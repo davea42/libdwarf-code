@@ -1,3 +1,12 @@
+June 04,2011
+  Non-Elf objects could be used with libdwarf, but 
+  no one has contributed non-elf-reading code for libdwarf
+  and a crucial detail was not documented so those writing
+  such object-reading code have not done it entirely correctly.  
+  Fundamentally such code must treat a section index of 0 as
+  a real but empty section with no name (an empty name).
+  dwarf_elf_access.c and dwarf_elf_init_finish.c have some comments
+  on this point now.
 March 29,2011
   All the code changed a lot because indentations were all over
   the map, now they are consistent.  

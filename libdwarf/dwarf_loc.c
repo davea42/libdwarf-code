@@ -665,6 +665,9 @@ _dwarf_get_loclist_header_start(Dwarf_Debug dbg,
         if (secload != DW_DLV_OK) {
             return secload;
         }
+        if (!dbg->de_debug_loc.dss_size) {
+            return (DW_DLV_NO_ENTRY);
+        }
     }
     return DW_DLV_OK;
 }

@@ -159,6 +159,10 @@ dwarf_srcfiles(Dwarf_Die die,
     if (res != DW_DLV_OK) {
         return res;
     }
+    if (!dbg->de_debug_line.dss_size) {
+        return (DW_DLV_NO_ENTRY);
+    }
+
 
     lres = dwarf_whatform(stmt_list_attr,&attrform,error);
     if (lres != DW_DLV_OK) {
@@ -479,6 +483,10 @@ _dwarf_internal_srclines(Dwarf_Die die,
     if (res != DW_DLV_OK) {
         return res;
     }
+    if (!dbg->de_debug_line.dss_size) {
+        return (DW_DLV_NO_ENTRY);
+    }
+
     address_size = _dwarf_get_address_size(dbg, die);
     resattr = dwarf_attr(die, DW_AT_stmt_list, &stmt_list_attr, error);
     if (resattr != DW_DLV_OK) {

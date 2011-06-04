@@ -1,3 +1,14 @@
+
+2011-06-04  DavidAnderson <davea42@earthlink.net>
+     * NEWS: Mention the non-elf documentation oversight.
+     * dwarf_arange.c,dwarf_elf_access.c, dwarf_frame3.c,
+       dwarf_funcs.c,dwarf_global.c,dwarf_init_finish.c,
+       dwarf_line.c,dwarf_loc.c,dwarf_macro.c,dwarf_print_lines.c,
+       dwarf_pubtypes.c,dwarf_query.c,dwarf_ranges.c,dwarf_string.c,
+       dwarf_types.c,dwarf_vars.c, dwarf_weaks.c: Everything loading
+       a section now checks the result for 'empty' and returns
+       DW_DLV_NO_ENTRY explicitly.  This makes it easier to
+       do nothing safely when there is no data.
 2011-06-04  DavidAnderson <davea42@earthlink.net>
      * dwarf_line.c (_dwarf_internal_srclines): Created new local functions
        to unify some repeated code in into function calls.  One of the

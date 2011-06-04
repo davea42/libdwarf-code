@@ -91,6 +91,10 @@ dwarf_get_aranges_list(Dwarf_Debug dbg,
     Dwarf_Chain curr_chain = NULL;
     Dwarf_Chain prev_chain = NULL;
     Dwarf_Chain head_chain = NULL;
+    if (!dbg->de_debug_aranges.dss_size) {
+        return (DW_DLV_NO_ENTRY);
+    }
+
 
     arange_ptr = dbg->de_debug_aranges.dss_data;
     arange_ptr_start = arange_ptr;

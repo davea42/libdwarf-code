@@ -71,6 +71,10 @@ dwarf_get_str(Dwarf_Debug dbg,
     if (res != DW_DLV_OK) {
         return res;
     }
+    if (!dbg->de_debug_str.dss_size) {
+        return (DW_DLV_NO_ENTRY);
+    }
+
 
     *string = (char *) dbg->de_debug_str.dss_data + offset;
 

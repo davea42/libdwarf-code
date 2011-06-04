@@ -95,6 +95,11 @@ get_basic_section_data(Dwarf_Debug dbg,
     Dwarf_Error* error,
     int duperr, int emptyerr )
 {
+    /*  There is an elf convention that section index 0  is reserved,
+        and that section is always empty. 
+        Non-elf object formats must honor that by ensuring that
+        (when they assign numbers to 'sections' or 'section-like-things')
+        they never assign a real section section-number  0 to dss_index. */
     if (secdata->dss_index != 0) {
         DWARF_DBG_ERROR(dbg, duperr, DW_DLV_ERROR);
     }
@@ -193,7 +198,17 @@ _dwarf_setup(Dwarf_Debug dbg, Dwarf_Error * error)
     section_count = obj->methods->get_section_count(obj->object);
 
     /*  We can skip index 0 when considering ELF files, but not other
-        object types. */
+        object types.  Indeed regardless of the object type we should
+        skip section 0 here.  
+        This is a convention.  We depend on it.
+        Non-elf object access code should
+        (in itself) understand we will index beginning at 1 and adjust
+        itself to deal with this Elf convention.    Without this
+        convention various parts of the code in this file won't work correctly. 
+        A dss_index of 0 must not be used, even though we start at 0
+        here.  So the get_section_info() must adapt to the situation
+        (the elf version does automatically as a result of Elf having
+        a section zero with zero length and an empty name). */
     for (section_index = 0; section_index < section_count;
         ++section_index) {
         
@@ -505,6 +520,11 @@ _dwarf_load_section(Dwarf_Debug dbg,
         return DW_DLV_OK;
     }
     o = dbg->de_obj_file; 
+    /*  There is an elf convention that section index 0  is reserved,
+        and that section is always empty. 
+        Non-elf object formats must honor that by ensuring that
+        (when they assign numbers to 'sections' or 'section-like-things')
+        they never assign a real section section-number  0 to dss_index. */
     res = o->methods->load_section(
         o->object, section->dss_index, 
         &section->dss_data, &err);

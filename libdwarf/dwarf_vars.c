@@ -51,6 +51,9 @@ dwarf_get_vars(Dwarf_Debug dbg,
     if (res != DW_DLV_OK) {
         return res;
     }
+    if (!dbg->de_debug_abbrev.dss_size) {
+        return (DW_DLV_NO_ENTRY);
+    }
 
     return _dwarf_internal_get_pubnames_like_data(dbg, 
         dbg->de_debug_varnames.dss_data, 

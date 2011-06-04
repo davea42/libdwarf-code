@@ -218,7 +218,16 @@ dwarf_elf_object_access_get_section_count(void * obj_in)
 }
 
 
-/* dwarf_elf_object_access_get_section() */
+/*  dwarf_elf_object_access_get_section() 
+
+    If writing a function vaguely like this for a non-elf object,
+    be sure that when section-index is passed in as zero that
+    you set the fields in *ret_scn to reflect an empty section
+    with an empty string as the section name.  Adjust your
+    section indexes of your non-elf-reading-code  
+    for all the necessary functions in Dwarf_Obj_Access_Methods_s 
+    accordingly.
+*/
 static 
 int 
 dwarf_elf_object_access_get_section_info(

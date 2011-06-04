@@ -75,6 +75,7 @@ int dwarf_get_ranges_a(Dwarf_Debug dbg,
     if (res != DW_DLV_OK) {
         return res;
     }
+
     if(rangesoffset >= dbg->de_debug_ranges.dss_size) {
         _dwarf_error(dbg, error, DW_DLE_DEBUG_RANGES_OFFSET_BAD);
         return (DW_DLV_ERROR);

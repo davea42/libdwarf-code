@@ -173,6 +173,10 @@ int * err_count_out, int only_line_header)
     if (res != DW_DLV_OK) {
         return res;
     }
+    if (!dbg->de_debug_line.dss_size) {
+        return (DW_DLV_NO_ENTRY);
+    }
+
 
     resattr = dwarf_attr(die, DW_AT_stmt_list, &stmt_list_attr, error);
     if (resattr != DW_DLV_OK) {

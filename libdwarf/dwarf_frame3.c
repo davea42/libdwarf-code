@@ -89,6 +89,9 @@ _dwarf_frame_address_offsets(Dwarf_Debug dbg, Dwarf_Addr ** addrlist,
     if (res != DW_DLV_OK) {
         return res;
     }
+    if (!dbg->de_debug_frame.dss_size) {
+        return (DW_DLV_NO_ENTRY);
+    }
 
     for (i = 0; i < cie_count; i++) {
         Dwarf_Off instoff = 0;

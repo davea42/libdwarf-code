@@ -378,6 +378,9 @@ dwarf_diename(Dwarf_Die die, char **ret_name, Dwarf_Error * error)
     if (res != DW_DLV_OK) {
         return res;
     }
+    if (!dbg->de_debug_str.dss_size) {
+        return (DW_DLV_NO_ENTRY);
+    }
 
     *ret_name = (char *) (dbg->de_debug_str.dss_data + string_offset);
     return DW_DLV_OK;
