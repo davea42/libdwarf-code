@@ -1103,7 +1103,6 @@ traverse_attribute(Dwarf_Debug dbg, Dwarf_Die die, Dwarf_Half attr,
     int die_indent_level)
 {
     Dwarf_Attribute attrib = 0;
-    Dwarf_Unsigned uval = 0;
     const char * atname = 0;
     const char * valname = 0;
     int tres = 0;
@@ -1192,7 +1191,6 @@ traverse_one_die(Dwarf_Debug dbg, Dwarf_Attribute attrib, Dwarf_Die die,
     Dwarf_Off overall_offset = 0;
     Dwarf_Signed atcnt = 0;
     int res = 0;
-    int abbrev_code = dwarf_die_abbrev_code(die);
     boolean circular_reference = FALSE;
     boolean print_information = FALSE;
 
@@ -1620,7 +1618,7 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
             if(is_location_form(theform)) {
                 get_location_list(dbg, die, attrib, &esb_base);
                 show_form_itself(show_form_used, theform, directform,&esb_base);
-            } else if (theform = DW_FORM_exprloc)  {
+            } else if (theform == DW_FORM_exprloc)  {
                 int showhextoo = 1;
                 print_exprloc_content(dbg,die,attrib,showhextoo,&esb_base);
             } else {
@@ -2028,7 +2026,7 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
         }
     }
 
-    if (PRINTING_DIES && print_information || bTextFound) {
+    if ((PRINTING_DIES && print_information) || bTextFound) {
         /*  Print just the Tags and Attributes */
         if (!display_offsets) {
             printf("%-28s\n",atname);
@@ -2308,7 +2306,6 @@ get_location_list(Dwarf_Debug dbg, Dwarf_Die die, Dwarf_Attribute attr,
     Dwarf_Addr hipc;
     Dwarf_Off offset = 0;
     Dwarf_Bool bError = FALSE;
-    Bucket_Data *pBucketData = 0;
 
     if (use_old_dwarf_loclist) {
         lres = dwarf_loclist(attr, &llbuf, &no_of_elements, &err);

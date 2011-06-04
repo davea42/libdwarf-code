@@ -57,7 +57,7 @@ $Header: /plroot/cmplrs.src/v7.4.5m/.RCS/PL/dwarfdump/RCS/dwarfdump.c,v 1.48 200
 extern int elf_open(char *name,int mode);
 #endif
 
-#define DWARFDUMP_VERSION " Sat Apr 23 08:58:33 PDT 2011  "
+#define DWARFDUMP_VERSION " Sat Jun  4 14:06:58 PDT 2011  "
 
 extern char *optarg;
 
@@ -68,7 +68,7 @@ extern char *optarg;
 static string process_args(int argc, char *argv[]);
 
 char * program_name;
-int check_error = 0;
+static int check_error = 0;
 
 /* defined in print_sections.c, die for the current compile unit, 
    used in get_fde_proc_name() */
@@ -213,6 +213,7 @@ typedef struct {
    Full CU names recorded here, though only a portion
    of the name may have been checked to cause the
    compiler data  to be entered here.
+   The +1 guarantees we do not overstep the array.
 */
 static Compiler compilers_detected[COMPILER_TABLE_MAX];
 static int compilers_detected_count = 0;
@@ -223,10 +224,11 @@ static int compilers_detected_count = 0;
    comparisons, so the compilers_targeted name might be simply a
    compiler version number or a short substring of a
    CU producer name.
+   The +1 guarantees we do not overstep the array.
 */ 
 static Compiler compilers_targeted[COMPILER_TABLE_MAX];
 static int compilers_targeted_count = 0;
-int current_compiler = -1;
+static int current_compiler = -1;
 
 static void reset_compiler_entry(Compiler *compiler);
 static void PRINT_CHECK_RESULT(char *str,
@@ -234,8 +236,8 @@ static void PRINT_CHECK_RESULT(char *str,
 
 
 /* The check and print flags here make it easy to 
-   allow check-only, print-only or check-and-print
-   in the body of the code. */
+   allow check-only or print-only.  We no longer support
+   check-and-print in a single run.  */
 boolean do_check_dwarf = FALSE;
 boolean do_print_dwarf = FALSE;
 boolean check_show_results = FALSE;  /* Display checks results. */
@@ -595,24 +597,33 @@ print_specific_checks_results(Compiler *pCompiler)
 {
     fprintf(stderr, "\nDWARF CHECK RESULT\n");
         fprintf(stderr, "<item>                    <checks>    <errors>\n");
-    if (check_pubname_attr)
+    if (check_pubname_attr) {
         PRINT_CHECK_RESULT("pubname_attr", pCompiler, pubname_attr_result);
-    if (check_attr_tag)
+    }
+    if (check_attr_tag) {
         PRINT_CHECK_RESULT("attr_tag", pCompiler, attr_tag_result);
-    if (check_tag_tree)
+    }
+    if (check_tag_tree) {
         PRINT_CHECK_RESULT("tag_tree", pCompiler, tag_tree_result);
-    if (check_type_offset)
+    }
+    if (check_type_offset) {
         PRINT_CHECK_RESULT("type_offset", pCompiler, type_offset_result);
-    if (check_decl_file)
+    }
+    if (check_decl_file) {
         PRINT_CHECK_RESULT("decl_file", pCompiler, decl_file_result);
-    if (check_ranges)
+    }
+    if (check_ranges) {
         PRINT_CHECK_RESULT("ranges", pCompiler, ranges_result);
-    if (check_lines)
+    }
+    if (check_lines) {
         PRINT_CHECK_RESULT("line_table", pCompiler, lines_result);
-    if (check_fdes)
+    }
+    if (check_fdes) {
         PRINT_CHECK_RESULT("fde table", pCompiler, fde_duplication);
-    if (check_aranges)
+    }
+    if (check_aranges) {
         PRINT_CHECK_RESULT("aranges", pCompiler, aranges_result);
+    }
 
     if (check_names) {
         PRINT_CHECK_RESULT("names",pCompiler, names_result);
@@ -688,7 +699,6 @@ print_checks_results()
     /* Print list of CUs for each compiler detected */
     if (producer_children_flag) {
 
-        a_name_chain *cu_list = 0;
         a_name_chain *nc = 0;
         a_name_chain *nc_next = 0;
         int count = 0;
@@ -712,7 +722,7 @@ print_checks_results()
 
     /* Print error report only if errors have been detected */
     /* Print error report if the -kd option */
-    if (do_check_dwarf && check_error || check_show_results) {
+    if ((do_check_dwarf && check_error) || check_show_results) {
         int count = 0;
         int compilers_not_detected = 0;
         int compilers_verified = 0;
@@ -860,33 +870,43 @@ process_one_file(Elf * elf, string file_name, int archive,
     /* Just for the moment */
     check_harmless = FALSE;
 
-    if (header_flag)
+    if (header_flag) {
         print_object_header(elf,dbg);
-
-    if (info_flag || line_flag || cu_name_flag || search_is_on || producer_children_flag)
+    }
+    if (info_flag || line_flag || cu_name_flag || search_is_on || producer_children_flag) {
         print_infos(dbg);
-    if (pubnames_flag)
+    }
+    if (pubnames_flag) {
         print_pubnames(dbg);
-    if (macinfo_flag)
+    }
+    if (macinfo_flag) {
         print_macinfo(dbg);
-    if (loc_flag)
+    }
+    if (loc_flag) {
         print_locs(dbg);
-    if (abbrev_flag)
+    }
+    if (abbrev_flag) {
         print_abbrevs(dbg);
-    if (string_flag)
+    }
+    if (string_flag) {
         print_strings(dbg);
-    if (aranges_flag)
+    }
+    if (aranges_flag) {
         print_aranges(dbg);
-    if (ranges_flag)
+    }
+    if (ranges_flag) {
         print_ranges(dbg);
+    }
     if (frame_flag || eh_frame_flag) {
         current_cu_die_for_print_frames = 0;
         print_frames(dbg, frame_flag, eh_frame_flag, config_file_data);
     }
-    if (static_func_flag)
+    if (static_func_flag) {
         print_static_funcs(dbg);
-    if (static_var_flag)
+    }
+    if (static_var_flag) {
         print_static_vars(dbg);
+    }
     /*  DWARF_PUBTYPES is the standard typenames dwarf section.
         SGI_TYPENAME is the same concept but is SGI specific ( it was
         defined 10 years before dwarf pubtypes). */
@@ -895,8 +915,9 @@ process_one_file(Elf * elf, string file_name, int archive,
         print_types(dbg, DWARF_PUBTYPES);
         print_types(dbg, SGI_TYPENAME);
     }
-    if (weakname_flag)
+    if (weakname_flag) {
         print_weaknames(dbg);
+    }
     if (reloc_flag)
         print_relocinfo(dbg, reloc_map);
     /* The right time to do this is unclear. But we need to do it. */
@@ -931,14 +952,16 @@ do_all()
     pubnames_flag = macinfo_flag = TRUE;
     aranges_flag = TRUE;
     abbrev_flag = TRUE;
-    /* Do not do 
+    /*  Do not do 
         loc_flag = TRUE 
         abbrev_flag = TRUE;
         because nothing in
         the DWARF spec guarantees the sections are free of random bytes
         in areas not referenced by .debug_info */
     string_flag = TRUE;
-    reloc_flag = TRUE;
+    /*  Do not do 
+        reloc_flag = TRUE;
+        as print_relocs makes no sense for non-elf dwarfdump users.  */  
     static_func_flag = static_var_flag = TRUE;
     type_flag = weakname_flag = TRUE;
     ranges_flag = TRUE; /* Dump .debug_ranges */
@@ -1129,7 +1152,7 @@ process_args(int argc, char *argv[])
                     else {
                         /*  Assume a compiler version to check,
                             most likely a substring of a compiler name.  */
-                        if (compilers_targeted_count < COMPILER_TABLE_MAX) {
+                        if ((compilers_targeted_count+1) < COMPILER_TABLE_MAX) {
                             Compiler *pCompiler = 0;
                             char *cmp = makename(optarg);
                             /* First compiler at position [1] */
@@ -1266,10 +1289,10 @@ process_args(int argc, char *argv[])
                 check_locations = TRUE; 
                 frame_flag = eh_frame_flag = TRUE;
                 check_ranges = TRUE;
-                check_aranges = TRUE;
                 check_lines = TRUE;
                 check_fdes = TRUE;
                 check_harmless = TRUE;
+                check_aranges = TRUE;
                 aranges_flag = TRUE;  /* Aranges section */
                 check_abbreviations = TRUE; 
                 check_dwarf_constants = TRUE; 
@@ -1983,7 +2006,7 @@ checking_this_compiler()
         and indicates if the current CU is in a targeted compiler
         specified by the user. Default value is TRUE, which
         means test all compilers until a CU is detected. */
-    return current_cu_is_checked_compiler;
+    return current_cu_is_checked_compiler || check_all_compilers;
 }
 
 static int
@@ -2073,7 +2096,14 @@ add_cu_name_compiler_target(char *name)
 {
     a_name_chain *cu_last = 0;
     a_name_chain *nc = 0;
-    Compiler *pCompiler = &compilers_detected[current_compiler];
+    Compiler *pCompiler = 0;
+
+    if (current_compiler < 1) {
+        fprintf(stderr,"Current  compiler set to %d, cannot add "
+              "Compilation unit name.  Giving up.",current_compiler);
+        exit(1);
+    }
+    pCompiler = &compilers_detected[current_compiler];
     cu_last = pCompiler->cu_last;
     /* Record current cu name */
     nc = (a_name_chain *)malloc(sizeof(a_name_chain));
@@ -2116,17 +2146,23 @@ void DWARF_CHECK_COUNT(Dwarf_Check_Categories category, int inc)
 {
     compilers_detected[0].results[category].checks += inc;
     compilers_detected[0].results[total_check_result].checks += inc;
-    compilers_detected[current_compiler].results[category].checks += inc;
-    compilers_detected[current_compiler].results[total_check_result].checks += inc;
-    compilers_detected[current_compiler].verified = TRUE;
+    if(current_compiler > 0 && current_compiler <  COMPILER_TABLE_MAX) {
+        compilers_detected[current_compiler].results[category].checks += inc;
+        compilers_detected[current_compiler].results[total_check_result].checks
+            += inc;
+        compilers_detected[current_compiler].verified = TRUE;
+    }
 }
 
 void DWARF_ERROR_COUNT(Dwarf_Check_Categories category, int inc)
 {
     compilers_detected[0].results[category].errors += inc;
     compilers_detected[0].results[total_check_result].errors += inc;
-    compilers_detected[current_compiler].results[category].errors += inc;
-    compilers_detected[current_compiler].results[total_check_result].errors += inc;
+    if(current_compiler > 0 && current_compiler <  COMPILER_TABLE_MAX) {
+        compilers_detected[current_compiler].results[category].errors += inc;
+        compilers_detected[current_compiler].results[total_check_result].errors
+            += inc;
+    }
 }
 
 void PRINT_CHECK_RESULT(char *str,

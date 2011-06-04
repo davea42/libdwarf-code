@@ -3,7 +3,7 @@
 dwarfdump \- dumps DWARF debug information of an ELF object
 .SH SYNOPSIS
 .B dwarfdump
-[-abcdefilmoprsvy] [-k{aefrty}]  [-t{afv}] [-u\f2cuname\fP] \f2objectfilename\fP
+[-abcdefilmoprsvy] [-k{abcdefFgilmMnrRsStxy}] [-kxe]  [-t{afv}] [-u\f2cuname\fP] \f2objectfilename\fP
 .SH DESCRIPTION
 The 
 .B dwarfdump
@@ -11,16 +11,23 @@ command prints DWARF sections as requested by specific options.
 With no options (but with the required \f2objectfilename\fP ) 
 all sections print.
 .PP
+As of June 2011 the printing options and the checking options
+are mutually exclusive (if checking options are selected 
+the section details are not printed).   When errors are encountered
+dwarfdump does attempt to print sufficient context so that
+one can understand exactly where the error is in the DWARF.
+This change makes checking really large object files
+much easier.
+.PP
 The format is intended to be human readable.
 If a script is to parse the output, the
 .B \-d
 option is useful.
-.P
+.PP
 Not all sections actually exist in any given object file.
-.P
+.PP
 The format may change from release to release, so it is
 unwise to depend too heavily on the format.
-.P
 .PP
 Frame information (.debug_frame and .eh_frame) is heavily
 dependent on the ABI/ISA of the object file.  
@@ -61,7 +68,7 @@ command accepts one or more of the following options:
 .B \-a
 Dumps most sections.
 Same as 
-.B \-bcfilmoprsy
+.B \-bcfimopsy
 .BR \-tfv .
 .TP
 .B \-b
@@ -98,11 +105,23 @@ Dumps the .debug_frame section.
 Dumps the .debug_info section.
 .TP
 .B \-ka
-Adds all available error checks to whatever sections
-are being read. At the end of the run prints the
+Adds all but one available error checks 
+(the more computationally expensive -kxe check
+is not included with -ka).
+. At the end of the run prints the
 instances inspected and the number of errors for each
 type of check.  If there are more than zero errors
 the compiler has emitted invalid DWARF.
+If no errors were detected no error check summary is printed
+by default,
+though -kd forces an error check summary to be printed.
+.TP
+.B \-kxe
+Adds an extended frames check (a check which is more
+computionally expensive) to the frame checking code,
+and turns off the normal frames check. 
+So to get full frames checking in one execution
+do 'dwarfdump -kxe -kx <objectpath>'.
 .TP
 .B \-l
 Dumps the .debug_line information.  

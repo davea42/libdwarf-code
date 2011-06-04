@@ -281,7 +281,6 @@ FindAddressInBucketGroup(Bucket_Group *pBucketGroup,Dwarf_Addr address)
 /*  Search an entry (Bucket Data) in the Bucket Set */
 Bucket_Data *FindDataInBucketGroup(Bucket_Group *pBucketGroup,Dwarf_Addr key)
 {
-    int nIndex = -1;
     int mid = 0;
     int low = 0;
     int high = 0;
@@ -476,7 +475,6 @@ ProcessBucketGroup(Bucket_Group *pBucketGroup,
 {
     int nIndex = 0;
     int nStart = 0;
-    int nCount = 0;
     Bucket *pBucket = 0;
     Bucket_Data *pBucketData = 0;
     Bucket_Data *pLower = 0;

@@ -191,13 +191,21 @@ print_aranges(Dwarf_Debug dbg)
                             cures3, err);
                     }
 
-                    /* Print the CU information if different. */
+                    /* Print the CU information if different.  */
                     if (prev_off != off || first_cu) {
                         first_cu = FALSE;
                         prev_off = off;
                         /*  We are faking the indent level. We do not know
-                            what level it is, really. */
-                        if(start || length) {
+                            what level it is, really. 
+
+                            If do_check_dwarf we do not want to do 
+                            the die print call as it will do 
+                            check/print we may not have asked for. 
+                            And if we did ask for debug_info checks
+                            this will do the checks a second time!
+                            So only call print_one_die if printing.
+                        */
+                        if(do_print_dwarf){
                             /* There is no die if its a set-end entry */
                             print_one_die(dbg, cu_die, 
                                 /* print_information= */ (boolean) TRUE,
@@ -241,7 +249,14 @@ print_aranges(Dwarf_Debug dbg)
                     }
                     dwarf_dealloc(dbg, cu_die, DW_DLA_DIE);
                     cu_die = 0;
-                } /* end start||length test */
+                } else {
+                    /*  Must be a range end. We really do want to print
+                        this as there is a real record here, an
+                        'arange end' record. */
+                    if (do_print_dwarf) {
+                         printf("\narange end");
+                    }
+                }/* end start||length test */
             }  /* end aires DW_DLV_OK test */
 
             /* print associated die too? */

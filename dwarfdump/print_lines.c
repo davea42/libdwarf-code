@@ -82,7 +82,6 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
     Dwarf_Addr pc = 0;
     Dwarf_Unsigned lineno = 0;
     Dwarf_Signed column = 0;
-    string filename = "<unknown>";
 
     Dwarf_Bool newstatement = 0;
     Dwarf_Bool lineendsequence = 0;

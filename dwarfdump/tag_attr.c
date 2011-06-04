@@ -258,7 +258,6 @@ main(int argc, char **argv)
 
     for (i = 0; i < table_rows; i++) {
         int j = 0;
-        int printonerr = 0;
         const char *name = 0;
         if(standard_flag) {
             dwarf_get_TAG_name(i,&name);

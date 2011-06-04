@@ -314,7 +314,6 @@ extern Dwarf_Off fde_offset_for_cu_high;
 extern void tag_specific_checks_setup(Dwarf_Half val,int die_indent_level);
 
 extern char *program_name;
-extern int check_error;
 extern Dwarf_Error err;
 extern void print_error_and_continue (Dwarf_Debug dbg, string msg,int res, Dwarf_Error err);
 extern void print_error (Dwarf_Debug dbg, string msg,int res, Dwarf_Error err);
@@ -437,6 +436,8 @@ dwarfdump_print_one_locdesc(Dwarf_Debug dbg,
     struct esb_s *string_out);
 void clean_up_die_esb();
 void clean_up_syms_malloc_data();
+void safe_strcpy(char *out, long outlen, const char *in, long inlen);
+
 
 void print_any_harmless_errors(Dwarf_Debug dbg);
 
