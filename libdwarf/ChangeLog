@@ -1,3 +1,15 @@
+2011-06-04  DavidAnderson <davea42@earthlink.net>
+     * dwarf_alloc.c: Added include "dwarf_harmless.h" so
+       a prototype is visible here.
+     * dwarf_form.c (dwarf_convert_to_global_offset,dwarf_global_formref):                   Deleted unused local variables.
+     * dwarf_frame.c (dwarf_initialize_fde_table): Uses local instead
+       of ignoring it (avoids compiler warning).
+     * dwarf_frame2.c (_dwarf_get_fde_list_internal): Delete unused
+       local variable.
+     * dwarf_line.c (dwarf_srcfiles): Call uses variable expected
+       signedness now, avoiding compiler warning.
+     * dwarf_print_lines.c: Printf was missing %, gcc -Wall pointed
+       out the mistake.
 2011-04-23  DavidAnderson <davea42@earthlink.net>
      * pro_error.c (_dwarf_p_error): The code attempting to deal with
        an unexpected error code was doing an inappropriate cast and
