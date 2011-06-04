@@ -17,6 +17,7 @@
        of strings.  Removed the cast and removed the questionable 
        array reference.
      * dwarf_frame.c: A couple lines were indented badly. Fixed the indentation.
+     * pro_line.h: Now __x86_64 also gets MIN_INST_LENGTH 1
 2011-03-29  DavidAnderson <davea42@earthlink.net>
      * everything:   Redid all indentations for
        consistency.  Updated copyrights.  Interfaces
