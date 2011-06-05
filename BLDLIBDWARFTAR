@@ -8,6 +8,7 @@ then
 	echo  Example: BLDLIBDWARFTAR 20040108
 	exit 1
 fi
+echo "This does not do UPDATEDWARFDUMPVERSION.sh"
 dat=$1
 
 tmpf=dwarf
@@ -16,7 +17,7 @@ sh CPTOPUBLIC  $tmpdir/$tmpf
 newpref=dwarf-${dat}
 newf=libdwarf-${dat}.tar
 echo src is $tmpdir/$tmpf tmp is $newpref target is $newf
-sh UPDATEDWARFDUMPVERSION.sh
+#sh UPDATEDWARFDUMPVERSION.sh
 echo ============  $newpref  $newf ==========
 
 echo First create $tmpdir/$newpref with the latest source.
