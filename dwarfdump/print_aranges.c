@@ -254,7 +254,7 @@ print_aranges(Dwarf_Debug dbg)
                         this as there is a real record here, an
                         'arange end' record. */
                     if (do_print_dwarf) {
-                         printf("\narange end");
+                        printf("\narange end");
                     }
                 }/* end start||length test */
             }  /* end aires DW_DLV_OK test */
