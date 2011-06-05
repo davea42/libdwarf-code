@@ -1,5 +1,8 @@
 2011-06-05  DavidAnderson <davea42@earthlink.net>
-      * dwarfdump.c, common.c: Updated version string.
+      * dwarfdump.c: Updated version string.
+        Now -kd forces a summary error report, always.
+        Even if no errors found or even checked-for.
+      * common.c: Updated version string.
 2011-06-05  DavidAnderson <davea42@earthlink.net>
       * dwarfdump.c,print_aranges.c,print_reloc.c: A few indents
         did not match the standard multiple-of-4-spaces. Corrected.

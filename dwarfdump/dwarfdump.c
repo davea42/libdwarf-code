@@ -775,8 +775,9 @@ print_checks_results()
             }
         }
 
-        /* Print summary only if we have verified compilers */
-        if (compilers_verified) {
+        /*  Print summary if we have verified compilers or
+            if the -kd option used. */
+        if (compilers_verified || check_show_results) {
             /* Print compilers detected summary*/
             if (print_summary_all) {
                 count = 0;
