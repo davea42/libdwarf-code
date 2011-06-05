@@ -24,17 +24,17 @@
   SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  
 */
-/* simplereader.c
-   This is an example of code reading dwarf .debug_info.
-   It is kept as simple as possible to expose essential features.
-   It does not do all possible error reporting or error handling.
+/*  simplereader.c
+    This is an example of code reading dwarf .debug_info.
+    It is kept as simple as possible to expose essential features.
+    It does not do all possible error reporting or error handling.
 
-   The --names 
-   option adds some extra printing.
+    The --names 
+    option adds some extra printing.
 
-   To use, try
-       make
-       ./simplereader simplereader
+    To use, try
+        make
+        ./simplereader simplereader
 */
 #include <sys/types.h> /* For open() */
 #include <sys/stat.h>  /* For open() */
@@ -80,9 +80,9 @@ main(int argc, char **argv)
         int i = 0;
         for(i = 1; i < (argc-1) ; ++i) {
             if(strcmp(argv[i],"--names") == 0) {
-               namesoptionon=1;
+                namesoptionon=1;
             } else {
-               printf("Unknown argument \"%s\" ignored\n",argv[i]);
+                printf("Unknown argument \"%s\" ignored\n",argv[i]);
             }
         }
         filepath = argv[i];
@@ -250,26 +250,26 @@ print_subprog(Dwarf_Debug dbg,Dwarf_Die die, int level,
         res = dwarf_whatattr(attrbuf[i],&aform,&error);
         if(res == DW_DLV_OK) {
             if(aform == DW_AT_decl_file) {
-                  get_number(attrbuf[i],&filenum);
-                  if((filenum > 0) && (sf->srcfilescount > (filenum-1))) {
-                       filename = sf->srcfiles[filenum-1];
-                  }
+                get_number(attrbuf[i],&filenum);
+                if((filenum > 0) && (sf->srcfilescount > (filenum-1))) {
+                    filename = sf->srcfiles[filenum-1];
+                }
             }
             if(aform == DW_AT_decl_line) {
-                  get_number(attrbuf[i],&linenum);
+                get_number(attrbuf[i],&linenum);
             }
             if(aform == DW_AT_low_pc) {
-                  get_addr(attrbuf[i],&lowpc);
+                get_addr(attrbuf[i],&lowpc);
             }
             if(aform == DW_AT_high_pc) {
-                  get_addr(attrbuf[i],&highpc);
+                get_addr(attrbuf[i],&highpc);
             }
         }
         dwarf_dealloc(dbg,attrbuf[i],DW_DLA_ATTR);
     }
     if(filenum || linenum) {
         printf("<%3d> file: %" DW_PR_DUu " %s  line %"
-               DW_PR_DUu "\n",level,filenum,filename?filename:"",linenum);
+            DW_PR_DUu "\n",level,filenum,filename?filename:"",linenum);
     }
     if(lowpc) {
         printf("<%3d> low_pc : 0x%" DW_PR_DUx  "\n",
@@ -301,11 +301,12 @@ print_comp_dir(Dwarf_Debug dbg,Dwarf_Die die,int level, struct srcfilesdata *sf)
         res = dwarf_whatattr(attrbuf[i],&aform,&error);
         if(res == DW_DLV_OK) {
             if(aform == DW_AT_comp_dir) {
-               char *name = 0;
-               res = dwarf_formstring(attrbuf[i],&name,&error);
-               if(res == DW_DLV_OK) {
-                   printf(    "<%3d> compilation directory : \"%s\"\n",level,name);
-               }
+                char *name = 0;
+                res = dwarf_formstring(attrbuf[i],&name,&error);
+                if(res == DW_DLV_OK) {
+                    printf(    "<%3d> compilation directory : \"%s\"\n",
+                        level,name);
+                }
             }
             if(aform == DW_AT_stmt_list) {
                 /* Offset of stmt list for this CU in .debug_line */
@@ -319,14 +320,14 @@ print_comp_dir(Dwarf_Debug dbg,Dwarf_Die die,int level, struct srcfilesdata *sf)
 static void
 resetsrcfiles(Dwarf_Debug dbg,struct srcfilesdata *sf)
 {
-     Dwarf_Signed sri = 0;
-     for (sri = 0; sri < sf->srcfilescount; ++sri) {
-         dwarf_dealloc(dbg, sf->srcfiles[sri], DW_DLA_STRING);
-     }
-     dwarf_dealloc(dbg, sf->srcfiles, DW_DLA_LIST);
-     sf->srcfilesres = DW_DLV_ERROR;
-     sf->srcfiles = 0;
-     sf->srcfilescount = 0;
+    Dwarf_Signed sri = 0;
+    for (sri = 0; sri < sf->srcfilescount; ++sri) {
+        dwarf_dealloc(dbg, sf->srcfiles[sri], DW_DLA_STRING);
+    }
+    dwarf_dealloc(dbg, sf->srcfiles, DW_DLA_LIST);
+    sf->srcfilesres = DW_DLV_ERROR;
+    sf->srcfiles = 0;
+    sf->srcfilescount = 0;
 }
 
 static void
@@ -364,8 +365,9 @@ print_die_data(Dwarf_Debug dbg, Dwarf_Die print_me,int level,
             printf(    "<%3d> subprogram            : \"%s\"\n",level,name);
             print_subprog(dbg,print_me,level,sf);
         } else if (tag == DW_TAG_compile_unit ||
-           tag == DW_TAG_partial_unit ||
-           tag == DW_TAG_type_unit) {
+            tag == DW_TAG_partial_unit ||
+            tag == DW_TAG_type_unit) {
+
             resetsrcfiles(dbg,sf);
             printf(    "<%3d> source file           : \"%s\"\n",level,name);
             print_comp_dir(dbg,print_me,level,sf);

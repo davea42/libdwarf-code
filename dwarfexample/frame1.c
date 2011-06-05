@@ -25,17 +25,17 @@
   SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  
 */
-/* simplereader.c
-   This is an example of code reading dwarf .debug_frame.
-   It is kept as simple as possible to expose essential features.
-   It does not do all possible error reporting or error handling.
+/*  simplereader.c
+    This is an example of code reading dwarf .debug_frame.
+    It is kept as simple as possible to expose essential features.
+    It does not do all possible error reporting or error handling.
 
-   It specifically calls dwarf_expand_frame_instructions()
-   to verify that works without crashing!
+    It specifically calls dwarf_expand_frame_instructions()
+    to verify that works without crashing!
 
-   To use, try
-       make
-       ./frame1 frame1
+    To use, try
+        make
+        ./frame1 frame1
 */
 #include <sys/types.h> /* For open() */
 #include <sys/stat.h>  /* For open() */
@@ -90,16 +90,16 @@ main(int argc, char **argv)
         printf("Giving up, dwarf_init failed, cannot do DWARF processing\n");
         exit(1);
     }
-    /* Do this setting after init before any real operations.
-       These return the old values, but here we do not
-       need to know the old values.  The sizes and
-       values here are higher than most ABIs and entirely
-       arbitrary.  
+    /*  Do this setting after init before any real operations.
+        These return the old values, but here we do not
+        need to know the old values.  The sizes and
+        values here are higher than most ABIs and entirely
+        arbitrary.  
 
-       The setting of initial_value to
-       the same as undefined-value (the other possible choice being
-       same-value) is arbitrary, different ABIs do differ, and
-       you have to know which is right. */
+        The setting of initial_value to
+        the same as undefined-value (the other possible choice being
+        same-value) is arbitrary, different ABIs do differ, and
+        you have to know which is right. */
     regtabrulecount=1999;
     dwarf_set_frame_undefined_value(dbg, UNDEF_VAL);
     dwarf_set_frame_rule_initial_value(dbg, UNDEF_VAL);
@@ -131,8 +131,8 @@ read_frame_data(Dwarf_Debug dbg)
     res = dwarf_get_fde_list(dbg,&cie_data,&cie_element_count,
         &fde_data,&fde_element_count,&error);
     if(res == DW_DLV_NO_ENTRY) {
-       printf("No frame data present ");
-       exit(0);
+        printf("No frame data present ");
+        exit(0);
     }
     if( res == DW_DLV_ERROR) {
         printf("Error reading frame data ");
@@ -237,13 +237,13 @@ print_fde_instrs(Dwarf_Debug dbg,
 
     arbitrary_addr = lowpc + (func_length/2);
     printf("function low pc 0x%" DW_PR_DUx 
-           "  and length 0x%" DW_PR_DUx  
-           "  and addr we choose 0x%" DW_PR_DUx  
-           "\n",
-         lowpc,func_length,arbitrary_addr);
+        "  and length 0x%" DW_PR_DUx  
+        "  and addr we choose 0x%" DW_PR_DUx  
+        "\n",
+        lowpc,func_length,arbitrary_addr);
 
-    /* 1 is arbitrary. We are winding up getting the
-       rule count here while leaving things unchanged. */
+    /*  1 is arbitrary. We are winding up getting the
+        rule count here while leaving things unchanged. */
     oldrulecount = dwarf_set_frame_rule_table_size(dbg,1);
     dwarf_set_frame_rule_table_size(dbg,oldrulecount);
 
@@ -271,8 +271,8 @@ print_fde_instrs(Dwarf_Debug dbg,
     }
     res = dwarf_get_cie_of_fde(fde,&cie,error);
     if(res != DW_DLV_OK) {
-            printf("Error getting cie from fde\n");
-            exit(1);
+        printf("Error getting cie from fde\n");
+        exit(1);
     }
 
     res = dwarf_expand_frame_instructions(cie,
@@ -321,8 +321,8 @@ print_one_regentry(const char *prefix,Dwarf_Fde fde,Dwarf_Debug dbg,
         (entry->dw_value_type == DW_EXPR_VAL_OFFSET)? "DW_EXPR_VAL_OFFSET":
         (entry->dw_value_type == DW_EXPR_EXPRESSION)? "DW_EXPR_EXPRESSION":
         (entry->dw_value_type == DW_EXPR_VAL_EXPRESSION)? 
-             "DW_EXPR_VAL_EXPRESSION":
-        "Unknown");
+            "DW_EXPR_VAL_EXPRESSION":
+            "Unknown");
     switch(entry->dw_value_type) {
     case DW_EXPR_OFFSET:
         print_reg(entry->dw_regnum);
@@ -336,7 +336,7 @@ print_one_regentry(const char *prefix,Dwarf_Fde fde,Dwarf_Debug dbg,
                 printf("address of value is CFA plus signed offset");
             }
             if(!is_cfa  && entry->dw_regnum != CFA_VAL) {
-               printf(" compiler botch, regnum != CFA_VAL");
+                printf(" compiler botch, regnum != CFA_VAL");
             }
         } else {
             printf("value in register");
@@ -345,14 +345,14 @@ print_one_regentry(const char *prefix,Dwarf_Fde fde,Dwarf_Debug dbg,
     case DW_EXPR_VAL_OFFSET:
         print_reg(entry->dw_regnum);
         printf(" offset  %" DW_PR_DSd " " , 
-                entry->dw_offset_or_block_len);
+            entry->dw_offset_or_block_len);
         if(is_cfa) {
             printf("does this make sense? No?");
         } else {
             printf("value at CFA plus signed offset");
         }
         if(!is_cfa  && entry->dw_regnum != CFA_VAL) {
-               printf(" compiler botch, regnum != CFA_VAL");
+            printf(" compiler botch, regnum != CFA_VAL");
         }
         break;
     case DW_EXPR_EXPRESSION:
@@ -391,14 +391,14 @@ print_regtable(Dwarf_Fde fde,Dwarf_Regtable3 *tab3,int oldrulecount,
         max = tab3->rt3_reg_table_size;
     }
     print_one_regentry("cfa",fde,dbg,oldrulecount,&tab3->rt3_cfa_rule,
-       error);
+        error);
    
-   for(r = 0; r < max; r++) {
-       char rn[30];
-       snprintf(rn,sizeof(rn),"reg %d",r);
-       print_one_regentry(rn, fde,dbg,oldrulecount,tab3->rt3_rules+r,
-           error);
-   }
+    for(r = 0; r < max; r++) {
+        char rn[30];
+        snprintf(rn,sizeof(rn),"reg %d",r);
+        print_one_regentry(rn, fde,dbg,oldrulecount,tab3->rt3_rules+r,
+            error);
+    }
     
 
 }
