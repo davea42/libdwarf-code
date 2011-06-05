@@ -1,13 +1,33 @@
 #!/bin/sh
-if [ $# -eq 1 ]
+# CPTOPUBLIC [uv] [nouv]
+
+usemsg()
+{
+  echo "CPTOPUBLIC [uv] [nouv]"
+  echo "where uv means update version strings "
+  echo "where nouv means do not update version strings "
+  echo "One of uv or nouv is required..."
+}
+
+if [ $# -ne 1 ]
 then
-  t=$1
-else
-  t=/var/tmp/dwarf
+  usemsg
+  exit 1
 fi
+uver="n"
+case $1 in 
+  uv) uver="y" ;;
+  nouv) uver="n" ;;
+  *) usemsg  ; exit 1 ;;
+esac
+
+t=/var/tmp/dwarf
 
 echo target is $t
-sh UPDATEDWARFDUMPVERSION.sh
+if [ $uver = "y" ]
+then
+  sh UPDATEDWARFDUMPVERSION.sh
+fi
 rm -rf $t
 mkdir $t
 mkdir $t/dwarfdump 
