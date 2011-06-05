@@ -54,7 +54,7 @@ $Header: /plroot/cmplrs.src/v7.4.5m/.RCS/PL/dwarfdump/RCS/dwarfdump.c,v 1.48 200
 #include <unistd.h>             /* For getopt. */
 #include "dwconf.h"
 #include "naming.h"
-#define DWARFDUMP_VERSION " Sat Jun  4 14:06:58 PDT 2011  "
+#define DWARFDUMP_VERSION " Sun Jun  5 07:57:55 PDT 2011  "
 
 using std::string;
 using std::cout;
