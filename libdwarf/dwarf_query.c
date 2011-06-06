@@ -812,3 +812,33 @@ enum Dwarf_Form_Class dwarf_get_form_class(
     return DW_FORM_CLASS_UNKNOWN;
 };
 
+/*  Given a DIE, figure out what the CU's DWARF version is
+    and the size of an offset
+    and return it through the *version pointer and return
+    DW_DLV_OK.
+    
+    If we cannot find a CU,  
+        return DW_DLV_ERROR on error.
+        In case of error no Dwarf_Debug was available,
+        so setting a Dwarf_Error is somewhat futile.
+    Never returns DW_DLV_NO_ENTRY.
+*/
+int 
+dwarf_get_version_of_die(Dwarf_Die die,
+    Dwarf_Half *version,
+    Dwarf_Half *offset_size)
+{
+    Dwarf_CU_Context cucontext = 0;
+    if(!die) {
+        return DW_DLV_ERROR;
+    }
+    cucontext = die->di_cu_context;
+    if(!cucontext) {
+        return DW_DLV_ERROR;
+    }
+    *version = cucontext->cc_version_stamp;
+    *offset_size = cucontext->cc_length_size;
+    return DW_DLV_OK;
+}
+
+

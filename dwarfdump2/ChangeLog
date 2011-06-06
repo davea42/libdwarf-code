@@ -1,3 +1,8 @@
+2011-06-06  DavidAnderson <davea42@earthlink.net>
+      * dwarfdump.cc: Updated version string. 
+      * print_die.cc: Corrected handling of DW_AT_data_member_location.
+        Corrected handling of 'class constant' function
+        formxdata_print_value() so it does not leak memory.
 2010-06-05  DavidAnderson <davea42@earthlink.net>
       * dwarfdump.cc: Updated DWARF_VERSION string.
 2010-06-04  DavidAnderson <davea42@earthlink.net>

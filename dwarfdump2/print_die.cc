@@ -77,6 +77,10 @@ static bool legal_tag_tree_combination(Dwarf_Half parent_tag,
     Dwarf_Half child_tag);
 static int _dwarf_print_one_expr_op(Dwarf_Debug dbg,Dwarf_Loc* expr,int index, string &string_out);
 
+static int formxdata_print_value(Dwarf_Debug dbg,
+    Dwarf_Attribute attrib, string &str_out,
+    Dwarf_Error * err);
+
 // This following variable is weird. ???
 static bool local_symbols_already_began = false;
 
@@ -949,8 +953,50 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die, Dwarf_Half attr,
             &err,
             show_form_used);
         break;
-    case DW_AT_location:
     case DW_AT_data_member_location:
+{
+            //  Value is a constant or a location 
+            //  description or location list. 
+            //  If a constant, it could be signed or
+            //  unsigned.  Telling whether a constant
+            //  or a reference is nontrivial 
+            //  since DW_FORM_data{4,8}
+            //  could be either in DWARF{2,3}  */
+            Dwarf_Half theform = 0;
+            Dwarf_Half directform = 0;
+            Dwarf_Half version = 0;
+            Dwarf_Half offset_size = 0;
+
+            get_form_values(attrib,theform,directform);
+            int wres = dwarf_get_version_of_die(die ,
+                &version,&offset_size);
+            if(wres != DW_DLV_OK) {
+                print_error(dbg,"Cannot get DIE context version number",wres,err);
+                break;
+            }
+            Dwarf_Form_Class fc = dwarf_get_form_class(version,attr,
+                offset_size,theform);
+            if(fc == DW_FORM_CLASS_CONSTANT) {
+                wres = formxdata_print_value(dbg,attrib,valname,
+                      &err);
+                show_form_itself(show_form_used, theform, directform,&valname);
+                if(wres == DW_DLV_OK){
+                    /* String appended already. */
+                    break;
+                } else if (wres == DW_DLV_NO_ENTRY) {
+                    print_error(dbg,"Cannot get DW_AT_data_member_location, how can it be NO_ENTRY? ",wres,err);
+                    break;
+                } else {
+                    print_error(dbg,"Cannot get DW_AT_data_member_location ",wres,err);
+                    break;
+                }
+            }
+            /*  FALL THRU, this is a 
+                a location description, or a reference
+                to one, or a mistake. */
+        }
+        /*  FALL THRU to location description */
+    case DW_AT_location:
     case DW_AT_vtable_elem_location:
     case DW_AT_string_length:
     case DW_AT_return_addr:
@@ -1434,7 +1480,8 @@ get_location_list(Dwarf_Debug dbg,
    DW_FORM_data1 (ie, unknown signedness) print two ways.
 */
 static int
-formxdata_print_value(Dwarf_Attribute attrib, string &str_out,
+formxdata_print_value(Dwarf_Debug dbg,
+    Dwarf_Attribute attrib, string &str_out,
     Dwarf_Error * err)
 {
     Dwarf_Signed tempsd = 0;
@@ -1459,26 +1506,36 @@ formxdata_print_value(Dwarf_Attribute attrib, string &str_out,
         } else /* DW_DLV_ERROR */{
             str_out.append(IToDec(tempud));
         }
-        return DW_DLV_OK;
-    } else  if (ures == DW_DLV_NO_ENTRY) {
-        if(sres == DW_DLV_OK) {
-            str_out.append(IToDec(tempsd));
-            return sres;
-        } else if (sres == DW_DLV_NO_ENTRY) {
-            return sres;
-        } else /* DW_DLV_ERROR */{
-            *err = serr;
-            return sres;
-        }
-    } 
-    /* else ures ==  DW_DLV_ERROR */ 
+        goto cleanup;
+    }  else {
+        /* ures ==  DW_DLV_ERROR */ 
+    }
     if(sres == DW_DLV_OK) {
         str_out.append(IToDec(tempsd));
-    } else if (sres == DW_DLV_NO_ENTRY) {
-        return ures;
     } 
-    /* DW_DLV_ERROR */
-    return ures;
+    cleanup:
+    if(sres == DW_DLV_OK || ures == DW_DLV_OK) {
+        if(sres == DW_DLV_ERROR) {
+             dwarf_dealloc(dbg,serr,DW_DLA_ERROR);
+        }
+        if(ures == DW_DLV_ERROR) {
+             dwarf_dealloc(dbg,*err,DW_DLA_ERROR);
+             *err = 0;
+        }
+        return DW_DLV_OK;
+    }
+    if(sres == DW_DLV_ERROR || ures == DW_DLV_ERROR) {
+        if(sres == DW_DLV_ERROR && ures == DW_DLV_ERROR) {
+             dwarf_dealloc(dbg,serr,DW_DLA_ERROR);
+             return DW_DLV_ERROR;
+        }
+        if(sres == DW_DLV_ERROR) {
+             *err = serr;
+        }
+        return DW_DLV_ERROR;
+    }
+    /* Both are DW_DLV_NO_ENTRY which is crazy, impossible. */
+    return DW_DLV_NO_ENTRY;
 }
 
 static void
@@ -1783,7 +1840,7 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
                 }
                 break;
             case DW_AT_const_value:
-                wres = formxdata_print_value(attrib,str_out, &err);
+                wres = formxdata_print_value(dbg,attrib,str_out, &err);
                 if(wres == DW_DLV_OK){
                     /* String appended already. */
                 } else if (wres == DW_DLV_NO_ENTRY) {
@@ -1795,7 +1852,7 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
             case DW_AT_upper_bound:
             case DW_AT_lower_bound:
             default:
-                wres = formxdata_print_value(attrib,str_out, &err);
+                wres = formxdata_print_value(dbg,attrib,str_out, &err);
                 if (wres == DW_DLV_OK) {
                     /* String appended already. */
                 } else if (wres == DW_DLV_NO_ENTRY) {

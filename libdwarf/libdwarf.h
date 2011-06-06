@@ -2781,8 +2781,15 @@ int dwarf_get_section_info_by_index(Dwarf_Debug      /*dbg*/,
     Dwarf_Unsigned*  /*section_size*/,
     Dwarf_Error*     /*error*/);
 
-/* Get section count, of object file sections. */
+/*  Get section count, of object file sections. */
 int dwarf_get_section_count(Dwarf_Debug /*dbg*/);
+
+/*  Get the version and offset size of a CU context. 
+    This is useful as a precursor to
+    calling dwarf_get_form_class() at times.  */
+int dwarf_get_version_of_die(Dwarf_Die /*die*/,
+    Dwarf_Half * /*version*/,
+    Dwarf_Half * /*offset_size*/);
 
 /*  Record some application command line options in libdwarf.  
     This is not arc/argv processing, just precooked setting

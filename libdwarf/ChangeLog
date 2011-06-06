@@ -1,4 +1,13 @@
-
+2011-06-06  DavidAnderson <davea42@earthlink.net>
+     * dwarf_error.c: Fix a typo in an error string.
+     * dwarf_query.c: Implement the new function 
+       dwarf_get_verion_of_die().
+     * libdwarf.h: Add prototype for dwarf_get_verion_of_die().
+     * libdwarf2.1.mm: for dwarf_form_{s,u}data, mention
+       the DW_FORM_data{4,8} class ambiguity.
+       Document the new function dwarf_get_verion_of_die().
+       Document version now 1.95.
+     * libdwarf2.1.pdf: Regenerate.
 2011-06-04  DavidAnderson <davea42@earthlink.net>
      * NEWS: Mention the non-elf documentation oversight.
      * dwarf_arange.c,dwarf_elf_access.c, dwarf_frame3.c,

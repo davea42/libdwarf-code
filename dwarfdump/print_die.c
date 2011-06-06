@@ -80,6 +80,8 @@ static int legal_tag_tree_combination(Dwarf_Half parent_tag,
     Dwarf_Half child_tag);
 static int _dwarf_print_one_expr_op(Dwarf_Debug dbg,Dwarf_Loc* expr,
     int index, struct esb_s *string_out);
+static int formxdata_print_value(Dwarf_Debug dbg,Dwarf_Attribute attrib, 
+    struct esb_s *esbp, Dwarf_Error * err, Dwarf_Bool hex_format);
 
 /* esb_base is static so gets initialized to zeros.  
    It is not thread-safe or
@@ -852,9 +854,15 @@ print_one_die(Dwarf_Debug dbg, Dwarf_Die die,
     the val_as_string function is generated
     from dwarf.h.  See <build dir>/dwarf_names.c
 
+    The known_signed bool is set true(nonzero) or false (zero)
+    and *both* uval_out and sval_out are set to the value,
+    though of course uval_out cannot represent a signed
+    value properly and sval_out cannot represent all unsigned
+    values properly.
+
     If string_out is non-NULL then attr_name and val_as_string
     must also be non-NULL.  */
-int
+static int
 get_small_encoding_integer_and_name(Dwarf_Debug dbg,
     Dwarf_Attribute attrib,
     Dwarf_Unsigned * uval_out,
@@ -883,7 +891,8 @@ get_small_encoding_integer_and_name(Dwarf_Debug dbg,
             }
             *uval_out = uval;
         } else {
-            *uval_out = (Dwarf_Unsigned) sval;
+            uval =  (Dwarf_Unsigned) sval; 
+            *uval_out = uval;
         }
     } else {
         *uval_out = uval;
@@ -1601,8 +1610,53 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
             &err, 
             show_form_used);
         break;
-    case DW_AT_location:
     case DW_AT_data_member_location:
+        {   
+            /*  Value is a constant or a location 
+                description or location list. 
+                If a constant, it could be signed or
+                unsigned.  Telling whether a constant
+                or a reference is nontrivial 
+                since DW_FORM_data{4,8}
+                could be either in DWARF{2,3}  */
+            enum Dwarf_Form_Class fc = DW_FORM_CLASS_UNKNOWN;
+            Dwarf_Half theform = 0;
+            Dwarf_Half directform = 0;
+            Dwarf_Half version = 0;
+            Dwarf_Half offset_size = 0;
+            int wres = 0;
+
+            get_form_values(attrib,&theform,&directform);
+            wres = dwarf_get_version_of_die(die ,
+                &version,&offset_size);
+            if(wres != DW_DLV_OK) {
+                print_error(dbg,"Cannot get DIE context version number",wres,err);
+                break;
+            }
+            fc = dwarf_get_form_class(version,attr,offset_size,theform); 
+            if(fc == DW_FORM_CLASS_CONSTANT) {
+                esb_empty_string(&esb_base);
+                wres = formxdata_print_value(dbg,attrib,&esb_base, 
+                      &err, FALSE);
+                show_form_itself(show_form_used, theform, directform,&esb_base);
+                valname = esb_get_string(&esb_base);
+                if(wres == DW_DLV_OK){
+                    /* String appended already. */
+                    break;
+                } else if (wres == DW_DLV_NO_ENTRY) {
+                    print_error(dbg,"Cannot get DW_AT_data_member_location, how can it be NO_ENTRY? ",wres,err);
+                    break;
+                } else {
+                    print_error(dbg,"Cannot get DW_AT_data_member_location ",wres,err);
+                    break;
+                }
+            }
+            /*  FALL THRU, this is a 
+                a location description, or a reference
+                to one, or a mistake. */
+        }
+        /*  FALL THRU to location description */
+    case DW_AT_location:
     case DW_AT_vtable_elem_location:
     case DW_AT_string_length:
     case DW_AT_return_addr:
@@ -1610,7 +1664,9 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
     case DW_AT_static_link:
     case DW_AT_frame_base:
         {
-            /* value is a location description or location list */
+            /*  The value is a location description 
+                or location list. */
+               
             Dwarf_Half theform = 0;
             Dwarf_Half directform = 0;
             get_form_values(attrib,&theform,&directform);
@@ -2444,7 +2500,8 @@ formx_signed(Dwarf_Signed u, struct esb_s *esbp)
     DW_FORM_data1 (ie, unknown signedness) print two ways.
 */
 static int
-formxdata_print_value(Dwarf_Attribute attrib, struct esb_s *esbp,
+formxdata_print_value(Dwarf_Debug dbg,Dwarf_Attribute attrib, 
+    struct esb_s *esbp,
     Dwarf_Error * err, Dwarf_Bool hex_format)
 {
     Dwarf_Signed tempsd = 0;
@@ -2457,7 +2514,8 @@ formxdata_print_value(Dwarf_Attribute attrib, struct esb_s *esbp,
     if(ures == DW_DLV_OK) {
         if(sres == DW_DLV_OK) {
             if(tempud == tempsd) {
-                /*  Data is the same value, so makes no difference which
+                /*  Data is the same value, 
+                    so makes no difference which
                     we print. */
                 formx_unsigned(tempud,esbp,hex_format);
             } else {
@@ -2466,31 +2524,44 @@ formxdata_print_value(Dwarf_Attribute attrib, struct esb_s *esbp,
                 formx_signed(tempsd,esbp);
                 esb_append(esbp,")");
             }
-        } else if (sres == DW_DLV_NO_ENTRY) {
-            formx_unsigned(tempud,esbp,hex_format);
         } else /* DW_DLV_ERROR */{
             formx_unsigned(tempud,esbp,hex_format);
         }
-        return DW_DLV_OK;
-    } else  if (ures == DW_DLV_NO_ENTRY) {
-        if(sres == DW_DLV_OK) {
-            formx_signed(tempsd,esbp);
-            return sres;
-        } else if (sres == DW_DLV_NO_ENTRY) {
-            return sres;
-        } else /* DW_DLV_ERROR */{
-            *err = serr;
-            return sres;
-        }
+        goto cleanup;
+    } else {
+        /* DW_DLV_ERROR */
     } 
     /* else ures ==  DW_DLV_ERROR */ 
     if(sres == DW_DLV_OK) {
         formx_signed(tempsd,esbp);
-    } else if (sres == DW_DLV_NO_ENTRY) {
-        return ures;
     } 
-    /* DW_DLV_ERROR */
-    return ures;
+    /*  Clean up any unused Dwarf_Error data. 
+        DW_DLV_NO_ENTRY cannot really happen,
+        so a complete cleanup for that is
+        not necessary. */
+    cleanup:
+    if(sres == DW_DLV_OK || ures == DW_DLV_OK) {
+        if(sres == DW_DLV_ERROR) {
+             dwarf_dealloc(dbg,serr,DW_DLA_ERROR);
+        }
+        if(ures == DW_DLV_ERROR) {
+             dwarf_dealloc(dbg,*err,DW_DLA_ERROR);
+             *err = 0;
+        }
+        return DW_DLV_OK;
+    }
+    if(sres == DW_DLV_ERROR || ures == DW_DLV_ERROR) {
+        if(sres == DW_DLV_ERROR && ures == DW_DLV_ERROR) {
+             dwarf_dealloc(dbg,serr,DW_DLA_ERROR);
+             return DW_DLV_ERROR;
+        }
+        if(sres == DW_DLV_ERROR) {
+             *err = serr;
+        }
+        return DW_DLV_ERROR;
+    }
+    /* Both are DW_DLV_NO_ENTRY which is crazy, impossible. */
+    return DW_DLV_NO_ENTRY;
 }
 
 static char *
@@ -2546,14 +2617,11 @@ print_exprloc_content(Dwarf_Debug dbg,Dwarf_Die die, Dwarf_Attribute attrib,
 
 
 
-/* Fill buffer with attribute value.
-   We pass in tag so we can try to do the right thing with
-   broken compiler DW_TAG_enumerator 
+/*  Fill buffer with attribute value.
+    We pass in tag so we can try to do the right thing with
+    broken compiler DW_TAG_enumerator 
 
-   We pass in die so  
-
-   We append to esbp's buffer.
-
+    We append to esbp's buffer.
 */
 void
 get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag, 
@@ -2858,7 +2926,7 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
                 break;
             case DW_AT_const_value:
                 /* Do not use hexadecimal format */
-                wres = formxdata_print_value(attrib,esbp, &err, FALSE);
+                wres = formxdata_print_value(dbg,attrib,esbp, &err, FALSE);
                 if(wres == DW_DLV_OK){
                     /* String appended already. */
                 } else if (wres == DW_DLV_NO_ENTRY) {
@@ -2874,7 +2942,7 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
             default:
                 /* Do not use hexadecimal format except for 
                     DW_AT_ranges. */
-                wres = formxdata_print_value(attrib,esbp, &err, 
+                wres = formxdata_print_value(dbg,attrib,esbp, &err, 
                     (DW_AT_ranges == attr));
                 if (wres == DW_DLV_OK) {
                     /* String appended already. */

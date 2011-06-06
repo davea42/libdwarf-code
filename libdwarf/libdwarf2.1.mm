@@ -8,7 +8,7 @@
 .nr Hb 5
 \." ==============================================
 \." Put current date in the following at each rev
-.ds vE rev 1.94, March 4,2011
+.ds vE rev 1.95, June 6, 2011
 \." ==============================================
 \." ==============================================
 .ds | |
@@ -1956,6 +1956,25 @@ consumer code do better error reporting
 in some circumstances, it is not generally needed.
 
 
+.H 3 "dwarf_get_version_of_die()"
+.DS
+\f(CWint dwarf_get_version_of_die(Dwarf_Die die,
+    Dwarf_Half *version,
+    Dwarf_Half *offset_size)\fP
+.DE
+The function returns the CU context version through \f(CW*version\fP
+and the CU context offset-size through \f(CW*offset_size\fP and
+returns \f(CWDW_DLV_OK\fP on success.
+
+In case of error, the only errors possible involve
+an inappropriate NULL \f(CWdie\fP pointer so no Dwarf_Debug
+pointer is available.  Therefore setting a Dwarf_Error would not
+be very meaningful (there is no Dwarf_Debug to
+attach it to).  The function returns DW_DLV_ERROR on error.
+
+The values returned through the pointers are the values
+two arguments to  dwarf_get_form_class() requires.
+
 .H 3 "dwarf_attrlist()"
 .DS
 \f(CWint dwarf_attrlist(
@@ -2394,6 +2413,13 @@ It is an
 error for the form to not belong to this class.  
 It returns \f(CWDW_DLV_ERROR\fP on error.
 
+Never returns \f(CWDW_DLV_NO_ENTRY\fP.
+
+For DWARF2 and DWARF3, \f(CWDW_FORM_data4\fP and \f(CWDW_FORM_data8\fP
+are possibly class \f(CWCONSTANT\fP, 
+and for DWARF4 and later they
+are definitely class \f(CWCONSTANT\fP.
+
 .H 3 "dwarf_formsdata()"
 .DS
 \f(CWint dwarf_formsdata(
@@ -2413,6 +2439,13 @@ If the size of the data
 attribute referenced is smaller than the size of the \f(CWDwarf_Signed\fP
 type, its value is sign extended.  
 It returns \f(CWDW_DLV_ERROR\fP on error.
+
+Never returns \f(CWDW_DLV_NO_ENTRY\fP.
+
+For DWARF2 and DWARF3, \f(CWDW_FORM_data4\fP and \f(CWDW_FORM_data8\fP
+are possibly class \f(CWCONSTANT\fP, 
+and for DWARF4 and later they
+are definitely class \f(CWCONSTANT\fP.
 
 .H 3 "dwarf_formblock()"
 .DS
@@ -2540,6 +2573,8 @@ correct class given the arguments
 presented.  Some user-defined
 attributes might have this problem.
 
+The function \f(CWdwarf_get_version_of_die()\fP may be helpful
+in filling out arguments for a call to \f(CWdwarf_get_form_class()\fP.
 
 .H 3 "dwarf_loclist_n()"
 .DS
