@@ -1,4 +1,5 @@
 2011-06-07  DavidAnderson <davea42@earthlink.net>
+      * CODINGSTYLE: Added this new document.
       * common.c: Updated version string.
       * dwarfdump.c: Updated version string, fixed indentation.
       * print_lines.c: Two line table checks moved from
