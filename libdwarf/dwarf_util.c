@@ -266,6 +266,7 @@ _dwarf_get_abbrev_for_code(Dwarf_CU_Context cu_context, Dwarf_Unsigned code)
     Dwarf_Hash_Table_Entry inner_hash_entry = 0; 
 
     Dwarf_Byte_Ptr abbrev_ptr = 0;
+    Dwarf_Byte_Ptr end_abbrev_ptr = 0;
     unsigned hashable_val = 0;
 
     if ( !hash_table_base->tb_entries ) {
@@ -323,8 +324,15 @@ _dwarf_get_abbrev_for_code(Dwarf_CU_Context cu_context, Dwarf_Unsigned code)
     abbrev_ptr = cu_context->cc_last_abbrev_ptr != NULL ?
         cu_context->cc_last_abbrev_ptr :
         dbg->de_debug_abbrev.dss_data + cu_context->cc_abbrev_offset;
+    end_abbrev_ptr = dbg->de_debug_abbrev.dss_data +
+            dbg->de_debug_abbrev.dss_size;
 
-    /* End of abbrev's for this cu, since abbrev code is 0. */
+    /*  End of abbrev's as we are past the end entirely.
+        THis can happen */
+    if (abbrev_ptr > end_abbrev_ptr) {
+        return (NULL);
+    }
+    /*  End of abbrev's for this cu, since abbrev code is 0. */
     if (*abbrev_ptr == 0) {
         return (NULL);
     }
@@ -362,7 +370,11 @@ _dwarf_get_abbrev_for_code(Dwarf_CU_Context cu_context, Dwarf_Unsigned code)
             DECODE_LEB128_UWORD(abbrev_ptr, attr_form);
         } while (attr_name != 0 && attr_form != 0);
 
-    } while (*abbrev_ptr != 0 && abbrev_code != code);
+        /* We may have fallen off the end of content,  that is not
+           a botch in the section, as there is no rule that the last
+           abbrev need have abbrev_code of 0. */
+    } while ( (abbrev_ptr < end_abbrev_ptr ) && 
+        *abbrev_ptr != 0 && abbrev_code != code);
 
     cu_context->cc_last_abbrev_ptr = abbrev_ptr;
     return (abbrev_code == code ? inner_list_entry : NULL);

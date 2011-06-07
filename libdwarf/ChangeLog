@@ -1,3 +1,11 @@
+2011-06-07  DavidAnderson <davea42@earthlink.net>
+     * dwarf_util.c(_dwarf_get_abbrev_for_code): If there is no
+       section padding the code could read-from-memory 
+       one past the end of the section
+       which could (in very rare circumstances) coredump
+       an application. In addition, earlier in the same funcion 
+       we did not account for the case where we had already read to
+       end of section. Both fixed.
 2011-06-06  DavidAnderson <davea42@earthlink.net>
      * dwarf_error.c: Fix a typo in an error string.
      * dwarf_query.c: Implement the new function 
