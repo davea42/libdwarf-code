@@ -195,6 +195,7 @@ libdwarf/dwarf_harmless.h \
 libdwarf/pro_util.h \
 libdwarf/pro_opaque.h \
 libdwarf/pro_reloc_stream.c \
+libdwarf/CODINGSTYLE \
 libdwarf/LIBDWARFCOPYRIGHT \
 libdwarf/index.v2.pdf \
 libdwarf/dwarf_macro.h \
