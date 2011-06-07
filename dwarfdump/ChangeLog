@@ -1,4 +1,10 @@
 2011-06-07  DavidAnderson <davea42@earthlink.net>
+      * dwarfdump.c: Refactor setting of do_print_dwarf 
+        and do_check_dwarf into a function. 
+      * print_lines.c (print_line_numbers_this_cu): When not checking 
+        added a check to insure we don't try to call a 
+        checking-related function.
+2011-06-07  DavidAnderson <davea42@earthlink.net>
       * CODINGSTYLE: Added this new document.
       * common.c: Updated version string.
       * dwarfdump.c: Updated version string, fixed indentation.

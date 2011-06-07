@@ -330,6 +330,21 @@ Dwarf_Unsigned cu_offset = 0;
 
 Dwarf_Error err;
 
+static void suppress_check_dwarf()
+{
+    do_print_dwarf = TRUE;
+    if(do_check_dwarf) {
+        fprintf(stderr,"Warning: check flag turned off, "
+            "checking and printing are separate.\n");
+    }
+    do_check_dwarf = FALSE;
+}
+static void suppress_print_dwarf()
+{
+    do_print_dwarf = FALSE;
+    do_check_dwarf = TRUE;
+}
+
 static int process_one_file(Elf * elf, string file_name, int archive,
     struct dwconf_s *conf);
 static int
@@ -945,10 +960,6 @@ process_one_file(Elf * elf, string file_name, int archive,
 static void 
 do_all()
 {
-    /* Enable print, disable check */
-    do_print_dwarf = TRUE;
-    do_check_dwarf = FALSE;
-
     info_flag = line_flag = frame_flag = TRUE;
     pubnames_flag = macinfo_flag = TRUE;
     aranges_flag = TRUE;
@@ -1023,6 +1034,7 @@ process_args(int argc, char *argv[])
 
     program_name = argv[0];
 
+    suppress_check_dwarf();
     if (argv[1] != NULL && argv[1][0] != '-') {
         do_all();
     }
@@ -1080,22 +1092,22 @@ process_args(int argc, char *argv[])
         case 'g':
             use_old_dwarf_loclist = TRUE;
             info_flag = TRUE;
-            do_print_dwarf = TRUE;
+            suppress_check_dwarf();
             break;
         case 'i':
-            do_print_dwarf = TRUE;
             info_flag = TRUE;
+            suppress_check_dwarf();
             break;
         case 'n':
             suppress_nested_name_search = TRUE;
             break;
         case 'l':
-            do_print_dwarf = TRUE;
             line_flag = TRUE;
+            suppress_check_dwarf();
             break;
         case 'f':
-            do_print_dwarf = TRUE;
             frame_flag = TRUE;
+            suppress_check_dwarf();
             break;
         case 'H': 
             {
@@ -1106,35 +1118,35 @@ process_args(int argc, char *argv[])
             }
             break;
         case 'F':
-            do_print_dwarf = TRUE;
             eh_frame_flag = TRUE;
+            suppress_check_dwarf();
             break;
         case 'b':
-            do_print_dwarf = TRUE;
             abbrev_flag = TRUE;
+            suppress_check_dwarf();
             break;
         case 'p':
-            do_print_dwarf = TRUE;
             pubnames_flag = TRUE;
+            suppress_check_dwarf();
             break;
         case 'P':
             /* List of CUs per compiler */
             producer_children_flag = TRUE;
             break;
         case 'r':
-            do_print_dwarf = TRUE;
             aranges_flag = TRUE;
+            suppress_check_dwarf();
             break;
         case 'N':
-            do_print_dwarf = TRUE;
             ranges_flag = TRUE;
+            suppress_check_dwarf();
             break;
         case 'R':
             generic_1200_regs = TRUE;
             break;
         case 'm':
-            do_print_dwarf = TRUE;
             macinfo_flag = TRUE;
+            suppress_check_dwarf();
             break;
         case 'c':
             /* Specify compiler name. */
@@ -1165,15 +1177,17 @@ process_args(int argc, char *argv[])
                     }
                 }
             } else {
-                do_print_dwarf = TRUE;
                 loc_flag = TRUE;
+                suppress_check_dwarf();
             }
             break;
         case 'Q':
+            /* Q suppresses section data printing. */
             do_print_dwarf = FALSE;
             break;
         case 's':
             string_flag = TRUE;
+            suppress_check_dwarf();
             break;
         case 'S':
             /* -S option: strings for 'any' and 'match' */
@@ -1226,6 +1240,7 @@ process_args(int argc, char *argv[])
             break;
 
         case 'a':
+            suppress_check_dwarf();
             do_all();
             break;
         case 'v':
@@ -1237,7 +1252,9 @@ process_args(int argc, char *argv[])
             exit(OKAY);
             break;
         case 'd':
-            do_print_dwarf = TRUE;
+            /* This is sort of useless unless printing,
+               but harmless, so we do not insist we
+              are printing with supporess_check_dwarf(). */
             dense = TRUE;
             break;
         case 'D':
@@ -1245,7 +1262,7 @@ process_args(int argc, char *argv[])
             display_offsets = FALSE;
             break;
         case 'e':
-            do_print_dwarf = TRUE;
+            suppress_check_dwarf();
             ellipsis = TRUE;
             break;
         case 'E':
@@ -1274,8 +1291,7 @@ process_args(int argc, char *argv[])
             }
             break;
         case 'k':
-            do_check_dwarf = TRUE;
-            do_print_dwarf = FALSE;
+            suppress_print_dwarf();
             oarg = optarg[0];
             switch (oarg) {
             case 'a':
@@ -1423,17 +1439,17 @@ process_args(int argc, char *argv[])
             case 'a':
                 /* all */
                 static_func_flag = static_var_flag = TRUE;
-                do_print_dwarf = TRUE;
+                suppress_check_dwarf();
                 break;
             case 'f':
                 /* .debug_static_func */
-                do_print_dwarf = TRUE;
                 static_func_flag = TRUE;
+                suppress_check_dwarf();
                 break;
             case 'v':
-                do_print_dwarf = TRUE;
                 /* .debug_static_var */
                 static_var_flag = TRUE;
+                suppress_check_dwarf();
                 break;
             default:
                 usage_error = TRUE;
@@ -1441,12 +1457,12 @@ process_args(int argc, char *argv[])
             }
             break;
         case 'y':               /* .debug_types */
-            do_print_dwarf = TRUE;
+            suppress_check_dwarf();
             type_flag = TRUE;
             break;
         case 'w':               /* .debug_weaknames */
             weakname_flag = TRUE;
-            do_print_dwarf = TRUE;
+            suppress_check_dwarf();
             break;
         case 'z':
             fprintf(stderr, "-z is no longer supported:ignored\n");

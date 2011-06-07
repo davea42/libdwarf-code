@@ -234,7 +234,7 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
                 DWARF_CHECK_COUNT(decl_file_result,1);
                 if (found_line_error) {
                     DWARF_CHECK_ERROR2(decl_file_result,where,dwarf_errmsg(err));
-                } else {
+                } else if (do_check_dwarf) {
                     /*  Check the address lies with a valid [lowPC:highPC]
                         in the .text section*/
                     if (IsValidInBucketGroup(pRangesInfo,pc)) {
