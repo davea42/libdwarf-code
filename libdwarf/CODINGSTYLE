@@ -29,6 +29,9 @@ dwarf_.  Non-static libdwarf global data and functions
 should begin with _dwarf (a somewhat questionable
 approach, but workable).
 
+Function names should be all lower case with underbars
+for readability.
+
 There should never be static data in any function.
 Nor should there ever be static data outside of libdwarf
 functions.  libdwarf can be called from multiple threads
