@@ -1836,7 +1836,7 @@ int get_producer_name(Dwarf_Debug dbg, Dwarf_Die cu_die,
         print_error(dbg, "hassattr on DW_AT_producer", ares, err);
     } else {
         if (ares == DW_DLV_NO_ENTRY) {
-            *producer_name = "<unknown producer>";
+            *producer_name = "<CU-missing-DW_AT_producer>";
         } else {
             /* DW_DLV_OK */
             /*  The string return is valid until the next call to this

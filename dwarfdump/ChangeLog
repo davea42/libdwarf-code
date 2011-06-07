@@ -1,4 +1,9 @@
 2011-06-06  DavidAnderson <davea42@earthlink.net>
+      * dwarfdump.c: Changed the missing-producer-attribute
+        default string used in summary/error
+        outputs to  "<CU-missing-DW_AT_producer>"
+        so it is this string clearer.
+2011-06-06  DavidAnderson <davea42@earthlink.net>
       * print_die.c: Now we strip off quotes dwarfdump
         added so -S match=main and the like work.
 2011-06-06  DavidAnderson <davea42@earthlink.net>
