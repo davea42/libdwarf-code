@@ -110,6 +110,7 @@ for i in dwarfdump/addrmap.c \
 dwarfdump/addrmap.h \
 dwarfdump/makename.c \
 dwarfdump/esb.h \
+dwarfdump/CODINGSTYLE \
 dwarfdump/DWARFDUMPCOPYRIGHT \
 dwarfdump/tag_tree.list \
 dwarfdump/tag_tree_ext.list \
