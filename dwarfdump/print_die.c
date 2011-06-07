@@ -291,6 +291,8 @@ print_infos(Dwarf_Debug dbg)
         need_CU_name = TRUE;
         need_CU_base_address = TRUE;
         need_CU_high_address = TRUE;
+        seen_PU_base_address = FALSE;
+        seen_PU_high_address = FALSE;
 
         /*  Release the 'cu_die' created by the call
             to 'dwarf_siblingof' at the top of the main loop. */
@@ -1694,7 +1696,7 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
             if(fc == DW_FORM_CLASS_CONSTANT) {
                 esb_empty_string(&esb_base);
                 wres = formxdata_print_value(dbg,attrib,&esb_base, 
-                      &err, FALSE);
+                    &err, FALSE);
                 show_form_itself(show_form_used, theform, directform,&esb_base);
                 valname = esb_get_string(&esb_base);
                 if(wres == DW_DLV_OK){
@@ -2592,21 +2594,21 @@ formxdata_print_value(Dwarf_Debug dbg,Dwarf_Attribute attrib,
     cleanup:
     if(sres == DW_DLV_OK || ures == DW_DLV_OK) {
         if(sres == DW_DLV_ERROR) {
-             dwarf_dealloc(dbg,serr,DW_DLA_ERROR);
+            dwarf_dealloc(dbg,serr,DW_DLA_ERROR);
         }
         if(ures == DW_DLV_ERROR) {
-             dwarf_dealloc(dbg,*err,DW_DLA_ERROR);
-             *err = 0;
+            dwarf_dealloc(dbg,*err,DW_DLA_ERROR);
+            *err = 0;
         }
         return DW_DLV_OK;
     }
     if(sres == DW_DLV_ERROR || ures == DW_DLV_ERROR) {
         if(sres == DW_DLV_ERROR && ures == DW_DLV_ERROR) {
-             dwarf_dealloc(dbg,serr,DW_DLA_ERROR);
-             return DW_DLV_ERROR;
+            dwarf_dealloc(dbg,serr,DW_DLA_ERROR);
+            return DW_DLV_ERROR;
         }
         if(sres == DW_DLV_ERROR) {
-             *err = serr;
+            *err = serr;
         }
         return DW_DLV_ERROR;
     }

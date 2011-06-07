@@ -57,7 +57,7 @@ $Header: /plroot/cmplrs.src/v7.4.5m/.RCS/PL/dwarfdump/RCS/dwarfdump.c,v 1.48 200
 extern int elf_open(char *name,int mode);
 #endif
 
-#define DWARFDUMP_VERSION " Mon Jun  6 13:26:17 PDT 2011  "
+#define DWARFDUMP_VERSION " Tue Jun  7 08:42:03 PDT 2011  "
 
 extern char *optarg;
 
@@ -1836,12 +1836,12 @@ int get_producer_name(Dwarf_Debug dbg, Dwarf_Die cu_die,
         print_error(dbg, "hassattr on DW_AT_producer", ares, err);
     } else {
         if (ares == DW_DLV_NO_ENTRY) {
-            /* We add extra quotes so it looks more like
-               the names for real producers that get_attr_value
-               produces. */
+            /*  We add extra quotes so it looks more like
+                the names for real producers that get_attr_value
+                produces. */
             *producer_name = "\"<CU-missing-DW_AT_producer>\"";
         } else {
-            /* DW_DLV_OK */
+            /*  DW_DLV_OK */
             /*  The string return is valid until the next call to this
                 function; so if the caller needs to keep the returned
                 string, the string must be copied (makename()). */

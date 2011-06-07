@@ -1,3 +1,16 @@
+2011-06-07  DavidAnderson <davea42@earthlink.net>
+      * common.c: Updated version string.
+      * dwarfdump.c: Updated version string, fixed indentation.
+      * print_lines.c: Two line table checks moved from
+        decl_file to line_table sections of the summary report
+        and both now show the possibly-wrong pc.
+        Since one is not necessarily a bug, the wording of the
+        message now has 'possibly' in it.
+      * print_die.c: Reinitialize subprogram-relative pc high/low
+        seen_PU_high_address
+        whenever compilation unit changes, and use that field
+        to avoid an erroneous  comparison (when checking for an error).
+        Fix some indentation errors introduced recently.
 2011-06-06  DavidAnderson <davea42@earthlink.net>
       * dwarfdump.c: Changed the missing-producer-attribute
         default string used in summary/error

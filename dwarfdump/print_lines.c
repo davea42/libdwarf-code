@@ -1,3 +1,4 @@
+
 /* 
   Copyright (C) 2000-2006 Silicon Graphics, Inc.  All Rights Reserved.
   Portions Copyright 2007-2010 Sun Microsystems, Inc. All rights reserved.
@@ -248,15 +249,22 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
                             table if try to match the pc value with 
                             one of those ranges.
                         */
+                        DWARF_CHECK_COUNT(lines_result,1);
                         if (FindAddressInBucketGroup(pLinkonceInfo,pc)){
                             /* Valid values; do nothing */
                         } else {
-                            /*  The SN Systems Linker generates line records 
+                            /*  The SN Systems Linker generates 
+                                line records 
                                 with addr=0, when dealing with linkonce 
                                 symbols and no stripping */
                             if (pc) {
-                                DWARF_CHECK_ERROR(decl_file_result,
-                                    ".debug_line: Address outside a valid .text range");
+                                char addr_tmp[100];
+                                snprintf(addr_tmp,sizeof(addr_tmp),
+                                    ".debug_line: Address"
+                                    " 0x%" DW_PR_XZEROS DW_PR_DUx
+                                    " outside a valid .text range",pc);
+                                DWARF_CHECK_ERROR(lines_result,
+                                    addr_tmp);
                             } else {
                                 SkipRecord = TRUE;
                             }
@@ -267,15 +275,29 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
                         is the same as the high_pc
                         address for the last known user program 
                         unit (PU) */
-                    if (i + 1 == linecount) {
+                    if ((i + 1 == linecount) &&
+                        seen_PU_high_address) {
                         /*  Ignore those PU that have been stripped 
                             by the linker; their low_pc values are 
-                            set to -1 */
-                        if (pc != PU_high_address && 
-                            PU_base_address != elf_max_address) {
-                            DWARF_CHECK_ERROR(decl_file_result,
-                                ".debug_line: Invalid address for "
-                                "DW_LNE_end_sequence");
+                            set to -1 (snc linker only) */
+                        /*  It is perfectly sensible for a compiler
+                            to leave a few bytes of NOP or other stuff
+                            after the last instruction in a subprogram,
+                            for cache-alignment or other purposes, so
+                            a mismatch here is not necessarily 
+                            an error.  */
+                           
+                        DWARF_CHECK_COUNT(lines_result,1);
+                        if ((pc != PU_high_address) && 
+                            (PU_base_address != elf_max_address)) {
+                            char addr_tmp[100];
+                            snprintf(addr_tmp,sizeof(addr_tmp),
+                                ".debug_line: Address"
+                                " 0x%" DW_PR_XZEROS DW_PR_DUx
+                                " may be incorrect" 
+                                " as DW_LNE_end_sequence address",pc);
+                            DWARF_CHECK_ERROR(lines_result,
+                                addr_tmp);
                         }
                     }
                 }
