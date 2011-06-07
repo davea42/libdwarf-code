@@ -1,4 +1,7 @@
 2011-06-06  DavidAnderson <davea42@earthlink.net>
+      * print_die.c: Now we strip off quotes dwarfdump
+        added so -S match=main and the like work.
+2011-06-06  DavidAnderson <davea42@earthlink.net>
       * common.c: Updated version string.
       * dwarfdump.c: Updated version string.
       * print_die.c: Corrected handling of DW_AT_data_member_location.

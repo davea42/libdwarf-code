@@ -1483,6 +1483,63 @@ dot_ok_in_identifier(int tag,Dwarf_Die die, const char *val)
     }
     return 0;
 }
+
+static void
+trim_quotes(const char *val,struct esb_s *es)
+{
+    if(val[0] == '"') {
+        size_t l = strlen(val);
+        if(l > 2 && val[l-1] == '"') {
+            esb_appendn(es,val+1,l-2);  
+            return;
+        }
+    }
+    esb_append(es,val);
+}
+
+static int
+have_a_search_match(const char *valname,const char *atname)
+{
+    /*  valname may have had quotes inserted, but search_match_text
+        will not. So we need to use a new copy, not valname here.
+        */
+    struct esb_s esb_match;
+    char *s2;
+    esb_constructor(&esb_match);
+
+    trim_quotes(valname,&esb_match);
+    s2 = esb_get_string(&esb_match); 
+    if (search_match_text ) {
+        if(!strcmp(s2,search_match_text) ||
+            !strcmp(atname,search_match_text)) {
+
+            esb_destructor(&esb_match);
+            return TRUE;
+        }
+    } 
+    if (search_any_text) { 
+        if(is_strstrnocase(s2,search_any_text) ||
+            is_strstrnocase(atname,search_any_text)) {
+
+            esb_destructor(&esb_match);
+            return TRUE;
+        }
+    }
+#ifdef HAVE_REGEX
+    if (search_regex_text) { 
+        if(!regexec(&search_re,s2,0,NULL,0) ||
+            !regexec(&search_re,atname,0,NULL,0)) {
+
+            esb_destructor(&esb_match);
+            return TRUE;
+        }
+    }
+#endif
+    esb_destructor(&esb_match);
+    return FALSE;
+}
+
+
 static boolean
 print_attribute(Dwarf_Debug dbg, Dwarf_Die die, 
     Dwarf_Half attr,
@@ -2064,15 +2121,8 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
         break;
     }
     if (!print_information) {
-        if ( (search_match_text && !strcmp(valname,search_match_text)) ||
-            (search_match_text && !strcmp(atname,search_match_text)) ||
-            (search_any_text && is_strstrnocase(valname,search_any_text)) ||
-            (search_any_text && is_strstrnocase(atname,search_any_text)) 
-#ifdef HAVE_REGEX
-            || (search_regex_text && !regexec(&search_re,valname,0,NULL,0))
-            || (search_regex_text && !regexec(&search_re,atname,0,NULL,0))
-#endif
-            ) {
+        if(have_a_search_match(valname,atname) )
+        {
             if (search_wide_format) {
                 found_search_attr = TRUE;
             } else {
