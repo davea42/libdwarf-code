@@ -46,6 +46,7 @@
 #include <stdlib.h>
 
 #include "dwarf_incl.h"
+#include "dwarf_harmless.h"
 #include "malloc_check.h"
 
 #define DWARF_DBG_ERROR(dbg,errval,retval) \
