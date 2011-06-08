@@ -1,4 +1,8 @@
 2011-06-08  DavidAnderson <davea42@earthlink.net>
+     * libdwarf2.1.mm,libdwarf2.1.pdf: Now discusses
+       DW_AT_data_member_location in the context
+       if dwarf_loclist_n(). Rev 1.96
+2011-06-08  DavidAnderson <davea42@earthlink.net>
      * dwarf_init_finish.c: Inserted missing include of
        dwarf_harmless.h.
 2011-06-07  DavidAnderson <davea42@earthlink.net>
