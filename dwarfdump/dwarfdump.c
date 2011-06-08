@@ -1252,9 +1252,9 @@ process_args(int argc, char *argv[])
             exit(OKAY);
             break;
         case 'd':
-            /* This is sort of useless unless printing,
-               but harmless, so we do not insist we
-              are printing with supporess_check_dwarf(). */
+            /*  This is sort of useless unless printing,
+                but harmless, so we do not insist we
+                are printing with supporess_check_dwarf(). */
             dense = TRUE;
             break;
         case 'D':

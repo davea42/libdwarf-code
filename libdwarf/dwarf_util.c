@@ -325,7 +325,7 @@ _dwarf_get_abbrev_for_code(Dwarf_CU_Context cu_context, Dwarf_Unsigned code)
         cu_context->cc_last_abbrev_ptr :
         dbg->de_debug_abbrev.dss_data + cu_context->cc_abbrev_offset;
     end_abbrev_ptr = dbg->de_debug_abbrev.dss_data +
-            dbg->de_debug_abbrev.dss_size;
+        dbg->de_debug_abbrev.dss_size;
 
     /*  End of abbrev's as we are past the end entirely.
         THis can happen */
@@ -370,9 +370,9 @@ _dwarf_get_abbrev_for_code(Dwarf_CU_Context cu_context, Dwarf_Unsigned code)
             DECODE_LEB128_UWORD(abbrev_ptr, attr_form);
         } while (attr_name != 0 && attr_form != 0);
 
-        /* We may have fallen off the end of content,  that is not
-           a botch in the section, as there is no rule that the last
-           abbrev need have abbrev_code of 0. */
+        /*  We may have fallen off the end of content,  that is not
+            a botch in the section, as there is no rule that the last
+            abbrev need have abbrev_code of 0. */
     } while ( (abbrev_ptr < end_abbrev_ptr ) && 
         *abbrev_ptr != 0 && abbrev_code != code);
 

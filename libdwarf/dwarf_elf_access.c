@@ -479,6 +479,14 @@ get_relocation_entries(Dwarf_Bool is_64bit,
     return(DW_DLV_OK);
 }
 
+/*  We have a EM_QUALCOMM_DSP6 relocatable object
+    test case in dwarf regression tests, atefail/ig_server.
+    Values for QUALCOMM were derived from this executable.
+*/
+   
+#define EM_QUALCOMM_DSP6 0xa4
+#define QUALCOMM_REL32   6
+
 static Dwarf_Bool
 is_32bit_abs_reloc(unsigned int type, Dwarf_Half machine) 
 {
@@ -534,6 +542,9 @@ is_32bit_abs_reloc(unsigned int type, Dwarf_Half machine)
         r = (type == R_X86_64_32);
         break;
 #endif
+    case  EM_QUALCOMM_DSP6:
+        r = (type == QUALCOMM_REL32);
+        break;
     }
     return r;
 }

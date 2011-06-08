@@ -2,7 +2,7 @@
       * dwarfdump.c: Refactor setting of do_print_dwarf 
         and do_check_dwarf into a function. Ensure that one of
         the refactored new functions is called in every case
-        an option requires such call.
+        an option requires such call. Ensured indents ok.
       * print_lines.c (print_line_numbers_this_cu): When not checking 
         added a check to insure we don't try to call a 
         checking-related function.

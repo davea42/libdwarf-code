@@ -1,4 +1,10 @@
 2011-06-07  DavidAnderson <davea42@earthlink.net>
+     * dwarf_elf_access.c: Added EM_QUALCOMM_DSP6 
+       machine so that relocations work on a
+       Qualcomm relocatable object in the dwarf regressiontests.
+     * dwarf_util.c: Fixed indent problems added in previous
+       change.
+2011-06-07  DavidAnderson <davea42@earthlink.net>
      * dwarf_util.c(_dwarf_get_abbrev_for_code): If there is no
        section padding the code could read-from-memory 
        one past the end of the section
