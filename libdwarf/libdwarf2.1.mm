@@ -8,7 +8,7 @@
 .nr Hb 5
 \." ==============================================
 \." Put current date in the following at each rev
-.ds vE rev 1.95, June 6, 2011
+.ds vE rev 1.96, June 8, 2011
 \." ==============================================
 \." ==============================================
 .ds | |
@@ -2612,10 +2612,20 @@ but arbitrary values.  Specifically, ld_lopc is set to 0 and
 ld_hipc is set to all-bits-on. And \f(CW*listlen\fP is set to 1.
 .P
 It returns \f(CWDW_DLV_ERROR\fP on error. 
+.P
 \f(CWdwarf_loclist_n()\fP works on \f(CWDW_AT_location\fP, 
 \f(CWDW_AT_data_member_location\fP, \f(CWDW_AT_vtable_elem_location\fP,
 \f(CWDW_AT_string_length\fP, \f(CWDW_AT_use_location\fP, and 
 \f(CWDW_AT_return_addr\fP attributes.  
+.P
+If the attribute is \f(CWDW_AT_data_member_location\fP the value
+may be of class CONSTANT.  \f(CWdwarf_loclist_n()\fP is unable
+to read class CONSTANT, so you need to first determine the
+class using \f(CWdwarf_get_form_class()\fP and if it is
+class CONSTANT call
+\f(CWdwarf_formsdata()\fP or \f(CWdwarf_formudata()\fP
+to get the constant value (you may need to call both as
+DWARF4 does not define the signedness of the constant value).
 .P
 Storage allocated by a successful call of \f(CWdwarf_loclist_n()\fP should 
 be deallocated when no longer of interest (see \f(CWdwarf_dealloc()\fP).
