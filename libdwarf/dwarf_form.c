@@ -42,29 +42,51 @@
 #include "dwarf_incl.h"
 #include "dwarf_die_deliv.h"
 
-int
-dwarf_hasform(Dwarf_Attribute attr,
-    Dwarf_Half form,
-    Dwarf_Bool * return_bool, Dwarf_Error * error)
+/* This code was repeated many times, now it
+   is all in one place. */
+static int 
+get_attr_dbg(Dwarf_Debug *dbg,
+    Dwarf_CU_Context * cu_context, 
+    Dwarf_Attribute attr, 
+    Dwarf_Error *error)
 {
-    Dwarf_CU_Context cu_context = 0;
-
+    Dwarf_CU_Context cup;
     if (attr == NULL) {
         _dwarf_error(NULL, error, DW_DLE_ATTR_NULL);
         return (DW_DLV_ERROR);
     }
 
-    cu_context = attr->ar_cu_context;
-    if (cu_context == NULL) {
+    cup = attr->ar_cu_context;
+    if (cup == NULL) {
         _dwarf_error(NULL, error, DW_DLE_ATTR_NO_CU_CONTEXT);
         return (DW_DLV_ERROR);
     }
 
-    if (cu_context->cc_dbg == NULL) {
+    if (cup->cc_dbg == NULL) {
         _dwarf_error(NULL, error, DW_DLE_ATTR_DBG_NULL);
         return (DW_DLV_ERROR);
     }
+    *cu_context = cup;
+    *dbg = cup->cc_dbg;
+    return DW_DLV_OK;
 
+}
+
+/*  Since this returns section-relative debug_info offsets,
+    this can represent all REFERENCE forms correctly
+    and allows all applicable forms. */
+int
+dwarf_hasform(Dwarf_Attribute attr,
+    Dwarf_Half form,
+    Dwarf_Bool * return_bool, Dwarf_Error * error)
+{
+    Dwarf_Debug dbg = 0;
+    Dwarf_CU_Context cu_context = 0;
+
+    int res  =get_attr_dbg(&dbg,&cu_context, attr,error);
+    if (res != DW_DLV_OK) {
+        return res;
+    }
     *return_bool = (attr->ar_attribute_form == form);
     return DW_DLV_OK;
 }
@@ -186,23 +208,12 @@ dwarf_whatform(Dwarf_Attribute attr,
     Dwarf_Half * return_form, Dwarf_Error * error)
 {
     Dwarf_CU_Context cu_context = 0;
+    Dwarf_Debug dbg = 0;
 
-    if (attr == NULL) {
-        _dwarf_error(NULL, error, DW_DLE_ATTR_NULL);
-        return (DW_DLV_ERROR);
+    int res  =get_attr_dbg(&dbg,&cu_context, attr,error);
+    if (res != DW_DLV_OK) {
+        return res;
     }
-
-    cu_context = attr->ar_cu_context;
-    if (cu_context == NULL) {
-        _dwarf_error(NULL, error, DW_DLE_ATTR_NO_CU_CONTEXT);
-        return (DW_DLV_ERROR);
-    }
-
-    if (cu_context->cc_dbg == NULL) {
-        _dwarf_error(NULL, error, DW_DLE_ATTR_DBG_NULL);
-        return (DW_DLV_ERROR);
-    }
-
     *return_form = attr->ar_attribute_form;
     return (DW_DLV_OK);
 }
@@ -218,23 +229,12 @@ dwarf_whatattr(Dwarf_Attribute attr,
     Dwarf_Half * return_attr, Dwarf_Error * error)
 {
     Dwarf_CU_Context cu_context = 0;
+    Dwarf_Debug dbg = 0;
 
-    if (attr == NULL) {
-        _dwarf_error(NULL, error, DW_DLE_ATTR_NULL);
-        return (DW_DLV_ERROR);
+    int res  =get_attr_dbg(&dbg,&cu_context, attr,error);
+    if (res != DW_DLV_OK) {
+        return res;
     }
-
-    cu_context = attr->ar_cu_context;
-    if (cu_context == NULL) {
-        _dwarf_error(NULL, error, DW_DLE_ATTR_NO_CU_CONTEXT);
-        return (DW_DLV_ERROR);
-    }
-
-    if (cu_context->cc_dbg == NULL) {
-        _dwarf_error(NULL, error, DW_DLE_ATTR_DBG_NULL);
-        return (DW_DLV_ERROR);
-    }
-
     *return_attr = (attr->ar_attribute);
     return DW_DLV_OK;
 }
@@ -248,24 +248,13 @@ int
 dwarf_convert_to_global_offset(Dwarf_Attribute attr,
     Dwarf_Off offset, Dwarf_Off * ret_offset, Dwarf_Error * error)
 {
-    Dwarf_Debug dbg;
-    Dwarf_CU_Context cu_context;
+    Dwarf_Debug dbg = 0;
+    Dwarf_CU_Context cu_context = 0;
   
-    if (attr == NULL) {
-        _dwarf_error(NULL, error, DW_DLE_ATTR_NULL);
-        return (DW_DLV_ERROR);
-    }
-    cu_context = attr->ar_cu_context;
-    if (cu_context == NULL) {
-        _dwarf_error(NULL, error, DW_DLE_ATTR_NO_CU_CONTEXT);
-        return (DW_DLV_ERROR);
-    }
-
-    if (cu_context->cc_dbg == NULL) {
-        _dwarf_error(NULL, error, DW_DLE_ATTR_DBG_NULL);
-        return (DW_DLV_ERROR);
-    }
-    dbg = cu_context->cc_dbg;
+    int res  = get_attr_dbg(&dbg,&cu_context,attr,error);
+    if(res != DW_DLV_OK) { 
+        return res;
+    } 
 
     switch (attr->ar_attribute_form) {
     case DW_FORM_ref1:
@@ -329,23 +318,10 @@ dwarf_formref(Dwarf_Attribute attr,
 
 
     *ret_offset = 0;
-    if (attr == NULL) {
-        _dwarf_error(NULL, error, DW_DLE_ATTR_NULL);
-        return (DW_DLV_ERROR);
-    }
-
-    cu_context = attr->ar_cu_context;
-    if (cu_context == NULL) {
-        _dwarf_error(NULL, error, DW_DLE_ATTR_NO_CU_CONTEXT);
-        return (DW_DLV_ERROR);
-    }
-
-    if (cu_context->cc_dbg == NULL) {
-        _dwarf_error(NULL, error, DW_DLE_ATTR_DBG_NULL);
-        return (DW_DLV_ERROR);
-    }
-    dbg = cu_context->cc_dbg;
-
+    int res  = get_attr_dbg(&dbg,&cu_context,attr,error);
+    if(res != DW_DLV_OK) { 
+        return res;
+    } 
     switch (attr->ar_attribute_form) {
 
     case DW_FORM_ref1:
@@ -425,23 +401,10 @@ int dwarf_formsig8(Dwarf_Attribute attr,
     Dwarf_Unsigned field_end_offset = 0;
     Dwarf_CU_Context cu_context = 0;
 
-
-    if (attr == NULL) {
-        _dwarf_error(NULL, error, DW_DLE_ATTR_NULL);
-        return (DW_DLV_ERROR);
-    }
-
-    cu_context = attr->ar_cu_context;
-    if (cu_context == NULL) {
-        _dwarf_error(NULL, error, DW_DLE_ATTR_NO_CU_CONTEXT);
-        return (DW_DLV_ERROR);
-    }
-
-    if (cu_context->cc_dbg == NULL) {
-        _dwarf_error(NULL, error, DW_DLE_ATTR_DBG_NULL);
-        return (DW_DLV_ERROR);
-    }
-    dbg = cu_context->cc_dbg;
+    int res  = get_attr_dbg(&dbg,&cu_context,attr,error);
+    if(res != DW_DLV_OK) { 
+        return res;
+    } 
 
     if(attr->ar_attribute_form != DW_FORM_ref_sig8 ) {
         _dwarf_error(dbg, error, DW_DLE_BAD_REF_SIG8_FORM);
@@ -461,7 +424,6 @@ int dwarf_formsig8(Dwarf_Attribute attr,
         sizeof(Dwarf_Sig8));
     return DW_DLV_OK;
 }
-
 
 /*  Since this returns section-relative debug_info offsets,
     this can represent all REFERENCE forms correctly
@@ -485,24 +447,11 @@ dwarf_global_formref(Dwarf_Attribute attr,
     Dwarf_CU_Context cu_context = 0;
     Dwarf_Half context_version = 0;
 
-    if (attr == NULL) {
-        _dwarf_error(NULL, error, DW_DLE_ATTR_NULL);
-        return (DW_DLV_ERROR);
-    }
-
-    cu_context = attr->ar_cu_context;
-    if (cu_context == NULL) {
-        _dwarf_error(NULL, error, DW_DLE_ATTR_NO_CU_CONTEXT);
-        return (DW_DLV_ERROR);
-    }
+    int res  = get_attr_dbg(&dbg,&cu_context,attr,error);
+    if(res != DW_DLV_OK) { 
+        return res;
+    } 
     context_version = cu_context->cc_version_stamp;
-
-    if (cu_context->cc_dbg == NULL) {
-        _dwarf_error(NULL, error, DW_DLE_ATTR_DBG_NULL);
-        return (DW_DLV_ERROR);
-    }
-    dbg = cu_context->cc_dbg;
-
     switch (attr->ar_attribute_form) {
 
     case DW_FORM_ref1:
@@ -611,23 +560,10 @@ dwarf_formaddr(Dwarf_Attribute attr,
     Dwarf_Addr ret_addr = 0;
     Dwarf_CU_Context cu_context = 0;
 
-    if (attr == NULL) {
-        _dwarf_error(NULL, error, DW_DLE_ATTR_NULL);
-        return (DW_DLV_ERROR);
-    }
-
-    cu_context = attr->ar_cu_context;
-    if (cu_context == NULL) {
-        _dwarf_error(NULL, error, DW_DLE_ATTR_NO_CU_CONTEXT);
-        return (DW_DLV_ERROR);
-    }
-
-    if (cu_context->cc_dbg == NULL) {
-        _dwarf_error(NULL, error, DW_DLE_ATTR_DBG_NULL);
-        return (DW_DLV_ERROR);
-    }
-    dbg = cu_context->cc_dbg;
-
+    int res  = get_attr_dbg(&dbg,&cu_context,attr,error);
+    if(res != DW_DLV_OK) { 
+        return res;
+    } 
     if (attr->ar_attribute_form == DW_FORM_addr
         /*  || attr->ar_attribute_form == DW_FORM_ref_addr Allowance of
             DW_FORM_ref_addr was a mistake. The value returned in that
@@ -697,24 +633,10 @@ dwarf_formudata(Dwarf_Attribute attr,
     Dwarf_Debug dbg = 0;
     Dwarf_CU_Context cu_context = 0;
 
-    if (attr == NULL) {
-        _dwarf_error(NULL, error, DW_DLE_ATTR_NULL);
-        return (DW_DLV_ERROR);
-    }
-
-
-    cu_context = attr->ar_cu_context;
-    if (cu_context == NULL) {
-        _dwarf_error(NULL, error, DW_DLE_ATTR_NO_CU_CONTEXT);
-        return (DW_DLV_ERROR);
-    }
-
-    dbg = cu_context->cc_dbg;
-    if (dbg == NULL) {
-        _dwarf_error(NULL, error, DW_DLE_ATTR_DBG_NULL);
-        return (DW_DLV_ERROR);
-    }
-
+    int res  = get_attr_dbg(&dbg,&cu_context,attr,error);
+    if(res != DW_DLV_OK) { 
+        return res;
+    } 
     switch (attr->ar_attribute_form) {
 
     case DW_FORM_data1:
@@ -776,23 +698,10 @@ dwarf_formsdata(Dwarf_Attribute attr,
     Dwarf_Debug dbg = 0;
     Dwarf_CU_Context cu_context = 0;
 
-    if (attr == NULL) {
-        _dwarf_error(NULL, error, DW_DLE_ATTR_NULL);
-        return (DW_DLV_ERROR);
-    }
-
-    cu_context = attr->ar_cu_context;
-    if (cu_context == NULL) {
-        _dwarf_error(NULL, error, DW_DLE_ATTR_NO_CU_CONTEXT);
-        return (DW_DLV_ERROR);
-    }
-
-    dbg = cu_context->cc_dbg;
-    if (dbg == NULL) {
-        _dwarf_error(NULL, error, DW_DLE_ATTR_DBG_NULL);
-        return (DW_DLV_ERROR);
-    }
-
+    int res  = get_attr_dbg(&dbg,&cu_context,attr,error);
+    if(res != DW_DLV_OK) { 
+        return res;
+    } 
     switch (attr->ar_attribute_form) {
 
     case DW_FORM_data1:
@@ -855,23 +764,10 @@ dwarf_formblock(Dwarf_Attribute attr,
     Dwarf_Word leb128_length = 0;
     Dwarf_Block *ret_block = 0;
 
-    if (attr == NULL) {
-        _dwarf_error(NULL, error, DW_DLE_ATTR_NULL);
-        return (DW_DLV_ERROR);
-    }
-
-    cu_context = attr->ar_cu_context;
-    if (cu_context == NULL) {
-        _dwarf_error(NULL, error, DW_DLE_ATTR_NO_CU_CONTEXT);
-        return (DW_DLV_ERROR);
-    }
-
-    if (cu_context->cc_dbg == NULL) {
-        _dwarf_error(NULL, error, DW_DLE_ATTR_DBG_NULL);
-        return (DW_DLV_ERROR);
-    }
-    dbg = cu_context->cc_dbg;
-
+    int res  = get_attr_dbg(&dbg,&cu_context,attr,error);
+    if(res != DW_DLV_OK) { 
+        return res;
+    } 
     switch (attr->ar_attribute_form) {
 
     case DW_FORM_block1:
@@ -942,23 +838,10 @@ dwarf_formstring(Dwarf_Attribute attr,
     Dwarf_Unsigned offset = 0;
     int res = DW_DLV_ERROR;
 
-    if (attr == NULL) {
-        _dwarf_error(NULL, error, DW_DLE_ATTR_NULL);
-        return (DW_DLV_ERROR);
-    }
-
-    cu_context = attr->ar_cu_context;
-    if (cu_context == NULL) {
-        _dwarf_error(NULL, error, DW_DLE_ATTR_NO_CU_CONTEXT);
-        return (DW_DLV_ERROR);
-    }
-
-    if (cu_context->cc_dbg == NULL) {
-        _dwarf_error(NULL, error, DW_DLE_ATTR_DBG_NULL);
-        return (DW_DLV_ERROR);
-    }
-    dbg = cu_context->cc_dbg;
-
+    res  = get_attr_dbg(&dbg,&cu_context,attr,error);
+    if(res != DW_DLV_OK) { 
+        return res;
+    } 
     if (attr->ar_attribute_form == DW_FORM_string) {
 
         void *begin = attr->ar_debug_info_ptr;
@@ -1023,18 +906,10 @@ dwarf_formexprloc(Dwarf_Attribute attr,
     Dwarf_Debug dbg = 0;
     Dwarf_CU_Context cu_context = 0;
 
-    if (attr == NULL) {
-        _dwarf_error(NULL, error, DW_DLE_ATTR_NULL);
-        return (DW_DLV_ERROR);
-    }
-
-    cu_context = attr->ar_cu_context;
-    if (cu_context == NULL) {
-        _dwarf_error(NULL, error, DW_DLE_ATTR_NO_CU_CONTEXT);
-        return (DW_DLV_ERROR);
-    }
-
-    dbg = cu_context->cc_dbg;
+    int res  = get_attr_dbg(&dbg,&cu_context,attr,error);
+    if(res != DW_DLV_OK) { 
+        return res;
+    } 
     if (dbg == NULL) {
         _dwarf_error(NULL, error, DW_DLE_ATTR_DBG_NULL);
         return (DW_DLV_ERROR);

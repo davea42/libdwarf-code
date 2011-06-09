@@ -1,3 +1,7 @@
+2011-06-09  DavidAnderson <davea42@earthlink.net>
+     * dwarf_form.c: Code getting access to CU context and
+       dbg was repeated many times. Refactored the common
+       code into a file-static subprogram.
 2011-06-08  DavidAnderson <davea42@earthlink.net>
      * libdwarf2.1.mm,libdwarf2.1.pdf: Now discusses
        DW_AT_data_member_location in the context
