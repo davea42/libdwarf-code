@@ -1,3 +1,5 @@
+2011-06-12  DavidAnderson <davea42@earthlink.net>
+      * dwarfdump.cc: Updated version string. 
 2011-06-06  DavidAnderson <davea42@earthlink.net>
       * dwarfdump.cc: Updated version string. 
       * print_die.cc: Corrected handling of DW_AT_data_member_location.

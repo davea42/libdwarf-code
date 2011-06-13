@@ -291,7 +291,8 @@ struct Dwarf_P_Per_Reloc_Sect_s {
         is the default number of slots to use */
 
     int pr_sect_num_of_reloc_sect; /* sect number returned by
-        de_callback_func() or de_callback_func_b() call, this is the sect
+        de_callback_func() or de_callback_func_b() or_c() 
+        call, this is the sect
         number of the relocation section. */
 
     /* singly-linked list. add at and ('last') with count of blocks */
@@ -321,12 +322,19 @@ struct Dwarf_P_Debug_s {
     int de_version_magic_number;
 
     Dwarf_Handler de_errhand;
+    /* de_user_data is provided so users can use it to readily tie
+       a callback to anything they desire.  The contents are not
+       used by libdwarf except to pass the data as a callback
+       argument.  New in June 2011. Available in
+       dwarf_pro_init_c() and its callback function.  */
+    void *    de_user_data;
     Dwarf_Ptr de_errarg;
 
     /*  Call back function, used to create .debug* sections. Provided
         By user. Only of these used per dbg. */
     Dwarf_Callback_Func de_callback_func;
     Dwarf_Callback_Func_b de_callback_func_b;
+    Dwarf_Callback_Func_c de_callback_func_c;
 
     /*  Flags from producer_init call */
     Dwarf_Unsigned de_flags;

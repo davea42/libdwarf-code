@@ -203,14 +203,27 @@ _dwarf_stream_relocs_to_disk(Dwarf_P_Debug dbg,
         total_size = ct * len;
         sec_index = prb->pr_sect_num_of_reloc_sect;
         if (sec_index == 0) {
-            /*  Call de_callback_func or de_callback_func_b, getting 
+            /*  Call de_callback_func or de_callback_func_b or _c, getting 
                 section number of reloc section. */
             int rel_section_index = 0;
             Dwarf_Unsigned name_idx = 0;
             int int_name = 0;
             int err = 0;
 
-            if (dbg->de_callback_func_b) {
+            if (dbg->de_callback_func_c) {
+                rel_section_index =
+                    dbg->de_callback_func_c(_dwarf_rel_section_names[i],
+                        /* size */ dbg->de_relocation_record_size,
+                        /* type */ SHT_REL,
+                        /* flags */ 0,
+                        /* link to symtab, which we cannot
+                            know */ 0,
+                        /* info == link to sec rels apply to */
+                            dbg->de_elf_sects[i],
+                        &name_idx, 
+                        dbg->de_user_data,
+                        &err);
+            } else if (dbg->de_callback_func_b) {
                 rel_section_index =
                     dbg->de_callback_func_b(_dwarf_rel_section_names[i],
                         /* size */ dbg->de_relocation_record_size,

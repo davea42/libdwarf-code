@@ -11,7 +11,7 @@
 .nr Hb 5
 \." ==============================================
 \." Put current date in the following at each rev
-.ds vE rev 1.29, 20 Sep 2010
+.ds vE rev 1.30, 12 June 2011
 \." ==============================================
 \." ==============================================
 .ds | |
@@ -120,8 +120,10 @@ return a value or abort.
 The library user can provide a function that the producer code
 will call on errors (which would allow callers avoid testing
 for error returns if the user function exits or aborts).
-See the  \f(CWdwarf_producer_init()\fP
-description below for more details.  
+See the  \f(CWdwarf_producer_init_c()\fP
+description below for more details
+(possibly the older forms \f(CWdwarf_producer_init_b()\fP
+and \f(CWdwarf_producer_init()\fP may be of interest).
 
 
 .H 2 "Document History"
@@ -277,6 +279,8 @@ For example:
 When the documentation below refers to 'an elf section number'
 it is really only dependent on getting (via the callback
 function passed by the caller of
+\f(CWdwarf_producer_init_c()\fP and
+the older forms, \f(CWdwarf_producer_init_b()\fP or
 \f(CWdwarf_producer_init()\fP)
 a sequence of integers back (with 1 as the lowest).
 
@@ -416,7 +420,9 @@ disk.
 Typically then, a producer application 
 would create a \f(CWDwarf_P_Debug\fP 
 descriptor to gather debugging information for a particular
-compilation-unit using \f(CWdwarf_producer_init()\fP.  
+compilation-unit using \f(CWdwarf_producer_init_c()\fP.  
+(Older code may use \f(CWdwarf_producer_init_b()\fP or
+\f(CWdwarf_producer_init()\fP).
 The producer application would 
 use this \f(CWDwarf_P_Debug\fP descriptor to accumulate debugging 
 information for this object using functions from other sections of 
@@ -450,6 +456,9 @@ The details are mentioned in the text.
         Dwarf_Ptr errarg,
         Dwarf_Error *error) \fP
 .DE
+This is the oldest form and code should migrate to the newest form,
+\f(CWdwarf_producer_init_c()\fP.
+.P
 The function \f(CWdwarf_producer_init() \fP returns a new 
 \f(CWDwarf_P_Debug\fP descriptor that can be used to add \f(CWDwarf\fP 
 information to the object.  
@@ -639,7 +648,7 @@ dependent on the relocation of this new section.
 Because "int *" is not guaranteed to work with elf 'symbols'
 that are really pointers,
 It is better to use the 
-\f(CWdwarf_producer_init_b()\fP
+\f(CWdwarf_producer_init_c()\fP
 interface.
 .P
 For example, the \f(CW.debug_line\fP section's third
@@ -667,22 +676,28 @@ The application will probably want to note the
 values passed to this function in some form, even if
 no Elf file is being produced.
 
-.H 3 "dwarf_producer_init_b()"
-
+.H 3 "dwarf_producer_init_c()"
 .DS
-\f(CWDwarf_P_Debug dwarf_producer_init_b(
-        Dwarf_Unsigned flags,
-        Dwarf_Callback_Func_b func,
-        Dwarf_Handler errhand,
-        Dwarf_Ptr errarg,
-        Dwarf_Error *error) \fP
-.DE
-The function \f(CWdwarf_producer_init_b() \fP 
+ \f(CWDwarf_P_Debug dwarf_producer_init_c(
+     Dwarf_Unsigned flags,
+     Dwarf_Callback_Func_c func,
+     Dwarf_Handler errhand,
+     Dwarf_Ptr errarg,
+     void * user_data,
+     Dwarf_Error *error) \fP
+ .DE
+
+The function \f(CWdwarf_producer_init_c() \fP 
 is the same as \f(CWdwarf_producer_init() \fP
-except that the callback function uses
+except that a) the callback function uses
 Dwarf_Unsigned rather than int as the
 type of the symbol-index returned to libdwarf
-through the pointer argument (see below).
+through the pointer argument (see below), and
+b) the \f(CWuser_data\fP argument passed in
+is passed through (unchanged) to the callback functions.
+.P
+The \f(CWuser_data\fP argument is not examined by libdwarf and
+may be used by consumer code for the consumer's own purposes.
 .P
 The \f(CWflags\fP
 values are as follows:
@@ -714,7 +729,7 @@ Either one of two output forms are specifiable:
 \f(CWDW_DLC_STREAM_RELOCATIONS\fP
 or
 \f(CWDW_DLC_SYMBOLIC_RELOCATIONS\fP .
-\f(CWdwarf_producer_init_b() \fP 
+\f(CWdwarf_producer_init_c() \fP 
 is usable with
 either output form.
 
@@ -747,7 +762,7 @@ The function \f(CWfunc\fP
 must be provided by the user of this library.
 Its prototype is:
 .DS
-\f(CWtypedef int (*Dwarf_Callback_Func_b)(
+\f(CWtypedef int (*Dwarf_Callback_Func_c)(
     char* name,
     int                 size,
     Dwarf_Unsigned      type,
@@ -755,6 +770,7 @@ Its prototype is:
     Dwarf_Unsigned      link,
     Dwarf_Unsigned      info,
     Dwarf_Unsigned*     sect_name_index,
+    void *              user_data,
     int*                error) \fP
 .DE
 For each section in the object file that \f(CWlibdwarf\fP
@@ -807,7 +823,7 @@ The application will probably want to note the
 values passed to this function in some form, even if
 no Elf file is being produced.
 
-Note that the \f(CWDwarf_Callback_Func_b() \fP form
+Note that the \f(CWDwarf_Callback_Func_c() \fP form
 passes back the sect_name_index as a Dwarf_Unsigned.
 This is guaranteed large enough to hold a pointer.
 (the other functional interfaces have versions with
@@ -825,6 +841,21 @@ or some other kind of pointer or value.
 The values show up in the 
 output of \f(CWdwarf_get_relocation_info()\fP
 (described below) and are not emitted anywhere else.
+
+.H 3 "dwarf_producer_init_b()"
+
+.DS
+\f(CWDwarf_P_Debug dwarf_producer_init_b(
+        Dwarf_Unsigned flags,
+        Dwarf_Callback_Func_b func,
+        Dwarf_Handler errhand,
+        Dwarf_Ptr errarg,
+        Dwarf_Error *error) \fP
+.DE
+This is identical to \f(CWdwarf_producer_init_c()\fP except that
+the user_data argument in \f(CWdwarf_producer_init_c()\fP and
+in \f(CWDwarf_Callback_Func_c\fP are absent in the _b form.
+
 
 .H 3 "dwarf_transform_to_disk_form()"
 
@@ -932,10 +963,11 @@ MIPS libdwarf (version 1 did exist in source).
 It returns DW_DLV_NO_ENTRY if 
 \f(CWcount_of_relocation_sections\fP is not meaningful
 because \f(CWDW_DLC_SYMBOLIC_RELOCATIONS\fP was not
-passed in the 
-\f(CWdwarf_producer_init() \fP
-(or
-\f(CWdwarf_producer_init_b() \fP ) call.
+passed to the
+\f(CWdwarf_producer_init_c()\fP
+\f(CWdwarf_producer_init_b()\fP or 
+\f(CWdwarf_producer_init()\fP  call
+(whichever one was used).
 
 It returns DW_DLV_ERROR if there was an error,
 in which case

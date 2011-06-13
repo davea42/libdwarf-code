@@ -1,4 +1,6 @@
+2011-06-12  DavidAnderson <davea42@earthlink.net>
 2011-06-07  DavidAnderson <davea42@earthlink.net>
+      * dwarfdump.c,common.c: Updated version string. 
       * dwarfdump.c: Refactor setting of do_print_dwarf 
         and do_check_dwarf into a function. Ensure that one of
         the refactored new functions is called in every case

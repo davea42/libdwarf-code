@@ -348,7 +348,7 @@ typedef struct Dwarf_Regtable_Entry3_s {
             Never on disk.
             DW_FRAME_* Values present on disk are in dwarf.h
             Because DW_FRAME_SAME_VAL and DW_FRAME_UNDEFINED_VAL 
-            and DW_FRAME_CFA_COL3 are defineable at runtime 
+            and DW_FRAME_CFA_COL3 are definable at runtime 
             consider the names symbolic in this comment, not absolute.
 
         Otherwise: the register number is a DWARF register number
@@ -760,16 +760,17 @@ struct Dwarf_Obj_Access_Interface_s {
 #define DW_DLC_WRITE       1        /* write only access */
 #define DW_DLC_RDWR        2        /* read/write access NOT SUPPORTED*/
 
-/* pro_init() access flag modifiers
+/* dwarf_producer_init*() access flag modifiers
    If HAVE_DWARF2_99_EXTENSION is defined at libdwarf build time
-   and DW_DLC_OFFSET_SIZE_64  is passed in pro_init() flags then the DWARF3 
-   64 bit offset extension is used to generate 64 bit offsets.
+   and DW_DLC_OFFSET_SIZE_64  is passed in producer_init() 
+   flags then the DWARF3 64 bit offset extension is used 
+   to generate 64 bit offsets.
 */
 #define DW_DLC_SIZE_64     0x40000000 /* 32-bit address-size target */
 #define DW_DLC_SIZE_32     0x20000000 /* 64-bit address-size target */
 #define DW_DLC_OFFSET_SIZE_64 0x10000000 /* 64-bit offset-size DWARF */
 
-/* dwarf_pro_init() access flag modifiers
+/* dwarf_producer_init*() access flag modifiers
 */
 #define DW_DLC_ISA_MIPS             0x00000000 /* MIPS target */
 #define DW_DLC_ISA_IA64             0x01000000 /* IA64 target */
@@ -1944,7 +1945,7 @@ int dwarf_print_lines(Dwarf_Die /*cu_die*/,Dwarf_Error * /*error*/,
 
 /*  dwarf_check_lineheader lets dwarfdump get detailed messages
     about some compiler errors we detect.
-    We return the count of detected errors throught the
+    We return the count of detected errors through the
     pointer.
 */
 void dwarf_check_lineheader(Dwarf_Die /*cu_die*/,int *errcount_out);
@@ -2099,24 +2100,29 @@ Dwarf_Ptr dwarf_seterrarg(Dwarf_Debug /*dbg*/, Dwarf_Ptr /*errarg*/);
 void dwarf_dealloc(Dwarf_Debug /*dbg*/, void* /*space*/, 
     Dwarf_Unsigned /*type*/);
 
+
 /* DWARF Producer Interface */
 
-typedef int (*Dwarf_Callback_Func)(
-    char*           /*name*/, 
-    int             /*size*/, 
+/* New form June, 2011. Adds user_data argument.  */
+typedef int (*Dwarf_Callback_Func_c)(
+    char*           /*name*/,
+    int             /*size*/,
     Dwarf_Unsigned  /*type*/,
-    Dwarf_Unsigned  /*flags*/, 
-    Dwarf_Unsigned  /*link*/, 
-    Dwarf_Unsigned  /*info*/, 
-    int*            /*sect name index*/, 
+    Dwarf_Unsigned  /*flags*/,
+    Dwarf_Unsigned  /*link*/,
+    Dwarf_Unsigned  /*info*/,
+    Dwarf_Unsigned* /*sect_name_index*/,
+    void *          /*user_data*/,
     int*            /*error*/);
 
-Dwarf_P_Debug dwarf_producer_init(
-    Dwarf_Unsigned  /*creation_flags*/, 
-    Dwarf_Callback_Func    /*func*/,
-    Dwarf_Handler   /*errhand*/, 
-    Dwarf_Ptr       /*errarg*/, 
-    Dwarf_Error*    /*error*/);
+/* New form June, 2011. Adds user_data */
+Dwarf_P_Debug dwarf_producer_init_c(
+    Dwarf_Unsigned        /*flags*/,
+    Dwarf_Callback_Func_c /*func*/,
+    Dwarf_Handler         /*errhand*/,
+    Dwarf_Ptr             /*errarg*/,
+    void *                /*user_data*/,
+    Dwarf_Error *         /*error*/);
 
 typedef int (*Dwarf_Callback_Func_b)(
     char*           /*name*/,
@@ -2128,7 +2134,8 @@ typedef int (*Dwarf_Callback_Func_b)(
     Dwarf_Unsigned* /*sect_name_index*/,
     int*            /*error*/);
 
-
+/* Intermediate form. Made obsolescent by dwarf_producer_init_c, 
+   but supported. */
 Dwarf_P_Debug dwarf_producer_init_b(
     Dwarf_Unsigned        /*flags*/,
     Dwarf_Callback_Func_b /*func*/,
@@ -2136,6 +2143,24 @@ Dwarf_P_Debug dwarf_producer_init_b(
     Dwarf_Ptr             /*errarg*/,
     Dwarf_Error *         /*error*/);
 
+/* Original, oldest form. From 1991. */
+typedef int (*Dwarf_Callback_Func)(
+    char*           /*name*/,
+    int             /*size*/,
+    Dwarf_Unsigned  /*type*/,
+    Dwarf_Unsigned  /*flags*/,
+    Dwarf_Unsigned  /*link*/,
+    Dwarf_Unsigned  /*info*/,
+    int*            /*sect name index*/,
+    int*            /*error*/);
+
+/* Original, oldest form. From 1991. */
+Dwarf_P_Debug dwarf_producer_init(
+    Dwarf_Unsigned  /*creation_flags*/,
+    Dwarf_Callback_Func    /*func*/,
+    Dwarf_Handler   /*errhand*/,
+    Dwarf_Ptr       /*errarg*/,
+    Dwarf_Error*    /*error*/);
 
 Dwarf_Signed dwarf_transform_to_disk_form(Dwarf_P_Debug /*dbg*/,
     Dwarf_Error*     /*error*/);
@@ -2320,7 +2345,7 @@ Dwarf_Unsigned dwarf_lne_end_sequence(Dwarf_P_Debug /*dbg*/,
 /* Producer .debug_frame functions */
 Dwarf_Unsigned dwarf_add_frame_cie(Dwarf_P_Debug /*dbg*/, 
     char*           /*augmenter*/, 
-    Dwarf_Small     /*code_alignent_factor*/, 
+    Dwarf_Small     /*code_alignment_factor*/, 
     Dwarf_Small     /*data_alignment_factor*/, 
     Dwarf_Small     /*return_address_reg*/, 
     Dwarf_Ptr       /*initialization_bytes*/, 

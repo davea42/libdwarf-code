@@ -81,6 +81,8 @@ static enum  WhichInputSource { OptNone, OptReadText,OptReadBin,OptPredefined}
 
 
 // This is a global so thet CallbackFunc can get to it
+// If we used the dwarf_producer_init_c() user_data pointer
+// creatively we would not need a global.
 static IRepresentation Irep;
 
 static Elf * elf = 0;
@@ -195,6 +197,7 @@ int CallbackFunc(
     Dwarf_Unsigned      link,
     Dwarf_Unsigned      info,
     Dwarf_Unsigned*     sect_name_symbol_index,
+    void *              user_data,
     int*                error) 
 {
     // Create an elf section.
@@ -339,11 +342,12 @@ main(int argc, char **argv)
     // We use DW_DLC_SYMBOLIC_RELOCATIONS so we can
     // read the relocations and do our own relocating.
     // See calls of dwarf_get_relocation_info().
-    Dwarf_P_Debug dbg = dwarf_producer_init_b(
+    Dwarf_P_Debug dbg = dwarf_producer_init_c(
         DW_DLC_WRITE|ptrsize|DW_DLC_SYMBOLIC_RELOCATIONS,
         CallbackFunc,
         0,
         errarg,
+        0, /* we are not using user_data, so pass in 0 */
         &err);
     if(dbg == reinterpret_cast<Dwarf_P_Debug>(DW_DLV_BADADDR)) {
         cerr << "Failed init_b" << endl;

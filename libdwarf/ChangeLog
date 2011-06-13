@@ -1,3 +1,15 @@
+2011-06-12  DavidAnderson <davea42@earthlink.net>
+     * libdwarf.h: Added dwarf_producer_init_c() and its
+       callback functions. Adds a user_data void* to the
+       init and callback functions for user convenience.
+     * libdwarf2p.1.m: Documented dwarf_producer_init_c().
+       Rev 1.30.
+     * libdwarf2p.1.pdf: Regenerated
+     * pro_init.c: Implement dwarf_producer_init_c().
+     * pro_opaque.h: Add fields for dwarf_producer_init_c().
+     * pro_reloc_stream.c: Implement dwarf_producer_init_c() callback.
+     * pro_reloc_symbolic.c: Implement dwarf_producer_init_c() callback.
+     * pro_section.c: Implement dwarf_producer_init_c() callback.
 2011-06-09  DavidAnderson <davea42@earthlink.net>
      * dwarf_form.c: Code getting access to CU context and
        dbg was repeated many times. Refactored the common

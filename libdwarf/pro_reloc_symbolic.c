@@ -191,7 +191,19 @@ _dwarf_symbolic_relocs_to_disk(Dwarf_P_Debug dbg,
                 data goes with what section when we are asked for the
                 real arrays. */
 
-            if (dbg->de_callback_func_b) {
+            if (dbg->de_callback_func_c) {
+                rel_section_index =
+                    dbg->de_callback_func_c(_dwarf_rel_section_names[i],
+                        dbg->de_relocation_record_size,
+                        /* type */ SHT_REL,
+                        /* flags */ 0,
+                        /* link to symtab, which we cannot
+                            know */ SHN_UNDEF,
+                        /* sec rels apply to */
+                        dbg->de_elf_sects[i],
+                        &name_idx, 
+                        dbg->de_user_data,&err); 
+            } else if (dbg->de_callback_func_b) {
                 rel_section_index =
                     dbg->de_callback_func_b(_dwarf_rel_section_names[i],
                         dbg->de_relocation_record_size,

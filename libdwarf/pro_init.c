@@ -63,6 +63,41 @@ static struct Dwarf_P_Section_Data_s init_sect = {
     MAGIC_SECT_NO, 0, 0, 0, 0
 };
 
+/* New June, 2011, this is the latest, most flexible
+   version. It adds (compared to *_b) the user_data
+   pointer which is passed back (unchanged) in 
+   each callback call. */
+Dwarf_P_Debug
+dwarf_producer_init_c(Dwarf_Unsigned flags,
+    Dwarf_Callback_Func_c func,
+    Dwarf_Handler errhand,
+    Dwarf_Ptr errarg, 
+    void * user_data,
+    Dwarf_Error * error)
+{
+    Dwarf_P_Debug dbg;
+    dbg = (Dwarf_P_Debug) _dwarf_p_get_alloc(NULL,
+        sizeof(struct Dwarf_P_Debug_s));
+    if (dbg == NULL) {
+        DWARF_P_DBG_ERROR(dbg, DW_DLE_DBG_ALLOC,
+            (Dwarf_P_Debug) DW_DLV_BADADDR);
+    }
+    memset((void *) dbg, 0, sizeof(struct Dwarf_P_Debug_s));
+    /* For the time being */
+    if (func == NULL) {
+        DWARF_P_DBG_ERROR(dbg, DW_DLE_NO_CALLBACK_FUNC,
+            (Dwarf_P_Debug) DW_DLV_BADADDR);
+    }
+    dbg->de_callback_func_c = func;
+    dbg->de_errhand = errhand;
+    dbg->de_errarg = errarg;
+    dbg->de_user_data = user_data;
+    common_init(dbg, flags);
+    return dbg;
+
+}
+
+
 Dwarf_P_Debug
 dwarf_producer_init_b(Dwarf_Unsigned flags,
     Dwarf_Callback_Func_b func,
@@ -85,6 +120,7 @@ dwarf_producer_init_b(Dwarf_Unsigned flags,
     dbg->de_callback_func_b = func;
     dbg->de_errhand = errhand;
     dbg->de_errarg = errarg;
+    dbg->de_user_data = 0;
     common_init(dbg, flags);
     return dbg;
 
@@ -113,6 +149,7 @@ dwarf_producer_init(Dwarf_Unsigned flags,
     dbg->de_callback_func = func;
     dbg->de_errhand = errhand;
     dbg->de_errarg = errarg;
+    dbg->de_user_data = 0;
     common_init(dbg, flags);
     return dbg;
 }

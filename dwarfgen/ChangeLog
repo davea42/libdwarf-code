@@ -1,3 +1,6 @@
+2011-06-12  DavidAnderson <davea42@earthlink.net>
+     * dwarfgen.cc: Use dwarf_producer_init_c(), the newest
+       interface to the producer.
 2011-04-23  DavidAnderson <davea42@earthlink.net>
      * createirepformfrombinary.cc, createirepfrombinary.cc,
        dwarfgen.cc,general.h,irepattrtodbg.cc,

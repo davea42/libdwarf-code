@@ -288,13 +288,19 @@ dwarf_transform_to_disk_form(Dwarf_P_Debug dbg, Dwarf_Error * error)
         {
             int new_base_elf_sect;
 
-            if (dbg->de_callback_func_b) {
+            if (dbg->de_callback_func_c) {
+                new_base_elf_sect =
+                    dbg->de_callback_func_c(_dwarf_sectnames[sect],
+                        /* rec size */ 1,
+                        SECTION_TYPE,
+                        flags, SHN_UNDEF, 0, &du,
+                        dbg->de_user_data, &err);
+            } else if (dbg->de_callback_func_b) {
                 new_base_elf_sect =
                     dbg->de_callback_func_b(_dwarf_sectnames[sect],
                         /* rec size */ 1,
                         SECTION_TYPE,
                         flags, SHN_UNDEF, 0, &du, &err);
-
             } else {
                 int name_idx = 0;
                 new_base_elf_sect = dbg->de_callback_func(
