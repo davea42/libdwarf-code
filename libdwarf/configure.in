@@ -69,10 +69,12 @@ AC_TRY_COMPILE([#include <elf.h>],[  Elf64_Sym p; p.st_info = 1; ],
 
 dnl default-disabled shared
 AC_SUBST(build_shared,[none])
+AC_SUBST(dwfpic,[])
 AC_ARG_ENABLE(shared,AC_HELP_STRING([--enable-shared],
 		[build shared library libdwarf.so]))
 AS_IF([ test "x$enable_shared" = "xyes"], [
    AC_SUBST(build_shared,[libdwarf.so])
+   AC_SUBST(dwfpic,[-fPIC])
 ])
 
 dnl default-enabled nonshared
