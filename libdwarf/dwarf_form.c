@@ -315,10 +315,11 @@ dwarf_formref(Dwarf_Attribute attr,
     Dwarf_Unsigned offset = 0;
     Dwarf_CU_Context cu_context = 0;
     Dwarf_Unsigned maximumoffset = 0; 
+    int res = DW_DLV_ERROR;
 
 
     *ret_offset = 0;
-    int res  = get_attr_dbg(&dbg,&cu_context,attr,error);
+    res  = get_attr_dbg(&dbg,&cu_context,attr,error);
     if(res != DW_DLV_OK) { 
         return res;
     } 

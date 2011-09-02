@@ -1,4 +1,6 @@
 2011-09-02  DavidAnderson <davea42@earthlink.net>
+     * dwarf_form.c(dwarf_formref): Removed c99-ish
+       declaration so C90 can compile the code. 
      * Makefile.in, configure.in: If building shared lib
        CFLAGS gets -fPIC  added in.
      * configure: Fegenerated.
