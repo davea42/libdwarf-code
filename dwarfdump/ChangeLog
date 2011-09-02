@@ -1,4 +1,5 @@
-2011-06-12  DavidAnderson <davea42@earthlink.net>
+2011-09-02  DavidAnderson <davea42@earthlink.net>
+      * common.c,dwarfdump.c: Update version string.
 2011-06-07  DavidAnderson <davea42@earthlink.net>
       * dwarfdump.c,common.c: Updated version string. 
       * dwarfdump.c: Refactor setting of do_print_dwarf 

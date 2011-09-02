@@ -322,11 +322,11 @@ struct Dwarf_P_Debug_s {
     int de_version_magic_number;
 
     Dwarf_Handler de_errhand;
-    /* de_user_data is provided so users can use it to readily tie
-       a callback to anything they desire.  The contents are not
-       used by libdwarf except to pass the data as a callback
-       argument.  New in June 2011. Available in
-       dwarf_pro_init_c() and its callback function.  */
+    /*  de_user_data is provided so users can use it to readily tie
+        a callback to anything they desire.  The contents are not
+        used by libdwarf except to pass the data as a callback
+        argument.  New in June 2011. Available in
+        dwarf_pro_init_c() and its callback function.  */
     void *    de_user_data;
     Dwarf_Ptr de_errarg;
 

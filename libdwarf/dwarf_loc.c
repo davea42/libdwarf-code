@@ -114,6 +114,7 @@ _dwarf_get_locdesc(Dwarf_Debug dbg,
             (Dwarf_Loc_Chain) _dwarf_get_alloc(dbg, DW_DLA_LOC_CHAIN,
                 1);
         if (curr_loc == NULL) {
+            /*  Some memory may leak here.  */
             _dwarf_error(dbg, error, DW_DLE_ALLOC_FAIL);
             return (NULL);
         }
@@ -458,10 +459,23 @@ _dwarf_get_locdesc(Dwarf_Debug dbg,
         case DW_OP_stack_value:  /* DWARF4 */
             break;
         default:
+            /*  Some memory does leak here.  */
             _dwarf_error(dbg, error, DW_DLE_LOC_EXPR_BAD);
             return (NULL);
         }
 
+        /* If offset == loc_len this would be normal end-of-expression. */
+        if (offset > loc_len) {
+            /*  We stepped past the end of the expression.
+                This has to be a compiler bug.
+                Operators missing their values cannot be detected
+                as such except at the end of an expression (like this).
+                The results would be wrong if returned.
+                Some memory may leak here.
+            */
+            _dwarf_error(dbg, error, DW_DLE_LOC_BAD_TERMINATION);
+            return (NULL);
+        }
 
         curr_loc->lc_number = operand1;
         curr_loc->lc_number2 = operand2;
@@ -477,6 +491,7 @@ _dwarf_get_locdesc(Dwarf_Debug dbg,
     block_loc =
         (Dwarf_Loc *) _dwarf_get_alloc(dbg, DW_DLA_LOC_BLOCK, op_count);
     if (block_loc == NULL) {
+        /*  Some memory does leak here.  */
         _dwarf_error(dbg, error, DW_DLE_ALLOC_FAIL);
         return (NULL);
     }

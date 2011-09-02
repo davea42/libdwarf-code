@@ -315,7 +315,8 @@ const char *_dwarf_errmsgs[] = {
     "DW_DLE_NOT_REF_FORM(226)",
     "DW_DLE_DEBUG_FRAME_LENGTH_NOT_MULTIPLE(227)",
     "DW_DLE_REF_SIG8_NOT_HANDLED (228)",
-    "DW_DLE_DEBUG_FRAME_POSSIBLE_ADDRESS_BOTCH (229)"
+    "DW_DLE_DEBUG_FRAME_POSSIBLE_ADDRESS_BOTCH (229)",
+    "DW_DLE_LOC_BAD_TERMINATION (230) the last location operator in an expression is missing some associated data, an operator ended too soon"
 };
 
 
