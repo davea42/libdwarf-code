@@ -1755,6 +1755,8 @@ print_frames(Dwarf_Debug dbg, int print_debug_frame, int print_eh_frame,
     
         /* Do not print any frame info if in check mode */
         if (check_frames) {
+            addr_map_destroy(lowpcSet);
+            lowpcSet = 0;
             continue;
         }
     
@@ -1804,6 +1806,7 @@ print_frames(Dwarf_Debug dbg, int print_debug_frame, int print_eh_frame,
                 fde_data, fde_element_count);
         }
         addr_map_destroy(lowpcSet);
+        lowpcSet = 0;
     }
     if (current_cu_die_for_print_frames) {
         dwarf_dealloc(dbg, current_cu_die_for_print_frames, DW_DLA_DIE);

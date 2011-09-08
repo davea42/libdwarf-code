@@ -55,6 +55,9 @@ addr_map_create_entry(Dwarf_Unsigned k,char *name)
     if(!mp) {
         return 0;
     }
+static int crscount = 0;
+crscount++;
+printf("dadebug addr_map_create_entry mp 0x%x count created %d\n",(unsigned)mp,crscount);
     mp->mp_key = k;
     if(name) {
         mp->mp_name = strdup(name);
@@ -67,6 +70,9 @@ static void
 addr_map_free_func(void *mx)
 {
     struct Addr_Map_Entry *m = mx;
+static int descount = 0;
+descount++;
+printf("dadebug addr_map_free_func m 0x%x count freed %d\n",(unsigned)m,descount);
     if(!m) {
         return;
     }
@@ -102,13 +108,21 @@ addr_map_insert( Dwarf_Unsigned addr,char *name,void **tree1)
 {
     void *retval = 0;
     struct Addr_Map_Entry *re = 0;
-    struct Addr_Map_Entry *e = addr_map_create_entry(addr,name);
+    struct Addr_Map_Entry *e;
+    e  = addr_map_create_entry(addr,name);
     DUMPFIRST(__LINE__);
-    /*  tsearch records e's contents. We must not free it till
-        destroy time. */
+    /*  tsearch records e's contents unless e
+        is already present . We must not free it till
+        destroy time if it got added to tree1.  */
     retval = tsearch(e,tree1, addr_map_compare_func);
     if(retval) {
         re = *(struct Addr_Map_Entry **)retval;
+        if ( re != e) {
+            /* We returned an existing record, e not needed. */
+            addr_map_free_func(e);
+        } else {
+            /* Record e got added to tree1, do not free record e. */
+        }
     }
     return re;
 }
@@ -117,12 +131,17 @@ addr_map_find(Dwarf_Unsigned addr,void **tree1)
 {
     void *retval = 0;
     struct Addr_Map_Entry *re = 0;
-    struct Addr_Map_Entry *e = addr_map_create_entry(addr,NULL);
+    struct Addr_Map_Entry *e = 0;
+
+    e = addr_map_create_entry(addr,NULL);
     DUMPFIRST(__LINE__);
     retval = tfind(e,tree1, addr_map_compare_func);
     if(retval) {
         re = *(struct Addr_Map_Entry **)retval;
-    }
+    } 
+    /*  The one we created here must be deleted, it is dead.
+        We look at the returned one instead. */
+    addr_map_free_func(e);
     return re;
 }
 
