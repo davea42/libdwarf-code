@@ -1,4 +1,9 @@
 2011-09-02  DavidAnderson <davea42@earthlink.net>
+     * libdwarf2.1.mm: Document the new function 
+       dwarf_set_default_address_size(). Updated revision to 1.97.
+     * libdwarf2.1.pdf: Regenerated.
+     * dwarf_frame.c: Implement dwarf_set_default_address_size().
+     * libdwarf.h: Declare the new function dwarf_set_default_address_size().
      * dwarf_form.c(dwarf_formref): Removed c99-ish
        declaration so C90 can compile the code. 
      * Makefile.in, configure.in: If building shared lib

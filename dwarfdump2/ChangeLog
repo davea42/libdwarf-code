@@ -1,3 +1,9 @@
+2011-09-05  DavidAnderson <davea42@earthlink.net>
+      * print_frames.c: Verify checking is on before doing
+        a duplicate fde check.
+      * dwarfdump.conf: Updated to use address_size and includeabi.
+      * dwconf.cc, dwconf.h: Adding configure keywords address_size and
+        includeabi.
 2011-09-02  DavidAnderson <davea42@earthlink.net>
       * dwarfdump.cc: Updated version string. 
 2011-06-12  DavidAnderson <davea42@earthlink.net>

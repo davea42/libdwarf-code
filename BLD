@@ -1,8 +1,8 @@
 
 set -x
-cd dwarfdump ; sh BLD
+cd dwarfdump ; sh configure ;  make
 cd ..
-cd dwarfdump2 ; sh BLD
+cd dwarfdump2 ; sh configure ;   make
 cd ..
 cd dwarfexample
 make

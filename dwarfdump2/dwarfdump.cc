@@ -53,6 +53,7 @@ $Header: /plroot/cmplrs.src/v7.4.5m/.RCS/PL/dwarfdump/RCS/dwarfdump.c,v 1.48 200
 #include <limits.h>
 #include <unistd.h>             /* For getopt. */
 #include "dwconf.h"
+#include "common.h"
 #include "naming.h"
 #define DWARFDUMP_VERSION " Fri Sep  2 13:45:21 PDT 2011  "
 
@@ -342,6 +343,9 @@ process_one_file(Elf * elf,const  string & file_name, int archive,
         config_file_data->cf_same_val);
     dwarf_set_frame_undefined_value(dbg,
         config_file_data->cf_undefined_val);
+    if(config_file_data->cf_address_size) {
+        dwarf_set_default_address_size(dbg, config_file_data->cf_address_size);
+    }
     dwarf_set_harmless_error_list_size(dbg,50);
     print_any_harmless_errors(dbg);
 

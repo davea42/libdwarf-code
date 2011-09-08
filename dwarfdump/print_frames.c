@@ -605,27 +605,31 @@ print_one_fde(Dwarf_Debug dbg, Dwarf_Fde fde,
         struct Addr_Map_Entry *mp = 0;
         temps = get_fde_proc_name(dbg, low_pc,pcMap,all_cus_seen);
         mp = addr_map_find(low_pc,lowpcSet);
-        DWARF_CHECK_COUNT(fde_duplication,1);
+        if (check_frames || check_frames_extended) { 
+            DWARF_CHECK_COUNT(fde_duplication,1);
+        }
         if (mp) {
-            char msg[400];
-            if(temps && (strlen(temps) > 0)) {
-                snprintf(msg,sizeof(msg),"An fde low pc of 0x%"
-                    DW_PR_DUx
-                    " is not the first fde with that pc. "
-                    "The first is named \"%s\"",
-                    (Dwarf_Unsigned)low_pc,
-                    temps);
-            } else {
-                snprintf(msg,sizeof(msg),"An fde low pc of 0x%"
-                    DW_PR_DUx
-                    " is not the first fde with that pc. "
-                    "The first is not named.",
-                    (Dwarf_Unsigned)low_pc);
-
+            if (check_frames || check_frames_extended) { 
+                char msg[400];
+                if(temps && (strlen(temps) > 0)) {
+                    snprintf(msg,sizeof(msg),"An fde low pc of 0x%"
+                        DW_PR_DUx
+                        " is not the first fde with that pc. "
+                        "The first is named \"%s\"",
+                        (Dwarf_Unsigned)low_pc,
+                        temps);
+                } else {
+                    snprintf(msg,sizeof(msg),"An fde low pc of 0x%"
+                        DW_PR_DUx
+                        " is not the first fde with that pc. "
+                        "The first is not named.",
+                        (Dwarf_Unsigned)low_pc);
+    
+                }
+                DWARF_CHECK_ERROR(fde_duplication,msg);
             }
-            DWARF_CHECK_ERROR(fde_duplication,msg);
         } else {
-            addr_map_insert(low_pc,0,lowpcSet);
+                addr_map_insert(low_pc,0,lowpcSet);
         }
 #endif
     }

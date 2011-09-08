@@ -437,17 +437,21 @@ print_one_fde(Dwarf_Debug dbg, Dwarf_Fde fde,
         temps = get_fde_proc_name(dbg, low_pc,
             pcMap,all_cus_seen);
         LowpcUsedSettype::const_iterator it = lowpcSet.find(low_pc);
-        fde_duplication.checks++;
+        if(check_fdes) {
+            fde_duplication.checks++;
+        }
         if (it != lowpcSet.end()) {
-            string msg = string("An fde low pc of ") + IToHex(low_pc) +
-                string(" is not the first fde with that pc. ");
-            if(temps.empty()) {
-                msg.append("The first is not named."); 
-            } else {
-                msg.append(string("The first is named \"")+
-                temps + string("\"") );
+            if(check_fdes) {
+                string msg = string("An fde low pc of ") + IToHex(low_pc) +
+                    string(" is not the first fde with that pc. ");
+                if(temps.empty()) {
+                    msg.append("The first is not named."); 
+                } else {
+                    msg.append(string("The first is named \"")+
+                    temps + string("\"") );
+                }
+                DWARF_CHECK_ERROR(fde_duplication,msg);
             }
-            DWARF_CHECK_ERROR(fde_duplication,msg);
         } else {
             lowpcSet.insert(low_pc);
         }

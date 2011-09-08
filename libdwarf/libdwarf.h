@@ -2640,12 +2640,14 @@ dwarf_get_section_max_offsets(Dwarf_Debug /*dbg*/,
     Dwarf_Unsigned * /*debug_ranges_size*/,
     Dwarf_Unsigned * /*debug_pubtypes_size*/);
 
+/*  The 'set' calls here return the original (before any change
+    by these set routines) of the respective fields. */
 /*  Multiple releases spelled 'initial' as 'inital' . 
     The 'inital' spelling should not be used. */ 
 Dwarf_Half dwarf_set_frame_rule_inital_value(Dwarf_Debug /*dbg*/,
     Dwarf_Half /*value*/);
 /*  Additional interface with correct 'initial' spelling. */
-/*  It is likely you will want to call the following 5 functions
+/*  It is likely you will want to call the following 6 functions
     before accessing any frame information.  All are useful
     to tailor handling of pseudo-registers needed to turn
     frame operation references into simpler forms and to
@@ -2662,6 +2664,10 @@ Dwarf_Half dwarf_set_frame_same_value(Dwarf_Debug /*dbg*/,
     Dwarf_Half /*value*/);
 Dwarf_Half dwarf_set_frame_undefined_value(Dwarf_Debug /*dbg*/, 
     Dwarf_Half /*value*/);
+/*  dwarf_set_default_address_size only sets 'value' if value is 
+    greater than zero. */
+Dwarf_Small dwarf_set_default_address_size(Dwarf_Debug /*dbg*/, 
+    Dwarf_Small /* value */);
 
 /*  As of April 27, 2009, this version with no diepointer is
     obsolete though supported.  Use dwarf_get_ranges_a() instead. */

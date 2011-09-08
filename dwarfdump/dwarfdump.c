@@ -851,6 +851,9 @@ process_one_file(Elf * elf, string file_name, int archive,
         config_file_data->cf_same_val);
     dwarf_set_frame_undefined_value(dbg,
         config_file_data->cf_undefined_val);
+    if(config_file_data->cf_address_size) {
+        dwarf_set_default_address_size(dbg, config_file_data->cf_address_size);
+    }
     dwarf_set_harmless_error_list_size(dbg,50);
 
 

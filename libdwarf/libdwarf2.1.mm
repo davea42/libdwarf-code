@@ -8,7 +8,7 @@
 .nr Hb 5
 \." ==============================================
 \." Put current date in the following at each rev
-.ds vE rev 1.96, June 8, 2011
+.ds vE rev 1.97, September 5, 2011
 \." ==============================================
 \." ==============================================
 .ds | |
@@ -4975,6 +4975,32 @@ frame operation.
 The function returns
 the previous value of the pseudo-register  (taken from the
 \f(CWdbg\fP structure).
+
+.H 4 "dwarf_set_default_address_size()"
+This allows consumers to set a default address size.
+When one has an object where the
+default address_size does not match the frame address
+size where there is no debug_info available to get a
+frame-specific address-size, this function is useful.
+For example, if an Elf64 object has a .debug_frame whose
+real address_size is 4 (32 bits).  This a very rare
+situation.
+.DS
+\f(CWDwarf_Small
+dwarf_set_default_address_size(Dwarf_Debug dbg,
+         Dwarf_Small value);\fP
+
+.DE
+\f(CWdwarf_set_default_address_size()\fP sets the
+value \f(CWvalue\fP as the  default address size for
+this activation of the reader, but only if \f(CWvalue\fP
+is greater than zero (otherwise the default address size
+is not changed).
+.P
+The function returns
+the previous value of the default address size  (taken from the
+\f(CWdbg\fP structure).
+
 
 
 .H 4 "dwarf_get_fde_info_for_reg3()"

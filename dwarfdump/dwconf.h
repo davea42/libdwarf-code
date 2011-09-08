@@ -76,6 +76,19 @@ struct dwconf_s {
         cf_interface_number 3) this should be outside the table, a
         special value such as 1436, not a table column at all).  */
     int cf_cfa_reg;
+
+    /*  If non-zero it is the number of bytes in an address
+        for the frame data.  Normally it will be zero because
+        there are usually other sources for the correct address size.
+        However, with DWARF2 frame data there is no explicit address
+        size in the frame data and the object file might not have
+        other .debug_ sections to work with. 
+        If zero, no address size was supplied, and that is normal and
+        the already-set (or defaulted) address size is to be used.
+        Only an exceptional frame configure will specify address
+        size here.  This won't work at all if the object needing
+        this setting has different address size in different CUs. */
+    int cf_address_size;
 };
 
 

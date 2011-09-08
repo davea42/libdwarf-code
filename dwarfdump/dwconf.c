@@ -49,6 +49,11 @@
 
 extern int verbose;
 
+/* The nesting level is arbitrary,  2 should suffice.
+   But at least this prevents an infinite loop.
+*/
+#define MAX_NEST_LEVEL 3 
+
 struct token_s {
     unsigned tk_len;
     char *tk_data;
@@ -65,6 +70,8 @@ enum linetype_e {
     LT_SAME_VAL_REG,
     LT_UNDEFINED_VAL_REG,
     LT_REG_TABLE_SIZE,
+    LT_ADDRESS_SIZE,
+    LT_INCLUDEABI,
     LT_ENDABI
 };
 
@@ -85,6 +92,8 @@ static char name_initial_reg_value[] = "initial_reg_value:";
 static char name_same_val_reg[] = "same_val_reg:";
 static char name_undefined_val_reg[] = "undefined_val_reg:";
 static char name_reg_table_size[] = "reg_table_size:";
+static char name_address_size[] = "address_size:";
+static char name_includeabi[] = "includeabi:";
 static char name_endabi[] = "endabi:";
 
 static struct comtable_s comtable[] = {
@@ -96,8 +105,44 @@ static struct comtable_s comtable[] = {
     {LT_SAME_VAL_REG, name_same_val_reg},
     {LT_UNDEFINED_VAL_REG, name_undefined_val_reg},
     {LT_REG_TABLE_SIZE, name_reg_table_size},
+    {LT_ADDRESS_SIZE, name_address_size},
+    {LT_INCLUDEABI, name_includeabi},
     {LT_ENDABI, name_endabi},
 };
+
+struct conf_internal_s {
+    unsigned long beginabi_lineno;
+    unsigned long frame_interface_lineno;
+    unsigned long initial_reg_value_lineno;
+    unsigned long reg_table_size_lineno;
+    unsigned long address_size_lineno;
+    unsigned long same_val_reg_lineno;
+    unsigned long undefined_val_reg_lineno;
+    unsigned long cfa_reg_lineno;
+    unsigned long regcount;
+    struct dwconf_s * conf_out;
+    char * conf_name_used;
+    char ** conf_defaults;
+};
+static void 
+init_conf_internal(struct conf_internal_s *s,
+    struct dwconf_s * conf_out)
+{
+    s->beginabi_lineno = 0;
+    s->frame_interface_lineno = 0;
+    s->initial_reg_value_lineno = 0;
+    s->reg_table_size_lineno = 0;
+    s->address_size_lineno = 0;
+    s->same_val_reg_lineno = 0;
+    s->undefined_val_reg_lineno = 0;
+    s->cfa_reg_lineno = 0;
+    s->cfa_reg_lineno = 0;
+    s->conf_name_used = 0;
+    s->conf_defaults = 0;
+    s->regcount = 0;
+    s->conf_out = conf_out;
+}
+
 static int size_of_comtable = sizeof(comtable) / sizeof(comtable[0]);
 
 static FILE *find_a_file(char *named_file, char **defaults,
@@ -105,7 +150,7 @@ static FILE *find_a_file(char *named_file, char **defaults,
 static int find_abi_start(FILE * stream, char *abi_name, long *offset,
     unsigned long *lineno_out);
 static int parse_abi(FILE * stream, char *fname, char *abiname,
-    struct dwconf_s *out, unsigned long lineno);
+    struct conf_internal_s *out, unsigned long lineno, unsigned nest_level);
 static char *get_token(char *cp, struct token_s *outtok);
 
 /*  This finds a dwarfdump.conf file and
@@ -120,11 +165,16 @@ static char *get_token(char *cp, struct token_s *outtok);
     It would also be reasonable to search every 'dwarfdump.conf'
     it finds for the abi. But we stop at the first dwarfdump.conf
     we find.
+    This is the internal call to get the conf data to implement
+    a crude 'includeabi' feature.
+
+    Returns 0 if no errors found, else returns > 0.
 */
-int
-find_conf_file_and_read_config(char *named_file,
-    char *named_abi, char **defaults,
-    struct dwconf_s *conf_out)
+static int
+find_conf_file_and_read_config_inner(char *named_file,
+    char *named_abi,
+    struct conf_internal_s *conf_internal,
+    unsigned nest_level)
 {
 
     FILE *conf_stream = 0;
@@ -135,7 +185,8 @@ find_conf_file_and_read_config(char *named_file,
 
     errcount = 0;
 
-    conf_stream = find_a_file(named_file, defaults, &name_used);
+    conf_stream = find_a_file(named_file, conf_internal->conf_defaults, 
+        &name_used);
     if (!conf_stream) {
         ++errcount;
         printf("dwarfdump found no file %s!\n",
@@ -146,6 +197,7 @@ find_conf_file_and_read_config(char *named_file,
     if (verbose > 1) {
         printf("dwarfdump using configuration file %s\n", name_used);
     }
+    conf_internal->conf_name_used = name_used;
 
     res = find_abi_start(conf_stream, named_abi, &offset, &lineno);
     if (errcount > 0) {
@@ -161,9 +213,27 @@ find_conf_file_and_read_config(char *named_file,
             offset, name_used);
         return errcount;
     }
-    parse_abi(conf_stream, name_used, named_abi, conf_out, lineno);
+    parse_abi(conf_stream, name_used, named_abi, conf_internal, lineno,
+        nest_level);
     fclose(conf_stream);
     return errcount;
+}
+
+/* This is the external-facing call to get the conf data. */
+int
+find_conf_file_and_read_config(char *named_file,
+    char *named_abi, char **defaults,
+    struct dwconf_s *conf_out)
+{
+    int res = 0;
+    struct conf_internal_s conf_internal;
+    init_conf_file_data(conf_out);
+    init_conf_internal(&conf_internal,conf_out);
+    conf_internal.conf_defaults = defaults;
+    res =  find_conf_file_and_read_config_inner(named_file,
+        named_abi,
+        &conf_internal,0);
+    return res;
 }
 
 /* Given path strings, attempt to make a canonical file name:
@@ -408,7 +478,7 @@ ensure_has_no_more_tokens(char *cp, char *fname, unsigned long lineno)
 
 
 /*  There may be many  beginabi: lines in a dwarfdump.conf file,
-    find the one we want and return it's file offset.
+    find the one we want and return its file offset.
 */
 static int
 find_abi_start(FILE * stream,
@@ -554,11 +624,8 @@ parsebeginabi(char *cp, char *fname, char *abiname,
         ++errcount;
         return FALSE;
     }
-    {
-        int res =
-            ensure_has_no_more_tokens(cp + tok.tk_len, fname, lineno);
-        return res;
-    }
+    ensure_has_no_more_tokens(cp + tok.tk_len, fname, lineno);
+    return TRUE;
 }
 
 /* This expands register names as required, but does not
@@ -634,13 +701,14 @@ make_a_number(char *cmd, char *filename, unsigned long
 */
 static int
 parsereg(char *cp, char *fname, unsigned long lineno,
-    struct dwconf_s *conf, struct comtable_s *comtab)
+    struct conf_internal_s *conf, struct comtable_s *comtab)
 {
     size_t clen = comtab->namelen;
     struct token_s regnum;
     struct token_s tokreg;
     unsigned long val = 0;
     int ok = FALSE;
+    int res = FALSE;
 
     cp = cp + clen + 1;
     cp = get_token(cp, &tokreg);
@@ -668,13 +736,10 @@ parsereg(char *cp, char *fname, unsigned long lineno,
         return FALSE;
     }
 
-    add_to_reg_table(conf, tokreg.tk_data, val, fname, lineno);
+    add_to_reg_table(conf->conf_out, tokreg.tk_data, val, fname, lineno);
 
-    {
-        int res = ensure_has_no_more_tokens(cp, fname, lineno);
-
-        return res;
-    }
+    res = ensure_has_no_more_tokens(cp, fname, lineno);
+    return res;
 }
 
 /*
@@ -683,12 +748,13 @@ parsereg(char *cp, char *fname, unsigned long lineno,
 */
 static int
 parseframe_interface(char *cp, char *fname, unsigned long lineno,
-    struct dwconf_s *conf, struct comtable_s *comtab)
+    struct conf_internal_s *conf, struct comtable_s *comtab)
 {
     size_t clen = comtab->namelen;
     struct token_s tok;
     unsigned long val = 0;
     int ok = FALSE;
+    int res = FALSE;
 
     cp = cp + clen + 1;
     cp = get_token(cp, &tok);
@@ -715,12 +781,9 @@ parseframe_interface(char *cp, char *fname, unsigned long lineno,
         return FALSE;
     }
 
-    conf->cf_interface_number = (int) val;
-    {
-        int res = ensure_has_no_more_tokens(cp, fname, lineno);
-
-        return res;
-    }
+    conf->conf_out->cf_interface_number = (int) val;
+    res = ensure_has_no_more_tokens(cp, fname, lineno);
+    return res;
 }
 
 /*
@@ -729,12 +792,13 @@ parseframe_interface(char *cp, char *fname, unsigned long lineno,
 */
 static int
 parsecfa_reg(char *cp, char *fname, unsigned long lineno,
-    struct dwconf_s *conf, struct comtable_s *comtab)
+    struct conf_internal_s *conf, struct comtable_s *comtab)
 {
     size_t clen = comtab->namelen;
     struct token_s tok;
     unsigned long val = 0;
     int ok = FALSE;
+    int res = FALSE;
 
     cp = cp + clen + 1;
     cp = get_token(cp, &tok);
@@ -752,11 +816,9 @@ parsecfa_reg(char *cp, char *fname, unsigned long lineno,
         ++errcount;
         return FALSE;
     }
-    conf->cf_cfa_reg = (int) val;
-    {
-        int res = ensure_has_no_more_tokens(cp, fname, lineno);
-        return res;
-    }
+    conf->conf_out->cf_cfa_reg = (int) val;
+    res = ensure_has_no_more_tokens(cp, fname, lineno);
+    return res;
 }
 
 
@@ -766,12 +828,13 @@ parsecfa_reg(char *cp, char *fname, unsigned long lineno,
 static int
 parseinitial_reg_value(char *cp, char *fname,
     unsigned long lineno,
-    struct dwconf_s *conf, struct comtable_s *comtab)
+    struct conf_internal_s *conf, struct comtable_s *comtab)
 {
     size_t clen = comtab->namelen;
     struct token_s tok;
     unsigned long val = 0;
     int ok = FALSE;
+    int res = FALSE;
 
     cp = cp + clen + 1;
     cp = get_token(cp, &tok);
@@ -790,23 +853,21 @@ parseinitial_reg_value(char *cp, char *fname,
         ++errcount;
         return FALSE;
     }
-    conf->cf_initial_rule_value = (int) val;
-    {
-        int res = ensure_has_no_more_tokens(cp, fname, lineno);
-
-        return res;
-    }
+    conf->conf_out->cf_initial_rule_value = (int) val;
+    res = ensure_has_no_more_tokens(cp, fname, lineno);
+    return res;
 }
 
 static int
 parsesame_val_reg(char *cp, char *fname,
     unsigned long lineno,
-    struct dwconf_s *conf, struct comtable_s *comtab)
+    struct conf_internal_s *conf, struct comtable_s *comtab)
 {
     size_t clen = comtab->namelen;
     struct token_s tok;
     unsigned long val = 0;
     int ok = FALSE;
+    int res = FALSE;
 
     cp = cp + clen + 1;
     cp = get_token(cp, &tok);
@@ -825,23 +886,21 @@ parsesame_val_reg(char *cp, char *fname,
         ++errcount;
         return FALSE;
     }
-    conf->cf_same_val = (int) val;
-    {
-        int res = ensure_has_no_more_tokens(cp, fname, lineno);
-
-        return res;
-    }
+    conf->conf_out->cf_same_val = (int) val;
+    res = ensure_has_no_more_tokens(cp, fname, lineno);
+    return res;
 }
 
 static int
 parseundefined_val_reg(char *cp, char *fname,
     unsigned long lineno,
-    struct dwconf_s *conf, struct comtable_s *comtab)
+    struct conf_internal_s *conf, struct comtable_s *comtab)
 {
     size_t clen = comtab->namelen;
     struct token_s tok;
     unsigned long val = 0;
     int ok = FALSE; 
+    int res = FALSE;
 
     cp = cp + clen + 1;
     cp = get_token(cp, &tok);
@@ -860,12 +919,9 @@ parseundefined_val_reg(char *cp, char *fname,
         ++errcount;
         return FALSE;
     }
-    conf->cf_undefined_val = (int) val;
-    {
-        int res = ensure_has_no_more_tokens(cp, fname, lineno);
-
-        return res;
-    }
+    conf->conf_out->cf_undefined_val = (int) val;
+    res = ensure_has_no_more_tokens(cp, fname, lineno);
+    return res;
 }
 
 
@@ -875,12 +931,13 @@ parseundefined_val_reg(char *cp, char *fname,
 */
 static int
 parsereg_table_size(char *cp, char *fname, unsigned long lineno,
-    struct dwconf_s *conf, struct comtable_s *comtab)
+    struct conf_internal_s *conf, struct comtable_s *comtab)
 {
     size_t clen = comtab->namelen;
     struct token_s tok;
     unsigned long val = 0;
     int ok = FALSE;
+    int res = FALSE;
 
     cp = cp + clen + 1;
     cp = get_token(cp, &tok);
@@ -898,13 +955,43 @@ parsereg_table_size(char *cp, char *fname, unsigned long lineno,
         ++errcount;
         return FALSE;
     }
-    conf->cf_table_entry_count = (unsigned long) val;
-    {
-        int res = ensure_has_no_more_tokens(cp, fname, lineno);
+    conf->conf_out->cf_table_entry_count = (unsigned long) val;
+    res = ensure_has_no_more_tokens(cp, fname, lineno);
+    return res;
+}
 
-        return res;
+/* We are guaranteed it's a table size command, parse it
+    and record the table size.
+*/
+static int
+parseaddress_size(char *cp, char *fname, unsigned long lineno,
+    struct conf_internal_s *conf, struct comtable_s *comtab)
+{
+    size_t clen = comtab->namelen;
+    struct token_s tok;
+    unsigned long val = 0;
+    int ok = FALSE;
+    int res = FALSE;
+
+    cp = cp + clen + 1;
+    cp = get_token(cp, &tok);
+    if (tok.tk_len == 0) {
+        printf("dwarfdump.conf error: "
+            "%s missing address size value %s line %lu",
+            comtab->name, fname, lineno);
+        ++errcount;
+        return FALSE;
     }
 
+    ok = make_a_number(comtab->name, fname, lineno, &tok, &val);
+
+    if (!ok) {
+        ++errcount;
+        return FALSE;
+    }
+    conf->conf_out->cf_address_size = (unsigned long) val;
+    res = ensure_has_no_more_tokens(cp, fname, lineno);
+    return res;
 }
 
 
@@ -917,6 +1004,7 @@ parseendabi(char *cp, char *fname, char *abiname, unsigned long lineno,
 {
     size_t clen = comtab->namelen;
     struct token_s tok;
+    int res = 0;
 
 
     cp = cp + clen + 1;
@@ -928,13 +1016,28 @@ parseendabi(char *cp, char *fname, char *abiname, unsigned long lineno,
         ++errcount;
         return FALSE;
     }
-    {
-        int res = ensure_has_no_more_tokens(cp, fname, lineno);
-
-        return res;
-    }
-
+    res = ensure_has_no_more_tokens(cp, fname, lineno);
+    return res;
 }
+static int
+parseincludeabi(char *cp, char *fname, unsigned long lineno,
+    char **abiname_out,
+    struct comtable_s *comtab)
+{
+    size_t clen = comtab->namelen;
+    struct token_s tok;
+    char *name = 0;
+    int res = FALSE;
+
+    cp = cp + clen + 1;
+    cp = get_token(cp, &tok);
+    name = makename(tok.tk_data);
+
+    *abiname_out = name;
+    res = ensure_has_no_more_tokens(cp, fname, lineno);
+    return res;
+}
+
 
 
 
@@ -954,22 +1057,23 @@ parseendabi(char *cp, char *fname, char *abiname, unsigned long lineno,
 */
 static int
 parse_abi(FILE * stream, char *fname, char *abiname,
-    struct dwconf_s *out, unsigned long lineno)
+    struct conf_internal_s *conf_internal, 
+    unsigned long lineno,
+    unsigned int nest_level)
 {
-    struct dwconf_s localconf;
+    struct dwconf_s *localconf = conf_internal->conf_out;
     char buf[1000];
     int comtype = 0;
-    long regcount = 0;
 
-    unsigned long beginabi_lineno = 0;
-    unsigned long frame_interface_lineno = 0;
-    unsigned long initial_reg_value_lineno = 0;
-    unsigned long reg_table_size_lineno = 0;
-    unsigned long same_val_reg_lineno = 0;
-    unsigned long undefined_val_reg_lineno = 0;
-    unsigned long cfa_reg_lineno = 0;
     static int first_time_done = 0;
     struct comtable_s *comtabp = 0;
+
+    if( nest_level > MAX_NEST_LEVEL) {
+        ++errcount;
+        printf("dwarfdump.conf: includeabi nest too deep in %s at line %lu\n",
+            fname, lineno);
+        return FALSE;
+    }
 
 
     if (first_time_done == 0) {
@@ -977,13 +1081,7 @@ parse_abi(FILE * stream, char *fname, char *abiname,
         first_time_done = 1;
     }
 
-
-
-
-    init_conf_file_data(&localconf);
-
     for (; !feof(stream);) {
-
         char *line = 0;
 
         /* long loffset = ftell(stream); */
@@ -1010,104 +1108,131 @@ parse_abi(FILE * stream, char *fname, char *abiname,
         case LT_BLANK:
             break;
         case LT_BEGINABI:
-            if (beginabi_lineno > 0) {
+            if (conf_internal->beginabi_lineno > 0) {
                 ++errcount;
                 printf
                     ("dwarfdump: Encountered beginabi: when not expected. "
                     "%s line %lu previous beginabi line %lu\n", fname,
-                    lineno, beginabi_lineno);
+                    lineno, conf_internal->beginabi_lineno);
             }
-            beginabi_lineno = lineno;
+            conf_internal->beginabi_lineno = lineno;
             parsebeginabi(line, fname, abiname, lineno, comtabp);
             break;
 
         case LT_REG:
-            parsereg(line, fname, lineno, &localconf, comtabp);
-            ++regcount;
+            parsereg(line, fname, lineno, conf_internal, comtabp);
+            conf_internal->regcount++;
             break;
         case LT_FRAME_INTERFACE:
-            if (frame_interface_lineno > 0) {
+            if (conf_internal->frame_interface_lineno > 0) {
                 ++errcount;
                 printf
                     ("dwarfdump: Encountered duplicate frame_interface: "
                     "%s line %lu previous frame_interface: line %lu\n",
-                    fname, lineno, frame_interface_lineno);
+                    fname, lineno, conf_internal->frame_interface_lineno);
             }
-            frame_interface_lineno = lineno;
+            conf_internal->frame_interface_lineno = lineno;
             parseframe_interface(line, fname,
-                lineno, &localconf, comtabp);
+                lineno, conf_internal, comtabp);
             break;
         case LT_CFA_REG:
-            if (cfa_reg_lineno > 0) {
+            if (conf_internal->cfa_reg_lineno > 0) {
                 printf("dwarfdump: Encountered duplicate cfa_reg: "
                     "%s line %lu previous cfa_reg line %lu\n",
-                    fname, lineno, cfa_reg_lineno);
+                    fname, lineno, conf_internal->cfa_reg_lineno);
                 ++errcount;
             }
-            cfa_reg_lineno = lineno;
-            parsecfa_reg(line, fname, lineno, &localconf, comtabp);
+            conf_internal->cfa_reg_lineno = lineno;
+            parsecfa_reg(line, fname, lineno, conf_internal, comtabp);
             break;
         case LT_INITIAL_REG_VALUE:
-            if (initial_reg_value_lineno > 0) {
+            if (conf_internal->initial_reg_value_lineno > 0) {
                 printf
                     ("dwarfdump: Encountered duplicate initial_reg_value: "
                     "%s line %lu previous initial_reg_value: line %lu\n",
-                    fname, lineno, initial_reg_value_lineno);
+                    fname, lineno, conf_internal->initial_reg_value_lineno);
                 ++errcount;
             }
-            initial_reg_value_lineno = lineno;
+            conf_internal->initial_reg_value_lineno = lineno;
             parseinitial_reg_value(line, fname,
-                lineno, &localconf, comtabp);
+                lineno, conf_internal, comtabp);
             break;
         case LT_SAME_VAL_REG:
-            if (same_val_reg_lineno > 0) {
+            if (conf_internal->same_val_reg_lineno > 0) {
                 ++errcount;
                 printf 
                     ("dwarfdump: Encountered duplicate same_val_reg: "
                     "%s line %lu previous initial_reg_value: line %lu\n",
-                    fname, lineno, initial_reg_value_lineno);
+                    fname, lineno, conf_internal->initial_reg_value_lineno);
             }
-            same_val_reg_lineno = lineno;
+            conf_internal->same_val_reg_lineno = lineno;
             parsesame_val_reg(line, fname,
-                lineno, &localconf, comtabp);
+                lineno, conf_internal, comtabp);
             break;
         case LT_UNDEFINED_VAL_REG:
-            if (undefined_val_reg_lineno > 0) {
+            if (conf_internal->undefined_val_reg_lineno > 0) {
                 ++errcount;
                 printf 
                     ("dwarfdump: Encountered duplicate undefined_val_reg: "
                     "%s line %lu previous initial_reg_value: line %lu\n",
-                    fname, lineno, initial_reg_value_lineno);
+                    fname, lineno, conf_internal->initial_reg_value_lineno);
             }
-            undefined_val_reg_lineno = lineno;
+            conf_internal->undefined_val_reg_lineno = lineno;
             parseundefined_val_reg(line, fname,
-                lineno, &localconf, comtabp);
+                lineno, conf_internal, comtabp);
             break;
         case LT_REG_TABLE_SIZE:
-            if (reg_table_size_lineno > 0) {
+            if (conf_internal->reg_table_size_lineno > 0) {
                 printf("dwarfdump: duplicate reg_table_size: "
                     "%s line %lu previous reg_table_size: line %lu\n",
-                    fname, lineno, reg_table_size_lineno);
+                    fname, lineno, conf_internal->reg_table_size_lineno);
                 ++errcount;
             }
-            reg_table_size_lineno = lineno;
+            conf_internal->reg_table_size_lineno = lineno;
             parsereg_table_size(line, fname,
-                lineno, &localconf, comtabp);
+                lineno, conf_internal, comtabp);
             break;
         case LT_ENDABI:
             parseendabi(line, fname, abiname, lineno, comtabp);
 
-            if (regcount > localconf.cf_table_entry_count) {
+            if (conf_internal->regcount > localconf->cf_table_entry_count) {
                 printf("dwarfdump: more registers named than "
                     " in  %s  ( %lu named vs  %s %lu)  %s line %lu\n",
-                    abiname, (unsigned long) regcount,
+                    abiname, (unsigned long) conf_internal->regcount,
                     name_reg_table_size,
-                    (unsigned long) localconf.cf_table_entry_count,
+                    (unsigned long) localconf->cf_table_entry_count,
                     fname, (unsigned long) lineno);
                 ++errcount;
             }
-            *out = localconf;
             return TRUE;
+        case LT_ADDRESS_SIZE:
+            if (conf_internal->address_size_lineno > 0) {
+                printf("dwarfdump: duplicate address_size: "
+                    "%s line %lu previous address_size: line %lu\n",
+                    fname, lineno, conf_internal->address_size_lineno);
+                ++errcount;
+            }
+            conf_internal->address_size_lineno = lineno;
+            parseaddress_size(line, fname,
+                lineno, conf_internal, comtabp);
+            break;
+        case LT_INCLUDEABI: {
+            char *abiname_inner = 0;
+            unsigned long abilno = conf_internal->beginabi_lineno;
+            int ires = 0;
+            ires = parseincludeabi(line,fname,lineno, &abiname_inner,comtabp);
+            if(ires == FALSE) {
+                return FALSE;
+            }
+            /* For the nested abi read, the abi line number must be
+               set as if not-yet-read, and then restored. */
+            conf_internal->beginabi_lineno = 0;
+            find_conf_file_and_read_config_inner(
+                conf_internal->conf_name_used,
+                abiname_inner, conf_internal,nest_level+1);
+            conf_internal->beginabi_lineno = abilno;
+            }
+            break;
         default:
             printf
                 ("dwarfdump internal error, impossible line type %d  %s %lu \n",
@@ -1179,6 +1304,7 @@ init_conf_file_data(struct dwconf_s *config_file_data)
     config_file_data->cf_table_entry_count = 100;
     config_file_data->cf_initial_rule_value = DW_FRAME_UNDEFINED_VAL;
     config_file_data->cf_cfa_reg =  DW_FRAME_CFA_COL3;
+    config_file_data->cf_address_size =  0;
     config_file_data->cf_same_val = DW_FRAME_SAME_VAL;
     config_file_data->cf_undefined_val = DW_FRAME_UNDEFINED_VAL;
     config_file_data->cf_regs = genericregnames;
@@ -1210,6 +1336,7 @@ init_mips_conf_file_data(struct dwconf_s *config_file_data)
     config_file_data->cf_initial_rule_value =
         DW_FRAME_REG_INITIAL_VALUE;
     config_file_data->cf_cfa_reg = DW_FRAME_CFA_COL;
+    config_file_data->cf_address_size =  0;
     config_file_data->cf_same_val = DW_FRAME_SAME_VAL;
     config_file_data->cf_undefined_val = DW_FRAME_UNDEFINED_VAL;
     config_file_data->cf_regs = regnames;
@@ -1247,6 +1374,7 @@ init_generic_config_1200_regs(struct dwconf_s *config_file_data)
         real register number. */
     config_file_data->cf_initial_rule_value = 1235; /* SAME VALUE */
     config_file_data->cf_cfa_reg =  DW_FRAME_CFA_COL3;
+    config_file_data->cf_address_size =  0;
     config_file_data->cf_same_val = 1235; 
     config_file_data->cf_undefined_val = 1234;
     config_file_data->cf_regs = genericregnames;
