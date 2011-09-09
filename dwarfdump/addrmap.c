@@ -55,9 +55,6 @@ addr_map_create_entry(Dwarf_Unsigned k,char *name)
     if(!mp) {
         return 0;
     }
-static int crscount = 0;
-crscount++;
-printf("dadebug addr_map_create_entry mp 0x%x count created %d\n",(unsigned)mp,crscount);
     mp->mp_key = k;
     if(name) {
         mp->mp_name = strdup(name);
@@ -70,9 +67,6 @@ static void
 addr_map_free_func(void *mx)
 {
     struct Addr_Map_Entry *m = mx;
-static int descount = 0;
-descount++;
-printf("dadebug addr_map_free_func m 0x%x count freed %d\n",(unsigned)m,descount);
     if(!m) {
         return;
     }
