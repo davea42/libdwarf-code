@@ -58,6 +58,9 @@
 /* Define 1 if want producer to build with IRIX offset sizes */
 #undef HAVE_SGI_IRIX_OFFSETS
 
+/* Define 1 if we have the Windows specific header stdafx.h */
+#undef HAVE_STDAFX_H
+
 /* Define to 1 if you have the <stdint.h> header file. */
 #undef HAVE_STDINT_H
 

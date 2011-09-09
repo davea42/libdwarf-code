@@ -31,6 +31,10 @@ elif test "$ac_cv_header_libelf_libelf_h" = yes; then
 	[Define to header that first defines elf.])
 fi
 
+AC_TRY_COMPILE([#include "stdafx.h"],[  int p; p = 27;] ,
+  AC_DEFINE(HAVE_STDAFX_H,1,
+        [Define 1 if we have the Windows specific header stdafx.h]))
+
 AC_TRY_COMPILE([#include LOCATION_OF_LIBELFHEADER],  Elf64_Rel *p; int i; i = p->r_info; ,AC_DEFINE(HAVE_ELF64_R_INFO,1,
 	[Define to 1 if the Elf64_Rel structure has r_info field.]))
 AC_TRY_COMPILE([],  __uint32_t p; p = 3; ,AC_DEFINE(HAVE___UINT32_T,

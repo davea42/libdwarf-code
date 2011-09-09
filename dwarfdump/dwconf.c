@@ -35,9 +35,9 @@
 
 
 /* Windows specific */
-#ifdef WIN32
+#ifdef HAVE_STDAFX_H
 #include "stdafx.h"
-#endif /* WIN32 */
+#endif /* HAVE_STDAFX_H */
 
 #include "globals.h"
 #include "dwarf.h"

@@ -39,6 +39,9 @@
 /* Define to 1 if you have the <sgidefs.h> header file. */
 #undef HAVE_SGIDEFS_H
 
+/* Define 1 if we have the Windows specific header stdafx.h */
+#undef HAVE_STDAFX_H
+
 /* Define to 1 if you have the <stdint.h> header file. */
 #undef HAVE_STDINT_H
 

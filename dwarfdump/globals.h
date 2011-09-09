@@ -88,9 +88,9 @@ typedef unsigned long long  __uint64_t;
 #include <string.h>
 
 /* Windows specific */
-#ifdef WIN32
+#ifdef HAVE_STDAFX_H
 #include "stdafx.h"
-#endif /* WIN32 */
+#endif /* HAVE_STDAFX_H */
 
 #ifdef HAVE_ELF_H
 #include <elf.h>

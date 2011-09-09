@@ -4162,6 +4162,24 @@ $as_echo "#define HAVE_OLD_FRAME_CFA_COL 1" >>confdefs.h
 fi
 
 
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+#include "stdafx.h"
+int
+main ()
+{
+  int p; p = 27;
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_compile "$LINENO"; then :
+
+$as_echo "#define HAVE_STDAFX_H 1" >>confdefs.h
+
+fi
+rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+
 # Check whether --enable-dwarf_format_sgi_irix was given.
 if test "${enable_dwarf_format_sgi_irix+set}" = set; then :
   enableval=$enable_dwarf_format_sgi_irix;
