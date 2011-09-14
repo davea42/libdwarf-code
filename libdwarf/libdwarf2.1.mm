@@ -8,7 +8,7 @@
 .nr Hb 5
 \." ==============================================
 \." Put current date in the following at each rev
-.ds vE rev 1.97, September 5, 2011
+.ds vE rev 1.99, September 14, 2011
 \." ==============================================
 \." ==============================================
 .ds | |
@@ -6281,7 +6281,7 @@ DW_DLE_DIE_LOC_EXPR_BAD:Expected block value for attribute not found
 DW_DLE_OFFSET_BAD:Offset for next compilation-unit in .debug_info bad
 DW_DLE_MAKE_CU_CONTEXT_FAIL:Could not make CU context
 DW_DLE_ARANGE_OFFSET_BAD:Offset into .debug_info in .debug_aranges bad
-DW_DLE_SEGMENT_SIZE_BAD:Segment size should be 0 for MIPS processors
+DW_DLE_SEGMENT_SIZE_BAD:Segment size will be 0 for MIPS processors and should always be < 8.
 DW_DLE_ARANGE_LENGTH_BAD:Length of arange section in .debug_arange bad
 DW_DLE_ARANGE_DECODE_ERROR:Aranges do not end at end of .debug_aranges
 DW_DLE_ARANGES_NULL:NULL pointer to Dwarf_Arange specified

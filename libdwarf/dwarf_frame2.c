@@ -566,9 +566,17 @@ dwarf_create_cie_from_after_start(Dwarf_Debug dbg,
 
         if( version == DW_CIE_VERSION4) {
             address_size = *((unsigned char *)frame_ptr);
+            if(address_size  > sizeof(Dwarf_Addr)) {
+                _dwarf_error(dbg, error, DW_DLE_ADDRESS_SIZE_ERROR);
+                return (DW_DLV_ERROR);
+            }
             ++frame_ptr;
             segment_size = *((unsigned char *)frame_ptr);
             ++frame_ptr;
+            if(segment_size  > sizeof(Dwarf_Addr)) {
+                _dwarf_error(dbg, error, DW_DLE_SEGMENT_SIZE_BAD);
+                return (DW_DLV_ERROR);
+            }
         }
 
         DECODE_LEB128_UWORD(frame_ptr, lreg);

@@ -1,3 +1,20 @@
+2011-09-14  DavidAnderson <davea42@earthlink.net>
+     * BLDLIBDWARFTAR: Moved a local disk file. Irrelevant
+       to everyone but DA.
+     * dwarf_arange.c: check that the address_size and segment 
+       selector size fields are sensible.
+     * dwarf_die_deliv.c,dwarf_frame2.c: Give
+       DW_DLE_ADDRESS_SIZE_ERROR or DW_DLE_CU_ADDRESS_SIZE_BAD 
+       if the address size read from a section is obviously wrong.
+       Similarly for a bad segment-selector-size give
+       DW_DLE_SEGMENT_SIZE_BAD.
+     * dwarf_error.c: Added text for the DW_DLE_SEGMENT_SIZE_BAD
+       error.
+     * dwarf_frame.c: If dwarf_set_default_address_size() is handed
+       an address_size that we cannot handle, ignore the input so
+       we don't wind up coredumping the library or consumer code.
+     * libdwarf2.1.mm: Updated list of error codes a little bit. Rev 1.99
+     * libdwarf2.1.pdf: Regenerated.
 2011-09-08  DavidAnderson <davea42@earthlink.net>
      * dwarf_frame.c: Fixed bad indents.
 2011-09-02  DavidAnderson <davea42@earthlink.net>

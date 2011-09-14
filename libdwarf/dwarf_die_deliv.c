@@ -186,6 +186,11 @@ _dwarf_make_CU_Context(Dwarf_Debug dbg,
 
     cu_context->cc_address_size = *(Dwarf_Small *) cu_ptr;
 
+    if(cu_context->cc_address_size  > sizeof(Dwarf_Addr)) {
+        _dwarf_error(dbg, error, DW_DLE_CU_ADDRESS_SIZE_BAD);
+        return (NULL);
+    }
+
     if ((length < CU_VERSION_STAMP_SIZE + local_length_size +
         CU_ADDRESS_SIZE_SIZE) ||
         (offset + length + local_length_size +

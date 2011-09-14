@@ -1,3 +1,5 @@
+2011-09-14  DavidAnderson <davea42@earthlink.net>
+      * dwarfdump.c, common.c: Update version string.
 2011-09-08  DavidAnderson <davea42@earthlink.net>
       * config.h, configure.in, dwconf.c, globals.h: Switch 
         compile dependency to configure time HAVE_STDAFX_H

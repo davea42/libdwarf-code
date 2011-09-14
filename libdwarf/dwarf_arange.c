@@ -142,18 +142,25 @@ dwarf_get_aranges_list(Dwarf_Debug dbg,
         }
 
         address_size = *(Dwarf_Small *) arange_ptr;
+        if(address_size  > sizeof(Dwarf_Addr)) {
+            _dwarf_error(dbg, error, DW_DLE_ADDRESS_SIZE_ERROR);
+            return DW_DLV_ERROR;
+        }
         /*  It is not an error if the sizes differ.
             Unusual, but not an error. */
         arange_ptr = arange_ptr + sizeof(Dwarf_Small);
         length = length - sizeof(Dwarf_Small);
 
+        /*  Even DWARF2 had a segment_size field here, meaning
+            size in bytes of a segment descriptor on the target
+            system. */
         segment_size = *(Dwarf_Small *) arange_ptr;
-        arange_ptr = arange_ptr + sizeof(Dwarf_Small);
-        length = length - sizeof(Dwarf_Small);
-        if (segment_size != 0) {
+        if(segment_size > sizeof(Dwarf_Addr)) {
             _dwarf_error(dbg, error, DW_DLE_SEGMENT_SIZE_BAD);
             return (DW_DLV_ERROR);
         }
+        arange_ptr = arange_ptr + sizeof(Dwarf_Small);
+        length = length - sizeof(Dwarf_Small);
 
         range_entry_size = 2*address_size + segment_size;
         /* Round arange_ptr offset to next multiple of address_size. */
@@ -168,7 +175,9 @@ dwarf_get_aranges_list(Dwarf_Debug dbg,
             Dwarf_Unsigned segment_selector = 0;
             Dwarf_Unsigned range_length = 0;
             /*  For segmented address spaces, the first field to
-                read is a segment selector (new in DWARF4) */
+                read is a segment selector (new in DWARF4).
+                Surprising since the segment_size was always there
+                in the table header! */
             if(version == 4 && segment_size != 0) {
                 READ_UNALIGNED(dbg, segment_selector, Dwarf_Unsigned,
                     arange_ptr, segment_size);

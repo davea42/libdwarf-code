@@ -34,7 +34,7 @@ cp -r $tmpf $newpref
 rm -f ${newf} ${newf}.gz
 tar cf /var/tmp/$newf $newpref
 gzip ${newf}
-hm=/home/davea/sgiweb3/pagedata
+hm=/home/davea/web4/gweb/pagedata
 cp  ${newf}.gz $hm
 ls -l $tmpdir/${newf}.gz
 ls -l $hm/${newf}.gz

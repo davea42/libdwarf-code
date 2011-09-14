@@ -216,7 +216,7 @@ const char *_dwarf_errmsgs[] = {
     "DW_DLE_MAKE_CU_CONTEXT_FAIL",
     "DW_DLE_REL_ALLOC",
     "DW_DLE_ARANGE_OFFSET_BAD",
-    "DW_DLE_SEGMENT_SIZE_BAD",
+    "DW_DLE_SEGMENT_SIZE_BAD (135) Size of a segment selector should usually be less than 8 (bytes).",
     "DW_DLE_ARANGE_LENGTH_BAD",
     "DW_DLE_ARANGE_DECODE_ERROR",
     "DW_DLE_ARANGES_NULL",
@@ -316,7 +316,7 @@ const char *_dwarf_errmsgs[] = {
     "DW_DLE_DEBUG_FRAME_LENGTH_NOT_MULTIPLE(227)",
     "DW_DLE_REF_SIG8_NOT_HANDLED (228)",
     "DW_DLE_DEBUG_FRAME_POSSIBLE_ADDRESS_BOTCH (229)",
-    "DW_DLE_LOC_BAD_TERMINATION (230) the last location operator in an expression is missing some associated data, an operator ended too soon"
+    "DW_DLE_LOC_BAD_TERMINATION (230) the last location operator in an expression is missing some associated data, an operator ended too soon",
 };
 
 
