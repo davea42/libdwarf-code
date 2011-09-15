@@ -135,6 +135,12 @@ struct Dwarf_CU_Context_s {
 struct Dwarf_Section_s {
     Dwarf_Small *  dss_data;
     Dwarf_Unsigned dss_size;
+    /*  Some Elf sections have a non-zero dss_entrysize which
+        is the size in bytes of a table entry in the section.
+        Relocations and symbols are both in tables, so have a
+        non-zero entrysize.  Object formats which do not care
+        about this should leave this field zero. */     
+    Dwarf_Unsigned dss_entrysize;
     Dwarf_Word     dss_index;
     /*  dss_addr is the 'section address' which is only
         non-zero for a GNU eh section.
@@ -154,6 +160,7 @@ struct Dwarf_Section_s {
     Dwarf_Half     dss_reloc_index; /* Zero means ignore the reloc fields. */
     Dwarf_Small *  dss_reloc_data;
     Dwarf_Unsigned dss_reloc_size;
+    Dwarf_Unsigned dss_reloc_entrysize;
     Dwarf_Addr     dss_reloc_addr;
     /*  dss_reloc_symtab is the sh_link of a .rela to its .symtab, leave
         it 0 if non-meaningful. */

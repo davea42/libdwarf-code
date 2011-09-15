@@ -1,3 +1,22 @@
+2011-09-15  DavidAnderson <davea42@earthlink.net>
+     * dwarf_elf_access.c: Adding fields to the object
+       structs dwarf uses and using them for error checks
+       when processing relocations.  
+     * dwarf_error.c: Adding descriptions of new error messages
+       for Elf object file interpretation problems.
+     * dwarf_init_finish.c: Adding 'entrysize' field about objects
+       do dwarf_elf_access.c can check for object and relocation  
+       data errors and avoid a coredump.  And we memset() a struct
+       to ensure there are no uninitialized contents.
+     * dwarf_opaque.h: Adding new dss_entrysize and
+       dss_reloc_entrysize fields so elf error
+       checks can be added to dwarf_elf_access.c.  These changes mean
+       you must recompile all of libdwarf source, not 
+       just a subset, when rebuilding (the first time one sees this change).
+     * libdwarf.h: Adding entrysize element to Dwarf_Obj_Access_Section_s.
+       Non-elf object formats can just set this field zero and ignore it.
+       Added new elf-specific error codes for the new checks in
+       dwarf_elf_access.c.
 2011-09-14  DavidAnderson <davea42@earthlink.net>
      * BLDLIBDWARFTAR: Moved a local disk file. Irrelevant
        to everyone but DA.

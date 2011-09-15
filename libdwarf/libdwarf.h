@@ -554,13 +554,26 @@ typedef struct Dwarf_Obj_Access_Section_s     Dwarf_Obj_Access_Section;
     names in the 'name' field.  libdwarf does
     not free the strings in 'name'. */
 struct Dwarf_Obj_Access_Section_s {
+    /*  addr is the virtual address of the first byte of
+        the section data.  Usually zero when the address
+        makes no sense for a given section. */
     Dwarf_Addr     addr;
+
+    /* Size in bytes of the section. */
     Dwarf_Unsigned size;
+
+    /*  Having an accurate section name makes debugging of libdwarf easier. 
+        and is essential to find the .debug_ sections.  */
     const char*    name;
     /*  Set link to zero if it is meaningless.  If non-zero
         it should be a link to a rela section or from symtab
         to strtab.  In Elf it is sh_link. */
     Dwarf_Unsigned link;
+    /*  Elf sections that are tables have a non-zero entrysize so
+        the count of entries can be calculated even without
+        the right structure definition. If your object format
+        does not have this data leave this zero. */
+    Dwarf_Unsigned entrysize;
 };
 
 /*  Returned by the get_endianness function in 
@@ -1038,10 +1051,13 @@ struct Dwarf_Obj_Access_Interface_s {
 #define DW_DLE_REF_SIG8_NOT_HANDLED            228
 #define DW_DLE_DEBUG_FRAME_POSSIBLE_ADDRESS_BOTCH 229
 #define DW_DLE_LOC_BAD_TERMINATION             230
+#define DW_DLE_SYMTAB_SECTION_LENGTH_ODD       231
+#define DW_DLE_RELOC_SECTION_SYMBOL_INDEX_BAD  232
+#define DW_DLE_RELOC_SECTION_RELOC_TARGET_SIZE_UNKNOWN  233
 
 
     /* DW_DLE_LAST MUST EQUAL LAST ERROR NUMBER */
-#define DW_DLE_LAST        230
+#define DW_DLE_LAST        233
 #define DW_DLE_LO_USER     0x10000
 
     /*  Taken as meaning 'undefined value', this is not

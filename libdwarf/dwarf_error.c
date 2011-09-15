@@ -317,6 +317,9 @@ const char *_dwarf_errmsgs[] = {
     "DW_DLE_REF_SIG8_NOT_HANDLED (228)",
     "DW_DLE_DEBUG_FRAME_POSSIBLE_ADDRESS_BOTCH (229)",
     "DW_DLE_LOC_BAD_TERMINATION (230) the last location operator in an expression is missing some associated data, an operator ended too soon",
+    "DW_DLE_SYMTAB_SECTION_LENGTH_ODD (231) so doing relocations seems unsafe",
+    "DW_DLE_RELOC_SECTION_SYMBOL_INDEX_BAD (232) so doing a relocation seems unsafe",
+    "DW_DLE_RELOC_SECTION_RELOC_TARGET_SIZE_UNKNOWN (233) so doing a relocation is unsafe",
 };
 
 

@@ -116,6 +116,7 @@ get_basic_section_data(Dwarf_Debug dbg,
     secdata->dss_size = doas->size;
     secdata->dss_addr = doas->addr;
     secdata->dss_link = doas->link;
+    secdata->dss_entrysize = doas->entrysize;
     return DW_DLV_OK;
 }
 
@@ -127,6 +128,7 @@ add_rela_data( struct Dwarf_Section_s *secdata,
 {
     secdata->dss_reloc_index = section_index;
     secdata->dss_reloc_size = doas->size;
+    secdata->dss_reloc_entrysize = doas->entrysize;
     secdata->dss_reloc_addr = doas->addr;
     secdata->dss_reloc_symtab = doas->link;
     secdata->dss_reloc_link = doas->link;
@@ -217,6 +219,7 @@ _dwarf_setup(Dwarf_Debug dbg, Dwarf_Error * error)
         int res = DW_DLV_ERROR;
         int err = 0;
 
+        memset(&doas,0,sizeof(doas));
         res = obj->methods->get_section_info(obj->object, 
             section_index, 
             &doas, &err);
