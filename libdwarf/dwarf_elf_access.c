@@ -637,6 +637,10 @@ update_entry(Dwarf_Debug dbg,
     Dwarf_Unsigned reloc_size = 0;
     Dwarf_Unsigned symtab_entry_count = 0;
        
+    if( symtab_section_entrysize == 0) {
+        *error = DW_DLE_SYMTAB_SECTION_ENTRYSIZE_ZERO;
+        return DW_DLV_ERROR;
+    }
     symtab_entry_count = symtab_section_size/symtab_section_entrysize;
 
     /* Dwarf_Elf_Rela dereferencing */
@@ -644,7 +648,7 @@ update_entry(Dwarf_Debug dbg,
     addend = rela->r_addend;
     type = rela->r_type;
     sym_idx = rela->r_symidx;
-    if (sym_idx > symtab_entry_count) {
+    if (sym_idx >= symtab_entry_count) {
         *error = DW_DLE_RELOC_SECTION_SYMBOL_INDEX_BAD;
         return DW_DLV_ERROR;
     }
@@ -713,6 +717,10 @@ apply_rela_entries(Dwarf_Debug dbg,
     int return_res = DW_DLV_OK;
     if ((target_section != NULL)  && (relas != NULL)) {
         unsigned int i;
+        if( symtab_section_entrysize == 0) {
+            *error = DW_DLE_SYMTAB_SECTION_ENTRYSIZE_ZERO;
+            return DW_DLV_ERROR;
+        }
         if(symtab_section_size%symtab_section_entrysize) {
                *error = DW_DLE_SYMTAB_SECTION_LENGTH_ODD;
                return DW_DLV_ERROR;

@@ -320,6 +320,7 @@ const char *_dwarf_errmsgs[] = {
     "DW_DLE_SYMTAB_SECTION_LENGTH_ODD (231) so doing relocations seems unsafe",
     "DW_DLE_RELOC_SECTION_SYMBOL_INDEX_BAD (232) so doing a relocation seems unsafe",
     "DW_DLE_RELOC_SECTION_RELOC_TARGET_SIZE_UNKNOWN (233) so doing a relocation is unsafe",
+    "DW_DLE_SYMTAB_SECTION_ENTRYSIZE_ZERO(234)",
 };
 
 

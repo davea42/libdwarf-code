@@ -1,3 +1,10 @@
+2011-09-16  DavidAnderson <davea42@earthlink.net>
+     * dwarf_elf_access.c: Give up relocating if the Elf symtab 
+       header sh_entrysize is zero, and refine the test for 
+       invalid symbol index to be a >= test.
+     * dwarf_error.c: Define text message for 
+       DW_DLE_SYMTAB_SECTION_ENTRYSIZE_ZERO.
+     * libdwarf.h: New error code DW_DLE_SYMTAB_SECTION_ENTRYSIZE_ZERO.
 2011-09-15  DavidAnderson <davea42@earthlink.net>
      * dwarf_elf_access.c: Adding fields to the object
        structs dwarf uses and using them for error checks
