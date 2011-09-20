@@ -62,7 +62,8 @@ print_strings(Dwarf_Debug dbg)
     char * name = 0;
     Dwarf_Off offset = 0;
     int sres = 0;
-
+    
+    error_message_data.current_section_id = DEBUG_STR;
     cout << endl;
     cout << ".debug_string" << endl;
     while ((sres = dwarf_get_str(dbg, offset, &name, &length, &err))

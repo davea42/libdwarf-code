@@ -438,7 +438,7 @@ print_one_fde(Dwarf_Debug dbg, Dwarf_Fde fde,
             pcMap,all_cus_seen);
         LowpcUsedSettype::const_iterator it = lowpcSet.find(low_pc);
         if(check_fdes) {
-            fde_duplication.checks++;
+            DWARF_CHECK_COUNT(fde_duplication,1);
         }
         if (it != lowpcSet.end()) {
             if(check_fdes) {
@@ -1453,6 +1453,10 @@ print_frames(Dwarf_Debug dbg, int print_debug_frame, int print_eh_frame,
 {
     Dwarf_Half address_size = 0;
     LowpcToNameMaptype map_lowpc_to_name;
+
+
+    error_message_data.current_section_id = DEBUG_FRAME;
+
     // The address size here will not be right for all frames.
     // Only in DWARF4 is there a real address size known
     // in the frame data itself.  If any DIE

@@ -61,8 +61,11 @@ print_aranges(Dwarf_Debug dbg)
     Dwarf_Signed count = 0;
     Dwarf_Arange *arange_buf = NULL;
 
-    cout <<  endl;
-    cout << ".debug_aranges" << endl;
+    error_message_data.current_section_id = DEBUG_ARANGES;
+    if (do_print_dwarf) {
+        cout << endl;
+        cout << ".debug_aranges" << endl;
+    }
     int ares = dwarf_get_aranges(dbg, &arange_buf, &count, &err);
     if (ares == DW_DLV_ERROR) {
         print_error(dbg, "dwarf_get_aranges", ares, err);

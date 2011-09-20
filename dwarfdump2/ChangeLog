@@ -1,3 +1,14 @@
+2011-09-20  DavidAnderson <davea42@earthlink.net>
+      * Makefile.in,common.cc,common.h,dwarfdump.cc,globals.h,
+        print_abbrevs.cc,print_aranges.cc,print_die.cc,print_frames.cc,
+        print_lines.cc,print_locs.cc,print_macros.cc,print_pubnames.cc,
+        print_ranges.cc,print_static_funcs.cc,print_static_vars.cc,
+        print_strings.cc,print_weaknames.cc,tag_attr.cc,tag_tree.cc:
+        Pulled in dwarfdump.cc related code and headers from dwarfdump
+        so at the dwarfdump level we agree with the C dwarfdump code
+        with its new options and compiler-checking features.
+        The output is not yet what we want for -k options, 
+        but this is a start. 
 2011-09-16  DavidAnderson <davea42@earthlink.net>
       * dwarfdump.cc: Update version string.
 2011-09-15  DavidAnderson <davea42@earthlink.net>

@@ -83,8 +83,11 @@ print_line_numbers_this_cu(DieHolder & hcudie)
     Dwarf_Die cu_die = hcudie.die();
     Dwarf_Debug dbg = hcudie.dbg();
 
-    cout << endl;
-    cout << ".debug_line: line number info for a single cu"<< endl;
+    error_message_data.current_section_id = DEBUG_LINE;
+    if(do_print_dwarf) {
+        cout << endl;
+        cout << ".debug_line: line number info for a single cu"<< endl;
+    }
     if (verbose > 1) {
         int errcount = 0;
         print_source_intro(cu_die);
@@ -93,11 +96,11 @@ print_line_numbers_this_cu(DieHolder & hcudie)
             /* indent_level= */ 0,
             hsrcfiles,
             /* ignore_die_printed_flag= */true);
-        lines_result.checks++;
+        DWARF_CHECK_COUNT(lines_result,1);
         int lres = dwarf_print_lines(cu_die, &err,&errcount);
         if(errcount > 0) {
-            lines_result.errors += errcount;
-            lines_result.checks += (errcount-1);
+            DWARF_ERROR_COUNT(lines_result,errcount);
+            DWARF_CHECK_COUNT(lines_result,(errcount-1));
         }
         if (lres == DW_DLV_ERROR) {
             print_error(dbg, "dwarf_srclines details", lres, err);
@@ -105,12 +108,12 @@ print_line_numbers_this_cu(DieHolder & hcudie)
         return;
     }
     if(check_lines) {
-        lines_result.checks++;
+        DWARF_CHECK_COUNT(lines_result,1);
         int line_errs = 0;
         dwarf_check_lineheader(cu_die,&line_errs);
         if(line_errs > 0) {
-            lines_result.errors += line_errs;
-            lines_result.checks += (line_errs-1);
+            DWARF_ERROR_COUNT(lines_result,line_errs);
+            DWARF_CHECK_COUNT(lines_result,(line_errs-1));
         }
     }
     Dwarf_Signed linecount = 0;

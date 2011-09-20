@@ -88,12 +88,12 @@ bool extended_flag = false;
 
 /* process arguments */
 void
-process_args(int argc, char *argv[])
+process_args(int argc,char *argv[])
 {
     int c = 0;
     bool usage_error = false;
 
-    while ((c = getopt(argc, argv, "i:o:se")) != EOF) {
+    while ((c = getopt(argc, const_cast<char **>(argv), "i:o:se")) != EOF) {
         switch (c) {
         case 'i':
             input_name = optarg;
@@ -114,7 +114,7 @@ process_args(int argc, char *argv[])
     }
 
     if (usage_error || 1 == optind || optind != argc) {
-        print_usage_message(usage);
+        print_usage_message(argv[0],usage);
         exit(FAILED);
     }
 }
@@ -124,41 +124,41 @@ process_args(int argc, char *argv[])
 int
 main(int argc, char **argv)
 {
-    print_version(argv[0]);
+    print_version_details(argv[0],false);
     process_args(argc,argv);
     print_args(argc,argv);
 
     if (input_name.empty()) {
         cerr << "Input name required, not supplied." << endl;
-        print_usage_message(usage);
+        print_usage_message(argv[0],usage);
         exit(FAILED);
     }
     FILE *fileInp = fopen(input_name.c_str(),"r");
     if (!fileInp) {
         cerr << "Invalid input filename, could not open '" <<
             input_name << "'." << endl;
-        print_usage_message(usage);
+        print_usage_message(argv[0],usage);
         exit(FAILED);
     }
 
 
     if (output_name.empty()) {
         cerr << "Output name required, not supplied." << endl;
-        print_usage_message(usage);
+        print_usage_message(argv[0],usage);
         exit(FAILED);
     }
     FILE *fileOut = fopen(output_name.c_str(),"w");
     if (!fileOut) {
         cerr << "Invalid output filename, could not open: '" <<
             output_name <<  "'." << endl;
-        print_usage_message(usage);
+        print_usage_message(argv[0],usage);
         exit(FAILED);
     }
     if ((standard_flag && extended_flag) || 
         (!standard_flag && !extended_flag)) {
         cerr << "Invalid table type" << endl;
         cerr << "Choose -e  or -s ." << endl;
-        print_usage_message(usage);
+        print_usage_message(argv[0],usage);
         exit(FAILED);
     }
 

@@ -2,7 +2,8 @@
 #  Makefile for dwarfdump
 #  This is made very simple so it should work with
 #  any 'make'.
-
+#  The Makefile does assume that libdwarf is at ../libdwarf
+#  from the dwarfdump2 source directory.
 #
 
 srcdir =	@srcdir@
@@ -41,6 +42,7 @@ binprefix =
 BASE_CFILES = naming.cc
 
 FINALOBJECTS = \
+        checkutil.o \
 	dwarfdump.o \
 	dwconf.o \
 	print_abbrevs.o \
@@ -70,6 +72,7 @@ GEN_HFILES = \
 all: dwarfdump
 
 HEADERS = $(srcdir)/globals.h \
+        $(srcdir)/checkutil.h \
         $(srcdir)/dieholder.h \
         $(srcdir)/srcfilesholder.h \
         $(srcdir)/print_frames.h \
@@ -86,8 +89,8 @@ $(FINALOBJECTS): $(BASE_CFILES) $(GEN_HFILES) $(HEADERS)
 default: $(TARGETS)
 
 
-dwarfdump: $(FINALOBJECTS)  naming.o
-	$(CXX) $(CXXFLAGS) -o $@ $(FINALOBJECTS) naming.o  common.o tag_common.o $(LDFLAGS) 
+dwarfdump: $(FINALOBJECTS)  naming.o common.o
+	$(CXX) $(CXXFLAGS) -o $@ $(FINALOBJECTS) naming.o common.o  tag_common.o $(LDFLAGS) 
 
 tag_common.o: $(srcdir)/tag_common.cc $(HEADERS)  
 	$(CXX) $(CXXFLAGS) -c $(srcdir)/tag_common.cc

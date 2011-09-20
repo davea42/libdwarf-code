@@ -75,6 +75,7 @@ print_ranges(Dwarf_Debug dbg)
     int group_number = 0;
     int wasdense = 0;
 
+    error_message_data.current_section_id = DEBUG_RANGES;
     cout << endl;
     cout << ".debug_ranges" << endl;
     /*  Turn off dense, we do not want  print_ranges_list_to_extra

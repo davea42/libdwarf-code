@@ -56,11 +56,6 @@ static int get_form_values(Dwarf_Attribute attrib,
     Dwarf_Half & theform, Dwarf_Half & directform);
 static void show_form_itself(bool show_form,
     int theform, int directform, string *str_out);
-static void get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
-   Dwarf_Die die,
-   Dwarf_Attribute attrib, 
-   SrcfilesHolder &srcfiles,
-   string &str_out,bool show_form);
 static bool print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
    Dwarf_Half attr,
    Dwarf_Attribute actual_addr,
@@ -184,7 +179,8 @@ print_infos(Dwarf_Debug dbg)
     int nres = DW_DLV_OK;
     int   cu_count = 0;
 
-    if (print_as_info_or_cu()) {
+    error_message_data.current_section_id = DEBUG_INFO;
+    if (print_as_info_or_cu() && do_print_dwarf) {
         cout << endl;
         cout << ".debug_info" << endl;
     }
@@ -328,19 +324,19 @@ print_die_and_children_internal(DieHolder & hin_die_in,
         dieVec.push_back(hin_die);
         Dwarf_Die in_die = hin_die.die();
         if (check_tag_tree) {
-            tag_tree_result.checks++;
+            DWARF_CHECK_COUNT(tag_tree_result,1);
             if (indent_level == 0) {
                 Dwarf_Half tag;
 
                 tres = dwarf_tag(in_die, &tag, &err);
                 if (tres != DW_DLV_OK) {
                     DWARF_CHECK_ERROR(tag_tree_result,
-                        "Tag-tree root is not DW_TAG_compile_unit")
+                        "Tag-tree root is not DW_TAG_compile_unit");
                 } else if (tag == DW_TAG_compile_unit) {
                     /* OK */
                 } else {
                     DWARF_CHECK_ERROR(tag_tree_result,
-                        "tag-tree root is not DW_TAG_compile_unit")
+                        "tag-tree root is not DW_TAG_compile_unit");
                 }
             } else {
                 Dwarf_Half tag_parent = 0; 
@@ -867,7 +863,7 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die, Dwarf_Half attr,
     }
     if (check_attr_tag) {
         string tagname = "<tag invalid>";
-        attr_tag_result.checks++;
+        DWARF_CHECK_COUNT(attr_tag_result,1);
         if (tres == DW_DLV_ERROR) {
             DWARF_CHECK_ERROR3(attr_tag_result,tagname,
                 get_AT_name(attr,dwarf_names_print_on_error),
@@ -875,14 +871,14 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die, Dwarf_Half attr,
         } else if (tres == DW_DLV_NO_ENTRY) {
             DWARF_CHECK_ERROR3(attr_tag_result,tagname,
                 get_AT_name(attr,dwarf_names_print_on_error),
-                "check the tag-attr combination..")
+                "check the tag-attr combination..");
         } else if (legal_tag_attr_combination(tag, attr)) {
             /* OK */
         } else {
             tagname = get_TAG_name(tag,dwarf_names_print_on_error);
             DWARF_CHECK_ERROR3(attr_tag_result,tagname,
                 get_AT_name(attr,dwarf_names_print_on_error),
-                "check the tag-attr combination")
+                "check the tag-attr combination");
         }
     }
 
@@ -1589,7 +1585,7 @@ print_exprloc_content(Dwarf_Debug dbg,Dwarf_Die die,
     broken compiler DW_TAG_enumerator 
 
     We append to str_out.  */
-static void
+void
 get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag, 
     Dwarf_Die die, Dwarf_Attribute attrib,
     SrcfilesHolder &hsrcfiles, string &str_out,
@@ -1649,7 +1645,7 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
                     has to be in the same CU, it seems. */
                 Dwarf_Off cuoff = 0;
                 Dwarf_Off culen = 0;
-                tag_tree_result.checks++;
+                DWARF_CHECK_COUNT(tag_tree_result,1);
                 int res = dwarf_die_CU_offset_range(die,&cuoff,
                     &culen,&err);
                 if(res != DW_DLV_OK) {
@@ -1658,7 +1654,7 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
                     if(off <  cuoff || off >= cuend) { 
                         DWARF_CHECK_ERROR(tag_tree_result,
                             "DW_AT_sibling DW_FORM_ref_addr offset points "
-                            "outside of current CU")
+                            "outside of current CU");
                     }
                 }
             }
@@ -1688,10 +1684,10 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
             if (attr == DW_AT_type) {
                 dres = dwarf_offdie(dbg, cu_offset + off,
                     &die_for_check, &err);
-                type_offset_result.checks++;
+                DWARF_CHECK_COUNT(type_offset_result,1);
                 if (dres != DW_DLV_OK) {
                     DWARF_CHECK_ERROR(type_offset_result,
-                        "DW_AT_type offset does not point to type info")
+                        "DW_AT_type offset does not point to type info");
                 } else {
                     int tres2;
 
@@ -1724,13 +1720,13 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
                             break;
                         default:
                             DWARF_CHECK_ERROR(type_offset_result,
-                                "DW_AT_type offset does not point to Type info")
+                                "DW_AT_type offset does not point to Type info");
                                 break;
                         }
                         dwarf_dealloc(dbg, die_for_check, DW_DLA_DIE);
                     } else {
                         DWARF_CHECK_ERROR(type_offset_result,
-                            "DW_AT_type offset does not exist")
+                            "DW_AT_type offset does not exist");
                     }
                 }
             }
@@ -1822,7 +1818,7 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
                             str_out.append(fname);
                         }
                         if(check_decl_file) {
-                            decl_file_result.checks++;
+                            DWARF_CHECK_COUNT(decl_file_result,1);
                             /*  Zero is always a legal index, it means
                                 no source name provided. */
                             if(tempud > srccount) {

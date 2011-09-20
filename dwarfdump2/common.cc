@@ -35,34 +35,54 @@
 #include <string>
 #include <iostream>
 #include "common.h"
+#define DWARFDUMP_VERSION " Tue Sep 20 16:16:01 PDT 2011  "
 using std::string;
 using std::cout;
 using std::cerr;
 using std::endl;
 
 void
-print_version(const std::string & name)
+print_version_details(const std::string & name,bool alwaysprint)
 {
-    cout << name << " built: " << __DATE__ << " " << __TIME__ << endl;
+#ifdef WIN32
+#   ifdef _DEBUG
+    char *acType = "Debug";
+#   else
+    char *acType = "Release";
+#   endif /* _DEBUG */
+    static char acVersion[32];
+    snprintf(acVersion,sizeof(acVersion),
+        "[%s %s %s]",__DATE__,__TIME__,acType);
+    cout << name << " " << acVersion << endl;
+#else  /* !WIN32 */
+    if(alwaysprint) {
+        cout << DWARFDUMP_VERSION << endl;
+    }
+#endif /* WIN32 */
 }
 
-void
-print_usage_message(const char *options[])
-{
-    int nIndex;
-    for (nIndex = 0; *options[nIndex]; ++nIndex) {
-        cout <<  options[nIndex] << endl;
-    }
-}
 
 void
 print_args(int argc, char *argv[])
 {
+#ifdef WIN32
     int nIndex;
     cout << "Arguments:";
     for (nIndex = 1; nIndex < argc; ++nIndex) {
         cout << " " << argv[nIndex] ;
     }
     cout << endl;
+#endif
 }
 
+void
+print_usage_message(const std::string &progname,
+    const char **text)
+{
+#ifdef WIN32
+    cerr <<"Usage:  " << progname<<"  <options> <object file>" << endl;
+#endif
+    for (unsigned i = 0; *text[i]; ++i) {
+        cerr <<  text[i] << endl;
+    }
+}

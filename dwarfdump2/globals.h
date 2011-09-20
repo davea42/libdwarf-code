@@ -1,6 +1,7 @@
 /* 
   Copyright (C) 2000-2005 Silicon Graphics, Inc.  All Rights Reserved.
   Portions Copyright (C) 2007-2011 David Anderson. All Rights Reserved.
+  Portions Copyright (C) 2011 SN Systems Ltd. All Rights Reserved.
 
   This program is free software; you can redistribute it and/or modify it
   under the terms of version 2 of the GNU General Public License as
@@ -92,6 +93,9 @@ typedef unsigned long long  __uint64_t;
 #include <iostream>
 #include <sstream> // For IToDec
 #include <iomanip> // For setw
+#include <list> 
+#include <map> 
+#include <set> 
 #include <string.h>
 #ifdef HAVE_ELF_H
 #include <elf.h>
@@ -115,11 +119,14 @@ typedef unsigned long long  __uint64_t;
 
 #include "dieholder.h"
 #include "srcfilesholder.h"
+#include "checkutil.h"
 
-typedef struct {
-    int checks;
-    int errors;
-} Dwarf_Check_Result;
+struct Dwarf_Check_Result {
+    Dwarf_Check_Result ():checks_(0),errors_(0) {};
+    ~Dwarf_Check_Result() {};
+    int checks_;
+    int errors_;
+};
 
 extern bool search_is_on;
 extern std::string search_any_text;
@@ -131,6 +138,112 @@ extern regex_t search_re;
 extern bool is_strstrnocase(const char * container, const char * contained);
 
 
+extern bool do_check_dwarf;
+extern bool do_print_dwarf;
+extern bool record_dwarf_error;  /* A test has failed, this
+  is normally set FALSE shortly after being set TRUE, it is
+  a short-range hint we should print something we might not
+  otherwise print (under the circumstances). */
+
+// Compilation Unit information for improved error messages.
+struct Error_Message_Data {
+    Error_Message_Data():
+        seen_PU(false), 
+        seen_CU(false),
+        need_CU_name(false), 
+        need_CU_base_address(false), 
+        need_CU_high_address(false), 
+        need_PU_valid_code(false),
+        seen_PU_base_address(false),
+        PU_base_address(0),
+        PU_high_address(0),
+        DIE_offset(0),
+        DIE_overall_offset(0),
+        DIE_CU_offset(0),
+        DIE_CU_overall_offset(0),
+        current_section_id(0),
+        CU_base_address(0),
+        CU_high_address(0),
+        elf_max_address(0),
+        elf_address_size(0)
+        {};
+    ~Error_Message_Data() {};
+    std::string PU_name;
+    std::string CU_name;
+    std::string CU_producer;
+    bool seen_PU;              // Detected a PU. 
+    bool seen_CU;              // Detected a CU. 
+    bool need_CU_name;          
+    bool need_CU_base_address; // Need CU Base address.
+    bool need_CU_high_address; // Need CU High address.
+    bool need_PU_valid_code;   // Need PU valid code. 
+    
+    bool seen_PU_base_address; // Detected a Base address for PU 
+    bool seen_PU_high_address; // Detected a High address for PU 
+    Dwarf_Addr PU_base_address;// PU Base address 
+    Dwarf_Addr PU_high_address;// PU High address 
+    
+    Dwarf_Off  DIE_offset;     // DIE offset in compile unit. 
+    Dwarf_Off  DIE_overall_offset;  // DIE offset in .debug_info. 
+    
+    Dwarf_Off  DIE_CU_offset;  // CU DIE offset in compile unit 
+    Dwarf_Off  DIE_CU_overall_offset; // CU DIE offset in .debug_info 
+    int current_section_id;    // Section being process. 
+    
+    Dwarf_Addr CU_base_address;// CU Base address. 
+    Dwarf_Addr CU_high_address;// CU High address. 
+    
+    Dwarf_Addr elf_max_address;// Largest representable  address offset. 
+    Dwarf_Half elf_address_size;// Target pointer size. 
+};
+extern struct Error_Message_Data error_message_data;
+
+//  Display parent/children when in wide format.
+extern bool display_parent_tree;
+extern bool display_children_tree;
+extern int stop_indent_level;
+
+//  Print search results when in wide format. 
+extern bool search_wide_format;
+extern bool search_is_on;
+
+extern std::string search_any_text;
+extern std::string search_match_text;
+extern std::string search_regex_text;
+#ifdef HAVE_REGEX
+extern regex_t search_re;
+#endif
+extern bool is_strstrnocase(const char *data, const char *pattern);
+
+// Options to enable debug tracing. 
+#define MAX_TRACE_LEVEL 10
+extern int nTrace[MAX_TRACE_LEVEL + 1];
+#define DUMP_RANGES_INFO            1 // Dump RangesInfo Table.
+#define DUMP_LOCATION_SECTION_INFO  2 // Dump Location (.debug_loc) Info.
+#define DUMP_RANGES_SECTION_INFO    3 // Dump Ranges (.debug_ranges) Info.
+#define DUMP_LINKONCE_INFO          4 // Dump Linkonce Table.
+#define DUMP_VISITED_INFO           5 // Dump Visited Info.
+
+#define dump_ranges_info            nTrace[DUMP_RANGES_INFO]
+#define dump_location_section_info  nTrace[DUMP_LOCATION_SECTION_INFO]
+#define dump_ranges_section_info    nTrace[DUMP_RANGES_SECTION_INFO]
+#define dump_linkonce_info          nTrace[DUMP_LINKONCE_INFO]
+#define dump_visited_info           nTrace[DUMP_VISITED_INFO]
+
+/* Section IDs */
+#define DEBUG_ABBREV      1
+#define DEBUG_ARANGES     2
+#define DEBUG_FRAME       3
+#define DEBUG_INFO        4
+#define DEBUG_LINE        5
+#define DEBUG_LOC         6
+#define DEBUG_MACINFO     7
+#define DEBUG_PUBNAMES    8
+#define DEBUG_RANGES      9
+#define DEBUG_STATIC_VARS 10
+#define DEBUG_STATIC_FUNC 11
+#define DEBUG_STR         12
+#define DEBUG_WEAKNAMES   13
 
 extern int verbose;
 extern bool dense;
@@ -138,6 +251,7 @@ extern bool ellipsis;
 extern bool use_mips_regnames;
 extern bool show_global_offsets;
 extern bool show_form_used;
+extern bool display_offsets;
 
 extern bool check_pubname_attr;
 extern bool check_attr_tag;
@@ -145,43 +259,83 @@ extern bool check_tag_tree;
 extern bool check_type_offset;
 extern bool check_decl_file;
 extern bool check_lines;
+extern bool check_ranges;
+extern bool check_fdes;
 extern bool check_aranges;
 extern bool check_harmless;
+extern bool check_abbeviations;
+extern bool check_dwarf_constants;
+extern bool check_di_gaps;
+extern bool check_forward_decl;
+extern bool check_self_references;
 extern bool suppress_nested_name_search;
 extern bool suppress_check_extensions_tables;
-extern bool check_fdes;
-
 
 extern int break_after_n_units;
 
-extern Dwarf_Check_Result abbrev_code_result;
-extern Dwarf_Check_Result pubname_attr_result;
-extern Dwarf_Check_Result reloc_offset_result;
-extern Dwarf_Check_Result attr_tag_result;
-extern Dwarf_Check_Result tag_tree_result;
-extern Dwarf_Check_Result type_offset_result;
-extern Dwarf_Check_Result decl_file_result;
-extern Dwarf_Check_Result ranges_result;
-extern Dwarf_Check_Result lines_result;
-extern Dwarf_Check_Result aranges_result;
-extern Dwarf_Check_Result harmless_result;
-extern Dwarf_Check_Result fde_duplication;
+extern bool check_names;          // Check for invalid names.
+extern bool check_verbose_mode;   // During '-k' mode, display errors.
+extern bool check_frames;         // Frames check.
+extern bool check_frames_extended;// Extensive frames check. 
+extern bool check_locations;      // Location list check.
+
+
+// Check categories corresponding to the -k option 
+enum Dwarf_Check_Categories{ // Dwarf_Check_Categories 
+    abbrev_code_result,
+    pubname_attr_result,
+    reloc_offset_result,
+    attr_tag_result,
+    tag_tree_result,
+    type_offset_result,
+    decl_file_result,
+    ranges_result,
+    lines_result,
+    aranges_result,
+    //  Harmless errors are errors detected inside libdwarf but
+    //  not reported via DW_DLE_ERROR returns because the errors
+    //  won't really affect client code.  The 'harmless' errors
+    //  are reported and otherwise ignored.  It is difficult to report
+    //  the error when the error is noticed by libdwarf, the error
+    //  is reported at a later time.
+    //  The other errors dwarfdump reports are also generally harmless 
+    //  but are detected by dwarfdump so it's possble to report the
+    //  error as soon as the error is discovered. 
+    harmless_result,
+    fde_duplication,
+    frames_result,
+    locations_result,
+    names_result,
+    abbreviations_result,
+    dwarf_constants_result,
+    di_gaps_result,
+    forward_decl_result,
+    self_references_result,
+    total_check_result,
+    LAST_CATEGORY  // Must be last.
+} ;
+
 
 extern bool info_flag;
 extern bool line_flag;
 extern bool use_old_dwarf_loclist;
+extern bool producer_children_flag;   // List of CUs per compiler 
 
 extern std::string cu_name;
 extern bool cu_name_flag;
 extern Dwarf_Unsigned cu_offset;
 extern Dwarf_Off fde_offset_for_cu_low;
 extern Dwarf_Off fde_offset_for_cu_high;
-extern std::string program_name;
 
-extern int check_error;
+/*  Process TAGs for checking mode and reset pRangesInfo table 
+    if appropriate. */
+extern void tag_specific_checks_setup(Dwarf_Half val,int die_indent_level);
+
+extern std::string program_name;
 extern Dwarf_Error err;
-extern void print_error (Dwarf_Debug dbg, const std::string& msg,int res, Dwarf_Error err);
+
 extern void print_error_and_continue (Dwarf_Debug dbg, const std::string& msg,int res, Dwarf_Error err);
+extern void print_error (Dwarf_Debug dbg, const std::string& msg,int res, Dwarf_Error err);
 
 // The dwarf_names_print_on_error is so other apps (tag_tree.cc)
 // can use the generated code in dwarf_names.cc (etc) easily.
@@ -215,6 +369,10 @@ extern std::string  print_ranges_list_to_extra(Dwarf_Debug dbg,
     Dwarf_Unsigned bytecount);
 extern bool should_skip_this_cu(DieHolder &cu_die, Dwarf_Error err);
 
+int get_cu_name(Dwarf_Debug dbg,Dwarf_Die cu_die,
+    Dwarf_Error err,std::string &short_name_out,std::string &long_name_out);
+int get_producer_name(Dwarf_Debug dbg,Dwarf_Die cu_die,
+    Dwarf_Error err,std::string &producer_name_out);
 
 extern void print_die_and_children(
     DieHolder &in_die,
@@ -226,25 +384,30 @@ extern bool print_one_die(
     SrcfilesHolder &srcfiles,
     bool ignore_die_printed_flag);
 
-#define DWARF_CHECK_ERROR(var,str) {\
-    var.errors++; \
-    cout << "*** DWARF CHECK: " << str << " ***" << endl;\
-    check_error ++; \
-}
+// Check for specific compiler.
+extern bool checking_this_compiler();
+extern void update_compiler_target(const std::string & producer_name);
+extern void add_cu_name_compiler_target(const std::string &name);
 
-#define DWARF_CHECK_ERROR2(var,str1, str2) {\
-    var.errors++; \
-    cout << "*** DWARF CHECK: " << str1 << ": " << \
-        str2 << " ***" << endl;\
-    check_error ++; \
-}
 
-#define DWARF_CHECK_ERROR3(var,str1, str2,strexpl) {\
-    var.errors++; \
-    cout << "*** DWARF CHECK: " << str1 << " -> " << \
-        str2 << ": " << strexpl << " ***" << endl;\
-    check_error ++; \
-}
+/*  General error reporting routines. These were
+    macros for a short time and when changed into functions 
+    they kept (for now) their capitalization. 
+    The capitalization will likely change. */
+extern void PRINT_CU_INFO();
+extern void DWARF_CHECK_COUNT(Dwarf_Check_Categories category, int inc);
+extern void DWARF_ERROR_COUNT(Dwarf_Check_Categories category, int inc);
+extern void DWARF_CHECK_ERROR_PRINT_CU();
+extern void DWARF_CHECK_ERROR(Dwarf_Check_Categories category,
+    const std::string &str);
+extern void DWARF_CHECK_ERROR2(Dwarf_Check_Categories category,
+    const std::string &str1, 
+    const std::string &str2);
+extern void DWARF_CHECK_ERROR3(Dwarf_Check_Categories category,
+    const std::string & str1, 
+    const std::string & str2, 
+    const std::string & strexpl);
+
 
 extern void printreg(Dwarf_Signed reg,struct dwconf_s *config_data);
 extern void print_frame_inst_bytes(Dwarf_Debug dbg,
@@ -252,6 +415,13 @@ extern void print_frame_inst_bytes(Dwarf_Debug dbg,
     Dwarf_Signed data_alignment_factor,
     int code_alignment_factor, Dwarf_Half addr_size,
     struct dwconf_s *config_data);
+
+void get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
+   Dwarf_Die die,
+   Dwarf_Attribute attrib,
+   SrcfilesHolder &srcfiles,
+   std::string &str_out,bool show_form);
+
 
 
 extern Dwarf_Unsigned local_dwarf_decode_u_leb128(unsigned char *leb128,
@@ -271,6 +441,15 @@ void clean_up_syms_malloc_data();
 
 void print_any_harmless_errors(Dwarf_Debug dbg);
 
+/* Definitions for printing relocations.  */
+#define DW_SECTION_REL_DEBUG_INFO     0
+#define DW_SECTION_REL_DEBUG_LINE     1
+#define DW_SECTION_REL_DEBUG_PUBNAMES 2
+#define DW_SECTION_REL_DEBUG_ABBREV   3
+#define DW_SECTION_REL_DEBUG_ARANGES  4
+#define DW_SECTION_REL_DEBUG_FRAME    5
+#define DW_SECTION_REL_DEBUG_LOC      6
+#define DW_SECTION_REL_DEBUG_RANGES   7
 
 template <typename T >
 std::string IToDec(T v,unsigned l=0) 

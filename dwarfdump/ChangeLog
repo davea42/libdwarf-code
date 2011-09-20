@@ -1,3 +1,9 @@
+2011-09-20  DavidAnderson <davea42@earthlink.net>
+      * Makefile.in: Fixed typo in comment.
+      * common.c: Use snprintf, not sprintf. Updated version string.
+      * dwarfdump.c: Correct typo and move usage_text to
+        a source position corresponding to that in dwarfdump.cc.
+        Updated version string.
 2011-09-16  DavidAnderson <davea42@earthlink.net>
       * dwarfdump.c, common.c: Update version string.
 2011-09-15  DavidAnderson <davea42@earthlink.net>

@@ -72,13 +72,13 @@ Blank lines are allowed and are dropped.
 */
 
 static const char *usage[] = {
-  "Usage: tag_tree_build <options>\n",
-  "options:\t-t\tGenerate Tags table\n",
-  "    -i Input-file-path\n",
-  "    -o Output-table-path\n",
-  "    -e   (Want Extended table (common extensions))\n",
-  "    -s   (Want Standard table)\n",
-  ""
+    "Usage: tag_tree_build <options>\n",
+    "options:\t-t\tGenerate Tags table\n",
+    "    -i Input-file-path\n",
+    "    -o Output-table-path\n",
+    "    -e   (Want Extended table (common extensions))\n",
+    "    -s   (Want Standard table)\n",
+    ""
 };
 
 static std::string input_name;
@@ -113,7 +113,7 @@ process_args(int argc, char *argv[])
     }
 
     if (usage_error || 1 == optind || optind != argc) {
-        print_usage_message(usage);
+        print_usage_message(argv[0],usage);
         exit(FAILED);
     }
 }
@@ -125,40 +125,40 @@ main(int argc, char **argv)
 {
 
 
-    print_version(argv[0]);
+    print_version_details(argv[0],false);
     process_args(argc,argv);
     print_args(argc,argv);
 
     if (input_name.empty() ) {
         cerr << "Input name required, not supplied." << endl;
-        print_usage_message(usage);
+        print_usage_message(argv[0],usage);
         exit(FAILED);
     }
     FILE *fileInp = fopen(input_name.c_str(),"r");
     if (!fileInp) {
         cerr << "Invalid input filename, could not open '" << 
             input_name << "'" << endl;
-        print_usage_message(usage);
+        print_usage_message(argv[0],usage);
         exit(FAILED);
     }
 
 
     if (output_name.empty() ) {
         cerr << "Output name required, not supplied." << endl;
-        print_usage_message(usage);
+        print_usage_message(argv[0],usage);
         exit(FAILED);
     }
     FILE *fileOut = fopen(output_name.c_str(),"w");
     if (!fileOut) {
         cerr << "Invalid output filename, could not open: '" <<
             output_name <<  "'" << endl;
-        print_usage_message(usage);
+        print_usage_message(argv[0],usage);
         exit(FAILED);
     }
     if ((standard_flag && extended_flag) || (!standard_flag && !extended_flag)) {
         cerr <<"Invalid table type" << endl;
         cerr << "Choose -e  or -s ." << endl;
-        print_usage_message(usage);
+        print_usage_message(argv[0],usage);
         exit(FAILED);
     }
     unsigned int  table_rows = 0;

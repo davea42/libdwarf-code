@@ -70,8 +70,11 @@ print_abbrevs(Dwarf_Debug dbg)
     Dwarf_Signed child_flag = 0;
     int abres = 0;
 
-    cout << endl;
-    cout << ".debug_abbrev" << endl;
+    error_message_data.current_section_id = DEBUG_ABBREV;
+    if (do_print_dwarf) {
+        cout << endl;
+        cout << ".debug_abbrev" << endl;
+    }
     while ((abres = dwarf_get_abbrev(dbg, offset, &ab,
         &length, &attr_count,
         &err)) == DW_DLV_OK) {

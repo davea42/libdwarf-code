@@ -62,6 +62,10 @@ print_static_vars(Dwarf_Debug dbg)
     Dwarf_Off die_off = 0;
     Dwarf_Off cu_off = 0;
     Dwarf_Signed count = 0;
+    error_message_data.current_section_id = DEBUG_STATIC_VARS;
+    if (!do_print_dwarf) {
+        return;
+    }
 
     cout << endl;
     cout << ".debug_static_vars" << endl;

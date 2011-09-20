@@ -77,8 +77,14 @@ print_locs(Dwarf_Debug dbg)
     Dwarf_Unsigned next_entry = 0;
     int index = 0;
     int lres = 0;
-    /* This is sometimes wrong, we need a frame-specific size. */
     Dwarf_Half address_size = 0;
+
+    error_message_data.current_section_id = DEBUG_LOC;
+    if(!do_print_dwarf) {
+        return;
+    }
+
+    /* This is sometimes wrong, we need a frame-specific size. */
     int fres = dwarf_get_address_size(dbg, &address_size, &err);
     if (fres != DW_DLV_OK) { 
         print_error(dbg, "dwarf_get_address_size", fres, err);
