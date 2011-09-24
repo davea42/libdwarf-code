@@ -1054,11 +1054,12 @@ struct Dwarf_Obj_Access_Interface_s {
 #define DW_DLE_SYMTAB_SECTION_LENGTH_ODD       231
 #define DW_DLE_RELOC_SECTION_SYMBOL_INDEX_BAD  232
 #define DW_DLE_RELOC_SECTION_RELOC_TARGET_SIZE_UNKNOWN  233
-#define DW_DLE_SYMTAB_SECTION_ENTRYSIZE_ZERO  234
+#define DW_DLE_SYMTAB_SECTION_ENTRYSIZE_ZERO   234
+#define DW_DLE_LINE_NUMBER_HEADER_ERROR        235
 
 
     /* DW_DLE_LAST MUST EQUAL LAST ERROR NUMBER */
-#define DW_DLE_LAST        234
+#define DW_DLE_LAST        235
 #define DW_DLE_LO_USER     0x10000
 
     /*  Taken as meaning 'undefined value', this is not

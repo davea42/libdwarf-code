@@ -1,3 +1,11 @@
+2011-09-23  DavidAnderson <davea42@earthlink.net>
+     * dwarf_arange.c: Test for a zero address-size: that indicates
+       broken dwarf generation.
+     * dwarf_line.c: Test for irrational line number header data and
+       error off with DW_DLE_LINE_NUMBER_HEADER_ERROR if we find it.
+       Add accidentally-omitted check for version 4.
+     * dwarf_error.c, libdwarf.h: New error code 
+       DW_DLE_LINE_NUMBER_HEADER_ERROR.
 2011-09-16  DavidAnderson <davea42@earthlink.net>
      * dwarf_elf_access.c: Give up relocating if the Elf symtab 
        header sh_entrysize is zero, and refine the test for 

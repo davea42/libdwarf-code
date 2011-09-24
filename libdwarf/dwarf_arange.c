@@ -146,6 +146,10 @@ dwarf_get_aranges_list(Dwarf_Debug dbg,
             _dwarf_error(dbg, error, DW_DLE_ADDRESS_SIZE_ERROR);
             return DW_DLV_ERROR;
         }
+        if(address_size  ==  0) {
+            _dwarf_error(dbg, error, DW_DLE_ADDRESS_SIZE_ERROR);
+            return DW_DLV_ERROR;
+        }
         /*  It is not an error if the sizes differ.
             Unusual, but not an error. */
         arange_ptr = arange_ptr + sizeof(Dwarf_Small);

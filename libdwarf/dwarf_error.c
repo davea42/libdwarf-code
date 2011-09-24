@@ -321,6 +321,7 @@ const char *_dwarf_errmsgs[] = {
     "DW_DLE_RELOC_SECTION_SYMBOL_INDEX_BAD (232) so doing a relocation seems unsafe",
     "DW_DLE_RELOC_SECTION_RELOC_TARGET_SIZE_UNKNOWN (233) so doing a relocation is unsafe",
     "DW_DLE_SYMTAB_SECTION_ENTRYSIZE_ZERO(234)",
+    "DW_DLE_LINE_NUMBER_HEADER_ERROR (235), a line number program header seems incomplete (perhaps the header_length is wrong?).",
 };
 
 
