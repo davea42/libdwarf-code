@@ -907,7 +907,7 @@ process_one_file(Elf * elf,const  string & file_name, int archive,
         print_weaknames(dbg);
     }
     if (reloc_flag) {
-        print_relocinfo(dbg);
+        print_relocinfo(dbg,reloc_map);
     }
     // The right time to do this is unclear, but we
     // need to do it.

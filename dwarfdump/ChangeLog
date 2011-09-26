@@ -1,3 +1,10 @@
+2011-09-26  DavidAnderson <davea42@earthlink.net>
+      * dwarfdump.c: Removed duplicate usage_text strings.
+      * print_reloc.c:  In case we don't have ELF64 headers,
+        do the last-best-hope internal define in the right place
+        so it actually helps. For some local variables, ensure
+        they have values defined at the definition point.
+        Switch some assign-and-test into two lines.
 2011-09-20  DavidAnderson <davea42@earthlink.net>
       * Makefile.in: Fixed typo in comment.
       * common.c: Use snprintf, not sprintf. Updated version string.

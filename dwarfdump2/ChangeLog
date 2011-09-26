@@ -1,3 +1,12 @@
+2011-09-26  DavidAnderson <davea42@earthlink.net>
+     * checkutil.cc: Added a blank line for readability.
+     * dwarfdump.cc: Added the reloc_map bit field to the print_relocinfo call.
+     * globals.h: Added the reloc_map bit field argument to the print_relocinfo
+       declaration.
+     * print_reloc.cc: Updated so it handles rel and rela and
+       uses the same format and code organization as C dwarfdump. 
+     * print_sections.cc: Changed one error print format so it matches
+       C dwarfdump hex output form.
 2011-09-20  DavidAnderson <davea42@earthlink.net>
       * Makefile.in,common.cc,common.h,dwarfdump.cc,globals.h,
         print_abbrevs.cc,print_aranges.cc,print_die.cc,print_frames.cc,

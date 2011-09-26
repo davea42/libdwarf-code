@@ -354,7 +354,7 @@ extern void print_locs (Dwarf_Debug dbg);
 extern void print_abbrevs (Dwarf_Debug dbg);
 extern void print_strings (Dwarf_Debug dbg);
 extern void print_aranges (Dwarf_Debug dbg);
-extern void print_relocinfo (Dwarf_Debug dbg);
+extern void print_relocinfo (Dwarf_Debug dbg, unsigned reloc_map);
 extern void print_static_funcs(Dwarf_Debug dbg);
 extern void print_static_vars(Dwarf_Debug dbg);
 enum type_type_e {SGI_TYPENAME, DWARF_PUBTYPES} ;

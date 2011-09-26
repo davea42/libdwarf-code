@@ -95,6 +95,7 @@ LinkOnceEntry::printLinkOnceEntry(unsigned ct)
          ",  section = " <<
          lo_section_name_ << std::endl;
 };
+
 void
 LinkOnceData::PrintLinkOnceData()
 {
