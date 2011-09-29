@@ -113,11 +113,21 @@ bool LinkOnceData::FindLinkOnceEntry(Dwarf_Unsigned pc)
     std::list<LinkOnceEntry>::iterator it;
     for( it = link_once_data_.begin(); it != link_once_data_.end();
         ++it) {
-        if (it->inThisRange(pc) ) {
+        if (it->inThisLinkOnceRange(pc) ) {
             return true;
         }
     }
     return false;
 }
-
+bool LinkOnceData::FindLinkOnceEntry(const std::string &secname,Dwarf_Unsigned lopc,Dwarf_Unsigned hipc)
+{
+    std::list<LinkOnceEntry>::iterator it;
+    for( it = link_once_data_.begin(); it != link_once_data_.end();
+        ++it) {
+        if (it->inThisLinkOnceRange(secname,lopc,hipc) ) {
+            return true;
+        }
+    }
+    return false;
+}
 

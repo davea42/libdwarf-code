@@ -132,21 +132,27 @@ print_pubname_style_entry(Dwarf_Debug dbg,
         dwarf_dealloc(dbg, die, DW_DLA_DIE);
         print_error(dbg, details.c_str(), cudres, err);
     }
-    cout << line_title ;
-    cout << " " <<  LeftAlign(15,name);
-    cout << " die-in-sect " <<  die_off;
-    cout << ", cu-in-sect " <<  cu_off;
-    cout << ", die-in-cu " <<  die_CU_off;
-    cout << ", cu-header-in-sect " << ((Dwarf_Signed) (die_off - die_CU_off));
+    if( display_offsets) {
+        /* Print 'name'at the end for better layout */
+        cout << line_title ;
+        cout << " die-in-sect " <<  IToHex0N(die_off,10);
+        cout << ", cu-in-sect " <<  IToHex0N(cu_off,10);
+        cout << ", die-in-cu " <<  IToHex0N(die_CU_off,10);
+        /*  Following is absolute offset of the ** beginning of the
+                cu */
+        cout << ", cu-header-in-sect " <<        
+            IToHex0N((die_off - die_CU_off),10);
+    }
 
     if ((die_off - die_CU_off) != global_cu_offset) {
         cout << line_title <<  " error: real cuhdr "<<  global_cu_offset << endl;
         exit(1);
     }
-    if (verbose) {
-        cout  << " cuhdr " << global_cu_offset;
+    if (display_offsets && verbose) {
+        cout  << " cuhdr " << IToHex0N(global_cu_offset,10);
     }
-    cout << endl;
+    cout << " '" << name << "'" << endl;
+
 
     dwarf_dealloc(dbg, die, DW_DLA_DIE);
     dwarf_dealloc(dbg, cu_die, DW_DLA_DIE);
@@ -171,6 +177,8 @@ print_pubnames(Dwarf_Debug dbg)
     Dwarf_Off die_off = 0;
     Dwarf_Off cu_off = 0;
     char *name = 0;
+    /* Offset to previous CU */
+    Dwarf_Off prev_cu_off = error_message_data.elf_max_address;
 
     error_message_data.current_section_id = DEBUG_PUBNAMES;
     if (do_print_dwarf) {
@@ -201,50 +209,69 @@ print_pubnames(Dwarf_Debug dbg)
                 print_error(dbg, "pubnames dwarf_global_cu_offset", 
                     cures3, err);
             }
-
-            print_pubname_style_entry(dbg,
-                "global",
-                name, die_off, cu_off,
-                global_cu_off, maxoff);
-
-            /* print associated die too? */
-
             if (check_pubname_attr) {
                 Dwarf_Bool has_attr;
                 int ares;
                 int dres;
                 Dwarf_Die die;
 
+                /*  We are processing a new set of pubnames
+                    for a different CU; get the producer ID, at 'cu_off'
+                    to see if we need to skip these pubnames */
+                if (cu_off != prev_cu_off) {
+                    string producer_name;
+
+                    /* Record offset for previous CU */
+                    prev_cu_off = cu_off;
+
+                    dres = dwarf_offdie(dbg, cu_off, &die, &err);
+                    if (dres != DW_DLV_OK) {
+                        print_error(dbg, "print pubnames: dwarf_offdie a", dres,err);
+                    }
+
+                    DieHolder hdie(dbg,die);
+                    /* Get producer name for this CU and update compiler list */
+                    get_producer_name(hdie,err,producer_name);
+                    update_compiler_target(producer_name);
+                }
+
                 /* get die at die_off */
                 dres = dwarf_offdie(dbg, die_off, &die, &err);
                 if (dres != DW_DLV_OK) {
-                    string details = string("dwarf_offdie in "
-                        "checking pubnames attribute: "
-                        "die offset does not reference valid DIE.  ")
-                        + IToHex(die_off,0) +
-                        string(".");
-                    print_error(dbg, details.c_str(), dres, err);
-                    print_error(dbg, "dwarf_offdie", dres, err);
+                    print_error(dbg, "print pubnames: dwarf_offdie b", dres, err);
                 }
 
 
                 ares =
                     dwarf_hasattr(die, DW_AT_external, &has_attr, &err);
                 if (ares == DW_DLV_ERROR) {
-                    print_error(dbg, "pubnames hassattr on DW_AT_external", ares,
+                    print_error(dbg, "hassattr on DW_AT_external", ares,
                         err);
                 }
-                DWARF_CHECK_COUNT(pubname_attr_result,1);
-                if (ares == DW_DLV_OK && has_attr) {
-                    /* Should the value of flag be examined? */
-                } else {
-                    DWARF_CHECK_ERROR2(pubname_attr_result,name,
-                        "pubname does not have DW_AT_external");
+
+                /*  Check for specific compiler */
+                if (checking_this_compiler()) {
+                    DWARF_CHECK_COUNT(pubname_attr_result,1);
+                    if (ares == DW_DLV_OK && has_attr) {
+                        /* Should the value of flag be examined? */
+                    } else {
+                        DWARF_CHECK_ERROR2(pubname_attr_result,name,
+                            "pubname does not have DW_AT_external");
+                    }
                 }
                 dwarf_dealloc(dbg, die, DW_DLA_DIE);
+            }
+
+            /* Now print pubname, after the test */
+            if (do_print_dwarf || (record_dwarf_error && check_verbose_mode)) {
+                print_pubname_style_entry(dbg,
+                    "global",
+                    name, die_off, cu_off,
+                    global_cu_off, maxoff);
+                record_dwarf_error = false; // Clear error condition.
             }
         }
         dwarf_globals_dealloc(dbg, globbuf, count);
     }
-}                               /* print_pubnames() */
+}   /* print_pubnames() */
 

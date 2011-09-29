@@ -92,7 +92,8 @@ print_locs(Dwarf_Debug dbg)
 
 
     cout << endl;
-    cout << ".debug_loc format <i o b e l>: "
+    cout << ".debug_loc" << endl; 
+    cout <<"Format <i o b e l>: "
         "index section-offset begin-addr end-addr length-of-block-entry";
     cout << endl;
     while ((lres = dwarf_get_loclist_entry(dbg, offset,
@@ -103,15 +104,17 @@ print_locs(Dwarf_Debug dbg)
 
         string exprstring;
         get_string_from_locs(dbg,data,entry_len,address_size,exprstring);
-        cout <<" <iobel> [" << IToDec(index,4);
-        cout <<"] " << IToHex0N(offset,10);
-        if( verbose) {
+        if( display_offsets) {
+            cout <<" <iobel> [" << IToDec(index,8);
+            cout <<"] " << IToHex0N(offset,10);
             // We print this offset so it matches what the debug_info
             // loclist offset shows (so we can relate them).
             // This offset is the offset of the expression byte blob.
-            cout << string(" ") <<
-                BracketSurround(string("expr-off ") +
-                    IToHex(next_entry - entry_len));
+            if(verbose) {
+                cout << string(" ") <<
+                    BracketSurround(string("expr-off ") +
+                        IToHex0N(next_entry - entry_len,10));
+            }
         }
         cout <<" "<< IToHex0N(lopc_offset,10);
         cout <<" "<< IToHex0N(hipc_offset,10);

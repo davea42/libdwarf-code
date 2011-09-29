@@ -155,6 +155,7 @@ struct Error_Message_Data {
         need_CU_high_address(false), 
         need_PU_valid_code(false),
         seen_PU_base_address(false),
+        seen_PU_high_address(false),
         PU_base_address(0),
         PU_high_address(0),
         DIE_offset(0),
@@ -263,7 +264,7 @@ extern bool check_ranges;
 extern bool check_fdes;
 extern bool check_aranges;
 extern bool check_harmless;
-extern bool check_abbeviations;
+extern bool check_abbreviations;
 extern bool check_dwarf_constants;
 extern bool check_di_gaps;
 extern bool check_forward_decl;
@@ -369,10 +370,15 @@ extern std::string  print_ranges_list_to_extra(Dwarf_Debug dbg,
     Dwarf_Unsigned bytecount);
 extern bool should_skip_this_cu(DieHolder &cu_die, Dwarf_Error err);
 
-int get_cu_name(Dwarf_Debug dbg,Dwarf_Die cu_die,
+int get_cu_name(DieHolder &hcu_die,
     Dwarf_Error err,std::string &short_name_out,std::string &long_name_out);
-int get_producer_name(Dwarf_Debug dbg,Dwarf_Die cu_die,
+int get_producer_name(DieHolder &hcu_die,
     Dwarf_Error err,std::string &producer_name_out);
+
+/* Get number of abbreviations for a CU */
+extern void get_abbrev_array_info(Dwarf_Debug dbg,Dwarf_Unsigned offset);
+/* Validate an abbreviation */
+extern void validate_abbrev_code(Dwarf_Debug dbg,Dwarf_Unsigned abbrev_code);
 
 extern void print_die_and_children(
     DieHolder &in_die,

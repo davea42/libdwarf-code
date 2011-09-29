@@ -36,11 +36,23 @@ public:
         lo_section_index_(section),lo_section_low_pc_(lowpc),
         lo_section_high_pc_(high_pc),lo_section_name_(name) {};
     ~LinkOnceEntry () {};
-    bool inThisRange(Dwarf_Unsigned pc) {
-         if(pc < lo_section_low_pc_ || pc > lo_section_high_pc_) {
-             return false;
+    bool inThisLinkOnceRange(Dwarf_Unsigned pc) {
+        if(pc >= lo_section_low_pc_ && pc <= lo_section_high_pc_) {
+            return true;
+        }
+        return false;
+    }
+    bool inThisLinkOnceRange(const std::string &sname,Dwarf_Unsigned lopc,
+        Dwarf_Unsigned hipc) {
+         if(sname == lo_section_name_ ) {
+             if((lopc >= lo_section_low_pc_ && lopc <=
+                 lo_section_high_pc_) &&
+                 (hipc >= lo_section_low_pc_ && hipc <=
+                 lo_section_high_pc_))  {
+                 return true;
+             }
          }
-         return true;
+         return false;
     };
     void printLinkOnceEntry(unsigned index);
 private:
@@ -48,8 +60,7 @@ private:
     Dwarf_Unsigned lo_section_low_pc_;
     Dwarf_Unsigned lo_section_high_pc_;
     // There are normally relatively few sections (not thousands
-    // or millions), so saving the name here is harmless in practice,
-    // we need not try pointing off to something holding the string.
+    // or millions).
     std::string lo_section_name_;
 };
 
@@ -62,6 +73,8 @@ public:
         link_once_data_.push_back(e);
     };
     bool FindLinkOnceEntry(Dwarf_Unsigned pc);
+    bool FindLinkOnceEntry(const std::string &secname,Dwarf_Unsigned lopc,
+        Dwarf_Unsigned hipc);
     void PrintLinkOnceData();
 private:
     std::list<LinkOnceEntry> link_once_data_;
@@ -128,6 +141,13 @@ public:
     };
     void DeleteVisitedOffset(Dwarf_Unsigned off) {
          offset_.erase(off);
+    };
+    bool IsKnownOffset(Dwarf_Unsigned off) {
+       VODtype::size_type v = offset_.count(off);
+       if( v) {
+           return true;
+       }
+       return false;
     };
 private:
     VODtype offset_;

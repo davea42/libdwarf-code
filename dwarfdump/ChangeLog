@@ -1,3 +1,11 @@
+2011-09-29  DavidAnderson <davea42@earthlink.net>
+      * dwarfdump.c: Amplifying the -n help string.
+      * print_abbrev.c: Adding the standard test of the section
+        print option before printing the header line for the abbrevs section.
+      * print_die.c: Added a {} pair to avoid eventual bug.
+      * print_frames.c: Reformatted a comment for readability.
+      * print_lines.c: Added a status test for consistency with the rest
+        of the code.
 2011-09-26  DavidAnderson <davea42@earthlink.net>
       * dwarfdump.c: Removed duplicate usage_text strings.
       * print_reloc.c:  In case we don't have ELF64 headers,

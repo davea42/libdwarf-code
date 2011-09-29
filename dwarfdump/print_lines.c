@@ -176,7 +176,7 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
                 if (SkipRecord) {
                     /* Skip records that do not have ís_addr_set' */
                     ares = dwarf_line_is_addr_set(line, &has_is_addr_set, &err);
-                    if (has_is_addr_set) {
+                    if (ares == DW_DLV_OK && has_is_addr_set) {
                         SkipRecord = FALSE;
                     }
                     else {

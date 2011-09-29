@@ -104,6 +104,8 @@ static const char *usage_text[] = {
 "\t\t-p\tprint pubnames section",
 "\t\t-N\tprint ranges section",
 "\t\t-n\tsuppress frame information function name lookup",
+"\t\t  \t(when printing frame information from multi-gigabyte",
+"\t\t  \tobject files this option may save significant time).",
 "\t\t-r\tprint aranges section",
 "\t\t-R\tPrint frame register names as r33 etc",
 "\t\t  \t    and allow up to 1200 registers.",
@@ -1584,15 +1586,15 @@ old_get_cu_name(Dwarf_Debug dbg, Dwarf_Die cu_die, Dwarf_Error err)
     return attr_name;
 }
 
-/* Returns the cu of the CU */
-int get_cu_name(Dwarf_Debug dbg, Dwarf_Die cu_die,
+/* Returns the cu name of the CU */
+int get_cu_name(DieHolder &hcu_die,
     Dwarf_Error err, string &short_name, string &long_name)
 {
     Dwarf_Attribute name_attr = 0;
 
-    int ares = dwarf_attr(cu_die, DW_AT_name, &name_attr, &err);
+    int ares = dwarf_attr(hcu_die.die(),DW_AT_name, &name_attr, &err);
     if (ares == DW_DLV_ERROR) {
-        print_error(dbg, "hassattr on DW_AT_name", ares, err);
+        print_error(hcu_die.dbg(), "hassattr on DW_AT_name", ares, err);
     } else {
         if (ares == DW_DLV_NO_ENTRY) {
             short_name = "<unknown name>";
@@ -1601,8 +1603,8 @@ int get_cu_name(Dwarf_Debug dbg, Dwarf_Die cu_die,
             /* DW_DLV_OK */
 
             SrcfilesHolder srcfiles;
-            get_attr_value(dbg, DW_TAG_compile_unit, 
-                cu_die, name_attr, 
+            get_attr_value(hcu_die.dbg(), DW_TAG_compile_unit, 
+                hcu_die.die(), name_attr, 
                 srcfiles,
                 long_name,
                 false /*show_form_used*/);
@@ -1619,19 +1621,19 @@ int get_cu_name(Dwarf_Debug dbg, Dwarf_Die cu_die,
             short_name = filename;
         }
     }
-    dwarf_dealloc(dbg, name_attr, DW_DLA_ATTR);
+    dwarf_dealloc(hcu_die.dbg(), name_attr, DW_DLA_ATTR);
     return ares;
 }
 
 /* Returns the producer of the CU */
-int get_producer_name(Dwarf_Debug dbg, Dwarf_Die cu_die,
+int get_producer_name(DieHolder &hcu_die,
     Dwarf_Error err, string &producer_name)
 {
     Dwarf_Attribute producer_attr = 0;
 
-    int ares = dwarf_attr(cu_die, DW_AT_producer, &producer_attr, &err);
+    int ares = dwarf_attr(hcu_die.die(), DW_AT_producer, &producer_attr, &err);
     if (ares == DW_DLV_ERROR) {
-        print_error(dbg, "hassattr on DW_AT_producer", ares, err);
+        print_error(hcu_die.dbg(), "hassattr on DW_AT_producer", ares, err);
     } else {
         if (ares == DW_DLV_NO_ENTRY) {
             /*  We add extra quotes so it looks more like
@@ -1645,14 +1647,14 @@ int get_producer_name(Dwarf_Debug dbg, Dwarf_Die cu_die,
                 string, the string must be copied (makename()). */
             string esb_producer;
             SrcfilesHolder srcfiles;
-            get_attr_value(dbg, DW_TAG_compile_unit, 
-                cu_die, producer_attr, 
+            get_attr_value(hcu_die.dbg(), DW_TAG_compile_unit, 
+                hcu_die.die(), producer_attr, 
                 srcfiles,producer_name,
                 false /*show_form_used*/);
         }
     }
 
-    dwarf_dealloc(dbg, producer_attr, DW_DLA_ATTR);
+    dwarf_dealloc(hcu_die.dbg(), producer_attr, DW_DLA_ATTR);
     return ares;
 }
 

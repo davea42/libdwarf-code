@@ -70,10 +70,6 @@ static string process_args(int argc, char *argv[]);
 char * program_name;
 static int check_error = 0;
 
-/* defined in print_sections.c, die for the current compile unit, 
-   used in get_fde_proc_name() */
-extern Dwarf_Die current_cu_die_for_print_frames;
-
 /*  The type of Bucket. */
 #define KIND_RANGES_INFO       1
 #define KIND_SECTIONS_INFO     2
@@ -1036,6 +1032,8 @@ static const char *usage_text[] = {
 "\t\t-m\tprint macinfo section",
 "\t\t-M\tprint the form name for each attribute",
 "\t\t-n\tsuppress frame information function name lookup",
+"\t\t  \t(when printing frame information from multi-gigabyte",
+"\t\t  \tobject files this option may save significant time).",
 "\t\t-N\tprint ranges section",
 "\t\t-o[liaprfoR]\tprint relocation info",
 "\t\t  \tl=line,i=info,a=abbrev,p=pubnames,r=aranges,f=frames,o=loc,R=Ranges",

@@ -1,4 +1,5 @@
 /* 
+
   Copyright (C) 2000-2006 Silicon Graphics, Inc.  All Rights Reserved.
   Portions Copyright 2007-2010 Sun Microsystems, Inc. All rights reserved.
   Portions Copyright 2009-2011 SN Systems Ltd. All rights reserved.
@@ -714,9 +715,9 @@ print_one_die(Dwarf_Debug dbg, Dwarf_Die die,
             die_stack[die_indent_level].already_printed_ = TRUE;
         }
         if (die_indent_level == 0) {
-            if (dense)
+            if (dense) {
                 printf("\n");
-            else {
+            } else {
                 printf("\nCOMPILE_UNIT<header overall offset = 0x%" 
                     DW_PR_XZEROS DW_PR_DUx ">:\n",
                     (Dwarf_Unsigned)(overall_offset - offset));

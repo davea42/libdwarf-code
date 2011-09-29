@@ -316,7 +316,8 @@ load_nested_proc_name(Dwarf_Debug dbg, Dwarf_Die die, Dwarf_Addr low_pc,
                     return 1;
                 }
                 /* Check children of subprograms recursively should
-                    this really be check children of anything? */
+                    this really be check children of anything,
+                    or just children of subprograms? */
 
                 lchres = dwarf_child(curdie, &newchild, &err);
                 if (lchres == DW_DLV_OK) {

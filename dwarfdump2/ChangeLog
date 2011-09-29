@@ -1,3 +1,27 @@
+2011-09-29  DavidAnderson <davea42@earthlink.net>
+     * check_util.cc: New FindLinkOnceEntry function added for completeness.
+     * check_util.h: Added omitted LinkOnce and VistedOffsetData functions
+       so the code is complete.
+     * dwarfdump.cc: Expanded on the explanation of the -n option. get_cu_name()
+       now uses the DieHolder class as its first argument.
+     * globals.h: Corrected omissions and misspellings of a couple globals,
+       and correct a couple function interfaces to use DieHolder.
+     * print_abbrevs.cc: Added abbreviation validation code and unified
+       a couple places to print like dwarfdump. 
+     * print_aranges.cc: Major changes to add checking and organize like the
+       dwarfdump version is organized.
+     * print_die.cc: Major changes to organize like the dwarfdump version and
+       add lots of checking.
+     * print_frames.cc: Modest changes to get the output and checking to
+       match the dwarfdump version.
+     * print_lines.cc: Fairly modest changes to get the output and checking to
+       match the dwarfdump version.
+     * print_locs.cc: Small changes to get the output to match the dwarfdump
+       version.
+     * print_pubnames.cc: Perhaps 20% changed, making the printed output
+       work like the dwarfdump version.
+     * print_aranges.c: If not printing (ie, if checking) just return.
+
 2011-09-26  DavidAnderson <davea42@earthlink.net>
      * checkutil.cc: Added a blank line for readability.
      * dwarfdump.cc: Added the reloc_map bit field to the print_relocinfo call.

@@ -83,6 +83,9 @@ print_line_numbers_this_cu(DieHolder & hcudie)
     Dwarf_Die cu_die = hcudie.die();
     Dwarf_Debug dbg = hcudie.dbg();
 
+    bool InvalidSection = false;
+    bool SkipRecord = false;
+
     error_message_data.current_section_id = DEBUG_LINE;
     if(do_print_dwarf) {
         cout << endl;
@@ -107,7 +110,7 @@ print_line_numbers_this_cu(DieHolder & hcudie)
         }
         return;
     }
-    if(check_lines) {
+    if(check_lines && checking_this_compiler()) {
         DWARF_CHECK_COUNT(lines_result,1);
         int line_errs = 0;
         dwarf_check_lineheader(cu_die,&line_errs);
@@ -120,34 +123,64 @@ print_line_numbers_this_cu(DieHolder & hcudie)
     Dwarf_Line *linebuf = NULL;
     int lres = dwarf_srclines(cu_die, &linebuf, &linecount, &err);
     if (lres == DW_DLV_ERROR) {
-        print_error(dbg, "dwarf_srclines", lres, err);
+        /* Do not terminate processing. */
+        if (check_decl_file) {
+            DWARF_CHECK_COUNT(decl_file_result,1);
+            DWARF_CHECK_ERROR2(decl_file_result,"dwarf_srclines",
+                dwarf_errmsg(err));
+            record_dwarf_error = false;  /* Clear error condition */
+        } else {
+            print_error(dbg, "dwarf_srclines", lres, err);
+        }
     } else if (lres == DW_DLV_NO_ENTRY) {
         /* no line information is included */
     } else {
-        print_source_intro(cu_die);
-        if (verbose) {
-            SrcfilesHolder hsrcfiles;
-            print_one_die(hcudie, /* print_information= */ 1,
-                /* indent_level= */ 0,
-                hsrcfiles,
-                /* ignore_die_printed_flag= */true);
+        if(do_print_dwarf) {
+            print_source_intro(cu_die);
+            if (verbose) {
+                SrcfilesHolder hsrcfiles;
+                print_one_die(hcudie, /* print_information= */ 1,
+                    /* indent_level= */ 0,
+                    hsrcfiles,
+                    /* ignore_die_printed_flag= */true);
+            }
+            cout <<
+                "<pc>        [row,col] NS BB ET uri: \"filepath\""
+                << endl;
+            cout << 
+                "NS new statement, BB new basic block, ET end of text sequence"
+                << endl;
         }
-        cout <<
-            "<pc>        [row,col] NS BB ET uri: \"filepath\""
-            << endl;
-        cout << 
-            "NS new statement, BB new basic block, ET end of text sequence"
-            << endl;
- 
-
         string lastsrc = ""; 
         for (Dwarf_Signed i = 0; i < linecount; i++) {
             Dwarf_Line line = linebuf[i];
             char *filenamearg = 0;
             string filename("<unknown>");
+            bool found_line_error = false;
+            Dwarf_Bool has_is_addr_set = 0;
+            string where;
+
+             if (check_decl_file && checking_this_compiler()) {
+                /* A line record with addr=0 was detected */
+                if (SkipRecord) {
+                    /* Skip records that do not have ís_addr_set' */
+                    int ares1 = dwarf_line_is_addr_set(line, &has_is_addr_set, &err);
+                    if (ares1 == DW_DLV_OK && has_is_addr_set) {
+                        SkipRecord = false;
+                    }
+                    else {
+                        /*  Keep ignoring records until we have 
+                            one with 'is_addr_set' */
+                        continue;
+                    }
+                }
+            }
+
+
             int sres = dwarf_linesrc(line, &filenamearg, &err);
             if (sres == DW_DLV_ERROR) {
                 print_error(dbg, "dwarf_linesrc", sres, err);
+                found_line_error = true;
             }
             if (sres == DW_DLV_OK) {
                 filename = filenamearg;
@@ -156,6 +189,7 @@ print_line_numbers_this_cu(DieHolder & hcudie)
             int ares = dwarf_lineaddr(line, &pc, &err);
             if (ares == DW_DLV_ERROR) {
                 print_error(dbg, "dwarf_lineaddr", ares, err);
+                found_line_error = true;
             }
             if (ares == DW_DLV_NO_ENTRY) {
                 pc = 0;
@@ -164,6 +198,7 @@ print_line_numbers_this_cu(DieHolder & hcudie)
             int lires = dwarf_lineno(line, &lineno, &err);
             if (lires == DW_DLV_ERROR) {
                 print_error(dbg, "dwarf_lineno", lires, err);
+                found_line_error = true;
             }
             if (lires == DW_DLV_NO_ENTRY) {
                 lineno = -1LL;
@@ -172,10 +207,112 @@ print_line_numbers_this_cu(DieHolder & hcudie)
             int cores = dwarf_lineoff(line, &column, &err);
             if (cores == DW_DLV_ERROR) {
                 print_error(dbg, "dwarf_lineoff", cores, err);
+                found_line_error = true;
             }
             if (cores == DW_DLV_NO_ENTRY) {
                 column = -1LL;
             }
+
+            /*  Process any possible error condition, though
+                we won't be at the first such error. */
+            if (check_decl_file && checking_this_compiler()) {
+                DWARF_CHECK_COUNT(decl_file_result,1);
+                if (found_line_error) {
+                    DWARF_CHECK_ERROR2(decl_file_result,where,dwarf_errmsg(err));
+                } else if (do_check_dwarf) {
+                    /*  Check the address lies with a valid [lowPC:highPC]
+                        in the .text section*/
+                    if (pAddressRangesData->IsAddressInAddressRange(pc)) {
+                        /* Valid values; do nothing */
+                    } else {
+                        /*  At this point may be we are dealing with 
+                            a linkonce symbol. The problem we have here 
+                            is we have consumed the deug_info section
+                            and we are dealing just with the records 
+                            from the .debug_line, so no PU_name is 
+                            available and no high_pc. Traverse the linkonce
+                            table if try to match the pc value with 
+                            one of those ranges.
+                        */
+                        DWARF_CHECK_COUNT(lines_result,1);
+                        if (pLinkOnceData->FindLinkOnceEntry(pc)){
+                            /* Valid values; do nothing */
+                        } else {
+                            /*  The SN Systems Linker generates 
+                                line records 
+                                with addr=0, when dealing with linkonce 
+                                symbols and no stripping */
+                            if (pc) {
+                                char addr_tmp[100];
+                                snprintf(addr_tmp,sizeof(addr_tmp),
+                                    ".debug_line: Address"
+                                    " 0x%" DW_PR_XZEROS DW_PR_DUx
+                                    " outside a valid .text range",pc);
+                                DWARF_CHECK_ERROR(lines_result,
+                                    addr_tmp);
+                            } else {
+                                SkipRecord = true;
+                            }
+                        }
+                    }
+                    /*  Check the last record for the .debug_line, 
+                        the one created by DW_LNE_end_sequence, 
+                        is the same as the high_pc
+                        address for the last known user program 
+                        unit (PU) */
+                    if ((i + 1 == linecount) &&
+                        error_message_data.seen_PU_high_address) {
+                        /*  Ignore those PU that have been stripped 
+                            by the linker; their low_pc values are 
+                            set to -1 (snc linker only) */
+                        /*  It is perfectly sensible for a compiler
+                            to leave a few bytes of NOP or other stuff
+                            after the last instruction in a subprogram,
+                            for cache-alignment or other purposes, so
+                            a mismatch here is not necessarily 
+                            an error.  */
+                           
+                        DWARF_CHECK_COUNT(lines_result,1);
+                        if ((pc != error_message_data.PU_high_address) && 
+                            (error_message_data.PU_base_address != 
+                                error_message_data.elf_max_address)) {
+                            char addr_tmp[100];
+                            snprintf(addr_tmp,sizeof(addr_tmp),
+                                ".debug_line: Address"
+                                " 0x%" DW_PR_XZEROS DW_PR_DUx
+                                " may be incorrect" 
+                                " as DW_LNE_end_sequence address",pc);
+                            DWARF_CHECK_ERROR(lines_result,
+                                addr_tmp);
+                        }
+                    }
+                }
+            }
+
+            /* Display the error information */
+            if (found_line_error || record_dwarf_error) {
+                if (check_verbose_mode) {
+                    /* Print the record number for better error description */
+                    cout << "Record = " <<
+                        i << " Addr = " <<  IToHex0N(pc,10) <<
+                        " [" << IToDec(lineno,4) <<
+                        ","<< IToDec(column,2) <<
+                        "] '" << filename << "'" << endl;
+                    /* Flush due to the redirection of stderr */
+                    cout.flush();
+                    /* The compilation unit was already printed */
+                    if (!check_decl_file) {
+                        PRINT_CU_INFO();
+                    }
+                }
+                record_dwarf_error = false; 
+                InvalidSection = true;
+                /* Due to a fatal error, skip current record */
+                if (found_line_error) {
+                    continue;
+                }
+            }
+
             cout << IToHex0N(pc,10) << "  ["  <<
                 IToDec(lineno,4) << "," <<
                 IToDec(column,2) <<
@@ -219,7 +356,9 @@ print_line_numbers_this_cu(DieHolder & hcudie)
                 string urs(" uri: \"");
                 translate_to_uri(filename.c_str(),urs);
                 urs.append("\"");
-                cout << urs ;
+                if (do_print_dwarf) {
+                    cout << urs ;
+                }
                 lastsrc = filename;
             }
             cout << endl;

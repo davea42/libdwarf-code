@@ -62,6 +62,7 @@ print_abbrevs(Dwarf_Debug dbg)
     Dwarf_Unsigned offset = 0;
     Dwarf_Unsigned length = 0;
     Dwarf_Unsigned attr_count = 0;
+    Dwarf_Half tag = 0;
     Dwarf_Half attr = 0;
     Dwarf_Signed form = 0;
     Dwarf_Off off = 0;
@@ -83,13 +84,13 @@ print_abbrevs(Dwarf_Debug dbg)
             /* Simple innocuous zero : null abbrev entry */
             if (dense) {
                 cout << BracketSurround(IToDec(abbrev_num));
-                cout << BracketSurround(IToDec(offset));
+                cout << BracketSurround(IToHex0N(offset,10));
                 // 0 is abbrev_code.
                 cout << BracketSurround(IToDec(0));
                 cout << BracketSurround("null .debug_abbrev entry") << endl;
             } else {
-                cout << BracketSurround(IToDec(abbrev_num,4));
-                cout << BracketSurround(IToDec(offset,5));
+                cout << BracketSurround(IToDec(abbrev_num,5));
+                cout << BracketSurround(IToHex0N(offset,10));
                 // 0 is abbrev_code.
                 cout << BracketSurround(string("code: ") +IToDec(0,2));
                 cout << " null .debug_abbrev entry" << endl;
@@ -114,15 +115,15 @@ print_abbrevs(Dwarf_Debug dbg)
         }
         if (dense) {
             cout << BracketSurround(IToDec(abbrev_num));
-            cout << BracketSurround(IToDec(offset));
+            cout << BracketSurround(IToHex0N(offset,10));
             cout << BracketSurround(IToDec(abbrev_code));
             cout << BracketSurround(get_TAG_name(tag,
                 dwarf_names_print_on_error));
         }
         else {
-            cout << BracketSurround(IToDec(abbrev_num,4));
-            cout << BracketSurround(IToDec(offset,5));
-            cout << BracketSurround(string("code: ") +IToDec(abbrev_code,2));
+            cout << BracketSurround(IToDec(abbrev_num,5));
+            cout << BracketSurround(IToHex0N(offset,10));
+            cout << BracketSurround(string("code: ") +IToDec(abbrev_code,3));
             cout << " ";
             cout << LeftAlign(20,get_TAG_name(tag,
                 dwarf_names_print_on_error));
@@ -139,9 +140,10 @@ print_abbrevs(Dwarf_Debug dbg)
         }
         child_name = get_children_name(child_flag,
             dwarf_names_print_on_error);
-        cout << child_name;
-        if (!dense) {
-            cout << endl;
+        if (dense) {
+            cout << " " << child_name;
+        } else {
+            cout << "        " << child_name << endl;
         }
         /*  Abbrev just contains the format of a die, which debug_info
             then points to with the real data. So here we just print the 
@@ -163,7 +165,7 @@ print_abbrevs(Dwarf_Debug dbg)
                 cout << BracketSurround(get_FORM_name((Dwarf_Half) form,
                     dwarf_names_print_on_error));
             } else {
-                cout << "      " << BracketSurround(IToDec(off,5));
+                cout << "      " << BracketSurround(IToHex0N(off,10));
                 cout << "\t";
                 cout << LeftAlign(28,get_AT_name(
                     attr,dwarf_names_print_on_error));
@@ -182,4 +184,125 @@ print_abbrevs(Dwarf_Debug dbg)
         print_error(dbg, "dwarf_get_abbrev", abres, err);
     }
 }
+
+
+/* Abbreviations array info for checking  abbrev tags.
+   The [zero] entry is not used. 
+   We never shrink the array, but it never grows beyond
+   the largest abbreviation count of all the CUs.
+
+   
+*/
+
+static std::vector<Dwarf_Signed>abbrev_vec;
+#define ABBREV_ARRAY_INITIAL_SIZE  64
+/* Number of abbreviations for current CU */
+static Dwarf_Unsigned CU_high_abbrev_code;
+static Dwarf_Unsigned CU_abbrev_count;
+
+static void
+increaseTo(unsigned nsize)
+{
+    unsigned csize = abbrev_vec.size();
+    if(nsize < csize) {
+        // Nothing to do here.
+        return;
+    }
+    abbrev_vec.resize(nsize);
+    for(unsigned i = csize; i < nsize; ++i) {
+                abbrev_vec[i] = 0;
+    }
+
+}
+
+/* Calculate the number of abbreviations for the
+   current CU and set up a basic abbreviations array info,
+   storing the number of attributes per abbreviation.
+*/
+void
+get_abbrev_array_info(Dwarf_Debug dbg, Dwarf_Unsigned offset_in)
+{
+    Dwarf_Unsigned offset = offset_in;
+    if (check_abbreviations) {
+        Dwarf_Abbrev ab;
+        Dwarf_Unsigned length = 0;
+        Dwarf_Unsigned abbrev_entry_count = 0;
+        Dwarf_Unsigned abbrev_code;
+        int abres = DW_DLV_OK;
+        Dwarf_Error err;
+
+        bool bMore = true;
+        CU_abbrev_count = 0;
+        CU_high_abbrev_code = 0;
+
+        if (!abbrev_vec.empty()) {
+            for(unsigned i = 0; i < abbrev_vec.size(); ++i) {
+                abbrev_vec[i] = 0;
+            }
+        }
+
+        while (bMore && (abres = dwarf_get_abbrev(dbg, offset, &ab,
+            &length, &abbrev_entry_count,
+            &err)) == DW_DLV_OK) {
+            dwarf_get_abbrev_code(ab,&abbrev_code,&err);
+            if (abbrev_code == 0) {
+                /* End of abbreviation table for this CU */
+                ++offset; /* Skip abbreviation code */
+                bMore = false;
+            } else {
+                /* Valid abbreviation code */
+                if (abbrev_code > 0) {
+                    increaseTo(abbrev_code+1);
+                    abbrev_vec[abbrev_code] = abbrev_entry_count;
+                    if(abbrev_code > CU_high_abbrev_code) {
+                        CU_high_abbrev_code = abbrev_code;
+                    }
+                    ++CU_abbrev_count;
+                    offset += length;
+                } else {
+                    /* Invalid abbreviation code */
+                    print_error(dbg, "get_abbrev_array_info", abres, err);
+                }
+            }
+            dwarf_dealloc(dbg, ab, DW_DLA_ABBREV);
+        }
+    }
+}
+
+
+
+/* The following relevent for one specific Linker. */
+#define SNLINKER_MAX_ATTRIB_COUNT  16
+
+/* Validate an abbreviation for the current CU. */
+void
+validate_abbrev_code(Dwarf_Debug dbg,Dwarf_Unsigned abbrev_code)
+{
+    char buf[128];
+
+    DWARF_CHECK_COUNT(abbreviations_result,1);
+    if (abbrev_code < 0 || (abbrev_code && abbrev_code > CU_high_abbrev_code)) {
+        snprintf(buf, sizeof(buf),
+            "Abbrev code %" DW_PR_DUu
+            " outside valid range of [0-%" DW_PR_DUu "]",
+            abbrev_code,CU_high_abbrev_code);
+        DWARF_CHECK_ERROR2(abbreviations_result,buf,
+            "Invalid abbreviation code.");
+    } else {
+        Dwarf_Signed abbrev_entry_count =
+            abbrev_vec[abbrev_code];
+        if (abbrev_entry_count < 0 ||
+            abbrev_entry_count > SNLINKER_MAX_ATTRIB_COUNT) {
+            snprintf(buf, sizeof(buf),
+                "Abbrev code %" DW_PR_DUu
+                ", with %" DW_PR_DUu " attributes: "
+                "outside valid range.",
+                abbrev_code,
+                abbrev_entry_count);
+            DWARF_CHECK_ERROR2(abbreviations_result,buf,
+                "Invalid number of attributes.");
+        }
+    }
+}
+    
 
