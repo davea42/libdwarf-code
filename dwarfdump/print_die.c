@@ -47,9 +47,6 @@ $ Header: /plroot/cmplrs.src/v7.4.5m/.RCS/PL/dwarfdump/RCS/print_die.c,v 1.51 20
 #include "makename.h"           /* Non-duplicating string table. */
 #include "print_frames.h"       /* for get_string_from_locs() . */
 #include "tag_common.h" 
-#ifdef HAVE_STDLIB_H
-#include <stdlib.h>             /* for llabs() */ 
-#endif
 
 /*  Traverse a DIE and attributes to check self references */
 static boolean traverse_one_die(Dwarf_Debug dbg, Dwarf_Attribute attrib,
@@ -1159,11 +1156,11 @@ traverse_attribute(Dwarf_Debug dbg, Dwarf_Die die, Dwarf_Half attr,
         /* Get the global offset for reference */
         res = dwarf_global_formref(attrib, &ref_off, &err);
         if (res != DW_DLV_OK) {
-            print_error(dbg, "dwarf_die_CU_offset", res, err);
+            print_error(dbg, "dwarf_global_formref fails in traversal", res, err);
         }
         res = dwarf_dieoffset(die, &die_off, &err);
         if (res != DW_DLV_OK) {
-            print_error(dbg, "ref formwith no ref?!", res, err);
+            print_error(dbg, "dwarf_dieoffset fails in traversal", res, err);
         }
 
         /* Follow reference chain, looking for self references */
@@ -1223,7 +1220,7 @@ traverse_one_die(Dwarf_Debug dbg, Dwarf_Attribute attrib, Dwarf_Die die,
         const char * tagname = 0;
         res = dwarf_die_CU_offset(die, &offset, &err);
         if (res != DW_DLV_OK) {
-            print_error(dbg, "dwarf_die_CU_offset", res, err);
+            print_error(dbg, "dwarf_die_CU_offsetC", res, err);
         }
         tagname = get_TAG_name(tag,dwarf_names_print_on_error);
         printf("<%2d><0x%" DW_PR_XZEROS DW_PR_DUx 
@@ -1387,7 +1384,7 @@ print_range_attribute(Dwarf_Debug dbg,
                         }
                     }
                     /*  Each entry holds 2 addresses (offsets) */
-                        off += elf_address_size * 2;
+                    off += elf_address_size * 2;
                 }
                 if (bError && check_verbose_mode) {
                     printf("\n");
@@ -1563,6 +1560,7 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
     boolean found_search_attr = FALSE;
     boolean bTextFound = FALSE;
 
+    esb_empty_string(&esb_extra);
     atname = get_AT_name(attr,dwarf_names_print_on_error);
 
     /*  The following gets the real attribute, even in the face of an 
@@ -1967,7 +1965,16 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
         valname = esb_get_string(&esb_base);
 
         if (check_locations || check_ranges) {
-            safe_strcpy(PU_name,sizeof(PU_name),valname,strlen(valname));
+            int local_show_form = 0;
+            struct esb_s lesb;
+            const char *name = 0;
+            esb_constructor(&lesb);
+            get_attr_value(dbg, tag, die, attrib, srcfiles, cnt, 
+                &lesb, local_show_form);
+            /*  Look for specific name forms, attempting to
+                notice and report 'odd' identifiers. */
+            name = esb_get_string(&lesb);
+            safe_strcpy(PU_name,sizeof(PU_name),name,strlen(name));
         }
         break;
     case DW_AT_name:
@@ -2087,7 +2094,7 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
                     dwarf_dealloc(dbg,err,DW_DLA_ERROR);
                     err = 0;
                 } else {
-                    print_error(dbg, "dwarf_die_CU_offset", res, err);
+                    print_error(dbg, "dwarf_die_CU_offsetD", res, err);
                 } 
             }
             res = dwarf_dieoffset(die, &die_off, &err);
@@ -2172,7 +2179,6 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
             }
         }
     }
-
     if ((PRINTING_DIES && print_information) || bTextFound) {
         /*  Print just the Tags and Attributes */
         if (!display_offsets) {
@@ -2596,7 +2602,6 @@ formxdata_print_value(Dwarf_Debug dbg,Dwarf_Attribute attrib,
     Dwarf_Error * err, Dwarf_Bool hex_format)
 {
     Dwarf_Signed tempsd = 0;
-    Dwarf_Signed llsd = 0;
     Dwarf_Unsigned tempud = 0;
     int sres = 0;
     int ures = 0;
@@ -2604,14 +2609,9 @@ formxdata_print_value(Dwarf_Debug dbg,Dwarf_Attribute attrib,
 
     ures = dwarf_formudata(attrib, &tempud, err);
     sres = dwarf_formsdata(attrib, &tempsd, &serr);
-#ifdef HAVE_STDLIB_H
-    llsd = llabs(tempsd);
-#else
-    llsd = tempsd;
-#endif
     if(ures == DW_DLV_OK) {
         if(sres == DW_DLV_OK) {
-            if(tempud == tempsd && llsd == tempsd) {
+            if(tempud == tempsd && tempsd >= 0) {
                 /*  Data is the same value and not negative,
                     so makes no difference which
                     we print. */

@@ -1,4 +1,8 @@
 2011-10-03  DavidAnderson <davea42@earthlink.net>
+     * print_die.c: Fix the formx code by removing recently-added use of llabs().
+       Fix format botch, and correct small error string mistakes. Empty
+       esb_extra string when it is no longer valid.
+2011-10-03  DavidAnderson <davea42@earthlink.net>
       * dwarfdump.c: Minor formatting changes.
       * print_die.c: Initialize some local varables at definition. Ensure that
         we do not get a FORM name in a name string (so a test

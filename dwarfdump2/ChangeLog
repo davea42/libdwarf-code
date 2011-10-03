@@ -1,4 +1,11 @@
 2011-10-03  DavidAnderson <davea42@earthlink.net>
+     * print_die.cc: Fix the formx code by removing recently-added use of llabs().
+       Fix consitency issue in error strings versus dwarfdump.  Set record_dwarf_error
+       flag false for consistency with dwarfdump. Ensure PU_name does not get
+       FORM info for DW_AT_MIPS_linkage_name.
+     * dwarfdump.cc:  Fix endl use for clarity. Add an endl in DWARF_CHECK_ERROR3 for
+       consistency.
+2011-10-03  DavidAnderson <davea42@earthlink.net>
      * Makefile.in: Making naming.cc like dwarfdump means altering
        Makefile.in to be more like the dwarfdump Makefile.in
      * checkutil.c: Moved functions here (from the .h) for ease

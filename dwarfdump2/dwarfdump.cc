@@ -1985,8 +1985,8 @@ void PRINT_CU_INFO()
     cout <<", Low PC = " << 
         IToHex0N(error_message_data.CU_base_address,10) << 
         ", High PC = " << 
-        IToHex0N(error_message_data.CU_high_address,10) <<
-        endl;
+        IToHex0N(error_message_data.CU_high_address,10);
+    cout << endl;
     cout.flush();
 }
 
@@ -2069,6 +2069,7 @@ void DWARF_CHECK_ERROR3(Dwarf_Check_Categories category,
     if (checking_this_compiler()) {
         DWARF_ERROR_COUNT(category,1);
         if (check_verbose_mode) {
+            cout << endl;
             cout << "*** DWARF CHECK: " << str1 << " -> " <<
                 str2 << ": " <<
                 strexpl << " ***" <<
