@@ -1,3 +1,5 @@
+2011-10-03  DavidAnderson <davea42@earthlink.net>
+     * dwarf_line.c: Introduce {} in a test to avoid future mistakes.
 2011-09-16  DavidAnderson <davea42@earthlink.net>
      * dwarf_elf_access.c: Give up relocating if the Elf symtab 
        header sh_entrysize is zero, and refine the test for 

@@ -62,7 +62,7 @@ print_source_intro(Dwarf_Die cu_die)
 
     if (ores == DW_DLV_OK) {
         cout << "Source lines (from CU-DIE at .debug_info offset ";
-        cout << off;
+        cout << IToHex0N(off,10);
         cout << "):" << endl;
     } else {
         cout <<"Source lines (for the CU-DIE at unknown location):" <<
@@ -91,7 +91,7 @@ print_line_numbers_this_cu(DieHolder & hcudie)
         cout << endl;
         cout << ".debug_line: line number info for a single cu"<< endl;
     }
-    if (verbose > 1) {
+    if ( verbose > 1) {
         int errcount = 0;
         print_source_intro(cu_die);
         SrcfilesHolder hsrcfiles;
@@ -115,6 +115,7 @@ print_line_numbers_this_cu(DieHolder & hcudie)
         int line_errs = 0;
         dwarf_check_lineheader(cu_die,&line_errs);
         if(line_errs > 0) {
+            DWARF_CHECK_ERROR_PRINT_CU();
             DWARF_ERROR_COUNT(lines_result,line_errs);
             DWARF_CHECK_COUNT(lines_result,(line_errs-1));
         }
@@ -144,6 +145,7 @@ print_line_numbers_this_cu(DieHolder & hcudie)
                     hsrcfiles,
                     /* ignore_die_printed_flag= */true);
             }
+            cout << endl;
             cout <<
                 "<pc>        [row,col] NS BB ET uri: \"filepath\""
                 << endl;
@@ -313,10 +315,12 @@ print_line_numbers_this_cu(DieHolder & hcudie)
                 }
             }
 
-            cout << IToHex0N(pc,10) << "  ["  <<
-                IToDec(lineno,4) << "," <<
-                IToDec(column,2) <<
-                "]" ;
+            if(do_print_dwarf) {
+                cout << IToHex0N(pc,10) << "  ["  <<
+                    IToDec(lineno,4) << "," <<
+                    IToDec(column,2) <<
+                    "]" ;
+            }
 
             if (sres == DW_DLV_OK) {
                 dwarf_dealloc(dbg, filenamearg, DW_DLA_STRING);
@@ -324,7 +328,7 @@ print_line_numbers_this_cu(DieHolder & hcudie)
             Dwarf_Bool newstatement = 0;
             int nsres = dwarf_linebeginstatement(line, &newstatement, &err);
             if (nsres == DW_DLV_OK) {
-                if (newstatement) {
+                if (do_print_dwarf && newstatement) {
                     cout <<" NS";
                 }
             } else if (nsres == DW_DLV_ERROR) {
@@ -334,7 +338,7 @@ print_line_numbers_this_cu(DieHolder & hcudie)
             Dwarf_Bool new_basic_block = 0;
             nsres = dwarf_lineblock(line, &new_basic_block, &err);
             if (nsres == DW_DLV_OK) {
-                if (new_basic_block) {
+                if (do_print_dwarf && new_basic_block) {
                     cout <<" BB";
                 }
             } else if (nsres == DW_DLV_ERROR) {
@@ -343,7 +347,7 @@ print_line_numbers_this_cu(DieHolder & hcudie)
             Dwarf_Bool lineendsequence = 0;
             nsres = dwarf_lineendsequence(line, &lineendsequence, &err);
             if (nsres == DW_DLV_OK) {
-                if (lineendsequence) {
+                if (do_print_dwarf && lineendsequence) {
                     cout <<" ET";
                 }
             } else if (nsres == DW_DLV_ERROR) {
@@ -361,7 +365,9 @@ print_line_numbers_this_cu(DieHolder & hcudie)
                 }
                 lastsrc = filename;
             }
-            cout << endl;
+            if(do_print_dwarf) {
+               cout << endl;
+            }
         }
         dwarf_srclines_dealloc(dbg, linebuf, linecount);
     }

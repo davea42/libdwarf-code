@@ -882,13 +882,11 @@ process_one_file(Elf * elf, string file_name, int archive,
         build_linkonce_info(dbg);
     }
 
-    /* Just for the moment */
-    check_harmless = FALSE;
-
     if (header_flag) {
         print_object_header(elf,dbg);
     }
-    if (info_flag || line_flag || cu_name_flag || search_is_on || producer_children_flag) {
+    if (info_flag || line_flag || cu_name_flag || search_is_on || 
+        producer_children_flag) {
         print_infos(dbg);
     }
     if (pubnames_flag) {
@@ -933,8 +931,9 @@ process_one_file(Elf * elf, string file_name, int archive,
     if (weakname_flag) {
         print_weaknames(dbg);
     }
-    if (reloc_flag)
+    if (reloc_flag) {
         print_relocinfo(dbg, reloc_map);
+    }
     /* The right time to do this is unclear. But we need to do it. */
     print_any_harmless_errors(dbg);
 
@@ -962,7 +961,6 @@ do_all()
     info_flag = line_flag = frame_flag = TRUE;
     pubnames_flag = macinfo_flag = TRUE;
     aranges_flag = TRUE;
-    abbrev_flag = TRUE;
     /*  Do not do 
         loc_flag = TRUE 
         abbrev_flag = TRUE;
@@ -1618,6 +1616,7 @@ process_args(int argc, char *argv[])
     }
 
     if (do_check_dwarf) {
+        /* Reduce verbosity when checking (checking means checking-only). */
         verbose = 1;
     }
     return argv[optind]; 

@@ -66,6 +66,13 @@ AddressRangeEntry::printAddressRangeEntry(unsigned ct)
         
 };
 
+// Leave overall high/low as is, delete the details.
+void 
+AddressRangesData::ResetRangesList()
+{
+     address_range_data_.clear();
+}
+
 // We might want to sort these by low-address rather than printing
 // in random order!
 void 
@@ -83,6 +90,23 @@ AddressRangesData::PrintRangesData()
         it->printAddressRangeEntry(ct);
     }
 }
+void 
+AddressRangesData::AddAddressRange(Dwarf_Unsigned low_pc, Dwarf_Unsigned high_pc) 
+{
+         // Presently we are not checking for duplicates, so some
+         // can be present.
+         address_range_data_.push_back(AddressRangeEntry(low_pc,high_pc));
+};
+
+void 
+AddressRangesData::SetLimitsAddressRange(Dwarf_Unsigned low_pc, Dwarf_Unsigned high_pc)
+{
+        if(low_pc < high_pc) {
+           low_pc_ = low_pc;
+           high_pc_ = high_pc;
+        }
+};
+
 void
 LinkOnceEntry::printLinkOnceEntry(unsigned ct) 
 {

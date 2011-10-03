@@ -39,8 +39,6 @@ INSTALL = cp
 
 binprefix =
 
-BASE_CFILES = naming.cc
-
 FINALOBJECTS = \
         checkutil.o \
 	dwarfdump.o \
@@ -84,7 +82,7 @@ HEADERS = $(srcdir)/globals.h \
         $(srcdir)/print_frames.h \
         $(srcdir)/uri.h
 
-$(FINALOBJECTS): $(BASE_CFILES) $(GEN_HFILES) $(HEADERS)
+$(FINALOBJECTS): $(GEN_HFILES) $(HEADERS) $(srcdir)/naming.cc
 
 default: $(TARGETS)
 
@@ -97,11 +95,17 @@ tag_common.o: $(srcdir)/tag_common.cc $(HEADERS)
 common.o:  $(srcdir)/common.cc $(srcdir)/common.h
 	$(CXX) $(CXXFLAGS) -c $(srcdir)/common.cc
 
-tag_tree_build:  $(srcdir)/tag_tree.cc $(DIRINC)/dwarf.h $(HEADERS) tag_common.o naming.o common.o
-	$(CXX) $(CXXFLAGS) $(srcdir)/tag_tree.cc naming.o tag_common.o common.o $(LDFLAGS) -o tag_tree_build 
 
-tag_attr_build:  $(srcdir)/tag_attr.cc $(DIRINC)/dwarf.h $(HEADERS) tag_common.o naming.o common.o
-	$(CXX) $(CXXFLAGS) $(srcdir)/tag_attr.cc naming.o tag_common.o common.o $(LDFLAGS) -o tag_attr_build 
+# We need this as naming.o has external references we cannot have
+# in the tree builds.
+trivial_naming.o: $(srcdir)/naming.cc
+	$(CXX) $(CXXFLAGS) -DTRIVIAL_NAMING  -c $(srcdir)/naming.cc -o trivial_naming.o
+
+tag_tree_build:  $(srcdir)/tag_tree.cc $(DIRINC)/dwarf.h $(HEADERS) tag_common.o trivial_naming.o common.o
+	$(CXX) $(CXXFLAGS) $(srcdir)/tag_tree.cc trivial_naming.o tag_common.o common.o $(LDFLAGS) -o tag_tree_build 
+
+tag_attr_build:  $(srcdir)/tag_attr.cc $(DIRINC)/dwarf.h $(HEADERS) trivial_naming.o tag_common.o naming.o common.o
+	$(CXX) $(CXXFLAGS) $(srcdir)/tag_attr.cc trivial_naming.o tag_common.o common.o $(LDFLAGS) -o tag_attr_build 
 
 tmp-tt-table.cc tmp-tt-ext-table.cc: $(srcdir)/tag_tree_ext.list $(srcdir)/tag_tree.list tag_tree_build
 	# gcc -E tag_tree.list does not work, so use a .cc name

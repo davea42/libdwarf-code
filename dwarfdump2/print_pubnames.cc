@@ -108,11 +108,11 @@ print_pubname_style_entry(Dwarf_Debug dbg,
     if (dres != DW_DLV_OK) {
         string details = string(line_title) + string(" dwarf_offdie : "
             "die offset does not reference valid DIE.  ")
- 
-            + IToHex(die_off,0) +
+            + IToHex(die_off) +
             string(".");
         print_error(dbg, details.c_str(), dres, err);
     }
+    DieHolder(dbg,die);
 
 
     /* get offset of die from its cu-header */
@@ -127,7 +127,7 @@ print_pubname_style_entry(Dwarf_Debug dbg,
     if (cudres != DW_DLV_OK) {
         string details =  string(line_title) + string(" dwarf_offdie: "
             "die offset does not reference valid CU DIE.  ")
-            + IToHex(cu_off,0) +
+            + IToHex(cu_off) +
             string(".");
         dwarf_dealloc(dbg, die, DW_DLA_DIE);
         print_error(dbg, details.c_str(), cudres, err);

@@ -110,16 +110,13 @@ private:
 // data that must fail the search is noted as such quickly.
 class AddressRangesData {
 public:
-    AddressRangesData():low_pc_(0),high_pc_(0) {};
+    AddressRangesData():low_pc_(0xffffffffffffffff),high_pc_(0) {};
     ~AddressRangesData() {};
-    void AddAddressRange(Dwarf_Unsigned low_pc, Dwarf_Unsigned high_pc) {
-    };
-    void SetLimitsAddressRange(Dwarf_Unsigned low_pc, Dwarf_Unsigned high_pc){
-        AddressRangeEntry x(low_pc,high_pc);
-        address_range_data_.push_back(x);
-    };
+    void AddAddressRange(Dwarf_Unsigned low_pc, Dwarf_Unsigned high_pc);
+    void SetLimitsAddressRange(Dwarf_Unsigned low_pc, Dwarf_Unsigned high_pc);
     bool IsAddressInAddressRange(Dwarf_Unsigned pc);
     void PrintRangesData();
+    void ResetRangesList();
 private:
     Dwarf_Unsigned low_pc_;
     Dwarf_Unsigned high_pc_;
@@ -134,23 +131,27 @@ extern AddressRangesData *pAddressRangesData;
 class VisitedOffsetData {
 public:
     typedef std::set<Dwarf_Unsigned,std::less<Dwarf_Unsigned> > VODtype;
-    VisitedOffsetData () { };
-    ~VisitedOffsetData () { };
-    void AddVistedOffset(Dwarf_Unsigned off) {
-         offset_.insert(off);
+    VisitedOffsetData () { offset_ = new VODtype; };
+    ~VisitedOffsetData () { delete offset_;};
+    void reset() {
+        delete offset_;
+        offset_ = new VODtype;
+    }
+    void AddVisitedOffset(Dwarf_Unsigned off) {
+         offset_->insert(off);
     };
     void DeleteVisitedOffset(Dwarf_Unsigned off) {
-         offset_.erase(off);
+         offset_->erase(off);
     };
     bool IsKnownOffset(Dwarf_Unsigned off) {
-       VODtype::size_type v = offset_.count(off);
+       VODtype::size_type v = offset_->count(off);
        if( v) {
            return true;
        }
        return false;
     };
 private:
-    VODtype offset_;
+    VODtype *offset_;
 };
 
 extern VisitedOffsetData *pVisitedOffsetData;

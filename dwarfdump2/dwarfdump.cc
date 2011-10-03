@@ -444,6 +444,12 @@ main(int argc, char *argv[])
     delete pAddressRangesData;
     delete pLinkOnceData;
     delete pVisitedOffsetData;
+#ifdef HAVE_REGEX
+    if(!search_regex_text.empty()) {
+        regfree(&search_re);
+    }
+#endif
+
 
     if (check_error)
         return FAILED;
@@ -580,9 +586,9 @@ print_object_header(Elf *elf,Dwarf_Debug dbg)
 static void
 print_specific_checks_results(Compiler *pCompiler)
 {
-    cout << endl;
-    cout << "DWARF CHECK RESULT" << endl;
-    cout << "<item>                    <checks>    <errors>\n" << endl;
+    cerr << endl;
+    cerr << "DWARF CHECK RESULT" << endl;
+    cerr << "<item>                    <checks>    <errors>" << endl;
     if (check_pubname_attr) {
         PRINT_CHECK_RESULT("pubname_attr", pCompiler, pubname_attr_result);
     }
@@ -737,6 +743,7 @@ print_checks_results()
             '-c<str>', that were not detected. */
         if (compilers_not_detected) {
             unsigned count = 0;
+            cerr << endl;
             cerr << compilers_not_detected <<  " Compilers not detected:"
                 << endl;
             for (unsigned index = 1; index < compilers_targeted.size(); ++index) {
@@ -750,6 +757,7 @@ print_checks_results()
         }
 
         unsigned count2 = 0;
+        cerr << endl;
         cerr << compilers_verified <<  " Compilers verified:"
             << endl;
         for (unsigned index = 1; index < compilers_detected.size(); ++index) {
@@ -770,6 +778,7 @@ print_checks_results()
             /* Print compilers detected summary*/
             if (print_summary_all) {
                 int count = 0;
+                cerr << endl;
                 cerr << "*** ERRORS PER COMPILER ***" << endl;
                 for (unsigned index = 1; index < compilers_detected.size(); ++index) {
                     Compiler *pCompiler = &compilers_detected[index];
@@ -783,6 +792,7 @@ print_checks_results()
             }
 
             /* Print general summary (all compilers checked) */
+            cerr << endl;
             cerr <<"*** TOTAL ERRORS FOR ALL COMPILERS ***" << endl;
             print_specific_checks_results(&compilers_detected[0]);
         }
@@ -921,21 +931,32 @@ process_one_file(Elf * elf,const  string & file_name, int archive,
     if (dres != DW_DLV_OK) {
         print_error(dbg, "dwarf_finish", dres, err);
     }
+    cout << endl;
+    cerr.flush();
     return 0;
 
 }
 
 static void do_all()
 {
-    info_flag = line_flag = frame_flag = abbrev_flag = true;
-    pubnames_flag = aranges_flag = macinfo_flag = true;
-    // Do not do loc_flag = true because nothing in
-    // the DWARF spec guarantees .debug_loc is free of random bytes
-    // in areas not referenced by .debug_info 
+    info_flag = line_flag = frame_flag =  true;
+    pubnames_flag = macinfo_flag = true;
+    aranges_flag = true;
+    /*  Do not do 
+        loc_flag = TRUE 
+        abbrev_flag = TRUE;
+        because nothing in
+        the DWARF spec guarantees the sections are free of random bytes
+        in areas not referenced by .debug_info */
+
     string_flag = true;
-    reloc_flag = true;
+    /*  Do not do 
+        reloc_flag = TRUE;
+        as print_relocs makes no sense for non-elf dwarfdump users.  */
     static_func_flag = static_var_flag = true;
     type_flag = weakname_flag = true;
+    ranges_flag = true;
+    header_flag = true;
 }
 
 /* process arguments and return object filename */
@@ -1043,6 +1064,7 @@ process_args(int argc, char *argv[])
             break;
         case 'p':
             pubnames_flag = true;
+            suppress_check_dwarf();
             break;
         case 'P':
             /* List of CUs per compiler */
@@ -1210,7 +1232,7 @@ process_args(int argc, char *argv[])
                 pubnames_flag = info_flag = true;
                 check_decl_file = true;
                 check_frames = true;
-                check_frames_extended = true;
+                check_frames_extended = false;
                 check_locations = true;
                 frame_flag = eh_frame_flag = true;
                 check_ranges = true;
@@ -1434,6 +1456,10 @@ process_args(int argc, char *argv[])
         print_usage_message(program_name,usage_text);
         exit(FAILED);
     }
+    if(do_check_dwarf) {
+        /* Reduce verbosity when checking (checking means checking-only). */
+        verbose = 1;
+    }
     return argv[optind];
 }
 
@@ -1452,6 +1478,7 @@ print_error_and_continue(Dwarf_Debug dbg, const string & msg, int dwarf_code,
 {
     cout.flush();
     cerr.flush();
+    cerr << endl;
     if (dwarf_code == DW_DLV_ERROR) {
         string errmsg = dwarf_errmsg(err);
         Dwarf_Unsigned myerr = dwarf_errno(err);
@@ -1468,6 +1495,9 @@ print_error_and_continue(Dwarf_Debug dbg, const string & msg, int dwarf_code,
             ":  code " << dwarf_code << endl;
     }
     cerr.flush();
+
+    // Display compile unit name.
+    PRINT_CU_INFO();
 }
 
 /*  Predicate function. Returns 'true' if the CU should
@@ -1773,8 +1803,7 @@ tag_specific_checks_setup(Dwarf_Half val,int die_indent_level)
         /*  If we are checking line information, build
             the table containing the pairs LowPC and HighPC */
         if (check_decl_file || check_ranges || check_locations) {
-            delete pAddressRangesData;
-            pAddressRangesData = new AddressRangesData;
+            pAddressRangesData->ResetRangesList();
         }
         /*  The following flag indicate that only low_pc and high_pc
             values found in DW_TAG_subprograms are going to be considered when
@@ -1833,10 +1862,8 @@ increment_compilers_detected(bool beyond)
         compilers_detected.push_back(c);
     }
     if (beyond) {
-        if( compilers_detected.empty()) {
-            Compiler c;
-            compilers_detected.push_back(c);
-        }
+        Compiler c;
+        compilers_detected.push_back(c);
     }
 }
 static void 
@@ -1899,7 +1926,7 @@ update_compiler_target(const string &producer_name)
     }
 
     /* Check for already detected compiler */
-    bool cFound = true;
+    bool cFound = false;
     for (index = 1; index < compilers_detected.size(); ++index) {
         if (
 #if WIN32
@@ -1957,7 +1984,7 @@ void PRINT_CU_INFO()
         " GOFF = "<< IToHex0N(error_message_data.DIE_overall_offset,10);
     cout <<", Low PC = " << 
         IToHex0N(error_message_data.CU_base_address,10) << 
-        ", High PC = 0x%08" << 
+        ", High PC = " << 
         IToHex0N(error_message_data.CU_high_address,10) <<
         endl;
     cout.flush();
@@ -1992,7 +2019,8 @@ PRINT_CHECK_RESULT(const string &str,
 {
     Dwarf_Check_Result result = pCompiler->results_[category];
     cerr << std::setw(24) << std::left << str <<
-         IToDec(result.checks_,10) << 
+         IToDec(result.checks_,10) <<  
+         "  " <<
          IToDec(result.errors_,10) << endl; 
 }
 

@@ -129,9 +129,10 @@ get_abstract_origin_or_spec_funcname(Dwarf_Debug dbg,
 }
 
 
-/*  Returns true  if a proc with this low_pc found.
+/*  Returns true  this is a procedure with a name, and sets
+    the name in proc_name and the low pc in low_pc_out.
     Else returns false.  */
-static bool
+bool
 get_proc_name(Dwarf_Debug dbg, Dwarf_Die die, 
     string & proc_name, Dwarf_Addr & low_pc_out)
 {
@@ -464,13 +465,13 @@ print_one_fde(Dwarf_Debug dbg, Dwarf_Fde fde,
         }
     }
     if(!check_frames_extended) {
-        cout << BracketSurround(IToDec(cie_index,3));
-        cout << BracketSurround(IToHex(low_pc) + string(":")+
-            IToHex(low_pc + func_length));
+        cout << BracketSurround(IToDec(cie_index,5));
+        cout << BracketSurround(IToHex0N(low_pc,10) + string(":")+
+            IToHex0N(low_pc + func_length,10));
         cout << BracketSurround(temps);
         cout << BracketSurround(string("fde offset ") +
-            IToHex(fde_offset) + string(" length: ") +
-            IToHex(fde_bytes_length));
+            IToHex0N(fde_offset,10) + string(" length: ") +
+            IToHex0N(fde_bytes_length,10));
     }
 
     if (!is_eh) {
@@ -541,9 +542,9 @@ print_one_fde(Dwarf_Debug dbg, Dwarf_Fde fde,
                 continue;
             }
             if (!printed_intro_addr & !check_frames_extended) {
-                cout <<"    ";
+                cout <<"        ";
                 cout << IToHex0N(j,10);
-                cout <<":\t";
+                cout <<": ";
                 printed_intro_addr = true;
             }
             print_one_frame_reg_col(dbg, config_data->cf_cfa_reg,
@@ -575,7 +576,7 @@ print_one_fde(Dwarf_Debug dbg, Dwarf_Fde fde,
                 break;
             }
             if (!printed_intro_addr && !check_frames_extended) {
-                cout << "    " << IToHex0N(j,10) << ":\t";
+                cout << "        " << IToHex0N(j,10) << ": ";
                 printed_intro_addr = true;
             }
             print_one_frame_reg_col(dbg,k,
@@ -608,12 +609,12 @@ print_one_fde(Dwarf_Debug dbg, Dwarf_Fde fde,
                 &err);
         if (offres == DW_DLV_OK) {
             if(!check_frames_extended) {
-                cout << "\tfde sec. offset " << IToDec(fde_off) <<
+                cout << " fde section offset " << IToDec(fde_off) <<
                     " " <<
-                    IToHex(fde_off);
+                    IToHex0N(fde_off,10);
                 cout << " cie offset for fde: " << IToDec(cie_off) <<
                     " " <<
-                    IToHex(cie_off);
+                    IToHex0N(cie_off,10);
                 cout << endl;
             }
         }
@@ -720,12 +721,12 @@ print_one_cie(Dwarf_Debug dbg, Dwarf_Cie cie,
     {
         if(!check_frames_extended) {
             string augmenter = augmenter_arg;
-            cout << BracketSurround(IToDec(cie_index,3));
+            cout << BracketSurround(IToDec(cie_index,5));
             cout << "\tversion\t\t\t\t" << static_cast<int>(version) << endl;
             cires = dwarf_cie_section_offset(dbg, cie, &cie_off, &err);
             if (cires == DW_DLV_OK) {
-                cout << "\tcie sec. offset " << IToDec(cie_off);
-                cout << " " << IToHex(cie_off) << endl;
+                cout << "\tcie section offset\t\t" << IToDec(cie_off);
+                cout << " " << IToHex0N(cie_off,10) << endl;
             }
     
             cout << "\taugmentation\t\t\t" << augmenter << endl;
@@ -762,9 +763,10 @@ print_one_cie(Dwarf_Debug dbg, Dwarf_Cie cie,
 
         if(!check_frames_extended) {
             cout <<
-                "\tbytes of initial instructions:\t" <<
+                "\tbytes of initial instructions\t" <<
                 IToDec(initial_instructions_length) << endl;
-            cout <<"\tcie length :\t\t\t" <<IToDec(cie_length) << endl;
+            cout <<"\tcie length\t\t\t" <<IToDec(cie_length) << endl;
+            cout << "\tinitial instructions" << endl;
             print_frame_inst_bytes(dbg, initial_instructions, 
                 (Dwarf_Signed) initial_instructions_length,
                 data_alignment_factor,
@@ -1392,6 +1394,9 @@ print_one_frame_reg_col(Dwarf_Debug dbg,
 {
     string type_title = "";
     int print_type_title = 1;
+     if (check_frames_extended) {
+        return;
+    }
 
     if (config_data->cf_interface_number == 2)
         print_type_title = 0;

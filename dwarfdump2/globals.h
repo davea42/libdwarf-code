@@ -422,6 +422,11 @@ extern void print_frame_inst_bytes(Dwarf_Debug dbg,
     int code_alignment_factor, Dwarf_Half addr_size,
     struct dwconf_s *config_data);
 
+bool
+get_proc_name(Dwarf_Debug dbg, Dwarf_Die die,
+    std::string & proc_name, Dwarf_Addr & low_pc_out);
+
+
 void get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
    Dwarf_Die die,
    Dwarf_Attribute attrib,

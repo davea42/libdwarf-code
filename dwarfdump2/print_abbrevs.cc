@@ -92,7 +92,7 @@ print_abbrevs(Dwarf_Debug dbg)
                 cout << BracketSurround(IToDec(abbrev_num,5));
                 cout << BracketSurround(IToHex0N(offset,10));
                 // 0 is abbrev_code.
-                cout << BracketSurround(string("code: ") +IToDec(0,2));
+                cout << BracketSurround(string("code: ") +IToDec(0,3));
                 cout << " null .debug_abbrev entry" << endl;
             }
 
@@ -165,8 +165,8 @@ print_abbrevs(Dwarf_Debug dbg)
                 cout << BracketSurround(get_FORM_name((Dwarf_Half) form,
                     dwarf_names_print_on_error));
             } else {
-                cout << "      " << BracketSurround(IToHex0N(off,10));
-                cout << "\t";
+                cout << "       " << BracketSurround(IToHex0N(off,10));
+                cout << "              ";
                 cout << LeftAlign(28,get_AT_name(
                     attr,dwarf_names_print_on_error));
                 cout << get_FORM_name(form,

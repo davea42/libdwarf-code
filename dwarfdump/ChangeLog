@@ -1,3 +1,19 @@
+2011-10-03  DavidAnderson <davea42@earthlink.net>
+      * dwarfdump.c: Minor formatting changes.
+      * print_die.c: Initialize some local varables at definition. Ensure that
+        we do not get a FORM name in a name string (so a test
+        works right).  And also ensure a FORM name does not get
+        into a compiler-target setting.  Refine the formx_print_value()
+        so it is more complete (like dwarfdump2). Ensure show_form_itself()
+        uses the argument, not a global, for the show-form test.
+      * naming.c:  Introduce a {} pair on an 'if' 
+        to reduce the possibility of future
+        errors.
+      * print_pubnames.c: Add error details to match dwarfdump2.
+      * print_ranges.c: If not printing, return immediately.
+      * print_reloc.c: A test was coded with = where == was needed.
+      * print_types.c: Move local variable definitions to the
+        block they are used in.
 2011-09-29  DavidAnderson <davea42@earthlink.net>
       * dwarfdump.c: Amplifying the -n help string.
       * print_abbrev.c: Adding the standard test of the section
@@ -6,6 +22,8 @@
       * print_frames.c: Reformatted a comment for readability.
       * print_lines.c: Added a status test for consistency with the rest
         of the code.
+      * print_reloc.c: One of the assign-and-test removal changes
+        in the previous changes was wrong.
 2011-09-26  DavidAnderson <davea42@earthlink.net>
       * dwarfdump.c: Removed duplicate usage_text strings.
       * print_reloc.c:  In case we don't have ELF64 headers,

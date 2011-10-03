@@ -240,11 +240,11 @@ print_aranges(Dwarf_Debug dbg)
                                 "arange starts at " <<
                                 IToHex0N(start,10);
                         }
-                        cout << "length of " << IToHex0N(length) <<
+                        cout << ", length of " << IToHex0N(length,10) <<
                             ", cu_die_offset = "<< IToHex0N(cu_die_offset,10);
                     }
                     if (verbose && do_print_dwarf) {
-                        cout << " cuhdr "<< IToHex0N(off,10);
+                        cout << " cuhdr "<< IToHex0N(off,10) << endl;
                     }
                 } else {
                     /*  Must be a range end. We really do want to print

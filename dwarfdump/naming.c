@@ -78,9 +78,10 @@ ellipname(int res, int val_in, const char *v,const char *ty,int printonerr)
         /* Capture any name error in DWARF constants */
 #ifndef TRIVIAL_NAMING
         if(printonerr && check_dwarf_constants && checking_this_compiler()) {
-            if (check_verbose_mode)
+            if (check_verbose_mode) {
                 fprintf(stderr,"%s of %d (0x%x) is unknown to dwarfdump. "
                     "Continuing. \n",ty,val_in,val_in );
+            }
             DWARF_ERROR_COUNT(dwarf_constants_result,1);
             DWARF_CHECK_ERROR_PRINT_CU();
         }

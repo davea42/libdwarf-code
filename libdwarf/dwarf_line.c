@@ -139,8 +139,9 @@ dwarf_srcfiles(Dwarf_Die die,
 
     /*  ***** BEGIN CODE ***** */
     /*  Reset error. */
-    if (error != NULL)
+    if (error != NULL) {
         *error = NULL;
+    }
 
     CHECK_DIE(die, DW_DLV_ERROR);
     dbg = die->di_cu_context->cc_dbg;

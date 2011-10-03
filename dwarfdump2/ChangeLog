@@ -1,3 +1,26 @@
+2011-10-03  DavidAnderson <davea42@earthlink.net>
+     * Makefile.in: Making naming.cc like dwarfdump means altering
+       Makefile.in to be more like the dwarfdump Makefile.in
+     * checkutil.c: Moved functions here (from the .h) for ease
+       in debugging. 
+     * checkutil.h: Moved a couple function definitions to the .h.
+       Changed the VODtype member to be a pointer so it can be cleared
+       out trivially, and altered uses to match.
+     * dwarfdump.cc: Free regex data.  Make format details match dwarfdump.
+       Make do_all() match dwarfdump version. Ensure suppress_check_dwarf()
+       called in one more place. Get the -ka settings right.  For checking,
+       lower verbosity to one.
+     * globals.h: Insert get_proc_name() prototoype.
+     * naming.cc: Add error checking (but only when used in dwarfdump itself).
+     * print_abbrevs.cc,print_aranges.cc: Get formatting to match dwarfdump.
+     * print_die.cc: Get formatting to match dwarfdump (which involved more
+       than just format changes, had to ensure that the CU and PU globals
+       are set too, for the error reporting).  Added the LinkOnce testing too.
+     * print_frames.cc: Made get_proc_name a global function.  Fixed up
+       formatting to match dwarfdump.
+     * print_lines.cc,print_pubnames.cc,print_strings.cc: Fixed up formatting 
+       to match dwarfdump.
+     * print_types.cc: Made more like the dwarfdump version.
 2011-09-29  DavidAnderson <davea42@earthlink.net>
      * check_util.cc: New FindLinkOnceEntry function added for completeness.
      * check_util.h: Added omitted LinkOnce and VistedOffsetData functions

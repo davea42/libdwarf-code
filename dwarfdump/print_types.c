@@ -56,8 +56,6 @@ print_types(Dwarf_Debug dbg, enum type_type_e type_type)
     Dwarf_Type *typebuf = NULL;
     Dwarf_Signed count = 0;
     Dwarf_Signed i = 0;
-    Dwarf_Off die_off = 0;
-    Dwarf_Off cu_off = 0;
     char *name = NULL;
     int gtres = 0;
 
@@ -119,6 +117,8 @@ print_types(Dwarf_Debug dbg, enum type_type_e type_type)
         for (i = 0; i < count; i++) {
             int tnres = 0;
             int cures3 = 0;
+            Dwarf_Off die_off = 0;
+            Dwarf_Off cu_off = 0;
             Dwarf_Off global_cu_off = 0;
 
             tnres =

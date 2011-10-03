@@ -61,7 +61,11 @@ print_ranges(Dwarf_Debug dbg)
     int wasdense = 0;
 
     current_section_id = DEBUG_RANGES;
+    if (!do_print_dwarf) {
+        return;
+    }
     printf("\n.debug_ranges\n");
+
     /*  Turn off dense, we do not want  print_ranges_list_to_extra
         to use dense form here. */
     wasdense = dense;

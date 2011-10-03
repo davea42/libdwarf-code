@@ -816,7 +816,7 @@ print_relocinfo_32(Dwarf_Debug dbg, Elf * elf)
     int scn_names_cnt = 0;
 
     ehdr32 = elf32_getehdr(elf);
-    if (ehdr32 = NULL) {
+    if (ehdr32 == NULL) {
         print_error(dbg, "DW_ELF_GETEHDR_ERROR", DW_DLV_OK, err);
     }
 
