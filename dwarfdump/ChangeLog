@@ -1,4 +1,9 @@
 2011-10-03  DavidAnderson <davea42@earthlink.net>
+     * dwarfdump.c: for -kF, add check_lines. Ensure uniformity
+       in the usage-text ending.
+     * print_lines.c: Ensure lines printing suppresses some
+       error reporting when appropriate.
+2011-10-03  DavidAnderson <davea42@earthlink.net>
      * print_die.c: Fix the formx code by removing recently-added use of llabs().
        Fix format botch, and correct small error string mistakes. Empty
        esb_extra string when it is no longer valid.

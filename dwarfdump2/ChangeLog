@@ -1,4 +1,10 @@
 2011-10-03  DavidAnderson <davea42@earthlink.net>
+     * dwarfdump.cc: Use the dwarfdump usage text. Add remove_quotes_pair()
+       for consistency with dwarfdump.c and use it. Add check_lines to -kF . 
+     * print_die.cc: the have_a_search_match() test was backwards. Fixed.
+     * print_lines.cc: Add record_line_error() so errors can be seen
+       in detail when appropriate.  Add some CHECK_COUNT calls when appropriate.
+2011-10-03  DavidAnderson <davea42@earthlink.net>
      * print_die.cc: Fix the formx code by removing recently-added use of llabs().
        Fix consitency issue in error strings versus dwarfdump.  Set record_dwarf_error
        flag false for consistency with dwarfdump. Ensure PU_name does not get

@@ -76,10 +76,17 @@ static const char *usage_text[] = {
 "options:\t-a\tprint all .debug_* sections",
 "\t\t-b\tprint abbrev section",
 "\t\t-c\tprint loc section",
+"\t\t-c<str>\tcheck only specific compiler objects", 
+"\t\t  \t  <str> is described by 'DW_AT_producer'. Examples:",
+"\t\t  \t    -cg       check only GCC compiler objects",
+"\t\t  \t    -cs       check only SNC compiler objects",
+"\t\t  \t    -c'350.1' check only compiler objects with 350.1 in the CU name",
 "\t\t-C\tactivate printing (with -i) of warnings about",
 "\t\t\tcertain common extensions of DWARF.",
 "\t\t-d\tdense: one line per entry (info section only)",
+"\t\t-D\tdo not show offsets",  /* Do not show any offsets */
 "\t\t-e\tellipsis: short names for tags, attrs etc.",
+"\t\t-E\tprint object Header information",
 "\t\t-f\tprint dwarf frame section",
 "\t\t-F\tprint gnu .eh_frame section",
 "\t\t-g\t(use incomplete loclist support)",
@@ -88,24 +95,43 @@ static const char *usage_text[] = {
 "\t\t-H <num>\tlimit output to the first <num> major units",
 "\t\t\t  example: to stop after <num> compilation units",
 "\t\t-i\tprint info section",
-"\t\t-k[aefrty] check dwarf information",
+"\t\t-k[abcdeEfFgilmMnrRsStx[e]y] check dwarf information",
 "\t\t   a\tdo all checks",
+"\t\t   b\tcheck abbreviations",     /* Check abbreviations */
+"\t\t   c\texamine DWARF constants", /* Check for valid DWARF constants */
+"\t\t   d\tshow check results",      /* Show check results */
 "\t\t   e\texamine attributes of pubnames",
+"\t\t   E\tignore DWARF extensions",  /*  Ignore DWARF extensions */
 "\t\t   f\texamine frame information (use with -f or -F)",
+"\t\t   F\texamine integrity of files-lines attributes", /* Files-Lines integrity */
+"\t\t   g\tcheck debug info gaps", /* Check for debug info gaps */
+"\t\t   i\tdisplay summary for all compilers", /* Summary all compilers */
+"\t\t   l\tcheck location list (.debug_loc)",  /* Location list integrity */
+"\t\t   m\tcheck ranges list (.debug_ranges)", /* Ranges list integrity */
+"\t\t   M\tcheck ranges list (.debug_aranges)",/* Aranges list integrity */
+"\t\t   n\texamine names in attributes",       /* Check for valid names */
 "\t\t   r\texamine tag-attr relation",
+"\t\t   R\tcheck forward references to DIEs (declarations)", /* Check DW_AT_specification references */
+"\t\t   s\tperform checks in silent mode",
+"\t\t   S\tcheck self references to DIEs",
 "\t\t   t\texamine tag-tag relations",
+"\t\t   x\tbasic frames check (.eh_frame, .debug_frame)",
+"\t\t   xe\textensive frames check (.eh_frame, .debug_frame)", 
 "\t\t   y\texamine type info",
 "\t\t\tUnless -C option given certain common tag-attr and tag-tag",
 "\t\t\textensions are assumed to be ok (not reported).",
 "\t\t-l\tprint line section",
 "\t\t-m\tprint macinfo section",
 "\t\t-M\tprint the form name for each attribute",
-"\t\t-o\tprint relocation info",
-"\t\t-p\tprint pubnames section",
-"\t\t-N\tprint ranges section",
 "\t\t-n\tsuppress frame information function name lookup",
 "\t\t  \t(when printing frame information from multi-gigabyte",
 "\t\t  \tobject files this option may save significant time).",
+"\t\t-N\tprint ranges section",
+"\t\t-o[liaprfoR]\tprint relocation info",
+"\t\t  \tl=line,i=info,a=abbrev,p=pubnames,r=aranges,f=frames,o=loc,R=Ranges",
+"\t\t-p\tprint pubnames section",
+"\t\t-P\tprint list of compile units per producer", /* List of CUs per compiler */
+"\t\t-Q\tsuppress printing section data",  
 "\t\t-r\tprint aranges section",
 "\t\t-R\tPrint frame register names as r33 etc",
 "\t\t  \t    and allow up to 1200 registers.",
@@ -132,7 +158,12 @@ static const char *usage_text[] = {
 "\t\t-x name=<path>\tname dwarfdump.conf",
 "\t\t-x abi=<abi>\tname abi in dwarfdump.conf",
 "\t\t-w\tprint weakname section",
+"\t\t-W\tprint parent and children tree (wide format) with the -S option",
+"\t\t-Wp\tprint parent tree (wide format) with the -S option",
+"\t\t-Wc\tprint children tree (wide format) with the -S option",
 "\t\t-y\tprint type section",
+"",
+
 0};
 
 
@@ -959,6 +990,44 @@ static void do_all()
     header_flag = true;
 }
 
+/* Remove matching leading/trailing quotes.
+   Does not alter the passed in string.
+   If quotes removed does a makename on a modified string. */
+static string
+remove_quotes_pair(char *text)
+{
+    static char single_quote = '\'';
+    static char double_quote = '\"';
+    string out;
+    char quote = 0;
+    char *p = text;
+    int len = strlen(text);
+
+    if (len < 2) {
+        return p;
+    }
+
+    /* Compare first character with ' or " */
+    if (p[0] == single_quote) {
+        quote = single_quote;
+    } else {
+        if (p[0] == double_quote) {
+            quote = double_quote;
+        }
+        else {
+            return p;
+        }
+    }
+    {
+        if (p[len - 1] == quote) {
+            out = string(p+1,p+len-1);
+            return out;
+        }
+    }
+    return p;
+}
+
+
 /* process arguments and return object filename */
 static string
 process_args(int argc, char *argv[])
@@ -1127,14 +1196,14 @@ process_args(int argc, char *argv[])
                 search_is_on = true;
                 /* -S text */
                 if (strncmp(optarg,"match=",6) == 0) {
-                    search_match_text = (&optarg[6]);
+                    search_match_text = remove_quotes_pair(&optarg[6]);
                     if (search_match_text.size() > 0) {
                         err = false;
                     }
                 }
                 else {
                     if (strncmp(optarg,"any=",4) == 0) {
-                        search_any_text = (&optarg[4]);
+                        search_any_text = remove_quotes_pair(&optarg[4]);
                         if (search_any_text.size() > 0) {
                             err = false;
                         }
@@ -1142,7 +1211,7 @@ process_args(int argc, char *argv[])
 #ifdef HAVE_REGEX
                     else {
                         if (strncmp(optarg,"regex=",6) == 0) {
-                            search_regex_text = (&optarg[6]);
+                            search_regex_text = remove_quotes_pair(&optarg[6]);
                             if (search_regex_text.size() > 0) {
                                 if (regcomp(&search_re,
                                     search_regex_text.c_str(),
@@ -1274,6 +1343,7 @@ process_args(int argc, char *argv[])
             /* files-lines */
             case 'F':
                 check_decl_file = true;
+                check_lines = true;
                 info_flag = true;
                 break;
             /* Check debug info gaps */

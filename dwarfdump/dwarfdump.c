@@ -1068,7 +1068,9 @@ static const char *usage_text[] = {
 "\t\t-Wp\tprint parent tree (wide format) with the -S option",
 "\t\t-Wc\tprint children tree (wide format) with the -S option",
 "\t\t-y\tprint type section",
-""
+"",
+
+0
 };
 
 
@@ -1434,6 +1436,7 @@ process_args(int argc, char *argv[])
             /* files-lines */
             case 'F':
                 check_decl_file = TRUE;
+                check_lines = TRUE;
                 info_flag = TRUE;
                 break;
             /* Check debug info gaps */

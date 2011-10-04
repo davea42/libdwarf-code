@@ -2040,7 +2040,7 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die, Dwarf_Half attr,
         break;
     }
     if (!print_information) {
-        if (!have_a_search_match(valname,atname) ) {
+        if (have_a_search_match(valname,atname) ) {
             if (search_wide_format) {
                 found_search_attr = true;
             } else {

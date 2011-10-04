@@ -70,6 +70,21 @@ print_source_intro(Dwarf_Die cu_die)
     }
 }
 
+static void
+record_line_error(const std::string &where, Dwarf_Error err)
+{
+    if(check_lines && checking_this_compiler()) {
+        string msg("Error getting line details calling "); 
+        msg.append(where);
+        msg.append(" dwarf error is ");
+        
+        const char *estring = dwarf_errmsg(err);
+    
+        msg.append(estring);
+        DWARF_CHECK_ERROR(lines_result,msg);
+    }
+}
+
 /*  Print line number information:
 
     filename
@@ -157,7 +172,6 @@ print_line_numbers_this_cu(DieHolder & hcudie)
         for (Dwarf_Signed i = 0; i < linecount; i++) {
             Dwarf_Line line = linebuf[i];
             char *filenamearg = 0;
-            string filename("<unknown>");
             bool found_line_error = false;
             Dwarf_Bool has_is_addr_set = 0;
             string where;
@@ -179,19 +193,27 @@ print_line_numbers_this_cu(DieHolder & hcudie)
             }
 
 
+            if (check_decl_file && checking_this_compiler()) {
+               DWARF_CHECK_COUNT(lines_result,1);
+            }
+            string filename("<unknown>");
             int sres = dwarf_linesrc(line, &filenamearg, &err);
             if (sres == DW_DLV_ERROR) {
-                print_error(dbg, "dwarf_linesrc", sres, err);
+                where = "dwarf_linesrc()";
                 found_line_error = true;
+                record_line_error(where,err);
             }
             if (sres == DW_DLV_OK) {
                 filename = filenamearg;
+                dwarf_dealloc(dbg, filenamearg, DW_DLA_STRING);
+                filenamearg = 0;
             }
             Dwarf_Addr pc = 0;
             int ares = dwarf_lineaddr(line, &pc, &err);
             if (ares == DW_DLV_ERROR) {
-                print_error(dbg, "dwarf_lineaddr", ares, err);
+                where = "dwarf_lineaddr()";
                 found_line_error = true;
+                record_line_error(where,err);
             }
             if (ares == DW_DLV_NO_ENTRY) {
                 pc = 0;
@@ -199,8 +221,9 @@ print_line_numbers_this_cu(DieHolder & hcudie)
             Dwarf_Unsigned lineno = 0;
             int lires = dwarf_lineno(line, &lineno, &err);
             if (lires == DW_DLV_ERROR) {
-                print_error(dbg, "dwarf_lineno", lires, err);
+                where = "dwarf_lineno()";
                 found_line_error = true;
+                record_line_error(where,err);
             }
             if (lires == DW_DLV_NO_ENTRY) {
                 lineno = -1LL;
@@ -208,8 +231,9 @@ print_line_numbers_this_cu(DieHolder & hcudie)
             Dwarf_Signed column = 0;
             int cores = dwarf_lineoff(line, &column, &err);
             if (cores == DW_DLV_ERROR) {
-                print_error(dbg, "dwarf_lineoff", cores, err);
+                where = "dwarf_lineoff()";
                 found_line_error = true;
+                record_line_error(where,err);
             }
             if (cores == DW_DLV_NO_ENTRY) {
                 column = -1LL;
@@ -322,9 +346,6 @@ print_line_numbers_this_cu(DieHolder & hcudie)
                     "]" ;
             }
 
-            if (sres == DW_DLV_OK) {
-                dwarf_dealloc(dbg, filenamearg, DW_DLA_STRING);
-            }
             Dwarf_Bool newstatement = 0;
             int nsres = dwarf_linebeginstatement(line, &newstatement, &err);
             if (nsres == DW_DLV_OK) {
@@ -369,6 +390,7 @@ print_line_numbers_this_cu(DieHolder & hcudie)
                cout << endl;
             }
         }
+        InvalidSection = false;
         dwarf_srclines_dealloc(dbg, linebuf, linecount);
     }
 }
