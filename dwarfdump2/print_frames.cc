@@ -240,7 +240,6 @@ load_nested_proc_names(Dwarf_Debug dbg, Dwarf_Die die,
     Dwarf_Half tag;
     Dwarf_Error err = 0;
     int chres = DW_DLV_OK;
-
     while (chres == DW_DLV_OK) {
         int tres = dwarf_tag(curdie, &tag, &err);
         err = 0;
@@ -305,8 +304,6 @@ load_nested_proc_names(Dwarf_Debug dbg, Dwarf_Die die,
     return;
 }
 
-
-
 /*  For SGI MP Fortran and other languages, functions 
     nest!  As a result, we must dig thru all functions, 
     not just the top level.
@@ -344,7 +341,11 @@ get_fde_proc_name(Dwarf_Debug dbg, Dwarf_Addr low_pc,
             &address_size, &next_cu_offset,
             &err);
 
-        if (cures != DW_DLV_OK) {
+        if (cures == DW_DLV_NO_ENTRY) {
+            all_cus_seen = true;
+            break;
+        } else if (cures == DW_DLV_ERROR) {
+            // Nothing much we can do here.
             all_cus_seen = true;
             break;
         }
@@ -748,7 +749,7 @@ print_one_cie(Dwarf_Debug dbg, Dwarf_Cie cie,
                 /* do nothing. */
             } else if (ares == DW_DLV_OK && len > 0) {
                 if(!check_frames_extended) {
-                    cout << "\teh aug data len " <<
+                    cout << " eh aug data len " <<
                         IToHex(len);
                     for (unsigned k2 = 0; data && k2 < len; ++k2) {
                         if (k2 == 0) {

@@ -1,4 +1,7 @@
-Marcy 29, 2011
+October 04, 2011
+    Revised in major ways to do the additional checks and produce the same
+    output as dwarfdump.  But making use of C++ features.
+March 29, 2011
     All indentations changed to a consistent 4 characters per level.
     This was a massive but simple change.
 January 26, 2010

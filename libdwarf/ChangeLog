@@ -1,3 +1,10 @@
+2011-10-05  DavidAnderson <davea42@earthlink.net>
+     * dwarf_die_deliv.c: When relocations fail, record
+       a 'harmless error' and continue the CU loading.
+       No way to be sure the error is really harmless, of course.
+       But it seems to often be harmless.
+       For some if() tests add {} to make the clause extent clear.
+     * dwarf_harmless.c: Add a comment prefix to dwarf_harmless_init().
 2011-10-03  DavidAnderson <davea42@earthlink.net>
      * dwarf_line.c: Introduce {} in a test to avoid future mistakes.
 2011-09-16  DavidAnderson <davea42@earthlink.net>

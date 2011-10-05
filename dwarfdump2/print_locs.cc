@@ -105,6 +105,7 @@ print_locs(Dwarf_Debug dbg)
         string exprstring;
         get_string_from_locs(dbg,data,entry_len,address_size,exprstring);
         if( display_offsets) {
+            ++index;
             cout <<" <iobel> [" << IToDec(index,8);
             cout <<"] " << IToHex0N(offset,10);
             // We print this offset so it matches what the debug_info
@@ -121,7 +122,6 @@ print_locs(Dwarf_Debug dbg)
         cout <<" "<< IToDec(entry_len,8);
         cout <<" "<< exprstring;
         cout << endl;
-        index++;
         offset = next_entry;
     }
     if (lres == DW_DLV_ERROR) {

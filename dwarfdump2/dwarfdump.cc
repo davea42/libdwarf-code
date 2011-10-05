@@ -266,19 +266,18 @@ static bool print_summary_all = false;
     debug information, including the check results for several
     categories (see -k option). */
 struct Compiler {
-    Compiler():verified_(false) {};
+    Compiler():verified_(false) { results_.resize((int)LAST_CATEGORY); };
     ~Compiler() {};
     std::string name_;
     bool verified_;
     std::vector<std::string> cu_list_;
-    Dwarf_Check_Result results_[LAST_CATEGORY];
+    std::vector<Dwarf_Check_Result> results_;
 };
 
 /* Record compilers  whose CU names have been seen. 
    Full CU names recorded here, though only a portion
    of the name may have been checked to cause the
    compiler data  to be entered here.
-   The +1 guarantees we do not overstep the array.
 */
 
 static std::vector<Compiler> compilers_detected;
@@ -289,7 +288,6 @@ static std::vector<Compiler> compilers_detected;
    comparisons, so the compilers_targeted name might be simply a
    compiler version number or a short substring of a
    CU producer name.
-   The +1 guarantees we do not overstep the array.
 */
 static std::vector<Compiler> compilers_targeted;
 static int current_compiler = 0;
@@ -503,6 +501,11 @@ print_any_harmless_errors(Dwarf_Debug dbg)
     if(res == DW_DLV_NO_ENTRY) {
         return;
     }
+    if(totalcount > 0) {
+        cout << endl;
+        cout << "*** HARMLESS ERROR COUNT: " << IToDec(totalcount) <<
+            " ***" << endl;
+    }
     for(i = 0 ; buf[i]; ++i) {
         ++printcount;
         DWARF_CHECK_COUNT(harmless_result,1);
@@ -688,20 +691,25 @@ print_specific_checks_results(Compiler *pCompiler)
     PRINT_CHECK_RESULT("** Summarize **",pCompiler, total_check_result);
 }
 
-
 // StrictWeakOrdering, like LessThanComparable.
+// But reversed... !!
 static bool
 sort_compare_compiler(const Compiler &cmp1,const  Compiler &cmp2)
 {
-  int cnt1 = cmp1.results_[total_check_result].errors_;
-  int cnt2 = cmp2.results_[total_check_result].errors_;
+    int cnt1 = cmp1.results_[total_check_result].errors_;
+    int cnt2 = cmp2.results_[total_check_result].errors_;
 
-  if (cnt1 < cnt2) {
-    return true;
-  }
-  return false;
+    if (cnt1 > cnt2) {
+        return true;
+    }
+    /* When error counts match, sort on name. */
+    if(cnt1 == cnt2) {
+        if (cmp1.name_ > cmp2.name_) {
+            return true;  
+        }
+    }
+    return false;
 }
-
 /* Print a summary of checks and errors */
 static void
 print_checks_results()
@@ -710,8 +718,10 @@ print_checks_results()
     cerr.flush();
     cout.flush();
 
-    std::sort(compilers_detected.begin()+ 1,
-        compilers_detected.end(),sort_compare_compiler);
+    if(compilers_detected.size() > 1) {
+        std::stable_sort(compilers_detected.begin()+ 1,
+            compilers_detected.end(),sort_compare_compiler);
+    }
 
     /* Print list of CUs for each compiler detected */
     if (producer_children_flag) {
@@ -725,15 +735,16 @@ print_checks_results()
             const Compiler& c = compilers_detected[index];
             cerr << endl;
             cerr << IToDec0N(index,2) << ": " << c.name_;
+            cerr << endl;
             count = 0;
-            for (unsigned nc = 1; 
+            for (unsigned nc = 0; 
                 nc < c.cu_list_.size(); 
                 ++nc ) {
 
                 ++count;
                 cerr << endl;
                 cerr << "    " << IToDec0N(count,2) <<": '" <<
-                   c.cu_list_[nc]<< "'" << endl;
+                   c.cu_list_[nc]<< "'" ;
             }
             total += count;
             cerr << endl;
@@ -1301,7 +1312,7 @@ process_args(int argc, char *argv[])
                 pubnames_flag = info_flag = true;
                 check_decl_file = true;
                 check_frames = true;
-                check_frames_extended = false;
+                // check_frames_extended = false;
                 check_locations = true;
                 frame_flag = eh_frame_flag = true;
                 check_ranges = true;
@@ -2003,8 +2014,7 @@ update_compiler_target(const string &producer_name)
             !stricmp(compilers_detected[index].name_.c_str(),
                 error_message_data.CU_producer.c_str())
 #else
-            !strcmp(compilers_detected[index].name_.c_str(),
-                error_message_data.CU_producer.c_str())
+            compilers_detected[index].name_ == error_message_data.CU_producer
 #endif
             ) {
             /* Set current compiler index */

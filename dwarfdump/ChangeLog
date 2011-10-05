@@ -1,3 +1,21 @@
+2011-10-05  DavidAnderson <davea42@earthlink.net>
+     * dwarfdump.c: Increased COMPILER_TABLE_MAX for better reporting.
+       Provide a 'HARMLESS ERROR' title in output if there are any such.
+       One issue is (for relocatable objects) libdwarf attempts to continue
+       even if relocations fail, and a relocation failure is now 
+       counted as a harmless error (even if it turns out to be harmful!).
+       When sorting compilers_detected, use the producer name to sort
+       when error counts are identical.  If the compiler table fills up,
+       print a note. With -ka, no longer explicitly turn check_frames_extended
+       off, it is off already unless the user turned it on explicitly with
+       -kxe.
+     * print_die.c: The check for a file number (decl_file) was simply wrong.
+       Made some detail changes to reporting.
+     * print_frames.c: Added comments about the inefficiency for getting
+       function names when printing frames (dwarfdump2 does not suffer
+       the same inefficiency).
+     * print_locs.c: Do not use a side effect for updating the index
+       before printing in print_locs().
 2011-10-03  DavidAnderson <davea42@earthlink.net>
      * dwarfdump.c: for -kF, add check_lines. Ensure uniformity
        in the usage-text ending.

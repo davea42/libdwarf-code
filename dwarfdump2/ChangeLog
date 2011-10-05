@@ -1,3 +1,23 @@
+2011-10-05  DavidAnderson <davea42@earthlink.net>
+     * dwarfdump.cc: Now Dwarf_Check_Result is in a vector, not an array.
+       If harmless errors detected, a HARMLESS ERROR COUNT string is
+       printed as a header.  Note that libdwarf treats relocation errors
+       (for relocatable objects) as harmless errors whether they are harmless
+       or not.  For sorting the compilers-detected, and equal counts,
+       use the producer name to break the tie.  With -ka, no longer
+       turn off check_frames_extended, it is already off unless the
+       user explicitly asked for it.  Now the compiler-name reporting
+       is identical to dwarfdump.
+     * print_die.cc: Ensure newline and hex output details 
+       match up with dwarfdump. Ensure we record program unit
+       name when we need to (call tag_specific_checks_setup()).
+       Added locations_result checks that were accidentally left out.
+       Ensure newlines and hex outputs match dwarfdump.
+       The decl_file_result checks were just wrong, but are now corrected.
+     * print_frames.cc: Handle DW_DLV_NO_ENTRY specifically for
+       dwarf_next_cu_header() call.  Get 'eh aug data' string details
+       to exactly match dwarfdump.
+     * print_locs.cc: Get index printing in location lists to match dwarfdump.
 2011-10-03  DavidAnderson <davea42@earthlink.net>
      * dwarfdump.cc: Use the dwarfdump usage text. Add remove_quotes_pair()
        for consistency with dwarfdump.c and use it. Add check_lines to -kF . 

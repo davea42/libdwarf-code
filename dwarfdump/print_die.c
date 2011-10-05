@@ -736,25 +736,25 @@ print_one_die(Dwarf_Debug dbg, Dwarf_Die die,
             if (dense) {
                 if (show_global_offsets) {
                     if (die_indent_level == 0) {
-                        printf("<%d><%" DW_PR_DUx "+%" DW_PR_DUx " GOFF=%" 
+                        printf("<%d><0x%" DW_PR_DUx "+0x%" DW_PR_DUx " GOFF=0x%" 
                             DW_PR_DUx ">", die_indent_level,
                             (Dwarf_Unsigned)(overall_offset - offset), 
                             (Dwarf_Unsigned)offset,
                                 (Dwarf_Unsigned)overall_offset);
                         } else {
-                        printf("<%d><%" DW_PR_DUx " GOFF=%" DW_PR_DUx ">", 
+                        printf("<%d><0x%" DW_PR_DUx " GOFF=0x%" DW_PR_DUx ">", 
                             die_indent_level, 
                             (Dwarf_Unsigned)offset, 
                             (Dwarf_Unsigned)overall_offset);
                     }
                 } else {
                     if (die_indent_level == 0) {
-                        printf("<%d><%" DW_PR_DUx "+%" DW_PR_DUx ">", 
+                        printf("<%d><0x%" DW_PR_DUx "+0x%" DW_PR_DUx ">", 
                             die_indent_level,
                             (Dwarf_Unsigned)(overall_offset - offset), 
                             (Dwarf_Unsigned)offset);
                     } else {
-                        printf("<%d><%" DW_PR_DUx ">", die_indent_level, 
+                        printf("<%d><0x%" DW_PR_DUx ">", die_indent_level, 
                             (Dwarf_Unsigned)offset);
                     }
                 }
@@ -1948,7 +1948,6 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
                 break;
             }
 
-
             esb_empty_string(&esb_base);
             get_attr_value(dbg, tag,die, attrib, srcfiles, cnt, &esb_base,
                 show_form_used);
@@ -2455,9 +2454,8 @@ get_location_list(Dwarf_Debug dbg, Dwarf_Die die, Dwarf_Attribute attr,
 
     /* Base address used to update entries in .debug_loc */
     Dwarf_Addr base_address = CU_base_address;
-    Dwarf_Addr lopc;
-    Dwarf_Addr hipc;
-    Dwarf_Off offset = 0;
+    Dwarf_Addr lopc = 0;
+    Dwarf_Addr hipc = 0;
     Dwarf_Bool bError = FALSE;
 
     if (use_old_dwarf_loclist) {
@@ -2479,6 +2477,7 @@ get_location_list(Dwarf_Debug dbg, Dwarf_Die die, Dwarf_Attribute attr,
         return;
     for (llent = 0; llent < no_of_elements; ++llent) {
         char small_buf[100];
+        Dwarf_Off offset = 0;
 
         llbuf = llbufarray[llent];
         /*  If we have a location list refering to the .debug_loc
@@ -3003,19 +3002,31 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
 
                             esb_append(esbp, " ");
                             esb_append(esbp, fname);
+                        }
 
-                            /*  Validate integrity of files 
-                                referenced in .debug_line */
-                            if(check_decl_file) {
-                                DWARF_CHECK_COUNT(decl_file_result,1);
-                                /*  Zero is always a legal index, it means
+                        /*  Validate integrity of files 
+                            referenced in .debug_line */
+                        if(check_decl_file) {
+                            DWARF_CHECK_COUNT(decl_file_result,1);
+                            /*  Zero is always a legal index, it means
                                     no source name provided. */
-                                if(tempud <= 0 || tempud > cnt) {
-                                    DWARF_CHECK_ERROR2(decl_file_result,
-                                        get_AT_name(attr,
-                                            dwarf_names_print_on_error),
-                                        "does not point to valid file info");
+                            if(tempud != 0 && tempud > cnt) {
+                                if(!srcfiles) {
+                                    snprintf(small_buf,sizeof(small_buf),
+                                        "There is a file number=%" DW_PR_DUu
+                                        " but no source files "
+                                        " are known.",tempud);
+                                } else {
+                                    snprintf(small_buf, sizeof(small_buf),
+                                        "Does not point to valid file info "
+                                        " filenum=%"  DW_PR_DUu
+                                        " filecount=%" DW_PR_DUu ".",
+                                        tempud,cnt);
                                 }
+                                DWARF_CHECK_ERROR2(decl_file_result,
+                                    get_AT_name(attr,
+                                        dwarf_names_print_on_error),
+                                    small_buf);
                             }
                         }
                     }

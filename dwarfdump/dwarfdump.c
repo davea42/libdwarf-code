@@ -188,7 +188,7 @@ static boolean check_snc_compiler = FALSE; /* Check SNC compiler */
 static boolean check_gcc_compiler = FALSE; 
 static boolean print_summary_all = FALSE; 
 
-#define COMPILER_TABLE_MAX 20
+#define COMPILER_TABLE_MAX 100
 typedef struct anc {
     struct anc *next;
     char *item;
@@ -514,6 +514,9 @@ print_any_harmless_errors(Dwarf_Debug dbg)
     if(res == DW_DLV_NO_ENTRY) {
         return;
     }
+    if(totalcount > 0) {
+        printf("\n*** HARMLESS ERROR COUNT: %u ***\n",totalcount);
+    }
     for(i = 0 ; buf[i]; ++i) {
         ++printcount;
         DWARF_CHECK_COUNT(harmless_result,1);
@@ -683,13 +686,16 @@ qsort_compare_compiler(const void *elem1,const void *elem2)
   Compiler cmp2 = *(Compiler *)elem2;
   int cnt1 = cmp1.results[total_check_result].errors;
   int cnt2 = cmp2.results[total_check_result].errors;
+  int sc = 0;
 
   if (cnt1 < cnt2) {
     return 1;
   } else if (cnt1 > cnt2) {
     return -1;
   }
-  return 0;
+  /* When error counts match, sort on name. */
+  sc = strcmp(cmp2.name,cmp1.name);
+  return sc;
 }
 
 /* Print a summary of checks and errors */
@@ -704,8 +710,8 @@ print_checks_results()
 
     /* Sort based on errors detected; the first entry is reserved */
     pCompilers = &compilers_detected[1];
-    qsort((void *)pCompilers,
-    compilers_detected_count,sizeof(Compiler),qsort_compare_compiler);
+    qsort((void *)pCompilers, compilers_detected_count,
+        sizeof(Compiler),qsort_compare_compiler);
 
     /* Print list of CUs for each compiler detected */
     if (producer_children_flag) {
@@ -718,7 +724,7 @@ print_checks_results()
         fprintf(stderr,"\n*** CU NAMES PER COMPILER ***\n");
         for (index = 1; index <= compilers_detected_count; ++index) {
             pCompiler = &compilers_detected[index];
-            fprintf(stderr,"\n%02d: %s",index,pCompiler->name);
+            fprintf(stderr,"\n%02d: %s\n",index,pCompiler->name);
             count = 0;
             for (nc = pCompiler->cu_list; nc; nc = nc_next) {
                 fprintf(stderr,"\n    %02d: '%s'",++count,nc->item);
@@ -1265,6 +1271,10 @@ process_args(int argc, char *argv[])
                             pCompiler = &compilers_targeted[compilers_targeted_count];
                             reset_compiler_entry(pCompiler);
                             pCompiler->name = cmp;
+                        } else {
+                            fprintf(stderr, "Compiler table max %d exceeded, "
+                                "limiting the tracked compilers to %d\n",
+                                COMPILER_TABLE_MAX,COMPILER_TABLE_MAX);
                         }
                     }
                 }
@@ -1394,7 +1404,7 @@ process_args(int argc, char *argv[])
                 pubnames_flag = info_flag = TRUE;
                 check_decl_file = TRUE;
                 check_frames = TRUE;  
-                check_frames_extended = FALSE;
+                /*check_frames_extended = FALSE; */
                 check_locations = TRUE; 
                 frame_flag = eh_frame_flag = TRUE;
                 check_ranges = TRUE;

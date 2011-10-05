@@ -220,7 +220,6 @@ print_infos(Dwarf_Debug dbg)
             &abbrev_offset, &address_size,
             &next_cu_offset, &err))
         == DW_DLV_OK) {
-
         if(cu_count >=  break_after_n_units) {
             cout << "Break at " << cu_count << endl;
             break;
@@ -679,10 +678,10 @@ print_one_die(DieHolder & hdie, bool print_information,
             hdie.mark_die_printed();
         }
         if (die_indent_level == 0) {
-            cout << endl;
             if (dense) {
                cout << endl;
             } else {
+                cout << endl;
                 cout << "COMPILE_UNIT<header overall offset = "
                     << IToHex0N((overall_offset - offset),10) << ">:" << endl;
             }
@@ -703,28 +702,28 @@ print_one_die(DieHolder & hdie, bool print_information,
                     if (die_indent_level == 0) {
                         cout << BracketSurround(IToDec(die_indent_level)) <<
                             BracketSurround(
-                                IToDec(overall_offset - offset) +
+                                IToHex(overall_offset - offset) +
                                 string("+") +
-                                IToDec(offset) +
+                                IToHex(offset) +
                                 string(" GOFF=") +
-                                IToDec(overall_offset)); 
+                                IToHex(overall_offset)); 
                     } else {
                         cout << BracketSurround(IToDec(die_indent_level)) <<
                             BracketSurround(
-                                IToDec(offset) +
+                                IToHex(offset) +
                                 string(" GOFF=") +
-                                IToDec(overall_offset)); 
+                                IToHex(overall_offset)); 
                     }
                 } else {
                     if (die_indent_level == 0) {
                         cout << BracketSurround(IToDec(die_indent_level)) <<
                             BracketSurround(
-                                IToDec(overall_offset - offset) +
+                                IToHex(overall_offset - offset) +
                                 string("+") +
-                                IToDec(offset));
+                                IToHex(offset));
                     } else {
                         cout << BracketSurround(IToDec(die_indent_level)) <<
-                            BracketSurround(IToDec(offset));
+                            BracketSurround(IToHex(offset));
                     }
                 }
                 cout << BracketSurround(tagname);
@@ -1326,7 +1325,7 @@ print_range_attribute(Dwarf_Debug dbg,
                                         "Low = " <<  IToHex0N(lopc,10) <<
                                         " (" <<  IToHex0N(r->dwr_addr1,10) <<
                                         "), High = " << IToHex0N(hipc,10) << 
-                                        " (" <<  IToHex0N(hipc,10) <<
+                                        " (" <<  IToHex0N(r->dwr_addr2,10) <<
                                         ")" << endl;
                                 }
                             }
@@ -1530,6 +1529,7 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die, Dwarf_Half attr,
             /* OK */
         } else {
             tagname = get_TAG_name(tag,dwarf_names_print_on_error);
+            tag_specific_checks_setup(tag,die_indent_level);
             DWARF_CHECK_ERROR3(attr_tag_result,tagname,
                 get_AT_name(attr,dwarf_names_print_on_error),
                 "check the tag-attr combination");
@@ -2274,6 +2274,11 @@ get_location_list(Dwarf_Debug dbg,
     int lres = 0;
     int llent = 0;
     int skip_locdesc_header = 0;
+    Dwarf_Addr base_address = error_message_data.CU_base_address;
+    Dwarf_Addr lopc = 0;
+    Dwarf_Addr hipc = 0;
+    bool bError = false;
+
 
 
     if (use_old_dwarf_loclist) {
@@ -2297,7 +2302,60 @@ get_location_list(Dwarf_Debug dbg,
 
     for (llent = 0; llent < no_of_elements; ++llent) {
         llbuf = llbufarray[llent];
+        Dwarf_Off offset = 0;
 
+        /*  If we have a location list refering to the .debug_loc
+            Check for specific compiler we are validating. */
+        if (check_locations && in_valid_code && 
+            llbuf->ld_from_loclist && checking_this_compiler()) {
+            /*  To calculate the offset, we use:
+                sizeof(Dwarf_Half) -> number of expression list
+                2 * address_size -> low_pc and high_pc */
+            offset = llbuf->ld_section_offset - 
+                llbuf->ld_cents * sizeof(Dwarf_Half) - 
+                2 * error_message_data.elf_address_size;
+
+            if (llbuf->ld_lopc == error_message_data.elf_max_address) {
+                /*  (0xffffffff,addr), use specific address 
+                    (current PU address) */
+                base_address = llbuf->ld_hipc;
+            } else {
+                /* (offset,offset), update using CU address */
+                lopc = llbuf->ld_lopc + base_address;
+                hipc = llbuf->ld_hipc + base_address;
+
+                DWARF_CHECK_COUNT(locations_result,1);
+
+                /*  Check the low_pc and high_pc are within 
+                    a valid range in the .text section */
+                if(pAddressRangesData->IsAddressInAddressRange(lopc) &&
+                   pAddressRangesData->IsAddressInAddressRange(hipc)) {
+                    /* Valid values; do nothing */
+                } else {
+                    /*  At this point may be we are dealing with 
+                        a linkonce symbol */
+                    if (pLinkOnceData->FindLinkOnceEntry(
+                                error_message_data.PU_name,lopc,hipc)) {
+                        /* Valid values; do nothing */
+                    } else {
+                        bError = true;
+                        DWARF_CHECK_ERROR(locations_result,
+                            ".debug_loc: Address outside a "
+                            "valid .text range");
+                        if (check_verbose_mode) {
+                           cout << "Offset = " << IToHex0N(offset,10) <<
+                               ", Base = " << IToHex0N(base_address,10) <<
+                               ", " <<
+                               "Low = " <<  IToHex0N(lopc,10) <<
+                               " (" <<  IToHex0N(llbuf->ld_lopc,10) <<
+                               "), High = " << IToHex0N(hipc,10) <<
+                               " (" <<  IToHex0N(llbuf->ld_hipc,10) <<
+                               ")" << endl;
+                        }
+                    }
+                }
+            }
+        }
         if (!dense && llbuf->ld_from_loclist) {
             if (llent == 0) {
                 locstr.append("<loclist with ");
@@ -2321,6 +2379,10 @@ get_location_list(Dwarf_Debug dbg,
                 DW_DLV_OK). */
         }
     }
+    if (bError && check_verbose_mode) {
+        cout << endl;
+    }
+
     for (i = 0; i < no_of_elements; ++i) {
         dwarf_dealloc(dbg, llbufarray[i]->ld_s, DW_DLA_LOC_BLOCK);
         dwarf_dealloc(dbg, llbufarray[i], DW_DLA_LOCDESC);
@@ -2509,7 +2571,7 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
         if (bres == DW_DLV_OK) {
             str_out.append(BracketSurround(
                 string("global die offset ") +
-                IToDec(off)));
+                IToHex0N(off,10)));
         } else {
             print_error(dbg,
                 "DW_FORM_ref_addr form with no reference?!",
@@ -2709,8 +2771,7 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
                     if (attr == DW_AT_decl_file || attr == DW_AT_call_file) {
                         Dwarf_Unsigned srccount =  hsrcfiles.count();
                         char **srcfiles = hsrcfiles.srcfiles();
-                        if (srcfiles && tempud > 0 && 
-                            tempud <= srccount) {
+                        if (srcfiles && tempud > 0 && tempud <= srccount) {
                             /*  added by user request */
                             /*  srcfiles is indexed starting at 0, but
                                 DW_AT_decl_file defines that 0 means no
@@ -2721,15 +2782,30 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
                             str_out.append(" ");
                             str_out.append(fname);
                         }
+                        /*  Validate integrity of files 
+                            referenced in .debug_line */
                         if(check_decl_file) {
                             DWARF_CHECK_COUNT(decl_file_result,1);
                             /*  Zero is always a legal index, it means
                                 no source name provided. */
-                            if(tempud <= 0 || tempud > srccount) {
+                            if(tempud != 0  && tempud > srccount) {
+                                string msg;
+                                if(!srcfiles) {
+                                    msg = "There is a file number=";
+                                    msg.append(IToDec(tempud));
+                                    msg.append(" but no source files  are known.");
+                                } else {
+                                    msg = "Does not point to valid file info ";
+                                    msg.append(" filenum=");
+                                    msg.append(IToDec(tempud));
+                                    msg.append(" filecount=");
+                                    msg.append(IToDec(srccount));
+                                    msg.append(".");
+                                }
                                 DWARF_CHECK_ERROR2(decl_file_result,
                                     get_AT_name(attr,
                                         dwarf_names_print_on_error),
-                                    "does not point to valid file info");
+                                    msg);
                             }
                         }
                     }

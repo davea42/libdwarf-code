@@ -179,6 +179,8 @@ unsigned dwarf_set_harmless_error_list_size(Dwarf_Debug dbg,
     return prevcount-1;
 }
 
+/*  Only callable from within libdwarf (as a practical matter)
+*/
 void 
 dwarf_harmless_init(struct Dwarf_Harmless_s *dhp,unsigned size)
 {

@@ -238,6 +238,25 @@ _dwarf_make_CU_Context(Dwarf_Debug dbg,
     return (cu_context);
 }
 
+static int
+reloc_incomplete(Dwarf_Error err)
+{
+    int e = dwarf_errno(err);
+    if( e == DW_DLE_RELOC_MISMATCH_INDEX       ||
+        e == DW_DLE_RELOC_MISMATCH_RELOC_INDEX  ||
+        e == DW_DLE_RELOC_MISMATCH_STRTAB_INDEX ||
+        e == DW_DLE_RELOC_SECTION_MISMATCH      ||
+        e == DW_DLE_RELOC_SECTION_MISSING_INDEX  ||
+        e == DW_DLE_RELOC_SECTION_LENGTH_ODD     ||
+        e == DW_DLE_RELOC_SECTION_PTR_NULL        ||
+        e == DW_DLE_RELOC_SECTION_MALLOC_FAIL      ||
+        e == DW_DLE_RELOC_SECTION_SYMBOL_INDEX_BAD  ) {
+        return 1;
+    }
+    return 0;
+}
+
+
 
 /*  Returns offset of next compilation-unit thru next_cu_offset
     pointer.
@@ -292,10 +311,26 @@ dwarf_next_cu_header_b(Dwarf_Debug dbg,
     if (dbg->de_cu_context == NULL) {
         new_offset = 0;
         if (!dbg->de_debug_info.dss_data) {
-            int res = _dwarf_load_debug_info(dbg, error);
+            Dwarf_Error err2= 0;
+            int res = _dwarf_load_debug_info(dbg, &err2);
 
             if (res != DW_DLV_OK) {
-                return res;
+                if(reloc_incomplete(err2)) {
+                    /*  We will assume all is ok, though it is not. 
+                        Relocation errors need not be fatal.  */
+                    char msg_buf[200];
+                    snprintf(msg_buf,sizeof(msg_buf),
+                       "Relocations did not complete successfully, but we are "
+                       " ignoring error: %s",dwarf_errmsg(err2));
+                    dwarf_insert_harmless_error(dbg,msg_buf);
+                    res = DW_DLV_OK;
+                } else {
+                    if( error) {
+                        *error = err2;
+                    }
+                    return res;
+                }
+              
             }
         }
 
@@ -333,21 +368,26 @@ dwarf_next_cu_header_b(Dwarf_Debug dbg,
 
     dbg->de_cu_context = cu_context;
 
-    if (cu_header_length != NULL)
+    if (cu_header_length != NULL) {
         *cu_header_length = cu_context->cc_length;
+    }
 
-    if (version_stamp != NULL)
+    if (version_stamp != NULL) {
         *version_stamp = cu_context->cc_version_stamp;
-
-    if (abbrev_offset != NULL)
+    }
+    if (abbrev_offset != NULL) {
         *abbrev_offset = cu_context->cc_abbrev_offset;
+    }
 
-    if (address_size != NULL)
+    if (address_size != NULL) {
         *address_size = cu_context->cc_address_size;
-    if (offset_size != NULL)
+    }
+    if (offset_size != NULL) {
         *offset_size = cu_context->cc_length_size;
-    if (extension_size != NULL)
+    }
+    if (extension_size != NULL) {
         *extension_size = cu_context->cc_extension_size;
+    }
 
     new_offset = new_offset + cu_context->cc_length +
         cu_context->cc_length_size + cu_context->cc_extension_size;
