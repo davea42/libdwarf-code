@@ -193,7 +193,7 @@ print_line_numbers_this_cu(DieHolder & hcudie)
             }
 
 
-            if (check_decl_file && checking_this_compiler()) {
+            if (check_lines && checking_this_compiler()) {
                DWARF_CHECK_COUNT(lines_result,1);
             }
             string filename("<unknown>");
@@ -260,7 +260,9 @@ print_line_numbers_this_cu(DieHolder & hcudie)
                             table if try to match the pc value with 
                             one of those ranges.
                         */
-                        DWARF_CHECK_COUNT(lines_result,1);
+                        if (check_lines && checking_this_compiler()) {
+                            DWARF_CHECK_COUNT(lines_result,1);
+                        }
                         if (pLinkOnceData->FindLinkOnceEntry(pc)){
                             /* Valid values; do nothing */
                         } else {
@@ -270,12 +272,14 @@ print_line_numbers_this_cu(DieHolder & hcudie)
                                 symbols and no stripping */
                             if (pc) {
                                 char addr_tmp[100];
-                                snprintf(addr_tmp,sizeof(addr_tmp),
-                                    ".debug_line: Address"
-                                    " 0x%" DW_PR_XZEROS DW_PR_DUx
-                                    " outside a valid .text range",pc);
-                                DWARF_CHECK_ERROR(lines_result,
-                                    addr_tmp);
+                                if(check_lines && checking_this_compiler()) {
+                                    snprintf(addr_tmp,sizeof(addr_tmp),
+                                        ".debug_line: Address"
+                                        " 0x%" DW_PR_XZEROS DW_PR_DUx
+                                        " outside a valid .text range",pc);
+                                    DWARF_CHECK_ERROR(lines_result,
+                                        addr_tmp);
+                                }
                             } else {
                                 SkipRecord = true;
                             }
@@ -298,18 +302,20 @@ print_line_numbers_this_cu(DieHolder & hcudie)
                             a mismatch here is not necessarily 
                             an error.  */
                            
-                        DWARF_CHECK_COUNT(lines_result,1);
-                        if ((pc != error_message_data.PU_high_address) && 
-                            (error_message_data.PU_base_address != 
-                                error_message_data.elf_max_address)) {
-                            char addr_tmp[100];
-                            snprintf(addr_tmp,sizeof(addr_tmp),
-                                ".debug_line: Address"
-                                " 0x%" DW_PR_XZEROS DW_PR_DUx
-                                " may be incorrect" 
-                                " as DW_LNE_end_sequence address",pc);
-                            DWARF_CHECK_ERROR(lines_result,
-                                addr_tmp);
+                        if (check_lines && checking_this_compiler()) {
+                            DWARF_CHECK_COUNT(lines_result,1);
+                            if ((pc != error_message_data.PU_high_address) && 
+                                (error_message_data.PU_base_address != 
+                                    error_message_data.elf_max_address)) {
+                                char addr_tmp[100];
+                                snprintf(addr_tmp,sizeof(addr_tmp),
+                                    ".debug_line: Address"
+                                    " 0x%" DW_PR_XZEROS DW_PR_DUx
+                                    " may be incorrect" 
+                                    " as DW_LNE_end_sequence address",pc);
+                                DWARF_CHECK_ERROR(lines_result,
+                                    addr_tmp);
+                            }
                         }
                     }
                 }

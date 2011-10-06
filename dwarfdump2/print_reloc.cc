@@ -88,6 +88,16 @@ static const char *sectnames[] = {
     DW_SECTNAME_REL_DEBUG_LOC,
     DW_SECTNAME_REL_DEBUG_RANGES,
 };
+static const char *sectnamesa[] = {
+    DW_SECTNAME_RELA_DEBUG_INFO,
+    DW_SECTNAME_RELA_DEBUG_LINE,
+    DW_SECTNAME_RELA_DEBUG_PUBNAMES,
+    DW_SECTNAME_RELA_DEBUG_ABBREV,
+    DW_SECTNAME_RELA_DEBUG_ARANGES,
+    DW_SECTNAME_RELA_DEBUG_FRAME,
+    DW_SECTNAME_RELA_DEBUG_LOC,
+    DW_SECTNAME_RELA_DEBUG_RANGES,
+};
 
 static const char *error_msg_duplicate[] = {
     DW_SECTNAME_REL_DEBUG_INFO STRING_FOR_DUPLICATE,
@@ -903,7 +913,7 @@ print_relocinfo_32(Dwarf_Debug dbg, Elf * elf)
 static void
 print_reloc_information_64(int section_no, Dwarf_Small * buf,
     Dwarf_Unsigned size, Elf64_Xword type,
-    const char **scn_names, int scn_names_cnt)
+    const char **scn_names, int scn_names_count)
 {
     /* Include support for Elf64_Rel and Elf64_Rela */
     Dwarf_Unsigned add = 0;
@@ -912,7 +922,8 @@ print_reloc_information_64(int section_no, Dwarf_Small * buf,
     Dwarf_Unsigned off = 0;
 
     cout << endl;
-    cout << sectnames[section_no] << ":" << endl;;
+    cout << ((type == SHT_RELA)?sectnamesa[section_no]:
+        sectnames[section_no]) << ":" << endl;;
     /* Print some headers and change the order for better reading */
     printf("Offset     Addend     %-26s Index   Symbol Name\n","Reloc Type");
 #if HAVE_ELF64_GETEHDR
@@ -920,7 +931,7 @@ print_reloc_information_64(int section_no, Dwarf_Small * buf,
 #if HAVE_ELF64_R_INFO
         /* This works for the Elf64_Rel in linux */
         Elf64_Rel *p = (Elf64_Rel *) (buf + off);
-        string name = "<no name>";
+        string name;
         if(sym_data ) {
             size_t index = ELF64_R_SYM(p->r_info) - 1;
             if(index < sym_data_entry_count) {
@@ -935,10 +946,17 @@ print_reloc_information_64(int section_no, Dwarf_Small * buf,
         /*  When the name is not available, use the
             section name as a reference for the name.*/
         if (name.empty()) {
-            SYM64 *sym_64 = &sym_data_64[ELF64_R_SYM(p->r_info) - 1];
-            if (sym_64->type == STT_SECTION) {
-                name = scn_names[sym_64->shndx];
+            size_t index = ELF64_R_SYM(p->r_info) - 1;
+            if (index <  sym_data_64_entry_count) {
+                SYM64 *sym_64 = &sym_data_64[index];
+                if (sym_64->type == STT_SECTION &&
+                    sym_64->shndx < scn_names_count) {
+                    name = scn_names[sym_64->shndx];
+                }
             }
+        }
+        if (name.empty()) {
+            name = "<no name>";
         }
 
         if (SHT_RELA == type) {
@@ -949,8 +967,8 @@ print_reloc_information_64(int section_no, Dwarf_Small * buf,
 
         cout << IToHex0N(p->r_offset,10);
         cout << " " << IToHex0N(add,10);
-        cout << LeftAlign(26,get_reloc_type_names(ELF64_R_TYPE(p->r_info)));
-        cout << " " << ELF64_R_SYM(p->r_info);
+        cout << " " <<LeftAlign(26,get_reloc_type_names(ELF64_R_TYPE(p->r_info)));
+        cout << " " << BracketSurround(IToDec(ELF64_R_SYM(p->r_info),5));
         cout << " " << name;
         cout << endl;
 #else
@@ -958,7 +976,7 @@ print_reloc_information_64(int section_no, Dwarf_Small * buf,
             but seperate fields, with 3 types, actually. Only one of
             which prints here, as only one really used with dwarf */
         Elf64_Rel *p = (Elf64_Rel *) (buf + off);
-        string name = "<no name>";
+        string name;
         if(sym_data ) {
             size_t index = p->r_sym - 1;
             if(index < sym_data_entry_count) {
@@ -970,10 +988,13 @@ print_reloc_information_64(int section_no, Dwarf_Small * buf,
                 name = sym_data_64[index].name;
             }
         }
+        if (name.empty()) {
+            name = "<no name>";
+        }
         cout << IToHex0N(p->r_offset,10);
         cout << " " << IToHex0N(add,10);
-        cout << LeftAlign(26,get_reloc_type_names(ELF64_R_TYPE(p->r_info)));
-        cout << " " << ELF64_R_SYM(p->r_info)
+        cout << " " << LeftAlign(26,get_reloc_type_names(ELF64_R_TYPE(p->r_info)));
+        cout << " " << BracketSurround(IToDec(ELF64_R_SYM(p->r_info),3))
         cout << " " << name;
         cout << endl;
 #endif
@@ -984,7 +1005,7 @@ print_reloc_information_64(int section_no, Dwarf_Small * buf,
 static void
 print_reloc_information_32(int section_no, Dwarf_Small * buf,
     Dwarf_Unsigned size, Elf64_Xword type,
-    const char **scn_names, int scn_names_cnt)
+    const char **scn_names, int scn_names_count)
 {
 /*  Include support for Elf32_Rel and Elf32_Rela */
     Dwarf_Unsigned add = 0;
@@ -993,23 +1014,32 @@ print_reloc_information_32(int section_no, Dwarf_Small * buf,
     Dwarf_Unsigned off = 0;
 
     cout << endl;
-    cout <<  sectnames[section_no] << ":" << endl;
-    for (off = 0; off < size; off += sizeof(Elf32_Rel)) {
+    cout <<  ((type == SHT_RELA)?sectnamesa[section_no]:
+        sectnames[section_no]) << ":" << endl;
+    printf("Offset     Addend     %-26s Index   Symbol Name\n","Reloc Type");
+    for (off = 0; off < size; off += rel_size) {
         Elf32_Rel *p = (Elf32_Rel *) (buf + off);
-        string name("<no name>");
+        string name;
         if(sym_data) {
             size_t index = ELF32_R_SYM(p->r_info) - 1;
             if(index < sym_data_entry_count) {
                 name = sym_data[index].name;
             }
         }
-/*  When the name is not available, use the
+        /*  When the name is not available, use the
             section name as a reference for the name.*/
         if (name.empty()) {
-            SYM *sym_32 = &sym_data[ELF32_R_SYM(p->r_info) - 1];
-            if (sym_32->type == STT_SECTION) {
-                name = scn_names[sym_32->shndx];
+            size_t index = ELF32_R_SYM(p->r_info) - 1;
+            if(index < sym_data_entry_count) {
+                SYM *sym_32 = &sym_data[index];
+                if (sym_32->type == STT_SECTION  &&
+                    sym_32->shndx < scn_names_count) {
+                    name = scn_names[sym_32->shndx];
+                }
             }
+        }
+        if (name.empty()) {
+            name = "<no name>";
         }
 
         if (SHT_RELA == type) {
@@ -1018,8 +1048,9 @@ print_reloc_information_32(int section_no, Dwarf_Small * buf,
         }
         cout << IToHex0N(p->r_offset,10);
         cout << " " << IToHex0N(add,10);
-        cout << LeftAlign(26,get_reloc_type_names(ELF32_R_TYPE(p->r_info)));
-        cout << " " << ELF32_R_SYM(p->r_info);
+        cout << " " << LeftAlign(26,
+            get_reloc_type_names(ELF32_R_TYPE(p->r_info)));
+        cout << " " << BracketSurround(IToDec(ELF32_R_SYM(p->r_info),5));
         cout << " " << name;
         cout << endl;
     }

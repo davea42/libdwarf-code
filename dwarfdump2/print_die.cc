@@ -2652,8 +2652,14 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
                     &die_for_check, &err);
                 DWARF_CHECK_COUNT(type_offset_result,1);
                 if (dres != DW_DLV_OK) {
-                    DWARF_CHECK_ERROR(type_offset_result,
-                        "DW_AT_type offset does not point to type info");
+                    string msg("DW_AT_type offset does not point to a DIE");
+                    msg.append(" for global offset ");
+                    msg.append(IToHex(cu_offset + off));
+                    msg.append(" cu off ");
+                    msg.append(IToHex(cu_offset));
+                    msg.append(" local offset ");
+                    msg.append(IToHex( off));
+                    DWARF_CHECK_ERROR(type_offset_result,msg);
                 } else {
                     int tres2;
 
@@ -2682,12 +2688,20 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
                         case DW_TAG_volatile_type:
                         case DW_TAG_template_type_parameter:
                         case DW_TAG_template_value_parameter:
+                        case DW_TAG_unspecified_type:
                             /* OK */
                             break;
                         default:
-                            DWARF_CHECK_ERROR(type_offset_result,
-                                "DW_AT_type offset does not point to Type info");
-                                break;
+                            {
+                            string msg("DW_AT_type offset does not point to Type info");
+                            msg.append(" we got tag ");
+                            msg.append(IToHex(tag_for_check));
+                            msg.append(" ");
+                            msg.append(get_TAG_name(tag_for_check,
+                                dwarf_names_print_on_error));
+                            DWARF_CHECK_ERROR(type_offset_result, msg);
+                            }
+                            break;
                         }
                         dwarf_dealloc(dbg, die_for_check, DW_DLA_DIE);
                     } else {

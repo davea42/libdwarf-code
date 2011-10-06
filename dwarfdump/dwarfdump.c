@@ -604,7 +604,6 @@ print_object_header(Elf *elf,Dwarf_Debug dbg)
 #endif /* WIN32 */
 }
 
-
 /* Print checks and errors for a specific compiler */
 static void
 print_specific_checks_results(Compiler *pCompiler)
@@ -802,7 +801,7 @@ print_checks_results()
                 for (index = 1; index <= compilers_detected_count; ++index) {
                     pCompiler = &compilers_detected[index];
                     if (pCompiler->verified) {
-                        fprintf(stderr,"\n%02d: %s",
+                        fprintf(stderr,"%02d: %s\n",
                             ++count,pCompiler->name);
                         print_specific_checks_results(pCompiler);
                     }

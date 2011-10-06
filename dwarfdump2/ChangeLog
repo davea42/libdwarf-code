@@ -1,3 +1,16 @@
+2011-10-06  DavidAnderson <davea42@earthlink.net>
+     * common.cc: Change ifdef to ifndef to match the dwarfdump
+       version.
+     * globals.h: Added comments giving the enum index values in
+       a few places.
+     * print_die.cc: For type_offset_result errors, give more
+       complete error reports.
+     * print_lines.cc: Ensure the if check and the CHECK_COUNT
+       refer to the same error category.  Ensure we test for
+       a checking flag before doing checking.
+     * print_reloc.cc: Report the section name as .rela<something>
+       when it is rela.  Ensure we don't index off the end of
+       a scn_names array. Get the output line format to match dwarfdump.
 2011-10-05  DavidAnderson <davea42@earthlink.net>
      * dwarfdump.cc: Now Dwarf_Check_Result is in a vector, not an array.
        If harmless errors detected, a HARMLESS ERROR COUNT string is
@@ -26,7 +39,7 @@
        in detail when appropriate.  Add some CHECK_COUNT calls when appropriate.
 2011-10-03  DavidAnderson <davea42@earthlink.net>
      * print_die.cc: Fix the formx code by removing recently-added use of llabs().
-       Fix consitency issue in error strings versus dwarfdump.  Set record_dwarf_error
+       Fix consistency issue in error strings versus dwarfdump.  Set record_dwarf_error
        flag false for consistency with dwarfdump. Ensure PU_name does not get
        FORM info for DW_AT_MIPS_linkage_name.
      * dwarfdump.cc:  Fix endl use for clarity. Add an endl in DWARF_CHECK_ERROR3 for

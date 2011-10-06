@@ -2111,7 +2111,7 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
                 res = dwarf_offdie(dbg,ref_off,&ref_die,&err);
                 if (res == DW_DLV_OK) {
                     ++die_indent_level;
-                    
+                    struct esb_s copy_base;
                     if (dump_visited_info) {
                         Dwarf_Off off;
                         dwarf_die_CU_offset(die, &off, &err);
@@ -2122,7 +2122,15 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
                         printf("%*s%s -> %s\n",die_indent_level * 2 + 2,
                             " ",atname,valname);
                     }
+                    /* Because esb_base is global, lets not
+                       let the traversal trash what we have here. */
+                    esb_constructor(&copy_base); 
+                    esb_append(&copy_base,esb_get_string(&esb_base));
+                    esb_empty_string(&esb_base);
                     traverse_one_die(dbg,attrib,ref_die,srcfiles,cnt,die_indent_level);
+                    esb_empty_string(&esb_base);
+                    esb_append(&esb_base,esb_get_string(&copy_base));
+                    esb_destructor(&copy_base);
                     dwarf_dealloc(dbg,ref_die,DW_DLA_DIE);
                     ref_die = 0;
                     --die_indent_level;
@@ -2874,8 +2882,10 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
                     &die_for_check, &err);
                 DWARF_CHECK_COUNT(type_offset_result,1);
                 if (dres != DW_DLV_OK) {
-                    DWARF_CHECK_ERROR(type_offset_result,
-                        "DW_AT_type offset does not point to type info");
+                    snprintf(small_buf,sizeof(small_buf),
+                        "DW_AT_type offset does not point to a DIE for global offset 0x%" DW_PR_DUx " cu off 0x%" DW_PR_DUx " local offset 0x%" DW_PR_DUx,
+                        cu_offset + off,cu_offset,off);
+                    DWARF_CHECK_ERROR(type_offset_result,small_buf);
                 } else {
                     int tres2 =
                         dwarf_tag(die_for_check, &tag_for_check, &err);
@@ -2902,12 +2912,19 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
                         case DW_TAG_volatile_type:
                         case DW_TAG_template_type_parameter:
                         case DW_TAG_template_value_parameter:
+                        case DW_TAG_unspecified_type:
                             /* OK */
                             break;
                         default:
-                            DWARF_CHECK_ERROR(type_offset_result,
-                                "DW_AT_type offset does not point to Type info");
-                                break;
+                            { 
+                                snprintf(small_buf,sizeof(small_buf),
+                                    "DW_AT_type offset does not point to Type info we got tag 0x%x %s",
+                                tag_for_check,
+                                get_TAG_name(tag_for_check,
+                                    dwarf_names_print_on_error));
+                                DWARF_CHECK_ERROR(type_offset_result,small_buf);
+                            }
+                            break;
                         }
                         dwarf_dealloc(dbg, die_for_check, DW_DLA_DIE);
                         die_for_check = 0;

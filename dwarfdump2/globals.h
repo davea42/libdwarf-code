@@ -283,15 +283,15 @@ extern bool check_locations;      // Location list check.
 
 // Check categories corresponding to the -k option 
 enum Dwarf_Check_Categories{ // Dwarf_Check_Categories 
-    abbrev_code_result,
+    abbrev_code_result, // 0
     pubname_attr_result,
     reloc_offset_result,
     attr_tag_result,
     tag_tree_result,
-    type_offset_result,
+    type_offset_result, // 5
     decl_file_result,
     ranges_result,
-    lines_result,
+    lines_result,       //8
     aranges_result,
     //  Harmless errors are errors detected inside libdwarf but
     //  not reported via DW_DLE_ERROR returns because the errors
@@ -302,17 +302,17 @@ enum Dwarf_Check_Categories{ // Dwarf_Check_Categories
     //  The other errors dwarfdump reports are also generally harmless 
     //  but are detected by dwarfdump so it's possble to report the
     //  error as soon as the error is discovered. 
-    harmless_result,
+    harmless_result,   //10
     fde_duplication,
     frames_result,
     locations_result,
     names_result,
-    abbreviations_result,
+    abbreviations_result, // 15
     dwarf_constants_result,
     di_gaps_result,
     forward_decl_result,
     self_references_result,
-    total_check_result,
+    total_check_result,  //20
     LAST_CATEGORY  // Must be last.
 } ;
 

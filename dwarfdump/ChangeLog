@@ -1,3 +1,9 @@
+2011-10-06  DavidAnderson <davea42@earthlink.net>
+     * dwarfdump.c: Removed a newline in a printf to match dwarfdump2.
+     * print_die.c: Expanded the error messages in a couple type_offset_result
+       checks.  Worked around the global nature of esb_base by
+       saving it locally while we recursively traverse DW_AT_type like things
+       looking for bad references.
 2011-10-05  DavidAnderson <davea42@earthlink.net>
      * dwarfdump.c: Increased COMPILER_TABLE_MAX for better reporting.
        Provide a 'HARMLESS ERROR' title in output if there are any such.

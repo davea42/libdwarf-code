@@ -79,7 +79,7 @@ void
 print_usage_message(const std::string &progname,
     const char **text)
 {
-#ifdef WIN32
+#ifndef WIN32
     cerr <<"Usage:  " << progname<<"  <options> <object file>" << endl;
 #endif
     for (unsigned i = 0; *text[i]; ++i) {
