@@ -4,6 +4,12 @@
        checks.  Worked around the global nature of esb_base by
        saving it locally while we recursively traverse DW_AT_type like things
        looking for bad references.
+     * print_lines.c: Ensure we only check for errors when
+       we request such checking.
+     * print_reloc.c: Ensure we don't index off the end of scn_names.
+       Deal with missing names and bad symbol indexes consistently.
+       When working with a .rela, report name as the section name
+       instead of calling it .rel in the relocations output.
 2011-10-05  DavidAnderson <davea42@earthlink.net>
      * dwarfdump.c: Increased COMPILER_TABLE_MAX for better reporting.
        Provide a 'HARMLESS ERROR' title in output if there are any such.
