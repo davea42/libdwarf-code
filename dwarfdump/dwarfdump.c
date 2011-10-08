@@ -425,16 +425,14 @@ main(int argc, char *argv[])
 
     /*  If we are checking .debug_line, .debug_ranges, .debug_aranges,
         or .debug_loc build the tables containing 
-        the pairs LowPC and HighPC */
-    if (check_decl_file || check_ranges || check_locations) {
+        the pairs LowPC and HighPC. It is safer  (and not
+        expensive) to build all
+        of these at once so mistakes in options do not lead
+        to coredumps (like -ka -p did once). */
+    if (check_decl_file || check_ranges || check_locations ||
+        do_check_dwarf || check_self_references) {
         pRangesInfo = AllocateBucketGroup(KIND_RANGES_INFO);
-    } 
-
-    if (do_check_dwarf) {
         pLinkonceInfo = AllocateBucketGroup(KIND_SECTIONS_INFO);
-    }
-
-    if (check_self_references) {
         pVisitedInfo = AllocateBucketGroup(KIND_VISITED_INFO);
     }
 
@@ -471,18 +469,17 @@ main(int argc, char *argv[])
     clean_up_die_esb();
     clean_up_syms_malloc_data();
 
-
-    if (check_decl_file || check_ranges || check_locations) {
+    if(pRangesInfo) {
         ReleaseBucketGroup(pRangesInfo);
         pRangesInfo = 0;
     }
 
-    if (do_check_dwarf) {
+    if(pLinkonceInfo) {
         ReleaseBucketGroup(pLinkonceInfo);
         pLinkonceInfo = 0;
     }
 
-    if (check_self_references) {
+    if(pVisitedInfo) {
         ReleaseBucketGroup(pVisitedInfo);
         pVisitedInfo = 0;
     }

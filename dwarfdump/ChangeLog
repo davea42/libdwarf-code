@@ -1,3 +1,9 @@
+2011-10-08  DavidAnderson <davea42@earthlink.net>
+     dwarfdump.cc: If doing any relevant checking,
+     instantiate all three possibly-usable BucketGroup objects.
+     That makes it simpler to avoid a coredump when the user
+     provides a nonsensical option set  --  at a cost of
+     a very small amount of memory.
 2011-10-06  DavidAnderson <davea42@earthlink.net>
      * dwarfdump.c: Removed a newline in a printf to match dwarfdump2.
        Calls of get_attr_value() now have extra argument, so

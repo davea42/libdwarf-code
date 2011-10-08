@@ -369,7 +369,7 @@ static void suppress_check_dwarf()
     do_print_dwarf = true;
     if(do_check_dwarf) {
         cerr <<"Warning: check flag turned off, "
-            "checking and printing are separate.\n" <<
+            "checking and printing are separate." <<
             endl;
     }
     do_check_dwarf = false;

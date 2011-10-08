@@ -1,3 +1,6 @@
+2011-10-08  DavidAnderson <davea42@earthlink.net>
+     * dwarfdump.cc: Removed an extra newline from a
+       warning message so we match the dwarfdump version.
 2011-10-07  DavidAnderson <davea42@earthlink.net>
      * dwarfdump.cc:  Added a new argument to get_attr_value, so
        changed its calls here.
