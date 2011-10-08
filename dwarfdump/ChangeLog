@@ -1,9 +1,19 @@
 2011-10-06  DavidAnderson <davea42@earthlink.net>
      * dwarfdump.c: Removed a newline in a printf to match dwarfdump2.
+       Calls of get_attr_value() now have extra argument, so
+       fix them.
+     * dwarfdump.conf: Having 'mips' be an ABI which really reflected
+       the IRIX abi and IRIX compilers was a mistake.   Now that 
+       abi works for modern MIPS.
+     * globals.h: get_attr_value() adds an argument.
      * print_die.c: Expanded the error messages in a couple type_offset_result
        checks.  Worked around the global nature of esb_base by
        saving it locally while we recursively traverse DW_AT_type like things
-       looking for bad references.
+       looking for bad references. Added a 'verbose' argument a few places
+       so (at a critical point) show_form_itself won't add a form
+       string when we really don't want it to.
+     * print_static_funcs.c:  Fixed an error string so it says
+       static funcs, not pubnames.
      * print_lines.c: Ensure we only check for errors when
        we request such checking.
      * print_reloc.c: Ensure we don't index off the end of scn_names.

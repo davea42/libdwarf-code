@@ -1,3 +1,16 @@
+2011-10-07  DavidAnderson <davea42@earthlink.net>
+     * dwarfdump.cc:  Added a new argument to get_attr_value, so
+       changed its calls here.
+     * dwarfdump.conf: As for dwarfdump, changed the 'mips' abi
+       to work well with modern MIPS targets.  For IRIX, 
+       mips-irix and mips-irix2 abis are provided. 
+     * dwconf.cc: Added a '.' at the tail of an error message
+       to match dwarfdump.
+     * globals.h: get_attr_value() has a 'verbose' argument now.
+     * print_die.cc: Various calls now have a 'verbose' argument
+       so critical uses can use a 'local' value when needed.
+     * print_static_funcs.c: Changed an error message to make it
+       clear this is the static funcs section, not pubnames.
 2011-10-06  DavidAnderson <davea42@earthlink.net>
      * common.cc: Change ifdef to ifndef to match the dwarfdump
        version.

@@ -124,7 +124,7 @@ print_static_funcs(Dwarf_Debug dbg)
                     /* Should the value of flag be examined? */
                 } else {
                     DWARF_CHECK_ERROR2(pubname_attr_result,name,
-                        "pubname does not have DW_AT_external");
+                        "pubname (in static funcs section) does not have DW_AT_external");
                 }
                 dwarf_dealloc(dbg, die, DW_DLA_DIE);
             }

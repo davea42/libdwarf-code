@@ -418,7 +418,7 @@ void get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
     Dwarf_Attribute attrib,
     char **srcfiles,
     Dwarf_Signed cnt, struct esb_s *esbp,
-    int show_form);
+    int show_form,int local_verbose);
 
 
 extern Dwarf_Unsigned local_dwarf_decode_u_leb128(unsigned char *leb128,

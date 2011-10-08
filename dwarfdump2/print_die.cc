@@ -64,6 +64,7 @@ static bool traverse_one_die(Dwarf_Debug dbg,
 static int get_form_values(Dwarf_Attribute attrib,
     Dwarf_Half & theform, Dwarf_Half & directform);
 static void show_form_itself(bool show_form,
+    int local_verbose,
     int theform, int directform, string *str_out);
 static bool print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
    Dwarf_Half attr,
@@ -866,7 +867,7 @@ get_small_encoding_integer_and_name(Dwarf_Debug dbg,
         Dwarf_Half theform = 0;
         Dwarf_Half directform = 0;
         get_form_values(attrib,theform,directform);
-        show_form_itself(show_form, theform, directform,string_out);
+        show_form_itself(show_form,verbose, theform, directform,string_out);
     }
     return DW_DLV_OK;
 }
@@ -1111,15 +1112,32 @@ traverse_attribute(Dwarf_Debug dbg, Dwarf_Die die, Dwarf_Half attr,
         Dwarf_Die ref_die = 0;
 
         ++die_indent_level;
-        get_attr_value(dbg, tag, die, attrib, hsrcfiles, valname, show_form_used);
+        get_attr_value(dbg, tag, die, attrib, hsrcfiles, valname, 
+            show_form_used,verbose);
         /* Get the global offset for reference */
         res = dwarf_global_formref(attrib, &ref_off, &err);
         if (res != DW_DLV_OK) {
-            print_error(dbg, "dwarf_global_formref fails in traversal", res, err);
+            int errno = dwarf_errno(err);
+            if (errno == DW_DLE_REF_SIG8_NOT_HANDLED ) {
+                // No need to stop, ref_sig8 refers out of
+                // the current section.
+                break;
+            } else {
+                print_error(dbg, "dwarf_global_formref fails in traversal", 
+                    res, err);
+            }
         }
         res = dwarf_dieoffset(die, &die_off, &err);
         if (res != DW_DLV_OK) {
-            print_error(dbg, "dwarf_dieoffset fails in traversal", res, err);
+            int errno = dwarf_errno(err);
+            if (errno == DW_DLE_REF_SIG8_NOT_HANDLED ) {
+                // No need to stop, ref_sig8 refers out of
+                // the current section.
+                break;
+            } else {
+                print_error(dbg, "dwarf_dieoffset fails in traversal", 
+                    res, err);
+            }
         }
 
         /* Follow reference chain, looking for self references */
@@ -1192,7 +1210,7 @@ traverse_one_die(Dwarf_Debug dbg, Dwarf_Attribute attrib, Dwarf_Die die,
         Dwarf_Half attr = 0;
         string atname;
         get_attr_value(dbg, tag, die, attrib, hsrcfiles, 
-            valname, show_form_used);
+            valname, show_form_used,verbose);
         dwarf_whatattr(attrib, &attr, &err);
         atname = get_AT_name(attr,dwarf_names_print_on_error);
   
@@ -1520,11 +1538,11 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die, Dwarf_Half attr,
         if (tres == DW_DLV_ERROR) {
             DWARF_CHECK_ERROR3(attr_tag_result,tagname,
                 get_AT_name(attr,dwarf_names_print_on_error),
-                "check the tag-attr combination.");
+                "check the tag-attr combination, dwarf_tag failed.");
         } else if (tres == DW_DLV_NO_ENTRY) {
             DWARF_CHECK_ERROR3(attr_tag_result,tagname,
                 get_AT_name(attr,dwarf_names_print_on_error),
-                "check the tag-attr combination..");
+                "check the tag-attr combination, dwarf_tag NO ENTRY?.");
         } else if (legal_tag_attr_combination(tag, attr)) {
             /* OK */
         } else {
@@ -1629,7 +1647,8 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die, Dwarf_Half attr,
             if(fc == DW_FORM_CLASS_CONSTANT) {
                 wres = formxdata_print_value(dbg,attrib,valname,
                       &err,false);
-                show_form_itself(show_form_used, theform, directform,&valname);
+                show_form_itself(show_form_used,verbose, 
+                    theform, directform,&valname);
                 if(wres == DW_DLV_OK){
                     /* String appended already. */
                     break;
@@ -1659,7 +1678,8 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die, Dwarf_Half attr,
         get_form_values(attrib,theform,directform);
         if(is_location_form(theform)) {
             get_location_list(dbg, die, attrib, valname);
-            show_form_itself(show_form_used, theform, directform,&valname);
+            show_form_itself(show_form_used,verbose, 
+                theform, directform,&valname);
         } else if (theform == DW_FORM_exprloc)  {
             bool showhextoo = true;
             print_exprloc_content(dbg,die,attrib,showhextoo,valname);
@@ -1673,7 +1693,8 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die, Dwarf_Half attr,
         Dwarf_Half directform = 0;
         get_form_values(attrib,theform,directform);
         valname = get_FLAG_BLOCK_string(dbg, attrib);
-        show_form_itself(show_form_used, theform, directform,&valname);
+        show_form_itself(show_form_used,verbose, 
+            theform, directform,&valname);
         }
         break;
     case DW_AT_SUN_cf_kind:
@@ -1695,7 +1716,8 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die, Dwarf_Half attr,
                 print_error(dbg,"Cannot get formudata....",wres,err);
                 valname = "??";
             }
-            show_form_itself(show_form_used, theform, directform,&valname);
+            show_form_itself(show_form_used,verbose, 
+                theform, directform,&valname);
         }
         break;
     case DW_AT_upper_bound:
@@ -1717,12 +1739,14 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die, Dwarf_Half attr,
                 Dwarf_Half directform = 0;
                 get_form_values(attrib,theform,directform);
                 get_location_list(dbg, die, attrib, valname);
-                show_form_itself(show_form_used, theform, directform,&valname);
+                show_form_itself(show_form_used,verbose, 
+                    theform, directform,&valname);
                 }
                 break;
             default:
                 get_attr_value(dbg, tag, die,
-                    attrib, hsrcfiles, valname,show_form_used);
+                    attrib, hsrcfiles, valname,show_form_used,
+                    verbose);
                 break;
             }
             break;
@@ -1751,7 +1775,7 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die, Dwarf_Half attr,
                 valname.append("<offset-from-lowpc>");
             }
             get_attr_value(dbg, tag, die, attrib, hsrcfiles, valname,
-                show_form_used);
+                show_form_used,verbose);
             /* Update base and high addresses for CU */
             if (error_message_data.seen_CU && 
                 (error_message_data.need_CU_base_address || 
@@ -1863,32 +1887,36 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die, Dwarf_Half attr,
             }
 
             get_attr_value(dbg, tag,die, attrib, hsrcfiles, valname,
-                show_form_used);
+                show_form_used,verbose);
             print_range_attribute(dbg,die,attr,attr_in,
                 theform,dwarf_names_print_on_error,print_information,extra);
         }
         break;
     case DW_AT_MIPS_linkage_name:
         get_attr_value(dbg, tag, die, attrib, hsrcfiles,
-            valname, show_form_used);
+            valname, show_form_used,verbose);
 
         if (check_locations || check_ranges) {
             string lname;
             bool local_show_form = false;
-            get_attr_value(dbg,tag,die,attrib,hsrcfiles,lname,local_show_form);
+            int local_verbose = 0;
+            get_attr_value(dbg,tag,die,attrib,hsrcfiles,lname,local_show_form,
+                local_verbose);
             error_message_data.PU_name = lname;
         }
         break;
     case DW_AT_name:
     case DW_AT_GNU_template_name:
         get_attr_value(dbg, tag, die, attrib, hsrcfiles, 
-            valname, show_form_used);
+            valname, show_form_used,verbose);
         if (check_names && checking_this_compiler()) {
             /*  Look for specific name forms, attempting to
                 notice and report 'odd' identifiers. */
             string lname;
             bool local_show_form = false;
-            get_attr_value(dbg,tag,die,attrib,hsrcfiles,lname,local_show_form);
+            int local_verbose = 0;
+            get_attr_value(dbg,tag,die,attrib,hsrcfiles,lname,local_show_form,
+                local_verbose);
             DWARF_CHECK_COUNT(names_result,1);
             if (!strcmp("\"(null)\"",lname.c_str())) {
                 DWARF_CHECK_ERROR(names_result,
@@ -1911,7 +1939,9 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die, Dwarf_Half attr,
             error_message_data.seen_PU && error_message_data.PU_name.empty()) {
             string lname;
             bool local_show_form = false;
-            get_attr_value(dbg,tag,die,attrib,hsrcfiles,lname,local_show_form);
+            int local_verbose = 0;
+            get_attr_value(dbg,tag,die,attrib,hsrcfiles,lname,
+                local_show_form, local_verbose);
             error_message_data.PU_name = lname;
         }
 
@@ -1919,22 +1949,24 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die, Dwarf_Half attr,
         if (error_message_data.seen_CU && error_message_data.need_CU_name) {
             // Lets not get the form name included.
             bool local_show_form_used = false;
+            int local_verbose = 0;
             string localname;
             get_attr_value(dbg, tag, die, attrib, hsrcfiles, 
-                localname, local_show_form_used);
+                localname, local_show_form_used,local_verbose);
             error_message_data.CU_name = localname;
             error_message_data.need_CU_name = false;
         }
         break;
     case DW_AT_producer:
             get_attr_value(dbg, tag, die, attrib, hsrcfiles, 
-                valname, show_form_used);
+                valname, show_form_used,verbose);
             /* If we are in checking mode, identify the compiler */
             if (do_check_dwarf || search_is_on) {
                 bool local_show_form = false;
+                int local_verbose = 0;
                 string local_producer;
                 get_attr_value(dbg, tag, die, attrib, hsrcfiles, 
-                    local_producer, local_show_form);
+                    local_producer, local_show_form,local_verbose);
                 /* Check if this compiler version is a target */
                 update_compiler_target(local_producer);
             }
@@ -1948,7 +1980,8 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die, Dwarf_Half attr,
     case DW_AT_specification:
     case DW_AT_abstract_origin:
     case DW_AT_type:
-        get_attr_value(dbg, tag, die, attrib, hsrcfiles ,valname, show_form_used);
+        get_attr_value(dbg, tag, die, attrib, hsrcfiles ,
+            valname, show_form_used,verbose);
         if (check_forward_decl || check_self_references) {
             Dwarf_Off die_off = 0;
             Dwarf_Off ref_off = 0;
@@ -2036,7 +2069,8 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die, Dwarf_Half attr,
         }
         break;
     default:
-        get_attr_value(dbg, tag,die, attrib, hsrcfiles, valname,show_form_used);
+        get_attr_value(dbg, tag,die, attrib, hsrcfiles, valname,
+            show_form_used,verbose);
         break;
     }
     if (!print_information) {
@@ -2530,7 +2564,7 @@ void
 get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag, 
     Dwarf_Die die, Dwarf_Attribute attrib,
     SrcfilesHolder &hsrcfiles, string &str_out,
-    bool show_form)
+    bool show_form,int local_verbose)
 {
     Dwarf_Signed tempsd = 0;
     Dwarf_Unsigned tempud = 0;
@@ -2989,7 +3023,7 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
         print_error(dbg, "dwarf_whatform unexpected value", DW_DLV_OK,
             err);
     }
-    show_form_itself(show_form,theform, direct_form,&str_out);
+    show_form_itself(show_form,local_verbose,theform, direct_form,&str_out);
 }
 
 static int
@@ -3002,13 +3036,15 @@ get_form_values(Dwarf_Attribute attrib,
     return res;
 }
 static void
-show_form_itself(bool local_show_form,int theform, 
+show_form_itself(bool local_show_form,
+    int local_verbose,
+    int theform, 
     int directform, string *str_out)
 {
     if ( local_show_form
         && directform && directform == DW_FORM_indirect) {
         str_out->append(" (used DW_FORM_indirect");
-        if(verbose) {
+        if(local_verbose) {
             str_out->append(" ");
             str_out->append(IToDec(DW_FORM_indirect));
         }
@@ -3018,7 +3054,7 @@ show_form_itself(bool local_show_form,int theform,
         str_out->append(" <form ");
         str_out->append(get_FORM_name(theform,
             dwarf_names_print_on_error));
-        if(verbose) {
+        if(local_verbose) {
             str_out->append(" ");
             str_out->append(IToDec(theform));
         }

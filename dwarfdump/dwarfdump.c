@@ -1831,7 +1831,7 @@ int get_cu_name(Dwarf_Debug dbg, Dwarf_Die cu_die,
             esb_empty_string(&esb_long_name);
             get_attr_value(dbg, DW_TAG_compile_unit, 
                 cu_die, name_attr, NULL, 0, &esb_long_name,
-                0 /*show_form_used*/);
+                0 /*show_form_used*/,0 /* verbose */);
             *long_name = esb_get_string(&esb_long_name);
             /* Generate the short name (filename) */
             filename = strrchr(*long_name,'/');
@@ -1878,7 +1878,7 @@ int get_producer_name(Dwarf_Debug dbg, Dwarf_Die cu_die,
             esb_empty_string(&esb_producer);
             get_attr_value(dbg, DW_TAG_compile_unit, 
                 cu_die, producer_attr, NULL, 0, &esb_producer,
-                0 /*show_form_used*/);
+                0 /*show_form_used*/,0 /* verbose */);
             *producer_name = esb_get_string(&esb_producer);
         }
     }

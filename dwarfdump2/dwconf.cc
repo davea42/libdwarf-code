@@ -200,7 +200,7 @@ find_conf_file_and_read_config_inner(const string &named_file,
         ++errcount;
         cout << "dwarfdump found no ABI " <<
             named_abi << " in file " <<
-            name_used << endl;
+            name_used << "." <<endl;
         return errcount;
     }
     int seekres = fseek(conf_stream, offset, SEEK_SET);

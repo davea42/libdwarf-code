@@ -431,7 +431,8 @@ void get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
    Dwarf_Die die,
    Dwarf_Attribute attrib,
    SrcfilesHolder &srcfiles,
-   std::string &str_out,bool show_form);
+   std::string &str_out,bool show_form,
+   int local_verbose);
 
 
 

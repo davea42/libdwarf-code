@@ -1718,7 +1718,7 @@ int get_cu_name(DieHolder &hcu_die,
                 hcu_die.die(), name_attr, 
                 srcfiles,
                 long_name,
-                false /*show_form_used*/);
+                false /*show_form_used*/,0 /* verbose */);
             /* Generate the short name (filename) */
             const char * filename = strrchr(long_name.c_str(),'/');
             if (!filename) {
@@ -1761,7 +1761,8 @@ int get_producer_name(DieHolder &hcu_die,
             get_attr_value(hcu_die.dbg(), DW_TAG_compile_unit, 
                 hcu_die.die(), producer_attr, 
                 srcfiles,producer_name,
-                false /*show_form_used*/);
+                false /*show_form_used*/,
+                0 /* verbose */);
         }
     }
 
