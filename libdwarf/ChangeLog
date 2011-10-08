@@ -1,4 +1,4 @@
-2011-10-05  DavidAnderson <davea42@earthlink.net>
+2011-10-05  DavidAnderson <davea42@earthlink.net> .
      * dwarf_die_deliv.c: When relocations fail, record
        a 'harmless error' and continue the CU loading.
        No way to be sure the error is really harmless, of course.
