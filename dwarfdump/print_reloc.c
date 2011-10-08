@@ -86,6 +86,16 @@ static char *sectnames[] = {
     DW_SECTNAME_REL_DEBUG_LOC,
     DW_SECTNAME_REL_DEBUG_RANGES,
 };
+static char *sectnamesa[] = {
+    DW_SECTNAME_RELA_DEBUG_INFO,
+    DW_SECTNAME_RELA_DEBUG_LINE,
+    DW_SECTNAME_RELA_DEBUG_PUBNAMES,
+    DW_SECTNAME_RELA_DEBUG_ABBREV,
+    DW_SECTNAME_RELA_DEBUG_ARANGES,
+    DW_SECTNAME_RELA_DEBUG_FRAME,
+    DW_SECTNAME_RELA_DEBUG_LOC,
+    DW_SECTNAME_RELA_DEBUG_RANGES,
+};
 
 static char *error_msg_duplicate[] = {
     DW_SECTNAME_REL_DEBUG_INFO STRING_FOR_DUPLICATE,
@@ -558,6 +568,12 @@ get_reloc_type_names(int index)
     return retval;
 }
 
+#ifndef HAVE_ELF64_GETEHDR
+#define Elf64_Addr  long
+#define Elf64_Word  unsigned long
+#define Elf64_Xword unsigned long
+#define Elf64_Sym   long
+#endif
 
 static struct {
     Dwarf_Small *buf;
@@ -567,12 +583,6 @@ static struct {
     Elf64_Xword type;   /* To cover 32 and 64 records types */
 } sect_data[DW_SECTION_REL_DEBUG_NUM];
 
-#ifndef HAVE_ELF64_GETEHDR
-#define Elf64_Addr  long
-#define Elf64_Word  unsigned long
-#define Elf64_Xword unsigned long
-#define Elf64_Sym   long
-#endif
 
 typedef size_t indx_type;
 
@@ -603,12 +613,12 @@ static void print_reloc_information_64(int section_no,
     Dwarf_Small * buf,
     Dwarf_Unsigned size,
     Elf64_Xword type,
-    char **scn_names,int scn_names_cnt); 
+    char **scn_names,int scn_names_count); 
 static void print_reloc_information_32(int section_no,
     Dwarf_Small * buf,
     Dwarf_Unsigned size,
     Elf64_Xword type,
-    char **scn_names,int scn_names_cnt);
+    char **scn_names,int scn_names_count);
 static SYM *readsyms(Elf32_Sym * data, size_t num, Elf * elf,
     Elf32_Word link);
 static SYM64 *read_64_syms(Elf64_Sym * data, size_t num, Elf * elf,
@@ -727,10 +737,10 @@ print_relocinfo_64(Dwarf_Debug dbg, Elf * elf)
 {
 #ifdef HAVE_ELF64_GETEHDR
     Elf_Scn *scn = NULL;
-    Elf64_Ehdr *ehdr64;
-    Elf64_Shdr *shdr64;
-    char *scn_name;
-    int i;
+    Elf64_Ehdr *ehdr64 = 0;
+    Elf64_Shdr *shdr64 = 0;
+    char *scn_name = 0;
+    int i = 0;
     Elf64_Sym *sym_64 = 0;
     char **scn_names = 0;
     int scn_names_cnt = 0;
@@ -815,7 +825,8 @@ print_relocinfo_32(Dwarf_Debug dbg, Elf * elf)
     char **scn_names = 0;
     int scn_names_cnt = 0;
 
-    if ((ehdr32 = elf32_getehdr(elf)) == NULL) {
+    ehdr32 = elf32_getehdr(elf);
+    if (ehdr32 == NULL) {
         print_error(dbg, "DW_ELF_GETEHDR_ERROR", DW_DLV_OK, err);
     }
 
@@ -901,15 +912,16 @@ print_relocinfo_32(Dwarf_Debug dbg, Elf * elf)
 static void
 print_reloc_information_64(int section_no, Dwarf_Small * buf,
     Dwarf_Unsigned size, Elf64_Xword type,
-    char **scn_names, int scn_names_cnt) 
+    char **scn_names, int scn_names_count) 
 {
     /* Include support for Elf64_Rel and Elf64_Rela */
     Dwarf_Unsigned add = 0;
     Dwarf_Half rel_size = SHT_RELA == type ? 
         sizeof(Elf64_Rela) : sizeof(Elf64_Rel);
-    Dwarf_Unsigned off;
+    Dwarf_Unsigned off = 0;
 
-    printf("\n%s:\n", sectnames[section_no]);
+    printf("\n%s:\n", type== SHT_RELA?sectnamesa[section_no]:
+        sectnames[section_no]);
   
     /* Print some headers and change the order for better reading */
     printf("Offset     Addend     %-26s Index   Symbol Name\n","Reloc Type");
@@ -919,7 +931,7 @@ print_reloc_information_64(int section_no, Dwarf_Small * buf,
 #if HAVE_ELF64_R_INFO
         /* This works for the Elf64_Rel in linux */
         Elf64_Rel *p = (Elf64_Rel *) (buf + off);
-        char *name = "<no name>";
+        char *name = 0;
         if(sym_data ) {
             size_t index = ELF64_R_SYM(p->r_info) - 1;
             if(index < sym_data_entry_count) {
@@ -934,11 +946,18 @@ print_reloc_information_64(int section_no, Dwarf_Small * buf,
 
         /*  When the name is not available, use the
             section name as a reference for the name.*/
-        if (!*name) {
-            SYM64 *sym_64 = &sym_data_64[ELF64_R_SYM(p->r_info) - 1];
-            if (sym_64->type == STT_SECTION) {
-                name = scn_names[sym_64->shndx];
+        if (!name || !name[0]) {
+            size_t index = ELF64_R_SYM(p->r_info) - 1;
+            if(index < sym_data_64_entry_count) {
+                SYM64 *sym_64 = &sym_data_64[index];
+                if (sym_64->type == STT_SECTION &&
+                    sym_64->shndx < scn_names_count) {
+                    name = scn_names[sym_64->shndx];
+                }
             }
+        }
+        if(!name || !name[0]) {
+            name = "<no name>";
         }
     
         if (SHT_RELA == type) {
@@ -957,7 +976,7 @@ print_reloc_information_64(int section_no, Dwarf_Small * buf,
             but seperate fields, with 3 types, actually. Only one of
             which prints here, as only one really used with dwarf */
         Elf64_Rel *p = (Elf64_Rel *) (buf + off);
-        char *name = "<no name>";
+        char *name = 0;
         if(sym_data ) {
             size_t index = p->r_sym - 1;
             if(index < sym_data_entry_count) {
@@ -969,6 +988,9 @@ print_reloc_information_64(int section_no, Dwarf_Small * buf,
                 name = sym_data_64[index].name;
             }
         }
+        if(!name || !name[0]) {
+            name = "<no name>";
+        } 
         printf("%5" DW_PR_DUu " %-26s <%3ld> %s\n",
             (Dwarf_Unsigned) (p->r_offset),
             get_reloc_type_names(p->r_type),
@@ -982,15 +1004,16 @@ print_reloc_information_64(int section_no, Dwarf_Small * buf,
 static void
 print_reloc_information_32(int section_no, Dwarf_Small * buf,
    Dwarf_Unsigned size, Elf64_Xword type, char **scn_names,
-   int scn_names_cnt)
+   int scn_names_count)
 {
     /*  Include support for Elf32_Rel and Elf32_Rela */
     Dwarf_Unsigned add = 0;
     Dwarf_Half rel_size = SHT_RELA == type ? 
         sizeof(Elf32_Rela) : sizeof(Elf32_Rel);
-    Dwarf_Unsigned off;
+    Dwarf_Unsigned off = 0;
 
-    printf("\n%s:\n", sectnames[section_no]);
+    printf("\n%s:\n", type== SHT_RELA?sectnamesa[section_no]:
+        sectnames[section_no]);
 
 
     /* Print some headers and change the order for better reading. */
@@ -998,7 +1021,7 @@ print_reloc_information_32(int section_no, Dwarf_Small * buf,
   
     for (off = 0; off < size; off += rel_size) {
         Elf32_Rel *p = (Elf32_Rel *) (buf + off);
-        char *name = "<no name>";
+        char *name = 0;
 
         if(sym_data) {
             size_t index = ELF32_R_SYM(p->r_info) - 1;
@@ -1009,11 +1032,18 @@ print_reloc_information_32(int section_no, Dwarf_Small * buf,
 
         /*  When the name is not available, use the
             section name as a reference for the name. */
-        if (!*name) {
-            SYM *sym = &sym_data[ELF32_R_SYM(p->r_info) - 1];
-            if (sym->type == STT_SECTION) {
-                name = scn_names[sym->shndx];
+        if (!name || !name[0]) {
+            size_t index = ELF32_R_SYM(p->r_info) - 1;
+            if(index < sym_data_entry_count) {
+                SYM *sym = &sym_data[index];
+                if (sym->type == STT_SECTION&&
+                    sym->shndx < scn_names_count) {
+                    name = scn_names[sym->shndx];
+                }
             }
+        }
+        if(!name || !name[0]) {
+            name = "<no name>";
         }
         if (SHT_RELA == type) {
             Elf32_Rela *pa = (Elf32_Rela *)p;
@@ -1034,10 +1064,11 @@ readsyms(Elf32_Sym * data, size_t num, Elf * elf, Elf32_Word link)
     SYM *s, *buf;
     indx_type i;
 
-    if ((buf = (SYM *) calloc(num, sizeof(SYM))) == NULL) {
+    buf = (SYM *) calloc(num, sizeof(SYM));
+    if (buf == NULL) {
         return NULL;
     }
-    s = buf;                    /* save pointer to head of array */
+    s = buf; /* save pointer to head of array */
     for (i = 1; i < num; i++, data++, buf++) {
         buf->indx = i;
         buf->name = (char *) elf_strptr(elf, link, data->st_name);
@@ -1047,7 +1078,7 @@ readsyms(Elf32_Sym * data, size_t num, Elf * elf, Elf32_Word link)
         buf->bind = ELF32_ST_BIND(data->st_info);
         buf->other = data->st_other;
         buf->shndx = data->st_shndx;
-    }                           /* end for loop */
+    }   /* end for loop */
     return (s);
 }
 
@@ -1059,7 +1090,8 @@ read_64_syms(Elf64_Sym * data, size_t num, Elf * elf, Elf64_Word link)
     SYM64 *s, *buf;
     indx_type i;
 
-    if ((buf = (SYM64 *) calloc(num, sizeof(SYM64))) == NULL) {
+    buf = (SYM64 *) calloc(num, sizeof(SYM64));
+    if (buf == NULL) {
         return NULL;
     }
     s = buf;                    /* save pointer to head of array */

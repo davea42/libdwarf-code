@@ -73,6 +73,17 @@ print_source_intro(Dwarf_Die cu_die)
     }
 }
 
+static void
+record_line_error(const char *where, Dwarf_Error err)
+{
+    char tmp_buff[500];
+    if(check_lines && checking_this_compiler()) {
+        snprintf(tmp_buff, sizeof(tmp_buff),
+            "Error getting line details calling %s dwarf error is %s",
+            where,dwarf_errmsg(err));
+        DWARF_CHECK_ERROR(lines_result,tmp_buff);
+    }
+}
 
 extern void
 print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
@@ -176,7 +187,7 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
                 if (SkipRecord) {
                     /* Skip records that do not have ís_addr_set' */
                     ares = dwarf_line_is_addr_set(line, &has_is_addr_set, &err);
-                    if (has_is_addr_set) {
+                    if (ares == DW_DLV_OK && has_is_addr_set) {
                         SkipRecord = FALSE;
                     }
                     else {
@@ -187,23 +198,24 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
                 }
             }
 
+            if(check_lines && checking_this_compiler()) {
+                DWARF_CHECK_COUNT(lines_result,1);
+            }
+            filename = "<unknown>";
             sres = dwarf_linesrc(line, &filename, &err);
-
             if (sres == DW_DLV_ERROR) {
                 /* Do not terminate processing */
-                where = "dwarf_linesrc";
+                where = "dwarf_linesrc()";
+                record_line_error(where,err);
                 found_line_error = TRUE;
-            }
-
-            if (sres == DW_DLV_NO_ENTRY) {
-                filename = "<unknown>";
             }
 
             ares = dwarf_lineaddr(line, &pc, &err);
 
             if (ares == DW_DLV_ERROR) {
                 /* Do not terminate processing */
-                where = "dwarf_lineaddr";
+                where = "dwarf_lineaddr()";
+                record_line_error(where,err);
                 found_line_error = TRUE;
             }
             if (ares == DW_DLV_NO_ENTRY) {
@@ -212,7 +224,8 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
             lires = dwarf_lineno(line, &lineno, &err);
             if (lires == DW_DLV_ERROR) {
                 /* Do not terminate processing */
-                where = "dwarf_lineno";
+                where = "dwarf_lineno()";
+                record_line_error(where,err);
                 found_line_error = TRUE;
             }
             if (lires == DW_DLV_NO_ENTRY) {
@@ -221,7 +234,8 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
             cores = dwarf_lineoff(line, &column, &err);
             if (cores == DW_DLV_ERROR) {
                 /* Do not terminate processing */
-                where = "dwarf_lineoff";
+                where = "dwarf_lineoff()";
+                record_line_error(where,err);
                 found_line_error = TRUE;
             }
             if (cores == DW_DLV_NO_ENTRY) {
@@ -249,7 +263,9 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
                             table if try to match the pc value with 
                             one of those ranges.
                         */
-                        DWARF_CHECK_COUNT(lines_result,1);
+                        if(check_lines && checking_this_compiler()) {
+                            DWARF_CHECK_COUNT(lines_result,1);
+                        }
                         if (FindAddressInBucketGroup(pLinkonceInfo,pc)){
                             /* Valid values; do nothing */
                         } else {
@@ -259,12 +275,14 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
                                 symbols and no stripping */
                             if (pc) {
                                 char addr_tmp[100];
-                                snprintf(addr_tmp,sizeof(addr_tmp),
-                                    ".debug_line: Address"
-                                    " 0x%" DW_PR_XZEROS DW_PR_DUx
-                                    " outside a valid .text range",pc);
-                                DWARF_CHECK_ERROR(lines_result,
-                                    addr_tmp);
+                                if(check_lines && checking_this_compiler()) {
+                                    snprintf(addr_tmp,sizeof(addr_tmp),
+                                        ".debug_line: Address"
+                                        " 0x%" DW_PR_XZEROS DW_PR_DUx
+                                        " outside a valid .text range",pc);
+                                    DWARF_CHECK_ERROR(lines_result,
+                                        addr_tmp);
+                                }
                             } else {
                                 SkipRecord = TRUE;
                             }
@@ -287,17 +305,19 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
                             a mismatch here is not necessarily 
                             an error.  */
                            
-                        DWARF_CHECK_COUNT(lines_result,1);
-                        if ((pc != PU_high_address) && 
-                            (PU_base_address != elf_max_address)) {
-                            char addr_tmp[100];
-                            snprintf(addr_tmp,sizeof(addr_tmp),
-                                ".debug_line: Address"
-                                " 0x%" DW_PR_XZEROS DW_PR_DUx
-                                " may be incorrect" 
-                                " as DW_LNE_end_sequence address",pc);
-                            DWARF_CHECK_ERROR(lines_result,
-                                addr_tmp);
+                        if (check_lines && checking_this_compiler()) {
+                            DWARF_CHECK_COUNT(lines_result,1);
+                            if ((pc != PU_high_address) && 
+                                (PU_base_address != elf_max_address)) {
+                                char addr_tmp[100];
+                                snprintf(addr_tmp,sizeof(addr_tmp),
+                                    ".debug_line: Address"
+                                    " 0x%" DW_PR_XZEROS DW_PR_DUx
+                                    " may be incorrect" 
+                                    " as DW_LNE_end_sequence address",pc);
+                                DWARF_CHECK_ERROR(lines_result,
+                                    addr_tmp);
+                            }
                         }
                     }
                 }

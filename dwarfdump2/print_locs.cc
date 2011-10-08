@@ -77,8 +77,14 @@ print_locs(Dwarf_Debug dbg)
     Dwarf_Unsigned next_entry = 0;
     int index = 0;
     int lres = 0;
-    /* This is sometimes wrong, we need a frame-specific size. */
     Dwarf_Half address_size = 0;
+
+    error_message_data.current_section_id = DEBUG_LOC;
+    if(!do_print_dwarf) {
+        return;
+    }
+
+    /* This is sometimes wrong, we need a frame-specific size. */
     int fres = dwarf_get_address_size(dbg, &address_size, &err);
     if (fres != DW_DLV_OK) { 
         print_error(dbg, "dwarf_get_address_size", fres, err);
@@ -86,7 +92,8 @@ print_locs(Dwarf_Debug dbg)
 
 
     cout << endl;
-    cout << ".debug_loc format <i o b e l>: "
+    cout << ".debug_loc" << endl; 
+    cout <<"Format <i o b e l>: "
         "index section-offset begin-addr end-addr length-of-block-entry";
     cout << endl;
     while ((lres = dwarf_get_loclist_entry(dbg, offset,
@@ -97,22 +104,24 @@ print_locs(Dwarf_Debug dbg)
 
         string exprstring;
         get_string_from_locs(dbg,data,entry_len,address_size,exprstring);
-        cout <<" <iobel> [" << IToDec(index,4);
-        cout <<"] " << IToHex0N(offset,10);
-        if( verbose) {
+        if( display_offsets) {
+            ++index;
+            cout <<" <iobel> [" << IToDec(index,8);
+            cout <<"] " << IToHex0N(offset,10);
             // We print this offset so it matches what the debug_info
             // loclist offset shows (so we can relate them).
             // This offset is the offset of the expression byte blob.
-            cout << string(" ") <<
-                BracketSurround(string("expr-off ") +
-                    IToHex(next_entry - entry_len));
+            if(verbose) {
+                cout << string(" ") <<
+                    BracketSurround(string("expr-off ") +
+                        IToHex0N(next_entry - entry_len,10));
+            }
         }
         cout <<" "<< IToHex0N(lopc_offset,10);
         cout <<" "<< IToHex0N(hipc_offset,10);
         cout <<" "<< IToDec(entry_len,8);
         cout <<" "<< exprstring;
         cout << endl;
-        index++;
         offset = next_entry;
     }
     if (lres == DW_DLV_ERROR) {

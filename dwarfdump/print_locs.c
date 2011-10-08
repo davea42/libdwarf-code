@@ -104,8 +104,9 @@ print_locs(Dwarf_Debug dbg)
             &exprstring);
         /* Display offsets */
         if (display_offsets) {
-            printf("\t <iobel> [%8d] 0x%" DW_PR_XZEROS DW_PR_DUx,
-                ++index, offset);
+            ++index;
+            printf(" <iobel> [%8d] 0x%" DW_PR_XZEROS DW_PR_DUx,
+                index, offset);
             if(verbose) {
                 printf(" <expr-off 0x%"  DW_PR_XZEROS  DW_PR_DUx ">",
                     next_entry - entry_len);

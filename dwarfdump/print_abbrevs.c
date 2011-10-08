@@ -83,7 +83,9 @@ print_abbrevs(Dwarf_Debug dbg)
 
     current_section_id = DEBUG_ABBREV;
 
-    printf("\n.debug_abbrev\n");
+    if (do_print_dwarf) {
+        printf("\n.debug_abbrev\n");
+    }
     while ((abres = dwarf_get_abbrev(dbg, offset, &ab,
         &length, &abbrev_entry_count,
         &err)) == DW_DLV_OK) {

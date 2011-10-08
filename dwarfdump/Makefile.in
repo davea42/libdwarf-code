@@ -2,7 +2,8 @@
 #  Makefile for dwarfdump
 #  This is made very simple so it should work with
 #  any 'make'.
-
+#  The Makefile does assume that libdwarf is at ../libdwarf
+#  from the dwarfdump2 source directory.
 #
 
 srcdir =	@srcdir@

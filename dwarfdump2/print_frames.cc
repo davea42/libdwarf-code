@@ -129,9 +129,10 @@ get_abstract_origin_or_spec_funcname(Dwarf_Debug dbg,
 }
 
 
-/*  Returns true  if a proc with this low_pc found.
+/*  Returns true  this is a procedure with a name, and sets
+    the name in proc_name and the low pc in low_pc_out.
     Else returns false.  */
-static bool
+bool
 get_proc_name(Dwarf_Debug dbg, Dwarf_Die die, 
     string & proc_name, Dwarf_Addr & low_pc_out)
 {
@@ -239,7 +240,6 @@ load_nested_proc_names(Dwarf_Debug dbg, Dwarf_Die die,
     Dwarf_Half tag;
     Dwarf_Error err = 0;
     int chres = DW_DLV_OK;
-
     while (chres == DW_DLV_OK) {
         int tres = dwarf_tag(curdie, &tag, &err);
         err = 0;
@@ -304,8 +304,6 @@ load_nested_proc_names(Dwarf_Debug dbg, Dwarf_Die die,
     return;
 }
 
-
-
 /*  For SGI MP Fortran and other languages, functions 
     nest!  As a result, we must dig thru all functions, 
     not just the top level.
@@ -319,12 +317,12 @@ get_fde_proc_name(Dwarf_Debug dbg, Dwarf_Addr low_pc,
     bool & all_cus_seen)
 {
     Dwarf_Unsigned cu_header_length = 0;
-    Dwarf_Unsigned abbrev_offset = 0;
+    Dwarf_Unsigned     abbrev_offset = 0;
     Dwarf_Half version_stamp = 0;
     Dwarf_Half address_size = 0;
     Dwarf_Unsigned next_cu_offset = 0;
-    int cures = DW_DLV_OK;
-    int chres = DW_DLV_OK;
+    int cures = DW_DLV_ERROR;
+    int chres = DW_DLV_ERROR;
     string proc_name;
 
     LowpcToNameMaptype::const_iterator it = pcMap.find(low_pc); 
@@ -335,13 +333,19 @@ get_fde_proc_name(Dwarf_Debug dbg, Dwarf_Addr low_pc,
     if(all_cus_seen) {
         return "";
     }
+
+    // Loop through the CUs 
     for (;;) {
         cures = dwarf_next_cu_header(dbg, &cu_header_length,
             &version_stamp, &abbrev_offset,
             &address_size, &next_cu_offset,
             &err);
 
-        if (cures != DW_DLV_OK) {
+        if (cures == DW_DLV_NO_ENTRY) {
+            all_cus_seen = true;
+            break;
+        } else if (cures == DW_DLV_ERROR) {
+            // Nothing much we can do here.
             all_cus_seen = true;
             break;
         }
@@ -368,6 +372,8 @@ get_fde_proc_name(Dwarf_Debug dbg, Dwarf_Addr low_pc,
             ;  /* do nothing, loop on cu */
         } else { 
             /* DW_DLV_OK */
+            // find All the subprograms for this CU and use
+            // pcMap to associate each name with its low_pc!
             load_nested_proc_names(dbg, child, proc_name,
                 pcMap);
             dwarf_dealloc(dbg, child, DW_DLA_DIE);
@@ -375,6 +381,9 @@ get_fde_proc_name(Dwarf_Debug dbg, Dwarf_Addr low_pc,
         dwarf_dealloc(dbg, current_cu_die_for_print_frames, DW_DLA_DIE);
         LowpcToNameMaptype::const_iterator it = pcMap.find(low_pc); 
         if(it != pcMap.end()) {
+            // If we need more CUs later we will process
+            // them as needed (later), but we have done enough
+            // CUs to satisfy this low_pc.
             string s = it->second;
             return s;
         }
@@ -406,7 +415,6 @@ print_one_fde(Dwarf_Debug dbg, Dwarf_Fde fde,
     Dwarf_Signed cie_index = 0;
     Dwarf_Off fde_offset = 0;
     Dwarf_Signed eh_table_offset = 0;
-    string temps;
     Dwarf_Error err = 0;
     bool printed_intro_addr = false;
 
@@ -433,15 +441,16 @@ print_one_fde(Dwarf_Debug dbg, Dwarf_Fde fde,
     if (fres == DW_DLV_ERROR) {
         print_error(dbg, "dwarf_get_fde_exception_info", fres, err);
     }
+    string temps;
     if(!suppress_nested_name_search) {
         temps = get_fde_proc_name(dbg, low_pc,
             pcMap,all_cus_seen);
         LowpcUsedSettype::const_iterator it = lowpcSet.find(low_pc);
-        if(check_fdes) {
-            fde_duplication.checks++;
+        if(check_frames || check_frames_extended) {
+            DWARF_CHECK_COUNT(fde_duplication,1);
         }
         if (it != lowpcSet.end()) {
-            if(check_fdes) {
+            if(check_frames || check_frames_extended ) {
                 string msg = string("An fde low pc of ") + IToHex(low_pc) +
                     string(" is not the first fde with that pc. ");
                 if(temps.empty()) {
@@ -456,25 +465,29 @@ print_one_fde(Dwarf_Debug dbg, Dwarf_Fde fde,
             lowpcSet.insert(low_pc);
         }
     }
-    cout << BracketSurround(IToDec(cie_index,3));
-    cout << BracketSurround(IToHex(low_pc) + string(":")+
-        IToHex(low_pc + func_length));
-    cout << BracketSurround(temps);
-    cout << BracketSurround(string("fde offset ") +
-        IToHex(fde_offset) + string(" length: ") +
-        IToHex(fde_bytes_length));
+    if(!check_frames_extended) {
+        cout << BracketSurround(IToDec(cie_index,5));
+        cout << BracketSurround(IToHex0N(low_pc,10) + string(":")+
+            IToHex0N(low_pc + func_length,10));
+        cout << BracketSurround(temps);
+        cout << BracketSurround(string("fde offset ") +
+            IToHex0N(fde_offset,10) + string(" length: ") +
+            IToHex0N(fde_bytes_length,10));
+    }
 
     if (!is_eh) {
         /* IRIX uses eh_table_offset. */
-        if (eh_table_offset == DW_DLX_NO_EH_OFFSET) {
-            cout << BracketSurround(
-                string("eh offset none")) << endl;
-        } else if (eh_table_offset == DW_DLX_EH_OFFSET_UNAVAILABLE) {
-            cout << BracketSurround(
-                string("eh offset unknown")) << endl;
-        } else {
-            cout << BracketSurround(
-                string("eh offset ") + IToHex(eh_table_offset))   << endl;
+        if(!check_frames_extended) {
+            if (eh_table_offset == DW_DLX_NO_EH_OFFSET) {
+                cout << BracketSurround(
+                    string("eh offset none")) << endl;
+            } else if (eh_table_offset == DW_DLX_EH_OFFSET_UNAVAILABLE) {
+                cout << BracketSurround(
+                    string("eh offset unknown")) << endl;
+            } else {
+                cout << BracketSurround(
+                    string("eh offset ") + IToHex(eh_table_offset))   << endl;
+            }
         }
     } else {
         int ares = 0;
@@ -485,16 +498,20 @@ print_one_fde(Dwarf_Debug dbg, Dwarf_Fde fde,
         if (ares == DW_DLV_NO_ENTRY) {
             /* do nothing. */
         } else if (ares == DW_DLV_OK) {
-            cout << "<eh aug data len " << IToHex(len);
-            for (unsigned k2 = 0; k2 < len; ++k2) {
-                if (k2 == 0) {
-                    cout <<" bytes 0x";
+            if(!check_frames_extended) {
+                cout << "<eh aug data len " << IToHex(len);
+                for (unsigned k2 = 0; k2 < len; ++k2) {
+                    if (k2 == 0) {
+                        cout <<" bytes 0x";
+                    }
+                    cout << IToHex02(data[k2])<< " ";
                 }
-                cout << IToHex02(data[k2])<< " ";
+                cout << ">";
             }
-            cout << ">";
         }                       /* else DW_DLV_ERROR, do nothing */
-        cout << endl;
+        if(!check_frames_extended) {
+            cout << endl;
+        }
     }
 
     for (Dwarf_Addr j = low_pc; j < low_pc + func_length; j++) {
@@ -525,10 +542,10 @@ print_one_fde(Dwarf_Debug dbg, Dwarf_Fde fde,
                 /* duplicate row */
                 continue;
             }
-            if (!printed_intro_addr) {
-                cout <<"    ";
+            if (!printed_intro_addr & !check_frames_extended) {
+                cout <<"        ";
                 cout << IToHex0N(j,10);
-                cout <<":\t";
+                cout <<": ";
                 printed_intro_addr = true;
             }
             print_one_frame_reg_col(dbg, config_data->cf_cfa_reg,
@@ -559,8 +576,8 @@ print_one_fde(Dwarf_Debug dbg, Dwarf_Fde fde,
                 /* duplicate row */
                 break;
             }
-            if (!printed_intro_addr) {
-                cout << "    " << IToHex0N(j,10) << ":\t";
+            if (!printed_intro_addr && !check_frames_extended) {
+                cout << "        " << IToHex0N(j,10) << ": ";
                 printed_intro_addr = true;
             }
             print_one_frame_reg_col(dbg,k,
@@ -592,13 +609,15 @@ print_one_fde(Dwarf_Debug dbg, Dwarf_Fde fde,
             dwarf_fde_section_offset(dbg, fde, &fde_off, &cie_off,
                 &err);
         if (offres == DW_DLV_OK) {
-            cout << "\tfde sec. offset " << IToDec(fde_off) <<
-                " " <<
-                IToHex(fde_off);
-            cout << " cie offset for fde: " << IToDec(cie_off) <<
-                " " <<
-                IToHex(cie_off);
-            cout << endl;
+            if(!check_frames_extended) {
+                cout << " fde section offset " << IToDec(fde_off) <<
+                    " " <<
+                    IToHex0N(fde_off,10);
+                cout << " cie offset for fde: " << IToDec(cie_off) <<
+                    " " <<
+                    IToHex0N(cie_off,10);
+                cout << endl;
+            }
         }
 
         if (res == DW_DLV_OK) {
@@ -639,11 +658,13 @@ print_one_fde(Dwarf_Debug dbg, Dwarf_Fde fde,
             if (cires == DW_DLV_NO_ENTRY) {
                 ;               /* ? */
             } else {
-                print_frame_inst_bytes(dbg, instrs,
-                    (Dwarf_Signed) ilen,
-                    data_alignment_factor,
-                    (int) code_alignment_factor,
-                    address_size, config_data);
+                if(!check_frames_extended) {
+                    print_frame_inst_bytes(dbg, instrs,
+                        (Dwarf_Signed) ilen,
+                        data_alignment_factor,
+                        (int) code_alignment_factor,
+                        address_size, config_data);
+                }
             }
         } else if (res == DW_DLV_NO_ENTRY) {
             cout <<"Impossible: no instr bytes for fde index " <<
@@ -699,22 +720,24 @@ print_one_cie(Dwarf_Debug dbg, Dwarf_Cie cie,
         return DW_DLV_NO_ENTRY;
     }
     {
-        string augmenter = augmenter_arg;
-        cout << BracketSurround(IToDec(cie_index,3));
-        cout << "\tversion\t\t\t\t" << static_cast<int>(version) << endl;
-        cires = dwarf_cie_section_offset(dbg, cie, &cie_off, &err);
-        if (cires == DW_DLV_OK) {
-            cout << "\tcie sec. offset " << IToDec(cie_off);
-            cout << " " << IToHex(cie_off) << endl;
+        if(!check_frames_extended) {
+            string augmenter = augmenter_arg;
+            cout << BracketSurround(IToDec(cie_index,5));
+            cout << "\tversion\t\t\t\t" << static_cast<int>(version) << endl;
+            cires = dwarf_cie_section_offset(dbg, cie, &cie_off, &err);
+            if (cires == DW_DLV_OK) {
+                cout << "\tcie section offset\t\t" << IToDec(cie_off);
+                cout << " " << IToHex0N(cie_off,10) << endl;
+            }
+    
+            cout << "\taugmentation\t\t\t" << augmenter << endl;
+            cout << "\tcode_alignment_factor\t\t" <<
+                code_alignment_factor << endl;
+            cout << "\tdata_alignment_factor\t\t" <<
+                data_alignment_factor << endl;
+            cout << "\treturn_address_register\t\t" <<
+                return_address_register_rule << endl;
         }
-
-        cout << "\taugmentation\t\t\t" << augmenter << endl;
-        cout << "\tcode_alignment_factor\t\t" <<
-            code_alignment_factor << endl;
-        cout << "\tdata_alignment_factor\t\t" <<
-            data_alignment_factor << endl;
-        cout << "\treturn_address_register\t\t" <<
-            return_address_register_rule << endl;
         {
             int ares = 0;
             Dwarf_Small *data = 0;
@@ -725,27 +748,32 @@ print_one_cie(Dwarf_Debug dbg, Dwarf_Cie cie,
             if (ares == DW_DLV_NO_ENTRY) {
                 /* do nothing. */
             } else if (ares == DW_DLV_OK && len > 0) {
-                cout << "\teh aug data len " <<
-                    IToHex(len);
-                for (unsigned k2 = 0; data && k2 < len; ++k2) {
-                    if (k2 == 0) {
-                        cout <<" bytes 0x";
+                if(!check_frames_extended) {
+                    cout << " eh aug data len " <<
+                        IToHex(len);
+                    for (unsigned k2 = 0; data && k2 < len; ++k2) {
+                        if (k2 == 0) {
+                            cout <<" bytes 0x";
+                        }
+                        cout << IToHex02(data[k2]) << " ";
                     }
-                    cout << IToHex02(data[k2]) << " ";
+                    cout << endl;
                 }
-                cout << endl;
             }  /* else DW_DLV_ERROR or no data, do nothing */
         }
 
-        cout <<
-            "\tbytes of initial instructions:\t" <<
-            IToDec(initial_instructions_length) << endl;
-        cout <<"\tcie length :\t\t\t" <<IToDec(cie_length) << endl;
-        print_frame_inst_bytes(dbg, initial_instructions, 
-            (Dwarf_Signed) initial_instructions_length,
-            data_alignment_factor,
-            (int) code_alignment_factor,
-            address_size, config_data);
+        if(!check_frames_extended) {
+            cout <<
+                "\tbytes of initial instructions\t" <<
+                IToDec(initial_instructions_length) << endl;
+            cout <<"\tcie length\t\t\t" <<IToDec(cie_length) << endl;
+            cout << "\tinitial instructions" << endl;
+            print_frame_inst_bytes(dbg, initial_instructions, 
+                (Dwarf_Signed) initial_instructions_length,
+                data_alignment_factor,
+                (int) code_alignment_factor,
+                address_size, config_data);
+        }
     }
     return DW_DLV_OK;
 }
@@ -1367,6 +1395,9 @@ print_one_frame_reg_col(Dwarf_Debug dbg,
 {
     string type_title = "";
     int print_type_title = 1;
+     if (check_frames_extended) {
+        return;
+    }
 
     if (config_data->cf_interface_number == 2)
         print_type_title = 0;
@@ -1453,6 +1484,10 @@ print_frames(Dwarf_Debug dbg, int print_debug_frame, int print_eh_frame,
 {
     Dwarf_Half address_size = 0;
     LowpcToNameMaptype map_lowpc_to_name;
+
+
+    error_message_data.current_section_id = DEBUG_FRAME;
+
     // The address size here will not be right for all frames.
     // Only in DWARF4 is there a real address size known
     // in the frame data itself.  If any DIE
@@ -1521,6 +1556,11 @@ print_frames(Dwarf_Debug dbg, int print_debug_frame, int print_eh_frame,
                 print_any_harmless_errors(dbg);
             }
         }
+        /* Do not print any frame info if in check mode */
+        if (check_frames) {
+            continue;
+        }
+
         if (fres == DW_DLV_ERROR) {
             cout << endl;
             cout << framename;
@@ -1535,12 +1575,14 @@ print_frames(Dwarf_Debug dbg, int print_debug_frame, int print_eh_frame,
             /* no frame information */
         } else {                /* DW_DLV_OK */
 
-            cout << endl;
-            cout << framename;
-            cout << endl;
-            cout << endl;
-            cout << "fde:";
-            cout << endl;
+            if( !check_frames_extended) {
+                cout << endl;
+                cout << framename;
+                cout << endl;
+                cout << endl;
+                cout << "fde:";
+                cout << endl;
+            }
 
             for (i = 0; i < fde_element_count; i++) {
                 print_one_fde(dbg, fde_data[i],
@@ -1556,9 +1598,12 @@ print_frames(Dwarf_Debug dbg, int print_debug_frame, int print_eh_frame,
             }
             /* Print the cie set. */
             if (verbose) {
-                cout << endl;
-                cout << "cie:";
-                cout << endl;
+                 /* Do not print if in check mode */
+                if (!check_frames_extended) {
+                    cout << endl;
+                    cout << "cie:";
+                    cout << endl;
+                }
                 for (i = 0; i < cie_element_count; i++) {
                     print_one_cie(dbg, cie_data[i], i, address_size,
                         config_data);

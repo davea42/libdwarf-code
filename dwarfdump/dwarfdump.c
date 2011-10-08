@@ -57,7 +57,7 @@ $Header: /plroot/cmplrs.src/v7.4.5m/.RCS/PL/dwarfdump/RCS/dwarfdump.c,v 1.48 200
 extern int elf_open(char *name,int mode);
 #endif
 
-#define DWARFDUMP_VERSION " Fri Sep 16 14:17:59 PDT 2011  "
+#define DWARFDUMP_VERSION " Tue Sep 20 16:16:01 PDT 2011  "
 
 extern char *optarg;
 
@@ -69,10 +69,6 @@ static string process_args(int argc, char *argv[]);
 
 char * program_name;
 static int check_error = 0;
-
-/* defined in print_sections.c, die for the current compile unit, 
-   used in get_fde_proc_name() */
-extern Dwarf_Die current_cu_die_for_print_frames;
 
 /*  The type of Bucket. */
 #define KIND_RANGES_INFO       1
@@ -137,7 +133,7 @@ boolean producer_children_flag = FALSE;   /* List of CUs per compiler */
 static unsigned reloc_map = 0;
 
 /*  Start verbose at zero. verbose can
-    incremented with -v but not decremented. */
+    be incremented with -v but not decremented. */
 int verbose = 0; 
 
 boolean dense = FALSE;
@@ -192,7 +188,7 @@ static boolean check_snc_compiler = FALSE; /* Check SNC compiler */
 static boolean check_gcc_compiler = FALSE; 
 static boolean print_summary_all = FALSE; 
 
-#define COMPILER_TABLE_MAX 20
+#define COMPILER_TABLE_MAX 100
 typedef struct anc {
     struct anc *next;
     char *item;
@@ -429,16 +425,14 @@ main(int argc, char *argv[])
 
     /*  If we are checking .debug_line, .debug_ranges, .debug_aranges,
         or .debug_loc build the tables containing 
-        the pairs LowPC and HighPC */
-    if (check_decl_file || check_ranges || check_locations) {
+        the pairs LowPC and HighPC. It is safer  (and not
+        expensive) to build all
+        of these at once so mistakes in options do not lead
+        to coredumps (like -ka -p did once). */
+    if (check_decl_file || check_ranges || check_locations ||
+        do_check_dwarf || check_self_references) {
         pRangesInfo = AllocateBucketGroup(KIND_RANGES_INFO);
-    } 
-
-    if (do_check_dwarf) {
         pLinkonceInfo = AllocateBucketGroup(KIND_SECTIONS_INFO);
-    }
-
-    if (check_self_references) {
         pVisitedInfo = AllocateBucketGroup(KIND_VISITED_INFO);
     }
 
@@ -475,18 +469,17 @@ main(int argc, char *argv[])
     clean_up_die_esb();
     clean_up_syms_malloc_data();
 
-
-    if (check_decl_file || check_ranges || check_locations) {
+    if(pRangesInfo) {
         ReleaseBucketGroup(pRangesInfo);
         pRangesInfo = 0;
     }
 
-    if (do_check_dwarf) {
+    if(pLinkonceInfo) {
         ReleaseBucketGroup(pLinkonceInfo);
         pLinkonceInfo = 0;
     }
 
-    if (check_self_references) {
+    if(pVisitedInfo) {
         ReleaseBucketGroup(pVisitedInfo);
         pVisitedInfo = 0;
     }
@@ -517,6 +510,9 @@ print_any_harmless_errors(Dwarf_Debug dbg)
         &totalcount);
     if(res == DW_DLV_NO_ENTRY) {
         return;
+    }
+    if(totalcount > 0) {
+        printf("\n*** HARMLESS ERROR COUNT: %u ***\n",totalcount);
     }
     for(i = 0 ; buf[i]; ++i) {
         ++printcount;
@@ -605,7 +601,6 @@ print_object_header(Elf *elf,Dwarf_Debug dbg)
 #endif /* WIN32 */
 }
 
-
 /* Print checks and errors for a specific compiler */
 static void
 print_specific_checks_results(Compiler *pCompiler)
@@ -687,13 +682,16 @@ qsort_compare_compiler(const void *elem1,const void *elem2)
   Compiler cmp2 = *(Compiler *)elem2;
   int cnt1 = cmp1.results[total_check_result].errors;
   int cnt2 = cmp2.results[total_check_result].errors;
+  int sc = 0;
 
   if (cnt1 < cnt2) {
     return 1;
   } else if (cnt1 > cnt2) {
     return -1;
   }
-  return 0;
+  /* When error counts match, sort on name. */
+  sc = strcmp(cmp2.name,cmp1.name);
+  return sc;
 }
 
 /* Print a summary of checks and errors */
@@ -708,8 +706,8 @@ print_checks_results()
 
     /* Sort based on errors detected; the first entry is reserved */
     pCompilers = &compilers_detected[1];
-    qsort((void *)pCompilers,
-    compilers_detected_count,sizeof(Compiler),qsort_compare_compiler);
+    qsort((void *)pCompilers, compilers_detected_count,
+        sizeof(Compiler),qsort_compare_compiler);
 
     /* Print list of CUs for each compiler detected */
     if (producer_children_flag) {
@@ -722,7 +720,7 @@ print_checks_results()
         fprintf(stderr,"\n*** CU NAMES PER COMPILER ***\n");
         for (index = 1; index <= compilers_detected_count; ++index) {
             pCompiler = &compilers_detected[index];
-            fprintf(stderr,"\n%02d: %s",index,pCompiler->name);
+            fprintf(stderr,"\n%02d: %s\n",index,pCompiler->name);
             count = 0;
             for (nc = pCompiler->cu_list; nc; nc = nc_next) {
                 fprintf(stderr,"\n    %02d: '%s'",++count,nc->item);
@@ -800,7 +798,7 @@ print_checks_results()
                 for (index = 1; index <= compilers_detected_count; ++index) {
                     pCompiler = &compilers_detected[index];
                     if (pCompiler->verified) {
-                        fprintf(stderr,"\n%02d: %s",
+                        fprintf(stderr,"%02d: %s\n",
                             ++count,pCompiler->name);
                         print_specific_checks_results(pCompiler);
                     }
@@ -886,13 +884,11 @@ process_one_file(Elf * elf, string file_name, int archive,
         build_linkonce_info(dbg);
     }
 
-    /* Just for the moment */
-    check_harmless = FALSE;
-
     if (header_flag) {
         print_object_header(elf,dbg);
     }
-    if (info_flag || line_flag || cu_name_flag || search_is_on || producer_children_flag) {
+    if (info_flag || line_flag || cu_name_flag || search_is_on || 
+        producer_children_flag) {
         print_infos(dbg);
     }
     if (pubnames_flag) {
@@ -937,8 +933,9 @@ process_one_file(Elf * elf, string file_name, int archive,
     if (weakname_flag) {
         print_weaknames(dbg);
     }
-    if (reloc_flag)
+    if (reloc_flag) {
         print_relocinfo(dbg, reloc_map);
+    }
     /* The right time to do this is unclear. But we need to do it. */
     print_any_harmless_errors(dbg);
 
@@ -966,7 +963,6 @@ do_all()
     info_flag = line_flag = frame_flag = TRUE;
     pubnames_flag = macinfo_flag = TRUE;
     aranges_flag = TRUE;
-    abbrev_flag = TRUE;
     /*  Do not do 
         loc_flag = TRUE 
         abbrev_flag = TRUE;
@@ -983,7 +979,102 @@ do_all()
     header_flag = TRUE; /* Dump header info */
 }
 
-static  const char *usage_text[];
+
+static const char *usage_text[] = {
+"options:\t-a\tprint all .debug_* sections",
+"\t\t-b\tprint abbrev section",
+"\t\t-c\tprint loc section",
+"\t\t-c<str>\tcheck only specific compiler objects", 
+"\t\t  \t  <str> is described by 'DW_AT_producer'. Examples:",
+"\t\t  \t    -cg       check only GCC compiler objects",
+"\t\t  \t    -cs       check only SNC compiler objects",
+"\t\t  \t    -c'350.1' check only compiler objects with 350.1 in the CU name",
+"\t\t-C\tactivate printing (with -i) of warnings about",
+"\t\t\tcertain common extensions of DWARF.",
+"\t\t-d\tdense: one line per entry (info section only)",
+"\t\t-D\tdo not show offsets",  /* Do not show any offsets */
+"\t\t-e\tellipsis: short names for tags, attrs etc.",
+"\t\t-E\tprint object Header information",
+"\t\t-f\tprint dwarf frame section",
+"\t\t-F\tprint gnu .eh_frame section",
+"\t\t-g\t(use incomplete loclist support)",
+"\t\t-G\tshow global die offsets",
+"\t\t-h\tprint IRIX exception tables (unsupported)",
+"\t\t-H <num>\tlimit output to the first <num> major units",
+"\t\t\t  example: to stop after <num> compilation units",
+"\t\t-i\tprint info section",
+"\t\t-k[abcdeEfFgilmMnrRsStx[e]y] check dwarf information",
+"\t\t   a\tdo all checks",
+"\t\t   b\tcheck abbreviations",     /* Check abbreviations */
+"\t\t   c\texamine DWARF constants", /* Check for valid DWARF constants */
+"\t\t   d\tshow check results",      /* Show check results */
+"\t\t   e\texamine attributes of pubnames",
+"\t\t   E\tignore DWARF extensions",  /*  Ignore DWARF extensions */
+"\t\t   f\texamine frame information (use with -f or -F)",
+"\t\t   F\texamine integrity of files-lines attributes", /* Files-Lines integrity */
+"\t\t   g\tcheck debug info gaps", /* Check for debug info gaps */
+"\t\t   i\tdisplay summary for all compilers", /* Summary all compilers */
+"\t\t   l\tcheck location list (.debug_loc)",  /* Location list integrity */
+"\t\t   m\tcheck ranges list (.debug_ranges)", /* Ranges list integrity */
+"\t\t   M\tcheck ranges list (.debug_aranges)",/* Aranges list integrity */
+"\t\t   n\texamine names in attributes",       /* Check for valid names */
+"\t\t   r\texamine tag-attr relation",
+"\t\t   R\tcheck forward references to DIEs (declarations)", /* Check DW_AT_specification references */
+"\t\t   s\tperform checks in silent mode",
+"\t\t   S\tcheck self references to DIEs",
+"\t\t   t\texamine tag-tag relations",
+"\t\t   x\tbasic frames check (.eh_frame, .debug_frame)",
+"\t\t   xe\textensive frames check (.eh_frame, .debug_frame)", 
+"\t\t   y\texamine type info",
+"\t\t\tUnless -C option given certain common tag-attr and tag-tag",
+"\t\t\textensions are assumed to be ok (not reported).",
+"\t\t-l\tprint line section",
+"\t\t-m\tprint macinfo section",
+"\t\t-M\tprint the form name for each attribute",
+"\t\t-n\tsuppress frame information function name lookup",
+"\t\t  \t(when printing frame information from multi-gigabyte",
+"\t\t  \tobject files this option may save significant time).",
+"\t\t-N\tprint ranges section",
+"\t\t-o[liaprfoR]\tprint relocation info",
+"\t\t  \tl=line,i=info,a=abbrev,p=pubnames,r=aranges,f=frames,o=loc,R=Ranges",
+"\t\t-p\tprint pubnames section",
+"\t\t-P\tprint list of compile units per producer", /* List of CUs per compiler */
+"\t\t-Q\tsuppress printing section data",  
+"\t\t-r\tprint aranges section",
+"\t\t-R\tPrint frame register names as r33 etc",
+"\t\t  \t    and allow up to 1200 registers.",
+"\t\t  \t    Print using a 'generic' register set.",
+"\t\t-s\tprint string section",
+"\t\t-S <option>=<text>\tsearch for <text> in attributes",
+"\t\t  \twith <option>:",
+"\t\t  \t-S any=<text>\tany <text>",
+"\t\t  \t-S match=<text>\tmatching <text>",
+#ifdef HAVE_REGEX
+"\t\t  \t-S regex=<text>\tuse regular expression matching", 
+#endif
+"\t\t  \t (only one -S option allowed, any= and regex= ",
+"\t\t  \t  only usable if the functions required are ",
+"\t\t  \t  found at configure time)",
+"\t\t-t[afv] static: ",
+"\t\t   a\tprint both sections",
+"\t\t   f\tprint static func section",
+"\t\t   v\tprint static var section",
+"\t\t-u<file> print sections only for specified file",
+"\t\t-v\tverbose: show more information",
+"\t\t-vv verbose: show even more information",
+"\t\t-V print version information",
+"\t\t-x name=<path>\tname dwarfdump.conf",
+"\t\t-x abi=<abi>\tname abi in dwarfdump.conf",
+"\t\t-w\tprint weakname section",
+"\t\t-W\tprint parent and children tree (wide format) with the -S option",
+"\t\t-Wp\tprint parent tree (wide format) with the -S option",
+"\t\t-Wc\tprint children tree (wide format) with the -S option",
+"\t\t-y\tprint type section",
+"",
+
+0
+};
+
 
 /* Remove matching leading/trailing quotes.
    Does not alter the passed in string.
@@ -1176,6 +1267,10 @@ process_args(int argc, char *argv[])
                             pCompiler = &compilers_targeted[compilers_targeted_count];
                             reset_compiler_entry(pCompiler);
                             pCompiler->name = cmp;
+                        } else {
+                            fprintf(stderr, "Compiler table max %d exceeded, "
+                                "limiting the tracked compilers to %d\n",
+                                COMPILER_TABLE_MAX,COMPILER_TABLE_MAX);
                         }
                     }
                 }
@@ -1257,7 +1352,7 @@ process_args(int argc, char *argv[])
         case 'd':
             /*  This is sort of useless unless printing,
                 but harmless, so we do not insist we
-                are printing with supporess_check_dwarf(). */
+                are printing with suppress_check_dwarf(). */
             dense = TRUE;
             break;
         case 'D':
@@ -1305,7 +1400,7 @@ process_args(int argc, char *argv[])
                 pubnames_flag = info_flag = TRUE;
                 check_decl_file = TRUE;
                 check_frames = TRUE;  
-                check_frames_extended = FALSE;
+                /*check_frames_extended = FALSE; */
                 check_locations = TRUE; 
                 frame_flag = eh_frame_flag = TRUE;
                 check_ranges = TRUE;
@@ -1347,6 +1442,7 @@ process_args(int argc, char *argv[])
             /* files-lines */
             case 'F':
                 check_decl_file = TRUE;
+                check_lines = TRUE;
                 info_flag = TRUE;
                 break;
             /* Check debug info gaps */
@@ -1529,101 +1625,12 @@ process_args(int argc, char *argv[])
     }
 
     if (do_check_dwarf) {
+        /* Reduce verbosity when checking (checking means checking-only). */
         verbose = 1;
     }
     return argv[optind]; 
 }
 
-static const char *usage_text[] = {
-"options:\t-a\tprint all .debug_* sections",
-"\t\t-b\tprint abbrev section",
-"\t\t-c\tprint loc section",
-"\t\t-c<str>\tcheck only specific compiler objects", 
-"\t\t  \t  <str> is described by 'DW_AT_producer'. Examples:",
-"\t\t  \t    -cg       check only GCC compiler objects",
-"\t\t  \t    -cs       check only SNC compiler objects",
-"\t\t  \t    -c'350.1' check only compiler objects with 350.1 in the CU name",
-"\t\t-C\tactivate printing (with -i) of warnings about",
-"\t\t\tcertain common extensions of DWARF.",
-"\t\t-d\tdense: one line per entry (info section only)",
-"\t\t-D\tdo not show offsets",  /* Do not show any offsets */
-"\t\t-e\tellipsis: short names for tags, attrs etc.",
-"\t\t-E\tprint object Header information",
-"\t\t-f\tprint dwarf frame section",
-"\t\t-F\tprint gnu .eh_frame section",
-"\t\t-g\t(use incomplete loclist support)",
-"\t\t-G\tshow global die offsets",
-"\t\t-h\tprint IRIX exception tables (unsupported)",
-"\t\t-H <num>\tlimit output to the first <num> major units",
-"\t\t\t  example: to stop after <num> compilation units",
-"\t\t-i\tprint info section",
-"\t\t-k[abcdeEfFgilmMnrRsStx[e]y] check dwarf information",
-"\t\t   a\tdo all checks",
-"\t\t   b\tcheck abbreviations",     /* Check abbreviations */
-"\t\t   c\texamine DWARF constants", /* Check for valid DWARF constants */
-"\t\t   d\tshow check results",      /* Show check results */
-"\t\t   e\texamine attributes of pubnames",
-"\t\t   E\tignore DWARF extensions",  /*  Ignore DWARF extensions */
-"\t\t   f\texamine frame information (use with -f or -F)",
-"\t\t   F\texamine integrity of files-lines attributes", /* Files-Lines integrity */
-"\t\t   g\tcheck debug info gaps", /* Check for debug info gaps */
-"\t\t   i\tdisplay summary for all compilers", /* Summary all compilers */
-"\t\t   l\tcheck location list (.debug_loc)",  /* Location list integrity */
-"\t\t   m\tcheck ranges list (.debug_ranges)", /* Ranges list integrity */
-"\t\t   M\tcheck ranges list (.debug_aranges)",/* Aranges list integrity */
-"\t\t   n\texamine names in attributes",       /* Check for valid names */
-"\t\t   r\texamine tag-attr relation",
-"\t\t   R\tcheck forward references to DIEs (declarations)", /* Check DW_AT_specification references */
-"\t\t   s\tperform checks in silent mode",
-"\t\t   S\tcheck self references to DIEs",
-"\t\t   t\texamine tag-tag relations",
-"\t\t   x\tbasic frames check (.eh_frame, .debug_frame)",
-"\t\t   xe\textensive frames check (.eh_frame, .debug_frame)", 
-"\t\t   y\texamine type info",
-"\t\t\tUnless -C option given certain common tag-attr and tag-tag",
-"\t\t\textensions are assumed to be ok (not reported).",
-"\t\t-l\tprint line section",
-"\t\t-m\tprint macinfo section",
-"\t\t-M\tprint the form name for each attribute",
-"\t\t-n\tsuppress frame information function name lookup",
-"\t\t-N\tprint ranges section",
-"\t\t-o[liaprfoR]\tprint relocation info",
-"\t\t  \tl=line,i=info,a=abbrev,p=pubnames,r=aranges,f=frames,o=loc,R=Ranges",
-"\t\t-p\tprint pubnames section",
-"\t\t-P\tprint list of compile units per producer", /* List of CUs per compiler */
-"\t\t-Q\tsuppress printing section data",  
-"\t\t-r\tprint aranges section",
-"\t\t-R\tPrint frame register names as r33 etc",
-"\t\t  \t    and allow up to 1200 registers.",
-"\t\t  \t    Print using a 'generic' register set.",
-"\t\t-s\tprint string section",
-"\t\t-S <option>=<text>\tsearch for <text> in attributes",
-"\t\t  \twith <option>:",
-"\t\t  \t-S any=<text>\tany <text>",
-"\t\t  \t-S match=<text>\tmatching <text>",
-#ifdef HAVE_REGEX
-"\t\t  \t-S regex=<text>\tuse regular expression matching", 
-#endif
-"\t\t  \t (only one -S option allowed, any= and regex= ",
-"\t\t  \t  only usable if the functions required are ",
-"\t\t  \t  found at configure time)",
-"\t\t-t[afv] static: ",
-"\t\t   a\tprint both sections",
-"\t\t   f\tprint static func section",
-"\t\t   v\tprint static var section",
-"\t\t-u<file> print sections only for specified file",
-"\t\t-v\tverbose: show more information",
-"\t\t-vv verbose: show even more information",
-"\t\t-V print version information",
-"\t\t-x name=<path>\tname dwarfdump.conf",
-"\t\t-x abi=<abi>\tname abi in dwarfdump.conf",
-"\t\t-w\tprint weakname section",
-"\t\t-W\tprint parent and children tree (wide format) with the -S option",
-"\t\t-Wp\tprint parent tree (wide format) with the -S option",
-"\t\t-Wc\tprint children tree (wide format) with the -S option",
-"\t\t-y\tprint type section",
-""
-};
 
 void
 print_error(Dwarf_Debug dbg, string msg, int dwarf_code,
@@ -1821,7 +1828,7 @@ int get_cu_name(Dwarf_Debug dbg, Dwarf_Die cu_die,
             esb_empty_string(&esb_long_name);
             get_attr_value(dbg, DW_TAG_compile_unit, 
                 cu_die, name_attr, NULL, 0, &esb_long_name,
-                0 /*show_form_used*/);
+                0 /*show_form_used*/,0 /* verbose */);
             *long_name = esb_get_string(&esb_long_name);
             /* Generate the short name (filename) */
             filename = strrchr(*long_name,'/');
@@ -1868,7 +1875,7 @@ int get_producer_name(Dwarf_Debug dbg, Dwarf_Die cu_die,
             esb_empty_string(&esb_producer);
             get_attr_value(dbg, DW_TAG_compile_unit, 
                 cu_die, producer_attr, NULL, 0, &esb_producer,
-                0 /*show_form_used*/);
+                0 /*show_form_used*/,0 /* verbose */);
             *producer_name = esb_get_string(&esb_producer);
         }
     }

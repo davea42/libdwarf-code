@@ -68,11 +68,32 @@ skipunder(const char *v)
 static string
 ellipname(int res, unsigned int val_in, const char *v,const char *ty,bool printonerr)
 {
+#ifndef TRIVIAL_NAMING
+    if (check_dwarf_constants && checking_this_compiler()) {
+        DWARF_CHECK_COUNT(dwarf_constants_result,1);
+    }
+#endif
     if(res != DW_DLV_OK) {
+        if(printonerr) {
+#ifndef TRIVIAL_NAMING
+        if(printonerr && check_dwarf_constants && checking_this_compiler()) {
+            if (check_verbose_mode) {
+                std::cerr << ty << " of " << val_in << " (" <<
+                    IToHex(val_in) << 
+                    ") is unknown to dwarfdump. " <<
+                    "Continuing. " << endl;
+            }
+            DWARF_ERROR_COUNT(dwarf_constants_result,1);
+            DWARF_CHECK_ERROR_PRINT_CU();
+        }
+#else
+        /* This is for the tree-generation, not dwarfdump itself. */
         if(printonerr) {
             std::cerr << ty << " of " << val_in << 
                 " (" << IToHex(val_in,0) << 
                 ") is unknown to dwarfdump. Continuing. " << std::endl;
+        }
+#endif
         }
         return "<Unknown " + string(ty) + " value " +
             IToHex(val_in,0) + ">";

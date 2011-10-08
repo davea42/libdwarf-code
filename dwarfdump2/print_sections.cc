@@ -88,7 +88,7 @@ deal_with_name_offset_err(Dwarf_Debug dbg,
             cout << name;
             cout << die_off;
             cout << " (";
-            cout << IToHex(die_off);
+            cout << IToHex0N(die_off,10);
             cout << ")" << endl;
         }
         print_error(dbg, err_loc, nres, err);

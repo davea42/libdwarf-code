@@ -65,6 +65,10 @@ print_weaknames(Dwarf_Debug dbg)
     Dwarf_Off cu_off = 0;
     int wkres = 0;
 
+    error_message_data.current_section_id = DEBUG_WEAKNAMES;
+    if (!do_print_dwarf) {
+        return;
+    }
     cout << endl;
     cout << ".debug_weaknames" << endl;
     wkres = dwarf_get_weaks(dbg, &weaknamebuf, &count, &err);

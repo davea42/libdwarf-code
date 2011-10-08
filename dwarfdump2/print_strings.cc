@@ -62,14 +62,15 @@ print_strings(Dwarf_Debug dbg)
     char * name = 0;
     Dwarf_Off offset = 0;
     int sres = 0;
-
+    
+    error_message_data.current_section_id = DEBUG_STR;
     cout << endl;
     cout << ".debug_string" << endl;
     while ((sres = dwarf_get_str(dbg, offset, &name, &length, &err))
         == DW_DLV_OK) {
-        cout << "name at offset " << offset <<
-            ", length " << length <<
-            " is " << name << endl;
+        cout << "name at offset " << IToHex0N(offset,10) <<
+            ", length " << IToDec(length,4) <<
+            " is " << "'" << name <<"'" <<  endl;
         offset += length + 1;
     }
     /*  An inability to find the section is not necessarily

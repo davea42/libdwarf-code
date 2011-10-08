@@ -1,4 +1,13 @@
-Marcy 29, 2011
+October 06, 2011
+    The -x abi=mips  frame register abi in dwarfdump.conf is now
+    usable with modern MIPS objects as well as old IRIX objects.
+    There are other mips-* frame register setups described
+    in dwarfdump.conf for anyone testing that nothing new has
+    been added that conflicts with old IRIX/MIPS frame generation.
+October 04, 2011
+    Revised in major ways to do the additional checks and produce the same
+    output as dwarfdump.  But making use of C++ features.
+March 29, 2011
     All indentations changed to a consistent 4 characters per level.
     This was a massive but simple change.
 January 26, 2010

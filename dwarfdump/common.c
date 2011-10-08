@@ -37,7 +37,7 @@
 
 #include "common.h"
 #include <stdio.h>
-#define DWARFDUMP_VERSION " Fri Sep 16 14:17:59 PDT 2011  "
+#define DWARFDUMP_VERSION " Tue Sep 20 16:16:01 PDT 2011  "
 
 /* The Linux/Unix version does not want a version string to print
    unless -V is on the command line. */
@@ -51,7 +51,8 @@ print_version_details(const char * name,int alwaysprint)
     char *acType = "Release";
 #   endif /* _DEBUG */
     static char acVersion[32];
-    sprintf(acVersion,"[%s %s %s]",__DATE__,__TIME__,acType);
+    snprintf(acVersion,sizeof(acVersion),
+        "[%s %s %s]",__DATE__,__TIME__,acType);
     printf("%s %s\n",name,acVersion);
 #else  /* !WIN32 */
     if(alwaysprint) {

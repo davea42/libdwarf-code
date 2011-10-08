@@ -146,6 +146,10 @@ print_macinfo(Dwarf_Debug dbg)
     Dwarf_Macro_Details *maclist = NULL;
     int lres = 0;
 
+    error_message_data.current_section_id = DEBUG_MACINFO;
+    if(!do_print_dwarf) {
+        return;
+    }
     cout << endl;
     cout << ".debug_macinfo" << endl;
 

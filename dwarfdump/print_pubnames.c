@@ -95,6 +95,7 @@ print_pubname_style_entry(Dwarf_Debug dbg,
     int dres = 0;
     int ddres = 0;
     int cudres = 0;
+    char tmp_buf[100];
 
     /* get die at die_off */
     dres = dwarf_offdie(dbg, die_off, &die, &err);
@@ -104,6 +105,9 @@ print_pubname_style_entry(Dwarf_Debug dbg,
         esb_append(&details,line_title);
         esb_append(&details," dwarf_offdie : "
             "die offset does not reference valid DIE.  ");
+        snprintf(tmp_buf,sizeof(tmp_buf),"0x%"  DW_PR_DUx, die_off);
+        esb_append(&details,tmp_buf);
+        esb_append(&details,".");
         print_error(dbg, esb_get_string(&details), dres, err);
         esb_destructor(&details);
     }
@@ -128,10 +132,11 @@ print_pubname_style_entry(Dwarf_Debug dbg,
             struct esb_s details;
             esb_constructor(&details);
             esb_append(&details,line_title);
-            esb_append_printf(&details," dwarf_offdie: "
-                "cu die offset 0x%" DW_PR_DUx 
-                " does not reference valid CU DIE.  ",
-                (Dwarf_Unsigned)cu_off);
+            esb_append(&details," dwarf_offdie: "
+                "cu die offset  does not reference valid CU DIE.  ");
+            snprintf(tmp_buf,sizeof(tmp_buf),"0x%"  DW_PR_DUx, cu_off);
+            esb_append(&details,tmp_buf);
+            esb_append(&details,".");
             print_error(dbg, esb_get_string(&details), dres, err);
             esb_destructor(&details);
         } else {

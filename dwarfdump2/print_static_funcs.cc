@@ -67,7 +67,12 @@ print_static_funcs(Dwarf_Debug dbg)
     Dwarf_Off cu_off = 0;
     int gfres = 0;
 
-    printf("\n.debug_static_func\n");
+    error_message_data.current_section_id = DEBUG_STATIC_FUNC;
+    if (!do_print_dwarf) {
+        return;
+    }
+    cout << endl;
+    cout << ".debug_static_func" << endl;
     gfres = dwarf_get_funcs(dbg, &funcbuf, &count, &err);
     if (gfres == DW_DLV_ERROR) {
         print_error(dbg, "dwarf_get_funcs", gfres, err);
@@ -114,12 +119,12 @@ print_static_funcs(Dwarf_Debug dbg)
                     print_error(dbg, "hassattr on DW_AT_external", ares,
                         err);
                 }
-                pubname_attr_result.checks++;
+                DWARF_CHECK_COUNT(pubname_attr_result,1);
                 if (ares == DW_DLV_OK && has_attr) {
                     /* Should the value of flag be examined? */
                 } else {
                     DWARF_CHECK_ERROR2(pubname_attr_result,name,
-                        "pubname does not have DW_AT_external")
+                        "pubname (in static funcs section) does not have DW_AT_external");
                 }
                 dwarf_dealloc(dbg, die, DW_DLA_DIE);
             }

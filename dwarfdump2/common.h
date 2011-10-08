@@ -39,7 +39,8 @@
 
 
 void print_args(int argc, char *argv[]);
-void print_usage_message(const char *options[]);
-void print_version(const std::string& name);
+void print_usage_message(const std::string &program_name,
+    const char **options);
+void print_version_details(const std::string& name,bool alwaysprint);
 
 #endif /* common_INCLUDED */

@@ -258,7 +258,12 @@ get_proc_name(Dwarf_Debug dbg, Dwarf_Die die, Dwarf_Addr low_pc,
     dwarf_dealloc(dbg, atlist, DW_DLA_LIST);
     if(funcnamefound && funcpcfound && pcMap ) {
         /*  Insert every name to map, not just the one
-            we are looking for. */
+            we are looking for. 
+            This version does extra work in that
+            early symbols in a CU will be inserted
+            multiple times (the extra times have no
+            effect), the dwarfdump2
+            version of this does less work.  */
         addr_map_insert(low_pc_die,proc_name_buf,pcMap);
     }
     if (funcnamefound == 0 || funcpcfound == 0 || low_pc != low_pc_die) {
@@ -316,7 +321,8 @@ load_nested_proc_name(Dwarf_Debug dbg, Dwarf_Die die, Dwarf_Addr low_pc,
                     return 1;
                 }
                 /* Check children of subprograms recursively should
-                    this really be check children of anything? */
+                    this really be check children of anything,
+                    or just children of subprograms? */
 
                 lchres = dwarf_child(curdie, &newchild, &err);
                 if (lchres == DW_DLV_OK) {

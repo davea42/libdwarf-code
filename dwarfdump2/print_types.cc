@@ -71,6 +71,9 @@ print_types(Dwarf_Debug dbg, enum type_type_e type_type)
     void (*dealloctype) (Dwarf_Debug, Dwarf_Type *, Dwarf_Signed) =
         0;
 
+    if(!do_print_dwarf) {
+        return;
+    }
 
     if (type_type == DWARF_PUBTYPES) {
         section_name = ".debug_pubtypes";
@@ -112,10 +115,11 @@ print_types(Dwarf_Debug dbg, enum type_type_e type_type)
         cout << section_name << endl;
 
         for (Dwarf_Signed i = 0; i < count; i++) {
-            Dwarf_Off global_cu_off = 0;
             char *name = NULL;
             Dwarf_Off die_off = 0;
             Dwarf_Off cu_off = 0;
+            Dwarf_Off global_cu_off = 0;
+
             int tnres =
                 get_offset(typebuf[i], &name, &die_off, &cu_off, &err);
             deal_with_name_offset_err(dbg, offset_err_name, name,
