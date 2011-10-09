@@ -320,8 +320,8 @@ dwarf_next_cu_header_b(Dwarf_Debug dbg,
                         Relocation errors need not be fatal.  */
                     char msg_buf[200];
                     snprintf(msg_buf,sizeof(msg_buf),
-                       "Relocations did not complete successfully, but we are "
-                       " ignoring error: %s",dwarf_errmsg(err2));
+                        "Relocations did not complete successfully, but we are "
+                        " ignoring error: %s",dwarf_errmsg(err2));
                     dwarf_insert_harmless_error(dbg,msg_buf);
                     res = DW_DLV_OK;
                 } else {

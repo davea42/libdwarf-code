@@ -458,8 +458,8 @@ get_relocation_entries(Dwarf_Bool is_64bit,
         relocation_size = sizeof(Elf32_Rela);
     }
     if( relocation_size != relocation_section_entrysize) {
-        /* Means our struct definition does not match the
-           real object. */
+        /*  Means our struct definition does not match the
+            real object. */
         *error = DW_DLE_RELOC_SECTION_LENGTH_ODD;
         return DW_DLV_ERROR;
     }
@@ -722,8 +722,8 @@ apply_rela_entries(Dwarf_Debug dbg,
             return DW_DLV_ERROR;
         }
         if(symtab_section_size%symtab_section_entrysize) {
-               *error = DW_DLE_SYMTAB_SECTION_LENGTH_ODD;
-               return DW_DLV_ERROR;
+            *error = DW_DLE_SYMTAB_SECTION_LENGTH_ODD;
+            return DW_DLV_ERROR;
         }
         for (i = 0; i < nrelas; i++) {
             int res = update_entry(dbg, is_64bit,
@@ -735,9 +735,9 @@ apply_rela_entries(Dwarf_Debug dbg,
                 symtab_section_size,
                 symtab_section_entrysize,
                 error);
-           if (res != DW_DLV_OK) {
+            if (res != DW_DLV_OK) {
                 return_res = res;
-           }
+            }
         }
     }
     return return_res;

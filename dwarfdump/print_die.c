@@ -2070,17 +2070,17 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
         valname = esb_get_string(&esb_base);
         /* If we are in checking mode, identify the compiler */
         if (do_check_dwarf || search_is_on) {
-           /*  Do not use show-form here! We just want the producer name, not
-               the form name. */
-           int show_form_local = FALSE;
-           int local_verbose = 0;
-           struct esb_s local_e;
-           esb_constructor(&local_e);
-           get_attr_value(dbg, tag, die, attrib, srcfiles, cnt, 
-              &local_e, show_form_local,local_verbose);
-           /* Check if this compiler version is a target */
-           update_compiler_target(esb_get_string(&local_e));
-           esb_destructor(&local_e);
+            /*  Do not use show-form here! We just want the producer name, not
+                the form name. */
+            int show_form_local = FALSE;
+            int local_verbose = 0;
+            struct esb_s local_e;
+            esb_constructor(&local_e);
+            get_attr_value(dbg, tag, die, attrib, srcfiles, cnt, 
+                &local_e, show_form_local,local_verbose);
+            /* Check if this compiler version is a target */
+            update_compiler_target(esb_get_string(&local_e));
+            esb_destructor(&local_e);
         }
         break;
 
@@ -2147,8 +2147,8 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
                         printf("%*s%s -> %s\n",die_indent_level * 2 + 2,
                             " ",atname,valname);
                     }
-                    /* Because esb_base is global, lets not
-                       let the traversal trash what we have here. */
+                    /*  Because esb_base is global, lets not
+                        let the traversal trash what we have here. */
                     esb_constructor(&copy_base); 
                     esb_append(&copy_base,esb_get_string(&esb_base));
                     esb_empty_string(&esb_base);
@@ -3054,7 +3054,7 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
                         if(check_decl_file) {
                             DWARF_CHECK_COUNT(decl_file_result,1);
                             /*  Zero is always a legal index, it means
-                                    no source name provided. */
+                                no source name provided. */
                             if(tempud != 0 && tempud > cnt) {
                                 if(!srcfiles) {
                                     snprintf(small_buf,sizeof(small_buf),

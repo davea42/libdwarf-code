@@ -635,7 +635,7 @@ print_one_fde(Dwarf_Debug dbg, Dwarf_Fde fde,
                 DWARF_CHECK_ERROR(fde_duplication,msg);
             }
         } else {
-                addr_map_insert(low_pc,0,lowpcSet);
+            addr_map_insert(low_pc,0,lowpcSet);
         }
 #endif
     }

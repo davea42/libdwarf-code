@@ -44,16 +44,16 @@ public:
     }
     bool inThisLinkOnceRange(const std::string &sname,Dwarf_Unsigned lopc,
         Dwarf_Unsigned hipc) {
-         if(sname == lo_section_name_ ) {
-             if((lopc >= lo_section_low_pc_ && lopc <=
-                 lo_section_high_pc_) &&
-                 (hipc >= lo_section_low_pc_ && hipc <=
-                 lo_section_high_pc_))  {
-                 return true;
-             }
-         }
-         return false;
-    };
+            if(sname == lo_section_name_ ) {
+                if((lopc >= lo_section_low_pc_ && lopc <=
+                    lo_section_high_pc_) &&
+                    (hipc >= lo_section_low_pc_ && hipc <=
+                    lo_section_high_pc_))  {
+                    return true;
+                }
+            }
+            return false;
+        };
     void printLinkOnceEntry(unsigned index);
 private:
     Dwarf_Unsigned lo_section_index_;
@@ -90,10 +90,10 @@ public:
         range_high_pc_(high_pc){};
     ~AddressRangeEntry () {};
     bool inThisRange(Dwarf_Unsigned pc) {
-         if(pc < range_low_pc_ || pc > range_high_pc_) {
-             return false;
-         }
-         return true;
+        if(pc < range_low_pc_ || pc > range_high_pc_) {
+            return false;
+        }
+        return true;
     };
     void printAddressRangeEntry(unsigned index);
 private:
@@ -138,17 +138,17 @@ public:
         offset_ = new VODtype;
     }
     void AddVisitedOffset(Dwarf_Unsigned off) {
-         offset_->insert(off);
+        offset_->insert(off);
     };
     void DeleteVisitedOffset(Dwarf_Unsigned off) {
-         offset_->erase(off);
+        offset_->erase(off);
     };
     bool IsKnownOffset(Dwarf_Unsigned off) {
-       VODtype::size_type v = offset_->count(off);
-       if( v) {
-           return true;
-       }
-       return false;
+        VODtype::size_type v = offset_->count(off);
+        if( v) {
+            return true;
+        }
+        return false;
     };
 private:
     VODtype *offset_;

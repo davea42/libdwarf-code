@@ -1224,8 +1224,8 @@ parse_abi(FILE * stream, char *fname, char *abiname,
             if(ires == FALSE) {
                 return FALSE;
             }
-            /* For the nested abi read, the abi line number must be
-               set as if not-yet-read, and then restored. */
+            /*  For the nested abi read, the abi line number must be
+                set as if not-yet-read, and then restored. */
             conf_internal->beginabi_lineno = 0;
             find_conf_file_and_read_config_inner(
                 conf_internal->conf_name_used,

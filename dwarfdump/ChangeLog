@@ -1,4 +1,6 @@
 2011-10-09  DavidAnderson <davea42@earthlink.net>
+     * dwconf.c,print_die.c, print_frames.c: Fix bad indentation.
+2011-10-09  DavidAnderson <davea42@earthlink.net>
      * print_die.c (get_location_list): Tests for DW_DLV_ERROR
        were written without {}, added in the braces.
 2011-10-08  DavidAnderson <davea42@earthlink.net>
