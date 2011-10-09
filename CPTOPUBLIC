@@ -63,6 +63,8 @@ dwarfdump2/tag_common.cc  \
 dwarfdump2/tag_attr.list  \
 dwarfdump2/Makefile.in  \
 dwarfdump2/tag_tree.cc  \
+dwarfdump2/checkutil.h \
+dwarfdump2/checkutil.cc \
 dwarfdump2/configure  \
 dwarfdump2/configure.in \
 dwarfdump2/common.cc  \
