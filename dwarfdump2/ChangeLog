@@ -1,3 +1,11 @@
+2011-10-09  DavidAnderson <davea42@earthlink.net>
+     * print_strings.cc(print_strings): Add display_offsets
+       test to make this like C dwarfdump (making offset printing
+       optional). 
+     * print_die.cc: Ensuring identical with C dwarfdump
+       by checking for the display_offsets global in
+       dwarfdump_print_one_locdesc(). And ensure that
+       we have braces for if statements in get_location_list().
 2011-10-08  DavidAnderson <davea42@earthlink.net>
      * dwarfdump.cc: Removed an extra newline from a
        warning message so we match the dwarfdump version.

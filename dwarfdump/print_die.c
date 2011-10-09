@@ -2493,10 +2493,11 @@ get_location_list(Dwarf_Debug dbg, Dwarf_Die die, Dwarf_Attribute attr,
 
     if (use_old_dwarf_loclist) {
         lres = dwarf_loclist(attr, &llbuf, &no_of_elements, &err);
-        if (lres == DW_DLV_ERROR)
+        if (lres == DW_DLV_ERROR) {
             print_error(dbg, "dwarf_loclist", lres, err);
-        if (lres == DW_DLV_NO_ENTRY)
+        } else if (lres == DW_DLV_NO_ENTRY) {
             return;
+        }
         dwarfdump_print_one_locdesc(dbg, llbuf,skip_locdesc_header,esbp);
         dwarf_dealloc(dbg, llbuf->ld_s, DW_DLA_LOC_BLOCK);
         dwarf_dealloc(dbg, llbuf, DW_DLA_LOCDESC);
@@ -2504,10 +2505,11 @@ get_location_list(Dwarf_Debug dbg, Dwarf_Die die, Dwarf_Attribute attr,
     }
 
     lres = dwarf_loclist_n(attr, &llbufarray, &no_of_elements, &err);
-    if (lres == DW_DLV_ERROR)
+    if (lres == DW_DLV_ERROR) {
         print_error(dbg, "dwarf_loclist", lres, err);
-    if (lres == DW_DLV_NO_ENTRY)
+    } else if (lres == DW_DLV_NO_ENTRY) {
         return;
+    }
     for (llent = 0; llent < no_of_elements; ++llent) {
         char small_buf[100];
         Dwarf_Off offset = 0;
