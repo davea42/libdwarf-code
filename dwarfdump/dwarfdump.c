@@ -57,7 +57,7 @@ $Header: /plroot/cmplrs.src/v7.4.5m/.RCS/PL/dwarfdump/RCS/dwarfdump.c,v 1.48 200
 extern int elf_open(char *name,int mode);
 #endif
 
-#define DWARFDUMP_VERSION " Sun Oct  9 10:49:03 PDT 2011  "
+#define DWARFDUMP_VERSION " Tue Oct 11 15:51:27 PDT 2011  "
 
 extern char *optarg;
 
@@ -1292,10 +1292,16 @@ process_args(int argc, char *argv[])
             {
                 boolean err = TRUE;
                 search_is_on = TRUE;
+                char *tempstr = 0;
+                struct esb_s tmp;
+                esb_constructor(&tmp);
                 /* -S text */
                 if (strncmp(optarg,"match=",6) == 0) {
+               
                     search_match_text = makename(&optarg[6]);
-                    search_match_text = remove_quotes_pair(search_match_text);
+                    tempstr = remove_quotes_pair(search_match_text);
+                    translate_from_uri(tempstr,&tmp);
+                    search_match_text = makename(esb_get_string(&tmp));
                     if (strlen(search_match_text) > 0) {
                         err = FALSE;
                     }
@@ -1303,7 +1309,9 @@ process_args(int argc, char *argv[])
                 else {
                     if (strncmp(optarg,"any=",4) == 0) {
                         search_any_text = makename(&optarg[4]);
-                        search_any_text = remove_quotes_pair(search_any_text);
+                        tempstr = remove_quotes_pair(search_any_text);
+                        translate_from_uri(tempstr,&tmp);
+                        search_any_text = makename(esb_get_string(&tmp));
                         if (strlen(search_any_text) > 0) {
                             err = FALSE;
                         }
@@ -1312,8 +1320,10 @@ process_args(int argc, char *argv[])
                     else {
                         if (strncmp(optarg,"regex=",6) == 0) {
                             search_regex_text = makename(&optarg[6]);
-                            search_regex_text = remove_quotes_pair(
+                            tempstr = remove_quotes_pair(
                                 search_regex_text);
+                            translate_from_uri(tempstr,&tmp);
+                            search_any_text = makename(esb_get_string(&tmp));
                             if (strlen(search_regex_text) > 0) {
                                 if (regcomp(&search_re,search_regex_text,
                                     REG_EXTENDED)) {

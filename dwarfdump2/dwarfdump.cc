@@ -57,7 +57,8 @@ $Header: /plroot/cmplrs.src/v7.4.5m/.RCS/PL/dwarfdump/RCS/dwarfdump.c,v 1.48 200
 #include "dwconf.h"
 #include "common.h"
 #include "naming.h"
-#define DWARFDUMP_VERSION " Sun Oct  9 10:49:03 PDT 2011  "
+#include "uri.h"
+#define DWARFDUMP_VERSION " Tue Oct 11 15:51:27 PDT 2011  "
 
 using std::string;
 using std::cout;
@@ -1207,14 +1208,16 @@ process_args(int argc, char *argv[])
                 search_is_on = true;
                 /* -S text */
                 if (strncmp(optarg,"match=",6) == 0) {
-                    search_match_text = remove_quotes_pair(&optarg[6]);
+                    string noquotes = remove_quotes_pair(&optarg[6]);
+                    translate_from_uri(noquotes,search_match_text);
                     if (search_match_text.size() > 0) {
                         err = false;
                     }
                 }
                 else {
                     if (strncmp(optarg,"any=",4) == 0) {
-                        search_any_text = remove_quotes_pair(&optarg[4]);
+                        string noquotes = remove_quotes_pair(&optarg[4]);
+                        translate_from_uri(noquotes,search_any_text);
                         if (search_any_text.size() > 0) {
                             err = false;
                         }
@@ -1222,7 +1225,8 @@ process_args(int argc, char *argv[])
 #ifdef HAVE_REGEX
                     else {
                         if (strncmp(optarg,"regex=",6) == 0) {
-                            search_regex_text = remove_quotes_pair(&optarg[6]);
+                            string noquotes = remove_quotes_pair(&optarg[6]);
+                            translate_from_uri(noquotes,search_regex_text);
                             if (search_regex_text.size() > 0) {
                                 if (regcomp(&search_re,
                                     search_regex_text.c_str(),

@@ -33,4 +33,5 @@
 
 
 void translate_to_uri(const char * filename, struct esb_s *out);
+void translate_from_uri(const char * input, struct esb_s *out);
 

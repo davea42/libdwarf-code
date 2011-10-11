@@ -38,6 +38,7 @@
 */
 
 #include "globals.h"
+#include <iostream> //* for error and debug output.
 #include <string>
 #include "uri.h"
 #include <stdio.h>
@@ -337,9 +338,104 @@ translate_to_uri(const char * filename, string &out)
     }
 }
 
+/* This is not very efficient, but it is seldom called. */
+static char 
+hexdig(char c)
+{
+     char ochar = 0;
+     if(c >= 0 && c <= '9') {
+         ochar = (c - '0');
+         return ochar;
+     }
+     if(c >= 'a' && c <= 'f') {
+         ochar = (c - 'a')+10;
+         return ochar;
+     }
+     if(c >= 'A' && c <= 'F') {
+         ochar = (c - 'A')+10;
+         return ochar;
+     }
+     // We have an input botch here.
+     fprintf(stderr,"Translating from uri: "
+         "A supposed hexadecimal input character is "
+         "not 0-9 or a-f or A-F, it is (shown as hex here): %x\n",c);
+     return ochar;
+}
+
+static char tohex(char c1, char c2)
+{
+    char out = (hexdig(c1) << 4) | hexdig(c2);
+    return out;
+}
+
+static int
+hexpairtochar(const char *cp, char *myochar)
+{
+    char ochar = 0;
+    int olen = 0;
+    char c = cp[0];
+    if(c) {
+        char c2 = cp[1];
+        if(c2) {
+            ochar = tohex(c,c2);
+            olen = 2;
+        } else {
+            std::cerr << "Translating from uri: "
+                "A supposed hexadecimal input character pair "
+                "runs off the end of the input after 1 hex digit."<<
+                std::endl;
+            /* botched input. */
+            ochar = c;
+            olen = 1;
+        }
+    } else {
+        /* botched input. */
+        std::cerr << "Translating from uri: "
+            "A supposed hexadecimal input character pair "
+            "runs off the end of the input." << std::endl;
+        ochar = '%';
+        olen = 0;
+    }
+    *myochar = ochar;
+    return olen;
+}
+void
+translate_from_uri(const std::string & input, string &out)
+{
+    const char *cp = input.c_str();
+    for(; *cp; ++cp) {
+        char c = *cp;
+        if(c == '%') {
+            char c2 = cp[1];
+            // hexpairtochar deals with c2 being NUL.
+            if ( c2  == '%') {
+                out.push_back(c);
+                ++cp;
+                continue;
+            } 
+            int increment = hexpairtochar(cp+1,&c);
+            out.push_back(c);
+            cp += increment;
+            continue;
+        }
+        out.push_back(c);
+    }
+}
+
 #ifdef TEST
 
 unsigned errcnt = 0;
+static void
+mytestfrom(const std::string & in,const std::string & expected,int testnum)
+{
+    string out;
+    translate_from_uri(in, out);
+    if(expected != out) {
+        printf(" Fail test %d expected \"%s\" got \"%s\"\n",
+            testnum,expected.c_str(),out.c_str());
+        ++errcnt;
+    }
+}
 
 static void
 mytest(const std::string & in,const std::string & expected,int testnum)
@@ -347,7 +443,7 @@ mytest(const std::string & in,const std::string & expected,int testnum)
     string out;
     translate_to_uri(in.c_str(), out);
     if(expected !=  out) {
-        printf(" Fail test %d expected %s got %s\n",
+        printf(" Fail test %d expected \"%s\" got \"%s\"\n",
             testnum,expected.c_str(),out.c_str());
         ++errcnt;
     }
@@ -357,11 +453,28 @@ mytest(const std::string & in,const std::string & expected,int testnum)
 int 
 main()
 {
+    /* We no longer translate space to %20, that
+    turns out not to help all that much. */
     mytest("aaa","aaa",1);
-    mytest(" bc","%20bc",2);
-    mytest(" bc\n","%20bc%0a",2);
-    mytest(" bc\r","%20bc%0d",2);
-    mytest(" \x01","%20%01",2);
+    mytest(" bc"," bc",2);
+    mytest(";bc","%3bbc",3);
+    mytest(" bc\n"," bc%0a",4);
+    mytest(";bc\n","%3bbc%0a",5);
+    mytest(" bc\r"," bc%0d",6);
+    mytest(";bc\r","%3bbc%0d",7);
+    mytest(" \x01"," %01",8);
+    mytest(";\x01","%3b%01",9);
+    mytestfrom("abc","abc",10);
+    mytestfrom("a%20bc","a bc",11);
+    mytestfrom("a%%20bc","a%20bc",12);
+    mytestfrom("a%%%20bc","a% bc",13);
+    mytestfrom("a%%%%20bc","a%%20bc",14);
+    mytestfrom("a%20","a ",15);
+    /* The following is mistaken input. */
+    mytestfrom("a%2","a2",16);
+    mytestfrom("a%","a%",17);
+    mytest("%bc","%25bc",18);
+    
     if(errcnt) {
         printf("uri errcount ",errcnt);
     }

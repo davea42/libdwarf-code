@@ -770,7 +770,7 @@ print_one_die(Dwarf_Debug dbg, Dwarf_Die die,
                         (Dwarf_Unsigned)overall_offset);
                 } else {
                     printf("<%2d><0x%" DW_PR_XZEROS DW_PR_DUx ">", 
-                        die_stack_indent_level, 
+                        die_indent_level, 
                         (Dwarf_Unsigned)offset);
                 }
 

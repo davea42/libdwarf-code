@@ -33,4 +33,5 @@
 
 
 void translate_to_uri(const char * filename, std::string &out);
+void translate_from_uri(const std::string &input, std::string &out);
 

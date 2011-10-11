@@ -331,9 +331,119 @@ translate_to_uri(const char * filename, struct esb_s *out)
     }
 }
 
+/* This is not very efficient, but it is seldom called. */
+static char
+hexdig(char c)
+{
+     char ochar = 0;
+     if(c >= 0 && c <= '9') {
+         ochar = (c - '0');
+         return ochar;
+     }
+     if(c >= 'a' && c <= 'f') {
+         ochar = (c - 'a')+10;
+         return ochar;
+     }
+     if(c >= 'A' && c <= 'F') {
+         ochar = (c - 'A')+10;
+         return ochar;
+     }
+     // We have an input botch here.
+     fprintf(stderr,"Translating from uri: "
+         "A supposed hexadecimal input character is "
+         "not 0-9 or a-f or A-F, it is (shown as hex here): %x\n",c);
+     return ochar;
+}
+
+static char tohex(char c1, char c2)
+{
+    char out = (hexdig(c1) << 4) | hexdig(c2);
+    return out;
+}
+static int
+hexpairtochar(const char *cp, char*myochar)
+{
+    char ochar = 0;
+    int olen = 0;
+    char c = cp[0];
+    if(c) {
+        char c2 = cp[1];
+        if(c2) {
+            ochar = tohex(c,c2);
+            olen = 2;
+        } else {
+            fprintf(stderr,"Translating from uri: "
+                "A supposed hexadecimal input character pair "
+                "runs off the end of the input after 1 hex digit.\n");
+            /* botched input. */
+            ochar = c;
+            olen = 1;
+        }
+    } else {
+        /* botched input. */
+        fprintf(stderr,"Translating from uri: "
+            "A supposed hexadecimal input character pair "
+            "runs off the end of the input.\n");
+        ochar = '%';
+        olen = 0;
+    }
+    *myochar = ochar;
+    return olen;
+}
+
+void
+translate_from_uri(const char * input, struct esb_s* out)
+{
+    const char *cp = input;
+    char tempstr[2];
+    for(; *cp; ++cp) {
+        char c = *cp;
+        if(c == '%') {
+            int increment = 0;
+            char c2 = cp[1];
+            // hexpairtochar deals with c2 being NUL.
+            if ( c2  == '%') {
+                tempstr[0] = c;
+                tempstr[1] = 0;
+                esb_append(out,tempstr);
+                ++cp;
+                continue;
+            }
+           
+            increment = hexpairtochar(cp+1,&c);
+            tempstr[0] = c;
+            tempstr[1] = 0;
+            esb_append(out,tempstr);
+            cp +=increment;
+            continue;
+        }
+        tempstr[0] = c;
+        tempstr[1] = 0;
+        esb_append(out,tempstr);
+    }
+}
+
+
+
+
 #ifdef TEST
 
 unsigned errcnt = 0;
+
+static void
+mytestfrom(const char * in,const char *expected,int testnum)
+{
+    struct esb_s out;
+    esb_constructor(&out);
+    translate_from_uri(in, &out);
+    if(strcmp(expected, esb_get_string(&out))) {
+        printf(" Fail test %d expected \"%s\" got \"%s\"\n",
+            testnum,expected,esb_get_string(&out));
+        ++errcnt;
+    }
+    esb_destructor(&out);
+}
+
 
 static void
 mytest(char *in,char *expected,int testnum)
@@ -352,15 +462,28 @@ mytest(char *in,char *expected,int testnum)
 int 
 main()
 {
+    /* We no longer translate space to %20, that
+    turns out not to help all that much. */
     mytest("aaa","aaa",1);
     mytest(" bc"," bc",2);
-    mytest("\'bc","%27bc",3);
-    mytest("\"bc","%22bc",4);
-    mytest("%bx","%25bx",5);
-    mytest(";bc","%3bbc",6);
-    mytest(" bc\n"," bc%0a",7);
-    mytest(" bc\r"," bc%0d",8);
-    mytest(" \x01"," %01",9);
+    mytest(";bc","%3bbc",3);
+    mytest(" bc\n"," bc%0a",4);
+    mytest(";bc\n","%3bbc%0a",5);
+    mytest(" bc\r"," bc%0d",6);
+    mytest(";bc\r","%3bbc%0d",7);
+    mytest(" \x01"," %01",8);
+    mytest(";\x01","%3b%01",9);
+    mytestfrom("abc","abc",10);
+    mytestfrom("a%20bc","a bc",11);
+    mytestfrom("a%%20bc","a%20bc",12);
+    mytestfrom("a%%%20bc","a% bc",13);
+    mytestfrom("a%%%%20bc","a%%20bc",14);
+    mytestfrom("a%20","a ",15);
+    /* The following is mistaken input. */
+    mytestfrom("a%2","a2",16);
+    mytestfrom("a%","a%",17);
+    mytest("%bc","%25bc",18);
+
     if(errcnt) {
         printf("uri errcount ",errcnt);
     }
