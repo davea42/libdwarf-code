@@ -60,6 +60,36 @@ known problem and are only detected inside libdwarf itself.
 These are difficult to properly report in dwarfdump and
 any error strings may not appear close to the time the
 error was encountered.
+.SH URI STYLE INPUT STRINGS
+.PP
+All the options taking name strings  look for URIs and
+translate the URI strings to characters by default.
+So any single % character is treated as if the following two
+characters are hex digits representing the underlying true character.
+Various characters are meaningful to shells (such as bash or sh) 
+and to getopt (such as the space character) 
+If the URI translation does anything it prints the before and after
+of the URI translation on standard output, so inspection of the first
+lines of output will show if URI did anything.
+The actual options themselves are assumed to be non-URI.
+So in the option '-cS&T' the -c portion must be non-URI, but the
+& character might cause input issues so '-cS%26T' could be used instead.
+To actually input a single % character (in a name, for example), 
+double it to %% on the command line.
+.PP
+Options -U (turning off URI interpretation) and -q (making finding
+URI sequences silent) give finer control of URI interpretation.
+.PP
+As an example, to get a string'a b' make the string 'a%20b'
+(here the quote  (') is for exposition not part of the string, though
+quote is certainly problematic in a name).
+Instead of escaping " quotes in the string,  type %25, as in
+   'a "b'  should be typed   'a%20%25b'
+Any characters can be typed in URI style, not just characters
+which are problematic to the shell or getopt.
+We strongly suggest you not type URI-style characters where
+such are not needed or use
+the % character itself in command line strings unless you must.
 .SH PRINTING OPTIONS
 .TP
 .B \-a
@@ -373,12 +403,12 @@ Any CU with no match is not printed.
 The string cannot have spaces or other characters which are
 meaningful to getopt(3) and the shell will strip off quotes and
 other characters.
-So the string is assumed to be in uri style and is translated.
+So the string is assumed to be in URI style and is translated.
 In other words, to match 'a b' make the -S string 'a%20b'
 Instead of escaping " quotes in the string,  type %25, as in
    'a "b'  should be typed   'a%20%25b'
 (the ' are for exposition here, not part of the strings).
-Any characters can be typed in uri style, not just characters
+Any characters can be typed in URI style, not just characters
 which are problematic to the shell or getopt.
 .PP
 The -S any= and -S regex= options are only usable
@@ -423,6 +453,12 @@ printing frame information (here using ppc as an example).
 .B \-P 
 When  checking this adds the list of compilation-unit names
 seen for each producer-compiler to the printed checking results.
+.TP
+.B \-q
+When a URI is found and translated while reading
+the command line, be quiet about
+the URI translation. That is,  don't print the
+original and translated option strings.
 
 .TP
 .B \-E 
@@ -439,6 +475,12 @@ the 'cuname' you provide should be c.c as the characters
 through the final path-separating / are ignored.
 If 'cuname' begins with a / then the entire name string
 of a compilation unit must match 'cuname'.
+
+.TP
+.B \-U
+Turn off the URI interpretation of the command line
+strings entirely.  Must be be on the command line before
+any URI strings encountered to be fully effective.
 
 .TP
 .B \-z

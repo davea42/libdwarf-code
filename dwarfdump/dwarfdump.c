@@ -65,7 +65,7 @@ extern char *optarg;
 #define OKAY 0
 #define BYTES_PER_INSTRUCTION 4
 
-static string process_args(int argc, char *argv[]);
+static const char* process_args(int argc, char *argv[]);
 
 char * program_name;
 static int check_error = 0;
@@ -104,6 +104,8 @@ int nTrace[MAX_TRACE_LEVEL + 1];
 
 /* Build section information */
 void build_linkonce_info(Dwarf_Debug dbg);
+static const char * do_uri_translation(const char *s,
+    const char *context);
 
 boolean info_flag = FALSE;
 boolean use_old_dwarf_loclist = FALSE;  /* This so both dwarf_loclist() 
@@ -166,6 +168,9 @@ boolean suppress_check_extensions_tables = FALSE;
    A workaround. A real fix for N**2 behavior is needed. 
 */
 boolean suppress_nested_name_search = FALSE;
+static boolean uri_options_translation = TRUE;
+static boolean do_print_uri_in_input = TRUE;
+
 
 /* break_after_n_units is mainly for testing.
    It enables easy limiting of output size/running time
@@ -198,7 +203,7 @@ typedef struct anc {
     debug information, including the check results for several
     categories (see -k option). */
 typedef struct {
-    char *name;
+    const char *name;
     boolean verified;
     a_name_chain *cu_list;
     a_name_chain *cu_last;
@@ -285,9 +290,9 @@ int stop_indent_level = 0;
 boolean search_wide_format = FALSE;
 /* -S option: strings for 'any' and 'match' */
 boolean search_is_on = FALSE;
-char *search_any_text = 0;
-char *search_match_text = 0;
-char *search_regex_text = 0;
+const char *search_any_text = 0;
+const char *search_match_text = 0;
+const char *search_regex_text = 0;
 #ifdef HAVE_REGEX
 /* -S option: the compiled_regex */
 regex_t search_re;
@@ -298,8 +303,8 @@ regex_t search_re;
    frame data.  We're pretty flexible in
    the path to dwarfdump.conf .
 */
-static char *config_file_path = 0;
-static char *config_file_abi = 0;
+static const char *config_file_path = 0;
+static const char *config_file_abi = 0;
 static char *config_file_defaults[] = {
     "dwarfdump.conf",
     "./dwarfdump.conf",
@@ -341,10 +346,10 @@ static void suppress_print_dwarf()
     do_check_dwarf = TRUE;
 }
 
-static int process_one_file(Elf * elf, string file_name, int archive,
+static int process_one_file(Elf * elf, const char * file_name, int archive,
     struct dwconf_s *conf);
 static int
-open_a_file(string name)
+open_a_file(const char * name)
 {
     /* Set to a file number that cannot be legal. */
     int f = -1;
@@ -376,7 +381,7 @@ close_a_file(int f)
 int
 main(int argc, char *argv[])
 {
-    string file_name = 0;
+    const char * file_name = 0;
     int f = 0;
     Elf_Cmd cmd = 0;
     Elf *arf = 0; 
@@ -818,7 +823,7 @@ print_checks_results()
 
 */
 static int
-process_one_file(Elf * elf, string file_name, int archive,
+process_one_file(Elf * elf, const char * file_name, int archive,
     struct dwconf_s *config_file_data)
 {
     Dwarf_Debug dbg;
@@ -1079,13 +1084,13 @@ static const char *usage_text[] = {
 /* Remove matching leading/trailing quotes.
    Does not alter the passed in string.
    If quotes removed does a makename on a modified string. */ 
-static char *
-remove_quotes_pair(char *text)
+static const char *
+remove_quotes_pair(const char *text)
 {
     static char single_quote = '\'';
     static char double_quote = '\"';
     char quote = 0;
-    char *p = text;
+    const char *p = text;
     int len = strlen(text);
 
     if (len < 2) {
@@ -1106,7 +1111,7 @@ remove_quotes_pair(char *text)
     {
         if (p[len - 1] == quote) {
             char *altered = calloc(1,len+1);
-            char *str2 = 0;
+            const char *str2 = 0;
             strcpy(altered,p+1);
             altered[len - 2] = '\0';
             str2 =  makename(altered);
@@ -1118,7 +1123,7 @@ remove_quotes_pair(char *text)
 }
 
 /* process arguments and return object filename */
-static string
+static const char *
 process_args(int argc, char *argv[])
 {
     extern int optind;
@@ -1135,7 +1140,7 @@ process_args(int argc, char *argv[])
 
     /* j unused */
     while ((c = getopt(argc, argv,
-        "#:abc::CdDeEfFgGhH:ik:lmMnNo::pPQrRsS:t:u:vVwW::x:yz")) != EOF) {
+        "#:abc::CdDeEfFgGhH:ik:lmMnNo::pPqQrRsS:t:u:UvVwW::x:yz")) != EOF) {
 
         switch (c) {
         /* Internal debug level setting. */
@@ -1152,21 +1157,22 @@ process_args(int argc, char *argv[])
             break;
         case 'x':               /* Select abi/path to use */
             {
-                char *path = 0;
-                char *abi = 0;
-
+                const char *path = 0;
+                const char *abi = 0;
                 /*  -x name=<path> meaning name dwarfdump.conf file -x
                     abi=<abi> meaning select abi from dwarfdump.conf
                     file. Must always select abi to use dwarfdump.conf */
                 if (strncmp(optarg, "name=", 5) == 0) {
-                    path = makename(&optarg[5]);
-                    if (strlen(path) < 1)
+                    path = do_uri_translation(&optarg[5],"-x name=");
+                    if (strlen(path) < 1) {
                         goto badopt;
+                    }
                     config_file_path = path;
                 } else if (strncmp(optarg, "abi=", 4) == 0) {
-                    abi = makename(&optarg[4]);
-                    if (strlen(abi) < 1)
+                    abi = do_uri_translation(&optarg[4],"-x abi=");
+                    if (strlen(abi) < 1) {
                         goto badopt;
+                    }
                     config_file_abi = abi;
                     break;
                 } else {
@@ -1261,7 +1267,8 @@ process_args(int argc, char *argv[])
                             most likely a substring of a compiler name.  */
                         if ((compilers_targeted_count+1) < COMPILER_TABLE_MAX) {
                             Compiler *pCompiler = 0;
-                            char *cmp = makename(optarg);
+                            const char *cmp = 0;
+                            cmp = do_uri_translation(optarg,"-c<compiler name>");
                             /* First compiler at position [1] */
                             compilers_targeted_count++;
                             pCompiler = &compilers_targeted[compilers_targeted_count];
@@ -1283,6 +1290,9 @@ process_args(int argc, char *argv[])
             /* Q suppresses section data printing. */
             do_print_dwarf = FALSE;
             break;
+        case 'q':
+            /* Suppress uri-did-transate notification */
+            do_print_uri_in_input = FALSE;
         case 's':
             string_flag = TRUE;
             suppress_check_dwarf();
@@ -1292,16 +1302,13 @@ process_args(int argc, char *argv[])
             {
                 boolean err = TRUE;
                 search_is_on = TRUE;
-                char *tempstr = 0;
-                struct esb_s tmp;
-                esb_constructor(&tmp);
+                const char *tempstr = 0;
                 /* -S text */
                 if (strncmp(optarg,"match=",6) == 0) {
                
                     search_match_text = makename(&optarg[6]);
                     tempstr = remove_quotes_pair(search_match_text);
-                    translate_from_uri(tempstr,&tmp);
-                    search_match_text = makename(esb_get_string(&tmp));
+                    search_match_text = do_uri_translation(tempstr,"-S match=");
                     if (strlen(search_match_text) > 0) {
                         err = FALSE;
                     }
@@ -1310,8 +1317,7 @@ process_args(int argc, char *argv[])
                     if (strncmp(optarg,"any=",4) == 0) {
                         search_any_text = makename(&optarg[4]);
                         tempstr = remove_quotes_pair(search_any_text);
-                        translate_from_uri(tempstr,&tmp);
-                        search_any_text = makename(esb_get_string(&tmp));
+                        search_any_text = do_uri_translation(tempstr,"-S any=");
                         if (strlen(search_any_text) > 0) {
                             err = FALSE;
                         }
@@ -1322,8 +1328,8 @@ process_args(int argc, char *argv[])
                             search_regex_text = makename(&optarg[6]);
                             tempstr = remove_quotes_pair(
                                 search_regex_text);
-                            translate_from_uri(tempstr,&tmp);
-                            search_any_text = makename(esb_get_string(&tmp));
+                            search_regex_text = do_uri_translation(tempstr,
+                                "-S regex=");
                             if (strlen(search_regex_text) > 0) {
                                 if (regcomp(&search_re,search_regex_text,
                                     REG_EXTENDED)) {
@@ -1538,9 +1544,15 @@ process_args(int argc, char *argv[])
                 break;
             }
             break;
-        case 'u':               /* compile unit */
+        case 'u': {             /* compile unit */
+            const char *tstr = 0;
             cu_name_flag = TRUE;
-            safe_strcpy(cu_name,sizeof(cu_name), optarg,strlen(optarg));
+            tstr = do_uri_translation(optarg,"-u<cu name>");
+            safe_strcpy(cu_name,sizeof(cu_name), tstr,strlen(tstr));
+            }
+            break;
+        case 'U': 
+            uri_options_translation = FALSE;
             break;
         case 't':
             oarg = optarg[0];
@@ -1638,7 +1650,7 @@ process_args(int argc, char *argv[])
         /* Reduce verbosity when checking (checking means checking-only). */
         verbose = 1;
     }
-    return argv[optind]; 
+    return do_uri_translation(argv[optind],"file-to-process"); 
 }
 
 
@@ -2258,3 +2270,25 @@ void DWARF_CHECK_ERROR3(Dwarf_Check_Categories category,
     }
 }
 
+/* Precondition: 'out' is already constructed and empty. */
+static const char *
+do_uri_translation(const char *s,const char *context)
+{
+    struct esb_s str;
+    char *finalstr = 0;
+    if (!uri_options_translation) {
+        return makename(s);
+    }
+    esb_constructor(&str);
+    translate_from_uri(s,&str);
+    if (do_print_uri_in_input) {
+        if(strcmp(s,esb_get_string(&str))) {
+            printf("Uri Translation on option %s\n",context);
+            printf("    \'%s\'\n",s);
+            printf("    \'%s\'\n",esb_get_string(&str));
+        }
+    }
+    finalstr = makename(esb_get_string(&str));
+    esb_destructor(&str);
+    return finalstr;
+}

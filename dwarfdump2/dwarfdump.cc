@@ -180,6 +180,7 @@ int nTrace[MAX_TRACE_LEVEL + 1];
 
 /* Build section information */
 void build_linkonce_info(Dwarf_Debug dbg);
+static string do_uri_translation(const string &s, const std::string &context);
 
 bool info_flag = false;
 
@@ -241,6 +242,8 @@ bool suppress_check_extensions_tables = false;
 // suppress_nested_name_search is a band-aid. 
 // A workaround. A real fix for N**2 behavior is needed. 
 bool suppress_nested_name_search = false;
+static bool uri_options_translation = true;
+static bool do_print_uri_in_input = true;
 
 /*  break_after_n_units is mainly for testing.
     It enables easy limiting of output size/running time
@@ -556,10 +559,10 @@ print_object_header(Elf *elf,Dwarf_Debug dbg)
         //printf("  ABI version   = %02x (%s)\n",
         //  eh32->e_ident[EI_ABIVERSION], eh_literals.e_ident_abi_version);
         cout <<"e_type   : " <<
-             << IToHex(eh32->e_type)<< 
+            << IToHex(eh32->e_type)<< 
             " ("<< eh_literals.e_type << ")" << endl;
         cout <<"e_machine: " << 
-             << IToHex(eh32->e_machine)<< 
+            << IToHex(eh32->e_machine)<< 
             " (" << eh_literals.e_machine_s <<  
             ") (" << eh_literals.e_machine_l << ")" << endl;
         cout <<"e_version: " <<  IToHex(eh32->e_version) << endl;
@@ -598,10 +601,10 @@ print_object_header(Elf *elf,Dwarf_Debug dbg)
             //printf("  ABI version   = %02x (%s)\n",
             //  eh64->e_ident[EI_ABIVERSION], eh_literals.e_ident_abi_version);
             cout <<"e_type   : " <<
-                 << IToHex(eh64->e_type)<< 
+                << IToHex(eh64->e_type)<< 
                 " ("<< eh_literals.e_type << ")" << endl;
             cout <<"e_machine: " << 
-                 << IToHex(eh64->e_machine)<< 
+                << IToHex(eh64->e_machine)<< 
                 " (" << eh_literals.e_machine_s <<  
                 ") (" << eh_literals.e_machine_l << ")" << endl;
             cout <<"e_version: " <<  IToHex(eh64->e_version) << endl;
@@ -745,7 +748,7 @@ print_checks_results()
                 ++count;
                 cerr << endl;
                 cerr << "    " << IToDec0N(count,2) <<": '" <<
-                   c.cu_list_[nc]<< "'" ;
+                    c.cu_list_[nc]<< "'" ;
             }
             total += count;
             cerr << endl;
@@ -808,10 +811,10 @@ print_checks_results()
                 ++count2;
                 Compiler *pCompiler = &compilers_detected[index];
                 cerr << IToDec0N(count2,2) << ": errors = "<<
-                   IToDec(pCompiler->results_[total_check_result].errors_,5) 
-                   << ", " <<
-                   pCompiler->name_ <<
-                   endl;
+                    IToDec(pCompiler->results_[total_check_result].errors_,5) 
+                    << ", " <<
+                    pCompiler->name_ <<
+                    endl;
             }
         }
 
@@ -1059,7 +1062,7 @@ process_args(int argc, char *argv[])
 
     while ((c =
         getopt(argc, argv,
-        "#:abc::CdDeEfFgGhH:ik:lmMnNo::pPQrRsS:t:u:UvVwW::x:yz")) != EOF) {
+        "#:abc::CdDeEfFgGhH:ik:lmMnNo::pPqQrRsS:t:u:UvVwW::x:yz")) != EOF) {
 
         switch (c) {
         case '#':
@@ -1082,12 +1085,12 @@ process_args(int argc, char *argv[])
                     abi=<abi> meaning select abi from dwarfdump.conf
                     file. Must always select abi to use dwarfdump.conf */
                 if (strncmp(optarg, "name=", 5) == 0) {
-                    path = &optarg[5];
+                    path = do_uri_translation(&optarg[5],"-x name=");
                     if (path.empty())
                         goto badopt;
                     config_file_path = path;
                 } else if (strncmp(optarg, "abi=", 4) == 0) {
-                    abi = &optarg[4];
+                    abi = do_uri_translation(&optarg[4],"-x abi=");
                     if (abi.empty())
                         goto badopt;
                     config_file_abi = abi;
@@ -1183,7 +1186,8 @@ process_args(int argc, char *argv[])
                     else {
                         increment_compilers_targeted(true);
                         unsigned cc = compilers_targeted.size() -1;
-                        compilers_targeted[cc].name_ = optarg;
+                        compilers_targeted[cc].name_ = 
+                            do_uri_translation(optarg,"-c<compiler name>");
                         //  Assume a compiler version to check,
                         //  most likely a substring of a compiler name.
                     }
@@ -1197,6 +1201,10 @@ process_args(int argc, char *argv[])
             // Q suppresses section data printing.
             do_print_dwarf = false;
             break;
+        case 'q':
+            // suppress uri-did-translate notification.
+            do_print_uri_in_input = false;
+            break;
         case 's':
             string_flag = true;
             suppress_check_dwarf();
@@ -1209,7 +1217,7 @@ process_args(int argc, char *argv[])
                 /* -S text */
                 if (strncmp(optarg,"match=",6) == 0) {
                     string noquotes = remove_quotes_pair(&optarg[6]);
-                    translate_from_uri(noquotes,search_match_text);
+                    search_match_text = do_uri_translation(noquotes,"-S match=");
                     if (search_match_text.size() > 0) {
                         err = false;
                     }
@@ -1217,7 +1225,7 @@ process_args(int argc, char *argv[])
                 else {
                     if (strncmp(optarg,"any=",4) == 0) {
                         string noquotes = remove_quotes_pair(&optarg[4]);
-                        translate_from_uri(noquotes,search_any_text);
+                        search_any_text=do_uri_translation(noquotes,"-S any=");
                         if (search_any_text.size() > 0) {
                             err = false;
                         }
@@ -1226,7 +1234,7 @@ process_args(int argc, char *argv[])
                     else {
                         if (strncmp(optarg,"regex=",6) == 0) {
                             string noquotes = remove_quotes_pair(&optarg[6]);
-                            translate_from_uri(noquotes,search_regex_text);
+                            search_regex_text = do_uri_translation(noquotes,"-s regex=");
                             if (search_regex_text.size() > 0) {
                                 if (regcomp(&search_re,
                                     search_regex_text.c_str(),
@@ -1449,7 +1457,10 @@ process_args(int argc, char *argv[])
             break;
         case 'u':               /* compile unit */
             cu_name_flag = true;
-            cu_name = optarg;
+            cu_name = do_uri_translation(optarg,"-u<cu name>");
+            break;
+        case 'U':               /* Suppress URI translation. */
+            uri_options_translation = false;
             break;
         case 't':
             oarg = optarg[0];
@@ -1545,7 +1556,7 @@ process_args(int argc, char *argv[])
         /* Reduce verbosity when checking (checking means checking-only). */
         verbose = 1;
     }
-    return argv[optind];
+    return do_uri_translation(argv[optind],"file-to-process");
 }
 
 /* ARGSUSED */
@@ -1979,7 +1990,7 @@ increment_compilers_targeted(bool beyond)
 void 
 update_compiler_target(const string &producer_name)
 {
-    int index = 0;
+    unsigned index = 0;
 
     error_message_data.CU_producer = producer_name;
     current_cu_is_checked_compiler = false;
@@ -2104,9 +2115,9 @@ PRINT_CHECK_RESULT(const string &str,
 {
     Dwarf_Check_Result result = pCompiler->results_[category];
     cerr << std::setw(24) << std::left << str <<
-         IToDec(result.checks_,10) <<  
-         "  " <<
-         IToDec(result.errors_,10) << endl; 
+        IToDec(result.checks_,10) <<  
+        "  " <<
+        IToDec(result.errors_,10) << endl; 
 }
 
 void DWARF_CHECK_ERROR_PRINT_CU()
@@ -2162,5 +2173,23 @@ void DWARF_CHECK_ERROR3(Dwarf_Check_Categories category,
         }
         DWARF_CHECK_ERROR_PRINT_CU();
     }
+}
+
+static string
+do_uri_translation(const string &s,const string&context)
+{
+    string out;
+    if (!uri_options_translation) {
+        return s;
+    }
+    translate_from_uri(s.c_str(),out);
+    if (do_print_uri_in_input) {
+        if(s != out) {
+            cout << "Uri Translation on option " << context << endl;
+            cout << "    \'" << s << "\'"<< endl;
+            cout << "    \'" << out << "\'"<< endl;
+        }
+    }
+    return out;
 }
 

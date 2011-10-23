@@ -1,3 +1,15 @@
+2011-10-23  DavidAnderson <davea42@earthlink.net>
+     * dwarfdump.1: Now command line input strings 
+       are translated from uri-style
+     * dwarfdump.c: Translate input strings to from uri style to characters.
+       Fix indentation mistakes.
+       Fix constness issues on character strings.
+     * dwconf.c: Fix constness issues on character strings.
+     * dwconf.h: Fix constness issues on character strings.
+     * globals.h: Fix constness issues on character strings.
+     * makename.c: Fix constness issues on character strings.
+     * makename.h: Fix constness issues on character strings.
+     * uri.c: Fix indentation mistakes.
 2011-10-22  DavidAnderson <davea42@earthlink.net>
      * common.c :Update version string.
      * dwarfdump.c: Update version string. Do not set ranges_flag

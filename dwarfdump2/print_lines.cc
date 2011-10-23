@@ -176,15 +176,14 @@ print_line_numbers_this_cu(DieHolder & hcudie)
             Dwarf_Bool has_is_addr_set = 0;
             string where;
 
-             if (check_decl_file && checking_this_compiler()) {
+            if (check_decl_file && checking_this_compiler()) {
                 /* A line record with addr=0 was detected */
                 if (SkipRecord) {
                     /* Skip records that do not have ís_addr_set' */
                     int ares1 = dwarf_line_is_addr_set(line, &has_is_addr_set, &err);
                     if (ares1 == DW_DLV_OK && has_is_addr_set) {
                         SkipRecord = false;
-                    }
-                    else {
+                    } else {
                         /*  Keep ignoring records until we have 
                             one with 'is_addr_set' */
                         continue;
@@ -194,7 +193,7 @@ print_line_numbers_this_cu(DieHolder & hcudie)
 
 
             if (check_lines && checking_this_compiler()) {
-               DWARF_CHECK_COUNT(lines_result,1);
+                DWARF_CHECK_COUNT(lines_result,1);
             }
             string filename("<unknown>");
             int sres = dwarf_linesrc(line, &filenamearg, &err);
@@ -393,7 +392,7 @@ print_line_numbers_this_cu(DieHolder & hcudie)
                 lastsrc = filename;
             }
             if(do_print_dwarf) {
-               cout << endl;
+                cout << endl;
             }
         }
         InvalidSection = false;

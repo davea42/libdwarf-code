@@ -139,7 +139,7 @@ print_pubname_style_entry(Dwarf_Debug dbg,
         cout << ", cu-in-sect " <<  IToHex0N(cu_off,10);
         cout << ", die-in-cu " <<  IToHex0N(die_CU_off,10);
         /*  Following is absolute offset of the ** beginning of the
-                cu */
+            cu */
         cout << ", cu-header-in-sect " <<        
             IToHex0N((die_off - die_CU_off),10);
     }

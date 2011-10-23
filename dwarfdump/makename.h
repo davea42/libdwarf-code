@@ -48,6 +48,6 @@
     use of this is very rare.
 */
 
-char * makename(char *); /* Makes a copy of the string in
+char * makename(const char *); /* Makes a copy of the string in
     a malloc area.  Can never return 0. */
 #endif

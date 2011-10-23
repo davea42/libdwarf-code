@@ -45,13 +45,6 @@
 #include <ctype.h>
 using std::string;
 
-static std::string
-xchar(int c)
-{
-    char buf[10];
-    snprintf(buf, sizeof(buf),"%%%02x",c);
-    return buf;
-}
 
 /* dwarfdump_ctype table. See dwarfdump/uritablebuild.c */
 static char dwarfdump_ctype_table[256] = { 
@@ -323,10 +316,10 @@ xchar(int c, char *buf, int size)
    %xx form.
 */
 void
-translate_to_uri(const char * filename, string &out)
+translate_to_uri(const string &s, string &out)
 {
-    const char *cp = 0;
-    for(cp = filename  ; *cp; ++cp) {
+    const char *cp = s.c_str();
+    for( ; *cp; ++cp) {
         int c = 0xff & (unsigned char)*cp;
         if(dwarfdump_ctype_table[c]) {
             out.push_back((char)c);
@@ -342,24 +335,24 @@ translate_to_uri(const char * filename, string &out)
 static char 
 hexdig(char c)
 {
-     char ochar = 0;
-     if(c >= 0 && c <= '9') {
-         ochar = (c - '0');
-         return ochar;
-     }
-     if(c >= 'a' && c <= 'f') {
-         ochar = (c - 'a')+10;
-         return ochar;
-     }
-     if(c >= 'A' && c <= 'F') {
-         ochar = (c - 'A')+10;
-         return ochar;
-     }
-     // We have an input botch here.
-     fprintf(stderr,"Translating from uri: "
-         "A supposed hexadecimal input character is "
-         "not 0-9 or a-f or A-F, it is (shown as hex here): %x\n",c);
-     return ochar;
+    char ochar = 0;
+    if(c >= 0 && c <= '9') {
+        ochar = (c - '0');
+        return ochar;
+    }
+    if(c >= 'a' && c <= 'f') {
+        ochar = (c - 'a')+10;
+        return ochar;
+    }
+    if(c >= 'A' && c <= 'F') {
+        ochar = (c - 'A')+10;
+        return ochar;
+    }
+    // We have an input botch here.
+    fprintf(stderr,"Translating from uri: "
+        "A supposed hexadecimal input character is "
+        "not 0-9 or a-f or A-F, it is (shown as hex here): %x\n",c);
+    return ochar;
 }
 
 static char tohex(char c1, char c2)

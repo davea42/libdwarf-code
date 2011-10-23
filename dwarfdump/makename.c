@@ -50,7 +50,7 @@
 #include "makename.h"
 
 char *
-makename(char *s)
+makename(const char *s)
 {
     char *newstr;
 

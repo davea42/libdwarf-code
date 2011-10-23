@@ -190,9 +190,9 @@ extern int stop_indent_level;
 extern boolean search_wide_format;
 extern boolean search_is_on;
 
-extern char *search_any_text;
-extern char *search_match_text;
-extern char *search_regex_text;
+const extern char *search_any_text;
+const extern char *search_match_text;
+const extern char *search_regex_text;
 #ifdef HAVE_REGEX
 extern regex_t search_re;
 #endif

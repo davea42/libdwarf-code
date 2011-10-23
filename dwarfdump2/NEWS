@@ -1,3 +1,11 @@
+ctober 23, 2011
+    By default the various places with string option values
+    and file paths all use URI transformation on input and
+    if the transformation does anything at all dwarfdump reports
+    the input and transformed strings.  This makes it easy
+    to deal with strings and expressions and file paths
+    that are difficult to express in a shell (or that getopt
+    mangles). Options  -q and -U give you  control over this process.
 October 06, 2011
     The -x abi=mips  frame register abi in dwarfdump.conf is now
     usable with modern MIPS objects as well as old IRIX objects.

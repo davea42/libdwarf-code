@@ -335,24 +335,24 @@ translate_to_uri(const char * filename, struct esb_s *out)
 static char
 hexdig(char c)
 {
-     char ochar = 0;
-     if(c >= 0 && c <= '9') {
-         ochar = (c - '0');
-         return ochar;
-     }
-     if(c >= 'a' && c <= 'f') {
-         ochar = (c - 'a')+10;
-         return ochar;
-     }
-     if(c >= 'A' && c <= 'F') {
-         ochar = (c - 'A')+10;
-         return ochar;
-     }
-     // We have an input botch here.
-     fprintf(stderr,"Translating from uri: "
-         "A supposed hexadecimal input character is "
-         "not 0-9 or a-f or A-F, it is (shown as hex here): %x\n",c);
-     return ochar;
+    char ochar = 0;
+    if(c >= 0 && c <= '9') {
+        ochar = (c - '0');
+        return ochar;
+    }
+    if(c >= 'a' && c <= 'f') {
+        ochar = (c - 'a')+10;
+        return ochar;
+    }
+    if(c >= 'A' && c <= 'F') {
+        ochar = (c - 'A')+10;
+        return ochar;
+    }
+    // We have an input botch here.
+    fprintf(stderr,"Translating from uri: "
+        "A supposed hexadecimal input character is "
+        "not 0-9 or a-f or A-F, it is (shown as hex here): %x\n",c);
+    return ochar;
 }
 
 static char tohex(char c1, char c2)

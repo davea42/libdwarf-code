@@ -121,7 +121,7 @@ struct conf_internal_s {
     unsigned long cfa_reg_lineno;
     unsigned long regcount;
     struct dwconf_s * conf_out;
-    char * conf_name_used;
+    const char * conf_name_used;
     char ** conf_defaults;
 };
 static void 
@@ -145,11 +145,11 @@ init_conf_internal(struct conf_internal_s *s,
 
 static int size_of_comtable = sizeof(comtable) / sizeof(comtable[0]);
 
-static FILE *find_a_file(char *named_file, char **defaults,
-    string * name_used);
-static int find_abi_start(FILE * stream, char *abi_name, long *offset,
+static FILE *find_a_file(const char *named_file, char **defaults,
+    const char** name_used);
+static int find_abi_start(FILE * stream, const char *abi_name, long *offset,
     unsigned long *lineno_out);
-static int parse_abi(FILE * stream, char *fname, char *abiname,
+static int parse_abi(FILE * stream, const char *fname, const char *abiname,
     struct conf_internal_s *out, unsigned long lineno, unsigned nest_level);
 static char *get_token(char *cp, struct token_s *outtok);
 
@@ -171,14 +171,14 @@ static char *get_token(char *cp, struct token_s *outtok);
     Returns 0 if no errors found, else returns > 0.
 */
 static int
-find_conf_file_and_read_config_inner(char *named_file,
-    char *named_abi,
+find_conf_file_and_read_config_inner(const char *named_file,
+    const char *named_abi,
     struct conf_internal_s *conf_internal,
     unsigned nest_level)
 {
 
     FILE *conf_stream = 0;
-    char *name_used = 0;
+    const char *name_used = 0;
     long offset = 0;
     int res = FALSE;
     unsigned long lineno = 0;
@@ -221,8 +221,8 @@ find_conf_file_and_read_config_inner(char *named_file,
 
 /* This is the external-facing call to get the conf data. */
 int
-find_conf_file_and_read_config(char *named_file,
-    char *named_abi, char **defaults,
+find_conf_file_and_read_config(const char *named_file,
+    const char *named_abi, char **defaults,
     struct dwconf_s *conf_out)
 {
     int res = 0;
@@ -245,7 +245,7 @@ find_conf_file_and_read_config(char *named_file,
 */
 static char *
 canonical_append(char *target, unsigned int target_size,
-    char *first_string, char *second_string)
+    const char *first_string, const char *second_string)
 {
     size_t firstlen = strlen(first_string);
 
@@ -347,10 +347,10 @@ test_canonical_append(void)
     config_file_defaults[].
 */
 static FILE *
-find_a_file(char *named_file, char **defaults, string * name_used)
+find_a_file(const char *named_file, char **defaults, const char ** name_used)
 {
     FILE *fin = 0;
-    char *lname = named_file;
+    const char *lname = named_file;
     const char *type = "rw";
     int i = 0;
 
@@ -461,7 +461,7 @@ skipwhite(char *cp)
    Emit error message if error.
 */
 static int
-ensure_has_no_more_tokens(char *cp, char *fname, unsigned long lineno)
+ensure_has_no_more_tokens(char *cp, const char *fname, unsigned long lineno)
 {
     struct token_s tok;
 
@@ -481,8 +481,8 @@ ensure_has_no_more_tokens(char *cp, char *fname, unsigned long lineno)
     find the one we want and return its file offset.
 */
 static int
-find_abi_start(FILE * stream,
-    char *abi_name, long *offset, unsigned long *lineno_out)
+find_abi_start(FILE * stream, const char *abi_name, 
+    long *offset, unsigned long *lineno_out)
 {
     char buf[100];
     unsigned long lineno = 0;
@@ -605,7 +605,7 @@ which_command(char *cp, struct comtable_s **tableentry)
    find the name on the line.
 */
 static int
-parsebeginabi(char *cp, char *fname, char *abiname,
+parsebeginabi(char *cp, const char *fname, const char *abiname,
     unsigned long lineno, struct comtable_s *comtab)
 {
     size_t clen = comtab->namelen;
@@ -634,7 +634,7 @@ parsebeginabi(char *cp, char *fname, char *abiname,
 #define CONF_TABLE_OVERSIZE  100
 static void
 add_to_reg_table(struct dwconf_s *conf,
-    char *rname, unsigned long rval, char *fname,
+    char *rname, unsigned long rval, const char *fname,
     unsigned long lineno)
 {
     if (conf->cf_regs_malloced == 0) {
@@ -668,7 +668,7 @@ add_to_reg_table(struct dwconf_s *conf,
    Determine the value (and return it) or generate an error message.
 */
 static int
-make_a_number(char *cmd, char *filename, unsigned long
+make_a_number(char *cmd, const char *filename, unsigned long
     lineno, struct token_s *tok, unsigned long *val_out)
 {
     char *endnum = 0;
@@ -700,7 +700,7 @@ make_a_number(char *cmd, char *filename, unsigned long
     and record the interesting data.
 */
 static int
-parsereg(char *cp, char *fname, unsigned long lineno,
+parsereg(char *cp, const char *fname, unsigned long lineno,
     struct conf_internal_s *conf, struct comtable_s *comtab)
 {
     size_t clen = comtab->namelen;
@@ -747,7 +747,7 @@ parsereg(char *cp, char *fname, unsigned long lineno,
    Parse it and record the value data.
 */
 static int
-parseframe_interface(char *cp, char *fname, unsigned long lineno,
+parseframe_interface(char *cp, const char *fname, unsigned long lineno,
     struct conf_internal_s *conf, struct comtable_s *comtab)
 {
     size_t clen = comtab->namelen;
@@ -791,7 +791,7 @@ parseframe_interface(char *cp, char *fname, unsigned long lineno,
    and record the important data.
 */
 static int
-parsecfa_reg(char *cp, char *fname, unsigned long lineno,
+parsecfa_reg(char *cp, const char *fname, unsigned long lineno,
     struct conf_internal_s *conf, struct comtable_s *comtab)
 {
     size_t clen = comtab->namelen;
@@ -826,7 +826,7 @@ parsecfa_reg(char *cp, char *fname, unsigned long lineno,
    parse it and put the reg value where it will be remembered. 
 */
 static int
-parseinitial_reg_value(char *cp, char *fname,
+parseinitial_reg_value(char *cp, const char *fname,
     unsigned long lineno,
     struct conf_internal_s *conf, struct comtable_s *comtab)
 {
@@ -859,7 +859,7 @@ parseinitial_reg_value(char *cp, char *fname,
 }
 
 static int
-parsesame_val_reg(char *cp, char *fname,
+parsesame_val_reg(char *cp, const char *fname,
     unsigned long lineno,
     struct conf_internal_s *conf, struct comtable_s *comtab)
 {
@@ -892,7 +892,7 @@ parsesame_val_reg(char *cp, char *fname,
 }
 
 static int
-parseundefined_val_reg(char *cp, char *fname,
+parseundefined_val_reg(char *cp, const char *fname,
     unsigned long lineno,
     struct conf_internal_s *conf, struct comtable_s *comtab)
 {
@@ -930,7 +930,7 @@ parseundefined_val_reg(char *cp, char *fname,
     and record the table size.
 */
 static int
-parsereg_table_size(char *cp, char *fname, unsigned long lineno,
+parsereg_table_size(char *cp, const char *fname, unsigned long lineno,
     struct conf_internal_s *conf, struct comtable_s *comtab)
 {
     size_t clen = comtab->namelen;
@@ -964,7 +964,7 @@ parsereg_table_size(char *cp, char *fname, unsigned long lineno,
     and record the table size.
 */
 static int
-parseaddress_size(char *cp, char *fname, unsigned long lineno,
+parseaddress_size(char *cp, const char *fname, unsigned long lineno,
     struct conf_internal_s *conf, struct comtable_s *comtab)
 {
     size_t clen = comtab->namelen;
@@ -999,7 +999,8 @@ parseaddress_size(char *cp, char *fname, unsigned long lineno,
     check we have the right abi.
 */
 static int
-parseendabi(char *cp, char *fname, char *abiname, unsigned long lineno,
+parseendabi(char *cp, const char *fname, 
+    const char *abiname, unsigned long lineno,
     struct comtable_s *comtab)
 {
     size_t clen = comtab->namelen;
@@ -1020,7 +1021,7 @@ parseendabi(char *cp, char *fname, char *abiname, unsigned long lineno,
     return res;
 }
 static int
-parseincludeabi(char *cp, char *fname, unsigned long lineno,
+parseincludeabi(char *cp, const char *fname, unsigned long lineno,
     char **abiname_out,
     struct comtable_s *comtab)
 {
@@ -1056,7 +1057,7 @@ parseincludeabi(char *cp, char *fname, unsigned long lineno,
 
 */
 static int
-parse_abi(FILE * stream, char *fname, char *abiname,
+parse_abi(FILE * stream, const char *fname, const char *abiname,
     struct conf_internal_s *conf_internal, 
     unsigned long lineno,
     unsigned int nest_level)

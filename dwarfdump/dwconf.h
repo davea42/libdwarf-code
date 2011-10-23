@@ -93,8 +93,8 @@ struct dwconf_s {
 
 
 /* Returns DW_DLV_OK if works. DW_DLV_ERROR if cannot do what is asked. */
-int find_conf_file_and_read_config(char *named_file,
-    char *named_abi, char **defaults,
+int find_conf_file_and_read_config(const char *named_file,
+    const char *named_abi, char **defaults,
     struct dwconf_s *conf_out);
 void init_conf_file_data(struct dwconf_s *config_file_data);
 void init_mips_conf_file_data(struct dwconf_s *config_file_data);

@@ -40,10 +40,10 @@ bool
 AddressRangesData::IsAddressInAddressRange(Dwarf_Unsigned pc)
 {
     if(pc < low_pc_) {
-         return false;
+        return false;
     }
     if(pc > high_pc_) {
-         return false;
+        return false;
     }
     for(std::list<AddressRangeEntry>::iterator it =
         address_range_data_.begin(); it != address_range_data_.end();
@@ -60,17 +60,16 @@ void
 AddressRangeEntry::printAddressRangeEntry(unsigned ct) 
 {
     cout <<"[" << IToDec(ct,6) << "] Low = " <<
-         IToHex(range_low_pc_, 10 ) <<
-         ", High =  " <<
-         IToHex(range_high_pc_, 10) << std::endl;
-        
+        IToHex(range_low_pc_, 10 ) <<
+        ", High =  " <<
+        IToHex(range_high_pc_, 10) << std::endl;
 };
 
 // Leave overall high/low as is, delete the details.
 void 
 AddressRangesData::ResetRangesList()
 {
-     address_range_data_.clear();
+    address_range_data_.clear();
 }
 
 // We might want to sort these by low-address rather than printing
@@ -93,31 +92,31 @@ AddressRangesData::PrintRangesData()
 void 
 AddressRangesData::AddAddressRange(Dwarf_Unsigned low_pc, Dwarf_Unsigned high_pc) 
 {
-         // Presently we are not checking for duplicates, so some
-         // can be present.
-         address_range_data_.push_back(AddressRangeEntry(low_pc,high_pc));
+    // Presently we are not checking for duplicates, so some
+    // can be present.
+    address_range_data_.push_back(AddressRangeEntry(low_pc,high_pc));
 };
 
 void 
 AddressRangesData::SetLimitsAddressRange(Dwarf_Unsigned low_pc, Dwarf_Unsigned high_pc)
 {
-        if(low_pc < high_pc) {
-           low_pc_ = low_pc;
-           high_pc_ = high_pc;
-        }
+    if(low_pc < high_pc) {
+        low_pc_ = low_pc;
+        high_pc_ = high_pc;
+    }
 };
 
 void
 LinkOnceEntry::printLinkOnceEntry(unsigned ct) 
 {
     cout <<"[" << IToDec(ct,6) << "] Low = " <<
-         IToHex(lo_section_low_pc_, 10 ) <<
-         ", High =  " <<
-         IToHex(lo_section_high_pc_, 10) << 
-         ",  section index = " <<
-         lo_section_index_ <<
-         ",  section = " <<
-         lo_section_name_ << std::endl;
+        IToHex(lo_section_low_pc_, 10 ) <<
+        ", High =  " <<
+        IToHex(lo_section_high_pc_, 10) << 
+        ",  section index = " <<
+        lo_section_index_ <<
+        ",  section = " <<
+        lo_section_name_ << std::endl;
 };
 
 void

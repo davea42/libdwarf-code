@@ -1395,7 +1395,7 @@ print_one_frame_reg_col(Dwarf_Debug dbg,
 {
     string type_title = "";
     int print_type_title = 1;
-     if (check_frames_extended) {
+    if (check_frames_extended) {
         return;
     }
 
@@ -1598,7 +1598,7 @@ print_frames(Dwarf_Debug dbg, int print_debug_frame, int print_eh_frame,
             }
             /* Print the cie set. */
             if (verbose) {
-                 /* Do not print if in check mode */
+                /* Do not print if in check mode */
                 if (!check_frames_extended) {
                     cout << endl;
                     cout << "cie:";

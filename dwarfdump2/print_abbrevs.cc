@@ -62,7 +62,6 @@ print_abbrevs(Dwarf_Debug dbg)
     Dwarf_Unsigned offset = 0;
     Dwarf_Unsigned length = 0;
     Dwarf_Unsigned attr_count = 0;
-    Dwarf_Half tag = 0;
     Dwarf_Half attr = 0;
     Dwarf_Signed form = 0;
     Dwarf_Off off = 0;
@@ -210,7 +209,7 @@ increaseTo(unsigned nsize)
     }
     abbrev_vec.resize(nsize);
     for(unsigned i = csize; i < nsize; ++i) {
-                abbrev_vec[i] = 0;
+        abbrev_vec[i] = 0;
     }
 
 }

@@ -745,7 +745,6 @@ print_relocinfo_64(Dwarf_Debug dbg, Elf * elf)
 {
 #ifdef HAVE_ELF64_GETEHDR
     Elf_Scn *scn = NULL;
-    Elf_Data *data = 0;
     Elf64_Ehdr *ehdr64 = 0;
     Elf64_Shdr *shdr64  = 0;
     const char *scn_name = 0;
@@ -820,7 +819,6 @@ static void
 print_relocinfo_32(Dwarf_Debug dbg, Elf * elf)
 {
     Elf_Scn *scn = NULL;
-    Elf_Data *data = 0;
     Elf32_Ehdr *ehdr32 = 0;
     Elf32_Shdr *shdr32 = 0;
     char *scn_name = 0;

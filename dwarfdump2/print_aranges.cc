@@ -182,7 +182,7 @@ print_aranges(Dwarf_Debug dbg)
 
 
                 if (check_aranges) {
-                     do_checking(dbg,arange_buf,i,cu_die_offset,first_cu,
+                    do_checking(dbg,arange_buf,i,cu_die_offset,first_cu,
                         cu_die_offset_prev,cu_die);
                 }
 
