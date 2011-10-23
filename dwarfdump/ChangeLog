@@ -1,4 +1,6 @@
 2011-10-23  DavidAnderson <davea42@earthlink.net>
+     * dwarfdump.c: Fix omission of a 'break' statement for case 'q'.
+2011-10-23  DavidAnderson <davea42@earthlink.net>
      * dwarfdump.1: Now command line input strings 
        are translated from uri-style
      * dwarfdump.c: Translate input strings to from uri style to characters.

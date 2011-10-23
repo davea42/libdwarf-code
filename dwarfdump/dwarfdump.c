@@ -1293,6 +1293,7 @@ process_args(int argc, char *argv[])
         case 'q':
             /* Suppress uri-did-transate notification */
             do_print_uri_in_input = FALSE;
+            break;
         case 's':
             string_flag = TRUE;
             suppress_check_dwarf();
