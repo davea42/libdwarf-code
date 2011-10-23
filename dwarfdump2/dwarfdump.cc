@@ -58,7 +58,7 @@ $Header: /plroot/cmplrs.src/v7.4.5m/.RCS/PL/dwarfdump/RCS/dwarfdump.c,v 1.48 200
 #include "common.h"
 #include "naming.h"
 #include "uri.h"
-#define DWARFDUMP_VERSION " Tue Oct 11 15:51:27 PDT 2011  "
+#define DWARFDUMP_VERSION " Sat Oct 22 15:33:20 PDT 2011  "
 
 using std::string;
 using std::cout;
@@ -988,6 +988,7 @@ static void do_all()
     /*  Do not do 
         loc_flag = TRUE 
         abbrev_flag = TRUE;
+        ranges_flag = true;
         because nothing in
         the DWARF spec guarantees the sections are free of random bytes
         in areas not referenced by .debug_info */
@@ -998,7 +999,6 @@ static void do_all()
         as print_relocs makes no sense for non-elf dwarfdump users.  */
     static_func_flag = static_var_flag = true;
     type_flag = weakname_flag = true;
-    ranges_flag = true;
     header_flag = true;
 }
 
@@ -1059,7 +1059,7 @@ process_args(int argc, char *argv[])
 
     while ((c =
         getopt(argc, argv,
-        "#:abc::CdDeEfFgGhH:ik:lmMnNo::pPQrRsS:t:u:vVwW::x:yz")) != EOF) {
+        "#:abc::CdDeEfFgGhH:ik:lmMnNo::pPQrRsS:t:u:UvVwW::x:yz")) != EOF) {
 
         switch (c) {
         case '#':

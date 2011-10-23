@@ -57,7 +57,7 @@ $Header: /plroot/cmplrs.src/v7.4.5m/.RCS/PL/dwarfdump/RCS/dwarfdump.c,v 1.48 200
 extern int elf_open(char *name,int mode);
 #endif
 
-#define DWARFDUMP_VERSION " Tue Oct 11 15:51:27 PDT 2011  "
+#define DWARFDUMP_VERSION " Sat Oct 22 15:33:20 PDT 2011  "
 
 extern char *optarg;
 
@@ -966,6 +966,7 @@ do_all()
     /*  Do not do 
         loc_flag = TRUE 
         abbrev_flag = TRUE;
+        ranges_flag = TRUE;
         because nothing in
         the DWARF spec guarantees the sections are free of random bytes
         in areas not referenced by .debug_info */
@@ -975,7 +976,6 @@ do_all()
         as print_relocs makes no sense for non-elf dwarfdump users.  */  
     static_func_flag = static_var_flag = TRUE;
     type_flag = weakname_flag = TRUE;
-    ranges_flag = TRUE; /* Dump .debug_ranges */
     header_flag = TRUE; /* Dump header info */
 }
 
