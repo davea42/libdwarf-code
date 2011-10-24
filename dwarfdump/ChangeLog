@@ -1,3 +1,6 @@
+2011-10-24  DavidAnderson <davea42@earthlink.net>
+     * dwarfdump.1: Clearly identify the command line options where
+       URI style input is expected.
 2011-10-23  DavidAnderson <davea42@earthlink.net>
      * dwarfdump.c: Fix omission of a 'break' statement for case 'q'.
 2011-10-23  DavidAnderson <davea42@earthlink.net>

@@ -62,8 +62,9 @@ any error strings may not appear close to the time the
 error was encountered.
 .SH URI STYLE INPUT STRINGS
 .PP
-All the options taking name strings  look for URIs and
-translate the URI strings to characters by default.
+The <objectfilename> and the options taking name strings look for URIs and
+translate the URI strings to characters by default
+(see -x, -c<compiler name>, -S, -u).
 So any single % character is treated as if the following two
 characters are hex digits representing the underlying true character.
 Various characters are meaningful to shells (such as bash or sh) 
@@ -79,7 +80,7 @@ double it to %% on the command line.
 .PP
 Options -U (turning off URI interpretation) and -q (making finding
 URI sequences silent) give finer control of URI interpretation.
-.PP
+PP
 As an example, to get a string'a b' make the string 'a%20b'
 (here the quote  (') is for exposition not part of the string, though
 quote is certainly problematic in a name).
@@ -224,6 +225,7 @@ and turns off -cg .
 .B \-cname
 Restricts checking to compilers whose
 producer string contains 'name' (not case sensitive).
+The 'name' is read as a URI string.
 
 .TP
 .B \
@@ -384,6 +386,7 @@ When printing DIEs
 for each tag value or attribute name that matches 'string' exactly
 print the compilation unit information and its section offset.
 Any CU with no match is not printed.
+The 'string' is read as a URI string.
 .TP
 .B \-S any=string   
 When printing DIEs
@@ -391,6 +394,7 @@ for each tag value or attribute name that contains 'string'
 somewhere in the tag or attribute (case insensitive)
 print the compilation unit information and its section offset.
 Any CU with no match is not printed.
+The 'string' is read as a URI string.
 .TP
 .B \-S regex=string 
 When printing DIEs
@@ -398,6 +402,7 @@ for each tag value or attribute name where the 'string' reqular
 expression matches print the compilation unit information
 and its section offset.
 Any CU with no match is not printed.
+The 'string' is read as a URI string.
 
 .PP
 The string cannot have spaces or other characters which are
@@ -443,11 +448,13 @@ higher numbers mean more debug actions. See the source code.
 .B \-x name=/p/a/t/h.conf 
 The file path given is the name of a file assumed to be
 a dwarfdump.conf-like file.
+The file path is read as a URI string.
 
 .TP
 .B \-x abi=ppc  
 Selects the abi (from a dwarfdump.conf file) to be used in
 printing frame information (here using ppc as an example).
+The abi is read as a URI string.
 
 .TP
 .B \-P 
@@ -475,6 +482,7 @@ the 'cuname' you provide should be c.c as the characters
 through the final path-separating / are ignored.
 If 'cuname' begins with a / then the entire name string
 of a compilation unit must match 'cuname'.
+The 'cuname' is read as a URI string.
 
 .TP
 .B \-U
@@ -489,10 +497,15 @@ No longer suported.
 
 .SH FILES
 dwarfdump
+
 dwarfdump.conf
+
 ./dwarfdump.conf
+
 $(HOME)/.dwarfdump.conf
+
 $(HOME)/dwarfdump.conf
+
 <install-prefix>/lib/dwarfdump.conf
 .SH NOTES
 In some cases compilers use DW_FORM_data1 (for example)
