@@ -58,7 +58,7 @@ $Header: /plroot/cmplrs.src/v7.4.5m/.RCS/PL/dwarfdump/RCS/dwarfdump.c,v 1.48 200
 #include "common.h"
 #include "naming.h"
 #include "uri.h"
-#define DWARFDUMP_VERSION " Sat Oct 22 15:33:20 PDT 2011  "
+#define DWARFDUMP_VERSION " Mon Oct 24 09:24:29 PDT 2011  "
 
 using std::string;
 using std::cout;
@@ -1184,6 +1184,7 @@ process_args(int argc, char *argv[])
                         check_all_compilers = false;
                     }
                     else {
+                        check_all_compilers = false;
                         increment_compilers_targeted(true);
                         unsigned cc = compilers_targeted.size() -1;
                         compilers_targeted[cc].name_ = 
@@ -1234,7 +1235,7 @@ process_args(int argc, char *argv[])
                     else {
                         if (strncmp(optarg,"regex=",6) == 0) {
                             string noquotes = remove_quotes_pair(&optarg[6]);
-                            search_regex_text = do_uri_translation(noquotes,"-s regex=");
+                            search_regex_text = do_uri_translation(noquotes,"-S regex=");
                             if (search_regex_text.size() > 0) {
                                 if (regcomp(&search_re,
                                     search_regex_text.c_str(),
@@ -1972,10 +1973,8 @@ increment_compilers_targeted(bool beyond)
         compilers_targeted.push_back(c);
     }
     if (beyond) {
-        if( compilers_targeted.empty()) {
-            Compiler c;
-            compilers_targeted.push_back(c);
-        }
+        Compiler c;
+        compilers_targeted.push_back(c);
     }
 }
 
@@ -2010,7 +2009,7 @@ update_compiler_target(const string &producer_name)
             }
         }
     } else {
-        /* Take into account that internaly all strings are double quoted */
+        /* Take into account that internally all strings are double quoted */
         bool snc_compiler = hasprefix(
             error_message_data.CU_producer.c_str(),
             "\"SN")? true : false;

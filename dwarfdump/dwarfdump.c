@@ -57,7 +57,7 @@ $Header: /plroot/cmplrs.src/v7.4.5m/.RCS/PL/dwarfdump/RCS/dwarfdump.c,v 1.48 200
 extern int elf_open(char *name,int mode);
 #endif
 
-#define DWARFDUMP_VERSION " Sat Oct 22 15:33:20 PDT 2011  "
+#define DWARFDUMP_VERSION " Mon Oct 24 09:24:29 PDT 2011  "
 
 extern char *optarg;
 
@@ -1274,6 +1274,7 @@ process_args(int argc, char *argv[])
                             pCompiler = &compilers_targeted[compilers_targeted_count];
                             reset_compiler_entry(pCompiler);
                             pCompiler->name = cmp;
+                            check_all_compilers = FALSE;
                         } else {
                             fprintf(stderr, "Compiler table max %d exceeded, "
                                 "limiting the tracked compilers to %d\n",
@@ -2103,7 +2104,7 @@ update_compiler_target(const char *producer_name)
             }
         }
     } else {
-        /* Take into account that internaly all strings are double quoted */
+        /* Take into account that internally all strings are double quoted */
         boolean snc_compiler = hasprefix(CU_producer,"\"SN")? TRUE : FALSE;
         boolean gcc_compiler = hasprefix(CU_producer,"\"GNU")?TRUE : FALSE; 
         current_cu_is_checked_compiler = check_all_compilers ||
