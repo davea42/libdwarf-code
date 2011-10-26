@@ -27,12 +27,15 @@ just
     cp dwarfdump $HOME/bin/dwarfdump 
 (by convention many people put personal executables in $HOME/bin
 and fix up $PATH to refer there) which suffices as 'installation'.
+Also   
+    cp dwarfdump.conf $HOME 
 
 To use dwarf or libdwarf, you may want to install dwarf.h
 and libdwarf.h somewhere convenient.
 You can just copy those two headers to /usr/local/include by hand
+(or anywhere, really, that you have permission to copy to)
 (you may need to use -I/usr/local/include on compile lines
-to reference them there, but see below on configure).
+to reference them there, but see below on configure and make).
 
 Notice that dwarf_names.c and dwarf_names.h are supplied by
 the release though the Makefile can and may rebuild them.
@@ -40,31 +43,40 @@ Some users find it difficult to get a reliable awk(1) program,
 so for them these prebuilt versions may be useful.
 
 If your headers or libelf/libdwarf are not in the expected places,
-use the configure script to access them (and to add other ld
-or C flags).
-For example, using csh syntax:
-	setenv PRIVATE_LIBDIR /home/davea/lib
-	./configure LDFLAGS="-L$PRIVATE_LIBDIR" \
-		CPPFLAGS="-I/home/davea/inc" CFLAGS="-I/home/davea/inc"
-Set both CFLAGS and CPPFLAGS so that configure works properly.
+use the make command line to add flags and include directories.
+For example
+  ./configure
+  PREINCS="-I /usr/local/include" POSTINCS="-I /home/x/include"  make
+PREINCS content is inserted before CFLAGS as make(1) is running.
+POSTINCS content is added after the CFLAGS value.
 
-If your primary target cpu architecture ( of objects that you
-are using dwarfdump on) is not MIPS, you will probably want
-to add   -DDWARFDUMP_TURN_OFF_MIPS_REG_NAMES=1 to CPPFLAGS
-and CFLAGS  to avoid using misleading register names.
-See print_sections.c.
+To set LDFLAGS,
+do so at configure time, for example:
+  ./configure LDFLAGS="-L /some/dir"
+And/or use PRELIBS and/or POSTLIBS at 'make' time similar to the use
+of PREINCS and POSTINCS.
 
-
-If $PRIVATE_LIBDIR  has both libelf.so and libelf.a, the libelf.so
-will be picked up and 
-  "./tag_tree_build: error while loading shared libraries: 
-	libelf.so.0: cannot open shared object file: 
-	No such file or directory"
+If the libdwarf directory
+has both libdwarf.so and libdwarf.a, the libdwarf.so
+will be picked up and
+  "./tag_tree_build: error while loading shared libraries:
+        libdwarf.so: cannot open shared object file:  
+        No such file or directory"
 will probably result.
-Either: remove libelf.so.* from your $PRIVATE_LIBDIR or set
-LD_LIBRARY_PATH to $PRIVATE_LIBDIR, or use LDFLAGS to set
-rpath.   Much simpler all around to ensure that $PRIVATE_LIBDIR
-only has archive libelf, not shared-library libelf.
+Either: remove libdwarf.so  and rebuild or set
+the environment variable LD_LIBRARY_PATH to  the directory 
+containing the .so or use LDFLAGS to set rpath (see just below).   
+It is perhaps simpler to ensure that the libdwarf directory
+only has an archive, not  a shared-library.
+But sometimes one wants a shared library.
+In that case
+one can set ld's -rpath on the gcc command line like this:
+    LDFLAGS="-Wl,-rpath=/some/path/libdir"
+so the shared library can be found at run time automatically.
+
+The same problem may arise with libelf, and the same approach
+will solve the problem.
+
 
 
 David Anderson.  davea42  at  earthlink dot net.

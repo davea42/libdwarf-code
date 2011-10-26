@@ -36,11 +36,19 @@ at compile time are to be expected in dwarf_frame.c and
 dwarf_frame2.c.   Do not be alarmed.
 
 If your headers are not in the expected places,
-use the configure script to access them (and to add other ld
-or C flags).
+use the make command line to add flags and include directories.
 For example
-        ./configure  CPPFLAGS="-I/home/davea/inc" CFLAGS="-I/home/davea/inc"
-Set both CFLAGS and CPPFLAGS so that configure works properly.
+  ./configure  
+  PREINCS="-I /usr/local/share/include" POSTINCS="-I /home/x/include"  make
+PREINCS content is inserted before CFLAGS as make(1) is running.
+POSTINCS content is added after the CFLAGS value.
+
+To set LDFLAGS (which is used when building a .so and
+in building gennames to create some source here), 
+do so at configure time, for example:
+  ./configure LDFLAGS="-L /var/tmp"
+Or use PRELIBS and/or POSTLIBS at 'make' time similar to the use
+of PREINCS and POSTINCS.
 
 If you are using the old frame interfaces and depend on
 the use of DW_FRAME_CFA_COL you must add  --enable-oldframecol

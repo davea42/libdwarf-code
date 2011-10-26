@@ -1,3 +1,8 @@
+2011-10-26  DavidAnderson <davea42@earthlink.net>
+     * Makefile.in, README: Added Make settings of PREINCS POSTINCS
+       PRELIBS, POSTLIBS to simplify building when libdwarf or libelf
+       are not in the normal locations.   Documented usable ways to
+       deal with unusual situations at build time.
 2011-10-09  DavidAnderson <davea42@earthlink.net> .
      * dwarf_die_deliv.c, dwarf_elf_access.c: Fix bad indentation.
 2011-10-05  DavidAnderson <davea42@earthlink.net> .

@@ -1,4 +1,8 @@
-ctober 23, 2011
+October 26, 2011
+    Added new features to Makefile.in and documented in README
+    how to build dwarfdump with headers or libraries in
+    non-standard places.    
+October 23, 2011
     By default the various places with string option values
     and file paths all use URI transformation on input and
     if the transformation does anything at all dwarfdump reports

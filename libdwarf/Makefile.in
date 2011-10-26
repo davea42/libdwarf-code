@@ -63,9 +63,9 @@ DEFS =		@DEFS@
 LIBS =		@LIBS@
 INCLUDES =	-I. -I$(srcdir)
 dwfpic =        @dwfpic@
-CFLAGS =	@CFLAGS@ $(INCLUDES) $(dwfpic)
+CFLAGS =	$(PREINCS) @CFLAGS@ $(INCLUDES) $(dwfpic) $(POSTINCS)
 # For more checking add -DWANT_LIBBDWARF_MALLOC_CHECK=1 to CFLAGS
-LDFLAGS =	@LDFLAGS@
+LDFLAGS =	$(PRELIBS) @LDFLAGS@ $(POSTLIBS)
 
 
 BUILD_BASE = .

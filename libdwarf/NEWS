@@ -1,3 +1,7 @@
+October 26,2011
+  Revised the Makefile.in and README to make building libdwarf
+  easier to accomplish with unusual locations of libelf headers
+  or other headers or libraries.
 June 04,2011
   Non-Elf objects could be used with libdwarf, but 
   no one has contributed non-elf-reading code for libdwarf

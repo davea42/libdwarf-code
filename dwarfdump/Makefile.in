@@ -28,14 +28,15 @@ ARFLAGS =	@ARFLAGS@
 RM =		rm
 RANLIB =	@RANLIB@
 DEFS =		@DEFS@
+# ../libdwarf gets us to local headers and a libdwarf 
+# archive, usually, so we assume it.
+DIRINC =        $(srcdir)/../libdwarf
 LIBS =		@LIBS@ -L../libdwarf -ldwarf -lelf
 INCLUDES =	-I. -I$(srcdir) -I$(srcdir)/../libdwarf
-CFLAGS =	@CFLAGS@ $(INCLUDES) -DCONFPREFIX=${libdir}
-LDFLAGS =	@LDFLAGS@  $(LIBS)
+CFLAGS =	$(PREINCS) @CFLAGS@ $(INCLUDES) -DCONFPREFIX=${libdir} $(POSTINCS)
+LDFLAGS =	$(PRELIBS) @LDFLAGS@  $(LIBS) $(POSTLIBS)
 
-# ../libdwarf gets us to local headers
 
-DIRINC =  $(srcdir)/../libdwarf
 INSTALL = cp
 
 binprefix =
