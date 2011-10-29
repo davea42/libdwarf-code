@@ -1,4 +1,6 @@
 2011-10-29  DavidAnderson <davea42@earthlink.net>
+     * dwarfdump.cc, common.cc: Update version strings.
+2011-10-29  DavidAnderson <davea42@earthlink.net>
      * dwarfdump.cc: Reset the CU hints at each new section.
        Set up reloc flags so debug_types gets relocated if necessary.
      * globals.h: Add DEBUG_TYPES for the .debug_types section.
