@@ -447,36 +447,59 @@ _dwarf_memcpy_swap_bytes(void *s1, const void *s2, size_t len)
     Now brought to one place.
 
     We try to accurately compute the size of a cu header
-    given a known cu header location ( an offset in .debug_info).  */
+    given a known cu header location ( an offset in .debug_info
+    or debug_types).  */
 /* ARGSUSED */
 Dwarf_Unsigned
-_dwarf_length_of_cu_header(Dwarf_Debug dbg, Dwarf_Unsigned offset)
+_dwarf_length_of_cu_header(Dwarf_Debug dbg, Dwarf_Unsigned offset,
+    Dwarf_Bool is_info)
 {
     int local_length_size = 0;
     int local_extension_size = 0;
     Dwarf_Unsigned length = 0;
-    Dwarf_Small *cuptr = dbg->de_debug_info.dss_data + offset;
+    Dwarf_Unsigned final_size = 0;
+    Dwarf_Small *cuptr = 
+        is_info? dbg->de_debug_info.dss_data + offset:
+            dbg->de_debug_types.dss_data+ offset;
 
     READ_AREA_LENGTH(dbg, length, Dwarf_Unsigned,
         cuptr, local_length_size, local_extension_size);
 
-    return local_extension_size +  /* initial extension, if present */
+    final_size = local_extension_size +  /* initial extension, if present */
         local_length_size +     /* Size of cu length field. */
         sizeof(Dwarf_Half) +    /* Size of version stamp field. */
         local_length_size +     /* Size of abbrev offset field. */
         sizeof(Dwarf_Small);    /* Size of address size field. */
 
+    if(!is_info) {
+        final_size += 
+            /* type signature size */
+            sizeof (Dwarf_Sig8) + 
+            /* type offset size */
+            local_length_size;
+    }
+    return final_size;
 }
 
 /*  Pretend we know nothing about the CU
     and just roughly compute the result.  */
 Dwarf_Unsigned
-_dwarf_length_of_cu_header_simple(Dwarf_Debug dbg)
+_dwarf_length_of_cu_header_simple(Dwarf_Debug dbg,
+    Dwarf_Bool dinfo)
 {
-    return dbg->de_length_size +        /* Size of cu length field. */
+    Dwarf_Unsigned finalsize = 0;
+    finalsize =  dbg->de_length_size +        /* Size of cu length field. */
         sizeof(Dwarf_Half) +    /* Size of version stamp field. */
         dbg->de_length_size +   /* Size of abbrev offset field. */
         sizeof(Dwarf_Small);    /* Size of address size field. */
+    if(!dinfo) {
+        finalsize += 
+            /* type signature size */
+            sizeof (Dwarf_Sig8) + 
+            /* type offset size */
+            dbg->de_length_size;
+    }
+    return finalsize;
 }
 
 /*  Now that we delay loading .debug_info, we need to do the
@@ -487,22 +510,29 @@ int
 _dwarf_load_debug_info(Dwarf_Debug dbg, Dwarf_Error * error)
 {
     int res = DW_DLV_ERROR;
-
-    /*  Testing de_debug_info.dss_data allows us to avoid testing
-        de_debug_abbrev.dss_data. 
-        One test instead of 2. .debug_info is useless
-        without .debug_abbrev. */
     if (dbg->de_debug_info.dss_data) {
         return DW_DLV_OK;
     }
-
     res = _dwarf_load_section(dbg, &dbg->de_debug_abbrev,error);
     if (res != DW_DLV_OK) {
         return res;
     }
     res = _dwarf_load_section(dbg, &dbg->de_debug_info, error);
     return res;
-
+}
+int
+_dwarf_load_debug_types(Dwarf_Debug dbg, Dwarf_Error * error)
+{
+    int res = DW_DLV_ERROR;
+    if (dbg->de_debug_types.dss_data) {
+        return DW_DLV_OK;
+    }
+    res = _dwarf_load_section(dbg, &dbg->de_debug_abbrev,error);
+    if (res != DW_DLV_OK) {
+        return res;
+    }
+    res = _dwarf_load_section(dbg, &dbg->de_debug_types, error);
+    return res;
 }
 void
 _dwarf_free_abbrev_hash_table_contents(Dwarf_Debug dbg,Dwarf_Hash_Table hash_table)

@@ -52,12 +52,18 @@
 
 #include <stddef.h>
 
+/* The 'debug_info' names below are non-zero (non-NULL) only
+   if we are processing a debug_info section. And vice versa
+   for a debug_types section. */
 
 struct Dwarf_Die_s {
-    Dwarf_Byte_Ptr di_debug_info_ptr;
+    Dwarf_Byte_Ptr di_debug_ptr;
     Dwarf_Abbrev_List di_abbrev_list;
     Dwarf_CU_Context di_cu_context;
     int  di_abbrev_code;
+
+    /* TRUE if part of debug_info. FALSE if part of .debug_types. */
+    Dwarf_Bool di_is_info;
 };
 
 struct Dwarf_Attribute_s {
@@ -69,7 +75,10 @@ struct Dwarf_Attribute_s {
             ar_attribute_form_direct contains DW_FORM_indirect
             but ar_attribute_form contains the true form. */
     Dwarf_CU_Context ar_cu_context;
-    Dwarf_Small *ar_debug_info_ptr;
+        /*  The following points to either debug_info or debug_types
+            depending on if context is cc_is_info  or not. */   
+    Dwarf_Small *ar_debug_ptr;
+
     Dwarf_Die ar_die;/* Access to the DIE owning the attribute */
     Dwarf_Attribute ar_next;
 };
@@ -95,6 +104,7 @@ struct Dwarf_Attribute_s {
     Dwarf_Off off2 = cu_context->cc_debug_info_offset;
     cu_die_info_ptr = dbg->de_debug_info.dss_data +
         off2 + _dwarf_length_of_cu_header(dbg, off2);
+    Or similar for de_debug_types.
     
     **Updated by dwarf_next_cu_header in dwarf_die_deliv.c
 */
@@ -117,14 +127,20 @@ struct Dwarf_CU_Context_s {
     Dwarf_Half cc_version_stamp;
     Dwarf_Sword cc_abbrev_offset;
     Dwarf_Small cc_address_size;
-    /*  cc_debug_info_offset is the offset in the section
+    /*  cc_debug_offset is the offset in the section
         of the CU header of this CU.  Dwarf_Word
-        should be large enough. */
-    Dwarf_Word cc_debug_info_offset;
+        should be large enough.  May be debug_info or debug_types
+        but those are distinct. See cc_is_info flag. */
+    Dwarf_Word cc_debug_offset;
+    Dwarf_Sig8  cc_signature;
+    Dwarf_Unsigned cc_typeoffset;
+
     Dwarf_Byte_Ptr cc_last_abbrev_ptr;
     Dwarf_Hash_Table cc_abbrev_hash_table;
     Dwarf_CU_Context cc_next;
     /*unsigned char cc_offset_length; */
+    Dwarf_Bool cc_is_info; /* TRUE means context is
+        in debug_info, FALSE means is in debug_types. */
 };
 
 /*  Consolidates section-specific data in one place.
@@ -185,6 +201,36 @@ struct Dwarf_Harmless_s {
   char **  dh_errors;
 };
 
+/* Data needed seperately for debug_info and debug_types
+   as we may be reading both interspersed. */
+
+struct Dwarf_Debug_InfoTypes_s {
+    /*  Context for the compilation_unit just read by a call to
+        dwarf_next_cu_header. **Updated by dwarf_next_cu_header in
+        dwarf_die_deliv.c */
+    Dwarf_CU_Context de_cu_context;
+    /*  Points to linked list of CU Contexts for the CU's already read.
+        These are only CU's read by dwarf_next_cu_header(). */
+    Dwarf_CU_Context de_cu_context_list;
+    /*  Points to the last CU Context added to the list by
+        dwarf_next_cu_header(). */
+    Dwarf_CU_Context de_cu_context_list_end;
+    /*  This is the list of CU contexts read for dwarf_offdie().  These
+        may read ahead of dwarf_next_cu_header(). */
+    Dwarf_CU_Context de_offdie_cu_context;
+    Dwarf_CU_Context de_offdie_cu_context_end;
+
+    /*  Offset of last byte of last CU read. */
+    Dwarf_Word de_last_offset;
+    /*  de_last_di_info_ptr and de_last_die are used with
+        dwarf_siblingof, dwarf_child, and dwarf_validate_die_sibling. 
+        dwarf_validate_die_sibling will not give meaningful results
+        if called inappropriately. */
+    Dwarf_Byte_Ptr  de_last_di_ptr;
+    Dwarf_Die  de_last_die;
+};
+typedef struct Dwarf_Debug_InfoTypes_s *Dwarf_Debug_InfoTypes;
+
 struct Dwarf_Debug_s {
     /*  All file access methods and support data 
         are hidden in this structure. 
@@ -195,26 +241,8 @@ struct Dwarf_Debug_s {
     Dwarf_Handler de_errhand;
     Dwarf_Ptr de_errarg;
 
-    /*  Context for the compilation_unit just read by a call to
-        dwarf_next_cu_header. **Updated by dwarf_next_cu_header in
-        dwarf_die_deliv.c */
-    Dwarf_CU_Context de_cu_context;
-
-    /*  Points to linked list of CU Contexts for the CU's already read.
-        These are only CU's read by dwarf_next_cu_header(). */
-    Dwarf_CU_Context de_cu_context_list;
-
-    /*  Points to the last CU Context added to the list by
-        dwarf_next_cu_header(). */
-    Dwarf_CU_Context de_cu_context_list_end;
-
-    /*  This is the list of CU contexts read for dwarf_offdie().  These
-        may read ahead of dwarf_next_cu_header(). */
-    Dwarf_CU_Context de_offdie_cu_context;
-    Dwarf_CU_Context de_offdie_cu_context_end;
-
-    /*  Offset of last byte of last CU read. */
-    Dwarf_Word de_info_last_offset;
+    struct Dwarf_Debug_InfoTypes_s de_info_reading;
+    struct Dwarf_Debug_InfoTypes_s de_types_reading;
 
     /*  Number of bytes in the length, and offset field in various
         .debug_* sections.  It's not very meaningful, and is
@@ -256,6 +284,7 @@ struct Dwarf_Debug_s {
     Dwarf_Signed de_fde_count_eh;
 
     struct Dwarf_Section_s de_debug_info; 
+    struct Dwarf_Section_s de_debug_types; 
     struct Dwarf_Section_s de_debug_abbrev;
     struct Dwarf_Section_s de_debug_line;
     struct Dwarf_Section_s de_debug_loc;
@@ -303,13 +332,6 @@ struct Dwarf_Debug_s {
         object opened. */
 
     struct Dwarf_Harmless_s de_harmless_errors;
-
-    /*  de_last_di_info_ptr and de_last_die are used with
-        dwarf_siblingof, dwarf_child, and dwarf_validate_die_sibling. 
-        dwarf_validate_die_sibling will not give meaningful results
-        if called inappropriately. */
-    Dwarf_Byte_Ptr  de_last_di_info_ptr;
-    Dwarf_Die  de_last_die;
 };
 
 typedef struct Dwarf_Chain_s *Dwarf_Chain;

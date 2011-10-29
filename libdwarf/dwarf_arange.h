@@ -51,7 +51,8 @@ struct Dwarf_Arange_s {
 
 
     /*  Offset into .debug_info of the start of the compilation-unit
-        containing this set of aranges. */
+        containing this set of aranges. 
+        Applies only to .debug_info, not .debug_types. */
     Dwarf_Off ar_info_offset;
 
     /* Corresponding Dwarf_Debug. */

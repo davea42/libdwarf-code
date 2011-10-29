@@ -98,7 +98,6 @@ print_line_numbers_this_cu(DieHolder & hcudie)
     Dwarf_Die cu_die = hcudie.die();
     Dwarf_Debug dbg = hcudie.dbg();
 
-    bool InvalidSection = false;
     bool SkipRecord = false;
 
     error_message_data.current_section_id = DEBUG_LINE;
@@ -337,7 +336,6 @@ print_line_numbers_this_cu(DieHolder & hcudie)
                     }
                 }
                 record_dwarf_error = false; 
-                InvalidSection = true;
                 /* Due to a fatal error, skip current record */
                 if (found_line_error) {
                     continue;
@@ -395,7 +393,6 @@ print_line_numbers_this_cu(DieHolder & hcudie)
                 cout << endl;
             }
         }
-        InvalidSection = false;
         dwarf_srclines_dealloc(dbg, linebuf, linecount);
     }
 }

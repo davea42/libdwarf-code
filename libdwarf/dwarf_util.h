@@ -312,10 +312,11 @@ _dwarf_get_abbrev_for_code(Dwarf_CU_Context cu_context,
 int _dwarf_string_valid(void *startptr, void *endptr);
 
 Dwarf_Unsigned _dwarf_length_of_cu_header(Dwarf_Debug,
-    Dwarf_Unsigned offset);
-Dwarf_Unsigned _dwarf_length_of_cu_header_simple(Dwarf_Debug);
+    Dwarf_Unsigned offset,Dwarf_Bool dinfo);
+Dwarf_Unsigned _dwarf_length_of_cu_header_simple(Dwarf_Debug,Dwarf_Bool dinfo);
 
 int  _dwarf_load_debug_info(Dwarf_Debug dbg, Dwarf_Error *error);
+int  _dwarf_load_debug_types(Dwarf_Debug dbg, Dwarf_Error *error);
 void _dwarf_free_abbrev_hash_table_contents(Dwarf_Debug dbg,
     struct Dwarf_Hash_Table_s* hash_table);
 int _dwarf_get_address_size(Dwarf_Debug dbg, Dwarf_Die die);

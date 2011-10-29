@@ -228,6 +228,7 @@ extern int nTrace[MAX_TRACE_LEVEL + 1];
 #define DEBUG_STATIC_FUNC 11
 #define DEBUG_STR         12
 #define DEBUG_WEAKNAMES   13
+#define DEBUG_TYPES       14
 
 extern int verbose;
 extern boolean dense;
@@ -365,6 +366,7 @@ extern void validate_abbrev_code(Dwarf_Debug dbg,Dwarf_Unsigned abbrev_code);
 extern void print_die_and_children(
     Dwarf_Debug dbg, 
     Dwarf_Die in_die,
+    Dwarf_Bool is_info,
     char **srcfiles,
     Dwarf_Signed cnt);
 extern boolean print_one_die(
@@ -429,6 +431,8 @@ extern Dwarf_Signed local_dwarf_decode_s_leb128(unsigned char *leb128,
 
 extern void dump_block(char *prefix, char *data, Dwarf_Signed len);
 
+extern void format_sig8_string(Dwarf_Sig8 *data,struct esb_s *out);
+
 int
 dwarfdump_print_one_locdesc(Dwarf_Debug dbg,
     Dwarf_Locdesc * llbuf,
@@ -450,5 +454,6 @@ void print_any_harmless_errors(Dwarf_Debug dbg);
 #define DW_SECTION_REL_DEBUG_FRAME    5
 #define DW_SECTION_REL_DEBUG_LOC      6
 #define DW_SECTION_REL_DEBUG_RANGES   7
+#define DW_SECTION_REL_DEBUG_TYPES    8
 
 #endif /* globals_INCLUDED */

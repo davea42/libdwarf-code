@@ -132,6 +132,7 @@ dwarf_get_aranges_list(Dwarf_Debug dbg,
             arange_ptr, local_length_size);
         arange_ptr += local_length_size;
         length = length - local_length_size;
+        /* This applies to debug_info only, not to debug_types. */
         if (info_offset >= dbg->de_debug_info.dss_size) {
             FIX_UP_OFFSET_IRIX_BUG(dbg, info_offset,
                 "arange info offset.a");
@@ -463,6 +464,9 @@ dwarf_get_arange(Dwarf_Arange * aranges,
     die in the compilation-unit that the
     arange belongs to.  Returns DW_DLV_ERROR
     on error.
+
+    For an arange, the cu_die can only be from debug_info,
+    not debug_types, it seems.
 */
 int
 dwarf_get_cu_die_offset(Dwarf_Arange arange,
@@ -478,6 +482,7 @@ dwarf_get_cu_die_offset(Dwarf_Arange arange,
     }
     dbg = arange->ar_dbg;
     offset = arange->ar_info_offset;
+    /* This applies to debug_info only, not to debug_types. */
     if (!dbg->de_debug_info.dss_data) {
         int res = _dwarf_load_debug_info(dbg, error);
 
@@ -485,7 +490,7 @@ dwarf_get_cu_die_offset(Dwarf_Arange arange,
             return res;
         }
     }
-    *returned_offset = offset + _dwarf_length_of_cu_header(dbg, offset);
+    *returned_offset = offset + _dwarf_length_of_cu_header(dbg, offset, true);
     return DW_DLV_OK;
 }
 
@@ -507,6 +512,7 @@ dwarf_get_arange_cu_header_offset(Dwarf_Arange arange,
         return (DW_DLV_ERROR);
     }
     dbg = arange->ar_dbg;
+    /* This applies to debug_info only, not to debug_types. */
     /*  Like dwarf_get_arange_info this ensures debug_info loaded:
         the cu_header is in debug_info and will be used else
         we would not call dwarf_get_arange_cu_header_offset. */
@@ -552,6 +558,7 @@ dwarf_get_arange_info(Dwarf_Arange arange,
         Dwarf_Debug dbg = arange->ar_dbg;
         Dwarf_Off offset = arange->ar_info_offset;
 
+        /* This applies to debug_info only, not to debug_types. */
         if (!dbg->de_debug_info.dss_data) {
             int res = _dwarf_load_debug_info(dbg, error);
             if (res != DW_DLV_OK) {
@@ -559,7 +566,7 @@ dwarf_get_arange_info(Dwarf_Arange arange,
             }
         }
         *cu_die_offset =
-            offset + _dwarf_length_of_cu_header(dbg, offset);
+            offset + _dwarf_length_of_cu_header(dbg, offset,true);
     }
     return (DW_DLV_OK);
 }
@@ -595,6 +602,7 @@ dwarf_get_arange_info_b(Dwarf_Arange arange,
         Dwarf_Debug dbg = arange->ar_dbg;
         Dwarf_Off offset = arange->ar_info_offset;
 
+        /* This applies to debug_info only, not to debug_types. */
         if (!dbg->de_debug_info.dss_data) {
             int res = _dwarf_load_debug_info(dbg, error);
             if (res != DW_DLV_OK) {
@@ -602,7 +610,7 @@ dwarf_get_arange_info_b(Dwarf_Arange arange,
             }
         }
         *cu_die_offset =
-            offset + _dwarf_length_of_cu_header(dbg, offset);
+            offset + _dwarf_length_of_cu_header(dbg, offset,true);
     }
     return (DW_DLV_OK);
 }   

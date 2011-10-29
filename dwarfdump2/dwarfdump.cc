@@ -181,6 +181,7 @@ int nTrace[MAX_TRACE_LEVEL + 1];
 /* Build section information */
 void build_linkonce_info(Dwarf_Debug dbg);
 static string do_uri_translation(const string &s, const std::string &context);
+static void reset_overall_CU_error_data();
 
 bool info_flag = false;
 
@@ -924,33 +925,43 @@ process_one_file(Elf * elf,const  string & file_name, int archive,
         print_infos(dbg);
     }
     if (pubnames_flag) {
+        reset_overall_CU_error_data();
         print_pubnames(dbg);
     }
     if (macinfo_flag) {
+        reset_overall_CU_error_data();
         print_macinfo(dbg);
     }
     if (loc_flag) {
+        reset_overall_CU_error_data();
         print_locs(dbg);
     }
     if (abbrev_flag) {
+        reset_overall_CU_error_data();
         print_abbrevs(dbg);
     }
     if (string_flag) {
+        reset_overall_CU_error_data();
         print_strings(dbg);
     }
     if (aranges_flag) {
+        reset_overall_CU_error_data();
         print_aranges(dbg);
     }
     if (ranges_flag) {
+        reset_overall_CU_error_data();
         print_ranges(dbg);
     }
     if (frame_flag || eh_frame_flag) {
+        reset_overall_CU_error_data();
         print_frames(dbg, frame_flag, eh_frame_flag, config_file_data);
     }
     if (static_func_flag) {
+        reset_overall_CU_error_data();
         print_static_funcs(dbg);
     }
     if (static_var_flag) {
+        reset_overall_CU_error_data();
         print_static_vars(dbg);
     }
     /*  DWARF_PUBTYPES is the standard typenames dwarf section.
@@ -958,13 +969,17 @@ process_one_file(Elf * elf,const  string & file_name, int archive,
         defined 10 years before dwarf pubtypes). */
 
     if (type_flag) {
+        reset_overall_CU_error_data();
         print_types(dbg, DWARF_PUBTYPES);
+        reset_overall_CU_error_data();
         print_types(dbg, SGI_TYPENAME);
     }
     if (weakname_flag) {
+        reset_overall_CU_error_data();
         print_weaknames(dbg);
     }
     if (reloc_flag) {
+        reset_overall_CU_error_data();
         print_relocinfo(dbg,reloc_map);
     }
     // The right time to do this is unclear, but we
@@ -1296,7 +1311,10 @@ process_args(int argc, char *argv[])
             reloc_flag = true;
             if (optarg) {
                 switch (optarg[0]) {
-                case 'i': reloc_map |= (1 <<DW_SECTION_REL_DEBUG_INFO); break;
+                case 'i': 
+                    reloc_map |= (1 <<DW_SECTION_REL_DEBUG_INFO); 
+                    reloc_map |= (1 <<DW_SECTION_REL_DEBUG_TYPES); 
+                    break;
                 case 'l': reloc_map |= (1 <<DW_SECTION_REL_DEBUG_LINE); break;
                 case 'p': reloc_map |= (1 <<DW_SECTION_REL_DEBUG_PUBNAMES); break;
                 /*  Case a has no effect, no relocations can point out
@@ -2060,6 +2078,19 @@ add_cu_name_compiler_target(const string & name)
         exit(1);
     }
     compilers_detected[current_compiler].cu_list_.push_back(name);
+}
+
+static void
+reset_overall_CU_error_data()
+{
+   error_message_data.CU_name = "<unknown>";
+   error_message_data.CU_producer = "<unknown>";
+   error_message_data.DIE_offset = 0;
+   error_message_data.DIE_overall_offset = 0;
+   error_message_data.DIE_CU_offset = 0;
+   error_message_data.DIE_CU_overall_offset = 0;
+   error_message_data.CU_base_address = 0;
+   error_message_data.CU_high_address = 0;
 }
 
 /* Print CU basic information */

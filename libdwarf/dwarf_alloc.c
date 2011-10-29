@@ -676,6 +676,10 @@ dwarf_dealloc(Dwarf_Debug dbg,
                 (Dwarf_Small *) space <
                 dbg->de_debug_info.dss_data + dbg->de_debug_info.dss_size)
                 return;
+            if ((Dwarf_Small *) space >= dbg->de_debug_types.dss_data &&
+                (Dwarf_Small *) space <
+                dbg->de_debug_types.dss_data + dbg->de_debug_types.dss_size)
+                return;
 
             if (dbg->de_debug_line.dss_data != NULL &&
                 (Dwarf_Small *) space >= dbg->de_debug_line.dss_data &&
@@ -1024,6 +1028,21 @@ rela_free(struct Dwarf_Section_s * sec)
     sec->dss_data_was_malloc = 0;
 }
 
+static void
+freecontextlist(Dwarf_Debug dbg, Dwarf_Debug_InfoTypes dis)
+{
+    Dwarf_CU_Context context = 0;
+    Dwarf_CU_Context nextcontext = 0;
+    for (context = dis->de_cu_context_list;
+        context; context = nextcontext) {
+        Dwarf_Hash_Table hash_table = context->cc_abbrev_hash_table;
+        _dwarf_free_abbrev_hash_table_contents(dbg,hash_table);
+        nextcontext = context->cc_next;
+        dwarf_dealloc(dbg, hash_table, DW_DLA_HASH_TABLE);
+        dwarf_dealloc(dbg, context, DW_DLA_CU_CONTEXT);
+    }
+}
+
 /*
     Used to free all space allocated for this Dwarf_Debug.
     The caller should assume that the Dwarf_Debug pointer 
@@ -1034,27 +1053,19 @@ rela_free(struct Dwarf_Section_s * sec)
 int
 _dwarf_free_all_of_one_debug(Dwarf_Debug dbg)
 {
-    Dwarf_Alloc_Hdr alloc_hdr;
-    Dwarf_Shalf i;
-    Dwarf_CU_Context context = 0;
-    Dwarf_CU_Context nextcontext = 0;
+    Dwarf_Alloc_Hdr alloc_hdr = 0;
+    Dwarf_Shalf i = 0;
 
-    if (dbg == NULL)
+    if (dbg == NULL) {
         return (DW_DLV_ERROR);
+    }
 
     /*  To do complete validation that we have no surprising missing or
         erroneous deallocs it is advisable to do the dwarf_deallocs here 
         that are not things the user can otherwise request.
         Housecleaning.  */
-
-    for (context = dbg->de_cu_context_list;
-        context; context = nextcontext) {
-        Dwarf_Hash_Table hash_table = context->cc_abbrev_hash_table;
-        _dwarf_free_abbrev_hash_table_contents(dbg,hash_table);
-        nextcontext = context->cc_next;
-        dwarf_dealloc(dbg, hash_table, DW_DLA_HASH_TABLE);
-        dwarf_dealloc(dbg, context, DW_DLA_CU_CONTEXT);
-    }
+    freecontextlist(dbg,&dbg->de_info_reading);
+    freecontextlist(dbg,&dbg->de_types_reading);
 
     /* Housecleaning done. Now really free all the space. */
 #ifdef DWARF_SIMPLE_MALLOC
@@ -1092,6 +1103,7 @@ _dwarf_free_all_of_one_debug(Dwarf_Debug dbg)
 
 #endif
     rela_free(&dbg->de_debug_info);
+    rela_free(&dbg->de_debug_types);
     rela_free(&dbg->de_debug_abbrev);
     rela_free(&dbg->de_debug_line);
     rela_free(&dbg->de_debug_loc);

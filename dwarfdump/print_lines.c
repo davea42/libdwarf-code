@@ -105,7 +105,6 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
     int cores = 0;
     int line_errs = 0;
 
-    Dwarf_Bool InvalidSection = FALSE;
     Dwarf_Bool SkipRecord = FALSE;
 
     current_section_id = DEBUG_LINE;
@@ -339,7 +338,6 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
                     }
                 }
                 record_dwarf_error = FALSE; 
-                InvalidSection = TRUE;
                 /* Due to a fatal error, skip current record */
                 if (found_line_error) {
                     continue;
@@ -398,7 +396,6 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
                 printf("\n");
             }
         }
-        InvalidSection = FALSE;
         esb_destructor(&lastsrc);
         dwarf_srclines_dealloc(dbg, linebuf, linecount);
     }

@@ -49,7 +49,7 @@ using std::cout;
 using std::cerr;
 using std::endl;
 
-#define DW_SECTION_REL_DEBUG_NUM      8  /* Number of sections */
+#define DW_SECTION_REL_DEBUG_NUM      9  /* Number of sections */
 /* .debug_abbrev should never have a relocation applied to it as it
    never refers to another section! (other sections refer to 
    .debug_abbrev) */
@@ -63,6 +63,7 @@ using std::endl;
 #define DW_SECTNAME_RELA_DEBUG_FRAME    ".rela.debug_frame"
 #define DW_SECTNAME_RELA_DEBUG_LOC      ".rela.debug_loc"
 #define DW_SECTNAME_RELA_DEBUG_RANGES   ".rela.debug_ranges"
+#define DW_SECTNAME_RELA_DEBUG_TYPES    ".rela.debug_types"
 
 #define DW_SECTNAME_REL_DEBUG          ".rel.debug_"
 #define DW_SECTNAME_REL_DEBUG_INFO     ".rel.debug_info"
@@ -73,6 +74,7 @@ using std::endl;
 #define DW_SECTNAME_REL_DEBUG_FRAME    ".rel.debug_frame"
 #define DW_SECTNAME_REL_DEBUG_LOC      ".rel.debug_loc"
 #define DW_SECTNAME_REL_DEBUG_RANGES   ".rel.debug_ranges"
+#define DW_SECTNAME_REL_DEBUG_TYPES    ".rel.debug_types"
 
 
 #define STRING_FOR_DUPLICATE " duplicate"
@@ -87,6 +89,7 @@ static const char *sectnames[] = {
     DW_SECTNAME_REL_DEBUG_FRAME,
     DW_SECTNAME_REL_DEBUG_LOC,
     DW_SECTNAME_REL_DEBUG_RANGES,
+    DW_SECTNAME_REL_DEBUG_TYPES,
 };
 static const char *sectnamesa[] = {
     DW_SECTNAME_RELA_DEBUG_INFO,
@@ -97,6 +100,7 @@ static const char *sectnamesa[] = {
     DW_SECTNAME_RELA_DEBUG_FRAME,
     DW_SECTNAME_RELA_DEBUG_LOC,
     DW_SECTNAME_RELA_DEBUG_RANGES,
+    DW_SECTNAME_RELA_DEBUG_TYPES,
 };
 
 static const char *error_msg_duplicate[] = {
@@ -108,6 +112,7 @@ static const char *error_msg_duplicate[] = {
     DW_SECTNAME_REL_DEBUG_FRAME STRING_FOR_DUPLICATE,
     DW_SECTNAME_REL_DEBUG_LOC STRING_FOR_DUPLICATE,
     DW_SECTNAME_REL_DEBUG_RANGES STRING_FOR_DUPLICATE,
+    DW_SECTNAME_REL_DEBUG_TYPES STRING_FOR_DUPLICATE,
 };
 
 static const char *error_msg_null[] = {
@@ -119,6 +124,7 @@ static const char *error_msg_null[] = {
     DW_SECTNAME_REL_DEBUG_FRAME STRING_FOR_NULL,
     DW_SECTNAME_REL_DEBUG_LOC STRING_FOR_NULL,
     DW_SECTNAME_REL_DEBUG_RANGES STRING_FOR_NULL,
+    DW_SECTNAME_REL_DEBUG_TYPES STRING_FOR_NULL,
 };
 
 /*  Include Section type, to be able to deal with all the
@@ -689,6 +695,10 @@ get_reloc_section(Dwarf_Debug dbg,
     {/*7*/ DW_SECTION_REL_DEBUG_RANGES,
     DW_SECTNAME_REL_DEBUG_RANGES,
     DW_SECTNAME_RELA_DEBUG_RANGES},
+
+    {/*8*/ DW_SECTION_REL_DEBUG_TYPES,
+    DW_SECTNAME_REL_DEBUG_TYPES,
+    DW_SECTNAME_RELA_DEBUG_TYPES},
     };
 
     Elf_Data *data;

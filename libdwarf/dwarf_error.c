@@ -322,6 +322,10 @@ const char *_dwarf_errmsgs[] = {
     "DW_DLE_RELOC_SECTION_RELOC_TARGET_SIZE_UNKNOWN (233) so doing a relocation is unsafe",
     "DW_DLE_SYMTAB_SECTION_ENTRYSIZE_ZERO(234)",
     "DW_DLE_LINE_NUMBER_HEADER_ERROR (235), a line number program header seems incomplete (perhaps the header_length is wrong?).",
+    "DW_DLE_DEBUG_TYPES_NULL (236)",
+    "DW_DLE_DEBUG_TYPES_DUPLICATE (237)",
+    "DW_DLE_DEBUG_TYPES_ONLY_DWARF4 (238)",
+    "DW_DLE_DEBUG_TYPEOFFSET_BAD (239)",
 };
 
 

@@ -1,4 +1,4 @@
-\."
+n\."
 \." the following line may be removed if the ff ligature works on your machine
 .lg 0
 \." set up heading formats
@@ -8,7 +8,7 @@
 .nr Hb 5
 \." ==============================================
 \." Put current date in the following at each rev
-.ds vE rev 1.99, September 14, 2011
+.ds vE rev 2.00, October 29, 2011
 \." ==============================================
 \." ==============================================
 .ds | |
@@ -89,7 +89,7 @@ and a copy of the standard.
 .H 2 "Copyright"
 Copyright 1993-2006 Silicon Graphics, Inc.
 
-Copyright 2007-2010 David Anderson. 
+Copyright 2007-2011 David Anderson. 
 
 Permission is hereby granted to 
 copy or republish or use any or all of this document without
@@ -149,7 +149,7 @@ complete description of these entries.
 
 .P
 This document adopts all the terms and definitions in "\fIDWARF Debugging 
-Information Format\fP" versions 2 and 3.  
+Information Format\fP" versions 2,3, and 4.  
 It originally focused on the implementation at
 Silicon Graphics, Inc., but now
 attempts to be more generally useful.
@@ -202,6 +202,16 @@ functions.
 The following is a brief mention of the changes in this libdwarf from 
 the libdwarf draft for DWARF Version 1 and recent changes.
 .H 2 "Items Changed"
+.P
+Added new functions (some for libdwarf client code) 
+and internal logic support for the 
+DWARF4 .debug_types section.
+The new functions are
+dwarf_next_cu_header_c(),
+dwarf_siblingof_b(), dwarf_offdie_b(),
+dwarf_get_cu_die_offset_given_cu_header_offset_b(),
+dwarf_get_die_infotypes_flag(),
+dwarf_get_section_max_offsets_b().
 .P
 New functions and logic support additional detailed error reporting
 so that more compiler bugs can be reported sensibly 
@@ -325,6 +335,8 @@ exceptional conditions like failures and 'no more data' indications.
 
 .H 2 "Revision History"
 .VL 15
+.LI "October 2011"
+DWARF4 support for reading .debug_types added.
 .LI "March 93"
 Work on DWARF2 SGI draft begins
 .LI "June 94"
@@ -879,7 +891,7 @@ Instead free it with \f(CWdwarf_finish()\fP.
 .DE
 An instance of a \f(CWDwarf_Die\fP type is returned from a successful 
 call to the \f(CWdwarf_siblingof()\fP, \f(CWdwarf_child\fP, or 
-\f(CWdwarf_offdie()\fP function, and is used as a descriptor for queries 
+\f(CWdwarf_offdie_b()\fP function, and is used as a descriptor for queries 
 about information related to that DIE.  The storage pointed to by this 
 descriptor should be freed, using \f(CWdwarf_dealloc()\fP with the allocation 
 type \f(CWDW_DLA_DIE\fP when no longer needed.
@@ -1473,28 +1485,82 @@ certain errors are detected.
 The default for this value is FALSE (0) so the extra messages
 are off by default.
 
+.H 2 "Section size operations"
+.P
+These operations are informative but not normally needed.
+.H 3 "dwarf_get_section_max_offsets_b()"
+.DS
+\f(CWint dwarf_get_section_max_offsets_b(Dwarf_debug dbg,
+    Dwarf_Unsigned * /*debug_info_size*/,
+    Dwarf_Unsigned * /*debug_abbrev_size*/,
+    Dwarf_Unsigned * /*debug_line_size*/,
+    Dwarf_Unsigned * /*debug_loc_size*/,
+    Dwarf_Unsigned * /*debug_aranges_size*/,
+    Dwarf_Unsigned * /*debug_macinfo_size*/,
+    Dwarf_Unsigned * /*debug_pubnames_size*/,
+    Dwarf_Unsigned * /*debug_str_size*/,
+    Dwarf_Unsigned * /*debug_frame_size*/,
+    Dwarf_Unsigned * /*debug_ranges_size*/,
+    Dwarf_Unsigned * /*debug_pubtypes_size*/,
+    Dwarf_Unsigned * /*debug_types_size*/);
+.DE
+.P
+The function
+\f(CWdwarf_get_section_max_offsets_b()\fP an open
+Dwarf_Dbg and reports on the section sizes by pushing
+section size values  back through the pointers.
+
+Created in October 2011.
+
+.H 3 "dwarf_get_section_max_offsets()"
+.DS
+\f(CWint dwarf_get_section_max_offsets(Dwarf_debug dbg,
+    Dwarf_Unsigned * /*debug_info_size*/,
+    Dwarf_Unsigned * /*debug_abbrev_size*/,
+    Dwarf_Unsigned * /*debug_line_size*/,
+    Dwarf_Unsigned * /*debug_loc_size*/,
+    Dwarf_Unsigned * /*debug_aranges_size*/,
+    Dwarf_Unsigned * /*debug_macinfo_size*/,
+    Dwarf_Unsigned * /*debug_pubnames_size*/,
+    Dwarf_Unsigned * /*debug_str_size*/,
+    Dwarf_Unsigned * /*debug_frame_size*/,
+    Dwarf_Unsigned * /*debug_ranges_size*/,
+    Dwarf_Unsigned * /*debug_pubtypes_size*/);
+.DE
+.P
+The function is the same as \f(CWdwarf_get_section_max_offsets_b()\fP
+except it is missing the \f(CWdebug_types_size()\fP argument.
+Though obsolete it is still supported.
+
+
 
 .H 2 "Debugging Information Entry Delivery Operations"
 These functions are concerned with accessing debugging information 
 entries. 
 
-.H 3 "Debugging Information Entry Debugger Delivery Operations"
-
-.H 3 "dwarf_next_cu_header_b()"
+.H 3 "dwarf_next_cu_header_c()"
 .DS
-\f(CWint dwarf_next_cu_header_b(
+\f(CWint dwarf_next_cu_header_c(
         Dwarf_debug dbg,
+        Dwarf_Bool is_info,
         Dwarf_Unsigned *cu_header_length,
         Dwarf_Half     *version_stamp,
         Dwarf_Unsigned *abbrev_offset,
         Dwarf_Half     *address_size,
         Dwarf_Half     *offset_size,
         Dwarf_Half     *extension_size,
+        Dwarf_Sig8     *signature,
+        Dwarf_Unsigned *typeoffset
         Dwarf_Unsigned *next_cu_header,
         Dwarf_Error    *error);
 .DE
 The function
-\f(CWdwarf_next_cu_header_b()\fP returns \f(CWDW_DLV_ERROR\fP 
+\f(CWdwarf_next_cu_header_c()\fP operates on
+the either the .debug_info   section
+(if \f(CWis_info\fP is non-zero) or .debug_types
+section   
+(if \f(CWis_info\fP is zero).
+It returns \f(CWDW_DLV_ERROR\fP 
 if it fails, and
 \f(CWDW_DLV_OK\fP if it succeeds.
 .P
@@ -1502,7 +1568,7 @@ If it succeeds, \f(CW*next_cu_header\fP is set to
 the offset in the .debug_info section of the next 
 compilation-unit header if it succeeds.  On reading the last 
 compilation-unit header in the .debug_info section it contains 
-the size of the .debug_info section.
+the size of the .debug_info or debug_types section.
 The next call to 
 \f(CWdwarf_next_cu_header_b()\fP returns \f(CWDW_DLV_NO_ENTRY\fP
 without reading a 
@@ -1514,7 +1580,8 @@ The other
 values returned through pointers are the values in the compilation-unit 
 header.  If any of \f(CWcu_header_length\fP, \f(CWversion_stamp\fP,
 \f(CWabbrev_offset\fP, \f(CWaddress_size\fP, 
-\f(CWoffset_size\fP, or \f(CWextension_size\fP,
+\f(CWoffset_size\fP, \f(CWextension_size\fP,
+\f(CWsignatyre\fP, or \f(CWtypeoffset\fP,
 is \f(CWNULL\fP, the 
 argument is ignored (meaning it is not an error to provide a 
 \f(CWNULL\fP pointer for any or all of these arguments).
@@ -1560,13 +1627,61 @@ in the initial length field
 which indicates the following 8 bytes in the .debug_info section
 are the real length).
 See the DWARF3 or DWARF4 standard, section 7.4.
+.P
+The
+\f(CWsignature\fP pointer is only relevant if
+\f(CWis_info\fP is zero, and if relevant the 8 byte type
+signature of the .debug_types CU header is assigned through
+the pointer.
+.P
+The
+\f(CWtypeoffset\fP pointer is only relevant if
+\f(CWis_info\fP is zero, and if relevant the local offset
+within the CU of the the type offset the .debug_types entry
+represents is assigned through the pointer.
+The
+\f(CWtypeoffset\fP matters because a
+DW_AT_type referencing the type unit may reference an inner type,
+such as a  C++ class in a C++ namespace, but the type itself
+has the enclosing namespace in the .debug_type type_unit.
+
+.H 3 "dwarf_next_cu_header_b()"
+.DS
+\f(CWint dwarf_next_cu_header_b(
+        Dwarf_debug dbg,
+        Dwarf_Unsigned *cu_header_length,
+        Dwarf_Half     *version_stamp,
+        Dwarf_Unsigned *abbrev_offset,
+        Dwarf_Half     *address_size,
+        Dwarf_Half     *offset_size,
+        Dwarf_Half     *extension_size,
+        Dwarf_Unsigned *next_cu_header,
+        Dwarf_Error    *error);
+.DE
+.P
+This is obsolete as of October 2011 though supported.
+.P
+The function
+\f(CWdwarf_next_cu_header_b()\fP  operates on 
+the .debug_info section.  It operates exactly like
+\f(CWdwarf_next_cu_header_c()\fP but
+is missing the
+\f(CWsignature\fP, and \f(CWtypeoffset\fP
+fields.
+This is kept for compatibility.
+All code using this should be changed to use
+\f(CWdwarf_next_cu_header_c()\fP
+
 .H 3 "dwarf_next_cu_header()"
 .P
-The following is the older form, missing the
-\f(CWoffset_size\fP, and \f(CWextension_size\fP
-fields. This is kept for compatibility.
+The following is the original form, missing the
+\f(CWoffset_size\fP, \f(CWextension_size\fP,
+\f(CWsignature\fP, and \f(CWtypeoffset\fP
+fields in
+\f(CWdwarf_next_cu_header_c()\fP. 
+This is kept for compatibility.
 All code using this should be changed to use
-\f(CWdwarf_next_cu_header_b()\fP
+\f(CWdwarf_next_cu_header_c()\fP
 .DS
 \f(CWint dwarf_next_cu_header(
         Dwarf_debug dbg,
@@ -1578,21 +1693,38 @@ All code using this should be changed to use
         Dwarf_Error    *error);
 .DE
 
-.H 3 "dwarf_siblingof()"
+.H 3 "dwarf_siblingof_b()"
 .DS
-\f(CWint dwarf_siblingof(
+\f(CWint dwarf_siblingof_b(
         Dwarf_Debug dbg, 
         Dwarf_Die die, 
+        Dwarf_Bool is_info,
 	Dwarf_Die *return_sib,
         Dwarf_Error *error)\fP
 .DE
-The function \f(CWdwarf_siblingof()\fP 
+The function \f(CWdwarf_siblingof_b()\fP 
 returns \f(CWDW_DLV_ERROR\fP and sets the \f(CWerror\fP pointer on error.
 If there is no sibling it returns \f(CWDW_DLV_NO_ENTRY\fP.
 When it succeeds,
-\f(CWdwarf_siblingof()\fP returns
+\f(CWdwarf_siblingof_b()\fP returns
 \f(CWDW_DLV_OK\fP  and sets \f(CW*return_sib\fP to the \f(CWDwarf_Die\fP 
 descriptor of the sibling of \f(CWdie\fP.
+
+If \f(CWis_info\fP is non-zero then the  \f(CWdie\fP
+is assumed to refer to a .debug_info DIE.  
+If \f(CWis_info\fP is zero then the  \f(CWdie\fP
+is assumed to refer to a .debug_types DIE.  
+Note that the first call (the call that gets the compilation-unit
+DIE in a compilation unit) passes in a NULL \f(CWdie\fP
+so having the caller pass in \f(CWis_info\fP is essential.
+And if \f(CWdie\fP is non-NULL it is still essential for the
+call to pass in  \f(CWis_info\fP set properly to reflect the
+section the DIE came from.
+The function
+\f(CWdwarf_get_die_infotypes_flag()\fP  is of interest as
+it returns the proper is_info value from any non-NULL \f(CWdie\fP
+pointer.
+
 
 If \f(CWdie\fP is \fINULL\fP, the \f(CWDwarf_Die\fP descriptor of the
 first die in the compilation-unit is returned.  
@@ -1607,8 +1739,9 @@ tag.
 \f(CWDwarf_Die return_sib = 0;
 Dwarf_Error error = 0;
 int res;
-/* in_die might be NULL or a vaid Dwarf_Die */
-res = dwarf_siblingof(dbg,in_die,&return_sib, &error);
+Dwarf_Bool is_info = 1;
+/* in_die might be NULL or a valid Dwarf_Die */
+res = dwarf_siblingof_b(dbg,in_die,is_info,&return_sib, &error);
 if (res == DW_DLV_OK) {
    /* Use return_sib here. */
    dwarf_dealloc(dbg, return_sib, DW_DLA_DIE);
@@ -1619,6 +1752,19 @@ if (res == DW_DLV_OK) {
 .DE
 .in -2
 
+.H 3 "dwarf_siblingof()"
+.DS
+\f(CWint dwarf_siblingof(
+        Dwarf_Debug dbg,
+        Dwarf_Die die,
+        Dwarf_Die *return_sib,
+        Dwarf_Error *error)\fP
+.DE
+.P
+\f(CWint dwarf_siblingof()\fP operates exactly the same as
+\f(CWint dwarf_siblingof_b()\fP, but 
+\f(CWint dwarf_siblingof()\fP refers only to .debug_info
+DIEs.
 
 
 .H 3 "dwarf_child()"
@@ -1657,18 +1803,19 @@ if (res == DW_DLV_OK) {
 .DE
 .in -2
 
-.H 3 "dwarf_offdie()"
+.H 3 "dwarf_offdie_b()"
 .DS
-\f(CWint dwarf_offdie(
+\f(CWint dwarf_offdie_b(
         Dwarf_Debug dbg,
         Dwarf_Off offset, 
+        Dwarf_Bool is_info,
 	Dwarf_Die *return_die,
         Dwarf_Error *error)\fP
 .DE
-The function \f(CWdwarf_offdie()\fP 
+The function \f(CWdwarf_offdie_b()\fP 
 returns \f(CWDW_DLV_ERROR\fP and sets the \f(CWerror\fP die on error.
 When it succeeds,
-\f(CWdwarf_offdie()\fP returns
+\f(CWdwarf_offdie_b()\fP returns
 \f(CWDW_DLV_OK\fP and sets \f(CW*return_die\fP
 to the
 the \f(CWDwarf_Die\fP 
@@ -1682,10 +1829,21 @@ is no abbreviation code. Meaning this 'die offset' is not
 the offset of a real die, but is instead an offset of a null die,
 a padding die, or of some random zero byte: this should
 not be returned in normal use.
+.P
 It is the user's 
 responsibility to make sure that \f(CWoffset\fP is the start of a valid 
 debugging information entry.  The result of passing it an invalid 
 offset could be chaos.
+.P
+If \f(CWis_info\fP is non-zero the \f(CWoffset\fP must refer
+to a .debug_info section offset. 
+If \f(CWis_info\fP zero the \f(CWoffset\fP must refer
+to a .debug_types section offset. 
+Error returns or misleading
+values may result if the 
+\f(CWis_info\fP flag 
+or the \f(CWoffset\fP value
+are incorrect.
 
 .in +2
 .DS
@@ -1693,7 +1851,7 @@ offset could be chaos.
 Dwarf_Die return_die = 0;
 int res;
 
-res = dwarf_offdie(dbg,die_offset,&return_die, &error);
+res = dwarf_offdie_b(dbg,die_offset,&return_die, &error);
 if (res == DW_DLV_OK) {
    /* Use return_die here. */
    dwarf_dealloc(dbg, return_die, DW_DLA_DIE);
@@ -1703,6 +1861,21 @@ if (res == DW_DLV_OK) {
 }\fP
 .DE
 .in -2
+
+.H 3 "dwarf_offdie()"
+.DS
+\f(CWint dwarf_offdie(
+        Dwarf_Debug dbg,
+        Dwarf_Off offset, 
+	Dwarf_Die *return_die,
+        Dwarf_Error *error)\fP
+.DE
+.P
+The function \f(CWdwarf_offdie()\fP is obsolete, use
+\f(CWdwarf_offdie_b()\fP instead.
+The function is still supported in the library, but only
+references the .debug_info section.
+
 
 .H 3 "dwarf_validate_die_sibling()"
 .DS
@@ -1766,6 +1939,18 @@ attributes, dealing with each one as appropriate.
 .LE
 .P
 
+.H 3 "dwarf_get_die_infotypes_flag()"
+.DS
+\f(CWDwarf_Bool dwarf_get_die_infotypes_flag(Dwarf_Die die)\fP
+.DE
+.P
+The function \f(CWdwarf_tag()\fP returns the section flag
+indicating which section the DIE originates from.
+If the returned value is non-zero the DIE 
+originates from the .debug_info section.
+If the returned value is zero the DIE 
+originates from the .debug_types section.
+
 .H 3 "dwarf_tag()"
 .DS
 \f(CWint dwarf_tag(
@@ -1773,7 +1958,7 @@ attributes, dealing with each one as appropriate.
 	Dwarf_Half *tagval,
         Dwarf_Error *error)\fP
 .DE
-The function \f(CWdwarf_tag()\fP returns the \fItag\fP of \f(CWdie\fP
+The function \f(CWdwarf_tag()\fP returns the \f(CWtag\fP of \f(CWdie\fP
 through the pointer  \f(CWtagval\fP if it succeeds. 
 It returns \f(CWDW_DLV_OK\fP if it succeeds.
 It returns \f(CWDW_DLV_ERROR\fP on error.
@@ -1852,7 +2037,7 @@ of .debug_info (the \f(CWreturn_offset\fP is a global section offset).
 .P
 This is useful when processing a DIE tree and encountering
 an error or other surprise in a DIE, as the \f(CWreturn_offset\fP
-can be passed to \f(CWdwarf_offdie()\fP to return a pointer
+can be passed to \f(CWdwarf_offdie_b()\fP to return a pointer
 to the CU die of the CU owning the \f(CWgiven_die\fP passed
 to \f(CWdwarf_CU_dieoffset_given_die()\fP. The consumer can
 extract information from the CU die and the \f(CWgiven_die\fP  
@@ -1876,7 +2061,7 @@ if(res != DW_DLV_OK) {
     printf("FAIL: dwarf_CU_dieoffset_given_die did not work\n");
     exit(1);
 }
-res = dwarf_offdie(dbg,cudieoff,&cudie,&error);
+res = dwarf_offdie_b(dbg,cudieoff,&cudie,&error);
 if(res != DW_DLV_OK) {
     printf("FAIL: dwarf_offdie did not work\n");
     exit(1);
@@ -3282,9 +3467,10 @@ It never returns \f(CWDW_DLV_NO_ENTRY\fP.
 
 .H 4 "dwarf_get_cu_die_offset_given_cu_header_offset()"
 .DS
-\f(CWint dwarf_get_cu_die_offset_given_cu_header_offset(
+\f(CWint dwarf_get_cu_die_offset_given_cu_header_offset_b(
 	Dwarf_Debug dbg,
 	Dwarf_Off   in_cu_header_offset,
+        Dwarf_Bool  is_info,
         Dwarf_Off * out_cu_die_offset,
         Dwarf_Error *error)\fP
 .DE
@@ -3295,7 +3481,12 @@ the offset of the compilation-unit DIE given the
 offset \f(CWin_cu_header_offset\fP of a compilation-unit header.
 It returns \f(CWDW_DLV_ERROR\fP on error.
 It never returns \f(CWDW_DLV_NO_ENTRY\fP.
-
+.P
+If \f(CWis_info\fP is non-zero the \f(CWin_cu_header_offset\fP must refer
+to a .debug_info section offset. 
+If \f(CWis_info\fP zero the \f(CWin_cu_header_offset\fP must refer
+to a .debug_types section offset. 
+Chaos may result if the \f(CWis_info\fP flag is incorrect.
 
 This effectively turns a compilation-unit-header offset
 into a compilation-unit DIE offset (by adding the
@@ -3306,7 +3497,22 @@ This function is also sometimes useful with the
 \f(CWdwarf_type_cu_offset()\fP,
 and
 \f(CWint dwarf_var_cu_offset()\fP 
-functions.
+functions, though for those functions the data is
+only in .debug_info by definition.
+
+.H 4 "dwarf_get_cu_die_offset_given_cu_header_offset()"
+.DS
+\f(CWint dwarf_get_cu_die_offset_given_cu_header_offset(
+	Dwarf_Debug dbg,
+	Dwarf_Off   in_cu_header_offset,
+        Dwarf_Off * out_cu_die_offset,
+        Dwarf_Error *error)\fP
+.DE
+This function is superseded by 
+\f(CWdwarf_get_cu_die_offset_given_cu_header_offset_b()\fP,
+a function which is still supported thought it refers only
+to the .debug_info section.
+
 
 \f(CWdwarf_get_cu_die_offset_given_cu_header_offset()\fP 
 added Rev 1.45, June, 2001.
@@ -4743,7 +4949,7 @@ So one must have used \f(CWdwarf_get_fde_list()\fP or
 \f(CWdwarf_get_fde_list_eh()\fP to get
 a cie list before this is meaningful.
 
-This function is ocassionally useful, but is
+This function is occasionally useful, but is
 little used.
 
 .H 4 "dwarf_get_fde_instr_bytes()"
@@ -4875,7 +5081,7 @@ dwarf_set_frame_rule_table_size(Dwarf_Debug dbg,
          Dwarf_Half value);\fP
 
 .DE
-\f(CWddwarf_set_frame_rule_table_size()\fP sets the
+\f(CWdwarf_set_frame_rule_table_size()\fP sets the
 value \f(CWvalue\fP as the size of libdwarf-internal
 rules tables  of \f(CWdbg\fP.
 .P
@@ -5970,7 +6176,7 @@ In checking DWARF in linkonce sections for correctness
 it has been found useful to have certain section-oriented
 operations when processing object files.
 Normally these operations are not needed or useful
-in a fully-linked exececutable or shared library.
+in a fully-linked executable or shared library.
 
 While the code is written with Elf sections in mind,
 it is quite possible to process  non-Elf objects

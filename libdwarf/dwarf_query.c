@@ -89,10 +89,15 @@ int
 dwarf_dieoffset(Dwarf_Die die,
     Dwarf_Off * ret_offset, Dwarf_Error * error)
 {
-    CHECK_DIE(die, DW_DLV_ERROR);
+    Dwarf_Small *dataptr = 0;
+    Dwarf_Debug dbg = 0;
 
-    *ret_offset = (die->di_debug_info_ptr -
-        die->di_cu_context->cc_dbg->de_debug_info.dss_data);
+    CHECK_DIE(die, DW_DLV_ERROR);
+    dbg = die->di_cu_context->cc_dbg;
+    dataptr = die->di_is_info? dbg->de_debug_info.dss_data:
+        dbg->de_debug_types.dss_data;
+
+    *ret_offset = (die->di_debug_ptr - dataptr);
     return DW_DLV_OK;
 }
 
@@ -106,13 +111,16 @@ dwarf_die_CU_offset(Dwarf_Die die,
     Dwarf_Off * cu_off, Dwarf_Error * error)
 {
     Dwarf_CU_Context cu_context = 0;
+    Dwarf_Small *dataptr = 0;
+    Dwarf_Debug dbg = 0;
 
     CHECK_DIE(die, DW_DLV_ERROR);
     cu_context = die->di_cu_context;
+    dbg = die->di_cu_context->cc_dbg;
+    dataptr = die->di_is_info? dbg->de_debug_info.dss_data:
+        dbg->de_debug_types.dss_data;
 
-    *cu_off =
-        (die->di_debug_info_ptr - cu_context->cc_dbg->de_debug_info.dss_data -
-        cu_context->cc_debug_info_offset);
+    *cu_off = (die->di_debug_ptr - dataptr - cu_context->cc_debug_offset);
     return DW_DLV_OK;
 }
 
@@ -147,7 +155,7 @@ dwarf_die_CU_offset_range(Dwarf_Die die,
     CHECK_DIE(die, DW_DLV_ERROR);
     cu_context = die->di_cu_context;
 
-    *cu_off = cu_context->cc_debug_info_offset;
+    *cu_off = cu_context->cc_debug_offset;
     *cu_length = cu_context->cc_length + cu_context->cc_length_size
         + cu_context->cc_extension_size;
     return DW_DLV_OK;
@@ -193,7 +201,7 @@ dwarf_attrlist(Dwarf_Die die,
     }
     abbrev_ptr = abbrev_list->ab_abbrev_ptr;
 
-    info_ptr = die->di_debug_info_ptr;
+    info_ptr = die->di_debug_ptr;
     SKIP_LEB128_WORD(info_ptr);
 
     do {
@@ -224,7 +232,7 @@ dwarf_attrlist(Dwarf_Die die,
                 new_attr->ar_attribute_form = attr_form;
             }
             new_attr->ar_cu_context = die->di_cu_context;
-            new_attr->ar_debug_info_ptr = info_ptr;
+            new_attr->ar_debug_ptr = info_ptr;
             new_attr->ar_die = die;
             {
                 Dwarf_Unsigned sov = _dwarf_get_size_of_val(dbg, 
@@ -299,7 +307,7 @@ _dwarf_get_value_ptr(Dwarf_Die die,
     }
     abbrev_ptr = abbrev_list->ab_abbrev_ptr;
 
-    info_ptr = die->di_debug_info_ptr;
+    info_ptr = die->di_debug_ptr;
     SKIP_LEB128_WORD(info_ptr);
 
     do {
@@ -443,7 +451,7 @@ dwarf_attr(Dwarf_Die die,
     attrib->ar_attribute_form = attr_form;
     attrib->ar_attribute_form_direct = attr_form;
     attrib->ar_cu_context = die->di_cu_context;
-    attrib->ar_debug_info_ptr = info_ptr;
+    attrib->ar_debug_ptr = info_ptr;
     attrib->ar_die = die;
     *ret_attr = (attrib);
     return DW_DLV_OK;
@@ -654,11 +662,15 @@ dwarf_attr_offset(Dwarf_Die die, Dwarf_Attribute attr,
     Dwarf_Error * error)
 {
     Dwarf_Off attroff = 0;
+    Dwarf_Small *dataptr = 0;
+    Dwarf_Debug dbg = 0;
 
     CHECK_DIE(die, DW_DLV_ERROR);
+    dbg = die->di_cu_context->cc_dbg;
+    dataptr = die->di_is_info? dbg->de_debug_info.dss_data:
+        dbg->de_debug_types.dss_data;
 
-    attroff = (attr->ar_debug_info_ptr -
-        die->di_cu_context->cc_dbg->de_debug_info.dss_data);
+    attroff = (attr->ar_debug_ptr - dataptr);
     *offset = attroff;
     return DW_DLV_OK;
 }

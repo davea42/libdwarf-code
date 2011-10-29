@@ -1,3 +1,16 @@
+2011-10-29  DavidAnderson <davea42@earthlink.net>
+     * dwarfdump.c: Reset the CU hints at each new section.
+       Set up reloc flags so debug_types gets relocated if necessary.
+     * globals.h: Add DEBUG_TYPES for the .debug_types section.
+       Add a type-unit signature pretty-printer function.
+       Add DW_SECTION_REL_DEBUG_TYPES so debug_types can be relocated.
+     * print_reloc.c: Add entries so debug_types can get relocated.
+     * print_die.c: Now we handle both debug_info and debug_types
+       sections.  Moved some CU header print operations to little
+       helper functions to clarify the code. Refactored print_infos()
+       to deal with debug_types and debug_info.
+       Using the new libdwarf functions that allow debug_types.
+     * print_lines.c: Delete unused local variable and its setting code.
 2011-10-26  DavidAnderson <davea42@earthlink.net>
      * Makefile.in, README: Added Make settings of PREINCS POSTINCS
        PRELIBS, POSTLIBS to simplify building when libdwarf or libelf

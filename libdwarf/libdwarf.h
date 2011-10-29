@@ -1056,10 +1056,14 @@ struct Dwarf_Obj_Access_Interface_s {
 #define DW_DLE_RELOC_SECTION_RELOC_TARGET_SIZE_UNKNOWN  233
 #define DW_DLE_SYMTAB_SECTION_ENTRYSIZE_ZERO   234
 #define DW_DLE_LINE_NUMBER_HEADER_ERROR        235
+#define DW_DLE_DEBUG_TYPES_NULL                236
+#define DW_DLE_DEBUG_TYPES_DUPLICATE           237
+#define DW_DLE_DEBUG_TYPES_ONLY_DWARF4         238
+#define DW_DLE_DEBUG_TYPEOFFSET_BAD            239
 
 
     /* DW_DLE_LAST MUST EQUAL LAST ERROR NUMBER */
-#define DW_DLE_LAST        235
+#define DW_DLE_LAST        239
 #define DW_DLE_LO_USER     0x10000
 
     /*  Taken as meaning 'undefined value', this is not
@@ -1141,7 +1145,9 @@ int dwarf_object_init(Dwarf_Obj_Access_Interface* /* obj */,
 int dwarf_object_finish(Dwarf_Debug /* dbg */,
     Dwarf_Error* /* error */);
   
-/* die traversal operations */
+/*  Die traversal operations.  
+    dwarf_next_cu_header_b() traverses debug_info CU headers.
+    */
 int dwarf_next_cu_header_b(Dwarf_Debug /*dbg*/, 
     Dwarf_Unsigned* /*cu_header_length*/, 
     Dwarf_Half*     /*version_stamp*/, 
@@ -1151,7 +1157,23 @@ int dwarf_next_cu_header_b(Dwarf_Debug /*dbg*/,
     Dwarf_Half*     /*extension_size*/, 
     Dwarf_Unsigned* /*next_cu_header_offset*/,
     Dwarf_Error*    /*error*/);
-/* The following is now obsolete, though supported. November 2009. */
+
+/*  dwarf_next_cu_header_types() traverses debug_types CU headers.
+    New in October, 2011
+    */
+int dwarf_next_cu_header_c(Dwarf_Debug /*dbg*/, 
+    Dwarf_Bool      /*is_info*/,
+    Dwarf_Unsigned* /*cu_header_length*/, 
+    Dwarf_Half*     /*version_stamp*/, 
+    Dwarf_Off*      /*abbrev_offset*/, 
+    Dwarf_Half*     /*address_size*/, 
+    Dwarf_Half*     /*length_size*/, 
+    Dwarf_Half*     /*extension_size*/, 
+    Dwarf_Sig8*     /*type signature*/,
+    Dwarf_Unsigned* /*typeoffset*/,
+    Dwarf_Unsigned* /*next_cu_header_offset*/,
+    Dwarf_Error*    /*error*/);
+/* The following is obsolete, though supported. November 2009. */
 int dwarf_next_cu_header(Dwarf_Debug /*dbg*/, 
     Dwarf_Unsigned* /*cu_header_length*/, 
     Dwarf_Half*     /*version_stamp*/, 
@@ -1164,16 +1186,38 @@ int dwarf_siblingof(Dwarf_Debug /*dbg*/,
     Dwarf_Die        /*die*/, 
     Dwarf_Die*       /*return_siblingdie*/,
     Dwarf_Error*     /*error*/);
+/* dwarf_siblingof_b new October 2011. */
+int dwarf_siblingof_b(Dwarf_Debug /*dbg*/, 
+    Dwarf_Die        /*die*/, 
+    Dwarf_Bool       /*is_info*/,
+    Dwarf_Die*       /*return_siblingdie*/,
+    Dwarf_Error*     /*error*/);
 
 int dwarf_child(Dwarf_Die /*die*/, 
     Dwarf_Die*       /*return_childdie*/,
     Dwarf_Error*     /*error*/);
 
-/* Finding die given global (not CU-relative) offset */
+/*  Finding die given global (not CU-relative) offset.
+    Applies only to debug_info. */
 int dwarf_offdie(Dwarf_Debug /*dbg*/, 
     Dwarf_Off        /*offset*/, 
     Dwarf_Die*       /*return_die*/,
     Dwarf_Error*     /*error*/);
+
+/* dwarf_offdie_b() new October 2011 */
+/*  Finding die given global (not CU-relative) offset.
+    Applies to debug_info (is_info true) or debug_types (is_info false). */
+int dwarf_offdie_b(Dwarf_Debug /*dbg*/, 
+    Dwarf_Off        /*offset*/, 
+    Dwarf_Bool       /*is_info*/,
+    Dwarf_Die*       /*return_die*/,
+    Dwarf_Error*     /*error*/);
+
+/*  Returns the is_info flag through the pointer if the function returns
+    DW_DLV_OK. Needed so client software knows if a DIE is in debug_info
+    or debug_types.
+    New October 2011. */
+Dwarf_Bool dwarf_get_die_infotypes_flag(Dwarf_Die /*die*/);
 
 /* Higher level functions (Unimplemented) */
 int dwarf_pcfile(Dwarf_Debug /*dbg*/, 
@@ -1517,6 +1561,15 @@ int dwarf_global_die_offset(Dwarf_Global /*global*/,
 int dwarf_get_cu_die_offset_given_cu_header_offset(
     Dwarf_Debug      /*dbg*/,
     Dwarf_Off        /*in_cu_header_offset*/,
+    Dwarf_Off *  /*out_cu_die_offset*/, 
+    Dwarf_Error *    /*err*/);
+
+/*  The _b form is new October 2011. */
+int dwarf_get_cu_die_offset_given_cu_header_offset_b(
+    Dwarf_Debug      /*dbg*/,
+    Dwarf_Off        /*in_cu_header_offset*/,
+    Dwarf_Bool       /*is_info. True means look in debug_Info, 
+        false use debug_types.*/,
     Dwarf_Off *  /*out_cu_die_offset*/, 
     Dwarf_Error *    /*err*/);
 
@@ -2656,6 +2709,24 @@ dwarf_get_section_max_offsets(Dwarf_Debug /*dbg*/,
     Dwarf_Unsigned * /*debug_frame_size*/,
     Dwarf_Unsigned * /*debug_ranges_size*/,
     Dwarf_Unsigned * /*debug_pubtypes_size*/);
+
+/*  New October 2011., adds .debug_types section to the sizes
+    returned. */
+int
+dwarf_get_section_max_offsets_b(Dwarf_Debug /*dbg*/,
+
+    Dwarf_Unsigned * /*debug_info_size*/,
+    Dwarf_Unsigned * /*debug_abbrev_size*/,
+    Dwarf_Unsigned * /*debug_line_size*/,
+    Dwarf_Unsigned * /*debug_loc_size*/,
+    Dwarf_Unsigned * /*debug_aranges_size*/,
+    Dwarf_Unsigned * /*debug_macinfo_size*/,
+    Dwarf_Unsigned * /*debug_pubnames_size*/,
+    Dwarf_Unsigned * /*debug_str_size*/,
+    Dwarf_Unsigned * /*debug_frame_size*/,
+    Dwarf_Unsigned * /*debug_ranges_size*/,
+    Dwarf_Unsigned * /*debug_pubtypes_size*/,
+    Dwarf_Unsigned * /*debug_types_size*/);
 
 /*  The 'set' calls here return the original (before any change
     by these set routines) of the respective fields. */

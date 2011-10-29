@@ -1,3 +1,50 @@
+2011-10-29  DavidAnderson <davea42@earthlink.net>
+     * dwarf_alloc.c: Add support for the .debug_types section.
+     * dwarf_arange.c,dwarf_global.c: Add commentary about 
+       debug_info vs debug_types and a new argument to
+       an internal function.
+     * dwarf_arange.h,dwarf_global.h: Add comment that this is 
+       debug_info related only.
+     * dwarf_die_deliv.c: Now handles .debug_types as well as
+       .debug_info, and context information for the two sections
+       is kept seperate.
+     * dwarf_elf_access.c: Add a check for relocations of .debug_types.
+     * dwarf_error.c: Added error strings related to .debug_types.
+     * dwarf_form.c: Changes for .debug_types, mainly due to removing
+       'info_' from certain struct member names.
+     * dwarf_init_finish.c: Notice the .debug_types section. 
+       New function dwarf_get_section_max_offsets_b() returns
+       the size of debug_types (added to existing arguments).
+     * dwarf_opaque.h: Fields named *_info_* have the info_
+       removed as they apply to debug_types as well.
+       A new struct Dwarf_Debug_InfoTypes holds the data
+       for either of .debug_types and .debug_info sections.
+       Separating them so the sections can be accessed
+       simultaneously.  Moved data items from Dwarf_Debug to
+       the new struct. DIE structs now have a 'is_info' field
+       so a CU and a DIE know whether they are from .debug_info
+       or .debug_types.
+     * dwarf_query.c: The query functions now work for
+       debug_info and debug_query as appropriate.
+     * dwarf_util.h: Added _dwarf_load_debug_types() and altered
+       a couple internal function prototypes with an 'is_info' flag
+       argument.
+     * dwarf_util.c: Added _dwarf_load_debug_types(). Altered
+       functions so the deal with .debug_types or .debug_info
+       as appropriate.
+     * libdwarf.h: Added debug_types error codes.
+       Added dwarf_siblingof_b() and dwarf_offdie_b() and
+       Added dwarf_next_cu_header_c() and
+       dwarf_get_cu_die_offset_given_cu_header_offset_b()
+       to account for .debug_types or .debug_info as required.
+       Added dwarf_get_die_infotypes_flag() so client code
+       can know if a DIE is debug_info or debug_types based.
+       Added dwarf_get_section_max_offsets_b(), adding
+       a debug_types size argument.
+     * libdwarf2.1.mm: Documented the new functions. New version
+       is 2.0 (somewhat arbitrarily changed from 1.x to 2.0)
+     * libdwarf2.1.pdf: Regenerated
+
 2011-10-26  DavidAnderson <davea42@earthlink.net>
      * Makefile.in, README: Added Make settings of PREINCS POSTINCS
        PRELIBS, POSTLIBS to simplify building when libdwarf or libelf

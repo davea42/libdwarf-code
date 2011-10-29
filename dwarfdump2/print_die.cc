@@ -186,6 +186,7 @@ struct operation_descr_s opdesc[]= {
 
 static void
 print_die_and_children_internal(DieHolder &die_in,
+    Dwarf_Bool is_info,
     vector<DieHolder> &dieVec,
     int &indent_level,
     SrcfilesHolder & srcfiles);
@@ -196,37 +197,142 @@ print_as_info_or_cu()
    return (info_flag || cu_name_flag);
 }
 
+static int
+print_one_die_section(Dwarf_Debug dbg,bool is_info);
 
 /* process each compilation unit in .debug_info */
 void
 print_infos(Dwarf_Debug dbg)
 {
+    int nres;
+    error_message_data.current_section_id = DEBUG_INFO;
+    nres = print_one_die_section(dbg,true);
+    if (nres == DW_DLV_ERROR) {
+        string errmsg = dwarf_errmsg(err);
+        Dwarf_Unsigned myerr = dwarf_errno(err);
+
+        cerr << program_name << " ERROR:  " <<
+            "attempting to print .debug_info:  " <<
+            errmsg << " (" << myerr << ")" << endl;
+        cerr << "attempting to continue." << endl;
+    }
+    error_message_data.current_section_id = DEBUG_TYPES;
+    nres = print_one_die_section(dbg,false);
+    if (nres == DW_DLV_ERROR) {
+        string errmsg = dwarf_errmsg(err);
+        Dwarf_Unsigned myerr = dwarf_errno(err);
+    
+        cerr << program_name << " ERROR:  " <<
+            "attempting to print .debug_types:  " <<
+            errmsg << " (" << myerr << ")" << endl;
+        cerr << "attempting to continue." << endl;
+    }
+}
+
+static void 
+print_std_cu_hdr( Dwarf_Unsigned cu_header_length,
+    Dwarf_Unsigned abbrev_offset,
+    Dwarf_Half version_stamp,
+    Dwarf_Half address_size)
+{
+    if(dense) {
+        cout << " cu_header_length" <<
+            BracketSurround(IToHex0N(cu_header_length,10));
+        cout << " version_stamp" <<
+            BracketSurround(IToHex0N(version_stamp,6));
+        cout << " abbrev_offset" <<
+            BracketSurround(IToHex0N(abbrev_offset,10));
+        cout << " address_size" <<
+            BracketSurround(IToHex0N(address_size,4));
+    } else {
+        cout <<  "  cu_header_length = " <<
+            IToHex0N(cu_header_length,10) <<
+            " " << IToDec(cu_header_length) << endl;
+        cout <<  "  version_stamp    = " <<
+            IToHex0N(version_stamp,6) <<
+            "    " <<
+            " " << IToDec(version_stamp) << endl;
+        cout <<  "  abbrev_offset    = " <<
+            IToHex0N(abbrev_offset,10) <<
+            " " << IToDec(abbrev_offset) << endl;
+        cout <<  "  address_size     = " << 
+            IToHex0N(address_size,4) <<
+            "      " <<
+            " " << IToDec(address_size) << endl;
+    }
+}
+static void
+print_std_cu_signature( Dwarf_Sig8 *signature,Dwarf_Unsigned typeoffset)
+{
+    if(dense) {
+        string sig8str;
+        format_sig8_string(signature,sig8str);
+        cout << " signature" << 
+            BracketSurround(sig8str);
+        cout << " typeoffset" << 
+            BracketSurround(IToHex0N(typeoffset,10));
+    } else {
+        string sig8str;
+        format_sig8_string(signature,sig8str);
+        cout << "  signature        = " << 
+            sig8str << endl;
+        cout << "  typeoffset       = " <<
+            IToHex0N(typeoffset,10) <<
+            " " << IToDec(typeoffset) << endl;
+    }
+}
+
+static int
+print_one_die_section(Dwarf_Debug dbg,bool is_info)
+{
     Dwarf_Unsigned cu_header_length = 0;
     Dwarf_Unsigned abbrev_offset = 0;
     Dwarf_Half version_stamp = 0;
     Dwarf_Half address_size = 0;
+    Dwarf_Half extension_size = 0;
+    Dwarf_Half length_size = 0;
+    Dwarf_Sig8 signature;
+    Dwarf_Unsigned typeoffset = 0;
     Dwarf_Unsigned next_cu_offset = 0;
     int nres = DW_DLV_OK;
     int   cu_count = 0;
-
-    error_message_data.current_section_id = DEBUG_INFO;
+    unsigned loop_count = 0;
+    Dwarf_Bool local_is_info = (is_info)?true:false;
     if (print_as_info_or_cu() && do_print_dwarf) {
-        cout << endl;
-        cout << ".debug_info" << endl;
+        if(is_info) {
+            cout << endl;
+            cout << ".debug_info" << endl;
+        }
     }
-
     /* Loop until it fails. */
-    while ((nres =
-        dwarf_next_cu_header(dbg, &cu_header_length, &version_stamp,
-            &abbrev_offset, &address_size,
-            &next_cu_offset, &err))
-        == DW_DLV_OK) {
+    for (;;++loop_count) {
+        nres = dwarf_next_cu_header_c(dbg, is_info, 
+                &cu_header_length, &version_stamp,
+                &abbrev_offset, &address_size,
+                &length_size, &extension_size,
+                &signature, &typeoffset,
+                &next_cu_offset, &err);
+        if(nres == DW_DLV_NO_ENTRY) {
+            return nres;
+        }
+        if(loop_count == 0 && !is_info && 
+            // Do not print this string unless we really have debug_types
+            // for consistency with dwarf2/3 output.
+            // Looks a bit messy here in the code, but few objects have
+            // this section so far.
+            print_as_info_or_cu() && do_print_dwarf) {
+            cout <<  endl;
+            cout << ".debug_types" << endl;
+        }
+        if(nres != DW_DLV_OK) {
+            return nres;
+        }
         if(cu_count >=  break_after_n_units) {
             cout << "Break at " << cu_count << endl;
             break;
         }
         Dwarf_Die cu_die = 0;
-        int sres = dwarf_siblingof(dbg, NULL, &cu_die, &err);
+        int sres = dwarf_siblingof_b(dbg, NULL,is_info, &cu_die, &err);
         if (sres != DW_DLV_OK) {
             print_error(dbg, "siblingof cu header", sres, err);
         }
@@ -264,43 +370,43 @@ print_infos(Dwarf_Debug dbg)
         error_message_data.seen_PU_base_address = false;
         error_message_data.seen_PU_high_address = false;
 
-        if (info_flag && do_print_dwarf && verbose) {
-            if (dense) {
-                cout << BracketSurround("cu_header");
-                cout << " cu_header_length" << 
-                    BracketSurround(IToHex0N(cu_header_length,10));
-                cout << " version_stamp" << 
-                    BracketSurround(IToHex0N(version_stamp,6));
-                cout << " abbrev_offset" << 
-                    BracketSurround(IToHex0N(abbrev_offset,10));
-                cout << " address_size" << 
-                    BracketSurround(IToHex0N(address_size,4));
+        if (info_flag && do_print_dwarf ) { 
+            if(verbose){
+                if (dense) {
+                    cout << BracketSurround("cu_header");
+                } else {
+                    cout << endl;
+                    cout << "CU_HEADER:" << endl;
+                }
+                print_std_cu_hdr(cu_header_length, abbrev_offset,
+                    version_stamp,address_size);
+                if(! is_info) {
+                    print_std_cu_signature(&signature,typeoffset);
+                }
+                if(dense) {
+                    cout <<endl;
+                }
             } else {
-                cout << endl;
-                cout << "CU_HEADER:" << endl;
-                cout <<  "  cu_header_length = " <<
-                    IToHex0N(cu_header_length,10) <<
-                    " " << IToDec(cu_header_length) << endl;
-                cout <<  "  version_stamp    = " <<
-                    IToHex0N(version_stamp,6) <<
-                    "    " <<
-                    " " << IToDec(version_stamp) << endl;
-
-                cout <<  "  abbrev_offset    = " <<
-                    IToHex0N(abbrev_offset,10) <<
-                    " " << IToDec(abbrev_offset) << endl;
-
-                cout <<  "  address_size     = " <<
-                    IToHex0N(address_size,4) <<
-                    "      " <<
-                    " " << IToDec(address_size) << endl;
+                // For debug_types we really need some header info
+                // to make sense of this.
+                if(!is_info) {
+                    if(dense) {
+                        cout << BracketSurround("cu_header");
+                    } else {
+                        cout << endl;
+                        cout << "CU_HEADER:" << endl;
+                    }
+                    print_std_cu_signature(&signature,typeoffset);
+                    if(dense) {
+                        cout <<endl;
+                    }
+                }
             }
         }
         get_abbrev_array_info(dbg,abbrev_offset);
 
-        /* process a single compilation unit in .debug_info. */
         Dwarf_Die cu_die2 = 0;
-        sres = dwarf_siblingof(dbg, NULL, &cu_die2, &err);
+        sres = dwarf_siblingof_b(dbg, NULL,is_info, &cu_die2, &err);
         if (sres == DW_DLV_OK) {
             DieHolder hcu_die2(dbg,cu_die2);
             if (print_as_info_or_cu() || search_is_on) {
@@ -318,7 +424,7 @@ print_infos(Dwarf_Debug dbg)
                     &error_message_data.DIE_CU_overall_offset,
                     &error_message_data.DIE_CU_offset,
                     &err);
-                print_die_and_children(hcu_die2, hsrcfiles);
+                print_die_and_children(hcu_die2,is_info, hsrcfiles);
             }
             if (dump_ranges_info) {
                 pAddressRangesData->PrintRangesData();
@@ -335,15 +441,7 @@ print_infos(Dwarf_Debug dbg)
         ++cu_count;
         cu_offset = next_cu_offset;
     }
-    if (nres == DW_DLV_ERROR) {
-        string errmsg = dwarf_errmsg(err);
-        Dwarf_Unsigned myerr = dwarf_errno(err);
-
-        cerr << program_name << " ERROR:  " <<
-            "attempting to print .debug_info:  " <<
-                errmsg << " (" << myerr << ")" << endl;
-        cerr << "attempting to continue." << endl;
-    }
+    return nres;
 }
 
 
@@ -352,18 +450,21 @@ print_a_die_stack(Dwarf_Debug dbg,SrcfilesHolder & hsrcfiles,int lev,
     vector<DieHolder> &dieVec)
 {
     bool ignore_die_stack = false;
-    print_one_die(dieVec[lev],true,lev,hsrcfiles,
+    bool print_information = true;
+    print_one_die(dieVec[lev],print_information,lev,hsrcfiles,
         ignore_die_stack);
 }
 
 void
 print_die_and_children(DieHolder & in_die_in,
+    Dwarf_Bool is_info,
     SrcfilesHolder &hsrcfiles)
 {
     int indent_level = 0;
 
     vector<DieHolder> dieVec;
     print_die_and_children_internal(in_die_in,
+        is_info,
         dieVec,
         indent_level, hsrcfiles);
     return;
@@ -374,11 +475,13 @@ print_die_stack(DieHolder &curdie, vector<DieHolder> &dieVec,
     SrcfilesHolder & hsrcfiles)
 {
     unsigned lev = 0;
+    bool print_information = true;
+    bool ignore_die_stack = false;
 
     for(lev = 0; lev < dieVec.size(); ++lev)
     {
-        print_one_die(dieVec[lev],true,lev,hsrcfiles,
-            /* ignore_die_printed_flag= */false);
+        print_one_die(dieVec[lev],print_information,lev,hsrcfiles,
+            /* ignore_die_printed_flag= */ignore_die_stack);
     }
 }
 
@@ -386,6 +489,7 @@ print_die_stack(DieHolder &curdie, vector<DieHolder> &dieVec,
 // Recursively follow the die tree 
 static void
 print_die_and_children_internal(DieHolder & hin_die_in,
+    Dwarf_Bool is_info,
     vector<DieHolder> &dieVec,
     int &indent_level,
     SrcfilesHolder & hsrcfiles)
@@ -532,6 +636,7 @@ print_die_and_children_internal(DieHolder & hin_die_in,
             DieHolder hchild(dbg,child);
             indent_level++;
             print_die_and_children_internal(hchild, 
+                is_info,
                 dieVec,indent_level,hsrcfiles);
             indent_level--;
             if (indent_level == 0) {
@@ -548,7 +653,7 @@ print_die_and_children_internal(DieHolder & hin_die_in,
         }
 
         Dwarf_Die sibling = 0;
-        cdres = dwarf_siblingof(dbg, in_die, &sibling, &err);
+        cdres = dwarf_siblingof_b(dbg, in_die,is_info, &sibling, &err);
         if (cdres == DW_DLV_OK) {
             /*  print_die_and_children_internal(); We
                 loop around to actually print this, rather than
@@ -599,7 +704,8 @@ print_die_and_children_internal(DieHolder & hin_die_in,
 #define PRINTING_DIES (do_print_dwarf || (record_dwarf_error && check_verbose_mode))
 
 bool
-print_one_die(DieHolder & hdie, bool print_information,
+print_one_die(DieHolder & hdie, 
+    bool print_information,
     int die_indent_level,
     SrcfilesHolder &hsrcfiles,
     bool ignore_die_printed_flag)
@@ -1066,6 +1172,9 @@ traverse_attribute(Dwarf_Debug dbg, Dwarf_Die die, Dwarf_Half attr,
     int tres = 0;
     Dwarf_Half tag = 0;
     bool circular_reference = false;
+    Dwarf_Bool is_info = true;
+
+    is_info=dwarf_get_die_infotypes_flag(die);
 
     atname = get_AT_name(attr,dwarf_names_print_on_error);
 
@@ -1125,7 +1234,7 @@ traverse_attribute(Dwarf_Debug dbg, Dwarf_Die die, Dwarf_Half attr,
         }
 
         /* Follow reference chain, looking for self references */
-        res = dwarf_offdie(dbg,ref_off,&ref_die,&err);
+        res = dwarf_offdie_b(dbg,ref_off,is_info,&ref_die,&err);
         if (res == DW_DLV_OK) {
             DieHolder hdie(dbg,ref_die);
             ++die_indent_level;
@@ -1167,6 +1276,7 @@ traverse_one_die(Dwarf_Debug dbg, Dwarf_Attribute attrib, Dwarf_Die die,
     if (res != DW_DLV_OK) {
         print_error(dbg, "accessing tag of die!", res, err);
     }
+
     res = dwarf_dieoffset(die, &overall_offset, &err);
     if (res != DW_DLV_OK) {
         print_error(dbg, "dwarf_dieoffset", res, err);
@@ -1497,7 +1607,9 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die, Dwarf_Half attr,
     Dwarf_Half tag = 0;
     bool found_search_attr = false;
     bool bTextFound = false;
+    Dwarf_Bool is_info = true;
 
+    is_info=dwarf_get_die_infotypes_flag(die);
     atname = get_AT_name(attr,dwarf_names_print_on_error);
 
     /*  The following gets the real attribute, even in the face of an 
@@ -2002,7 +2114,7 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die, Dwarf_Half attr,
                 pVisitedOffsetData->AddVisitedOffset(die_off);
 
                 /* Follow reference chain, looking for self references */
-                res = dwarf_offdie(dbg,ref_off,&ref_die,&err);
+                res = dwarf_offdie_b(dbg,ref_off,is_info,&ref_die,&err);
                 if (res == DW_DLV_OK) {
                     DieHolder hdie(dbg,ref_die);
                     ++die_indent_level;
@@ -2564,7 +2676,9 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
     int dres  = DW_DLV_ERROR;
     Dwarf_Half direct_form = 0;
     Dwarf_Half theform = 0;
+    Dwarf_Bool is_info = true;
 
+    is_info=dwarf_get_die_infotypes_flag(die);
     int fres = get_form_values(attrib,theform,direct_form);
     if (fres == DW_DLV_ERROR) {
         print_error(dbg, "dwarf_whatform cannot find attr form", fres,
@@ -2667,7 +2781,7 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
             } else if (wres == DW_DLV_NO_ENTRY) {
             }
             if (attr == DW_AT_type) {
-                dres = dwarf_offdie(dbg, cu_offset + off,
+                dres = dwarf_offdie_b(dbg, cu_offset + off,is_info,
                     &die_for_check, &err);
                 DWARF_CHECK_COUNT(type_offset_result,1);
                 if (dres != DW_DLV_OK) {
@@ -2991,16 +3105,9 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
                 "Cannot get a  DW_FORM_ref_sig8 ....", 
                 wres, err);
         } else {
-            char small_buf[40];
-            str_out.append("0x");
-            for( unsigned i = 0; i < sizeof(sig8data.signature); ++i) {
-                if (i == 4) {
-                    str_out.append(" 0x");
-                }
-                snprintf(small_buf,sizeof(small_buf), "%02x",
-                    (unsigned)(sig8data.signature[i]));
-                str_out.append(small_buf);
-            }
+            string sig8str;
+            format_sig8_string(&sig8data,sig8str);
+            str_out.append(sig8str);
         }
         }
         break;
@@ -3009,6 +3116,21 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
             err);
     }
     show_form_itself(show_form,local_verbose,theform, direct_form,&str_out);
+}
+
+void
+format_sig8_string(Dwarf_Sig8 *data,string &out)
+{
+    char small_buf[40];
+    out.append("0x");
+    for( unsigned i = 0; i < sizeof(data->signature); ++i) {
+        if (i == 4) {
+            out.append(" 0x");
+        }
+        snprintf(small_buf,sizeof(small_buf), "%02x",
+            (unsigned char)(data->signature[i]));
+        out.append(small_buf);
+    }
 }
 
 static int

@@ -503,6 +503,7 @@ dwarf_global_name_offsets(Dwarf_Global global,
         _dwarf_error(NULL, error, DW_DLE_DBG_NULL);
         return (DW_DLV_ERROR);
     }
+    /* Cannot refer to debug_types */
     if (dbg->de_debug_info.dss_size &&
         ((off + MIN_CU_HDR_SIZE) >= dbg->de_debug_info.dss_size)) {
         _dwarf_error(NULL, error, DW_DLE_OFFSET_BAD);
@@ -516,6 +517,7 @@ dwarf_global_name_offsets(Dwarf_Global global,
     *ret_name = (char *) global->gl_name;
 
     if (cu_die_offset != NULL) {
+        /* Globals cannot refer to debug_types */
         int res = _dwarf_load_debug_info(dbg, error);
 
         if (res != DW_DLV_OK) {
@@ -525,11 +527,12 @@ dwarf_global_name_offsets(Dwarf_Global global,
             _dwarf_length_of_cu_header() will step off the end and
             therefore must not be used. 10 is a meaningless heuristic,
             but no CU header is that small so it is safe. */
+        /* Globals cannot refer to debug_types */
         if ((off + 10) >= dbg->de_debug_info.dss_size) {
             _dwarf_error(NULL, error, DW_DLE_OFFSET_BAD);
             return (DW_DLV_ERROR);
         }
-        *cu_die_offset = off + _dwarf_length_of_cu_header(dbg, off);
+        *cu_die_offset = off + _dwarf_length_of_cu_header(dbg, off,true);
     }
 
 
@@ -544,6 +547,10 @@ dwarf_global_name_offsets(Dwarf_Global global,
     No error is possible.
 
     See also dwarf_CU_dieoffset_given_die().
+
+    This is assumed to never apply to data in .debug_types, it
+    only refers to .debug_info.
+
 */
 
 /* ARGSUSED */
@@ -554,7 +561,26 @@ dwarf_get_cu_die_offset_given_cu_header_offset(Dwarf_Debug dbg,
     Dwarf_Error * err)
 {
     Dwarf_Off len =
-        _dwarf_length_of_cu_header(dbg, in_cu_header_offset);
+        _dwarf_length_of_cu_header(dbg, in_cu_header_offset,true);
+
+    Dwarf_Off newoff = in_cu_header_offset + len;
+
+    *out_cu_die_offset = newoff;
+    return DW_DLV_OK;
+}
+
+/*  The following version new in October 2011, does allow finding
+    the offset if one knows whether debug_info or debug_types.
+    */
+int
+dwarf_get_cu_die_offset_given_cu_header_offset_b(Dwarf_Debug dbg,
+    Dwarf_Off in_cu_header_offset,
+    Dwarf_Bool is_info,
+    Dwarf_Off * out_cu_die_offset,
+    Dwarf_Error * err)
+{
+    Dwarf_Off len =
+        _dwarf_length_of_cu_header(dbg, in_cu_header_offset,is_info);
 
     Dwarf_Off newoff = in_cu_header_offset + len;
 
@@ -579,9 +605,10 @@ dwarf_CU_dieoffset_given_die(Dwarf_Die die,
     
     CHECK_DIE(die, DW_DLV_ERROR);
     cucontext = die->di_cu_context;
-    dieoff =  cucontext->cc_debug_info_offset;
+    dieoff =  cucontext->cc_debug_offset;
     /*  The following call cannot fail, so no error check. */
-    dwarf_get_cu_die_offset_given_cu_header_offset(
-        cucontext->cc_dbg, dieoff, return_offset,error);
+    dwarf_get_cu_die_offset_given_cu_header_offset_b(
+        cucontext->cc_dbg, dieoff,
+        die->di_is_info, return_offset,error);
     return DW_DLV_OK;
 }

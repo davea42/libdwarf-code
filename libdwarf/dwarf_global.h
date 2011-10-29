@@ -52,6 +52,8 @@ typedef struct Dwarf_Global_Context_s *Dwarf_Global_Context;
 
     Also used for DWARF3 .debug_pubtypes.
 
+    These never refer to .debug_types, only to .debug_info.
+
 */
 struct Dwarf_Global_Context_s {
 
