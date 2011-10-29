@@ -1,3 +1,5 @@
+October 29, 2011
+  Added support for printing .debug_types (type unit) data.
 October 26, 2011
   Added new features to Makefile.in and documented in README
   how to build dwarfdump with headers or libraries in
