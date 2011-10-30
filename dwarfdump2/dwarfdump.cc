@@ -920,9 +920,12 @@ process_one_file(Elf * elf,const  string & file_name, int archive,
     if (header_flag) {
         print_object_header(elf,dbg);
     }
+    reset_overall_CU_error_data();
     if (info_flag || line_flag || cu_name_flag || search_is_on ||
         producer_children_flag) {
-        print_infos(dbg);
+        print_infos(dbg,true);
+        reset_overall_CU_error_data();
+        print_infos(dbg,false);
     }
     if (pubnames_flag) {
         reset_overall_CU_error_data();
@@ -2080,11 +2083,15 @@ add_cu_name_compiler_target(const string & name)
     compilers_detected[current_compiler].cu_list_.push_back(name);
 }
 
+/*  Making this a named string makes it simpler to change
+    what the reset,or 'I do not know'  value is for
+    CU name or producer name for PRINT_CU_INFO. */
+static string default_cu_producer("<unknown>");
 static void
 reset_overall_CU_error_data()
 {
-   error_message_data.CU_name = "<unknown>";
-   error_message_data.CU_producer = "<unknown>";
+   error_message_data.CU_name = default_cu_producer;
+   error_message_data.CU_producer = default_cu_producer;
    error_message_data.DIE_offset = 0;
    error_message_data.DIE_overall_offset = 0;
    error_message_data.DIE_CU_offset = 0;
@@ -2093,15 +2100,41 @@ reset_overall_CU_error_data()
    error_message_data.CU_high_address = 0;
 }
 
+static bool
+cu_data_is_set()
+{
+    if(error_message_data.CU_name != default_cu_producer || 
+        error_message_data.CU_producer != default_cu_producer) {
+        return true;
+    }
+    if(error_message_data.DIE_offset  || 
+        error_message_data.DIE_overall_offset) {
+        return true;
+    }
+    if(error_message_data.CU_base_address || 
+        error_message_data.CU_high_address) {
+        return true;
+    }
+    return false;
+}
+
 /* Print CU basic information */
 void PRINT_CU_INFO()
 {
     cerr.flush();
     cout.flush();
-    if (error_message_data.current_section_id == DEBUG_LINE) {
+    if (error_message_data.current_section_id == DEBUG_LINE ||
+        error_message_data.current_section_id == DEBUG_ARANGES) {
+        /*  Only in the DEBUG_LINE/ARANGES case is DIE_CU_offset or 
+            DIE_CU_overall_offset what we want to print here.
+            In other cases DIE_CU_offset is not really a CU
+            offset at all. */
         error_message_data.DIE_offset = error_message_data.DIE_CU_offset;
         error_message_data.DIE_overall_offset = 
             error_message_data.DIE_CU_overall_offset;
+    }
+    if(!cu_data_is_set()) {
+        return;
     }
     cout <<  endl;
     cout <<"CU Name = " <<error_message_data.CU_name << endl;

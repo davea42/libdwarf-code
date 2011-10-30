@@ -10,12 +10,6 @@ AC_CHECK_TOOL(RANLIB, ranlib, :)
 AC_CHECK_TOOL(AR, ar)
 dnl AC_ARFLAGS
 
-
-/* Define to 1 if the elf64_getehdr function is in libelf.a */
-#undef HAVE_ELF64_GETEHDR
-
-
-
 AC_CHECK_HEADERS(elf.h getopt.h libelf.h libelf/libelf.h sgidefs.h sys/types.h)
 AC_CHECK_LIB(elf,elf64_getehdr,
   AC_DEFINE(HAVE_ELF64_GETEHDR,1, 

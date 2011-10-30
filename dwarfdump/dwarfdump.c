@@ -893,9 +893,12 @@ process_one_file(Elf * elf, const char * file_name, int archive,
     if (header_flag) {
         print_object_header(elf,dbg);
     }
+    reset_overall_CU_error_data();
     if (info_flag || line_flag || cu_name_flag || search_is_on || 
         producer_children_flag) {
-        print_infos(dbg);
+        print_infos(dbg,TRUE);
+        reset_overall_CU_error_data();
+        print_infos(dbg,FALSE);
     }
     if (pubnames_flag) {
         reset_overall_CU_error_data();
@@ -2194,11 +2197,16 @@ reset_compiler_entry(Compiler *compiler)
 {
     memset(compiler,0,sizeof(Compiler));
 }
+
+/*  Making this a named string makes it simpler to change
+    what the reset,or 'I do not know'  value is for
+    CU name or producer name for PRINT_CU_INFO. */
+static const char * default_cu_producer = "<unknown>";
 static void
 reset_overall_CU_error_data()
 {
-   strcpy(CU_name,"<unknown>");
-   strcpy(CU_producer,"<unknown>");
+   strcpy(CU_name,default_cu_producer);
+   strcpy(CU_producer,default_cu_producer);
    DIE_offset = 0;
    DIE_overall_offset = 0;
    DIE_CU_offset = 0;
@@ -2207,12 +2215,36 @@ reset_overall_CU_error_data()
    CU_high_address = 0;
 }
 
+
+static boolean 
+cu_data_is_set()
+{
+    if(strcmp(CU_name,default_cu_producer) || 
+        strcmp(CU_producer,default_cu_producer)) {
+        return 1;
+    }
+    if(DIE_offset  || DIE_overall_offset) {
+        return 1;
+    }
+    if(CU_base_address || CU_high_address) {
+        return 1;
+    }
+    return 0;
+}
 /* Print CU basic information */
 void PRINT_CU_INFO()
 {
-    if (current_section_id == DEBUG_LINE) {
+    if (current_section_id == DEBUG_LINE || 
+        current_section_id == DEBUG_ARANGES) {
+        /*  Only in the DEBUG_LINE/ARANGES case is DIE_CU_offset or 
+            DIE_CU_overall_offset what we want to print here.
+            In other cases DIE_CU_offset is not really a CU
+            offset at all. */
         DIE_offset = DIE_CU_offset;
         DIE_overall_offset = DIE_CU_overall_offset;
+    }
+    if(!cu_data_is_set()) {
+        return;
     }
     printf("\n");
     printf("CU Name = %s\n",CU_name);

@@ -202,19 +202,22 @@ print_one_die_section(Dwarf_Debug dbg,bool is_info);
 
 /* process each compilation unit in .debug_info */
 void
-print_infos(Dwarf_Debug dbg)
+print_infos(Dwarf_Debug dbg,bool is_info)
 {
-    int nres;
-    error_message_data.current_section_id = DEBUG_INFO;
-    nres = print_one_die_section(dbg,true);
-    if (nres == DW_DLV_ERROR) {
-        string errmsg = dwarf_errmsg(err);
-        Dwarf_Unsigned myerr = dwarf_errno(err);
-
-        cerr << program_name << " ERROR:  " <<
-            "attempting to print .debug_info:  " <<
-            errmsg << " (" << myerr << ")" << endl;
-        cerr << "attempting to continue." << endl;
+    int nres = 0;
+    if(is_info) {
+        error_message_data.current_section_id = DEBUG_INFO;
+        nres = print_one_die_section(dbg,true);
+        if (nres == DW_DLV_ERROR) {
+            string errmsg = dwarf_errmsg(err);
+            Dwarf_Unsigned myerr = dwarf_errno(err);
+    
+            cerr << program_name << " ERROR:  " <<
+                "attempting to print .debug_info:  " <<
+                errmsg << " (" << myerr << ")" << endl;
+            cerr << "attempting to continue." << endl;
+        }
+        return;
     }
     error_message_data.current_section_id = DEBUG_TYPES;
     nres = print_one_die_section(dbg,false);
@@ -307,11 +310,11 @@ print_one_die_section(Dwarf_Debug dbg,bool is_info)
     /* Loop until it fails. */
     for (;;++loop_count) {
         nres = dwarf_next_cu_header_c(dbg, is_info, 
-                &cu_header_length, &version_stamp,
-                &abbrev_offset, &address_size,
-                &length_size, &extension_size,
-                &signature, &typeoffset,
-                &next_cu_offset, &err);
+            &cu_header_length, &version_stamp,
+            &abbrev_offset, &address_size,
+            &length_size, &extension_size,
+            &signature, &typeoffset,
+            &next_cu_offset, &err);
         if(nres == DW_DLV_NO_ENTRY) {
             return nres;
         }
@@ -702,6 +705,11 @@ print_die_and_children_internal(DieHolder & hin_die_in,
 
 /* Print one die on error and verbose or non check mode */
 #define PRINTING_DIES (do_print_dwarf || (record_dwarf_error && check_verbose_mode))
+
+/*  This is called from the debug_line printing and the DIE
+    passed in is a CU DIE. 
+    In other cases the DIE passed in is not a CU die.
+    */
 
 bool
 print_one_die(DieHolder & hdie, 
@@ -2089,13 +2097,12 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die, Dwarf_Half attr,
             if (res != DW_DLV_OK) {
                 int myerr = dwarf_errno(err);
                 if(myerr == DW_DLE_REF_SIG8_NOT_HANDLED) {
-                    /* FIXME: DW_DLE_REF_SIG8_NOT_HANDLED */
-                    /* No offset available, incomplete implementation. */
+                    /*  DW_DLE_REF_SIG8_NOT_HANDLED */
+                    /*  No offset available, it makes little sense
+                        to delve into this sort of reference unless
+                        we think a graph of self-refs *across*
+                        type-units is possible. Hmm. FIXME? */
                     suppress_check = 1 ;
-                    DWARF_CHECK_COUNT(self_references_result,1);
-                    DWARF_CHECK_ERROR(self_references_result,
-                        "DW_AT_ref_sig8 not handled so "
-                        "self references not fully checked");
                     dwarf_dealloc(dbg,err,DW_DLA_ERROR);
                     err = 0;
                 } else {

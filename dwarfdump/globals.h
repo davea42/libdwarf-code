@@ -327,7 +327,7 @@ extern void print_frames (Dwarf_Debug dbg, int print_debug_frame,
 extern void print_ranges (Dwarf_Debug dbg);
 extern void print_pubnames (Dwarf_Debug dbg);
 extern void print_macinfo (Dwarf_Debug dbg);
-extern void print_infos (Dwarf_Debug dbg);
+extern void print_infos (Dwarf_Debug dbg,Dwarf_Bool is_info);
 extern void print_locs (Dwarf_Debug dbg);
 extern void print_abbrevs (Dwarf_Debug dbg);
 extern void print_strings (Dwarf_Debug dbg);

@@ -1,3 +1,17 @@
+2011-10-30  DavidAnderson <davea42@earthlink.net>
+     * configure.in: Removed a couple bogus lines which were
+       reporting strange shell errors.
+     * configure:  Regenerated.
+     * dwarfdump.c: Refine the error outputs so bogus reports
+       do not print.  Refactor the debuginfo/types prints for
+       better reporting of errors.
+     * globals.h: Refactoring meant changing one prototype here,
+       the print_infos() prototype.
+     * print_die.c: Refactor the debuginfo/types prints for
+       better reporting of errors.  Remove an 'error' report
+       about DW_DLE_REF_SIG8_NOT_HANDLED.  It's unclear
+       what we might want to do here in future, but an error
+       report is misleading.
 2011-10-29  DavidAnderson <davea42@earthlink.net>
      * dwarfdump.c, common.c: Update version strings.
 2011-10-29  DavidAnderson <davea42@earthlink.net>

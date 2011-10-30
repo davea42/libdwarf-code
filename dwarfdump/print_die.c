@@ -218,18 +218,21 @@ print_as_info_or_cu()
 
 /* process each compilation unit in .debug_info */
 void
-print_infos(Dwarf_Debug dbg)
+print_infos(Dwarf_Debug dbg,Dwarf_Bool is_info)
 {
     int nres = 0;
-    nres = print_one_die_section(dbg,TRUE);
-    if (nres == DW_DLV_ERROR) {
-        char * errmsg = dwarf_errmsg(err);
-        Dwarf_Unsigned myerr = dwarf_errno(err);
-
-        fprintf(stderr, "%s ERROR:  %s:  %s (%lu)\n",
-            program_name, "attempting to print .debug_info",
-            errmsg, (unsigned long) myerr);
-        fprintf(stderr, "attempting to continue.\n");
+    if(is_info) {
+        nres = print_one_die_section(dbg,TRUE);
+        if (nres == DW_DLV_ERROR) {
+            char * errmsg = dwarf_errmsg(err);
+            Dwarf_Unsigned myerr = dwarf_errno(err);
+    
+            fprintf(stderr, "%s ERROR:  %s:  %s (%lu)\n",
+                program_name, "attempting to print .debug_info",
+                errmsg, (unsigned long) myerr);
+            fprintf(stderr, "attempting to continue.\n");
+        }
+        return;
     }
     nres = print_one_die_section(dbg,FALSE);
     if (nres == DW_DLV_ERROR) {
@@ -331,12 +334,12 @@ print_one_die_section(Dwarf_Debug dbg,Dwarf_Bool is_info)
         Dwarf_Die cu_die = 0;
 
         nres = dwarf_next_cu_header_c(dbg, 
-                is_info,
-                &cu_header_length, &version_stamp,
-                &abbrev_offset, &address_size,
-                &length_size,&extension_size,
-                &signature, &typeoffset,
-                &next_cu_offset, &err);
+            is_info,
+            &cu_header_length, &version_stamp,
+            &abbrev_offset, &address_size,
+            &length_size,&extension_size,
+            &signature, &typeoffset,
+            &next_cu_offset, &err);
         if (nres == DW_DLV_NO_ENTRY) {
             return nres;
         }
@@ -2224,13 +2227,12 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
             if (res != DW_DLV_OK) {
                 int myerr = dwarf_errno(err);
                 if(myerr == DW_DLE_REF_SIG8_NOT_HANDLED) {
-                    /* FIXME: DW_DLE_REF_SIG8_NOT_HANDLED */
-                    /* No offset available, incomplete implementation. */
+                    /*  DW_DLE_REF_SIG8_NOT_HANDLED */
+                    /*  No offset available, it makes little sense
+                        to delve into this sort of reference unless
+                        we think a graph of self-refs *across*
+                        type-units is possible. Hmm. FIXME? */
                     suppress_check = 1 ;
-                    DWARF_CHECK_COUNT(self_references_result,1);
-                    DWARF_CHECK_ERROR(self_references_result,
-                        "DW_AT_ref_sig8 not handled so "
-                        "self references not fully checked");
                     dwarf_dealloc(dbg,err,DW_DLA_ERROR);
                     err = 0;
                 } else {
