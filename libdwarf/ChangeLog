@@ -1,3 +1,7 @@
+2011-11-02  DavidAnderson <davea42@earthlink.net>
+     * dwarf.h: Spelling fix: specfic->specific. 
+       Rearranged a few comments  about MIPS/SGI for 
+       a better appearance.
 2011-10-29  DavidAnderson <davea42@earthlink.net>
      * dwarf_alloc.c: Add support for the .debug_types section.
      * dwarf_arange.c,dwarf_global.c: Add commentary about 

@@ -925,20 +925,20 @@ extern "C" {
 #define DW_EH_PE_omit     0xff  /* GNU.  Means no value present. */
 
 
-/* Mapping from machine registers and pseudo-regs into the .debug_frame table.
-   DW_FRAME entries are machine specific. These describe
-   MIPS/SGI R3000, R4K, R4400 and all later MIPS/SGI IRIX machines.
-   They describe a mapping from hardware register number to
-   the number used in the table to identify that register.
+/* Mapping from machine registers and pseudo-regs into the 
+   .debug_frame table.  DW_FRAME entries are machine specific. 
+   These describe MIPS/SGI R3000, R4K, R4400 and all later 
+   MIPS/SGI IRIX machines.  They describe a mapping from 
+   hardware register number to the number used in the table 
+   to identify that register.
 
-   The CFA (Canonical Frame Address) described in DWARF is called
-   the Virtual Frame Pointer on MIPS/SGI machines.
+   The CFA (Canonical Frame Address) described in DWARF is 
+   called the Virtual Frame Pointer on MIPS/SGI machines.
 
-   The DW_FRAME* names here are MIPS/SGI specfic.
+   The DW_FRAME* names here are MIPS/SGI specific.
    Libdwarf interfaces defined in 2008 make the 
-   frame definitions
-   here (and the fixed table sizes they imply) obsolete.
-   They are left here for compatibility. 
+   frame definitions here (and the fixed table sizes 
+   they imply) obsolete.  They are left here for compatibility. 
 */
 /* Default column used for CFA in the libdwarf reader client.
    Assumes reg 0 never appears as
