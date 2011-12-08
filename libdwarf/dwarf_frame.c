@@ -744,7 +744,7 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
                 /*  The first operand is an unsigned leb128 register
                     number. The second is a signed factored offset.
                     Identical to DW_CFA_offset_extended except the
-                    secondoperand is signed */
+                    second operand is signed */
                 Dwarf_Unsigned lreg;
 
                 DECODE_LEB128_UWORD(instr_ptr, lreg);

@@ -1,3 +1,9 @@
+2011-12-08  DavidAnderson <davea42@earthlink.net>
+     * dwarf_frame.c: Corrected a typo by adding a space
+       to a comment.
+     * libdwarf2p.1.mm: A sentence about dwarf_lne_end_sequence() 
+       was missing its introductory words. New version is 1.31.
+     * libdwarf2p.1.pdf: Regenerated.
 2011-11-02  DavidAnderson <davea42@earthlink.net>
      * dwarf.h: Spelling fix: specfic->specific. 
        Rearranged a few comments  about MIPS/SGI for 

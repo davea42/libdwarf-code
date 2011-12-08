@@ -11,7 +11,7 @@
 .nr Hb 5
 \." ==============================================
 \." Put current date in the following at each rev
-.ds vE rev 1.30, 12 June 2011
+.ds vE rev 1.31, 8 December 2011
 \." ==============================================
 \." ==============================================
 .ds | |
@@ -1875,7 +1875,8 @@ contiguous block of instructions.
 \f(CWaddress()\fP 
 should be just higher than the end of the last address in the 
 sequence of instructions.
-block of instructions, a call to \f(CWdwarf_lne_set_address()\fP will 
+Before the next
+block of instructions (if any) a call to \f(CWdwarf_lne_set_address()\fP will 
 have to be made to set the address of the start of the target address
 of the block, followed by calls to \f(CWdwarf_add_line_entry()\fP for
 each of the instructions in the block.
