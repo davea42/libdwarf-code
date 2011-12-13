@@ -146,12 +146,14 @@ extern "C" {
 #define DW_TAG_GNU_BINCL                0x4104 /* GNU */
 #define DW_TAG_GNU_EINCL                0x4105 /* GNU */
 
-
 /* GNU extension. http://gcc.gnu.org/wiki/TemplateParmsDwarf */
 #define DW_TAG_GNU_template_template_parameter  0x4106 /* GNU */
 #define DW_TAG_GNU_template_template_param      0x4106 /* GNU */
 #define DW_TAG_GNU_template_parameter_pack      0x4107 /* GNU */
 #define DW_TAG_GNU_formal_parameter_pack        0x4108 /* GNU */
+
+#define DW_TAG_GNU_call_site                    0x4109 /* GNU */
+#define DW_TAG_GNU_call_site_parameter          0x410a /* GNU */
 
 /* ALTIUM extensions */
     /* DSP-C/Starcore __circ qualifier */
@@ -378,7 +380,38 @@ extern "C" {
 #define DW_AT_body_begin                        0x2105 /* GNU */
 #define DW_AT_body_end                          0x2106 /* GNU */
 #define DW_AT_GNU_vector                        0x2107 /* GNU */
-#define DW_AT_GNU_template_name                 0x2108 /* GNU */
+
+/*  Thread safety, see http://gcc.gnu.org/wiki/ThreadSafetyAnnotation .  */
+/*  The values here are from gcc-4.6.2 include/dwarf2.h.  The
+    values are not given on the web page at all, nor on web pages
+    it refers to. */
+#define DW_AT_GNU_guarded_by                    0x2108 /* GNU */
+#define DW_AT_GNU_pt_guarded_by                 0x2109 /* GNU */
+#define DW_AT_GNU_guarded                       0x210a /* GNU */
+#define DW_AT_GNU_pt_guarded                    0x210b /* GNU */
+#define DW_AT_GNU_locks_excluded                0x210c /* GNU */
+#define DW_AT_GNU_exclusive_locks_required      0x210d /* GNU */
+#define DW_AT_GNU_shared_locks_required         0x210e /* GNU */
+
+/* See http://gcc.gnu.org/wiki/DwarfSeparateTypeInfo */
+#define DW_AT_GNU_odr_signature                 0x210f /* GNU */
+
+/*  See  See http://gcc.gnu.org/wiki/TemplateParmsDwarf */
+/*  The value here is from gcc-4.6.2 include/dwarf2.h.  The value is
+    not consistent with the web page as of December 2011. */
+#define DW_AT_GNU_template_name                 0x2110 /* GNU */
+/*  The GNU call site extension.
+    See http://www.dwarfstd.org/ShowIssue.php?issue=100909.2&type=open .  */
+#define DW_AT_GNU_call_site_value               0x2111 /* GNU */
+#define DW_AT_GNU_call_site_data_value          0x2112 /* GNU */
+#define DW_AT_GNU_call_site_target              0x2113 /* GNU */
+#define DW_AT_GNU_call_site_target_clobbered    0x2114 /* GNU */
+#define DW_AT_GNU_tail_call                     0x2115 /* GNU */
+#define DW_AT_GNU_all_tail_call_sites           0x2116 /* GNU */
+#define DW_AT_GNU_all_call_sites                0x2117 /* GNU */
+#define DW_AT_GNU_all_source_call_sites         0x2118 /* GNU */
+
+
 
 /* ALTIUM extension: ALTIUM Compliant location lists (flag) */
 #define DW_AT_ALTIUM_loclist    0x2300          /* ALTIUM  */
@@ -431,6 +464,10 @@ extern "C" {
 #define DW_AT_SUN_is_omp_child_func             0x2239 /* SUN */
 #define DW_AT_SUN_fortran_main_alias            0x223a /* SUN */
 #define DW_AT_SUN_fortran_based                 0x223b /* SUN */
+
+/*   See http://gcc.gnu.org/wiki/DW_AT_GNAT_descriptive_type .  */
+#define DW_AT_use_GNAT_descriptive_type         0x2301 /* GNAT */
+#define DW_AT_GNAT_descriptive_type             0x2302 /* GNAT */
 
 /* UPC extension */
 #define DW_AT_upc_threads_scaled                0x3210 /* UPC */
@@ -621,6 +658,12 @@ extern "C" {
 /* Follows extension so dwarfdump prints the most-likely-useful name. */
 #define DW_OP_lo_user                   0xe0
 
+
+#define DW_OP_GNU_uninit                0xf0 /* GNU */
+#define DW_OP_GNU_encoded_addr          0xf1 /* GNU */
+#define DW_OP_GNU_implicit_pointer      0xf2 /* GNU */
+#define DW_OP_GNU_entry_value           0xf3 /* GNU */
+
     /* HP extensions. */
 #define DW_OP_HP_unknown                0xe0 /* HP conflict: GNU */
 #define DW_OP_HP_is_value               0xe1 /* HP */
@@ -632,9 +675,9 @@ extern "C" {
 
 #define DW_OP_INTEL_bit_piece           0xe8 /* Intel: made obsolete by DW_OP_bit_piece above. */
 
-
    /* Apple extension. */
 #define DW_OP_APPLE_uninit              0xf0 /* Apple */ 
+#define DW_OP_PGI_omp_thread_num        0xf8 /* PGI (STMicroelectronics) */
 
 #define DW_OP_hi_user                   0xff
 
@@ -777,6 +820,11 @@ extern "C" {
 #define DW_CC_nocall                    0x03
 #define DW_CC_lo_user                   0x40
 
+#define DW_CC_GNU_renesas_sh            0x40 /* GNU */
+#define DW_CC_GNU_borland_fastcall_i386 0x41 /* GNU */
+
+
+
 /* ALTIUM extensions. */
 /* Function is an interrupt handler, return address on system stack. */
 #define DW_CC_ALTIUM_interrupt          0x65  /* ALTIUM*/
@@ -839,6 +887,7 @@ extern "C" {
 #define DW_LNE_HP_negate_front_end_logical  0x19 /* 25 HP */
 #define DW_LNE_HP_define_proc               0x20 /* 32 HP */
 
+#define DW_LNE_HP_source_file_correlation   0x80 /* HP */
 #define DW_LNE_lo_user                  0x80 /* DWARF3 */
 #define DW_LNE_hi_user                  0xff /* DWARF3 */
 

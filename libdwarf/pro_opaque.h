@@ -142,9 +142,34 @@ typedef struct Dwarf_P_Per_Sect_String_Attrs_s *Dwarf_P_Per_Sect_String_Attrs;
 #define         DEBUG_WEAKNAMES 10
 #define         DEBUG_MACINFO   11
 #define         DEBUG_LOC   12
+#define         DEBUG_RANGES 13
+#define         DEBUG_TYPES 14
 
-    /* number of debug_* sections not including the relocations */
-#define         NUM_DEBUG_SECTIONS      DEBUG_LOC + 1
+/* Maximum number of debug_* sections not including the relocations */
+#define         NUM_DEBUG_SECTIONS      15
+
+/*  Describes the data needed to generate line table header info
+    so we can vary the init at runtime. */
+struct Dwarf_P_Line_Inits_s {
+    unsigned pi_version; /* line table version number */
+    unsigned pi_default_is_stmt; /* default value for is_stmt */
+    
+    /* Size of the smallest instruction, in bytes. */
+    unsigned pi_minimum_instruction_length; 
+   
+    /* Make this >1 for VLIW machines. */
+    unsigned pi_maximum_operations_per_instruction;
+
+    /*  Normally opcode_base is determined by pi_version, but we
+        allow manual setting here so we can generate data like
+        GNU with a DWARF3 opcode base in a DWARF2 section. 
+        This determines how much of the header_opcode_lengths
+        table is emitted in the line table header */
+    unsigned pi_opcode_base; 
+
+    int      pi_line_base;   /* For line table header. */
+    int      pi_line_range;  /* For line table header. */
+};
 
 
 struct Dwarf_P_Die_s {
@@ -474,6 +499,8 @@ struct Dwarf_P_Debug_s {
     int de_sect_sa_next_to_return;  /* Iterator on sring attrib sects */
     /* String attributes data of each section. */
     struct Dwarf_P_Per_Sect_String_Attrs_s de_sect_string_attr[NUM_DEBUG_SECTIONS];
+    /* Hold data needed to init new line output flexibly. */
+    struct Dwarf_P_Line_Inits_s de_line_inits;
 };
 
 #define CURRENT_VERSION_STAMP   2

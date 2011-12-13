@@ -8,7 +8,7 @@ n\."
 .nr Hb 5
 \." ==============================================
 \." Put current date in the following at each rev
-.ds vE rev 2.00, October 29, 2011
+.ds vE rev 2.02, December 13, 2011
 \." ==============================================
 \." ==============================================
 .ds | |
@@ -77,7 +77,7 @@ The DWARF committee published DWARF2 July 27, 1993.
 In the mid 1990s this document and the library it describes
 (which the committee never endorsed, having decided
 not to endorse or approve any particular library interface)
-was made available on the internet by Silcon Graphics, Inc.
+was made available on the internet by Silicon Graphics, Inc.
 .P
 In 2005 the DWARF committee began an affiliation with FreeStandards.org.
 In 2007 FreeStandards.org merged with The Linux Foundation.
@@ -1581,7 +1581,7 @@ values returned through pointers are the values in the compilation-unit
 header.  If any of \f(CWcu_header_length\fP, \f(CWversion_stamp\fP,
 \f(CWabbrev_offset\fP, \f(CWaddress_size\fP, 
 \f(CWoffset_size\fP, \f(CWextension_size\fP,
-\f(CWsignatyre\fP, or \f(CWtypeoffset\fP,
+\f(CWsignature\fP, or \f(CWtypeoffset\fP,
 is \f(CWNULL\fP, the 
 argument is ignored (meaning it is not an error to provide a 
 \f(CWNULL\fP pointer for any or all of these arguments).
@@ -3250,10 +3250,23 @@ The function \f(CWdwarf_lineoff()\fP returns
 \f(CWDW_DLV_OK\fP and sets \f(CW*return_lineoff\fP to
 the column number at which
 the statement represented by \f(CWline\fP begins.  
-It sets \f(CWreturn_lineoff\fP to \fI-1\fP 
+.P
+It sets \f(CWreturn_lineoff\fP to zero
 if the column number of the statement is not represented
 (meaning the producer library call was given zero
-as the column number). 
+as the column number).  Zero is the correct value meaning "left edge" 
+as defined in the DWARF2/3/4 specication (section 6.2.2).
+.P
+Before December 2011 zero was not returned through 
+the  \f(CWreturn_lineoff\fP pointer, -1 was returned through the pointer.
+The reason for this oddity is unclear, lost in history.
+But there is no good reason for -1.
+.P
+The type of  \f(CWreturn_lineoff\fP is a pointer-to-signed, but there
+is no good reason for the value to be signed, the DWARF specification
+does not deal with negative column numbers.  However, changing the
+declaration would cause compilation errors for little benefit, so
+the pointer-to-signed is left unchanged.
 .P
 On error it returns \f(CWDW_DLV_ERROR\fP.
 It never returns \f(CWDW_DLV_NO_ENTRY\fP.
@@ -3324,6 +3337,31 @@ It never returns \f(CWDW_DLV_NO_ENTRY\fP.
 This is intended to allow consumers to do a more useful job
 printing and analyzing DWARF data, it is not strictly
 necessary.
+
+.H 4 "dwarf_prologue_end_etc()" 
+.DS
+\f(CWint dwarf_prologue_end_etc(Dwarf_Line  line,
+        Dwarf_Bool  *    prologue_end,
+        Dwarf_Bool  *    epilogue_begin,
+        Dwarf_Unsigned * isa,
+        Dwarf_Unsigned * discriminator,
+        Dwarf_Error *    error)\fP
+.DE
+The function 
+\f(CWdwarf_prologue_end_etc()\fP returns
+\f(CWDW_DLV_OK\fP and sets  the returned fields to
+values currently set.
+While it is pretty safe to assume that the
+\f(CWisa\fP
+and
+\f(CWdiscriminator\fP
+values returned are very small integers, there is
+no restriction in the standard.
+It returns \f(CWDW_DLV_ERROR\fP on error.
+It never returns \f(CWDW_DLV_NO_ENTRY\fP.
+
+This function is new in December 2011.
+
 
 .H 2 "Global Name Space Operations" 
 These operations operate on the .debug_pubnames section of the debugging 

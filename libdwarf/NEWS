@@ -1,3 +1,10 @@
+December 13, 2011
+  dwarf_lineoff() is now deprecated, dwarf_lineoff_b() is
+  strongly recommended instead.
+  dwarf_add_line_entry() does not have all the line fields
+  needed for generating DWARF3/4, use dwarf_add_line_entry_b() instead.
+  Generation of DWARF3/4 is not yet functional, this new function
+  is a first step.
 October 29, 2011
   Added support for reading .debug_types (type unit) data.
 October 26,2011

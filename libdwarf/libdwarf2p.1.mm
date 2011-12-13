@@ -11,7 +11,7 @@
 .nr Hb 5
 \." ==============================================
 \." Put current date in the following at each rev
-.ds vE rev 1.31, 8 December 2011
+.ds vE rev 1.32, 13 December 2011
 \." ==============================================
 \." ==============================================
 .ds | |
@@ -1803,9 +1803,9 @@ a contiguous block is indicated by calling the function
 Line number operations do not support
 \f(CWDW_DLC_SYMBOLIC_RELOCATIONS\fP.
 
-.H 3 "dwarf_add_line_entry()"
+.H 3 "dwarf_add_line_entry_b()"
 .DS
-\f(CWDwarf_Unsigned dwarf_add_line_entry(
+\f(CWDwarf_Unsigned dwarf_add_line_entry_b(
         Dwarf_P_Debug dbg,
         Dwarf_Unsigned file_index, 
         Dwarf_Addr code_offset,
@@ -1813,14 +1813,21 @@ Line number operations do not support
         Dwarf_Signed column_number,
         Dwarf_Bool is_source_stmt_begin, 
         Dwarf_Bool is_basic_block_begin,
+        Dwarf_Bool is_epilogue_begin,
+        Dwarf_Bool is_prologue_end,
+        Dwarf_Unsigned  isa,
+        Dwarf_Unsigned  discriminator,
         Dwarf_Error *error)\fP
 .DE
 The function \f(CWdwarf_add_line_entry()\fP adds an entry to the
 section containing information about source lines.  
 It specifies
-in \f(CWcode_offset\fP, the offset from the address set using
-\f(CWdwarf_lne_set_address()\fP, of the address of the first
-instruction in a contiguous block.  
+in \f(CWcode_offset\fP, the address of this line.
+The function subtracts \f(CWcode_offset\fP from the value given
+as the address of a previous line call to compute an offset,
+and the offset is what is recorded in the line instructions
+so no relocation will be needed on the line instruction generated.
+.P
 The source file that gave rise
 to the instruction is specified by \f(CWfile_index\fP, the source
 line number is specified by \f(CWlineno\fP, and the source column 
@@ -1838,7 +1845,44 @@ the sequence generated for the source line at \f(CWlineno\fP.  Similarly,
 the instruction at \f(CWcode_address\fP is the first instruction of
 a basic block.
 
+\f(CWis_epilogue_begin\fP is a boolean flag that is true only if 
+the instruction at \f(CWcode_address\fP is the first instruction in 
+the sequence generated for the function epilogue code.
+
+Similarly, \f(CWis_prolgue_end\fP is a boolean flag that is true only if
+the instruction at \f(CWcode_address\fP is the last instruction of
+the seqence generated for the function prologue.
+
+\f(CWisa\fP should be zero unless the code 
+at \f(CWcode_address\fP is generated in a non-standard isa.
+The values assigned to non-standard isas are defined by the compiler
+implementation. 
+
+\f(CWdiscriminator\fP should be zero unless the line table
+needs to distinguish among multiple blocks
+associated with the same source file, line, and column.
+The values assigned to \f(CWdiscriminator\fP are defined by the compiler
+implementation.
+
 It returns \f(CW0\fP on success, and \f(CWDW_DLV_NOCOUNT\fP on error.
+
+This function is defined as of December 2011.
+
+.H 3 "dwarf_add_line_entry()"
+.DS
+\f(CWDwarf_Unsigned dwarf_add_line_entry(
+        Dwarf_P_Debug dbg,
+        Dwarf_Unsigned file_index,
+        Dwarf_Addr code_offset,
+        Dwarf_Unsigned lineno,
+        Dwarf_Signed column_number,
+        Dwarf_Bool is_source_stmt_begin,
+        Dwarf_Bool is_basic_block_begin,
+        Dwarf_Error *error)\fP
+.DE
+This function is the same as \f(CWdwarf_add_line_entry_b()\fP
+except this older version is missing the new 
+DWARF3/4 line table fields.
 
 .H 3 "dwarf_lne_set_address()"
 .DS
@@ -1900,8 +1944,12 @@ have been used to create the present object.
 It returns the index of the string just added, in the list of include 
 directories for the object.  
 This index is then used to refer to this 
-string.  
-It returns \f(CWDW_DLV_NOCOUNT\fP on error.
+string.  The first successful call of this function
+returns one, not zero, to be consistent with the directory indices
+that \f(CWdwarf_add_file_decl()\fP (below) expects..
+
+\f(CWdwarf_add_directory_decl()\fP
+returns \f(CWDW_DLV_NOCOUNT\fP on error.
 
 .H 3 "dwarf_add_file_decl()"
 .DS
@@ -1919,11 +1967,20 @@ The name of the file is
 specified by \f(CWname\fP (which must not be the empty string
 or a null pointer, it must point to 
 a string with length greater than 0).  
+
 In case the name is not a fully-qualified
-pathname, it is prefixed with the name of the directory specified by
-\f(CWdir_idx\fP.  
+pathname, it is 
+considered prefixed with the name of the directory specified by
+\f(CWdir_idx\fP (which does not mean the \f(CWname\fP
+is changed or physically prefixed by 
+this producer function, we simply describe the meaning here).
 \f(CWdir_idx\fP is the index of the directory to be
 prefixed in the list builtup using \f(CWdwarf_add_directory_decl()\fP.
+As specified by the DWARF spec, a \f(CWdir_idx\fP of zero will be
+interpreted as meaning the directory of the compilation and
+another index must refer to a valid directory as
+FIXME
+
 
 \f(CWtime_mod\fP gives the time at which the file was last modified,
 and \f(CWlength\fP gives the length of the file in bytes.

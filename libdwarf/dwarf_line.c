@@ -405,11 +405,14 @@ _dwarf_internal_srclines(Dwarf_Die die,
 
     /*  Phony init. See below for true initialization. */
     Dwarf_Bool is_stmt = false;
+    /* DWARF4: operation within a VLIW instruction. */
+    Dwarf_Unsigned op_index  = 0;
 
     Dwarf_Bool basic_block = false;
     Dwarf_Bool prologue_end = false;
     Dwarf_Bool epilogue_begin = false;
     Dwarf_Small isa = 0;
+    Dwarf_Unsigned discriminator = 0;
     Dwarf_Bool end_sequence = false;
 
     /*  These pointers are used to build the list of files names by this 
@@ -623,12 +626,23 @@ _dwarf_internal_srclines(Dwarf_Die die,
                 compile. That is, these are special opcodes between
                 opcode_base and MAX_LINE_OP_CODE.  (including
                 opcode_base and MAX_LINE_OP_CODE) */
+            Dwarf_Unsigned operation_advance = 0;
 
             opcode = opcode - prefix.pf_opcode_base;
-            address = address + prefix.pf_minimum_instruction_length *
-                (opcode / prefix.pf_line_range);
-            line =
-                line + prefix.pf_line_base +
+            operation_advance = (opcode / prefix.pf_line_range);
+
+            if (prefix.pf_maximum_ops_per_instruction < 2) {
+                address = address + (operation_advance *
+                    prefix.pf_minimum_instruction_length);
+            } else { 
+                address = address + (prefix.pf_minimum_instruction_length *
+                    ((op_index + operation_advance)/
+                    prefix.pf_maximum_ops_per_instruction));
+                op_index = (op_index +operation_advance)%
+                    prefix.pf_maximum_ops_per_instruction;
+            }
+
+            line = line + prefix.pf_line_base +
                 opcode % prefix.pf_line_range;
 
             if (dolines) {
@@ -660,6 +674,7 @@ _dwarf_internal_srclines(Dwarf_Die die,
                 curr_line->li_addr_line.li_l_data.li_prologue_end =
                     prologue_end;
                 curr_line->li_addr_line.li_l_data.li_isa = isa;
+                curr_line->li_addr_line.li_l_data.li_discriminator = discriminator;
                 curr_line->li_context = line_context;
                 line_count++;
 
@@ -675,6 +690,9 @@ _dwarf_internal_srclines(Dwarf_Die die,
             }
 
             basic_block = false;
+            prologue_end = false;
+            epilogue_begin = false;
+            discriminator = 0;
         } else if (type == LOP_STANDARD) {
             switch (opcode) {
 
@@ -712,6 +730,7 @@ _dwarf_internal_srclines(Dwarf_Die die,
                     curr_line->li_addr_line.li_l_data.
                         li_prologue_end = prologue_end;
                     curr_line->li_addr_line.li_l_data.li_isa = isa;
+                    curr_line->li_addr_line.li_l_data.li_discriminator = discriminator;
                     line_count++;
 
                     chain_line = (Dwarf_Chain)
@@ -728,6 +747,7 @@ _dwarf_internal_srclines(Dwarf_Die die,
                 basic_block = false;
                 prologue_end = false;
                 epilogue_begin = false;
+                discriminator = 0;
                 }
                 break;
             case DW_LNS_advance_pc:{
@@ -773,9 +793,21 @@ _dwarf_internal_srclines(Dwarf_Die die,
 
             case DW_LNS_const_add_pc:{
                 opcode = MAX_LINE_OP_CODE - prefix.pf_opcode_base;
-                address = address +
-                    prefix.pf_minimum_instruction_length * (opcode /
-                        prefix.pf_line_range);
+                if (prefix.pf_maximum_ops_per_instruction < 2) {
+                    Dwarf_Unsigned operation_advance = 
+                        (opcode / prefix.pf_line_range);
+                    address = address +
+                        prefix.pf_minimum_instruction_length * 
+                            operation_advance;
+                } else {
+                    Dwarf_Unsigned operation_advance = 
+                        (opcode / prefix.pf_line_range);
+                    address = address + prefix.pf_minimum_instruction_length *
+                        ((op_index + operation_advance)/
+                        prefix.pf_maximum_ops_per_instruction);
+                    op_index = (op_index +operation_advance)%
+                        prefix.pf_maximum_ops_per_instruction;
+                }
                 }
                 break;
             case DW_LNS_fixed_advance_pc:{
@@ -783,6 +815,7 @@ _dwarf_internal_srclines(Dwarf_Die die,
                     line_ptr, sizeof(Dwarf_Half));
                 line_ptr += sizeof(Dwarf_Half);
                 address = address + fixed_advance_pc;
+                op_index = 0;
                 }
                 break;
 
@@ -846,7 +879,7 @@ _dwarf_internal_srclines(Dwarf_Die die,
                     curr_line->li_addr_line.li_l_data.li_column =
                         (Dwarf_Half) column;
                     curr_line->li_addr_line.li_l_data.li_is_stmt =
-                        prefix.pf_default_is_stmt;
+                        is_stmt;
                     curr_line->li_addr_line.li_l_data.
                         li_basic_block = basic_block;
                     curr_line->li_addr_line.li_l_data.
@@ -857,6 +890,7 @@ _dwarf_internal_srclines(Dwarf_Die die,
                     curr_line->li_addr_line.li_l_data.
                         li_prologue_end = prologue_end;
                     curr_line->li_addr_line.li_l_data.li_isa = isa;
+                    curr_line->li_addr_line.li_l_data.li_discriminator = discriminator;
                     line_count++;
                     chain_line = (Dwarf_Chain)
                         _dwarf_get_alloc(dbg, DW_DLA_CHAIN, 1);
@@ -879,6 +913,9 @@ _dwarf_internal_srclines(Dwarf_Die die,
                 end_sequence = false;
                 prologue_end = false;
                 epilogue_begin = false;
+                isa = 0;
+                discriminator = 0;
+                op_index = 0;
                 }
                 break;
 
@@ -916,6 +953,7 @@ _dwarf_internal_srclines(Dwarf_Die die,
 
                     update_chain_list(chain_line,&head_chain,&curr_chain);
                 }
+                op_index = 0;
                 line_ptr += address_size;
                 }
                 break;
@@ -943,6 +981,14 @@ _dwarf_internal_srclines(Dwarf_Die die,
                     update_file_entry(cur_file_entry,&file_entries,
                         &prev_file_entry,&file_entry_count);
                 }
+                }
+                break;
+            case DW_LNE_set_discriminator:{
+                /* New in DWARF4 */
+                Dwarf_Unsigned utmp2 = 0;
+
+                DECODE_LEB128_UWORD(line_ptr, utmp2);
+                discriminator = (Dwarf_Word) utmp2;
                 }
                 break;
             default:{
@@ -1143,14 +1189,14 @@ dwarf_lineaddr(Dwarf_Line line,
 }
 
 
-/*  Each 'line' entry has a column-within-line (offset
-    within the line) where the
-    source text begins.
-    If the entry is a DW_LNE_end_sequence the line-number is
-    meaningless (see dwarf_lineendsequence(), just above).
-    Lines of text begin at column 1.  The value 0
-    means the line begins at the left edge of the line.
-    (See the DWARF3 spec, section 6.2.2).  */
+/*  Obsolete: do not use this function.
+    December 2011: For reasons lost in the mists of history,
+    this returned -1, not zero (through the pointer
+    ret_lineoff), if the column was zero.
+    That was always bogus, even in DWARF2. 
+    It is also bogus that the column value is signed, but
+    it is painful to change the argument type in 2011, so leave it.
+    */
 int
 dwarf_lineoff(Dwarf_Line line,
     Dwarf_Signed * ret_lineoff, Dwarf_Error * error)
@@ -1159,10 +1205,32 @@ dwarf_lineoff(Dwarf_Line line,
         _dwarf_error(NULL, error, DW_DLE_DWARF_LINE_NULL);
         return (DW_DLV_ERROR);
     }
-
     *ret_lineoff = (
-        (line->li_addr_line.li_l_data.li_column == 0) ? 
+        (line->li_addr_line.li_l_data.li_column == 0) ?
             -1 : line->li_addr_line.li_l_data.li_column);
+    return DW_DLV_OK;
+}
+/*  Each 'line' entry has a column-within-line (offset
+    within the line) where the
+    source text begins.
+    If the entry is a DW_LNE_end_sequence the line-number is
+    meaningless (see dwarf_lineendsequence(), just above).
+    Lines of text begin at column 1.  The value 0
+    means the line begins at the left edge of the line.
+    (See the DWARF3 spec, section 6.2.2).  
+    So 0 and 1 mean essentially the same thing.
+    dwarf_lineoff_b() is new in December 2011.
+    */
+int
+dwarf_lineoff_b(Dwarf_Line line,
+    Dwarf_Unsigned * ret_lineoff, Dwarf_Error * error)
+{
+    if (line == NULL || ret_lineoff == 0) {
+        _dwarf_error(NULL, error, DW_DLE_DWARF_LINE_NULL);
+        return (DW_DLV_ERROR);
+    }
+
+    *ret_lineoff = line->li_addr_line.li_l_data.li_column;
     return DW_DLV_OK;
 }
 
@@ -1334,6 +1402,27 @@ dwarf_lineblock(Dwarf_Line line,
     *return_bool = (line->li_addr_line.li_l_data.li_basic_block);
     return DW_DLV_OK;
 }
+
+/* We gather these into one call as it's likely one
+   will want all or none of them.  */
+int dwarf_prologue_end_etc(Dwarf_Line  line,
+    Dwarf_Bool  *    prologue_end,
+    Dwarf_Bool  *    epilogue_begin,
+    Dwarf_Unsigned * isa,
+    Dwarf_Unsigned * discriminator,
+    Dwarf_Error *    error)
+{
+    if (line == NULL) {
+        _dwarf_error(NULL, error, DW_DLE_DWARF_LINE_NULL);
+        return (DW_DLV_ERROR);
+    }
+    *prologue_end = (line->li_addr_line.li_l_data.li_prologue_end);
+    *epilogue_begin = (line->li_addr_line.li_l_data.li_epilogue_begin);
+    *isa = (line->li_addr_line.li_l_data.li_isa);
+    *discriminator = (line->li_addr_line.li_l_data.li_discriminator);
+    return DW_DLV_OK;
+}
+
 
 
 #if 0  /* Ignore this.  This needs major re-work. */
@@ -1691,6 +1780,12 @@ dwarf_read_line_table_prefix(Dwarf_Debug dbg,
 
     prefix_out->pf_default_is_stmt = *(unsigned char *) line_ptr;
     line_ptr = line_ptr + sizeof(Dwarf_Small);
+
+    if(version == CURRENT_VERSION_STAMP4) { 
+        prefix_out->pf_maximum_ops_per_instruction = 
+            *(unsigned char *) line_ptr;
+        line_ptr = line_ptr + sizeof(Dwarf_Small);
+    }
 
     prefix_out->pf_line_base = *(signed char *) line_ptr;
     line_ptr = line_ptr + sizeof(Dwarf_Sbyte);

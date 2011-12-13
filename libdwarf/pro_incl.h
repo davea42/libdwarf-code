@@ -58,9 +58,9 @@
 #ifdef WORDS_BIGENDIAN
 #define WRITE_UNALIGNED(dbg,dest,source, srclength,len_out) \
     { \
-        dbg->de_copy_word(dest,                   \
-            ((char *)source) +srclength-len_out,  \
-            len_out) ;                            \
+        dbg->de_copy_word(dest,                     \
+            ((char *)source) +(srclength)-(len_out),\
+            (len_out)) ;                            \
     }
 
 
@@ -70,7 +70,7 @@
     { \
         dbg->de_copy_word( (dest) , \
             ((char *)source) ,      \
-            len_out) ;              \
+            (len_out)) ;            \
     }
 #endif
 

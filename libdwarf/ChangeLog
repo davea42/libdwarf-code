@@ -1,3 +1,46 @@
+2011-12-13  DavidAnderson <davea42@earthlink.net>
+     * dwarf.h: Added some GNU extensions.
+     * libdwarf.h: Added dwarf_lineoff_b() as
+       dwarf_lineoff() wrongly returns a signed column number.
+       Added dwarf_add_lineentry_b() as preparation for creating
+       DWARF3/4 output.
+     * dwarf_line.h: Added new struct fields to accomodate
+       DWARF3/4 isa and discriminator fields.
+     * dwarf_line.c: Now deals with the VLIW line calculations
+       in DWARF4.  Adds support for computing the discriminator
+       and isa fields.  Adds dwarf_lineoff_b() (and dwarf_lineoff
+       is now deprecated).  Adds dwarf_prologue_end_etc() which
+       returns some DWARF3/4 line fields.
+     * dwarf_print_lines.c: Adds handling of DWARF3/4
+       line operations and fields and prints the details.
+     * libdwarf2.1.mm: Documents the new functions in dwarf_line.c
+       Version set to 2.02.
+     * libdwarf2.1.pdf: Regenerated.
+     * libdwarf2p.1.mm: Documents the new function
+       dwaf_add_line_entry_b().
+       Version set to 1.32.
+     * libdwarf2p.1.pdf: Regenerated.
+     * pro_incl.h:  Add parentheses so the WRITE_UNALIGNED macro
+       works correctly in all circumtances.
+     * pro_opaque.h: Add DEBUG_RANGES and dEBUG_TYPES to the list
+       of sections we could generate.  Define struct Dwarf_P_Line_Inits_s
+       to hold initialization values for line table data so we can later
+       make the choices at runtime rather than compile time.
+       The new struct is a field of the Dwarf_P_Debug struct.
+     * pro_line.h: Added some DWARF3/4 support and preparations
+       for emitting DWARF3/4.
+     * pro_line.c: Define dwarf_add_line_entry_b() for DWARF3/4
+       line fields, and _dwarf_init_default_line_header_vals()
+       to provide a default set of values, the defaults match
+       what was previously done.
+       Add support for the new DWARF3/4 line table fields.
+     * pro_section.c:  Add the beginnings of support for creating
+       new DWARF3/4 sections and the new standard opcodes.
+       Move the field-writing code to small functions making
+       the line table writing smaller and easier to read.
+       Added the beginnings of allowing writing DWARF3/4
+       line table fields. Some if() missing {} were
+       modified by adding {} to avoid future problems.
 2011-12-08  DavidAnderson <davea42@earthlink.net>
      * dwarf_frame.c: Corrected a typo by adding a space
        to a comment.

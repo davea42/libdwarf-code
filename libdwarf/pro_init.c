@@ -163,6 +163,7 @@ common_init(Dwarf_P_Debug dbg, Dwarf_Unsigned flags)
     dbg->de_debug_sects = &init_sect;
     dbg->de_current_active_section = &init_sect;
     dbg->de_flags = flags;
+    _dwarf_init_default_line_header_vals(dbg);
 
     /* Now, with flags set, can use 64bit tests */
 

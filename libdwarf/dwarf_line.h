@@ -134,6 +134,7 @@ struct Dwarf_Line_s {
     Dwarf_Addr li_address;  /* pc value of machine instr */
     union addr_or_line_s {
         struct li_inner_s {
+            Dwarf_Unsigned li_discriminator; /* New as of DWARF4 */
             Dwarf_Sword li_file;  /* int identifying src file */
             /*  li_file is a number 1-N, indexing into a conceptual
                 source file table as described in dwarf2/3 spec line
@@ -141,7 +142,7 @@ struct Dwarf_Line_s {
                 Dwarf_Sword lc_file_entry_count;) */
             Dwarf_Sword li_line;  /* source file line number. */
             Dwarf_Half li_column; /* source file column number */
-            Dwarf_Small li_isa;
+            Dwarf_Small li_isa;   /* New as of DWARF4. */
 
             /* To save space, use bit flags. */
             /* indicate start of stmt */
@@ -282,12 +283,12 @@ struct Line_Table_Prefix_s {
     Dwarf_Small *pf_line_prologue_start;
 
     Dwarf_Small pf_default_is_stmt;
+    Dwarf_Ubyte pf_maximum_ops_per_instruction;
     Dwarf_Sbyte pf_line_base;
     Dwarf_Small pf_line_range;
 
     /* Highest std opcode (+1).  */
     Dwarf_Small pf_opcode_base;
-
     /*  pf_opcode_base -1 entries (each a count, normally the value of
         each entry is 0 or 1). */
     Dwarf_Small *pf_opcode_length_table;

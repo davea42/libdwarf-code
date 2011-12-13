@@ -1516,8 +1516,15 @@ int dwarf_lineaddr(Dwarf_Line /*line*/,
     Dwarf_Addr *     /*returned_addr*/,
     Dwarf_Error*     /*error*/);
 
+/* dwarf_lineoff() is OBSOLETE as of December 2011. Do not use. */
 int dwarf_lineoff(Dwarf_Line /*line*/, 
     Dwarf_Signed  *  /*returned_lineoffset*/,
+    Dwarf_Error*     /*error*/);
+/*  dwarf_lineoff_b() correctly returns an unsigned column number
+    through the pointer returned_offset. 
+    dwarf_lineoff_b() is new in December 2011.  */
+int dwarf_lineoff_b(Dwarf_Line /*line*/, 
+    Dwarf_Unsigned  */*returned_lineoffset*/,
     Dwarf_Error*     /*error*/);
 
 int dwarf_linesrc(Dwarf_Line /*line*/, 
@@ -1527,6 +1534,15 @@ int dwarf_linesrc(Dwarf_Line /*line*/,
 int dwarf_lineblock(Dwarf_Line /*line*/, 
     Dwarf_Bool  *    /*returned_bool*/,
     Dwarf_Error*     /*error*/);
+
+/* We gather these into one call as it's likely one
+   will want all or none of them.  */
+int dwarf_prologue_end_etc(Dwarf_Line /* line */,
+    Dwarf_Bool  *    /*prologue_end*/,
+    Dwarf_Bool  *    /*eplogue_begin*/,
+    Dwarf_Unsigned * /* isa */,
+    Dwarf_Unsigned * /* discriminator */,
+    Dwarf_Error *    /*error*/);
 
 /* Tertiary interface to line info */
 /* Unimplemented */
@@ -2395,6 +2411,18 @@ Dwarf_Unsigned dwarf_add_file_decl(Dwarf_P_Debug /*dbg*/,
     Dwarf_Unsigned  /*length*/, 
     Dwarf_Error*    /*error*/);
 
+Dwarf_Unsigned dwarf_add_line_entry_b(Dwarf_P_Debug /*dbg*/, 
+    Dwarf_Unsigned  /*file_index*/, 
+    Dwarf_Addr      /*code_address*/, 
+    Dwarf_Unsigned  /*lineno*/, 
+    Dwarf_Signed    /*column_number*/, 
+    Dwarf_Bool      /*is_source_stmt_begin*/, 
+    Dwarf_Bool      /*is_basic_block_begin*/, 
+    Dwarf_Bool      /*is_epilogue_begin*/, 
+    Dwarf_Bool      /*is_prologue_end*/, 
+    Dwarf_Unsigned  /*isa*/,
+    Dwarf_Unsigned  /*discriminator*/,
+    Dwarf_Error*    /*error*/);
 Dwarf_Unsigned dwarf_add_line_entry(Dwarf_P_Debug /*dbg*/, 
     Dwarf_Unsigned  /*file_index*/, 
     Dwarf_Addr      /*code_address*/, 

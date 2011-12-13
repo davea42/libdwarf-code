@@ -53,11 +53,11 @@ static void
 print_line_header(void)
 {
     printf
-        ("                                                         s b e\n"
-        "                                                         t l s\n"
-        "                                                         m c e\n"
-        " section    op                                       col t k q\n"
-        " offset     code               address     file line umn ? ? ?\n");
+        ("                                                         s b e p e i d\n"
+        "                                                         t l s r p s i\n"
+        "                                                         m c e o i a s\n"
+        " section    op                                       col t k q l l   c\n"
+        " offset     code               address     file line umn ? ? ? ? ? \n");
 }
 
 /* FIXME: print new line values:   prologue_end epilogue_begin isa */
@@ -69,10 +69,11 @@ print_line_detail(char *prefix,
     unsigned long line,
     unsigned long column,
     int is_stmt, int basic_block, int end_sequence,
-    int prologue_end, int epilogue_begin, int isa)
+    int prologue_end, int epilogue_begin, int isa,
+    Dwarf_Unsigned discriminator)
 {
     printf("%-15s %2d 0x%" DW_PR_XZEROS DW_PR_DUx " "
-        "%2lu   %4lu %2lu   %1d %1d %1d\n",
+        "%2lu   %4lu %2lu   %1d %1d %1d",
         prefix,
         (int) opcode,
         (Dwarf_Unsigned) address,
@@ -80,7 +81,13 @@ print_line_detail(char *prefix,
         (unsigned long) line,
         (unsigned long) column,
         (int) is_stmt, (int) basic_block, (int) end_sequence);
-
+    if(discriminator || prologue_end || epilogue_begin || isa) {
+        printf(" %1d", prologue_end);
+        printf(" %1d", epilogue_begin);
+        printf(" %1d", isa);
+        printf(" 0x%" DW_PR_DUx , discriminator);
+    } 
+    printf("\n");
 }
 
 
@@ -128,6 +135,8 @@ int * err_count_out, int only_line_header)
     Dwarf_Bool prologue_end = false;
     Dwarf_Bool epilogue_begin = false;
     Dwarf_Small isa = 0;
+    Dwarf_Unsigned op_index  = 0;
+    Dwarf_Unsigned discriminator = 0;
 
 
     Dwarf_Sword i=0;
@@ -379,19 +388,32 @@ int * err_count_out, int only_line_header)
                 special_opcode_base and MAX_LINE_OP_CODE.  (including
                 special_opcode_base and MAX_LINE_OP_CODE) */
             char special[50];
+            Dwarf_Unsigned operation_advance = 0;
             unsigned origop = opcode;
 
             opcode = opcode - prefix.pf_opcode_base;
-            address = address + prefix.pf_minimum_instruction_length *
-                (opcode / prefix.pf_line_range);
+            operation_advance = (opcode / prefix.pf_line_range);
+            if(prefix.pf_maximum_ops_per_instruction < 2) {
+                address = address + (prefix.pf_minimum_instruction_length *
+                    operation_advance);
+            } else {
+                address = address + (prefix.pf_minimum_instruction_length *
+                    ((op_index + operation_advance)/
+                    prefix.pf_maximum_ops_per_instruction));
+                op_index = (op_index +operation_advance)%
+                    prefix.pf_maximum_ops_per_instruction;
+            }
             line = line + prefix.pf_line_base +
                 opcode % prefix.pf_line_range;
             sprintf(special, "Specialop %3u", origop);
             print_line_detail(special,
                 opcode, address, (int) file, line, column,
                 is_stmt, basic_block, end_sequence,
-                prologue_end, epilogue_begin, isa);
+                prologue_end, epilogue_begin, isa,discriminator);
             basic_block = false;
+            prologue_end = false;
+            epilogue_begin = false;
+            discriminator = 0;
         } else if (type == LOP_STANDARD) {
             switch (opcode) {
 
@@ -400,8 +422,11 @@ int * err_count_out, int only_line_header)
                     opcode, address, file, line,
                     column, is_stmt, basic_block,
                     end_sequence, prologue_end,
-                    epilogue_begin, isa);
+                    epilogue_begin, isa,discriminator);
                 basic_block = false;
+                prologue_end = false;
+                epilogue_begin = false;
+                discriminator = 0;
                 }
                 break;
 
@@ -463,9 +488,22 @@ int * err_count_out, int only_line_header)
 
             case DW_LNS_const_add_pc:{
                 opcode = MAX_LINE_OP_CODE - prefix.pf_opcode_base;
-                address = address +
-                    prefix.pf_minimum_instruction_length * (opcode /
-                    prefix.pf_line_range);
+                if(prefix.pf_maximum_ops_per_instruction < 2) {
+                    Dwarf_Unsigned operation_advance =
+                        (opcode / prefix.pf_line_range);
+                    address = address +
+                        prefix.pf_minimum_instruction_length *
+                            operation_advance;
+                } else {
+                    Dwarf_Unsigned operation_advance =
+                        (opcode / prefix.pf_line_range);
+                    address = address + prefix.pf_minimum_instruction_length *
+                        ((op_index + operation_advance)/
+                        prefix.pf_maximum_ops_per_instruction);
+                    op_index = (op_index +operation_advance)%
+                        prefix.pf_maximum_ops_per_instruction;
+                }
+
                 printf("DW_LNS_const_add_pc new address 0x%" 
                     DW_PR_XZEROS DW_PR_DSx "\n",
                     (Dwarf_Signed) address);
@@ -482,6 +520,7 @@ int * err_count_out, int only_line_header)
                     (Dwarf_Signed) fixed_advance_pc,
                     (Dwarf_Signed) fixed_advance_pc,
                     (Dwarf_Signed) address);
+                op_index = 0;
                 }
                 break;
             case DW_LNS_set_prologue_end:{
@@ -535,7 +574,7 @@ int * err_count_out, int only_line_header)
                     opcode, address, file, line,
                     column, is_stmt, basic_block,
                     end_sequence, prologue_end,
-                    epilogue_begin, isa);
+                    epilogue_begin, isa,discriminator);
 
                 address = 0;
                 file = 1;
@@ -546,6 +585,9 @@ int * err_count_out, int only_line_header)
                 end_sequence = false;
                 prologue_end = false;
                 epilogue_begin = false;
+                isa = 0;
+                discriminator = 0;
+                op_index = 0;
                 }
                 break;
             case DW_LNE_set_address:{
@@ -558,6 +600,7 @@ int * err_count_out, int only_line_header)
                     DW_PR_XZEROS DW_PR_DUx "\n",
                     (Dwarf_Unsigned) address);
 
+                op_index = 0;
                 }
                 break;
             case DW_LNE_define_file:{
@@ -591,6 +634,17 @@ int * err_count_out, int only_line_header)
 
                 }
                 break;
+            case DW_LNE_set_discriminator:{
+                /* new in DWARF4 */
+                Dwarf_Unsigned utmp2 = 0;
+
+                DECODE_LEB128_UWORD(line_ptr, utmp2);
+                discriminator = (Dwarf_Word) utmp2;
+                printf("DW_LNE_set_discriminator 0x%"
+                    DW_PR_XZEROS DW_PR_DUx "\n",utmp2);
+                }
+                break;
+
             default:{
                 /*  This is an extended op code we do not know about,
                     other than we know now many bytes it is

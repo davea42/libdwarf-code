@@ -46,6 +46,7 @@
 #include "pro_incl.h"
 #include "pro_line.h"
 
+static
 Dwarf_Unsigned _dwarf_pro_add_line_entry(Dwarf_P_Debug,
     Dwarf_Unsigned file_index,
     Dwarf_Addr code_address,
@@ -55,6 +56,10 @@ Dwarf_Unsigned _dwarf_pro_add_line_entry(Dwarf_P_Debug,
     Dwarf_Bool is_stmt_begin,
     Dwarf_Bool is_bb_begin,
     Dwarf_Ubyte opc,
+    Dwarf_Bool isepilbeg,
+    Dwarf_Bool isprolend,
+    Dwarf_Unsigned isa,
+    Dwarf_Unsigned discriminator,
     Dwarf_Error * error);
 
 /*  Add a entry to the line information section
@@ -66,21 +71,70 @@ Dwarf_Unsigned _dwarf_pro_add_line_entry(Dwarf_P_Debug,
     dwarf_lne_set_address() and dwarf_lne_end_sequence() can use
     this internal routine. */
 Dwarf_Unsigned
+dwarf_add_line_entry_b(Dwarf_P_Debug dbg,
+    Dwarf_Unsigned file_index,
+    Dwarf_Addr     code_address,
+    Dwarf_Unsigned line_no,
+    Dwarf_Signed   col_no,
+    Dwarf_Bool     is_stmt_begin,
+    Dwarf_Bool     is_bb_begin, 
+    Dwarf_Bool     isepilbeg,
+    Dwarf_Bool     isprolend,
+    Dwarf_Unsigned isa,
+    Dwarf_Unsigned discriminator,
+    Dwarf_Error *  error)
+{
+    Dwarf_Unsigned retval = 0;
+    Dwarf_Ubyte opc = 0;
+    Dwarf_Unsigned symidx = 0;
+
+    retval = _dwarf_pro_add_line_entry(dbg, file_index, code_address, 
+        symidx,
+        line_no, col_no, is_stmt_begin,
+        is_bb_begin,
+        opc, 
+        isepilbeg,isprolend,isa,discriminator, error);
+    return retval;
+}
+Dwarf_Unsigned
 dwarf_add_line_entry(Dwarf_P_Debug dbg,
     Dwarf_Unsigned file_index,
     Dwarf_Addr code_address,
     Dwarf_Unsigned line_no,
-    Dwarf_Signed col_no,
+    Dwarf_Signed col_no, /* Wrong, should be unsigned. */
     Dwarf_Bool is_stmt_begin,
     Dwarf_Bool is_bb_begin, Dwarf_Error * error)
 {
-    Dwarf_Unsigned retval;
+    Dwarf_Unsigned retval = 0;
+    Dwarf_Ubyte opc = 0;
+    Dwarf_Unsigned symidx = 0;
+    Dwarf_Bool isepilbeg = 0;
+    Dwarf_Bool isprolend  = 0;
+    Dwarf_Unsigned isa = 0;
+    Dwarf_Unsigned discriminator = 0;
 
-    retval = _dwarf_pro_add_line_entry(dbg, file_index, code_address, 0,
+    retval = _dwarf_pro_add_line_entry(dbg, file_index, code_address, 
+        symidx,
         line_no, col_no, is_stmt_begin,
-        is_bb_begin, 0, error);
+        is_bb_begin, 
+        opc,
+        isepilbeg, isprolend, isa, discriminator,
+        error);
     return retval;
 }
+
+void
+_dwarf_init_default_line_header_vals(Dwarf_P_Debug dbg)
+{
+    dbg->de_line_inits.pi_version = DW_LINE_VERSION2;
+    dbg->de_line_inits.pi_default_is_stmt = DEFAULT_IS_STMT;
+    dbg->de_line_inits.pi_minimum_instruction_length = MIN_INST_LENGTH;
+    dbg->de_line_inits.pi_maximum_operations_per_instruction = 1;
+    dbg->de_line_inits.pi_opcode_base = OPCODE_BASE;
+    dbg->de_line_inits.pi_line_base = LINE_BASE;
+    dbg->de_line_inits.pi_line_range = LINE_RANGE;
+}
+
 
 /*  Ask to emit DW_LNE_set_address opcode explicitly. Used by be
     to emit start of a new .text section, or to force a relocated
@@ -90,12 +144,27 @@ dwarf_lne_set_address(Dwarf_P_Debug dbg,
     Dwarf_Addr offs,
     Dwarf_Unsigned symidx, Dwarf_Error * error)
 {
-    Dwarf_Ubyte opc;
-    Dwarf_Unsigned retval;
+    Dwarf_Ubyte    opc = 0;
+    Dwarf_Unsigned retval = 0;
+    Dwarf_Unsigned file_index = 0;
+    Dwarf_Unsigned line_no = 0;
+    Dwarf_Signed   col_no = 0;
+    Dwarf_Bool     is_stmt = 0;
+    Dwarf_Bool     is_bb = 0;
+    Dwarf_Bool     isepilbeg = 0;
+    Dwarf_Bool     isprolend  = 0;
+    Dwarf_Unsigned isa = 0;
+    Dwarf_Unsigned discriminator = 0;
+
 
     opc = DW_LNE_set_address;
     retval =
-        _dwarf_pro_add_line_entry(dbg, 0, offs, symidx, 0, 0, 0, 0, opc,
+        _dwarf_pro_add_line_entry(dbg, file_index, offs, 
+            symidx, 
+            line_no, col_no, is_stmt, 
+            is_bb, 
+            opc,
+            isepilbeg, isprolend, isa, discriminator,
             error);
     return retval;
 }
@@ -107,13 +176,28 @@ Dwarf_Unsigned
 dwarf_lne_end_sequence(Dwarf_P_Debug dbg,
     Dwarf_Addr end_address, Dwarf_Error * error)
 {
-    Dwarf_Ubyte opc;
-    Dwarf_Unsigned retval;
+    Dwarf_Ubyte    opc = 0;
+    Dwarf_Unsigned retval = 0;
+    Dwarf_Unsigned file_index = 0;
+    Dwarf_Unsigned symidx = 0;
+    Dwarf_Unsigned line_no = 0;
+    Dwarf_Bool     is_stmt = 0;
+    Dwarf_Bool     is_bb = 0;
+    Dwarf_Signed   col_no = 0;/* Wrong, should be unsigned. */
+    Dwarf_Bool     isepilbeg = 0;
+    Dwarf_Bool     isprolend  = 0;
+    Dwarf_Unsigned isa = 0;
+    Dwarf_Unsigned discriminator = 0;
 
     opc = DW_LNE_end_sequence;
     retval =
-        _dwarf_pro_add_line_entry(dbg, 0, end_address, 0, 0, 0, 0, 0,
-            opc, error);
+        _dwarf_pro_add_line_entry(dbg, file_index, end_address, 
+            symidx, 
+            line_no, col_no, is_stmt, 
+            is_bb,
+            opc, 
+            isepilbeg, isprolend, isa, discriminator,
+            error);
     return retval;
 }
 
@@ -121,7 +205,7 @@ dwarf_lne_end_sequence(Dwarf_P_Debug dbg,
     Opc indicates if an opcode needs to be generated, rather than just
     an entry in the matrix. During opcodes generation time, these 
     opcodes will be used. */
-Dwarf_Unsigned
+static Dwarf_Unsigned
 _dwarf_pro_add_line_entry(Dwarf_P_Debug dbg,
     Dwarf_Unsigned file_index,
     Dwarf_Addr code_address,
@@ -130,7 +214,12 @@ _dwarf_pro_add_line_entry(Dwarf_P_Debug dbg,
     Dwarf_Signed col_no,
     Dwarf_Bool is_stmt_begin,
     Dwarf_Bool is_bb_begin,
-    Dwarf_Ubyte opc, Dwarf_Error * error)
+    Dwarf_Ubyte opc, 
+    Dwarf_Bool isepilbeg,
+    Dwarf_Bool isprolend,
+    Dwarf_Unsigned isa,
+    Dwarf_Unsigned discriminator,
+    Dwarf_Error * error)
 {
     if (dbg->de_lines == NULL) {
         dbg->de_lines = (Dwarf_P_Line)
@@ -139,7 +228,7 @@ _dwarf_pro_add_line_entry(Dwarf_P_Debug dbg,
             DWARF_P_DBG_ERROR(dbg, DW_DLE_LINE_ALLOC, DW_DLV_NOCOUNT);
         }
         dbg->de_last_line = dbg->de_lines;
-        _dwarf_pro_reg_init(dbg->de_lines);
+        _dwarf_pro_reg_init(dbg,dbg->de_lines);
 
     } else {
         dbg->de_last_line->dpl_next = (Dwarf_P_Line)
@@ -148,7 +237,7 @@ _dwarf_pro_add_line_entry(Dwarf_P_Debug dbg,
             DWARF_P_DBG_ERROR(dbg, DW_DLE_LINE_ALLOC, DW_DLV_NOCOUNT);
         }
         dbg->de_last_line = dbg->de_last_line->dpl_next;
-        _dwarf_pro_reg_init(dbg->de_last_line);
+        _dwarf_pro_reg_init(dbg,dbg->de_last_line);
     }
     dbg->de_last_line->dpl_address = code_address;
     dbg->de_last_line->dpl_file = (unsigned long) file_index;
@@ -158,7 +247,10 @@ _dwarf_pro_add_line_entry(Dwarf_P_Debug dbg,
     dbg->de_last_line->dpl_basic_block = is_bb_begin;
     dbg->de_last_line->dpl_opc = opc;
     dbg->de_last_line->dpl_r_symidx = symidx;
-
+    dbg->de_last_line->dpl_prologue_end = isprolend;
+    dbg->de_last_line->dpl_epilogue_begin = isepilbeg;
+    dbg->de_last_line->dpl_isa = isa;
+    dbg->de_last_line->dpl_discriminator = discriminator;
     return (0);
 }
 
@@ -197,7 +289,7 @@ dwarf_add_directory_decl(Dwarf_P_Debug dbg,
 }
 
 /*  Add a file entry declaration to the debug_line section. Stored
-    in linked list. The data is immediately encodes as leb128
+    in linked list. The data is immediately encoded as leb128
     and stored in Dwarf_P_F_Entry_s struct. */
 Dwarf_Unsigned
 dwarf_add_file_decl(Dwarf_P_Debug dbg,
@@ -275,13 +367,18 @@ dwarf_add_file_decl(Dwarf_P_Debug dbg,
 /*  Initialize a row of the matrix for line numbers, meaning 
     initialize the struct corresponding to it */
 void
-_dwarf_pro_reg_init(Dwarf_P_Line cur_line)
+_dwarf_pro_reg_init(Dwarf_P_Debug dbg, Dwarf_P_Line cur_line)
 {
     cur_line->dpl_address = 0;
     cur_line->dpl_file = 1;
     cur_line->dpl_line = 1;
     cur_line->dpl_column = 0;
-    cur_line->dpl_is_stmt = DEFAULT_IS_STMT;
+    cur_line->dpl_is_stmt = dbg->de_line_inits.pi_default_is_stmt;
     cur_line->dpl_basic_block = false;
     cur_line->dpl_next = NULL;
+    cur_line->dpl_prologue_end = 0;
+    cur_line->dpl_epilogue_begin = 0;
+    cur_line->dpl_isa = 0;
+    cur_line->dpl_discriminator = 0;
+    cur_line->dpl_opc = 0;
 }

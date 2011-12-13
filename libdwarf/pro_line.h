@@ -35,8 +35,10 @@
 */
 
 
+#define DW_LINE_VERSION2   2
+#define DW_LINE_VERSION3   3
+#define DW_LINE_VERSION4   4
 
-#define VERSION				2
 #if defined(__i386) || defined(__x86_64)
 #define MIN_INST_LENGTH			1
 #else
@@ -48,7 +50,7 @@
 #define LINE_BASE   -1
 #define LINE_RANGE   4
 
-#define OPCODE_BASE  10
+#define OPCODE_BASE  10 /* DWARF2.  13 in DWARF3, DWARF4 */
 #define MAX_OPCODE   255
 
 
@@ -102,10 +104,18 @@ struct Dwarf_P_Line_s {
     Dwarf_Unsigned dpl_r_symidx;
 
     Dwarf_P_Line dpl_next;
+
+    Dwarf_Ubyte    dpl_prologue_end;   /* DWARF3 */
+    Dwarf_Ubyte    dpl_epilogue_begin; /* DWARF3 */
+    Dwarf_Unsigned dpl_isa;            /* DWARF3 */
+    Dwarf_Unsigned dpl_discriminator;  /* DWARF4 */
+
 };
 
 /* 
     to initialize state machine registers, definition in 
     pro_line.c
 */
-void _dwarf_pro_reg_init(Dwarf_P_Line);
+void _dwarf_pro_reg_init(Dwarf_P_Debug dbg,Dwarf_P_Line);
+
+void _dwarf_init_default_line_header_vals(Dwarf_P_Debug dbg);
