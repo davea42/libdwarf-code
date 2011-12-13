@@ -60,5 +60,6 @@ DW_AT_decl_file
 DW_AT_decl_line
 DW_AT_name
 DW_AT_GNU_template_name
+DW_AT_GNU_guarded_by /* GNU changed the name of 0x2108! */
 0xffffffff
 

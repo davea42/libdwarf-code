@@ -93,7 +93,7 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
     Dwarf_Signed i = 0;
     Dwarf_Addr pc = 0;
     Dwarf_Unsigned lineno = 0;
-    Dwarf_Signed column = 0;
+    Dwarf_Unsigned column = 0;
 
     Dwarf_Bool newstatement = 0;
     Dwarf_Bool lineendsequence = 0;
@@ -169,9 +169,11 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
                     /* ignore_die_stack= */TRUE);
             }
             printf("\n<pc>        [row,col] "
-                "NS BB ET uri: \"filepath\"\n");
+                "NS BB ET PE EB IS= DI= uri: \"filepath\"\n");
             printf("NS new statement, BB new basic block, "
                 "ET end of text sequence\n");
+            printf("PE prologue end, EB epilogue begin\n");
+            printf("IA=val ISA number, DI=val discriminator value\n");
         }
         for (i = 0; i < linecount; i++) {
             Dwarf_Line line = linebuf[i];
@@ -230,7 +232,7 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
             if (lires == DW_DLV_NO_ENTRY) {
                 lineno = -1LL;
             }
-            cores = dwarf_lineoff(line, &column, &err);
+            cores = dwarf_lineoff_b(line, &column, &err);
             if (cores == DW_DLV_ERROR) {
                 /* Do not terminate processing */
                 where = "dwarf_lineoff()";
@@ -238,7 +240,9 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
                 found_line_error = TRUE;
             }
             if (cores == DW_DLV_NO_ENTRY) {
-                column = -1LL;
+                /*  Zero was always the correct default, meaning
+                    the left edge. DWARF2/3/4 spec sec 6.2.2 */
+                column = 0;
             }
 
             /*  Process any possible error condition, though
@@ -328,7 +332,7 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
                     /* Print the record number for better error description */
                     printf("Record = %"  DW_PR_DUu 
                         " Addr = 0x%" DW_PR_XZEROS DW_PR_DUx 
-                        " [%4" DW_PR_DUu ",%2" DW_PR_DSd "] '%s'\n",
+                        " [%4" DW_PR_DUu ",%2" DW_PR_DUu "] '%s'\n",
                         i, pc,lineno,column,filename);
                     /* Flush due to the redirection of stderr */
                     fflush(stdout);
@@ -345,7 +349,7 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
             }
             if (do_print_dwarf) {
                 printf("0x%08" DW_PR_DUx 
-                    "  [%4" DW_PR_DUu ",%2" DW_PR_DSd "]", pc, lineno,
+                    "  [%4" DW_PR_DUu ",%2" DW_PR_DUu "]", pc, lineno,
                     column);
             }
 
@@ -373,6 +377,33 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
             } else if (nsres == DW_DLV_ERROR) {
                 print_error(dbg, "lineblock failed", nsres, err);
             }
+            if(do_print_dwarf) {
+                Dwarf_Bool prologue_end = 0;
+                Dwarf_Bool epilogue_begin = 0;
+                Dwarf_Unsigned isa = 0;
+                Dwarf_Unsigned discriminator = 0;
+                int disres = dwarf_prologue_end_etc(line,
+                    &prologue_end,&epilogue_begin,
+                    &isa,&discriminator,&err);
+                if (disres == DW_DLV_ERROR) {
+                    print_error(dbg, "dwarf_prologue_end_etc() failed",
+                        disres, err);
+                }
+                if(prologue_end) {
+                    printf(" PE");
+                }
+                if(epilogue_begin) {
+                    printf(" EB");
+                }
+                if(isa) {
+                    printf(" IS=0x%" DW_PR_DUx, isa);
+                }
+                if(discriminator) {
+                    printf(" DI=0x%" DW_PR_DUx, discriminator);
+                }
+            }
+
+
             if (i > 0 &&  verbose < 3  &&
                 strcmp(filename,esb_get_string(&lastsrc)) == 0) {
                 /* Do not print name. */

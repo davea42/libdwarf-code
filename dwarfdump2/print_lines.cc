@@ -161,10 +161,16 @@ print_line_numbers_this_cu(DieHolder & hcudie)
             }
             cout << endl;
             cout <<
-                "<pc>        [row,col] NS BB ET uri: \"filepath\""
+                "<pc>        [row,col] NS BB ET PE EB IS= DI= uri: \"filepath\""
                 << endl;
             cout << 
                 "NS new statement, BB new basic block, ET end of text sequence"
+                << endl;
+            cout << 
+                "PE prologue end, EB epilogue begin"
+                << endl;
+            cout << 
+                "IA=val ISA number, DI=val discriminator value"
                 << endl;
         }
         string lastsrc = ""; 
@@ -226,15 +232,17 @@ print_line_numbers_this_cu(DieHolder & hcudie)
             if (lires == DW_DLV_NO_ENTRY) {
                 lineno = -1LL;
             }
-            Dwarf_Signed column = 0;
-            int cores = dwarf_lineoff(line, &column, &err);
+            Dwarf_Unsigned column = 0;
+            int cores = dwarf_lineoff_b(line, &column, &err);
             if (cores == DW_DLV_ERROR) {
                 where = "dwarf_lineoff()";
                 found_line_error = true;
                 record_line_error(where,err);
             }
             if (cores == DW_DLV_NO_ENTRY) {
-                column = -1LL;
+                /*  Zero was always the correct default, meaning
+                    the left edge. DWARF2/3/4 spec sec 6.2.2 */
+                column = 0;
             }
 
             /*  Process any possible error condition, though
@@ -377,6 +385,34 @@ print_line_numbers_this_cu(DieHolder & hcudie)
             } else if (nsres == DW_DLV_ERROR) {
                 print_error(dbg, "lineblock failed", nsres, err);
             }
+            if (do_print_dwarf) { 
+                Dwarf_Bool prologue_end = 0;
+                Dwarf_Bool epilogue_begin = 0;
+                Dwarf_Unsigned isa = 0;
+                Dwarf_Unsigned discriminator = 0;
+                int disres = dwarf_prologue_end_etc(line,
+                    &prologue_end,&epilogue_begin,
+                    &isa,&discriminator,&err);
+                if (disres == DW_DLV_ERROR) {
+                    print_error(dbg, "dwarf_prologue_end_etc() failed", 
+                        disres, err);
+                }
+                if(prologue_end) {
+                    cout <<" PE";
+                }
+                if(epilogue_begin) {
+                    cout <<" EB";
+                }
+                if(isa) {
+                    cout <<" IS=";
+                    cout << IToHex(isa);
+                }
+                if(discriminator) {
+                    cout <<" DI=";
+                    cout << IToHex(discriminator);
+                }
+            }
+
             // Here avoid so much duplication of long file paths.
             if (i > 0 && verbose < 3  && filename == lastsrc ){
                 /* print no name, leave blank. */

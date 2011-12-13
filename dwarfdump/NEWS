@@ -1,3 +1,8 @@
+December 13, 2011
+  Now prints missing line table column number as 0 (now
+  matching the DWARF spec), the previous
+  practice of printing -1 was always wrong.
+  And prints the DWARF3/4 new line table fields (when present).
 October 29, 2011
   Added support for printing .debug_types (type unit) data.
 October 26, 2011
