@@ -88,7 +88,7 @@ No blank lines or commentary allowed, no symbols, just numbers.
 #define STD_TAG_TABLE_COLUMNS 7
 
 /* TAG tree common extension maximums. */
-#define EXT_TAG_TABLE_ROWS  5
+#define EXT_TAG_TABLE_ROWS  7
 #define EXT_TAG_TABLE_COLS  7
 
 /* The following 2 used in tag_tree.c only. */
@@ -97,12 +97,12 @@ No blank lines or commentary allowed, no symbols, just numbers.
 
 /*  Number of attributes columns per tag. The array is bit fields,
     BITS_PER_WORD fields per word. Dense and quick to inspect */
-#define COUNT_ATTRIBUTE_STD 4 
+#define COUNT_ATTRIBUTE_STD 7 
 
 #define STD_ATTR_TABLE_ROWS STD_TAG_TABLE_ROWS
 #define  STD_ATTR_TABLE_COLUMNS  7
 /* tag/attr tree common extension maximums. */
-#define EXT_ATTR_TABLE_ROWS 4
+#define EXT_ATTR_TABLE_ROWS 7
 #define EXT_ATTR_TABLE_COLS 7
 
 /* The following 2 used in tag_attr.c only. */

@@ -322,6 +322,7 @@ dwarfgen/general.h \
 dwarfgen/irepattrtodbg.h \
 dwarfgen/irepdie.h \
 dwarfgen/irepform.h \
+dwarfgen/irepline.h \
 dwarfgen/irepframe.h \
 dwarfgen/irepmacro.h \
 dwarfgen/irepresentation.h \

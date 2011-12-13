@@ -1,4 +1,8 @@
 2011-12-13  DavidAnderson <davea42@earthlink.net>
+     * dwarfdump.c, common.c: Update version string.
+     * tag_attr_ext.list, tag_common.h: New information on GNU
+       attributes meant allowing a larger row count.
+2011-12-13  DavidAnderson <davea42@earthlink.net>
      * tag_common.h: A new attr in the .list means increasing
        the column count.
 2011-12-13  DavidAnderson <davea42@earthlink.net>
