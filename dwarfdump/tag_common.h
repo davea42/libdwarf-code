@@ -85,27 +85,25 @@ No blank lines or commentary allowed, no symbols, just numbers.
     this is for standard TAGs. Number of rows. */
 #define STD_TAG_TABLE_ROWS 0x44
 /* Enough entries to have a bit for each standard legal tag. */
-#define STD_TAG_TABLE_COLUMNS 4
+#define STD_TAG_TABLE_COLUMNS 7
 
 /* TAG tree common extension maximums. */
 #define EXT_TAG_TABLE_ROWS  5
-#define EXT_TAG_TABLE_COLS  4
+#define EXT_TAG_TABLE_COLS  7
 
 /* The following 2 used in tag_tree.c only. */
 #define TAG_TABLE_ROW_MAXIMUM STD_TAG_TABLE_ROWS
 #define TAG_TABLE_COLUMN_MAXIMUM  EXT_TAG_TABLE_COLS
-
-
 
 /*  Number of attributes columns per tag. The array is bit fields,
     BITS_PER_WORD fields per word. Dense and quick to inspect */
 #define COUNT_ATTRIBUTE_STD 4 
 
 #define STD_ATTR_TABLE_ROWS STD_TAG_TABLE_ROWS
-#define  STD_ATTR_TABLE_COLUMNS  4
+#define  STD_ATTR_TABLE_COLUMNS  7
 /* tag/attr tree common extension maximums. */
 #define EXT_ATTR_TABLE_ROWS 4
-#define EXT_ATTR_TABLE_COLS 6
+#define EXT_ATTR_TABLE_COLS 7
 
 /* The following 2 used in tag_attr.c only. */
 #define ATTR_TABLE_ROW_MAXIMUM STD_ATTR_TABLE_ROWS

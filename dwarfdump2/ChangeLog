@@ -1,4 +1,7 @@
 2011-12-13  DavidAnderson <davea42@earthlink.net>
+     * tag_common.h: A new attr in the .list means increasing
+       the column count.
+2011-12-13  DavidAnderson <davea42@earthlink.net>
      * print_lines.c: Now prints no-column as 0 not -1.
        And prints the DWARF3/4 line table values when present.
      * tag_attr_ext.list: Add a GNU extension.
