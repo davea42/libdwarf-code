@@ -144,6 +144,8 @@ public:
         extension_size_(0),
         has_macrodata_(false),
         macrodata_offset_(0),
+        has_linedata_(false),
+        linedata_offset_(0),
         cudie_offset_(0)
         {};
     IRCUdata(Dwarf_Unsigned len,Dwarf_Half version,
@@ -160,21 +162,35 @@ public:
             length_size_(length_size),
             extension_size_(extension_size),
             has_macrodata_(false),
-            macrodata_offset_(0),cudie_offset_(0) {};
+            macrodata_offset_(0),
+            has_linedata_(false),
+            linedata_offset_(0),
+            cudie_offset_(0) {};
     ~IRCUdata() { };
     bool hasMacroData(Dwarf_Unsigned *offset_out,Dwarf_Unsigned *cudie_off) {
         *offset_out = macrodata_offset_;
         *cudie_off = cudie_offset_; 
         return has_macrodata_;
     }
+    bool hasLineData(Dwarf_Unsigned *offset_out,Dwarf_Unsigned *cudie_off) {
+        *offset_out = linedata_offset_;
+        *cudie_off = cudie_offset_; 
+        return has_linedata_;
+    }
     void setMacroData(Dwarf_Unsigned offset,Dwarf_Unsigned cudieoff) {
         has_macrodata_ = true;
         macrodata_offset_ = offset;
         cudie_offset_ = cudieoff;
     };
+    void setLineData(Dwarf_Unsigned offset,Dwarf_Unsigned cudieoff) {
+        has_linedata_ = true;
+        linedata_offset_ = offset;
+        cudie_offset_ = cudieoff;
+    };
     IRDie & baseDie() { return cudie_; };
     Dwarf_Half getVersionStamp() { return version_stamp_; };
     Dwarf_Half getOffsetSize() { return length_size_; };
+    IRCULineData & getCULines() { return cu_lines_; };
     std::string  getCUName() {
         return cudie_.getName();
     }
@@ -189,7 +205,10 @@ private:
     Dwarf_Half extension_size_;
     bool has_macrodata_;
     Dwarf_Unsigned macrodata_offset_;
+    bool has_linedata_;
+    Dwarf_Unsigned linedata_offset_;
     Dwarf_Unsigned cudie_offset_;
+    IRCULineData      cu_lines_;
 
     // If true, is 32bit dwarf,else 64bit. Gives the size of a reference.
     bool dwarf32bit_;  

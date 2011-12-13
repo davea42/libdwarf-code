@@ -23,6 +23,7 @@
 #include <iostream>
 #include <string>
 #include <list>
+#include <map>
 #include <vector>
 #include <string.h> // For memset etc
 #include <sys/stat.h> //open
@@ -35,16 +36,19 @@
 #include "irepresentation.h"
 #include "ireptodbg.h"
 #include "irepattrtodbg.h"
+#include "general.h"
 
 using std::string;
 using std::cout;
 using std::cerr;
 using std::endl;
 using std::vector;
+using std::map;
 using std::list;
 
 static Dwarf_Error error;
 
+typedef std::map<std::string,unsigned> pathToUnsignedType;
 
 static Dwarf_P_Die 
 HandleOneDieAndChildren(Dwarf_P_Debug dbg,
@@ -93,11 +97,118 @@ HandleOneDieAndChildren(Dwarf_P_Debug dbg,
     return ourdie; 
 }
 
-// This emits the DIEs for a single CU.
+static void
+HandleLineData(Dwarf_P_Debug dbg,IRepresentation & Irep, IRCUdata&cu)
+{
+    Dwarf_Error error = 0;
+    // We refer to files by fileno, this builds an index.
+    pathToUnsignedType pathmap;
+
+    IRCULineData& ld = cu.getCULines();
+    std::vector<IRCULine> & cu_lines = ld.get_cu_lines();
+    //std::vector<IRCUSrcfile> &cu_srcfiles  = ld.get_cu_srcfiles();
+    if(cu_lines.empty()) {
+        // No lines data to emit, do nothing.
+        return;
+    }
+    // To start with, we are doing a trivial generation here.
+    // To be refined 'soon'.  FIXME
+    // Initially we don't worry about dwarf_add_directory_decl().
+    
+    bool firstline = true;
+    bool addrsetincu = false;
+    for(unsigned k = 0; k < cu_lines.size(); ++k) {
+        IRCULine &li = cu_lines[k];
+        const std::string&path = li.getpath();
+        unsigned pathindex = 0;
+        pathToUnsignedType::const_iterator it = pathmap.find(path);
+        if(it == pathmap.end()) {
+            Dwarf_Error error = 0;
+            Dwarf_Unsigned idx = dwarf_add_file_decl(
+                dbg,const_cast<char *>(path.c_str()),
+                0,0,0,&error);
+            if(idx == DW_DLV_NOCOUNT) {
+                cerr << "Error from dwarf_add_file_decl() on " << 
+                    path << endl;
+                exit(1);
+            }
+            pathindex = idx;
+            pathmap[path] = pathindex;
+        } else {
+            pathindex = it->second;
+        }
+        Dwarf_Addr a = li.getaddr();
+        bool addrsetinline = li.getaddrset();
+        bool endsequence = li.getendsequence();
+        if(firstline || !addrsetincu) {
+            // We fake an elf sym index here.
+            Dwarf_Unsigned elfsymidx = 0;
+            if(firstline && !addrsetinline) {
+                cerr << "Error building line, first entry not addr set" << 
+                    endl; 
+                exit(1);
+            }
+            Dwarf_Unsigned res = dwarf_lne_set_address(dbg,
+                a,elfsymidx,&error);
+            if(res == DW_DLV_NOCOUNT) {
+                cerr << "Error building line, dwarf_lne_set_address" << 
+                    endl; 
+                exit(1);
+            }
+            addrsetincu = true;
+            firstline = false;
+        } else if( endsequence) {
+            Dwarf_Unsigned esres = dwarf_lne_end_sequence(dbg,
+                a,&error);
+            if(esres == DW_DLV_NOCOUNT) {
+                cerr << "Error building line, dwarf_lne_end_sequence" << 
+                    endl; 
+                exit(1);
+            }
+            addrsetincu = false;
+            continue;
+        }
+        Dwarf_Signed linecol = li.getlinecol();
+        // It's really the code address or (when in a proper compiler)
+        // a section or function offset.
+        // libdwarf subtracts the code_offset from the address passed
+        // this way or from dwarf_lne_set_address() and writes a small
+        // offset in a DW_LNS_advance_pc instruction.
+        Dwarf_Addr code_offset = a;
+        Dwarf_Unsigned lineno = li.getlineno();
+        Dwarf_Bool isstmt = li.getisstmt()?1:0;
+        Dwarf_Bool isblock = li.getisblock()?1:0;
+        Dwarf_Bool isepiloguebegin = li.getepiloguebegin()?1:0;
+        Dwarf_Bool isprologueend = li.getprologueend()?1:0;
+        Dwarf_Unsigned isa = li.getisa();
+        Dwarf_Unsigned discriminator = li.getdiscriminator();
+        Dwarf_Unsigned lires = dwarf_add_line_entry_b(dbg,
+            pathindex, 
+            code_offset,
+            lineno,
+            linecol,
+            isstmt,
+            isblock,
+            isepiloguebegin,
+            isprologueend,
+            isa,
+            discriminator,
+            &error);
+        if(lires == DW_DLV_NOCOUNT) {
+            cerr << "Error building line, dwarf_add_line_entry" << 
+                endl; 
+            exit(1);
+        }
+    }
+    if(addrsetincu) {
+        cerr << "CU Lines did not end in an end_sequence!" << endl;
+    }
+}
+// This emits the DIEs for a single CU and possibly line data
+// associated with the CU.
 // The DIEs form a graph (which can be created and linked together 
-// in any order)
-// and which is emitted in tree preorder as defined by
-// the DWARF spec.
+// in any order)  and which is emitted in tree preorder as 
+// defined by the DWARF spec.
 //
 static void
 emitOneCU( Dwarf_P_Debug dbg,IRepresentation & Irep, IRCUdata&cu,
@@ -120,13 +231,15 @@ emitOneCU( Dwarf_P_Debug dbg,IRepresentation & Irep, IRCUdata&cu,
         cerr << "Unable to add_die_to_debug " << endl;
         exit(1);
     }
+
+    HandleLineData(dbg,Irep,cu);
 }
 // .debug_info creation.
+// Also creates .debug_line
 static void
 transform_debug_info(Dwarf_P_Debug dbg,
    IRepresentation & irep,int cu_of_input_we_output)
 {
-    Dwarf_Error error;
     int cu_number = 0;
     std::list<IRCUdata> &culist = irep.infodata().getCUData();
     // For now,  just one CU we write (as spoken by Yoda).

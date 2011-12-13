@@ -64,8 +64,6 @@ AddAttrToDie(Dwarf_P_Debug dbg,
 {
     int attrnum = irattr.getAttrNum();
     enum Dwarf_Form_Class formclass = irattr.getFormClass();
-    int finalform = irattr.getFinalForm();
-    int directform = irattr.getDirectForm();
     // IRForm is an abstract base class.
     IRForm *form = irattr.getFormData();
 

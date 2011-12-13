@@ -37,6 +37,7 @@
 #include "libdwarf.h"
 #include "irepresentation.h"
 #include "createirepfrombinary.h"
+#include "general.h" // For IToHex()
 
 using std::string;
 using std::cout;
@@ -345,6 +346,165 @@ get_children_of_die(Dwarf_Die in_die,IRDie&irdie,
     dwarf_dealloc(dbg,curchilddie,DW_DLA_DIE);
 }
 
+static void
+get_linedata_of_cu_die(Dwarf_Die in_die,IRDie&irdie, 
+    IRCUdata &ircudata,
+    IRepresentation &irep,
+    Dwarf_Debug dbg)
+{
+    Dwarf_Error error = 0;
+    char **srcfiles = 0;
+    Dwarf_Signed srccount = 0;
+    IRCULineData&culinesdata =  ircudata.getCULines();
+    int res = dwarf_srcfiles(in_die,&srcfiles, &srccount,&error);
+    if(res == DW_DLV_ERROR) {
+        cerr << "dwarf_srcfiles failed " << endl;
+        exit(1);
+    } else if (res == DW_DLV_NO_ENTRY) {
+        // No data.
+        return;
+    }
+
+    std::vector<IRCUSrcfile> &srcs = culinesdata.get_cu_srcfiles();
+    for (Dwarf_Signed i = 0; i < srccount; ++i) {
+        IRCUSrcfile S(srcfiles[i]);
+        srcs.push_back(S);
+        /* use srcfiles[i] */
+        dwarf_dealloc(dbg, srcfiles[i], DW_DLA_STRING);
+    }
+    dwarf_dealloc(dbg, srcfiles, DW_DLA_LIST);
+
+    Dwarf_Line * linebuf = 0;
+    Dwarf_Signed linecnt = 0;
+    int res2 = dwarf_srclines(in_die,&linebuf,&linecnt, &error);
+    if(res == DW_DLV_ERROR) {
+        cerr << "dwarf_srclines failed " << endl;
+        exit(1);
+    } else if (res == DW_DLV_NO_ENTRY) {
+        // No data.
+        cerr << "dwarf_srclines failed NO_ENTRY, crazy "
+            "since srcfiles worked" << endl;
+        exit(1);
+    }
+
+    std::vector<IRCULine> &lines = culinesdata.get_cu_lines();
+    for(Dwarf_Signed j = 0; j < linecnt ; ++j ) {
+        Dwarf_Line li = linebuf[j];
+        int lres;
+
+        Dwarf_Addr address = 0;
+        lres = dwarf_lineaddr(li,&address,&error);
+        if (lres != DW_DLV_OK) {
+            cerr << "dwarf_lineaddr failed. " << endl;
+            exit(1);
+        }
+        Dwarf_Bool is_addr_set = 0;
+        lres = dwarf_line_is_addr_set(li,&is_addr_set,&error);
+        if (lres != DW_DLV_OK) {
+            cerr << "dwarf_line_is_addr_set failed. " << endl;
+            exit(1);
+        }
+        Dwarf_Unsigned fileno = 0;
+        lres = dwarf_line_srcfileno(li,&fileno,&error);
+        if (lres != DW_DLV_OK) {
+            cerr << "dwarf_srcfileno failed. " << endl;
+            exit(1);
+        }
+        Dwarf_Unsigned lineno = 0;
+        lres = dwarf_lineno(li,&lineno,&error);
+        if (lres != DW_DLV_OK) {
+            cerr << "dwarf_lineno failed. " << endl;
+            exit(1);
+        }
+        Dwarf_Unsigned lineoff = 0;
+        lres = dwarf_lineoff_b(li,&lineoff,&error);
+        if (lres != DW_DLV_OK) {
+            cerr << "dwarf_lineoff failed. " << endl;
+            exit(1);
+        }
+        char *linesrctmp = 0;
+        lres = dwarf_linesrc(li,&linesrctmp,&error);
+        if (lres != DW_DLV_OK) {
+            cerr << "dwarf_linesrc failed. " << endl;
+            exit(1);
+        }
+        // libdwarf is trying to generate a full path,
+        // the string here is that generated data, not
+        // simply the 'file' path represented by the
+        // file number (fileno).
+        std::string linesrc(linesrctmp);
+
+      
+        Dwarf_Bool is_stmt = 0;
+        lres = dwarf_linebeginstatement(li,&is_stmt,&error);
+        if (lres != DW_DLV_OK) {
+            cerr << "dwarf_linebeginstatement failed. " << endl;
+            exit(1);
+        }
+
+        Dwarf_Bool basic_block = 0;
+        lres = dwarf_lineblock(li,&basic_block,&error);
+        if (lres != DW_DLV_OK) {
+            cerr << "dwarf_lineblock failed. " << endl;
+            exit(1);
+        }
+
+        Dwarf_Bool end_sequence = 0;
+        lres = dwarf_lineendsequence(li,&end_sequence,&error);
+        if (lres != DW_DLV_OK) {
+            cerr << "dwarf_lineendsequence failed. " << endl;
+            exit(1);
+        }
+
+        Dwarf_Bool prologue_end = 0;
+        Dwarf_Bool epilogue_begin = 0;
+        Dwarf_Unsigned isa = 0;
+        Dwarf_Unsigned discriminator = 0;
+        lres = dwarf_prologue_end_etc(li,&prologue_end,
+            &epilogue_begin,&isa,&discriminator,&error);
+        if (lres != DW_DLV_OK) {
+            cerr << "dwarf_prologue_end_etc failed. " << endl;
+            exit(1);
+        }
+
+        IRCULine L(address,
+            is_addr_set,
+            fileno,
+            lineno,
+            lineoff,
+            linesrc,
+            is_stmt,
+            basic_block,
+            end_sequence,
+            prologue_end,epilogue_begin,
+            isa,discriminator);
+        lines.push_back(L);
+    }
+    dwarf_srclines_dealloc(dbg, linebuf, linecnt);
+}
+
+static bool 
+getToplevelOffsetAttr(Dwarf_Die cu_die,Dwarf_Half attrnumber,
+    Dwarf_Unsigned &offset_out)
+{
+    Dwarf_Error error = 0;
+    Dwarf_Off offset = 0;
+    Dwarf_Attribute attr = 0;
+    int res = dwarf_attr(cu_die,attrnumber,&attr, &error);
+    bool foundit = false;
+    Dwarf_Off sectoff = 0;
+    if(res == DW_DLV_OK) {
+        Dwarf_Signed sval = 0;
+        Dwarf_Unsigned uval = 0;
+        res = dwarf_global_formref(attr,&offset,&error);
+        if(res == DW_DLV_OK) {
+            foundit = true;
+            offset_out = offset;
+        }
+    }
+    return foundit;
+}   
+
 // We record the .debug_info info for each CU found
 // To start with we restrict attention to very few DIEs and
 // attributes,  but intend to get all eventually.
@@ -394,28 +554,12 @@ readCUDataFromBinary(Dwarf_Debug dbg, IRepresentation & irep)
             cerr <<"no Entry! in dwarf_siblingof on CU die "<< endl;
             exit(1);
         }
-        Dwarf_Half attrnumber = DW_AT_macro_info;
-        Dwarf_Attribute attr;
-        res = dwarf_attr(cu_die,attrnumber,&attr, &error);
-        bool foundmsect = false;
         Dwarf_Off macrooffset = 0;
-        if(res == DW_DLV_OK) {
-            // In dwarf2/3 a form const is used for an offset.
-            // We know this will be an offset value.
-            Dwarf_Signed sval = 0;
-            Dwarf_Unsigned uval = 0;
-            res = dwarf_formudata(attr,&uval,&error);
-            if(res == DW_DLV_OK) {
-                macrooffset = uval;
-                foundmsect = true;
-            } else {
-                res = dwarf_formsdata(attr,&sval,&error);
-                if(res == DW_DLV_OK) {
-                    macrooffset = sval;
-                    foundmsect = true;
-                }
-            }
-        }
+        bool foundmsect = getToplevelOffsetAttr(cu_die,DW_AT_macro_info,
+            macrooffset);
+        Dwarf_Off linesoffset = 0;
+        bool foundlines = getToplevelOffsetAttr(cu_die,DW_AT_stmt_list,
+            linesoffset);
         Dwarf_Off dieoff = 0;
         res = dwarf_dieoffset(cu_die,&dieoff,&error);
         if(res != DW_DLV_OK) {
@@ -425,12 +569,16 @@ readCUDataFromBinary(Dwarf_Debug dbg, IRepresentation & irep)
         if(foundmsect) {
             cudata.setMacroData(macrooffset,dieoff);
         }
+        if(foundlines) {
+            cudata.setLineData(linesoffset,dieoff);
+        }
         culist.push_back(cudata);
         IRCUdata & treecu = irep.infodata().lastCU();
         IRDie &cuirdie = treecu.baseDie();
         get_basic_die_data(dbg,cu_die,cuirdie);
         get_attrs_of_die(cu_die,cuirdie,treecu,irep,dbg);
         get_children_of_die(cu_die,cuirdie,treecu,irep,dbg);
+        get_linedata_of_cu_die(cu_die,cuirdie,treecu,irep,dbg);
         dwarf_dealloc(dbg,cu_die,DW_DLA_DIE);
     }
     // If we want pointers from child to parent now is the time

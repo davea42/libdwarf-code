@@ -24,7 +24,7 @@
 // demonstrate the various possibilities using the producer
 // library.
 //
-//  dwarfgen [-t def|obj|txt] [-o outpath] path
+//  dwarfgen [-t def|obj|txt] [-o outpath] [-c cunum]  path
 
 //  where -t means what sort of input to read
 //         def means predefined (no input is read, the output
@@ -40,6 +40,9 @@
 //
 //  where  -o means specify the pathname of the output object. If not
 //         supplied testout.o is used as the default output path.
+//  where -c supplies a CU number of the obj input to output
+//         because the dwarf producer wants just one CU.
+//         Default is -1 which won't match anything.
 
 #include "config.h"
 #include <unistd.h> 
@@ -88,6 +91,10 @@ static IRepresentation Irep;
 static Elf * elf = 0;
 static Elf32_Ehdr * ehp = 0;
 static strtabdata secstrtab;
+
+// loff_t is signed for some reason (strange) but we make offsets unsigned.
+#define LOFFTODWUNS(x)  ( (Dwarf_Unsigned)(x))
+
 class SectionFromDwarf {
 public:
     std::string name_;
@@ -500,6 +507,7 @@ InsertDataIntoElf(Dwarf_Signed d,Dwarf_P_Debug dbg,Elf *elf)
         elf_section_index << endl;
 }
 
+#if 0
 static string
 printable_rel_type(unsigned char reltype)
 {
@@ -520,6 +528,7 @@ printable_rel_type(unsigned char reltype)
     }
     return "drt-unknown (impossible case)";
 }
+#endif
 
 static Dwarf_Unsigned  
 FindSymbolValue(ElfSymIndex symi,IRepresentation &irep)
@@ -534,7 +543,6 @@ static void
 bitreplace(char *buf, Dwarf_Unsigned newval,
     size_t newvalsize,int length)
 {
-    uint64_t my8 = 0;
     if(length == 4) {
         uint32_t my4 = newval; 
         uint32_t * p = reinterpret_cast<uint32_t *>(buf );
@@ -561,10 +569,10 @@ findelfbuf(Elf *elf,Elf_Scn *scn,Dwarf_Unsigned offset, unsigned length)
     unsigned bct = 0;
     for (;ed; ed = elf_getdata(scn,ed)) {
         bct++;
-        if(offset >= (ed->d_off + ed->d_size) ) {
+        if(offset >= LOFFTODWUNS(ed->d_off + ed->d_size) ) {
             continue;
         }
-        if(offset < ed->d_off) {
+        if(offset < LOFFTODWUNS(ed->d_off)) {
             cerr << " Relocation at offset  " << 
                 offset << " cannot be accomplished, no buffer. " 
                 << endl; 
@@ -634,7 +642,6 @@ write_generated_dbg(Dwarf_P_Debug dbg,Elf * elf,IRepresentation &irep)
             exit(1);
         }
         ElfSectIndex si(elf_section_index_link);
-        SectionFromDwarf & sfd  = FindMySection(si);
         cout << "Relocs for sec " << ct << " elf-sec=" << elf_section_index <<
             " link="      << elf_section_index_link <<
             " bufct="     << relocation_buffer_count << endl;

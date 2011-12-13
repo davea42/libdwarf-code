@@ -23,6 +23,7 @@
 //
 //
 #include "irepform.h"
+#include "irepline.h"
 #include "irepdie.h"
 #include "irepmacro.h"
 #include "irepframe.h"
@@ -128,5 +129,7 @@ private:
 
     IRFrame  framedata_;
     IRMacro  macrodata_;
+
+    // Line data is inside IRDInfo.
     IRDInfo  debuginfodata_;
 };

@@ -1,3 +1,5 @@
+#ifndef IREPLINE_H
+#define IREPLINE_H
 /*
   Copyright (C) 2011 David Anderson.  
 
@@ -21,12 +23,49 @@
 
 class IRCULine {
 public:
-    IRCULine() {};
+    IRCULine(Dwarf_Addr addr,Dwarf_Bool isset,
+        Dwarf_Unsigned fileno,
+        Dwarf_Unsigned lineno,
+        Dwarf_Unsigned linecol,
+        const std::string & linename,
+        Dwarf_Bool is_stmt,
+        Dwarf_Bool bb,
+        Dwarf_Bool endseq,
+        Dwarf_Bool prol_end,
+        Dwarf_Bool epil_beg,
+        Dwarf_Unsigned isa,
+        Dwarf_Unsigned discrim):
+        address_(addr),
+        isaddrset_(isset),
+        srcfileno_(fileno),
+        lineno_(lineno),
+        linecol_(linecol),
+        linesrc_(linename),
+        is_stmt_(is_stmt),
+        basic_block_(bb),
+        end_sequence_(endseq),
+        prologue_end_(prol_end),
+        epilogue_begin_(epil_beg),
+        isa_(isa),
+        discriminator_(discrim)
+        {};
+    const std::string &getpath() { return linesrc_; };
+    Dwarf_Addr getaddr() { return address_;};
+    bool getaddrset() { return isaddrset_;};
+    bool getendsequence() { return end_sequence_; };
+    Dwarf_Unsigned getlineno() { return lineno_; };
+    Dwarf_Unsigned getlinecol() { return linecol_; };
+    bool getisstmt() { return is_stmt_; };
+    bool getisblock() { return basic_block_; };
+    bool getepiloguebegin() { return epilogue_begin_; };
+    bool getprologueend() { return prologue_end_; };
+    Dwarf_Unsigned getisa() { return isa_; };
+    Dwarf_Unsigned getdiscriminator() { return discriminator_; };
     ~IRCULine() {};
 private:
 
     // Names taken from the DWARF4 std. document, sec 6.2.2.
-    Dwarf_Unsigned address_;
+    Dwarf_Addr address_;
     bool isaddrset_;
     Dwarf_Unsigned srcfileno_;
     Dwarf_Unsigned lineno_;
@@ -42,19 +81,21 @@ private:
 };
 class IRCUSrcfile {
 public:
-    IRCUSrcfile() {};
+    IRCUSrcfile(std::string file): cusrcfile_(file) {};
     ~IRCUSrcfile() {};
+    std::string &getfilepath() {return cusrcfile_;};
 private:
     std::string cusrcfile_;
 };
 
-class IRCULines {
+class IRCULineData {
 public:
-    IRLine() {};
-    ~IRLine() {};
+    IRCULineData() {};
+    ~IRCULineData() {};
     std::vector<IRCULine> &get_cu_lines() { return culinedata_; };
     std::vector<IRCUSrcfile> &get_cu_srcfiles() { return cusrcfiledata_; };
 private:
     std::vector<IRCUSrcfile> cusrcfiledata_;
     std::vector<IRCULine> culinedata_;
 };
+#endif // IREPLINE_H

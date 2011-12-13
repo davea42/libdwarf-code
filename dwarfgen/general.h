@@ -19,6 +19,8 @@
 //#include <sstream> 
 //#include <iomanip> // iomanip for setw etc
 
+#include <sstream>
+#include <iomanip>
 
 template <typename T >
 std::string IToHex(T v,unsigned l=0)
