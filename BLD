@@ -1,9 +1,8 @@
 
 set -x
-cd dwarfdump ; sh configure ;  make
-cd ..
-cd dwarfdump2 ; sh configure ;   make
-cd ..
-cd dwarfexample
-make
-cd ..
+sh CLEANUP
+( cd libdwarf ;   sh configure ;  make )
+( cd dwarfdump ;   sh configure ;  make )
+( cd dwarfdump2 ;    sh configure ;   make )
+( cd dwarfgen ;    sh configure ;   make )
+( cd dwarfexample ;  make )

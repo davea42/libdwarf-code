@@ -1,3 +1,5 @@
+2011-12-14  DavidAnderson <davea42@earthlink.net>
+     * print_die.c: Add support for newer DW_OP_GNU_* .
 2011-12-13  DavidAnderson <davea42@earthlink.net>
      * dwarfdump.c, common.c: Update version string.
      * tag_attr_ext.list, tag_common.h: New information on GNU

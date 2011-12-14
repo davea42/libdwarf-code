@@ -48,6 +48,59 @@
 #include "dwarf_loc.h"
 #include <stdio.h> /* for debugging only. */
 
+/*  Richard Henderson: The operand is an absolute
+    address.  The first byte of the value
+    is an encoding length: 0 2 4 or 8.  If zero
+    it means the following is address-size.
+    The address then follows immediately for
+    that number of bytes. */
+static int
+read_encoded_addr(Dwarf_Small *loc_ptr, Dwarf_Debug dbg,
+   Dwarf_Unsigned * val_out, 
+   int * len_out,
+   Dwarf_Error *error)
+{
+    int totallen = 0;
+    int oplen = 0;
+    int len = 0;
+    Dwarf_Small op = *loc_ptr;
+    Dwarf_Unsigned operand = 0;
+    len++;
+    if(op == 0) {
+        /* FIXME: should be CU specific. */
+        op = dbg->de_pointer_size;
+    }
+    switch(op) {
+    case 1:
+         *val_out = *loc_ptr;
+         len++;
+         break;
+        
+    case 2:
+         READ_UNALIGNED(dbg, operand, Dwarf_Unsigned, loc_ptr, 2);
+         *val_out = operand;
+         len +=2;
+         break;
+    case 4:
+         READ_UNALIGNED(dbg, operand, Dwarf_Unsigned, loc_ptr, 4);
+         *val_out = operand;
+         len +=4;
+         break;
+    case 8:
+         READ_UNALIGNED(dbg, operand, Dwarf_Unsigned, loc_ptr, 8);
+         *val_out = operand;
+         len +=8;
+         break;
+    default:
+         /* We do not know how much to read. */
+        _dwarf_error(dbg, error, DW_DLE_GNU_OPCODE_ERROR);
+         return DW_DLV_ERROR;
+    };
+    *len_out = len;
+    return DW_DLV_OK;
+}
+
+
 
 /*  Given a Dwarf_Block that represents a location expression,
     this function returns a pointer to a Dwarf_Locdesc struct 
@@ -458,8 +511,71 @@ _dwarf_get_locdesc(Dwarf_Debug dbg,
             break;
         case DW_OP_stack_value:  /* DWARF4 */
             break;
+        case DW_OP_GNU_uninit:            /*  0xf0  GNU */
+            /*  Carolyn Tice: Follws a DW_OP_reg or DW_OP_regx
+                and marks the reg as being uninitialized. */
+            break;
+        case DW_OP_GNU_encoded_addr: {      /*  0xf1  GNU */
+            /*  Richard Henderson: The operand is an absolute
+                address.  The first byte of the value
+                is an encoding length: 0 2 4 or 8.  If zero
+                it means the following is address-size.
+                The address then follows immediately for
+                that number of bytes. */
+                int length = 0;
+                int reares = read_encoded_addr(loc_ptr,dbg,&operand1,
+                   &length,error);
+                if(reares != DW_DLV_OK) {
+                    /*  Oops. The caller will notice and
+                        will issue DW_DLV_ERROR. */
+                    return NULL;
+                }
+                loc_ptr += length;
+                offset  += length;
+            }
+            break;
+        case DW_OP_GNU_implicit_pointer:  /*  0xf2  GNU */
+            /*  Jakub Jelinek: The value is an optimized-out
+                pointer value. Represented as
+                an offset_size (address_size) DIE offset
+                (as simple unsigned integer) followed by
+                a signed leb128 offset. 
+                http://www.dwarfstd.org/ShowIssue.php?issue=100831.1 */
+            READ_UNALIGNED(dbg, operand1, Dwarf_Unsigned, loc_ptr,
+                dbg->de_length_size);
+            loc_ptr = loc_ptr + dbg->de_length_size;
+            offset = offset + dbg->de_length_size;
+
+            operand2 = _dwarf_decode_s_leb128(loc_ptr, &leb128_length);
+            loc_ptr = loc_ptr + leb128_length;
+            offset = offset + leb128_length;
+
+            break;
+        case DW_OP_GNU_entry_value:       /*  0xf3  GNU */
+            /*  Jakub Jelinek: A register reused really soon,
+                but the value is unchanged.  So to represent
+                that value we have a uleb128 size followed
+                by a DWARF expression block that size.
+                http://www.dwarfstd.org/ShowIssue.php?issue=100909.1 */
+
+            /*  uleb length of value bytes followed by that
+                number of bytes of the value. */
+            operand1 = _dwarf_decode_u_leb128(loc_ptr, &leb128_length);
+            loc_ptr = loc_ptr + leb128_length;
+            offset = offset + leb128_length;
+
+            /*  Second operand is block of 'operand1' bytes of stuff. */
+            /*  This using the second operand as a pointer
+                is quite ugly. */
+            /*  This gets an ugly compiler warning. Sorry. */
+            operand2 = (Dwarf_Unsigned)loc_ptr;
+            offset = offset + operand1;
+            loc_ptr = loc_ptr + operand1;
+            break;
+
         default:
             /*  Some memory does leak here.  */
+
             _dwarf_error(dbg, error, DW_DLE_LOC_EXPR_BAD);
             return (NULL);
         }

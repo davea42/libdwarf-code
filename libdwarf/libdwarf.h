@@ -1060,6 +1060,7 @@ struct Dwarf_Obj_Access_Interface_s {
 #define DW_DLE_DEBUG_TYPES_DUPLICATE           237
 #define DW_DLE_DEBUG_TYPES_ONLY_DWARF4         238
 #define DW_DLE_DEBUG_TYPEOFFSET_BAD            239
+#define DW_DLE_GNU_OPCODE_ERROR                240
 
 
     /* DW_DLE_LAST MUST EQUAL LAST ERROR NUMBER */

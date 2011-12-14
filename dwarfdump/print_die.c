@@ -192,6 +192,10 @@ struct operation_descr_s opdesc[]= {
     {DW_OP_bit_piece,2,"uleb"},
     {DW_OP_implicit_value,2,"uleb"},
     {DW_OP_stack_value,0,""},
+    {DW_OP_GNU_uninit,0,""},
+    {DW_OP_GNU_encoded_addr,1,"addr"},
+    {DW_OP_GNU_implicit_pointer,1,"addr" },
+    {DW_OP_GNU_entry_value,1,"val" },
     /* terminator */
     {0,0,""} 
 };
@@ -2573,8 +2577,27 @@ _dwarf_print_one_expr_op(Dwarf_Debug dbg,Dwarf_Loc* expr,int index,
         case DW_OP_HP_unmod_range:
         case DW_OP_HP_tls:
         case DW_OP_INTEL_bit_piece:
-        case DW_OP_APPLE_uninit:
             break;
+        case DW_OP_stack_value:  /* DWARF4 */
+            break;
+        case DW_OP_GNU_uninit:  /* DW_OP_APPLE_uninit */
+            /* No operands. */ 
+            break;  
+        case DW_OP_GNU_encoded_addr: 
+            snprintf(small_buf, sizeof(small_buf), 
+                " 0x%" DW_PR_XZEROS  DW_PR_DUx , opd1);
+            esb_append(string_out, small_buf);
+            break;  
+        case DW_OP_GNU_implicit_pointer:
+            snprintf(small_buf, sizeof(small_buf), 
+                " 0x%" DW_PR_XZEROS  DW_PR_DUx , opd1);
+            esb_append(string_out, small_buf);
+            break;  
+        case DW_OP_GNU_entry_value:
+            snprintf(small_buf, sizeof(small_buf), 
+                " 0x%" DW_PR_XZEROS  DW_PR_DUx , opd1);
+            esb_append(string_out, small_buf);
+            break;      
         default:
             {
                 snprintf(small_buf, sizeof(small_buf),

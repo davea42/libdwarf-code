@@ -326,6 +326,7 @@ const char *_dwarf_errmsgs[] = {
     "DW_DLE_DEBUG_TYPES_DUPLICATE (237)",
     "DW_DLE_DEBUG_TYPES_ONLY_DWARF4 (238)",
     "DW_DLE_DEBUG_TYPEOFFSET_BAD (239)",
+    "DW_DLE_GNU_OPCODE_ERROR (240)",
 };
 
 

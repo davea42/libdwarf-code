@@ -1,3 +1,7 @@
+2011-12-14  DavidAnderson <davea42@earthlink.net>
+     * libdwarf.h, dwarf_error.c: Add a new error code 
+       for DW_OP location codes.
+     * dwarf_loc.c: Implement support for new DW_OP_GNU codes.
 2011-12-13  DavidAnderson <davea42@earthlink.net>
      * dwarf.h: Added some GNU extensions.
      * libdwarf.h: Added dwarf_lineoff_b() as

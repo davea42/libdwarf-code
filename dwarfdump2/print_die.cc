@@ -180,6 +180,10 @@ struct operation_descr_s opdesc[]= {
     {DW_OP_bit_piece,2,"uleb"},
     {DW_OP_implicit_value,2,"uleb"},
     {DW_OP_stack_value,0,""},
+    {DW_OP_GNU_uninit,0,""},
+    {DW_OP_GNU_encoded_addr,1,"addr"},
+    {DW_OP_GNU_implicit_pointer,1,"addr" },
+    {DW_OP_GNU_entry_value,1,"val" },
     /* terminator */
     {0,0,""} 
 };
@@ -2374,6 +2378,22 @@ _dwarf_print_one_expr_op(Dwarf_Debug dbg,Dwarf_Loc* expr,int index,
                 }
             }
             }
+        case DW_OP_stack_value:
+            break;
+        case DW_OP_GNU_uninit: /* DW_OP_APPLE_uninit */
+            /* No operands. */
+            break;
+        case DW_OP_GNU_encoded_addr:
+            string_out.append(" ");
+            string_out.append(IToHex0N(opd1,10));
+            break;
+        case DW_OP_GNU_implicit_pointer:
+            string_out.append(" ");
+            string_out.append(IToHex0N(opd1,10));
+            break;
+        case DW_OP_GNU_entry_value:
+            string_out.append(" ");
+            string_out.append(IToHex0N(opd1,10));
             break;
         /* We do not know what the operands, if any, are. */
         case DW_OP_HP_unknown:
@@ -2384,7 +2404,6 @@ _dwarf_print_one_expr_op(Dwarf_Debug dbg,Dwarf_Loc* expr,int index,
         case DW_OP_HP_unmod_range:
         case DW_OP_HP_tls:
         case DW_OP_INTEL_bit_piece:
-        case DW_OP_APPLE_uninit:
             break;
         default:
             string_out.append(string(" dwarf_op unknown: ") +
