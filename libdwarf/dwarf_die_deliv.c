@@ -267,12 +267,14 @@ _dwarf_make_CU_Context(Dwarf_Debug dbg,
             cu_ptr, local_length_size);
         cu_context->cc_typeoffset = typeoffset;
         cu_context->cc_signature = signaturedata;
-        Dwarf_Unsigned cu_len = length - (local_length_size + 
-            local_extension_size);
-        if(typeoffset >= cu_len) {
-            dwarf_dealloc(dbg, cu_context, DW_DLA_CU_CONTEXT);
-            _dwarf_error(dbg, error, DW_DLE_DEBUG_TYPEOFFSET_BAD);
-            return (NULL);
+        {
+            Dwarf_Unsigned cu_len = length - (local_length_size + 
+                local_extension_size);
+            if(typeoffset >= cu_len) {
+                dwarf_dealloc(dbg, cu_context, DW_DLA_CU_CONTEXT);
+                _dwarf_error(dbg, error, DW_DLE_DEBUG_TYPEOFFSET_BAD);
+                return (NULL);
+            }
         }
     }
 
@@ -437,9 +439,9 @@ dwarf_next_cu_header_internal(Dwarf_Debug dbg,
     /*  Get offset into .debug_info of next CU. If dbg has no context,
         this has to be the first one. */
     if (dis->de_cu_context == NULL) {
-        new_offset = 0;
         Dwarf_Small *dataptr = is_info? dbg->de_debug_info.dss_data:
             dbg->de_debug_types.dss_data;
+        new_offset = 0;
         if (!dataptr) {
             Dwarf_Error err2= 0;
             int res = is_info?_dwarf_load_debug_info(dbg, &err2):

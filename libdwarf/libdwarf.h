@@ -1525,7 +1525,7 @@ int dwarf_lineoff(Dwarf_Line /*line*/,
     through the pointer returned_offset. 
     dwarf_lineoff_b() is new in December 2011.  */
 int dwarf_lineoff_b(Dwarf_Line /*line*/, 
-    Dwarf_Unsigned  */*returned_lineoffset*/,
+    Dwarf_Unsigned * /*returned_lineoffset*/,
     Dwarf_Error*     /*error*/);
 
 int dwarf_linesrc(Dwarf_Line /*line*/, 
