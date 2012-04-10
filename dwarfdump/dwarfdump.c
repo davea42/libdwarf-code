@@ -57,7 +57,7 @@ $Header: /plroot/cmplrs.src/v7.4.5m/.RCS/PL/dwarfdump/RCS/dwarfdump.c,v 1.48 200
 extern int elf_open(char *name,int mode);
 #endif
 
-#define DWARFDUMP_VERSION " Tue Dec 13 12:04:54 PST 2011  "
+#define DWARFDUMP_VERSION " Tue Apr 10 11:43:32 PDT 2012  "
 
 extern char *optarg;
 

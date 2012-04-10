@@ -58,7 +58,7 @@ $Header: /plroot/cmplrs.src/v7.4.5m/.RCS/PL/dwarfdump/RCS/dwarfdump.c,v 1.48 200
 #include "common.h"
 #include "naming.h"
 #include "uri.h"
-#define DWARFDUMP_VERSION " Tue Dec 13 12:04:54 PST 2011  "
+#define DWARFDUMP_VERSION " Tue Apr 10 11:43:32 PDT 2012  "
 
 using std::string;
 using std::cout;
