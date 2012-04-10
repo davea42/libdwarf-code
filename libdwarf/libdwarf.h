@@ -779,8 +779,8 @@ struct Dwarf_Obj_Access_Interface_s {
    flags then the DWARF3 64 bit offset extension is used 
    to generate 64 bit offsets.
 */
-#define DW_DLC_SIZE_64     0x40000000 /* 32-bit address-size target */
-#define DW_DLC_SIZE_32     0x20000000 /* 64-bit address-size target */
+#define DW_DLC_SIZE_64     0x40000000 /* 64-bit address-size target */
+#define DW_DLC_SIZE_32     0x20000000 /* 32-bit address-size target */
 #define DW_DLC_OFFSET_SIZE_64 0x10000000 /* 64-bit offset-size DWARF */
 
 /* dwarf_producer_init*() access flag modifiers
