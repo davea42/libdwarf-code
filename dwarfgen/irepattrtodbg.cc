@@ -39,6 +39,17 @@
 #include "ireptodbg.h"
 #include "irepattrtodbg.h"
 
+#ifdef HAVE_INTPTR_T  
+#include <stdint.h>
+typedef intptr_t myintfromp; // intptr_t is from C99.
+#else
+// We want an integer that is big enough for a pointer so the
+// pointer return value from the libdwarf producer can be
+// tested for -1.  Ugly overloading of integer and pointer in libdwarf.
+// We just hope it will compile for you.
+typedef long myintfromp;
+#endif
+
 using std::string;
 using std::cout;
 using std::cerr;
@@ -95,7 +106,7 @@ AddAttrToDie(Dwarf_P_Debug dbg,
         // Relocation later will fix value.
         Dwarf_P_Attribute a = dwarf_add_AT_targ_address(dbg,
             outdie,attrnum,0,sym_index,&error);
-        if( reinterpret_cast<int>(a) == DW_DLV_BADADDR) {
+        if( reinterpret_cast<myintfromp>(a) == DW_DLV_BADADDR) {
             cerr << "ERROR dwarf_add_AT_targ_address fails, attrnum "
                 <<attrnum << cerr;
            
@@ -130,7 +141,7 @@ AddAttrToDie(Dwarf_P_Debug dbg,
         // FIXME: rel type ok?
         Dwarf_P_Attribute a = 
             dwarf_add_AT_flag(dbg,outdie,attrnum,f->getFlagVal(),&error);
-        if( reinterpret_cast<int>(a) == DW_DLV_BADADDR) {
+        if( reinterpret_cast<myintfromp>(a) == DW_DLV_BADADDR) {
             cerr << "ERROR dwarf_add_AT_flag fails, attrnum "
                 <<attrnum << cerr;
         }
@@ -188,7 +199,7 @@ AddAttrToDie(Dwarf_P_Debug dbg,
                 &error);
             break;
         }
-        if( reinterpret_cast<int>(a) == DW_DLV_BADADDR) {
+        if( reinterpret_cast<myintfromp>(a) == DW_DLV_BADADDR) {
             cerr << "ERROR dwarf_add_AT_string fails, attrnum "
                 <<attrnum << cerr;
         }
