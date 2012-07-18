@@ -158,10 +158,8 @@ _dwarf_setup(Dwarf_Debug dbg, Dwarf_Error * error)
 
     Dwarf_Endianness endianness;
 
-    Dwarf_Unsigned section_size = 0;
     Dwarf_Unsigned section_count = 0;
     Dwarf_Half section_index = 0;
-    Dwarf_Addr section_addr = 0;
 
     foundDwarf = FALSE;
 
@@ -227,8 +225,6 @@ _dwarf_setup(Dwarf_Debug dbg, Dwarf_Error * error)
             DWARF_DBG_ERROR(dbg, err, DW_DLV_ERROR);
         }
 
-        section_addr = doas.addr;
-        section_size = doas.size;
         scn_name = doas.name;
 
         if (strncmp(scn_name, ".debug_", 7)

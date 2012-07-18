@@ -409,6 +409,7 @@ _dwarf_update_line_sec(Dwarf_Small * line_ptr,
                     understand.
                     arbitrary choice of unsigned read.
                     signed read would work as well.  */
+                /* utmp2 set but not used here */
                 Dwarf_Unsigned utmp2;
 
                 DECODE_LEB128_UWORD(line_ptr, utmp2);
@@ -450,6 +451,7 @@ _dwarf_update_line_sec(Dwarf_Small * line_ptr,
                 }
 
             case DW_LNS_set_file:{
+                /* utmp2 set but not used here. */
                 Dwarf_Unsigned utmp2;
 
                 DECODE_LEB128_UWORD(line_ptr, utmp2);
@@ -458,6 +460,7 @@ _dwarf_update_line_sec(Dwarf_Small * line_ptr,
                 }
 
             case DW_LNS_set_column:{
+                /* utmp2 set but not used here. */
                 Dwarf_Unsigned utmp2;
 
                 DECODE_LEB128_UWORD(line_ptr, utmp2);

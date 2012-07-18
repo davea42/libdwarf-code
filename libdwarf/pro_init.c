@@ -42,6 +42,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "pro_incl.h"
+#include "pro_line.h"
 #include "pro_section.h"        /* for MAGIC_SECT_NO */
 #include "pro_reloc_symbolic.h"
 #include "pro_reloc_stream.h"

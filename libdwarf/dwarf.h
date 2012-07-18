@@ -796,6 +796,8 @@ extern "C" {
    has objected. */
 #define DW_LANG_OpenCL                  0x0015 /* Provisionally DWARF5 */
 #define DW_LANG_Go                      0x0016 /* Provisionally DWARF5 */
+#define DW_LANG_Modula3                 0x0017 /* Provisionally DWARF5 */
+#define DW_LANG_Haskel                  0x0018 /* Provisionally DWARF5 */
 #define DW_LANG_lo_user                 0x8000
 #define DW_LANG_Mips_Assembler          0x8001 /* MIPS   */
 #define DW_LANG_Upc                     0x8765 /* UPC, use

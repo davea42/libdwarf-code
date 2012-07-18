@@ -467,7 +467,6 @@ write_fixed_size(Dwarf_Unsigned val,
     Dwarf_Unsigned size,
     Dwarf_Error* error)
 {
-    Dwarf_Ubyte db = val;
     unsigned char *data = 0;
     GET_CHUNK(dbg, elfsectno, data, size, error);
     WRITE_UNALIGNED(dbg, (void *) data, (const void *) &val,
@@ -498,7 +497,7 @@ pretend_write_uval(Dwarf_Unsigned val,
 {
     char buff1[ENCODE_SPACE_NEEDED];
     int nbytes = 0;
-    int res =  _dwarf_pro_encode_leb128_nm(val,
+    _dwarf_pro_encode_leb128_nm(val,
         &nbytes, buff1,
         sizeof(buff1));
     return nbytes;
@@ -580,9 +579,6 @@ _dwarf_pro_generate_debugline(Dwarf_P_Debug dbg, Dwarf_Error * error)
     int uwordb_size = dbg->de_offset_size;
     int extension_size = dbg->de_64bit_extension ? 4 : 0;
     int upointer_size = dbg->de_pointer_size;
-    char buff1[ENCODE_SPACE_NEEDED];
-
-
 
     sum_bytes = 0;
 
@@ -721,22 +717,18 @@ _dwarf_pro_generate_debugline(Dwarf_P_Debug dbg, Dwarf_Error * error)
     _dwarf_pro_reg_init(dbg,prevline);
     /* generate opcodes for line numbers */
     while (curline) {
-        int nbytes;
-        char *arg;
-        int opc;
-        int no_lns_copy;        /* if lns copy opcode doesnt need to be 
+        int opc = 0;
+        int no_lns_copy = 0;        /* if lns copy opcode doesnt need to be 
             generated, if special opcode or end
             sequence */
-        Dwarf_Unsigned addr_adv;
-        int line_adv;           /* supposed to be a reasonably small
+        Dwarf_Unsigned addr_adv = 0;
+        int line_adv = 0;           /* supposed to be a reasonably small
             number, so the size should not be a
             problem. ? */
 
         no_lns_copy = 0;
         if (curline->dpl_opc != 0) {
-            int inst_bytes;     /* no of bytes in extended opcode */
-            char *str;          /* hold leb encoded inst_bytes */
-            int str_nbytes;     /* no of bytes in str */
+            int inst_bytes = 0;     /* no of bytes in extended opcode */
             unsigned writelen = 0;
 
             switch (curline->dpl_opc) {
@@ -1961,11 +1953,7 @@ _dwarf_pro_generate_debuginfo(Dwarf_P_Debug dbg, Dwarf_Error * error)
 
     curabbrev = abbrev_head;
     while (curabbrev) {
-        char *val;
-        int nbytes;
-        int idx;
-        int res;
-        char buff1[ENCODE_SPACE_NEEDED];
+        int idx = 0;
 
         write_uval(curabbrev->abb_idx,dbg,abbrevsectno,error);
         write_uval(curabbrev->abb_tag,dbg,abbrevsectno,error);

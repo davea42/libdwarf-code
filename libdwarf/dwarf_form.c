@@ -145,9 +145,8 @@ dwarf_uncompress_integer_block(
     remain = input_length_in_bytes;
     ptr = input_block;
     while (remain > 0) {
-        Dwarf_Signed num;
-        Dwarf_Word len;
-        num = _dwarf_decode_s_leb128((unsigned char *)ptr, &len);
+        Dwarf_Word len = 0;
+        _dwarf_decode_s_leb128((unsigned char *)ptr, &len);
         ptr += len;
         remain -= len;
         output_length_in_units++;
