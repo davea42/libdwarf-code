@@ -494,6 +494,10 @@ get_relocation_entries(Dwarf_Bool is_64bit,
 /*  We have a EM_QUALCOMM_DSP6 relocatable object
     test case in dwarf regression tests, atefail/ig_server.
     Values for QUALCOMM were derived from this executable.
+
+    The r = 0 in the function will get optimized away 
+    when not needed.
+
 */
    
 #define EM_QUALCOMM_DSP6 0xa4
@@ -506,9 +510,16 @@ is_32bit_abs_reloc(unsigned int type, Dwarf_Half machine)
     switch (machine) {
 #if defined(EM_MIPS) && defined (R_MIPS_32)
     case EM_MIPS:
-        r = (type == R_MIPS_32);
-        break;
+        r =  (0
+#if defined (R_MIPS_32)
+            | (type == R_MIPS_32)
 #endif
+#if defined (R_MIPS_TLS_DTPREL32)
+            | (type == R_MIPS_TLS_DTPREL32)
+#endif /* DTPREL32 */
+            );
+        break;
+#endif /* MIPS case */
 #if defined(EM_SPARC32PLUS)  && defined (R_SPARC_UA32)
     case EM_SPARC32PLUS:
         r =  (type == R_SPARC_UA32);
@@ -521,14 +532,32 @@ is_32bit_abs_reloc(unsigned int type, Dwarf_Half machine)
 #endif
 #if defined(EM_SPARC) && defined (R_SPARC_UA32)
     case EM_SPARC:
-        r =  (type == R_SPARC_UA32);
-        break;
+        r =  (0
+#if defined(R_SPARC_UA32)
+            | (type == R_SPARC_UA32)
 #endif
+#if (R_SPARC_TLS_DTPOFF32)
+            | (type == R_SPARC_TLS_DTPOFF32)
+#endif
+            );
+        break;
+#endif /* EM_SPARC */
 #if defined(EM_386) && defined (R_386_32)
     case EM_386:
-        r =  (type == R_386_32);
-        break;
+        r = (0
+#if defined (R_386_32)
+            |  (type == R_386_32)
 #endif
+#if defined (R_386_TLS_LDO_32)
+            | (type == R_386_TLS_LDO_32)
+#endif
+#if defined (R_386_TLS_DTPOFF32)
+            | (type == R_386_TLS_DTPOFF32)
+#endif
+            );
+        break;
+#endif /* EM_386 */
+
 #if defined(EM_IA_64) && defined (R_IA64_SECREL32LSB)
     case EM_IA_64:
         r =  (type == R_IA64_SECREL32LSB);
@@ -544,6 +573,7 @@ is_32bit_abs_reloc(unsigned int type, Dwarf_Half machine)
         r =  (type == R_PPC_ADDR32);
         break;
 #endif
+
 #if defined(EM_S390) && defined (R_390_32)
     case EM_S390:
         r =  (type == R_390_32);
@@ -551,9 +581,17 @@ is_32bit_abs_reloc(unsigned int type, Dwarf_Half machine)
 #endif
 #if defined(EM_X86_64) && defined (R_X86_64_32)
     case EM_X86_64:
-        r = (type == R_X86_64_32);
-        break;
+        r = (0
+#if defined (R_X86_64_32)
+            | (type == R_X86_64_32)
 #endif
+#if defined (R_X86_64_DTPOFF32)
+            | (type ==  R_X86_64_DTPOFF32)
+#endif
+            );
+        break;
+#endif /* EM_X86_64 */
+
     case  EM_QUALCOMM_DSP6:
         r = (type == QUALCOMM_REL32);
         break;
@@ -568,9 +606,16 @@ is_64bit_abs_reloc(unsigned int type, Dwarf_Half machine)
     switch (machine) {
 #if defined(EM_MIPS) && defined (R_MIPS_64)
     case EM_MIPS:
-        r =  (type == R_MIPS_64);
-        break;
+        r = (0 
+#if defined (R_MIPS_64)
+            | (type == R_MIPS_64)
 #endif
+#if defined(R_MIPS_TLS_DTPREL64)
+            | (type == R_MIPS_TLS_DTPREL64)
+#endif
+            );
+        break;
+#endif /* EM_MIPS */
 #if defined(EM_SPARC32PLUS) && defined (R_SPARC_UA64)
     case EM_SPARC32PLUS:
         r =  (type == R_SPARC_UA64);
@@ -583,9 +628,17 @@ is_64bit_abs_reloc(unsigned int type, Dwarf_Half machine)
 #endif
 #if defined(EM_SPARC) && defined (R_SPARC_UA64)
     case EM_SPARC:
-        r = (type == R_SPARC_UA64);
-        break;
+        r = (0
+#if defined(R_SPARC_UA64)
+            | (type == R_SPARC_UA64)
 #endif
+#if defined (R_SPARC_TLS_DTPOFF64)
+            | (type == R_SPARC_TLS_DTPOFF64)
+#endif
+            );
+        break;
+#endif /* EM_SPARC */
+
 #if defined(EM_IA_64) && defined (R_IA64_SECREL32LSB)
     case EM_IA_64:
         r =  (type == R_IA64_DIR64LSB);
@@ -603,9 +656,16 @@ is_64bit_abs_reloc(unsigned int type, Dwarf_Half machine)
 #endif
 #if defined(EM_X86_64) && defined (R_X86_64_64)
     case EM_X86_64:
-        r =  (type == R_X86_64_64);
-        break;
+        r = (0
+#if defined (R_X86_64_64)
+            | (type == R_X86_64_64)
 #endif
+#if defined (R_X86_64_DTPOFF32)
+            | (type == R_X86_64_DTPOFF64)
+#endif
+            );
+        break;
+#endif /* EM_X86_64 */
     }
     return r;
 }
