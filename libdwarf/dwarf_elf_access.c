@@ -558,27 +558,88 @@ is_32bit_abs_reloc(unsigned int type, Dwarf_Half machine)
         break;
 #endif /* EM_386 */
 
+#if defined (EM_SH) && defined (R_SH_DIR32)
+    case EM_SH:
+        r = (0
+#if defined (R_SH_DIR32)
+            | (type == R_SH_DIR32)
+#endif
+#if defined (R_SH_DTPOFF32)
+            | (type == R_SH_TLS_DTPOFF32)
+#endif
+            );
+        break;
+#endif /* SH */
+
 #if defined(EM_IA_64) && defined (R_IA64_SECREL32LSB)
     case EM_IA_64:
-        r =  (type == R_IA64_SECREL32LSB);
-        break;
+        r = (0
+#if defined (R_IA64_SECREL32LSB)
+            | (type == R_IA64_SECREL32LSB)
 #endif
+#if defined (R_IA64_DIR32LSB)
+            | (type == R_IA64_DIR32LSB)
+#endif
+#if defined (R_IA64_DTPREL32LSB)
+            | (type == R_IA64_DTPREL32LSB)
+#endif
+            );
+        break;
+#endif /* EM_IA_64 */
+
+#if defined(EM_ARM) && defined (R_ARM_ABS32)
+    case EM_ARM:
+        r = (0
+#if defined (R_ARM_ABS32)
+            | ( type == R_ARM_ABS32)
+#endif
+#if defined (R_ARM_TLS_LDO32)
+            | ( type == R_ARM_TLS_LDO32)
+#endif
+            );
+        break;
+#endif /* EM_ARM */
+
 #if defined(EM_PPC64) && defined (R_PPC64_ADDR32)
     case EM_PPC64:
-        r =  (type == R_PPC64_ADDR32);
-        break;
+        r = (0
+#if defined(R_PPC64_ADDR32)
+            | (type == R_PPC64_ADDR32)
 #endif
+#if defined(R_PPC_DTPREL32)
+            | (type == R_PPC_DTPREL32)
+#endif
+            );
+        break;
+#endif /* EM_PPC64 */
+
+
 #if defined(EM_PPC) && defined (R_PPC_ADDR32)
     case EM_PPC:
-        r =  (type == R_PPC_ADDR32);
-        break;
+        r = (0
+#if defined (R_PPC_ADDR32)
+            | (type == R_PPC_ADDR32)
 #endif
+#if defined (R_PPC_DTPREL32)
+            | (type == R_PPC_DTPREL32)
+#endif
+            );
+        break;
+#endif /* EM_PPC */
 
 #if defined(EM_S390) && defined (R_390_32)
     case EM_S390:
-        r =  (type == R_390_32);
-        break;
+        r = (0
+#if defined (R_390_32)
+            | (type == R_390_32)
 #endif
+#if defined (R_390_TLS_LDO32)
+            | (type == R_390_TLS_LDO32)
+#endif
+            );
+        break;
+#endif /* EM_S390 */
+
 #if defined(EM_X86_64) && defined (R_X86_64_32)
     case EM_X86_64:
         r = (0
@@ -623,7 +684,14 @@ is_64bit_abs_reloc(unsigned int type, Dwarf_Half machine)
 #endif
 #if defined(EM_SPARCV9) && defined (R_SPARC_UA64)
     case EM_SPARCV9:
-        r = (type == R_SPARC_UA64);
+        r = (0
+#if defined (R_SPARC_UA64)
+            | (type == R_SPARC_UA64)
+#endif
+#if defined (R_SPARC_TLS_DTPOFF64)
+            | (type == R_SPARC_TLS_DTPOFF64)
+#endif
+            );
         break;
 #endif
 #if defined(EM_SPARC) && defined (R_SPARC_UA64)
@@ -639,21 +707,48 @@ is_64bit_abs_reloc(unsigned int type, Dwarf_Half machine)
         break;
 #endif /* EM_SPARC */
 
-#if defined(EM_IA_64) && defined (R_IA64_SECREL32LSB)
+#if defined(EM_IA_64) && defined (R_IA64_SECREL64LSB)
     case EM_IA_64:
-        r =  (type == R_IA64_DIR64LSB);
-        break;
+        r = (0
+#if defined (R_IA64_SECREL64LSB)
+            | (type == R_IA64_SECREL64LSB)
 #endif
+#if defined (R_IA64_DIR64LSB)
+            | (type == R_IA64_DIR64LSB)
+#endif
+#if defined (R_IA64_DTPREL64LSB)
+            | (type == R_IA64_DTPREL64LSB)
+#endif
+            );
+        break;
+#endif /* EM_IA_64 */
+
 #if defined(EM_PPC64) && defined (R_PPC64_ADDR64)
     case EM_PPC64:
-        r =  (type == R_PPC64_ADDR64);
-        break;
+        r = (0
+#if defined(R_PPC64_ADDR64)
+            | (type == R_PPC64_ADDR64)
 #endif
+#if defined(R_PPC64_DTPREL64)
+            | (type == R_PPC64_DTPREL64)
+#endif
+            );
+        break;
+#endif /* EM_PPC64 */
+
 #if defined(EM_S390) && defined (R_390_64)
     case EM_S390:
-        r =  (type == R_390_64);
-        break;
+        r = (0
+#if defined(R_390_64)
+            | (type == R_390_64)
 #endif
+#if defined(R_390_TLS_LDO64)
+            | (type == R_390_TLS_LDO64)
+#endif
+            );
+        break;
+#endif /* EM_390 */
+
 #if defined(EM_X86_64) && defined (R_X86_64_64)
     case EM_X86_64:
         r = (0
