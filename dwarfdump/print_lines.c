@@ -65,9 +65,12 @@ print_source_intro(Dwarf_Die cu_die)
     int ores = dwarf_dieoffset(cu_die, &off, &err);
 
     if (ores == DW_DLV_OK) {
-        printf("Source lines (from CU-DIE at .debug_info offset 0x%" 
-            DW_PR_XZEROS DW_PR_DUx "):\n",
-            (Dwarf_Unsigned) off);
+        /* SN-Carlos: Check if print of <pc> address is needed. */
+        if (line_print_pc) {
+            printf("Source lines (from CU-DIE at .debug_info offset 0x%" 
+                DW_PR_XZEROS DW_PR_DUx "):\n",
+                (Dwarf_Unsigned) off);
+        }
     } else {
         printf("Source lines (for the CU-DIE at unknown location):\n");
     }
@@ -157,8 +160,11 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
     } else if (lres == DW_DLV_NO_ENTRY) {
         /* no line information is included */
     } else {
-        struct esb_s lastsrc;;
+        char *padding;
+        struct esb_s lastsrc;
         esb_constructor(&lastsrc);
+        /* SN-Carlos: Padding for a nice layout */
+        line_print_pc ? padding = "            " : "";
         if (do_print_dwarf) {
             print_source_intro(cu_die);
             if (verbose) {
@@ -168,12 +174,18 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
                     /* srcfiles= */ 0, /* cnt= */ 0, 
                     /* ignore_die_stack= */TRUE);
             }
-            printf("\n<pc>        [row,col] "
+            /* SN-Carlos: Check if print of <pc> address is needed. */
+            printf("\n");
+            printf("%sNS new statement, BB new basic block, "
+                "ET end of text sequence\n",padding);
+            printf("%sPE prologue end, EB epilogue begin\n",padding);
+            printf("%sIA=val ISA number, DI=val discriminator value\n",
+                padding);
+            if (line_print_pc) {
+                printf("<pc>        ");
+            }
+            printf("[row,col] "
                 "NS BB ET PE EB IS= DI= uri: \"filepath\"\n");
-            printf("NS new statement, BB new basic block, "
-                "ET end of text sequence\n");
-            printf("PE prologue end, EB epilogue begin\n");
-            printf("IA=val ISA number, DI=val discriminator value\n");
         }
         for (i = 0; i < linecount; i++) {
             Dwarf_Line line = linebuf[i];
@@ -348,9 +360,11 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
                 }
             }
             if (do_print_dwarf) {
-                printf("0x%08" DW_PR_DUx 
-                    "  [%4" DW_PR_DUu ",%2" DW_PR_DUu "]", pc, lineno,
-                    column);
+                /* SN-Carlos: Check if print of <pc> address is needed. */
+                if (line_print_pc) {
+                    printf("0x%" DW_PR_XZEROS DW_PR_DUx "  ", pc);
+                }
+                printf("[%4" DW_PR_DUu ",%2" DW_PR_DUu "]", lineno, column);
             }
 
             nsres = dwarf_linebeginstatement(line, &newstatement, &err);

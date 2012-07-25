@@ -406,8 +406,6 @@ print_one_die_section(Dwarf_Debug dbg,Dwarf_Bool is_info)
         need_CU_name = TRUE;
         need_CU_base_address = TRUE;
         need_CU_high_address = TRUE;
-        seen_PU_base_address = FALSE;
-        seen_PU_high_address = FALSE;
 
         /*  Release the 'cu_die' created by the call
             to 'dwarf_siblingof' at the top of the main loop. */
@@ -543,10 +541,10 @@ print_die_and_children_internal(Dwarf_Debug dbg,
     Dwarf_Die in_die = in_die_in;
 
     for (;;) {
-        SET_DIE_STACK_ENTRY(die_stack_indent_level,in_die);
-
         /* Get the CU offset for easy error reporting */
         dwarf_die_offsets(in_die,&DIE_overall_offset,&DIE_offset,&err);
+
+        SET_DIE_STACK_ENTRY(die_stack_indent_level,in_die);
 
         if (check_tag_tree) {
             DWARF_CHECK_COUNT(tag_tree_result,1);
@@ -889,7 +887,7 @@ print_one_die(Dwarf_Debug dbg, Dwarf_Die die,
                         (Dwarf_Unsigned)overall_offset);
                 } else {
                     printf("<%2d><0x%" DW_PR_XZEROS DW_PR_DUx ">", 
-                        die_indent_level, 
+                        die_indent_level,
                         (Dwarf_Unsigned)offset);
                 }
 
@@ -1278,7 +1276,9 @@ traverse_attribute(Dwarf_Debug dbg, Dwarf_Die die, Dwarf_Half attr,
         /* Get the global offset for reference */
         res = dwarf_global_formref(attrib, &ref_off, &err);
         if (res != DW_DLV_OK) {
-            int errno = dwarf_errno(err);
+            /* SN-Carlos: Windows defines errno, as
+             * #define errno   (*_errno()) */
+            int err_no = dwarf_errno(err);
             if (errno == DW_DLE_REF_SIG8_NOT_HANDLED ) {
                 // No need to stop, ref_sig8 refers out of
                 // the current section.
@@ -1290,7 +1290,9 @@ traverse_attribute(Dwarf_Debug dbg, Dwarf_Die die, Dwarf_Half attr,
         }
         res = dwarf_dieoffset(die, &die_off, &err);
         if (res != DW_DLV_OK) {
-            int errno = dwarf_errno(err);
+            /* SN-Carlos: Windows defines errno, as
+             * #define errno   (*_errno()) */
+            int err_no = dwarf_errno(err);
             if (errno == DW_DLE_REF_SIG8_NOT_HANDLED ) {
                 // No need to stop, ref_sig8 refers out of
                 // the current section.
@@ -2237,6 +2239,10 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
                         we think a graph of self-refs *across*
                         type-units is possible. Hmm. FIXME? */
                     suppress_check = 1 ;
+                    DWARF_CHECK_COUNT(self_references_result,1);
+                    DWARF_CHECK_ERROR(self_references_result,
+                        "DW_AT_ref_sig8 not handled so "
+                        "self references not fully checked");
                     dwarf_dealloc(dbg,err,DW_DLA_ERROR);
                     err = 0;
                 } else {
@@ -2257,8 +2263,8 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
                 /* Follow reference chain, looking for self references */
                 res = dwarf_offdie_b(dbg,ref_off,is_info,&ref_die,&err);
                 if (res == DW_DLV_OK) {
-                    ++die_indent_level;
                     struct esb_s copy_base;
+                    ++die_indent_level;
                     if (dump_visited_info) {
                         Dwarf_Off off;
                         dwarf_die_CU_offset(die, &off, &err);
@@ -2323,8 +2329,9 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
         break;
     }
     if (!print_information) {
-        if(have_a_search_match(valname,atname) )
-        {
+        if (have_a_search_match(valname,atname)) {
+            /* SN-Carlos: Count occurrence of text */
+            ++search_occurrences;
             if (search_wide_format) {
                 found_search_attr = TRUE;
             } else {
@@ -2503,11 +2510,11 @@ _dwarf_print_one_expr_op(Dwarf_Debug dbg,Dwarf_Loc* expr,int index,
             break;
         case DW_OP_bregx:
             snprintf(small_buf, sizeof(small_buf), 
-                "0x%08" DW_PR_DUx , opd1);
+                " 0x%" DW_PR_XZEROS DW_PR_DUx , opd1);
             esb_append(string_out, small_buf);
             opd2 = expr->lr_number2;
             snprintf(small_buf, sizeof(small_buf),
-                "+%" DW_PR_DSd , (Dwarf_Signed) opd2);
+                "+%" DW_PR_DUx , (Dwarf_Signed) opd2);
             esb_append(string_out, small_buf);
             break;
         case DW_OP_call2:
@@ -3085,6 +3092,8 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
                         case DW_TAG_template_type_parameter:
                         case DW_TAG_template_value_parameter:
                         case DW_TAG_unspecified_type:
+                        /* SN-Carlos: Template alias */
+                        case DW_TAG_template_alias:
                             /* OK */
                             break;
                         default:
@@ -3298,9 +3307,9 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
         wres = dwarf_formstring(attrib, &temps, &err);
         if (wres == DW_DLV_OK) {
             /* Print as quoted string for clarity. */
-            esb_append(esbp, "\"");
+            //esb_append(esbp, "\"");
             esb_append(esbp, temps);
-            esb_append(esbp, "\"");
+            //esb_append(esbp, "\"");
         } else if (wres == DW_DLV_NO_ENTRY) {
             /* nothing? */
         } else {

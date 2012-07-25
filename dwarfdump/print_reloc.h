@@ -270,20 +270,20 @@ $Header: /plroot/cmplrs.src/v7.4.5m/.RCS/PL/dwarfdump/RCS/print_reloc.c,v 1.11 2
 #define R_MIPS_NONE                   0
 #define R_MIPS_16                     1
 #define R_MIPS_32                     2
-#define R_MIPS_ADD                    2
+#define R_MIPS_ADD                    R_MIPS_32
 #define R_MIPS_REL                    3
-#define R_MIPS_REL32                  3
+#define R_MIPS_REL32                  R_MIPS_REL
 #define R_MIPS_26                     4
 #define R_MIPS_HI16                   5
 #define R_MIPS_LO16                   6
 #define R_MIPS_GPREL                  7
-#define R_MIPS_GPREL16                7
+#define R_MIPS_GPREL16                R_MIPS_GPREL
 #define R_MIPS_LITERAL                8
 #define R_MIPS_GOT                    9
-#define R_MIPS_GOT16                  9
+#define R_MIPS_GOT16                  R_MIPS_GOT
 #define R_MIPS_PC16                  10
 #define R_MIPS_CALL                  11
-#define R_MIPS_CALL16                11
+#define R_MIPS_CALL16                R_MIPS_CALL
 #define R_MIPS_GPREL32               12
 
 #define R_MIPS_SHIFT5                16

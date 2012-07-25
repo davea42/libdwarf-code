@@ -39,6 +39,7 @@
 #include "config.h"
 #include "dwarf_incl.h"
 #include "dwarf_elf_access.h"
+#include "dwarf_reloc.h"
 
 #ifdef HAVE_ELF_H
 #include <elf.h>

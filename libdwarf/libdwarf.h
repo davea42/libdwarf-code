@@ -502,16 +502,16 @@ typedef struct Dwarf_Var_s*        Dwarf_Var;
 typedef struct Dwarf_Weak_s*       Dwarf_Weak;
 typedef struct Dwarf_Error_s*      Dwarf_Error;
 typedef struct Dwarf_Attribute_s*  Dwarf_Attribute;
-typedef struct Dwarf_Abbrev_s*       Dwarf_Abbrev;
-typedef struct Dwarf_Fde_s*         Dwarf_Fde;
-typedef struct Dwarf_Cie_s*         Dwarf_Cie;
-typedef struct Dwarf_Arange_s*       Dwarf_Arange;
+typedef struct Dwarf_Abbrev_s*     Dwarf_Abbrev;
+typedef struct Dwarf_Fde_s*        Dwarf_Fde;
+typedef struct Dwarf_Cie_s*        Dwarf_Cie;
+typedef struct Dwarf_Arange_s*     Dwarf_Arange;
 
 /* Opaque types for Producer Library. */
-typedef struct Dwarf_P_Debug_s*           Dwarf_P_Debug;
-typedef struct Dwarf_P_Die_s*           Dwarf_P_Die;
-typedef struct Dwarf_P_Attribute_s*    Dwarf_P_Attribute;
-typedef struct Dwarf_P_Fde_s*        Dwarf_P_Fde;
+typedef struct Dwarf_P_Debug_s*       Dwarf_P_Debug;
+typedef struct Dwarf_P_Die_s*         Dwarf_P_Die;
+typedef struct Dwarf_P_Attribute_s*   Dwarf_P_Attribute;
+typedef struct Dwarf_P_Fde_s*         Dwarf_P_Fde;
 typedef struct Dwarf_P_Expr_s*        Dwarf_P_Expr;
 typedef Dwarf_Unsigned                Dwarf_Tag;
 
@@ -751,8 +751,8 @@ struct Dwarf_Obj_Access_Interface_s {
 #define DW_DLA_LIST            0x0f     /* a list */
 #define DW_DLA_LINEBUF         0x10     /* Dwarf_Line* (not used) */
 #define DW_DLA_ARANGE          0x11     /* Dwarf_Arange */
-#define DW_DLA_ABBREV          0x12      /* Dwarf_Abbrev */
-#define DW_DLA_FRAME_OP        0x13      /* Dwarf_Frame_Op */
+#define DW_DLA_ABBREV          0x12     /* Dwarf_Abbrev */
+#define DW_DLA_FRAME_OP        0x13     /* Dwarf_Frame_Op */
 #define DW_DLA_CIE             0x14     /* Dwarf_Cie */
 #define DW_DLA_FDE             0x15     /* Dwarf_Fde */
 #define DW_DLA_LOC_BLOCK       0x16     /* Dwarf_Loc Block (not used) */

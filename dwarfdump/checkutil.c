@@ -545,7 +545,7 @@ Dwarf_Bool IsValidInLinkonce(Bucket_Group *pLo,
     Bucket_Data *pBucketData = 0;
     /*  Since text is quite uniformly just this name, no need to get it
         from elsewhere, though it will not work for non-elf.  */
-    const char *lo_text = ".text";
+    const char *lo_text = ".text.";
 
     /*  Build the name that represents the linkonce section (.text). 
         This is not defined in DWARF so not correct for all

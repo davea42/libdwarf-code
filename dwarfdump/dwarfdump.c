@@ -54,8 +54,8 @@ $Header: /plroot/cmplrs.src/v7.4.5m/.RCS/PL/dwarfdump/RCS/dwarfdump.c,v 1.48 200
 #include "esb.h"                /* For flexible string buffer. */
 
 #ifdef WIN32
-extern int elf_open(char *name,int mode);
-#endif
+extern int elf_open(const char *name,int mode);
+#endif /* WIN32 */
 
 #define DWARFDUMP_VERSION " Tue Apr 10 11:43:32 PDT 2012  "
 
@@ -69,6 +69,10 @@ static const char* process_args(int argc, char *argv[]);
 
 char * program_name;
 static int check_error = 0;
+
+/* defined in print_sections.c, die for the current compile unit, 
+   used in get_fde_proc_name() */
+extern Dwarf_Die current_cu_die_for_print_frames;
 
 /*  The type of Bucket. */
 #define KIND_RANGES_INFO       1
@@ -115,6 +119,7 @@ boolean use_old_dwarf_loclist = FALSE;  /* This so both dwarf_loclist()
     dwarf_loclist_n() */
 
 boolean line_flag = FALSE;
+boolean line_print_pc = TRUE;    /* Print <pc> addresses. */
 static boolean abbrev_flag = FALSE;
 static boolean frame_flag = FALSE;      /* .debug_frame section. */
 static boolean eh_frame_flag = FALSE;   /* GNU .eh_frame section. */
@@ -134,6 +139,7 @@ boolean producer_children_flag = FALSE;   /* List of CUs per compiler */
 
 /* Bitmap for relocations. See globals.h for DW_SECTION_REL_DEBUG_RANGES etc.*/
 static unsigned reloc_map = 0;
+static unsigned section_map = 0;
 
 /*  Start verbose at zero. verbose can
     be incremented with -v but not decremented. */
@@ -294,6 +300,8 @@ boolean search_is_on = FALSE;
 const char *search_any_text = 0;
 const char *search_match_text = 0;
 const char *search_regex_text = 0;
+int search_occurrences = 0;
+boolean search_print_results = FALSE;
 #ifdef HAVE_REGEX
 /* -S option: the compiled_regex */
 regex_t search_re;
@@ -398,7 +406,7 @@ main(int argc, char *argv[])
     stderr->_file = stdout->_file;
 #endif /* WIN32 */
   
-    print_version_details(argv[0],FALSE);
+    print_version_details(argv[0],TRUE);
 
     (void) elf_version(EV_NONE);
     if (elf_version(EV_CURRENT) == EV_NONE) {
@@ -475,17 +483,17 @@ main(int argc, char *argv[])
     clean_up_die_esb();
     clean_up_syms_malloc_data();
 
-    if(pRangesInfo) {
+    if (pRangesInfo) {
         ReleaseBucketGroup(pRangesInfo);
         pRangesInfo = 0;
     }
 
-    if(pLinkonceInfo) {
+    if (pLinkonceInfo) {
         ReleaseBucketGroup(pLinkonceInfo);
         pLinkonceInfo = 0;
     }
 
-    if(pVisitedInfo) {
+    if (pVisitedInfo) {
         ReleaseBucketGroup(pVisitedInfo);
         pVisitedInfo = 0;
     }
@@ -517,7 +525,7 @@ print_any_harmless_errors(Dwarf_Debug dbg)
     if(res == DW_DLV_NO_ENTRY) {
         return;
     }
-    if(totalcount > 0) {
+    if (totalcount > 0) {
         printf("\n*** HARMLESS ERROR COUNT: %u ***\n",totalcount);
     }
     for(i = 0 ; buf[i]; ++i) {
@@ -534,8 +542,40 @@ print_any_harmless_errors(Dwarf_Debug dbg)
 }
 
 static void
-print_object_header(Elf *elf,Dwarf_Debug dbg)
+print_object_header(Elf *elf,Dwarf_Debug dbg,unsigned section_map)
 {
+    /* SN-Carlos: Debug section names to be included in printing */
+    #define DW_SECTNAME_DEBUG_INFO     ".debug_info"
+    #define DW_SECTNAME_DEBUG_LINE     ".debug_line"
+    #define DW_SECTNAME_DEBUG_PUBNAMES ".debug_pubnames"
+    #define DW_SECTNAME_DEBUG_ABBREV   ".debug_abbrev"
+    #define DW_SECTNAME_DEBUG_ARANGES  ".debug_aranges"
+    #define DW_SECTNAME_DEBUG_FRAME    ".debug_frame"
+    #define DW_SECTNAME_DEBUG_LOC      ".debug_loc"
+    #define DW_SECTNAME_DEBUG_RANGES   ".debug_ranges"
+    #define DW_SECTNAME_DEBUG_STR      ".debug_str"
+    #define DW_SECTNAME_DEBUG_PUBTYPES ".debug_pubtypes"
+    #define DW_SECTNAME_DEBUG_TYPES    ".debug_types"
+    #define DW_SECTNAME_TEXT           ".text"
+
+    static char *sectnames[] = {
+        DW_SECTNAME_DEBUG_INFO,
+        DW_SECTNAME_DEBUG_LINE,
+        DW_SECTNAME_DEBUG_PUBNAMES,
+        DW_SECTNAME_DEBUG_ABBREV,
+        DW_SECTNAME_DEBUG_ARANGES,
+        DW_SECTNAME_DEBUG_FRAME,
+        DW_SECTNAME_DEBUG_LOC,
+        DW_SECTNAME_DEBUG_RANGES,
+        DW_SECTNAME_DEBUG_STR,
+        DW_SECTNAME_DEBUG_PUBTYPES,
+        DW_SECTNAME_DEBUG_TYPES,
+        DW_SECTNAME_TEXT,
+        ""
+    };
+
+    /* Check if header information is required */
+    if (section_map & DW_MASK_PRINT_HEADER) {
 #ifdef WIN32
     /*  Standard libelf has no function generating the names of the 
         encodings, but this libelf apparently does. */
@@ -553,24 +593,30 @@ print_object_header(Elf *elf,Dwarf_Debug dbg)
         printf("\nObject Header:\ne_ident:\n");
         printf("  File ID       = %s\n",eh_literals.e_ident_file_id);
         printf("  File class    = %02x (%s)\n",
-            eh32->e_ident[EI_CLASS], eh_literals.e_ident_file_class);
+            eh32->e_ident[EI_CLASS],eh_literals.e_ident_file_class);
         printf("  Data encoding = %02x (%s)\n",
-            eh32->e_ident[EI_DATA], eh_literals.e_ident_data_encoding);
+            eh32->e_ident[EI_DATA],eh_literals.e_ident_data_encoding);
         printf("  File version  = %02x (%s)\n",
-            eh32->e_ident[EI_VERSION], eh_literals.e_ident_file_version);
-        printf("  OS ABI        = %02x (%s) (%s)\n", eh32->e_ident[EI_OSABI],
-            eh_literals.e_ident_os_abi_s, eh_literals.e_ident_os_abi_l);
-        //printf("  ABI version   = %02x (%s)\n",
-        //  eh32->e_ident[EI_ABIVERSION], eh_literals.e_ident_abi_version);
-        printf("e_type   : 0x%x (%s)\n",
-            eh32->e_type, eh_literals.e_type);
-        printf("e_machine: 0x%x (%s) (%s)\n", eh32->e_machine,
-            eh_literals.e_machine_s, eh_literals.e_machine_l);
-        printf("e_version: 0x%x\n", eh32->e_version);
-        //printf("e_entry     = 0x%I64x\n", eh32->e_entry);
-        printf("e_flags  : 0x%x\n", eh32->e_flags);
-        printf("e_phnum  : 0x%x\n", eh32->e_phnum);
-        printf("e_shnum  : 0x%x\n", eh32->e_shnum);
+            eh32->e_ident[EI_VERSION],eh_literals.e_ident_file_version);
+        printf("  OS ABI        = %02x (%s) (%s)\n",eh32->e_ident[EI_OSABI],
+            eh_literals.e_ident_os_abi_s,eh_literals.e_ident_os_abi_l);
+        printf("  ABI version   = %02x (%s)\n",
+            eh32->e_ident[EI_ABIVERSION], eh_literals.e_ident_abi_version);
+        printf("e_type     : 0x%x (%s)\n",
+            eh32->e_type,eh_literals.e_type);
+        printf("e_machine  : 0x%x (%s) (%s)\n",eh32->e_machine,
+            eh_literals.e_machine_s,eh_literals.e_machine_l);
+        printf("e_version  : 0x%x\n", eh32->e_version);
+        printf("e_entry    : 0x%" DW_PR_XZEROS DW_PR_DUx "\n",eh32->e_entry);
+        printf("e_phoff    : 0x%" DW_PR_XZEROS DW_PR_DUx "\n",eh32->e_phoff);
+        printf("e_shoff    : 0x%" DW_PR_XZEROS DW_PR_DUx "\n",eh32->e_shoff);
+        printf("e_flags    : 0x%x\n",eh32->e_flags);
+        printf("e_ehsize   : 0x%x\n",eh32->e_ehsize);
+        printf("e_phentsize: 0x%x\n",eh32->e_phentsize);
+        printf("e_phnum    : 0x%x\n",eh32->e_phnum);
+        printf("e_shentsize: 0x%x\n",eh32->e_shentsize);
+        printf("e_shnum    : 0x%x\n",eh32->e_shnum);
+        printf("e_shstrndx : 0x%x\n",eh32->e_shstrndx);
     }
     else {
 #ifdef HAVE_ELF64_GETEHDR
@@ -583,28 +629,97 @@ print_object_header(Elf *elf,Dwarf_Debug dbg)
             printf("\nObject Header:\ne_ident:\n");
             printf("  File ID       = %s\n",eh_literals.e_ident_file_id);
             printf("  File class    = %02x (%s)\n",
-                eh64->e_ident[EI_CLASS], eh_literals.e_ident_file_class);
+                eh64->e_ident[EI_CLASS],eh_literals.e_ident_file_class);
             printf("  Data encoding = %02x (%s)\n",
-                eh64->e_ident[EI_DATA], eh_literals.e_ident_data_encoding);
+                eh64->e_ident[EI_DATA],eh_literals.e_ident_data_encoding);
             printf("  File version  = %02x (%s)\n",
-                eh64->e_ident[EI_VERSION], eh_literals.e_ident_file_version);
-            printf("  OS ABI        = %02x (%s) (%s)\n", eh64->e_ident[EI_OSABI],
-                eh_literals.e_ident_os_abi_s, eh_literals.e_ident_os_abi_l);
-            //printf("  ABI version   = %02x (%s)\n",
-            //  eh64->e_ident[EI_ABIVERSION], eh_literals.e_ident_abi_version);
-            printf("e_type   : 0x%x (%s)\n",
-                eh64->e_type, eh_literals.e_type);
-            printf("e_machine: 0x%x (%s) (%s)\n", eh64->e_machine,
-                eh_literals.e_machine_s, eh_literals.e_machine_l);
-            printf("e_version: 0x%x\n", eh64->e_version);
-            //printf("e_entry     = 0x%I64x\n", eh64->e_entry);
-            printf("e_flags  : 0x%x\n", eh64->e_flags);
-            printf("e_phnum  : 0x%x\n", eh64->e_phnum);
-            printf("e_shnum  : 0x%x\n", eh64->e_shnum);
+                eh64->e_ident[EI_VERSION],eh_literals.e_ident_file_version);
+            printf("  OS ABI        = %02x (%s) (%s)\n",eh64->e_ident[EI_OSABI],
+                eh_literals.e_ident_os_abi_s,eh_literals.e_ident_os_abi_l);
+            printf("  ABI version   = %02x (%s)\n",
+                eh64->e_ident[EI_ABIVERSION], eh_literals.e_ident_abi_version);
+            printf("e_type     : 0x%x (%s)\n",
+                eh64->e_type,eh_literals.e_type);
+            printf("e_machine  : 0x%x (%s) (%s)\n",eh64->e_machine,
+                eh_literals.e_machine_s,eh_literals.e_machine_l);
+            printf("e_version  : 0x%x\n", eh64->e_version);
+            printf("e_entry    : 0x%" DW_PR_XZEROS DW_PR_DUx "\n",eh64->e_entry);
+            printf("e_phoff    : 0x%" DW_PR_XZEROS DW_PR_DUx "\n",eh64->e_phoff);
+            printf("e_shoff    : 0x%" DW_PR_XZEROS DW_PR_DUx "\n",eh64->e_shoff);
+            printf("e_flags    : 0x%x\n",eh64->e_flags);
+            printf("e_ehsize   : 0x%x\n",eh64->e_ehsize);
+            printf("e_phentsize: 0x%x\n",eh64->e_phentsize);
+            printf("e_phnum    : 0x%x\n",eh64->e_phnum);
+            printf("e_shentsize: 0x%x\n",eh64->e_shentsize);
+            printf("e_shnum    : 0x%x\n",eh64->e_shnum);
+            printf("e_shstrndx : 0x%x\n",eh64->e_shstrndx);
         }
 #endif /* HAVE_ELF64_GETEHDR */
     }
 #endif /* WIN32 */
+    }
+    /* SN-Carlos: Print basic section information is required */
+    /* Mask only debug bits */
+    section_map &= (~DW_MASK_PRINT_HEADER);
+    if (section_map) {
+        int nCount = 0;
+        int section_index = 0;
+        int index = 0;
+        int res = 0;
+        const char *section_name = NULL;
+        Dwarf_Addr section_addr = 0;
+        Dwarf_Unsigned section_size = 0;
+        Dwarf_Error error = 0;
+        boolean print_it = FALSE;
+        Dwarf_Unsigned total_bytes = 0;
+        int printed_sections = 0;
+
+        /* Print section information (name, size, address). */
+        nCount = dwarf_get_section_count(dbg);
+        printf("\nInfo for %d sections:\n"
+               "  Nro Index Address    Size(h)    Size(d)  Name\n",nCount);
+        /* Ignore section with index=0 */
+        for (section_index = 1; section_index < nCount; ++section_index) {
+            res = dwarf_get_section_info_by_index(dbg,section_index,
+                &section_name,
+                &section_addr,
+                &section_size,
+                &error);
+            if (res == DW_DLV_OK) {
+                print_it = FALSE;
+                if (section_map == DW_MASK_PRINT_ALL) {
+                    /* Print all sections info */
+                    print_it = TRUE;
+                } else {
+                    /* Check if the section name is a debug section */
+                    for (index = 0; *sectnames[index]; ++index) {
+                        if (!strcmp(sectnames[index],section_name) &&
+                            (section_map & (1 << index))) {
+                            print_it = TRUE;
+                            break;
+                        }
+                    }
+                }
+                if (print_it) {
+                    ++printed_sections;
+                    printf("  %3d "                         /* nro */
+                           "0x%03x "                        /* index */
+                           "0x%" DW_PR_XZEROS DW_PR_DUx " " /* address */
+                           "0x%" DW_PR_XZEROS DW_PR_DUx " " /* size (hex) */
+                           "%" DW_PR_XZEROS DW_PR_DUu " "   /* size (dec) */
+                           "%s\n",                          /* name */
+                           printed_sections,
+                           section_index,
+                           section_addr,
+                           section_size, section_size,
+                           section_name);
+                    total_bytes += section_size;
+                }
+            }
+        }
+        printf("*** Summary: %" DW_PR_DUu " bytes for %d sections ***\n",
+            total_bytes, printed_sections);
+    }
 }
 
 /* Print checks and errors for a specific compiler */
@@ -684,20 +799,40 @@ print_specific_checks_results(Compiler *pCompiler)
 static int
 qsort_compare_compiler(const void *elem1,const void *elem2)
 {
-  Compiler cmp1 = *(Compiler *)elem1;
-  Compiler cmp2 = *(Compiler *)elem2;
-  int cnt1 = cmp1.results[total_check_result].errors;
-  int cnt2 = cmp2.results[total_check_result].errors;
-  int sc = 0;
+    Compiler cmp1 = *(Compiler *)elem1;
+    Compiler cmp2 = *(Compiler *)elem2;
+    int cnt1 = cmp1.results[total_check_result].errors;
+    int cnt2 = cmp2.results[total_check_result].errors;
 
-  if (cnt1 < cnt2) {
-    return 1;
-  } else if (cnt1 > cnt2) {
-    return -1;
-  }
-  /* When error counts match, sort on name. */
-  sc = strcmp(cmp2.name,cmp1.name);
-  return sc;
+    if (cnt1 < cnt2) {
+        return 1;
+    } else if (cnt1 > cnt2) {
+        return -1;
+    }
+    return 0;
+}
+
+/* SN-Carlos: Print a summary of search results */
+static void
+print_search_results()
+{
+    const char *search_type = 0;
+    const char *search_text = 0;
+    if (search_any_text) {
+        search_type = "any";
+        search_text = search_any_text;
+    } else {
+        if (search_match_text) {
+            search_type = "match";
+            search_text = search_match_text;
+        } else {
+            search_type = "regex";
+            search_text = search_regex_text;
+        }
+    }
+    fprintf(stderr,"\nSearch type      : '%s'\n",search_type);
+    fprintf(stderr,"Pattern searched : '%s'\n",search_text);
+    fprintf(stderr,"Occurrences Found: %d\n",search_occurrences);
 }
 
 /* Print a summary of checks and errors */
@@ -712,7 +847,7 @@ print_checks_results()
 
     /* Sort based on errors detected; the first entry is reserved */
     pCompilers = &compilers_detected[1];
-    qsort((void *)pCompilers, compilers_detected_count,
+    qsort((void *)pCompilers,compilers_detected_count,
         sizeof(Compiler),qsort_compare_compiler);
 
     /* Print list of CUs for each compiler detected */
@@ -726,7 +861,7 @@ print_checks_results()
         fprintf(stderr,"\n*** CU NAMES PER COMPILER ***\n");
         for (index = 1; index <= compilers_detected_count; ++index) {
             pCompiler = &compilers_detected[index];
-            fprintf(stderr,"\n%02d: %s\n",index,pCompiler->name);
+            fprintf(stderr,"\n%02d: %s",index,pCompiler->name);
             count = 0;
             for (nc = pCompiler->cu_list; nc; nc = nc_next) {
                 fprintf(stderr,"\n    %02d: '%s'",++count,nc->item);
@@ -804,7 +939,7 @@ print_checks_results()
                 for (index = 1; index <= compilers_detected_count; ++index) {
                     pCompiler = &compilers_detected[index];
                     if (pCompiler->verified) {
-                        fprintf(stderr,"%02d: %s\n",
+                        fprintf(stderr,"\n%02d: %s",
                             ++count,pCompiler->name);
                         print_specific_checks_results(pCompiler);
                     }
@@ -890,11 +1025,14 @@ process_one_file(Elf * elf, const char * file_name, int archive,
         build_linkonce_info(dbg);
     }
 
+    /* SN-Carlos: Just for the moment */
+    check_harmless = FALSE;
+
     if (header_flag) {
-        print_object_header(elf,dbg);
+        print_object_header(elf,dbg,section_map);
     }
     reset_overall_CU_error_data();
-    if (info_flag || line_flag || cu_name_flag || search_is_on || 
+    if (info_flag || line_flag || cu_name_flag || search_is_on ||
         producer_children_flag) {
         print_infos(dbg,TRUE);
         reset_overall_CU_error_data();
@@ -959,6 +1097,12 @@ process_one_file(Elf * elf, const char * file_name, int archive,
         reset_overall_CU_error_data();
         print_relocinfo(dbg, reloc_map);
     }
+
+    /* SN-Carlos: Print search results */
+    if (search_print_results && search_is_on) {
+        print_search_results();
+    }
+
     /* The right time to do this is unclear. But we need to do it. */
     print_any_harmless_errors(dbg);
 
@@ -986,6 +1130,7 @@ do_all()
     info_flag = line_flag = frame_flag = TRUE;
     pubnames_flag = macinfo_flag = TRUE;
     aranges_flag = TRUE;
+    abbrev_flag = TRUE;
     /*  Do not do 
         loc_flag = TRUE 
         abbrev_flag = TRUE;
@@ -994,16 +1139,20 @@ do_all()
         the DWARF spec guarantees the sections are free of random bytes
         in areas not referenced by .debug_info */
     string_flag = TRUE;
+    reloc_flag = TRUE;
     /*  Do not do 
         reloc_flag = TRUE;
         as print_relocs makes no sense for non-elf dwarfdump users.  */  
     static_func_flag = static_var_flag = TRUE;
     type_flag = weakname_flag = TRUE;
+    ranges_flag = TRUE; /* Dump .debug_ranges */
     header_flag = TRUE; /* Dump header info */
 }
 
-
+extern const char *usage_text[];
+extern const char *usage_debug_text[];
 static const char *usage_text[] = {
+"Usage: DwarfDump <options> <object file>",
 "options:\t-a\tprint all .debug_* sections",
 "\t\t-b\tprint abbrev section",
 "\t\t-c\tprint loc section",
@@ -1017,7 +1166,10 @@ static const char *usage_text[] = {
 "\t\t-d\tdense: one line per entry (info section only)",
 "\t\t-D\tdo not show offsets",  /* Do not show any offsets */
 "\t\t-e\tellipsis: short names for tags, attrs etc.",
-"\t\t-E\tprint object Header information",
+"\t\t-E[hliaprfoRstxd]\tprint object Header and/or section information",
+"\t\t  \th=header,l=line,i=info,a=abbrev,p=pubnames,r=aranges,",
+"\t\t  \tf=frames,o=loc,R=Ranges,s=strings,t=pubtypes,x=text,",
+"\t\t  \td=default sections, same as -E and {liaprfoRstx}",
 "\t\t-f\tprint dwarf frame section",
 "\t\t-F\tprint gnu .eh_frame section",
 "\t\t-g\t(use incomplete loclist support)",
@@ -1051,7 +1203,8 @@ static const char *usage_text[] = {
 "\t\t   y\texamine type info",
 "\t\t\tUnless -C option given certain common tag-attr and tag-tag",
 "\t\t\textensions are assumed to be ok (not reported).",
-"\t\t-l\tprint line section",
+"\t\t-l[s]\tprint line section",
+"\t\t   s\tdo not print <pc> address",
 "\t\t-m\tprint macinfo section",
 "\t\t-M\tprint the form name for each attribute",
 "\t\t-n\tsuppress frame information function name lookup",
@@ -1068,7 +1221,8 @@ static const char *usage_text[] = {
 "\t\t  \t    and allow up to 1200 registers.",
 "\t\t  \t    Print using a 'generic' register set.",
 "\t\t-s\tprint string section",
-"\t\t-S <option>=<text>\tsearch for <text> in attributes",
+"\t\t-S[v] <option>=<text>\tsearch for <text> in attributes",
+"\t\t  \ts\tprint number of occurrences",
 "\t\t  \twith <option>:",
 "\t\t  \t-S any=<text>\tany <text>",
 "\t\t  \t-S match=<text>\tmatching <text>",
@@ -1158,15 +1312,20 @@ process_args(int argc, char *argv[])
 
     /* j unused */
     while ((c = getopt(argc, argv,
-        "#:abc::CdDeEfFgGhH:ik:lmMnNo::pPqQrRsS:t:u:UvVwW::x:yz")) != EOF) {
+        "#:abc::CdDeE::fFgGhH:ik:l::mMnNo::pPqQrRsS:t:u:UvVwW::x:yz")) != EOF) {
 
         switch (c) {
         /* Internal debug level setting. */
         case '#':
         {
             int nTraceLevel =  atoi(optarg);
-            if (nTraceLevel > 0 && nTraceLevel <= MAX_TRACE_LEVEL) {
+            if (nTraceLevel >= 0 && nTraceLevel <= MAX_TRACE_LEVEL) {
                 nTrace[nTraceLevel] = 1;
+            }
+            /* SN-Carlos: Display dwarfdump debug options. */
+            if (dump_options) {
+                print_usage_message(program_name,usage_debug_text);
+                exit(OKAY);
             }
             break;
         }
@@ -1222,6 +1381,14 @@ process_args(int argc, char *argv[])
         case 'l':
             line_flag = TRUE;
             suppress_check_dwarf();
+            /* SN-Carlos: Enable to suppress offsets printing */
+            if (optarg) {
+                switch (optarg[0]) {
+                /* -ls : suppress <pc> addresses */
+                case 's': line_print_pc = FALSE; break;
+                default: usage_error = TRUE; break;
+                }
+            }
             break;
         case 'f':
             frame_flag = TRUE;
@@ -1320,12 +1487,17 @@ process_args(int argc, char *argv[])
         case 'S':
             /* -S option: strings for 'any' and 'match' */
             {
+                const char *tempstr = 0;
                 boolean err = TRUE;
                 search_is_on = TRUE;
-                const char *tempstr = 0;
-                /* -S text */
+                /* SN-Carlos: 'v' option, to print number of occurrences */
+                /* -S[v]match|any|regex=text*/
+                if (optarg[0] == 'v') {
+                    ++optarg;
+                    search_print_results = TRUE;
+                }
+                /* -S match=<text>*/
                 if (strncmp(optarg,"match=",6) == 0) {
-               
                     search_match_text = makename(&optarg[6]);
                     tempstr = remove_quotes_pair(search_match_text);
                     search_match_text = do_uri_translation(tempstr,"-S match=");
@@ -1334,6 +1506,7 @@ process_args(int argc, char *argv[])
                     }
                 }
                 else {
+                    /* -S any=<text>*/
                     if (strncmp(optarg,"any=",4) == 0) {
                         search_any_text = makename(&optarg[4]);
                         tempstr = remove_quotes_pair(search_any_text);
@@ -1344,6 +1517,7 @@ process_args(int argc, char *argv[])
                     }
 #ifdef HAVE_REGEX
                     else {
+                        /* -S regex=<regular expression>*/
                         if (strncmp(optarg,"regex=",6) == 0) {
                             search_regex_text = makename(&optarg[6]);
                             tempstr = remove_quotes_pair(
@@ -1386,6 +1560,7 @@ process_args(int argc, char *argv[])
             exit(OKAY);
             break;
         case 'd':
+            do_print_dwarf = TRUE;
             /*  This is sort of useless unless printing,
                 but harmless, so we do not insist we
                 are printing with suppress_check_dwarf(). */
@@ -1402,13 +1577,37 @@ process_args(int argc, char *argv[])
         case 'E':
             /* Object Header information (but maybe really print) */
             header_flag = TRUE;
+            /* SN-Carlos: Selected printing of section info */
+            if (optarg) {
+                switch (optarg[0]) {
+                case 'h': section_map |= DW_MASK_PRINT_HEADER; break;
+                case 'i': section_map |= (1 << DW_SECTION_DEBUG_INFO);
+                          section_map |= (1 << DW_SECTION_DEBUG_TYPES); break;
+                case 'l': section_map |= (1 << DW_SECTION_DEBUG_LINE); break;
+                case 'p': section_map |= (1 << DW_SECTION_DEBUG_PUBNAMES); break;
+                case 'a': section_map |= (1 << DW_SECTION_DEBUG_ABBREV); break;
+                case 'r': section_map |= (1 << DW_SECTION_DEBUG_ARANGES); break;
+                case 'f': section_map |= (1 << DW_SECTION_DEBUG_FRAME); break;
+                case 'o': section_map |= (1 << DW_SECTION_DEBUG_LOC); break;
+                case 'R': section_map |= (1 << DW_SECTION_DEBUG_RANGES); break;
+                case 's': section_map |= (1 << DW_SECTION_DEBUG_STRING); break;
+                case 't': section_map |= (1 << DW_SECTION_DEBUG_PUBTYPES); break;
+                case 'x': section_map |= (1 << DW_SECTION_TEXT); break;
+                /* case 'd', use the default section set */
+                case 'd': section_map |= DW_MASK_PRINT_DEFAULT; break;
+                default: usage_error = TRUE; break;
+                }
+            } else {
+                /* Display header and all sections info */
+                section_map = DW_MASK_PRINT_HEADER | DW_MASK_PRINT_ALL;
+            }
             break;
         case 'o':
             reloc_flag = TRUE;
             if (optarg) {
                 switch (optarg[0]) {
                 case 'i': 
-                    reloc_map |= (1 << DW_SECTION_REL_DEBUG_INFO); break;
+                    reloc_map |= (1 << DW_SECTION_REL_DEBUG_INFO);
                     reloc_map |= (1 << DW_SECTION_REL_DEBUG_TYPES); break;
                 case 'l': reloc_map |= (1 << DW_SECTION_REL_DEBUG_LINE); break;
                 case 'p': reloc_map |= (1 << DW_SECTION_REL_DEBUG_PUBNAMES); break;
@@ -1423,7 +1622,7 @@ process_args(int argc, char *argv[])
                 }
             } else {
                 /* Display all relocs */
-                reloc_map = 0x00ff;
+                reloc_map = DW_MASK_PRINT_ALL;
             }
             break;
         case 'k':
@@ -1438,7 +1637,7 @@ process_args(int argc, char *argv[])
                 pubnames_flag = info_flag = TRUE;
                 check_decl_file = TRUE;
                 check_frames = TRUE;  
-                /*check_frames_extended = FALSE; */
+                check_frames_extended = FALSE;
                 check_locations = TRUE; 
                 frame_flag = eh_frame_flag = TRUE;
                 check_ranges = TRUE;
@@ -1675,6 +1874,23 @@ process_args(int argc, char *argv[])
     return do_uri_translation(argv[optind],"file-to-process"); 
 }
 
+/* SN-Carlos: Generic constants for debugging */
+#define DUMP_RANGES_INFO            1   /* Dump RangesInfo Table. */
+#define DUMP_LOCATION_SECTION_INFO  2   /* Dump Location (.debug_loc) Info. */
+#define DUMP_RANGES_SECTION_INFO    3   /* Dump Ranges (.debug_ranges) Info. */
+#define DUMP_LINKONCE_INFO          4   /* Dump Linkonce Table. */
+#define DUMP_VISITED_INFO           5   /* Dump Visited Info. */
+
+static const char *usage_debug_text[] = {
+"Usage: DwarfDump <debug_options>",
+"options:\t-0\tprint this information",
+"\t\t-1\tDump RangesInfo Table",
+"\t\t-2\tDump Location (.debug_loc) Info",
+"\t\t-3\tDump Ranges (.debug_ranges) Info",
+"\t\t-4\tDump Linkonce Table",
+"\t\t-5\tDump Visited Info",
+""
+};
 
 void
 print_error(Dwarf_Debug dbg, string msg, int dwarf_code,
@@ -2080,7 +2296,7 @@ checking_this_compiler()
         and indicates if the current CU is in a targeted compiler
         specified by the user. Default value is TRUE, which
         means test all compilers until a CU is detected. */
-    return current_cu_is_checked_compiler || check_all_compilers;
+    return current_cu_is_checked_compiler;
 }
 
 static int
@@ -2125,8 +2341,9 @@ update_compiler_target(const char *producer_name)
         }
     } else {
         /* Take into account that internally all strings are double quoted */
-        boolean snc_compiler = hasprefix(CU_producer,"\"SN")? TRUE : FALSE;
-        boolean gcc_compiler = hasprefix(CU_producer,"\"GNU")?TRUE : FALSE; 
+        /* SN-Carlos: Do not include quotes in the name */
+        boolean snc_compiler = hasprefix(CU_producer,"SN")? TRUE : FALSE;
+        boolean gcc_compiler = hasprefix(CU_producer,"GNU")?TRUE : FALSE; 
         current_cu_is_checked_compiler = check_all_compilers ||
             (snc_compiler && check_snc_compiler) ||
             (gcc_compiler && check_gcc_compiler) ;

@@ -16,6 +16,9 @@
 /* Define to 1 if the elf64_getshdr function is in libelf.a. */
 #undef HAVE_ELF64_GETSHDR
 
+/* Define to 1 if the Elf64_Rel structure has r_info field */
+#undef HAVE_ELF64_R_INFO
+
 /* Define 1 if Elf64_Rela defined. */
 #undef HAVE_ELF64_RELA
 
@@ -27,6 +30,12 @@
 
 /* Define to 1 if you have the <elf.h> header file. */
 #undef HAVE_ELF_H
+
+/* Define to 1 if you have the <elf_rpl.h> header file. */
+#undef HAVE_ELF_RPL_H
+
+/* Define to 1 if you have the <getopt.h> header file. */
+#undef HAVE_GETOPT_H
 
 /* Define to 1 if you have the <inttypes.h> header file. */
 #undef HAVE_INTTYPES_H
@@ -42,6 +51,10 @@
 
 /* Define to 1 if you have the <memory.h> header file. */
 #undef HAVE_MEMORY_H
+
+/* Define 1 if want producer to build with only 32bit section offsets per
+   strict dwarf2 */
+#undef HAVE_OLD_DWARF2_32BIT_OFFSET
 
 /* Define 1 if need nonstandard printf format for 64bit */
 #undef HAVE_NONSTANDARD_PRINTF_64_FORMAT

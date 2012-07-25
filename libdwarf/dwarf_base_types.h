@@ -82,7 +82,7 @@
 
 /*Dwarf_Word  is unsigned word usable for index, count in memory */
 /*Dwarf_Sword is   signed word usable for index, count in memory */
-/*  The are 32 or 64 bits depending if 64 bit longs or not, which
+/*  They are 32 or 64 bits depending if 64 bit longs or not, which
     fits the  ILP32 and LP64 models
     These work equally well with ILP64.  */
 

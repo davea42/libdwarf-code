@@ -190,9 +190,11 @@ extern int stop_indent_level;
 extern boolean search_wide_format;
 extern boolean search_is_on;
 
-const extern char *search_any_text;
-const extern char *search_match_text;
-const extern char *search_regex_text;
+/* SN-Carlos: Able to generate report on search */
+extern const char *search_any_text;
+extern const char *search_match_text;
+extern const char *search_regex_text;
+extern int search_occurrences;
 #ifdef HAVE_REGEX
 extern regex_t search_re;
 #endif
@@ -202,12 +204,14 @@ extern boolean is_strstrnocase(const char *data, const char *pattern);
 #define MAX_TRACE_LEVEL 10
 extern int nTrace[MAX_TRACE_LEVEL + 1];
 
+#define DUMP_OPTIONS                0   /* Dump options. */
 #define DUMP_RANGES_INFO            1   /* Dump RangesInfo Table. */
 #define DUMP_LOCATION_SECTION_INFO  2   /* Dump Location (.debug_loc) Info. */
 #define DUMP_RANGES_SECTION_INFO    3   /* Dump Ranges (.debug_ranges) Info. */
 #define DUMP_LINKONCE_INFO          4   /* Dump Linkonce Table. */
 #define DUMP_VISITED_INFO           5   /* Dump Visited Info. */
 
+#define dump_options                nTrace[DUMP_OPTIONS]
 #define dump_ranges_info            nTrace[DUMP_RANGES_INFO]
 #define dump_location_section_info  nTrace[DUMP_LOCATION_SECTION_INFO]
 #define dump_ranges_section_info    nTrace[DUMP_RANGES_SECTION_INFO]
@@ -301,6 +305,7 @@ typedef enum /* Dwarf_Check_Categories */ {
 
 extern boolean info_flag;
 extern boolean line_flag;
+extern boolean line_print_pc;        /* SN-Carlos: Print <pc> addresses. */
 extern boolean use_old_dwarf_loclist;
 extern boolean producer_children_flag;   /* List of CUs per compiler */
 
@@ -445,7 +450,7 @@ void safe_strcpy(char *out, long outlen, const char *in, long inlen);
 
 void print_any_harmless_errors(Dwarf_Debug dbg);
 
-/* Definitions for printing relocations.  */
+/* Definitions for printing relocations. */
 #define DW_SECTION_REL_DEBUG_INFO     0
 #define DW_SECTION_REL_DEBUG_LINE     1
 #define DW_SECTION_REL_DEBUG_PUBNAMES 2
@@ -455,5 +460,24 @@ void print_any_harmless_errors(Dwarf_Debug dbg);
 #define DW_SECTION_REL_DEBUG_LOC      6
 #define DW_SECTION_REL_DEBUG_RANGES   7
 #define DW_SECTION_REL_DEBUG_TYPES    8
+
+/* SN-Carlos: Definitions for printing sections. */
+#define DW_SECTION_DEBUG_INFO     0
+#define DW_SECTION_DEBUG_LINE     1
+#define DW_SECTION_DEBUG_PUBNAMES 2
+#define DW_SECTION_DEBUG_ABBREV   3
+#define DW_SECTION_DEBUG_ARANGES  4
+#define DW_SECTION_DEBUG_FRAME    5
+#define DW_SECTION_DEBUG_LOC      6
+#define DW_SECTION_DEBUG_RANGES   7
+#define DW_SECTION_DEBUG_STRING   8
+#define DW_SECTION_DEBUG_PUBTYPES 9
+#define DW_SECTION_DEBUG_TYPES    10
+#define DW_SECTION_TEXT           11
+
+/* Mask to indicate all sections (by default) */
+#define DW_MASK_PRINT_ALL       0x00ff
+#define DW_MASK_PRINT_HEADER    0x8000
+#define DW_MASK_PRINT_DEFAULT   0x07ff
 
 #endif /* globals_INCLUDED */

@@ -35,8 +35,14 @@
 
 /* These do little except on Windows */
 
+#include "config.h"
 #include "common.h"
 #include <stdio.h>
+/* Windows specific header files */
+#ifdef HAVE_STDAFX_H
+#include "stdafx.h"
+#endif /* HAVE_STDAFX_H */
+
 #define DWARFDUMP_VERSION " Tue Apr 10 11:43:32 PDT 2012  "
 
 /* The Linux/Unix version does not want a version string to print
@@ -45,11 +51,11 @@ void
 print_version_details(const char * name,int alwaysprint)
 {
 #ifdef WIN32
-#   ifdef _DEBUG
+#ifdef _DEBUG
     char *acType = "Debug";
-#   else
+#else
     char *acType = "Release";
-#   endif /* _DEBUG */
+#endif /* _DEBUG */
     static char acVersion[32];
     snprintf(acVersion,sizeof(acVersion),
         "[%s %s %s]",__DATE__,__TIME__,acType);
