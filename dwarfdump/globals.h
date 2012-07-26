@@ -478,6 +478,6 @@ void print_any_harmless_errors(Dwarf_Debug dbg);
 /* Mask to indicate all sections (by default) */
 #define DW_MASK_PRINT_ALL       0x00ff
 #define DW_MASK_PRINT_HEADER    0x8000
-#define DW_MASK_PRINT_DEFAULT   0x07ff
+#define DW_MASK_PRINT_DEFAULT   0x0fff
 
 #endif /* globals_INCLUDED */
