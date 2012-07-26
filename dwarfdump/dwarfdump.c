@@ -406,7 +406,7 @@ main(int argc, char *argv[])
     stderr->_file = stdout->_file;
 #endif /* WIN32 */
   
-    print_version_details(argv[0],TRUE);
+    print_version_details(argv[0],FALSE);
 
     (void) elf_version(EV_NONE);
     if (elf_version(EV_CURRENT) == EV_NONE) {

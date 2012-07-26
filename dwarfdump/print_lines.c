@@ -164,7 +164,7 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
         struct esb_s lastsrc;
         esb_constructor(&lastsrc);
         /* SN-Carlos: Padding for a nice layout */
-        line_print_pc ? padding = "            " : "";
+        padding = line_print_pc ? "            " : "";
         if (do_print_dwarf) {
             print_source_intro(cu_die);
             if (verbose) {
