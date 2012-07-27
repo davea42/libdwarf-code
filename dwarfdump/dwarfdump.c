@@ -542,7 +542,7 @@ print_any_harmless_errors(Dwarf_Debug dbg)
 }
 
 static void
-print_object_header(Elf *elf,Dwarf_Debug dbg,unsigned section_map)
+print_object_header(Elf *elf,Dwarf_Debug dbg,unsigned bitmap)
 {
     /* SN-Carlos: Debug section names to be included in printing */
     #define DW_SECTNAME_DEBUG_INFO     ".debug_info"
@@ -574,8 +574,11 @@ print_object_header(Elf *elf,Dwarf_Debug dbg,unsigned section_map)
         ""
     };
 
+    /* SN-Carlos: Preserve original mapping */
+    unsigned bitmap_wrk;
+
     /* Check if header information is required */
-    if (section_map & DW_MASK_PRINT_HEADER) {
+    if (bitmap & DW_HDR_HEADER || bitmap == DW_HDR_ALL) {
 #ifdef WIN32
     /*  Standard libelf has no function generating the names of the 
         encodings, but this libelf apparently does. */
@@ -659,9 +662,11 @@ print_object_header(Elf *elf,Dwarf_Debug dbg,unsigned section_map)
 #endif /* WIN32 */
     }
     /* SN-Carlos: Print basic section information is required */
-    /* Mask only debug bits */
-    section_map &= (~DW_MASK_PRINT_HEADER);
-    if (section_map) {
+    /* Mask only known sections (debug and text) bits */
+    bitmap_wrk = bitmap;
+    bitmap_wrk &= (~DW_HDR_HEADER);    /* Remove bit Header */
+    bitmap_wrk &= (~DW_HDR_ALL);       /* Remove bit All */
+    if (bitmap_wrk || bitmap == DW_HDR_ALL) {
         int nCount = 0;
         int section_index = 0;
         int index = 0;
@@ -687,14 +692,15 @@ print_object_header(Elf *elf,Dwarf_Debug dbg,unsigned section_map)
                 &error);
             if (res == DW_DLV_OK) {
                 print_it = FALSE;
-                if (section_map == DW_MASK_PRINT_ALL) {
+                /* SN-Carlos: Use original mapping */
+                if (bitmap == DW_HDR_ALL) {
                     /* Print all sections info */
                     print_it = TRUE;
                 } else {
                     /* Check if the section name is a debug section */
                     for (index = 0; *sectnames[index]; ++index) {
                         if (!strcmp(sectnames[index],section_name) &&
-                            (section_map & (1 << index))) {
+                            (bitmap & (1 << index))) {
                             print_it = TRUE;
                             break;
                         }
@@ -1580,26 +1586,26 @@ process_args(int argc, char *argv[])
             /* SN-Carlos: Selected printing of section info */
             if (optarg) {
                 switch (optarg[0]) {
-                case 'h': section_map |= DW_MASK_PRINT_HEADER; break;
-                case 'i': section_map |= (1 << DW_SECTION_DEBUG_INFO);
-                          section_map |= (1 << DW_SECTION_DEBUG_TYPES); break;
-                case 'l': section_map |= (1 << DW_SECTION_DEBUG_LINE); break;
-                case 'p': section_map |= (1 << DW_SECTION_DEBUG_PUBNAMES); break;
-                case 'a': section_map |= (1 << DW_SECTION_DEBUG_ABBREV); break;
-                case 'r': section_map |= (1 << DW_SECTION_DEBUG_ARANGES); break;
-                case 'f': section_map |= (1 << DW_SECTION_DEBUG_FRAME); break;
-                case 'o': section_map |= (1 << DW_SECTION_DEBUG_LOC); break;
-                case 'R': section_map |= (1 << DW_SECTION_DEBUG_RANGES); break;
-                case 's': section_map |= (1 << DW_SECTION_DEBUG_STRING); break;
-                case 't': section_map |= (1 << DW_SECTION_DEBUG_PUBTYPES); break;
-                case 'x': section_map |= (1 << DW_SECTION_TEXT); break;
+                case 'h': section_map |= DW_HDR_HEADER; break;
+                case 'i': section_map |= DW_HDR_DEBUG_INFO;
+                          section_map |= DW_HDR_DEBUG_TYPES; break;
+                case 'l': section_map |= DW_HDR_DEBUG_LINE; break;
+                case 'p': section_map |= DW_HDR_DEBUG_PUBNAMES; break;
+                case 'a': section_map |= DW_HDR_DEBUG_ABBREV; break;
+                case 'r': section_map |= DW_HDR_DEBUG_ARANGES; break;
+                case 'f': section_map |= DW_HDR_DEBUG_FRAME; break;
+                case 'o': section_map |= DW_HDR_DEBUG_LOC; break;
+                case 'R': section_map |= DW_HDR_DEBUG_RANGES; break;
+                case 's': section_map |= DW_HDR_DEBUG_STRING; break;
+                case 't': section_map |= DW_HDR_DEBUG_PUBTYPES; break;
+                case 'x': section_map |= DW_HDR_TEXT; break;
                 /* case 'd', use the default section set */
-                case 'd': section_map |= DW_MASK_PRINT_DEFAULT; break;
+                case 'd': section_map |= DW_HDR_DEFAULT; break;
                 default: usage_error = TRUE; break;
                 }
             } else {
                 /* Display header and all sections info */
-                section_map = DW_MASK_PRINT_HEADER | DW_MASK_PRINT_ALL;
+                section_map = DW_HDR_ALL;
             }
             break;
         case 'o':
