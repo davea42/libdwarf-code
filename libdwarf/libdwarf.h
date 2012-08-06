@@ -559,6 +559,9 @@ struct Dwarf_Obj_Access_Section_s {
         makes no sense for a given section. */
     Dwarf_Addr     addr;
 
+    /* SN-Carlos: Section type. */
+    Dwarf_Unsigned type;
+
     /* Size in bytes of the section. */
     Dwarf_Unsigned size;
 
@@ -569,6 +572,11 @@ struct Dwarf_Obj_Access_Section_s {
         it should be a link to a rela section or from symtab
         to strtab.  In Elf it is sh_link. */
     Dwarf_Unsigned link;
+
+    /* SN-Carlos: The section header index of the section to which the
+       relocation applies. In Elf it is sh_info. */
+    Dwarf_Unsigned info;
+
     /*  Elf sections that are tables have a non-zero entrysize so
         the count of entries can be calculated even without
         the right structure definition. If your object format

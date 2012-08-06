@@ -261,9 +261,13 @@ dwarf_elf_object_access_get_section_info(
             return DW_DLV_ERROR;
         }
 
+        /* SN-Carlos: Get also section 'sh_type' and sh_info' fields, so the
+         * caller can use it for additional tasks that require that info. */
+        ret_scn->type = shdr64->sh_type;
         ret_scn->size = shdr64->sh_size;
         ret_scn->addr = shdr64->sh_addr;
         ret_scn->link = shdr64->sh_link;
+        ret_scn->info = shdr64->sh_info;
         ret_scn->entrysize = shdr64->sh_entsize;
         ret_scn->name = elf_strptr(obj->elf, obj->ehdr64->e_shstrndx,
             shdr64->sh_name);
@@ -282,9 +286,13 @@ dwarf_elf_object_access_get_section_info(
         return DW_DLV_ERROR;
     }
 
+    /* SN-Carlos: Get also the section type, so the caller can use it
+     * for additional tasks that require to know the section type. */
+    ret_scn->type = shdr32->sh_type;
     ret_scn->size = shdr32->sh_size;
     ret_scn->addr = shdr32->sh_addr;
     ret_scn->link = shdr32->sh_link;
+    ret_scn->info = shdr32->sh_info;
     ret_scn->entrysize = shdr32->sh_entsize;
     ret_scn->name = elf_strptr(obj->elf, obj->ehdr32->e_shstrndx,
         shdr32->sh_name);
