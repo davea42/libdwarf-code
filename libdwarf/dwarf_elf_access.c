@@ -616,7 +616,7 @@ is_32bit_abs_reloc(unsigned int type, Dwarf_Half machine)
             | (type == R_PPC64_ADDR32)
 #endif
 #if defined(R_PPC_DTPREL32)
-            | (type == R_PPC_DTPREL32)
+            | (type == R_PPC64_DTPREL32)
 #endif
             );
         break;
@@ -776,7 +776,7 @@ is_64bit_abs_reloc(unsigned int type, Dwarf_Half machine)
 
 
 /*  Returns DW_DLV_OK if it works, else DW_DLV_ERROR.
-    The caller may decide to ignre the errors or report them. */  
+    The caller may decide to ignore the errors or report them. */  
 static int
 update_entry(Dwarf_Debug dbg,
     Dwarf_Bool is_64bit, Dwarf_Endianness endianess,
