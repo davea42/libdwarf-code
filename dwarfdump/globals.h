@@ -190,6 +190,10 @@ extern int stop_indent_level;
 extern boolean search_wide_format;
 extern boolean search_is_on;
 
+/* SN-Carlos: calculate wasted space */
+extern void calculate_attributes_usage(Dwarf_Half attr,Dwarf_Half theform,
+    Dwarf_Unsigned value);
+
 /* SN-Carlos: Able to generate report on search */
 extern const char *search_any_text;
 extern const char *search_match_text;
@@ -257,6 +261,7 @@ extern boolean check_dwarf_constants;
 extern boolean check_di_gaps; 
 extern boolean check_forward_decl; 
 extern boolean check_self_references; 
+extern boolean check_attr_encoding;   /* SN-Carlos: Attributes encoding */
 extern boolean suppress_nested_name_search;
 extern boolean suppress_check_extensions_tables;
 
@@ -299,6 +304,7 @@ typedef enum /* Dwarf_Check_Categories */ {
     di_gaps_result,
     forward_decl_result,
     self_references_result,
+    attr_encoding_result,
     total_check_result,
     LAST_CATEGORY  /* Must be last */
 } Dwarf_Check_Categories;

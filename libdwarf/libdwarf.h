@@ -2948,6 +2948,17 @@ int dwarf_get_version_of_die(Dwarf_Die /*die*/,
     Dwarf_Half * /*version*/,
     Dwarf_Half * /*offset_size*/);
 
+/*  SN-Carlos: Just another entry points for the encoding routines for
+    LEB128 in the DWARF producer. */
+int dwarf_encode_leb128(Dwarf_Unsigned /*val*/,
+    int * /*nbytes*/,
+    char * /*space*/,
+    int /*splen*/);
+int dwarf_encode_signed_leb128(Dwarf_Signed /*val*/,
+    int * /*nbytes*/,
+    char * /*space*/,
+    int /*splen*/);
+
 /*  Record some application command line options in libdwarf.  
     This is not arc/argv processing, just precooked setting
     of a flag in libdwarf based on something the application

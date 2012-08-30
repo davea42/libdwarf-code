@@ -580,5 +580,18 @@ _dwarf_get_address_size(Dwarf_Debug dbg, Dwarf_Die die)
     return addrsize;
 }
 
+/* SN-Carlos: Encode val as an unsigned LEB128. */
+int dwarf_encode_leb128(Dwarf_Unsigned val, int *nbytes,
+    char *space, int splen)
+{
+    /* Encode val as an unsigned LEB128. */
+    return _dwarf_pro_encode_leb128_nm(val,nbytes,space,splen);
+}
 
-
+/* SN-Carlos: Encode val as a signed LEB128. */
+int dwarf_encode_signed_leb128(Dwarf_Signed val, int *nbytes,
+    char *space, int splen)
+{
+    /* Encode val as a signed LEB128. */
+    return _dwarf_pro_encode_signed_leb128_nm(val,nbytes,space,splen);
+}

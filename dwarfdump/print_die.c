@@ -2897,8 +2897,159 @@ print_exprloc_content(Dwarf_Debug dbg,Dwarf_Die die, Dwarf_Attribute attrib,
     }
 }
 
+/* SN-Carlos: Borrow the definition from pro_encode_nm.h */
+/*  Bytes needed to encode a number.
+    Not a tight bound, just a reasonable bound.
+*/
+#ifndef ENCODE_SPACE_NEEDED
+#define ENCODE_SPACE_NEEDED   (2*sizeof(Dwarf_Unsigned))
+#endif /* ENCODE_SPACE_NEEDED */
 
+/* SN-Carlos: Table indexed by the attribute value; only standard attributes
+ * are included, ie. in the range [1..DW_AT_lo_user]; we waste a little bit
+ * of space, but accessing the table is fast. */
+typedef struct attr_encoding {
+    Dwarf_Unsigned entries; /* Attribute occurrences */
+    Dwarf_Unsigned formx;   /* Space used by current encoding */
+    Dwarf_Unsigned leb128;  /* Space used with LEB128 encoding */
+} a_attr_encoding;
+static a_attr_encoding *attributes_encoding_table = NULL;
 
+/* SN-Carlos: Check the potential amount of space wasted by attributes values
+ * that can be represented as an unsigned LEB128. Only attributes with forms:
+ * DW_FORM_data1, DW_FORM_data2, DW_FORM_data4 and DW_FORM_data are checked
+ */
+static void
+check_attributes_encoding(Dwarf_Half attr,Dwarf_Half theform,
+    Dwarf_Unsigned value)
+{
+    static int factor[DW_FORM_data1 + 1];
+    static boolean do_init = TRUE;
+
+    if (do_init) {
+        /* Create table on first call */
+        attributes_encoding_table = (a_attr_encoding *)calloc(DW_AT_lo_user,
+                                        sizeof(a_attr_encoding));
+        /* We use only 4 slots in the table, for quick access */
+        factor[DW_FORM_data1] = 1;  /* index 0x0b */
+        factor[DW_FORM_data2] = 2;  /* index 0x05 */
+        factor[DW_FORM_data4] = 4;  /* index 0x06 */
+        factor[DW_FORM_data8] = 8;  /* index 0x07 */
+        do_init = FALSE;
+    }
+
+    /* SN-Carlos: Regardless of the encoding form, count the checks. */
+    DWARF_CHECK_COUNT(attr_encoding_result,1);
+
+    /* For 'DW_AT_stmt_list', due to the way is generated, the value
+     * can be unknown at compile time and only the assembler can decide
+     * how to represent the offset; ignore this attribute. */
+    if (DW_AT_stmt_list == attr) {
+        return;
+    }
+
+    /* Only checks those attributes that have DW_FORM_dataX:
+     * DW_FORM_data1, DW_FORM_data2, DW_FORM_data4 and DW_FORM_data8 */
+    if (theform == DW_FORM_data1 || theform == DW_FORM_data2 ||
+        theform == DW_FORM_data4 || theform == DW_FORM_data8) {
+        int res = 0;
+        /* Size of the byte stream buffer that needs to be memcpy-ed. */
+        int leb128_size = 0;
+        /* To encode the attribute value */
+        char encode_buffer[ENCODE_SPACE_NEEDED];
+        char small_buf[64]; /* Just a small buffer */
+
+        res = dwarf_encode_leb128(value,&leb128_size,
+            encode_buffer,sizeof(encode_buffer));
+        if (res == DW_DLV_OK) {
+            if (factor[theform] > leb128_size) {
+                int wasted_bytes = factor[theform] - leb128_size;
+                snprintf(small_buf, sizeof(small_buf), 
+                    "%d wasted byte(s)",wasted_bytes);
+                DWARF_CHECK_ERROR2(attr_encoding_result,
+                    get_AT_name(attr,dwarf_names_print_on_error),small_buf);
+                /* Add the optimized size to the specific attribute, only if
+                 * we are dealing with a standard attribute. */
+                if (attr < DW_AT_lo_user) {
+                    attributes_encoding_table[attr].entries += 1;
+                    attributes_encoding_table[attr].formx   += factor[theform];
+                    attributes_encoding_table[attr].leb128  += leb128_size;
+                }
+            }
+        }
+    }
+}
+
+/* SN-Carlos: Print a detailed encoding usage per attribute */
+void
+print_attributes_encoding(Dwarf_Debug dbg)
+{
+    if (attributes_encoding_table) {
+        boolean print_header = TRUE;
+        Dwarf_Unsigned total_entries = 0;
+        Dwarf_Unsigned total_bytes_formx = 0;
+        Dwarf_Unsigned total_bytes_leb128 = 0;
+        Dwarf_Unsigned entries = 0;
+        Dwarf_Unsigned bytes_formx = 0;
+        Dwarf_Unsigned bytes_leb128 = 0;
+        int index;
+        int count = 0;
+        float saved_rate;
+        for (index = 0; index < DW_AT_lo_user; ++index) {
+            if (attributes_encoding_table[index].leb128) {
+                if (print_header) {
+                    printf("\n*** SPACE USED BY ATTRIBUTE ENCODINGS ***\n");
+                    printf("Nro Attribute Name            "
+                           "   Entries     Data_x     leb128 Rate\n");
+                    print_header = FALSE;
+                }
+                entries = attributes_encoding_table[index].entries;
+                bytes_formx = attributes_encoding_table[index].formx;
+                bytes_leb128 = attributes_encoding_table[index].leb128;
+                total_entries += entries;
+                total_bytes_formx += bytes_formx;
+                total_bytes_leb128 += bytes_leb128;
+                saved_rate = bytes_leb128 * 100 / bytes_formx;
+                printf("%3d %-25s "
+                       "%10" /*DW_PR_XZEROS*/ DW_PR_DUu " "   /* Entries */
+                       "%10" /*DW_PR_XZEROS*/ DW_PR_DUu " "   /* FORMx */
+                       "%10" /*DW_PR_XZEROS*/ DW_PR_DUu " "   /* LEB128 */
+                       "%3.0f%%"
+                       "\n",
+                    ++count,
+                    get_AT_name(index,dwarf_names_print_on_error),
+                    entries,
+                    bytes_formx,
+                    bytes_leb128,
+                    saved_rate);
+            }
+        }
+        if (!print_header) {
+            /* At least we have an entry, print summary and percentage */
+            Dwarf_Addr lower = 0;
+            Dwarf_Unsigned size = 0;
+            saved_rate = total_bytes_leb128 * 100 / total_bytes_formx;
+            printf("** Summary **                 "
+                    "%10" /*DW_PR_XZEROS*/ DW_PR_DUu " "  /* Entries */
+                    "%10" /*DW_PR_XZEROS*/ DW_PR_DUu " "  /* FORMx */
+                    "%10" /*DW_PR_XZEROS*/ DW_PR_DUu " "  /* LEB128 */
+                    "%3.0f%%"
+                    "\n",
+                total_entries,
+                total_bytes_formx,
+                total_bytes_leb128,
+                saved_rate);
+            /* Get .debug_info size (Very unlikely to have an error here). */
+            dwarf_get_section_info_by_name(dbg,".debug_info",&lower,&size,&err);
+            saved_rate = (total_bytes_formx - total_bytes_leb128) * 100 / size;
+            if (saved_rate > 0) {
+                printf("\n** .debug_info size can be reduced by %.0f%% **\n",
+                    saved_rate);
+            }
+        }
+        free(attributes_encoding_table);
+    }
+}
 
 /*  Fill buffer with attribute value.
     We pass in tag so we can try to do the right thing with
@@ -3188,6 +3339,10 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
                         "0x%08" DW_PR_DUx ,
                         tempud);
                     esb_append(esbp, small_buf);
+                    /* SN-Carlos: Check attribute encoding */
+                    if (check_attr_encoding) {
+                        check_attributes_encoding(attr,theform,tempud);
+                    }
                     if (attr == DW_AT_decl_file || attr == DW_AT_call_file) {
                         if (srcfiles && tempud > 0 && tempud <= cnt) {
                             /*  added by user request */

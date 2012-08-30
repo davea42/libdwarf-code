@@ -70,6 +70,9 @@ static const char* process_args(int argc, char *argv[]);
 char * program_name;
 static int check_error = 0;
 
+/* SN-Carlos: Detailed attributes encoding space */
+extern void print_attributes_encoding(Dwarf_Debug dbg);
+
 /* defined in print_sections.c, die for the current compile unit, 
    used in get_fde_proc_name() */
 extern Dwarf_Die current_cu_die_for_print_frames;
@@ -168,6 +171,7 @@ boolean check_dwarf_constants = FALSE;
 boolean check_di_gaps = FALSE; 
 boolean check_forward_decl = FALSE; 
 boolean check_self_references = FALSE; 
+boolean check_attr_encoding = FALSE;   /* SN-Carlos: Attributes encoding */
 boolean generic_1200_regs = FALSE;
 boolean suppress_check_extensions_tables = FALSE;
 
@@ -723,7 +727,7 @@ print_object_header(Elf *elf,Dwarf_Debug dbg,unsigned bitmap)
                 }
             }
         }
-        printf("*** Summary: %" DW_PR_DUu " bytes for %d sections ***\n",
+        printf("*** Summary: %" DW_PR_DUu " bytes for %d section(s) ***\n",
             total_bytes, printed_sections);
     }
 }
@@ -797,6 +801,11 @@ print_specific_checks_results(Compiler *pCompiler)
     if (check_self_references) {
         PRINT_CHECK_RESULT("self_references", 
             pCompiler, self_references_result);
+    }
+
+    /* SN-Carlos: Display attributes encoding results */
+    if (check_attr_encoding) {
+        PRINT_CHECK_RESULT("attr_encoding", pCompiler, attr_encoding_result);
     }
 
     PRINT_CHECK_RESULT("** Summarize **",pCompiler, total_check_result);
@@ -1116,6 +1125,11 @@ process_one_file(Elf * elf, const char * file_name, int archive,
     /* Print error report if the -kd option */
     print_checks_results();
 
+    /* SN-Carlos: Print the detailed attribute usage space */
+    if (check_attr_encoding) {
+        print_attributes_encoding(dbg);
+    }
+
     dres = dwarf_finish(dbg, &err);
     if (dres != DW_DLV_OK) {
         print_error(dbg, "dwarf_finish", dres, err);
@@ -1190,7 +1204,7 @@ static const char *usage_text[] = {
 "\t\t   c\texamine DWARF constants", /* Check for valid DWARF constants */
 "\t\t   d\tshow check results",      /* Show check results */
 "\t\t   e\texamine attributes of pubnames",
-"\t\t   E\tignore DWARF extensions",  /*  Ignore DWARF extensions */
+"\t\t   E\texamine attributes encodings",  /* SN-Carlos: Attributes encoding */
 "\t\t   f\texamine frame information (use with -f or -F)",
 "\t\t   F\texamine integrity of files-lines attributes", /* Files-Lines integrity */
 "\t\t   g\tcheck debug info gaps", /* Check for debug info gaps */
@@ -1657,6 +1671,7 @@ process_args(int argc, char *argv[])
                 check_di_gaps = TRUE; /* Check debug info gaps */
                 check_forward_decl = TRUE;  /* Check forward declarations */
                 check_self_references = TRUE;  /* Check self references */
+                check_attr_encoding = TRUE;    /* Check attributes encoding */
                 break;
             /* Abbreviations */
             case 'b':
@@ -1677,6 +1692,11 @@ process_args(int argc, char *argv[])
                 pubnames_flag = TRUE;
                 check_harmless = TRUE;
                 check_fdes = TRUE;
+                break;
+            /* Attributes encoding usage */
+            case 'E':
+                check_attr_encoding = TRUE;
+                info_flag = TRUE;
                 break;
             case 'f':
                 check_harmless = TRUE;
