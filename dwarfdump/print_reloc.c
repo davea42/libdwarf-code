@@ -45,7 +45,7 @@ $Header: /plroot/cmplrs.src/v7.4.5m/.RCS/PL/dwarfdump/RCS/print_reloc.c,v 1.11 2
 
 
 #include "globals.h"
-#include "dwarf_reloc.h"    /* SN-Carlos: Include basic definitions */
+#include "print_reloc.h"
 
 #define DW_SECTION_REL_DEBUG_NUM      9  /* Number of sections */
 /* .debug_abbrev should never have a relocation applied to it as it
@@ -139,384 +139,6 @@ static char *error_msg_null[] = {
     sect_data[(x)].type = t;                                        \
     sect_data[(x)].name = n;                                        \
     }
-
-/* PowerPC relocations defined by the ABIs */
-static char *reloc_type_names_PPC[] = {
-    "R_PPC_NONE",                 /*  00 */
-    "R_PPC_ADDR32",               /*  01 */
-    "R_PPC_ADDR24",               /*  02 */
-    "R_PPC_ADDR16",               /*  03 */
-    "R_PPC_ADDR16_LO",            /*  04 */
-    "R_PPC_ADDR16_HI",            /*  05 */
-    "R_PPC_ADDR16_HA",            /*  06 */
-    "R_PPC_ADDR14",               /*  07 */
-    "R_PPC_ADDR14_BRTAKEN",       /*  08 */
-    "R_PPC_ADDR14_BRNTAKEN",      /*  09 */
-    "R_PPC_REL24",                /*  10 */
-    "R_PPC_REL14",                /*  11 */
-    "R_PPC_REL14_BRTAKEN",        /*  12 */
-    "R_PPC_REL14_BRNTAKEN",       /*  13 */
-    "R_PPC_GOT16",                /*  14 */
-    "R_PPC_GOT16_LO",             /*  15 */
-    "R_PPC_GOT16_HI",             /*  16 */
-    "R_PPC_GOT16_HA",             /*  17 */
-    "R_PPC_PLTREL24",             /*  18 */
-    "R_PPC_COPY",                 /*  19 */
-    "R_PPC_GLOB_DAT",             /*  20 */
-    "R_PPC_JMP_SLOT",             /*  21 */
-    "R_PPC_RELATIVE",             /*  22 */
-    "R_PPC_LOCAL24PC",            /*  23 */
-    "R_PPC_UADDR32",              /*  24 */
-    "R_PPC_UADDR16",              /*  25 */
-    "R_PPC_REL32",                /*  26 */
-    "R_PPC_PLT32",                /*  27 */
-    "R_PPC_PLTREL32",             /*  28 */
-    "R_PPC_PLT16_LO",             /*  29 */
-    "R_PPC_PLT16_HI",             /*  30 */
-    "R_PPC_PLT16_HA",             /*  31 */
-    "R_PPC_SDAREL16",             /*  32 */
-    "R_PPC_SECTOFF",              /*  33 */
-    "R_PPC_SECTOFF_LO",           /*  34 */
-    "R_PPC_SECTOFF_HI",           /*  35 */
-    "R_PPC_SECTOFF_HA",           /*  36 */
-    "R_PPC_37",                   /*  37 */
-    "R_PPC_38",                   /*  38 */
-    "R_PPC_39",                   /*  39 */
-    "R_PPC_40",                   /*  40 */
-    "R_PPC_41",                   /*  41 */
-    "R_PPC_42",                   /*  42 */
-    "R_PPC_43",                   /*  43 */
-    "R_PPC_44",                   /*  44 */
-    "R_PPC_45",                   /*  45 */
-    "R_PPC_46",                   /*  46 */
-    "R_PPC_47",                   /*  47 */
-    "R_PPC_48",                   /*  48 */
-    "R_PPC_49",                   /*  49 */
-    "R_PPC_50",                   /*  50 */
-    "R_PPC_51",                   /*  51 */
-    "R_PPC_52",                   /*  52 */
-    "R_PPC_53",                   /*  53 */
-    "R_PPC_54",                   /*  54 */
-    "R_PPC_55",                   /*  55 */
-    "R_PPC_56",                   /*  56 */
-    "R_PPC_57",                   /*  57 */
-    "R_PPC_58",                   /*  58 */
-    "R_PPC_59",                   /*  59 */
-    "R_PPC_60",                   /*  60 */
-    "R_PPC_61",                   /*  61 */
-    "R_PPC_62",                   /*  62 */
-    "R_PPC_63",                   /*  63 */
-    "R_PPC_64",                   /*  64 */
-    "R_PPC_65",                   /*  65 */
-    "R_PPC_66",                   /*  66 */
-    "R_PPC_TLS",                  /*  67 */
-    "R_PPC_DTPMOD32",             /*  68 */
-    "R_PPC_TPREL16",              /*  69 */
-    "R_PPC_TPREL16_LO",           /*  70 */
-    "R_PPC_TPREL16_HI",           /*  71 */
-    "R_PPC_TPREL16_HA",           /*  72 */
-    "R_PPC_TPREL32",              /*  73 */
-    "R_PPC_DTPREL16",             /*  74 */
-    "R_PPC_DTPREL16_LO",          /*  75 */
-    "R_PPC_DTPREL16_HI",          /*  76 */
-    "R_PPC_DTPREL16_HA",          /*  77 */
-    "R_PPC_DTPREL64",             /*  78 */
-    "R_PPC_GOT_TLSGD16",          /*  79 */
-    "R_PPC_GOT_TLSGD16_LO",       /*  80 */
-    "R_PPC_GOT_TLSGD16_HI",       /*  81 */
-    "R_PPC_GOT_TLSGD16_HA",       /*  82 */
-    "R_PPC_GOT_TLSLD16",          /*  83 */
-    "R_PPC_GOT_TLSLD16_LO",       /*  84 */
-    "R_PPC_GOT_TLSLD16_HI",       /*  85 */
-    "R_PPC_GOT_TLSLD16_HA",       /*  86 */
-    "R_PPC_GOT_TPREL16_DS",       /*  87 */
-    "R_PPC_GOT_TPREL16_LO",       /*  88 */
-    "R_PPC_GOT_TPREL16_HI",       /*  89 */
-    "R_PPC_GOT_TPREL16_HA",       /*  90 */
-    "R_PPC_GOT_DTPREL16",         /*  91 */
-    "R_PPC_GOT_DTPREL16_LO",      /*  92 */
-    "R_PPC_GOT_DTPREL16_HI",      /*  93 */
-    "R_PPC_GOT_DTPREL16_HA",      /*  94 */
-};
-
-/* PowerPC64 relocations defined by the ABIs */
-static char *reloc_type_names_PPC64[] = {
-    "R_PPC64_NONE",                 /*  00 */
-    "R_PPC64_ADDR32",               /*  01 */
-    "R_PPC64_ADDR24",               /*  02 */
-    "R_PPC64_ADDR16",               /*  03 */
-    "R_PPC64_ADDR16_LO",            /*  04 */
-    "R_PPC64_ADDR16_HI",            /*  05 */
-    "R_PPC64_ADDR16_HA",            /*  06 */
-    "R_PPC64_ADDR14",               /*  07 */
-    "R_PPC64_ADDR14_BRTAKEN",       /*  08 */
-    "R_PPC64_ADDR14_BRNTAKEN",      /*  09 */
-    "R_PPC64_REL24",                /*  10 */
-    "R_PPC64_REL14",                /*  11 */
-    "R_PPC64_REL14_BRTAKEN",        /*  12 */
-    "R_PPC64_REL14_BRNTAKEN",       /*  13 */
-    "R_PPC64_GOT16",                /*  14 */
-    "R_PPC64_GOT16_LO",             /*  15 */
-    "R_PPC64_GOT16_HI",             /*  16 */
-    "R_PPC64_GOT16_HA",             /*  17 */
-    "R_PPC64_PLTREL24",             /*  18 */
-    "R_PPC64_COPY",                 /*  19 */
-    "R_PPC64_GLOB_DAT",             /*  20 */
-    "R_PPC64_JMP_SLOT",             /*  21 */
-    "R_PPC64_RELATIVE",             /*  22 */
-    "R_PPC64_LOCAL24PC",            /*  23 */
-    "R_PPC64_UADDR32",              /*  24 */
-    "R_PPC64_UADDR16",              /*  25 */
-    "R_PPC64_REL32",                /*  26 */
-    "R_PPC64_PLT32",                /*  27 */
-    "R_PPC64_PLTREL32",             /*  28 */
-    "R_PPC64_PLT16_LO",             /*  29 */
-    "R_PPC64_PLT16_HI",             /*  30 */
-    "R_PPC64_PLT16_HA",             /*  31 */
-    "R_PPC64_SDAREL16",             /*  32 */
-    "R_PPC64_SECTOFF",              /*  33 */
-    "R_PPC64_SECTOFF_LO",           /*  34 */
-    "R_PPC64_SECTOFF_HI",           /*  35 */
-    "R_PPC64_SECTOFF_HA",           /*  36 */
-    "R_PPC64_REL30",                /*  37 */
-    "R_PPC64_ADDR64",               /*  38 */
-    "R_PPC64_ADDR16_HIGHER",        /*  39 */
-    "R_PPC64_ADDR16_HIGHERA",       /*  40 */
-    "R_PPC64_ADDR16_HIGHEST",       /*  41 */
-    "R_PPC64_ADDR16_HIGHESTA",      /*  42 */
-    "R_PPC64_UADDR64",              /*  43 */
-    "R_PPC64_REL64",                /*  44 */
-    "R_PPC64_PLT64",                /*  45 */
-    "R_PPC64_PLTREL64",             /*  46 */
-    "R_PPC64_TOC16",                /*  47 */
-    "R_PPC64_TOC16_LO",             /*  48 */
-    "R_PPC64_TOC16_HI",             /*  49 */
-    "R_PPC64_TOC16_HA",             /*  50 */
-    "R_PPC64_TOC",                  /*  51 */
-    "R_PPC64_PLTGOT16",             /*  52 */
-    "R_PPC64_PLTGOT16_LO",          /*  53 */
-    "R_PPC64_PLTGOT16_HI",          /*  54 */
-    "R_PPC64_PLTGOT16_HA",          /*  55 */
-    "R_PPC64_ADDR16_DS",            /*  56 */
-    "R_PPC64_ADDR16_LO_DS",         /*  57 */
-    "R_PPC64_GOT16_DS",             /*  58 */
-    "R_PPC64_GOT16_LO_DS",          /*  59 */
-    "R_PPC64_PLT16_LO_DS",          /*  60 */
-    "R_PPC64_SECTOFF_DS",           /*  61 */
-    "R_PPC64_SECTOFF_LO_DS",        /*  62 */
-    "R_PPC64_TOC16_DS",             /*  63 */
-    "R_PPC64_TOC16_LO_DS",          /*  64 */
-    "R_PPC64_PLTGOT16_DS",          /*  65 */
-    "R_PPC64_PLTGOT16_LO_DS",       /*  66 */
-    "R_PPC64_TLS",                  /*  67 */
-    "R_PPC64_DTPMOD32",             /*  68 */
-    "R_PPC64_TPREL16",              /*  69 */
-    "R_PPC64_TPREL16_LO",           /*  70 */
-    "R_PPC64_TPREL16_HI",           /*  71 */
-    "R_PPC64_TPREL16_HA",           /*  72 */
-    "R_PPC64_TPREL32",              /*  73 */
-    "R_PPC64_DTPREL16",             /*  74 */
-    "R_PPC64_DTPREL16_LO",          /*  75 */
-    "R_PPC64_DTPREL16_HI",          /*  76 */
-    "R_PPC64_DTPREL16_HA",          /*  77 */
-    "R_PPC64_DTPREL64",             /*  78 */
-    "R_PPC64_GOT_TLSGD16",          /*  79 */
-    "R_PPC64_GOT_TLSGD16_LO",       /*  80 */
-    "R_PPC64_GOT_TLSGD16_HI",       /*  81 */
-    "R_PPC64_GOT_TLSGD16_HA",       /*  82 */
-    "R_PPC64_GOT_TLSLD16",          /*  83 */
-    "R_PPC64_GOT_TLSLD16_LO",       /*  84 */
-    "R_PPC64_GOT_TLSLD16_HI",       /*  85 */
-    "R_PPC64_GOT_TLSLD16_HA",       /*  86 */
-    "R_PPC64_GOT_TPREL16_DS",       /*  87 */
-    "R_PPC64_GOT_TPREL16_LO",       /*  88 */
-    "R_PPC64_GOT_TPREL16_HI",       /*  89 */
-    "R_PPC64_GOT_TPREL16_HA",       /*  90 */
-    "R_PPC64_GOT_DTPREL16",         /*  91 */
-    "R_PPC64_GOT_DTPREL16_LO",      /*  92 */
-    "R_PPC64_GOT_DTPREL16_HI",      /*  93 */
-    "R_PPC64_GOT_DTPREL16_HA",      /*  94 */
-    "R_PPC64_TPREL16_DS",           /*  95 */
-    "R_PPC64_TPREL16_LO_DS",        /*  96 */
-    "R_PPC64_TPREL16_HIGHER",       /*  97 */
-    "R_PPC64_TPREL16_HIGHERA",      /*  98 */
-    "R_PPC64_TPREL16_HIGHEST",      /*  99 */
-    "R_PPC64_TPREL16_HIGHESTA",     /* 100 */
-    "R_PPC64_DTPREL16_DS",          /* 101 */
-    "R_PPC64_DTPREL16_LO_DS",       /* 102 */
-    "R_PPC64_DTPREL16_HIGHER",      /* 103 */
-    "R_PPC64_DTPREL16_HIGHERA",     /* 104 */
-    "R_PPC64_DTPREL16_HIGHEST",     /* 105 */
-    "R_PPC64_DTPREL16_HIGHESTA",    /* 106 */
-    "R_PPC64_TOC32",                /* 107 */
-    "R_PPC64_DTPMOD32",             /* 108 */
-    "R_PPC64_TPREL32",              /* 109 */
-    "R_PPC64_DTPREL32",             /* 110 */
-};
-
-/* Relocation types for MIPS */
-static char *reloc_type_names_MIPS[] = {
-    "R_MIPS_NONE", "R_MIPS_16", "R_MIPS_32", "R_MIPS_REL32",
-    "R_MIPS_26", "R_MIPS_HI16", "R_MIPS_LO16", "R_MIPS_GPREL16",
-    "R_MIPS_LITERAL", "R_MIPS_GOT16", "R_MIPS_PC16", "R_MIPS_CALL16",
-    "R_MIPS_GPREL32",           /* 12 */
-    "reloc type 13?", "reloc type 14?", "reloc type 15?",
-    "R_MIPS_SHIFT5",            /* 16 */
-    "R_MIPS_SHIFT6",            /* 17 */
-    "R_MIPS_64",                /* 18 */
-    "R_MIPS_GOT_DISP",          /* 19 */
-    "R_MIPS_GOT_PAGE",          /* 20 */
-    "R_MIPS_GOT_OFST",          /* 21 */
-    "R_MIPS_GOT_HI16",          /* 22 */
-    "R_MIPS_GOT_LO16",          /* 23 */
-    "R_MIPS_SUB",               /* 24 */
-    "R_MIPS_INSERT_A",          /* 25 */
-    "R_MIPS_INSERT_B",          /* 26 */
-    "R_MIPS_DELETE",            /* 27 */
-    "R_MIPS_HIGHER",            /* 28 */
-    "R_MIPS_HIGHEST",           /* 29 */
-    "R_MIPS_CALL_HI16",         /* 30 */
-    "R_MIPS_CALL_LO16",         /* 31 */
-    "R_MIPS_SCN_DISP",          /* 32 */
-    "R_MIPS_REL16",             /* 33 */
-    "R_MIPS_ADD_IMMEDIATE",     /* 34 */
-};
-
-/* ARM relocations defined by the ABIs */
-static char *reloc_type_names_ARM[] = {
-    "R_ARM_NONE",                 /*  00 */
-    "R_ARM_PC24",                 /*  01 */
-    "R_ARM_ABS32",                /*  02 */
-    "R_ARM_REL32",                /*  03 */
-    "R_ARM_LDR_PC_G0",            /*  04 */
-    "R_ARM_ABS16",                /*  05 */
-    "R_ARM_ABS12",                /*  06 */
-    "R_ARM_THM_ABS5",             /*  07 */
-    "R_ARM_ABS8",                 /*  08 */
-    "R_ARM_SBREL32",              /*  09 */
-    "R_ARM_THM_CALL",             /*  10 */
-    "R_ARM_THM_PC8",              /*  11 */
-    "R_ARM_BREL_ADJ",             /*  12 */
-    "R_ARM_TLS_DESC",             /*  13 */
-    "R_ARM_THM_SWI8",             /*  14 */
-    "R_ARM_XPC25",                /*  15 */
-    "R_ARM_THM_XPC22",            /*  16 */
-    "R_ARM_TLS_DTPMOD32",         /*  17 */
-    "R_ARM_TLS_DTPOFF32",         /*  18 */
-    "R_ARM_TLS_TPOFF32",          /*  19 */
-    "R_ARM_COPY",                 /*  20 */
-    "R_ARM_GLOB_DAT",             /*  21 */
-    "R_ARM_JUMP_SLOT",            /*  22 */
-    "R_ARM_RELATIVE",             /*  23 */
-    "R_ARM_GOTOFF32",             /*  24 */
-    "R_ARM_BASE_PREL",            /*  25 */
-    "R_ARM_GOT_BREL",             /*  26 */
-    "R_ARM_PLT32",                /*  27 */
-    "R_ARM_CALL",                 /*  28 */
-    "R_ARM_JUMP24",               /*  29 */
-    "R_ARM_THM_JUMP24",           /*  30 */
-    "R_ARM_BASE_ABS",             /*  31 */
-    "R_ARM_ALU_PCREL_7_0",        /*  32 */
-    "R_ARM_ALU_PCREL_15_8",       /*  33 */
-    "R_ARM_ALU_PCREL_23_15",      /*  34 */
-    "R_ARM_LDR_SBREL_11_0_NC",    /*  35 */
-    "R_ARM_ALU_SBREL_19_12_NC",   /*  36 */
-    "R_ARM_ALU_SBREL_27_20_CK",   /*  37 */
-    "R_ARM_TARGET1",              /*  38 */
-    "R_ARM_SBREL31",              /*  39 */
-    "R_ARM_V4BX",                 /*  40 */
-    "R_ARM_TARGET2",              /*  41 */
-    "R_ARM_PREL31",               /*  42 */
-    "R_ARM_MOVW_ABS_NC",          /*  43 */
-    "R_ARM_MOVT_ABS",             /*  44 */
-    "R_ARM_MOVW_PREL_NC",         /*  45 */
-    "R_ARM_MOVT_PREL",            /*  46 */
-    "R_ARM_THM_MOVW_ABS_NC",      /*  47 */
-    "R_ARM_THM_MOVT_ABS",         /*  48 */
-    "R_ARM_THM_MOVW_PREL_NC",     /*  49 */
-    "R_ARM_THM_MOVT_PREL",        /*  50 */
-    "R_ARM_THM_JUMP19",           /*  51 */
-    "R_ARM_THM_JUMP6",            /*  52 */
-    "R_ARM_THM_ALU_PREL_11_0",    /*  53 */
-    "R_ARM_THM_PC12",             /*  54 */
-    "R_ARM_ABS32_NOI",            /*  55 */
-    "R_ARM_REL32_NOI",            /*  56 */
-    "R_ARM_ALU_PC_G0_NC",         /*  57 */
-    "R_ARM_ALU_PC_G0",            /*  58 */
-    "R_ARM_ALU_PC_G1_NC",         /*  59 */
-    "R_ARM_ALU_PC_G1",            /*  60 */
-    "R_ARM_ALU_PC_G2",            /*  61 */
-    "R_ARM_LDR_PC_G1",            /*  62 */
-    "R_ARM_LDR_PC_G2",            /*  63 */
-    "R_ARM_LDRS_PC_G0",           /*  64 */
-    "R_ARM_LDRS_PC_G1",           /*  65 */
-    "R_ARM_LDRS_PC_G2",           /*  66 */
-    "R_ARM_LDC_PC_G0",            /*  67 */
-    "R_ARM_LDC_PC_G1",            /*  68 */
-    "R_ARM_LDC_PC_G2",            /*  69 */
-    "R_ARM_ALU_SB_G0_NC",         /*  70 */
-    "R_ARM_ALU_SB_G0",            /*  71 */
-    "R_ARM_ALU_SB_G1_NC",         /*  72 */
-    "R_ARM_ALU_SB_G1",            /*  73 */
-    "R_ARM_ALU_SB_G2",            /*  74 */
-    "R_ARM_LDR_SB_G0",            /*  75 */
-    "R_ARM_LDR_SB_G1",            /*  76 */
-    "R_ARM_LDR_SB_G2",            /*  77 */
-    "R_ARM_LDRS_SB_G0",           /*  78 */
-    "R_ARM_LDRS_SB_G1",           /*  79 */
-    "R_ARM_LDRS_SB_G2",           /*  80 */
-    "R_ARM_LDC_SB_G0",            /*  81 */
-    "R_ARM_LDC_SB_G1",            /*  82 */
-    "R_ARM_LDC_SB_G2",            /*  83 */
-    "R_ARM_MOVW_BREL_NC",         /*  84 */
-    "R_ARM_MOVT_BREL",            /*  85 */
-    "R_ARM_MOVW_BREL",            /*  86 */
-    "R_ARM_THM_MOVW_BREL_NC",     /*  87 */
-    "R_ARM_THM_MOVT_BREL",        /*  88 */
-    "R_ARM_THM_MOVW_BREL",        /*  89 */
-    "R_ARM_TLS_GOTDESC",          /*  90 */
-    "R_ARM_TLS_CALL",             /*  91 */
-    "R_ARM_TLS_DESCSEQ",          /*  92 */
-    "R_ARM_THM_TLS_CALL",         /*  93 */
-    "R_ARM_PLT32_ABS",            /*  94 */
-    "R_ARM_GOT_ABS",              /*  95 */
-    "R_ARM_GOT_PREL",             /*  96 */
-    "R_ARM_GOT_BREL12",           /*  97 */
-    "R_ARM_GOTOFF12",             /*  98 */
-    "R_ARM_GOTRELAX",             /*  99 */
-    "R_ARM_GNU_VTENTRY",          /* 100 */
-    "R_ARM_GNU_VTINHERIT",        /* 101 */
-    "R_ARM_THM_JUMP11",           /* 102 */
-    "R_ARM_THM_JUMP8",            /* 103 */
-    "R_ARM_TLS_GD32",             /* 104 */
-    "R_ARM_TLS_LDM32",            /* 105 */
-    "R_ARM_TLS_LDO32",            /* 106 */
-    "R_ARM_TLS_IE32",             /* 107 */
-    "R_ARM_TLS_LE32",             /* 108 */
-    "R_ARM_TLS_LDO12",            /* 109 */
-    "R_ARM_TLS_LE12",             /* 110 */
-    "R_ARM_TLS_IE12GP",           /* 111 */
-    "R_ARM_TLS_MOVT_TPOFF32",     /* 112 */   /* "R_ARM_PRIVATE_0" */
-    "R_ARM_TLS_MOVW_TPOFF32",     /* 113 */   /* "R_ARM_PRIVATE_1" */
-    "R_ARM_THM_TLS_MOVT_TPOFF32", /* 114 */   /* "R_ARM_PRIVATE_2" */
-    "R_ARM_THM_TLS_MOVT_TPOFF32", /* 115 */   /* "R_ARM_PRIVATE_3" */
-    "R_ARM_PRIVATE_4",            /* 116 */
-    "R_ARM_PRIVATE_5",            /* 117 */
-    "R_ARM_PRIVATE_6",            /* 118 */
-    "R_ARM_PRIVATE_7",            /* 119 */
-    "R_ARM_PRIVATE_8",            /* 120 */
-    "R_ARM_PRIVATE_9",            /* 121 */
-    "R_ARM_PRIVATE_10",           /* 122 */
-    "R_ARM_PRIVATE_11",           /* 123 */
-    "R_ARM_PRIVATE_12",           /* 124 */
-    "R_ARM_PRIVATE_13",           /* 125 */
-    "R_ARM_PRIVATE_14",           /* 126 */
-    "R_ARM_PRIVATE_15",           /* 127 */
-    "R_ARM_ME_TOO",               /* 128 */
-    "R_ARM_THM_TLS_DESCSEQ16",    /* 129 */
-    "R_ARM_THM_TLS_DESCSEQ32",    /* 130 */
-};
-
 /* Record the relocation table name information */
 static char **reloc_type_names = NULL;
 static Dwarf_Small number_of_reloc_type_names = 0;
@@ -525,26 +147,43 @@ static Dwarf_Small number_of_reloc_type_names = 0;
 static void 
 set_relocation_table_names(Dwarf_Small machine_type)
 {
-  switch (machine_type) {
+    reloc_type_names = 0;
+    number_of_reloc_type_names = 0;
+    switch (machine_type) {
     case EM_MIPS:
+#ifdef DWARF_RELOC_MIPS
         reloc_type_names = reloc_type_names_MIPS;
         number_of_reloc_type_names = 
             sizeof(reloc_type_names_MIPS) / sizeof(char *);
+#endif /* DWARF_RELOC_MIPS */
         break;
     case EM_PPC:
+#ifdef DWARF_RELOC_PPC
         reloc_type_names = reloc_type_names_PPC;
         number_of_reloc_type_names = 
             sizeof(reloc_type_names_PPC) / sizeof(char *);
+#endif /* DWARF_RELOC_PPC */
         break;
     case EM_PPC64:
+#ifdef DWARF_RELOC_PPC64
         reloc_type_names = reloc_type_names_PPC64;
         number_of_reloc_type_names = 
             sizeof(reloc_type_names_PPC64) / sizeof(char *);
+#endif /* DWARF_RELOC_PPC64 */
         break;
     case EM_ARM:
+#ifdef DWARF_RELOC_ARM
         reloc_type_names = reloc_type_names_ARM;
         number_of_reloc_type_names = 
             sizeof(reloc_type_names_ARM) / sizeof(char *);
+#endif /* DWARF_RELOC_ARM */
+        break;
+    case EM_X86_64:
+#ifdef DWARF_RELOC_X86_64
+        reloc_type_names = reloc_type_names_X86_64;
+        number_of_reloc_type_names = 
+            sizeof(reloc_type_names_X86_64) / sizeof(char *);
+#endif /* DWARF_RELOC_X86_64 */
         break;
     default:
         /* We don't have others covered. */

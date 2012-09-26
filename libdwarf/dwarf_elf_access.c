@@ -39,7 +39,15 @@
 #include "config.h"
 #include "dwarf_incl.h"
 #include "dwarf_elf_access.h"
-#include "dwarf_reloc.h"
+
+/* SN-Carlos: Include Relocation definitions in the case of Windows */
+#ifdef WIN32
+#include "dwarf_reloc_arm.h"
+#include "dwarf_reloc_mips.h"
+#include "dwarf_reloc_ppc.h"
+#include "dwarf_reloc_ppc64.h"
+#include "dwarf_reloc_x86_64.h"
+#endif /* WIN32 */
 
 #ifdef HAVE_ELF_H
 #include <elf.h>
