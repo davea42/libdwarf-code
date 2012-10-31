@@ -45,7 +45,7 @@ $Header: /plroot/cmplrs.src/v7.4.5m/.RCS/PL/dwarfdump/RCS/print_reloc.c,v 1.11 2
 /* Definitions for PPC */
 #define DWARF_RELOC_PPC
 
-/* SN-Carlos: Include the definitions only in the case of Windows */
+/* Include the definitions only in the case of Windows */
 #ifdef WIN32
 /* PowerPC relocations defined by the ABIs */
 #define R_PPC_NONE                   0

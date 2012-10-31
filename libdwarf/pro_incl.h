@@ -36,7 +36,7 @@
 
 */
 
-/* SN-Carlos: Windows specific */
+/* Windows specific */
 #ifdef HAVE_STDAFX_H
 #include "stdafx.h"
 #endif /* HAVE_STDAFX_H */

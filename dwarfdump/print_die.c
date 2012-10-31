@@ -1276,10 +1276,10 @@ traverse_attribute(Dwarf_Debug dbg, Dwarf_Die die, Dwarf_Half attr,
         /* Get the global offset for reference */
         res = dwarf_global_formref(attrib, &ref_off, &err);
         if (res != DW_DLV_OK) {
-            /* SN-Carlos: Windows defines errno, as
+            /* Windows defines errno, as
              * #define errno   (*_errno()) */
-            int err_no = dwarf_errno(err);
-            if (errno == DW_DLE_REF_SIG8_NOT_HANDLED ) {
+            int dwerrno = dwarf_errno(err);
+            if (dwerrno == DW_DLE_REF_SIG8_NOT_HANDLED ) {
                 // No need to stop, ref_sig8 refers out of
                 // the current section.
                 break;
@@ -1290,10 +1290,10 @@ traverse_attribute(Dwarf_Debug dbg, Dwarf_Die die, Dwarf_Half attr,
         }
         res = dwarf_dieoffset(die, &die_off, &err);
         if (res != DW_DLV_OK) {
-            /* SN-Carlos: Windows defines errno, as
+            /* Windows defines errno, as
              * #define errno   (*_errno()) */
-            int err_no = dwarf_errno(err);
-            if (errno == DW_DLE_REF_SIG8_NOT_HANDLED ) {
+            int dwerrno = dwarf_errno(err);
+            if (dwerrno == DW_DLE_REF_SIG8_NOT_HANDLED ) {
                 // No need to stop, ref_sig8 refers out of
                 // the current section.
                 break;
@@ -2330,7 +2330,7 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
     }
     if (!print_information) {
         if (have_a_search_match(valname,atname)) {
-            /* SN-Carlos: Count occurrence of text */
+            /* Count occurrence of text */
             ++search_occurrences;
             if (search_wide_format) {
                 found_search_attr = TRUE;
@@ -2514,7 +2514,7 @@ _dwarf_print_one_expr_op(Dwarf_Debug dbg,Dwarf_Loc* expr,int index,
             esb_append(string_out, small_buf);
             opd2 = expr->lr_number2;
             snprintf(small_buf, sizeof(small_buf),
-                "+%" DW_PR_DUx , (Dwarf_Signed) opd2);
+                "+%" DW_PR_DSd , (Dwarf_Signed) opd2);
             esb_append(string_out, small_buf);
             break;
         case DW_OP_call2:
@@ -2897,7 +2897,7 @@ print_exprloc_content(Dwarf_Debug dbg,Dwarf_Die die, Dwarf_Attribute attrib,
     }
 }
 
-/* SN-Carlos: Borrow the definition from pro_encode_nm.h */
+/* Borrow the definition from pro_encode_nm.h */
 /*  Bytes needed to encode a number.
     Not a tight bound, just a reasonable bound.
 */
@@ -2905,9 +2905,9 @@ print_exprloc_content(Dwarf_Debug dbg,Dwarf_Die die, Dwarf_Attribute attrib,
 #define ENCODE_SPACE_NEEDED   (2*sizeof(Dwarf_Unsigned))
 #endif /* ENCODE_SPACE_NEEDED */
 
-/* SN-Carlos: Table indexed by the attribute value; only standard attributes
- * are included, ie. in the range [1..DW_AT_lo_user]; we waste a little bit
- * of space, but accessing the table is fast. */
+/* Table indexed by the attribute value; only standard attributes
+ * are included, ie. in the range [1..DW_AT_lo_user]; we waste a
+ * little bit of space, but accessing the table is fast. */
 typedef struct attr_encoding {
     Dwarf_Unsigned entries; /* Attribute occurrences */
     Dwarf_Unsigned formx;   /* Space used by current encoding */
@@ -2915,8 +2915,8 @@ typedef struct attr_encoding {
 } a_attr_encoding;
 static a_attr_encoding *attributes_encoding_table = NULL;
 
-/* SN-Carlos: Check the potential amount of space wasted by attributes values
- * that can be represented as an unsigned LEB128. Only attributes with forms:
+/* Check the potential amount of space wasted by attributes values that can
+ * be represented as an unsigned LEB128. Only attributes with forms:
  * DW_FORM_data1, DW_FORM_data2, DW_FORM_data4 and DW_FORM_data are checked
  */
 static void
@@ -2938,7 +2938,7 @@ check_attributes_encoding(Dwarf_Half attr,Dwarf_Half theform,
         do_init = FALSE;
     }
 
-    /* SN-Carlos: Regardless of the encoding form, count the checks. */
+    /* Regardless of the encoding form, count the checks. */
     DWARF_CHECK_COUNT(attr_encoding_result,1);
 
     /* For 'DW_AT_stmt_list', due to the way is generated, the value
@@ -2980,7 +2980,7 @@ check_attributes_encoding(Dwarf_Half attr,Dwarf_Half theform,
     }
 }
 
-/* SN-Carlos: Print a detailed encoding usage per attribute */
+/* Print a detailed encoding usage per attribute */
 void
 print_attributes_encoding(Dwarf_Debug dbg)
 {
@@ -3243,7 +3243,7 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
                         case DW_TAG_template_type_parameter:
                         case DW_TAG_template_value_parameter:
                         case DW_TAG_unspecified_type:
-                        /* SN-Carlos: Template alias */
+                        /* Template alias */
                         case DW_TAG_template_alias:
                             /* OK */
                             break;
@@ -3339,7 +3339,7 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
                         "0x%08" DW_PR_DUx ,
                         tempud);
                     esb_append(esbp, small_buf);
-                    /* SN-Carlos: Check attribute encoding */
+                    /* Check attribute encoding */
                     if (check_attr_encoding) {
                         check_attributes_encoding(attr,theform,tempud);
                     }
@@ -3461,10 +3461,7 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
     case DW_FORM_strp:
         wres = dwarf_formstring(attrib, &temps, &err);
         if (wres == DW_DLV_OK) {
-            /* Print as quoted string for clarity. */
-            //esb_append(esbp, "\"");
             esb_append(esbp, temps);
-            //esb_append(esbp, "\"");
         } else if (wres == DW_DLV_NO_ENTRY) {
             /* nothing? */
         } else {

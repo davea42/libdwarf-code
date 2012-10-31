@@ -71,7 +71,7 @@ DW_AT_decl_column
 DW_AT_decl_file
 DW_AT_decl_line
 DW_AT_accessibility
-DW_AT_description   /* SN-Carlos: Missing attribute */
+DW_AT_description
 DW_AT_name
 DW_AT_sibling
 0xffffffff
@@ -119,9 +119,9 @@ DW_AT_sibling
 DW_AT_small
 0xffffffff
 DW_TAG_catch_block
-DW_AT_decl_column   /* SN-Carlos: Missing attribute */
-DW_AT_decl_file     /* SN-Carlos: Missing attribute */
-DW_AT_decl_line     /* SN-Carlos: Missing attribute */
+DW_AT_decl_column
+DW_AT_decl_file
+DW_AT_decl_line
 DW_AT_abstract_origin
 DW_AT_high_pc
 DW_AT_low_pc
@@ -154,8 +154,8 @@ DW_AT_decl_column
 DW_AT_decl_file
 DW_AT_decl_line
 DW_AT_declaration
-DW_AT_description   /* SN-Carlos: Missing attribute */
-DW_AT_linkage_name  /* SN-Carlos: Missing attribute */
+DW_AT_description
+DW_AT_linkage_name
 DW_AT_location
 DW_AT_name
 DW_AT_segment
@@ -227,7 +227,7 @@ DW_AT_location
 DW_TAG_entry_point
 DW_AT_address_class
 DW_AT_description
-DW_AT_frame_base    /* SN-Carlos: Missing attribute */
+DW_AT_frame_base
 DW_AT_linkage_name
 DW_AT_low_pc
 DW_AT_name
@@ -384,9 +384,9 @@ DW_AT_start_scope
 DW_AT_sibling
 0xffffffff
 DW_TAG_lexical_block
-DW_AT_decl_column   /* SN-Carlos: Missing attribute */
-DW_AT_decl_file     /* SN-Carlos: Missing attribute */
-DW_AT_decl_line     /* SN-Carlos: Missing attribute */
+DW_AT_decl_column
+DW_AT_decl_file
+DW_AT_decl_line
 DW_AT_abstract_origin
 DW_AT_description
 DW_AT_high_pc
@@ -428,7 +428,7 @@ DW_AT_high_pc
 DW_AT_low_pc
 DW_AT_name
 DW_AT_priority
-DW_AT_ranges    /* SN-Carlos: Missing attribute */
+DW_AT_ranges
 DW_AT_segment
 DW_AT_sibling
 DW_AT_specification
@@ -553,9 +553,9 @@ DW_AT_byte_size
 DW_AT_bit_size /* Allowed in DWARF4 */
 0xffffffff
 DW_TAG_template_alias
-DW_AT_decl_column   /* SN-Carlos: Missing attribute */
-DW_AT_decl_file     /* SN-Carlos: Missing attribute */
-DW_AT_decl_line     /* SN-Carlos: Missing attribute */
+DW_AT_decl_column
+DW_AT_decl_file
+DW_AT_decl_line
 DW_AT_abstract_origin
 DW_AT_accessibility
 DW_AT_allocated
@@ -578,7 +578,7 @@ DW_AT_name
 DW_AT_sibling
 DW_AT_type
 0xffffffff
-DW_TAG_rvalue_reference_type    /* SN-Carlos: Missing tag */
+DW_TAG_rvalue_reference_type
 DW_AT_address_class
 DW_AT_allocated
 DW_AT_associated
@@ -610,10 +610,10 @@ DW_TAG_shared_type
 DW_AT_decl_column
 DW_AT_decl_file
 DW_AT_decl_line
-DW_AT_allocated     /* SN-Carlos: Missing attribute */
-DW_AT_associated    /* SN-Carlos: Missing attribute */
+DW_AT_allocated
+DW_AT_associated
 DW_AT_count
-DW_AT_data_location /* SN-Carlos: Missing attribute */
+DW_AT_data_location
 DW_AT_name
 DW_AT_sibling
 DW_AT_type

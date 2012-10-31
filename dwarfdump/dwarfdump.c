@@ -70,7 +70,7 @@ static const char* process_args(int argc, char *argv[]);
 char * program_name;
 static int check_error = 0;
 
-/* SN-Carlos: Detailed attributes encoding space */
+/* Detailed attributes encoding space */
 extern void print_attributes_encoding(Dwarf_Debug dbg);
 
 /* defined in print_sections.c, die for the current compile unit, 
@@ -171,7 +171,7 @@ boolean check_dwarf_constants = FALSE;
 boolean check_di_gaps = FALSE; 
 boolean check_forward_decl = FALSE; 
 boolean check_self_references = FALSE; 
-boolean check_attr_encoding = FALSE;   /* SN-Carlos: Attributes encoding */
+boolean check_attr_encoding = FALSE;   /* Attributes encoding */
 boolean generic_1200_regs = FALSE;
 boolean suppress_check_extensions_tables = FALSE;
 
@@ -548,7 +548,7 @@ print_any_harmless_errors(Dwarf_Debug dbg)
 static void
 print_object_header(Elf *elf,Dwarf_Debug dbg,unsigned bitmap)
 {
-    /* SN-Carlos: Debug section names to be included in printing */
+    /* Debug section names to be included in printing */
     #define DW_SECTNAME_DEBUG_INFO     ".debug_info"
     #define DW_SECTNAME_DEBUG_LINE     ".debug_line"
     #define DW_SECTNAME_DEBUG_PUBNAMES ".debug_pubnames"
@@ -578,7 +578,7 @@ print_object_header(Elf *elf,Dwarf_Debug dbg,unsigned bitmap)
         ""
     };
 
-    /* SN-Carlos: Preserve original mapping */
+    /* Preserve original mapping */
     unsigned bitmap_wrk;
 
     /* Check if header information is required */
@@ -665,7 +665,7 @@ print_object_header(Elf *elf,Dwarf_Debug dbg,unsigned bitmap)
     }
 #endif /* WIN32 */
     }
-    /* SN-Carlos: Print basic section information is required */
+    /* Print basic section information is required */
     /* Mask only known sections (debug and text) bits */
     bitmap_wrk = bitmap;
     bitmap_wrk &= (~DW_HDR_HEADER);    /* Remove bit Header */
@@ -696,7 +696,7 @@ print_object_header(Elf *elf,Dwarf_Debug dbg,unsigned bitmap)
                 &error);
             if (res == DW_DLV_OK) {
                 print_it = FALSE;
-                /* SN-Carlos: Use original mapping */
+                /* Use original mapping */
                 if (bitmap == DW_HDR_ALL) {
                     /* Print all sections info */
                     print_it = TRUE;
@@ -803,7 +803,7 @@ print_specific_checks_results(Compiler *pCompiler)
             pCompiler, self_references_result);
     }
 
-    /* SN-Carlos: Display attributes encoding results */
+    /* Display attributes encoding results */
     if (check_attr_encoding) {
         PRINT_CHECK_RESULT("attr_encoding", pCompiler, attr_encoding_result);
     }
@@ -827,7 +827,7 @@ qsort_compare_compiler(const void *elem1,const void *elem2)
     return 0;
 }
 
-/* SN-Carlos: Print a summary of search results */
+/* Print a summary of search results */
 static void
 print_search_results()
 {
@@ -1040,7 +1040,7 @@ process_one_file(Elf * elf, const char * file_name, int archive,
         build_linkonce_info(dbg);
     }
 
-    /* SN-Carlos: Just for the moment */
+    /* Just for the moment */
     check_harmless = FALSE;
 
     if (header_flag) {
@@ -1113,7 +1113,7 @@ process_one_file(Elf * elf, const char * file_name, int archive,
         print_relocinfo(dbg, reloc_map);
     }
 
-    /* SN-Carlos: Print search results */
+    /* Print search results */
     if (search_print_results && search_is_on) {
         print_search_results();
     }
@@ -1125,7 +1125,7 @@ process_one_file(Elf * elf, const char * file_name, int archive,
     /* Print error report if the -kd option */
     print_checks_results();
 
-    /* SN-Carlos: Print the detailed attribute usage space */
+    /* Print the detailed attribute usage space */
     if (check_attr_encoding) {
         print_attributes_encoding(dbg);
     }
@@ -1204,7 +1204,7 @@ static const char *usage_text[] = {
 "\t\t   c\texamine DWARF constants", /* Check for valid DWARF constants */
 "\t\t   d\tshow check results",      /* Show check results */
 "\t\t   e\texamine attributes of pubnames",
-"\t\t   E\texamine attributes encodings",  /* SN-Carlos: Attributes encoding */
+"\t\t   E\texamine attributes encodings",  /* Attributes encoding */
 "\t\t   f\texamine frame information (use with -f or -F)",
 "\t\t   F\texamine integrity of files-lines attributes", /* Files-Lines integrity */
 "\t\t   g\tcheck debug info gaps", /* Check for debug info gaps */
@@ -1342,7 +1342,7 @@ process_args(int argc, char *argv[])
             if (nTraceLevel >= 0 && nTraceLevel <= MAX_TRACE_LEVEL) {
                 nTrace[nTraceLevel] = 1;
             }
-            /* SN-Carlos: Display dwarfdump debug options. */
+            /* Display dwarfdump debug options. */
             if (dump_options) {
                 print_usage_message(program_name,usage_debug_text);
                 exit(OKAY);
@@ -1401,7 +1401,7 @@ process_args(int argc, char *argv[])
         case 'l':
             line_flag = TRUE;
             suppress_check_dwarf();
-            /* SN-Carlos: Enable to suppress offsets printing */
+            /* Enable to suppress offsets printing */
             if (optarg) {
                 switch (optarg[0]) {
                 /* -ls : suppress <pc> addresses */
@@ -1510,7 +1510,7 @@ process_args(int argc, char *argv[])
                 const char *tempstr = 0;
                 boolean err = TRUE;
                 search_is_on = TRUE;
-                /* SN-Carlos: 'v' option, to print number of occurrences */
+                /* 'v' option, to print number of occurrences */
                 /* -S[v]match|any|regex=text*/
                 if (optarg[0] == 'v') {
                     ++optarg;
@@ -1597,7 +1597,7 @@ process_args(int argc, char *argv[])
         case 'E':
             /* Object Header information (but maybe really print) */
             header_flag = TRUE;
-            /* SN-Carlos: Selected printing of section info */
+            /* Selected printing of section info */
             if (optarg) {
                 switch (optarg[0]) {
                 case 'h': section_map |= DW_HDR_HEADER; break;
@@ -1900,7 +1900,7 @@ process_args(int argc, char *argv[])
     return do_uri_translation(argv[optind],"file-to-process"); 
 }
 
-/* SN-Carlos: Generic constants for debugging */
+/* Generic constants for debugging */
 #define DUMP_RANGES_INFO            1   /* Dump RangesInfo Table. */
 #define DUMP_LOCATION_SECTION_INFO  2   /* Dump Location (.debug_loc) Info. */
 #define DUMP_RANGES_SECTION_INFO    3   /* Dump Ranges (.debug_ranges) Info. */
@@ -2367,7 +2367,7 @@ update_compiler_target(const char *producer_name)
         }
     } else {
         /* Take into account that internally all strings are double quoted */
-        /* SN-Carlos: Do not include quotes in the name */
+        /* Do not include quotes in the name */
         boolean snc_compiler = hasprefix(CU_producer,"SN")? TRUE : FALSE;
         boolean gcc_compiler = hasprefix(CU_producer,"GNU")?TRUE : FALSE; 
         current_cu_is_checked_compiler = check_all_compilers ||

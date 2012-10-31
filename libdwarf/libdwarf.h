@@ -559,7 +559,7 @@ struct Dwarf_Obj_Access_Section_s {
         makes no sense for a given section. */
     Dwarf_Addr     addr;
 
-    /* SN-Carlos: Section type. */
+    /* Section type. */
     Dwarf_Unsigned type;
 
     /* Size in bytes of the section. */
@@ -573,7 +573,7 @@ struct Dwarf_Obj_Access_Section_s {
         to strtab.  In Elf it is sh_link. */
     Dwarf_Unsigned link;
 
-    /* SN-Carlos: The section header index of the section to which the
+    /* The section header index of the section to which the
        relocation applies. In Elf it is sh_info. */
     Dwarf_Unsigned info;
 
@@ -2948,7 +2948,7 @@ int dwarf_get_version_of_die(Dwarf_Die /*die*/,
     Dwarf_Half * /*version*/,
     Dwarf_Half * /*offset_size*/);
 
-/*  SN-Carlos: Just another entry points for the encoding routines for
+/*  Just another entry points for the encoding routines for
     LEB128 in the DWARF producer. */
 int dwarf_encode_leb128(Dwarf_Unsigned /*val*/,
     int * /*nbytes*/,

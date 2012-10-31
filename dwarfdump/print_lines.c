@@ -65,7 +65,7 @@ print_source_intro(Dwarf_Die cu_die)
     int ores = dwarf_dieoffset(cu_die, &off, &err);
 
     if (ores == DW_DLV_OK) {
-        /* SN-Carlos: Check if print of <pc> address is needed. */
+        /* Check if print of <pc> address is needed. */
         if (line_print_pc) {
             printf("Source lines (from CU-DIE at .debug_info offset 0x%" 
                 DW_PR_XZEROS DW_PR_DUx "):\n",
@@ -163,7 +163,7 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
         char *padding;
         struct esb_s lastsrc;
         esb_constructor(&lastsrc);
-        /* SN-Carlos: Padding for a nice layout */
+        /* Padding for a nice layout */
         padding = line_print_pc ? "            " : "";
         if (do_print_dwarf) {
             print_source_intro(cu_die);
@@ -174,7 +174,7 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
                     /* srcfiles= */ 0, /* cnt= */ 0, 
                     /* ignore_die_stack= */TRUE);
             }
-            /* SN-Carlos: Check if print of <pc> address is needed. */
+            /* Check if print of <pc> address is needed. */
             printf("\n");
             printf("%sNS new statement, BB new basic block, "
                 "ET end of text sequence\n",padding);
@@ -360,7 +360,7 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
                 }
             }
             if (do_print_dwarf) {
-                /* SN-Carlos: Check if print of <pc> address is needed. */
+                /* Check if print of <pc> address is needed. */
                 if (line_print_pc) {
                     printf("0x%" DW_PR_XZEROS DW_PR_DUx "  ", pc);
                 }

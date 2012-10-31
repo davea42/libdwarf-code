@@ -49,7 +49,7 @@
 #include "dwarf_harmless.h"
 #include "malloc_check.h"
 
-/* SN-Carlos: For consistency, use the HAVE_LIBELF_H symbol */
+/* For consistency, use the HAVE_LIBELF_H symbol */
 #ifdef HAVE_ELF_H
 #include <elf.h>
 #endif
@@ -146,7 +146,7 @@ add_rela_data( struct Dwarf_Section_s *secdata,
     secdata->dss_reloc_link = doas->link;
 }
 
-/* SN-Carlos: As the tasks performed on a debug related section is the same,
+/* As the tasks performed on a debug related section is the same,
  * in order to make the process of adding a new section (very unlikely) a
  * little bit easy and to reduce the possibility of errors, a simple table
  * build dynamically, will contain the relevant information. */
@@ -211,7 +211,7 @@ _dwarf_setup(Dwarf_Debug dbg, Dwarf_Error * error)
 
     Dwarf_Endianness endianness;
 
-    /* SN-Carlos: Table with pointers to debug sections */
+    /* Table with pointers to debug sections */
     struct Dwarf_Section_s **sections = 0;
 
     Dwarf_Unsigned section_count = 0;
@@ -254,8 +254,8 @@ _dwarf_setup(Dwarf_Debug dbg, Dwarf_Error * error)
 
     section_count = obj->methods->get_section_count(obj->object);
 
-    /* SN-Carlos: Allocate space to record references to debug sections,
-     * that can be referenced by RELA sections in the 'sh_info' field. */
+    /* Allocate space to record references to debug sections, that can
+     * be referenced by RELA sections in the 'sh_info' field. */
     sections = (struct Dwarf_Section_s **)calloc(section_count + 1,
                                          sizeof(struct Dwarf_Section_s *));
     if (!sections) {
@@ -263,9 +263,9 @@ _dwarf_setup(Dwarf_Debug dbg, Dwarf_Error * error)
         return DW_DLV_ERROR;
     }
 
-    /* SN-Carlos: Setup the table that contains the basic information
-     * about the sections that are DWARF related. The  entries are very
-     * unlikely to change very often. */
+    /* Setup the table that contains the basic information about the
+     * sections that are DWARF related. The entries are very unlikely
+     * to change very often. */
     add_debug_section_info(".debug_info",&dbg->de_debug_info,           /*01*/
                 DW_DLE_DEBUG_INFO_DUPLICATE,DW_DLE_DEBUG_INFO_NULL,
                 TRUE);
@@ -365,14 +365,14 @@ _dwarf_setup(Dwarf_Debug dbg, Dwarf_Error * error)
             && strcmp(scn_name, ".symtab")
             && strcmp(scn_name, ".strtab")
             && strncmp(scn_name, ".rela.",6)
-            /* SN-Carlos: For an object file with incorrect rela section name,
+            /* For an object file with incorrect rela section name,
              * readelf prints correct debug information, as the tool takes the
              * section type instead of the section name. Include the incorrect
              * section name, until this test uses the section type. */
             && doas.type != SHT_RELA)  {
             continue;
         } else {
-            /* SN-Carlos: Search the debug sections table for a match */
+            /* Search the debug sections table for a match */
             struct dbg_sect_s *section;
             int index;
             int found_match = FALSE;
@@ -394,11 +394,11 @@ _dwarf_setup(Dwarf_Debug dbg, Dwarf_Error * error)
                 }
             }
             if (!found_match) {
-                /* SN-Carlos: For an object file with incorrect rela section
-                * name, the 'readelf' tool, prints correct debug information,
-                * as the tool takes the section type instead of the section
-                * name. If the current section is a RELA one and the 'sh_info'
-                * refers to a debug section, add the relocation data. */
+                /* For an object file with incorrect rela section name,
+                 * the 'readelf' tool, prints correct debug information,
+                 * as the tool takes the section type instead of the section
+                 * name. If the current section is a RELA one and the 'sh_info'
+                 * refers to a debug section, add the relocation data. */
                 if (doas.type == SHT_RELA && sections[doas.info]) {
                     add_rela_data(sections[doas.info],&doas,section_index);
                 }
@@ -407,7 +407,7 @@ _dwarf_setup(Dwarf_Debug dbg, Dwarf_Error * error)
         }
     }
 
-    /* SN-Carlos: Free table with section information. */
+    /* Free table with section information. */
     if (sections){
         free(sections);
     }

@@ -45,7 +45,7 @@ $Header: /plroot/cmplrs.src/v7.4.5m/.RCS/PL/dwarfdump/RCS/print_reloc.c,v 1.11 2
 /* Definitions for X86_64 */
 #define DWARF_RELOC_X86_64
 
-/* SN-Carlos: Include the definitions only in the case of Windows */
+/* Include the definitions only in the case of Windows */
 #ifdef WIN32
 /* Relocation types for AMD x86-64 architecture */
 #define R_X86_64_NONE             0 /* No reloc */
