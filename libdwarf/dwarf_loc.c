@@ -66,11 +66,11 @@ read_encoded_addr(Dwarf_Small *loc_ptr, Dwarf_Debug dbg,
     Dwarf_Small op = *loc_ptr;
     Dwarf_Unsigned operand = 0;
     len++;
-    if(op == 0) {
+    if (op == 0) {
         /* FIXME: should be CU specific. */
         op = dbg->de_pointer_size;
     }
-    switch(op) {
+    switch (op) {
     case 1:
          *val_out = *loc_ptr;
          len++;
@@ -525,7 +525,7 @@ _dwarf_get_locdesc(Dwarf_Debug dbg,
                 int length = 0;
                 int reares = read_encoded_addr(loc_ptr,dbg,&operand1,
                    &length,error);
-                if(reares != DW_DLV_OK) {
+                if (reares != DW_DLV_OK) {
                     /*  Oops. The caller will notice and
                         will issue DW_DLV_ERROR. */
                     return NULL;

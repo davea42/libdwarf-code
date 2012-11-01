@@ -52,10 +52,10 @@ skipunder(const char *v)
 {
     const char *cp = v;
     int undercount = 0;
-    for(  ; *cp ; ++cp) {
-        if( *cp == '_') {
+    for (; *cp ; ++cp) {
+        if (*cp == '_') {
             ++undercount;
-            if(undercount == 2) {
+            if (undercount == 2) {
                 return cp+1;
             }
         }
@@ -71,13 +71,13 @@ ellipname(int res, int val_in, const char *v,const char *ty,int printonerr)
         DWARF_CHECK_COUNT(dwarf_constants_result,1);
     }
 #endif
-    if(res != DW_DLV_OK) {
+    if (res != DW_DLV_OK) {
         char buf[100];
         char *n;
         snprintf(buf,sizeof(buf),"<Unknown %s value 0x%x>",ty,val_in);
         /* Capture any name error in DWARF constants */
 #ifndef TRIVIAL_NAMING
-        if(printonerr && check_dwarf_constants && checking_this_compiler()) {
+        if (printonerr && check_dwarf_constants && checking_this_compiler()) {
             if (check_verbose_mode) {
                 fprintf(stderr,"%s of %d (0x%x) is unknown to dwarfdump. "
                     "Continuing. \n",ty,val_in,val_in );
@@ -87,7 +87,7 @@ ellipname(int res, int val_in, const char *v,const char *ty,int printonerr)
         }
 #else
         /* This is for the tree-generation, not dwarfdump itself. */
-        if(printonerr) {
+        if (printonerr) {
             fprintf(stderr,"%s of %d (0x%x) is unknown to dwarfdump. "
                 "Continuing. \n",ty,val_in,val_in );
         }
@@ -95,7 +95,7 @@ ellipname(int res, int val_in, const char *v,const char *ty,int printonerr)
         n = makename(buf);
         return n;
     }
-    if(ellipsis) {
+    if (ellipsis) {
         return skipunder(v);
     }
     return v;

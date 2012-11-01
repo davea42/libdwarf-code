@@ -51,11 +51,11 @@
 static int
 is_path_separator(Dwarf_Small s)
 {
-    if(s == '/') {
+    if (s == '/') {
         return 1;
     }
 #ifdef HAVE_WINDOWS_PATH
-    if(s == '\\') {
+    if (s == '\\') {
         return 1;
     }
 #endif
@@ -71,15 +71,15 @@ static int
 file_name_is_full_path(Dwarf_Small  *fname)
 {
     Dwarf_Small firstc = *fname;
-    if(is_path_separator(firstc)) {
+    if (is_path_separator(firstc)) {
         /* Full path. */
         return 1;
     }
-    if(!firstc) {
+    if (!firstc) {
         return 0;
     }
 #ifdef HAVE_WINDOWS_PATH
-    if((firstc >= 'A' && firstc <= 'Z') ||
+    if ((firstc >= 'A' && firstc <= 'Z') ||
         (firstc >= 'a' && firstc <= 'z')) {
 
         Dwarf_Small secondc = fname[1];
@@ -247,7 +247,7 @@ dwarf_srcfiles(Dwarf_Die die,
         /*  dir_name can be NULL if there is no DW_AT_comp_dir. 
             file_name == fe->lte_filename aside from char signedness.
         */
-        if(dir_name == 0 || file_name_is_full_path(fe->lte_filename)) { 
+        if (dir_name == 0 || file_name_is_full_path(fe->lte_filename)) { 
             /*  This is safe because dwarf_dealloc is careful to not
                 dealloc strings which are part of the raw .debug_* data.  
             */
@@ -847,7 +847,7 @@ _dwarf_internal_srclines(Dwarf_Die die,
                 }
                 }
                 break;
-            } /* End switch(opcode) */
+            } /* End switch (opcode) */
 
         } else if (type == LOP_EXTENDED) {
             Dwarf_Unsigned utmp3 = 0;
@@ -996,7 +996,7 @@ _dwarf_internal_srclines(Dwarf_Die die,
                     other than we know now many bytes it is
                     and the op code and the bytes of operand. */
                 Dwarf_Unsigned remaining_bytes = instr_length -1;
-                if(instr_length < 1 || remaining_bytes > DW_LNE_LEN_MAX) {
+                if (instr_length < 1 || remaining_bytes > DW_LNE_LEN_MAX) {
                     dwarf_free_line_table_prefix(&prefix);
                     _dwarf_error(dbg, error,
                         DW_DLE_LINE_EXT_OPCODE_BAD);
@@ -1657,7 +1657,7 @@ print_header_issue(Dwarf_Debug dbg,
     Dwarf_Small *data_start,
     int *err_count_out)
 {
-    if(!err_count_out) {
+    if (!err_count_out) {
         return;
     }
     /* Are we in verbose mode */
@@ -1668,7 +1668,7 @@ print_header_issue(Dwarf_Debug dbg,
         fflush(stdout);
         printf("\n*** DWARF CHECK: "
             ".debug_line: %s", specific_msg);
-        if( data_start >= dbg->de_debug_line.dss_data && 
+        if (data_start >= dbg->de_debug_line.dss_data && 
             (data_start < (dbg->de_debug_line.dss_data + 
             dbg->de_debug_line.dss_size))) {
             Dwarf_Unsigned off = data_start - dbg->de_debug_line.dss_data;
@@ -1731,8 +1731,8 @@ dwarf_read_line_table_prefix(Dwarf_Debug dbg,
     Dwarf_Unsigned files_malloc = 0;
     Dwarf_Small *line_ptr_end = 0;
     Dwarf_Small *lp_begin = 0;
-    if(bogus_bytes_ptr) *bogus_bytes_ptr = 0;
-    if(bogus_bytes) *bogus_bytes= 0;
+    if (bogus_bytes_ptr) *bogus_bytes_ptr = 0;
+    if (bogus_bytes) *bogus_bytes= 0;
 
     prefix_out->pf_line_ptr_start = line_ptr;
     /* READ_AREA_LENGTH updates line_ptr for consumed bytes */
@@ -1781,7 +1781,7 @@ dwarf_read_line_table_prefix(Dwarf_Debug dbg,
     prefix_out->pf_default_is_stmt = *(unsigned char *) line_ptr;
     line_ptr = line_ptr + sizeof(Dwarf_Small);
 
-    if(version == CURRENT_VERSION_STAMP4) { 
+    if (version == CURRENT_VERSION_STAMP4) { 
         prefix_out->pf_maximum_ops_per_instruction = 
             *(unsigned char *) line_ptr;
         line_ptr = line_ptr + sizeof(Dwarf_Small);
@@ -1816,8 +1816,8 @@ dwarf_read_line_table_prefix(Dwarf_Debug dbg,
             int mismatch = memcmp(dwarf_standard_opcode_operand_count,
                 prefix_out->pf_opcode_length_table,
                 STANDARD_OPERAND_COUNT_DWARF3);
-            if(mismatch) {
-                if(err_count_out) {
+            if (mismatch) {
+                if (err_count_out) {
                     print_header_issue(dbg,
                         "standard-operands did not match", 
                         data_start,err_count_out);
@@ -1825,7 +1825,7 @@ dwarf_read_line_table_prefix(Dwarf_Debug dbg,
                 mismatch = memcmp(dwarf_arm_standard_opcode_operand_count,
                     prefix_out->pf_opcode_length_table,
                     STANDARD_OPERAND_COUNT_DWARF3);
-                if(!mismatch && err_count_out) {
+                if (!mismatch && err_count_out) {
                     print_header_issue(dbg,
                         "arm (incorrect) operands in use", 
                         data_start,err_count_out);
@@ -1833,7 +1833,7 @@ dwarf_read_line_table_prefix(Dwarf_Debug dbg,
             }
             if (!mismatch) {
                 if (version == 2) {
-                    if(err_count_out) {
+                    if (err_count_out) {
                         print_header_issue(dbg,
                             "standard DWARF3 operands matched, but is DWARF2 linetable", 
                             data_start,err_count_out);
@@ -1851,8 +1851,8 @@ dwarf_read_line_table_prefix(Dwarf_Debug dbg,
                     prefix_out->pf_opcode_length_table,
                     STANDARD_OPERAND_COUNT_DWARF2);
 
-                if(mismatch) {
-                    if(err_count_out) {
+                if (mismatch) {
+                    if (err_count_out) {
                         print_header_issue(dbg,
                             "standard-operands-lengths did not match", 
                             data_start,err_count_out);
@@ -1860,7 +1860,7 @@ dwarf_read_line_table_prefix(Dwarf_Debug dbg,
                     mismatch = memcmp(dwarf_arm_standard_opcode_operand_count,
                         prefix_out->pf_opcode_length_table,
                         STANDARD_OPERAND_COUNT_DWARF2);
-                    if(!mismatch && err_count_out) {
+                    if (!mismatch && err_count_out) {
                         print_header_issue(dbg,
                             "arm (incorrect) operand in use", 
                             data_start,err_count_out);
@@ -2005,7 +2005,7 @@ dwarf_read_line_table_prefix(Dwarf_Debug dbg,
     lp_begin = prefix_out->pf_line_prologue_start +
         prefix_out->pf_prologue_length;
     if (line_ptr != lp_begin) {
-        if(line_ptr > lp_begin) { 
+        if (line_ptr > lp_begin) { 
             _dwarf_error(dbg, err, DW_DLE_LINE_PROLOG_LENGTH_BAD);
             return (DW_DLV_ERROR);
         } else {
@@ -2013,10 +2013,10 @@ dwarf_read_line_table_prefix(Dwarf_Debug dbg,
                 bytes are really part of the instruction
                 stream.  The prefix_out->pf_prologue_length is
                 wrong (12 too high).  */
-            if(bogus_bytes_ptr) {
+            if (bogus_bytes_ptr) {
                 *bogus_bytes_ptr = line_ptr;
             }
-            if(bogus_bytes) {
+            if (bogus_bytes) {
                 /*  How far off things are. We expect the
                     value 12 ! */
                 *bogus_bytes = (lp_begin - line_ptr);

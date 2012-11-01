@@ -170,7 +170,7 @@ main(int argc, char **argv)
         print_usage_message(argv[0],usage);
         exit(FAILED);
     }
-    if(standard_flag) {
+    if (standard_flag) {
         table_rows = STD_TAG_TABLE_ROWS;
         table_columns = STD_TAG_TABLE_COLUMNS;
     } else {
@@ -197,12 +197,12 @@ main(int argc, char **argv)
             /* Reached normal eof */
             break;
         }
-        if(standard_flag) {
+        if (standard_flag) {
             if (tag >= table_rows ) {
                 bad_line_input("tag value exceeds standard table size");
             }
         } else {
-            if(current_row >= table_rows) {
+            if (current_row >= table_rows) {
                 bad_line_input("too many extended table rows.");
             }
             tag_tree_combination_table[current_row][0] = tag;
@@ -213,7 +213,7 @@ main(int argc, char **argv)
         }
         nTagLoc = 1;
         while (num != 0xffffffff) {
-            if(standard_flag) {
+            if (standard_flag) {
                 int idx = num / BITS_PER_WORD;
                 int bit = num % BITS_PER_WORD;
     
@@ -224,7 +224,7 @@ main(int argc, char **argv)
                 }
                 tag_tree_combination_table[tag][idx] |= (1 << bit);
             } else {
-                if(nTagLoc >= table_columns) {
+                if (nTagLoc >= table_columns) {
                     printf("Attempting to use colum %d, max is %d\n",
                         nTagLoc,table_columns);
                     bad_line_input("too many subTAGs, table incomplete.");
@@ -270,7 +270,7 @@ main(int argc, char **argv)
             fprintf(fileOut,"/* %u %-37s*/\n", k, name);
         }
         fprintf(fileOut,"    { ");
-        for(j = 0; j < table_columns; ++j ) {
+        for (j = 0; j < table_columns; ++j ) {
             fprintf(fileOut,"0x%08x,",tag_tree_combination_table[i][j]);
         }
         fprintf(fileOut,"},\n");

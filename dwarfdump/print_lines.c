@@ -80,7 +80,7 @@ static void
 record_line_error(const char *where, Dwarf_Error err)
 {
     char tmp_buff[500];
-    if(check_lines && checking_this_compiler()) {
+    if (check_lines && checking_this_compiler()) {
         snprintf(tmp_buff, sizeof(tmp_buff),
             "Error getting line details calling %s dwarf error is %s",
             where,dwarf_errmsg(err));
@@ -127,7 +127,7 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
             /* ignore_die_stack= */TRUE);
         DWARF_CHECK_COUNT(lines_result,1);
         lres = dwarf_print_lines(cu_die, &err,&errcount);
-        if(errcount > 0) {
+        if (errcount > 0) {
             DWARF_ERROR_COUNT(lines_result,errcount);
             DWARF_CHECK_COUNT(lines_result,(errcount-1));
         }
@@ -137,10 +137,10 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
         return;
     }
     
-    if(check_lines && checking_this_compiler()) {
+    if (check_lines && checking_this_compiler()) {
         DWARF_CHECK_COUNT(lines_result,1);
         dwarf_check_lineheader(cu_die,&line_errs);
-        if(line_errs > 0) {
+        if (line_errs > 0) {
             DWARF_CHECK_ERROR_PRINT_CU();
             DWARF_ERROR_COUNT(lines_result,line_errs);
             DWARF_CHECK_COUNT(lines_result,(line_errs-1));
@@ -211,7 +211,7 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
                 }
             }
 
-            if(check_lines && checking_this_compiler()) {
+            if (check_lines && checking_this_compiler()) {
                 DWARF_CHECK_COUNT(lines_result,1);
             }
             filename = "<unknown>";
@@ -278,7 +278,7 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
                             table if try to match the pc value with 
                             one of those ranges.
                         */
-                        if(check_lines && checking_this_compiler()) {
+                        if (check_lines && checking_this_compiler()) {
                             DWARF_CHECK_COUNT(lines_result,1);
                         }
                         if (FindAddressInBucketGroup(pLinkonceInfo,pc)){
@@ -290,7 +290,7 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
                                 symbols and no stripping */
                             if (pc) {
                                 char addr_tmp[100];
-                                if(check_lines && checking_this_compiler()) {
+                                if (check_lines && checking_this_compiler()) {
                                     snprintf(addr_tmp,sizeof(addr_tmp),
                                         ".debug_line: Address"
                                         " 0x%" DW_PR_XZEROS DW_PR_DUx
@@ -391,7 +391,7 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
             } else if (nsres == DW_DLV_ERROR) {
                 print_error(dbg, "lineblock failed", nsres, err);
             }
-            if(do_print_dwarf) {
+            if (do_print_dwarf) {
                 Dwarf_Bool prologue_end = 0;
                 Dwarf_Bool epilogue_begin = 0;
                 Dwarf_Unsigned isa = 0;
@@ -403,16 +403,16 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
                     print_error(dbg, "dwarf_prologue_end_etc() failed",
                         disres, err);
                 }
-                if(prologue_end) {
+                if (prologue_end) {
                     printf(" PE");
                 }
-                if(epilogue_begin) {
+                if (epilogue_begin) {
                     printf(" EB");
                 }
-                if(isa) {
+                if (isa) {
                     printf(" IS=0x%" DW_PR_DUx, isa);
                 }
-                if(discriminator) {
+                if (discriminator) {
                     printf(" DI=0x%" DW_PR_DUx, discriminator);
                 }
             }
@@ -427,7 +427,7 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
                 esb_append(&urs, " uri: \"");
                 translate_to_uri(filename,&urs);
                 esb_append(&urs,"\"");
-                if(do_print_dwarf) {
+                if (do_print_dwarf) {
                     printf("%s",esb_get_string(&urs));
                 }
                 esb_destructor(&urs);

@@ -74,7 +74,7 @@ print_strings(Dwarf_Debug dbg)
     /*  An inability to find the section is not necessarily
         a real error, so do not report error unless we've
         seen a real record. */
-    if(sres == DW_DLV_ERROR && offset != 0) {
+    if (sres == DW_DLV_ERROR && offset != 0) {
         print_error(dbg, "dwarf_get_str failure", sres, err);
     }
 }

@@ -72,7 +72,7 @@
         Dwarf_Word sleblen; \
         value = _dwarf_decode_s_leb128(ptr,&sleblen); \
         ptr += sleblen; \
-    } while(0)
+    } while (0)
 
 
 /*
@@ -220,7 +220,7 @@ typedef Dwarf_Unsigned BIGGEST_UINT;
 do {                                                         \
     READ_UNALIGNED(r_dbg,w_target,r_targtype,                \
     rw_src_data_p, ORIGINAL_DWARF_OFFSET_SIZE);              \
-    if(w_target == DISTINGUISHED_VALUE) {                    \
+    if (w_target == DISTINGUISHED_VALUE) {                   \
         /* dwarf3 64bit extension */                         \
         w_length_size  = DISTINGUISHED_VALUE_OFFSET_SIZE;    \
         rw_src_data_p += ORIGINAL_DWARF_OFFSET_SIZE;         \
@@ -229,7 +229,7 @@ do {                                                         \
             rw_src_data_p, DISTINGUISHED_VALUE_OFFSET_SIZE); \
         rw_src_data_p += DISTINGUISHED_VALUE_OFFSET_SIZE;    \
     } else {                                                 \
-        if(w_target == 0 && r_dbg->de_big_endian_object) {   \
+        if (w_target == 0 && r_dbg->de_big_endian_object) {  \
             /* Might be IRIX: We have to distinguish between   */    \
             /* 32-bit DWARF format and IRIX 64-bit DWARF format. */  \
             if (r_dbg->de_length_size == 8) {                        \
@@ -253,7 +253,7 @@ do {                                                         \
             w_length_size  = ORIGINAL_DWARF_OFFSET_SIZE;             \
             rw_src_data_p += w_length_size;                          \
         }                                                            \
-    } } while(0)
+    } } while (0)
 
 Dwarf_Unsigned
 _dwarf_decode_u_leb128(Dwarf_Small * leb128,

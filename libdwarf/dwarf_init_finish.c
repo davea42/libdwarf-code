@@ -354,7 +354,7 @@ _dwarf_setup(Dwarf_Debug dbg, Dwarf_Error * error)
         res = obj->methods->get_section_info(obj->object, 
             section_index, 
             &doas, &err);
-        if(res == DW_DLV_ERROR){
+        if (res == DW_DLV_ERROR){
             DWARF_DBG_ERROR(dbg, err, DW_DLV_ERROR);
         }
 
@@ -529,22 +529,22 @@ _dwarf_load_section(Dwarf_Debug dbg,
     res = o->methods->load_section(
         o->object, section->dss_index, 
         &section->dss_data, &err);
-    if(res == DW_DLV_ERROR){
+    if (res == DW_DLV_ERROR){
         DWARF_DBG_ERROR(dbg, err, DW_DLV_ERROR);
     }
-    if(_dwarf_apply_relocs == 0) {
+    if (_dwarf_apply_relocs == 0) {
         return res;
     }
-    if(section->dss_reloc_size == 0) {
+    if (section->dss_reloc_size == 0) {
         return res;
     }
-    if(!o->methods->relocate_a_section) {
+    if (!o->methods->relocate_a_section) {
         return res;
     }
     /*apply relocations */
     res = o->methods->relocate_a_section( o->object, section->dss_index,
         dbg, &err);
-    if(res == DW_DLV_ERROR) {
+    if (res == DW_DLV_ERROR) {
         DWARF_DBG_ERROR(dbg, err, DW_DLV_ERROR);
     }
     return res;

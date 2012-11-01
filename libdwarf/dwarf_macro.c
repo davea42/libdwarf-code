@@ -145,7 +145,7 @@ _dwarf_macro_stack_push_index(Dwarf_Debug dbg, Dwarf_Signed indx,
             ms->was_fault = 1;
             return DW_DLV_ERROR;
         }
-        if(ms->st_base) {
+        if (ms->st_base) {
             memcpy(newbase, ms->st_base,
                 ms->next_to_use * sizeof(Dwarf_Signed));
             dwarf_dealloc(dbg, ms->st_base, DW_DLA_STRING);

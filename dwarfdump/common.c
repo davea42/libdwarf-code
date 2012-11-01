@@ -61,7 +61,7 @@ print_version_details(const char * name,int alwaysprint)
         "[%s %s %s]",__DATE__,__TIME__,acType);
     printf("%s %s\n",name,acVersion);
 #else  /* !WIN32 */
-    if(alwaysprint) {
+    if (alwaysprint) {
         printf("%s\n",DWARFDUMP_VERSION); 
     }
 #endif /* WIN32 */

@@ -161,7 +161,7 @@ dwarf_elf_init_file_ownership(dwarf_elf_handle elf_file_pointer,
         libdwarf_owns_elf,
         &binary_interface,
         &err);
-    if(res != DW_DLV_OK){
+    if (res != DW_DLV_OK){
         DWARF_DBG_ERROR(NULL, err, DW_DLV_ERROR);
     }
 
@@ -169,7 +169,7 @@ dwarf_elf_init_file_ownership(dwarf_elf_handle elf_file_pointer,
         saving  the binary interface in 'ret-dbg' */
     res = dwarf_object_init(binary_interface, errhand, errarg, 
         ret_dbg, error);
-    if(res != DW_DLV_OK){
+    if (res != DW_DLV_OK){
         dwarf_elf_object_access_finish(binary_interface);
     }
     return res;

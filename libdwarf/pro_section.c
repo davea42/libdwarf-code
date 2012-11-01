@@ -613,7 +613,7 @@ _dwarf_pro_generate_debugline(Dwarf_P_Debug dbg, Dwarf_Error * error)
 
     /* length of table specifying # of opnds */
     prolog_size += dbg->de_line_inits.pi_opcode_base-1;
-    if(dbg->de_line_inits.pi_version == DW_LINE_VERSION4) {
+    if (dbg->de_line_inits.pi_version == DW_LINE_VERSION4) {
         /* For maximum_operations_per_instruction. */
         prolog_size += sizeof_ubyte(dbg);
     }
@@ -654,7 +654,7 @@ _dwarf_pro_generate_debugline(Dwarf_P_Debug dbg, Dwarf_Error * error)
         sizeof(db), sizeof(Dwarf_Ubyte));
     data += sizeof(Dwarf_Ubyte);
 
-    if(dbg->de_line_inits.pi_version == DW_LINE_VERSION4) {
+    if (dbg->de_line_inits.pi_version == DW_LINE_VERSION4) {
         db =  dbg->de_line_inits.pi_maximum_operations_per_instruction;
         WRITE_UNALIGNED(dbg, (void *) data, (const void *) &db,
             sizeof(db), sizeof(Dwarf_Ubyte));
@@ -888,7 +888,7 @@ _dwarf_pro_generate_debugline(Dwarf_P_Debug dbg, Dwarf_Error * error)
                 sum_bytes += writelen;
                 prevline->dpl_basic_block = curline->dpl_basic_block;
             }
-            if(curline->dpl_discriminator) {
+            if (curline->dpl_discriminator) {
                 /*  This is dwarf4, but because it is an extended op
                     not a standard op,
                     we allow it without testing version.
@@ -1212,7 +1212,7 @@ _dwarf_pro_generate_debugframe(Dwarf_P_Debug dbg, Dwarf_Error * error)
             /*  IRIX/MIPS extension:
                 Using fde offset, generate DW_AT_MIPS_fde attribute for the
                 die corresponding to this fde.  */
-            if(_dwarf_pro_add_AT_fde(dbg, curfde->fde_die, cur_off,  
+            if (_dwarf_pro_add_AT_fde(dbg, curfde->fde_die, cur_off,  
                 error) < 0) {
                 return -1;
             }
@@ -1348,7 +1348,7 @@ _dwarf_pro_generate_debugframe(Dwarf_P_Debug dbg, Dwarf_Error * error)
         }
 
         curinst = curfde->fde_inst;
-        if(curfde->fde_block) {
+        if (curfde->fde_block) {
             unsigned long size = curfde->fde_inst_block_size;
             memcpy((void *) data, (const void *) curfde->fde_block, size);
             data += size;

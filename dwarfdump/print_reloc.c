@@ -581,14 +581,14 @@ print_reloc_information_64(int section_no, Dwarf_Small * buf,
         /* This works for the Elf64_Rel in linux */
         Elf64_Rel *p = (Elf64_Rel *) (buf + off);
         char *name = 0;
-        if(sym_data ) {
+        if (sym_data ) {
             size_t index = ELF64_R_SYM(p->r_info) - 1;
-            if(index < sym_data_entry_count) {
+            if (index < sym_data_entry_count) {
                 name = sym_data[index].name;
             }
         } else if (sym_data_64) {
             size_t index = ELF64_R_SYM(p->r_info) - 1;
-            if(index < sym_data_64_entry_count) {
+            if (index < sym_data_64_entry_count) {
                 name = sym_data_64[index].name;
             }
         }
@@ -597,7 +597,7 @@ print_reloc_information_64(int section_no, Dwarf_Small * buf,
             section name as a reference for the name.*/
         if (!name || !name[0]) {
             size_t index = ELF64_R_SYM(p->r_info) - 1;
-            if(index < sym_data_64_entry_count) {
+            if (index < sym_data_64_entry_count) {
                 SYM64 *sym_64 = &sym_data_64[index];
                 if (sym_64->type == STT_SECTION &&
                     sym_64->shndx < scn_names_count) {
@@ -605,7 +605,7 @@ print_reloc_information_64(int section_no, Dwarf_Small * buf,
                 }
             }
         }
-        if(!name || !name[0]) {
+        if (!name || !name[0]) {
             name = "<no name>";
         }
     
@@ -626,18 +626,18 @@ print_reloc_information_64(int section_no, Dwarf_Small * buf,
             which prints here, as only one really used with dwarf */
         Elf64_Rel *p = (Elf64_Rel *) (buf + off);
         char *name = 0;
-        if(sym_data ) {
+        if (sym_data ) {
             size_t index = p->r_sym - 1;
-            if(index < sym_data_entry_count) {
+            if (index < sym_data_entry_count) {
                 name = sym_data[index].name;
             }
         } else if (sym_data_64) {
             size_t index = p->r_sym - 1;
-            if(index < sym_data_64_entry_count) {
+            if (index < sym_data_64_entry_count) {
                 name = sym_data_64[index].name;
             }
         }
-        if(!name || !name[0]) {
+        if (!name || !name[0]) {
             name = "<no name>";
         } 
         printf("%5" DW_PR_DUu " %-26s <%3ld> %s\n",
@@ -672,9 +672,9 @@ print_reloc_information_32(int section_no, Dwarf_Small * buf,
         Elf32_Rel *p = (Elf32_Rel *) (buf + off);
         char *name = 0;
 
-        if(sym_data) {
+        if (sym_data) {
             size_t index = ELF32_R_SYM(p->r_info) - 1;
-            if(index < sym_data_entry_count) {
+            if (index < sym_data_entry_count) {
                 name = sym_data[index].name;
             }
         }
@@ -683,7 +683,7 @@ print_reloc_information_32(int section_no, Dwarf_Small * buf,
             section name as a reference for the name. */
         if (!name || !name[0]) {
             size_t index = ELF32_R_SYM(p->r_info) - 1;
-            if(index < sym_data_entry_count) {
+            if (index < sym_data_entry_count) {
                 SYM *sym = &sym_data[index];
                 if (sym->type == STT_SECTION&&
                     sym->shndx < scn_names_count) {
@@ -691,7 +691,7 @@ print_reloc_information_32(int section_no, Dwarf_Small * buf,
                 }
             }
         }
-        if(!name || !name[0]) {
+        if (!name || !name[0]) {
             name = "<no name>";
         }
         if (SHT_RELA == type) {

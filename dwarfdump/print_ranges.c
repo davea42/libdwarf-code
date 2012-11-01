@@ -70,7 +70,7 @@ print_ranges(Dwarf_Debug dbg)
         to use dense form here. */
     wasdense = dense;
     dense = 0;
-    for(;;) {
+    for (;;) {
         Dwarf_Ranges *rangeset = 0;
         Dwarf_Signed rangecount = 0;
         Dwarf_Unsigned bytecount = 0;
@@ -79,7 +79,7 @@ print_ranges(Dwarf_Debug dbg)
             the older call here. */
         int rres = dwarf_get_ranges(dbg,off,&rangeset,
             &rangecount,&bytecount,&err);
-        if(rres == DW_DLV_OK) {
+        if (rres == DW_DLV_OK) {
             char *val = 0;
             printf(" Ranges group %d:\n",group_number);
             esb_empty_string(&esb_string);

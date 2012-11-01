@@ -143,11 +143,11 @@ dwarf_get_aranges_list(Dwarf_Debug dbg,
         }
 
         address_size = *(Dwarf_Small *) arange_ptr;
-        if(address_size  > sizeof(Dwarf_Addr)) {
+        if (address_size  > sizeof(Dwarf_Addr)) {
             _dwarf_error(dbg, error, DW_DLE_ADDRESS_SIZE_ERROR);
             return DW_DLV_ERROR;
         }
-        if(address_size  ==  0) {
+        if (address_size  ==  0) {
             _dwarf_error(dbg, error, DW_DLE_ADDRESS_SIZE_ERROR);
             return DW_DLV_ERROR;
         }
@@ -160,7 +160,7 @@ dwarf_get_aranges_list(Dwarf_Debug dbg,
             size in bytes of a segment descriptor on the target
             system. */
         segment_size = *(Dwarf_Small *) arange_ptr;
-        if(segment_size > sizeof(Dwarf_Addr)) {
+        if (segment_size > sizeof(Dwarf_Addr)) {
             _dwarf_error(dbg, error, DW_DLE_SEGMENT_SIZE_BAD);
             return (DW_DLV_ERROR);
         }
@@ -183,7 +183,7 @@ dwarf_get_aranges_list(Dwarf_Debug dbg,
                 read is a segment selector (new in DWARF4).
                 Surprising since the segment_size was always there
                 in the table header! */
-            if(version == 4 && segment_size != 0) {
+            if (version == 4 && segment_size != 0) {
                 READ_UNALIGNED(dbg, segment_selector, Dwarf_Unsigned,
                     arange_ptr, segment_size);
                 arange_ptr += address_size;
@@ -316,7 +316,7 @@ dwarf_get_aranges(Dwarf_Debug dbg,
     }
 
     res = dwarf_get_aranges_list(dbg,&head_chain,&arange_count,error);
-    if(res != DW_DLV_OK) {
+    if (res != DW_DLV_OK) {
         return res;
     }
 
@@ -387,7 +387,7 @@ _dwarf_get_aranges_addr_offsets(Dwarf_Debug dbg,
     }
 
     res = dwarf_get_aranges_list(dbg,&head_chain,&arange_count,error);
-    if(res != DW_DLV_OK) {
+    if (res != DW_DLV_OK) {
         return res;
     }
 
@@ -588,10 +588,10 @@ dwarf_get_arange_info_b(Dwarf_Arange arange,
         return (DW_DLV_ERROR);
     }
     
-    if(segment != NULL) {
+    if (segment != NULL) {
         *segment = arange->ar_segment_selector;
     }
-    if(segment_entry_size != NULL) {
+    if (segment_entry_size != NULL) {
         *segment_entry_size = arange->ar_segment_selector_size;
     }
     if (start != NULL)

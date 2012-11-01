@@ -414,6 +414,8 @@ struct esb_s;
 extern Dwarf_Die current_cu_die_for_print_frames; /* This is
     an awful hack, making current_cu_die_for_print_frames public. 
     But it enables cleaning up (doing all dealloc needed). */
+/* defined in print_sections.c, die for the current compile unit, 
+   used in get_fde_proc_name() */
 
 extern void printreg(Dwarf_Signed reg,struct dwconf_s *config_data);
 extern void print_frame_inst_bytes(Dwarf_Debug dbg,
@@ -453,6 +455,8 @@ void clean_up_die_esb();
 void clean_up_syms_malloc_data();
 void safe_strcpy(char *out, long outlen, const char *in, long inlen);
 
+/* Detailed attributes encoding space */
+void print_attributes_encoding(Dwarf_Debug dbg);
 
 void print_any_harmless_errors(Dwarf_Debug dbg);
 

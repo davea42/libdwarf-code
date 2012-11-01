@@ -317,10 +317,10 @@ translate_to_uri(const char * filename, struct esb_s *out)
 {
     char buf[8];
     const char *cp = 0;
-    for(cp = filename  ; *cp; ++cp) {
+    for (cp = filename  ; *cp; ++cp) {
         char v[2];
         int c = 0xff & (unsigned char)*cp;
-        if(dwarfdump_ctype_table[c]) {
+        if (dwarfdump_ctype_table[c]) {
             v[0] = c;
             v[1] = 0;
             esb_append(out,v);
@@ -336,15 +336,15 @@ static char
 hexdig(char c)
 {
     char ochar = 0;
-    if(c >= 0 && c <= '9') {
+    if (c >= 0 && c <= '9') {
         ochar = (c - '0');
         return ochar;
     }
-    if(c >= 'a' && c <= 'f') {
+    if (c >= 'a' && c <= 'f') {
         ochar = (c - 'a')+10;
         return ochar;
     }
-    if(c >= 'A' && c <= 'F') {
+    if (c >= 'A' && c <= 'F') {
         ochar = (c - 'A')+10;
         return ochar;
     }
@@ -366,9 +366,9 @@ hexpairtochar(const char *cp, char*myochar)
     char ochar = 0;
     int olen = 0;
     char c = cp[0];
-    if(c) {
+    if (c) {
         char c2 = cp[1];
-        if(c2) {
+        if (c2) {
             ochar = tohex(c,c2);
             olen = 2;
         } else {
@@ -396,13 +396,13 @@ translate_from_uri(const char * input, struct esb_s* out)
 {
     const char *cp = input;
     char tempstr[2];
-    for(; *cp; ++cp) {
+    for (; *cp; ++cp) {
         char c = *cp;
-        if(c == '%') {
+        if (c == '%') {
             int increment = 0;
             char c2 = cp[1];
             // hexpairtochar deals with c2 being NUL.
-            if ( c2  == '%') {
+            if (c2  == '%') {
                 tempstr[0] = c;
                 tempstr[1] = 0;
                 esb_append(out,tempstr);
@@ -436,7 +436,7 @@ mytestfrom(const char * in,const char *expected,int testnum)
     struct esb_s out;
     esb_constructor(&out);
     translate_from_uri(in, &out);
-    if(strcmp(expected, esb_get_string(&out))) {
+    if (strcmp(expected, esb_get_string(&out))) {
         printf(" Fail test %d expected \"%s\" got \"%s\"\n",
             testnum,expected,esb_get_string(&out));
         ++errcnt;
@@ -451,7 +451,7 @@ mytest(char *in,char *expected,int testnum)
     struct esb_s out;
     esb_constructor(&out);
     translate_to_uri(in, &out);
-    if(strcmp(expected, esb_get_string(&out))) {
+    if (strcmp(expected, esb_get_string(&out))) {
         printf(" Fail test %d expected %s got %s\n",testnum,expected,esb_get_string(&out));
         ++errcnt;
     }
@@ -484,7 +484,7 @@ main()
     mytestfrom("a%","a%",17);
     mytest("%bc","%25bc",18);
 
-    if(errcnt) {
+    if (errcnt) {
         printf("uri errcount ",errcnt);
     }
     return errcnt? 1:0;

@@ -70,13 +70,6 @@ static const char* process_args(int argc, char *argv[]);
 char * program_name;
 static int check_error = 0;
 
-/* Detailed attributes encoding space */
-extern void print_attributes_encoding(Dwarf_Debug dbg);
-
-/* defined in print_sections.c, die for the current compile unit, 
-   used in get_fde_proc_name() */
-extern Dwarf_Die current_cu_die_for_print_frames;
-
 /*  The type of Bucket. */
 #define KIND_RANGES_INFO       1
 #define KIND_SECTIONS_INFO     2
@@ -347,7 +340,7 @@ Dwarf_Error err;
 static void suppress_check_dwarf()
 {
     do_print_dwarf = TRUE;
-    if(do_check_dwarf) {
+    if (do_check_dwarf) {
         fprintf(stderr,"Warning: check flag turned off, "
             "checking and printing are separate.\n");
     }
@@ -503,7 +496,7 @@ main(int argc, char *argv[])
     }
 
 #ifdef HAVE_REGEX
-    if(search_regex_text) {
+    if (search_regex_text) {
         regfree(&search_re);
     }
 #endif
@@ -526,18 +519,18 @@ print_any_harmless_errors(Dwarf_Debug dbg)
     unsigned printcount = 0;
     int res = dwarf_get_harmless_error_list(dbg,LOCAL_PTR_ARY_COUNT,buf,
         &totalcount);
-    if(res == DW_DLV_NO_ENTRY) {
+    if (res == DW_DLV_NO_ENTRY) {
         return;
     }
     if (totalcount > 0) {
         printf("\n*** HARMLESS ERROR COUNT: %u ***\n",totalcount);
     }
-    for(i = 0 ; buf[i]; ++i) {
+    for (i = 0 ; buf[i]; ++i) {
         ++printcount;
         DWARF_CHECK_COUNT(harmless_result,1);
         DWARF_CHECK_ERROR(harmless_result,buf[i]);
     }
-    if(totalcount > printcount) {
+    if (totalcount > printcount) {
         //harmless_result.checks += (totalcount - printcount);
         DWARF_CHECK_COUNT(harmless_result,(totalcount - printcount));
         //harmless_result.errors += (totalcount - printcount);
@@ -546,7 +539,7 @@ print_any_harmless_errors(Dwarf_Debug dbg)
 }
 
 static void
-print_object_header(Elf *elf,Dwarf_Debug dbg,unsigned bitmap)
+print_object_header(Elf *elf,Dwarf_Debug dbg,unsigned local_section_map)
 {
     /* Debug section names to be included in printing */
     #define DW_SECTNAME_DEBUG_INFO     ".debug_info"
@@ -579,10 +572,10 @@ print_object_header(Elf *elf,Dwarf_Debug dbg,unsigned bitmap)
     };
 
     /* Preserve original mapping */
-    unsigned bitmap_wrk;
+    unsigned map_wrk;
 
     /* Check if header information is required */
-    if (bitmap & DW_HDR_HEADER || bitmap == DW_HDR_ALL) {
+    if (local_section_map & DW_HDR_HEADER || local_section_map == DW_HDR_ALL) {
 #ifdef WIN32
     /*  Standard libelf has no function generating the names of the 
         encodings, but this libelf apparently does. */
@@ -667,10 +660,10 @@ print_object_header(Elf *elf,Dwarf_Debug dbg,unsigned bitmap)
     }
     /* Print basic section information is required */
     /* Mask only known sections (debug and text) bits */
-    bitmap_wrk = bitmap;
-    bitmap_wrk &= (~DW_HDR_HEADER);    /* Remove bit Header */
-    bitmap_wrk &= (~DW_HDR_ALL);       /* Remove bit All */
-    if (bitmap_wrk || bitmap == DW_HDR_ALL) {
+    map_wrk = local_section_map;
+    map_wrk &= (~DW_HDR_HEADER);    /* Remove bit Header */
+    map_wrk &= (~DW_HDR_ALL);       /* Remove bit All */
+    if (map_wrk || local_section_map == DW_HDR_ALL) {
         int nCount = 0;
         int section_index = 0;
         int index = 0;
@@ -697,14 +690,14 @@ print_object_header(Elf *elf,Dwarf_Debug dbg,unsigned bitmap)
             if (res == DW_DLV_OK) {
                 print_it = FALSE;
                 /* Use original mapping */
-                if (bitmap == DW_HDR_ALL) {
+                if (local_section_map == DW_HDR_ALL) {
                     /* Print all sections info */
                     print_it = TRUE;
                 } else {
                     /* Check if the section name is a debug section */
                     for (index = 0; *sectnames[index]; ++index) {
                         if (!strcmp(sectnames[index],section_name) &&
-                            (bitmap & (1 << index))) {
+                            (local_section_map & (1 << index))) {
                             print_it = TRUE;
                             break;
                         }
@@ -776,7 +769,7 @@ print_specific_checks_results(Compiler *pCompiler)
         PRINT_CHECK_RESULT("locations",pCompiler, locations_result);
     }
 
-    if(check_harmless) {
+    if (check_harmless) {
         PRINT_CHECK_RESULT("harmless_errors", pCompiler, harmless_result);
     }
 
@@ -1005,7 +998,7 @@ process_one_file(Elf * elf, const char * file_name, int archive,
         config_file_data->cf_same_val);
     dwarf_set_frame_undefined_value(dbg,
         config_file_data->cf_undefined_val);
-    if(config_file_data->cf_address_size) {
+    if (config_file_data->cf_address_size) {
         dwarf_set_default_address_size(dbg, config_file_data->cf_address_size);
     }
     dwarf_set_harmless_error_list_size(dbg,50);
@@ -1039,9 +1032,6 @@ process_one_file(Elf * elf, const char * file_name, int archive,
         /* Build section information */
         build_linkonce_info(dbg);
     }
-
-    /* Just for the moment */
-    check_harmless = FALSE;
 
     if (header_flag) {
         print_object_header(elf,dbg,section_map);
@@ -1159,13 +1149,11 @@ do_all()
         the DWARF spec guarantees the sections are free of random bytes
         in areas not referenced by .debug_info */
     string_flag = TRUE;
-    reloc_flag = TRUE;
     /*  Do not do 
         reloc_flag = TRUE;
         as print_relocs makes no sense for non-elf dwarfdump users.  */  
     static_func_flag = static_var_flag = TRUE;
     type_flag = weakname_flag = TRUE;
-    ranges_flag = TRUE; /* Dump .debug_ranges */
     header_flag = TRUE; /* Dump header info */
 }
 
@@ -1417,7 +1405,7 @@ process_args(int argc, char *argv[])
         case 'H': 
             {
                 int break_val =  atoi(optarg);
-                if(break_val > 0) {
+                if (break_val > 0) {
                     break_after_n_units = break_val;
                 }
             }
@@ -1872,7 +1860,7 @@ process_args(int argc, char *argv[])
             "or the other.  -x abi= ignored.\n");
         config_file_abi = FALSE;
     }
-    if(generic_1200_regs) {
+    if (generic_1200_regs) {
         init_generic_config_1200_regs(&config_file_data);
     }
     if (config_file_abi && (frame_flag || eh_frame_flag)) {
@@ -2462,14 +2450,14 @@ reset_overall_CU_error_data()
 static boolean 
 cu_data_is_set()
 {
-    if(strcmp(CU_name,default_cu_producer) || 
+    if (strcmp(CU_name,default_cu_producer) || 
         strcmp(CU_producer,default_cu_producer)) {
         return 1;
     }
-    if(DIE_offset  || DIE_overall_offset) {
+    if (DIE_offset  || DIE_overall_offset) {
         return 1;
     }
-    if(CU_base_address || CU_high_address) {
+    if (CU_base_address || CU_high_address) {
         return 1;
     }
     return 0;
@@ -2486,7 +2474,7 @@ void PRINT_CU_INFO()
         DIE_offset = DIE_CU_offset;
         DIE_overall_offset = DIE_CU_overall_offset;
     }
-    if(!cu_data_is_set()) {
+    if (!cu_data_is_set()) {
         return;
     }
     printf("\n");
@@ -2504,7 +2492,7 @@ void DWARF_CHECK_COUNT(Dwarf_Check_Categories category, int inc)
 {
     compilers_detected[0].results[category].checks += inc;
     compilers_detected[0].results[total_check_result].checks += inc;
-    if(current_compiler > 0 && current_compiler <  COMPILER_TABLE_MAX) {
+    if (current_compiler > 0 && current_compiler <  COMPILER_TABLE_MAX) {
         compilers_detected[current_compiler].results[category].checks += inc;
         compilers_detected[current_compiler].results[total_check_result].checks
             += inc;
@@ -2516,7 +2504,7 @@ void DWARF_ERROR_COUNT(Dwarf_Check_Categories category, int inc)
 {
     compilers_detected[0].results[category].errors += inc;
     compilers_detected[0].results[total_check_result].errors += inc;
-    if(current_compiler > 0 && current_compiler <  COMPILER_TABLE_MAX) {
+    if (current_compiler > 0 && current_compiler <  COMPILER_TABLE_MAX) {
         compilers_detected[current_compiler].results[category].errors += inc;
         compilers_detected[current_compiler].results[total_check_result].errors
             += inc;
@@ -2588,7 +2576,7 @@ do_uri_translation(const char *s,const char *context)
     esb_constructor(&str);
     translate_from_uri(s,&str);
     if (do_print_uri_in_input) {
-        if(strcmp(s,esb_get_string(&str))) {
+        if (strcmp(s,esb_get_string(&str))) {
             printf("Uri Translation on option %s\n",context);
             printf("    \'%s\'\n",s);
             printf("    \'%s\'\n",esb_get_string(&str));

@@ -1069,7 +1069,7 @@ parse_abi(FILE * stream, const char *fname, const char *abiname,
     static int first_time_done = 0;
     struct comtable_s *comtabp = 0;
 
-    if( nest_level > MAX_NEST_LEVEL) {
+    if (nest_level > MAX_NEST_LEVEL) {
         ++errcount;
         printf("dwarfdump.conf: includeabi nest too deep in %s at line %lu\n",
             fname, lineno);
@@ -1222,7 +1222,7 @@ parse_abi(FILE * stream, const char *fname, const char *abiname,
             unsigned long abilno = conf_internal->beginabi_lineno;
             int ires = 0;
             ires = parseincludeabi(line,fname,lineno, &abiname_inner,comtabp);
-            if(ires == FALSE) {
+            if (ires == FALSE) {
                 return FALSE;
             }
             /*  For the nested abi read, the abi line number must be
