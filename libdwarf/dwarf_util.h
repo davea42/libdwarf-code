@@ -52,11 +52,11 @@
     version of _dwarf_decode_u_leb128() which did
     not work correctly if Dwarf_Word was 64 bits.
 */
-#define DECODE_LEB128_UWORD(ptr, value) \
-    do { \
-        Dwarf_Word uleblen; \
+#define DECODE_LEB128_UWORD(ptr, value)               \
+    do {                                              \
+        Dwarf_Word uleblen;                           \
         value = _dwarf_decode_u_leb128(ptr,&uleblen); \
-        ptr += uleblen; \
+        ptr += uleblen;                               \
     } while (0)
 
 /*
@@ -67,11 +67,11 @@
     not work correctly if Dwarf_Word was 64 bits.
 
 */
-#define DECODE_LEB128_SWORD(ptr, value) \
-    do { \
-        Dwarf_Word sleblen; \
+#define DECODE_LEB128_SWORD(ptr, value)               \
+    do {                                              \
+        Dwarf_Word sleblen;                           \
         value = _dwarf_decode_s_leb128(ptr,&sleblen); \
-        ptr += sleblen; \
+        ptr += sleblen;                               \
     } while (0)
 
 
@@ -80,32 +80,34 @@
     to be no more than 4 bytes long.  Same for both
     signed and unsigned numbers.
 */
-#define SKIP_LEB128_WORD(ptr) \
-    do{ if ((*(ptr++) & 0x80) != 0) { \
-        if ((*(ptr++) & 0x80) != 0) { \
-            if ((*(ptr++) & 0x80) != 0) { \
-                if ((*(ptr++) & 0x80) != 0) { \
-                } \
-            } \
-        } \
-    } } while (0)
+#define SKIP_LEB128_WORD(ptr)                     \
+    do {                                          \
+        if ((*(ptr++) & 0x80) != 0) {             \
+            if ((*(ptr++) & 0x80) != 0) {         \
+                if ((*(ptr++) & 0x80) != 0) {     \
+                    if ((*(ptr++) & 0x80) != 0) { \
+                    }                             \
+                }                                 \
+            }                                     \
+        }                                         \
+    } while (0)
 
 
-#define CHECK_DIE(die, error_ret_value) \
-do {                   \
-    if (die == NULL) { \
-        _dwarf_error(NULL, error, DW_DLE_DIE_NULL); \
-        return(error_ret_value); \
-    } \
-    if (die->di_cu_context == NULL) { \
-        _dwarf_error(NULL, error, DW_DLE_DIE_NO_CU_CONTEXT); \
-        return(error_ret_value); \
-    } \
-    if (die->di_cu_context->cc_dbg == NULL) { \
-        _dwarf_error(NULL, error, DW_DLE_DBG_NULL); \
-        return(error_ret_value); \
-    }  \
-} while (0)
+#define CHECK_DIE(die, error_ret_value)                          \
+    do {                                                         \
+        if (die == NULL) {                                       \
+            _dwarf_error(NULL, error, DW_DLE_DIE_NULL);          \
+            return(error_ret_value);                             \
+        }                                                        \
+        if (die->di_cu_context == NULL) {                        \
+            _dwarf_error(NULL, error, DW_DLE_DIE_NO_CU_CONTEXT); \
+            return(error_ret_value);                             \
+        }                                                        \
+        if (die->di_cu_context->cc_dbg == NULL) {                \
+            _dwarf_error(NULL, error, DW_DLE_DBG_NULL);          \
+            return(error_ret_value);                             \
+        }                                                        \
+    } while (0)
 
 
 /* 
@@ -122,12 +124,12 @@ do {                   \
 typedef Dwarf_Unsigned BIGGEST_UINT;
 
 #ifdef WORDS_BIGENDIAN
-#define READ_UNALIGNED(dbg,dest,desttype, source, length) \
-    do { \
-        BIGGEST_UINT _ltmp = 0;  \
+#define READ_UNALIGNED(dbg,dest,desttype, source, length)                 \
+    do {                                                                  \
+        BIGGEST_UINT _ltmp = 0;                                           \
         dbg->de_copy_word( (((char *)(&_ltmp)) + sizeof(_ltmp) - length), \
-            source, length) ; \
-        dest = (desttype)_ltmp;  \
+            source, length) ;                                             \
+        dest = (desttype)_ltmp;                                           \
     } while (0)
 
 
@@ -139,20 +141,21 @@ typedef Dwarf_Unsigned BIGGEST_UINT;
     on host endianness, not object file endianness.
     The memcpy args are the issue.
 */
-#define SIGN_EXTEND(dest, length)    \
-    do {if (*(Dwarf_Sbyte *)((char *)&dest + sizeof(dest) - length) < 0) {\
-        memcpy((char *)&dest, "\xff\xff\xff\xff\xff\xff\xff\xff", \
-            sizeof(dest) - length);  \
-        }                            \
+#define SIGN_EXTEND(dest, length)                                          \
+    do {                                                                   \
+        if (*(Dwarf_Sbyte *)((char *)&dest + sizeof(dest) - length) < 0) { \
+            memcpy((char *)&dest, "\xff\xff\xff\xff\xff\xff\xff\xff",      \
+                sizeof(dest) - length);                                    \
+        }                                                                  \
     } while (0)
 #else /* LITTLE ENDIAN */
 
 #define READ_UNALIGNED(dbg,dest,desttype, source, length) \
-    do  {                                     \
-        BIGGEST_UINT _ltmp = 0;               \
-        dbg->de_copy_word( (char *)(&_ltmp) , \
-            source, length) ;                 \
-        dest = (desttype)_ltmp;               \
+    do  {                                                 \
+        BIGGEST_UINT _ltmp = 0;                           \
+        dbg->de_copy_word( (char *)(&_ltmp) ,             \
+            source, length) ;                             \
+        dest = (desttype)_ltmp;                           \
     } while (0)
 
 
@@ -164,12 +167,13 @@ typedef Dwarf_Unsigned BIGGEST_UINT;
     on host endianness, not object file endianness.
     The memcpy args are the issue.
 */
-#define SIGN_EXTEND(dest, length)    \
-    do {if (*(Dwarf_Sbyte *)((char *)&dest + (length-1)) < 0) {\
-        memcpy((char *)&dest+length, \
-            "\xff\xff\xff\xff\xff\xff\xff\xff", \
-            sizeof(dest) - length);  \
-        }  \
+#define SIGN_EXTEND(dest, length)                               \
+    do {                                                        \
+        if (*(Dwarf_Sbyte *)((char *)&dest + (length-1)) < 0) { \
+            memcpy((char *)&dest+length,                        \
+                "\xff\xff\xff\xff\xff\xff\xff\xff",             \
+                sizeof(dest) - length);                         \
+        }                                                       \
     } while (0)
 
 #endif /* ! LITTLE_ENDIAN */
@@ -215,45 +219,46 @@ typedef Dwarf_Unsigned BIGGEST_UINT;
     does not seem necessary (none of the 64bit length seems 
     appropriate unless it's  ident[EI_CLASS] == ELFCLASS64).
 */
-#   define    READ_AREA_LENGTH(r_dbg,w_target,r_targtype,    \
-    rw_src_data_p,w_length_size,w_exten_size)                \
-do {                                                         \
-    READ_UNALIGNED(r_dbg,w_target,r_targtype,                \
-    rw_src_data_p, ORIGINAL_DWARF_OFFSET_SIZE);              \
-    if (w_target == DISTINGUISHED_VALUE) {                   \
-        /* dwarf3 64bit extension */                         \
-        w_length_size  = DISTINGUISHED_VALUE_OFFSET_SIZE;    \
-        rw_src_data_p += ORIGINAL_DWARF_OFFSET_SIZE;         \
-        w_exten_size   = ORIGINAL_DWARF_OFFSET_SIZE;         \
-        READ_UNALIGNED(r_dbg,w_target,r_targtype,            \
-            rw_src_data_p, DISTINGUISHED_VALUE_OFFSET_SIZE); \
-        rw_src_data_p += DISTINGUISHED_VALUE_OFFSET_SIZE;    \
-    } else {                                                 \
-        if (w_target == 0 && r_dbg->de_big_endian_object) {  \
-            /* Might be IRIX: We have to distinguish between   */    \
-            /* 32-bit DWARF format and IRIX 64-bit DWARF format. */  \
-            if (r_dbg->de_length_size == 8) {                        \
-                /* IRIX 64 bit, big endian.  This test */            \
-                /* is not a truly precise test, a precise test */    \
-                /* would check if the target was IRIX.  */           \
-                READ_UNALIGNED(r_dbg,w_target,r_targtype,            \
-                    rw_src_data_p, DISTINGUISHED_VALUE_OFFSET_SIZE); \
-                w_length_size  = DISTINGUISHED_VALUE_OFFSET_SIZE;    \
-                rw_src_data_p += DISTINGUISHED_VALUE_OFFSET_SIZE;    \
-                w_exten_size = 0;                                    \
-            } else {                                                 \
-                /* 32 bit, big endian */                             \
-                w_length_size  = ORIGINAL_DWARF_OFFSET_SIZE;         \
-                rw_src_data_p += w_length_size;                      \
-                w_exten_size = 0;                                    \
-            }                                                        \
-        } else {                                                     \
-            /* Standard 32 bit dwarf2/dwarf3 */                      \
-            w_exten_size   = 0;                                      \
-            w_length_size  = ORIGINAL_DWARF_OFFSET_SIZE;             \
-            rw_src_data_p += w_length_size;                          \
-        }                                                            \
-    } } while (0)
+#define READ_AREA_LENGTH(r_dbg,w_target,r_targtype,                      \
+    rw_src_data_p,w_length_size,w_exten_size)                            \
+    do {                                                                 \
+        READ_UNALIGNED(r_dbg,w_target,r_targtype,                        \
+        rw_src_data_p, ORIGINAL_DWARF_OFFSET_SIZE);                      \
+        if (w_target == DISTINGUISHED_VALUE) {                           \
+            /* dwarf3 64bit extension */                                 \
+            w_length_size  = DISTINGUISHED_VALUE_OFFSET_SIZE;            \
+            rw_src_data_p += ORIGINAL_DWARF_OFFSET_SIZE;                 \
+            w_exten_size   = ORIGINAL_DWARF_OFFSET_SIZE;                 \
+            READ_UNALIGNED(r_dbg,w_target,r_targtype,                    \
+                rw_src_data_p, DISTINGUISHED_VALUE_OFFSET_SIZE);         \
+            rw_src_data_p += DISTINGUISHED_VALUE_OFFSET_SIZE;            \
+        } else {                                                         \
+            if (w_target == 0 && r_dbg->de_big_endian_object) {          \
+                /* Might be IRIX: We have to distinguish between   */    \
+                /* 32-bit DWARF format and IRIX 64-bit DWARF format. */  \
+                if (r_dbg->de_length_size == 8) {                        \
+                    /* IRIX 64 bit, big endian.  This test */            \
+                    /* is not a truly precise test, a precise test */    \
+                    /* would check if the target was IRIX.  */           \
+                    READ_UNALIGNED(r_dbg,w_target,r_targtype,            \
+                        rw_src_data_p, DISTINGUISHED_VALUE_OFFSET_SIZE); \
+                    w_length_size  = DISTINGUISHED_VALUE_OFFSET_SIZE;    \
+                    rw_src_data_p += DISTINGUISHED_VALUE_OFFSET_SIZE;    \
+                    w_exten_size = 0;                                    \
+                } else {                                                 \
+                    /* 32 bit, big endian */                             \
+                    w_length_size  = ORIGINAL_DWARF_OFFSET_SIZE;         \
+                    rw_src_data_p += w_length_size;                      \
+                    w_exten_size = 0;                                    \
+                }                                                        \
+            } else {                                                     \
+                /* Standard 32 bit dwarf2/dwarf3 */                      \
+                w_exten_size   = 0;                                      \
+                w_length_size  = ORIGINAL_DWARF_OFFSET_SIZE;             \
+                rw_src_data_p += w_length_size;                          \
+            }                                                            \
+        }                                                                \
+    } while (0)
 
 Dwarf_Unsigned
 _dwarf_decode_u_leb128(Dwarf_Small * leb128,

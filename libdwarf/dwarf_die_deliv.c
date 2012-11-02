@@ -1034,7 +1034,7 @@ dwarf_child(Dwarf_Die die,
 
     if (!has_die_child) {
         /* Look for end of sibling chain. */
-        while ( dis->de_last_di_ptr < die_info_end) {
+        while (dis->de_last_di_ptr < die_info_end) {
             if (*dis->de_last_di_ptr) {
                 break;
             }
@@ -1059,7 +1059,7 @@ dwarf_child(Dwarf_Die die,
 
     if (abbrev_code == 0) {
         /* Look for end of sibling chain */
-        while ( dis->de_last_di_ptr < die_info_end) {
+        while (dis->de_last_di_ptr < die_info_end) {
             if (*dis->de_last_di_ptr) {
                 break;
             }

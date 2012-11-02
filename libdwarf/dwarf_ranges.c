@@ -119,7 +119,7 @@ int dwarf_get_ranges_a(Dwarf_Debug dbg,
         if (re->cur.dwr_addr1 == 0 && re->cur.dwr_addr2 == 0) {
             re->cur.dwr_type =  DW_RANGES_END;
             break;
-        } else if ( re->cur.dwr_addr1 == MAX_ADDR) {
+        } else if (re->cur.dwr_addr1 == MAX_ADDR) {
             re->cur.dwr_type =  DW_RANGES_ADDRESS_SELECTION;
         } else {
             re->cur.dwr_type =  DW_RANGES_ENTRY;

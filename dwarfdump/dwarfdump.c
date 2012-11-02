@@ -1140,7 +1140,6 @@ do_all()
     info_flag = line_flag = frame_flag = TRUE;
     pubnames_flag = macinfo_flag = TRUE;
     aranges_flag = TRUE;
-    abbrev_flag = TRUE;
     /*  Do not do 
         loc_flag = TRUE 
         abbrev_flag = TRUE;
@@ -1157,8 +1156,6 @@ do_all()
     header_flag = TRUE; /* Dump header info */
 }
 
-extern const char *usage_text[];
-extern const char *usage_debug_text[];
 static const char *usage_text[] = {
 "Usage: DwarfDump <options> <object file>",
 "options:\t-a\tprint all .debug_* sections",
@@ -1256,10 +1253,26 @@ static const char *usage_text[] = {
 "\t\t-Wc\tprint children tree (wide format) with the -S option",
 "\t\t-y\tprint type section",
 "",
-
 0
 };
 
+/* Generic constants for debugging */
+#define DUMP_RANGES_INFO            1   /* Dump RangesInfo Table. */
+#define DUMP_LOCATION_SECTION_INFO  2   /* Dump Location (.debug_loc) Info. */
+#define DUMP_RANGES_SECTION_INFO    3   /* Dump Ranges (.debug_ranges) Info. */
+#define DUMP_LINKONCE_INFO          4   /* Dump Linkonce Table. */
+#define DUMP_VISITED_INFO           5   /* Dump Visited Info. */
+
+static const char *usage_debug_text[] = {
+"Usage: DwarfDump <debug_options>",
+"options:\t-0\tprint this information",
+"\t\t-1\tDump RangesInfo Table",
+"\t\t-2\tDump Location (.debug_loc) Info",
+"\t\t-3\tDump Ranges (.debug_ranges) Info",
+"\t\t-4\tDump Linkonce Table",
+"\t\t-5\tDump Visited Info",
+""
+};
 
 /* Remove matching leading/trailing quotes.
    Does not alter the passed in string.
@@ -1888,24 +1901,6 @@ process_args(int argc, char *argv[])
     return do_uri_translation(argv[optind],"file-to-process"); 
 }
 
-/* Generic constants for debugging */
-#define DUMP_RANGES_INFO            1   /* Dump RangesInfo Table. */
-#define DUMP_LOCATION_SECTION_INFO  2   /* Dump Location (.debug_loc) Info. */
-#define DUMP_RANGES_SECTION_INFO    3   /* Dump Ranges (.debug_ranges) Info. */
-#define DUMP_LINKONCE_INFO          4   /* Dump Linkonce Table. */
-#define DUMP_VISITED_INFO           5   /* Dump Visited Info. */
-
-static const char *usage_debug_text[] = {
-"Usage: DwarfDump <debug_options>",
-"options:\t-0\tprint this information",
-"\t\t-1\tDump RangesInfo Table",
-"\t\t-2\tDump Location (.debug_loc) Info",
-"\t\t-3\tDump Ranges (.debug_ranges) Info",
-"\t\t-4\tDump Linkonce Table",
-"\t\t-5\tDump Visited Info",
-""
-};
-
 void
 print_error(Dwarf_Debug dbg, string msg, int dwarf_code,
     Dwarf_Error err)
@@ -2317,7 +2312,7 @@ static int
 hasprefix(const char *sample, const char *prefix)
 {
     unsigned prelen = strlen(prefix);
-    if ( strncmp(sample,prefix,prelen) == 0) {
+    if (strncmp(sample,prefix,prelen) == 0) {
         return TRUE;
     }
     return FALSE;
@@ -2354,8 +2349,7 @@ update_compiler_target(const char *producer_name)
             }
         }
     } else {
-        /* Take into account that internally all strings are double quoted */
-        /* Do not include quotes in the name */
+        /* Internally the strings do not include quotes */
         boolean snc_compiler = hasprefix(CU_producer,"SN")? TRUE : FALSE;
         boolean gcc_compiler = hasprefix(CU_producer,"GNU")?TRUE : FALSE; 
         current_cu_is_checked_compiler = check_all_compilers ||
