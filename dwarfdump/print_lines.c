@@ -65,12 +65,9 @@ print_source_intro(Dwarf_Die cu_die)
     int ores = dwarf_dieoffset(cu_die, &off, &err);
 
     if (ores == DW_DLV_OK) {
-        /* Check if print of <pc> address is needed. */
-        if (line_print_pc) {
-            printf("Source lines (from CU-DIE at .debug_info offset 0x%" 
-                DW_PR_XZEROS DW_PR_DUx "):\n",
-                (Dwarf_Unsigned) off);
-        }
+        printf("Source lines (from CU-DIE at .debug_info offset 0x%" 
+            DW_PR_XZEROS DW_PR_DUx "):\n",
+            (Dwarf_Unsigned) off);
     } else {
         printf("Source lines (for the CU-DIE at unknown location):\n");
     }

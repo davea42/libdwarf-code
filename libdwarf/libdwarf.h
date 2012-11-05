@@ -2948,8 +2948,8 @@ int dwarf_get_version_of_die(Dwarf_Die /*die*/,
     Dwarf_Half * /*version*/,
     Dwarf_Half * /*offset_size*/);
 
-/*  Just another entry points for the encoding routines for
-    LEB128 in the DWARF producer. */
+/*  These make the  LEB encoding routines visible to libdwarf
+    callers. Added November, 2012. */
 int dwarf_encode_leb128(Dwarf_Unsigned /*val*/,
     int * /*nbytes*/,
     char * /*space*/,

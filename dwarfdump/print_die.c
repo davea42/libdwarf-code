@@ -1276,8 +1276,6 @@ traverse_attribute(Dwarf_Debug dbg, Dwarf_Die die, Dwarf_Half attr,
         /* Get the global offset for reference */
         res = dwarf_global_formref(attrib, &ref_off, &err);
         if (res != DW_DLV_OK) {
-            /* Windows defines errno, as
-             * #define errno   (*_errno()) */
             int dwerrno = dwarf_errno(err);
             if (dwerrno == DW_DLE_REF_SIG8_NOT_HANDLED ) {
                 // No need to stop, ref_sig8 refers out of
@@ -1290,8 +1288,6 @@ traverse_attribute(Dwarf_Debug dbg, Dwarf_Die die, Dwarf_Half attr,
         }
         res = dwarf_dieoffset(die, &die_off, &err);
         if (res != DW_DLV_OK) {
-            /* Windows defines errno, as
-             * #define errno   (*_errno()) */
             int dwerrno = dwarf_errno(err);
             if (dwerrno == DW_DLE_REF_SIG8_NOT_HANDLED ) {
                 // No need to stop, ref_sig8 refers out of
