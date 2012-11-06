@@ -1,3 +1,5 @@
+2012-10-31  DavidAnderson <davea42@earthlink.net>
+     * CODINGSTYLE: Added some small details here.
 2012-04-04  DavidAnderson <davea42@earthlink.net>
      * libdwarf.h: A pointer "*" was right next to
        a "/*" so a space introduced between them for clarity.
