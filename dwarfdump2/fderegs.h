@@ -60,16 +60,16 @@ public:
     void setPc(Dwarf_Addr pcval) { pcAddr_ = pcval;};
     int preliminaryRead(Dwarf_Error *err) {
         zeroRegTab();
-        if(interfaceNumber_ == 2) {
+        if (interfaceNumber_ == 2) {
             // Interface 2 is deprecated. Ok to use for testing.
             static Dwarf_Regtable t;
             Dwarf_Regtable regtab2;
             regtab2 = t;
             int res = dwarf_get_fde_info_for_all_regs(fde_,
                 pcAddr_, &regtab2  ,&rowPc_,err);
-            if(res == DW_DLV_OK) {
+            if (res == DW_DLV_OK) {
                 // Transform to form 3.
-                for(unsigned i = 0; i < confData_.cf_table_entry_count; ++i) {
+                for (unsigned i = 0; i < confData_.cf_table_entry_count; ++i) {
                     Dwarf_Regtable_Entry3 *out = 
                         regTable_.rt3_rules+i;
                     Dwarf_Regtable_Entry *in =
@@ -82,7 +82,7 @@ public:
                 }
             }
             return res;
-        } else if(interfaceNumber_ == 3) {
+        } else if (interfaceNumber_ == 3) {
             //int rulecount = confData_.cf_table_entry_count;
             int res = dwarf_get_fde_info_for_all_regs3(fde_,
                 pcAddr_, &regTable_,&rowPc_,err);
@@ -108,7 +108,7 @@ public:
     int getRegdata(unsigned table_col,
         Dwarf_Regtable_Entry3 * entry_out, Dwarf_Addr * rowpc_out, 
         Dwarf_Error *err) {
-        if ( table_col >= confData_.cf_table_entry_count) {
+        if (table_col >= confData_.cf_table_entry_count) {
             return DW_DLV_ERROR;
         }  
         *rowpc_out = rowPc_;

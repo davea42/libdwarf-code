@@ -41,7 +41,7 @@ $Header: /plroot/cmplrs.src/v7.4.5m/.RCS/PL/dwarfdump/RCS/tag_tree.c,v 1.8 2005/
 #include <unistd.h>   /* For getopt. */
 
 #include "globals.h"
-#include "naming.h"
+#include "libdwarf.h"
 #include "common.h"
 #include "tag_common.h"
 using std::cout;
@@ -163,7 +163,7 @@ main(int argc, char **argv)
     }
     unsigned int  table_rows = 0;
     unsigned int table_columns = 0;
-    if(standard_flag) {
+    if (standard_flag) {
         table_rows = STD_TAG_TABLE_ROWS;
         table_columns = STD_TAG_TABLE_COLUMNS;
     } else {
@@ -190,12 +190,12 @@ main(int argc, char **argv)
             /* Reached normal eof */
             break;
         }
-        if(standard_flag) {
+        if (standard_flag) {
             if (tag >= table_rows ) {
                 bad_line_input("tag value exceeds standard table size");
             }
         } else {
-            if(current_row >= table_rows) {
+            if (current_row >= table_rows) {
                 bad_line_input("too many extended table rows.");
             }
             tag_tree_combination_table[current_row][0] = tag;
@@ -206,7 +206,7 @@ main(int argc, char **argv)
         }
         nTagLoc = 1;
         while (num != 0xffffffff) {
-            if(standard_flag) {
+            if (standard_flag) {
                 unsigned idx = num / BITS_PER_WORD;
                 unsigned bit = num % BITS_PER_WORD;
     
@@ -217,7 +217,7 @@ main(int argc, char **argv)
                 }
                 tag_tree_combination_table[tag][idx] |= (1 << bit);
             } else {
-                if(nTagLoc >= table_columns) {
+                if (nTagLoc >= table_columns) {
                     cout << "Attempting to use column " << nTagLoc <<
                         ", max is " << table_columns << endl;
                     bad_line_input("too many subTAGs, table incomplete.");
@@ -262,7 +262,7 @@ main(int argc, char **argv)
                     tag_tree_combination_table[i][0],printonerr).c_str());
         }
         fprintf(fileOut,"    { ");
-        for(unsigned j = 0; j < table_columns; ++j ) {
+        for (unsigned j = 0; j < table_columns; ++j ) {
             fprintf(fileOut,"0x%08x,",tag_tree_combination_table[i][j]);
         }
         fprintf(fileOut,"},\n");

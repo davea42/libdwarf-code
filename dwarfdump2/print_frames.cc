@@ -86,11 +86,11 @@ get_abstract_origin_or_spec_funcname(Dwarf_Debug dbg,
     Dwarf_Signed atcnt = 0;
     bool name_found = false;
     int res = dwarf_global_formref(attr,&off,&err);
-    if(res != DW_DLV_OK) {
+    if (res != DW_DLV_OK) {
         return DW_DLV_NO_ENTRY;
     }
     int dres = dwarf_offdie(dbg,off,&origin_die,&err);
-    if(dres != DW_DLV_OK) {
+    if (dres != DW_DLV_OK) {
         return DW_DLV_NO_ENTRY;
     }
     int atres = dwarf_attrlist(origin_die, &atlist, &atcnt, &err);
@@ -105,7 +105,7 @@ get_abstract_origin_or_spec_funcname(Dwarf_Debug dbg,
         if (ares == DW_DLV_ERROR) {
             break;
         } else if (ares == DW_DLV_OK) {
-            if(lattr == DW_AT_name) {
+            if (lattr == DW_AT_name) {
                 int sres = 0;
                 char* temps = 0;
                 sres = dwarf_formstring(atlist[i], &temps, &err);
@@ -122,7 +122,7 @@ get_abstract_origin_or_spec_funcname(Dwarf_Debug dbg,
     }
     dwarf_dealloc(dbg, atlist, DW_DLA_LIST);
     dwarf_dealloc(dbg,origin_die,DW_DLA_DIE);
-    if(!name_found) {
+    if (!name_found) {
         return DW_DLV_NO_ENTRY;
     }
     return DW_DLV_OK;
@@ -169,13 +169,13 @@ get_proc_name(Dwarf_Debug dbg, Dwarf_Die die,
             case DW_AT_specification:
             case DW_AT_abstract_origin:
                 {
-                    if(!funcnamefound) {
+                    if (!funcnamefound) {
                         string aotemp;
                         /*  Only use this if we have not seen DW_AT_name
                             yet .*/
                         int aores = get_abstract_origin_or_spec_funcname(dbg,
                             atlist[i], aotemp);
-                        if(aores == DW_DLV_OK) {
+                        if (aores == DW_DLV_OK) {
                             /* FOUND THE NAME */
                             proc_name = aotemp;
                             funcnamefound = 1;
@@ -326,11 +326,11 @@ get_fde_proc_name(Dwarf_Debug dbg, Dwarf_Addr low_pc,
     string proc_name;
 
     LowpcToNameMaptype::const_iterator it = pcMap.find(low_pc); 
-    if(it != pcMap.end()) {
+    if (it != pcMap.end()) {
         string s = it->second;
         return s;
     }
-    if(all_cus_seen) {
+    if (all_cus_seen) {
         return "";
     }
 
@@ -380,7 +380,7 @@ get_fde_proc_name(Dwarf_Debug dbg, Dwarf_Addr low_pc,
         } 
         dwarf_dealloc(dbg, current_cu_die_for_print_frames, DW_DLA_DIE);
         LowpcToNameMaptype::const_iterator it = pcMap.find(low_pc); 
-        if(it != pcMap.end()) {
+        if (it != pcMap.end()) {
             // If we need more CUs later we will process
             // them as needed (later), but we have done enough
             // CUs to satisfy this low_pc.
@@ -442,18 +442,18 @@ print_one_fde(Dwarf_Debug dbg, Dwarf_Fde fde,
         print_error(dbg, "dwarf_get_fde_exception_info", fres, err);
     }
     string temps;
-    if(!suppress_nested_name_search) {
+    if (!suppress_nested_name_search) {
         temps = get_fde_proc_name(dbg, low_pc,
             pcMap,all_cus_seen);
         LowpcUsedSettype::const_iterator it = lowpcSet.find(low_pc);
-        if(check_frames || check_frames_extended) {
+        if (check_frames || check_frames_extended) {
             DWARF_CHECK_COUNT(fde_duplication,1);
         }
         if (it != lowpcSet.end()) {
-            if(check_frames || check_frames_extended ) {
+            if (check_frames || check_frames_extended ) {
                 string msg = string("An fde low pc of ") + IToHex(low_pc) +
                     string(" is not the first fde with that pc. ");
-                if(temps.empty()) {
+                if (temps.empty()) {
                     msg.append("The first is not named."); 
                 } else {
                     msg.append(string("The first is named \"")+
@@ -465,7 +465,7 @@ print_one_fde(Dwarf_Debug dbg, Dwarf_Fde fde,
             lowpcSet.insert(low_pc);
         }
     }
-    if(!check_frames_extended) {
+    if (!check_frames_extended) {
         cout << BracketSurround(IToDec(cie_index,5));
         cout << BracketSurround(IToHex0N(low_pc,10) + string(":")+
             IToHex0N(low_pc + func_length,10));
@@ -477,7 +477,7 @@ print_one_fde(Dwarf_Debug dbg, Dwarf_Fde fde,
 
     if (!is_eh) {
         /* IRIX uses eh_table_offset. */
-        if(!check_frames_extended) {
+        if (!check_frames_extended) {
             if (eh_table_offset == DW_DLX_NO_EH_OFFSET) {
                 cout << BracketSurround(
                     string("eh offset none")) << endl;
@@ -498,7 +498,7 @@ print_one_fde(Dwarf_Debug dbg, Dwarf_Fde fde,
         if (ares == DW_DLV_NO_ENTRY) {
             /* do nothing. */
         } else if (ares == DW_DLV_OK) {
-            if(!check_frames_extended) {
+            if (!check_frames_extended) {
                 cout << "<eh aug data len " << IToHex(len);
                 for (unsigned k2 = 0; k2 < len; ++k2) {
                     if (k2 == 0) {
@@ -509,7 +509,7 @@ print_one_fde(Dwarf_Debug dbg, Dwarf_Fde fde,
                 cout << ">";
             }
         }                       /* else DW_DLV_ERROR, do nothing */
-        if(!check_frames_extended) {
+        if (!check_frames_extended) {
             cout << endl;
         }
     }
@@ -609,7 +609,7 @@ print_one_fde(Dwarf_Debug dbg, Dwarf_Fde fde,
             dwarf_fde_section_offset(dbg, fde, &fde_off, &cie_off,
                 &err);
         if (offres == DW_DLV_OK) {
-            if(!check_frames_extended) {
+            if (!check_frames_extended) {
                 cout << " fde section offset " << IToDec(fde_off) <<
                     " " <<
                     IToHex0N(fde_off,10);
@@ -658,7 +658,7 @@ print_one_fde(Dwarf_Debug dbg, Dwarf_Fde fde,
             if (cires == DW_DLV_NO_ENTRY) {
                 ;               /* ? */
             } else {
-                if(!check_frames_extended) {
+                if (!check_frames_extended) {
                     print_frame_inst_bytes(dbg, instrs,
                         (Dwarf_Signed) ilen,
                         data_alignment_factor,
@@ -720,7 +720,7 @@ print_one_cie(Dwarf_Debug dbg, Dwarf_Cie cie,
         return DW_DLV_NO_ENTRY;
     }
     {
-        if(!check_frames_extended) {
+        if (!check_frames_extended) {
             string augmenter = augmenter_arg;
             cout << BracketSurround(IToDec(cie_index,5));
             cout << "\tversion\t\t\t\t" << static_cast<int>(version) << endl;
@@ -748,7 +748,7 @@ print_one_cie(Dwarf_Debug dbg, Dwarf_Cie cie,
             if (ares == DW_DLV_NO_ENTRY) {
                 /* do nothing. */
             } else if (ares == DW_DLV_OK && len > 0) {
-                if(!check_frames_extended) {
+                if (!check_frames_extended) {
                     cout << " eh aug data len " <<
                         IToHex(len);
                     for (unsigned k2 = 0; data && k2 < len; ++k2) {
@@ -762,7 +762,7 @@ print_one_cie(Dwarf_Debug dbg, Dwarf_Cie cie,
             }  /* else DW_DLV_ERROR or no data, do nothing */
         }
 
-        if(!check_frames_extended) {
+        if (!check_frames_extended) {
             cout <<
                 "\tbytes of initial instructions\t" <<
                 IToDec(initial_instructions_length) << endl;
@@ -800,7 +800,7 @@ get_string_from_locs(Dwarf_Debug dbg,
         print_error(dbg, "dwarf_get_loclist_from_expr_a",
             res2, err2);
     }
-    if(res2==DW_DLV_NO_ENTRY) {
+    if (res2==DW_DLV_NO_ENTRY) {
         return;
     }
     /* lcnt is always 1 */
@@ -810,7 +810,7 @@ get_string_from_locs(Dwarf_Debug dbg,
         locdescarray,
         skip_locdesc_header,
         out_string);
-    if(res != DW_DLV_OK) {
+    if (res != DW_DLV_OK) {
         cout <<"Bad status from _dwarf_print_one_locdesc " << 
             res << endl;
         exit(1);
@@ -852,7 +852,7 @@ print_frame_inst_bytes(Dwarf_Debug dbg,
         // The odd character of DFA symbols because of
         // the packing means DW_CFA_extended and DW_CFA_nop
         // conflict.
-        if(res == DW_DLV_OK) {
+        if (res == DW_DLV_OK) {
             cfa_name = cfa_name_x;
         }
         switch (top) {
@@ -894,7 +894,7 @@ print_frame_inst_bytes(Dwarf_Debug dbg,
 
         default:
             res = dwarf_get_CFA_name(bottom,&cfa_name_x);
-            if(res == DW_DLV_OK) {
+            if (res == DW_DLV_OK) {
                 cfa_name = cfa_name_x;
             }
             loff = off;
@@ -1105,7 +1105,7 @@ print_frame_inst_bytes(Dwarf_Debug dbg,
                     dump_block("\t\t", (char *) instp+1,
                         (Dwarf_Signed) block_len);
                     cout << endl;
-                    if(verbose) {
+                    if (verbose) {
                         string exprstring;
                         get_string_from_locs(dbg,
                             instp+1,block_len, addr_size,exprstring);
@@ -1138,7 +1138,7 @@ print_frame_inst_bytes(Dwarf_Debug dbg,
                     dump_block("\t\t", (char *) instp+1,
                         (Dwarf_Signed) block_len);
                     cout << endl;
-                    if(verbose) {
+                    if (verbose) {
                         string exprstring;
                         get_string_from_locs(dbg,
                             instp+1,block_len, addr_size,exprstring);
@@ -1300,7 +1300,7 @@ print_frame_inst_bytes(Dwarf_Debug dbg,
                     dump_block("\t\t", (char *) instp+1,
                         (Dwarf_Signed) block_len);
                     cout << endl;
-                    if(verbose) {
+                    if (verbose) {
                         string exprstring;
                         get_string_from_locs(dbg,
                             instp+1,block_len, addr_size,exprstring);
@@ -1444,7 +1444,7 @@ print_one_frame_reg_col(Dwarf_Debug dbg,
         if (print_type_title)
             cout << "> ";
         if (verbose) {
-            if(block_ptr == 0) {
+            if (block_ptr == 0) {
                 // Wrong (old) register access used.
                 // -R being just one way to request the 'reg3'
                 // register interfaces.
@@ -1455,7 +1455,7 @@ print_one_frame_reg_col(Dwarf_Debug dbg,
                 pref.append("bytes:");
                 dump_block(pref, reinterpret_cast<char *>(block_ptr), offset);
                 cout << "> ";
-                if(verbose) {
+                if (verbose) {
                     string exprstring;
                     get_string_from_locs(dbg,
                         block_ptr,offset, address_size,exprstring);
@@ -1523,7 +1523,7 @@ print_frames(Dwarf_Debug dbg, int print_debug_frame, int print_eh_frame,
                 that describes the changes.  */
             fres = dwarf_get_fde_list(dbg, &cie_data, &cie_element_count,
                 &fde_data, &fde_element_count, &err);
-            if(check_harmless) {
+            if (check_harmless) {
                 print_any_harmless_errors(dbg);
             }
         } else {
@@ -1552,7 +1552,7 @@ print_frames(Dwarf_Debug dbg, int print_debug_frame, int print_eh_frame,
             fres = dwarf_get_fde_list_eh(dbg, &cie_data,
                 &cie_element_count, &fde_data,
                 &fde_element_count, &err);
-            if(check_harmless) {
+            if (check_harmless) {
                 print_any_harmless_errors(dbg);
             }
         }
@@ -1575,7 +1575,7 @@ print_frames(Dwarf_Debug dbg, int print_debug_frame, int print_eh_frame,
             /* no frame information */
         } else {                /* DW_DLV_OK */
 
-            if( !check_frames_extended) {
+            if (!check_frames_extended) {
                 cout << endl;
                 cout << framename;
                 cout << endl;
@@ -1592,7 +1592,7 @@ print_frames(Dwarf_Debug dbg, int print_debug_frame, int print_eh_frame,
                     lowpcSet,
                     all_cus_seen);
                 ++frame_count;
-                if(frame_count >= break_after_n_units) {
+                if (frame_count >= break_after_n_units) {
                     break;
                 }
             }
@@ -1608,7 +1608,7 @@ print_frames(Dwarf_Debug dbg, int print_debug_frame, int print_eh_frame,
                     print_one_cie(dbg, cie_data[i], i, address_size,
                         config_data);
                     ++cie_count;
-                    if(cie_count >= break_after_n_units) {
+                    if (cie_count >= break_after_n_units) {
                         break;
                     }
                 }

@@ -80,7 +80,7 @@ print_locs(Dwarf_Debug dbg)
     Dwarf_Half address_size = 0;
 
     error_message_data.current_section_id = DEBUG_LOC;
-    if(!do_print_dwarf) {
+    if (!do_print_dwarf) {
         return;
     }
 
@@ -104,14 +104,14 @@ print_locs(Dwarf_Debug dbg)
 
         string exprstring;
         get_string_from_locs(dbg,data,entry_len,address_size,exprstring);
-        if( display_offsets) {
+        if (display_offsets) {
             ++index;
-            cout <<" <iobel> [" << IToDec(index,8);
+            cout <<"  <iobel> [" << IToDec(index,8);
             cout <<"] " << IToHex0N(offset,10);
             // We print this offset so it matches what the debug_info
             // loclist offset shows (so we can relate them).
             // This offset is the offset of the expression byte blob.
-            if(verbose) {
+            if (verbose) {
                 cout << string(" ") <<
                     BracketSurround(string("expr-off ") +
                         IToHex0N(next_entry - entry_len,10));

@@ -64,7 +64,7 @@ do_checking(Dwarf_Debug dbg, Dwarf_Arange *arange_buf,Dwarf_Signed i,
     Dwarf_Off cudieoff3 = 0;
     int dres = dwarf_get_arange_cu_header_offset(
         arange_buf[i],&cuhdroff,&err);
-    if(dres == DW_DLV_OK) {
+    if (dres == DW_DLV_OK) {
         Dwarf_Off cudieoff2 = 0;
 
         /* Get the CU offset for easy error reporting */
@@ -79,13 +79,13 @@ do_checking(Dwarf_Debug dbg, Dwarf_Arange *arange_buf,Dwarf_Signed i,
         }
         dres = dwarf_get_cu_die_offset_given_cu_header_offset(
             dbg,cuhdroff,&cudieoff2,&err);
-        if(dres == DW_DLV_OK) {
+        if (dres == DW_DLV_OK) {
             /* Get the CU offset for easy error reporting */
             dwarf_die_offsets(cu_die,
                 &error_message_data.DIE_overall_offset,
                 &error_message_data.DIE_offset,&err);
             DWARF_CHECK_COUNT(aranges_result,1);
-            if(cudieoff2 != cu_die_offset) {
+            if (cudieoff2 != cu_die_offset) {
                 cout << "Error, cu_die offsets mismatch,  " <<
                     IToHex(cu_die_offset) << " != " <<
                     IToHex(cudieoff2) << " from arange data";
@@ -101,9 +101,9 @@ do_checking(Dwarf_Debug dbg, Dwarf_Arange *arange_buf,Dwarf_Signed i,
     }
     dres = dwarf_get_cu_die_offset(arange_buf[i],&cudieoff3,
         &err);
-    if(dres == DW_DLV_OK) {
+    if (dres == DW_DLV_OK) {
         DWARF_CHECK_COUNT(aranges_result,1);
-        if(cudieoff3 != cu_die_offset) {
+        if (cudieoff3 != cu_die_offset) {
             cout << "Error, cu_die offsets (b) mismatch ,  "<<
                 IToHex(cu_die_offset) << " != " <<
                 IToHex(cudieoff3) << " from arange data";
@@ -169,7 +169,7 @@ print_aranges(Dwarf_Debug dbg)
                 DieHolder hcu_die(dbg,cu_die);
 
                 if (cu_name_flag) {
-                    if(should_skip_this_cu(hcu_die,err)) {
+                    if (should_skip_this_cu(hcu_die,err)) {
                         continue;
                     }
                 }
@@ -186,7 +186,7 @@ print_aranges(Dwarf_Debug dbg)
                         cu_die_offset_prev,cu_die);
                 }
 
-                if(start || length) {
+                if (start || length) {
                     Dwarf_Off off = 0;
                     int cures3 = dwarf_get_arange_cu_header_offset(
                         arange_buf[i], &off, &err);
@@ -209,7 +209,7 @@ print_aranges(Dwarf_Debug dbg)
                             this will do the checks a second time!
                             So only call print_one_die if printing.
                         */
-                        if(do_print_dwarf){
+                        if (do_print_dwarf){
                             /* There is no die if its a set-end entry */
                             SrcfilesHolder hsrcfiles;
                             print_one_die(hcu_die, 
@@ -228,7 +228,7 @@ print_aranges(Dwarf_Debug dbg)
 
                     if (do_print_dwarf) {
                         /* Print current aranges record */
-                        if(segment_entry_size) {
+                        if (segment_entry_size) {
                             cout << endl;
                             cout <<
                                 "arange starts at seg,off " <<

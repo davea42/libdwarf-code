@@ -147,7 +147,7 @@ print_macinfo(Dwarf_Debug dbg)
     int lres = 0;
 
     error_message_data.current_section_id = DEBUG_MACINFO;
-    if(!do_print_dwarf) {
+    if (!do_print_dwarf) {
         return;
     }
     cout << endl;

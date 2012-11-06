@@ -68,7 +68,7 @@ print_strings(Dwarf_Debug dbg)
     cout << ".debug_string" << endl;
     while ((sres = dwarf_get_str(dbg, offset, &name, &length, &err))
         == DW_DLV_OK) {
-        if(display_offsets) {
+        if (display_offsets) {
             cout << "name at offset " << IToHex0N(offset,10) <<
                 ", length " << IToDec(length,4) <<
                 " is " << "'" << name <<"'" <<  endl;
@@ -81,7 +81,7 @@ print_strings(Dwarf_Debug dbg)
     /*  An inability to find the section is not necessarily
         a real error, so do not report error unless we've
         seen a real record. */
-    if(sres == DW_DLV_ERROR && offset != 0) {
+    if (sres == DW_DLV_ERROR && offset != 0) {
         print_error(dbg, "dwarf_get_str failure", sres, err);
     }
 }

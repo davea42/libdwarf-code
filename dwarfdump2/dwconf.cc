@@ -542,7 +542,7 @@ add_to_reg_table(struct dwconf_s *conf,
     const string &fname,
     unsigned long lineno)
 {
-    if( rval >= conf->cf_regs.size()) {
+    if (rval >= conf->cf_regs.size()) {
         conf->cf_regs.resize(rval+1);
     }
     conf->cf_regs[rval] = rname;
@@ -935,7 +935,7 @@ parse_abi(FILE * stream, const string &fname, const string &abiname,
 {
     struct dwconf_s *localconf = conf_internal->conf_out;
 
-    if( nest_level > MAX_NEST_LEVEL) {
+    if (nest_level > MAX_NEST_LEVEL) {
         ++errcount;
         cout <<"dwarfdump.conf: includeabi nest too deep  in " <<
             fname << " at line " << lineno<<endl;
@@ -1190,7 +1190,7 @@ init_conf_file_data(struct dwconf_s *config_file_data)
         sizeof(genericregnames) / sizeof(genericregnames[0]);
     config_file_data->cf_regs.clear();
     config_file_data->cf_regs.reserve(generic_table_count);
-    for(unsigned i = 0; i < generic_table_count; ++i) {
+    for (unsigned i = 0; i < generic_table_count; ++i) {
         config_file_data->cf_regs.push_back(genericregnames[i]);
     }
 }
@@ -1220,7 +1220,7 @@ init_mips_conf_file_data(struct dwconf_s *config_file_data)
         sizeof(mipsregnames) / sizeof(mipsregnames[0]);
     config_file_data->cf_regs.clear();
     config_file_data->cf_regs.reserve(mips_table_count);
-    for(unsigned i = 0; i < mips_table_count; ++i) {
+    for (unsigned i = 0; i < mips_table_count; ++i) {
         config_file_data->cf_regs.push_back(mipsregnames[i]);
     }
     return;
@@ -1249,7 +1249,7 @@ init_generic_config_1200_regs(struct dwconf_s *config_file_data)
         sizeof(genericregnames) / sizeof(genericregnames[0]);
     config_file_data->cf_regs.clear();
     config_file_data->cf_regs.reserve(generic_table_count);
-    for(unsigned i = 0; i < generic_table_count; ++i) {
+    for (unsigned i = 0; i < generic_table_count; ++i) {
         config_file_data->cf_regs.push_back(genericregnames[i]);
     }
 }
@@ -1275,7 +1275,7 @@ print_reg_from_config_data(Dwarf_Signed reg,
         cout << "s";
         return;
     }
-    if ( reg < 0 || 
+    if (reg < 0 || 
         reg >= config_data->cf_regs.size()) {
         cout << "r" << reg;
         return;

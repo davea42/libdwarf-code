@@ -46,9 +46,9 @@ public:
         dbg_(dbg),srcfiles_(srcfiles),cnt_(cnt),refcount_(new int(1)) { };
     ~SrcfilesHolder() {
         (*refcount_)--;
-        if( (*refcount_) == 0) {
+        if ((*refcount_) == 0) {
             delete refcount_; 
-            if(srcfiles_) do_delete();
+            if (srcfiles_) do_delete();
         }
     };
     SrcfilesHolder(const SrcfilesHolder & d):dbg_(d.dbg_),
@@ -57,12 +57,12 @@ public:
         (*refcount_)++;
     };
     SrcfilesHolder & operator=(const SrcfilesHolder & d) {
-        if(this != &d) {
+        if (this != &d) {
             (*d.refcount_)++;
             (*refcount_)--;
-            if( (*refcount_) == 0) {
+            if ((*refcount_) == 0) {
                 delete refcount_; 
-                if(srcfiles_) do_delete();
+                if (srcfiles_) do_delete();
             }
             refcount_ = d.refcount_;
             srcfiles_ = d.srcfiles_;

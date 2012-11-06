@@ -39,13 +39,13 @@ using std::endl;
 bool 
 AddressRangesData::IsAddressInAddressRange(Dwarf_Unsigned pc)
 {
-    if(pc < low_pc_) {
+    if (pc < low_pc_) {
         return false;
     }
-    if(pc > high_pc_) {
+    if (pc > high_pc_) {
         return false;
     }
-    for(std::list<AddressRangeEntry>::iterator it =
+    for (std::list<AddressRangeEntry>::iterator it =
         address_range_data_.begin(); it != address_range_data_.end();
         ++it) {
         if (it->inThisRange(pc) ) {
@@ -82,7 +82,7 @@ AddressRangesData::PrintRangesData()
         IToHex(low_pc_,10) <<
         "  High = " <<
         IToHex(high_pc_,10);
-    for(std::list<AddressRangeEntry>::iterator it = 
+    for (std::list<AddressRangeEntry>::iterator it = 
         address_range_data_.begin(); it != address_range_data_.end();
         ++it,++ct) {
 
@@ -100,7 +100,7 @@ AddressRangesData::AddAddressRange(Dwarf_Unsigned low_pc, Dwarf_Unsigned high_pc
 void 
 AddressRangesData::SetLimitsAddressRange(Dwarf_Unsigned low_pc, Dwarf_Unsigned high_pc)
 {
-    if(low_pc < high_pc) {
+    if (low_pc < high_pc) {
         low_pc_ = low_pc;
         high_pc_ = high_pc;
     }
@@ -123,7 +123,7 @@ void
 LinkOnceData::PrintLinkOnceData()
 {
     unsigned ct = 0;
-    for(std::list<LinkOnceEntry>::iterator it = 
+    for (std::list<LinkOnceEntry>::iterator it = 
         link_once_data_.begin(); it != link_once_data_.end();
         ++it,++ct) {
 
@@ -134,7 +134,7 @@ LinkOnceData::PrintLinkOnceData()
 bool LinkOnceData::FindLinkOnceEntry(Dwarf_Unsigned pc)
 {
     std::list<LinkOnceEntry>::iterator it;
-    for( it = link_once_data_.begin(); it != link_once_data_.end();
+    for (it = link_once_data_.begin(); it != link_once_data_.end();
         ++it) {
         if (it->inThisLinkOnceRange(pc) ) {
             return true;
@@ -145,7 +145,7 @@ bool LinkOnceData::FindLinkOnceEntry(Dwarf_Unsigned pc)
 bool LinkOnceData::FindLinkOnceEntry(const std::string &secname,Dwarf_Unsigned lopc,Dwarf_Unsigned hipc)
 {
     std::list<LinkOnceEntry>::iterator it;
-    for( it = link_once_data_.begin(); it != link_once_data_.end();
+    for (it = link_once_data_.begin(); it != link_once_data_.end();
         ++it) {
         if (it->inThisLinkOnceRange(secname,lopc,hipc) ) {
             return true;

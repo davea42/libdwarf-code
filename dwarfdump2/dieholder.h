@@ -43,9 +43,9 @@ public:
         dbg_(dbg),die_(die),refcount_(new int(1)),die_printed_(false) { };
     ~DieHolder() {
         (*refcount_)--;
-        if( (*refcount_) == 0) {
+        if ((*refcount_) == 0) {
             delete refcount_; 
-            if(die_) dwarf_dealloc(dbg_,die_,DW_DLA_DIE);
+            if (die_) dwarf_dealloc(dbg_,die_,DW_DLA_DIE);
         }
     };
     DieHolder(const DieHolder & d):dbg_(d.dbg_),die_(d.die_),
@@ -53,12 +53,12 @@ public:
         (*refcount_)++;
     };
     DieHolder & operator=(const DieHolder & d) {
-        if(this != &d) {
+        if (this != &d) {
             (*d.refcount_)++;
             (*refcount_)--;
-            if( (*refcount_) == 0) {
+            if ((*refcount_) == 0) {
                 delete refcount_; 
-                if(die_) dwarf_dealloc(dbg_,die_,DW_DLA_DIE);
+                if (die_) dwarf_dealloc(dbg_,die_,DW_DLA_DIE);
             }
             refcount_ = d.refcount_;
             die_ = d.die_;

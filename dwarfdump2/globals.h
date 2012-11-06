@@ -208,9 +208,15 @@ extern int stop_indent_level;
 extern bool search_wide_format;
 extern bool search_is_on;
 
+/* Calculate wasted space */
+extern void calculate_attributes_usage(Dwarf_Half attr,Dwarf_Half theform,
+    Dwarf_Unsigned value);
+
+/* Able to generate report on search */
 extern std::string search_any_text;
 extern std::string search_match_text;
 extern std::string search_regex_text;
+extern int search_occurrences;
 #ifdef HAVE_REGEX
 extern regex_t search_re;
 #endif
@@ -219,12 +225,14 @@ extern bool is_strstrnocase(const char *data, const char *pattern);
 // Options to enable debug tracing. 
 #define MAX_TRACE_LEVEL 10
 extern int nTrace[MAX_TRACE_LEVEL + 1];
+#define DUMP_OPTIONS                0 // Dump options.
 #define DUMP_RANGES_INFO            1 // Dump RangesInfo Table.
 #define DUMP_LOCATION_SECTION_INFO  2 // Dump Location (.debug_loc) Info.
 #define DUMP_RANGES_SECTION_INFO    3 // Dump Ranges (.debug_ranges) Info.
 #define DUMP_LINKONCE_INFO          4 // Dump Linkonce Table.
 #define DUMP_VISITED_INFO           5 // Dump Visited Info.
 
+#define dump_options                nTrace[DUMP_OPTIONS]
 #define dump_ranges_info            nTrace[DUMP_RANGES_INFO]
 #define dump_location_section_info  nTrace[DUMP_LOCATION_SECTION_INFO]
 #define dump_ranges_section_info    nTrace[DUMP_RANGES_SECTION_INFO]
@@ -270,6 +278,7 @@ extern bool check_dwarf_constants;
 extern bool check_di_gaps;
 extern bool check_forward_decl;
 extern bool check_self_references;
+extern bool check_attr_encoding;   /* Attributes encoding */
 extern bool suppress_nested_name_search;
 extern bool suppress_check_extensions_tables;
 
@@ -313,13 +322,15 @@ enum Dwarf_Check_Categories{ // Dwarf_Check_Categories
     di_gaps_result,
     forward_decl_result,
     self_references_result,
-    total_check_result,  //20
+    attr_encoding_result,
+    total_check_result,  //21
     LAST_CATEGORY  // Must be last.
 } ;
 
 
 extern bool info_flag;
 extern bool line_flag;
+extern bool line_print_pc;        /* Print <pc> addresses. */
 extern bool use_old_dwarf_loclist;
 extern bool producer_children_flag;   // List of CUs per compiler 
 
@@ -457,7 +468,10 @@ void clean_up_syms_malloc_data();
 
 void print_any_harmless_errors(Dwarf_Debug dbg);
 
-/* Definitions for printing relocations.  */
+/* Detailed attributes encoding space */
+void print_attributes_encoding(Dwarf_Debug dbg);
+
+/* Definitions for printing relocations. */
 #define DW_SECTION_REL_DEBUG_INFO     0
 #define DW_SECTION_REL_DEBUG_LINE     1
 #define DW_SECTION_REL_DEBUG_PUBNAMES 2
@@ -467,6 +481,26 @@ void print_any_harmless_errors(Dwarf_Debug dbg);
 #define DW_SECTION_REL_DEBUG_LOC      6
 #define DW_SECTION_REL_DEBUG_RANGES   7
 #define DW_SECTION_REL_DEBUG_TYPES    8
+#define DW_MASK_PRINT_ALL             0x00ff
+
+/* Definitions for printing sections. */
+#define DW_HDR_DEBUG_INFO     0x00000001   /*  0 */
+#define DW_HDR_DEBUG_LINE     0x00000002   /*  1 */
+#define DW_HDR_DEBUG_PUBNAMES 0x00000004   /*  2 */
+#define DW_HDR_DEBUG_ABBREV   0x00000008   /*  3 */ /* 0x000f */
+#define DW_HDR_DEBUG_ARANGES  0x00000010   /*  4 */
+#define DW_HDR_DEBUG_FRAME    0x00000020   /*  5 */
+#define DW_HDR_DEBUG_LOC      0x00000040   /*  6 */
+#define DW_HDR_DEBUG_RANGES   0x00000080   /*  7 */ /* 0x00ff */
+#define DW_HDR_DEBUG_STRING   0x00000100   /*  8 */
+#define DW_HDR_DEBUG_PUBTYPES 0x00000200   /*  9 */
+#define DW_HDR_DEBUG_TYPES    0x00000400   /* 10 */
+#define DW_HDR_TEXT           0x00000800   /* 11 */ /* 0x0fff */
+#define DW_HDR_HEADER         0x00001000   /* 12 */
+
+/* Mask to indicate all sections (by default) */
+#define DW_HDR_ALL            0x80000000
+#define DW_HDR_DEFAULT        0x00000fff
 
 template <typename T >
 std::string IToDec(T v,unsigned l=0) 
@@ -482,11 +516,11 @@ std::string IToDec(T v,unsigned l=0)
 template <typename T >
 std::string IToHex(T v,unsigned l=0) 
 {
-    if(v == 0) {
+    if (v == 0) {
         // For a zero value, above does not insert 0x.
         // So we do zeroes here.
         std::string out = "0x0";
-        if(l > 3)  {
+        if (l > 3)  {
             out.append(l-3,'0');
         }
         return out;
@@ -517,7 +551,7 @@ std::string IToHex0N(T v,unsigned len=0)
     s.setf(std::ios::hex,std::ios::basefield); 
     //s.setf(std::ios::showbase); 
     s << std::setfill('0');
-    if(len > 2 ) {
+    if (len > 2 ) {
         s << std::setw(len-2) << v;
     } else {
         s << v;
@@ -533,12 +567,12 @@ std::string IToDec0N(T v,unsigned len=0)
         // 000-27 is not what we want for example.
         s << v; 
         // ASSERT: s.str().size() >= 1
-        if( len > ((s.str().size()))) {
+        if (len > ((s.str().size()))) {
             // Ignore the leading - and take the rest.
             std::string rest = s.str().substr(1);
             std::string::size_type zeroscount = len - (rest.size()+1); 
             std::string final;
-            if(zeroscount > 0) {
+            if (zeroscount > 0) {
                 final.append(zeroscount,'0');
                 final.append(rest);
             } else {
@@ -549,7 +583,7 @@ std::string IToDec0N(T v,unsigned len=0)
         return s.str();
     }
     s << std::setfill('0');
-    if(len > 0) {
+    if (len > 0) {
         s << std::setw(len) << v;
     } else {
         s << v;
@@ -558,7 +592,7 @@ std::string IToDec0N(T v,unsigned len=0)
 }
 inline std::string LeftAlign(unsigned minlen,const std::string &s)
 {
-    if(minlen <= s.size()) {
+    if (minlen <= s.size()) {
         return s;
     }
     std::string out = s;

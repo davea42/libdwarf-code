@@ -319,9 +319,9 @@ void
 translate_to_uri(const string &s, string &out)
 {
     const char *cp = s.c_str();
-    for( ; *cp; ++cp) {
+    for (; *cp; ++cp) {
         int c = 0xff & (unsigned char)*cp;
-        if(dwarfdump_ctype_table[c]) {
+        if (dwarfdump_ctype_table[c]) {
             out.push_back((char)c);
         } else {
             char buf[8];
@@ -336,15 +336,15 @@ static char
 hexdig(char c)
 {
     char ochar = 0;
-    if(c >= 0 && c <= '9') {
+    if (c >= 0 && c <= '9') {
         ochar = (c - '0');
         return ochar;
     }
-    if(c >= 'a' && c <= 'f') {
+    if (c >= 'a' && c <= 'f') {
         ochar = (c - 'a')+10;
         return ochar;
     }
-    if(c >= 'A' && c <= 'F') {
+    if (c >= 'A' && c <= 'F') {
         ochar = (c - 'A')+10;
         return ochar;
     }
@@ -367,9 +367,9 @@ hexpairtochar(const char *cp, char *myochar)
     char ochar = 0;
     int olen = 0;
     char c = cp[0];
-    if(c) {
+    if (c) {
         char c2 = cp[1];
-        if(c2) {
+        if (c2) {
             ochar = tohex(c,c2);
             olen = 2;
         } else {
@@ -396,12 +396,12 @@ void
 translate_from_uri(const std::string & input, string &out)
 {
     const char *cp = input.c_str();
-    for(; *cp; ++cp) {
+    for (; *cp; ++cp) {
         char c = *cp;
-        if(c == '%') {
+        if (c == '%') {
             char c2 = cp[1];
             // hexpairtochar deals with c2 being NUL.
-            if ( c2  == '%') {
+            if (c2  == '%') {
                 out.push_back(c);
                 ++cp;
                 continue;
@@ -423,7 +423,7 @@ mytestfrom(const std::string & in,const std::string & expected,int testnum)
 {
     string out;
     translate_from_uri(in, out);
-    if(expected != out) {
+    if (expected != out) {
         printf(" Fail test %d expected \"%s\" got \"%s\"\n",
             testnum,expected.c_str(),out.c_str());
         ++errcnt;
@@ -435,7 +435,7 @@ mytest(const std::string & in,const std::string & expected,int testnum)
 {
     string out;
     translate_to_uri(in.c_str(), out);
-    if(expected !=  out) {
+    if (expected !=  out) {
         printf(" Fail test %d expected \"%s\" got \"%s\"\n",
             testnum,expected.c_str(),out.c_str());
         ++errcnt;
@@ -468,7 +468,7 @@ main()
     mytestfrom("a%","a%",17);
     mytest("%bc","%25bc",18);
     
-    if(errcnt) {
+    if (errcnt) {
         printf("uri errcount ",errcnt);
     }
     return errcnt? 1:0;
