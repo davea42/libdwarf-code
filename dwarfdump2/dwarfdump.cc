@@ -448,7 +448,7 @@ print_object_header(Elf *elf,Dwarf_Debug dbg,unsigned local_section_map)
     #define DW_SECTNAME_DEBUG_TYPES    ".debug_types"
     #define DW_SECTNAME_TEXT           ".text"
 
-    static char *sectnames[] = {
+    static const char *sectnames[] = {
         DW_SECTNAME_DEBUG_INFO,
         DW_SECTNAME_DEBUG_LINE,
         DW_SECTNAME_DEBUG_PUBNAMES,
@@ -589,7 +589,7 @@ print_object_header(Elf *elf,Dwarf_Debug dbg,unsigned local_section_map)
         Dwarf_Addr section_addr = 0;
         Dwarf_Unsigned section_size = 0;
         Dwarf_Error error = 0;
-        boolean print_it = FALSE;
+        bool print_it = false;
         Dwarf_Unsigned total_bytes = 0;
         int printed_sections = 0;
 
@@ -605,17 +605,17 @@ print_object_header(Elf *elf,Dwarf_Debug dbg,unsigned local_section_map)
                 &section_size,
                 &error);
             if (res == DW_DLV_OK) {
-                print_it = FALSE;
+                print_it = false;
                 /* Use original mapping */
                 if (local_section_map == DW_HDR_ALL) {
                     /* Print all sections info */
-                    print_it = TRUE;
+                    print_it = true;
                 } else {
                     /* Check if the section name is a debug section */
                     for (index = 0; *sectnames[index]; ++index) {
                         if (!strcmp(sectnames[index],section_name) &&
                             (local_section_map & (1 << index))) {
-                            print_it = TRUE;
+                            print_it = true;
                             break;
                         }
                     }
@@ -747,13 +747,13 @@ sort_compare_compiler(const Compiler &cmp1,const  Compiler &cmp2)
 static void
 print_search_results()
 {
-    const char *search_type = 0;
-    const char *search_text = 0;
-    if (search_any_text) {
+    string search_type;
+    string search_text;
+    if (!search_any_text.empty()) {
         search_type = "any";
         search_text = search_any_text;
     } else {
-        if (search_match_text) {
+        if (!search_match_text.empty()) {
             search_type = "match";
             search_text = search_match_text;
         } else {
@@ -761,9 +761,10 @@ print_search_results()
             search_text = search_regex_text;
         }
     }
-    fprintf(stderr,"\nSearch type      : '%s'\n",search_type);
-    fprintf(stderr,"Pattern searched : '%s'\n",search_text);
-    fprintf(stderr,"Occurrences Found: %d\n",search_occurrences);
+    cerr << endl;
+    cerr << "Search type      : " <<search_type << endl;
+    cerr << "Pattern searched : " <<search_text<< endl;
+    cerr << "Occurrences Found: "<< search_occurrences << endl;
 }
 
 /* Print a summary of checks and errors */
@@ -1428,7 +1429,7 @@ process_args(int argc, char *argv[])
                 /* -S[v]match|any|regex=text*/
                 if (optarg[0] == 'v') {
                     ++optarg;
-                    search_print_results = TRUE;
+                    search_print_results = true;
                 }
                 /* -S match=<text>*/
                 if (strncmp(optarg,"match=",6) == 0) {

@@ -51,6 +51,7 @@ $Header: /plroot/cmplrs.src/v7.4.5m/.RCS/PL/dwarfdump/RCS/dwarfdump.c,v 1.48 200
 #include "makename.h"
 #include "dwconf.h"
 #include "common.h"
+#include "uri.h"
 #include "esb.h"                /* For flexible string buffer. */
 
 #ifdef WIN32

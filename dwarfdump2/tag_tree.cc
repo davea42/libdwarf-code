@@ -44,6 +44,7 @@ $Header: /plroot/cmplrs.src/v7.4.5m/.RCS/PL/dwarfdump/RCS/tag_tree.c,v 1.8 2005/
 #include "libdwarf.h"
 #include "common.h"
 #include "tag_common.h"
+#include "naming.h"
 using std::cout;
 using std::cerr;
 using std::endl;

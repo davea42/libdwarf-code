@@ -623,7 +623,7 @@ is_32bit_abs_reloc(unsigned int type, Dwarf_Half machine)
 #if defined(R_PPC64_ADDR32)
             | (type == R_PPC64_ADDR32)
 #endif
-#if defined(R_PPC_DTPREL32)
+#if defined(R_PPC64_DTPREL32)
             | (type == R_PPC64_DTPREL32)
 #endif
             );
