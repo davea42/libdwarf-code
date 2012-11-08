@@ -3,7 +3,7 @@
   Portions Copyright (C) 2012 SN Systems Ltd. All rights reserved.
 
   This program is free software; you can redistribute it and/or modify it
-  under the terms of version 2 of the GNU Lesser General Public License as
+  under the terms of version 2.1 of the GNU Lesser General Public License
   published by the Free Software Foundation.
 
   This program is distributed in the hope that it would be useful, but
