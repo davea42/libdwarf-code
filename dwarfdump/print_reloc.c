@@ -614,7 +614,7 @@ print_reloc_information_64(int section_no, Dwarf_Small * buf,
             add = pa->r_addend;
         }
 
-        printf("0x%08x 0x%08x %-26s <%5ld> %s\n",
+        printf("0x%08lx 0x%08lx %-26s <%5ld> %s\n",
             (unsigned long int) (p->r_offset),
             (unsigned long int) (add),
             get_reloc_type_names(ELF64_R_TYPE(p->r_info)),
@@ -698,7 +698,7 @@ print_reloc_information_32(int section_no, Dwarf_Small * buf,
             Elf32_Rela *pa = (Elf32_Rela *)p;
             add = pa->r_addend;
         }
-        printf("0x%08x 0x%08x %-26s <%5ld> %s\n",
+        printf("0x%08lx 0x%08lx %-26s <%5ld> %s\n",
             (unsigned long int) (p->r_offset),
             (unsigned long int) (add),
             get_reloc_type_names(ELF32_R_TYPE(p->r_info)),

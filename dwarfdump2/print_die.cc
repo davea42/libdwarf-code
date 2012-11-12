@@ -304,7 +304,6 @@ print_one_die_section(Dwarf_Debug dbg,bool is_info)
     int nres = DW_DLV_OK;
     int   cu_count = 0;
     unsigned loop_count = 0;
-    Dwarf_Bool local_is_info = (is_info)?true:false;
     if (print_as_info_or_cu() && do_print_dwarf) {
         if (is_info) {
             cout << endl;
@@ -509,12 +508,12 @@ print_die_and_children_internal(DieHolder & hin_die_in,
     for (;;) {
         // We loop on siblings, this is the sibling loop.
         /* Get the CU offset for easy error reporting */
+        Dwarf_Die in_die = hin_die.die();
         dwarf_die_offsets(in_die,
             &error_message_data.DIE_overall_offset,
             &error_message_data.DIE_offset,
             &err);
         dieVec.push_back(hin_die);
-        Dwarf_Die in_die = hin_die.die();
         if (check_tag_tree) {
             DWARF_CHECK_COUNT(tag_tree_result,1);
             if (indent_level == 0) {
@@ -2708,7 +2707,7 @@ check_attributes_encoding(Dwarf_Half attr,Dwarf_Half theform,
     Dwarf_Unsigned value)
 {
     static int factor[DW_FORM_data1 + 1];
-    static boolean do_init = TRUE;
+    static bool do_init = true;
 
     if (do_init) {
         /* Create table on first call */
@@ -2719,7 +2718,7 @@ check_attributes_encoding(Dwarf_Half attr,Dwarf_Half theform,
         factor[DW_FORM_data2] = 2;  /* index 0x05 */
         factor[DW_FORM_data4] = 4;  /* index 0x06 */
         factor[DW_FORM_data8] = 8;  /* index 0x07 */
-        do_init = FALSE;
+        do_init = false;
     }
 
     /* Regardless of the encoding form, count the checks. */
@@ -2769,7 +2768,7 @@ void
 print_attributes_encoding(Dwarf_Debug dbg)
 {
     if (attributes_encoding_table) {
-        boolean print_header = TRUE;
+        bool print_header = true;
         Dwarf_Unsigned total_entries = 0;
         Dwarf_Unsigned total_bytes_formx = 0;
         Dwarf_Unsigned total_bytes_leb128 = 0;
@@ -2778,14 +2777,13 @@ print_attributes_encoding(Dwarf_Debug dbg)
         Dwarf_Unsigned bytes_leb128 = 0;
         int index;
         int count = 0;
-        float saved_rate;
         for (index = 0; index < DW_AT_lo_user; ++index) {
             if (attributes_encoding_table[index].leb128) {
                 if (print_header) {
                     printf("\n*** SPACE USED BY ATTRIBUTE ENCODINGS ***\n");
                     printf("Nro Attribute Name            "
                            "   Entries     Data_x     leb128 Rate\n");
-                    print_header = FALSE;
+                    print_header = false;
                 }
                 entries = attributes_encoding_table[index].entries;
                 bytes_formx = attributes_encoding_table[index].formx;
@@ -2793,7 +2791,7 @@ print_attributes_encoding(Dwarf_Debug dbg)
                 total_entries += entries;
                 total_bytes_formx += bytes_formx;
                 total_bytes_leb128 += bytes_leb128;
-                saved_rate = bytes_leb128 * 100 / bytes_formx;
+                float saved_rate = bytes_leb128 * 100 / bytes_formx;
                 printf("%3d %-25s "
                        "%10" /*DW_PR_XZEROS*/ DW_PR_DUu " "   /* Entries */
                        "%10" /*DW_PR_XZEROS*/ DW_PR_DUu " "   /* FORMx */
@@ -2801,7 +2799,7 @@ print_attributes_encoding(Dwarf_Debug dbg)
                        "%3.0f%%"
                        "\n",
                     ++count,
-                    get_AT_name(index,dwarf_names_print_on_error),
+                    get_AT_name(index,dwarf_names_print_on_error).c_str(),
                     entries,
                     bytes_formx,
                     bytes_leb128,
@@ -2812,7 +2810,7 @@ print_attributes_encoding(Dwarf_Debug dbg)
             /* At least we have an entry, print summary and percentage */
             Dwarf_Addr lower = 0;
             Dwarf_Unsigned size = 0;
-            saved_rate = total_bytes_leb128 * 100 / total_bytes_formx;
+            float saved_rate = total_bytes_leb128 * 100 / total_bytes_formx;
             printf("** Summary **                 "
                     "%10" /*DW_PR_XZEROS*/ DW_PR_DUu " "  /* Entries */
                     "%10" /*DW_PR_XZEROS*/ DW_PR_DUu " "  /* FORMx */

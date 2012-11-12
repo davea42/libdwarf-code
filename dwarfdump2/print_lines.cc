@@ -150,9 +150,8 @@ print_line_numbers_this_cu(DieHolder & hcudie)
     } else if (lres == DW_DLV_NO_ENTRY) {
         /* no line information is included */
     } else {
-        char *padding;
         /* Padding for a nice layout */
-        padding = line_print_pc ? "            " : "";
+        string padding = line_print_pc ? "            " : "";
         if (do_print_dwarf) {
             print_source_intro(cu_die);
             if (verbose) {
@@ -174,7 +173,7 @@ print_line_numbers_this_cu(DieHolder & hcudie)
                 "IA=val ISA number, DI=val discriminator value"
                 << endl;
             if (line_print_pc) {
-                cout << "<pc>        "
+                cout << "<pc>        ";
             }
             cout <<
                 "[row,col] NS BB ET PE EB IS= DI= uri: \"filepath\""
@@ -360,7 +359,7 @@ print_line_numbers_this_cu(DieHolder & hcudie)
             if (do_print_dwarf) {
                 /* Check if print of <pc> address is needed. */
                 if (line_print_pc) {
-                    cout << IToHex0N(pc,10) << "  "
+                    cout << IToHex0N(pc,10) << "  ";
                 }
                 cout << "[" <<
                     IToDec(lineno,4) << "," <<

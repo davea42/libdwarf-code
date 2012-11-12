@@ -75,7 +75,6 @@ void ResetBucketGroup(Bucket_Group *pBucketGroup);
 void ResetSentinelBucketGroup(Bucket_Group *pBucketGroup);
 
 void PrintBucketGroup(Bucket_Group *pBucketGroup,Dwarf_Bool bFull);
-void PrintBucketData(Bucket_Group *pBucketGroup,Bucket_Data *pBucketData);
 
 void AddEntryIntoBucketGroup(Bucket_Group *pBucketGroup,
     Dwarf_Addr key,Dwarf_Addr base,Dwarf_Addr low,Dwarf_Addr high,
@@ -84,7 +83,6 @@ void AddEntryIntoBucketGroup(Bucket_Group *pBucketGroup,
 Dwarf_Bool DeleteKeyInBucketGroup(Bucket_Group *pBucketGroup,Dwarf_Addr key);
 
 Dwarf_Bool FindAddressInBucketGroup(Bucket_Group *pBucketGroup,Dwarf_Addr address);
-int FindDataIndexInBucket(Bucket_Group *pBucketGroup,Bucket_Data *pBucketData);
 Bucket_Data *FindDataInBucketGroup(Bucket_Group *pBucketGroup,Dwarf_Addr key);
 Bucket_Data *FindKeyInBucketGroup(Bucket_Group *pBucketGroup,Dwarf_Addr key);
 Bucket_Data *FindNameInBucketGroup(Bucket_Group *pBucketGroup,char *name);
