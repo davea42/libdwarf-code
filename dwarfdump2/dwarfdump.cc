@@ -1155,7 +1155,7 @@ static const char *usage_text[] = {
 "\t\t  \t    Print using a 'generic' register set.",
 "\t\t-s\tprint string section",
 "\t\t-S[v] <option>=<text>\tsearch for <text> in attributes",
-"\t\t  \ts\tprint number of occurrences",
+"\t\t  \tv\tprint number of occurrences",
 "\t\t  \twith <option>:",
 "\t\t  \t-S any=<text>\tany <text>",
 "\t\t  \t-S match=<text>\tmatching <text>",
