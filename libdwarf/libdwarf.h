@@ -1325,19 +1325,35 @@ int dwarf_loclist(Dwarf_Attribute /*attr*/,  /* inflexible! */
    no addr_size is obsolete but supported, 
    use dwarf_loclist_from_expr_a() instead.  
 */
-int dwarf_loclist_from_expr(Dwarf_Debug dbg,
-    Dwarf_Ptr expression_in,
-    Dwarf_Unsigned expression_length,
-    Dwarf_Locdesc ** llbuf,
-    Dwarf_Signed * listlen, Dwarf_Error * error);
+int dwarf_loclist_from_expr(Dwarf_Debug /*dbg*/,
+    Dwarf_Ptr      /* expression_in*/,
+    Dwarf_Unsigned /* expression_length*/,
+    Dwarf_Locdesc ** /* llbuf*/,
+    Dwarf_Signed * /*listlen*/, 
+    Dwarf_Error *  /* error*/ );
 
-/* dwarf_loclist_from_expr_a() new 27 Apr 2009: added addr_size argument. */
-int dwarf_loclist_from_expr_a(Dwarf_Debug dbg,
-    Dwarf_Ptr expression_in,
-    Dwarf_Unsigned expression_length,
-    Dwarf_Half addr_size,
-    Dwarf_Locdesc ** llbuf,
-    Dwarf_Signed * listlen, Dwarf_Error * error);
+/*  dwarf_loclist_from_expr_a() new 27 Apr 2009: 
+    added addr_size argument. */
+int dwarf_loclist_from_expr_a(Dwarf_Debug /*dbg*/,
+    Dwarf_Ptr      /*expression_in*/,
+    Dwarf_Unsigned /*expression_length*/,
+    Dwarf_Half     /*addr_size*/,
+    Dwarf_Locdesc ** /*llbuf*/,
+    Dwarf_Signed * /*listlen*/, 
+    Dwarf_Error *  /*error*/);
+
+/*  dwarf_loclist_from_expr_b() new 13 Nov 2012: 
+    added version argument, 2 for DWARF2 etc. */
+int
+dwarf_loclist_from_expr_b(Dwarf_Debug /*dbg*/, 
+    Dwarf_Ptr      /*expression_in*/ ,
+    Dwarf_Unsigned /*expression_length*/ ,
+    Dwarf_Half     /*addr_size*/ ,
+    Dwarf_Small    /*dwarf_version*/ ,
+    Dwarf_Locdesc ** /*llbuf*/ ,
+    Dwarf_Signed * /*listlen*/ , 
+    Dwarf_Error *  /*error*/ );
+
 
 /* Unimplemented */
 int dwarf_stringlen(Dwarf_Die /*die*/, 

@@ -117,6 +117,7 @@ static Dwarf_Locdesc *
 _dwarf_get_locdesc(Dwarf_Debug dbg,
     Dwarf_Block * loc_block,
     Dwarf_Half address_size,
+    Dwarf_Small version_stamp,
     Dwarf_Addr lowpc,
     Dwarf_Addr highpc, 
     Dwarf_Error * error)
@@ -534,21 +535,27 @@ _dwarf_get_locdesc(Dwarf_Debug dbg,
                 offset  += length;
             }
             break;
-        case DW_OP_GNU_implicit_pointer:  /*  0xf2  GNU */
+        case DW_OP_GNU_implicit_pointer:{  /*  0xf2  GNU */
             /*  Jakub Jelinek: The value is an optimized-out
                 pointer value. Represented as
-                an offset_size (address_size) DIE offset
-                (as simple unsigned integer) followed by
-                a signed leb128 offset. 
+                an offset_size DIE offset
+                (a simple unsigned integer) in DWARF3,4 
+                followed by a signed leb128 offset.
+                For DWARF2, it is actually pointer size. 
                 http://www.dwarfstd.org/ShowIssue.php?issue=100831.1 */
+            Dwarf_Small iplen = dbg->de_length_size;
+            if (version_stamp == CURRENT_VERSION_STAMP /* 2 */ ) {
+                iplen = dbg->de_pointer_size;
+            }
             READ_UNALIGNED(dbg, operand1, Dwarf_Unsigned, loc_ptr,
-                dbg->de_length_size);
-            loc_ptr = loc_ptr + dbg->de_length_size;
-            offset = offset + dbg->de_length_size;
+                iplen);
+            loc_ptr = loc_ptr + iplen;
+            offset = offset + iplen;
 
             operand2 = _dwarf_decode_s_leb128(loc_ptr, &leb128_length);
             loc_ptr = loc_ptr + leb128_length;
             offset = offset + leb128_length;
+            }
 
             break;
         case DW_OP_GNU_entry_value:       /*  0xf3  GNU */
@@ -906,7 +913,9 @@ dwarf_loclist_n(Dwarf_Attribute attr,
             }
             locdesc = _dwarf_get_locdesc(dbg, &loc_block,
                 address_size,
-                lowpc, highpc, error);
+                cucontext->cc_version_stamp, 
+                lowpc, highpc, 
+                error);
             if (locdesc == NULL) {
                 _dwarf_cleanup_llbuf(dbg, llbuf, lli);
                 /* low level error already set: let it be passed back */
@@ -942,7 +951,9 @@ dwarf_loclist_n(Dwarf_Attribute attr,
             error, and we don't test for block length 0 specially here. */
         locdesc = _dwarf_get_locdesc(dbg, &loc_block,
             address_size,
-            lowpc, highpc, error);
+            cucontext->cc_version_stamp, 
+            lowpc, highpc, 
+            error);
         if (locdesc == NULL) {
             /* low level error already set: let it be passed back */
             return (DW_DLV_ERROR);
@@ -1062,7 +1073,9 @@ dwarf_loclist(Dwarf_Attribute attr,
         handles only a single location expression.  */
     locdesc = _dwarf_get_locdesc(dbg, &loc_block,
         address_size,
-        lowpc, highpc, error);
+        cucontext->cc_version_stamp, 
+        lowpc, highpc, 
+        error);
     if (locdesc == NULL) {
         /* low level error already set: let it be passed back */
         return (DW_DLV_ERROR);
@@ -1107,14 +1120,61 @@ dwarf_loclist_from_expr(Dwarf_Debug dbg,
 }
 
 /*  New April 27 2009. Adding addr_size argument for the rare
-    cases where an object has CUs with a different address_size. */
+    cases where an object has CUs with a different address_size.
+
+    FIXME: As of 2012 we need yet another version with
+    the version_stamp passed in.
+*/
 int
 dwarf_loclist_from_expr_a(Dwarf_Debug dbg,
     Dwarf_Ptr expression_in,
     Dwarf_Unsigned expression_length,
     Dwarf_Half addr_size,
     Dwarf_Locdesc ** llbuf,
-    Dwarf_Signed * listlen, Dwarf_Error * error)
+    Dwarf_Signed * listlen, 
+    Dwarf_Error * error)
+{
+    int res;
+    Dwarf_Debug_InfoTypes info_reading = &dbg->de_info_reading;
+    Dwarf_CU_Context current_cu_context = 
+        info_reading->de_cu_context; 
+    Dwarf_Small version_stamp = CURRENT_VERSION_STAMP;
+
+    if (current_cu_context) {
+        /*  This is ugly. It is not necessarily right. Due to
+            oddity in DW_OP_GNU_implicit_pointer, see its
+            implementation above. 
+            For correctness, use dwarf_loclist_from_expr_b()
+            instead. */
+        version_stamp = current_cu_context->cc_version_stamp;
+        if (version_stamp < 2) {
+           version_stamp = CURRENT_VERSION_STAMP;
+        }
+    } else {
+        version_stamp = CURRENT_VERSION_STAMP;
+    }
+    res = dwarf_loclist_from_expr_b(dbg,
+        expression_in,
+        expression_length,
+        addr_size,
+        version_stamp, /* CU context DWARF version */
+        llbuf,
+        listlen,
+        error);
+    return res;
+}
+/*  New November 13 2012. Adding 
+    DWARF version number argument.
+*/
+int
+dwarf_loclist_from_expr_b(Dwarf_Debug dbg,
+    Dwarf_Ptr expression_in,
+    Dwarf_Unsigned expression_length,
+    Dwarf_Half addr_size,
+    Dwarf_Small dwarf_version,
+    Dwarf_Locdesc ** llbuf,
+    Dwarf_Signed * listlen, 
+    Dwarf_Error * error)
 {
     /* Dwarf_Block that describes a single location expression. */
     Dwarf_Block loc_block;
@@ -1123,6 +1183,7 @@ dwarf_loclist_from_expr_a(Dwarf_Debug dbg,
     Dwarf_Locdesc *locdesc = 0;
     Dwarf_Addr lowpc = 0;
     Dwarf_Addr highpc = (Dwarf_Unsigned) (-1LL);
+    Dwarf_Small version_stamp = dwarf_version;
 
     memset(&loc_block,0,sizeof(loc_block));
     loc_block.bl_len = expression_length;
@@ -1135,8 +1196,12 @@ dwarf_loclist_from_expr_a(Dwarf_Debug dbg,
     it was unused or perhaps never tested after being set. Dwarf2,
     section 2.4.1 In other words, it is not an error, and we don't
     test for block length 0 specially here.  */
+    /* We need the DWARF version to get a locdesc! */ 
     locdesc = _dwarf_get_locdesc(dbg, &loc_block, 
-        addr_size,lowpc, highpc, error);
+        addr_size,
+        version_stamp,
+        lowpc, highpc, 
+        error);
     if (locdesc == NULL) {
         /* low level error already set: let it be passed back */
         return (DW_DLV_ERROR);

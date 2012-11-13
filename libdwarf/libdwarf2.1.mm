@@ -8,7 +8,7 @@ n\."
 .nr Hb 5
 \." ==============================================
 \." Put current date in the following at each rev
-.ds vE rev 2.02, December 13, 2011
+.ds vE rev 2.03, November 13, 2012
 \." ==============================================
 \." ==============================================
 .ds | |
@@ -202,6 +202,14 @@ functions.
 The following is a brief mention of the changes in this libdwarf from 
 the libdwarf draft for DWARF Version 1 and recent changes.
 .H 2 "Items Changed"
+.P
+Added dwarf_loclist_from_expr_b()
+function which adds an argument of the DWARF version
+(2 for DWARF2, etc) to the dwarf_loclist_from_expr_a()
+function.  Because the DW_OP_GNU_implicit_pointer
+opcode is defined differently for DWARF2 than for
+later versions.
+(November 2012)
 .P
 Added new functions (some for libdwarf client code) 
 and internal logic support for the 
@@ -2965,7 +2973,32 @@ if (lres == DW_DLV_OK) {
 .DE
 .in -2
 .P
+.H 3 "dwarf_loclist_from_expr_b()"
+.DS
+\f(CWint dwarf_loclist_from_expr_a(
+        Dwarf_Ptr bytes_in, 
+        Dwarf_Unsigned bytes_len,
+        Dwarf_Half addr_size,
+        Dwarf_Half version_stamp,
+        Dwarf_Locdesc **llbuf,
+        Dwarf_Signed  *listlen,
+        Dwarf_Error *error)\fP
+.DE
+The function \f(CWdwarf_loclist_from_expr_b()\fP 
+is identical to  \f(CWdwarf_loclist_from_expr_a()\fP
+in every way except that the caller passes the additional argument 
+\f(CWversion_stamp\fP containing the 
+version stamp (2 for DWARF2, etc) of the CU using
+this location expression.
+The DW_OP_GNU_implicit_pointer requires this version information
+to be correctly processed.
+.P
+The \f(CWaddr_size\fP argument (added 27April2009) is needed
+to correctly interpret frame information as different compilation
+units can have different address sizes.
+DWARF4 adds address_size to the CIE header.
 
+.P
 .H 3 "dwarf_loclist_from_expr_a()"
 .DS
 \f(CWint dwarf_loclist_from_expr_a(
