@@ -2065,7 +2065,8 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
                         }
                         if (check_decl_file || check_ranges || 
                             check_locations) {
-                            AddEntryIntoBucketGroup(pRangesInfo,0,lowAddr,
+                            AddEntryIntoBucketGroup(pRangesInfo,0,
+                                lowAddr,
                                 lowAddr,highAddr,NULL,FALSE);
                         }
                     }

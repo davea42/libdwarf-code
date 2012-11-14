@@ -134,10 +134,14 @@ DumpFullBucketGroup(Bucket_Group *pBucketGroup)
     Bucket_Data *pBucketData = 0;
 
     assert(pBucketGroup);
+    printf("\nBucket Group at 0x%lx lower 0x%lx upper 0x%lx]\n",
+        (unsigned long)pBucketGroup,
+        (unsigned long)pBucketGroup->lower,
+        (unsigned long)pBucketGroup->upper);
     for (pBucket = pBucketGroup->pHead; pBucket && pBucket->nEntries; 
         pBucket = pBucket->pNext) {
 
-        printf("\nLowPC & HighPC records for bucket %d, at 0x%08lx\n",
+        printf("LowPC & HighPC records for bucket %d, at 0x%08lx\n",
             nBucketNo++,(unsigned long)pBucket);
         for (nIndex = 0; nIndex < pBucket->nEntries; ++nIndex) {
             pBucketData = &pBucket->Entries[nIndex];
@@ -431,10 +435,11 @@ IsValidInBucketGroup(Bucket_Group *pBucketGroup,Dwarf_Addr address)
 
     assert(pBucketGroup);
     /* Check the address is within the allowed limits */
-    if (address >= pBucketGroup->lower && address <= pBucketGroup->upper) {
-        for (pBucket = pBucketGroup->pHead; pBucket && pBucket->nEntries; 
+    if (address >= pBucketGroup->lower && 
+        address <= pBucketGroup->upper) {
+        for (pBucket = pBucketGroup->pHead; 
+            pBucket && pBucket->nEntries; 
             pBucket = pBucket->pNext) {
-
             for (nIndex = 0; nIndex < pBucket->nEntries; ++nIndex) {
                 pBucketData = &pBucket->Entries[nIndex];
                 if (address >= pBucketData->low && 
