@@ -1,3 +1,11 @@
+2012-11-14  DavidAnderson <davea42@earthlink.net>
+     * dwarf_loc.c: DW_OP_GNU_implicit_pointer requires a version stamp
+       to work correctly.  Created a new function
+       to allow clients to expicitly pass the version stamp.
+       Most clients can continue to use the old interface.
+     * libdwarf.h: Declaring new function dwarf_loclist_from_expr_b()
+     * libdwarf2.1.mm: Documenting dwarf_loclist_from_expr_b()
+     * libdwarf2.1.pdf: Regenerated.
 2012-10-31  DavidAnderson <davea42@earthlink.net>
      * CODINGSTYLE: Added some small details here.
 2012-04-04  DavidAnderson <davea42@earthlink.net>
