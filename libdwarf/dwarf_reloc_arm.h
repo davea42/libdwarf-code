@@ -163,7 +163,7 @@
 #endif /* WIN32 */
 
 /* ARM relocations defined by the ABIs */
-static char *reloc_type_names_ARM[] = {
+static const char *reloc_type_names_ARM[] = {
     "R_ARM_NONE",                 /*  00 */
     "R_ARM_PC24",                 /*  01 */
     "R_ARM_ABS32",                /*  02 */

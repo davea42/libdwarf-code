@@ -85,7 +85,6 @@ AddressRangesData::PrintRangesData()
     for (std::list<AddressRangeEntry>::iterator it = 
         address_range_data_.begin(); it != address_range_data_.end();
         ++it,++ct) {
-
         it->printAddressRangeEntry(ct);
     }
 }
@@ -97,6 +96,8 @@ AddressRangesData::AddAddressRange(Dwarf_Unsigned low_pc, Dwarf_Unsigned high_pc
     address_range_data_.push_back(AddressRangeEntry(low_pc,high_pc));
 };
 
+// This only does something with a meaningful range.
+// Something like 0,0 (for example) is ignored.
 void 
 AddressRangesData::SetLimitsAddressRange(Dwarf_Unsigned low_pc, Dwarf_Unsigned high_pc)
 {

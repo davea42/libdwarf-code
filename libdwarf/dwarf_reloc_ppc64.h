@@ -160,7 +160,7 @@
 #endif /* WIN32 */
 
 /* PowerPC64 relocations defined by the ABIs */
-static char *reloc_type_names_PPC64[] = {
+static const char *reloc_type_names_PPC64[] = {
     "R_PPC64_NONE",                 /*  00 */
     "R_PPC64_ADDR32",               /*  01 */
     "R_PPC64_ADDR24",               /*  02 */

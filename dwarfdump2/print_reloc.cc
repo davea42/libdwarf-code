@@ -44,6 +44,7 @@ $Header: /plroot/cmplrs.src/v7.4.5m/.RCS/PL/dwarfdump/RCS/print_reloc.c,v 1.11 2
 
 
 #include "globals.h"
+#include "print_reloc.h"
 using std::string;
 using std::cout;
 using std::cerr;

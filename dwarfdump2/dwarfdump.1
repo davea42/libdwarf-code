@@ -115,7 +115,8 @@ Print locations lists.
 Print ELF header information and index, address and size for all sections.
 .TP
 .B \-Eh
-Print ELF header information in a readable format.
+Effectively does nothing (use another tool
+to print the Elf file header).
 .TP
 .B \-El
 Print index, address and size for the .debug_line section.
@@ -432,7 +433,7 @@ have a 'match', an 'any', and a 'regex').
 Any -S causes the .debug_info section to be inspected.
 No checking options or printing options should be supplied with -S.
 
-If -v is added to the -S option, the number of occurrences is printed.
+If v is added to the -S option, the number of occurrences is printed.
 
 .TP
 .B \-S match=string
@@ -475,7 +476,13 @@ if the library functions required are found at configure time.
 .PP
 The -W option is a modifier to the -S option, and
 increases the amount of output -W prints.
-Now we show the -W in context with a -S option.
+An example v modifier to the -S option is shown below.
+We show the -W in context with a -S option.
+
+.TP
+.B \-S vmatch=string1
+Prints information about the
+DIEs that -S matches and prints the count of occurences
 
 .TP
 .B \-S match=string1 -W

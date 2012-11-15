@@ -818,7 +818,11 @@ qsort_compare_compiler(const void *elem1,const void *elem2)
     } else if (cnt1 > cnt2) {
         return -1;
     }
-    return 0;
+    /* When error counts match, sort on name. */
+    {
+        int v = strcmp(cmp2.name, cmp1.name);
+        return v;
+    }
 }
 
 /* Print a summary of search results */

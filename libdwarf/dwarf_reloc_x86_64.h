@@ -83,7 +83,7 @@
 #endif /* WIN32 */
 
 /* Relocation types for X86_64 */
-static char *reloc_type_names_X86_64[] = {
+static const char *reloc_type_names_X86_64[] = {
     "R_X86_64_NONE",            /* 00 */
     "R_X86_64_64",              /* 01 */
     "R_X86_64_PC32",            /* 02 */

@@ -142,7 +142,7 @@
 #endif /* WIN32 */
 
 /* PowerPC relocations defined by the ABIs */
-static char *reloc_type_names_PPC[] = {
+static const char *reloc_type_names_PPC[] = {
     "R_PPC_NONE",                 /*  00 */
     "R_PPC_ADDR32",               /*  01 */
     "R_PPC_ADDR24",               /*  02 */

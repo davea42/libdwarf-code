@@ -81,7 +81,7 @@
 #endif /* WIN32 */
 
 /* Relocation types for MIPS */
-static char *reloc_type_names_MIPS[] = {
+static const char *reloc_type_names_MIPS[] = {
     "R_MIPS_NONE",              /* 00 */
     "R_MIPS_16",                /* 01 */
     "R_MIPS_32",                /* 02 */

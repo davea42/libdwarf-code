@@ -118,6 +118,10 @@ public:
     void PrintRangesData();
     void ResetRangesList();
 private:
+    // low_pc_ and high_pc_ are set from elf header data for a
+    // text section, not from the 
+    // individual ranges found in the DWARF data itself.
+    // See SetLimitsAddressRange().
     Dwarf_Unsigned low_pc_;
     Dwarf_Unsigned high_pc_;
     std::list<AddressRangeEntry> address_range_data_; 

@@ -2330,6 +2330,7 @@ _dwarf_print_one_expr_op(Dwarf_Debug dbg,Dwarf_Loc* expr,int index,
             break;
         case DW_OP_bregx:
             {
+            string_out.append(" ");
             string_out.append(IToHex0N(opd1,10));
             string_out.append("+");
             Dwarf_Unsigned opd2 = expr->lr_number2;
@@ -2337,18 +2338,22 @@ _dwarf_print_one_expr_op(Dwarf_Debug dbg,Dwarf_Loc* expr,int index,
             }
             break;
         case DW_OP_call2:
+            string_out.append(" ");
             string_out.append(IToHex0N(opd1));
 
             break;
         case DW_OP_call4:
+            string_out.append(" ");
             string_out.append(IToHex(opd1));
 
             break;
         case DW_OP_call_ref:
+            string_out.append(" ");
             string_out.append(IToHex0N(opd1,8));
             break;
         case DW_OP_bit_piece:
             {
+            string_out.append(" ");
             string_out.append(IToHex0N(opd1,8));
             string_out.append(" offset ");
             Dwarf_Unsigned opd2 = expr->lr_number2;

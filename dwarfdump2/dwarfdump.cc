@@ -326,7 +326,6 @@ main(int argc, char *argv[])
     pVisitedOffsetData = new VisitedOffsetData;
 
     increment_compilers_detected(false);
-    increment_compilers_targeted(false);
     (void) elf_version(EV_NONE);
     if (elf_version(EV_CURRENT) == EV_NONE) {
         cerr << "dwarfdump: libelf.a out of date." << endl;
@@ -956,7 +955,7 @@ process_one_file(Elf * elf,const  string & file_name, int archive,
         Dwarf_Addr upper = 0;
         Dwarf_Unsigned size = 0;
         int res = 0;
-        res = dwarf_get_section_info_by_name(dbg,".text.",&lower,&size,&err);
+        res = dwarf_get_section_info_by_name(dbg,".text",&lower,&size,&err);
         if (DW_DLV_OK == res) {
             upper = lower + size;
         }
