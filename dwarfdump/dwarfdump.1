@@ -299,9 +299,10 @@ Turns on full reporting of error totals per producer.
 Turns on reading pubnames and checking for fde errors.
 .TP
 .B \-kE 
-Checks attributes encoding representation in debug_info, looking if the value
-will use less bytes if represented in LEB128.
- 
+Checks the integer encoding representation in debug_info,
+computing whether these integer values
+could fit in fewer bytes if represented in LEB128.
+
 .TP
 .B \-kf 
 Turns on checking for FDE errors.
