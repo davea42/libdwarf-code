@@ -68,21 +68,21 @@ boolean
 is_strstrnocase(const char * container, const char * contained)
 {
     const unsigned char *ct = (const unsigned char *)container;
-    for( ; *ct; ++ct )
+    for (; *ct; ++ct )
     {
         const unsigned char * cntnd = (const unsigned char *)contained;
         boolean innerwrong = TRUE;
-        for(  ; *cntnd; ++cntnd,++ct) 
+        for (; *cntnd; ++cntnd,++ct) 
         {
             char lct = tolower(*ct);
             char tlc = tolower(*cntnd);
-            if(lct != tlc) {
+            if (lct != tlc) {
                 innerwrong=TRUE;
                 break; /* Go to outer loop */
             }
             innerwrong=FALSE;
         }
-        if(!innerwrong) {
+        if (!innerwrong) {
             return TRUE;
         }
     }

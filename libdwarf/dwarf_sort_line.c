@@ -235,7 +235,7 @@ cmpr(const void *lin, const void *rin)
 static void
 free_area_data(struct a_line_area *arp)
 {
-    while(arp) {
+    while (arp) {
         struct a_line_area *next = arp->ala_next;
         free(arp);
         arp = next;

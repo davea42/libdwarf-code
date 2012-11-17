@@ -54,10 +54,10 @@ skipunder(const char *v)
 {
     const char *cp = v;
     int undercount = 0;
-    for(  ; *cp ; ++cp) {
-        if( *cp == '_') {
+    for (; *cp ; ++cp) {
+        if (*cp == '_') {
             ++undercount;
-            if(undercount == 2) {
+            if (undercount == 2) {
                 return cp+1;
             }
         }
@@ -73,10 +73,10 @@ ellipname(int res, unsigned int val_in, const char *v,const char *ty,bool printo
         DWARF_CHECK_COUNT(dwarf_constants_result,1);
     }
 #endif
-    if(res != DW_DLV_OK) {
-        if(printonerr) {
+    if (res != DW_DLV_OK) {
+        if (printonerr) {
 #ifndef TRIVIAL_NAMING
-        if(printonerr && check_dwarf_constants && checking_this_compiler()) {
+        if (printonerr && check_dwarf_constants && checking_this_compiler()) {
             if (check_verbose_mode) {
                 std::cerr << ty << " of " << val_in << " (" <<
                     IToHex(val_in) << 
@@ -88,7 +88,7 @@ ellipname(int res, unsigned int val_in, const char *v,const char *ty,bool printo
         }
 #else
         /* This is for the tree-generation, not dwarfdump itself. */
-        if(printonerr) {
+        if (printonerr) {
             std::cerr << ty << " of " << val_in << 
                 " (" << IToHex(val_in,0) << 
                 ") is unknown to dwarfdump. Continuing. " << std::endl;
@@ -98,7 +98,7 @@ ellipname(int res, unsigned int val_in, const char *v,const char *ty,bool printo
         return "<Unknown " + string(ty) + " value " +
             IToHex(val_in,0) + ">";
     }
-    if(ellipsis) {
+    if (ellipsis) {
         return skipunder(v);
     }
     return v;

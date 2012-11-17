@@ -73,7 +73,7 @@ print_source_intro(Dwarf_Die cu_die)
 static void
 record_line_error(const std::string &where, Dwarf_Error err)
 {
-    if(check_lines && checking_this_compiler()) {
+    if (check_lines && checking_this_compiler()) {
         string msg("Error getting line details calling "); 
         msg.append(where);
         msg.append(" dwarf error is ");
@@ -101,11 +101,11 @@ print_line_numbers_this_cu(DieHolder & hcudie)
     bool SkipRecord = false;
 
     error_message_data.current_section_id = DEBUG_LINE;
-    if(do_print_dwarf) {
+    if (do_print_dwarf) {
         cout << endl;
         cout << ".debug_line: line number info for a single cu"<< endl;
     }
-    if ( verbose > 1) {
+    if (verbose > 1) {
         int errcount = 0;
         print_source_intro(cu_die);
         SrcfilesHolder hsrcfiles;
@@ -115,7 +115,7 @@ print_line_numbers_this_cu(DieHolder & hcudie)
             /* ignore_die_printed_flag= */true);
         DWARF_CHECK_COUNT(lines_result,1);
         int lres = dwarf_print_lines(cu_die, &err,&errcount);
-        if(errcount > 0) {
+        if (errcount > 0) {
             DWARF_ERROR_COUNT(lines_result,errcount);
             DWARF_CHECK_COUNT(lines_result,(errcount-1));
         }
@@ -124,11 +124,11 @@ print_line_numbers_this_cu(DieHolder & hcudie)
         }
         return;
     }
-    if(check_lines && checking_this_compiler()) {
+    if (check_lines && checking_this_compiler()) {
         DWARF_CHECK_COUNT(lines_result,1);
         int line_errs = 0;
         dwarf_check_lineheader(cu_die,&line_errs);
-        if(line_errs > 0) {
+        if (line_errs > 0) {
             DWARF_CHECK_ERROR_PRINT_CU();
             DWARF_ERROR_COUNT(lines_result,line_errs);
             DWARF_CHECK_COUNT(lines_result,(line_errs-1));
@@ -150,7 +150,9 @@ print_line_numbers_this_cu(DieHolder & hcudie)
     } else if (lres == DW_DLV_NO_ENTRY) {
         /* no line information is included */
     } else {
-        if(do_print_dwarf) {
+        /* Padding for a nice layout */
+        string padding = line_print_pc ? "            " : "";
+        if (do_print_dwarf) {
             print_source_intro(cu_die);
             if (verbose) {
                 SrcfilesHolder hsrcfiles;
@@ -159,18 +161,22 @@ print_line_numbers_this_cu(DieHolder & hcudie)
                     hsrcfiles,
                     /* ignore_die_printed_flag= */true);
             }
+            /* Check if print of <pc> address is needed. */
             cout << endl;
-            cout <<
-                "<pc>        [row,col] NS BB ET PE EB IS= DI= uri: \"filepath\""
-                << endl;
-            cout << 
+            cout << padding <<
                 "NS new statement, BB new basic block, ET end of text sequence"
                 << endl;
-            cout << 
+            cout << padding <<
                 "PE prologue end, EB epilogue begin"
                 << endl;
-            cout << 
+            cout << padding <<
                 "IA=val ISA number, DI=val discriminator value"
+                << endl;
+            if (line_print_pc) {
+                cout << "<pc>        ";
+            }
+            cout <<
+                "[row,col] NS BB ET PE EB IS= DI= uri: \"filepath\""
                 << endl;
         }
         string lastsrc = ""; 
@@ -278,7 +284,7 @@ print_line_numbers_this_cu(DieHolder & hcudie)
                                 symbols and no stripping */
                             if (pc) {
                                 char addr_tmp[100];
-                                if(check_lines && checking_this_compiler()) {
+                                if (check_lines && checking_this_compiler()) {
                                     snprintf(addr_tmp,sizeof(addr_tmp),
                                         ".debug_line: Address"
                                         " 0x%" DW_PR_XZEROS DW_PR_DUx
@@ -350,8 +356,12 @@ print_line_numbers_this_cu(DieHolder & hcudie)
                 }
             }
 
-            if(do_print_dwarf) {
-                cout << IToHex0N(pc,10) << "  ["  <<
+            if (do_print_dwarf) {
+                /* Check if print of <pc> address is needed. */
+                if (line_print_pc) {
+                    cout << IToHex0N(pc,10) << "  ";
+                }
+                cout << "[" <<
                     IToDec(lineno,4) << "," <<
                     IToDec(column,2) <<
                     "]" ;
@@ -397,17 +407,17 @@ print_line_numbers_this_cu(DieHolder & hcudie)
                     print_error(dbg, "dwarf_prologue_end_etc() failed", 
                         disres, err);
                 }
-                if(prologue_end) {
+                if (prologue_end) {
                     cout <<" PE";
                 }
-                if(epilogue_begin) {
+                if (epilogue_begin) {
                     cout <<" EB";
                 }
-                if(isa) {
+                if (isa) {
                     cout <<" IS=";
                     cout << IToHex(isa);
                 }
-                if(discriminator) {
+                if (discriminator) {
                     cout <<" DI=";
                     cout << IToHex(discriminator);
                 }
@@ -425,7 +435,7 @@ print_line_numbers_this_cu(DieHolder & hcudie)
                 }
                 lastsrc = filename;
             }
-            if(do_print_dwarf) {
+            if (do_print_dwarf) {
                 cout << endl;
             }
         }

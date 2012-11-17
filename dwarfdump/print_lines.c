@@ -77,7 +77,7 @@ static void
 record_line_error(const char *where, Dwarf_Error err)
 {
     char tmp_buff[500];
-    if(check_lines && checking_this_compiler()) {
+    if (check_lines && checking_this_compiler()) {
         snprintf(tmp_buff, sizeof(tmp_buff),
             "Error getting line details calling %s dwarf error is %s",
             where,dwarf_errmsg(err));
@@ -124,7 +124,7 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
             /* ignore_die_stack= */TRUE);
         DWARF_CHECK_COUNT(lines_result,1);
         lres = dwarf_print_lines(cu_die, &err,&errcount);
-        if(errcount > 0) {
+        if (errcount > 0) {
             DWARF_ERROR_COUNT(lines_result,errcount);
             DWARF_CHECK_COUNT(lines_result,(errcount-1));
         }
@@ -134,10 +134,10 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
         return;
     }
     
-    if(check_lines && checking_this_compiler()) {
+    if (check_lines && checking_this_compiler()) {
         DWARF_CHECK_COUNT(lines_result,1);
         dwarf_check_lineheader(cu_die,&line_errs);
-        if(line_errs > 0) {
+        if (line_errs > 0) {
             DWARF_CHECK_ERROR_PRINT_CU();
             DWARF_ERROR_COUNT(lines_result,line_errs);
             DWARF_CHECK_COUNT(lines_result,(line_errs-1));
@@ -157,8 +157,11 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
     } else if (lres == DW_DLV_NO_ENTRY) {
         /* no line information is included */
     } else {
-        struct esb_s lastsrc;;
+        char *padding;
+        struct esb_s lastsrc;
         esb_constructor(&lastsrc);
+        /* Padding for a nice layout */
+        padding = line_print_pc ? "            " : "";
         if (do_print_dwarf) {
             print_source_intro(cu_die);
             if (verbose) {
@@ -168,12 +171,18 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
                     /* srcfiles= */ 0, /* cnt= */ 0, 
                     /* ignore_die_stack= */TRUE);
             }
-            printf("\n<pc>        [row,col] "
+            /* Check if print of <pc> address is needed. */
+            printf("\n");
+            printf("%sNS new statement, BB new basic block, "
+                "ET end of text sequence\n",padding);
+            printf("%sPE prologue end, EB epilogue begin\n",padding);
+            printf("%sIA=val ISA number, DI=val discriminator value\n",
+                padding);
+            if (line_print_pc) {
+                printf("<pc>        ");
+            }
+            printf("[row,col] "
                 "NS BB ET PE EB IS= DI= uri: \"filepath\"\n");
-            printf("NS new statement, BB new basic block, "
-                "ET end of text sequence\n");
-            printf("PE prologue end, EB epilogue begin\n");
-            printf("IA=val ISA number, DI=val discriminator value\n");
         }
         for (i = 0; i < linecount; i++) {
             Dwarf_Line line = linebuf[i];
@@ -199,7 +208,7 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
                 }
             }
 
-            if(check_lines && checking_this_compiler()) {
+            if (check_lines && checking_this_compiler()) {
                 DWARF_CHECK_COUNT(lines_result,1);
             }
             filename = "<unknown>";
@@ -266,7 +275,7 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
                             table if try to match the pc value with 
                             one of those ranges.
                         */
-                        if(check_lines && checking_this_compiler()) {
+                        if (check_lines && checking_this_compiler()) {
                             DWARF_CHECK_COUNT(lines_result,1);
                         }
                         if (FindAddressInBucketGroup(pLinkonceInfo,pc)){
@@ -278,7 +287,7 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
                                 symbols and no stripping */
                             if (pc) {
                                 char addr_tmp[100];
-                                if(check_lines && checking_this_compiler()) {
+                                if (check_lines && checking_this_compiler()) {
                                     snprintf(addr_tmp,sizeof(addr_tmp),
                                         ".debug_line: Address"
                                         " 0x%" DW_PR_XZEROS DW_PR_DUx
@@ -348,9 +357,11 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
                 }
             }
             if (do_print_dwarf) {
-                printf("0x%08" DW_PR_DUx 
-                    "  [%4" DW_PR_DUu ",%2" DW_PR_DUu "]", pc, lineno,
-                    column);
+                /* Check if print of <pc> address is needed. */
+                if (line_print_pc) {
+                    printf("0x%" DW_PR_XZEROS DW_PR_DUx "  ", pc);
+                }
+                printf("[%4" DW_PR_DUu ",%2" DW_PR_DUu "]", lineno, column);
             }
 
             nsres = dwarf_linebeginstatement(line, &newstatement, &err);
@@ -377,7 +388,7 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
             } else if (nsres == DW_DLV_ERROR) {
                 print_error(dbg, "lineblock failed", nsres, err);
             }
-            if(do_print_dwarf) {
+            if (do_print_dwarf) {
                 Dwarf_Bool prologue_end = 0;
                 Dwarf_Bool epilogue_begin = 0;
                 Dwarf_Unsigned isa = 0;
@@ -389,16 +400,16 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
                     print_error(dbg, "dwarf_prologue_end_etc() failed",
                         disres, err);
                 }
-                if(prologue_end) {
+                if (prologue_end) {
                     printf(" PE");
                 }
-                if(epilogue_begin) {
+                if (epilogue_begin) {
                     printf(" EB");
                 }
-                if(isa) {
+                if (isa) {
                     printf(" IS=0x%" DW_PR_DUx, isa);
                 }
-                if(discriminator) {
+                if (discriminator) {
                     printf(" DI=0x%" DW_PR_DUx, discriminator);
                 }
             }
@@ -413,7 +424,7 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
                 esb_append(&urs, " uri: \"");
                 translate_to_uri(filename,&urs);
                 esb_append(&urs,"\"");
-                if(do_print_dwarf) {
+                if (do_print_dwarf) {
                     printf("%s",esb_get_string(&urs));
                 }
                 esb_destructor(&urs);

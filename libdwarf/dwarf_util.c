@@ -71,7 +71,7 @@ _dwarf_get_size_of_val(Dwarf_Debug dbg,
         return (form);
 
     case DW_FORM_addr:
-        if(address_size) {
+        if (address_size) {
             return address_size;
         }
         /* This should never happen, address_size should be set. */
@@ -201,11 +201,11 @@ copy_abbrev_table_to_new_table(Dwarf_Hash_Table htin,
     Dwarf_Hash_Table_Entry entry_out = htout->tb_entries;
     unsigned entry_out_count = htout->tb_table_entry_count;
     unsigned k = 0;
-    for ( ;  k < entry_in_count; ++k,++entry_in) {
+    for (; k < entry_in_count; ++k,++entry_in) {
         Dwarf_Abbrev_List listent = entry_in->at_head;
         Dwarf_Abbrev_List nextlistent = 0;
 
-        for (  ; listent ; listent = nextlistent) {
+        for (; listent ; listent = nextlistent) {
             unsigned newtmp = listent->ab_code;
             unsigned newhash = newtmp%entry_out_count;
             Dwarf_Hash_Table_Entry e;
@@ -269,13 +269,13 @@ _dwarf_get_abbrev_for_code(Dwarf_CU_Context cu_context, Dwarf_Unsigned code)
     Dwarf_Byte_Ptr end_abbrev_ptr = 0;
     unsigned hashable_val = 0;
 
-    if ( !hash_table_base->tb_entries ) {
+    if (!hash_table_base->tb_entries) {
         hash_table_base->tb_table_entry_count =  HT_MULTIPLE;
         hash_table_base->tb_total_abbrev_count= 0;
         hash_table_base->tb_entries =  _dwarf_get_alloc(dbg,
             DW_DLA_HASH_TABLE_ENTRY, 
             hash_table_base->tb_table_entry_count);
-        if(! hash_table_base->tb_entries) {
+        if (!hash_table_base->tb_entries) {
             return NULL;
         }
 
@@ -289,7 +289,7 @@ _dwarf_get_abbrev_for_code(Dwarf_CU_Context cu_context, Dwarf_Unsigned code)
             DW_DLA_HASH_TABLE_ENTRY, 
             newht.tb_table_entry_count);
 
-        if(! newht.tb_entries) {
+        if (!newht.tb_entries) {
             return NULL;
         }
         /*  Copy the existing entries to the new table,
@@ -373,7 +373,7 @@ _dwarf_get_abbrev_for_code(Dwarf_CU_Context cu_context, Dwarf_Unsigned code)
         /*  We may have fallen off the end of content,  that is not
             a botch in the section, as there is no rule that the last
             abbrev need have abbrev_code of 0. */
-    } while ( (abbrev_ptr < end_abbrev_ptr ) && 
+    } while ((abbrev_ptr < end_abbrev_ptr) && 
         *abbrev_ptr != 0 && abbrev_code != code);
 
     cu_context->cc_last_abbrev_ptr = abbrev_ptr;
@@ -471,7 +471,7 @@ _dwarf_length_of_cu_header(Dwarf_Debug dbg, Dwarf_Unsigned offset,
         local_length_size +     /* Size of abbrev offset field. */
         sizeof(Dwarf_Small);    /* Size of address size field. */
 
-    if(!is_info) {
+    if (!is_info) {
         final_size += 
             /* type signature size */
             sizeof (Dwarf_Sig8) + 
@@ -492,7 +492,7 @@ _dwarf_length_of_cu_header_simple(Dwarf_Debug dbg,
         sizeof(Dwarf_Half) +    /* Size of version stamp field. */
         dbg->de_length_size +   /* Size of abbrev offset field. */
         sizeof(Dwarf_Small);    /* Size of address size field. */
-    if(!dinfo) {
+    if (!dinfo) {
         finalsize += 
             /* type signature size */
             sizeof (Dwarf_Sig8) + 
@@ -572,7 +572,7 @@ _dwarf_get_address_size(Dwarf_Debug dbg, Dwarf_Die die)
 {
     Dwarf_CU_Context context = 0;
     Dwarf_Half addrsize = 0;
-    if(!die) {
+    if (!die) {
         return dbg->de_pointer_size;
     }
     context = die->di_cu_context;
@@ -580,5 +580,18 @@ _dwarf_get_address_size(Dwarf_Debug dbg, Dwarf_Die die)
     return addrsize;
 }
 
+/* Encode val as an unsigned LEB128. */
+int dwarf_encode_leb128(Dwarf_Unsigned val, int *nbytes,
+    char *space, int splen)
+{
+    /* Encode val as an unsigned LEB128. */
+    return _dwarf_pro_encode_leb128_nm(val,nbytes,space,splen);
+}
 
-
+/* Encode val as a signed LEB128. */
+int dwarf_encode_signed_leb128(Dwarf_Signed val, int *nbytes,
+    char *space, int splen)
+{
+    /* Encode val as a signed LEB128. */
+    return _dwarf_pro_encode_signed_leb128_nm(val,nbytes,space,splen);
+}

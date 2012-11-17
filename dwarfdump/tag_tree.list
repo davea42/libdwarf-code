@@ -464,6 +464,7 @@ DW_TAG_typedef        /* Nested typedef */
 DW_TAG_subprogram     
 DW_TAG_template_type_parameter /* template instantiations */
 DW_TAG_template_value_parameter /* template instantiations */
+DW_TAG_union_type  /* Nested unions */
 0xffffffff
 DW_TAG_template_alias
 DW_TAG_template_type_parameter

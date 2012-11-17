@@ -86,7 +86,7 @@ print_ranges(Dwarf_Debug dbg)
         to use dense form here. */
     wasdense = dense;
     dense = 0;
-    for(;;) {
+    for (;;) {
         Dwarf_Ranges *rangeset = 0;
         Dwarf_Signed rangecount = 0;
         Dwarf_Unsigned bytecount = 0;
@@ -95,7 +95,7 @@ print_ranges(Dwarf_Debug dbg)
         // older call here.
         int rres = dwarf_get_ranges(dbg,off,&rangeset,
             &rangecount,&bytecount,&err);
-        if(rres == DW_DLV_OK) {
+        if (rres == DW_DLV_OK) {
             cout <<" Ranges group " << group_number << ":" << endl;
             string exprstring = 
                 print_ranges_list_to_extra(dbg,off,

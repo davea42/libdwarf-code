@@ -37,15 +37,15 @@ public:
         lo_section_high_pc_(high_pc),lo_section_name_(name) {};
     ~LinkOnceEntry () {};
     bool inThisLinkOnceRange(Dwarf_Unsigned pc) {
-        if(pc >= lo_section_low_pc_ && pc <= lo_section_high_pc_) {
+        if (pc >= lo_section_low_pc_ && pc <= lo_section_high_pc_) {
             return true;
         }
         return false;
     }
     bool inThisLinkOnceRange(const std::string &sname,Dwarf_Unsigned lopc,
         Dwarf_Unsigned hipc) {
-            if(sname == lo_section_name_ ) {
-                if((lopc >= lo_section_low_pc_ && lopc <=
+            if (sname == lo_section_name_ ) {
+                if ((lopc >= lo_section_low_pc_ && lopc <=
                     lo_section_high_pc_) &&
                     (hipc >= lo_section_low_pc_ && hipc <=
                     lo_section_high_pc_))  {
@@ -90,7 +90,7 @@ public:
         range_high_pc_(high_pc){};
     ~AddressRangeEntry () {};
     bool inThisRange(Dwarf_Unsigned pc) {
-        if(pc < range_low_pc_ || pc > range_high_pc_) {
+        if (pc < range_low_pc_ || pc > range_high_pc_) {
             return false;
         }
         return true;
@@ -118,6 +118,10 @@ public:
     void PrintRangesData();
     void ResetRangesList();
 private:
+    // low_pc_ and high_pc_ are set from elf header data for a
+    // text section, not from the 
+    // individual ranges found in the DWARF data itself.
+    // See SetLimitsAddressRange().
     Dwarf_Unsigned low_pc_;
     Dwarf_Unsigned high_pc_;
     std::list<AddressRangeEntry> address_range_data_; 
@@ -145,7 +149,7 @@ public:
     };
     bool IsKnownOffset(Dwarf_Unsigned off) {
         VODtype::size_type v = offset_->count(off);
-        if( v) {
+        if (v) {
             return true;
         }
         return false;

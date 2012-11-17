@@ -71,7 +71,7 @@ print_types(Dwarf_Debug dbg, enum type_type_e type_type)
     void (*dealloctype) (Dwarf_Debug, Dwarf_Type *, Dwarf_Signed) =
         0;
 
-    if(!do_print_dwarf) {
+    if (!do_print_dwarf) {
         return;
     }
 

@@ -124,13 +124,13 @@ int
 test_ints()
 {
     int errcount = 0;
-    for(int i = 0; ; ++i) {
+    for (int i = 0; ; ++i) {
         struct testdata & x = itests[i]; 
-        if(x.val == 0 && x.definedlen == 0 && x.expected == 0) {
+        if (x.val == 0 && x.definedlen == 0 && x.expected == 0) {
             break;
         }
         string res = IToDec(x.val,x.definedlen);
-        if( res != string(x.expected) ) {
+        if (res != string(x.expected) ) {
             cout << "FAIL: test " << i << " got \"" << res <<
                 "\" but expected \"" << x.expected <<
                 "\"  line "  << __LINE__ << endl;
@@ -144,13 +144,13 @@ int
 test_ints_hex()
 {
     int errcount = 0;
-    for(int i = 0; ; ++i) {
+    for (int i = 0; ; ++i) {
         struct testdata & x = itestsx[i];
-        if(x.val == 0 && x.definedlen == 0 && x.expected == 0) {
+        if (x.val == 0 && x.definedlen == 0 && x.expected == 0) {
             break;
         }
         string res = IToHex(x.val,x.definedlen);
-        if( res != string(x.expected) ) {
+        if (res != string(x.expected) ) {
             cout << "FAIL: test " << i << " got \"" << res <<
                 "\" but expected \"" << x.expected <<
                 "\"  line "  << __LINE__ << endl;
@@ -163,13 +163,13 @@ int
 test_uints()
 {
     int errcount = 0;
-    for(int i = 0; ; ++i) {
+    for (int i = 0; ; ++i) {
         struct utestdata & x = utests[i];
-        if(x.val == 0 && x.definedlen == 0 && x.expected == 0) {
+        if (x.val == 0 && x.definedlen == 0 && x.expected == 0) {
             break;
         }
         string res = IToDec(x.val,x.definedlen);
-        if( res != string(x.expected) ) {
+        if (res != string(x.expected) ) {
             cout << "FAIL: test " << i << " got \"" << res <<
                 "\" but expected \"" << x.expected <<
                 "\"  line "  << __LINE__ << endl;
@@ -183,13 +183,13 @@ int
 test_uints_hex()
 {
     int errcount = 0;
-    for(int i = 0; ; ++i) {
+    for (int i = 0; ; ++i) {
         struct utestdata & x = utestsx[i];
-        if(x.val == 0 && x.definedlen == 0 && x.expected == 0) {
+        if (x.val == 0 && x.definedlen == 0 && x.expected == 0) {
             break;
         }
         string res = IToHex(x.val,x.definedlen);
-        if( res != string(x.expected) ) {
+        if (res != string(x.expected) ) {
             cout << "FAIL: test " << i << " got \"" << res <<
                 "\" but expected \"" << x.expected <<
                 "\"  line "  << __LINE__ << endl;
@@ -202,13 +202,13 @@ int
 test_uints_02hex()
 {
     int errcount = 0;
-    for(int i = 0; ; ++i) {
+    for (int i = 0; ; ++i) {
         struct utestdata & x = utests02x[i];
-        if(x.val == 0 && x.definedlen == 0 && x.expected == 0) {
+        if (x.val == 0 && x.definedlen == 0 && x.expected == 0) {
             break;
         }
         string res = IToHex02(x.val);
-        if( res != string(x.expected) ) {
+        if (res != string(x.expected) ) {
             cout << "FAIL: test " << i << " got \"" << res <<
                 "\" but expected \"" << x.expected <<
                 "\"  line "  << __LINE__ << endl;
@@ -222,13 +222,13 @@ int
 test_uints_0Nhex()
 {
     int errcount = 0;
-    for(int i = 0; ; ++i) {
+    for (int i = 0; ; ++i) {
         struct utestdata & x = utests0Nx[i];
-        if(x.val == 0 && x.definedlen == 0 && x.expected == 0) {
+        if (x.val == 0 && x.definedlen == 0 && x.expected == 0) {
             break;
         }
         string res = IToHex0N(x.val,x.definedlen);
-        if( res != string(x.expected) ) {
+        if (res != string(x.expected) ) {
             cout << "FAIL: test " << i << " got \"" << res <<
                 "\" but expected \"" << x.expected <<
                 "\"  line "  << __LINE__ << endl;
@@ -253,13 +253,13 @@ int
 test_ints_0Ndec()
 {
     int errcount = 0;
-    for(int i = 0; ; ++i) {
+    for (int i = 0; ; ++i) {
         struct testdata & x = itests0Nd[i];
-        if(x.val == 0 && x.definedlen == 0 && x.expected == 0) {
+        if (x.val == 0 && x.definedlen == 0 && x.expected == 0) {
             break;
         }
         string res = IToDec0N(x.val,x.definedlen);
-        if( res != string(x.expected) ) {
+        if (res != string(x.expected) ) {
             cout << "FAIL: test " << i << " got \"" << res <<
                 "\" but expected \"" << x.expected <<
                 "\"  line "  << __LINE__ << endl;
@@ -284,13 +284,13 @@ int
 test_leftalign()
 {
     int errcount = 0;
-    for(int i = 0; ; ++i) {
+    for (int i = 0; ; ++i) {
         struct testdatas & x = sdata[i];
-        if(x.val == 0 && x.definedlen == 0 && x.expected == 0) {
+        if (x.val == 0 && x.definedlen == 0 && x.expected == 0) {
             break;
         }
         std::string res = LeftAlign(x.definedlen,x.val);
-        if( res != std::string(x.expected) ) {
+        if (res != std::string(x.expected) ) {
             cout << "FAIL: test " << i << " got \"" << res <<
                 "\" length: " << res.size() << 
                 "  but expected \"" << x.expected <<
@@ -314,7 +314,7 @@ int main()
     errcount += test_uints_0Nhex();
     errcount += test_ints_0Ndec();
     errcount += test_leftalign();
-    if(errcount) {
+    if (errcount) {
         cout << "FAIL " << errcount << " tests" << endl;
         exit(1);
     }

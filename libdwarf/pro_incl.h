@@ -36,6 +36,11 @@
 
 */
 
+/* Windows specific */
+#ifdef HAVE_STDAFX_H
+#include "stdafx.h"
+#endif /* HAVE_STDAFX_H */
+
 #ifdef HAVE_ELF_H
 #include <elf.h>
 #elif defined(HAVE_LIBELF_H) 

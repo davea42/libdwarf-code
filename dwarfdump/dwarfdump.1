@@ -14,7 +14,7 @@ refers to those sections).
 .PP
 As of June 2011 the printing options and the checking options
 are mutually exclusive (if checking options are selected 
-the section details are not printed).   When errors are encountered
+the section details are not printed). When errors are encountered
 dwarfdump does attempt to print sufficient context so that
 one can understand exactly where the error is in the DWARF.
 This change makes checking really large object files
@@ -31,7 +31,7 @@ The format may change from release to release, so it is
 unwise to depend too heavily on the format.
 .PP
 Frame information (.debug_frame and .eh_frame) is heavily
-dependent on the ABI/ISA of the object file.  
+dependent on the ABI/ISA of the object file. 
 By default we use a generic set of register names
 handling up to 100 registers named r0-100.
 The '-R' option uses a built-in generic register name set
@@ -82,10 +82,10 @@ Options -U (turning off URI interpretation) and -q (making finding
 URI sequences silent) give finer control of URI interpretation.
 PP
 As an example, to get a string'a b' make the string 'a%20b'
-(here the quote  (') is for exposition not part of the string, though
+(here the quote (') is for exposition not part of the string, though
 quote is certainly problematic in a name).
-Instead of escaping " quotes in the string,  type %25, as in
-   'a "b'  should be typed   'a%20%25b'
+Instead of escaping " quotes in the string, type %25, as in
+ 'a "b' should be typed 'a%20%25b'
 Any characters can be typed in URI style, not just characters
 which are problematic to the shell or getopt.
 We strongly suggest you not type URI-style characters where
@@ -111,6 +111,50 @@ this print failing.
 Print locations lists.
 
 .TP
+.B \-E    
+Print ELF header information and index, address and size for all sections.
+.TP
+.B \-Eh
+Effectively does nothing (use another tool to print
+the Elf file header).
+.TP
+.B \-El
+Print index, address and size for the .debug_line section.
+.TP
+.B \-Ei
+Print index, address and size for the .debug_info section.
+.TP
+.B \-Ea
+Print index, address and size for the .debug_abbrev section.
+.TP
+.B \-Ep
+Print index, address and size for the .debug_pubnames section.
+.TP
+.B \-Er
+Print index, address and size for the .debug_aranges section.
+.TP
+.B \-Ef
+Print index, address and size for the .debug_frame section.
+.TP
+.B \-Eo
+Print index, address and size for the .debug_loc section.
+.TP
+.B \-ER
+Print index, address and size for the .debug_ranges section.
+.TP
+.B \-Es
+Print index, address and size for the .debug_string section.
+.TP
+.B \-Et
+Print index, address and size for the .debug_pubtypes section.
+.TP
+.B \-Ex
+Print index, address and size for the .text section.
+.TP
+.B \-Ed
+Print index, address and size for the .text and .debug_* sections.
+
+.TP
 .B \-f
 Print the .debug_frame section.
 .TP
@@ -118,12 +162,20 @@ Print the .debug_frame section.
 Print the .eh_frame section.
 
 .TP
+.B \-h
+Print IRIX exception tables (unsupported).
+
+.TP
 .B \-i
-Print  the .debug_info section.
+Print the .debug_info section.
 
 .TP
 .B \-l
 Print the .debug_info section and the associated line section data.
+.TP
+.B \-ls
+Print the .debug_info section and the associated line section data, but omits
+the <pc> address. Useful when a comparison is required.
 
 .TP
 .B \-m
@@ -131,7 +183,7 @@ Print the .debug_macinfo section.
 
 .TP
 .B \-N
-Print .debug_ranges section.  Because the DWARF specfications
+Print .debug_ranges section. Because the DWARF specfications
 do not rule out garbage data areas in .debug_ranges (if they are not
 referenced from .debug_info) any garbage bytes can result in
 this print failing.
@@ -214,13 +266,13 @@ Print a dwarfdump date/version string and stop.
 .B \-cg 
 Restricts checking to compilers whose
 producer string starts with 'GNU'
-and turns off -cs .
+and turns off -cs.
 
 .TP
 .B \-cs
 Restricts checking to compilers whose
 producer string starts with 'SN'
-and turns off -cg .
+and turns off -cg.
 .TP
 .B \-cname
 Restricts checking to compilers whose
@@ -228,14 +280,13 @@ producer string contains 'name' (not case sensitive).
 The 'name' is read as a URI string.
 
 .TP
-.B \
--ka        : Turns on all checking options except -kxe (-kxe might
-             be slow enough one mignt not want to use it routinely.)
+.B \-ka
+Turns on all checking options except -kxe (-kxe might
+be slow enough one mignt not want to use it routinely.)
 
 .TP
-.B \
--kb        : Checks for certain abbreviations section errors when reading
-             DIEs.
+.B \-kb
+Checks for certain abbreviations section errors when reading DIEs.
 .TP
 .B \-kc 
 Checks for errors in constants in debug_info.
@@ -246,6 +297,12 @@ Turns on full reporting of error totals per producer.
 .TP
 .B \-ke 
 Turns on reading pubnames and checking for fde errors.
+.TP
+.B \-kE 
+Checks the integer encoding representation in debug_info,
+computing whether these integer values
+could fit in fewer bytes if represented in LEB128.
+
 .TP
 .B \-kf 
 Turns on checking for FDE errors.
@@ -281,7 +338,7 @@ rom DW_AT_specification attributes.
 for debuggers).
 .TP
 .B \-ks 
-Turns on extra reporting for some DIE errors checking detects .
+Turns on extra reporting for some DIE errors checking detects.
 .TP
 .B \-kS 
 Turns on checking DIE references for circular references.
@@ -309,13 +366,13 @@ With -C the extensions are taken out of the allowed class of combinations.
 .TP
 .B \-d
 When printing DIEs, put all the attributes for each DIE on the same (long)
-line as the TAG.  This makes searching for DIE information
+line as the TAG. This makes searching for DIE information
 (as with grep) much simpler as the entire DIE is on one line.
 
 .TP
 .B \-D
 Turns off the display of section offsets and attribute values in printed output.
-So the .debug_info output isjust TAGs and Attributes.
+So the .debug_info output is just TAGs and Attributes.
 For pubnames (and the like) it removes offsets from the output.
 For locations lists it removes offsets from the output, but that
 is useless since the attribute values don't show so neither does
@@ -324,7 +381,7 @@ the location data.
 .TP
 .B \-e
 Turns on truncation of attribute and tag names. For example
-DW_TAG_foo  becomes   foo .    Not compatible with
+DW_TAG_foo becomes foo. Not compatible with
 checking, only useful for printing DIEs.
 
 .TP
@@ -334,10 +391,10 @@ When printing, add global offsets to the offsets printed.
 .TP
 .B \-H number 
 When printing or checking .debug_info, this terminates
-the search after 'number' compilation units.  When printing
+the search after 'number' compilation units. When printing
 frame information this terminates the FDE reporting 
 after 'number' FDEs and the CIE reporting (which occurs if one adds -v)
-after 'number' CIEs.  Example   '-H 1'
+after 'number' CIEs. Example '-H 1'
 
 .TP
 .B \-M 
@@ -380,6 +437,9 @@ have a 'match', an 'any', and a 'regex').
 Any -S causes the .debug_info section to be inspected.
 No checking options or printing options should be supplied with -S.
 
+If v is added to the -S option, the number of occurrences is printed.
+(see below for an example).
+
 .TP
 .B \-S match=string
 When printing DIEs
@@ -410,8 +470,8 @@ meaningful to getopt(3) and the shell will strip off quotes and
 other characters.
 So the string is assumed to be in URI style and is translated.
 In other words, to match 'a b' make the -S string 'a%20b'
-Instead of escaping " quotes in the string,  type %25, as in
-   'a "b'  should be typed   'a%20%25b'
+Instead of escaping " quotes in the string, type %25, as in
+ 'a "b' should be typed 'a%20%25b'
 (the ' are for exposition here, not part of the strings).
 Any characters can be typed in URI style, not just characters
 which are problematic to the shell or getopt.
@@ -421,7 +481,13 @@ if the library functions required are found at configure time.
 .PP
 The -W option is a modifier to the -S option, and
 increases the amount of output -W prints.
-Now we show the -W in context with a -S option.
+An example v modifier to the -S option is shown below.
+And we show the -W in context with a -S option.
+
+.TP
+.B \-S vmatch=string1 
+Prints information about the
+DIEs that -S matches and prints the count of occurences
 
 .TP
 .B \-S match=string1 -W
@@ -458,13 +524,13 @@ The abi is read as a URI string.
 
 .TP
 .B \-P 
-When  checking this adds the list of compilation-unit names
+When checking this adds the list of compilation-unit names
 seen for each producer-compiler to the printed checking results.
 .TP
 .B \-q
 When a URI is found and translated while reading
 the command line, be quiet about
-the URI translation. That is,  don't print the
+the URI translation. That is, don't print the
 original and translated option strings.
 
 .TP
@@ -487,7 +553,7 @@ The 'cuname' is read as a URI string.
 .TP
 .B \-U
 Turn off the URI interpretation of the command line
-strings entirely.  Must be be on the command line before
+strings entirely. Must be be on the command line before
 any URI strings encountered to be fully effective.
 
 .TP

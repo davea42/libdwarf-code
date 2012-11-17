@@ -82,7 +82,7 @@ is_skippable_line(char *pLine)
 {
     bool empty = true;
 
-    if(pLine[0] == '#') {
+    if (pLine[0] == '#') {
         // Preprocessor lines are of no interest.
         return true;
     }
@@ -90,7 +90,7 @@ is_skippable_line(char *pLine)
         // The }  is from an 'extern "C"' and not interesting.
         return true;
     }
-    if(strncmp(&pLine[0],"extern \"C\"",10) == 0) {
+    if (strncmp(&pLine[0],"extern \"C\"",10) == 0) {
         // It is an 'extern "C"' and not interesting.
         return true;
     }

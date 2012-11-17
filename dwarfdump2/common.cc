@@ -32,6 +32,7 @@
 
 */
 
+#include "config.h"
 #include <string>
 #include <iostream>
 #include "common.h"
@@ -45,17 +46,17 @@ void
 print_version_details(const std::string & name,bool alwaysprint)
 {
 #ifdef WIN32
-#   ifdef _DEBUG
+#ifdef _DEBUG
     char *acType = "Debug";
-#   else
+#else
     char *acType = "Release";
-#   endif /* _DEBUG */
+#endif /* _DEBUG */
     static char acVersion[32];
     snprintf(acVersion,sizeof(acVersion),
         "[%s %s %s]",__DATE__,__TIME__,acType);
     cout << name << " " << acVersion << endl;
 #else  /* !WIN32 */
-    if(alwaysprint) {
+    if (alwaysprint) {
         cout << DWARFDUMP_VERSION << endl;
     }
 #endif /* WIN32 */

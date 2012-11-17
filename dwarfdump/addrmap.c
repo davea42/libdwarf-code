@@ -52,11 +52,11 @@ addr_map_create_entry(Dwarf_Unsigned k,char *name)
 {
     struct Addr_Map_Entry *mp = 
         (struct Addr_Map_Entry *)malloc(sizeof(struct Addr_Map_Entry));
-    if(!mp) {
+    if (!mp) {
         return 0;
     }
     mp->mp_key = k;
-    if(name) {
+    if (name) {
         mp->mp_name = strdup(name);
     } else {
         mp->mp_name = 0;
@@ -67,7 +67,7 @@ static void
 addr_map_free_func(void *mx)
 {
     struct Addr_Map_Entry *m = mx;
-    if(!m) {
+    if (!m) {
         return;
     }
     free(m->mp_name);
@@ -79,7 +79,7 @@ addr_map_free_func(void *mx)
 static void
 DUMPFIRST(int line)
 {
-    if(!firststring) {
+    if (!firststring) {
         return;
     }
 }
@@ -89,10 +89,10 @@ addr_map_compare_func(const void *l, const void *r)
 {
     const struct Addr_Map_Entry *ml = l;
     const struct Addr_Map_Entry *mr = r;
-    if(ml->mp_key < mr->mp_key) {
+    if (ml->mp_key < mr->mp_key) {
         return -1;
     }
-    if(ml->mp_key > mr->mp_key) {
+    if (ml->mp_key > mr->mp_key) {
         return 1;
     }
     return 0;
@@ -109,9 +109,9 @@ addr_map_insert( Dwarf_Unsigned addr,char *name,void **tree1)
         is already present . We must not free it till
         destroy time if it got added to tree1.  */
     retval = tsearch(e,tree1, addr_map_compare_func);
-    if(retval) {
+    if (retval) {
         re = *(struct Addr_Map_Entry **)retval;
-        if ( re != e) {
+        if (re != e) {
             /* We returned an existing record, e not needed. */
             addr_map_free_func(e);
         } else {
@@ -130,7 +130,7 @@ addr_map_find(Dwarf_Unsigned addr,void **tree1)
     e = addr_map_create_entry(addr,NULL);
     DUMPFIRST(__LINE__);
     retval = tfind(e,tree1, addr_map_compare_func);
-    if(retval) {
+    if (retval) {
         re = *(struct Addr_Map_Entry **)retval;
     } 
     /*  The one we created here must be deleted, it is dead.

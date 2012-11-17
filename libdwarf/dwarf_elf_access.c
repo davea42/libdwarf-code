@@ -40,6 +40,15 @@
 #include "dwarf_incl.h"
 #include "dwarf_elf_access.h"
 
+/* Include Relocation definitions in the case of Windows */
+#ifdef WIN32
+#include "dwarf_reloc_arm.h"
+#include "dwarf_reloc_mips.h"
+#include "dwarf_reloc_ppc.h"
+#include "dwarf_reloc_ppc64.h"
+#include "dwarf_reloc_x86_64.h"
+#endif /* WIN32 */
+
 #ifdef HAVE_ELF_H
 #include <elf.h>
 #endif
@@ -149,9 +158,9 @@ dwarf_elf_object_access_internals_init(void* obj_in,
     obj->is_64bit = (ehdr_ident[EI_CLASS] == ELFCLASS64);
 
 
-    if(ehdr_ident[EI_DATA] == ELFDATA2LSB){
+    if (ehdr_ident[EI_DATA] == ELFDATA2LSB){
         obj->endianness = DW_OBJECT_LSB;
-    } else if(ehdr_ident[EI_DATA] == ELFDATA2MSB){
+    } else if (ehdr_ident[EI_DATA] == ELFDATA2MSB){
         obj->endianness = DW_OBJECT_MSB;
     }
 
@@ -260,13 +269,17 @@ dwarf_elf_object_access_get_section_info(
             return DW_DLV_ERROR;
         }
 
+        /* Get also section 'sh_type' and sh_info' fields, so the caller
+         * can use it for additional tasks that require that info. */
+        ret_scn->type = shdr64->sh_type;
         ret_scn->size = shdr64->sh_size;
         ret_scn->addr = shdr64->sh_addr;
         ret_scn->link = shdr64->sh_link;
+        ret_scn->info = shdr64->sh_info;
         ret_scn->entrysize = shdr64->sh_entsize;
         ret_scn->name = elf_strptr(obj->elf, obj->ehdr64->e_shstrndx,
             shdr64->sh_name);
-        if(ret_scn->name == NULL) {
+        if (ret_scn->name == NULL) {
             *error = DW_DLE_ELF_STRPTR_ERROR;
             return DW_DLV_ERROR;
         }
@@ -281,9 +294,13 @@ dwarf_elf_object_access_get_section_info(
         return DW_DLV_ERROR;
     }
 
+    /* Get also the section type, so the caller can use it for
+     * additional tasks that require to know the section type. */
+    ret_scn->type = shdr32->sh_type;
     ret_scn->size = shdr32->sh_size;
     ret_scn->addr = shdr32->sh_addr;
     ret_scn->link = shdr32->sh_link;
+    ret_scn->info = shdr32->sh_info;
     ret_scn->entrysize = shdr32->sh_entsize;
     ret_scn->name = elf_strptr(obj->elf, obj->ehdr32->e_shstrndx,
         shdr32->sh_name);
@@ -315,7 +332,7 @@ dwarf_elf_object_access_get_pointer_size(void* obj_in)
 }
 
 #define MATCH_REL_SEC(i_,s_,r_)  \
-if(i_ == s_.dss_index) { \
+if (i_ == s_.dss_index) { \
     *r_ = &s_;            \
     return DW_DLV_OK;    \
 }
@@ -379,7 +396,7 @@ get_rela_elf64(Dwarf_Small *data, unsigned int i,
     */
 #define ELF64MIPS_REL_SYM(i) ((i) & 0xffffffff)
 #define ELF64MIPS_REL_TYPE(i) ((i >> 56) &0xff)
-    if(machine == EM_MIPS && endianness == DW_OBJECT_LSB ){
+    if (machine == EM_MIPS && endianness == DW_OBJECT_LSB ){
         /*  This is really wierd. Treat this very specially. 
             The Elf64 LE MIPS object used for
             testing (that has rela) wants the
@@ -458,7 +475,7 @@ get_relocation_entries(Dwarf_Bool is_64bit,
     } else {
         relocation_size = sizeof(Elf32_Rela);
     }
-    if( relocation_size != relocation_section_entrysize) {
+    if (relocation_size != relocation_section_entrysize) {
         /*  Means our struct definition does not match the
             real object. */
         *error = DW_DLE_RELOC_SECTION_LENGTH_ODD;
@@ -472,7 +489,7 @@ get_relocation_entries(Dwarf_Bool is_64bit,
 
     if ((relocation_section_size != 0)) {
         size_t bytescount = 0;
-        if(relocation_section_size%relocation_size) {
+        if (relocation_section_size%relocation_size) {
             *error = DW_DLE_RELOC_SECTION_LENGTH_ODD;
             return DW_DLV_ERROR;
         }
@@ -606,8 +623,8 @@ is_32bit_abs_reloc(unsigned int type, Dwarf_Half machine)
 #if defined(R_PPC64_ADDR32)
             | (type == R_PPC64_ADDR32)
 #endif
-#if defined(R_PPC_DTPREL32)
-            | (type == R_PPC_DTPREL32)
+#if defined(R_PPC64_DTPREL32)
+            | (type == R_PPC64_DTPREL32)
 #endif
             );
         break;
@@ -767,7 +784,7 @@ is_64bit_abs_reloc(unsigned int type, Dwarf_Half machine)
 
 
 /*  Returns DW_DLV_OK if it works, else DW_DLV_ERROR.
-    The caller may decide to ignre the errors or report them. */  
+    The caller may decide to ignore the errors or report them. */  
 static int
 update_entry(Dwarf_Debug dbg,
     Dwarf_Bool is_64bit, Dwarf_Endianness endianess,
@@ -793,7 +810,7 @@ update_entry(Dwarf_Debug dbg,
     Dwarf_Unsigned reloc_size = 0;
     Dwarf_Unsigned symtab_entry_count = 0;
        
-    if( symtab_section_entrysize == 0) {
+    if (symtab_section_entrysize == 0) {
         *error = DW_DLE_SYMTAB_SECTION_ENTRYSIZE_ZERO;
         return DW_DLV_ERROR;
     }
@@ -873,11 +890,11 @@ apply_rela_entries(Dwarf_Debug dbg,
     int return_res = DW_DLV_OK;
     if ((target_section != NULL)  && (relas != NULL)) {
         unsigned int i;
-        if( symtab_section_entrysize == 0) {
+        if (symtab_section_entrysize == 0) {
             *error = DW_DLE_SYMTAB_SECTION_ENTRYSIZE_ZERO;
             return DW_DLV_ERROR;
         }
-        if(symtab_section_size%symtab_section_entrysize) {
+        if (symtab_section_size%symtab_section_entrysize) {
             *error = DW_DLE_SYMTAB_SECTION_LENGTH_ODD;
             return DW_DLV_ERROR;
         }
@@ -928,7 +945,7 @@ loop_through_relocations(
         relocation_section_size, 
         relocation_section_entrysize, 
         &relas, &nrelas, error);
-    if(ret != DW_DLV_OK) {
+    if (ret != DW_DLV_OK) {
         free(relas);
         return ret;
     }
@@ -938,7 +955,7 @@ loop_through_relocations(
         malloc space and refer to the malloc space instead of the
         space returned by the elf library */
     mspace = malloc(relocatablesec->dss_size);
-    if(!mspace) {
+    if (!mspace) {
         *error = DW_DLE_RELOC_SECTION_MALLOC_FAIL;
         return DW_DLV_ERROR;
     }
@@ -979,13 +996,13 @@ dwarf_elf_object_relocate_a_section(void* obj_in,
 
     /* The section to relocate must already be loaded into memory. */
     res = find_section_to_relocate(dbg, section_index,&relocatablesec,error);
-    if(res != DW_DLV_OK) {
+    if (res != DW_DLV_OK) {
         return res;
     }
 
     /*  Sun and possibly others do not always set sh_link in .debug_* sections. 
         So we cannot do full  consistency checks. */
-    if(relocatablesec->dss_reloc_index == 0 ) {
+    if (relocatablesec->dss_reloc_index == 0 ) {
         /* Something is wrong. */
         *error = DW_DLE_RELOC_SECTION_MISSING_INDEX;
         return DW_DLV_ERROR;
@@ -994,40 +1011,40 @@ dwarf_elf_object_relocate_a_section(void* obj_in,
     res =  dwarf_elf_object_access_load_section(obj_in,
         relocatablesec->dss_reloc_index,
         &relocatablesec->dss_reloc_data, error);
-    if(res != DW_DLV_OK) {
+    if (res != DW_DLV_OK) {
         return res;
     }
 
     /* Now get the symtab. */
-    if  (!obj->symtab) {
+    if (!obj->symtab) {
         obj->symtab = &dbg->de_elf_symtab;
         obj->strtab = &dbg->de_elf_strtab;
     }
-    if( obj->symtab->dss_index != relocatablesec->dss_reloc_link) {
+    if (obj->symtab->dss_index != relocatablesec->dss_reloc_link) {
         /* Something is wrong. */
         *error = DW_DLE_RELOC_MISMATCH_RELOC_INDEX;
         return DW_DLV_ERROR;
     }
-    if( obj->strtab->dss_index != obj->symtab->dss_link) {
+    if (obj->strtab->dss_index != obj->symtab->dss_link) {
         /* Something is wrong. */
         *error = DW_DLE_RELOC_MISMATCH_STRTAB_INDEX;
         return DW_DLV_ERROR;
     }
-    if(!obj->symtab->dss_data) {
+    if (!obj->symtab->dss_data) {
         /* Now load the symtab */
         res =  dwarf_elf_object_access_load_section(obj_in,
             obj->symtab->dss_index,
             &obj->symtab->dss_data, error);
-        if(res != DW_DLV_OK) {
+        if (res != DW_DLV_OK) {
             return res;
         }
     }
-    if(! obj->strtab->dss_data) {
+    if (!obj->strtab->dss_data) {
         /* Now load the strtab */
         res = dwarf_elf_object_access_load_section(obj_in, 
             obj->strtab->dss_index,
             &obj->strtab->dss_data,error);
-        if(res != DW_DLV_OK){
+        if (res != DW_DLV_OK){
             return res;
         }
     }
@@ -1103,20 +1120,20 @@ dwarf_elf_object_access_init(dwarf_elf_handle elf,
     Dwarf_Obj_Access_Interface *intfc = 0;
 
     internals = malloc(sizeof(dwarf_elf_object_access_internals_t));
-    if(!internals) {
+    if (!internals) {
         /* Impossible case, we hope. Give up. */
         return DW_DLV_ERROR;
     }
     memset(internals,0,sizeof(*internals));
     res = dwarf_elf_object_access_internals_init(internals, elf, err);
-    if(res != DW_DLV_OK){
+    if (res != DW_DLV_OK){
         free(internals);
         return DW_DLV_ERROR;
     }
     internals->libdwarf_owns_elf = libdwarf_owns_elf;
     
     intfc = malloc(sizeof(Dwarf_Obj_Access_Interface));
-    if(!intfc) {
+    if (!intfc) {
         /* Impossible case, we hope. Give up. */
         free(internals);
         return DW_DLV_ERROR;
@@ -1135,13 +1152,13 @@ dwarf_elf_object_access_init(dwarf_elf_handle elf,
 void 
 dwarf_elf_object_access_finish(Dwarf_Obj_Access_Interface* obj)
 {
-    if(!obj) {
+    if (!obj) {
         return;
     }
-    if(obj->object) {
+    if (obj->object) {
         dwarf_elf_object_access_internals_t *internals = 
             (dwarf_elf_object_access_internals_t *)obj->object;
-        if(internals->libdwarf_owns_elf){
+        if (internals->libdwarf_owns_elf){
             elf_end(internals->elf);
         }
     }
@@ -1164,10 +1181,10 @@ dwarf_get_elf(Dwarf_Debug dbg, dwarf_elf_handle * elf,
     }
 
     obj = dbg->de_obj_file; 
-    if(obj) {
+    if (obj) {
         dwarf_elf_object_access_internals_t *internals =
             (dwarf_elf_object_access_internals_t*)obj->object;
-        if(internals->elf == NULL) {
+        if (internals->elf == NULL) {
             _dwarf_error(dbg, error, DW_DLE_FNO);
             return (DW_DLV_ERROR);
         }

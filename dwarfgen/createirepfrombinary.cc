@@ -200,10 +200,10 @@ readCUMacroDataFromBinary(Dwarf_Debug dbg, IRepresentation & irep,
         Dwarf_Unsigned dieoffset = cu.baseDie().getGlobalOffset();
         Dwarf_Macro_Details *mdp = md;
         for(int i = 0; i < mcount; ++i, mdp++ ) {
-            IRMacroRecord i(dieoffset,mdp->dmd_offset,
+            IRMacroRecord ir(dieoffset,mdp->dmd_offset,
                 mdp->dmd_type, mdp->dmd_lineno,
                 mdp->dmd_fileindex, mdp->dmd_macro?mdp->dmd_macro:"");
-            mvec.push_back(i);
+            mvec.push_back(ir);
         }
     }    
     dwarf_dealloc(dbg, md, DW_DLA_STRING);

@@ -76,7 +76,7 @@ is_skippable_line(char *pLine)
 {
     boolean empty = TRUE;
 
-    if(pLine[0] == '#') {
+    if (pLine[0] == '#') {
         /* Preprocessor lines are of no interest. */
         return TRUE;
     }

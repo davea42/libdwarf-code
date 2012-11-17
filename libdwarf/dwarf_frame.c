@@ -170,7 +170,7 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
         if ((macreg) >= (machigh_reg) || (macreg) < 0) {     \
             SIMPLE_ERROR_RETURN(DW_DLE_DF_REG_NUM_TOO_HIGH); \
         }                                                    \
-    } /*CONSTCOND */ while(0)
+    } /*CONSTCOND */ while (0)
 #define SIMPLE_ERROR_RETURN(code) \
         free(localregtab);        \
         *returned_error = code;   \
@@ -1078,7 +1078,7 @@ int dwarf_get_cie_index(
     Dwarf_Signed* index, 
     Dwarf_Error* error )
 {
-    if( cie == NULL )
+    if (cie == NULL)
     {
         _dwarf_error(NULL, error, DW_DLE_CIE_NULL);
         return (DW_DLV_ERROR);
@@ -1727,7 +1727,7 @@ dwarf_get_fde_info_for_reg(Dwarf_Fde fde,
             DW_DLE_FRAME_REGISTER_UNREPRESENTABLE);
         return (DW_DLV_ERROR);
     }
-    if(table_column == dbg->de_frame_cfa_col_number) {
+    if (table_column == dbg->de_frame_cfa_col_number) {
         if (register_num != NULL)
             *register_num = fde_table.fr_cfa_rule.ru_register;
         if (offset != NULL)
@@ -2337,7 +2337,7 @@ init_reg_rules_alloc(Dwarf_Debug dbg,struct Dwarf_Frame_s *f,
     f->fr_reg = (struct Dwarf_Reg_Rule_s *)
         calloc(sizeof(struct Dwarf_Reg_Rule_s), count);
     if (f->fr_reg == 0) {
-        if(error) {
+        if (error) {
             _dwarf_error(dbg, error, DW_DLE_DF_ALLOC_FAIL);
         }
         return (DW_DLV_ERROR);
@@ -2394,7 +2394,7 @@ dwarf_init_reg_rules_ru(struct Dwarf_Reg_Rule_s *base,
 {
     struct Dwarf_Reg_Rule_s *r = base+first;
     unsigned i = first;
-    for( ; i < last; ++i,++r) {
+    for (; i < last; ++i,++r) {
         r->ru_is_off = 0;
         r->ru_value_type = DW_EXPR_OFFSET;
         r->ru_register = initial_value;
@@ -2408,7 +2408,7 @@ dwarf_init_reg_rules_dw(struct Dwarf_Regtable_Entry_s *base,
 {
     struct Dwarf_Regtable_Entry_s *r = base+first;
     unsigned i = first;
-    for( ; i < last; ++i,++r) {
+    for (; i < last; ++i,++r) {
         r->dw_offset_relevant = 0;
         r->dw_value_type = DW_EXPR_OFFSET;
         r->dw_regnum = initial_value;
@@ -2421,7 +2421,7 @@ dwarf_init_reg_rules_dw3(struct Dwarf_Regtable_Entry3_s *base,
 {
     struct Dwarf_Regtable_Entry3_s *r = base+first;
     unsigned i = first;
-    for( ; i < last; ++i,++r) {
+    for (; i < last; ++i,++r) {
         r->dw_offset_relevant = 0;
         r->dw_value_type = DW_EXPR_OFFSET;
         r->dw_regnum = initial_value;

@@ -203,12 +203,12 @@ static void
 increaseTo(unsigned nsize)
 {
     unsigned csize = abbrev_vec.size();
-    if(nsize < csize) {
+    if (nsize < csize) {
         // Nothing to do here.
         return;
     }
     abbrev_vec.resize(nsize);
-    for(unsigned i = csize; i < nsize; ++i) {
+    for (unsigned i = csize; i < nsize; ++i) {
         abbrev_vec[i] = 0;
     }
 
@@ -235,7 +235,7 @@ get_abbrev_array_info(Dwarf_Debug dbg, Dwarf_Unsigned offset_in)
         CU_high_abbrev_code = 0;
 
         if (!abbrev_vec.empty()) {
-            for(unsigned i = 0; i < abbrev_vec.size(); ++i) {
+            for (unsigned i = 0; i < abbrev_vec.size(); ++i) {
                 abbrev_vec[i] = 0;
             }
         }
@@ -253,7 +253,7 @@ get_abbrev_array_info(Dwarf_Debug dbg, Dwarf_Unsigned offset_in)
                 if (abbrev_code > 0) {
                     increaseTo(abbrev_code+1);
                     abbrev_vec[abbrev_code] = abbrev_entry_count;
-                    if(abbrev_code > CU_high_abbrev_code) {
+                    if (abbrev_code > CU_high_abbrev_code) {
                         CU_high_abbrev_code = abbrev_code;
                     }
                     ++CU_abbrev_count;

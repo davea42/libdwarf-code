@@ -431,7 +431,7 @@ _dwarf_get_fde_list_internal(Dwarf_Debug dbg, Dwarf_Cie ** cie_data,
         cie_list_ptr = (Dwarf_Cie *)
             _dwarf_get_alloc(dbg, DW_DLA_LIST, cie_count);
     } else {
-        if(fde_count > 0) {
+        if (fde_count > 0) {
             dealloc_fde_cie_list_internal(head_fde_ptr, head_cie_ptr);
             _dwarf_error(dbg, error, DW_DLE_ORPHAN_FDE);
             return DW_DLV_ERROR;
@@ -472,7 +472,7 @@ _dwarf_get_fde_list_internal(Dwarf_Debug dbg, Dwarf_Cie ** cie_data,
 
     *fde_data = fde_list_ptr;
     *fde_element_count = fde_count;
-    if(use_gnu_cie_calc) {
+    if (use_gnu_cie_calc) {
         dbg->de_fde_data_eh = fde_list_ptr;
         dbg->de_fde_count_eh = fde_count;
         dbg->de_cie_data_eh = cie_list_ptr;
@@ -486,7 +486,7 @@ _dwarf_get_fde_list_internal(Dwarf_Debug dbg, Dwarf_Cie ** cie_data,
 
     /*  Sort the list by the address so that dwarf_get_fde_at_pc() can
         binary search this list.  */
-    if(fde_count > 0) {
+    if (fde_count > 0) {
         qsort((void *) fde_list_ptr, fde_count, sizeof(Dwarf_Ptr),
             qsort_compare);
     }
@@ -564,16 +564,16 @@ dwarf_create_cie_from_after_start(Dwarf_Debug dbg,
         Dwarf_Unsigned lreg = 0;
         unsigned long size = 0;
 
-        if( version == DW_CIE_VERSION4) {
+        if (version == DW_CIE_VERSION4) {
             address_size = *((unsigned char *)frame_ptr);
-            if(address_size  > sizeof(Dwarf_Addr)) {
+            if (address_size  > sizeof(Dwarf_Addr)) {
                 _dwarf_error(dbg, error, DW_DLE_ADDRESS_SIZE_ERROR);
                 return (DW_DLV_ERROR);
             }
             ++frame_ptr;
             segment_size = *((unsigned char *)frame_ptr);
             ++frame_ptr;
-            if(segment_size  > sizeof(Dwarf_Addr)) {
+            if (segment_size  > sizeof(Dwarf_Addr)) {
                 _dwarf_error(dbg, error, DW_DLE_SEGMENT_SIZE_BAD);
                 return (DW_DLV_ERROR);
             }

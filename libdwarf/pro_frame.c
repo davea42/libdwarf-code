@@ -248,10 +248,10 @@ dwarf_insert_fde_inst_bytes(Dwarf_P_Debug dbg,
     Dwarf_P_Fde fde,Dwarf_Unsigned len, Dwarf_Ptr ibytes,
     Dwarf_Error *error)
 {
-    if( len == 0) {
+    if (len == 0) {
         return DW_DLV_OK;
     }
-    if(fde->fde_block || fde->fde_inst) {
+    if (fde->fde_block || fde->fde_inst) {
         DWARF_P_DBG_ERROR(dbg, DW_DLE_DUPLICATE_INST_BLOCK,
             (int)DW_DLV_BADADDR);
     }
@@ -519,7 +519,7 @@ dwarf_add_fde_inst(Dwarf_P_Fde fde,
     case DW_CFA_def_cfa_register:
     case DW_CFA_def_cfa_offset:
     one_leb:
-        if(!signed_first) {
+        if (!signed_first) {
             res = _dwarf_pro_encode_leb128_nm(val1, &nbytes,
                 buff1, sizeof(buff1));
         } else {

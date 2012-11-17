@@ -171,7 +171,7 @@ main(int argc, char **argv)
     }
 
 
-    if(standard_flag) {
+    if (standard_flag) {
         table_rows = STD_ATTR_TABLE_ROWS;
         table_columns = STD_ATTR_TABLE_COLUMNS;
     } else {
@@ -195,12 +195,12 @@ main(int argc, char **argv)
             /* Reached normal eof */
             break;
         }
-        if(standard_flag) {
+        if (standard_flag) {
             if (tag >= table_rows ) {
                 bad_line_input("tag value exceeds standard table size");
             }
         } else {
-            if(current_row >= table_rows) {
+            if (current_row >= table_rows) {
                 bad_line_input("too many extended table rows.");
             }
             tag_attr_combination_table[current_row][0] = tag;
@@ -212,7 +212,7 @@ main(int argc, char **argv)
         }
         curcol = 1;
         while (num != MAGIC_TOKEN_VALUE) {
-            if(standard_flag) {
+            if (standard_flag) {
                 unsigned idx = num / BITS_PER_WORD;
                 unsigned bit = num % BITS_PER_WORD;
 
@@ -259,7 +259,7 @@ main(int argc, char **argv)
     for (i = 0; i < table_rows; i++) {
         int j = 0;
         const char *name = 0;
-        if(standard_flag) {
+        if (standard_flag) {
             dwarf_get_TAG_name(i,&name);
             fprintf(fileOut,"/* %d %-37s*/\n",i,name); 
         } else {
@@ -268,7 +268,7 @@ main(int argc, char **argv)
             fprintf(fileOut,"/* %u %-37s*/\n",k,name);
         }
         fprintf(fileOut,"    { ");
-        for(j = 0; j < table_columns; ++j ) {
+        for (j = 0; j < table_columns; ++j ) {
             fprintf(fileOut,"0x%08x,",tag_attr_combination_table[i][j]);
         }
         fprintf(fileOut,"},\n");

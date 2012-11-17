@@ -116,7 +116,7 @@ dwarf_add_AT_targ_address_b(Dwarf_P_Debug dbg,
     case DW_AT_entry_pc:
         break;
     default: 
-        if ( attr < DW_AT_lo_user || attr > DW_AT_hi_user ) {
+        if (attr < DW_AT_lo_user || attr > DW_AT_hi_user ) {
             _dwarf_p_error(dbg, error, DW_DLE_INPUT_ATTR_BAD);
             return ((Dwarf_P_Attribute) DW_DLV_BADADDR);
         }
@@ -141,7 +141,7 @@ dwarf_add_AT_ref_address(Dwarf_P_Debug dbg,
         break;
 
     default: 
-        if ( attr < DW_AT_lo_user || attr > DW_AT_hi_user ) {
+        if (attr < DW_AT_lo_user || attr > DW_AT_hi_user ) {
             _dwarf_p_error(dbg, error, DW_DLE_INPUT_ATTR_BAD);
             return ((Dwarf_P_Attribute) DW_DLV_BADADDR);
         }
@@ -484,7 +484,7 @@ dwarf_add_AT_unsigned_const(Dwarf_P_Debug dbg,
         break;
 
     default:
-        if ( attr < DW_AT_lo_user || attr > DW_AT_hi_user ) {
+        if (attr < DW_AT_lo_user || attr > DW_AT_hi_user ) {
             _dwarf_p_error(dbg, error, DW_DLE_INPUT_ATTR_BAD);
             return ((Dwarf_P_Attribute) DW_DLV_BADADDR);
         }
@@ -574,7 +574,7 @@ dwarf_add_AT_signed_const(Dwarf_P_Debug dbg,
         break;
 
     default:
-        if ( attr < DW_AT_lo_user || attr > DW_AT_hi_user ) {
+        if (attr < DW_AT_lo_user || attr > DW_AT_hi_user ) {
             _dwarf_p_error(dbg, error, DW_DLE_INPUT_ATTR_BAD);
             return ((Dwarf_P_Attribute) DW_DLV_BADADDR);
         }
@@ -687,7 +687,7 @@ dwarf_add_AT_location_expr(Dwarf_P_Debug dbg,
     break;
 
     default:
-        if ( attr < DW_AT_lo_user || attr > DW_AT_hi_user ) {
+        if (attr < DW_AT_lo_user || attr > DW_AT_hi_user ) {
             _dwarf_p_error(dbg, error, DW_DLE_INPUT_ATTR_BAD);
             return ((Dwarf_P_Attribute) DW_DLV_BADADDR);
         }
@@ -824,7 +824,7 @@ dwarf_add_AT_reference(Dwarf_P_Debug dbg,
         break;
 
     default:
-        if ( attr < DW_AT_lo_user || attr > DW_AT_hi_user ) {
+        if (attr < DW_AT_lo_user || attr > DW_AT_hi_user ) {
             _dwarf_p_error(dbg, error, DW_DLE_INPUT_ATTR_BAD);
             return ((Dwarf_P_Attribute) DW_DLV_BADADDR);
         }
@@ -882,7 +882,7 @@ dwarf_add_AT_flag(Dwarf_P_Debug dbg,
         break;
 
         default:
-            if ( attr < DW_AT_lo_user || attr > DW_AT_hi_user ) {
+            if (attr < DW_AT_lo_user || attr > DW_AT_hi_user ) {
                 _dwarf_p_error(dbg, error, DW_DLE_INPUT_ATTR_BAD);
                 return ((Dwarf_P_Attribute) DW_DLV_BADADDR);
             }
@@ -952,7 +952,7 @@ dwarf_add_AT_string(Dwarf_P_Debug dbg,
         break;
 
         default:
-            if ( attr < DW_AT_lo_user || attr > DW_AT_hi_user ) {
+            if (attr < DW_AT_lo_user || attr > DW_AT_hi_user ) {
             _dwarf_p_error(dbg, error, DW_DLE_INPUT_ATTR_BAD);
             return ((Dwarf_P_Attribute) DW_DLV_BADADDR);
         }

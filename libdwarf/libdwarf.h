@@ -2,9 +2,9 @@
 
   Copyright (C) 2000-2010 Silicon Graphics, Inc.  All Rights Reserved.
   Portions Copyright 2007-2010 Sun Microsystems, Inc. All rights reserved.
-  Portions Copyright 2008-2011 David Anderson. All rights reserved.
+  Portions Copyright 2008-2012 David Anderson. All rights reserved.
   Portions Copyright 2008-2010 Arxan Technologies, Inc. All rights reserved.
-  Portions Copyright 2010 SN Systems Ltd. All rights reserved.
+  Portions Copyright 2010-2012 SN Systems Ltd. All rights reserved.
 
   This program is free software; you can redistribute it and/or modify it
   under the terms of version 2.1 of the GNU Lesser General Public License
@@ -502,16 +502,16 @@ typedef struct Dwarf_Var_s*        Dwarf_Var;
 typedef struct Dwarf_Weak_s*       Dwarf_Weak;
 typedef struct Dwarf_Error_s*      Dwarf_Error;
 typedef struct Dwarf_Attribute_s*  Dwarf_Attribute;
-typedef struct Dwarf_Abbrev_s*       Dwarf_Abbrev;
-typedef struct Dwarf_Fde_s*         Dwarf_Fde;
-typedef struct Dwarf_Cie_s*         Dwarf_Cie;
-typedef struct Dwarf_Arange_s*       Dwarf_Arange;
+typedef struct Dwarf_Abbrev_s*     Dwarf_Abbrev;
+typedef struct Dwarf_Fde_s*        Dwarf_Fde;
+typedef struct Dwarf_Cie_s*        Dwarf_Cie;
+typedef struct Dwarf_Arange_s*     Dwarf_Arange;
 
 /* Opaque types for Producer Library. */
-typedef struct Dwarf_P_Debug_s*           Dwarf_P_Debug;
-typedef struct Dwarf_P_Die_s*           Dwarf_P_Die;
-typedef struct Dwarf_P_Attribute_s*    Dwarf_P_Attribute;
-typedef struct Dwarf_P_Fde_s*        Dwarf_P_Fde;
+typedef struct Dwarf_P_Debug_s*       Dwarf_P_Debug;
+typedef struct Dwarf_P_Die_s*         Dwarf_P_Die;
+typedef struct Dwarf_P_Attribute_s*   Dwarf_P_Attribute;
+typedef struct Dwarf_P_Fde_s*         Dwarf_P_Fde;
 typedef struct Dwarf_P_Expr_s*        Dwarf_P_Expr;
 typedef Dwarf_Unsigned                Dwarf_Tag;
 
@@ -559,6 +559,9 @@ struct Dwarf_Obj_Access_Section_s {
         makes no sense for a given section. */
     Dwarf_Addr     addr;
 
+    /* Section type. */
+    Dwarf_Unsigned type;
+
     /* Size in bytes of the section. */
     Dwarf_Unsigned size;
 
@@ -569,6 +572,11 @@ struct Dwarf_Obj_Access_Section_s {
         it should be a link to a rela section or from symtab
         to strtab.  In Elf it is sh_link. */
     Dwarf_Unsigned link;
+
+    /* The section header index of the section to which the
+       relocation applies. In Elf it is sh_info. */
+    Dwarf_Unsigned info;
+
     /*  Elf sections that are tables have a non-zero entrysize so
         the count of entries can be calculated even without
         the right structure definition. If your object format
@@ -751,8 +759,8 @@ struct Dwarf_Obj_Access_Interface_s {
 #define DW_DLA_LIST            0x0f     /* a list */
 #define DW_DLA_LINEBUF         0x10     /* Dwarf_Line* (not used) */
 #define DW_DLA_ARANGE          0x11     /* Dwarf_Arange */
-#define DW_DLA_ABBREV          0x12      /* Dwarf_Abbrev */
-#define DW_DLA_FRAME_OP        0x13      /* Dwarf_Frame_Op */
+#define DW_DLA_ABBREV          0x12     /* Dwarf_Abbrev */
+#define DW_DLA_FRAME_OP        0x13     /* Dwarf_Frame_Op */
 #define DW_DLA_CIE             0x14     /* Dwarf_Cie */
 #define DW_DLA_FDE             0x15     /* Dwarf_Fde */
 #define DW_DLA_LOC_BLOCK       0x16     /* Dwarf_Loc Block (not used) */
@@ -2955,6 +2963,17 @@ int dwarf_get_section_count(Dwarf_Debug /*dbg*/);
 int dwarf_get_version_of_die(Dwarf_Die /*die*/,
     Dwarf_Half * /*version*/,
     Dwarf_Half * /*offset_size*/);
+
+/*  These make the  LEB encoding routines visible to libdwarf
+    callers. Added November, 2012. */
+int dwarf_encode_leb128(Dwarf_Unsigned /*val*/,
+    int * /*nbytes*/,
+    char * /*space*/,
+    int /*splen*/);
+int dwarf_encode_signed_leb128(Dwarf_Signed /*val*/,
+    int * /*nbytes*/,
+    char * /*space*/,
+    int /*splen*/);
 
 /*  Record some application command line options in libdwarf.  
     This is not arc/argv processing, just precooked setting

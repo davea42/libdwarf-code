@@ -697,7 +697,7 @@ dwarf_die_abbrev_children_flag(Dwarf_Die die,Dwarf_Half *ab_has_child)
 static enum Dwarf_Form_Class 
 dw_get_special_offset(Dwarf_Half attrnum)
 {
-    switch(attrnum) {
+    switch (attrnum) {
     case DW_AT_stmt_list:
         return DW_FORM_CLASS_LINEPTR;
     case DW_AT_macro_info:
@@ -759,23 +759,23 @@ enum Dwarf_Form_Class dwarf_get_form_class(
     Dwarf_Half offset_size, 
     Dwarf_Half form)
 {
-    switch(form) {
+    switch (form) {
     case  DW_FORM_addr: return DW_FORM_CLASS_ADDRESS;
 
     case  DW_FORM_data2:  return DW_FORM_CLASS_CONSTANT;
 
     case  DW_FORM_data4: 
-        if(dwversion <= 3 && offset_size == 4) {
+        if (dwversion <= 3 && offset_size == 4) {
             enum Dwarf_Form_Class class = dw_get_special_offset(attrnum);
-            if(class != DW_FORM_CLASS_UNKNOWN) {
+            if (class != DW_FORM_CLASS_UNKNOWN) {
                 return class;
             }
         }
         return DW_FORM_CLASS_CONSTANT;
     case  DW_FORM_data8:
-        if(dwversion <= 3 && offset_size == 8) {
+        if (dwversion <= 3 && offset_size == 8) {
             enum Dwarf_Form_Class class = dw_get_special_offset(attrnum);
-            if(class != DW_FORM_CLASS_UNKNOWN) {
+            if (class != DW_FORM_CLASS_UNKNOWN) {
                 return class;
             }
         }
@@ -784,7 +784,7 @@ enum Dwarf_Form_Class dwarf_get_form_class(
     case  DW_FORM_sec_offset:
         {
             enum Dwarf_Form_Class class = dw_get_special_offset(attrnum);
-            if(class != DW_FORM_CLASS_UNKNOWN) {
+            if (class != DW_FORM_CLASS_UNKNOWN) {
                 return class;
             }
         }
@@ -841,11 +841,11 @@ dwarf_get_version_of_die(Dwarf_Die die,
     Dwarf_Half *offset_size)
 {
     Dwarf_CU_Context cucontext = 0;
-    if(!die) {
+    if (!die) {
         return DW_DLV_ERROR;
     }
     cucontext = die->di_cu_context;
-    if(!cucontext) {
+    if (!cucontext) {
         return DW_DLV_ERROR;
     }
     *version = cucontext->cc_version_stamp;

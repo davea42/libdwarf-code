@@ -81,7 +81,7 @@ print_line_detail(char *prefix,
         (unsigned long) line,
         (unsigned long) column,
         (int) is_stmt, (int) basic_block, (int) end_sequence);
-    if(discriminator || prologue_end || epilogue_begin || isa) {
+    if (discriminator || prologue_end || epilogue_begin || isa) {
         printf(" %1d", prologue_end);
         printf(" %1d", epilogue_begin);
         printf(" %1d", isa);
@@ -261,7 +261,7 @@ int * err_count_out, int only_line_header)
         line_ptr_end = prefix.pf_line_ptr_end;
         line_ptr = line_ptr_out;
     }
-    if(only_line_header) {
+    if (only_line_header) {
         /* Just checking for header errors, nothing more here.*/
         dwarf_free_line_table_prefix(&prefix);
         return DW_DLV_OK;
@@ -325,7 +325,7 @@ int * err_count_out, int only_line_header)
 
     {
         Dwarf_Unsigned offset = 0;
-        if(bogus_bytes_count > 0) {
+        if (bogus_bytes_count > 0) {
             Dwarf_Unsigned wcount = bogus_bytes_count;
             Dwarf_Unsigned boffset = bogus_bytes_ptr - orig_line_ptr;
             printf("*** DWARF CHECK: the line table prologue  header_length "
@@ -393,7 +393,7 @@ int * err_count_out, int only_line_header)
 
             opcode = opcode - prefix.pf_opcode_base;
             operation_advance = (opcode / prefix.pf_line_range);
-            if(prefix.pf_maximum_ops_per_instruction < 2) {
+            if (prefix.pf_maximum_ops_per_instruction < 2) {
                 address = address + (prefix.pf_minimum_instruction_length *
                     operation_advance);
             } else {
@@ -488,7 +488,7 @@ int * err_count_out, int only_line_header)
 
             case DW_LNS_const_add_pc:{
                 opcode = MAX_LINE_OP_CODE - prefix.pf_opcode_base;
-                if(prefix.pf_maximum_ops_per_instruction < 2) {
+                if (prefix.pf_maximum_ops_per_instruction < 2) {
                     Dwarf_Unsigned operation_advance =
                         (opcode / prefix.pf_line_range);
                     address = address +
@@ -651,7 +651,7 @@ int * err_count_out, int only_line_header)
                     (and the op code and the bytes of operand). */
 
                 Dwarf_Unsigned remaining_bytes = instr_length -1;
-                if(instr_length < 1 || remaining_bytes > DW_LNE_LEN_MAX) {
+                if (instr_length < 1 || remaining_bytes > DW_LNE_LEN_MAX) {
                     dwarf_free_line_table_prefix(&prefix);
                     _dwarf_error(dbg, error,
                         DW_DLE_LINE_EXT_OPCODE_BAD);
@@ -659,7 +659,7 @@ int * err_count_out, int only_line_header)
                 }
                 printf("DW_LNE extended op 0x%x ",ext_opcode);
                 printf("Bytecount: %" DW_PR_DUu , (Dwarf_Unsigned)instr_length);
-                if(remaining_bytes > 0) {
+                if (remaining_bytes > 0) {
                     printf(" linedata: 0x");
                     while (remaining_bytes > 0) {
                         printf("%02x",(unsigned char)(*(line_ptr)));
