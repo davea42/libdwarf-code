@@ -761,8 +761,8 @@ print_search_results()
         }
     }
     cerr << endl;
-    cerr << "Search type      : " <<search_type << endl;
-    cerr << "Pattern searched : " <<search_text<< endl;
+    cerr << "Search type      : '" <<search_type << "'" << endl;
+    cerr << "Pattern searched : '" <<search_text << "'" << endl;
     cerr << "Occurrences Found: "<< search_occurrences << endl;
 }
 
