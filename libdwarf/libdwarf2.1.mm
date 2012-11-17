@@ -8,7 +8,7 @@ n\."
 .nr Hb 5
 \." ==============================================
 \." Put current date in the following at each rev
-.ds vE rev 2.03, November 13, 2012
+.ds vE rev 2.04, November 17, 2012
 \." ==============================================
 \." ==============================================
 .ds | |
@@ -6308,6 +6308,10 @@ callers.
 These functions aid in the management of errors encountered when using 
 functions in the \fIlibdwarf\fP library and releasing memory allocated 
 as a result of a \fIlibdwarf\fP operation. 
+.P
+For clients that wish to encode LEB numbers two
+interfaces are provided to the producer code's 
+internal LEB function.
 
 .H 3 "dwarf_errno()"
 .DS
@@ -6652,6 +6656,44 @@ to by \f(CWspace\fP, and allocated to the given \f(CWDwarf_Debug\fP.
 The argument \f(CWtype\fP is an integer code that specifies the allocation 
 type of the region pointed to by the \f(CWspace\fP.  Refer to section 
 4 for details on \fIlibdwarf\fP memory management.
+
+.H 3 "dwarf_encode_leb128()"
+.DS
+int dwarf_encode_leb128(Dwarf_Unsigned val,
+    int * nbytes,
+    char * space,
+    int   splen);
+.DE
+The function \f(CWdwarf_encode_leb128\fP 
+encodes the value \f(CWval\fP
+in the caller-provided buffer that \f(CWspace\fP
+points to.  The caller-provided buffer must
+be at least \f(CWsplen\fP bytes long.
+
+The function returns \f(CWDW_DLV_OK\fP
+if the encoding succeeds.
+If  \f(CWsplen\fP is too small to encode the
+value, \f(CWDW_DLV_ERROR\fP will
+be returned.
+
+If the call succeeds, 
+the number of bytes of \f(CWspace\fP that are used
+in the encoding are returned through the pointer \f(CWnbytes\fP
+
+
+.H 3 "dwarf_encode_signed_leb128()"
+.DS
+int dwarf_encode_signed_leb128(Dwarf_Signed val,
+    int * nbytes,
+    char * space,
+    int splen);
+.DE
+
+The function \f(CWdwarf_encode_signed_leb128\fP
+is the same as \f(CWdwarf_encode_leb128\fP except that
+the argument  \f(CWval\fP is signed.
+
+
 
 .SK
 .S

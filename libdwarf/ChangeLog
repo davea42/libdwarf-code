@@ -1,4 +1,9 @@
 2012-11-17  David Anderson
+     * libdwarf2.1.mm: Document dwarf_encode_leb128() and
+       and dwarf_encode_signed_leb128().
+     * libdwarf2.1.pdf: Regenerated.
+       
+2012-11-17  David Anderson
      * dwarf_arange.c,dwarf_base_types.h,dwarf_die_deliv.c,
        dwarf_elf_access.c,dwarf_form.c,dwarf_frame.c,
        dwarf_frame2.c,dwarf_harmless.c,dwarf_init_finish.c,
