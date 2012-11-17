@@ -1,4 +1,5 @@
 2012-11-17  David Anderson
+     * configure regenerated with autoconf 2.69
      * dwarfdump.c, common.c: Update version string.
 2012-11-17  David Anderson
      * addrmap.c,checkutil.c,common.c,dwarfdump.c,dwconf.c,

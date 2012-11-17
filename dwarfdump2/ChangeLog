@@ -1,4 +1,5 @@
 2012-11-17  David Anderson
+     * configure regenerated with autoconf 2.69
      * dwarfdump.cc, common.cc: Update version string.
 2012-11-17  David Anderson
      * checkutil.cc,checkutil.h,common.cc,dieholder.h,dwarfdump.cc,

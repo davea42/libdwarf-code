@@ -1,4 +1,8 @@
 2012-11-17  David Anderson
+     * dwarf_original_elf_init.c: Expanded comment about
+       HAVE_ELF_C_READ_MMAP (which is not settable
+       by configure and is not really needed).
+     * configure regenerated with autoconf 2.69
      * libdwarf2.1.mm: Document dwarf_encode_leb128() and
        and dwarf_encode_signed_leb128().
      * libdwarf2.1.pdf: Regenerated.

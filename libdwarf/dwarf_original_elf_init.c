@@ -108,7 +108,10 @@ dwarf_init(int fd,
     /*  Changed to mmap request per bug 281217. 6/95 */
 #ifdef HAVE_ELF_C_READ_MMAP
     /*  ELF_C_READ_MMAP is an SGI IRIX specific enum value from IRIX
-        libelf.h meaning read but use mmap */
+        libelf.h meaning read but use mmap. 
+        It is never necessary -- it is just a convenience.  
+        HAVE_ELF_C_READ_MMAP has not been in config.h via
+        configure since 2004 at least. */
     what_kind_of_elf_read = ELF_C_READ_MMAP;
 #endif /* !HAVE_ELF_C_READ_MMAP */
 
