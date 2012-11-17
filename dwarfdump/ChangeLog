@@ -1,9 +1,15 @@
 2012-11-15  CarlosAlbertoEnciso <carlos.alberto.enciso@gmail.com>
      * addrmap.c: Consistent layout for if statements.
-     * checkutil.c: Incorrect string name for .text section name.
+     * checkutil.c: Incorrect string prefix for .text 
+       linkonce section name,
+       is '.text.' for the applicable linke once sections, not 
+       simply '.text'
+       Added print of internal (debugging dwarfdump) data not
+       previously printed.
      * common.c: Consistent layout for if statements.
        Include "config.h".
        Minor layout change for #ifdef _DEBUG.
+       Add HAVE_STDAFX_H check.
      * dwarfdump.1: Changes for new options: -E*, -h, -ls, -kE, plus
        some minor typo corrections.
      * dwarfdump.c: Consistent layout for if, for statements.
@@ -25,13 +31,18 @@
        Expand -l option to print line information with no offsets
        values (-ls). Useful for comparisons.
        Expand -S option to print number of occurrences for the
-       searched pattern (-Sv <search_options>.
+       searched pattern (-Sv<search_options>.
        Remove support for internally quoted strings.
        Remove extra 'break' for case 'o' in 'process_args'.
        Include the value zero for -# (internal debug level)
-       Fix layout for 'qsort_compare_compiler'.
+       Fix layout for 'qsort_compare_compiler' and use compiler
+       name in the sort to get a stable sort.
+       Now that name strings are not qoted internally,
+       ensure that we do not expect such quotes in checking
+       compiler names.
      * dwconf.c: Consistent layout for if statements.
-     * globals.h:
+     * globals.h: Add externs and defines for the items
+       newly needed globally.
      * naming.c: Consistent layout for if, for statements.
      * print_aranges.c: Consistent layout for if statements.
      * print_die.c: Consistent layout for if, for and switch statements.
@@ -39,7 +50,7 @@
        'seen_PU_high_address'.  Rename 'errno' to 
        'dwerrno' to avoid conflict with system symbol.
        Missing DWARF_CHECK_COUNT and DWARF_CHECK_ERROR 
-       when testint self references category.
+       when testing self references category.
        Support for counting number of occurrences of the pattern being
        searched (See -S option).
        Add support for new option -kE; the atrribute 
@@ -52,6 +63,7 @@
        'get_attr_value' as it
        refers to a type in the case of checks for type offsets.
        Remove support for internally quoted strings.
+       Add space so DW_OP_bregx prints more readably.
      * print_frames.c: Consistent layout for if statements.
      * print_lines.c: Consistent layout for if statements.
        Implement the ability to print line information 

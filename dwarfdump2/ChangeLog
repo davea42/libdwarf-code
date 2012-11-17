@@ -1,9 +1,10 @@
 2012-11-15  CarlosAlbertoEnciso <carlos.alberto.enciso@gmail.com>
-     * addrmap.cc: Consistent layout for if statements.
-     * checkutil.cc: Incorrect string name for .text section name.
+     * checkutil.cc:  Consistent layout for if, for statements.
+     * checkutil.h:  Consistent layout for if, for statements.
      * common.cc: Consistent layout for if statements.
        Include "config.h".
        Minor layout change for #ifdef _DEBUG.
+     * dieholder.h:  Consistent layout for if statements.
      * dwarfdump.1: Changes for new options: -E*, -h, -ls, -kE, plus
        some minor typo corrections.
      * dwarfdump.cc: Consistent layout for if, for statements.
@@ -31,8 +32,10 @@
        Include the value zero for -# (internal debug level)
        Fix layout for 'qsort_compare_compiler'.
      * dwconf.cc: Consistent layout for if statements.
-     * globals.h:
+     * fderegs.h: Consistent layout for if statements.
+     * globals.h: Add externs for new globals.
      * naming.cc: Consistent layout for if, for statements.
+     * print_abbrevs.cc: Consistent layout for if statements.
      * print_aranges.cc: Consistent layout for if statements.
      * print_die.cc: Consistent layout for if, for and switch statements.
        Remove unused symbols 'seen_PU_base_address', 
@@ -60,9 +63,8 @@
        but the basic line information remains the same). 
        Minor layout changes.
      * print_locs.cc: Consistent layout for if statements.
+     * print_macros.cc: Consistent layout for if statements.
      * print_ranges.cc: Consistent layout for if and for statements.
-     * print_reloc.h: New, #includes new relocation headers
-       from libdwarf for improved printing of relocations.
      * print_reloc.cc: Consistent layout for if statements.
        Includes print_reloc.h now.
        Move names for relocation types to individual 
@@ -79,6 +81,8 @@
        to individual header files based on architecture 
        (ARM, MIPS, PPC, PPC64, X86_64). 
      * print_strings.cc: Consistent layout for if statements.
+     * print_types.cc: Consistent layout for if statements.
+     * srcfilesholder.h: Consistent layout for if statements.
      * strstrnocase.cc: Consistent layout for if and for statements.
      * tag_attr.cc: Consistent layout for if and for statements.
      * tag_attr.list: Add some missing attributes and 
@@ -86,6 +90,8 @@
        remove a duplicated DW_AT_name.
      * tag_common.cc: Consistent layout for if statements.
      * tag_tree.cc: Consistent layout for if and for statements.
+       Add include of libdwarf.h and move include of naming.h
+     * test_printfuncs.cc:  Consistent layout for if and for statements.
      * tag_tree.list: Missing DW_TAG_union_type to allow 
        verification of nested unions.
      * uri.cc: Consistent layout for if and for statements.

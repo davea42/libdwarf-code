@@ -1,3 +1,6 @@
+2011-11-14  DavidAnderson <davea42@earthlink.net>
+     * createirepfrombinary.cc: Fixed a nasty typo that
+       would not even compile. 
 2011-04-10  DavidAnderson <davea42@earthlink.net>
      * config.h.in: Add HAVE_INTPTR_T
      * configure.in: Test for intptr_t
