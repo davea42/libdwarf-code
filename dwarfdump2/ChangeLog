@@ -1,4 +1,6 @@
 2012-11-17  David Anderson
+     * dwarfdump.cc, common.cc: Update version string.
+2012-11-17  David Anderson
      * checkutil.cc,checkutil.h,common.cc,dieholder.h,dwarfdump.cc,
        dwconf.cc,fderegs.h,globals.h,naming.cc,print_abbrevs.cc,
        print_aranges.cc,print_die.cc,print_frames.cc,print_lines.cc,
