@@ -1,6 +1,7 @@
 /*
 
-  Copyright (C) 2008-2011 David Anderson. All Rights Reserved.
+  Copyright (C) 2008-2012 David Anderson. All Rights Reserved.
+  Portions Copyright 2012 SN Systems Ltd. All rights reserved.
 
   This program is free software; you can redistribute it and/or modify it
   under the terms of version 2.1 of the GNU Lesser General Public License 

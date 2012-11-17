@@ -1,3 +1,6 @@
+2011-11-17  DavidAnderson <davea42@earthlink.net>
+     * createirepformfrombinary.cc,createirepfrombinary.cc,
+       irepattrtodbg.cc: Update copyright year.
 2011-11-14  DavidAnderson <davea42@earthlink.net>
      * createirepfrombinary.cc: Fixed a nasty typo that
        would not even compile. 

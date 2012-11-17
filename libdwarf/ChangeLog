@@ -1,3 +1,14 @@
+2012-11-17  David Anderson
+     * dwarf_arange.c,dwarf_base_types.h,dwarf_die_deliv.c,
+       dwarf_elf_access.c,dwarf_form.c,dwarf_frame.c,
+       dwarf_frame2.c,dwarf_harmless.c,dwarf_init_finish.c,
+       dwarf_line.c,dwarf_line.h,dwarf_loc.c,dwarf_macro.c,
+       dwarf_original_elf_init.c,dwarf_print_lines.c,dwarf_query.c
+       dwarf_ranges.c,dwarf_reloc_arm.h,dwarf_reloc_mips.h,
+       dwarf_reloc_ppc.h,dwarf_reloc_ppc64.h,dwarf_reloc_x86_64.h,
+       dwarf_util.c,dwarf_util.h,pro_forms.c,pro_frame.c,
+       pro_incl.h,pro_init.c,pro_section.c: Update copyright
+       on files changed recently.
 2012-11-15  CarlosAlbertoEnciso <carlos.alberto.enciso@gmail.com>
      * dwarf.h: Incorrect comments for registers (64 to 108).
      * dwarf_arange.c: Consistent layout for if statements.

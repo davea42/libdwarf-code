@@ -1,3 +1,11 @@
+2012-11-17  David Anderson
+     * checkutil.cc,checkutil.h,common.cc,dieholder.h,dwarfdump.cc,
+       dwconf.cc,fderegs.h,globals.h,naming.cc,print_abbrevs.cc,
+       print_aranges.cc,print_die.cc,print_frames.cc,print_lines.cc,
+       print_locs.cc,print_macros.cc,print_reloc.h,print_strings.cc,
+       print_types.cc,srcfilesholder.h,strstrnocase.cc,
+       tag_attr.cc,tag_attr_ext.list,tag_attr.list, 
+       tag_tree_ext.list,tag_tree.list: Update copyright.
 2012-11-15  CarlosAlbertoEnciso <carlos.alberto.enciso@gmail.com>
      * checkutil.cc:  Consistent layout for if, for statements.
      * checkutil.h:  Consistent layout for if, for statements.
