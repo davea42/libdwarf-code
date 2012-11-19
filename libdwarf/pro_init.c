@@ -202,7 +202,7 @@ common_init(Dwarf_P_Debug dbg, Dwarf_Unsigned flags)
         dwarf3.  This allows run-time selection of offset size.  */
     dbg->de_64bit_extension = (IS_64BIT(dbg) ? 1 : 0);
     dbg->de_pointer_size = (IS_64BIT(dbg) ? 8 : 4);
-    if( flags & DW_DLC_OFFSET_SIZE_64 && (dbg->de_pointer_size == 8)) {
+    if (flags & DW_DLC_OFFSET_SIZE_64 && (dbg->de_pointer_size == 8)) {
         /*  When it's 64 bit address, a 64bit offset is sensible.
             Arguably a 32 bit address with 64 bit offset could be
             sensible, but who would want that? */
