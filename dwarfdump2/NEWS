@@ -1,3 +1,11 @@
+November 17, 2012
+  Added new checking options.
+  To get good relocation-handling dwarfdump now expects to read
+  headers from libdwarf with the relocation numbers. That means
+  building dwarfdump separate from the libdwarf source is no
+  longer as useful as it was.  It is best to build libdwarf
+  and dwarfdump together for decent handling of relocatable
+  objects.
 December 13, 2011
   Now prints missing line table column number as 0 (now
   matching the DWARF spec), the previous
