@@ -43,7 +43,7 @@
 #include "stdafx.h"
 #endif /* HAVE_STDAFX_H */
 
-#define DWARFDUMP_VERSION " Sat Nov 17 13:32:40 PST 2012  "
+#define DWARFDUMP_VERSION " Tue Nov 20 09:37:08 PST 2012  "
 
 /* The Linux/Unix version does not want a version string to print
    unless -V is on the command line. */
