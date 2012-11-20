@@ -140,7 +140,7 @@ static char *error_msg_null[] = {
     sect_data[(x)].name = n;                                        \
     }
 /* Record the relocation table name information */
-static char **reloc_type_names = NULL;
+static const char **reloc_type_names = NULL;
 static Dwarf_Small number_of_reloc_type_names = 0;
 
 /* Set the relocation names based on the machine type */
@@ -198,11 +198,11 @@ set_relocation_table_names(Dwarf_Small machine_type)
     If buf is used, it is static, so beware: it
     will be overwritten by the next call.
 */
-static char *
+static const char *
 get_reloc_type_names(int index)
 {
     static char buf[100];
-    char *retval = 0;
+    const char *retval = 0;
 
     if (index < 0 || index >= number_of_reloc_type_names) {
         sprintf(buf, "reloc type %d unknown", (int) index);
