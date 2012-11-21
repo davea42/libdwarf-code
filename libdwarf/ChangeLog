@@ -1,3 +1,11 @@
+2012-11-21  David Anderson
+     * dwarf_loc.c: Updated argument list and implementation for
+       dwarf_loclist_from_expr_b(), adding offset size (length size).
+     * libdwarf.h: Updated argument list for 
+       dwarf_loclist_from_expr_b().
+     * libdwarf2.1.mm: Updated dwarf_loclist_from_expr_b()
+       documentation. Now version is 2.05.
+     * libdwarf2.1.pdf: Regenerated.
 2012-11-20  David Anderson
      * dwarf_line.h: Fixing two small formatting
        inconsistencies.
@@ -77,6 +85,7 @@
 2012-11-14  DavidAnderson <davea42@earthlink.net>
      * dwarf_loc.c: DW_OP_GNU_implicit_pointer requires a version stamp
        to work correctly.  Created a new function
+       dwarf_loclist_from_expr_b()
        to allow clients to expicitly pass the version stamp.
        Most clients can continue to use the old interface.
      * libdwarf.h: Declaring new function dwarf_loclist_from_expr_b()

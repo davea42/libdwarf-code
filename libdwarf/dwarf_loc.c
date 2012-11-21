@@ -117,6 +117,7 @@ static Dwarf_Locdesc *
 _dwarf_get_locdesc(Dwarf_Debug dbg,
     Dwarf_Block * loc_block,
     Dwarf_Half address_size,
+    Dwarf_Half offset_size,
     Dwarf_Small version_stamp,
     Dwarf_Addr lowpc,
     Dwarf_Addr highpc, 
@@ -541,11 +542,12 @@ _dwarf_get_locdesc(Dwarf_Debug dbg,
                 an offset_size DIE offset
                 (a simple unsigned integer) in DWARF3,4 
                 followed by a signed leb128 offset.
-                For DWARF2, it is actually pointer size. 
+                For DWARF2, it is actually pointer size
+                (address size). 
                 http://www.dwarfstd.org/ShowIssue.php?issue=100831.1 */
-            Dwarf_Small iplen = dbg->de_length_size;
+            Dwarf_Small iplen = offset_size;
             if (version_stamp == CURRENT_VERSION_STAMP /* 2 */ ) {
-                iplen = dbg->de_pointer_size;
+                iplen = address_size;
             }
             READ_UNALIGNED(dbg, operand1, Dwarf_Unsigned, loc_ptr,
                 iplen);
@@ -913,6 +915,7 @@ dwarf_loclist_n(Dwarf_Attribute attr,
             }
             locdesc = _dwarf_get_locdesc(dbg, &loc_block,
                 address_size,
+                dbg->de_length_size,
                 cucontext->cc_version_stamp, 
                 lowpc, highpc, 
                 error);
@@ -951,6 +954,7 @@ dwarf_loclist_n(Dwarf_Attribute attr,
             error, and we don't test for block length 0 specially here. */
         locdesc = _dwarf_get_locdesc(dbg, &loc_block,
             address_size,
+            dbg->de_length_size,
             cucontext->cc_version_stamp, 
             lowpc, highpc, 
             error);
@@ -1073,6 +1077,7 @@ dwarf_loclist(Dwarf_Attribute attr,
         handles only a single location expression.  */
     locdesc = _dwarf_get_locdesc(dbg, &loc_block,
         address_size,
+        dbg->de_length_size,
         cucontext->cc_version_stamp, 
         lowpc, highpc, 
         error);
@@ -1122,8 +1127,9 @@ dwarf_loclist_from_expr(Dwarf_Debug dbg,
 /*  New April 27 2009. Adding addr_size argument for the rare
     cases where an object has CUs with a different address_size.
 
-    FIXME: As of 2012 we need yet another version with
-    the version_stamp passed in.
+    As of 2012 we have yet another version 
+    dwarf_loclist_from_expr_b()
+    with the version_stamp and offset size (length size) passed in.
 */
 int
 dwarf_loclist_from_expr_a(Dwarf_Debug dbg,
@@ -1139,6 +1145,7 @@ dwarf_loclist_from_expr_a(Dwarf_Debug dbg,
     Dwarf_CU_Context current_cu_context = 
         info_reading->de_cu_context; 
     Dwarf_Small version_stamp = CURRENT_VERSION_STAMP;
+    Dwarf_Half offset_size = dbg->de_length_size;
 
     if (current_cu_context) {
         /*  This is ugly. It is not necessarily right. Due to
@@ -1157,6 +1164,7 @@ dwarf_loclist_from_expr_a(Dwarf_Debug dbg,
         expression_in,
         expression_length,
         addr_size,
+        offset_size,
         version_stamp, /* CU context DWARF version */
         llbuf,
         listlen,
@@ -1171,6 +1179,7 @@ dwarf_loclist_from_expr_b(Dwarf_Debug dbg,
     Dwarf_Ptr expression_in,
     Dwarf_Unsigned expression_length,
     Dwarf_Half addr_size,
+    Dwarf_Half offset_size,
     Dwarf_Small dwarf_version,
     Dwarf_Locdesc ** llbuf,
     Dwarf_Signed * listlen, 
@@ -1199,6 +1208,7 @@ dwarf_loclist_from_expr_b(Dwarf_Debug dbg,
     /* We need the DWARF version to get a locdesc! */ 
     locdesc = _dwarf_get_locdesc(dbg, &loc_block, 
         addr_size,
+        offset_size,
         version_stamp,
         lowpc, highpc, 
         error);

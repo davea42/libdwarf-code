@@ -1351,12 +1351,16 @@ int dwarf_loclist_from_expr_a(Dwarf_Debug /*dbg*/,
     Dwarf_Error *  /*error*/);
 
 /*  dwarf_loclist_from_expr_b() new 13 Nov 2012: 
-    added version argument, 2 for DWARF2 etc. */
+    added dwarf_version (DWARF version number
+    of the applicable compilation unit) 
+    and offset_size arguments. Added for
+    DW_OP_GNU_implicit_pointer. */
 int
 dwarf_loclist_from_expr_b(Dwarf_Debug /*dbg*/, 
     Dwarf_Ptr      /*expression_in*/ ,
     Dwarf_Unsigned /*expression_length*/ ,
     Dwarf_Half     /*addr_size*/ ,
+    Dwarf_Half     /*offset_size*/ ,
     Dwarf_Small    /*dwarf_version*/ ,
     Dwarf_Locdesc ** /*llbuf*/ ,
     Dwarf_Signed * /*listlen*/ , 

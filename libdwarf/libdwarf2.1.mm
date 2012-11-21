@@ -8,7 +8,7 @@ n\."
 .nr Hb 5
 \." ==============================================
 \." Put current date in the following at each rev
-.ds vE rev 2.04, November 17, 2012
+.ds vE rev 2.05, November 21, 2012
 \." ==============================================
 \." ==============================================
 .ds | |
@@ -204,8 +204,9 @@ the libdwarf draft for DWARF Version 1 and recent changes.
 .H 2 "Items Changed"
 .P
 Added dwarf_loclist_from_expr_b()
-function which adds an argument of the DWARF version
-(2 for DWARF2, etc) to the dwarf_loclist_from_expr_a()
+function which adds arguments of the DWARF version
+(2 for DWARF2, etc) and the offset size 
+to the dwarf_loclist_from_expr_a()
 function.  Because the DW_OP_GNU_implicit_pointer
 opcode is defined differently for DWARF2 than for
 later versions.
@@ -2926,7 +2927,11 @@ if (lres == DW_DLV_OK) {
         Dwarf_Signed  *listlen,
         Dwarf_Error *error)\fP
 .DE
-The function \f(CWdwarf_loclist_from_expr()\fP sets \f(CW*llbuf\fP to point to 
+Use \f(CWdwarf_loclist_from_expr_b()\fP instead. 
+This function is obsolete.
+.P
+The function \f(CWdwarf_loclist_from_expr()\fP 
+sets \f(CW*llbuf\fP to point to 
 a \f(CWDwarf_Locdesc\fP pointer for the single location expression
 which is pointed to by \f(CW*bytes_in\fP (whose length is
 \f(CW*bytes_len\fP).
@@ -2944,7 +2949,8 @@ being read (normally 4 or 8).
 .P
 It returns \f(CWDW_DLV_ERROR\fP on error. 
 .P
-Storage allocated by a successful call of \f(CWdwarf_loclist_from_expr()\fP should 
+Storage allocated by a successful call 
+of \f(CWdwarf_loclist_from_expr()\fP should 
 be deallocated when no longer of interest (see \f(CWdwarf_dealloc()\fP).
 The block of \f(CWDwarf_Loc\fP structs pointed to by the \f(CWld_s\fP 
 field of each \f(CWDwarf_Locdesc\fP structure 
@@ -2979,6 +2985,7 @@ if (lres == DW_DLV_OK) {
         Dwarf_Ptr bytes_in, 
         Dwarf_Unsigned bytes_len,
         Dwarf_Half addr_size,
+        Dwarf_Half offset_size,
         Dwarf_Half version_stamp,
         Dwarf_Locdesc **llbuf,
         Dwarf_Signed  *listlen,
@@ -2986,14 +2993,15 @@ if (lres == DW_DLV_OK) {
 .DE
 The function \f(CWdwarf_loclist_from_expr_b()\fP 
 is identical to  \f(CWdwarf_loclist_from_expr_a()\fP
-in every way except that the caller passes the additional argument 
+in every way except that the caller passes an additional argument 
 \f(CWversion_stamp\fP containing the 
 version stamp (2 for DWARF2, etc) of the CU using
-this location expression.
-The DW_OP_GNU_implicit_pointer requires this version information
-to be correctly processed.
+this location expression and an additional argument
+of the offset size of the CU using this location expression.
+The DW_OP_GNU_implicit_pointer operation requires this version 
+and offset information to be correctly processed.
 .P
-The \f(CWaddr_size\fP argument (added 27April2009) is needed
+The \f(CWaddr_size\fP argument (from 27April2009) is needed
 to correctly interpret frame information as different compilation
 units can have different address sizes.
 DWARF4 adds address_size to the CIE header.
@@ -3009,6 +3017,9 @@ DWARF4 adds address_size to the CIE header.
         Dwarf_Signed  *listlen,
         Dwarf_Error *error)\fP
 .DE
+Use \f(CWdwarf_loclist_from_expr_b()\fP instead. 
+This function is obsolete.
+.P
 The function \f(CWdwarf_loclist_from_expr_a()\fP 
 is identical to  \f(CWdwarf_loclist_from_expr()\fP
 in every way except that the caller passes the additional argument 
