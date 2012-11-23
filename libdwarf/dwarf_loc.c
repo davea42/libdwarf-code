@@ -112,6 +112,10 @@ read_encoded_addr(Dwarf_Small *loc_ptr, Dwarf_Debug dbg,
     the block is greater than 0.  Zero length location expressions 
     to represent variables that have been optimized away are 
     handled in the calling function.
+
+    address_size, offset_size, and version_stamp are
+    per-CU, not per-object or per dbg. 
+    We cannot use dbg directly to get those values.
 */
 static Dwarf_Locdesc *
 _dwarf_get_locdesc(Dwarf_Debug dbg,
@@ -469,9 +473,9 @@ _dwarf_get_locdesc(Dwarf_Debug dbg,
             break;
         case DW_OP_call_ref:    /* DWARF3 */
             READ_UNALIGNED(dbg, operand1, Dwarf_Unsigned, loc_ptr,
-                dbg->de_length_size);
-            loc_ptr = loc_ptr + dbg->de_length_size;
-            offset = offset + dbg->de_length_size;
+                offset_size);
+            loc_ptr = loc_ptr + offset_size;
+            offset = offset + offset_size;
             break;
 
         case DW_OP_form_tls_address:    /* DWARF3f */
@@ -915,7 +919,7 @@ dwarf_loclist_n(Dwarf_Attribute attr,
             }
             locdesc = _dwarf_get_locdesc(dbg, &loc_block,
                 address_size,
-                dbg->de_length_size,
+                cucontext->cc_length,
                 cucontext->cc_version_stamp, 
                 lowpc, highpc, 
                 error);
@@ -954,7 +958,7 @@ dwarf_loclist_n(Dwarf_Attribute attr,
             error, and we don't test for block length 0 specially here. */
         locdesc = _dwarf_get_locdesc(dbg, &loc_block,
             address_size,
-            dbg->de_length_size,
+            cucontext->cc_length,
             cucontext->cc_version_stamp, 
             lowpc, highpc, 
             error);
@@ -1077,7 +1081,7 @@ dwarf_loclist(Dwarf_Attribute attr,
         handles only a single location expression.  */
     locdesc = _dwarf_get_locdesc(dbg, &loc_block,
         address_size,
-        dbg->de_length_size,
+        cucontext->cc_length,
         cucontext->cc_version_stamp, 
         lowpc, highpc, 
         error);
@@ -1108,7 +1112,8 @@ dwarf_loclist(Dwarf_Attribute attr,
     a DW_FORM_block*, just the expression bytes.
 
     If the address_size != de_pointer_size this will not work
-    right. FIXME.
+    right. 
+    See dwarf_loclist_from_expr_b() for a better interface.
 */
 int
 dwarf_loclist_from_expr(Dwarf_Debug dbg,
@@ -1127,8 +1132,7 @@ dwarf_loclist_from_expr(Dwarf_Debug dbg,
 /*  New April 27 2009. Adding addr_size argument for the rare
     cases where an object has CUs with a different address_size.
 
-    As of 2012 we have yet another version 
-    dwarf_loclist_from_expr_b()
+    As of 2012 we have yet another version, dwarf_loclist_from_expr_b()
     with the version_stamp and offset size (length size) passed in.
 */
 int
@@ -1152,13 +1156,13 @@ dwarf_loclist_from_expr_a(Dwarf_Debug dbg,
             oddity in DW_OP_GNU_implicit_pointer, see its
             implementation above. 
             For correctness, use dwarf_loclist_from_expr_b()
-            instead. */
+            instead of dwarf_loclist_from_expr_a(). */
         version_stamp = current_cu_context->cc_version_stamp;
+        offset_size = current_cu_context->cc_length;
         if (version_stamp < 2) {
-           version_stamp = CURRENT_VERSION_STAMP;
+            /* This is probably totally silly.  */
+            version_stamp = CURRENT_VERSION_STAMP;
         }
-    } else {
-        version_stamp = CURRENT_VERSION_STAMP;
     }
     res = dwarf_loclist_from_expr_b(dbg,
         expression_in,

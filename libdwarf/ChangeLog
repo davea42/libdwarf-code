@@ -1,3 +1,7 @@
+2012-11-22  David Anderson
+     * dwarf_loc.c: Removed the last dbg->de_length_size
+       instances from _dwarf_get_locdesc() to reflect the
+       incoming argument with the offset size (length size).
 2012-11-21  David Anderson
      * dwarf_loc.c: Updated argument list and implementation for
        dwarf_loclist_from_expr_b(), adding offset size (length size).
