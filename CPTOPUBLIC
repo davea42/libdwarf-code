@@ -96,6 +96,7 @@ dwarfdump2/NEWS  \
 dwarfdump2/print_frames.h  \
 dwarfdump2/COPYING  \
 dwarfdump2/print_reloc.cc  \
+dwarfdump2/print_reloc.h \
 dwarfdump2/print_sections.cc \
 dwarfdump2/print_sections.h \
 dwarfdump2/strstrnocase.cc \
@@ -195,6 +196,11 @@ libdwarf/dwarf_form.c \
 libdwarf/gennames.c \
 libdwarf/dwarf_harmless.c \
 libdwarf/dwarf_harmless.h \
+libdwarf/dwarf_reloc_arm.h \
+libdwarf/dwarf_reloc_mips.h \
+libdwarf/dwarf_reloc_ppc.h \
+libdwarf/dwarf_reloc_ppc64.h \
+libdwarf/dwarf_reloc_x86_64.h \
 libdwarf/pro_util.h \
 libdwarf/pro_opaque.h \
 libdwarf/pro_reloc_stream.c \

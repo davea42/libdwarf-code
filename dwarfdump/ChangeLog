@@ -1,3 +1,5 @@
+2012-11-27  David Anderson
+     * dwarfdump.c, common.c: Update version string.
 2012-11-20  David Anderson
      * dwarfdump.c, common.c: Update version string.
      * print_reloc.c: Inserted missing 'const' qualifiers
