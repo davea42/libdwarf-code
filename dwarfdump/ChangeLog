@@ -1,4 +1,7 @@
 2012-11-29  David Anderson
+     * dwarfdump.c, print_die.c: Now all follow dicheck
+       indent rules.
+2012-11-29  David Anderson
      * dwarfdump.c, common.c: Update version string.
 2012-11-27  David Anderson
      * dwarfdump.c, common.c: Update version string.

@@ -680,7 +680,7 @@ print_object_header(Elf *elf,Dwarf_Debug dbg,unsigned local_section_map)
         /* Print section information (name, size, address). */
         nCount = dwarf_get_section_count(dbg);
         printf("\nInfo for %d sections:\n"
-               "  Nro Index Address    Size(h)    Size(d)  Name\n",nCount);
+            "  Nro Index Address    Size(h)    Size(d)  Name\n",nCount);
         /* Ignore section with index=0 */
         for (section_index = 1; section_index < nCount; ++section_index) {
             res = dwarf_get_section_info_by_index(dbg,section_index,
@@ -707,16 +707,16 @@ print_object_header(Elf *elf,Dwarf_Debug dbg,unsigned local_section_map)
                 if (print_it) {
                     ++printed_sections;
                     printf("  %3d "                         /* nro */
-                           "0x%03x "                        /* index */
-                           "0x%" DW_PR_XZEROS DW_PR_DUx " " /* address */
-                           "0x%" DW_PR_XZEROS DW_PR_DUx " " /* size (hex) */
-                           "%" DW_PR_XZEROS DW_PR_DUu " "   /* size (dec) */
-                           "%s\n",                          /* name */
-                           printed_sections,
-                           section_index,
-                           section_addr,
-                           section_size, section_size,
-                           section_name);
+                        "0x%03x "                        /* index */
+                        "0x%" DW_PR_XZEROS DW_PR_DUx " " /* address */
+                        "0x%" DW_PR_XZEROS DW_PR_DUx " " /* size (hex) */
+                        "%" DW_PR_XZEROS DW_PR_DUu " "   /* size (dec) */
+                        "%s\n",                          /* name */
+                        printed_sections,
+                        section_index,
+                        section_addr,
+                        section_size, section_size,
+                        section_name);
                     total_bytes += section_size;
                 }
             }
@@ -1608,7 +1608,7 @@ process_args(int argc, char *argv[])
                 switch (optarg[0]) {
                 case 'h': section_map |= DW_HDR_HEADER; break;
                 case 'i': section_map |= DW_HDR_DEBUG_INFO;
-                          section_map |= DW_HDR_DEBUG_TYPES; break;
+                    section_map |= DW_HDR_DEBUG_TYPES; break;
                 case 'l': section_map |= DW_HDR_DEBUG_LINE; break;
                 case 'p': section_map |= DW_HDR_DEBUG_PUBNAMES; break;
                 case 'a': section_map |= DW_HDR_DEBUG_ABBREV; break;
