@@ -1,4 +1,8 @@
 2012-11-29  David Anderson
+     * dwarf_elf_access.c,dwarf_init_finish.c,dwarf_loc.c,
+       dwarf_reloc_arm.h,dwarf_reloc_x86_64.h,libdwarf.h:
+       Fix indents so dicheck gives no warnings.
+2012-11-29  David Anderson
      * dwarf_addr_finder.c: Add const to a couple
        const arrays.
      * gennames.c: Add const to a couple const variables.

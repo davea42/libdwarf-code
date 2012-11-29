@@ -270,8 +270,8 @@ dwarf_elf_object_access_get_section_info(
             return DW_DLV_ERROR;
         }
 
-        /* Get also section 'sh_type' and sh_info' fields, so the caller
-         * can use it for additional tasks that require that info. */
+        /*  Get also section 'sh_type' and sh_info' fields, so the caller
+            can use it for additional tasks that require that info. */
         ret_scn->type = shdr64->sh_type;
         ret_scn->size = shdr64->sh_size;
         ret_scn->addr = shdr64->sh_addr;
@@ -295,8 +295,8 @@ dwarf_elf_object_access_get_section_info(
         return DW_DLV_ERROR;
     }
 
-    /* Get also the section type, so the caller can use it for
-     * additional tasks that require to know the section type. */
+    /*  Get also the section type, so the caller can use it for
+        additional tasks that require to know the section type. */
     ret_scn->type = shdr32->sh_type;
     ret_scn->size = shdr32->sh_size;
     ret_scn->addr = shdr32->sh_addr;

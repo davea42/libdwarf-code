@@ -55,12 +55,12 @@
 #define R_X86_64_DTPOFF64        17 /* Offset in module's TLS block */
 #define R_X86_64_TPOFF64         18 /* Offset in initial TLS block */
 #define R_X86_64_TLSGD           19 /* 32 bit signed PC relative offset
-                                       to two GOT entries for GD symbol */
+                                        to two GOT entries for GD symbol */
 #define R_X86_64_TLSLD           20 /* 32 bit signed PC relative offset
-                                       to two GOT entries for LD symbol */
+                                        to two GOT entries for LD symbol */
 #define R_X86_64_DTPOFF32        21 /* Offset in TLS block */
 #define R_X86_64_GOTTPOFF        22 /* 32 bit signed PC relative offset
-                                       to GOT entry for IE symbol */
+                                        to GOT entry for IE symbol */
 #define R_X86_64_TPOFF32         23 /* Offset in initial TLS block */
 #define R_X86_64_PC64            24 /* PC relative 64 bit */
 #define R_X86_64_GOTOFF64        25 /* 64 bit offset to GOT */

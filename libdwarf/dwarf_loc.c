@@ -72,29 +72,29 @@ read_encoded_addr(Dwarf_Small *loc_ptr, Dwarf_Debug dbg,
     }
     switch (op) {
     case 1:
-         *val_out = *loc_ptr;
-         len++;
-         break;
+        *val_out = *loc_ptr;
+        len++;
+        break;
         
     case 2:
-         READ_UNALIGNED(dbg, operand, Dwarf_Unsigned, loc_ptr, 2);
-         *val_out = operand;
-         len +=2;
-         break;
+        READ_UNALIGNED(dbg, operand, Dwarf_Unsigned, loc_ptr, 2);
+        *val_out = operand;
+        len +=2;
+        break;
     case 4:
-         READ_UNALIGNED(dbg, operand, Dwarf_Unsigned, loc_ptr, 4);
-         *val_out = operand;
-         len +=4;
-         break;
+        READ_UNALIGNED(dbg, operand, Dwarf_Unsigned, loc_ptr, 4);
+        *val_out = operand;
+        len +=4;
+        break;
     case 8:
-         READ_UNALIGNED(dbg, operand, Dwarf_Unsigned, loc_ptr, 8);
-         *val_out = operand;
-         len +=8;
-         break;
+        READ_UNALIGNED(dbg, operand, Dwarf_Unsigned, loc_ptr, 8);
+        *val_out = operand;
+        len +=8;
+        break;
     default:
-         /* We do not know how much to read. */
+        /* We do not know how much to read. */
         _dwarf_error(dbg, error, DW_DLE_GNU_OPCODE_ERROR);
-         return DW_DLV_ERROR;
+        return DW_DLV_ERROR;
     };
     *len_out = len;
     return DW_DLV_OK;
@@ -530,7 +530,7 @@ _dwarf_get_locdesc(Dwarf_Debug dbg,
                 that number of bytes. */
                 int length = 0;
                 int reares = read_encoded_addr(loc_ptr,dbg,&operand1,
-                   &length,error);
+                    &length,error);
                 if (reares != DW_DLV_OK) {
                     /*  Oops. The caller will notice and
                         will issue DW_DLV_ERROR. */
@@ -1272,5 +1272,3 @@ dwarf_get_loclist_entry(Dwarf_Debug dbg,
     *next_entry = b.bl_len + b.bl_section_offset;
     return DW_DLV_OK;
 }
-
-

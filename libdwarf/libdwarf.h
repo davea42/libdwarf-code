@@ -573,8 +573,8 @@ struct Dwarf_Obj_Access_Section_s {
         to strtab.  In Elf it is sh_link. */
     Dwarf_Unsigned link;
 
-    /* The section header index of the section to which the
-       relocation applies. In Elf it is sh_info. */
+    /*  The section header index of the section to which the
+        relocation applies. In Elf it is sh_info. */
     Dwarf_Unsigned info;
 
     /*  Elf sections that are tables have a non-zero entrysize so

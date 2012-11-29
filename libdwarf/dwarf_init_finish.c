@@ -243,91 +243,91 @@ _dwarf_setup(Dwarf_Debug dbg, Dwarf_Error * error)
 
     section_count = obj->methods->get_section_count(obj->object);
 
-    /* Allocate space to record references to debug sections, that can
-     * be referenced by RELA sections in the 'sh_info' field. */
+    /*  Allocate space to record references to debug sections, that can
+        be referenced by RELA sections in the 'sh_info' field. */
     sections = (struct Dwarf_Section_s **)calloc(section_count + 1,
-                                         sizeof(struct Dwarf_Section_s *));
+        sizeof(struct Dwarf_Section_s *));
     if (!sections) {
         /* Impossible case, we hope. Give up. */
         return DW_DLV_ERROR;
     }
 
-    /* Setup the table that contains the basic information about the
-     * sections that are DWARF related. The entries are very unlikely
-     * to change very often. */
+    /*  Setup the table that contains the basic information about the
+        sections that are DWARF related. The entries are very unlikely
+        to change very often. */
     add_debug_section_info(dbg,".debug_info",&dbg->de_debug_info, /*01*/
-                DW_DLE_DEBUG_INFO_DUPLICATE,DW_DLE_DEBUG_INFO_NULL,
-                TRUE);
+        DW_DLE_DEBUG_INFO_DUPLICATE,DW_DLE_DEBUG_INFO_NULL,
+        TRUE);
     add_debug_section_info(dbg,".debug_types",&dbg->de_debug_types, /*02*/
-                DW_DLE_DEBUG_TYPES_DUPLICATE,DW_DLE_DEBUG_TYPES_NULL,
-                TRUE);
+        DW_DLE_DEBUG_TYPES_DUPLICATE,DW_DLE_DEBUG_TYPES_NULL,
+        TRUE);
     add_debug_section_info(dbg,".debug_abbrev",&dbg->de_debug_abbrev, /*03*/
-                DW_DLE_DEBUG_ABBREV_DUPLICATE,DW_DLE_DEBUG_ABBREV_NULL,
-                FALSE);
+        DW_DLE_DEBUG_ABBREV_DUPLICATE,DW_DLE_DEBUG_ABBREV_NULL,
+        FALSE);
     add_debug_section_info(dbg,".debug_aranges",&dbg->de_debug_aranges, /*04*/
-                DW_DLE_DEBUG_ARANGES_DUPLICATE,0,
-                FALSE);
+        DW_DLE_DEBUG_ARANGES_DUPLICATE,0,
+        FALSE);
     add_debug_section_info(dbg,".debug_line",&dbg->de_debug_line,  /*05*/
-                DW_DLE_DEBUG_LINE_DUPLICATE,0,
-                FALSE);
+        DW_DLE_DEBUG_LINE_DUPLICATE,0,
+        FALSE);
     add_debug_section_info(dbg,".debug_frame",&dbg->de_debug_frame, /*06*/
-                DW_DLE_DEBUG_FRAME_DUPLICATE,0,
-                TRUE);
+        DW_DLE_DEBUG_FRAME_DUPLICATE,0,
+        TRUE);
     /* gnu egcs-1.1.2 data */
     add_debug_section_info(dbg,".eh_frame",&dbg->de_debug_frame_eh_gnu, /*07*/
-                DW_DLE_DEBUG_FRAME_DUPLICATE,0,
-                TRUE);
+        DW_DLE_DEBUG_FRAME_DUPLICATE,0,
+        TRUE);
     add_debug_section_info(dbg,".debug_loc",&dbg->de_debug_loc, /*08*/
-                DW_DLE_DEBUG_LOC_DUPLICATE,0,
-                FALSE);
+        DW_DLE_DEBUG_LOC_DUPLICATE,0,
+        FALSE);
     add_debug_section_info(dbg,".debug_pubnames",&dbg->de_debug_pubnames,/*09*/
-                DW_DLE_DEBUG_PUBNAMES_DUPLICATE,0,
-                FALSE);
+        DW_DLE_DEBUG_PUBNAMES_DUPLICATE,0,
+        FALSE);
     add_debug_section_info(dbg,".debug_str",&dbg->de_debug_str,    /*10*/
-                DW_DLE_DEBUG_STR_DUPLICATE,0,
-                FALSE);
+        DW_DLE_DEBUG_STR_DUPLICATE,0,
+        FALSE);
     /* SGI IRIX-only. */
     add_debug_section_info(dbg,".debug_funcnames",&dbg->de_debug_funcnames, 
-                /*11*/
-                DW_DLE_DEBUG_FUNCNAMES_DUPLICATE,0,
-                FALSE);
+        /*11*/
+        DW_DLE_DEBUG_FUNCNAMES_DUPLICATE,0,
+        FALSE);
     /*  SGI IRIX-only, created years before DWARF3. Content
         essentially identical to .debug_pubtypes.  */
     add_debug_section_info(dbg,".debug_typenames",&dbg->de_debug_typenames, 
-                /*12*/
-                DW_DLE_DEBUG_TYPENAMES_DUPLICATE,0,
-                FALSE);
+        /*12*/
+        DW_DLE_DEBUG_TYPENAMES_DUPLICATE,0,
+        FALSE);
     /* Section new in DWARF3.  */
     add_debug_section_info(dbg,".debug_pubtypes",&dbg->de_debug_pubtypes,   
-                /*13*/
-                DW_DLE_DEBUG_PUBTYPES_DUPLICATE,0,
-                FALSE);
+        /*13*/
+        DW_DLE_DEBUG_PUBTYPES_DUPLICATE,0,
+        FALSE);
     /* SGI IRIX-only.  */
     add_debug_section_info(dbg,".debug_varnames",&dbg->de_debug_varnames,   
-                /*14*/
-                DW_DLE_DEBUG_VARNAMES_DUPLICATE,0,
-                FALSE);
+        /*14*/
+        DW_DLE_DEBUG_VARNAMES_DUPLICATE,0,
+        FALSE);
     /* SGI IRIX-only. */
     add_debug_section_info(dbg,".debug_weaknames",&dbg->de_debug_weaknames, 
-                /*15*/
-                DW_DLE_DEBUG_WEAKNAMES_DUPLICATE,0,
-                FALSE);
+        /*15*/
+        DW_DLE_DEBUG_WEAKNAMES_DUPLICATE,0,
+        FALSE);
     add_debug_section_info(dbg,".debug_macinfo",&dbg->de_debug_macinfo,     
-                /*16*/
-                DW_DLE_DEBUG_MACINFO_DUPLICATE,0,
-                FALSE);
+        /*16*/
+        DW_DLE_DEBUG_MACINFO_DUPLICATE,0,
+        FALSE);
     add_debug_section_info(dbg,".debug_ranges",&dbg->de_debug_ranges,       
-                /*17*/
-                DW_DLE_DEBUG_RANGES_DUPLICATE,0,
-                TRUE);
+        /*17*/
+        DW_DLE_DEBUG_RANGES_DUPLICATE,0,
+        TRUE);
     add_debug_section_info(dbg,".symtab",&dbg->de_elf_symtab,               
-                /*18*/
-                DW_DLE_DEBUG_SYMTAB_ERR,0,
-                FALSE);
+        /*18*/
+        DW_DLE_DEBUG_SYMTAB_ERR,0,
+        FALSE);
     add_debug_section_info(dbg,".strtab",&dbg->de_elf_strtab,               
-                /*19*/
-                DW_DLE_DEBUG_STRTAB_ERR,0,
-                FALSE);
+        /*19*/
+        DW_DLE_DEBUG_STRTAB_ERR,0,
+        FALSE);
 
     /*  We can skip index 0 when considering ELF files, but not other
         object types.  Indeed regardless of the object type we should
@@ -363,10 +363,11 @@ _dwarf_setup(Dwarf_Debug dbg, Dwarf_Error * error)
             && strcmp(scn_name, ".symtab")
             && strcmp(scn_name, ".strtab")
             && strncmp(scn_name, ".rela.",6)
-            /* For an object file with incorrect rela section name,
-             * readelf prints correct debug information, as the tool takes the
-             * section type instead of the section name. Include the incorrect
-             * section name, until this test uses the section type. */
+            /*  For an object file with incorrect rela section name,
+                readelf prints correct debug information, 
+                as the tool takes the section type instead 
+                of the section name. Include the incorrect
+                section name, until this test uses the section type. */
             && doas.type != SHT_RELA)  {
             continue;
         } else {
@@ -393,11 +394,12 @@ _dwarf_setup(Dwarf_Debug dbg, Dwarf_Error * error)
                 }
             }
             if (!found_match) {
-                /* For an object file with incorrect rela section name,
-                 * the 'readelf' tool, prints correct debug information,
-                 * as the tool takes the section type instead of the section
-                 * name. If the current section is a RELA one and the 'sh_info'
-                 * refers to a debug section, add the relocation data. */
+                /*  For an object file with incorrect rela section name,
+                    the 'readelf' tool, prints correct debug information,
+                    as the tool takes the section type instead 
+                    of the section name. If the current section 
+                    is a RELA one and the 'sh_info'
+                    refers to a debug section, add the relocation data. */
                 if (doas.type == SHT_RELA && sections[doas.info]) {
                     add_rela_data(sections[doas.info],&doas,section_index);
                 }
