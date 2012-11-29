@@ -231,6 +231,31 @@ struct Dwarf_Debug_InfoTypes_s {
 };
 typedef struct Dwarf_Debug_InfoTypes_s *Dwarf_Debug_InfoTypes;
 
+/*  As the tasks performed on a debug related section is the same,
+    in order to make the process of adding a new section (very unlikely) a
+    little bit easy and to reduce the possibility of errors, a simple table
+    build dynamically, will contain the relevant information. 
+*/
+
+struct Dwarf_dbg_sect_s {
+    /* Debug section name must not be freed, is quoted string. */
+    const char *ds_name;                     
+    struct Dwarf_Section_s *ds_secdata;/* Debug section information */
+    int ds_duperr;                     /* Error code for duplicated section */
+    int ds_emptyerr;                   /* Error code for empty section */
+    int ds_have_dwarf;                 /* Section contains DWARF */
+};
+
+/*  As the number of debug sections does not change very often, in the case a
+    new section is added in '_dwarf_setup', the 'MAX_DEBUG_SECTIONS' must
+    be updated accordingly. 
+    This does not allow for section-groups in object files,
+    for which many .debug_info (and other) sections may exist.
+*/
+#define DWARF_MAX_DEBUG_SECTIONS 20
+
+
+
 struct Dwarf_Debug_s {
     /*  All file access methods and support data 
         are hidden in this structure. 
@@ -330,6 +355,9 @@ struct Dwarf_Debug_s {
 
     unsigned char de_big_endian_object; /* Non-zero if big-endian
         object opened. */
+
+    struct Dwarf_dbg_sect_s de_debug_sections[DWARF_MAX_DEBUG_SECTIONS];
+    unsigned de_debug_sections_total_entries; /* Number actually used. */
 
     struct Dwarf_Harmless_s de_harmless_errors;
 };

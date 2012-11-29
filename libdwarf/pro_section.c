@@ -120,7 +120,7 @@ char *_dwarf_sectnames[] = {
 
 
 
-static Dwarf_Ubyte std_opcode_len[] = { 0,      /* DW_LNS_copy */
+static const Dwarf_Ubyte std_opcode_len[] = { 0, /* DW_LNS_copy */
     1,                          /* DW_LNS_advance_pc */
     1,                          /* DW_LNS_advance_line */
     1,                          /* DW_LNS_set_file */

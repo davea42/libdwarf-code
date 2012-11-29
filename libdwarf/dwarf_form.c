@@ -618,7 +618,7 @@ dwarf_formflag(Dwarf_Attribute attr,
     }
 
     if (attr->ar_attribute_form == DW_FORM_flag) {
-        *ret_bool = (*(Dwarf_Small *) attr->ar_debug_ptr != 0);
+        *ret_bool = *(Dwarf_Small *)(attr->ar_debug_ptr);
         return (DW_DLV_OK);
     }
     _dwarf_error(cu_context->cc_dbg, error, DW_DLE_ATTR_FORM_BAD);

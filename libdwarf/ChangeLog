@@ -1,3 +1,19 @@
+2012-11-29  David Anderson
+     * dwarf_addr_finder.c: Add const to a couple
+       const arrays.
+     * gennames.c: Add const to a couple const variables.
+     * dwarf_form.c: dwarf_formflag() was incorrectly 
+       returning 1 instead of the actual flag value when 
+       non-zero flag value. Now returns the real flag byte value.
+     * dwarf_opaque.h: Moved debug_section area info into
+       a new array in Dwarf_Debug struct.
+     * dwarf_init_finish.c: Instead of a file-static array,
+       the array is moved to the Dwarf_Debug struct and accesses
+       are adjusted to match.
+     * pro_section.c: Add const to an array declaration.
+     * libdwarf2.1.mm: Updated dwarf_formflag()
+       documentation. Now version is 2.06.
+     * libdwarf2.1.pdf: Regenerated.
 2012-11-22  David Anderson
      * dwarf_loc.c: Removed the last dbg->de_length_size
        instances from _dwarf_get_locdesc() to reflect the

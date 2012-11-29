@@ -8,7 +8,7 @@ n\."
 .nr Hb 5
 \." ==============================================
 \." Put current date in the following at each rev
-.ds vE rev 2.05, November 21, 2012
+.ds vE rev 2.06, November 29, 2012
 \." ==============================================
 \." ==============================================
 .ds | |
@@ -2584,8 +2584,16 @@ It returns \f(CWDW_DLV_ERROR\fP on error.
 When it succeeds,
 \f(CWdwarf_formflag()\fP returns
 \f(CWDW_DLV_OK\fP and sets \f(CW*return_bool\fP
-\f(CW1\fP (i.e. true) (if the attribute has a non-zero value)
-or \f(CW0\fP (i.e. false) (if the attribute has a zero value).
+to the (one unsigned byte) flag value. 
+Any non-zero value means true.
+A zero value means false.
+
+Before 29 November 2012 this would only return 1 or zero
+through the pointer, but that was always a strange thing to do.
+The DWARF specification has always been clear that any non-zero
+value means true.  The function should report the value
+found truthfully, and now it does.
+
 It returns \f(CWDW_DLV_ERROR\fP on error or if the \f(CWattr\fP
 does not have form flag.
 

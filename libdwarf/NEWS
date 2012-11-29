@@ -1,3 +1,9 @@
+November 29, 2012
+  The function dwarf_formflag() now returns the actual flag value
+  instead of just 1 or 0.   It has been coded wrong a very long time.
+  The DWARF documents (DWARF2 on) have always made it clear any non-zero
+  value means true and zero means false. Now consumers can properly
+  note the value the compiler actually put into the flag byte.
 November 17, 2012
   New headers contain the relocation codes for various object
   ABIs.   These headers are needed in libdwarf and expected

@@ -110,8 +110,8 @@ static unsigned array_count = 0;
 typedef int (*compfn)(const void *,const void *);
 static int Compare(array_data *,array_data *);
 
-static char *prefix_root = "DW_";
-static unsigned prefix_root_len = 3;
+static const char *prefix_root = "DW_";
+static const unsigned prefix_root_len = 3;
 
 /* f_dwarf_in is the input dwarf.h. The others are output files. */
 static FILE *f_dwarf_in;
