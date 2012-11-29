@@ -2693,9 +2693,9 @@ print_exprloc_content(Dwarf_Debug dbg,Dwarf_Die die,
 #define ENCODE_SPACE_NEEDED   (2*sizeof(Dwarf_Unsigned))
 #endif /* ENCODE_SPACE_NEEDED */
 
-/* Table indexed by the attribute value; only standard attributes
- * are included, ie. in the range [1..DW_AT_lo_user]; we waste a
- * little bit of space, but accessing the table is fast. */
+// Table indexed by the attribute value; only standard attributes
+// are included, ie. in the range [1..DW_AT_lo_user]; we waste a
+// little bit of space, but accessing the table is fast. */
 typedef struct attr_encoding {
     Dwarf_Unsigned entries; /* Attribute occurrences */
     Dwarf_Unsigned formx;   /* Space used by current encoding */
@@ -2703,10 +2703,10 @@ typedef struct attr_encoding {
 } a_attr_encoding;
 static a_attr_encoding *attributes_encoding_table = NULL;
 
-/* Check the potential amount of space wasted by attributes values that can
- * be represented as an unsigned LEB128. Only attributes with forms:
- * DW_FORM_data1, DW_FORM_data2, DW_FORM_data4 and DW_FORM_data are checked
- */
+// Check the potential amount of space wasted by attributes values that can
+// be represented as an unsigned LEB128. Only attributes with forms:
+// DW_FORM_data1, DW_FORM_data2, DW_FORM_data4 and DW_FORM_data are checked
+//
 static void
 check_attributes_encoding(Dwarf_Half attr,Dwarf_Half theform,
     Dwarf_Unsigned value)
@@ -2715,10 +2715,10 @@ check_attributes_encoding(Dwarf_Half attr,Dwarf_Half theform,
     static bool do_init = true;
 
     if (do_init) {
-        /* Create table on first call */
+        // Create table on first call */
         attributes_encoding_table = (a_attr_encoding *)calloc(DW_AT_lo_user,
-                                        sizeof(a_attr_encoding));
-        /* We use only 4 slots in the table, for quick access */
+            sizeof(a_attr_encoding));
+        // We use only 4 slots in the table, for quick access */
         factor[DW_FORM_data1] = 1;  /* index 0x0b */
         factor[DW_FORM_data2] = 2;  /* index 0x05 */
         factor[DW_FORM_data4] = 4;  /* index 0x06 */
@@ -2726,18 +2726,18 @@ check_attributes_encoding(Dwarf_Half attr,Dwarf_Half theform,
         do_init = false;
     }
 
-    /* Regardless of the encoding form, count the checks. */
+    // Regardless of the encoding form, count the checks.
     DWARF_CHECK_COUNT(attr_encoding_result,1);
 
-    /* For 'DW_AT_stmt_list', due to the way is generated, the value
-     * can be unknown at compile time and only the assembler can decide
-     * how to represent the offset; ignore this attribute. */
+    // For 'DW_AT_stmt_list', due to the way is generated, the value
+    // can be unknown at compile time and only the assembler can decide
+    // how to represent the offset; ignore this attribute. 
     if (DW_AT_stmt_list == attr) {
         return;
     }
 
-    /* Only checks those attributes that have DW_FORM_dataX:
-     * DW_FORM_data1, DW_FORM_data2, DW_FORM_data4 and DW_FORM_data8 */
+    // Only checks those attributes that have DW_FORM_dataX:
+    // DW_FORM_data1, DW_FORM_data2, DW_FORM_data4 and DW_FORM_data8 */
     if (theform == DW_FORM_data1 || theform == DW_FORM_data2 ||
         theform == DW_FORM_data4 || theform == DW_FORM_data8) {
         int res = 0;
@@ -2756,8 +2756,8 @@ check_attributes_encoding(Dwarf_Half attr,Dwarf_Half theform,
                     "%d wasted byte(s)",wasted_bytes);
                 DWARF_CHECK_ERROR2(attr_encoding_result,
                     get_AT_name(attr,dwarf_names_print_on_error),small_buf);
-                /* Add the optimized size to the specific attribute, only if
-                 * we are dealing with a standard attribute. */
+                // Add the optimized size to the specific attribute, only if
+                // we are dealing with a standard attribute. 
                 if (attr < DW_AT_lo_user) {
                     attributes_encoding_table[attr].entries += 1;
                     attributes_encoding_table[attr].formx   += factor[theform];
@@ -2787,7 +2787,7 @@ print_attributes_encoding(Dwarf_Debug dbg)
                 if (print_header) {
                     printf("\n*** SPACE USED BY ATTRIBUTE ENCODINGS ***\n");
                     printf("Nro Attribute Name            "
-                           "   Entries     Data_x     leb128 Rate\n");
+                        "   Entries     Data_x     leb128 Rate\n");
                     print_header = false;
                 }
                 entries = attributes_encoding_table[index].entries;
@@ -2798,11 +2798,11 @@ print_attributes_encoding(Dwarf_Debug dbg)
                 total_bytes_leb128 += bytes_leb128;
                 float saved_rate = bytes_leb128 * 100 / bytes_formx;
                 printf("%3d %-25s "
-                       "%10" /*DW_PR_XZEROS*/ DW_PR_DUu " "   /* Entries */
-                       "%10" /*DW_PR_XZEROS*/ DW_PR_DUu " "   /* FORMx */
-                       "%10" /*DW_PR_XZEROS*/ DW_PR_DUu " "   /* LEB128 */
-                       "%3.0f%%"
-                       "\n",
+                    "%10" /*DW_PR_XZEROS*/ DW_PR_DUu " "   /* Entries */
+                    "%10" /*DW_PR_XZEROS*/ DW_PR_DUu " "   /* FORMx */
+                    "%10" /*DW_PR_XZEROS*/ DW_PR_DUu " "   /* LEB128 */
+                    "%3.0f%%"
+                    "\n",
                     ++count,
                     get_AT_name(index,dwarf_names_print_on_error).c_str(),
                     entries,
@@ -2817,11 +2817,11 @@ print_attributes_encoding(Dwarf_Debug dbg)
             Dwarf_Unsigned size = 0;
             float saved_rate = total_bytes_leb128 * 100 / total_bytes_formx;
             printf("** Summary **                 "
-                    "%10" /*DW_PR_XZEROS*/ DW_PR_DUu " "  /* Entries */
-                    "%10" /*DW_PR_XZEROS*/ DW_PR_DUu " "  /* FORMx */
-                    "%10" /*DW_PR_XZEROS*/ DW_PR_DUu " "  /* LEB128 */
-                    "%3.0f%%"
-                    "\n",
+                "%10" /*DW_PR_XZEROS*/ DW_PR_DUu " "  /* Entries */
+                "%10" /*DW_PR_XZEROS*/ DW_PR_DUu " "  /* FORMx */
+                "%10" /*DW_PR_XZEROS*/ DW_PR_DUu " "  /* LEB128 */
+                "%3.0f%%"
+                "\n",
                 total_entries,
                 total_bytes_formx,
                 total_bytes_leb128,
