@@ -663,6 +663,14 @@ extern "C" {
 #define DW_OP_GNU_encoded_addr          0xf1 /* GNU */
 #define DW_OP_GNU_implicit_pointer      0xf2 /* GNU */
 #define DW_OP_GNU_entry_value           0xf3 /* GNU */
+#define DW_OP_GNU_const_type            0xf4 /* GNU */
+#define DW_OP_GNU_regval_type           0xf5 /* GNU */
+#define DW_OP_GNU_deref_type            0xf6 /* GNU */
+#define DW_OP_GNU_convert               0xf7 /* GNU */
+#define DW_OP_GNU_reinterpret           0xf9 /* GNU */
+#define DW_OP_GNU_parameter_ref         0xfa /* GNU */
+#define DW_OP_GNU_addr_index            0xfb /* GNU */
+#define DW_OP_GNU_const_index           0xfc /* GNU */
 
     /* HP extensions. */
 #define DW_OP_HP_unknown                0xe0 /* HP conflict: GNU */

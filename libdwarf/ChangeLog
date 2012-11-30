@@ -1,3 +1,6 @@
+2012-11-30  David Anderson
+     * dwarf.h: defines for some added DW_OP_GNU operators
+     * dwarf_loc.c: Added support for some DW_OP_GNU operators.
 2012-11-29  David Anderson
      * dwarf_elf_access.c,dwarf_init_finish.c,dwarf_loc.c,
        dwarf_reloc_arm.h,dwarf_reloc_x86_64.h,libdwarf.h:

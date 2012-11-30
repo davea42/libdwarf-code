@@ -497,7 +497,14 @@ _dwarf_get_locdesc(Dwarf_Debug dbg,
                 (by the operations encountered so far in this
                 expression) onto the expression stack as the offset
                 in thread-local-storage of the variable. */
-        case DW_OP_GNU_push_tls_address:
+        case DW_OP_GNU_push_tls_address: /* 0xe0 */
+            /* Unimplemented in gdb 7.5.1 ? */
+            break;
+        case DW_OP_GNU_deref_type: /* 0xf6 */
+            /* die offset (uleb128). */
+            operand1 = _dwarf_decode_u_leb128(loc_ptr, &leb128_length);
+            loc_ptr = loc_ptr + leb128_length;
+            offset = offset + leb128_length;
             break;
 
         case DW_OP_implicit_value: /* DWARF4 */
@@ -518,6 +525,7 @@ _dwarf_get_locdesc(Dwarf_Debug dbg,
         case DW_OP_stack_value:  /* DWARF4 */
             break;
         case DW_OP_GNU_uninit:            /*  0xf0  GNU */
+            /* Unimplemented in gdb 7.5.1  */
             /*  Carolyn Tice: Follws a DW_OP_reg or DW_OP_regx
                 and marks the reg as being uninitialized. */
             break;
@@ -585,7 +593,50 @@ _dwarf_get_locdesc(Dwarf_Debug dbg,
             offset = offset + operand1;
             loc_ptr = loc_ptr + operand1;
             break;
-
+        case DW_OP_GNU_const_type:       /*  0xf4  GNU */
+            /* die offset as uleb. */
+            operand1 = _dwarf_decode_u_leb128(loc_ptr, &leb128_length);
+            loc_ptr = loc_ptr + leb128_length;
+            offset = offset + leb128_length;
+            break;
+        case DW_OP_GNU_regval_type:       /*  0xf5  GNU */
+            /* reg num uleb*/
+            operand1 = _dwarf_decode_u_leb128(loc_ptr, &leb128_length);
+            loc_ptr = loc_ptr + leb128_length;
+            offset = offset + leb128_length;
+            /* cu die off uleb*/
+            operand2 = _dwarf_decode_u_leb128(loc_ptr, &leb128_length);
+            loc_ptr = loc_ptr + leb128_length;
+            offset = offset + leb128_length;
+            break;
+        case DW_OP_GNU_convert:       /*  0xf7  GNU */
+        case DW_OP_GNU_reinterpret:       /*  0xf9  GNU */
+            /* die offset  or zero */
+            operand1 = _dwarf_decode_u_leb128(loc_ptr, &leb128_length);
+            loc_ptr = loc_ptr + leb128_length;
+            offset = offset + leb128_length;
+            break;
+        case DW_OP_GNU_parameter_ref :       /*  0xfa  GNU */
+            /* 4 byte unsigned int */
+            READ_UNALIGNED(dbg, operand1, Dwarf_Unsigned, loc_ptr, 
+                4);
+            loc_ptr = loc_ptr + 4;
+            offset = offset + 4;
+            break;
+        case DW_OP_GNU_addr_index :       /*  0xfb  GNU */
+            /* Address size value */
+            READ_UNALIGNED(dbg, operand1, Dwarf_Unsigned, loc_ptr,
+                address_size);
+            loc_ptr = loc_ptr + address_size;
+            offset = offset + address_size;
+            break;
+        case DW_OP_GNU_const_index :       /*  0xfb  GNU */
+            /* Address size value */
+            READ_UNALIGNED(dbg, operand1, Dwarf_Unsigned, loc_ptr,
+                address_size);
+            loc_ptr = loc_ptr + address_size;
+            offset = offset + address_size;
+            break;
         default:
             /*  Some memory does leak here.  */
 

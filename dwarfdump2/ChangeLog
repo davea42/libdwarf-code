@@ -1,3 +1,7 @@
+2012-11-30  David Anderson
+     * dwarfdump.cc, common.cc: Update version string.
+     * print_die.cc: Now prints various DW_OP_GNU
+       operators.
 2012-11-29  David Anderson
      * dwarfdump.cc,print_die.cc: Now all follow
        dicheck indent rules.
