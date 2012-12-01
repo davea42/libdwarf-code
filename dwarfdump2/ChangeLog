@@ -1,3 +1,5 @@
+2012-12-01  David Anderson
+     * dwarfdump.cc: Change printf (3 places) to cout.
 2012-11-30  David Anderson
      * dwarfdump.cc, common.cc: Update version string.
      * print_die.cc: Now prints various DW_OP_GNU

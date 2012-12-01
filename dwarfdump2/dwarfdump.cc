@@ -594,8 +594,9 @@ print_object_header(Elf *elf,Dwarf_Debug dbg,unsigned local_section_map)
 
         /* Print section information (name, size, address). */
         nCount = dwarf_get_section_count(dbg);
-        printf("\nInfo for %d sections:\n"
-            "  Nro Index Address    Size(h)    Size(d)  Name\n",nCount);
+        cout << endl;
+        cout << "Info for " <<nCount<< " sections:" << endl;
+        cout << "  Nro Index Address    Size(h)    Size(d)  Name" << endl;
         /* Ignore section with index=0 */
         for (section_index = 1; section_index < nCount; ++section_index) {
             res = dwarf_get_section_info_by_index(dbg,section_index,
@@ -621,23 +622,19 @@ print_object_header(Elf *elf,Dwarf_Debug dbg,unsigned local_section_map)
                 }
                 if (print_it) {
                     ++printed_sections;
-                    printf("  %3d "                         /* nro */
-                        "0x%03x "                        /* index */
-                        "0x%" DW_PR_XZEROS DW_PR_DUx " " /* address */
-                        "0x%" DW_PR_XZEROS DW_PR_DUx " " /* size (hex) */
-                        "%" DW_PR_XZEROS DW_PR_DUu " "   /* size (dec) */
-                        "%s\n",                          /* name */
-                        printed_sections,
-                        section_index,
-                        section_addr,
-                        section_size, section_size,
-                        section_name);
+                    cout << "  " << IToDec(printed_sections,3) <<
+                        " " << IToHex0N(section_index,5) <<
+                        " " << IToHex0N(section_addr,10) <<
+                        " " << IToHex0N(section_size,10) <<
+                        " " << IToDec0N(section_size,8) <<
+                        " " << section_name << endl;
                     total_bytes += section_size;
                 }
             }
         }
-        printf("*** Summary: %" DW_PR_DUu " bytes for %d section(s) ***\n",
-            total_bytes, printed_sections);
+        cout << "*** Summary: " << total_bytes <<
+            " bytes for " << printed_sections << 
+            " section(s) ***" << endl;
     }
 }
 
