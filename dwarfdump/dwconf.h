@@ -62,12 +62,12 @@ struct dwconf_s {
         */
     char **cf_regs;
     unsigned long cf_named_regs_table_size;
-    int    cf_regs_malloced; 
+    unsigned    cf_regs_malloced; 
 
     /*  The 'default initial value' when intializing a table. for MIPS
         is DW_FRAME_SAME_VAL(1035). For other ISA/ABIs may be
         DW_FRAME_UNDEFINED_VAL(1034). */
-    int cf_initial_rule_value;
+    unsigned cf_initial_rule_value;
     int cf_same_val;
     int cf_undefined_val;
 
@@ -88,7 +88,7 @@ struct dwconf_s {
         Only an exceptional frame configure will specify address
         size here.  This won't work at all if the object needing
         this setting has different address size in different CUs. */
-    int cf_address_size;
+    unsigned cf_address_size;
 };
 
 

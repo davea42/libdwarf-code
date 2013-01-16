@@ -35,6 +35,10 @@ AC_TRY_COMPILE([#include <elf.h>],[  int p; p = R_IA_64_DIR32LSB;] ,
   AC_DEFINE(HAVE_R_IA_64_DIR32LSB,1,
 	[Define 1 if  R_IA_64_DIR32LSB is defined (might be enum value).]))
 
+AC_TRY_COMPILE([#include <libelf.h>],[ struct _Elf a; int i; i = 0; ] ,
+  AC_DEFINE(HAVE_STRUCT_UNDERSCORE_ELF,1,
+	[Define 1 if libelf.h defines struct _Elf ]))
+
 AC_TRY_COMPILE([
 #include <libelf.h>
 ],[  int p; p = 0; ] ,

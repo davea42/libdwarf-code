@@ -41,11 +41,12 @@
 #include "pro_incl.h"
 #ifdef HAVE_STDLIB_H
 #include <stdlib.h>
+#else
+#include <malloc.h>
 #endif /* HAVE_STDLIB_H */
 #ifdef HAVE_STRING_H
 #include <string.h>
 #endif /* HAVE_STRING_H */
-#include <malloc.h>
 
 /*  When each block is allocated, there is a two-word structure
     allocated at the beginning so the block can go on a list.

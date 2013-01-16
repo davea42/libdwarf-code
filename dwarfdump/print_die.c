@@ -2847,7 +2847,7 @@ formxdata_print_value(Dwarf_Debug dbg,Dwarf_Attribute attrib,
     sres = dwarf_formsdata(attrib, &tempsd, &serr);
     if (ures == DW_DLV_OK) {
         if (sres == DW_DLV_OK) {
-            if (tempud == tempsd && tempsd >= 0) {
+            if (tempud == (Dwarf_Unsigned)tempsd && tempsd >= 0) {
                 /*  Data is the same value and not negative,
                     so makes no difference which
                     we print. */
@@ -3109,6 +3109,9 @@ print_attributes_encoding(Dwarf_Debug dbg)
     We pass in tag so we can try to do the right thing with
     broken compiler DW_TAG_enumerator 
 
+    'cnt' is signed for historical reasons (a mistake
+    in an interface), but the value is never negative.
+
     We append to esbp's buffer.
 */
 void
@@ -3123,7 +3126,6 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
     Dwarf_Block *tempb = 0;
     Dwarf_Signed tempsd = 0;
     Dwarf_Unsigned tempud = 0;
-    int i = 0;
     Dwarf_Half attr = 0;
     Dwarf_Off off = 0;
     Dwarf_Off goff = 0; /* Global offset */
@@ -3328,9 +3330,10 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
     case DW_FORM_block4:
         fres = dwarf_formblock(attrib, &tempb, &err);
         if (fres == DW_DLV_OK) {
-            for (i = 0; i < tempb->bl_len; i++) {
+            unsigned u = 0;
+            for (u = 0; u < tempb->bl_len; u++) {
                 snprintf(small_buf, sizeof(small_buf), "%02x",
-                    *(i + (unsigned char *) tempb->bl_data));
+                    *(u + (unsigned char *) tempb->bl_data));
                 esb_append(esbp, small_buf);
             }
             dwarf_dealloc(dbg, tempb, DW_DLA_BLOCK);
@@ -3398,7 +3401,9 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
                         check_attributes_encoding(attr,theform,tempud);
                     }
                     if (attr == DW_AT_decl_file || attr == DW_AT_call_file) {
-                        if (srcfiles && tempud > 0 && tempud <= cnt) {
+                        if (srcfiles && tempud > 0 && 
+                            /* ASSERT: cnt >= 0 */
+                            tempud <= (Dwarf_Unsigned)cnt) {
                             /*  added by user request */
                             /*  srcfiles is indexed starting at 0, but
                                 DW_AT_decl_file defines that 0 means no
@@ -3417,7 +3422,8 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
                             DWARF_CHECK_COUNT(decl_file_result,1);
                             /*  Zero is always a legal index, it means
                                 no source name provided. */
-                            if (tempud != 0 && tempud > cnt) {
+                            if (tempud != 0 && 
+                                tempud > ((Dwarf_Unsigned)cnt)) {
                                 if (!srcfiles) {
                                     snprintf(small_buf,sizeof(small_buf),
                                         "There is a file number=%" DW_PR_DUu

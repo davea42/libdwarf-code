@@ -47,6 +47,7 @@
 #include "dwarf_incl.h"
 #include <stdio.h>
 #include "dwarf_die_deliv.h"
+#include "pro_encode_nm.h"
 
 
 
@@ -540,7 +541,7 @@ _dwarf_free_abbrev_hash_table_contents(Dwarf_Debug dbg,Dwarf_Hash_Table hash_tab
 {
     /*  A Hash Table is an array with tb_table_entry_count struct
         Dwarf_Hash_Table_s entries in the array. */
-    int hashnum = 0;
+    unsigned hashnum = 0;
     for (; hashnum < hash_table->tb_table_entry_count; ++hashnum) {
         struct Dwarf_Abbrev_List_s *abbrev = 0;
         struct Dwarf_Abbrev_List_s *nextabbrev = 0;

@@ -222,7 +222,7 @@ esb_append_printf(struct esb_s *data,const char *in_string, ...)
 
     static FILE *null_file = NULL;
 
-    int needed_size = 0;
+    unsigned needed_size = 0;
     int length = 0;
     va_list ap;
     va_start(ap,in_string);
@@ -230,9 +230,13 @@ esb_append_printf(struct esb_s *data,const char *in_string, ...)
         null_file = fopen(NULL_DEVICE_FILE,"w");
     }
     length = vfprintf(null_file,in_string,ap);
+    if (length < 0) {
+        /*  We are unable to deal sensibly with this.  FIXME */
+        return;
+    }
 
     /* Check if we require allocate more space */
-    needed_size = data->esb_used_bytes + length;
+    needed_size = data->esb_used_bytes + (unsigned)length;
     if (needed_size > data->esb_allocated_size) {
         allocate_more(data,length);
     }

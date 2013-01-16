@@ -410,7 +410,8 @@ dwarf_errmsg(Dwarf_Error error)
         return "Dwarf_Error is NULL";
     }
 
-    if (error->er_errval >= (sizeof(_dwarf_errmsgs) / sizeof(char *))) {
+    if (error->er_errval >= 
+        (Dwarf_Signed)(sizeof(_dwarf_errmsgs) / sizeof(char *))) {
         return "Dwarf_Error value out of range";
     }
 

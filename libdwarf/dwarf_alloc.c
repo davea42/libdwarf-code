@@ -915,11 +915,11 @@ void
 dwarf_print_memory_stats(Dwarf_Debug dbg)
 {
     Dwarf_Alloc_Hdr alloc_hdr;
-    Dwarf_Shalf i;
+    Dwarf_Shalf i = 0;
 
     /*  Alloc types start at 1, not 0. Hence, the first NULL string, and 
         also a size of MAX_DW_DLA + 1. */
-    char *alloc_type_name[MAX_DW_DLA + 1] = {
+    const char *alloc_type_name[MAX_DW_DLA + 1] = {
         "",
         "DW_DLA_STRING",
         "DW_DLA_LOC",

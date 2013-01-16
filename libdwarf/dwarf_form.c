@@ -117,7 +117,7 @@ dwarf_uncompress_integer_block(
 {
     Dwarf_Unsigned output_length_in_units = 0;
     void * output_block = 0;
-    int i = 0;
+    unsigned i = 0;
     char * ptr = 0;
     int remain = 0;
     Dwarf_sfixed * array = 0;

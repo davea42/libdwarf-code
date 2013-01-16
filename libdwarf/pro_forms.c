@@ -235,7 +235,7 @@ dwarf_compress_integer_block(
     Dwarf_Unsigned output_length_in_bytes = 0;
     char * output_block = 0;
     char encode_buffer[ENCODE_SPACE_NEEDED];
-    int i = 0;
+    unsigned u = 0;
     char * ptr = 0;
     int remain = 0;
     int result = 0;
@@ -260,11 +260,11 @@ dwarf_compress_integer_block(
     /* First compress everything to find the total size. */
 
     output_length_in_bytes = 0;
-    for (i=0; i<input_length_in_units; i++) {
+    for (u=0; u<input_length_in_units; u++) {
         int unit_encoded_size;
         Dwarf_sfixed unit; /* this is fixed at signed-32-bits */
         
-        unit = ((Dwarf_sfixed*)input_block)[i];
+        unit = ((Dwarf_sfixed*)input_block)[u];
         
         result = _dwarf_pro_encode_signed_leb128_nm(unit, &unit_encoded_size,
             encode_buffer,sizeof(encode_buffer));
@@ -289,11 +289,11 @@ dwarf_compress_integer_block(
 
     ptr = output_block;
     remain = output_length_in_bytes;
-    for (i=0; i<input_length_in_units; i++) {
+    for (u=0; u<input_length_in_units; u++) {
         int unit_encoded_size;
         Dwarf_sfixed unit; /* this is fixed at signed-32-bits */
         
-        unit = ((Dwarf_sfixed*)input_block)[i];
+        unit = ((Dwarf_sfixed*)input_block)[u];
         
         result = _dwarf_pro_encode_signed_leb128_nm(unit, &unit_encoded_size,
             ptr, remain);
@@ -640,7 +640,7 @@ dwarf_add_AT_location_expr(Dwarf_P_Debug dbg,
     Dwarf_Half attr_form = 0;
     char *len_str = 0;
     int len_size = 0;
-    int block_size = 0;
+    unsigned block_size = 0;
     char *block_dest_ptr = 0;
     int do_len_as_int = 0;
 

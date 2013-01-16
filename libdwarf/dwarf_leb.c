@@ -116,7 +116,7 @@ _dwarf_decode_s_leb128(Dwarf_Small * leb128, Dwarf_Word * leb128_length)
 {
     Dwarf_Signed number = 0;
     Dwarf_Bool sign = 0;
-    Dwarf_Sword shift = 0;
+    Dwarf_Word shift = 0;
     unsigned char byte = *leb128;
     Dwarf_Sword byte_length = 1;
 

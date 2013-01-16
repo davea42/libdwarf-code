@@ -373,7 +373,7 @@ _dwarf_setup(Dwarf_Debug dbg, Dwarf_Error * error)
         } else {
             /* Search the debug sections table for a match */
             struct Dwarf_dbg_sect_s *section;
-            int index;
+            unsigned index;
             int found_match = FALSE;
             for (index = 0; index < 
                 dbg->de_debug_sections_total_entries; ++index) {

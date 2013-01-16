@@ -144,7 +144,7 @@ init_conf_internal(struct conf_internal_s *s,
     s->conf_out = conf_out;
 }
 
-static int size_of_comtable = sizeof(comtable) / sizeof(comtable[0]);
+static unsigned size_of_comtable = sizeof(comtable) / sizeof(comtable[0]);
 
 static FILE *find_a_file(const char *named_file, char **defaults,
     const char** name_used);
@@ -580,7 +580,7 @@ finish_comtable_setup(void)
 static enum linetype_e
 which_command(char *cp, struct comtable_s **tableentry)
 {
-    int i;
+    unsigned i = 0;
     struct token_s tok;
 
     if (*cp == '#')

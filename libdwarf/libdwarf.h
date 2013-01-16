@@ -61,10 +61,19 @@ extern "C" {
     so one can use grep  to each declaration in its entirety.
     The declarations are a little harder to read this way, but...
 
+    The struct name Elf spelling needs to match the name in libelf.h
+    which is normally struct Elf but on some systems (FreeBSD
+    for example) is struct _Elf .
 */
 
+#ifdef HAVE_STRUCT_UNDERSCORE_ELF
+struct _Elf;
+typedef struct _Elf* dwarf_elf_handle;
+#else
+/*  The original libelf struct name is struct Elf */
 struct Elf;
 typedef struct Elf* dwarf_elf_handle;
+#endif
 
 /* To enable printing with printf regardless of the
    actual underlying data type, we define the DW_PR_xxx macros. 
@@ -1509,7 +1518,8 @@ void dwarf_srclines_dealloc(Dwarf_Debug /*dbg*/,
     Dwarf_Line*       /*linebuf*/,
     Dwarf_Signed      /*count */);
 
-
+/*  While 'filecount' is signed, the value
+    returned through the pointer is never negative. */
 int dwarf_srcfiles(Dwarf_Die /*die*/, 
     char***          /*srcfiles*/, 
     Dwarf_Signed *   /*filecount*/,

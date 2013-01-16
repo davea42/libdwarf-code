@@ -191,8 +191,36 @@ libdwarf.h somewhere convenient.
 You will also need libelf (libelf.a and/or libelf.so) and
 libelf.h installed. These are available from GNU repositories
 and from the normal Linux repositories for Linux releases.
-On Ubuntu 20/04 for example:
+On Ubuntu Linux for example:
 	sudo apt-get install libelf-dev libelf1 
+
+Compiler warnings:
+A few Warnings like:
+dwarf_frame.c:715:29: warning: cast from pointer to integer of different size [-
+Wpointer-to-int-cast]
+dwarf_arange.c:113:13: warning: variable ‘local_extension_size’ set but not used
+ [-Wunused-but-set-variable]
+are considered normal.
+
+
+As of January 2013 the code compiles with gcc without
+problems with -Wall and -Wsign-compare
+aside from the warnings hinted at above.
+
+The following gcc/clang options 
+have not all been tried as of January 2013,
+but will be as time permits.
+-Wsystem-headers 
+-Wall  -Wsign-compare
+-Wno-format-y2k -W 
+-Wno-unused-parameter -Wstrict-prototypes 
+-Wmissing-prototypes -Wpointer-arith 
+-Wreturn-type -Wcast-qual -Wwrite-strings 
+-Wswitch -Wshadow -Wunused-parameter 
+-Wcast-align -Wchar-subscripts -Winline 
+-Wnested-externs -Wredundant-decls 
+-Wold-style-definition -Wno-pointer-sign
+
 
 $Source: /home/davea/dwarf/dwarf-working/trunk/libdwarf/README,v $
 $Revision: 1.1 $

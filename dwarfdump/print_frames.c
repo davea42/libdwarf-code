@@ -677,7 +677,7 @@ print_one_fde(Dwarf_Debug dbg, Dwarf_Fde fde,
         } else if (ares == DW_DLV_OK) {
             /* Do not print if in check mode */
             if (!check_frames_extended) {
-                int k2 = 0;
+                unsigned k2 = 0;
 
                 printf("<eh aug data len 0x%" DW_PR_DUx , len);
                 for (k2 = 0; k2 < len; ++k2) {
@@ -975,7 +975,7 @@ print_one_cie(Dwarf_Debug dbg, Dwarf_Cie cie,
             } else if (ares == DW_DLV_OK && len > 0) {
                 /* Do not print if in check mode */
                 if (!check_frames_extended) {
-                    int k2 = 0;
+                    unsigned k2 = 0;
 
                     printf(" eh aug data len 0x%" DW_PR_DUx , len);
                     for (k2 = 0; data && k2 < len; ++k2) {

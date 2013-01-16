@@ -85,7 +85,7 @@ dwarf_get_aranges_list(Dwarf_Debug dbg,
     Dwarf_Small segment_size = 0;
 
     /*  Count of total number of aranges. */
-    Dwarf_Unsigned arange_count = 0;
+    Dwarf_Signed arange_count = 0;
 
     Dwarf_Arange arange = 0;
 
@@ -302,7 +302,7 @@ dwarf_get_aranges(Dwarf_Debug dbg,
     Dwarf_Chain curr_chain = NULL;
     Dwarf_Chain prev_chain = NULL;
     Dwarf_Chain head_chain = NULL;
-    Dwarf_Unsigned i = 0;
+    Dwarf_Signed i = 0;
     int res = DW_DLV_ERROR;
 
     /* ***** BEGIN CODE ***** */
@@ -360,7 +360,7 @@ _dwarf_get_aranges_addr_offsets(Dwarf_Debug dbg,
     Dwarf_Signed * count,
     Dwarf_Error * error)
 {
-    Dwarf_Unsigned i = 0;
+    Dwarf_Signed i = 0;
 
     /* Used to chain Dwarf_Aranges structs. */
     Dwarf_Chain curr_chain = NULL;

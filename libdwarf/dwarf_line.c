@@ -134,7 +134,7 @@ dwarf_srcfiles(Dwarf_Die die,
     int resattr = DW_DLV_ERROR;
     int lres = DW_DLV_ERROR;
     struct Line_Table_Prefix_s line_prefix;
-    int i = 0;
+    unsigned i = 0;
     int res = DW_DLV_ERROR;
 
     /*  ***** BEGIN CODE ***** */
@@ -421,6 +421,7 @@ _dwarf_internal_srclines(Dwarf_Die die,
     Dwarf_File_Entry cur_file_entry = 0; 
     Dwarf_File_Entry prev_file_entry = 0;
 
+    Dwarf_Word u = 0;
     Dwarf_Sword i = 0;
     Dwarf_Sword file_entry_count = 0;
 
@@ -567,9 +568,9 @@ _dwarf_internal_srclines(Dwarf_Die die,
     /*  Fill out a Dwarf_File_Entry list as we use that to implement the 
         define_file operation. */
     file_entries = prev_file_entry = NULL;
-    for (i = 0; i < prefix.pf_files_count; ++i) {
+    for (u = 0; u < prefix.pf_files_count; ++u) {
         struct Line_Table_File_Entry_s *pfxfile =
-            prefix.pf_line_table_file_entries + i;
+            prefix.pf_line_table_file_entries + u;
 
         cur_file_entry = (Dwarf_File_Entry)
             _dwarf_get_alloc(dbg, DW_DLA_FILE_ENTRY, 1);

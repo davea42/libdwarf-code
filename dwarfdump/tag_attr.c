@@ -123,12 +123,12 @@ process_args(int argc, char *argv[])
 int
 main(int argc, char **argv)
 {
-    int i = 0;
+    unsigned u = 0;
     unsigned int num = 0;
     int input_eof = 0;
-    int table_rows = 0;
-    int table_columns = 0;
-    int current_row = 0;
+    unsigned table_rows = 0;
+    unsigned table_columns = 0;
+    unsigned current_row = 0;
     FILE * fileInp = 0;
     FILE * fileOut = 0;
 
@@ -188,7 +188,7 @@ main(int argc, char **argv)
     }
     while (!feof(stdin)) {
         unsigned int tag;
-        int curcol = 0;
+        unsigned int curcol = 0;
 
         input_eof = read_value(&tag,fileInp);
         if (IS_EOF == input_eof) {
@@ -256,20 +256,20 @@ main(int argc, char **argv)
             "[ATTR_TREE_EXT_ROW_COUNT][ATTR_TREE_EXT_COLUMN_COUNT] = {\n");
     }
 
-    for (i = 0; i < table_rows; i++) {
-        int j = 0;
+    for (u = 0; u < table_rows; u++) {
+        unsigned j = 0;
         const char *name = 0;
         if (standard_flag) {
-            dwarf_get_TAG_name(i,&name);
-            fprintf(fileOut,"/* %d %-37s*/\n",i,name); 
+            dwarf_get_TAG_name(u,&name);
+            fprintf(fileOut,"/* %u %-37s*/\n",u,name); 
         } else {
-            int k = tag_attr_combination_table[i][0];
+            unsigned k = tag_attr_combination_table[u][0];
             dwarf_get_TAG_name(k,&name);           
             fprintf(fileOut,"/* %u %-37s*/\n",k,name);
         }
         fprintf(fileOut,"    { ");
         for (j = 0; j < table_columns; ++j ) {
-            fprintf(fileOut,"0x%08x,",tag_attr_combination_table[i][j]);
+            fprintf(fileOut,"0x%08x,",tag_attr_combination_table[u][j]);
         }
         fprintf(fileOut,"},\n");
     }

@@ -125,7 +125,7 @@ struct Dwarf_CU_Context_s {
         cc_extension_size is zero.  */
     Dwarf_Small cc_extension_size;
     Dwarf_Half cc_version_stamp;
-    Dwarf_Sword cc_abbrev_offset;
+    Dwarf_Word cc_abbrev_offset;
     Dwarf_Small cc_address_size;
     /*  cc_debug_offset is the offset in the section
         of the CU header of this CU.  Dwarf_Word
@@ -303,10 +303,10 @@ struct Dwarf_Debug_s {
     /*  Points to contiguous block of pointers to Dwarf_Fde_s structs. */
     Dwarf_Fde *de_fde_data;
     /*  Count of number of Dwarf_Fde_s structs. */
-    Dwarf_Signed de_fde_count;
+    Dwarf_Unsigned de_fde_count;
     /*  Keep eh (GNU) separate!. */
     Dwarf_Fde *de_fde_data_eh;
-    Dwarf_Signed de_fde_count_eh;
+    Dwarf_Unsigned de_fde_count_eh;
 
     struct Dwarf_Section_s de_debug_info; 
     struct Dwarf_Section_s de_debug_types; 
