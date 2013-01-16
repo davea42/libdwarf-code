@@ -14,3 +14,6 @@
         signed/unsigned comparison warnings.
       * tag_tree.c, tag_attr.c: Changed table sizes to unsigned to fix
         signed/unsigned comparison warnings.
+2013-01-16  David Anderson
+      * dwarfdump.c, common.c: Update version string.
+
