@@ -1,3 +1,9 @@
+January 25, 2013
+  The definition of the Dwarf_Loc struct 
+  could not handle DW_OP_GNU_const_type
+  so it had to change. The new field added makes this version of libdwarf 
+  incompatible with any existing dwarfdump.  Rebuild dwarfdump
+  and dwarfdump2 to use it with this libdwarf.
 November 29, 2012
   The function dwarf_formflag() now returns the actual flag value
   instead of just 1 or 0.   It has been coded wrong a very long time.

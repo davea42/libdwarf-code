@@ -184,7 +184,7 @@ struct operation_descr_s opdesc[]= {
     {DW_OP_GNU_encoded_addr,1,"addr"},
     {DW_OP_GNU_implicit_pointer,2,"addr" },
     {DW_OP_GNU_entry_value,2,"val" },
-    {DW_OP_GNU_const_type,1,"uleb" },
+    {DW_OP_GNU_const_type,3,"uleb" },
     {DW_OP_GNU_regval_type,2,"uleb" },
     {DW_OP_GNU_deref_type,1,"val" },
     {DW_OP_GNU_convert,1,"uleb" },
@@ -2419,8 +2419,19 @@ _dwarf_print_one_expr_op(Dwarf_Debug dbg,Dwarf_Loc* expr,int index,
             string_out.append(IToHex0N(opd1,10));
             break;
         case DW_OP_GNU_const_type:
+            {
             string_out.append(" ");
             string_out.append(IToHex0N(opd1,10));
+            Dwarf_Unsigned opd2 = expr->lr_number2;
+            string_out.append(" const length: ");
+            string_out.append(IToDec(opd2));
+            string_out.append(" contents 0x");
+            const unsigned char *opd3 = 
+                (const unsigned char *)expr->lr_number3;
+            for (unsigned i = 0; i < opd2; i++) {
+                    string_out.append(IToHex02( *(i + opd3)));
+            }
+            }
             break;
         case DW_OP_GNU_regval_type:
             {
@@ -2428,7 +2439,7 @@ _dwarf_print_one_expr_op(Dwarf_Debug dbg,Dwarf_Loc* expr,int index,
             string_out.append(IToHex0N(opd1,4));
             string_out.append(" ");
             Dwarf_Unsigned opd2 = expr->lr_number2;
-            string_out.append(IToHex(opd2,10));
+            string_out.append(IToHex0N(opd2,10));
             }
             break;
         case DW_OP_GNU_deref_type:

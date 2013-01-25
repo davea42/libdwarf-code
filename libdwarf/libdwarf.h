@@ -153,7 +153,8 @@ typedef struct {
 typedef struct {
     Dwarf_Small     lr_atom;        /* location operation */
     Dwarf_Unsigned  lr_number;      /* operand */
-    Dwarf_Unsigned  lr_number2;     /* for OP_BREGx */
+    Dwarf_Unsigned  lr_number2;     /* for OP_BREGx  and DW_OP_GNU_const_type*/
+    Dwarf_Unsigned  lr_number3;     /* for DW_OP_GNU_const_type*/
     Dwarf_Unsigned  lr_offset;      /* offset in locexpr for OP_BRA etc */
 } Dwarf_Loc;
 

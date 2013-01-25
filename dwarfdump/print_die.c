@@ -196,7 +196,7 @@ struct operation_descr_s opdesc[]= {
     {DW_OP_GNU_encoded_addr,1,"addr"},
     {DW_OP_GNU_implicit_pointer,2,"addr" },
     {DW_OP_GNU_entry_value,2,"val" },
-    {DW_OP_GNU_const_type,1,"uleb" },
+    {DW_OP_GNU_const_type,3,"uleb" },
     {DW_OP_GNU_regval_type,2,"uleb" },
     {DW_OP_GNU_deref_type,1,"val" },
     {DW_OP_GNU_convert,1,"uleb" },
@@ -2616,13 +2616,30 @@ _dwarf_print_one_expr_op(Dwarf_Debug dbg,Dwarf_Loc* expr,int index,
             esb_append(string_out, small_buf);
             break;      
         case DW_OP_GNU_const_type:
+            {
+            const unsigned char *bp = 0;
+            unsigned int u = 0;
             snprintf(small_buf, sizeof(small_buf), 
                 " 0x%" DW_PR_XZEROS  DW_PR_DUx , opd1);
             esb_append(string_out, small_buf);
+            /* Followed by 1 byte length field */
+            opd2 = expr->lr_number2;
+            esb_append(string_out," const length: ");
+            snprintf(small_buf, sizeof(small_buf), 
+                "%" DW_PR_DUu , opd2);
+            esb_append(string_out, small_buf);
+            esb_append(string_out, " contents 0x");
+            bp = (const unsigned char *) expr->lr_number3;
+            for (; u < opd2; ++u,++bp) {
+                snprintf(small_buf, sizeof(small_buf),
+                    "%02x", *bp);
+                esb_append(string_out, small_buf);
+            }
+            }
             break;
         case DW_OP_GNU_regval_type:
             snprintf(small_buf, sizeof(small_buf), 
-                " 0x%" DW_PR_XZEROS  DW_PR_DUx , opd1);
+                " 0x%" DW_PR_DUx , opd1);
             esb_append(string_out, small_buf);
             opd2 = expr->lr_number2;
             snprintf(small_buf, sizeof(small_buf), 
@@ -2631,7 +2648,7 @@ _dwarf_print_one_expr_op(Dwarf_Debug dbg,Dwarf_Loc* expr,int index,
             break;
         case DW_OP_GNU_deref_type:
             snprintf(small_buf, sizeof(small_buf), 
-                " 0x%" DW_PR_XZEROS  DW_PR_DUx , opd1);
+                " 0x%02" DW_PR_DUx , opd1);
             esb_append(string_out, small_buf);
             break;
         case DW_OP_GNU_convert:
@@ -2641,22 +2658,22 @@ _dwarf_print_one_expr_op(Dwarf_Debug dbg,Dwarf_Loc* expr,int index,
             break;
         case DW_OP_GNU_reinterpret:
             snprintf(small_buf, sizeof(small_buf), 
-                " 0x%" DW_PR_XZEROS  DW_PR_DUx , opd1);
+                " 0x%02" DW_PR_DUx , opd1);
             esb_append(string_out, small_buf);
             break;
         case DW_OP_GNU_parameter_ref:
             snprintf(small_buf, sizeof(small_buf), 
-                " 0x%" DW_PR_XZEROS  DW_PR_DUx , opd1);
+                " 0x%02"  DW_PR_DUx , opd1);
             esb_append(string_out, small_buf);
             break;
         case DW_OP_GNU_addr_index:
             snprintf(small_buf, sizeof(small_buf), 
-                " 0x%" DW_PR_XZEROS  DW_PR_DUx , opd1);
+                " 0x%02" DW_PR_DUx , opd1);
             esb_append(string_out, small_buf);
             break;
         case DW_OP_GNU_const_index:
             snprintf(small_buf, sizeof(small_buf), 
-                " 0x%" DW_PR_XZEROS  DW_PR_DUx , opd1);
+                " 0x%02" DW_PR_DUx , opd1);
             esb_append(string_out, small_buf);
             break;
         default:

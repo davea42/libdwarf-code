@@ -1,4 +1,12 @@
 2013-01-25  David Anderson
+     * common.c: Add 'const' on string declarations to avoid
+       compiler warnings.
+     * dwarf_loc.h: Add the new field lc_number3 to handle
+       DW_OP_GNU_const_type properly.
+     * dwarf_loc.c: Handle  DW_OP_GNU_const_type properly.
+     * libdwarf.h: Add lr_number3 so we can handle DW_OP_GNU_const_type 
+       properly.
+2013-01-25  David Anderson
      * dwarf_loc.c: Use cc_length_size, not cc_length to get
        the offset size. Nasty bug.
      * dwarf_opaque.h: Change commentary to clarify the cc_length

@@ -1,2 +1,5 @@
+2013-01-25  David Anderson
+     * dwarfdump.cc, common.cc: Update version string.
+     * print_die.cc: Handle DW_OP_GNU_const_type properly.
 2013-01-16  David Anderson
      * dwarfdump.cc, common.cc: Update version string.

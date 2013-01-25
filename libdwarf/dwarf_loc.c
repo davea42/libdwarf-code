@@ -161,6 +161,7 @@ _dwarf_get_locdesc(Dwarf_Debug dbg,
     while (offset < loc_len) {
         Dwarf_Unsigned operand1 = 0;
         Dwarf_Unsigned operand2 = 0;
+        Dwarf_Unsigned operand3 = 0;
         Dwarf_Small atom = 0;
 
         op_count++;
@@ -596,6 +597,15 @@ _dwarf_get_locdesc(Dwarf_Debug dbg,
             operand1 = _dwarf_decode_u_leb128(loc_ptr, &leb128_length);
             loc_ptr = loc_ptr + leb128_length;
             offset = offset + leb128_length;
+            /* Next byte is size of data block */
+            operand2 = *(Dwarf_Small *) loc_ptr;
+            loc_ptr = loc_ptr + 1;
+            offset = offset + 1;
+            /* Following that is data block of bytes. */
+            operand3 = (Dwarf_Unsigned)loc_ptr;
+            offset = offset + operand2;
+            loc_ptr = loc_ptr + operand2;
+
             break;
         case DW_OP_GNU_regval_type:       /*  0xf5  GNU */
             /* reg num uleb*/
@@ -637,7 +647,6 @@ _dwarf_get_locdesc(Dwarf_Debug dbg,
             break;
         default:
             /*  Some memory does leak here.  */
-
             _dwarf_error(dbg, error, DW_DLE_LOC_EXPR_BAD);
             return (NULL);
         }
@@ -657,6 +666,7 @@ _dwarf_get_locdesc(Dwarf_Debug dbg,
 
         curr_loc->lc_number = operand1;
         curr_loc->lc_number2 = operand2;
+        curr_loc->lc_number3 = operand3;
 
         if (head_loc == NULL)
             head_loc = prev_loc = curr_loc;
@@ -679,6 +689,7 @@ _dwarf_get_locdesc(Dwarf_Debug dbg,
         (block_loc + i)->lr_atom = curr_loc->lc_atom;
         (block_loc + i)->lr_number = curr_loc->lc_number;
         (block_loc + i)->lr_number2 = curr_loc->lc_number2;
+        (block_loc + i)->lr_number3 = curr_loc->lc_number3;
         (block_loc + i)->lr_offset = curr_loc->lc_offset;
 
         prev_loc = curr_loc;

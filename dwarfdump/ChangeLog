@@ -1,3 +1,6 @@
+2013-01-25  David Anderson
+      * dwarfdump.c, common.c: Update version string.
+      * print_die.c: Print DW_OP_GNU_const_type properly.
 2013-01-16  David Anderson
       * dwconf.c: Changed table size to unsigned to eliminate
         signed/unsigned comparison warnings.
