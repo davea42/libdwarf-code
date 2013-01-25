@@ -968,7 +968,7 @@ dwarf_loclist_n(Dwarf_Attribute attr,
             }
             locdesc = _dwarf_get_locdesc(dbg, &loc_block,
                 address_size,
-                cucontext->cc_length,
+                cucontext->cc_length_size,
                 cucontext->cc_version_stamp, 
                 lowpc, highpc, 
                 error);
@@ -1007,7 +1007,7 @@ dwarf_loclist_n(Dwarf_Attribute attr,
             error, and we don't test for block length 0 specially here. */
         locdesc = _dwarf_get_locdesc(dbg, &loc_block,
             address_size,
-            cucontext->cc_length,
+            cucontext->cc_length_size,
             cucontext->cc_version_stamp, 
             lowpc, highpc, 
             error);
@@ -1130,7 +1130,7 @@ dwarf_loclist(Dwarf_Attribute attr,
         handles only a single location expression.  */
     locdesc = _dwarf_get_locdesc(dbg, &loc_block,
         address_size,
-        cucontext->cc_length,
+        cucontext->cc_length_size,
         cucontext->cc_version_stamp, 
         lowpc, highpc, 
         error);
@@ -1207,7 +1207,7 @@ dwarf_loclist_from_expr_a(Dwarf_Debug dbg,
             For correctness, use dwarf_loclist_from_expr_b()
             instead of dwarf_loclist_from_expr_a(). */
         version_stamp = current_cu_context->cc_version_stamp;
-        offset_size = current_cu_context->cc_length;
+        offset_size = current_cu_context->cc_length_size;
         if (version_stamp < 2) {
             /* This is probably totally silly.  */
             version_stamp = CURRENT_VERSION_STAMP;

@@ -111,19 +111,25 @@ struct Dwarf_Attribute_s {
 struct Dwarf_CU_Context_s {
     Dwarf_Debug cc_dbg;
     /*  The sum of cc_length, cc_length_size, and cc_extension_size
-        is the total length of the CU including its header. */
+        is the total length of the CU including its header. 
+
+        cc_length is the length of the compilation unit excluding
+        cc_length_size and cc_extension_size.  */
     Dwarf_Word cc_length;
+
     /*  cc_length_size is the size in bytes of an offset.
         4 for 32bit dwarf, 8 for 64bit dwarf (whether MIPS/IRIX
         64bit dwarf or standard 64bit dwarf using the extension
         mechanism). */
     Dwarf_Small cc_length_size;
+
     /*  cc_extension_size is zero unless this is standard
         DWARF3 and later 64bit dwarf using the extension mechanism.
         If it is the DWARF3 and later 64bit dwarf cc_extension
         size is 4. So for 32bit dwarf and MIPS/IRIX 64bit dwarf
         cc_extension_size is zero.  */
     Dwarf_Small cc_extension_size;
+
     Dwarf_Half cc_version_stamp;
     Dwarf_Word cc_abbrev_offset;
     Dwarf_Small cc_address_size;

@@ -1,3 +1,8 @@
+2013-01-25  David Anderson
+     * dwarf_loc.c: Use cc_length_size, not cc_length to get
+       the offset size. Nasty bug.
+     * dwarf_opaque.h: Change commentary to clarify the cc_length
+       field content to hopefully avoid making that mistake again.
 2013-01-15  David Anderson
      * dwarf.h: defines for some added DW_OP_GNU operators
      * dwarf_loc.c: Added support for some DW_OP_GNU operators.
