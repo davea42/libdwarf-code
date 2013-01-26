@@ -76,7 +76,7 @@
 and sectnames (below).  REL_SEC_PREFIX is either ".rel" or ".rela"
 see pro_incl.h
 */
-char *_dwarf_rel_section_names[] = {
+const char *_dwarf_rel_section_names[] = {
     REL_SEC_PREFIX ".debug_info",
     REL_SEC_PREFIX ".debug_line",
     REL_SEC_PREFIX ".debug_abbrev",     /* no relocations on this, really */
@@ -99,7 +99,7 @@ char *_dwarf_rel_section_names[] = {
     in pro_section.h, in the same order 
     Must match also _dwarf_rel_section_names above
 */
-char *_dwarf_sectnames[] = {
+const char *_dwarf_sectnames[] = {
     ".debug_info",
     ".debug_line",
     ".debug_abbrev",

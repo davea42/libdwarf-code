@@ -149,7 +149,7 @@ add_rela_data( struct Dwarf_Section_s *secdata,
 /* Used to add the specific information for a debug related section */
 static void
 add_debug_section_info(Dwarf_Debug dbg,
-    char *name,
+    const char *name,
     struct Dwarf_Section_s *secdata,
     int duperr,int emptyerr,int have_dwarf)
 {
@@ -373,11 +373,11 @@ _dwarf_setup(Dwarf_Debug dbg, Dwarf_Error * error)
         } else {
             /* Search the debug sections table for a match */
             struct Dwarf_dbg_sect_s *section;
-            unsigned index;
+            unsigned i = 0;
             int found_match = FALSE;
-            for (index = 0; index < 
-                dbg->de_debug_sections_total_entries; ++index) {
-                section = &dbg->de_debug_sections[index];
+            for (i = 0; i < 
+                dbg->de_debug_sections_total_entries; ++i) {
+                section = &dbg->de_debug_sections[i];
                 if (strcmp(scn_name, section->ds_name) == 0) {
                     res = get_basic_section_data(dbg,
                         section->ds_secdata, &doas,

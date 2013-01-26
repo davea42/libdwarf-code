@@ -63,7 +63,7 @@ print_line_header(void)
 
 /* FIXME: print new line values:   prologue_end epilogue_begin isa */
 static void
-print_line_detail(char *prefix,
+print_line_detail(const char *prefix,
     int opcode,
     Dwarf_Unsigned address,
     unsigned long file,
@@ -95,7 +95,7 @@ print_line_detail(char *prefix,
 /*  return DW_DLV_OK if ok. else DW_DLV_NO_ENTRY or DW_DLV_ERROR
     If err_count_out is non-NULL, this is a special 'check'
     call.  */
-int
+static int
 _dwarf_internal_printlines(Dwarf_Die die, Dwarf_Error * error,
 int * err_count_out, int only_line_header)
 {

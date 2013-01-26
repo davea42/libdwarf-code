@@ -1,4 +1,30 @@
 2013-01-25  David Anderson
+     * dwarf_alloc.c: Changed some local names to avoid
+       compiler warnings about redefining names in inner contexts.
+     * dwarf_frame2.c: Changed some local names to avoid
+       compiler warnings about redefining names in inner contexts.
+       Added const to some declarations to avoid warnings
+       about const being cast away.
+     * dwarf_init_finish.c: Added const to some declarations 
+       to avoid warnings about const being cast away.
+       Changed some local names to avoid
+       compiler warnings about redefining names in inner contexts.
+     * dwarf_line.c, dwarf_print_lines.c: Added const to some declarations 
+       to avoid warnings about const being cast away.
+       Added static to function definition to reflect its use
+       and to avoid warning about lack of a visible prototype.
+     * gennames.c: Using C89/90 void to declare functions with
+       no arguments to avoid compiler warnings about using old style
+       declarations.
+       Changed some local names to avoid
+       compiler warnings about redefining names in inner contexts.
+       Added const to some declarations to avoid warnings
+       about const being cast away.
+     * pro_incl.h: WRITE_UNALIGNED macros now cast with const
+        to avoid warnings about const being cast away.
+     * pro_macinfo.c,pro_section.c,pro_section.h:  Added const 
+       to some declarations to avoid warnings about const being cast away.
+2013-01-25  David Anderson
      * common.c: Add 'const' on string declarations to avoid
        compiler warnings.
      * dwarf_loc.h: Add the new field lc_number3 to handle

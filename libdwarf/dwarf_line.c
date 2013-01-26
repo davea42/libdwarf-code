@@ -1654,7 +1654,7 @@ dwarf_arm_standard_opcode_operand_count[STANDARD_OPERAND_COUNT_DWARF3] = {
    errors by command line option, print the details.  */
 static void
 print_header_issue(Dwarf_Debug dbg,
-    char *specific_msg,
+    const char *specific_msg,
     Dwarf_Small *data_start,
     int *err_count_out)
 {

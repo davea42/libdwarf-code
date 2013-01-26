@@ -4,6 +4,20 @@ January 25, 2013
   so it had to change. The new field added makes this version of libdwarf 
   incompatible with any existing dwarfdump.  Rebuild dwarfdump
   and dwarfdump2 to use it with this libdwarf.
+  Moved firmly into C89/C90 usage by more complete use of const
+  and be using int x(void) for example to prototype parameter-less
+  functions.  Compiles close to cleanly with
+  gcc options -Wsystem-headers 
+    -Wall  -Wsign-compare
+ -Wno-format-y2k -W 
+ -Wno-unused-parameter -Wstrict-prototypes 
+ -Wmissing-prototypes -Wpointer-arith 
+ -Wreturn-type -Wcast-qual -Wwrite-strings 
+ -Wswitch -Wshadow -Wunused-parameter 
+ -Wcast-align -Wchar-subscripts -Winline 
+ -Wnested-externs -Wredundant-decls 
+ -Wold-style-definition -Wno-pointer-sign
+
 November 29, 2012
   The function dwarf_formflag() now returns the actual flag value
   instead of just 1 or 0.   It has been coded wrong a very long time.

@@ -471,7 +471,7 @@ _dwarf_get_alloc(Dwarf_Debug dbg,
     Dwarf_Ptr ret_mem;
 
     Dwarf_Signed size = 0;
-    unsigned int index;
+    unsigned int uindx;
     unsigned int type = alloc_type;
 
     if (dbg == NULL) {
@@ -482,7 +482,7 @@ _dwarf_get_alloc(Dwarf_Debug dbg,
         /* internal error */
         return NULL;
     }
-    index = index_into_allocated[type].ia_al_num;
+    uindx = index_into_allocated[type].ia_al_num;
     /*  Zero also illegal but not tested for */
 
     /*  If the Dwarf_Debug is not fully set up, we will get index 0 for
@@ -490,7 +490,7 @@ _dwarf_get_alloc(Dwarf_Debug dbg,
         happen for DW_DLA_ERROR, I (davea) believe, and for that we call 
         special code here.. */
 
-    if (index == 0) {
+    if (uindx == 0) {
         if (alloc_type == DW_DLA_STRING) {
             size = count;
         } else if (alloc_type == DW_DLA_LIST) {
@@ -523,7 +523,7 @@ _dwarf_get_alloc(Dwarf_Debug dbg,
 #endif
         }
     } else {
-        alloc_hdr = &dbg->de_alloc_hdr[index];
+        alloc_hdr = &dbg->de_alloc_hdr[uindx];
         if (alloc_hdr->ah_bytes_one_struct > 0) {
 #ifdef DWARF_SIMPLE_MALLOC
             size = alloc_hdr->ah_bytes_one_struct;
@@ -629,7 +629,7 @@ dwarf_dealloc(Dwarf_Debug dbg,
     Dwarf_Alloc_Hdr alloc_hdr;
     Dwarf_Alloc_Area alloc_area;
     unsigned int type = alloc_type;
-    unsigned int index;
+    unsigned int uindex;
 
     if (space == NULL) {
         return;
@@ -666,11 +666,11 @@ dwarf_dealloc(Dwarf_Debug dbg,
         return;
     }
 
-    index = index_into_allocated[type].ia_al_num;
+    uindex = index_into_allocated[type].ia_al_num;
     /*  A string pointer may point into .debug_info or .debug_string.
         Otherwise, they are directly malloc'ed. */
     dwarf_malloc_check_dealloc_data(space, type);
-    if (index == 0) {
+    if (uindex == 0) {
         if (type == DW_DLA_STRING) {
             if ((Dwarf_Small *) space >= dbg->de_debug_info.dss_data &&
                 (Dwarf_Small *) space <
@@ -774,7 +774,7 @@ dwarf_dealloc(Dwarf_Debug dbg,
     _dwarf_simple_malloc_delete_from_list(dbg, space, type);
     free(space);
 #else /* !DWARF_SIMPLE_MALLOC */
-    alloc_hdr = &dbg->de_alloc_hdr[index];
+    alloc_hdr = &dbg->de_alloc_hdr[uindex];
 
     /*  Get pointer to Dwarf_Alloc_Area this struct came from. See
         dwarf_alloc.h ROUND_SIZE_WITH_POINTER stuff */
