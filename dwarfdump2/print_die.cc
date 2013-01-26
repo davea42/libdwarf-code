@@ -2422,14 +2422,19 @@ _dwarf_print_one_expr_op(Dwarf_Debug dbg,Dwarf_Loc* expr,int index,
             {
             string_out.append(" ");
             string_out.append(IToHex0N(opd1,10));
-            Dwarf_Unsigned opd2 = expr->lr_number2;
+            const unsigned char *opd2 = 
+                (const unsigned char *)expr->lr_number2;
+            unsigned length = *opd2;
+
+ 
             string_out.append(" const length: ");
-            string_out.append(IToDec(opd2));
+            string_out.append(IToDec(length));
+            // Now point to the data bytes.
+            ++opd2;
+
             string_out.append(" contents 0x");
-            const unsigned char *opd3 = 
-                (const unsigned char *)expr->lr_number3;
-            for (unsigned i = 0; i < opd2; i++) {
-                    string_out.append(IToHex02( *(i + opd3)));
+            for (unsigned i = 0; i < length; i++,opd2++) {
+                    string_out.append(IToHex02( *opd2));
             }
             }
             break;

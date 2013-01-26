@@ -41,7 +41,6 @@ struct Dwarf_Loc_Chain_s {
     Dwarf_Small lc_atom;
     Dwarf_Unsigned lc_number;
     Dwarf_Unsigned lc_number2;
-    Dwarf_Unsigned lc_number3;
     Dwarf_Unsigned lc_offset;
     Dwarf_Loc_Chain lc_next;
 };

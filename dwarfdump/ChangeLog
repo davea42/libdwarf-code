@@ -1,3 +1,7 @@
+2013-01-26  David Anderson
+      * dwarfdump.c, common.c: Update version string.
+      * print_die.c: Print DW_OP_GNU_const_type properly using
+        the binary-compatibility version of Dwarf_Loc.
 2013-01-25  David Anderson
       * dwarfdump.c, common.c: Update version string.
       * print_die.c: Print DW_OP_GNU_const_type properly.

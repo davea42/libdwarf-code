@@ -2618,19 +2618,25 @@ _dwarf_print_one_expr_op(Dwarf_Debug dbg,Dwarf_Loc* expr,int index,
         case DW_OP_GNU_const_type:
             {
             const unsigned char *bp = 0;
+            unsigned int length = 0;
             unsigned int u = 0;
             snprintf(small_buf, sizeof(small_buf), 
                 " 0x%" DW_PR_XZEROS  DW_PR_DUx , opd1);
             esb_append(string_out, small_buf);
-            /* Followed by 1 byte length field */
-            opd2 = expr->lr_number2;
+            /* Followed by 1 byte length field and
+               the const bytes, all pointed to by lr_number2 */
+            bp = (const unsigned char *) expr->lr_number2;
+            /* First get the length */
+            length = *bp;
             esb_append(string_out," const length: ");
             snprintf(small_buf, sizeof(small_buf), 
-                "%" DW_PR_DUu , opd2);
+                "%u" , length);
             esb_append(string_out, small_buf);
+            /* Now point to the data bytes of the const. */
+            bp++;
+
             esb_append(string_out, " contents 0x");
-            bp = (const unsigned char *) expr->lr_number3;
-            for (; u < opd2; ++u,++bp) {
+            for (u = 0; u < length; ++u,++bp) {
                 snprintf(small_buf, sizeof(small_buf),
                     "%02x", *bp);
                 esb_append(string_out, small_buf);

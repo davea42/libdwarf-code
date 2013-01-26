@@ -154,7 +154,6 @@ typedef struct {
     Dwarf_Small     lr_atom;        /* location operation */
     Dwarf_Unsigned  lr_number;      /* operand */
     Dwarf_Unsigned  lr_number2;     /* for OP_BREGx  and DW_OP_GNU_const_type*/
-    Dwarf_Unsigned  lr_number3;     /* for DW_OP_GNU_const_type*/
     Dwarf_Unsigned  lr_offset;      /* offset in locexpr for OP_BRA etc */
 } Dwarf_Loc;
 
@@ -2230,7 +2229,7 @@ void dwarf_dealloc(Dwarf_Debug /*dbg*/, void* /*space*/,
 
 /* DWARF Producer Interface */
 
-/* New form June, 2011. Adds user_data argument.  */
+/*  New form June, 2011. Adds user_data argument. */
 typedef int (*Dwarf_Callback_Func_c)(
     char*           /*name*/,
     int             /*size*/,

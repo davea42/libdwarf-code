@@ -8,7 +8,7 @@ n\."
 .nr Hb 5
 \." ==============================================
 \." Put current date in the following at each rev
-.ds vE rev 2.06, November 29, 2012
+.ds vE rev 2.07, January 26, 2013
 \." ==============================================
 \." ==============================================
 .ds | |
@@ -202,6 +202,9 @@ functions.
 The following is a brief mention of the changes in this libdwarf from 
 the libdwarf draft for DWARF Version 1 and recent changes.
 .H 2 "Items Changed"
+.P
+Defined how the new operator DW_OP_GNU_const_type is handled.
+(January 26 2013)
 .P
 Added dwarf_loclist_from_expr_b()
 function which adds arguments of the DWARF version
@@ -478,6 +481,18 @@ this to a \f(CWDwarf_Signed\fP type for those operations.
 For a \f(CWDW_OP_implicit_value\fP operator the \f(CWlr_number2\fP
 field is a pointer to the bytes of the value. The field pointed to
 is \f(CWlr_number\fP bytes long.  There is no explicit terminator.
+Do not attempt to \f(CWfree\fP the bytes which \f(CWlr_number2\fP
+points at and do not alter those bytes. The pointer value
+remains valid till the open Dwarf_Debug is closed.
+This is a rather ugly use of a host integer to hold a pointer. 
+You will normally have to do a 'cast' operation to use the value. 
+.P
+For a \f(CWDW_OP_GNU_const_type\fP operator the \f(CWlr_number2\fP
+field is a pointer to a block with an initial
+unsigned byte giving the number of bytes
+following, followed immediately that number of const
+value bytes. 
+There is no explicit terminator.
 Do not attempt to \f(CWfree\fP the bytes which \f(CWlr_number2\fP
 points at and do not alter those bytes. The pointer value
 remains valid till the open Dwarf_Debug is closed.
