@@ -35,6 +35,17 @@ Warnings like
 at compile time are to be expected in dwarf_frame.c and
 dwarf_frame2.c.   Do not be alarmed.
 
+Warnings like
+ "warning: passing argument 1 of ‘dbg->de_callback_func_c’
+discards ‘const’ qualifier from pointer target type
+[enabled by default]" at compile time are to be expected in
+some pro*.c source files.  Fixing the public prototype could
+cause some producer-library user's code to fail to compile
+so we live with the warnings for now.
+
+
+
+
 If your headers are not in the expected places,
 use the make command line to add flags and include directories.
 For example

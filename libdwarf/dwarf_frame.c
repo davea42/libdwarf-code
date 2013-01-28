@@ -166,9 +166,13 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
     Dwarf_Sword * returned_count,
     int *returned_error)
 {
+/*  The following macro depends on macreg and
+    machigh_reg both being unsigned to avoid
+    unintended behavior and to avoid compiler warnings when
+    high warning levels are turned on.  */
 #define ERROR_IF_REG_NUM_TOO_HIGH(macreg,machigh_reg)        \
     do {                                                     \
-        if ((macreg) >= (machigh_reg) || (macreg) < 0) {     \
+        if ((macreg) >= (machigh_reg)) {                     \
             SIMPLE_ERROR_RETURN(DW_DLE_DF_REG_NUM_TOO_HIGH); \
         }                                                    \
     } /*CONSTCOND */ while (0)

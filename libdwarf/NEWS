@@ -1,3 +1,8 @@
+January 26, 2013
+  Retracted the incompatible change. The interfaces are
+  again compatible with previous releases and the January 25
+  release is withdrawn.  Has all the fixes of Jan 25 present
+  in the code.
 January 25, 2013
   The definition of the Dwarf_Loc struct 
   could not handle DW_OP_GNU_const_type
