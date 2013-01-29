@@ -1,3 +1,8 @@
+2013-01-28  David Anderson
+     * dwarf_frame.c: Fix a macro so it does not test unsigned
+       numbers as being less than zero. Fixes a compiler warning.
+     * malloc_check.c: Add void as the parameter list of a
+       parameter-less function. Fixes a compiler warning.
 2013-01-26  David Anderson
      * libdwarf.h: Remove the lc_number3 field to restore
        interface binary compatibility with earlier releases.
