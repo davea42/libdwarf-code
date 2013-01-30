@@ -219,6 +219,7 @@ distclean:	clean
 	rm -f config.status config.log config.cache config.h
 	rm -rf autom4te.cache 
 	rm -f Makefile
+	rm -f libdwarf.h
 
 
 shar:

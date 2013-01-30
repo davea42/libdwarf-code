@@ -61,19 +61,16 @@ extern "C" {
     so one can use grep  to each declaration in its entirety.
     The declarations are a little harder to read this way, but...
 
-    The struct name Elf spelling needs to match the name in libelf.h
-    which is normally struct Elf but on some systems (FreeBSD
-    for example) is struct _Elf .
+    The seeming duplication of the Elf typedef allows
+    both verification we have the right struct name (when
+    libelf.h included before this) and
+    creation of a local handle so we have the struct pointer
+    here (if libelf.h is not included before this file).
+
 */
 
-#ifdef HAVE_STRUCT_UNDERSCORE_ELF
-struct _Elf;
-typedef struct _Elf* dwarf_elf_handle;
-#else
-/*  The original libelf struct name is struct Elf */
-struct Elf;
+typedef struct Elf Elf;
 typedef struct Elf* dwarf_elf_handle;
-#endif
 
 /* To enable printing with printf regardless of the
    actual underlying data type, we define the DW_PR_xxx macros. 

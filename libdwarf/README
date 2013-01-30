@@ -8,13 +8,20 @@ To build  both, type
         ./configure --enable-shared 
         make
 
+January 30, 2013: libdwarf.h is no longer in the distribution,
+but libdwarf.h.in is identical to libdwarf.h.  'configure'
+copies libdwarf.h.in to libdwarf.h and whether libelf.h defines
+'struct _Elf' or 'struct Elf' configure attempts to create
+libdwarf.h appropriately.  
+
 No real install target is provided here, so 'make install' does
 not do much. One can copy either or both of libdwarf.a libdwarf.so 
 to somewhere fairly standard (but intended for software you build)  
 like '/usr/local/lib'.  Or anywhere else you want to copy it.
 
 To use dwarf or libdwarf, you may want to copy dwarf.h and
-libdwarf.h somewhere convenient (possibly /usr/local/include), 
+a generated libdwarf.h somewhere convenient
+(possibly /usr/local/include), 
 and you may need to copy the libdwarf to a convenient spot 
 (/usr/local/lib is a traditional place for libraries one builds
 oneself on Unix and Linux).
@@ -42,8 +49,6 @@ discards ‘const’ qualifier from pointer target type
 some pro*.c source files.  Fixing the public prototype could
 cause some producer-library user's code to fail to compile
 so we live with the warnings for now.
-
-
 
 
 If your headers are not in the expected places,

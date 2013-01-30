@@ -1,3 +1,11 @@
+2013-01-20  David Anderson
+     * libdwarf.h: Removed.
+     * libdwarf.h.in: Added. Identical content to standard libdwarf. 
+     * configure.in: Generates libdwarf.h.
+       Notices if struct _Elf in libelf.h and generates libdwarf.h
+       appropriately.
+     * configure: Regenerated
+     * README now mentions the libdwarf.h generation at configure time.
 2013-01-28  David Anderson
      * dwarf_frame.c: Fix a macro so it does not test unsigned
        numbers as being less than zero. Fixes a compiler warning.
