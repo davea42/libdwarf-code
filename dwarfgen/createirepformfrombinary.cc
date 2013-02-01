@@ -1,5 +1,5 @@
 /*
-  Copyright (C) 2010-2012 David Anderson.  
+  Copyright (C) 2010-2013 David Anderson.  
 
   This program is free software; you can redistribute it and/or modify it
   under the terms of version 2 of the GNU General Public License as
@@ -163,10 +163,37 @@ IRForm *formFactory(Dwarf_Debug dbg,
     return new IRFormUnknown();
 }
 
+static void
+extractInterafaceForms(IRFormInterface *interface,
+    Dwarf_Half *finalform,
+    Dwarf_Half *initialform)
+{
+    Dwarf_Error error = 0;
+    int res = dwarf_whatform(interface->attr_,finalform,&error);
+    if(res != DW_DLV_OK) {
+        cerr << "Unable to get attr form " << endl;
+        exit(1);
+    }
+
+    res = dwarf_whatform_direct(interface->attr_,initialform,&error);
+    if(res != DW_DLV_OK) {
+        cerr << "Unable to get attr direct form " << endl;
+        exit(1);
+    }
+}
+
+
+
 IRFormAddress::IRFormAddress(IRFormInterface * interface)
 {
     Dwarf_Addr val = 0;
     Dwarf_Error error = 0;
+    Dwarf_Half finalform = 0;
+    Dwarf_Half initialform = 0;
+    extractInterafaceForms(interface,&finalform,&initialform);
+    setFinalForm(finalform);
+    setInitialForm(initialform);
+
     int res = dwarf_formaddr(interface->attr_,&val, &error);
     if(res != DW_DLV_OK) {
         cerr << "Unable to read flag value. Impossible error.\n" << endl;
@@ -177,6 +204,12 @@ IRFormAddress::IRFormAddress(IRFormInterface * interface)
 }
 IRFormBlock::IRFormBlock(IRFormInterface * interface)
 {
+    Dwarf_Half finalform = 0;
+    Dwarf_Half initialform = 0;
+    extractInterafaceForms(interface,&finalform,&initialform);
+    setFinalForm(finalform);
+    setInitialForm(initialform);
+
     Dwarf_Block *blockptr = 0;
     Dwarf_Error error = 0;
     int res = dwarf_formblock(interface->attr_,&blockptr, &error);
@@ -189,6 +222,12 @@ IRFormBlock::IRFormBlock(IRFormInterface * interface)
 }
 IRFormConstant::IRFormConstant(IRFormInterface * interface)
 {
+    Dwarf_Half finalform = 0;
+    Dwarf_Half initialform = 0;
+    extractInterafaceForms(interface,&finalform,&initialform);
+    setFinalForm(finalform);
+    setInitialForm(initialform);
+
     enum Signedness oursign = SIGN_NOT_SET;
     Dwarf_Unsigned uval = 0;
     Dwarf_Signed sval = 0;
@@ -219,6 +258,12 @@ IRFormExprloc::IRFormExprloc(IRFormInterface * interface)
     Dwarf_Unsigned len = 0;
     Dwarf_Ptr data = 0;
     Dwarf_Error error = 0;
+    Dwarf_Half finalform = 0;
+    Dwarf_Half initialform = 0;
+    extractInterafaceForms(interface,&finalform,&initialform);
+    setFinalForm(finalform);
+    setInitialForm(initialform);
+
     int res = dwarf_formexprloc(interface->attr_,&len, &data, &error);
     if(res != DW_DLV_OK) {
         cerr << "Unable to read flag value. Impossible error.\n" << endl;
@@ -229,12 +274,21 @@ IRFormExprloc::IRFormExprloc(IRFormInterface * interface)
 IRFormFlag::IRFormFlag(IRFormInterface * interface)
 {
     Dwarf_Bool flagval = 0;
+    Dwarf_Half finalform = 0;
+    Dwarf_Half initialform = 0;
+    extractInterafaceForms(interface,&finalform,&initialform);
+    setFinalForm(finalform);
+    setInitialForm(initialform);
+
     Dwarf_Error error = 0;
     int res = dwarf_formflag(interface->attr_,&flagval, &error);
     if(res != DW_DLV_OK) {
         cerr << "Unable to read flag value. Impossible error.\n" << endl;
         exit(1);
     }
+    setFlagVal(flagval);
+    setFinalForm(finalform);
+    setInitialForm(initialform);
 }
 
 // We are simply assuming (here) that the value is a global offset
@@ -249,6 +303,7 @@ get_section_offset(IRFormInterface * interface)
     Dwarf_Error error = 0;
     Dwarf_Off sectionoffset = 0;
     int resu = 0;
+
     // The following allows more sorts of value than
     // we really want to allow here, but that is
     // harmless, we believe.
@@ -274,26 +329,56 @@ IRFormLoclistPtr::IRFormLoclistPtr(IRFormInterface * interface)
 {
     Dwarf_Unsigned uval = get_section_offset(interface);
     setOffset(uval);
+    Dwarf_Half finalform = 0;
+    Dwarf_Half initialform = 0;
+    extractInterafaceForms(interface,&finalform,&initialform);
+    setFinalForm(finalform);
+    setInitialForm(initialform);
+
 }
 IRFormLinePtr::IRFormLinePtr(IRFormInterface * interface)
 {
     Dwarf_Unsigned uval = get_section_offset(interface);
     setOffset(uval);
+    Dwarf_Half finalform = 0;
+    Dwarf_Half initialform = 0;
+    extractInterafaceForms(interface,&finalform,&initialform);
+    setFinalForm(finalform);
+    setInitialForm(initialform);
+
 }
 IRFormMacPtr::IRFormMacPtr(IRFormInterface * interface)
 {
     Dwarf_Unsigned uval = get_section_offset(interface);
     setOffset(uval);
+    Dwarf_Half finalform = 0;
+    Dwarf_Half initialform = 0;
+    extractInterafaceForms(interface,&finalform,&initialform);
+    setFinalForm(finalform);
+    setInitialForm(initialform);
+
 }
 IRFormRangelistPtr::IRFormRangelistPtr(IRFormInterface * interface)
 {
     Dwarf_Unsigned uval = get_section_offset(interface);
     setOffset(uval);
+    Dwarf_Half finalform = 0;
+    Dwarf_Half initialform = 0;
+    extractInterafaceForms(interface,&finalform,&initialform);
+    setFinalForm(finalform);
+    setInitialForm(initialform);
+
 }
 IRFormFramePtr::IRFormFramePtr(IRFormInterface * interface)
 {
     Dwarf_Unsigned uval = get_section_offset(interface);
     setOffset(uval);
+    Dwarf_Half finalform = 0;
+    Dwarf_Half initialform = 0;
+    extractInterafaceForms(interface,&finalform,&initialform);
+    setFinalForm(finalform);
+    setInitialForm(initialform);
+
 }
 
 // This is a .debug_info to .debug_info (or .debug_types to .debug_types)
@@ -345,6 +430,12 @@ IRFormString::IRFormString(IRFormInterface * interface)
 {
     char *str = 0;
     Dwarf_Error error = 0;
+    Dwarf_Half finalform = 0;
+    Dwarf_Half initialform = 0;
+    extractInterafaceForms(interface,&finalform,&initialform);
+    setFinalForm(finalform);
+    setInitialForm(initialform);
+
     int res = dwarf_formstring(interface->attr_,&str, &error);
     if(res != DW_DLV_OK) {
         cerr << "Unable to read string. Impossible error.\n" << endl;

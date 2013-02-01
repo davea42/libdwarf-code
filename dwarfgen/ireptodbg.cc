@@ -1,5 +1,5 @@
 /*
-  Copyright (C) 2010-2011 David Anderson.  
+  Copyright (C) 2010-2013 David Anderson.  
 
   This program is free software; you can redistribute it and/or modify it
   under the terms of version 2 of the GNU General Public License as
@@ -60,7 +60,7 @@ HandleOneDieAndChildren(Dwarf_P_Debug dbg,
     // children to it, but add no content yet.
     Dwarf_P_Die ourdie = dwarf_new_die(dbg,inDie.getTag(),NULL,NULL,
         NULL,NULL,&error);
-    if (reinterpret_cast<int>(ourdie) == DW_DLV_BADADDR) {
+    if (reinterpret_cast<Dwarf_Signed>(ourdie) == DW_DLV_BADADDR) {
         cerr << "Die creation failure.  "<< endl;
         exit(1);
     }
@@ -80,7 +80,7 @@ HandleOneDieAndChildren(Dwarf_P_Debug dbg,
             res  = dwarf_die_link(chp,ourdie,NULL,NULL, NULL,&error);
         }
         // Bad cast here, FIXME
-        if (reinterpret_cast<int>(res) == DW_DLV_BADADDR) {
+        if (reinterpret_cast<Dwarf_Signed>(res) == DW_DLV_BADADDR) {
             cerr << "Die link failure.  "<< endl;
             exit(1);
         }

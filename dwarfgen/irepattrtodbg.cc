@@ -1,5 +1,5 @@
 /*
-  Copyright (C) 2010-2012 David Anderson.  
+  Copyright (C) 2010-2013 David Anderson.  
 
   This program is free software; you can redistribute it and/or modify it
   under the terms of version 2 of the GNU General Public License as
@@ -81,14 +81,14 @@ AddAttrToDie(Dwarf_P_Debug dbg,
     switch(formclass) {
     case DW_FORM_CLASS_UNKNOWN:   
         cerr << "ERROR Impossible DW_FORM_CLASS_UNKNOWN, attrnum "
-            <<attrnum << cerr;
+            <<attrnum << endl;
         break;
     case DW_FORM_CLASS_ADDRESS:
         {
         IRFormAddress *f = dynamic_cast<IRFormAddress *>(form);
         if (!f) {
             cerr << "ERROR Impossible DW_FORM_CLASS_ADDRESS cast fails, attrnum "
-                <<attrnum << cerr;
+                <<attrnum << endl;
             break;
         }
         // FIXME: do better creating a symbol:  try to match original 
@@ -108,7 +108,7 @@ AddAttrToDie(Dwarf_P_Debug dbg,
             outdie,attrnum,0,sym_index,&error);
         if( reinterpret_cast<myintfromp>(a) == DW_DLV_BADADDR) {
             cerr << "ERROR dwarf_add_AT_targ_address fails, attrnum "
-                <<attrnum << cerr;
+                <<attrnum << endl;
            
         }
         }
@@ -133,7 +133,7 @@ AddAttrToDie(Dwarf_P_Debug dbg,
         IRFormFlag *f = dynamic_cast<IRFormFlag *>(form);
         if (!f) {
             cerr << "ERROR Impossible DW_FORM_CLASS_FLAG cast fails, attrnum "
-                <<attrnum << cerr;
+                <<attrnum << endl;
             break;
         }
         // FIXME: handle indirect form (libdwarf needs feature).
@@ -143,7 +143,7 @@ AddAttrToDie(Dwarf_P_Debug dbg,
             dwarf_add_AT_flag(dbg,outdie,attrnum,f->getFlagVal(),&error);
         if( reinterpret_cast<myintfromp>(a) == DW_DLV_BADADDR) {
             cerr << "ERROR dwarf_add_AT_flag fails, attrnum "
-                <<attrnum << cerr;
+                <<attrnum << endl;
         }
         }
         break;
@@ -174,7 +174,7 @@ AddAttrToDie(Dwarf_P_Debug dbg,
         IRFormString *f = dynamic_cast<IRFormString *>(form);
         if (!f) {
             cerr << "ERROR Impossible DW_FORM_CLASS_STRING cast fails, attrnum "
-                <<attrnum << cerr;
+                <<attrnum << endl;
             break;
         }
         Dwarf_P_Attribute a = 0;
@@ -201,7 +201,7 @@ AddAttrToDie(Dwarf_P_Debug dbg,
         }
         if( reinterpret_cast<myintfromp>(a) == DW_DLV_BADADDR) {
             cerr << "ERROR dwarf_add_AT_string fails, attrnum "
-                <<attrnum << cerr;
+                <<attrnum << endl;
         }
         }
         break;
@@ -213,7 +213,7 @@ AddAttrToDie(Dwarf_P_Debug dbg,
     default:
         cerr << "ERROR Impossible DW_FORM_CLASS  "<<
             static_cast<int>(formclass)
-            <<attrnum << cerr;
+            <<attrnum << endl;
         //FIXME
     }
     return;

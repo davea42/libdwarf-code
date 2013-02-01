@@ -1,5 +1,5 @@
 /*
-  Copyright (C) 2010-2012 David Anderson.  
+  Copyright (C) 2010-2013 David Anderson.  
 
   This program is free software; you can redistribute it and/or modify it
   under the terms of version 2 of the GNU General Public License as
@@ -215,35 +215,35 @@ get_basic_attr_data_one_attr(Dwarf_Debug dbg,
 {
     Dwarf_Error error;
     Dwarf_Half attrnum = 0;
-    Dwarf_Half dirform = 0;
-    Dwarf_Half indirform = 0;
+    Dwarf_Half finalform = 0;
+    Dwarf_Half initialform = 0;
     int res = dwarf_whatattr(attr,&attrnum,&error);
     if(res != DW_DLV_OK) {
         cerr << "Unable to get attr number " << endl;
         exit(1);
     }
-    res = dwarf_whatform(attr,&dirform,&error);
+    res = dwarf_whatform(attr,&finalform,&error);
     if(res != DW_DLV_OK) {
         cerr << "Unable to get attr form " << endl;
         exit(1);
     }
 
-    res = dwarf_whatform_direct(attr,&indirform,&error);
+    res = dwarf_whatform_direct(attr,&initialform,&error);
     if(res != DW_DLV_OK) {
         cerr << "Unable to get attr direct form " << endl;
         exit(1);
     }
-    irattr.setBaseData(attrnum,dirform,indirform);
+    irattr.setBaseData(attrnum,finalform,initialform);
     enum Dwarf_Form_Class cl = dwarf_get_form_class(
         cudata.getVersionStamp(), attrnum,   
-        cudata.getOffsetSize(), dirform);
+        cudata.getOffsetSize(), finalform);
     irattr.setFormClass(cl);
     if (cl == DW_FORM_CLASS_UNKNOWN) {
         cerr << "Unable to figure out form class. ver " << 
             cudata.getVersionStamp() <<
             " attrnum " << attrnum <<
             " offsetsize " << cudata.getOffsetSize() <<
-            " formnum " <<  dirform << endl;
+            " formnum " <<  finalform << endl;
         return;
     }
     irattr.setFormData(formFactory(dbg,attr,cudata,irattr));

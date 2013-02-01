@@ -8,7 +8,7 @@ n\."
 .nr Hb 5
 \." ==============================================
 \." Put current date in the following at each rev
-.ds vE rev 2.07, January 26, 2013
+.ds vE rev 2.09, February 01, 2013
 \." ==============================================
 \." ==============================================
 .ds | |
@@ -2446,6 +2446,7 @@ to the attribute form code of
 the attribute represented by the \f(CWDwarf_Attribute\fP descriptor 
 \f(CWattr\fP.  
 It returns  \f(CWDW_DLV_ERROR\fP  on error.
+
 An attribute using DW_FORM_indirect effectively has two forms.
 This function returns the 'final' form for \f(CWDW_FORM_indirect\fP,
 not the \f(CWDW_FORM_indirect\fP itself. This function is
@@ -2467,9 +2468,17 @@ the attribute represented by the \f(CWDwarf_Attribute\fP descriptor
 It returns  \f(CWDW_DLV_ERROR\fP  on error.
 An attribute using \f(CWDW_FORM_indirect\fP effectively has two forms.
 This returns the form 'directly' in the initial form field.
+That is, it returns the 'initial' form of the attribute.
+.P
 So when the form field is \f(CWDW_FORM_indirect\fP
 this call returns the \f(CWDW_FORM_indirect\fP form, 
 which is sometimes useful for dump utilities.
+.P
+It is confusing that the _direct() function returns 
+DW_FORM_indirect if an indirect form is involved.
+Just think of this as returning the initial form the first
+form value seen for the attribute, which is also the final
+form unless the initial form is \f(CWDW_FORM_indirect\fP.
 
 .H 3 "dwarf_whatattr()"
 .DS
