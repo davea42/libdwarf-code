@@ -1,3 +1,10 @@
+2013-02-01  David Anderson
+      * print_die.c: Replaced use of makename (which did malloc)
+        with use of struct esb_s, avoiding a serious memory leak.
+        Completely removed static struct variables esb_base and
+        esb_extra, ensuring die string print-data is not
+        corrupted by recursive calls.
+      * dwarfdump.c, common.c: Update version string.
 2013-01-26  David Anderson
       * dwarfdump.c, common.c: Update version string.
       * print_die.c: Print DW_OP_GNU_const_type properly using

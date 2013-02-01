@@ -2434,7 +2434,7 @@ _dwarf_print_one_expr_op(Dwarf_Debug dbg,Dwarf_Loc* expr,int index,
 
             string_out.append(" contents 0x");
             for (unsigned i = 0; i < length; i++,opd2++) {
-                    string_out.append(IToHex02( *opd2));
+                string_out.append(IToHex02( *opd2));
             }
             }
             break;

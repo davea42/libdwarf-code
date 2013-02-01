@@ -58,7 +58,7 @@ $Header: /plroot/cmplrs.src/v7.4.5m/.RCS/PL/dwarfdump/RCS/dwarfdump.c,v 1.48 200
 extern int elf_open(const char *name,int mode);
 #endif /* WIN32 */
 
-#define DWARFDUMP_VERSION " Sat Jan 26 08:07:46 PST 2013  "
+#define DWARFDUMP_VERSION " Fri Feb  1 10:06:59 PST 2013  "
 
 extern char *optarg;
 
@@ -478,7 +478,6 @@ main(int argc, char *argv[])
     }
     elf_end(arf);
     /* Trivial malloc space cleanup. */
-    clean_up_die_esb();
     clean_up_syms_malloc_data();
 
     if (pRangesInfo) {
