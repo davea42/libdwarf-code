@@ -95,8 +95,10 @@ makename.o: $(srcdir)/makename.h $(srcdir)/makename.c
 	$(CC) $(CFLAGS) -c $(srcdir)/makename.c
 common.o:  $(srcdir)/common.c $(srcdir)/common.h
 	$(CC) $(CFLAGS) -c $(srcdir)/common.c
+
+# gennames should use a static libdwarf.
 gennames: $(srcdir)/gennames.c $(DIRINC)/dwarf.h $(HEADERS) common.o
-	$(CC) $(CFLAGS) $(srcdir)/gennames.c common.o $(LDFLAGS) -o gennames
+	$(CC) $(CFLAGS) $(srcdir)/gennames.c common.o ../libdwarf/libdwarf.a $(LDFLAGS) -o gennames
 naming.o:  $(srcdir)/naming.c $(srcdir)/naming.h
 	$(CC) $(CFLAGS) -c $(srcdir)/naming.c
 
@@ -105,11 +107,12 @@ naming.o:  $(srcdir)/naming.c $(srcdir)/naming.h
 trivial_naming.o: $(srcdir)/naming.c
 	$(CC) $(CFLAGS) -DTRIVIAL_NAMING  -c $(srcdir)/naming.c -o trivial_naming.o 
 
+# Use static libdwarf.a
 tag_tree_build:  $(srcdir)/tag_tree.c $(DIRINC)/dwarf.h $(HEADERS) tag_common.o makename.o common.o trivial_naming.o
-	$(CC) $(CFLAGS) $(srcdir)/tag_tree.c tag_common.o common.o makename.o trivial_naming.o $(LDFLAGS) -o tag_tree_build 
+	$(CC) $(CFLAGS) $(srcdir)/tag_tree.c tag_common.o common.o makename.o trivial_naming.o ../libdwarf/libdwarf.a $(LDFLAGS) -o tag_tree_build 
 
 tag_attr_build:  $(srcdir)/tag_attr.c $(DIRINC)/dwarf.h $(HEADERS) tag_common.o makename.o common.o trivial_naming.o
-	$(CC) $(CFLAGS) $(srcdir)/tag_attr.c tag_common.o common.o makename.o trivial_naming.o $(LDFLAGS) -o tag_attr_build 
+	$(CC) $(CFLAGS) $(srcdir)/tag_attr.c tag_common.o common.o makename.o trivial_naming.o ../libdwarf/libdwarf.a $(LDFLAGS) -o tag_attr_build 
 
 tmp-tt-table.c tmp-tt-ext-table.c: $(srcdir)/tag_tree_ext.list $(srcdir)/tag_tree.list tag_tree_build
 	# gcc -E tag_tree.list does not work, so use a .c name

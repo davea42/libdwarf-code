@@ -1,3 +1,16 @@
+For a simple build of libdwarf and dwarfdump2 
+and the other tools for personal use:
+    ./configure
+    make
+    cp dwarfdump2/dwarfdump <somewhere>
+    Optionally: cp libdwarf/libdwarf.a <somewhere>
+
+To also build a shared libdwarf in the process, do:
+    ./configure --enable-shared
+    make
+    cp libdwarf/libdwarf.so <somewhere>
+    cp dwarfdump2/dwarfdump <somewhere>
+
 
 When ready to create a new distro,
 do
