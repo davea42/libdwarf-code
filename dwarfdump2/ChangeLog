@@ -1,3 +1,6 @@
+2013-02-03  David Anderson
+     * checkutil.h: A 64bit constant was missing the trailing ULL
+       and a compiler caught the mistake. Added the ULL.
 2013-02-01  David Anderson
      * dwarfdump.cc, common.cc: Update version string.
      * print_die.cc: One line had an indentation incorrect,

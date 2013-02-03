@@ -85,6 +85,7 @@ distclean:  clean
 	rm -f dwarfgen/config.log 
 	rm -f dwarfgen/config.cache 
 	rm -f dwarfgen/config.h
+	rm -f dwarfgen/configure.lineno
 	rm -rf dwarfgen/autom4te.cache 
 	rm -f dwarfgen/Makefile
 	rm -f dwarfdump2/config.status 

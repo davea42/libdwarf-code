@@ -111,7 +111,7 @@ private:
 // data that must fail the search is noted as such quickly.
 class AddressRangesData {
 public:
-    AddressRangesData():low_pc_(0xffffffffffffffff),high_pc_(0) {};
+    AddressRangesData():low_pc_(0xffffffffffffffffULL),high_pc_(0) {};
     ~AddressRangesData() {};
     void AddAddressRange(Dwarf_Unsigned low_pc, Dwarf_Unsigned high_pc);
     void SetLimitsAddressRange(Dwarf_Unsigned low_pc, Dwarf_Unsigned high_pc);
