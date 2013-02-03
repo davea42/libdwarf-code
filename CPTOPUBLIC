@@ -37,6 +37,11 @@ mkdir $t/dwarfgen
 mkdir $t/dwarfexample
 mkdir $t/libdwarf/cmplrs
 cp BLDLIBDWARF $t
+cp configure.in $t
+cp configure $t
+cp config.h.in $t
+cp Makefile.in $t
+cp install.sh $t
 for i in dwarfexample/NEWS \
 dwarfexample/ChangeLog2010 \
 dwarfexample/ChangeLog2009 \
