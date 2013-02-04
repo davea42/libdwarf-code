@@ -42,10 +42,6 @@ struct Addr_Map_Entry * addr_map_insert( Dwarf_Unsigned addr,
 { return 0; }
 struct Addr_Map_Entry * addr_map_find(Dwarf_Unsigned addr,void **tree1)
 { return 0; }
-void addr_map_destroy(void *map)
-{ return;}
-
-
    
 #else /* HAVE_TSEARCH */
 #define __USE_GNU 1 

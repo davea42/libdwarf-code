@@ -1,3 +1,6 @@
+2013-02-04  David Anderson
+      * dwarfdump/addrmap.c: Forgot to remove the addr_map_destroy()
+        implementation in #ifndef HAVE_TSEARCH. Now it is removed.
 2013-02-03  David Anderson
       * dwarfdump/addrmap.c: Implement HAVE_TDESTROY. 
         tdestroy() is GNU only. Now we allow tsearch without
