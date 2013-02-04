@@ -1819,5 +1819,6 @@ print_frames(Dwarf_Debug dbg, int print_debug_frame, int print_eh_frame,
         current_cu_die_for_print_frames = 0;
     }
     addr_map_destroy(map_lowpc_to_name);
+    map_lowpc_to_name = 0;
 }
 

@@ -29,6 +29,13 @@
 #include "globals.h"
 #include <stdio.h>
 #include "addrmap.h"
+
+
+/*  If we have tsearch but not tdestroy the use of tsearch
+    will result in a memory leak, but oh well.   
+    See HAVE_TSEARCH and HAVE_TDESTROY.
+    Note that dwarfdump2 has no leak of this sort.
+*/
 #ifndef HAVE_TSEARCH
 struct Addr_Map_Entry * addr_map_insert( Dwarf_Unsigned addr,
     char *name,void **tree1)
@@ -140,11 +147,18 @@ addr_map_find(Dwarf_Unsigned addr,void **tree1)
     return re;
 }
 
+
+#endif /* HAVE_TSEARCH */
+#ifndef HAVE_TDESTROY
+void
+addr_map_destroy(void *map)
+{
+}
+#else
 void
 addr_map_destroy(void *map)
 {
     /* tdestroy is not part of Posix, it is a GNU libc function. */
     tdestroy(map,addr_map_free_func);
 }
-
-#endif /* HAVE_TSEARCH */
+#endif

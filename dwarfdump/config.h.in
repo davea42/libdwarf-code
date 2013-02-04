@@ -60,6 +60,9 @@
 /* Define to 1 if you have the <sys/types.h> header file. */
 #undef HAVE_SYS_TYPES_H
 
+/* Define 1 if the tsearch function tdestroy seems to be defined */
+#undef HAVE_TDESTROY
+
 /* Define 1 if the tsearch functions seem to be defined */
 #undef HAVE_TSEARCH
 
