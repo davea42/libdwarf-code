@@ -1,3 +1,5 @@
+2013-02-07  David Anderson
+     * dieholder.h: Corrected the indentation of DieVec.
 2013-02-05  David Anderson
      * dwarfdump.cc, common.cc: Update version string.
        get_attr_value adds dieVec argument.

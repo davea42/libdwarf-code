@@ -96,51 +96,51 @@ private:
 
 class DieVec {
 public:
-   DieVec() {};
-   ~DieVec() {};
-   // Simpler to handle negatives here than in the
-   // print_die.cc code.
-   void setSiblingGlobalOffset(int indx,Dwarf_Off off) {
-       if (indx >= 0 && indx < dieVec_.size()) {
-           dieVec_[indx].setSiblingGlobalOffset(off); 
-       }
-   };
-   // Zero is always a safe return.
-   // Simpler to handle negatives here than in the
-   // print_die.cc code.
-   Dwarf_Off getSiblingGlobalOffset(int indx) {
-       if (indx >= 0 && indx < dieVec_.size()) {
-           return dieVec_[indx].getSiblingGlobalOffset(); 
-       }
-       return 0;
-   };
-   bool getDie(int indx,Dwarf_Die &dieout) {
-       if (indx >= 0 && indx < dieVec_.size()) {
-           dieout  =dieVec_[indx].die();
-           return true;
-       }
-       // Should never happen!
-       return false;
-   };
-   bool getDieHolder(int indx,DieHolder &dh) {
-       if (indx >= 0 && indx < dieVec_.size()) {
-           dh= dieVec_[indx];
-           return true;
-       }
-       // Should never happen!
-       return false;
-   };
-   int Size() {
-       return dieVec_.size();
-   }
-   void PushBack(DieHolder &d) {
-       dieVec_.push_back(d);
-   }
-   void PopBack() {
-       dieVec_.pop_back();
-   }
+    DieVec() {};
+    ~DieVec() {};
+    // Simpler to handle negatives here than in the
+    // print_die.cc code.
+    void setSiblingGlobalOffset(int indx,Dwarf_Off off) {
+        if (indx >= 0 && indx < dieVec_.size()) {
+            dieVec_[indx].setSiblingGlobalOffset(off); 
+        }
+    };
+    // Zero is always a safe return.
+    // Simpler to handle negatives here than in the
+    // print_die.cc code.
+    Dwarf_Off getSiblingGlobalOffset(int indx) {
+        if (indx >= 0 && indx < dieVec_.size()) {
+            return dieVec_[indx].getSiblingGlobalOffset(); 
+        }
+        return 0;
+    };
+    bool getDie(int indx,Dwarf_Die &dieout) {
+        if (indx >= 0 && indx < dieVec_.size()) {
+            dieout  =dieVec_[indx].die();
+            return true;
+        }
+        // Should never happen!
+        return false;
+    };
+    bool getDieHolder(int indx,DieHolder &dh) {
+        if (indx >= 0 && indx < dieVec_.size()) {
+            dh= dieVec_[indx];
+            return true;
+        }
+        // Should never happen!
+        return false;
+    };
+    int Size() {
+        return dieVec_.size();
+    }
+    void PushBack(DieHolder &d) {
+        dieVec_.push_back(d);
+    }
+    void PopBack() {
+        dieVec_.pop_back();
+    }
 private:
-   std::vector<DieHolder> dieVec_;
+    std::vector<DieHolder> dieVec_;
 };
 
 #endif  // DIEHOLDER_H
