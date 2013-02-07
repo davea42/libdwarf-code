@@ -1,3 +1,20 @@
+2013-02-05  David Anderson
+      * dwarfdump.c: Update version string.
+        get_producer_name() now uses struct esb_s;
+      * common.c: Update version string.
+      * print_die.c: Check DW_AT_sibling values for sanity,
+        and when something quite wrong is found, print an error
+        and stop.
+        get_producer_name() now uses struct esb_s;
+        Added sibling_die_global_offset_ to die_stack_data_s
+        so we can check sibling attribute values.
+        get_attr_value() now uses esb_s pointer.
+      * globals.h: get_producer_name() now uses struct esb_s;
+      * print_aranges.c, print_pubnames.c:get_producer_name() 
+        now uses struct esb_s;
+      * dwconf.c: The use of esb_s means we need to consider
+        an empty config-file-path as no path and look in default
+        places.  We cannot just test for null pointer.
 2013-02-04  David Anderson
       * dwarfdump/addrmap.c: Forgot to remove the addr_map_destroy()
         implementation in #ifndef HAVE_TSEARCH. Now it is removed.

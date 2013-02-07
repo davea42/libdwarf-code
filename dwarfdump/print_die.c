@@ -201,6 +201,11 @@ struct operation_descr_s opdesc[]= {
 
 struct die_stack_data_s {
     Dwarf_Die die_;
+    /*  sibling_die_globaloffset_ is set while processing the DIE.
+        We do not know the sibling global offset 
+        when we create the stack entry. 
+        If the sibling attribute absent we never know. */
+    Dwarf_Off sibling_die_globaloffset_;
     boolean already_printed_;
 };
 struct die_stack_data_s empty_stack_entry;
@@ -208,9 +213,79 @@ struct die_stack_data_s empty_stack_entry;
 #define DIE_STACK_SIZE 800
 static struct die_stack_data_s die_stack[DIE_STACK_SIZE];
 
-#define SET_DIE_STACK_ENTRY(i,x) { die_stack[i].die_ = x; \
-    die_stack[die_stack_indent_level].already_printed_ = FALSE; }
+#define SET_DIE_STACK_ENTRY(i,x) { die_stack[i].die_ = x;    \
+    die_stack[i].sibling_die_globaloffset_ = 0;              \
+    die_stack[i].already_printed_ = FALSE; }
 #define EMPTY_DIE_STACK_ENTRY(i) { die_stack[i] = empty_stack_entry; }
+#define SET_DIE_STACK_SIBLING(x) {                           \
+    die_stack[die_stack_indent_level].sibling_die_globaloffset_ = x; }
+
+
+/*  The first non-zero sibling offset we can find
+    is what we want to return. The lowest sibling
+    offset in the stack.  Or 0 if we have none known.
+*/
+static Dwarf_Off
+get_die_stack_sibling()
+{
+    int i = die_stack_indent_level;
+    for( ; i >=0 ; --i) 
+    {
+        Dwarf_Off v = die_stack[i].sibling_die_globaloffset_;
+        if (v) {
+            return v;
+        }
+    }
+    return 0;
+}
+/*  Higher stack level numbers must have a smaller sibling
+    offset than lower or else the sibling offsets are wrong. 
+    Stack entries with sibling_die_globaloffset_ 0 must be
+    ignored in this, it just means there was no sibling
+    attribute at that level.
+*/
+static void
+validate_die_stack_siblings(Dwarf_Debug dbg)
+{
+    int i = die_stack_indent_level;
+    Dwarf_Off innersiboffset = 0;
+    char small_buf[200];
+    for( ; i >=0 ; --i) 
+    {
+        Dwarf_Off v = die_stack[i].sibling_die_globaloffset_;
+        if (v) {
+            innersiboffset = v; 
+            break;
+        }
+    }
+    if(!innersiboffset) {
+        /* no sibling values to check. */
+        return;
+    }
+    for(--i ; i >= 0 ; --i) 
+    {
+        /* outersiboffset is an outer sibling offset. */
+        Dwarf_Off outersiboffset = die_stack[i].sibling_die_globaloffset_;
+        if (outersiboffset ) {
+            if (outersiboffset < innersiboffset) {
+                Dwarf_Error err = 0;
+                snprintf(small_buf, sizeof(small_buf), 
+                    "Die stack sibling error, outer global offset " 
+                    "0x%"  DW_PR_XZEROS DW_PR_DUx
+                    " less than inner global offset "
+                    "0x%"  DW_PR_XZEROS DW_PR_DUx
+                    ", the DIE tree is erroneous.",
+                    outersiboffset,
+                    innersiboffset);
+                print_error(dbg,small_buf, DW_DLV_OK, err);
+            }
+            /*  We only need check one level with an offset 
+                at each entry. */
+            break;
+        }
+    }
+    return;
+}
 
 static int
 print_as_info_or_cu()
@@ -321,7 +396,6 @@ print_one_die_section(Dwarf_Debug dbg,Dwarf_Bool is_info)
     int   cu_count = 0;
     char * cu_short_name = NULL;
     char * cu_long_name = NULL;
-    char * producer_name = NULL;
 
     current_section_id = DEBUG_INFO;
 
@@ -376,9 +450,14 @@ print_one_die_section(Dwarf_Debug dbg,Dwarf_Bool is_info)
             }
         }
 
+        {
         /* Get producer name for this CU and update compiler list */
-        get_producer_name(dbg,cu_die,err,&producer_name);
-        update_compiler_target(producer_name);
+            struct esb_s producername;
+            esb_constructor(&producername);
+            get_producer_name(dbg,cu_die,err,&producername);
+            update_compiler_target(esb_get_string(&producername));
+            esb_destructor(&producername);
+        }
 
         /*  Once the compiler table has been updated, see
             if we need to generate the list of CU compiled
@@ -618,6 +697,7 @@ print_die_and_children_internal(Dwarf_Debug dbg,
             retry_print_on_match = print_one_die(dbg, in_die, 
                 print_as_info_or_cu(), 
                 die_stack_indent_level, srcfiles, cnt,ignore_die_stack);
+            validate_die_stack_siblings(dbg);
             if (!print_as_info_or_cu() && retry_print_on_match) {
                 if (display_parent_tree) {
                     print_die_stack(dbg,srcfiles,cnt);
@@ -634,7 +714,6 @@ print_die_and_children_internal(Dwarf_Debug dbg,
         }
 
         cdres = dwarf_child(in_die, &child, &err);
-
         /* Check for specific compiler */
         if (check_abbreviations && checking_this_compiler()) {
             Dwarf_Half ab_has_child;
@@ -675,18 +754,44 @@ print_die_and_children_internal(Dwarf_Debug dbg,
 
         /* child first: we are doing depth-first walk */
         if (cdres == DW_DLV_OK) {
+            /*  If the global offset of the (first) child is 
+                <= the parent DW_AT_sibling global-offset-value
+                then the compiler has made a mistake, and
+                the DIE tree is corrupt.  */
+            Dwarf_Off child_overall_offset = 0;
+            int cores = dwarf_dieoffset(child, &child_overall_offset, &err);
+            if (cores == DW_DLV_OK) {
+                char small_buf[200];
+                Dwarf_Off parent_sib_val = get_die_stack_sibling();
+                if (parent_sib_val && 
+                    (parent_sib_val <= child_overall_offset )) {
+                    snprintf(small_buf,sizeof(small_buf),
+                        "A parent DW_AT_sibling of "
+                        "0x%" DW_PR_XZEROS  DW_PR_DUx
+                        " points %s the first child "
+                        "0x%"  DW_PR_XZEROS  DW_PR_DUx
+                        " so the die tree is corrupt "
+                        "(showing section, not CU, offsets). ",
+                        parent_sib_val,
+                        (parent_sib_val == child_overall_offset)?"at":"before",
+                        child_overall_offset);
+                    print_error(dbg,small_buf,DW_DLV_OK,err);
+                }
+            }
+
             die_stack_indent_level++;
             SET_DIE_STACK_ENTRY(die_stack_indent_level,0);
             if (die_stack_indent_level >= DIE_STACK_SIZE ) {
                 print_error(dbg,
-                    "compiled in DIE_STACK_SIZE limit exceeded",
+                    "ERROR: compiled in DIE_STACK_SIZE limit exceeded",
                     DW_DLV_OK,err);
             }
             print_die_and_children_internal(dbg, child,is_info, srcfiles, cnt);
             EMPTY_DIE_STACK_ENTRY(die_stack_indent_level);
             die_stack_indent_level--;
-            if (die_stack_indent_level == 0)
+            if (die_stack_indent_level == 0) {
                 local_symbols_already_began = FALSE;
+            }
             dwarf_dealloc(dbg, child, DW_DLA_DIE);
             child = 0;
         } else if (cdres == DW_DLV_ERROR) {
@@ -1372,23 +1477,23 @@ traverse_one_die(Dwarf_Debug dbg, Dwarf_Attribute attrib, Dwarf_Die die,
 
     DWARF_CHECK_COUNT(self_references_result,1);
     if (FindKeyInBucketGroup(pVisitedInfo,overall_offset)) {
-        char * valname = NULL;
+        char * localvaln = NULL;
         Dwarf_Half attr = 0;
         struct esb_s bucketgroupstr;
         const char *atname = NULL;
         esb_constructor(&bucketgroupstr);
         get_attr_value(dbg, tag, die, attrib, srcfiles, 
             cnt, &bucketgroupstr, show_form_used,verbose);
-        valname = esb_get_string(&bucketgroupstr);
-        esb_destructor(&bucketgroupstr);
+        localvaln = esb_get_string(&bucketgroupstr);
 
         dwarf_whatattr(attrib, &attr, &err);
         atname = get_AT_name(attr,dwarf_names_print_on_error);
   
         /* We have a self reference */
         DWARF_CHECK_ERROR3(self_references_result,
-            "Invalid self reference to DIE: ",atname,valname);
+            "Invalid self reference to DIE: ",atname,localvaln);
         circular_reference = TRUE;
+        esb_destructor(&bucketgroupstr);
     } else {
         Dwarf_Signed i = 0;
         Dwarf_Attribute *atlist = 0;
@@ -2158,6 +2263,7 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
                 notice and report 'odd' identifiers. */
             name = esb_get_string(&lesb);
             safe_strcpy(PU_name,sizeof(PU_name),name,strlen(name));
+            esb_destructor(&lesb);
         }
         }
         break;
@@ -2170,7 +2276,7 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
             &templatenamestr, show_form_used,verbose);
         esb_empty_string(&valname);
         esb_append(&valname, esb_get_string(&templatenamestr));
-        esb_constructor(&templatenamestr);
+        esb_destructor(&templatenamestr);
  
 
         if (check_names && checking_this_compiler()) {
@@ -2223,12 +2329,11 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
             struct esb_s lesb;
             int local_show_form_used = FALSE;
             int local_verbose = 0;
-            char *localname = 0;
             esb_constructor(&lesb);
             get_attr_value(dbg, tag, die, attrib, srcfiles, cnt, 
                 &lesb, local_show_form_used,local_verbose);
-            localname = esb_get_string(&lesb);
-            safe_strcpy(CU_name,sizeof(CU_name),localname,strlen(localname));
+            safe_strcpy(CU_name,sizeof(CU_name),
+               esb_get_string(&lesb),esb_string_len(&lesb));
             need_CU_name = FALSE;
             esb_destructor(&lesb);
         }
@@ -3199,9 +3304,7 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
     Dwarf_Block *tempb = 0;
     Dwarf_Signed tempsd = 0;
     Dwarf_Unsigned tempud = 0;
-    Dwarf_Half attr = 0;
     Dwarf_Off off = 0;
-    Dwarf_Off goff = 0; /* Global offset */
     Dwarf_Die die_for_check = 0;
     Dwarf_Half tag_for_check = 0;
     Dwarf_Bool tempbool = 0;
@@ -3247,6 +3350,8 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
         }
         break;
     case DW_FORM_ref_addr:
+        {
+        Dwarf_Half attr = 0;
         /*  DW_FORM_ref_addr is not accessed thru formref: ** it is an
             address (global section offset) in ** the .debug_info
             section. */
@@ -3270,8 +3375,30 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
                 /*  The value had better be inside the current CU
                     else there is a nasty error here, as a sibling
                     has to be in the same CU, it seems. */
+                /*  The target offset (off) had better be
+                    following the die's global offset else
+                    we have a serious botch. this FORM
+                    defines the value as a .debug_info
+                    global offset. */
                 Dwarf_Off cuoff = 0;
                 Dwarf_Off culen = 0;
+                Dwarf_Off die_overall_offset = 0;
+                int ores = dwarf_dieoffset(die, &die_overall_offset, &err);
+                if (ores != DW_DLV_OK) {
+                    print_error(dbg, "dwarf_dieoffset", ores, err);
+                }
+                SET_DIE_STACK_SIBLING(off);
+                if (die_overall_offset >= off) {
+                    snprintf(small_buf,sizeof(small_buf),
+                        "ERROR: Sibling DW_FORM_ref_offset 0x%" 
+                        DW_PR_XZEROS DW_PR_DUx
+                        " points %s die Global offset "
+                        "0x%"  DW_PR_XZEROS  DW_PR_DUx,
+                        off,(die_overall_offset == off)?"at":"before",
+                        die_overall_offset);
+                    print_error(dbg,small_buf,DW_DLV_OK,0);
+                }
+
                 int res = dwarf_die_CU_offset_range(die,&cuoff,
                     &culen,&err);
                 DWARF_CHECK_COUNT(tag_tree_result,1);
@@ -3286,6 +3413,7 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
                 }
             }
         }
+        }
 
         break;
     case DW_FORM_ref1:
@@ -3293,26 +3421,66 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
     case DW_FORM_ref4:
     case DW_FORM_ref8:
     case DW_FORM_ref_udata:
-        bres = dwarf_formref(attrib, &off, &err);
-        if (bres != DW_DLV_OK) {
+        { 
+        int fres = 0;
+        Dwarf_Half attr = 0; 
+        Dwarf_Off goff = 0; /* Global offset */
+        fres = dwarf_formref(attrib, &off, &err);
+        if (fres != DW_DLV_OK) {
             /* Report incorrect offset */
             snprintf(small_buf,sizeof(small_buf),
                 "%s, offset=<0x%"  DW_PR_XZEROS  DW_PR_DUx 
                 ">","reference form with no valid local ref?!",off);
-            print_error(dbg, small_buf, bres, err);
+            print_error(dbg, small_buf, fres, err);
         }
 
         /* Convert the local offset into a relative section offset */
-        if (show_global_offsets) {
-            bres = dwarf_convert_to_global_offset(attrib, 
+        fres = dwarf_whatattr(attrib, &attr, &err);
+        if (fres != DW_DLV_OK) {
+            snprintf(small_buf,sizeof(small_buf),
+                "Form %d, has no attribute value?!" ,theform);
+            print_error(dbg, small_buf, fres, err);
+        }
+
+        if (show_global_offsets || attr == DW_AT_sibling) {
+            fres = dwarf_convert_to_global_offset(attrib, 
                 off, &goff, &err);
-            if (bres != DW_DLV_OK) {
+            if (fres != DW_DLV_OK) {
                 /*  Report incorrect offset */
                 snprintf(small_buf,sizeof(small_buf),
                     "%s, global die offset=<0x%"  DW_PR_XZEROS  DW_PR_DUx 
                     ">","invalid offset",goff);
-                print_error(dbg, small_buf, bres, err);
+                print_error(dbg, small_buf, fres, err);
             }
+        }
+        if (attr == DW_AT_sibling) {
+            /*  The value had better be inside the current CU
+                else there is a nasty error here, as a sibling
+                has to be in the same CU, it seems. */
+            /*  The target offset (off) had better be
+                following the die's global offset else
+                we have a serious botch. this FORM
+                defines the value as a .debug_info
+                global offset. */
+            Dwarf_Off cuoff = 0;
+            Dwarf_Off culen = 0;
+            Dwarf_Off die_overall_offset = 0;
+            int ores = dwarf_dieoffset(die, &die_overall_offset, &err);
+            if (ores != DW_DLV_OK) {
+                print_error(dbg, "dwarf_dieoffset", ores, err);
+            }
+            SET_DIE_STACK_SIBLING(goff);
+            if (die_overall_offset >= goff) {
+                snprintf(small_buf,sizeof(small_buf),
+                    "ERROR: Sibling offset 0x%"  DW_PR_XZEROS  DW_PR_DUx 
+                    " points %s its own die Global offset "
+                    "0x%"  DW_PR_XZEROS  DW_PR_DUx,
+                    goff,
+                    (die_overall_offset == goff)?"at":"before",
+                    die_overall_offset);
+                print_error(dbg,small_buf,DW_DLV_OK,0);
+            }
+
         }
 
         /*  Do references inside <> to distinguish them ** from
@@ -3396,6 +3564,7 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
                 }
             }
         }
+        }
         break;
     case DW_FORM_block:
     case DW_FORM_block1:
@@ -3420,6 +3589,8 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
     case DW_FORM_data2:
     case DW_FORM_data4:
     case DW_FORM_data8:
+        {
+        Dwarf_Half attr = 0;
         fres = dwarf_whatattr(attrib, &attr, &err);
         if (fres == DW_DLV_ERROR) {
             print_error(dbg, "FORM_datan cannot get attr", fres, err);
@@ -3564,6 +3735,7 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
                     fde_offset_for_cu_high = tempud;
                 }
             }
+        }
         }
         break;
     case DW_FORM_sdata:

@@ -58,7 +58,7 @@ $Header: /plroot/cmplrs.src/v7.4.5m/.RCS/PL/dwarfdump/RCS/dwarfdump.c,v 1.48 200
 extern int elf_open(const char *name,int mode);
 #endif /* WIN32 */
 
-#define DWARFDUMP_VERSION " Fri Feb  1 10:06:59 PST 2013  "
+#define DWARFDUMP_VERSION " Tue Feb  5 16:52:47 PST 2013  "
 
 extern char *optarg;
 
@@ -310,7 +310,7 @@ regex_t search_re;
    frame data.  We're pretty flexible in
    the path to dwarfdump.conf .
 */
-static const char *config_file_path = 0;
+static struct esb_s config_file_path;
 static const char *config_file_abi = 0;
 static char *config_file_defaults[] = {
     "dwarfdump.conf",
@@ -395,6 +395,7 @@ main(int argc, char *argv[])
     Elf *elf = 0;
     int archive = 0;
 
+    esb_constructor(&config_file_path);
 #ifdef WIN32
     /* Windows specific. */
     /* Redirect stderr to stdout. */
@@ -1369,7 +1370,8 @@ process_args(int argc, char *argv[])
                     if (strlen(path) < 1) {
                         goto badopt;
                     }
-                    config_file_path = path;
+                    esb_empty_string(&config_file_path); 
+                    esb_append(&config_file_path,path);
                 } else if (strncmp(optarg, "abi=", 4) == 0) {
                     abi = do_uri_translation(&optarg[4],"-x abi=");
                     if (strlen(abi) < 1) {
@@ -1881,7 +1883,8 @@ process_args(int argc, char *argv[])
         init_generic_config_1200_regs(&config_file_data);
     }
     if (config_file_abi && (frame_flag || eh_frame_flag)) {
-        int res = find_conf_file_and_read_config(config_file_path,
+        int res = find_conf_file_and_read_config(
+            esb_get_string(&config_file_path),
             config_file_abi,
             config_file_defaults,
             &config_file_data);
@@ -2123,14 +2126,15 @@ int get_cu_name(Dwarf_Debug dbg, Dwarf_Die cu_die,
     return ares;
 }
 
-/* Returns the producer of the CU */
+/*  Returns the producer of the CU 
+    Caller must ensure producernameout is
+    a valid, constructed, empty esb_s instance before calling. */
 int get_producer_name(Dwarf_Debug dbg, Dwarf_Die cu_die,
-    Dwarf_Error err, string *producer_name)
+    Dwarf_Error err, struct esb_s *producernameout)
 {
     Dwarf_Attribute producer_attr = 0;
-    int ares;
 
-    ares = dwarf_attr(cu_die, DW_AT_producer, &producer_attr, &err);
+    int ares = dwarf_attr(cu_die, DW_AT_producer, &producer_attr, &err);
     if (ares == DW_DLV_ERROR) {
         print_error(dbg, "hassattr on DW_AT_producer", ares, err);
     } else {
@@ -2138,21 +2142,21 @@ int get_producer_name(Dwarf_Debug dbg, Dwarf_Die cu_die,
             /*  We add extra quotes so it looks more like
                 the names for real producers that get_attr_value
                 produces. */
-            *producer_name = "\"<CU-missing-DW_AT_producer>\"";
+            esb_append(producernameout,"\"<CU-missing-DW_AT_producer>\"");
         } else {
             /*  DW_DLV_OK */
             /*  The string return is valid until the next call to this
                 function; so if the caller needs to keep the returned
                 string, the string must be copied (makename()). */
-            static struct esb_s esb_producer;
-            esb_empty_string(&esb_producer);
             get_attr_value(dbg, DW_TAG_compile_unit, 
-                cu_die, producer_attr, NULL, 0, &esb_producer,
+                cu_die, producer_attr, NULL, 0, producernameout,
                 0 /*show_form_used*/,0 /* verbose */);
-            *producer_name = esb_get_string(&esb_producer);
         }
     }
-
+    /*  If ares is error or missing case, 
+        producer_attr will be left
+        NULL by the call,
+        which is safe when calling dealloc(). */
     dwarf_dealloc(dbg, producer_attr, DW_DLA_ATTR);
     return ares;
 }
@@ -2562,7 +2566,9 @@ void DWARF_CHECK_ERROR3(Dwarf_Check_Categories category,
     }
 }
 
-/* Precondition: 'out' is already constructed and empty. */
+/*  The strings whose pointers are returned here
+    from makename are never destructed, but
+    that is ok since there are only about 10 created at most.  */
 static const char *
 do_uri_translation(const char *s,const char *context)
 {

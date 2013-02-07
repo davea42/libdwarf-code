@@ -58,8 +58,9 @@ $Header: /plroot/cmplrs.src/v7.4.5m/.RCS/PL/dwarfdump/RCS/dwarfdump.c,v 1.48 200
 #include "common.h"
 #include "naming.h"
 #include "uri.h"
-#define DWARFDUMP_VERSION " Fri Feb  1 10:06:59 PST 2013  "
+#define DWARFDUMP_VERSION " Tue Feb  5 16:52:47 PST 2013  "
 
+using std::vector;
 using std::string;
 using std::cout;
 using std::cerr;
@@ -1978,8 +1979,12 @@ int get_cu_name(DieHolder &hcu_die,
             /* DW_DLV_OK */
 
             SrcfilesHolder srcfiles;
+            DieVec dieVec;
+            int indentlevel = 0;
             get_attr_value(hcu_die.dbg(), DW_TAG_compile_unit, 
-                hcu_die.die(), name_attr, 
+                hcu_die.die(), 
+                indentlevel, dieVec,
+                name_attr, 
                 srcfiles,
                 long_name,
                 false /*show_form_used*/,0 /* verbose */);
@@ -2022,8 +2027,12 @@ int get_producer_name(DieHolder &hcu_die,
                 string, the string must be copied (makename()). */
             string esb_producer;
             SrcfilesHolder srcfiles;
+            DieVec dieVec;
+            int indentlevel = 0;
             get_attr_value(hcu_die.dbg(), DW_TAG_compile_unit, 
-                hcu_die.die(), producer_attr, 
+                hcu_die.die(), 
+                indentlevel,dieVec,
+                producer_attr, 
                 srcfiles,producer_name,
                 false /*show_form_used*/,
                 0 /* verbose */);

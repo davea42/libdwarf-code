@@ -346,6 +346,10 @@ test_canonical_append(void)
 
     The defaults are listed in dwarfdump.c in the array 
     config_file_defaults[].
+
+    Since named_file comes from an esb_get_string, lname
+    may be non-null but pointing to empty string to mean
+    no-name.
 */
 static FILE *
 find_a_file(const char *named_file, char **defaults, const char ** name_used)
@@ -359,7 +363,7 @@ find_a_file(const char *named_file, char **defaults, const char ** name_used)
     test_canonical_append();
 #endif /* BUILD_FOR_TEST */
 
-    if (lname) {
+    if (lname && (strlen(lname) > 0)) {
         /* Name given, just assume it is fully correct, try no other. */
         if (verbose > 1) {
             printf("dwarfdump looking for configuration as %s\n",

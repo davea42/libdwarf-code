@@ -55,6 +55,7 @@ using std::vector;
 
 static bool traverse_one_die(Dwarf_Debug dbg, 
     Dwarf_Attribute attrib, Dwarf_Die die,
+    int indentlevel,DieVec &dieVec,
     SrcfilesHolder & hsrcfiles,
     int die_indent_level);
 
@@ -71,6 +72,7 @@ static bool print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
    Dwarf_Attribute actual_addr,
    bool print_information, 
    int die_indent_level,
+   DieVec &dieVec,
    SrcfilesHolder &srcfiles);
 static void get_location_list(Dwarf_Debug dbg, 
    Dwarf_Die die,
@@ -201,9 +203,94 @@ struct operation_descr_s opdesc[]= {
 static void
 print_die_and_children_internal(DieHolder &die_in,
     Dwarf_Bool is_info,
-    vector<DieHolder> &dieVec,
+    DieVec &dieVec,
     int &indent_level,
     SrcfilesHolder & srcfiles);
+
+static void
+safe_set_dievec_sibling(DieVec &dv,int level,Dwarf_Off off)
+{
+    if(level >= 0 && level < dv.Size()) {
+        dv.setSiblingGlobalOffset(level,off);
+    }
+}
+
+// This removes items from here up from sibling comparisons, effectively.
+// We do at most two, see the stack update code.
+static void
+clearSiblingComparisons(DieVec  &dieVec,int level) 
+{
+    int start = level;
+    int end = level +2;
+    if (dieVec.Size() < end) {
+       end = dieVec.Size();
+    }
+    for (int cur = start  ; cur < end;  ++cur) {
+        if(cur >= 0) {
+            dieVec.setSiblingGlobalOffset(cur,0);
+        }
+    }
+}
+static Dwarf_Off
+get_die_stack_sibling( int indentlevel, DieVec &dieVec)
+{
+    int i = indentlevel-1; 
+    if ( i > dieVec.Size()) {
+         i = dieVec.Size()-1;
+    }
+    for( ; i >=0 ; --i)
+    {
+        Dwarf_Off v = dieVec.getSiblingGlobalOffset(i);
+        if (v) {
+            return v;
+        }
+    }
+    return 0;
+}
+static void 
+validate_die_stack_siblings(Dwarf_Debug dbg, 
+    int indentlevel,
+    DieVec &dieVec)
+{
+    int i = indentlevel-1;
+    Dwarf_Off innersiboffset = 0;
+    if ( i > dieVec.Size()) {
+         i = dieVec.Size()-1;
+    }
+    for( ; i >=0 ; --i)
+    {
+        Dwarf_Off v = dieVec.getSiblingGlobalOffset(i);
+        if (v) {
+            innersiboffset = v;
+            break;
+        }
+    }
+    if(!innersiboffset) {
+        /* no sibling values to check. */
+        return;
+    }
+    for(--i ; i >= 0 ; --i)
+    {
+        /* outersiboffset is an outer sibling offset. */
+        Dwarf_Off outersiboffset = dieVec.getSiblingGlobalOffset(i);
+        if (outersiboffset ) {
+            if (outersiboffset < innersiboffset) {
+                Dwarf_Error err = 0;
+                string errmsg("Die stack sibling error, outer global offset ");
+                errmsg.append(IToHex0N(outersiboffset,10));
+                errmsg.append(" less than inner global offset ");
+                errmsg.append(IToHex0N(innersiboffset,10));
+                errmsg.append(", the DIE tree is erroneous.");
+                errmsg.append(" ");
+                print_error(dbg,errmsg.c_str(), DW_DLV_OK, err);
+            }
+            /*  We only need check one level with an offset 
+                at each entry. */
+            break;
+        }
+    }
+    return;
+}
 
 static bool 
 print_as_info_or_cu()
@@ -461,11 +548,21 @@ print_one_die_section(Dwarf_Debug dbg,bool is_info)
 
 static void
 print_a_die_stack(Dwarf_Debug dbg,SrcfilesHolder & hsrcfiles,int lev,
-    vector<DieHolder> &dieVec)
+    DieVec &dieVec)
 {
     bool ignore_die_stack = false;
     bool print_information = true;
-    print_one_die(dieVec[lev],print_information,lev,hsrcfiles,
+    DieHolder dh;
+    bool res  = dieVec.getDieHolder(lev,dh);
+    if (!res) {
+        print_error(dbg,
+            "ERROR: Logic error, this die stack level is impossible.",
+            DW_DLV_OK,0);
+    }
+    print_one_die(dh,
+        print_information,lev,
+        dieVec,
+        hsrcfiles,
         ignore_die_stack);
 }
 
@@ -476,7 +573,7 @@ print_die_and_children(DieHolder & in_die_in,
 {
     int indent_level = 0;
 
-    vector<DieHolder> dieVec;
+    DieVec dieVec;
     print_die_and_children_internal(in_die_in,
         is_info,
         dieVec,
@@ -485,16 +582,24 @@ print_die_and_children(DieHolder & in_die_in,
 }
 
 static void
-print_die_stack(DieHolder &curdie, vector<DieHolder> &dieVec,
+print_die_stack(Dwarf_Debug dbg,DieVec &dieVec,
     SrcfilesHolder & hsrcfiles)
 {
     unsigned lev = 0;
     bool print_information = true;
     bool ignore_die_stack = false;
 
-    for (lev = 0; lev < dieVec.size(); ++lev)
+    for (lev = 0; lev < dieVec.Size(); ++lev)
     {
-        print_one_die(dieVec[lev],print_information,lev,hsrcfiles,
+        DieHolder dh;
+        bool res  = dieVec.getDieHolder(lev,dh);
+        if (!res) {
+            print_error(dbg,
+                "ERROR: Logic error B, this die stack error is impossible.",
+                DW_DLV_OK,0);
+        }
+        print_one_die(dh,print_information,lev,
+            dieVec,hsrcfiles,
             /* ignore_die_printed_flag= */ignore_die_stack);
     }
 }
@@ -504,7 +609,7 @@ print_die_stack(DieHolder &curdie, vector<DieHolder> &dieVec,
 static void
 print_die_and_children_internal(DieHolder & hin_die_in,
     Dwarf_Bool is_info,
-    vector<DieHolder> &dieVec,
+    DieVec &dieVec,
     int &indent_level,
     SrcfilesHolder & hsrcfiles)
 {
@@ -513,6 +618,7 @@ print_die_and_children_internal(DieHolder & hin_die_in,
     int tres;
     int cdres;
     DieHolder hin_die(hin_die_in);
+    hin_die.setSiblingGlobalOffset(0);
     Dwarf_Debug dbg = hin_die_in.dbg();
 
     for (;;) {
@@ -523,7 +629,7 @@ print_die_and_children_internal(DieHolder & hin_die_in,
             &error_message_data.DIE_overall_offset,
             &error_message_data.DIE_offset,
             &err);
-        dieVec.push_back(hin_die);
+        dieVec.PushBack(hin_die);
         if (check_tag_tree) {
             DWARF_CHECK_COUNT(tag_tree_result,1);
             if (indent_level == 0) {
@@ -545,7 +651,13 @@ print_die_and_children_internal(DieHolder & hin_die_in,
                 string ctagname("<child tag invalid>");
                 string ptagname("<parent tag invalid>");
 
-                Dwarf_Die tp = dieVec[indent_level - 1].die();
+                Dwarf_Die tp = 0;
+                bool res  = dieVec.getDie(indent_level -1,tp);
+                if (!res) {
+                    print_error(dbg,
+                        "ERROR: Logic error C, this die stack error is impossible.",
+                        DW_DLV_OK,0);
+                }
                 int pres = dwarf_tag(tp, &tag_parent, &err);
                 int cres = dwarf_tag(in_die, &tag_child, &err);
                 if (pres != DW_DLV_OK)
@@ -590,11 +702,12 @@ print_die_and_children_internal(DieHolder & hin_die_in,
         /* here to pre-descent processing of the die */
         bool retry_print_on_match = 
             print_one_die(hin_die, print_as_info_or_cu(),
-                indent_level, hsrcfiles,
+                indent_level, dieVec,hsrcfiles,
             /* ignore_die_printed_flag= */ false);
+        validate_die_stack_siblings(dbg,indent_level,dieVec);
         if (!print_as_info_or_cu() && retry_print_on_match) {
             if (display_parent_tree) {
-                print_die_stack(hin_die,dieVec,hsrcfiles);
+                print_die_stack(dbg,dieVec,hsrcfiles);
             } else {
                 if (display_children_tree) {
                     print_a_die_stack(dbg,hsrcfiles,indent_level,dieVec);
@@ -647,12 +760,43 @@ print_die_and_children_internal(DieHolder & hin_die_in,
 
         /* child first: we are doing depth-first walk */
         if (cdres == DW_DLV_OK) {
+
+            //  If the global offset of the (first) child is 
+            //  <= the parent DW_AT_sibling global-offset-value
+            //  then the compiler has made a mistake, and
+            //  the DIE tree is corrupt.  
+            Dwarf_Off child_overall_offset = 0;
+            int cores = dwarf_dieoffset(child, &child_overall_offset, &err);
+            if (cores == DW_DLV_OK) {
+                char small_buf[200];
+                Dwarf_Off parent_sib_val = 
+                   get_die_stack_sibling(indent_level,dieVec);
+                if (parent_sib_val && 
+                    (parent_sib_val <= child_overall_offset )) {
+                    string errmsg("A parent DW_AT_sibling of ");
+                    errmsg.append(IToHex0N(parent_sib_val,10));
+                    errmsg.append(" points ");
+                    errmsg.append((parent_sib_val == child_overall_offset)?
+                        "at":"before");
+                    errmsg.append(" the first child ");
+                    errmsg.append(IToHex0N(child_overall_offset,10));
+                    errmsg.append(" so the die tree is corrupt ");
+                    errmsg.append("(showing section, not CU, offsets).  ");
+                    print_error(dbg,errmsg.c_str(),DW_DLV_OK,err);
+                }
+            }
+
             DieHolder hchild(dbg,child);
             indent_level++;
             print_die_and_children_internal(hchild, 
                 is_info,
                 dieVec,indent_level,hsrcfiles);
+            // This removes the hchild from sibling comparisons.
             indent_level--;
+
+            // This eliminates the parent from sibling
+            // comparisons already done.
+            clearSiblingComparisons(dieVec,indent_level-1);
             if (indent_level == 0) {
                 local_symbols_already_began = false;
             }
@@ -702,7 +846,7 @@ print_die_and_children_internal(DieHolder & hin_die_in,
 
         /*  Here do any post-descent (ie post-dwarf_child) processing of 
             the in_die (just pop stack). */
-        dieVec.pop_back();
+        dieVec.PopBack();
         if (cdres == DW_DLV_OK) {
             /* Set to process the sibling, loop again. */
             hin_die = hsibling;
@@ -726,6 +870,7 @@ bool
 print_one_die(DieHolder & hdie, 
     bool print_information,
     int die_indent_level,
+    DieVec &dieVec,
     SrcfilesHolder &hsrcfiles,
     bool ignore_die_printed_flag)
 {
@@ -897,7 +1042,8 @@ print_one_die(DieHolder & hdie,
 
             bool attr_match = print_attribute(dbg, die, attr,
                 atlist[i],
-                print_information,die_indent_level, hsrcfiles);
+                print_information,die_indent_level, 
+                dieVec,hsrcfiles);
             if (print_information == false && attr_match) {
                 attribute_matched = true;
             }
@@ -1181,6 +1327,8 @@ show_attr_form_error(Dwarf_Debug dbg,unsigned attr,unsigned form,string *out)
 static bool
 traverse_attribute(Dwarf_Debug dbg, Dwarf_Die die, Dwarf_Half attr,
     Dwarf_Attribute attr_in,
+    int vecindentlevel,
+    DieVec &dieVec,
     bool print_information,
     SrcfilesHolder & hsrcfiles,
     int die_indent_level)
@@ -1224,7 +1372,9 @@ traverse_attribute(Dwarf_Debug dbg, Dwarf_Die die, Dwarf_Half attr,
         Dwarf_Die ref_die = 0;
 
         ++die_indent_level;
-        get_attr_value(dbg, tag, die, attrib, hsrcfiles, valname, 
+        get_attr_value(dbg, tag, die, 
+            vecindentlevel,dieVec,
+            attrib, hsrcfiles, valname, 
             show_form_used,verbose);
         /* Get the global offset for reference */
         res = dwarf_global_formref(attrib, &ref_off, &err);
@@ -1270,6 +1420,7 @@ traverse_attribute(Dwarf_Debug dbg, Dwarf_Die die, Dwarf_Half attr,
                     " -> " << valname << endl;
             }
             circular_reference = traverse_one_die(dbg,attrib,ref_die,
+                vecindentlevel, dieVec,
                 hsrcfiles,die_indent_level);
             pVisitedOffsetData->DeleteVisitedOffset(die_off);
             --die_indent_level;
@@ -1283,6 +1434,7 @@ traverse_attribute(Dwarf_Debug dbg, Dwarf_Die die, Dwarf_Half attr,
 /* Traverse one DIE in order to detect self references to DIES. */
 static bool
 traverse_one_die(Dwarf_Debug dbg, Dwarf_Attribute attrib, Dwarf_Die die,
+    int vecindentlevel,DieVec &dieVec,
     SrcfilesHolder & hsrcfiles,
     int die_indent_level)
 {
@@ -1322,7 +1474,9 @@ traverse_one_die(Dwarf_Debug dbg, Dwarf_Attribute attrib, Dwarf_Die die,
         string valname;
         Dwarf_Half attr = 0;
         string atname;
-        get_attr_value(dbg, tag, die, attrib, hsrcfiles, 
+        get_attr_value(dbg, tag, die, 
+            vecindentlevel, dieVec,
+            attrib, hsrcfiles, 
             valname, show_form_used,verbose);
         dwarf_whatattr(attrib, &attr, &err);
         atname = get_AT_name(attr,dwarf_names_print_on_error);
@@ -1350,8 +1504,10 @@ traverse_one_die(Dwarf_Debug dbg, Dwarf_Attribute attrib, Dwarf_Die die,
             Dwarf_Half attr = 0;
             int ares = dwarf_whatattr(atlist[i], &attr, &err);
             if (ares == DW_DLV_OK) {
-                circular_reference = traverse_attribute(dbg, die, attr,
+                circular_reference = traverse_attribute(dbg, die, 
+                    attr,
                     atlist[i],
+                    vecindentlevel,dieVec,
                     print_information, hsrcfiles,
                     die_indent_level);
             } else {
@@ -1616,6 +1772,7 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die, Dwarf_Half attr,
     Dwarf_Attribute attr_in,
     bool print_information,
     int die_indent_level,
+    DieVec &dieVec,
     SrcfilesHolder & hsrcfiles)
 {
     Dwarf_Attribute attrib = 0;
@@ -1860,6 +2017,7 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die, Dwarf_Half attr,
                 break;
             default:
                 get_attr_value(dbg, tag, die,
+                    die_indent_level, dieVec,
                     attrib, hsrcfiles, valname,show_form_used,
                     verbose);
                 break;
@@ -1889,7 +2047,9 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die, Dwarf_Half attr,
                     DW_AT_low_pc to get a true pc. */
                 valname.append("<offset-from-lowpc>");
             }
-            get_attr_value(dbg, tag, die, attrib, hsrcfiles, valname,
+            get_attr_value(dbg, tag, die, 
+                die_indent_level, dieVec,
+                attrib, hsrcfiles, valname,
                 show_form_used,verbose);
             /* Update base and high addresses for CU */
             if (error_message_data.seen_CU && 
@@ -2001,28 +2161,36 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die, Dwarf_Half attr,
                 break;
             }
 
-            get_attr_value(dbg, tag,die, attrib, hsrcfiles, valname,
+            get_attr_value(dbg, tag,die, 
+                die_indent_level, dieVec,
+                attrib, hsrcfiles, valname,
                 show_form_used,verbose);
             print_range_attribute(dbg,die,attr,attr_in,
                 theform,dwarf_names_print_on_error,print_information,extra);
         }
         break;
     case DW_AT_MIPS_linkage_name:
-        get_attr_value(dbg, tag, die, attrib, hsrcfiles,
+        get_attr_value(dbg, tag, die, 
+            die_indent_level, dieVec,
+            attrib, hsrcfiles,
             valname, show_form_used,verbose);
 
         if (check_locations || check_ranges) {
             string lname;
             bool local_show_form = false;
             int local_verbose = 0;
-            get_attr_value(dbg,tag,die,attrib,hsrcfiles,lname,local_show_form,
+            get_attr_value(dbg,tag,die,
+                die_indent_level, dieVec,
+                attrib,hsrcfiles,lname,local_show_form,
                 local_verbose);
             error_message_data.PU_name = lname;
         }
         break;
     case DW_AT_name:
     case DW_AT_GNU_template_name:
-        get_attr_value(dbg, tag, die, attrib, hsrcfiles, 
+        get_attr_value(dbg, tag, die, 
+            die_indent_level, dieVec,
+            attrib, hsrcfiles, 
             valname, show_form_used,verbose);
         if (check_names && checking_this_compiler()) {
             /*  Look for specific name forms, attempting to
@@ -2030,7 +2198,9 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die, Dwarf_Half attr,
             string lname;
             bool local_show_form = false;
             int local_verbose = 0;
-            get_attr_value(dbg,tag,die,attrib,hsrcfiles,lname,local_show_form,
+            get_attr_value(dbg,tag,die,
+                die_indent_level, dieVec,
+                attrib,hsrcfiles,lname,local_show_form,
                 local_verbose);
             DWARF_CHECK_COUNT(names_result,1);
             if (!strcmp("\"(null)\"",lname.c_str())) {
@@ -2055,7 +2225,9 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die, Dwarf_Half attr,
             string lname;
             bool local_show_form = false;
             int local_verbose = 0;
-            get_attr_value(dbg,tag,die,attrib,hsrcfiles,lname,
+            get_attr_value(dbg,tag,die,
+                die_indent_level, dieVec,
+                attrib,hsrcfiles,lname,
                 local_show_form, local_verbose);
             error_message_data.PU_name = lname;
         }
@@ -2066,21 +2238,27 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die, Dwarf_Half attr,
             bool local_show_form_used = false;
             int local_verbose = 0;
             string localname;
-            get_attr_value(dbg, tag, die, attrib, hsrcfiles, 
+            get_attr_value(dbg, tag, die, 
+                die_indent_level, dieVec,
+                attrib, hsrcfiles, 
                 localname, local_show_form_used,local_verbose);
             error_message_data.CU_name = localname;
             error_message_data.need_CU_name = false;
         }
         break;
     case DW_AT_producer:
-        get_attr_value(dbg, tag, die, attrib, hsrcfiles, 
+        get_attr_value(dbg, tag, die, 
+            die_indent_level, dieVec,
+            attrib, hsrcfiles, 
             valname, show_form_used,verbose);
         /* If we are in checking mode, identify the compiler */
         if (do_check_dwarf || search_is_on) {
             bool local_show_form = false;
             int local_verbose = 0;
             string local_producer;
-            get_attr_value(dbg, tag, die, attrib, hsrcfiles, 
+            get_attr_value(dbg, tag, die, 
+                die_indent_level, dieVec,
+                attrib, hsrcfiles, 
                 local_producer, local_show_form,local_verbose);
             /* Check if this compiler version is a target */
             update_compiler_target(local_producer);
@@ -2095,7 +2273,9 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die, Dwarf_Half attr,
     case DW_AT_specification:
     case DW_AT_abstract_origin:
     case DW_AT_type:
-        get_attr_value(dbg, tag, die, attrib, hsrcfiles ,
+        get_attr_value(dbg, tag, die, 
+            die_indent_level, dieVec,
+            attrib, hsrcfiles ,
             valname, show_form_used,verbose);
         if (check_forward_decl || check_self_references) {
             Dwarf_Off die_off = 0;
@@ -2140,7 +2320,10 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die, Dwarf_Half attr,
                 if (res == DW_DLV_OK) {
                     DieHolder hdie(dbg,ref_die);
                     ++die_indent_level;
-                    
+                    // We don't do a die stack here.
+                    // So use a temporary stack, empty.
+                    DieVec dieVec;
+                    int vec_indent_level = 0;
                     if (dump_visited_info) {
                         Dwarf_Off off;
                         dwarf_die_CU_offset(die, &off, &err);
@@ -2150,7 +2333,8 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die, Dwarf_Half attr,
                         unsigned w = die_indent_level * 2 + 2;
                         cout << std::setw(w)<< atname << " -> " << valname << endl ;
                     }
-                    traverse_one_die(dbg,attrib,ref_die,hsrcfiles,die_indent_level);
+                    traverse_one_die(dbg,attrib,ref_die,
+                        vec_indent_level,dieVec,hsrcfiles,die_indent_level);
                     --die_indent_level;
                 }
                 pVisitedOffsetData->DeleteVisitedOffset(die_off);
@@ -2187,7 +2371,9 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die, Dwarf_Half attr,
         }
         break;
     default:
-        get_attr_value(dbg, tag,die, attrib, hsrcfiles, valname,
+        get_attr_value(dbg, tag,die, 
+            die_indent_level,dieVec,
+            attrib, hsrcfiles, valname,
             show_form_used,verbose);
         break;
     }
@@ -2913,15 +3099,16 @@ print_attributes_encoding(Dwarf_Debug dbg)
     We append to str_out.  */
 void
 get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag, 
-    Dwarf_Die die, Dwarf_Attribute attrib,
+    Dwarf_Die die, 
+    int indentlevel,
+    DieVec &dieVec,
+    Dwarf_Attribute attrib,
     SrcfilesHolder &hsrcfiles, string &str_out,
     bool show_form,int local_verbose)
 {
     Dwarf_Signed tempsd = 0;
     Dwarf_Unsigned tempud = 0;
     Dwarf_Half attr = 0;
-    Dwarf_Off off = 0;
-    Dwarf_Off goff = 0;
     Dwarf_Die die_for_check = 0;
     Dwarf_Half tag_for_check = 0;
     Dwarf_Addr addr = 0;
@@ -2951,9 +3138,11 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
         }
         break;
     case DW_FORM_ref_addr:
+        {
         /*  DW_FORM_ref_addr is not accessed thru formref: ** it is an
             address (global section offset) in ** the .debug_info
             section. */
+        Dwarf_Off off = 0;
         bres = dwarf_global_formref(attrib, &off, &err);
         if (bres == DW_DLV_OK) {
             str_out.append(BracketSurround(
@@ -2969,9 +3158,30 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
         } else if (wres == DW_DLV_NO_ENTRY) {
         } else {
             if (attr == DW_AT_sibling) {
-                /*  The value had better be inside the current CU
-                    else there is a nasty error here, as a sibling
-                    has to be in the same CU, it seems. */
+                //  The target offset (off) had better be
+                //  following the die's global offset else
+                //  we have a serious botch. this FORM
+                //  defines the value as a .debug_info
+                //  global offset. 
+                Dwarf_Off die_overall_offset = 0;
+                int ores = dwarf_dieoffset(die, &die_overall_offset, &err);
+                if (ores != DW_DLV_OK) {
+                    print_error(dbg, "dwarf_dieoffset", ores, err);
+                }
+                safe_set_dievec_sibling(dieVec,indentlevel-1,off);
+                if (die_overall_offset >= off) {
+                    string errmsg("ERROR: Sibling DW_FORM_ref_offset ");
+                    errmsg.append(IToHex0N(off,10));
+                    errmsg.append(" points ");
+                    errmsg.append((die_overall_offset == off)?"at":"before");
+                    errmsg.append(" die Global offset ");
+                    errmsg.append(IToHex0N(die_overall_offset,10));
+                    print_error(dbg,errmsg.c_str(),DW_DLV_OK,0);
+                }
+
+                //  The value had better be inside the current CU
+                //  else there is a nasty error here, as a sibling
+                //  has to be in the same CU, it seems. 
                 Dwarf_Off cuoff = 0;
                 Dwarf_Off culen = 0;
                 DWARF_CHECK_COUNT(tag_tree_result,1);
@@ -2988,13 +3198,16 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
                 }
             }
         }
-
+        }
         break;
     case DW_FORM_ref1:
     case DW_FORM_ref2:
     case DW_FORM_ref4:
     case DW_FORM_ref8:
     case DW_FORM_ref_udata:
+        {
+        Dwarf_Off goff = 0;
+        Dwarf_Off off = 0;
         bres = dwarf_formref(attrib, &off, &err);
         if (bres != DW_DLV_OK) {
             /* Report incorrect offset */
@@ -3003,8 +3216,16 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
             msg.append(BracketSurround(IToHex0N(off,10)));
             print_error(dbg, msg, bres, err);
         }
+        int fres = dwarf_whatattr(attrib, &attr, &err);
+        if (fres != DW_DLV_OK) {
+            string errmsg("Form ");
+            errmsg.append(IToDec(theform));
+            errmsg.append(", has no attribute value?!");
+            print_error(dbg, errmsg.c_str(), fres, err);
+        }
+
         /* Convert the local offset into a relative section offset */
-        if (show_global_offsets) {
+        if (show_global_offsets || attr == DW_AT_sibling) {
             bres = dwarf_convert_to_global_offset(attrib,
                 off, &goff, &err);
             if (bres != DW_DLV_OK) {
@@ -3015,6 +3236,37 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
                 print_error(dbg, msg, bres, err);
             }
         }
+        if (attr == DW_AT_sibling) {
+            //  The target offset (off) had better be
+            //  following the die's global offset else
+            //  we have a serious botch. this FORM
+            //  defines the value as a .debug_info
+            //  global offset. */
+            Dwarf_Off cuoff = 0;
+            Dwarf_Off culen = 0;
+            Dwarf_Off die_overall_offset = 0;
+            int ores = dwarf_dieoffset(die, &die_overall_offset, &err);
+            if (ores != DW_DLV_OK) {
+                print_error(dbg, "dwarf_dieoffset", ores, err);
+            }
+            safe_set_dievec_sibling(dieVec,indentlevel-1,goff);
+            //  The value had better be inside the current CU
+            //  else there is a nasty error here, as a sibling
+            //  has to be in the same CU, it seems. */
+            if (die_overall_offset >= goff) {
+                string errmsg("ERROR: Sibling offset ");
+                errmsg.append(IToHex0N(goff,10));
+                errmsg.append(" points ");
+                errmsg.append((die_overall_offset == goff)?"at":"before");
+                errmsg.append(" its own die Global offset ");
+                errmsg.append(IToHex0N(die_overall_offset,10));
+                errmsg.append(" ");
+                print_error(dbg,errmsg.c_str(),DW_DLV_OK,0);
+             }
+
+         }
+
+
 
         /*  Do references inside <> to distinguish them ** from
             constants. In dense form this results in <<>>. Ugly for
@@ -3099,6 +3351,7 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
                     }
                 }
             }
+        }
         }
         break;
     case DW_FORM_block:

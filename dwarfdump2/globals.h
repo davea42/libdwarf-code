@@ -95,6 +95,7 @@ typedef unsigned long long  __uint64_t;
 #include <iomanip> // For setw
 #include <list> 
 #include <map> 
+#include <vector> 
 #include <set> 
 #include <string.h>
 #ifdef HAVE_ELF_H
@@ -400,6 +401,7 @@ extern bool print_one_die(
     DieHolder &hdie_in,
     bool print_information,
     int indent_level,
+    DieVec &dieVec,
     SrcfilesHolder &srcfiles,
     bool ignore_die_printed_flag);
 
@@ -442,6 +444,8 @@ get_proc_name(Dwarf_Debug dbg, Dwarf_Die die,
 
 void get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
    Dwarf_Die die,
+   int indentlevel,
+   DieVec &dieVec,
    Dwarf_Attribute attrib,
    SrcfilesHolder &srcfiles,
    std::string &str_out,bool show_form,

@@ -1,3 +1,17 @@
+2013-02-05  David Anderson
+     * dwarfdump.cc, common.cc: Update version string.
+       get_attr_value adds dieVec argument.
+     * dieholder.h: Create new type DieVec for the die vector.
+     * print_die.cc: Check DW_AT_sibling values for sanity,
+       and when something quite wrong is found, print an error
+       and stop. Uses DieVec now. Corrected some mistakes
+       in handling the vector.
+     * globals.h: Uses DieVec now, for print_one_die(),
+       get_attr_value.
+     * print_aranges.cc: Uses DieVec now.
+     * print_lines.cc: Uses DieVec now.
+     * globals.h: Uses DieVec now.
+     * dwarfdump.cc: Uses DieVec now.
 2013-02-03  David Anderson
      * checkutil.h: A 64bit constant was missing the trailing ULL
        and a compiler caught the mistake. Added the ULL.
