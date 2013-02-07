@@ -618,11 +618,23 @@ is_32bit_abs_reloc(unsigned int type, Dwarf_Half machine)
         break;
 #endif /* EM_ARM */
 
-#if defined(EM_PPC64) && defined (R_PPC64_ADDR32)
+/*  On FreeBSD R_PPC64_ADDR32 not defined
+    so we use the R_PPC_ names which
+    have the proper value.
+    Our headers have:
+    R_PPC64_ADDR64   38
+    R_PPC_ADDR32     1 so we use this one
+    R_PPC64_ADDR32   R_PPC_ADDR32
+
+    R_PPC64_DTPREL32 110  which may be wrong/unavailable
+    R_PPC64_DTPREL64 78
+    R_PPC_DTPREL32   78 
+    */
+#if defined(EM_PPC64) && defined (R_PPC_ADDR32)
     case EM_PPC64:
         r = (0
-#if defined(R_PPC64_ADDR32)
-            | (type == R_PPC64_ADDR32)
+#if defined(R_PPC_ADDR32)
+            | (type == R_PPC_ADDR32)
 #endif
 #if defined(R_PPC64_DTPREL32)
             | (type == R_PPC64_DTPREL32)

@@ -1,3 +1,7 @@
+2013-02-07  David Anderson
+     * dwarf_elf_access.c: FreeBSD did not have R_PPC64_ADDR32
+       as a relocation name, so changed one name to be the name
+       usable in Ubuntu and FreeBSD, R_PPC_ADDR32.
 2013-02-01  David Anderson
      * libdwarf2.1.mm: Improved the documentation of the
        badly-named functions dwarf_whatform() and 
