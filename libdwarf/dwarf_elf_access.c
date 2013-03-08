@@ -75,6 +75,13 @@
 #define EM_MIPS 8
 #endif
 
+#ifndef EM_K10M
+#define EM_K10M 181  /* Intel K10M */
+#endif
+#ifndef EM_L10M
+#define EM_L10M 180  /* Intel L10M */
+#endif
+
 
 #ifdef HAVE_ELF64_GETEHDR
 extern Elf64_Ehdr *elf64_getehdr(Elf *);
@@ -671,6 +678,12 @@ is_32bit_abs_reloc(unsigned int type, Dwarf_Half machine)
 #endif /* EM_S390 */
 
 #if defined(EM_X86_64) && defined (R_X86_64_32)
+#if defined(EM_K10M)
+    case EM_K10M:
+#endif
+#if defined(EM_L10M)
+    case EM_L10M:
+#endif
     case EM_X86_64:
         r = (0
 #if defined (R_X86_64_32)
@@ -780,6 +793,12 @@ is_64bit_abs_reloc(unsigned int type, Dwarf_Half machine)
 #endif /* EM_390 */
 
 #if defined(EM_X86_64) && defined (R_X86_64_64)
+#if defined(EM_K10M)
+    case EM_K10M:
+#endif
+#if defined(EM_L10M)
+    case EM_L10M:
+#endif
     case EM_X86_64:
         r = (0
 #if defined (R_X86_64_64)
