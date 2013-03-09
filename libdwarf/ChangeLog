@@ -1,3 +1,6 @@
+2013-03-08  David Anderson
+     * dwarf_elf_access.c: Now we handle K10M and L10M
+       as having relocations named as in x86, x86_64.
 2013-02-07  David Anderson
      * dwarf_elf_access.c: FreeBSD did not have R_PPC64_ADDR32
        as a relocation name, so changed one name to be the name
