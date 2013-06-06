@@ -1,3 +1,8 @@
+2013-06-08  David Anderson
+     * libdwarf2.1.mm: Improved the documentation of
+       dwarf_highpc() function to suggest how to interpret
+       the value (pc or offset).
+     * libdwarf2.1.pdf: Regenerated.
 2013-03-08  David Anderson
      * dwarf_elf_access.c: Now we handle K10M and L10M
        as having relocations named as in x86, x86_64.

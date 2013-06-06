@@ -8,7 +8,7 @@ n\."
 .nr Hb 5
 \." ==============================================
 \." Put current date in the following at each rev
-.ds vE rev 2.09, February 01, 2013
+.ds vE rev 2.10, June 06, 2013
 \." ==============================================
 \." ==============================================
 .ds | |
@@ -2270,7 +2270,8 @@ The function \f(CWdwarf_lowpc()\fP returns
 \f(CWDW_DLV_OK\fP and sets \f(CW*return_lowpc\fP
 to the low program counter 
 value associated with the \f(CWdie\fP descriptor if \f(CWdie\fP 
-represents a debugging information entry with this attribute.  
+represents a debugging information entry with the
+\f(CWDW_AT_low_pc\fP attribute.
 It returns \f(CWDW_DLV_NO_ENTRY\fP if \f(CWdie\fP does not have this 
 attribute. 
 It returns \f(CWDW_DLV_ERROR\fP if an error occurred. 
@@ -2286,7 +2287,20 @@ The function \f(CWdwarf_highpc()\fP returns
 \f(CWDW_DLV_OK\fP and sets \f(CW*return_highpc\fP
 the high program counter 
 value associated with the \f(CWdie\fP descriptor if \f(CWdie\fP 
-represents a debugging information entry with this attribute.  
+represents a debugging information entry with the
+\f(CWDW_AT_high_pc attribute\fP.  
+The value returned may be literally a pc value (if the FORM
+of the attribute DW_AT_high_pc is of class address)
+or it may be a offset (if the FORM is of class constant).
+
+It may be convenient to use the 
+\f(CWdwarf_attr()\fP,
+\f(CWdwarf_get_version_of_die()\fP,
+\f(CWdwarf_get_form_class()\fP,
+and/or
+\f(CWdwarf_whatform()\fP
+functions to determine which class the value has.
+
 It returns \f(CWDW_DLV_NO_ENTRY\fP if \f(CWdie\fP does not have this 
 attribute. 
 It returns \f(CWDW_DLV_ERROR\fP if an error occurred. 
