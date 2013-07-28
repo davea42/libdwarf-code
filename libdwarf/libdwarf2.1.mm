@@ -8,7 +8,7 @@ n\."
 .nr Hb 5
 \." ==============================================
 \." Put current date in the following at each rev
-.ds vE rev 2.10, June 06, 2013
+.ds vE rev 2.11, June 07, 2013
 \." ==============================================
 \." ==============================================
 .ds | |
@@ -2288,22 +2288,19 @@ The function \f(CWdwarf_highpc()\fP returns
 the high program counter 
 value associated with the \f(CWdie\fP descriptor if \f(CWdie\fP 
 represents a debugging information entry with the
-\f(CWDW_AT_high_pc attribute\fP.  
-The value returned may be literally a pc value (if the FORM
-of the attribute DW_AT_high_pc is of class address)
-or it may be a offset (if the FORM is of class constant).
+\f(CWDW_AT_high_pc attribute\fP and the form is \f(CWDW_FORM_addr\fP
+(meaning the form is of class address).  
 
-It may be convenient to use the 
-\f(CWdwarf_attr()\fP,
-\f(CWdwarf_get_version_of_die()\fP,
-\f(CWdwarf_get_form_class()\fP,
-and/or
-\f(CWdwarf_whatform()\fP
-functions to determine which class the value has.
+So this function is useless for a \f(CWDW_AT_high_pc\fP
+which is encoded as a constant.
 
 It returns \f(CWDW_DLV_NO_ENTRY\fP if \f(CWdie\fP does not have this 
-attribute. 
-It returns \f(CWDW_DLV_ERROR\fP if an error occurred. 
+attribute.
+
+It returns \f(CWDW_DLV_ERROR\fP if an error occurred or if the
+form is of class constant (which means this function is
+not very useful for some DWARF as of 2013). 
+
 
 .H 3 "dwarf_bytesize()"
 .DS

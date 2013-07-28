@@ -32,6 +32,11 @@
 /* Definitions for ARM */
 #define DWARF_RELOC_ARM
 
+#ifndef EM_AARCH64
+#define EM_AARCH64 183  /* Arm 64 */
+#endif
+
+
 /* Include the definitions only in the case of Windows */
 #ifdef WIN32
 /* Relocation types for ARM */
@@ -296,4 +301,12 @@ static const char *reloc_type_names_ARM[] = {
     "R_ARM_THM_TLS_DESCSEQ16",    /* 129 */
     "R_ARM_THM_TLS_DESCSEQ32",    /* 130 */
 };
+
+#ifndef R_AARCH64_ABS64
+#define R_AARCH64_ABS64 0x101
+#endif
+#ifndef R_AARCH64_ABS32
+#define R_AARCH64_ABS32 0x102
+#endif
+
 #endif /* DWARF_RELOC_ARM_H */

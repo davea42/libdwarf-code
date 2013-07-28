@@ -534,7 +534,7 @@ _dwarf_internal_srclines(Dwarf_Die die,
 
     {
         Dwarf_Small *newlinep = 0;
-        int res = dwarf_read_line_table_prefix(dbg,
+        int resp = dwarf_read_line_table_prefix(dbg,
             line_ptr,
             dbg->de_debug_line.dss_size,
             &newlinep,
@@ -543,13 +543,13 @@ _dwarf_internal_srclines(Dwarf_Die die,
             error,
             0);
 
-        if (res == DW_DLV_ERROR) {
+        if (resp == DW_DLV_ERROR) {
             dwarf_free_line_table_prefix(&prefix);
-            return res;
+            return resp;
         }
-        if (res == DW_DLV_NO_ENTRY) {
+        if (resp == DW_DLV_NO_ENTRY) {
             dwarf_free_line_table_prefix(&prefix);
-            return res;
+            return resp;
         }
         line_ptr_end = prefix.pf_line_ptr_end;
         line_ptr = newlinep;

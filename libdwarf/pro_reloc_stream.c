@@ -179,8 +179,8 @@ _dwarf_stream_relocs_to_disk(Dwarf_P_Debug dbg,
     Dwarf_Small *data = 0;
     int sec_index = 0;
     unsigned long i = 0;
-    Dwarf_Error err = 0;
-    Dwarf_Error *error = &err;
+    Dwarf_Error erre = 0;
+    Dwarf_Error *error = &erre;
 
     Dwarf_Signed sec_count = 0;
 
@@ -208,7 +208,7 @@ _dwarf_stream_relocs_to_disk(Dwarf_P_Debug dbg,
             int rel_section_index = 0;
             Dwarf_Unsigned name_idx = 0;
             int int_name = 0;
-            int err = 0;
+            int erri = 0;
 
             if (dbg->de_callback_func_c) {
                 rel_section_index =
@@ -222,7 +222,7 @@ _dwarf_stream_relocs_to_disk(Dwarf_P_Debug dbg,
                             dbg->de_elf_sects[i],
                         &name_idx, 
                         dbg->de_user_data,
-                        &err);
+                        &erri);
             } else if (dbg->de_callback_func_b) {
                 rel_section_index =
                     dbg->de_callback_func_b(_dwarf_rel_section_names[i],
@@ -233,7 +233,7 @@ _dwarf_stream_relocs_to_disk(Dwarf_P_Debug dbg,
                             know */ 0,
                         /* info == link to sec rels apply to */
                             dbg->de_elf_sects[i],
-                        &name_idx, &err);
+                        &name_idx, &erri);
             } else {
                 rel_section_index =
                     dbg->de_callback_func(_dwarf_rel_section_names[i],
@@ -243,7 +243,7 @@ _dwarf_stream_relocs_to_disk(Dwarf_P_Debug dbg,
                         /* link to symtab, which we cannot
                             know */ 0,
                         /* info == link to sec rels apply to */
-                            dbg->de_elf_sects[i], &int_name, &err);
+                            dbg->de_elf_sects[i], &int_name, &erri);
                 name_idx = int_name;
             }
             if (rel_section_index == -1) {
@@ -256,7 +256,7 @@ _dwarf_stream_relocs_to_disk(Dwarf_P_Debug dbg,
             prb->pr_sect_num_of_reloc_sect = rel_section_index;
             sec_index = rel_section_index;
         }
-        GET_CHUNK(dbg, sec_index, data, total_size, &err);
+        GET_CHUNK(dbg, sec_index, data, total_size, &erri);
         p_blk = p_reloc->pr_first_block;
 
         /*  Following loop executes at least once. Effects the
@@ -265,13 +265,12 @@ _dwarf_stream_relocs_to_disk(Dwarf_P_Debug dbg,
             input block. The new block is in the de_debug_sects list. */
         while (p_blk) {
 
-            unsigned long len =
+            unsigned long lenk =
                 p_blk->rb_where_to_add_next - p_blk->rb_data;
 
-            memcpy(data, p_blk->rb_data, len);
+            memcpy(data, p_blk->rb_data, lenk);
 
-
-            data += len;
+            data += lenk;
 
             p_blk_last = p_blk;
             p_blk = p_blk->rb_next;

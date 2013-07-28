@@ -81,6 +81,16 @@
 #ifndef EM_L10M
 #define EM_L10M 180  /* Intel L10M */
 #endif
+#ifndef EM_AARCH64
+#define EM_AARCH64 183  /* Arm 64 */
+#endif
+#ifndef R_AARCH64_ABS64
+#define R_AARCH64_ABS64 0x101
+#endif
+#ifndef R_AARCH64_ABS32
+#define R_AARCH64_ABS32 0x102
+#endif
+
 
 
 #ifdef HAVE_ELF64_GETEHDR
@@ -614,9 +624,13 @@ is_32bit_abs_reloc(unsigned int type, Dwarf_Half machine)
 
 #if defined(EM_ARM) && defined (R_ARM_ABS32)
     case EM_ARM:
+    case EM_AARCH64:
         r = (0
 #if defined (R_ARM_ABS32)
             | ( type == R_ARM_ABS32)
+#endif
+#if defined (R_AARCH64_ABS32)
+            | ( type == R_AARCH64_ABS32)
 #endif
 #if defined (R_ARM_TLS_LDO32)
             | ( type == R_ARM_TLS_LDO32)
@@ -810,6 +824,16 @@ is_64bit_abs_reloc(unsigned int type, Dwarf_Half machine)
             );
         break;
 #endif /* EM_X86_64 */
+#if defined(EM_AARCH64) && defined (R_AARCH64_ABS64)
+    case EM_AARCH64:
+        r = (0
+#if defined (R_AARCH64_ABS64)
+            | ( type == R_AARCH64_ABS64)
+#endif
+            );
+        break;
+#endif /* EM_AARCH64 */
+
     }
     return r;
 }

@@ -989,7 +989,6 @@ _dwarf_pro_generate_debugframe(Dwarf_P_Debug dbg, Dwarf_Error * error)
     int elfsectno = 0;
     int i = 0;
     int firsttime = 1;
-    int pad = 0;     /* Pad for padding to align cies and fdes */
     Dwarf_P_Cie curcie = 0;
     Dwarf_P_Fde curfde = 0;
     unsigned char *data = 0;
@@ -1026,6 +1025,7 @@ _dwarf_pro_generate_debugframe(Dwarf_P_Debug dbg, Dwarf_Error * error)
         int c_bytes = 0;
         char *data_al = 0;
         int d_bytes = 0;
+        int pad = 0;     /* Pad for padding to align cies and fdes */
         int res = 0;
         char buff1[ENCODE_SPACE_NEEDED];
         char buff2[ENCODE_SPACE_NEEDED];
@@ -1159,10 +1159,11 @@ _dwarf_pro_generate_debugframe(Dwarf_P_Debug dbg, Dwarf_Error * error)
     while (curfde) {
         Dwarf_P_Frame_Pgm curinst = 0;
         long fde_length = 0;
-        int pad = 0;
+        int pad2 = 0;
         Dwarf_P_Cie cie_ptr = 0;
         Dwarf_Word cie_index = 0; 
-        Dwarf_Word index = 0;
+        /* index is a global in string.h, so don't name anything index. */
+        Dwarf_Word indx = 0;
         int oet_length = 0;
         int afl_length = 0; 
         int res = 0;
@@ -1175,10 +1176,10 @@ _dwarf_pro_generate_debugframe(Dwarf_P_Debug dbg, Dwarf_Error * error)
         /* Find the CIE associated with this fde. */
         cie_ptr = dbg->de_frame_cies;
         cie_index = curfde->fde_cie;
-        index = 1; /* The cie_index of the first cie is 1, not 0. */
-        while (cie_ptr && index < cie_index) {
+        indx = 1; /* The cie_index of the first cie is 1, not 0. */
+        while (cie_ptr && indx < cie_index) {
             cie_ptr = cie_ptr->cie_next;
-            index++;
+            indx++;
         }
         if (cie_ptr == NULL) {
             DWARF_P_DBG_ERROR(dbg, DW_DLE_CIE_NULL, -1);
@@ -1257,8 +1258,8 @@ _dwarf_pro_generate_debugframe(Dwarf_P_Debug dbg, Dwarf_Error * error)
         }
 
         /* adjust for padding */
-        pad = (int) PADDING(fde_length, upointer_size);
-        fde_length += pad;
+        pad2 = (int) PADDING(fde_length, upointer_size);
+        fde_length += pad2;
 
 
         /* write out fde */
@@ -1382,7 +1383,7 @@ _dwarf_pro_generate_debugframe(Dwarf_P_Debug dbg, Dwarf_Error * error)
             }
         }
         /* padding */
-        for (i = 0; i < pad; i++) {
+        for (i = 0; i < pad2; i++) {
             *data = DW_CFA_nop;
             data++;
         }
@@ -1661,7 +1662,7 @@ _dwarf_pro_generate_debuginfo(Dwarf_P_Debug dbg, Dwarf_Error * error)
         Dwarf_P_Attribute new_first_attr;
         Dwarf_P_Attribute new_last_attr;
         char *space = 0;
-        int res = 0;
+        int cres = 0;
         char buff1[ENCODE_SPACE_NEEDED];
         int i = 0;
 
@@ -1687,10 +1688,10 @@ _dwarf_pro_generate_debuginfo(Dwarf_P_Debug dbg, Dwarf_Error * error)
                 abbrev_tail = curabbrev;
             }
         }
-        res = _dwarf_pro_encode_leb128_nm(curabbrev->abb_idx,
+        cres = _dwarf_pro_encode_leb128_nm(curabbrev->abb_idx,
             &nbytes,
             buff1, sizeof(buff1));
-        if (res != DW_DLV_OK) {
+        if (cres != DW_DLV_OK) {
             DWARF_P_DBG_ERROR(dbg, DW_DLE_ABBREV_ALLOC, -1);
         }
         space = _dwarf_p_get_alloc(dbg, nbytes);
@@ -1744,6 +1745,7 @@ _dwarf_pro_generate_debuginfo(Dwarf_P_Debug dbg, Dwarf_Error * error)
         
         while (curattr) {
             if (curattr->ar_rel_type != R_MIPS_NONE) {
+                int rres=0;
                 switch (curattr->ar_attribute) {
                 case DW_AT_stmt_list:
                     curattr->ar_rel_symidx =
@@ -1760,13 +1762,13 @@ _dwarf_pro_generate_debuginfo(Dwarf_P_Debug dbg, Dwarf_Error * error)
                 default:
                     break;
                 }
-                res = dbg->de_reloc_name(dbg, DEBUG_INFO, 
+                rres = dbg->de_reloc_name(dbg, DEBUG_INFO, 
                     die_off + curattr->ar_rel_offset,/* r_offset */
                     curattr->ar_rel_symidx,
                     dwarf_drt_data_reloc,
                     curattr->ar_reloc_len);
 
-                if (res != DW_DLV_OK) {
+                if (rres != DW_DLV_OK) {
                     DWARF_P_DBG_ERROR(dbg, DW_DLE_REL_ALLOC, -1);
                 }
 

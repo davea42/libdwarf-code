@@ -1080,7 +1080,7 @@ dwarf_get_cie_of_fde(Dwarf_Fde fde,
 
 int dwarf_get_cie_index(
     Dwarf_Cie cie,
-    Dwarf_Signed* index, 
+    Dwarf_Signed* indx, 
     Dwarf_Error* error )
 {
     if (cie == NULL)
@@ -1089,7 +1089,7 @@ int dwarf_get_cie_index(
         return (DW_DLV_ERROR);
     }
 
-    *index = cie->ci_index;
+    *indx = cie->ci_index;
     return (DW_DLV_OK);
 }
 
