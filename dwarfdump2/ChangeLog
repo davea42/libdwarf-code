@@ -1,3 +1,5 @@
+2013-07-30  David Anderson
+     * common.cc,dwarfdump.cc: updated version string.
 2013-02-07  David Anderson
      * dieholder.h: Corrected the indentation of DieVec.
 2013-02-05  David Anderson
