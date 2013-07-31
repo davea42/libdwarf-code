@@ -1121,6 +1121,11 @@ _dwarf_free_all_of_one_debug(Dwarf_Debug dbg)
     rela_free(&dbg->de_debug_ranges);
     dwarf_harmless_cleanout(&dbg->de_harmless_errors);
 
+    /* SN-Carlos: Release loading address table */
+    if (dbg->de_sections_load_address) {
+        free(dbg->de_sections_load_address);
+    }
+
     memset(dbg, 0, sizeof(*dbg)); /* Prevent accidental use later. */
     free(dbg);
     return (DW_DLV_OK);

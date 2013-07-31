@@ -92,15 +92,16 @@ ResetSentinelBucketGroup(Bucket_Group *pBucketGroup)
 
 void PrintBucketGroup(Bucket_Group *pBucketGroup,Dwarf_Bool bFull)
 {
-    assert(pBucketGroup);
-    if (bFull) {
-        DumpFullBucketGroup(pBucketGroup);
-    } else {
-        if (pBucketGroup->pFirst && pBucketGroup->pLast) {
-            printf("\nBegin Traversing, First = 0x%08" DW_PR_DUx 
-                ", Last = 0x%08" DW_PR_DUx "\n",
-            pBucketGroup->pFirst->key,pBucketGroup->pLast->key);
-            ProcessBucketGroup(pBucketGroup,PrintBucketData);
+    if (pBucketGroup) {
+        if (bFull) {
+            DumpFullBucketGroup(pBucketGroup);
+        } else {
+            if (pBucketGroup->pFirst && pBucketGroup->pLast) {
+                printf("\nBegin Traversing, First = 0x%08" DW_PR_DUx 
+                    ", Last = 0x%08" DW_PR_DUx "\n",
+                pBucketGroup->pFirst->key,pBucketGroup->pLast->key);
+                ProcessBucketGroup(pBucketGroup,PrintBucketData);
+            }
         }
     }
 }
@@ -135,7 +136,7 @@ DumpFullBucketGroup(Bucket_Group *pBucketGroup)
     Bucket_Data *pBucketData = 0;
 
     assert(pBucketGroup);
-    printf("\nBucket Group at 0x%lx lower 0x%lx upper 0x%lx]\n",
+    printf("\nBucket Group at 0x%lx [lower 0x%lx upper 0x%lx]\n",
         (unsigned long)pBucketGroup,
         (unsigned long)pBucketGroup->lower,
         (unsigned long)pBucketGroup->upper);

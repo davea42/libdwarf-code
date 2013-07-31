@@ -332,6 +332,9 @@ static char *config_file_defaults[] = {
 };
 static struct dwconf_s config_file_data;
 
+/* SN-Carlos: Output filename */
+static const char *output_file = 0;
+
 char cu_name[BUFSIZ];
 boolean cu_name_flag = FALSE;
 Dwarf_Unsigned cu_offset = 0;
@@ -395,6 +398,20 @@ main(int argc, char *argv[])
     Elf *elf = 0;
     int archive = 0;
 
+    /* SN-Carlos: Often we redirect the output to a file, but we have found
+       issues due to the buffering associated with stdout. Some issues were
+       fixed just by the use of 'fflush', but the main issued remained.
+       The stdout stream is buffered, so will only display what's in the
+       buffer after it reaches a newline (or when it's told to). We have a
+       few options to print immediately:
+       - Print to stderr instead using fprintf.
+       - Print to stdout and flush stdout whenever we need it to using fflush.
+       - We can also disable buffering on stdout by using setbuf:
+         setbuf(stdout,NULL);
+         Make stdout unbuffered; this seems to work for all cases.
+    */
+    setbuf(stdout,NULL);
+
     esb_constructor(&config_file_path);
 #ifdef WIN32
     /* Windows specific. */
@@ -447,6 +464,14 @@ main(int argc, char *argv[])
         pRangesInfo = AllocateBucketGroup(KIND_RANGES_INFO);
         pLinkonceInfo = AllocateBucketGroup(KIND_SECTIONS_INFO);
         pVisitedInfo = AllocateBucketGroup(KIND_VISITED_INFO);
+    }
+
+    /* SN-Carlos: Redirect stdout and stderr to an specific file */
+    if (output_file) {
+        freopen(output_file,"w",stderr);
+        dup2(fileno(stdout),fileno(stderr));
+        print_version_details(argv[0],TRUE);
+        print_args(argc,argv);
     }
 
     while ((elf = elf_begin(f, cmd, arf)) != 0) {
@@ -730,8 +755,8 @@ print_object_header(Elf *elf,Dwarf_Debug dbg,unsigned local_section_map)
 static void
 print_specific_checks_results(Compiler *pCompiler)
 {
-    fprintf(stderr, "\nDWARF CHECK RESULT\n");
-        fprintf(stderr, "<item>                    <checks>    <errors>\n");
+    printf("\nDWARF CHECK RESULT\n");
+    printf("<item>                    <checks>    <errors>\n");
     if (check_pubname_attr) {
         PRINT_CHECK_RESULT("pubname_attr", pCompiler, pubname_attr_result);
     }
@@ -843,9 +868,9 @@ print_search_results()
             search_text = search_regex_text;
         }
     }
-    fprintf(stderr,"\nSearch type      : '%s'\n",search_type);
-    fprintf(stderr,"Pattern searched : '%s'\n",search_text);
-    fprintf(stderr,"Occurrences Found: %d\n",search_occurrences);
+    printf("\nSearch type      : '%s'\n",search_type);
+    printf("Pattern searched : '%s'\n",search_text);
+    printf("Occurrences Found: %d\n",search_occurrences);
 }
 
 /* Print a summary of checks and errors */
@@ -871,20 +896,20 @@ print_checks_results()
         int count = 0;
         int total = 0;
 
-        fprintf(stderr,"\n*** CU NAMES PER COMPILER ***\n");
+        printf("\n*** CU NAMES PER COMPILER ***\n");
         for (index = 1; index <= compilers_detected_count; ++index) {
             pCompiler = &compilers_detected[index];
-            fprintf(stderr,"\n%02d: %s",index,pCompiler->name);
+            printf("\n%02d: %s",index,pCompiler->name);
             count = 0;
             for (nc = pCompiler->cu_list; nc; nc = nc_next) {
-                fprintf(stderr,"\n    %02d: '%s'",++count,nc->item);
+                printf("\n    %02d: '%s'",++count,nc->item);
                 nc_next = nc->next;
                 free(nc);
             }
             total += count;
-            fprintf(stderr,"\n");
+            printf("\n");
         }
-        fprintf(stderr,"\nDetected %d CU names\n",total);
+        printf("\nDetected %d CU names\n",total);
     }
 
     /* Print error report only if errors have been detected */
@@ -908,34 +933,31 @@ print_checks_results()
         }
 
         /* Print compilers detected list */
-        fprintf(stderr,
-            "\n%d Compilers detected:\n",compilers_detected_count);
+        printf("\n%d Compilers detected:\n",compilers_detected_count);
         for (index = 1; index <= compilers_detected_count; ++index) {
             pCompiler = &compilers_detected[index];
-            fprintf(stderr,"%02d: %s\n",index,pCompiler->name);
+            printf("%02d: %s\n",index,pCompiler->name);
         }
 
         /*  Print compiler list specified by the user with the
             '-c<str>', that were not detected. */
         if (compilers_not_detected) {
             count = 0;
-            fprintf(stderr,
-                "\n%d Compilers not detected:\n",compilers_not_detected);
+            printf("\n%d Compilers not detected:\n",compilers_not_detected);
             for (index = 1; index <= compilers_targeted_count; ++index) {
                 if (!compilers_targeted[index].verified) {
-                    fprintf(stderr,
-                        "%02d: '%s'\n",
+                    printf("%02d: '%s'\n",
                         ++count,compilers_targeted[index].name);
                 }
             }
         }
 
         count = 0;
-        fprintf(stderr,"\n%d Compilers verified:\n",compilers_verified);
+        printf("\n%d Compilers verified:\n",compilers_verified);
         for (index = 1; index <= compilers_detected_count; ++index) {
             pCompiler = &compilers_detected[index];
             if (pCompiler->verified) {
-                fprintf(stderr,"%02d: errors = %5d, %s\n",
+                printf("%02d: errors = %5d, %s\n",
                     ++count,
                     pCompiler->results[total_check_result].errors,
                     pCompiler->name);
@@ -948,19 +970,18 @@ print_checks_results()
             /* Print compilers detected summary*/
             if (print_summary_all) {
                 count = 0;
-                fprintf(stderr,"\n*** ERRORS PER COMPILER ***\n");
+                printf("\n*** ERRORS PER COMPILER ***\n");
                 for (index = 1; index <= compilers_detected_count; ++index) {
                     pCompiler = &compilers_detected[index];
                     if (pCompiler->verified) {
-                        fprintf(stderr,"\n%02d: %s",
-                            ++count,pCompiler->name);
+                        printf("\n%02d: %s",++count,pCompiler->name);
                         print_specific_checks_results(pCompiler);
                     }
                 }
             }
 
             /* Print general summary (all compilers checked) */
-            fprintf(stderr,"\n*** TOTAL ERRORS FOR ALL COMPILERS ***\n");
+            printf("\n*** TOTAL ERRORS FOR ALL COMPILERS ***\n");
             print_specific_checks_results(&compilers_detected[0]);
         }
     }
@@ -1221,6 +1242,7 @@ static const char *usage_text[] = {
 "\t\t  \t(when printing frame information from multi-gigabyte",
 "\t\t  \tobject files this option may save significant time).",
 "\t\t-N\tprint ranges section",
+"\t\t-O name=<path>\tname the output file",
 "\t\t-o[liaprfoR]\tprint relocation info",
 "\t\t  \tl=line,i=info,a=abbrev,p=pubnames,r=aranges,f=frames,o=loc,R=Ranges",
 "\t\t-p\tprint pubnames section",
@@ -1338,7 +1360,7 @@ process_args(int argc, char *argv[])
 
     /* j unused */
     while ((c = getopt(argc, argv,
-        "#:abc::CdDeE::fFgGhH:ik:l::mMnNo::pPqQrRsS:t:u:UvVwW::x:yz")) != EOF) {
+        "#:abc::CdDeE::fFgGhH:ik:l::mMnNo::O:pPqQrRsS:t:u:UvVwW::x:yz")) != EOF) {
 
         switch (c) {
         /* Internal debug level setting. */
@@ -1650,6 +1672,21 @@ process_args(int argc, char *argv[])
             } else {
                 /* Display all relocs */
                 reloc_map = DW_MASK_PRINT_ALL;
+            }
+            break;
+        /* SN-Carlos: Output filename */
+        case 'O':
+            {
+                const char *path = 0;
+                /*  -O name=<filename> */
+                usage_error = TRUE;
+                if (strncmp(optarg,"name=",5) == 0) {
+                    path = do_uri_translation(&optarg[5],"-O name=");
+                    if (strlen(path) > 0) {
+                        usage_error = FALSE;
+                        output_file = path;
+                    }
+                }
             }
             break;
         case 'k':
@@ -2517,7 +2554,7 @@ void PRINT_CHECK_RESULT(char *str,
     Compiler *pCompiler, Dwarf_Check_Categories category)
 {
     Dwarf_Check_Result result = pCompiler->results[category];
-    fprintf(stderr, "%-24s%10d  %10d\n", str, result.checks, result.errors);
+    printf("%-24s%10d  %10d\n", str, result.checks, result.errors);
 }
 
 void DWARF_CHECK_ERROR_PRINT_CU()
