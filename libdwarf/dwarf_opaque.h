@@ -366,6 +366,15 @@ struct Dwarf_Debug_s {
     unsigned de_debug_sections_total_entries; /* Number actually used. */
 
     struct Dwarf_Harmless_s de_harmless_errors;
+
+    /*  SN-Carlos: For each section, record the default loading address,
+        that will be used when a relocation is being processed.
+        There are some kind of elf, that have relocation info; for those
+        cases, when doing checks we process the relocation and use the
+        default load address. */
+    /*  Number of sections and virtual address for each section. */
+    Dwarf_Unsigned  de_sections_count;
+    Dwarf_Addr     *de_sections_load_address;
 };
 
 typedef struct Dwarf_Chain_s *Dwarf_Chain;

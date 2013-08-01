@@ -147,7 +147,7 @@ struct Dwarf_Elf_Rela {
     /*Dwarf_ufixed64 r_info; */
     Dwarf_ufixed64 r_type;
     Dwarf_ufixed64 r_symidx;
-    Dwarf_ufixed64 r_addend; 
+    Dwarf_ufixed64 r_addend;
 };
 
 
@@ -865,6 +865,7 @@ update_entry(Dwarf_Debug dbg,
     Dwarf_sfixed64 addend = 0;
     Dwarf_Unsigned reloc_size = 0;
     Dwarf_Unsigned symtab_entry_count = 0;
+    Dwarf_Addr load_address = 0;
        
     if (symtab_section_entrysize == 0) {
         *error = DW_DLE_SYMTAB_SECTION_ENTRYSIZE_ZERO;
@@ -913,13 +914,22 @@ update_entry(Dwarf_Debug dbg,
         return DW_DLV_ERROR;
     }
 
+    /* SN-Carlos: From the elf.pdf documentation (Figure 1-8. Section Header)
+       sh_addr: If the section will appear in the memory image of a process,
+       this member gives the address at which the section's first byte should
+       reside. Otherwise, the member contains 0.
+       Use the the value of 'sh_addr' as default load address, regardless
+       of the address assigned by the loader. */
+    if (sym->st_shndx >= 0 && sym->st_shndx < dbg->de_sections_count) {
+        load_address = dbg->de_sections_load_address[sym->st_shndx];
+    }
 
     {
         /*  Assuming we do not need to do a READ_UNALIGNED here
             at target_section + offset and add its value to
             outval.  Some ABIs say no read (for example MIPS),
             but if some do then which ones? */
-        Dwarf_Unsigned outval = sym->st_value + addend;
+        Dwarf_Unsigned outval = sym->st_value + addend + load_address;
         WRITE_UNALIGNED(dbg,target_section + offset,
             &outval,sizeof(outval),reloc_size);
     }
