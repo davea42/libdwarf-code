@@ -343,8 +343,6 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
                         " Addr = 0x%" DW_PR_XZEROS DW_PR_DUx 
                         " [%4" DW_PR_DUu ",%2" DW_PR_DUu "] '%s'\n",
                         i, pc,lineno,column,filename);
-                    /* Flush due to the redirection of stderr */
-                    fflush(stdout);
                     /* The compilation unit was already printed */
                     if (!check_decl_file) {
                         PRINT_CU_INFO();

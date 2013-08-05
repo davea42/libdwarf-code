@@ -419,7 +419,8 @@ main(int argc, char *argv[])
     /* Tried to use SetStdHandle, but it does not work properly. */
     //BOOL bbb = SetStdHandle(STD_ERROR_HANDLE,GetStdHandle(STD_OUTPUT_HANDLE));
     //_iob[2]._file = _iob[1]._file;
-    stderr->_file = stdout->_file;
+    //stderr->_file = stdout->_file;
+    dup2(fileno(stdout),fileno(stderr));
 #endif /* WIN32 */
   
     print_version_details(argv[0],FALSE);
@@ -431,6 +432,16 @@ main(int argc, char *argv[])
     }
 
     file_name = process_args(argc, argv);
+    print_args(argc,argv);
+
+    /* SN-Carlos: Redirect stdout and stderr to an specific file */
+    if (output_file) {
+        freopen(output_file,"w",stdout);
+        dup2(fileno(stdout),fileno(stderr));
+        /* Record version and arguments in the output file */
+        print_version_details(argv[0],TRUE);
+        print_args(argc,argv);
+    }
 
     /*  Because LibDwarf now generates some new warnings,
         allow the user to hide them by using command line options */
@@ -439,7 +450,7 @@ main(int argc, char *argv[])
         cmd.check_verbose_mode = check_verbose_mode;
         dwarf_record_cmdline_options(cmd);
     }
-    print_args(argc,argv);
+
     f = open_a_file(file_name);
     if (f == -1) {
         fprintf(stderr, "%s ERROR:  can't open %s\n", program_name,
@@ -464,14 +475,6 @@ main(int argc, char *argv[])
         pRangesInfo = AllocateBucketGroup(KIND_RANGES_INFO);
         pLinkonceInfo = AllocateBucketGroup(KIND_SECTIONS_INFO);
         pVisitedInfo = AllocateBucketGroup(KIND_VISITED_INFO);
-    }
-
-    /* SN-Carlos: Redirect stdout and stderr to an specific file */
-    if (output_file) {
-        freopen(output_file,"w",stderr);
-        dup2(fileno(stdout),fileno(stderr));
-        print_version_details(argv[0],TRUE);
-        print_args(argc,argv);
     }
 
     while ((elf = elf_begin(f, cmd, arf)) != 0) {
@@ -881,8 +884,6 @@ print_checks_results()
     Compiler *pCompilers;
     Compiler *pCompiler;
 
-    fflush(stdout);
-
     /* Sort based on errors detected; the first entry is reserved */
     pCompilers = &compilers_detected[1];
     qsort((void *)pCompilers,compilers_detected_count,
@@ -1152,7 +1153,6 @@ process_one_file(Elf * elf, const char * file_name, int archive,
     }
 
     printf("\n");
-    fflush(stderr);
     return 0;
 
 }
@@ -1958,9 +1958,6 @@ void
 print_error_and_continue(Dwarf_Debug dbg, string msg, int dwarf_code,
     Dwarf_Error err)
 {
-    fflush(stdout);
-    fflush(stderr);
-
     fprintf(stderr,"\n");
 
     if (dwarf_code == DW_DLV_ERROR) {
@@ -1977,7 +1974,6 @@ print_error_and_continue(Dwarf_Debug dbg, string msg, int dwarf_code,
         fprintf(stderr, "%s InternalError:  %s:  code %d\n",
             program_name, msg, dwarf_code);
     }
-    fflush(stderr);
 
     /* Display compile unit name */
     PRINT_CU_INFO();
@@ -2524,7 +2520,6 @@ void PRINT_CU_INFO()
     printf(", Low PC = 0x%08" DW_PR_DUx ", High PC = 0x%08" DW_PR_DUx ,
         CU_base_address,CU_high_address);
     printf("\n");
-    fflush(stdout);
 }
 
 void DWARF_CHECK_COUNT(Dwarf_Check_Categories category, int inc)

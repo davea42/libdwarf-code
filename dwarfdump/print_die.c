@@ -2518,8 +2518,6 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
                 }
             }
         }
-        /*  Due to redirection of stderr */
-        fflush(stdout);
         bTextFound = FALSE;
     }
     esb_destructor(&valname);

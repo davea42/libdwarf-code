@@ -1663,10 +1663,6 @@ print_header_issue(Dwarf_Debug dbg,
     }
     /* Are we in verbose mode */
     if (dwarf_cmdline_options.check_verbose_mode) {
-        /*  When redirecting stderr into stdout or vice versa, 
-            ensure lines come out at the 'right time' with fflush. */
-        fflush(stderr);
-        fflush(stdout);
         printf("\n*** DWARF CHECK: "
             ".debug_line: %s", specific_msg);
         if (data_start >= dbg->de_debug_line.dss_data && 
@@ -1680,7 +1676,6 @@ print_header_issue(Dwarf_Debug dbg,
             printf(" (unknown section location) ");
         }
         printf("***\n");
-        fflush(stdout);
     }
     *err_count_out += 1;
 }
