@@ -39,9 +39,13 @@
 // when deciding when to do dealloc.
 class DieHolder {
 public:
-    DieHolder():dbg_(0),die_(0),refcount_(new int(1)),die_printed_(false) { };
+    DieHolder():dbg_(0),die_(0),
+        sibling_global_offset_(0),
+        refcount_(new int(1)),die_printed_(false) { };
     DieHolder(Dwarf_Debug dbg, Dwarf_Die die):
-        dbg_(dbg),die_(die),refcount_(new int(1)),die_printed_(false) { };
+        dbg_(dbg),die_(die),
+        sibling_global_offset_(0),
+        refcount_(new int(1)),die_printed_(false) { };
     ~DieHolder() {
         (*refcount_)--;
         if ((*refcount_) == 0) {
@@ -49,7 +53,10 @@ public:
             if (die_) dwarf_dealloc(dbg_,die_,DW_DLA_DIE);
         }
     };
+    // We don't copy a DieHolder sibling_global_offset_
+    // as that is local to the dieVec instances.
     DieHolder(const DieHolder & d):dbg_(d.dbg_),die_(d.die_),
+        sibling_global_offset_(0),
         refcount_(d.refcount_),die_printed_(d.die_printed_) {
         (*refcount_)++;
     };
@@ -64,18 +71,76 @@ public:
             refcount_ = d.refcount_;
             die_ = d.die_;
             dbg_ = d.dbg_;
+            sibling_global_offset_ = d.sibling_global_offset_;
             die_printed_ = d.die_printed_;
         }
         return *this;
     };
     Dwarf_Die die() { return die_; };
     Dwarf_Debug dbg() { return dbg_; };
+    void setSiblingGlobalOffset(Dwarf_Off o) {sibling_global_offset_ = o;}
+    Dwarf_Off getSiblingGlobalOffset() {return sibling_global_offset_; }
     bool die_printed() { return die_printed_; };
     void mark_die_printed() { die_printed_ = true; };
 private:
     Dwarf_Debug dbg_;
     Dwarf_Die   die_;
+    // sibling_global_offset_ is zero until we encounter a sibling attribute.
+    // And it says zero if a die has no DW_AT_sibling.
+    // It is used for error-checking sibling attributes.
+    Dwarf_Off   sibling_global_offset_;
     int *refcount_;
     bool die_printed_;
 };
+
+
+class DieVec {
+public:
+    DieVec() {};
+    ~DieVec() {};
+    // Simpler to handle negatives here than in the
+    // print_die.cc code.
+    void setSiblingGlobalOffset(int indx,Dwarf_Off off) {
+        if (indx >= 0 && indx < dieVec_.size()) {
+            dieVec_[indx].setSiblingGlobalOffset(off); 
+        }
+    };
+    // Zero is always a safe return.
+    // Simpler to handle negatives here than in the
+    // print_die.cc code.
+    Dwarf_Off getSiblingGlobalOffset(int indx) {
+        if (indx >= 0 && indx < dieVec_.size()) {
+            return dieVec_[indx].getSiblingGlobalOffset(); 
+        }
+        return 0;
+    };
+    bool getDie(int indx,Dwarf_Die &dieout) {
+        if (indx >= 0 && indx < dieVec_.size()) {
+            dieout  =dieVec_[indx].die();
+            return true;
+        }
+        // Should never happen!
+        return false;
+    };
+    bool getDieHolder(int indx,DieHolder &dh) {
+        if (indx >= 0 && indx < dieVec_.size()) {
+            dh= dieVec_[indx];
+            return true;
+        }
+        // Should never happen!
+        return false;
+    };
+    int Size() {
+        return dieVec_.size();
+    }
+    void PushBack(DieHolder &d) {
+        dieVec_.push_back(d);
+    }
+    void PopBack() {
+        dieVec_.pop_back();
+    }
+private:
+    std::vector<DieHolder> dieVec_;
+};
+
 #endif  // DIEHOLDER_H

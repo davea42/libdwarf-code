@@ -79,16 +79,16 @@ typedef int boolean;
 #define FALSE 0
 #define FAILED 1
 
-static void OpenAllFiles();
-static void WriteFileTrailers();
-static void CloseAllFiles();
-static void GenerateInitialFileLines();
-static void GenerateOneSet();
+static void OpenAllFiles(void);
+static void WriteFileTrailers(void);
+static void CloseAllFiles(void);
+static void GenerateInitialFileLines(void);
+static void GenerateOneSet(void);
 #ifdef TRACE_ARRAY
 static void PrintArray(void);
 #endif /* TRACE_ARRAY */
 static boolean is_skippable_line(char *pLine);
-static void ParseDefinitionsAndWriteOutput();
+static void ParseDefinitionsAndWriteOutput(void);
 
 /* We don't need really long lines: the input file is simple. */
 #define MAX_LINE_SIZE 1000
@@ -110,8 +110,8 @@ static unsigned array_count = 0;
 typedef int (*compfn)(const void *,const void *);
 static int Compare(array_data *,array_data *);
 
-static char *prefix_root = "DW_";
-static unsigned prefix_root_len = 3;
+static const char *prefix_root = "DW_";
+static const unsigned prefix_root_len = 3;
 
 /* f_dwarf_in is the input dwarf.h. The others are output files. */
 static FILE *f_dwarf_in;
@@ -195,12 +195,12 @@ main(int argc,char **argv)
 static void 
 PrintArray(void)
 {
-    int index;
-    for (index = 0; index < array_count; ++index) {
+    int i;
+    for (i = 0; i < array_count; ++i) {
         printf("%d: Name %s_%s, Value 0x%04x\n",
-            index,prefix,
-            array[index].name,
-            array[index].value);
+            i,prefix,
+            array[i].name,
+            array[i].value);
     }
 }
 #endif /* TRACE_ARRAY */
@@ -235,13 +235,13 @@ open_path(const char *base, const char *file, const char *direction)
 
 /* Open files and write the basic headers */
 static void 
-OpenAllFiles()
+OpenAllFiles(void)
 {
-    char *dwarf_h      = "dwarf.h";
-    char *names_h      = "dwarf_names.h";
-    char *names_c      = "dwarf_names.c";
-    char *names_enum_h = "dwarf_names_enum.h";
-    char *names_new_h  = "dwarf_names_new.h";
+    const char *dwarf_h      = "dwarf.h";
+    const char *names_h      = "dwarf_names.h";
+    const char *names_c      = "dwarf_names.c";
+    const char *names_enum_h = "dwarf_names_enum.h";
+    const char *names_new_h  = "dwarf_names_new.h";
 
     f_dwarf_in = open_path(input_name,dwarf_h,"r");
     f_names_enum_h = open_path(output_name,names_enum_h,"w");
@@ -251,7 +251,7 @@ OpenAllFiles()
 }
 
 static void
-GenerateInitialFileLines()
+GenerateInitialFileLines(void)
 {
     /* Generate entries for 'dwarf_names_enum.h' */
     fprintf(f_names_enum_h,"/* Automatically generated, do not edit. */\n");
@@ -323,7 +323,7 @@ GenerateInitialFileLines()
 
 /* Close files and write basic trailers */
 static void 
-WriteFileTrailers()
+WriteFileTrailers(void)
 {
     /* Generate entries for 'dwarf_names_enum.h' */
     fprintf(f_names_enum_h,"#endif /* __DWARF_NAMES_ENUM_H__ */\n");
@@ -340,7 +340,7 @@ WriteFileTrailers()
 }
 
 static void 
-CloseAllFiles()
+CloseAllFiles(void)
 {
     fclose(f_dwarf_in);
     fclose(f_names_enum_h);
@@ -351,9 +351,9 @@ CloseAllFiles()
 
 /* Write the table and code for a common set of names */
 static void 
-GenerateOneSet()
+GenerateOneSet(void)
 {
-    unsigned index;
+    unsigned u;
     unsigned prev_value = 0;
     size_t len;
     char *prefix_id = prefix + prefix_root_len;
@@ -393,31 +393,31 @@ GenerateOneSet()
         fprintf(f_names_c,"    switch (val) {\n");
     }
 
-    for (index = 0; index < array_count; ++index) {
+    for (u = 0; u < array_count; ++u) {
         /* Check if value already dumped */
-        if (index > 0 && group_array[index].value == prev_value) {
+        if (u > 0 && group_array[u].value == prev_value) {
             continue;
         }
-        prev_value = group_array[index].value;
+        prev_value = group_array[u].value;
 
         len = 39 - strlen(prefix);
         fprintf(f_names_enum_h,"    %s_%-*s = 0x%04x",
-            prefix,(int)len,group_array[index].name,group_array[index].value);
-        fprintf(f_names_enum_h,(index + 1 < array_count) ? ",\n" : "\n");
+            prefix,(int)len,group_array[u].name,group_array[u].value);
+        fprintf(f_names_enum_h,(u + 1 < array_count) ? ",\n" : "\n");
 
         /* Generate entries for 'dwarf_names.c' */
         if (use_tables) {
             /* The 20 just makes nice formatting in the output. */
-            len = 20 - strlen(group_array[index].name);
+            len = 20 - strlen(group_array[u].name);
             fprintf(f_names_c,"    {/* %3d */ \"%s_%s\", ",
-                index,prefix,group_array[index].name);
-            fprintf(f_names_c," %s_%s}", prefix,group_array[index].name);
-            fprintf(f_names_c,(index + 1 < array_count) ? ",\n" : "\n");
+                u,prefix,group_array[u].name);
+            fprintf(f_names_c," %s_%s}", prefix,group_array[u].name);
+            fprintf(f_names_c,(u + 1 < array_count) ? ",\n" : "\n");
         } else {
             fprintf(f_names_c,"    case %s_%s:\n",
-                prefix,group_array[index].name);
+                prefix,group_array[u].name);
             fprintf(f_names_c,"        *s_out = \"%s_%s\";\n",
-                prefix,group_array[index].name);
+                prefix,group_array[u].name);
             fprintf(f_names_c,"        return DW_DLV_OK;\n");
         }
     }
@@ -472,7 +472,7 @@ char *in,unsigned in_len)
 
 /* Parse the 'dwarf.h' file and generate the tables */
 static void 
-ParseDefinitionsAndWriteOutput()
+ParseDefinitionsAndWriteOutput(void)
 {
     char new_prefix[64];
     char *second_underscore = NULL;

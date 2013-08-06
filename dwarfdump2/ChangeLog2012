@@ -1,41 +1,39 @@
+2012-12-01  David Anderson
+     * dwarfdump.cc: Change printf (3 places) to cout.
+2012-11-30  David Anderson
+     * dwarfdump.cc, common.cc: Update version string.
+     * print_die.cc: Now prints various DW_OP_GNU
+       operators.
 2012-11-29  David Anderson
-     * dwarfdump.c, common.c: Update version string.
-     * dwarfdump.c, print_die.c: Now all follow dicheck
-       indent rules.
+     * dwarfdump.cc,print_die.cc: Now all follow
+       dicheck indent rules.
 2012-11-29  David Anderson
-     * dwarfdump.c, common.c: Update version string.
+     * dwarfdump.cc, common.cc: Update version string.
 2012-11-27  David Anderson
-     * dwarfdump.c, common.c: Update version string.
+     * dwarfdump.cc, common.cc: Update version string.
 2012-11-20  David Anderson
-     * dwarfdump.c, common.c: Update version string.
-     * print_reloc.c: Inserted missing 'const' qualifiers
-       fixing 3 compiler warnings.
+     * dwarfdump.cc, common.cc: Update version string.
 2012-11-17  David Anderson
      * configure regenerated with autoconf 2.69
-     * dwarfdump.c, common.c: Update version string.
+     * dwarfdump.cc, common.cc: Update version string.
 2012-11-17  David Anderson
-     * addrmap.c,checkutil.c,common.c,dwarfdump.c,dwconf.c,
-       globals.h,naming.c,print_aranges.c,print_die.c,print_frames.c,
-       print_locs.c,print_ranges.c,print_reloc.c,print_reloc.h,
-       print_strings.c,strstrnocase.c,tag_attr.c,tag_common.c,
-       tag_tree.c,uri.c,
-       tag_attr_ext.list,tag_attr.list,tag_tree_ext.list,
-       tag_tree.list : Update copyright year.
+     * checkutil.cc,checkutil.h,common.cc,dieholder.h,dwarfdump.cc,
+       dwconf.cc,fderegs.h,globals.h,naming.cc,print_abbrevs.cc,
+       print_aranges.cc,print_die.cc,print_frames.cc,print_lines.cc,
+       print_locs.cc,print_macros.cc,print_reloc.h,print_strings.cc,
+       print_types.cc,srcfilesholder.h,strstrnocase.cc,
+       tag_attr.cc,tag_attr_ext.list,tag_attr.list, 
+       tag_tree_ext.list,tag_tree.list: Update copyright.
 2012-11-15  CarlosAlbertoEnciso <carlos.alberto.enciso@gmail.com>
-     * addrmap.c: Consistent layout for if statements.
-     * checkutil.c: Incorrect string prefix for .text 
-       linkonce section name,
-       is '.text.' for the applicable linke once sections, not 
-       simply '.text'
-       Added print of internal (debugging dwarfdump) data not
-       previously printed.
-     * common.c: Consistent layout for if statements.
+     * checkutil.cc:  Consistent layout for if, for statements.
+     * checkutil.h:  Consistent layout for if, for statements.
+     * common.cc: Consistent layout for if statements.
        Include "config.h".
        Minor layout change for #ifdef _DEBUG.
-       Add HAVE_STDAFX_H check.
+     * dieholder.h:  Consistent layout for if statements.
      * dwarfdump.1: Changes for new options: -E*, -h, -ls, -kE, plus
        some minor typo corrections.
-     * dwarfdump.c: Consistent layout for if, for statements.
+     * dwarfdump.cc: Consistent layout for if, for statements.
        Expand -E option to print the full information for 
        the ELF header
        (32-bit and 64-bit) to include additional fields (e_ehsize,
@@ -54,26 +52,23 @@
        Expand -l option to print line information with no offsets
        values (-ls). Useful for comparisons.
        Expand -S option to print number of occurrences for the
-       searched pattern (-Sv<search_options>.
+       searched pattern (-Sv <search_options>.
        Remove support for internally quoted strings.
        Remove extra 'break' for case 'o' in 'process_args'.
        Include the value zero for -# (internal debug level)
-       Fix layout for 'qsort_compare_compiler' and use compiler
-       name in the sort to get a stable sort.
-       Now that name strings are not qoted internally,
-       ensure that we do not expect such quotes in checking
-       compiler names.
-     * dwconf.c: Consistent layout for if statements.
-     * globals.h: Add externs and defines for the items
-       newly needed globally.
-     * naming.c: Consistent layout for if, for statements.
-     * print_aranges.c: Consistent layout for if statements.
-     * print_die.c: Consistent layout for if, for and switch statements.
+       Fix layout for 'qsort_compare_compiler'.
+     * dwconf.cc: Consistent layout for if statements.
+     * fderegs.h: Consistent layout for if statements.
+     * globals.h: Add externs for new globals.
+     * naming.cc: Consistent layout for if, for statements.
+     * print_abbrevs.cc: Consistent layout for if statements.
+     * print_aranges.cc: Consistent layout for if statements.
+     * print_die.cc: Consistent layout for if, for and switch statements.
        Remove unused symbols 'seen_PU_base_address', 
        'seen_PU_high_address'.  Rename 'errno' to 
        'dwerrno' to avoid conflict with system symbol.
        Missing DWARF_CHECK_COUNT and DWARF_CHECK_ERROR 
-       when testing self references category.
+       when testint self references category.
        Support for counting number of occurrences of the pattern being
        searched (See -S option).
        Add support for new option -kE; the atrribute 
@@ -86,17 +81,18 @@
        'get_attr_value' as it
        refers to a type in the case of checks for type offsets.
        Remove support for internally quoted strings.
-       Add space so DW_OP_bregx prints more readably.
-     * print_frames.c: Consistent layout for if statements.
-     * print_lines.c: Consistent layout for if statements.
+     * print_frames.cc: Consistent layout for if statements.
+     * print_lines.cc: Consistent layout for if statements.
        Implement the ability to print line information 
        with no offset values (useful when comparisons are 
        required, as the pc values can change
        but the basic line information remains the same). 
        Minor layout changes.
-     * print_locs.c: Consistent layout for if statements.
-     * print_ranges.c: Consistent layout for if and for statements.
-     * print_reloc.c: Consistent layout for if statements.
+     * print_locs.cc: Consistent layout for if statements.
+     * print_macros.cc: Consistent layout for if statements.
+     * print_ranges.cc: Consistent layout for if and for statements.
+     * print_reloc.cc: Consistent layout for if statements.
+       Includes print_reloc.h now.
        Move names for relocation types to individual 
        header files based on architecture (ARM, MIPS, PPC, 
        PPC64, X86_64).
@@ -110,16 +106,20 @@
      * print_reloc.h: Move definitions for relocation types 
        to individual header files based on architecture 
        (ARM, MIPS, PPC, PPC64, X86_64). 
-     * print_strings.c: Consistent layout for if statements.
-     * strstrnocase.c: Consistent layout for if and for statements.
-     * tag_attr.c: Consistent layout for if and for statements.
+     * print_strings.cc: Consistent layout for if statements.
+     * print_types.cc: Consistent layout for if statements.
+     * srcfilesholder.h: Consistent layout for if statements.
+     * strstrnocase.cc: Consistent layout for if and for statements.
+     * tag_attr.cc: Consistent layout for if and for statements.
      * tag_attr.list: Add some missing attributes and 
        the complete set for DW_TAG_rvalue_reference_type; 
        remove a duplicated DW_AT_name.
-     * tag_common.c: Consistent layout for if statements.
-     * tag_tree.c: Consistent layout for if and for statements.
+     * tag_common.cc: Consistent layout for if statements.
+     * tag_tree.cc: Consistent layout for if and for statements.
+       Add include of libdwarf.h and move include of naming.h
+     * test_printfuncs.cc:  Consistent layout for if and for statements.
      * tag_tree.list: Missing DW_TAG_union_type to allow 
        verification of nested unions.
-     * uri.c: Consistent layout for if and for statements.
+     * uri.cc: Consistent layout for if and for statements.
 2012-04-10  DavidAnderson <davea42@earthlink.net>
-     * dwarfdump.c, common.c: Updated version string. 
+     * dwarfdump.cc, common.cc: Updated version string. 

@@ -83,7 +83,7 @@ struct Dwarf_Alloc_Hdr_s {
 
     /*  Number of structs of this alloc_type that will be contained in
         each chunk that is malloc'ed. Initialized by dwarf_init(). */
-    Dwarf_Word ah_structs_per_chunk;
+    Dwarf_Sword ah_structs_per_chunk;
 
     /*  Number of bytes malloc'ed per chunk which is basically
         (ah_bytes_one_struct+_DWARF_RESERVE) * ah_alloc_num. */

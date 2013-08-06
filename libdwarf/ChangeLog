@@ -1,92 +1,137 @@
-2012-11-17  David Anderson
-     * dwarf_original_elf_init.c: Expanded comment about
-       HAVE_ELF_C_READ_MMAP (which is not settable
-       by configure and is not really needed).
-     * configure regenerated with autoconf 2.69
-     * libdwarf2.1.mm: Document dwarf_encode_leb128() and
-       and dwarf_encode_signed_leb128().
+2013-07-28  David Anderson
+     * dwarf_abbrev.c, dwarf_frame.c, dwarf_frame3.c,dwarf_line.c,
+       pro_reloc_stream.c, pro_section.c: 
+       Rename local variables to avoid
+       compiler warnings about local variables reusing
+       outer scope (including global) names.
+     * dwarf_elf_access.c: Add AARCH64 support.
+     * dwarf_reloc_arm.h: Add AARCH64 support.
+     * libdwarf2.1.mm: dwarf_highpc() documentation admits
+       it does not work properly for DWARF4 in all cases.
+       dwarf_highpc() needs to be fixed.
+     * libdwarf2.1.pdf: Regenerated
+2013-06-08  David Anderson
+     * libdwarf2.1.mm: Improved the documentation of
+       dwarf_highpc() function to suggest how to interpret
+       the value (pc or offset).
      * libdwarf2.1.pdf: Regenerated.
-       
-2012-11-17  David Anderson
-     * dwarf_arange.c,dwarf_base_types.h,dwarf_die_deliv.c,
-       dwarf_elf_access.c,dwarf_form.c,dwarf_frame.c,
-       dwarf_frame2.c,dwarf_harmless.c,dwarf_init_finish.c,
-       dwarf_line.c,dwarf_line.h,dwarf_loc.c,dwarf_macro.c,
-       dwarf_original_elf_init.c,dwarf_print_lines.c,dwarf_query.c
-       dwarf_ranges.c,dwarf_reloc_arm.h,dwarf_reloc_mips.h,
-       dwarf_reloc_ppc.h,dwarf_reloc_ppc64.h,dwarf_reloc_x86_64.h,
-       dwarf_util.c,dwarf_util.h,pro_forms.c,pro_frame.c,
-       pro_incl.h,pro_init.c,pro_section.c: Update copyright
-       on files changed recently.
-2012-11-15  CarlosAlbertoEnciso <carlos.alberto.enciso@gmail.com>
-     * dwarf.h: Incorrect comments for registers (64 to 108).
-     * dwarf_arange.c: Consistent layout for if statements.
-     * dwarf_base_type.h: Minor comment type.
-     * dwarf_die_deliv.c: Consistent layout for if and while statements.
-     * dwarf_elf_access.c: Consistent layout for if statements.
-       For Windows, include header files with relocation definitions.
-       Populate new fields 'type' (section type) and 'info' (target section
-       for relocation) in data structure 'Dwarf_Obj_Access_Section_s'.
-       Minor typo error in function 'is_32bit_abs_reloc' for the case
-       'EM_PPC64', to use the correct symbol 'R_PPC64_DTPREL32' and
-       'R_PPC64_DTPREL32'.
-     * dwarf_form.c: Consistent layout for if statements.
-     * dwarf_frame.c: Consistent layout for if, for and while statements.
-     * dwarf_frame2.c: Consistent layout for if statements.
-     * dwarf_harmless.c: Consistent layout for if and for statements.
-     * dwarf_init_finish.c: Consistent layout for if statements.
-       Use HAVE_ELF_H, HAVE_LIBELF_H, HAVE_LIBELF_LIBELF_H to control
-       the inclusion of the libelf symbols.
-       New function 'add_debug_section_info' and new data structure
-       'dbg_sect_s' to deal properly with .rel and .rela section types
-       independently of the section name. The new algorithm to setup
-       the debug sections is implemented in '_dwarf_setup'.
-     * dwarf_line.c: Consistent layout for if statements.
-     * dwarf_line.h: Consistent layout for if statements.
-     * dwarf_loc.c: Consistent layout for if and switch statements.
-     * dwarf_macro.c: Consistent layout for if statements.
-     * dwarf_original_elf_init.c: Consistent layout for if statements.
-     * dwarf_print_lines.c: Consistent layout for if statements.
-     * dwarf_query.c: Consistent layout for if and switch statements.
-     * dwarf_ranges.c: Consistent layout for if and for statements.
-     * dwarf_reloc_arm.h: New file; relocations definitions for ARM.
-     * dwarf_reloc_mips.h: New file; relocations definitions for MIPS.
-     * dwarf_reloc_ppc.h: New file; relocations definitions for PPC.
-     * dwarf_reloc_ppc64.h: New file; relocations definitions for PPC64.
-     * dwarf_reloc_x86_64.h: New file; relocations definitions for X86_64.
-     * dwarf_sort_line.c: Consistent layout for while statements.
-     * dwarf_util.c: Consistent layout for if, for and while statements.
-       New functions 'dwarf_encode_leb128', 'dwarf_encode_signed_leb128'
-       to encode a value as unsiged LEB128 and signed LEB128.
-     * dwarf_util.h: Consistent layout for the macros DECODE_LEB128_UWORD,
-       DECODE_LEB128_SWORD, SKIP_LEB128_WORD, CHECK_DIE, READ_UNALIGNED,
-       SIGN_EXTEND, READ_AREA_LENGTH to include proper tabbing.
-     * libdwarf.h: Consistent layout for some typedef definitions.
-       New fields 'type' (section type) and 'info' (target section for
-       relocation) in data structure 'Dwarf_Obj_Access_Section_s'.
-       Prototypes for new functions 'dwarf_encode_leb128' and
-       'dwarf_encode_signed_leb128', defined in dwarf_util.c.
-     * pro_forms.c: Consistent layout for if statements.
-     * pro_frame.c: Consistent layout for if statements.
-     * pro_incl.h: For Windows, include the stdafx.h header file.
-     * pro_init.c: Consistent layout for if statements.
-     * pro_section.c: Consistent layout for if statements.
-2012-11-14  DavidAnderson <davea42@earthlink.net>
-     * dwarf_loc.c: DW_OP_GNU_implicit_pointer requires a version stamp
-       to work correctly.  Created a new function
-       to allow clients to expicitly pass the version stamp.
-       Most clients can continue to use the old interface.
-     * libdwarf.h: Declaring new function dwarf_loclist_from_expr_b()
-     * libdwarf2.1.mm: Documenting dwarf_loclist_from_expr_b()
+2013-03-08  David Anderson
+     * dwarf_elf_access.c: Now we handle K10M and L10M
+       as having relocations named as in x86, x86_64.
+2013-02-07  David Anderson
+     * dwarf_elf_access.c: FreeBSD did not have R_PPC64_ADDR32
+       as a relocation name, so changed one name to be the name
+       usable in Ubuntu and FreeBSD, R_PPC_ADDR32.
+2013-02-01  David Anderson
+     * libdwarf2.1.mm: Improved the documentation of the
+       badly-named functions dwarf_whatform() and 
+       dwarf_whatform_direct().
      * libdwarf2.1.pdf: Regenerated.
-2012-10-31  DavidAnderson <davea42@earthlink.net>
-     * CODINGSTYLE: Added some small details here.
-2012-04-04  DavidAnderson <davea42@earthlink.net>
-     * libdwarf.h: A pointer "*" was right next to
-       a "/*" so a space introduced between them for clarity.
-       Fixed comments on DW_DLC_SIZE_64 and DW_DLC_SIZE_32.
-     * dwarf_die_deliv.c: Two local variables were declared in the
-       middle of code, accidentally creating C99 dependencies.
-       Both trivially fixed with no change in logic.
-2012-01-01  DavidAnderson <davea42@earthlink.net>
-     * A new year starts.
+     * libdwarf.h.in: The arguments to dwarf_whatform[_direct]()
+       are renamed for clarity. They are commented out, so
+       this is just improving documentation.
+2013-01-20  David Anderson
+     * libdwarf.h: Removed.
+     * libdwarf.h.in: Added. Identical content to standard libdwarf. 
+     * configure.in: Generates libdwarf.h.
+       Notices if struct _Elf in libelf.h and generates libdwarf.h
+       appropriately.
+     * configure: Regenerated
+     * README now mentions the libdwarf.h generation at configure time.
+2013-01-28  David Anderson
+     * dwarf_frame.c: Fix a macro so it does not test unsigned
+       numbers as being less than zero. Fixes a compiler warning.
+     * malloc_check.c: Add void as the parameter list of a
+       parameter-less function. Fixes a compiler warning.
+2013-01-26  David Anderson
+     * libdwarf.h: Remove the lc_number3 field to restore
+       interface binary compatibility with earlier releases.
+     * dwarf_loc.c, dwarf_loc.h: No longer uses the removed
+       lc_number3 or lr_number3 fields. 
+2013-01-25  David Anderson
+     * dwarf_alloc.c: Changed some local names to avoid
+       compiler warnings about redefining names in inner contexts.
+     * dwarf_frame2.c: Changed some local names to avoid
+       compiler warnings about redefining names in inner contexts.
+       Added const to some declarations to avoid warnings
+       about const being cast away.
+     * dwarf_init_finish.c: Added const to some declarations 
+       to avoid warnings about const being cast away.
+       Changed some local names to avoid
+       compiler warnings about redefining names in inner contexts.
+     * dwarf_line.c, dwarf_print_lines.c: Added const to some declarations 
+       to avoid warnings about const being cast away.
+       Added static to function definition to reflect its use
+       and to avoid warning about lack of a visible prototype.
+     * gennames.c: Using C89/90 void to declare functions with
+       no arguments to avoid compiler warnings about using old style
+       declarations.
+       Changed some local names to avoid
+       compiler warnings about redefining names in inner contexts.
+       Added const to some declarations to avoid warnings
+       about const being cast away.
+     * pro_incl.h: WRITE_UNALIGNED macros now cast with const
+        to avoid warnings about const being cast away.
+     * pro_macinfo.c,pro_section.c,pro_section.h:  Added const 
+       to some declarations to avoid warnings about const being cast away.
+2013-01-25  David Anderson
+     * common.c: Add 'const' on string declarations to avoid
+       compiler warnings.
+     * dwarf_loc.h: Add the new field lc_number3 to handle
+       DW_OP_GNU_const_type properly.
+     * dwarf_loc.c: Handle  DW_OP_GNU_const_type properly.
+     * libdwarf.h: Add lr_number3 so we can handle DW_OP_GNU_const_type 
+       properly. This destroys binary compatibility. Not a good idea.
+       See Jan 26, above.
+2013-01-25  David Anderson
+     * dwarf_loc.c: Use cc_length_size, not cc_length to get
+       the offset size. Nasty bug.
+     * dwarf_opaque.h: Change commentary to clarify the cc_length
+       field content to hopefully avoid making that mistake again.
+2013-01-15  David Anderson
+     * dwarf.h: defines for some added DW_OP_GNU operators
+     * dwarf_loc.c: Added support for some DW_OP_GNU operators.
+     * config.h.in, configure.in: Define and set HAVE_STRUCT_UNDERSCORE_ELF
+       as FreeBSD names struct _Elf instead of struct Elf.
+     * configure: Regenerated.
+     * dwarf_alloc.c: Initialize a local var at declaration, add const
+       to array of strings type declaration.
+     * dwarf_alloc.h: Change ah_structs_per_chunk to Dwarf_Sword
+       to eliminate a compiler warning. 
+     * dwarf_arange.c: Change a couple Dwarf_Unsigned to Dwarf_Signed
+       to eliminate a compiler warning.
+     * dwarf_die_deliv.c: Change local to Dwarf_Unsigned to eliminate
+       signed compare warning (and actually signed was wrong anyway!).
+     * dwarf_error.c: Fix comparison to eliminate signed/unsigned
+       compare warning.
+     * dwarf_form.c: Index variable changed to unsigned to
+       eliminate signed/unsigned comparison warning.
+     * dwarf_frame.c: Local variables changed to unsigned to
+       eliminate signed/unsigned comparison warnings.
+     * dwarf_frame3.c: Local variables changed to unsigned to
+       eliminate signed/unsigned comparison warnings.
+     * dwarf_init_finish.c: Local variable changed to unsigned to
+       eliminate signed/unsigned comparison warning.
+     * dwarf_leb.c: Local variable changed to unsigned to
+       eliminate signed/unsigned comparison warning.
+     * dwarf_line.c: Changed index variable to unsigned to
+       eliminate signed/unsigned comparison warning.
+     * dwarf_loc.c: Delete two unused local variables.
+     * dwarf_loc.c: Delete two unused local variables.
+     * dwarf_macro.c: Fixed comparisons
+       eliminate signed/unsigned comparison warning.
+     * dwarf_opaque.h: Changed cc_abbrev_offset and de_fde_count
+       to unsigned (which they should have been all along) to
+       eliminate signed/unsigned comparison warnings.
+     * dwarf_print_lines.c: Local variable changed to unsigned to
+       eliminate signed/unsigned comparison warning.
+     * dwarf_util.c: Add include of pro_encode_nm.h to avoid
+       a compiler warning. Changed index variable to unsigned to
+       eliminate signed/unsigned comparison warning.
+     * libdwarf.h: Add ability to handle struct _Elf.
+     * pro_alloc.c: Move an include of malloc.h as it is
+       not needed if stdlib.h is present.
+     * pro_forms.c: Changed index variable to unsigned to
+       eliminate signed/unsigned comparison warning.
+     * pro_util.h: Add specific allowance for FreeBSD include and
+       relocation.

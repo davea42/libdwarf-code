@@ -368,7 +368,7 @@ string old_get_cu_name(Dwarf_Debug dbg,Dwarf_Die cu_die,Dwarf_Error err);
 int get_cu_name(Dwarf_Debug dbg,Dwarf_Die cu_die,
     Dwarf_Error err,char **short_name,char **long_name);
 int get_producer_name(Dwarf_Debug dbg,Dwarf_Die cu_die,
-    Dwarf_Error err,char **producer_name);
+    Dwarf_Error err,struct esb_s *producername);
 
 /* Get number of abbreviations for a CU */
 extern void get_abbrev_array_info(Dwarf_Debug dbg,Dwarf_Unsigned offset);

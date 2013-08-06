@@ -109,8 +109,11 @@ print_line_numbers_this_cu(DieHolder & hcudie)
         int errcount = 0;
         print_source_intro(cu_die);
         SrcfilesHolder hsrcfiles;
-        print_one_die(hcudie, /* print_information= */ 1,
+        DieVec dieVec;
+        print_one_die(hcudie, 
+            /* print_information= */ 1,
             /* indent_level= */ 0,
+            dieVec,
             hsrcfiles,
             /* ignore_die_printed_flag= */true);
         DWARF_CHECK_COUNT(lines_result,1);
@@ -156,8 +159,10 @@ print_line_numbers_this_cu(DieHolder & hcudie)
             print_source_intro(cu_die);
             if (verbose) {
                 SrcfilesHolder hsrcfiles;
+                DieVec dieVec;
                 print_one_die(hcudie, /* print_information= */ 1,
                     /* indent_level= */ 0,
+                    dieVec,
                     hsrcfiles,
                     /* ignore_die_printed_flag= */true);
             }

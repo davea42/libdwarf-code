@@ -240,7 +240,6 @@ print_pubnames(Dwarf_Debug dbg)
                     for a different CU; get the producer ID, at 'cu_off'
                     to see if we need to skip these pubnames */
                 if (cu_off != prev_cu_off) {
-                    char *producer_name = 0;
 
                     /* Record offset for previous CU */
                     prev_cu_off = cu_off;
@@ -250,9 +249,15 @@ print_pubnames(Dwarf_Debug dbg)
                         print_error(dbg, "print pubnames: dwarf_offdie a", dres,err);
                     }
 
-                    /* Get producer name for this CU and update compiler list */
-                    get_producer_name(dbg,die,err,&producer_name);
-                    update_compiler_target(producer_name);
+                    {
+                        /*  Get producer name for this CU 
+                            and update compiler list */
+                        struct esb_s producername;
+                        esb_constructor(&producername);
+                        get_producer_name(dbg,die,err,&producername);
+                        update_compiler_target(esb_get_string(&producername));
+                        esb_destructor(&producername);
+                    }
 
                     dwarf_dealloc(dbg, die, DW_DLA_DIE);
                 }

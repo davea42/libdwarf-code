@@ -35,6 +35,9 @@
 */
 
 
+#if defined(__FreeBSD__)
+#include <osreldate.h>
+#endif
 
 
 #define IS_64BIT(dbg) ((dbg)->de_flags & DW_DLC_SIZE_64 ? 1 : 0)
@@ -118,7 +121,9 @@
 #define Get_REL_SEGREL_isa(dbg)    (R_386_NONE) /* I don't know! */
 #endif /* sparc || i386 */
 #else  /* !sun */
-#ifdef HAVE_SYS_IA64_ELF_H
+#if defined(HAVE_SYS_IA64_ELF_H) || \
+    /* FreeBSD 7.x and above have these. */ \
+    (defined(__FreeBSD__) && __FreeBSD_version > 700000)
 #define Get_REL64_isa(dbg)         (ISA_IA64(dbg) ? \
     DWARF_PRO_R_IA64_DIR64LSB : R_MIPS_64)
 #define Get_REL32_isa(dbg)         (ISA_IA64(dbg) ? \
@@ -128,7 +133,7 @@
 /* ia64 uses 32bit dwarf offsets for sections */
 #define Get_REL_SEGREL_isa(dbg)    (ISA_IA64(dbg) ? \
     DWARF_PRO_R_IA64_SEGREL32LSB : R_MIPS_SCN_DISP)
-#else /* HAVE_SYS_IA64_ELF_H */
+#else /* HAVE_SYS_IA64_ELF_H || FreeBSD 7 */
 
 #if !defined(linux) && !defined(__BEOS__)
 #define Get_REL64_isa(dbg)         (R_MIPS_64)

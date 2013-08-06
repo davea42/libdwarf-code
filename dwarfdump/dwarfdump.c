@@ -58,7 +58,7 @@ $Header: /plroot/cmplrs.src/v7.4.5m/.RCS/PL/dwarfdump/RCS/dwarfdump.c,v 1.48 200
 extern int elf_open(const char *name,int mode);
 #endif /* WIN32 */
 
-#define DWARFDUMP_VERSION " Sat Nov 17 13:32:40 PST 2012  "
+#define DWARFDUMP_VERSION " Tue Jul 30 09:12:36 PDT 2013  "
 
 extern char *optarg;
 
@@ -310,7 +310,7 @@ regex_t search_re;
    frame data.  We're pretty flexible in
    the path to dwarfdump.conf .
 */
-static const char *config_file_path = 0;
+static struct esb_s config_file_path;
 static const char *config_file_abi = 0;
 static char *config_file_defaults[] = {
     "dwarfdump.conf",
@@ -331,6 +331,9 @@ static char *config_file_defaults[] = {
     0
 };
 static struct dwconf_s config_file_data;
+
+/* SN-Carlos: Output filename */
+static const char *output_file = 0;
 
 char cu_name[BUFSIZ];
 boolean cu_name_flag = FALSE;
@@ -395,13 +398,29 @@ main(int argc, char *argv[])
     Elf *elf = 0;
     int archive = 0;
 
+    /* SN-Carlos: Often we redirect the output to a file, but we have found
+       issues due to the buffering associated with stdout. Some issues were
+       fixed just by the use of 'fflush', but the main issued remained.
+       The stdout stream is buffered, so will only display what's in the
+       buffer after it reaches a newline (or when it's told to). We have a
+       few options to print immediately:
+       - Print to stderr instead using fprintf.
+       - Print to stdout and flush stdout whenever we need it to using fflush.
+       - We can also disable buffering on stdout by using setbuf:
+         setbuf(stdout,NULL);
+         Make stdout unbuffered; this seems to work for all cases.
+    */
+    setbuf(stdout,NULL);
+
+    esb_constructor(&config_file_path);
 #ifdef WIN32
     /* Windows specific. */
     /* Redirect stderr to stdout. */
     /* Tried to use SetStdHandle, but it does not work properly. */
     //BOOL bbb = SetStdHandle(STD_ERROR_HANDLE,GetStdHandle(STD_OUTPUT_HANDLE));
     //_iob[2]._file = _iob[1]._file;
-    stderr->_file = stdout->_file;
+    //stderr->_file = stdout->_file;
+    dup2(fileno(stdout),fileno(stderr));
 #endif /* WIN32 */
   
     print_version_details(argv[0],FALSE);
@@ -413,6 +432,20 @@ main(int argc, char *argv[])
     }
 
     file_name = process_args(argc, argv);
+    print_args(argc,argv);
+
+    /* SN-Carlos: Redirect stdout and stderr to an specific file */
+    if (output_file) {
+        if (NULL == freopen(output_file,"w",stdout)) {
+            fprintf(stderr,
+                "dwarfdump: Unable to redirect output to '%s'\n",output_file);
+            exit(1);
+        }
+        dup2(fileno(stdout),fileno(stderr));
+        /* Record version and arguments in the output file */
+        print_version_details(argv[0],TRUE);
+        print_args(argc,argv);
+    }
 
     /*  Because LibDwarf now generates some new warnings,
         allow the user to hide them by using command line options */
@@ -421,7 +454,7 @@ main(int argc, char *argv[])
         cmd.check_verbose_mode = check_verbose_mode;
         dwarf_record_cmdline_options(cmd);
     }
-    print_args(argc,argv);
+
     f = open_a_file(file_name);
     if (f == -1) {
         fprintf(stderr, "%s ERROR:  can't open %s\n", program_name,
@@ -478,7 +511,6 @@ main(int argc, char *argv[])
     }
     elf_end(arf);
     /* Trivial malloc space cleanup. */
-    clean_up_die_esb();
     clean_up_syms_malloc_data();
 
     if (pRangesInfo) {
@@ -680,7 +712,7 @@ print_object_header(Elf *elf,Dwarf_Debug dbg,unsigned local_section_map)
         /* Print section information (name, size, address). */
         nCount = dwarf_get_section_count(dbg);
         printf("\nInfo for %d sections:\n"
-               "  Nro Index Address    Size(h)    Size(d)  Name\n",nCount);
+            "  Nro Index Address    Size(h)    Size(d)  Name\n",nCount);
         /* Ignore section with index=0 */
         for (section_index = 1; section_index < nCount; ++section_index) {
             res = dwarf_get_section_info_by_index(dbg,section_index,
@@ -707,16 +739,16 @@ print_object_header(Elf *elf,Dwarf_Debug dbg,unsigned local_section_map)
                 if (print_it) {
                     ++printed_sections;
                     printf("  %3d "                         /* nro */
-                           "0x%03x "                        /* index */
-                           "0x%" DW_PR_XZEROS DW_PR_DUx " " /* address */
-                           "0x%" DW_PR_XZEROS DW_PR_DUx " " /* size (hex) */
-                           "%" DW_PR_XZEROS DW_PR_DUu " "   /* size (dec) */
-                           "%s\n",                          /* name */
-                           printed_sections,
-                           section_index,
-                           section_addr,
-                           section_size, section_size,
-                           section_name);
+                        "0x%03x "                        /* index */
+                        "0x%" DW_PR_XZEROS DW_PR_DUx " " /* address */
+                        "0x%" DW_PR_XZEROS DW_PR_DUx " " /* size (hex) */
+                        "%" DW_PR_XZEROS DW_PR_DUu " "   /* size (dec) */
+                        "%s\n",                          /* name */
+                        printed_sections,
+                        section_index,
+                        section_addr,
+                        section_size, section_size,
+                        section_name);
                     total_bytes += section_size;
                 }
             }
@@ -730,8 +762,8 @@ print_object_header(Elf *elf,Dwarf_Debug dbg,unsigned local_section_map)
 static void
 print_specific_checks_results(Compiler *pCompiler)
 {
-    fprintf(stderr, "\nDWARF CHECK RESULT\n");
-        fprintf(stderr, "<item>                    <checks>    <errors>\n");
+    printf("\nDWARF CHECK RESULT\n");
+    printf("<item>                    <checks>    <errors>\n");
     if (check_pubname_attr) {
         PRINT_CHECK_RESULT("pubname_attr", pCompiler, pubname_attr_result);
     }
@@ -843,9 +875,9 @@ print_search_results()
             search_text = search_regex_text;
         }
     }
-    fprintf(stderr,"\nSearch type      : '%s'\n",search_type);
-    fprintf(stderr,"Pattern searched : '%s'\n",search_text);
-    fprintf(stderr,"Occurrences Found: %d\n",search_occurrences);
+    printf("\nSearch type      : '%s'\n",search_type);
+    printf("Pattern searched : '%s'\n",search_text);
+    printf("Occurrences Found: %d\n",search_occurrences);
 }
 
 /* Print a summary of checks and errors */
@@ -855,8 +887,6 @@ print_checks_results()
     int index = 0;
     Compiler *pCompilers;
     Compiler *pCompiler;
-
-    fflush(stdout);
 
     /* Sort based on errors detected; the first entry is reserved */
     pCompilers = &compilers_detected[1];
@@ -871,20 +901,20 @@ print_checks_results()
         int count = 0;
         int total = 0;
 
-        fprintf(stderr,"\n*** CU NAMES PER COMPILER ***\n");
+        printf("\n*** CU NAMES PER COMPILER ***\n");
         for (index = 1; index <= compilers_detected_count; ++index) {
             pCompiler = &compilers_detected[index];
-            fprintf(stderr,"\n%02d: %s",index,pCompiler->name);
+            printf("\n%02d: %s",index,pCompiler->name);
             count = 0;
             for (nc = pCompiler->cu_list; nc; nc = nc_next) {
-                fprintf(stderr,"\n    %02d: '%s'",++count,nc->item);
+                printf("\n    %02d: '%s'",++count,nc->item);
                 nc_next = nc->next;
                 free(nc);
             }
             total += count;
-            fprintf(stderr,"\n");
+            printf("\n");
         }
-        fprintf(stderr,"\nDetected %d CU names\n",total);
+        printf("\nDetected %d CU names\n",total);
     }
 
     /* Print error report only if errors have been detected */
@@ -908,34 +938,31 @@ print_checks_results()
         }
 
         /* Print compilers detected list */
-        fprintf(stderr,
-            "\n%d Compilers detected:\n",compilers_detected_count);
+        printf("\n%d Compilers detected:\n",compilers_detected_count);
         for (index = 1; index <= compilers_detected_count; ++index) {
             pCompiler = &compilers_detected[index];
-            fprintf(stderr,"%02d: %s\n",index,pCompiler->name);
+            printf("%02d: %s\n",index,pCompiler->name);
         }
 
         /*  Print compiler list specified by the user with the
             '-c<str>', that were not detected. */
         if (compilers_not_detected) {
             count = 0;
-            fprintf(stderr,
-                "\n%d Compilers not detected:\n",compilers_not_detected);
+            printf("\n%d Compilers not detected:\n",compilers_not_detected);
             for (index = 1; index <= compilers_targeted_count; ++index) {
                 if (!compilers_targeted[index].verified) {
-                    fprintf(stderr,
-                        "%02d: '%s'\n",
+                    printf("%02d: '%s'\n",
                         ++count,compilers_targeted[index].name);
                 }
             }
         }
 
         count = 0;
-        fprintf(stderr,"\n%d Compilers verified:\n",compilers_verified);
+        printf("\n%d Compilers verified:\n",compilers_verified);
         for (index = 1; index <= compilers_detected_count; ++index) {
             pCompiler = &compilers_detected[index];
             if (pCompiler->verified) {
-                fprintf(stderr,"%02d: errors = %5d, %s\n",
+                printf("%02d: errors = %5d, %s\n",
                     ++count,
                     pCompiler->results[total_check_result].errors,
                     pCompiler->name);
@@ -948,19 +975,18 @@ print_checks_results()
             /* Print compilers detected summary*/
             if (print_summary_all) {
                 count = 0;
-                fprintf(stderr,"\n*** ERRORS PER COMPILER ***\n");
+                printf("\n*** ERRORS PER COMPILER ***\n");
                 for (index = 1; index <= compilers_detected_count; ++index) {
                     pCompiler = &compilers_detected[index];
                     if (pCompiler->verified) {
-                        fprintf(stderr,"\n%02d: %s",
-                            ++count,pCompiler->name);
+                        printf("\n%02d: %s",++count,pCompiler->name);
                         print_specific_checks_results(pCompiler);
                     }
                 }
             }
 
             /* Print general summary (all compilers checked) */
-            fprintf(stderr,"\n*** TOTAL ERRORS FOR ALL COMPILERS ***\n");
+            printf("\n*** TOTAL ERRORS FOR ALL COMPILERS ***\n");
             print_specific_checks_results(&compilers_detected[0]);
         }
     }
@@ -1131,7 +1157,6 @@ process_one_file(Elf * elf, const char * file_name, int archive,
     }
 
     printf("\n");
-    fflush(stderr);
     return 0;
 
 }
@@ -1221,6 +1246,7 @@ static const char *usage_text[] = {
 "\t\t  \t(when printing frame information from multi-gigabyte",
 "\t\t  \tobject files this option may save significant time).",
 "\t\t-N\tprint ranges section",
+"\t\t-O name=<path>\tname the output file",
 "\t\t-o[liaprfoR]\tprint relocation info",
 "\t\t  \tl=line,i=info,a=abbrev,p=pubnames,r=aranges,f=frames,o=loc,R=Ranges",
 "\t\t-p\tprint pubnames section",
@@ -1338,7 +1364,7 @@ process_args(int argc, char *argv[])
 
     /* j unused */
     while ((c = getopt(argc, argv,
-        "#:abc::CdDeE::fFgGhH:ik:l::mMnNo::pPqQrRsS:t:u:UvVwW::x:yz")) != EOF) {
+        "#:abc::CdDeE::fFgGhH:ik:l::mMnNo::O:pPqQrRsS:t:u:UvVwW::x:yz")) != EOF) {
 
         switch (c) {
         /* Internal debug level setting. */
@@ -1370,7 +1396,8 @@ process_args(int argc, char *argv[])
                     if (strlen(path) < 1) {
                         goto badopt;
                     }
-                    config_file_path = path;
+                    esb_empty_string(&config_file_path); 
+                    esb_append(&config_file_path,path);
                 } else if (strncmp(optarg, "abi=", 4) == 0) {
                     abi = do_uri_translation(&optarg[4],"-x abi=");
                     if (strlen(abi) < 1) {
@@ -1608,7 +1635,7 @@ process_args(int argc, char *argv[])
                 switch (optarg[0]) {
                 case 'h': section_map |= DW_HDR_HEADER; break;
                 case 'i': section_map |= DW_HDR_DEBUG_INFO;
-                          section_map |= DW_HDR_DEBUG_TYPES; break;
+                    section_map |= DW_HDR_DEBUG_TYPES; break;
                 case 'l': section_map |= DW_HDR_DEBUG_LINE; break;
                 case 'p': section_map |= DW_HDR_DEBUG_PUBNAMES; break;
                 case 'a': section_map |= DW_HDR_DEBUG_ABBREV; break;
@@ -1649,6 +1676,21 @@ process_args(int argc, char *argv[])
             } else {
                 /* Display all relocs */
                 reloc_map = DW_MASK_PRINT_ALL;
+            }
+            break;
+        /* SN-Carlos: Output filename */
+        case 'O':
+            {
+                const char *path = 0;
+                /*  -O name=<filename> */
+                usage_error = TRUE;
+                if (strncmp(optarg,"name=",5) == 0) {
+                    path = do_uri_translation(&optarg[5],"-O name=");
+                    if (strlen(path) > 0) {
+                        usage_error = FALSE;
+                        output_file = path;
+                    }
+                }
             }
             break;
         case 'k':
@@ -1882,7 +1924,8 @@ process_args(int argc, char *argv[])
         init_generic_config_1200_regs(&config_file_data);
     }
     if (config_file_abi && (frame_flag || eh_frame_flag)) {
-        int res = find_conf_file_and_read_config(config_file_path,
+        int res = find_conf_file_and_read_config(
+            esb_get_string(&config_file_path),
             config_file_abi,
             config_file_defaults,
             &config_file_data);
@@ -1919,9 +1962,6 @@ void
 print_error_and_continue(Dwarf_Debug dbg, string msg, int dwarf_code,
     Dwarf_Error err)
 {
-    fflush(stdout);
-    fflush(stderr);
-
     fprintf(stderr,"\n");
 
     if (dwarf_code == DW_DLV_ERROR) {
@@ -1938,7 +1978,6 @@ print_error_and_continue(Dwarf_Debug dbg, string msg, int dwarf_code,
         fprintf(stderr, "%s InternalError:  %s:  code %d\n",
             program_name, msg, dwarf_code);
     }
-    fflush(stderr);
 
     /* Display compile unit name */
     PRINT_CU_INFO();
@@ -2124,14 +2163,15 @@ int get_cu_name(Dwarf_Debug dbg, Dwarf_Die cu_die,
     return ares;
 }
 
-/* Returns the producer of the CU */
+/*  Returns the producer of the CU 
+    Caller must ensure producernameout is
+    a valid, constructed, empty esb_s instance before calling. */
 int get_producer_name(Dwarf_Debug dbg, Dwarf_Die cu_die,
-    Dwarf_Error err, string *producer_name)
+    Dwarf_Error err, struct esb_s *producernameout)
 {
     Dwarf_Attribute producer_attr = 0;
-    int ares;
 
-    ares = dwarf_attr(cu_die, DW_AT_producer, &producer_attr, &err);
+    int ares = dwarf_attr(cu_die, DW_AT_producer, &producer_attr, &err);
     if (ares == DW_DLV_ERROR) {
         print_error(dbg, "hassattr on DW_AT_producer", ares, err);
     } else {
@@ -2139,21 +2179,21 @@ int get_producer_name(Dwarf_Debug dbg, Dwarf_Die cu_die,
             /*  We add extra quotes so it looks more like
                 the names for real producers that get_attr_value
                 produces. */
-            *producer_name = "\"<CU-missing-DW_AT_producer>\"";
+            esb_append(producernameout,"\"<CU-missing-DW_AT_producer>\"");
         } else {
             /*  DW_DLV_OK */
             /*  The string return is valid until the next call to this
                 function; so if the caller needs to keep the returned
                 string, the string must be copied (makename()). */
-            static struct esb_s esb_producer;
-            esb_empty_string(&esb_producer);
             get_attr_value(dbg, DW_TAG_compile_unit, 
-                cu_die, producer_attr, NULL, 0, &esb_producer,
+                cu_die, producer_attr, NULL, 0, producernameout,
                 0 /*show_form_used*/,0 /* verbose */);
-            *producer_name = esb_get_string(&esb_producer);
         }
     }
-
+    /*  If ares is error or missing case, 
+        producer_attr will be left
+        NULL by the call,
+        which is safe when calling dealloc(). */
     dwarf_dealloc(dbg, producer_attr, DW_DLA_ATTR);
     return ares;
 }
@@ -2484,7 +2524,6 @@ void PRINT_CU_INFO()
     printf(", Low PC = 0x%08" DW_PR_DUx ", High PC = 0x%08" DW_PR_DUx ,
         CU_base_address,CU_high_address);
     printf("\n");
-    fflush(stdout);
 }
 
 void DWARF_CHECK_COUNT(Dwarf_Check_Categories category, int inc)
@@ -2514,7 +2553,7 @@ void PRINT_CHECK_RESULT(char *str,
     Compiler *pCompiler, Dwarf_Check_Categories category)
 {
     Dwarf_Check_Result result = pCompiler->results[category];
-    fprintf(stderr, "%-24s%10d  %10d\n", str, result.checks, result.errors);
+    printf("%-24s%10d  %10d\n", str, result.checks, result.errors);
 }
 
 void DWARF_CHECK_ERROR_PRINT_CU()
@@ -2563,7 +2602,9 @@ void DWARF_CHECK_ERROR3(Dwarf_Check_Categories category,
     }
 }
 
-/* Precondition: 'out' is already constructed and empty. */
+/*  The strings whose pointers are returned here
+    from makename are never destructed, but
+    that is ok since there are only about 10 created at most.  */
 static const char *
 do_uri_translation(const char *s,const char *context)
 {

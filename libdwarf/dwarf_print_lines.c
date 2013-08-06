@@ -63,7 +63,7 @@ print_line_header(void)
 
 /* FIXME: print new line values:   prologue_end epilogue_begin isa */
 static void
-print_line_detail(char *prefix,
+print_line_detail(const char *prefix,
     int opcode,
     Dwarf_Unsigned address,
     unsigned long file,
@@ -95,7 +95,7 @@ print_line_detail(char *prefix,
 /*  return DW_DLV_OK if ok. else DW_DLV_NO_ENTRY or DW_DLV_ERROR
     If err_count_out is non-NULL, this is a special 'check'
     call.  */
-int
+static int
 _dwarf_internal_printlines(Dwarf_Die die, Dwarf_Error * error,
 int * err_count_out, int only_line_header)
 {
@@ -141,6 +141,7 @@ int * err_count_out, int only_line_header)
 
 
     Dwarf_Sword i=0;
+    Dwarf_Word u=0;
 
     /*  This is the current opcode read from the statement program. */
     Dwarf_Small opcode=0;
@@ -293,23 +294,23 @@ int * err_count_out, int only_line_header)
     }
     printf("  include directories count %d\n", 
         (int) prefix.pf_include_directories_count);
-    for (i = 0; i < prefix.pf_include_directories_count; ++i) {
-        printf("  include dir[%d] %s\n",
-            (int) i, prefix.pf_include_directories[i]);
+    for (u = 0; u < prefix.pf_include_directories_count; ++u) {
+        printf("  include dir[%u] %s\n",
+            (int) u, prefix.pf_include_directories[u]);
     }
     printf("  files count            %d\n", 
         (int) prefix.pf_files_count);
 
-    for (i = 0; i < prefix.pf_files_count; ++i) {
+    for (u = 0; u < prefix.pf_files_count; ++u) {
         struct Line_Table_File_Entry_s *lfile =
-            prefix.pf_line_table_file_entries + i;
+            prefix.pf_line_table_file_entries + u;
         Dwarf_Unsigned tlm2 = lfile->lte_last_modification_time;
         Dwarf_Unsigned di = lfile->lte_directory_index;
         Dwarf_Unsigned fl = lfile->lte_length_of_file;
 
-        printf("  file[%d]  %s (file-number: %d) \n",
-            (int) i, (char *) lfile->lte_filename,
-            (int)(i+1));
+        printf("  file[%u]  %s (file-number: %u) \n",
+            (unsigned) u, (char *) lfile->lte_filename,
+            (unsigned)(u+1));
         printf("    dir index %d\n", (int) di);
         {
             time_t tt = (time_t) tlm2;

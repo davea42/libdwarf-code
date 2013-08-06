@@ -1,5 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
-AC_INIT(libdwarf.h)
+dnlAC_INIT(libdwarf.h)
+AC_INIT()
 AC_CONFIG_HEADER(config.h)
 
 AC_PROG_CC
@@ -13,6 +14,10 @@ dnl AC_ARFLAGS
 
 AC_CHECK_HEADERS(alloca.h elf.h elfaccess.h libelf.h libelf/libelf.h  sys/types.h sys/ia64/elf.h)
 
+dnl The default libdwarf is the one with struct Elf
+echo Assuming struct Elf for the default libdwarf.h
+cp libdwarf.h.in libdwarf.h
+
 AC_CHECK_LIB(elf,elf64_getehdr,
   AC_DEFINE(HAVE_ELF64_GETEHDR,1,
 	[Define to 1 if the elf64_getehdr function is in libelf.a.]))
@@ -23,6 +28,22 @@ AC_TRY_COMPILE( ,  __uint32_t p; p = 3; ,AC_DEFINE(HAVE___UINT32_T,1,
 	[See if __uint32_t is predefined in the compiler.]))
 AC_TRY_COMPILE( ,  __uint64_t p; p = 3; ,AC_DEFINE(HAVE___UINT64_T,1,
 	[See if __uint64_t is predefined in the compiler.]))
+dnl The following are for FreeBSD and others which
+dnl use struct _Elf as the actual struct type.
+AC_TRY_COMPILE([#include <libelf/libelf.h>  
+  struct _Elf; typedef struct _Elf Elf; ],
+  [struct _Elf *a = 0; ],
+  [ sed 's/struct Elf/struct _Elf/g' <libdwarf.h.in >libdwarf.h ;
+    echo Found struct _Elf in libelf/libelf.h, using it in libdwarf.h ],
+  [echo libelf/libelf.h does not have struct _Elf]) 
+AC_TRY_COMPILE([#include <libelf.h>
+  struct _Elf; typedef struct _Elf Elf; ],
+  [ struct _Elf *a = 0; ],
+  [ sed 's/struct Elf/struct _Elf/g' <libdwarf.h.in >libdwarf.h ;
+    echo Found struct _Elf in libelf.h, using it in libdwarf.h ],
+  [echo libelf.h does not have struct _Elf]) 
+
+
 AC_TRY_COMPILE([#include <sys/types.h>],[  __uint32_t p; p = 3;] ,
   AC_DEFINE(HAVE___UINT32_T_IN_SYS_TYPES_H,1,
 	[Define 1 if sys/types.h defines __uint32_t.]))
@@ -34,6 +55,10 @@ dnl to stand in for a small set.
 AC_TRY_COMPILE([#include <elf.h>],[  int p; p = R_IA_64_DIR32LSB;] ,
   AC_DEFINE(HAVE_R_IA_64_DIR32LSB,1,
 	[Define 1 if  R_IA_64_DIR32LSB is defined (might be enum value).]))
+
+AC_TRY_COMPILE([#include <libelf.h>],[ struct _Elf a; int i; i = 0; ] ,
+  AC_DEFINE(HAVE_STRUCT_UNDERSCORE_ELF,1,
+	[Define 1 if libelf.h defines struct _Elf ]))
 
 AC_TRY_COMPILE([
 #include <libelf.h>

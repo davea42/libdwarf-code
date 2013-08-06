@@ -39,9 +39,9 @@ void
 print_version(const char * name)
 {
 #ifdef _DEBUG
-    char *acType = "Debug";
+    const char *acType = "Debug";
 #else
-    char *acType = "Release";
+    const char *acType = "Release";
 #endif /* _DEBUG */
 
     char acVersion[60];

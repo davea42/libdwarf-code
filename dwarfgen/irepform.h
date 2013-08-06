@@ -1,5 +1,5 @@
 /*
-  Copyright (C) 2010-2011 David Anderson.  
+  Copyright (C) 2010-2013 David Anderson.  
 
   This program is free software; you can redistribute it and/or modify it
   under the terms of version 2 of the GNU General Public License as
@@ -39,14 +39,14 @@ private:
 class IRFormUnknown : public IRForm {
 public: 
     IRFormUnknown():
-        directform_(0), indirectform_(0), 
+        finalform_(0), initialform_(0), 
         formclass_(DW_FORM_CLASS_UNKNOWN)
         {}
     ~IRFormUnknown() {};
     IRFormUnknown(IRFormInterface *);
     IRFormUnknown(const IRFormUnknown &r) {
-        directform_ = r.directform_;
-        indirectform_ = r.indirectform_;
+        finalform_ = r.finalform_;
+        initialform_ = r.initialform_;
         formclass_ = r.formclass_;
     }
     virtual IRFormUnknown * clone() const {
@@ -54,16 +54,16 @@ public:
     }
     IRFormUnknown & operator=(const IRFormUnknown &r) {
         if(this == &r) return *this;
-        directform_ = r.directform_;
-        indirectform_ = r.indirectform_;
+        finalform_ = r.finalform_;
+        initialform_ = r.initialform_;
         formclass_ = r.formclass_;
     };
     enum Dwarf_Form_Class getFormClass() const { return formclass_; };
 private:        
-    Dwarf_Half directform_;
+    Dwarf_Half finalform_;
     // In most cases directform == indirect form.
     // Otherwise, directform == DW_FORM_indirect.
-    Dwarf_Half indirectform_;
+    Dwarf_Half initialform_;
     enum Dwarf_Form_Class formclass_;
 };  
 // An address class entry refers to some part
@@ -77,7 +77,7 @@ private:
 class IRFormAddress : public IRForm {
 public: 
     IRFormAddress():
-        directform_(0), indirectform_(0), 
+        finalform_(0), initialform_(0), 
         formclass_(DW_FORM_CLASS_ADDRESS),
         address_(0)
         {};
@@ -85,35 +85,39 @@ public:
     ~IRFormAddress() {};
     IRFormAddress & operator=(const IRFormAddress &r) {
         if(this == &r) return *this;
-        directform_ = r.directform_;
-        indirectform_ = r.indirectform_;
+        finalform_ = r.finalform_;
+        initialform_ = r.initialform_;
         formclass_ = r.formclass_;
         address_ = r.address_;
     };
     IRFormAddress(const IRFormAddress &r) {
-        directform_ = r.directform_;
-        indirectform_ = r.indirectform_;
+        finalform_ = r.finalform_;
+        initialform_ = r.initialform_;
         formclass_ = r.formclass_;
         address_ = r.address_;
     }
     virtual IRFormAddress * clone() const {
         return new IRFormAddress(*this);
     };
+    void setInitialForm(Dwarf_Half v) { initialform_ = v;}
+    void setFinalForm(Dwarf_Half v) { finalform_ = v;}
+    Dwarf_Half getInitialForm() { return initialform_;}
+    Dwarf_Half getFinalForm() {return finalform_;}
     Dwarf_Addr  getAddress() { return address_;};
     enum Dwarf_Form_Class getFormClass() const { return formclass_; };
 private:        
     void setAddress(Dwarf_Addr addr) { address_ = addr; };
-    Dwarf_Half directform_;
+    Dwarf_Half finalform_;
     // In most cases directform == indirect form.
     // Otherwise, directform == DW_FORM_indirect.
-    Dwarf_Half indirectform_;
+    Dwarf_Half initialform_;
     enum Dwarf_Form_Class formclass_;
     Dwarf_Addr address_;
 };  
 class IRFormBlock : public IRForm {
 public: 
     IRFormBlock():
-        directform_(0), indirectform_(0), 
+        finalform_(0), initialform_(0), 
         formclass_(DW_FORM_CLASS_BLOCK),
         fromloclist_(0),sectionoffset_(0)
         {}
@@ -121,16 +125,16 @@ public:
     ~IRFormBlock() {};
     IRFormBlock & operator=(const IRFormBlock &r) {
         if(this == &r) return *this;
-        directform_ = r.directform_;
-        indirectform_ = r.indirectform_;
+        finalform_ = r.finalform_;
+        initialform_ = r.initialform_;
         formclass_ = r.formclass_;
         blockdata_ = r.blockdata_;
         fromloclist_ = r.fromloclist_;
         sectionoffset_ = r.sectionoffset_;
     };
     IRFormBlock(const IRFormBlock &r) {
-        directform_ = r.directform_;
-        indirectform_ = r.indirectform_;
+        finalform_ = r.finalform_;
+        initialform_ = r.initialform_;
         formclass_ = r.formclass_;
         blockdata_ = r.blockdata_;
         fromloclist_ = r.fromloclist_;
@@ -139,12 +143,17 @@ public:
     virtual IRFormBlock * clone() const {
         return new IRFormBlock(*this);
     }
+    void setInitialForm(Dwarf_Half v) { initialform_ = v;}
+    void setFinalForm(Dwarf_Half v) { finalform_ = v;}
+    Dwarf_Half getInitialForm() { return initialform_;}
+    Dwarf_Half getFinalForm() {return finalform_;}
+
     enum Dwarf_Form_Class getFormClass() const { return formclass_; };
 private:        
-    Dwarf_Half directform_;
+    Dwarf_Half finalform_;
     // In most cases directform == indirect form.
     // Otherwise, directform == DW_FORM_indirect.
-    Dwarf_Half indirectform_;
+    Dwarf_Half initialform_;
     enum Dwarf_Form_Class formclass_;
     std::vector<char> blockdata_;
     Dwarf_Small fromloclist_;
@@ -162,7 +171,7 @@ private:
 class IRFormConstant : public IRForm {
 public: 
     IRFormConstant():
-        directform_(0), indirectform_(0), 
+        finalform_(0), initialform_(0), 
         formclass_(DW_FORM_CLASS_CONSTANT),
         signedness_(SIGN_NOT_SET),
         uval_(0), sval_(0)
@@ -171,16 +180,16 @@ public:
     ~IRFormConstant() {};
     IRFormConstant & operator=(const IRFormConstant &r) {
         if(this == &r) return *this;
-        directform_ = r.directform_;
-        indirectform_ = r.indirectform_;
+        finalform_ = r.finalform_;
+        initialform_ = r.initialform_;
         formclass_ = r.formclass_;
         signedness_ = r.signedness_;
         uval_ = r.uval_;
         sval_ = r.sval_;
     };
     IRFormConstant(const IRFormConstant &r) {
-        directform_ = r.directform_;
-        indirectform_ = r.indirectform_;
+        finalform_ = r.finalform_;
+        initialform_ = r.initialform_;
         formclass_ = r.formclass_;
         signedness_ = r.signedness_;
         uval_ = r.uval_;
@@ -189,12 +198,16 @@ public:
     virtual IRFormConstant * clone() const {
         return new IRFormConstant(*this);
     }
+    void setInitialForm(Dwarf_Half v) { initialform_ = v;}
+    void setFinalForm(Dwarf_Half v) { finalform_ = v;}
+    Dwarf_Half getInitialForm() { return initialform_;}
+    Dwarf_Half getFinalForm() {return finalform_;}
     enum Dwarf_Form_Class getFormClass() const { return formclass_; };
 private:        
-    Dwarf_Half directform_;
+    Dwarf_Half finalform_;
     // In most cases directform == indirect form.
     // Otherwise, directform == DW_FORM_indirect.
-    Dwarf_Half indirectform_;
+    Dwarf_Half initialform_;
     enum Dwarf_Form_Class formclass_;
     // Starts at SIGN_NOT_SET.
     // SIGN_UNKNOWN means it was a DW_FORM_data* of some
@@ -216,21 +229,21 @@ private:
 class IRFormExprloc : public IRForm {
 public: 
     IRFormExprloc():
-        directform_(0), indirectform_(0), 
+        finalform_(0), initialform_(0), 
         formclass_(DW_FORM_CLASS_EXPRLOC)
         {};
     IRFormExprloc(IRFormInterface *);
     ~IRFormExprloc() {};
     IRFormExprloc & operator=(const IRFormExprloc &r) {
         if(this == &r) return *this;
-        directform_ = r.directform_;
-        indirectform_ = r.indirectform_;
+        finalform_ = r.finalform_;
+        initialform_ = r.initialform_;
         formclass_ = r.formclass_;
         exprlocdata_ = r.exprlocdata_;
     };
     IRFormExprloc(const IRFormExprloc &r) {
-        directform_ = r.directform_;
-        indirectform_ = r.indirectform_;
+        finalform_ = r.finalform_;
+        initialform_ = r.initialform_;
         formclass_ = r.formclass_;
         exprlocdata_ = r.exprlocdata_;
         
@@ -238,12 +251,16 @@ public:
     virtual IRFormExprloc * clone() const {
         return new IRFormExprloc(*this);
     }
+    void setInitialForm(Dwarf_Half v) { initialform_ = v;}
+    void setFinalForm(Dwarf_Half v) { finalform_ = v;}
+    Dwarf_Half getInitialForm() { return initialform_;}
+    Dwarf_Half getFinalForm() {return finalform_;}
     enum Dwarf_Form_Class getFormClass() const { return formclass_; };
 private:        
-    Dwarf_Half directform_;
+    Dwarf_Half finalform_;
     // In most cases directform == indirect form.
     // Otherwise, directform == DW_FORM_indirect.
-    Dwarf_Half indirectform_;
+    Dwarf_Half initialform_;
     enum Dwarf_Form_Class formclass_;
     std::vector<char> exprlocdata_;
     void insertBlock(Dwarf_Unsigned len, Dwarf_Ptr data) {
@@ -257,7 +274,8 @@ private:
 class IRFormFlag : public IRForm {
 public: 
     IRFormFlag():
-        directform_(0), indirectform_(0), 
+        initialform_(0), 
+        finalform_(0), 
         formclass_(DW_FORM_CLASS_FLAG),
         flagval_(0)
         {};
@@ -265,14 +283,14 @@ public:
     ~IRFormFlag() {};
     IRFormFlag & operator=(const IRFormFlag &r) {
         if(this == &r) return *this;
-        directform_ = r.directform_;
-        indirectform_ = r.indirectform_;
+        initialform_ = r.initialform_;
+        finalform_ = r.finalform_;
         formclass_ = r.formclass_;
         flagval_ = r.flagval_;
     };
     IRFormFlag(const IRFormFlag &r) {
-        directform_ = r.directform_;
-        indirectform_ = r.indirectform_;
+        initialform_ = r.initialform_;
+        finalform_ = r.finalform_;
         formclass_ = r.formclass_;
         flagval_ = r.flagval_;
     }
@@ -280,12 +298,17 @@ public:
         return new IRFormFlag(*this);
     }
     enum Dwarf_Form_Class getFormClass() const { return formclass_; };
+    void setInitialForm(Dwarf_Half v) { initialform_ = v;}
+    void setFinalForm(Dwarf_Half v) { finalform_ = v;}
+    Dwarf_Half getInitialForm() { return initialform_;}
+    Dwarf_Half getFinalForm() {return finalform_;}
+    void setFlagVal(Dwarf_Bool v) { flagval_ = v;}
     Dwarf_Bool getFlagVal() { return flagval_; }
 private:        
-    Dwarf_Half directform_;
-    // In most cases directform == indirect form.
-    // Otherwise, directform == DW_FORM_indirect.
-    Dwarf_Half indirectform_;
+    Dwarf_Half initialform_;
+    // In most cases initialform_ == finalform_.
+    // Otherwise, initialform == DW_FORM_indirect.
+    Dwarf_Half finalform_;
     enum Dwarf_Form_Class formclass_;
     Dwarf_Bool flagval_; 
 };  
@@ -294,7 +317,7 @@ private:
 class IRFormLinePtr : public IRForm {
 public: 
     IRFormLinePtr():
-        directform_(0), indirectform_(0), 
+        finalform_(0), initialform_(0), 
         formclass_(DW_FORM_CLASS_LINEPTR),
         debug_line_offset_(0)
         {};
@@ -302,26 +325,30 @@ public:
     ~IRFormLinePtr() {};
     IRFormLinePtr & operator=(const IRFormLinePtr &r) {
         if(this == &r) return *this;
-        directform_ = r.directform_;
-        indirectform_ = r.indirectform_;
+        finalform_ = r.finalform_;
+        initialform_ = r.initialform_;
         formclass_ = r.formclass_;
         debug_line_offset_ = r.debug_line_offset_;
     };
     IRFormLinePtr(const IRFormLinePtr &r) {
-        directform_ = r.directform_;
-        indirectform_ = r.indirectform_;
+        finalform_ = r.finalform_;
+        initialform_ = r.initialform_;
         formclass_ = r.formclass_;
         debug_line_offset_ = r.debug_line_offset_;
     }
+    void setInitialForm(Dwarf_Half v) { initialform_ = v;}
+    void setFinalForm(Dwarf_Half v) { finalform_ = v;}
+    Dwarf_Half getInitialForm() { return initialform_;}
+    Dwarf_Half getFinalForm(void) {return finalform_; }
     virtual IRFormLinePtr * clone() const {
         return new IRFormLinePtr(*this);
     }
     enum Dwarf_Form_Class getFormClass() const { return formclass_; };
 private:        
-    Dwarf_Half directform_;
+    Dwarf_Half finalform_;
     // In most cases directform == indirect form.
     // Otherwise, directform == DW_FORM_indirect.
-    Dwarf_Half indirectform_;
+    Dwarf_Half initialform_;
     enum Dwarf_Form_Class formclass_;
     Dwarf_Off debug_line_offset_;
 
@@ -334,7 +361,7 @@ private:
 class IRFormLoclistPtr : public IRForm {
 public: 
     IRFormLoclistPtr():
-        directform_(0), indirectform_(0), 
+        finalform_(0), initialform_(0), 
         formclass_(DW_FORM_CLASS_LOCLISTPTR),
         loclist_offset_(0)
         {};
@@ -342,26 +369,30 @@ public:
     ~IRFormLoclistPtr() {};
     IRFormLoclistPtr & operator=(const IRFormLoclistPtr &r) {
         if(this == &r) return *this;
-        directform_ = r.directform_;
-        indirectform_ = r.indirectform_;
+        finalform_ = r.finalform_;
+        initialform_ = r.initialform_;
         formclass_ = r.formclass_;
         loclist_offset_ = r.loclist_offset_;
     };
     IRFormLoclistPtr(const IRFormLoclistPtr &r) {
-        directform_ = r.directform_;
-        indirectform_ = r.indirectform_;
+        finalform_ = r.finalform_;
+        initialform_ = r.initialform_;
         formclass_ = r.formclass_;
         loclist_offset_ = r.loclist_offset_;
     }
     virtual IRFormLoclistPtr * clone() const {
         return new IRFormLoclistPtr(*this);
     }
+    void setInitialForm(Dwarf_Half v) { initialform_ = v;}
+    void setFinalForm(Dwarf_Half v) { finalform_ = v;}
+    Dwarf_Half getInitialForm() { return initialform_;}
+    Dwarf_Half getFinalForm() {return finalform_;}
     enum Dwarf_Form_Class getFormClass() const { return formclass_; };
 private:        
-    Dwarf_Half directform_;
+    Dwarf_Half finalform_;
     // In most cases directform == indirect form.
     // Otherwise, directform == DW_FORM_indirect.
-    Dwarf_Half indirectform_;
+    Dwarf_Half initialform_;
     enum Dwarf_Form_Class formclass_;
     Dwarf_Off loclist_offset_;
 
@@ -374,7 +405,7 @@ private:
 class IRFormMacPtr : public IRForm {
 public: 
     IRFormMacPtr():
-        directform_(0), indirectform_(0), 
+        finalform_(0), initialform_(0), 
         formclass_(DW_FORM_CLASS_MACPTR),
         macro_offset_(0)
         {};
@@ -382,26 +413,30 @@ public:
     ~IRFormMacPtr() {};
     IRFormMacPtr & operator=(const IRFormMacPtr &r) {
         if(this == &r) return *this;
-        directform_ = r.directform_;
-        indirectform_ = r.indirectform_;
+        finalform_ = r.finalform_;
+        initialform_ = r.initialform_;
         formclass_ = r.formclass_;
         macro_offset_ = r.macro_offset_;
     };
     IRFormMacPtr(const IRFormMacPtr &r) {
-        directform_ = r.directform_;
-        indirectform_ = r.indirectform_;
+        finalform_ = r.finalform_;
+        initialform_ = r.initialform_;
         formclass_ = r.formclass_;
         macro_offset_ = r.macro_offset_;
     }
     virtual IRFormMacPtr * clone() const {
         return new IRFormMacPtr(*this);
     }
+    void setInitialForm(Dwarf_Half v) { initialform_ = v;}
+    void setFinalForm(Dwarf_Half v) { finalform_ = v;}
+    Dwarf_Half getInitialForm() { return initialform_;}
+    Dwarf_Half getFinalForm() {return finalform_;}
     enum Dwarf_Form_Class getFormClass() const { return formclass_; };
 private:        
-    Dwarf_Half directform_;
+    Dwarf_Half finalform_;
     // In most cases directform == indirect form.
     // Otherwise, directform == DW_FORM_indirect.
-    Dwarf_Half indirectform_;
+    Dwarf_Half initialform_;
     enum Dwarf_Form_Class formclass_;
     Dwarf_Off macro_offset_;
 
@@ -414,7 +449,7 @@ private:
 class IRFormRangelistPtr : public IRForm {
 public: 
     IRFormRangelistPtr():
-        directform_(0), indirectform_(0), 
+        finalform_(0), initialform_(0), 
         formclass_(DW_FORM_CLASS_RANGELISTPTR),
         rangelist_offset_(0)
         {};
@@ -422,26 +457,30 @@ public:
     ~IRFormRangelistPtr() {};
     IRFormRangelistPtr & operator=(const IRFormRangelistPtr &r) {
         if(this == &r) return *this;
-        directform_ = r.directform_;
-        indirectform_ = r.indirectform_;
+        finalform_ = r.finalform_;
+        initialform_ = r.initialform_;
         formclass_ = r.formclass_;
         rangelist_offset_ = r.rangelist_offset_;
     };
     IRFormRangelistPtr(const IRFormRangelistPtr &r) {
-        directform_ = r.directform_;
-        indirectform_ = r.indirectform_;
+        finalform_ = r.finalform_;
+        initialform_ = r.initialform_;
         formclass_ = r.formclass_;
         rangelist_offset_ = r.rangelist_offset_;
     }
+    void setInitialForm(Dwarf_Half v) { initialform_ = v;}
+    void setFinalForm(Dwarf_Half v) { finalform_ = v;}
+    Dwarf_Half getInitialForm() { return initialform_;}
+    Dwarf_Half getFinalForm() {return finalform_;}
     virtual IRFormRangelistPtr * clone() const {
         return new IRFormRangelistPtr(*this);
     }
     enum Dwarf_Form_Class getFormClass() const { return formclass_; };
 private:        
-    Dwarf_Half directform_;
+    Dwarf_Half finalform_;
     // In most cases directform == indirect form.
     // Otherwise, directform == DW_FORM_indirect.
-    Dwarf_Half indirectform_;
+    Dwarf_Half initialform_;
     enum Dwarf_Form_Class formclass_;
     Dwarf_Off rangelist_offset_;
 
@@ -453,7 +492,7 @@ private:
 class IRFormFramePtr : public IRForm {
 public:
     IRFormFramePtr():
-        directform_(0), indirectform_(0),
+        finalform_(0), initialform_(0),
         formclass_(DW_FORM_CLASS_FRAMEPTR),
         frame_offset_(0)
         {};
@@ -461,26 +500,30 @@ public:
     ~IRFormFramePtr() {};
     IRFormFramePtr & operator=(const IRFormFramePtr &r) {
         if(this == &r) return *this;
-        directform_ = r.directform_;
-        indirectform_ = r.indirectform_;
+        finalform_ = r.finalform_;
+        initialform_ = r.initialform_;
         formclass_ = r.formclass_;
         frame_offset_ = r.frame_offset_;
     };
     IRFormFramePtr(const IRFormFramePtr &r) {
-        directform_ = r.directform_;
-        indirectform_ = r.indirectform_;
+        finalform_ = r.finalform_;
+        initialform_ = r.initialform_;
         formclass_ = r.formclass_;
         frame_offset_ = r.frame_offset_;
     }
     virtual IRFormFramePtr * clone() const {
         return new IRFormFramePtr(*this);
     }
+    void setInitialForm(Dwarf_Half v) { initialform_ = v;}
+    void setFinalForm(Dwarf_Half v) { finalform_ = v;}
+    Dwarf_Half getInitialForm() { return initialform_;}
+    Dwarf_Half getFinalForm() {return finalform_;}
     enum Dwarf_Form_Class getFormClass() const { return formclass_; };
 private:
-    Dwarf_Half directform_;
+    Dwarf_Half finalform_;
     // In most cases directform == indirect form.
     // Otherwise, directform == DW_FORM_indirect.
-    Dwarf_Half indirectform_;
+    Dwarf_Half initialform_;
     enum Dwarf_Form_Class formclass_;
     Dwarf_Off frame_offset_;
 
@@ -494,7 +537,7 @@ private:
 class IRFormReference : public IRForm {
 public: 
     IRFormReference():
-        directform_(0), indirectform_(0), 
+        finalform_(0), initialform_(0), 
         formclass_(DW_FORM_CLASS_REFERENCE),
         reftype_(RT_NONE),
         globalOffset_(0),cuRelativeOffset_(0)
@@ -503,8 +546,8 @@ public:
     ~IRFormReference() {};
     IRFormReference & operator=(const IRFormReference &r) {
         if(this == &r) return *this;
-        directform_ = r.directform_;
-        indirectform_ = r.indirectform_;
+        finalform_ = r.finalform_;
+        initialform_ = r.initialform_;
         formclass_ = r.formclass_;
         reftype_ = r.reftype_;
         globalOffset_ = r.globalOffset_;
@@ -512,8 +555,8 @@ public:
         typeSig8_ = r.typeSig8_;
     };
     IRFormReference(const IRFormReference &r) {
-        directform_ = r.directform_;
-        indirectform_ = r.indirectform_;
+        finalform_ = r.finalform_;
+        initialform_ = r.initialform_;
         formclass_ = r.formclass_;
         reftype_ = r.reftype_;
         globalOffset_ = r.globalOffset_;
@@ -523,6 +566,10 @@ public:
     virtual IRFormReference * clone() const {
         return new IRFormReference(*this);
     }
+    void setInitialForm(Dwarf_Half v) { initialform_ = v;}
+    void setFinalForm(Dwarf_Half v) { finalform_ = v;}
+    Dwarf_Half getInitialForm() { return initialform_;}
+    Dwarf_Half getFinalForm() {return finalform_;}
     void setOffset(Dwarf_Off off) { globalOffset_ = off; 
         reftype_ = RT_GLOBAL;};
     void setCUOffset(Dwarf_Off off) { cuRelativeOffset_= off; 
@@ -533,10 +580,10 @@ public:
 private:        
     void initSig8();
 
-    Dwarf_Half directform_;
+    Dwarf_Half finalform_;
     // In most cases directform == indirect form.
     // Otherwise, directform == DW_FORM_indirect.
-    Dwarf_Half indirectform_;
+    Dwarf_Half initialform_;
     enum Dwarf_Form_Class formclass_;
     enum RefType { RT_NONE,RT_GLOBAL, RT_CUREL,RT_SIG }; 
     enum RefType reftype_;
@@ -549,14 +596,14 @@ private:
 class IRFormString: public IRForm {
 public:
     IRFormString():
-        directform_(0), indirectform_(0), 
+        finalform_(0), initialform_(0), 
         formclass_(DW_FORM_CLASS_STRING),
         strpoffset_(0) {};
     ~IRFormString() {};
     IRFormString(IRFormInterface *);
     IRFormString(const IRFormString &r) {
-        directform_ = r.directform_;
-        indirectform_ = r.indirectform_;
+        finalform_ = r.finalform_;
+        initialform_ = r.initialform_;
         formclass_ = r.formclass_;
         formdata_= r.formdata_;
         strpoffset_= r.strpoffset_;
@@ -566,20 +613,24 @@ public:
     }
     IRFormString & operator=(const IRFormString &r) {
         if(this == &r) return *this;
-        directform_ = r.directform_;
-        indirectform_ = r.indirectform_;
+        finalform_ = r.finalform_;
+        initialform_ = r.initialform_;
         formclass_ = r.formclass_;
         formdata_ = r.formdata_;
         strpoffset_ = r.strpoffset_;
     };
+    void setInitialForm(Dwarf_Half v) { initialform_ = v;}
+    void setFinalForm(Dwarf_Half v) { finalform_ = v;}
+    Dwarf_Half getInitialForm() { return initialform_;}
+    Dwarf_Half getFinalForm() {return finalform_;}
     void setString(const char *s) {formdata_ = s; };
     const std::string & getString() const {return formdata_; };
     enum Dwarf_Form_Class getFormClass() const { return formclass_; };
 private:
-    Dwarf_Half directform_;
+    Dwarf_Half finalform_;
     // In most cases directform == indirect form.
     // Otherwise, directform == DW_FORM_indirect.
-    Dwarf_Half indirectform_;
+    Dwarf_Half initialform_;
     enum Dwarf_Form_Class formclass_;
     std::string formdata_;
     Dwarf_Unsigned strpoffset_;

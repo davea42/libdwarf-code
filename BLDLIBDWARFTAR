@@ -13,11 +13,11 @@ dat=$1
 
 tmpf=dwarf
 tmpdir=/var/tmp
-sh CPTOPUBLIC  $tmpdir/$tmpf
+# cptopublic knows /var/tmp/dwarf is the target
+sh CPTOPUBLIC nouv 
 newpref=dwarf-${dat}
 newf=libdwarf-${dat}.tar
 echo src is $tmpdir/$tmpf tmp is $newpref target is $newf
-#sh UPDATEDWARFDUMPVERSION.sh
 echo ============  $newpref  $newf ==========
 
 echo First create $tmpdir/$newpref with the latest source.
@@ -29,7 +29,7 @@ then
 fi
 rm -rf $newpref
 
-cp -r $tmpf $newpref
+cp -rp $tmpf $newpref
 # Alter date below before using.e
 rm -f ${newf} ${newf}.gz
 tar cf /var/tmp/$newf $newpref

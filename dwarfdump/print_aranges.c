@@ -156,8 +156,8 @@ print_aranges(Dwarf_Debug dbg)
                 print_error(dbg, "dwarf_get_arange_info", aires, err);
             } else {
                 int dres;
-                char *producer_name = 0;
-
+                struct esb_s producer_name;
+                esb_constructor(&producer_name);
                 /*  Get basic locations for error reporting */
                 dres = dwarf_offdie(dbg, cu_die_offset, &cu_die, &err);
                 if (dres != DW_DLV_OK) {
@@ -171,7 +171,8 @@ print_aranges(Dwarf_Debug dbg)
                 }
                 /* Get producer name for this CU and update compiler list */
                 get_producer_name(dbg,cu_die,err,&producer_name);
-                update_compiler_target(producer_name);
+                update_compiler_target(esb_get_string(&producer_name));
+                esb_destructor(&producer_name);
                 if (!checking_this_compiler()) {
                     continue;
                 }

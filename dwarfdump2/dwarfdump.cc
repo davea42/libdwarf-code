@@ -58,8 +58,9 @@ $Header: /plroot/cmplrs.src/v7.4.5m/.RCS/PL/dwarfdump/RCS/dwarfdump.c,v 1.48 200
 #include "common.h"
 #include "naming.h"
 #include "uri.h"
-#define DWARFDUMP_VERSION " Sat Nov 17 13:32:40 PST 2012  "
+#define DWARFDUMP_VERSION " Tue Jul 30 09:12:36 PDT 2013  "
 
+using std::vector;
 using std::string;
 using std::cout;
 using std::cerr;
@@ -552,7 +553,7 @@ print_object_header(Elf *elf,Dwarf_Debug dbg,unsigned local_section_map)
                 IToHex0N(eh64->e_ident[EI_ABIVERSION],4) <<
                 eh_literals.e_ident_abi_version << endl;
             cout << "e_type     : " <<
-                 IToHex(eh64->e_type) << 
+                IToHex(eh64->e_type) << 
                 " ("<< eh_literals.e_type << ")" << endl;
             cout << "e_machine  : " << 
                 IToHex(eh64->e_machine) << 
@@ -594,8 +595,9 @@ print_object_header(Elf *elf,Dwarf_Debug dbg,unsigned local_section_map)
 
         /* Print section information (name, size, address). */
         nCount = dwarf_get_section_count(dbg);
-        printf("\nInfo for %d sections:\n"
-               "  Nro Index Address    Size(h)    Size(d)  Name\n",nCount);
+        cout << endl;
+        cout << "Info for " <<nCount<< " sections:" << endl;
+        cout << "  Nro Index Address    Size(h)    Size(d)  Name" << endl;
         /* Ignore section with index=0 */
         for (section_index = 1; section_index < nCount; ++section_index) {
             res = dwarf_get_section_info_by_index(dbg,section_index,
@@ -621,23 +623,19 @@ print_object_header(Elf *elf,Dwarf_Debug dbg,unsigned local_section_map)
                 }
                 if (print_it) {
                     ++printed_sections;
-                    printf("  %3d "                         /* nro */
-                           "0x%03x "                        /* index */
-                           "0x%" DW_PR_XZEROS DW_PR_DUx " " /* address */
-                           "0x%" DW_PR_XZEROS DW_PR_DUx " " /* size (hex) */
-                           "%" DW_PR_XZEROS DW_PR_DUu " "   /* size (dec) */
-                           "%s\n",                          /* name */
-                           printed_sections,
-                           section_index,
-                           section_addr,
-                           section_size, section_size,
-                           section_name);
+                    cout << "  " << IToDec(printed_sections,3) <<
+                        " " << IToHex0N(section_index,5) <<
+                        " " << IToHex0N(section_addr,10) <<
+                        " " << IToHex0N(section_size,10) <<
+                        " " << IToDec0N(section_size,8) <<
+                        " " << section_name << endl;
                     total_bytes += section_size;
                 }
             }
         }
-        printf("*** Summary: %" DW_PR_DUu " bytes for %d section(s) ***\n",
-            total_bytes, printed_sections);
+        cout << "*** Summary: " << total_bytes <<
+            " bytes for " << printed_sections << 
+            " section(s) ***" << endl;
     }
 }
 
@@ -1514,7 +1512,7 @@ process_args(int argc, char *argv[])
                 switch (optarg[0]) {
                 case 'h': section_map |= DW_HDR_HEADER; break;
                 case 'i': section_map |= DW_HDR_DEBUG_INFO;
-                          section_map |= DW_HDR_DEBUG_TYPES; break;
+                    section_map |= DW_HDR_DEBUG_TYPES; break;
                 case 'l': section_map |= DW_HDR_DEBUG_LINE; break;
                 case 'p': section_map |= DW_HDR_DEBUG_PUBNAMES; break;
                 case 'a': section_map |= DW_HDR_DEBUG_ABBREV; break;
@@ -1981,8 +1979,12 @@ int get_cu_name(DieHolder &hcu_die,
             /* DW_DLV_OK */
 
             SrcfilesHolder srcfiles;
+            DieVec dieVec;
+            int indentlevel = 0;
             get_attr_value(hcu_die.dbg(), DW_TAG_compile_unit, 
-                hcu_die.die(), name_attr, 
+                hcu_die.die(), 
+                indentlevel, dieVec,
+                name_attr, 
                 srcfiles,
                 long_name,
                 false /*show_form_used*/,0 /* verbose */);
@@ -2025,8 +2027,12 @@ int get_producer_name(DieHolder &hcu_die,
                 string, the string must be copied (makename()). */
             string esb_producer;
             SrcfilesHolder srcfiles;
+            DieVec dieVec;
+            int indentlevel = 0;
             get_attr_value(hcu_die.dbg(), DW_TAG_compile_unit, 
-                hcu_die.die(), producer_attr, 
+                hcu_die.die(), 
+                indentlevel,dieVec,
+                producer_attr, 
                 srcfiles,producer_name,
                 false /*show_form_used*/,
                 0 /* verbose */);

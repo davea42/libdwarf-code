@@ -134,7 +134,7 @@ libdwarf_compose_begin(Dwarf_P_Debug dbg, int code,
 
 
 static void
-libdwarf_compose_add_string(Dwarf_P_Debug dbg, char *string, size_t len)
+libdwarf_compose_add_string(Dwarf_P_Debug dbg, const char *string, size_t len)
 {
     struct dw_macinfo_block_s *curblk = dbg->de_current_macinfo;
     unsigned char *nextchar;

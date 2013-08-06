@@ -231,12 +231,12 @@ handle_debug_info(Dwarf_Debug dbg, int *errval)
     return DW_DLV_OK;
 }
 
-static int
+static const int
   might_have_addr[] = {
     DW_AT_high_pc,
     DW_AT_low_pc,
 };
-static int might_have_locdesc[] = {
+static  const int might_have_locdesc[] = {
     DW_AT_segment,
     DW_AT_return_addr,
     DW_AT_frame_base,

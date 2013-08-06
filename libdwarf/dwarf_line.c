@@ -134,7 +134,7 @@ dwarf_srcfiles(Dwarf_Die die,
     int resattr = DW_DLV_ERROR;
     int lres = DW_DLV_ERROR;
     struct Line_Table_Prefix_s line_prefix;
-    int i = 0;
+    unsigned i = 0;
     int res = DW_DLV_ERROR;
 
     /*  ***** BEGIN CODE ***** */
@@ -421,6 +421,7 @@ _dwarf_internal_srclines(Dwarf_Die die,
     Dwarf_File_Entry cur_file_entry = 0; 
     Dwarf_File_Entry prev_file_entry = 0;
 
+    Dwarf_Word u = 0;
     Dwarf_Sword i = 0;
     Dwarf_Sword file_entry_count = 0;
 
@@ -533,7 +534,7 @@ _dwarf_internal_srclines(Dwarf_Die die,
 
     {
         Dwarf_Small *newlinep = 0;
-        int res = dwarf_read_line_table_prefix(dbg,
+        int resp = dwarf_read_line_table_prefix(dbg,
             line_ptr,
             dbg->de_debug_line.dss_size,
             &newlinep,
@@ -542,13 +543,13 @@ _dwarf_internal_srclines(Dwarf_Die die,
             error,
             0);
 
-        if (res == DW_DLV_ERROR) {
+        if (resp == DW_DLV_ERROR) {
             dwarf_free_line_table_prefix(&prefix);
-            return res;
+            return resp;
         }
-        if (res == DW_DLV_NO_ENTRY) {
+        if (resp == DW_DLV_NO_ENTRY) {
             dwarf_free_line_table_prefix(&prefix);
-            return res;
+            return resp;
         }
         line_ptr_end = prefix.pf_line_ptr_end;
         line_ptr = newlinep;
@@ -567,9 +568,9 @@ _dwarf_internal_srclines(Dwarf_Die die,
     /*  Fill out a Dwarf_File_Entry list as we use that to implement the 
         define_file operation. */
     file_entries = prev_file_entry = NULL;
-    for (i = 0; i < prefix.pf_files_count; ++i) {
+    for (u = 0; u < prefix.pf_files_count; ++u) {
         struct Line_Table_File_Entry_s *pfxfile =
-            prefix.pf_line_table_file_entries + i;
+            prefix.pf_line_table_file_entries + u;
 
         cur_file_entry = (Dwarf_File_Entry)
             _dwarf_get_alloc(dbg, DW_DLA_FILE_ENTRY, 1);
@@ -1653,7 +1654,7 @@ dwarf_arm_standard_opcode_operand_count[STANDARD_OPERAND_COUNT_DWARF3] = {
    errors by command line option, print the details.  */
 static void
 print_header_issue(Dwarf_Debug dbg,
-    char *specific_msg,
+    const char *specific_msg,
     Dwarf_Small *data_start,
     int *err_count_out)
 {
@@ -1662,10 +1663,6 @@ print_header_issue(Dwarf_Debug dbg,
     }
     /* Are we in verbose mode */
     if (dwarf_cmdline_options.check_verbose_mode) {
-        /*  When redirecting stderr into stdout or vice versa, 
-            ensure lines come out at the 'right time' with fflush. */
-        fflush(stderr);
-        fflush(stdout);
         printf("\n*** DWARF CHECK: "
             ".debug_line: %s", specific_msg);
         if (data_start >= dbg->de_debug_line.dss_data && 
@@ -1679,7 +1676,6 @@ print_header_issue(Dwarf_Debug dbg,
             printf(" (unknown section location) ");
         }
         printf("***\n");
-        fflush(stdout);
     }
     *err_count_out += 1;
 }

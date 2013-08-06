@@ -334,6 +334,6 @@ dwarf_malloc_check_complete(char *msg)
 
 #else
 
-extern void *libdwarf_an_unused_function_so_not_empty_c_file();
+extern void *libdwarf_an_unused_function_so_not_empty_c_file(void);
 
 #endif /* WANT_LIBBDWARF_MALLOC_CHECK */

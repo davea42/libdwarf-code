@@ -102,10 +102,10 @@ trivial_naming.o: $(srcdir)/naming.cc
 	$(CXX) $(CXXFLAGS) -DTRIVIAL_NAMING  -c $(srcdir)/naming.cc -o trivial_naming.o
 
 tag_tree_build:  $(srcdir)/tag_tree.cc $(DIRINC)/dwarf.h $(HEADERS) tag_common.o trivial_naming.o common.o
-	$(CXX) $(CXXFLAGS) $(srcdir)/tag_tree.cc trivial_naming.o tag_common.o common.o $(LDFLAGS) -o tag_tree_build 
+	$(CXX) $(CXXFLAGS) $(srcdir)/tag_tree.cc trivial_naming.o tag_common.o common.o ../libdwarf/libdwarf.a $(LDFLAGS) -o tag_tree_build 
 
 tag_attr_build:  $(srcdir)/tag_attr.cc $(DIRINC)/dwarf.h $(HEADERS) trivial_naming.o tag_common.o naming.o common.o
-	$(CXX) $(CXXFLAGS) $(srcdir)/tag_attr.cc trivial_naming.o tag_common.o common.o $(LDFLAGS) -o tag_attr_build 
+	$(CXX) $(CXXFLAGS) $(srcdir)/tag_attr.cc trivial_naming.o tag_common.o common.o  ../libdwarf/libdwarf.a $(LDFLAGS) -o tag_attr_build 
 
 tmp-tt-table.cc tmp-tt-ext-table.cc: $(srcdir)/tag_tree_ext.list $(srcdir)/tag_tree.list tag_tree_build
 	# gcc -E tag_tree.list does not work, so use a .cc name

@@ -37,6 +37,11 @@ mkdir $t/dwarfgen
 mkdir $t/dwarfexample
 mkdir $t/libdwarf/cmplrs
 cp BLDLIBDWARF $t
+cp configure.in $t
+cp configure $t
+cp config.h.in $t
+cp Makefile.in $t
+cp install.sh $t
 for i in dwarfexample/NEWS \
 dwarfexample/ChangeLog2010 \
 dwarfexample/ChangeLog2009 \
@@ -96,6 +101,7 @@ dwarfdump2/NEWS  \
 dwarfdump2/print_frames.h  \
 dwarfdump2/COPYING  \
 dwarfdump2/print_reloc.cc  \
+dwarfdump2/print_reloc.h \
 dwarfdump2/print_sections.cc \
 dwarfdump2/print_sections.h \
 dwarfdump2/strstrnocase.cc \
@@ -195,6 +201,11 @@ libdwarf/dwarf_form.c \
 libdwarf/gennames.c \
 libdwarf/dwarf_harmless.c \
 libdwarf/dwarf_harmless.h \
+libdwarf/dwarf_reloc_arm.h \
+libdwarf/dwarf_reloc_mips.h \
+libdwarf/dwarf_reloc_ppc.h \
+libdwarf/dwarf_reloc_ppc64.h \
+libdwarf/dwarf_reloc_x86_64.h \
 libdwarf/pro_util.h \
 libdwarf/pro_opaque.h \
 libdwarf/pro_reloc_stream.c \
@@ -240,7 +251,7 @@ libdwarf/pro_encode_nm.c \
 libdwarf/pro_weaks.c \
 libdwarf/Makefile.in \
 libdwarf/LGPL.txt \
-libdwarf/libdwarf.h \
+libdwarf/libdwarf.h.in \
 libdwarf/libdwarf2.1.mm \
 libdwarf/pro_reloc_symbolic.h \
 libdwarf/configure \

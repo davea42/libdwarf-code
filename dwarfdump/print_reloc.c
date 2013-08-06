@@ -274,8 +274,8 @@ static void print_relocinfo_32(Dwarf_Debug dbg, Elf * elf);
 
 static SYM   *sym_data;
 static SYM64 *sym_data_64;
-static long   sym_data_entry_count;
-static long   sym_data_64_entry_count;
+static unsigned long   sym_data_entry_count;
+static unsigned long   sym_data_64_entry_count;
 
 typedef struct {
     indx_type index;
@@ -507,7 +507,6 @@ print_relocinfo_32(Dwarf_Debug dbg, Elf * elf)
                 print_error(dbg, "no symbol table data", DW_DLV_OK,
                     err);
             }
-            sym = (Elf32_Sym *) get_scndata(scn, &sym_size);
             count = sym_size / sizeof(Elf32_Sym);
             sym++;
             free(sym_data);

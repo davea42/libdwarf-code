@@ -146,44 +146,28 @@ add_rela_data( struct Dwarf_Section_s *secdata,
     secdata->dss_reloc_link = doas->link;
 }
 
-/* As the tasks performed on a debug related section is the same,
- * in order to make the process of adding a new section (very unlikely) a
- * little bit easy and to reduce the possibility of errors, a simple table
- * build dynamically, will contain the relevant information. */
-struct dbg_sect_s {
-    char *ds_name;                         /* Debug section name */
-    struct Dwarf_Section_s *ds_secdata;    /* Debug information */
-    int ds_duperr;                         /* Error code for duplicated section */
-    int ds_emptyerr;                       /* Error code for empty section */
-    int ds_have_dwarf;                     /* Section contains DWARF */
-};
-
-static int total_entries = 0;
-
-/* As the number of debug sections does not change very often, in the case a
- * new section is added in '_dwarf_setup', the 'MAX_DEBUG_SECTIONS' must
- * be updated accordingly */
-#define MAX_DEBUG_SECTIONS 20
-static struct dbg_sect_s debug_sections[MAX_DEBUG_SECTIONS];
-
 /* Used to add the specific information for a debug related section */
 static void
-add_debug_section_info(char *name,
+add_debug_section_info(Dwarf_Debug dbg,
+    const char *name,
     struct Dwarf_Section_s *secdata,
     int duperr,int emptyerr,int have_dwarf)
 {
-    if (total_entries < MAX_DEBUG_SECTIONS) {
-        debug_sections[total_entries].ds_name = name;
-        debug_sections[total_entries].ds_secdata = secdata;
-        debug_sections[total_entries].ds_duperr = duperr;
-        debug_sections[total_entries].ds_emptyerr = emptyerr;
-        debug_sections[total_entries].ds_have_dwarf = have_dwarf;
-        ++total_entries;
+    unsigned total_entries = dbg->de_debug_sections_total_entries;
+    if (total_entries < DWARF_MAX_DEBUG_SECTIONS) {
+        struct Dwarf_dbg_sect_s *debug_section =
+            &dbg->de_debug_sections[total_entries];
+        debug_section->ds_name = name;
+        debug_section->ds_secdata = secdata;
+        debug_section->ds_duperr = duperr;
+        debug_section->ds_emptyerr = emptyerr;
+        debug_section->ds_have_dwarf = have_dwarf;
+        ++dbg->de_debug_sections_total_entries;
     } else {
         /* Just stop recording related debug sections */
         fprintf(stderr, "Debug sections table max %d exceeded, "
             "limiting the tracked sections to %d\n",
-            MAX_DEBUG_SECTIONS,MAX_DEBUG_SECTIONS);
+            DWARF_MAX_DEBUG_SECTIONS,DWARF_MAX_DEBUG_SECTIONS);
     }
 }
 
@@ -201,10 +185,16 @@ add_debug_section_info(char *name,
     added .debug_frame since there could be stripped objects 
     that have only a .debug_frame section for exception 
     processing.
-    DW_DLV_NO_ENTRY or DW_DLV_OK or DW_DLV_ERROR */
+    DW_DLV_NO_ENTRY or DW_DLV_OK or DW_DLV_ERROR 
+
+    This does not allow for section-groups in object files,
+    for which many .debug_info (and other DWARF) sections may exist.
+*/
+
 static int
 _dwarf_setup(Dwarf_Debug dbg, Dwarf_Error * error)
 {
+    Dwarf_Addr *virtual_addresses = 0;
     const char *scn_name = 0;
     int foundDwarf = 0;
     struct Dwarf_Obj_Access_Interface_s * obj = 0;
@@ -247,89 +237,108 @@ _dwarf_setup(Dwarf_Debug dbg, Dwarf_Error * error)
     dbg->de_length_size = obj->methods->get_length_size(obj->object);
     dbg->de_pointer_size = obj->methods->get_pointer_size(obj->object);
 
-  /*  For windows always is 4 ? */
+    /*  For windows always is 4 ? */
 #ifdef WIN32
     dbg->de_pointer_size = 4;
 #endif /* WIN32 */
 
     section_count = obj->methods->get_section_count(obj->object);
 
-    /* Allocate space to record references to debug sections, that can
-     * be referenced by RELA sections in the 'sh_info' field. */
+    /*  Allocate space to record references to debug sections, that can
+        be referenced by RELA sections in the 'sh_info' field. */
     sections = (struct Dwarf_Section_s **)calloc(section_count + 1,
-                                         sizeof(struct Dwarf_Section_s *));
+        sizeof(struct Dwarf_Section_s *));
     if (!sections) {
         /* Impossible case, we hope. Give up. */
         return DW_DLV_ERROR;
     }
 
-    /* Setup the table that contains the basic information about the
-     * sections that are DWARF related. The entries are very unlikely
-     * to change very often. */
-    add_debug_section_info(".debug_info",&dbg->de_debug_info,           /*01*/
-                DW_DLE_DEBUG_INFO_DUPLICATE,DW_DLE_DEBUG_INFO_NULL,
-                TRUE);
-    add_debug_section_info(".debug_types",&dbg->de_debug_types,         /*02*/
-                DW_DLE_DEBUG_TYPES_DUPLICATE,DW_DLE_DEBUG_TYPES_NULL,
-                TRUE);
-    add_debug_section_info(".debug_abbrev",&dbg->de_debug_abbrev,       /*03*/
-                DW_DLE_DEBUG_ABBREV_DUPLICATE,DW_DLE_DEBUG_ABBREV_NULL,
-                FALSE);
-    add_debug_section_info(".debug_aranges",&dbg->de_debug_aranges,     /*04*/
-                DW_DLE_DEBUG_ARANGES_DUPLICATE,0,
-                FALSE);
-    add_debug_section_info(".debug_line",&dbg->de_debug_line,           /*05*/
-                DW_DLE_DEBUG_LINE_DUPLICATE,0,
-                FALSE);
-    add_debug_section_info(".debug_frame",&dbg->de_debug_frame,         /*06*/
-                DW_DLE_DEBUG_FRAME_DUPLICATE,0,
-                TRUE);
+    /*  Setup the table that contains the basic information about the
+        sections that are DWARF related. The entries are very unlikely
+        to change very often. */
+    add_debug_section_info(dbg,".debug_info",&dbg->de_debug_info, /*01*/
+        DW_DLE_DEBUG_INFO_DUPLICATE,DW_DLE_DEBUG_INFO_NULL,
+        TRUE);
+    add_debug_section_info(dbg,".debug_types",&dbg->de_debug_types, /*02*/
+        DW_DLE_DEBUG_TYPES_DUPLICATE,DW_DLE_DEBUG_TYPES_NULL,
+        TRUE);
+    add_debug_section_info(dbg,".debug_abbrev",&dbg->de_debug_abbrev, /*03*/
+        DW_DLE_DEBUG_ABBREV_DUPLICATE,DW_DLE_DEBUG_ABBREV_NULL,
+        FALSE);
+    add_debug_section_info(dbg,".debug_aranges",&dbg->de_debug_aranges, /*04*/
+        DW_DLE_DEBUG_ARANGES_DUPLICATE,0,
+        FALSE);
+    add_debug_section_info(dbg,".debug_line",&dbg->de_debug_line,  /*05*/
+        DW_DLE_DEBUG_LINE_DUPLICATE,0,
+        FALSE);
+    add_debug_section_info(dbg,".debug_frame",&dbg->de_debug_frame, /*06*/
+        DW_DLE_DEBUG_FRAME_DUPLICATE,0,
+        TRUE);
     /* gnu egcs-1.1.2 data */
-    add_debug_section_info(".eh_frame",&dbg->de_debug_frame_eh_gnu,     /*07*/
-                DW_DLE_DEBUG_FRAME_DUPLICATE,0,
-                TRUE);
-    add_debug_section_info(".debug_loc",&dbg->de_debug_loc,             /*08*/
-                DW_DLE_DEBUG_LOC_DUPLICATE,0,
-                FALSE);
-    add_debug_section_info(".debug_pubnames",&dbg->de_debug_pubnames,   /*09*/
-                DW_DLE_DEBUG_PUBNAMES_DUPLICATE,0,
-                FALSE);
-    add_debug_section_info(".debug_str",&dbg->de_debug_str,             /*10*/
-                DW_DLE_DEBUG_STR_DUPLICATE,0,
-                FALSE);
+    add_debug_section_info(dbg,".eh_frame",&dbg->de_debug_frame_eh_gnu, /*07*/
+        DW_DLE_DEBUG_FRAME_DUPLICATE,0,
+        TRUE);
+    add_debug_section_info(dbg,".debug_loc",&dbg->de_debug_loc, /*08*/
+        DW_DLE_DEBUG_LOC_DUPLICATE,0,
+        FALSE);
+    add_debug_section_info(dbg,".debug_pubnames",&dbg->de_debug_pubnames,/*09*/
+        DW_DLE_DEBUG_PUBNAMES_DUPLICATE,0,
+        FALSE);
+    add_debug_section_info(dbg,".debug_str",&dbg->de_debug_str,    /*10*/
+        DW_DLE_DEBUG_STR_DUPLICATE,0,
+        FALSE);
     /* SGI IRIX-only. */
-    add_debug_section_info(".debug_funcnames",&dbg->de_debug_funcnames, /*11*/
-                DW_DLE_DEBUG_FUNCNAMES_DUPLICATE,0,
-                FALSE);
+    add_debug_section_info(dbg,".debug_funcnames",&dbg->de_debug_funcnames, 
+        /*11*/
+        DW_DLE_DEBUG_FUNCNAMES_DUPLICATE,0,
+        FALSE);
     /*  SGI IRIX-only, created years before DWARF3. Content
         essentially identical to .debug_pubtypes.  */
-    add_debug_section_info(".debug_typenames",&dbg->de_debug_typenames, /*12*/
-                DW_DLE_DEBUG_TYPENAMES_DUPLICATE,0,
-                FALSE);
+    add_debug_section_info(dbg,".debug_typenames",&dbg->de_debug_typenames, 
+        /*12*/
+        DW_DLE_DEBUG_TYPENAMES_DUPLICATE,0,
+        FALSE);
     /* Section new in DWARF3.  */
-    add_debug_section_info(".debug_pubtypes",&dbg->de_debug_pubtypes,   /*13*/
-                DW_DLE_DEBUG_PUBTYPES_DUPLICATE,0,
-                FALSE);
+    add_debug_section_info(dbg,".debug_pubtypes",&dbg->de_debug_pubtypes,   
+        /*13*/
+        DW_DLE_DEBUG_PUBTYPES_DUPLICATE,0,
+        FALSE);
     /* SGI IRIX-only.  */
-    add_debug_section_info(".debug_varnames",&dbg->de_debug_varnames,   /*14*/
-                DW_DLE_DEBUG_VARNAMES_DUPLICATE,0,
-                FALSE);
+    add_debug_section_info(dbg,".debug_varnames",&dbg->de_debug_varnames,   
+        /*14*/
+        DW_DLE_DEBUG_VARNAMES_DUPLICATE,0,
+        FALSE);
     /* SGI IRIX-only. */
-    add_debug_section_info(".debug_weaknames",&dbg->de_debug_weaknames, /*15*/
-                DW_DLE_DEBUG_WEAKNAMES_DUPLICATE,0,
-                FALSE);
-    add_debug_section_info(".debug_macinfo",&dbg->de_debug_macinfo,     /*16*/
-                DW_DLE_DEBUG_MACINFO_DUPLICATE,0,
-                FALSE);
-    add_debug_section_info(".debug_ranges",&dbg->de_debug_ranges,       /*17*/
-                DW_DLE_DEBUG_RANGES_DUPLICATE,0,
-                TRUE);
-    add_debug_section_info(".symtab",&dbg->de_elf_symtab,               /*18*/
-                DW_DLE_DEBUG_SYMTAB_ERR,0,
-                FALSE);
-    add_debug_section_info(".strtab",&dbg->de_elf_strtab,               /*19*/
-                DW_DLE_DEBUG_STRTAB_ERR,0,
-                FALSE);
+    add_debug_section_info(dbg,".debug_weaknames",&dbg->de_debug_weaknames, 
+        /*15*/
+        DW_DLE_DEBUG_WEAKNAMES_DUPLICATE,0,
+        FALSE);
+    add_debug_section_info(dbg,".debug_macinfo",&dbg->de_debug_macinfo,     
+        /*16*/
+        DW_DLE_DEBUG_MACINFO_DUPLICATE,0,
+        FALSE);
+    add_debug_section_info(dbg,".debug_ranges",&dbg->de_debug_ranges,       
+        /*17*/
+        DW_DLE_DEBUG_RANGES_DUPLICATE,0,
+        TRUE);
+    add_debug_section_info(dbg,".symtab",&dbg->de_elf_symtab,               
+        /*18*/
+        DW_DLE_DEBUG_SYMTAB_ERR,0,
+        FALSE);
+    add_debug_section_info(dbg,".strtab",&dbg->de_elf_strtab,               
+        /*19*/
+        DW_DLE_DEBUG_STRTAB_ERR,0,
+        FALSE);
+
+    /* SN-Carlos: Record the default loading address for each section */
+    virtual_addresses = (Dwarf_Addr *)calloc(section_count + 1,
+        sizeof(Dwarf_Addr));
+    if (!virtual_addresses) {
+        /* Impossible case, we hope. Give up. */
+        return DW_DLV_ERROR;
+    }
+    dbg->de_sections_count = section_count;
+    dbg->de_sections_load_address = virtual_addresses;
 
     /*  We can skip index 0 when considering ELF files, but not other
         object types.  Indeed regardless of the object type we should
@@ -358,6 +367,9 @@ _dwarf_setup(Dwarf_Debug dbg, Dwarf_Error * error)
             DWARF_DBG_ERROR(dbg, err, DW_DLV_ERROR);
         }
 
+        /* SN-Carlos: Record virtual address for this section. */
+        dbg->de_sections_load_address[section_index] = doas.addr;
+
         scn_name = doas.name;
 
         if (strncmp(scn_name, ".debug_", 7)
@@ -365,19 +377,21 @@ _dwarf_setup(Dwarf_Debug dbg, Dwarf_Error * error)
             && strcmp(scn_name, ".symtab")
             && strcmp(scn_name, ".strtab")
             && strncmp(scn_name, ".rela.",6)
-            /* For an object file with incorrect rela section name,
-             * readelf prints correct debug information, as the tool takes the
-             * section type instead of the section name. Include the incorrect
-             * section name, until this test uses the section type. */
+            /*  For an object file with incorrect rela section name,
+                readelf prints correct debug information, 
+                as the tool takes the section type instead 
+                of the section name. Include the incorrect
+                section name, until this test uses the section type. */
             && doas.type != SHT_RELA)  {
             continue;
         } else {
             /* Search the debug sections table for a match */
-            struct dbg_sect_s *section;
-            int index;
+            struct Dwarf_dbg_sect_s *section;
+            unsigned i = 0;
             int found_match = FALSE;
-            for (index = 0; index < total_entries; ++index) {
-                section = &debug_sections[index];
+            for (i = 0; i < 
+                dbg->de_debug_sections_total_entries; ++i) {
+                section = &dbg->de_debug_sections[i];
                 if (strcmp(scn_name, section->ds_name) == 0) {
                     res = get_basic_section_data(dbg,
                         section->ds_secdata, &doas,
@@ -394,11 +408,12 @@ _dwarf_setup(Dwarf_Debug dbg, Dwarf_Error * error)
                 }
             }
             if (!found_match) {
-                /* For an object file with incorrect rela section name,
-                 * the 'readelf' tool, prints correct debug information,
-                 * as the tool takes the section type instead of the section
-                 * name. If the current section is a RELA one and the 'sh_info'
-                 * refers to a debug section, add the relocation data. */
+                /*  For an object file with incorrect rela section name,
+                    the 'readelf' tool, prints correct debug information,
+                    as the tool takes the section type instead 
+                    of the section name. If the current section 
+                    is a RELA one and the 'sh_info'
+                    refers to a debug section, add the relocation data. */
                 if (doas.type == SHT_RELA && sections[doas.info]) {
                     add_rela_data(sections[doas.info],&doas,section_index);
                 }

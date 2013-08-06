@@ -219,7 +219,7 @@ _dwarf_make_CU_Context(Dwarf_Debug dbg,
         cu_ptr, sizeof(Dwarf_Half));
     cu_ptr += sizeof(Dwarf_Half);
 
-    READ_UNALIGNED(dbg, abbrev_offset, Dwarf_Signed,
+    READ_UNALIGNED(dbg, abbrev_offset, Dwarf_Unsigned,
         cu_ptr, local_length_size);
     cu_ptr += local_length_size;
     cu_context->cc_abbrev_offset = (Dwarf_Sword) abbrev_offset;
@@ -279,7 +279,7 @@ _dwarf_make_CU_Context(Dwarf_Debug dbg,
         }
     }
 
-    if (abbrev_offset >= dbg->de_debug_abbrev.dss_size) {
+    if ((Dwarf_Unsigned)abbrev_offset >= dbg->de_debug_abbrev.dss_size) {
         dwarf_dealloc(dbg, cu_context, DW_DLA_CU_CONTEXT);
         _dwarf_error(dbg, error, DW_DLE_ABBREV_OFFSET_ERROR);
         return (NULL);

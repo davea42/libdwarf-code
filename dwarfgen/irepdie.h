@@ -1,5 +1,5 @@
 /*
-  Copyright (C) 2010-2011 David Anderson.  
+  Copyright (C) 2010-2013 David Anderson.  
 
   This program is free software; you can redistribute it and/or modify it
   under the terms of version 2 of the GNU General Public License as
@@ -24,17 +24,17 @@ class IRCUdata;
 
 class IRAttr { 
 public:
-    IRAttr():attr_(0),directform_(0),indirectform_(0),
+    IRAttr():attr_(0),finalform_(0),initialform_(0),
         formclass_(DW_FORM_CLASS_UNKNOWN),formdata_(0) {
         };
-    IRAttr(Dwarf_Half attr,Dwarf_Half dirform, Dwarf_Half indirform):
-        attr_(attr),directform_(dirform),indirectform_(indirform),
+    IRAttr(Dwarf_Half attr,Dwarf_Half finalform, Dwarf_Half initialform):
+        attr_(attr),finalform_(finalform),initialform_(initialform),
         formclass_(DW_FORM_CLASS_UNKNOWN),formdata_(0) {
     };
     IRAttr(const IRAttr &r) {
         attr_ = r.attr_;
-        directform_ = r.directform_;
-        indirectform_ = r.indirectform_;
+        finalform_ = r.finalform_;
+        initialform_ = r.initialform_;
         formclass_ = r.formclass_;
         if(r.formdata_) {
             formdata_ =  r.formdata_->clone();
@@ -48,8 +48,8 @@ public:
             return *this;
         }
         attr_ = r.attr_;
-        directform_ = r.directform_;
-        indirectform_ = r.indirectform_;
+        finalform_ = r.finalform_;
+        initialform_ = r.initialform_;
         formclass_ = r.formclass_;
         if(r.formdata_) {
             formdata_ =  r.formdata_->clone();
@@ -58,27 +58,27 @@ public:
         }
         return *this;
     }
-    void setBaseData(Dwarf_Half attr, Dwarf_Half dirform, 
-        Dwarf_Half indirform){
+    void setBaseData(Dwarf_Half attr, Dwarf_Half finalform, 
+        Dwarf_Half initialform){
         attr_ = attr;
-        directform_ = dirform;
-        indirectform_ = indirform;
+        finalform_ = finalform;
+        initialform_ = initialform;
     };
     void setFormClass(enum Dwarf_Form_Class cl) {
         formclass_ = cl;
     };
     enum Dwarf_Form_Class getFormClass() const {return formclass_; };
     void setFormData(IRForm *f) { formdata_ = f; };
-    Dwarf_Half getFinalForm() const { return indirectform_; };
-    Dwarf_Half getDirectForm() const { return directform_; };
+    Dwarf_Half getFinalForm() const { return initialform_; };
+    Dwarf_Half getDirectForm() const { return finalform_; };
     Dwarf_Half getAttrNum() const { return attr_; };
     IRForm * getFormData() { return formdata_;};
 private:
     Dwarf_Half attr_;
-    Dwarf_Half directform_;
-    // In most cases directform == indirect form.
-    // Otherwise, directform == DW_FORM_indirect.
-    Dwarf_Half indirectform_;
+    Dwarf_Half finalform_;
+    // In most cases finalform == initialform form.
+    // Otherwise, initialform == DW_FORM_indirect.
+    Dwarf_Half initialform_;
     enum Dwarf_Form_Class formclass_;
     IRForm *formdata_;
 };

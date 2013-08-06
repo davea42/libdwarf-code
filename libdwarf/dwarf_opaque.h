@@ -111,21 +111,27 @@ struct Dwarf_Attribute_s {
 struct Dwarf_CU_Context_s {
     Dwarf_Debug cc_dbg;
     /*  The sum of cc_length, cc_length_size, and cc_extension_size
-        is the total length of the CU including its header. */
+        is the total length of the CU including its header. 
+
+        cc_length is the length of the compilation unit excluding
+        cc_length_size and cc_extension_size.  */
     Dwarf_Word cc_length;
+
     /*  cc_length_size is the size in bytes of an offset.
         4 for 32bit dwarf, 8 for 64bit dwarf (whether MIPS/IRIX
         64bit dwarf or standard 64bit dwarf using the extension
         mechanism). */
     Dwarf_Small cc_length_size;
+
     /*  cc_extension_size is zero unless this is standard
         DWARF3 and later 64bit dwarf using the extension mechanism.
         If it is the DWARF3 and later 64bit dwarf cc_extension
         size is 4. So for 32bit dwarf and MIPS/IRIX 64bit dwarf
         cc_extension_size is zero.  */
     Dwarf_Small cc_extension_size;
+
     Dwarf_Half cc_version_stamp;
-    Dwarf_Sword cc_abbrev_offset;
+    Dwarf_Word cc_abbrev_offset;
     Dwarf_Small cc_address_size;
     /*  cc_debug_offset is the offset in the section
         of the CU header of this CU.  Dwarf_Word
@@ -231,6 +237,31 @@ struct Dwarf_Debug_InfoTypes_s {
 };
 typedef struct Dwarf_Debug_InfoTypes_s *Dwarf_Debug_InfoTypes;
 
+/*  As the tasks performed on a debug related section is the same,
+    in order to make the process of adding a new section (very unlikely) a
+    little bit easy and to reduce the possibility of errors, a simple table
+    build dynamically, will contain the relevant information. 
+*/
+
+struct Dwarf_dbg_sect_s {
+    /* Debug section name must not be freed, is quoted string. */
+    const char *ds_name;                     
+    struct Dwarf_Section_s *ds_secdata;/* Debug section information */
+    int ds_duperr;                     /* Error code for duplicated section */
+    int ds_emptyerr;                   /* Error code for empty section */
+    int ds_have_dwarf;                 /* Section contains DWARF */
+};
+
+/*  As the number of debug sections does not change very often, in the case a
+    new section is added in '_dwarf_setup', the 'MAX_DEBUG_SECTIONS' must
+    be updated accordingly. 
+    This does not allow for section-groups in object files,
+    for which many .debug_info (and other) sections may exist.
+*/
+#define DWARF_MAX_DEBUG_SECTIONS 20
+
+
+
 struct Dwarf_Debug_s {
     /*  All file access methods and support data 
         are hidden in this structure. 
@@ -278,10 +309,10 @@ struct Dwarf_Debug_s {
     /*  Points to contiguous block of pointers to Dwarf_Fde_s structs. */
     Dwarf_Fde *de_fde_data;
     /*  Count of number of Dwarf_Fde_s structs. */
-    Dwarf_Signed de_fde_count;
+    Dwarf_Unsigned de_fde_count;
     /*  Keep eh (GNU) separate!. */
     Dwarf_Fde *de_fde_data_eh;
-    Dwarf_Signed de_fde_count_eh;
+    Dwarf_Unsigned de_fde_count_eh;
 
     struct Dwarf_Section_s de_debug_info; 
     struct Dwarf_Section_s de_debug_types; 
@@ -331,7 +362,19 @@ struct Dwarf_Debug_s {
     unsigned char de_big_endian_object; /* Non-zero if big-endian
         object opened. */
 
+    struct Dwarf_dbg_sect_s de_debug_sections[DWARF_MAX_DEBUG_SECTIONS];
+    unsigned de_debug_sections_total_entries; /* Number actually used. */
+
     struct Dwarf_Harmless_s de_harmless_errors;
+
+    /*  SN-Carlos: For each section, record the default loading address,
+        that will be used when a relocation is being processed.
+        There are some kind of elf, that have relocation info; for those
+        cases, when doing checks we process the relocation and use the
+        default load address. */
+    /*  Number of sections and virtual address for each section. */
+    Dwarf_Unsigned  de_sections_count;
+    Dwarf_Addr     *de_sections_load_address;
 };
 
 typedef struct Dwarf_Chain_s *Dwarf_Chain;

@@ -212,9 +212,11 @@ print_aranges(Dwarf_Debug dbg)
                         if (do_print_dwarf){
                             /* There is no die if its a set-end entry */
                             SrcfilesHolder hsrcfiles;
+                            DieVec dieVec;
                             print_one_die(hcu_die, 
                                 /* print_information= */ 1,
                                 /* indent_level = */0,
+                                dieVec,
                                 hsrcfiles,
                                 /* ignore_die_printed_flag= */true);
                         }

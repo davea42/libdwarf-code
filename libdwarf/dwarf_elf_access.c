@@ -75,6 +75,23 @@
 #define EM_MIPS 8
 #endif
 
+#ifndef EM_K10M
+#define EM_K10M 181  /* Intel K10M */
+#endif
+#ifndef EM_L10M
+#define EM_L10M 180  /* Intel L10M */
+#endif
+#ifndef EM_AARCH64
+#define EM_AARCH64 183  /* Arm 64 */
+#endif
+#ifndef R_AARCH64_ABS64
+#define R_AARCH64_ABS64 0x101
+#endif
+#ifndef R_AARCH64_ABS32
+#define R_AARCH64_ABS32 0x102
+#endif
+
+
 
 #ifdef HAVE_ELF64_GETEHDR
 extern Elf64_Ehdr *elf64_getehdr(Elf *);
@@ -130,7 +147,7 @@ struct Dwarf_Elf_Rela {
     /*Dwarf_ufixed64 r_info; */
     Dwarf_ufixed64 r_type;
     Dwarf_ufixed64 r_symidx;
-    Dwarf_ufixed64 r_addend; 
+    Dwarf_ufixed64 r_addend;
 };
 
 
@@ -270,8 +287,8 @@ dwarf_elf_object_access_get_section_info(
             return DW_DLV_ERROR;
         }
 
-        /* Get also section 'sh_type' and sh_info' fields, so the caller
-         * can use it for additional tasks that require that info. */
+        /*  Get also section 'sh_type' and sh_info' fields, so the caller
+            can use it for additional tasks that require that info. */
         ret_scn->type = shdr64->sh_type;
         ret_scn->size = shdr64->sh_size;
         ret_scn->addr = shdr64->sh_addr;
@@ -295,8 +312,8 @@ dwarf_elf_object_access_get_section_info(
         return DW_DLV_ERROR;
     }
 
-    /* Get also the section type, so the caller can use it for
-     * additional tasks that require to know the section type. */
+    /*  Get also the section type, so the caller can use it for
+        additional tasks that require to know the section type. */
     ret_scn->type = shdr32->sh_type;
     ret_scn->size = shdr32->sh_size;
     ret_scn->addr = shdr32->sh_addr;
@@ -607,9 +624,13 @@ is_32bit_abs_reloc(unsigned int type, Dwarf_Half machine)
 
 #if defined(EM_ARM) && defined (R_ARM_ABS32)
     case EM_ARM:
+    case EM_AARCH64:
         r = (0
 #if defined (R_ARM_ABS32)
             | ( type == R_ARM_ABS32)
+#endif
+#if defined (R_AARCH64_ABS32)
+            | ( type == R_AARCH64_ABS32)
 #endif
 #if defined (R_ARM_TLS_LDO32)
             | ( type == R_ARM_TLS_LDO32)
@@ -618,11 +639,23 @@ is_32bit_abs_reloc(unsigned int type, Dwarf_Half machine)
         break;
 #endif /* EM_ARM */
 
-#if defined(EM_PPC64) && defined (R_PPC64_ADDR32)
+/*  On FreeBSD R_PPC64_ADDR32 not defined
+    so we use the R_PPC_ names which
+    have the proper value.
+    Our headers have:
+    R_PPC64_ADDR64   38
+    R_PPC_ADDR32     1 so we use this one
+    R_PPC64_ADDR32   R_PPC_ADDR32
+
+    R_PPC64_DTPREL32 110  which may be wrong/unavailable
+    R_PPC64_DTPREL64 78
+    R_PPC_DTPREL32   78 
+    */
+#if defined(EM_PPC64) && defined (R_PPC_ADDR32)
     case EM_PPC64:
         r = (0
-#if defined(R_PPC64_ADDR32)
-            | (type == R_PPC64_ADDR32)
+#if defined(R_PPC_ADDR32)
+            | (type == R_PPC_ADDR32)
 #endif
 #if defined(R_PPC64_DTPREL32)
             | (type == R_PPC64_DTPREL32)
@@ -659,6 +692,12 @@ is_32bit_abs_reloc(unsigned int type, Dwarf_Half machine)
 #endif /* EM_S390 */
 
 #if defined(EM_X86_64) && defined (R_X86_64_32)
+#if defined(EM_K10M)
+    case EM_K10M:
+#endif
+#if defined(EM_L10M)
+    case EM_L10M:
+#endif
     case EM_X86_64:
         r = (0
 #if defined (R_X86_64_32)
@@ -768,6 +807,12 @@ is_64bit_abs_reloc(unsigned int type, Dwarf_Half machine)
 #endif /* EM_390 */
 
 #if defined(EM_X86_64) && defined (R_X86_64_64)
+#if defined(EM_K10M)
+    case EM_K10M:
+#endif
+#if defined(EM_L10M)
+    case EM_L10M:
+#endif
     case EM_X86_64:
         r = (0
 #if defined (R_X86_64_64)
@@ -779,6 +824,16 @@ is_64bit_abs_reloc(unsigned int type, Dwarf_Half machine)
             );
         break;
 #endif /* EM_X86_64 */
+#if defined(EM_AARCH64) && defined (R_AARCH64_ABS64)
+    case EM_AARCH64:
+        r = (0
+#if defined (R_AARCH64_ABS64)
+            | ( type == R_AARCH64_ABS64)
+#endif
+            );
+        break;
+#endif /* EM_AARCH64 */
+
     }
     return r;
 }
@@ -810,6 +865,7 @@ update_entry(Dwarf_Debug dbg,
     Dwarf_sfixed64 addend = 0;
     Dwarf_Unsigned reloc_size = 0;
     Dwarf_Unsigned symtab_entry_count = 0;
+    Dwarf_Addr load_address = 0;
        
     if (symtab_section_entrysize == 0) {
         *error = DW_DLE_SYMTAB_SECTION_ENTRYSIZE_ZERO;
@@ -858,13 +914,22 @@ update_entry(Dwarf_Debug dbg,
         return DW_DLV_ERROR;
     }
 
+    /* SN-Carlos: From the elf.pdf documentation (Figure 1-8. Section Header)
+       sh_addr: If the section will appear in the memory image of a process,
+       this member gives the address at which the section's first byte should
+       reside. Otherwise, the member contains 0.
+       Use the the value of 'sh_addr' as default load address, regardless
+       of the address assigned by the loader. */
+    if (sym->st_shndx >= 0 && sym->st_shndx < dbg->de_sections_count) {
+        load_address = dbg->de_sections_load_address[sym->st_shndx];
+    }
 
     {
         /*  Assuming we do not need to do a READ_UNALIGNED here
             at target_section + offset and add its value to
             outval.  Some ABIs say no read (for example MIPS),
             but if some do then which ones? */
-        Dwarf_Unsigned outval = sym->st_value + addend;
+        Dwarf_Unsigned outval = sym->st_value + addend + load_address;
         WRITE_UNALIGNED(dbg,target_section + offset,
             &outval,sizeof(outval),reloc_size);
     }

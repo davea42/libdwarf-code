@@ -166,9 +166,13 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
     Dwarf_Sword * returned_count,
     int *returned_error)
 {
+/*  The following macro depends on macreg and
+    machigh_reg both being unsigned to avoid
+    unintended behavior and to avoid compiler warnings when
+    high warning levels are turned on.  */
 #define ERROR_IF_REG_NUM_TOO_HIGH(macreg,machigh_reg)        \
     do {                                                     \
-        if ((macreg) >= (machigh_reg) || (macreg) < 0) {     \
+        if ((macreg) >= (machigh_reg)) {                     \
             SIMPLE_ERROR_RETURN(DW_DLE_DF_REG_NUM_TOO_HIGH); \
         }                                                    \
     } /*CONSTCOND */ while (0)
@@ -181,8 +185,8 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
     Dwarf_Small *instr_ptr;
 
     /*  Register numbers not limited to just 255, thus not using
-        Dwarf_Small. */
-    typedef int reg_num_type;
+        Dwarf_Small.  */
+    typedef unsigned reg_num_type;
 
     Dwarf_Unsigned factored_N_value;
     Dwarf_Signed signed_factored_N_value;
@@ -194,7 +198,7 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
         Dwarf_ufixed */
     Dwarf_Unsigned adv_loc = 0;
 
-    int reg_count = dbg->de_frame_reg_rules_entry_count;
+    unsigned reg_count = dbg->de_frame_reg_rules_entry_count;
     struct Dwarf_Reg_Rule_s *localregtab = calloc(reg_count,
         sizeof(struct Dwarf_Reg_Rule_s));
 
@@ -1076,7 +1080,7 @@ dwarf_get_cie_of_fde(Dwarf_Fde fde,
 
 int dwarf_get_cie_index(
     Dwarf_Cie cie,
-    Dwarf_Signed* index, 
+    Dwarf_Signed* indx, 
     Dwarf_Error* error )
 {
     if (cie == NULL)
@@ -1085,7 +1089,7 @@ int dwarf_get_cie_index(
         return (DW_DLV_ERROR);
     }
 
-    *index = cie->ci_index;
+    *indx = cie->ci_index;
     return (DW_DLV_OK);
 }
 
@@ -1261,7 +1265,7 @@ dwarf_get_fde_for_die(Dwarf_Debug dbg,
     cie_ptr = prefix_c.cf_addr_after_prefix;
     cie_id = prefix_c.cf_cie_id;
 
-    if (cie_id == DW_CIE_ID) {
+    if (cie_id == (Dwarf_Unsigned)DW_CIE_ID) {
         int res2 = 0;
         Dwarf_Cie new_cie = 0;
 
@@ -1918,7 +1922,7 @@ dwarf_get_fde_n(Dwarf_Fde * fde_data,
     Dwarf_Fde * returned_fde, Dwarf_Error * error)
 {
     Dwarf_Debug dbg = 0;
-    Dwarf_Signed fdecount = 0;
+    Dwarf_Unsigned fdecount = 0;
 
     if (fde_data == NULL) {
         _dwarf_error(dbg, error, DW_DLE_FDE_PTR_NULL);

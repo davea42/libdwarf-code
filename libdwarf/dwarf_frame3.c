@@ -63,18 +63,19 @@ _dwarf_frame_address_offsets(Dwarf_Debug dbg, Dwarf_Addr ** addrlist,
 {
     int retval = DW_DLV_OK;
     int res = DW_DLV_ERROR;
-    Dwarf_Cie *cie_data;
-    Dwarf_Signed cie_count;
-    Dwarf_Fde *fde_data;
-    Dwarf_Signed fde_count;
-    Dwarf_Signed i;
-    Dwarf_Frame_Op *frame_inst;
-    Dwarf_Fde fdep;
-    Dwarf_Cie ciep;
+    Dwarf_Cie *cie_data = 0;
+    Dwarf_Signed cie_count = 0;
+    Dwarf_Fde *fde_data = 0;
+    Dwarf_Signed fde_count = 0;
+    Dwarf_Signed i = 0;
+    Dwarf_Unsigned u = 0;
+    Dwarf_Frame_Op *frame_inst = 0;
+    Dwarf_Fde fdep = 0;
+    Dwarf_Cie ciep = 0;
     Dwarf_Chain curr_chain = 0;
     Dwarf_Chain head_chain = 0;
     Dwarf_Chain prev_chain = 0;
-    Dwarf_Arange arange;
+    Dwarf_Arange arange = 0;
     Dwarf_Unsigned arange_count = 0;
     Dwarf_Addr *arange_addrs = 0;
     Dwarf_Off *arange_offsets = 0;
@@ -229,7 +230,7 @@ _dwarf_frame_address_offsets(Dwarf_Debug dbg, Dwarf_Addr ** addrlist,
             if (finst2->fp_base_op == 0 && finst2->fp_extended_op == 1) {
                 /* is DW_CFA_set_loc */
                 Dwarf_Addr add = (Dwarf_Addr) finst2->fp_offset;
-                Dwarf_Off off = finst2->fp_instr_offset + instoff;
+                Dwarf_Off off2 = finst2->fp_instr_offset + instoff;
 
                 arange = (Dwarf_Arange)
                     _dwarf_get_alloc(dbg, DW_DLA_ARANGE, 1);
@@ -238,7 +239,7 @@ _dwarf_frame_address_offsets(Dwarf_Debug dbg, Dwarf_Addr ** addrlist,
                     return (DW_DLV_ERROR);
                 }
                 arange->ar_address = add;
-                arange->ar_info_offset = off;
+                arange->ar_info_offset = off2;
                 arange_count++;
                 curr_chain = (Dwarf_Chain)
                     _dwarf_get_alloc(dbg, DW_DLA_CHAIN, 1);
@@ -275,11 +276,11 @@ _dwarf_frame_address_offsets(Dwarf_Debug dbg, Dwarf_Addr ** addrlist,
     }
 
     curr_chain = head_chain;
-    for (i = 0; i < arange_count; i++) {
+    for (u = 0; u < arange_count; u++) {
         Dwarf_Arange ar = curr_chain->ch_item;
 
-        arange_addrs[i] = ar->ar_address;
-        arange_offsets[i] = ar->ar_info_offset;
+        arange_addrs[u] = ar->ar_address;
+        arange_offsets[u] = ar->ar_info_offset;
         prev_chain = curr_chain;
         curr_chain = curr_chain->ch_next;
         dwarf_dealloc(dbg, ar, DW_DLA_ARANGE);

@@ -194,7 +194,7 @@ dwarf_get_abbrev_children_flag(Dwarf_Abbrev abbrev,
 
 int
 dwarf_get_abbrev_entry(Dwarf_Abbrev abbrev,
-    Dwarf_Signed index,
+    Dwarf_Signed indx,
     Dwarf_Half * returned_attr_num,
     Dwarf_Signed * form,
     Dwarf_Off * offset, Dwarf_Error * error)
@@ -205,7 +205,7 @@ dwarf_get_abbrev_entry(Dwarf_Abbrev abbrev,
     Dwarf_Half attr = 0;
     Dwarf_Half attr_form = 0;
 
-    if (index < 0)
+    if (indx < 0)
         return (DW_DLV_NO_ENTRY);
 
     if (abbrev == NULL) {
@@ -228,9 +228,9 @@ dwarf_get_abbrev_entry(Dwarf_Abbrev abbrev,
         abbrev->ab_dbg->de_debug_abbrev.dss_size;
 
     for (attr = 1, attr_form = 1;
-        index >= 0 && abbrev_ptr < abbrev_end && (attr != 0 ||
+        indx >= 0 && abbrev_ptr < abbrev_end && (attr != 0 ||
             attr_form != 0);
-        index--) {
+        indx--) {
         Dwarf_Unsigned utmp4;
 
         mark_abbrev_ptr = abbrev_ptr;
@@ -245,7 +245,7 @@ dwarf_get_abbrev_entry(Dwarf_Abbrev abbrev,
         return (DW_DLV_ERROR);
     }
 
-    if (index >= 0) {
+    if (indx >= 0) {
         return (DW_DLV_NO_ENTRY);
     }
 
