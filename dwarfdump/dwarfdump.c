@@ -436,7 +436,11 @@ main(int argc, char *argv[])
 
     /* SN-Carlos: Redirect stdout and stderr to an specific file */
     if (output_file) {
-        freopen(output_file,"w",stdout);
+        if (NULL == freopen(output_file,"w",stdout)) {
+            fprintf(stderr,
+                "dwarfdump: Unable to redirect output to '%s'\n",output_file);
+            exit(1);
+        }
         dup2(fileno(stdout),fileno(stderr));
         /* Record version and arguments in the output file */
         print_version_details(argv[0],TRUE);
