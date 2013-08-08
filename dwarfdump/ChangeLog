@@ -1,3 +1,5 @@
+2013-08-08  David Anderson
+     * print_reloc.c: Removed duplicated call to get_scndata().
 2013-08-07  David Anderson
      * dwarfdump.c: Changed non-fatal error messages to write
        to stdout instead of stderr. Making it much easier to
