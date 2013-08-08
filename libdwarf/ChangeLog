@@ -1,3 +1,9 @@
+2013-08-07  David Anderson
+     * dwarf_init_finish.c: Changed a nonfatal error to
+       write it to stdout instead of stderr to make it easier
+       to understand the context of the error (which involves
+       the number of debug sections, not something anyone
+       should ever see).
 2013-07-28  David Anderson
      * dwarf_abbrev.c, dwarf_frame.c, dwarf_frame3.c,dwarf_line.c,
        pro_reloc_stream.c, pro_section.c: 

@@ -165,7 +165,7 @@ add_debug_section_info(Dwarf_Debug dbg,
         ++dbg->de_debug_sections_total_entries;
     } else {
         /* Just stop recording related debug sections */
-        fprintf(stderr, "Debug sections table max %d exceeded, "
+        printf("Debug sections table max %d exceeded, "
             "limiting the tracked sections to %d\n",
             DWARF_MAX_DEBUG_SECTIONS,DWARF_MAX_DEBUG_SECTIONS);
     }
