@@ -76,7 +76,7 @@
    Value is 0 means do the string check.
    Value non-zero means do not do the check.
 */
-static Dwarf_Small _dwarf_assume_string_bad;
+static Dwarf_Small _dwarf_assume_string_in_bounds;
 static Dwarf_Small _dwarf_apply_relocs = 1;
 
 /*  Call this after calling dwarf_init but before doing anything else.
@@ -92,9 +92,9 @@ dwarf_set_reloc_application(int apply)
 int
 dwarf_set_stringcheck(int newval)
 {
-    int oldval = _dwarf_assume_string_bad;
+    int oldval = _dwarf_assume_string_in_bounds;
 
-    _dwarf_assume_string_bad = newval;
+    _dwarf_assume_string_in_bounds = newval;
     return oldval;
 }
 
@@ -208,7 +208,7 @@ _dwarf_setup(Dwarf_Debug dbg, Dwarf_Error * error)
 
     foundDwarf = FALSE;
 
-    dbg->de_assume_string_in_bounds = _dwarf_assume_string_bad;
+    dbg->de_assume_string_in_bounds = _dwarf_assume_string_in_bounds;
 
     dbg->de_same_endian = 1;
     dbg->de_copy_word = memcpy;

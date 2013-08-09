@@ -1173,7 +1173,7 @@ _dwarf_free_special_error(Dwarf_Ptr space)
 void
 _dwarf_simple_malloc_botch(int err)
 {
-    fprintf(stderr,"simple malloc botch %d\n",err);
+    fprintf(stdout,"simple malloc botch %d\n",err);
 }
 static void
 _dwarf_simple_malloc_add_to_list(Dwarf_Debug dbg,

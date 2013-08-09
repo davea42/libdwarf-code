@@ -8,7 +8,7 @@ n\."
 .nr Hb 5
 \." ==============================================
 \." Put current date in the following at each rev
-.ds vE rev 2.11, June 07, 2013
+.ds vE rev 2.12, Aug 09, 2013
 \." ==============================================
 \." ==============================================
 .ds | |
@@ -1456,10 +1456,11 @@ The function
 and returns the previous value of the global flag.
 
 If the stringcheck global flag is zero (the default)
-libdwarf does not do string length validity checks.
+libdwarf does string length validity checks
+(the checks do slow libdwarf down very slightly).
 If the stringcheck global flag is non-zero 
-libdwarf does do string length validity checks (the checks
-do slow libdwarf down).
+libdwarf does not do string length validity 
+checks.
 
 The global flag is really just 8 bits long, upperbits are not noticed
 or recorded.
