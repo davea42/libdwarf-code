@@ -1,3 +1,6 @@
+2013-08-08  David Anderson
+     * dwarf_form.c: When a FORM_string attribute is in 
+       debug_types it is now correctly dealt with.
 2013-08-07  David Anderson
      * dwarf_init_finish.c: Changed a nonfatal error to
        write it to stdout instead of stderr to make it easier

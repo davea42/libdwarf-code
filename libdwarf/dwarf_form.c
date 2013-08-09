@@ -764,6 +764,7 @@ dwarf_formblock(Dwarf_Attribute attr,
     Dwarf_Small *data = 0;
     Dwarf_Word leb128_length = 0;
     Dwarf_Block *ret_block = 0;
+    Dwarf_Small *dataptr = 0;
 
     int res  = get_attr_dbg(&dbg,&cu_context,attr,error);
     if (res != DW_DLV_OK) { 
@@ -800,8 +801,11 @@ dwarf_formblock(Dwarf_Attribute attr,
     }
 
     /* Check that block lies within current cu in .debug_info. */
+    dataptr = cu_context->cc_is_info? dbg->de_debug_info.dss_data:
+        dbg->de_debug_types.dss_data;
+
     if (attr->ar_debug_ptr + length >=
-        dbg->de_debug_info.dss_data + cu_context->cc_debug_offset +
+        dataptr + cu_context->cc_debug_offset +
         cu_context->cc_length + cu_context->cc_length_size +
         cu_context->cc_extension_size) {
         _dwarf_error(dbg, error, DW_DLE_ATTR_FORM_SIZE_BAD);
@@ -817,7 +821,7 @@ dwarf_formblock(Dwarf_Attribute attr,
     ret_block->bl_len = length;
     ret_block->bl_data = (Dwarf_Ptr) data;
     ret_block->bl_from_loclist = 0;
-    ret_block->bl_section_offset = data - dbg->de_debug_info.dss_data;
+    ret_block->bl_section_offset = data - dataptr;
 
 
     *return_block = ret_block;
@@ -850,7 +854,11 @@ dwarf_formstring(Dwarf_Attribute attr,
         if (0 == dbg->de_assume_string_in_bounds) {
             /* Check that string lies within current cu in .debug_info. 
             */
-            void *end = dbg->de_debug_info.dss_data +
+            Dwarf_Small *dataptr = cu_context->cc_is_info? 
+                dbg->de_debug_info.dss_data:
+                dbg->de_debug_types.dss_data;
+
+            void *end = dataptr +
                 cu_context->cc_debug_offset +
                 cu_context->cc_length + cu_context->cc_length_size +
                 cu_context->cc_extension_size;
@@ -873,9 +881,9 @@ dwarf_formstring(Dwarf_Attribute attr,
             return res;
         }
         if (0 == dbg->de_assume_string_in_bounds) {
-            /* Check that string lies within current cu in .debug_info. 
+            /* Check that string lies within its   .debug_str. 
             */
-            void *end = dbg->de_debug_str.dss_data + 
+            void *end = dbg->de_debug_str.dss_data +
                 dbg->de_debug_str.dss_size;
             void*begin = dbg->de_debug_str.dss_data + offset;
             if (0 == _dwarf_string_valid(begin, end)) {
