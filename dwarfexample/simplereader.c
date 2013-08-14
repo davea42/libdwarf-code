@@ -1,5 +1,5 @@
 /*
-  Copyright (c) 2009-2010 David Anderson.  All rights reserved.
+  Copyright (c) 2009-2013 David Anderson.  All rights reserved.
  
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions are met:
@@ -26,11 +26,16 @@
 */
 /*  simplereader.c
     This is an example of code reading dwarf .debug_info.
-    It is kept as simple as possible to expose essential features.
+    It is kept simple to expose essential features.
     It does not do all possible error reporting or error handling.
+    It does to a bit of error checking as a help in ensuring
+    that some code works properly... for error checks.
 
     The --names 
     option adds some extra printing.
+
+    The --check
+    option does some interface and error checking.
 
     To use, try
         make
@@ -61,6 +66,7 @@ static void get_die_and_siblings(Dwarf_Debug dbg, Dwarf_Die in_die,int in_level,
 static void resetsrcfiles(Dwarf_Debug dbg,struct srcfilesdata *sf);
 
 static int namesoptionon = 0;
+static int checkoptionon = 0;
 
 int 
 main(int argc, char **argv)
@@ -81,6 +87,8 @@ main(int argc, char **argv)
         for(i = 1; i < (argc-1) ; ++i) {
             if(strcmp(argv[i],"--names") == 0) {
                 namesoptionon=1;
+            } else if(strcmp(argv[i],"--check") == 0) {
+                checkoptionon=1;
             } else {
                 printf("Unknown argument \"%s\" ignored\n",argv[i]);
             }
@@ -229,7 +237,8 @@ get_number(Dwarf_Attribute attr,Dwarf_Unsigned *val)
 }
 static void
 print_subprog(Dwarf_Debug dbg,Dwarf_Die die, int level,
-    struct srcfilesdata *sf)
+    struct srcfilesdata *sf,
+    const char *name)
 {
     int res;
     Dwarf_Error error = 0;
@@ -262,20 +271,94 @@ print_subprog(Dwarf_Debug dbg,Dwarf_Die die, int level,
                 get_addr(attrbuf[i],&lowpc);
             }
             if(aform == DW_AT_high_pc) {
+                /*  This will FAIL with DWARF4 highpc form
+                    of 'class constant'.  */
                 get_addr(attrbuf[i],&highpc);
             }
         }
         dwarf_dealloc(dbg,attrbuf[i],DW_DLA_ATTR);
     }
-    if(filenum || linenum) {
+    /*  Here let's test some alternative interfaces for high and low pc. 
+        We only do both dwarf_highpc and dwarf_highpcb_b as
+        an error check. Do not do both yourself. */
+    if(checkoptionon){
+        int hres = 0;
+        int hresb = 0;
+        int lres = 0;
+        Dwarf_Addr althipc = 0;
+        Dwarf_Addr hipcoffset = 0;
+        Dwarf_Addr althipcb = 0;
+        Dwarf_Addr altlopc = 0;
+        Dwarf_Half highform = 0;
+        enum Dwarf_Form_Class highclass = 0;
+        
+        /*  Should work for DWARF 2/3 DW_AT_high_pc, and
+            all high_pc where the FORM is DW_FORM_addr 
+            Avoid using this interface as of 2013. */
+        hres  = dwarf_highpc(die,&althipc,&error);
+
+        /* Should work for all DWARF DW_AT_high_pc.  */
+        hresb = dwarf_highpc_b(die,&althipcb,&highform,&highclass,&error);
+
+        lres = dwarf_lowpc(die,&altlopc,&error);
+        printf("high_pc checking %s ",name);
+
+        if (hres == DW_DLV_OK) {
+            /* present, FORM addr */
+            printf("highpc   0x%" DW_PR_XZEROS DW_PR_DUx " ",
+                althipc);
+        } else if (hres == DW_DLV_ERROR) {
+            printf("dwarf_highpc() error not class address ");
+        } else {
+            /* absent */
+        }
+        if(hresb == DW_DLV_OK) {
+            /* present, FORM addr or const. */
+            if(highform == DW_FORM_addr) {
+                printf("highpcb  0x%" DW_PR_XZEROS DW_PR_DUx " ",
+                    althipcb);
+            } else {
+                if(lres == DW_DLV_OK) {
+                    hipcoffset = althipcb;
+                    althipcb = altlopc + hipcoffset;
+                    printf("highpcb  0x%" DW_PR_XZEROS DW_PR_DUx " "
+                        "highoff  0x%" DW_PR_XZEROS DW_PR_DUx " ",
+                        althipcb,hipcoffset);
+                } else {
+                    printf("highoff  0x%" DW_PR_XZEROS DW_PR_DUx " ",
+                        althipcb);
+                }
+            }
+        } else if (hresb == DW_DLV_ERROR) {
+            printf("dwarf_highpc_b() error!");
+        } else {
+            /* absent */
+        }
+
+        /* Should work for all DWARF DW_AT_low_pc */
+        if (lres == DW_DLV_OK) {
+            /* present, FORM addr. */
+            printf("lowpc    0x%" DW_PR_XZEROS DW_PR_DUx " ",
+                altlopc);
+        } else if (lres == DW_DLV_ERROR) {
+            printf("dwarf_lowpc() error!");
+        } else {
+            /* absent. */
+        }
+        printf("\n");
+
+
+
+    }
+    if(namesoptionon && (filenum || linenum)) {
         printf("<%3d> file: %" DW_PR_DUu " %s  line %"
             DW_PR_DUu "\n",level,filenum,filename?filename:"",linenum);
     }
-    if(lowpc) {
+    if(namesoptionon && lowpc) {
         printf("<%3d> low_pc : 0x%" DW_PR_DUx  "\n",
             level, (Dwarf_Unsigned)lowpc);
     }
-    if(highpc) {
+    if(namesoptionon && highpc) {
         printf("<%3d> high_pc: 0x%" DW_PR_DUx  "\n",
             level, (Dwarf_Unsigned)highpc);
     }
@@ -360,13 +443,16 @@ print_die_data(Dwarf_Debug dbg, Dwarf_Die print_me,int level,
         printf("Error in dwarf_get_TAG_name , level %d \n",level);
         exit(1);
     }
-    if(namesoptionon) {
+    if(namesoptionon ||checkoptionon) {
         if( tag == DW_TAG_subprogram) {
-            printf(    "<%3d> subprogram            : \"%s\"\n",level,name);
-            print_subprog(dbg,print_me,level,sf);
-        } else if (tag == DW_TAG_compile_unit ||
+            if(namesoptionon) {
+                printf(    "<%3d> subprogram            : \"%s\"\n",level,name);
+            }
+            print_subprog(dbg,print_me,level,sf,name);
+        } 
+        if( (namesoptionon) && (tag == DW_TAG_compile_unit ||
             tag == DW_TAG_partial_unit ||
-            tag == DW_TAG_type_unit) {
+            tag == DW_TAG_type_unit)) {
 
             resetsrcfiles(dbg,sf);
             printf(    "<%3d> source file           : \"%s\"\n",level,name);

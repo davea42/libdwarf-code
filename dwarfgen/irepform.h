@@ -170,6 +170,7 @@ private:
 };  
 class IRFormConstant : public IRForm {
 public: 
+    enum Signedness {SIGN_NOT_SET,SIGN_UNKNOWN,UNSIGNED, SIGNED };
     IRFormConstant():
         finalform_(0), initialform_(0), 
         formclass_(DW_FORM_CLASS_CONSTANT),
@@ -178,6 +179,19 @@ public:
         {}
     IRFormConstant(IRFormInterface *);
     ~IRFormConstant() {};
+    IRFormConstant(Dwarf_Half finalform,
+        Dwarf_Half initialform,
+        enum Dwarf_Form_Class formclass,
+        IRFormConstant::Signedness signedness,
+        Dwarf_Unsigned uval,
+        Dwarf_Signed sval) {
+        finalform_ = finalform;
+        initialform_ = initialform;
+        formclass_ = formclass;
+        signedness_ = signedness;
+        uval_ = uval;
+        sval_ = sval;
+    };
     IRFormConstant & operator=(const IRFormConstant &r) {
         if(this == &r) return *this;
         finalform_ = r.finalform_;
@@ -202,7 +216,10 @@ public:
     void setFinalForm(Dwarf_Half v) { finalform_ = v;}
     Dwarf_Half getInitialForm() { return initialform_;}
     Dwarf_Half getFinalForm() {return finalform_;}
-    enum Dwarf_Form_Class getFormClass() const { return formclass_; };
+    Dwarf_Form_Class getFormClass() const { return formclass_; };
+    Signedness getSignedness() const {return signedness_; };
+    Dwarf_Signed getSignedVal() const {return sval_;};
+    Dwarf_Unsigned getUnsignedVal() const {return uval_;};
 private:        
     Dwarf_Half finalform_;
     // In most cases directform == indirect form.
@@ -212,8 +229,7 @@ private:
     // Starts at SIGN_NOT_SET.
     // SIGN_UNKNOWN means it was a DW_FORM_data* of some
     // kind so we do not really know.
-    enum Signedness {SIGN_NOT_SET,SIGN_UNKNOWN,UNSIGNED, SIGNED };
-    enum Signedness signedness_;
+    Signedness signedness_;
     // Both uval_ and sval_ are always set to the same bits.
     Dwarf_Unsigned uval_;
     Dwarf_Signed sval_;

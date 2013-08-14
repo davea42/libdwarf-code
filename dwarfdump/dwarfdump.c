@@ -1,6 +1,6 @@
 /* 
   Copyright (C) 2000,2002,2004,2005 Silicon Graphics, Inc.  All Rights Reserved.
-  Portions Copyright (C) 2007-2012 David Anderson. All Rights Reserved.
+  Portions Copyright (C) 2007-2013 David Anderson. All Rights Reserved.
   Portions Copyright 2007-2010 Sun Microsystems, Inc. All rights reserved.
   Portions Copyright 2012 SN Systems Ltd. All rights reserved.:w
 
@@ -1946,7 +1946,7 @@ print_error_and_continue(Dwarf_Debug dbg, string msg, int dwarf_code,
     } else if (dwarf_code == DW_DLV_OK) {
         printf("%s:  %s \n", program_name, msg);
     } else {
-         printf("%s InternalError:  %s:  code %d\n",
+        printf("%s InternalError:  %s:  code %d\n",
             program_name, msg, dwarf_code);
     }
     fflush(stdout);

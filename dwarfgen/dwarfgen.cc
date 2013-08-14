@@ -92,6 +92,8 @@ static Elf * elf = 0;
 static Elf32_Ehdr * ehp = 0;
 static strtabdata secstrtab;
 
+bool transformHighpcToConst = false;
+
 // loff_t is signed for some reason (strange) but we make offsets unsigned.
 #define LOFFTODWUNS(x)  ( (Dwarf_Unsigned)(x))
 
@@ -297,7 +299,7 @@ main(int argc, char **argv)
     int opt;
     bool pathrequired(false);
     long cu_of_input_we_output = -1;
-    while((opt=getopt(argc,argv,"o:t:c:")) != -1) {
+    while((opt=getopt(argc,argv,"o:t:c:h")) != -1) {
         switch(opt) {
         case 'c':
             // At present we can only create a single
@@ -306,6 +308,9 @@ main(int argc, char **argv)
             break;
         case 't':
             setinput(&whichinput,optarg,&pathrequired);
+            break;
+        case 'h':
+            transformHighpcToConst = true;
             break;
         case 'o':
             outfile = optarg;

@@ -1,3 +1,21 @@
+2013-08-13  David Anderson
+     * dwarf_init_finish.c:
+     * dwarf_query.c:  Added dwarf_highpc_b() so consumers can deal
+       with DW_AT_high_pc with form constant (a feature of DWARF4).
+     * libdwarf.h.in: Added dwarf_highpc_b(), 
+       dwarf_add_AT_any_value_sleb(), dwarf_add_AT_any_value_uleb().
+       to give producers more flexibility.
+       Moved the Dwarf_Form_Class declaration closer to the 
+       head of the file so the new function prototypes can reference it.
+     * libdwarf2.1.mm: Version 2.1.13.  Added dwarf_highpc_b().
+     * libdwarf2.1.pdf: Regenerated.
+     * libdwarf2p.1.mm: Version 1.33. Documents
+       dwarf_add_AT_any_value_sleb() and
+       dwarf_add_AT_any_value_uleb(). 
+       Fixes a one-character typo that was truncating the document severely.
+     * libdwarf2p.1.pdf: Regenerated.
+     * pro_forms.c: Implements dwarf_add_AT_any_value_sleb() and
+        dwarf_add_AT_any_value_uleb().
 2013-08-09  David Anderson
      * dwarf_init_finish.c: Spelling, change _dwarf_assume_string_bad->
        _dwarf_assume_string_in_bound to reflect the actual meaning.

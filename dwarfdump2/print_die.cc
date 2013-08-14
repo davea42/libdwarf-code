@@ -2,7 +2,7 @@
   Copyright (C) 2000-2006 Silicon Graphics, Inc.  All Rights Reserved.
   Portions Copyright 2007-2010 Sun Microsystems, Inc. All rights reserved.
   Portions Copyright 2009-2012 SN Systems Ltd. All rights reserved.
-  Portions Copyright 2007-2012 David Anderson. All rights reserved.
+  Portions Copyright 2007-2013 David Anderson. All rights reserved.
 
   This program is free software; you can redistribute it and/or modify it
   under the terms of version 2 of the GNU General Public License as
@@ -223,7 +223,7 @@ clearSiblingComparisons(DieVec  &dieVec,int level)
     int start = level;
     int end = level +2;
     if (dieVec.Size() < end) {
-       end = dieVec.Size();
+        end = dieVec.Size();
     }
     for (int cur = start  ; cur < end;  ++cur) {
         if(cur >= 0) {
@@ -236,7 +236,7 @@ get_die_stack_sibling( int indentlevel, DieVec &dieVec)
 {
     int i = indentlevel-1; 
     if ( i > dieVec.Size()) {
-         i = dieVec.Size()-1;
+        i = dieVec.Size()-1;
     }
     for( ; i >=0 ; --i)
     {
@@ -255,7 +255,7 @@ validate_die_stack_siblings(Dwarf_Debug dbg,
     int i = indentlevel-1;
     Dwarf_Off innersiboffset = 0;
     if ( i > dieVec.Size()) {
-         i = dieVec.Size()-1;
+        i = dieVec.Size()-1;
     }
     for( ; i >=0 ; --i)
     {
@@ -770,7 +770,7 @@ print_die_and_children_internal(DieHolder & hin_die_in,
             if (cores == DW_DLV_OK) {
                 char small_buf[200];
                 Dwarf_Off parent_sib_val = 
-                   get_die_stack_sibling(indent_level,dieVec);
+                    get_die_stack_sibling(indent_level,dieVec);
                 if (parent_sib_val && 
                     (parent_sib_val <= child_overall_offset )) {
                     string errmsg("A parent DW_AT_sibling of ");
@@ -2038,7 +2038,8 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die, Dwarf_Half attr,
                 break;
             }
             if (theform != DW_FORM_addr) {
-                /*  New in DWARF4: other forms are not an address
+                /*  New in DWARF4: other forms 
+                    (of class constant) are not an address
                     but are instead offset from pc.
                     One could test for DWARF4 here before adding
                     this string, but that seems unnecessary as this
@@ -3262,9 +3263,9 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
                 errmsg.append(IToHex0N(die_overall_offset,10));
                 errmsg.append(" ");
                 print_error(dbg,errmsg.c_str(),DW_DLV_OK,0);
-             }
+            }
 
-         }
+        }
 
 
 

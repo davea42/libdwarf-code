@@ -8,7 +8,7 @@ n\."
 .nr Hb 5
 \." ==============================================
 \." Put current date in the following at each rev
-.ds vE rev 2.12, Aug 09, 2013
+.ds vE rev 2.13, Aug 10, 2013
 \." ==============================================
 \." ==============================================
 .ds | |
@@ -89,7 +89,7 @@ and a copy of the standard.
 .H 2 "Copyright"
 Copyright 1993-2006 Silicon Graphics, Inc.
 
-Copyright 2007-2011 David Anderson. 
+Copyright 2007-2013 David Anderson. 
 
 Permission is hereby granted to 
 copy or republish or use any or all of this document without
@@ -2277,6 +2277,36 @@ It returns \f(CWDW_DLV_NO_ENTRY\fP if \f(CWdie\fP does not have this
 attribute. 
 It returns \f(CWDW_DLV_ERROR\fP if an error occurred. 
 
+.H 3 "dwarf_highpc_b()"
+.DS
+\f(CWint dwarf_highpc_b(
+        Dwarf_Die               die,
+        Dwarf_Addr  *           return_highpc,
+        Dwarf_Half  *           return_form*/,
+        enum Dwarf_Form_Class * return_class*/,
+        Dwarf_Error *error)\fP
+.DE
+The function \f(CWdwarf_highpc_b()\fP returns
+\f(CWDW_DLV_OK\fP and sets \f(CW*return_highpc\fP
+to the value of the \f(CWDW_AT_high_pc\fP attribute.
+It also sets \f(CWreturn_form\fP to the FORM
+of the attribute. 
+It also sets \f(CWreturn_class\fP to the form class
+of the attribute.
+
+If the form class  returned is \f(CWDW_FORM_CLASS_ADDRESS\fP
+the \f(CWreturn_highpc\fP is an actual pc address (1 higher
+than the address of the last pc in the address range).. 
+If the form class  returned is \f(CWDW_FORM_CLASS_CONSTANT\fP
+the \f(CWreturn_highpc\fP is an offset from the value of
+the the DIE's  low PC address (see DWARF4 section 2.17.2 Contiguous
+Address Range).
+
+It returns \f(CWDW_DLV_NO_ENTRY\fP if \f(CWdie\fP does not have 
+the \f(CWDW_AT_high_pc\fP attribute.
+
+It returns \f(CWDW_DLV_ERROR\fP if an error occurred.
+
 .H 3 "dwarf_highpc()"
 .DS
 \f(CWint dwarf_highpc(
@@ -2292,16 +2322,15 @@ represents a debugging information entry with the
 \f(CWDW_AT_high_pc attribute\fP and the form is \f(CWDW_FORM_addr\fP
 (meaning the form is of class address).  
 
-So this function is useless for a \f(CWDW_AT_high_pc\fP
-which is encoded as a constant.
+This function is useless for a \f(CWDW_AT_high_pc\fP
+which is encoded as a constant (which was first possible in
+DWARF4).
 
 It returns \f(CWDW_DLV_NO_ENTRY\fP if \f(CWdie\fP does not have this 
 attribute.
 
 It returns \f(CWDW_DLV_ERROR\fP if an error occurred or if the
-form is of class constant (which means this function is
-not very useful for some DWARF as of 2013). 
-
+form is not of class address.
 
 .H 3 "dwarf_bytesize()"
 .DS

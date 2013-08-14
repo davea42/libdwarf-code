@@ -1,3 +1,9 @@
+2013-08-13  David Anderson
+     * esb.c: Add 1 so the esb_append_printf has room for the NUL
+       byte.
+     * print_die.c: Clarified a comment about DW_AT_high_pc
+       and FORM class constant. Fixed indent error.
+     * dwarfdump.c: Fixed indent error.
 2013-08-08  David Anderson
      * print_reloc.c: Removed duplicated call to get_scndata().
 2013-08-07  David Anderson

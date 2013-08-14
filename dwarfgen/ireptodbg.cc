@@ -50,6 +50,111 @@ static Dwarf_Error error;
 
 typedef std::map<std::string,unsigned> pathToUnsignedType;
 
+// The first special transformation is converting DW_AT_high_pc
+// from FORM_addr to an offset and we choose FORM_uleb
+// The attrs ref passed in is (sometimes) used to generate
+// a new attrs list for the caller.
+static void
+specialAttrTransformations(Dwarf_P_Debug dbg,
+    IRepresentation & Irep,
+    Dwarf_P_Die ourdie,
+    IRDie &inDie, 
+    list<IRAttr>& attrs,
+    unsigned level)
+{
+    if(!transformHighpcToConst) {
+        // No transformation of this sort requested.
+        return;
+    }
+    Dwarf_Half dietag = inDie.getTag();
+    if(dietag != DW_TAG_subprogram) {
+        return;
+    }
+    bool foundhipc= false;
+    bool foundlopc= false;
+    Dwarf_Addr lopcval = 0;
+    Dwarf_Addr hipcval = 0;
+    for (list<IRAttr>::iterator it = attrs.begin();
+        it != attrs.end();
+        it++) {
+        IRAttr & attr = *it;
+        Dwarf_Half attrnum = attr.getAttrNum();
+        Dwarf_Half attrform = attr.getFinalForm();
+        Dwarf_Form_Class formclass = attr.getFormClass();
+        IRForm * form = attr.getFormData();
+        if(attrnum == DW_AT_high_pc) { 
+             if (attrform == DW_FORM_udata) {
+                 // Already the right form for the test.
+                 // Nothing to do.
+                 return;
+             }
+             if (formclass != DW_FORM_CLASS_ADDRESS) {
+                 return;
+             }
+             IRForm*f = attr.getFormData();
+             IRFormAddress *f2 = dynamic_cast<IRFormAddress *>(f);
+             hipcval = f2->getAddress();
+             foundhipc = true;
+             continue;
+        }
+        if(attrnum == DW_AT_low_pc) { 
+             if (formclass != DW_FORM_CLASS_ADDRESS) {
+                 return;
+             }
+             IRForm*f = attr.getFormData();
+             IRFormAddress *f2 = dynamic_cast<IRFormAddress *>(f);
+             lopcval = f2->getAddress();
+
+             foundlopc = true;
+             continue;
+        }
+        continue;
+    }
+    if(!foundlopc || !foundhipc) {
+        return;
+    }
+    Dwarf_Addr hipcoffset = hipcval - lopcval;
+    // Now we create a revised attribute.
+    list<IRAttr> revisedattrs;
+    for (list<IRAttr>::iterator it = attrs.begin();
+        it != attrs.end();
+        it++) {
+        IRAttr & attr = *it;
+        Dwarf_Half attrnum = attr.getAttrNum();
+        Dwarf_Half attrform = attr.getFinalForm();
+        Dwarf_Form_Class formclass = attr.getFormClass();
+        if(attrnum == DW_AT_high_pc) { 
+             // Here we want to creat a constant form.
+             // We will assign a FORM of DW_FORM_uleb
+             IRAttr attr2(attrnum,
+                 DW_FORM_udata,
+                 DW_FORM_udata);
+             attr2.setFormClass(DW_FORM_CLASS_CONSTANT);
+             IRFormConstant *f = new IRFormConstant(
+                 DW_FORM_udata,
+                 DW_FORM_udata,
+                 DW_FORM_CLASS_CONSTANT,
+                 IRFormConstant::UNSIGNED,
+                 hipcoffset,
+                 0);
+             attr2.setFormData(f);
+             revisedattrs.push_back(attr2);
+             foundhipc = true;
+             continue;
+        }
+        if(attrnum == DW_AT_low_pc) { 
+             foundlopc = true;
+             revisedattrs.push_back(attr);
+             continue;
+        }
+        revisedattrs.push_back(attr);
+        continue;
+    }
+    // Now we make the attr list have the revised attribute.
+    attrs = revisedattrs;
+}
+
+
 static Dwarf_P_Die 
 HandleOneDieAndChildren(Dwarf_P_Debug dbg,
     IRepresentation & Irep,
@@ -87,7 +192,12 @@ HandleOneDieAndChildren(Dwarf_P_Debug dbg,
         lastch = chp;
     }
     list<IRAttr>& attrs = inDie.getAttributes();
-    // Now we add attributes (content), if any, to the 'ourdie'.
+
+    // Now any special transformations to the attrs list.
+    specialAttrTransformations(dbg,Irep,ourdie,inDie,attrs,level);
+
+    // Now we add attributes (content), if any, to the 
+    // output die 'ourdie'.
     for (list<IRAttr>::iterator it = attrs.begin();
         it != attrs.end();
         it++) {

@@ -1,3 +1,7 @@
+2013-08-11  David Anderson
+     * print_die.c: Clarified a comment about DW_AT_high_pc and
+       FORM class constant. 
+       Fixed indent errors.
 2013-08-07  David Anderson
      * dwarfdump.cc: Changed cerr to cout in all cases of
        errors other than fatal errors. Making it easier to
