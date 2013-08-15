@@ -58,7 +58,7 @@ $Header: /plroot/cmplrs.src/v7.4.5m/.RCS/PL/dwarfdump/RCS/dwarfdump.c,v 1.48 200
 extern int elf_open(const char *name,int mode);
 #endif /* WIN32 */
 
-#define DWARFDUMP_VERSION " Wed Aug  7 10:34:13 PDT 2013  "
+#define DWARFDUMP_VERSION " Thu Aug 15 07:14:27 PDT 2013  "
 
 extern char *optarg;
 
@@ -404,7 +404,7 @@ main(int argc, char *argv[])
     //_iob[2]._file = _iob[1]._file;
     stderr->_file = stdout->_file;
 #endif /* WIN32 */
-  
+
     print_version_details(argv[0],FALSE);
 
     (void) elf_version(EV_NONE);
@@ -974,6 +974,13 @@ print_checks_results()
     fflush(stdout);
 }
 
+/* This is for dwarf_print_lines() */
+void 
+printf_callback_for_libdwarf(void *userdata,const char *data)
+{
+    printf("%s",data);
+}
+
 /*
   Given a file which we know is an elf file, process
   the dwarf data.
@@ -985,6 +992,7 @@ process_one_file(Elf * elf, const char * file_name, int archive,
 {
     Dwarf_Debug dbg;
     int dres;
+    struct Dwarf_Printf_Callback_Info_s printfcallbackdata;
 
     dres = dwarf_elf_init(elf, DW_DLC_READ, NULL, NULL, &dbg, &err);
     if (dres == DW_DLV_NO_ENTRY) {
@@ -994,6 +1002,11 @@ process_one_file(Elf * elf, const char * file_name, int archive,
     if (dres != DW_DLV_OK) {
         print_error(dbg, "dwarf_elf_init", dres, err);
     }
+
+    memset(&printfcallbackdata,0,sizeof(printfcallbackdata));
+    printfcallbackdata.dp_fptr = printf_callback_for_libdwarf;
+    dwarf_register_printf_callback(dbg,&printfcallbackdata);
+
 
     if (archive) {
         Elf_Arhdr *mem_header = elf_getarhdr(elf);

@@ -1,3 +1,8 @@
+2013-08-15  David Anderson
+     * dwarfdump.c: Now calls dwarf_register_printf_callback()
+       so dwarf_print_lines() output is shown (if dwarfdump
+       wants it shown).  Update version string.
+      * common.c: Update version string.
 2013-08-13  David Anderson
      * esb.c: Add 1 so the esb_append_printf has room for the NUL
        byte.

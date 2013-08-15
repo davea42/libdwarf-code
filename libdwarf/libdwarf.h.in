@@ -1183,6 +1183,7 @@ int dwarf_object_init(Dwarf_Obj_Access_Interface* /* obj */,
 
 int dwarf_object_finish(Dwarf_Debug /* dbg */,
     Dwarf_Error* /* error */);
+
   
 /*  Die traversal operations.  
     dwarf_next_cu_header_b() traverses debug_info CU headers.
@@ -2104,6 +2105,39 @@ struct Dwarf_Macro_Details_s {
 int _dwarf_print_lines(Dwarf_Die /*cu_die*/,Dwarf_Error * /*error*/);
 int dwarf_print_lines(Dwarf_Die /*cu_die*/,Dwarf_Error * /*error*/,
    int * /*error_count_out */);
+
+/*  As of August 2013, dwarf_print_lines() no longer uses printf.
+    Instead it calls back to the application using a function pointer
+    once per line-to-print.  The lines passed back already have any needed
+    newlines.    The following struct is used to initialize
+    the callback mechanism.
+
+    Failing to call the dwarf_register_printf_callback() function will
+    prevent the lines from being passed back but such omission
+    is not an error.
+    See libdwarf2.1.mm for further documentation.
+
+    The return value is the previous set of callback values.
+*/
+
+typedef void (* dwarf_printf_callback_function_type)(void * /*user_pointer*/,
+    const char * /*linecontent*/);
+
+struct Dwarf_Printf_Callback_Info_s {
+    void *                        dp_user_pointer;
+    dwarf_printf_callback_function_type dp_fptr;
+    char *                        dp_buffer;
+    unsigned int                  dp_buffer_len;
+    int                           dp_buffer_user_provided;
+    void *                        dp_reserved;
+};
+
+/*  If called with a NULL newvalues pointer, it simply returns
+    the current set of values for this Dwarf_Debug. */
+struct  Dwarf_Printf_Callback_Info_s
+dwarf_register_printf_callback(Dwarf_Debug /*dbg*/,
+    struct  Dwarf_Printf_Callback_Info_s * /*newvalues*/);
+
 
 /*  dwarf_check_lineheader lets dwarfdump get detailed messages
     about some compiler errors we detect.

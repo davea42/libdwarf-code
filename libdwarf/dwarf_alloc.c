@@ -970,21 +970,27 @@ dwarf_print_memory_stats(Dwarf_Debug dbg)
     if (dbg == NULL)
         return;
 
-    printf("Size of Dwarf_Debug        %4ld bytes\n",
+    dwarf_printf(dbg,
+        "Size of Dwarf_Debug        %4ld bytes\n",
         (long) sizeof(*dbg));
-    printf("Size of Dwarf_Alloc_Hdr_s  %4ld bytes\n",
+    dwarf_printf(dbg,
+        "Size of Dwarf_Alloc_Hdr_s  %4ld bytes\n",
         (long) sizeof(struct Dwarf_Alloc_Hdr_s));
-    printf("size of Dwarf_Alloc_Area_s %4ld bytes\n",
+    dwarf_printf(dbg,
+        "size of Dwarf_Alloc_Area_s %4ld bytes\n",
         (long) sizeof(struct Dwarf_Alloc_Area_s));
 
-    printf("   Alloc Type                   Curr  Structs byt   str\n");
-    printf("   ----------                   ----  ------- per   per\n");
+    dwarf_printf(dbg,
+        "   Alloc Type                   Curr  Structs byt   str\n");
+    dwarf_printf(dbg,
+        "   ----------                   ----  ------- per   per\n");
     for (i = 1; i <= MAX_DW_DLA; i++) {
         int indx = index_into_allocated[i].ia_al_num;
 
         alloc_hdr = &dbg->de_alloc_hdr[indx];
         if (alloc_hdr->ah_bytes_one_struct != 1) {
-            printf("%2d %-25s   %6d %8d %6d %6d\n",
+            dwarf_printf(dbg,
+                "%2d %-25s   %6d %8d %6d %6d\n",
                 (int) i,
                 alloc_type_name[i],
                 (int) alloc_hdr->ah_chunks_allocated,
@@ -1120,6 +1126,11 @@ _dwarf_free_all_of_one_debug(Dwarf_Debug dbg)
     rela_free(&dbg->de_debug_weaknames);
     rela_free(&dbg->de_debug_ranges);
     dwarf_harmless_cleanout(&dbg->de_harmless_errors);
+
+    if (dbg->de_printf_callback.dp_buffer && 
+        !dbg->de_printf_callback.dp_buffer_user_provided ) {
+        free(dbg->de_printf_callback.dp_buffer);
+    }
 
     memset(dbg, 0, sizeof(*dbg)); /* Prevent accidental use later. */
     free(dbg);

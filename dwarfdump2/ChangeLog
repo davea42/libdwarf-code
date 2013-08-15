@@ -1,3 +1,8 @@
+2013-08-15  David Anderson
+     * dwarfdump.cc: Now calls dwarf_register_printf_callback()
+       so dwarf_print_lines() output is shown (if dwarfdump
+       wants it shown). Update version string.
+      * common.c: Update version string.
 2013-08-11  David Anderson
      * print_die.c: Clarified a comment about DW_AT_high_pc and
        FORM class constant. 

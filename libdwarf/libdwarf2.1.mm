@@ -8,7 +8,7 @@ n\."
 .nr Hb 5
 \." ==============================================
 \." Put current date in the following at each rev
-.ds vE rev 2.13, Aug 10, 2013
+.ds vE rev 2.14, Aug 15, 2013
 \." ==============================================
 \." ==============================================
 .ds | |
@@ -202,6 +202,12 @@ functions.
 The following is a brief mention of the changes in this libdwarf from 
 the libdwarf draft for DWARF Version 1 and recent changes.
 .H 2 "Items Changed"
+.P
+Added a printf-callback so libdwarf will not actually print
+to stdout.  Added dwarf_highpc_b()
+so return of a DWARF4 DW_AT_high_pc of class constant
+can be returned properly.
+(August 15 2013)
 .P
 Defined how the new operator DW_OP_GNU_const_type is handled.
 (January 26 2013)
@@ -1557,6 +1563,127 @@ The function is the same as \f(CWdwarf_get_section_max_offsets_b()\fP
 except it is missing the \f(CWdebug_types_size()\fP argument.
 Though obsolete it is still supported.
 
+.H 2 "Printf Callbacks"
+.P
+This is new in August 2013.
+.P
+The \f(CWdwarf_print_lines()\fP function
+is intended as a helper to programs like \f(CWdwarfdump\fP
+and show some line internal details in a way only the interals
+of libdwarf can show these details.
+But using printf directly in libdwarf means the caller
+has limited control of where the output appears.
+So now the 'printf' output is passed back to the
+caller through a callback function whose implementation
+is provided by the caller. 
+.P
+Any code calling libdwarf can ignore
+the functions described in this section completely.   
+If the functions are ignored the messages
+(if any) from libdwarf will simply not appear anywhere.
+.P
+The \f(CWlibdwarf.h\fP header file defines
+\f(CWstruct Dwarf_Printf_Callback_Info_s\fP
+and
+\f(CWdwarf_register_printf_callback\fP
+for those libdwarf callers wishing to implement the callback.
+In this section we describe how one uses that interface.
+The applications \f(CWdwarfdump\fP  and
+\f(CWdwarfdump2\fP are examples of how these may be used.
+
+
+
+.H 3 "dwarf_register_printf_callback"
+.DS
+\f(CWstruct  Dwarf_Printf_Callback_Info_s
+    dwarf_register_printf_callback(Dwarf_Debug dbg,
+    struct  Dwarf_Printf_Callback_Info_s * newvalues);
+.DE
+.P
+The  \f(CWdwarf_register_printf_callback()\fP function
+can only be called after the Dwarf_Debug instance
+has been initialized, the call makes no sense at other times.
+The function returns the current value of the structure.
+If \f(CWnewvalues\fP is non-null then the passed-in
+values are used to initialize the libdwarf internal
+callback data (the values returned are the values
+before the \f(CWnewvalues\fP are recorded). 
+If \f(CWnewvalues\fP is null no change is made to
+the libdwarf internal callback data.
+
+
+
+
+.H 3 "Dwarf_Printf_Callback_Info_s"
+.DS
+\f(CWstruct Dwarf_Printf_Callback_Info_s {
+    void *                        dp_user_pointer;
+    dwarf_printf_callback_function_type dp_fptr;
+    char *                        dp_buffer;
+    unsigned int                  dp_buffer_len;
+    int                           dp_buffer_user_provided;
+    void *                        dp_reserved;
+};
+.DE
+.P
+First we describe the fields as applicable in setting up
+for a call to \f(CWdwarf_register_printf_callback()\fP.
+.P
+The field \f(CWdp_user_pointer\fP is remembered by libdwarf
+and passed back in any call libdwarf makes to the 
+user's callback function.  
+It is otherwise ignored by libdwarf.
+.P
+The field \f(CWdp_fptr\fP is either NULL or a pointer to
+a user-implemented function.
+.P
+If the field \f(CWdp_buffer_user_provided\fP is non-zero
+then \f(CWdp_buffer_len\fP and \f(CWdp_buffer\fP
+must be set by the user and libdwarf will use that buffer
+without doing any malloc of space.
+If the field \f(CWdp_buffer_user_provided\fP is zero
+then the input fields \f(CWdp_buffer_len\fP and \f(CWdp_buffer\fP
+are ignored by libdwarf and space is malloc'd as needed.
+.P
+The field \f(CWdp_reserved\fP is ignored, it is reserved for
+future use.
+.P
+When the structure is returned by \f(CWdwarf_register_printf_callback()\fP
+the values of the fields before the
+\f(CWdwarf_register_printf_callback()\fP call are returned.
+
+
+.H 3 "dwarf_printf_callback_function_type"
+.DS
+\f(CWtypedef void (* dwarf_printf_callback_function_type)(void * user_pointer,
+    const char * linecontent);
+.DE
+.P
+Any application using the callbacks needs to use the function
+\f(CWdwarf_register_printf_callback()\fP and supply a function matching
+the above function prototype from libdwarf.h.
+
+.H 3 "Example of printf callback use in a C++ application using libdwarf"
+.DS
+\f(CWstruct Dwarf_Printf_Callback_Info_s printfcallbackdata;
+    memset(&printfcallbackdata,0,sizeof(printfcallbackdata));
+    printfcallbackdata.dp_fptr = printf_callback_for_libdwarf;
+    dwarf_register_printf_callback(dbg,&printfcallbackdata);
+
+Assuming the user implements something
+like the following function in her application:
+
+void
+printf_callback_for_libdwarf(void *userdata,const char *data)
+{
+     cout << data;
+}
+.DE
+.P
+It is crucial that the user's callback function copies or
+prints the data immediately. Once the user callback
+function returns the \f(CWdata\fP
+pointer may change or become stale without warning.
 
 
 .H 2 "Debugging Information Entry Delivery Operations"
@@ -4802,14 +4929,15 @@ lfB lfB lfB
 l c l.
 NAME:value:PURPOSE
 _
-DW_FRAME_UNDEFINED_VAL:1034:means undefined value.
-::Not a column or register value
+DW_FRAME_UNDEFINED_VAL:1034:means undefined
+::value. Not a column or register value
 DW_FRAME_SAME_VAL:1035:means 'same value' as
 ::caller had. Not a column or
 ::register value
-DW_FRAME_CFA_COL3:1436:means 'cfa register' is referred to,
-::not a real register, not a column, but the cfa (the cfa
-::does have a value, but in the DWARF3 libdwarf interface
+DW_FRAME_CFA_COL3:1436:means 'cfa register'
+::is referred to, not a real register, not 
+::a column, but the cfa (the cfa does have 
+::a value, but in the DWARF3 libdwarf interface
 ::it does not have a 'real register number').
 .TE
 .DE
@@ -6506,6 +6634,7 @@ enumerated in Figure \n(aX below were defined in Dwarf 1.
 These errors are not used by the \f(CWlibdwarf\fP implementation
 for Dwarf 2 or later.  
 .DS
+
 .TS
 center box, tab(:);
 lfB lfB 
@@ -6513,18 +6642,21 @@ l l.
 SYMBOLIC NAME:DESCRIPTION
 _
 DW_DLE_NE:No error (0)
-DW_DLE_VMM:Version of DWARF information newer than libdwarf
+DW_DLE_VMM:Version of DWARF information newer
+:than libdwarf
 DW_DLE_MAP:Memory map failure
 DW_DLE_LEE:Propagation of libelf error
 DW_DLE_NDS:No debug section
 DW_DLE_NLS:No line section
-DW_DLE_ID:Requested information not associated with descriptor
+DW_DLE_ID:Requested information not associated
+:with descriptor
 DW_DLE_IOF:I/O failure
 DW_DLE_MAF:Memory allocation failure
 DW_DLE_IA:Invalid argument
 DW_DLE_MDE:Mangled debugging entry
 DW_DLE_MLE:Mangled line number entry
-DW_DLE_FNO:File descriptor does not refer to an open file
+DW_DLE_FNO:File descriptor does not refer
+:to an open file
 DW_DLE_FNR:File is not a regular file
 DW_DLE_FWA:File is opened with wrong access
 DW_DLE_NOB:File is not an object file
@@ -6533,10 +6665,12 @@ DW_DLE_EOLL:End of location list entries
 DW_DLE_NOLL:No location list section
 DW_DLE_BADOFF:Invalid offset
 DW_DLE_EOS:End of section
-DW_DLE_ATRUNC:Abbreviations section appears truncated
-DW_DLE_BADBITC:Address size passed to dwarf bad
+DW_DLE_ATRUNC:Abbreviations section appears
+:truncated
+DW_DLE_BADBITC:Address size passed to
+:dwarf bad
 .TE
-.FG "List of Dwarf Error Codes"
+.FG "Dwarf Error Codes"
 .DE
 
 The set of errors returned by \f(CWLibdwarf\fP functions
@@ -6544,6 +6678,7 @@ is listed below.
 Some of the errors are SGI specific.
 
 .DS
+
 .TS
 center box, tab(:);
 lfB lfB
@@ -6560,47 +6695,43 @@ DW_DLE_ELF_GETSHDR_ERROR:Error in elf_getshdr() on object
 DW_DLE_ELF_STRPTR_ERROR:Error in elf_strptr() on object
 DW_DLE_DEBUG_INFO_DUPLICATE:Multiple .debug_info sections
 DW_DLE_DEBUG_INFO_NULL:No data in .debug_info section
-DW_DLE_DEBUG_ABBREV_DUPLICATE:Multiple .debug_abbrev sections
+DW_DLE_DEBUG_ABBREV_DUPLICATE:Multiple .debug_abbrev
+:sections
 DW_DLE_DEBUG_ABBREV_NULL:No data in .debug_abbrev section
-DW_DLE_DEBUG_ARANGES_DUPLICATE:Multiple .debug_arange sections
+DW_DLE_DEBUG_ARANGES_DUPLICATE:Multiple .debug_arange
+:sections
 DW_DLE_DEBUG_ARANGES_NULL:No data in .debug_arange section
 DW_DLE_DEBUG_LINE_DUPLICATE:Multiple .debug_line sections
 DW_DLE_DEBUG_LINE_NULL:No data in .debug_line section
 DW_DLE_DEBUG_LOC_DUPLICATE:Multiple .debug_loc sections
 DW_DLE_DEBUG_LOC_NULL:No data in .debug_loc section
-DW_DLE_DEBUG_MACINFO_DUPLICATE:Multiple .debug_macinfo sections
+DW_DLE_DEBUG_MACINFO_DUPLICATE:Multiple .debug_macinfo
+:sections
 DW_DLE_DEBUG_MACINFO_NULL:No data in .debug_macinfo section
-DW_DLE_DEBUG_PUBNAMES_DUPLICATE:Multiple .debug_pubnames sections
-DW_DLE_DEBUG_PUBNAMES_NULL:No data in .debug_pubnames section
+DW_DLE_DEBUG_PUBNAMES_DUPLICATE:Multiple .debug_pubnames
+:sections
+DW_DLE_DEBUG_PUBNAMES_NULL:No data in .debug_pubnames
+:section
 DW_DLE_DEBUG_STR_DUPLICATE:Multiple .debug_str sections
 DW_DLE_DEBUG_STR_NULL:No data in .debug_str section
 DW_DLE_CU_LENGTH_ERROR:Length of compilation-unit bad
 DW_DLE_VERSION_STAMP_ERROR:Incorrect Version Stamp
 DW_DLE_ABBREV_OFFSET_ERROR:Offset in .debug_abbrev bad
 DW_DLE_ADDRESS_SIZE_ERROR:Size of addresses in target bad
-DW_DLE_DEBUG_INFO_PTR_NULL:Pointer into .debug_info in DIE null
+DW_DLE_DEBUG_INFO_PTR_NULL:Pointer into .debug_info in
+:DIE null
 DW_DLE_DIE_NULL:Null Dwarf_Die
 DW_DLE_STRING_OFFSET_BAD:Offset in .debug_str bad
-DW_DLE_DEBUG_LINE_LENGTH_BAD:Length of .debug_line segment bad
-DW_DLE_LINE_PROLOG_LENGTH_BAD:Length of .debug_line prolog bad
-DW_DLE_LINE_NUM_OPERANDS_BAD:Number of operands to line instr bad
-DW_DLE_LINE_SET_ADDR_ERROR:Error in DW_LNE_set_address instruction
-DW_DLE_LINE_EXT_OPCODE_BAD:Error in DW_EXTENDED_OPCODE instruction
-DW_DLE_DWARF_LINE_NULL:Null Dwarf_line argument
-DW_DLE_INCL_DIR_NUM_BAD:Error in included directory for given line
-DW_DLE_LINE_FILE_NUM_BAD:File number in .debug_line bad
-DW_DLE_ALLOC_FAIL:Failed to allocate required structs
-DW_DLE_DBG_NULL:Null Dwarf_Debug argument
-DW_DLE_DEBUG_FRAME_LENGTH_BAD:Error in length of frame
-DW_DLE_FRAME_VERSION_BAD:Bad version stamp for frame
-DW_DLE_CIE_RET_ADDR_REG_ERROR:Bad register specified for return address
-DW_DLE_FDE_NULL:Null Dwarf_Fde argument
-DW_DLE_FDE_DBG_NULL:No Dwarf_Debug associated with FDE
-DW_DLE_CIE_NULL:Null Dwarf_Cie argument
-DW_DLE_CIE_DBG_NULL:No Dwarf_Debug associated with CIE
-DW_DLE_FRAME_TABLE_COL_BAD:Bad column in frame table specified
+DW_DLE_DEBUG_LINE_LENGTH_BAD:Length of .debug_line
+:segment bad
+DW_DLE_LINE_PROLOG_LENGTH_BAD:Length of .debug_line
+: prolog bad
+DW_DLE_LINE_NUM_OPERANDS_BAD:Number of operands to line
+:instr bad
+DW_DLE_LINE_SET_ADDR_ERROR:Error in DW_LNE_set_address
+: instruction
 .TE
-.FG "List of Dwarf 2 Error Codes (continued)"
+.FG "Dwarf 2 Error Codes (continued below)"
 .DE
 
 .DS
@@ -6610,6 +6741,25 @@ lfB lfB
 l l.
 SYMBOLIC NAME:DESCRIPTION
 _
+
+DW_DLE_LINE_EXT_OPCODE_BAD:Error in DW_EXTENDED_OPCODE
+: instruction
+DW_DLE_DWARF_LINE_NULL:Null Dwarf_line argument
+DW_DLE_INCL_DIR_NUM_BAD:Error in included directory for
+:given line
+DW_DLE_LINE_FILE_NUM_BAD:File number in .debug_line bad
+DW_DLE_ALLOC_FAIL:Failed to allocate required structs
+DW_DLE_DBG_NULL:Null Dwarf_Debug argument
+DW_DLE_DEBUG_FRAME_LENGTH_BAD:Error in length of frame
+DW_DLE_FRAME_VERSION_BAD:Bad version stamp for frame
+DW_DLE_CIE_RET_ADDR_REG_ERROR:Bad register specified for
+:return address
+DW_DLE_FDE_NULL:Null Dwarf_Fde argument
+DW_DLE_FDE_DBG_NULL:No Dwarf_Debug associated with FDE
+DW_DLE_CIE_NULL:Null Dwarf_Cie argument
+DW_DLE_CIE_DBG_NULL:No Dwarf_Debug associated with CIE
+DW_DLE_FRAME_TABLE_COL_BAD:Bad column in frame table
+:specified
 DW_DLE_PC_NOT_IN_FDE_RANGE:PC requested not in address range of FDE
 DW_DLE_CIE_INSTR_EXEC_ERROR:Error in executing instructions in CIE
 DW_DLE_FRAME_INSTR_EXEC_ERROR:Error in executing instructions in FDE
@@ -6641,27 +6791,8 @@ DW_DLE_PUBNAMES_LENGTH_BAD:Read pubnames past end of .debug_pubnames
 DW_DLE_GLOBAL_NULL:Null Dwarf_Global specified
 DW_DLE_GLOBAL_CONTEXT_NULL:No context for Dwarf_Global given
 DW_DLE_DIR_INDEX_BAD:Error in directory index read
-DW_DLE_LOC_EXPR_BAD:Bad operator read for location expression
-DW_DLE_DIE_LOC_EXPR_BAD:Expected block value for attribute not found
-DW_DLE_OFFSET_BAD:Offset for next compilation-unit in .debug_info bad
-DW_DLE_MAKE_CU_CONTEXT_FAIL:Could not make CU context
-DW_DLE_ARANGE_OFFSET_BAD:Offset into .debug_info in .debug_aranges bad
-DW_DLE_SEGMENT_SIZE_BAD:Segment size will be 0 for MIPS processors and should always be < 8.
-DW_DLE_ARANGE_LENGTH_BAD:Length of arange section in .debug_arange bad
-DW_DLE_ARANGE_DECODE_ERROR:Aranges do not end at end of .debug_aranges
-DW_DLE_ARANGES_NULL:NULL pointer to Dwarf_Arange specified
-DW_DLE_ARANGE_NULL:NULL Dwarf_Arange specified
-DW_DLE_NO_FILE_NAME:No file name for Dwarf_Line struct
-DW_DLE_NO_COMP_DIR:No Compilation directory for compilation-unit
-DW_DLE_CU_ADDRESS_SIZE_BAD:CU header address size not match Elf class
-DW_DLE_ELF_GETIDENT_ERROR:Error in elf_getident() on object
-DW_DLE_NO_AT_MIPS_FDE:DIE does not have DW_AT_MIPS_fde attribute
-DW_DLE_NO_CIE_FOR_FDE:No CIE specified for FDE
-DW_DLE_DIE_ABBREV_LIST_NULL:No abbreviation for the code in DIE found
-DW_DLE_DEBUG_FUNCNAMES_DUPLICATE:Multiple .debug_funcnames sections
-DW_DLE_DEBUG_FUNCNAMES_NULL:No data in .debug_funcnames section
 .TE
-.FG "List of Dwarf 2 Error Codes (continued)"
+.FG "Dwarf 2 Error Codes (continued below)"
 .DE
 
 .DS
@@ -6671,30 +6802,78 @@ lfB lfB
 l l.
 SYMBOLIC NAME:DESCRIPTION
 _
-DW_DLE_DEBUG_FUNCNAMES_VERSION_ERROR:Version stamp in .debug_funcnames bad
-DW_DLE_DEBUG_FUNCNAMES_LENGTH_BAD:Length error in reading .debug_funcnames
+DW_DLE_LOC_EXPR_BAD:Bad operator read for location expression
+DW_DLE_DIE_LOC_EXPR_BAD:Expected block value for attribute
+:not found
+DW_DLE_OFFSET_BAD:Offset for next compilation-unit in 
+:.debug_info bad
+DW_DLE_MAKE_CU_CONTEXT_FAIL:Could not make CU context
+DW_DLE_ARANGE_OFFSET_BAD:Offset into .debug_info in
+:.debug_aranges bad
+DW_DLE_SEGMENT_SIZE_BAD:Segment size will be 0 for MIPS
+:processorsand should always be < 8.
+DW_DLE_ARANGE_LENGTH_BAD:Length of arange section in 
+:.debug_arange bad
+DW_DLE_ARANGE_DECODE_ERROR:Aranges do not end at end
+:of .debug_aranges
+DW_DLE_ARANGES_NULL:NULL pointer to Dwarf_Arange specified
+DW_DLE_ARANGE_NULL:NULL Dwarf_Arange specified
+DW_DLE_NO_FILE_NAME:No file name for Dwarf_Line struct
+DW_DLE_NO_COMP_DIR:No Compilation directory for
+:compilation-unit
+DW_DLE_CU_ADDRESS_SIZE_BAD:CU header address size not
+:match Elf class
+DW_DLE_ELF_GETIDENT_ERROR:Error in elf_getident() on object
+DW_DLE_NO_AT_MIPS_FDE:DIE does not have 
+:DW_AT_MIPS_fde attribute
+DW_DLE_NO_CIE_FOR_FDE:No CIE specified for FDE
+DW_DLE_DIE_ABBREV_LIST_NULL:No abbreviation for the code
+:in DIE found
+DW_DLE_DEBUG_FUNCNAMES_DUPLICATE:Multiple .debug_funcnames sections
+DW_DLE_DEBUG_FUNCNAMES_NULL:No data in .debug_funcnames section
+DW_DLE_DEBUG_FUNCNAMES_VERSION_ERROR:Version stamp in
+:.debug_funcnames bad
+DW_DLE_DEBUG_FUNCNAMES_LENGTH_BAD:Length error in reading
+:.debug_funcnames
 DW_DLE_FUNC_NULL:NULL Dwarf_Func specified
 DW_DLE_FUNC_CONTEXT_NULL:No context for Dwarf_Func struct
 DW_DLE_DEBUG_TYPENAMES_DUPLICATE:Multiple .debug_typenames sections
 DW_DLE_DEBUG_TYPENAMES_NULL:No data in .debug_typenames section
-DW_DLE_DEBUG_TYPENAMES_VERSION_ERROR:Version stamp in .debug_typenames bad
-DW_DLE_DEBUG_TYPENAMES_LENGTH_BAD:Length error in reading .debug_typenames
+DW_DLE_DEBUG_TYPENAMES_VERSION_ERROR:Version stamp in
+:.debug_typenames bad
+DW_DLE_DEBUG_TYPENAMES_LENGTH_BAD:Length error in reading
+:.debug_typenames
 DW_DLE_TYPE_NULL:NULL Dwarf_Type specified
 DW_DLE_TYPE_CONTEXT_NULL:No context for Dwarf_Type given
 DW_DLE_DEBUG_VARNAMES_DUPLICATE:Multiple .debug_varnames sections
 DW_DLE_DEBUG_VARNAMES_NULL:No data in .debug_varnames section
-DW_DLE_DEBUG_VARNAMES_VERSION_ERROR:Version stamp in .debug_varnames bad
-DW_DLE_DEBUG_VARNAMES_LENGTH_BAD:Length error in reading .debug_varnames
+DW_DLE_DEBUG_VARNAMES_VERSION_ERROR:Version stamp in
+:.debug_varnames bad
+DW_DLE_DEBUG_VARNAMES_LENGTH_BAD:Length error in reading
+:.debug_varnames
+.TE
+.FG "Dwarf 2 Error Codes (continued below)"
+.DE
+
+.DS
+.TS
+center box, tab(:);
+lfB lfB
+l l.
+SYMBOLIC NAME:DESCRIPTION
+_
 DW_DLE_VAR_NULL:NULL Dwarf_Var specified
 DW_DLE_VAR_CONTEXT_NULL:No context for Dwarf_Var given
 DW_DLE_DEBUG_WEAKNAMES_DUPLICATE:Multiple .debug_weaknames section
 DW_DLE_DEBUG_WEAKNAMES_NULL:No data in .debug_varnames section
-DW_DLE_DEBUG_WEAKNAMES_VERSION_ERROR:Version stamp in .debug_varnames bad
-DW_DLE_DEBUG_WEAKNAMES_LENGTH_BAD:Length error in reading .debug_weaknames
+DW_DLE_DEBUG_WEAKNAMES_VERSION_ERROR:Version stamp in
+:.debug_varnames bad
+DW_DLE_DEBUG_WEAKNAMES_LENGTH_BAD:Length error in reading
+:.debug_weaknames
 DW_DLE_WEAK_NULL:NULL Dwarf_Weak specified
 DW_DLE_WEAK_CONTEXT_NULL:No context for Dwarf_Weak given
 .TE
-.FG "List of Dwarf 2 Error Codes"
+.FG "Dwarf 2 Error Codes"
 .DE
 
 This list of errors is not complete;

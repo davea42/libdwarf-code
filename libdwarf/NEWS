@@ -1,3 +1,9 @@
+August 15, 2013
+  Now the printf (stdout) here go through a callback function instead
+  of actually using stdout.  That way dwarfdump and other apps have full
+  control of libdwarf output from dwarf_print_lines() for example.
+  It also means callers of dwarf_print_lines() need to have called
+  dwarf_register_printf_callback() to get any actual print output.
 January 26, 2013
   Retracted the incompatible change. The interfaces are
   again compatible with previous releases and the January 25

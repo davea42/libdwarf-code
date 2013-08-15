@@ -58,7 +58,7 @@ $Header: /plroot/cmplrs.src/v7.4.5m/.RCS/PL/dwarfdump/RCS/dwarfdump.c,v 1.48 200
 #include "common.h"
 #include "naming.h"
 #include "uri.h"
-#define DWARFDUMP_VERSION " Wed Aug  7 10:34:13 PDT 2013  "
+#define DWARFDUMP_VERSION " Thu Aug 15 07:14:27 PDT 2013  "
 
 using std::vector;
 using std::string;
@@ -898,6 +898,13 @@ print_checks_results()
     cout.flush();
 }
 
+/* This is for dwarf_print_lines() */
+void 
+printf_callback_for_libdwarf(void *userdata,const char *data)
+{
+     cout << data;
+}
+
 
 /*
   Given a file which we know is an elf file, process
@@ -919,6 +926,11 @@ process_one_file(Elf * elf,const  string & file_name, int archive,
     if (dres != DW_DLV_OK) {
         print_error(dbg, "dwarf_elf_init", dres, err);
     }
+
+    struct Dwarf_Printf_Callback_Info_s printfcallbackdata;
+    memset(&printfcallbackdata,0,sizeof(printfcallbackdata));
+    printfcallbackdata.dp_fptr = printf_callback_for_libdwarf;
+    dwarf_register_printf_callback(dbg,&printfcallbackdata);
 
     if (archive) {
         Elf_Arhdr *mem_header = elf_getarhdr(elf);
