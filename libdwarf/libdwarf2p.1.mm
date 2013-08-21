@@ -11,7 +11,7 @@
 .nr Hb 5
 \." ==============================================
 \." Put current date in the following at each rev
-.ds vE rev 1.32, 13 December 2011
+.ds vE rev 1.33, 13 August 2013
 \." ==============================================
 \." ==============================================
 .ds | |
@@ -64,7 +64,7 @@ information.
 .H 2 "Copyright"
 Copyright 1993-2006 Silicon Graphics, Inc.
 
-Copyright 2007-2010 David Anderson.
+Copyright 2007-2013 David Anderson.
 
 Permission is hereby granted to
 copy or republish or use any or all of this document without
@@ -685,7 +685,7 @@ no Elf file is being produced.
      Dwarf_Ptr errarg,
      void * user_data,
      Dwarf_Error *error) \fP
- .DE
+.DE
 
 The function \f(CWdwarf_producer_init_c() \fP 
 is the same as \f(CWdwarf_producer_init() \fP
@@ -1408,6 +1408,29 @@ attribute for the \f(CWDIE\fP given by \f(CWownerdie\fP.  It returns
 the \f(CWDwarf_P_Attribute\fP descriptor representing this attribute
 on success.  On error, it returns \f(CWDW_DLV_BADADDR\fP.
 
+.H 3 "dwarf_add_AT_any_value_sleb()"
+.DS
+\f(CWDwarf_P_Attribute dwarf_add_AT_any_value_sleb(
+        Dwarf_P_Die ownerdie,
+        Dwarf_Half  attrnum,
+        Dwarf_Signed signed_value,
+        Dwarf_Error *error) \fP
+.DE
+The function \f(CWdwarf_add_AT_any_value_sleb() \fP adds the
+given \f(CWDwarf_Signed\fP value \f(CWsigned_value\fP as the value
+of the \f(CWDW_AT_const_value\fP attribute for the \f(CWDIE\fP
+described by the given \f(CWownerdie\fP.
+
+The FORM of the output value is \f(CWDW_FORM_sdata\fP (signed leb number)
+and the attribute will be \f(CWDW_AT_const_value\fP.
+
+It returns the
+\f(CWDwarf_P_Attribute\fP descriptor for this attribute on success.
+
+On error, it returns \f(CWDW_DLV_BADADDR\fP.
+
+The function was created 13 August 2013.
+
 .H 3 "dwarf_add_AT_const_value_signedint()"
 .DS
 \f(CWDwarf_P_Attribute dwarf_add_AT_const_value_signedint(
@@ -1418,9 +1441,42 @@ on success.  On error, it returns \f(CWDW_DLV_BADADDR\fP.
 The function \f(CWdwarf_add_AT_const_value_signedint() \fP adds the
 given \f(CWDwarf_Signed\fP value \f(CWsigned_value\fP as the value
 of the \f(CWDW_AT_const_value\fP attribute for the \f(CWDIE\fP
-described by the given \f(CWownerdie\fP.  It returns the 
+described by the given \f(CWownerdie\fP.  
+
+The FORM of the output value is \f(CWDW_FORM_data<n>\fP (signed leb number)
+and the attribute will be \f(CWDW_AT_const_value\fP.
+
+With this interface and output, there is no way for consumers
+to know from the FORM that the value is signed.
+
+
+It returns the 
 \f(CWDwarf_P_Attribute\fP descriptor for this attribute on success.  
+
 On error, it returns \f(CWDW_DLV_BADADDR\fP.
+
+.H 3 "dwarf_add_AT_any_value_uleb()"
+.DS
+\f(CWDwarf_P_Attribute dwarf_add_AT_any_value_uleb(
+        Dwarf_P_Die ownerdie,
+        Dwarf_Half  attrnum,
+        Dwarf_Unsigned unsigned_value,
+        Dwarf_Error *error) \fP
+.DE
+The function \f(CWdwarf_add_AT_any_value_uleb() \fP adds the
+given \f(CWDwarf_Unsigned\fP value \f(CWunsigned_value\fP as the value
+of the \f(CWattrnum\fP attribute for the \f(CWDIE\fP described
+by the given \f(CWownerdie\fP.
+
+The FORM of the output value is \f(CWDW_FORM_udata\fP (unsigned leb number)
+and the attribute is \f(CWattrnum\fP.
+
+It returns the \f(CWDwarf_P_Attribute\fP
+descriptor for this attribute on success.
+
+On error, it returns \f(CWDW_DLV_BADADDR\fP.
+
+The function was created 13 August 2013.
 
 .H 3 "dwarf_add_AT_const_value_unsignedint()"
 .DS
@@ -1432,9 +1488,18 @@ On error, it returns \f(CWDW_DLV_BADADDR\fP.
 The function \f(CWdwarf_add_AT_const_value_unsignedint() \fP adds the
 given \f(CWDwarf_Unsigned\fP value \f(CWunsigned_value\fP as the value
 of the \f(CWDW_AT_const_value\fP attribute for the \f(CWDIE\fP described 
-by the given \f(CWownerdie\fP.  It returns the \f(CWDwarf_P_Attribute\fP
-descriptor for this attribute on success.  On error, it returns
-\f(CWDW_DLV_BADADDR\fP.
+by the given \f(CWownerdie\fP.  
+
+The FORM of the output value is \f(CWDW_FORM_data<n>\fP
+and the attribute will be \f(CWDW_AT_const_value\fP.
+
+With this interface and output, there is no way for consumers
+to know from the FORM that the value is signed.
+
+It returns the \f(CWDwarf_P_Attribute\fP
+descriptor for this attribute on success.  
+
+On error, it returns \f(CWDW_DLV_BADADDR\fP.
 
 .H 3 "dwarf_add_AT_const_value_string()"
 .DS
@@ -1500,7 +1565,8 @@ information.
 
 Do not use this function for attr \f(CWDW_AT_high_pc\fP
 if the value to be recorded is an offset (not a pc)
-[ use \f(CWdwarf_add_AT_unsigned_const()\fP  (for example)
+[ use \f(CWdwarf_add_AT_unsigned_const()\fP  
+or  \f(CWdwarf_add_AT_any_value_uleb()\fP 
 instead].
 
 .H 3 "dwarf_add_AT_dataref()"
@@ -1534,8 +1600,9 @@ the \f(CWsym_index\fP is applied to the relocation
 information.
 
 Do not use this function for \f(CWDW_AT_high_pc\fP, use
-\f(CWdwarf_add_AT_unsigned_const()\fP  [ (for example)
-if the value to be recorded is
+\f(CWdwarf_add_AT_unsigned_const()\fP 
+or \f(CWdwarf_add_AT_any_value_uleb()\fP 
+[ if the value to be recorded is
 an offset of \f(CWDW_AT_low_pc\fP]
 or \f(CWdwarf_add_AT_targ_address_b()\fP [ if the value
 to be recorded is an address].
@@ -1589,6 +1656,8 @@ to the \f(CWDIE\fP specified by \f(CWownerdie\fP.  The object that
 the \f(CWDIE\fP belongs to is specified by \f(CWdbg\fP.  The attribute
 is specified by \f(CWattr\fP, and its value is specified by \f(CWvalue\fP.
 
+The FORM of the output will be one of the \f(CWDW_FORM_data<n>\fP forms.
+
 It returns the \f(CWDwarf_P_Attribute\fP descriptor for the attribute
 on success, and \f(CWDW_DLV_BADADDR\fP on error.
 
@@ -1625,6 +1694,8 @@ same compilation-unit to the \f(CWDIE\fP specified by \f(CWownerdie\fP.
 The object that the \f(CWDIE\fP belongs to is specified by \f(CWdbg\fP.  
 The attribute is specified by \f(CWattr\fP, and the other \f(CWDIE\fP
 being referred to is specified by \f(CWotherdie\fP.
+
+The FORM of the output will be one of the \f(CWDW_FORM_data<n>\fP forms.
 
 This cannot generate DW_FORM_ref_addr references to
 \f(CWDIE\fPs in other compilation units.

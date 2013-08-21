@@ -1,3 +1,25 @@
+2013-08-15  David Anderson
+     * dwarfdump.c: Now calls dwarf_register_printf_callback()
+       so dwarf_print_lines() output is shown (if dwarfdump
+       wants it shown).  Update version string.
+      * common.c: Update version string.
+2013-08-13  David Anderson
+     * esb.c: Add 1 so the esb_append_printf has room for the NUL
+       byte.
+     * print_die.c: Clarified a comment about DW_AT_high_pc
+       and FORM class constant. Fixed indent error.
+     * dwarfdump.c: Fixed indent error.
+2013-08-08  David Anderson
+     * print_reloc.c: Removed duplicated call to get_scndata().
+2013-08-07  David Anderson
+     * dwarfdump.c: Changed non-fatal error messages to write
+       to stdout instead of stderr. Making it much easier to
+       have a usable output-with-errors in case of redirection.
+       Updated version string.
+     * checkutil.c: If a certain pointer not set, just do nothing, 
+       there is no reason to abort.  
+       Added in a missing [ in a debug printf.
+     * common.c: Updated version string.
 2013-07-30  David Anderson
      * common.c,dwarfdump.c: updated version string.
 2013-02-05  David Anderson

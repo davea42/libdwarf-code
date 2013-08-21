@@ -104,7 +104,7 @@ AddAttrToDie(Dwarf_P_Debug dbg,
 
         // FIXME: we should  allow for DW_FORM_indirect here.
         // Relocation later will fix value.
-        Dwarf_P_Attribute a = dwarf_add_AT_targ_address(dbg,
+        Dwarf_P_Attribute a = dwarf_add_AT_targ_address_b(dbg,
             outdie,attrnum,0,sym_index,&error);
         if( reinterpret_cast<myintfromp>(a) == DW_DLV_BADADDR) {
             cerr << "ERROR dwarf_add_AT_targ_address fails, attrnum "
@@ -120,7 +120,43 @@ AddAttrToDie(Dwarf_P_Debug dbg,
         break;
     case DW_FORM_CLASS_CONSTANT:
         {
-        //FIXME
+        IRFormConstant *f = dynamic_cast<IRFormConstant *>(form);
+        Dwarf_Half form = f->getFinalForm();
+        // FIXME: Handle form indirect
+        IRFormConstant::Signedness sn = f->getSignedness();
+        Dwarf_Unsigned uval = 0;
+        Dwarf_P_Attribute a = 0;
+        if (sn == IRFormConstant::SIGNED) {
+            Dwarf_Signed sval = f->getSignedVal();
+            if (form == DW_FORM_sdata) {
+                a = dwarf_add_AT_any_value_sleb(
+                    outdie,attrnum,
+                    sval,&error);
+            } else {
+                //cerr << "ERROR how can we know "
+                //    "a non-sdata const is signed?, attrnum " <<
+                //    attrnum <<endl;
+                a = dwarf_add_AT_signed_const(dbg,
+                    outdie,attrnum,
+                    sval,&error);
+            }
+        } else {
+            Dwarf_Unsigned uval = f->getUnsignedVal();
+            if (form == DW_FORM_udata) {
+                a = dwarf_add_AT_any_value_uleb(
+                    outdie,attrnum,
+                    uval,&error);
+            } else {
+                a = dwarf_add_AT_unsigned_const(dbg,
+                    outdie,attrnum,
+                    uval,&error);
+            }
+        }
+        if( reinterpret_cast<myintfromp>(a) == DW_DLV_BADADDR) {
+            cerr << "ERROR dwarf_add_AT_ class constant fails, attrnum "
+                <<attrnum << endl;
+           
+        }
         }
         break;
     case DW_FORM_CLASS_EXPRLOC:   

@@ -1,5 +1,6 @@
 /*
   Copyright (C) 2005 Silicon Graphics, Inc.  All Rights Reserved.
+  Portions Copyright (C) 2013 David Anderson. All Rights Reserved.
   This program is free software; you can redistribute it and/or modify it
   under the terms of version 2 of the GNU General Public License as
   published by the Free Software Foundation.
@@ -234,6 +235,7 @@ esb_append_printf(struct esb_s *data,const char *in_string, ...)
         /*  We are unable to deal sensibly with this.  FIXME */
         return;
     }
+    length = length + 1; /* Allow for terminating NUL byte. */
 
     /* Check if we require allocate more space */
     needed_size = data->esb_used_bytes + (unsigned)length;

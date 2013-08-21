@@ -44,7 +44,7 @@ using std::vector;
 using std::list;
 
 // THis should instantiated only locally, not with 'new'.
-// It should not bt copied.
+// It should not be copied.
 class IRFormInterface {
 public:
     IRFormInterface(Dwarf_Debug dbg,
@@ -398,7 +398,9 @@ IRFormReference::IRFormReference(IRFormInterface * interface)
         setSignature(&val8);
         return;
     }
-    if(form == DW_FORM_ref_addr) {
+    if(form == DW_FORM_ref_addr ||
+        form == DW_FORM_data4 ||
+        form == DW_FORM_data8) {
         int res = dwarf_global_formref(interface->attr_,&val, &error);
         if(res != DW_DLV_OK) {
             cerr << "Unable to read reference. Impossible error.\n" << endl;
@@ -411,7 +413,8 @@ IRFormReference::IRFormReference(IRFormInterface * interface)
     // a local CU offset, and we record it as such..
     int res = dwarf_formref(interface->attr_,&val, &error);
     if(res != DW_DLV_OK) {
-        cerr << "Unable to read reference. Impossible error.\n" << endl;
+        cerr << "Unable to read reference.. Impossible error. form " << 
+            form << endl;
         exit(1);
     }
     setCUOffset(val);

@@ -1121,6 +1121,30 @@ struct Dwarf_Obj_Access_Interface_s {
    source file to generate Exception tables for this function. */
 #define DW_DLX_EH_OFFSET_UNAVAILABLE  (-2LL)
 
+/* The dwarf specification separates FORMs into
+different classes.  To do the seperation properly
+requires 4 pieces of data as of DWARF4 (thus the
+function arguments listed here). 
+The DWARF4 specification class definition suffices to
+describe all DWARF versions.
+See section 7.5.4, Attribute Encodings.
+A return of DW_FORM_CLASS_UNKNOWN means we could not properly figure
+out what form-class it is.
+
+    DW_FORM_CLASS_FRAMEPTR is MIPS/IRIX only, and refers
+    to the DW_AT_MIPS_fde attribute (a reference to the
+    .debug_frame section).
+*/
+enum Dwarf_Form_Class {
+    DW_FORM_CLASS_UNKNOWN,   DW_FORM_CLASS_ADDRESS,
+    DW_FORM_CLASS_BLOCK,     DW_FORM_CLASS_CONSTANT, 
+    DW_FORM_CLASS_EXPRLOC,   DW_FORM_CLASS_FLAG, 
+    DW_FORM_CLASS_LINEPTR,   DW_FORM_CLASS_LOCLISTPTR, 
+    DW_FORM_CLASS_MACPTR,    DW_FORM_CLASS_RANGELISTPTR, 
+    DW_FORM_CLASS_REFERENCE, DW_FORM_CLASS_STRING,
+    DW_FORM_CLASS_FRAMEPTR
+};
+
 
 /*===========================================================================*/
 /*  Dwarf consumer interface initialization and termination operations */
@@ -1159,6 +1183,7 @@ int dwarf_object_init(Dwarf_Obj_Access_Interface* /* obj */,
 
 int dwarf_object_finish(Dwarf_Debug /* dbg */,
     Dwarf_Error* /* error */);
+
   
 /*  Die traversal operations.  
     dwarf_next_cu_header_b() traverses debug_info CU headers.
@@ -1393,6 +1418,21 @@ int dwarf_lowpc(Dwarf_Die /*die*/,
     Dwarf_Addr  *    /*returned_addr*/,
     Dwarf_Error*     /*error*/);
 
+/*  When the highpc attribute is of class  'constant'
+    it is not an address, it is an offset from the
+    base address (such as lowpc) of the function. 
+    This is therefore a required interface for DWARF4
+    style DW_AT_highpc.
+    */
+int dwarf_highpc_b(Dwarf_Die /*die*/,
+    Dwarf_Addr  *           /*return_value*/,
+    Dwarf_Half  *           /*return_form*/,
+    enum Dwarf_Form_Class * /*return_class*/,
+    Dwarf_Error *           /*error*/);
+
+/*  This works for DWARF2 and DWARF3 styles of DW_AT_highpc,
+    but not for the DWARF4 class constant forms. 
+    If the FORM is of class constant this returns an error */
 int dwarf_highpc(Dwarf_Die /*die*/, 
     Dwarf_Addr  *    /*returned_addr*/,
     Dwarf_Error*     /*error*/);
@@ -2066,6 +2106,39 @@ int _dwarf_print_lines(Dwarf_Die /*cu_die*/,Dwarf_Error * /*error*/);
 int dwarf_print_lines(Dwarf_Die /*cu_die*/,Dwarf_Error * /*error*/,
    int * /*error_count_out */);
 
+/*  As of August 2013, dwarf_print_lines() no longer uses printf.
+    Instead it calls back to the application using a function pointer
+    once per line-to-print.  The lines passed back already have any needed
+    newlines.    The following struct is used to initialize
+    the callback mechanism.
+
+    Failing to call the dwarf_register_printf_callback() function will
+    prevent the lines from being passed back but such omission
+    is not an error.
+    See libdwarf2.1.mm for further documentation.
+
+    The return value is the previous set of callback values.
+*/
+
+typedef void (* dwarf_printf_callback_function_type)(void * /*user_pointer*/,
+    const char * /*linecontent*/);
+
+struct Dwarf_Printf_Callback_Info_s {
+    void *                        dp_user_pointer;
+    dwarf_printf_callback_function_type dp_fptr;
+    char *                        dp_buffer;
+    unsigned int                  dp_buffer_len;
+    int                           dp_buffer_user_provided;
+    void *                        dp_reserved;
+};
+
+/*  If called with a NULL newvalues pointer, it simply returns
+    the current set of values for this Dwarf_Debug. */
+struct  Dwarf_Printf_Callback_Info_s
+dwarf_register_printf_callback(Dwarf_Debug /*dbg*/,
+    struct  Dwarf_Printf_Callback_Info_s * /*newvalues*/);
+
+
 /*  dwarf_check_lineheader lets dwarfdump get detailed messages
     about some compiler errors we detect.
     We return the count of detected errors through the
@@ -2152,30 +2225,6 @@ int dwarf_get_address_size(Dwarf_Debug /*dbg*/,
 int dwarf_get_die_address_size(Dwarf_Die /*die*/,
     Dwarf_Half  *    /*addr_size*/,
     Dwarf_Error *    /*error*/);
-
-/* The dwarf specification separates FORMs into
-different classes.  To do the seperation properly
-requires 4 pieces of data as of DWARF4 (thus the
-function arguments listed here). 
-The DWARF4 specification class definition suffices to
-describe all DWARF versions.
-See section 7.5.4, Attribute Encodings.
-A return of DW_FORM_CLASS_UNKNOWN means we could not properly figure
-out what form-class it is.
-
-    DW_FORM_CLASS_FRAMEPTR is MIPS/IRIX only, and refers
-    to the DW_AT_MIPS_fde attribute (a reference to the
-    .debug_frame section).
-*/
-enum Dwarf_Form_Class {
-    DW_FORM_CLASS_UNKNOWN,   DW_FORM_CLASS_ADDRESS,
-    DW_FORM_CLASS_BLOCK,     DW_FORM_CLASS_CONSTANT, 
-    DW_FORM_CLASS_EXPRLOC,   DW_FORM_CLASS_FLAG, 
-    DW_FORM_CLASS_LINEPTR,   DW_FORM_CLASS_LOCLISTPTR, 
-    DW_FORM_CLASS_MACPTR,    DW_FORM_CLASS_RANGELISTPTR, 
-    DW_FORM_CLASS_REFERENCE, DW_FORM_CLASS_STRING,
-    DW_FORM_CLASS_FRAMEPTR
-};
 
 enum Dwarf_Form_Class dwarf_get_form_class(
     Dwarf_Half /* dwversion */,
@@ -2418,10 +2467,24 @@ Dwarf_P_Attribute dwarf_add_AT_producer(Dwarf_P_Die /*ownerdie*/,
     char*           /*producer_string*/, 
     Dwarf_Error*    /*error*/);
 
+/* August 2013 sleb creator. For any attribute. */
+Dwarf_P_Attribute dwarf_add_AT_any_value_sleb(Dwarf_P_Die /*ownerdie*/,
+    Dwarf_Half    /*attrnum*/,
+    Dwarf_Signed  /*signed_value*/,
+    Dwarf_Error * /*error*/);
+
+/* Original sleb creator. Only for DW_AT_const_value. */
 Dwarf_P_Attribute dwarf_add_AT_const_value_signedint(Dwarf_P_Die /*ownerdie*/, 
     Dwarf_Signed    /*signed_value*/, 
     Dwarf_Error*    /*error*/);
 
+/* August 2013 uleb creator. For any attribute. */
+Dwarf_P_Attribute dwarf_add_AT_any_value_uleb(Dwarf_P_Die /*ownerdie*/,
+    Dwarf_Half      /*attrnum*/,
+    Dwarf_Unsigned  /*signed_value*/,
+    Dwarf_Error *   /*error*/);
+
+/* Original uleb creator. Only for DW_AT_const_value. */
 Dwarf_P_Attribute dwarf_add_AT_const_value_unsignedint(
     Dwarf_P_Die     /*ownerdie*/, 
     Dwarf_Unsigned  /*unsigned_value*/, 

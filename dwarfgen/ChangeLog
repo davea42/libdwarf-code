@@ -1,3 +1,20 @@
+2013-08-13  David Anderson
+     * createirepformfrombinary.cc: IRFormReference now
+       allows DW_FORM_data4/8 as reference forms (applies
+       to DWARF2). Made two error outputs look just enough
+       different to tell which test cause the error string.
+     * dwarfgen.cc: Added the -h option to specify transformation
+       of DW_AT_high_pc from form address to form const to create
+       a specific  regression test case .
+     * general.h: Added the -h global flag variable transformHighpcToConst
+       as an extern.
+     * irepattrtodbg.cc: Now emits class constant attributes and values.
+     * irepform.h: Now has a new IRFormConstant constructor so we can
+       easily create an attribute on-the-fly internally.
+       Added accessor functions for IRFormConstant values.
+     * ireptodbg.cc: specialAttrTransformations() does the transformation
+       that -h requests: making DW_AT_high_pc be of form constant instead
+       of form address.
 2013-02-01  David Anderson
      * createirepfrombinary.cc,createirepfrombinary.h,dwarfgen.cc,
        general.h,irepattrtodbg.cc,irepattrtodbg.h,irepdie.h,

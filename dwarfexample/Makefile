@@ -2,7 +2,7 @@
 
 LIBDIR= -L../libdwarf
 LIBS= -ldwarf -lelf
-CFLAGS= -Wall -I../libdwarf
+CFLAGS= -gdwarf-4 -Wall -I../libdwarf
 
 all: simplereader frame1
 

@@ -1,7 +1,7 @@
 /*
 
   Copyright (C) 2000-2005 Silicon Graphics, Inc.  All Rights Reserved.
-  Portions Copyright (C) 2007-2011 David Anderson. All Rights Reserved.
+  Portions Copyright (C) 2007-2013 David Anderson. All Rights Reserved.
   Portions Copyright (C) 2008-2010 Arxan Technologies, Inc. All Rights Reserved.
 
   This program is free software; you can redistribute it and/or modify it
@@ -375,7 +375,15 @@ struct Dwarf_Debug_s {
     /*  Number of sections and virtual address for each section. */
     Dwarf_Unsigned  de_sections_count;
     Dwarf_Addr     *de_sections_load_address;
+
+    struct Dwarf_Printf_Callback_Info_s  de_printf_callback;
 };
+
+int dwarf_printf(Dwarf_Debug dbg, const char * format, ...)
+#ifdef __GNUC__ /* The following gets us printf-like arg checking. */
+    __attribute__ ((format (__printf__, 2, 3)))
+#endif    
+;   
 
 typedef struct Dwarf_Chain_s *Dwarf_Chain;
 struct Dwarf_Chain_s {

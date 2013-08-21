@@ -22,6 +22,9 @@
 #include <sstream>
 #include <iomanip>
 
+// Run time flag from command line.
+extern bool transformHighpcToConst;
+
 template <typename T >
 std::string IToHex(T v,unsigned l=0)
 {

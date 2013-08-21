@@ -1,7 +1,7 @@
 /*
 
   Copyright (C) 2000,2002,2004 Silicon Graphics, Inc.  All Rights Reserved.
-  Portions Copyright (C) 2007-2012 David Anderson. All Rights Reserved.
+  Portions Copyright (C) 2007-2013 David Anderson. All Rights Reserved.
   Portions Copyright 2012 SN Systems Ltd. All rights reserved.
 
   This program is free software; you can redistribute it and/or modify it
@@ -47,6 +47,12 @@
 #include "dwarf_incl.h"
 #include <stdio.h>
 #include "dwarf_die_deliv.h"
+
+static int _dwarf_die_attr_unsigned_constant(Dwarf_Die die,
+    Dwarf_Half attr,
+    Dwarf_Unsigned * return_val,
+    Dwarf_Error * error);
+
 
 /* This is normally reliable.
 But not always.
@@ -474,8 +480,13 @@ dwarf_lowpc(Dwarf_Die die,
     dbg = die->di_cu_context->cc_dbg;
     address_size = die->di_cu_context->cc_address_size;
     info_ptr = _dwarf_get_value_ptr(die, DW_AT_low_pc, &attr_form);
-    if ((info_ptr == NULL && attr_form == 0) ||
-        (info_ptr != NULL && attr_form != DW_FORM_addr)) {
+    if (info_ptr == NULL && attr_form == 0) {
+        /*  No form, a bug somewhere. Possibly in the DWARF producer. */
+        _dwarf_error(dbg, error, DW_DLE_DIE_BAD);
+        return (DW_DLV_ERROR);
+    }
+    if (info_ptr != NULL && attr_form != DW_FORM_addr) {
+        /* Not the correct form for DW_AT_low_pc */
         _dwarf_error(dbg, error, DW_DLE_DIE_BAD);
         return (DW_DLV_ERROR);
     }
@@ -492,33 +503,107 @@ dwarf_lowpc(Dwarf_Die die,
 }
 
 
+/*  This works for DWARF2 and DWARF3 but fails for DWARF4
+    DW_AT_high_pc attributes of class constant.
+    It is best to cease using this interface.
+    */
 int
 dwarf_highpc(Dwarf_Die die,
     Dwarf_Addr * return_addr, Dwarf_Error * error)
+{
+    int res = 0;
+    enum Dwarf_Form_Class class = DW_FORM_CLASS_UNKNOWN;
+    Dwarf_Half form = 0;
+    
+    CHECK_DIE(die, DW_DLV_ERROR);
+    res = dwarf_highpc_b(die,return_addr,&form,&class,error);
+    if (res != DW_DLV_OK) {
+        return res;
+    }
+    if (form != DW_FORM_addr) {
+        /* Not the correct form for DWARF2/3 DW_AT_high_pc */
+        Dwarf_Debug dbg = die->di_cu_context->cc_dbg;
+        _dwarf_error(dbg, error, DW_DLE_DIE_BAD);
+        return (DW_DLV_ERROR);
+    } 
+    return (DW_DLV_OK);
+}
+
+/*  This works for  all versions of DWARF.
+    This is the preferred interface, cease using dwarf_highpc.
+    The consumer has to check the return_form or 
+    return_class to decide if the value returned 
+    through return_value is an address or an address-offset. 
+    See  DWARF4 section 2.17.2,
+    "Contiguous Address Range".
+    */
+int
+dwarf_highpc_b(Dwarf_Die die,
+    Dwarf_Addr * return_value, 
+    Dwarf_Half * return_form,
+    enum Dwarf_Form_Class * return_class,
+    Dwarf_Error * error)
 {
     Dwarf_Addr ret_addr = 0;
     Dwarf_Byte_Ptr info_ptr = 0;
     Dwarf_Half attr_form = 0;
     Dwarf_Debug dbg = 0;
     Dwarf_Half address_size = 0;
+    Dwarf_Half offset_size = 0;
+    enum Dwarf_Form_Class class = DW_FORM_CLASS_UNKNOWN;
+    Dwarf_Half version = 0;
 
     CHECK_DIE(die, DW_DLV_ERROR);
     dbg = die->di_cu_context->cc_dbg;
     address_size = die->di_cu_context->cc_address_size;
+
     info_ptr = _dwarf_get_value_ptr(die, DW_AT_high_pc, &attr_form);
-    if ((info_ptr == NULL && attr_form == 0) ||
-        (info_ptr != NULL && attr_form != DW_FORM_addr)) {
+    if (info_ptr == NULL && attr_form == 0) {
         _dwarf_error(dbg, error, DW_DLE_DIE_BAD);
         return (DW_DLV_ERROR);
     }
     if (info_ptr == NULL) {
         return (DW_DLV_NO_ENTRY);
     }
+    version = die->di_cu_context->cc_version_stamp;
+    offset_size = die->di_cu_context->cc_length_size;
+    class = dwarf_get_form_class(version,DW_AT_high_pc,
+        offset_size,attr_form);
 
-    READ_UNALIGNED(dbg, ret_addr, Dwarf_Addr,
-        info_ptr, address_size);
-
-    *return_addr = ret_addr;
+    if (class == DW_FORM_CLASS_ADDRESS) {
+        Dwarf_Addr addr = 0;
+        READ_UNALIGNED(dbg, addr, Dwarf_Addr,
+            info_ptr, address_size);
+        *return_value = addr;
+    } else {
+        int res = 0;
+        Dwarf_Unsigned v = 0;
+        res = _dwarf_die_attr_unsigned_constant(die,DW_AT_high_pc,
+            &v,error);
+        if( res != DW_DLV_OK) {
+            Dwarf_Byte_Ptr info_ptr = 0;
+            info_ptr = _dwarf_get_value_ptr(die, DW_AT_high_pc, &attr_form);
+            if (info_ptr != NULL) {
+                if (attr_form == DW_FORM_sdata) {
+                    Dwarf_Signed sval = 0;
+                    sval = _dwarf_decode_s_leb128(info_ptr, NULL);
+                    /*  DWARF4 defines the value as an unsigned offset
+                        in section 2.17.2. */
+                    *return_value = (Dwarf_Unsigned)sval;          
+                } else {
+                    _dwarf_error(dbg, error, DW_DLE_DIE_BAD);
+                    return (DW_DLV_ERROR);
+                }
+            } else {
+                _dwarf_error(dbg, error, DW_DLE_DIE_BAD);
+                return (DW_DLV_ERROR);
+            }
+        } else {
+            *return_value = v;
+        }
+    }
+    *return_form = attr_form;
+    *return_class = class;
     return (DW_DLV_OK);
 }
 
@@ -528,11 +613,13 @@ dwarf_highpc(Dwarf_Die die,
     occurs in die.  Attr is required to be an attribute
     whose form is in the "constant" class.  If attr occurs 
     in die, the value is returned.  
-  Returns DW_DLV_OK, DW_DLV_ERROR, or DW_DLV_NO_ENTRY as
+
+    Returns DW_DLV_OK, DW_DLV_ERROR, or DW_DLV_NO_ENTRY as
     appropriate. Sets the value thru the pointer return_val.
+
     This function is meant to do all the 
     processing for dwarf_bytesize, dwarf_bitsize, dwarf_bitoffset, 
-    and dwarf_srclang.
+    and dwarf_srclang. And it helps in dwarf_highpc_with_form().
 */
 static int
 _dwarf_die_attr_unsigned_constant(Dwarf_Die die,

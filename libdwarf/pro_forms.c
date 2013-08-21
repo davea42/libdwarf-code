@@ -1,7 +1,7 @@
 /*
   Copyright (C) 2000,2004 Silicon Graphics, Inc.  All Rights Reserved.
   Portions Copyright 2002-2010 Sun Microsystems, Inc. All rights reserved.
-  Portions Copyright 2007-2012 David Anderson. All rights reserved.
+  Portions Copyright 2007-2013 David Anderson. All rights reserved.
   Portions Copyright 2012 SN Systems Ltd. All rights reserved.
 
   This program is free software; you can redistribute it and/or modify it
@@ -1067,6 +1067,18 @@ dwarf_add_AT_const_value_signedint(Dwarf_P_Die ownerdie,
     Dwarf_Signed signed_value,
     Dwarf_Error * error)
 {
+    return dwarf_add_AT_any_value_sleb(
+        ownerdie,DW_AT_const_value,
+        signed_value,
+        error);
+}
+
+Dwarf_P_Attribute
+dwarf_add_AT_any_value_sleb(Dwarf_P_Die ownerdie,
+    Dwarf_Half attrnum,
+    Dwarf_Signed signed_value,
+    Dwarf_Error * error)
+{
     Dwarf_P_Attribute new_attr = 0;
     int leb_size = 0;
     char encode_buffer[ENCODE_SPACE_NEEDED];
@@ -1084,7 +1096,7 @@ dwarf_add_AT_const_value_signedint(Dwarf_P_Die ownerdie,
         return ((Dwarf_P_Attribute) DW_DLV_BADADDR);
     }
 
-    new_attr->ar_attribute = DW_AT_const_value;
+    new_attr->ar_attribute = attrnum;
     new_attr->ar_attribute_form = DW_FORM_sdata;
     new_attr->ar_rel_type = R_MIPS_NONE;
     new_attr->ar_reloc_len = 0; /* unused for R_MIPS_NONE */
@@ -1111,9 +1123,22 @@ dwarf_add_AT_const_value_signedint(Dwarf_P_Die ownerdie,
     return new_attr;
 }
 
-
+/* AT_const_value, uleb */
 Dwarf_P_Attribute
 dwarf_add_AT_const_value_unsignedint(Dwarf_P_Die ownerdie,
+    Dwarf_Unsigned unsigned_value,
+    Dwarf_Error * error)
+{
+    return dwarf_add_AT_any_value_uleb(
+        ownerdie,DW_AT_const_value,
+        unsigned_value,
+        error);
+}
+
+
+Dwarf_P_Attribute
+dwarf_add_AT_any_value_uleb(Dwarf_P_Die ownerdie,
+    Dwarf_Half attrnum,
     Dwarf_Unsigned unsigned_value,
     Dwarf_Error * error)
 {
@@ -1134,7 +1159,7 @@ dwarf_add_AT_const_value_unsignedint(Dwarf_P_Die ownerdie,
         return ((Dwarf_P_Attribute) DW_DLV_BADADDR);
     }
 
-    new_attr->ar_attribute = DW_AT_const_value;
+    new_attr->ar_attribute = attrnum;
     new_attr->ar_attribute_form = DW_FORM_udata;
     new_attr->ar_rel_type = R_MIPS_NONE;
     new_attr->ar_reloc_len = 0; /* unused for R_MIPS_NONE */

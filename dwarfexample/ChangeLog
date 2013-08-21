@@ -1,5 +1,5 @@
-2011-06-04  DavidAnderson <davea42@earthlink.net>
-      * frame1.c, simplereader.c: Altered indentation to
-        multiples of 4 spaces, no tabs. No substantive change.
-2011-01-13  DavidAnderson <davea42@earthlink.net>
-      * New year starts.
+2013-08-13  David Anderson <davea42@earthlink.net>
+      * Add the --check option to verify that dwarf_highpc()
+        and the new dwarf_highpc_b() work properly with
+        both form address and form constant instances of
+        attributes DW_AT_high_pc.

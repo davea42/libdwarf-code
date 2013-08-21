@@ -2104,7 +2104,8 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
                 break;
             }
             if (theform != DW_FORM_addr) {
-                /*  New in DWARF4: other forms are not an address
+                /*  New in DWARF4: other forms 
+                    (of class constant) are not an address
                     but are instead offset from pc.
                     One could test for DWARF4 here before adding
                     this string, but that seems unnecessary as this
@@ -2333,7 +2334,7 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
             get_attr_value(dbg, tag, die, attrib, srcfiles, cnt, 
                 &lesb, local_show_form_used,local_verbose);
             safe_strcpy(CU_name,sizeof(CU_name),
-               esb_get_string(&lesb),esb_string_len(&lesb));
+                esb_get_string(&lesb),esb_string_len(&lesb));
             need_CU_name = FALSE;
             esb_destructor(&lesb);
         }

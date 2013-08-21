@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2000, 2004, 2006 Silicon Graphics, Inc.  All Rights Reserved.
-  Portions Copyright (C) 2009-2012 David Anderson. All Rights Reserved.
+  Portions Copyright (C) 2009-2013 David Anderson. All Rights Reserved.
   Portions Copyright (C) 2010-2012 SN Systems Ltd. All Rights Reserved.
 
   This program is free software; you can redistribute it and/or modify it

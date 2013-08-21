@@ -58,7 +58,7 @@ $Header: /plroot/cmplrs.src/v7.4.5m/.RCS/PL/dwarfdump/RCS/dwarfdump.c,v 1.48 200
 #include "common.h"
 #include "naming.h"
 #include "uri.h"
-#define DWARFDUMP_VERSION " Tue Jul 30 09:12:36 PDT 2013  "
+#define DWARFDUMP_VERSION " Thu Aug 15 07:14:27 PDT 2013  "
 
 using std::vector;
 using std::string;
@@ -283,7 +283,7 @@ static void suppress_check_dwarf()
 {
     do_print_dwarf = true;
     if (do_check_dwarf) {
-        cerr <<"Warning: check flag turned off, "
+        cout <<"Warning: check flag turned off, "
             "checking and printing are separate." <<
             endl;
     }
@@ -644,9 +644,9 @@ print_object_header(Elf *elf,Dwarf_Debug dbg,unsigned local_section_map)
 static void
 print_specific_checks_results(Compiler *pCompiler)
 {
-    cerr << endl;
-    cerr << "DWARF CHECK RESULT" << endl;
-    cerr << "<item>                    <checks>    <errors>" << endl;
+    cout << endl;
+    cout << "DWARF CHECK RESULT" << endl;
+    cout << "<item>                    <checks>    <errors>" << endl;
     if (check_pubname_attr) {
         PRINT_CHECK_RESULT("pubname_attr", pCompiler, pubname_attr_result);
     }
@@ -758,10 +758,13 @@ print_search_results()
             search_text = search_regex_text;
         }
     }
-    cerr << endl;
-    cerr << "Search type      : '" <<search_type << "'" << endl;
-    cerr << "Pattern searched : '" <<search_text << "'" << endl;
-    cerr << "Occurrences Found: "<< search_occurrences << endl;
+    cout.flush();
+    cerr.flush();
+    cout << endl;
+    cout << "Search type      : '" <<search_type << "'" << endl;
+    cout << "Pattern searched : '" <<search_text << "'" << endl;
+    cout << "Occurrences Found: "<< search_occurrences << endl;
+    cout.flush();
 }
 
 /* Print a summary of checks and errors */
@@ -769,8 +772,8 @@ static void
 print_checks_results()
 {
 
-    cerr.flush();
     cout.flush();
+    cerr.flush();
 
     if (compilers_detected.size() > 1) {
         std::stable_sort(compilers_detected.begin()+ 1,
@@ -783,27 +786,27 @@ print_checks_results()
         unsigned count = 0;
         unsigned total = 0;
 
-        cerr <<  endl;
-        cerr << "*** CU NAMES PER COMPILER ***"<< endl;
+        cout <<  endl;
+        cout << "*** CU NAMES PER COMPILER ***"<< endl;
         for (unsigned index = 1; index < compilers_detected.size(); ++index) {
             const Compiler& c = compilers_detected[index];
-            cerr << endl;
-            cerr << IToDec0N(index,2) << ": " << c.name_;
+            cout << endl;
+            cout << IToDec0N(index,2) << ": " << c.name_;
             count = 0;
             for (unsigned nc = 0; 
                 nc < c.cu_list_.size(); 
                 ++nc ) {
 
                 ++count;
-                cerr << endl;
-                cerr << "    " << IToDec0N(count,2) <<": '" <<
+                cout << endl;
+                cout << "    " << IToDec0N(count,2) <<": '" <<
                     c.cu_list_[nc]<< "'" ;
             }
             total += count;
-            cerr << endl;
+            cout << endl;
         }
-        cerr << endl;
-        cerr<< "Detected " << total << " CU names" << endl;
+        cout << endl;
+        cout<< "Detected " << total << " CU names" << endl;
     }
 
     /* Print error report only if errors have been detected */
@@ -826,11 +829,11 @@ print_checks_results()
         }
 
         /* Print compilers detected list */
-        cerr << endl;
-        cerr << compilers_detected.size() -1 <<  " Compilers detected:"
+        cout << endl;
+        cout << compilers_detected.size() -1 <<  " Compilers detected:"
             << endl;
         for (unsigned index = 1; index < compilers_detected.size(); ++index) {
-            cerr << IToDec0N(index,2) << ": " <<
+            cout << IToDec0N(index,2) << ": " <<
                 compilers_detected[index].name_<< endl;
         }
 
@@ -838,28 +841,28 @@ print_checks_results()
             '-c<str>', that were not detected. */
         if (compilers_not_detected) {
             unsigned count = 0;
-            cerr << endl;
-            cerr << compilers_not_detected <<  " Compilers not detected:"
+            cout << endl;
+            cout << compilers_not_detected <<  " Compilers not detected:"
                 << endl;
             for (unsigned index = 1; index < compilers_targeted.size(); ++index) {
                 Compiler *pCompiler = &compilers_targeted[index];
                 if (!pCompiler->verified_) {
                     ++count;
-                    cerr <<  IToDec0N(count,2) << ": '" <<
+                    cout <<  IToDec0N(count,2) << ": '" <<
                         pCompiler->name_ << "'" << endl;
                 }
             }
         }
 
         unsigned count2 = 0;
-        cerr << endl;
-        cerr << compilers_verified <<  " Compilers verified:"
+        cout << endl;
+        cout << compilers_verified <<  " Compilers verified:"
             << endl;
         for (unsigned index = 1; index < compilers_detected.size(); ++index) {
             if (compilers_detected[index].verified_) {
                 ++count2;
                 Compiler *pCompiler = &compilers_detected[index];
-                cerr << IToDec0N(count2,2) << ": errors = "<<
+                cout << IToDec0N(count2,2) << ": errors = "<<
                     IToDec(pCompiler->results_[total_check_result].errors_,5) 
                     << ", " <<
                     pCompiler->name_ <<
@@ -873,13 +876,13 @@ print_checks_results()
             /* Print compilers detected summary*/
             if (print_summary_all) {
                 int count = 0;
-                cerr << endl;
-                cerr << "*** ERRORS PER COMPILER ***" << endl;
+                cout << endl;
+                cout << "*** ERRORS PER COMPILER ***" << endl;
                 for (unsigned index = 1; index < compilers_detected.size(); ++index) {
                     Compiler *pCompiler = &compilers_detected[index];
                     if (pCompiler->verified_) {
                         ++count;
-                        cerr << endl << IToDec0N(count,2) << ": " <<
+                        cout << endl << IToDec0N(count,2) << ": " <<
                             pCompiler->name_;
                         print_specific_checks_results(pCompiler);
                     }
@@ -887,11 +890,19 @@ print_checks_results()
             }
 
             /* Print general summary (all compilers checked) */
-            cerr << endl;
-            cerr <<"*** TOTAL ERRORS FOR ALL COMPILERS ***" << endl;
+            cout << endl;
+            cout <<"*** TOTAL ERRORS FOR ALL COMPILERS ***" << endl;
             print_specific_checks_results(&compilers_detected[0]);
         }
     }
+    cout.flush();
+}
+
+/* This is for dwarf_print_lines() */
+void 
+printf_callback_for_libdwarf(void *userdata,const char *data)
+{
+     cout << data;
 }
 
 
@@ -915,6 +926,11 @@ process_one_file(Elf * elf,const  string & file_name, int archive,
     if (dres != DW_DLV_OK) {
         print_error(dbg, "dwarf_elf_init", dres, err);
     }
+
+    struct Dwarf_Printf_Callback_Info_s printfcallbackdata;
+    memset(&printfcallbackdata,0,sizeof(printfcallbackdata));
+    printfcallbackdata.dp_fptr = printf_callback_for_libdwarf;
+    dwarf_register_printf_callback(dbg,&printfcallbackdata);
 
     if (archive) {
         Elf_Arhdr *mem_header = elf_getarhdr(elf);
@@ -1056,6 +1072,7 @@ process_one_file(Elf * elf,const  string & file_name, int archive,
     }
     cout << endl;
     cerr.flush();
+    cout.flush();
     return 0;
 
 }
@@ -1824,20 +1841,20 @@ print_error_and_continue(Dwarf_Debug dbg, const string & msg, int dwarf_code,
 {
     cout.flush();
     cerr.flush();
-    cerr << endl;
+    cout << endl;
     if (dwarf_code == DW_DLV_ERROR) {
         string errmsg = dwarf_errmsg(err);
         Dwarf_Unsigned myerr = dwarf_errno(err);
-        cerr << program_name <<
+        cout << program_name <<
             " ERROR:  " << msg << ":  " << errmsg << " (" << myerr<< 
             ")" << endl;
     } else if (dwarf_code == DW_DLV_NO_ENTRY) {
-        cerr << program_name <<
+        cout << program_name <<
             " NO ENTRY:  " <<  msg << ": " << endl;
     } else if (dwarf_code == DW_DLV_OK) {
-        cerr << program_name<< ":  " << msg << endl;
+        cout << program_name<< ":  " << msg << endl;
     } else {
-        cerr << program_name<< " InternalError:  "<<  msg << 
+        cout << program_name<< " InternalError:  "<<  msg << 
             ":  code " << dwarf_code << endl;
     }
     cerr.flush();
@@ -2413,7 +2430,7 @@ PRINT_CHECK_RESULT(const string &str,
     Compiler *pCompiler, Dwarf_Check_Categories category)
 {
     Dwarf_Check_Result result = pCompiler->results_[category];
-    cerr << std::setw(24) << std::left << str <<
+    cout << std::setw(24) << std::left << str <<
         IToDec(result.checks_,10) <<  
         "  " <<
         IToDec(result.errors_,10) << endl; 

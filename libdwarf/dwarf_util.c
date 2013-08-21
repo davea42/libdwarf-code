@@ -46,10 +46,13 @@
 #include "config.h"
 #include "dwarf_incl.h"
 #include <stdio.h>
+#include <stdarg.h>
+#include <stdlib.h> /* For free() */
 #include "dwarf_die_deliv.h"
 #include "pro_encode_nm.h"
 
 
+#define MINBUFLEN 1000
 
 /*  Given a form, and a pointer to the bytes encoding 
     a value of that form, val_ptr, this function returns
@@ -597,3 +600,120 @@ int dwarf_encode_signed_leb128(Dwarf_Signed val, int *nbytes,
     /* Encode val as a signed LEB128. */
     return _dwarf_pro_encode_signed_leb128_nm(val,nbytes,space,splen);
 }
+
+
+struct  Dwarf_Printf_Callback_Info_s
+dwarf_register_printf_callback( Dwarf_Debug dbg,
+    struct  Dwarf_Printf_Callback_Info_s * newvalues)
+{
+    struct  Dwarf_Printf_Callback_Info_s oldval = dbg->de_printf_callback;
+    if (!newvalues) {
+        return oldval;
+    }
+    if( newvalues->dp_buffer_user_provided) {
+        if( oldval.dp_buffer_user_provided) {
+            /* User continues to control the buffer. */
+            dbg->de_printf_callback = *newvalues;
+        }else {
+            /*  Switch from our control of buffer to user
+                control.  */
+            free(oldval.dp_buffer);
+            oldval.dp_buffer = 0;
+            dbg->de_printf_callback = *newvalues;
+        }
+    } else if (oldval.dp_buffer_user_provided){
+        /* Switch from user control to our control */
+        dbg->de_printf_callback = *newvalues;
+        dbg->de_printf_callback.dp_buffer_len = 0;
+        dbg->de_printf_callback.dp_buffer= 0;
+    } else {
+        /* User does not control the buffer. */
+        dbg->de_printf_callback = *newvalues;
+        dbg->de_printf_callback.dp_buffer_len =
+              oldval.dp_buffer_len;
+        dbg->de_printf_callback.dp_buffer =
+              oldval.dp_buffer;
+    }
+    return oldval;
+}
+
+
+/* start is a minimum size, but may be zero. */
+static void bufferdoublesize(struct  Dwarf_Printf_Callback_Info_s *bufdata)
+{
+    char *space = 0;
+    int targlen = 0;
+    if (bufdata->dp_buffer_len == 0) {
+        targlen = MINBUFLEN;
+    } else {
+        targlen = bufdata->dp_buffer_len * 2;
+        if (targlen < bufdata->dp_buffer_len) {
+            /* Overflow, we cannot do this doubling. */
+            return;
+        }
+    }
+    /* Make big enough for a trailing NUL char. */
+    space = malloc(targlen+1);
+    if (!space) {
+        /* Out of space, we cannot double it. */
+        return;
+    }
+    free(bufdata->dp_buffer);
+    bufdata->dp_buffer = space;
+    bufdata->dp_buffer_len = targlen;
+    return;
+}
+
+int 
+dwarf_printf(Dwarf_Debug dbg,
+    const char * format,
+    ...)
+{
+    va_list ap;
+    int maxtries = 4;
+    int tries = 0;
+    struct Dwarf_Printf_Callback_Info_s *bufdata = 
+        &dbg->de_printf_callback;
+    dwarf_printf_callback_function_type func = bufdata->dp_fptr;
+    if (!func) {
+        return 0;
+    }
+    if (!bufdata->dp_buffer) {
+        bufferdoublesize(bufdata);
+        if (!bufdata->dp_buffer) {
+            /*  Something is wrong. Possibly caller
+                set up callback wrong. */
+            return 0;
+        }
+    }
+      
+    /*  Here we ensure (or nearly ensure) we expand
+        the buffer when necessary, but not excessively
+        (but only if we control the buffer size).  */
+    while (1) {
+        tries++;
+        va_start(ap,format);
+        int olen = vsnprintf(bufdata->dp_buffer,
+              bufdata->dp_buffer_len, format,ap);
+        va_end(ap);
+        if (olen > -1 && olen < bufdata->dp_buffer_len) {
+              /* The caller had better copy or dispose
+                  of the contents, as next-call will overwrite them. */
+              func(bufdata->dp_user_pointer,bufdata->dp_buffer);
+              return 0;
+        }
+        if (bufdata->dp_buffer_user_provided) {
+              func(bufdata->dp_user_pointer,bufdata->dp_buffer);
+              return 0;
+        }
+        if (tries > maxtries) {
+              /* we did all we could, print what we have space for. */
+              func(bufdata->dp_user_pointer,bufdata->dp_buffer);
+              return 0;
+        }
+        bufferdoublesize(bufdata);
+    }
+    /* Not reached. */
+    return 0;
+}
+

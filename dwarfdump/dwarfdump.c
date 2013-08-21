@@ -1,6 +1,6 @@
 /* 
   Copyright (C) 2000,2002,2004,2005 Silicon Graphics, Inc.  All Rights Reserved.
-  Portions Copyright (C) 2007-2012 David Anderson. All Rights Reserved.
+  Portions Copyright (C) 2007-2013 David Anderson. All Rights Reserved.
   Portions Copyright 2007-2010 Sun Microsystems, Inc. All rights reserved.
   Portions Copyright 2012 SN Systems Ltd. All rights reserved.:w
 
@@ -58,7 +58,7 @@ $Header: /plroot/cmplrs.src/v7.4.5m/.RCS/PL/dwarfdump/RCS/dwarfdump.c,v 1.48 200
 extern int elf_open(const char *name,int mode);
 #endif /* WIN32 */
 
-#define DWARFDUMP_VERSION " Tue Jul 30 09:12:36 PDT 2013  "
+#define DWARFDUMP_VERSION " Thu Aug 15 07:14:27 PDT 2013  "
 
 extern char *optarg;
 
@@ -345,7 +345,7 @@ static void suppress_check_dwarf()
 {
     do_print_dwarf = TRUE;
     if (do_check_dwarf) {
-        fprintf(stderr,"Warning: check flag turned off, "
+        printf("Warning: check flag turned off, "
             "checking and printing are separate.\n");
     }
     do_check_dwarf = FALSE;
@@ -422,7 +422,7 @@ main(int argc, char *argv[])
     //stderr->_file = stdout->_file;
     dup2(fileno(stdout),fileno(stderr));
 #endif /* WIN32 */
-  
+
     print_version_details(argv[0],FALSE);
 
     (void) elf_version(EV_NONE);
@@ -835,6 +835,7 @@ print_specific_checks_results(Compiler *pCompiler)
     }
 
     PRINT_CHECK_RESULT("** Summarize **",pCompiler, total_check_result);
+    fflush(stdout);
 }
 
 static int
@@ -875,9 +876,12 @@ print_search_results()
             search_text = search_regex_text;
         }
     }
+    fflush(stdout);
+    fflush(stderr);
     printf("\nSearch type      : '%s'\n",search_type);
     printf("Pattern searched : '%s'\n",search_text);
     printf("Occurrences Found: %d\n",search_occurrences);
+    fflush(stdout);
 }
 
 /* Print a summary of checks and errors */
@@ -938,7 +942,8 @@ print_checks_results()
         }
 
         /* Print compilers detected list */
-        printf("\n%d Compilers detected:\n",compilers_detected_count);
+        printf(
+            "\n%d Compilers detected:\n",compilers_detected_count);
         for (index = 1; index <= compilers_detected_count; ++index) {
             pCompiler = &compilers_detected[index];
             printf("%02d: %s\n",index,pCompiler->name);
@@ -948,10 +953,12 @@ print_checks_results()
             '-c<str>', that were not detected. */
         if (compilers_not_detected) {
             count = 0;
-            printf("\n%d Compilers not detected:\n",compilers_not_detected);
+            printf(
+                "\n%d Compilers not detected:\n",compilers_not_detected);
             for (index = 1; index <= compilers_targeted_count; ++index) {
                 if (!compilers_targeted[index].verified) {
-                    printf("%02d: '%s'\n",
+                    printf(
+                        "%02d: '%s'\n",
                         ++count,compilers_targeted[index].name);
                 }
             }
@@ -979,7 +986,8 @@ print_checks_results()
                 for (index = 1; index <= compilers_detected_count; ++index) {
                     pCompiler = &compilers_detected[index];
                     if (pCompiler->verified) {
-                        printf("\n%02d: %s",++count,pCompiler->name);
+                        printf("\n%02d: %s",
+                            ++count,pCompiler->name);
                         print_specific_checks_results(pCompiler);
                     }
                 }
@@ -990,6 +998,14 @@ print_checks_results()
             print_specific_checks_results(&compilers_detected[0]);
         }
     }
+    fflush(stdout);
+}
+
+/* This is for dwarf_print_lines() */
+void 
+printf_callback_for_libdwarf(void *userdata,const char *data)
+{
+    printf("%s",data);
 }
 
 /*
@@ -1003,6 +1019,7 @@ process_one_file(Elf * elf, const char * file_name, int archive,
 {
     Dwarf_Debug dbg;
     int dres;
+    struct Dwarf_Printf_Callback_Info_s printfcallbackdata;
 
     dres = dwarf_elf_init(elf, DW_DLC_READ, NULL, NULL, &dbg, &err);
     if (dres == DW_DLV_NO_ENTRY) {
@@ -1012,6 +1029,11 @@ process_one_file(Elf * elf, const char * file_name, int archive,
     if (dres != DW_DLV_OK) {
         print_error(dbg, "dwarf_elf_init", dres, err);
     }
+
+    memset(&printfcallbackdata,0,sizeof(printfcallbackdata));
+    printfcallbackdata.dp_fptr = printf_callback_for_libdwarf;
+    dwarf_register_printf_callback(dbg,&printfcallbackdata);
+
 
     if (archive) {
         Elf_Arhdr *mem_header = elf_getarhdr(elf);
@@ -1157,6 +1179,7 @@ process_one_file(Elf * elf, const char * file_name, int archive,
     }
 
     printf("\n");
+    fflush(stdout);
     return 0;
 
 }
@@ -1962,20 +1985,20 @@ void
 print_error_and_continue(Dwarf_Debug dbg, string msg, int dwarf_code,
     Dwarf_Error err)
 {
-    fprintf(stderr,"\n");
+    printf("\n");
 
     if (dwarf_code == DW_DLV_ERROR) {
         string errmsg = dwarf_errmsg(err);
         Dwarf_Unsigned myerr = dwarf_errno(err);
 
-        fprintf(stderr, "%s ERROR:  %s:  %s (%lu)\n",
+        printf( "%s ERROR:  %s:  %s (%lu)\n",
             program_name, msg, errmsg, (unsigned long) myerr);
     } else if (dwarf_code == DW_DLV_NO_ENTRY) {
-        fprintf(stderr, "%s NO ENTRY:  %s: \n", program_name, msg);
+        printf("%s NO ENTRY:  %s: \n", program_name, msg);
     } else if (dwarf_code == DW_DLV_OK) {
-        fprintf(stderr, "%s:  %s \n", program_name, msg);
+        printf("%s:  %s \n", program_name, msg);
     } else {
-        fprintf(stderr, "%s InternalError:  %s:  code %d\n",
+        printf("%s InternalError:  %s:  code %d\n",
             program_name, msg, dwarf_code);
     }
 
