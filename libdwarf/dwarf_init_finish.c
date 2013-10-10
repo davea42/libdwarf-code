@@ -418,16 +418,6 @@ _dwarf_setup(Dwarf_Debug dbg, Dwarf_Error * error)
         return sectionerr;
     }
 
-    /* SN-Carlos: Record the default loading address for each section */
-    virtual_addresses = (Dwarf_Addr *)calloc(section_count + 1,
-        sizeof(Dwarf_Addr));
-    if (!virtual_addresses) {
-        /* Impossible case, we hope. Give up. */
-        return DW_DLV_ERROR;
-    }
-    dbg->de_sections_count = section_count;
-    dbg->de_sections_load_address = virtual_addresses;
-
     /*  We can skip index 0 when considering ELF files, but not other
         object types.  Indeed regardless of the object type we should
         skip section 0 here.  
