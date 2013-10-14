@@ -1,3 +1,10 @@
+October 14, 2013
+  The Callback_Func declarations in libdwarf.h were missing a
+  const on the name argument.  Adding it removes compiler warnings.
+  But removing it means client code calling
+  producer functions has to change to get their
+  callback function declarations/definitions to match.
+  The change does not affect those calling the consumer interfaces.
 August 15, 2013
   Now the printf (stdout) here go through a callback function instead
   of actually using stdout.  That way dwarfdump and other apps have full

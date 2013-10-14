@@ -2277,7 +2277,7 @@ void dwarf_dealloc(Dwarf_Debug /*dbg*/, void* /*space*/,
 
 /*  New form June, 2011. Adds user_data argument. */
 typedef int (*Dwarf_Callback_Func_c)(
-    char*           /*name*/,
+    const char*     /*name*/,
     int             /*size*/,
     Dwarf_Unsigned  /*type*/,
     Dwarf_Unsigned  /*flags*/,
@@ -2297,7 +2297,7 @@ Dwarf_P_Debug dwarf_producer_init_c(
     Dwarf_Error *         /*error*/);
 
 typedef int (*Dwarf_Callback_Func_b)(
-    char*           /*name*/,
+    const char*     /*name*/,
     int             /*size*/,
     Dwarf_Unsigned  /*type*/,
     Dwarf_Unsigned  /*flags*/,
@@ -2317,7 +2317,7 @@ Dwarf_P_Debug dwarf_producer_init_b(
 
 /* Original, oldest form. From 1991. */
 typedef int (*Dwarf_Callback_Func)(
-    char*           /*name*/,
+    const char*     /*name*/,
     int             /*size*/,
     Dwarf_Unsigned  /*type*/,
     Dwarf_Unsigned  /*flags*/,

@@ -1,3 +1,8 @@
+2013-10-14  David Anderson
+     * libdwarf.h.in: Dwarf_Callback_Func_c, 
+       Dwarf_Callback_Func_b and Dwarf_Callback_Func name argument
+       was lacking a const qualifier leading to compiler warnings.
+       Now has const qualifier.
 2013-08-15  David Anderson
      * dwarf_alloc.c: Now uses dwarf_printf instead of printf. 
        And frees the dwarf_printf dp_buffer if appropriate.

@@ -199,7 +199,7 @@ createnamestr(unsigned strtabstroff)
 
 // This functional interface is defined by libdwarf. 
 int CallbackFunc(
-    char* name,
+    const char* name,
     int                 size,
     Dwarf_Unsigned      type,
     Dwarf_Unsigned      flags,

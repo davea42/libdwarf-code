@@ -1,3 +1,7 @@
+2013-10-14  David Anderson
+     * dwarfgen.cc: The declaration of CallbackFunc()
+       now has const char *name to match the corrected
+       declaration in libdwarf.h
 2013-08-13  David Anderson
      * createirepformfrombinary.cc: IRFormReference now
        allows DW_FORM_data4/8 as reference forms (applies
