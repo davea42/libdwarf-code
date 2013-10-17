@@ -49,7 +49,7 @@ $Header: /plroot/cmplrs.src/v7.4.5m/.RCS/PL/dwarfdump/RCS/print_sections.c,v 1.6
 #include "print_sections.h"
 #include "print_frames.h"
 
-/* get all the data in .debug_types */
+/* Get all the data in .debug_types or debug_pubtypes. */
 extern void
 print_types(Dwarf_Debug dbg, enum type_type_e type_type)
 {
@@ -76,7 +76,6 @@ print_types(Dwarf_Debug dbg, enum type_type_e type_type)
     if (!do_print_dwarf) {
         return;
     }
-  
 
     if (type_type == DWARF_PUBTYPES) {
         section_name = ".debug_pubtypes";

@@ -59,6 +59,7 @@ using std::list;
 static void readFrameDataFromBinary(Dwarf_Debug dbg, IRepresentation & irep);
 static void readMacroDataFromBinary(Dwarf_Debug dbg, IRepresentation & irep);
 static void readCUDataFromBinary(Dwarf_Debug dbg, IRepresentation & irep);
+static void readGlobals(Dwarf_Debug dbg, IRepresentation & irep);
 
 class DbgInAutoCloser {
 public:
@@ -104,7 +105,7 @@ createIrepFromBinary(const std::string &infile,
     readFrameDataFromBinary(dbg,irep);
     readCUDataFromBinary(dbg,irep);
     readMacroDataFromBinary(dbg,irep);
-
+    readGlobals(dbg,irep);
     return;
 }
 
@@ -614,5 +615,69 @@ readMacroDataFromBinary(Dwarf_Debug dbg, IRepresentation & irep)
             readCUMacroDataFromBinary(dbg, irep, macrooffset,*it);
         }
     }
+}
+
+// Offsets refer to .debug_info, nothing else.
+static void
+readGlobals(Dwarf_Debug dbg, IRepresentation & irep)
+{
+    Dwarf_Error   error;
+    Dwarf_Global *globs = 0;
+    Dwarf_Type   *types = 0;
+    Dwarf_Signed  cnt = 0;
+    Dwarf_Signed  i = 0;
+    int res = 0;
+    IRPubsData  &pubdata = irep.pubnamedata();
+    
+    res = dwarf_get_globals(dbg, &globs,&cnt, &error);
+    if(res == DW_DLV_OK) {
+        std::list<IRPub> &pubnames = pubdata.getPubnames();
+        for (Dwarf_Signed i = 0; i < cnt; ++i) {
+            Dwarf_Global g = globs[i];
+            char *name = 0;
+            // dieoff and cuoff may be in .debug_info
+            // or .debug_types
+            Dwarf_Off dieoff = 0;
+            Dwarf_Off cuoff = 0;
+            res = dwarf_global_name_offsets(g,&name,
+                &dieoff,&cuoff,&error);
+            if( res == DW_DLV_OK) {
+                IRPub p(name,dieoff,cuoff);
+                dwarf_dealloc(dbg,name,DW_DLA_STRING);
+                pubnames.push_back(p);
+            }
+        }
+        dwarf_globals_dealloc(dbg, globs, cnt);
+    } else if (res == DW_DLV_ERROR) {
+        cerr << "dwarf_get_globals failed" << endl;
+        exit(1);
+    }
+    res = dwarf_get_pubtypes(dbg, &types,&cnt, &error);
+    if(res == DW_DLV_OK) {
+        std::list<IRPub> &pubtypes = pubdata.getPubtypes();
+        for (Dwarf_Signed i = 0; i < cnt; ++i) {
+            Dwarf_Type g = types[i];
+            char *name = 0;
+            // dieoff and cuoff may be in .debug_info
+            // or .debug_types
+            Dwarf_Off dieoff = 0;
+            Dwarf_Off cuoff = 0;
+            res = dwarf_pubtype_name_offsets(g,&name,
+                &dieoff,&cuoff,&error);
+            if( res == DW_DLV_OK) {
+                IRPub p(name,dieoff,cuoff);
+                dwarf_dealloc(dbg,name,DW_DLA_STRING);
+                pubtypes.push_back(p);
+            }
+        }
+        dwarf_globals_dealloc(dbg, globs, cnt);
+    } else if (res == DW_DLV_ERROR) {
+        cerr << "dwarf_get_globals failed" << endl;
+        exit(1);
+    }
+
+
+
+
 }
 

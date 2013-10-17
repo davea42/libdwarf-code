@@ -95,7 +95,8 @@ private:
 
 class IRDie {
 public:
-    IRDie():tag_(0),globalOffset_(0), cuRelativeOffset_(0) {};
+    IRDie():tag_(0),globalOffset_(0), cuRelativeOffset_(0),
+        generatedDie_(0) {};
     ~IRDie() {};
     void addChild(const IRDie & newdie ) {
         children_.push_back(newdie);
@@ -132,6 +133,8 @@ public:
         cuRelativeOffset_ = cuoff; 
     };
     Dwarf_Unsigned getGlobalOffset() const { return globalOffset_;};
+    void setGeneratedDie(Dwarf_P_Die p_die) { generatedDie_ = p_die;};
+    Dwarf_P_Die getGeneratedDie() const { return generatedDie_;};
     unsigned getTag() {return tag_; }
 
 private:
@@ -140,6 +143,7 @@ private:
    unsigned tag_;
    Dwarf_Unsigned globalOffset_;
    Dwarf_Unsigned cuRelativeOffset_;
+   Dwarf_P_Die generatedDie_;
 };
 
 class IRCUdata {
@@ -200,6 +204,7 @@ public:
     IRDie & baseDie() { return cudie_; };
     Dwarf_Half getVersionStamp() { return version_stamp_; };
     Dwarf_Half getOffsetSize() { return length_size_; };
+    Dwarf_Unsigned getCUdieOffset() { return cudie_offset_; };
     IRCULineData & getCULines() { return cu_lines_; };
     std::string  getCUName() {
         return cudie_.getName();

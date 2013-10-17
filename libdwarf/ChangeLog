@@ -1,3 +1,17 @@
+2013-10-17  David Anderson
+     * dwarf_error.c: Add DW_DLE_DEBUGPUBTYPES_ERROR string.
+     * libdwarf.h.in: Add DW_DLE_DEBUGPUBTYPES_ERROR and fix
+       DW_DLE_LAST. Add dwarf_add_pubtype() interface.
+     * libdwarf2.1.mm: References to Dwarf_Pubtype changed
+       to Dwarf_Type, using the same interface type
+       as for .debug_types (an SGI extension). Now at rev 2.15.
+       Clarified that pubnames and pubtypes only apply to 
+       .debug_info.
+     * libdwarf2.1.pdf: Regenerated.
+     * pro_opaque.h: Added DEBUG_PUBTYPES and updated
+       NUM_DEBUG_SECTIONS.
+     * pro_pubnames.c: Added dwarf_add_pubtype() support.
+     * pro_section.c: Added support for pubtypes.
 2013-10-14  David Anderson
      * libdwarf.h.in: Dwarf_Callback_Func_c, 
        Dwarf_Callback_Func_b and Dwarf_Callback_Func name argument

@@ -1,3 +1,5 @@
+2013-10-17  David Anderson
+     * print_types.c: Remove pointless blank line.
 2013-08-15  David Anderson
      * dwarfdump.c: Now calls dwarf_register_printf_callback()
        so dwarf_print_lines() output is shown (if dwarfdump

@@ -91,8 +91,8 @@ const char *_dwarf_rel_section_names[] = {
     REL_SEC_PREFIX ".debug_macinfo",
     REL_SEC_PREFIX ".debug_loc",
     REL_SEC_PREFIX ".debug_ranges",
-    REL_SEC_PREFIX ".debug_types"
-
+    REL_SEC_PREFIX ".debug_types",      /* new in DWARF4 */
+    REL_SEC_PREFIX ".debug_pubtypes",   /* new in DWARF3 */
 };
 
 /*  names of sections. Ensure that it matches the defines 
@@ -114,7 +114,8 @@ const char *_dwarf_sectnames[] = {
     ".debug_macinfo",
     ".debug_loc",
     ".debug_ranges",
-    ".debug_types",
+    ".debug_types",             /* new in DWARF4 */
+    ".debug_pubtypes",          /* new in DWARF3 */
 };
 
 
@@ -260,6 +261,12 @@ dwarf_transform_to_disk_form(Dwarf_P_Debug dbg, Dwarf_Error * error)
                 continue;
             }
             break;
+        case DEBUG_PUBTYPES:
+            if (dbg->de_simple_name_headers[dwarf_snk_pubtype].
+                sn_head == NULL) {
+                continue;
+            }
+            break;
 
         case DEBUG_STR:
             if (dbg->de_strings == NULL) {
@@ -400,6 +407,16 @@ dwarf_transform_to_disk_form(Dwarf_P_Debug dbg, Dwarf_Error * error)
             error);
         if (nbufs < 0) {
             DWARF_P_DBG_ERROR(dbg, DW_DLE_DEBUGINFO_ERROR,
+                DW_DLV_NOCOUNT);
+        }
+    }
+    if (dbg->de_simple_name_headers[dwarf_snk_pubtype].sn_head) {
+        nbufs = _dwarf_transform_simplename_to_disk(dbg,
+            dwarf_snk_pubtype,
+            DEBUG_PUBTYPES,
+            error);
+        if (nbufs < 0) {
+            DWARF_P_DBG_ERROR(dbg, DW_DLE_DEBUGPUBTYPES_ERROR,
                 DW_DLV_NOCOUNT);
         }
     }

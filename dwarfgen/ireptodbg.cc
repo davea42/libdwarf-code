@@ -179,6 +179,7 @@ HandleOneDieAndChildren(Dwarf_P_Debug dbg,
         cerr << "Die creation failure.  "<< endl;
         exit(1);
     }
+    inDie.setGeneratedDie(ourdie);
        
     Dwarf_P_Die lastch = 0;
     for ( list<IRDie>::iterator it = children.begin();
@@ -351,9 +352,11 @@ emitOneCU( Dwarf_P_Debug dbg,IRepresentation & Irep, IRCUdata&cu,
         cerr << "Unable to add_die_to_debug " << endl;
         exit(1);
     }
+    
 
     HandleLineData(dbg,Irep,cu);
 }
+
 // .debug_info creation.
 // Also creates .debug_line
 static void
@@ -481,6 +484,138 @@ transform_macro_info(Dwarf_P_Debug dbg,
     for( Dwarf_Unsigned ct = 0; ct < reloc_count ; ++ct) {
     }
 }
+
+// Starting at a Die, look through its children
+// in its input to find which one we have by
+// comparing the input-die global offset.
+static
+Dwarf_P_Die findTargetDieByOffset(IRDie& indie,
+   Dwarf_Unsigned targetglobaloff)
+{
+   Dwarf_Unsigned globoff = indie.getGlobalOffset();
+   if(globoff == targetglobaloff) {
+       return indie.getGeneratedDie();
+   }
+   std::list<IRDie> dielist =  indie.getChildren();
+   for ( list<IRDie>::iterator it = dielist.begin();
+        it != dielist.end();
+        it++) {
+        IRDie &ldie = *it;
+        Dwarf_P_Die foundDie = findTargetDieByOffset(ldie,
+            targetglobaloff);
+        if(foundDie) {
+            return foundDie;
+        }
+   }
+   return NULL;
+}
+
+// If the pubnames/pubtypes entry is in the
+// cu we are emitting, find the generated output
+// Dwarf_P_Die in that CU
+// and attach the pubname/type entry to it.
+static void
+transform_debug_pubnames_types_inner(Dwarf_P_Debug dbg,
+   IRepresentation & Irep,int cu_of_input_we_output,
+   IRCUdata&cu)
+{
+    // First, get the target CU. */
+    Dwarf_Unsigned targetcuoff= cu.getCUdieOffset();
+
+    IRDie &basedie = cu.baseDie();
+    Dwarf_P_Die p_die = basedie.getGeneratedDie();
+
+    IRPubsData& pubs = Irep.pubnamedata();
+    std::list<IRPub> &nameslist = pubs.getPubnames();
+    if(!nameslist.empty()) {
+        for ( list<IRPub>::iterator it = nameslist.begin();
+        it != nameslist.end();
+        it++) {
+            IRPub &pub = *it;
+            Dwarf_Unsigned pubcuoff= pub.getCUdieOffset();
+            Dwarf_Unsigned ourdieoff= pub.getDieOffset();
+            if (pubcuoff != targetcuoff) {
+                 continue;
+            }
+            Dwarf_P_Die targdie = findTargetDieByOffset(basedie,
+               ourdieoff);
+            if(targdie) {
+                // Ugly. Old mistake in libdwarf declaration. 
+                char *mystr = const_cast<char *>(pub.getName().c_str());
+                Dwarf_Unsigned res = dwarf_add_pubname(
+                    dbg,targdie,
+                    mystr,
+                    &error);
+                if(!res) {
+                    cerr << "Failed to add pubname entry for offset"
+                        << ourdieoff 
+                        << "in CU at offset " << pubcuoff << endl;
+                    exit(1);
+                }
+            } else {
+                cerr << "Did not find target pubname P_Die for offset " 
+                    << ourdieoff 
+                    << "in CU at offset " << pubcuoff << endl;
+            }
+        }
+    }
+    std::list<IRPub> &typeslist = pubs.getPubtypes();
+    if(!typeslist.empty()) {
+        for ( list<IRPub>::iterator it = typeslist.begin();
+        it != typeslist.end();
+        it++) {
+            IRPub &pub = *it;
+            Dwarf_Unsigned pubcuoff= pub.getCUdieOffset();
+            Dwarf_Unsigned ourdieoff= pub.getDieOffset();
+            if (pubcuoff != targetcuoff) {
+                continue;
+            }
+            Dwarf_P_Die targdie = findTargetDieByOffset(basedie,
+               ourdieoff);
+            if(targdie) {
+                // Ugly. Old mistake in libdwarf declaration. 
+                char *mystr = const_cast<char *>(pub.getName().c_str());
+                Dwarf_Unsigned res = dwarf_add_pubtype(
+                    dbg,targdie,
+                    mystr,
+                    &error);
+                if(!res) {
+                    cerr << "Failed to add pubtype entry for offset"
+                        << ourdieoff
+                        << "in CU at offset " << pubcuoff << endl;
+                    exit(1);
+                }
+            } else {
+                cerr << "Did not find target pubtype P_Die for offset " 
+                    << ourdieoff
+                    << "in CU at offset " << pubcuoff << endl;
+            }
+        }
+    }
+}
+
+// This looks for pubnames/pubtypes
+// to generate based on an object file input. 
+static void
+transform_debug_pubnames_types(Dwarf_P_Debug dbg,
+   IRepresentation & Irep,int cu_of_input_we_output)
+{
+    int cu_number = 0;
+    std::list<IRCUdata> &culist = Irep.infodata().getCUData();
+    // For now,  just one CU we write (as spoken by Yoda).
+
+    for ( list<IRCUdata>::iterator it = culist.begin();
+        it != culist.end();
+        it++,cu_number++) {
+        if(cu_number == cu_of_input_we_output) { 
+            IRCUdata & primecu = *it;
+            transform_debug_pubnames_types_inner(
+                dbg,Irep,cu_of_input_we_output,primecu);
+            break;
+        }
+    }
+}
+
 void
 transform_irep_to_dbg(Dwarf_P_Debug dbg,
    IRepresentation & Irep,int cu_of_input_we_output)
@@ -488,4 +623,5 @@ transform_irep_to_dbg(Dwarf_P_Debug dbg,
     transform_debug_info(dbg,Irep,cu_of_input_we_output);
     transform_cie_fde(dbg,Irep,cu_of_input_we_output);
     transform_macro_info(dbg,Irep,cu_of_input_we_output);
+    transform_debug_pubnames_types(dbg,Irep,cu_of_input_we_output);
 }

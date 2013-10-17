@@ -37,6 +37,7 @@
 #include "irepdie.h"
 #include "irepmacro.h"
 #include "irepframe.h"
+#include "ireppubnames.h"
 #include "strtabdata.h"
 
 // The elf symbols are used to tie relocations to values.
@@ -130,6 +131,7 @@ public:
     IRFrame &framedata() { return framedata_; };
     IRMacro &macrodata() { return macrodata_; };
     IRDInfo &infodata() { return debuginfodata_; };
+    IRPubsData &pubnamedata() {return pubnamedata_;};
     ElfSymbols &getElfSymbols() { return elfSymbols_;};
     unsigned getBaseTextSymbol() {
         return elfSymbols_.getBaseTextSymbol().getSymIndex();};
@@ -139,7 +141,10 @@ private:
 
     IRFrame  framedata_;
     IRMacro  macrodata_;
+    IRPubsData  pubnamedata_;
 
-    // Line data is inside IRDInfo.
+    // .debug_info and its line data are inside debuginfodata_;
     IRDInfo  debuginfodata_;
+    // .debug_types and its line data are in debugtypesdata_.
+    IRDInfo  debugtypesdata_;
 };

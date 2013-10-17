@@ -1075,10 +1075,11 @@ struct Dwarf_Obj_Access_Interface_s {
 #define DW_DLE_DEBUG_TYPES_ONLY_DWARF4         238
 #define DW_DLE_DEBUG_TYPEOFFSET_BAD            239
 #define DW_DLE_GNU_OPCODE_ERROR                240
+#define DW_DLE_DEBUGPUBTYPES_ERROR             241
 
 
     /* DW_DLE_LAST MUST EQUAL LAST ERROR NUMBER */
-#define DW_DLE_LAST        239
+#define DW_DLE_LAST        241
 #define DW_DLE_LO_USER     0x10000
 
     /*  Taken as meaning 'undefined value', this is not
@@ -2758,6 +2759,14 @@ Dwarf_Unsigned dwarf_add_pubname(
     Dwarf_P_Die        /*die*/, 
     char*              /*pubname_name*/, 
     Dwarf_Error*       /*error*/);
+
+/* Added 17 October 2013.  Introduced in DWARF3. */
+Dwarf_Unsigned dwarf_add_pubtype(
+    Dwarf_P_Debug      /*dbg*/,
+    Dwarf_P_Die        /*die*/,
+    char*              /*pubtype_name*/,
+    Dwarf_Error*       /*error*/);
+
 
 Dwarf_Unsigned dwarf_add_funcname(
     Dwarf_P_Debug      /*dbg*/, 

@@ -144,9 +144,10 @@ typedef struct Dwarf_P_Per_Sect_String_Attrs_s *Dwarf_P_Per_Sect_String_Attrs;
 #define         DEBUG_LOC   12
 #define         DEBUG_RANGES 13
 #define         DEBUG_TYPES 14
+#define         DEBUG_PUBTYPES 15
 
 /* Maximum number of debug_* sections not including the relocations */
-#define         NUM_DEBUG_SECTIONS      15
+#define         NUM_DEBUG_SECTIONS      16
 
 /*  Describes the data needed to generate line table header info
     so we can vary the init at runtime. */
@@ -230,9 +231,12 @@ struct dw_macinfo_block_s {
 /*  dwarf_sn_kind is for the array of similarly-treated
     name -> cu ties
 */
-enum dwarf_sn_kind { dwarf_snk_pubname, dwarf_snk_funcname,
-    dwarf_snk_weakname, dwarf_snk_typename,
-    dwarf_snk_varname,
+enum dwarf_sn_kind { dwarf_snk_pubname,  /* .debug_pubnames */
+    dwarf_snk_funcname,  /* SGI extension. */
+    dwarf_snk_weakname,  /* SGI extension. */
+    dwarf_snk_typename,  /* SGI extension. */
+    dwarf_snk_varname,   /* SGI extension. */
+    dwarf_snk_pubtype,   /* .debug_pubtypes */
     dwarf_snk_entrycount /* this one must be last */
 };
 

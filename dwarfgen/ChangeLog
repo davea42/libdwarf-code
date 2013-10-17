@@ -1,3 +1,11 @@
+2013-10-17  David Anderson
+     * ireppubnames.h: deals with debug_pubnames and debug_pubtypes
+       data.
+     * irepdie.h: Remember the producer DIE offset so we
+       can access it for pubnames/pubtypes.
+     * createirepfrombinary.cc: Read in pubnames and pubtypes data.
+     * irepresentation.h: Add in pubnames and pubtypes data.
+     * ireptodbg.cc: Write out applicable pubnames/pubtype data.
 2013-10-14  David Anderson
      * dwarfgen.cc: The declaration of CallbackFunc()
        now has const char *name to match the corrected

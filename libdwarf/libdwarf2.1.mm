@@ -8,7 +8,7 @@ n\."
 .nr Hb 5
 \." ==============================================
 \." Put current date in the following at each rev
-.ds vE rev 2.14, Aug 15, 2013
+.ds vE rev 2.15, Oct 16, 2013
 \." ==============================================
 \." ==============================================
 .ds | |
@@ -1317,7 +1317,7 @@ DW_DLA_FUNC_CONTEXT     :     Dwarf_Func
 DW_DLA_TYPENAME_CONTEXT :     Dwarf_Type
 DW_DLA_VAR_CONTEXT      :     Dwarf_Var
 DW_DLA_WEAK_CONTEXT	:     Dwarf_Weak
-DW_DLA_PUBTYPES_CONTEXT	:     Dwarf_Pubtype
+DW_DLA_PUBTYPES_CONTEXT	:     Dwarf_Type
 .TE
 .FG "Allocation/Deallocation Identifiers"
 .DE
@@ -3645,6 +3645,10 @@ descriptors should be
 freed using \f(CWdwarf_globals_dealloc()\fP.
 \f(CWdwarf_globals_dealloc()\fP is new as of July 15, 2005
 and is the preferred approach to freeing this memory..
+.P
+Global names refer exclusively to names and offsets
+in the .debug_info section.
+See section 6.1.1 "Lookup by Name" in the dwarf standard.
 
 .in +2
 .DS
@@ -3858,7 +3862,7 @@ the count of user-defined
 type names represented in the section containing user-defined type names,
 i.e. .debug_pubtypes.
 It also stores at \f(CW*types\fP, 
-a pointer to a list of \f(CWDwarf_Pubtype\fP descriptors, one for each of the 
+a pointer to a list of \f(CWDwarf_Type\fP descriptors, one for each of the 
 user-defined type names in the .debug_pubtypes section.  
 The returned results are for the entire section.
 It returns \f(CWDW_DLV_NOCOUNT\fP on error. 
@@ -3873,11 +3877,16 @@ freed using \f(CWdwarf_types_dealloc()\fP.
 \f(CWdwarf_types_dealloc()\fP is used for both
 \f(CWdwarf_get_pubtypes()\fP and \f(CWdwarf_get_types()\fP
 as the data types are the same.
+.P
+Global type names refer exclusively to names and offsets
+in the .debug_info section.   
+See section 6.1.1 "Lookup by Name" in the dwarf standard.
+
 
 .in +2
 .DS
 \f(CWDwarf_Signed cnt;
-Dwarf_Pubtype *types;
+Dwarf_Type *types;
 int res;
 
 res = dwarf_get_pubtypes(dbg, &types,&cnt, &error);
@@ -3894,7 +3903,7 @@ if (res == DW_DLV_OK) {
 .H 4 "dwarf_pubtypename()"
 .DS
 \f(CWint dwarf_pubtypename(
-        Dwarf_Pubtype   type,
+        Dwarf_Type   type,
         char       **return_name,
         Dwarf_Error *error)\fP
 .DE
@@ -3902,7 +3911,7 @@ The function \f(CWdwarf_pubtypename()\fP returns
 \f(CWDW_DLV_OK\fP and sets \f(CW*return_name\fP to
 a pointer to a
 null-terminated string that names the user-defined type represented by the
-\f(CWDwarf_Pubtype\fP descriptor, \f(CWtype\fP.  
+\f(CWDwarf_Type\fP descriptor, \f(CWtype\fP.  
 It returns \f(CWDW_DLV_ERROR\fP on error.  
 It never returns \f(CWDW_DLV_NO_ENTRY\fP.
 On a successful return from this function, the string should
@@ -3912,7 +3921,7 @@ be freed using \f(CWdwarf_dealloc()\fP, with the allocation type
 .H 4 "dwarf_pubtype_die_offset()"
 .DS
 \f(CWint dwarf_pubtype_die_offset(
-        Dwarf_Pubtype type,
+        Dwarf_Type type,
         Dwarf_Off  *return_offset,
         Dwarf_Error *error)\fP
 .DE
@@ -3920,7 +3929,7 @@ The function \f(CWdwarf_pubtype_die_offset()\fP returns
 \f(CWDW_DLV_OK\fP and sets \f(CW*return_offset\fP to
 the offset in
 the section containing DIEs, i.e. .debug_info, of the DIE representing
-the user-defined type that is described by the \f(CWDwarf_Pubtype\fP 
+the user-defined type that is described by the \f(CWDwarf_Type\fP 
 descriptor, \f(CWtype\fP.  
 It returns \f(CWDW_DLV_ERROR\fP on error.
 It never returns \f(CWDW_DLV_NO_ENTRY\fP.
@@ -3928,7 +3937,7 @@ It never returns \f(CWDW_DLV_NO_ENTRY\fP.
 .H 4 "dwarf_pubtype_cu_offset()"
 .DS
 \f(CWint dwarf_pubtype_cu_offset(
-        Dwarf_Pubtype type,
+        Dwarf_Type type,
         Dwarf_Off  *return_offset,
         Dwarf_Error *error)\fP
 .DE
@@ -3937,14 +3946,14 @@ The function \f(CWdwarf_pubtype_cu_offset()\fP returns
 the offset in
 the section containing DIEs, i.e. .debug_info, of the compilation-unit
 header of the compilation-unit that contains the user-defined type
-described by the \f(CWDwarf_Pubtype\fP descriptor, \f(CWtype\fP.  
+described by the \f(CWDwarf_Type\fP descriptor, \f(CWtype\fP.  
 It returns \f(CWDW_DLV_ERROR\fP on error.
 It never returns \f(CWDW_DLV_NO_ENTRY\fP.
 
 .H 4 "dwarf_pubtype_name_offsets()"
 .DS
 \f(CWint dwarf_pubtype_name_offsets(
-        Dwarf_Pubtype   type,
+        Dwarf_Type   type,
         char      ** returned_name,
         Dwarf_Off *  die_offset,
         Dwarf_Off *  cu_offset,
@@ -3954,7 +3963,7 @@ The function \f(CWdwarf_pubtype_name_offsets()\fP returns
 \f(CWDW_DLV_OK\fP and sets \f(CW*returned_name\fP to
 a pointer to
 a null-terminated string that gives the name of the user-defined
-type described by the \f(CWDwarf_Pubtype\fP descriptor \f(CWtype\fP.
+type described by the \f(CWDwarf_Type\fP descriptor \f(CWtype\fP.
 It also returns in the locations
 pointed to by \f(CWdie_offset\fP, and \f(CWcu_offset\fP, the offsets
 of the DIE representing the 
