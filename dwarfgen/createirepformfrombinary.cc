@@ -34,6 +34,7 @@
 #include <iostream>
 #include <string>
 #include <list>
+#include <map>
 #include <vector>
 #include <string.h> // For memset etc
 #include <sys/stat.h> //open
@@ -87,70 +88,62 @@ IRForm *formFactory(Dwarf_Debug dbg,
     case DW_FORM_CLASS_ADDRESS:
         {
             IRFormAddress *f = new IRFormAddress(&interface);
-            // FIXME: do we need to do anything about the symbol here?
+            // FIXME: do we need to do anything about symbol here?
+            // Yes, if it has a relocation.
             return f;
         }
         break;
     case DW_FORM_CLASS_BLOCK:     
         {
             IRFormBlock *f = new IRFormBlock(&interface);
-            //FIXME
             return f;
         }
         break;
     case DW_FORM_CLASS_CONSTANT:
         {
             IRFormConstant *f = new IRFormConstant(&interface);
-            //FIXME
             return f;
         }
         break;
     case DW_FORM_CLASS_EXPRLOC:   
         {
             IRFormExprloc *f = new IRFormExprloc(&interface);
-            //FIXME
             return f;
         }
         break;
     case DW_FORM_CLASS_FLAG:
         {
             IRFormFlag *f = new IRFormFlag(&interface);
-            //FIXME
             return f;
         }
         break;
     case DW_FORM_CLASS_LINEPTR:   
         {
             IRFormLinePtr *f = new IRFormLinePtr(&interface);
-            //FIXME
             return f;
         }
         break;
     case DW_FORM_CLASS_LOCLISTPTR:
         {
             IRFormLoclistPtr *f = new IRFormLoclistPtr(&interface);
-            //FIXME
             return f;
         }
         break;
     case DW_FORM_CLASS_MACPTR:    
         {
             IRFormMacPtr *f = new IRFormMacPtr(&interface);
-            //FIXME
             return f;
         }
         break;
     case DW_FORM_CLASS_RANGELISTPTR:
         {
             IRFormRangelistPtr *f = new IRFormRangelistPtr(&interface);
-            //FIXME
             return f;
         }
         break;
     case DW_FORM_CLASS_REFERENCE: 
         {
             IRFormReference *f  = new IRFormReference(&interface);
-            //FIXME
             return f;
         }
         break;
@@ -163,7 +156,6 @@ IRForm *formFactory(Dwarf_Debug dbg,
     case DW_FORM_CLASS_FRAMEPTR: /* SGI/IRIX extension. */
         {
             IRFormFramePtr *f = new IRFormFramePtr(&interface);
-            //FIXME
             return f;
         }
         break;
@@ -203,6 +195,8 @@ IRFormAddress::IRFormAddress(IRFormInterface * interface)
     extractInterafaceForms(interface,&finalform,&initialform);
     setFinalForm(finalform);
     setInitialForm(initialform);
+    formclass_ = DW_FORM_CLASS_ADDRESS;
+    address_ = 0;
 
     int res = dwarf_formaddr(interface->attr_,&val, &error);
     if(res != DW_DLV_OK) {
@@ -210,6 +204,7 @@ IRFormAddress::IRFormAddress(IRFormInterface * interface)
         exit(1);
     }
     // FIXME do we need to do anything about the symbol here?
+    // It might have a relocation and we should determine that.
     address_ = val;
 }
 IRFormBlock::IRFormBlock(IRFormInterface * interface)
@@ -219,6 +214,10 @@ IRFormBlock::IRFormBlock(IRFormInterface * interface)
     extractInterafaceForms(interface,&finalform,&initialform);
     setFinalForm(finalform);
     setInitialForm(initialform);
+    formclass_=DW_FORM_CLASS_BLOCK;
+    fromloclist_= 0;
+    sectionoffset_=0;
+
 
     Dwarf_Block *blockptr = 0;
     Dwarf_Error error = 0;
@@ -237,6 +236,11 @@ IRFormConstant::IRFormConstant(IRFormInterface * interface)
     extractInterafaceForms(interface,&finalform,&initialform);
     setFinalForm(finalform);
     setInitialForm(initialform);
+    formclass_=DW_FORM_CLASS_CONSTANT;
+    signedness_=SIGN_NOT_SET;
+    uval_=0; 
+    sval_=0;
+
 
     enum Signedness oursign = SIGN_NOT_SET;
     Dwarf_Unsigned uval = 0;
@@ -273,12 +277,15 @@ IRFormExprloc::IRFormExprloc(IRFormInterface * interface)
     extractInterafaceForms(interface,&finalform,&initialform);
     setFinalForm(finalform);
     setInitialForm(initialform);
+    formclass_=DW_FORM_CLASS_EXPRLOC;
 
     int res = dwarf_formexprloc(interface->attr_,&len, &data, &error);
     if(res != DW_DLV_OK) {
         cerr << "Unable to read flag value. Impossible error.\n" << endl;
         exit(1);
     }
+    // FIXME: Would be nice to expand to the expression details
+    // instead of just a block of bytes.
     insertBlock(len,data);
 }
 IRFormFlag::IRFormFlag(IRFormInterface * interface)
@@ -289,6 +296,9 @@ IRFormFlag::IRFormFlag(IRFormInterface * interface)
     extractInterafaceForms(interface,&finalform,&initialform);
     setFinalForm(finalform);
     setInitialForm(initialform);
+    formclass_=DW_FORM_CLASS_FLAG;
+    flagval_=0;
+
 
     Dwarf_Error error = 0;
     int res = dwarf_formflag(interface->attr_,&flagval, &error);
@@ -299,6 +309,7 @@ IRFormFlag::IRFormFlag(IRFormInterface * interface)
     setFlagVal(flagval);
     setFinalForm(finalform);
     setInitialForm(initialform);
+
 }
 
 // We are simply assuming (here) that the value is a global offset
@@ -344,8 +355,14 @@ IRFormLoclistPtr::IRFormLoclistPtr(IRFormInterface * interface)
     extractInterafaceForms(interface,&finalform,&initialform);
     setFinalForm(finalform);
     setInitialForm(initialform);
-
+    formclass_=DW_FORM_CLASS_LOCLISTPTR;
+    loclist_offset_=0;
 }
+
+// When emitting line data from the producer, this
+// attribute is automatically emitted by the transform_to_disk 
+// function if there is line data in the generated CU,
+// not created by interpreting this input attribute.
 IRFormLinePtr::IRFormLinePtr(IRFormInterface * interface)
 {
     Dwarf_Unsigned uval = get_section_offset(interface);
@@ -366,6 +383,9 @@ IRFormMacPtr::IRFormMacPtr(IRFormInterface * interface)
     extractInterafaceForms(interface,&finalform,&initialform);
     setFinalForm(finalform);
     setInitialForm(initialform);
+    formclass_=DW_FORM_CLASS_MACPTR;
+    macro_offset_=0;
+
 
 }
 IRFormRangelistPtr::IRFormRangelistPtr(IRFormInterface * interface)
@@ -377,6 +397,9 @@ IRFormRangelistPtr::IRFormRangelistPtr(IRFormInterface * interface)
     extractInterafaceForms(interface,&finalform,&initialform);
     setFinalForm(finalform);
     setInitialForm(initialform);
+    formclass_=DW_FORM_CLASS_RANGELISTPTR;
+    rangelist_offset_=0;
+
 
 }
 IRFormFramePtr::IRFormFramePtr(IRFormInterface * interface)
@@ -388,29 +411,54 @@ IRFormFramePtr::IRFormFramePtr(IRFormInterface * interface)
     extractInterafaceForms(interface,&finalform,&initialform);
     setFinalForm(finalform);
     setInitialForm(initialform);
+    formclass_=DW_FORM_CLASS_FRAMEPTR;
+    frame_offset_=0;
+
 
 }
 
 // This is a .debug_info to .debug_info (or .debug_types to .debug_types)
 // reference.  
+
+// Since local/global reference target values are not known
+// till the DIEs are actually emitted,
+// we eventually use libdwarf  (dwarf_get_die_markers) to fix up
+// the new target value.  Here we just record the input value.
+//
 IRFormReference::IRFormReference(IRFormInterface * interface)
 {
     Dwarf_Off val = 0;
     Dwarf_Error error = 0;
-    Dwarf_Half form = interface->irattr_.getFinalForm();
-    if(form == DW_FORM_ref_sig8) {
+    Dwarf_Half finalform = 0;
+    Dwarf_Half initialform = 0;
+    formclass_ = DW_FORM_CLASS_REFERENCE;
+    reftype_ = RT_NONE;
+    globalOffset_ = 0;
+    cuRelativeOffset_ = 0;
+    targetInputDie_= 0;
+    target_die_=  0;
+    initSig8();
+
+    extractInterafaceForms(interface,&finalform,&initialform);
+    setFinalForm(finalform);
+    setInitialForm(initialform);
+    IRCUdata &cudata = interface->cudata_;
+
+    if(finalform == DW_FORM_ref_sig8) {
         Dwarf_Sig8 val8;
         int res = dwarf_formsig8(interface->attr_,&val8, &error);
         if(res != DW_DLV_OK) {
-            cerr << "Unable to read sig8 reference. Impossible error.\n" << endl;
+            cerr << "Unable to read sig8 reference. Impossible error.\n" 
+                << endl;
             exit(1);
         }
         setSignature(&val8);
         return;
     }
-    if(form == DW_FORM_ref_addr ||
-        form == DW_FORM_data4 ||
-        form == DW_FORM_data8) {
+    if(finalform == DW_FORM_ref_addr ||
+        finalform == DW_FORM_data4 ||
+        finalform == DW_FORM_data8) {
+        // FIXME there might be a relocation record.
         int res = dwarf_global_formref(interface->attr_,&val, &error);
         if(res != DW_DLV_OK) {
             cerr << "Unable to read reference. Impossible error.\n" << endl;
@@ -423,11 +471,17 @@ IRFormReference::IRFormReference(IRFormInterface * interface)
     // a local CU offset, and we record it as such..
     int res = dwarf_formref(interface->attr_,&val, &error);
     if(res != DW_DLV_OK) {
-        cerr << "Unable to read reference.. Impossible error. form " << 
-            form << endl;
+        cerr << "Unable to read reference.. Impossible error. finalform " << 
+            finalform << endl;
         exit(1);
     }
     setCUOffset(val);
+    cudata.insertLocalReferenceAttrTargetRef(val,this);
+    IRDie *targdie = cudata.getLocalDie(val);
+    if (targdie) {
+        // Record local offset's IRDie when it is already known.
+        setTargetInDie(targdie);
+    }
 }
 
 // Global static data used to initialized a sig8 reliably.
@@ -448,6 +502,9 @@ IRFormString::IRFormString(IRFormInterface * interface)
     extractInterafaceForms(interface,&finalform,&initialform);
     setFinalForm(finalform);
     setInitialForm(initialform);
+    formclass_=DW_FORM_CLASS_STRING;
+    strpoffset_=0;
+
 
     int res = dwarf_formstring(interface->attr_,&str, &error);
     if(res != DW_DLV_OK) {

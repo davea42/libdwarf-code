@@ -35,6 +35,7 @@
 #include <iomanip> // iomanp for setw etc
 #include <string>
 #include <list>
+#include <map>
 #include <vector>
 #include <string.h> // For memset etc
 #include <sys/stat.h> //open
@@ -66,6 +67,7 @@ using std::cerr;
 using std::endl;
 using std::vector;
 using std::list;
+using std::map;
 
 static Dwarf_Error error;
 static unsigned fakeaddrnum;
@@ -81,7 +83,9 @@ static unsigned fakeaddrnum;
 void
 AddAttrToDie(Dwarf_P_Debug dbg,
     IRepresentation & Irep,
-    Dwarf_P_Die outdie,IRDie & irdie,IRAttr &irattr)
+    IRCUdata  &cu,
+    Dwarf_P_Die outdie,
+    IRDie & irdie,IRAttr &irattr)
 {
     int attrnum = irattr.getAttrNum();
     enum Dwarf_Form_Class formclass = irattr.getFormClass();
@@ -193,27 +197,116 @@ AddAttrToDie(Dwarf_P_Debug dbg,
         }
         }
         break;
+
     case DW_FORM_CLASS_LINEPTR:   
         {
-        //FIXME
+        // The DW_AT_stmt_list attribute is generated 
+        // as a side effect of dwarf_transform_to_disk_form
+        // if producer line-info-creating functions were called.
+        // So we ignore this attribute here, it is
+        // automatic.
         }
         break;
     case DW_FORM_CLASS_LOCLISTPTR:
         {
-        //FIXME
+        //FIXME. Needs support in dwarf producer(libdwarf)
         }
         break;
     case DW_FORM_CLASS_MACPTR:    
         {
-        //FIXME
+        // The DW_AT_macro_info attribute is generated 
+        // as a side effect of dwarf_transform_to_disk_form
+        // if producer macro-creating functions were called.
+        // So we ignore this attribute here, it is
+        // automatic.
         }
         break;
     case DW_FORM_CLASS_RANGELISTPTR:
         {
-        //FIXME
+        //FIXME. Needs support in dwarf producer(libdwarf)
         }
         break;
     case DW_FORM_CLASS_REFERENCE: 
+        {
+        // Can be a local CU  reference to a DIE, or a
+        // global DIE reference  or a
+        // sig8 reference.
+        //FIXME
+        IRFormReference *r = dynamic_cast<IRFormReference *>(form);
+        if (!r) {
+            cerr << "ERROR Impossible DW_FORM_CLASS_REFERENCE cast fails, attrnum "
+                <<attrnum << endl;
+            break;
+        }
+
+        Dwarf_Half finalform = r->getFinalForm();
+        
+        IRFormReference::RefType reftype = r->getReferenceType();
+        switch (reftype) {
+        case IRFormReference::RT_NONE:
+            cerr << "ERROR CLASS REFERENCE unknown reftype "
+                <<attrnum << endl;
+            break;
+        case IRFormReference::RT_GLOBAL:
+            // FIXME. Not handled.
+            break;
+        case IRFormReference::RT_CUREL:
+            {
+            IRDie *targetofref = r->getTargetInDie();
+            Dwarf_P_Die targetoutdie = 0;
+            if(targetofref) {
+                targetoutdie = targetofref->getGeneratedDie();
+            }
+            if(!targetoutdie) {
+                if(!targetofref) {
+                    cerr << "ERROR CLASS REFERENCE targetdie of reference unknown" 
+                        <<attrnum << endl;
+                    break;
+                }
+                // We must add the attribute when we have the
+                // target Dwarf_P_Die, which should get set shortly.
+                // And do the  dwarf_add_AT_reference() then.
+                // Before transform_to_disk_form.
+                // NULL targetoutdie allowed here.
+                // Arranging DIE order so there were no forward-refs
+                // could be difficult.
+                // Another option would be two-pass: first create
+                // all the DIEs then all the attributes for each.
+                Dwarf_P_Attribute a =
+                    dwarf_add_AT_reference_b(dbg,outdie,attrnum,
+                    /*targetoutdie */NULL,&error);
+                if( reinterpret_cast<myintfromp>(a) == DW_DLV_BADADDR) {
+                    cerr << "ERROR dwarf_add_AT_reference fails, "
+                        "attrnum with not yet known targetoutdie "
+                        << IToHex(attrnum) << endl;
+                } else {
+                    ClassReferenceFixupData x(dbg,attrnum,outdie,targetofref);
+                    cu.insertClassReferenceFixupData(x);
+                }
+                break;
+            }
+            Dwarf_P_Attribute a =
+                dwarf_add_AT_reference(dbg,outdie,attrnum,
+                targetoutdie,&error);
+            if( reinterpret_cast<myintfromp>(a) == DW_DLV_BADADDR) {
+                cerr << "ERROR dwarf_add_AT_reference fails, "
+                    "attrnum with known targetoutdie "
+                    << IToHex(attrnum) << endl;
+            }
+            }
+            break;
+        case IRFormReference::RT_SIG:
+            {
+            Dwarf_P_Attribute a =
+                dwarf_add_AT_with_ref_sig8(outdie,attrnum,
+                r->getSignature(),&error);
+            if( reinterpret_cast<myintfromp>(a) == DW_DLV_BADADDR) {
+                cerr << "ERROR dwarf_add_AT_ref_sig8 fails, attrnum "
+                    << IToHex(attrnum) << endl;
+            }
+            }
+        }
+        }
         break;
     case DW_FORM_CLASS_STRING:
         {
@@ -265,3 +358,24 @@ AddAttrToDie(Dwarf_P_Debug dbg,
     return;
 }
   
+
+void 
+IRCUdata::updateClassReferenceTargets() 
+{
+    for(std::list<ClassReferenceFixupData>::iterator it =
+        classReferenceFixupList_.begin();
+        it != classReferenceFixupList_.end();
+        ++it) {
+            IRDie* d = it->target_;
+            Dwarf_P_Die sourcedie = it->sourcedie_;
+            Dwarf_P_Die targetdie = d->getGeneratedDie();
+            Dwarf_Error error = 0;
+            int res = dwarf_fixup_AT_reference_die(it->dbg_,
+                it->attrnum_,sourcedie,targetdie,&error);
+            if(res != DW_DLV_OK) {
+                cerr << "Improper dwarf_fixup_AT_reference_die call"
+                    << endl;
+            }
+        }
+}
+

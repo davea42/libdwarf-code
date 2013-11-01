@@ -474,7 +474,7 @@ dwarf_add_AT_unsigned_const(Dwarf_P_Debug dbg,
     case DW_AT_decl_line:
     case DW_AT_const_value:
     case DW_AT_start_scope:
-    case DW_AT_stride_size:
+    case DW_AT_stride_size: /* DW_AT_bit_stride  is DWARF3 name */
     case DW_AT_count:
     case DW_AT_associated:
     case DW_AT_allocated:
@@ -776,13 +776,16 @@ dwarf_add_AT_location_expr(Dwarf_P_Debug dbg,
     are not needed.  Instead, the ar_ref_die points to
     the other die, and its di_offset value is used as
     the reference value.  */
+
 Dwarf_P_Attribute
-dwarf_add_AT_reference(Dwarf_P_Debug dbg,
+_dwarf_add_AT_reference_internal(Dwarf_P_Debug dbg,
     Dwarf_P_Die ownerdie,
     Dwarf_Half attr,
-    Dwarf_P_Die otherdie, Dwarf_Error * error)
+    Dwarf_P_Die otherdie, 
+    int check_otherdie,
+    Dwarf_Error * error)
 {
-    Dwarf_P_Attribute new_attr;
+    Dwarf_P_Attribute new_attr = 0;
 
     if (dbg == NULL) {
         _dwarf_p_error(NULL, error, DW_DLE_DBG_NULL);
@@ -794,34 +797,40 @@ dwarf_add_AT_reference(Dwarf_P_Debug dbg,
         return ((Dwarf_P_Attribute) DW_DLV_BADADDR);
     }
 
-    if (otherdie == NULL) {
+    if (check_otherdie && (otherdie == NULL)) {
         _dwarf_p_error(dbg, error, DW_DLE_DIE_NULL);
         return ((Dwarf_P_Attribute) DW_DLV_BADADDR);
     }
 
     switch (attr) {
-    case DW_AT_specification:
-    case DW_AT_discr:
-    case DW_AT_common_reference:
-    case DW_AT_import:
-    case DW_AT_containing_type:
-    case DW_AT_default_value:
-    case DW_AT_abstract_origin:
-    case DW_AT_friend:
-    case DW_AT_priority:
-    case DW_AT_type:
-    case DW_AT_lower_bound:
-    case DW_AT_upper_bound:
     case DW_AT_count:
-    case DW_AT_associated:
-    case DW_AT_allocated:
+    case DW_AT_sibling:
+    case DW_AT_byte_size:
     case DW_AT_bit_offset:
     case DW_AT_bit_size:
-    case DW_AT_byte_size:
-    case DW_AT_sibling:
-    case DW_AT_bit_stride:
-    case DW_AT_byte_stride:
+    case DW_AT_discr:
+    case DW_AT_import:
+    case DW_AT_common_reference:
+    case DW_AT_containing_type:
+    case DW_AT_default_value:
+    case DW_AT_lower_bound:
+    case DW_AT_bit_stride: /* Early name is DW_AT_stride_size */
+    case DW_AT_upper_bound:
+    case DW_AT_abstract_origin:
+    case DW_AT_base_types:
+    case DW_AT_friend:
     case DW_AT_namelist_item:
+    case DW_AT_priority:
+    case DW_AT_specification:
+    case DW_AT_type:
+    case DW_AT_allocated:
+    case DW_AT_associated:
+    case DW_AT_byte_stride:
+    case DW_AT_extension:
+    case DW_AT_trampoline:
+    case DW_AT_small:
+    case DW_AT_object_pointer:
+    case DW_AT_signature:
         break;
 
     default:
@@ -850,6 +859,71 @@ dwarf_add_AT_reference(Dwarf_P_Debug dbg,
     /* Add attribute to the die */
     _dwarf_pro_add_at_to_die(ownerdie, new_attr);
     return new_attr;
+}
+Dwarf_P_Attribute
+dwarf_add_AT_reference(Dwarf_P_Debug dbg,
+    Dwarf_P_Die ownerdie,
+    Dwarf_Half attr,
+    Dwarf_P_Die otherdie, Dwarf_Error * error)
+{
+    return _dwarf_add_AT_reference_internal(dbg,
+        ownerdie,
+        attr,
+        otherdie, 
+        /* check otherdie */ 1,
+        error);
+}
+
+/*  Allowing the target die to be identified later. 
+    
+    */
+Dwarf_P_Attribute
+dwarf_add_AT_reference_b(Dwarf_P_Debug dbg,
+    Dwarf_P_Die ownerdie,
+    Dwarf_Half attr,
+    Dwarf_P_Die otherdie, 
+    Dwarf_Error * error)
+{
+    return _dwarf_add_AT_reference_internal(dbg,
+        ownerdie,
+        attr,
+        otherdie, 
+        /* check otherdie */ 0,
+        error);
+}
+
+
+
+
+int
+dwarf_fixup_AT_reference_die(Dwarf_P_Debug dbg,
+   Dwarf_Half attrnum,
+   Dwarf_P_Die sourcedie,
+   Dwarf_P_Die targetdie,
+   Dwarf_Error *error)
+{
+    Dwarf_P_Attribute a = 0;
+    Dwarf_P_Attribute cur = 0;
+    if (dbg == NULL) {
+        _dwarf_p_error(NULL, error, DW_DLE_DBG_NULL);
+        return DW_DLV_ERROR;
+    }
+    for(cur = sourcedie->di_attrs; cur; cur = cur->ar_next) {
+        if (attrnum == cur->ar_attribute) {
+            a = cur;
+            break;
+        }
+    }
+    if(!a) {
+        _dwarf_p_error(dbg, error, DW_DLE_AT_FIXUP_NULL);
+        return DW_DLV_ERROR;
+    }
+    if(a->ar_ref_die) {
+        _dwarf_p_error(dbg, error, DW_DLE_AT_FIXUP_DUP);
+        return DW_DLV_ERROR;
+    }
+    a->ar_ref_die = targetdie;
+    return DW_DLV_OK;
 }
 
 
@@ -1020,6 +1094,43 @@ dwarf_add_AT_const_value_string(Dwarf_P_Die ownerdie,
     _dwarf_pro_add_at_to_die(ownerdie, new_attr);
     return new_attr;
 }
+
+Dwarf_P_Attribute
+dwarf_add_AT_with_ref_sig8(Dwarf_P_Die ownerdie,
+    Dwarf_Half attrnum,
+    const Dwarf_Sig8 *sig8_in, 
+    Dwarf_Error * error)
+{
+    Dwarf_P_Attribute new_attr = 0;
+    if (ownerdie == NULL) {
+        _dwarf_p_error(NULL, error, DW_DLE_DIE_NULL);
+        return ((Dwarf_P_Attribute) DW_DLV_BADADDR);
+    }
+
+    new_attr = (Dwarf_P_Attribute)
+        _dwarf_p_get_alloc(ownerdie->di_dbg, sizeof(struct Dwarf_P_Attribute_s));
+    if (new_attr == NULL) {
+        _dwarf_p_error(NULL, error, DW_DLE_ALLOC_FAIL);
+        return ((Dwarf_P_Attribute) DW_DLV_BADADDR);
+    }
+    new_attr->ar_attribute = attrnum;
+    new_attr->ar_attribute_form = DW_FORM_ref_sig8;
+    new_attr->ar_nbytes = sizeof (Dwarf_Sig8);
+    new_attr->ar_next = 0;
+
+    new_attr->ar_data =
+        (char *) _dwarf_p_get_alloc(ownerdie->di_dbg, sizeof(Dwarf_Sig8));
+    if (new_attr->ar_data == NULL) {
+        _dwarf_p_error(NULL, error, DW_DLE_ALLOC_FAIL);
+        return ((Dwarf_P_Attribute) DW_DLV_BADADDR);
+    }
+    memcpy(new_attr->ar_data,sig8_in,sizeof(Dwarf_Sig8));
+    new_attr->ar_rel_type = R_MIPS_NONE;
+    new_attr->ar_reloc_len = 0; /* unused for R_MIPS_NONE */
+    _dwarf_pro_add_at_to_die(ownerdie, new_attr);
+    return new_attr;
+}
+
 
 
 Dwarf_P_Attribute

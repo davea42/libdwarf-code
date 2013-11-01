@@ -31,6 +31,7 @@
 
 void AddAttrToDie(Dwarf_P_Debug dbg,
    IRepresentation & Irep,
+   IRCUdata   &cu,
    Dwarf_P_Die outdie,IRDie & irdie,IRAttr &irattr);
 
 #endif /* IREPATTRTODBG_H */

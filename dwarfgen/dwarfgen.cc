@@ -62,6 +62,7 @@
 #include <iomanip>
 #include <string>
 #include <list>
+#include <map>
 #include <vector>
 #include <string.h> // For memset etc
 #include <sys/stat.h> //open

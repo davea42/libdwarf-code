@@ -1556,6 +1556,17 @@ dwarf_get_string_attributes_info(Dwarf_P_Debug dbg,
 }
 
 
+static int
+has_sibling_die_already(Dwarf_P_Die d)
+{
+    Dwarf_P_Attribute a = 0;
+    for(a = d->di_attrs; a ; a = a->ar_next) {
+        if(a->ar_attribute == DW_AT_sibling) {
+            return 1;
+        }
+    }
+    return 0;
+}
 
 /* Generate debug_info and debug_abbrev sections */
 
@@ -1659,14 +1670,18 @@ _dwarf_pro_generate_debuginfo(Dwarf_P_Debug dbg, Dwarf_Error * error)
     }
 
     /*  Pass 0: only top level dies, add at_sibling attribute to those
-        dies with children */
+        dies with children, but if and only if
+        there is no sibling attribute already. */
     first_child = curdie->di_child;
     while (first_child && first_child->di_right) {
-        if (first_child->di_child)
-            dwarf_add_AT_reference(dbg,
-                first_child,
-                DW_AT_sibling,
-                first_child->di_right, error);
+        if (first_child->di_child) {
+            if (!has_sibling_die_already(first_child)) {
+                dwarf_add_AT_reference(dbg,
+                    first_child,
+                    DW_AT_sibling,
+                    first_child->di_right, error);
+            }
+        }
         first_child = first_child->di_right;
     }
 
@@ -1675,9 +1690,9 @@ _dwarf_pro_generate_debuginfo(Dwarf_P_Debug dbg, Dwarf_Error * error)
     string_attr_count = 0;
     while (curdie != NULL) {
         int nbytes = 0;
-        Dwarf_P_Attribute curattr;
-        Dwarf_P_Attribute new_first_attr;
-        Dwarf_P_Attribute new_last_attr;
+        Dwarf_P_Attribute curattr = 0;
+        Dwarf_P_Attribute new_first_attr = 0;
+        Dwarf_P_Attribute new_last_attr = 0;
         char *space = 0;
         int cres = 0;
         char buff1[ENCODE_SPACE_NEEDED];
@@ -1697,7 +1712,7 @@ _dwarf_pro_generate_debuginfo(Dwarf_P_Debug dbg, Dwarf_Error * error)
             curabbrev->abb_idx = n_abbrevs;
             abbrev_tail = abbrev_head = curabbrev;
         } else {
-            /* check if its a new abbreviation, if yes, add to tail */
+            /* Check if it is a new abbreviation, if yes, add to tail */
             if (curabbrev->abb_idx == 0) {
                 n_abbrevs++;
                 curabbrev->abb_idx = n_abbrevs;
@@ -1724,40 +1739,46 @@ _dwarf_pro_generate_debuginfo(Dwarf_P_Debug dbg, Dwarf_Error * error)
         new_first_attr = new_last_attr = NULL;
         curattr = curdie->di_attrs;
         for (i = 0; i < (int)curabbrev->abb_n_attr; i++) {
-            Dwarf_P_Attribute ca;
-            Dwarf_P_Attribute cl;
+            Dwarf_P_Attribute cur = 0;
+            Dwarf_P_Attribute lastattr = 0;
 
-            /* The following should always find an attribute! */
-            for (ca = cl = curattr;
-                ca && curabbrev->abb_attrs[i] != ca->ar_attribute;
-                cl = ca, ca = ca->ar_next)
+            /*  The following should always find an attribute! 
+                It starts from the beginning of the remaining list
+                of attributes on the DIE.*/
+            for (cur = lastattr = curattr;
+                cur && (curabbrev->abb_attrs[i] != cur->ar_attribute);
+                lastattr = cur, cur = cur->ar_next)
             {
             }
 
-            if (!ca) {
+            if (!cur) {
+                /*  This will trip with an error if, somehow, one has
+                    managed to erroneously have multiple of
+                    a given attribute number in a single DIE. */
                 DWARF_P_DBG_ERROR(dbg,DW_DLE_ABBREV_ALLOC, -1);
             }
 
-            /* Remove the attribute from the old list. */
-            if (ca == curattr) {
-                curattr = ca->ar_next;
+            /*  Remove the attribute from the old list, we
+                will place it on the new list. */
+            if (cur == curattr) {
+                curattr = cur->ar_next;
             } else {
-                cl->ar_next = ca->ar_next;
+                lastattr->ar_next = cur->ar_next;
             }
 
-            ca->ar_next = NULL;
+            cur->ar_next = NULL;
                 
-            /* Add the attribute to the new list. */
+            /* Add the attribute'cur' to the new list. */
             if (new_first_attr == NULL) {
-                new_first_attr = new_last_attr = ca;
+                new_first_attr = new_last_attr = cur;
             } else {
-                new_last_attr->ar_next = ca;
-                new_last_attr = ca;
+                new_last_attr->ar_next = cur;
+                new_last_attr = cur;
             }
         }
 
+        /*  Now we attach the attributes list to the die. */
         curdie->di_attrs = new_first_attr;
-            
         curattr = curdie->di_attrs;
         
         while (curattr) {
@@ -2193,8 +2214,7 @@ _dwarf_pro_getabbrev(Dwarf_P_Die die, Dwarf_P_Abbrev head)
             while (match && curattr) {
                 res1 = _dwarf_pro_match_attr(curattr,
                     curabbrev,
-                    (int) curabbrev->
-                    abb_n_attr);
+                    (int) curabbrev->abb_n_attr);
                 if (res1 == 0) {
                     match = 0;
                 }

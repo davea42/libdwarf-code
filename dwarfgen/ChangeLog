@@ -1,3 +1,16 @@
+2013-10-31  David Anderson
+     * createirepformfrombinary.cc: Adding 
+       support for some CLASS REFERENCE forms.
+     * createirepformfrombinary.cc, creatirepfrombinary.cc: Adding 
+       support for some CLASS REFERENCE forms.
+       Fixed dealloc for dwarf_get_pubtypes to avoid duplicate free.
+     * dwarfgen.cc: Added #include so it compiles.
+     * irepattrtodbg.cc,irepattrtodbg.h: Added support for 
+       some CLASS REFERENCE forms.
+     * irepdie.h,irepform.h: Added support for some CLASS REFERENCE forms.
+     * irepframe.h: Added 3 comment lines about fde_instrs_
+     * ireptodbg.cc: Added support for some CLASS REFERENCE forms. 
+2013-10-17  David Anderson
 2013-10-17  David Anderson
      * ireppubnames.h: deals with debug_pubnames and debug_pubtypes
        data.

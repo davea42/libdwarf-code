@@ -36,6 +36,7 @@
 #include <iostream>
 #include <string>
 #include <list>
+#include <map>
 #include <vector>
 #include <string.h> // For memset etc
 #include <sys/stat.h> //open
@@ -55,6 +56,7 @@ using std::cerr;
 using std::endl;
 using std::vector;
 using std::list;
+using std::map;
 
 static void readFrameDataFromBinary(Dwarf_Debug dbg, IRepresentation & irep);
 static void readMacroDataFromBinary(Dwarf_Debug dbg, IRepresentation & irep);
@@ -260,7 +262,8 @@ get_basic_attr_data_one_attr(Dwarf_Debug dbg,
     irattr.setFormData(formFactory(dbg,attr,cudata,irattr));
 }
 void 
-get_basic_die_data(Dwarf_Debug dbg,Dwarf_Die indie,IRDie &irdie)
+get_basic_die_data(Dwarf_Debug dbg,
+    Dwarf_Die indie,IRDie &irdie)
 {
     Dwarf_Half tagval = 0;
     Dwarf_Error error = 0;
@@ -287,7 +290,8 @@ get_basic_die_data(Dwarf_Debug dbg,Dwarf_Die indie,IRDie &irdie)
 
 static void
 get_attrs_of_die(Dwarf_Die in_die,IRDie &irdie,
-    IRCUdata &data, IRepresentation &irep,
+    IRCUdata &cudata, 
+    IRepresentation &irep,
     Dwarf_Debug dbg)
 {
     Dwarf_Error error = 0;
@@ -304,15 +308,20 @@ get_attrs_of_die(Dwarf_Die in_die,IRDie &irdie,
     }
     for (Dwarf_Signed i = 0; i < atcnt; ++i) {
         Dwarf_Attribute attr = atlist[i];
+        // Use an empty attr to get a placeholder on
+        // the attr list for this IRDie.
         IRAttr irattr;
-        get_basic_attr_data_one_attr(dbg,attr,data,irattr);
         attrlist.push_back(irattr);
+        // We want a pointer to the final attr to be
+        // recorded for references, not a local temp IRAttr.
+        IRAttr & lastirattr = attrlist.back();
+        get_basic_attr_data_one_attr(dbg,attr,cudata,lastirattr);
 
     }
     dwarf_dealloc(dbg,atlist, DW_DLA_LIST);
 }
 
-// Invariant: IRDie and IRCUdata  is in the irep tree,
+// Invariant: IRDie and IRCUdata are in the irep tree,
 // not local record references to local scopes.
 static void
 get_children_of_die(Dwarf_Die in_die,IRDie&irdie, 
@@ -335,9 +344,12 @@ get_children_of_die(Dwarf_Die in_die,IRDie&irdie,
     for(;;) {
         IRDie child;
         get_basic_die_data(dbg,curchilddie,child);
-        get_attrs_of_die(curchilddie,child,ircudata,irep,dbg);
         irdie.addChild(child);
         IRDie &lastchild = irdie.lastChild();
+        get_attrs_of_die(curchilddie,lastchild,ircudata,irep,dbg);
+
+        ircudata.insertLocalDieOffset(lastchild.getCURelativeOffset(), 
+            &lastchild);
 
         get_children_of_die(curchilddie,lastchild,ircudata,irep,dbg);
         ++childcount;
@@ -587,9 +599,17 @@ readCUDataFromBinary(Dwarf_Debug dbg, IRepresentation & irep)
         IRCUdata & treecu = irep.infodata().lastCU();
         IRDie &cuirdie = treecu.baseDie();
         get_basic_die_data(dbg,cu_die,cuirdie);
+        treecu.insertLocalDieOffset(cuirdie.getCURelativeOffset(), 
+            &cuirdie);
         get_attrs_of_die(cu_die,cuirdie,treecu,irep,dbg);
         get_children_of_die(cu_die,cuirdie,treecu,irep,dbg);
         get_linedata_of_cu_die(cu_die,cuirdie,treecu,irep,dbg);
+        
+        // Now we have all local DIEs in the CU so we
+        // can identify all targets of local CLASS_REFERENCE
+        // and insert the IRDie * into the IRFormReference
+        treecu.updateReferenceAttrDieTargets();
+
         dwarf_dealloc(dbg,cu_die,DW_DLA_DIE);
     }
     // If we want pointers from child to parent now is the time
@@ -670,7 +690,7 @@ readGlobals(Dwarf_Debug dbg, IRepresentation & irep)
                 pubtypes.push_back(p);
             }
         }
-        dwarf_globals_dealloc(dbg, globs, cnt);
+        dwarf_types_dealloc(dbg, types, cnt);
     } else if (res == DW_DLV_ERROR) {
         cerr << "dwarf_get_globals failed" << endl;
         exit(1);

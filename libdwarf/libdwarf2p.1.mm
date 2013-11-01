@@ -11,7 +11,7 @@
 .nr Hb 5
 \." ==============================================
 \." Put current date in the following at each rev
-.ds vE rev 1.33, 13 August 2013
+.ds vE rev 1.34, 20 October 2013
 \." ==============================================
 \." ==============================================
 .ds | |
@@ -1548,7 +1548,7 @@ on success, and \f(CWDW_DLV_BADADDR\fP on error.
         Dwarf_Error *error) \fP
 .DE
 The function \f(CWdwarf_add_AT_targ_address_b() \fP 
-is identical to \f(CWdwarf_add_AT_targ_address_b() \fP
+is identical to \f(CWdwarf_add_AT_targ_address() \fP
 except that \f(CWsym_index() \fP is guaranteed to 
 be large enough that it can contain a pointer to
 arbitrary data (so the caller can pass in a real elf
@@ -1702,6 +1702,54 @@ This cannot generate DW_FORM_ref_addr references to
 
 It returns the \f(CWDwarf_P_Attribute\fP descriptor for the attribute
 on success, and \f(CWDW_DLV_BADADDR\fP on error.
+
+.H 3 "dwarf_add_AT_reference_b()"
+.DS
+\f(CWDwarf_P_Attribute dwarf_add_AT_reference_b(
+        Dwarf_P_Debug dbg,
+        Dwarf_Half attr,
+        Dwarf_P_Die ownerdie,
+        Dwarf_P_Die otherdie,
+        Dwarf_Error *error)\fP
+.DE
+The function \f(CWdwarf_add_AT_reference_b()\fP
+is the same as  \f(CWdwarf_add_AT_reference()\fP
+except that \f(CWdwarf_add_AT_reference_b()\fP
+accepts a NULL \f(CWotherdie\fP with the assumption
+that \f(CWdwarf_fixup_AT_reference_die()\fP
+will be called by user code 
+to fill in the missing \f(CWotherdie\fP 
+before the DIEs are transformed to disk form.
+
+.H 3 "dwarf_fixup_AT_reference_die()"
+.DS
+\f(CWint dwarf_fixup_AT_reference_die(
+        Dwarf_Half attrnum,
+        Dwarf_P_Die ownerdie,
+        Dwarf_P_Die otherdie,
+        Dwarf_Error *error)\fP
+.DE
+The function \f(CWdwarf_fixup_AT_reference_die()\fP
+is provided to set the NULL \f(CWotherdie\fP
+that  \f(CWdwarf_add_AT_reference_b()\fP allows
+to the reference target DIE.
+This must be done before transforming to disk form.
+\f(CWattrnum()\fP should be the 
+attribute number of the attribute of \fCWownerdie\fP which is
+to be updated.  For example, if a local forward reference
+was in a \fCWDW_AT_sibling\fP attribute in ownerdie, pass
+the value \fCWDW_AT_sibling\fP as attrnum.
+.P
+Since no attribute number can appear more than once on a
+given DIE
+the \f(CWattrnum()\fP suffices to uniquely identify which
+attribute of \fCWownerdie\fP to update
+.P
+It returns either \f(CWDW_DLV_OK\fP (on success) 
+or \f(CWDW_DLV_ERROR\fP (on error).
+Calling this on an attribute where \f(CWotherdie\fP
+was already set is an error.
+
 
 .H 3 "dwarf_add_AT_flag()"
 .DS

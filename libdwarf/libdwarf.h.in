@@ -1076,10 +1076,12 @@ struct Dwarf_Obj_Access_Interface_s {
 #define DW_DLE_DEBUG_TYPEOFFSET_BAD            239
 #define DW_DLE_GNU_OPCODE_ERROR                240
 #define DW_DLE_DEBUGPUBTYPES_ERROR             241
+#define DW_DLE_AT_FIXUP_NULL                   242
+#define DW_DLE_AT_FIXUP_DUP                    243
 
 
     /* DW_DLE_LAST MUST EQUAL LAST ERROR NUMBER */
-#define DW_DLE_LAST        241
+#define DW_DLE_LAST        243
 #define DW_DLE_LO_USER     0x10000
 
     /*  Taken as meaning 'undefined value', this is not
@@ -2434,6 +2436,32 @@ Dwarf_P_Attribute dwarf_add_AT_reference(Dwarf_P_Debug /*dbg*/,
     Dwarf_P_Die     /*otherdie*/, 
     Dwarf_Error*    /*error*/);
 
+/*  dwarf_add_AT_reference_b allows otherdie to be NULL with
+    the assumption the caller will then later call
+    dwarf_fixup_AT_reference_die() with a non-null target die. 
+    New 22 October, 2013
+*/
+Dwarf_P_Attribute dwarf_add_AT_reference_b(Dwarf_P_Debug /*dbg*/, 
+    Dwarf_P_Die     /*ownerdie*/, 
+    Dwarf_Half      /*attr*/, 
+    Dwarf_P_Die     /*otherdie*/, 
+    Dwarf_Error*    /*error*/);
+
+/* The following is for out-of-order cu-local
+   references.  Allowing nominating the target Dwarf_P_Die
+   after calling dwarf_add_AT_reference with a NULL otherdie
+   after a single pass thru the DIE generation. Needed
+   for forward-references.
+   New 22 October, 2013.
+*/
+int
+dwarf_fixup_AT_reference_die(Dwarf_P_Debug /*dbg */,
+    Dwarf_Half    /* attrnum */,
+    Dwarf_P_Die   /* sourcedie*/,
+    Dwarf_P_Die   /* targetdie*/,
+    Dwarf_Error * /*error*/);
+
+
 Dwarf_P_Attribute dwarf_add_AT_dataref(
     Dwarf_P_Debug   /* dbg*/,
     Dwarf_P_Die     /*ownerdie*/, 
@@ -2498,6 +2526,14 @@ Dwarf_P_Attribute dwarf_add_AT_comp_dir(Dwarf_P_Die /*ownerdie*/,
 Dwarf_P_Attribute dwarf_add_AT_name(Dwarf_P_Die    /*die*/,
     char*           /*name*/,
     Dwarf_Error*    /*error*/);
+
+Dwarf_P_Attribute
+dwarf_add_AT_with_ref_sig8(
+   Dwarf_P_Die   /*ownerdie */,
+   Dwarf_Half    /*attrnum */,
+   const Dwarf_Sig8 *  /*sig8_in*/, 
+   Dwarf_Error * /*error*/);
+
 
 /* Producer line creation functions (.debug_line) */
 Dwarf_Unsigned dwarf_add_directory_decl(Dwarf_P_Debug /*dbg*/, 

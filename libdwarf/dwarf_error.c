@@ -328,6 +328,8 @@ const char *_dwarf_errmsgs[] = {
     "DW_DLE_DEBUG_TYPEOFFSET_BAD (239)",
     "DW_DLE_GNU_OPCODE_ERROR (240)",
     "DW_DLE_DEBUGPUBTYPES_ERROR (241), could not create pubtypes section",
+    "DW_DLE_AT_FIXUP_NULL (242)",
+    "DW_DLE_AT_FIXUP_DUP (243)",
 };
 
 

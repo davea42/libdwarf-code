@@ -55,6 +55,7 @@ using std::endl;
 using std::vector;
 using std::map;
 using std::list;
+using std::map;
 
 static Dwarf_Error error;
 
@@ -93,30 +94,29 @@ specialAttrTransformations(Dwarf_P_Debug dbg,
         Dwarf_Form_Class formclass = attr.getFormClass();
         IRForm * form = attr.getFormData();
         if(attrnum == DW_AT_high_pc) { 
-             if (attrform == DW_FORM_udata) {
-                 // Already the right form for the test.
-                 // Nothing to do.
-                 return;
-             }
-             if (formclass != DW_FORM_CLASS_ADDRESS) {
-                 return;
-             }
-             IRForm*f = attr.getFormData();
-             IRFormAddress *f2 = dynamic_cast<IRFormAddress *>(f);
-             hipcval = f2->getAddress();
-             foundhipc = true;
-             continue;
+            if (attrform == DW_FORM_udata) {
+                // Already the right form for the test.
+                // Nothing to do.
+                return;
+            }
+            if (formclass != DW_FORM_CLASS_ADDRESS) {
+                return;
+            }
+            IRForm*f = attr.getFormData();
+            IRFormAddress *f2 = dynamic_cast<IRFormAddress *>(f);
+            hipcval = f2->getAddress();
+            foundhipc = true;
+            continue;
         }
         if(attrnum == DW_AT_low_pc) { 
-             if (formclass != DW_FORM_CLASS_ADDRESS) {
-                 return;
-             }
-             IRForm*f = attr.getFormData();
-             IRFormAddress *f2 = dynamic_cast<IRFormAddress *>(f);
-             lopcval = f2->getAddress();
-
-             foundlopc = true;
-             continue;
+            if (formclass != DW_FORM_CLASS_ADDRESS) {
+                return;
+            }
+            IRForm*f = attr.getFormData();
+            IRFormAddress *f2 = dynamic_cast<IRFormAddress *>(f);
+            lopcval = f2->getAddress();
+            foundlopc = true;
+            continue;
         }
         continue;
     }
@@ -134,28 +134,28 @@ specialAttrTransformations(Dwarf_P_Debug dbg,
         Dwarf_Half attrform = attr.getFinalForm();
         Dwarf_Form_Class formclass = attr.getFormClass();
         if(attrnum == DW_AT_high_pc) { 
-             // Here we want to creat a constant form.
-             // We will assign a FORM of DW_FORM_uleb
-             IRAttr attr2(attrnum,
-                 DW_FORM_udata,
-                 DW_FORM_udata);
-             attr2.setFormClass(DW_FORM_CLASS_CONSTANT);
-             IRFormConstant *f = new IRFormConstant(
-                 DW_FORM_udata,
-                 DW_FORM_udata,
-                 DW_FORM_CLASS_CONSTANT,
-                 IRFormConstant::UNSIGNED,
-                 hipcoffset,
-                 0);
-             attr2.setFormData(f);
-             revisedattrs.push_back(attr2);
-             foundhipc = true;
-             continue;
+            // Here we want to creat a constant form.
+            // We will assign a FORM of DW_FORM_uleb
+            IRAttr attr2(attrnum,
+                DW_FORM_udata,
+                DW_FORM_udata);
+            attr2.setFormClass(DW_FORM_CLASS_CONSTANT);
+            IRFormConstant *f = new IRFormConstant(
+                DW_FORM_udata,
+                DW_FORM_udata,
+                DW_FORM_CLASS_CONSTANT,
+                IRFormConstant::UNSIGNED,
+                hipcoffset,
+                0);
+            attr2.setFormData(f);
+            revisedattrs.push_back(attr2);
+            foundhipc = true;
+            continue;
         }
         if(attrnum == DW_AT_low_pc) { 
-             foundlopc = true;
-             revisedattrs.push_back(attr);
-             continue;
+            foundlopc = true;
+            revisedattrs.push_back(attr);
+            continue;
         }
         revisedattrs.push_back(attr);
         continue;
@@ -165,10 +165,14 @@ specialAttrTransformations(Dwarf_P_Debug dbg,
 }
 
 
+// Here we emit all the DIEs for a single Die and
+// its children.  When level == 0 the inDie is
+// the CU die.
 static Dwarf_P_Die 
 HandleOneDieAndChildren(Dwarf_P_Debug dbg,
-    IRepresentation & Irep,
-    IRDie &inDie, unsigned level)
+    IRepresentation &Irep,
+    IRCUdata &cu,
+    IRDie    &inDie, unsigned level)
 {
     list<IRDie>& children = inDie.getChildren();
     // We create our target DIE first so we can link
@@ -180,13 +184,13 @@ HandleOneDieAndChildren(Dwarf_P_Debug dbg,
         exit(1);
     }
     inDie.setGeneratedDie(ourdie);
-       
+
     Dwarf_P_Die lastch = 0;
     for ( list<IRDie>::iterator it = children.begin();
         it != children.end();
         it++) {
         IRDie & ch = *it;
-        Dwarf_P_Die chp = HandleOneDieAndChildren(dbg,Irep,ch,level+1);
+        Dwarf_P_Die chp = HandleOneDieAndChildren(dbg,Irep,cu,ch,level+1);
         Dwarf_P_Die res = 0;
         if(lastch) {
             // Link to right of earlier sibling.
@@ -209,11 +213,12 @@ HandleOneDieAndChildren(Dwarf_P_Debug dbg,
 
     // Now we add attributes (content), if any, to the 
     // output die 'ourdie'.
-    for (list<IRAttr>::iterator it = attrs.begin();
+    for (list<IRAttr>::iterator it = attrs.begin(); 
         it != attrs.end();
-        it++) {
+        it++) { 
         IRAttr & attr = *it;
-        AddAttrToDie(dbg,Irep,ourdie,inDie,attr);
+
+        AddAttrToDie(dbg,Irep,cu,ourdie,inDie,attr);
     }
     return ourdie; 
 }
@@ -341,7 +346,8 @@ emitOneCU( Dwarf_P_Debug dbg,IRepresentation & Irep, IRCUdata&cu,
     Dwarf_Error error;
     
     IRDie & basedie =  cu.baseDie();
-    Dwarf_P_Die cudie = HandleOneDieAndChildren(dbg,Irep,basedie,0);
+    Dwarf_P_Die cudie = HandleOneDieAndChildren(dbg,Irep,
+        cu,basedie,0);
 
     // Add base die to debug, this is the CU die.
     // This is not a good design as DWARF3/4 have
@@ -352,7 +358,9 @@ emitOneCU( Dwarf_P_Debug dbg,IRepresentation & Irep, IRCUdata&cu,
         cerr << "Unable to add_die_to_debug " << endl;
         exit(1);
     }
-    
+
+    // Does fixup of IRFormReference targets.
+    cu.updateClassReferenceTargets();    
 
     HandleLineData(dbg,Irep,cu);
 }
@@ -492,12 +500,12 @@ static
 Dwarf_P_Die findTargetDieByOffset(IRDie& indie,
    Dwarf_Unsigned targetglobaloff)
 {
-   Dwarf_Unsigned globoff = indie.getGlobalOffset();
-   if(globoff == targetglobaloff) {
-       return indie.getGeneratedDie();
-   }
-   std::list<IRDie> dielist =  indie.getChildren();
-   for ( list<IRDie>::iterator it = dielist.begin();
+    Dwarf_Unsigned globoff = indie.getGlobalOffset();
+    if(globoff == targetglobaloff) {
+        return indie.getGeneratedDie();
+    }
+    std::list<IRDie> dielist =  indie.getChildren();
+    for ( list<IRDie>::iterator it = dielist.begin();
         it != dielist.end();
         it++) {
         IRDie &ldie = *it;
@@ -506,8 +514,8 @@ Dwarf_P_Die findTargetDieByOffset(IRDie& indie,
         if(foundDie) {
             return foundDie;
         }
-   }
-   return NULL;
+    }
+    return NULL;
 }
 
 // If the pubnames/pubtypes entry is in the
@@ -535,10 +543,10 @@ transform_debug_pubnames_types_inner(Dwarf_P_Debug dbg,
             Dwarf_Unsigned pubcuoff= pub.getCUdieOffset();
             Dwarf_Unsigned ourdieoff= pub.getDieOffset();
             if (pubcuoff != targetcuoff) {
-                 continue;
+                continue;
             }
             Dwarf_P_Die targdie = findTargetDieByOffset(basedie,
-               ourdieoff);
+                ourdieoff);
             if(targdie) {
                 // Ugly. Old mistake in libdwarf declaration. 
                 char *mystr = const_cast<char *>(pub.getName().c_str());
@@ -571,7 +579,7 @@ transform_debug_pubnames_types_inner(Dwarf_P_Debug dbg,
                 continue;
             }
             Dwarf_P_Die targdie = findTargetDieByOffset(basedie,
-               ourdieoff);
+                ourdieoff);
             if(targdie) {
                 // Ugly. Old mistake in libdwarf declaration. 
                 char *mystr = const_cast<char *>(pub.getName().c_str());

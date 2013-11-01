@@ -1,3 +1,22 @@
+2013-10-31  David Anderson
+     * dwarf_error.c: Added DW_DLE_AT_FIXUP_NULL and
+       DW_DLE_AT_FIXUP_DUP. 
+     * libdwarf.h.in: Added those two defines plus dwarf_add_AT_reference_b()
+       and dwarf_fixup_AT_reference_die() for CLASS REFERENCE attribute
+       handling. Also, dwarf_add_AT_with_ref_sig8() for refsig8
+       references.
+     * libdwarf2p.1.mm: version 1.34 20 October. Document new interfaces.
+       Fixed typo in dwarf_add_AT_targ_address_b() documentation.
+     * libdwarf2p.1.pdf: Regenerated.
+     * pro_die.c. Added commentary.
+     * pro_forms.c: Added reference support with dwarf_add_AT_reference_b()
+       and refactoring to avoid duplicating code.
+       Added dwarf_add_AT_with_ref_sig8()
+     * pro_section.c: now only adds DW_AT_sibling automatically
+       if it was not present already.  Still only adds it
+       in the same automatically-selected places.
+       Some renaming of local variables for clarity around line 1743.
+       One line reformatted, it was looking very odd, line 2217.
 2013-10-17  David Anderson
      * dwarf_error.c: Add DW_DLE_DEBUGPUBTYPES_ERROR string.
      * libdwarf.h.in: Add DW_DLE_DEBUGPUBTYPES_ERROR and fix

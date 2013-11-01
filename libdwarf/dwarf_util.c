@@ -630,9 +630,9 @@ dwarf_register_printf_callback( Dwarf_Debug dbg,
         /* User does not control the buffer. */
         dbg->de_printf_callback = *newvalues;
         dbg->de_printf_callback.dp_buffer_len =
-              oldval.dp_buffer_len;
+            oldval.dp_buffer_len;
         dbg->de_printf_callback.dp_buffer =
-              oldval.dp_buffer;
+            oldval.dp_buffer;
     }
     return oldval;
 }
@@ -694,22 +694,22 @@ dwarf_printf(Dwarf_Debug dbg,
         tries++;
         va_start(ap,format);
         int olen = vsnprintf(bufdata->dp_buffer,
-              bufdata->dp_buffer_len, format,ap);
+            bufdata->dp_buffer_len, format,ap);
         va_end(ap);
         if (olen > -1 && olen < bufdata->dp_buffer_len) {
-              /* The caller had better copy or dispose
-                  of the contents, as next-call will overwrite them. */
-              func(bufdata->dp_user_pointer,bufdata->dp_buffer);
-              return 0;
+            /*  The caller had better copy or dispose
+                of the contents, as next-call will overwrite them. */
+            func(bufdata->dp_user_pointer,bufdata->dp_buffer);
+            return 0;
         }
         if (bufdata->dp_buffer_user_provided) {
-              func(bufdata->dp_user_pointer,bufdata->dp_buffer);
-              return 0;
+            func(bufdata->dp_user_pointer,bufdata->dp_buffer);
+            return 0;
         }
         if (tries > maxtries) {
-              /* we did all we could, print what we have space for. */
-              func(bufdata->dp_user_pointer,bufdata->dp_buffer);
-              return 0;
+            /* we did all we could, print what we have space for. */
+            func(bufdata->dp_user_pointer,bufdata->dp_buffer);
+            return 0;
         }
         bufferdoublesize(bufdata);
     }

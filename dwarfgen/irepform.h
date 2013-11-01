@@ -31,6 +31,7 @@
 //
 //
 class IRCUdata;
+class IRDie;
 class IRAttr;
 class IRFormInterface;
 
@@ -566,7 +567,9 @@ public:
         finalform_(0), initialform_(0), 
         formclass_(DW_FORM_CLASS_REFERENCE),
         reftype_(RT_NONE),
-        globalOffset_(0),cuRelativeOffset_(0)
+        globalOffset_(0),cuRelativeOffset_(0),
+        targetInputDie_(0),
+        target_die_(0)
         {initSig8();};
     IRFormReference(IRFormInterface *);
     ~IRFormReference() {};
@@ -579,6 +582,8 @@ public:
         globalOffset_ = r.globalOffset_;
         cuRelativeOffset_ = r.cuRelativeOffset_;
         typeSig8_ = r.typeSig8_;
+        targetInputDie_ = r.targetInputDie_;
+        target_die_ = r.target_die_;
     };
     IRFormReference(const IRFormReference &r) {
         finalform_ = r.finalform_;
@@ -588,6 +593,8 @@ public:
         globalOffset_ = r.globalOffset_;
         cuRelativeOffset_ = r.cuRelativeOffset_;
         typeSig8_ = r.typeSig8_;
+        targetInputDie_ = r.targetInputDie_;
+        target_die_ = r.target_die_;
     }
     virtual IRFormReference * clone() const {
         return new IRFormReference(*this);
@@ -602,7 +609,15 @@ public:
         reftype_ = RT_CUREL;};
     void setSignature(Dwarf_Sig8 * sig) { typeSig8_ = *sig;
         reftype_ = RT_SIG;};
+    const Dwarf_Sig8 *getSignature() { return &typeSig8_;};
     enum Dwarf_Form_Class getFormClass() const { return formclass_; };
+    enum RefType { RT_NONE,RT_GLOBAL, RT_CUREL,RT_SIG }; 
+    enum RefType getReferenceType() { return reftype_;};
+    Dwarf_P_Die getTargetGenDie() { return target_die_;};
+    IRDie * getTargetInDie() { return targetInputDie_;};
+    void setTargetGenDie(Dwarf_P_Die targ) { target_die_ = targ; };
+    void setTargetInDie(IRDie* targ) { targetInputDie_ = targ; };
+
 private:        
     void initSig8();
 
@@ -611,11 +626,26 @@ private:
     // Otherwise, directform == DW_FORM_indirect.
     Dwarf_Half initialform_;
     enum Dwarf_Form_Class formclass_;
-    enum RefType { RT_NONE,RT_GLOBAL, RT_CUREL,RT_SIG }; 
     enum RefType reftype_;
+
+    // gobalOffset_ on input target set if and only if RT_GLOBAL
     Dwarf_Off globalOffset_;
+    // cuRelativeOffset_  on input targetset if and only if RT_CUREL
     Dwarf_Off cuRelativeOffset_;
+    // typeSig8_ on input target set if and only if RT_SIG
     Dwarf_Sig8 typeSig8_;
+
+    // For RT_SIG we do not need extra data.
+    // For RT_CUREL and RT_GLOBAL we do.
+
+    // For RT_CUREL.  Points at the target input DIE
+    // after all input DIEs set up for a CU .
+    IRDie * targetInputDie_;
+    // FIXME
+    Dwarf_P_Die target_die_; //for RT_CUREL, this is known
+        // for sure only after all target DIEs generated!
+
+    // RT_GLOBAL. FIXME
 };  
 
 

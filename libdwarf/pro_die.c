@@ -425,10 +425,13 @@ _dwarf_pro_add_AT_macro_info(Dwarf_P_Debug dbg,
 }
 
 
+/*  Updates the list of attributes on this Dwarf_P_Die
+*/
 void
 _dwarf_pro_add_at_to_die(Dwarf_P_Die die, Dwarf_P_Attribute attr)
 {
     if (die->di_last_attr) {
+        /* Inserts new attr at the end */
         die->di_last_attr->ar_next = attr;
         die->di_last_attr = attr;
         die->di_n_attr++;

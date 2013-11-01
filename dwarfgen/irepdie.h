@@ -31,6 +31,7 @@
 //
 //
 class IRCUdata;
+class IRDie;
 
 class IRAttr { 
 public:
@@ -124,8 +125,9 @@ public:
         *lastch = &children_.back();
         return true;
     };
-    // lastChild will throw if no child exists.
+    // lastChild and lastAttr will throw if no entry exists.
     IRDie &lastChild() { return children_.back(); };
+    IRAttr &lastAttr() { return attrs_.back(); };
     void setBaseData(Dwarf_Half tag,Dwarf_Unsigned goff, 
         Dwarf_Unsigned cuoff) {
         tag_ = tag;
@@ -133,17 +135,60 @@ public:
         cuRelativeOffset_ = cuoff; 
     };
     Dwarf_Unsigned getGlobalOffset() const { return globalOffset_;};
-    void setGeneratedDie(Dwarf_P_Die p_die) { generatedDie_ = p_die;};
+    Dwarf_Unsigned getCURelativeOffset() const { return cuRelativeOffset_;};
+    void setGeneratedDie(Dwarf_P_Die p_die) { 
+        generatedDie_ = p_die;};
     Dwarf_P_Die getGeneratedDie() const { return generatedDie_;};
     unsigned getTag() {return tag_; }
 
 private:
+   // We rely on the IRDie container being one which does not
+   // invalidate pointers with addition/deletion.
    std::list<IRDie>  children_;
+
    std::list<IRAttr> attrs_;
    unsigned tag_;
+   // The following are data from input.
    Dwarf_Unsigned globalOffset_;
    Dwarf_Unsigned cuRelativeOffset_;
+
+   // the following is generated during output.
    Dwarf_P_Die generatedDie_;
+};
+
+
+struct OffsetFormEntry {
+    OffsetFormEntry(): off_(0),form_(0){};
+    OffsetFormEntry(Dwarf_Unsigned o,
+        IRFormReference* f): off_(o),form_(f){};
+    ~OffsetFormEntry(){};
+
+    Dwarf_Unsigned  off_;
+    IRFormReference *form_;
+};
+struct ClassReferenceFixupData {
+    ClassReferenceFixupData():
+        dbg_(0),
+        attrnum_(0),
+        sourcedie_(0),
+        target_(0) {}
+    ~ClassReferenceFixupData(){};
+    ClassReferenceFixupData(
+        Dwarf_P_Debug dbg,
+        Dwarf_Half attrnum,
+        Dwarf_P_Die sourcedie,
+        IRDie *d):
+        dbg_(dbg),
+        attrnum_(attrnum),
+        sourcedie_(sourcedie),
+        target_(d) {};
+    Dwarf_P_Debug dbg_;
+    //  The source die and attrnum suffice because the definition of
+    //  DWARF guarantees only one attribute of any given attribute number
+    //  can exist on a given DIE. 
+    Dwarf_Half attrnum_;
+    Dwarf_P_Die sourcedie_;
+    IRDie *target_;
 };
 
 class IRCUdata {
@@ -206,8 +251,47 @@ public:
     Dwarf_Half getOffsetSize() { return length_size_; };
     Dwarf_Unsigned getCUdieOffset() { return cudie_offset_; };
     IRCULineData & getCULines() { return cu_lines_; };
+
+    void insertLocalDieOffset(Dwarf_Unsigned localoff,IRDie* dieptr) {
+        cuOffInLocalToIRDie_[localoff] = dieptr;
+    };
+    void insertLocalReferenceAttrTargetRef(Dwarf_Unsigned localoff,
+        IRFormReference* attrptr) {
+         
+        cuOffInLocalToIRFormRef_.push_back(OffsetFormEntry(localoff,
+            attrptr));
+    };
+    IRDie * getLocalDie(Dwarf_Unsigned localoff) {
+        std::map<Dwarf_Unsigned,IRDie*>::iterator pos;
+        pos = cuOffInLocalToIRDie_.find(localoff);
+        if(pos != cuOffInLocalToIRDie_.end()) {
+            return pos->second;
+        }
+        return NULL;
+    };
+    void insertClassReferenceFixupData(ClassReferenceFixupData &c) {
+        classReferenceFixupList_.push_back(c);
+    }
+    void updateClassReferenceTargets();
     std::string  getCUName() {
         return cudie_.getName();
+    };
+    // Use  cuOffInLocalToIRDie_ and
+    // cuOffInLocalToIRAttr_ to update attr targets.
+    void updateReferenceAttrDieTargets() {
+        for(std::list<OffsetFormEntry>::iterator it =
+            cuOffInLocalToIRFormRef_.begin();
+            it != cuOffInLocalToIRFormRef_.end();
+            ++it) {
+            IRFormReference* r = it->form_;
+            IRDie * tdie = getLocalDie(it->off_);
+            if(tdie) {
+                r->setTargetInDie(tdie);
+            } else {
+                // Missing die in r  
+                // Should be impossible.
+            }
+        }
     }
     
 private:
@@ -229,6 +313,22 @@ private:
     bool dwarf32bit_;  
 
     IRDie   cudie_;
+
+    // Refers to cu-local offsets in the input CU and which DIE
+    // in the input they target for this CU.
+    // Used to find the target DIE for the IRAttrs
+    // referenced by  cuOffInLocalToIRAttr_
+    std::map<Dwarf_Unsigned,IRDie*> cuOffInLocalToIRDie_;
+
+    // Refers to IRAttrs which make a CU local reference
+    // meaning CLASS_REFERENCE IRFormReference to a cu-local die
+    // Once Input dies read in this and cuOffInLocalToIRDie_
+    // are used to update the IRAttr itself.
+    std::list<OffsetFormEntry> cuOffInLocalToIRFormRef_;
+
+    // The data needed to get the Dwarf_P_Die  set for
+    // some class reference instances.
+    std::list<ClassReferenceFixupData> classReferenceFixupList_;
 };
 
 class IRDInfo {

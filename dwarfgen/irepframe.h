@@ -130,6 +130,9 @@ private:
     // fde_bytes_ may be empty if content bytes not yet created.
     std::vector<Dwarf_Small> fde_bytes_; 
 
+    // fde_instrs_ is simply a vector of bytes.
+    // it might be good to actually parse the
+    // instructions.
     std::vector<Dwarf_Small> fde_instrs_; 
     // cie_offset may be 0 if not known yet.
     Dwarf_Off  cie_offset_;
