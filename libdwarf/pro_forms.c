@@ -165,12 +165,13 @@ local_add_AT_address(Dwarf_P_Debug dbg,
     Dwarf_Error * error)
 {
     Dwarf_P_Attribute new_attr;
-    int upointer_size = dbg->de_pointer_size;
+    int upointer_size = 0;
 
     if (dbg == NULL) {
         _dwarf_p_error(NULL, error, DW_DLE_DBG_NULL);
         return ((Dwarf_P_Attribute) DW_DLV_BADADDR);
     }
+    upointer_size = dbg->de_pointer_size;
 
     if (ownerdie == NULL) {
         _dwarf_p_error(dbg, error, DW_DLE_DIE_NULL);

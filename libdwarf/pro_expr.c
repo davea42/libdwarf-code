@@ -82,7 +82,7 @@ dwarf_add_expr_gen(Dwarf_P_Expr expr,
 
     char encode_buffer2[ENCODE_SPACE_NEEDED];
     int res = 0;
-    Dwarf_P_Debug dbg = expr->ex_dbg;
+    Dwarf_P_Debug dbg = 0;
 
     /*  Give the buffer where the operands are first going to be
         assembled the largest alignment. */
@@ -110,6 +110,7 @@ dwarf_add_expr_gen(Dwarf_P_Expr expr,
         _dwarf_p_error(NULL, error, DW_DLE_EXPR_NULL);
         return (DW_DLV_NOCOUNT);
     }
+    dbg = expr->ex_dbg;
 
     if (expr->ex_dbg == NULL) {
         _dwarf_p_error(NULL, error, DW_DLE_DBG_NULL);

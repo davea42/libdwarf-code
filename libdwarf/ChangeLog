@@ -1,3 +1,9 @@
+2013-11-24  David Anderson
+     * pro_expr.c(dwarf_add_expr_gen): Moved use of a pointer
+       to be after where the pointer tested for NULL.
+     * pro_forms.c(local_add_AT_address): Moved use of a pointer
+       to be after where the pointer tested for NULL.
+       Both bugs found by the STACK code analysis tool from MIT.
 2013-10-31  David Anderson
      * dwarf_error.c: Added DW_DLE_AT_FIXUP_NULL and
        DW_DLE_AT_FIXUP_DUP. 
