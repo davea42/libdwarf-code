@@ -4,22 +4,22 @@
   Portions Copyright 2011  David Anderson. All Rights Reserved.
 
   This program is free software; you can redistribute it and/or modify it
-  under the terms of version 2.1 of the GNU Lesser General Public License 
+  under the terms of version 2.1 of the GNU Lesser General Public License
   as published by the Free Software Foundation.
 
   This program is distributed in the hope that it would be useful, but
   WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
   Further, this software is distributed without any warranty that it is
-  free of the rightful claim of any third person regarding infringement 
-  or the like.  Any license provided herein, whether implied or 
+  free of the rightful claim of any third person regarding infringement
+  or the like.  Any license provided herein, whether implied or
   otherwise, applies only to this software file.  Patent licenses, if
-  any, provided herein do not apply to combinations of this program with 
-  other software, or any other product whatsoever.  
+  any, provided herein do not apply to combinations of this program with
+  other software, or any other product whatsoever.
 
-  You should have received a copy of the GNU Lesser General Public 
-  License along with this program; if not, write the Free Software 
+  You should have received a copy of the GNU Lesser General Public
+  License along with this program; if not, write the Free Software
   Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston MA 02110-1301,
   USA.
 
@@ -48,8 +48,8 @@
 
 
 /*
-    This function adds another type name to the 
-    list of type names for the given Dwarf_P_Debug.  
+    This function adds another type name to the
+    list of type names for the given Dwarf_P_Debug.
     It returns 0 on error, and 1 otherwise.
 */
 Dwarf_Unsigned
@@ -64,10 +64,10 @@ dwarf_add_typename(Dwarf_P_Debug dbg,
 
 /*
   The following is the generic 'add a simple name entry'
-  for any of the simple name sections. 
+  for any of the simple name sections.
 
   See enum dwarf_sn_kind in pro_opaque.h
- 
+
 */
 Dwarf_Unsigned
 _dwarf_add_simple_name_entry(Dwarf_P_Debug dbg,
@@ -128,18 +128,18 @@ _dwarf_add_simple_name_entry(Dwarf_P_Debug dbg,
 
 
 /*
-    _dwarf_transform_simplename_to_disk writes 
+    _dwarf_transform_simplename_to_disk writes
     ".rel.debug_pubnames",
     ".rel.debug_funcnames",       sgi extension
     ".rel.debug_typenames",       sgi extension
     ".rel.debug_varnames",        sgi extension
-    ".rel.debug_weaknames",       sgi extension 
+    ".rel.debug_weaknames",       sgi extension
     to disk.
     section_index indexes one of those sections.
     entrykind is one of those 'kind's.  */
 int
-_dwarf_transform_simplename_to_disk(Dwarf_P_Debug dbg, 
-    enum dwarf_sn_kind entrykind, 
+_dwarf_transform_simplename_to_disk(Dwarf_P_Debug dbg,
+    enum dwarf_sn_kind entrykind,
     int section_index, /* in de_elf_sects etc */
     Dwarf_Error * error)
 {
