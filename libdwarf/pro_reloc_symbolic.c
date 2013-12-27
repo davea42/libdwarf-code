@@ -4,22 +4,22 @@
   Portions Copyright 2011 David Anderson.  All Rights Reserved.
 
   This program is free software; you can redistribute it and/or modify it
-  under the terms of version 2.1 of the GNU Lesser General Public License 
+  under the terms of version 2.1 of the GNU Lesser General Public License
   as published by the Free Software Foundation.
 
   This program is distributed in the hope that it would be useful, but
   WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
   Further, this software is distributed without any warranty that it is
-  free of the rightful claim of any third person regarding infringement 
-  or the like.  Any license provided herein, whether implied or 
+  free of the rightful claim of any third person regarding infringement
+  or the like.  Any license provided herein, whether implied or
   otherwise, applies only to this software file.  Patent licenses, if
-  any, provided herein do not apply to combinations of this program with 
-  other software, or any other product whatsoever.  
+  any, provided herein do not apply to combinations of this program with
+  other software, or any other product whatsoever.
 
-  You should have received a copy of the GNU Lesser General Public 
-  License along with this program; if not, write the Free Software 
+  You should have received a copy of the GNU Lesser General Public
+  License along with this program; if not, write the Free Software
   Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston MA 02110-1301,
   USA.
 
@@ -50,8 +50,8 @@
     Return DW_DLV_OK otherwise */
 
 int
-_dwarf_pro_reloc_name_symbolic(Dwarf_P_Debug dbg, 
-    int base_sec_index, 
+_dwarf_pro_reloc_name_symbolic(Dwarf_P_Debug dbg,
+    int base_sec_index,
     Dwarf_Unsigned offset, /* r_offset of reloc */
     Dwarf_Unsigned symidx,
     enum Dwarf_Rel_Type type,
@@ -79,8 +79,8 @@ _dwarf_pro_reloc_name_symbolic(Dwarf_P_Debug dbg,
 /*  Return DW_DLV_ERROR on malloc error.
     Return DW_DLV_OK otherwise */
 int
-_dwarf_pro_reloc_length_symbolic(Dwarf_P_Debug dbg, 
-    int base_sec_index, 
+_dwarf_pro_reloc_length_symbolic(Dwarf_P_Debug dbg,
+    int base_sec_index,
     Dwarf_Unsigned offset,  /* r_offset of reloc */
     Dwarf_Unsigned start_symidx,
     Dwarf_Unsigned end_symidx,
@@ -148,7 +148,7 @@ _dwarf_reset_reloc_sect_info(struct Dwarf_P_Per_Reloc_Sect_s *pblk,
 
     Return -1 on error (malloc failure)
 
-    Return DW_DLV_OK on success. Any other return indicates 
+    Return DW_DLV_OK on success. Any other return indicates
     malloc failed.  */
 int
 _dwarf_symbolic_relocs_to_disk(Dwarf_P_Debug dbg,
@@ -178,7 +178,7 @@ _dwarf_symbolic_relocs_to_disk(Dwarf_P_Debug dbg,
         /* total_size = ct *len; */
         sec_index = p_reloc->pr_sect_num_of_reloc_sect;
         if (sec_index == 0) {
-            /*  Call de_callback_func or de_callback_func_b, 
+            /*  Call de_callback_func or de_callback_func_b,
                 getting section number of reloc section. */
             int rel_section_index = 0;
             int int_name = 0;
@@ -201,8 +201,8 @@ _dwarf_symbolic_relocs_to_disk(Dwarf_P_Debug dbg,
                             know */ SHN_UNDEF,
                         /* sec rels apply to */
                         dbg->de_elf_sects[i],
-                        &name_idx, 
-                        dbg->de_user_data,&err); 
+                        &name_idx,
+                        dbg->de_user_data,&err);
             } else if (dbg->de_callback_func_b) {
                 rel_section_index =
                     dbg->de_callback_func_b(_dwarf_rel_section_names[i],

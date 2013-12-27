@@ -4,22 +4,22 @@
   Portions Copyright 2011 David Anderson. All Rights Reserved.
 
   This program is free software; you can redistribute it and/or modify it
-  under the terms of version 2.1 of the GNU Lesser General Public License 
+  under the terms of version 2.1 of the GNU Lesser General Public License
   as published by the Free Software Foundation.
 
   This program is distributed in the hope that it would be useful, but
   WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
   Further, this software is distributed without any warranty that it is
-  free of the rightful claim of any third person regarding infringement 
-  or the like.  Any license provided herein, whether implied or 
+  free of the rightful claim of any third person regarding infringement
+  or the like.  Any license provided herein, whether implied or
   otherwise, applies only to this software file.  Patent licenses, if
-  any, provided herein do not apply to combinations of this program with 
-  other software, or any other product whatsoever.  
+  any, provided herein do not apply to combinations of this program with
+  other software, or any other product whatsoever.
 
-  You should have received a copy of the GNU Lesser General Public 
-  License along with this program; if not, write the Free Software 
+  You should have received a copy of the GNU Lesser General Public
+  License along with this program; if not, write the Free Software
   Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston MA 02110-1301,
   USA.
 
@@ -64,8 +64,8 @@ Dwarf_Unsigned _dwarf_pro_add_line_entry(Dwarf_P_Debug,
 
 /*  Add a entry to the line information section
     file_index: index of file in file entries, obtained from
-    add_file_entry() call. 
-        
+    add_file_entry() call.
+
     This function actually calls _dwarf_pro_add_line_entry(), with
     an extra parameter, the opcode. Done so that interface calls
     dwarf_lne_set_address() and dwarf_lne_end_sequence() can use
@@ -77,7 +77,7 @@ dwarf_add_line_entry_b(Dwarf_P_Debug dbg,
     Dwarf_Unsigned line_no,
     Dwarf_Signed   col_no,
     Dwarf_Bool     is_stmt_begin,
-    Dwarf_Bool     is_bb_begin, 
+    Dwarf_Bool     is_bb_begin,
     Dwarf_Bool     isepilbeg,
     Dwarf_Bool     isprolend,
     Dwarf_Unsigned isa,
@@ -88,11 +88,11 @@ dwarf_add_line_entry_b(Dwarf_P_Debug dbg,
     Dwarf_Ubyte opc = 0;
     Dwarf_Unsigned symidx = 0;
 
-    retval = _dwarf_pro_add_line_entry(dbg, file_index, code_address, 
+    retval = _dwarf_pro_add_line_entry(dbg, file_index, code_address,
         symidx,
         line_no, col_no, is_stmt_begin,
         is_bb_begin,
-        opc, 
+        opc,
         isepilbeg,isprolend,isa,discriminator, error);
     return retval;
 }
@@ -113,10 +113,10 @@ dwarf_add_line_entry(Dwarf_P_Debug dbg,
     Dwarf_Unsigned isa = 0;
     Dwarf_Unsigned discriminator = 0;
 
-    retval = _dwarf_pro_add_line_entry(dbg, file_index, code_address, 
+    retval = _dwarf_pro_add_line_entry(dbg, file_index, code_address,
         symidx,
         line_no, col_no, is_stmt_begin,
-        is_bb_begin, 
+        is_bb_begin,
         opc,
         isepilbeg, isprolend, isa, discriminator,
         error);
@@ -159,17 +159,17 @@ dwarf_lne_set_address(Dwarf_P_Debug dbg,
 
     opc = DW_LNE_set_address;
     retval =
-        _dwarf_pro_add_line_entry(dbg, file_index, offs, 
-            symidx, 
-            line_no, col_no, is_stmt, 
-            is_bb, 
+        _dwarf_pro_add_line_entry(dbg, file_index, offs,
+            symidx,
+            line_no, col_no, is_stmt,
+            is_bb,
             opc,
             isepilbeg, isprolend, isa, discriminator,
             error);
     return retval;
 }
 
-/*  Ask to emit end_seqence opcode. Used normally at the end of a 
+/*  Ask to emit end_seqence opcode. Used normally at the end of a
     compilation unit. Can also be used in the middle if there
     are gaps in the region described by the code address.  */
 Dwarf_Unsigned
@@ -191,19 +191,19 @@ dwarf_lne_end_sequence(Dwarf_P_Debug dbg,
 
     opc = DW_LNE_end_sequence;
     retval =
-        _dwarf_pro_add_line_entry(dbg, file_index, end_address, 
-            symidx, 
-            line_no, col_no, is_stmt, 
+        _dwarf_pro_add_line_entry(dbg, file_index, end_address,
+            symidx,
+            line_no, col_no, is_stmt,
             is_bb,
-            opc, 
+            opc,
             isepilbeg, isprolend, isa, discriminator,
             error);
     return retval;
 }
 
-/*  Add an entry in the internal list of lines mantained by producer. 
+/*  Add an entry in the internal list of lines mantained by producer.
     Opc indicates if an opcode needs to be generated, rather than just
-    an entry in the matrix. During opcodes generation time, these 
+    an entry in the matrix. During opcodes generation time, these
     opcodes will be used. */
 static Dwarf_Unsigned
 _dwarf_pro_add_line_entry(Dwarf_P_Debug dbg,
@@ -214,7 +214,7 @@ _dwarf_pro_add_line_entry(Dwarf_P_Debug dbg,
     Dwarf_Signed col_no,
     Dwarf_Bool is_stmt_begin,
     Dwarf_Bool is_bb_begin,
-    Dwarf_Ubyte opc, 
+    Dwarf_Ubyte opc,
     Dwarf_Bool isepilbeg,
     Dwarf_Bool isprolend,
     Dwarf_Unsigned isa,
@@ -364,7 +364,7 @@ dwarf_add_file_decl(Dwarf_P_Debug dbg,
 }
 
 
-/*  Initialize a row of the matrix for line numbers, meaning 
+/*  Initialize a row of the matrix for line numbers, meaning
     initialize the struct corresponding to it */
 void
 _dwarf_pro_reg_init(Dwarf_P_Debug dbg, Dwarf_P_Line cur_line)

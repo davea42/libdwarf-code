@@ -6,22 +6,22 @@
   Portions Copyright 2012 SN Systems Ltd. All rights reserved.
 
   This program is free software; you can redistribute it and/or modify it
-  under the terms of version 2.1 of the GNU Lesser General Public License 
+  under the terms of version 2.1 of the GNU Lesser General Public License
   as published by the Free Software Foundation.
 
   This program is distributed in the hope that it would be useful, but
   WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
   Further, this software is distributed without any warranty that it is
-  free of the rightful claim of any third person regarding infringement 
-  or the like.  Any license provided herein, whether implied or 
+  free of the rightful claim of any third person regarding infringement
+  or the like.  Any license provided herein, whether implied or
   otherwise, applies only to this software file.  Patent licenses, if
-  any, provided herein do not apply to combinations of this program with 
-  other software, or any other product whatsoever.  
+  any, provided herein do not apply to combinations of this program with
+  other software, or any other product whatsoever.
 
-  You should have received a copy of the GNU Lesser General Public 
-  License along with this program; if not, write the Free Software 
+  You should have received a copy of the GNU Lesser General Public
+  License along with this program; if not, write the Free Software
   Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston MA 02110-1301,
   USA.
 
@@ -53,13 +53,13 @@ static void common_init(Dwarf_P_Debug dbg, Dwarf_Unsigned flags);
 
 void *_dwarf_memcpy_swap_bytes(void *s1, const void *s2, size_t len);
 
-/*  This function sets up a new dwarf producing region. 
+/*  This function sets up a new dwarf producing region.
     flags: Indicates type of access method, one of DW_DLC* macros
     func(): Used to create a new object file, a call back function
     errhand(): Error Handler provided by user
     errarg: Argument to errhand()
     error: returned error value */
-    /*  We want the following to have an elf section number that matches 
+    /*  We want the following to have an elf section number that matches
         'nothing' */
 static struct Dwarf_P_Section_Data_s init_sect = {
     MAGIC_SECT_NO, 0, 0, 0, 0
@@ -67,13 +67,13 @@ static struct Dwarf_P_Section_Data_s init_sect = {
 
 /* New June, 2011, this is the latest, most flexible
    version. It adds (compared to *_b) the user_data
-   pointer which is passed back (unchanged) in 
+   pointer which is passed back (unchanged) in
    each callback call. */
 Dwarf_P_Debug
 dwarf_producer_init_c(Dwarf_Unsigned flags,
     Dwarf_Callback_Func_c func,
     Dwarf_Handler errhand,
-    Dwarf_Ptr errarg, 
+    Dwarf_Ptr errarg,
     void * user_data,
     Dwarf_Error * error)
 {
@@ -187,9 +187,9 @@ common_init(Dwarf_P_Debug dbg, Dwarf_Unsigned flags)
         pure 32 bit offset dwarf for 32bit pointer apps. */
 
     dbg->de_offset_reloc = Get_REL32_isa(dbg);
-#elif defined(HAVE_SGI_IRIX_OFFSETS) 
-    /*  MIPS-SGI-IRIX 32 or 64, where offsets and lengths are both 64 bit for 
-        64bit pointer objects and both 32 bit for 32bit pointer objects. 
+#elif defined(HAVE_SGI_IRIX_OFFSETS)
+    /*  MIPS-SGI-IRIX 32 or 64, where offsets and lengths are both 64 bit for
+        64bit pointer objects and both 32 bit for 32bit pointer objects.
         And a dwarf-reader must check elf info to tell which applies. */
     dbg->de_64bit_extension = 0;
     dbg->de_pointer_size = (IS_64BIT(dbg) ? 8 : 4);
@@ -197,7 +197,7 @@ common_init(Dwarf_P_Debug dbg, Dwarf_Unsigned flags)
     dbg->de_ptr_reloc =
         IS_64BIT(dbg) ? Get_REL64_isa(dbg) : Get_REL32_isa(dbg);
     dbg->de_offset_reloc = dbg->de_ptr_reloc;
-#else /* HAVE_DWARF2_99_EXTENSION or default. */ 
+#else /* HAVE_DWARF2_99_EXTENSION or default. */
     /*  Revised 64 bit output, using distingushed values. Per 1999
         dwarf3.  This allows run-time selection of offset size.  */
     dbg->de_64bit_extension = (IS_64BIT(dbg) ? 1 : 0);
@@ -232,7 +232,7 @@ common_init(Dwarf_P_Debug dbg, Dwarf_Unsigned flags)
         dbg->de_relocation_record_size =
             sizeof(struct Dwarf_Relocation_Data_s);
     } else {
-        
+
 #if HAVE_ELF64_GETEHDR
         dbg->de_relocation_record_size =
             IS_64BIT(dbg)? sizeof(REL64) : sizeof(REL32);
