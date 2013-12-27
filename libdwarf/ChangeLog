@@ -1,7 +1,9 @@
 2013-12-26  David Anderson
      *	pro_section.c, pro_types.c, pro_vars.c, pro_weaks.c, pro_forms.c,
         pro_frame.c,pro_funcs.c,pro_init.c,pro_line.c,pro_macinfo.c,
-        pro_pubnames.c,pro_reloc.c,pro_reloc_stream.c,pro_reloc_symbolic.c:
+        pro_pubnames.c,pro_reloc.c,pro_reloc_stream.c,pro_reloc_symbolic.c,
+        pro_expr.h,pro_macinfo.h,pro_reloc.h,pro_reloc_stream.h,
+        pro_reloc_symbolic.h,pro_section.h,pro_types.h,pro_util.h:
         Remove trailing whitespace from the code.
 2013-11-24  David Anderson
      * pro_expr.c(dwarf_add_expr_gen): Moved use of a pointer

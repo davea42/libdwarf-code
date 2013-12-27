@@ -4,19 +4,19 @@
   Portions Copyright 2002-2010 Sun Microsystems, Inc. All rights reserved.
 
   This program is free software; you can redistribute it and/or modify it
-  under the terms of version 2.1 of the GNU Lesser General Public License 
+  under the terms of version 2.1 of the GNU Lesser General Public License
   as published by the Free Software Foundation.
 
   This program is distributed in the hope that it would be useful, but
   WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
   Further, this software is distributed without any warranty that it is
-  free of the rightful claim of any third person regarding infringement 
-  or the like.  Any license provided herein, whether implied or 
+  free of the rightful claim of any third person regarding infringement
+  or the like.  Any license provided herein, whether implied or
   otherwise, applies only to this software file.  Patent licenses, if
-  any, provided herein do not apply to combinations of this program with 
-  other software, or any other product whatsoever.  
+  any, provided herein do not apply to combinations of this program with
+  other software, or any other product whatsoever.
 
   You should have received a copy of the GNU Lesser General Public
   License along with this program; if not, write the Free Software
@@ -57,7 +57,7 @@
 
 /* The following defines are only important for users of the
 ** producer part of libdwarf, and such should have these
-** defined correctly (as necessary) 
+** defined correctly (as necessary)
 ** by the #include <elf.h> done in pro_incl.h
 ** before the #include "pro_util.h".
 ** For others producer macros do not matter so 0 is a usable value, and
@@ -66,7 +66,7 @@
 */
 /* R_MIPS* are #define so #ifndef works */
 /* R_IA_64* are not necessarily #define (might be enum) so #ifndef
-   is useless, we use the configure script generating 
+   is useless, we use the configure script generating
    HAVE_R_IA_64_DIR32LSB and HAVE_R_IA64_DIR32LSB.
 */
 #ifndef R_MIPS_64
