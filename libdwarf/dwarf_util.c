@@ -4,22 +4,22 @@
   Portions Copyright 2012 SN Systems Ltd. All rights reserved.
 
   This program is free software; you can redistribute it and/or modify it
-  under the terms of version 2.1 of the GNU Lesser General Public License 
+  under the terms of version 2.1 of the GNU Lesser General Public License
   as published by the Free Software Foundation.
 
   This program is distributed in the hope that it would be useful, but
   WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
   Further, this software is distributed without any warranty that it is
-  free of the rightful claim of any third person regarding infringement 
-  or the like.  Any license provided herein, whether implied or 
+  free of the rightful claim of any third person regarding infringement
+  or the like.  Any license provided herein, whether implied or
   otherwise, applies only to this software file.  Patent licenses, if
-  any, provided herein do not apply to combinations of this program with 
-  other software, or any other product whatsoever.  
+  any, provided herein do not apply to combinations of this program with
+  other software, or any other product whatsoever.
 
-  You should have received a copy of the GNU Lesser General Public 
-  License along with this program; if not, write the Free Software 
+  You should have received a copy of the GNU Lesser General Public
+  License along with this program; if not, write the Free Software
   Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston MA 02110-1301,
   USA.
 
@@ -34,7 +34,7 @@
 
 */
 /* The address of the Free Software Foundation is
-   Free Software Foundation, Inc., 51 Franklin St, Fifth Floor, 
+   Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
    Boston, MA 02110-1301, USA.
    SGI has moved from the Crittenden Lane address.
 */
@@ -54,7 +54,7 @@
 
 #define MINBUFLEN 1000
 
-/*  Given a form, and a pointer to the bytes encoding 
+/*  Given a form, and a pointer to the bytes encoding
     a value of that form, val_ptr, this function returns
     the length, in bytes, of a value of that form.
     When using this function, check for a return of 0
@@ -85,7 +85,7 @@ _dwarf_get_size_of_val(Dwarf_Debug dbg,
         return 8; /* sizeof Dwarf_Sig8 */
 
     /*  DWARF2 was wrong on the size of the attribute for
-        DW_FORM_ref_addr.  We assume compilers are using the 
+        DW_FORM_ref_addr.  We assume compilers are using the
         corrected DWARF3 text (for 32bit pointer target objects pointer and
         offsets are the same size anyway). */
     case DW_FORM_ref_addr:
@@ -146,7 +146,7 @@ _dwarf_get_size_of_val(Dwarf_Debug dbg,
 
             form_indirect = _dwarf_decode_u_leb128(val_ptr, &indir_len);
             if (form_indirect == DW_FORM_indirect) {
-                return (0);     /* We are in big trouble: The true form 
+                return (0);     /* We are in big trouble: The true form
                     of DW_FORM_indirect is
                     DW_FORM_indirect? Nonsense. Should
                     never happen. */
@@ -198,7 +198,7 @@ _dwarf_get_size_of_val(Dwarf_Debug dbg,
     a new list.  Don't delete anything. Leave the
     htin with stale data. */
 static void
-copy_abbrev_table_to_new_table(Dwarf_Hash_Table htin, 
+copy_abbrev_table_to_new_table(Dwarf_Hash_Table htin,
   Dwarf_Hash_Table htout)
 {
     Dwarf_Hash_Table_Entry entry_in = htin->tb_entries;
@@ -215,7 +215,7 @@ copy_abbrev_table_to_new_table(Dwarf_Hash_Table htin,
             unsigned newhash = newtmp%entry_out_count;
             Dwarf_Hash_Table_Entry e;
             nextlistent = listent->ab_next;
-            e = entry_out+newhash; 
+            e = entry_out+newhash;
             /*  Move_entry_to_new_hash. This reverses the
                 order of the entries, effectively, but
                 that does not seem significant. */
@@ -223,7 +223,7 @@ copy_abbrev_table_to_new_table(Dwarf_Hash_Table htin,
             e->at_head = listent;
 
             htout->tb_total_abbrev_count++;
-        } 
+        }
     }
 }
 
@@ -233,7 +233,7 @@ copy_abbrev_table_to_new_table(Dwarf_Hash_Table htin,
     the abbrev between the last abbrev added and this one to
     the hash table.  In other words, the .debug_abbrev section
     is scanned sequentially from the top for an abbrev with
-    the given code.  All intervening abbrevs are also put 
+    the given code.  All intervening abbrevs are also put
     into the hash table.
 
     This function hashes the given code, and checks the chain
@@ -257,18 +257,18 @@ _dwarf_get_abbrev_for_code(Dwarf_CU_Context cu_context, Dwarf_Unsigned code)
 {
     Dwarf_Debug dbg = cu_context->cc_dbg;
     Dwarf_Hash_Table hash_table_base = cu_context->cc_abbrev_hash_table;
-    Dwarf_Hash_Table_Entry entry_base = 0; 
-    Dwarf_Hash_Table_Entry entry_cur = 0; 
+    Dwarf_Hash_Table_Entry entry_base = 0;
+    Dwarf_Hash_Table_Entry entry_cur = 0;
     Dwarf_Word hash_num = 0;
-    Dwarf_Unsigned abbrev_code = 0; 
+    Dwarf_Unsigned abbrev_code = 0;
     Dwarf_Unsigned abbrev_tag  = 0;
     Dwarf_Unsigned attr_name = 0;
     Dwarf_Unsigned attr_form = 0;
 
     Dwarf_Abbrev_List hash_abbrev_entry = 0;
 
-    Dwarf_Abbrev_List inner_list_entry = 0; 
-    Dwarf_Hash_Table_Entry inner_hash_entry = 0; 
+    Dwarf_Abbrev_List inner_list_entry = 0;
+    Dwarf_Hash_Table_Entry inner_hash_entry = 0;
 
     Dwarf_Byte_Ptr abbrev_ptr = 0;
     Dwarf_Byte_Ptr end_abbrev_ptr = 0;
@@ -278,7 +278,7 @@ _dwarf_get_abbrev_for_code(Dwarf_CU_Context cu_context, Dwarf_Unsigned code)
         hash_table_base->tb_table_entry_count =  HT_MULTIPLE;
         hash_table_base->tb_total_abbrev_count= 0;
         hash_table_base->tb_entries =  _dwarf_get_alloc(dbg,
-            DW_DLA_HASH_TABLE_ENTRY, 
+            DW_DLA_HASH_TABLE_ENTRY,
             hash_table_base->tb_table_entry_count);
         if (!hash_table_base->tb_entries) {
             return NULL;
@@ -291,7 +291,7 @@ _dwarf_get_abbrev_for_code(Dwarf_CU_Context cu_context, Dwarf_Unsigned code)
         newht.tb_table_entry_count =  hash_table_base->tb_total_abbrev_count;
         newht.tb_total_abbrev_count = 0;
         newht.tb_entries =  _dwarf_get_alloc(dbg,
-            DW_DLA_HASH_TABLE_ENTRY, 
+            DW_DLA_HASH_TABLE_ENTRY,
             newht.tb_table_entry_count);
 
         if (!newht.tb_entries) {
@@ -307,21 +307,20 @@ _dwarf_get_abbrev_for_code(Dwarf_CU_Context cu_context, Dwarf_Unsigned code)
         /*  Now overwrite the existing table descriptor with
             the new, newly valid, contents. */
         *hash_table_base = newht;
-    } /* Else is ok as is, add entry */ 
+    } /* Else is ok as is, add entry */
 
-    
     hashable_val = code;
-    hash_num = hashable_val % 
+    hash_num = hashable_val %
         hash_table_base->tb_table_entry_count;
     entry_base = hash_table_base->tb_entries;
     entry_cur  = entry_base + hash_num;
-   
+
     /* Determine if the 'code' is the list of synonyms already. */
     for (hash_abbrev_entry = entry_cur->at_head;
         hash_abbrev_entry != NULL && hash_abbrev_entry->ab_code != code;
         hash_abbrev_entry = hash_abbrev_entry->ab_next);
     if (hash_abbrev_entry != NULL) {
-        /*  This returns a pointer to an abbrev list entry, not 
+        /*  This returns a pointer to an abbrev list entry, not
             the list itself. */
         return (hash_abbrev_entry);
     }
@@ -354,7 +353,7 @@ _dwarf_get_abbrev_for_code(Dwarf_CU_Context cu_context, Dwarf_Unsigned code)
         }
 
         new_hashable_val = abbrev_code;
-        hash_num = new_hashable_val % 
+        hash_num = new_hashable_val %
             hash_table_base->tb_table_entry_count;
         inner_hash_entry = entry_base + hash_num;
         /* Move_entry_to_new_hash */
@@ -378,7 +377,7 @@ _dwarf_get_abbrev_for_code(Dwarf_CU_Context cu_context, Dwarf_Unsigned code)
         /*  We may have fallen off the end of content,  that is not
             a botch in the section, as there is no rule that the last
             abbrev need have abbrev_code of 0. */
-    } while ((abbrev_ptr < end_abbrev_ptr) && 
+    } while ((abbrev_ptr < end_abbrev_ptr) &&
         *abbrev_ptr != 0 && abbrev_code != code);
 
     cu_context->cc_last_abbrev_ptr = abbrev_ptr;
@@ -463,7 +462,7 @@ _dwarf_length_of_cu_header(Dwarf_Debug dbg, Dwarf_Unsigned offset,
     int local_extension_size = 0;
     Dwarf_Unsigned length = 0;
     Dwarf_Unsigned final_size = 0;
-    Dwarf_Small *cuptr = 
+    Dwarf_Small *cuptr =
         is_info? dbg->de_debug_info.dss_data + offset:
             dbg->de_debug_types.dss_data+ offset;
 
@@ -477,9 +476,9 @@ _dwarf_length_of_cu_header(Dwarf_Debug dbg, Dwarf_Unsigned offset,
         sizeof(Dwarf_Small);    /* Size of address size field. */
 
     if (!is_info) {
-        final_size += 
+        final_size +=
             /* type signature size */
-            sizeof (Dwarf_Sig8) + 
+            sizeof (Dwarf_Sig8) +
             /* type offset size */
             local_length_size;
     }
@@ -498,9 +497,9 @@ _dwarf_length_of_cu_header_simple(Dwarf_Debug dbg,
         dbg->de_length_size +   /* Size of abbrev offset field. */
         sizeof(Dwarf_Small);    /* Size of address size field. */
     if (!dinfo) {
-        finalsize += 
+        finalsize +=
             /* type signature size */
-            sizeof (Dwarf_Sig8) + 
+            sizeof (Dwarf_Sig8) +
             /* type offset size */
             dbg->de_length_size;
     }
@@ -560,19 +559,19 @@ _dwarf_free_abbrev_hash_table_contents(Dwarf_Debug dbg,Dwarf_Hash_Table hash_tab
     dwarf_dealloc(dbg,hash_table->tb_entries,DW_DLA_HASH_TABLE_ENTRY);
 }
 
-/* 
+/*
     If no die provided the size value returned might be wrong.
-    If different compilation units have different address sizes 
+    If different compilation units have different address sizes
     this may not give the correct value in all contexts if the die
-    pointer is NULL. 
-    If the Elf offset size != address_size 
+    pointer is NULL.
+    If the Elf offset size != address_size
     (for example if address_size = 4 but recorded in elf64 object)
     this may not give the correct value in all contexts if the die
-    pointer is NULL. 
+    pointer is NULL.
     If the die pointer is non-NULL (in which case it must point to
     a valid DIE) this will return the correct size.
 */
-int 
+int
 _dwarf_get_address_size(Dwarf_Debug dbg, Dwarf_Die die)
 {
     Dwarf_CU_Context context = 0;
@@ -664,7 +663,7 @@ static void bufferdoublesize(struct  Dwarf_Printf_Callback_Info_s *bufdata)
     return;
 }
 
-int 
+int
 dwarf_printf(Dwarf_Debug dbg,
     const char * format,
     ...)
@@ -672,7 +671,7 @@ dwarf_printf(Dwarf_Debug dbg,
     va_list ap;
     int maxtries = 4;
     int tries = 0;
-    struct Dwarf_Printf_Callback_Info_s *bufdata = 
+    struct Dwarf_Printf_Callback_Info_s *bufdata =
         &dbg->de_printf_callback;
     dwarf_printf_callback_function_type func = bufdata->dp_fptr;
     if (!func) {
@@ -686,7 +685,7 @@ dwarf_printf(Dwarf_Debug dbg,
             return 0;
         }
     }
-      
+
     /*  Here we ensure (or nearly ensure) we expand
         the buffer when necessary, but not excessively
         (but only if we control the buffer size).  */
