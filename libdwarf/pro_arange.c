@@ -4,22 +4,22 @@
   Portions Copyright 2011 David Anderson.  All Rights Reserved.
 
   This program is free software; you can redistribute it and/or modify it
-  under the terms of version 2.1 of the GNU Lesser General Public License 
+  under the terms of version 2.1 of the GNU Lesser General Public License
   as published by the Free Software Foundation.
 
   This program is distributed in the hope that it would be useful, but
   WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
   Further, this software is distributed without any warranty that it is
-  free of the rightful claim of any third person regarding infringement 
-  or the like.  Any license provided herein, whether implied or 
+  free of the rightful claim of any third person regarding infringement
+  or the like.  Any license provided herein, whether implied or
   otherwise, applies only to this software file.  Patent licenses, if
-  any, provided herein do not apply to combinations of this program with 
-  other software, or any other product whatsoever.  
+  any, provided herein do not apply to combinations of this program with
+  other software, or any other product whatsoever.
 
-  You should have received a copy of the GNU Lesser General Public 
-  License along with this program; if not, write the Free Software 
+  You should have received a copy of the GNU Lesser General Public
+  License along with this program; if not, write the Free Software
   Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston MA 02110-1301,
   USA.
 
@@ -50,7 +50,7 @@
 
 
 
-/*  This function adds another address range 
+/*  This function adds another address range
     to the list of address ranges for the
     given Dwarf_P_Debug.  It returns 0 on error,
     and 1 otherwise.  */
@@ -66,7 +66,7 @@ dwarf_add_arange(Dwarf_P_Debug dbg,
         error);
 }
 
-/*  This function adds another address range 
+/*  This function adds another address range
     to the list of address ranges for the
     given Dwarf_P_Debug.  It returns 0 on error,
     and 1 otherwise.  */
@@ -144,7 +144,7 @@ _dwarf_transform_arange_to_disk(Dwarf_P_Debug dbg, Dwarf_Error * error)
     /* ***** BEGIN CODE ***** */
 
     /* Size of the .debug_aranges section header. */
-    arange_num_bytes = extension_word_size + 
+    arange_num_bytes = extension_word_size +
         uword_size +       /* Size of length field.  */
         sizeof(Dwarf_Half) +    /* Size of version field. */
         uword_size +            /* Size of .debug_info offset. */
@@ -249,13 +249,13 @@ _dwarf_transform_arange_to_disk(Dwarf_P_Debug dbg, Dwarf_Error * error)
 
 
 
-    /*  The arange address, length are pointer-size fields of the target 
+    /*  The arange address, length are pointer-size fields of the target
         machine. */
     for (given_arange = dbg->de_arange; given_arange != NULL;
         given_arange = given_arange->ag_next) {
 
         /* Write relocation record for beginning of address range. */
-        res = dbg->de_reloc_name(dbg, DEBUG_ARANGES, 
+        res = dbg->de_reloc_name(dbg, DEBUG_ARANGES,
             arange_ptr - arange,       /* r_offset */
             (long) given_arange->ag_symbol_index,
             dwarf_drt_data_reloc, upointer_size);
@@ -279,7 +279,7 @@ _dwarf_transform_arange_to_disk(Dwarf_P_Debug dbg, Dwarf_Error * error)
                 'if'. */
             Dwarf_Unsigned val;
 
-            res = dbg->de_reloc_pair(dbg, DEBUG_ARANGES, 
+            res = dbg->de_reloc_pair(dbg, DEBUG_ARANGES,
                 arange_ptr - arange,   /* r_offset */
                 given_arange->ag_symbol_index,
                 given_arange->ag_end_symbol_index,

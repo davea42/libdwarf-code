@@ -5,22 +5,22 @@
   Portions Copyright 2011 David Anderson.  All Rights Reserved.
 
   This program is free software; you can redistribute it and/or modify it
-  under the terms of version 2.1 of the GNU Lesser General Public License 
+  under the terms of version 2.1 of the GNU Lesser General Public License
   as published by the Free Software Foundation.
 
   This program is distributed in the hope that it would be useful, but
   WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
   Further, this software is distributed without any warranty that it is
-  free of the rightful claim of any third person regarding infringement 
-  or the like.  Any license provided herein, whether implied or 
+  free of the rightful claim of any third person regarding infringement
+  or the like.  Any license provided herein, whether implied or
   otherwise, applies only to this software file.  Patent licenses, if
-  any, provided herein do not apply to combinations of this program with 
-  other software, or any other product whatsoever.  
+  any, provided herein do not apply to combinations of this program with
+  other software, or any other product whatsoever.
 
-  You should have received a copy of the GNU Lesser General Public 
-  License along with this program; if not, write the Free Software 
+  You should have received a copy of the GNU Lesser General Public
+  License along with this program; if not, write the Free Software
   Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston MA 02110-1301,
   USA.
 
@@ -59,8 +59,8 @@
     We still need the dbg structure on allocation so that we know which
     linked list to add the block to.
 
-    Only the allocation of the dbg structure itself cannot use 
-    _dwarf_p_get_alloc.  
+    Only the allocation of the dbg structure itself cannot use
+    _dwarf_p_get_alloc.
     That structure should be set up by hand, and the two list pointers
     should be initialized to point at the node itself.  That initializes
     the doubly linked list.  */
@@ -88,7 +88,7 @@ _dwarf_p_get_alloc(Dwarf_P_Debug dbg, Dwarf_Unsigned size)
         /* should throw an error */
         return NULL;
     }
-    
+
     /* point to 'size' bytes just beyond lp struct */
     sp = LIST_TO_BLOCK(lp);
     memset(sp, 0, size);
@@ -100,7 +100,7 @@ _dwarf_p_get_alloc(Dwarf_P_Debug dbg, Dwarf_Unsigned size)
 
         dbglp = BLOCK_TO_LIST(dbg);
         nextblock = dbglp->next;
-        
+
         /* Insert between dbglp and nextblock */
         dbglp->next = lp;
         lp->prev = dbglp;
@@ -115,8 +115,8 @@ _dwarf_p_get_alloc(Dwarf_P_Debug dbg, Dwarf_Unsigned size)
   This routine is only here in case a caller of an older version of the
   library is calling this for some reason.
   We will clean up any stray blocks when the session is closed.
-  No need to remove this block.  In theory the user might be 
-  depending on the fact that we used to just 'free' this.  
+  No need to remove this block.  In theory the user might be
+  depending on the fact that we used to just 'free' this.
   In theory they might also be
   passing a block that they got from libdwarf.  So we don't know if we
   should try to remove this block from our global list.  Safest just to
@@ -126,7 +126,7 @@ _dwarf_p_get_alloc(Dwarf_P_Debug dbg, Dwarf_Unsigned size)
   This function is deprecated!  Don't call it inside libdwarf or outside of it.
   !!!
 */
-       
+
 void
 dwarf_p_dealloc(Dwarf_Small * ptr)
 {
@@ -150,7 +150,7 @@ _dwarf_p_dealloc(Dwarf_P_Debug dbg, Dwarf_Small * ptr) /* ARGSUSED */
     will write to the same memory location they read from.
     This should only happen when we deallocate the dbg structure itself.
   */
-  
+
   lp->prev->next = lp->next;
   lp->next->prev = lp->prev;
 
@@ -172,7 +172,7 @@ _dwarf_p_dealloc_all(Dwarf_P_Debug dbg)
         /* should throw an error */
         return;
     }
-    
+
     dbglp = BLOCK_TO_LIST(dbg);
     while (dbglp->next != dbglp) {
         _dwarf_p_dealloc(dbg, LIST_TO_BLOCK(dbglp->next));
