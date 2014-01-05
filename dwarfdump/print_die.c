@@ -1302,7 +1302,7 @@ static void
 show_attr_form_error(Dwarf_Debug dbg,unsigned attr,unsigned form,struct esb_s *out)
 {
     const char *n = 0;
-    int res;
+    int res = 0;
     char buf[30];
     esb_append(out,"ERROR: Attribute ");
     snprintf(buf,sizeof(buf),"%u",attr);
@@ -3384,6 +3384,7 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
                 Dwarf_Off cuoff = 0;
                 Dwarf_Off culen = 0;
                 Dwarf_Off die_overall_offset = 0;
+                int res = 0;
                 int ores = dwarf_dieoffset(die, &die_overall_offset, &err);
                 if (ores != DW_DLV_OK) {
                     print_error(dbg, "dwarf_dieoffset", ores, err);
@@ -3400,7 +3401,7 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
                     print_error(dbg,small_buf,DW_DLV_OK,0);
                 }
 
-                int res = dwarf_die_CU_offset_range(die,&cuoff,
+                res = dwarf_die_CU_offset_range(die,&cuoff,
                     &culen,&err);
                 DWARF_CHECK_COUNT(tag_tree_result,1);
                 if (res != DW_DLV_OK) {
