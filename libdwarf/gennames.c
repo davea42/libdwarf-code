@@ -487,6 +487,8 @@ ParseDefinitionsAndWriteOutput(void)
 
     /* Process each line from 'dwarf.h' */
     while (!feof(f_dwarf_in)) {
+        /*  errno is cleared here so printing errno after 
+            the fgets is showing errno as set by fgets. */
         errno = 0;
         char *fgbad = fgets(line_in,sizeof(line_in),f_dwarf_in);
         if(!fgbad) {
