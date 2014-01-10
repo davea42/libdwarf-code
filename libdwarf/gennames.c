@@ -44,7 +44,8 @@
 #include <errno.h>   /* For errno declaration. */
 #include <ctype.h>
 #include <string.h>
-#include <unistd.h>  /* For getopt */
+#include <getopt.h>
+#include <unistd.h>
 #include "dwarf.h"
 #include "common.h"
 
@@ -487,7 +488,7 @@ ParseDefinitionsAndWriteOutput(void)
 
     /* Process each line from 'dwarf.h' */
     while (!feof(f_dwarf_in)) {
-        /*  errno is cleared here so printing errno after 
+        /*  errno is cleared here so printing errno after
             the fgets is showing errno as set by fgets. */
         char *fgbad = 0;
         errno = 0;

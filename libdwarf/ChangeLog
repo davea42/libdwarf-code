@@ -2,3 +2,4 @@
      *	gennames.c: Added comment clarifying why error is set
         before the call to fgets, and fixing the declaration
         order to avoid c99-ism.
+     *  dwarf_frame2.c: Use /* not // for comments in C.

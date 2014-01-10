@@ -458,7 +458,7 @@ _dwarf_get_fde_list_internal(Dwarf_Debug dbg, Dwarf_Cie ** cie_data,
             _dwarf_get_alloc(dbg, DW_DLA_LIST, fde_count);
     }
 
-    // It is ok if fde_list_ptr is NULL, we just have no fdes.
+    /* It is ok if fde_list_ptr is NULL, we just have no fdes. */
     cur_fde_ptr = head_fde_ptr;
     for (i = 0; i < fde_count; i++) {
         *(fde_list_ptr + i) = cur_fde_ptr;
