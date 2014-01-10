@@ -489,8 +489,9 @@ ParseDefinitionsAndWriteOutput(void)
     while (!feof(f_dwarf_in)) {
         /*  errno is cleared here so printing errno after 
             the fgets is showing errno as set by fgets. */
+        char *fgbad = 0;
         errno = 0;
-        char *fgbad = fgets(line_in,sizeof(line_in),f_dwarf_in);
+        fgbad = fgets(line_in,sizeof(line_in),f_dwarf_in);
         if(!fgbad) {
             if(feof(f_dwarf_in)) {
                 break;
