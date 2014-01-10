@@ -349,7 +349,7 @@ hexdig(char c)
         ochar = (c - 'A')+10;
         return ochar;
     }
-    // We have an input botch here.
+    /* We have an input botch here. */
     fprintf(stderr,"Translating from uri: "
         "A supposed hexadecimal input character is "
         "not 0-9 or a-f or A-F, it is (shown as hex here): %x\n",c);
@@ -402,7 +402,7 @@ translate_from_uri(const char * input, struct esb_s* out)
         if (c == '%') {
             int increment = 0;
             char c2 = cp[1];
-            // hexpairtochar deals with c2 being NUL.
+            /* hexpairtochar deals with c2 being NUL. */
             if (c2  == '%') {
                 tempstr[0] = c;
                 tempstr[1] = 0;

@@ -1,3 +1,13 @@
+2014-01-10  David Anderson
+      * dwarfdump.c: Change // comments to /* */ comments.
+      * makename.c: Delete blank line and trailing space. Add cast
+        so gcc -ansi compiles without complaint.
+      * print_die.c, uri.c: Change // comments to /* */ comments.
+      * tag_attr.c: Add getopt.h include so gcc -ansi compiles 
+        without complaint.
+      * tag_tree.c: Add getopt.h and string.h include so gcc -ansi compiles 
+        without complaint. Add cast so strdup call to avoid warning.
+      * addr_map.c: Add cast so strdup call does not cause warning gcc -ansi.
 2014-01-04  David Anderson
       * dwarfdump.c: Initialize a local variable to zero and
         move a declaration (avoiding a c99-ism, the code

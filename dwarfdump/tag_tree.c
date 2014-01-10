@@ -36,9 +36,11 @@
 $Header: /plroot/cmplrs.src/v7.4.5m/.RCS/PL/dwarfdump/RCS/tag_tree.c,v 1.8 2005/12/01 17:34:59 davea Exp $ */
 #include <dwarf.h>
 #include <stdio.h>
+#include <getopt.h>             
+#include <string.h>             /* For strdup() */             
 #include <stdlib.h>             /* For exit() declaration etc. */
 #include <errno.h>              /* For errno declaration. */
-#include <unistd.h>             /* For getopt. */
+#include <unistd.h>
 
 #include "globals.h"
 #include "libdwarf.h"
@@ -95,10 +97,10 @@ process_args(int argc, char *argv[])
     while ((c = getopt(argc, argv, "i:o:es")) != EOF) {
         switch (c) {
         case 'i':
-            input_name = strdup(optarg);
+            input_name = (char *)strdup(optarg);
             break;
         case 'o':
-            output_name = strdup(optarg);
+            output_name = (char *)strdup(optarg);
             break;
         case 'e':
             extended_flag = TRUE;

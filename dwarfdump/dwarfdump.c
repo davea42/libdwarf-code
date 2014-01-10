@@ -532,9 +532,9 @@ print_any_harmless_errors(Dwarf_Debug dbg)
         DWARF_CHECK_ERROR(harmless_result,buf[i]);
     }
     if (totalcount > printcount) {
-        //harmless_result.checks += (totalcount - printcount);
+        /*harmless_result.checks += (totalcount - printcount); */
         DWARF_CHECK_COUNT(harmless_result,(totalcount - printcount));
-        //harmless_result.errors += (totalcount - printcount);
+        /*harmless_result.errors += (totalcount - printcount); */
         DWARF_ERROR_COUNT(harmless_result,(totalcount - printcount));
     }
 }
@@ -2014,12 +2014,12 @@ should_skip_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die, Dwarf_Error err)
                 /* Ignore case if Windows */
 #if WIN32
                 if (stricmp(cu_name, p)) {
-                    // skip this cu.
+                    /* skip this cu. */
                     return TRUE;
                 }
 #else
                 if (strcmp(cu_name, p)) {
-                    // skip this cu.
+                    /* skip this cu. */
                     return TRUE;
                 }
 #endif /* WIN32 */

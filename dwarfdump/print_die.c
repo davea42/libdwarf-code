@@ -1387,8 +1387,8 @@ traverse_attribute(Dwarf_Debug dbg, Dwarf_Die die, Dwarf_Half attr,
         if (res != DW_DLV_OK) {
             int dwerrno = dwarf_errno(err);
             if (dwerrno == DW_DLE_REF_SIG8_NOT_HANDLED ) {
-                // No need to stop, ref_sig8 refers out of
-                // the current section.
+                /*  No need to stop, ref_sig8 refers out of
+                    the current section. */
                 break;
             } else {
                 print_error(dbg, "dwarf_global_formref fails in traversal", 
@@ -1399,8 +1399,8 @@ traverse_attribute(Dwarf_Debug dbg, Dwarf_Die die, Dwarf_Half attr,
         if (res != DW_DLV_OK) {
             int dwerrno = dwarf_errno(err);
             if (dwerrno == DW_DLE_REF_SIG8_NOT_HANDLED ) {
-                // No need to stop, ref_sig8 refers out of
-                // the current section.
+                /*  No need to stop, ref_sig8 refers out of
+                    the current section. */
                 break;
             } else {
                 print_error(dbg, "dwarf_dieoffset fails in traversal", res, err);

@@ -1,5 +1,4 @@
-
-/* 
+/*
   Copyright (C) 2000,2004 Silicon Graphics, Inc.  All Rights Reserved.
 
   This program is free software; you can redistribute it and/or modify it
@@ -31,7 +30,7 @@
   http://oss.sgi.com/projects/GenInfo/NoticeExplan
 
    makename.c
-   $Revision: 1.4 $ 
+   $Revision: 1.4 $
    $Date: 2005/11/08 21:48:42 $
 
    This used to be elaborate stuff.
@@ -52,13 +51,13 @@
 char *
 makename(const char *s)
 {
-    char *newstr;
+    char *newstr = 0;
 
     if (!s) {
         return "";
     }
 
-    newstr = strdup(s);
+    newstr = (char *)strdup(s);
     if (newstr == 0) {
         fprintf(stderr, "Out of memory mallocing %d bytes\n",
             (int) strlen(s));

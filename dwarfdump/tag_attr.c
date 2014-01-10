@@ -36,6 +36,7 @@
 $Header: /plroot/cmplrs.src/v7.4.5m/.RCS/PL/dwarfdump/RCS/tag_attr.c,v 1.8 2005/12/01 17:34:59 davea Exp $ */
 #include <dwarf.h>
 #include <stdio.h>
+#include <getopt.h>
 #include <stdlib.h>             /* For exit() declaration etc. */
 #include <errno.h>              /* For errno declaration. */
 #include <unistd.h>             /* For getopt. */  
