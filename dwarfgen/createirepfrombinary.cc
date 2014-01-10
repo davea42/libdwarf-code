@@ -41,7 +41,6 @@
 #include <string.h> // For memset etc
 #include <sys/stat.h> //open
 #include <fcntl.h> //open
-#include "elf.h"
 #include "gelf.h"
 #include "strtabdata.h"
 #include "dwarf.h"

@@ -41,7 +41,6 @@
 #include <sys/stat.h> //open
 #include <fcntl.h> //open
 #include "general.h"
-#include "elf.h"
 #include "gelf.h"
 #include "strtabdata.h"
 #include "dwarf.h"
