@@ -1,4 +1,6 @@
 2014-01-10  David Anderson
+     *  dwarf_ranges.c, dwarf_sort_lines.c: Remove trailing whitespace.
+2014-01-10  David Anderson
      *	gennames.c: Added comment clarifying why error is set
         before the call to fgets, and fixing the declaration
         order to avoid c99-ism.
