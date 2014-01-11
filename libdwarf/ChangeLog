@@ -1,5 +1,10 @@
 2014-01-10  David Anderson
+     *  dwarf_print_lines.c,dwarf_macro.c: Remove trailing whitespace.
      *  dwarf_ranges.c, dwarf_sort_lines.c: Remove trailing whitespace.
+     *  dwarf_query.c, dwarf_pubtypes.c: Remove trailing whitespace.
+     *  dwarf_original_elf_init.c,dwarf_loc.c: Remove trailing whitespace.
+     *  gennames.c: Fix a printf so the generated dwarf_names.c
+        does not have a trailing space.
 2014-01-10  David Anderson
      *	gennames.c: Added comment clarifying why error is set
         before the call to fgets, and fixing the declaration

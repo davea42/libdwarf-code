@@ -5,22 +5,22 @@
   Portions Copyright 2012 SN Systems Ltd. All rights reserved.
 
   This program is free software; you can redistribute it and/or modify it
-  under the terms of version 2.1 of the GNU Lesser General Public License 
+  under the terms of version 2.1 of the GNU Lesser General Public License
   as published by the Free Software Foundation.
 
   This program is distributed in the hope that it would be useful, but
   WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
   Further, this software is distributed without any warranty that it is
-  free of the rightful claim of any third person regarding infringement 
-  or the like.  Any license provided herein, whether implied or 
+  free of the rightful claim of any third person regarding infringement
+  or the like.  Any license provided herein, whether implied or
   otherwise, applies only to this software file.  Patent licenses, if
-  any, provided herein do not apply to combinations of this program with 
-  other software, or any other product whatsoever.  
+  any, provided herein do not apply to combinations of this program with
+  other software, or any other product whatsoever.
 
-  You should have received a copy of the GNU Lesser General Public 
-  License along with this program; if not, write the Free Software 
+  You should have received a copy of the GNU Lesser General Public
+  License along with this program; if not, write the Free Software
   Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston MA 02110-1301,
   USA.
 
@@ -35,7 +35,7 @@
 
 */
 /* The address of the Free Software Foundation is
-   Free Software Foundation, Inc., 51 Franklin St, Fifth Floor, 
+   Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
    Boston, MA 02110-1301, USA.
    SGI has moved from the Crittenden Lane address.
 */
@@ -57,11 +57,11 @@ static int _dwarf_die_attr_unsigned_constant(Dwarf_Die die,
 /* This is normally reliable.
 But not always.
 If different compilation
-units have different address sizes 
-this may not give the correct value in all contexts. 
-If the Elf offset size != address_size 
+units have different address sizes
+this may not give the correct value in all contexts.
+If the Elf offset size != address_size
 (for example if address_size = 4 but recorded in elf64 object)
-this may not give the correct value in all contexts. 
+this may not give the correct value in all contexts.
 */
 int
 dwarf_get_address_size(Dwarf_Debug dbg,
@@ -147,13 +147,13 @@ dwarf_die_offsets(Dwarf_Die die,
     return DW_DLV_ERROR;
 }
 
-/*  This function returns the global offset 
+/*  This function returns the global offset
     (meaning the section offset) and length of
     the CU that this die is a part of.
     Used for correctness checking by dwarfdump.  */
 int
 dwarf_die_CU_offset_range(Dwarf_Die die,
-    Dwarf_Off * cu_off, 
+    Dwarf_Off * cu_off,
     Dwarf_Off * cu_length,
     Dwarf_Error * error)
 {
@@ -242,14 +242,13 @@ dwarf_attrlist(Dwarf_Die die,
             new_attr->ar_debug_ptr = info_ptr;
             new_attr->ar_die = die;
             {
-                Dwarf_Unsigned sov = _dwarf_get_size_of_val(dbg, 
-                    attr_form, 
+                Dwarf_Unsigned sov = _dwarf_get_size_of_val(dbg,
+                    attr_form,
                     die->di_cu_context->cc_address_size,
                     info_ptr,
                     die->di_cu_context->cc_length_size);
                 info_ptr += sov;
             }
- 
 
             if (head_attr == NULL)
                 head_attr = curr_attr = new_attr;
@@ -293,7 +292,7 @@ dwarf_attrlist(Dwarf_Die die,
     is returned in *attr_form.
 
     Returns NULL on error, or if attr is not found.
-    However, *attr_form is 0 on error, and positive 
+    However, *attr_form is 0 on error, and positive
     otherwise.
 */
 static Dwarf_Byte_Ptr
@@ -338,9 +337,9 @@ _dwarf_get_value_ptr(Dwarf_Die die,
         }
 
         info_ptr += _dwarf_get_size_of_val(die->di_cu_context->cc_dbg,
-            curr_attr_form, 
+            curr_attr_form,
             die->di_cu_context->cc_address_size,
-            info_ptr, 
+            info_ptr,
             die->di_cu_context->cc_length_size);
     } while (curr_attr != 0 || curr_attr_form != 0);
 
@@ -514,7 +513,7 @@ dwarf_highpc(Dwarf_Die die,
     int res = 0;
     enum Dwarf_Form_Class class = DW_FORM_CLASS_UNKNOWN;
     Dwarf_Half form = 0;
-    
+
     CHECK_DIE(die, DW_DLV_ERROR);
     res = dwarf_highpc_b(die,return_addr,&form,&class,error);
     if (res != DW_DLV_OK) {
@@ -525,21 +524,21 @@ dwarf_highpc(Dwarf_Die die,
         Dwarf_Debug dbg = die->di_cu_context->cc_dbg;
         _dwarf_error(dbg, error, DW_DLE_DIE_BAD);
         return (DW_DLV_ERROR);
-    } 
+    }
     return (DW_DLV_OK);
 }
 
 /*  This works for  all versions of DWARF.
     This is the preferred interface, cease using dwarf_highpc.
-    The consumer has to check the return_form or 
-    return_class to decide if the value returned 
-    through return_value is an address or an address-offset. 
+    The consumer has to check the return_form or
+    return_class to decide if the value returned
+    through return_value is an address or an address-offset.
     See  DWARF4 section 2.17.2,
     "Contiguous Address Range".
     */
 int
 dwarf_highpc_b(Dwarf_Die die,
-    Dwarf_Addr * return_value, 
+    Dwarf_Addr * return_value,
     Dwarf_Half * return_form,
     enum Dwarf_Form_Class * return_class,
     Dwarf_Error * error)
@@ -589,7 +588,7 @@ dwarf_highpc_b(Dwarf_Die die,
                     sval = _dwarf_decode_s_leb128(info_ptr, NULL);
                     /*  DWARF4 defines the value as an unsigned offset
                         in section 2.17.2. */
-                    *return_value = (Dwarf_Unsigned)sval;          
+                    *return_value = (Dwarf_Unsigned)sval;
                 } else {
                     _dwarf_error(dbg, error, DW_DLE_DIE_BAD);
                     return (DW_DLV_ERROR);
@@ -609,16 +608,16 @@ dwarf_highpc_b(Dwarf_Die die,
 
 
 /*
-    Takes a die, an attribute attr, and checks if attr 
+    Takes a die, an attribute attr, and checks if attr
     occurs in die.  Attr is required to be an attribute
-    whose form is in the "constant" class.  If attr occurs 
-    in die, the value is returned.  
+    whose form is in the "constant" class.  If attr occurs
+    in die, the value is returned.
 
     Returns DW_DLV_OK, DW_DLV_ERROR, or DW_DLV_NO_ENTRY as
     appropriate. Sets the value thru the pointer return_val.
 
-    This function is meant to do all the 
-    processing for dwarf_bytesize, dwarf_bitsize, dwarf_bitoffset, 
+    This function is meant to do all the
+    processing for dwarf_bytesize, dwarf_bitsize, dwarf_bitoffset,
     and dwarf_srclang. And it helps in dwarf_highpc_with_form().
 */
 static int
@@ -683,7 +682,7 @@ dwarf_bytesize(Dwarf_Die die,
     Dwarf_Unsigned * ret_size, Dwarf_Error * error)
 {
     Dwarf_Unsigned luns = 0;
-    int res = _dwarf_die_attr_unsigned_constant(die, DW_AT_byte_size, 
+    int res = _dwarf_die_attr_unsigned_constant(die, DW_AT_byte_size,
         &luns, error);
     *ret_size = luns;
     return res;
@@ -695,7 +694,7 @@ dwarf_bitsize(Dwarf_Die die,
     Dwarf_Unsigned * ret_size, Dwarf_Error * error)
 {
     Dwarf_Unsigned luns = 0;
-    int res = _dwarf_die_attr_unsigned_constant(die, DW_AT_bit_size, 
+    int res = _dwarf_die_attr_unsigned_constant(die, DW_AT_bit_size,
         &luns, error);
     *ret_size = luns;
     return res;
@@ -707,7 +706,7 @@ dwarf_bitoffset(Dwarf_Die die,
     Dwarf_Unsigned * ret_size, Dwarf_Error * error)
 {
     Dwarf_Unsigned luns = 0;
-    int res = _dwarf_die_attr_unsigned_constant(die, 
+    int res = _dwarf_die_attr_unsigned_constant(die,
         DW_AT_bit_offset, &luns, error);
     *ret_size = luns;
     return res;
@@ -720,7 +719,7 @@ dwarf_srclang(Dwarf_Die die,
     Dwarf_Unsigned * ret_size, Dwarf_Error * error)
 {
     Dwarf_Unsigned luns = 0;
-    int res = _dwarf_die_attr_unsigned_constant(die, DW_AT_language, 
+    int res = _dwarf_die_attr_unsigned_constant(die, DW_AT_language,
         &luns, error);
     *ret_size = luns;
     return res;
@@ -733,7 +732,7 @@ dwarf_arrayorder(Dwarf_Die die,
     Dwarf_Unsigned * ret_size, Dwarf_Error * error)
 {
     Dwarf_Unsigned luns = 0;
-    int res = _dwarf_die_attr_unsigned_constant(die, DW_AT_ordering, 
+    int res = _dwarf_die_attr_unsigned_constant(die, DW_AT_ordering,
         &luns, error);
     *ret_size = luns;
     return res;
@@ -745,7 +744,7 @@ dwarf_arrayorder(Dwarf_Die die,
     If the die and the attr are not related the result is
     meaningless.  */
 int
-dwarf_attr_offset(Dwarf_Die die, Dwarf_Attribute attr, 
+dwarf_attr_offset(Dwarf_Die die, Dwarf_Attribute attr,
     Dwarf_Off * offset /* return offset thru this ptr */,
     Dwarf_Error * error)
 {
@@ -782,7 +781,7 @@ dwarf_die_abbrev_children_flag(Dwarf_Die die,Dwarf_Half *ab_has_child)
 }
 
 /* Helper function for finding form class. */
-static enum Dwarf_Form_Class 
+static enum Dwarf_Form_Class
 dw_get_special_offset(Dwarf_Half attrnum)
 {
     switch (attrnum) {
@@ -843,8 +842,8 @@ dw_get_special_offset(Dwarf_Half attrnum)
    for DWARF2 or 3 as well.  */
 enum Dwarf_Form_Class dwarf_get_form_class(
     Dwarf_Half dwversion,
-    Dwarf_Half attrnum, 
-    Dwarf_Half offset_size, 
+    Dwarf_Half attrnum,
+    Dwarf_Half offset_size,
     Dwarf_Half form)
 {
     switch (form) {
@@ -852,7 +851,7 @@ enum Dwarf_Form_Class dwarf_get_form_class(
 
     case  DW_FORM_data2:  return DW_FORM_CLASS_CONSTANT;
 
-    case  DW_FORM_data4: 
+    case  DW_FORM_data4:
         if (dwversion <= 3 && offset_size == 4) {
             enum Dwarf_Form_Class class = dw_get_special_offset(attrnum);
             if (class != DW_FORM_CLASS_UNKNOWN) {
@@ -903,10 +902,8 @@ enum Dwarf_Form_Class dwarf_get_form_class(
 
     case  DW_FORM_flag:         return DW_FORM_CLASS_FLAG;
     case  DW_FORM_flag_present: return DW_FORM_CLASS_FLAG;
-
-   
-    case  DW_FORM_indirect: 
-    default: 
+    case  DW_FORM_indirect:
+    default:
         break;
     };
     return DW_FORM_CLASS_UNKNOWN;
@@ -916,14 +913,14 @@ enum Dwarf_Form_Class dwarf_get_form_class(
     and the size of an offset
     and return it through the *version pointer and return
     DW_DLV_OK.
-    
-    If we cannot find a CU,  
+
+    If we cannot find a CU,
         return DW_DLV_ERROR on error.
         In case of error no Dwarf_Debug was available,
         so setting a Dwarf_Error is somewhat futile.
     Never returns DW_DLV_NO_ENTRY.
 */
-int 
+int
 dwarf_get_version_of_die(Dwarf_Die die,
     Dwarf_Half *version,
     Dwarf_Half *offset_size)

@@ -438,7 +438,7 @@ GenerateOneSet(void)
         fprintf(f_names_c,"}\n");
     } else {
         fprintf(f_names_c,"    }\n");
-        fprintf(f_names_c,"    return DW_DLV_NO_ENTRY; \n");
+        fprintf(f_names_c,"    return DW_DLV_NO_ENTRY;\n");
         fprintf(f_names_c,"}\n");
     }
 

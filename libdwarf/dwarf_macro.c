@@ -5,22 +5,22 @@
   Portions Copyright 2012 SN Systems Ltd. All rights reserved.
 
   This program is free software; you can redistribute it and/or modify it
-  under the terms of version 2.1 of the GNU Lesser General Public License 
+  under the terms of version 2.1 of the GNU Lesser General Public License
   as published by the Free Software Foundation.
 
   This program is distributed in the hope that it would be useful, but
   WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
   Further, this software is distributed without any warranty that it is
-  free of the rightful claim of any third person regarding infringement 
-  or the like.  Any license provided herein, whether implied or 
+  free of the rightful claim of any third person regarding infringement
+  or the like.  Any license provided herein, whether implied or
   otherwise, applies only to this software file.  Patent licenses, if
-  any, provided herein do not apply to combinations of this program with 
-  other software, or any other product whatsoever.  
+  any, provided herein do not apply to combinations of this program with
+  other software, or any other product whatsoever.
 
-  You should have received a copy of the GNU Lesser General Public 
-  License along with this program; if not, write the Free Software 
+  You should have received a copy of the GNU Lesser General Public
+  License along with this program; if not, write the Free Software
   Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston MA 02110-1301,
   USA.
 
@@ -35,7 +35,7 @@
 
 */
 /* The address of the Free Software Foundation is
-   Free Software Foundation, Inc., 51 Franklin St, Fifth Floor, 
+   Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
    Boston, MA 02110-1301, USA.
    SGI has moved from the Crittenden Lane address.
 */
@@ -192,7 +192,7 @@ dwarf_get_macro_details(Dwarf_Debug dbg,
     Dwarf_Small *pnext = 0;
     Dwarf_Unsigned endloc = 0;
     unsigned char uc = 0;
-    unsigned long depth = 0;    
+    unsigned long depth = 0;
         /* By section 6.3.2 Dwarf3 draft 8/9,
         the base file should appear as
         DW_MACINFO_start_file. See
@@ -279,7 +279,7 @@ dwarf_get_macro_details(Dwarf_Debug dbg,
             (void) _dwarf_decode_u_leb128(pnext, &len);
 
             pnext += len;
-            if (((Dwarf_Unsigned)(pnext - macro_base)) >= 
+            if (((Dwarf_Unsigned)(pnext - macro_base)) >=
                 dbg->de_debug_macinfo.dss_size) {
                 free_macro_stack(dbg,&msdata);
                 _dwarf_error(dbg, error,
@@ -288,7 +288,7 @@ dwarf_get_macro_details(Dwarf_Debug dbg,
             }
             slen = strlen((char *) pnext) + 1;
             pnext += slen;
-            if (((Dwarf_Unsigned)(pnext - macro_base)) >= 
+            if (((Dwarf_Unsigned)(pnext - macro_base)) >=
                 dbg->de_debug_macinfo.dss_size) {
                 free_macro_stack(dbg,&msdata);
                 _dwarf_error(dbg, error,
@@ -301,7 +301,7 @@ dwarf_get_macro_details(Dwarf_Debug dbg,
             /* line, file index */
             (void) _dwarf_decode_u_leb128(pnext, &len);
             pnext += len;
-            if (((Dwarf_Unsigned)(pnext - macro_base)) >= 
+            if (((Dwarf_Unsigned)(pnext - macro_base)) >=
                 dbg->de_debug_macinfo.dss_size) {
                 free_macro_stack(dbg,&msdata);
                 _dwarf_error(dbg, error,
@@ -310,7 +310,7 @@ dwarf_get_macro_details(Dwarf_Debug dbg,
             }
             (void) _dwarf_decode_u_leb128(pnext, &len);
             pnext += len;
-            if (((Dwarf_Unsigned)(pnext - macro_base)) >= 
+            if (((Dwarf_Unsigned)(pnext - macro_base)) >=
                 dbg->de_debug_macinfo.dss_size) {
                 free_macro_stack(dbg,&msdata);
                 _dwarf_error(dbg, error,
@@ -322,11 +322,11 @@ dwarf_get_macro_details(Dwarf_Debug dbg,
 
         case DW_MACINFO_end_file:
             if (--depth == 0) {
-                /*  done = 1; no, do not stop here, at least one gcc had 
+                /*  done = 1; no, do not stop here, at least one gcc had
                     the wrong depth settings in the gcc 3.4 timeframe. */
             }
             /* no string or number here */
-            break; 
+            break;
         case 0:
             /* end of cu's entries */
             done = 1;
@@ -353,7 +353,7 @@ dwarf_get_macro_details(Dwarf_Debug dbg,
         return (DW_DLV_ERROR);
     }
 
-    /*  We have 'count' array entries to allocate and str_space bytes of 
+    /*  We have 'count' array entries to allocate and str_space bytes of
         string space to provide for. */
 
     string_offset = count * sizeof(Dwarf_Macro_Details);
@@ -404,7 +404,7 @@ dwarf_get_macro_details(Dwarf_Debug dbg,
             pdmd->dmd_lineno = v1;
 
             pnext += len;
-            if (((Dwarf_Unsigned)(pnext - macro_base)) >= 
+            if (((Dwarf_Unsigned)(pnext - macro_base)) >=
                 dbg->de_debug_macinfo.dss_size) {
                 free_macro_stack(dbg,&msdata);
                 dwarf_dealloc(dbg, return_data, DW_DLA_STRING);
@@ -417,7 +417,7 @@ dwarf_get_macro_details(Dwarf_Debug dbg,
             pdmd->dmd_macro = (char *) latest_str_loc;
             latest_str_loc += slen;
             pnext += slen;
-            if (((Dwarf_Unsigned)(pnext - macro_base)) >= 
+            if (((Dwarf_Unsigned)(pnext - macro_base)) >=
                 dbg->de_debug_macinfo.dss_size) {
                 free_macro_stack(dbg,&msdata);
                 dwarf_dealloc(dbg, return_data, DW_DLA_STRING);
@@ -431,7 +431,7 @@ dwarf_get_macro_details(Dwarf_Debug dbg,
             v1 = _dwarf_decode_u_leb128(pnext, &len);
             pdmd->dmd_lineno = v1;
             pnext += len;
-            if (((Dwarf_Unsigned)(pnext - macro_base)) >= 
+            if (((Dwarf_Unsigned)(pnext - macro_base)) >=
                 dbg->de_debug_macinfo.dss_size) {
                 free_macro_stack(dbg,&msdata);
                 dwarf_dealloc(dbg, return_data, DW_DLA_STRING);
@@ -443,11 +443,11 @@ dwarf_get_macro_details(Dwarf_Debug dbg,
             pdmd->dmd_fileindex = v1;
             (void) _dwarf_macro_stack_push_index(dbg, fileindex,
                 &msdata);
-            /*  We ignore the error, we just let fileindex ** be -1 when 
+            /*  We ignore the error, we just let fileindex ** be -1 when
                 we pop this one. */
             fileindex = v1;
             pnext += len;
-            if (((Dwarf_Unsigned)(pnext - macro_base)) >= 
+            if (((Dwarf_Unsigned)(pnext - macro_base)) >=
                 dbg->de_debug_macinfo.dss_size) {
                 free_macro_stack(dbg,&msdata);
                 dwarf_dealloc(dbg, return_data, DW_DLA_STRING);
