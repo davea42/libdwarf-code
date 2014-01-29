@@ -45,6 +45,7 @@ FINALOBJECTS = \
 	addrmap.o \
         checkutil.o \
 	dwarfdump.o \
+	dwarf_tsearchbal.o \
 	dwconf.o \
 	esb.o \
 	print_abbrevs.o \
@@ -79,6 +80,7 @@ HEADERS = $(srcdir)/checkutil.h \
         $(srcdir)/esb.h \
         $(srcdir)/globals.h \
         $(srcdir)/makename.h \
+        $(srcdir)/dwarf_tsearch.h \
         $(srcdir)/print_frames.h \
         $(srcdir)/uri.h
 

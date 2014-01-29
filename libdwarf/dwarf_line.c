@@ -301,12 +301,6 @@ dwarf_srcfiles(Dwarf_Die die,
         }
     }
 
-    curr_chain = (Dwarf_Chain) _dwarf_get_alloc(dbg, DW_DLA_CHAIN, 1);
-    if (curr_chain == NULL) {
-        dwarf_free_line_table_prefix(&line_prefix);
-        _dwarf_error(dbg, error, DW_DLE_ALLOC_FAIL);
-        return (DW_DLV_ERROR);
-    }
     if (line_prefix.pf_files_count == 0) {
         *srcfiles = NULL;
         *srcfilecount = 0;

@@ -47,7 +47,6 @@
 
 #include "dwarf_incl.h"
 #include "dwarf_harmless.h"
-#include "malloc_check.h"
 
 /* For consistency, use the HAVE_LIBELF_H symbol */
 #ifdef HAVE_ELF_H
@@ -557,16 +556,11 @@ dwarf_object_init(Dwarf_Obj_Access_Interface* obj, Dwarf_Handler errhand,
         if (freeresult == DW_DLV_ERROR) {
             DWARF_DBG_ERROR(dbg, DW_DLE_DBG_ALLOC, DW_DLV_ERROR);
         }
-        dwarf_malloc_check_complete("After Final free");
         return setup_result;
     }
 
     dwarf_harmless_init(&dbg->de_harmless_errors,
         DW_HARMLESS_ERROR_CIRCULAR_LIST_DEFAULT_SIZE);
-
-    /* This call cannot fail: allocates nothing, releases nothing */
-    _dwarf_setup_debug(dbg);
-
 
     *ret_dbg = dbg;
     return DW_DLV_OK;    
@@ -587,8 +581,6 @@ dwarf_object_finish(Dwarf_Debug dbg, Dwarf_Error * error)
     if (res == DW_DLV_ERROR) {
         DWARF_DBG_ERROR(dbg, DW_DLE_DBG_ALLOC, DW_DLV_ERROR);
     }
-    dwarf_malloc_check_complete("After Final free");
-
     return res;  
 }
 

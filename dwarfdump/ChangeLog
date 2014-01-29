@@ -1,3 +1,11 @@
+2014-01-29  David Anderson
+      * dwarf_tsearchbal.c,dwarf_tsearch.h: New source files.
+      * print_frames.c: dwarf_tsearch now built in, we are
+        no longer using libc tsearch.
+      * addrmap.c: Now uses dwarf_tsearch.
+      * configure.in, config.h.in: No longer need HAVE_TSEARCH or
+        HAVE_TDESTROY
+      * configure: regenerated
 2014-01-10  David Anderson
       * dwarfdump.c: Change // comments to /* */ comments.
       * makename.c: Delete blank line and trailing space. Add cast

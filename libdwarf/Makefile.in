@@ -64,7 +64,6 @@ LIBS =		@LIBS@
 INCLUDES =	-I. -I$(srcdir)
 dwfpic =        @dwfpic@
 CFLAGS =	$(PREINCS) @CFLAGS@ $(INCLUDES) $(dwfpic) $(POSTINCS)
-# For more checking add -DWANT_LIBBDWARF_MALLOC_CHECK=1 to CFLAGS
 LDFLAGS =	$(PRELIBS) @LDFLAGS@ $(POSTLIBS)
 
 
@@ -96,6 +95,7 @@ OBJS= dwarf_abbrev.o \
         dwarf_util.o \
         dwarf_leb.o \
         dwarf_ranges.o \
+        dwarf_tsearchhash.o \
         dwarf_vars.o \
         dwarf_weaks.o    \
         dwarf_addr_finder.o \

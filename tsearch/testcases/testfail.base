@@ -1,0 +1,203 @@
+
+==== binarysearch testcases/test2 ====
+dadebug run standard: 0
+dadebug apply by pointer
+special sequence testcases/test2
+insertonebypointer rec 2 addr 0x2 found record preexisting, error
+deleteonebypointer could not find rec 4 ! error! addr 0x2
+FAIL tsearch test.
+==== eppingerdel testcases/test2 ====
+dadebug run standard: 0
+dadebug apply by pointer
+special sequence testcases/test2
+insertonebypointer rec 2 addr 0x2 found record preexisting, error
+deleteonebypointer could not find rec 4 ! error! addr 0x2
+FAIL tsearch test.
+==== balancedsearch testcases/test2 ====
+dadebug run standard: 0
+dadebug apply by pointer
+special sequence testcases/test2
+insertonebypointer rec 2 addr 0x2 found record preexisting, error
+deleteonebypointer could not find rec 4 ! error! addr 0x2
+FAIL tsearch test.
+==== redblack testcases/test2 ====
+dadebug run standard: 0
+dadebug apply by pointer
+special sequence testcases/test2
+insertonebypointer rec 2 addr 0x2 found record preexisting, error
+deleteonebypointer could not find rec 4 ! error! addr 0x2
+FAIL tsearch test.
+==== gnusearch testcases/test2 ====
+dadebug run standard: 0
+dadebug apply by pointer
+special sequence testcases/test2
+insertonebypointer rec 2 addr 0x2 found record preexisting, error
+deleteonebypointer could not find rec 4 ! error! addr 0x2
+FAIL tsearch test.
+==== hashsearch testcases/test2 ====
+dadebug run standard: 0
+dadebug apply by pointer
+special sequence testcases/test2
+insertonebypointer rec 2 addr 0x2 found record preexisting, error
+deleteonebypointer could not find rec 4 ! error! addr 0x2
+FAIL tsearch test.
+==== binarysearch testcases/test17 ====
+dadebug run standard: 0
+dadebug apply by pointer
+special sequence testcases/test17
+insertonebypointer rec 4 addr 0x8 found record preexisting, error
+insertonebypointer rec 23 addr 0x34 found record preexisting, error
+FAIL tsearch test.
+==== eppingerdel testcases/test17 ====
+dadebug run standard: 0
+dadebug apply by pointer
+special sequence testcases/test17
+insertonebypointer rec 4 addr 0x8 found record preexisting, error
+insertonebypointer rec 23 addr 0x34 found record preexisting, error
+FAIL tsearch test.
+==== balancedsearch testcases/test17 ====
+dadebug run standard: 0
+dadebug apply by pointer
+special sequence testcases/test17
+insertonebypointer rec 4 addr 0x8 found record preexisting, error
+insertonebypointer rec 23 addr 0x34 found record preexisting, error
+FAIL tsearch test.
+==== redblack testcases/test17 ====
+dadebug run standard: 0
+dadebug apply by pointer
+special sequence testcases/test17
+insertonebypointer rec 4 addr 0x8 found record preexisting, error
+dadebug movered right entry 0x8871148 2-node 0 red 1  l 0x88710a8 r 0x88712c0
+dadebug movered right return 0x8871148 2-node 0 red 1  l 0x88710a8 r 0x88712c0
+dadebug movered right entry 0x88712c0 2-node 1 red 0  l 0x8871270 r 0x8871310
+dadebug movered right return 0x88712c0 2-node 0 red 1  l 0x8871270 r 0x8871310
+dadebug movered right entry 0x88712c0 2-node 0 red 1  l 0x8871270 r 0x8871310
+dadebug movered right return 0x88712c0 2-node 0 red 1  l 0x8871270 r 0x8871310
+dadebug movered right entry 0x8871310 2-node 1 red 0  l 0x88712e8 r 0x8871360
+dadebug movered right return 0x8871310 2-node 0 red 1  l 0x88712e8 r 0x8871360
+dadebug findmin now: h is 0x8871310 2-node 0 red 1  l 0x88712e8 r 0x8871360
+dadebug findmin  of h. rlink 0x8871360 2-node 1 red 0  l 0x0 r 0x0
+dadebug findmin returns 0x8871360
+dadebug findmin got r 0x8871360 2-node 1 red 0  l 0x0 r 0x0
+dadebug deletemin entry 0x8871360 2-node 1 red 0  l 0x0 r 0x0
+dadebug deletemin !llink, ret rlink 0x0
+dadebug revised h->rlink is  Null node
+dadebug revised h is  0x8871310 2-node 0 red 1  l 0x88712e8 r 0x0
+dadebug movered right entry 0x88712c0 2-node 0 red 1  l 0x8871270 r 0x88712e8
+dadebug movered right return 0x88712c0 2-node 0 red 1  l 0x8871270 r 0x88712e8
+dadebug findmin now: h is 0x88712c0 2-node 0 red 1  l 0x8871270 r 0x88712e8
+dadebug findmin  of h. rlink 0x88712e8 2-node 1 red 0  l 0x0 r 0x0
+dadebug findmin returns 0x88712e8
+dadebug findmin got r 0x88712e8 2-node 1 red 0  l 0x0 r 0x0
+dadebug deletemin entry 0x88712e8 2-node 1 red 0  l 0x0 r 0x0
+dadebug deletemin !llink, ret rlink 0x0
+dadebug revised h->rlink is  Null node
+dadebug revised h is  0x88712c0 2-node 0 red 1  l 0x8871270 r 0x0
+insertonebypointer rec 23 addr 0x34 found record preexisting, error
+FAIL tsearch test.
+==== gnusearch testcases/test17 ====
+dadebug run standard: 0
+dadebug apply by pointer
+special sequence testcases/test17
+insertonebypointer rec 4 addr 0x8 found record preexisting, error
+insertonebypointer rec 23 addr 0x34 found record preexisting, error
+FAIL tsearch test.
+==== hashsearch testcases/test17 ====
+dadebug run standard: 0
+dadebug apply by pointer
+special sequence testcases/test17
+insertonebypointer rec 4 addr 0x8 found record preexisting, error
+insertonebypointer rec 23 addr 0x34 found record preexisting, error
+FAIL tsearch test.
+==== binarysearch -byvalue testcases/test2 ====
+dadebug run standard: 0
+dadebug apply by value
+special sequence testcases/test2
+deletebyvalue action 2 could not find rec! error! addr 0x4
+FAIL tsearch test.
+==== eppingerdel -byvalue testcases/test2 ====
+dadebug run standard: 0
+dadebug apply by value
+special sequence testcases/test2
+deletebyvalue action 2 could not find rec! error! addr 0x4
+FAIL tsearch test.
+==== balancedsearch -byvalue testcases/test2 ====
+dadebug run standard: 0
+dadebug apply by value
+special sequence testcases/test2
+deletebyvalue action 2 could not find rec! error! addr 0x4
+FAIL tsearch test.
+==== redblack -byvalue testcases/test2 ====
+dadebug run standard: 0
+dadebug apply by value
+special sequence testcases/test2
+deletebyvalue action 2 could not find rec! error! addr 0x4
+FAIL tsearch test.
+==== gnusearch -byvalue testcases/test2 ====
+dadebug run standard: 0
+dadebug apply by value
+special sequence testcases/test2
+deletebyvalue action 2 could not find rec! error! addr 0x4
+FAIL tsearch test.
+==== hashsearch -byvalue testcases/test2 ====
+dadebug run standard: 0
+dadebug apply by value
+special sequence testcases/test2
+deletebyvalue action 2 could not find rec! error! addr 0x4
+FAIL tsearch test.
+==== binarysearch -byvalue testcases/test17 ====
+dadebug run standard: 0
+dadebug apply by value
+special sequence testcases/test17
+PASS tsearch test.
+==== eppingerdel -byvalue testcases/test17 ====
+dadebug run standard: 0
+dadebug apply by value
+special sequence testcases/test17
+PASS tsearch test.
+==== balancedsearch -byvalue testcases/test17 ====
+dadebug run standard: 0
+dadebug apply by value
+special sequence testcases/test17
+PASS tsearch test.
+==== redblack -byvalue testcases/test17 ====
+dadebug run standard: 0
+dadebug apply by value
+special sequence testcases/test17
+dadebug movered right entry 0x93300c8 2-node 0 red 1  l 0x9330068 r 0x9330128
+dadebug movered right return 0x93300c8 2-node 0 red 1  l 0x9330068 r 0x9330128
+dadebug movered right entry 0x9330128 2-node 1 red 0  l 0x93300f8 r 0x9330158
+dadebug movered right return 0x9330128 2-node 0 red 1  l 0x93300f8 r 0x9330158
+dadebug movered right entry 0x9330128 2-node 0 red 1  l 0x93300f8 r 0x9330158
+dadebug movered right return 0x9330128 2-node 0 red 1  l 0x93300f8 r 0x9330158
+dadebug movered right entry 0x9330158 2-node 1 red 0  l 0x9330140 r 0x9330260
+dadebug movered right return 0x9330158 2-node 0 red 1  l 0x9330140 r 0x9330260
+dadebug findmin now: h is 0x9330158 2-node 0 red 1  l 0x9330140 r 0x9330260
+dadebug findmin  of h. rlink 0x9330260 2-node 1 red 0  l 0x0 r 0x0
+dadebug findmin returns 0x9330260
+dadebug findmin got r 0x9330260 2-node 1 red 0  l 0x0 r 0x0
+dadebug deletemin entry 0x9330260 2-node 1 red 0  l 0x0 r 0x0
+dadebug deletemin !llink, ret rlink 0x0
+dadebug revised h->rlink is  Null node
+dadebug revised h is  0x9330158 2-node 0 red 1  l 0x9330140 r 0x0
+dadebug movered right entry 0x9330128 2-node 0 red 1  l 0x93300f8 r 0x9330140
+dadebug movered right return 0x9330128 2-node 0 red 1  l 0x93300f8 r 0x9330140
+dadebug findmin now: h is 0x9330128 2-node 0 red 1  l 0x93300f8 r 0x9330140
+dadebug findmin  of h. rlink 0x9330140 2-node 1 red 0  l 0x0 r 0x0
+dadebug findmin returns 0x9330140
+dadebug findmin got r 0x9330140 2-node 1 red 0  l 0x0 r 0x0
+dadebug deletemin entry 0x9330140 2-node 1 red 0  l 0x0 r 0x0
+dadebug deletemin !llink, ret rlink 0x0
+dadebug revised h->rlink is  Null node
+dadebug revised h is  0x9330128 2-node 0 red 1  l 0x93300f8 r 0x0
+PASS tsearch test.
+==== gnusearch -byvalue testcases/test17 ====
+dadebug run standard: 0
+dadebug apply by value
+special sequence testcases/test17
+PASS tsearch test.
+==== hashsearch -byvalue testcases/test17 ====
+dadebug run standard: 0
+dadebug apply by value
+special sequence testcases/test17
+PASS tsearch test.

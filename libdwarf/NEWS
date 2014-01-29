@@ -1,3 +1,6 @@
+January 29, 2014
+  Now using dwarf_tsearch() instead of the original complicated
+  allocation code.
 October 14, 2013
   The Callback_Func declarations in libdwarf.h were missing a
   const on the name argument.  Adding it removes compiler warnings.

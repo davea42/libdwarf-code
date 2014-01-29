@@ -1,0 +1,52 @@
+2013-08-15  David Anderson
+     * dwarfdump.cc: Now calls dwarf_register_printf_callback()
+       so dwarf_print_lines() output is shown (if dwarfdump
+       wants it shown). Update version string.
+      * common.c: Update version string.
+2013-08-11  David Anderson
+     * print_die.c: Clarified a comment about DW_AT_high_pc and
+       FORM class constant. 
+       Fixed indent errors.
+2013-08-07  David Anderson
+     * dwarfdump.cc: Changed cerr to cout in all cases of
+       errors other than fatal errors. Making it easier to
+       understand where errors occurred when redirecting 
+       the output.
+       Updated version string.
+     * common.cc: updated version string
+     * print_reloc.cc (print_relocinfo_32): Removed a useless
+       duplicated call to get_scndata.
+2013-07-30  David Anderson
+     * common.cc,dwarfdump.cc: updated version string.
+2013-02-07  David Anderson
+     * dieholder.h: Corrected the indentation of DieVec.
+2013-02-05  David Anderson
+     * dwarfdump.cc, common.cc: Update version string.
+       get_attr_value adds dieVec argument.
+     * dieholder.h: Create new type DieVec for the die vector.
+     * print_die.cc: Check DW_AT_sibling values for sanity,
+       and when something quite wrong is found, print an error
+       and stop. Uses DieVec now. Corrected some mistakes
+       in handling the vector.
+     * globals.h: Uses DieVec now, for print_one_die(),
+       get_attr_value.
+     * print_aranges.cc: Uses DieVec now.
+     * print_lines.cc: Uses DieVec now.
+     * globals.h: Uses DieVec now.
+     * dwarfdump.cc: Uses DieVec now.
+2013-02-03  David Anderson
+     * checkutil.h: A 64bit constant was missing the trailing ULL
+       and a compiler caught the mistake. Added the ULL.
+2013-02-01  David Anderson
+     * dwarfdump.cc, common.cc: Update version string.
+     * print_die.cc: One line had an indentation incorrect,
+       as shown by dicheck. Fixed.
+2013-01-26  David Anderson
+     * dwarfdump.cc, common.cc: Update version string.
+     * print_die.cc: Handle DW_OP_GNU_const_type using the
+       binary compatibility version of Dwarf_Loc.
+2013-01-25  David Anderson
+     * dwarfdump.cc, common.cc: Update version string.
+     * print_die.cc: Handle DW_OP_GNU_const_type properly.
+2013-01-16  David Anderson
+     * dwarfdump.cc, common.cc: Update version string.

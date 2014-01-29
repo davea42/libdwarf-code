@@ -1,3 +1,18 @@
+2014-01-29  David Anderson
+     *  dwarf_tsearch.h, dwarf_tsearchhash.c: New files implementing
+        a hashed tree with tsearch() interfaces.
+     *  Makefile.in: Add dwarf_tsearchhash.c to the build.
+     *  dwarf_init_finish.c: Remove references to malloc_check and _dwarf_setup_debug()
+        and include of "malloc_check.h" as those are no longer needed.
+     *  dwarf_line.c: Removed a superfluous _dwarf_get_alloc().  The result of the call
+        was never used.
+     *  dwarf_opaque.h: Removed Dwarf_Alloc_Hdr_s references and simple malloc references.
+        added de_alloc_tree as base of a hash database replacing most of dwarf_alloc.c.
+     *  dwarf_query.c: Removed an unused local variable.
+     *  dwarf_alloc.h,dwarf_alloc.c: Removed simple malloc support and all the 
+        complicated code handling allocation record-keeping in favor of 
+        much simpler code calling functions
+        using a tsearch-like interface.
 2014-01-10  David Anderson
      *  dwarf_print_lines.c,dwarf_macro.c: Remove trailing whitespace.
      *  dwarf_ranges.c, dwarf_sort_lines.c: Remove trailing whitespace.

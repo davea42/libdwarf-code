@@ -1,0 +1,191 @@
+Some thoughts about tsearch.
+
+David Anderson
+17 January 2014.
+
+Tsearch() was defined and implemented fairly early in
+the history of UNIX, but I don't know exactly when.
+The earliest documentation I have is from the 1991
+edition of UNIX System V Release 4 Programmer's Reference
+Manual.
+
+It is useful because it enables one to make a searchable tree
+of, well, any data one might have need to search.   Tsearch never needs
+to understand the format of the data.
+
+The functions defined there are  tsearch(), tfind(),
+tdelete(), and twalk().  The description is just
+as difficult to understand as the documentation in release 3.54
+of the Linux man-pages project (the most recent I have on hand).
+
+The Single Unix Specification page on tsearch() etc is slightly
+different text from the Programmer's Reference Manual and the 
+Linux man page, but no clearer.
+
+The confusion is partly due to the interface definition.  Until the
+late 20th century only limited attention was given to interface
+design.  By the late 20th century it seems clear that any
+newly designed tsearch-like functionality would have a significantly
+different interface.   An example of an improved interface is
+the GNU/Linux function hsearch_r().  Making the return value
+a small integer defining what the function actually did
+(and using other arguments to return additional values as
+necessary) significantly simplifies the discussion.
+
+Here though we are talking about the old and standard interface.
+We attempt to clarify the messy parts. See the examples provided
+for actual code.
+
+The functions and tables of tsearch are not thread safe.
+Nor thread-aware.  Any access to one of tables at the
+same time the table is being updated will lead to chaos
+eventually.
+
+Any table tsearch maintains consists of records
+of undefined (meaning the definition
+is local to the internals) content each record 
+of which contains, as one element, a copy of a KEY pointer.
+
+void *tsearch(const void *key, void **rootp,
+    int (*compar)(const void *l, const void *r));
+
+Our terminology comes from the above declaration.
+tsearch() returns a pointer.  If tsearch 
+fails due to an out of memory or internal error
+it returns NULL.  Otherwise it returns a non-null
+pointer (see Return value, below).
+
+KEY: 
+First we will define KEY as it is ordinarily used. 
+KEY is a pointer to an object you define and initialize.
+The object must remain in stable
+storage for as long as the table has a copy of the KEY
+pointing to the object.   Example:
+    struct mystruct *key_a = malloc(sizeof(struct mystruct));
+    initialize(key_a, my data to fill in struct...);
+    void *r = tsearch(key_a,&treeroot,comparfunc);
+
+ROOTP:
+This must be the address of a void* datum.
+Before the first call of tsearch the value of *rootp must
+be NULL (set by you somehow).
+The contents are maintained by tsearch thereafter.
+
+COMPAR:
+A function you write whose argments (when tsearch internals call it)
+are KEY pointers from two records (your records).  The function should
+return -1 if the record KEY l points to is considered less than
+the recorda KEY r points to. Return zero of the values
+are considered to match.  Return 1 otherwise.
+Example:  int comparefunc(const void *l,const void *r) { 
+struct mystruct *lp = l;
+struct mystruct *rp = r;
+if(lp->myv <  rp->myv) return -1;
+if(lp->myv ==  rp->myv) return 0;
+return 1; }
+Of course the comparison need not be of simple values, it could involve
+anything. This is just a simple sketch.
+
+Return value:
+If tsearch() returns NULL something went wrong. There was insufficient memory
+or an internal error of some kind.
+
+Lets call the KEY passed in KEYa.
+Otherwise tsearch() returns a pointer to a KEY for this object.
+Dereference to get an actual KEY (a pointer to your object).
+Lets call this dereferenced KEY key_deref.
+  struct mystruct *key_deref = *(struct mystruct *)r;
+if KEYa == key_deref then:
+  KEYa  was added to the tree.
+  Hence the tree now has a copy of
+  the value of key_a.
+else:
+  KEYa matched a record in the tree and
+  you need to free any space you allocated
+  to build the key for this tsearch call. 
+  In our example:
+  free(key_a).
+  
+
+I hope the above clarifies the use of tsearch somewhat.
+============
+tsearch use using pointers (declarations left out):
+    The struct here is entirely ours: tsearch neither knows nor cares
+    how it is laid out.
+
+    mt = struct example_tentry *mt =
+        (struct example_tentry *)calloc(sizeof(struct example_tentry),1); 
+    mt->mt_key = keyvalue;
+    mt->mt_data = datavalue;
+    errno = 0;
+    /* tsearch adds an entry if its not present already. */
+    retval = dwarf_tsearch(mt,tree, mt_compare_func  );
+    if(retval == 0) {
+        printf("FAIL ENOMEM in search on  %d, give up insertrecsbypointer\n",i);
+        exit(1);
+    } else {
+        struct example_tentry *re = 0;
+        re = *(struct example_tentry **)retval;
+        if(re != mt) {
+            /* found existing entry. */
+            mt_free_func(mt);
+        } else {
+            /* New entry mt was added. */
+        }
+    }
+
+In this case the mt_compare_func() might if using a struct look like:
+    int
+    mt_compare_func(const void *l, const void *r)
+    {
+        const struct example_tentry *ml = l;
+        const struct example_tentry *mr = r;
+        /* If the key were a string, one could use strcmp()
+           instead of the comparisons here */
+        if(ml->mt_key < mr->mt_key) {
+            return -1;
+        }
+        if(ml->mt_key > mr->mt_key) {
+            return 1;
+        }
+        return 0;
+    }
+
+
+
+
+============
+tsearch use using values (declarations left out):
+            void *mt = (void *)key;
+            errno = 0;
+            /* tsearch adds an entry if its not present already. */
+            retval = dwarf_tsearch(mt,tree, value_compare_func  );
+            if(retval == 0) {
+                printf("FAIL ENOMEM in search on  %d, give up insertrecsbypointer\n",i);
+                exit(1);
+            } else {
+                /* successful search.mt might have been added by the call, 
+                   or maybe it was already in the tree.
+                   It is impossible to tell which */
+            }
+In this case the value_compare_func might look like:
+             int
+             value_compare_func(const void *l, const void *r)
+             {
+                 VALTYPE lp = (VALTYPE)l;
+                 VALTYPE rp = (VALTYPE)r;
+                 if(lp < rp) {
+                     return -1;
+                 }
+                 if(lp > rp) {
+                     return 1;
+                 }
+                 return 0;
+             }
+===================
+
+
+
+
+
+

@@ -2,7 +2,7 @@
   Copyright (C) 2000-2006 Silicon Graphics, Inc.  All Rights Reserved.
   Portions Copyright 2007-2010 Sun Microsystems, Inc. All rights reserved.
   Portions Copyright 2009-2010 SN Systems Ltd. All rights reserved.
-  Portions Copyright 2008-2011 David Anderson. All rights reserved.
+  Portions Copyright 2008-2014 David Anderson. All rights reserved.
 
   This program is free software; you can redistribute it and/or modify it
   under the terms of version 2 of the GNU General Public License as
@@ -100,8 +100,6 @@ print_pubname_style_entry(Dwarf_Debug dbg,
     Dwarf_Unsigned maxoff)
 {
     Dwarf_Die die = NULL;
-    Dwarf_Die cu_die = NULL;
-    Dwarf_Off die_CU_off = 0;
 
     /* get die at die_off */
     int dres = dwarf_offdie(dbg, die_off, &die, &err);
@@ -112,26 +110,27 @@ print_pubname_style_entry(Dwarf_Debug dbg,
             string(".");
         print_error(dbg, details.c_str(), dres, err);
     }
-    DieHolder(dbg,die);
 
-
+    DieHolder dh(dbg,die);
+    Dwarf_Off die_CU_off = 0;
     /* get offset of die from its cu-header */
-    int ddres = dwarf_die_CU_offset(die, &die_CU_off, &err);
+    int ddres = dwarf_die_CU_offset(dh.die(), &die_CU_off, &err);
     if (ddres != DW_DLV_OK) {
         string details = string(line_title) + " cannot get CU die offset";
         print_error(dbg, details.c_str(), ddres, err);
     }
 
     /* get die at offset cu_off */
+    Dwarf_Die cu_die = NULL;
     int cudres = dwarf_offdie(dbg, cu_off, &cu_die, &err);
     if (cudres != DW_DLV_OK) {
         string details =  string(line_title) + string(" dwarf_offdie: "
             "die offset does not reference valid CU DIE.  ")
             + IToHex(cu_off) +
             string(".");
-        dwarf_dealloc(dbg, die, DW_DLA_DIE);
         print_error(dbg, details.c_str(), cudres, err);
     }
+    DieHolder cudh(dbg,cu_die);
     if( display_offsets) {
         /* Print 'name'at the end for better layout */
         cout << line_title ;
@@ -152,10 +151,6 @@ print_pubname_style_entry(Dwarf_Debug dbg,
         cout  << " cuhdr " << IToHex0N(global_cu_offset,10);
     }
     cout << " '" << name << "'" << endl;
-
-
-    dwarf_dealloc(dbg, die, DW_DLA_DIE);
-    dwarf_dealloc(dbg, cu_die, DW_DLA_DIE);
 
     check_info_offset_sanity(line_title,
         "die offset", name, die_off, maxoff);
@@ -213,12 +208,12 @@ print_pubnames(Dwarf_Debug dbg)
                 Dwarf_Bool has_attr;
                 int ares;
                 int dres;
-                Dwarf_Die die;
 
                 /*  We are processing a new set of pubnames
                     for a different CU; get the producer ID, at 'cu_off'
                     to see if we need to skip these pubnames */
                 if (cu_off != prev_cu_off) {
+                    Dwarf_Die die = 0;
                     string producer_name;
 
                     /* Record offset for previous CU */
@@ -235,15 +230,17 @@ print_pubnames(Dwarf_Debug dbg)
                     update_compiler_target(producer_name);
                 }
 
+                Dwarf_Die die = 0;
                 /* get die at die_off */
                 dres = dwarf_offdie(dbg, die_off, &die, &err);
                 if (dres != DW_DLV_OK) {
                     print_error(dbg, "print pubnames: dwarf_offdie b", dres, err);
                 }
+                DieHolder dh(dbg,die);
 
 
                 ares =
-                    dwarf_hasattr(die, DW_AT_external, &has_attr, &err);
+                    dwarf_hasattr(dh.die(), DW_AT_external, &has_attr, &err);
                 if (ares == DW_DLV_ERROR) {
                     print_error(dbg, "hassattr on DW_AT_external", ares,
                         err);
@@ -259,7 +256,6 @@ print_pubnames(Dwarf_Debug dbg)
                             "pubname does not have DW_AT_external");
                     }
                 }
-                dwarf_dealloc(dbg, die, DW_DLA_DIE);
             }
 
             /* Now print pubname, after the test */

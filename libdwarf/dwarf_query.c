@@ -543,7 +543,6 @@ dwarf_highpc_b(Dwarf_Die die,
     enum Dwarf_Form_Class * return_class,
     Dwarf_Error * error)
 {
-    Dwarf_Addr ret_addr = 0;
     Dwarf_Byte_Ptr info_ptr = 0;
     Dwarf_Half attr_form = 0;
     Dwarf_Debug dbg = 0;

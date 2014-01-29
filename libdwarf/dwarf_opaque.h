@@ -289,13 +289,9 @@ struct Dwarf_Debug_s {
         non-zero means do not do the check. */
     Dwarf_Small de_assume_string_in_bounds;
 
-    /*  Dwarf_Alloc_Hdr_s structs used to manage chunks that are
-        malloc'ed for each allocation type for structs. */
-    struct Dwarf_Alloc_Hdr_s de_alloc_hdr[ALLOC_AREA_REAL_TABLE_MAX];
-#ifdef DWARF_SIMPLE_MALLOC
-    struct simple_malloc_record_s *  de_simple_malloc_base;
-#endif
-    
+    /*  Keep track of allocations so a dwarf_finish call can clean up. 
+        Null till a tree is created */
+    void * de_alloc_tree;
 
     /*  These fields are used to process debug_frame section.  **Updated 
         by dwarf_get_fde_list in dwarf_frame.h */

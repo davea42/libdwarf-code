@@ -607,7 +607,6 @@ print_one_fde(Dwarf_Debug dbg, Dwarf_Fde fde,
     if (suppress_nested_name_search) {
         temps = 0;
     } else {
-#ifdef HAVE_TSEARCH
         struct Addr_Map_Entry *mp = 0;
         temps = get_fde_proc_name(dbg, low_pc,pcMap,all_cus_seen);
         mp = addr_map_find(low_pc,lowpcSet);
@@ -637,7 +636,6 @@ print_one_fde(Dwarf_Debug dbg, Dwarf_Fde fde,
         } else {
             addr_map_insert(low_pc,0,lowpcSet);
         }
-#endif
     }
 
     /* Do not print if in check mode */
