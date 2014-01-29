@@ -1,4 +1,4 @@
-/* 
+/*
   Copyright 2010 David Anderson. All rights reserved.
 
   This program is free software; you can redistribute it and/or modify it

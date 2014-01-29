@@ -32,7 +32,7 @@
 
 $Header: /plroot/cmplrs.src/v7.4.5m/.RCS/PL/dwarfdump/RCS/esb.c,v 1.1 2005/08/04 05:09:37 davea Exp $ */
 
-/* esb.c 
+/* esb.c
    extensible string buffer.
 
    A simple means (vaguely like a C++ class) that

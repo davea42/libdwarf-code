@@ -4,22 +4,22 @@
   Portions Copyright (C) 2009-2011 David Anderson. All Rights Reserved.
 
   This program is free software; you can redistribute it and/or modify it
-  under the terms of version 2.1 of the GNU Lesser General Public License 
+  under the terms of version 2.1 of the GNU Lesser General Public License
   as published by the Free Software Foundation.
 
   This program is distributed in the hope that it would be useful, but
   WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
   Further, this software is distributed without any warranty that it is
-  free of the rightful claim of any third person regarding infringement 
-  or the like.  Any license provided herein, whether implied or 
+  free of the rightful claim of any third person regarding infringement
+  or the like.  Any license provided herein, whether implied or
   otherwise, applies only to this software file.  Patent licenses, if
-  any, provided herein do not apply to combinations of this program with 
-  other software, or any other product whatsoever.  
+  any, provided herein do not apply to combinations of this program with
+  other software, or any other product whatsoever.
 
-  You should have received a copy of the GNU Lesser General Public 
-  License along with this program; if not, write the Free Software 
+  You should have received a copy of the GNU Lesser General Public
+  License along with this program; if not, write the Free Software
   Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston MA 02110-1301,
   USA.
 
@@ -33,8 +33,8 @@
   http://oss.sgi.com/projects/GenInfo/NoticeExplan
 
 */
-/* The address of the Free Software Foundation is 
-   Free Software Foundation, Inc., 51 Franklin St, Fifth Floor, 
+/* The address of the Free Software Foundation is
+   Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
    Boston, MA 02110-1301, USA.
    SGI has moved from the above address.
 */
@@ -258,7 +258,7 @@ dwarf_get_abbrev_entry(Dwarf_Abbrev abbrev,
     return DW_DLV_OK;
 }
 
-/*  This function is not entirely safe to call. 
+/*  This function is not entirely safe to call.
     The problem is that the DWARF[234] specification does not insist
     that bytes in .debug_abbrev that are not referenced by .debug_info
     or .debug_types need to be initialized to anything specific.

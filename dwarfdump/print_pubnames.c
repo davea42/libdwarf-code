@@ -1,4 +1,4 @@
-/* 
+/*
   Copyright (C) 2000-2006 Silicon Graphics, Inc.  All Rights Reserved.
   Portions Copyright 2007-2010 Sun Microsystems, Inc. All rights reserved.
 v Portions Copyright 2009-2011 SN Systems Ltd. All rights reserved.
@@ -36,8 +36,8 @@ v Portions Copyright 2009-2011 SN Systems Ltd. All rights reserved.
 
 $Header: /plroot/cmplrs.src/v7.4.5m/.RCS/PL/dwarfdump/RCS/print_sections.c,v 1.69 2006/04/17 00:09:56 davea Exp $ */
 /*  The address of the Free Software Foundation is
-    Free Software Foundation, Inc., 51 Franklin St, Fifth Floor, 
-    Boston, MA 02110-1301, USA.  
+    Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
+    Boston, MA 02110-1301, USA.
     SGI has moved from the Crittenden Lane address.
 */
 
@@ -59,7 +59,7 @@ check_info_offset_sanity(char *sec,
     if (maxoff == 0) {
         /* Lets make a heuristic check. */
         if (offset > 0xffffffff) {
-            printf("Warning: section %s %s %s offset 0x%" 
+            printf("Warning: section %s %s %s offset 0x%"
                 DW_PR_XZEROS DW_PR_DUx " "
                 "exceptionally large \n",
                 sec, field, global, offset);
@@ -67,7 +67,7 @@ check_info_offset_sanity(char *sec,
         return;
     }
     if (offset >= maxoff) {
-        printf("Warning: section %s %s %s offset 0x%" 
+        printf("Warning: section %s %s %s offset 0x%"
             DW_PR_XZEROS  DW_PR_DUx " "
                 "larger than max of 0x%" DW_PR_DUx "\n",
                 sec, field, global,  offset, maxoff);
@@ -147,11 +147,11 @@ print_pubname_style_entry(Dwarf_Debug dbg,
     /* Display offsets */
     if (display_offsets) {
         /* Print 'name'at the end for better layout */
-        printf("%s die-in-sect 0x%" DW_PR_XZEROS DW_PR_DUx 
+        printf("%s die-in-sect 0x%" DW_PR_XZEROS DW_PR_DUx
             ", cu-in-sect 0x%" DW_PR_XZEROS DW_PR_DUx ","
             " die-in-cu 0x%" DW_PR_XZEROS DW_PR_DUx
             ", cu-header-in-sect 0x%" DW_PR_XZEROS DW_PR_DUx ,
-            line_title, 
+            line_title,
             die_off, cu_off,
             (Dwarf_Unsigned) die_CU_off,
             /*  Following is absolute offset of the ** beginning of the
@@ -160,7 +160,7 @@ print_pubname_style_entry(Dwarf_Debug dbg,
     }
 
     if ((die_off - die_CU_off) != global_cu_offset) {
-        printf(" error: real cuhdr 0x%" DW_PR_XZEROS DW_PR_DUx, 
+        printf(" error: real cuhdr 0x%" DW_PR_XZEROS DW_PR_DUx,
             global_cu_offset);
         exit(1);
     }
@@ -171,7 +171,7 @@ print_pubname_style_entry(Dwarf_Debug dbg,
     }
 
     /* Print 'name'at the end for better layout */
-    printf(" '%s'\n",name); 
+    printf(" '%s'\n",name);
 
     dwarf_dealloc(dbg, die, DW_DLA_DIE);
 
@@ -250,7 +250,7 @@ print_pubnames(Dwarf_Debug dbg)
                     }
 
                     {
-                        /*  Get producer name for this CU 
+                        /*  Get producer name for this CU
                             and update compiler list */
                         struct esb_s producername;
                         esb_constructor(&producername);

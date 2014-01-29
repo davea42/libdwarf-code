@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2010-2013 David Anderson.  All rights reserved.
- 
+
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions are met:
   * Redistributions of source code must retain the above copyright
@@ -11,7 +11,7 @@
   * Neither the name of the example nor the
     names of its contributors may be used to endorse or promote products
     derived from this software without specific prior written permission.
- 
+
   THIS SOFTWARE IS PROVIDED BY David Anderson ''AS IS'' AND ANY
   EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
   WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -28,7 +28,7 @@
 // irepattrtodbg.cc
 
 #include "config.h"
-#include <unistd.h> 
+#include <unistd.h>
 #include <stdlib.h> // for exit
 #include <iostream>
 #include <sstream> // For BldName
@@ -49,7 +49,7 @@
 #include "ireptodbg.h"
 #include "irepattrtodbg.h"
 
-#ifdef HAVE_INTPTR_T  
+#ifdef HAVE_INTPTR_T
 #include <stdint.h>
 typedef intptr_t myintfromp; // intptr_t is from C99.
 #else
@@ -74,7 +74,7 @@ static unsigned fakeaddrnum;
 // We are not going to 'validate' the FORM for this Attribute.
 // or this Die.  We just assume that what we are handed is
 // what we are to produce.  We do test the attribute
-// at times, partly to ensure we use as many of the dwarf_add_AT* 
+// at times, partly to ensure we use as many of the dwarf_add_AT*
 // functions as possible.
 
 // Correctness/appropriateness must be evaluated elsewhere.
@@ -92,7 +92,7 @@ AddAttrToDie(Dwarf_P_Debug dbg,
     IRForm *form = irattr.getFormData();
 
     switch(formclass) {
-    case DW_FORM_CLASS_UNKNOWN:   
+    case DW_FORM_CLASS_UNKNOWN:
         cerr << "ERROR Impossible DW_FORM_CLASS_UNKNOWN, attrnum "
             <<attrnum << endl;
         break;
@@ -104,10 +104,10 @@ AddAttrToDie(Dwarf_P_Debug dbg,
                 <<attrnum << endl;
             break;
         }
-        // FIXME: do better creating a symbol:  try to match original 
+        // FIXME: do better creating a symbol:  try to match original
         // or specified input.
         Dwarf_Addr addr = f->getAddress();
-       
+
         string symname = BldName("addrsym",fakeaddrnum++);
         Dwarf_Addr pcval = addr;
 
@@ -122,11 +122,11 @@ AddAttrToDie(Dwarf_P_Debug dbg,
         if( reinterpret_cast<myintfromp>(a) == DW_DLV_BADADDR) {
             cerr << "ERROR dwarf_add_AT_targ_address fails, attrnum "
                 <<attrnum << endl;
-           
+
         }
         }
         break;
-    case DW_FORM_CLASS_BLOCK:   
+    case DW_FORM_CLASS_BLOCK:
         {
         //FIXME
         }
@@ -168,11 +168,11 @@ AddAttrToDie(Dwarf_P_Debug dbg,
         if( reinterpret_cast<myintfromp>(a) == DW_DLV_BADADDR) {
             cerr << "ERROR dwarf_add_AT_ class constant fails, attrnum "
                 <<attrnum << endl;
-           
+
         }
         }
         break;
-    case DW_FORM_CLASS_EXPRLOC:   
+    case DW_FORM_CLASS_EXPRLOC:
         {
         //FIXME
         }
@@ -188,7 +188,7 @@ AddAttrToDie(Dwarf_P_Debug dbg,
         // FIXME: handle indirect form (libdwarf needs feature).
         // FIXME: handle implicit flag (libdwarf needs feature).
         // FIXME: rel type ok?
-        Dwarf_P_Attribute a = 
+        Dwarf_P_Attribute a =
             dwarf_add_AT_flag(dbg,outdie,attrnum,f->getFlagVal(),&error);
         if( reinterpret_cast<myintfromp>(a) == DW_DLV_BADADDR) {
             cerr << "ERROR dwarf_add_AT_flag fails, attrnum "
@@ -197,9 +197,9 @@ AddAttrToDie(Dwarf_P_Debug dbg,
         }
         break;
 
-    case DW_FORM_CLASS_LINEPTR:   
+    case DW_FORM_CLASS_LINEPTR:
         {
-        // The DW_AT_stmt_list attribute is generated 
+        // The DW_AT_stmt_list attribute is generated
         // as a side effect of dwarf_transform_to_disk_form
         // if producer line-info-creating functions were called.
         // So we ignore this attribute here, it is
@@ -211,9 +211,9 @@ AddAttrToDie(Dwarf_P_Debug dbg,
         //FIXME. Needs support in dwarf producer(libdwarf)
         }
         break;
-    case DW_FORM_CLASS_MACPTR:    
+    case DW_FORM_CLASS_MACPTR:
         {
-        // The DW_AT_macro_info attribute is generated 
+        // The DW_AT_macro_info attribute is generated
         // as a side effect of dwarf_transform_to_disk_form
         // if producer macro-creating functions were called.
         // So we ignore this attribute here, it is
@@ -225,7 +225,7 @@ AddAttrToDie(Dwarf_P_Debug dbg,
         //FIXME. Needs support in dwarf producer(libdwarf)
         }
         break;
-    case DW_FORM_CLASS_REFERENCE: 
+    case DW_FORM_CLASS_REFERENCE:
         {
         // Can be a local CU  reference to a DIE, or a
         // global DIE reference  or a
@@ -239,7 +239,7 @@ AddAttrToDie(Dwarf_P_Debug dbg,
         }
 
         Dwarf_Half finalform = r->getFinalForm();
-        
+
         IRFormReference::RefType reftype = r->getReferenceType();
         switch (reftype) {
         case IRFormReference::RT_NONE:
@@ -258,7 +258,7 @@ AddAttrToDie(Dwarf_P_Debug dbg,
             }
             if(!targetoutdie) {
                 if(!targetofref) {
-                    cerr << "ERROR CLASS REFERENCE targetdie of reference unknown" 
+                    cerr << "ERROR CLASS REFERENCE targetdie of reference unknown"
                         <<attrnum << endl;
                     break;
                 }
@@ -356,10 +356,10 @@ AddAttrToDie(Dwarf_P_Debug dbg,
     }
     return;
 }
-  
 
-void 
-IRCUdata::updateClassReferenceTargets() 
+
+void
+IRCUdata::updateClassReferenceTargets()
 {
     for(std::list<ClassReferenceFixupData>::iterator it =
         classReferenceFixupList_.begin();

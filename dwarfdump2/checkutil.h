@@ -1,4 +1,4 @@
-/* 
+/*
   Copyright (C) 2011-2012 David Anderson. All Rights Reserved.
   Portions Copyright 2012 SN Systems Ltd. All rights reserved.
 
@@ -30,7 +30,7 @@
 // information.  Provides the ability to check whether
 // some line data that does not match .text does match
 // some linkonce section data.
-struct LinkOnceEntry { 
+struct LinkOnceEntry {
 public:
     LinkOnceEntry(Dwarf_Unsigned section, Dwarf_Unsigned lowpc,
         Dwarf_Unsigned high_pc, const std::string name):
@@ -100,11 +100,11 @@ public:
 private:
     Dwarf_Unsigned range_low_pc_;
     Dwarf_Unsigned range_high_pc_;
-};  
+};
 
 
 // In C dwarfdump see pRangesInfo.
-// These address ranges are within the text section, 
+// These address ranges are within the text section,
 // and though rather like LinkOnceEntry data, we can
 // rely on an overall valid range (before we check
 // for the specific range) as a qualifier.  So
@@ -120,12 +120,12 @@ public:
     void ResetRangesList();
 private:
     // low_pc_ and high_pc_ are set from elf header data for a
-    // text section, not from the 
+    // text section, not from the
     // individual ranges found in the DWARF data itself.
     // See SetLimitsAddressRange().
     Dwarf_Unsigned low_pc_;
     Dwarf_Unsigned high_pc_;
-    std::list<AddressRangeEntry> address_range_data_; 
+    std::list<AddressRangeEntry> address_range_data_;
 };
 
 extern AddressRangesData *pAddressRangesData;

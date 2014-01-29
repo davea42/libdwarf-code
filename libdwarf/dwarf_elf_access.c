@@ -7,22 +7,22 @@
   Portions Copyright 2012 SN Systems Ltd. All rights reserved.
 
   This program is free software; you can redistribute it and/or modify it
-  under the terms of version 2.1 of the GNU Lesser General Public License 
+  under the terms of version 2.1 of the GNU Lesser General Public License
   as published by the Free Software Foundation.
 
   This program is distributed in the hope that it would be useful, but
   WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
   Further, this software is distributed without any warranty that it is
-  free of the rightful claim of any third person regarding infringement 
-  or the like.  Any license provided herein, whether implied or 
+  free of the rightful claim of any third person regarding infringement
+  or the like.  Any license provided herein, whether implied or
   otherwise, applies only to this software file.  Patent licenses, if
-  any, provided herein do not apply to combinations of this program with 
-  other software, or any other product whatsoever.  
+  any, provided herein do not apply to combinations of this program with
+  other software, or any other product whatsoever.
 
-  You should have received a copy of the GNU Lesser General Public 
-  License along with this program; if not, write the Free Software 
+  You should have received a copy of the GNU Lesser General Public
+  License along with this program; if not, write the Free Software
   Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston MA 02110-1301,
   USA.
 
@@ -137,8 +137,8 @@ typedef struct {
     /*  Elf symtab and its strtab.  Initialized at first
         call to do relocations, the actual data is in the Dwarf_Debug
         struct, not allocated locally here. */
-    struct Dwarf_Section_s *symtab; 
-    struct Dwarf_Section_s *strtab; 
+    struct Dwarf_Section_s *symtab;
+    struct Dwarf_Section_s *strtab;
 
 } dwarf_elf_object_access_internals_t;
 
@@ -147,22 +147,22 @@ struct Dwarf_Elf_Rela {
     /*Dwarf_ufixed64 r_info; */
     Dwarf_ufixed64 r_type;
     Dwarf_ufixed64 r_symidx;
-    Dwarf_ufixed64 r_addend; 
+    Dwarf_ufixed64 r_addend;
 };
 
 
-static int dwarf_elf_object_access_load_section(void* obj_in, 
-    Dwarf_Half section_index, 
-    Dwarf_Small** section_data, 
+static int dwarf_elf_object_access_load_section(void* obj_in,
+    Dwarf_Half section_index,
+    Dwarf_Small** section_data,
     int* error);
 
 /* dwarf_elf_object_access_internals_init() */
-static int 
-dwarf_elf_object_access_internals_init(void* obj_in, 
-    dwarf_elf_handle elf, 
+static int
+dwarf_elf_object_access_internals_init(void* obj_in,
+    dwarf_elf_handle elf,
     int* error)
 {
-    dwarf_elf_object_access_internals_t*obj = 
+    dwarf_elf_object_access_internals_t*obj =
         (dwarf_elf_object_access_internals_t*)obj_in;
     char *ehdr_ident = 0;
     Dwarf_Half machine = 0;
@@ -210,13 +210,13 @@ dwarf_elf_object_access_internals_init(void* obj_in,
     /*  The following length_size is Not Too Significant. Only used
         one calculation, and an approximate one at that. */
     obj->length_size = obj->is_64bit ? 8 : 4;
-    obj->pointer_size = obj->is_64bit ? 8 : 4;    
+    obj->pointer_size = obj->is_64bit ? 8 : 4;
 
     if (obj->is_64bit && machine != EM_MIPS) {
         /*  MIPS/IRIX makes pointer size and length size 8 for -64.
             Other platforms make length 4 always. */
         /*  4 here supports 32bit-offset dwarf2, as emitted by cygnus
-            tools, and the dwarfv2.1 64bit extension setting. 
+            tools, and the dwarfv2.1 64bit extension setting.
             This is not the same as the size-of-an-offset, which
             is 4 in 32bit dwarf and 8 in 64bit dwarf.  */
         obj->length_size = 4;
@@ -226,44 +226,44 @@ dwarf_elf_object_access_internals_init(void* obj_in,
 
 /* dwarf_elf_object_access_get_byte_order */
 static
-Dwarf_Endianness 
+Dwarf_Endianness
 dwarf_elf_object_access_get_byte_order(void* obj_in)
 {
-    dwarf_elf_object_access_internals_t*obj = 
+    dwarf_elf_object_access_internals_t*obj =
         (dwarf_elf_object_access_internals_t*)obj_in;
     return obj->endianness;
 }
 
 /* dwarf_elf_object_access_get_section_count() */
 static
-Dwarf_Unsigned 
+Dwarf_Unsigned
 dwarf_elf_object_access_get_section_count(void * obj_in)
 {
-    dwarf_elf_object_access_internals_t*obj = 
+    dwarf_elf_object_access_internals_t*obj =
         (dwarf_elf_object_access_internals_t*)obj_in;
     return obj->section_count;
 }
 
 
-/*  dwarf_elf_object_access_get_section() 
+/*  dwarf_elf_object_access_get_section()
 
     If writing a function vaguely like this for a non-elf object,
     be sure that when section-index is passed in as zero that
     you set the fields in *ret_scn to reflect an empty section
     with an empty string as the section name.  Adjust your
-    section indexes of your non-elf-reading-code  
-    for all the necessary functions in Dwarf_Obj_Access_Methods_s 
+    section indexes of your non-elf-reading-code
+    for all the necessary functions in Dwarf_Obj_Access_Methods_s
     accordingly.
 */
-static 
-int 
+static
+int
 dwarf_elf_object_access_get_section_info(
-    void* obj_in, 
-    Dwarf_Half section_index, 
-    Dwarf_Obj_Access_Section* ret_scn, 
+    void* obj_in,
+    Dwarf_Half section_index,
+    Dwarf_Obj_Access_Section* ret_scn,
     int* error)
 {
-    dwarf_elf_object_access_internals_t*obj = 
+    dwarf_elf_object_access_internals_t*obj =
         (dwarf_elf_object_access_internals_t*)obj_in;
 
     Elf32_Shdr *shdr32 = 0;
@@ -306,7 +306,7 @@ dwarf_elf_object_access_get_section_info(
         *error = DW_DLE_MISSING_ELF64_SUPPORT;
         return DW_DLV_ERROR;
 #endif /* HAVE_ELF64_GETSHDR */
-    } 
+    }
     if ((shdr32 = elf32_getshdr(scn)) == NULL) {
         *error = DW_DLE_ELF_GETSHDR_ERROR;
         return DW_DLV_ERROR;
@@ -331,20 +331,20 @@ dwarf_elf_object_access_get_section_info(
 
 /* dwarf_elf_object_access_get_length_size */
 static
-Dwarf_Small 
+Dwarf_Small
 dwarf_elf_object_access_get_length_size(void* obj_in)
 {
-    dwarf_elf_object_access_internals_t*obj = 
+    dwarf_elf_object_access_internals_t*obj =
         (dwarf_elf_object_access_internals_t*)obj_in;
     return obj->length_size;
 }
 
 /* dwarf_elf_object_access_get_pointer_size */
 static
-Dwarf_Small 
+Dwarf_Small
 dwarf_elf_object_access_get_pointer_size(void* obj_in)
 {
-    dwarf_elf_object_access_internals_t*obj = 
+    dwarf_elf_object_access_internals_t*obj =
         (dwarf_elf_object_access_internals_t*)obj_in;
     return obj->pointer_size;
 }
@@ -380,14 +380,14 @@ find_section_to_relocate(Dwarf_Debug dbg,Dwarf_Half section_index,
     /* de_elf_strtab,syms); */
     *error = DW_DLE_RELOC_SECTION_MISMATCH;
     return DW_DLV_ERROR;
-   
+
 }
 #undef MATCH_REL_SEC
 
 static void
 get_rela_elf32(Dwarf_Small *data, unsigned int i,
   int endianness,
-  int machine, 
+  int machine,
   struct Dwarf_Elf_Rela *relap)
 {
     Elf32_Rela *relp = (Elf32_Rela*)(data + (i * sizeof(Elf32_Rela)));
@@ -401,7 +401,7 @@ get_rela_elf32(Dwarf_Small *data, unsigned int i,
 }
 
 static void
-get_rela_elf64(Dwarf_Small *data, unsigned int i, 
+get_rela_elf64(Dwarf_Small *data, unsigned int i,
   int endianness,
   int machine,
   struct Dwarf_Elf_Rela *relap)
@@ -415,12 +415,12 @@ get_rela_elf64(Dwarf_Small *data, unsigned int i,
 #define ELF64MIPS_REL_SYM(i) ((i) & 0xffffffff)
 #define ELF64MIPS_REL_TYPE(i) ((i >> 56) &0xff)
     if (machine == EM_MIPS && endianness == DW_OBJECT_LSB ){
-        /*  This is really wierd. Treat this very specially. 
+        /*  This is really wierd. Treat this very specially.
             The Elf64 LE MIPS object used for
             testing (that has rela) wants the
             values as  sym  ssym type3 type2 type, treating
             each value as independent value. But libelf xlate
-            treats it as something else so we fudge here.  
+            treats it as something else so we fudge here.
             It is unclear
             how to precisely characterize where these relocations
             were used.
@@ -433,7 +433,7 @@ get_rela_elf64(Dwarf_Small *data, unsigned int i,
         relap->r_symidx = ELF64MIPS_REL_SYM(relp->r_info);
 #undef MIPS64SYM
 #undef MIPS64TYPE
-    } else 
+    } else
     {
         relap->r_type = ELF64_R_TYPE(relp->r_info);
         relap->r_symidx = ELF64_R_SYM(relp->r_info);
@@ -443,15 +443,15 @@ get_rela_elf64(Dwarf_Small *data, unsigned int i,
 }
 
 static void
-get_relocations_array(Dwarf_Bool is_64bit, 
+get_relocations_array(Dwarf_Bool is_64bit,
     int endianness,
     int machine,
-    Dwarf_Small *data, 
-    unsigned int num_relocations, 
+    Dwarf_Small *data,
+    unsigned int num_relocations,
     struct Dwarf_Elf_Rela *relap)
 {
     unsigned int i = 0;
-    void (*get_relocations)(Dwarf_Small *data, unsigned int i, 
+    void (*get_relocations)(Dwarf_Small *data, unsigned int i,
         int endianness,
         int machine,
         struct Dwarf_Elf_Rela *relap);
@@ -519,7 +519,7 @@ get_relocation_entries(Dwarf_Bool is_64bit,
             return(DW_DLV_ERROR);
         }
         memset(*relas,0,bytescount);
-        get_relocations_array(is_64bit,endianness,machine, 
+        get_relocations_array(is_64bit,endianness,machine,
             relocation_section,
             *nrelas, *relas);
     }
@@ -530,16 +530,16 @@ get_relocation_entries(Dwarf_Bool is_64bit,
     test case in dwarf regression tests, atefail/ig_server.
     Values for QUALCOMM were derived from this executable.
 
-    The r = 0 in the function will get optimized away 
+    The r = 0 in the function will get optimized away
     when not needed.
 
 */
-   
+
 #define EM_QUALCOMM_DSP6 0xa4
 #define QUALCOMM_REL32   6
 
 static Dwarf_Bool
-is_32bit_abs_reloc(unsigned int type, Dwarf_Half machine) 
+is_32bit_abs_reloc(unsigned int type, Dwarf_Half machine)
 {
     Dwarf_Bool r = 0;
     switch (machine) {
@@ -649,7 +649,7 @@ is_32bit_abs_reloc(unsigned int type, Dwarf_Half machine)
 
     R_PPC64_DTPREL32 110  which may be wrong/unavailable
     R_PPC64_DTPREL64 78
-    R_PPC_DTPREL32   78 
+    R_PPC_DTPREL32   78
     */
 #if defined(EM_PPC64) && defined (R_PPC_ADDR32)
     case EM_PPC64:
@@ -718,13 +718,13 @@ is_32bit_abs_reloc(unsigned int type, Dwarf_Half machine)
 }
 
 static Dwarf_Bool
-is_64bit_abs_reloc(unsigned int type, Dwarf_Half machine) 
+is_64bit_abs_reloc(unsigned int type, Dwarf_Half machine)
 {
     Dwarf_Bool r = 0;
     switch (machine) {
 #if defined(EM_MIPS) && defined (R_MIPS_64)
     case EM_MIPS:
-        r = (0 
+        r = (0
 #if defined (R_MIPS_64)
             | (type == R_MIPS_64)
 #endif
@@ -840,32 +840,32 @@ is_64bit_abs_reloc(unsigned int type, Dwarf_Half machine)
 
 
 /*  Returns DW_DLV_OK if it works, else DW_DLV_ERROR.
-    The caller may decide to ignore the errors or report them. */  
+    The caller may decide to ignore the errors or report them. */
 static int
 update_entry(Dwarf_Debug dbg,
     Dwarf_Bool is_64bit, Dwarf_Endianness endianess,
     Dwarf_Half machine, struct Dwarf_Elf_Rela *rela,
-    Dwarf_Small *target_section, 
+    Dwarf_Small *target_section,
     Dwarf_Small *symtab_section_data,
-    Dwarf_Unsigned symtab_section_size, 
+    Dwarf_Unsigned symtab_section_size,
     Dwarf_Unsigned symtab_section_entrysize,
     int *error)
 {
-    unsigned int type = 0; 
+    unsigned int type = 0;
     unsigned int sym_idx = 0;
 #ifdef HAVE_ELF64_SYM
     Elf64_Sym sym_buf;
     Elf64_Sym *sym = 0;
 #else
     Elf32_Sym sym_buf;
-    Elf32_Sym *sym = 0; 
+    Elf32_Sym *sym = 0;
 #endif
     Elf32_Sym *sym32 = 0;
     Dwarf_ufixed64 offset = 0;
     Dwarf_sfixed64 addend = 0;
     Dwarf_Unsigned reloc_size = 0;
     Dwarf_Unsigned symtab_entry_count = 0;
-       
+
     if (symtab_section_entrysize == 0) {
         *error = DW_DLE_SYMTAB_SECTION_ENTRYSIZE_ZERO;
         return DW_DLV_ERROR;
@@ -881,8 +881,8 @@ update_entry(Dwarf_Debug dbg,
         *error = DW_DLE_RELOC_SECTION_SYMBOL_INDEX_BAD;
         return DW_DLV_ERROR;
     }
-    
-    
+
+
 
     if (is_64bit) {
 #ifdef HAVE_ELF64_SYM
@@ -931,7 +931,7 @@ update_entry(Dwarf_Debug dbg,
 /*  Somewhat arbitrarily, we attempt to apply all the relocations we can
     and still notify the caller of at least one error if we found
     any errors.  */
-static int 
+static int
 apply_rela_entries(Dwarf_Debug dbg,
     Dwarf_Bool is_64bit,
     Dwarf_Endianness endianess,
@@ -988,7 +988,7 @@ loop_through_relocations(
     Dwarf_Unsigned relocation_section_size =
         relocatablesec->dss_reloc_size;
     Dwarf_Unsigned relocation_section_entrysize = relocatablesec->dss_reloc_entrysize;
- 
+
     int ret = DW_DLV_ERROR;
     struct Dwarf_Elf_Rela *relas = 0;
     unsigned int nrelas = 0;
@@ -997,9 +997,9 @@ loop_through_relocations(
     ret = get_relocation_entries(obj->is_64bit,
         obj->endianness,
         obj->machine,
-        relocation_section, 
-        relocation_section_size, 
-        relocation_section_entrysize, 
+        relocation_section,
+        relocation_section_size,
+        relocation_section_entrysize,
         &relas, &nrelas, error);
     if (ret != DW_DLV_OK) {
         free(relas);
@@ -1023,8 +1023,8 @@ loop_through_relocations(
     ret = apply_rela_entries(
         dbg,
         obj->is_64bit,
-        obj->endianness, obj->machine, 
-        target_section, 
+        obj->endianness, obj->machine,
+        target_section,
         symtab_section,
         symtab_section_size,
         symtab_section_entrysize,
@@ -1043,7 +1043,7 @@ dwarf_elf_object_relocate_a_section(void* obj_in,
     int* error)
 {
     int res = DW_DLV_ERROR;
-    dwarf_elf_object_access_internals_t*obj = 0; 
+    dwarf_elf_object_access_internals_t*obj = 0;
     struct Dwarf_Section_s * relocatablesec = 0;
     if (section_index == 0) {
         return DW_DLV_NO_ENTRY;
@@ -1056,7 +1056,7 @@ dwarf_elf_object_relocate_a_section(void* obj_in,
         return res;
     }
 
-    /*  Sun and possibly others do not always set sh_link in .debug_* sections. 
+    /*  Sun and possibly others do not always set sh_link in .debug_* sections.
         So we cannot do full  consistency checks. */
     if (relocatablesec->dss_reloc_index == 0 ) {
         /* Something is wrong. */
@@ -1097,7 +1097,7 @@ dwarf_elf_object_relocate_a_section(void* obj_in,
     }
     if (!obj->strtab->dss_data) {
         /* Now load the strtab */
-        res = dwarf_elf_object_access_load_section(obj_in, 
+        res = dwarf_elf_object_access_load_section(obj_in,
             obj->strtab->dss_index,
             &obj->strtab->dss_data,error);
         if (res != DW_DLV_OK){
@@ -1112,13 +1112,13 @@ dwarf_elf_object_relocate_a_section(void* obj_in,
 }
 
 /* dwarf_elf_object_access_load_section */
-static int 
-dwarf_elf_object_access_load_section(void* obj_in, 
-    Dwarf_Half section_index, 
-    Dwarf_Small** section_data, 
+static int
+dwarf_elf_object_access_load_section(void* obj_in,
+    Dwarf_Half section_index,
+    Dwarf_Small** section_data,
     int* error)
 {
-    dwarf_elf_object_access_internals_t*obj = 
+    dwarf_elf_object_access_internals_t*obj =
         (dwarf_elf_object_access_internals_t*)obj_in;
     if (section_index == 0) {
         return DW_DLV_NO_ENTRY;
@@ -1152,7 +1152,7 @@ dwarf_elf_object_access_load_section(void* obj_in,
 
 
 /* dwarf_elf_access method table. */
-static const struct Dwarf_Obj_Access_Methods_s dwarf_elf_object_access_methods = 
+static const struct Dwarf_Obj_Access_Methods_s dwarf_elf_object_access_methods =
 {
     dwarf_elf_object_access_get_section_info,
     dwarf_elf_object_access_get_byte_order,
@@ -1160,13 +1160,13 @@ static const struct Dwarf_Obj_Access_Methods_s dwarf_elf_object_access_methods =
     dwarf_elf_object_access_get_pointer_size,
     dwarf_elf_object_access_get_section_count,
     dwarf_elf_object_access_load_section,
-    dwarf_elf_object_relocate_a_section 
+    dwarf_elf_object_relocate_a_section
 };
 
 
 /* Interface for the ELF object file implementation.  */
-int 
-dwarf_elf_object_access_init(dwarf_elf_handle elf, 
+int
+dwarf_elf_object_access_init(dwarf_elf_handle elf,
     int libdwarf_owns_elf,
     Dwarf_Obj_Access_Interface** ret_obj,
     int *err)
@@ -1187,7 +1187,7 @@ dwarf_elf_object_access_init(dwarf_elf_handle elf,
         return DW_DLV_ERROR;
     }
     internals->libdwarf_owns_elf = libdwarf_owns_elf;
-    
+
     intfc = malloc(sizeof(Dwarf_Obj_Access_Interface));
     if (!intfc) {
         /* Impossible case, we hope. Give up. */
@@ -1205,14 +1205,14 @@ dwarf_elf_object_access_init(dwarf_elf_handle elf,
 
 
 /* Clean up the Dwarf_Obj_Access_Interface returned by elf_access_init.  */
-void 
+void
 dwarf_elf_object_access_finish(Dwarf_Obj_Access_Interface* obj)
 {
     if (!obj) {
         return;
     }
     if (obj->object) {
-        dwarf_elf_object_access_internals_t *internals = 
+        dwarf_elf_object_access_internals_t *internals =
             (dwarf_elf_object_access_internals_t *)obj->object;
         if (internals->libdwarf_owns_elf){
             elf_end(internals->elf);
@@ -1229,14 +1229,14 @@ dwarf_elf_object_access_finish(Dwarf_Obj_Access_Interface* obj)
 int
 dwarf_get_elf(Dwarf_Debug dbg, dwarf_elf_handle * elf,
     Dwarf_Error * error)
-{   
+{
     struct Dwarf_Obj_Access_Interface_s * obj = 0;
     if (dbg == NULL) {
         _dwarf_error(NULL, error, DW_DLE_DBG_NULL);
         return (DW_DLV_ERROR);
     }
 
-    obj = dbg->de_obj_file; 
+    obj = dbg->de_obj_file;
     if (obj) {
         dwarf_elf_object_access_internals_t *internals =
             (dwarf_elf_object_access_internals_t*)obj->object;
@@ -1246,10 +1246,10 @@ dwarf_get_elf(Dwarf_Debug dbg, dwarf_elf_handle * elf,
         }
         *elf = internals->elf;
         return DW_DLV_OK;
-       
+
     }
     _dwarf_error(dbg, error, DW_DLE_FNO);
     return DW_DLV_ERROR;
 }
-    
+
 

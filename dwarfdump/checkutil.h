@@ -1,4 +1,4 @@
-/* 
+/*
   Copyright (C) 2011 SN Systems Ltd. All Rights Reserved.
   Portions Copyright (C) 2011 David Anderson. All Rights Reserved.
 
@@ -26,10 +26,10 @@
 #ifndef CHECKUTIL_H
 #define CHECKUTIL_H
 
-/*  Map information. 
+/*  Map information.
     Depending on the specific functions used various
     fields here are either used or ignored.
-    
+
 */
 typedef struct {
     Dwarf_Bool bFlag;   /* General flag */
@@ -42,14 +42,14 @@ typedef struct {
     Dwarf_Addr high;    /* Used for High PC */
 } Bucket_Data;
 
-/*  This groups Bucket_Data records into 
+/*  This groups Bucket_Data records into
     a 'bucket' so that a single malloc creates
     BUCKET_SIZE entries.  The intent is to reduce
     overhead (as compared to having next/previous
     pointers in each Bucket_Data and mallocing
     each Bucket_Data individually.
 */
-   
+
 #define BUCKET_SIZE 2040
 typedef struct bucket {
     int nEntries;

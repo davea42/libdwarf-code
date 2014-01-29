@@ -1,4 +1,4 @@
-/* 
+/*
   Copyright (C) 2011-2012 David Anderson. All Rights Reserved.
   Portions Copyright 2012 SN Systems Ltd. All rights reserved.
 
@@ -37,7 +37,7 @@ using std::cerr;
 using std::endl;
 
 
-bool 
+bool
 AddressRangesData::IsAddressInAddressRange(Dwarf_Unsigned pc)
 {
     if (pc < low_pc_) {
@@ -58,7 +58,7 @@ AddressRangesData::IsAddressInAddressRange(Dwarf_Unsigned pc)
 }
 
 void
-AddressRangeEntry::printAddressRangeEntry(unsigned ct) 
+AddressRangeEntry::printAddressRangeEntry(unsigned ct)
 {
     cout <<"[" << IToDec(ct,6) << "] Low = " <<
         IToHex(range_low_pc_, 10 ) <<
@@ -67,7 +67,7 @@ AddressRangeEntry::printAddressRangeEntry(unsigned ct)
 };
 
 // Leave overall high/low as is, delete the details.
-void 
+void
 AddressRangesData::ResetRangesList()
 {
     address_range_data_.clear();
@@ -75,7 +75,7 @@ AddressRangesData::ResetRangesList()
 
 // We might want to sort these by low-address rather than printing
 // in random order!
-void 
+void
 AddressRangesData::PrintRangesData()
 {
     unsigned ct  = 0;
@@ -83,14 +83,14 @@ AddressRangesData::PrintRangesData()
         IToHex(low_pc_,10) <<
         "  High = " <<
         IToHex(high_pc_,10);
-    for (std::list<AddressRangeEntry>::iterator it = 
+    for (std::list<AddressRangeEntry>::iterator it =
         address_range_data_.begin(); it != address_range_data_.end();
         ++it,++ct) {
         it->printAddressRangeEntry(ct);
     }
 }
-void 
-AddressRangesData::AddAddressRange(Dwarf_Unsigned low_pc, Dwarf_Unsigned high_pc) 
+void
+AddressRangesData::AddAddressRange(Dwarf_Unsigned low_pc, Dwarf_Unsigned high_pc)
 {
     // Presently we are not checking for duplicates, so some
     // can be present.
@@ -99,7 +99,7 @@ AddressRangesData::AddAddressRange(Dwarf_Unsigned low_pc, Dwarf_Unsigned high_pc
 
 // This only does something with a meaningful range.
 // Something like 0,0 (for example) is ignored.
-void 
+void
 AddressRangesData::SetLimitsAddressRange(Dwarf_Unsigned low_pc, Dwarf_Unsigned high_pc)
 {
     if (low_pc < high_pc) {
@@ -109,12 +109,12 @@ AddressRangesData::SetLimitsAddressRange(Dwarf_Unsigned low_pc, Dwarf_Unsigned h
 };
 
 void
-LinkOnceEntry::printLinkOnceEntry(unsigned ct) 
+LinkOnceEntry::printLinkOnceEntry(unsigned ct)
 {
     cout <<"[" << IToDec(ct,6) << "] Low = " <<
         IToHex(lo_section_low_pc_, 10 ) <<
         ", High =  " <<
-        IToHex(lo_section_high_pc_, 10) << 
+        IToHex(lo_section_high_pc_, 10) <<
         ",  section index = " <<
         lo_section_index_ <<
         ",  section = " <<
@@ -125,7 +125,7 @@ void
 LinkOnceData::PrintLinkOnceData()
 {
     unsigned ct = 0;
-    for (std::list<LinkOnceEntry>::iterator it = 
+    for (std::list<LinkOnceEntry>::iterator it =
         link_once_data_.begin(); it != link_once_data_.end();
         ++it,++ct) {
 

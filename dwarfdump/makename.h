@@ -1,6 +1,6 @@
 #ifndef names_h
 #define names_h
-/* 
+/*
     Copyright (C) 2000,2004 Silicon Graphics, Inc.  All Rights Reserved.
     Portions Copyright 2011 David Anderson. All Rights Reserved.
 
@@ -33,7 +33,7 @@
     http://oss.sgi.com/projects/GenInfo/NoticeExplan
 */
 
-/*  makename.h   
+/*  makename.h
     $Revision: 1.3 $
     $Date: 2004/10/28 22:26:58 $
 

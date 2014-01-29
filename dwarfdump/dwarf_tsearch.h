@@ -32,14 +32,14 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 /*  The following interfaces follow tsearch (See the Single
     Unix Specification) but the implementation is
-    written without reference to the source  code 
+    written without reference to the source  code
     of any version of tsearch. Only uses
-    of tsearch were examined, not tsearch source code. 
+    of tsearch were examined, not tsearch source code.
 
     See http://reality.sgiweb.org/davea/tsearch.html
     for information about tsearch.
 
-    We are matching the standard functional 
+    We are matching the standard functional
     interface here, but to avoid interfering with
     libc implementations or code using libc
     implementations, we change all the names.
@@ -58,7 +58,7 @@ typedef enum
 }
 DW_VISIT;
 
-/* void * return values are actually 
+/* void * return values are actually
    void **key so you must dereference these
    once to get a key you passed in.
 
@@ -83,26 +83,26 @@ void *dwarf_tfind(const void * /*key*/, void *const * /*rootp*/,
 void *dwarf_tdelete(const void * /*key*/, void ** /*rootp*/,
     int (* /*compar*/)(const void *, const void *));
 
-void dwarf_twalk(const void * /*root*/, 
+void dwarf_twalk(const void * /*root*/,
     void (* /*action*/)(const void * /*nodep*/,
     const DW_VISIT  /*which*/,
     const int  /*depth*/));
 
 /* dwarf_tdestroy() cannot set the root pointer NULL, you must do
    so on return from dwarf_tdestroy(). */
-void dwarf_tdestroy(void * /*root*/, 
+void dwarf_tdestroy(void * /*root*/,
     void (* /*free_node*/)(void * /*nodep*/));
 
 
 /*  Prints  a simple tree representation to stdout. For debugging.
 */
-void dwarf_tdump(const void*root, 
+void dwarf_tdump(const void*root,
     char *(* /*keyprint*/)(const void *),
     const char *msg);
 
 /* Returns NULL  and does nothing
    unless the implemenation used uses a hash tree. */
-void * dwarf_initialize_search_hash( void **treeptr, 
+void * dwarf_initialize_search_hash( void **treeptr,
     unsigned long(*hashfunc)(const void *key),
     unsigned long size_estimate);
 

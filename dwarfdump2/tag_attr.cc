@@ -1,4 +1,4 @@
-/* 
+/*
   Copyright (C) 2000-2005 Silicon Graphics, Inc.  All Rights Reserved.
   Portions Copyright (C) 2009-2012 SN Systems Ltd. All Rights Reserved.
   Portions Copyright (C) 2009-2012 David Anderson. All Rights Reserved.
@@ -51,7 +51,7 @@ using std::endl;
 
 bool ellipsis = true; /* So we can use naming.cc */
 
-/* Expected input format 
+/* Expected input format
 
 0xffffffff
 value of a tag
@@ -154,7 +154,7 @@ main(int argc, char **argv)
         print_usage_message(argv[0],usage);
         exit(FAILED);
     }
-    if ((standard_flag && extended_flag) || 
+    if ((standard_flag && extended_flag) ||
         (!standard_flag && !extended_flag)) {
         cerr << "Invalid table type" << endl;
         cerr << "Choose -e  or -s ." << endl;
@@ -220,10 +220,10 @@ main(int argc, char **argv)
             } else {
                 if (curcol >= table_columns) {
                     bad_line_input("too many attributes: table incomplete.");
-                } 
+                }
                 tag_attr_combination_table[current_row][curcol] = num;
                 curcol++;
-                
+
             }
             input_eof = read_value(&num,fileInp);
             if (IS_EOF == input_eof) {
@@ -255,10 +255,10 @@ main(int argc, char **argv)
         bool printonerr = false;
         if (standard_flag) {
             fprintf(fileOut,"/* %d %-37s*/\n",i,
-                get_TAG_name(i,printonerr).c_str()); 
+                get_TAG_name(i,printonerr).c_str());
         } else {
             fprintf(fileOut,"/* %u %-37s*/\n",
-                tag_attr_combination_table[i][0], 
+                tag_attr_combination_table[i][0],
                 get_TAG_name(
                     tag_attr_combination_table[i][0],printonerr).c_str());
         }

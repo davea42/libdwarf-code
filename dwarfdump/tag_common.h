@@ -1,4 +1,4 @@
-/* 
+/*
   Copyright (C) 2000-2010 Silicon Graphics, Inc.  All Rights Reserved.
   Portions Copyright (C) 2009-2010 SN Systems Ltd. All Rights Reserved.
   Portions Copyright (C) 2009-2011 David Anderson. All Rights Reserved.
@@ -61,7 +61,7 @@ No blank lines or commentary allowed, no symbols, just numbers.
 
 */
 
-/* TAG_ATTR.LIST Expected input format 
+/* TAG_ATTR.LIST Expected input format
 
 0xffffffff
 value of a tag
@@ -97,7 +97,7 @@ No blank lines or commentary allowed, no symbols, just numbers.
 
 /*  Number of attributes columns per tag. The array is bit fields,
     BITS_PER_WORD fields per word. Dense and quick to inspect */
-#define COUNT_ATTRIBUTE_STD 7 
+#define COUNT_ATTRIBUTE_STD 7
 
 #define STD_ATTR_TABLE_ROWS STD_TAG_TABLE_ROWS
 #define  STD_ATTR_TABLE_COLUMNS  7

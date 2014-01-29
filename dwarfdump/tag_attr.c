@@ -1,4 +1,4 @@
-/* 
+/*
   Copyright (C) 2000-2005 Silicon Graphics, Inc.  All Rights Reserved.
   Portions Copyright (C) 2009-2012 SN Systems Ltd. All Rights Reserved.
   Portions Copyright (C) 2009-2012 David Anderson. All Rights Reserved.
@@ -39,7 +39,7 @@ $Header: /plroot/cmplrs.src/v7.4.5m/.RCS/PL/dwarfdump/RCS/tag_attr.c,v 1.8 2005/
 #include <getopt.h>
 #include <stdlib.h>             /* For exit() declaration etc. */
 #include <errno.h>              /* For errno declaration. */
-#include <unistd.h>             /* For getopt. */  
+#include <unistd.h>             /* For getopt. */
 
 #include "globals.h"
 #include "libdwarf.h"
@@ -48,7 +48,7 @@ $Header: /plroot/cmplrs.src/v7.4.5m/.RCS/PL/dwarfdump/RCS/tag_attr.c,v 1.8 2005/
 
 boolean ellipsis = FALSE; /* So we can use dwarf_names.c */
 
-/* Expected input format 
+/* Expected input format
 
 0xffffffff
 value of a tag
@@ -163,10 +163,10 @@ main(int argc, char **argv)
         print_usage_message(argv[0],usage);
         exit(FAILED);
     }
-    if ((standard_flag && extended_flag) || 
+    if ((standard_flag && extended_flag) ||
         (!standard_flag && !extended_flag)) {
         fprintf(stderr,"Invalid table type\n");
-        fprintf(stderr,"Choose -e  or -s .\n"); 
+        fprintf(stderr,"Choose -e  or -s .\n");
         print_usage_message(argv[0],usage);
         exit(FAILED);
     }
@@ -225,10 +225,10 @@ main(int argc, char **argv)
             } else {
                 if (curcol >= table_columns) {
                     bad_line_input("too many attributes: table incomplete.");
-                } 
+                }
                 tag_attr_combination_table[current_row][curcol] = num;
                 curcol++;
-                
+
             }
             input_eof = read_value(&num,fileInp);
             if (IS_EOF == input_eof) {
@@ -262,10 +262,10 @@ main(int argc, char **argv)
         const char *name = 0;
         if (standard_flag) {
             dwarf_get_TAG_name(u,&name);
-            fprintf(fileOut,"/* %u %-37s*/\n",u,name); 
+            fprintf(fileOut,"/* %u %-37s*/\n",u,name);
         } else {
             unsigned k = tag_attr_combination_table[u][0];
-            dwarf_get_TAG_name(k,&name);           
+            dwarf_get_TAG_name(k,&name);
             fprintf(fileOut,"/* %u %-37s*/\n",k,name);
         }
         fprintf(fileOut,"    { ");

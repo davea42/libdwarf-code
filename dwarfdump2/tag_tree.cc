@@ -1,4 +1,4 @@
-/* 
+/*
   Copyright (C) 2000-2005 Silicon Graphics, Inc.  All Rights Reserved.
   Portions Copyright 2009-2012 SN Systems Ltd. All rights reserved.
   Portions Copyright 2009-2012 David Anderson. All rights reserved.
@@ -137,7 +137,7 @@ main(int argc, char **argv)
     }
     FILE *fileInp = fopen(input_name.c_str(),"r");
     if (!fileInp) {
-        cerr << "Invalid input filename, could not open '" << 
+        cerr << "Invalid input filename, could not open '" <<
             input_name << "'" << endl;
         print_usage_message(argv[0],usage);
         exit(FAILED);
@@ -210,7 +210,7 @@ main(int argc, char **argv)
             if (standard_flag) {
                 unsigned idx = num / BITS_PER_WORD;
                 unsigned bit = num % BITS_PER_WORD;
-    
+
                 if (idx >= table_columns) {
                     cout << "Want column " << idx << ", have only " <<
                         table_columns << endl;
@@ -254,7 +254,7 @@ main(int argc, char **argv)
     for (unsigned i = 0; i < table_rows; i++) {
         bool printonerr=false;
         if (standard_flag) {
-            fprintf(fileOut,"/* %d %-37s*/\n",i, 
+            fprintf(fileOut,"/* %d %-37s*/\n",i,
                 get_TAG_name(i,printonerr).c_str());
         } else {
             fprintf(fileOut,"/* %u %-37s*/\n",

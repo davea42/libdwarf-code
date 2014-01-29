@@ -1,4 +1,4 @@
-/* 
+/*
   Copyright (C) 2000-2006 Silicon Graphics, Inc.  All Rights Reserved.
   Portions Copyright 2007-2010 Sun Microsystems, Inc. All rights reserved.
   Portions Copyright 2009-2011 SN Systems Ltd. All rights reserved.
@@ -36,8 +36,8 @@
 
 $Header: /plroot/cmplrs.src/v7.4.5m/.RCS/PL/dwarfdump/RCS/print_sections.c,v 1.69 2006/04/17 00:09:56 davea Exp $ */
 /*  The address of the Free Software Foundation is
-    Free Software Foundation, Inc., 51 Franklin St, Fifth Floor, 
-    Boston, MA 02110-1301, USA.  
+    Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
+    Boston, MA 02110-1301, USA.
     SGI has moved from the Crittenden Lane address.
 */
 
@@ -67,18 +67,18 @@ print_one_macro_entry_detail(long i,
 {
     /* "DW_MACINFO_*: section-offset file-index [line] string\n" */
     if (mdp->dmd_macro) {
-        printf("%3ld %s: %6" DW_PR_DUu " %2" DW_PR_DSd " [%4" 
+        printf("%3ld %s: %6" DW_PR_DUu " %2" DW_PR_DSd " [%4"
             DW_PR_DSd "] \"%s\" \n",
             i,
             type,
             (Dwarf_Unsigned)mdp->dmd_offset,
             mdp->dmd_fileindex, mdp->dmd_lineno, mdp->dmd_macro);
     } else {
-        printf("%3ld %s: %6" DW_PR_DUu " %2" DW_PR_DSd " [%4" 
+        printf("%3ld %s: %6" DW_PR_DUu " %2" DW_PR_DSd " [%4"
             DW_PR_DSd "] 0\n",
             i,
             type,
-            (Dwarf_Unsigned)mdp->dmd_offset, 
+            (Dwarf_Unsigned)mdp->dmd_offset,
             mdp->dmd_fileindex, mdp->dmd_lineno);
     }
 
@@ -151,7 +151,7 @@ print_macinfo(Dwarf_Debug dbg)
     if (!do_print_dwarf) {
         return;
     }
-  
+
     printf("\n.debug_macinfo\n");
 
     while ((lres = dwarf_get_macro_details(dbg, offset,

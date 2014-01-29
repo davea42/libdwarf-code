@@ -1,4 +1,4 @@
-/* 
+/*
   Copyright (C) 2000-2005 Silicon Graphics, Inc.  All Rights Reserved.
   Portions Copyright (C) 2009-2012 SN Systems Ltd. All Rights Reserved.
   Portions Copyright (C) 2009-2012 David Anderson. All Rights Reserved.
@@ -41,7 +41,7 @@ $Header: /plroot/cmplrs.src/v7.4.5m/.RCS/PL/dwarfdump/RCS/tag_common.c,v 1.8 200
 
 #include "globals.h"
 #include "naming.h"
-#include "tag_common.h" 
+#include "tag_common.h"
 
 static int linecount = 0;
 static char line_in[MAX_LINE_SIZE];
@@ -86,9 +86,9 @@ is_skippable_line(char *pLine)
     return empty;
 }
 
-/*  Reads a value from the text table. 
-    Exits  with non-zero status 
-    if the table is erroneous in some way. 
+/*  Reads a value from the text table.
+    Exits  with non-zero status
+    if the table is erroneous in some way.
 */
 int
 read_value(unsigned int *outval, FILE*file)
@@ -96,7 +96,7 @@ read_value(unsigned int *outval, FILE*file)
     char *res = 0;
     unsigned long lval;
     char *strout = 0;
-    boolean bBlankLine = TRUE; 
+    boolean bBlankLine = TRUE;
 
     ++linecount;
     *outval = 0;

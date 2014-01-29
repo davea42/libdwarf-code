@@ -1,4 +1,4 @@
-/* 
+/*
   Copyright (C) 2000-2005 Silicon Graphics, Inc.  All Rights Reserved.
   Portions Copyright (C) 2007-2012 David Anderson. All Rights Reserved.
   Portions Copyright (C) 2011-2012 SN Systems Ltd. All Rights Reserved.
@@ -69,7 +69,7 @@ $Header: /plroot/cmplrs.src/v7.4.5m/.RCS/PL/dwarfdump/RCS/globals.h,v 1.25 2006/
 
 #if (!defined(HAVE___UINT32_T)) && defined(HAVE_SYS_TYPES_H) && defined(HAVE___UINT32_T_IN_SYS_TYPES_H)
 #  include <sys/types.h>
-/*  We assume __[u]int32_t and __[u]int64_t defined 
+/*  We assume __[u]int32_t and __[u]int64_t defined
     since __uint32_t defined in the sys/types.h in use */
 #define HAVE___UINT32_T 1
 #define HAVE___UINT64_T 1
@@ -93,10 +93,10 @@ typedef unsigned long long  __uint64_t;
 #include <iostream>
 #include <sstream> // For IToDec
 #include <iomanip> // For setw
-#include <list> 
-#include <map> 
-#include <vector> 
-#include <set> 
+#include <list>
+#include <map>
+#include <vector>
+#include <set>
 #include <string.h>
 #ifdef HAVE_ELF_H
 #include <elf.h>
@@ -149,11 +149,11 @@ extern bool record_dwarf_error;  /* A test has failed, this
 // Compilation Unit information for improved error messages.
 struct Error_Message_Data {
     Error_Message_Data():
-        seen_PU(false), 
+        seen_PU(false),
         seen_CU(false),
-        need_CU_name(false), 
-        need_CU_base_address(false), 
-        need_CU_high_address(false), 
+        need_CU_name(false),
+        need_CU_base_address(false),
+        need_CU_high_address(false),
         need_PU_valid_code(false),
         seen_PU_base_address(false),
         seen_PU_high_address(false),
@@ -173,30 +173,30 @@ struct Error_Message_Data {
     std::string PU_name;
     std::string CU_name;
     std::string CU_producer;
-    bool seen_PU;              // Detected a PU. 
-    bool seen_CU;              // Detected a CU. 
-    bool need_CU_name;          
+    bool seen_PU;              // Detected a PU.
+    bool seen_CU;              // Detected a CU.
+    bool need_CU_name;
     bool need_CU_base_address; // Need CU Base address.
     bool need_CU_high_address; // Need CU High address.
-    bool need_PU_valid_code;   // Need PU valid code. 
-    
-    bool seen_PU_base_address; // Detected a Base address for PU 
-    bool seen_PU_high_address; // Detected a High address for PU 
-    Dwarf_Addr PU_base_address;// PU Base address 
-    Dwarf_Addr PU_high_address;// PU High address 
-    
-    Dwarf_Off  DIE_offset;     // DIE offset in compile unit. 
-    Dwarf_Off  DIE_overall_offset;  // DIE offset in .debug_info. 
-    
-    Dwarf_Off  DIE_CU_offset;  // CU DIE offset in compile unit 
-    Dwarf_Off  DIE_CU_overall_offset; // CU DIE offset in .debug_info 
-    int current_section_id;    // Section being process. 
-    
-    Dwarf_Addr CU_base_address;// CU Base address. 
-    Dwarf_Addr CU_high_address;// CU High address. 
-    
-    Dwarf_Addr elf_max_address;// Largest representable  address offset. 
-    Dwarf_Half elf_address_size;// Target pointer size. 
+    bool need_PU_valid_code;   // Need PU valid code.
+
+    bool seen_PU_base_address; // Detected a Base address for PU
+    bool seen_PU_high_address; // Detected a High address for PU
+    Dwarf_Addr PU_base_address;// PU Base address
+    Dwarf_Addr PU_high_address;// PU High address
+
+    Dwarf_Off  DIE_offset;     // DIE offset in compile unit.
+    Dwarf_Off  DIE_overall_offset;  // DIE offset in .debug_info.
+
+    Dwarf_Off  DIE_CU_offset;  // CU DIE offset in compile unit
+    Dwarf_Off  DIE_CU_overall_offset; // CU DIE offset in .debug_info
+    int current_section_id;    // Section being process.
+
+    Dwarf_Addr CU_base_address;// CU Base address.
+    Dwarf_Addr CU_high_address;// CU High address.
+
+    Dwarf_Addr elf_max_address;// Largest representable  address offset.
+    Dwarf_Half elf_address_size;// Target pointer size.
 };
 extern struct Error_Message_Data error_message_data;
 
@@ -205,7 +205,7 @@ extern bool display_parent_tree;
 extern bool display_children_tree;
 extern int stop_indent_level;
 
-//  Print search results when in wide format. 
+//  Print search results when in wide format.
 extern bool search_wide_format;
 extern bool search_is_on;
 
@@ -223,7 +223,7 @@ extern regex_t search_re;
 #endif
 extern bool is_strstrnocase(const char *data, const char *pattern);
 
-// Options to enable debug tracing. 
+// Options to enable debug tracing.
 #define MAX_TRACE_LEVEL 10
 extern int nTrace[MAX_TRACE_LEVEL + 1];
 #define DUMP_OPTIONS                0 // Dump options.
@@ -288,12 +288,12 @@ extern int break_after_n_units;
 extern bool check_names;          // Check for invalid names.
 extern bool check_verbose_mode;   // During '-k' mode, display errors.
 extern bool check_frames;         // Frames check.
-extern bool check_frames_extended;// Extensive frames check. 
+extern bool check_frames_extended;// Extensive frames check.
 extern bool check_locations;      // Location list check.
 
 
-// Check categories corresponding to the -k option 
-enum Dwarf_Check_Categories{ // Dwarf_Check_Categories 
+// Check categories corresponding to the -k option
+enum Dwarf_Check_Categories{ // Dwarf_Check_Categories
     abbrev_code_result, // 0
     pubname_attr_result,
     reloc_offset_result,
@@ -310,9 +310,9 @@ enum Dwarf_Check_Categories{ // Dwarf_Check_Categories
     //  are reported and otherwise ignored.  It is difficult to report
     //  the error when the error is noticed by libdwarf, the error
     //  is reported at a later time.
-    //  The other errors dwarfdump reports are also generally harmless 
+    //  The other errors dwarfdump reports are also generally harmless
     //  but are detected by dwarfdump so it's possble to report the
-    //  error as soon as the error is discovered. 
+    //  error as soon as the error is discovered.
     harmless_result,   //10
     fde_duplication,
     frames_result,
@@ -333,7 +333,7 @@ extern bool info_flag;
 extern bool line_flag;
 extern bool line_print_pc;        /* Print <pc> addresses. */
 extern bool use_old_dwarf_loclist;
-extern bool producer_children_flag;   // List of CUs per compiler 
+extern bool producer_children_flag;   // List of CUs per compiler
 
 extern std::string cu_name;
 extern bool cu_name_flag;
@@ -341,7 +341,7 @@ extern Dwarf_Unsigned cu_offset;
 extern Dwarf_Off fde_offset_for_cu_low;
 extern Dwarf_Off fde_offset_for_cu_high;
 
-/*  Process TAGs for checking mode and reset pRangesInfo table 
+/*  Process TAGs for checking mode and reset pRangesInfo table
     if appropriate. */
 extern void tag_specific_checks_setup(Dwarf_Half val,int die_indent_level);
 
@@ -412,8 +412,8 @@ extern void add_cu_name_compiler_target(const std::string &name);
 
 
 /*  General error reporting routines. These were
-    macros for a short time and when changed into functions 
-    they kept (for now) their capitalization. 
+    macros for a short time and when changed into functions
+    they kept (for now) their capitalization.
     The capitalization will likely change. */
 extern void PRINT_CU_INFO();
 extern void DWARF_CHECK_COUNT(Dwarf_Check_Categories category, int inc);
@@ -422,11 +422,11 @@ extern void DWARF_CHECK_ERROR_PRINT_CU();
 extern void DWARF_CHECK_ERROR(Dwarf_Check_Categories category,
     const std::string &str);
 extern void DWARF_CHECK_ERROR2(Dwarf_Check_Categories category,
-    const std::string &str1, 
+    const std::string &str1,
     const std::string &str2);
 extern void DWARF_CHECK_ERROR3(Dwarf_Check_Categories category,
-    const std::string & str1, 
-    const std::string & str2, 
+    const std::string & str1,
+    const std::string & str2,
     const std::string & strexpl);
 
 
@@ -507,7 +507,7 @@ void print_attributes_encoding(Dwarf_Debug dbg);
 #define DW_HDR_DEFAULT        0x00000fff
 
 template <typename T >
-std::string IToDec(T v,unsigned l=0) 
+std::string IToDec(T v,unsigned l=0)
 {
     std::ostringstream s;
     if (l > 0) {
@@ -518,7 +518,7 @@ std::string IToDec(T v,unsigned l=0)
     return s.str();
 };
 template <typename T >
-std::string IToHex(T v,unsigned l=0) 
+std::string IToHex(T v,unsigned l=0)
 {
     if (v == 0) {
         // For a zero value, above does not insert 0x.
@@ -530,8 +530,8 @@ std::string IToHex(T v,unsigned l=0)
         return out;
     }
     std::ostringstream s;
-    s.setf(std::ios::hex,std::ios::basefield); 
-    s.setf(std::ios::showbase); 
+    s.setf(std::ios::hex,std::ios::basefield);
+    s.setf(std::ios::showbase);
     if (l > 0) {
         s << std::setw(l);
     }
@@ -543,7 +543,7 @@ inline std::string IToHex02(unsigned v)
 {
     std::ostringstream s;
     // NO showbase here.
-    s.setf(std::ios::hex,std::ios::basefield); 
+    s.setf(std::ios::hex,std::ios::basefield);
     s << std::setfill('0');
     s << std::setw(2) << (0xff & v);
     return s.str();
@@ -552,8 +552,8 @@ template <typename T>
 std::string IToHex0N(T v,unsigned len=0)
 {
     std::ostringstream s;
-    s.setf(std::ios::hex,std::ios::basefield); 
-    //s.setf(std::ios::showbase); 
+    s.setf(std::ios::hex,std::ios::basefield);
+    //s.setf(std::ios::showbase);
     s << std::setfill('0');
     if (len > 2 ) {
         s << std::setw(len-2) << v;
@@ -567,14 +567,14 @@ std::string IToDec0N(T v,unsigned len=0)
 {
     std::ostringstream s;
     if (v < 0 && len > 2 ) {
-        // Special handling for negatives: 
+        // Special handling for negatives:
         // 000-27 is not what we want for example.
-        s << v; 
+        s << v;
         // ASSERT: s.str().size() >= 1
         if (len > ((s.str().size()))) {
             // Ignore the leading - and take the rest.
             std::string rest = s.str().substr(1);
-            std::string::size_type zeroscount = len - (rest.size()+1); 
+            std::string::size_type zeroscount = len - (rest.size()+1);
             std::string final;
             if (zeroscount > 0) {
                 final.append(zeroscount,'0');
@@ -583,7 +583,7 @@ std::string IToDec0N(T v,unsigned len=0)
                 final = rest;
             }
             return std::string("-") + final;
-        } 
+        }
         return s.str();
     }
     s << std::setfill('0');
@@ -600,19 +600,19 @@ inline std::string LeftAlign(unsigned minlen,const std::string &s)
         return s;
     }
     std::string out = s;
-    std::string::size_type spaces = minlen - out.size(); 
+    std::string::size_type spaces = minlen - out.size();
     out.append(spaces,' ');
     return out;
 }
 
-inline std::string SpaceSurround(const std::string &s) 
+inline std::string SpaceSurround(const std::string &s)
 {
     std::string out(" ");
     out.append(s);
     out.append(" ");
     return out;
 };
-inline std::string BracketSurround(const std::string &s) 
+inline std::string BracketSurround(const std::string &s)
 {
     std::string out("<");
     out.append(s);

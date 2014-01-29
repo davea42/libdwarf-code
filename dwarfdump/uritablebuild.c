@@ -1,4 +1,4 @@
-/* 
+/*
     Copyright 2011 David Anderson. All rights reserved.
 
     This program is free software; you can redistribute it and/or modify it
@@ -32,8 +32,8 @@
 */
 
 /*  The address of the Free Software Foundation is
-    Free Software Foundation, Inc., 51 Franklin St, Fifth Floor, 
-    Boston, MA 02110-1301, USA.  
+    Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
+    Boston, MA 02110-1301, USA.
     SGI has moved from the Crittenden Lane address.
 */
 
@@ -44,12 +44,12 @@
    Ones one does not want to appear in output.
 
    It's a bit arbitrary in that we allow lots of shell-interpreted
-   characters through, and most characters generally. 
+   characters through, and most characters generally.
 
    But not control characters or single or double quotes.
    The quotes would be particularly problematic for post-processing
    dwarfdump output sensibly.
-   
+
 */
 static void
 print_entry(int c)
@@ -132,7 +132,7 @@ print_entry(int c)
 }
 
 
-int 
+int
 main()
 {
     int i = 0;

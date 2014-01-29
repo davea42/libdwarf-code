@@ -32,7 +32,7 @@
 
 */
 /* The address of the Free Software Foundation is
-   Free Software Foundation, Inc., 51 Franklin St, Fifth Floor, 
+   Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
    Boston, MA 02110-1301, USA.  */
 
 
@@ -73,7 +73,7 @@ is_strstrnocase(const char * container, const char * contained)
     {
         const unsigned char * cntnd = (const unsigned char *)contained;
         boolean innerwrong = TRUE;
-        for (; *cntnd; ++cntnd,++ct) 
+        for (; *cntnd; ++cntnd,++ct)
         {
             char lct = tolower(*ct);
             char tlc = tolower(*cntnd);

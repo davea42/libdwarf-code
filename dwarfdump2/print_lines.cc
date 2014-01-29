@@ -1,4 +1,4 @@
-/* 
+/*
   Copyright (C) 2000-2006 Silicon Graphics, Inc.  All Rights Reserved.
   Portions Copyright 2007-2010 Sun Microsystems, Inc. All rights reserved.
   Portions Copyright 2009-2012 SN Systems Ltd. All rights reserved.
@@ -36,8 +36,8 @@
 
 $Header: /plroot/cmplrs.src/v7.4.5m/.RCS/PL/dwarfdump/RCS/print_sections.c,v 1.69 2006/04/17 00:09:56 davea Exp $ */
 /*  The address of the Free Software Foundation is
-    Free Software Foundation, Inc., 51 Franklin St, Fifth Floor, 
-    Boston, MA 02110-1301, USA.  
+    Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
+    Boston, MA 02110-1301, USA.
     SGI has moved from the Crittenden Lane address.
 */
 
@@ -74,12 +74,12 @@ static void
 record_line_error(const std::string &where, Dwarf_Error err)
 {
     if (check_lines && checking_this_compiler()) {
-        string msg("Error getting line details calling "); 
+        string msg("Error getting line details calling ");
         msg.append(where);
         msg.append(" dwarf error is ");
-        
+
         const char *estring = dwarf_errmsg(err);
-    
+
         msg.append(estring);
         DWARF_CHECK_ERROR(lines_result,msg);
     }
@@ -110,7 +110,7 @@ print_line_numbers_this_cu(DieHolder & hcudie)
         print_source_intro(cu_die);
         SrcfilesHolder hsrcfiles;
         DieVec dieVec;
-        print_one_die(hcudie, 
+        print_one_die(hcudie,
             /* print_information= */ 1,
             /* indent_level= */ 0,
             dieVec,
@@ -184,7 +184,7 @@ print_line_numbers_this_cu(DieHolder & hcudie)
                 "[row,col] NS BB ET PE EB IS= DI= uri: \"filepath\""
                 << endl;
         }
-        string lastsrc = ""; 
+        string lastsrc = "";
         for (Dwarf_Signed i = 0; i < linecount; i++) {
             Dwarf_Line line = linebuf[i];
             char *filenamearg = 0;
@@ -200,7 +200,7 @@ print_line_numbers_this_cu(DieHolder & hcudie)
                     if (ares1 == DW_DLV_OK && has_is_addr_set) {
                         SkipRecord = false;
                     } else {
-                        /*  Keep ignoring records until we have 
+                        /*  Keep ignoring records until we have
                             one with 'is_addr_set' */
                         continue;
                     }
@@ -268,13 +268,13 @@ print_line_numbers_this_cu(DieHolder & hcudie)
                     if (pAddressRangesData->IsAddressInAddressRange(pc)) {
                         /* Valid values; do nothing */
                     } else {
-                        /*  At this point may be we are dealing with 
-                            a linkonce symbol. The problem we have here 
+                        /*  At this point may be we are dealing with
+                            a linkonce symbol. The problem we have here
                             is we have consumed the deug_info section
-                            and we are dealing just with the records 
-                            from the .debug_line, so no PU_name is 
+                            and we are dealing just with the records
+                            from the .debug_line, so no PU_name is
                             available and no high_pc. Traverse the linkonce
-                            table if try to match the pc value with 
+                            table if try to match the pc value with
                             one of those ranges.
                         */
                         if (check_lines && checking_this_compiler()) {
@@ -283,9 +283,9 @@ print_line_numbers_this_cu(DieHolder & hcudie)
                         if (pLinkOnceData->FindLinkOnceEntry(pc)){
                             /* Valid values; do nothing */
                         } else {
-                            /*  The SN Systems Linker generates 
-                                line records 
-                                with addr=0, when dealing with linkonce 
+                            /*  The SN Systems Linker generates
+                                line records
+                                with addr=0, when dealing with linkonce
                                 symbols and no stripping */
                             if (pc) {
                                 char addr_tmp[100];
@@ -302,33 +302,33 @@ print_line_numbers_this_cu(DieHolder & hcudie)
                             }
                         }
                     }
-                    /*  Check the last record for the .debug_line, 
-                        the one created by DW_LNE_end_sequence, 
+                    /*  Check the last record for the .debug_line,
+                        the one created by DW_LNE_end_sequence,
                         is the same as the high_pc
-                        address for the last known user program 
+                        address for the last known user program
                         unit (PU) */
                     if ((i + 1 == linecount) &&
                         error_message_data.seen_PU_high_address) {
-                        /*  Ignore those PU that have been stripped 
-                            by the linker; their low_pc values are 
+                        /*  Ignore those PU that have been stripped
+                            by the linker; their low_pc values are
                             set to -1 (snc linker only) */
                         /*  It is perfectly sensible for a compiler
                             to leave a few bytes of NOP or other stuff
                             after the last instruction in a subprogram,
                             for cache-alignment or other purposes, so
-                            a mismatch here is not necessarily 
+                            a mismatch here is not necessarily
                             an error.  */
-                           
+
                         if (check_lines && checking_this_compiler()) {
                             DWARF_CHECK_COUNT(lines_result,1);
-                            if ((pc != error_message_data.PU_high_address) && 
-                                (error_message_data.PU_base_address != 
+                            if ((pc != error_message_data.PU_high_address) &&
+                                (error_message_data.PU_base_address !=
                                     error_message_data.elf_max_address)) {
                                 char addr_tmp[100];
                                 snprintf(addr_tmp,sizeof(addr_tmp),
                                     ".debug_line: Address"
                                     " 0x%" DW_PR_XZEROS DW_PR_DUx
-                                    " may be incorrect" 
+                                    " may be incorrect"
                                     " as DW_LNE_end_sequence address",pc);
                                 DWARF_CHECK_ERROR(lines_result,
                                     addr_tmp);
@@ -354,7 +354,7 @@ print_line_numbers_this_cu(DieHolder & hcudie)
                         PRINT_CU_INFO();
                     }
                 }
-                record_dwarf_error = false; 
+                record_dwarf_error = false;
                 /* Due to a fatal error, skip current record */
                 if (found_line_error) {
                     continue;
@@ -400,7 +400,7 @@ print_line_numbers_this_cu(DieHolder & hcudie)
             } else if (nsres == DW_DLV_ERROR) {
                 print_error(dbg, "lineblock failed", nsres, err);
             }
-            if (do_print_dwarf) { 
+            if (do_print_dwarf) {
                 Dwarf_Bool prologue_end = 0;
                 Dwarf_Bool epilogue_begin = 0;
                 Dwarf_Unsigned isa = 0;
@@ -409,7 +409,7 @@ print_line_numbers_this_cu(DieHolder & hcudie)
                     &prologue_end,&epilogue_begin,
                     &isa,&discriminator,&err);
                 if (disres == DW_DLV_ERROR) {
-                    print_error(dbg, "dwarf_prologue_end_etc() failed", 
+                    print_error(dbg, "dwarf_prologue_end_etc() failed",
                         disres, err);
                 }
                 if (prologue_end) {

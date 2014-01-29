@@ -1,4 +1,4 @@
-/* 
+/*
   Copyright (C) 2000-2006 Silicon Graphics, Inc.  All Rights Reserved.
   Portions Copyright 2007-2010 Sun Microsystems, Inc. All rights reserved.
   Portions Copyright 2009-2010 SN Systems Ltd. All rights reserved.
@@ -36,8 +36,8 @@
 
 $Header: /plroot/cmplrs.src/v7.4.5m/.RCS/PL/dwarfdump/RCS/print_sections.c,v 1.69 2006/04/17 00:09:56 davea Exp $ */
 /*  The address of the Free Software Foundation is
-    Free Software Foundation, Inc., 51 Franklin St, Fifth Floor, 
-    Boston, MA 02110-1301, USA.  
+    Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
+    Boston, MA 02110-1301, USA.
     SGI has moved from the Crittenden Lane address.
 */
 
@@ -139,7 +139,7 @@ print_pubname_style_entry(Dwarf_Debug dbg,
         cout << ", die-in-cu " <<  IToHex0N(die_CU_off,10);
         /*  Following is absolute offset of the ** beginning of the
             cu */
-        cout << ", cu-header-in-sect " <<        
+        cout << ", cu-header-in-sect " <<
             IToHex0N((die_off - die_CU_off),10);
     }
 
@@ -177,7 +177,7 @@ print_pubnames(Dwarf_Debug dbg)
 
     error_message_data.current_section_id = DEBUG_PUBNAMES;
     if (do_print_dwarf) {
-        cout << endl; 
+        cout << endl;
         cout << ".debug_pubnames" << endl;
     }
     int res = dwarf_get_globals(dbg, &globbuf, &count, &err);
@@ -201,7 +201,7 @@ print_pubnames(Dwarf_Debug dbg)
             cures3 = dwarf_global_cu_offset(globbuf[i],
                 &global_cu_off, &err);
             if (cures3 != DW_DLV_OK) {
-                print_error(dbg, "pubnames dwarf_global_cu_offset", 
+                print_error(dbg, "pubnames dwarf_global_cu_offset",
                     cures3, err);
             }
             if (check_pubname_attr) {

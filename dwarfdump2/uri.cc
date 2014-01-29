@@ -1,4 +1,4 @@
-/* 
+/*
   Copyright 2011-2012 David Anderson. All rights reserved.
   Portions Copyright 2012 SN Systems Ltd. All rights reserved.
 
@@ -33,8 +33,8 @@
 */
 
 /*  The address of the Free Software Foundation is
-    Free Software Foundation, Inc., 51 Franklin St, Fifth Floor, 
-    Boston, MA 02110-1301, USA.  
+    Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
+    Boston, MA 02110-1301, USA.
     SGI has moved from the Crittenden Lane address.
 */
 
@@ -48,7 +48,7 @@ using std::string;
 
 
 /* dwarfdump_ctype table. See dwarfdump/uritablebuild.c */
-static char dwarfdump_ctype_table[256] = { 
+static char dwarfdump_ctype_table[256] = {
 0, /* NUL 0x00 */
 0, /* control 0x01 */
 0, /* control 0x02 */
@@ -313,7 +313,7 @@ xchar(int c, char *buf, int size)
     return buf;
 }
 
-/* Translate dangerous and some other characters to safe 
+/* Translate dangerous and some other characters to safe
    %xx form.
 */
 void
@@ -333,7 +333,7 @@ translate_to_uri(const string &s, string &out)
 }
 
 /* This is not very efficient, but it is seldom called. */
-static char 
+static char
 hexdig(char c)
 {
     char ochar = 0;
@@ -406,7 +406,7 @@ translate_from_uri(const std::string & input, string &out)
                 out.push_back(c);
                 ++cp;
                 continue;
-            } 
+            }
             int increment = hexpairtochar(cp+1,&c);
             out.push_back(c);
             cp += increment;
@@ -444,7 +444,7 @@ mytest(const std::string & in,const std::string & expected,int testnum)
 }
 
 
-int 
+int
 main()
 {
     /* We no longer translate space to %20, that
@@ -468,7 +468,7 @@ main()
     mytestfrom("a%2","a2",16);
     mytestfrom("a%","a%",17);
     mytest("%bc","%25bc",18);
-    
+
     if (errcnt) {
         printf("uri errcount ",errcnt);
     }

@@ -1,4 +1,4 @@
-/* 
+/*
   Copyright (C) 2000-2005 Silicon Graphics, Inc.  All Rights Reserved.
   Portions Copyright (C) 2007-2012 David Anderson. All Rights Reserved.
   Portions Copyright 2007-2010 Sun Microsystems, Inc. All rights reserved.
@@ -36,7 +36,7 @@
 $Header: /plroot/cmplrs.src/v7.4.5m/.RCS/PL/dwarfdump/RCS/dwarfdump.c,v 1.48 2006/04/18 18:05:57 davea Exp $ */
 
 /* The address of the Free Software Foundation is
-   Free Software Foundation, Inc., 51 Franklin St, Fifth Floor, 
+   Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
    Boston, MA 02110-1301, USA.
    SGI has moved from the Crittenden Lane address.
 */
@@ -90,11 +90,11 @@ static void reset_overall_CU_error_data();
 
 bool info_flag = false;
 
-/*  This so both dwarf_loclist() 
+/*  This so both dwarf_loclist()
     and dwarf_loclist_n() can be
     tested. Defaults to new
     dwarf_loclist_n() */
-bool use_old_dwarf_loclist = false;  
+bool use_old_dwarf_loclist = false;
 
 bool line_flag = false;
 bool line_print_pc = true;    /* Print <pc> addresses. */
@@ -119,7 +119,7 @@ bool producer_children_flag = false;   /* List of CUs per compiler */
 static unsigned reloc_map = 0;
 static unsigned section_map = 0;
 
-// Start verbose at zero. verbose can 
+// Start verbose at zero. verbose can
 // be incremented with -v but not decremented.
 int verbose = 0;
 bool dense = false;
@@ -148,31 +148,31 @@ bool check_self_references = false;
 bool check_attr_encoding = false;   /* Attributes encoding */
 bool generic_1200_regs = false;
 bool suppress_check_extensions_tables = false;
-// suppress_nested_name_search is a band-aid. 
-// A workaround. A real fix for N**2 behavior is needed. 
+// suppress_nested_name_search is a band-aid.
+// A workaround. A real fix for N**2 behavior is needed.
 bool suppress_nested_name_search = false;
 static bool uri_options_translation = true;
 static bool do_print_uri_in_input = true;
 
 /*  break_after_n_units is mainly for testing.
     It enables easy limiting of output size/running time
-    when one wants the output limited. 
+    when one wants the output limited.
     For example,
         -H 2
-    limits the -i output to 2 compilation units and 
+    limits the -i output to 2 compilation units and
     the -f or -F output to 2 FDEs and 2 CIEs.  */
 int break_after_n_units = INT_MAX;
 
-bool check_names = false;     
+bool check_names = false;
 bool check_verbose_mode = true; /* During '-k' mode, display errors */
-bool check_frames = false;    
+bool check_frames = false;
 bool check_frames_extended = false;    /* Extensive frames check */
 bool check_locations = false;          /* Location list check */
 
-static bool check_all_compilers = true; 
+static bool check_all_compilers = true;
 static bool check_snc_compiler = false; /* Check SNC compiler */
-static bool check_gcc_compiler = false; 
-static bool print_summary_all = false; 
+static bool check_gcc_compiler = false;
+static bool print_summary_all = false;
 
 
 /*  Records information about compilers (producers) found in the
@@ -187,7 +187,7 @@ struct Compiler {
     std::vector<Dwarf_Check_Result> results_;
 };
 
-/* Record compilers  whose CU names have been seen. 
+/* Record compilers  whose CU names have been seen.
    Full CU names recorded here, though only a portion
    of the name may have been checked to cause the
    compiler data  to be entered here.
@@ -209,7 +209,7 @@ static void PRINT_CHECK_RESULT(const std::string &str,
     Compiler *pCompiler, Dwarf_Check_Categories category);
 
 
-/* The check and print flags here make it easy to 
+/* The check and print flags here make it easy to
    allow check-only or print-only.  We no longer support
    check-and-print in a single run.  */
 bool do_check_dwarf = false;
@@ -248,7 +248,7 @@ regex_t search_re;
 #endif
 
 
-/*  These configure items are for the 
+/*  These configure items are for the
     frame data.  */
 static string config_file_path;
 static string config_file_abi;
@@ -470,7 +470,7 @@ print_object_header(Elf *elf,Dwarf_Debug dbg,unsigned local_section_map)
     /* Check if header information is required */
     if (local_section_map & DW_HDR_HEADER || local_section_map == DW_HDR_ALL) {
 #ifdef WIN32
-    /*  Standard libelf has no function generating the names of the 
+    /*  Standard libelf has no function generating the names of the
         encodings, but this libelf apparently does. */
     Elf_Ehdr_Literal eh_literals;
     Elf32_Ehdr *eh32;
@@ -483,8 +483,8 @@ print_object_header(Elf *elf,Dwarf_Debug dbg,unsigned local_section_map)
         /* Get literal strings for header fields */
         elf32_gethdr_literals(eh32,&eh_literals);
         /* Print 32-bit obj header */
-        cout << endl;   
-        cout << "Object Header:" << endl; 
+        cout << endl;
+        cout << "Object Header:" << endl;
         cout << "e_ident:" << endl;
         cout << "  File ID       = " << eh_literals.e_ident_file_id <<endl;
         cout << "  File class    = " <<
@@ -498,18 +498,18 @@ print_object_header(Elf *elf,Dwarf_Debug dbg,unsigned local_section_map)
             eh_literals.e_ident_file_version << endl;
         cout << "  OS ABI        = " <<
             IToHex0N(eh32->e_ident[EI_VERSION],4) <<
-            " (" <<eh_literals.e_ident_os_abi_s << 
-            ") (" <<eh_literals.e_ident_os_abi_l << 
+            " (" <<eh_literals.e_ident_os_abi_s <<
+            ") (" <<eh_literals.e_ident_os_abi_l <<
             ")" <<endl;
         cout << "  ABI version   = " <<
             IToHex0N(eh32->e_ident[EI_ABIVERSION],4) <<
             eh_literals.e_ident_abi_version << endl;
         cout << "e_type     : " <<
-            IToHex(eh32->e_type) << 
+            IToHex(eh32->e_type) <<
             " ("<< eh_literals.e_type << ")" << endl;
-        cout << "e_machine  : " << 
-            IToHex(eh32->e_machine) << 
-            " (" << eh_literals.e_machine_s <<  
+        cout << "e_machine  : " <<
+            IToHex(eh32->e_machine) <<
+            " (" << eh_literals.e_machine_s <<
             ") (" << eh_literals.e_machine_l << ")" << endl;
         cout << "e_version  : " << IToHex(eh32->e_version) << endl;
         cout << "e_entry    : " << IToHexON(eh32->e_entry) << endl;
@@ -531,8 +531,8 @@ print_object_header(Elf *elf,Dwarf_Debug dbg,unsigned local_section_map)
             /* Get literal strings for header fields */
             elf64_gethdr_literals(eh64,&eh_literals);
             /* Print 64-bit obj header */
-            cout << endl;   
-            cout << "Object Header:" << endl; 
+            cout << endl;
+            cout << "Object Header:" << endl;
             cout << "e_ident:" << endl;
             cout << "  File ID       = " << eh_literals.e_ident_file_id <<endl;
             cout << "  File class    = " <<
@@ -546,18 +546,18 @@ print_object_header(Elf *elf,Dwarf_Debug dbg,unsigned local_section_map)
                 eh_literals.e_ident_file_version << endl;
             cout << "  OS ABI        = " <<
                 IToHex0N(eh64->e_ident[EI_VERSION],4) <<
-                " (" <<eh_literals.e_ident_os_abi_s << 
-                ") (" <<eh_literals.e_ident_os_abi_l << 
+                " (" <<eh_literals.e_ident_os_abi_s <<
+                ") (" <<eh_literals.e_ident_os_abi_l <<
                 ")" <<endl;
             cout << "  ABI version   = " <<
                 IToHex0N(eh64->e_ident[EI_ABIVERSION],4) <<
                 eh_literals.e_ident_abi_version << endl;
             cout << "e_type     : " <<
-                IToHex(eh64->e_type) << 
+                IToHex(eh64->e_type) <<
                 " ("<< eh_literals.e_type << ")" << endl;
-            cout << "e_machine  : " << 
-                IToHex(eh64->e_machine) << 
-                " (" << eh_literals.e_machine_s <<  
+            cout << "e_machine  : " <<
+                IToHex(eh64->e_machine) <<
+                " (" << eh_literals.e_machine_s <<
                 ") (" << eh_literals.e_machine_l << ")" << endl;
             cout << "e_version  : " << IToHex(eh64->e_version) << endl;
             cout << "e_entry    : " << IToHexON(eh64->e_entry) << endl;
@@ -634,7 +634,7 @@ print_object_header(Elf *elf,Dwarf_Debug dbg,unsigned local_section_map)
             }
         }
         cout << "*** Summary: " << total_bytes <<
-            " bytes for " << printed_sections << 
+            " bytes for " << printed_sections <<
             " section(s) ***" << endl;
     }
 }
@@ -692,23 +692,23 @@ print_specific_checks_results(Compiler *pCompiler)
     if (check_abbreviations) {
         PRINT_CHECK_RESULT("abbreviations", pCompiler, abbreviations_result);
     }
-    
+
     if (check_dwarf_constants) {
         PRINT_CHECK_RESULT("dwarf_constants",
             pCompiler, dwarf_constants_result);
     }
-   
+
     if (check_di_gaps) {
         PRINT_CHECK_RESULT("debug_info_gaps", pCompiler, di_gaps_result);
     }
-  
+
     if (check_forward_decl) {
-        PRINT_CHECK_RESULT("forward_declarations", 
+        PRINT_CHECK_RESULT("forward_declarations",
             pCompiler, forward_decl_result);
     }
- 
+
     if (check_self_references) {
-        PRINT_CHECK_RESULT("self_references", 
+        PRINT_CHECK_RESULT("self_references",
             pCompiler, self_references_result);
     }
 
@@ -734,7 +734,7 @@ sort_compare_compiler(const Compiler &cmp1,const  Compiler &cmp2)
     /* When error counts match, sort on name. */
     if (cnt1 == cnt2) {
         if (cmp1.name_ > cmp2.name_) {
-            return true;  
+            return true;
         }
     }
     return false;
@@ -793,8 +793,8 @@ print_checks_results()
             cout << endl;
             cout << IToDec0N(index,2) << ": " << c.name_;
             count = 0;
-            for (unsigned nc = 0; 
-                nc < c.cu_list_.size(); 
+            for (unsigned nc = 0;
+                nc < c.cu_list_.size();
                 ++nc ) {
 
                 ++count;
@@ -863,7 +863,7 @@ print_checks_results()
                 ++count2;
                 Compiler *pCompiler = &compilers_detected[index];
                 cout << IToDec0N(count2,2) << ": errors = "<<
-                    IToDec(pCompiler->results_[total_check_result].errors_,5) 
+                    IToDec(pCompiler->results_[total_check_result].errors_,5)
                     << ", " <<
                     pCompiler->name_ <<
                     endl;
@@ -899,10 +899,10 @@ print_checks_results()
 }
 
 /* This is for dwarf_print_lines() */
-void 
+void
 printf_callback_for_libdwarf(void *userdata,const char *data)
 {
-     cout << data;
+    cout << data;
 }
 
 
@@ -936,7 +936,7 @@ process_one_file(Elf * elf,const  string & file_name, int archive,
         Elf_Arhdr *mem_header = elf_getarhdr(elf);
 
         cout << endl;
-        cout << "archive member \t" << 
+        cout << "archive member \t" <<
             (mem_header ? mem_header->ar_name : "") << endl;
     }
     dwarf_set_frame_rule_initial_value(dbg,
@@ -959,7 +959,7 @@ process_one_file(Elf * elf,const  string & file_name, int archive,
     if (dres != DW_DLV_OK) {
         print_error(dbg, "get_location_list", dres, err);
     }
-    error_message_data.elf_max_address = 
+    error_message_data.elf_max_address =
         (error_message_data.elf_address_size == 8 ) ?
         0xffffffffffffffffULL : 0xffffffff;
 
@@ -980,7 +980,7 @@ process_one_file(Elf * elf,const  string & file_name, int archive,
         /* Build section information */
         build_linkonce_info(dbg);
     }
- 
+
     if (header_flag) {
         print_object_header(elf,dbg,section_map);
     }
@@ -1082,8 +1082,8 @@ static void do_all()
     info_flag = line_flag = frame_flag =  true;
     pubnames_flag = macinfo_flag = true;
     aranges_flag = true;
-    /*  Do not do 
-        loc_flag = TRUE 
+    /*  Do not do
+        loc_flag = TRUE
         abbrev_flag = TRUE;
         ranges_flag = true;
         because nothing in
@@ -1091,7 +1091,7 @@ static void do_all()
         in areas not referenced by .debug_info */
 
     string_flag = true;
-    /*  Do not do 
+    /*  Do not do
         reloc_flag = TRUE;
         as print_relocs makes no sense for non-elf dwarfdump users.  */
     static_func_flag = static_var_flag = true;
@@ -1104,7 +1104,7 @@ static const char *usage_text[] = {
 "options:\t-a\tprint all .debug_* sections",
 "\t\t-b\tprint abbrev section",
 "\t\t-c\tprint loc section",
-"\t\t-c<str>\tcheck only specific compiler objects", 
+"\t\t-c<str>\tcheck only specific compiler objects",
 "\t\t  \t  <str> is described by 'DW_AT_producer'. Examples:",
 "\t\t  \t    -cg       check only GCC compiler objects",
 "\t\t  \t    -cs       check only SNC compiler objects",
@@ -1147,7 +1147,7 @@ static const char *usage_text[] = {
 "\t\t   S\tcheck self references to DIEs",
 "\t\t   t\texamine tag-tag relations",
 "\t\t   x\tbasic frames check (.eh_frame, .debug_frame)",
-"\t\t   xe\textensive frames check (.eh_frame, .debug_frame)", 
+"\t\t   xe\textensive frames check (.eh_frame, .debug_frame)",
 "\t\t   y\texamine type info",
 "\t\t\tUnless -C option given certain common tag-attr and tag-tag",
 "\t\t\textensions are assumed to be ok (not reported).",
@@ -1163,7 +1163,7 @@ static const char *usage_text[] = {
 "\t\t  \tl=line,i=info,a=abbrev,p=pubnames,r=aranges,f=frames,o=loc,R=Ranges",
 "\t\t-p\tprint pubnames section",
 "\t\t-P\tprint list of compile units per producer", /* List of CUs per compiler */
-"\t\t-Q\tsuppress printing section data",  
+"\t\t-Q\tsuppress printing section data",
 "\t\t-r\tprint aranges section",
 "\t\t-R\tPrint frame register names as r33 etc",
 "\t\t  \t    and allow up to 1200 registers.",
@@ -1175,7 +1175,7 @@ static const char *usage_text[] = {
 "\t\t  \t-S any=<text>\tany <text>",
 "\t\t  \t-S match=<text>\tmatching <text>",
 #ifdef HAVE_REGEX
-"\t\t  \t-S regex=<text>\tuse regular expression matching", 
+"\t\t  \t-S regex=<text>\tuse regular expression matching",
 #endif
 "\t\t  \t (only one -S option allowed, any= and regex= ",
 "\t\t  \t  only usable if the functions required are ",
@@ -1354,7 +1354,7 @@ process_args(int argc, char *argv[])
             frame_flag = true;
             suppress_check_dwarf();
             break;
-        case 'H': 
+        case 'H':
             {
                 int break_val =  atoi(optarg);
                 if (break_val > 0) {
@@ -1411,7 +1411,7 @@ process_args(int argc, char *argv[])
                         check_all_compilers = false;
                         increment_compilers_targeted(true);
                         unsigned cc = compilers_targeted.size() -1;
-                        compilers_targeted[cc].name_ = 
+                        compilers_targeted[cc].name_ =
                             do_uri_translation(optarg,"-c<compiler name>");
                         //  Assume a compiler version to check,
                         //  most likely a substring of a compiler name.
@@ -1485,7 +1485,7 @@ process_args(int argc, char *argv[])
 #endif /* HAVE_REGEX */
                 }
                 if (err) {
-                    cerr << 
+                    cerr <<
                         "-S any=<text> or -S match=<text> or -S regex=<text>"
                         << endl;
                     cerr <<  "is allowed, not -S " <<optarg << endl;
@@ -1553,9 +1553,9 @@ process_args(int argc, char *argv[])
             reloc_flag = true;
             if (optarg) {
                 switch (optarg[0]) {
-                case 'i': 
-                    reloc_map |= (1 <<DW_SECTION_REL_DEBUG_INFO); 
-                    reloc_map |= (1 <<DW_SECTION_REL_DEBUG_TYPES); 
+                case 'i':
+                    reloc_map |= (1 <<DW_SECTION_REL_DEBUG_INFO);
+                    reloc_map |= (1 <<DW_SECTION_REL_DEBUG_TYPES);
                     break;
                 case 'l': reloc_map |= (1 <<DW_SECTION_REL_DEBUG_LINE); break;
                 case 'p': reloc_map |= (1 <<DW_SECTION_REL_DEBUG_PUBNAMES); break;
@@ -1812,7 +1812,7 @@ process_args(int argc, char *argv[])
             cout <<
                 "Frame not configured due to error(s). Giving up."<<endl;
             eh_frame_flag = false;
-            frame_flag = false; 
+            frame_flag = false;
         }
     }
     if (usage_error || (optind != (argc - 1))) {
@@ -1846,7 +1846,7 @@ print_error_and_continue(Dwarf_Debug dbg, const string & msg, int dwarf_code,
         string errmsg = dwarf_errmsg(err);
         Dwarf_Unsigned myerr = dwarf_errno(err);
         cout << program_name <<
-            " ERROR:  " << msg << ":  " << errmsg << " (" << myerr<< 
+            " ERROR:  " << msg << ":  " << errmsg << " (" << myerr<<
             ")" << endl;
     } else if (dwarf_code == DW_DLV_NO_ENTRY) {
         cout << program_name <<
@@ -1854,7 +1854,7 @@ print_error_and_continue(Dwarf_Debug dbg, const string & msg, int dwarf_code,
     } else if (dwarf_code == DW_DLV_OK) {
         cout << program_name<< ":  " << msg << endl;
     } else {
-        cout << program_name<< " InternalError:  "<<  msg << 
+        cout << program_name<< " InternalError:  "<<  msg <<
             ":  code " << dwarf_code << endl;
     }
     cerr.flush();
@@ -1883,7 +1883,7 @@ should_skip_this_cu(DieHolder& hcu_die, Dwarf_Error err)
     }
     int dares = dwarf_attr(cu_die, DW_AT_name, &attrib, &err);
     if (dares != DW_DLV_OK) {
-        print_error(dbg, 
+        print_error(dbg,
             "dwarf cu_die has no name, when checking if cu skippable",
             dares, err);
     }
@@ -1998,10 +1998,10 @@ int get_cu_name(DieHolder &hcu_die,
             SrcfilesHolder srcfiles;
             DieVec dieVec;
             int indentlevel = 0;
-            get_attr_value(hcu_die.dbg(), DW_TAG_compile_unit, 
-                hcu_die.die(), 
+            get_attr_value(hcu_die.dbg(), DW_TAG_compile_unit,
+                hcu_die.die(),
                 indentlevel, dieVec,
-                name_attr, 
+                name_attr,
                 srcfiles,
                 long_name,
                 false /*show_form_used*/,0 /* verbose */);
@@ -2046,10 +2046,10 @@ int get_producer_name(DieHolder &hcu_die,
             SrcfilesHolder srcfiles;
             DieVec dieVec;
             int indentlevel = 0;
-            get_attr_value(hcu_die.dbg(), DW_TAG_compile_unit, 
-                hcu_die.die(), 
+            get_attr_value(hcu_die.dbg(), DW_TAG_compile_unit,
+                hcu_die.die(),
                 indentlevel,dieVec,
-                producer_attr, 
+                producer_attr,
                 srcfiles,producer_name,
                 false /*show_form_used*/,
                 0 /* verbose */);
@@ -2089,7 +2089,7 @@ const char *nlo_debug_ranges   = ".debug.wR.";
 const char *nlo_debug_str      = ".debug.ws.";
 
 /* Build linkonce section information */
-void 
+void
 build_linkonce_info(Dwarf_Debug dbg)
 {
     int nCount = 0;
@@ -2163,9 +2163,9 @@ build_linkonce_info(Dwarf_Debug dbg)
     }
 }
 
-/* Check for specific TAGs and initialize some 
+/* Check for specific TAGs and initialize some
     information used by '-k' options */
-void 
+void
 tag_specific_checks_setup(Dwarf_Half val,int die_indent_level)
 {
     switch (val) {
@@ -2205,7 +2205,7 @@ static bool current_cu_is_checked_compiler = true;
 /*  Are we checking for errors from the
     compiler of the current compilation unit?
 */
-bool 
+bool
 checking_this_compiler()
 {
     /*  This flag has been update by 'update_compiler_target()'
@@ -2225,7 +2225,7 @@ hasprefix(const char *sample, const char *prefix)
     return false;
 }
 
-static void 
+static void
 increment_compilers_detected(bool beyond)
 {
     if (compilers_detected.empty()) {
@@ -2238,7 +2238,7 @@ increment_compilers_detected(bool beyond)
         compilers_detected.push_back(c);
     }
 }
-static void 
+static void
 increment_compilers_targeted(bool beyond)
 {
     if (compilers_targeted.empty()) {
@@ -2260,7 +2260,7 @@ increment_compilers_targeted(bool beyond)
         current_compiler
     The compiler name is from DW_AT_producer.
 */
-void 
+void
 update_compiler_target(const string &producer_name)
 {
     unsigned index = 0;
@@ -2289,7 +2289,7 @@ update_compiler_target(const string &producer_name)
             "SN")? true : false;
         bool gcc_compiler = hasprefix(
             error_message_data.CU_producer.c_str(),
-            "GNU")?true : false; 
+            "GNU")?true : false;
         current_cu_is_checked_compiler = check_all_compilers ||
             (snc_compiler && check_snc_compiler) ||
             (gcc_compiler && check_gcc_compiler) ;
@@ -2356,15 +2356,15 @@ reset_overall_CU_error_data()
 static bool
 cu_data_is_set()
 {
-    if (error_message_data.CU_name != default_cu_producer || 
+    if (error_message_data.CU_name != default_cu_producer ||
         error_message_data.CU_producer != default_cu_producer) {
         return true;
     }
-    if (error_message_data.DIE_offset  || 
+    if (error_message_data.DIE_offset  ||
         error_message_data.DIE_overall_offset) {
         return true;
     }
-    if (error_message_data.CU_base_address || 
+    if (error_message_data.CU_base_address ||
         error_message_data.CU_high_address) {
         return true;
     }
@@ -2378,12 +2378,12 @@ void PRINT_CU_INFO()
     cout.flush();
     if (error_message_data.current_section_id == DEBUG_LINE ||
         error_message_data.current_section_id == DEBUG_ARANGES) {
-        /*  Only in the DEBUG_LINE/ARANGES case is DIE_CU_offset or 
+        /*  Only in the DEBUG_LINE/ARANGES case is DIE_CU_offset or
             DIE_CU_overall_offset what we want to print here.
             In other cases DIE_CU_offset is not really a CU
             offset at all. */
         error_message_data.DIE_offset = error_message_data.DIE_CU_offset;
-        error_message_data.DIE_overall_offset = 
+        error_message_data.DIE_overall_offset =
             error_message_data.DIE_CU_overall_offset;
     }
     if (!cu_data_is_set()) {
@@ -2394,9 +2394,9 @@ void PRINT_CU_INFO()
     cout << "CU Producer = " <<error_message_data.CU_producer << endl;
     cout <<"DIE OFF = "<< IToHex0N(error_message_data.DIE_offset,10) <<
         " GOFF = "<< IToHex0N(error_message_data.DIE_overall_offset,10);
-    cout <<", Low PC = " << 
-        IToHex0N(error_message_data.CU_base_address,10) << 
-        ", High PC = " << 
+    cout <<", Low PC = " <<
+        IToHex0N(error_message_data.CU_base_address,10) <<
+        ", High PC = " <<
         IToHex0N(error_message_data.CU_high_address,10);
     cout << endl;
     cout.flush();
@@ -2425,15 +2425,15 @@ void DWARF_ERROR_COUNT(Dwarf_Check_Categories category, int inc)
     }
 }
 
-static void 
+static void
 PRINT_CHECK_RESULT(const string &str,
     Compiler *pCompiler, Dwarf_Check_Categories category)
 {
     Dwarf_Check_Result result = pCompiler->results_[category];
     cout << std::setw(24) << std::left << str <<
-        IToDec(result.checks_,10) <<  
+        IToDec(result.checks_,10) <<
         "  " <<
-        IToDec(result.errors_,10) << endl; 
+        IToDec(result.errors_,10) << endl;
 }
 
 void DWARF_CHECK_ERROR_PRINT_CU()

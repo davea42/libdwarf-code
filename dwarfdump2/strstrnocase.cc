@@ -32,8 +32,8 @@
 
 */
 /*  The address of the Free Software Foundation is
-    Free Software Foundation, Inc., 51 Franklin St, Fifth Floor, 
-    Boston, MA 02110-1301, USA.  
+    Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
+    Boston, MA 02110-1301, USA.
 */
 
 
@@ -45,7 +45,7 @@ The comparisons are independent  of case.
 
 Regrettably there is no generally accepted version that
 does this job, though GNU Linux has  strcasestr() which
-does what we need.  
+does what we need.
 
 There is a public domain stristr().    But given that dwarfdump is GPL,
 it would seem (IANAL) that we cannot mix public domain code
@@ -71,7 +71,7 @@ is_strstrnocase(const char * container, const char * contained)
     {
         const unsigned char * cntnd = (const unsigned char *)contained;
         bool innerwrong = true;
-        for (; *cntnd; ++cntnd,++ct) 
+        for (; *cntnd; ++cntnd,++ct)
         {
             unsigned char lct = tolower(*ct);
             unsigned char tlc = tolower(*cntnd);

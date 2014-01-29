@@ -1,4 +1,4 @@
-/* 
+/*
   Copyright (C) 2011 SN Systems Ltd. All Rights Reserved.
   Portions Copyright (C) 2011-2012 David Anderson. All Rights Reserved.
   Portions Copyright 2012 SN Systems Ltd. All rights reserved.
@@ -51,7 +51,7 @@ AllocateBucketGroup(int kind)
     return pBucketGroup;
 }
 
-void 
+void
 ReleaseBucketGroup(Bucket_Group *pBucketGroup)
 {
     Bucket *pBucket = 0;
@@ -68,7 +68,7 @@ ReleaseBucketGroup(Bucket_Group *pBucketGroup)
     free(pBucketGroup);
 }
 
-void 
+void
 ResetBucketGroup(Bucket_Group *pBucketGroup)
 {
     Bucket *pBucket = 0;
@@ -81,7 +81,7 @@ ResetBucketGroup(Bucket_Group *pBucketGroup)
 }
 
 /* Reset sentinels in a Bucket Group. */
-void 
+void
 ResetSentinelBucketGroup(Bucket_Group *pBucketGroup)
 {
     /* Sanity checks */
@@ -97,7 +97,7 @@ void PrintBucketGroup(Bucket_Group *pBucketGroup,Dwarf_Bool bFull)
             DumpFullBucketGroup(pBucketGroup);
         } else {
             if (pBucketGroup->pFirst && pBucketGroup->pLast) {
-                printf("\nBegin Traversing, First = 0x%08" DW_PR_DUx 
+                printf("\nBegin Traversing, First = 0x%08" DW_PR_DUx
                     ", Last = 0x%08" DW_PR_DUx "\n",
                 pBucketGroup->pFirst->key,pBucketGroup->pLast->key);
                 ProcessBucketGroup(pBucketGroup,PrintBucketData);
@@ -106,7 +106,7 @@ void PrintBucketGroup(Bucket_Group *pBucketGroup,Dwarf_Bool bFull)
     }
 }
 
-static void 
+static void
 PrintBucketData(Bucket_Group *pBucketGroup,Bucket_Data *pBucketData)
 {
     int nCount = 0;
@@ -115,7 +115,7 @@ PrintBucketData(Bucket_Group *pBucketGroup,Bucket_Data *pBucketData)
 
     nCount = FindDataIndexInBucket(pBucketGroup,pBucketData);
     printf("[%06d] Key = 0x%08" DW_PR_DUx ", Base = 0x%08" DW_PR_DUx
-        ", Low = 0x%08" DW_PR_DUx ", High = 0x%08" DW_PR_DUx 
+        ", Low = 0x%08" DW_PR_DUx ", High = 0x%08" DW_PR_DUx
         ", Flag = %d, Name = '%s'\n",
         ++nCount,
         pBucketData->key,
@@ -126,7 +126,7 @@ PrintBucketData(Bucket_Group *pBucketGroup,Bucket_Data *pBucketData)
         pBucketData->name);
 }
 
-static void 
+static void
 DumpFullBucketGroup(Bucket_Group *pBucketGroup)
 {
     int nBucketNo = 1;
@@ -140,7 +140,7 @@ DumpFullBucketGroup(Bucket_Group *pBucketGroup)
         (unsigned long)pBucketGroup,
         (unsigned long)pBucketGroup->lower,
         (unsigned long)pBucketGroup->upper);
-    for (pBucket = pBucketGroup->pHead; pBucket && pBucket->nEntries; 
+    for (pBucket = pBucketGroup->pHead; pBucket && pBucket->nEntries;
         pBucket = pBucket->pNext) {
 
         printf("LowPC & HighPC records for bucket %d, at 0x%08lx\n",
@@ -148,7 +148,7 @@ DumpFullBucketGroup(Bucket_Group *pBucketGroup)
         for (nIndex = 0; nIndex < pBucket->nEntries; ++nIndex) {
             pBucketData = &pBucket->Entries[nIndex];
             printf("[%06d] Key = 0x%08" DW_PR_DUx ", Base = 0x%08" DW_PR_DUx
-                ", Low = 0x%08" DW_PR_DUx ", High = 0x%08" DW_PR_DUx 
+                ", Low = 0x%08" DW_PR_DUx ", High = 0x%08" DW_PR_DUx
                 ", Flag = %d, Name = '%s'\n",
                 ++nCount,
                 pBucketData->key,
@@ -161,9 +161,9 @@ DumpFullBucketGroup(Bucket_Group *pBucketGroup)
     }
 }
 
-/* Insert entry into Bucket Group. 
+/* Insert entry into Bucket Group.
    We make no check for duplicate information. */
-void 
+void
 AddEntryIntoBucketGroup(Bucket_Group *pBucketGroup,
     Dwarf_Addr key,Dwarf_Addr base,
     Dwarf_Addr low,Dwarf_Addr high,
@@ -193,7 +193,7 @@ AddEntryIntoBucketGroup(Bucket_Group *pBucketGroup,
 
     pBucket = pBucketGroup->pTail;
 
-    /*  Check if we have a previous allocated set of 
+    /*  Check if we have a previous allocated set of
         buckets (have been cleared */
     if (pBucket->nEntries) {
         if (pBucket->nEntries < BUCKET_SIZE) {
@@ -208,9 +208,9 @@ AddEntryIntoBucketGroup(Bucket_Group *pBucketGroup,
         }
     } else {
         /*  We have an allocated bucket with zero entries; search for the
-            first available bucket to be used as the current 
+            first available bucket to be used as the current
             insertion point */
-        for (pBucket = pBucketGroup->pHead; pBucket; 
+        for (pBucket = pBucketGroup->pHead; pBucket;
             pBucket = pBucket->pNext) {
 
             if (pBucket->nEntries < BUCKET_SIZE) {
@@ -223,18 +223,18 @@ AddEntryIntoBucketGroup(Bucket_Group *pBucketGroup,
 
 /* For Groups where entries are individually deleted, this does
    that work.  */
-Dwarf_Bool 
+Dwarf_Bool
 DeleteKeyInBucketGroup(Bucket_Group *pBucketGroup,Dwarf_Addr key)
 {
     int nIndex = 0;
     Bucket *pBucket = 0;
     Bucket_Data *pBucketData = 0;
-  
+
     /* Sanity checks */
     assert(pBucketGroup);
-  
+
     /* For now do a linear search */
-    for (pBucket = pBucketGroup->pHead; pBucket && pBucket->nEntries; 
+    for (pBucket = pBucketGroup->pHead; pBucket && pBucket->nEntries;
         pBucket = pBucket->pNext) {
 
         for (nIndex = 0; nIndex < pBucket->nEntries; ++nIndex) {
@@ -242,7 +242,7 @@ DeleteKeyInBucketGroup(Bucket_Group *pBucketGroup,Dwarf_Addr key)
             if (pBucketData->key == key) {
                 Bucket_Data data = {FALSE,NULL,0,0,0,0};
                 int nStart;
-                for (nStart = nIndex + 1; nStart < pBucket->nEntries; 
+                for (nStart = nIndex + 1; nStart < pBucket->nEntries;
                     ++nStart) {
 
                     pBucket->Entries[nIndex] = pBucket->Entries[nStart];
@@ -257,11 +257,11 @@ DeleteKeyInBucketGroup(Bucket_Group *pBucketGroup,Dwarf_Addr key)
     return FALSE;
 }
 
-/*  Search to see if the address is in the range between 
+/*  Search to see if the address is in the range between
     low and high addresses in some Bucked Data record.
     This matches == if high is exact match (which usually means
     one-past-true-high).  */
-Dwarf_Bool 
+Dwarf_Bool
 FindAddressInBucketGroup(Bucket_Group *pBucketGroup,Dwarf_Addr address)
 {
     int nIndex = 0;
@@ -270,12 +270,12 @@ FindAddressInBucketGroup(Bucket_Group *pBucketGroup,Dwarf_Addr address)
 
     assert(pBucketGroup);
     /* For now do a linear search */
-    for (pBucket = pBucketGroup->pHead; pBucket && pBucket->nEntries; 
+    for (pBucket = pBucketGroup->pHead; pBucket && pBucket->nEntries;
         pBucket = pBucket->pNext) {
 
         for (nIndex = 0; nIndex < pBucket->nEntries; ++nIndex) {
             pBucketData = &pBucket->Entries[nIndex];
-            if (address >= pBucketData->low && 
+            if (address >= pBucketData->low &&
                 address <= pBucketData->high) {
                 return TRUE;
             }
@@ -308,7 +308,7 @@ Bucket_Data *FindDataInBucketGroup(Bucket_Group *pBucketGroup,Dwarf_Addr key)
                     high = mid;
                 }
             }
-            if ((low < pBucket->nEntries) && 
+            if ((low < pBucket->nEntries) &&
                 (pBucket->Entries[low].key == key)) {
 
                 pBucketData = &pBucket->Entries[low];
@@ -324,9 +324,9 @@ Bucket_Data *FindDataInBucketGroup(Bucket_Group *pBucketGroup,Dwarf_Addr key)
     return (Bucket_Data *)NULL;
 }
 
-/*  Find the Bucket that contains a given Bucket Data 
+/*  Find the Bucket that contains a given Bucket Data
     and return its local index. Else return -1.  */
-static int 
+static int
 FindDataIndexInBucket(Bucket_Group *pBucketGroup,Bucket_Data *pBucketData)
 {
     Bucket *pBucket = 0;
@@ -338,19 +338,19 @@ FindDataIndexInBucket(Bucket_Group *pBucketGroup,Bucket_Data *pBucketData)
     assert(pBucketData);
 
     /* Use sentinels if any. */
-    if (pBucketGroup->pFirst && pBucketGroup->pLast && 
-        pBucketData >= pBucketGroup->pFirst && 
+    if (pBucketGroup->pFirst && pBucketGroup->pLast &&
+        pBucketData >= pBucketGroup->pFirst &&
         pBucketData <= pBucketGroup->pLast) {
 
         /* Find bucket that contains the first sentinel */
-        for (pBucket = pBucketGroup->pHead; pBucket && pBucket->nEntries; 
+        for (pBucket = pBucketGroup->pHead; pBucket && pBucket->nEntries;
             pBucket = pBucket->pNext) {
 
             pLower = &pBucket->Entries[0];
             pUpper = &pBucket->Entries[pBucket->nEntries - 1];
 
             /* Check if the first sentinel is in this bucket. */
-            if (pBucketGroup->pFirst >= pLower && 
+            if (pBucketGroup->pFirst >= pLower &&
                 pBucketGroup->pFirst <= pUpper) {
                 /* We have found the bucket, return the index. */
                 return pBucketData - pBucketGroup->pFirst;
@@ -358,7 +358,7 @@ FindDataIndexInBucket(Bucket_Group *pBucketGroup,Bucket_Data *pBucketData)
         }
     } else {
         /* Find bucket that contains the entry */
-        for (pBucket = pBucketGroup->pHead; pBucket && pBucket->nEntries; 
+        for (pBucket = pBucketGroup->pHead; pBucket && pBucket->nEntries;
             pBucket = pBucket->pNext) {
 
             pLower = &pBucket->Entries[0];
@@ -376,7 +376,7 @@ FindDataIndexInBucket(Bucket_Group *pBucketGroup,Bucket_Data *pBucketData)
 }
 
 /*  Search an entry (Bucket Data) in the Bucket Group.
-    The key is an offset, a DIE offset 
+    The key is an offset, a DIE offset
     within Visited info. */
 Bucket_Data *FindKeyInBucketGroup(Bucket_Group *pBucketGroup,Dwarf_Addr key)
 {
@@ -388,7 +388,7 @@ Bucket_Data *FindKeyInBucketGroup(Bucket_Group *pBucketGroup,Dwarf_Addr key)
     assert(pBucketGroup);
 
     /* For now do a linear search */
-    for (pBucket = pBucketGroup->pHead; pBucket && pBucket->nEntries; 
+    for (pBucket = pBucketGroup->pHead; pBucket && pBucket->nEntries;
         pBucket = pBucket->pNext) {
         for (nIndex = 0; nIndex < pBucket->nEntries; ++nIndex) {
             pBucketData = &pBucket->Entries[nIndex];
@@ -411,7 +411,7 @@ FindNameInBucketGroup(Bucket_Group *pBucketGroup,char *name)
 
     assert(pBucketGroup);
     /* For now do a linear search. */
-    for (pBucket = pBucketGroup->pHead; pBucket && pBucket->nEntries; 
+    for (pBucket = pBucketGroup->pHead; pBucket && pBucket->nEntries;
         pBucket = pBucket->pNext) {
         for (nIndex = 0; nIndex < pBucket->nEntries; ++nIndex) {
             pBucketData = &pBucket->Entries[nIndex];
@@ -424,11 +424,11 @@ FindNameInBucketGroup(Bucket_Group *pBucketGroup,char *name)
 }
 
 /*  Check if an address valid or not. That is,
-    check if it is in  the lower -> upper range of a bucket. 
+    check if it is in  the lower -> upper range of a bucket.
     It checks <= and >= so the lower end
     and  one-past on the upper end matches.
 */
-Dwarf_Bool 
+Dwarf_Bool
 IsValidInBucketGroup(Bucket_Group *pBucketGroup,Dwarf_Addr address)
 {
     Bucket *pBucket = 0;
@@ -437,14 +437,14 @@ IsValidInBucketGroup(Bucket_Group *pBucketGroup,Dwarf_Addr address)
 
     assert(pBucketGroup);
     /* Check the address is within the allowed limits */
-    if (address >= pBucketGroup->lower && 
+    if (address >= pBucketGroup->lower &&
         address <= pBucketGroup->upper) {
-        for (pBucket = pBucketGroup->pHead; 
-            pBucket && pBucket->nEntries; 
+        for (pBucket = pBucketGroup->pHead;
+            pBucket && pBucket->nEntries;
             pBucket = pBucket->pNext) {
             for (nIndex = 0; nIndex < pBucket->nEntries; ++nIndex) {
                 pBucketData = &pBucket->Entries[nIndex];
-                if (address >= pBucketData->low && 
+                if (address >= pBucketData->low &&
                     address <= pBucketData->high) {
                     return TRUE;
                 }
@@ -455,7 +455,7 @@ IsValidInBucketGroup(Bucket_Group *pBucketGroup,Dwarf_Addr address)
 }
 
 /*  Reset limits for values in the Bucket Set */
-void 
+void
 ResetLimitsBucketSet(Bucket_Group *pBucketGroup)
 {
     assert(pBucketGroup);
@@ -464,7 +464,7 @@ ResetLimitsBucketSet(Bucket_Group *pBucketGroup)
 }
 
 /*  Limits are set only for ranges, so only in pRangesInfo. */
-void 
+void
 SetLimitsBucketGroup(Bucket_Group *pBucketGroup,
     Dwarf_Addr lower,Dwarf_Addr upper)
 {
@@ -476,7 +476,7 @@ SetLimitsBucketGroup(Bucket_Group *pBucketGroup,
 }
 
 /* Traverse Bucket Set and execute a supplied function */
-static void 
+static void
 ProcessBucketGroup(Bucket_Group *pBucketGroup,
     void (*pFunction)(Bucket_Group *pBucketGroup,Bucket_Data *pBucketData))
 {
@@ -497,12 +497,12 @@ ProcessBucketGroup(Bucket_Group *pBucketGroup,
     }
 
     /* Find bucket that contains the first sentinel */
-    for (pBucket = pBucketGroup->pHead; pBucket && pBucket->nEntries; 
+    for (pBucket = pBucketGroup->pHead; pBucket && pBucket->nEntries;
         pBucket = pBucket->pNext) {
 
         pLower = &pBucket->Entries[0];
         pUpper = &pBucket->Entries[pBucket->nEntries - 1];
-  
+
         /* Check if the first sentinel is in this bucket */
         if (pBucketGroup->pFirst >= pLower && pBucketGroup->pFirst <= pUpper) {
             /* Low sentinel is in this bucket */
@@ -536,11 +536,11 @@ ProcessBucketGroup(Bucket_Group *pBucketGroup,
     }
 }
 
-/*  Check if a given (lopc,hipc) are valid for a linkonce. 
+/*  Check if a given (lopc,hipc) are valid for a linkonce.
     We pass in the linkonce  (instead of
-    referencing the global pLinkonceInfo) as that means 
-    searches for pLinkonceInfo find all the uses, 
-    making understanding of the code a tiny bit easier. 
+    referencing the global pLinkonceInfo) as that means
+    searches for pLinkonceInfo find all the uses,
+    making understanding of the code a tiny bit easier.
     The section name created is supposed to be the appropriate
     linkonce section name.
 */
@@ -548,17 +548,17 @@ Dwarf_Bool IsValidInLinkonce(Bucket_Group *pLo,
     const char *name,Dwarf_Addr lopc,Dwarf_Addr hipc)
 {
 #define SECTION_NAME_LEN 2048 /* Guessing a sensible length */
-    static char section_name[SECTION_NAME_LEN]; 
+    static char section_name[SECTION_NAME_LEN];
     Bucket_Data *pBucketData = 0;
     /*  Since text is quite uniformly just this name, no need to get it
         from elsewhere, though it will not work for non-elf.  */
     const char *lo_text = ".text.";
 
-    /*  Build the name that represents the linkonce section (.text). 
+    /*  Build the name that represents the linkonce section (.text).
         This is not defined in DWARF so not correct for all
         compilers. */
     snprintf(section_name,sizeof(section_name),"%s%s",lo_text,name);
-  
+
     pBucketData = FindNameInBucketGroup(pLo,section_name);
     if (pBucketData) {
         if (lopc >= pBucketData->low && lopc <= pBucketData->high) {

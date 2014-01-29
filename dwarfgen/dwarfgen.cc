@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2010-2013 David Anderson.  All rights reserved.
- 
+
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions are met:
   * Redistributions of source code must retain the above copyright
@@ -11,7 +11,7 @@
   * Neither the name of the example nor the
     names of its contributors may be used to endorse or promote products
     derived from this software without specific prior written permission.
- 
+
   THIS SOFTWARE IS PROVIDED BY David Anderson ''AS IS'' AND ANY
   EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
   WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -25,7 +25,7 @@
 
 */
 // dwarfgen.cc
-//  
+//
 // Using some information source, create a tree of dwarf
 // information (speaking of a DIE tree).
 // Turn the die tree into dwarfdata using libdwarf producer
@@ -40,10 +40,10 @@
 //         def means predefined (no input is read, the output
 //         is based on some canned setups built into dwarfgen).
 //         'path' is ignored in this case. This is the default.
-//         
+//
 //         obj means 'path' is required, it is the object file to
 //             read (the dwarf sections are duplicated in the output file)
-//         
+//
 //         txt means 'path' is required, path must contain plain text
 //             (in a form rather like output by dwarfdump)
 //             that defines the dwarf that is to be output.
@@ -55,7 +55,7 @@
 //         Default is -1 which won't match anything.
 
 #include "config.h"
-#include <unistd.h> 
+#include <unistd.h>
 #include <stdlib.h> // for exit
 #include <iostream>
 #include <sstream>
@@ -89,7 +89,7 @@ static void write_generated_dbg(Dwarf_P_Debug dbg,Elf * elf,
 
 static string outfile("testout.o");
 static string infile;
-static enum  WhichInputSource { OptNone, OptReadText,OptReadBin,OptPredefined} 
+static enum  WhichInputSource { OptNone, OptReadText,OptReadBin,OptPredefined}
     whichinput(OptPredefined);
 
 
@@ -124,7 +124,7 @@ public:
     Dwarf_Unsigned getNextOffset() { return lengthWrittenToElf_; }
     void setNextOffset(Dwarf_Unsigned v) { lengthWrittenToElf_ = v; }
 
-    unsigned getSectionNameSymidx() { 
+    unsigned getSectionNameSymidx() {
         return section_name_symidx_.getSymIndex(); };
     SectionFromDwarf():section_name_itself_(0),
         section_name_symidx_(0),
@@ -157,7 +157,7 @@ static ElfSectIndex create_dw_elf(SectionFromDwarf  &ds);
 static SectionFromDwarf & FindMySection(const ElfSectIndex & elf_section_index)
 {
     for(unsigned i =0; i < dwsectab.size(); ++i) {
-        if(elf_section_index.getSectIndex() != 
+        if(elf_section_index.getSectIndex() !=
             dwsectab[i].getSectIndex().getSectIndex()) {
             continue;
         }
@@ -193,7 +193,7 @@ createnamestr(unsigned strtabstroff)
         cerr << "Unable to elf_getshdr() on " << outfile << endl;
         exit(1);
     }
-    strshdr->sh_name =  strtabstroff; 
+    strshdr->sh_name =  strtabstroff;
     strshdr->sh_type= SHT_STRTAB;
     strshdr->sh_flags = SHF_STRINGS;
     strshdr->sh_addr = 0;
@@ -207,7 +207,7 @@ createnamestr(unsigned strtabstroff)
 }
 
 
-// This functional interface is defined by libdwarf. 
+// This functional interface is defined by libdwarf.
 int CallbackFunc(
     const char* name,
     int                 size,
@@ -217,7 +217,7 @@ int CallbackFunc(
     Dwarf_Unsigned      info,
     Dwarf_Unsigned*     sect_name_symbol_index,
     void *              user_data,
-    int*                error) 
+    int*                error)
 {
     // Create an elf section.
     // If the data is relocations, we suppress the generation
@@ -301,7 +301,7 @@ setinput(enum  WhichInputSource *src,
     exit(1);
 }
 
-int 
+int
 main(int argc, char **argv)
 {
 
@@ -328,7 +328,7 @@ main(int argc, char **argv)
         case '?':
             cerr << "Invalid quest? option input " << endl;
             exit(1);
-            
+
         default:
             cerr << "Invalid option input " << endl;
             exit(1);
@@ -340,9 +340,9 @@ main(int argc, char **argv)
     }
 
     if(pathrequired) {
-        infile = argv[optind];    
+        infile = argv[optind];
     }
-    
+
     if(whichinput == OptReadBin) {
         createIrepFromBinary(infile,Irep);
     } else if (whichinput == OptReadText) {
@@ -355,8 +355,8 @@ main(int argc, char **argv)
         cerr << "Impossible: unknown input style." << endl;
         exit(EXIT_FAILURE);
     }
-    
-    // Example will return error value thru 'err' pointer 
+
+    // Example will return error value thru 'err' pointer
     // and return DW_DLV_BADADDR if there is an error.
     int ptrsize = DW_DLC_SIZE_32;
     Dwarf_Ptr errarg = 0;
@@ -375,7 +375,7 @@ main(int argc, char **argv)
         cerr << "Failed init_b" << endl;
         exit(EXIT_FAILURE);
     }
-        
+
     transform_irep_to_dbg(dbg,Irep,cu_of_input_we_output);
 
     write_object_file(dbg,Irep);
@@ -387,13 +387,13 @@ main(int argc, char **argv)
     return 0;
 }
 
-static void 
+static void
 write_object_file(Dwarf_P_Debug dbg, IRepresentation &irep)
 {
     int mode =  S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH;
     int fd = open(outfile.c_str(),O_WRONLY|O_CREAT|O_TRUNC, mode);
     if(fd < 0 ) {
-        cerr << "Unable to open " << outfile << 
+        cerr << "Unable to open " << outfile <<
             " for writing." << endl;
         exit(1);
     }
@@ -414,11 +414,11 @@ write_object_file(Dwarf_P_Debug dbg, IRepresentation &irep)
         cerr << "Unable to elf_newehdr() on " << outfile << endl;
         exit(1);
     }
-    ehp->e_ident[EI_MAG0] = ELFMAG0; 
-    ehp->e_ident[EI_MAG1] = ELFMAG1; 
-    ehp->e_ident[EI_MAG2] = ELFMAG2; 
-    ehp->e_ident[EI_MAG3] = ELFMAG3; 
-    ehp->e_ident[EI_CLASS] = ELFCLASS32; 
+    ehp->e_ident[EI_MAG0] = ELFMAG0;
+    ehp->e_ident[EI_MAG1] = ELFMAG1;
+    ehp->e_ident[EI_MAG2] = ELFMAG2;
+    ehp->e_ident[EI_MAG3] = ELFMAG3;
+    ehp->e_ident[EI_CLASS] = ELFCLASS32;
     ehp->e_ident[EI_DATA] = ELFDATA2LSB;
     ehp->e_ident[EI_VERSION] = EV_CURRENT;
     ehp->e_machine = EM_386;
@@ -449,7 +449,7 @@ write_object_file(Dwarf_P_Debug dbg, IRepresentation &irep)
     close(fd);
 }
 
-    
+
 // an object section with fake .text data (just as an example).
 static void
 write_text_section(Elf * elf)
@@ -489,7 +489,7 @@ write_text_section(Elf * elf)
     shdr1->sh_addralign = 1;
     shdr1->sh_entsize = 0;
 }
-static void 
+static void
 InsertDataIntoElf(Dwarf_Signed d,Dwarf_P_Debug dbg,Elf *elf)
 {
     Dwarf_Signed elf_section_index = 0;
@@ -518,7 +518,7 @@ InsertDataIntoElf(Dwarf_Signed d,Dwarf_P_Debug dbg,Elf *elf)
     sfd.setNextOffset(ed->d_off + length);
     ed->d_align = 1;
     ed->d_version = EV_CURRENT;
-    cout << "Inserted " << length << " bytes into elf section index " << 
+    cout << "Inserted " << length << " bytes into elf section index " <<
         elf_section_index << endl;
 }
 
@@ -545,7 +545,7 @@ printable_rel_type(unsigned char reltype)
 }
 #endif
 
-static Dwarf_Unsigned  
+static Dwarf_Unsigned
 FindSymbolValue(ElfSymIndex symi,IRepresentation &irep)
 {
     ElfSymbols & syms = irep.getElfSymbols();
@@ -559,17 +559,17 @@ bitreplace(char *buf, Dwarf_Unsigned newval,
     size_t newvalsize,int length)
 {
     if(length == 4) {
-        uint32_t my4 = newval; 
+        uint32_t my4 = newval;
         uint32_t * p = reinterpret_cast<uint32_t *>(buf );
         uint32_t oldval = *p;
         *p = oldval + my4;
     } else if (length == 8) {
-        uint64_t my8 = newval; 
+        uint64_t my8 = newval;
         uint64_t * p = reinterpret_cast<uint64_t *>(buf );
         uint64_t oldval = *p;
         *p = oldval + my8;
     } else {
-        cerr << " Relocation is length " << length << 
+        cerr << " Relocation is length " << length <<
             " which we do not yet handle." << endl;
         exit(1);
     }
@@ -588,23 +588,23 @@ findelfbuf(Elf *elf,Elf_Scn *scn,Dwarf_Unsigned offset, unsigned length)
             continue;
         }
         if(offset < LOFFTODWUNS(ed->d_off)) {
-            cerr << " Relocation at offset  " << 
-                offset << " cannot be accomplished, no buffer. " 
-                << endl; 
+            cerr << " Relocation at offset  " <<
+                offset << " cannot be accomplished, no buffer. "
+                << endl;
             exit(1);
         }
         Dwarf_Unsigned localoff = offset - ed->d_off;
         if((localoff + length) > ed->d_size) {
-            cerr << " Relocation at offset  " << 
-                offset << " cannot be accomplished, size mismatch. " 
-                << endl; 
+            cerr << " Relocation at offset  " <<
+                offset << " cannot be accomplished, size mismatch. "
+                << endl;
             exit(1);
         }
         char *lclptr = reinterpret_cast<char *>(ed->d_buf) + localoff;
         return lclptr;
     }
-    cerr << " Relocation at offset  " << offset  << 
-        " cannot be accomplished,  past end of buffers" << endl; 
+    cerr << " Relocation at offset  " << offset  <<
+        " cannot be accomplished,  past end of buffers" << endl;
     return 0;
 
 }
@@ -613,7 +613,7 @@ static void
 write_generated_dbg(Dwarf_P_Debug dbg,Elf * elf,IRepresentation &irep)
 {
     Dwarf_Error err = 0;
-    Dwarf_Signed sectioncount = 
+    Dwarf_Signed sectioncount =
         dwarf_transform_to_disk_form(dbg,0);
 
     Dwarf_Signed d = 0;
@@ -634,11 +634,11 @@ write_generated_dbg(Dwarf_P_Debug dbg,Elf * elf,IRepresentation &irep)
         exit(1);
 
     }
-    cout << "Relocations sections count= " << reloc_sections_count << 
+    cout << "Relocations sections count= " << reloc_sections_count <<
         " relversion=" << drd_version << endl;
     for( Dwarf_Unsigned ct = 0; ct < reloc_sections_count ; ++ct) {
         // elf_section_index is the elf index of the relocations
-        // themselves. 
+        // themselves.
         Dwarf_Signed elf_section_index = 0;
         // elf_section_index_link is the elf index of the section
         // the relocations apply to.

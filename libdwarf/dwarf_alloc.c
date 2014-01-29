@@ -116,10 +116,10 @@ struct ial_s alloc_instance_basics[ALLOC_AREA_INDEX_TABLE_MAX] = {
     { sizeof(Dwarf_Locdesc),MULTIPLY_NO, 0, 0} , /* 3 DW_DLA_LOCDESC */
     { 1,MULTIPLY_NO, 0, 0} , /* not used *//* 4 DW_DLA_ELLIST */
     { 1,MULTIPLY_NO, 0, 0} , /* not used *//* 5 DW_DLA_BOUNDS */
-    { sizeof(Dwarf_Block),MULTIPLY_NO,  0, 0} , /* 6 DW_DLA_BLOCK */ 
+    { sizeof(Dwarf_Block),MULTIPLY_NO,  0, 0} , /* 6 DW_DLA_BLOCK */
 
     /* the actual dwarf_debug structure */ /* 7 DW_DLA_DEBUG */
-    { 1,MULTIPLY_NO, 0, 0} , 
+    { 1,MULTIPLY_NO, 0, 0} ,
 
     {sizeof(struct Dwarf_Die_s),MULTIPLY_NO, 0, 0},/* 8 DW_DLA_DIE */
     {sizeof(struct Dwarf_Line_s),MULTIPLY_NO, 0, 0},/* 9 DW_DLA_LINE */
@@ -145,39 +145,39 @@ struct ial_s alloc_instance_basics[ALLOC_AREA_INDEX_TABLE_MAX] = {
     /* 18 DW_DLA_ABBREV */
     {sizeof(struct Dwarf_Abbrev_s),MULTIPLY_NO,  0, 0},
 
-    /* 19 DW_DLA_FRAME_OP */ 
-    {sizeof(Dwarf_Frame_Op),MULTIPLY_NO,  0, 0} , 
+    /* 19 DW_DLA_FRAME_OP */
+    {sizeof(Dwarf_Frame_Op),MULTIPLY_NO,  0, 0} ,
 
     /* 20 DW_DLA_CIE */
-    {sizeof(struct Dwarf_Cie_s),MULTIPLY_NO,  0, 0}, 
+    {sizeof(struct Dwarf_Cie_s),MULTIPLY_NO,  0, 0},
 
     {sizeof(struct Dwarf_Fde_s),MULTIPLY_NO,  0, 0},/* 21 DW_DLA_FDE */
     {sizeof(Dwarf_Loc),MULTIPLY_CT, 0, 0},          /* 22 DW_DLA_LOC_BLOCK */
     {sizeof(Dwarf_Frame_Op),MULTIPLY_CT, 0, 0},     /* 23 DW_DLA_FRAME_BLOCK */
 
     /* 24 DW_DLA_FUNC UNUSED */
-    {sizeof(struct Dwarf_Global_s),MULTIPLY_NO,  0, 0}, 
+    {sizeof(struct Dwarf_Global_s),MULTIPLY_NO,  0, 0},
 
     /* 25 DW_DLA_TYPENAME UNUSED */
-    {sizeof(struct Dwarf_Global_s),MULTIPLY_NO,  0, 0}, 
+    {sizeof(struct Dwarf_Global_s),MULTIPLY_NO,  0, 0},
 
     /* 26 DW_DLA_VAR UNUSED */
-    {sizeof(struct Dwarf_Global_s),MULTIPLY_NO,  0, 0}, 
-    
+    {sizeof(struct Dwarf_Global_s),MULTIPLY_NO,  0, 0},
+
     /* 27 DW_DLA_WEAK UNUSED */
-    {sizeof(struct Dwarf_Global_s),MULTIPLY_NO,  0, 0}, 
+    {sizeof(struct Dwarf_Global_s),MULTIPLY_NO,  0, 0},
 
     {1,MULTIPLY_SP, 0, 0},                    /* 28 DW_DLA_ADDR */
     {sizeof(Dwarf_Ranges),MULTIPLY_CT, 0,0 }, /* 29 DW_DLA_RANGES */
 
     /*  The following DW_DLA data types
         are known only inside libdwarf.  */
-    
+
     /* 30 DW_DLA_ABBREV_LIST */
     { sizeof(struct Dwarf_Abbrev_List_s),MULTIPLY_NO, 0, 0},
 
     /* 31 DW_DLA_CHAIN */
-    {sizeof(struct Dwarf_Chain_s),MULTIPLY_NO, 0, 0}, 
+    {sizeof(struct Dwarf_Chain_s),MULTIPLY_NO, 0, 0},
 
     /* 32 DW_DLA_CU_CONTEXT */
     {sizeof(struct Dwarf_CU_Context_s),MULTIPLY_NO,  0, 0},
@@ -196,10 +196,10 @@ struct ial_s alloc_instance_basics[ALLOC_AREA_INDEX_TABLE_MAX] = {
     {sizeof(struct Dwarf_Line_Context_s),MULTIPLY_NO,  0, 0},
 
     /* 37 DW_DLA_LOC_CHAIN */
-    {sizeof(struct Dwarf_Loc_Chain_s),MULTIPLY_NO,  0, 0},  
+    {sizeof(struct Dwarf_Loc_Chain_s),MULTIPLY_NO,  0, 0},
 
     /* 38 DW_DLA_HASH_TABLE */
-    {sizeof(struct Dwarf_Hash_Table_s),MULTIPLY_NO, 0, 0},  
+    {sizeof(struct Dwarf_Hash_Table_s),MULTIPLY_NO, 0, 0},
 
     /*  The following really use Global struct: used to be unique struct
     per type, but now merged (11/99).  The opaque types
@@ -227,7 +227,7 @@ struct ial_s alloc_instance_basics[ALLOC_AREA_INDEX_TABLE_MAX] = {
 
 };
 
-/*  We are simply using the incoming pointer as the key-pointer. 
+/*  We are simply using the incoming pointer as the key-pointer.
 */
 typedef unsigned long VALTYPE;
 
@@ -278,16 +278,16 @@ simple_compare_function(const void *l, const void *r)
     of memory.  For alloc_types that are not
     strings or lists of pointers, only 1 struct
     can be requested at a time.  This is indicated
-    by an input count of 1.  For strings, count 
+    by an input count of 1.  For strings, count
     equals the length of the string it will
     contain, i.e it the length of the string
     plus 1 for the terminating null.  For lists
     of pointers, count is equal to the number of
-    pointers.  For DW_DLA_FRAME_BLOCK, DW_DLA_RANGES, and 
+    pointers.  For DW_DLA_FRAME_BLOCK, DW_DLA_RANGES, and
     DW_DLA_LOC_BLOCK allocation types also, count
     is the count of the number of structs needed.
 
-    This function cannot be used to allocate a 
+    This function cannot be used to allocate a
     Dwarf_Debug_s struct.  */
 
 Dwarf_Ptr
@@ -309,7 +309,7 @@ _dwarf_get_alloc(Dwarf_Debug dbg,
     }
     basesize = alloc_instance_basics[alloc_type].ia_struct_size;
     action = alloc_instance_basics[alloc_type].ia_multiply_count;
-    if(action == MULTIPLY_NO) { 
+    if(action == MULTIPLY_NO) {
         /* Usually count is 1, but do not assume it. */
         size = basesize;
     } else if (action == MULTIPLY_CT) {
@@ -324,7 +324,7 @@ _dwarf_get_alloc(Dwarf_Debug dbg,
     size += DW_RESERVE;
     alloc_mem = malloc(size);
     if (!alloc_mem) {
-        return NULL; 
+        return NULL;
     }
     {
         void *key = alloc_mem;
@@ -359,8 +359,8 @@ _dwarf_get_alloc(Dwarf_Debug dbg,
 /*
     This function is used to deallocate a region of memory
     that was obtained by a call to _dwarf_get_alloc.  Note
-    that though dwarf_dealloc() is a public function, 
-    _dwarf_get_alloc() isn't.  
+    that though dwarf_dealloc() is a public function,
+    _dwarf_get_alloc() isn't.
 
     For lists, typically arrays of pointers, it is assumed
     that the space was allocated by a direct call to malloc,
@@ -368,7 +368,7 @@ _dwarf_get_alloc(Dwarf_Debug dbg,
     for variable length blocks such as DW_DLA_FRAME_BLOCK
     and DW_DLA_LOC_BLOCK and DW_DLA_RANGES.
 
-    For strings, the pointer might point to a string in 
+    For strings, the pointer might point to a string in
     .debug_info or .debug_string.  After this is checked,
     and if found not to be the case, a free() is done,
     again on the assumption that a malloc was used to
@@ -396,10 +396,10 @@ dwarf_dealloc(Dwarf_Debug dbg,
     }
 
     /*  A string pointer may point into .debug_info or .debug_string.
-        Otherwise, they are directly malloc'ed and must be freed. 
+        Otherwise, they are directly malloc'ed and must be freed.
     */
     if (type == DW_DLA_STRING) {
-        /*  See dwarf_line.c dwarf_srcfilse() 
+        /*  See dwarf_line.c dwarf_srcfilse()
             for an example of the odd way we wind up with
             a string that is in debug_info or the like, not mallocd
             by _dwarf_get_alloc(). */
@@ -421,7 +421,7 @@ dwarf_dealloc(Dwarf_Debug dbg,
         if (dbg->de_debug_pubnames.dss_data != NULL &&
             (Dwarf_Small *) space >= dbg->de_debug_pubnames.dss_data &&
             (Dwarf_Small *) space <
-                dbg->de_debug_pubnames.dss_data + 
+                dbg->de_debug_pubnames.dss_data +
                 dbg->de_debug_pubnames.dss_size)
             return;
 
@@ -440,34 +440,34 @@ dwarf_dealloc(Dwarf_Debug dbg,
         if (dbg->de_debug_funcnames.dss_data != NULL &&
             (Dwarf_Small *) space >= dbg->de_debug_funcnames.dss_data &&
             (Dwarf_Small *) space <
-                dbg->de_debug_funcnames.dss_data + 
+                dbg->de_debug_funcnames.dss_data +
                 dbg->de_debug_funcnames.dss_size)
             return;
 
         if (dbg->de_debug_typenames.dss_data != NULL &&
             (Dwarf_Small *) space >= dbg->de_debug_typenames.dss_data &&
             (Dwarf_Small *) space <
-                dbg->de_debug_typenames.dss_data + 
+                dbg->de_debug_typenames.dss_data +
                 dbg->de_debug_typenames.dss_size)
             return;
         if (dbg->de_debug_pubtypes.dss_data != NULL &&
             (Dwarf_Small *) space >= dbg->de_debug_pubtypes.dss_data &&
             (Dwarf_Small *) space <
-                dbg->de_debug_pubtypes.dss_data + 
+                dbg->de_debug_pubtypes.dss_data +
                 dbg->de_debug_pubtypes.dss_size)
             return;
 
         if (dbg->de_debug_varnames.dss_data != NULL &&
             (Dwarf_Small *) space >= dbg->de_debug_varnames.dss_data &&
             (Dwarf_Small *) space <
-            dbg->de_debug_varnames.dss_data + 
+            dbg->de_debug_varnames.dss_data +
             dbg->de_debug_varnames.dss_size)
             return;
 
         if (dbg->de_debug_weaknames.dss_data != NULL &&
             (Dwarf_Small *) space >= dbg->de_debug_weaknames.dss_data &&
             (Dwarf_Small *) space <
-                dbg->de_debug_weaknames.dss_data + 
+                dbg->de_debug_weaknames.dss_data +
                 dbg->de_debug_weaknames.dss_size)
             return;
     }
@@ -481,15 +481,15 @@ dwarf_dealloc(Dwarf_Debug dbg,
             'space'. */
         void *key = space - DW_RESERVE;
         dwarf_tdelete(key,&dbg->de_alloc_tree,simple_compare_function);
-        /*  If dwarf_tdelete returns NULL it might mean 
+        /*  If dwarf_tdelete returns NULL it might mean
             a) tree is empty.
             b) If hashsearch, then a single chain might now be empty,
                 so we do not know of a 'parent node'.
             c) We did not find that key, we did nothing.
 
-            In any case, we simply don't worry about it. 
+            In any case, we simply don't worry about it.
             Not Supposed To Happen. */
-        
+
         free(key);
         return;
     }
@@ -511,9 +511,9 @@ _dwarf_get_debug(void)
     }
     memset(dbg, 0, sizeof(struct Dwarf_Debug_s));
     /* Set up for a dwarf_tsearch hash table */
-    
+
     dwarf_initialize_search_hash(&dbg->de_alloc_tree,simple_value_hashfunc,0);
-    
+
 
     return (dbg);
 }
@@ -532,7 +532,7 @@ dwarf_print_memory_stats(Dwarf_Debug dbg)
 
 /* In the 'rela' relocation case we might have malloc'd
    space to ensure it is read-write. In that case, free the space.  */
-static void 
+static void
 rela_free(struct Dwarf_Section_s * sec)
 {
     if (sec->dss_data_was_malloc) {
@@ -559,7 +559,7 @@ freecontextlist(Dwarf_Debug dbg, Dwarf_Debug_InfoTypes dis)
 
 /*
     Used to free all space allocated for this Dwarf_Debug.
-    The caller should assume that the Dwarf_Debug pointer 
+    The caller should assume that the Dwarf_Debug pointer
     itself is no longer valid upon return from this function.
 
     In case of difficulty, this function simply returns quietly.
@@ -572,7 +572,7 @@ _dwarf_free_all_of_one_debug(Dwarf_Debug dbg)
     }
 
     /*  To do complete validation that we have no surprising missing or
-        erroneous deallocs it is advisable to do the dwarf_deallocs here 
+        erroneous deallocs it is advisable to do the dwarf_deallocs here
         that are not things the user can otherwise request.
         Housecleaning.  */
     freecontextlist(dbg,&dbg->de_info_reading);
@@ -598,7 +598,7 @@ _dwarf_free_all_of_one_debug(Dwarf_Debug dbg)
     rela_free(&dbg->de_debug_ranges);
     dwarf_harmless_cleanout(&dbg->de_harmless_errors);
 
-    if (dbg->de_printf_callback.dp_buffer && 
+    if (dbg->de_printf_callback.dp_buffer &&
         !dbg->de_printf_callback.dp_buffer_user_provided ) {
         free(dbg->de_printf_callback.dp_buffer);
     }
@@ -613,7 +613,7 @@ _dwarf_free_all_of_one_debug(Dwarf_Debug dbg)
     in dwarf_dealloc.
     Something with the prefix (prefix space hidden from caller).
 
-    Only applies to DW_DLA_ERROR, and  making up an error record.  
+    Only applies to DW_DLA_ERROR, and  making up an error record.
     The allocated space simply leaks.
 */
 struct Dwarf_Error_s *

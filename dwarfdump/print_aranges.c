@@ -1,4 +1,4 @@
-/* 
+/*
   Copyright (C) 2000-2006 Silicon Graphics, Inc.  All Rights Reserved.
   Portions Copyright 2007-2010 Sun Microsystems, Inc. All rights reserved.
   Portions Copyright 2009-2012 SN Systems Ltd. All rights reserved.
@@ -36,8 +36,8 @@
 
 $Header: /plroot/cmplrs.src/v7.4.5m/.RCS/PL/dwarfdump/RCS/print_sections.c,v 1.69 2006/04/17 00:09:56 davea Exp $ */
 /*  The address of the Free Software Foundation is
-    Free Software Foundation, Inc., 51 Franklin St, Fifth Floor, 
-    Boston, MA 02110-1301, USA.  
+    Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
+    Boston, MA 02110-1301, USA.
     SGI has moved from the Crittenden Lane address.
 */
 
@@ -77,7 +77,7 @@ do_checking(Dwarf_Debug dbg, Dwarf_Arange *arange_buf,Dwarf_Signed i,
             dwarf_die_offsets(cu_die,&DIE_overall_offset,&DIE_offset,&err);
             DWARF_CHECK_COUNT(aranges_result,1);
             if (cudieoff2 != cu_die_offset) {
-                printf("Error, cu_die offsets mismatch,  0x%" 
+                printf("Error, cu_die offsets mismatch,  0x%"
                     DW_PR_DUx
                     " != 0x%" DW_PR_DUx " from arange data",
                     cu_die_offset,cudieoff2);
@@ -97,7 +97,7 @@ do_checking(Dwarf_Debug dbg, Dwarf_Arange *arange_buf,Dwarf_Signed i,
         DWARF_CHECK_COUNT(aranges_result,1);
         if (cudieoff3 != cu_die_offset) {
             printf(
-                "Error, cu_die offsets (b) mismatch ,  0x%" 
+                "Error, cu_die offsets (b) mismatch ,  0x%"
                 DW_PR_DUx
                 " != 0x%" DW_PR_DUx " from arange data",
                 cu_die_offset,cudieoff3);
@@ -106,8 +106,8 @@ do_checking(Dwarf_Debug dbg, Dwarf_Arange *arange_buf,Dwarf_Signed i,
                 " gets wrong offset");
         }
     } else {
-        print_error(dbg, "dwarf_get_cu_die_offset failed ", 
-            dres,err);           
+        print_error(dbg, "dwarf_get_cu_die_offset failed ",
+            dres,err);
     }
 }
 
@@ -121,8 +121,8 @@ print_aranges(Dwarf_Debug dbg)
     int ares = 0;
     int aires = 0;
     Dwarf_Off prev_off = 0; /* Holds previous CU offset */
-    Dwarf_Bool first_cu = TRUE; 
-    Dwarf_Off cu_die_offset_prev = 0; 
+    Dwarf_Bool first_cu = TRUE;
+    Dwarf_Off cu_die_offset_prev = 0;
 
     /* Reset the global state, so we can traverse the debug_info */
     seen_CU = FALSE;
@@ -197,18 +197,18 @@ print_aranges(Dwarf_Debug dbg)
                         first_cu = FALSE;
                         prev_off = off;
                         /*  We are faking the indent level. We do not know
-                            what level it is, really. 
+                            what level it is, really.
 
-                            If do_check_dwarf we do not want to do 
-                            the die print call as it will do 
-                            check/print we may not have asked for. 
+                            If do_check_dwarf we do not want to do
+                            the die print call as it will do
+                            check/print we may not have asked for.
                             And if we did ask for debug_info checks
                             this will do the checks a second time!
                             So only call print_one_die if printing.
                         */
                         if (do_print_dwarf){
                             /* There is no die if its a set-end entry */
-                            print_one_die(dbg, cu_die, 
+                            print_one_die(dbg, cu_die,
                                 /* print_information= */ (boolean) TRUE,
                                 /* indent_level = */0,
                                 /* srcfiles= */ 0,
@@ -227,25 +227,25 @@ print_aranges(Dwarf_Debug dbg)
                         /* Print current aranges record */
                         if (segment_entry_size) {
                             printf(
-                                "\narange starts at seg,off 0x%" 
+                                "\narange starts at seg,off 0x%"
                                 DW_PR_XZEROS DW_PR_DUx
                                 ",0x%" DW_PR_XZEROS DW_PR_DUx
                                 ", ",
-                                segment, 
+                                segment,
                                 (Dwarf_Unsigned)start);
                         } else {
-                            printf("\narange starts at 0x%" 
+                            printf("\narange starts at 0x%"
                                 DW_PR_XZEROS DW_PR_DUx ", ",
                                 (Dwarf_Unsigned)start);
                         }
-                        printf("length of 0x%" DW_PR_XZEROS DW_PR_DUx 
+                        printf("length of 0x%" DW_PR_XZEROS DW_PR_DUx
                             ", cu_die_offset = 0x%" DW_PR_XZEROS DW_PR_DUx,
-                            length, 
+                            length,
                             (Dwarf_Unsigned)cu_die_offset);
 
                     }
                     if (verbose && do_print_dwarf) {
-                        printf(" cuhdr 0x%" DW_PR_XZEROS DW_PR_DUx "\n", 
+                        printf(" cuhdr 0x%" DW_PR_XZEROS DW_PR_DUx "\n",
                             (Dwarf_Unsigned)off);
                     }
                     dwarf_dealloc(dbg, cu_die, DW_DLA_DIE);

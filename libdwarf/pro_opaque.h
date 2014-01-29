@@ -5,19 +5,19 @@
   Portions Copyright 2011 David Anderson. All Rights Reserved.
 
   This program is free software; you can redistribute it and/or modify it
-  under the terms of version 2.1 of the GNU Lesser General Public License 
+  under the terms of version 2.1 of the GNU Lesser General Public License
   as published by the Free Software Foundation.
 
   This program is distributed in the hope that it would be useful, but
   WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
   Further, this software is distributed without any warranty that it is
-  free of the rightful claim of any third person regarding infringement 
-  or the like.  Any license provided herein, whether implied or 
+  free of the rightful claim of any third person regarding infringement
+  or the like.  Any license provided herein, whether implied or
   otherwise, applies only to this software file.  Patent licenses, if
-  any, provided herein do not apply to combinations of this program with 
-  other software, or any other product whatsoever.  
+  any, provided herein do not apply to combinations of this program with
+  other software, or any other product whatsoever.
 
   You should have received a copy of the GNU Lesser General Public
   License along with this program; if not, write the Free Software
@@ -38,9 +38,9 @@
 
 #include <stddef.h>
 
-/* 
-    Sgidefs included to define __uint32_t, 
-    a guaranteed 4-byte quantity.            
+/*
+    Sgidefs included to define __uint32_t,
+    a guaranteed 4-byte quantity.
 */
 #include "libdwarfdefs.h"
 
@@ -79,7 +79,7 @@ typedef signed short Dwarf_Shalf;
 typedef __uint32_t Dwarf_ufixed;
 typedef __int32_t Dwarf_sfixed;
 
-/* 
+/*
     producer:
     This struct is used to hold information about all
     debug* sections. On creating a new section, section
@@ -96,7 +96,7 @@ typedef struct Dwarf_P_Inc_Dir_s *Dwarf_P_Inc_Dir;
 
 /*
     producer:
-    This struct holds file entries for the statement prologue. 
+    This struct holds file entries for the statement prologue.
     Defined in pro_line.h
 */
 typedef struct Dwarf_P_F_Entry_s *Dwarf_P_F_Entry;
@@ -109,7 +109,7 @@ typedef struct Dwarf_P_Cie_s *Dwarf_P_Cie;
 
 /*
     producer:
-    Struct to hold line number information, different from 
+    Struct to hold line number information, different from
     Dwarf_Line opaque type.
 */
 typedef struct Dwarf_P_Line_s *Dwarf_P_Line;
@@ -154,19 +154,19 @@ typedef struct Dwarf_P_Per_Sect_String_Attrs_s *Dwarf_P_Per_Sect_String_Attrs;
 struct Dwarf_P_Line_Inits_s {
     unsigned pi_version; /* line table version number */
     unsigned pi_default_is_stmt; /* default value for is_stmt */
-    
+
     /* Size of the smallest instruction, in bytes. */
-    unsigned pi_minimum_instruction_length; 
-   
+    unsigned pi_minimum_instruction_length;
+
     /* Make this >1 for VLIW machines. */
     unsigned pi_maximum_operations_per_instruction;
 
     /*  Normally opcode_base is determined by pi_version, but we
         allow manual setting here so we can generate data like
-        GNU with a DWARF3 opcode base in a DWARF2 section. 
+        GNU with a DWARF3 opcode base in a DWARF2 section.
         This determines how much of the header_opcode_lengths
         table is emitted in the line table header */
-    unsigned pi_opcode_base; 
+    unsigned pi_opcode_base;
 
     int      pi_line_base;   /* For line table header. */
     int      pi_line_range;  /* For line table header. */
@@ -182,7 +182,7 @@ struct Dwarf_P_Die_s {
     Dwarf_P_Die di_child; /* first child */
     /*  The last child field makes linking up children an O(1) operation,
         See pro_die.c. */
-    Dwarf_P_Die di_last_child; 
+    Dwarf_P_Die di_last_child;
     Dwarf_P_Die di_left; /* left sibling */
     Dwarf_P_Die di_right; /* right sibling */
     Dwarf_P_Attribute di_attrs; /* list of attributes */
@@ -264,14 +264,14 @@ struct Dwarf_P_Simple_name_header_s {
         trailer */
     Dwarf_Signed sn_net_len;
 };
-typedef int (*_dwarf_pro_reloc_name_func_ptr) (Dwarf_P_Debug dbg, 
-    int sec_index, 
+typedef int (*_dwarf_pro_reloc_name_func_ptr) (Dwarf_P_Debug dbg,
+    int sec_index,
     Dwarf_Unsigned offset,/* r_offset */
     Dwarf_Unsigned symidx,
     enum Dwarf_Rel_Type type,
     int reltarget_length);
 
-typedef int (*_dwarf_pro_reloc_length_func_ptr) (Dwarf_P_Debug dbg, 
+typedef int (*_dwarf_pro_reloc_length_func_ptr) (Dwarf_P_Debug dbg,
     int sec_index, Dwarf_Unsigned offset,/* r_offset */
     Dwarf_Unsigned start_symidx,
     Dwarf_Unsigned end_symidx,
@@ -287,7 +287,7 @@ typedef int (*_dwarf_pro_transform_relocs_func_ptr) (Dwarf_P_Debug dbg,
     a SYMBOLIC relocation entry.
     During creation sometimes we create multiple chained blocks,
     but sometimes we create a single long block.
-    Before returning reloc data to caller, 
+    Before returning reloc data to caller,
     we switch to a single, long-enough,
     block.
 
@@ -307,7 +307,7 @@ struct Dwarf_P_Relocation_Block_s {
     char *rb_data; /* data area */
 };
 
-/* One of these per potential relocation section 
+/* One of these per potential relocation section
    So one per actual dwarf section.
    Left zeroed when not used (some sections have
    no relocations).
@@ -316,11 +316,11 @@ struct Dwarf_P_Per_Reloc_Sect_s {
     unsigned long pr_reloc_total_count; /* total number of entries
         across all blocks */
 
-    unsigned long pr_slots_per_block_to_alloc; /* at Block alloc, this 
+    unsigned long pr_slots_per_block_to_alloc; /* at Block alloc, this
         is the default number of slots to use */
 
     int pr_sect_num_of_reloc_sect; /* sect number returned by
-        de_callback_func() or de_callback_func_b() or_c() 
+        de_callback_func() or de_callback_func_b() or_c()
         call, this is the sect
         number of the relocation section. */
 
@@ -438,7 +438,7 @@ struct Dwarf_P_Debug_s {
     int de_elf_sects[NUM_DEBUG_SECTIONS];  /* elf sect number of
         the section itself, DEBUG_LINE for example */
 
-    Dwarf_Unsigned de_sect_name_idx[NUM_DEBUG_SECTIONS]; /* section 
+    Dwarf_Unsigned de_sect_name_idx[NUM_DEBUG_SECTIONS]; /* section
         name index or handle for the name of the symbol for
         DEBUG_LINE for example */
 
@@ -459,8 +459,8 @@ struct Dwarf_P_Debug_s {
         -64 8.  */
 
     unsigned char de_pointer_size; /* size of pointer in target.
-        Here to avoid test of abi in 
-        macro at run time MIPS -n32 
+        Here to avoid test of abi in
+        macro at run time MIPS -n32
         4, -64 is 8.  */
 
     unsigned char de_is_64bit; /* non-zero if is 64bit. Else 32 bit:

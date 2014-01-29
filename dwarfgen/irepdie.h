@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2010-2013 David Anderson.  All rights reserved.
- 
+
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions are met:
   * Redistributions of source code must retain the above copyright
@@ -11,7 +11,7 @@
   * Neither the name of the example nor the
     names of its contributors may be used to endorse or promote products
     derived from this software without specific prior written permission.
- 
+
   THIS SOFTWARE IS PROVIDED BY David Anderson ''AS IS'' AND ANY
   EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
   WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -26,14 +26,14 @@
 */
 
 
-// 
+//
 // irepdie.h
 //
 //
 class IRCUdata;
 class IRDie;
 
-class IRAttr { 
+class IRAttr {
 public:
     IRAttr():attr_(0),finalform_(0),initialform_(0),
         formclass_(DW_FORM_CLASS_UNKNOWN),formdata_(0) {
@@ -69,7 +69,7 @@ public:
         }
         return *this;
     }
-    void setBaseData(Dwarf_Half attr, Dwarf_Half finalform, 
+    void setBaseData(Dwarf_Half attr, Dwarf_Half finalform,
         Dwarf_Half initialform){
         attr_ = attr;
         finalform_ = finalform;
@@ -103,11 +103,11 @@ public:
         children_.push_back(newdie);
     };
     std::string  getName() {
-        std::list<IRAttr>::iterator it = attrs_.begin(); 
+        std::list<IRAttr>::iterator it = attrs_.begin();
         for( ; it != attrs_.end() ; ++it) {
             if (it->getAttrNum() == DW_AT_name) {
                 IRForm *f = it->getFormData();
-                const IRFormString * isv = 
+                const IRFormString * isv =
                     dynamic_cast<const IRFormString *>(f);
                 if(isv) {
                     return isv->getString();
@@ -128,15 +128,15 @@ public:
     // lastChild and lastAttr will throw if no entry exists.
     IRDie &lastChild() { return children_.back(); };
     IRAttr &lastAttr() { return attrs_.back(); };
-    void setBaseData(Dwarf_Half tag,Dwarf_Unsigned goff, 
+    void setBaseData(Dwarf_Half tag,Dwarf_Unsigned goff,
         Dwarf_Unsigned cuoff) {
         tag_ = tag;
         globalOffset_=goff;
-        cuRelativeOffset_ = cuoff; 
+        cuRelativeOffset_ = cuoff;
     };
     Dwarf_Unsigned getGlobalOffset() const { return globalOffset_;};
     Dwarf_Unsigned getCURelativeOffset() const { return cuRelativeOffset_;};
-    void setGeneratedDie(Dwarf_P_Die p_die) { 
+    void setGeneratedDie(Dwarf_P_Die p_die) {
         generatedDie_ = p_die;};
     Dwarf_P_Die getGeneratedDie() const { return generatedDie_;};
     unsigned getTag() {return tag_; }
@@ -185,7 +185,7 @@ struct ClassReferenceFixupData {
     Dwarf_P_Debug dbg_;
     //  The source die and attrnum suffice because the definition of
     //  DWARF guarantees only one attribute of any given attribute number
-    //  can exist on a given DIE. 
+    //  can exist on a given DIE.
     Dwarf_Half attrnum_;
     Dwarf_P_Die sourcedie_;
     IRDie *target_;
@@ -193,7 +193,7 @@ struct ClassReferenceFixupData {
 
 class IRCUdata {
 public:
-    IRCUdata(): 
+    IRCUdata():
         cu_header_length_(0),
         abbrev_offset_(0),
         next_cu_header_offset_(0),
@@ -212,7 +212,7 @@ public:
         Dwarf_Half addr_size,
         Dwarf_Half length_size,
         Dwarf_Half extension_size,
-        Dwarf_Unsigned next_cu_header): 
+        Dwarf_Unsigned next_cu_header):
             cu_header_length_(len),
             abbrev_offset_(abbrev_offset),
             next_cu_header_offset_(addr_size),
@@ -228,12 +228,12 @@ public:
     ~IRCUdata() { };
     bool hasMacroData(Dwarf_Unsigned *offset_out,Dwarf_Unsigned *cudie_off) {
         *offset_out = macrodata_offset_;
-        *cudie_off = cudie_offset_; 
+        *cudie_off = cudie_offset_;
         return has_macrodata_;
     }
     bool hasLineData(Dwarf_Unsigned *offset_out,Dwarf_Unsigned *cudie_off) {
         *offset_out = linedata_offset_;
-        *cudie_off = cudie_offset_; 
+        *cudie_off = cudie_offset_;
         return has_linedata_;
     }
     void setMacroData(Dwarf_Unsigned offset,Dwarf_Unsigned cudieoff) {
@@ -257,7 +257,7 @@ public:
     };
     void insertLocalReferenceAttrTargetRef(Dwarf_Unsigned localoff,
         IRFormReference* attrptr) {
-         
+
         cuOffInLocalToIRFormRef_.push_back(OffsetFormEntry(localoff,
             attrptr));
     };
@@ -288,12 +288,12 @@ public:
             if(tdie) {
                 r->setTargetInDie(tdie);
             } else {
-                // Missing die in r  
+                // Missing die in r
                 // Should be impossible.
             }
         }
     }
-    
+
 private:
     Dwarf_Unsigned cu_header_length_;
     Dwarf_Unsigned abbrev_offset_;
@@ -310,7 +310,7 @@ private:
     IRCULineData      cu_lines_;
 
     // If true, is 32bit dwarf,else 64bit. Gives the size of a reference.
-    bool dwarf32bit_;  
+    bool dwarf32bit_;
 
     IRDie   cudie_;
 

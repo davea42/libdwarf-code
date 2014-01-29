@@ -1,7 +1,7 @@
 /*
   Copyright (c) 2009-2010 David Anderson.
   All rights reserved.
- 
+
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions are met:
   * Redistributions of source code must retain the above copyright
@@ -12,7 +12,7 @@
   * Neither the name of the example nor the
     names of its contributors may be used to endorse or promote products
     derived from this software without specific prior written permission.
- 
+
   THIS SOFTWARE IS PROVIDED BY David Anderson ''AS IS'' AND ANY
   EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
   WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -23,7 +23,7 @@
   ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
   (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
   SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- 
+
 */
 /*  simplereader.c
     This is an example of code reading dwarf .debug_frame.
@@ -63,7 +63,7 @@ print_cie_instrs(Dwarf_Debug dbg,Dwarf_Cie cie,Dwarf_Error *error);
 #define CFA_VAL 2002
 
 
-int 
+int
 main(int argc, char **argv)
 {
 
@@ -94,7 +94,7 @@ main(int argc, char **argv)
         These return the old values, but here we do not
         need to know the old values.  The sizes and
         values here are higher than most ABIs and entirely
-        arbitrary.  
+        arbitrary.
 
         The setting of initial_value to
         the same as undefined-value (the other possible choice being
@@ -116,7 +116,7 @@ main(int argc, char **argv)
     return 0;
 }
 
-static void 
+static void
 read_frame_data(Dwarf_Debug dbg)
 {
     Dwarf_Error error;
@@ -126,7 +126,7 @@ read_frame_data(Dwarf_Debug dbg)
     Dwarf_Fde *fde_data = 0;
     int res = DW_DLV_ERROR;
     Dwarf_Signed fdenum = 0;
-    
+
 
     res = dwarf_get_fde_list(dbg,&cie_data,&cie_element_count,
         &fde_data,&fde_element_count,&error);
@@ -138,7 +138,7 @@ read_frame_data(Dwarf_Debug dbg)
         printf("Error reading frame data ");
         exit(1);
     }
-    printf( "%" DW_PR_DSd " cies present. " 
+    printf( "%" DW_PR_DSd " cies present. "
         "%" DW_PR_DSd " fdes present. \n",
         cie_element_count,fde_element_count);
     /*if(fdenum >= fde_element_count) {
@@ -152,7 +152,7 @@ read_frame_data(Dwarf_Debug dbg)
         printf("Print cie of fde %" DW_PR_DSd  "\n",fdenum);
         res = dwarf_get_cie_of_fde(fde_data[fdenum],&cie,&error);
         if(res != DW_DLV_OK) {
-            printf("Error accessing fdenum %" DW_PR_DSd 
+            printf("Error accessing fdenum %" DW_PR_DSd
                 " to get its cie\n",fdenum);
             exit(1);
         }
@@ -160,7 +160,7 @@ read_frame_data(Dwarf_Debug dbg)
         printf("Print fde %" DW_PR_DSd  "\n",fdenum);
         print_fde_instrs(dbg,fde_data[fdenum],fdenum,&error);
     }
-  
+
     /* Done with the data. */
     dwarf_fde_cie_list_dealloc(dbg,cie_data,cie_element_count,
         fde_data, fde_element_count);
@@ -226,7 +226,7 @@ print_fde_instrs(Dwarf_Debug dbg,
     Dwarf_Frame_Op * frame_op_list = 0;
     Dwarf_Signed frame_op_count = 0;
     Dwarf_Cie cie = 0;
-    
+
 
     res = dwarf_get_fde_range(fde,&lowpc,&func_length,&fde_bytes,
         &fde_byte_length,&cie_offset,&cie_index,&fde_offset,error);
@@ -236,9 +236,9 @@ print_fde_instrs(Dwarf_Debug dbg,
     }
 
     arbitrary_addr = lowpc + (func_length/2);
-    printf("function low pc 0x%" DW_PR_DUx 
-        "  and length 0x%" DW_PR_DUx  
-        "  and addr we choose 0x%" DW_PR_DUx  
+    printf("function low pc 0x%" DW_PR_DUx
+        "  and length 0x%" DW_PR_DUx
+        "  and addr we choose 0x%" DW_PR_DUx
         "\n",
         lowpc,func_length,arbitrary_addr);
 
@@ -257,7 +257,7 @@ print_fde_instrs(Dwarf_Debug dbg,
 
     res = dwarf_get_fde_info_for_all_regs3(fde,arbitrary_addr ,
         &tab3,&actual_pc,error);
-          
+
     if(res != DW_DLV_OK) {
         printf("dwarf_get_fde_info_for_all_regs3 failed!\n");
         exit(1);
@@ -289,7 +289,7 @@ print_fde_instrs(Dwarf_Debug dbg,
     free(tab3.rt3_rules);
 }
 
-static void 
+static void
 print_reg(int r)
 {
    switch(r) {
@@ -316,11 +316,11 @@ print_one_regentry(const char *prefix,Dwarf_Fde fde,Dwarf_Debug dbg,
     int is_cfa = !strcmp("cfa",prefix);
     printf("%s ",prefix);
     printf("type: %d %s ",
-        entry->dw_value_type, 
+        entry->dw_value_type,
         (entry->dw_value_type == DW_EXPR_OFFSET)? "DW_EXPR_OFFSET":
         (entry->dw_value_type == DW_EXPR_VAL_OFFSET)? "DW_EXPR_VAL_OFFSET":
         (entry->dw_value_type == DW_EXPR_EXPRESSION)? "DW_EXPR_EXPRESSION":
-        (entry->dw_value_type == DW_EXPR_VAL_EXPRESSION)? 
+        (entry->dw_value_type == DW_EXPR_VAL_EXPRESSION)?
             "DW_EXPR_VAL_EXPRESSION":
             "Unknown");
     switch(entry->dw_value_type) {
@@ -328,7 +328,7 @@ print_one_regentry(const char *prefix,Dwarf_Fde fde,Dwarf_Debug dbg,
         print_reg(entry->dw_regnum);
         printf(" offset_rel? %d ",entry->dw_offset_relevant);
         if(entry->dw_offset_relevant) {
-            printf(" offset  %" DW_PR_DSd " " , 
+            printf(" offset  %" DW_PR_DSd " " ,
                 entry->dw_offset_or_block_len);
             if(is_cfa) {
                 printf("defines cfa value");
@@ -344,7 +344,7 @@ print_one_regentry(const char *prefix,Dwarf_Fde fde,Dwarf_Debug dbg,
         break;
     case DW_EXPR_VAL_OFFSET:
         print_reg(entry->dw_regnum);
-        printf(" offset  %" DW_PR_DSd " " , 
+        printf(" offset  %" DW_PR_DSd " " ,
             entry->dw_offset_or_block_len);
         if(is_cfa) {
             printf("does this make sense? No?");
@@ -358,7 +358,7 @@ print_one_regentry(const char *prefix,Dwarf_Fde fde,Dwarf_Debug dbg,
     case DW_EXPR_EXPRESSION:
         print_reg(entry->dw_regnum);
         printf(" offset_rel? %d ",entry->dw_offset_relevant);
-        printf(" offset  %" DW_PR_DSd " " , 
+        printf(" offset  %" DW_PR_DSd " " ,
             entry->dw_offset_or_block_len);
         printf("Block ptr set? %s ",entry->dw_block_ptr?"yes":"no");
         printf(" Value is at address given by expr val ");
@@ -366,7 +366,7 @@ print_one_regentry(const char *prefix,Dwarf_Fde fde,Dwarf_Debug dbg,
             (Dwarf_Unsigned)entry->dw_block_ptr); */
         break;
     case DW_EXPR_VAL_EXPRESSION:
-        printf(" expression byte len  %" DW_PR_DSd " " , 
+        printf(" expression byte len  %" DW_PR_DSd " " ,
             entry->dw_offset_or_block_len);
         printf("Block ptr set? %s ",entry->dw_block_ptr?"yes":"no");
         printf(" Value is expr val ");
@@ -392,14 +392,14 @@ print_regtable(Dwarf_Fde fde,Dwarf_Regtable3 *tab3,int oldrulecount,
     }
     print_one_regentry("cfa",fde,dbg,oldrulecount,&tab3->rt3_cfa_rule,
         error);
-   
+
     for(r = 0; r < max; r++) {
         char rn[30];
         snprintf(rn,sizeof(rn),"reg %d",r);
         print_one_regentry(rn, fde,dbg,oldrulecount,tab3->rt3_rules+r,
             error);
     }
-    
+
 
 }
 

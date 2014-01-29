@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2010-2013 David Anderson.  All rights reserved.
- 
+
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions are met:
   * Redistributions of source code must retain the above copyright
@@ -11,7 +11,7 @@
   * Neither the name of the example nor the
     names of its contributors may be used to endorse or promote products
     derived from this software without specific prior written permission.
- 
+
   THIS SOFTWARE IS PROVIDED BY David Anderson ''AS IS'' AND ANY
   EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
   WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -27,11 +27,11 @@
 
 // createirepfrombinary.cc
 
-// Reads an object and inserts its dwarf data into 
+// Reads an object and inserts its dwarf data into
 // an object intended to hold all the dwarf data.
 
 #include "config.h"
-#include <unistd.h> 
+#include <unistd.h>
 #include <stdlib.h> // for exit
 #include <iostream>
 #include <string>
@@ -65,7 +65,7 @@ static void readGlobals(Dwarf_Debug dbg, IRepresentation & irep);
 class DbgInAutoCloser {
 public:
     DbgInAutoCloser(Dwarf_Debug dbg,int fd): dbg_(dbg),fd_(fd) {};
-    ~DbgInAutoCloser() { 
+    ~DbgInAutoCloser() {
         Dwarf_Error err = 0;
         dwarf_finish(dbg_,&err);
         close(fd_);
@@ -74,7 +74,7 @@ private:
     Dwarf_Debug dbg_;
     int fd_;
 };
- 
+
 
 void
 createIrepFromBinary(const std::string &infile,
@@ -110,7 +110,7 @@ createIrepFromBinary(const std::string &infile,
     return;
 }
 
-static void 
+static void
 readFrameDataFromBinary(Dwarf_Debug dbg, IRepresentation & irep)
 {
     Dwarf_Error err = 0;
@@ -157,7 +157,7 @@ readFrameDataFromBinary(Dwarf_Debug dbg, IRepresentation & irep)
             data_alignment_factor,return_address_register_rule,
             initial_instructions,initial_instructions_length);
         irep.framedata().insert_cie(cie);
-    } 
+    }
     for(Dwarf_Signed i =0; i < fde_count; ++i) {
         Dwarf_Addr low_pc = 0;
         Dwarf_Unsigned    func_length = 0;
@@ -179,7 +179,7 @@ readFrameDataFromBinary(Dwarf_Debug dbg, IRepresentation & irep)
             cie_offset, cie_index,fde_offset);
         Dwarf_Ptr instr_in = 0;
         Dwarf_Unsigned instr_len = 0;
-        res = dwarf_get_fde_instr_bytes(fde_data[i], 
+        res = dwarf_get_fde_instr_bytes(fde_data[i],
             &instr_in, &instr_len, &err);
         if(res != DW_DLV_OK) {
             cerr << "Error reading frame data fde instructions " << i << endl;
@@ -187,7 +187,7 @@ readFrameDataFromBinary(Dwarf_Debug dbg, IRepresentation & irep)
         }
         fde.get_fde_instrs_into_ir(instr_in,instr_len);
         irep.framedata().insert_fde(fde);
-    } 
+    }
     dwarf_fde_cie_list_dealloc(dbg,cie_data,cie_count,
         fde_data,fde_count);
 }
@@ -217,7 +217,7 @@ readCUMacroDataFromBinary(Dwarf_Debug dbg, IRepresentation & irep,
                 mdp->dmd_fileindex, mdp->dmd_macro?mdp->dmd_macro:"");
             mvec.push_back(ir);
         }
-    }    
+    }
     dwarf_dealloc(dbg, md, DW_DLA_STRING);
 }
 
@@ -247,11 +247,11 @@ get_basic_attr_data_one_attr(Dwarf_Debug dbg,
     }
     irattr.setBaseData(attrnum,finalform,initialform);
     enum Dwarf_Form_Class cl = dwarf_get_form_class(
-        cudata.getVersionStamp(), attrnum,   
+        cudata.getVersionStamp(), attrnum,
         cudata.getOffsetSize(), finalform);
     irattr.setFormClass(cl);
     if (cl == DW_FORM_CLASS_UNKNOWN) {
-        cerr << "Unable to figure out form class. ver " << 
+        cerr << "Unable to figure out form class. ver " <<
             cudata.getVersionStamp() <<
             " attrnum " << attrnum <<
             " offsetsize " << cudata.getOffsetSize() <<
@@ -260,7 +260,7 @@ get_basic_attr_data_one_attr(Dwarf_Debug dbg,
     }
     irattr.setFormData(formFactory(dbg,attr,cudata,irattr));
 }
-void 
+void
 get_basic_die_data(Dwarf_Debug dbg,
     Dwarf_Die indie,IRDie &irdie)
 {
@@ -289,7 +289,7 @@ get_basic_die_data(Dwarf_Debug dbg,
 
 static void
 get_attrs_of_die(Dwarf_Die in_die,IRDie &irdie,
-    IRCUdata &cudata, 
+    IRCUdata &cudata,
     IRepresentation &irep,
     Dwarf_Debug dbg)
 {
@@ -323,7 +323,7 @@ get_attrs_of_die(Dwarf_Die in_die,IRDie &irdie,
 // Invariant: IRDie and IRCUdata are in the irep tree,
 // not local record references to local scopes.
 static void
-get_children_of_die(Dwarf_Die in_die,IRDie&irdie, 
+get_children_of_die(Dwarf_Die in_die,IRDie&irdie,
     IRCUdata &ircudata,
     IRepresentation &irep,
     Dwarf_Debug dbg)
@@ -347,7 +347,7 @@ get_children_of_die(Dwarf_Die in_die,IRDie&irdie,
         IRDie &lastchild = irdie.lastChild();
         get_attrs_of_die(curchilddie,lastchild,ircudata,irep,dbg);
 
-        ircudata.insertLocalDieOffset(lastchild.getCURelativeOffset(), 
+        ircudata.insertLocalDieOffset(lastchild.getCURelativeOffset(),
             &lastchild);
 
         get_children_of_die(curchilddie,lastchild,ircudata,irep,dbg);
@@ -369,7 +369,7 @@ get_children_of_die(Dwarf_Die in_die,IRDie&irdie,
 }
 
 static void
-get_linedata_of_cu_die(Dwarf_Die in_die,IRDie&irdie, 
+get_linedata_of_cu_die(Dwarf_Die in_die,IRDie&irdie,
     IRCUdata &ircudata,
     IRepresentation &irep,
     Dwarf_Debug dbg)
@@ -456,7 +456,7 @@ get_linedata_of_cu_die(Dwarf_Die in_die,IRDie&irdie,
         // file number (fileno).
         std::string linesrc(linesrctmp);
 
-      
+
         Dwarf_Bool is_stmt = 0;
         lres = dwarf_linebeginstatement(li,&is_stmt,&error);
         if (lres != DW_DLV_OK) {
@@ -505,7 +505,7 @@ get_linedata_of_cu_die(Dwarf_Die in_die,IRDie&irdie,
     dwarf_srclines_dealloc(dbg, linebuf, linecnt);
 }
 
-static bool 
+static bool
 getToplevelOffsetAttr(Dwarf_Die cu_die,Dwarf_Half attrnumber,
     Dwarf_Unsigned &offset_out)
 {
@@ -525,12 +525,12 @@ getToplevelOffsetAttr(Dwarf_Die cu_die,Dwarf_Half attrnumber,
         }
     }
     return foundit;
-}   
+}
 
 // We record the .debug_info info for each CU found
 // To start with we restrict attention to very few DIEs and
 // attributes,  but intend to get all eventually.
-static void 
+static void
 readCUDataFromBinary(Dwarf_Debug dbg, IRepresentation & irep)
 {
     Dwarf_Error error;
@@ -565,7 +565,7 @@ readCUDataFromBinary(Dwarf_Debug dbg, IRepresentation & irep)
             extension_size,next_cu_header);
 
         //  The CU will have a single sibling (well, it is
-        //  not exactly a sibling, but close enough), a cu_die. 
+        //  not exactly a sibling, but close enough), a cu_die.
         res = dwarf_siblingof(dbg,no_die,&cu_die,&error);
         if(res == DW_DLV_ERROR) {
             cerr <<"Error in dwarf_siblingof on CU die "<< endl;
@@ -598,12 +598,12 @@ readCUDataFromBinary(Dwarf_Debug dbg, IRepresentation & irep)
         IRCUdata & treecu = irep.infodata().lastCU();
         IRDie &cuirdie = treecu.baseDie();
         get_basic_die_data(dbg,cu_die,cuirdie);
-        treecu.insertLocalDieOffset(cuirdie.getCURelativeOffset(), 
+        treecu.insertLocalDieOffset(cuirdie.getCURelativeOffset(),
             &cuirdie);
         get_attrs_of_die(cu_die,cuirdie,treecu,irep,dbg);
         get_children_of_die(cu_die,cuirdie,treecu,irep,dbg);
         get_linedata_of_cu_die(cu_die,cuirdie,treecu,irep,dbg);
-        
+
         // Now we have all local DIEs in the CU so we
         // can identify all targets of local CLASS_REFERENCE
         // and insert the IRDie * into the IRFormReference
@@ -619,7 +619,7 @@ readCUDataFromBinary(Dwarf_Debug dbg, IRepresentation & irep)
 // the macro info for each CU (if any).
 // We record the CU macro info for each CU found (using
 // the value of the DW_AT_macro_info attribute, if any).
-static void 
+static void
 readMacroDataFromBinary(Dwarf_Debug dbg, IRepresentation & irep)
 {
 
@@ -647,7 +647,7 @@ readGlobals(Dwarf_Debug dbg, IRepresentation & irep)
     Dwarf_Signed  i = 0;
     int res = 0;
     IRPubsData  &pubdata = irep.pubnamedata();
-    
+
     res = dwarf_get_globals(dbg, &globs,&cnt, &error);
     if(res == DW_DLV_OK) {
         std::list<IRPub> &pubnames = pubdata.getPubnames();

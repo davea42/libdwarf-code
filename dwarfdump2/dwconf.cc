@@ -46,7 +46,7 @@ using std::endl;
 
 // The nesting level is arbitrary,  2 should suffice.
 // But at least this prevents an infinite loop.
-#define MAX_NEST_LEVEL 3 
+#define MAX_NEST_LEVEL 3
 
 
 
@@ -79,7 +79,7 @@ struct comtable_s {
 };
 
 /* Count errors found in this scan of the configuration file. */
-static int errcount = 0;        
+static int errcount = 0;
 
 static string name_begin_abi("beginabi:");
 static string name_reg("reg:");
@@ -141,7 +141,7 @@ static FILE *find_a_file(const string &named_file, const char **defaults,
     string & name_used);
 static bool find_abi_start(FILE * stream, const string &abi_name, long *offset,
     unsigned long *lineno_out);
-static bool parse_abi(FILE * stream, const std::string &fname, 
+static bool parse_abi(FILE * stream, const std::string &fname,
     const std::string &abiname,
     struct conf_internal_s *out, unsigned long lineno,unsigned nestlevel);
 static char * get_token(char *cp, token_s *tok);
@@ -158,7 +158,7 @@ static char * get_token(char *cp, token_s *tok);
     with that name.  It then looks for the right  ABI entry.
     If the first file it finds does not have that ABI entry it
     gives up.
-  
+
     It would also be reasonable to search every 'dwarfdump.conf'
     it finds for the abi. But we stop at the first dwarfdump.conf
     we find.
@@ -170,7 +170,7 @@ static char * get_token(char *cp, token_s *tok);
 */
 int
 find_conf_file_and_read_config_inner(const string &named_file,
-    const string &named_abi, 
+    const string &named_abi,
     struct conf_internal_s *conf_internal,
     unsigned nest_level)
 {
@@ -178,7 +178,7 @@ find_conf_file_and_read_config_inner(const string &named_file,
     errcount = 0;
 
     string name_used;
-    FILE *conf_stream = find_a_file(named_file, 
+    FILE *conf_stream = find_a_file(named_file,
         conf_internal->conf_defaults, name_used);
     if (!conf_stream) {
         ++errcount;
@@ -209,7 +209,7 @@ find_conf_file_and_read_config_inner(const string &named_file,
         ++errcount;
         cout << "dwarfdump seek to " <<
             offset << " offset in " <<
-            name_used << 
+            name_used <<
             " failed!" << endl;
         return errcount;
     }
@@ -222,7 +222,7 @@ find_conf_file_and_read_config_inner(const string &named_file,
 // This is the exteral-facing call to read the configure file.
 int
 find_conf_file_and_read_config(const string &named_file,
-    const string &named_abi, 
+    const string &named_abi,
     const char **defaults,
     struct dwconf_s *conf_out)
 {
@@ -235,7 +235,7 @@ find_conf_file_and_read_config(const string &named_file,
     conf_internal.conf_defaults = defaults;
 
     int res = find_conf_file_and_read_config_inner(named_file,
-        named_abi, 
+        named_abi,
         &conf_internal,0);
     return res;
 }
@@ -324,11 +324,11 @@ test_canonical_append(void)
    combining separate name and path components.
    This is  an arbitrary choice...
 
-    The defaults are listed in dwarfdump.c in the array 
+    The defaults are listed in dwarfdump.c in the array
     config_file_defaults[].
 */
 static FILE *
-find_a_file(const std::string &named_file, const char **defaults, 
+find_a_file(const std::string &named_file, const char **defaults,
    string & name_used_out)
 {
     string lname = named_file;
@@ -430,7 +430,7 @@ ensure_has_no_more_tokens(char *cp, const string &fname, unsigned long lineno)
 /*  There may be many  beginabi: lines in a dwarfdump.conf file,
     find the one we want and return its file offset.  */
 static bool
-find_abi_start(FILE * stream, const string &abi_name, 
+find_abi_start(FILE * stream, const string &abi_name,
     long *offset, unsigned long *lineno_out)
 {
     char buf[100];
@@ -530,7 +530,7 @@ parsebeginabi(char *cp, const string &fname, const string &abiname,
             fname << " line " << lineno  <<endl;
         return false;
     }
-    bool res = ensure_has_no_more_tokens(cp + tok.tk_data.size(), 
+    bool res = ensure_has_no_more_tokens(cp + tok.tk_data.size(),
         fname, lineno);
     return res;
 }
@@ -539,7 +539,7 @@ parsebeginabi(char *cp, const string &fname, const string &abiname,
     ensure no names duplicated.  */
 static void
 add_to_reg_table(struct dwconf_s *conf,
-    const string &rname, unsigned long rval, 
+    const string &rname, unsigned long rval,
     const string &fname,
     unsigned long lineno)
 {
@@ -553,7 +553,7 @@ add_to_reg_table(struct dwconf_s *conf,
 /*  Our input is supposed to be a number.
     Determine the value (and return it) or generate an error message.  */
 static int
-make_a_number(const string &cmd, const string &filename, 
+make_a_number(const string &cmd, const string &filename,
     unsigned long lineno, struct token_s *tok, unsigned long *val_out)
 {
     char *endnum = 0;
@@ -686,7 +686,7 @@ parsecfa_reg(char *cp, const string &fname, unsigned long lineno,
         ++errcount;
         cout << "dwarfdump.conf error: " <<
             comtab->name <<
-            " missing cfa_reg number " << 
+            " missing cfa_reg number " <<
             fname << " line " << lineno  << endl;
         return false;
     }
@@ -704,7 +704,7 @@ parsecfa_reg(char *cp, const string &fname, unsigned long lineno,
 
 
 /*  We are guaranteed it's an initial_reg_value: command,
-    parse it and put the reg value where it will be remembered. 
+    parse it and put the reg value where it will be remembered.
 */
 static bool
 parseinitial_reg_value(char *cp, const string &fname,
@@ -720,7 +720,7 @@ parseinitial_reg_value(char *cp, const string &fname,
         cout << "dwarfdump.conf error: " <<
             comtab->name <<
             " missing initial reg value " <<
-            fname << " line " << lineno << endl; 
+            fname << " line " << lineno << endl;
         return false;
     }
 
@@ -872,7 +872,7 @@ parseaddress_size(char *cp, const string &fname, unsigned long lineno,
     check we have the right abi.
 */
 static bool
-parseendabi(char *cp, const string &fname, 
+parseendabi(char *cp, const string &fname,
     const string &abiname, unsigned long lineno,
     struct comtable_s *comtab)
 {
@@ -896,7 +896,7 @@ parseendabi(char *cp, const string &fname,
     return res;
 }
 
-static int 
+static int
 parseincludeabi(char *cp,const string &fname,unsigned long lineno,
     std::string &abiname_out,struct comtable_s *comtab)
 {
@@ -909,7 +909,7 @@ parseincludeabi(char *cp,const string &fname,unsigned long lineno,
     return res;
 }
 
-   
+
 
 
 
@@ -924,7 +924,7 @@ parseincludeabi(char *cp,const string &fname,unsigned long lineno,
   undefined_value 'reg number' :  <number: normally 1035 >
   reg_table_size: <size of table>
   endabi:  <abiname>
- 
+
   We are positioned at the start of a beginabi: line when
   called.
 
@@ -993,7 +993,7 @@ parse_abi(FILE * stream, const string &fname, const string &abiname,
         case LT_FRAME_INTERFACE:
             if (conf_internal->frame_interface_lineno > 0) {
                 ++errcount;
-                cout << "dwarfdump: Encountered duplicate frame_interface: " 
+                cout << "dwarfdump: Encountered duplicate frame_interface: "
                     << fname <<
                     " line " << lineno <<
                     " previous frame_interface: line " <<
@@ -1006,7 +1006,7 @@ parse_abi(FILE * stream, const string &fname, const string &abiname,
         case LT_CFA_REG:
             if (conf_internal->cfa_reg_lineno > 0) {
                 ++errcount;
-                cout << "dwarfdump: Encountered duplicate cfa_reg: " 
+                cout << "dwarfdump: Encountered duplicate cfa_reg: "
                     << fname <<
                     " line " << lineno <<
                     " previous cfa_reg line " <<
@@ -1018,7 +1018,7 @@ parse_abi(FILE * stream, const string &fname, const string &abiname,
         case LT_INITIAL_REG_VALUE:
             if (conf_internal->initial_reg_value_lineno > 0) {
                 ++errcount;
-                cout << 
+                cout <<
                     "dwarfdump: Encountered duplicate " <<
                     "initial_reg_value: " <<
                     fname <<
@@ -1033,7 +1033,7 @@ parse_abi(FILE * stream, const string &fname, const string &abiname,
         case LT_SAME_VAL_REG:
             if (conf_internal->same_val_reg_lineno > 0) {
                 ++errcount;
-                cout << 
+                cout <<
                     "dwarfdump: Encountered duplicate " <<
                     "same_val_reg: " <<
                     fname <<
@@ -1048,7 +1048,7 @@ parse_abi(FILE * stream, const string &fname, const string &abiname,
         case LT_UNDEFINED_VAL_REG:
             if (conf_internal->undefined_val_reg_lineno > 0) {
                 ++errcount;
-                cout << 
+                cout <<
                     "dwarfdump: Encountered duplicate " <<
                     "undefined_val_reg: " <<
                     fname <<
@@ -1064,7 +1064,7 @@ parse_abi(FILE * stream, const string &fname, const string &abiname,
         case LT_REG_TABLE_SIZE:
             if (conf_internal->reg_table_size_lineno > 0) {
                 ++errcount;
-                cout << "dwarfdump: duplicate reg_table_size: " 
+                cout << "dwarfdump: duplicate reg_table_size: "
                     << fname <<
                     " line " << lineno <<
                     " previous reg_table_size: line " <<
@@ -1111,7 +1111,7 @@ parse_abi(FILE * stream, const string &fname, const string &abiname,
                 return ires;
             }
             // For the nested abi read, the abi line number must be
-            // set as if not-yet-read, and then restored. 
+            // set as if not-yet-read, and then restored.
             conf_internal->beginabi_lineno = 0;
             find_conf_file_and_read_config_inner(conf_internal->conf_name_used,
                 abiname_inner,conf_internal,nest_level+1);
@@ -1174,11 +1174,11 @@ static const char *genericregnames[] = {
     "r20"
 };
 
-/*  This is a simple generic set of registers.  The 
+/*  This is a simple generic set of registers.  The
     table entry count is pretty arbitrary.
 */
 void
-init_conf_file_data(struct dwconf_s *config_file_data) 
+init_conf_file_data(struct dwconf_s *config_file_data)
 {
     config_file_data->cf_interface_number = 3;
     config_file_data->cf_table_entry_count = 100;
@@ -1199,9 +1199,9 @@ init_conf_file_data(struct dwconf_s *config_file_data)
 /*  These defaults match MIPS/IRIX ABI defaults, but this
     function is not actually used.
     For a 'generic' ABI, see -R or init_conf_file_data().
-    To really get the old MIPS, use '-x abi=mips'. 
+    To really get the old MIPS, use '-x abi=mips'.
     For other ABIs, see -x abi=<whatever>
-    to configure dwarfdump (and libdwarf) frame 
+    to configure dwarfdump (and libdwarf) frame
     data reporting at runtime.
 */
 void
@@ -1228,7 +1228,7 @@ init_mips_conf_file_data(struct dwconf_s *config_file_data)
 }
 
 
-/* A 'generic' ABI. For up to 1200 registers. 
+/* A 'generic' ABI. For up to 1200 registers.
 */
 void
 init_generic_config_1200_regs(struct dwconf_s *config_file_data)
@@ -1236,9 +1236,9 @@ init_generic_config_1200_regs(struct dwconf_s *config_file_data)
     config_file_data->cf_interface_number = 3;
     config_file_data->cf_table_entry_count = 1200;
     /*  There is no defined name for cf_initial_rule_value,
-        cf_same_val, or cf_undefined_val in libdwarf.h, 
-        these must just be high enough to be higher than 
-        any real register number. 
+        cf_same_val, or cf_undefined_val in libdwarf.h,
+        these must just be high enough to be higher than
+        any real register number.
         DW_FRAME_CFA_COL3 must also be higher than any
         real register number. */
     config_file_data->cf_initial_rule_value = 1235; /* SAME VALUE */
@@ -1276,7 +1276,7 @@ print_reg_from_config_data(Dwarf_Signed reg,
         cout << "s";
         return;
     }
-    if (reg < 0 || 
+    if (reg < 0 ||
         reg >= config_data->cf_regs.size()) {
         cout << "r" << reg;
         return;

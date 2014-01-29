@@ -1,4 +1,4 @@
-/* 
+/*
   Copyright (C) 2000-2006 Silicon Graphics, Inc.  All Rights Reserved.
   Portions Copyright 2007-2010 Sun Microsystems, Inc. All rights reserved.
   Portions Copyright 2009-2012 SN Systems Ltd. All rights reserved.
@@ -36,8 +36,8 @@
 
 $Header: /plroot/cmplrs.src/v7.4.5m/.RCS/PL/dwarfdump/RCS/print_sections.c,v 1.69 2006/04/17 00:09:56 davea Exp $ */
 /*  The address of the Free Software Foundation is
-    Free Software Foundation, Inc., 51 Franklin St, Fifth Floor, 
-    Boston, MA 02110-1301, USA.  
+    Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
+    Boston, MA 02110-1301, USA.
     SGI has moved from the Crittenden Lane address.
 */
 
@@ -112,8 +112,8 @@ do_checking(Dwarf_Debug dbg, Dwarf_Arange *arange_buf,Dwarf_Signed i,
                 " gets wrong offset");
         }
     } else {
-        print_error(dbg, "dwarf_get_cu_die_offset failed ", 
-            dres,err);           
+        print_error(dbg, "dwarf_get_cu_die_offset failed ",
+            dres,err);
     }
 }
 
@@ -132,8 +132,8 @@ print_aranges(Dwarf_Debug dbg)
     error_message_data.need_CU_name = true;
     error_message_data.need_CU_base_address = true;
     error_message_data.need_CU_high_address = true;
- 
-    
+
+
     error_message_data.current_section_id = DEBUG_ARANGES;
     if (do_print_dwarf) {
         cout << endl;
@@ -200,11 +200,11 @@ print_aranges(Dwarf_Debug dbg)
                         first_cu = false;
                         prev_off = off;
                         /*  We are faking the indent level. We do not know
-                            what level it is, really. 
+                            what level it is, really.
 
-                            If do_check_dwarf we do not want to do 
-                            the die print call as it will do 
-                            check/print we may not have asked for. 
+                            If do_check_dwarf we do not want to do
+                            the die print call as it will do
+                            check/print we may not have asked for.
                             And if we did ask for debug_info checks
                             this will do the checks a second time!
                             So only call print_one_die if printing.
@@ -213,7 +213,7 @@ print_aranges(Dwarf_Debug dbg)
                             /* There is no die if its a set-end entry */
                             SrcfilesHolder hsrcfiles;
                             DieVec dieVec;
-                            print_one_die(hcu_die, 
+                            print_one_die(hcu_die,
                                 /* print_information= */ 1,
                                 /* indent_level = */0,
                                 dieVec,

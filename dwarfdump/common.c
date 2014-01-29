@@ -1,4 +1,4 @@
-/* 
+/*
   Copyright (C) 2008-2010 SN Systems.  All Rights Reserved.
   Portions Copyright (C) 2008-2012 David Anderson.  All Rights Reserved.
   Portions Copyright (C) 2011-2012 SN Systems Ltd.  .  All Rights Reserved.
@@ -62,7 +62,7 @@ print_version_details(const char * name,int alwaysprint)
     printf("%s %s\n",name,acVersion);
 #else  /* !WIN32 */
     if (alwaysprint) {
-        printf("%s\n",DWARFDUMP_VERSION); 
+        printf("%s\n",DWARFDUMP_VERSION);
     }
 #endif /* WIN32 */
 }

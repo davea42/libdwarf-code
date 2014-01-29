@@ -1,9 +1,9 @@
-/* 
+/*
     Copyright (C) 2000-2006 Silicon Graphics, Inc.  All Rights Reserved.
     Portions Copyright 2007-2010 Sun Microsystems, Inc. All rights reserved.
     Portions Copyright 2009-2010 SN Systems Ltd. All rights reserved.
     Portions Copyright 2008-2011 David Anderson. All rights reserved.
-  
+
     This program is free software; you can redistribute it and/or modify it
     under the terms of version 2 of the GNU General Public License as
     published by the Free Software Foundation.
@@ -35,8 +35,8 @@
     $Header: /plroot/cmplrs.src/v7.4.5m/.RCS/PL/dwarfdump/RCS/print_sections.c,v 1.69 2006/04/17 00:09:56 davea Exp $ */
 
 /*  The address of the Free Software Foundation is
-    Free Software Foundation, Inc., 51 Franklin St, Fifth Floor, 
-    Boston, MA 02110-1301, USA.  
+    Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
+    Boston, MA 02110-1301, USA.
     SGI has moved from the Crittenden Lane address.
 */
 
@@ -65,7 +65,7 @@ print_static_vars(Dwarf_Debug dbg)
     if (!do_print_dwarf) {
         return;
     }
-  
+
     printf("\n.debug_static_vars\n");
     gvres = dwarf_get_vars(dbg, &varbuf, &count, &err);
     if (gvres == DW_DLV_ERROR) {

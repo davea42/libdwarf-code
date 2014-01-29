@@ -7,19 +7,19 @@
   Portions Copyright (C) 2010-2012 SN Systems Ltd. All Rights Reserved
 
   This program is free software; you can redistribute it and/or modify it
-  under the terms of version 2.1 of the GNU Lesser General Public License 
+  under the terms of version 2.1 of the GNU Lesser General Public License
   as published by the Free Software Foundation.
 
   This program is distributed in the hope that it would be useful, but
   WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
   Further, this software is distributed without any warranty that it is
-  free of the rightful claim of any third person regarding infringement 
-  or the like.  Any license provided herein, whether implied or 
+  free of the rightful claim of any third person regarding infringement
+  or the like.  Any license provided herein, whether implied or
   otherwise, applies only to this software file.  Patent licenses, if
-  any, provided herein do not apply to combinations of this program with 
-  other software, or any other product whatsoever.  
+  any, provided herein do not apply to combinations of this program with
+  other software, or any other product whatsoever.
 
   You should have received a copy of the GNU Lesser General Public
   License along with this program; if not, write the Free Software
@@ -37,7 +37,7 @@
 
 */
 /* The address of the Free Software Foundation is
-   Free Software Foundation, Inc., 51 Franklin St, Fifth Floor, 
+   Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
    Boston, MA 02110-1301, USA.
    SGI has moved from the Crittenden Lane address.
 */
@@ -47,7 +47,7 @@
 
 /*
     Decodes unsigned leb128 encoded numbers.
-    Make sure ptr is a pointer to a 1-byte type.  
+    Make sure ptr is a pointer to a 1-byte type.
     In 2003 and earlier this was a hand-inlined
     version of _dwarf_decode_u_leb128() which did
     not work correctly if Dwarf_Word was 64 bits.
@@ -76,7 +76,7 @@
 
 
 /*
-    Skips leb128_encoded numbers that are guaranteed 
+    Skips leb128_encoded numbers that are guaranteed
     to be no more than 4 bytes long.  Same for both
     signed and unsigned numbers.
 */
@@ -110,7 +110,7 @@
     } while (0)
 
 
-/* 
+/*
    Reads 'source' for 'length' bytes from unaligned addr.
 
    Avoids any constant-in-conditional warnings and
@@ -185,7 +185,7 @@ typedef Dwarf_Unsigned BIGGEST_UINT;
     of pure 32 or 64 bit
     or the dwarf v3 64bit-extension way)
 
-    It reads the bits from where rw_src_data_p  points to 
+    It reads the bits from where rw_src_data_p  points to
     and updates the rw_src_data_p to point past what was just read.
 
     It updates w_length_size (to the size of an offset, either 4 or 8)
@@ -195,9 +195,9 @@ typedef Dwarf_Unsigned BIGGEST_UINT;
     r_dbg is just the current dbg pointer.
     w_target is the output length field.
     r_targtype is the output type. Always Dwarf_Unsigned so far.
-  
+
 */
-/*  This one handles the v3 64bit extension  
+/*  This one handles the v3 64bit extension
     and 32bit (and   SGI/MIPS fixed 64  bit via the
         dwarf_init-set r_dbg->de_length_size)..
     It does not recognize any but the one distingushed value
@@ -209,14 +209,14 @@ typedef Dwarf_Unsigned BIGGEST_UINT;
     which makes possible auto-detection of the extension.
 
     This depends on knowing that only a non-zero length
-    is legitimate (AFAICT), and for IRIX non-standard -64 
+    is legitimate (AFAICT), and for IRIX non-standard -64
     dwarf that the first 32 bits of the 64bit offset will be
-    zero (because the compiler could not handle a truly large 
-    value as of Jan 2003 and because no app has that much debug 
+    zero (because the compiler could not handle a truly large
+    value as of Jan 2003 and because no app has that much debug
     info anyway, at least not in the IRIX case).
 
     At present not testing for '64bit elf' here as that
-    does not seem necessary (none of the 64bit length seems 
+    does not seem necessary (none of the 64bit length seems
     appropriate unless it's  ident[EI_CLASS] == ELFCLASS64).
 */
 #define READ_AREA_LENGTH(r_dbg,w_target,r_targtype,                      \
@@ -272,7 +272,7 @@ Dwarf_Unsigned
 _dwarf_get_size_of_val(Dwarf_Debug dbg,
     Dwarf_Unsigned form,
     Dwarf_Half address_size,
-    Dwarf_Small * val_ptr, 
+    Dwarf_Small * val_ptr,
     int v_length_size);
 
 struct Dwarf_Hash_Table_Entry_s;
@@ -280,7 +280,7 @@ struct Dwarf_Hash_Table_Entry_s;
    The intent is that once the total_abbrev_count across
    all the entries is greater than  10*current_table_entry_count
    one should build a new Dwarf_Hash_Table_Base_s, rehash
-   all the existing entries, and delete the old table and entries. 
+   all the existing entries, and delete the old table and entries.
    (10 is a heuristic, nothing magic about it, but once the
    count gets to 30 or 40 times current_table_entry_count
    things really slow down a lot. One (500MB) application had
@@ -297,7 +297,7 @@ struct Dwarf_Hash_Table_s {
 
 /*
     This struct is used to build a hash table for the
-    abbreviation codes for a compile-unit.  
+    abbreviation codes for a compile-unit.
 */
 struct Dwarf_Hash_Table_Entry_s {
     Dwarf_Abbrev_List at_head;

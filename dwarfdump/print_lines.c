@@ -1,5 +1,5 @@
 
-/* 
+/*
   Copyright (C) 2000-2006 Silicon Graphics, Inc.  All Rights Reserved.
   Portions Copyright 2007-2010 Sun Microsystems, Inc. All rights reserved.
   Portions Copyright 2009-2011 SN Systems Ltd. All rights reserved.
@@ -37,8 +37,8 @@
 
 $Header: /plroot/cmplrs.src/v7.4.5m/.RCS/PL/dwarfdump/RCS/print_sections.c,v 1.69 2006/04/17 00:09:56 davea Exp $ */
 /*  The address of the Free Software Foundation is
-    Free Software Foundation, Inc., 51 Franklin St, Fifth Floor, 
-    Boston, MA 02110-1301, USA.  
+    Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
+    Boston, MA 02110-1301, USA.
     SGI has moved from the Crittenden Lane address.  */
 
 #include "globals.h"
@@ -65,7 +65,7 @@ print_source_intro(Dwarf_Die cu_die)
     int ores = dwarf_dieoffset(cu_die, &off, &err);
 
     if (ores == DW_DLV_OK) {
-        printf("Source lines (from CU-DIE at .debug_info offset 0x%" 
+        printf("Source lines (from CU-DIE at .debug_info offset 0x%"
             DW_PR_XZEROS DW_PR_DUx "):\n",
             (Dwarf_Unsigned) off);
     } else {
@@ -110,7 +110,7 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
     current_section_id = DEBUG_LINE;
 
     /* line_flag is TRUE */
-  
+
     if (do_print_dwarf) {
         printf("\n.debug_line: line number info for a single cu\n");
     }
@@ -119,8 +119,8 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
         print_source_intro(cu_die);
         print_one_die(dbg, cu_die,
             /* print_information= */ 1,
-            /* indent level */0, 
-            /* srcfiles= */ 0, /* cnt= */ 0, 
+            /* indent level */0,
+            /* srcfiles= */ 0, /* cnt= */ 0,
             /* ignore_die_stack= */TRUE);
         DWARF_CHECK_COUNT(lines_result,1);
         lres = dwarf_print_lines(cu_die, &err,&errcount);
@@ -133,7 +133,7 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
         }
         return;
     }
-    
+
     if (check_lines && checking_this_compiler()) {
         DWARF_CHECK_COUNT(lines_result,1);
         dwarf_check_lineheader(cu_die,&line_errs);
@@ -165,10 +165,10 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
         if (do_print_dwarf) {
             print_source_intro(cu_die);
             if (verbose) {
-                print_one_die(dbg, cu_die, 
+                print_one_die(dbg, cu_die,
                     /* print_information= */ TRUE,
                     /* indent_level= */ 0,
-                    /* srcfiles= */ 0, /* cnt= */ 0, 
+                    /* srcfiles= */ 0, /* cnt= */ 0,
                     /* ignore_die_stack= */TRUE);
             }
             /* Check if print of <pc> address is needed. */
@@ -201,7 +201,7 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
                         SkipRecord = FALSE;
                     }
                     else {
-                        /*  Keep ignoring records until we have 
+                        /*  Keep ignoring records until we have
                             one with 'is_addr_set' */
                         continue;
                     }
@@ -266,13 +266,13 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
                     if (IsValidInBucketGroup(pRangesInfo,pc)) {
                         /* Valid values; do nothing */
                     } else {
-                        /*  At this point may be we are dealing with 
-                            a linkonce symbol. The problem we have here 
+                        /*  At this point may be we are dealing with
+                            a linkonce symbol. The problem we have here
                             is we have consumed the deug_info section
-                            and we are dealing just with the records 
-                            from the .debug_line, so no PU_name is 
+                            and we are dealing just with the records
+                            from the .debug_line, so no PU_name is
                             available and no high_pc. Traverse the linkonce
-                            table if try to match the pc value with 
+                            table if try to match the pc value with
                             one of those ranges.
                         */
                         if (check_lines && checking_this_compiler()) {
@@ -281,9 +281,9 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
                         if (FindAddressInBucketGroup(pLinkonceInfo,pc)){
                             /* Valid values; do nothing */
                         } else {
-                            /*  The SN Systems Linker generates 
-                                line records 
-                                with addr=0, when dealing with linkonce 
+                            /*  The SN Systems Linker generates
+                                line records
+                                with addr=0, when dealing with linkonce
                                 symbols and no stripping */
                             if (pc) {
                                 char addr_tmp[100];
@@ -300,32 +300,32 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
                             }
                         }
                     }
-                    /*  Check the last record for the .debug_line, 
-                        the one created by DW_LNE_end_sequence, 
+                    /*  Check the last record for the .debug_line,
+                        the one created by DW_LNE_end_sequence,
                         is the same as the high_pc
-                        address for the last known user program 
+                        address for the last known user program
                         unit (PU) */
                     if ((i + 1 == linecount) &&
                         seen_PU_high_address) {
-                        /*  Ignore those PU that have been stripped 
-                            by the linker; their low_pc values are 
+                        /*  Ignore those PU that have been stripped
+                            by the linker; their low_pc values are
                             set to -1 (snc linker only) */
                         /*  It is perfectly sensible for a compiler
                             to leave a few bytes of NOP or other stuff
                             after the last instruction in a subprogram,
                             for cache-alignment or other purposes, so
-                            a mismatch here is not necessarily 
+                            a mismatch here is not necessarily
                             an error.  */
-                           
+
                         if (check_lines && checking_this_compiler()) {
                             DWARF_CHECK_COUNT(lines_result,1);
-                            if ((pc != PU_high_address) && 
+                            if ((pc != PU_high_address) &&
                                 (PU_base_address != elf_max_address)) {
                                 char addr_tmp[100];
                                 snprintf(addr_tmp,sizeof(addr_tmp),
                                     ".debug_line: Address"
                                     " 0x%" DW_PR_XZEROS DW_PR_DUx
-                                    " may be incorrect" 
+                                    " may be incorrect"
                                     " as DW_LNE_end_sequence address",pc);
                                 DWARF_CHECK_ERROR(lines_result,
                                     addr_tmp);
@@ -339,8 +339,8 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
             if (found_line_error || record_dwarf_error) {
                 if (check_verbose_mode) {
                     /* Print the record number for better error description */
-                    printf("Record = %"  DW_PR_DUu 
-                        " Addr = 0x%" DW_PR_XZEROS DW_PR_DUx 
+                    printf("Record = %"  DW_PR_DUu
+                        " Addr = 0x%" DW_PR_XZEROS DW_PR_DUx
                         " [%4" DW_PR_DUu ",%2" DW_PR_DUu "] '%s'\n",
                         i, pc,lineno,column,filename);
                     /* Flush due to the redirection of stderr */
@@ -350,7 +350,7 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
                         PRINT_CU_INFO();
                     }
                 }
-                record_dwarf_error = FALSE; 
+                record_dwarf_error = FALSE;
                 /* Due to a fatal error, skip current record */
                 if (found_line_error) {
                     continue;

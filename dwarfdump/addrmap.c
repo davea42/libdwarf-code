@@ -1,4 +1,4 @@
-/* 
+/*
   Copyright 2010-2012 David Anderson. All rights reserved.
   Portions Copyright 2012 SN Systems Ltd. All rights reserved.
 
@@ -31,10 +31,10 @@
 #include "addrmap.h"
 
 
-static struct Addr_Map_Entry * 
+static struct Addr_Map_Entry *
 addr_map_create_entry(Dwarf_Unsigned k,char *name)
 {
-    struct Addr_Map_Entry *mp = 
+    struct Addr_Map_Entry *mp =
         (struct Addr_Map_Entry *)malloc(sizeof(struct Addr_Map_Entry));
     if (!mp) {
         return 0;
@@ -60,7 +60,7 @@ addr_map_free_func(void *mx)
     return;
 }
 
-static int 
+static int
 addr_map_compare_func(const void *l, const void *r)
 {
     const struct Addr_Map_Entry *ml = l;
@@ -73,7 +73,7 @@ addr_map_compare_func(const void *l, const void *r)
     }
     return 0;
 }
-struct Addr_Map_Entry * 
+struct Addr_Map_Entry *
 addr_map_insert( Dwarf_Unsigned addr,char *name,void **tree1)
 {
     void *retval = 0;
@@ -95,7 +95,7 @@ addr_map_insert( Dwarf_Unsigned addr,char *name,void **tree1)
     }
     return re;
 }
-struct Addr_Map_Entry * 
+struct Addr_Map_Entry *
 addr_map_find(Dwarf_Unsigned addr,void **tree1)
 {
     void *retval = 0;
@@ -106,7 +106,7 @@ addr_map_find(Dwarf_Unsigned addr,void **tree1)
     retval = dwarf_tfind(e,tree1, addr_map_compare_func);
     if (retval) {
         re = *(struct Addr_Map_Entry **)retval;
-    } 
+    }
     /*  The one we created here must be deleted, it is dead.
         We look at the returned one instead. */
     addr_map_free_func(e);

@@ -1,4 +1,4 @@
-/* 
+/*
   Copyright (C) 2000-2006 Silicon Graphics, Inc.  All Rights Reserved.
   Portions Copyright 2007-2010 Sun Microsystems, Inc. All rights reserved.
   Portions Copyright 2009-2012 SN Systems Ltd. All rights reserved.
@@ -36,8 +36,8 @@
 
 $Header: /plroot/cmplrs.src/v7.4.5m/.RCS/PL/dwarfdump/RCS/print_sections.c,v 1.69 2006/04/17 00:09:56 davea Exp $ */
 /*  The address of the Free Software Foundation is
-    Free Software Foundation, Inc., 51 Franklin St, Fifth Floor, 
-    Boston, MA 02110-1301, USA.  
+    Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
+    Boston, MA 02110-1301, USA.
     SGI has moved from the Crittenden Lane address.
 */
 
@@ -53,7 +53,7 @@ using std::cout;
 using std::cerr;
 using std::endl;
 
-/* print data in .debug_loc 
+/* print data in .debug_loc
    There is no guarantee this will work because we are assuming
    that all bytes are valid loclist data, that there are no
    odd padding or garbage bytes.  In normal use one gets
@@ -86,13 +86,13 @@ print_locs(Dwarf_Debug dbg)
 
     /* This is sometimes wrong, we need a frame-specific size. */
     int fres = dwarf_get_address_size(dbg, &address_size, &err);
-    if (fres != DW_DLV_OK) { 
+    if (fres != DW_DLV_OK) {
         print_error(dbg, "dwarf_get_address_size", fres, err);
     }
 
 
     cout << endl;
-    cout << ".debug_loc" << endl; 
+    cout << ".debug_loc" << endl;
     cout <<"Format <i o b e l>: "
         "index section-offset begin-addr end-addr length-of-block-entry";
     cout << endl;

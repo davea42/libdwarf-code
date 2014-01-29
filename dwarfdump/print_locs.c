@@ -1,4 +1,4 @@
-/* 
+/*
   Copyright (C) 2000-2006 Silicon Graphics, Inc.  All Rights Reserved.
   Portions Copyright 2007-2010 Sun Microsystems, Inc. All rights reserved.
   Portions Copyright 2009-2012 SN Systems Ltd. All rights reserved.
@@ -36,8 +36,8 @@
 
 $Header: /plroot/cmplrs.src/v7.4.5m/.RCS/PL/dwarfdump/RCS/print_sections.c,v 1.69 2006/04/17 00:09:56 davea Exp $ */
 /*  The address of the Free Software Foundation is
-    Free Software Foundation, Inc., 51 Franklin St, Fifth Floor, 
-    Boston, MA 02110-1301, USA.  
+    Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
+    Boston, MA 02110-1301, USA.
     SGI has moved from the Crittenden Lane address.
 */
 
@@ -49,7 +49,7 @@ $Header: /plroot/cmplrs.src/v7.4.5m/.RCS/PL/dwarfdump/RCS/print_sections.c,v 1.6
 #include "print_sections.h"
 #include "print_frames.h"
 
-/* print data in .debug_loc 
+/* print data in .debug_loc
    There is no guarantee this will work because we are assuming
    that all bytes are valid loclist data, that there are no
    odd padding or garbage bytes.  In normal use one gets
@@ -71,7 +71,7 @@ print_locs(Dwarf_Debug dbg)
     Dwarf_Unsigned entry_len = 0;
     Dwarf_Unsigned next_entry = 0;
     struct esb_s  exprstring;
-    int index = 0; 
+    int index = 0;
     int lres = 0;
     int fres = 0;
 
@@ -91,7 +91,7 @@ print_locs(Dwarf_Debug dbg)
     }
 
     printf("\n.debug_loc");
-  
+
     printf("\nFormat <i o b e l>: "
         "index section-offset begin-addr end-addr length-of-block-entry\n");
     esb_constructor(&exprstring);
@@ -112,8 +112,8 @@ print_locs(Dwarf_Debug dbg)
                     next_entry - entry_len);
             }
         }
-        printf(" 0x%"  DW_PR_XZEROS  DW_PR_DUx 
-            " 0x%" DW_PR_XZEROS DW_PR_DUx  
+        printf(" 0x%"  DW_PR_XZEROS  DW_PR_DUx
+            " 0x%" DW_PR_XZEROS DW_PR_DUx
             " %8" DW_PR_DUu " %s\n",
             (Dwarf_Unsigned) lopc_offset,
             (Dwarf_Unsigned) hipc_offset,  entry_len,

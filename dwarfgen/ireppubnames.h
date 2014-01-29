@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2010-2013 David Anderson.  All rights reserved.
- 
+
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions are met:
   * Redistributions of source code must retain the above copyright
@@ -11,7 +11,7 @@
   * Neither the name of the example nor the
     names of its contributors may be used to endorse or promote products
     derived from this software without specific prior written permission.
- 
+
   THIS SOFTWARE IS PROVIDED BY David Anderson ''AS IS'' AND ANY
   EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
   WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -26,12 +26,12 @@
 */
 
 
-// 
+//
 // ireppubnames.h
 //
 //
 
-class IRPub{ 
+class IRPub{
 public:
     IRPub():dieoffset_(0),cudieoffset_(0) {
         };
@@ -53,8 +53,8 @@ public:
         cudieoffset_ = r.cudieoffset_;
         return *this;
     };
-    void setBaseData(const std::string &name, 
-        Dwarf_Unsigned dieoffset, 
+    void setBaseData(const std::string &name,
+        Dwarf_Unsigned dieoffset,
         Dwarf_Unsigned cudieoffset){
         name_ = name;
         dieoffset_ = dieoffset;

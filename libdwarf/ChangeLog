@@ -1,4 +1,20 @@
 2014-01-29  David Anderson
+     * common.h,dwarf.h,dwarf_abbrev.c,dwarf_abbrev.h,dwarf_addr_finder.c,
+       dwarf_alloc.c,dwarf_alloc.h,dwarf_arange.c,dwarf_arange.h,
+       dwarf_base_types.h,dwarf_die_deliv.c,dwarf_die_deliv.h,
+       dwarf_elf_access.c,dwarf_elf_access.h,dwarf_error.c,dwarf_error.h,
+       dwarf_form.c,dwarf_frame.c,dwarf_frame.h,dwarf_frame2.c,
+       dwarf_frame3.c,dwarf_funcs.c,dwarf_funcs.h,dwarf_global.c,
+       dwarf_global.h,dwarf_harmless.c,dwarf_harmless.h,dwarf_incl.h,
+       dwarf_init_finish.c,dwarf_line.c,dwarf_line.h,dwarf_line2.c,
+       dwarf_loc.h,dwarf_macro.h,dwarf_opaque.h,dwarf_reloc_arm.h,
+       dwarf_reloc_mips.h,dwarf_reloc_ppc.h,dwarf_reloc_ppc64.h,
+       dwarf_reloc_x86_64.h,dwarf_tsearch.h,dwarf_types.h,dwarf_util.h,
+       dwarf_vars.h,dwarf_weaks.h,libdwarfdefs.h,malloc_check.h,
+       pro_alloc.h,pro_arange.h,pro_die.h,pro_encode_nm.h,pro_error.h,
+       pro_frame.h,pro_incl.h,pro_line.h,pro_opaque.h,dwarf_tsearch.h:
+       Remove trailing whitespace.
+2014-01-29  David Anderson
      *  dwarf_tsearch.h, dwarf_tsearchhash.c: New files implementing
         a hashed tree with tsearch() interfaces.
      *  Makefile.in: Add dwarf_tsearchhash.c to the build.

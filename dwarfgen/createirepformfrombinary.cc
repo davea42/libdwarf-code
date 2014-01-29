@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2010-2013 David Anderson.  All rights reserved.
- 
+
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions are met:
   * Redistributions of source code must retain the above copyright
@@ -11,7 +11,7 @@
   * Neither the name of the example nor the
     names of its contributors may be used to endorse or promote products
     derived from this software without specific prior written permission.
- 
+
   THIS SOFTWARE IS PROVIDED BY David Anderson ''AS IS'' AND ANY
   EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
   WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -25,11 +25,11 @@
 
 */
 // createirepfrombinary.cc
-// Reads an object and inserts its dwarf data into 
+// Reads an object and inserts its dwarf data into
 // an object intended to hold all the dwarf data.
 
 #include "config.h"
-#include <unistd.h> 
+#include <unistd.h>
 #include <stdlib.h> // for exit
 #include <iostream>
 #include <string>
@@ -67,7 +67,7 @@ public:
     IRCUdata &cudata_;
     IRAttr &irattr_;
 private:
-    
+
     // Do not instantiate.
     IRFormInterface();
     IRFormInterface& operator= (const IRFormInterface &ir);
@@ -82,7 +82,7 @@ IRForm *formFactory(Dwarf_Debug dbg,
     IRFormInterface interface(dbg,attr,cudata,irattr);
     enum Dwarf_Form_Class cl = irattr.getFormClass();
     switch(cl) {
-    case DW_FORM_CLASS_UNKNOWN:   
+    case DW_FORM_CLASS_UNKNOWN:
         break;
     case DW_FORM_CLASS_ADDRESS:
         {
@@ -92,7 +92,7 @@ IRForm *formFactory(Dwarf_Debug dbg,
             return f;
         }
         break;
-    case DW_FORM_CLASS_BLOCK:     
+    case DW_FORM_CLASS_BLOCK:
         {
             IRFormBlock *f = new IRFormBlock(&interface);
             return f;
@@ -104,7 +104,7 @@ IRForm *formFactory(Dwarf_Debug dbg,
             return f;
         }
         break;
-    case DW_FORM_CLASS_EXPRLOC:   
+    case DW_FORM_CLASS_EXPRLOC:
         {
             IRFormExprloc *f = new IRFormExprloc(&interface);
             return f;
@@ -116,7 +116,7 @@ IRForm *formFactory(Dwarf_Debug dbg,
             return f;
         }
         break;
-    case DW_FORM_CLASS_LINEPTR:   
+    case DW_FORM_CLASS_LINEPTR:
         {
             IRFormLinePtr *f = new IRFormLinePtr(&interface);
             return f;
@@ -128,7 +128,7 @@ IRForm *formFactory(Dwarf_Debug dbg,
             return f;
         }
         break;
-    case DW_FORM_CLASS_MACPTR:    
+    case DW_FORM_CLASS_MACPTR:
         {
             IRFormMacPtr *f = new IRFormMacPtr(&interface);
             return f;
@@ -140,7 +140,7 @@ IRForm *formFactory(Dwarf_Debug dbg,
             return f;
         }
         break;
-    case DW_FORM_CLASS_REFERENCE: 
+    case DW_FORM_CLASS_REFERENCE:
         {
             IRFormReference *f  = new IRFormReference(&interface);
             return f;
@@ -237,7 +237,7 @@ IRFormConstant::IRFormConstant(IRFormInterface * interface)
     setInitialForm(initialform);
     formclass_=DW_FORM_CLASS_CONSTANT;
     signedness_=SIGN_NOT_SET;
-    uval_=0; 
+    uval_=0;
     sval_=0;
 
 
@@ -259,7 +259,7 @@ IRFormConstant::IRFormConstant(IRFormInterface * interface)
             oursign = SIGNED;
             uval = static_cast<Dwarf_Unsigned>(sval);
         } else {
-            cerr << "Unable to read constant value. Impossible error.\n" 
+            cerr << "Unable to read constant value. Impossible error.\n"
                 << endl;
             exit(1);
         }
@@ -314,8 +314,8 @@ IRFormFlag::IRFormFlag(IRFormInterface * interface)
 // We are simply assuming (here) that the value is a global offset
 // to some section or other.
 // Calling code ensures that is true.
-// 
-static Dwarf_Unsigned 
+//
+static Dwarf_Unsigned
 get_section_offset(IRFormInterface * interface)
 {
     Dwarf_Unsigned uval = 0;
@@ -338,7 +338,7 @@ get_section_offset(IRFormInterface * interface)
         if(ress == DW_DLV_OK) {
             uval = static_cast<Dwarf_Unsigned>(sval);
         } else {
-            cerr << "Unable to read constant offset value. Impossible error.\n" 
+            cerr << "Unable to read constant offset value. Impossible error.\n"
                 << endl;
             exit(1);
         }
@@ -359,7 +359,7 @@ IRFormLoclistPtr::IRFormLoclistPtr(IRFormInterface * interface)
 }
 
 // When emitting line data from the producer, this
-// attribute is automatically emitted by the transform_to_disk 
+// attribute is automatically emitted by the transform_to_disk
 // function if there is line data in the generated CU,
 // not created by interpreting this input attribute.
 IRFormLinePtr::IRFormLinePtr(IRFormInterface * interface)
@@ -417,7 +417,7 @@ IRFormFramePtr::IRFormFramePtr(IRFormInterface * interface)
 }
 
 // This is a .debug_info to .debug_info (or .debug_types to .debug_types)
-// reference.  
+// reference.
 
 // Since local/global reference target values are not known
 // till the DIEs are actually emitted,
@@ -447,7 +447,7 @@ IRFormReference::IRFormReference(IRFormInterface * interface)
         Dwarf_Sig8 val8;
         int res = dwarf_formsig8(interface->attr_,&val8, &error);
         if(res != DW_DLV_OK) {
-            cerr << "Unable to read sig8 reference. Impossible error.\n" 
+            cerr << "Unable to read sig8 reference. Impossible error.\n"
                 << endl;
             exit(1);
         }
@@ -470,7 +470,7 @@ IRFormReference::IRFormReference(IRFormInterface * interface)
     // a local CU offset, and we record it as such..
     int res = dwarf_formref(interface->attr_,&val, &error);
     if(res != DW_DLV_OK) {
-        cerr << "Unable to read reference.. Impossible error. finalform " << 
+        cerr << "Unable to read reference.. Impossible error. finalform " <<
             finalform << endl;
         exit(1);
     }
@@ -487,7 +487,7 @@ IRFormReference::IRFormReference(IRFormInterface * interface)
 static Dwarf_Sig8  zero_sig8;
 // Initialization helper function.
 void
-IRFormReference::initSig8() 
+IRFormReference::initSig8()
 {
     typeSig8_ = zero_sig8;
 }

@@ -55,14 +55,14 @@ struct dwconf_s {
     unsigned long cf_table_entry_count;
 
     /*  Array of cf_table_entry_count reg names. Names not filled in
-        from dwarfdump.conf have NULL (0) pointer value. 
+        from dwarfdump.conf have NULL (0) pointer value.
         cf_named_regs_table_size must match size of cf_regs array.
         Set cf_regs_malloced  1  if table was malloced. Set 0
         if static.
         */
     char **cf_regs;
     unsigned long cf_named_regs_table_size;
-    unsigned    cf_regs_malloced; 
+    unsigned    cf_regs_malloced;
 
     /*  The 'default initial value' when intializing a table. for MIPS
         is DW_FRAME_SAME_VAL(1035). For other ISA/ABIs may be
@@ -71,7 +71,7 @@ struct dwconf_s {
     int cf_same_val;
     int cf_undefined_val;
 
-    /*  The number of the cfa 'register'. For cf_interface_number 2 of 
+    /*  The number of the cfa 'register'. For cf_interface_number 2 of
         MIPS this is 0. For other architectures (and anytime using
         cf_interface_number 3) this should be outside the table, a
         special value such as 1436, not a table column at all).  */
@@ -82,7 +82,7 @@ struct dwconf_s {
         there are usually other sources for the correct address size.
         However, with DWARF2 frame data there is no explicit address
         size in the frame data and the object file might not have
-        other .debug_ sections to work with. 
+        other .debug_ sections to work with.
         If zero, no address size was supplied, and that is normal and
         the already-set (or defaulted) address size is to be used.
         Only an exceptional frame configure will specify address

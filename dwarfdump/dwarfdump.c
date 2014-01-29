@@ -1,4 +1,4 @@
-/* 
+/*
   Copyright (C) 2000,2002,2004,2005 Silicon Graphics, Inc.  All Rights Reserved.
   Portions Copyright (C) 2007-2013 David Anderson. All Rights Reserved.
   Portions Copyright 2007-2010 Sun Microsystems, Inc. All rights reserved.
@@ -36,7 +36,7 @@
 $Header: /plroot/cmplrs.src/v7.4.5m/.RCS/PL/dwarfdump/RCS/dwarfdump.c,v 1.48 2006/04/18 18:05:57 davea Exp $ */
 
 /* The address of the Free Software Foundation is
-   Free Software Foundation, Inc., 51 Franklin St, Fifth Floor, 
+   Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
    Boston, MA 02110-1301, USA.
    SGI has moved from the Crittenden Lane address.
 */
@@ -93,8 +93,8 @@ Bucket_Group *pLinkonceInfo = NULL;
     DW_AT_specification DW_AT_abstract_origin DW_AT_type
     that let DWARF refer (as in a general graph) to
     arbitrary other DIEs.
-    These traversals use pVisitedInfo to 
-    detect any compiler errors that introduce circular references. 
+    These traversals use pVisitedInfo to
+    detect any compiler errors that introduce circular references.
     Printing of the traversals is also done on request.
     Entries are added and deleted as they are visited in
     a depth-first traversal.  */
@@ -110,7 +110,7 @@ static const char * do_uri_translation(const char *s,
 static void reset_overall_CU_error_data();
 
 boolean info_flag = FALSE;
-boolean use_old_dwarf_loclist = FALSE;  /* This so both dwarf_loclist() 
+boolean use_old_dwarf_loclist = FALSE;  /* This so both dwarf_loclist()
     and dwarf_loclist_n() can be
     tested. Defaults to new
     dwarf_loclist_n() */
@@ -140,7 +140,7 @@ static unsigned section_map = 0;
 
 /*  Start verbose at zero. verbose can
     be incremented with -v but not decremented. */
-int verbose = 0; 
+int verbose = 0;
 
 boolean dense = FALSE;
 boolean ellipsis = FALSE;
@@ -160,17 +160,17 @@ boolean check_fdes = FALSE;
 boolean check_ranges = FALSE;
 boolean check_aranges = FALSE;
 boolean check_harmless = FALSE;
-boolean check_abbreviations = FALSE; 
-boolean check_dwarf_constants = FALSE; 
-boolean check_di_gaps = FALSE; 
-boolean check_forward_decl = FALSE; 
-boolean check_self_references = FALSE; 
+boolean check_abbreviations = FALSE;
+boolean check_dwarf_constants = FALSE;
+boolean check_di_gaps = FALSE;
+boolean check_forward_decl = FALSE;
+boolean check_self_references = FALSE;
 boolean check_attr_encoding = FALSE;   /* Attributes encoding */
 boolean generic_1200_regs = FALSE;
 boolean suppress_check_extensions_tables = FALSE;
 
-/* suppress_nested_name_search is a band-aid. 
-   A workaround. A real fix for N**2 behavior is needed. 
+/* suppress_nested_name_search is a band-aid.
+   A workaround. A real fix for N**2 behavior is needed.
 */
 boolean suppress_nested_name_search = FALSE;
 static boolean uri_options_translation = TRUE;
@@ -179,24 +179,24 @@ static boolean do_print_uri_in_input = TRUE;
 
 /* break_after_n_units is mainly for testing.
    It enables easy limiting of output size/running time
-   when one wants the output limited. 
+   when one wants the output limited.
    For example,
     -H 2
-   limits the -i output to 2 compilation units and 
+   limits the -i output to 2 compilation units and
    the -f or -F output to 2 FDEs and 2 CIEs.
 */
 int break_after_n_units = INT_MAX;
 
-boolean check_names = FALSE;     
+boolean check_names = FALSE;
 boolean check_verbose_mode = TRUE; /* During '-k' mode, display errors */
-boolean check_frames = FALSE;    
+boolean check_frames = FALSE;
 boolean check_frames_extended = FALSE;    /* Extensive frames check */
 boolean check_locations = FALSE;          /* Location list check */
 
-static boolean check_all_compilers = TRUE; 
+static boolean check_all_compilers = TRUE;
 static boolean check_snc_compiler = FALSE; /* Check SNC compiler */
-static boolean check_gcc_compiler = FALSE; 
-static boolean print_summary_all = FALSE; 
+static boolean check_gcc_compiler = FALSE;
+static boolean print_summary_all = FALSE;
 
 #define COMPILER_TABLE_MAX 100
 typedef struct anc {
@@ -215,7 +215,7 @@ typedef struct {
     Dwarf_Check_Result results[LAST_CATEGORY];
 } Compiler;
 
-/* Record compilers  whose CU names have been seen. 
+/* Record compilers  whose CU names have been seen.
    Full CU names recorded here, though only a portion
    of the name may have been checked to cause the
    compiler data  to be entered here.
@@ -231,7 +231,7 @@ static int compilers_detected_count = 0;
    compiler version number or a short substring of a
    CU producer name.
    The +1 guarantees we do not overstep the array.
-*/ 
+*/
 static Compiler compilers_targeted[COMPILER_TABLE_MAX];
 static int compilers_targeted_count = 0;
 static int current_compiler = -1;
@@ -241,7 +241,7 @@ static void PRINT_CHECK_RESULT(char *str,
     Compiler *pCompiler, Dwarf_Check_Categories category);
 
 
-/* The check and print flags here make it easy to 
+/* The check and print flags here make it easy to
    allow check-only or print-only.  We no longer support
    check-and-print in a single run.  */
 boolean do_check_dwarf = FALSE;
@@ -256,8 +256,8 @@ boolean record_dwarf_error = FALSE;  /* A test has failed, this
 /* These names make diagnostic messages more complete, the
    fixed length is safe, though ultra long names will get
    truncated. */
-char PU_name[COMPILE_UNIT_NAME_LEN];  
-char CU_name[COMPILE_UNIT_NAME_LEN];  
+char PU_name[COMPILE_UNIT_NAME_LEN];
+char CU_name[COMPILE_UNIT_NAME_LEN];
 char CU_producer[COMPILE_UNIT_NAME_LEN];
 
 boolean seen_PU = FALSE;              /* Detected a PU */
@@ -306,7 +306,7 @@ regex_t search_re;
 #endif
 
 
-/* These configure items are for the 
+/* These configure items are for the
    frame data.  We're pretty flexible in
    the path to dwarfdump.conf .
 */
@@ -391,7 +391,7 @@ main(int argc, char *argv[])
     const char * file_name = 0;
     int f = 0;
     Elf_Cmd cmd = 0;
-    Elf *arf = 0; 
+    Elf *arf = 0;
     Elf *elf = 0;
     int archive = 0;
 
@@ -437,7 +437,7 @@ main(int argc, char *argv[])
     }
 
     /*  If we are checking .debug_line, .debug_ranges, .debug_aranges,
-        or .debug_loc build the tables containing 
+        or .debug_loc build the tables containing
         the pairs LowPC and HighPC. It is safer  (and not
         expensive) to build all
         of these at once so mistakes in options do not lead
@@ -508,7 +508,7 @@ main(int argc, char *argv[])
         return OKAY;
 }
 
-void 
+void
 print_any_harmless_errors(Dwarf_Debug dbg)
 {
 #define LOCAL_PTR_ARY_COUNT 50
@@ -578,7 +578,7 @@ print_object_header(Elf *elf,Dwarf_Debug dbg,unsigned local_section_map)
     /* Check if header information is required */
     if (local_section_map & DW_HDR_HEADER || local_section_map == DW_HDR_ALL) {
 #ifdef WIN32
-    /*  Standard libelf has no function generating the names of the 
+    /*  Standard libelf has no function generating the names of the
         encodings, but this libelf apparently does. */
     Elf_Ehdr_Literal eh_literals;
     Elf32_Ehdr *eh32;
@@ -779,23 +779,23 @@ print_specific_checks_results(Compiler *pCompiler)
     if (check_abbreviations) {
         PRINT_CHECK_RESULT("abbreviations", pCompiler, abbreviations_result);
     }
-    
+
     if (check_dwarf_constants) {
         PRINT_CHECK_RESULT("dwarf_constants",
             pCompiler, dwarf_constants_result);
     }
-   
+
     if (check_di_gaps) {
         PRINT_CHECK_RESULT("debug_info_gaps", pCompiler, di_gaps_result);
     }
-  
+
     if (check_forward_decl) {
-        PRINT_CHECK_RESULT("forward_declarations", 
+        PRINT_CHECK_RESULT("forward_declarations",
             pCompiler, forward_decl_result);
     }
- 
+
     if (check_self_references) {
-        PRINT_CHECK_RESULT("self_references", 
+        PRINT_CHECK_RESULT("self_references",
             pCompiler, self_references_result);
     }
 
@@ -975,7 +975,7 @@ print_checks_results()
 }
 
 /* This is for dwarf_print_lines() */
-void 
+void
 printf_callback_for_libdwarf(void *userdata,const char *data)
 {
     printf("%s",data);
@@ -1036,7 +1036,7 @@ process_one_file(Elf * elf, const char * file_name, int archive,
         print_error(dbg, "get_location_list", dres, err);
     }
 
-    elf_max_address = (elf_address_size == 8 ) ? 
+    elf_max_address = (elf_address_size == 8 ) ?
         0xffffffffffffffffULL : 0xffffffff;
 
     /* Get .text and .debug_ranges info if in check mode */
@@ -1158,26 +1158,26 @@ process_one_file(Elf * elf, const char * file_name, int archive,
 
 }
 
-/* Do printing of most sections. 
+/* Do printing of most sections.
    Do not do detailed checking.
 */
-static void 
+static void
 do_all()
 {
     info_flag = line_flag = frame_flag = TRUE;
     pubnames_flag = macinfo_flag = TRUE;
     aranges_flag = TRUE;
-    /*  Do not do 
-        loc_flag = TRUE 
+    /*  Do not do
+        loc_flag = TRUE
         abbrev_flag = TRUE;
         ranges_flag = TRUE;
         because nothing in
         the DWARF spec guarantees the sections are free of random bytes
         in areas not referenced by .debug_info */
     string_flag = TRUE;
-    /*  Do not do 
+    /*  Do not do
         reloc_flag = TRUE;
-        as print_relocs makes no sense for non-elf dwarfdump users.  */  
+        as print_relocs makes no sense for non-elf dwarfdump users.  */
     static_func_flag = static_var_flag = TRUE;
     type_flag = weakname_flag = TRUE;
     header_flag = TRUE; /* Dump header info */
@@ -1188,7 +1188,7 @@ static const char *usage_text[] = {
 "options:\t-a\tprint all .debug_* sections",
 "\t\t-b\tprint abbrev section",
 "\t\t-c\tprint loc section",
-"\t\t-c<str>\tcheck only specific compiler objects", 
+"\t\t-c<str>\tcheck only specific compiler objects",
 "\t\t  \t  <str> is described by 'DW_AT_producer'. Examples:",
 "\t\t  \t    -cg       check only GCC compiler objects",
 "\t\t  \t    -cs       check only SNC compiler objects",
@@ -1231,7 +1231,7 @@ static const char *usage_text[] = {
 "\t\t   S\tcheck self references to DIEs",
 "\t\t   t\texamine tag-tag relations",
 "\t\t   x\tbasic frames check (.eh_frame, .debug_frame)",
-"\t\t   xe\textensive frames check (.eh_frame, .debug_frame)", 
+"\t\t   xe\textensive frames check (.eh_frame, .debug_frame)",
 "\t\t   y\texamine type info",
 "\t\t\tUnless -C option given certain common tag-attr and tag-tag",
 "\t\t\textensions are assumed to be ok (not reported).",
@@ -1247,7 +1247,7 @@ static const char *usage_text[] = {
 "\t\t  \tl=line,i=info,a=abbrev,p=pubnames,r=aranges,f=frames,o=loc,R=Ranges",
 "\t\t-p\tprint pubnames section",
 "\t\t-P\tprint list of compile units per producer", /* List of CUs per compiler */
-"\t\t-Q\tsuppress printing section data",  
+"\t\t-Q\tsuppress printing section data",
 "\t\t-r\tprint aranges section",
 "\t\t-R\tPrint frame register names as r33 etc",
 "\t\t  \t    and allow up to 1200 registers.",
@@ -1259,7 +1259,7 @@ static const char *usage_text[] = {
 "\t\t  \t-S any=<text>\tany <text>",
 "\t\t  \t-S match=<text>\tmatching <text>",
 #ifdef HAVE_REGEX
-"\t\t  \t-S regex=<text>\tuse regular expression matching", 
+"\t\t  \t-S regex=<text>\tuse regular expression matching",
 #endif
 "\t\t  \t (only one -S option allowed, any= and regex= ",
 "\t\t  \t  only usable if the functions required are ",
@@ -1303,7 +1303,7 @@ static const char *usage_debug_text[] = {
 
 /* Remove matching leading/trailing quotes.
    Does not alter the passed in string.
-   If quotes removed does a makename on a modified string. */ 
+   If quotes removed does a makename on a modified string. */
 static const char *
 remove_quotes_pair(const char *text)
 {
@@ -1392,7 +1392,7 @@ process_args(int argc, char *argv[])
                     if (strlen(path) < 1) {
                         goto badopt;
                     }
-                    esb_empty_string(&config_file_path); 
+                    esb_empty_string(&config_file_path);
                     esb_append(&config_file_path,path);
                 } else if (strncmp(optarg, "abi=", 4) == 0) {
                     abi = do_uri_translation(&optarg[4],"-x abi=");
@@ -1443,7 +1443,7 @@ process_args(int argc, char *argv[])
             frame_flag = TRUE;
             suppress_check_dwarf();
             break;
-        case 'H': 
+        case 'H':
             {
                 int break_val =  atoi(optarg);
                 if (break_val > 0) {
@@ -1655,7 +1655,7 @@ process_args(int argc, char *argv[])
             reloc_flag = TRUE;
             if (optarg) {
                 switch (optarg[0]) {
-                case 'i': 
+                case 'i':
                     reloc_map |= (1 << DW_SECTION_REL_DEBUG_INFO);
                     reloc_map |= (1 << DW_SECTION_REL_DEBUG_TYPES); break;
                 case 'l': reloc_map |= (1 << DW_SECTION_REL_DEBUG_LINE); break;
@@ -1682,12 +1682,12 @@ process_args(int argc, char *argv[])
                 check_pubname_attr = TRUE;
                 check_attr_tag = TRUE;
                 check_tag_tree = check_type_offset = TRUE;
-                check_names = TRUE;  
+                check_names = TRUE;
                 pubnames_flag = info_flag = TRUE;
                 check_decl_file = TRUE;
-                check_frames = TRUE;  
+                check_frames = TRUE;
                 check_frames_extended = FALSE;
-                check_locations = TRUE; 
+                check_locations = TRUE;
                 frame_flag = eh_frame_flag = TRUE;
                 check_ranges = TRUE;
                 check_lines = TRUE;
@@ -1695,8 +1695,8 @@ process_args(int argc, char *argv[])
                 check_harmless = TRUE;
                 check_aranges = TRUE;
                 aranges_flag = TRUE;  /* Aranges section */
-                check_abbreviations = TRUE; 
-                check_dwarf_constants = TRUE; 
+                check_abbreviations = TRUE;
+                check_dwarf_constants = TRUE;
                 check_di_gaps = TRUE; /* Check debug info gaps */
                 check_forward_decl = TRUE;  /* Check forward declarations */
                 check_self_references = TRUE;  /* Check self references */
@@ -1827,7 +1827,7 @@ process_args(int argc, char *argv[])
             safe_strcpy(cu_name,sizeof(cu_name), tstr,strlen(tstr));
             }
             break;
-        case 'U': 
+        case 'U':
             uri_options_translation = FALSE;
             break;
         case 't':
@@ -1927,7 +1927,7 @@ process_args(int argc, char *argv[])
         /* Reduce verbosity when checking (checking means checking-only). */
         verbose = 1;
     }
-    return do_uri_translation(argv[optind],"file-to-process"); 
+    return do_uri_translation(argv[optind],"file-to-process");
 }
 
 void
@@ -2124,7 +2124,7 @@ int get_cu_name(Dwarf_Debug dbg, Dwarf_Die cu_die,
             static struct esb_s esb_long_name;
             char *filename;
             esb_empty_string(&esb_long_name);
-            get_attr_value(dbg, DW_TAG_compile_unit, 
+            get_attr_value(dbg, DW_TAG_compile_unit,
                 cu_die, name_attr, NULL, 0, &esb_long_name,
                 0 /*show_form_used*/,0 /* verbose */);
             *long_name = esb_get_string(&esb_long_name);
@@ -2148,7 +2148,7 @@ int get_cu_name(Dwarf_Debug dbg, Dwarf_Die cu_die,
     return ares;
 }
 
-/*  Returns the producer of the CU 
+/*  Returns the producer of the CU
     Caller must ensure producernameout is
     a valid, constructed, empty esb_s instance before calling. */
 int get_producer_name(Dwarf_Debug dbg, Dwarf_Die cu_die,
@@ -2170,12 +2170,12 @@ int get_producer_name(Dwarf_Debug dbg, Dwarf_Die cu_die,
             /*  The string return is valid until the next call to this
                 function; so if the caller needs to keep the returned
                 string, the string must be copied (makename()). */
-            get_attr_value(dbg, DW_TAG_compile_unit, 
+            get_attr_value(dbg, DW_TAG_compile_unit,
                 cu_die, producer_attr, NULL, 0, producernameout,
                 0 /*show_form_used*/,0 /* verbose */);
         }
     }
-    /*  If ares is error or missing case, 
+    /*  If ares is error or missing case,
         producer_attr will be left
         NULL by the call,
         which is safe when calling dealloc(). */
@@ -2212,7 +2212,7 @@ char *nlo_debug_ranges   = ".debug.wR.";
 char *nlo_debug_str      = ".debug.ws.";
 
 /* Build linkonce section information */
-void 
+void
 build_linkonce_info(Dwarf_Debug dbg)
 {
     int nCount = 0;
@@ -2286,9 +2286,9 @@ build_linkonce_info(Dwarf_Debug dbg)
     }
 }
 
-/* Check for specific TAGs and initialize some 
+/* Check for specific TAGs and initialize some
     information used by '-k' options */
-void 
+void
 tag_specific_checks_setup(Dwarf_Half val,int die_indent_level)
 {
     switch (val) {
@@ -2328,7 +2328,7 @@ static boolean current_cu_is_checked_compiler = TRUE;
 /*  Are we checking for errors from the
     compiler of the current compilation unit?
 */
-boolean 
+boolean
 checking_this_compiler()
 {
     /*  This flag has been update by 'update_compiler_target()'
@@ -2355,7 +2355,7 @@ hasprefix(const char *sample, const char *prefix)
         current_compiler
     The compiler name is from DW_AT_producer.
 */
-void 
+void
 update_compiler_target(const char *producer_name)
 {
     Dwarf_Bool cFound = FALSE;
@@ -2381,7 +2381,7 @@ update_compiler_target(const char *producer_name)
     } else {
         /* Internally the strings do not include quotes */
         boolean snc_compiler = hasprefix(CU_producer,"SN")? TRUE : FALSE;
-        boolean gcc_compiler = hasprefix(CU_producer,"GNU")?TRUE : FALSE; 
+        boolean gcc_compiler = hasprefix(CU_producer,"GNU")?TRUE : FALSE;
         current_cu_is_checked_compiler = check_all_compilers ||
             (snc_compiler && check_snc_compiler) ||
             (gcc_compiler && check_gcc_compiler) ;
@@ -2471,10 +2471,10 @@ reset_overall_CU_error_data()
 }
 
 
-static boolean 
+static boolean
 cu_data_is_set()
 {
-    if (strcmp(CU_name,default_cu_producer) || 
+    if (strcmp(CU_name,default_cu_producer) ||
         strcmp(CU_producer,default_cu_producer)) {
         return 1;
     }
@@ -2489,9 +2489,9 @@ cu_data_is_set()
 /* Print CU basic information */
 void PRINT_CU_INFO()
 {
-    if (current_section_id == DEBUG_LINE || 
+    if (current_section_id == DEBUG_LINE ||
         current_section_id == DEBUG_ARANGES) {
-        /*  Only in the DEBUG_LINE/ARANGES case is DIE_CU_offset or 
+        /*  Only in the DEBUG_LINE/ARANGES case is DIE_CU_offset or
             DIE_CU_overall_offset what we want to print here.
             In other cases DIE_CU_offset is not really a CU
             offset at all. */
