@@ -66,7 +66,8 @@
 #include "dwarf_harmless.h"
 #include "dwarf_tsearch.h"
 
-
+#define TRUE 1
+#define FALSE 0
 /*  Some allocations are simple some not. These reduce
     the issue of determining which sort of thing to a simple
     test. See ia_multiply_count
@@ -355,6 +356,108 @@ _dwarf_get_alloc(Dwarf_Debug dbg,
 }
 
 
+/*  This is unfortunate.  Something should be done, but what? */
+static int
+string_is_in_debug_section(Dwarf_Debug dbg,Dwarf_Ptr space)
+{
+    /*  See dwarf_line.c dwarf_srcfiles()
+        for one way we can wind up with
+        a DW_DLA_STRING string that may or may not be malloc-ed
+        by _dwarf_get_alloc().
+
+        dwarf_formstring(), for example, returns strings
+        which point into .debug_info or .debug_types but
+        dwarf_dealloc is never supposed to be applied
+        to strings dwarf_formstring() returns! 
+     
+        Lots of calls returning strings
+        have always been documented as requiring
+        dwarf_dealloc(...DW_DLA_STRING) when the code
+        just returns a pointer to a portion of a loaded section! 
+        It is too late to change the documentation.
+        */
+        
+    /*  Not checked, no known reason to check: 
+        de_debug_abbrev
+        de_debug_loc 
+        de_debug_aranges 
+        de_debug_macinfo 
+        de_debug_ranges   */
+
+    if ((Dwarf_Small *) space >= dbg->de_debug_info.dss_data &&
+        (Dwarf_Small *) space <
+            dbg->de_debug_info.dss_data + dbg->de_debug_info.dss_size)
+        return TRUE;
+    if (dbg->de_debug_types.dss_data != NULL &&
+        (Dwarf_Small *) space >= dbg->de_debug_types.dss_data &&
+        (Dwarf_Small *) space <
+            dbg->de_debug_types.dss_data + dbg->de_debug_types.dss_size)
+        return TRUE;
+    if (dbg->de_debug_line.dss_data != NULL &&
+        (Dwarf_Small *) space >= dbg->de_debug_line.dss_data &&
+        (Dwarf_Small *) space <
+            dbg->de_debug_line.dss_data + dbg->de_debug_line.dss_size)
+        return TRUE;
+
+    if (dbg->de_debug_pubnames.dss_data != NULL &&
+        (Dwarf_Small *) space >= dbg->de_debug_pubnames.dss_data &&
+        (Dwarf_Small *) space <
+            dbg->de_debug_pubnames.dss_data +
+            dbg->de_debug_pubnames.dss_size)
+        return TRUE;
+
+    if (dbg->de_debug_frame.dss_data != NULL &&
+        (Dwarf_Small *) space >= dbg->de_debug_frame.dss_data &&
+        (Dwarf_Small *) space <
+            dbg->de_debug_frame.dss_data + dbg->de_debug_frame.dss_size)
+        return TRUE;
+    if (dbg->de_debug_frame_eh_gnu.dss_data != NULL &&
+        (Dwarf_Small *) space >= dbg->de_debug_frame_eh_gnu.dss_data &&
+        (Dwarf_Small *) space <
+            dbg->de_debug_frame_eh_gnu.dss_data + dbg->de_debug_frame_eh_gnu.dss_size)
+        return TRUE;
+
+    if (dbg->de_debug_str.dss_data != NULL &&
+        (Dwarf_Small *) space >= dbg->de_debug_str.dss_data &&
+        (Dwarf_Small *) space <
+            dbg->de_debug_str.dss_data + dbg->de_debug_str.dss_size)
+        return TRUE;
+
+    if (dbg->de_debug_funcnames.dss_data != NULL &&
+        (Dwarf_Small *) space >= dbg->de_debug_funcnames.dss_data &&
+        (Dwarf_Small *) space <
+            dbg->de_debug_funcnames.dss_data +
+            dbg->de_debug_funcnames.dss_size)
+        return TRUE;
+
+    if (dbg->de_debug_typenames.dss_data != NULL &&
+        (Dwarf_Small *) space >= dbg->de_debug_typenames.dss_data &&
+        (Dwarf_Small *) space <
+            dbg->de_debug_typenames.dss_data +
+            dbg->de_debug_typenames.dss_size)
+        return TRUE;
+    if (dbg->de_debug_pubtypes.dss_data != NULL &&
+        (Dwarf_Small *) space >= dbg->de_debug_pubtypes.dss_data &&
+        (Dwarf_Small *) space <
+            dbg->de_debug_pubtypes.dss_data +
+            dbg->de_debug_pubtypes.dss_size)
+        return TRUE;
+
+    if (dbg->de_debug_varnames.dss_data != NULL &&
+        (Dwarf_Small *) space >= dbg->de_debug_varnames.dss_data &&
+        (Dwarf_Small *) space <
+        dbg->de_debug_varnames.dss_data +
+        dbg->de_debug_varnames.dss_size)
+        return TRUE;
+
+    if (dbg->de_debug_weaknames.dss_data != NULL &&
+        (Dwarf_Small *) space >= dbg->de_debug_weaknames.dss_data &&
+        (Dwarf_Small *) space <
+            dbg->de_debug_weaknames.dss_data +
+            dbg->de_debug_weaknames.dss_size)
+        return TRUE;
+    return FALSE;
+}
 
 /*
     This function is used to deallocate a region of memory
@@ -395,81 +498,12 @@ dwarf_dealloc(Dwarf_Debug dbg,
         return;
     }
 
-    /*  A string pointer may point into .debug_info or .debug_string.
-        Otherwise, they are directly malloc'ed and must be freed.
-    */
-    if (type == DW_DLA_STRING) {
-        /*  See dwarf_line.c dwarf_srcfilse()
-            for an example of the odd way we wind up with
-            a string that is in debug_info or the like, not mallocd
-            by _dwarf_get_alloc(). */
-        if ((Dwarf_Small *) space >= dbg->de_debug_info.dss_data &&
-            (Dwarf_Small *) space <
-                dbg->de_debug_info.dss_data + dbg->de_debug_info.dss_size)
-            return;
-        if ((Dwarf_Small *) space >= dbg->de_debug_types.dss_data &&
-            (Dwarf_Small *) space <
-                dbg->de_debug_types.dss_data + dbg->de_debug_types.dss_size)
-            return;
-
-        if (dbg->de_debug_line.dss_data != NULL &&
-            (Dwarf_Small *) space >= dbg->de_debug_line.dss_data &&
-            (Dwarf_Small *) space <
-                dbg->de_debug_line.dss_data + dbg->de_debug_line.dss_size)
-            return;
-
-        if (dbg->de_debug_pubnames.dss_data != NULL &&
-            (Dwarf_Small *) space >= dbg->de_debug_pubnames.dss_data &&
-            (Dwarf_Small *) space <
-                dbg->de_debug_pubnames.dss_data +
-                dbg->de_debug_pubnames.dss_size)
-            return;
-
-        if (dbg->de_debug_frame.dss_data != NULL &&
-            (Dwarf_Small *) space >= dbg->de_debug_frame.dss_data &&
-            (Dwarf_Small *) space <
-                dbg->de_debug_frame.dss_data + dbg->de_debug_frame.dss_size)
-            return;
-
-        if (dbg->de_debug_str.dss_data != NULL &&
-            (Dwarf_Small *) space >= dbg->de_debug_str.dss_data &&
-            (Dwarf_Small *) space <
-                dbg->de_debug_str.dss_data + dbg->de_debug_str.dss_size)
-            return;
-
-        if (dbg->de_debug_funcnames.dss_data != NULL &&
-            (Dwarf_Small *) space >= dbg->de_debug_funcnames.dss_data &&
-            (Dwarf_Small *) space <
-                dbg->de_debug_funcnames.dss_data +
-                dbg->de_debug_funcnames.dss_size)
-            return;
-
-        if (dbg->de_debug_typenames.dss_data != NULL &&
-            (Dwarf_Small *) space >= dbg->de_debug_typenames.dss_data &&
-            (Dwarf_Small *) space <
-                dbg->de_debug_typenames.dss_data +
-                dbg->de_debug_typenames.dss_size)
-            return;
-        if (dbg->de_debug_pubtypes.dss_data != NULL &&
-            (Dwarf_Small *) space >= dbg->de_debug_pubtypes.dss_data &&
-            (Dwarf_Small *) space <
-                dbg->de_debug_pubtypes.dss_data +
-                dbg->de_debug_pubtypes.dss_size)
-            return;
-
-        if (dbg->de_debug_varnames.dss_data != NULL &&
-            (Dwarf_Small *) space >= dbg->de_debug_varnames.dss_data &&
-            (Dwarf_Small *) space <
-            dbg->de_debug_varnames.dss_data +
-            dbg->de_debug_varnames.dss_size)
-            return;
-
-        if (dbg->de_debug_weaknames.dss_data != NULL &&
-            (Dwarf_Small *) space >= dbg->de_debug_weaknames.dss_data &&
-            (Dwarf_Small *) space <
-                dbg->de_debug_weaknames.dss_data +
-                dbg->de_debug_weaknames.dss_size)
-            return;
+    if (type == DW_DLA_STRING && string_is_in_debug_section(dbg,space)) {
+        /*  A string pointer may point into .debug_info or .debug_string etc.
+            So must not be freed.  And strings have no need of a 
+            specialdestructor(). 
+            Mostly a historical mistake here. */
+        return;
     }
 
     if (alloc_instance_basics[type].specialdestructor) {

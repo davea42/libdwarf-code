@@ -1,3 +1,10 @@
+2014-01-30  David Anderson
+     * dwarf_alloc.c: Refactored and added relevant commentary.
+       Added a check for debug_types in dwarf_dealloc().
+     * dwarf_init_finish.c: Corrected a comment and made one line
+       declation-is-initialization.
+     * dwarf_opaque.h: Added commentary.
+
 2014-01-29  David Anderson
      * common.h,dwarf.h,dwarf_abbrev.c,dwarf_abbrev.h,dwarf_addr_finder.c,
        dwarf_alloc.c,dwarf_alloc.h,dwarf_arange.c,dwarf_arange.h,

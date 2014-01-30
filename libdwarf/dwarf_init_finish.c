@@ -575,9 +575,7 @@ dwarf_object_init(Dwarf_Obj_Access_Interface* obj, Dwarf_Handler errhand,
 int
 dwarf_object_finish(Dwarf_Debug dbg, Dwarf_Error * error)
 {
-    int res = DW_DLV_OK;
-
-    res = _dwarf_free_all_of_one_debug(dbg);
+    int res = _dwarf_free_all_of_one_debug(dbg);
     if (res == DW_DLV_ERROR) {
         DWARF_DBG_ERROR(dbg, DW_DLE_DBG_ALLOC, DW_DLV_ERROR);
     }
@@ -585,9 +583,8 @@ dwarf_object_finish(Dwarf_Debug dbg, Dwarf_Error * error)
 }
 
 
-/*  Load the ELF section with the specified index and set the
-    pointer pointed to by section_data to the memory where it
-    was loaded.  */
+/*  Load the ELF section with the specified index and set its
+    dss_data pointer to the memory where it was loaded.  */
 int
 _dwarf_load_section(Dwarf_Debug dbg,
     struct Dwarf_Section_s *section,

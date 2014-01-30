@@ -163,6 +163,8 @@ struct Dwarf_Section_s {
         non-zero entrysize.  Object formats which do not care
         about this should leave this field zero. */
     Dwarf_Unsigned dss_entrysize;
+    /*  dss_index is the section index as things are numbered in
+        an object file being read.   An Elf section number. */
     Dwarf_Word     dss_index;
     /*  dss_addr is the 'section address' which is only
         non-zero for a GNU eh section.
