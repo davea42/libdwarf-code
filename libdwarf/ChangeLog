@@ -1,4 +1,12 @@
 2014-01-30  David Anderson
+     * dwarf_loc.c: Add support for DW_FORM_exprloc
+       to dwarf_loclist_n().
+     * libdwarf2.1.mm: Document support for DW_FORM_exprloc.
+     * libdwarf2.1.pdf: Regenerate.
+     * dwarf.h, dwarf_form.c, dwarf_line.c,
+       dwarf_query.c, dwarf_util.c: Add limited support for DW_FORM_GNU_ref_alt
+        and DW_FORM_GNU_strp_alt.
+2014-01-30  David Anderson
      * dwarf_alloc.c: Refactored and added relevant commentary.
        Added a check for debug_types in dwarf_dealloc().
      * dwarf_init_finish.c: Corrected a comment and made one line

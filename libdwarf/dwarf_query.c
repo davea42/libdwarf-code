@@ -901,6 +901,10 @@ enum Dwarf_Form_Class dwarf_get_form_class(
 
     case  DW_FORM_flag:         return DW_FORM_CLASS_FLAG;
     case  DW_FORM_flag_present: return DW_FORM_CLASS_FLAG;
+
+    case  DW_FORM_GNU_ref_alt:  return DW_FORM_CLASS_REFERENCE;
+    case  DW_FORM_GNU_strp_alt: return DW_FORM_CLASS_STRING;
+
     case  DW_FORM_indirect:
     default:
         break;

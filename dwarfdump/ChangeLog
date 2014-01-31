@@ -1,3 +1,6 @@
+2014-01-30  David Anderson
+      * print_die.c: Add limited support for DW_FORM_GNU_ref_alt
+        and DW_FORM_GNU_strp_alt.
 2014-01-29  David Anderson
       * addrmap.c addrmap.h checkutil.c,checkutil.h,
         common.c common.h,dwarf_tsearch.h,dwarfdump.c,dwconf.c,

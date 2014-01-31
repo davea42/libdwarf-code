@@ -8,7 +8,7 @@ n\."
 .nr Hb 5
 \." ==============================================
 \." Put current date in the following at each rev
-.ds vE rev 2.15, Oct 16, 2013
+.ds vE rev 2.16, January 30, 2014
 \." ==============================================
 \." ==============================================
 .ds | |
@@ -3000,6 +3000,13 @@ in all the fields of the \f(CWDwarf_Locdesc\fP(s) returned.
 .P
 If the attribute is a location description
 (DW_FORM_block2 or DW_FORM_block4)
+then some of the \f(CWDwarf_Locdesc\fP values of the single
+\f(CWDwarf_Locdesc\fP record are set to 'sensible'
+but arbitrary values.  Specifically, ld_lopc is set to 0 and
+ld_hipc is set to all-bits-on. And \f(CW*listlen\fP is set to 1.
+.P
+If the attribute is a reference to a location expression
+(DW_FORM_locexper)
 then some of the \f(CWDwarf_Locdesc\fP values of the single
 \f(CWDwarf_Locdesc\fP record are set to 'sensible'
 but arbitrary values.  Specifically, ld_lopc is set to 0 and

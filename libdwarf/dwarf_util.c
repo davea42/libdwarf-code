@@ -74,6 +74,9 @@ _dwarf_get_size_of_val(Dwarf_Debug dbg,
 
     default:                    /* Handles form = 0. */
         return (form);
+    case DW_FORM_GNU_ref_alt:
+    case DW_FORM_GNU_strp_alt:
+        return v_length_size;
 
     case DW_FORM_addr:
         if (address_size) {

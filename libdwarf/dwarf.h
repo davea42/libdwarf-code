@@ -223,6 +223,8 @@ extern "C" {
 #define DW_FORM_flag_present            0x19 /* DWARF4 */
 /* 0x1a thru 0x1f were left unused accidentally. Reserved for future use. */
 #define DW_FORM_ref_sig8                0x20 /* DWARF4 */
+#define DW_FORM_GNU_ref_alt             0x1f20 /* GNU extension. Offset in .debug_info. */
+#define DW_FORM_GNU_strp_alt            0x1f21 /* GNU extension. Offset in .debug_str. */
 
 #define DW_AT_sibling                           0x01
 #define DW_AT_location                          0x02

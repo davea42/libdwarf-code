@@ -995,19 +995,27 @@ dwarf_loclist_n(Dwarf_Attribute attr,
             loclist_offset = loc_block.bl_section_offset +
                 loc_block.bl_len;
         }
-
-
     } else {
-        Dwarf_Block *tblock = 0;
-
-        blkres = dwarf_formblock(loc_attr, &tblock, error);
-        if (blkres != DW_DLV_OK) {
-            return (blkres);
+        if( form == DW_FORM_exprloc) {
+            blkres = dwarf_formexprloc(loc_attr,&loc_block.bl_len,
+                &loc_block.bl_data,error);
+            if(blkres != DW_DLV_OK) {
+                return blkres;
+            }
+            loc_block.bl_from_loclist = 0;
+            loc_block.bl_section_offset  = loc_block.bl_data -
+                 (Dwarf_Ptr)dbg->de_debug_info.dss_data;
+        } else {
+            Dwarf_Block *tblock = 0;
+            blkres = dwarf_formblock(loc_attr, &tblock, error);
+            if (blkres != DW_DLV_OK) {
+                return (blkres);
+            }
+            loc_block = *tblock;
+            /*  We copied tblock contents to the stack var, so can dealloc
+                tblock now.  Avoids leaks. */
+            dwarf_dealloc(dbg, tblock, DW_DLA_BLOCK);
         }
-        loc_block = *tblock;
-        /*  We copied tblock contents to the stack var, so can dealloc
-            tblock now.  Avoids leaks. */
-        dwarf_dealloc(dbg, tblock, DW_DLA_BLOCK);
         listlen = 1; /* One by definition of a location entry. */
         lowpc = 0;   /* HACK */
         highpc = (Dwarf_Unsigned) (-1LL); /* HACK */
@@ -1119,16 +1127,27 @@ dwarf_loclist(Dwarf_Attribute attr,
             return (blkres);
         }
     } else {
-        Dwarf_Block *tblock = 0;
+        if( form == DW_FORM_exprloc) {
+            blkres = dwarf_formexprloc(loc_attr,&loc_block.bl_len,
+                &loc_block.bl_data,error);
+            if(blkres != DW_DLV_OK) {
+                return blkres;
+            }
+            loc_block.bl_from_loclist = 0;
+            loc_block.bl_section_offset  = loc_block.bl_data -
+                 (Dwarf_Ptr)dbg->de_debug_info.dss_data;
+        } else {
+            Dwarf_Block *tblock = 0;
 
-        blkres = dwarf_formblock(loc_attr, &tblock, error);
-        if (blkres != DW_DLV_OK) {
-            return (blkres);
+            blkres = dwarf_formblock(loc_attr, &tblock, error);
+            if (blkres != DW_DLV_OK) {
+                return (blkres);
+            }
+            loc_block = *tblock;
+            /*  We copied tblock contents to the stack var, so can dealloc
+                tblock now.  Avoids leaks. */
+            dwarf_dealloc(dbg, tblock, DW_DLA_BLOCK);
         }
-        loc_block = *tblock;
-        /*  We copied tblock contents to the stack var, so can dealloc
-            tblock now.  Avoids leaks. */
-        dwarf_dealloc(dbg, tblock, DW_DLA_BLOCK);
         lowpc = 0;              /* HACK */
         highpc = (Dwarf_Unsigned) (-1LL);       /* HACK */
     }

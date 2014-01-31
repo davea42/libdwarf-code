@@ -516,6 +516,8 @@ dwarf_global_formref(Dwarf_Attribute attr,
         break;
     case DW_FORM_ref_addr:
     case DW_FORM_sec_offset:
+    case DW_FORM_GNU_ref_alt:  /* 2013 GNU extension */
+    case DW_FORM_GNU_strp_alt:  /* 2013 GNU extension */
         {
             /*  DW_FORM_sec_offset first exists in DWARF4.*/
             /*  It is up to the caller to know what the offset
@@ -829,7 +831,7 @@ dwarf_formblock(Dwarf_Attribute attr,
 }
 
 
-/* Contrary to long standing documentation,
+/* Contrary to pre-2005 documentation,
    The string pointer returned thru return_str must
    never have dwarf_dealloc() applied to it.
    Documentation fixed July 2005.
@@ -899,6 +901,10 @@ dwarf_formstring(Dwarf_Attribute attr,
         }
 
         *return_str = (char *) (dbg->de_debug_str.dss_data + offset);
+        return DW_DLV_OK;
+    }
+    if (attr->ar_attribute_form == DW_FORM_GNU_strp_alt) {
+        *return_str = (char *)"<DW_FORM_GNU_strp_alt not handled>";
         return DW_DLV_OK;
     }
 

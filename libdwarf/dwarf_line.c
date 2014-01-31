@@ -170,7 +170,8 @@ dwarf_srcfiles(Dwarf_Die die,
         return lres;
     }
     if (attrform != DW_FORM_data4 && attrform != DW_FORM_data8 &&
-        attrform != DW_FORM_sec_offset ) {
+        attrform != DW_FORM_sec_offset  &&
+        attrform != DW_FORM_GNU_ref_alt) {
         _dwarf_error(dbg, error, DW_DLE_LINE_OFFSET_BAD);
         return (DW_DLV_ERROR);
     }

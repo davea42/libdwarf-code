@@ -3851,7 +3851,34 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
         }
         }
         break;
-
+    case DW_FORM_GNU_ref_alt: {
+        bres = dwarf_global_formref(attrib, &off, &err);
+        if (bres == DW_DLV_OK) {
+            snprintf(small_buf, sizeof(small_buf),
+                "0x%" DW_PR_XZEROS DW_PR_DUx,
+                (Dwarf_Unsigned) off);
+            esb_append(esbp, small_buf);
+        } else {
+            print_error(dbg,
+                "DW_FORM_GNU_ref_alt form with no reference?!",
+                bres, err);
+        }
+        }
+        break;
+    case DW_FORM_GNU_strp_alt: {
+        bres = dwarf_global_formref(attrib, &off, &err);
+        if (bres == DW_DLV_OK) {
+            snprintf(small_buf, sizeof(small_buf),
+                "0x%" DW_PR_XZEROS DW_PR_DUx,
+                (Dwarf_Unsigned) off);
+            esb_append(esbp, small_buf);
+        } else {
+            print_error(dbg,
+                "DW_FORM_GNU_strp_alt form with no reference?!",
+                bres, err);
+        }
+        }
+        break;
     default:
         print_error(dbg, "dwarf_whatform unexpected value", DW_DLV_OK,
             err);

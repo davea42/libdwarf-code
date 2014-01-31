@@ -2640,7 +2640,7 @@ _dwarf_print_one_expr_op(Dwarf_Debug dbg,Dwarf_Loc* expr,int index,
             break;
         case DW_OP_GNU_convert:
             string_out.append(" ");
-            string_out.append(IToHex0N(opd1,4));
+            string_out.append(IToHex0N(opd1,10));
             break;
         case DW_OP_GNU_reinterpret:
             string_out.append(" ");
@@ -3620,6 +3620,30 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
             string sig8str;
             format_sig8_string(&sig8data,sig8str);
             str_out.append(sig8str);
+        }
+        }
+        break;
+     case DW_FORM_GNU_ref_alt: {
+        Dwarf_Off off = 0;
+        bres = dwarf_global_formref(attrib, &off, &err);
+        if (bres == DW_DLV_OK) {
+            str_out.append(IToHex0N(off,10));
+        } else {
+            print_error(dbg,
+                "DW_FORM_GNU_ref_alt form with no reference?!",
+                bres, err);
+        }
+        }
+        break;
+    case DW_FORM_GNU_strp_alt: {
+        Dwarf_Off off = 0;
+        bres = dwarf_global_formref(attrib, &off, &err);
+        if (bres == DW_DLV_OK) {
+            str_out.append(IToHex0N(off,10));
+        } else {
+            print_error(dbg,
+                "DW_FORM_GNU_strp_alt with no reference?!",
+                bres, err);
         }
         }
         break;

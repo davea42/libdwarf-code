@@ -1,3 +1,6 @@
+2014-01-30  David Anderson
+     * print_die.cc: Add some limited support for DW_FORM_GNU_ref_alt
+       and DW_FORM_GNU_strp_alt.
 2014-01-29  David Anderson
      * checkutil.cc,checkutil.h,common.cc,common.h,dieholder.h,dwarfdump.cc,
        dwconf.cc,dwconf.h,fderegs.h,globals.h,naming.cc,naming.h,
