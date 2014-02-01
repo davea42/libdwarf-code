@@ -356,7 +356,13 @@ _dwarf_get_alloc(Dwarf_Debug dbg,
 }
 
 
-/*  This is unfortunate.  Something should be done, but what? */
+/*  This is unfortunate, with all these messy tests.  
+
+    It has not escaped my attention that with a tiny change
+    to what _dwarf_get_alloc does that dwarf_dealloc()
+    could use dwarf_tfind to determine what need not
+    be freed. And thus this function could go away.
+*/
 static int
 string_is_in_debug_section(Dwarf_Debug dbg,Dwarf_Ptr space)
 {

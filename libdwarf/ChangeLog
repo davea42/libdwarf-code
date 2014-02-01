@@ -1,7 +1,13 @@
+2014-01-31  David Anderson
+     * configure.in: The test to generate HAVE___UINT32_T_IN_SYS_TYPES_H
+       was in a strange place. Moved it up a few lines.
+     * configure: Regenerated.
+     * dwarf_alloc.c: Added comment hinting at how dwarf_dealloc
+       can be further simplified.
 2014-01-30  David Anderson
      * dwarf_loc.c: Add support for DW_FORM_exprloc
        to dwarf_loclist_n().
-     * libdwarf2.1.mm: Document support for DW_FORM_exprloc.
+     * libdwarf2.1.mm: Document support for DW_FORM_exprloc.Version 2.16
      * libdwarf2.1.pdf: Regenerate.
      * dwarf.h, dwarf_form.c, dwarf_line.c,
        dwarf_query.c, dwarf_util.c: Add limited support for DW_FORM_GNU_ref_alt

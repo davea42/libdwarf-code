@@ -29,6 +29,7 @@
 #include "globals.h"
 #include <stdio.h>
 #include "addrmap.h"
+#include "dwarf_tsearch.h"
 
 
 static struct Addr_Map_Entry *
