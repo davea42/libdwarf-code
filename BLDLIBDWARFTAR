@@ -9,6 +9,9 @@ then
 	exit 1
 fi
 echo "This does not do UPDATEDWARFDUMPVERSION.sh"
+echo "Make sure there are no unwanted files"
+echo "in the code directories as all the files get"
+echo "copied to the release tar file."
 dat=$1
 
 tmpf=dwarf
