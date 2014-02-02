@@ -3623,7 +3623,7 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
         }
         }
         break;
-     case DW_FORM_GNU_ref_alt: {
+    case DW_FORM_GNU_ref_alt: {
         Dwarf_Off off = 0;
         bres = dwarf_global_formref(attrib, &off, &err);
         if (bres == DW_DLV_OK) {

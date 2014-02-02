@@ -1,4 +1,6 @@
 2014-02-02  David Anderson
+     * print_die.cc: One line had incorrect indent. Fixed.
+2014-02-02  David Anderson
      * tag_attr.list,tag_attr_ext.list,tag_tree.list,tag_tree_ext.list:
        Removed trailing whitespace.
 2014-01-31  David Anderson
