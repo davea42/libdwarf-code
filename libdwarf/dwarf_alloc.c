@@ -359,14 +359,9 @@ _dwarf_get_alloc(Dwarf_Debug dbg,
     }
 }
 
-
-/*  This is unfortunate, with all these messy tests.  
-
-    It has not escaped my attention that with a tiny change
-    to what _dwarf_get_alloc does that dwarf_dealloc()
-    could use dwarf_tfind to determine what need not
-    be freed. And thus this function could go away.
-*/
+/*  This was once a long list of tests using dss_data
+    and dss_size to see if 'space' was inside a debug section.
+    This tfind approach removes that maintenance headache. */
 static int
 string_is_in_debug_section(Dwarf_Debug dbg,Dwarf_Ptr space)
 {
@@ -378,21 +373,13 @@ string_is_in_debug_section(Dwarf_Debug dbg,Dwarf_Ptr space)
         dwarf_formstring(), for example, returns strings
         which point into .debug_info or .debug_types but
         dwarf_dealloc is never supposed to be applied
-        to strings dwarf_formstring() returns! 
-     
+        to strings dwarf_formstring() returns!
+
         Lots of calls returning strings
         have always been documented as requiring
         dwarf_dealloc(...DW_DLA_STRING) when the code
-        just returns a pointer to a portion of a loaded section! 
-        It is too late to change the documentation.
-        */
-        
-    /*  Not checked, no known reason to check: 
-        de_debug_abbrev
-        de_debug_loc 
-        de_debug_aranges 
-        de_debug_macinfo 
-        de_debug_ranges   */
+        just returns a pointer to a portion of a loaded section!
+        It is too late to change the documentation. */
 
     void *result = 0;
     result = dwarf_tfind((void *)space,
@@ -450,8 +437,8 @@ dwarf_dealloc(Dwarf_Debug dbg,
 
     if (type == DW_DLA_STRING && string_is_in_debug_section(dbg,space)) {
         /*  A string pointer may point into .debug_info or .debug_string etc.
-            So must not be freed.  And strings have no need of a 
-            specialdestructor(). 
+            So must not be freed.  And strings have no need of a
+            specialdestructor().
             Mostly a historical mistake here. */
         return;
     }

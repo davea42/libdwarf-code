@@ -1,3 +1,9 @@
+2014-02-02  David Anderson
+     * dwarf_alloc.c: Added commentary.
+     * dwarf_loc.c: Fixed two indents.
+     * gennames.c: Removed trailing newlines from the printf
+       output (dwarf_names_new.h is the file generated).
+     * libdwarf.h.in: Removed trailing whitespace.
 2014-02-01  David Anderson
      * dwarf_alloc.c: Instead of doing a long list of address compares,
        use the hash 'tree' and tfind() to determine if we malloced

@@ -265,9 +265,9 @@ GenerateInitialFileLines(void)
     fprintf(f_names_new_h,"/* Automatically generated, do not edit. */\n");
     fprintf(f_names_new_h,"/* Generated on %s  %s */\n",__DATE__,__TIME__);
     fprintf(f_names_new_h,"\n/* BEGIN FILE */\n\n");
-    fprintf(f_names_new_h,"/* define DWARF_PRINT_PREFIX before this \n");
+    fprintf(f_names_new_h,"/* define DWARF_PRINT_PREFIX before this\n");
     fprintf(f_names_new_h,"   point if you wish to.  */\n");
-    fprintf(f_names_new_h,"#ifndef DWARF_PRINT_PREFIX \n");
+    fprintf(f_names_new_h,"#ifndef DWARF_PRINT_PREFIX\n");
     fprintf(f_names_new_h,"#define DWARF_PRINT_PREFIX dwarf_\n");
     fprintf(f_names_new_h,"#endif\n");
     fprintf(f_names_new_h,"#define dw_glue(x,y) x##y\n");
