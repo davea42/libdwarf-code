@@ -1,3 +1,9 @@
+2014-02-01  David Anderson
+     * dwarf_alloc.c: Instead of doing a long list of address compares,
+       use the hash 'tree' and tfind() to determine if we malloced
+       the space or simply took an address from .debug_info (
+       or other in-memory section) when
+       we returned a _dwarf_get_alloc() pointer to the user.
 2014-01-31  David Anderson
      * configure.in: The test to generate HAVE___UINT32_T_IN_SYS_TYPES_H
        was in a strange place. Moved it up a few lines.

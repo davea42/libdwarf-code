@@ -239,13 +239,16 @@ simple_value_hashfunc(const void *keyp)
     return up;
 }
 /*  We did alloc something but not a fixed-length thing.
-    Instead, it starts with some special data we noted. */
+    Instead, it starts with some special data we noted.
+    The incoming pointer is to the caller data, we
+    destruct based on caller, but find the special
+    extra data in a prefix area. */
 static void
-simple_free_node(void *nodep)
+tdestroy_free_node(void *nodep)
 {
     Dwarf_Ptr m = (Dwarf_Ptr)nodep;
-    Dwarf_Ptr data = m + DW_RESERVE;
-    struct reserve_data_s * reserve =(struct reserve_data_s *)m;
+    Dwarf_Ptr malloc_addr = m - DW_RESERVE;
+    struct reserve_data_s * reserve =(struct reserve_data_s *)malloc_addr;
     unsigned type = reserve->rd_type;
     if (type >= ALLOC_AREA_INDEX_TABLE_MAX) {
         /* Internal error, corrupted data. */
@@ -253,9 +256,9 @@ simple_free_node(void *nodep)
     }
 
     if (alloc_instance_basics[type].specialdestructor) {
-        alloc_instance_basics[type].specialdestructor(data);
+        alloc_instance_basics[type].specialdestructor(m);
     }
-    free(m);
+    free(malloc_addr);
 }
 
 /* The sort of hash table entries result in very simple helper functions. */
@@ -328,8 +331,8 @@ _dwarf_get_alloc(Dwarf_Debug dbg,
         return NULL;
     }
     {
-        void *key = alloc_mem;
         Dwarf_Ptr ret_mem = alloc_mem + DW_RESERVE;
+        void *key = ret_mem;
         struct reserve_data_s *r = (struct reserve_data_s*)alloc_mem;
         void *result = 0;
 
@@ -346,7 +349,8 @@ _dwarf_get_alloc(Dwarf_Debug dbg,
                 return NULL;
             }
         }
-        result = dwarf_tsearch((void *)key,&dbg->de_alloc_tree,simple_compare_function);
+        result = dwarf_tsearch((void *)key,
+            &dbg->de_alloc_tree,simple_compare_function);
         if(!result) {
             /*  Something badly wrong. Out of memory.
                 pretend all is well. */
@@ -390,78 +394,17 @@ string_is_in_debug_section(Dwarf_Debug dbg,Dwarf_Ptr space)
         de_debug_macinfo 
         de_debug_ranges   */
 
-    if ((Dwarf_Small *) space >= dbg->de_debug_info.dss_data &&
-        (Dwarf_Small *) space <
-            dbg->de_debug_info.dss_data + dbg->de_debug_info.dss_size)
+    void *result = 0;
+    result = dwarf_tfind((void *)space,
+        &dbg->de_alloc_tree,simple_compare_function);
+    if(!result) {
+        /*  Not in the tree, so not malloc-ed
+            Nothing to delete. */
         return TRUE;
-    if (dbg->de_debug_types.dss_data != NULL &&
-        (Dwarf_Small *) space >= dbg->de_debug_types.dss_data &&
-        (Dwarf_Small *) space <
-            dbg->de_debug_types.dss_data + dbg->de_debug_types.dss_size)
-        return TRUE;
-    if (dbg->de_debug_line.dss_data != NULL &&
-        (Dwarf_Small *) space >= dbg->de_debug_line.dss_data &&
-        (Dwarf_Small *) space <
-            dbg->de_debug_line.dss_data + dbg->de_debug_line.dss_size)
-        return TRUE;
-
-    if (dbg->de_debug_pubnames.dss_data != NULL &&
-        (Dwarf_Small *) space >= dbg->de_debug_pubnames.dss_data &&
-        (Dwarf_Small *) space <
-            dbg->de_debug_pubnames.dss_data +
-            dbg->de_debug_pubnames.dss_size)
-        return TRUE;
-
-    if (dbg->de_debug_frame.dss_data != NULL &&
-        (Dwarf_Small *) space >= dbg->de_debug_frame.dss_data &&
-        (Dwarf_Small *) space <
-            dbg->de_debug_frame.dss_data + dbg->de_debug_frame.dss_size)
-        return TRUE;
-    if (dbg->de_debug_frame_eh_gnu.dss_data != NULL &&
-        (Dwarf_Small *) space >= dbg->de_debug_frame_eh_gnu.dss_data &&
-        (Dwarf_Small *) space <
-            dbg->de_debug_frame_eh_gnu.dss_data + dbg->de_debug_frame_eh_gnu.dss_size)
-        return TRUE;
-
-    if (dbg->de_debug_str.dss_data != NULL &&
-        (Dwarf_Small *) space >= dbg->de_debug_str.dss_data &&
-        (Dwarf_Small *) space <
-            dbg->de_debug_str.dss_data + dbg->de_debug_str.dss_size)
-        return TRUE;
-
-    if (dbg->de_debug_funcnames.dss_data != NULL &&
-        (Dwarf_Small *) space >= dbg->de_debug_funcnames.dss_data &&
-        (Dwarf_Small *) space <
-            dbg->de_debug_funcnames.dss_data +
-            dbg->de_debug_funcnames.dss_size)
-        return TRUE;
-
-    if (dbg->de_debug_typenames.dss_data != NULL &&
-        (Dwarf_Small *) space >= dbg->de_debug_typenames.dss_data &&
-        (Dwarf_Small *) space <
-            dbg->de_debug_typenames.dss_data +
-            dbg->de_debug_typenames.dss_size)
-        return TRUE;
-    if (dbg->de_debug_pubtypes.dss_data != NULL &&
-        (Dwarf_Small *) space >= dbg->de_debug_pubtypes.dss_data &&
-        (Dwarf_Small *) space <
-            dbg->de_debug_pubtypes.dss_data +
-            dbg->de_debug_pubtypes.dss_size)
-        return TRUE;
-
-    if (dbg->de_debug_varnames.dss_data != NULL &&
-        (Dwarf_Small *) space >= dbg->de_debug_varnames.dss_data &&
-        (Dwarf_Small *) space <
-        dbg->de_debug_varnames.dss_data +
-        dbg->de_debug_varnames.dss_size)
-        return TRUE;
-
-    if (dbg->de_debug_weaknames.dss_data != NULL &&
-        (Dwarf_Small *) space >= dbg->de_debug_weaknames.dss_data &&
-        (Dwarf_Small *) space <
-            dbg->de_debug_weaknames.dss_data +
-            dbg->de_debug_weaknames.dss_size)
-        return TRUE;
+    }
+    /*  We found the address in the tree, so it is NOT
+        part of .debug_info or any other dwarf section,
+        but is space malloc-d in _dwarf_get_alloc(). */
     return FALSE;
 }
 
@@ -490,6 +433,7 @@ dwarf_dealloc(Dwarf_Debug dbg,
     Dwarf_Ptr space, Dwarf_Unsigned alloc_type)
 {
     unsigned int type = alloc_type;
+    Dwarf_Ptr malloc_addr = space - DW_RESERVE;
 
     if (space == NULL) {
         return;
@@ -519,7 +463,7 @@ dwarf_dealloc(Dwarf_Debug dbg,
         /*  The 'space' pointer we get points after the reserve space.
             The key and address to free are just a few bytes before
             'space'. */
-        void *key = space - DW_RESERVE;
+        void *key = space;
         dwarf_tdelete(key,&dbg->de_alloc_tree,simple_compare_function);
         /*  If dwarf_tdelete returns NULL it might mean
             a) tree is empty.
@@ -530,7 +474,7 @@ dwarf_dealloc(Dwarf_Debug dbg,
             In any case, we simply don't worry about it.
             Not Supposed To Happen. */
 
-        free(key);
+        free(malloc_addr);
         return;
     }
 }
@@ -643,7 +587,7 @@ _dwarf_free_all_of_one_debug(Dwarf_Debug dbg)
         free(dbg->de_printf_callback.dp_buffer);
     }
 
-    dwarf_tdestroy(dbg->de_alloc_tree,simple_free_node);
+    dwarf_tdestroy(dbg->de_alloc_tree,tdestroy_free_node);
     memset(dbg, 0, sizeof(*dbg)); /* Prevent accidental use later. */
     free(dbg);
     return (DW_DLV_OK);
