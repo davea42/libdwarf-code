@@ -1,4 +1,4 @@
-/* 
+/*
   Copyright (C) 2000-2010 Silicon Graphics, Inc.  All Rights Reserved.
   Portions Copyright (C) 2009-2012 David Anderson. All Rights Reserved.
   Portions Copyright 2012 SN Systems Ltd. All rights reserved.
@@ -33,20 +33,20 @@
   http://oss.sgi.com/projects/GenInfo/NoticeExplan
 
 
-  $Header: /plroot/cmplrs.src/v7.4.5m/.RCS/PL/dwarfdump/RCS/tag_attr.list,v 1.7 2005/12/01 17:34:59 davea Exp $ 
+  $Header: /plroot/cmplrs.src/v7.4.5m/.RCS/PL/dwarfdump/RCS/tag_attr.list,v 1.7 2005/12/01 17:34:59 davea Exp $
 */
 #include <dwarf.h>
 
 /*
-    list for semantic check of tag-attr relation.  
-   
-    0xffffffff is a "punctuation."  The final line of this file 
-    must be 0xffffffff.  The next line after each 0xffffffff 
-    (except the final line) is a tag.  The lines after this line 
-    before the next 0xffffffff are the attributes that can be given 
+    list for semantic check of tag-attr relation.
+
+    0xffffffff is a "punctuation."  The final line of this file
+    must be 0xffffffff.  The next line after each 0xffffffff
+    (except the final line) is a tag.  The lines after this line
+    before the next 0xffffffff are the attributes that can be given
     to the tag."
 
-    For example, 
+    For example,
 
     0xffffffff
     DW_TAG_access_declaration
@@ -58,12 +58,12 @@
     DW_AT_sibling
     0xffffffff
 
-    means "only DW_AT_decl_column, DW_AT_decl_file, DW_AT_decl_line, 
-    DW_AT_accessibility, DW_AT_name and DW_AT_sibling can be given to 
+    means "only DW_AT_decl_column, DW_AT_decl_file, DW_AT_decl_line,
+    DW_AT_accessibility, DW_AT_name and DW_AT_sibling can be given to
     DW_TAG_access_declaration."
 
-    This file is applied to the preprocessor, thus any C comment and 
-    preprocessor control line is available.  
+    This file is applied to the preprocessor, thus any C comment and
+    preprocessor control line is available.
 */
 
 0xffffffff
@@ -108,7 +108,7 @@ DW_AT_byte_size
 DW_AT_bit_size /* Allowed in DWARF4 */
 DW_AT_data_bit_offset
 DW_AT_data_location
-DW_AT_decimal_scale 
+DW_AT_decimal_scale
 DW_AT_decimal_sign
 DW_AT_description
 DW_AT_digit_count
@@ -499,8 +499,8 @@ DW_AT_sibling
 DW_AT_specification
 DW_AT_type
 /*  Comment from 1993:
-    "Though DWARF spec doesn't refer to DW_AT_byte_size, it may well be 
-    given to DW_TAG_pointer_type."  
+    "Though DWARF spec doesn't refer to DW_AT_byte_size, it may well be
+    given to DW_TAG_pointer_type."
     Comment 31 January 2009:
     Discussed in the dwarf-workgroup mailing list Jan 5 2009, that
     DW_AT_byte_size is allowed.
@@ -544,8 +544,8 @@ DW_AT_name
 DW_AT_sibling
 DW_AT_type
 /*  Comment from 1993:
-    "Though DWARF spec doesn't refer to DW_AT_byte_size, it may well be 
-    given to DW_TAG_pointer_type."  
+    "Though DWARF spec doesn't refer to DW_AT_byte_size, it may well be
+    given to DW_TAG_pointer_type."
     Comment 31 January 2009:
     Discussed in the dwarf-workgroup mailing list Jan 5 2009, that
     DW_AT_byte_size is allowed.
