@@ -5,19 +5,26 @@ and the other tools for personal use:
     cp dwarfdump2/dwarfdump <somewhere>
     Optionally: cp libdwarf/libdwarf.a <somewhere>
 
+To build all the tools (including dwarfgen and 
+dwarfexample) use 'make all'. There are known 
+small compile-time issues with building dwarfgen on 
+MaxOSX and most don't need to build dwarfgen.
+    ./configure
+    make all
+
+
 To also build a shared libdwarf in the process, do:
     ./configure --enable-shared
     make
     cp libdwarf/libdwarf.so <somewhere>
     cp dwarfdump2/dwarfdump <somewhere>
 
-
 When ready to create a new distro,
 do
 ./CPTOPUBLIC
 ./BLDLIBDWARF yyyymmdd
-where that would be
-	./BLDLIBDWARF 20061224
+where that could be
+	./BLDLIBDWARF 20140131
 as an example.
 
-David Anderson.  December 2006.
+David Anderson.  Updated February 2, 2014.

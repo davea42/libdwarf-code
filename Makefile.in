@@ -66,13 +66,16 @@ dwfpic =        @dwfpic@
 CFLAGS =	$(PREINCS) @CFLAGS@ $(INCLUDES) $(dwfpic) $(POSTINCS)
 LDFLAGS =	$(PRELIBS) @LDFLAGS@ $(POSTLIBS)
 
+basic:
+	cd libdwarf && make
+	cd dwarfdump && make
+	cd dwarfdump2 && make
 all:
 	cd libdwarf && make
 	cd dwarfdump && make
 	cd dwarfdump2 && make
 	cd dwarfgen && make
 	cd dwarfexample && make
-   
 
 clean:
 	sh ./CLEANUP
