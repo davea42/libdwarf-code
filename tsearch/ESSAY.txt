@@ -46,6 +46,11 @@ of undefined (meaning the definition
 is local to the internals) content each record 
 of which contains, as one element, a copy of a KEY pointer.
 
+In the following I freely use tsearch for dwarf_tsearch
+etc. The functionality and interfaces are identical.
+
+=========
+tsearch:
 void *tsearch(const void *key, void **rootp,
     int (*compar)(const void *l, const void *r));
 
@@ -108,6 +113,127 @@ else:
   
 
 I hope the above clarifies the use of tsearch somewhat.
+============
+Tfind:
+void *find(const void *key, void **rootp,
+    int (*compar)(const void *l, const void *r));
+
+The interfaces are the same but the return value is
+(in contrast with tsearch) reasonably clear:
+
+A non-null return is a key (pointer).
+It never adds a new record, it simple tries to find a record.
+A NULL return means either that the search-ed for record did not exist or that
+something internal went wrong or perhaps that something incorrect
+was detected at runtime in the arguments passed in.
+
+============
+Tdelete:
+void *tdelete(const void *key, void **rootp,
+    int (*compar)(const void *l, const void *r));
+
+The arguments are the same as tsearch/tfind, 
+but the return value is a bit odd.
+
+If something goes wrong or if the record does not exist, 
+it returns NULL.  That is straightforward.
+
+If the record is deleted tdelete is supposed to return
+a pointer to the parent of the deleted record.
+The content of the deleted record is NOT deleted.
+
+If the record deleted was the last record in the
+tree,  a NULL is returned and  *rootp is set to NULL.
+Thus restoring initial conditions of an empty tree.
+
+If the record deleted was the root (of the records
+in the tree as of the call) then what is this supposed
+to return?  No available documentation suggests an
+answer. The current dwarf_tdelete implementations
+return some record or other in this case.
+
+In the case of dwarf_tdelete() for a hash 'tree'
+if the node was the last in a hash chain then
+NULL is returned. (ugly, but it is difficult to
+figure out what else to do).
+
+All this means that it is a waste of time to 
+inspect the return value from tdelete.
+
+So to do a tdelete and do any necessary
+memory free do:
+    key = xxxx
+    t = tfind(key,&root,compar_func)
+    
+    if (t) {
+        tdelete(key,&root,compar_func)
+    }
+    free key
+    free r
+
+where what 'free key' means is to free whatever 'key = xxxx'
+allocated. Which means do the same for 'free r'.
+
+Of course if your keys point into to a static array of data
+then free is unnecessary, but how often will the data
+be in static memory?  
+And if it is in static storage, why do any free at all?
+
+
+
+============
+Tdestroy:
+void *tdestroy((void * root,
+    void (*free_node)(void * key));
+
+This frees all memory the tree system has and
+along the way it calls 'free_node' for each
+node in the tree. 
+
+It empties the tree, but, oddly, the root argument
+is a simple pointer to the root, not a pointer-to-pointer.
+Hence this routine can free the tree, but cannot
+assign a NULL to the root.  So you should do
+    root = 0;
+after calling tdestroy().
+
+
+============
+Twalk:
+void *twalk((const void * /*root*/,
+    void (* /*action*/)(const void * /*nodep*/,
+    const DW_VISIT  /*which*/,
+    const int  /*depth*/));
+
+============
+Tdump:
+void tdump(const void *rootp,
+    char *(*keyprint)(const void *key),
+    const char * msg);
+
+This is unique to the dwarf_tsearch library.
+It prints (to standard out) a representation of the tree.
+The output is indented one space per level and ordered such
+that turning the output 90 degrees clockwise shows a kind
+of picture of the tree structure in the way trees
+are normally shown in books.
+It may be of slight interest for debugging trees if the
+trees are not too large.
+
+The 'msg' argument is just a character string of interest to you, something
+identifying the output. It is printed once and otherwise ignored.
+
+The 'keyprint' argument is a pointer to
+a function you write.  The function 
+is called for each node in turn. It
+should return a pointer to a string with whatever
+data from the passed-in-by-tdump key you wish to show. 
+Normally the pointer returned from keyprint should be pointing to a 
+static area so there is no issue with memory leakage to worry about.
+tdump will print the returned string immediately and will not refer
+to it again.
+
+
 ============
 tsearch use using pointers (declarations left out):
     The struct here is entirely ours: tsearch neither knows nor cares
@@ -182,6 +308,12 @@ In this case the value_compare_func might look like:
                  }
                  return 0;
              }
+In this case the free_node function would look like
+void free_node { /* Do nothing. */ }
+
+
+In this case, there is never any free() calls you need to make
+as the key is not a pointer to anything.
 ===================
 
 
