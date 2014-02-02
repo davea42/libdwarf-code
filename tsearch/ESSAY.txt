@@ -315,9 +315,67 @@ void free_node { /* Do nothing. */ }
 In this case, there is never any free() calls you need to make
 as the key is not a pointer to anything.
 ===================
+If I were designing the interfaces in 2014 I might do
+as follows.
 
+I think the GNU hsearch_r interfaces are a fine
+approach and could be extended to tsearch().  But
+I propose something slightly different.
 
+struct tsearch_base; /* opaque struct, content defined by
+   the search code, content not made public */
+int compare_func(void *l, void*r); /* you define comparison function */
+int free_func(void *n); /* you define free function */
 
+None of the proposed interfaces touch errno.
 
+All functions return 0 on success and an errno on failure.
+They return EINVAL if an argument is incorrect somehow.
 
+int tcreate(struct tsearch_base **base,compare_func,free_func)
+    allocate a struct_tsearch_base record and puts a pointer to
+    it in *base. Records the compare and free_func pointers.
+    A call on this by uses is a requirement .
 
+    returns:
+    ENOMEM if out of memory.
+    EINVAL if something wrong with an argument or an internal problem.
+
+int tsearch(void *key,struct tsearch_base *base);
+    returns:
+    ENOMEM if out of memory.
+    EINVAL if something wrong with an argument or an internal problem.
+
+int tfind(void *key,struct tsearch_base *base);
+    returns:
+    ESRCH if not found.
+    EINVAL if something wrong with an argument or an internal problem.
+
+int tdelete(void *key,struct tsearch_base *base,void **keyout);
+    If successful, tdelete deletes the record key identifies
+    and returns that record's recorded key through *keyout.
+    So if a free()or other action is required you can take that action.
+
+    The 'base' struct tsearch_base record is NOT freed, 
+    it remains, whether the tree has any records left or not.
+
+    returns:
+    ESRCH if key not found.
+    EINVAL if something wrong with an argument or an internal problem.
+
+int tsize(struct tsearch_base *base,unsigned long*count_out);
+    Stores a count of the records currently recorded in the tree in *count_out.
+
+    EINVAL if something wrong with an argument or an internal problem.
+    
+
+int tdestroy(struct tsearch_base **base);
+    A call is a requirement on users -- to free up the tree space.
+    Calls free_func  on each node in the tree and
+    frees all tree memory and does 
+        *base = NULL
+    to reset your tree pointer.
+
+    returns:
+    EINVAL if something wrong with an argument or an internal problem.
+=================
