@@ -70,10 +70,13 @@ basic:
 	cd libdwarf && make
 	cd dwarfdump && make
 	cd dwarfdump2 && make
-all:
+
+# The dd target takes the least space and time
+# to build.
+dd:
 	cd libdwarf && make
 	cd dwarfdump && make
-	cd dwarfdump2 && make
+all:    basic
 	cd dwarfgen && make
 	cd dwarfexample && make
 

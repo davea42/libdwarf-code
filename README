@@ -1,9 +1,14 @@
-For a simple build of libdwarf and dwarfdump2 
+For a simple build of libdwarf, dwarfdump, and dwarfdump2 
 and the other tools for personal use:
     ./configure
     make
     cp dwarfdump2/dwarfdump <somewhere>
-    Optionally: cp libdwarf/libdwarf.a <somewhere>
+    #Optionally: cp libdwarf/libdwarf.a <somewhere>
+
+To just build libdwarf and dwarfdump
+    ./configure
+    make dd
+    cp dwarfdump/dwarfdump <somewhere>
 
 To build all the tools (including dwarfgen and 
 dwarfexample) use 'make all'. There are known 

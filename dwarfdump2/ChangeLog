@@ -1,3 +1,7 @@
+2014-02-08  David Anderson
+     * Makefile.in: Having a single rule build two independent things
+       interacted badly with make -j 2 , so now each rule just builds
+       a single target (see tag*.list builds).
 2014-02-02  David Anderson
      * print_die.cc: One line had incorrect indent. Fixed.
 2014-02-02  David Anderson

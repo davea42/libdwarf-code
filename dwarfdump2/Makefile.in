@@ -107,23 +107,27 @@ tag_tree_build:  $(srcdir)/tag_tree.cc $(DIRINC)/dwarf.h $(HEADERS) tag_common.o
 tag_attr_build:  $(srcdir)/tag_attr.cc $(DIRINC)/dwarf.h $(HEADERS) trivial_naming.o tag_common.o naming.o common.o
 	$(CXX) $(CXXFLAGS) $(srcdir)/tag_attr.cc trivial_naming.o tag_common.o common.o  ../libdwarf/libdwarf.a $(LDFLAGS) -o tag_attr_build 
 
-tmp-tt-table.cc tmp-tt-ext-table.cc: $(srcdir)/tag_tree_ext.list $(srcdir)/tag_tree.list tag_tree_build
+tmp-tt-table.cc: $(srcdir)/tag_tree.list tag_tree_build
 	# gcc -E tag_tree.list does not work, so use a .cc name
 	-rm -f  tmp-t1.cc
 	cp $(srcdir)/tag_tree.list tmp-t1.cc
 	$(CXX) $(CXXFLAGS) -E tmp-t1.cc  > ./tmp-tag-tree-build1.tmp
 	./tag_tree_build -s  -i tmp-tag-tree-build1.tmp  -o tmp-tt-table.cc
+tmp-tt-ext-table.cc: $(srcdir)/tag_tree_ext.list tag_tree_build
+	# gcc -E tag_tree_ext.list does not work, so use a .cc name
 	-rm -f tmp-t4.cc
 	cp $(srcdir)/tag_tree_ext.list tmp-t4.cc
 	$(CXX) $(CXXFLAGS) -E tmp-t4.cc  > ./tmp-tag-tree-build4.tmp
 	./tag_tree_build -e  -i tmp-tag-tree-build4.tmp -o tmp-tt-ext-table.cc
 
-tmp-ta-table.cc tmp-ta-ext-table.cc: $(srcdir)/tag_attr_ext.list $(srcdir)/tag_attr.list tag_attr_build
+tmp-ta-table.cc: $(srcdir)/tag_attr.list tag_attr_build
 	# gcc -E tag_attr.list does not work, so use a .cc name
 	-rm -f tmp-t2.cc
 	cp $(srcdir)/tag_attr.list tmp-t2.cc
 	$(CXX) $(CXXFLAGS)  -E tmp-t2.cc  > ./tmp-tag-attr-build2.tmp
 	./tag_attr_build -s -i tmp-tag-attr-build2.tmp -o tmp-ta-table.cc
+tmp-ta-ext-table.cc: $(srcdir)/tag_attr_ext.list tag_attr_build
+	# gcc -E tag_attr_ext.list does not work, so use a .cc name
 	-rm -f tmp-t3.cc
 	cp $(srcdir)/tag_attr_ext.list tmp-t3.cc
 	$(CXX) $(CXXFLAGS)  -E tmp-t3.cc  > ./tmp-tag-attr-build3.tmp
