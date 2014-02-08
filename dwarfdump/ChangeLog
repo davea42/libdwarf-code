@@ -1,4 +1,6 @@
 2014-02-08  David Anderson
+     * dwarfdump.c,common.c: Update version string.
+2014-02-08  David Anderson
      * Makefile.in: Having a single rule build two independent things
        interacted badly with make -j 2 , so now each rule just builds
        a single target (see tag*.list builds).
@@ -14,12 +16,18 @@
 2014-01-29  David Anderson
       * addrmap.c addrmap.h checkutil.c,checkutil.h,
         common.c common.h,dwarf_tsearch.h,dwarfdump.c,dwconf.c,
-        dwconf.h,esb.c,esb.h,globals.h,makename.h,naming.c,naming.h: Remove trailing whitespace.
-      * print_abbrevs.c,print_aranges.c,print_die.c,print_frames.c,print_frames.h,
-        print_lines.c,print_locs.c,print_macros.c,print_pubnames.c,print_ranges.c,
-        print_reloc.c,print_reloc.h,print_sections.c,print_sections.h,print_static_funcs.c,
-        print_static_vars.c,print_strings.c,print_types.c,print_weaknames.c,strstrnocase.c,
-        tag_attr.c,tag_common.c,tag_common.h,tag_tree.c,testesb.c,uri.c,uri.h,uritablebuild.c:
+        dwconf.h,esb.c,esb.h,globals.h,makename.h,naming.c,naming.h: 
+        Remove trailing whitespace.
+      * print_abbrevs.c,print_aranges.c,print_die.c,print_frames.c,
+        print_frames.h,
+        print_lines.c,print_locs.c,print_macros.c,print_pubnames.c,
+        print_ranges.c,
+        print_reloc.c,print_reloc.h,print_sections.c,print_sections.h,
+        print_static_funcs.c,
+        print_static_vars.c,print_strings.c,print_types.c,
+        print_weaknames.c,strstrnocase.c,
+        tag_attr.c,tag_common.c,tag_common.h,tag_tree.c,
+        testesb.c,uri.c,uri.h,uritablebuild.c:
         Remove trailing whitespace.
 2014-01-29  David Anderson
       * dwarf_tsearchbal.c,dwarf_tsearch.h: New source files.
