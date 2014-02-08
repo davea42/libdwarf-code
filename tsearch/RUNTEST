@@ -7,8 +7,16 @@
 myexit=0
 
 #These test expecting failure.
-echo >testfail
+#The following line assumes the test cases have been
+#placed in a directory named 'testcases' and
+#that the .gz versions expanded.
+#The tsearch test data is in the 
+#libdwarf regression tests (available from sourceforge)
+#in the directory
+#     tsearchtests
 b=testcases
+
+echo >testfail
 for opts in "" -byvalue
 do
   for test in $b/test2 $b/test17
