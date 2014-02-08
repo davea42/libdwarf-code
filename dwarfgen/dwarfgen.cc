@@ -208,6 +208,8 @@ createnamestr(unsigned strtabstroff)
 
 
 // This functional interface is defined by libdwarf.
+// Please see the comments in libdwarf2p.1.pdf 
+// (libdwarf2p.1.mm)  on this callback interface.
 int CallbackFunc(
     const char* name,
     int                 size,
@@ -234,6 +236,15 @@ int CallbackFunc(
         return 0;
     }
     SectionFromDwarf ds(name,size,type,flags,link,info) ;
+
+    // It is up to you to provide (to libdwarf, 
+    // to generate relocation records) 
+    // a symbol index for the section.   
+    // In Elf, each section gets an elf symbol table entry.
+    // So that relocations have an address to refer to.
+    // You will create the Elf symbol table, so you have to tell
+    // libdwarf the index to put into relocation records for the
+    // section newly defined here.
     *sect_name_symbol_index = ds.getSectionNameSymidx();
     ElfSectIndex createdsec = create_dw_elf(ds);
 

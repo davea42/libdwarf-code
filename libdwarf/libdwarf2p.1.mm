@@ -11,7 +11,7 @@
 .nr Hb 5
 \." ==============================================
 \." Put current date in the following at each rev
-.ds vE rev 1.34, 20 October 2013
+.ds vE rev 1.35, 8 February 2014
 \." ==============================================
 \." ==============================================
 .ds | |
@@ -635,6 +635,15 @@ And, for relocation callbacks, the \f(CWinfo\fP field
 is passed as the elf section number of the section
 the relocations apply to.
 .P
+The  \f(CWsect_name_index\fP field is a field you use
+to pass a symbol index back to libdwarf.
+In Elf, each section gets an elf symbol table entry
+so that relocations have an address to refer to
+(relocations rely on addresses in the Elf symbol table).
+You will create the Elf symbol table, so you have to tell
+libdwarf the index to put into relocation records for the
+section newly defined here.
+.P
 On success
 the user function should return the Elf section number of the
 newly created Elf section.
@@ -645,11 +654,10 @@ Elf symbol number assigned in the Elf symbol table of the
 new Elf section.
 This symbol number is needed with relocations
 dependent on the relocation of this new section.
-Because "int *" is not guaranteed to work with elf 'symbols'
-that are really pointers,
-It is better to use the 
+.P
+Use the 
 \f(CWdwarf_producer_init_c()\fP
-interface.
+interface instead of this interface.
 .P
 For example, the \f(CW.debug_line\fP section's third
 data element (in a compilation unit) is the offset from the
@@ -670,7 +678,7 @@ returned being a real Elf section.
 The Elf section is simply useful for generating relocation
 records.
 Similarly, the Elf symbol table index returned through 
-the \f(CWsect_name_index\fP must simply be an index
+the \f(CWsect_name_index\fP must be an index
 that can be used in relocations against this section.
 The application will probably want to note the
 values passed to this function in some form, even if
@@ -786,17 +794,10 @@ callback must be ignored by the app).
 And, for relocation callbacks, the \f(CWinfo\fP field
 is passed as the elf section number of the section
 the relocations apply to.
-
+.P
 On success
 the user function should return the Elf section number of the
 newly created Elf section.
-.P
-On success, the function should also set the integer
-pointed to by \f(CWsect_name_index\fP to the
-Elf symbol number assigned in the Elf symbol table of the
-new Elf section.
-This symbol number is needed with relocations
-dependent on the relocation of this new section.
 .P
 For example, the \f(CW.debug_line\fP section's third
 data element (in a compilation unit) is the offset from the
@@ -822,13 +823,14 @@ that can be used in relocations against this section.
 The application will probably want to note the
 values passed to this function in some form, even if
 no Elf file is being produced.
-
+.P
 Note that the \f(CWDwarf_Callback_Func_c() \fP form
 passes back the sect_name_index as a Dwarf_Unsigned.
-This is guaranteed large enough to hold a pointer.
+This is guaranteed large enough to hold a pointer (see
+next paragraph).
 (the other functional interfaces have versions with
 the 'symbol index' as a Dwarf_Unsigned too. See below).
-
+.P
 If \f(CWDW_DLC_SYMBOLIC_RELOCATIONS\fP
 is in use, then the symbol index is simply an arbitrary
 value (from the point of view of libdwarf) so the

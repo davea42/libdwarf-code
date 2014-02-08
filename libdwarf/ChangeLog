@@ -1,3 +1,9 @@
+2014-02-08  David Anderson
+     * libdwarf2p.1.mm: Now version 1.35.  Added a few words
+       about the sect_name_index field in the callback
+       from libdwarf to your code for each new Elf section
+       to be generated.
+     * libdwarf2p.1.pdf: Regenerated.
 2014-02-02  David Anderson
      * dwarf_alloc.c: Added commentary.
      * dwarf_loc.c: Fixed two indents.
