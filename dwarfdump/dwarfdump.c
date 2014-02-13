@@ -306,9 +306,12 @@ regex_t search_re;
 #endif
 
 
-/* These configure items are for the
-   frame data.  We're pretty flexible in
-   the path to dwarfdump.conf .
+/*  These configure items are for the
+    frame data.  We're flexible in
+    the path to dwarfdump.conf .
+    The HOME strings here are transformed in
+    dwconf.c to reference the environment
+    variable $HOME .
 */
 static struct esb_s config_file_path;
 static const char *config_file_abi = 0;

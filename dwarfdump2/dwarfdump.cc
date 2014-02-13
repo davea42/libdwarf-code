@@ -249,7 +249,12 @@ regex_t search_re;
 
 
 /*  These configure items are for the
-    frame data.  */
+    frame data.  We're flexible in
+    the path to dwarfdump.conf .
+    The HOME strings here are transformed in
+    dwconf.cc to reference the environment
+    variable $HOME .
+*/
 static string config_file_path;
 static string config_file_abi;
 static const char *  config_file_defaults[] = {

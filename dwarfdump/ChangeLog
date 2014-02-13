@@ -1,3 +1,6 @@
+2014-02-13  David Anderson
+     * dwarfdump.cc: Minor changes in the commentary relating
+       to the search paths for dwarfdump.conf. No code changed.
 2014-02-08  David Anderson
      * dwarfdump.c,common.c: Update version string.
 2014-02-08  David Anderson
