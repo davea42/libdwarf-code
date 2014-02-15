@@ -1,7 +1,7 @@
 Some thoughts about tsearch.
 
 David Anderson
-17 January 2014.
+Updated 15 February 2014.
 
 Tsearch() was defined and implemented fairly early in
 the history of UNIX, but I don't know exactly when.
@@ -48,6 +48,43 @@ of which contains, as one element, a copy of a KEY pointer.
 
 In the following I freely use tsearch for dwarf_tsearch
 etc. The functionality and interfaces are identical.
+
+=========
+Further reading (February 15, 2014)
+
+After implementing tsearch I looked briefly at
+some other projects.
+
+freecode.net: See the 'GNU libavl' project.
+  The libavl libary is a GNU project in C with each tree type
+  having a uniquely-named but consistent set of interfaces.
+  The interface design is much more sensible than
+  Unix TSEARCH.  You  will probably find it in most any
+  Linux distribution.  The 2.0.3 tarfile source has no
+  configure step and
+  the 2.0.3 Makefile failed for me,
+  it placed -lm too early on the command line building texitree
+  means the version mentioned on freecode.net:
+  ftp://ftp.gnu.org/pub/gnu/avl/avl-2.0.3.tar.gz
+  is rather old.  And past that, libavl.texi
+  fails. 
+
+freecode.net: See the 'libredblack' project.
+  This project tarfile was last updated in 2003.
+   It is on sourceforge at http://sourceforge.net/projects/redblacktree/
+  Implemented in C.
+  Configure worked (version 1.3) but the make step failed
+  running the python app ./rbgen due to the presence
+  of the string  %prefix on line 9 of rbgen.
+  Removing that one line of python commentary from Eric Raymond
+  fixed the build!
+  There is a good amount of C #define magic making it harder to
+  read the source than one might expect.
+
+freecode.net: See the project 'Template based B+ Tree'.
+  Is in C++ and can be used for searches which are file or
+  memory based through use of C++ templates by the implemenation.
+  Have not attempted to build it.
 
 =========
 tsearch:
