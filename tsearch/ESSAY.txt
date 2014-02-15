@@ -50,7 +50,23 @@ In the following I freely use tsearch for dwarf_tsearch
 etc. The functionality and interfaces are identical.
 
 =========
-Further reading (February 15, 2014)
+Further reading 
+
+The canonical reference for binary trees and the
+algorithm reference for most of the tsearch code is 
+Donald E. Knuth,
+"The Art of Computer Programming" Volume 3 Sorting and Searching,
+Second Edition. 
+
+"Algorithms" Fourth Edition, Robert Sedgewick and Kevin Wayne,
+is the basis for the red-black tree coding.
+
+
+Wikipedia has quite a few entries of interest.
+  http://en.wikipedia.org/wiki/Self-balancing_binary_search_tree
+  http://en.wikipedia.org/wiki/Tree_traversal
+  http://en.wikipedia.org/wiki/Red–black_tree
+are just a few.
 
 After implementing tsearch I looked briefly at
 some other projects.
