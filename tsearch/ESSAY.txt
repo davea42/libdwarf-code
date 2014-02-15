@@ -61,13 +61,15 @@ freecode.net: See the 'GNU libavl' project.
   The interface design is much more sensible than
   Unix TSEARCH.  You  will probably find it in most any
   Linux distribution.  The 2.0.3 tarfile source has no
-  configure step and
-  the 2.0.3 Makefile failed for me,
+  configure step and the 2.0.3 Makefile failed for me,
   it placed -lm too early on the command line building texitree
   means the version mentioned on freecode.net:
   ftp://ftp.gnu.org/pub/gnu/avl/avl-2.0.3.tar.gz
   is rather old.  And past that, libavl.texi
-  fails. 
+  fails doing plain 'make'.  
+  Doing 'make program' to just build the source works fine.
+  The interface definitions are more sensible than tsearch,
+  rb_delete returns the deleted item when it succeeds, for example.
 
 freecode.net: See the 'libredblack' project.
   This project tarfile was last updated in 2003.
@@ -80,6 +82,8 @@ freecode.net: See the 'libredblack' project.
   fixed the build!
   There is a good amount of C #define magic making it harder to
   read the source than one might expect.
+  The interface definitions are more sensible than tsearch,
+  rb_delete returns the deleted item when it succeeds, for example.
 
 freecode.net: See the project 'Template based B+ Tree'.
   Is in C++ and can be used for searches which are file or
