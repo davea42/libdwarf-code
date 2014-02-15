@@ -65,8 +65,9 @@ freecode.net: See the 'GNU libavl' project.
   it placed -lm too early on the command line building texitree
   means the version mentioned on freecode.net:
   ftp://ftp.gnu.org/pub/gnu/avl/avl-2.0.3.tar.gz
-  is rather old.  And past that, libavl.texi
-  fails doing plain 'make'.  
+  is rather old but shows internal evidence of
+  last being updated in 2007 (*.pdf and other file timestamps
+  in the tar file). The Makefile fails for me doing plain 'make'.  
   Doing 'make program' to just build the source works fine.
   The interface definitions are more sensible than tsearch,
   rb_delete returns the deleted item when it succeeds, for example.
