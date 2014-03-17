@@ -153,7 +153,7 @@ dwarf_names.c dwarf_names.h: gennames $(srcdir)/dwarf.h
 
 docbld:pdfbld 
 bldpdf: pdfbld
-pdfbld: libdwarf2.1.pdf libdwarf2p.1.pdf dwarf.v2.pdf index.v2.pdf mips_extensions.pdf
+pdfbld: libdwarf2.1.pdf libdwarf2p.1.pdf mips_extensions.pdf
 #Oriented to using gsroff now.
 TROFF=/usr/bin/groff
 TROFFDEV="-T ps"
@@ -175,23 +175,6 @@ libdwarf2p.1.pdf:  $(BUILD_BASE)/libdwarf2p.1.mm
 		  | tbl | $(TROFF) $(TROFFDEV) -mm >libdwarf2p.1.ps
 	$(PSTOPDF) libdwarf2p.1.ps libdwarf2p.1.pdf
 
-# At present, the newIndex is not usable: we have no tools
-# to build a new index page at the moment.
-
-dwarf.v2.pdf:	$(BUILD_BASE)/dwarf.v2.mm
-	-pic $(BUILD_BASE)/dwarf.v2.mm \
-		  | tbl | $(TROFF) $(TROFFDEV) -mm >dwarf.v2.ps 2> newIndex
-	$(PSTOPDF) dwarf.v2.ps dwarf.v2.pdf
-
-# the index is only useful till the document changes: it is
-# not autmatically correct. It was prepared by tools internal
-# to USL/Novell
-
-index.v2.pdf:  index.v2.mm
-	-pic index.v2.mm | tbl | $(TROFF) $(TROFFDEV) -mm >index.v2.ps
-	$(PSTOPDF) index.v2.ps  index.v2.pdf
-
-
 mips_extensions.pdf: mips_extensions.mm
 	-pr $(TROFFDEV) -e mips_extensions.mm | tbl | \
                  $(TROFF) $(TROFFDEV) -mm >mips_extensions.ps
@@ -201,9 +184,6 @@ clean:
 	rm -f *.o libdwarf.a 
 	rm -f libdwarf.so
 	rm -f libdwarf2.1.ps
-	rm -f newIndex
-	rm -f dwarf.v2.ps
-	rm -f index.v2.ps
 	rm -f mips_extensions.ps
 	rm -f libdwarf2p.1.ps
 	rm -f gennames 
