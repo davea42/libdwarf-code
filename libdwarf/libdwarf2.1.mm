@@ -8,7 +8,7 @@ n\."
 .nr Hb 5
 \." ==============================================
 \." Put current date in the following at each rev
-.ds vE rev 2.16, January 30, 2014
+.ds vE rev 2.17, April 02, 2014
 \." ==============================================
 \." ==============================================
 .ds | |
@@ -2002,8 +2002,9 @@ are incorrect.
 \f(CWDwarf_Error error = 0;
 Dwarf_Die return_die = 0;
 int res;
+int is_info = 1;
 
-res = dwarf_offdie_b(dbg,die_offset,&return_die, &error);
+res = dwarf_offdie_b(dbg,die_offset,is_info,&return_die, &error);
 if (res == DW_DLV_OK) {
    /* Use return_die here. */
    dwarf_dealloc(dbg, return_die, DW_DLA_DIE);
@@ -2197,6 +2198,7 @@ extract information from the CU die and the \f(CWgiven_die\fP
 
 An example  (a snippet) of code using this function
 follows. It assumes that \f(CWin_die\fP is a DIE
+in .debug_info
 that, for some reason, you have decided needs CU context
 printed (assuming \f(CWprint_die_data\fP 
 does some reasonable printing).
@@ -2206,6 +2208,7 @@ does some reasonable printing).
 int res;
 Dwarf_Off cudieoff = 0;
 Dwarf_Die cudie = 0;
+int is_info = 1; /* 
 
 print_die_data(dbg,in_die);
 res = dwarf_CU_dieoffset_given_die(in_die,&cudieoff,&error);
@@ -2213,7 +2216,7 @@ if(res != DW_DLV_OK) {
     printf("FAIL: dwarf_CU_dieoffset_given_die did not work\n");
     exit(1);
 }
-res = dwarf_offdie_b(dbg,cudieoff,&cudie,&error);
+res = dwarf_offdie_b(dbg,cudieoff,is_info,&cudie,&error);
 if(res != DW_DLV_OK) {
     printf("FAIL: dwarf_offdie did not work\n");
     exit(1);

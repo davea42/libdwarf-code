@@ -1,3 +1,8 @@
+2014-04-02  David Anderson
+     * libdwarf2.1.mm: Examples using dwarf_offdie_b() were
+       miscoded (is_info argument not provided). Now fixed.
+       Now at version 2.17.
+     * libdwarf2.1.pdf: Regenerated
 2014-03-17  David Anderson
      * dwarf.v2.mm,dwarf.v2.pdf,index.v2.mm,index.v2.pdf: Removed
        these files, they are now on dwarfstd.org.
