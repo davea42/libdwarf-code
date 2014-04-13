@@ -297,6 +297,10 @@ dwarf_convert_to_global_offset(Dwarf_Attribute attr,
     DWARF2 as address-size but which was always an offset
     so should have always been offset size (wording
     corrected in DWARF3).
+    The dwarfstd.org FAQ "How big is a DW_FORM_ref_addr?"
+    suggested all should use offset-size, but that suggestion
+    seems to have been ignored in favor of doing what the
+    DWARF2 and 3 standards actually say.
 
     November, 2010: *ret_offset is always set now.
     Even in case of error.
@@ -434,6 +438,10 @@ int dwarf_formsig8(Dwarf_Attribute attr,
     DWARF2 as address-size but which was always an offset
     so should have always been offset size (wording
     corrected in DWARF3).
+    gcc and Go and libdwarf producer code
+    define the length of the value of DW_FORM_ref_addr
+    per the version. So for V2 it is address-size and V3 and later
+    it is offset-size.
 
     See the DWARF4 document for the 3 cases fitting
     reference forms.  The caller must determine which section the
@@ -515,6 +523,29 @@ dwarf_global_formref(Dwarf_Attribute attr,
         /* The offset is global. */
         break;
     case DW_FORM_ref_addr:
+        {
+            /*  In Dwarf V2 DW_FORM_ref_addr was defined
+                as address-size even though it is a .debug_info
+                offset.  Fixed in Dwarf V3 to be offset-size.
+                */
+            unsigned length_size = 0;
+            if (context_version == 2) {
+                length_size = cu_context->cc_address_size;
+            } else {
+                length_size = cu_context->cc_length_size;
+            }
+            if (length_size == 4) {
+                READ_UNALIGNED(dbg, offset, Dwarf_Unsigned,
+                    attr->ar_debug_ptr, sizeof(Dwarf_ufixed));
+            } else if (length_size == 8) {
+                READ_UNALIGNED(dbg, offset, Dwarf_Unsigned,
+                    attr->ar_debug_ptr, sizeof(Dwarf_Unsigned));
+            } else {
+                _dwarf_error(dbg, error, DW_DLE_FORM_SEC_OFFSET_LENGTH_BAD);
+                return (DW_DLV_ERROR);
+            }
+        }
+        break;
     case DW_FORM_sec_offset:
     case DW_FORM_GNU_ref_alt:  /* 2013 GNU extension */
     case DW_FORM_GNU_strp_alt:  /* 2013 GNU extension */

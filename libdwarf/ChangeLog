@@ -1,3 +1,20 @@
+2014-04-12  David Anderson
+     * dwarf_die_deliv.c,dwarf_query.c: Gets the version stamp passed to
+       _dwarf_get_size_of_val() so DW_FORM_ref_addr handled
+       correctly.
+     * dwarf_form.c: Handle DW_FORM_ref_addr as the V2
+       specification says (V3 and later continue to
+       be handled unchanged.).
+     * dwarf_util.c: Handle DW_FORM_ref_addr as the V2
+       specification says (V3 and later continue to
+       be handled unchanged.).
+     * dwarf_addr_finder.c: Removed a mistaken handling
+       of DW_FORM_ref_addr. No one should be using this
+       function's features though...
+     * pro_forms.c: Made a comment clearer about
+       DW_FORM_ref_addr.
+     * pro_section.c: Made a comment clearer, removed
+       #if 0 code.
 2014-04-02  David Anderson
      * libdwarf2.1.mm: Examples using dwarf_offdie_b() were
        miscoded (is_info argument not provided). Now fixed.

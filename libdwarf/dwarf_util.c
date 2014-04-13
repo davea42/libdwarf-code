@@ -62,8 +62,10 @@
 Dwarf_Unsigned
 _dwarf_get_size_of_val(Dwarf_Debug dbg,
     Dwarf_Unsigned form,
+    Dwarf_Half cu_version,
     Dwarf_Half address_size,
-    Dwarf_Small * val_ptr, int v_length_size)
+    Dwarf_Small * val_ptr,
+    int v_length_size)
 {
     Dwarf_Unsigned length = 0;
     Dwarf_Word leb128_length = 0;
@@ -90,8 +92,14 @@ _dwarf_get_size_of_val(Dwarf_Debug dbg,
     /*  DWARF2 was wrong on the size of the attribute for
         DW_FORM_ref_addr.  We assume compilers are using the
         corrected DWARF3 text (for 32bit pointer target objects pointer and
-        offsets are the same size anyway). */
+        offsets are the same size anyway).
+        It is clear (as of 2014) that for 64bit folks used
+        the V2 spec in the way V2 was
+        written, so the ref_addr has to account for that.*/
     case DW_FORM_ref_addr:
+        if (cu_version == DW_CU_VERSION2) {
+            return (address_size);
+        }
         return (v_length_size);
 
     case DW_FORM_block1:
@@ -156,6 +164,7 @@ _dwarf_get_size_of_val(Dwarf_Debug dbg,
             }
             return (indir_len + _dwarf_get_size_of_val(dbg,
                 form_indirect,
+                cu_version,
                 address_size,
                 val_ptr + indir_len,
                 v_length_size));

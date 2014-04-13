@@ -757,6 +757,7 @@ _dwarf_next_die_info_ptr(Dwarf_Byte_Ptr die_info_ptr,
         if (attr_form != 0) {
             info_ptr += _dwarf_get_size_of_val(cu_context->cc_dbg,
                 attr_form,
+                cu_context->cc_version_stamp,
                 cu_context->cc_address_size,
                 info_ptr,
                 cu_context->cc_length_size);

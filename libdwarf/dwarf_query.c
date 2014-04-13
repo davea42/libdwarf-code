@@ -244,6 +244,7 @@ dwarf_attrlist(Dwarf_Die die,
             {
                 Dwarf_Unsigned sov = _dwarf_get_size_of_val(dbg,
                     attr_form,
+                    die->di_cu_context->cc_version_stamp,
                     die->di_cu_context->cc_address_size,
                     info_ptr,
                     die->di_cu_context->cc_length_size);
@@ -338,6 +339,7 @@ _dwarf_get_value_ptr(Dwarf_Die die,
 
         info_ptr += _dwarf_get_size_of_val(die->di_cu_context->cc_dbg,
             curr_attr_form,
+            die->di_cu_context->cc_version_stamp,
             die->di_cu_context->cc_address_size,
             info_ptr,
             die->di_cu_context->cc_length_size);

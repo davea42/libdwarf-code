@@ -1899,20 +1899,11 @@ _dwarf_pro_generate_debuginfo(Dwarf_P_Debug dbg, Dwarf_Error * error)
                 {
                     /*  curattr->ar_ref_die == NULL!
 
-                        ref_addr doesn't take a CU-offset.
+                        DW_FORM_ref_addr doesn't take a CU-offset.
                         This is different than other refs.
                         This value will be set by the user of the
                         producer library using a relocation.
                         No need to set a value here.  */
-#if 0
-                    du = curattr->ar_ref_die->di_offset;
-                    {
-                        /* ref to offset of die */
-                        WRITE_UNALIGNED(dbg, (void *) data,
-                            (const void *) &du,
-                            sizeof(du), uwordb_size);
-                    }
-#endif
                     break;
 
                 }
