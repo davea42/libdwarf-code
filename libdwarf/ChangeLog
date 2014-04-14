@@ -1,3 +1,6 @@
+2014-04-14  David Anderson
+     * bldDWindex.sh: Deleted. This shell script was intended for 
+       DWARF2 postscript post-processing and was never useful.
 2014-04-12  David Anderson
      * dwarf_die_deliv.c,dwarf_query.c: Gets the version stamp passed to
        _dwarf_get_size_of_val() so DW_FORM_ref_addr handled
