@@ -149,11 +149,9 @@ dwarf_add_AT_ref_address(Dwarf_P_Debug dbg,
         break;
     }
 
-    /*  FIXME: For DWARF3 and later this call is wrong as
+    /*  FIXME: For DWARF3 and later this call is problematic as
         DW_FORM_ref_addr is really an offset in
-        .debug_info , not an address.
-        For V2 it is surely also wrong as it is not given a pc_value
-        at all.  */
+        .debug_info , not an address.  */
     return local_add_AT_address(dbg, ownerdie, attr, DW_FORM_ref_addr,
         pc_value, sym_index, error);
 }
