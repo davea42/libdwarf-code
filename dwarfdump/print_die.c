@@ -327,7 +327,9 @@ static  void
 print_std_cu_hdr(Dwarf_Unsigned cu_header_length,
     Dwarf_Unsigned abbrev_offset,
     Dwarf_Half version_stamp,
-    Dwarf_Half address_size)
+    Dwarf_Half address_size,
+    /* offset_size is often called length_size in libdwarf. */
+    Dwarf_Half offset_size)
 {
     if (dense) {
         printf(" %s<0x%" DW_PR_XZEROS  DW_PR_DUx
@@ -339,6 +341,8 @@ print_std_cu_hdr(Dwarf_Unsigned cu_header_length,
             ">", "abbrev_offset", abbrev_offset);
         printf(" %s<0x%02x>", "address_size",
             address_size);
+        printf(" %s<0x%02x>", "offset_size",
+            offset_size);
     } else {
         printf("  %-16s = 0x%" DW_PR_XZEROS DW_PR_DUx
             " %" DW_PR_DUu
@@ -354,6 +358,8 @@ print_std_cu_hdr(Dwarf_Unsigned cu_header_length,
             abbrev_offset);
         printf("  %-16s = 0x%02x       %u\n", "address_size",
             address_size,address_size);
+        printf("  %-16s = 0x%02x       %u\n", "offset_size",
+            offset_size,offset_size);
     }
 }
 static void
@@ -498,7 +504,7 @@ print_one_die_section(Dwarf_Debug dbg,Dwarf_Bool is_info)
                     printf("\nCU_HEADER:\n");
                 }
                 print_std_cu_hdr(cu_header_length,abbrev_offset,
-                    version_stamp,address_size);
+                    version_stamp,address_size,length_size);
                 if (!is_info) {
                     print_std_cu_signature(&signature,typeoffset);
                 }

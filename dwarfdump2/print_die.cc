@@ -337,7 +337,8 @@ static void
 print_std_cu_hdr( Dwarf_Unsigned cu_header_length,
     Dwarf_Unsigned abbrev_offset,
     Dwarf_Half version_stamp,
-    Dwarf_Half address_size)
+    Dwarf_Half address_size,
+    Dwarf_Half offset_size)
 {
     if (dense) {
         cout << " cu_header_length" <<
@@ -347,6 +348,8 @@ print_std_cu_hdr( Dwarf_Unsigned cu_header_length,
         cout << " abbrev_offset" <<
             BracketSurround(IToHex0N(abbrev_offset,10));
         cout << " address_size" <<
+            BracketSurround(IToHex0N(address_size,4));
+        cout << " offset_size" <<
             BracketSurround(IToHex0N(address_size,4));
     } else {
         cout <<  "  cu_header_length = " <<
@@ -363,6 +366,10 @@ print_std_cu_hdr( Dwarf_Unsigned cu_header_length,
             IToHex0N(address_size,4) <<
             "      " <<
             " " << IToDec(address_size) << endl;
+        cout <<  "  offset_size      = " <<
+            IToHex0N(offset_size,4) <<
+            "      " <<
+            " " << IToDec(offset_size) << endl;
     }
 }
 static void
@@ -480,7 +487,7 @@ print_one_die_section(Dwarf_Debug dbg,bool is_info)
                     cout << "CU_HEADER:" << endl;
                 }
                 print_std_cu_hdr(cu_header_length, abbrev_offset,
-                    version_stamp,address_size);
+                    version_stamp,address_size,length_size);
                 if (!is_info) {
                     print_std_cu_signature(&signature,typeoffset);
                 }

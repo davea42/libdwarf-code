@@ -1,3 +1,7 @@
+2014-04-15  David Anderson
+     * uri.c(hexdig): was testing 0, fixed to be '0'.
+2014-04-14  David Anderson
+     * dwarfdump.c,common.c: Update version string.
 2014-04-12  David Anderson
      * dwarfdump.c,common.c: Update version string.
 2014-02-13  David Anderson
