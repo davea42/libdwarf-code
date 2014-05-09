@@ -1,7 +1,7 @@
 /*
 
   Copyright (C) 2000-2005 Silicon Graphics, Inc. All Rights Reserved.
-  Portions Copyright (C) 2008-2011 David Anderson.  All Rights Reserved.
+  Portions Copyright (C) 2008-2014 David Anderson.  All Rights Reserved.
 
   This program is free software; you can redistribute it and/or modify it
   under the terms of version 2.1 of the GNU Lesser General Public License
@@ -22,15 +22,6 @@
   License along with this program; if not, write the Free Software
   Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston MA 02110-1301,
   USA.
-
-  Contact information:  Silicon Graphics, Inc., 1500 Crittenden Lane,
-  Mountain View, CA 94043, or:
-
-  http://www.sgi.com
-
-  For further information regarding this notice, see:
-
-  http://oss.sgi.com/projects/GenInfo/NoticeExplan
 
 */
 
@@ -330,6 +321,7 @@ const char *_dwarf_errmsgs[] = {
     "DW_DLE_DEBUGPUBTYPES_ERROR (241), could not create pubtypes section",
     "DW_DLE_AT_FIXUP_NULL (242)",
     "DW_DLE_AT_FIXUP_DUP (243)",
+    "DW_DLE_BAD_ABINAME (244)",
 };
 
 

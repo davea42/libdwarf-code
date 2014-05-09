@@ -197,10 +197,11 @@ local_add_AT_address(Dwarf_P_Debug dbg,
     new_attr->ar_rel_symidx = sym_index;
     new_attr->ar_reloc_len = upointer_size;
     new_attr->ar_next = 0;
-    if (sym_index != NO_ELF_SYM_INDEX)
+    if (sym_index != NO_ELF_SYM_INDEX) {
         new_attr->ar_rel_type = dbg->de_ptr_reloc;
-    else
+    } else {
         new_attr->ar_rel_type = R_MIPS_NONE;
+    }
 
     new_attr->ar_data = (char *)
         _dwarf_p_get_alloc(dbg, upointer_size);

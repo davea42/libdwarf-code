@@ -26,15 +26,6 @@
   Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston MA 02110-1301,
   USA.
 
-  Contact information:  Silicon Graphics, Inc., 1500 Crittenden Lane,
-  Mountain View, CA 94043, or:
-
-  http://www.sgi.com
-
-  For further information regarding this notice, see:
-
-  http://oss.sgi.com/projects/GenInfo/NoticeExplan
-
 */
 
 
@@ -788,41 +779,55 @@ struct Dwarf_Obj_Access_Interface_s {
 #define DW_DLC_RDWR        2        /* read/write access NOT SUPPORTED*/
 
 /* dwarf_producer_init*() access flag modifiers
-   If HAVE_DWARF2_99_EXTENSION is defined at libdwarf build time
-   and DW_DLC_OFFSET_SIZE_64  is passed in producer_init()
-   flags then the DWARF3 64 bit offset extension is used
-   to generate 64 bit offsets.
+   No longer depends on compile-time settings for
+   how to produce 64bit offset. See DW_DLC_IRIX_OFFSET64.
+   Historic  versions. One of
+   If DW_DLC_POINTER64 is not set DW_DLC_POINTER32 is assumed.
+   If DW_DLC_OFFSET64 or DW_DLC_IRIX_OFFSET64 is not
+   set 32bit offset DWARF is assumed.
+   Non-MIPS Non IA64 should use DW_DLC_SYMBOLIC_RELOCATIONS
+   and handle the relocation creation for the target
+   itself using the symbolic relocations to do so, those
+   use the Dwarf_Rel_Type enum relocation indicators.
+
 */
-#define DW_DLC_SIZE_64     0x40000000 /* 64-bit address-size target */
-#define DW_DLC_SIZE_32     0x20000000 /* 32-bit address-size target */
-#define DW_DLC_OFFSET_SIZE_64 0x10000000 /* 64-bit offset-size DWARF */
+/*  The first three are traditional dwarf producer names.
+    These names still work.
+    Newer names below.
+*/
+#define DW_DLC_SIZE_64              0x40000000 /* 64-bit address-size target */
+#define DW_DLC_SIZE_32              0x20000000 /* 32-bit address-size target */
+#define DW_DLC_OFFSET_SIZE_64       0x10000000 /* 64-bit offset-size DWARF */
 
 /* dwarf_producer_init*() access flag modifiers
+   Some new April 2014.
+   If DW_DLC_STREAM_RELOCATIONS is set the
+   DW_DLC_ISA_* flags are ignored. See the Dwarf_Rel_Type enum.
 */
-#define DW_DLC_ISA_MIPS             0x00000000 /* MIPS target */
-#define DW_DLC_ISA_IA64             0x01000000 /* IA64 target */
-#define DW_DLC_STREAM_RELOCATIONS   0x02000000 /* Old style binary relocs */
 
-    /*  Usable with assembly output because it is up to the producer to
-        deal with locations in whatever manner the producer code wishes.
-        Possibly emitting text an assembler will recognize. */
+/* Old style Elf binary relocation (.rel) records. The default. */
+#define DW_DLC_STREAM_RELOCATIONS   0x02000000
+
+#define DW_DLC_OFFSET32             0x00010000 /* use 32-bit sec offsets */
+/* The following 3 are new sensible names. Old names above with same values. */
+#define DW_DLC_OFFSET64             0x10000000 /* use 64-bit sec offsets */
+#define DW_DLC_POINTER32            0x20000000 /* use 4 for address_size */
+#define DW_DLC_POINTER64            0x40000000 /* use 8 for address_size */
+/* Special for IRIX only */
+#define DW_DLC_IRIX_OFFSET64        0x00200000 /* use non-std IRIX 64bitoffset headers  */
+
+/*  Usable with assembly output because it is up to the producer to
+    deal with locations in whatever manner the calling producer
+    code wishes.  For example, when the libdwarf caller wishes
+    to produce relocations differently than the binary
+    relocation bits that libdwarf Stream Relocations generate.
+    */
 #define DW_DLC_SYMBOLIC_RELOCATIONS 0x04000000
+
 
 #define DW_DLC_TARGET_BIGENDIAN     0x08000000 /* Big    endian target */
 #define DW_DLC_TARGET_LITTLEENDIAN  0x00100000 /* Little endian target */
 
-#if 0
-  /*
-   The libdwarf producer interfaces jumble these two semantics together in
-   confusing ways.  We *should* have flags like these...
-   But changing the code means a lot of diffs.  So for now,
-   we leave things as they are
-  */
-  #define DW_DLC_SUN_OFFSET32        0x00010000 /* use 32-bit sec offsets */
-  #define DW_DLC_SUN_OFFSET64        0x00020000 /* use 64-bit sec offsets */
-  #define DW_DLC_SUN_POINTER32        0x00040000 /* use 4 for address_size */
-  #define DW_DLC_SUN_POINTER64        0x00080000 /* use 8 for address_size */
-#endif
 
 /* dwarf_pcline() slide arguments
 */
@@ -1078,10 +1083,11 @@ struct Dwarf_Obj_Access_Interface_s {
 #define DW_DLE_DEBUGPUBTYPES_ERROR             241
 #define DW_DLE_AT_FIXUP_NULL                   242
 #define DW_DLE_AT_FIXUP_DUP                    243
+#define DW_DLE_BAD_ABINAME                     244
 
 
     /* DW_DLE_LAST MUST EQUAL LAST ERROR NUMBER */
-#define DW_DLE_LAST        243
+#define DW_DLE_LAST        244
 #define DW_DLE_LO_USER     0x10000
 
     /*  Taken as meaning 'undefined value', this is not
@@ -2279,7 +2285,7 @@ void dwarf_dealloc(Dwarf_Debug /*dbg*/, void* /*space*/,
 /* DWARF Producer Interface */
 
 /*  New form June, 2011. Adds user_data argument. */
-typedef int (*Dwarf_Callback_Func_c)(
+typedef int (*Dwarf_Callback_Func)(
     const char*     /*name*/,
     int             /*size*/,
     Dwarf_Unsigned  /*type*/,
@@ -2290,52 +2296,20 @@ typedef int (*Dwarf_Callback_Func_c)(
     void *          /*user_data*/,
     int*            /*error*/);
 
-/* New form June, 2011. Adds user_data */
-Dwarf_P_Debug dwarf_producer_init_c(
+/*  Returns DW_DLV_OK or DW_DLV_ERROR and
+    if DW_DLV_OK returns the Dwarf_P_Debug
+    pointer through the dbg_returned argument. */
+int dwarf_producer_init(
     Dwarf_Unsigned        /*flags*/,
-    Dwarf_Callback_Func_c /*func*/,
+    Dwarf_Callback_Func   /*func*/,
     Dwarf_Handler         /*errhand*/,
     Dwarf_Ptr             /*errarg*/,
     void *                /*user_data*/,
+    const char *isa_name, /* See isa/abi names in pro_init.c */
+    const char *dwarf_version, /* V2 V3 V4 or V5. */
+    const char *extra,    /* Extra input strings, comma separated. */
+    Dwarf_P_Debug *,      /* dbg_returned */
     Dwarf_Error *         /*error*/);
-
-typedef int (*Dwarf_Callback_Func_b)(
-    const char*     /*name*/,
-    int             /*size*/,
-    Dwarf_Unsigned  /*type*/,
-    Dwarf_Unsigned  /*flags*/,
-    Dwarf_Unsigned  /*link*/,
-    Dwarf_Unsigned  /*info*/,
-    Dwarf_Unsigned* /*sect_name_index*/,
-    int*            /*error*/);
-
-/* Intermediate form. Made obsolescent by dwarf_producer_init_c,
-   but supported. */
-Dwarf_P_Debug dwarf_producer_init_b(
-    Dwarf_Unsigned        /*flags*/,
-    Dwarf_Callback_Func_b /*func*/,
-    Dwarf_Handler         /*errhand*/,
-    Dwarf_Ptr             /*errarg*/,
-    Dwarf_Error *         /*error*/);
-
-/* Original, oldest form. From 1991. */
-typedef int (*Dwarf_Callback_Func)(
-    const char*     /*name*/,
-    int             /*size*/,
-    Dwarf_Unsigned  /*type*/,
-    Dwarf_Unsigned  /*flags*/,
-    Dwarf_Unsigned  /*link*/,
-    Dwarf_Unsigned  /*info*/,
-    int*            /*sect name index*/,
-    int*            /*error*/);
-
-/* Original, oldest form. From 1991. */
-Dwarf_P_Debug dwarf_producer_init(
-    Dwarf_Unsigned  /*creation_flags*/,
-    Dwarf_Callback_Func    /*func*/,
-    Dwarf_Handler   /*errhand*/,
-    Dwarf_Ptr       /*errarg*/,
-    Dwarf_Error*    /*error*/);
 
 Dwarf_Signed dwarf_transform_to_disk_form(Dwarf_P_Debug /*dbg*/,
     Dwarf_Error*     /*error*/);

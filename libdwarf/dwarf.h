@@ -223,6 +223,8 @@ extern "C" {
 #define DW_FORM_flag_present            0x19 /* DWARF4 */
 /* 0x1a thru 0x1f were left unused accidentally. Reserved for future use. */
 #define DW_FORM_ref_sig8                0x20 /* DWARF4 */
+#define DW_FORM_GNU_addr_index          0x1f01 /* GNU extension in debug_info.dwo.*/
+#define DW_FORM_GNU_str_index           0x1f02 /* GNU extension, somewhat like DW_FORM_strp */
 #define DW_FORM_GNU_ref_alt             0x1f20 /* GNU extension. Offset in .debug_info. */
 #define DW_FORM_GNU_strp_alt            0x1f21 /* GNU extension. Offset in .debug_str. */
 
@@ -412,6 +414,14 @@ extern "C" {
 #define DW_AT_GNU_all_tail_call_sites           0x2116 /* GNU */
 #define DW_AT_GNU_all_call_sites                0x2117 /* GNU */
 #define DW_AT_GNU_all_source_call_sites         0x2118 /* GNU */
+/* The GNU DebugFission project: http://gcc.gnu.org/wiki/DebugFission */
+#define DW_AT_GNU_dwo_name                      0x2130 /* GNU */
+#define DW_AT_GNU_dwo_id                        0x2131 /* GNU */
+
+#define DW_AT_GNU_ranges_base                   0x2132 /* GNU */
+#define DW_AT_GNU_addr_base                     0x2133 /* GNU */
+#define DW_AT_GNU_pubnames                      0x2134 /* GNU */
+#define DW_AT_GNU_pubtypes                      0x2135 /* GNU */
 
 
 

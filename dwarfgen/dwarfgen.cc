@@ -369,20 +369,32 @@ main(int argc, char **argv)
 
     // Example will return error value thru 'err' pointer
     // and return DW_DLV_BADADDR if there is an error.
-    int ptrsize = DW_DLC_SIZE_32;
+    int ptrsizeflagbit = DW_DLC_POINTER32;
+    int offsetsizeflagbit = DW_DLC_OFFSET32;
+    const char * isa_name = "x86";
+    const char *dwarf_version = "V2";
+    int endian =  DW_DLC_TARGET_LITTLEENDIAN;
     Dwarf_Ptr errarg = 0;
     Dwarf_Error err = 0;
+    void *user_data = 0;
+    Dwarf_P_Debug dbg = 0;
     // We use DW_DLC_SYMBOLIC_RELOCATIONS so we can
     // read the relocations and do our own relocating.
     // See calls of dwarf_get_relocation_info().
-    Dwarf_P_Debug dbg = dwarf_producer_init_c(
-        DW_DLC_WRITE|ptrsize|DW_DLC_SYMBOLIC_RELOCATIONS,
+    int res = dwarf_producer_init(
+        DW_DLC_WRITE|ptrsizeflagbit|
+        offsetsizeflagbit|DW_DLC_SYMBOLIC_RELOCATIONS|
+        endian,
         CallbackFunc,
-        0,
+        0, // errhand
         errarg,
-        0, /* we are not using user_data, so pass in 0 */
+        user_data,
+        isa_name,
+        dwarf_version,
+        0, // No extra identifying strings.
+        &dbg,
         &err);
-    if(dbg == reinterpret_cast<Dwarf_P_Debug>(DW_DLV_BADADDR)) {
+    if(res != DW_DLV_OK) {
         cerr << "Failed init_b" << endl;
         exit(EXIT_FAILURE);
     }
@@ -433,7 +445,9 @@ write_object_file(Dwarf_P_Debug dbg, IRepresentation &irep)
     ehp->e_ident[EI_DATA] = ELFDATA2LSB;
     ehp->e_ident[EI_VERSION] = EV_CURRENT;
     ehp->e_machine = EM_386;
-    ehp->e_type = ET_EXEC;
+    //  We do not bother to create program headers, so
+    //  mark this as ET_REL.
+    ehp->e_type = ET_REL;
     ehp->e_version = EV_CURRENT;
 
     unsigned  strtabstroff = secstrtab.addString(".shstrtab");

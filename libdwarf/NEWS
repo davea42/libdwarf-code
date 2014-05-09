@@ -1,3 +1,20 @@
+April 25, 2014
+  The Producer code drops old dwarf_producer_init* functions
+  and introduces a new one: dwarf_producer_init_d().
+  And the producer callback function is renamed Dwarf_Callback_Func.
+  Hence code calling the libdwarf producer must change.
+
+  Code calling the consumer interface is not affected.
+
+  The determination of what/how to emit DWARF is now determined
+  at run time, not at build time.  It's now much simpler to
+  get the sort of output you want. Provision is made for emitting
+  DWARF3,4,5 and 5 (though that provision is at a very early stage
+  and not much supported yet).
+
+  The postal addresses for SGI in the copyright comments
+  changed from time to time and are no longer accurate. 
+  So they are gradually being removed.
 March 17, 2014
   The dwarf.v2.mm and index.v2.mm and their pdf files have been
   removed from the distribution.    Those files are available

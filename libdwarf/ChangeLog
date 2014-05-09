@@ -1,3 +1,34 @@
+2014-08-05  David Anderson
+     * dwarf.h: Adds DW_AT_GNU_dwo_id, DW_AT_GNU_dwo_name and other
+       GNU extensions.
+     * libdwarf.h.in: Producer code changes:
+       The dwarf_producer_init_d() is new and has new arguments.
+       The older dwarf_producer_init() and _b _c versions are removed.
+       Only one producer callback declaration exists now:
+       Dwarf_Callback_Func.
+     * pro_init.c: Implements the new dwarf_producer_init_d()
+       function and initializes fields at runtime to select
+       what DWARF to emit. Messy and confusing initialization code 
+       rewritten to depend on the runtime arguments
+       to dwarf_producer_init_d, not library compile-time.
+     * pro_opaque.h: New runtime fields set by initialization code.
+     * pro_reloc.c:  Fix a couple comment indentations.
+     * pro_forms.c:  Add curly braces in an if to avoid
+       a hard-to-find bug (there was none yet, but it was a trap...).
+     * pro_reloc_symbolic.c,pro_reloc_stream.c:  Remove use 
+       of obsolete callback functions.
+     * pro_section.c: Ensure only IRIX isa/abi target generates
+       an exception CIE entry. Remove use of obsolete
+       callbacks.
+     * pro_util.h: Remove confusing and unreadable
+       relocation number ifdefs that
+       depended on settings at library compile-time. Most of the
+       content of the file is deleted now. See 
+       isa_relocs[] in pro_init.c
+     * dwarf_error.c: Added error code (used by producer code).
+     * libdwarf2p.1.mm: Now version 1.36. Updated dwarf_producer_init()
+       documentation.
+     * libdwarf2p.1.pdf: Regenerated.
 2014-04-14  David Anderson
      * pro_forms.c: Modified a comment about DW_FORM_ref_addr.
        No logic change.
