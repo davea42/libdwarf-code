@@ -1,3 +1,6 @@
+2014-08-09  David Anderson
+     * Makefile.in: Write ar std-out to ar-output-temp 
+       so the text is not needlessly filling a terminal window.
 2014-08-05  David Anderson
      * dwarf.h: Adds DW_AT_GNU_dwo_id, DW_AT_GNU_dwo_name and other
        GNU extensions.

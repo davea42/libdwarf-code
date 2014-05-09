@@ -129,13 +129,13 @@ OBJS= dwarf_abbrev.o \
 all: @build_shared@ @build_nonshared@
 
 libdwarf.a: dwarf_names.h dwarf_names.c  $(OBJS) dwarf_names.o
-	$(AR) $(ARFLAGS) $@ $(OBJS)  dwarf_names.o
+	$(AR) $(ARFLAGS) $@ $(OBJS)  dwarf_names.o > ar-output-temp
 
 libdwarf.so: dwarf_names.h dwarf_names.c $(OBJS) dwarf_names.o
 	$(CC) $(CFLAGS) -shared $(OBJS)  dwarf_names.o -o $@
 
 none:
-	echo "do nothing"
+	echo "do nothing " $@
 common.o: $(srcdir)/common.c $(srcdir)/common.h
 	$(CC) $(CFLAGS) -c $(srcdir)/common.c
 gennames: $(srcdir)/gennames.c $(srcdir)/dwarf.h common.o
@@ -187,6 +187,7 @@ clean:
 	rm -f mips_extensions.ps
 	rm -f libdwarf2p.1.ps
 	rm -f gennames 
+	rm -f ar-output-temp
 	rm -f junk 
 	rm -f ALL
 	rm -f gennames 
