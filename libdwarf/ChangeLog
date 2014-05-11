@@ -1,7 +1,18 @@
-2014-08-09  David Anderson
+2014-05-11  David Anderson
+     * dwarf_error.c: Added 3 new error strings.
+     * dwarf_form.c: Added DW_FORM_GNU_str_index and partial
+       DW_FORM_GNU_addr_index handling.
+     * dwarf_init_finish.c: Refactored initial section setup
+       so we can handle dwo (DebugFission) or regular sections.
+     * dwarf_query.c:  Add support for DW_FORM_GNU_str_index.
+       Partial support for DW_FORM_GNU_addr_index.
+     * dwarf_util.c:  Add support for DW_FORM_GNU_str_index,
+       DW_FORM_GNU_addr_index.
+     * libdwarf.h.in: 4 new error codes in DW_DLE_ list. Last now 248.
+2014-05-09  David Anderson
      * Makefile.in: Write ar std-out to ar-output-temp 
        so the text is not needlessly filling a terminal window.
-2014-08-05  David Anderson
+2014-05-08  David Anderson
      * dwarf.h: Adds DW_AT_GNU_dwo_id, DW_AT_GNU_dwo_name and other
        GNU extensions.
      * libdwarf.h.in: Producer code changes:

@@ -322,6 +322,10 @@ const char *_dwarf_errmsgs[] = {
     "DW_DLE_AT_FIXUP_NULL (242)",
     "DW_DLE_AT_FIXUP_DUP (243)",
     "DW_DLE_BAD_ABINAME (244)",
+    "DW_DLE_TOO_MANY_DEBUG(245), too many .debug_* sections present somehow",
+    "DW_DLE_DEBUG_STR_OFFSETS_DUPLICATE(246)",
+    "DW_DLE_SECTION_DUPLICATION(247)",
+    "DW_DLE_SECTION_ERROR(248)",
 };
 
 

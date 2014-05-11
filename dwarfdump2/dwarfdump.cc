@@ -58,7 +58,7 @@ $Header: /plroot/cmplrs.src/v7.4.5m/.RCS/PL/dwarfdump/RCS/dwarfdump.c,v 1.48 200
 #include "common.h"
 #include "naming.h"
 #include "uri.h"
-#define DWARFDUMP_VERSION " Mon Apr 14 18:12:55 PDT 2014  "
+#define DWARFDUMP_VERSION " Sun May 11 09:50:50 PDT 2014  "
 
 using std::vector;
 using std::string;
@@ -1921,7 +1921,7 @@ should_skip_this_cu(DieHolder& hcu_die, Dwarf_Error err)
         }
     } else {
         print_error(dbg,
-            "dwarf_whatform unexpected value",
+            "dwarf_whatform unexpected value.",
             fres, err);
     }
     dwarf_dealloc(dbg, attrib, DW_DLA_ATTR);
@@ -1976,7 +1976,7 @@ old_get_cu_name(Dwarf_Debug dbg, Dwarf_Die cu_die, Dwarf_Error err)
         }
     } else {
         print_error(dbg,
-            "dwarf_whatform unexpected value",
+            "dwarf_whatform unexpected value..",
             fres, err);
     }
     dwarf_dealloc(dbg, attrib, DW_DLA_ATTR);

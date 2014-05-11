@@ -3545,6 +3545,7 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
         break;
     case DW_FORM_string:
     case DW_FORM_strp:
+    case DW_FORM_GNU_str_index:
         { char *temps = 0;
         wres = dwarf_formstring(attrib, &temps, &err);
         if (wres == DW_DLV_OK) {
@@ -3654,6 +3655,19 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
         }
         }
         break;
+    case DW_FORM_GNU_addr_index: {
+        /*  uLEB128 value refers to an entry in .debug_addr section. */
+        /*  FIXME: Cheat for now, just read value */
+        wres = dwarf_formudata(attrib, &tempud, &err);
+        if (wres == DW_DLV_OK) {
+            str_out.append(IToHex0N(tempud,10));
+        } else if (wres == DW_DLV_NO_ENTRY) {
+            // nothing? 
+        } else {
+            print_error(dbg, "Cannot get DW_FORM_GNU_addr_index....", wres, err);
+        }
+        break;
+    }
     default:
         print_error(dbg, "dwarf_whatform unexpected value", DW_DLV_OK,
             err);

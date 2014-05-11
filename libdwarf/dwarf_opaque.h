@@ -152,8 +152,7 @@ struct Dwarf_CU_Context_s {
 /*  Consolidates section-specific data in one place.
     Section is an Elf specific term, intended as a general
     term (for non-Elf objects some code must synthesize the
-    values somehow).
-    Makes adding more section-data much simpler. */
+    values somehow).  */
 struct Dwarf_Section_s {
     Dwarf_Small *  dss_data;
     Dwarf_Unsigned dss_size;
@@ -172,6 +171,9 @@ struct Dwarf_Section_s {
         it zero is fine for non-elf.  */
     Dwarf_Addr     dss_addr;
     Dwarf_Small    dss_data_was_malloc;
+    /*  is_in_use set during initial object reading to
+        detect duplicates. Ignored after setup done. */
+    Dwarf_Small    dss_is_in_use;
 
     /*  For non-elf, leaving the following fields zero
         will mean they are ignored. */
@@ -248,19 +250,23 @@ typedef struct Dwarf_Debug_InfoTypes_s *Dwarf_Debug_InfoTypes;
 struct Dwarf_dbg_sect_s {
     /* Debug section name must not be freed, is quoted string. */
     const char *ds_name;
-    struct Dwarf_Section_s *ds_secdata;/* Debug section information */
+    /*   Debug section information, points to de_debug_*member
+        (or the like) of the dbg struct.  */
+    struct Dwarf_Section_s *ds_secdata;
+
     int ds_duperr;                     /* Error code for duplicated section */
     int ds_emptyerr;                   /* Error code for empty section */
     int ds_have_dwarf;                 /* Section contains DWARF */
 };
 
 /*  As the number of debug sections does not change very often, in the case a
-    new section is added in '_dwarf_setup', the 'MAX_DEBUG_SECTIONS' must
+    new section is added in 'enter_section_in_array()' 
+    the 'MAX_DEBUG_SECTIONS' must
     be updated accordingly.
-    This does not allow for section-groups in object files,
+    This does not yet allow for section-groups in object files,
     for which many .debug_info (and other) sections may exist.
 */
-#define DWARF_MAX_DEBUG_SECTIONS 20
+#define DWARF_MAX_DEBUG_SECTIONS 29
 
 
 
@@ -329,11 +335,15 @@ struct Dwarf_Debug_s {
     struct Dwarf_Section_s de_debug_pubtypes; /* DWARF3 .debug_pubtypes */
 
     struct Dwarf_Section_s de_debug_funcnames;
-    struct Dwarf_Section_s de_debug_typenames; /* SGI IRIX extension essentially
+
+    /* SGI IRIX extension essentially
         identical to DWARF3 .debug_pubtypes. */
-    struct Dwarf_Section_s de_debug_varnames;
-    struct Dwarf_Section_s de_debug_weaknames;
+    struct Dwarf_Section_s de_debug_typenames; 
+    struct Dwarf_Section_s de_debug_varnames; /* SGI IRIX only. */
+    struct Dwarf_Section_s de_debug_weaknames; /* SGI IRIX only. */
+
     struct Dwarf_Section_s de_debug_ranges;
+    struct Dwarf_Section_s de_debug_str_offsets;
 
     /*  For non-elf, simply leave the following two structs zeroed and
         they will be ignored. */

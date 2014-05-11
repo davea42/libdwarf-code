@@ -377,13 +377,39 @@ dwarf_diename(Dwarf_Die die, char **ret_name, Dwarf_Error * error)
     }
 
     dbg = die->di_cu_context->cc_dbg;
-    if (attr_form != DW_FORM_strp) {
+    if (attr_form == DW_FORM_GNU_str_index) {
+        Dwarf_Unsigned offsettostr= 0;
+        Dwarf_Word leb_len = 0;
+        Dwarf_Unsigned lebval = 0 ;
+        res = _dwarf_load_section(dbg, &dbg->de_debug_str_offsets,error);
+        if (res != DW_DLV_OK) {
+            return res;
+        }
+        lebval = _dwarf_decode_u_leb128(info_ptr, &leb_len);
+        /* The offsets table is a series of 4 byte entries. */
+        if ((lebval + sizeof(Dwarf_Word)) >=
+            dbg->de_debug_str_offsets.dss_size ) {
+            _dwarf_error(dbg, error, DW_DLE_ATTR_FORM_SIZE_BAD);
+            return (DW_DLV_ERROR);
+        }
+
+        READ_UNALIGNED(dbg,offsettostr,Dwarf_Unsigned,
+            dbg->de_debug_str_offsets.dss_data + 
+                (lebval*die->di_cu_context->cc_length_size),
+            die->di_cu_context->cc_length_size);
+        string_offset = offsettostr;
+    }
+
+
+    if (attr_form != DW_FORM_strp && attr_form != DW_FORM_GNU_str_index) {
         _dwarf_error(dbg, error, DW_DLE_ATTR_FORM_BAD);
         return (DW_DLV_ERROR);
     }
+    if( attr_form == DW_FORM_strp) {
+        READ_UNALIGNED(dbg, string_offset, Dwarf_Unsigned,
+            info_ptr, die->di_cu_context->cc_length_size);
 
-    READ_UNALIGNED(dbg, string_offset, Dwarf_Unsigned,
-        info_ptr, die->di_cu_context->cc_length_size);
+    }
 
     if (string_offset >= dbg->de_debug_str.dss_size) {
         _dwarf_error(dbg, error, DW_DLE_STRING_OFFSET_BAD);
@@ -904,6 +930,8 @@ enum Dwarf_Form_Class dwarf_get_form_class(
     case  DW_FORM_flag:         return DW_FORM_CLASS_FLAG;
     case  DW_FORM_flag_present: return DW_FORM_CLASS_FLAG;
 
+    case  DW_FORM_GNU_addr_index:  return DW_FORM_CLASS_REFERENCE;
+    case  DW_FORM_GNU_str_index:  return DW_FORM_CLASS_STRING;
     case  DW_FORM_GNU_ref_alt:  return DW_FORM_CLASS_REFERENCE;
     case  DW_FORM_GNU_strp_alt: return DW_FORM_CLASS_STRING;
 

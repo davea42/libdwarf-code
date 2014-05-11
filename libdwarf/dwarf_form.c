@@ -705,6 +705,8 @@ dwarf_formudata(Dwarf_Attribute attr,
         return DW_DLV_OK;
         }
         break;
+    case DW_FORM_GNU_addr_index: /* not the right way, quite. FIXME. */
+    case DW_FORM_GNU_str_index: /* not the right way, quite. FIXME. */
     case DW_FORM_udata:
         ret_value =
             (_dwarf_decode_u_leb128(attr->ar_debug_ptr, NULL));
@@ -903,12 +905,44 @@ dwarf_formstring(Dwarf_Attribute attr,
         *return_str = (char *) (begin);
         return DW_DLV_OK;
     }
+    if (attr->ar_attribute_form == DW_FORM_GNU_str_index) {
+        Dwarf_Unsigned offsettostr= 0;
+        Dwarf_Word leb_len = 0;
+        Dwarf_Unsigned lebval = 0;
+        res = _dwarf_load_section(dbg, &dbg->de_debug_str_offsets,error);
+        if (res != DW_DLV_OK) {
+            return res;
+        }
+        lebval = (_dwarf_decode_u_leb128(attr->ar_debug_ptr, &leb_len));
+        /* The offsets table is a series of 4 byte entries. */
+        if ((lebval + sizeof(Dwarf_Word)) >= 
+            dbg->de_debug_str_offsets.dss_size ) {
+            _dwarf_error(dbg, error, DW_DLE_ATTR_FORM_SIZE_BAD);
+            return (DW_DLV_ERROR);
+        }
+        
+        READ_UNALIGNED(dbg,offsettostr,Dwarf_Unsigned,
+            dbg->de_debug_str_offsets.dss_data + 
+                (lebval* cu_context->cc_length_size),
+            cu_context->cc_length_size);
+        offset = offsettostr;
+        /* FALL THRU */
+    }
+    if (attr->ar_attribute_form == DW_FORM_GNU_strp_alt) {
+        /* Unsure what this is really. FIXME */
+        *return_str = (char *)"<DW_FORM_GNU_strp_alt not handled>";
+        return DW_DLV_OK;
+    }
+
 
     if (attr->ar_attribute_form == DW_FORM_strp) {
         READ_UNALIGNED(dbg, offset, Dwarf_Unsigned,
             attr->ar_debug_ptr,
             cu_context->cc_length_size);
-
+    }
+    if (attr->ar_attribute_form == DW_FORM_strp ||
+        attr->ar_attribute_form == DW_FORM_GNU_str_index) {
+        /* So the 'offset' into .debug_str is set. */
         res = _dwarf_load_section(dbg, &dbg->de_debug_str,error);
         if (res != DW_DLV_OK) {
             return res;
@@ -932,10 +966,6 @@ dwarf_formstring(Dwarf_Attribute attr,
         }
 
         *return_str = (char *) (dbg->de_debug_str.dss_data + offset);
-        return DW_DLV_OK;
-    }
-    if (attr->ar_attribute_form == DW_FORM_GNU_strp_alt) {
-        *return_str = (char *)"<DW_FORM_GNU_strp_alt not handled>";
         return DW_DLV_OK;
     }
 

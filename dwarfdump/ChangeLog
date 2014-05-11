@@ -1,3 +1,9 @@
+2014-05-11  David Anderson
+     * print_die.c: Add printing of DW_FORM_GNU_str_index, partial
+       of DW_FORM_GNU_addr_index.
+     * dwarfdump.c: Trivial change to error strings so each is unique.
+       Update version string.
+     * common.c: Update version string.
 2014-04-15  David Anderson
      * uri.c(hexdig): was testing 0, fixed to be '0'.
 2014-04-14  David Anderson

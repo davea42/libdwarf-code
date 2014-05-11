@@ -188,6 +188,12 @@ _dwarf_get_size_of_val(Dwarf_Debug dbg,
         _dwarf_decode_s_leb128(val_ptr, &leb128_length);
         return (leb128_length);
 
+
+    case DW_FORM_GNU_addr_index:
+    case DW_FORM_GNU_str_index:
+        _dwarf_decode_u_leb128(val_ptr, &leb128_length);
+        return (leb128_length);
+
     case DW_FORM_strp:
         return (v_length_size);
 
