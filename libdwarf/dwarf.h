@@ -221,7 +221,9 @@ extern "C" {
 #define DW_FORM_sec_offset              0x17 /* DWARF4 */
 #define DW_FORM_exprloc                 0x18 /* DWARF4 */
 #define DW_FORM_flag_present            0x19 /* DWARF4 */
-/* 0x1a thru 0x1f were left unused accidentally. Reserved for future use. */
+#define DW_FORM_strx                    0x1a /* DWARF5 */
+#define DW_FORM_addrx                   0x1b /* DWARF5 */
+/* 0x1c thru 0x1f were left unused accidentally. Reserved for future use. */
 #define DW_FORM_ref_sig8                0x20 /* DWARF4 */
 #define DW_FORM_GNU_addr_index          0x1f01 /* GNU extension in debug_info.dwo.*/
 #define DW_FORM_GNU_str_index           0x1f02 /* GNU extension, somewhat like DW_FORM_strp */
@@ -325,6 +327,17 @@ extern "C" {
 #define DW_AT_const_expr                        0x6c /* DWARF4 */
 #define DW_AT_enum_class                        0x6d /* DWARF4 */
 #define DW_AT_linkage_name                      0x6e /* DWARF4 */
+#define DW_AT_string_length_bit_size            0x6f /* DWARF5 */
+#define DW_AT_string_length_byte_size           0x70 /* DWARF5 */
+#define DW_AT_rank                              0x71 /* DWARF5 */
+#define DW_AT_str_offsets_base                  0x72 /* DWARF5 */
+#define DW_AT_addr_base                         0x73 /* DWARF5 */
+#define DW_AT_ranges_base                       0x74 /* DWARF5 */
+#define DW_AT_dwo_id                            0x75 /* DWARF5 */
+#define DW_AT_dwo_name                          0x76 /* DWARF5 */
+#define DW_AT_reference                         0x77 /* DWARF5 */
+#define DW_AT_rvalue_reference                  0x78 /* DWARF5 */
+#define DW_AT_macros                            0x79 /* DWARF5 */
 
 /* In extensions, we attempt to include the vendor extension
    in the name even when the vendor leaves it out. */
@@ -662,6 +675,9 @@ extern "C" {
 #define DW_OP_bit_piece                 0x9d /* DWARF3f */
 #define DW_OP_implicit_value            0x9e /* DWARF4 */
 #define DW_OP_stack_value               0x9f /* DWARF4 */
+#define DW_OP_implicit_pointer          0xa0 /* DWARF5 */
+#define DW_OP_addrx                     0xa1 /* DWARF5 */
+#define DW_OP_constx                    0xa2 /* DWARF5 */
 
 
     /* GNU extensions. */
@@ -814,10 +830,14 @@ extern "C" {
    it seems extremely likely they will be approved as the committee
    chair agrees these should be ok and no one on the committee
    has objected. */
-#define DW_LANG_OpenCL                  0x0015 /* Provisionally DWARF5 */
-#define DW_LANG_Go                      0x0016 /* Provisionally DWARF5 */
-#define DW_LANG_Modula3                 0x0017 /* Provisionally DWARF5 */
-#define DW_LANG_Haskel                  0x0018 /* Provisionally DWARF5 */
+#define DW_LANG_OpenCL                  0x0015 /* DWARF5 */
+#define DW_LANG_Go                      0x0016 /* DWARF5 */
+#define DW_LANG_Modula3                 0x0017 /* DWARF5 */
+#define DW_LANG_Haskel                  0x0018 /* DWARF5 */
+#define DW_LANG_C_plus_plus_03          0x0019 /* DWARF5 */
+#define DW_LANG_C_plus_plus_11          0x001a /* DWARF5 */
+#define DW_LANG_OCaml                   0x001b /* DWARF5 */
+#define DW_LANG_Rust                    0x001c /* DWARF5 */
 #define DW_LANG_lo_user                 0x8000
 #define DW_LANG_Mips_Assembler          0x8001 /* MIPS   */
 #define DW_LANG_Upc                     0x8765 /* UPC, use
@@ -896,6 +916,7 @@ extern "C" {
 #define DW_LNE_set_address              0x02
 #define DW_LNE_define_file              0x03
 #define DW_LNE_set_discriminator        0x04  /* DWARF4 */
+#define DW_LNE_define_file_MD5          0x05  /* DWARF5 */
 
 /* HP extensions. */
 #define DW_LNE_HP_negate_is_UV_update       0x11 /* 17 HP */
@@ -925,6 +946,18 @@ extern "C" {
 #define DW_MACINFO_start_file           0x03
 #define DW_MACINFO_end_file             0x04
 #define DW_MACINFO_vendor_ext           0xff
+
+#define DW_MACRO_define                 0x01
+#define DW_MACRO_undef                  0x02
+#define DW_MACRO_start_file             0x03
+#define DW_MACRO_end_file               0x04
+#define DW_MACRO_define_indirect        0x05
+#define DW_MACRO_undef_indirect         0x06
+#define DW_MACRO_transparent_include    0x07
+#define DW_MACRO_define_indirectx       0x0b
+#define DW_MACRO_undef_indirectx        0x0c
+#define DW_MACRO_lo_user                0xe0
+#define DW_MACRO_hi_user                0xff
 
 /* CFA operator compaction (a space saving measure, see
    the DWARF standard) means DW_CFA_extended and DW_CFA_nop
