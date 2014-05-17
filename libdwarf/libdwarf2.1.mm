@@ -8,7 +8,7 @@ n\."
 .nr Hb 5
 \." ==============================================
 \." Put current date in the following at each rev
-.ds vE rev 2.17, April 02, 2014
+.ds vE rev 2.18, May 15, 2014
 \." ==============================================
 \." ==============================================
 .ds | |
@@ -202,6 +202,14 @@ functions.
 The following is a brief mention of the changes in this libdwarf from 
 the libdwarf draft for DWARF Version 1 and recent changes.
 .H 2 "Items Changed"
+.P
+Added a note about dwarf_errmsg(): the string pointer
+returned should be considered ephemeral, not a
+string which remains valid permanently.
+User code should print it or copy it before calling
+other libdwarf functions on the specific Dwarf_Debug
+instance.
+(May 15, 2014)
 .P
 Added a printf-callback so libdwarf will not actually print
 to stdout.  Added dwarf_highpc_b()
@@ -6560,8 +6568,24 @@ to the error specified by \f(CWerror\fP.
 The function \f(CWdwarf_errmsg()\fP returns a pointer to a
 null-terminated error message string corresponding to the error specified by 
 \f(CWerror\fP.  
-The string returned by \f(CWdwarf_errmsg()\fP 
+The string
 should not be deallocated using \f(CWdwarf_dealloc()\fP.
+
+The string should be considered to be a temporary string.
+That is, the returned pointer may become stale if you do
+libdwarf calls on the 
+\f(CWDwarf_Debug\fP
+instance
+other than 
+\f(CWdwarf_errmsg()\fP 
+or
+\f(CWdwarf_errno()\fP. 
+So copy the errmsg string ( or print
+it) but do not depend on the pointer remaining valid
+past other libdwarf calls to the
+\f(CWDwarf_Debug\fP instance that detected an error
+.
+
 
 .H 3 "dwarf_get_harmless_error_list()"
 .DS

@@ -59,13 +59,15 @@
     the length, in bytes, of a value of that form.
     When using this function, check for a return of 0
     a recursive DW_FORM_INDIRECT value.  */
-Dwarf_Unsigned
+int
 _dwarf_get_size_of_val(Dwarf_Debug dbg,
     Dwarf_Unsigned form,
     Dwarf_Half cu_version,
     Dwarf_Half address_size,
     Dwarf_Small * val_ptr,
-    int v_length_size)
+    int v_length_size,
+    Dwarf_Unsigned *size_out,
+    Dwarf_Error*error)
 {
     Dwarf_Unsigned length = 0;
     Dwarf_Word leb128_length = 0;
@@ -74,20 +76,36 @@ _dwarf_get_size_of_val(Dwarf_Debug dbg,
 
     switch (form) {
 
-    default:                    /* Handles form = 0. */
-        return (form);
+    /*  When we encounter a FORM here that
+        we know about but forgot to enter here,
+        we had better not just continue. 
+        Usually means we forgot to update this function
+        when implementing form handling of a new FORM.
+        Disaster results from using a bogus value, 
+        so generate error. */
+    default:  
+        _dwarf_error(dbg,error,DW_DLE_DEBUG_FORM_HANDLING_INCOMPLETE);
+        return DW_DLV_ERROR;
+
+
+    case 0:  return 0;
     case DW_FORM_GNU_ref_alt:
     case DW_FORM_GNU_strp_alt:
-        return v_length_size;
+        *size_out = v_length_size;
+        return DW_DLV_OK;
 
     case DW_FORM_addr:
         if (address_size) {
-            return address_size;
+            *size_out = address_size;
+        } else {
+            /* This should never happen, address_size should be set. */
+            *size_out = dbg->de_pointer_size;
         }
-        /* This should never happen, address_size should be set. */
-        return (dbg->de_pointer_size);
+        return DW_DLV_OK;
     case DW_FORM_ref_sig8:
-        return 8; /* sizeof Dwarf_Sig8 */
+        *size_out = 8;
+        /* sizeof Dwarf_Sig8 */
+        return DW_DLV_OK;
 
     /*  DWARF2 was wrong on the size of the attribute for
         DW_FORM_ref_addr.  We assume compilers are using the
@@ -98,110 +116,146 @@ _dwarf_get_size_of_val(Dwarf_Debug dbg,
         written, so the ref_addr has to account for that.*/
     case DW_FORM_ref_addr:
         if (cu_version == DW_CU_VERSION2) {
-            return (address_size);
+            *size_out = address_size;
+        } else {
+            *size_out = v_length_size;
         }
-        return (v_length_size);
+        return DW_DLV_OK;
 
     case DW_FORM_block1:
-        return (*(Dwarf_Small *) val_ptr + 1);
+        *size_out =  *(Dwarf_Small *) val_ptr + 1;
+        return DW_DLV_OK;
 
     case DW_FORM_block2:
         READ_UNALIGNED(dbg, ret_value, Dwarf_Unsigned,
             val_ptr, sizeof(Dwarf_Half));
-        return (ret_value + sizeof(Dwarf_Half));
+        *size_out = ret_value + sizeof(Dwarf_Half);
+        return DW_DLV_OK;
 
     case DW_FORM_block4:
         READ_UNALIGNED(dbg, ret_value, Dwarf_Unsigned,
             val_ptr, sizeof(Dwarf_ufixed));
-        return (ret_value + sizeof(Dwarf_ufixed));
-
+        *size_out = ret_value + sizeof(Dwarf_ufixed);
+        return DW_DLV_OK;
 
     case DW_FORM_data1:
-        return (1);
+        *size_out = 1;
+        return DW_DLV_OK;
 
     case DW_FORM_data2:
-        return (2);
+        *size_out = 2;
+        return DW_DLV_OK;
 
     case DW_FORM_data4:
-        return (4);
+        *size_out = 4;
+        return DW_DLV_OK;
 
     case DW_FORM_data8:
-        return (8);
+        *size_out = 8;
+        return DW_DLV_OK;
 
     case DW_FORM_string:
-        return (strlen((char *) val_ptr) + 1);
+        *size_out = strlen((char *) val_ptr) + 1;
+        return DW_DLV_OK;
 
     case DW_FORM_block:
     case DW_FORM_exprloc:
         length = _dwarf_decode_u_leb128(val_ptr, &leb128_length);
-        return (length + leb128_length);
+        *size_out = length + leb128_length;
+        return DW_DLV_OK;
 
     case DW_FORM_flag_present:
-        return (0);
+        *size_out = 0;
+        return DW_DLV_OK;
+
     case DW_FORM_flag:
-        return (1);
+        *size_out = 1;
+        return DW_DLV_OK;
 
     case DW_FORM_sec_offset:
         /* If 32bit dwarf, is 4. Else is 64bit dwarf and is 8. */
-        return (v_length_size);
+        *size_out = v_length_size;
+        return DW_DLV_OK;
 
     case DW_FORM_ref_udata:
         /*  Discard the decoded value, we just want the length
             of the value. */
         _dwarf_decode_u_leb128(val_ptr, &leb128_length);
-        return (leb128_length);
+        *size_out = leb128_length;
+        return DW_DLV_OK;
 
     case DW_FORM_indirect:
         {
             Dwarf_Word indir_len = 0;
+            int res = 0;
+            Dwarf_Unsigned real_form_len = 0;
 
             form_indirect = _dwarf_decode_u_leb128(val_ptr, &indir_len);
             if (form_indirect == DW_FORM_indirect) {
-                return (0);     /* We are in big trouble: The true form
+                /* We are in big trouble: The true form
                     of DW_FORM_indirect is
                     DW_FORM_indirect? Nonsense. Should
                     never happen. */
+                _dwarf_error(dbg,error,DW_DLE_NESTED_FORM_INDIRECT_ERROR);
+                return DW_DLV_ERROR;
             }
-            return (indir_len + _dwarf_get_size_of_val(dbg,
+            res = _dwarf_get_size_of_val(dbg,
                 form_indirect,
                 cu_version,
                 address_size,
                 val_ptr + indir_len,
-                v_length_size));
+                v_length_size,
+                &real_form_len,
+                error);
+            if(res != DW_DLV_OK) {
+                return res;
+            }
+            *size_out = indir_len + real_form_len;
+            return DW_DLV_OK;
         }
 
     case DW_FORM_ref1:
-        return (1);
+        *size_out = 1;
+        return DW_DLV_OK;
 
     case DW_FORM_ref2:
-        return (2);
+        *size_out = 2;
+        return DW_DLV_OK;
 
     case DW_FORM_ref4:
-        return (4);
+        *size_out = 4;
+        return DW_DLV_OK;
 
     case DW_FORM_ref8:
-        return (8);
+        *size_out = 8;
+        return DW_DLV_OK;
 
     case DW_FORM_sdata:
         /*  Discard the decoded value, we just want the length
             of the value. */
         _dwarf_decode_s_leb128(val_ptr, &leb128_length);
-        return (leb128_length);
+        *size_out = (leb128_length);
+        return DW_DLV_OK;
 
 
+    case DW_FORM_addrx:
     case DW_FORM_GNU_addr_index:
+    case DW_FORM_strx:
     case DW_FORM_GNU_str_index:
         _dwarf_decode_u_leb128(val_ptr, &leb128_length);
-        return (leb128_length);
+        *size_out = leb128_length;
+        return DW_DLV_OK;
 
     case DW_FORM_strp:
-        return (v_length_size);
+        *size_out = v_length_size;
+        return DW_DLV_OK;
 
     case DW_FORM_udata:
         /*  Discard the decoded value, we just want the length
             of the value. */
         _dwarf_decode_u_leb128(val_ptr, &leb128_length);
-        return (leb128_length);
+        *size_out = leb128_length;
+        return DW_DLV_OK;
     }
 }
 

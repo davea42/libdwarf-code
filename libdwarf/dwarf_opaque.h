@@ -141,6 +141,27 @@ struct Dwarf_CU_Context_s {
     Dwarf_Sig8  cc_signature;
     Dwarf_Unsigned cc_typeoffset;
 
+    /*  If the attribute DW_AT_[GNU_]addr_base is present in the
+        CU die, its value is in cc_addr_base. 
+        cc_addr_bae_present TRUE means cc_addr_base is meaningful, which
+        is a check on the correctness of the DWARF. 
+        DW_AT_str_offsets_base exists for DW_FORM_strx,
+        for GNU a base of zero is apparently fine. 
+        Fields listed in this order for a tiny space saving.
+    */
+    Dwarf_Bool cc_addr_base_present; 
+    Dwarf_Bool cc_string_base_present; 
+    /* refers to cc_cu_die_global_sec_offset */
+    Dwarf_Bool cc_cu_die_offset_present;
+
+
+    Dwarf_Unsigned cc_addr_base;
+    Dwarf_Unsigned cc_string_base;
+
+    /*  Pointer to the bytes of the CU die for this CU.
+        Set when the CU die is accessed by dwarf_siblingof(). */
+    Dwarf_Unsigned cc_cu_die_global_sec_offset;
+
     Dwarf_Byte_Ptr cc_last_abbrev_ptr;
     Dwarf_Hash_Table cc_abbrev_hash_table;
     Dwarf_CU_Context cc_next;
@@ -266,7 +287,7 @@ struct Dwarf_dbg_sect_s {
     This does not yet allow for section-groups in object files,
     for which many .debug_info (and other) sections may exist.
 */
-#define DWARF_MAX_DEBUG_SECTIONS 29
+#define DWARF_MAX_DEBUG_SECTIONS 30
 
 
 
@@ -343,7 +364,9 @@ struct Dwarf_Debug_s {
     struct Dwarf_Section_s de_debug_weaknames; /* SGI IRIX only. */
 
     struct Dwarf_Section_s de_debug_ranges;
+    /*  Following two part of DebugFission. */
     struct Dwarf_Section_s de_debug_str_offsets;
+    struct Dwarf_Section_s de_debug_addr;
 
     /*  For non-elf, simply leave the following two structs zeroed and
         they will be ignored. */
@@ -376,6 +399,7 @@ struct Dwarf_Debug_s {
     struct Dwarf_Harmless_s de_harmless_errors;
 
     struct Dwarf_Printf_Callback_Info_s  de_printf_callback;
+
 };
 
 int dwarf_printf(Dwarf_Debug dbg, const char * format, ...)
@@ -412,3 +436,27 @@ void *_dwarf_memcpy_swap_bytes(void *s1, const void *s2, size_t len);
 int _dwarf_load_section(Dwarf_Debug,
     struct Dwarf_Section_s *,
     Dwarf_Error *);
+
+
+int _dwarf_get_string_base_attr_value(Dwarf_Debug dbg,
+    Dwarf_CU_Context context,
+    Dwarf_Unsigned *sbase_out,
+    Dwarf_Error *error);
+
+int _dwarf_exract_string_offset_via_str_offsets(Dwarf_Debug dbg,
+    Dwarf_Small *info_data_ptr,
+    Dwarf_Half   attrnum,
+    Dwarf_Half   attrform,
+    Dwarf_CU_Context cu_context,
+    Dwarf_Unsigned *str_sect_offset_out,
+    Dwarf_Error *error);
+
+
+int
+_dwarf_extract_address_from_debug_addr(Dwarf_Debug dbg,
+    Dwarf_CU_Context context,
+    Dwarf_Byte_Ptr info_ptr,
+    Dwarf_Addr *addr_out,
+    Dwarf_Error *error);
+
+

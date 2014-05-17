@@ -511,6 +511,28 @@ enter_section_in_de_debug_sections_array(Dwarf_Debug dbg,
         }
         return DW_DLV_OK;
     }
+    if(!strcmp(scn_name,".debug_addr")) {
+        /* New DWARF5 */
+        sectionerr = add_debug_section_info(dbg,".debug_addr",
+            &dbg->de_debug_addr,
+            DW_DLE_DEBUG_ADDR_DUPLICATE,0,
+            TRUE,err);
+        if (sectionerr != DW_DLV_OK) {
+            return sectionerr;
+        }
+        return DW_DLV_OK;
+    }
+    if(!strcmp(scn_name,".debug_addr.dwo")) {
+        /* New DWARF5 */
+        sectionerr = add_debug_section_info(dbg,".debug_addr.dwo",
+            &dbg->de_debug_addr,
+            DW_DLE_DEBUG_ADDR_DUPLICATE,0,
+            TRUE,err);
+        if (sectionerr != DW_DLV_OK) {
+            return sectionerr;
+        }
+        return DW_DLV_OK;
+    }
     return DW_DLV_NO_ENTRY;
 }
 

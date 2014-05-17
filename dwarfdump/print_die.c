@@ -184,7 +184,7 @@ struct operation_descr_s opdesc[]= {
     {DW_OP_stack_value,0,""},
     {DW_OP_GNU_uninit,0,""},
     {DW_OP_GNU_encoded_addr,1,"addr"},
-    {DW_OP_GNU_implicit_pointer,2,"addr" },
+    {DW_OP_GNU_implicit_pointer,2,"addr" }, /* DWARF5 */
     {DW_OP_GNU_entry_value,2,"val" },
     {DW_OP_GNU_const_type,3,"uleb" },
     {DW_OP_GNU_regval_type,2,"uleb" },
@@ -195,6 +195,8 @@ struct operation_descr_s opdesc[]= {
     {DW_OP_GNU_addr_index,1,"val" },
     {DW_OP_GNU_const_index,1,"val" },
     {DW_OP_GNU_push_tls_address,0,"" },
+    {DW_OP_addrx,1,"uleb" }, /* DWARF5 */
+    {DW_OP_constx,1,"uleb" }, /* DWARF5 */
     /* terminator */
     {0,0,""}
 };
@@ -2109,7 +2111,9 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
             } else if (rv == DW_DLV_NO_ENTRY) {
                 break;
             }
-            if (theform != DW_FORM_addr) {
+            if (theform != DW_FORM_addr && 
+                theform != DW_FORM_GNU_addr_index &&
+                theform != DW_FORM_addrx) {
                 /*  New in DWARF4: other forms
                     (of class constant) are not an address
                     but are instead offset from pc.
@@ -2145,26 +2149,32 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
 
             /* Record the low and high addresses as we have them */
             if ((check_decl_file || check_ranges ||
-                check_locations) && theform == DW_FORM_addr) {
+                check_locations) && 
+                (theform == DW_FORM_addr ||
+                 theform == DW_FORM_GNU_addr_index ||
+                 theform == DW_FORM_addrx) ) {
+                int res =0;
                 Dwarf_Addr addr = 0;
-                dwarf_formaddr(attrib, &addr, &err);
-                if (attr == DW_AT_low_pc) {
-                    lowAddr = addr;
-                    bSawLow = TRUE;
-                    /*  Record the base address of the last seen PU
-                        to be used when checking line information */
-                    if (seen_PU && !seen_PU_base_address) {
-                        seen_PU_base_address = TRUE;
-                        PU_base_address = addr;
-                    }
-                } else {
-                    highAddr = addr;
-                    bSawHigh = TRUE;
-                    /*  Record the high address of the last seen PU
-                        to be used when checking line information */
-                    if (seen_PU && !seen_PU_high_address) {
-                        seen_PU_high_address = TRUE;
-                        PU_high_address = addr;
+                res = dwarf_formaddr(attrib, &addr, &err);
+                if(res == DW_DLV_OK) {
+                    if (attr == DW_AT_low_pc) {
+                        lowAddr = addr;
+                        bSawLow = TRUE;
+                        /*  Record the base address of the last seen PU
+                            to be used when checking line information */
+                        if (seen_PU && !seen_PU_base_address) {
+                            seen_PU_base_address = TRUE;
+                            PU_base_address = addr;
+                        }
+                    } else {
+                        highAddr = addr;
+                        bSawHigh = TRUE;
+                        /*  Record the high address of the last seen PU
+                            to be used when checking line information */
+                        if (seen_PU && !seen_PU_high_address) {
+                            seen_PU_high_address = TRUE;
+                            PU_high_address = addr;
+                        }
                     }
                 }
 
@@ -2661,6 +2671,10 @@ _dwarf_print_one_expr_op(Dwarf_Debug dbg,Dwarf_Loc* expr,int index,
                 " %" DW_PR_DSd, (Dwarf_Signed) opd1);
             esb_append(string_out, small_buf);
             break;
+        case DW_OP_GNU_const_index:
+        case DW_OP_GNU_addr_index:
+        case DW_OP_addrx: /* DWARF5: unsigned val */
+        case DW_OP_constx: /* DWARF5: unsigned val */
         case DW_OP_const1u:
         case DW_OP_const2u:
         case DW_OP_const4u:
@@ -2832,16 +2846,6 @@ _dwarf_print_one_expr_op(Dwarf_Debug dbg,Dwarf_Loc* expr,int index,
         case DW_OP_GNU_parameter_ref:
             snprintf(small_buf, sizeof(small_buf),
                 " 0x%02"  DW_PR_DUx , opd1);
-            esb_append(string_out, small_buf);
-            break;
-        case DW_OP_GNU_addr_index:
-            snprintf(small_buf, sizeof(small_buf),
-                " 0x%02" DW_PR_DUx , opd1);
-            esb_append(string_out, small_buf);
-            break;
-        case DW_OP_GNU_const_index:
-            snprintf(small_buf, sizeof(small_buf),
-                " 0x%02" DW_PR_DUx , opd1);
             esb_append(string_out, small_buf);
             break;
         default:
@@ -3337,7 +3341,6 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
     } else if (fres == DW_DLV_NO_ENTRY) {
         return;
     }
-
     /*  dwarf_whatform_direct gets the 'direct' form, so if
         the form is DW_FORM_indir that is what is returned. */
     dwarf_whatform_direct(attrib, &direct_form, &err);
@@ -3345,6 +3348,8 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
 
 
     switch (theform) {
+    case DW_FORM_GNU_addr_index:
+    case DW_FORM_addrx:
     case DW_FORM_addr:
         bres = dwarf_formaddr(attrib, &addr, &err);
         if (bres == DW_DLV_OK) {
@@ -3772,6 +3777,7 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
         break;
     case DW_FORM_string:
     case DW_FORM_strp:
+    case DW_FORM_strx:
     case DW_FORM_GNU_str_index:
         wres = dwarf_formstring(attrib, &temps, &err);
         if (wres == DW_DLV_OK) {
@@ -3886,22 +3892,6 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
         }
         }
         break;
-    case DW_FORM_GNU_addr_index: {
-        /*  uLEB128 value refers to an entry in .debug_addr section. */
-        /*  FIXME: Cheat for now, just read value */
-        wres = dwarf_formudata(attrib, &tempud, &err);
-        if (wres == DW_DLV_OK) {
-            snprintf(small_buf, sizeof(small_buf), "0x%" DW_PR_XZEROS DW_PR_DUx ,
-                tempud);
-            esb_append(esbp, small_buf);
-        } else if (wres == DW_DLV_NO_ENTRY) {
-            /* nothing? */
-        } else {
-            print_error(dbg, "Cannot get DW_FORM_GNU_addr_index....", wres, err);
-        }
-
-        break;
-    }
     default:
         print_error(dbg, "dwarf_whatform unexpected value", DW_DLV_OK,
             err);

@@ -1088,10 +1088,18 @@ struct Dwarf_Obj_Access_Interface_s {
 #define DW_DLE_DEBUG_STR_OFFSETS_DUPLICATE     246
 #define DW_DLE_SECTION_DUPLICATION             247
 #define DW_DLE_SECTION_ERROR                   248
+#define DW_DLE_DEBUG_ADDR_DUPLICATE            249
+#define DW_DLE_DEBUG_CU_UNAVAILABLE_FOR_FORM   250
+#define DW_DLE_DEBUG_FORM_HANDLING_INCOMPLETE  251
+#define DW_DLE_NEXT_DIE_PAST_END               252
+#define DW_DLE_NEXT_DIE_WRONG_FORM             253
+#define DW_DLE_NEXT_DIE_NO_ABBREV_LIST         254
+#define DW_DLE_NESTED_FORM_INDIRECT_ERROR      255
+#define DW_DLE_CU_DIE_NO_ABBREV_LIST           256
 
 
     /* DW_DLE_LAST MUST EQUAL LAST ERROR NUMBER */
-#define DW_DLE_LAST        248
+#define DW_DLE_LAST        256
 #define DW_DLE_LO_USER     0x10000
 
     /*  Taken as meaning 'undefined value', this is not

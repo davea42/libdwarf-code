@@ -36,7 +36,7 @@
 #include <string>
 #include <iostream>
 #include "common.h"
-#define DWARFDUMP_VERSION " Sun May 11 09:50:50 PDT 2014  "
+#define DWARFDUMP_VERSION " Fri May 16 18:51:36 PDT 2014  "
 using std::string;
 using std::cout;
 using std::cerr;

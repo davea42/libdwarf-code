@@ -1,3 +1,31 @@
+2014-05-14  David Anderson
+     * dwarf_die_deliv.c: Refactored several interfaces and used
+       DW_DLV_OK (etc) returned values internally much more than
+       before to  get the desired behavior easily.
+     * dwarf_error.c: Error strings for 8 new error numbers.
+     * dwarf_form.c: DW_FORM_addr_index, DW_FORM_addrx
+       support added.
+     * dwarf_init_finish.c: Sections .debug_addr and
+       .debug_addr.dwo now handled if present.
+     * dwarf_opaque.h: New Dwarf_CU_Context fields added
+       so we can get CU DIE attributes for DW_FORM_addrx
+       DW_FORM_strx etc.
+       New de_debug* fields added for the new DebugFission
+       sections.
+     * dwarf_query.c: Using the revised _dwarf_get_size_of_val()
+       internal function. 
+       Handling DW_FORM_GNU_str_index, DW_FORM_strx.
+       New functions (internal) for DW_FORM_strx, DW_FORM_addrx
+       and the GNU version of these to avoid duplicating code.
+     * dwarf_util.c: Implement revised _dwarf_get_size_of_val().
+       Handling DW_FORM_GNU_str_index, DW_FORM_strx.
+     * dwarf_util.h: Updated _dwarf_get_size_of_val()
+       declaration.
+     * libdwarf2.1.mm: Revision 2.8. May 15 2014. Documented
+       a restriction to a sensible view to strings that
+       dwarf_errmsg() returns.   However without actually
+       changing anything to take advantage of that restriction.
+     * libdwarf2.1.pdf: Regenerated.
 2014-05-11  David Anderson
      * dwarf_error.c: Added 3 new error strings.
      * dwarf_form.c: Added DW_FORM_GNU_str_index and partial

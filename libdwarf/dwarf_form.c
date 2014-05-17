@@ -306,7 +306,16 @@ dwarf_convert_to_global_offset(Dwarf_Attribute attr,
     Even in case of error.
     Set to zero for most errors, but for
         DW_DLE_ATTR_FORM_OFFSET_BAD
-    *ret_offset is set to the bad offset.  */
+    *ret_offset is set to the bad offset.  
+
+    DW_FORM_addrx 
+    DW_FORM_strx
+    DW_FORM_GNU_addr_index
+    DW_FORM_GNU_str_index
+    are not references to .debug_info/.debug_types, 
+    so they are not allowed here. */
+
+
 int
 dwarf_formref(Dwarf_Attribute attr,
    Dwarf_Off * ret_offset, Dwarf_Error * error)
@@ -447,6 +456,7 @@ int dwarf_formsig8(Dwarf_Attribute attr,
     reference forms.  The caller must determine which section the
     reference 'points' to.  The function added in November 2009,
     dwarf_get_form_class(), helps in this regard.  */
+
 int
 dwarf_global_formref(Dwarf_Attribute attr,
     Dwarf_Off * ret_offset, Dwarf_Error * error)
@@ -482,7 +492,8 @@ dwarf_global_formref(Dwarf_Attribute attr,
             attr->ar_debug_ptr, sizeof(Dwarf_Unsigned));
         goto fixoffset;
 
-    case DW_FORM_ref_udata:
+    case DW_FORM_ref_udata: 
+        {
         offset = _dwarf_decode_u_leb128(attr->ar_debug_ptr, NULL);
 
         fixoffset: /* we have a local offset, make it global */
@@ -497,6 +508,7 @@ dwarf_global_formref(Dwarf_Attribute attr,
 
         /* globalize the offset */
         offset += cu_context->cc_debug_offset;
+        }
         break;
 
     /*  The DWARF2 document did not make clear that
@@ -598,6 +610,21 @@ dwarf_formaddr(Dwarf_Attribute attr,
     if (res != DW_DLV_OK) {
         return res;
     }
+    if (attr->ar_attribute_form == DW_FORM_GNU_addr_index ||
+        attr->ar_attribute_form == DW_FORM_addrx) {
+        Dwarf_Addr addr_out = 0;
+        res = _dwarf_extract_address_from_debug_addr(dbg,
+            cu_context,
+            attr->ar_debug_ptr,
+            &addr_out,
+            error);
+
+        if (res != DW_DLV_OK) {
+            return res;
+        }
+        *return_addr = addr_out;
+        return (DW_DLV_OK);
+    }
     if (attr->ar_attribute_form == DW_FORM_addr
         /*  || attr->ar_attribute_form == DW_FORM_ref_addr Allowance of
             DW_FORM_ref_addr was a mistake. The value returned in that
@@ -616,7 +643,6 @@ dwarf_formaddr(Dwarf_Attribute attr,
         *return_addr = ret_addr;
         return (DW_DLV_OK);
     }
-
     _dwarf_error(dbg, error, DW_DLE_ATTR_FORM_BAD);
     return (DW_DLV_ERROR);
 }
@@ -705,8 +731,8 @@ dwarf_formudata(Dwarf_Attribute attr,
         return DW_DLV_OK;
         }
         break;
-    case DW_FORM_GNU_addr_index: /* not the right way, quite. FIXME. */
-    case DW_FORM_GNU_str_index: /* not the right way, quite. FIXME. */
+
+    /* real udata */
     case DW_FORM_udata:
         ret_value =
             (_dwarf_decode_u_leb128(attr->ar_debug_ptr, NULL));
@@ -785,7 +811,7 @@ dwarf_formsdata(Dwarf_Attribute attr,
         break;
     }
     _dwarf_error(dbg, error, DW_DLE_ATTR_FORM_BAD);
-    return (DW_DLV_ERROR);
+    return DW_DLV_ERROR;
 }
 
 
@@ -863,6 +889,56 @@ dwarf_formblock(Dwarf_Attribute attr,
     return (DW_DLV_OK);
 }
 
+int
+_dwarf_extract_string_offset_via_str_offsets(Dwarf_Debug dbg,
+    Dwarf_Small *info_data_ptr,
+    Dwarf_Half   attrnum,
+    Dwarf_Half   attrform,
+    Dwarf_CU_Context cu_context,
+    Dwarf_Unsigned *str_sect_offset_out,
+    Dwarf_Error *error)
+{
+    Dwarf_Unsigned offsettostr= 0;
+    Dwarf_Unsigned offset_base = 0;
+    Dwarf_Word leb_len = 0;
+    Dwarf_Unsigned index_to_offset_entry = 0;
+    Dwarf_Unsigned offsetintable = 0;
+    Dwarf_Unsigned end_offsetintable = 0;
+    int res = 0;
+
+    res = _dwarf_load_section(dbg, &dbg->de_debug_str_offsets,error);
+    if (res != DW_DLV_OK) {
+        return res;
+    }
+    index_to_offset_entry = (_dwarf_decode_u_leb128(info_data_ptr, &leb_len));
+    /*  DW_FORM_GNU_str_index has no 'base' value.
+        DW_FORM_strx has a base value
+        for the offset table */
+    if( attrform == DW_FORM_strx) {
+        res = _dwarf_get_string_base_attr_value(dbg,cu_context,
+            &offset_base,error);
+        if (res != DW_DLV_OK) {
+            return res;
+        }
+    }
+
+    offsetintable = (index_to_offset_entry*cu_context->cc_length_size )
+        + offset_base;
+    end_offsetintable = offsetintable + cu_context->cc_length_size;
+    /* The offsets table is a series of offset-size entries. */
+    if ((end_offsetintable) >= dbg->de_debug_str_offsets.dss_size ) {
+        _dwarf_error(dbg, error, DW_DLE_ATTR_FORM_SIZE_BAD);
+        return (DW_DLV_ERROR);
+    }
+
+    /* Now read the string offset from the offset table. */
+    READ_UNALIGNED(dbg,offsettostr,Dwarf_Unsigned,
+        dbg->de_debug_str_offsets.dss_data + offsetintable,
+        cu_context->cc_length_size);
+    *str_sect_offset_out = offsettostr;
+    return DW_DLV_OK;
+}
+
 
 /* Contrary to pre-2005 documentation,
    The string pointer returned thru return_str must
@@ -877,11 +953,14 @@ dwarf_formstring(Dwarf_Attribute attr,
     Dwarf_Debug dbg = 0;
     Dwarf_Unsigned offset = 0;
     int res = DW_DLV_ERROR;
-
+    Dwarf_Small *dataptr = 0;
     res  = get_attr_dbg(&dbg,&cu_context,attr,error);
     if (res != DW_DLV_OK) {
         return res;
     }
+    dataptr = cu_context->cc_is_info?
+        dbg->de_debug_info.dss_data:
+        dbg->de_debug_types.dss_data;
     if (attr->ar_attribute_form == DW_FORM_string) {
 
         void *begin = attr->ar_debug_ptr;
@@ -889,9 +968,6 @@ dwarf_formstring(Dwarf_Attribute attr,
         if (0 == dbg->de_assume_string_in_bounds) {
             /* Check that string lies within current cu in .debug_info.
             */
-            Dwarf_Small *dataptr = cu_context->cc_is_info?
-                dbg->de_debug_info.dss_data:
-                dbg->de_debug_types.dss_data;
 
             void *end = dataptr +
                 cu_context->cc_debug_offset +
@@ -905,7 +981,13 @@ dwarf_formstring(Dwarf_Attribute attr,
         *return_str = (char *) (begin);
         return DW_DLV_OK;
     }
-    if (attr->ar_attribute_form == DW_FORM_GNU_str_index) {
+    if (attr->ar_attribute_form == DW_FORM_GNU_strp_alt) {
+        /* Unsure what this is really. FIXME */
+        *return_str = (char *)"<DW_FORM_GNU_strp_alt not handled>";
+        return DW_DLV_OK;
+    }
+    if (attr->ar_attribute_form == DW_FORM_GNU_str_index ||
+        attr->ar_attribute_form == DW_FORM_strx) {
         Dwarf_Unsigned offsettostr= 0;
         Dwarf_Word leb_len = 0;
         Dwarf_Unsigned lebval = 0;
@@ -913,36 +995,27 @@ dwarf_formstring(Dwarf_Attribute attr,
         if (res != DW_DLV_OK) {
             return res;
         }
-        lebval = (_dwarf_decode_u_leb128(attr->ar_debug_ptr, &leb_len));
-        /* The offsets table is a series of 4 byte entries. */
-        if ((lebval + sizeof(Dwarf_Word)) >= 
-            dbg->de_debug_str_offsets.dss_size ) {
-            _dwarf_error(dbg, error, DW_DLE_ATTR_FORM_SIZE_BAD);
-            return (DW_DLV_ERROR);
-        }
-        
-        READ_UNALIGNED(dbg,offsettostr,Dwarf_Unsigned,
-            dbg->de_debug_str_offsets.dss_data + 
-                (lebval* cu_context->cc_length_size),
-            cu_context->cc_length_size);
+
+        res = _dwarf_extract_string_offset_via_str_offsets(dbg,
+           dataptr,
+           attr->ar_attribute,
+           attr->ar_attribute_form,
+           cu_context,
+           &offsettostr,
+           error);
         offset = offsettostr;
         /* FALL THRU */
-    }
-    if (attr->ar_attribute_form == DW_FORM_GNU_strp_alt) {
-        /* Unsure what this is really. FIXME */
-        *return_str = (char *)"<DW_FORM_GNU_strp_alt not handled>";
-        return DW_DLV_OK;
-    }
-
-
-    if (attr->ar_attribute_form == DW_FORM_strp) {
-        READ_UNALIGNED(dbg, offset, Dwarf_Unsigned,
-            attr->ar_debug_ptr,
-            cu_context->cc_length_size);
+    } else {
+        if (attr->ar_attribute_form == DW_FORM_strp) {
+            READ_UNALIGNED(dbg, offset, Dwarf_Unsigned,
+                attr->ar_debug_ptr,
+                cu_context->cc_length_size);
+        }
     }
     if (attr->ar_attribute_form == DW_FORM_strp ||
-        attr->ar_attribute_form == DW_FORM_GNU_str_index) {
-        /* So the 'offset' into .debug_str is set. */
+        attr->ar_attribute_form == DW_FORM_GNU_str_index ||
+        attr->ar_attribute_form == DW_FORM_strx) {
+        /* The 'offset' into .debug_str is set. */
         res = _dwarf_load_section(dbg, &dbg->de_debug_str,error);
         if (res != DW_DLV_OK) {
             return res;

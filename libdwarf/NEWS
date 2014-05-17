@@ -1,7 +1,20 @@
-April 25, 2014
+May 55, 2014
+  Added a caveat that dwarf_errmsg() returned string pointers are not
+  necessarily pointers that can be relied on to be valid for the
+  duration of the current executable.   It's best for consumers
+  to print or copy the string right away and then forget the returned
+  pointer.    This  restriction is probably already met by
+  most conservative consumer code: earlier, nothing was said about
+  the lifetime of the string!   Eventually it would be nice to
+  actually have more ephemeral strings as then some much better
+  error strings could easily be produced with no leakage and
+  no growth in the size of the running executable.
+  For now, though, all dwarf_errmsg() strings continue to point to
+  static strings.  Just please don't depend on it!
+April 25, 2014  - BINARY & SOURCE INCOMPATIBLITY
   The Producer code drops old dwarf_producer_init* functions
-  and introduces a new one: dwarf_producer_init_d().
-  And the producer callback function is renamed Dwarf_Callback_Func.
+  and provides an old name with a new interface: dwarf_producer_init().
+  The producer callback function is renamed Dwarf_Callback_Func.
   Hence code calling the libdwarf producer must change.
 
   Code calling the consumer interface is not affected.
