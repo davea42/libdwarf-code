@@ -2046,7 +2046,7 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die, Dwarf_Half attr,
             } else if (rv == DW_DLV_NO_ENTRY) {
                 break;
             }
-            if (theform != DW_FORM_addr && 
+            if (theform != DW_FORM_addr &&
                 theform != DW_FORM_GNU_addr_index &&
                 theform != DW_FORM_addrx) {
                 /*  New in DWARF4: other forms
@@ -2086,10 +2086,10 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die, Dwarf_Half attr,
             }
             /* Record the low and high addresses as we have them */
             if ((check_decl_file || check_ranges ||
-                check_locations) && 
+                check_locations) &&
                 (theform == DW_FORM_addr  ||
-                 theform == DW_FORM_GNU_addr_index ||
-                 theform == DW_FORM_addrx) ) {
+                theform == DW_FORM_GNU_addr_index ||
+                theform == DW_FORM_addrx) ) {
                 Dwarf_Addr addr = 0;
                 int res = dwarf_formaddr(attrib, &addr, &err);
                 if(res == DW_DLV_OK) {
@@ -2098,7 +2098,7 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die, Dwarf_Half attr,
                         bSawLow = true;
                         /*  Record the base address of the last seen PU
                             to be used when checking line information */
-                        if (error_message_data.seen_PU && 
+                        if (error_message_data.seen_PU &&
                             !error_message_data.seen_PU_base_address) {
                             error_message_data.seen_PU_base_address = true;
                             error_message_data.PU_base_address = addr;
@@ -2108,7 +2108,7 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die, Dwarf_Half attr,
                         bSawHigh = true;
                         /*  Record the high address of the last seen PU
                             to be used when checking line information */
-                        if (error_message_data.seen_PU && 
+                        if (error_message_data.seen_PU &&
                             !error_message_data.seen_PU_high_address) {
                             error_message_data.seen_PU_high_address = true;
                             error_message_data.PU_high_address = addr;
@@ -2530,7 +2530,7 @@ _dwarf_print_one_expr_op(Dwarf_Debug dbg,Dwarf_Loc* expr,int index,
             }
             break;
         case DW_OP_GNU_const_index:
-        case DW_OP_GNU_addr_index: 
+        case DW_OP_GNU_addr_index:
         case DW_OP_addrx:  /* DWARF5 unsigned index */
         case DW_OP_constx: /* DWARF5 unsigned index */
         case DW_OP_const1u:
@@ -3154,7 +3154,7 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
                 Dwarf_Unsigned index = 0;
                 int res = dwarf_get_debug_addr_index(attrib,&index,&err);
                 if(res != DW_DLV_OK) {
-                      print_error(dbg, "addr missing index ?!", res, err);
+                    print_error(dbg, "addr missing index ?!", res, err);
                 }
                 str_out.append("(addr_index: ");
                 str_out.append(IToHex0N(index,10));
@@ -3163,7 +3163,7 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
             str_out.append(IToHex0N(addr,10));
         } else if (bres == DW_DLV_ERROR) {
             if (DW_DLE_MISSING_NEEDED_DEBUG_ADDR_SECTION ==
-                 dwarf_errno(err)) {
+                dwarf_errno(err)) {
                 Dwarf_Unsigned index = 0;
                 int res = dwarf_get_debug_addr_index(attrib,&index,&err);
                 if(res != DW_DLV_OK) {
@@ -3174,12 +3174,12 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
                 str_out.append(")<no .debug_addr section>");
                 addr = 0;
             /*  This is normal in a .dwo file. The .debug_addr
-                     is in a .o and in the final executable. */
+                is in a .o and in the final executable. */
             } else {
                 print_error(dbg, "addr formwith no addr?!", bres, err);
             }
         } else {
-            print_error(dbg, "addr is a DW_DLV_NO_ENTRY? Impossible", 
+            print_error(dbg, "addr is a DW_DLV_NO_ENTRY? Impossible",
                 bres, err);
         }
         break;
@@ -3591,7 +3591,7 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
                 theform == DW_FORM_GNU_str_index) {
                 string saver(temps);
                 Dwarf_Unsigned index = 0;
-                
+
                 sres = dwarf_get_debug_str_index(attrib,&index,&err);
                 if (sres == DW_DLV_OK) {
                 str_out.append("(indexed string: ");
@@ -3607,14 +3607,14 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
 
         } else if (wres == DW_DLV_NO_ENTRY) {
             if (theform == DW_FORM_strx ||
-               theform == DW_FORM_GNU_str_index) {
+                theform == DW_FORM_GNU_str_index) {
                 str_out.append("(indexed string:no string provided?)");
             } else {
                 str_out.append("<no string provided?>");
             }
         } else {
             if (theform == DW_FORM_strx ||
-               theform == DW_FORM_GNU_str_index) {
+                theform == DW_FORM_GNU_str_index) {
                 print_error(dbg, "Cannot get an indexed string....",
                     sres, err);
             } else {
