@@ -1,4 +1,6 @@
 2014-05-18  David Anderson
+     * dwarf_loc.: Fixed offset update for DW_OP_constx/addrx.
+2014-05-18  David Anderson
      * dwarf_form.c: Removed trailing whitespace, added commentary.
      * dwarf_loc.c: Added commentary.
 2014-05-18  David Anderson
