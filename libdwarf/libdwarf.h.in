@@ -1565,14 +1565,6 @@ int dwarf_formstring(Dwarf_Attribute /*attr*/,
     char   **        /*returned_string*/,
     Dwarf_Error*     /*error*/);
 
-/*  Part of DebugFission.  So a consumer can get the index when
-    the object with the actual debug_str_offsets (and debug_str ) is
-    elsewhere.  New May 2014*/
-int dwarf_get_debug_str_index(Dwarf_Attribute /*attr*/,
-    Dwarf_Unsigned * /*return_index*/,
-    Dwarf_Error * /*error*/);
-
-
 int dwarf_formexprloc(Dwarf_Attribute /*attr*/,
     Dwarf_Unsigned * /*return_exprlen*/,
     Dwarf_Ptr  * /*block_ptr*/,

@@ -177,7 +177,7 @@ add_debug_section_info(Dwarf_Debug dbg,
         ++dbg->de_debug_sections_total_entries;
         return DW_DLV_OK;
     }
-    /*  This represents a bug in libdwarf. 
+    /*  This represents a bug in libdwarf.
         Mis-setup-DWARF_MAX_DEBUG_SECTIONS.
         Or possibly a use of section groups that is
         not supported.  */
@@ -187,8 +187,8 @@ add_debug_section_info(Dwarf_Debug dbg,
 
 
 /*  If running this long set of tests is slow
-    enough to matter one could set up a local 
-    tsearch tree with all this content and search 
+    enough to matter one could set up a local
+    tsearch tree with all this content and search
     it instead of this set of sequential tests. */
 static int
 enter_section_in_de_debug_sections_array(Dwarf_Debug dbg,
@@ -201,7 +201,7 @@ enter_section_in_de_debug_sections_array(Dwarf_Debug dbg,
         to change very often. */
     if(!strcmp(scn_name,".debug_info")) {
         sectionerr = add_debug_section_info(dbg,".debug_info",
-            &dbg->de_debug_info, 
+            &dbg->de_debug_info,
             DW_DLE_DEBUG_INFO_DUPLICATE,DW_DLE_DEBUG_INFO_NULL,
             TRUE,err);
         if (sectionerr != DW_DLV_OK) {
@@ -211,7 +211,7 @@ enter_section_in_de_debug_sections_array(Dwarf_Debug dbg,
     }
     if(!strcmp(scn_name,".debug_info.dwo")) {
         sectionerr = add_debug_section_info(dbg,".debug_info.dwo",
-            &dbg->de_debug_info, 
+            &dbg->de_debug_info,
             DW_DLE_DEBUG_INFO_DUPLICATE,DW_DLE_DEBUG_INFO_NULL,
             TRUE,err);
         if (sectionerr != DW_DLV_OK) {
@@ -262,7 +262,7 @@ enter_section_in_de_debug_sections_array(Dwarf_Debug dbg,
     }
     if(!strcmp(scn_name,".debug_aranges")) {
         sectionerr = add_debug_section_info(dbg,".debug_aranges",
-            &dbg->de_debug_aranges, 
+            &dbg->de_debug_aranges,
             DW_DLE_DEBUG_ARANGES_DUPLICATE,0,
             FALSE,err);
         if (sectionerr != DW_DLV_OK) {
@@ -272,7 +272,7 @@ enter_section_in_de_debug_sections_array(Dwarf_Debug dbg,
     }
     if(!strcmp(scn_name,".debug_aranges.dwo")) {
         sectionerr = add_debug_section_info(dbg,".debug_aranges.dwo",
-            &dbg->de_debug_aranges, 
+            &dbg->de_debug_aranges,
             DW_DLE_DEBUG_ARANGES_DUPLICATE,0,
             FALSE,err);
         if (sectionerr != DW_DLV_OK) {
@@ -282,7 +282,7 @@ enter_section_in_de_debug_sections_array(Dwarf_Debug dbg,
     }
     if(!strcmp(scn_name,".debug_line")) {
         sectionerr = add_debug_section_info(dbg,".debug_line",
-            &dbg->de_debug_line, 
+            &dbg->de_debug_line,
             DW_DLE_DEBUG_LINE_DUPLICATE,0,
             FALSE,err);
         if (sectionerr != DW_DLV_OK) {
@@ -292,7 +292,7 @@ enter_section_in_de_debug_sections_array(Dwarf_Debug dbg,
     }
     if(!strcmp(scn_name,".debug_line.dwo")) {
         sectionerr = add_debug_section_info(dbg,".debug_line.dwo",
-            &dbg->de_debug_line,  
+            &dbg->de_debug_line,
             DW_DLE_DEBUG_LINE_DUPLICATE,0,
             FALSE,err);
         if (sectionerr != DW_DLV_OK) {
@@ -302,7 +302,7 @@ enter_section_in_de_debug_sections_array(Dwarf_Debug dbg,
     }
     if(!strcmp(scn_name,".debug_frame")) {
         sectionerr = add_debug_section_info(dbg,".debug_frame",
-            &dbg->de_debug_frame, 
+            &dbg->de_debug_frame,
             DW_DLE_DEBUG_FRAME_DUPLICATE,0,
             TRUE,err);
         if (sectionerr != DW_DLV_OK) {
@@ -333,7 +333,7 @@ enter_section_in_de_debug_sections_array(Dwarf_Debug dbg,
     }
     if(!strcmp(scn_name,".debug_loc.dwo")) {
         sectionerr = add_debug_section_info(dbg,".debug_loc.dwo",
-            &dbg->de_debug_loc, 
+            &dbg->de_debug_loc,
             DW_DLE_DEBUG_LOC_DUPLICATE,0,
             FALSE,err);
         if (sectionerr != DW_DLV_OK) {
@@ -353,7 +353,7 @@ enter_section_in_de_debug_sections_array(Dwarf_Debug dbg,
     }
     if(!strcmp(scn_name,".debug_str")) {
         sectionerr = add_debug_section_info(dbg,".debug_str",
-            &dbg->de_debug_str,   
+            &dbg->de_debug_str,
             DW_DLE_DEBUG_STR_DUPLICATE,0,
             FALSE,err);
         if (sectionerr != DW_DLV_OK) {
@@ -363,7 +363,7 @@ enter_section_in_de_debug_sections_array(Dwarf_Debug dbg,
     }
     if(!strcmp(scn_name,".debug_str.dwo")) {
         sectionerr = add_debug_section_info(dbg,".debug_str.dwo",
-            &dbg->de_debug_str,    
+            &dbg->de_debug_str,
             DW_DLE_DEBUG_STR_DUPLICATE,0,
             FALSE,err);
         if (sectionerr != DW_DLV_OK) {
@@ -679,22 +679,22 @@ _dwarf_setup(Dwarf_Debug dbg, Dwarf_Error * error)
             && doas.type != SHT_RELA)  {
             continue;
         } else {
-            /* Build up the sections table and the
-               de_debug* etc pointers in Dwarf_Debug. */
+            /*  Build up the sections table and the
+                de_debug* etc pointers in Dwarf_Debug. */
             struct Dwarf_dbg_sect_s *section;
 
             unsigned i = 0;
             int found_match = FALSE;
             unsigned initial_start_number = 0;
             unsigned dbg_section_number = 0;
-            res = is_section_known_already(dbg,scn_name, 
+            res = is_section_known_already(dbg,scn_name,
                 &dbg_section_number,
                 initial_start_number,
                 &err);
             if (res == DW_DLV_OK) {
-               /* DUPLICATE */
-                DWARF_DBG_ERROR(dbg, DW_DLE_SECTION_DUPLICATION, 
-                   DW_DLV_ERROR);
+                /* DUPLICATE */
+                DWARF_DBG_ERROR(dbg, DW_DLE_SECTION_DUPLICATION,
+                    DW_DLV_ERROR);
             } else if (res == DW_DLV_ERROR) {
                 DWARF_DBG_ERROR(dbg, err, DW_DLV_ERROR);
             }
@@ -703,7 +703,7 @@ _dwarf_setup(Dwarf_Debug dbg, Dwarf_Error * error)
             if (res == DW_DLV_OK) {
                 /*  We just added a new entry in the dbg
                     de_debug_sections array.  So we know its number. */
-                unsigned real_start_number = 
+                unsigned real_start_number =
                     dbg->de_debug_sections_total_entries-1;
                 res = is_section_known_already(dbg,scn_name,
                     &dbg_section_number,
@@ -714,7 +714,7 @@ _dwarf_setup(Dwarf_Debug dbg, Dwarf_Error * error)
                     res = get_basic_section_data(dbg,
                         section->ds_secdata, &doas,
                         obj_section_index, error,
-                        section->ds_duperr, 
+                        section->ds_duperr,
                         section->ds_emptyerr);
                     if (res != DW_DLV_OK) {
                         return res;

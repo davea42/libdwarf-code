@@ -921,7 +921,7 @@ dwarf_siblingof_b(Dwarf_Debug dbg,
         child_depth = 0;
         do {
             int res2 = 0;
-            Dwarf_Byte_Ptr die_info_ptr2 = 0;            
+            Dwarf_Byte_Ptr die_info_ptr2 = 0;
             res2 = _dwarf_next_die_info_ptr(die_info_ptr,
                 die->di_cu_context, die_info_end,
                 cu_info_start, true, &has_child,
@@ -1012,7 +1012,7 @@ dwarf_siblingof_b(Dwarf_Debug dbg,
 
 int
 dwarf_child(Dwarf_Die die,
-    Dwarf_Die * caller_ret_die, 
+    Dwarf_Die * caller_ret_die,
     Dwarf_Error * error)
 {
     Dwarf_Byte_Ptr die_info_ptr = 0;
@@ -1055,11 +1055,11 @@ dwarf_child(Dwarf_Die die,
         die->di_cu_context->cc_extension_size;
 
     res = _dwarf_next_die_info_ptr(die_info_ptr, die->di_cu_context,
-            die_info_end, 
-            NULL, false,
-            &has_die_child,
-            &die_info_ptr2,
-            error);
+        die_info_end,
+        NULL, false,
+        &has_die_child,
+        &die_info_ptr2,
+        error);
     if(res != DW_DLV_OK) {
         return res;
     }

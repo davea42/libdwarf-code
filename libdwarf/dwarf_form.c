@@ -306,26 +306,26 @@ dwarf_convert_to_global_offset(Dwarf_Attribute attr,
     Even in case of error.
     Set to zero for most errors, but for
         DW_DLE_ATTR_FORM_OFFSET_BAD
-    *ret_offset is set to the bad offset.  
+    *ret_offset is set to the bad offset.
 
-    DW_FORM_addrx 
+    DW_FORM_addrx
     DW_FORM_strx
     DW_FORM_GNU_addr_index
     DW_FORM_GNU_str_index
-    are not references to .debug_info/.debug_types, 
+    are not references to .debug_info/.debug_types,
     so they are not allowed here. */
 
 
 int
 dwarf_formref(Dwarf_Attribute attr,
-   Dwarf_Off * ret_offset, Dwarf_Error * error)
+   Dwarf_Off * ret_offset,
+   Dwarf_Error * error)
 {
     Dwarf_Debug dbg = 0;
     Dwarf_Unsigned offset = 0;
     Dwarf_CU_Context cu_context = 0;
     Dwarf_Unsigned maximumoffset = 0;
     int res = DW_DLV_ERROR;
-
 
     *ret_offset = 0;
     res  = get_attr_dbg(&dbg,&cu_context,attr,error);
@@ -492,7 +492,7 @@ dwarf_global_formref(Dwarf_Attribute attr,
             attr->ar_debug_ptr, sizeof(Dwarf_Unsigned));
         goto fixoffset;
 
-    case DW_FORM_ref_udata: 
+    case DW_FORM_ref_udata:
         {
         offset = _dwarf_decode_u_leb128(attr->ar_debug_ptr, NULL);
 
@@ -602,50 +602,20 @@ dwarf_global_formref(Dwarf_Attribute attr,
     elsewhere.  New May 2014*/
 int
 dwarf_get_debug_addr_index(Dwarf_Attribute attr,
-    Dwarf_Unsigned * return_index, 
+    Dwarf_Unsigned * return_index,
     Dwarf_Error * error)
 {
     int theform = attr->ar_attribute_form;
     if (theform == DW_FORM_GNU_addr_index ||
         theform == DW_FORM_addrx) {
         Dwarf_Unsigned index = 0;
-        Dwarf_Word uleblen = 0;                           
+        Dwarf_Word uleblen = 0;
         Dwarf_Small *info_ptr = attr->ar_debug_ptr;
-        index = _dwarf_decode_u_leb128(info_ptr,&uleblen); 
+        index = _dwarf_decode_u_leb128(info_ptr,&uleblen);
         *return_index = index;
         return DW_DLV_OK;
     }
 
-    {
-        Dwarf_CU_Context cu_context = 0;
-        Dwarf_Debug dbg = 0;
-        int res  = get_attr_dbg(&dbg,&cu_context,attr,error);
-        if (res != DW_DLV_OK) {
-            return res;
-        }
-        _dwarf_error(dbg, error, DW_DLE_ATTR_FORM_NOT_ADDR_INDEX);
-    }
-    return (DW_DLV_ERROR);
-}
-
-/*  Part of DebugFission.  So a consumer can get the index when
-    the object with the actual debug_str_offsets (and debug_str ) is
-    elsewhere.  New May 2014*/
-int
-dwarf_get_debug_str_index(Dwarf_Attribute attr,
-    Dwarf_Unsigned *return_index,
-    Dwarf_Error *error)
-{
-    int theform = attr->ar_attribute_form;
-    if (theform == DW_FORM_strx ||
-        theform == DW_FORM_GNU_str_index) {
-        Dwarf_Unsigned index = 0;
-        Dwarf_Word uleblen = 0;                           
-        Dwarf_Small *info_ptr = attr->ar_debug_ptr;
-        index = _dwarf_decode_u_leb128(info_ptr,&uleblen); 
-        *return_index = index;
-        return DW_DLV_OK;
-    }
     {
         Dwarf_CU_Context cu_context = 0;
         Dwarf_Debug dbg = 0;
@@ -1051,12 +1021,12 @@ dwarf_formstring(Dwarf_Attribute attr,
         attr->ar_attribute_form == DW_FORM_strx) {
         Dwarf_Unsigned offsettostr= 0;
         res = _dwarf_extract_string_offset_via_str_offsets(dbg,
-           infoptr,
-           attr->ar_attribute,
-           attr->ar_attribute_form,
-           cu_context,
-           &offsettostr,
-           error);
+            infoptr,
+            attr->ar_attribute,
+            attr->ar_attribute_form,
+            cu_context,
+            &offsettostr,
+            error);
         offset = offsettostr;
         /* FALL THRU */
     } else {

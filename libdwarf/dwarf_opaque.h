@@ -142,15 +142,15 @@ struct Dwarf_CU_Context_s {
     Dwarf_Unsigned cc_typeoffset;
 
     /*  If the attribute DW_AT_[GNU_]addr_base is present in the
-        CU die, its value is in cc_addr_base. 
+        CU die, its value is in cc_addr_base.
         cc_addr_bae_present TRUE means cc_addr_base is meaningful, which
-        is a check on the correctness of the DWARF. 
+        is a check on the correctness of the DWARF.
         DW_AT_str_offsets_base exists for DW_FORM_strx,
-        for GNU a base of zero is apparently fine. 
+        for GNU a base of zero is apparently fine.
         Fields listed in this order for a tiny space saving.
     */
-    Dwarf_Bool cc_addr_base_present; 
-    Dwarf_Bool cc_string_base_present; 
+    Dwarf_Bool cc_addr_base_present;
+    Dwarf_Bool cc_string_base_present;
     /* refers to cc_cu_die_global_sec_offset */
     Dwarf_Bool cc_cu_die_offset_present;
 
@@ -284,7 +284,7 @@ struct Dwarf_dbg_sect_s {
 };
 
 /*  As the number of debug sections does not change very often, in the case a
-    new section is added in 'enter_section_in_array()' 
+    new section is added in 'enter_section_in_array()'
     the 'MAX_DEBUG_SECTIONS' must
     be updated accordingly.
     This does not yet allow for section-groups in object files,
@@ -362,7 +362,7 @@ struct Dwarf_Debug_s {
 
     /* SGI IRIX extension essentially
         identical to DWARF3 .debug_pubtypes. */
-    struct Dwarf_Section_s de_debug_typenames; 
+    struct Dwarf_Section_s de_debug_typenames;
     struct Dwarf_Section_s de_debug_varnames; /* SGI IRIX only. */
     struct Dwarf_Section_s de_debug_weaknames; /* SGI IRIX only. */
 

@@ -78,12 +78,12 @@ _dwarf_get_size_of_val(Dwarf_Debug dbg,
 
     /*  When we encounter a FORM here that
         we know about but forgot to enter here,
-        we had better not just continue. 
+        we had better not just continue.
         Usually means we forgot to update this function
         when implementing form handling of a new FORM.
-        Disaster results from using a bogus value, 
+        Disaster results from using a bogus value,
         so generate error. */
-    default:  
+    default:
         _dwarf_error(dbg,error,DW_DLE_DEBUG_FORM_HANDLING_INCOMPLETE);
         return DW_DLV_ERROR;
 
