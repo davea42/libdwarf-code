@@ -640,9 +640,9 @@ dwarf_get_debug_str_index(Dwarf_Attribute attr,
     if (theform == DW_FORM_strx ||
         theform == DW_FORM_GNU_str_index) {
         Dwarf_Unsigned index = 0;
-        Dwarf_Word uleblen = 0;                           
+        Dwarf_Word uleblen = 0;
         Dwarf_Small *info_ptr = attr->ar_debug_ptr;
-        index = _dwarf_decode_u_leb128(info_ptr,&uleblen); 
+        index = _dwarf_decode_u_leb128(info_ptr,&uleblen);
         *return_index = index;
         return DW_DLV_OK;
     }
@@ -746,7 +746,12 @@ dwarf_formflag(Dwarf_Attribute attr,
     return (DW_DLV_ERROR);
 }
 
-
+/*  If the form is DW_FORM_constx and the .debug_addr section
+    is missing, this returns DW_DLV_ERROR and the error number
+    in the Dwarf_Error is  DW_DLE_MISSING_NEEDED_DEBUG_ADDR_SECTION.
+    When that arises, a consumer should call
+    dwarf_get_debug_addr_index() and use that on the appropriate
+    .debug_addr section in the executable or another object. */
 int
 dwarf_formudata(Dwarf_Attribute attr,
     Dwarf_Unsigned * return_uval, Dwarf_Error * error)
@@ -793,7 +798,6 @@ dwarf_formudata(Dwarf_Attribute attr,
         return DW_DLV_OK;
         }
         break;
-
     /* real udata */
     case DW_FORM_udata:
         ret_value =

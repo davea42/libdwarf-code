@@ -1,4 +1,7 @@
 2014-05-18  David Anderson
+     * dwarf_form.c: Removed trailing whitespace, added commentary.
+     * dwarf_loc.c: Added commentary.
+2014-05-18  David Anderson
      * libdwarf.h.in, dwarf_form.c: Restored the function
        dwarf_get_debug_addr_index(). It is useful as a convenience
        for apps like dwarfdump.

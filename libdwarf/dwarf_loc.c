@@ -638,12 +638,16 @@ _dwarf_get_locdesc(Dwarf_Debug dbg,
             break;
         case DW_OP_addrx :           /* DWARF5 */
         case DW_OP_GNU_addr_index :  /* 0xfb DebugFission */
+            /*  Index into .debug_addr. The value in .debug_addr
+                is an address. */
             operand1 = _dwarf_decode_u_leb128(loc_ptr, &leb128_length);
             loc_ptr = loc_ptr + leb128_length;
             offset = offset + address_size;
             break;
         case DW_OP_constx :          /* DWARF5 */
         case DW_OP_GNU_const_index : /* 0xfc DebugFission */
+            /*  Index into .debug_addr. The value in .debug_addr
+                is a constant that fits in an address. */
             operand1 = _dwarf_decode_u_leb128(loc_ptr, &leb128_length);
             loc_ptr = loc_ptr + leb128_length;
             offset = offset + address_size;
