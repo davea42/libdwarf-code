@@ -1934,8 +1934,8 @@ process_args(int argc, char *argv[])
 }
 
 void
-print_error(Dwarf_Debug dbg, 
-    char * msg, 
+print_error(Dwarf_Debug dbg,
+    char * msg,
     int dwarf_code,
     Dwarf_Error err)
 {
@@ -1945,8 +1945,8 @@ print_error(Dwarf_Debug dbg,
 }
 /* ARGSUSED */
 void
-print_error_and_continue(Dwarf_Debug dbg, 
-    char * msg, 
+print_error_and_continue(Dwarf_Debug dbg,
+    char * msg,
     int dwarf_code,
     Dwarf_Error err)
 {

@@ -1,3 +1,6 @@
+2014-05-18  David Anderson
+     *  dwarfdump.c,print_die.c: Fixed indent errors and
+        removed trailing whitespace.
 2014-05-14  David Anderson
      * print_die.c: Complete printing of DW_FORM_GNU_str_index, 
        DW_FORM_GNU_addr_index, 

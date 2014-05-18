@@ -2111,7 +2111,7 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
             } else if (rv == DW_DLV_NO_ENTRY) {
                 break;
             }
-            if (theform != DW_FORM_addr && 
+            if (theform != DW_FORM_addr &&
                 theform != DW_FORM_GNU_addr_index &&
                 theform != DW_FORM_addrx) {
                 /*  New in DWARF4: other forms
@@ -2149,10 +2149,11 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
 
             /* Record the low and high addresses as we have them */
             if ((check_decl_file || check_ranges ||
-                check_locations) && 
+                check_locations) &&
                 (theform == DW_FORM_addr ||
-                 theform == DW_FORM_GNU_addr_index ||
-                 theform == DW_FORM_addrx) ) {
+                theform == DW_FORM_GNU_addr_index ||
+                theform == DW_FORM_addrx) ) {
+
                 int res =0;
                 Dwarf_Addr addr = 0;
                 res = dwarf_formaddr(attrib, &addr, &err);
@@ -2294,7 +2295,6 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
         esb_empty_string(&valname);
         esb_append(&valname, esb_get_string(&templatenamestr));
         esb_destructor(&templatenamestr);
-
 
         if (check_names && checking_this_compiler()) {
             int local_show_form = FALSE;
@@ -3358,7 +3358,7 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
                 Dwarf_Unsigned index = 0;
                 int res = dwarf_get_debug_addr_index(attrib,&index,&err);
                 if(res != DW_DLV_OK) {
-                      print_error(dbg, "addr missing index ?!", res, err);
+                    print_error(dbg, "addr missing index ?!", res, err);
                 }
                 snprintf(small_buf, sizeof(small_buf),
                     "(addr_index: 0x%" DW_PR_XZEROS DW_PR_DUx
@@ -3368,7 +3368,6 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
                     is in a .o and in the final executable. */
                 esb_append(esbp, small_buf);
             }
-            
             snprintf(small_buf, sizeof(small_buf),
                 "0x%" DW_PR_XZEROS DW_PR_DUx ,
                 (Dwarf_Unsigned) addr);
@@ -3379,7 +3378,7 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
                 Dwarf_Unsigned index = 0;
                 int res = dwarf_get_debug_addr_index(attrib,&index,&err);
                 if(res != DW_DLV_OK) {
-                      print_error(dbg, "addr missing index ?!", bres, err);
+                    print_error(dbg, "addr missing index ?!", bres, err);
                 }
 
                 addr = 0;
@@ -3394,7 +3393,7 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
                 print_error(dbg, "addr formwith no addr?!", bres, err);
             }
         } else {
-            print_error(dbg, "addr is a DW_DLV_NO_ENTRY? Impossible.", 
+            print_error(dbg, "addr is a DW_DLV_NO_ENTRY? Impossible.",
                 bres, err);
         }
         break;
@@ -3827,8 +3826,8 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
 
                 esb_append(&saver,temps);
                 if(sres == DW_DLV_OK) {
-                    snprintf(small_buf, sizeof(small_buf), 
-                        "(indexed string: 0x%" DW_PR_XZEROS DW_PR_DUx ")" ,
+                    snprintf(small_buf, sizeof(small_buf),
+                        "(indexed string: 0x%" DW_PR_XZEROS DW_PR_DUx ")",
                         index);
                     esb_append(esbp, small_buf);
                 } else {
@@ -3841,14 +3840,14 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
             }
         } else if (sres == DW_DLV_NO_ENTRY) {
             if (theform == DW_FORM_strx ||
-               theform == DW_FORM_GNU_str_index) {
+                theform == DW_FORM_GNU_str_index) {
                 esb_append(esbp, "(indexed string,no string provided?)");
             } else {
                 esb_append(esbp, "<no string provided?>");
             }
         } else {
             if (theform == DW_FORM_strx ||
-               theform == DW_FORM_GNU_str_index) {
+                theform == DW_FORM_GNU_str_index) {
                 print_error(dbg, "Cannot get an indexed string....",
                     sres, err);
             } else {
