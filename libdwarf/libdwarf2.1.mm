@@ -8,7 +8,7 @@ n\."
 .nr Hb 5
 \." ==============================================
 \." Put current date in the following at each rev
-.ds vE rev 2.19, May 17, 2014
+.ds vE rev 2.20, May 19, 2014
 \." ==============================================
 \." ==============================================
 .ds | |
@@ -2794,7 +2794,7 @@ below.
 
 
 
-H 3 "dwarf_formaddr()"
+H 3 "dwarf_get_debug_addr_index()"
 .DS
 \f(CWint dwarf_get_debug_addr_index(
         Dwarf_Attribute attr,
@@ -2821,7 +2821,6 @@ attributes which a call to
 \f(CWdwarf_formaddr()\fP
 would fail with error code 
 \f(CWDW_DLE_MISSING_NEEDED_DEBUG_ADDR_SECTION\fP.
-
 
 
 .H 3 "dwarf_formflag()"
