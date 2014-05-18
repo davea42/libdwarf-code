@@ -3353,12 +3353,49 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
     case DW_FORM_addr:
         bres = dwarf_formaddr(attrib, &addr, &err);
         if (bres == DW_DLV_OK) {
+            if (theform == DW_FORM_GNU_addr_index ||
+                theform == DW_FORM_addrx) {
+                Dwarf_Unsigned index = 0;
+                int res = dwarf_get_debug_addr_index(attrib,&index,&err);
+                if(res != DW_DLV_OK) {
+                      print_error(dbg, "addr missing index ?!", res, err);
+                }
+                snprintf(small_buf, sizeof(small_buf),
+                    "(addr_index: 0x%" DW_PR_XZEROS DW_PR_DUx
+                    ")" ,
+                    (Dwarf_Unsigned) index);
+                /*  This is normal in a .dwo file. The .debug_addr
+                    is in a .o and in the final executable. */
+                esb_append(esbp, small_buf);
+            }
+            
             snprintf(small_buf, sizeof(small_buf),
                 "0x%" DW_PR_XZEROS DW_PR_DUx ,
                 (Dwarf_Unsigned) addr);
             esb_append(esbp, small_buf);
+        } else if (bres == DW_DLV_ERROR) {
+            if (DW_DLE_MISSING_NEEDED_DEBUG_ADDR_SECTION ==
+                dwarf_errno(err)) {
+                Dwarf_Unsigned index = 0;
+                int res = dwarf_get_debug_addr_index(attrib,&index,&err);
+                if(res != DW_DLV_OK) {
+                      print_error(dbg, "addr missing index ?!", bres, err);
+                }
+
+                addr = 0;
+                snprintf(small_buf, sizeof(small_buf),
+                    "(addr_index: 0x%" DW_PR_XZEROS DW_PR_DUx
+                    ")<no .debug_addr section>" ,
+                    (Dwarf_Unsigned) index);
+                /*  This is normal in a .dwo file. The .debug_addr
+                    is in a .o and in the final executable. */
+                esb_append(esbp, small_buf);
+            } else {
+                print_error(dbg, "addr formwith no addr?!", bres, err);
+            }
         } else {
-            print_error(dbg, "addr formwith no addr?!", bres, err);
+            print_error(dbg, "addr is a DW_DLV_NO_ENTRY? Impossible.", 
+                bres, err);
         }
         break;
     case DW_FORM_ref_addr:
@@ -3778,17 +3815,48 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
     case DW_FORM_string:
     case DW_FORM_strp:
     case DW_FORM_strx:
-    case DW_FORM_GNU_str_index:
-        wres = dwarf_formstring(attrib, &temps, &err);
-        if (wres == DW_DLV_OK) {
-            esb_append(esbp, temps);
-        } else if (wres == DW_DLV_NO_ENTRY) {
-            /* nothing? */
-        } else {
-            print_error(dbg, "Cannot get a formstr (or a formstrp)....",
-                wres, err);
-        }
+    case DW_FORM_GNU_str_index: {
+        int sres = dwarf_formstring(attrib, &temps, &err);
+        if (sres == DW_DLV_OK) {
+            if (theform == DW_FORM_strx ||
+                theform == DW_FORM_GNU_str_index) {
+                struct esb_s saver;
+                Dwarf_Unsigned index = 0;
+                esb_constructor(&saver);
+                sres = dwarf_get_debug_str_index(attrib,&index,&err);
 
+                esb_append(&saver,temps);
+                if(sres == DW_DLV_OK) {
+                    snprintf(small_buf, sizeof(small_buf), 
+                        "(indexed string: 0x%" DW_PR_XZEROS DW_PR_DUx ")" ,
+                        index);
+                    esb_append(esbp, small_buf);
+                } else {
+                    esb_append(esbp,"(indexed string:no string provided?)");
+                }
+                esb_append(esbp, esb_get_string(&saver));
+                esb_destructor(&saver);
+            } else {
+                esb_append(esbp,temps);
+            }
+        } else if (sres == DW_DLV_NO_ENTRY) {
+            if (theform == DW_FORM_strx ||
+               theform == DW_FORM_GNU_str_index) {
+                esb_append(esbp, "(indexed string,no string provided?)");
+            } else {
+                esb_append(esbp, "<no string provided?>");
+            }
+        } else {
+            if (theform == DW_FORM_strx ||
+               theform == DW_FORM_GNU_str_index) {
+                print_error(dbg, "Cannot get an indexed string....",
+                    sres, err);
+            } else {
+                print_error(dbg, "Cannot get a formstr (or a formstrp)....",
+                    sres, err);
+            }
+        }
+        }
         break;
     case DW_FORM_flag:
         wres = dwarf_formflag(attrib, &tempbool, &err);

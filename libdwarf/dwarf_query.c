@@ -535,7 +535,10 @@ _dwarf_extract_address_from_debug_addr(Dwarf_Debug dbg,
     }
     res = _dwarf_load_section(dbg, &dbg->de_debug_addr,error);
     if (res != DW_DLV_OK) {
-            return res; 
+            /*  Ignore the inner error, report something meaningful */
+            dwarf_dealloc(dbg,*error, DW_DLA_ERROR);
+            _dwarf_error(dbg,error,DW_DLE_MISSING_NEEDED_DEBUG_ADDR_SECTION);
+            return DW_DLV_ERROR; 
     }
     /*  DW_FORM_addrx has a base value from the CU die:
         DW_AT_addr_base.  DW_OP_addrx and DW_OP_constx
@@ -701,7 +704,12 @@ _dwarf_get_string_base_attr_value(Dwarf_Debug dbg,
     /* NO ENTRY, No other attr.Not even GNU */
     dwarf_dealloc(dbg,myattr,DW_DLA_ATTR);
     dwarf_dealloc(dbg,cudie,DW_DLA_DIE);
-    return DW_DLV_NO_ENTRY;
+    /*  We do not need a base for a .dwo. We might for .dwp
+        and would or .o or executable. 
+        FIXME: assume we do not need this.
+    */
+    *sbase_out = 0;
+    return DW_DLV_OK;
 }
 /*  Goes to the CU die and finds the DW_AT_GNU_addr_base
     (or DW_AT_addr_base ) and gets the value from that CU die
@@ -759,12 +767,26 @@ _dwarf_get_address_base_attr_value(Dwarf_Debug dbg,
     }
     /* NO ENTRY, try the other attr. */
     /* DW_DLV_OK, 0==hasattr.  So no Entry */
-    res = dwarf_attr(cudie,DW_AT_GNU_addr_base,
-            &myattr,error);
-    if(res != DW_DLV_OK) {
+    res = dwarf_attr(cudie,DW_AT_GNU_addr_base, &myattr,error);
+    if(res == DW_DLV_NO_ENTRY) {
+        res = dwarf_attr(cudie,DW_AT_addr_base, &myattr,error);
+        if (res == DW_DLV_NO_ENTRY) {
+            /*  A .o or .dwp needs a base, but a .dwo does not.
+                FIXME: check this claim...
+                Assume zero is ok and works. */
+            *abase_out = 0;
+            dwarf_dealloc(dbg,cudie,DW_DLA_DIE);
+            return DW_DLV_OK;
+        }
+        if (res == DW_DLV_ERROR) {
             dwarf_dealloc(dbg,cudie,DW_DLA_DIE);
             return res;
+        }
+    } else if (res == DW_DLV_ERROR) {
+        dwarf_dealloc(dbg,cudie,DW_DLA_DIE);
+        return res;
     }
+    
     {
         Dwarf_Unsigned val = 0;
         res = dwarf_formudata(myattr,&val,error);

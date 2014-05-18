@@ -3,7 +3,9 @@
        of DW_FORM_GNU_addr_index, DW_OP_addrx, DW_OP_constx.
        Support for DW_OP_GNU_const_index too.
        DW_FORM_addrx too.
-     * dwarfdump.cc: Update version string.
+     * print_frames.cc: Support for  DW_OP_addrx.
+     * dwarfdump.cc: Update version string. Minor revision
+       of layout of arguments to print_error(), print_error_and_continue().
      * common.cc: Update version string.
 2014-05-11  David Anderson
      * print_die.cc: Add printing of DW_FORM_GNU_str_index, partial

@@ -8,7 +8,7 @@ n\."
 .nr Hb 5
 \." ==============================================
 \." Put current date in the following at each rev
-.ds vE rev 2.18, May 15, 2014
+.ds vE rev 2.19, May 17, 2014
 \." ==============================================
 \." ==============================================
 .ds | |
@@ -2776,6 +2776,53 @@ belongs to the \f(CWADDRESS\fP class.
 It is an error for the form to
 not belong to this class.  
 It returns \f(CWDW_DLV_ERROR\fP on error.
+
+One possible error that can arise (in a .dwo object file
+or a .dwp package file) is 
+\f(CWDW_DLE_MISSING_NEEDED_DEBUG_ADDR_SECTION\fP.
+Such an error means that the  .dwo or .dwp file
+is missing the 
+\f(CW.debug_addr\fP
+section and it is up to the consumer to know how to find
+the executable or object that contains the 
+\f(CW.debug_addr\fP section and how to
+complete the finding of the actual address for the 
+passed in attribute.  
+See
+\f(CWdwarf_get_debug_addr_index()\fP 
+below.
+
+
+
+H 3 "dwarf_formaddr()"
+.DS
+\f(CWint dwarf_get_debug_addr_index(
+        Dwarf_Attribute attr,
+        Dwarf_Unsigned  * return_index,
+        Dwarf_Error *error)\fP
+.DE
+\f(CWdwarf_get_debug_addr_index()\fP 
+is only valid on attributes with form
+\f(CWDW_FORM_GNU_addr_index\fP 
+or
+\f(CWDW_FORM_addrx\fP.
+
+When it succeeds,
+\f(CWdwarf_get_debug_addr_index()\fP returns
+\f(CWDW_DLV_OK\fP and sets \f(CW*return_index\fP
+to
+the attribute's index (into the
+\f(CW.debug_addr\fP section).
+
+It returns \f(CWDW_DLV_ERROR\fP on error.
+
+This is intended to be called only on
+attributes which a call to 
+\f(CWdwarf_formaddr()\fP
+would fail with error code 
+\f(CWDW_DLE_MISSING_NEEDED_DEBUG_ADDR_SECTION\fP.
+
+
 
 .H 3 "dwarf_formflag()"
 .DS

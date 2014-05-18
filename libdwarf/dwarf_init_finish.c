@@ -170,6 +170,7 @@ add_debug_section_info(Dwarf_Debug dbg,
         secdata->dss_is_in_use = TRUE;
         debug_section->ds_name = name;
         debug_section->ds_secdata = secdata;
+        secdata->dss_name = name;
         debug_section->ds_duperr = duperr;
         debug_section->ds_emptyerr = emptyerr;
         debug_section->ds_have_dwarf = have_dwarf;

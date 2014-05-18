@@ -205,8 +205,16 @@ get_proc_name(Dwarf_Debug dbg, Dwarf_Die die,
             case DW_AT_low_pc:
                 dres = dwarf_formaddr(atlist[i], &low_pc_out, &err);
                 if (dres == DW_DLV_ERROR) {
-                    print_error(dbg, "formaddr in get_proc_name failed",
-                        dres, err);
+                    if (DW_DLE_MISSING_NEEDED_DEBUG_ADDR_SECTION ==
+                        dwarf_errno(err)) {
+                        print_error_and_continue(dbg,
+                            "The .debug_addr section is missing, "
+                            "low_pc unavailable",
+                            dres,err);
+                    } else {
+                        print_error(dbg, "formaddr in get_proc_name failed",
+                            dres, err);
+                    }
                 } else if (dres == DW_DLV_OK) {
                     funcpcfound = true;
                 }

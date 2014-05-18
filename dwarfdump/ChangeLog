@@ -1,9 +1,12 @@
 2014-05-14  David Anderson
-     * print_die.c: Complete printing of DW_FORM_GNU_str_index, partial
-       of DW_FORM_GNU_addr_index, DW_OP_addrx, DW_OP_constx.
-       Support for DW_OP_GNU_const_index too.
-       DW_FORM_addrx too.
+     * print_die.c: Complete printing of DW_FORM_GNU_str_index, 
+       DW_FORM_GNU_addr_index, 
+       DW_FORM_addrx, DW_FORM_constx.
+     * print_frames.c: Now supports DW_FORM_GNU_addr_index, 
+       DW_FORM_addrx, DW_FORM_constx.
      * dwarfdump.c: Update version string.
+       Trivial text realignment of argument strings
+       in print_error() and print_error_and_continue().
      * common.c: Update version string.
 2014-05-11  David Anderson
      * print_die.c: Add printing of DW_FORM_GNU_str_index, partial

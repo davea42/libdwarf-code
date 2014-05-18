@@ -1,3 +1,19 @@
+2014-05-17  David Anderson
+     * dwarf.h: Minor comment enhancement.
+     * dwarf_loc.c: Fixed code for DW_OP_constx, DW_OP_addrx,
+       DW_OP_GNU_addr_index, DW_OP_GNU_const_index.
+     * dwarf_form.c: DW_FORM_addr_index, DW_FORM_addrx,
+       DW_FORM_strx, DW_FORM_GNU_str_index
+     * dwarf_opaque.h: added new field dss_name to help
+       debugging.
+     * dwarf_query.c: Returns DW_DLE_MISSING_NEEDED_DEBUG_ADDR_SECTION when
+       debug_addr is missing so address cannot be
+       literally extracted.
+       New functions:  dwarf_get_debug_addr_index()
+       and dwarf_get_debug_str_index().
+     * libdwarf.h.in: New error codes for FORM errors.
+       New function declarations:  dwarf_get_debug_addr_index()
+      and dwarf_get_debug_str_index().
 2014-05-14  David Anderson
      * dwarf_die_deliv.c: Refactored several interfaces and used
        DW_DLV_OK (etc) returned values internally much more than

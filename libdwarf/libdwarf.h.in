@@ -1096,10 +1096,13 @@ struct Dwarf_Obj_Access_Interface_s {
 #define DW_DLE_NEXT_DIE_NO_ABBREV_LIST         254
 #define DW_DLE_NESTED_FORM_INDIRECT_ERROR      255
 #define DW_DLE_CU_DIE_NO_ABBREV_LIST           256
+#define DW_DLE_MISSING_NEEDED_DEBUG_ADDR_SECTION 257
+#define DW_DLE_ATTR_FORM_NOT_ADDR_INDEX        258
+#define DW_DLE_ATTR_FORM_NOT_STR_INDEX         259
 
 
     /* DW_DLE_LAST MUST EQUAL LAST ERROR NUMBER */
-#define DW_DLE_LAST        256
+#define DW_DLE_LAST        259
 #define DW_DLE_LO_USER     0x10000
 
     /*  Taken as meaning 'undefined value', this is not
@@ -1534,6 +1537,14 @@ int dwarf_formaddr(Dwarf_Attribute /*attr*/,
     Dwarf_Addr   *   /*returned_addr*/,
     Dwarf_Error*     /*error*/);
 
+/*  Part of DebugFission.  So a consumer can get the index when
+    the object with the actual debug_addr  is
+    elsewhere.  New May 2014*/
+int dwarf_get_debug_addr_index(Dwarf_Attribute /*attr*/,
+    Dwarf_Unsigned * /*return_index*/,
+    Dwarf_Error * /*error*/);
+
+
 int dwarf_formflag(Dwarf_Attribute /*attr*/,
     Dwarf_Bool *     /*returned_bool*/,
     Dwarf_Error*     /*error*/);
@@ -1553,6 +1564,14 @@ int dwarf_formblock(Dwarf_Attribute /*attr*/,
 int dwarf_formstring(Dwarf_Attribute /*attr*/,
     char   **        /*returned_string*/,
     Dwarf_Error*     /*error*/);
+
+/*  Part of DebugFission.  So a consumer can get the index when
+    the object with the actual debug_str_offsets (and debug_str ) is
+    elsewhere.  New May 2014*/
+int dwarf_get_debug_str_index(Dwarf_Attribute /*attr*/,
+    Dwarf_Unsigned * /*return_index*/,
+    Dwarf_Error * /*error*/);
+
 
 int dwarf_formexprloc(Dwarf_Attribute /*attr*/,
     Dwarf_Unsigned * /*return_exprlen*/,

@@ -597,6 +597,66 @@ dwarf_global_formref(Dwarf_Attribute attr,
     return DW_DLV_OK;
 }
 
+/*  Part of DebugFission.  So a consumer can get the index when
+    the object with the actual debug_addr  is
+    elsewhere.  New May 2014*/
+int
+dwarf_get_debug_addr_index(Dwarf_Attribute attr,
+    Dwarf_Unsigned * return_index, 
+    Dwarf_Error * error)
+{
+    int theform = attr->ar_attribute_form;
+    if (theform == DW_FORM_GNU_addr_index ||
+        theform == DW_FORM_addrx) {
+        Dwarf_Unsigned index = 0;
+        Dwarf_Word uleblen = 0;                           
+        Dwarf_Small *info_ptr = attr->ar_debug_ptr;
+        index = _dwarf_decode_u_leb128(info_ptr,&uleblen); 
+        *return_index = index;
+        return DW_DLV_OK;
+    }
+
+    {
+        Dwarf_CU_Context cu_context = 0;
+        Dwarf_Debug dbg = 0;
+        int res  = get_attr_dbg(&dbg,&cu_context,attr,error);
+        if (res != DW_DLV_OK) {
+            return res;
+        }
+        _dwarf_error(dbg, error, DW_DLE_ATTR_FORM_NOT_ADDR_INDEX);
+    }
+    return (DW_DLV_ERROR);
+}
+
+/*  Part of DebugFission.  So a consumer can get the index when
+    the object with the actual debug_str_offsets (and debug_str ) is
+    elsewhere.  New May 2014*/
+int
+dwarf_get_debug_str_index(Dwarf_Attribute attr,
+    Dwarf_Unsigned *return_index,
+    Dwarf_Error *error)
+{
+    int theform = attr->ar_attribute_form;
+    if (theform == DW_FORM_strx ||
+        theform == DW_FORM_GNU_str_index) {
+        Dwarf_Unsigned index = 0;
+        Dwarf_Word uleblen = 0;                           
+        Dwarf_Small *info_ptr = attr->ar_debug_ptr;
+        index = _dwarf_decode_u_leb128(info_ptr,&uleblen); 
+        *return_index = index;
+        return DW_DLV_OK;
+    }
+    {
+        Dwarf_CU_Context cu_context = 0;
+        Dwarf_Debug dbg = 0;
+        int res  = get_attr_dbg(&dbg,&cu_context,attr,error);
+        if (res != DW_DLV_OK) {
+            return res;
+        }
+        _dwarf_error(dbg, error, DW_DLE_ATTR_FORM_NOT_ADDR_INDEX);
+    }
+    return (DW_DLV_ERROR);
+}
 
 int
 dwarf_formaddr(Dwarf_Attribute attr,
@@ -954,6 +1014,7 @@ dwarf_formstring(Dwarf_Attribute attr,
     Dwarf_Unsigned offset = 0;
     int res = DW_DLV_ERROR;
     Dwarf_Small *dataptr = 0;
+    Dwarf_Small *infoptr = attr->ar_debug_ptr;
     res  = get_attr_dbg(&dbg,&cu_context,attr,error);
     if (res != DW_DLV_OK) {
         return res;
@@ -989,15 +1050,8 @@ dwarf_formstring(Dwarf_Attribute attr,
     if (attr->ar_attribute_form == DW_FORM_GNU_str_index ||
         attr->ar_attribute_form == DW_FORM_strx) {
         Dwarf_Unsigned offsettostr= 0;
-        Dwarf_Word leb_len = 0;
-        Dwarf_Unsigned lebval = 0;
-        res = _dwarf_load_section(dbg, &dbg->de_debug_str_offsets,error);
-        if (res != DW_DLV_OK) {
-            return res;
-        }
-
         res = _dwarf_extract_string_offset_via_str_offsets(dbg,
-           dataptr,
+           infoptr,
            attr->ar_attribute,
            attr->ar_attribute_form,
            cu_context,
@@ -1008,7 +1062,7 @@ dwarf_formstring(Dwarf_Attribute attr,
     } else {
         if (attr->ar_attribute_form == DW_FORM_strp) {
             READ_UNALIGNED(dbg, offset, Dwarf_Unsigned,
-                attr->ar_debug_ptr,
+                infoptr,
                 cu_context->cc_length_size);
         }
     }

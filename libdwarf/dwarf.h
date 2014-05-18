@@ -697,8 +697,8 @@ extern "C" {
 #define DW_OP_GNU_convert               0xf7 /* GNU */
 #define DW_OP_GNU_reinterpret           0xf9 /* GNU */
 #define DW_OP_GNU_parameter_ref         0xfa /* GNU */
-#define DW_OP_GNU_addr_index            0xfb /* GNU */
-#define DW_OP_GNU_const_index           0xfc /* GNU */
+#define DW_OP_GNU_addr_index            0xfb /* GNU DebugFission */
+#define DW_OP_GNU_const_index           0xfc /* GNU DebugFission */
 
     /* HP extensions. */
 #define DW_OP_HP_unknown                0xe0 /* HP conflict: GNU */

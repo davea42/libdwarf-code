@@ -219,6 +219,9 @@ struct Dwarf_Section_s {
     /*  Pointer to the elf symtab, used for elf .rela. Leave it 0
         if not relevant. */
     struct Dwarf_Section_s *dss_symtab;
+    /*  dss_name must never be freed, it is a quoted string
+        in libdwarf. */
+    const char * dss_name;
 };
 
 /*  Overview: if next_to_use== first, no error slots are used.
