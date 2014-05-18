@@ -1,8 +1,11 @@
 2014-05-18  David Anderson
+     * libdwarf.h.in, dwarf_form.c: Restored the function
+       dwarf_get_debug_addr_index(). It is useful as a convenience
+       for apps like dwarfdump.
+2014-05-18  David Anderson
      *  dwarf_die_deliv.c,dwarf_error.c,dwarf_form.c,dwarf_init_finish.c,
         dwarf_opaque.h,dwarf_query.c,dwarf_util.c,libdwarf.h.in:
         Fixed numerous indent errors and removed trailing whitespace.
-
 2014-05-17  David Anderson
      * dwarf.h: Minor comment enhancement.
      * dwarf_loc.c: Fixed code for DW_OP_constx, DW_OP_addrx,

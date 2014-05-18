@@ -1538,8 +1538,9 @@ int dwarf_formaddr(Dwarf_Attribute /*attr*/,
     Dwarf_Error*     /*error*/);
 
 /*  Part of DebugFission.  So a consumer can get the index when
-    the object with the actual debug_addr  is
-    elsewhere.  New May 2014*/
+    the object with the actual .debug_addr section is
+    elsewhere. And so a print application can
+    print the index.  New May 2014*/
 int dwarf_get_debug_addr_index(Dwarf_Attribute /*attr*/,
     Dwarf_Unsigned * /*return_index*/,
     Dwarf_Error * /*error*/);
@@ -1564,6 +1565,16 @@ int dwarf_formblock(Dwarf_Attribute /*attr*/,
 int dwarf_formstring(Dwarf_Attribute /*attr*/,
     char   **        /*returned_string*/,
     Dwarf_Error*     /*error*/);
+
+/* DebugFission.  So a DWARF print application can
+   get the string index (DW_FORM_strx) and print it.
+   A convenience function.
+   New May 2014. */
+int
+dwarf_get_debug_str_index(Dwarf_Attribute /*attr*/,
+    Dwarf_Unsigned * /*return_index*/,
+    Dwarf_Error * /*error*/);
+
 
 int dwarf_formexprloc(Dwarf_Attribute /*attr*/,
     Dwarf_Unsigned * /*return_exprlen*/,

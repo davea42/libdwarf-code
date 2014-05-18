@@ -628,6 +628,38 @@ dwarf_get_debug_addr_index(Dwarf_Attribute attr,
     return (DW_DLV_ERROR);
 }
 
+/*  Part of DebugFission.  So a dwarf dumper application
+    can get the index and print it for the user.
+    A convenience function.  New May 2014*/
+int
+dwarf_get_debug_str_index(Dwarf_Attribute attr,
+    Dwarf_Unsigned *return_index,
+    Dwarf_Error *error)
+{
+    int theform = attr->ar_attribute_form;
+    if (theform == DW_FORM_strx ||
+        theform == DW_FORM_GNU_str_index) {
+        Dwarf_Unsigned index = 0;
+        Dwarf_Word uleblen = 0;                           
+        Dwarf_Small *info_ptr = attr->ar_debug_ptr;
+        index = _dwarf_decode_u_leb128(info_ptr,&uleblen); 
+        *return_index = index;
+        return DW_DLV_OK;
+    }
+    {
+        Dwarf_CU_Context cu_context = 0;
+        Dwarf_Debug dbg = 0;
+        int res  = get_attr_dbg(&dbg,&cu_context,attr,error);
+        if (res != DW_DLV_OK) {
+            return res;
+        }
+        _dwarf_error(dbg, error, DW_DLE_ATTR_FORM_NOT_ADDR_INDEX);
+    }
+    return (DW_DLV_ERROR);
+}
+
+
+
 int
 dwarf_formaddr(Dwarf_Attribute attr,
     Dwarf_Addr * return_addr, Dwarf_Error * error)
