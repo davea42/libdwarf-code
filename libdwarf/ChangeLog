@@ -1,7 +1,7 @@
 2014-05-18  David Anderson
      * libdwarf2.1.mm: Fixed a typo in the H3 line
        for dwarf_get_debug_add_index().
-     * libdwarf2.1.pdf: Regenerated. Rev 1.20, May 18 2014.
+     * libdwarf2.1.pdf: Regenerated. Rev 2.20, May 18 2014.
 2014-05-18  David Anderson
      * dwarf_loc.: Fixed offset update for DW_OP_constx/addrx.
 2014-05-18  David Anderson
