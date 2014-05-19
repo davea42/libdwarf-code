@@ -100,7 +100,7 @@ public:
     ~DieVec() {};
     // Simpler to handle negatives here than in the
     // print_die.cc code.
-    void setSiblingGlobalOffset(int indx,Dwarf_Off off) {
+    void setSiblingGlobalOffset(unsigned indx,Dwarf_Off off) {
         if (indx >= 0 && indx < dieVec_.size()) {
             dieVec_[indx].setSiblingGlobalOffset(off);
         }
@@ -108,13 +108,13 @@ public:
     // Zero is always a safe return.
     // Simpler to handle negatives here than in the
     // print_die.cc code.
-    Dwarf_Off getSiblingGlobalOffset(int indx) {
+    Dwarf_Off getSiblingGlobalOffset(unsigned indx) {
         if (indx >= 0 && indx < dieVec_.size()) {
             return dieVec_[indx].getSiblingGlobalOffset();
         }
         return 0;
     };
-    bool getDie(int indx,Dwarf_Die &dieout) {
+    bool getDie(unsigned indx,Dwarf_Die &dieout) {
         if (indx >= 0 && indx < dieVec_.size()) {
             dieout  =dieVec_[indx].die();
             return true;
@@ -122,7 +122,7 @@ public:
         // Should never happen!
         return false;
     };
-    bool getDieHolder(int indx,DieHolder &dh) {
+    bool getDieHolder(unsigned indx,DieHolder &dh) {
         if (indx >= 0 && indx < dieVec_.size()) {
             dh= dieVec_[indx];
             return true;
@@ -130,7 +130,7 @@ public:
         // Should never happen!
         return false;
     };
-    int Size() {
+    unsigned Size() {
         return dieVec_.size();
     }
     void PushBack(DieHolder &d) {

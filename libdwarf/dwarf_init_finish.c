@@ -683,7 +683,6 @@ _dwarf_setup(Dwarf_Debug dbg, Dwarf_Error * error)
                 de_debug* etc pointers in Dwarf_Debug. */
             struct Dwarf_dbg_sect_s *section;
 
-            unsigned i = 0;
             int found_match = FALSE;
             unsigned initial_start_number = 0;
             unsigned dbg_section_number = 0;

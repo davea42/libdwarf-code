@@ -386,7 +386,6 @@ dwarf_diename(Dwarf_Die die, char **ret_name, Dwarf_Error * error)
     Dwarf_Debug dbg = 0;
     Dwarf_Byte_Ptr info_ptr = 0;
     Dwarf_Unsigned string_offset = 0;
-    Dwarf_Unsigned form_size = 0;
     int res = DW_DLV_ERROR;
 
     CHECK_DIE(die, DW_DLV_ERROR);
@@ -410,7 +409,7 @@ dwarf_diename(Dwarf_Die die, char **ret_name, Dwarf_Error * error)
         Dwarf_CU_Context context =    die->di_cu_context;
         Dwarf_Unsigned offsettostr= 0;
 
-        res = _dwarf_extract_string_offset_via_str_offsets(
+        res = _dwarf_extract_string_offset_via_str_offsets(dbg,
             info_ptr,
             DW_AT_name,
             attr_form,

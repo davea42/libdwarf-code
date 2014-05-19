@@ -210,7 +210,7 @@ print_die_and_children_internal(DieHolder &die_in,
     SrcfilesHolder & srcfiles);
 
 static void
-safe_set_dievec_sibling(DieVec &dv,int level,Dwarf_Off off)
+safe_set_dievec_sibling(DieVec &dv,unsigned level,Dwarf_Off off)
 {
     if(level >= 0 && level < dv.Size()) {
         dv.setSiblingGlobalOffset(level,off);
@@ -220,14 +220,14 @@ safe_set_dievec_sibling(DieVec &dv,int level,Dwarf_Off off)
 // This removes items from here up from sibling comparisons, effectively.
 // We do at most two, see the stack update code.
 static void
-clearSiblingComparisons(DieVec  &dieVec,int level)
+clearSiblingComparisons(DieVec  &dieVec,unsigned level)
 {
-    int start = level;
-    int end = level +2;
+    unsigned start = level;
+    unsigned end = level +2;
     if (dieVec.Size() < end) {
         end = dieVec.Size();
     }
-    for (int cur = start  ; cur < end;  ++cur) {
+    for (unsigned cur = start  ; cur < end;  ++cur) {
         if(cur >= 0) {
             dieVec.setSiblingGlobalOffset(cur,0);
         }
@@ -237,8 +237,8 @@ static Dwarf_Off
 get_die_stack_sibling( int indentlevel, DieVec &dieVec)
 {
     int i = indentlevel-1;
-    if ( i > dieVec.Size()) {
-        i = dieVec.Size()-1;
+    if ( i > (int)dieVec.Size()) {
+        i = (int)dieVec.Size()-1;
     }
     for( ; i >=0 ; --i)
     {
@@ -256,8 +256,8 @@ validate_die_stack_siblings(Dwarf_Debug dbg,
 {
     int i = indentlevel-1;
     Dwarf_Off innersiboffset = 0;
-    if ( i > dieVec.Size()) {
-        i = dieVec.Size()-1;
+    if ( i > (int)dieVec.Size()) {
+        i = (int)dieVec.Size()-1;
     }
     for( ; i >=0 ; --i)
     {
@@ -777,7 +777,6 @@ print_die_and_children_internal(DieHolder & hin_die_in,
             Dwarf_Off child_overall_offset = 0;
             int cores = dwarf_dieoffset(child, &child_overall_offset, &err);
             if (cores == DW_DLV_OK) {
-                char small_buf[200];
                 Dwarf_Off parent_sib_val =
                     get_die_stack_sibling(indent_level,dieVec);
                 if (parent_sib_val &&
@@ -3288,8 +3287,6 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
             //  we have a serious botch. this FORM
             //  defines the value as a .debug_info
             //  global offset. */
-            Dwarf_Off cuoff = 0;
-            Dwarf_Off culen = 0;
             Dwarf_Off die_overall_offset = 0;
             int ores = dwarf_dieoffset(die, &die_overall_offset, &err);
             if (ores != DW_DLV_OK) {

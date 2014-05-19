@@ -1,3 +1,8 @@
+2014-05-19  David Anderson
+     * print_die.cc: Removed unused local variables.
+       Changed indices to unsigned to remove warnings.
+     * die_holder.h: Changed indices to unsigned to remove
+       warnings.
 2014-05-18  David Anderson
      * dwarfdump.cc,print_die.cc: Fixed indents and
        removed trailing whitespace.

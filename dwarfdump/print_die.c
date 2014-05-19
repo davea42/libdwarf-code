@@ -3511,8 +3511,6 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
                 we have a serious botch. this FORM
                 defines the value as a .debug_info
                 global offset. */
-            Dwarf_Off cuoff = 0;
-            Dwarf_Off culen = 0;
             Dwarf_Off die_overall_offset = 0;
             int ores = dwarf_dieoffset(die, &die_overall_offset, &err);
             if (ores != DW_DLV_OK) {

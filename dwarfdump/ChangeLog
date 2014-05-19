@@ -1,3 +1,5 @@
+2014-05-19  David Anderson
+     *  print_die.c: Removed two unused local variables.
 2014-05-18  David Anderson
      *  dwarfdump.c,print_die.c: Fixed indent errors and
         removed trailing whitespace.

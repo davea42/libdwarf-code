@@ -181,7 +181,6 @@ _dwarf_symbolic_relocs_to_disk(Dwarf_P_Debug dbg,
             /*  Call de_callback_func
                 getting section number of reloc section. */
             int rel_section_index = 0;
-            int int_name = 0;
             Dwarf_Unsigned name_idx = 0;
 
             /*  This is a bit of a fake, as we do not really have true

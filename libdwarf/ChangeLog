@@ -1,3 +1,10 @@
+2014-05-19  David Anderson
+     * dwarf_init_finish.c: Removed unused local variable.
+     * dwarf_opaque.h: Added _dwarf_extract_string_offset_via_str_offsets()
+       to communicate the argument list to other libdwarf source files.
+     * dwarf_query.c: Fixed botch in call argument list, the dwarf_opaque.h
+       change exposed it.   Deleted an unused local variable.
+     * pro_reloc_symbolic.c: Deleted an unused local variable.
 2014-05-18  David Anderson
      * libdwarf2.1.mm: Fixed a typo in the H3 line
        for dwarf_get_debug_add_index().
