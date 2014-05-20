@@ -1,4 +1,11 @@
-May 55, 2014
+May 19, 2014
+  REASON FOR RELEASE
+  Now handles DebugFission (part of the unreleased standard
+  named DWARF5) in which debug information can be split from
+  objects and gathered into seperate object files.
+
+  MINOR POINT:
+
   Added a caveat that dwarf_errmsg() returned string pointers are not
   necessarily pointers that can be relied on to be valid for the
   duration of the current executable.   It's best for consumers
@@ -11,7 +18,9 @@ May 55, 2014
   no growth in the size of the running executable.
   For now, though, all dwarf_errmsg() strings continue to point to
   static strings.  Just please don't depend on it!
-April 25, 2014  - BINARY & SOURCE INCOMPATIBLITY
+
+  BINARY & SOURCE INCOMPATIBLITY:
+
   The Producer code drops old dwarf_producer_init* functions
   and provides an old name with a new interface: dwarf_producer_init().
   The producer callback function is renamed Dwarf_Callback_Func.

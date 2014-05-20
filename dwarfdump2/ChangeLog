@@ -1,4 +1,6 @@
 2014-05-19  David Anderson
+     * dwarfdump.cc, common.cc: Updated version string.
+2014-05-19  David Anderson
      * print_die.cc: Removed unused local variables.
        Changed indices to unsigned to remove warnings.
      * die_holder.h: Changed indices to unsigned to remove
