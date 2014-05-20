@@ -1,3 +1,6 @@
+2014-05-20  David Anderson
+     * dwarfdump.c, common.c: Updated version string.
+     * print_die.c: now the dwo_id value prints as hex.
 2014-05-19  David Anderson
      * dwarfdump.cc, common.cc: Updated version string.
 2014-05-19  David Anderson

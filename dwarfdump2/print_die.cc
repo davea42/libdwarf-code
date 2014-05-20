@@ -3455,6 +3455,8 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
             case DW_AT_count:
             case DW_AT_stmt_list:
             case DW_AT_MIPS_fde:
+            case DW_AT_GNU_dwo_id:
+            case DW_AT_dwo_id:
                 {
                 string emptyattrname;
                 bool show_form_here = false;
