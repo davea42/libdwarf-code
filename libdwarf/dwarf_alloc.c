@@ -65,6 +65,7 @@
 #include "dwarf_weaks.h"
 #include "dwarf_harmless.h"
 #include "dwarf_tsearch.h"
+#include "dwarf_gdbindex.h"
 
 #define TRUE 1
 #define FALSE 0
@@ -224,6 +225,20 @@ struct ial_s alloc_instance_basics[ALLOC_AREA_INDEX_TABLE_MAX] = {
     {sizeof(struct Dwarf_Global_Context_s),MULTIPLY_NO,  0, 0},
 
     {sizeof(struct Dwarf_Hash_Table_Entry_s),MULTIPLY_CT,0,0 }, /* 44 DW_DLA_HASH_TABLE_ENTRY */
+    {sizeof(int),MULTIPLY_NO,  0, 0}, /* reserved for future internal  types*/
+    {sizeof(int),MULTIPLY_NO,  0, 0}, /* reserved for future internal  types*/
+    {sizeof(int),MULTIPLY_NO,  0, 0}, /* reserved for future internal  types*/
+    {sizeof(int),MULTIPLY_NO,  0, 0}, /* reserved for future internal  types*/
+    {sizeof(int),MULTIPLY_NO,  0, 0}, /* reserved for future internal  types*/
+    {sizeof(int),MULTIPLY_NO,  0, 0}, /* reserved for future internal  types*/
+    {sizeof(int),MULTIPLY_NO,  0, 0}, /* reserved for future internal  types*/
+    {sizeof(int),MULTIPLY_NO,  0, 0}, /* reserved for future internal  types*/
+    {sizeof(int),MULTIPLY_NO,  0, 0}, /* reserved for future internal  types*/
+    {sizeof(int),MULTIPLY_NO,  0, 0}, /* reserved for future internal  types*/
+
+    /* now,  we have types that are public. */
+    /* 55.  New in June 2014. Gdb. */
+    {sizeof(struct Dwarf_Gdbindex_s),MULTIPLY_NO,  0, 0}, 
 
 
 };

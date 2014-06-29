@@ -47,6 +47,7 @@ FINALOBJECTS = \
 	print_aranges.o \
 	print_die.o \
 	print_frames.o  \
+	print_gdbindex.o  \
 	print_lines.o \
 	print_locs.o \
 	print_macros.o \

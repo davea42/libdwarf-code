@@ -1,3 +1,10 @@
+2014-06-28  David Anderson
+     * Makefile.in: Add print_dgbindex.o to objects list.
+     * dwarfdump.1: Add -I to options list (for gdb_index section).
+     * dwarfdump.c: Add gdbindex_flag and a call to print_gdb_index().
+     * globals.h: Add DW_HDR_GDB_INDEX to  flags.
+     * print_gdbindex.c: New file, prints .gdb_index section
+       if the section is present in an object.
 2014-05-20  David Anderson
      * dwarfdump.c, common.c: Updated version string.
      * print_die.c: now the dwo_id value prints as hex.

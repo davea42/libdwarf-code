@@ -238,6 +238,7 @@ extern int nTrace[MAX_TRACE_LEVEL + 1];
 #define DEBUG_STR         12
 #define DEBUG_WEAKNAMES   13
 #define DEBUG_TYPES       14
+#define DEBUG_GDB_INDEX   15
 
 extern int verbose;
 extern boolean dense;
@@ -447,6 +448,8 @@ extern void dump_block(char *prefix, char *data, Dwarf_Signed len);
 
 extern void format_sig8_string(Dwarf_Sig8 *data,struct esb_s *out);
 
+extern void print_gdb_index(Dwarf_Debug dbg);
+
 int
 dwarfdump_print_one_locdesc(Dwarf_Debug dbg,
     Dwarf_Locdesc * llbuf,
@@ -487,9 +490,10 @@ void print_any_harmless_errors(Dwarf_Debug dbg);
 #define DW_HDR_DEBUG_TYPES    0x00000400   /* 10 */
 #define DW_HDR_TEXT           0x00000800   /* 11 */ /* 0x0fff */
 #define DW_HDR_HEADER         0x00001000   /* 12 */
+#define DW_HDR_GDB_INDEX      0x00002000   /* 13 */
 
 /* Mask to indicate all sections (by default) */
 #define DW_HDR_ALL            0x80000000
-#define DW_HDR_DEFAULT        0x00000fff
+#define DW_HDR_DEFAULT        0x00002fff
 
 #endif /* globals_INCLUDED */

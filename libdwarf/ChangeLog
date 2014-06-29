@@ -1,3 +1,19 @@
+2014-06-28  David Anderson
+     * Makefile.in: Add dwarf_gdbindex.o to objects.
+     * dwarf_alloc.c: Add new type Dwarf_Gdbindex_s to allocatable
+       types.
+     * dwarf_elf_access.c: Add a comment reflecting lack of need
+       to relocate a .gdb_index section.
+     * dwarf_error.c: Add new error strings for gdb_index
+       related errors.
+     * dwarf_init_finish.c: Add .gdb_index section to the
+       sections we read.  Refactor a test into a function
+       this_section_dwarf_relevant() to make code more readable.
+     * dwarf_opaque.h: Add  de_debug_gdbindex to Dwarf_Debug_s.
+     * libdwarf.h.in: Add opaque types for .gdb_index section
+       interfaces. Add DW_DLA_GDBINDEX for allocatability of
+       the new type. Add new GDB_INDEX error codes in DW_DLA list.
+       Declare new gdb_index interfaces.
 2014-05-19  David Anderson
      * dwarf_init_finish.c: Removed unused local variable.
      * dwarf_opaque.h: Added _dwarf_extract_string_offset_via_str_offsets()

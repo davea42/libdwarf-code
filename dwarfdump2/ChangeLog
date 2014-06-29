@@ -1,3 +1,10 @@
+2014-06-28  David Anderson
+     * Makefile.in: Add print_gdbindx.o to objects list.
+     * dwarfdump.1: Add -I to options list.
+     * dwarfdump.cc: Add gdbindex_flag and I option
+       and call print_gdb_index().
+     * globals.h: Add DEBUG_GDB_INDEX  and
+       DW_HDR_GDB_INDEX defines. Declare print_gdb_index().
 2014-05-20  David Anderson
      * dwarfdump.cc, common.cc: Updated version string.
      * print_die.cc: Now the dwo_id prints as hex.

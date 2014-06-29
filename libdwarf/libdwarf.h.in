@@ -503,6 +503,13 @@ typedef struct Dwarf_Abbrev_s*     Dwarf_Abbrev;
 typedef struct Dwarf_Fde_s*        Dwarf_Fde;
 typedef struct Dwarf_Cie_s*        Dwarf_Cie;
 typedef struct Dwarf_Arange_s*     Dwarf_Arange;
+typedef struct Dwarf_Gdbindex_s*              Dwarf_Gdbindex;
+typedef struct Dwarf_Gdbindex_CUlist_s*       Dwarf_Gdbindex_CUlist;
+typedef struct Dwarf_Gdbindex_CUtypeslist_s*  Dwarf_Gdbindex_CUtypeslist;
+typedef struct Dwarf_Gdbindex_Addressarea_s*  Dwarf_Gdbindex_Addressarea;
+typedef struct Dwarf_Gdbindex_Symboltable_s*    Dwarf_Gdbindex_Symboltable;
+typedef struct Dwarf_Gdbindex_Constantpool_s* Dwarf_Gdbindex_Constantpool;
+
 
 /* Opaque types for Producer Library. */
 typedef struct Dwarf_P_Debug_s*       Dwarf_P_Debug;
@@ -768,6 +775,10 @@ struct Dwarf_Obj_Access_Interface_s {
 #define DW_DLA_WEAK            0x1b     /* Dwarf_Weak */
 #define DW_DLA_ADDR            0x1c     /* Dwarf_Addr sized entries */
 #define DW_DLA_RANGES          0x1d     /* Dwarf_Ranges */
+
+/* 0x1e (30) to 0x36 (54) reserved for internal to libdwarf types. */
+
+#define DW_DLA_GDBINDEX        0x37     /* Dwarf_Gdbindex */
 
 /* The augmenter string for CIE */
 #define DW_CIE_AUGMENTER_STRING_V0              "z"
@@ -1099,10 +1110,12 @@ struct Dwarf_Obj_Access_Interface_s {
 #define DW_DLE_MISSING_NEEDED_DEBUG_ADDR_SECTION 257
 #define DW_DLE_ATTR_FORM_NOT_ADDR_INDEX        258
 #define DW_DLE_ATTR_FORM_NOT_STR_INDEX         259
+#define DW_DLE_DUPLICATE_GDB_INDEX             260
+#define DW_DLE_ERRONEOUS_GDB_INDEX_SECTION     261
 
 
     /* DW_DLE_LAST MUST EQUAL LAST ERROR NUMBER */
-#define DW_DLE_LAST        259
+#define DW_DLE_LAST        261
 #define DW_DLE_LO_USER     0x10000
 
     /*  Taken as meaning 'undefined value', this is not
@@ -2274,6 +2287,140 @@ enum Dwarf_Form_Class dwarf_get_form_class(
     Dwarf_Half /* attrnum */,
     Dwarf_Half /*offset_size */,
     Dwarf_Half /*form*/);
+
+
+/*   BEGIN gdbindex operations interfaces. */
+/*  .gdb_index section operations.
+    A GDB extension.
+    The section is in some executables and if present
+    is used to quickly map an address or name to
+    a skeleton CU or TU.  If present then there are
+    .dwo or .dwp files somewhere to make detailed
+    debugging possible (up to user code to 
+    find it/them and deal with them).
+
+    Version 8 built by gdb, so type entries are ok as is.
+    Version 7 built by the 'gold' linker and type index
+    entries for a CU must be derived othewise, the
+    type index is not correct... ? FIXME
+    */
+
+/*  Creates a Dwarf_Gdbindex, returning it and
+    its values through the pointers. */
+int dwarf_gdbindex_header(Dwarf_Debug /*dbg*/,
+    Dwarf_Gdbindex * /*gdbindexptr*/,
+    Dwarf_Unsigned * /*version*/,
+    Dwarf_Unsigned * /*cu_list_offset*/,
+    Dwarf_Unsigned * /*types_cu_list_offset*/,
+    Dwarf_Unsigned * /*address_area_offset*/,
+    Dwarf_Unsigned * /*symbol_table_offset*/,
+    Dwarf_Unsigned * /*constant_pool_offset*/,
+    Dwarf_Unsigned * /*section_size*/,
+    Dwarf_Unsigned * /*unused_reserved*/,
+    Dwarf_Error    * /*error*/);
+
+int dwarf_gdbindex_culist_array(Dwarf_Gdbindex /*gdbindexptr*/,
+    Dwarf_Gdbindex_CUlist * /*list*/,
+    Dwarf_Unsigned       * /*list_length*/,
+    Dwarf_Error          * /*error*/);
+
+/*  entryindex: 0 to list_length-1 */
+int dwarf_gdbindex_culist_entry(Dwarf_Gdbindex_CUlist /*list*/,
+    Dwarf_Unsigned   /*entryindex*/,
+    Dwarf_Unsigned * /*cu_offset*/,
+    Dwarf_Unsigned * /*cu_length*/,
+    Dwarf_Error    * /*error*/);
+
+int dwarf_gdbindex_types_culist_array(Dwarf_Gdbindex /*gdbindexptr*/,
+    Dwarf_Gdbindex_CUtypeslist * /*types_list*/,
+    Dwarf_Unsigned            * /*types_list_length*/,
+    Dwarf_Error               * /*error*/);
+
+/*  entryindex: 0 to types_list_length -1 */
+int dwarf_gdbindex_types_culist_entry(
+    Dwarf_Gdbindex_CUtypeslist /*types_list*/,
+    Dwarf_Unsigned   /*entryindex*/,
+    Dwarf_Unsigned * /*cu_offset*/,
+    Dwarf_Unsigned * /*tu_offset*/,
+    Dwarf_Unsigned * /*type_signature*/,
+    Dwarf_Error    * /*error*/);
+
+/*  cuentryoffset is a value from symboltable (see below). */
+int dwarf_gdbindex_types_culist_entry_by_offset(
+    Dwarf_Gdbindex_CUtypeslist /*types_list*/,
+    Dwarf_Unsigned   /*cuentryoffset*/, /* from symboltable */
+    Dwarf_Unsigned * /*cu_offset*/,
+    Dwarf_Unsigned * /*tu_offset*/,
+    Dwarf_Unsigned * /*type_signature*/,
+    Dwarf_Error    * /*error*/);
+
+int dwarf_gdbindex_addressarea(Dwarf_Gdbindex /*gdbindexptr*/,
+    Dwarf_Gdbindex_Addressarea * /*address_list_out*/,
+    Dwarf_Unsigned            * /*addressarea_list_length*/,
+    Dwarf_Error               * /*error*/);
+
+/*    entryindex: 0 to addressarea_list_length-1 */
+int dwarf_gdbindex_addressarea_entry(
+    Dwarf_Gdbindex_Addressarea /*address_list*/,
+    Dwarf_Unsigned   /*entryindex*/,
+    Dwarf_Unsigned * /*low_adddress*/,
+    Dwarf_Unsigned * /*high_address*/,
+    Dwarf_Unsigned * /*cu_index*/,
+    Dwarf_Error    * /*error*/);
+
+int dwarf_gdbindex_symboltable_array(Dwarf_Gdbindex /*gdbindexptr*/,
+    Dwarf_Gdbindex_Symboltable * /*symtab_list_out*/,
+    Dwarf_Unsigned            * /*symtab_list_length*/,
+    Dwarf_Error               * /*error*/);
+
+/*  entryindex: 0 to symtab_list_length-1 */
+int dwarf_gdbindex_symboltable_entry(
+    Dwarf_Gdbindex_Symboltable /*symtab_list*/,
+    Dwarf_Unsigned   /*entryindex*/,
+    Dwarf_Unsigned * /*string_offset*/,
+    Dwarf_Unsigned * /*cu_vector_offset*/,
+    Dwarf_Error    * /*error*/);
+
+
+int dwarf_gdbindex_constantpool(Dwarf_Gdbindex /*gdbindexptr*/,
+    Dwarf_Gdbindex_Constantpool * /*pool*/,
+    Dwarf_Unsigned * /*pool_length*/,
+    Dwarf_Unsigned * /*number_of_cu_indices*/,
+    Dwarf_Error    * /*error*/);
+
+/*  cuvector_index 0 to number_of_cu_indices -1
+    0 here referring to the actual first, not
+    the special initial entry
+    which is the number of instances in the CU vector, a value
+    returned by dwarf_gdbindex_constantpool(). */
+int dwarf_gdbindex_cuvector_value(Dwarf_Gdbindex_Constantpool /*pool*/,
+    Dwarf_Unsigned   /*cuvector_index*/,
+    Dwarf_Unsigned * /*index*/,
+    Dwarf_Unsigned * /*attr_value*/,
+    Dwarf_Error    * /*error*/);
+int dwarf_gdbindex_expand_symtab(Dwarf_Gdbindex_Constantpool /*pool*/,
+    Dwarf_Unsigned   /*cuvector_index*/,
+    Dwarf_Unsigned * /*index*/,
+    Dwarf_Unsigned * /*cu_index*/,
+    Dwarf_Unsigned * /*reserved1*/,
+    Dwarf_Unsigned * /*symbol_kind*/,
+    Dwarf_Unsigned * /*reserved1*/,
+    Dwarf_Unsigned * /*is_static*/,
+    Dwarf_Error    * /*error*/);
+
+
+/*  The strings in the pool follow (in memory) the cu index
+    set and are NUL terminated. */
+
+int dwarf_gdbindex_string(Dwarf_Gdbindex_Constantpool /*pool*/,
+    Dwarf_Unsigned   /*stringindex*/,
+    const char    ** /*string_ptr*/,
+    Dwarf_Error   *  /*error*/);
+
+void dwarf_gdbindex_free(Dwarf_Gdbindex /*gdbindexptr*/);
+
+/*  END gdbindex operations. */
+
 
 /*  Utility operations */
 Dwarf_Unsigned dwarf_errno(Dwarf_Error     /*error*/);

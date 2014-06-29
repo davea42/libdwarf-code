@@ -371,6 +371,10 @@ struct Dwarf_Debug_s {
     struct Dwarf_Section_s de_debug_str_offsets;
     struct Dwarf_Section_s de_debug_addr;
 
+    /* Following for the .gdb_index section.  */
+    struct Dwarf_Section_s de_debug_gdbindex;
+   
+
     /*  For non-elf, simply leave the following two structs zeroed and
         they will be ignored. */
     struct Dwarf_Section_s de_elf_symtab;

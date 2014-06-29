@@ -132,6 +132,10 @@ static boolean static_var_flag = FALSE;
 static boolean type_flag = FALSE;
 static boolean weakname_flag = FALSE;
 static boolean header_flag = FALSE; /* Control printing of Elf header. */
+
+/* Control printing of gdb_index section.*/
+static boolean gdbindex_flag = FALSE; 
+
 boolean producer_children_flag = FALSE;   /* List of CUs per compiler */
 
 /* Bitmap for relocations. See globals.h for DW_SECTION_REL_DEBUG_RANGES etc.*/
@@ -558,6 +562,7 @@ print_object_header(Elf *elf,Dwarf_Debug dbg,unsigned local_section_map)
     #define DW_SECTNAME_DEBUG_PUBTYPES ".debug_pubtypes"
     #define DW_SECTNAME_DEBUG_TYPES    ".debug_types"
     #define DW_SECTNAME_TEXT           ".text"
+    #define DW_SECTNAME_GDB_INDEX      ".gdb_index"
 
     static char *sectnames[] = {
         DW_SECTNAME_DEBUG_INFO,
@@ -572,6 +577,7 @@ print_object_header(Elf *elf,Dwarf_Debug dbg,unsigned local_section_map)
         DW_SECTNAME_DEBUG_PUBTYPES,
         DW_SECTNAME_DEBUG_TYPES,
         DW_SECTNAME_TEXT,
+        DW_SECTNAME_GDB_INDEX
         ""
     };
 
@@ -1072,6 +1078,10 @@ process_one_file(Elf * elf, const char * file_name, int archive,
         reset_overall_CU_error_data();
         print_infos(dbg,FALSE);
     }
+    if (gdbindex_flag) {
+        reset_overall_CU_error_data();
+        print_gdb_index(dbg);
+    }
     if (pubnames_flag) {
         reset_overall_CU_error_data();
         print_pubnames(dbg);
@@ -1168,6 +1178,7 @@ static void
 do_all()
 {
     info_flag = line_flag = frame_flag = TRUE;
+    gdbindex_flag = TRUE;
     pubnames_flag = macinfo_flag = TRUE;
     aranges_flag = TRUE;
     /*  Do not do
@@ -1363,7 +1374,7 @@ process_args(int argc, char *argv[])
 
     /* j unused */
     while ((c = getopt(argc, argv,
-        "#:abc::CdDeE::fFgGhH:ik:l::mMnNo::pPqQrRsS:t:u:UvVwW::x:yz")) != EOF) {
+        "#:abc::CdDeE::fFgGhH:iIk:l::mMnNo::pPqQrRsS:t:u:UvVwW::x:yz")) != EOF) {
 
         switch (c) {
         /* Internal debug level setting. */
@@ -1425,6 +1436,10 @@ process_args(int argc, char *argv[])
             break;
         case 'i':
             info_flag = TRUE;
+            suppress_check_dwarf();
+            break;
+        case 'I':
+            gdbindex_flag = TRUE;
             suppress_check_dwarf();
             break;
         case 'n':
@@ -1645,6 +1660,7 @@ process_args(int argc, char *argv[])
                 case 's': section_map |= DW_HDR_DEBUG_STRING; break;
                 case 't': section_map |= DW_HDR_DEBUG_PUBTYPES; break;
                 case 'x': section_map |= DW_HDR_TEXT; break;
+                case 'I': section_map |= DW_HDR_GDB_INDEX; break;
                 /* case 'd', use the default section set */
                 case 'd': section_map |= DW_HDR_DEFAULT; break;
                 default: usage_error = TRUE; break;
@@ -1687,6 +1703,7 @@ process_args(int argc, char *argv[])
                 check_tag_tree = check_type_offset = TRUE;
                 check_names = TRUE;
                 pubnames_flag = info_flag = TRUE;
+                gdbindex_flag = TRUE;
                 check_decl_file = TRUE;
                 check_frames = TRUE;
                 check_frames_extended = FALSE;
