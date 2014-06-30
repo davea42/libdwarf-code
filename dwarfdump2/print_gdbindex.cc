@@ -19,13 +19,19 @@
   You should have received a copy of the GNU General Public License along
   with this program; if not, write the Free Software Foundation, Inc., 51
   Franklin Street - Fifth Floor, Boston MA 02110-1301, USA.
+
 */
+
 
 #include "globals.h"
 #include "naming.h"
-#include "esb.h"
+#include <vector>
+using std::string;
+using std::cout;
+using std::cerr;
+using std::endl;
+using std::vector;
 
-#include "print_sections.h"
 
 static int
 print_culist_array(Dwarf_Debug dbg,
@@ -41,9 +47,8 @@ print_culist_array(Dwarf_Debug dbg,
             "dwarf_gdbindex_culist_array failed",res,*err);
         return res;
     }
-    printf("  CU list. array length: %" DW_PR_DUu 
-        " format: [entry#] cuoffset culength\n",
-        list_len);
+    cout <<"  CU list. array length: " << list_len <<
+        " format: [entry#] cuoffset culength"  <<endl;
 
     for( i  = 0; i < list_len; i++) {
         Dwarf_Unsigned cuoffset = 0;
@@ -55,16 +60,15 @@ print_culist_array(Dwarf_Debug dbg,
                "dwarf_gdbindex_culist_entry failed",res,*err);
             return res;
         }
-        printf("    [%4" DW_PR_DUu "] 0x%"
-             DW_PR_XZEROS DW_PR_DUx 
-             " 0x%" DW_PR_XZEROS DW_PR_DUx "\n",
-             i,
-             cuoffset,
-             culength);
+        cout <<"    ["<< IToDec(i,4) << "] " <<
+             IToHex0N(cuoffset,10) << " " <<
+             IToHex0N(culength,10) << endl;
     }
-    printf("\n");
+    cout << endl;
     return DW_DLV_OK;
 }
+
+
 
 extern void
 print_gdb_index(Dwarf_Debug dbg)
@@ -81,7 +85,7 @@ print_gdb_index(Dwarf_Debug dbg)
     Dwarf_Error error = 0;
 
     int res = 0;
-    current_section_id = DEBUG_GDB_INDEX;
+    error_message_data.current_section_id = DEBUG_GDB_INDEX;
     res = dwarf_gdbindex_header(dbg, &gdbindex,
         &version,
         &cu_list_offset,
@@ -101,31 +105,31 @@ print_gdb_index(Dwarf_Debug dbg)
             say nothing. */
         return;
     }
-    printf("\n.gdb_index\n");
+    cout << endl ;
+    cout << ".gdb_index" << endl;
     if( res == DW_DLV_ERROR) {
         print_error(dbg,"dwarf_gdbindex_header",res,error);
         return;
     }
 
-    printf("  Version             : "
-        "0x%" DW_PR_XZEROS DW_PR_DUx  "\n",
-        version);
-    printf("  CU list offset      : "
-        "0x%" DW_PR_XZEROS DW_PR_DUx "\n",
-        cu_list_offset);
-    printf("  Address area offset : "
-        "0x%" DW_PR_XZEROS DW_PR_DUx "\n",
-        types_cu_list_offset);
-    printf("  Symboltable offset  : "
-        "0x%" DW_PR_XZEROS DW_PR_DUx "\n",
-        address_area_offset);
-    printf("  Constant pool offset: "
-        "0x%" DW_PR_XZEROS DW_PR_DUx "\n",
-        constant_pool_offset);
-    printf("  section size        : "
-        "0x%" DW_PR_XZEROS DW_PR_DUx "\n",
-        section_size);
-
+    cout <<"  Version             : " <<
+        IToHex0N(version,10) << 
+        endl;
+    cout << "  CU list offset      : " <<
+        IToHex0N(cu_list_offset,10) << 
+        endl;
+    cout << "  Address area offset : " <<
+        IToHex0N(types_cu_list_offset,10) << 
+        endl;
+    cout << "  Symboltable offset  : " <<
+        IToHex0N(address_area_offset,10) << 
+        endl;
+    cout << "  Constant pool offset: " <<
+        IToHex0N(constant_pool_offset,10) << 
+        endl;
+    cout << "  section size        : " <<
+        IToHex0N(section_size,10) << 
+        endl;
 
     res = print_culist_array(dbg,gdbindex,&error);
     if (res != DW_DLV_OK) {

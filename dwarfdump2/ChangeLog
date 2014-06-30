@@ -1,3 +1,5 @@
+2014-06-29  David Anderson
+     * print_gdbindex.cc: Add it into git.
 2014-06-28  David Anderson
      * Makefile.in: Add print_gdbindx.o to objects list.
      * dwarfdump.1: Add -I to options list.

@@ -1,3 +1,8 @@
+2014-06-29  David Anderson
+     * dwarf_error.c: Added error codes for gdbindex access.
+     * libdwarf.h.in: Revised gdbindex function interface: simpler.
+     * dwarf_gdbindex.c, dwarf_gdbindex.h: Implement gdbindex
+       functions.
 2014-06-28  David Anderson
      * Makefile.in: Add dwarf_gdbindex.o to objects.
      * dwarf_alloc.c: Add new type Dwarf_Gdbindex_s to allocatable

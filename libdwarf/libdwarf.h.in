@@ -504,11 +504,6 @@ typedef struct Dwarf_Fde_s*        Dwarf_Fde;
 typedef struct Dwarf_Cie_s*        Dwarf_Cie;
 typedef struct Dwarf_Arange_s*     Dwarf_Arange;
 typedef struct Dwarf_Gdbindex_s*              Dwarf_Gdbindex;
-typedef struct Dwarf_Gdbindex_CUlist_s*       Dwarf_Gdbindex_CUlist;
-typedef struct Dwarf_Gdbindex_CUtypeslist_s*  Dwarf_Gdbindex_CUtypeslist;
-typedef struct Dwarf_Gdbindex_Addressarea_s*  Dwarf_Gdbindex_Addressarea;
-typedef struct Dwarf_Gdbindex_Symboltable_s*    Dwarf_Gdbindex_Symboltable;
-typedef struct Dwarf_Gdbindex_Constantpool_s* Dwarf_Gdbindex_Constantpool;
 
 
 /* Opaque types for Producer Library. */
@@ -1112,10 +1107,14 @@ struct Dwarf_Obj_Access_Interface_s {
 #define DW_DLE_ATTR_FORM_NOT_STR_INDEX         259
 #define DW_DLE_DUPLICATE_GDB_INDEX             260
 #define DW_DLE_ERRONEOUS_GDB_INDEX_SECTION     261
+#define DW_DLE_GDB_INDEX_COUNT_ERROR           262
+#define DW_DLE_GDB_INDEX_COUNT_ADDR_ERROR      263
+#define DW_DLE_GDB_INDEX_INDEX_ERROR           264
+#define DW_DLE_GDB_INDEX_CUVEC_ERROR           265
 
 
     /* DW_DLE_LAST MUST EQUAL LAST ERROR NUMBER */
-#define DW_DLE_LAST        261
+#define DW_DLE_LAST        265
 #define DW_DLE_LO_USER     0x10000
 
     /*  Taken as meaning 'undefined value', this is not
@@ -2320,25 +2319,23 @@ int dwarf_gdbindex_header(Dwarf_Debug /*dbg*/,
     Dwarf_Error    * /*error*/);
 
 int dwarf_gdbindex_culist_array(Dwarf_Gdbindex /*gdbindexptr*/,
-    Dwarf_Gdbindex_CUlist * /*list*/,
     Dwarf_Unsigned       * /*list_length*/,
     Dwarf_Error          * /*error*/);
 
 /*  entryindex: 0 to list_length-1 */
-int dwarf_gdbindex_culist_entry(Dwarf_Gdbindex_CUlist /*list*/,
+int dwarf_gdbindex_culist_entry(Dwarf_Gdbindex /*gdbindexptr*/,
     Dwarf_Unsigned   /*entryindex*/,
     Dwarf_Unsigned * /*cu_offset*/,
     Dwarf_Unsigned * /*cu_length*/,
     Dwarf_Error    * /*error*/);
 
 int dwarf_gdbindex_types_culist_array(Dwarf_Gdbindex /*gdbindexptr*/,
-    Dwarf_Gdbindex_CUtypeslist * /*types_list*/,
     Dwarf_Unsigned            * /*types_list_length*/,
     Dwarf_Error               * /*error*/);
 
 /*  entryindex: 0 to types_list_length -1 */
 int dwarf_gdbindex_types_culist_entry(
-    Dwarf_Gdbindex_CUtypeslist /*types_list*/,
+    Dwarf_Gdbindex   /*gdbindexptr*/,
     Dwarf_Unsigned   /*entryindex*/,
     Dwarf_Unsigned * /*cu_offset*/,
     Dwarf_Unsigned * /*tu_offset*/,
@@ -2347,7 +2344,7 @@ int dwarf_gdbindex_types_culist_entry(
 
 /*  cuentryoffset is a value from symboltable (see below). */
 int dwarf_gdbindex_types_culist_entry_by_offset(
-    Dwarf_Gdbindex_CUtypeslist /*types_list*/,
+    Dwarf_Gdbindex   /*gdbindex*/,
     Dwarf_Unsigned   /*cuentryoffset*/, /* from symboltable */
     Dwarf_Unsigned * /*cu_offset*/,
     Dwarf_Unsigned * /*tu_offset*/,
@@ -2355,13 +2352,12 @@ int dwarf_gdbindex_types_culist_entry_by_offset(
     Dwarf_Error    * /*error*/);
 
 int dwarf_gdbindex_addressarea(Dwarf_Gdbindex /*gdbindexptr*/,
-    Dwarf_Gdbindex_Addressarea * /*address_list_out*/,
     Dwarf_Unsigned            * /*addressarea_list_length*/,
     Dwarf_Error               * /*error*/);
 
 /*    entryindex: 0 to addressarea_list_length-1 */
 int dwarf_gdbindex_addressarea_entry(
-    Dwarf_Gdbindex_Addressarea /*address_list*/,
+    Dwarf_Gdbindex   /*gdbindexptr*/,
     Dwarf_Unsigned   /*entryindex*/,
     Dwarf_Unsigned * /*low_adddress*/,
     Dwarf_Unsigned * /*high_address*/,
@@ -2369,13 +2365,12 @@ int dwarf_gdbindex_addressarea_entry(
     Dwarf_Error    * /*error*/);
 
 int dwarf_gdbindex_symboltable_array(Dwarf_Gdbindex /*gdbindexptr*/,
-    Dwarf_Gdbindex_Symboltable * /*symtab_list_out*/,
     Dwarf_Unsigned            * /*symtab_list_length*/,
     Dwarf_Error               * /*error*/);
 
 /*  entryindex: 0 to symtab_list_length-1 */
 int dwarf_gdbindex_symboltable_entry(
-    Dwarf_Gdbindex_Symboltable /*symtab_list*/,
+    Dwarf_Gdbindex   /*gdbindexptr*/,
     Dwarf_Unsigned   /*entryindex*/,
     Dwarf_Unsigned * /*string_offset*/,
     Dwarf_Unsigned * /*cu_vector_offset*/,
@@ -2383,7 +2378,6 @@ int dwarf_gdbindex_symboltable_entry(
 
 
 int dwarf_gdbindex_constantpool(Dwarf_Gdbindex /*gdbindexptr*/,
-    Dwarf_Gdbindex_Constantpool * /*pool*/,
     Dwarf_Unsigned * /*pool_length*/,
     Dwarf_Unsigned * /*number_of_cu_indices*/,
     Dwarf_Error    * /*error*/);
@@ -2393,12 +2387,14 @@ int dwarf_gdbindex_constantpool(Dwarf_Gdbindex /*gdbindexptr*/,
     the special initial entry
     which is the number of instances in the CU vector, a value
     returned by dwarf_gdbindex_constantpool(). */
-int dwarf_gdbindex_cuvector_value(Dwarf_Gdbindex_Constantpool /*pool*/,
+int dwarf_gdbindex_cuvector_value(Dwarf_Gdbindex /*gdbindex*/,
     Dwarf_Unsigned   /*cuvector_index*/,
     Dwarf_Unsigned * /*index*/,
+    /* The attr_value is a field of bits. For expanded version
+        use  dwarf_gdbindex_cuvector_expand_value() */
     Dwarf_Unsigned * /*attr_value*/,
     Dwarf_Error    * /*error*/);
-int dwarf_gdbindex_expand_symtab(Dwarf_Gdbindex_Constantpool /*pool*/,
+int dwarf_gdbindex_cuvector_expand_value(Dwarf_Gdbindex /*gdbindex*/,
     Dwarf_Unsigned   /*cuvector_index*/,
     Dwarf_Unsigned * /*index*/,
     Dwarf_Unsigned * /*cu_index*/,
@@ -2412,7 +2408,7 @@ int dwarf_gdbindex_expand_symtab(Dwarf_Gdbindex_Constantpool /*pool*/,
 /*  The strings in the pool follow (in memory) the cu index
     set and are NUL terminated. */
 
-int dwarf_gdbindex_string(Dwarf_Gdbindex_Constantpool /*pool*/,
+int dwarf_gdbindex_string(Dwarf_Gdbindex /*gdbindexptr*/,
     Dwarf_Unsigned   /*stringindex*/,
     const char    ** /*string_ptr*/,
     Dwarf_Error   *  /*error*/);
