@@ -134,7 +134,8 @@ set_base(Dwarf_Debug dbg,
             return DW_DLV_ERROR;
         }
         /* entry length includes pad. */
-        hdr->dg_entry_length = 3*sizeof(gdbindex_64);
+        hdr->dg_entry_length = 2*sizeof(gdbindex_64) +
+             sizeof(gdbindex_offset_type);
         count = end - start;
         count = count / hdr->dg_entry_length;
         hdr->dg_count = count;
@@ -352,6 +353,54 @@ dwarf_gdbindex_types_culist_entry(Dwarf_Gdbindex gdbindexptr,
     *t_signature = signature;
     return DW_DLV_OK;
 }
+
+int 
+dwarf_gdbindex_addressarea(Dwarf_Gdbindex gdbindexptr,
+    Dwarf_Unsigned            * list_length,
+    Dwarf_Error               * error)
+{
+    *list_length = gdbindexptr->gi_addressareahdr.dg_count;
+    return DW_DLV_OK;
+}
+
+/*    entryindex: 0 to addressarea_list_length-1 */
+int 
+dwarf_gdbindex_addressarea_entry(
+    Dwarf_Gdbindex   gdbindexptr,
+    Dwarf_Unsigned   entryindex,
+    Dwarf_Unsigned * low_address,
+    Dwarf_Unsigned * high_address,
+    Dwarf_Unsigned * cu_index,
+    Dwarf_Error    * error)
+{
+    Dwarf_Unsigned max =  gdbindexptr->gi_addressareahdr.dg_count;
+    Dwarf_Small * base = 0;
+    Dwarf_Unsigned lowaddr = 0;
+    Dwarf_Unsigned highaddr = 0;
+    Dwarf_Unsigned cuindex = 0;
+
+    if (entryindex >= max) {
+        _dwarf_error(gdbindexptr->gi_dbg, error,DW_DLE_GDB_INDEX_INDEX_ERROR);
+        return DW_DLV_ERROR;
+    }
+    base = gdbindexptr->gi_addressareahdr.dg_base;
+    base += entryindex*gdbindexptr->gi_addressareahdr.dg_entry_length;
+
+    READ_GDBINDEX(lowaddr ,Dwarf_Unsigned,
+        base,
+        sizeof(gdbindex_64));
+    READ_GDBINDEX(highaddr ,Dwarf_Unsigned,
+        base+ (1*sizeof(gdbindex_64)),
+        sizeof(gdbindex_64));
+    READ_GDBINDEX(cuindex ,Dwarf_Unsigned,
+        base+ (2*sizeof(gdbindex_64)),
+        sizeof(gdbindex_offset_type));
+    *low_address = lowaddr;
+    *high_address = highaddr;
+    *cu_index = cuindex;
+    return DW_DLV_OK;
+}
+
 
 
 

@@ -105,6 +105,44 @@ print_types_culist_array(Dwarf_Debug dbg,
     cout << endl;
     return DW_DLV_OK;
 }
+static int
+print_addressarea(Dwarf_Debug dbg,
+    Dwarf_Gdbindex  gdbindex,
+    Dwarf_Error * err)
+{
+    Dwarf_Unsigned list_len = 0;
+    Dwarf_Unsigned i;
+    int res = dwarf_gdbindex_addressarea(gdbindex,
+        &list_len,err);
+    if (res != DW_DLV_OK) {
+        print_error_and_continue(dbg,
+            "dwarf_gdbindex_addressarea failed",res,*err);
+        return res;
+    }
+    cout <<"  Address table array length: " <<list_len <<
+        " format: [entry#] lowpc highpc cu-index" <<endl;
+
+    for( i  = 0; i < list_len; i++) {
+        Dwarf_Unsigned lowpc = 0;
+        Dwarf_Unsigned highpc = 0;
+        Dwarf_Unsigned cu_index,
+        res = dwarf_gdbindex_addressarea_entry(gdbindex,i,
+            &lowpc,&highpc,
+            &cu_index,
+            err);
+        if (res != DW_DLV_OK) {
+            print_error_and_continue(dbg,
+               "dwarf_gdbindex_addressarea_entry failed",res,*err);
+            return res;
+        }
+        cout <<"    ["<< IToDec(i,4) << "] " <<
+             IToHex0N(lowpc,10) << " " <<
+             IToHex0N(highpc,10) << " " <<
+             IToDec(cu_index,4) << endl;
+    }
+    printf("\n");
+    return DW_DLV_OK;
+}
 
 extern void
 print_gdb_index(Dwarf_Debug dbg)
@@ -172,6 +210,10 @@ print_gdb_index(Dwarf_Debug dbg)
         return;
     }
     res = print_types_culist_array(dbg,gdbindex,&error);
+    if (res != DW_DLV_OK) {
+        return;
+    }
+    res = print_addressarea(dbg,gdbindex,&error);
     if (res != DW_DLV_OK) {
         return;
     }
