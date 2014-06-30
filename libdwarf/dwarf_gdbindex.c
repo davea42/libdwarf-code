@@ -306,6 +306,53 @@ dwarf_gdbindex_culist_entry(Dwarf_Gdbindex gdbindexptr,
     return DW_DLV_OK;
 }
 
+int
+dwarf_gdbindex_types_culist_array(Dwarf_Gdbindex gdbindexptr,
+    Dwarf_Unsigned       * list_length,
+    Dwarf_Error          * error)
+{
+    *list_length = gdbindexptr->gi_typesculisthdr.dg_count;
+    return DW_DLV_OK;
+}
+
+/*  entryindex: 0 to list_length-1 */
+int
+dwarf_gdbindex_types_culist_entry(Dwarf_Gdbindex gdbindexptr,
+    Dwarf_Unsigned   entryindex,
+    Dwarf_Unsigned * t_offset,
+    Dwarf_Unsigned * t_length,
+    Dwarf_Unsigned * t_signature,
+    Dwarf_Error    * error)
+{
+    Dwarf_Unsigned max =  gdbindexptr->gi_typesculisthdr.dg_count;
+    Dwarf_Small * base = 0;
+    Dwarf_Unsigned offset = 0;
+    Dwarf_Unsigned length = 0;
+    Dwarf_Unsigned signature = 0;
+    unsigned fieldlen = gdbindexptr->gi_typesculisthdr.dg_fieldlen;
+
+    if (entryindex >= max) {
+        _dwarf_error(gdbindexptr->gi_dbg, error,DW_DLE_GDB_INDEX_INDEX_ERROR);
+        return DW_DLV_ERROR;
+    }
+    base = gdbindexptr->gi_typesculisthdr.dg_base;
+    base += entryindex*gdbindexptr->gi_typesculisthdr.dg_entry_length;
+
+    READ_GDBINDEX(offset ,Dwarf_Unsigned,
+        base,
+        fieldlen);
+    READ_GDBINDEX(length ,Dwarf_Unsigned,
+        base+ (1*fieldlen),
+        fieldlen);
+    READ_GDBINDEX(signature ,Dwarf_Unsigned,
+        base+ (2*fieldlen),
+        fieldlen);
+    *t_offset = offset;
+    *t_length = length;
+    *t_signature = signature;
+    return DW_DLV_OK;
+}
+
 
 
 void

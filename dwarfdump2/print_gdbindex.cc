@@ -68,7 +68,43 @@ print_culist_array(Dwarf_Debug dbg,
     return DW_DLV_OK;
 }
 
+static int
+print_types_culist_array(Dwarf_Debug dbg,
+    Dwarf_Gdbindex  gdbindex,
+    Dwarf_Error * err)
+{
+    Dwarf_Unsigned list_len = 0;
+    Dwarf_Unsigned i;
+    int res = dwarf_gdbindex_types_culist_array(gdbindex,
+        &list_len,err);
+    if (res != DW_DLV_OK) {
+        print_error_and_continue(dbg,
+            "dwarf_gdbindex_types_culist_array failed",res,*err);
+        return res;
+    }
+    cout <<"  TU list. array length: " << list_len <<
+        " format: [entry#] cuoffset culength signature"  <<endl;
 
+    for( i  = 0; i < list_len; i++) {
+        Dwarf_Unsigned cuoffset = 0;
+        Dwarf_Unsigned culength = 0;
+        Dwarf_Unsigned signature = 0;
+        res = dwarf_gdbindex_types_culist_entry(gdbindex,i,
+            &cuoffset,&culength,
+            &signature,err);
+        if (res != DW_DLV_OK) {
+            print_error_and_continue(dbg,
+               "dwarf_gdbindex_types_culist_entry failed",res,*err);
+            return res;
+        }
+        cout <<"    ["<< IToDec(i,4) << "] " <<
+             IToHex0N(cuoffset,10) << " " <<
+             IToHex0N(culength,10) << " " <<
+             IToHex0N(signature,10) << endl;
+    }
+    cout << endl;
+    return DW_DLV_OK;
+}
 
 extern void
 print_gdb_index(Dwarf_Debug dbg)
@@ -132,6 +168,10 @@ print_gdb_index(Dwarf_Debug dbg)
         endl;
 
     res = print_culist_array(dbg,gdbindex,&error);
+    if (res != DW_DLV_OK) {
+        return;
+    }
+    res = print_types_culist_array(dbg,gdbindex,&error);
     if (res != DW_DLV_OK) {
         return;
     }

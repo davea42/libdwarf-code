@@ -1,3 +1,6 @@
+2014-06-30  David Anderson
+     * libdwarf.h.in: Remove useless interface to gdbindex.
+     * dwarf_gdbindex.c: Implement TU list access code.
 2014-06-29  David Anderson
      * dwarf_error.c: Added error codes for gdbindex access.
      * libdwarf.h.in: Revised gdbindex function interface: simpler.

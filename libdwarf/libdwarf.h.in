@@ -2342,15 +2342,6 @@ int dwarf_gdbindex_types_culist_entry(
     Dwarf_Unsigned * /*type_signature*/,
     Dwarf_Error    * /*error*/);
 
-/*  cuentryoffset is a value from symboltable (see below). */
-int dwarf_gdbindex_types_culist_entry_by_offset(
-    Dwarf_Gdbindex   /*gdbindex*/,
-    Dwarf_Unsigned   /*cuentryoffset*/, /* from symboltable */
-    Dwarf_Unsigned * /*cu_offset*/,
-    Dwarf_Unsigned * /*tu_offset*/,
-    Dwarf_Unsigned * /*type_signature*/,
-    Dwarf_Error    * /*error*/);
-
 int dwarf_gdbindex_addressarea(Dwarf_Gdbindex /*gdbindexptr*/,
     Dwarf_Unsigned            * /*addressarea_list_length*/,
     Dwarf_Error               * /*error*/);

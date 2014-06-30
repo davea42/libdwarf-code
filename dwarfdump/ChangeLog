@@ -1,3 +1,5 @@
+2014-06-30  David Anderson
+     * print_gdbindex.c: Add types printing.
 2014-06-29  David Anderson
      * print_gdbindex.c: Call latest libdwarf interfaces.
        Fix the formatting a bit.
