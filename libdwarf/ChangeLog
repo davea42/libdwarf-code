@@ -1,3 +1,7 @@
+2014-07-01  David Anderson
+     * libdwarf.h.in: Matched up gdbindex symboltable interfaces with
+       the C source.
+     * dwarf_gdbindex.c: Implement Symbol table access.
 2014-06-30  David Anderson
      * libdwarf.h.in: Remove useless interface to gdbindex.
      * dwarf_gdbindex.c: Implement TU list access code.

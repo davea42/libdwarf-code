@@ -2367,31 +2367,25 @@ int dwarf_gdbindex_symboltable_entry(
     Dwarf_Unsigned * /*cu_vector_offset*/,
     Dwarf_Error    * /*error*/);
 
-
-int dwarf_gdbindex_constantpool(Dwarf_Gdbindex /*gdbindexptr*/,
-    Dwarf_Unsigned * /*pool_length*/,
-    Dwarf_Unsigned * /*number_of_cu_indices*/,
+int dwarf_gdbindex_cuvector_length(Dwarf_Gdbindex /*gdbindex*/,
+    Dwarf_Unsigned   /*cuvector_offset*/,
+    Dwarf_Unsigned * /*innercount*/,
     Dwarf_Error    * /*error*/);
 
-/*  cuvector_index 0 to number_of_cu_indices -1
-    0 here referring to the actual first, not
-    the special initial entry
-    which is the number of instances in the CU vector, a value
-    returned by dwarf_gdbindex_constantpool(). */
-int dwarf_gdbindex_cuvector_value(Dwarf_Gdbindex /*gdbindex*/,
-    Dwarf_Unsigned   /*cuvector_index*/,
-    Dwarf_Unsigned * /*index*/,
+
+int dwarf_gdbindex_cuvector_inner_attributes(Dwarf_Gdbindex /*gdbindex*/,
+    Dwarf_Unsigned   /*cuvector_offset*/,
+    Dwarf_Unsigned   /*innerindex*/,
     /* The attr_value is a field of bits. For expanded version
         use  dwarf_gdbindex_cuvector_expand_value() */
     Dwarf_Unsigned * /*attr_value*/,
     Dwarf_Error    * /*error*/);
-int dwarf_gdbindex_cuvector_expand_value(Dwarf_Gdbindex /*gdbindex*/,
-    Dwarf_Unsigned   /*cuvector_index*/,
-    Dwarf_Unsigned * /*index*/,
+
+int dwarf_gdbindex_cuvector_instance_expand_value(Dwarf_Gdbindex /*gdbindex*/,
+    Dwarf_Unsigned   /*value*/,
     Dwarf_Unsigned * /*cu_index*/,
     Dwarf_Unsigned * /*reserved1*/,
     Dwarf_Unsigned * /*symbol_kind*/,
-    Dwarf_Unsigned * /*reserved1*/,
     Dwarf_Unsigned * /*is_static*/,
     Dwarf_Error    * /*error*/);
 
@@ -2399,8 +2393,8 @@ int dwarf_gdbindex_cuvector_expand_value(Dwarf_Gdbindex /*gdbindex*/,
 /*  The strings in the pool follow (in memory) the cu index
     set and are NUL terminated. */
 
-int dwarf_gdbindex_string(Dwarf_Gdbindex /*gdbindexptr*/,
-    Dwarf_Unsigned   /*stringindex*/,
+int dwarf_gdbindex_string_by_offset(Dwarf_Gdbindex /*gdbindexptr*/,
+    Dwarf_Unsigned   /*stringoffset*/,
     const char    ** /*string_ptr*/,
     Dwarf_Error   *  /*error*/);
 

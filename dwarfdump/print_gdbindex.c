@@ -155,6 +155,176 @@ print_addressarea(Dwarf_Debug dbg,
 }
 
 
+const char *kind_list[] = {
+  "unknown(0)  ",
+  "type(1)     ",
+  "var-enum(2) ",
+  "function(3) ",
+  "other-sym(4)",
+  "reserved(5) ",
+  "function(6) ",
+  "reserved(7) ",
+};
+const char * 
+get_kind(unsigned k)
+{
+     if (k <= 7) {
+         return kind_list[k];
+     }
+     return "kind-erroneous";
+}
+
+
+
+static int 
+print_symtab_entry(Dwarf_Debug dbg, 
+    Dwarf_Gdbindex gdbindex,
+    Dwarf_Unsigned index,
+    Dwarf_Unsigned symnameoffset,
+    Dwarf_Unsigned cuvecoffset,
+    Dwarf_Error *err)
+{
+    int res = 0;
+    const char *name = 0;
+    Dwarf_Unsigned cuvec_len = 0;
+    Dwarf_Unsigned ii = 0;
+
+    if (symnameoffset == 0 && cuvecoffset == 0) {
+        if (verbose > 1) {
+            printf("        [%4" DW_PR_DUu "] \"empty-hash-entry\"\n", index);
+        }
+        return DW_DLV_OK;
+    }
+    res = dwarf_gdbindex_string_by_offset(gdbindex,
+        symnameoffset,&name,err);
+    if(res != DW_DLV_OK) {
+        print_error_and_continue(dbg,
+            "dwarf_gdbindex_string_by_offset failed",res,*err);
+        return res;
+    }
+    res = dwarf_gdbindex_cuvector_length(gdbindex,
+        cuvecoffset,&cuvec_len,err);
+    if( res != DW_DLV_OK) {
+        print_error_and_continue(dbg,
+            "dwarf_gdbindex_cuvector_length failed",res,*err);
+        return res;
+    }
+    if (verbose > 1) {
+            printf("     [%4" DW_PR_DUu "]"
+               "stroff 0x%"    DW_PR_XZEROS DW_PR_DUx
+               " cuvecoff 0x%"    DW_PR_XZEROS DW_PR_DUx
+               " cuveclen 0x%"    DW_PR_XZEROS DW_PR_DUx "\n",
+               index,symnameoffset,cuvecoffset,cuvec_len);
+    }
+    for(ii = 0; ii < cuvec_len; ++ii ) {
+        Dwarf_Unsigned attributes = 0;
+        Dwarf_Unsigned cu_index = 0;
+        Dwarf_Unsigned reserved1 = 0;
+        Dwarf_Unsigned symbol_kind = 0;
+        Dwarf_Unsigned is_static = 0;
+
+        
+        res = dwarf_gdbindex_cuvector_inner_attributes(
+            gdbindex,cuvecoffset,ii,
+            &attributes,err);
+        if( res != DW_DLV_OK) {
+            print_error_and_continue(dbg,
+               "dwarf_gdbindex_cuvector_inner_attributes failed",res,*err);
+            return res;
+        }
+        res = dwarf_gdbindex_cuvector_instance_expand_value(gdbindex,
+            attributes, &cu_index,&reserved1,&symbol_kind, &is_static,
+            err);
+        if( res != DW_DLV_OK) {
+            print_error_and_continue(dbg,
+               "dwarf_gdbindex_cuvector_instance_expand_value failed",res,*err);
+            return res;
+        }
+        if (cuvec_len == 1) {
+            printf("  [%4" DW_PR_DUu "]"
+                "%4" DW_PR_DUu 
+                " [%s %s] \"%s\"\n",
+               index,
+               cu_index,
+               is_static?
+                   "static ":
+                   "global ",
+               get_kind(symbol_kind),
+               name);
+        } else if (ii == 0) {
+            printf("  [%4" DW_PR_DUu "]"
+                " \"%s\"\n" ,
+               index,
+               name);
+            printf("         %4" DW_PR_DUu " [%s %s]\n",
+               cu_index,
+               is_static?
+                   "static ":
+                   "global ",
+               get_kind(symbol_kind));
+        }else{
+            printf("         %4" DW_PR_DUu " [%s %s]\n",
+               cu_index,
+               is_static?
+                   "static ":
+                   "global ",
+               get_kind(symbol_kind));
+        }
+        if (verbose > 1) {
+            printf("        [%4" DW_PR_DUu "]"
+               "attr 0x%"    DW_PR_XZEROS DW_PR_DUx
+               " cuindx 0x%"    DW_PR_XZEROS DW_PR_DUx
+               " kind 0x%"    DW_PR_XZEROS DW_PR_DUx
+               " static 0x%"    DW_PR_XZEROS DW_PR_DUx "\n",
+               ii,attributes,cu_index,symbol_kind,is_static);
+        }
+
+    }
+    return DW_DLV_OK;
+}
+
+static int
+print_symboltable(Dwarf_Debug dbg,
+    Dwarf_Gdbindex  gdbindex,
+    Dwarf_Error * err)
+{
+    Dwarf_Unsigned list_len = 0;
+    Dwarf_Unsigned i;
+    int res = dwarf_gdbindex_symboltable_array(gdbindex,
+        &list_len,err);
+    if (res != DW_DLV_OK) {
+        print_error_and_continue(dbg,
+            "dwarf_gdbindex_symboltable failed",res,*err);
+        return res;
+    }
+    printf("\n  Symbol table: length %" DW_PR_DUu
+        " format: [entry#] symindex cuindex [type] \"name\" or \n",
+        list_len);
+    printf("                          "
+        " format: [entry#]  \"name\" , list of  cuindex [type]\n");
+
+    for( i  = 0; i < list_len; i++) {
+        Dwarf_Unsigned symnameoffset = 0;
+        Dwarf_Unsigned cuvecoffset = 0;
+        res = dwarf_gdbindex_symboltable_entry(gdbindex,i,
+            &symnameoffset,&cuvecoffset,
+            err);
+        if (res != DW_DLV_OK) {
+            print_error_and_continue(dbg,
+               "dwarf_gdbindex_symboltable_entry failed",res,*err);
+            return res;
+        }
+        res = print_symtab_entry(dbg,gdbindex,i,symnameoffset,cuvecoffset,err);
+        if (res != DW_DLV_OK) {
+            return res;
+        }
+    }
+    printf("\n");
+    return DW_DLV_OK;
+}
+
+
+
 
 extern void
 print_gdb_index(Dwarf_Debug dbg)
@@ -206,7 +376,7 @@ print_gdb_index(Dwarf_Debug dbg)
     printf("  Address area offset : "
         "0x%" DW_PR_XZEROS DW_PR_DUx "\n",
         types_cu_list_offset);
-    printf("  Symboltable offset  : "
+    printf("  Symbol table offset : "
         "0x%" DW_PR_XZEROS DW_PR_DUx "\n",
         address_area_offset);
     printf("  Constant pool offset: "
@@ -229,6 +399,9 @@ print_gdb_index(Dwarf_Debug dbg)
     if (res != DW_DLV_OK) {
         return;
     }
-
+    res = print_symboltable(dbg,gdbindex,&error);
+    if (res != DW_DLV_OK) {
+        return;
+    }
 }
 
