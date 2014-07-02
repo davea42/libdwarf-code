@@ -134,7 +134,7 @@ static boolean weakname_flag = FALSE;
 static boolean header_flag = FALSE; /* Control printing of Elf header. */
 
 /* Control printing of gdb_index section.*/
-static boolean gdbindex_flag = FALSE; 
+static boolean gdbindex_flag = FALSE;
 
 boolean producer_children_flag = FALSE;   /* List of CUs per compiler */
 

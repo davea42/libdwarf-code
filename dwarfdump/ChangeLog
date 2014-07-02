@@ -1,4 +1,6 @@
 2014-07-01  David Anderson
+     * dwarfdump.c, print_gdbindex.c: Fixed indentation and trailing whitespaces.
+2014-07-01  David Anderson
      * print_gdbindex.c: Now prints gdb_index symboltable.
 2014-06-30  David Anderson
      * print_gdbindex.c: Add types printing.

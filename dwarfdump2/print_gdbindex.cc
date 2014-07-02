@@ -57,12 +57,12 @@ print_culist_array(Dwarf_Debug dbg,
             &cuoffset,&culength,err);
         if (res != DW_DLV_OK) {
             print_error_and_continue(dbg,
-               "dwarf_gdbindex_culist_entry failed",res,*err);
+                "dwarf_gdbindex_culist_entry failed",res,*err);
             return res;
         }
         cout <<"    ["<< IToDec(i,4) << "] " <<
-             IToHex0N(cuoffset,10) << " " <<
-             IToHex0N(culength,10) << endl;
+            IToHex0N(cuoffset,10) << " " <<
+            IToHex0N(culength,10) << endl;
     }
     cout << endl;
     return DW_DLV_OK;
@@ -94,13 +94,13 @@ print_types_culist_array(Dwarf_Debug dbg,
             &signature,err);
         if (res != DW_DLV_OK) {
             print_error_and_continue(dbg,
-               "dwarf_gdbindex_types_culist_entry failed",res,*err);
+                "dwarf_gdbindex_types_culist_entry failed",res,*err);
             return res;
         }
         cout <<"    ["<< IToDec(i,4) << "] " <<
-             IToHex0N(cuoffset,10) << " " <<
-             IToHex0N(culength,10) << " " <<
-             IToHex0N(signature,10) << endl;
+            IToHex0N(cuoffset,10) << " " <<
+            IToHex0N(culength,10) << " " <<
+            IToHex0N(signature,10) << endl;
     }
     cout << endl;
     return DW_DLV_OK;
@@ -132,13 +132,13 @@ print_addressarea(Dwarf_Debug dbg,
             err);
         if (res != DW_DLV_OK) {
             print_error_and_continue(dbg,
-               "dwarf_gdbindex_addressarea_entry failed",res,*err);
+                "dwarf_gdbindex_addressarea_entry failed",res,*err);
             return res;
         }
         cout <<"    ["<< IToDec(i,4) << "] " <<
-             IToHex0N(lowpc,10) << " " <<
-             IToHex0N(highpc,10) << " " <<
-             IToDec(cu_index,4) << endl;
+            IToHex0N(lowpc,10) << " " <<
+            IToHex0N(highpc,10) << " " <<
+            IToDec(cu_index,4) << endl;
     }
     printf("\n");
     return DW_DLV_OK;
@@ -157,10 +157,10 @@ const char *kind_list[] = {
 const char *
 get_kind(unsigned k)
 {
-     if (k <= 7) {
-         return kind_list[k];
-     }
-     return "kind-erroneous";
+    if (k <= 7) {
+        return kind_list[k];
+    }
+    return "kind-erroneous";
 }
 
 
@@ -181,7 +181,7 @@ print_symtab_entry(Dwarf_Debug dbg,
     if (symnameoffset == 0 && cuvecoffset == 0) {
         if (verbose > 1) {
             cout <<"        [" << IToDec(index,4) <<
-              "] \"empty-hash-entry\"" << endl;
+                "] \"empty-hash-entry\"" << endl;
         }
         return DW_DLV_OK;
     }
@@ -200,10 +200,10 @@ print_symtab_entry(Dwarf_Debug dbg,
         return res;
     }
     if (verbose > 1) {
-            cout <<"     [" << IToDec(index,4) << "]" <<
-               "stroff "<<IToHex0N(symnameoffset,10) <<
-               " cuvecoff "<<IToHex0N(cuvecoffset,10) <<
-               " cuveclen "<<IToHex0N(cuvec_len,10) << endl;
+        cout <<"     [" << IToDec(index,4) << "]" <<
+            "stroff "<<IToHex0N(symnameoffset,10) <<
+            " cuvecoff "<<IToHex0N(cuvecoffset,10) <<
+            " cuveclen "<<IToHex0N(cuvec_len,10) << endl;
     }
     for(ii = 0; ii < cuvec_len; ++ii ) {
         Dwarf_Unsigned attributes = 0;
@@ -218,7 +218,7 @@ print_symtab_entry(Dwarf_Debug dbg,
             &attributes,err);
         if( res != DW_DLV_OK) {
             print_error_and_continue(dbg,
-               "dwarf_gdbindex_cuvector_inner_attributes failed",res,*err);
+                "dwarf_gdbindex_cuvector_inner_attributes failed",res,*err);
             return res;
         }
         res = dwarf_gdbindex_cuvector_instance_expand_value(gdbindex,
@@ -226,7 +226,7 @@ print_symtab_entry(Dwarf_Debug dbg,
             err);
         if( res != DW_DLV_OK) {
             print_error_and_continue(dbg,
-               "dwarf_gdbindex_cuvector_instance_expand_value failed",res,*err);
+                "dwarf_gdbindex_cuvector_instance_expand_value failed",res,*err);
             return res;
         }
         if (cuvec_len == 1) {
@@ -259,10 +259,10 @@ print_symtab_entry(Dwarf_Debug dbg,
         }
         if (verbose > 1) {
             cout <<"        ["<< IToDec(ii,4) << "]" <<
-               "attr " << IToHex0N(attributes,10) <<
-               " cuindx " << IToHex0N(cu_index,10) <<
-               " kind " << IToHex0N(symbol_kind,10) <<
-               " static " << IToHex0N(is_static,10) << endl;
+                "attr " << IToHex0N(attributes,10) <<
+                " cuindx " << IToHex0N(cu_index,10) <<
+                " kind " << IToHex0N(symbol_kind,10) <<
+                " static " << IToHex0N(is_static,10) << endl;
         }
 
     }
@@ -298,7 +298,7 @@ print_symboltable(Dwarf_Debug dbg,
             err);
         if (res != DW_DLV_OK) {
             print_error_and_continue(dbg,
-               "dwarf_gdbindex_symboltable_entry failed",res,*err);
+                "dwarf_gdbindex_symboltable_entry failed",res,*err);
             return res;
         }
         res = print_symtab_entry(dbg,gdbindex,i,symnameoffset,cuvecoffset,err);
