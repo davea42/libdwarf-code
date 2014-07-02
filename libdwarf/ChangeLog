@@ -1,4 +1,7 @@
 2014-07-01  David Anderson
+     * dwarf_alloc.c, dwarf_gdbindex.c, dwarf_init_finish.c, dwarf_opaque.h, libdwarf.h.in:
+       Fixed indent errors and removed trailing whitespace.
+2014-07-01  David Anderson
      * libdwarf.h.in: Matched up gdbindex symboltable interfaces with
        the C source.
      * dwarf_gdbindex.c: Implement Symbol table access.

@@ -586,7 +586,7 @@ is_section_known_already(Dwarf_Debug dbg,
     for which many .debug_info (and other DWARF) sections may exist.
 */
 
-static int 
+static int
 this_section_dwarf_relevant(const char *scn_name,int type)
 {
     /* A small helper function for _dwarf_setup(). */
@@ -595,19 +595,19 @@ this_section_dwarf_relevant(const char *scn_name,int type)
         && strcmp(scn_name, ".symtab")
         && strcmp(scn_name, ".strtab")
         && strcmp(scn_name, ".gdb_index")
-        && strncmp(scn_name, ".rela.",6) 
+        && strncmp(scn_name, ".rela.",6)
         /*  For an object file with incorrect rela section name,
             readelf prints correct debug information,
             as the tool takes the section type instead
             of the section name. Include the incorrect
             section name, until this test uses the section type. */
         && type != SHT_RELA)  {
-          /*  Other sections should be ignored, they
-              are not relevant for DWARF data. */
-          return FALSE;
-     }
-     /* This is one of ours. */
-     return TRUE;
+            /*  Other sections should be ignored, they
+                are not relevant for DWARF data. */
+            return FALSE;
+    }
+    /* This is one of ours. */
+    return TRUE;
 }
 
 

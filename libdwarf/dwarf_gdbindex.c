@@ -96,7 +96,7 @@ set_base(Dwarf_Debug dbg,
             section, but a useful one. */
         Dwarf_Unsigned count = 0;
         if( end < start) {
-            _dwarf_error(dbg, err,DW_DLE_GDB_INDEX_COUNT_ERROR); 
+            _dwarf_error(dbg, err,DW_DLE_GDB_INDEX_COUNT_ERROR);
             return DW_DLV_ERROR;
         }
         count = end - start;
@@ -112,24 +112,24 @@ set_base(Dwarf_Debug dbg,
         Dwarf_Unsigned count = 0;
         hdr->dg_base = start;
         if( end < start) {
-            _dwarf_error(dbg, err,DW_DLE_GDB_INDEX_COUNT_ADDR_ERROR); 
+            _dwarf_error(dbg, err,DW_DLE_GDB_INDEX_COUNT_ADDR_ERROR);
             return DW_DLV_ERROR;
         }
         /* entry length includes pad. */
         hdr->dg_entry_length = 2*sizeof(gdbindex_64) +
-             sizeof(gdbindex_offset_type);
+            sizeof(gdbindex_offset_type);
         count = end - start;
         count = count / hdr->dg_entry_length;
         hdr->dg_count = count;
-        /* The dg_fieldlen is a fake, the fields are not
-           all the same length. */
+        /*  The dg_fieldlen is a fake, the fields are not
+            all the same length. */
         hdr->dg_fieldlen = sizeof(gdbindex_offset_type);
         hdr->dg_type = type;
     }
     return DW_DLV_OK;
 }
 
-int 
+int
 dwarf_gdbindex_header(Dwarf_Debug dbg,
     Dwarf_Gdbindex * gdbindexptr,
     Dwarf_Unsigned * version,
@@ -164,10 +164,8 @@ dwarf_gdbindex_header(Dwarf_Debug dbg,
         _dwarf_error(dbg, error, DW_DLE_ERRONEOUS_GDB_INDEX_SECTION);
         return (DW_DLV_ERROR);
     }
-    
     memcpy(&header,dbg->de_debug_gdbindex.dss_data,
         sizeof(struct gi_fileheader_s));
-
     indexptr = _dwarf_get_alloc(dbg,DW_DLA_GDBINDEX,1);
     if (indexptr == NULL) {
         _dwarf_error(dbg, error, DW_DLE_ALLOC_FAIL);
@@ -200,7 +198,7 @@ dwarf_gdbindex_header(Dwarf_Debug dbg,
         dbg->de_debug_gdbindex.dss_data + indexptr->gi_cu_list_offset,
         dbg->de_debug_gdbindex.dss_data + indexptr->gi_types_cu_list_offset,
         2*sizeof(gdbindex_64),
-        sizeof(gdbindex_64), 
+        sizeof(gdbindex_64),
         git_std,error);
     res = set_base(dbg,&indexptr->gi_typesculisthdr,
         dbg->de_debug_gdbindex.dss_data + indexptr->gi_types_cu_list_offset,
@@ -222,7 +220,7 @@ dwarf_gdbindex_header(Dwarf_Debug dbg,
         git_std,error);
     res = set_base(dbg,&indexptr->gi_cuvectorhdr,
         dbg->de_debug_gdbindex.dss_data + indexptr->gi_constant_pool_offset,
-        /*  There is no real single vector size. 
+        /*  There is no real single vector size.
             but we'll use the entire rest as if there was. */
         dbg->de_debug_gdbindex.dss_data + indexptr->gi_section_length,
         sizeof(gdbindex_offset_type),
@@ -239,7 +237,7 @@ dwarf_gdbindex_header(Dwarf_Debug dbg,
     *types_cu_list_offset = indexptr->gi_types_cu_list_offset;
     *address_area_offset  = indexptr->gi_address_area_offset;
     *symbol_table_offset  = indexptr->gi_symbol_table_offset;
-    *constant_pool_offset = indexptr->gi_constant_pool_offset; 
+    *constant_pool_offset = indexptr->gi_constant_pool_offset;
     *section_size         = indexptr->gi_section_length;
     *unused_reserved = 0;
 
@@ -249,7 +247,7 @@ dwarf_gdbindex_header(Dwarf_Debug dbg,
 }
 
 
-int 
+int
 dwarf_gdbindex_culist_array(Dwarf_Gdbindex gdbindexptr,
     Dwarf_Unsigned       * list_length,
     Dwarf_Error          * error)
@@ -259,7 +257,7 @@ dwarf_gdbindex_culist_array(Dwarf_Gdbindex gdbindexptr,
 }
 
 /*  entryindex: 0 to list_length-1 */
-int 
+int
 dwarf_gdbindex_culist_entry(Dwarf_Gdbindex gdbindexptr,
     Dwarf_Unsigned   entryindex,
     Dwarf_Unsigned * cu_offset,
@@ -271,7 +269,7 @@ dwarf_gdbindex_culist_entry(Dwarf_Gdbindex gdbindexptr,
     Dwarf_Unsigned offset = 0;
     Dwarf_Unsigned length = 0;
     unsigned fieldlen = gdbindexptr->gi_culisthdr.dg_fieldlen;
-    
+
     if (entryindex >= max) {
         _dwarf_error(gdbindexptr->gi_dbg, error,DW_DLE_GDB_INDEX_INDEX_ERROR);
         return DW_DLV_ERROR;
@@ -337,7 +335,7 @@ dwarf_gdbindex_types_culist_entry(Dwarf_Gdbindex gdbindexptr,
     return DW_DLV_OK;
 }
 
-int 
+int
 dwarf_gdbindex_addressarea(Dwarf_Gdbindex gdbindexptr,
     Dwarf_Unsigned            * list_length,
     Dwarf_Error               * error)
@@ -347,7 +345,7 @@ dwarf_gdbindex_addressarea(Dwarf_Gdbindex gdbindexptr,
 }
 
 /*    entryindex: 0 to addressarea_list_length-1 */
-int 
+int
 dwarf_gdbindex_addressarea_entry(
     Dwarf_Gdbindex   gdbindexptr,
     Dwarf_Unsigned   entryindex,
@@ -394,7 +392,7 @@ dwarf_gdbindex_symboltable_array(Dwarf_Gdbindex gdbindexptr,
 }
 
 /*  entryindex: 0 to symtab_list_length-1 */
-int 
+int
 dwarf_gdbindex_symboltable_entry(
     Dwarf_Gdbindex   gdbindexptr,
     Dwarf_Unsigned   entryindex,
@@ -426,7 +424,7 @@ dwarf_gdbindex_symboltable_entry(
     return DW_DLV_OK;
 }
 
-int 
+int
 dwarf_gdbindex_cuvector_length(Dwarf_Gdbindex gdbindex,
     Dwarf_Unsigned   cuvector_offset,
     Dwarf_Unsigned * innercount,
@@ -442,15 +440,15 @@ dwarf_gdbindex_cuvector_length(Dwarf_Gdbindex gdbindex,
         _dwarf_error(gdbindex->gi_dbg, error,DW_DLE_GDB_INDEX_INDEX_ERROR);
         return DW_DLV_ERROR;
     }
-    
+
     READ_GDBINDEX(val,Dwarf_Unsigned,
         base,
         fieldlen);
     *innercount = val;
-    return DW_DLV_OK; 
+    return DW_DLV_OK;
 }
 
-int 
+int
 dwarf_gdbindex_cuvector_inner_attributes(Dwarf_Gdbindex gdbindexptr,
     Dwarf_Unsigned   cuvector_offset,
     Dwarf_Unsigned   innerindex,
@@ -460,7 +458,7 @@ dwarf_gdbindex_cuvector_inner_attributes(Dwarf_Gdbindex gdbindexptr,
     Dwarf_Error    * error)
 {
     Dwarf_Small *base = gdbindexptr->gi_cuvectorhdr.dg_base;
-    Dwarf_Small *end = gdbindexptr->gi_section_data + 
+    Dwarf_Small *end = gdbindexptr->gi_section_data +
         gdbindexptr->gi_section_length;
     Dwarf_Unsigned val = 0;
     unsigned fieldlen = gdbindexptr->gi_cuvectorhdr.dg_entry_length;
@@ -481,7 +479,7 @@ dwarf_gdbindex_cuvector_inner_attributes(Dwarf_Gdbindex gdbindexptr,
 }
 
 
-int 
+int
 dwarf_gdbindex_cuvector_instance_expand_value(Dwarf_Gdbindex gdbindexptr,
     /* will be an index passed back by FIXME */
     Dwarf_Unsigned   value,
@@ -494,14 +492,14 @@ dwarf_gdbindex_cuvector_instance_expand_value(Dwarf_Gdbindex gdbindexptr,
     *cu_index =    value         & 0xffffff;
     *reserved1 =   (value >> 24) & 0xf;
     *symbol_kind = (value >> 28) & 0x7;
-    *is_static =   (value >> 31) & 1; 
+    *is_static =   (value >> 31) & 1;
     return DW_DLV_OK;
 }
 
 
 /*  The strings in the pool follow (in memory) the cu index
     set and are NUL terminated. */
-int 
+int
 dwarf_gdbindex_string_by_offset(Dwarf_Gdbindex gdbindexptr,
     Dwarf_Unsigned   stringoffsetinpool,
     const char    ** string_ptr,

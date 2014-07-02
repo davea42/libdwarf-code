@@ -2295,7 +2295,7 @@ enum Dwarf_Form_Class dwarf_get_form_class(
     is used to quickly map an address or name to
     a skeleton CU or TU.  If present then there are
     .dwo or .dwp files somewhere to make detailed
-    debugging possible (up to user code to 
+    debugging possible (up to user code to
     find it/them and deal with them).
 
     Version 8 built by gdb, so type entries are ok as is.

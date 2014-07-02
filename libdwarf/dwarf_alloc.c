@@ -238,9 +238,7 @@ struct ial_s alloc_instance_basics[ALLOC_AREA_INDEX_TABLE_MAX] = {
 
     /* now,  we have types that are public. */
     /* 55.  New in June 2014. Gdb. */
-    {sizeof(struct Dwarf_Gdbindex_s),MULTIPLY_NO,  0, 0}, 
-
-
+    {sizeof(struct Dwarf_Gdbindex_s),MULTIPLY_NO,  0, 0},
 };
 
 /*  We are simply using the incoming pointer as the key-pointer.

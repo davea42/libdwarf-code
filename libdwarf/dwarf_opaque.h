@@ -373,7 +373,6 @@ struct Dwarf_Debug_s {
 
     /* Following for the .gdb_index section.  */
     struct Dwarf_Section_s de_debug_gdbindex;
-   
 
     /*  For non-elf, simply leave the following two structs zeroed and
         they will be ignored. */
