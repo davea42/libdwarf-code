@@ -1,3 +1,8 @@
+2014-07-02  David Anderson
+     * dwarfdump.c: A missing comma after DW_SECTNAME_GDB_INDEX
+       lead to a core dump.
+     * print_die.c: The printf format for a warning message was
+       messed up. Fixed.
 2014-07-01  David Anderson
      * dwarfdump.c, print_gdbindex.c: Fixed indentation and trailing whitespaces.
 2014-07-01  David Anderson

@@ -1675,7 +1675,7 @@ print_range_attribute(Dwarf_Debug dbg,
                 printf("\ndwarf_get_ranges() "
                     "finds no DW_AT_ranges at offset 0x%"
                     DW_PR_XZEROS DW_PR_DUx
-                    " (0x%" DW_PR_XZEROS  DW_PR_DUx ").",
+                    " (%" DW_PR_DUu ").",
                     original_off,
                     original_off);
             } else {

@@ -1658,9 +1658,9 @@ print_range_attribute(Dwarf_Debug dbg,
             if (do_print_dwarf) {
                 cout << endl;
                 cout << "dwarf_get_ranges() "
-                    "finds no DW_AT_ranges at offset 0x% ("  <<
+                    "finds no DW_AT_ranges at offset "  <<
                     IToHex0N(original_off,10) <<
-                    " " <<
+                    " (" <<
                     IToDec(original_off) <<
                     ").";
             } else {

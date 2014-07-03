@@ -1,4 +1,6 @@
-2014-07-01  David Anderson
+2014-07-02  David Anderson
+     * print_die.cc: The printf format for a warning message was
+       messed up. Fixed.
 2014-07-01  David Anderson
      * dwarfdump.cc, print_gdbindex.cc: Fixed indentation 
        and trailing whitespaces.

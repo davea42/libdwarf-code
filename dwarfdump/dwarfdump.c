@@ -577,7 +577,7 @@ print_object_header(Elf *elf,Dwarf_Debug dbg,unsigned local_section_map)
         DW_SECTNAME_DEBUG_PUBTYPES,
         DW_SECTNAME_DEBUG_TYPES,
         DW_SECTNAME_TEXT,
-        DW_SECTNAME_GDB_INDEX
+        DW_SECTNAME_GDB_INDEX,
         ""
     };
 
