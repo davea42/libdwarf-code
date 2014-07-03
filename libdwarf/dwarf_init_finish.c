@@ -617,7 +617,6 @@ _dwarf_setup(Dwarf_Debug dbg, Dwarf_Error * error)
     const char *scn_name = 0;
     int foundDwarf = 0;
     struct Dwarf_Obj_Access_Interface_s * obj = 0;
-    int sectionerr = DW_DLV_OK;
 
     Dwarf_Endianness endianness;
 

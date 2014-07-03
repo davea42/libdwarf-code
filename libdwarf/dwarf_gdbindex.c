@@ -145,9 +145,6 @@ dwarf_gdbindex_header(Dwarf_Debug dbg,
 
     struct gi_fileheader_s header;
     Dwarf_Gdbindex indexptr = 0;
-    Dwarf_Unsigned entry_count = 0;
-    Dwarf_Small *base = 0;
-
     int res = DW_DLV_ERROR;
 
     if (!dbg->de_debug_gdbindex.dss_size) {

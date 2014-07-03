@@ -52,9 +52,9 @@
 
 #include <stddef.h>
 
-/* The 'debug_info' names below are non-zero (non-NULL) only
-   if we are processing a debug_info section. And vice versa
-   for a debug_types section. */
+/*  The 'debug_info' names below are non-zero (non-NULL) only
+    if we are processing a debug_info section. And vice versa
+    for a debug_types section. */
 
 struct Dwarf_Die_s {
     Dwarf_Byte_Ptr di_debug_ptr;
@@ -115,7 +115,7 @@ struct Dwarf_CU_Context_s {
 
         cc_length is the length of the compilation unit excluding
         cc_length_size and cc_extension_size.  */
-    Dwarf_Word cc_length;
+    Dwarf_Unsigned cc_length;
 
     /*  cc_length_size is the size in bytes of an offset.
         4 for 32bit dwarf, 8 for 64bit dwarf (whether MIPS/IRIX
@@ -131,13 +131,13 @@ struct Dwarf_CU_Context_s {
     Dwarf_Small cc_extension_size;
 
     Dwarf_Half cc_version_stamp;
-    Dwarf_Word cc_abbrev_offset;
+    Dwarf_Unsigned cc_abbrev_offset;
     Dwarf_Small cc_address_size;
     /*  cc_debug_offset is the offset in the section
-        of the CU header of this CU.  Dwarf_Word
-        should be large enough.  May be debug_info or debug_types
+        of the CU header of this CU.
+        May be debug_info or debug_types
         but those are distinct. See cc_is_info flag. */
-    Dwarf_Word cc_debug_offset;
+    Dwarf_Unsigned cc_debug_offset;
     Dwarf_Sig8  cc_signature;
     Dwarf_Unsigned cc_typeoffset;
 
@@ -254,8 +254,11 @@ struct Dwarf_Debug_InfoTypes_s {
     Dwarf_CU_Context de_offdie_cu_context;
     Dwarf_CU_Context de_offdie_cu_context_end;
 
-    /*  Offset of last byte of last CU read. */
-    Dwarf_Word de_last_offset;
+    /*  Offset of last byte of last CU read.
+        Actually one-past that last byte.  So
+        use care and compare as offset >= de_last_offset
+        to know if offset is too big. */
+    Dwarf_Unsigned de_last_offset;
     /*  de_last_di_info_ptr and de_last_die are used with
         dwarf_siblingof, dwarf_child, and dwarf_validate_die_sibling.
         dwarf_validate_die_sibling will not give meaningful results

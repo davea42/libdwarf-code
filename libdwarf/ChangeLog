@@ -1,3 +1,13 @@
+2014-07-03  David Anderson
+     * dwarf_die_deliv.c: Fixed CU type offset check. Created local variable
+       so we do not repeat a calculation so the error does not recur and simplifying
+       nearby code.
+     * gdb_index.c: Remove unused local variable.
+     * dwarf_opaque.h: Change offset entries from Dwarf_Word to Dwarf_Unsigned
+       to ensure we do not remove bits from values.
+     * dwarf_query.c: Remove unused local variable and a comment referencing
+       that unused variable.
+     * pro_reloc_stream.c: Remove unused local variable.
 2014-07-01  David Anderson
      * dwarf_alloc.c, dwarf_gdbindex.c, dwarf_init_finish.c, dwarf_opaque.h, libdwarf.h.in:
        Fixed indent errors and removed trailing whitespace.

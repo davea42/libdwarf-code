@@ -722,7 +722,6 @@ _dwarf_get_address_base_attr_value(Dwarf_Debug dbg,
     Dwarf_Error *error)
 {
     int res = 0;
-    Dwarf_Bool hasattr = 0;
     Dwarf_Die cudie = 0;
     Dwarf_Bool cu_die_offset_present = 0;
     Dwarf_Unsigned cu_die_offset = 0;
@@ -765,7 +764,6 @@ _dwarf_get_address_base_attr_value(Dwarf_Debug dbg,
         return DW_DLV_OK;
     }
     /* NO ENTRY, try the other attr. */
-    /* DW_DLV_OK, 0==hasattr.  So no Entry */
     res = dwarf_attr(cudie,DW_AT_GNU_addr_base, &myattr,error);
     if(res == DW_DLV_NO_ENTRY) {
         res = dwarf_attr(cudie,DW_AT_addr_base, &myattr,error);
