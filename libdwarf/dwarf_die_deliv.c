@@ -171,6 +171,16 @@ _dwarf_find_offdie_CU_Context(Dwarf_Debug dbg, Dwarf_Off offset,
     Returns NULL on error.  As always, being an
     internal routine, assumes a good dbg.
 
+    The offset argument is global offset, the offset
+    in the section, irrespective of CUs.
+
+    max_cu_local_offset is a local offset in this CU.
+    So zero of this field is immediately following the length
+    field of the CU header. so max_cu_local_offset is
+    identical to the CU length field.
+    max_cu_global_offset is the offset one-past the end
+    of this entire CU.
+
     This function must always set a dwarf error code
     before returning NULL. Always.  */
 static Dwarf_CU_Context
@@ -183,7 +193,8 @@ _dwarf_make_CU_Context(Dwarf_Debug dbg,
     Dwarf_Unsigned typeoffset = 0;
     Dwarf_Sig8 signaturedata;
     Dwarf_Unsigned types_extra_len = 0;
-    Dwarf_Unsigned max_cu_offset =  0;
+    Dwarf_Unsigned max_cu_local_offset =  0;
+    Dwarf_Unsigned max_cu_global_offset =  0;
     Dwarf_Byte_Ptr cu_ptr = 0;
     int local_extension_size = 0;
     int local_length_size = 0;
@@ -215,7 +226,9 @@ _dwarf_make_CU_Context(Dwarf_Debug dbg,
 
 
     cu_context->cc_length = length;
-    max_cu_offset =  length + local_length_size + local_extension_size;
+    max_cu_local_offset =  length;
+    max_cu_global_offset =  offset + length + 
+        local_extension_size + local_length_size;
 
     READ_UNALIGNED(dbg, cu_context->cc_version_stamp, Dwarf_Half,
         cu_ptr, sizeof(Dwarf_Half));
@@ -241,7 +254,7 @@ _dwarf_make_CU_Context(Dwarf_Debug dbg,
     }
     if ((length < (CU_VERSION_STAMP_SIZE + local_length_size +
         CU_ADDRESS_SIZE_SIZE + types_extra_len)) ||
-        ((offset + max_cu_offset) > section_size)) {
+        (max_cu_global_offset > section_size)) {
 
         dwarf_dealloc(dbg, cu_context, DW_DLA_CU_CONTEXT);
         _dwarf_error(dbg, error, DW_DLE_CU_LENGTH_ERROR);
@@ -270,7 +283,7 @@ _dwarf_make_CU_Context(Dwarf_Debug dbg,
         cu_context->cc_typeoffset = typeoffset;
         cu_context->cc_signature = signaturedata;
         {
-            if (typeoffset >= max_cu_offset) {
+            if (typeoffset >= max_cu_local_offset) {
                 dwarf_dealloc(dbg, cu_context, DW_DLA_CU_CONTEXT);
                 _dwarf_error(dbg, error, DW_DLE_DEBUG_TYPEOFFSET_BAD);
                 return (NULL);
@@ -293,7 +306,7 @@ _dwarf_make_CU_Context(Dwarf_Debug dbg,
 
     cu_context->cc_debug_offset = offset;
 
-    dis->de_last_offset = offset + max_cu_offset;
+    dis->de_last_offset = max_cu_global_offset;
 
     if (dis->de_cu_context_list == NULL) {
         dis->de_cu_context_list = cu_context;

@@ -135,8 +135,10 @@ struct Dwarf_CU_Context_s {
     Dwarf_Small cc_address_size;
     /*  cc_debug_offset is the offset in the section
         of the CU header of this CU.
+        That is, it is a section global offset.
         May be debug_info or debug_types
-        but those are distinct. See cc_is_info flag. */
+        but those are distinct.
+        See cc_is_info flag. */
     Dwarf_Unsigned cc_debug_offset;
     Dwarf_Sig8  cc_signature;
     Dwarf_Unsigned cc_typeoffset;

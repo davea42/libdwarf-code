@@ -1,3 +1,19 @@
+2014-07-05  David Anderson
+     * dwarf_arange.c(dwarf_get_aranges_list): Remove the length variable
+       as its calculated value is unused.  rename length to area_length
+       for clarity.  Calculate arange_ptr_past_end early and
+       correctly.  Ensure that the test for version 4 is a >=
+       to reflect normal standards upgrades.
+     * dwarf_die_deliv.c(dwarf_find_offdie_CU_Context): Add commentary
+       about offsets and lengths for clarity.
+       Rename fields for clarity about local vs global offset.
+       Use the newly named fields for precise tests of section overflow of
+       a type unit.
+     * dwarf_frame.h: Add commentary about pointers in the cie_fde_prefix_s
+       structure.
+     * dwarf_global.c(_dwarf_internal_get_pubnames_like_data): Add 
+       commentary about the of fields.
+     * dwarf_opaque.h: Improve commentary about offsets. 
 2014-07-03  David Anderson
      * dwarf_die_deliv.c: Fixed CU type offset check. Created local variable
        so we do not repeat a calculation so the error does not recur and simplifying
