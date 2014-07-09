@@ -503,7 +503,8 @@ typedef struct Dwarf_Abbrev_s*     Dwarf_Abbrev;
 typedef struct Dwarf_Fde_s*        Dwarf_Fde;
 typedef struct Dwarf_Cie_s*        Dwarf_Cie;
 typedef struct Dwarf_Arange_s*     Dwarf_Arange;
-typedef struct Dwarf_Gdbindex_s*              Dwarf_Gdbindex;
+typedef struct Dwarf_Gdbindex_s*   Dwarf_Gdbindex;
+typedef struct Dwarf_Xu_Index_Header_s* Dwarf_Xu_Index_Header;
 
 
 /* Opaque types for Producer Library. */
@@ -774,6 +775,7 @@ struct Dwarf_Obj_Access_Interface_s {
 /* 0x1e (30) to 0x36 (54) reserved for internal to libdwarf types. */
 
 #define DW_DLA_GDBINDEX        0x37     /* Dwarf_Gdbindex */
+#define DW_DLA_XU_INDEX        0x38     /* Dwarf_Xu_Index_Header */
 
 /* The augmenter string for CIE */
 #define DW_CIE_AUGMENTER_STRING_V0              "z"
@@ -1111,10 +1113,14 @@ struct Dwarf_Obj_Access_Interface_s {
 #define DW_DLE_GDB_INDEX_COUNT_ADDR_ERROR      263
 #define DW_DLE_GDB_INDEX_INDEX_ERROR           264
 #define DW_DLE_GDB_INDEX_CUVEC_ERROR           265
+#define DW_DLE_DUPLICATE_CU_INDEX              266
+#define DW_DLE_DUPLICATE_TU_INDEX              267
+#define DW_DLE_XU_TYPE_ARG_ERROR               268
+#define DW_DLE_XU_IMPOSSIBLE_ERROR             269
 
 
     /* DW_DLE_LAST MUST EQUAL LAST ERROR NUMBER */
-#define DW_DLE_LAST        265
+#define DW_DLE_LAST        269
 #define DW_DLE_LO_USER     0x10000
 
     /*  Taken as meaning 'undefined value', this is not
@@ -2401,6 +2407,59 @@ int dwarf_gdbindex_string_by_offset(Dwarf_Gdbindex /*gdbindexptr*/,
 void dwarf_gdbindex_free(Dwarf_Gdbindex /*gdbindexptr*/);
 
 /*  END gdbindex operations. */
+/*  START .debug_cu_index and .debug_tu_index operations. */
+
+int dwarf_get_xu_index_header(Dwarf_Debug /*dbg*/,
+    const char *  section_type, /* "tu" or "cu" */
+    Dwarf_Xu_Index_Header * /*xuhdr*/,
+    Dwarf_Unsigned *            /*version_number*/,
+    Dwarf_Unsigned *            /*offsets_count L*/,
+    Dwarf_Unsigned *            /*units_count N*/,
+    Dwarf_Unsigned *            /*hash_slots_count M*/,
+    const char     **           /*sect_name*/,
+    Dwarf_Error *               /*err*/);
+
+int dwarf_get_xu_index_section_type(Dwarf_Xu_Index_Header /*xuhdr*/,
+    /*  the function returns a pointer to
+        the immutable string "tu" or "cu" via this arg. Do not free.  */
+    const char ** /*typename*/,
+    /*  the function returns a pointer to
+        the immutable section name. Do not free.
+        .debug_cu_index or .debug_tu_index */
+    const char ** /*sectionname*/,
+    Dwarf_Error * /*err*/);
+
+/*  Index values 0 to M-1 are valid. */
+int dwarf_get_xu_hash_entry(Dwarf_Xu_Index_Header /*xuhdr*/,
+    Dwarf_Unsigned    /*index*/,
+    /* returns the hash integer. 64 bits. */
+    Dwarf_Unsigned *  /*hash_value*/,
+
+    /* returns the index into rows of offset/size tables. */
+    Dwarf_Unsigned *  /*index_to_sections*/,
+    Dwarf_Error *     /*err*/);
+
+/*  Row 0, columns 0 to L-1,  are the section id's,
+    such as DW_SECT_INFO (ie, 1).
+    Rows 1 to N are section offset values. */
+int dwarf_get_xu_section_offset(Dwarf_Xu_Index_Header /*xuhdr*/,
+    Dwarf_Unsigned  /*row_index*/,
+    Dwarf_Unsigned  /*column_index*/,
+    /*  For row zero, the field below is really returning
+        the section id. */
+    Dwarf_Unsigned* /*sec_offset*/,
+    Dwarf_Error *   /*err*/);
+/*  Rows 1 to N are section size values. */
+int dwarf_get_xu_section_size(Dwarf_Xu_Index_Header /*xuhdr*/,
+    Dwarf_Unsigned  /*row_index*/,
+    Dwarf_Unsigned  /*column_index*/,
+    Dwarf_Unsigned* /*sec_size*/,
+    Dwarf_Error *   /*err*/);
+
+void dwarf_xu_header_free(Dwarf_Xu_Index_Header /*xuhdr*/);
+
+
+/*  END .debug_cu_index and .debug_tu_index operations. */
 
 
 /*  Utility operations */

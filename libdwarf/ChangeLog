@@ -1,3 +1,27 @@
+2014-07-09  David Anderson
+     * Makefile.in: Added dwarf_xu_index.o. Moved dwarf_macro.o
+       to get closer to alphabetical order in the list.
+     * dwarf.h: Added DW_SECT codes so the .debug_[tc]u.index
+       sections can be interpreted properly. DWARF5.
+     * dwarf_alloc.c: Added dwarf_xu_index.h #include. Added
+       struct Dwarf_Xu_Index_Header_s to alloced structs.
+       Added a couple lines of commentary about .gdb_index
+       section access type.
+     * dwarf_alloc.h: Increased  ALLOC_AREA_INDEX_TABLE_MAX to 57
+       for the new alloc type.
+     * dwarf_die_deliv.c: Removed trailing whitespace.
+     * dwarf_elf_access.c: Added commentary.
+     * dwarf_error.c: Added new error codes for .debug_tu_index
+       and .debug_cu_index sections code.
+     * dwarf_init_finish.c: Add handling of .debug_tu_index
+       and .debug_cu_index sections.
+     * dwarf_opaque.h: Add de_debug_cu_index and
+       de_debug_tu_index to Dwarf_Debug_s struct.
+     * dwarf_xu_index.c: New code for the newly handled
+       DWARF5 sections .debug_tu_index and .debug_cu_index .
+     * dwarf_xu_index.h: Defines struct Dwarf_Xu_Index_Header_s.
+     * libdwarf.h.in: Declares new functions implementing some of the
+       new section interfaces.
 2014-07-05  David Anderson
      * dwarf_arange.c(dwarf_get_aranges_list): Remove the length variable
        as its calculated value is unused.  rename length to area_length

@@ -1,3 +1,9 @@
+2014-07-09  David Anderson
+     * Makefile.n: Add print_debugfission.o to the list.
+     * globals.h: Add print_debugfission_index() interface.
+     * print_debugfission.c: New file beginning to
+       support  print of .debug_tu_index and 
+       .debug_cu_index sections  (DWARF5).
 2014-07-02  David Anderson
      * dwarfdump.c: A missing comma after DW_SECTNAME_GDB_INDEX
        lead to a core dump.

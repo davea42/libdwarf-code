@@ -227,7 +227,7 @@ _dwarf_make_CU_Context(Dwarf_Debug dbg,
 
     cu_context->cc_length = length;
     max_cu_local_offset =  length;
-    max_cu_global_offset =  offset + length + 
+    max_cu_global_offset =  offset + length +
         local_extension_size + local_length_size;
 
     READ_UNALIGNED(dbg, cu_context->cc_version_stamp, Dwarf_Half,

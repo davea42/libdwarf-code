@@ -760,6 +760,19 @@ extern "C" {
 
 #define DW_ATE_hi_user                  0xff
 
+/*  DWARF5 DebugFission object section id values
+    for  .dwp object section offsets hash table.
+    0 is reserved, not used.
+*/
+#define DW_SECT_INFO        1  /* .debug_info.dwo        DWARF5 */
+#define DW_SECT_TYPES       2  /* .debug_types.dwo       DWARF5 */
+#define DW_SECT_ABBREV      3  /* .debug_abbrev.dwo      DWARF5 */
+#define DW_SECT_LINE        4  /* .debug_line.dwo        DWARF5 */
+#define DW_SECT_LOC         5  /* .debug_loc.dwo         DWARF5 */
+#define DW_SECT_STR_OFFSETS 6  /* .debug_str_offsets.dwo DWARF5 */
+#define DW_SECT_MACINFO     7  /* .debug_macinfo.dwo     DWARF5 */
+#define DW_SECT_MACRO       8  /* .debug_macro.dwo       DWARF5 */
+
 
 /* Decimal Sign codes. */
 #define DW_DS_unsigned                  0x01 /* DWARF3f */

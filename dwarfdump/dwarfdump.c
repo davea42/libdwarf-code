@@ -1080,7 +1080,11 @@ process_one_file(Elf * elf, const char * file_name, int archive,
     }
     if (gdbindex_flag) {
         reset_overall_CU_error_data();
+        /*  By definition only one of the following indicies
+            can exist in a given object. */
         print_gdb_index(dbg);
+        print_debugfission_index(dbg,"cu");
+        print_debugfission_index(dbg,"tu");
     }
     if (pubnames_flag) {
         reset_overall_CU_error_data();

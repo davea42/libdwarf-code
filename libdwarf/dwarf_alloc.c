@@ -66,6 +66,7 @@
 #include "dwarf_harmless.h"
 #include "dwarf_tsearch.h"
 #include "dwarf_gdbindex.h"
+#include "dwarf_xu_index.h"
 
 #define TRUE 1
 #define FALSE 0
@@ -236,9 +237,13 @@ struct ial_s alloc_instance_basics[ALLOC_AREA_INDEX_TABLE_MAX] = {
     {sizeof(int),MULTIPLY_NO,  0, 0}, /* reserved for future internal  types*/
     {sizeof(int),MULTIPLY_NO,  0, 0}, /* reserved for future internal  types*/
 
-    /* now,  we have types that are public. */
-    /* 55.  New in June 2014. Gdb. */
+    /*  now,  we have types that are public. */
+    /*  55.  New in June 2014. Gdb. */
     {sizeof(struct Dwarf_Gdbindex_s),MULTIPLY_NO,  0, 0},
+
+    /*  56.  New in July 2014. DWARF5 DebugFission dwp file sections 
+        .debug_cu_index and .debug_tu_index . */
+    {sizeof(struct Dwarf_Xu_Index_Header_s),MULTIPLY_NO,  0, 0},
 };
 
 /*  We are simply using the incoming pointer as the key-pointer.

@@ -87,6 +87,7 @@ OBJS= dwarf_abbrev.o \
         dwarf_line.o \
         dwarf_line2.o \
         dwarf_loc.o \
+	dwarf_macro.o \
         dwarf_original_elf_init.o \
         dwarf_query.o \
         dwarf_string.o \
@@ -99,10 +100,10 @@ OBJS= dwarf_abbrev.o \
         dwarf_tsearchhash.o \
         dwarf_vars.o \
         dwarf_weaks.o    \
+        dwarf_xu_index.o    \
         dwarf_addr_finder.o \
 	dwarf_sort_line.o \
 	dwarf_print_lines.o \
-	dwarf_macro.o \
 	malloc_check.o \
         pro_alloc.o \
         pro_arange.o \

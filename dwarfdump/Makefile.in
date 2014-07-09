@@ -50,6 +50,7 @@ FINALOBJECTS = \
 	esb.o \
 	print_abbrevs.o \
 	print_aranges.o \
+	print_debugfission.o \
 	print_die.o \
 	print_frames.o  \
 	print_gdbindex.o  \

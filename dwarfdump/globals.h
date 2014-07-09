@@ -449,6 +449,8 @@ extern void dump_block(char *prefix, char *data, Dwarf_Signed len);
 extern void format_sig8_string(Dwarf_Sig8 *data,struct esb_s *out);
 
 extern void print_gdb_index(Dwarf_Debug dbg);
+extern void print_debugfission_index(Dwarf_Debug dbg,const char *type);
+
 
 int
 dwarfdump_print_one_locdesc(Dwarf_Debug dbg,

@@ -25,15 +25,6 @@
   Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston MA 02110-1301,
   USA.
 
-  Contact information:  Silicon Graphics, Inc., 1500 Crittenden Lane,
-  Mountain View, CA 94043, or:
-
-  http://www.sgi.com
-
-  For further information regarding this notice, see:
-
-  http://oss.sgi.com/projects/GenInfo/NoticeExplan
-
 */
 
 #include "config.h"
@@ -539,6 +530,28 @@ enter_section_in_de_debug_sections_array(Dwarf_Debug dbg,
         sectionerr = add_debug_section_info(dbg,".gdb_index",
             &dbg->de_debug_gdbindex,
             DW_DLE_DUPLICATE_GDB_INDEX,0,
+            FALSE,err);
+        if (sectionerr != DW_DLV_OK) {
+            return sectionerr;
+        }
+        return DW_DLV_OK;
+    }
+    if(!strcmp(scn_name,".debug_cu_index")) {
+        /* gdb added this. */
+        sectionerr = add_debug_section_info(dbg,".debug_cu_index",
+            &dbg->de_debug_cu_index,
+            DW_DLE_DUPLICATE_CU_INDEX,0,
+            FALSE,err);
+        if (sectionerr != DW_DLV_OK) {
+            return sectionerr;
+        }
+        return DW_DLV_OK;
+    }
+    if(!strcmp(scn_name,".debug_tu_index")) {
+        /* gdb added this. */
+        sectionerr = add_debug_section_info(dbg,".debug_tu_index",
+            &dbg->de_debug_tu_index,
+            DW_DLE_DUPLICATE_TU_INDEX,0,
             FALSE,err);
         if (sectionerr != DW_DLV_OK) {
             return sectionerr;
