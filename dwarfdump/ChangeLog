@@ -1,4 +1,7 @@
 2014-07-09  David Anderson
+     * print_debugfission.c: Removed trailing whitespace
+       characters.
+2014-07-09  David Anderson
      * Makefile.n: Add print_debugfission.o to the list.
      * globals.h: Add print_debugfission_index() interface.
      * print_debugfission.c: New file beginning to

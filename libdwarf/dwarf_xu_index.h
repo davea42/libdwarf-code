@@ -51,7 +51,7 @@ struct Dwarf_Xu_Index_Header_s {
     char             gx_type[4];
 
     /* Do not free gx_section_name. */
-    const char     * gx_section_name ; 
+    const char     * gx_section_name;
 };
 
 

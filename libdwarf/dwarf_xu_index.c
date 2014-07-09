@@ -31,12 +31,12 @@
 */
 
 
-/*  The file and functions have  'xu' because 
+/*  The file and functions have  'xu' because
     the .debug_cu_index and .debug_tu_index
     sections have the same layout and this deals with both.
 
     This is DebugFission, part of DWARF5.
-   
+
     It allows properly reading a .dwp object file
     with debug-information (no code).
 */
@@ -57,7 +57,7 @@ typedef __uint32_t xu_uint32_t;
 int
 dwarf_get_xu_index_header(Dwarf_Debug dbg,
     /* Pass in section_type "tu" or "cu" */
-    const char *     section_type, 
+    const char *     section_type,
     Dwarf_Xu_Index_Header * xuptr,
     Dwarf_Unsigned * version,
     Dwarf_Unsigned * number_of_columns, /* L */
@@ -150,7 +150,7 @@ int dwarf_get_xu_index_section_type(Dwarf_Xu_Index_Header xuhdr,
     Dwarf_Error * err)
 {
     *typename    = &xuhdr->gx_type[0];
-    *sectionname = xuhdr->gx_section_name; 
+    *sectionname = xuhdr->gx_section_name;
     return DW_DLV_OK;
 }
 

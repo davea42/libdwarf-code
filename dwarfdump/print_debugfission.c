@@ -71,7 +71,7 @@ print_debugfission_index(Dwarf_Debug dbg,const char *type)
         &err);
     if (res == DW_DLV_NO_ENTRY) {
         /* Impossible. */
-        print_error(dbg,"dwarf_get_xu_index_section_type", 
+        print_error(dbg,"dwarf_get_xu_index_section_type",
             DW_DLE_XU_IMPOSSIBLE_ERROR,err);
         dwarf_xu_header_free(xuhdr);
         return;
@@ -83,19 +83,17 @@ print_debugfission_index(Dwarf_Debug dbg,const char *type)
         return;
     }
     if (strcmp(section_type2,type)) {
-        print_error(dbg,"dwarf_get_xu_index_section_type", 
+        print_error(dbg,"dwarf_get_xu_index_section_type",
             DW_DLE_XU_IMPOSSIBLE_ERROR,err);
         dwarf_xu_header_free(xuhdr);
         return;
-    }      
-
-    
+    }
     printf("\n%s\n",section_name);
     printf("  Version:           %" DW_PR_DUu "\n",
         version_number);
     printf("  Number of columns: %" DW_PR_DUu "\n",
         offsets_count);
-    printf("  number of entries: %" DW_PR_DUu  "\n",   
+    printf("  number of entries: %" DW_PR_DUu  "\n",
         units_count);
     printf("  Number of slots:   %" DW_PR_DUu "\n",
         hash_slots_count);

@@ -1,4 +1,7 @@
 2014-07-09  David Anderson
+     *  dwarf_alloc.c,dwarf_xu_index.c,dwarf_xu_index.h:
+        Removed trailing whitespace characters.
+2014-07-09  David Anderson
      * Makefile.in: Added dwarf_xu_index.o. Moved dwarf_macro.o
        to get closer to alphabetical order in the list.
      * dwarf.h: Added DW_SECT codes so the .debug_[tc]u.index

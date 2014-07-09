@@ -241,7 +241,7 @@ struct ial_s alloc_instance_basics[ALLOC_AREA_INDEX_TABLE_MAX] = {
     /*  55.  New in June 2014. Gdb. */
     {sizeof(struct Dwarf_Gdbindex_s),MULTIPLY_NO,  0, 0},
 
-    /*  56.  New in July 2014. DWARF5 DebugFission dwp file sections 
+    /*  56.  New in July 2014. DWARF5 DebugFission dwp file sections
         .debug_cu_index and .debug_tu_index . */
     {sizeof(struct Dwarf_Xu_Index_Header_s),MULTIPLY_NO,  0, 0},
 };
