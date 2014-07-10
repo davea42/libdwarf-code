@@ -1117,10 +1117,13 @@ struct Dwarf_Obj_Access_Interface_s {
 #define DW_DLE_DUPLICATE_TU_INDEX              267
 #define DW_DLE_XU_TYPE_ARG_ERROR               268
 #define DW_DLE_XU_IMPOSSIBLE_ERROR             269
+#define DW_DLE_XU_NAME_COL_ERROR               270
+#define DW_DLE_XU_HASH_ROW_ERROR               271
+#define DW_DLE_XU_HASH_INDEX_ERROR             272
 
 
     /* DW_DLE_LAST MUST EQUAL LAST ERROR NUMBER */
-#define DW_DLE_LAST        269
+#define DW_DLE_LAST        272
 #define DW_DLE_LO_USER     0x10000
 
     /*  Taken as meaning 'undefined value', this is not
@@ -2440,19 +2443,21 @@ int dwarf_get_xu_hash_entry(Dwarf_Xu_Index_Header /*xuhdr*/,
     Dwarf_Error *     /*err*/);
 
 /*  Row 0, columns 0 to L-1,  are the section id's,
-    such as DW_SECT_INFO (ie, 1).
-    Rows 1 to N are section offset values. */
+    such as DW_SECT_INFO (ie, 1) (sect size set zero). */
+int dwarf_get_xu_section_names(Dwarf_Xu_Index_Header /*xuhdr*/,
+    /* defined to be row zero. */
+    Dwarf_Unsigned  /*column_index*/,
+    Dwarf_Unsigned* /*DW_SECT_ number*/,
+    const char **   /*DW_SECT_ name*/,
+    Dwarf_Error *   /*err*/);
+    
+    /* Rows 1 to N col 0 to L-1 are section offset and length values. */
 int dwarf_get_xu_section_offset(Dwarf_Xu_Index_Header /*xuhdr*/,
     Dwarf_Unsigned  /*row_index*/,
     Dwarf_Unsigned  /*column_index*/,
     /*  For row zero, the field below is really returning
         the section id. */
     Dwarf_Unsigned* /*sec_offset*/,
-    Dwarf_Error *   /*err*/);
-/*  Rows 1 to N are section size values. */
-int dwarf_get_xu_section_size(Dwarf_Xu_Index_Header /*xuhdr*/,
-    Dwarf_Unsigned  /*row_index*/,
-    Dwarf_Unsigned  /*column_index*/,
     Dwarf_Unsigned* /*sec_size*/,
     Dwarf_Error *   /*err*/);
 

@@ -348,6 +348,9 @@ const char *_dwarf_errmsgs[] = {
     "DW_DLE_DUPLICATE_TU_INDEX(267)",
     "DW_DLE_XU_TYPE_ARG_ERROR(268)",
     "DW_DLE_XU_IMPOSSIBLE_ERROR(269)",
+    "DW_DLE_XU_NAME_COL_ERROR(270)",
+    "DW_DLE_XU_HASH_ROW_ERROR(271)",
+    "DW_DLE_XU_HASH_INDEX_ERROR(272)",
 };
 
 

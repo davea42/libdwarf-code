@@ -98,6 +98,41 @@ print_debugfission_index(Dwarf_Debug dbg,const char *type)
     printf("  Number of slots:   %" DW_PR_DUu "\n",
         hash_slots_count);
 
+    if (hash_slots_count > 0) {
+        printf("\n");
+        printf("           hash               index\n");
+    }
+
+    {
+        Dwarf_Unsigned h = 0;   
+        for( h = 0; h < hash_slots_count; h++) {
+            Dwarf_Unsigned hashval = 0;
+            Dwarf_Unsigned index = 0;
+            res = dwarf_get_xu_hash_entry(xuhdr,h,
+               &hashval,&index,&err);
+            if (res == DW_DLV_ERROR) {
+               print_error(dbg,"dwarf_get_xu_hash_entry",res,err);
+               dwarf_xu_header_free(xuhdr);
+               return;
+            } else if (res == DW_DLV_NO_ENTRY) {
+               /* Impossible */
+                printf("  [%4" DW_PR_DUu "]  "
+                    "dwarf_get_xu_hash_entry impossible return code: "
+                    "No entry?\n",
+                    h);
+                return;
+            } else if (hashval == 0 && index == 0 ) {
+                /* An unused hash slot, we do not print them */
+                continue;
+            }
+            printf("  [%4" DW_PR_DUu "] 0x%16" DW_PR_DUx 
+                " %8" DW_PR_DUu  "\n",
+                h,
+                hashval,
+                index);
+        }
+    }
+
     dwarf_xu_header_free(xuhdr);
 }
 

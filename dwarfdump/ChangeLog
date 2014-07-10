@@ -1,3 +1,6 @@
+2014-07-10  David Anderson
+     * print_debugfission.c: Prints the hash table values of
+       the .debug_tu_index and .debug_cu_index sections.
 2014-07-09  David Anderson
      * print_debugfission.c: Removed trailing whitespace
        characters.
