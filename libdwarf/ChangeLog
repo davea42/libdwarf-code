@@ -1,7 +1,7 @@
 2014-07-10  David Anderson
      * dwarf_error.c,libdwarf.h.in: Added new error codes.
-     * dwarf_xu_index.c: Now prints the hash table of
-       .debug_tu_index and .debug_cu_index sections.
+     * dwarf_xu_index.c: Now extracts the hash table 
+       values from .debug_tu_index and .debug_cu_index sections.
 2014-07-09  David Anderson
      * dwarf_alloc.c,dwarf_xu_index.c,dwarf_xu_index.h:
         Removed trailing whitespace characters.
