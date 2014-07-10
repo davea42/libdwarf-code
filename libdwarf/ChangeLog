@@ -1,4 +1,7 @@
 2014-07-10  David Anderson
+     * dwarf_die_deliv.c: Clarify a comment a little bit.
+       No change in the code.
+2014-07-10  David Anderson
      * dwarf_error.c,libdwarf.h.in: Added new error codes.
      * dwarf_xu_index.c: Now extracts the hash table 
        values from .debug_tu_index and .debug_cu_index sections.

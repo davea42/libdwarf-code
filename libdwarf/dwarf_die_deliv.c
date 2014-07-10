@@ -486,9 +486,11 @@ dwarf_next_cu_header_internal(Dwarf_Debug dbg,
             dis->de_cu_context->cc_extension_size;
     }
 
-    /*  Check that there is room in .debug_info beyond the new offset
-        for at least a new cu header. If not, return 0 to indicate end
-        of debug_info section, and reset de_cu_debug_info_offset to
+    /*  Check that there is room in .debug_info beyond 
+        the new offset for at least a new cu header. 
+        If not, return 0 (DW_DLV_NO_ENTRY) to indicate end
+        of debug_info section, and reset 
+        de_cu_debug_info_offset to
         enable looping back through the cu's. */
     section_size = is_info? dbg->de_debug_info.dss_size:
         dbg->de_debug_types.dss_size;
