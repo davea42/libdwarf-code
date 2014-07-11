@@ -108,6 +108,7 @@ print_debugfission_index(Dwarf_Debug dbg,const char *type)
         for( h = 0; h < hash_slots_count; h++) {
             Dwarf_Unsigned hashval = 0;
             Dwarf_Unsigned index = 0;
+            Dwarf_Unsigned col = 0;
             res = dwarf_get_xu_hash_entry(xuhdr,h,
                &hashval,&index,&err);
             if (res == DW_DLV_ERROR) {
@@ -120,6 +121,7 @@ print_debugfission_index(Dwarf_Debug dbg,const char *type)
                     "dwarf_get_xu_hash_entry impossible return code: "
                     "No entry?\n",
                     h);
+                dwarf_xu_header_free(xuhdr);
                 return;
             } else if (hashval == 0 && index == 0 ) {
                 /* An unused hash slot, we do not print them */
@@ -130,9 +132,40 @@ print_debugfission_index(Dwarf_Debug dbg,const char *type)
                 h,
                 hashval,
                 index);
+            printf("      col              section   "
+                "offset                size\n");
+            for (col = 0; col < offsets_count; col++) {
+                Dwarf_Unsigned off = 0;
+                Dwarf_Unsigned len = 0;
+                const char * name = 0;
+                Dwarf_Unsigned num = 0;
+                res = dwarf_get_xu_section_names(xuhdr,
+                    col,&num,&name,&err);
+                if (res != DW_DLV_OK) {
+                    print_error(dbg,"dwarf_get_xu_section_names",res,err);
+                    dwarf_xu_header_free(xuhdr);
+                    return;
+                }
+                res = dwarf_get_xu_section_offset(xuhdr, 
+                    index,col,&off,&len,&err);
+                if (res != DW_DLV_OK) {
+                    print_error(dbg,"dwarf_get_xu_section_offset",res,err);
+                    dwarf_xu_header_free(xuhdr);
+                    return;
+                }
+                printf("    [,%2" DW_PR_DUu "] %20s "
+                    "0x%" DW_PR_XZEROS DW_PR_DUx 
+                    " (%8" DW_PR_DUu ") "
+                    "0x%" DW_PR_XZEROS DW_PR_DUx 
+                    " (%8" DW_PR_DUu ")\n",
+                    col,name,
+                    off,off,
+                    len,len); 
+            }
+            
+            
         }
     }
-
     dwarf_xu_header_free(xuhdr);
 }
 

@@ -223,14 +223,14 @@ int dwarf_get_xu_hash_entry(Dwarf_Xu_Index_Header xuhdr,
 
 static const char * dwp_secnames[] = {
 "No name for zero",
-/* DW_SECT_INFO        1 */ ".debug_info.dwo",
-/* DW_SECT_TYPES       2 */ ".debug_types.dwo",
-/* DW_SECT_ABBREV      3 */ ".debug_abbrev.dwo",
-/* DW_SECT_LINE        4 */ ".debug_line.dwo",
-/* DW_SECT_LOC         5 */ ".debug_loc.dwo",
-/* DW_SECT_STR_OFFSETS 6 */ ".debug_str_offsets.dwo",
-/* DW_SECT_MACINFO     7 */ ".debug_macinfo.dwo",
-/* DW_SECT_MACRO       8 */ ".debug_macro.dwo",
+"DW_SECT_INFO"        /*        1 */ /*".debug_info.dwo"*/,
+"DW_SECT_TYPES"       /*     2 */ /*".debug_types.dwo"*/,
+"DW_SECT_ABBREV"      /*      3 */ /*".debug_abbrev.dwo"*/,
+"DW_SECT_LINE"        /*        4 */ /*".debug_line.dwo"*/,
+"DW_SECT_LOC"         /*         5 */ /*".debug_loc.dwo"*/,
+"DW_SECT_STR_OFFSETS" /* 6 */ /*".debug_str_offsets.dwo"*/,
+"DW_SECT_MACINFO"     /*     7 */ /*".debug_macinfo.dwo"*/,
+"DW_SECT_MACRO"       /*       8 */ /*".debug_macro.dwo"*/,
 "No name > 8",
 };
 
@@ -291,6 +291,7 @@ dwarf_get_xu_section_offset(Dwarf_Xu_Index_Header xuhdr,
     Dwarf_Small *sizeentry =  0;
     Dwarf_Unsigned offset = 0;
     Dwarf_Unsigned size = 0;
+    Dwarf_Unsigned column_count = xuhdr->gx_column_count_sections;
 
     if( row_index > xuhdr->gx_units_in_index) {
         _dwarf_error(dbg, err, DW_DLE_XU_NAME_COL_ERROR);
@@ -305,10 +306,12 @@ dwarf_get_xu_section_offset(Dwarf_Xu_Index_Header xuhdr,
         _dwarf_error(dbg, err, DW_DLE_XU_NAME_COL_ERROR);
          return DW_DLV_ERROR;
     }
-    offsetrow = offsetrow + (row_index * LEN32BIT);
-    sizerow = sizerow + ((row_index-1) * LEN32BIT);
+    offsetrow = offsetrow + (row_index*column_count * LEN32BIT);
     offsetentry = offsetrow + (column_index *  LEN32BIT);
+
+    sizerow = sizerow + ((row_index-1)*column_count * LEN32BIT);
     sizeentry = sizerow + (column_index *  LEN32BIT);
+
     READ_UNALIGNED(dbg,offset,Dwarf_Unsigned, offsetentry,
         LEN32BIT);
     READ_UNALIGNED(dbg,size,Dwarf_Unsigned, sizeentry,
