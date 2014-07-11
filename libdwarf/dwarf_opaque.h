@@ -118,6 +118,7 @@ struct Dwarf_CU_Context_s {
     Dwarf_Unsigned cc_length;
 
     /*  cc_length_size is the size in bytes of an offset.
+        Should probably be renamed cc_offset_size.
         4 for 32bit dwarf, 8 for 64bit dwarf (whether MIPS/IRIX
         64bit dwarf or standard 64bit dwarf using the extension
         mechanism). */
@@ -125,9 +126,9 @@ struct Dwarf_CU_Context_s {
 
     /*  cc_extension_size is zero unless this is standard
         DWARF3 and later 64bit dwarf using the extension mechanism.
-        If it is the DWARF3 and later 64bit dwarf cc_extension
-        size is 4. So for 32bit dwarf and MIPS/IRIX 64bit dwarf
-        cc_extension_size is zero.  */
+        64bit DWARF3 and later: cc_extension_size is 4.
+        64bit DWARF2 MIPS/IRIX: cc_extension_size is zero.
+        32bit DWARF:            cc_extension_size is zero.  */
     Dwarf_Small cc_extension_size;
 
     Dwarf_Half cc_version_stamp;
