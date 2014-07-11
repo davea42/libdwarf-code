@@ -168,7 +168,7 @@ struct Dwarf_CU_Context_s {
     Dwarf_Bool cc_addr_base_present;
     Dwarf_Bool cc_string_base_present;
     /*  cc_cu_die_offset_present is non-zero if
-         cc_cu_die_global_sec_offset is meaningful.  */
+        cc_cu_die_global_sec_offset is meaningful.  */
     Dwarf_Bool cc_cu_die_offset_present;
 
     /*  Support for these two fields is incomplete. */
