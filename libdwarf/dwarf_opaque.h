@@ -131,8 +131,15 @@ struct Dwarf_CU_Context_s {
         32bit DWARF:            cc_extension_size is zero.  */
     Dwarf_Small cc_extension_size;
 
+    /*  cc_version_stamp is the DWARF version number applicable
+        to the  DWARF in this compilation unit. 2,3,4,... */
     Dwarf_Half cc_version_stamp;
+    /*  cc_abbrev_offset is the section-global offset
+        of the .debug_abbrev section this CU uses. */
     Dwarf_Unsigned cc_abbrev_offset;
+
+    /*  cc_address_size is the size of an address in this
+        compilation unit. */
     Dwarf_Small cc_address_size;
     /*  cc_debug_offset is the offset in the section
         of the CU header of this CU.
@@ -141,23 +148,30 @@ struct Dwarf_CU_Context_s {
         but those are distinct.
         See cc_is_info flag. */
     Dwarf_Unsigned cc_debug_offset;
+
+    /*  cc_signature and cc_typeoffset are in the CU header
+        of a type unit and contain the signature content
+        and the section-global DIE offset of the type
+        the signature applies to. */
     Dwarf_Sig8  cc_signature;
     Dwarf_Unsigned cc_typeoffset;
 
     /*  If the attribute DW_AT_[GNU_]addr_base is present in the
         CU die, its value is in cc_addr_base.
-        cc_addr_bae_present TRUE means cc_addr_base is meaningful, which
+        cc_addr_base_present TRUE means cc_addr_base is meaningful, which
         is a check on the correctness of the DWARF.
         DW_AT_str_offsets_base exists for DW_FORM_strx,
         for GNU a base of zero is apparently fine.
         Fields listed in this order for a tiny space saving.
+        Support for these is incomplete.
     */
     Dwarf_Bool cc_addr_base_present;
     Dwarf_Bool cc_string_base_present;
-    /* refers to cc_cu_die_global_sec_offset */
+    /*  cc_cu_die_offset_present is non-zero if
+         cc_cu_die_global_sec_offset is meaningful.  */
     Dwarf_Bool cc_cu_die_offset_present;
 
-
+    /*  Support for these two fields is incomplete. */
     Dwarf_Unsigned cc_addr_base;
     Dwarf_Unsigned cc_string_base;
 

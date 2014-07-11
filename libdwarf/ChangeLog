@@ -1,4 +1,7 @@
 2014-07-11  David Anderson
+     * dwarf_opaque.h: Various CU context fields were
+       not clarified by comments, so comments added.
+2014-07-11  David Anderson
      * dwarf_opaque.h: Clarified a couple comments.
 2014-07-11  David Anderson
      * dwarf_xu_index.c: Now extracts the offset and size table
