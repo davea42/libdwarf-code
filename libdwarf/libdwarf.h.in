@@ -1229,6 +1229,14 @@ int dwarf_object_init(Dwarf_Obj_Access_Interface* /* obj */,
 int dwarf_object_finish(Dwarf_Debug /* dbg */,
     Dwarf_Error* /* error */);
 
+/*  Section name access.  Because sections might
+    now end with .dwo  or might not (as of DWARF5)  */
+int
+dwarf_get_die_section_name(Dwarf_Debug /*dbg*/,
+    Dwarf_Bool    /*is_info*/,
+    const char ** /*sec_name*/,
+    Dwarf_Error * /*error*/);
+
 
 /*  Die traversal operations.
     dwarf_next_cu_header_b() traverses debug_info CU headers.
@@ -2450,7 +2458,7 @@ int dwarf_get_xu_section_names(Dwarf_Xu_Index_Header /*xuhdr*/,
     Dwarf_Unsigned* /*DW_SECT_ number*/,
     const char **   /*DW_SECT_ name*/,
     Dwarf_Error *   /*err*/);
-    
+
     /* Rows 1 to N col 0 to L-1 are section offset and length values. */
 int dwarf_get_xu_section_offset(Dwarf_Xu_Index_Header /*xuhdr*/,
     Dwarf_Unsigned  /*row_index*/,

@@ -1,3 +1,10 @@
+2014-07-12  David Anderson
+     * dwarf_die_deliv.c: Remove trailing whitespace.
+       Implement dwarf_get_die_section_name() allow
+       clients to get the Elf
+       section name actually used for the section.
+     * dwarf_xu_index.c: Remmove traling whitespace  and fix
+       indents.
 2014-07-11  David Anderson
      * dwarf_opaque.h: Various CU context fields were
        not clarified by comments, so comments added.

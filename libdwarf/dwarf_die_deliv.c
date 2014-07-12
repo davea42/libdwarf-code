@@ -486,10 +486,10 @@ dwarf_next_cu_header_internal(Dwarf_Debug dbg,
             dis->de_cu_context->cc_extension_size;
     }
 
-    /*  Check that there is room in .debug_info beyond 
-        the new offset for at least a new cu header. 
+    /*  Check that there is room in .debug_info beyond
+        the new offset for at least a new cu header.
         If not, return -1 (DW_DLV_NO_ENTRY) to indicate end
-        of debug_info section, and reset 
+        of debug_info section, and reset
         de_cu_debug_info_offset to
         enable looping back through the cu's. */
     section_size = is_info? dbg->de_debug_info.dss_size:
@@ -1260,3 +1260,31 @@ dwarf_offdie_b(Dwarf_Debug dbg,
     *new_die = die;
     return (DW_DLV_OK);
 }
+
+/*  This is useful when printing DIE data.
+    The string pointer returned must not be freed.
+    With non-elf objects it is possible the
+    string returned might be empty or NULL,
+    so callers should be prepared for that kind
+    of return. */
+int
+dwarf_get_die_section_name(Dwarf_Debug dbg,
+    Dwarf_Bool    is_info,
+    const char ** sec_name,
+    Dwarf_Error * error)
+{
+    struct Dwarf_Section_s *sec = 0;
+    if (is_info) {
+        sec = &dbg->de_debug_info;
+    } else {
+        sec = &dbg->de_debug_types;
+    }
+    if (sec->dss_size == 0) {
+        /* We don't have such a  section at all. */
+        return DW_DLV_NO_ENTRY;
+    }
+    *sec_name = sec->dss_name;
+    return DW_DLV_OK;
+}
+
+

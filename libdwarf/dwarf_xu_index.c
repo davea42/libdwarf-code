@@ -127,8 +127,8 @@ dwarf_get_xu_index_header(Dwarf_Debug dbg,
     section_sizes_tab_offset = section_offsets_tab_offset +
         ((num_CUs +1) *num_col* datalen32) ;
     tables_end_offset = section_sizes_tab_offset +
-        ((num_CUs   ) *num_col* datalen32) ;
-        
+        ((num_CUs   ) *num_col* datalen32);
+
     if ( tables_end_offset > sect->dss_size) {
         /* Something is badly wrong here. */
         _dwarf_error(dbg, error, DW_DLE_ERRONEOUS_GDB_INDEX_SECTION);
@@ -192,9 +192,9 @@ int dwarf_get_xu_hash_entry(Dwarf_Xu_Index_Header xuhdr,
     Dwarf_Error *     err)
 {
     Dwarf_Debug dbg = xuhdr->gx_dbg;
-    Dwarf_Small *hashtab = xuhdr->gx_section_data + 
+    Dwarf_Small *hashtab = xuhdr->gx_section_data +
         xuhdr->gx_hash_table_offset;
-    Dwarf_Small *indextab = xuhdr->gx_section_data + 
+    Dwarf_Small *indextab = xuhdr->gx_section_data +
         xuhdr->gx_index_table_offset;
     Dwarf_Small *indexentry = 0;
     Dwarf_Small *hashentry = 0;
@@ -208,14 +208,14 @@ int dwarf_get_xu_hash_entry(Dwarf_Xu_Index_Header xuhdr,
     hashentry = hashtab + (index * HASHSIGNATURELEN);
     indexentry = indextab + (index * LEN32BIT);
     READ_UNALIGNED(dbg,hashval,Dwarf_Unsigned,hashentry,
-       HASHSIGNATURELEN);
+        HASHSIGNATURELEN);
     READ_UNALIGNED(dbg,indexval,Dwarf_Unsigned, indexentry,
-       LEN32BIT);
+        LEN32BIT);
     if (indexval > xuhdr->gx_units_in_index) {
         _dwarf_error(dbg, err,  DW_DLE_XU_HASH_INDEX_ERROR);
         return DW_DLV_ERROR;
     }
-    *hash_value = hashval; 
+    *hash_value = hashval;
     *index_to_sections = indexval;
     return DW_DLV_OK;
 }
@@ -234,10 +234,10 @@ static const char * dwp_secnames[] = {
 "No name > 8",
 };
 
-/*  Row 0 of the Table of Section Offsets, 
+/*  Row 0 of the Table of Section Offsets,
     columns 0 to L-1,  are the section id's,
     and names, such as DW_SECT_INFO (ie, 1)  */
-int 
+int
 dwarf_get_xu_section_names(Dwarf_Xu_Index_Header xuhdr,
     Dwarf_Unsigned  column_index,
     Dwarf_Unsigned* number,
@@ -247,18 +247,18 @@ dwarf_get_xu_section_names(Dwarf_Xu_Index_Header xuhdr,
     Dwarf_Unsigned sec_num = 0;
     Dwarf_Debug dbg = xuhdr->gx_dbg;
     Dwarf_Small *namerow =  xuhdr->gx_section_offsets_offset +
-       xuhdr->gx_section_data;
+        xuhdr->gx_section_data;
     Dwarf_Small *nameloc =  0;
     if( column_index >= xuhdr->gx_column_count_sections) {
         _dwarf_error(dbg, err, DW_DLE_XU_NAME_COL_ERROR);
-         return DW_DLV_ERROR;
+        return DW_DLV_ERROR;
     }
     nameloc = namerow + LEN32BIT *column_index;
     READ_UNALIGNED(dbg,sec_num,Dwarf_Unsigned, nameloc,
-       LEN32BIT);
+        LEN32BIT);
     if (sec_num > DW_SECT_MACRO) {
         _dwarf_error(dbg, err, DW_DLE_XU_NAME_COL_ERROR);
-         return DW_DLV_ERROR;
+        return DW_DLV_ERROR;
     }
     if (sec_num < 1) {
         return DW_DLV_NO_ENTRY;
@@ -269,13 +269,13 @@ dwarf_get_xu_section_names(Dwarf_Xu_Index_Header xuhdr,
 }
 
 
-/*  Rows 1 to N 
-    col 0 to L-1 
+/*  Rows 1 to N
+    col 0 to L-1
     are section offset and length values from
     the Table of Section Offsets and Table of Section Sizes. */
-int 
+int
 dwarf_get_xu_section_offset(Dwarf_Xu_Index_Header xuhdr,
-    Dwarf_Unsigned  row_index, 
+    Dwarf_Unsigned  row_index,
     Dwarf_Unsigned  column_index,
     Dwarf_Unsigned* sec_offset,
     Dwarf_Unsigned* sec_size,
@@ -284,9 +284,9 @@ dwarf_get_xu_section_offset(Dwarf_Xu_Index_Header xuhdr,
     Dwarf_Debug dbg = xuhdr->gx_dbg;
     /* get to base of tables first. */
     Dwarf_Small *offsetrow =  xuhdr->gx_section_offsets_offset +
-       xuhdr->gx_section_data;
+        xuhdr->gx_section_data;
     Dwarf_Small *sizerow =  xuhdr->gx_section_sizes_offset +
-       xuhdr->gx_section_data;
+        xuhdr->gx_section_data;
     Dwarf_Small *offsetentry = 0;
     Dwarf_Small *sizeentry =  0;
     Dwarf_Unsigned offset = 0;
@@ -295,16 +295,16 @@ dwarf_get_xu_section_offset(Dwarf_Xu_Index_Header xuhdr,
 
     if( row_index > xuhdr->gx_units_in_index) {
         _dwarf_error(dbg, err, DW_DLE_XU_NAME_COL_ERROR);
-         return DW_DLV_ERROR;
+        return DW_DLV_ERROR;
     }
     if( row_index < 1 ) {
         _dwarf_error(dbg, err, DW_DLE_XU_NAME_COL_ERROR);
-         return DW_DLV_ERROR;
+        return DW_DLV_ERROR;
     }
 
     if( column_index >=  xuhdr->gx_column_count_sections) {
         _dwarf_error(dbg, err, DW_DLE_XU_NAME_COL_ERROR);
-         return DW_DLV_ERROR;
+        return DW_DLV_ERROR;
     }
     offsetrow = offsetrow + (row_index*column_count * LEN32BIT);
     offsetentry = offsetrow + (column_index *  LEN32BIT);

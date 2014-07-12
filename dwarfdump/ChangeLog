@@ -1,3 +1,10 @@
+2014-07-12  David Anderson
+     * print_die.c: Using a new interface to print the
+       actual section name, not just .debug_info or .debug_types.
+       dwarf_get_die_section_name();
+     * dwarfdump.c: Corrected a comment relating to
+       .gdb_index and .debug_[ct]u_index sections
+     * debugfission.c: Fix indentation mistakes.
 2014-07-11  David Anderson
      * print_debugfission.c: Prints the offset and size tables.
 2014-07-10  David Anderson

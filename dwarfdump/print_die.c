@@ -405,12 +405,21 @@ print_one_die_section(Dwarf_Debug dbg,Dwarf_Bool is_info)
     char * cu_short_name = NULL;
     char * cu_long_name = NULL;
 
-    current_section_id = DEBUG_INFO;
+    current_section_id = is_info?DEBUG_INFO:DEBUG_TYPES;
 
     if (print_as_info_or_cu() && do_print_dwarf) {
-        if (is_info) {
-            printf("\n.debug_info\n");
+        const char * section_name = 0;
+        int res = dwarf_get_die_section_name(dbg, is_info,
+            &section_name,&err);
+        if (res != DW_DLV_OK || !section_name ||
+            !strlen(section_name)) {
+            if (is_info) { 
+                section_name = ".debug_info";
+            } else  {
+                section_name = ".debug_types";
+            }
         }
+        printf("\n%s\n",section_name);
     }
 
     /* Loop until it fails.  */

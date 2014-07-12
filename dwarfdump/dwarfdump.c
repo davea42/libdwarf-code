@@ -1080,8 +1080,8 @@ process_one_file(Elf * elf, const char * file_name, int archive,
     }
     if (gdbindex_flag) {
         reset_overall_CU_error_data();
-        /*  By definition only one of the following indicies
-            can exist in a given object. */
+        /*  By definition if gdb_index is present
+            then "cu" and "tu" will not. And vice versa.  */
         print_gdb_index(dbg);
         print_debugfission_index(dbg,"cu");
         print_debugfission_index(dbg,"tu");
@@ -1182,7 +1182,6 @@ static void
 do_all()
 {
     info_flag = line_flag = frame_flag = TRUE;
-    gdbindex_flag = TRUE;
     pubnames_flag = macinfo_flag = TRUE;
     aranges_flag = TRUE;
     /*  Do not do

@@ -110,13 +110,13 @@ print_debugfission_index(Dwarf_Debug dbg,const char *type)
             Dwarf_Unsigned index = 0;
             Dwarf_Unsigned col = 0;
             res = dwarf_get_xu_hash_entry(xuhdr,h,
-               &hashval,&index,&err);
+                &hashval,&index,&err);
             if (res == DW_DLV_ERROR) {
-               print_error(dbg,"dwarf_get_xu_hash_entry",res,err);
-               dwarf_xu_header_free(xuhdr);
-               return;
+                print_error(dbg,"dwarf_get_xu_hash_entry",res,err);
+                dwarf_xu_header_free(xuhdr);
+                return;
             } else if (res == DW_DLV_NO_ENTRY) {
-               /* Impossible */
+                /* Impossible */
                 printf("  [%4" DW_PR_DUu "]  "
                     "dwarf_get_xu_hash_entry impossible return code: "
                     "No entry?\n",
