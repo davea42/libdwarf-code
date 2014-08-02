@@ -8,7 +8,7 @@ n\."
 .nr Hb 5
 \." ==============================================
 \." Put current date in the following at each rev
-.ds vE rev 2.20, May 19, 2014
+.ds vE rev 2.22, July 29, 2014
 \." ==============================================
 \." ==============================================
 .ds | |
@@ -89,7 +89,7 @@ and a copy of the standard.
 .H 2 "Copyright"
 Copyright 1993-2006 Silicon Graphics, Inc.
 
-Copyright 2007-2013 David Anderson. 
+Copyright 2007-2014 David Anderson. 
 
 Permission is hereby granted to 
 copy or republish or use any or all of this document without
@@ -149,7 +149,7 @@ complete description of these entries.
 
 .P
 This document adopts all the terms and definitions in "\fIDWARF Debugging 
-Information Format\fP" versions 2,3, and 4.  
+Information Format\fP" versions 2,3,4, and 5.  
 It originally focused on the implementation at
 Silicon Graphics, Inc., but now
 attempts to be more generally useful.
@@ -201,6 +201,7 @@ functions.
 .P
 The following is a brief mention of the changes in this libdwarf from 
 the libdwarf draft for DWARF Version 1 and recent changes.
+
 .H 2 "Items Changed"
 .P
 Added a note about dwarf_errmsg(): the string pointer
@@ -361,6 +362,10 @@ exceptional conditions like failures and 'no more data' indications.
 
 .H 2 "Revision History"
 .VL 15
+.LI "July 2014"
+Added support for the .gdb_index section and
+started support for the .debug_cu_index and .debug_tu_index
+sections.
 .LI "October 2011"
 DWARF4 support for reading .debug_types added.
 .LI "March 93"
@@ -1045,6 +1050,35 @@ pointed to by this descriptor should be individually freed, using
 \f(CWdwarf_dealloc()\fP with the allocation type \f(CWDW_DLA_ARANGE\fP when 
 no longer needed.
 
+.DS
+\f(CWtypedef struct Dwarf_Gdbindex_s* Dwarf_Gdbindex;\fP
+.DE
+Instances of \f(CWDwarf_Gdbindex\fP type are returned from successful calls 
+to the \f(CWdwarf_gdbindex_header()\fP function and are used to
+extract information from a .gdb_index section.
+This section is a gcc/gdb extension and is designed to allow
+a debugger fast access to data in .debug_info.
+The storage pointed to by this descriptor should be freed 
+using a call to \f(CWdwarf_gdbindex_free()\fP with 
+a valid \f(CWDwarf_Gdbindex\fP pointer as the argument.
+
+.DS
+\f(CWtypedef struct Dwarf_Xu_Index_Header_s* Dwarf_Xu_Index_header;\fP
+.DE
+Instances of \f(CWDwarf_Xu_Index_Header_s\fP type 
+are returned from successful calls 
+to the \f(CWdwarf_get_xu_index_header()\fP function and are used to
+extract information from a .debug_cu_index or .debug_tu_index 
+section. These sections are used to make possible
+access to .dwo sections gathered into a .dwp object
+as part of the DebugFission project allowing separation
+of an executable from most of its DWARF debugging information.
+As of July 2014 these sections may be produced by gdb
+but are not yet accepted into DWARF5.
+The storage pointed to by this descriptor should be freed 
+using a call to \f(CWdwarf_xh_header_fre()\fP with 
+a valid \f(CWDwarf_XuIndexHeader\fP pointer as the argument.
+
 .H 1 "Error Handling"
 The method for detection and disposition of error conditions that arise 
 during access of debugging information via \fIlibdwarf\fP is consistent
@@ -1696,7 +1730,54 @@ pointer may change or become stale without warning.
 
 .H 2 "Debugging Information Entry Delivery Operations"
 These functions are concerned with accessing debugging information 
-entries. 
+entries, whether from a .debug_info, .debug_types, .debug_info.dwo, 
+or .debug_types.dwo . 
+Since all such sections use similar formats, one
+set of functions suffices.
+
+.H 3 "dwarf_get_die_section_name()"
+.DS
+int
+dwarf_get_die_section_name(Dwarf_Debug dbg,
+    Dwarf_Bool    is_info,
+    const char ** sec_name,
+    Dwarf_Error * error);
+.DE
+\f(CWdwarf_get_die_section_name()\fP lets consumers
+access the object section name.
+This is useful for applications wanting to print
+the name, but of course the object section name is not 
+really a part of the DWARF information.
+Most applications will
+probably not call this function.
+It can be called at any time
+after the Dwarf_Debug initialization is done.
+.P
+The function
+\f(CWdwarf_get_die_section_name()\fP operates on
+the either the .debug_info[.dwo] section
+(if \f(CWis_info\fP is non-zero) 
+or .debug_types[.dwo]
+section
+(if \f(CWis_info\fP is zero).
+.P
+If the function succeeds, \f(CW*sec_name\fP is set to
+a pointer to a string with the object section name and 
+the function returns \f(CWDW_DLV_OK\fP.
+Do not free the string whose pointer is returned.
+For non-Elf objects it is possible the string pointer
+returned will be NULL or will point to an empty string.
+It is up to the calling application to recognize this
+possibility and deal with it appropriately.
+.P
+If the section does not exist the function returns
+DW_DLV_NO_ENTRY.
+.P 
+If there is an internal error detected the
+function returns \f(CWDW_DLV_ERROR\fP and sets the
+\f(CW*error\fP pointer.
+
+
 
 .H 3 "dwarf_next_cu_header_c()"
 .DS
@@ -6280,9 +6361,6 @@ This is the preferred way to get address size when the
 
 
 .H 2 "Ranges Operations (.debug_ranges)"
-
-
-.H 2 "Ranges Operations (.debug_ranges)"
 These functions provide information about the address ranges
 indicated by a  \f(CWDW_AT_ranges\fP attribute (the ranges are recorded
 in the  \f(CW.debug_ranges\fP section) of a DIE.  
@@ -6385,6 +6463,912 @@ The function \f(CWdwarf_ranges_dealloc()\fP takes as input a pointer
 to a block of \f(CWDwarf_Ranges\fP array and the 
 number of structures in the block.  
 It frees all the data in the array of structures.
+
+.H 2 ".gdb_index operations"
+These functions get access to the fast lookup tables
+defined by gdb and gcc.
+The section is of sufficient complexity that a number of function
+interfaces are needed.
+For additional information see
+"https://sourceware.org/gdb/onlinedocs/gdb/Index-Section-Format.html#Index-Section-Format".
+
+
+.H 3 "dwarf_gdbindex_header()"
+.DS
+int dwarf_gdbindex_header(Dwarf_Debug dbg,
+    Dwarf_Gdbindex * gdbindexptr,
+    Dwarf_Unsigned * version,
+    Dwarf_Unsigned * cu_list_offset,
+    Dwarf_Unsigned * types_cu_list_offset,
+    Dwarf_Unsigned * address_area_offset,
+    Dwarf_Unsigned * symbol_table_offset,
+    Dwarf_Unsigned * constant_pool_offset,
+    Dwarf_Unsigned * section_size,
+    Dwarf_Unsigned * unused_reserved,
+    const char    ** section_name,
+    Dwarf_Error    * error);
+.DE
+The function \f(CWdwarf_gdbindex_header()\fP takes as input a pointer 
+to a Dwarf_Debug structure and returns fields through
+various pointers.
+.P
+If the function returns DW_DLV_NO_ENTRY 
+there is no .gdb_index section and none of the return-pointer argument
+values are set.
+.P
+If the function returns DW_DLV_ERROR \f(CWerror\fP is set
+to indicate the specific error, but no other return-pointer
+arguments are touched.
+.P
+If successful, the function returns DW_DLV_OK and other values are set.
+The other values are set as follows:
+.P
+The field  \f(CW*gdbindexptr\fP is set to an opaque
+pointer to a libdwarf_internal structure used as an argument
+to other .gdbindex functions below.
+.P
+The remaining fields are set to values that are
+mostly of interest to a pretty-printer application.
+See the detailed layout specification for specifics.
+The values returned are recorded in the
+Dwarf_Gdbindex opaque structure for the other gdbindex
+functions documented below.
+.P
+The field  \f(CW*version\fP is set to the version
+of the gdb index header (2)..
+.P
+The field  \f(CW*cu_list_offset\fP is set to 
+the offset (in the .gdb_index section) of the 
+cu-list.
+.P
+The field  \f(CW*types_cu_list_offset\fP is set to 
+the offset (in the .gdb_index section) of the 
+types-list.
+.P
+The field  \f(CW*address_area_offset\fP is set to 
+the offset (in the .gdb_index section) of the 
+address area.
+.P
+The field  \f(CW*symbol_table_offset\fP is set to 
+the offset (in the .gdb_index section) of the 
+symbol table.
+.P
+The field  \f(CW*constant_pool_offset\fP is set to 
+the offset (in the .gdb_index section) of the 
+constant pool.
+.P
+The field  \f(CW*section_size\fP is set to 
+the length  of the .gdb_index section.
+.P
+The field  \f(CW*unused_reserved\fP is set to 
+zero.
+.P
+The field  \f(CW*section_name\fP is set to 
+the Elf object file section name (.gdb_index).
+If a non-Elf object file has such a section
+the value set might be NULL or might point to
+an empty string (NUL terminated), so
+code to account for NULL or empty. 
+.P
+The field  \f(CW*error\fP is not set.
+.P
+Here we show a use of the set of cu_list
+functions (using all the functions in one
+example makes it rather too long).
+
+.in +2
+.DS
+\f(CWDwarf_Gdbindex gindexptr;
+Dwarf_Unsigned version = 0;
+Dwarf_Unsigned cu_list_offset = 0;
+Dwarf_Unsigned types_cu_list_offset = 0;
+Dwarf_Unsigned address_area_offset = 0;
+Dwarf_Unsigned symbol_table_offset = 0;
+Dwarf_Unsigned constant_pool_offset = 0;
+Dwarf_Unsigned section_size = 0;
+Dwarf_Unsigned reserved = 0;
+Dwarf_Error error = 0;
+const char ** section_name = 0;
+int res;
+res = dwarf_gdbindex_header(dbg,&gindexptr,
+    &version,&cu_list_offset, &types_cu_list_offset,
+    &address_area_offset,&symbol_table_offset,
+    &constant_pool_offset, &section_size,
+    &reserved,&section_name,&error);
+if (res == DW_DLV_NO_ENTRY) {
+       return;
+} else if (res == DW_DLV_ERROR) {
+       return;
+} 
+{
+    /* do something with the data */
+    Dwarf_Unsigned length = 0;
+    Dwarf_Unsigned typeslength = 0;
+    res = dwarf_gdbindex_cu_list_array(gindexptr,
+        &length,&error);
+    /* Example actions. */
+    if (res == DW_DLV_OK) {
+        for(Dwarf_Unsigned i = 0; i < length; ++i) {
+            Dwarf_Unsigned cuoffset = 0;
+            Dwarf_Unsigned culength = 0;
+            res = dwarf_gdbindex_culist_entry(gindexptr,
+                i,&cuoffset,&culength,&error);
+            if (res == DW_DLV_OK) {
+                /* Do something with cuoffset, culength */
+            }
+        }
+    }
+    res = dwarf_gdbindex_types_cu_list_array(gindexptr,
+        &typeslength,&error);
+    if (res == DW_DLV_OK) {
+        for(Dwarf_Unsigned i = 0; i < typeslength; ++i) {
+            Dwarf_Unsigned cuoffset = 0;
+            Dwarf_Unsigned culength = 0;
+            res = dwarf_gdbindex_types_culist_entry(gindexptr,
+                i,&cuoffset,&culength,&error);
+            if (res == DW_DLV_OK) {
+                /* Do something with cuoffset, culength */
+            }
+        }
+    }
+    dwarf_gdbindex_free(gindexptr);
+}\fP
+.DE
+.in -2
+
+
+
+
+.H 3 "dwarf_gdbindex_culist_array()"
+.DS
+int dwarf_gdbindex_culist_array(Dwarf_Gdbindex gdbindexptr,
+    Dwarf_Unsigned       * list_length,
+    Dwarf_Error          * error);
+.DE
+The function \f(CWdwarf_gdbindex_culist_array()\fP takes as input
+valid Dwarf_Gdbindex pointer.
+.P
+While currently only DW_DLV_OK is returned one should
+test for DW_DLV_NO_ENTRY and DW_DLV_ERROR and do  something
+sensible if either is returned.
+.P
+If successful, the function
+returns DW_DLV_OK
+and returns the number
+of entries in the  culist through the\f(CWlist_length\fP 
+pointer.
+
+.H 3 "dwarf_gdbindex_culist_entry()"
+.DS
+int dwarf_gdbindex_culist_entry(Dwarf_Gdbindex gdbindexptr,
+    Dwarf_Unsigned   entryindex,
+    Dwarf_Unsigned * cu_offset,
+    Dwarf_Unsigned * cu_length,
+    Dwarf_Error    * error);
+.DE
+The function \f(CWdwarf_gdbindex_culist_entry()\fP takes as input
+valid Dwarf_Gdbindex pointer and an index into the culist array.
+Valid indexes are 0 through \f(CWlist_length -1\fP .
+.P
+If it returns DW_DLV_NO_ENTRY there is a coding error.
+If it returns DW_DLV_ERROR there is an error of some kind
+and the  error is indicated by
+the vale returned through the \f(CWerror\fP pointer.
+.P
+On success it returns DW_DLV_OK and returns
+the \f(CWcu_offset\fP (the section global offset of the CU
+in .debug_info))
+and \f(CWcu_length\fP (the length of the CU
+in .debug_info) values through the pointers.
+
+
+.H 3 "dwarf_gdbindex_types_culist_array()"
+.DS
+int dwarf_gdbindex_types_culist_array(Dwarf_Gdbindex /*gdbindexptr*/,
+    Dwarf_Unsigned            * /*types_list_length*/,
+    Dwarf_Error               * /*error*/);
+.DE
+The function \f(CWdwarf_gdbindex_types_culist_array()\fP takes as input
+valid Dwarf_Gdbindex pointer.
+.P
+While currently only DW_DLV_OK is returned one should
+test for DW_DLV_NO_ENTRY and DW_DLV_ERROR and do  something
+sensible if either is returned.
+.P
+If successful, the function
+returns DW_DLV_OK
+and returns the number
+of entries in the  types culist through the\f(CWlist_length\fP 
+.P
+
+.H 3 "dwarf_gdbindex_types_culist_entry()"
+.DS
+int dwarf_gdbindex_types_culist_entry(
+    Dwarf_Gdbindex   gdbindexptr,
+    Dwarf_Unsigned   entryindex,
+    Dwarf_Unsigned * cu_offset,
+    Dwarf_Unsigned * tu_offset,
+    Dwarf_Unsigned * type_signature,
+    Dwarf_Error    * error);
+.DE
+The function \f(CWdwarf_gdbindex_types_culist_entry()\fP takes as input
+valid Dwarf_Gdbindex pointer and an index into the types culist array.
+Valid indexes are 0 through \f(CWtypes_list_length -1\fP .
+.P
+If it returns DW_DLV_NO_ENTRY there is a coding error.
+If it returns DW_DLV_ERROR there is an error of some kind.
+and the  error is indicated by 
+the value returned through the \f(CWerror\fP pointer.
+.P
+On success it returns DW_DLV_OK and returns
+the \f(CWtu_offset\fP (the section global offset of the CU
+in .debug_types))
+and \f(CWtu_length\fP (the length of the CU
+in .debug_types) values through the pointers.
+It also returns  the type signature (a 64bit value) throuth
+the  \f(CWtype_signature\fP pointer.
+
+.H 3 "dwarf_gdbindex_addressarea()"
+.DS
+int dwarf_gdbindex_addressarea(Dwarf_Gdbindex /*gdbindexptr*/,
+    Dwarf_Unsigned            * /*addressarea_list_length*/,
+    Dwarf_Error               * /*error*/);
+.DE
+The function \f(CWdwarf_addressarea()\fP takes as input
+valid Dwarf_Gdbindex pointer and returns
+the length of the address area through \f(CWaddressarea_list_length\fP.
+.P
+If it returns DW_DLV_NO_ENTRY there is a coding error.
+If it returns DW_DLV_ERROR there is an error of some kind.
+and the  error is indicated by 
+the value returned through the \f(CWerror\fP pointer.
+.P
+If successful, the function
+returns DW_DLV_OK
+and returns the number
+of entries in the  address area through the 
+\f(CWaddressarea_list_length\fP  pointer.
+
+
+.H 3 "dwarf_gdbindex_addressarea_entry()"
+.DS
+int dwarf_gdbindex_addressarea_entry(
+    Dwarf_Gdbindex   gdbindexptr,
+    Dwarf_Unsigned   entryindex,
+    Dwarf_Unsigned * low_adddress,
+    Dwarf_Unsigned * high_address,
+    Dwarf_Unsigned * cu_index,
+    Dwarf_Error    * error);
+.DE
+The function \f(CWdwarf_addressarea_entry()\fP takes as input
+valid Dwarf_Gdbindex pointer 
+and an index into the address area (valid indexes are
+zero through \f(CWaddressarea_list_length - 1\fP.
+.P
+If it returns DW_DLV_NO_ENTRY there is a coding error.
+If it returns DW_DLV_ERROR there is an error of some kind.
+and the  error is indicated by 
+the value returned through the \f(CWerror\fP pointer.
+.P
+If successful, the function
+returns DW_DLV_OK
+and returns
+The 
+\f(CWlow_address\fP
+\f(CWhigh_address\fP
+and
+\f(CWcu_index\fP
+through the pointers.
+.P
+Given an open Dwarf_Gdbindex one uses the function as follows:
+.P
+.DS
+{
+    Dwarf_Unsigned list_len = 0;
+    Dwarf_Unsigned i;
+    int res = dwarf_gdbindex_addressarea(gdbindex,
+        &list_len,err);
+    if (res != DW_DLV_OK) {
+        /* Something wrong, ignore the addressarea */
+    }
+    /* Iterate through the address area. */
+    for( i  = 0; i < list_len; i++) {
+        Dwarf_Unsigned lowpc = 0;
+        Dwarf_Unsigned highpc = 0;
+        Dwarf_Unsigned cu_index,
+        res = dwarf_gdbindex_addressarea_entry(gdbindex,i,
+            &lowpc,&highpc,
+            &cu_index,
+            err);
+        if (res != DW_DLV_OK) {
+            /* Something wrong, ignore the addressarea */
+        }
+        /*  We have a valid address area entry, do something
+            with it. */
+    }
+}
+.DE
+
+
+.H 3 "dwarf_gdbindex_symboltable_array()"
+.DS
+int dwarf_gdbindex_symboltable_array(Dwarf_Gdbindex gdbindexptr,
+    Dwarf_Unsigned            * symtab_list_length,
+    Dwarf_Error               * error);
+.DE
+One can look at the symboltable as a two-level table (with
+The outer level indexes through symbol names and the inner level
+indexes through all the compilation units that
+define that symbol (each symbol having a different number
+of compilation units, this is not a simple rectangular table).
+.P
+The function \f(CWdwarf_gdbindex_symboltable_array()\fP takes as input
+valid Dwarf_Gdbindex pointer.
+.P
+If it returns DW_DLV_NO_ENTRY there is a coding error.
+If it returns DW_DLV_ERROR there is an error of some kind.
+and the  error is indicated by
+the value returned through the \f(CWerror\fP pointer.
+.P
+If successful, the function
+returns DW_DLV_OK
+and returns
+The \f(CWsymtab_list_length\fP through the pointer.
+.P
+Given a valid Dwarf_Gdbindex pointer, one can access the entire
+symbol table as follows (using 'return' here to indicate
+we are giving up due to a problem while keeping the 
+example code fairly short):
+.DS
+{
+    Dwarf_Unsigned symtab_list_length = 0;
+    Dwarf_Unsigned i = 0;
+    int res = dwarf_gdbindex_symboltable_array(gdbindex,
+        &symtab_list_length,err);
+    if (res != DW_DLV_OK) {
+       return;
+    }
+    for( i  = 0; i < symtab_list_length; i++) {
+        Dwarf_Unsigned symnameoffset = 0;
+        Dwarf_Unsigned cuvecoffset = 0;
+        Dwarf_Unsigned ii = 0;
+        const char *name = 0;
+        res = dwarf_gdbindex_symboltable_entry(gdbindex,i,
+            &symnameoffset,&cuvecoffset,
+            err);
+        if (res != DW_DLV_OK) {
+            return;
+        }
+        res = dwarf_gdbindex_string_by_offset(gdbindex,
+            symnameoffset,&name,err);
+        if(res != DW_DLV_OK) {
+            return;
+        }
+        res = dwarf_gdbindex_cuvector_length(gdbindex,
+            cuvecoffset,&cuvec_len,err);
+        if( res != DW_DLV_OK) {
+            return;
+        }
+        for(ii = 0; ii < cuvec_len; ++ii ) {
+            Dwarf_Unsigned attributes = 0;
+            Dwarf_Unsigned cu_index = 0;
+            Dwarf_Unsigned reserved1 = 0;
+            Dwarf_Unsigned symbol_kind = 0;
+            Dwarf_Unsigned is_static = 0;
+    
+            res = dwarf_gdbindex_cuvector_inner_attributes(
+                gdbindex,cuvecoffset,ii,
+                &attributes,err);
+            if( res != DW_DLV_OK) {
+                return;
+            }
+            /*  'attributes' is a value with various internal
+                fields so we expand the fields. */
+            res = dwarf_gdbindex_cuvector_instance_expand_value(gdbindex,
+                attributes, &cu_index,&reserved1,&symbol_kind, &is_static,
+                err);
+            if( res != DW_DLV_OK) {
+                return;
+            }
+            /* Do something with the attributes. */
+        }
+    }
+}
+.DE
+
+.H 3 "dwarf_gdbindex_symboltable_entry()"
+.DS
+int dwarf_gdbindex_symboltable_entry(
+    Dwarf_Gdbindex   gdbindexptr,
+    Dwarf_Unsigned   entryindex,
+    Dwarf_Unsigned * string_offset,
+    Dwarf_Unsigned * cu_vector_offset,
+    Dwarf_Error    * error);
+.DE
+.P
+The function \f(CWdwarf_gdbindex_symboltable_entry()\fP takes as input
+valid Dwarf_Gdbindex pointer and
+an entry index(valid index values being zero through 
+\f(CWsymtab_list_length -1\fP). 
+.P
+If it returns DW_DLV_NO_ENTRY there is a coding error.
+If it returns DW_DLV_ERROR there is an error of some kind.
+and the  error is indicated by
+the value returned through the \f(CWerror\fP pointer.
+.P
+If successful, the function
+returns DW_DLV_OK
+and returns
+The \f(CWstring_offset\fP 
+and \f(CWcu_vector_offset\fP through the pointers.
+See the example above which uses this function.
+
+
+.H 3 "dwarf_gdbindex_cuvector_length()"
+.DS
+int dwarf_gdbindex_cuvector_length(
+    Dwarf_Gdbindex   gdbindex,
+    Dwarf_Unsigned   cuvector_offset,
+    Dwarf_Unsigned * innercount,
+    Dwarf_Error    * error);
+.DE
+The function \f(CWdwarf_gdbindex_cuvector_length()\fP takes as input
+valid Dwarf_Gdbindex pointer and
+an a cu vector offset.
+.P
+If it returns DW_DLV_NO_ENTRY there is a coding error.
+If it returns DW_DLV_ERROR there is an error of some kind.
+and the  error is indicated by
+the value returned through the \f(CWerror\fP pointer.
+.P
+If successful, the function
+returns DW_DLV_OK
+and returns
+the \f(CWinner_count\fP  through the pointer.
+The \f(CWinner_count\fP  is the number of 
+compilation unit vectors for this array of vectors.
+See the example above which uses this function.
+
+
+
+.H 3 "dwarf_gdbindex_cuvector_inner_attributes()"
+.DS
+int dwarf_gdbindex_cuvector_inner_attributes(
+    Dwarf_Gdbindex   gdbindex,
+    Dwarf_Unsigned   cuvector_offset,
+    Dwarf_Unsigned   innerindex,
+    /* The attr_value is a field of bits. For expanded version
+        use  dwarf_gdbindex_cuvector_expand_value() */
+    Dwarf_Unsigned * attr_value,
+    Dwarf_Error    * error);
+.DE
+The function \f(CWdwarf_gdbindex_cuvector_inner_attributes()\fP takes as input
+valid Dwarf_Gdbindex pointer and
+an a cu vector offset and a \f(CWinner_index\fP (valid
+\f(CWinner_index\fP values are zero through \f(CWinner_count - 1\fP.
+.P
+If it returns DW_DLV_NO_ENTRY there is a coding error.
+If it returns DW_DLV_ERROR there is an error of some kind.
+and the  error is indicated by
+the value returned through the \f(CWerror\fP pointer.
+.P
+If successful, the function
+returns DW_DLV_OK
+and returns
+The \f(CWattr_value\fP through the pointer.
+The \f(CWattr_value\fP is actually composed of several fields,
+see the next function which expands the value.
+See the example above which uses this function.
+
+
+
+.H 3 "dwarf_gdbindex_cuvector_instance_expand_value()"
+.DS
+int dwarf_gdbindex_cuvector_instance_expand_value(
+    Dwarf_Gdbindex   gdbindex,
+    Dwarf_Unsigned   attr_value,
+    Dwarf_Unsigned * cu_index,
+    Dwarf_Unsigned * reserved1,
+    Dwarf_Unsigned * symbol_kind,
+    Dwarf_Unsigned * is_static,
+    Dwarf_Error    * error);
+.DE
+The function \f(CWdwarf_gdbindex_cuvector_instance_expand_value()\fP 
+takes as input
+valid Dwarf_Gdbindex pointer and
+an \f(CWattr_value\fP.
+.P
+If it returns DW_DLV_NO_ENTRY there is a coding error.
+If it returns DW_DLV_ERROR there is an error of some kind.
+and the  error is indicated by
+the value returned through the \f(CWerror\fP pointer.
+.P
+If successful, the function
+returns DW_DLV_OK
+and returns the following values through the pointers:
+
+The \f(CWcu_index\fP field is the index in the applicable
+CU list of a compilation unit. For the purpose of
+indexing the CU list and the types CU list form a single
+array so the \f(CWcu_index\fP can be indicating either list.
+
+The \f(CWsymbol_kind\fP field is a small integer with the symbol kind(
+zero is reserved, one is a tyhpe, 2 is a variable or enum value, etc).
+
+The \f(CWreserved1\fP field  should have the value zero
+and is the value of a bit field defined as reserved for future use.
+
+The \f(CWis_static\fP field is zero if the CU indexed is global
+and one if the CU indexed is static.
+
+
+See the example above which uses this function.
+
+
+.H 3 "dwarf_gdbindex_string_by_offset()"
+.DS
+int dwarf_gdbindex_string_by_offset(
+    Dwarf_Gdbindex   gdbindexptr,
+    Dwarf_Unsigned   stringoffset,
+    const char    ** string_ptr,
+    Dwarf_Error   *  error);
+.DE
+The function \f(CWdwarf_gdbindex_string_by_offset()\fP 
+takes as input
+valid Dwarf_Gdbindex pointer and
+a \f(CWstringoffset\fP
+If it returns DW_DLV_NO_ENTRY there is a coding error.
+If it returns DW_DLV_ERROR there is an error of some kind.
+and the  error is indicated by
+the value returned through the \f(CWerror\fP pointer.
+.P
+If it succeeds, the call returns a pointer to a string
+from the 'constant pool' through the \f(CWstring_ptr\fP.
+The string pointed to must never be free()d.
+.P
+See the example above which uses this function.
+
+
+.H 2 "Debug Fission (.debug_tu_index, .debug_cu_index) operations"
+We name things "xu" as these sections have the same format
+so we let "x" stand for either section.
+These functions get access to the  index functions needed
+to access and print the contents of an object file
+which is an aggregate of .dwo objects.  These
+sections are implemented in gcc/gdb and are proposed
+to be part of DWARF5 (As of July 2014 DWARF5 is not finished).
+The idea is that much debug information can be separated
+off into individual .dwo Elf objects and then aggregated
+simply into a single .dwp object so the executable need not
+have the complete debug information in it at runtime
+yet allow good debugging.
+.P
+For additional information, see
+"https://gcc.gnu.org/wiki/DebugFissionDWP",
+and eventually, the DWARF5 standard.
+.P
+The interfaces here are necessary if one wants to print
+the section.   To access DIE, macro, etc information
+the support is built into DIE, Macro, etc operations
+so applications usually won't need to use these
+operations at all.
+
+.P
+.H 3 "dwarf_get_xu_index_header()"
+.DS
+int dwarf_get_xu_index_header(Dwarf_Debug dbg,
+    const char *  section_type, /* "tu" or "cu" */
+    Dwarf_Xu_Index_Header *     xuhdr,
+    Dwarf_Unsigned *            version_number,
+    Dwarf_Unsigned *            offsets_count    /* L*/,
+    Dwarf_Unsigned *            units_count      /* N*/,
+    Dwarf_Unsigned *            hash_slots_count /* M*/,
+    const char     **           sect_name,
+    Dwarf_Error *               err);
+.DE
+The function \f(CWdwarf_get_xu_index_header()\fP
+takes as input a
+valid Dwarf_Debug pointer and
+an \f(CWsection_type\fP value, which must one of the 
+strings \f(CWtu\fP or \f(CWcu\fP.
+.P
+It returns DW_DLV_NO_ENTRY if the section requested
+is not in the object file.
+.P
+It returns DW_DLV_ERROR there is an error of some kind.
+and the  error is indicated by
+the value returned through the \f(CWerror\fP pointer.
+.P
+If successful, the function
+returns DW_DLV_OK
+and returns the following values through the pointers:
+.P
+The \f(CWxuhdr\fP field is a pointer usable in
+other operations (see below).
+.P
+The \f(CWversion_number\fP field is a the index version
+number. 
+For gcc before DWARF5 the version number is 2.
+For DWARF5 the version number is 5.
+.P
+The \f(CWoffsets_count\fP field is a the number
+of columns in the table of section offsets.
+Sometimes known as \f(CWL\fP.
+.P
+The \f(CWunits_count\fP field is a the number
+of compilation units or type units in the index.
+Sometimes known as \f(CWN\fP.
+.P
+The \f(CWhash_slots_count\fP field is a the number
+of slots in the hash table.
+Sometimes known as \f(CWM\fP.
+.P
+The \f(CWsect_name\fP field is the name 
+of the section in the object file.
+Because non-Elf objects may not use section names
+callers must recognize that the sect_name may be
+set to NULL (zero) or to point to the empty string
+and this is not considered an error.
+
+.P
+An example of initializing and disposing
+of a \f(CWDwarf_Xu_Index_Header\fP follows.
+.DS
+int res = 0;
+Dwarf_Xu_Index_Header xuhdr = 0;
+Dwarf_Unsigned version_number = 0;
+Dwarf_Unsigned offsets_count = 0; /*L */
+Dwarf_Unsigned units_count = 0; /* M */
+Dwarf_Unsigned hash_slots_count = 0; /* N */
+Dwarf_Error err = 0;
+const char * ret_type = 0;
+const char * section_name = 0;
+const char *type = "cu"; /* For example. Or "tu" */
+res = dwarf_get_xu_index_header(dbg,
+    type,
+    &xuhdr,
+    &version_number,
+    &offsets_count,
+    &units_count,
+    &hash_slots_count,
+    &section_name,
+    &err);
+if (res == DW_DLV_NO_ENTRY) {
+    /* No such section. */
+    return;
+}
+if (res == DW_DLV_ERROR) {
+    /* Something wrong. */
+    return;
+}
+
+if (res == DW_DLV_ERROR) {
+    /* Impossible error. */
+    dwarf_xu_header_free(xuhdr);
+    return;
+}
+/* Do something with the xuhdr here . */
+dwarf_xu_header_free(xuhdr);
+.DE
+
+
+.H 3 "dwarf_get_xu_index_section_type()"
+.DS
+int dwarf_get_xu_index_section_type(
+    Dwarf_Xu_Index_Header xuhdr,
+    const char ** typename,
+    const char ** sectionname,
+    Dwarf_Error * error);
+.DE
+The function \f(CWdwarf_get_xu_section_type()\fP
+takes as input a
+valid  \f(CWDwarf_Xu_Index_Header\fP.
+It is only useful when one already as an 
+open \f(CWxuhdr\fP but one does not know if
+this is a type unit or compilation unit index section.
+.P
+If it returns DW_DLV_NO_ENTRY something is wrong
+(should never happen).
+If it returns DW_DLV_ERROR something is wrong and
+the \f(CWerror\fP field is set to indicate a specific error. 
+.P
+If successful, the function returns DW_DLV_OK
+and sets the following arguments through the pointers:
+.P
+\f(CWtypename\fP is set to the string  \f(CWtu\fP
+or  \f(CWcu\fP to indcate the index is of a type unit
+or a compilation unit, respectively.
+.P
+\f(CWsectionname\fP is set to name of the object
+file section.
+Because non-Elf objects may not use section names
+callers must recognize that the sect_name may be
+set to NULL (zero) or to point to the empty string
+and this is not considered an error.
+.P
+Neither string should be free()d.
+
+
+.H 3 "dwarf_get_xu_header_free()"
+.DS
+void dwarf_xu_header_free(Dwarf_Xu_Index_Header xuhdr);
+.DE
+The function \f(CWdwarf_get_xu_header_free()\fP
+takes as input a valid \f(CWDwarf_Xu_Index_Header\fP
+and frees all the special data allocated for this
+access type.  Once called, any pointers returned
+by use of the  \f(CWxuhdr\fP should be considered
+stale and unusable.
+
+.H 3 "dwarf_get_xu_hash_entry()"
+.DS
+int dwarf_get_xu_hash_entry(
+    Dwarf_Xu_Index_Header xuhdr,
+    Dwarf_Unsigned        index,
+    Dwarf_Unsigned *      hash_value,
+    Dwarf_Unsigned *      index_to_sections,
+    Dwarf_Error *         error);
+.DE
+The function \f(CWdwarf_get_xu_hash_entry()\fP
+takes as input a valid \f(CWDwarf_Xu_Index_Header\fP
+and an  \f(CWindex\fP of a hash slot entry
+(valid hash slot index values are zero (0) through 
+\f(CWhash_slots_count -1\fP (M-1)).
+.P
+If it returns DW_DLV_NO_ENTRY something is wrong
+.P
+If it returns DW_DLV_ERROR something is wrong and
+the \f(CWerror\fP field is set to indicate a specific error.
+.P
+If successful, the function returns DW_DLV_OK
+and sets the following arguments through the pointers:
+.P
+\f(CWhash_value\fP is set to the 64bit hash of of the symbol name.
+.P
+\f(CWindex_to_sections\fP is set to the index into offset-size tables
+of this hash entry.
+.P
+If both \f(CWhash_value\fP and \f(CWindex_to_sections\fP are 
+zero (0)
+then the hash slot is unused.
+\f(CWindex_to_sections\fP is used in calls to
+the function \f(CWdwarf_get_xu_section_offset()\fP
+as the \f(CWrow_index\fP.
+.P
+An example of use follows.
+.DS
+/*  hash_slots_count returned by
+    dwarf_get_xu_index_header(), see above. */
+Dwarf_Unsigned h = 0;
+for( h = 0; h < hash_slots_count; h++) {
+    Dwarf_Unsigned hashval = 0;
+    Dwarf_Unsigned index = 0;
+    Dwarf_Unsigned col = 0;
+    res = dwarf_get_xu_hash_entry(xuhdr,h,
+                &hashval,&index,&err);
+    if (res == DW_DLV_ERROR) {
+        /* Oops. hash_slots_count wrong. */
+        return;
+    } else if (res == DW_DLV_NO_ENTRY) {
+        /* Impossible */
+        return;
+    } else if (hashval == 0 && index == 0 ) {
+        /* An unused hash slot, we do not print them */
+        continue;
+    }
+    /*  Here, hashval and index (a row index into offsets and lengths)
+        are valid. */
+.DE
+
+
+.H 3 "dwarf_get_xu_section_names()"
+.DS
+int dwarf_get_xu_section_names(
+    Dwarf_Xu_Index_Header xuhdr,
+    Dwarf_Unsigned        column_index,
+    Dwarf_Unsigned*       number,
+    const char **         name,
+    Dwarf_Error *         err);
+.DE
+The function \f(CWdwarf_get_xu_section_names()\fP
+takes as input a valid \f(CWDwarf_Xu_Index_Header\fP
+and a  \f(CWcolumn_index\fP of a hash slot entry
+(valid column_index values are zero (0) through
+\f(CWoffsets_count -1\fP (L-1)).
+.P
+If it returns DW_DLV_NO_ENTRY something is wrong
+.P
+If it returns DW_DLV_ERROR something is wrong and
+the \f(CWerror\fP field is set to indicate a specific error.
+.P 
+If successful, the function returns DW_DLV_OK
+and sets the following arguments through the pointers:
+.P
+\f(CWnumber\fP is set to a number identifying which section
+this column applies to. For example, if the value is 
+\f(CWDW_SECT_INFO\fP 
+(1) the column came from  a .debug_info.dwo section.
+See the table of \f(CWDW_SECT_\fP identifiers and
+asigned numbers in DWARF5.
+.P
+\f(CWname\fP is set to the applicable spelling of the
+section identifier, for example \f(CWDW_SECT_INFO\fP.
+
+
+.H 3 "dwarf_get_xu_section_offset()"
+.DS
+int dwarf_get_xu_section_offset(
+    Dwarf_Xu_Index_Header xuhdr,
+    Dwarf_Unsigned        row_index,
+    Dwarf_Unsigned        column_index,
+    Dwarf_Unsigned*       sec_offset,
+    Dwarf_Unsigned*       sec_size,
+    Dwarf_Error *         error);
+.DE
+The function \f(CWdwarf_get_xu_section_offset()\fP
+takes as input a valid \f(CWDwarf_Xu_Index_Header\fP
+and a  \f(CWrow_index\fP  
+(see \f(CWdwarf_get_xu_hash_entry()\fP above)
+and a  \f(CWcolumn_index\fP.
+Valid row_index values are one (1) through
+\f(CWunits_count\fP (N) but one uses 
+\f(CWdwarf_get_xu_hash_entry()\fP (above) to get
+row index.
+Valid column_index values are zero (0) through
+\f(CWoffsets_count -1\fP (L-1).
+.P
+If it returns DW_DLV_NO_ENTRY something is wrong.
+.P
+If it returns DW_DLV_ERROR something is wrong and
+the \f(CWerror\fP field is set to indicate a specific error.
+.P
+If successful, the function returns DW_DLV_OK
+and sets the following arguments through the pointers:
+.P
+\f(CWsec_offset\fP, (\f(CWbase offset\fP) is set to 
+the base offset of the initial compilation-unit-header
+section taken from  a .dwo object.
+The  base offset is the data
+from a single section of a .dwo object.
+.P
+\f(CWsec_size\fP is set to
+the length of the  original section taken from 
+a .dwo object.
+This is the length in the applicable
+section in the .dwp over which the base offset applies.
+.P
+An example of use of 
+\f(CWdwarf_get_xu_section_names()\fP
+and
+\f(CWdwarf_get_xu_section_offset()\fP
+follows.
+.DS
+/*  We use  'offsets_count' returned by
+    a dwarf_get_xu_index_header() call. 
+    We use 'index' returned by a 
+    dwarf_get_xu_hash_entry() call. */
+for (col = 0; col < offsets_count; col++) {
+    Dwarf_Unsigned off = 0;
+    Dwarf_Unsigned len = 0;
+    const char * name = 0;
+    Dwarf_Unsigned num = 0;
+    res = dwarf_get_xu_section_names(xuhdr,
+                    col,&num,&name,&err);
+    if (res != DW_DLV_OK) {
+        break;
+    }
+    res = dwarf_get_xu_section_offset(xuhdr,
+                    index,col,&off,&len,&err);
+    if (res != DW_DLV_OK) {
+        break;
+    }
+    /* Here we have the DW_SECT_ name and number
+       and the base offset and length of the
+       section data applicable to the hash
+       that got us here. 
+       Use the values.*/
+}
+.DE
 
 .H 2 "TAG ATTR etc names as strings"
 These functions turn a value into a string.  

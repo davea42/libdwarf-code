@@ -2333,6 +2333,7 @@ int dwarf_gdbindex_header(Dwarf_Debug /*dbg*/,
     Dwarf_Unsigned * /*constant_pool_offset*/,
     Dwarf_Unsigned * /*section_size*/,
     Dwarf_Unsigned * /*unused_reserved*/,
+    const char    ** /*section_name*/,
     Dwarf_Error    * /*error*/);
 
 int dwarf_gdbindex_culist_array(Dwarf_Gdbindex /*gdbindexptr*/,
@@ -2422,7 +2423,7 @@ void dwarf_gdbindex_free(Dwarf_Gdbindex /*gdbindexptr*/);
 
 int dwarf_get_xu_index_header(Dwarf_Debug /*dbg*/,
     const char *  section_type, /* "tu" or "cu" */
-    Dwarf_Xu_Index_Header * /*xuhdr*/,
+    Dwarf_Xu_Index_Header *     /*xuhdr*/,
     Dwarf_Unsigned *            /*version_number*/,
     Dwarf_Unsigned *            /*offsets_count L*/,
     Dwarf_Unsigned *            /*units_count N*/,
@@ -2450,21 +2451,18 @@ int dwarf_get_xu_hash_entry(Dwarf_Xu_Index_Header /*xuhdr*/,
     Dwarf_Unsigned *  /*index_to_sections*/,
     Dwarf_Error *     /*err*/);
 
-/*  Row 0, columns 0 to L-1,  are the section id's,
-    such as DW_SECT_INFO (ie, 1) (sect size set zero). */
+/*  Columns 0 to L-1,  valid. */
 int dwarf_get_xu_section_names(Dwarf_Xu_Index_Header /*xuhdr*/,
-    /* defined to be row zero. */
+    /* Row index defined to be row zero. */
     Dwarf_Unsigned  /*column_index*/,
     Dwarf_Unsigned* /*DW_SECT_ number*/,
     const char **   /*DW_SECT_ name*/,
     Dwarf_Error *   /*err*/);
 
-    /* Rows 1 to N col 0 to L-1 are section offset and length values. */
+    /* Rows 1 to N col 0 to L-1  are valid */
 int dwarf_get_xu_section_offset(Dwarf_Xu_Index_Header /*xuhdr*/,
     Dwarf_Unsigned  /*row_index*/,
     Dwarf_Unsigned  /*column_index*/,
-    /*  For row zero, the field below is really returning
-        the section id. */
     Dwarf_Unsigned* /*sec_offset*/,
     Dwarf_Unsigned* /*sec_size*/,
     Dwarf_Error *   /*err*/);

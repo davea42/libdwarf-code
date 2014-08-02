@@ -140,6 +140,7 @@ dwarf_gdbindex_header(Dwarf_Debug dbg,
     Dwarf_Unsigned * constant_pool_offset,
     Dwarf_Unsigned * section_size,
     Dwarf_Unsigned * unused_reserved,
+    const char    ** section_name,
     Dwarf_Error    * error)
 {
 
@@ -237,6 +238,7 @@ dwarf_gdbindex_header(Dwarf_Debug dbg,
     *constant_pool_offset = indexptr->gi_constant_pool_offset;
     *section_size         = indexptr->gi_section_length;
     *unused_reserved = 0;
+    *section_name  =        dbg->de_debug_gdbindex.dss_name;
 
     return DW_DLV_OK;
 

@@ -1,3 +1,10 @@
+2014-08-02  David Anderson
+     * dwarf_gdbindex.c: Fix an argument list by adding section name.
+     * libdwarf.h.in: Fix an argument list by adding section name.
+       Clarify some commentary on dwarf_get_xu* function declarations.
+     * libdwarf2.1.mm: Documented the new gdbindex and dwarf_get_xu*
+       functions.
+     * libdwarf2.1.pdf: Regenerate. Version 2.22.
 2014-07-12  David Anderson
      * dwarf_die_deliv.c: Remove trailing whitespace.
        Implement dwarf_get_die_section_name() allow
