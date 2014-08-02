@@ -338,6 +338,7 @@ print_gdb_index(Dwarf_Debug dbg)
     Dwarf_Unsigned section_size = 0;
     Dwarf_Unsigned unused = 0;
     Dwarf_Error error = 0;
+    const char *section_name = 0;
 
     int res = 0;
     current_section_id = DEBUG_GDB_INDEX;
@@ -350,6 +351,7 @@ print_gdb_index(Dwarf_Debug dbg)
         &constant_pool_offset,
         &section_size,
         &unused,
+        &section_name,
         &error);
 
     if (!do_print_dwarf) {
@@ -360,7 +362,10 @@ print_gdb_index(Dwarf_Debug dbg)
             say nothing. */
         return;
     }
-    printf("\n.gdb_index\n");
+    if (!section_name || !*section_name) {
+        section_name = ".gdb_index";
+    }
+    printf("\n%s\n",section_name);
     if( res == DW_DLV_ERROR) {
         print_error(dbg,"dwarf_gdbindex_header",res,error);
         return;

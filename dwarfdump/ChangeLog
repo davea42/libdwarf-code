@@ -1,3 +1,7 @@
+2014-08-02  David Anderson
+     * print_debugfission.c, print_gdbindex.c: Use the section name
+       strings returned by section-open 
+       for object files that have them (like Elf).
 2014-07-12  David Anderson
      * print_die.c: Using a new interface to print the
        actual section name, not just .debug_info or .debug_types.
