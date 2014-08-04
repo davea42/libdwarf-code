@@ -36,6 +36,7 @@ using std::vector;
 static int
 print_culist_array(Dwarf_Debug dbg,
     Dwarf_Gdbindex  gdbindex,
+    Dwarf_Unsigned *culist_len,
     Dwarf_Error * err)
 {
     Dwarf_Unsigned list_len = 0;
@@ -65,6 +66,7 @@ print_culist_array(Dwarf_Debug dbg,
             IToHex0N(culength,10) << endl;
     }
     cout << endl;
+    *culist_len = list_len;
     return DW_DLV_OK;
 }
 
@@ -163,6 +165,21 @@ get_kind(unsigned k)
     return "kind-erroneous";
 }
 
+static string
+cu_index_string(Dwarf_Unsigned index,
+    Dwarf_Unsigned culist_len)
+{
+    char  temp_space[40];
+    if (index > 162) cout << "dadebug index " <<index<< endl;
+    if (index < culist_len) {
+        return IToDec(index,4);
+    }
+    Dwarf_Unsigned type_index = index-culist_len;
+    string out = IToDec(index,4);
+    string tnum = "(T" + IToDec(type_index) + ")";
+    out.append(tnum);
+    return out;
+}
 
 
 static int
@@ -171,6 +188,7 @@ print_symtab_entry(Dwarf_Debug dbg,
     Dwarf_Unsigned index,
     Dwarf_Unsigned symnameoffset,
     Dwarf_Unsigned cuvecoffset,
+    Dwarf_Unsigned culist_len,
     Dwarf_Error *err)
 {
     int res = 0;
@@ -221,6 +239,8 @@ print_symtab_entry(Dwarf_Debug dbg,
                 "dwarf_gdbindex_cuvector_inner_attributes failed",res,*err);
             return res;
         }
+        // if cu_index is > the culist_len, then it  refers
+        // to a tu_index of  'cu_index - culist_len'
         res = dwarf_gdbindex_cuvector_instance_expand_value(gdbindex,
             attributes, &cu_index,&reserved1,&symbol_kind, &is_static,
             err);
@@ -231,30 +251,31 @@ print_symtab_entry(Dwarf_Debug dbg,
         }
         if (cuvec_len == 1) {
             cout <<"  [" << IToDec(index,4) << "]" <<
-                IToDec(cu_index,4) << " ["  <<
+                cu_index_string(cu_index,culist_len) <<
+                " ["  <<
                 (is_static?
                     "static ":
-                    "global ") <<  
+                    "global ") <<
                 " " <<
                 get_kind(symbol_kind) << "] " <<
                 "\"" << name << "\"" << endl;
         } else if (ii == 0) {
             cout <<"  [" << IToDec(index,4) << "]" <<
                 " \"" << name << "\"" << endl;
-            cout <<"         " << IToDec(cu_index,4) << 
-                " [" << 
+            cout <<"         " << cu_index_string(cu_index,culist_len) <<
+                " [" <<
                 (is_static?
                     "static ":
-                    "global ") << 
-                " " << 
+                    "global ") <<
+                " " <<
                 get_kind(symbol_kind) << "]" << endl;
         }else{
-            cout <<"         " << IToDec(cu_index,4) << 
-                " [" << 
+            cout <<"         " << cu_index_string(cu_index,culist_len) <<
+                " [" <<
                 (is_static?
                     "static ":
-                    "global ") << 
-                " " << 
+                    "global ") <<
+                " " <<
                 get_kind(symbol_kind) << "]" << endl;
         }
         if (verbose > 1) {
@@ -273,6 +294,7 @@ print_symtab_entry(Dwarf_Debug dbg,
 static int
 print_symboltable(Dwarf_Debug dbg,
     Dwarf_Gdbindex  gdbindex,
+    Dwarf_Unsigned culist_len,
     Dwarf_Error * err)
 {
     Dwarf_Unsigned list_len = 0;
@@ -301,7 +323,7 @@ print_symboltable(Dwarf_Debug dbg,
                 "dwarf_gdbindex_symboltable_entry failed",res,*err);
             return res;
         }
-        res = print_symtab_entry(dbg,gdbindex,i,symnameoffset,cuvecoffset,err);
+        res = print_symtab_entry(dbg,gdbindex,i,symnameoffset,cuvecoffset,culist_len,err);
         if (res != DW_DLV_OK) {
             return res;
         }
@@ -359,25 +381,26 @@ print_gdb_index(Dwarf_Debug dbg)
     }
 
     cout <<"  Version             : " <<
-        IToHex0N(version,10) << 
+        IToHex0N(version,10) <<
         endl;
     cout << "  CU list offset      : " <<
-        IToHex0N(cu_list_offset,10) << 
+        IToHex0N(cu_list_offset,10) <<
         endl;
     cout << "  Address area offset : " <<
-        IToHex0N(types_cu_list_offset,10) << 
+        IToHex0N(types_cu_list_offset,10) <<
         endl;
     cout << "  Symbol table offset : " <<
-        IToHex0N(address_area_offset,10) << 
+        IToHex0N(address_area_offset,10) <<
         endl;
     cout << "  Constant pool offset: " <<
-        IToHex0N(constant_pool_offset,10) << 
+        IToHex0N(constant_pool_offset,10) <<
         endl;
     cout << "  section size        : " <<
-        IToHex0N(section_size,10) << 
+        IToHex0N(section_size,10) <<
         endl;
 
-    res = print_culist_array(dbg,gdbindex,&error);
+    Dwarf_Unsigned culist_len = 0;
+    res = print_culist_array(dbg,gdbindex,&culist_len,&error);
     if (res != DW_DLV_OK) {
         return;
     }
@@ -389,7 +412,7 @@ print_gdb_index(Dwarf_Debug dbg)
     if (res != DW_DLV_OK) {
         return;
     }
-    res = print_symboltable(dbg,gdbindex,&error);
+    res = print_symboltable(dbg,gdbindex,culist_len,&error);
     if (res != DW_DLV_OK) {
         return;
     }

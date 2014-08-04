@@ -1,3 +1,14 @@
+2014-08-04  David Anderson
+     * dwarfdump.1: Mention -I option.
+     * dwarfdump.cc: Remove trailing whitespace.
+       Add -I to help output.
+     * print_die.cc: Fix an indent.
+     * print_debugfission.cc: Remove trailing whitespace on some lines.
+     * print_gdbindex.cc: Add culist_len argument to
+       print_culist_array so it can pass cu list length
+       to symboltable code.  So symboltable code can
+       know what indexes are type units and which compilation
+       units. Remove trailing whitespace on some lines.
 2014-08-03  David Anderson
      * Makefine.in: add print_debugfission.o
      * dwarfdump.cc: Print debugfission data now.

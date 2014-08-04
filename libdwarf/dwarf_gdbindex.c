@@ -164,7 +164,7 @@ dwarf_gdbindex_header(Dwarf_Debug dbg,
     }
     memcpy(&header,dbg->de_debug_gdbindex.dss_data,
         sizeof(struct gi_fileheader_s));
-    indexptr = _dwarf_get_alloc(dbg,DW_DLA_GDBINDEX,1);
+    indexptr = (Dwarf_Gdbindex)_dwarf_get_alloc(dbg,DW_DLA_GDBINDEX,1);
     if (indexptr == NULL) {
         _dwarf_error(dbg, error, DW_DLE_ALLOC_FAIL);
         return (DW_DLV_ERROR);

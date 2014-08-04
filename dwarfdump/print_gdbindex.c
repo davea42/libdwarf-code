@@ -30,6 +30,7 @@
 static int
 print_culist_array(Dwarf_Debug dbg,
     Dwarf_Gdbindex  gdbindex,
+    Dwarf_Unsigned *cu_list_len,
     Dwarf_Error * err)
 {
     Dwarf_Unsigned list_len = 0;
@@ -63,6 +64,7 @@ print_culist_array(Dwarf_Debug dbg,
             culength);
     }
     printf("\n");
+    *cu_list_len = list_len;
     return DW_DLV_OK;
 }
 
@@ -174,6 +176,27 @@ get_kind(unsigned k)
     return "kind-erroneous";
 }
 
+/*   NOTE: Returns pointer to static local string.
+     Use the returned pointer immediately or
+     things will not work properly.  */
+static char *
+cu_index_string(Dwarf_Unsigned index,
+    Dwarf_Unsigned culist_len)
+{
+    static char temp_space[40];
+    Dwarf_Unsigned type_index = 0;
+    if (index < culist_len) {
+        snprintf(temp_space,sizeof(temp_space), "%4" DW_PR_DUu,index);
+        return temp_space;
+    }
+    type_index = index-culist_len;
+    snprintf(temp_space,sizeof(temp_space), 
+        "%4" DW_PR_DUu "(T%4" DW_PR_DUu ")",
+        index,type_index);
+    return temp_space;
+}
+
+
 
 
 static int
@@ -182,6 +205,7 @@ print_symtab_entry(Dwarf_Debug dbg,
     Dwarf_Unsigned index,
     Dwarf_Unsigned symnameoffset,
     Dwarf_Unsigned cuvecoffset,
+    Dwarf_Unsigned culist_len,
     Dwarf_Error *err)
 {
     int res = 0;
@@ -239,31 +263,32 @@ print_symtab_entry(Dwarf_Debug dbg,
                 "dwarf_gdbindex_cuvector_instance_expand_value failed",res,*err);
             return res;
         }
+        /*  if cu_index is > the cu-count, then it  refers
+            to a tu_index of  'cu_index - cu-count' */
         if (cuvec_len == 1) {
             printf("  [%4" DW_PR_DUu "]"
-                "%4" DW_PR_DUu
+                "%s"
                 " [%s %s] \"%s\"\n",
                 index,
-                cu_index,
+                cu_index_string(cu_index,culist_len),
                 is_static?
                     "static ":
                     "global ",
                 get_kind(symbol_kind),
                 name);
         } else if (ii == 0) {
-            printf("  [%4" DW_PR_DUu "]"
-                " \"%s\"\n" ,
+            printf("  [%4" DW_PR_DUu "] \"%s\"\n" ,
                 index,
                 name);
-            printf("         %4" DW_PR_DUu " [%s %s]\n",
-                cu_index,
+            printf("         %s [%s %s]\n",
+                cu_index_string(cu_index,culist_len),
                 is_static?
                     "static ":
                     "global ",
                 get_kind(symbol_kind));
         }else{
-            printf("         %4" DW_PR_DUu " [%s %s]\n",
-                cu_index,
+            printf("         %s [%s %s]\n",
+                cu_index_string(cu_index,culist_len),
                 is_static?
                     "static ":
                     "global ",
@@ -285,6 +310,7 @@ print_symtab_entry(Dwarf_Debug dbg,
 static int
 print_symboltable(Dwarf_Debug dbg,
     Dwarf_Gdbindex  gdbindex,
+    Dwarf_Unsigned culist_len,
     Dwarf_Error * err)
 {
     Dwarf_Unsigned list_len = 0;
@@ -313,7 +339,8 @@ print_symboltable(Dwarf_Debug dbg,
                 "dwarf_gdbindex_symboltable_entry failed",res,*err);
             return res;
         }
-        res = print_symtab_entry(dbg,gdbindex,i,symnameoffset,cuvecoffset,err);
+        res = print_symtab_entry(dbg,gdbindex,i,symnameoffset,cuvecoffset,
+            culist_len,err);
         if (res != DW_DLV_OK) {
             return res;
         }
@@ -339,6 +366,7 @@ print_gdb_index(Dwarf_Debug dbg)
     Dwarf_Unsigned unused = 0;
     Dwarf_Error error = 0;
     const char *section_name = 0;
+    Dwarf_Unsigned culist_len = 0;
 
     int res = 0;
     current_section_id = DEBUG_GDB_INDEX;
@@ -391,7 +419,7 @@ print_gdb_index(Dwarf_Debug dbg)
         section_size);
 
 
-    res = print_culist_array(dbg,gdbindex,&error);
+    res = print_culist_array(dbg,gdbindex,&culist_len,&error);
     if (res != DW_DLV_OK) {
         return;
     }
@@ -403,7 +431,7 @@ print_gdb_index(Dwarf_Debug dbg)
     if (res != DW_DLV_OK) {
         return;
     }
-    res = print_symboltable(dbg,gdbindex,&error);
+    res = print_symboltable(dbg,gdbindex,culist_len,&error);
     if (res != DW_DLV_OK) {
         return;
     }

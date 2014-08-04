@@ -115,7 +115,7 @@ static bool weakname_flag = false;
 static bool header_flag = false; /* Control printing of Elf header. */
 
 // Control printing of gdb_index section.
-static bool gdbindex_flag = false; 
+static bool gdbindex_flag = false;
 
 bool producer_children_flag = false;   /* List of CUs per compiler */
 
@@ -1005,7 +1005,7 @@ process_one_file(Elf * elf,const  string & file_name, int archive,
     if (gdbindex_flag) {
         reset_overall_CU_error_data();
         //  By definition if gdb_index is present
-        //  then "cu" and "tu" will not be. And vice versa. 
+        //  then "cu" and "tu" will not be. And vice versa.
         print_gdb_index(dbg);
         print_debugfission_index(dbg,"cu");
         print_debugfission_index(dbg,"tu");
@@ -1145,6 +1145,7 @@ static const char *usage_text[] = {
 "\t\t-H <num>\tlimit output to the first <num> major units",
 "\t\t\t  example: to stop after <num> compilation units",
 "\t\t-i\tprint info section",
+"\t\t-I\tprint sections .gdb_index, .debug_cu_index, .debug_tu_index",
 "\t\t-k[abcdeEfFgilmMnrRsStx[e]y] check dwarf information",
 "\t\t   a\tdo all checks",
 "\t\t   b\tcheck abbreviations",     /* Check abbreviations */

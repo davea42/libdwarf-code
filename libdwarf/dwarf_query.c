@@ -604,15 +604,15 @@ dwarf_lowpc(Dwarf_Die die,
     if(attr_form == DW_FORM_GNU_addr_index ||
         attr_form == DW_FORM_addrx) {
         Dwarf_Addr addr_out = 0;
-        int res = 0;
+        int res2 = 0;
         Dwarf_CU_Context context = die->di_cu_context;
-        res = _dwarf_extract_address_from_debug_addr(dbg,
+        res2 = _dwarf_extract_address_from_debug_addr(dbg,
             context,
             info_ptr,
             &addr_out,
             error);
-        if (res != DW_DLV_OK) {
-            return res;
+        if (res2 != DW_DLV_OK) {
+            return res2;
         }
         *return_addr = addr_out;
         return (DW_DLV_OK);
@@ -842,14 +842,14 @@ dwarf_highpc_b(Dwarf_Die die,
         if (attr_form == DW_FORM_GNU_addr_index ||
             attr_form == DW_FORM_addrx) {
             Dwarf_Unsigned addr_out = 0;
-            int res = 0;
+            int res2 = 0;
             Dwarf_CU_Context context = die->di_cu_context;
-            res = _dwarf_extract_address_from_debug_addr(dbg,
+            res2 = _dwarf_extract_address_from_debug_addr(dbg,
                 context,
                 info_ptr,
                 &addr_out,
                 error);
-            if(res != DW_DLV_OK) {
+            if(res2 != DW_DLV_OK) {
                 return res;
             }
             *return_value = addr_out;
@@ -863,23 +863,23 @@ dwarf_highpc_b(Dwarf_Die die,
             info_ptr, address_size);
         *return_value = addr;
     } else {
-        int res = 0;
+        int res3 = 0;
         Dwarf_Unsigned v = 0;
-        res = _dwarf_die_attr_unsigned_constant(die,DW_AT_high_pc,
+        res3 = _dwarf_die_attr_unsigned_constant(die,DW_AT_high_pc,
             &v,error);
-        if( res != DW_DLV_OK) {
-            Dwarf_Byte_Ptr info_ptr = 0;
-            res = _dwarf_get_value_ptr(die, DW_AT_high_pc,
-                &attr_form,&info_ptr,error);
-            if(res == DW_DLV_ERROR) {
-                return res;
+        if(res3 != DW_DLV_OK) {
+            Dwarf_Byte_Ptr info_ptr2 = 0;
+            res3 = _dwarf_get_value_ptr(die, DW_AT_high_pc,
+                &attr_form,&info_ptr2,error);
+            if(res3 == DW_DLV_ERROR) {
+                return res3;
             }
             if(res == DW_DLV_NO_ENTRY) {
-                return res;
+                return res3;
             }
             if (attr_form == DW_FORM_sdata) {
                 Dwarf_Signed sval = 0;
-                sval = _dwarf_decode_s_leb128(info_ptr, NULL);
+                sval = _dwarf_decode_s_leb128(info_ptr2, NULL);
                 /*  DWARF4 defines the value as an unsigned offset
                     in section 2.17.2. */
                 *return_value = (Dwarf_Unsigned)sval;

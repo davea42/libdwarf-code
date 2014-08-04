@@ -33,6 +33,7 @@
 #include <string.h>
 /*#include <elfaccess.h> */
 #include "pro_incl.h"
+#include "pro_reloc.h"
 
 
 /*  Do initial alloc of newslots slots.

@@ -264,8 +264,8 @@ simple_value_hashfunc(const void *keyp)
 static void
 tdestroy_free_node(void *nodep)
 {
-    Dwarf_Ptr m = (Dwarf_Ptr)nodep;
-    Dwarf_Ptr malloc_addr = m - DW_RESERVE;
+    char * m = (char *)nodep;
+    char * malloc_addr = m - DW_RESERVE;
     struct reserve_data_s * reserve =(struct reserve_data_s *)malloc_addr;
     unsigned type = reserve->rd_type;
     if (type >= ALLOC_AREA_INDEX_TABLE_MAX) {
@@ -312,11 +312,11 @@ simple_compare_function(const void *l, const void *r)
     This function cannot be used to allocate a
     Dwarf_Debug_s struct.  */
 
-Dwarf_Ptr
+char *
 _dwarf_get_alloc(Dwarf_Debug dbg,
     Dwarf_Small alloc_type, Dwarf_Unsigned count)
 {
-    Dwarf_Ptr alloc_mem = 0;
+    char * alloc_mem = 0;
     Dwarf_Signed basesize = 0;
     Dwarf_Signed size = 0;
     unsigned int type = alloc_type;
@@ -349,7 +349,7 @@ _dwarf_get_alloc(Dwarf_Debug dbg,
         return NULL;
     }
     {
-        Dwarf_Ptr ret_mem = alloc_mem + DW_RESERVE;
+        char * ret_mem = alloc_mem + DW_RESERVE;
         void *key = ret_mem;
         struct reserve_data_s *r = (struct reserve_data_s*)alloc_mem;
         void *result = 0;
@@ -381,7 +381,7 @@ _dwarf_get_alloc(Dwarf_Debug dbg,
     and dss_size to see if 'space' was inside a debug section.
     This tfind approach removes that maintenance headache. */
 static int
-string_is_in_debug_section(Dwarf_Debug dbg,Dwarf_Ptr space)
+string_is_in_debug_section(Dwarf_Debug dbg,void * space)
 {
     /*  See dwarf_line.c dwarf_srcfiles()
         for one way we can wind up with
@@ -438,7 +438,7 @@ dwarf_dealloc(Dwarf_Debug dbg,
     Dwarf_Ptr space, Dwarf_Unsigned alloc_type)
 {
     unsigned int type = alloc_type;
-    Dwarf_Ptr malloc_addr = space - DW_RESERVE;
+    char * malloc_addr = (char *)space - DW_RESERVE;
 
     if (space == NULL) {
         return;

@@ -781,7 +781,7 @@ dwarf_add_AT_location_expr(Dwarf_P_Debug dbg,
     the other die, and its di_offset value is used as
     the reference value.  */
 
-Dwarf_P_Attribute
+static Dwarf_P_Attribute
 _dwarf_add_AT_reference_internal(Dwarf_P_Debug dbg,
     Dwarf_P_Die ownerdie,
     Dwarf_Half attr,

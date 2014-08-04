@@ -1227,6 +1227,7 @@ static const char *usage_text[] = {
 "\t\t-H <num>\tlimit output to the first <num> major units",
 "\t\t\t  example: to stop after <num> compilation units",
 "\t\t-i\tprint info section",
+"\t\t-I\tprint sections .gdb_index, .debug_cu_index, .debug_tu_index",
 "\t\t-k[abcdeEfFgilmMnrRsStx[e]y] check dwarf information",
 "\t\t   a\tdo all checks",
 "\t\t   b\tcheck abbreviations",     /* Check abbreviations */

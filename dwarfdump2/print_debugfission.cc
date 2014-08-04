@@ -100,7 +100,7 @@ print_debugfission_index(Dwarf_Debug dbg,const std::string &cuortu)
     cout << endl;
     cout << section_name;
     cout << endl;
-    cout << "  Version:           " << version_number << endl; 
+    cout << "  Version:           " << version_number << endl;
     cout << "  Number of columns: " << offsets_count << endl;
     cout << "  number of entries: " << units_count << endl;
     cout << "  Number of slots:   " << hash_slots_count << endl;
@@ -111,7 +111,7 @@ print_debugfission_index(Dwarf_Debug dbg,const std::string &cuortu)
     }
 
     {
-        Dwarf_Unsigned h = 0;   
+        Dwarf_Unsigned h = 0;
         for( h = 0; h < hash_slots_count; h++) {
             Dwarf_Unsigned hashval = 0;
             Dwarf_Unsigned index = 0;
@@ -123,7 +123,7 @@ print_debugfission_index(Dwarf_Debug dbg,const std::string &cuortu)
                 dwarf_xu_header_free(xuhdr);
                 return;
             } else if (res == DW_DLV_NO_ENTRY) {
-                // Impossible 
+                // Impossible
                 cout << "  [" << IToDec(h,4) << "]  "
                     << "dwarf_get_xu_hash_entry impossible return code: "
                     << "No entry?" << endl;
@@ -151,22 +151,20 @@ print_debugfission_index(Dwarf_Debug dbg,const std::string &cuortu)
                     dwarf_xu_header_free(xuhdr);
                     return;
                 }
-                res = dwarf_get_xu_section_offset(xuhdr, 
+                res = dwarf_get_xu_section_offset(xuhdr,
                     index,col,&off,&len,&err);
                 if (res != DW_DLV_OK) {
                     print_error(dbg,"dwarf_get_xu_section_offset",res,err);
                     dwarf_xu_header_free(xuhdr);
                     return;
                 }
-                cout <<"    [," <<IToDec(col,2) << 
+                cout <<"    [," <<IToDec(col,2) <<
                     "] " << RightAlign(20,name) <<
                     " "  << IToHex0N(off,10) <<
-                    " (" << IToDec(off,8) << 
+                    " (" << IToDec(off,8) <<
                     ") " << IToHex0N(len,10) <<
                     " (" << IToDec(len,8) << ")" << endl;
             }
-            
-            
         }
     }
     dwarf_xu_header_free(xuhdr);

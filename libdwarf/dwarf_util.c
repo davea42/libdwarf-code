@@ -349,7 +349,8 @@ _dwarf_get_abbrev_for_code(Dwarf_CU_Context cu_context, Dwarf_Unsigned code)
     if (!hash_table_base->tb_entries) {
         hash_table_base->tb_table_entry_count =  HT_MULTIPLE;
         hash_table_base->tb_total_abbrev_count= 0;
-        hash_table_base->tb_entries =  _dwarf_get_alloc(dbg,
+        hash_table_base->tb_entries =
+            (struct  Dwarf_Hash_Table_Entry_s *)_dwarf_get_alloc(dbg,
             DW_DLA_HASH_TABLE_ENTRY,
             hash_table_base->tb_table_entry_count);
         if (!hash_table_base->tb_entries) {
@@ -362,7 +363,8 @@ _dwarf_get_abbrev_for_code(Dwarf_CU_Context cu_context, Dwarf_Unsigned code)
         /* Effectively multiplies by >= HT_MULTIPLE */
         newht.tb_table_entry_count =  hash_table_base->tb_total_abbrev_count;
         newht.tb_total_abbrev_count = 0;
-        newht.tb_entries =  _dwarf_get_alloc(dbg,
+        newht.tb_entries =
+            (struct  Dwarf_Hash_Table_Entry_s *)_dwarf_get_alloc(dbg,
             DW_DLA_HASH_TABLE_ENTRY,
             newht.tb_table_entry_count);
 
@@ -488,7 +490,7 @@ _dwarf_memcpy_swap_bytes(void *s1, const void *s2, size_t len)
 {
     void *orig_s1 = s1;
     unsigned char *targ = (unsigned char *) s1;
-    unsigned char *src = (unsigned char *) s2;
+    const unsigned char *src = (const unsigned char *) s2;
 
     if (len == 4) {
         targ[3] = src[0];
@@ -713,7 +715,7 @@ dwarf_register_printf_callback( Dwarf_Debug dbg,
 static void bufferdoublesize(struct  Dwarf_Printf_Callback_Info_s *bufdata)
 {
     char *space = 0;
-    int targlen = 0;
+    unsigned int targlen = 0;
     if (bufdata->dp_buffer_len == 0) {
         targlen = MINBUFLEN;
     } else {
@@ -724,7 +726,7 @@ static void bufferdoublesize(struct  Dwarf_Printf_Callback_Info_s *bufdata)
         }
     }
     /* Make big enough for a trailing NUL char. */
-    space = malloc(targlen+1);
+    space = (char *)malloc(targlen+1);
     if (!space) {
         /* Out of space, we cannot double it. */
         return;
@@ -767,7 +769,7 @@ dwarf_printf(Dwarf_Debug dbg,
         int olen = vsnprintf(bufdata->dp_buffer,
             bufdata->dp_buffer_len, format,ap);
         va_end(ap);
-        if (olen > -1 && olen < bufdata->dp_buffer_len) {
+        if (olen > -1 && (long)olen < (long)bufdata->dp_buffer_len) {
             /*  The caller had better copy or dispose
                 of the contents, as next-call will overwrite them. */
             func(bufdata->dp_user_pointer,bufdata->dp_buffer);

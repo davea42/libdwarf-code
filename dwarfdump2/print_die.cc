@@ -414,7 +414,7 @@ print_one_die_section(Dwarf_Debug dbg,bool is_info)
 
     const char * csection_name = 0;
     int res = dwarf_get_die_section_name(dbg, is_info,
-            &csection_name,&err);
+        &csection_name,&err);
     if (res != DW_DLV_OK || !csection_name ||
         !strlen(csection_name)) {
         if (is_info) {

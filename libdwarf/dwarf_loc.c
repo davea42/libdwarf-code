@@ -1007,8 +1007,9 @@ dwarf_loclist_n(Dwarf_Attribute attr,
                 return blkres;
             }
             loc_block.bl_from_loclist = 0;
-            loc_block.bl_section_offset  = loc_block.bl_data -
-                (Dwarf_Ptr)dbg->de_debug_info.dss_data;
+            loc_block.bl_section_offset  =
+                (char *)loc_block.bl_data -
+                (char *)dbg->de_debug_info.dss_data;
         } else {
             Dwarf_Block *tblock = 0;
             blkres = dwarf_formblock(loc_attr, &tblock, error);
@@ -1138,8 +1139,9 @@ dwarf_loclist(Dwarf_Attribute attr,
                 return blkres;
             }
             loc_block.bl_from_loclist = 0;
-            loc_block.bl_section_offset  = loc_block.bl_data -
-                (Dwarf_Ptr)dbg->de_debug_info.dss_data;
+            loc_block.bl_section_offset  =
+                (char *)loc_block.bl_data -
+                (char *)dbg->de_debug_info.dss_data;
         } else {
             Dwarf_Block *tblock = 0;
 

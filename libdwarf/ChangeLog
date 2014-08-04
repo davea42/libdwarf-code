@@ -1,3 +1,19 @@
+2014-08-04  David Anderson, avoiding some compiler warnings.
+     * dwarf_alloc.c, dwarf_alloc.h: Change some uses of Dwarf_Ptr to be char *
+       so we avoid adding (etc) to Dwarf_Ptr.
+     * dwarf_gdbindex.c: Cast _dwarf_get_alloc() return properly.
+     * dwarf_loc.c: Cast Dwarf_Ptr to char * in a couple places.
+     * dwarf_query.c,dwarf_sort_line.c,pro_arange.c: Change names of local 
+       variables to avoid
+       compiler warning about shadowing other locals.
+     * dwarf_tsearchhash.c: Changed to avoid compiler warnings
+       about const casts whereever possible.
+     * libdwarf.h.in: Added prototypes for DWARF5
+       dwarf_get_SECT_name() and dwarf_get_MACRO_name().
+     * pro_alloc.c: Add include of pro_alloc.h.
+     * pro_forms.c: Made  _dwarf_add_AT_reference_internal()
+       static to avoid warning. 
+     * pro_types.c: Add include of pro_types.h.
 2014-08-02  David Anderson
      * dwarf_gdbindex.c: Fix an argument list by adding section name.
      * libdwarf.h.in: Fix an argument list by adding section name.

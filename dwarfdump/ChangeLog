@@ -1,3 +1,11 @@
+2014-08-04  David Anderson
+     * dwarfdump.1: Mention -I option.
+     * dwarfdump.c: Add -I to help output.
+     * print_gdbindex.c: Add cu_list_len argument to
+       print_culist_array  so it can pass back the culist length
+       for use by symboltable code.  So symboltable code can
+       know what indexes are type units and which compilation
+       units.
 2014-08-03  David Anderson
      * dwarfdump.c: Corrected typo in comment.
      * print_debugfission.c: Removed trailing whitespace.
