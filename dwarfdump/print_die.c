@@ -404,21 +404,21 @@ print_one_die_section(Dwarf_Debug dbg,Dwarf_Bool is_info)
     int   cu_count = 0;
     char * cu_short_name = NULL;
     char * cu_long_name = NULL;
+    const char * section_name = 0;
 
     current_section_id = is_info?DEBUG_INFO:DEBUG_TYPES;
 
-    if (print_as_info_or_cu() && do_print_dwarf) {
-        const char * section_name = 0;
-        int res = dwarf_get_die_section_name(dbg, is_info,
-            &section_name,&err);
-        if (res != DW_DLV_OK || !section_name ||
-            !strlen(section_name)) {
-            if (is_info) { 
-                section_name = ".debug_info";
-            } else  {
-                section_name = ".debug_types";
-            }
+    int res = dwarf_get_die_section_name(dbg, is_info,
+        &section_name,&err);
+    if (res != DW_DLV_OK || !section_name ||
+        !strlen(section_name)) {
+        if (is_info) {
+            section_name = ".debug_info";
+        } else  {
+            section_name = ".debug_types";
         }
+    }
+    if (print_as_info_or_cu() && is_info && do_print_dwarf) {
         printf("\n%s\n",section_name);
     }
 
@@ -438,8 +438,10 @@ print_one_die_section(Dwarf_Debug dbg,Dwarf_Bool is_info)
             return nres;
         }
         if (loop_count == 0 &&!is_info &&
+            /*  For .debug_types we don't print the section name
+                unless we really have it. */
             print_as_info_or_cu() && do_print_dwarf) {
-            printf("\n.debug_types\n");
+            printf("\n%s\n",section_name);
         }
         if (nres != DW_DLV_OK) {
             return nres;

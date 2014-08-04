@@ -376,6 +376,8 @@ enum type_type_e {SGI_TYPENAME, DWARF_PUBTYPES} ;
 extern void print_types(Dwarf_Debug dbg,enum type_type_e type_type);
 extern void print_weaknames(Dwarf_Debug dbg);
 extern void print_exception_tables(Dwarf_Debug dbg);
+extern void print_gdbindex(Dwarf_Debug dbg);
+extern void print_debugfission_index(Dwarf_Debug dbg, const std::string&cuortu);
 struct esb_s;
 extern std::string  print_ranges_list_to_extra(Dwarf_Debug dbg,
     Dwarf_Unsigned off,
@@ -608,7 +610,17 @@ inline std::string LeftAlign(unsigned minlen,const std::string &s)
     out.append(spaces,' ');
     return out;
 }
-
+inline std::string RightAlign(unsigned minlen,const std::string &s)
+{
+    if (minlen <= s.size()) {
+        return s;
+    }
+    std::string out;
+    std::string::size_type spaces = minlen - s.size();
+    out.append(spaces,' ');
+    out.append(s);
+    return out;
+}
 inline std::string SpaceSurround(const std::string &s)
 {
     std::string out(" ");

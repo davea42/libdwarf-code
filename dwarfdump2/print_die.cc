@@ -410,11 +410,24 @@ print_one_die_section(Dwarf_Debug dbg,bool is_info)
     int nres = DW_DLV_OK;
     int   cu_count = 0;
     unsigned loop_count = 0;
-    if (print_as_info_or_cu() && do_print_dwarf) {
+    std::string section_name;
+
+    const char * csection_name = 0;
+    int res = dwarf_get_die_section_name(dbg, is_info,
+            &csection_name,&err);
+    if (res != DW_DLV_OK || !csection_name ||
+        !strlen(csection_name)) {
         if (is_info) {
-            cout << endl;
-            cout << ".debug_info" << endl;
+            section_name = ".debug_info";
+        } else  {
+            section_name = ".debug_types";
         }
+    } else {
+        section_name = csection_name;
+    }
+    if (print_as_info_or_cu() && is_info && do_print_dwarf) {
+        cout << endl;
+        cout << section_name << endl;
     }
     /* Loop until it fails. */
     for (;;++loop_count) {
@@ -430,11 +443,10 @@ print_one_die_section(Dwarf_Debug dbg,bool is_info)
         if (loop_count == 0 && !is_info &&
             // Do not print this string unless we really have debug_types
             // for consistency with dwarf2/3 output.
-            // Looks a bit messy here in the code, but few objects have
-            // this section so far.
+            // Looks a bit messy here in the code, but that is ok.
             print_as_info_or_cu() && do_print_dwarf) {
             cout <<  endl;
-            cout << ".debug_types" << endl;
+            cout << section_name << endl;
         }
         if (nres != DW_DLV_OK) {
             return nres;

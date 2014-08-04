@@ -1,3 +1,10 @@
+2014-08-03  David Anderson
+     * dwarfdump.c: Corrected typo in comment.
+     * print_debugfission.c: Removed trailing whitespace.
+       Fixed some small mistakes in the output.
+     * print_die.c: Removed trailing whitespace.
+       Fixed the section name. It was showing .debug_types
+       when not wanted.
 2014-08-02  David Anderson
      * print_debugfission.c, print_gdbindex.c: Use the section name
        strings returned by section-open 

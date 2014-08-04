@@ -1081,7 +1081,7 @@ process_one_file(Elf * elf, const char * file_name, int archive,
     if (gdbindex_flag) {
         reset_overall_CU_error_data();
         /*  By definition if gdb_index is present
-            then "cu" and "tu" will not. And vice versa.  */
+            then "cu" and "tu" will not be. And vice versa.  */
         print_gdb_index(dbg);
         print_debugfission_index(dbg,"cu");
         print_debugfission_index(dbg,"tu");

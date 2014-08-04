@@ -1004,7 +1004,11 @@ process_one_file(Elf * elf,const  string & file_name, int archive,
     }
     if (gdbindex_flag) {
         reset_overall_CU_error_data();
+        //  By definition if gdb_index is present
+        //  then "cu" and "tu" will not be. And vice versa. 
         print_gdb_index(dbg);
+        print_debugfission_index(dbg,"cu");
+        print_debugfission_index(dbg,"tu");
     }
     if (pubnames_flag) {
         reset_overall_CU_error_data();
@@ -1095,7 +1099,6 @@ process_one_file(Elf * elf,const  string & file_name, int archive,
 static void do_all()
 {
     info_flag = line_flag = frame_flag =  true;
-    gdbindex_flag = true;
     pubnames_flag = macinfo_flag = true;
     aranges_flag = true;
     /*  Do not do

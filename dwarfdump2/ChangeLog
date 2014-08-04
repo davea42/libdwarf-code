@@ -1,3 +1,14 @@
+2014-08-03  David Anderson
+     * Makefine.in: add print_debugfission.o
+     * dwarfdump.cc: Print debugfission data now.
+     * globals.h: Add print_gdbindex() and
+       print_debugfission_index() interfaces.
+       Add RightAlign string function.
+     * print_debugfission.cc: New file, implements
+       printing the .debug_cu_index and .debug_tu_index
+       sections.
+     * print_die.c: Fix printing of the section name.
+     * print_gdbindex.cc: Fix printing of the section name.
 2014-07-02  David Anderson
      * print_die.cc: The printf format for a warning message was
        messed up. Fixed.
