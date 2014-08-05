@@ -1,4 +1,7 @@
 2014-08-05  David Anderson
+     * print_gdbindex.c: A couple places: Fixed indents
+       on a comment.
+2014-08-05  David Anderson
      * dwarfdump.c, common.c: Updated version string.
 2014-08-04  David Anderson
      * dwarfdump.1: Mention -I option.

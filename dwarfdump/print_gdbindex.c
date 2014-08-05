@@ -176,9 +176,9 @@ get_kind(unsigned k)
     return "kind-erroneous";
 }
 
-/*   NOTE: Returns pointer to static local string.
-     Use the returned pointer immediately or
-     things will not work properly.  */
+/*  NOTE: Returns pointer to static local string.
+    Use the returned pointer immediately or
+    things will not work properly.  */
 static char *
 cu_index_string(Dwarf_Unsigned index,
     Dwarf_Unsigned culist_len)
@@ -190,7 +190,7 @@ cu_index_string(Dwarf_Unsigned index,
         return temp_space;
     }
     type_index = index-culist_len;
-    snprintf(temp_space,sizeof(temp_space), 
+    snprintf(temp_space,sizeof(temp_space),
         "%4" DW_PR_DUu "(T%4" DW_PR_DUu ")",
         index,type_index);
     return temp_space;
