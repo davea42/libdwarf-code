@@ -139,7 +139,7 @@ _dwarf_macro_stack_push_index(Dwarf_Debug dbg, Dwarf_Signed indx,
         }
         new_size = ms->max * 2;
         newbase =
-            _dwarf_get_alloc(dbg, DW_DLA_STRING,
+            (Dwarf_Signed *)_dwarf_get_alloc(dbg, DW_DLA_STRING,
                 new_size * sizeof(Dwarf_Signed));
         if (newbase == 0) {
             /* just leave the old array in place */

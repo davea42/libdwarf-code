@@ -1,3 +1,6 @@
+2014-08-11  David Anderson, avoiding some compiler warnings.
+     *dwarf_xu_index.c,dwarf_macro.c: Failed to cast the pointer
+      returned by _dwarf_get_macro (one place in each file).
 2014-08-04  David Anderson, avoiding some compiler warnings.
      * dwarf_alloc.c, dwarf_alloc.h: Change some uses of Dwarf_Ptr to be char *
        so we avoid adding (etc) to Dwarf_Ptr.

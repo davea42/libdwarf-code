@@ -136,7 +136,7 @@ dwarf_get_xu_index_header(Dwarf_Debug dbg,
     }
 
 
-    indexptr = _dwarf_get_alloc(dbg,DW_DLA_XU_INDEX,1);
+    indexptr = (Dwarf_Xu_Index_Header)_dwarf_get_alloc(dbg,DW_DLA_XU_INDEX,1);
     if (indexptr == NULL) {
         _dwarf_error(dbg, error, DW_DLE_ALLOC_FAIL);
         return (DW_DLV_ERROR);
