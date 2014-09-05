@@ -25,7 +25,7 @@
     Mountain View, CA 94043, or:
 
     http://www.sgi.com
-  
+
     For further information regarding this notice, see:
 
     http://oss.sgi.com/projects/GenInfo/NoticeExplan
@@ -35,13 +35,13 @@
     $Header: /plroot/cmplrs.src/v7.4.5m/.RCS/PL/dwarfdump/RCS/print_frames.h,v 1.2 2006/04/17 00:09:56 davea Exp $ */
 
 int print_one_cie(Dwarf_Debug dbg, Dwarf_Cie cie,
-    Dwarf_Unsigned cie_index, 
+    Dwarf_Unsigned cie_index,
     Dwarf_Half address_size,
     struct dwconf_s * config_data);
 
 void get_string_from_locs(Dwarf_Debug dbg,
     Dwarf_Ptr bytes_in,
     Dwarf_Unsigned block_len,
-    Dwarf_Half addr_size, 
+    Dwarf_Half addr_size,
     struct esb_s *out_string);
 

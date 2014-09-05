@@ -4,22 +4,22 @@
   Portions Copyright 2012 SN Systems Ltd. All rights reserved.
 
   This program is free software; you can redistribute it and/or modify it
-  under the terms of version 2.1 of the GNU Lesser General Public License 
+  under the terms of version 2.1 of the GNU Lesser General Public License
   as published by the Free Software Foundation.
 
   This program is distributed in the hope that it would be useful, but
   WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
   Further, this software is distributed without any warranty that it is
-  free of the rightful claim of any third person regarding infringement 
-  or the like.  Any license provided herein, whether implied or 
+  free of the rightful claim of any third person regarding infringement
+  or the like.  Any license provided herein, whether implied or
   otherwise, applies only to this software file.  Patent licenses, if
-  any, provided herein do not apply to combinations of this program with 
-  other software, or any other product whatsoever.  
+  any, provided herein do not apply to combinations of this program with
+  other software, or any other product whatsoever.
 
-  You should have received a copy of the GNU Lesser General Public 
-  License along with this program; if not, write the Free Software 
+  You should have received a copy of the GNU Lesser General Public
+  License along with this program; if not, write the Free Software
   Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston MA 02110-1301,
   USA.
 
@@ -34,7 +34,7 @@
 
 */
 /* The address of the Free Software Foundation is
-   Free Software Foundation, Inc., 51 Franklin St, Fifth Floor, 
+   Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
    Boston, MA 02110-1301, USA.
    SGI has moved from the Crittenden Lane address.
 */
@@ -54,16 +54,20 @@
 
 #define MINBUFLEN 1000
 
-/*  Given a form, and a pointer to the bytes encoding 
+/*  Given a form, and a pointer to the bytes encoding
     a value of that form, val_ptr, this function returns
     the length, in bytes, of a value of that form.
     When using this function, check for a return of 0
     a recursive DW_FORM_INDIRECT value.  */
-Dwarf_Unsigned
+int
 _dwarf_get_size_of_val(Dwarf_Debug dbg,
     Dwarf_Unsigned form,
+    Dwarf_Half cu_version,
     Dwarf_Half address_size,
-    Dwarf_Small * val_ptr, int v_length_size)
+    Dwarf_Small * val_ptr,
+    int v_length_size,
+    Dwarf_Unsigned *size_out,
+    Dwarf_Error*error)
 {
     Dwarf_Unsigned length = 0;
     Dwarf_Word leb128_length = 0;
@@ -72,118 +76,186 @@ _dwarf_get_size_of_val(Dwarf_Debug dbg,
 
     switch (form) {
 
-    default:                    /* Handles form = 0. */
-        return (form);
+    /*  When we encounter a FORM here that
+        we know about but forgot to enter here,
+        we had better not just continue.
+        Usually means we forgot to update this function
+        when implementing form handling of a new FORM.
+        Disaster results from using a bogus value,
+        so generate error. */
+    default:
+        _dwarf_error(dbg,error,DW_DLE_DEBUG_FORM_HANDLING_INCOMPLETE);
+        return DW_DLV_ERROR;
+
+
+    case 0:  return 0;
+    case DW_FORM_GNU_ref_alt:
+    case DW_FORM_GNU_strp_alt:
+        *size_out = v_length_size;
+        return DW_DLV_OK;
 
     case DW_FORM_addr:
         if (address_size) {
-            return address_size;
+            *size_out = address_size;
+        } else {
+            /* This should never happen, address_size should be set. */
+            *size_out = dbg->de_pointer_size;
         }
-        /* This should never happen, address_size should be set. */
-        return (dbg->de_pointer_size);
+        return DW_DLV_OK;
     case DW_FORM_ref_sig8:
-        return 8; /* sizeof Dwarf_Sig8 */
+        *size_out = 8;
+        /* sizeof Dwarf_Sig8 */
+        return DW_DLV_OK;
 
     /*  DWARF2 was wrong on the size of the attribute for
-        DW_FORM_ref_addr.  We assume compilers are using the 
+        DW_FORM_ref_addr.  We assume compilers are using the
         corrected DWARF3 text (for 32bit pointer target objects pointer and
-        offsets are the same size anyway). */
+        offsets are the same size anyway).
+        It is clear (as of 2014) that for 64bit folks used
+        the V2 spec in the way V2 was
+        written, so the ref_addr has to account for that.*/
     case DW_FORM_ref_addr:
-        return (v_length_size);
+        if (cu_version == DW_CU_VERSION2) {
+            *size_out = address_size;
+        } else {
+            *size_out = v_length_size;
+        }
+        return DW_DLV_OK;
 
     case DW_FORM_block1:
-        return (*(Dwarf_Small *) val_ptr + 1);
+        *size_out =  *(Dwarf_Small *) val_ptr + 1;
+        return DW_DLV_OK;
 
     case DW_FORM_block2:
         READ_UNALIGNED(dbg, ret_value, Dwarf_Unsigned,
             val_ptr, sizeof(Dwarf_Half));
-        return (ret_value + sizeof(Dwarf_Half));
+        *size_out = ret_value + sizeof(Dwarf_Half);
+        return DW_DLV_OK;
 
     case DW_FORM_block4:
         READ_UNALIGNED(dbg, ret_value, Dwarf_Unsigned,
             val_ptr, sizeof(Dwarf_ufixed));
-        return (ret_value + sizeof(Dwarf_ufixed));
-
+        *size_out = ret_value + sizeof(Dwarf_ufixed);
+        return DW_DLV_OK;
 
     case DW_FORM_data1:
-        return (1);
+        *size_out = 1;
+        return DW_DLV_OK;
 
     case DW_FORM_data2:
-        return (2);
+        *size_out = 2;
+        return DW_DLV_OK;
 
     case DW_FORM_data4:
-        return (4);
+        *size_out = 4;
+        return DW_DLV_OK;
 
     case DW_FORM_data8:
-        return (8);
+        *size_out = 8;
+        return DW_DLV_OK;
 
     case DW_FORM_string:
-        return (strlen((char *) val_ptr) + 1);
+        *size_out = strlen((char *) val_ptr) + 1;
+        return DW_DLV_OK;
 
     case DW_FORM_block:
     case DW_FORM_exprloc:
         length = _dwarf_decode_u_leb128(val_ptr, &leb128_length);
-        return (length + leb128_length);
+        *size_out = length + leb128_length;
+        return DW_DLV_OK;
 
     case DW_FORM_flag_present:
-        return (0);
+        *size_out = 0;
+        return DW_DLV_OK;
+
     case DW_FORM_flag:
-        return (1);
+        *size_out = 1;
+        return DW_DLV_OK;
 
     case DW_FORM_sec_offset:
         /* If 32bit dwarf, is 4. Else is 64bit dwarf and is 8. */
-        return (v_length_size);
+        *size_out = v_length_size;
+        return DW_DLV_OK;
 
     case DW_FORM_ref_udata:
         /*  Discard the decoded value, we just want the length
             of the value. */
         _dwarf_decode_u_leb128(val_ptr, &leb128_length);
-        return (leb128_length);
+        *size_out = leb128_length;
+        return DW_DLV_OK;
 
     case DW_FORM_indirect:
         {
             Dwarf_Word indir_len = 0;
+            int res = 0;
+            Dwarf_Unsigned real_form_len = 0;
 
             form_indirect = _dwarf_decode_u_leb128(val_ptr, &indir_len);
             if (form_indirect == DW_FORM_indirect) {
-                return (0);     /* We are in big trouble: The true form 
+                /* We are in big trouble: The true form
                     of DW_FORM_indirect is
                     DW_FORM_indirect? Nonsense. Should
                     never happen. */
+                _dwarf_error(dbg,error,DW_DLE_NESTED_FORM_INDIRECT_ERROR);
+                return DW_DLV_ERROR;
             }
-            return (indir_len + _dwarf_get_size_of_val(dbg,
+            res = _dwarf_get_size_of_val(dbg,
                 form_indirect,
+                cu_version,
                 address_size,
                 val_ptr + indir_len,
-                v_length_size));
+                v_length_size,
+                &real_form_len,
+                error);
+            if(res != DW_DLV_OK) {
+                return res;
+            }
+            *size_out = indir_len + real_form_len;
+            return DW_DLV_OK;
         }
 
     case DW_FORM_ref1:
-        return (1);
+        *size_out = 1;
+        return DW_DLV_OK;
 
     case DW_FORM_ref2:
-        return (2);
+        *size_out = 2;
+        return DW_DLV_OK;
 
     case DW_FORM_ref4:
-        return (4);
+        *size_out = 4;
+        return DW_DLV_OK;
 
     case DW_FORM_ref8:
-        return (8);
+        *size_out = 8;
+        return DW_DLV_OK;
 
     case DW_FORM_sdata:
         /*  Discard the decoded value, we just want the length
             of the value. */
         _dwarf_decode_s_leb128(val_ptr, &leb128_length);
-        return (leb128_length);
+        *size_out = (leb128_length);
+        return DW_DLV_OK;
+
+
+    case DW_FORM_addrx:
+    case DW_FORM_GNU_addr_index:
+    case DW_FORM_strx:
+    case DW_FORM_GNU_str_index:
+        _dwarf_decode_u_leb128(val_ptr, &leb128_length);
+        *size_out = leb128_length;
+        return DW_DLV_OK;
 
     case DW_FORM_strp:
-        return (v_length_size);
+        *size_out = v_length_size;
+        return DW_DLV_OK;
 
     case DW_FORM_udata:
         /*  Discard the decoded value, we just want the length
             of the value. */
         _dwarf_decode_u_leb128(val_ptr, &leb128_length);
-        return (leb128_length);
+        *size_out = leb128_length;
+        return DW_DLV_OK;
     }
 }
 
@@ -198,7 +270,7 @@ _dwarf_get_size_of_val(Dwarf_Debug dbg,
     a new list.  Don't delete anything. Leave the
     htin with stale data. */
 static void
-copy_abbrev_table_to_new_table(Dwarf_Hash_Table htin, 
+copy_abbrev_table_to_new_table(Dwarf_Hash_Table htin,
   Dwarf_Hash_Table htout)
 {
     Dwarf_Hash_Table_Entry entry_in = htin->tb_entries;
@@ -215,7 +287,7 @@ copy_abbrev_table_to_new_table(Dwarf_Hash_Table htin,
             unsigned newhash = newtmp%entry_out_count;
             Dwarf_Hash_Table_Entry e;
             nextlistent = listent->ab_next;
-            e = entry_out+newhash; 
+            e = entry_out+newhash;
             /*  Move_entry_to_new_hash. This reverses the
                 order of the entries, effectively, but
                 that does not seem significant. */
@@ -223,7 +295,7 @@ copy_abbrev_table_to_new_table(Dwarf_Hash_Table htin,
             e->at_head = listent;
 
             htout->tb_total_abbrev_count++;
-        } 
+        }
     }
 }
 
@@ -233,7 +305,7 @@ copy_abbrev_table_to_new_table(Dwarf_Hash_Table htin,
     the abbrev between the last abbrev added and this one to
     the hash table.  In other words, the .debug_abbrev section
     is scanned sequentially from the top for an abbrev with
-    the given code.  All intervening abbrevs are also put 
+    the given code.  All intervening abbrevs are also put
     into the hash table.
 
     This function hashes the given code, and checks the chain
@@ -257,18 +329,18 @@ _dwarf_get_abbrev_for_code(Dwarf_CU_Context cu_context, Dwarf_Unsigned code)
 {
     Dwarf_Debug dbg = cu_context->cc_dbg;
     Dwarf_Hash_Table hash_table_base = cu_context->cc_abbrev_hash_table;
-    Dwarf_Hash_Table_Entry entry_base = 0; 
-    Dwarf_Hash_Table_Entry entry_cur = 0; 
+    Dwarf_Hash_Table_Entry entry_base = 0;
+    Dwarf_Hash_Table_Entry entry_cur = 0;
     Dwarf_Word hash_num = 0;
-    Dwarf_Unsigned abbrev_code = 0; 
+    Dwarf_Unsigned abbrev_code = 0;
     Dwarf_Unsigned abbrev_tag  = 0;
     Dwarf_Unsigned attr_name = 0;
     Dwarf_Unsigned attr_form = 0;
 
     Dwarf_Abbrev_List hash_abbrev_entry = 0;
 
-    Dwarf_Abbrev_List inner_list_entry = 0; 
-    Dwarf_Hash_Table_Entry inner_hash_entry = 0; 
+    Dwarf_Abbrev_List inner_list_entry = 0;
+    Dwarf_Hash_Table_Entry inner_hash_entry = 0;
 
     Dwarf_Byte_Ptr abbrev_ptr = 0;
     Dwarf_Byte_Ptr end_abbrev_ptr = 0;
@@ -277,8 +349,9 @@ _dwarf_get_abbrev_for_code(Dwarf_CU_Context cu_context, Dwarf_Unsigned code)
     if (!hash_table_base->tb_entries) {
         hash_table_base->tb_table_entry_count =  HT_MULTIPLE;
         hash_table_base->tb_total_abbrev_count= 0;
-        hash_table_base->tb_entries =  _dwarf_get_alloc(dbg,
-            DW_DLA_HASH_TABLE_ENTRY, 
+        hash_table_base->tb_entries =
+            (struct  Dwarf_Hash_Table_Entry_s *)_dwarf_get_alloc(dbg,
+            DW_DLA_HASH_TABLE_ENTRY,
             hash_table_base->tb_table_entry_count);
         if (!hash_table_base->tb_entries) {
             return NULL;
@@ -290,8 +363,9 @@ _dwarf_get_abbrev_for_code(Dwarf_CU_Context cu_context, Dwarf_Unsigned code)
         /* Effectively multiplies by >= HT_MULTIPLE */
         newht.tb_table_entry_count =  hash_table_base->tb_total_abbrev_count;
         newht.tb_total_abbrev_count = 0;
-        newht.tb_entries =  _dwarf_get_alloc(dbg,
-            DW_DLA_HASH_TABLE_ENTRY, 
+        newht.tb_entries =
+            (struct  Dwarf_Hash_Table_Entry_s *)_dwarf_get_alloc(dbg,
+            DW_DLA_HASH_TABLE_ENTRY,
             newht.tb_table_entry_count);
 
         if (!newht.tb_entries) {
@@ -307,21 +381,20 @@ _dwarf_get_abbrev_for_code(Dwarf_CU_Context cu_context, Dwarf_Unsigned code)
         /*  Now overwrite the existing table descriptor with
             the new, newly valid, contents. */
         *hash_table_base = newht;
-    } /* Else is ok as is, add entry */ 
+    } /* Else is ok as is, add entry */
 
-    
     hashable_val = code;
-    hash_num = hashable_val % 
+    hash_num = hashable_val %
         hash_table_base->tb_table_entry_count;
     entry_base = hash_table_base->tb_entries;
     entry_cur  = entry_base + hash_num;
-   
+
     /* Determine if the 'code' is the list of synonyms already. */
     for (hash_abbrev_entry = entry_cur->at_head;
         hash_abbrev_entry != NULL && hash_abbrev_entry->ab_code != code;
         hash_abbrev_entry = hash_abbrev_entry->ab_next);
     if (hash_abbrev_entry != NULL) {
-        /*  This returns a pointer to an abbrev list entry, not 
+        /*  This returns a pointer to an abbrev list entry, not
             the list itself. */
         return (hash_abbrev_entry);
     }
@@ -354,7 +427,7 @@ _dwarf_get_abbrev_for_code(Dwarf_CU_Context cu_context, Dwarf_Unsigned code)
         }
 
         new_hashable_val = abbrev_code;
-        hash_num = new_hashable_val % 
+        hash_num = new_hashable_val %
             hash_table_base->tb_table_entry_count;
         inner_hash_entry = entry_base + hash_num;
         /* Move_entry_to_new_hash */
@@ -378,7 +451,7 @@ _dwarf_get_abbrev_for_code(Dwarf_CU_Context cu_context, Dwarf_Unsigned code)
         /*  We may have fallen off the end of content,  that is not
             a botch in the section, as there is no rule that the last
             abbrev need have abbrev_code of 0. */
-    } while ((abbrev_ptr < end_abbrev_ptr) && 
+    } while ((abbrev_ptr < end_abbrev_ptr) &&
         *abbrev_ptr != 0 && abbrev_code != code);
 
     cu_context->cc_last_abbrev_ptr = abbrev_ptr;
@@ -417,7 +490,7 @@ _dwarf_memcpy_swap_bytes(void *s1, const void *s2, size_t len)
 {
     void *orig_s1 = s1;
     unsigned char *targ = (unsigned char *) s1;
-    unsigned char *src = (unsigned char *) s2;
+    const unsigned char *src = (const unsigned char *) s2;
 
     if (len == 4) {
         targ[3] = src[0];
@@ -463,7 +536,7 @@ _dwarf_length_of_cu_header(Dwarf_Debug dbg, Dwarf_Unsigned offset,
     int local_extension_size = 0;
     Dwarf_Unsigned length = 0;
     Dwarf_Unsigned final_size = 0;
-    Dwarf_Small *cuptr = 
+    Dwarf_Small *cuptr =
         is_info? dbg->de_debug_info.dss_data + offset:
             dbg->de_debug_types.dss_data+ offset;
 
@@ -477,9 +550,9 @@ _dwarf_length_of_cu_header(Dwarf_Debug dbg, Dwarf_Unsigned offset,
         sizeof(Dwarf_Small);    /* Size of address size field. */
 
     if (!is_info) {
-        final_size += 
+        final_size +=
             /* type signature size */
-            sizeof (Dwarf_Sig8) + 
+            sizeof (Dwarf_Sig8) +
             /* type offset size */
             local_length_size;
     }
@@ -498,9 +571,9 @@ _dwarf_length_of_cu_header_simple(Dwarf_Debug dbg,
         dbg->de_length_size +   /* Size of abbrev offset field. */
         sizeof(Dwarf_Small);    /* Size of address size field. */
     if (!dinfo) {
-        finalsize += 
+        finalsize +=
             /* type signature size */
-            sizeof (Dwarf_Sig8) + 
+            sizeof (Dwarf_Sig8) +
             /* type offset size */
             dbg->de_length_size;
     }
@@ -560,19 +633,19 @@ _dwarf_free_abbrev_hash_table_contents(Dwarf_Debug dbg,Dwarf_Hash_Table hash_tab
     dwarf_dealloc(dbg,hash_table->tb_entries,DW_DLA_HASH_TABLE_ENTRY);
 }
 
-/* 
+/*
     If no die provided the size value returned might be wrong.
-    If different compilation units have different address sizes 
+    If different compilation units have different address sizes
     this may not give the correct value in all contexts if the die
-    pointer is NULL. 
-    If the Elf offset size != address_size 
+    pointer is NULL.
+    If the Elf offset size != address_size
     (for example if address_size = 4 but recorded in elf64 object)
     this may not give the correct value in all contexts if the die
-    pointer is NULL. 
+    pointer is NULL.
     If the die pointer is non-NULL (in which case it must point to
     a valid DIE) this will return the correct size.
 */
-int 
+int
 _dwarf_get_address_size(Dwarf_Debug dbg, Dwarf_Die die)
 {
     Dwarf_CU_Context context = 0;
@@ -630,9 +703,9 @@ dwarf_register_printf_callback( Dwarf_Debug dbg,
         /* User does not control the buffer. */
         dbg->de_printf_callback = *newvalues;
         dbg->de_printf_callback.dp_buffer_len =
-              oldval.dp_buffer_len;
+            oldval.dp_buffer_len;
         dbg->de_printf_callback.dp_buffer =
-              oldval.dp_buffer;
+            oldval.dp_buffer;
     }
     return oldval;
 }
@@ -642,7 +715,7 @@ dwarf_register_printf_callback( Dwarf_Debug dbg,
 static void bufferdoublesize(struct  Dwarf_Printf_Callback_Info_s *bufdata)
 {
     char *space = 0;
-    int targlen = 0;
+    unsigned int targlen = 0;
     if (bufdata->dp_buffer_len == 0) {
         targlen = MINBUFLEN;
     } else {
@@ -653,7 +726,7 @@ static void bufferdoublesize(struct  Dwarf_Printf_Callback_Info_s *bufdata)
         }
     }
     /* Make big enough for a trailing NUL char. */
-    space = malloc(targlen+1);
+    space = (char *)malloc(targlen+1);
     if (!space) {
         /* Out of space, we cannot double it. */
         return;
@@ -664,7 +737,7 @@ static void bufferdoublesize(struct  Dwarf_Printf_Callback_Info_s *bufdata)
     return;
 }
 
-int 
+int
 dwarf_printf(Dwarf_Debug dbg,
     const char * format,
     ...)
@@ -672,7 +745,7 @@ dwarf_printf(Dwarf_Debug dbg,
     va_list ap;
     int maxtries = 4;
     int tries = 0;
-    struct Dwarf_Printf_Callback_Info_s *bufdata = 
+    struct Dwarf_Printf_Callback_Info_s *bufdata =
         &dbg->de_printf_callback;
     dwarf_printf_callback_function_type func = bufdata->dp_fptr;
     if (!func) {
@@ -686,7 +759,7 @@ dwarf_printf(Dwarf_Debug dbg,
             return 0;
         }
     }
-      
+
     /*  Here we ensure (or nearly ensure) we expand
         the buffer when necessary, but not excessively
         (but only if we control the buffer size).  */
@@ -694,22 +767,22 @@ dwarf_printf(Dwarf_Debug dbg,
         tries++;
         va_start(ap,format);
         int olen = vsnprintf(bufdata->dp_buffer,
-              bufdata->dp_buffer_len, format,ap);
+            bufdata->dp_buffer_len, format,ap);
         va_end(ap);
-        if (olen > -1 && olen < bufdata->dp_buffer_len) {
-              /* The caller had better copy or dispose
-                  of the contents, as next-call will overwrite them. */
-              func(bufdata->dp_user_pointer,bufdata->dp_buffer);
-              return 0;
+        if (olen > -1 && (long)olen < (long)bufdata->dp_buffer_len) {
+            /*  The caller had better copy or dispose
+                of the contents, as next-call will overwrite them. */
+            func(bufdata->dp_user_pointer,bufdata->dp_buffer);
+            return 0;
         }
         if (bufdata->dp_buffer_user_provided) {
-              func(bufdata->dp_user_pointer,bufdata->dp_buffer);
-              return 0;
+            func(bufdata->dp_user_pointer,bufdata->dp_buffer);
+            return 0;
         }
         if (tries > maxtries) {
-              /* we did all we could, print what we have space for. */
-              func(bufdata->dp_user_pointer,bufdata->dp_buffer);
-              return 0;
+            /* we did all we could, print what we have space for. */
+            func(bufdata->dp_user_pointer,bufdata->dp_buffer);
+            return 0;
         }
         bufferdoublesize(bufdata);
     }

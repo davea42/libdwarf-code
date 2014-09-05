@@ -1,4 +1,4 @@
-/* 
+/*
   Copyright (C) 2000-2006 Silicon Graphics, Inc.  All Rights Reserved.
   Portions Copyright 2007-2010 Sun Microsystems, Inc. All rights reserved.
   Portions Copyright 2009-2010 SN Systems Ltd. All rights reserved.
@@ -36,8 +36,8 @@
 
 $Header: /plroot/cmplrs.src/v7.4.5m/.RCS/PL/dwarfdump/RCS/print_sections.c,v 1.69 2006/04/17 00:09:56 davea Exp $ */
 /*  The address of the Free Software Foundation is
-    Free Software Foundation, Inc., 51 Franklin St, Fifth Floor, 
-    Boston, MA 02110-1301, USA.  
+    Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
+    Boston, MA 02110-1301, USA.
     SGI has moved from the Crittenden Lane address.
 */
 
@@ -81,7 +81,7 @@ print_static_vars(Dwarf_Debug dbg)
             Dwarf_Off global_cu_off = 0;
             char *namearg = 0;
 
-            int vnres = dwarf_var_name_offsets(varbuf[i], 
+            int vnres = dwarf_var_name_offsets(varbuf[i],
                 &namearg, &die_off, &cu_off, &err);
             deal_with_name_offset_err(dbg,
                 "dwarf_var_name_offsets",

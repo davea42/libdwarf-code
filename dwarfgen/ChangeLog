@@ -1,37 +1,16 @@
-2013-08-13  David Anderson
-     * createirepformfrombinary.cc: IRFormReference now
-       allows DW_FORM_data4/8 as reference forms (applies
-       to DWARF2). Made two error outputs look just enough
-       different to tell which test cause the error string.
-     * dwarfgen.cc: Added the -h option to specify transformation
-       of DW_AT_high_pc from form address to form const to create
-       a specific  regression test case .
-     * general.h: Added the -h global flag variable transformHighpcToConst
-       as an extern.
-     * irepattrtodbg.cc: Now emits class constant attributes and values.
-     * irepform.h: Now has a new IRFormConstant constructor so we can
-       easily create an attribute on-the-fly internally.
-       Added accessor functions for IRFormConstant values.
-     * ireptodbg.cc: specialAttrTransformations() does the transformation
-       that -h requests: making DW_AT_high_pc be of form constant instead
-       of form address.
-2013-02-01  David Anderson
-     * createirepfrombinary.cc,createirepfrombinary.h,dwarfgen.cc,
-       general.h,irepattrtodbg.cc,irepattrtodbg.h,irepdie.h,
-       irepform.h,irepframe.h,irepline.h,irepmacro.h,irepresentation.h,
-       ireptodbg.cc,strtabdata.h: updated copyright year to 2013.
-     * createirepformfrombinary.cc: Added missing implemenation
-       detals for all FORMs and FormFlag.
-     * createirepfrombinary.cc: Rename some local variables
-       for readability
-       based on the realization that dwarf_whatform and
-       dwarf_whatform_direct() are misnamed.
-     * irepattrtodbg.cc: Fixed  instances of << cerr when
-       << endl was what was wanted.
-     * ireptodbg.cc: Fixed cast from pointer to int as int
-       is too small, causes build to error off.
-     * irepdie.h,irepform.h: Rename form fields 
-       from indirectform_ directform_
-       to   initialform_ and finalform_ based on the realization
-       that dwarf_whatform and dwarf_whatform were misnamed.
-
+2014-05-08  David Anderson
+     * dwarfgen.cc: Now uses the newest form of dwarf_producer_init().
+       The old forms no longer are supported.
+2014-02-08  David Anderson
+     * dwarfgen.cc: Added commentary about the callback function
+       setting sect_name_index.
+2014-01-29  David Anderson
+     * createirepformfrombinary.cc,createirepfrombinary.cc,createirepfrombinary.h,
+       dwarfgen.cc,general.h,irepattrtodbg.cc,irepattrtodbg.h,irepdie.h,
+       irepform.h,irepframe.h,irepline.h,irepmacro.h,ireppubnames.h,
+       irepresentation.h,ireptodbg.cc,ireptodbg.h,strtabdata.h: Remove
+       trailing whitespace.
+2014-01-10  David Anderson
+     * createirepformfrombinary.cc,createirepfrombinary.cc,dwarfgen.cc,
+       irepattrtodbg.cc,ireptodbg.cc: Removed include of elf.h as it
+       is not needed given the include of gelf.h.

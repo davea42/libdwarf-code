@@ -1,4 +1,4 @@
-/* 
+/*
   Copyright 2010-2012 David Anderson. All rights reserved.
   Portions Copyright 2012 SN Systems Ltd. All rights reserved.
 
@@ -29,39 +29,20 @@
 #include "globals.h"
 #include <stdio.h>
 #include "addrmap.h"
+#include "dwarf_tsearch.h"
 
 
-/*  If we have tsearch but not tdestroy the use of tsearch
-    will result in a memory leak, but oh well.   
-    See HAVE_TSEARCH and HAVE_TDESTROY.
-    Note that dwarfdump2 has no leak of this sort.
-*/
-#ifndef HAVE_TSEARCH
-struct Addr_Map_Entry * addr_map_insert( Dwarf_Unsigned addr,
-    char *name,void **tree1)
-{ return 0; }
-struct Addr_Map_Entry * addr_map_find(Dwarf_Unsigned addr,void **tree1)
-{ return 0; }
-   
-#else /* HAVE_TSEARCH */
-#define __USE_GNU 1 
-#include <search.h>
-
-char firststringcontent[100];
-char *firststring = 0;
-struct Addr_Map_Entry *firstaddr = 0;
-
-static struct Addr_Map_Entry * 
+static struct Addr_Map_Entry *
 addr_map_create_entry(Dwarf_Unsigned k,char *name)
 {
-    struct Addr_Map_Entry *mp = 
+    struct Addr_Map_Entry *mp =
         (struct Addr_Map_Entry *)malloc(sizeof(struct Addr_Map_Entry));
     if (!mp) {
         return 0;
     }
     mp->mp_key = k;
     if (name) {
-        mp->mp_name = strdup(name);
+        mp->mp_name = (char *)strdup(name);
     } else {
         mp->mp_name = 0;
     }
@@ -80,15 +61,7 @@ addr_map_free_func(void *mx)
     return;
 }
 
-static void
-DUMPFIRST(int line)
-{
-    if (!firststring) {
-        return;
-    }
-}
-
-static int 
+static int
 addr_map_compare_func(const void *l, const void *r)
 {
     const struct Addr_Map_Entry *ml = l;
@@ -101,18 +74,17 @@ addr_map_compare_func(const void *l, const void *r)
     }
     return 0;
 }
-struct Addr_Map_Entry * 
+struct Addr_Map_Entry *
 addr_map_insert( Dwarf_Unsigned addr,char *name,void **tree1)
 {
     void *retval = 0;
     struct Addr_Map_Entry *re = 0;
     struct Addr_Map_Entry *e;
     e  = addr_map_create_entry(addr,name);
-    DUMPFIRST(__LINE__);
     /*  tsearch records e's contents unless e
         is already present . We must not free it till
         destroy time if it got added to tree1.  */
-    retval = tsearch(e,tree1, addr_map_compare_func);
+    retval = dwarf_tsearch(e,tree1, addr_map_compare_func);
     if (retval) {
         re = *(struct Addr_Map_Entry **)retval;
         if (re != e) {
@@ -124,7 +96,7 @@ addr_map_insert( Dwarf_Unsigned addr,char *name,void **tree1)
     }
     return re;
 }
-struct Addr_Map_Entry * 
+struct Addr_Map_Entry *
 addr_map_find(Dwarf_Unsigned addr,void **tree1)
 {
     void *retval = 0;
@@ -132,11 +104,10 @@ addr_map_find(Dwarf_Unsigned addr,void **tree1)
     struct Addr_Map_Entry *e = 0;
 
     e = addr_map_create_entry(addr,NULL);
-    DUMPFIRST(__LINE__);
-    retval = tfind(e,tree1, addr_map_compare_func);
+    retval = dwarf_tfind(e,tree1, addr_map_compare_func);
     if (retval) {
         re = *(struct Addr_Map_Entry **)retval;
-    } 
+    }
     /*  The one we created here must be deleted, it is dead.
         We look at the returned one instead. */
     addr_map_free_func(e);
@@ -144,17 +115,9 @@ addr_map_find(Dwarf_Unsigned addr,void **tree1)
 }
 
 
-#endif /* HAVE_TSEARCH */
-#ifndef HAVE_TDESTROY
-void
-addr_map_destroy(void *map)
-{
-}
-#else
 void
 addr_map_destroy(void *map)
 {
     /* tdestroy is not part of Posix, it is a GNU libc function. */
-    tdestroy(map,addr_map_free_func);
+    dwarf_tdestroy(map,addr_map_free_func);
 }
-#endif

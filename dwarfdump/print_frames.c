@@ -1,4 +1,4 @@
-/* 
+/*
   Copyright (C) 2006 Silicon Graphics, Inc.  All Rights Reserved.
   Portions Copyright (C) 2011-2012 SN Systems Ltd. All Rights Reserved.
   Portions Copyright (C) 2007-2012 David Anderson. All Rights Reserved.
@@ -36,7 +36,7 @@
   $Header: /plroot/cmplrs.src/v7.4.5m/.RCS/PL/dwarfdump/RCS/print_frames.c,v 1.5 2006/06/14 20:34:02 davea Exp $ */
 
 /*  The address of the Free Software Foundation is
-    Free Software Foundation, Inc., 51 Franklin St, Fifth Floor, 
+    Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
     Boston, MA 02110-1301, USA.
     SGI has moved from the Crittenden Lane address.
 */
@@ -84,8 +84,8 @@ safe_strcpy(char *out, long outlen, const char *in, long inlen)
 }
 
 /* For inlined functions, try to find name */
-static int 
-get_abstract_origin_funcname(Dwarf_Debug dbg,Dwarf_Attribute attr, 
+static int
+get_abstract_origin_funcname(Dwarf_Debug dbg,Dwarf_Attribute attr,
     char *name_out, unsigned maxlen)
 {
     Dwarf_Off off = 0;
@@ -99,7 +99,7 @@ get_abstract_origin_funcname(Dwarf_Debug dbg,Dwarf_Attribute attr,
     int res = dwarf_global_formref(attr,&off,&err);
     if (res != DW_DLV_OK) {
         return DW_DLV_NO_ENTRY;
-    } 
+    }
     dres = dwarf_offdie(dbg,off,&origin_die,&err);
     if (dres != DW_DLV_OK) {
         return DW_DLV_NO_ENTRY;
@@ -114,7 +114,7 @@ get_abstract_origin_funcname(Dwarf_Debug dbg,Dwarf_Attribute attr,
         int ares;
         ares = dwarf_whatattr(atlist[i], &lattr, &err);
         if (ares == DW_DLV_ERROR) {
-            break; 
+            break;
         } else if (ares == DW_DLV_OK) {
             if (lattr == DW_AT_name) {
                 int sres = 0;
@@ -162,7 +162,7 @@ get_proc_name(Dwarf_Debug dbg, Dwarf_Die die, Dwarf_Addr low_pc,
 
     proc_name_buf[0] = 0;       /* always set to something */
     if (pcMap) {
-        struct Addr_Map_Entry *ame = 0; 
+        struct Addr_Map_Entry *ame = 0;
         ame = addr_map_find(low_pc,pcMap);
         if (ame && ame->mp_name) {
             /* mp_name is NULL only if we ran out of heap space. */
@@ -206,7 +206,7 @@ get_proc_name(Dwarf_Debug dbg, Dwarf_Die die, Dwarf_Addr low_pc,
                             atlist[i], proc_name_buf,proc_name_buf_len);
                         if (aores == DW_DLV_OK) {
                             /* FOUND THE NAME */
-                            funcnamefound = 1; 
+                            funcnamefound = 1;
                         }
                     }
                 }
@@ -219,12 +219,12 @@ get_proc_name(Dwarf_Debug dbg, Dwarf_Die die, Dwarf_Addr low_pc,
                     print_error(dbg,
                         "formstring in get_proc_name failed",
                         sres, err);
-                    /*  50 is safe wrong length since is bigger than the 
+                    /*  50 is safe wrong length since is bigger than the
                         actual string */
                     safe_strcpy(proc_name_buf, proc_name_buf_len,
                         "ERROR in dwarf_formstring!", 50);
                 } else if (sres == DW_DLV_NO_ENTRY) {
-                    /*  50 is safe wrong length since is bigger than the 
+                    /*  50 is safe wrong length since is bigger than the
                         actual string */
                     safe_strcpy(proc_name_buf, proc_name_buf_len,
                         "NO ENTRY on dwarf_formstring?!", 50);
@@ -239,8 +239,16 @@ get_proc_name(Dwarf_Debug dbg, Dwarf_Die die, Dwarf_Addr low_pc,
             case DW_AT_low_pc:
                 dres = dwarf_formaddr(atlist[i], &low_pc_die, &err);
                 if (dres == DW_DLV_ERROR) {
-                    print_error(dbg, "formaddr in get_proc_name failed",
-                        dres, err);
+                    if (DW_DLE_MISSING_NEEDED_DEBUG_ADDR_SECTION ==
+                        dwarf_errno(err)) {
+                        print_error_and_continue(dbg,
+                            "The .debug_addr section is missing, "
+                            "low_pc unavailable",
+                            dres,err);
+                    } else {
+                        print_error(dbg, "formaddr in get_proc_name failed",
+                            dres, err);
+                    }
                     low_pc_die = ~low_pc;
                     /* ensure no match */
                 }
@@ -258,7 +266,7 @@ get_proc_name(Dwarf_Debug dbg, Dwarf_Die die, Dwarf_Addr low_pc,
     dwarf_dealloc(dbg, atlist, DW_DLA_LIST);
     if (funcnamefound && funcpcfound && pcMap ) {
         /*  Insert every name to map, not just the one
-            we are looking for. 
+            we are looking for.
             This version does extra work in that
             early symbols in a CU will be inserted
             multiple times (the extra times have no
@@ -276,7 +284,7 @@ get_proc_name(Dwarf_Debug dbg, Dwarf_Die die, Dwarf_Addr low_pc,
     a)  only looks for children of subprogram.
     b)  With subprogram looks at current die *before* looking
         for a child.
-        
+
     Needed since some languages, including SGI MP Fortran,
     have nested functions.
     Return 0 on failure, 1 on success.
@@ -335,7 +343,7 @@ load_nested_proc_name(Dwarf_Debug dbg, Dwarf_Die die, Dwarf_Addr low_pc,
                     dwarf_dealloc(dbg, newchild, DW_DLA_DIE);
                     if (newprog) {
                         /*  Found it.  We could just take this name or
-                            we could concatenate names together For now, 
+                            we could concatenate names together For now,
                             just take name */
                         if (die_locally_gotten) {
                             /*  If we got this die from the parent, we
@@ -388,7 +396,7 @@ load_nested_proc_name(Dwarf_Debug dbg, Dwarf_Die die, Dwarf_Addr low_pc,
                 dwarf_dealloc(dbg, prev_child, DW_DLA_DIE);
             }
             return 0;/* proc name not at this level */
-        } else {                
+        } else {
             /* DW_DLV_OK */
             curdie = newsibling;
             if (die_locally_gotten) {
@@ -409,8 +417,8 @@ load_nested_proc_name(Dwarf_Debug dbg, Dwarf_Die die, Dwarf_Addr low_pc,
     return 0;
 }
 
-/*  For SGI MP Fortran and other languages, functions 
-    nest!  As a result, we must dig thru all functions, 
+/*  For SGI MP Fortran and other languages, functions
+    nest!  As a result, we must dig thru all functions,
     not just the top level.
     This remembers the CU die and restarts each search at the start
     of  the current cu.
@@ -607,15 +615,14 @@ print_one_fde(Dwarf_Debug dbg, Dwarf_Fde fde,
     if (suppress_nested_name_search) {
         temps = 0;
     } else {
-#ifdef HAVE_TSEARCH
         struct Addr_Map_Entry *mp = 0;
         temps = get_fde_proc_name(dbg, low_pc,pcMap,all_cus_seen);
         mp = addr_map_find(low_pc,lowpcSet);
-        if (check_frames || check_frames_extended) { 
+        if (check_frames || check_frames_extended) {
             DWARF_CHECK_COUNT(fde_duplication,1);
         }
         if (mp) {
-            if (check_frames || check_frames_extended) { 
+            if (check_frames || check_frames_extended) {
                 char msg[400];
                 if (temps && (strlen(temps) > 0)) {
                     snprintf(msg,sizeof(msg),"An fde low pc of 0x%"
@@ -630,23 +637,22 @@ print_one_fde(Dwarf_Debug dbg, Dwarf_Fde fde,
                         " is not the first fde with that pc. "
                         "The first is not named.",
                         (Dwarf_Unsigned)low_pc);
-    
+
                 }
                 DWARF_CHECK_ERROR(fde_duplication,msg);
             }
         } else {
             addr_map_insert(low_pc,0,lowpcSet);
         }
-#endif
     }
 
     /* Do not print if in check mode */
     if (!check_frames_extended) {
-        printf("<%5" DW_PR_DSd "><0x%" DW_PR_XZEROS  DW_PR_DUx 
-            ":0x%" DW_PR_XZEROS DW_PR_DUx 
-            "><%s><fde offset 0x%" DW_PR_XZEROS DW_PR_DUx 
+        printf("<%5" DW_PR_DSd "><0x%" DW_PR_XZEROS  DW_PR_DUx
+            ":0x%" DW_PR_XZEROS DW_PR_DUx
+            "><%s><fde offset 0x%" DW_PR_XZEROS DW_PR_DUx
             " length: 0x%" DW_PR_XZEROS  DW_PR_DUx ">",
-            cie_index, (Dwarf_Unsigned)low_pc, 
+            cie_index, (Dwarf_Unsigned)low_pc,
             (Dwarf_Unsigned)(low_pc + func_length),
             temps ? temps : "", (Dwarf_Unsigned)fde_offset, fde_bytes_length);
     }
@@ -662,7 +668,7 @@ print_one_fde(Dwarf_Debug dbg, Dwarf_Fde fde,
             } else if (eh_table_offset == DW_DLX_EH_OFFSET_UNAVAILABLE) {
                 printf("<eh offset %s>\n", "unknown");
             } else {
-                printf("<eh offset 0x%" DW_PR_XZEROS DW_PR_DUx 
+                printf("<eh offset 0x%" DW_PR_XZEROS DW_PR_DUx
                     ">\n", eh_table_offset);
             }
         }
@@ -693,7 +699,7 @@ print_one_fde(Dwarf_Debug dbg, Dwarf_Fde fde,
         /* Do not print if in check mode */
         if (!check_frames_extended) {
             printf("\n");
-  
+
         }
     }
 
@@ -733,7 +739,7 @@ print_one_fde(Dwarf_Debug dbg, Dwarf_Fde fde,
 
             /* Do not print if in check mode */
             if (!printed_intro_addr && !check_frames_extended) {
-                printf("        0x%" DW_PR_XZEROS DW_PR_DUx 
+                printf("        0x%" DW_PR_XZEROS DW_PR_DUx
                     ": ", (Dwarf_Unsigned)j);
                 printed_intro_addr = 1;
             }
@@ -765,7 +771,7 @@ print_one_fde(Dwarf_Debug dbg, Dwarf_Fde fde,
                     &block_ptr,
                     &row_pc, &err);
                 offset = offset_or_block_len;
-            } else {   
+            } else {
                 /*  This interface is deprecated. Is the old
                     MIPS/DWARF2 interface. */
                 /*  ASSERT: config_data->cf_interface_number == 2 */
@@ -793,7 +799,7 @@ print_one_fde(Dwarf_Debug dbg, Dwarf_Fde fde,
 
             /* Do not print if in check mode */
             if (!printed_intro_addr && !check_frames_extended) {
-                printf("        0x%" DW_PR_XZEROS DW_PR_DUx ": ", 
+                printf("        0x%" DW_PR_XZEROS DW_PR_DUx ": ",
                     (Dwarf_Unsigned)j);
                 printed_intro_addr = 1;
             }
@@ -826,9 +832,9 @@ print_one_fde(Dwarf_Debug dbg, Dwarf_Fde fde,
         if (offres == DW_DLV_OK) {
             /* Do not print if in check mode */
             if (!check_frames_extended) {
-                printf(" fde section offset %" DW_PR_DUu 
-                    " 0x%" DW_PR_XZEROS DW_PR_DUx 
-                    " cie offset for fde: %" DW_PR_DUu 
+                printf(" fde section offset %" DW_PR_DUu
+                    " 0x%" DW_PR_XZEROS DW_PR_DUx
+                    " cie offset for fde: %" DW_PR_DUu
                     " 0x%" DW_PR_XZEROS DW_PR_DUx "\n",
                     (Dwarf_Unsigned) fde_off,
                     (Dwarf_Unsigned) fde_off,
@@ -850,7 +856,7 @@ print_one_fde(Dwarf_Debug dbg, Dwarf_Fde fde,
             Dwarf_Unsigned initial_instructions_length = 0;
 
             if (cie_index >= cie_element_count) {
-                printf("Bad cie index %" DW_PR_DSd 
+                printf("Bad cie index %" DW_PR_DSd
                     " with fde index %" DW_PR_DUu "! "
                     "(table entry max %" DW_PR_DSd ")\n",
                     cie_index, fde_index,
@@ -869,7 +875,7 @@ print_one_fde(Dwarf_Debug dbg, Dwarf_Fde fde,
                 &err);
             if (cires == DW_DLV_ERROR) {
                 printf
-                    ("Bad cie index %" DW_PR_DSd 
+                    ("Bad cie index %" DW_PR_DSd
                     " with fde index %" DW_PR_DUu "!\n",
                     cie_index,  fde_index);
                 print_error(dbg, "dwarf_get_cie_info", cires, err);
@@ -945,11 +951,11 @@ print_one_cie(Dwarf_Debug dbg, Dwarf_Cie cie,
     {
         /* Do not print if in check mode */
         if (!check_frames_extended) {
-            printf("<%5" DW_PR_DUu ">\tversion\t\t\t\t%d\n", 
-                cie_index, version);        
+            printf("<%5" DW_PR_DUu ">\tversion\t\t\t\t%d\n",
+                cie_index, version);
             cires = dwarf_cie_section_offset(dbg, cie, &cie_off, &err);
             if (cires == DW_DLV_OK) {
-                printf("\tcie section offset\t\t%" DW_PR_DUu 
+                printf("\tcie section offset\t\t%" DW_PR_DUu
                     " 0x%" DW_PR_XZEROS DW_PR_DUx "\n",
                     (Dwarf_Unsigned) cie_off,
                     (Dwarf_Unsigned) cie_off);
@@ -996,7 +1002,7 @@ print_one_cie(Dwarf_Debug dbg, Dwarf_Cie cie,
             printf("\tcie length\t\t\t%" DW_PR_DUu "\n", cie_length);
             /*  For better layout */
             printf("\tinitial instructions\n");
-            print_frame_inst_bytes(dbg, initial_instructions, 
+            print_frame_inst_bytes(dbg, initial_instructions,
                 (Dwarf_Signed) initial_instructions_length,
                 data_alignment_factor,
                 (int) code_alignment_factor,
@@ -1008,7 +1014,7 @@ print_one_cie(Dwarf_Debug dbg, Dwarf_Cie cie,
 
 void
 get_string_from_locs(Dwarf_Debug dbg,
-    Dwarf_Ptr bytes_in, 
+    Dwarf_Ptr bytes_in,
     Dwarf_Unsigned block_len,
     Dwarf_Half addr_size,
     struct esb_s *out_string)
@@ -1042,7 +1048,7 @@ get_string_from_locs(Dwarf_Debug dbg,
         printf("Bad status from _dwarf_print_one_locdesc %d\n",res);
         exit(1);
     }
-    
+
     dwarf_dealloc(dbg, locdescarray->ld_s, DW_DLA_LOC_BLOCK);
     dwarf_dealloc(dbg, locdescarray, DW_DLA_LOCDESC);
     return ;
@@ -1193,7 +1199,7 @@ print_frame_inst_bytes(Dwarf_Debug dbg,
                 off += uleblen;
                 printf("\t%2u DW_CFA_offset_extended ", loff);
                 printreg((Dwarf_Signed) uval, config_data);
-                printf(" %" DW_PR_DSd , 
+                printf(" %" DW_PR_DSd ,
                     (Dwarf_Signed) (((Dwarf_Signed) uval2) *
                         data_alignment_factor));
                 if (verbose) {
@@ -1299,9 +1305,9 @@ print_frame_inst_bytes(Dwarf_Debug dbg,
                     len -= uleblen;
                     off += uleblen;
                     printf
-                        ("\t%2u DW_CFA_def_cfa_expression expr block len %" 
+                        ("\t%2u DW_CFA_def_cfa_expression expr block len %"
                         DW_PR_DUu "\n",
-                        loff, 
+                        loff,
                         block_len);
                     dump_block("\t\t", (char *) instp+1,
                         (Dwarf_Signed) block_len);
@@ -1336,7 +1342,7 @@ print_frame_inst_bytes(Dwarf_Debug dbg,
                     len -= uleblen;
                     off += uleblen;
                     printf
-                        ("\t%2u DW_CFA_expression %" DW_PR_DUu 
+                        ("\t%2u DW_CFA_expression %" DW_PR_DUu
                         " expr block len %" DW_PR_DUu "\n",
                         loff,  uval,
                         block_len);
@@ -1401,7 +1407,7 @@ print_frame_inst_bytes(Dwarf_Debug dbg,
                     off += uleblen;
                     printf("\t%2u DW_CFA_def_cfa_sf ", loff);
                     printreg((Dwarf_Signed) uval, config_data);
-                    printf(" %" DW_PR_DSd , (long long) sval2); 
+                    printf(" %" DW_PR_DSd , (long long) sval2);
                     printf(" (*data alignment factor=>%" DW_PR_DSd ")",
                         (Dwarf_Signed)(sval2*data_alignment_factor));
                 }
@@ -1419,8 +1425,8 @@ print_frame_inst_bytes(Dwarf_Debug dbg,
                     instp += uleblen;
                     len -= uleblen;
                     off += uleblen;
-                    printf("\t%2u DW_CFA_def_cfa_offset_sf %" 
-                        DW_PR_DSd " (*data alignment factor=> %" 
+                    printf("\t%2u DW_CFA_def_cfa_offset_sf %"
+                        DW_PR_DSd " (*data alignment factor=> %"
                         DW_PR_DSd ")\n",
                         loff, sval,
                         (Dwarf_Signed)(data_alignment_factor*sval));
@@ -1444,11 +1450,11 @@ print_frame_inst_bytes(Dwarf_Debug dbg,
                     off += uleblen;
                     printf("\t%2u DW_CFA_val_offset ", loff);
                     printreg((Dwarf_Signed)uval, config_data);
-                    printf(" %" DW_PR_DSd , 
+                    printf(" %" DW_PR_DSd ,
                         (Dwarf_Signed) (sval2 *
                             data_alignment_factor));
                     if (verbose) {
-                        printf("  (%" DW_PR_DSd " * %d)", 
+                        printf("  (%" DW_PR_DSd " * %d)",
                             (Dwarf_Signed) sval2,
                             (int) data_alignment_factor);
                     }
@@ -1465,7 +1471,7 @@ print_frame_inst_bytes(Dwarf_Debug dbg,
                 len -= uleblen;
                 off += uleblen;
                 {
-                    Dwarf_Signed sval2 = 
+                    Dwarf_Signed sval2 =
                         local_dwarf_decode_s_leb128(instp + 1,
                             &uleblen);
 
@@ -1501,7 +1507,7 @@ print_frame_inst_bytes(Dwarf_Debug dbg,
                     len -= uleblen;
                     off += uleblen;
                     printf
-                        ("\t%2u DW_CFA_val_expression %" DW_PR_DUu 
+                        ("\t%2u DW_CFA_val_expression %" DW_PR_DUu
                         " expr block len %" DW_PR_DUu "\n",
                         loff,  uval,
                         block_len);
@@ -1552,7 +1558,7 @@ print_frame_inst_bytes(Dwarf_Debug dbg,
                     of this for loop. */
                 lreg = local_dwarf_decode_u_leb128(instp + 1,
                     &uleblen);
-                printf("\t%2u DW_CFA_GNU_args_size arg size: %" 
+                printf("\t%2u DW_CFA_GNU_args_size arg size: %"
                     DW_PR_DUu "\n",
                     loff, lreg);
                 instp += uleblen;
@@ -1594,7 +1600,7 @@ print_one_frame_reg_col(Dwarf_Debug dbg,
     Dwarf_Half addr_size,
     struct dwconf_s *config_data,
     Dwarf_Signed offset_relevant,
-    Dwarf_Signed offset, 
+    Dwarf_Signed offset,
     Dwarf_Ptr block_ptr)
 {
     char *type_title = "";
@@ -1675,7 +1681,7 @@ print_one_frame_reg_col(Dwarf_Debug dbg,
 }
 
 
-/*  get all the data in .debug_frame (or .eh_frame). 
+/*  get all the data in .debug_frame (or .eh_frame).
     The '3' versions mean print using the dwarf3 new interfaces.
     The non-3 mean use the old interfaces.
     All combinations of requests are possible.  */
@@ -1733,7 +1739,7 @@ print_frames(Dwarf_Debug dbg, int print_debug_frame, int print_eh_frame,
                 continue;
             }
             is_eh = 1;
-            /*  This is gnu g++ exceptions in a .eh_frame section. Which 
+            /*  This is gnu g++ exceptions in a .eh_frame section. Which
                 is just like .debug_frame except that the empty, or
                 'special' CIE_id is 0, not -1 (to distinguish fde from
                 cie). And the augmentation is "eh". As of egcs-1.1.2
@@ -1741,7 +1747,7 @@ print_frames(Dwarf_Debug dbg, int print_debug_frame, int print_eh_frame,
                 difference between the fde address and the beginning of
                 the cie it belongs to. This makes sense as this is
                 intended to be referenced at run time, and is part of
-                the running image. For more on augmentation strings, see 
+                the running image. For more on augmentation strings, see
                 libdwarf/dwarf_frame.c.  */
 
             /*  Big question here is how to print all the info?
@@ -1758,14 +1764,14 @@ print_frames(Dwarf_Debug dbg, int print_debug_frame, int print_eh_frame,
                 print_any_harmless_errors(dbg);
             }
         }
-    
+
         /* Do not print any frame info if in check mode */
         if (check_frames) {
             addr_map_destroy(lowpcSet);
             lowpcSet = 0;
             continue;
         }
-    
+
         if (fres == DW_DLV_ERROR) {
             printf("\n%s\n", framename);
             print_error(dbg, "dwarf_get_fde_list", fres, err);

@@ -1,6 +1,6 @@
 /*
   Copyright (c) 2009-2013 David Anderson.  All rights reserved.
- 
+
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions are met:
   * Redistributions of source code must retain the above copyright
@@ -11,7 +11,7 @@
   * Neither the name of the example nor the
     names of its contributors may be used to endorse or promote products
     derived from this software without specific prior written permission.
- 
+
   THIS SOFTWARE IS PROVIDED BY David Anderson ''AS IS'' AND ANY
   EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
   WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -22,7 +22,7 @@
   ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
   (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
   SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- 
+
 */
 /*  simplereader.c
     This is an example of code reading dwarf .debug_info.
@@ -31,7 +31,7 @@
     It does to a bit of error checking as a help in ensuring
     that some code works properly... for error checks.
 
-    The --names 
+    The --names
     option adds some extra printing.
 
     The --check
@@ -68,7 +68,7 @@ static void resetsrcfiles(Dwarf_Debug dbg,struct srcfilesdata *sf);
 static int namesoptionon = 0;
 static int checkoptionon = 0;
 
-int 
+int
 main(int argc, char **argv)
 {
 
@@ -116,7 +116,7 @@ main(int argc, char **argv)
     return 0;
 }
 
-static void 
+static void
 read_cu_list(Dwarf_Debug dbg)
 {
     Dwarf_Unsigned cu_header_length = 0;
@@ -171,7 +171,7 @@ get_die_and_siblings(Dwarf_Debug dbg, Dwarf_Die in_die,int in_level,
     Dwarf_Die cur_die=in_die;
     Dwarf_Die child = 0;
     Dwarf_Error error;
-   
+
     print_die_data(dbg,in_die,in_level,sf);
 
     for(;;) {
@@ -278,7 +278,7 @@ print_subprog(Dwarf_Debug dbg,Dwarf_Die die, int level,
         }
         dwarf_dealloc(dbg,attrbuf[i],DW_DLA_ATTR);
     }
-    /*  Here let's test some alternative interfaces for high and low pc. 
+    /*  Here let's test some alternative interfaces for high and low pc.
         We only do both dwarf_highpc and dwarf_highpcb_b as
         an error check. Do not do both yourself. */
     if(checkoptionon){
@@ -291,9 +291,9 @@ print_subprog(Dwarf_Debug dbg,Dwarf_Die die, int level,
         Dwarf_Addr altlopc = 0;
         Dwarf_Half highform = 0;
         enum Dwarf_Form_Class highclass = 0;
-        
+
         /*  Should work for DWARF 2/3 DW_AT_high_pc, and
-            all high_pc where the FORM is DW_FORM_addr 
+            all high_pc where the FORM is DW_FORM_addr
             Avoid using this interface as of 2013. */
         hres  = dwarf_highpc(die,&althipc,&error);
 
@@ -377,7 +377,7 @@ print_comp_dir(Dwarf_Debug dbg,Dwarf_Die die,int level, struct srcfilesdata *sf)
     if(res != DW_DLV_OK) {
         return;
     }
-    sf->srcfilesres = dwarf_srcfiles(die,&sf->srcfiles,&sf->srcfilescount, 
+    sf->srcfilesres = dwarf_srcfiles(die,&sf->srcfiles,&sf->srcfilescount,
         &error);
     for(i = 0; i < attrcount ; ++i) {
         Dwarf_Half aform;
@@ -449,7 +449,7 @@ print_die_data(Dwarf_Debug dbg, Dwarf_Die print_me,int level,
                 printf(    "<%3d> subprogram            : \"%s\"\n",level,name);
             }
             print_subprog(dbg,print_me,level,sf,name);
-        } 
+        }
         if( (namesoptionon) && (tag == DW_TAG_compile_unit ||
             tag == DW_TAG_partial_unit ||
             tag == DW_TAG_type_unit)) {

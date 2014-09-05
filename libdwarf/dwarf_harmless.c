@@ -4,22 +4,22 @@
   Portions Copyright 2012 SN Systems Ltd. All rights reserved.
 
   This program is free software; you can redistribute it and/or modify it
-  under the terms of version 2.1 of the GNU Lesser General Public License 
+  under the terms of version 2.1 of the GNU Lesser General Public License
   as published by the Free Software Foundation.
 
   This program is distributed in the hope that it would be useful, but
   WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
   Further, this software is distributed without any warranty that it is
-  free of the rightful claim of any third person regarding infringement 
-  or the like.  Any license provided herein, whether implied or 
+  free of the rightful claim of any third person regarding infringement
+  or the like.  Any license provided herein, whether implied or
   otherwise, applies only to this software file.  Patent licenses, if
-  any, provided herein do not apply to combinations of this program with 
-  other software, or any other product whatsoever.  
+  any, provided herein do not apply to combinations of this program with
+  other software, or any other product whatsoever.
 
-  You should have received a copy of the GNU Lesser General Public 
-  License along with this program; if not, write the Free Software 
+  You should have received a copy of the GNU Lesser General Public
+  License along with this program; if not, write the Free Software
   Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston MA 02110-1301,
   USA.
 
@@ -29,11 +29,11 @@
     and related helper functions for recording
     compiler errors that need not make the input
     unusable.
- 
+
     Applications can use dwarf_get_harmless_error_list to
     find (and possibly print) a warning about such errors.
 
-    The initial error reported here is 
+    The initial error reported here is
     DW_DLE_DEBUG_FRAME_LENGTH_NOT_MULTIPLE which was a
     bug in a specific compiler.
 
@@ -115,7 +115,7 @@ safe_strncpy(char *targ, char *src, unsigned spaceavail)
     targ[goodcount] = 0;
 }
 
-/*  Insertion made public is only for testing the harmless error code, 
+/*  Insertion made public is only for testing the harmless error code,
     it is not necessarily useful for libdwarf client code aside
     from code testing libdwarf. */
 void dwarf_insert_harmless_error(Dwarf_Debug dbg,
@@ -143,7 +143,7 @@ void dwarf_insert_harmless_error(Dwarf_Debug dbg,
 /*  The size of the circular list of strings may be set
     and reset as desired. Returns the previous size of
     the list. If the list is shortened excess error entries
-    are simply dropped. 
+    are simply dropped.
     If the reallocation fails the list size is left unchanged.
     Do not make this a long list!
 
@@ -166,7 +166,7 @@ unsigned dwarf_set_harmless_error_list_size(Dwarf_Debug dbg,
             dwarf_harmless_init(dhp,maxcount-1);
             if (oldarray.dh_next_to_use != oldarray.dh_first) {
                 unsigned i = 0;
-                for (i = oldarray.dh_first; i != oldarray.dh_next_to_use; 
+                for (i = oldarray.dh_first; i != oldarray.dh_next_to_use;
                     i = (i+1)%oldarray.dh_maxcount) {
                     dwarf_insert_harmless_error(dbg,oldarray.dh_errors[i]);
                 }
@@ -182,7 +182,7 @@ unsigned dwarf_set_harmless_error_list_size(Dwarf_Debug dbg,
 
 /*  Only callable from within libdwarf (as a practical matter)
 */
-void 
+void
 dwarf_harmless_init(struct Dwarf_Harmless_s *dhp,unsigned size)
 {
     unsigned i = 0;
@@ -210,7 +210,7 @@ dwarf_harmless_init(struct Dwarf_Harmless_s *dhp,unsigned size)
     }
 }
 
-void 
+void
 dwarf_harmless_cleanout(struct Dwarf_Harmless_s *dhp)
 {
     unsigned i = 0;
@@ -219,9 +219,9 @@ dwarf_harmless_cleanout(struct Dwarf_Harmless_s *dhp)
     }
     for (i = 0; i < dhp->dh_maxcount; ++i) {
         free(dhp->dh_errors[i]);
-    } 
-    free(dhp->dh_errors); 
-    dhp->dh_errors = 0;     
-    dhp->dh_maxcount = 0;     
+    }
+    free(dhp->dh_errors);
+    dhp->dh_errors = 0;
+    dhp->dh_maxcount = 0;
 }
 

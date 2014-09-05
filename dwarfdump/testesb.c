@@ -1,4 +1,4 @@
-/* testesb.c 
+/* testesb.c
    test code for esb.h esb.c
 
    Not part of a compiled dwarfdump.

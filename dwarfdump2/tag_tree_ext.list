@@ -1,4 +1,4 @@
-/* 
+/*
   Copyright (C) 2000-2010 Silicon Graphics, Inc.  All Rights Reserved.
   Portions Copyright 2009-2012 SN Systems Ltd. All rights reserved.
   Portions Copyright (C) 2009-2012 David Anderson. All Rights Reserved.
@@ -33,23 +33,23 @@
   http://oss.sgi.com/projects/GenInfo/NoticeExplan
 
 
-$Header: /plroot/cmplrs.src/v7.4.5m/.RCS/PL/dwarfdump/RCS/tag_attr.list,v 1.7 2005/12/01 17:34:59 davea Exp $ 
+$Header: /plroot/cmplrs.src/v7.4.5m/.RCS/PL/dwarfdump/RCS/tag_attr.list,v 1.7 2005/12/01 17:34:59 davea Exp $
 */
 #include <dwarf.h>
 
-/*  list for semantic check of tag-tree relation.  
+/*  list for semantic check of tag-tree relation.
     See tag_tree.list for details.
-   
+
 */
 
 /* Common DWARF extensions */
 
 0xffffffff
 DW_TAG_structure_type
-DW_TAG_variable  /* GNU gcc usage. */ 
+DW_TAG_variable  /* GNU gcc usage. */
 0xffffffff
 DW_TAG_class_type
-DW_TAG_variable  /* GNU gcc usage. */ 
+DW_TAG_variable  /* GNU gcc usage. */
 DW_TAG_GNU_template_template_parameter /* template instantiations */
 0xffffffff
 DW_TAG_structure_type

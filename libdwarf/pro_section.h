@@ -3,19 +3,19 @@
   Copyright (C) 2000,2004 Silicon Graphics, Inc.  All Rights Reserved.
 
   This program is free software; you can redistribute it and/or modify it
-  under the terms of version 2.1 of the GNU Lesser General Public License 
+  under the terms of version 2.1 of the GNU Lesser General Public License
   as published by the Free Software Foundation.
 
   This program is distributed in the hope that it would be useful, but
   WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
   Further, this software is distributed without any warranty that it is
-  free of the rightful claim of any third person regarding infringement 
-  or the like.  Any license provided herein, whether implied or 
+  free of the rightful claim of any third person regarding infringement
+  or the like.  Any license provided herein, whether implied or
   otherwise, applies only to this software file.  Patent licenses, if
-  any, provided herein do not apply to combinations of this program with 
-  other software, or any other product whatsoever.  
+  any, provided herein do not apply to combinations of this program with
+  other software, or any other product whatsoever.
 
   You should have received a copy of the GNU Lesser General Public
   License along with this program; if not, write the Free Software
@@ -44,7 +44,7 @@ extern const char *_dwarf_rel_section_names[];
 extern const char *_dwarf_sectnames[];
 
 /*  struct to hold relocation entries. Its mantained as a linked
-    list of relocation structs, and will then be written at as a 
+    list of relocation structs, and will then be written at as a
     whole into the relocation section. Whether its 32 bit or
     64 bit will be obtained from Dwarf_Debug pointer.  */
 
@@ -67,7 +67,7 @@ struct Dwarf_P_Section_Data_s {
 */
 #define MAGIC_SECT_NO -3
 
-/* Size of chunk of data allocated in one alloc 
+/* Size of chunk of data allocated in one alloc
    Not clear if this is the best size.
    Used to be just 4096 for user data, the section data struct
    was a separate malloc.
@@ -75,11 +75,11 @@ struct Dwarf_P_Section_Data_s {
 #define CHUNK_SIZE (4096 - sizeof (struct Dwarf_P_Section_Data_s))
 
 /*
-    chunk alloc routine - 
-    if chunk->ds_data is nil, it will alloc CHUNK_SIZE bytes, 
-    and return pointer to the beginning. If chunk is not nil, 
-    it will see if there's enoungh space for nbytes in current 
-    chunk, if not, add new chunk to linked list, and return 
+    chunk alloc routine -
+    if chunk->ds_data is nil, it will alloc CHUNK_SIZE bytes,
+    and return pointer to the beginning. If chunk is not nil,
+    it will see if there's enoungh space for nbytes in current
+    chunk, if not, add new chunk to linked list, and return
     a char * pointer to it. Return null if unsuccessful.
 */
 Dwarf_Small *_dwarf_pro_buffer(Dwarf_P_Debug dbg, int sectno,

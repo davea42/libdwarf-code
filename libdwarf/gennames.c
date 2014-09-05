@@ -1,41 +1,41 @@
-/* 
+/*
     Copyright 2009-2010 SN Systems Ltd. All rights reserved.
     Portions Copyright 2009-2011 David Anderson. All rights reserved.
- 
+
     This program is free software; you can redistribute it and/or modify it
-    under the terms of version 2.1 of the GNU Lesser General Public License 
+    under the terms of version 2.1 of the GNU Lesser General Public License
     as published by the Free Software Foundation.
- 
+
     This program is distributed in the hope that it would be useful, but
     WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- 
+
     Further, this software is distributed without any warranty that it is
     free of the rightful claim of any third person regarding infringement
     or the like.  Any license provided herein, whether implied or
     otherwise, applies only to this software file.  Patent licenses, if
     any, provided herein do not apply to combinations of this program with
     other software, or any other product whatsoever.
- 
-    You should have received a copy of the GNU Lesser General Public 
-    License along with this program; if not, write the Free Software 
+
+    You should have received a copy of the GNU Lesser General Public
+    License along with this program; if not, write the Free Software
     Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston MA 02110-1301,
     USA.
 
     Contact information:  Silicon Graphics, Inc., 1500 Crittenden Lane,
     Mountain View, CA 94043, or:
- 
+
     http://www.sgi.com
- 
+
     For further information regarding this notice, see:
- 
+
     http://oss.sgi.com/projects/GenInfo/NoticeExplan
- 
-*/ 
- 
+
+*/
+
 /*  The address of the Free Software Foundation is
-    Free Software Foundation, Inc., 51 Franklin St, Fifth Floor, 
-    Boston, MA 02110-1301, USA.  
+    Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
+    Boston, MA 02110-1301, USA.
     SGI has moved from the Crittenden Lane address.
 */
 
@@ -44,14 +44,15 @@
 #include <errno.h>   /* For errno declaration. */
 #include <ctype.h>
 #include <string.h>
-#include <unistd.h>  /* For getopt */  
+#include <getopt.h>
+#include <unistd.h>
 #include "dwarf.h"
 #include "common.h"
 
 /*  gennames.c
     Prints routines to return constant name for the associated value
     (such as the TAG name string for a particular tag).
-  
+
     The input is dwarf.h
     For each set of names with a common prefix, we create a routine
     to return the name given the value.
@@ -60,14 +61,14 @@
     value (DW_AT_* has some due to ambiguities in the DWARF2 spec)
     we take the first of a given value as the definitive name.
     TAGs, Attributes, etc are given distinct checks.
-  
+
     There are multiple output files as some people find one
     form more pleasant than the other.
-  
+
     The doprinting argument is so that when used by tag_tree.c,
     and tag_attr.c that we don't get irritating messages on stderr
     when those dwarfdump built-time applications are run.
-  
+
     Some compilers generate better code for switch statements than
     others, so the -s and -t options let the user decide which
     is better for their compiler (when building dwarfdump):
@@ -176,7 +177,7 @@ process_args(int argc, char *argv[])
     }
 }
 
-int 
+int
 main(int argc,char **argv)
 {
     print_version(argv[0]);
@@ -192,7 +193,7 @@ main(int argc,char **argv)
 
 /* Print the array used to hold the tags, attributes values */
 #ifdef TRACE_ARRAY
-static void 
+static void
 PrintArray(void)
 {
     int i;
@@ -205,7 +206,7 @@ PrintArray(void)
 }
 #endif /* TRACE_ARRAY */
 
-static int 
+static int
 Compare(array_data *elem1,array_data *elem2)
 {
     if (elem1->value < elem2->value) {
@@ -217,7 +218,7 @@ Compare(array_data *elem1,array_data *elem2)
     return 0;
 }
 
-static FILE * 
+static FILE *
 open_path(const char *base, const char *file, const char *direction)
 {
     FILE *f = 0;
@@ -234,7 +235,7 @@ open_path(const char *base, const char *file, const char *direction)
 }
 
 /* Open files and write the basic headers */
-static void 
+static void
 OpenAllFiles(void)
 {
     const char *dwarf_h      = "dwarf.h";
@@ -264,9 +265,9 @@ GenerateInitialFileLines(void)
     fprintf(f_names_new_h,"/* Automatically generated, do not edit. */\n");
     fprintf(f_names_new_h,"/* Generated on %s  %s */\n",__DATE__,__TIME__);
     fprintf(f_names_new_h,"\n/* BEGIN FILE */\n\n");
-    fprintf(f_names_new_h,"/* define DWARF_PRINT_PREFIX before this \n");
+    fprintf(f_names_new_h,"/* define DWARF_PRINT_PREFIX before this\n");
     fprintf(f_names_new_h,"   point if you wish to.  */\n");
-    fprintf(f_names_new_h,"#ifndef DWARF_PRINT_PREFIX \n");
+    fprintf(f_names_new_h,"#ifndef DWARF_PRINT_PREFIX\n");
     fprintf(f_names_new_h,"#define DWARF_PRINT_PREFIX dwarf_\n");
     fprintf(f_names_new_h,"#endif\n");
     fprintf(f_names_new_h,"#define dw_glue(x,y) x##y\n");
@@ -322,7 +323,7 @@ GenerateInitialFileLines(void)
 }
 
 /* Close files and write basic trailers */
-static void 
+static void
 WriteFileTrailers(void)
 {
     /* Generate entries for 'dwarf_names_enum.h' */
@@ -339,7 +340,7 @@ WriteFileTrailers(void)
     fprintf(f_names_c,"\n/* END FILE */\n");
 }
 
-static void 
+static void
 CloseAllFiles(void)
 {
     fclose(f_dwarf_in);
@@ -350,7 +351,7 @@ CloseAllFiles(void)
 }
 
 /* Write the table and code for a common set of names */
-static void 
+static void
 GenerateOneSet(void)
 {
     unsigned u;
@@ -437,7 +438,7 @@ GenerateOneSet(void)
         fprintf(f_names_c,"}\n");
     } else {
         fprintf(f_names_c,"    }\n");
-        fprintf(f_names_c,"    return DW_DLV_NO_ENTRY; \n");
+        fprintf(f_names_c,"    return DW_DLV_NO_ENTRY;\n");
         fprintf(f_names_c,"}\n");
     }
 
@@ -457,8 +458,9 @@ is_skippable_line(char *pLine)
     return empty;
 }
 
-static void safe_strncpy(char *out, unsigned out_len,
-char *in,unsigned in_len) 
+static void
+safe_strncpy(char *out, unsigned out_len,
+    char *in,unsigned in_len)
 {
     if(in_len >= out_len) {
         fprintf(stderr,"Impossible input line from dwarf.h. Giving up. \n");
@@ -471,7 +473,7 @@ char *in,unsigned in_len)
 
 
 /* Parse the 'dwarf.h' file and generate the tables */
-static void 
+static void
 ParseDefinitionsAndWriteOutput(void)
 {
     char new_prefix[64];
@@ -486,8 +488,11 @@ ParseDefinitionsAndWriteOutput(void)
 
     /* Process each line from 'dwarf.h' */
     while (!feof(f_dwarf_in)) {
+        /*  errno is cleared here so printing errno after
+            the fgets is showing errno as set by fgets. */
+        char *fgbad = 0;
         errno = 0;
-        char *fgbad = fgets(line_in,sizeof(line_in),f_dwarf_in);
+        fgbad = fgets(line_in,sizeof(line_in),f_dwarf_in);
         if(!fgbad) {
             if(feof(f_dwarf_in)) {
                 break;
@@ -500,7 +505,7 @@ ParseDefinitionsAndWriteOutput(void)
             continue;
         }
         sscanf(line_in,"%s %s %s %s",type,name,value,extra);
-        if (strcmp(type,"#define") || 
+        if (strcmp(type,"#define") ||
             strncmp(name,prefix_root,prefix_root_len)) {
             continue;
         }

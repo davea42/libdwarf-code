@@ -55,28 +55,28 @@ struct dwconf_s {
     // as before.  But most folks don't update those header files and
     // instead of making *them* configurable we make dwarfdump (and
     // libdwarf) configurable sufficiently to print frame information
-    // sensibly. 
+    // sensibly.
     unsigned cf_interface_number;
 
-    // The number of table rules , aka columns. For MIPS/IRIX is 66. 
+    // The number of table rules , aka columns. For MIPS/IRIX is 66.
     unsigned long cf_table_entry_count;
 
     // Array of cf_table_entry_count reg names. Names not filled in
     // from dwarfdump.conf have empty value.
-        
+
     std::vector<std::string> cf_regs;
 
     // The 'default initial value' when intializing a table. for MIPS
     // is DW_FRAME_SAME_VAL(1035). For other ISA/ABIs may be
-    // DW_FRAME_UNDEFINED_VAL(1034). 
-    unsigned cf_initial_rule_value; 
+    // DW_FRAME_UNDEFINED_VAL(1034).
+    unsigned cf_initial_rule_value;
     unsigned cf_same_val;
     unsigned cf_undefined_val;
 
-    // The number of the cfa 'register'. For cf_interface_number 2 of 
+    // The number of the cfa 'register'. For cf_interface_number 2 of
     // MIPS this is 0. For other architectures (and anytime using
     // cf_interface_number 3) this should be outside the table, a
-    // special value such as 1036, not a table column at all).  
+    // special value such as 1036, not a table column at all).
     unsigned cf_cfa_reg;
 
     /*  If non-zero it is the number of bytes in an address
@@ -84,7 +84,7 @@ struct dwconf_s {
         there are usually other sources for the correct address size.
         However, with DWARF2 frame data there is no explicit address
         size in the frame data and the object file might not have
-        other .debug_ sections to work with. 
+        other .debug_ sections to work with.
         If zero, no address size was supplied, and that is normal and
         the already-set (or defaulted) address size is to be used.
         Only an exceptional frame configure will specify address
@@ -95,9 +95,9 @@ struct dwconf_s {
 };
 
 
-// Returns DW_DLV_OK if works. DW_DLV_ERROR if cannot do what is asked. 
+// Returns DW_DLV_OK if works. DW_DLV_ERROR if cannot do what is asked.
 int find_conf_file_and_read_config(const std::string & named_file,
-    const std::string &named_abi, 
+    const std::string &named_abi,
     const char **defaults,
     struct dwconf_s *conf_out);
 void init_conf_file_data(struct dwconf_s *config_file_data);

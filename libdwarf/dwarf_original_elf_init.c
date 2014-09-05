@@ -76,7 +76,7 @@ dwarf_elf_init_file_ownership(dwarf_elf_handle elf_file_pointer,
 
 
 /*  The basic dwarf initializer function for consumers using
-    libelf. 
+    libelf.
     Return a libdwarf error code on error, return DW_DLV_OK
     if this succeeds.  */
 int
@@ -108,8 +108,8 @@ dwarf_init(int fd,
     /*  Changed to mmap request per bug 281217. 6/95 */
 #ifdef HAVE_ELF_C_READ_MMAP
     /*  ELF_C_READ_MMAP is an SGI IRIX specific enum value from IRIX
-        libelf.h meaning read but use mmap. 
-        It is never necessary -- it is just a convenience.  
+        libelf.h meaning read but use mmap.
+        It is never necessary -- it is just a convenience.
         HAVE_ELF_C_READ_MMAP has not been in config.h via
         configure since 2004 at least. */
     what_kind_of_elf_read = ELF_C_READ_MMAP;
@@ -119,7 +119,7 @@ dwarf_init(int fd,
     if (elf_file_pointer == NULL) {
         DWARF_DBG_ERROR(NULL, DW_DLE_ELF_BEGIN_ERROR, DW_DLV_ERROR);
     }
-    return dwarf_elf_init_file_ownership(elf_file_pointer, 
+    return dwarf_elf_init_file_ownership(elf_file_pointer,
         TRUE, access, errhand, errarg, ret_dbg, error);
 }
 
@@ -134,19 +134,19 @@ dwarf_elf_init(dwarf_elf_handle elf_file_pointer,
     Dwarf_Ptr errarg,
     Dwarf_Debug * ret_dbg, Dwarf_Error * error)
 {
-    return dwarf_elf_init_file_ownership(elf_file_pointer, 
+    return dwarf_elf_init_file_ownership(elf_file_pointer,
         FALSE, access, errhand, errarg, ret_dbg, error);
 }
 
 
 /* Initialize the ELF object access for libdwarf.  */
-static int 
-dwarf_elf_init_file_ownership(dwarf_elf_handle elf_file_pointer, 
-    int libdwarf_owns_elf, 
-    Dwarf_Unsigned access, 
-    Dwarf_Handler errhand, 
-    Dwarf_Ptr errarg, 
-    Dwarf_Debug * ret_dbg, 
+static int
+dwarf_elf_init_file_ownership(dwarf_elf_handle elf_file_pointer,
+    int libdwarf_owns_elf,
+    Dwarf_Unsigned access,
+    Dwarf_Handler errhand,
+    Dwarf_Ptr errarg,
+    Dwarf_Debug * ret_dbg,
     Dwarf_Error * error)
 {
     /* ELF is no longer tied to libdwarf. */
@@ -157,10 +157,10 @@ dwarf_elf_init_file_ownership(dwarf_elf_handle elf_file_pointer,
     if (access != DW_DLC_READ) {
         DWARF_DBG_ERROR(NULL, DW_DLE_INIT_ACCESS_WRONG, DW_DLV_ERROR);
     }
-   
+
     /* This allocates and fills in *binary_interface. */
     res = dwarf_elf_object_access_init(
-        elf_file_pointer, 
+        elf_file_pointer,
         libdwarf_owns_elf,
         &binary_interface,
         &err);
@@ -168,9 +168,9 @@ dwarf_elf_init_file_ownership(dwarf_elf_handle elf_file_pointer,
         DWARF_DBG_ERROR(NULL, err, DW_DLV_ERROR);
     }
 
-    /*  This mallocs space and returns pointer thru ret_dbg, 
+    /*  This mallocs space and returns pointer thru ret_dbg,
         saving  the binary interface in 'ret-dbg' */
-    res = dwarf_object_init(binary_interface, errhand, errarg, 
+    res = dwarf_object_init(binary_interface, errhand, errarg,
         ret_dbg, error);
     if (res != DW_DLV_OK){
         dwarf_elf_object_access_finish(binary_interface);

@@ -1,4 +1,4 @@
-/* 
+/*
   Copyright (C) 2000-2006 Silicon Graphics, Inc.  All Rights Reserved.
   Portions Copyright 2007-2010 Sun Microsystems, Inc. All rights reserved.
   Portions Copyright 2009-2010 SN Systems Ltd. All rights reserved.
@@ -36,8 +36,8 @@
 
 $Header: /plroot/cmplrs.src/v7.4.5m/.RCS/PL/dwarfdump/RCS/print_sections.c,v 1.69 2006/04/17 00:09:56 davea Exp $ */
 /*  The address of the Free Software Foundation is
-    Free Software Foundation, Inc., 51 Franklin St, Fifth Floor, 
-    Boston, MA 02110-1301, USA.  
+    Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
+    Boston, MA 02110-1301, USA.
     SGI has moved from the Crittenden Lane address.
 */
 
@@ -54,7 +54,7 @@ using std::cout;
 using std::cerr;
 using std::endl;
 
-/* Get all the data in .debug_static_funcs 
+/* Get all the data in .debug_static_funcs
    On error, this allows some dwarf memory leaks.
 */
 extern void

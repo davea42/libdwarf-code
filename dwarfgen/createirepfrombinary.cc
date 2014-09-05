@@ -1,36 +1,46 @@
 /*
-  Copyright (C) 2010-2013 David Anderson.  
+  Copyright (C) 2010-2013 David Anderson.  All rights reserved.
 
-  This program is free software; you can redistribute it and/or modify it
-  under the terms of version 2 of the GNU General Public License as
-  published by the Free Software Foundation.
+  Redistribution and use in source and binary forms, with or without
+  modification, are permitted provided that the following conditions are met:
+  * Redistributions of source code must retain the above copyright
+    notice, this list of conditions and the following disclaimer.
+  * Redistributions in binary form must reproduce the above copyright
+    notice, this list of conditions and the following disclaimer in the
+    documentation and/or other materials provided with the distribution.
+  * Neither the name of the example nor the
+    names of its contributors may be used to endorse or promote products
+    derived from this software without specific prior written permission.
 
-  This program is distributed in the hope that it would be useful, but
-  WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-
-  You should have received a copy of the GNU General Public License along
-  with this program; if not, write the Free Software Foundation, Inc., 51
-  Franklin Street - Fifth Floor, Boston MA 02110-1301, USA.
+  THIS SOFTWARE IS PROVIDED BY David Anderson ''AS IS'' AND ANY
+  EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+  WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+  DISCLAIMED. IN NO EVENT SHALL David Anderson BE LIABLE FOR ANY
+  DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+  (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+  ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 */
 
 // createirepfrombinary.cc
 
-// Reads an object and inserts its dwarf data into 
+// Reads an object and inserts its dwarf data into
 // an object intended to hold all the dwarf data.
 
 #include "config.h"
-#include <unistd.h> 
+#include <unistd.h>
 #include <stdlib.h> // for exit
 #include <iostream>
 #include <string>
 #include <list>
+#include <map>
 #include <vector>
 #include <string.h> // For memset etc
 #include <sys/stat.h> //open
 #include <fcntl.h> //open
-#include "elf.h"
 #include "gelf.h"
 #include "strtabdata.h"
 #include "dwarf.h"
@@ -45,15 +55,17 @@ using std::cerr;
 using std::endl;
 using std::vector;
 using std::list;
+using std::map;
 
 static void readFrameDataFromBinary(Dwarf_Debug dbg, IRepresentation & irep);
 static void readMacroDataFromBinary(Dwarf_Debug dbg, IRepresentation & irep);
 static void readCUDataFromBinary(Dwarf_Debug dbg, IRepresentation & irep);
+static void readGlobals(Dwarf_Debug dbg, IRepresentation & irep);
 
 class DbgInAutoCloser {
 public:
     DbgInAutoCloser(Dwarf_Debug dbg,int fd): dbg_(dbg),fd_(fd) {};
-    ~DbgInAutoCloser() { 
+    ~DbgInAutoCloser() {
         Dwarf_Error err = 0;
         dwarf_finish(dbg_,&err);
         close(fd_);
@@ -62,7 +74,7 @@ private:
     Dwarf_Debug dbg_;
     int fd_;
 };
- 
+
 
 void
 createIrepFromBinary(const std::string &infile,
@@ -94,11 +106,11 @@ createIrepFromBinary(const std::string &infile,
     readFrameDataFromBinary(dbg,irep);
     readCUDataFromBinary(dbg,irep);
     readMacroDataFromBinary(dbg,irep);
-
+    readGlobals(dbg,irep);
     return;
 }
 
-static void 
+static void
 readFrameDataFromBinary(Dwarf_Debug dbg, IRepresentation & irep)
 {
     Dwarf_Error err = 0;
@@ -145,7 +157,7 @@ readFrameDataFromBinary(Dwarf_Debug dbg, IRepresentation & irep)
             data_alignment_factor,return_address_register_rule,
             initial_instructions,initial_instructions_length);
         irep.framedata().insert_cie(cie);
-    } 
+    }
     for(Dwarf_Signed i =0; i < fde_count; ++i) {
         Dwarf_Addr low_pc = 0;
         Dwarf_Unsigned    func_length = 0;
@@ -167,7 +179,7 @@ readFrameDataFromBinary(Dwarf_Debug dbg, IRepresentation & irep)
             cie_offset, cie_index,fde_offset);
         Dwarf_Ptr instr_in = 0;
         Dwarf_Unsigned instr_len = 0;
-        res = dwarf_get_fde_instr_bytes(fde_data[i], 
+        res = dwarf_get_fde_instr_bytes(fde_data[i],
             &instr_in, &instr_len, &err);
         if(res != DW_DLV_OK) {
             cerr << "Error reading frame data fde instructions " << i << endl;
@@ -175,7 +187,7 @@ readFrameDataFromBinary(Dwarf_Debug dbg, IRepresentation & irep)
         }
         fde.get_fde_instrs_into_ir(instr_in,instr_len);
         irep.framedata().insert_fde(fde);
-    } 
+    }
     dwarf_fde_cie_list_dealloc(dbg,cie_data,cie_count,
         fde_data,fde_count);
 }
@@ -205,7 +217,7 @@ readCUMacroDataFromBinary(Dwarf_Debug dbg, IRepresentation & irep,
                 mdp->dmd_fileindex, mdp->dmd_macro?mdp->dmd_macro:"");
             mvec.push_back(ir);
         }
-    }    
+    }
     dwarf_dealloc(dbg, md, DW_DLA_STRING);
 }
 
@@ -235,11 +247,11 @@ get_basic_attr_data_one_attr(Dwarf_Debug dbg,
     }
     irattr.setBaseData(attrnum,finalform,initialform);
     enum Dwarf_Form_Class cl = dwarf_get_form_class(
-        cudata.getVersionStamp(), attrnum,   
+        cudata.getVersionStamp(), attrnum,
         cudata.getOffsetSize(), finalform);
     irattr.setFormClass(cl);
     if (cl == DW_FORM_CLASS_UNKNOWN) {
-        cerr << "Unable to figure out form class. ver " << 
+        cerr << "Unable to figure out form class. ver " <<
             cudata.getVersionStamp() <<
             " attrnum " << attrnum <<
             " offsetsize " << cudata.getOffsetSize() <<
@@ -248,8 +260,9 @@ get_basic_attr_data_one_attr(Dwarf_Debug dbg,
     }
     irattr.setFormData(formFactory(dbg,attr,cudata,irattr));
 }
-void 
-get_basic_die_data(Dwarf_Debug dbg,Dwarf_Die indie,IRDie &irdie)
+void
+get_basic_die_data(Dwarf_Debug dbg,
+    Dwarf_Die indie,IRDie &irdie)
 {
     Dwarf_Half tagval = 0;
     Dwarf_Error error = 0;
@@ -276,7 +289,8 @@ get_basic_die_data(Dwarf_Debug dbg,Dwarf_Die indie,IRDie &irdie)
 
 static void
 get_attrs_of_die(Dwarf_Die in_die,IRDie &irdie,
-    IRCUdata &data, IRepresentation &irep,
+    IRCUdata &cudata,
+    IRepresentation &irep,
     Dwarf_Debug dbg)
 {
     Dwarf_Error error = 0;
@@ -293,18 +307,23 @@ get_attrs_of_die(Dwarf_Die in_die,IRDie &irdie,
     }
     for (Dwarf_Signed i = 0; i < atcnt; ++i) {
         Dwarf_Attribute attr = atlist[i];
+        // Use an empty attr to get a placeholder on
+        // the attr list for this IRDie.
         IRAttr irattr;
-        get_basic_attr_data_one_attr(dbg,attr,data,irattr);
         attrlist.push_back(irattr);
+        // We want a pointer to the final attr to be
+        // recorded for references, not a local temp IRAttr.
+        IRAttr & lastirattr = attrlist.back();
+        get_basic_attr_data_one_attr(dbg,attr,cudata,lastirattr);
 
     }
     dwarf_dealloc(dbg,atlist, DW_DLA_LIST);
 }
 
-// Invariant: IRDie and IRCUdata  is in the irep tree,
+// Invariant: IRDie and IRCUdata are in the irep tree,
 // not local record references to local scopes.
 static void
-get_children_of_die(Dwarf_Die in_die,IRDie&irdie, 
+get_children_of_die(Dwarf_Die in_die,IRDie&irdie,
     IRCUdata &ircudata,
     IRepresentation &irep,
     Dwarf_Debug dbg)
@@ -324,9 +343,12 @@ get_children_of_die(Dwarf_Die in_die,IRDie&irdie,
     for(;;) {
         IRDie child;
         get_basic_die_data(dbg,curchilddie,child);
-        get_attrs_of_die(curchilddie,child,ircudata,irep,dbg);
         irdie.addChild(child);
         IRDie &lastchild = irdie.lastChild();
+        get_attrs_of_die(curchilddie,lastchild,ircudata,irep,dbg);
+
+        ircudata.insertLocalDieOffset(lastchild.getCURelativeOffset(),
+            &lastchild);
 
         get_children_of_die(curchilddie,lastchild,ircudata,irep,dbg);
         ++childcount;
@@ -347,7 +369,7 @@ get_children_of_die(Dwarf_Die in_die,IRDie&irdie,
 }
 
 static void
-get_linedata_of_cu_die(Dwarf_Die in_die,IRDie&irdie, 
+get_linedata_of_cu_die(Dwarf_Die in_die,IRDie&irdie,
     IRCUdata &ircudata,
     IRepresentation &irep,
     Dwarf_Debug dbg)
@@ -434,7 +456,7 @@ get_linedata_of_cu_die(Dwarf_Die in_die,IRDie&irdie,
         // file number (fileno).
         std::string linesrc(linesrctmp);
 
-      
+
         Dwarf_Bool is_stmt = 0;
         lres = dwarf_linebeginstatement(li,&is_stmt,&error);
         if (lres != DW_DLV_OK) {
@@ -483,7 +505,7 @@ get_linedata_of_cu_die(Dwarf_Die in_die,IRDie&irdie,
     dwarf_srclines_dealloc(dbg, linebuf, linecnt);
 }
 
-static bool 
+static bool
 getToplevelOffsetAttr(Dwarf_Die cu_die,Dwarf_Half attrnumber,
     Dwarf_Unsigned &offset_out)
 {
@@ -503,12 +525,12 @@ getToplevelOffsetAttr(Dwarf_Die cu_die,Dwarf_Half attrnumber,
         }
     }
     return foundit;
-}   
+}
 
 // We record the .debug_info info for each CU found
 // To start with we restrict attention to very few DIEs and
 // attributes,  but intend to get all eventually.
-static void 
+static void
 readCUDataFromBinary(Dwarf_Debug dbg, IRepresentation & irep)
 {
     Dwarf_Error error;
@@ -543,7 +565,7 @@ readCUDataFromBinary(Dwarf_Debug dbg, IRepresentation & irep)
             extension_size,next_cu_header);
 
         //  The CU will have a single sibling (well, it is
-        //  not exactly a sibling, but close enough), a cu_die. 
+        //  not exactly a sibling, but close enough), a cu_die.
         res = dwarf_siblingof(dbg,no_die,&cu_die,&error);
         if(res == DW_DLV_ERROR) {
             cerr <<"Error in dwarf_siblingof on CU die "<< endl;
@@ -576,9 +598,17 @@ readCUDataFromBinary(Dwarf_Debug dbg, IRepresentation & irep)
         IRCUdata & treecu = irep.infodata().lastCU();
         IRDie &cuirdie = treecu.baseDie();
         get_basic_die_data(dbg,cu_die,cuirdie);
+        treecu.insertLocalDieOffset(cuirdie.getCURelativeOffset(),
+            &cuirdie);
         get_attrs_of_die(cu_die,cuirdie,treecu,irep,dbg);
         get_children_of_die(cu_die,cuirdie,treecu,irep,dbg);
         get_linedata_of_cu_die(cu_die,cuirdie,treecu,irep,dbg);
+
+        // Now we have all local DIEs in the CU so we
+        // can identify all targets of local CLASS_REFERENCE
+        // and insert the IRDie * into the IRFormReference
+        treecu.updateReferenceAttrDieTargets();
+
         dwarf_dealloc(dbg,cu_die,DW_DLA_DIE);
     }
     // If we want pointers from child to parent now is the time
@@ -589,7 +619,7 @@ readCUDataFromBinary(Dwarf_Debug dbg, IRepresentation & irep)
 // the macro info for each CU (if any).
 // We record the CU macro info for each CU found (using
 // the value of the DW_AT_macro_info attribute, if any).
-static void 
+static void
 readMacroDataFromBinary(Dwarf_Debug dbg, IRepresentation & irep)
 {
 
@@ -604,5 +634,69 @@ readMacroDataFromBinary(Dwarf_Debug dbg, IRepresentation & irep)
             readCUMacroDataFromBinary(dbg, irep, macrooffset,*it);
         }
     }
+}
+
+// Offsets refer to .debug_info, nothing else.
+static void
+readGlobals(Dwarf_Debug dbg, IRepresentation & irep)
+{
+    Dwarf_Error   error;
+    Dwarf_Global *globs = 0;
+    Dwarf_Type   *types = 0;
+    Dwarf_Signed  cnt = 0;
+    Dwarf_Signed  i = 0;
+    int res = 0;
+    IRPubsData  &pubdata = irep.pubnamedata();
+
+    res = dwarf_get_globals(dbg, &globs,&cnt, &error);
+    if(res == DW_DLV_OK) {
+        std::list<IRPub> &pubnames = pubdata.getPubnames();
+        for (Dwarf_Signed i = 0; i < cnt; ++i) {
+            Dwarf_Global g = globs[i];
+            char *name = 0;
+            // dieoff and cuoff may be in .debug_info
+            // or .debug_types
+            Dwarf_Off dieoff = 0;
+            Dwarf_Off cuoff = 0;
+            res = dwarf_global_name_offsets(g,&name,
+                &dieoff,&cuoff,&error);
+            if( res == DW_DLV_OK) {
+                IRPub p(name,dieoff,cuoff);
+                dwarf_dealloc(dbg,name,DW_DLA_STRING);
+                pubnames.push_back(p);
+            }
+        }
+        dwarf_globals_dealloc(dbg, globs, cnt);
+    } else if (res == DW_DLV_ERROR) {
+        cerr << "dwarf_get_globals failed" << endl;
+        exit(1);
+    }
+    res = dwarf_get_pubtypes(dbg, &types,&cnt, &error);
+    if(res == DW_DLV_OK) {
+        std::list<IRPub> &pubtypes = pubdata.getPubtypes();
+        for (Dwarf_Signed i = 0; i < cnt; ++i) {
+            Dwarf_Type g = types[i];
+            char *name = 0;
+            // dieoff and cuoff may be in .debug_info
+            // or .debug_types
+            Dwarf_Off dieoff = 0;
+            Dwarf_Off cuoff = 0;
+            res = dwarf_pubtype_name_offsets(g,&name,
+                &dieoff,&cuoff,&error);
+            if( res == DW_DLV_OK) {
+                IRPub p(name,dieoff,cuoff);
+                dwarf_dealloc(dbg,name,DW_DLA_STRING);
+                pubtypes.push_back(p);
+            }
+        }
+        dwarf_types_dealloc(dbg, types, cnt);
+    } else if (res == DW_DLV_ERROR) {
+        cerr << "dwarf_get_globals failed" << endl;
+        exit(1);
+    }
+
+
+
+
 }
 

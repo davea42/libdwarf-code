@@ -45,12 +45,15 @@ FINALOBJECTS = \
 	addrmap.o \
         checkutil.o \
 	dwarfdump.o \
+	dwarf_tsearchbal.o \
 	dwconf.o \
 	esb.o \
 	print_abbrevs.o \
 	print_aranges.o \
+	print_debugfission.o \
 	print_die.o \
 	print_frames.o  \
+	print_gdbindex.o  \
 	print_lines.o \
 	print_locs.o \
 	print_macros.o \
@@ -79,6 +82,7 @@ HEADERS = $(srcdir)/checkutil.h \
         $(srcdir)/esb.h \
         $(srcdir)/globals.h \
         $(srcdir)/makename.h \
+        $(srcdir)/dwarf_tsearch.h \
         $(srcdir)/print_frames.h \
         $(srcdir)/uri.h
 
@@ -114,23 +118,29 @@ tag_tree_build:  $(srcdir)/tag_tree.c $(DIRINC)/dwarf.h $(HEADERS) tag_common.o 
 tag_attr_build:  $(srcdir)/tag_attr.c $(DIRINC)/dwarf.h $(HEADERS) tag_common.o makename.o common.o trivial_naming.o
 	$(CC) $(CFLAGS) $(srcdir)/tag_attr.c tag_common.o common.o makename.o trivial_naming.o ../libdwarf/libdwarf.a $(LDFLAGS) -o tag_attr_build 
 
-tmp-tt-table.c tmp-tt-ext-table.c: $(srcdir)/tag_tree_ext.list $(srcdir)/tag_tree.list tag_tree_build
+tmp-tt-table.c: $(srcdir)/tag_tree.list tag_tree_build
 	# gcc -E tag_tree.list does not work, so use a .c name
 	-rm -f  tmp-t1.c
 	cp $(srcdir)/tag_tree.list tmp-t1.c
 	$(CC) $(CFLAGS) -E tmp-t1.c  > ./tmp-tag-tree-build1.tmp
 	./tag_tree_build -s  -i tmp-tag-tree-build1.tmp  -o tmp-tt-table.c
+
+tmp-tt-ext-table.c: $(srcdir)/tag_tree_ext.list tag_tree_build
+	# gcc -E tag_tree_ext.list does not work, so use a .c name
 	-rm -f tmp-t4.c
 	cp $(srcdir)/tag_tree_ext.list tmp-t4.c
 	$(CC) $(CFLAGS) -E tmp-t4.c  > ./tmp-tag-tree-build4.tmp
 	./tag_tree_build -e  -i tmp-tag-tree-build4.tmp -o tmp-tt-ext-table.c
 
-tmp-ta-table.c tmp-ta-ext-table.c: $(srcdir)/tag_attr_ext.list $(srcdir)/tag_attr.list tag_attr_build
+tmp-ta-table.c: $(srcdir)/tag_attr.list tag_attr_build
 	# gcc -E tag_attr.list does not work, so use a .c name
 	-rm -f tmp-t2.c
 	cp $(srcdir)/tag_attr.list tmp-t2.c
 	$(CC) $(CFLAGS)  -E tmp-t2.c  > ./tmp-tag-attr-build2.tmp
 	./tag_attr_build -s -i tmp-tag-attr-build2.tmp -o tmp-ta-table.c
+
+tmp-ta-ext-table.c: $(srcdir)/tag_attr_ext.list tag_attr_build
+	# gcc -E tag_attr_ext.list does not work, so use a .c name
 	-rm -f tmp-t3.c
 	cp $(srcdir)/tag_attr_ext.list tmp-t3.c
 	$(CC) $(CFLAGS)  -E tmp-t3.c  > ./tmp-tag-attr-build3.tmp

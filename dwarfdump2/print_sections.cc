@@ -1,4 +1,4 @@
-/* 
+/*
   Copyright (C) 2000-2006 Silicon Graphics, Inc.  All Rights Reserved.
   Portions Copyright 2007-2010 Sun Microsystems, Inc. All rights reserved.
   Portions Copyright 2009-2010 SN Systems Ltd. All rights reserved.
@@ -36,8 +36,8 @@
 
 $Header: /plroot/cmplrs.src/v7.4.5m/.RCS/PL/dwarfdump/RCS/print_sections.c,v 1.69 2006/04/17 00:09:56 davea Exp $ */
 /*  The address of the Free Software Foundation is
-    Free Software Foundation, Inc., 51 Franklin St, Fifth Floor, 
-    Boston, MA 02110-1301, USA.  
+    Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
+    Boston, MA 02110-1301, USA.
     SGI has moved from the Crittenden Lane address.
 */
 
@@ -75,7 +75,7 @@ bool dwarf_names_print_on_error = true;
 void
 deal_with_name_offset_err(Dwarf_Debug dbg,
     const string &err_loc,
-    const string &name, 
+    const string &name,
     Dwarf_Unsigned die_off,
     int nres, Dwarf_Error err)
 {
@@ -96,7 +96,7 @@ deal_with_name_offset_err(Dwarf_Debug dbg,
 }
 /* The new (April 2005) dwarf_get_section_max_offsets()
    in libdwarf returns all max-offsets, but we only
-   want one of those offsets. This function returns 
+   want one of those offsets. This function returns
    the one we want from that set,
    making functions needing this offset as readable as possible.
    (avoiding code duplication).

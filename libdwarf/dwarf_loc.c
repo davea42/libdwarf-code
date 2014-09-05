@@ -5,22 +5,22 @@
   Portions Copyright (C) 2010-2012 SN Systems Ltd. All Rights Reserved.
 
   This program is free software; you can redistribute it and/or modify it
-  under the terms of version 2.1 of the GNU Lesser General Public License 
+  under the terms of version 2.1 of the GNU Lesser General Public License
   as published by the Free Software Foundation.
 
   This program is distributed in the hope that it would be useful, but
   WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
   Further, this software is distributed without any warranty that it is
-  free of the rightful claim of any third person regarding infringement 
-  or the like.  Any license provided herein, whether implied or 
+  free of the rightful claim of any third person regarding infringement
+  or the like.  Any license provided herein, whether implied or
   otherwise, applies only to this software file.  Patent licenses, if
-  any, provided herein do not apply to combinations of this program with 
-  other software, or any other product whatsoever.  
+  any, provided herein do not apply to combinations of this program with
+  other software, or any other product whatsoever.
 
-  You should have received a copy of the GNU Lesser General Public 
-  License along with this program; if not, write the Free Software 
+  You should have received a copy of the GNU Lesser General Public
+  License along with this program; if not, write the Free Software
   Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston MA 02110-1301,
   USA.
 
@@ -35,7 +35,7 @@
 
 */
 /* The address of the Free Software Foundation is
-   Free Software Foundation, Inc., 51 Franklin St, Fifth Floor, 
+   Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
    Boston, MA 02110-1301, USA.
    SGI has moved from the Crittenden Lane address.
 */
@@ -56,7 +56,7 @@
     that number of bytes. */
 static int
 read_encoded_addr(Dwarf_Small *loc_ptr, Dwarf_Debug dbg,
-   Dwarf_Unsigned * val_out, 
+   Dwarf_Unsigned * val_out,
    int * len_out,
    Dwarf_Error *error)
 {
@@ -73,7 +73,7 @@ read_encoded_addr(Dwarf_Small *loc_ptr, Dwarf_Debug dbg,
         *val_out = *loc_ptr;
         len++;
         break;
-        
+
     case 2:
         READ_UNALIGNED(dbg, operand, Dwarf_Unsigned, loc_ptr, 2);
         *val_out = operand;
@@ -101,18 +101,18 @@ read_encoded_addr(Dwarf_Small *loc_ptr, Dwarf_Debug dbg,
 
 
 /*  Given a Dwarf_Block that represents a location expression,
-    this function returns a pointer to a Dwarf_Locdesc struct 
-    that has its ld_cents field set to the number of location 
-    operators in the block, and its ld_s field pointing to a 
-    contiguous block of Dwarf_Loc structs.  However, the 
-    ld_lopc and ld_hipc values are uninitialized.  Returns 
-    NULL on error.  This function assumes that the length of 
-    the block is greater than 0.  Zero length location expressions 
-    to represent variables that have been optimized away are 
+    this function returns a pointer to a Dwarf_Locdesc struct
+    that has its ld_cents field set to the number of location
+    operators in the block, and its ld_s field pointing to a
+    contiguous block of Dwarf_Loc structs.  However, the
+    ld_lopc and ld_hipc values are uninitialized.  Returns
+    NULL on error.  This function assumes that the length of
+    the block is greater than 0.  Zero length location expressions
+    to represent variables that have been optimized away are
     handled in the calling function.
 
     address_size, offset_size, and version_stamp are
-    per-CU, not per-object or per dbg. 
+    per-CU, not per-object or per dbg.
     We cannot use dbg directly to get those values.
 */
 static Dwarf_Locdesc *
@@ -122,7 +122,7 @@ _dwarf_get_locdesc(Dwarf_Debug dbg,
     Dwarf_Half offset_size,
     Dwarf_Small version_stamp,
     Dwarf_Addr lowpc,
-    Dwarf_Addr highpc, 
+    Dwarf_Addr highpc,
     Dwarf_Error * error)
 {
     /* Size of the block containing the location expression. */
@@ -491,11 +491,12 @@ _dwarf_get_locdesc(Dwarf_Debug dbg,
             offset = offset + leb128_length;
             break;
 
-            /*  The operator means: push the currently computed 
+            /*  The operator means: push the currently computed
                 (by the operations encountered so far in this
                 expression) onto the expression stack as the offset
                 in thread-local-storage of the variable. */
-        case DW_OP_GNU_push_tls_address: /* 0xe0 */
+        case DW_OP_GNU_push_tls_address: /* 0xe0  */
+            /* Believed to have no operands. */
             /* Unimplemented in gdb 7.5.1 ? */
             break;
         case DW_OP_GNU_deref_type: /* 0xf6 */
@@ -505,7 +506,7 @@ _dwarf_get_locdesc(Dwarf_Debug dbg,
             offset = offset + leb128_length;
             break;
 
-        case DW_OP_implicit_value: /* DWARF4 */
+        case DW_OP_implicit_value: /* DWARF4 0xa0 */
             /*  uleb length of value bytes followed by that
                 number of bytes of the value. */
             operand1 = _dwarf_decode_u_leb128(loc_ptr, &leb128_length);
@@ -516,18 +517,18 @@ _dwarf_get_locdesc(Dwarf_Debug dbg,
             /*  This using the second operand as a pointer
                 is quite ugly. */
             /*  This gets an ugly compiler warning. Sorry. */
-            operand2 = (Dwarf_Unsigned)loc_ptr; 
+            operand2 = (Dwarf_Unsigned)loc_ptr;
             offset = offset + operand1;
             loc_ptr = loc_ptr + operand1;
             break;
         case DW_OP_stack_value:  /* DWARF4 */
             break;
-        case DW_OP_GNU_uninit:            /*  0xf0  GNU */
+        case DW_OP_GNU_uninit:            /* 0xf0 */
             /* Unimplemented in gdb 7.5.1  */
             /*  Carolyn Tice: Follws a DW_OP_reg or DW_OP_regx
                 and marks the reg as being uninitialized. */
             break;
-        case DW_OP_GNU_encoded_addr: {      /*  0xf1  GNU */
+        case DW_OP_GNU_encoded_addr: {      /*  0xf1 */
             /*  Richard Henderson: The operand is an absolute
                 address.  The first byte of the value
                 is an encoding length: 0 2 4 or 8.  If zero
@@ -546,14 +547,15 @@ _dwarf_get_locdesc(Dwarf_Debug dbg,
                 offset  += length;
             }
             break;
-        case DW_OP_GNU_implicit_pointer:{  /*  0xf2  GNU */
+        case DW_OP_implicit_pointer:       /* DWARF5 */
+        case DW_OP_GNU_implicit_pointer:{  /* 0xf2 */
             /*  Jakub Jelinek: The value is an optimized-out
                 pointer value. Represented as
                 an offset_size DIE offset
-                (a simple unsigned integer) in DWARF3,4 
+                (a simple unsigned integer) in DWARF3,4
                 followed by a signed leb128 offset.
                 For DWARF2, it is actually pointer size
-                (address size). 
+                (address size).
                 http://www.dwarfstd.org/ShowIssue.php?issue=100831.1 */
             Dwarf_Small iplen = offset_size;
             if (version_stamp == CURRENT_VERSION_STAMP /* 2 */ ) {
@@ -570,7 +572,7 @@ _dwarf_get_locdesc(Dwarf_Debug dbg,
             }
 
             break;
-        case DW_OP_GNU_entry_value:       /*  0xf3  GNU */
+        case DW_OP_GNU_entry_value:       /* 0xf3 */
             /*  Jakub Jelinek: A register reused really soon,
                 but the value is unchanged.  So to represent
                 that value we have a uleb128 size followed
@@ -591,7 +593,7 @@ _dwarf_get_locdesc(Dwarf_Debug dbg,
             offset = offset + operand1;
             loc_ptr = loc_ptr + operand1;
             break;
-        case DW_OP_GNU_const_type:       /*  0xf4  GNU */
+        case DW_OP_GNU_const_type:       /* 0xf4 */
             {
             unsigned blocklen = 0;
             /* die offset as uleb. */
@@ -610,7 +612,7 @@ _dwarf_get_locdesc(Dwarf_Debug dbg,
             loc_ptr = loc_ptr + blocklen;
             }
             break;
-        case DW_OP_GNU_regval_type:       /*  0xf5  GNU */
+        case DW_OP_GNU_regval_type:       /* 0xf5 */
             /* reg num uleb*/
             operand1 = _dwarf_decode_u_leb128(loc_ptr, &leb128_length);
             loc_ptr = loc_ptr + leb128_length;
@@ -620,33 +622,35 @@ _dwarf_get_locdesc(Dwarf_Debug dbg,
             loc_ptr = loc_ptr + leb128_length;
             offset = offset + leb128_length;
             break;
-        case DW_OP_GNU_convert:       /*  0xf7  GNU */
-        case DW_OP_GNU_reinterpret:       /*  0xf9  GNU */
+        case DW_OP_GNU_convert:       /* 0xf7 */
+        case DW_OP_GNU_reinterpret:       /* 0xf9 */
             /* die offset  or zero */
             operand1 = _dwarf_decode_u_leb128(loc_ptr, &leb128_length);
             loc_ptr = loc_ptr + leb128_length;
             offset = offset + leb128_length;
             break;
-        case DW_OP_GNU_parameter_ref :       /*  0xfa  GNU */
+        case DW_OP_GNU_parameter_ref :       /* 0xfa */
             /* 4 byte unsigned int */
-            READ_UNALIGNED(dbg, operand1, Dwarf_Unsigned, loc_ptr, 
+            READ_UNALIGNED(dbg, operand1, Dwarf_Unsigned, loc_ptr,
                 4);
             loc_ptr = loc_ptr + 4;
             offset = offset + 4;
             break;
-        case DW_OP_GNU_addr_index :       /*  0xfb  GNU */
-            /* Address size value */
-            READ_UNALIGNED(dbg, operand1, Dwarf_Unsigned, loc_ptr,
-                address_size);
-            loc_ptr = loc_ptr + address_size;
-            offset = offset + address_size;
+        case DW_OP_addrx :           /* DWARF5 */
+        case DW_OP_GNU_addr_index :  /* 0xfb DebugFission */
+            /*  Index into .debug_addr. The value in .debug_addr
+                is an address. */
+            operand1 = _dwarf_decode_u_leb128(loc_ptr, &leb128_length);
+            loc_ptr = loc_ptr + leb128_length;
+            offset = offset + leb128_length;
             break;
-        case DW_OP_GNU_const_index :       /*  0xfb  GNU */
-            /* Address size value */
-            READ_UNALIGNED(dbg, operand1, Dwarf_Unsigned, loc_ptr,
-                address_size);
-            loc_ptr = loc_ptr + address_size;
-            offset = offset + address_size;
+        case DW_OP_constx :          /* DWARF5 */
+        case DW_OP_GNU_const_index : /* 0xfc DebugFission */
+            /*  Index into .debug_addr. The value in .debug_addr
+                is a constant that fits in an address. */
+            operand1 = _dwarf_decode_u_leb128(loc_ptr, &leb128_length);
+            loc_ptr = loc_ptr + leb128_length;
+            offset = offset + leb128_length;
             break;
         default:
             /*  Some memory does leak here.  */
@@ -716,7 +720,7 @@ _dwarf_get_locdesc(Dwarf_Debug dbg,
 }
 
 /*  Using a loclist offset to get the in-memory
-    address of .debug_loc data to read, returns the loclist 
+    address of .debug_loc data to read, returns the loclist
     'header' info in return_block.
 */
 
@@ -726,8 +730,8 @@ static int
 _dwarf_read_loc_section(Dwarf_Debug dbg,
     Dwarf_Block * return_block,
     Dwarf_Addr * lowpc, Dwarf_Addr * hipc,
-    Dwarf_Off sec_offset, 
-    Dwarf_Half address_size, 
+    Dwarf_Off sec_offset,
+    Dwarf_Half address_size,
     Dwarf_Error * error)
 {
     Dwarf_Small *beg = dbg->de_debug_loc.dss_data + sec_offset;
@@ -815,7 +819,7 @@ _dwarf_get_loclist_count(Dwarf_Debug dbg,
     return DW_DLV_OK;
 }
 
-/* Helper routine to avoid code duplication. 
+/* Helper routine to avoid code duplication.
 */
 static int
 _dwarf_setup_loc(Dwarf_Attribute attr,
@@ -928,7 +932,7 @@ dwarf_loclist_n(Dwarf_Attribute attr,
         return setup_res;
     }
     address_size = cucontext->cc_address_size;
-    /*  If this is a form_block then it's a location expression. If it's 
+    /*  If this is a form_block then it's a location expression. If it's
         DW_FORM_data4 or DW_FORM_data8 it's a loclist offset */
     if (((cucontext->cc_version_stamp == CURRENT_VERSION_STAMP ||
         cucontext->cc_version_stamp == CURRENT_VERSION_STAMP3) &&
@@ -937,7 +941,7 @@ dwarf_loclist_n(Dwarf_Attribute attr,
         form == DW_FORM_sec_offset)) {
 
 
-        /*  A reference to .debug_loc, with an offset in .debug_loc of a 
+        /*  A reference to .debug_loc, with an offset in .debug_loc of a
             loclist */
         Dwarf_Unsigned loclist_offset = 0;
         int off_res  = DW_DLV_ERROR;
@@ -971,7 +975,7 @@ dwarf_loclist_n(Dwarf_Attribute attr,
             blkres = _dwarf_read_loc_section(dbg, &loc_block,
                 &lowpc,
                 &highpc,
-                loclist_offset, 
+                loclist_offset,
                 address_size,
                 error);
             if (blkres != DW_DLV_OK) {
@@ -981,8 +985,8 @@ dwarf_loclist_n(Dwarf_Attribute attr,
             locdesc = _dwarf_get_locdesc(dbg, &loc_block,
                 address_size,
                 cucontext->cc_length_size,
-                cucontext->cc_version_stamp, 
-                lowpc, highpc, 
+                cucontext->cc_version_stamp,
+                lowpc, highpc,
                 error);
             if (locdesc == NULL) {
                 _dwarf_cleanup_llbuf(dbg, llbuf, lli);
@@ -995,33 +999,42 @@ dwarf_loclist_n(Dwarf_Attribute attr,
             loclist_offset = loc_block.bl_section_offset +
                 loc_block.bl_len;
         }
-
-
     } else {
-        Dwarf_Block *tblock = 0;
-
-        blkres = dwarf_formblock(loc_attr, &tblock, error);
-        if (blkres != DW_DLV_OK) {
-            return (blkres);
+        if( form == DW_FORM_exprloc) {
+            blkres = dwarf_formexprloc(loc_attr,&loc_block.bl_len,
+                &loc_block.bl_data,error);
+            if(blkres != DW_DLV_OK) {
+                return blkres;
+            }
+            loc_block.bl_from_loclist = 0;
+            loc_block.bl_section_offset  =
+                (char *)loc_block.bl_data -
+                (char *)dbg->de_debug_info.dss_data;
+        } else {
+            Dwarf_Block *tblock = 0;
+            blkres = dwarf_formblock(loc_attr, &tblock, error);
+            if (blkres != DW_DLV_OK) {
+                return (blkres);
+            }
+            loc_block = *tblock;
+            /*  We copied tblock contents to the stack var, so can dealloc
+                tblock now.  Avoids leaks. */
+            dwarf_dealloc(dbg, tblock, DW_DLA_BLOCK);
         }
-        loc_block = *tblock;
-        /*  We copied tblock contents to the stack var, so can dealloc
-            tblock now.  Avoids leaks. */
-        dwarf_dealloc(dbg, tblock, DW_DLA_BLOCK);
         listlen = 1; /* One by definition of a location entry. */
         lowpc = 0;   /* HACK */
         highpc = (Dwarf_Unsigned) (-1LL); /* HACK */
 
         /*  An empty location description (block length 0) means the
             code generator emitted no variable, the variable was not
-            generated, it was unused or perhaps never tested after being 
+            generated, it was unused or perhaps never tested after being
             set. Dwarf2, section 2.4.1 In other words, it is not an
             error, and we don't test for block length 0 specially here. */
         locdesc = _dwarf_get_locdesc(dbg, &loc_block,
             address_size,
             cucontext->cc_length_size,
-            cucontext->cc_version_stamp, 
-            lowpc, highpc, 
+            cucontext->cc_version_stamp,
+            lowpc, highpc,
             error);
         if (locdesc == NULL) {
             /* low level error already set: let it be passed back */
@@ -1046,7 +1059,7 @@ dwarf_loclist_n(Dwarf_Attribute attr,
 
 /*  Handles only a location expression.
     If called on a loclist, just returns one of those.
-    Cannot not handle a real loclist. 
+    Cannot not handle a real loclist.
     It returns the location expression as a loclist with
     a single entry.
     See dwarf_loclist_n() which handles any number
@@ -1087,7 +1100,7 @@ dwarf_loclist(Dwarf_Attribute attr,
         return setup_res;
     }
     address_size = cucontext->cc_address_size;
-    /*  If this is a form_block then it's a location expression. If it's 
+    /*  If this is a form_block then it's a location expression. If it's
         DW_FORM_data4 or DW_FORM_data8 it's a loclist offset */
     if (((cucontext->cc_version_stamp == CURRENT_VERSION_STAMP ||
         cucontext->cc_version_stamp == CURRENT_VERSION_STAMP3) &&
@@ -1096,7 +1109,7 @@ dwarf_loclist(Dwarf_Attribute attr,
         form == DW_FORM_sec_offset))
         {
 
-        /*  A reference to .debug_loc, with an offset in .debug_loc of a 
+        /*  A reference to .debug_loc, with an offset in .debug_loc of a
             loclist. */
         Dwarf_Unsigned loclist_offset = 0;
         int off_res = DW_DLV_ERROR;
@@ -1112,23 +1125,35 @@ dwarf_loclist(Dwarf_Attribute attr,
         blkres = _dwarf_read_loc_section(dbg, &loc_block,
             &lowpc,
             &highpc,
-            loclist_offset, 
+            loclist_offset,
             address_size,
             error);
         if (blkres != DW_DLV_OK) {
             return (blkres);
         }
     } else {
-        Dwarf_Block *tblock = 0;
+        if( form == DW_FORM_exprloc) {
+            blkres = dwarf_formexprloc(loc_attr,&loc_block.bl_len,
+                &loc_block.bl_data,error);
+            if(blkres != DW_DLV_OK) {
+                return blkres;
+            }
+            loc_block.bl_from_loclist = 0;
+            loc_block.bl_section_offset  =
+                (char *)loc_block.bl_data -
+                (char *)dbg->de_debug_info.dss_data;
+        } else {
+            Dwarf_Block *tblock = 0;
 
-        blkres = dwarf_formblock(loc_attr, &tblock, error);
-        if (blkres != DW_DLV_OK) {
-            return (blkres);
+            blkres = dwarf_formblock(loc_attr, &tblock, error);
+            if (blkres != DW_DLV_OK) {
+                return (blkres);
+            }
+            loc_block = *tblock;
+            /*  We copied tblock contents to the stack var, so can dealloc
+                tblock now.  Avoids leaks. */
+            dwarf_dealloc(dbg, tblock, DW_DLA_BLOCK);
         }
-        loc_block = *tblock;
-        /*  We copied tblock contents to the stack var, so can dealloc
-            tblock now.  Avoids leaks. */
-        dwarf_dealloc(dbg, tblock, DW_DLA_BLOCK);
         lowpc = 0;              /* HACK */
         highpc = (Dwarf_Unsigned) (-1LL);       /* HACK */
     }
@@ -1137,14 +1162,14 @@ dwarf_loclist(Dwarf_Attribute attr,
         generator emitted no variable, the variable was not generated,
         it was unused or perhaps never tested after being set. Dwarf2,
         section 2.4.1 In other words, it is not an error, and we don't
-        test for block length 0 specially here. 
+        test for block length 0 specially here.
         See *dwarf_loclist_n() which handles the general case, this case
         handles only a single location expression.  */
     locdesc = _dwarf_get_locdesc(dbg, &loc_block,
         address_size,
         cucontext->cc_length_size,
-        cucontext->cc_version_stamp, 
-        lowpc, highpc, 
+        cucontext->cc_version_stamp,
+        lowpc, highpc,
         error);
     if (locdesc == NULL) {
         /* low level error already set: let it be passed back */
@@ -1167,13 +1192,13 @@ dwarf_loclist(Dwarf_Attribute attr,
         DW_CFA_def_cfa_expression
         DW_CFA_expression
         DW_CFA_val_expression
- 
+
     expression_in must point to a valid dwarf expression
     set of bytes of length expression_length. Not
     a DW_FORM_block*, just the expression bytes.
 
     If the address_size != de_pointer_size this will not work
-    right. 
+    right.
     See dwarf_loclist_from_expr_b() for a better interface.
 */
 int
@@ -1202,20 +1227,20 @@ dwarf_loclist_from_expr_a(Dwarf_Debug dbg,
     Dwarf_Unsigned expression_length,
     Dwarf_Half addr_size,
     Dwarf_Locdesc ** llbuf,
-    Dwarf_Signed * listlen, 
+    Dwarf_Signed * listlen,
     Dwarf_Error * error)
 {
     int res;
     Dwarf_Debug_InfoTypes info_reading = &dbg->de_info_reading;
-    Dwarf_CU_Context current_cu_context = 
-        info_reading->de_cu_context; 
+    Dwarf_CU_Context current_cu_context =
+        info_reading->de_cu_context;
     Dwarf_Small version_stamp = CURRENT_VERSION_STAMP;
     Dwarf_Half offset_size = dbg->de_length_size;
 
     if (current_cu_context) {
         /*  This is ugly. It is not necessarily right. Due to
             oddity in DW_OP_GNU_implicit_pointer, see its
-            implementation above. 
+            implementation above.
             For correctness, use dwarf_loclist_from_expr_b()
             instead of dwarf_loclist_from_expr_a(). */
         version_stamp = current_cu_context->cc_version_stamp;
@@ -1236,7 +1261,7 @@ dwarf_loclist_from_expr_a(Dwarf_Debug dbg,
         error);
     return res;
 }
-/*  New November 13 2012. Adding 
+/*  New November 13 2012. Adding
     DWARF version number argument.
 */
 int
@@ -1247,7 +1272,7 @@ dwarf_loclist_from_expr_b(Dwarf_Debug dbg,
     Dwarf_Half offset_size,
     Dwarf_Small dwarf_version,
     Dwarf_Locdesc ** llbuf,
-    Dwarf_Signed * listlen, 
+    Dwarf_Signed * listlen,
     Dwarf_Error * error)
 {
     /* Dwarf_Block that describes a single location expression. */
@@ -1270,12 +1295,12 @@ dwarf_loclist_from_expr_b(Dwarf_Debug dbg,
     it was unused or perhaps never tested after being set. Dwarf2,
     section 2.4.1 In other words, it is not an error, and we don't
     test for block length 0 specially here.  */
-    /* We need the DWARF version to get a locdesc! */ 
-    locdesc = _dwarf_get_locdesc(dbg, &loc_block, 
+    /* We need the DWARF version to get a locdesc! */
+    locdesc = _dwarf_get_locdesc(dbg, &loc_block,
         addr_size,
         offset_size,
         version_stamp,
-        lowpc, highpc, 
+        lowpc, highpc,
         error);
     if (locdesc == NULL) {
         /* low level error already set: let it be passed back */
@@ -1321,7 +1346,7 @@ dwarf_get_loclist_entry(Dwarf_Debug dbg,
     /* FIXME: address_size is not necessarily the same in every frame. */
     address_size = dbg->de_pointer_size;
     res = _dwarf_read_loc_section(dbg,
-        &b, &lowpc, &highpc, offset, 
+        &b, &lowpc, &highpc, offset,
         address_size,error);
     if (res != DW_DLV_OK) {
         return res;

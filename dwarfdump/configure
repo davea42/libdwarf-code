@@ -3719,6 +3719,24 @@ rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
 cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 #include <sys/types.h>
+int
+main ()
+{
+  __uint64_t p; p = 3;
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_compile "$LINENO"; then :
+
+$as_echo "#define HAVE___UINT64_T_IN_SYS_TYPES_H 1" >>confdefs.h
+
+fi
+rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+#include <sys/types.h>
         #include <regex.h>
 int
 main ()
@@ -3740,88 +3758,6 @@ $as_echo "#define HAVE_REGEX 1" >>confdefs.h
 
 fi
 rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
-
-cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-#include <stdio.h>
-#include <stdlib.h>
-/* On Ubuntu 10.x, tsearch is in package libc6-dev. */
-/* The tdestroy function is GNU, not POSIX. */
-#define __USE_GNU 1
-#include <search.h>
-struct my_tentry {
-    long mt_key;
-    char * mt_name;
-};
-struct my_tentry * make_my_tentry(long k,char *name) { return 0; }
-void mt_free_func(void *mt_data) { return; }
-int mt_compare_func(const void *l, const void *r) { return 0; }
-int
-main ()
-{
-
-    long i = 1;
-    void *tree1 = 0;
-    char *dbuf = 0;
-    struct my_tentry *mt = 0;
-    struct my_tentry *retval = 0;
-    mt = make_my_tentry(i,dbuf);
-    retval = tsearch(mt,&tree1, mt_compare_func  );
-    tdestroy(tree1,mt_free_func);
-    exit(0);
-;
-  ;
-  return 0;
-}
-_ACEOF
-if ac_fn_c_try_link "$LINENO"; then :
-
-$as_echo "#define HAVE_TDESTROY 1" >>confdefs.h
-
-fi
-rm -f core conftest.err conftest.$ac_objext \
-    conftest$ac_exeext conftest.$ac_ext
-
-cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-#include <stdio.h>
-#include <stdlib.h>
-/* On Ubuntu 10.x, tsearch is in package libc6-dev. */
-/* The tdestroy function is GNU, not POSIX. */
-#define __USE_GNU 1
-#include <search.h>
-struct my_tentry {
-    long mt_key;
-    char * mt_name;
-};
-struct my_tentry * make_my_tentry(long k,char *name) { return 0; }
-void mt_free_func(void *mt_data) { return; }
-int mt_compare_func(const void *l, const void *r) { return 0; }
-int
-main ()
-{
-
-    long i = 1;
-    void *tree1 = 0;
-    char *dbuf = 0;
-    struct my_tentry *mt = 0;
-    struct my_tentry *retval = 0;
-    mt = make_my_tentry(i,dbuf);
-    retval = tsearch(mt,&tree1, mt_compare_func  );
-    exit(0);
-;
-  ;
-  return 0;
-}
-_ACEOF
-if ac_fn_c_try_link "$LINENO"; then :
-
-$as_echo "#define HAVE_TSEARCH 1" >>confdefs.h
-
-fi
-rm -f core conftest.err conftest.$ac_objext \
-    conftest$ac_exeext conftest.$ac_ext
-
 
 # Check whether --enable-nonstandardprintf was given.
 if test "${enable_nonstandardprintf+set}" = set; then :

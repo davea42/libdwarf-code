@@ -3,24 +3,24 @@
   Copyright (C) 2000,2004 Silicon Graphics, Inc.  All Rights Reserved.
   Portions Copyright 2011-2012  David Anderson. All Rights Reserved.
   Portions Copyright 2012 SN Systems Ltd. All rights reserved.
-  
+
   This program is free software; you can redistribute it and/or modify it
-  under the terms of version 2.1 of the GNU Lesser General Public License 
+  under the terms of version 2.1 of the GNU Lesser General Public License
   as published by the Free Software Foundation.
 
   This program is distributed in the hope that it would be useful, but
   WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
   Further, this software is distributed without any warranty that it is
-  free of the rightful claim of any third person regarding infringement 
-  or the like.  Any license provided herein, whether implied or 
+  free of the rightful claim of any third person regarding infringement
+  or the like.  Any license provided herein, whether implied or
   otherwise, applies only to this software file.  Patent licenses, if
-  any, provided herein do not apply to combinations of this program with 
-  other software, or any other product whatsoever.  
+  any, provided herein do not apply to combinations of this program with
+  other software, or any other product whatsoever.
 
-  You should have received a copy of the GNU Lesser General Public 
-  License along with this program; if not, write the Free Software 
+  You should have received a copy of the GNU Lesser General Public
+  License along with this program; if not, write the Free Software
   Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston MA 02110-1301,
   USA.
 
@@ -101,7 +101,7 @@ dwarf_add_frame_cie(Dwarf_P_Debug dbg,
 /*  This functions adds a fde struct to the debug pointer. Its in the
     form of a linked list.
     die: subprogram/function die corresponding to this fde
-    cie: cie referred to by this fde, obtained from call to 
+    cie: cie referred to by this fde, obtained from call to
         add_frame_cie() routine.
     virt_addr: beginning address
     code_len: length of code reps by the fde */
@@ -164,7 +164,7 @@ dwarf_add_frame_fde_b(Dwarf_P_Debug dbg,
     dbg: The debug descriptor.
     fde: The fde to be added.
     die: subprogram/function die corresponding to this fde
-    cie: cie referred to by this fde, obtained from call to 
+    cie: cie referred to by this fde, obtained from call to
         add_frame_cie() routine.
     virt_addr: beginning address
     code_len: length of code reps by the fde
@@ -262,7 +262,7 @@ dwarf_insert_fde_inst_bytes(Dwarf_P_Debug dbg,
     fde->fde_n_bytes += len;
     return DW_DLV_OK;
 }
-    
+
 
 
 /* Create a new fde. */
@@ -336,7 +336,7 @@ dwarf_fde_cfa_offset(Dwarf_P_Fde fde,
 
     This does not work properly for  DW_DLC_SYMBOLIC_RELOCATIONS
     for DW_CFA_set_loc or DW_DVA_advance_loc* 'op', as
-    these ops normally are addresses or (DW_CFA_set_loc) 
+    these ops normally are addresses or (DW_CFA_set_loc)
     or code lengths (DW_DVA_advance_loc*) and such must be
     represented with relocations and symbol indices for
     DW_DLC_SYMBOLIC_RELOCATIONS.

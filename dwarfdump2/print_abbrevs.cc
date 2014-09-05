@@ -1,4 +1,4 @@
-/* 
+/*
   Copyright (C) 2000-2006 Silicon Graphics, Inc.  All Rights Reserved.
   Portions Copyright 2007-2010 Sun Microsystems, Inc. All rights reserved.
   Portions Copyright 2009-2012 SN Systems Ltd. All rights reserved.
@@ -36,8 +36,8 @@
 
 $Header: /plroot/cmplrs.src/v7.4.5m/.RCS/PL/dwarfdump/RCS/print_sections.c,v 1.69 2006/04/17 00:09:56 davea Exp $ */
 /*  The address of the Free Software Foundation is
-    Free Software Foundation, Inc., 51 Franklin St, Fifth Floor, 
-    Boston, MA 02110-1301, USA.  
+    Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
+    Boston, MA 02110-1301, USA.
     SGI has moved from the Crittenden Lane address.
 */
 
@@ -145,7 +145,7 @@ print_abbrevs(Dwarf_Debug dbg)
             cout << "        " << child_name << endl;
         }
         /*  Abbrev just contains the format of a die, which debug_info
-            then points to with the real data. So here we just print the 
+            then points to with the real data. So here we just print the
             given format. */
         for (Dwarf_Unsigned i = 0; i < attr_count; i++) {
             int aeres =
@@ -186,11 +186,11 @@ print_abbrevs(Dwarf_Debug dbg)
 
 
 /* Abbreviations array info for checking  abbrev tags.
-   The [zero] entry is not used. 
+   The [zero] entry is not used.
    We never shrink the array, but it never grows beyond
    the largest abbreviation count of all the CUs.
 
-   
+
 */
 
 static std::vector<Dwarf_Signed>abbrev_vec;
@@ -303,5 +303,5 @@ validate_abbrev_code(Dwarf_Debug dbg,Dwarf_Unsigned abbrev_code)
         }
     }
 }
-    
+
 

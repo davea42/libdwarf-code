@@ -1,4 +1,4 @@
-/* 
+/*
   Copyright (C) 2000-2005 Silicon Graphics, Inc.  All Rights Reserved.
   Portions Copyright (C) 2009-2012 SN Systems Ltd. All Rights Reserved.
   Portions Copyright (C) 2009-2012 David Anderson. All Rights Reserved.
@@ -43,8 +43,8 @@ $Header: /plroot/cmplrs.src/v7.4.5m/.RCS/PL/dwarfdump/RCS/tag_common.c,v 1.8 200
 
 #include "globals.h"
 #include "naming.h"
-#include "tag_common.h" 
-using std::string;  
+#include "tag_common.h"
+using std::string;
 using std::cout;
 using std::cerr;
 using std::endl;
@@ -100,9 +100,9 @@ is_skippable_line(char *pLine)
     return empty;
 }
 
-/* Reads a value from the text table. 
-   Exits  with non-zero status 
-   if the table is erroneous in some way. 
+/* Reads a value from the text table.
+   Exits  with non-zero status
+   if the table is erroneous in some way.
 */
 int
 read_value(unsigned int *outval, FILE*file)
@@ -110,7 +110,7 @@ read_value(unsigned int *outval, FILE*file)
     char *res = 0;
     unsigned long lval;
     char *strout = 0;
-    bool bBlankLine = true; 
+    bool bBlankLine = true;
 
     ++linecount;
     *outval = 0;

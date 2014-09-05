@@ -1,4 +1,4 @@
-/* 
+/*
   Copyright (C) 2000,2004,2005 Silicon Graphics, Inc.  All Rights Reserved.
   Portions Copyright (C) 2007-2012 David Anderson. All Rights Reserved.
   Portions Copyright (C) 2011-2012 SN Systems Ltd. All Rights Reserved
@@ -36,7 +36,7 @@
 $Header: /plroot/cmplrs.src/v7.4.5m/.RCS/PL/dwarfdump/RCS/print_reloc.c,v 1.11 2005/08/04 05:09:37 davea Exp $ */
 
 /* The address of the Free Software Foundation is
-   Free Software Foundation, Inc., 51 Franklin St, Fifth Floor, 
+   Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
    Boston, MA 02110-1301, USA.
    SGI has moved from the Crittenden Lane address.
 */
@@ -49,7 +49,7 @@ $Header: /plroot/cmplrs.src/v7.4.5m/.RCS/PL/dwarfdump/RCS/print_reloc.c,v 1.11 2
 
 #define DW_SECTION_REL_DEBUG_NUM      9  /* Number of sections */
 /* .debug_abbrev should never have a relocation applied to it as it
-   never refers to another section! (other sections refer to 
+   never refers to another section! (other sections refer to
    .debug_abbrev) */
 
 #define DW_SECTNAME_RELA_DEBUG          ".rela.debug_"
@@ -86,7 +86,7 @@ static char *sectnames[] = {
     DW_SECTNAME_REL_DEBUG_ARANGES,
     DW_SECTNAME_REL_DEBUG_FRAME,
     DW_SECTNAME_REL_DEBUG_LOC,
-    DW_SECTNAME_REL_DEBUG_RANGES, 
+    DW_SECTNAME_REL_DEBUG_RANGES,
     DW_SECTNAME_REL_DEBUG_TYPES,
 };
 static char *sectnamesa[] = {
@@ -144,7 +144,7 @@ static const char **reloc_type_names = NULL;
 static Dwarf_Small number_of_reloc_type_names = 0;
 
 /* Set the relocation names based on the machine type */
-static void 
+static void
 set_relocation_table_names(Dwarf_Small machine_type)
 {
     reloc_type_names = 0;
@@ -153,35 +153,35 @@ set_relocation_table_names(Dwarf_Small machine_type)
     case EM_MIPS:
 #ifdef DWARF_RELOC_MIPS
         reloc_type_names = reloc_type_names_MIPS;
-        number_of_reloc_type_names = 
+        number_of_reloc_type_names =
             sizeof(reloc_type_names_MIPS) / sizeof(char *);
 #endif /* DWARF_RELOC_MIPS */
         break;
     case EM_PPC:
 #ifdef DWARF_RELOC_PPC
         reloc_type_names = reloc_type_names_PPC;
-        number_of_reloc_type_names = 
+        number_of_reloc_type_names =
             sizeof(reloc_type_names_PPC) / sizeof(char *);
 #endif /* DWARF_RELOC_PPC */
         break;
     case EM_PPC64:
 #ifdef DWARF_RELOC_PPC64
         reloc_type_names = reloc_type_names_PPC64;
-        number_of_reloc_type_names = 
+        number_of_reloc_type_names =
             sizeof(reloc_type_names_PPC64) / sizeof(char *);
 #endif /* DWARF_RELOC_PPC64 */
         break;
     case EM_ARM:
 #ifdef DWARF_RELOC_ARM
         reloc_type_names = reloc_type_names_ARM;
-        number_of_reloc_type_names = 
+        number_of_reloc_type_names =
             sizeof(reloc_type_names_ARM) / sizeof(char *);
 #endif /* DWARF_RELOC_ARM */
         break;
     case EM_X86_64:
 #ifdef DWARF_RELOC_X86_64
         reloc_type_names = reloc_type_names_X86_64;
-        number_of_reloc_type_names = 
+        number_of_reloc_type_names =
             sizeof(reloc_type_names_X86_64) / sizeof(char *);
 #endif /* DWARF_RELOC_X86_64 */
         break;
@@ -194,7 +194,7 @@ set_relocation_table_names(Dwarf_Small machine_type)
 }
 
 /*
-    Return valid reloc type names. 
+    Return valid reloc type names.
     If buf is used, it is static, so beware: it
     will be overwritten by the next call.
 */
@@ -258,7 +258,7 @@ static void print_reloc_information_64(int section_no,
     Dwarf_Small * buf,
     Dwarf_Unsigned size,
     Elf64_Xword type,
-    char **scn_names,int scn_names_count); 
+    char **scn_names,int scn_names_count);
 static void print_reloc_information_32(int section_no,
     Dwarf_Small * buf,
     Dwarf_Unsigned size,
@@ -284,13 +284,13 @@ typedef struct {
 } REL_INFO;
 
 /*  If the incoming scn_name is known, record the name
-    in our reloc section names table. 
+    in our reloc section names table.
     For a given (debug) section there can be a .rel or a .rela,
-    not both. 
+    not both.
     The name-to-index in this table is fixed, invariant.
     It has to match other tables like
 */
-static int 
+static int
 get_reloc_section(Dwarf_Debug dbg,
     Elf_Scn *scn,
     char *scn_name,
@@ -399,7 +399,7 @@ print_relocinfo_64(Dwarf_Debug dbg, Elf * elf)
         print_error(dbg, "DW_ELF_GETEHDR_ERROR", DW_DLV_OK, err);
     }
 
-    /*  Make the section name array big enough 
+    /*  Make the section name array big enough
         that we don't need to check for overrun in the loop. */
     scn_names = (char **)calloc(ehdr64->e_shnum + 1, sizeof(char *));
 
@@ -445,8 +445,8 @@ print_relocinfo_64(Dwarf_Debug dbg, Elf * elf)
     set_relocation_table_names(ehdr64->e_machine);
 
     for (i = 0; i < DW_SECTION_REL_DEBUG_NUM; i++) {
-        if (sect_data[i].display && 
-            sect_data[i].buf != NULL && 
+        if (sect_data[i].display &&
+            sect_data[i].buf != NULL &&
             sect_data[i].size > 0) {
             print_reloc_information_64(i, sect_data[i].buf,
                 sect_data[i].size, sect_data[i].type,scn_names,
@@ -479,7 +479,7 @@ print_relocinfo_32(Dwarf_Debug dbg, Elf * elf)
         print_error(dbg, "DW_ELF_GETEHDR_ERROR", DW_DLV_OK, err);
     }
 
-    /*  Make the section name array big enough 
+    /*  Make the section name array big enough
         that we don't need to check for overrun in the loop. */
     scn_names = (char **)calloc(ehdr32->e_shnum + 1, sizeof(char *));
 
@@ -523,10 +523,10 @@ print_relocinfo_32(Dwarf_Debug dbg, Elf * elf)
 
     /* Set the relocation names based on the machine type */
     set_relocation_table_names(ehdr32->e_machine);
-  
+
     for (i = 0; i < DW_SECTION_REL_DEBUG_NUM; i++) {
-        if (sect_data[i].display && 
-            sect_data[i].buf != NULL && 
+        if (sect_data[i].display &&
+            sect_data[i].buf != NULL &&
             sect_data[i].size > 0) {
             print_reloc_information_32(i, sect_data[i].buf,
                 sect_data[i].size,sect_data[i].type,scn_names,
@@ -560,17 +560,17 @@ print_relocinfo_32(Dwarf_Debug dbg, Elf * elf)
 static void
 print_reloc_information_64(int section_no, Dwarf_Small * buf,
     Dwarf_Unsigned size, Elf64_Xword type,
-    char **scn_names, int scn_names_count) 
+    char **scn_names, int scn_names_count)
 {
     /* Include support for Elf64_Rel and Elf64_Rela */
     Dwarf_Unsigned add = 0;
-    Dwarf_Half rel_size = SHT_RELA == type ? 
+    Dwarf_Half rel_size = SHT_RELA == type ?
         sizeof(Elf64_Rela) : sizeof(Elf64_Rel);
     Dwarf_Unsigned off = 0;
 
     printf("\n%s:\n", type== SHT_RELA?sectnamesa[section_no]:
         sectnames[section_no]);
-  
+
     /* Print some headers and change the order for better reading */
     printf("Offset     Addend     %-26s Index   Symbol Name\n","Reloc Type");
 
@@ -607,7 +607,7 @@ print_reloc_information_64(int section_no, Dwarf_Small * buf,
         if (!name || !name[0]) {
             name = "<no name>";
         }
-    
+
         if (SHT_RELA == type) {
             Elf64_Rela *pa = (Elf64_Rela *)p;
             add = pa->r_addend;
@@ -638,7 +638,7 @@ print_reloc_information_64(int section_no, Dwarf_Small * buf,
         }
         if (!name || !name[0]) {
             name = "<no name>";
-        } 
+        }
         printf("%5" DW_PR_DUu " %-26s <%3ld> %s\n",
             (Dwarf_Unsigned) (p->r_offset),
             get_reloc_type_names(p->r_type),
@@ -656,7 +656,7 @@ print_reloc_information_32(int section_no, Dwarf_Small * buf,
 {
     /*  Include support for Elf32_Rel and Elf32_Rela */
     Dwarf_Unsigned add = 0;
-    Dwarf_Half rel_size = SHT_RELA == type ? 
+    Dwarf_Half rel_size = SHT_RELA == type ?
         sizeof(Elf32_Rela) : sizeof(Elf32_Rel);
     Dwarf_Unsigned off = 0;
 
@@ -666,7 +666,7 @@ print_reloc_information_32(int section_no, Dwarf_Small * buf,
 
     /* Print some headers and change the order for better reading. */
     printf("Offset     Addend     %-26s Index   Symbol Name\n","Reloc Type");
-  
+
     for (off = 0; off < size; off += rel_size) {
         Elf32_Rel *p = (Elf32_Rel *) (buf + off);
         char *name = 0;

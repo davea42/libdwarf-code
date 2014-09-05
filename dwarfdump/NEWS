@@ -1,3 +1,5 @@
+January 29, 2014
+  Now using dwarf_tsearch() so tsearch is available on every platform.
 November 17, 2012
   Added new checking options.  
   To get good relocation-handling dwarfdump now expects to read

@@ -11,7 +11,7 @@
 .nr Hb 5
 \." ==============================================
 \." Put current date in the following at each rev
-.ds vE rev 1.33, 13 August 2013
+.ds vE rev 1.36, 08 May 2014
 \." ==============================================
 \." ==============================================
 .ds | |
@@ -64,7 +64,7 @@ information.
 .H 2 "Copyright"
 Copyright 1993-2006 Silicon Graphics, Inc.
 
-Copyright 2007-2013 David Anderson.
+Copyright 2007-2014 David Anderson.
 
 Permission is hereby granted to
 copy or republish or use any or all of this document without
@@ -98,7 +98,10 @@ intentionally ignored.
 .P
 Error handling, error codes, and certain \f(CWLibdwarf\fP codes are discussed
 in the "\fIA Consumer Library Interface to DWARF\fP", which should 
-be read (or at least skimmed) before reading this document.
+be read before reading this document.
+.P
+A very few functions in the Producer Library follow the error-returns
+as defined in "\fIA Consumer Library Interface to DWARF\fP".
 .P
 However the general style of functions here 
 in the producer library is rather C-traditional
@@ -120,10 +123,8 @@ return a value or abort.
 The library user can provide a function that the producer code
 will call on errors (which would allow callers avoid testing
 for error returns if the user function exits or aborts).
-See the  \f(CWdwarf_producer_init_c()\fP
-description below for more details
-(possibly the older forms \f(CWdwarf_producer_init_b()\fP
-and \f(CWdwarf_producer_init()\fP may be of interest).
+See the  \f(CWdwarf_producer_init()\fP
+description below for more details.
 
 
 .H 2 "Document History"
@@ -203,6 +204,14 @@ all memory it uses (the application simply calls
 dwarf_producer_finish(dbg)).
 .LI "September 20  2010"
 Now documents the marker feature of DIE creation.
+.LI "May 01  2014"
+The dwarf_producer_init() code has a new interface
+and DWARF is configured at run time by its arguments.
+The producer code used to be configured at configure
+time, but the configure time producer configure options
+are no longer used. 
+The configuration was unneccesarily compilated:
+the run-time configuration is simpler to understand.
 .LE
 
 .H 1 "Type Definitions"
@@ -279,9 +288,7 @@ For example:
 When the documentation below refers to 'an elf section number'
 it is really only dependent on getting (via the callback
 function passed by the caller of
-\f(CWdwarf_producer_init_c()\fP and
-the older forms, \f(CWdwarf_producer_init_b()\fP or
-\f(CWdwarf_producer_init()\fP)
+\f(CWdwarf_producer_init()\fP.
 a sequence of integers back (with 1 as the lowest).
 
 When the documentation below refers to 'an Elf symbol index'
@@ -365,7 +372,9 @@ producer interface dynamically allocate values and some
 return pointers to those spaces.
 The dynamically allocated spaces 
 can not be reclaimed  (and must
-not be freed)  except by \f(CWdwarf_producer_finish(dbg)\fP.  
+not be freed) except that
+all such libdwarf-allocated memory
+is freed by \f(CWdwarf_producer_finish(dbg)\fP.  
 
 All data for a particular \f(CWDwarf_P_Debug\fP descriptor
 is separate from the data for any other 
@@ -420,9 +429,8 @@ disk.
 Typically then, a producer application 
 would create a \f(CWDwarf_P_Debug\fP 
 descriptor to gather debugging information for a particular
-compilation-unit using \f(CWdwarf_producer_init_c()\fP.  
-(Older code may use \f(CWdwarf_producer_init_b()\fP or
-\f(CWdwarf_producer_init()\fP).
+compilation-unit using \f(CWdwarf_producer_init()\fP.  
+
 The producer application would 
 use this \f(CWDwarf_P_Debug\fP descriptor to accumulate debugging 
 information for this object using functions from other sections of 
@@ -449,66 +457,33 @@ The details are mentioned in the text.
 .H 3 "dwarf_producer_init()"
 
 .DS
-\f(CWDwarf_P_Debug dwarf_producer_init(
+\f(CWint dwarf_producer_init(
         Dwarf_Unsigned flags,
         Dwarf_Callback_Func func,
         Dwarf_Handler errhand,
         Dwarf_Ptr errarg,
+        void *    user_data      
+        const char *isa_name,
+        const char *dwarf_version,
+        const char *extra, 
+        Dwarf_P_Debug *dbg_returned,
         Dwarf_Error *error) \fP
 .DE
-This is the oldest form and code should migrate to the newest form,
-\f(CWdwarf_producer_init_c()\fP.
 .P
 The function \f(CWdwarf_producer_init() \fP returns a new 
 \f(CWDwarf_P_Debug\fP descriptor that can be used to add \f(CWDwarf\fP 
 information to the object.  
-On error it returns \f(CWDW_DLV_BADADDR\fP.  
+On success it returns \f(CWDW_DLV_OK\fP.  
+On error it returns \f(CWDW_DLV_ERROR\fP.  
 \f(CWflags\fP determine whether the target object is 64-bit or 32-bit.  
 \f(CWfunc\fP is a pointer to a function called-back from \f(CWLibdwarf\fP 
 whenever \f(CWLibdwarf\fP needs to create a new object section (as it will 
 for each .debug_* section and related relocation section).  
-.P
-\f(CWerrhand\fP 
-is a pointer to a function that will be used as
-a default fall-back function for handling errors detected 
-by \f(CWLibdwarf\fP.  
-.P
-\f(CWerrarg\fP is the default error argument used 
-by the function pointed to by \f(CWerrhand\fP.
-.P
-For historical reasons the error handling is complicated
-and the following three paragraphs describe the  three
-possible scenarios when a producer function detects an error.
-In all cases a short error message is printed on
-stdout if the error number
-is negative (as all such should be, see libdwarf.h).
-Then further action is taken as follows.
-.P
-First,
-if the  Dwarf_Error argument to any specific producer function
-(see the functions documented below)  is non-null
-the \f(CWerrhand\fP argument here is ignored in that call and
-the specific producer function sets the Dwarf_Error and returns
-some specific value (for dwarf_producer_init it is DW_DLV_BADADDR
-as mentioned just above) indicating there is an error.
-.P
-Second,
-if the  Dwarf_Error argument to any specific producer function 
-(see the functions documented below)  is NULL and the
-\f(CWerrarg\fP  to \f(CWdwarf_producer_init() \fP is non-NULL
-then on an error in the producer code the Dwarf_Handler function is called
-and if that called function returns the producer code returns
-a specific value (for dwarf_producer_init it is DW_DLV_BADADDR
-as mentioned just above) indicating there is an error.
-.P
-Third,
-if the  Dwarf_Error argument to any specific producer function
-(see the functions documented below)  is NULL and the
-\f(CWerrarg\fP  to \f(CWdwarf_producer_init() \fP is NULL
-then on an error \f(CWabort()\fP is called.
+
 .P
 The \f(CWflags\fP
-values are as follows:
+values (to be OR'd together in the flags field
+in the calling code) are as follows:
 .in +4
 \f(CWDW_DLC_WRITE\fP 
 is required.
@@ -517,60 +492,52 @@ The values
 \f(CWDW_DLC_RDWR\fP
 are not supported by the producer and must not be passed.
 
-If 
-\f(CWDW_DLC_SIZE_64\fP
-is not ORed into \f(CWflags\fP
-then
-\f(CWDW_DLC_SIZE_32\fP
+The flag bit
+\f(CWDW_DLC_POINTER64\fP
+(or
+\f(CWDW_DLC_SIZE_64\fP)
+Indicates the target has a 64 bit (8 byte) address size.
+The flag bit
+\f(CWDW_DLC_POINTER32\fP
+(or
+\f(CWDW_DLC_SIZE_32\fP)
+Indicates the target has a 32 bit (4 byte) address size.
+If none of these pointer sizes is passed in 
+\f(CWDW_DLC_POINTER32\fP 
 is assumed.
-Oring in both is an error.
 
-If 
+
+
+The flag bit
+\f(CWDW_DLC_OFFSET32\fP
+indicates that 32bit offsets should be used in the generated DWARF.
+The flag bit
+\f(CWDW_DLC_OFFSET64\fP
 \f(CWDW_DLC_OFFSET_SIZE_64\fP
-is not ORed into \f(CWflags\fP
-then 64 bit offsets (as defined in the 1999 DWARF3)
-may be used (see next paragraph) to generate DWARF (if and only if
-DW_DLC_SIZE_64 is also ORed into \f(CWflags\fP).
+indicates that 64bit offsets should be used in the generated DWARF.
 
-If \f(CWHAVE_STRICT_32BIT_OFFSET\fP is set at configure time
-only 32bit DWARF offsets are generated 
-(use configure option --enable-dwarf-format-strict-32bit)
-and \f(CWDW_DLC_OFFSET_SIZE_64\fP is ignored. 
-If \f(CWHAVE_SGI_IRIX_OFFSETS\fP is set at configure time
-SGI IRIX offsets (standard 32bit, a special 64bit offset
-for 64bit address objects) are generated
-(use configure option --enable-dwarf-format-sgi-irix)
-and \f(CWDW_DLC_OFFSET_SIZE_64\fP is ignored.
-If neither \f(CWHAVE_STRICT_32BIT_OFFSET\fP nor \f(CWHAVE_SGI_IRIX_OFFSETS\fP
-is set at configure time then standard 
-offset sizes are used ( and \f(CWHAVE_DWARF2_99_EXTENSION\fP is
-set) and \f(CWDW_DLC_OFFSET_SIZE_64\fP is honored.
+The flag bit
+\f(CWDW_DLC_IRIX_OFFSET64\fP
+indicates that the generated DWARF should use the
+early (pre DWARF3) IRIX method of generating 64 bit offsets.
+In this case \f(CWDW_DLC_POINTER64\fP should also be passed in,
+and the \f(CWisa_name\fP
+passed in (see below) should be "irix".
 
-If
-\f(CWDW_DLC_ISA_IA64\fP
-is not ORed into \f(CWflags\fP
-then 
-\f(CWDW_DLC_ISA_MIPS\fP
-is assumed.
-Oring in both is an error.
+
 
 If
 \f(CWDW_DLC_TARGET_BIGENDIAN\fP
-is not ORed into \f(CWflags\fP
-then 
-endianness the same as the host is assumed.
-
-If
+or
 \f(CWDW_DLC_TARGET_LITTLEENDIAN\fP
 is not ORed into \f(CWflags\fP
 then 
 endianness the same as the host is assumed.
-
 If both 
 \f(CWDW_DLC_TARGET_LITTLEENDIAN\fP
 and
 \f(CWDW_DLC_TARGET_BIGENDIAN\fP
-are or-d in it is an error.
+are OR-d in it is an error.
 
 
 
@@ -584,7 +551,7 @@ The default is
 The
 \f(CWDW_DLC_STREAM_RELOCATIONS\fP
 are relocations in a binary stream (as used
-in a MIPS Elf object).
+in a MIPS/IRIX Elf object).
 
 The
 \f(CWDW_DLC_SYMBOLIC_RELOCATIONS\fP
@@ -596,14 +563,14 @@ This method of expressing relocations allows
 the producer-application to easily produce
 assembler text output of debugging information.
 
-
-If
+When
 \f(CWDW_DLC_SYMBOLIC_RELOCATIONS\fP
 is ORed into \f(CWflags\fP
 then relocations are returned not as streams
 but through an array of structures.
 
 .in -4
+
 .P
 The function \f(CWfunc\fP 
 must be provided by the user of this library.
@@ -616,7 +583,8 @@ Its prototype is:
     Dwarf_Unsigned      flags,
     Dwarf_Unsigned      link,
     Dwarf_Unsigned      info,
-    int*                sect_name_index,
+    Dwarf_Unsigned*     sect_name_index,
+    void *              user_data,
     int*                error) \fP
 .DE
 For each section in the object file that \f(CWlibdwarf\fP
@@ -635,6 +603,15 @@ And, for relocation callbacks, the \f(CWinfo\fP field
 is passed as the elf section number of the section
 the relocations apply to.
 .P
+The  \f(CWsect_name_index\fP field is a field you use
+to pass a symbol index back to libdwarf.
+In Elf, each section gets an elf symbol table entry
+so that relocations have an address to refer to
+(relocations rely on addresses in the Elf symbol table).
+You will create the Elf symbol table, so you have to tell
+libdwarf the index to put into relocation records for the
+section newly defined here.
+.P
 On success
 the user function should return the Elf section number of the
 newly created Elf section.
@@ -645,11 +622,10 @@ Elf symbol number assigned in the Elf symbol table of the
 new Elf section.
 This symbol number is needed with relocations
 dependent on the relocation of this new section.
-Because "int *" is not guaranteed to work with elf 'symbols'
-that are really pointers,
-It is better to use the 
+.P
+Use the 
 \f(CWdwarf_producer_init_c()\fP
-interface.
+interface instead of this interface.
 .P
 For example, the \f(CW.debug_line\fP section's third
 data element (in a compilation unit) is the offset from the
@@ -670,215 +646,109 @@ returned being a real Elf section.
 The Elf section is simply useful for generating relocation
 records.
 Similarly, the Elf symbol table index returned through 
-the \f(CWsect_name_index\fP must simply be an index
+the \f(CWsect_name_index\fP must be an index
 that can be used in relocations against this section.
 The application will probably want to note the
 values passed to this function in some form, even if
 no Elf file is being produced.
 
-.H 3 "dwarf_producer_init_c()"
-.DS
- \f(CWDwarf_P_Debug dwarf_producer_init_c(
-     Dwarf_Unsigned flags,
-     Dwarf_Callback_Func_c func,
-     Dwarf_Handler errhand,
-     Dwarf_Ptr errarg,
-     void * user_data,
-     Dwarf_Error *error) \fP
-.DE
-
-The function \f(CWdwarf_producer_init_c() \fP 
-is the same as \f(CWdwarf_producer_init() \fP
-except that a) the callback function uses
-Dwarf_Unsigned rather than int as the
-type of the symbol-index returned to libdwarf
-through the pointer argument (see below), and
-b) the \f(CWuser_data\fP argument passed in
-is passed through (unchanged) to the callback functions.
 .P
-The \f(CWuser_data\fP argument is not examined by libdwarf and
+\f(CWerrhand\fP 
+is a pointer to a function that will be used as
+a default fall-back function for handling errors detected 
+by \f(CWLibdwarf\fP.  
+
+.P
+\f(CWerrarg\fP is the default error argument used 
+by the function pointed to by \f(CWerrhand\fP.
+.P
+For historical reasons the error handling is complicated
+and the following three paragraphs describe the three
+possible scenarios when a producer function detects an error.
+In all cases a short error message is printed on
+stdout if the error number
+is negative (as all such should be, see libdwarf.h).
+Then further action is taken as follows.
+.P
+First,
+if the  Dwarf_Error argument to any specific producer function
+(see the functions documented below)  is non-null
+the \f(CWerrhand\fP argument here is ignored in that call and
+the specific producer function sets the Dwarf_Error and returns
+some specific value (for dwarf_producer_init it is DW_DLV_OK
+as mentioned just above) indicating there is an error.
+.P
+Second,
+if the  Dwarf_Error argument to any specific producer function 
+(see the functions documented below)  is NULL and the
+\f(CWerrarg\fP  to \f(CWdwarf_producer_init() \fP is non-NULL
+then on an error in the producer code the Dwarf_Handler function is called
+and if that called function returns the producer code returns
+a specific value (for dwarf_producer_init it is DW_DLV_OK
+as mentioned just above) indicating there is an error.
+.P
+Third,
+if the  Dwarf_Error argument to any specific producer function
+(see the functions documented below)  is NULL and the
+\f(CWerrarg\fP  to \f(CWdwarf_producer_init()\fP is NULL
+then on an error \f(CWabort()\fP is called.
+
+.P
+The \f(CWuser_data\fP argument is not examined by libdwarf.
+It is passed to user code in all 
+calls by libdwarf to  the \f(CWDwarf_Callback_Func()\fP
+function and 
 may be used by consumer code for the consumer's own purposes.
+Typical uses might be to pass in a pointer to some user
+data structure or to pass an integer that somehow
+is useful to the libdwarf-using code.
+
 .P
-The \f(CWflags\fP
-values are as follows:
-.in +4
-\f(CWDW_DLC_WRITE\fP 
-is required.
-The values
-\f(CWDW_DLC_READ\fP  
-\f(CWDW_DLC_RDWR\fP
-are not supported by the producer and must not be passed.
-
-If 
-\f(CWDW_DLC_SIZE_64\fP
-is not ORed into \f(CWflags\fP
-then
-\f(CWDW_DLC_SIZE_32\fP
-is assumed.
-Oring in both is an error.
-
-If
-\f(CWDW_DLC_ISA_IA64\fP
-is not ORed into \f(CWflags\fP
-then 
-\f(CWDW_DLC_ISA_MIPS\fP
-is assumed.
-Oring in both is an error.
-
-Either one of two output forms are specifiable:
-\f(CWDW_DLC_STREAM_RELOCATIONS\fP
-or
-\f(CWDW_DLC_SYMBOLIC_RELOCATIONS\fP .
-\f(CWdwarf_producer_init_c() \fP 
-is usable with
-either output form.
-
-Either one of two output forms is specifiable:
-\f(CWDW_DLC_STREAM_RELOCATIONS\fP
-or
-\f(CWDW_DLC_SYMBOLIC_RELOCATIONS\fP .
-
-The default is
-\f(CWDW_DLC_STREAM_RELOCATIONS\fP .
-The
-\f(CWDW_DLC_STREAM_RELOCATIONS\fP
-are relocations in a binary stream (as used
-in a MIPS Elf object).
-
-\f(CWDW_DLC_SYMBOLIC_RELOCATIONS\fP
-are ORed into flags
-to cause 
-the same relocations to be expressed in an
-array of structures defined by libdwarf,
-which the caller of the relevant function
-(see below) must deal with appropriately.
-This method of expressing relocations allows
-the producer-application to easily produce
-assembler text output of debugging information.
-
-.in -4
+The \f(CWisa_name\fP argument 
+must be non-null and contain one of the
+strings defined in the isa_relocs array
+in pro_init.c: "irix","mips","x86",
+"x86_64","arm","arm64","ppc","ppc64",
+"sparc". 
+Tthe names are not strictly ISA
+names (nor ABI names) but a hopefully-meaningful
+mixing of the concepts of ISA and ABI.
+The intent is mainly to 
+define relocation codes applicable to DW_DLC_STREAM_RELOCATIONS.
+New \f(CWisa_name\fP values will be provided as users
+request. In the "irix" case a special relocation is defined
+so a special CIE reference field can be created (if and
+only if the augmentation
+string is "z").
 .P
-The function \f(CWfunc\fP 
-must be provided by the user of this library.
-Its prototype is:
-.DS
-\f(CWtypedef int (*Dwarf_Callback_Func_c)(
-    char* name,
-    int                 size,
-    Dwarf_Unsigned      type,
-    Dwarf_Unsigned      flags,
-    Dwarf_Unsigned      link,
-    Dwarf_Unsigned      info,
-    Dwarf_Unsigned*     sect_name_index,
-    void *              user_data,
-    int*                error) \fP
-.DE
-For each section in the object file that \f(CWlibdwarf\fP
-needs to create, it calls this function once, passing in
-the section \f(CWname\fP, the section \f(CWtype\fP,
-the section \f(CWflags\fP, the \f(CWlink\fP field, and
-the \f(CWinfo\fP field.  For an Elf object file these values
-should be appropriate Elf section header values.
-For example, for relocation callbacks, the \f(CWlink\fP
-field is supposed to be set (by the app) to the index
-of the symtab section (the link field passed through the
-callback must be ignored by the app).
-And, for relocation callbacks, the \f(CWinfo\fP field
-is passed as the elf section number of the section
-the relocations apply to.
-
-On success
-the user function should return the Elf section number of the
-newly created Elf section.
+The \f(CWdwarf_version\fP argument 
+should be one of 
+"V2",
+"V3",
+"V4",
+"V5"
+to indicate which DWARF version is the overall format
+to be emitted.  Individual section version numbers will obey
+the standard for that overall DWARF version.
+Initially only "V2" is supported.
 .P
-On success, the function should also set the integer
-pointed to by \f(CWsect_name_index\fP to the
-Elf symbol number assigned in the Elf symbol table of the
-new Elf section.
-This symbol number is needed with relocations
-dependent on the relocation of this new section.
+The \f(CWextra\fP argument 
+is intended to support a comma-separated
+list of as-yet-undefined options.
+Passing in a null pointer or an empty string
+is acceptable if no such options are needed 
+or used.  All-lowercase option names are reserved to
+the libdwarf implementation itself (specific implemenations
+may want to use a leading upper-case letter for
+additional options).
+
 .P
-For example, the \f(CW.debug_line\fP section's third
-data element (in a compilation unit) is the offset from the
-beginning of the \f(CW.debug_info\fP section of the compilation
-unit entry for this \f(CW.debug_line\fP set.
-The relocation entry in \f(CW.rel.debug_line\fP
-for this offset
-must have the relocation symbol index of the 
-symbol \f(CW.debug_info\fP  returned
-by the callback of that section-creation through 
-the pointer \f(CWsect_name_index\fP.
-.P
-On failure, the function should return -1 and set the \f(CWerror\fP
-integer to an error code.
-.P
-Nothing in libdwarf actually depends on the section index
-returned being a real Elf section.
-The Elf section is simply useful for generating relocation
-records.
-Similarly, the Elf symbol table index returned through 
-the \f(CWsect_name_index\fP must simply be an index
-that can be used in relocations against this section.
-The application will probably want to note the
-values passed to this function in some form, even if
-no Elf file is being produced.
+The \f(CWerror\fP argument 
+is set throught he pointer to return specific error  
+if \f(CWerror\fP is non-null and
+and there is an error.  The error details
+will be passed back through this pointer argument.
 
-Note that the \f(CWDwarf_Callback_Func_c() \fP form
-passes back the sect_name_index as a Dwarf_Unsigned.
-This is guaranteed large enough to hold a pointer.
-(the other functional interfaces have versions with
-the 'symbol index' as a Dwarf_Unsigned too. See below).
-
-If \f(CWDW_DLC_SYMBOLIC_RELOCATIONS\fP
-is in use, then the symbol index is simply an arbitrary
-value (from the point of view of libdwarf) so the
-caller can put anything in it:
-a normal elf symbol index,
-a pointer to a struct (with arbitrary contents)
-(the caller must cast to/from Dwarf_Unsigned 
-as appropriate), 
-or some other kind of pointer or value.
-The values show up in the 
-output of \f(CWdwarf_get_relocation_info()\fP
-(described below) and are not emitted anywhere else.
-
-.H 3 "dwarf_producer_init_b()"
-
-.DS
-\f(CWDwarf_P_Debug dwarf_producer_init_b(
-        Dwarf_Unsigned flags,
-        Dwarf_Callback_Func_b func,
-        Dwarf_Handler errhand,
-        Dwarf_Ptr errarg,
-        Dwarf_Error *error) \fP
-.DE
-This is identical to \f(CWdwarf_producer_init_c()\fP except that
-the user_data argument in \f(CWdwarf_producer_init_c()\fP and
-in \f(CWDwarf_Callback_Func_c\fP are absent in the _b form.
-
-
-.H 3 "dwarf_transform_to_disk_form()"
-
-.DS
-\f(CWDwarf_Signed dwarf_transform_to_disk_form(
-        Dwarf_P_Debug dbg,
-        Dwarf_Error* error) \fP
-.DE
-The function \f(CWdwarf_transform_to_disk_form() \fP does the actual
-conversion of the \f(CWDwarf\fP information provided so far, to the
-form that is 
-normally written out as \f(CWElf\fP sections.  
-In other words, 
-once all DWARF information has been passed to \f(CWLibdwarf\fP, call 
-\f(CWdwarf_transform_to_disk_form() \fP to transform all the accumulated 
-data into byte streams.  
-This includes turning relocation information 
-into byte streams (and possibly relocation arrays).  
-This function does not write anything to disk.  If 
-successful, it returns a count of the number of \f(CWElf\fP sections 
-ready to be retrieved (and, normally, written to disk).
-In case of error, it returns 
-\f(CWDW_DLV_NOCOUNT\fP.
 
 
 .H 3 "dwarf_get_section_bytes()"
@@ -1548,7 +1418,7 @@ on success, and \f(CWDW_DLV_BADADDR\fP on error.
         Dwarf_Error *error) \fP
 .DE
 The function \f(CWdwarf_add_AT_targ_address_b() \fP 
-is identical to \f(CWdwarf_add_AT_targ_address_b() \fP
+is identical to \f(CWdwarf_add_AT_targ_address() \fP
 except that \f(CWsym_index() \fP is guaranteed to 
 be large enough that it can contain a pointer to
 arbitrary data (so the caller can pass in a real elf
@@ -1702,6 +1572,54 @@ This cannot generate DW_FORM_ref_addr references to
 
 It returns the \f(CWDwarf_P_Attribute\fP descriptor for the attribute
 on success, and \f(CWDW_DLV_BADADDR\fP on error.
+
+.H 3 "dwarf_add_AT_reference_b()"
+.DS
+\f(CWDwarf_P_Attribute dwarf_add_AT_reference_b(
+        Dwarf_P_Debug dbg,
+        Dwarf_Half attr,
+        Dwarf_P_Die ownerdie,
+        Dwarf_P_Die otherdie,
+        Dwarf_Error *error)\fP
+.DE
+The function \f(CWdwarf_add_AT_reference_b()\fP
+is the same as  \f(CWdwarf_add_AT_reference()\fP
+except that \f(CWdwarf_add_AT_reference_b()\fP
+accepts a NULL \f(CWotherdie\fP with the assumption
+that \f(CWdwarf_fixup_AT_reference_die()\fP
+will be called by user code 
+to fill in the missing \f(CWotherdie\fP 
+before the DIEs are transformed to disk form.
+
+.H 3 "dwarf_fixup_AT_reference_die()"
+.DS
+\f(CWint dwarf_fixup_AT_reference_die(
+        Dwarf_Half attrnum,
+        Dwarf_P_Die ownerdie,
+        Dwarf_P_Die otherdie,
+        Dwarf_Error *error)\fP
+.DE
+The function \f(CWdwarf_fixup_AT_reference_die()\fP
+is provided to set the NULL \f(CWotherdie\fP
+that  \f(CWdwarf_add_AT_reference_b()\fP allows
+to the reference target DIE.
+This must be done before transforming to disk form.
+\f(CWattrnum()\fP should be the 
+attribute number of the attribute of \fCWownerdie\fP which is
+to be updated.  For example, if a local forward reference
+was in a \fCWDW_AT_sibling\fP attribute in ownerdie, pass
+the value \fCWDW_AT_sibling\fP as attrnum.
+.P
+Since no attribute number can appear more than once on a
+given DIE
+the \f(CWattrnum()\fP suffices to uniquely identify which
+attribute of \fCWownerdie\fP to update
+.P
+It returns either \f(CWDW_DLV_OK\fP (on success) 
+or \f(CWDW_DLV_ERROR\fP (on error).
+Calling this on an attribute where \f(CWotherdie\fP
+was already set is an error.
+
 
 .H 3 "dwarf_add_AT_flag()"
 .DS

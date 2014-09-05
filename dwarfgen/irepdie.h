@@ -1,28 +1,39 @@
 /*
-  Copyright (C) 2010-2013 David Anderson.  
+  Copyright (C) 2010-2013 David Anderson.  All rights reserved.
 
-  This program is free software; you can redistribute it and/or modify it
-  under the terms of version 2 of the GNU General Public License as
-  published by the Free Software Foundation.
+  Redistribution and use in source and binary forms, with or without
+  modification, are permitted provided that the following conditions are met:
+  * Redistributions of source code must retain the above copyright
+    notice, this list of conditions and the following disclaimer.
+  * Redistributions in binary form must reproduce the above copyright
+    notice, this list of conditions and the following disclaimer in the
+    documentation and/or other materials provided with the distribution.
+  * Neither the name of the example nor the
+    names of its contributors may be used to endorse or promote products
+    derived from this software without specific prior written permission.
 
-  This program is distributed in the hope that it would be useful, but
-  WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-
-  You should have received a copy of the GNU General Public License along
-  with this program; if not, write the Free Software Foundation, Inc., 51
-  Franklin Street - Fifth Floor, Boston MA 02110-1301, USA.
+  THIS SOFTWARE IS PROVIDED BY David Anderson ''AS IS'' AND ANY
+  EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+  WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+  DISCLAIMED. IN NO EVENT SHALL David Anderson BE LIABLE FOR ANY
+  DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+  (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+  ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 */
 
 
-// 
+//
 // irepdie.h
 //
 //
 class IRCUdata;
+class IRDie;
 
-class IRAttr { 
+class IRAttr {
 public:
     IRAttr():attr_(0),finalform_(0),initialform_(0),
         formclass_(DW_FORM_CLASS_UNKNOWN),formdata_(0) {
@@ -58,7 +69,7 @@ public:
         }
         return *this;
     }
-    void setBaseData(Dwarf_Half attr, Dwarf_Half finalform, 
+    void setBaseData(Dwarf_Half attr, Dwarf_Half finalform,
         Dwarf_Half initialform){
         attr_ = attr;
         finalform_ = finalform;
@@ -85,17 +96,18 @@ private:
 
 class IRDie {
 public:
-    IRDie():tag_(0),globalOffset_(0), cuRelativeOffset_(0) {};
+    IRDie():tag_(0),globalOffset_(0), cuRelativeOffset_(0),
+        generatedDie_(0) {};
     ~IRDie() {};
     void addChild(const IRDie & newdie ) {
         children_.push_back(newdie);
     };
     std::string  getName() {
-        std::list<IRAttr>::iterator it = attrs_.begin(); 
+        std::list<IRAttr>::iterator it = attrs_.begin();
         for( ; it != attrs_.end() ; ++it) {
             if (it->getAttrNum() == DW_AT_name) {
                 IRForm *f = it->getFormData();
-                const IRFormString * isv = 
+                const IRFormString * isv =
                     dynamic_cast<const IRFormString *>(f);
                 if(isv) {
                     return isv->getString();
@@ -113,28 +125,75 @@ public:
         *lastch = &children_.back();
         return true;
     };
-    // lastChild will throw if no child exists.
+    // lastChild and lastAttr will throw if no entry exists.
     IRDie &lastChild() { return children_.back(); };
-    void setBaseData(Dwarf_Half tag,Dwarf_Unsigned goff, 
+    IRAttr &lastAttr() { return attrs_.back(); };
+    void setBaseData(Dwarf_Half tag,Dwarf_Unsigned goff,
         Dwarf_Unsigned cuoff) {
         tag_ = tag;
         globalOffset_=goff;
-        cuRelativeOffset_ = cuoff; 
+        cuRelativeOffset_ = cuoff;
     };
     Dwarf_Unsigned getGlobalOffset() const { return globalOffset_;};
+    Dwarf_Unsigned getCURelativeOffset() const { return cuRelativeOffset_;};
+    void setGeneratedDie(Dwarf_P_Die p_die) {
+        generatedDie_ = p_die;};
+    Dwarf_P_Die getGeneratedDie() const { return generatedDie_;};
     unsigned getTag() {return tag_; }
 
 private:
+   // We rely on the IRDie container being one which does not
+   // invalidate pointers with addition/deletion.
    std::list<IRDie>  children_;
+
    std::list<IRAttr> attrs_;
    unsigned tag_;
+   // The following are data from input.
    Dwarf_Unsigned globalOffset_;
    Dwarf_Unsigned cuRelativeOffset_;
+
+   // the following is generated during output.
+   Dwarf_P_Die generatedDie_;
+};
+
+
+struct OffsetFormEntry {
+    OffsetFormEntry(): off_(0),form_(0){};
+    OffsetFormEntry(Dwarf_Unsigned o,
+        IRFormReference* f): off_(o),form_(f){};
+    ~OffsetFormEntry(){};
+
+    Dwarf_Unsigned  off_;
+    IRFormReference *form_;
+};
+struct ClassReferenceFixupData {
+    ClassReferenceFixupData():
+        dbg_(0),
+        attrnum_(0),
+        sourcedie_(0),
+        target_(0) {}
+    ~ClassReferenceFixupData(){};
+    ClassReferenceFixupData(
+        Dwarf_P_Debug dbg,
+        Dwarf_Half attrnum,
+        Dwarf_P_Die sourcedie,
+        IRDie *d):
+        dbg_(dbg),
+        attrnum_(attrnum),
+        sourcedie_(sourcedie),
+        target_(d) {};
+    Dwarf_P_Debug dbg_;
+    //  The source die and attrnum suffice because the definition of
+    //  DWARF guarantees only one attribute of any given attribute number
+    //  can exist on a given DIE.
+    Dwarf_Half attrnum_;
+    Dwarf_P_Die sourcedie_;
+    IRDie *target_;
 };
 
 class IRCUdata {
 public:
-    IRCUdata(): 
+    IRCUdata():
         cu_header_length_(0),
         abbrev_offset_(0),
         next_cu_header_offset_(0),
@@ -153,7 +212,7 @@ public:
         Dwarf_Half addr_size,
         Dwarf_Half length_size,
         Dwarf_Half extension_size,
-        Dwarf_Unsigned next_cu_header): 
+        Dwarf_Unsigned next_cu_header):
             cu_header_length_(len),
             abbrev_offset_(abbrev_offset),
             next_cu_header_offset_(addr_size),
@@ -169,12 +228,12 @@ public:
     ~IRCUdata() { };
     bool hasMacroData(Dwarf_Unsigned *offset_out,Dwarf_Unsigned *cudie_off) {
         *offset_out = macrodata_offset_;
-        *cudie_off = cudie_offset_; 
+        *cudie_off = cudie_offset_;
         return has_macrodata_;
     }
     bool hasLineData(Dwarf_Unsigned *offset_out,Dwarf_Unsigned *cudie_off) {
         *offset_out = linedata_offset_;
-        *cudie_off = cudie_offset_; 
+        *cudie_off = cudie_offset_;
         return has_linedata_;
     }
     void setMacroData(Dwarf_Unsigned offset,Dwarf_Unsigned cudieoff) {
@@ -190,11 +249,51 @@ public:
     IRDie & baseDie() { return cudie_; };
     Dwarf_Half getVersionStamp() { return version_stamp_; };
     Dwarf_Half getOffsetSize() { return length_size_; };
+    Dwarf_Unsigned getCUdieOffset() { return cudie_offset_; };
     IRCULineData & getCULines() { return cu_lines_; };
+
+    void insertLocalDieOffset(Dwarf_Unsigned localoff,IRDie* dieptr) {
+        cuOffInLocalToIRDie_[localoff] = dieptr;
+    };
+    void insertLocalReferenceAttrTargetRef(Dwarf_Unsigned localoff,
+        IRFormReference* attrptr) {
+
+        cuOffInLocalToIRFormRef_.push_back(OffsetFormEntry(localoff,
+            attrptr));
+    };
+    IRDie * getLocalDie(Dwarf_Unsigned localoff) {
+        std::map<Dwarf_Unsigned,IRDie*>::iterator pos;
+        pos = cuOffInLocalToIRDie_.find(localoff);
+        if(pos != cuOffInLocalToIRDie_.end()) {
+            return pos->second;
+        }
+        return NULL;
+    };
+    void insertClassReferenceFixupData(ClassReferenceFixupData &c) {
+        classReferenceFixupList_.push_back(c);
+    }
+    void updateClassReferenceTargets();
     std::string  getCUName() {
         return cudie_.getName();
+    };
+    // Use  cuOffInLocalToIRDie_ and
+    // cuOffInLocalToIRAttr_ to update attr targets.
+    void updateReferenceAttrDieTargets() {
+        for(std::list<OffsetFormEntry>::iterator it =
+            cuOffInLocalToIRFormRef_.begin();
+            it != cuOffInLocalToIRFormRef_.end();
+            ++it) {
+            IRFormReference* r = it->form_;
+            IRDie * tdie = getLocalDie(it->off_);
+            if(tdie) {
+                r->setTargetInDie(tdie);
+            } else {
+                // Missing die in r
+                // Should be impossible.
+            }
+        }
     }
-    
+
 private:
     Dwarf_Unsigned cu_header_length_;
     Dwarf_Unsigned abbrev_offset_;
@@ -211,9 +310,25 @@ private:
     IRCULineData      cu_lines_;
 
     // If true, is 32bit dwarf,else 64bit. Gives the size of a reference.
-    bool dwarf32bit_;  
+    bool dwarf32bit_;
 
     IRDie   cudie_;
+
+    // Refers to cu-local offsets in the input CU and which DIE
+    // in the input they target for this CU.
+    // Used to find the target DIE for the IRAttrs
+    // referenced by  cuOffInLocalToIRAttr_
+    std::map<Dwarf_Unsigned,IRDie*> cuOffInLocalToIRDie_;
+
+    // Refers to IRAttrs which make a CU local reference
+    // meaning CLASS_REFERENCE IRFormReference to a cu-local die
+    // Once Input dies read in this and cuOffInLocalToIRDie_
+    // are used to update the IRAttr itself.
+    std::list<OffsetFormEntry> cuOffInLocalToIRFormRef_;
+
+    // The data needed to get the Dwarf_P_Die  set for
+    // some class reference instances.
+    std::list<ClassReferenceFixupData> classReferenceFixupList_;
 };
 
 class IRDInfo {

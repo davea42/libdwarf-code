@@ -53,7 +53,7 @@ extern int verbose;
 /* The nesting level is arbitrary,  2 should suffice.
    But at least this prevents an infinite loop.
 */
-#define MAX_NEST_LEVEL 3 
+#define MAX_NEST_LEVEL 3
 
 struct token_s {
     unsigned tk_len;
@@ -125,7 +125,7 @@ struct conf_internal_s {
     const char * conf_name_used;
     char ** conf_defaults;
 };
-static void 
+static void
 init_conf_internal(struct conf_internal_s *s,
     struct dwconf_s * conf_out)
 {
@@ -162,7 +162,7 @@ static char *get_token(char *cp, struct token_s *outtok);
     with that name.  It then looks for the right  ABI entry.
     If the first file it finds does not have that ABI entry it
     gives up.
-  
+
     It would also be reasonable to search every 'dwarfdump.conf'
     it finds for the abi. But we stop at the first dwarfdump.conf
     we find.
@@ -186,7 +186,7 @@ find_conf_file_and_read_config_inner(const char *named_file,
 
     errcount = 0;
 
-    conf_stream = find_a_file(named_file, conf_internal->conf_defaults, 
+    conf_stream = find_a_file(named_file, conf_internal->conf_defaults,
         &name_used);
     if (!conf_stream) {
         ++errcount;
@@ -344,7 +344,7 @@ test_canonical_append(void)
    combining separate name and path components.
    This is  an arbitrary choice...
 
-    The defaults are listed in dwarfdump.c in the array 
+    The defaults are listed in dwarfdump.c in the array
     config_file_defaults[].
 
     Since named_file comes from an esb_get_string, lname
@@ -486,7 +486,7 @@ ensure_has_no_more_tokens(char *cp, const char *fname, unsigned long lineno)
     find the one we want and return its file offset.
 */
 static int
-find_abi_start(FILE * stream, const char *abi_name, 
+find_abi_start(FILE * stream, const char *abi_name,
     long *offset, unsigned long *lineno_out)
 {
     char buf[100];
@@ -828,7 +828,7 @@ parsecfa_reg(char *cp, const char *fname, unsigned long lineno,
 
 
 /* We are guaranteed it's an initial_reg_value: command,
-   parse it and put the reg value where it will be remembered. 
+   parse it and put the reg value where it will be remembered.
 */
 static int
 parseinitial_reg_value(char *cp, const char *fname,
@@ -904,7 +904,7 @@ parseundefined_val_reg(char *cp, const char *fname,
     size_t clen = comtab->namelen;
     struct token_s tok;
     unsigned long val = 0;
-    int ok = FALSE; 
+    int ok = FALSE;
     int res = FALSE;
 
     cp = cp + clen + 1;
@@ -914,7 +914,7 @@ parseundefined_val_reg(char *cp, const char *fname,
             "%s missing undefined_reg value %s line %lu",
             comtab->name, fname, lineno);
         ++errcount;
-        return FALSE; 
+        return FALSE;
     }
 
     ok = make_a_number(comtab->name, fname, lineno, &tok, &val);
@@ -1004,7 +1004,7 @@ parseaddress_size(char *cp, const char *fname, unsigned long lineno,
     check we have the right abi.
 */
 static int
-parseendabi(char *cp, const char *fname, 
+parseendabi(char *cp, const char *fname,
     const char *abiname, unsigned long lineno,
     struct comtable_s *comtab)
 {
@@ -1056,14 +1056,14 @@ parseincludeabi(char *cp, const char *fname, unsigned long lineno,
     initial_reg_value:  <number: normally 1034 or 1035 >
     reg_table_size: <size of table>
     endabi:  <abiname>
- 
+
     We are positioned at the start of a beginabi: line when
     called.
 
 */
 static int
 parse_abi(FILE * stream, const char *fname, const char *abiname,
-    struct conf_internal_s *conf_internal, 
+    struct conf_internal_s *conf_internal,
     unsigned long lineno,
     unsigned int nest_level)
 {
@@ -1166,7 +1166,7 @@ parse_abi(FILE * stream, const char *fname, const char *abiname,
         case LT_SAME_VAL_REG:
             if (conf_internal->same_val_reg_lineno > 0) {
                 ++errcount;
-                printf 
+                printf
                     ("dwarfdump: Encountered duplicate same_val_reg: "
                     "%s line %lu previous initial_reg_value: line %lu\n",
                     fname, lineno, conf_internal->initial_reg_value_lineno);
@@ -1178,7 +1178,7 @@ parse_abi(FILE * stream, const char *fname, const char *abiname,
         case LT_UNDEFINED_VAL_REG:
             if (conf_internal->undefined_val_reg_lineno > 0) {
                 ++errcount;
-                printf 
+                printf
                     ("dwarfdump: Encountered duplicate undefined_val_reg: "
                     "%s line %lu previous initial_reg_value: line %lu\n",
                     fname, lineno, conf_internal->initial_reg_value_lineno);
@@ -1297,7 +1297,7 @@ static char *genericregnames[] = {
   "r20"
 };
 
-/*  This is a simple generic set of registers.  The 
+/*  This is a simple generic set of registers.  The
     table entry count is pretty arbitrary.
 */
 void
@@ -1316,16 +1316,16 @@ init_conf_file_data(struct dwconf_s *config_file_data)
     config_file_data->cf_regs = genericregnames;
     generic_table_count =
         sizeof(genericregnames) / sizeof(genericregnames[0]);
-    config_file_data->cf_named_regs_table_size = generic_table_count; 
+    config_file_data->cf_named_regs_table_size = generic_table_count;
     config_file_data->cf_regs_malloced = 0;
 }
 
 /*  These defaults match MIPS/IRIX ABI defaults, but this
     function is not actually used.
     For a 'generic' ABI, see -R or init_conf_file_data().
-    To really get the old MIPS, use '-x abi=mips'. 
+    To really get the old MIPS, use '-x abi=mips'.
     For other ABIs, see -x abi=<whatever>
-    to configure dwarfdump (and libdwarf) frame 
+    to configure dwarfdump (and libdwarf) frame
     data reporting at runtime.
 */
 void
@@ -1359,7 +1359,7 @@ init_mips_conf_file_data(struct dwconf_s *config_file_data)
     return;
 }
 
-/*  A 'generic' ABI. For up to 1200 registers. 
+/*  A 'generic' ABI. For up to 1200 registers.
     Perhaps cf_initial_rule_value should be d
     UNDEFINED VALUE (1034) instead, but for the purposes of
     getting the dwarfdump output correct
@@ -1373,15 +1373,15 @@ init_generic_config_1200_regs(struct dwconf_s *config_file_data)
     config_file_data->cf_interface_number = 3;
     config_file_data->cf_table_entry_count = 1200;
     /*  There is no defined name for cf_initial_rule_value,
-        cf_same_val, or cf_undefined_val in libdwarf.h, 
-        these must just be high enough to be higher than 
-        any real register number. 
+        cf_same_val, or cf_undefined_val in libdwarf.h,
+        these must just be high enough to be higher than
+        any real register number.
         DW_FRAME_CFA_COL3 must also be higher than any
         real register number. */
     config_file_data->cf_initial_rule_value = 1235; /* SAME VALUE */
     config_file_data->cf_cfa_reg =  DW_FRAME_CFA_COL3;
     config_file_data->cf_address_size =  0;
-    config_file_data->cf_same_val = 1235; 
+    config_file_data->cf_same_val = 1235;
     config_file_data->cf_undefined_val = 1234;
     config_file_data->cf_regs = genericregnames;
     config_file_data->cf_named_regs_table_size = generic_table_count;
@@ -1413,7 +1413,7 @@ print_reg_from_config_data(Dwarf_Signed reg,
     }
 
     if (config_data->cf_regs == 0 ||
-        reg < 0 || 
+        reg < 0 ||
         reg >= config_data->cf_named_regs_table_size) {
         printf("r%" DW_PR_DSd "", (Dwarf_Signed) reg);
         return;

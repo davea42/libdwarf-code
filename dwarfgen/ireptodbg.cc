@@ -1,24 +1,34 @@
 /*
-  Copyright (C) 2010-2013 David Anderson.  
+  Copyright (C) 2010-2013 David Anderson.  All rights reserved.
 
-  This program is free software; you can redistribute it and/or modify it
-  under the terms of version 2 of the GNU General Public License as
-  published by the Free Software Foundation.
+  Redistribution and use in source and binary forms, with or without
+  modification, are permitted provided that the following conditions are met:
+  * Redistributions of source code must retain the above copyright
+    notice, this list of conditions and the following disclaimer.
+  * Redistributions in binary form must reproduce the above copyright
+    notice, this list of conditions and the following disclaimer in the
+    documentation and/or other materials provided with the distribution.
+  * Neither the name of the example nor the
+    names of its contributors may be used to endorse or promote products
+    derived from this software without specific prior written permission.
 
-  This program is distributed in the hope that it would be useful, but
-  WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-
-  You should have received a copy of the GNU General Public License along
-  with this program; if not, write the Free Software Foundation, Inc., 51
-  Franklin Street - Fifth Floor, Boston MA 02110-1301, USA.
+  THIS SOFTWARE IS PROVIDED BY David Anderson ''AS IS'' AND ANY
+  EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+  WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+  DISCLAIMED. IN NO EVENT SHALL David Anderson BE LIABLE FOR ANY
+  DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+  (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+  ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 */
 
 // ireptodbg.cc
 
 #include "config.h"
-#include <unistd.h> 
+#include <unistd.h>
 #include <stdlib.h> // for exit
 #include <iostream>
 #include <string>
@@ -28,7 +38,6 @@
 #include <string.h> // For memset etc
 #include <sys/stat.h> //open
 #include <fcntl.h> //open
-#include "elf.h"
 #include "gelf.h"
 #include "strtabdata.h"
 #include "dwarf.h"
@@ -45,6 +54,7 @@ using std::endl;
 using std::vector;
 using std::map;
 using std::list;
+using std::map;
 
 static Dwarf_Error error;
 
@@ -58,7 +68,7 @@ static void
 specialAttrTransformations(Dwarf_P_Debug dbg,
     IRepresentation & Irep,
     Dwarf_P_Die ourdie,
-    IRDie &inDie, 
+    IRDie &inDie,
     list<IRAttr>& attrs,
     unsigned level)
 {
@@ -82,31 +92,30 @@ specialAttrTransformations(Dwarf_P_Debug dbg,
         Dwarf_Half attrform = attr.getFinalForm();
         Dwarf_Form_Class formclass = attr.getFormClass();
         IRForm * form = attr.getFormData();
-        if(attrnum == DW_AT_high_pc) { 
-             if (attrform == DW_FORM_udata) {
-                 // Already the right form for the test.
-                 // Nothing to do.
-                 return;
-             }
-             if (formclass != DW_FORM_CLASS_ADDRESS) {
-                 return;
-             }
-             IRForm*f = attr.getFormData();
-             IRFormAddress *f2 = dynamic_cast<IRFormAddress *>(f);
-             hipcval = f2->getAddress();
-             foundhipc = true;
-             continue;
+        if(attrnum == DW_AT_high_pc) {
+            if (attrform == DW_FORM_udata) {
+                // Already the right form for the test.
+                // Nothing to do.
+                return;
+            }
+            if (formclass != DW_FORM_CLASS_ADDRESS) {
+                return;
+            }
+            IRForm*f = attr.getFormData();
+            IRFormAddress *f2 = dynamic_cast<IRFormAddress *>(f);
+            hipcval = f2->getAddress();
+            foundhipc = true;
+            continue;
         }
-        if(attrnum == DW_AT_low_pc) { 
-             if (formclass != DW_FORM_CLASS_ADDRESS) {
-                 return;
-             }
-             IRForm*f = attr.getFormData();
-             IRFormAddress *f2 = dynamic_cast<IRFormAddress *>(f);
-             lopcval = f2->getAddress();
-
-             foundlopc = true;
-             continue;
+        if(attrnum == DW_AT_low_pc) {
+            if (formclass != DW_FORM_CLASS_ADDRESS) {
+                return;
+            }
+            IRForm*f = attr.getFormData();
+            IRFormAddress *f2 = dynamic_cast<IRFormAddress *>(f);
+            lopcval = f2->getAddress();
+            foundlopc = true;
+            continue;
         }
         continue;
     }
@@ -123,29 +132,29 @@ specialAttrTransformations(Dwarf_P_Debug dbg,
         Dwarf_Half attrnum = attr.getAttrNum();
         Dwarf_Half attrform = attr.getFinalForm();
         Dwarf_Form_Class formclass = attr.getFormClass();
-        if(attrnum == DW_AT_high_pc) { 
-             // Here we want to creat a constant form.
-             // We will assign a FORM of DW_FORM_uleb
-             IRAttr attr2(attrnum,
-                 DW_FORM_udata,
-                 DW_FORM_udata);
-             attr2.setFormClass(DW_FORM_CLASS_CONSTANT);
-             IRFormConstant *f = new IRFormConstant(
-                 DW_FORM_udata,
-                 DW_FORM_udata,
-                 DW_FORM_CLASS_CONSTANT,
-                 IRFormConstant::UNSIGNED,
-                 hipcoffset,
-                 0);
-             attr2.setFormData(f);
-             revisedattrs.push_back(attr2);
-             foundhipc = true;
-             continue;
+        if(attrnum == DW_AT_high_pc) {
+            // Here we want to creat a constant form.
+            // We will assign a FORM of DW_FORM_uleb
+            IRAttr attr2(attrnum,
+                DW_FORM_udata,
+                DW_FORM_udata);
+            attr2.setFormClass(DW_FORM_CLASS_CONSTANT);
+            IRFormConstant *f = new IRFormConstant(
+                DW_FORM_udata,
+                DW_FORM_udata,
+                DW_FORM_CLASS_CONSTANT,
+                IRFormConstant::UNSIGNED,
+                hipcoffset,
+                0);
+            attr2.setFormData(f);
+            revisedattrs.push_back(attr2);
+            foundhipc = true;
+            continue;
         }
-        if(attrnum == DW_AT_low_pc) { 
-             foundlopc = true;
-             revisedattrs.push_back(attr);
-             continue;
+        if(attrnum == DW_AT_low_pc) {
+            foundlopc = true;
+            revisedattrs.push_back(attr);
+            continue;
         }
         revisedattrs.push_back(attr);
         continue;
@@ -155,10 +164,14 @@ specialAttrTransformations(Dwarf_P_Debug dbg,
 }
 
 
-static Dwarf_P_Die 
+// Here we emit all the DIEs for a single Die and
+// its children.  When level == 0 the inDie is
+// the CU die.
+static Dwarf_P_Die
 HandleOneDieAndChildren(Dwarf_P_Debug dbg,
-    IRepresentation & Irep,
-    IRDie &inDie, unsigned level)
+    IRepresentation &Irep,
+    IRCUdata &cu,
+    IRDie    &inDie, unsigned level)
 {
     list<IRDie>& children = inDie.getChildren();
     // We create our target DIE first so we can link
@@ -169,13 +182,14 @@ HandleOneDieAndChildren(Dwarf_P_Debug dbg,
         cerr << "Die creation failure.  "<< endl;
         exit(1);
     }
-       
+    inDie.setGeneratedDie(ourdie);
+
     Dwarf_P_Die lastch = 0;
     for ( list<IRDie>::iterator it = children.begin();
         it != children.end();
         it++) {
         IRDie & ch = *it;
-        Dwarf_P_Die chp = HandleOneDieAndChildren(dbg,Irep,ch,level+1);
+        Dwarf_P_Die chp = HandleOneDieAndChildren(dbg,Irep,cu,ch,level+1);
         Dwarf_P_Die res = 0;
         if(lastch) {
             // Link to right of earlier sibling.
@@ -196,15 +210,16 @@ HandleOneDieAndChildren(Dwarf_P_Debug dbg,
     // Now any special transformations to the attrs list.
     specialAttrTransformations(dbg,Irep,ourdie,inDie,attrs,level);
 
-    // Now we add attributes (content), if any, to the 
+    // Now we add attributes (content), if any, to the
     // output die 'ourdie'.
     for (list<IRAttr>::iterator it = attrs.begin();
         it != attrs.end();
         it++) {
         IRAttr & attr = *it;
-        AddAttrToDie(dbg,Irep,ourdie,inDie,attr);
+
+        AddAttrToDie(dbg,Irep,cu,ourdie,inDie,attr);
     }
-    return ourdie; 
+    return ourdie;
 }
 
 static void
@@ -224,7 +239,7 @@ HandleLineData(Dwarf_P_Debug dbg,IRepresentation & Irep, IRCUdata&cu)
     // To start with, we are doing a trivial generation here.
     // To be refined 'soon'.  FIXME
     // Initially we don't worry about dwarf_add_directory_decl().
-    
+
     bool firstline = true;
     bool addrsetincu = false;
     for(unsigned k = 0; k < cu_lines.size(); ++k) {
@@ -238,7 +253,7 @@ HandleLineData(Dwarf_P_Debug dbg,IRepresentation & Irep, IRCUdata&cu)
                 dbg,const_cast<char *>(path.c_str()),
                 0,0,0,&error);
             if(idx == DW_DLV_NOCOUNT) {
-                cerr << "Error from dwarf_add_file_decl() on " << 
+                cerr << "Error from dwarf_add_file_decl() on " <<
                     path << endl;
                 exit(1);
             }
@@ -254,15 +269,15 @@ HandleLineData(Dwarf_P_Debug dbg,IRepresentation & Irep, IRCUdata&cu)
             // We fake an elf sym index here.
             Dwarf_Unsigned elfsymidx = 0;
             if(firstline && !addrsetinline) {
-                cerr << "Error building line, first entry not addr set" << 
-                    endl; 
+                cerr << "Error building line, first entry not addr set" <<
+                    endl;
                 exit(1);
             }
             Dwarf_Unsigned res = dwarf_lne_set_address(dbg,
                 a,elfsymidx,&error);
             if(res == DW_DLV_NOCOUNT) {
-                cerr << "Error building line, dwarf_lne_set_address" << 
-                    endl; 
+                cerr << "Error building line, dwarf_lne_set_address" <<
+                    endl;
                 exit(1);
             }
             addrsetincu = true;
@@ -271,8 +286,8 @@ HandleLineData(Dwarf_P_Debug dbg,IRepresentation & Irep, IRCUdata&cu)
             Dwarf_Unsigned esres = dwarf_lne_end_sequence(dbg,
                 a,&error);
             if(esres == DW_DLV_NOCOUNT) {
-                cerr << "Error building line, dwarf_lne_end_sequence" << 
-                    endl; 
+                cerr << "Error building line, dwarf_lne_end_sequence" <<
+                    endl;
                 exit(1);
             }
             addrsetincu = false;
@@ -293,7 +308,7 @@ HandleLineData(Dwarf_P_Debug dbg,IRepresentation & Irep, IRCUdata&cu)
         Dwarf_Unsigned isa = li.getisa();
         Dwarf_Unsigned discriminator = li.getdiscriminator();
         Dwarf_Unsigned lires = dwarf_add_line_entry_b(dbg,
-            pathindex, 
+            pathindex,
             code_offset,
             lineno,
             linecol,
@@ -305,8 +320,8 @@ HandleLineData(Dwarf_P_Debug dbg,IRepresentation & Irep, IRCUdata&cu)
             discriminator,
             &error);
         if(lires == DW_DLV_NOCOUNT) {
-            cerr << "Error building line, dwarf_add_line_entry" << 
-                endl; 
+            cerr << "Error building line, dwarf_add_line_entry" <<
+                endl;
             exit(1);
         }
     }
@@ -316,8 +331,8 @@ HandleLineData(Dwarf_P_Debug dbg,IRepresentation & Irep, IRCUdata&cu)
 }
 // This emits the DIEs for a single CU and possibly line data
 // associated with the CU.
-// The DIEs form a graph (which can be created and linked together 
-// in any order)  and which is emitted in tree preorder as 
+// The DIEs form a graph (which can be created and linked together
+// in any order)  and which is emitted in tree preorder as
 // defined by the DWARF spec.
 //
 static void
@@ -328,9 +343,10 @@ emitOneCU( Dwarf_P_Debug dbg,IRepresentation & Irep, IRCUdata&cu,
     // them in as we return back up the tree of recursing
     // on IRDie children.
     Dwarf_Error error;
-    
+
     IRDie & basedie =  cu.baseDie();
-    Dwarf_P_Die cudie = HandleOneDieAndChildren(dbg,Irep,basedie,0);
+    Dwarf_P_Die cudie = HandleOneDieAndChildren(dbg,Irep,
+        cu,basedie,0);
 
     // Add base die to debug, this is the CU die.
     // This is not a good design as DWARF3/4 have
@@ -342,8 +358,12 @@ emitOneCU( Dwarf_P_Debug dbg,IRepresentation & Irep, IRCUdata&cu,
         exit(1);
     }
 
+    // Does fixup of IRFormReference targets.
+    cu.updateClassReferenceTargets();
+
     HandleLineData(dbg,Irep,cu);
 }
+
 // .debug_info creation.
 // Also creates .debug_line
 static void
@@ -353,11 +373,11 @@ transform_debug_info(Dwarf_P_Debug dbg,
     int cu_number = 0;
     std::list<IRCUdata> &culist = irep.infodata().getCUData();
     // For now,  just one CU we write (as spoken by Yoda).
-    
+
     for ( list<IRCUdata>::iterator it = culist.begin();
         it != culist.end();
         it++,cu_number++) {
-        if(cu_number == cu_of_input_we_output) { 
+        if(cu_number == cu_of_input_we_output) {
             IRCUdata & primecu = *it;
             emitOneCU(dbg,irep,primecu,cu_of_input_we_output);
             break;
@@ -371,8 +391,8 @@ transform_cie_fde(Dwarf_P_Debug dbg,
     Dwarf_Error err = 0;
     std::vector<IRCie> &cie_vec = Irep.framedata().get_cie_vec();
     std::vector<IRFde> &fde_vec = Irep.framedata().get_fde_vec();
-    
-    for(size_t i = 0; i < cie_vec.size(); ++i) { 
+
+    for(size_t i = 0; i < cie_vec.size(); ++i) {
         IRCie &ciein = cie_vec[i];
         Dwarf_Unsigned version = 0;
         string aug;
@@ -398,7 +418,7 @@ transform_cie_fde(Dwarf_P_Debug dbg,
         }
         vector<int> fdeindex;
         // This inner loop is C*F so a bit slow.
-        for(size_t j = 0; j < fde_vec.size(); ++j) { 
+        for(size_t j = 0; j < fde_vec.size(); ++j) {
             IRFde &fdein = fde_vec[j];
             Dwarf_Unsigned code_len = 0;
             Dwarf_Addr code_virt_addr = 0;
@@ -410,7 +430,7 @@ transform_cie_fde(Dwarf_P_Debug dbg,
                 continue;
             }
 
-            
+
             Dwarf_P_Fde fdeout = dwarf_new_fde(dbg,&err);
             if(reinterpret_cast<Dwarf_Addr>(fdeout) == DW_DLV_BADADDR) {
                 cerr << "Error creating new fde " << j << endl;
@@ -426,16 +446,16 @@ transform_cie_fde(Dwarf_P_Debug dbg,
                 cerr << "Error inserting frame instr block " << j << endl;
                 exit(1);
             }
-            
-            Dwarf_P_Die irix_die = 0; 
+
+            Dwarf_P_Die irix_die = 0;
             Dwarf_Signed irix_table_offset = 0;
             Dwarf_Unsigned irix_excep_sym = 0;
-            Dwarf_Unsigned code_virt_addr_symidx = 
+            Dwarf_Unsigned code_virt_addr_symidx =
                 Irep.getBaseTextSymbol();
             Dwarf_Unsigned fde_index = dwarf_add_frame_info(
                 dbg, fdeout,irix_die,
                 out_cie_index, code_virt_addr,
-                code_len,code_virt_addr_symidx, 
+                code_len,code_virt_addr_symidx,
                 irix_table_offset,irix_excep_sym,
                 &err);
             if(fde_index == DW_DLV_BADADDR) {
@@ -446,7 +466,7 @@ transform_cie_fde(Dwarf_P_Debug dbg,
     }
 }
 
-static void 
+static void
 transform_macro_info(Dwarf_P_Debug dbg,
    IRepresentation & Irep,int cu_of_input_we_output)
 {
@@ -455,7 +475,7 @@ transform_macro_info(Dwarf_P_Debug dbg,
     for(size_t m = 0; m < macrov.size() ; m++ ) {
         // FIXME: we need to coordinate with generated
         // CUs .
-        cout << "FIXME: macros not really output yet " << 
+        cout << "FIXME: macros not really output yet " <<
             m << " " <<
             macrov.size() << endl;
     }
@@ -471,6 +491,138 @@ transform_macro_info(Dwarf_P_Debug dbg,
     for( Dwarf_Unsigned ct = 0; ct < reloc_count ; ++ct) {
     }
 }
+
+// Starting at a Die, look through its children
+// in its input to find which one we have by
+// comparing the input-die global offset.
+static
+Dwarf_P_Die findTargetDieByOffset(IRDie& indie,
+   Dwarf_Unsigned targetglobaloff)
+{
+    Dwarf_Unsigned globoff = indie.getGlobalOffset();
+    if(globoff == targetglobaloff) {
+        return indie.getGeneratedDie();
+    }
+    std::list<IRDie> dielist =  indie.getChildren();
+    for ( list<IRDie>::iterator it = dielist.begin();
+        it != dielist.end();
+        it++) {
+        IRDie &ldie = *it;
+        Dwarf_P_Die foundDie = findTargetDieByOffset(ldie,
+            targetglobaloff);
+        if(foundDie) {
+            return foundDie;
+        }
+    }
+    return NULL;
+}
+
+// If the pubnames/pubtypes entry is in the
+// cu we are emitting, find the generated output
+// Dwarf_P_Die in that CU
+// and attach the pubname/type entry to it.
+static void
+transform_debug_pubnames_types_inner(Dwarf_P_Debug dbg,
+   IRepresentation & Irep,int cu_of_input_we_output,
+   IRCUdata&cu)
+{
+    // First, get the target CU. */
+    Dwarf_Unsigned targetcuoff= cu.getCUdieOffset();
+
+    IRDie &basedie = cu.baseDie();
+    Dwarf_P_Die p_die = basedie.getGeneratedDie();
+
+    IRPubsData& pubs = Irep.pubnamedata();
+    std::list<IRPub> &nameslist = pubs.getPubnames();
+    if(!nameslist.empty()) {
+        for ( list<IRPub>::iterator it = nameslist.begin();
+        it != nameslist.end();
+        it++) {
+            IRPub &pub = *it;
+            Dwarf_Unsigned pubcuoff= pub.getCUdieOffset();
+            Dwarf_Unsigned ourdieoff= pub.getDieOffset();
+            if (pubcuoff != targetcuoff) {
+                continue;
+            }
+            Dwarf_P_Die targdie = findTargetDieByOffset(basedie,
+                ourdieoff);
+            if(targdie) {
+                // Ugly. Old mistake in libdwarf declaration.
+                char *mystr = const_cast<char *>(pub.getName().c_str());
+                Dwarf_Unsigned res = dwarf_add_pubname(
+                    dbg,targdie,
+                    mystr,
+                    &error);
+                if(!res) {
+                    cerr << "Failed to add pubname entry for offset"
+                        << ourdieoff
+                        << "in CU at offset " << pubcuoff << endl;
+                    exit(1);
+                }
+            } else {
+                cerr << "Did not find target pubname P_Die for offset "
+                    << ourdieoff
+                    << "in CU at offset " << pubcuoff << endl;
+            }
+        }
+    }
+    std::list<IRPub> &typeslist = pubs.getPubtypes();
+    if(!typeslist.empty()) {
+        for ( list<IRPub>::iterator it = typeslist.begin();
+        it != typeslist.end();
+        it++) {
+            IRPub &pub = *it;
+            Dwarf_Unsigned pubcuoff= pub.getCUdieOffset();
+            Dwarf_Unsigned ourdieoff= pub.getDieOffset();
+            if (pubcuoff != targetcuoff) {
+                continue;
+            }
+            Dwarf_P_Die targdie = findTargetDieByOffset(basedie,
+                ourdieoff);
+            if(targdie) {
+                // Ugly. Old mistake in libdwarf declaration.
+                char *mystr = const_cast<char *>(pub.getName().c_str());
+                Dwarf_Unsigned res = dwarf_add_pubtype(
+                    dbg,targdie,
+                    mystr,
+                    &error);
+                if(!res) {
+                    cerr << "Failed to add pubtype entry for offset"
+                        << ourdieoff
+                        << "in CU at offset " << pubcuoff << endl;
+                    exit(1);
+                }
+            } else {
+                cerr << "Did not find target pubtype P_Die for offset "
+                    << ourdieoff
+                    << "in CU at offset " << pubcuoff << endl;
+            }
+        }
+    }
+}
+
+// This looks for pubnames/pubtypes
+// to generate based on an object file input.
+static void
+transform_debug_pubnames_types(Dwarf_P_Debug dbg,
+   IRepresentation & Irep,int cu_of_input_we_output)
+{
+    int cu_number = 0;
+    std::list<IRCUdata> &culist = Irep.infodata().getCUData();
+    // For now,  just one CU we write (as spoken by Yoda).
+
+    for ( list<IRCUdata>::iterator it = culist.begin();
+        it != culist.end();
+        it++,cu_number++) {
+        if(cu_number == cu_of_input_we_output) {
+            IRCUdata & primecu = *it;
+            transform_debug_pubnames_types_inner(
+                dbg,Irep,cu_of_input_we_output,primecu);
+            break;
+        }
+    }
+}
+
 void
 transform_irep_to_dbg(Dwarf_P_Debug dbg,
    IRepresentation & Irep,int cu_of_input_we_output)
@@ -478,4 +630,5 @@ transform_irep_to_dbg(Dwarf_P_Debug dbg,
     transform_debug_info(dbg,Irep,cu_of_input_we_output);
     transform_cie_fde(dbg,Irep,cu_of_input_we_output);
     transform_macro_info(dbg,Irep,cu_of_input_we_output);
+    transform_debug_pubnames_types(dbg,Irep,cu_of_input_we_output);
 }

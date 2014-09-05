@@ -1,4 +1,4 @@
-/* 
+/*
   Copyright (C) 2006 Silicon Graphics, Inc.  All Rights Reserved.
   Portions Copyright (C) 2007-2012 David Anderson. All Rights Reserved.
   Portions Copyright 2012 SN Systems Ltd. All rights reserved.
@@ -36,7 +36,7 @@
 $Header: /plroot/cmplrs.src/v7.4.5m/.RCS/PL/dwarfdump/RCS/print_frames.c,v 1.5 2006/06/14 20:34:02 davea Exp $ */
 
 /*  The address of the Free Software Foundation is
-    Free Software Foundation, Inc., 51 Franklin St, Fifth Floor, 
+    Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
     Boston, MA 02110-1301, USA.
     SGI has moved from the Crittenden Lane address.
 */
@@ -134,7 +134,7 @@ get_abstract_origin_or_spec_funcname(Dwarf_Debug dbg,
     the name in proc_name and the low pc in low_pc_out.
     Else returns false.  */
 bool
-get_proc_name(Dwarf_Debug dbg, Dwarf_Die die, 
+get_proc_name(Dwarf_Debug dbg, Dwarf_Die die,
     string & proc_name, Dwarf_Addr & low_pc_out)
 {
     Dwarf_Signed atcnt = 0;
@@ -190,11 +190,11 @@ get_proc_name(Dwarf_Debug dbg, Dwarf_Die die,
                     print_error(dbg,
                         "formstring in get_proc_name failed",
                         sres, err);
-                    /*  50 is safe wrong length since is bigger than the 
+                    /*  50 is safe wrong length since is bigger than the
                         actual string */
                     proc_name = "ERROR in dwarf_formstring!";
                 } else if (sres == DW_DLV_NO_ENTRY) {
-                    /*  50 is safe wrong length since is bigger than the 
+                    /*  50 is safe wrong length since is bigger than the
                         actual string */
                     proc_name = "NO ENTRY on dwarf_formstring?!";
                 } else {
@@ -205,8 +205,16 @@ get_proc_name(Dwarf_Debug dbg, Dwarf_Die die,
             case DW_AT_low_pc:
                 dres = dwarf_formaddr(atlist[i], &low_pc_out, &err);
                 if (dres == DW_DLV_ERROR) {
-                    print_error(dbg, "formaddr in get_proc_name failed",
-                        dres, err);
+                    if (DW_DLE_MISSING_NEEDED_DEBUG_ADDR_SECTION ==
+                        dwarf_errno(err)) {
+                        print_error_and_continue(dbg,
+                            "The .debug_addr section is missing, "
+                            "low_pc unavailable",
+                            dres,err);
+                    } else {
+                        print_error(dbg, "formaddr in get_proc_name failed",
+                            dres, err);
+                    }
                 } else if (dres == DW_DLV_OK) {
                     funcpcfound = true;
                 }
@@ -228,12 +236,12 @@ get_proc_name(Dwarf_Debug dbg, Dwarf_Die die,
 
 /*  Nested search since some languages, including SGI MP Fortran,
     have nested functions.
- 
+
     Loads all the subprogram names it can find in the current
     sibling/child chain into the pcMap.
     Do not stop except on error.  */
 static void
-load_nested_proc_names(Dwarf_Debug dbg, Dwarf_Die die, 
+load_nested_proc_names(Dwarf_Debug dbg, Dwarf_Die die,
     string &proc_name, LowpcToNameMaptype & pcMap)
 {
     Dwarf_Die curdie = die;
@@ -261,7 +269,7 @@ load_nested_proc_names(Dwarf_Debug dbg, Dwarf_Die die,
                 lchres = dwarf_child(curdie, &newchild, &err);
                 if (lchres == DW_DLV_OK) {
                     /* Look for inner subprogram. */
-                    load_nested_proc_names(dbg, newchild, 
+                    load_nested_proc_names(dbg, newchild,
                         proc_name, pcMap);
                     dwarf_dealloc(dbg, newchild, DW_DLA_DIE);
                 } else if (lchres == DW_DLV_NO_ENTRY) {
@@ -305,8 +313,8 @@ load_nested_proc_names(Dwarf_Debug dbg, Dwarf_Die die,
     return;
 }
 
-/*  For SGI MP Fortran and other languages, functions 
-    nest!  As a result, we must dig thru all functions, 
+/*  For SGI MP Fortran and other languages, functions
+    nest!  As a result, we must dig thru all functions,
     not just the top level.
 
     This remembers the CU die and restarts each search at the start
@@ -326,7 +334,7 @@ get_fde_proc_name(Dwarf_Debug dbg, Dwarf_Addr low_pc,
     int chres = DW_DLV_ERROR;
     string proc_name;
 
-    LowpcToNameMaptype::const_iterator it = pcMap.find(low_pc); 
+    LowpcToNameMaptype::const_iterator it = pcMap.find(low_pc);
     if (it != pcMap.end()) {
         string s = it->second;
         return s;
@@ -335,7 +343,7 @@ get_fde_proc_name(Dwarf_Debug dbg, Dwarf_Addr low_pc,
         return "";
     }
 
-    // Loop through the CUs 
+    // Loop through the CUs
     for (;;) {
         cures = dwarf_next_cu_header(dbg, &cu_header_length,
             &version_stamp, &abbrev_offset,
@@ -352,7 +360,7 @@ get_fde_proc_name(Dwarf_Debug dbg, Dwarf_Addr low_pc,
         }
 
         Dwarf_Die current_cu_die_for_print_frames(0);
-        int dres = dwarf_siblingof(dbg, NULL, 
+        int dres = dwarf_siblingof(dbg, NULL,
             &current_cu_die_for_print_frames, &err);
         if (dres == DW_DLV_ERROR) {
             print_error(dbg,
@@ -371,16 +379,16 @@ get_fde_proc_name(Dwarf_Debug dbg, Dwarf_Addr low_pc,
         } else if (chres == DW_DLV_NO_ENTRY) {
 
             ;  /* do nothing, loop on cu */
-        } else { 
+        } else {
             /* DW_DLV_OK */
             // find All the subprograms for this CU and use
             // pcMap to associate each name with its low_pc!
             load_nested_proc_names(dbg, child, proc_name,
                 pcMap);
             dwarf_dealloc(dbg, child, DW_DLA_DIE);
-        } 
+        }
         dwarf_dealloc(dbg, current_cu_die_for_print_frames, DW_DLA_DIE);
-        LowpcToNameMaptype::const_iterator it = pcMap.find(low_pc); 
+        LowpcToNameMaptype::const_iterator it = pcMap.find(low_pc);
         if (it != pcMap.end()) {
             // If we need more CUs later we will process
             // them as needed (later), but we have done enough
@@ -455,7 +463,7 @@ print_one_fde(Dwarf_Debug dbg, Dwarf_Fde fde,
                 string msg = string("An fde low pc of ") + IToHex(low_pc) +
                     string(" is not the first fde with that pc. ");
                 if (temps.empty()) {
-                    msg.append("The first is not named."); 
+                    msg.append("The first is not named.");
                 } else {
                     msg.append(string("The first is named \"")+
                     temps + string("\"") );
@@ -554,7 +562,7 @@ print_one_fde(Dwarf_Debug dbg, Dwarf_Fde fde,
                 cfadata.dw_regnum,
                 address_size,
                 config_data,
-                cfadata.dw_offset_relevant, 
+                cfadata.dw_offset_relevant,
                 cfadata.dw_offset_or_block_len,
                 cfadata.dw_block_ptr);
         }
@@ -586,8 +594,8 @@ print_one_fde(Dwarf_Debug dbg, Dwarf_Fde fde,
                 cfadata.dw_regnum,
                 address_size,
                 config_data,
-                cfadata.dw_offset_relevant, 
-                cfadata.dw_offset_or_block_len, 
+                cfadata.dw_offset_relevant,
+                cfadata.dw_offset_or_block_len,
                 cfadata.dw_block_ptr);
         }
         if (printed_intro_addr) {
@@ -730,7 +738,7 @@ print_one_cie(Dwarf_Debug dbg, Dwarf_Cie cie,
                 cout << "\tcie section offset\t\t" << IToDec(cie_off);
                 cout << " " << IToHex0N(cie_off,10) << endl;
             }
-    
+
             cout << "\taugmentation\t\t\t" << augmenter << endl;
             cout << "\tcode_alignment_factor\t\t" <<
                 code_alignment_factor << endl;
@@ -769,7 +777,7 @@ print_one_cie(Dwarf_Debug dbg, Dwarf_Cie cie,
                 IToDec(initial_instructions_length) << endl;
             cout <<"\tcie length\t\t\t" <<IToDec(cie_length) << endl;
             cout << "\tinitial instructions" << endl;
-            print_frame_inst_bytes(dbg, initial_instructions, 
+            print_frame_inst_bytes(dbg, initial_instructions,
                 (Dwarf_Signed) initial_instructions_length,
                 data_alignment_factor,
                 (int) code_alignment_factor,
@@ -781,9 +789,9 @@ print_one_cie(Dwarf_Debug dbg, Dwarf_Cie cie,
 
 void
 get_string_from_locs(Dwarf_Debug dbg,
-    Dwarf_Ptr bytes_in, 
+    Dwarf_Ptr bytes_in,
     Dwarf_Unsigned block_len,
-    Dwarf_Half addr_size, 
+    Dwarf_Half addr_size,
     string &out_string)
 {
 
@@ -812,7 +820,7 @@ get_string_from_locs(Dwarf_Debug dbg,
         skip_locdesc_header,
         out_string);
     if (res != DW_DLV_OK) {
-        cout <<"Bad status from _dwarf_print_one_locdesc " << 
+        cout <<"Bad status from _dwarf_print_one_locdesc " <<
             res << endl;
         exit(1);
     }
@@ -860,7 +868,7 @@ print_frame_inst_bytes(Dwarf_Debug dbg,
         case DW_CFA_advance_loc:
             delta = ibyte & 0x3f;
             cout << "\t" << IToDec(off,2);
-            cout << " DW_CFA_advance_loc " << 
+            cout << " DW_CFA_advance_loc " <<
                 (delta * code_alignment_factor);
             if (verbose) {
                 cout <<"  (" << delta << " * " <<
@@ -983,7 +991,7 @@ print_frame_inst_bytes(Dwarf_Debug dbg,
                 cout << " " << (Dwarf_Signed) (((Dwarf_Signed) uval2) *
                     data_alignment_factor);
                 if (verbose) {
-                    cout << "  (" << uval2 << " * " << 
+                    cout << "  (" << uval2 << " * " <<
                         data_alignment_factor << ")";
                 }
                 cout << endl;
@@ -1219,7 +1227,7 @@ print_frame_inst_bytes(Dwarf_Debug dbg,
                     off += uleblen;
                     cout << "\t" << IToDec(loff,2);
                     cout << SpaceSurround(cfa_name) << sval;
-                    cout << " (*data alignment factor=> "<< 
+                    cout << " (*data alignment factor=> "<<
                         ((Dwarf_Signed)(sval*data_alignment_factor)) <<
                         ")" << endl;
                 }
@@ -1288,7 +1296,7 @@ print_frame_inst_bytes(Dwarf_Debug dbg,
                 len -= uleblen;
                 off += uleblen;
                 {
-                    Dwarf_Unsigned block_len = 
+                    Dwarf_Unsigned block_len =
                         local_dwarf_decode_u_leb128(instp + 1,
                             &uleblen);
 
@@ -1391,7 +1399,7 @@ print_one_frame_reg_col(Dwarf_Debug dbg,
     Dwarf_Half address_size,
     struct dwconf_s *config_data,
     Dwarf_Signed offset_relevant,
-    Dwarf_Signed offset, 
+    Dwarf_Signed offset,
     Dwarf_Ptr block_ptr)
 {
     string type_title = "";
@@ -1475,7 +1483,7 @@ print_one_frame_reg_col(Dwarf_Debug dbg,
 
 }
 
-/*  get all the data in .debug_frame (or .eh_frame). 
+/*  get all the data in .debug_frame (or .eh_frame).
     The '3' versions mean print using the dwarf3 new interfaces.
     The non-3 mean use the old interfaces.
     All combinations of requests are possible.  */
@@ -1493,7 +1501,7 @@ print_frames(Dwarf_Debug dbg, int print_debug_frame, int print_eh_frame,
     // Only in DWARF4 is there a real address size known
     // in the frame data itself.  If any DIE
     // is known then a real address size can be gotten from
-    // dwarf_get_die_address_size(). 
+    // dwarf_get_die_address_size().
     int fres = dwarf_get_address_size(dbg, &address_size, &err);
     if (fres != DW_DLV_OK) {
         print_error(dbg, "dwarf_get_address_size", fres, err);
@@ -1532,7 +1540,7 @@ print_frames(Dwarf_Debug dbg, int print_debug_frame, int print_eh_frame,
                 continue;
             }
             is_eh = 1;
-            /*  This is gnu g++ exceptions in a .eh_frame section. Which 
+            /*  This is gnu g++ exceptions in a .eh_frame section. Which
                 is just like .debug_frame except that the empty, or
                 'special' CIE_id is 0, not -1 (to distinguish fde from
                 cie). And the augmentation is "eh". As of egcs-1.1.2
@@ -1540,7 +1548,7 @@ print_frames(Dwarf_Debug dbg, int print_debug_frame, int print_eh_frame,
                 difference between the fde address and the beginning of
                 the cie it belongs to. This makes sense as this is
                 intended to be referenced at run time, and is part of
-                the running image. For more on augmentation strings, see 
+                the running image. For more on augmentation strings, see
                 libdwarf/dwarf_frame.c.  */
 
             /*  Big question here is how to print all the info?

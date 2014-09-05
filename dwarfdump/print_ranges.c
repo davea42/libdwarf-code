@@ -1,4 +1,4 @@
-/* 
+/*
   Copyright (C) 2000-2006 Silicon Graphics, Inc.  All Rights Reserved.
   Portions Copyright 2007-2010 Sun Microsystems, Inc. All rights reserved.
   Portions Copyright 2009-2012 SN Systems Ltd. All rights reserved.
@@ -36,8 +36,8 @@
 
 $Header: /plroot/cmplrs.src/v7.4.5m/.RCS/PL/dwarfdump/RCS/print_sections.c,v 1.69 2006/04/17 00:09:56 davea Exp $ */
 /*  The address of the Free Software Foundation is
-    Free Software Foundation, Inc., 51 Franklin St, Fifth Floor, 
-    Boston, MA 02110-1301, USA.  
+    Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
+    Boston, MA 02110-1301, USA.
     SGI has moved from the Crittenden Lane address.
 */
 
@@ -50,7 +50,7 @@ $Header: /plroot/cmplrs.src/v7.4.5m/.RCS/PL/dwarfdump/RCS/print_sections.c,v 1.6
 static struct esb_s esb_string;
 
 /* Because we do not know what DIE is involved, if the
-   object being printed has different address sizes 
+   object being printed has different address sizes
    in different compilation units this will not work
    properly: anything could happen. */
 extern void
@@ -93,7 +93,7 @@ print_ranges(Dwarf_Debug dbg)
         } else if (rres == DW_DLV_NO_ENTRY) {
             printf("End of .debug_ranges.\n");
             break;
-        } else { 
+        } else {
             /*  ERROR, which does not quite mean a real error,
                 as we might just be misaligned reading things without
                 a DW_AT_ranges offset.*/

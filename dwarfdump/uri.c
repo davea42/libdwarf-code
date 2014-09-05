@@ -1,4 +1,4 @@
-/* 
+/*
     Copyright 2011-2012 David Anderson. All rights reserved.
     Portions Copyright 2012 SN Systems Ltd. All rights reserved.
 
@@ -33,8 +33,8 @@
 */
 
 /*  The address of the Free Software Foundation is
-    Free Software Foundation, Inc., 51 Franklin St, Fifth Floor, 
-    Boston, MA 02110-1301, USA.  
+    Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
+    Boston, MA 02110-1301, USA.
     SGI has moved from the Crittenden Lane address.
 */
 
@@ -45,7 +45,7 @@
 #include <ctype.h>
 
 /* dwarfdump_ctype table. See uritablebuild.c */
-static char dwarfdump_ctype_table[256] = { 
+static char dwarfdump_ctype_table[256] = {
 0, /* NUL 0x00 */
 0, /* control 0x01 */
 0, /* control 0x02 */
@@ -310,7 +310,7 @@ xchar(int c, char *buf, int size)
     return buf;
 }
 
-/* Translate dangerous and some other characters to safe 
+/* Translate dangerous and some other characters to safe
    %xx form.
 */
 void
@@ -337,7 +337,7 @@ static char
 hexdig(char c)
 {
     char ochar = 0;
-    if (c >= 0 && c <= '9') {
+    if (c >= '0' && c <= '9') {
         ochar = (c - '0');
         return ochar;
     }
@@ -349,7 +349,7 @@ hexdig(char c)
         ochar = (c - 'A')+10;
         return ochar;
     }
-    // We have an input botch here.
+    /* We have an input botch here. */
     fprintf(stderr,"Translating from uri: "
         "A supposed hexadecimal input character is "
         "not 0-9 or a-f or A-F, it is (shown as hex here): %x\n",c);
@@ -402,7 +402,7 @@ translate_from_uri(const char * input, struct esb_s* out)
         if (c == '%') {
             int increment = 0;
             char c2 = cp[1];
-            // hexpairtochar deals with c2 being NUL.
+            /* hexpairtochar deals with c2 being NUL. */
             if (c2  == '%') {
                 tempstr[0] = c;
                 tempstr[1] = 0;
@@ -410,7 +410,7 @@ translate_from_uri(const char * input, struct esb_s* out)
                 ++cp;
                 continue;
             }
-           
+
             increment = hexpairtochar(cp+1,&c);
             tempstr[0] = c;
             tempstr[1] = 0;
@@ -460,7 +460,7 @@ mytest(char *in,char *expected,int testnum)
 }
 
 
-int 
+int
 main()
 {
     /* We no longer translate space to %20, that

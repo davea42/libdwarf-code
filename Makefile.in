@@ -66,13 +66,19 @@ dwfpic =        @dwfpic@
 CFLAGS =	$(PREINCS) @CFLAGS@ $(INCLUDES) $(dwfpic) $(POSTINCS)
 LDFLAGS =	$(PRELIBS) @LDFLAGS@ $(POSTLIBS)
 
-all:
+basic:
 	cd libdwarf && make
 	cd dwarfdump && make
 	cd dwarfdump2 && make
+
+# The dd target takes the least space and time
+# to build.
+dd:
+	cd libdwarf && make
+	cd dwarfdump && make
+all:    basic
 	cd dwarfgen && make
 	cd dwarfexample && make
-   
 
 clean:
 	sh ./CLEANUP

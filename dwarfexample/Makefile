@@ -2,7 +2,8 @@
 
 LIBDIR= -L../libdwarf
 LIBS= -ldwarf -lelf
-CFLAGS= -gdwarf-4 -Wall -I../libdwarf
+# FreeBSD gcc has -g -gdwarf-2 not -gdwarf-4
+CFLAGS= -g -Wall -I../libdwarf
 
 all: simplereader frame1
 

@@ -1,4 +1,4 @@
-/* 
+/*
   Copyright (C) 2000-2010 Silicon Graphics, Inc.  All Rights Reserved.
   Portions Copyright (C) 2009-2012 David Anderson. All Rights Reserved.
   Portions Copyright 2012 SN Systems Ltd. All rights reserved.
@@ -33,20 +33,20 @@
   http://oss.sgi.com/projects/GenInfo/NoticeExplan
 
 
-  $Header: /plroot/cmplrs.src/v7.4.5m/.RCS/PL/dwarfdump/RCS/tag_tree.list,v 1.6 2005/12/01 17:34:59 davea Exp $ 
+  $Header: /plroot/cmplrs.src/v7.4.5m/.RCS/PL/dwarfdump/RCS/tag_tree.list,v 1.6 2005/12/01 17:34:59 davea Exp $
 */
 #include <dwarf.h>
 
 /*
-    list for semantic check of tag-tree.  
-   
-    0xffffffff is a "punctuation."  The final line of this file 
-    must be 0xffffffff.  The next line after each 0xffffffff 
-    (except the final line)  stands for "parent-tag."  The lines 
-    after this line before the next 0xffffffff are the tags that 
+    list for semantic check of tag-tree.
+
+    0xffffffff is a "punctuation."  The final line of this file
+    must be 0xffffffff.  The next line after each 0xffffffff
+    (except the final line)  stands for "parent-tag."  The lines
+    after this line before the next 0xffffffff are the tags that
     can be children of the "parent-tag."
 
-    For example, 
+    For example,
 
     0xffffffff
     DW_TAG_array_type
@@ -54,11 +54,11 @@
     DW_TAG_enumeration_type
     0xffffffff
 
-    means "only DW_TAG_subrange_type and DW_TAG_enumeration_type can 
-    be children of DW_TAG_array_type.  
+    means "only DW_TAG_subrange_type and DW_TAG_enumeration_type can
+    be children of DW_TAG_array_type.
 
-    This file is applied to the preprocessor, thus any C comment and 
-    preprocessor control line is available.  
+    This file is applied to the preprocessor, thus any C comment and
+    preprocessor control line is available.
 */
 
 0xffffffff
@@ -112,7 +112,7 @@ DW_TAG_const_type
 DW_TAG_class_type   /* Nested classes */
 DW_TAG_structure_type   /* Nested structures */
 DW_TAG_enumeration_type /* Nested enums */
-DW_TAG_imported_declaration  
+DW_TAG_imported_declaration
 DW_TAG_template_alias  /* C++ 2010 template alias */
 0xffffffff
 DW_TAG_common_block
@@ -458,11 +458,11 @@ DW_TAG_typedef
 DW_TAG_union_type
 DW_TAG_friend
 DW_TAG_member
-DW_TAG_class_type  /* Nested classes */  
+DW_TAG_class_type  /* Nested classes */
 DW_TAG_enumeration_type /* Nested enums */
 DW_TAG_structure_type /* Nested structures */
 DW_TAG_typedef        /* Nested typedef */
-DW_TAG_subprogram     
+DW_TAG_subprogram
 DW_TAG_template_type_parameter /* template instantiations */
 DW_TAG_template_value_parameter /* template instantiations */
 DW_TAG_union_type  /* Nested unions */

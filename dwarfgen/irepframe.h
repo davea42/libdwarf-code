@@ -1,21 +1,31 @@
 /*
-  Copyright (C) 2010-2013 David Anderson.  
+  Copyright (C) 2010-2013 David Anderson.  All rights reserved.
 
-  This program is free software; you can redistribute it and/or modify it
-  under the terms of version 2 of the GNU General Public License as
-  published by the Free Software Foundation.
+  Redistribution and use in source and binary forms, with or without
+  modification, are permitted provided that the following conditions are met:
+  * Redistributions of source code must retain the above copyright
+    notice, this list of conditions and the following disclaimer.
+  * Redistributions in binary form must reproduce the above copyright
+    notice, this list of conditions and the following disclaimer in the
+    documentation and/or other materials provided with the distribution.
+  * Neither the name of the example nor the
+    names of its contributors may be used to endorse or promote products
+    derived from this software without specific prior written permission.
 
-  This program is distributed in the hope that it would be useful, but
-  WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-
-  You should have received a copy of the GNU General Public License along
-  with this program; if not, write the Free Software Foundation, Inc., 51
-  Franklin Street - Fifth Floor, Boston MA 02110-1301, USA.
+  THIS SOFTWARE IS PROVIDED BY David Anderson ''AS IS'' AND ANY
+  EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+  WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+  DISCLAIMED. IN NO EVENT SHALL David Anderson BE LIABLE FOR ANY
+  DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+  (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+  ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 */
 
-// 
+//
 // irepframe.h
 //
 
@@ -23,8 +33,8 @@ class IRCie {
 public:
     IRCie(): cie_byte_length_(0), version_(0),
         code_alignment_factor_(1),
-        data_alignment_factor_(1), 
-        return_address_register_rule_(0) 
+        data_alignment_factor_(1),
+        return_address_register_rule_(0)
         {};
     IRCie(Dwarf_Unsigned length, Dwarf_Unsigned version,
         const std::string &augmentation, Dwarf_Unsigned code_align,
@@ -32,10 +42,10 @@ public:
         const void * init_instrs, Dwarf_Unsigned instrs_len):
         cie_byte_length_(length), version_(version),
         augmentation_(augmentation), code_alignment_factor_(code_align),
-        data_alignment_factor_(data_align), 
-        return_address_register_rule_(return_reg_rule) 
+        data_alignment_factor_(data_align),
+        return_address_register_rule_(return_reg_rule)
         {
-            const Dwarf_Small *x = 
+            const Dwarf_Small *x =
                 reinterpret_cast<const Dwarf_Small *>(init_instrs);
             for(Dwarf_Unsigned i = 0; i < instrs_len; ++i) {
                 initial_instructions_.push_back(x[i]);
@@ -59,16 +69,16 @@ public:
         *len = initial_instructions_.size();
         *bytes = reinterpret_cast<void *>(&initial_instructions_[0]);
         };
-    
+
 private:
     //  Byte length  0 if not known yet.
-    Dwarf_Unsigned cie_byte_length_; 
-    Dwarf_Unsigned version_; 
+    Dwarf_Unsigned cie_byte_length_;
+    Dwarf_Unsigned version_;
     std::string augmentation_;
     Dwarf_Unsigned code_alignment_factor_;
     Dwarf_Signed data_alignment_factor_;
     Dwarf_Half   return_address_register_rule_;
-    std::vector<Dwarf_Small> initial_instructions_; 
+    std::vector<Dwarf_Small> initial_instructions_;
     // fde_index is the array of indexes into fdedata_
     // that are fdes used by this cie.
     std::vector<unsigned>  fde_index_;
@@ -105,22 +115,25 @@ public:
             fde_instrs_.push_back(x[i]);
         }
         };
-  
+
     void get_fde_instructions(Dwarf_Unsigned *len,
         void **bytes) {
         *len = fde_instrs_.size();
         *bytes = reinterpret_cast<void *>(&fde_instrs_[0]);
         };
     void fde_instrs () {
-        };  
- 
+        };
+
 private:
     Dwarf_Addr low_pc_;
     Dwarf_Unsigned func_length_;
     // fde_bytes_ may be empty if content bytes not yet created.
-    std::vector<Dwarf_Small> fde_bytes_; 
+    std::vector<Dwarf_Small> fde_bytes_;
 
-    std::vector<Dwarf_Small> fde_instrs_; 
+    // fde_instrs_ is simply a vector of bytes.
+    // it might be good to actually parse the
+    // instructions.
+    std::vector<Dwarf_Small> fde_instrs_;
     // cie_offset may be 0 if not known yet.
     Dwarf_Off  cie_offset_;
     // cie_index is the index in ciedata_  of

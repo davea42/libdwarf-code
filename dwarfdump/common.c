@@ -1,4 +1,4 @@
-/* 
+/*
   Copyright (C) 2008-2010 SN Systems.  All Rights Reserved.
   Portions Copyright (C) 2008-2012 David Anderson.  All Rights Reserved.
   Portions Copyright (C) 2011-2012 SN Systems Ltd.  .  All Rights Reserved.
@@ -43,7 +43,7 @@
 #include "stdafx.h"
 #endif /* HAVE_STDAFX_H */
 
-#define DWARFDUMP_VERSION " Thu Aug 15 07:14:27 PDT 2013  "
+#define DWARFDUMP_VERSION " Tue Aug  5 08:15:00 PDT 2014  "
 
 /* The Linux/Unix version does not want a version string to print
    unless -V is on the command line. */
@@ -62,7 +62,7 @@ print_version_details(const char * name,int alwaysprint)
     printf("%s %s\n",name,acVersion);
 #else  /* !WIN32 */
     if (alwaysprint) {
-        printf("%s\n",DWARFDUMP_VERSION); 
+        printf("%s\n",DWARFDUMP_VERSION);
     }
 #endif /* WIN32 */
 }

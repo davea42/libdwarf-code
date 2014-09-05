@@ -5,23 +5,23 @@
   Portions Copyright (C) 2008-2010 Arxan Technologies, Inc. All Rights Reserved.
 
   This program is free software; you can redistribute it and/or modify it
-  under the terms of version 2.1 of the GNU Lesser General Public License 
+  under the terms of version 2.1 of the GNU Lesser General Public License
   as published by the Free Software Foundation.
 
   This program is distributed in the hope that it would be useful, but
   WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
   Further, this software is distributed without any warranty that it is
-  free of the rightful claim of any third person regarding infringement 
-  or the like.  Any license provided herein, whether implied or 
+  free of the rightful claim of any third person regarding infringement
+  or the like.  Any license provided herein, whether implied or
   otherwise, applies only to this software file.  Patent licenses, if
-  any, provided herein do not apply to combinations of this program with 
-  other software, or any other product whatsoever.  
+  any, provided herein do not apply to combinations of this program with
+  other software, or any other product whatsoever.
 
-  You should have received a copy of the GNU Lesser General Public 
-  License along with this program; if not, write the Free Software 
-  Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston MA 02110-1301, 
+  You should have received a copy of the GNU Lesser General Public
+  License along with this program; if not, write the Free Software
+  Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston MA 02110-1301,
   USA.
 
   Contact information:  Silicon Graphics, Inc., 1500 Crittenden Lane,
@@ -52,9 +52,9 @@
 
 #include <stddef.h>
 
-/* The 'debug_info' names below are non-zero (non-NULL) only
-   if we are processing a debug_info section. And vice versa
-   for a debug_types section. */
+/*  The 'debug_info' names below are non-zero (non-NULL) only
+    if we are processing a debug_info section. And vice versa
+    for a debug_types section. */
 
 struct Dwarf_Die_s {
     Dwarf_Byte_Ptr di_debug_ptr;
@@ -76,7 +76,7 @@ struct Dwarf_Attribute_s {
             but ar_attribute_form contains the true form. */
     Dwarf_CU_Context ar_cu_context;
         /*  The following points to either debug_info or debug_types
-            depending on if context is cc_is_info  or not. */   
+            depending on if context is cc_is_info  or not. */
     Dwarf_Small *ar_debug_ptr;
 
     Dwarf_Die ar_die;/* Access to the DIE owning the attribute */
@@ -84,40 +84,41 @@ struct Dwarf_Attribute_s {
 };
 
 /*
-    This structure provides the context for a compilation unit.  
+    This structure provides the context for a compilation unit.
     Thus, it contains the Dwarf_Debug, cc_dbg, that this cu
-    belongs to.  It contains the information in the compilation 
+    belongs to.  It contains the information in the compilation
     unit header, cc_length, cc_version_stamp, cc_abbrev_offset,
-    and cc_address_size, in the .debug_info section for that cu.  
-    In addition, it contains the count, cc_count_cu, of the cu 
-    number of that cu in the list of cu's in the .debug_info.  
-    The count starts at 1, ie cc_count_cu is 1 for the first cu, 
-    2 for the second and so on.  This struct also contains a 
-    pointer, cc_abbrev_table, to a list of pairs of abbrev code 
-    and a pointer to the start of that abbrev 
+    and cc_address_size, in the .debug_info section for that cu.
+    In addition, it contains the count, cc_count_cu, of the cu
+    number of that cu in the list of cu's in the .debug_info.
+    The count starts at 1, ie cc_count_cu is 1 for the first cu,
+    2 for the second and so on.  This struct also contains a
+    pointer, cc_abbrev_table, to a list of pairs of abbrev code
+    and a pointer to the start of that abbrev
     in the .debug_abbrev section.
 
-    Each die will also contain a pointer to such a struct to 
-    record the context for that die.  
+    Each die will also contain a pointer to such a struct to
+    record the context for that die.
 
-    Notice that a pointer to the CU DIE itself is 
+    Notice that a pointer to the CU DIE itself is
     Dwarf_Off off2 = cu_context->cc_debug_info_offset;
     cu_die_info_ptr = dbg->de_debug_info.dss_data +
         off2 + _dwarf_length_of_cu_header(dbg, off2);
     Or similar for de_debug_types.
-    
+
     **Updated by dwarf_next_cu_header in dwarf_die_deliv.c
 */
 struct Dwarf_CU_Context_s {
     Dwarf_Debug cc_dbg;
     /*  The sum of cc_length, cc_length_size, and cc_extension_size
-        is the total length of the CU including its header. 
+        is the total length of the CU including its header.
 
         cc_length is the length of the compilation unit excluding
         cc_length_size and cc_extension_size.  */
-    Dwarf_Word cc_length;
+    Dwarf_Unsigned cc_length;
 
     /*  cc_length_size is the size in bytes of an offset.
+        Should probably be renamed cc_offset_size.
         4 for 32bit dwarf, 8 for 64bit dwarf (whether MIPS/IRIX
         64bit dwarf or standard 64bit dwarf using the extension
         mechanism). */
@@ -125,21 +126,58 @@ struct Dwarf_CU_Context_s {
 
     /*  cc_extension_size is zero unless this is standard
         DWARF3 and later 64bit dwarf using the extension mechanism.
-        If it is the DWARF3 and later 64bit dwarf cc_extension
-        size is 4. So for 32bit dwarf and MIPS/IRIX 64bit dwarf
-        cc_extension_size is zero.  */
+        64bit DWARF3 and later: cc_extension_size is 4.
+        64bit DWARF2 MIPS/IRIX: cc_extension_size is zero.
+        32bit DWARF:            cc_extension_size is zero.  */
     Dwarf_Small cc_extension_size;
 
+    /*  cc_version_stamp is the DWARF version number applicable
+        to the  DWARF in this compilation unit. 2,3,4,... */
     Dwarf_Half cc_version_stamp;
-    Dwarf_Word cc_abbrev_offset;
+    /*  cc_abbrev_offset is the section-global offset
+        of the .debug_abbrev section this CU uses. */
+    Dwarf_Unsigned cc_abbrev_offset;
+
+    /*  cc_address_size is the size of an address in this
+        compilation unit. */
     Dwarf_Small cc_address_size;
     /*  cc_debug_offset is the offset in the section
-        of the CU header of this CU.  Dwarf_Word
-        should be large enough.  May be debug_info or debug_types
-        but those are distinct. See cc_is_info flag. */
-    Dwarf_Word cc_debug_offset;
+        of the CU header of this CU.
+        That is, it is a section global offset.
+        May be debug_info or debug_types
+        but those are distinct.
+        See cc_is_info flag. */
+    Dwarf_Unsigned cc_debug_offset;
+
+    /*  cc_signature and cc_typeoffset are in the CU header
+        of a type unit and contain the signature content
+        and the section-global DIE offset of the type
+        the signature applies to. */
     Dwarf_Sig8  cc_signature;
     Dwarf_Unsigned cc_typeoffset;
+
+    /*  If the attribute DW_AT_[GNU_]addr_base is present in the
+        CU die, its value is in cc_addr_base.
+        cc_addr_base_present TRUE means cc_addr_base is meaningful, which
+        is a check on the correctness of the DWARF.
+        DW_AT_str_offsets_base exists for DW_FORM_strx,
+        for GNU a base of zero is apparently fine.
+        Fields listed in this order for a tiny space saving.
+        Support for these is incomplete.
+    */
+    Dwarf_Bool cc_addr_base_present;
+    Dwarf_Bool cc_string_base_present;
+    /*  cc_cu_die_offset_present is non-zero if
+        cc_cu_die_global_sec_offset is meaningful.  */
+    Dwarf_Bool cc_cu_die_offset_present;
+
+    /*  Support for these two fields is incomplete. */
+    Dwarf_Unsigned cc_addr_base;
+    Dwarf_Unsigned cc_string_base;
+
+    /*  Pointer to the bytes of the CU die for this CU.
+        Set when the CU die is accessed by dwarf_siblingof(). */
+    Dwarf_Unsigned cc_cu_die_global_sec_offset;
 
     Dwarf_Byte_Ptr cc_last_abbrev_ptr;
     Dwarf_Hash_Table cc_abbrev_hash_table;
@@ -151,9 +189,8 @@ struct Dwarf_CU_Context_s {
 
 /*  Consolidates section-specific data in one place.
     Section is an Elf specific term, intended as a general
-    term (for non-Elf objects some code must synthesize the 
-    values somehow).
-    Makes adding more section-data much simpler. */
+    term (for non-Elf objects some code must synthesize the
+    values somehow).  */
 struct Dwarf_Section_s {
     Dwarf_Small *  dss_data;
     Dwarf_Unsigned dss_size;
@@ -161,8 +198,10 @@ struct Dwarf_Section_s {
         is the size in bytes of a table entry in the section.
         Relocations and symbols are both in tables, so have a
         non-zero entrysize.  Object formats which do not care
-        about this should leave this field zero. */     
+        about this should leave this field zero. */
     Dwarf_Unsigned dss_entrysize;
+    /*  dss_index is the section index as things are numbered in
+        an object file being read.   An Elf section number. */
     Dwarf_Word     dss_index;
     /*  dss_addr is the 'section address' which is only
         non-zero for a GNU eh section.
@@ -170,6 +209,9 @@ struct Dwarf_Section_s {
         it zero is fine for non-elf.  */
     Dwarf_Addr     dss_addr;
     Dwarf_Small    dss_data_was_malloc;
+    /*  is_in_use set during initial object reading to
+        detect duplicates. Ignored after setup done. */
+    Dwarf_Small    dss_is_in_use;
 
     /*  For non-elf, leaving the following fields zero
         will mean they are ignored. */
@@ -194,6 +236,9 @@ struct Dwarf_Section_s {
     /*  Pointer to the elf symtab, used for elf .rela. Leave it 0
         if not relevant. */
     struct Dwarf_Section_s *dss_symtab;
+    /*  dss_name must never be freed, it is a quoted string
+        in libdwarf. */
+    const char * dss_name;
 };
 
 /*  Overview: if next_to_use== first, no error slots are used.
@@ -226,10 +271,13 @@ struct Dwarf_Debug_InfoTypes_s {
     Dwarf_CU_Context de_offdie_cu_context;
     Dwarf_CU_Context de_offdie_cu_context_end;
 
-    /*  Offset of last byte of last CU read. */
-    Dwarf_Word de_last_offset;
+    /*  Offset of last byte of last CU read.
+        Actually one-past that last byte.  So
+        use care and compare as offset >= de_last_offset
+        to know if offset is too big. */
+    Dwarf_Unsigned de_last_offset;
     /*  de_last_di_info_ptr and de_last_die are used with
-        dwarf_siblingof, dwarf_child, and dwarf_validate_die_sibling. 
+        dwarf_siblingof, dwarf_child, and dwarf_validate_die_sibling.
         dwarf_validate_die_sibling will not give meaningful results
         if called inappropriately. */
     Dwarf_Byte_Ptr  de_last_di_ptr;
@@ -240,31 +288,35 @@ typedef struct Dwarf_Debug_InfoTypes_s *Dwarf_Debug_InfoTypes;
 /*  As the tasks performed on a debug related section is the same,
     in order to make the process of adding a new section (very unlikely) a
     little bit easy and to reduce the possibility of errors, a simple table
-    build dynamically, will contain the relevant information. 
+    build dynamically, will contain the relevant information.
 */
 
 struct Dwarf_dbg_sect_s {
     /* Debug section name must not be freed, is quoted string. */
-    const char *ds_name;                     
-    struct Dwarf_Section_s *ds_secdata;/* Debug section information */
+    const char *ds_name;
+    /*   Debug section information, points to de_debug_*member
+        (or the like) of the dbg struct.  */
+    struct Dwarf_Section_s *ds_secdata;
+
     int ds_duperr;                     /* Error code for duplicated section */
     int ds_emptyerr;                   /* Error code for empty section */
     int ds_have_dwarf;                 /* Section contains DWARF */
 };
 
 /*  As the number of debug sections does not change very often, in the case a
-    new section is added in '_dwarf_setup', the 'MAX_DEBUG_SECTIONS' must
-    be updated accordingly. 
-    This does not allow for section-groups in object files,
+    new section is added in 'enter_section_in_array()'
+    the 'MAX_DEBUG_SECTIONS' must
+    be updated accordingly.
+    This does not yet allow for section-groups in object files,
     for which many .debug_info (and other) sections may exist.
 */
-#define DWARF_MAX_DEBUG_SECTIONS 20
+#define DWARF_MAX_DEBUG_SECTIONS 30
 
 
 
 struct Dwarf_Debug_s {
-    /*  All file access methods and support data 
-        are hidden in this structure. 
+    /*  All file access methods and support data
+        are hidden in this structure.
         We get a pointer, callers control the lifetime of the
         structure and contents. */
     struct Dwarf_Obj_Access_Interface_s *de_obj_file;
@@ -284,20 +336,16 @@ struct Dwarf_Debug_s {
         sections. 4 in 32bit, 8 in MIPS 64, ia64. */
     Dwarf_Small de_pointer_size;
 
-    /*  set at creation of a Dwarf_Debug to say if form_string should be 
+    /*  set at creation of a Dwarf_Debug to say if form_string should be
         checked for valid length at every call. 0 means do the check.
         non-zero means do not do the check. */
     Dwarf_Small de_assume_string_in_bounds;
 
-    /*  Dwarf_Alloc_Hdr_s structs used to manage chunks that are
-        malloc'ed for each allocation type for structs. */
-    struct Dwarf_Alloc_Hdr_s de_alloc_hdr[ALLOC_AREA_REAL_TABLE_MAX];
-#ifdef DWARF_SIMPLE_MALLOC
-    struct simple_malloc_record_s *  de_simple_malloc_base;
-#endif
-    
+    /*  Keep track of allocations so a dwarf_finish call can clean up.
+        Null till a tree is created */
+    void * de_alloc_tree;
 
-    /*  These fields are used to process debug_frame section.  **Updated 
+    /*  These fields are used to process debug_frame section.  **Updated
         by dwarf_get_fde_list in dwarf_frame.h */
     /*  Points to contiguous block of pointers to Dwarf_Cie_s structs. */
     Dwarf_Cie *de_cie_data;
@@ -314,8 +362,8 @@ struct Dwarf_Debug_s {
     Dwarf_Fde *de_fde_data_eh;
     Dwarf_Unsigned de_fde_count_eh;
 
-    struct Dwarf_Section_s de_debug_info; 
-    struct Dwarf_Section_s de_debug_types; 
+    struct Dwarf_Section_s de_debug_info;
+    struct Dwarf_Section_s de_debug_types;
     struct Dwarf_Section_s de_debug_abbrev;
     struct Dwarf_Section_s de_debug_line;
     struct Dwarf_Section_s de_debug_loc;
@@ -331,11 +379,23 @@ struct Dwarf_Debug_s {
     struct Dwarf_Section_s de_debug_pubtypes; /* DWARF3 .debug_pubtypes */
 
     struct Dwarf_Section_s de_debug_funcnames;
-    struct Dwarf_Section_s de_debug_typenames; /* SGI IRIX extension essentially
+
+    /* SGI IRIX extension essentially
         identical to DWARF3 .debug_pubtypes. */
-    struct Dwarf_Section_s de_debug_varnames;
-    struct Dwarf_Section_s de_debug_weaknames;
+    struct Dwarf_Section_s de_debug_typenames;
+    struct Dwarf_Section_s de_debug_varnames; /* SGI IRIX only. */
+    struct Dwarf_Section_s de_debug_weaknames; /* SGI IRIX only. */
+
     struct Dwarf_Section_s de_debug_ranges;
+    /*  Following two part of DebugFission. */
+    struct Dwarf_Section_s de_debug_str_offsets;
+    struct Dwarf_Section_s de_debug_addr;
+
+    /* Following for the .gdb_index section.  */
+    struct Dwarf_Section_s de_debug_gdbindex;
+
+    struct Dwarf_Section_s de_debug_cu_index;
+    struct Dwarf_Section_s de_debug_tu_index;
 
     /*  For non-elf, simply leave the following two structs zeroed and
         they will be ignored. */
@@ -350,14 +410,14 @@ struct Dwarf_Debug_s {
         so must elf_end() */
 
     /* Default is DW_FRAME_INITIAL_VALUE from header. */
-    Dwarf_Half de_frame_rule_initial_value;  
+    Dwarf_Half de_frame_rule_initial_value;
 
     /* Default is   DW_FRAME_LAST_REG_NUM. */
-    Dwarf_Half de_frame_reg_rules_entry_count; 
+    Dwarf_Half de_frame_reg_rules_entry_count;
 
-    Dwarf_Half de_frame_cfa_col_number; 
-    Dwarf_Half de_frame_same_value_number; 
-    Dwarf_Half de_frame_undefined_value_number; 
+    Dwarf_Half de_frame_cfa_col_number;
+    Dwarf_Half de_frame_same_value_number;
+    Dwarf_Half de_frame_undefined_value_number;
 
     unsigned char de_big_endian_object; /* Non-zero if big-endian
         object opened. */
@@ -368,13 +428,14 @@ struct Dwarf_Debug_s {
     struct Dwarf_Harmless_s de_harmless_errors;
 
     struct Dwarf_Printf_Callback_Info_s  de_printf_callback;
+
 };
 
 int dwarf_printf(Dwarf_Debug dbg, const char * format, ...)
 #ifdef __GNUC__ /* The following gets us printf-like arg checking. */
     __attribute__ ((format (__printf__, 2, 3)))
-#endif    
-;   
+#endif
+;
 
 typedef struct Dwarf_Chain_s *Dwarf_Chain;
 struct Dwarf_Chain_s {
@@ -404,3 +465,34 @@ void *_dwarf_memcpy_swap_bytes(void *s1, const void *s2, size_t len);
 int _dwarf_load_section(Dwarf_Debug,
     struct Dwarf_Section_s *,
     Dwarf_Error *);
+
+
+int _dwarf_get_string_base_attr_value(Dwarf_Debug dbg,
+    Dwarf_CU_Context context,
+    Dwarf_Unsigned *sbase_out,
+    Dwarf_Error *error);
+
+int _dwarf_exract_string_offset_via_str_offsets(Dwarf_Debug dbg,
+    Dwarf_Small *info_data_ptr,
+    Dwarf_Half   attrnum,
+    Dwarf_Half   attrform,
+    Dwarf_CU_Context cu_context,
+    Dwarf_Unsigned *str_sect_offset_out,
+    Dwarf_Error *error);
+
+
+int _dwarf_extract_address_from_debug_addr(Dwarf_Debug dbg,
+    Dwarf_CU_Context context,
+    Dwarf_Byte_Ptr info_ptr,
+    Dwarf_Addr *addr_out,
+    Dwarf_Error *error);
+
+int _dwarf_extract_string_offset_via_str_offsets(Dwarf_Debug dbg,
+    Dwarf_Small *info_data_ptr,
+    Dwarf_Half   attrnum,
+    Dwarf_Half   attrform,
+    Dwarf_CU_Context cu_context,
+    Dwarf_Unsigned *str_sect_offset_out,
+    Dwarf_Error *error);
+
+

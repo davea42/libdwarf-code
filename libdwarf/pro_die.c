@@ -5,22 +5,22 @@
   Portions Copyright 2011 David Anderson.  All Rights Reserved.
 
   This program is free software; you can redistribute it and/or modify it
-  under the terms of version 2.1 of the GNU Lesser General Public License 
+  under the terms of version 2.1 of the GNU Lesser General Public License
   as published by the Free Software Foundation.
 
   This program is distributed in the hope that it would be useful, but
   WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
   Further, this software is distributed without any warranty that it is
-  free of the rightful claim of any third person regarding infringement 
-  or the like.  Any license provided herein, whether implied or 
+  free of the rightful claim of any third person regarding infringement
+  or the like.  Any license provided herein, whether implied or
   otherwise, applies only to this software file.  Patent licenses, if
-  any, provided herein do not apply to combinations of this program with 
-  other software, or any other product whatsoever.  
+  any, provided herein do not apply to combinations of this program with
+  other software, or any other product whatsoever.
 
-  You should have received a copy of the GNU Lesser General Public 
-  License along with this program; if not, write the Free Software 
+  You should have received a copy of the GNU Lesser General Public
+  License along with this program; if not, write the Free Software
   Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston MA 02110-1301,
   USA.
 
@@ -51,7 +51,7 @@
 /* adds an attribute to a die */
 void _dwarf_pro_add_at_to_die(Dwarf_P_Die die, Dwarf_P_Attribute attr);
 
-/*  This function creates a new die. 
+/*  This function creates a new die.
     tag: tag of the new die to be created
     parent,child,left,right: specify neighbors of the new die. Only
     one of these may be non-null */
@@ -78,7 +78,7 @@ dwarf_new_die(Dwarf_P_Debug dbg,
     new_die->di_tag = tag;
     new_die->di_dbg = dbg;
     new_die->di_marker = 0;
-    ret_die = 
+    ret_die =
         dwarf_die_link(new_die, parent, child, left, right, error);
     return ret_die;
 }
@@ -93,7 +93,7 @@ dwarf_die_link(Dwarf_P_Die new_die,
     Dwarf_P_Die left, Dwarf_P_Die right, Dwarf_Error * error)
 {
     /* Count the # of non null neighbors. */
-    int n_nulls = 0;  
+    int n_nulls = 0;
 
     if (parent != NULL) {
         n_nulls++;
@@ -131,9 +131,9 @@ dwarf_die_link(Dwarf_P_Die new_die,
     if (left != NULL) {
         n_nulls++;
         new_die->di_left = left;
-        if (left->di_right) { 
-            /*  There's already a right sibling of left, 
-                insert the new die in the list. */ 
+        if (left->di_right) {
+            /*  There's already a right sibling of left,
+                insert the new die in the list. */
             new_die->di_right = left->di_right;
             left->di_right->di_left = new_die;
         }
@@ -162,7 +162,7 @@ dwarf_die_link(Dwarf_P_Die new_die,
             new_die->di_parent = right->di_parent;
         }
     }
-    if (n_nulls > 1) { 
+    if (n_nulls > 1) {
         /* Multiple neighbors! error! */
         DWARF_P_DBG_ERROR(NULL, DW_DLE_EXTRA_NEIGHBORS,
             (Dwarf_P_Die) DW_DLV_BADADDR);
@@ -200,7 +200,7 @@ dwarf_get_die_marker(Dwarf_P_Debug dbg,
 
 
 /*----------------------------------------------------------------------------
-    This function adds a die to dbg struct. It should be called using 
+    This function adds a die to dbg struct. It should be called using
     the root of all the dies.
 -----------------------------------------------------------------------------*/
 Dwarf_Unsigned
@@ -326,7 +326,7 @@ dwarf_add_AT_comp_dir(Dwarf_P_Die ownerdie,
     new_attr->ar_next = NULL;
     new_attr->ar_reloc_len = 0;
     new_attr->ar_data = (char *)
-        _dwarf_p_get_alloc(ownerdie->di_dbg, 
+        _dwarf_p_get_alloc(ownerdie->di_dbg,
         strlen(current_working_directory)+1);
     if (new_attr->ar_data == NULL) {
         DWARF_P_DBG_ERROR(NULL, DW_DLE_STRING_ALLOC,
@@ -425,10 +425,13 @@ _dwarf_pro_add_AT_macro_info(Dwarf_P_Debug dbg,
 }
 
 
+/*  Updates the list of attributes on this Dwarf_P_Die
+*/
 void
 _dwarf_pro_add_at_to_die(Dwarf_P_Die die, Dwarf_P_Attribute attr)
 {
     if (die->di_last_attr) {
+        /* Inserts new attr at the end */
         die->di_last_attr->ar_next = attr;
         die->di_last_attr = attr;
         die->di_n_attr++;

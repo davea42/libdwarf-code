@@ -4,22 +4,22 @@
   Portions Copyright 2011 David Anderson. All rights reserved.
 
   This program is free software; you can redistribute it and/or modify it
-  under the terms of version 2.1 of the GNU Lesser General Public License 
+  under the terms of version 2.1 of the GNU Lesser General Public License
   as published by the Free Software Foundation.
 
   This program is distributed in the hope that it would be useful, but
   WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
   Further, this software is distributed without any warranty that it is
-  free of the rightful claim of any third person regarding infringement 
-  or the like.  Any license provided herein, whether implied or 
+  free of the rightful claim of any third person regarding infringement
+  or the like.  Any license provided herein, whether implied or
   otherwise, applies only to this software file.  Patent licenses, if
-  any, provided herein do not apply to combinations of this program with 
-  other software, or any other product whatsoever.  
+  any, provided herein do not apply to combinations of this program with
+  other software, or any other product whatsoever.
 
-  You should have received a copy of the GNU Lesser General Public 
-  License along with this program; if not, write the Free Software 
+  You should have received a copy of the GNU Lesser General Public
+  License along with this program; if not, write the Free Software
   Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston MA 02110-1301,
   USA.
 
@@ -44,7 +44,7 @@
 #include "pro_expr.h"
 
 /*
-    This function creates a new expression 
+    This function creates a new expression
     struct that can be used to build up a
     location expression.
 */
@@ -78,11 +78,11 @@ dwarf_add_expr_gen(Dwarf_P_Expr expr,
     Dwarf_Unsigned val2, Dwarf_Error * error)
 {
     /* 2* since used to concatenate 2 leb's below */
-    char encode_buffer[2 * ENCODE_SPACE_NEEDED];        
+    char encode_buffer[2 * ENCODE_SPACE_NEEDED];
 
     char encode_buffer2[ENCODE_SPACE_NEEDED];
     int res = 0;
-    Dwarf_P_Debug dbg = expr->ex_dbg;
+    Dwarf_P_Debug dbg = 0;
 
     /*  Give the buffer where the operands are first going to be
         assembled the largest alignment. */
@@ -110,6 +110,7 @@ dwarf_add_expr_gen(Dwarf_P_Expr expr,
         _dwarf_p_error(NULL, error, DW_DLE_EXPR_NULL);
         return (DW_DLV_NOCOUNT);
     }
+    dbg = expr->ex_dbg;
 
     if (expr->ex_dbg == NULL) {
         _dwarf_p_error(NULL, error, DW_DLE_DBG_NULL);

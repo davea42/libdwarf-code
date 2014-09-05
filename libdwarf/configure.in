@@ -28,6 +28,14 @@ AC_TRY_COMPILE( ,  __uint32_t p; p = 3; ,AC_DEFINE(HAVE___UINT32_T,1,
 	[See if __uint32_t is predefined in the compiler.]))
 AC_TRY_COMPILE( ,  __uint64_t p; p = 3; ,AC_DEFINE(HAVE___UINT64_T,1,
 	[See if __uint64_t is predefined in the compiler.]))
+AC_TRY_COMPILE([#include <sys/types.h>],[  __uint32_t p; p = 3;] ,
+  AC_DEFINE(HAVE___UINT32_T_IN_SYS_TYPES_H,1,
+	[Define 1 if sys/types.h defines __uint32_t.]))
+AC_TRY_COMPILE([#include <sys/types.h>],[  __uint64_t p; p = 3;] ,
+  AC_DEFINE(HAVE___UINT64_T_IN_SYS_TYPES_H,1,
+	[Define 1 if sys/types.h defines __uint64_t.]))
+
+
 dnl The following are for FreeBSD and others which
 dnl use struct _Elf as the actual struct type.
 AC_TRY_COMPILE([#include <libelf/libelf.h>  
@@ -44,12 +52,6 @@ AC_TRY_COMPILE([#include <libelf.h>
   [echo libelf.h does not have struct _Elf]) 
 
 
-AC_TRY_COMPILE([#include <sys/types.h>],[  __uint32_t p; p = 3;] ,
-  AC_DEFINE(HAVE___UINT32_T_IN_SYS_TYPES_H,1,
-	[Define 1 if sys/types.h defines __uint32_t.]))
-AC_TRY_COMPILE([#include <sys/types.h>],[  __uint64_t p; p = 3;] ,
-  AC_DEFINE(HAVE___UINT64_T_IN_SYS_TYPES_H,1,
-	[Define 1 if sys/types.h defines __uint64_t.]))
 dnl checking for ia 64 types, which might be enums, using HAVE_R_IA_64_DIR32LSB
 dnl to stand in for a small set.
 AC_TRY_COMPILE([#include <elf.h>],[  int p; p = R_IA_64_DIR32LSB;] ,

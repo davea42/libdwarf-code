@@ -1,4 +1,4 @@
-/* 
+/*
   Copyright (C) 2007-2012 David Anderson. All Rights Reserved.
   Portions Copyright (C) 2012 SN Systems Ltd. All rights reserved.
 
@@ -22,7 +22,7 @@
   Franklin Street - Fifth Floor, Boston MA 02110-1301, USA.
 */
 /* The address of the Free Software Foundation is
-   Free Software Foundation, Inc., 51 Franklin St, Fifth Floor, 
+   Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
    Boston, MA 02110-1301, USA.
 */
 

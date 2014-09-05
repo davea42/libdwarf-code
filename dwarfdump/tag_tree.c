@@ -1,4 +1,4 @@
-/* 
+/*
   Copyright (C) 2000-2005 Silicon Graphics, Inc.  All Rights Reserved.
   Portions Copyright 2009-2012 SN Systems Ltd. All rights reserved.
   Portions Copyright 2009-2012 David Anderson. All rights reserved.
@@ -36,9 +36,11 @@
 $Header: /plroot/cmplrs.src/v7.4.5m/.RCS/PL/dwarfdump/RCS/tag_tree.c,v 1.8 2005/12/01 17:34:59 davea Exp $ */
 #include <dwarf.h>
 #include <stdio.h>
+#include <getopt.h>
+#include <string.h>             /* For strdup() */
 #include <stdlib.h>             /* For exit() declaration etc. */
 #include <errno.h>              /* For errno declaration. */
-#include <unistd.h>             /* For getopt. */
+#include <unistd.h>
 
 #include "globals.h"
 #include "libdwarf.h"
@@ -91,14 +93,14 @@ process_args(int argc, char *argv[])
     boolean usage_error = FALSE;
 
     program_name = argv[0];
-  
+
     while ((c = getopt(argc, argv, "i:o:es")) != EOF) {
         switch (c) {
         case 'i':
-            input_name = strdup(optarg);
+            input_name = (char *)strdup(optarg);
             break;
         case 'o':
-            output_name = strdup(optarg);
+            output_name = (char *)strdup(optarg);
             break;
         case 'e':
             extended_flag = TRUE;
@@ -166,7 +168,7 @@ main(int argc, char **argv)
     }
     if ((standard_flag && extended_flag) || (!standard_flag && !extended_flag)) {
         fprintf(stderr,"Invalid table type\n");
-        fprintf(stderr,"Choose -e  or -s .\n"); 
+        fprintf(stderr,"Choose -e  or -s .\n");
         print_usage_message(argv[0],usage);
         exit(FAILED);
     }
@@ -216,7 +218,7 @@ main(int argc, char **argv)
             if (standard_flag) {
                 unsigned idx = num / BITS_PER_WORD;
                 unsigned bit = num % BITS_PER_WORD;
-    
+
                 if (idx >= table_columns) {
                     fprintf(stderr,"Want column %d, have only %d\n",
                         idx,table_columns);

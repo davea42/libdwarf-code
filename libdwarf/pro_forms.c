@@ -5,22 +5,22 @@
   Portions Copyright 2012 SN Systems Ltd. All rights reserved.
 
   This program is free software; you can redistribute it and/or modify it
-  under the terms of version 2.1 of the GNU Lesser General Public License 
+  under the terms of version 2.1 of the GNU Lesser General Public License
   as published by the Free Software Foundation.
 
   This program is distributed in the hope that it would be useful, but
   WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
   Further, this software is distributed without any warranty that it is
-  free of the rightful claim of any third person regarding infringement 
-  or the like.  Any license provided herein, whether implied or 
+  free of the rightful claim of any third person regarding infringement
+  or the like.  Any license provided herein, whether implied or
   otherwise, applies only to this software file.  Patent licenses, if
-  any, provided herein do not apply to combinations of this program with 
-  other software, or any other product whatsoever.  
+  any, provided herein do not apply to combinations of this program with
+  other software, or any other product whatsoever.
 
-  You should have received a copy of the GNU Lesser General Public 
-  License along with this program; if not, write the Free Software 
+  You should have received a copy of the GNU Lesser General Public
+  License along with this program; if not, write the Free Software
   Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston MA 02110-1301,
   USA.
 
@@ -71,7 +71,7 @@ local_add_AT_address(Dwarf_P_Debug dbg,
     Dwarf_Unsigned pc_value,
     Dwarf_Unsigned sym_index,
     Dwarf_Error * error);
-     
+
 /* old interface */
 Dwarf_P_Attribute
 dwarf_add_AT_targ_address(Dwarf_P_Debug dbg,
@@ -80,15 +80,15 @@ dwarf_add_AT_targ_address(Dwarf_P_Debug dbg,
     Dwarf_Unsigned pc_value,
     Dwarf_Signed sym_index, Dwarf_Error * error)
 {
-    return 
+    return
         dwarf_add_AT_targ_address_b(dbg,
-            ownerdie, 
+            ownerdie,
             attr,
-            pc_value, 
+            pc_value,
             (Dwarf_Unsigned) sym_index, error);
 }
 
-/*  New interface, replacing dwarf_add_AT_targ_address. 
+/*  New interface, replacing dwarf_add_AT_targ_address.
     Essentially just makes sym_index a Dwarf_Unsigned
     so for symbolic relocations it can be a full address.  */
 Dwarf_P_Attribute
@@ -116,14 +116,14 @@ dwarf_add_AT_targ_address_b(Dwarf_P_Debug dbg,
     case DW_AT_const_value: /* Gcc can generate this as address. */
     case DW_AT_entry_pc:
         break;
-    default: 
+    default:
         if (attr < DW_AT_lo_user || attr > DW_AT_hi_user ) {
             _dwarf_p_error(dbg, error, DW_DLE_INPUT_ATTR_BAD);
             return ((Dwarf_P_Attribute) DW_DLV_BADADDR);
         }
         break;
     }
-    
+
     return local_add_AT_address(dbg, ownerdie, attr, DW_FORM_addr,
         pc_value, sym_index, error);
 }
@@ -141,16 +141,19 @@ dwarf_add_AT_ref_address(Dwarf_P_Debug dbg,
     case DW_AT_import:
         break;
 
-    default: 
+    default:
         if (attr < DW_AT_lo_user || attr > DW_AT_hi_user ) {
             _dwarf_p_error(dbg, error, DW_DLE_INPUT_ATTR_BAD);
             return ((Dwarf_P_Attribute) DW_DLV_BADADDR);
         }
         break;
     }
-    
+
+    /*  FIXME: For DWARF3 and later this call is problematic as
+        DW_FORM_ref_addr is really an offset in
+        .debug_info , not an address.  */
     return local_add_AT_address(dbg, ownerdie, attr, DW_FORM_ref_addr,
-        pc_value, sym_index, error);    
+        pc_value, sym_index, error);
 }
 
 
@@ -165,12 +168,13 @@ local_add_AT_address(Dwarf_P_Debug dbg,
     Dwarf_Error * error)
 {
     Dwarf_P_Attribute new_attr;
-    int upointer_size = dbg->de_pointer_size;
+    int upointer_size = 0;
 
     if (dbg == NULL) {
         _dwarf_p_error(NULL, error, DW_DLE_DBG_NULL);
         return ((Dwarf_P_Attribute) DW_DLV_BADADDR);
     }
+    upointer_size = dbg->de_pointer_size;
 
     if (ownerdie == NULL) {
         _dwarf_p_error(dbg, error, DW_DLE_DIE_NULL);
@@ -193,10 +197,11 @@ local_add_AT_address(Dwarf_P_Debug dbg,
     new_attr->ar_rel_symidx = sym_index;
     new_attr->ar_reloc_len = upointer_size;
     new_attr->ar_next = 0;
-    if (sym_index != NO_ELF_SYM_INDEX)
+    if (sym_index != NO_ELF_SYM_INDEX) {
         new_attr->ar_rel_type = dbg->de_ptr_reloc;
-    else
+    } else {
         new_attr->ar_rel_type = R_MIPS_NONE;
+    }
 
     new_attr->ar_data = (char *)
         _dwarf_p_get_alloc(dbg, upointer_size);
@@ -244,13 +249,12 @@ dwarf_compress_integer_block(
         _dwarf_p_error(NULL, error, DW_DLE_DBG_NULL);
         return((void *)DW_DLV_BADADDR);
     }
-    
+
     if (unit_is_signed == false ||
         unit_length_in_bits != 32 ||
         input_block == NULL ||
         input_length_in_units == 0 ||
         output_length_in_bytes_ptr == NULL) {
-        
         _dwarf_p_error(NULL, error, DW_DLE_BADBITC);
         return ((void *) DW_DLV_BADADDR);
     }
@@ -263,9 +267,9 @@ dwarf_compress_integer_block(
     for (u=0; u<input_length_in_units; u++) {
         int unit_encoded_size;
         Dwarf_sfixed unit; /* this is fixed at signed-32-bits */
-        
+
         unit = ((Dwarf_sfixed*)input_block)[u];
-        
+
         result = _dwarf_pro_encode_signed_leb128_nm(unit, &unit_encoded_size,
             encode_buffer,sizeof(encode_buffer));
         if (result !=  DW_DLV_OK) {
@@ -275,7 +279,7 @@ dwarf_compress_integer_block(
         output_length_in_bytes += unit_encoded_size;
     }
 
-    
+
     /* Then alloc */
 
     output_block = (void *)
@@ -284,7 +288,7 @@ dwarf_compress_integer_block(
         _dwarf_p_error(dbg, error, DW_DLE_ALLOC_FAIL);
         return((void*)DW_DLV_BADADDR);
     }
-    
+
     /* Then compress again and copy into new buffer */
 
     ptr = output_block;
@@ -292,9 +296,9 @@ dwarf_compress_integer_block(
     for (u=0; u<input_length_in_units; u++) {
         int unit_encoded_size;
         Dwarf_sfixed unit; /* this is fixed at signed-32-bits */
-        
+
         unit = ((Dwarf_sfixed*)input_block)[u];
-        
+
         result = _dwarf_pro_encode_signed_leb128_nm(unit, &unit_encoded_size,
             ptr, remain);
         if (result !=  DW_DLV_OK) {
@@ -328,7 +332,7 @@ dwarf_dealloc_compressed_block(Dwarf_P_Debug dbg, void * space)
     DWARF 3: the FORM here has no defined meaning for dwarf3.
     DWARF 4: the FORM here means that for DW_AT_high_pc the value
         is not a high address but is instead an offset
-        from a (separate) DW_AT_low_pc. 
+        from a (separate) DW_AT_low_pc.
     The intent for DWARF4 is that this is not a relocated
     address at all.  Instead a simple offset.
     But this should NOT be called for a simple non-relocated offset.
@@ -354,7 +358,7 @@ dwarf_add_AT_dataref(
 
 
 
-Dwarf_P_Attribute 
+Dwarf_P_Attribute
 dwarf_add_AT_block(
     Dwarf_P_Debug       dbg,
     Dwarf_P_Die         ownerdie,
@@ -417,7 +421,7 @@ dwarf_add_AT_block(
     memcpy(attrdata, encode_buffer, len_size);
     attrdata += len_size;
     memcpy(attrdata, block_data, block_size);
-    
+
     /* add attribute to the die */
     _dwarf_pro_add_at_to_die(ownerdie, new_attr);
 
@@ -427,8 +431,8 @@ dwarf_add_AT_block(
 
 /*
     This function adds attributes whose value
-    is an unsigned constant.  It determines the 
-    size of the value field from the value of 
+    is an unsigned constant.  It determines the
+    size of the value field from the value of
     the constant.
 */
 Dwarf_P_Attribute
@@ -474,7 +478,7 @@ dwarf_add_AT_unsigned_const(Dwarf_P_Debug dbg,
     case DW_AT_decl_line:
     case DW_AT_const_value:
     case DW_AT_start_scope:
-    case DW_AT_stride_size:
+    case DW_AT_stride_size: /* DW_AT_bit_stride  is DWARF3 name */
     case DW_AT_count:
     case DW_AT_associated:
     case DW_AT_allocated:
@@ -537,8 +541,8 @@ dwarf_add_AT_unsigned_const(Dwarf_P_Debug dbg,
 
 
 /*  This function adds attributes whose value
-    is an signed constant.  It determines the 
-    size of the value field from the value of 
+    is an signed constant.  It determines the
+    size of the value field from the value of
     the constant.  */
 Dwarf_P_Attribute
 dwarf_add_AT_signed_const(Dwarf_P_Debug dbg,
@@ -766,7 +770,7 @@ dwarf_add_AT_location_expr(Dwarf_P_Debug dbg,
 
 
 /*  This function adds attributes of reference class.
-    The references here are local CU references, 
+    The references here are local CU references,
     not DW_FORM_ref_addr.
     The offset field is 4 bytes for 32-bit objects,
     and 8-bytes for 64-bit objects.  Otherdie is the
@@ -776,13 +780,16 @@ dwarf_add_AT_location_expr(Dwarf_P_Debug dbg,
     are not needed.  Instead, the ar_ref_die points to
     the other die, and its di_offset value is used as
     the reference value.  */
-Dwarf_P_Attribute
-dwarf_add_AT_reference(Dwarf_P_Debug dbg,
+
+static Dwarf_P_Attribute
+_dwarf_add_AT_reference_internal(Dwarf_P_Debug dbg,
     Dwarf_P_Die ownerdie,
     Dwarf_Half attr,
-    Dwarf_P_Die otherdie, Dwarf_Error * error)
+    Dwarf_P_Die otherdie,
+    int check_otherdie,
+    Dwarf_Error * error)
 {
-    Dwarf_P_Attribute new_attr;
+    Dwarf_P_Attribute new_attr = 0;
 
     if (dbg == NULL) {
         _dwarf_p_error(NULL, error, DW_DLE_DBG_NULL);
@@ -794,34 +801,40 @@ dwarf_add_AT_reference(Dwarf_P_Debug dbg,
         return ((Dwarf_P_Attribute) DW_DLV_BADADDR);
     }
 
-    if (otherdie == NULL) {
+    if (check_otherdie && (otherdie == NULL)) {
         _dwarf_p_error(dbg, error, DW_DLE_DIE_NULL);
         return ((Dwarf_P_Attribute) DW_DLV_BADADDR);
     }
 
     switch (attr) {
-    case DW_AT_specification:
-    case DW_AT_discr:
-    case DW_AT_common_reference:
-    case DW_AT_import:
-    case DW_AT_containing_type:
-    case DW_AT_default_value:
-    case DW_AT_abstract_origin:
-    case DW_AT_friend:
-    case DW_AT_priority:
-    case DW_AT_type:
-    case DW_AT_lower_bound:
-    case DW_AT_upper_bound:
     case DW_AT_count:
-    case DW_AT_associated:
-    case DW_AT_allocated:
+    case DW_AT_sibling:
+    case DW_AT_byte_size:
     case DW_AT_bit_offset:
     case DW_AT_bit_size:
-    case DW_AT_byte_size:
-    case DW_AT_sibling:
-    case DW_AT_bit_stride:
-    case DW_AT_byte_stride:
+    case DW_AT_discr:
+    case DW_AT_import:
+    case DW_AT_common_reference:
+    case DW_AT_containing_type:
+    case DW_AT_default_value:
+    case DW_AT_lower_bound:
+    case DW_AT_bit_stride: /* Early name is DW_AT_stride_size */
+    case DW_AT_upper_bound:
+    case DW_AT_abstract_origin:
+    case DW_AT_base_types:
+    case DW_AT_friend:
     case DW_AT_namelist_item:
+    case DW_AT_priority:
+    case DW_AT_specification:
+    case DW_AT_type:
+    case DW_AT_allocated:
+    case DW_AT_associated:
+    case DW_AT_byte_stride:
+    case DW_AT_extension:
+    case DW_AT_trampoline:
+    case DW_AT_small:
+    case DW_AT_object_pointer:
+    case DW_AT_signature:
         break;
 
     default:
@@ -851,6 +864,70 @@ dwarf_add_AT_reference(Dwarf_P_Debug dbg,
     _dwarf_pro_add_at_to_die(ownerdie, new_attr);
     return new_attr;
 }
+Dwarf_P_Attribute
+dwarf_add_AT_reference(Dwarf_P_Debug dbg,
+    Dwarf_P_Die ownerdie,
+    Dwarf_Half attr,
+    Dwarf_P_Die otherdie, Dwarf_Error * error)
+{
+    return _dwarf_add_AT_reference_internal(dbg,
+        ownerdie,
+        attr,
+        otherdie,
+        /* check otherdie */ 1,
+        error);
+}
+
+/*  Allowing the target die to be identified later.
+    */
+Dwarf_P_Attribute
+dwarf_add_AT_reference_b(Dwarf_P_Debug dbg,
+    Dwarf_P_Die ownerdie,
+    Dwarf_Half attr,
+    Dwarf_P_Die otherdie,
+    Dwarf_Error * error)
+{
+    return _dwarf_add_AT_reference_internal(dbg,
+        ownerdie,
+        attr,
+        otherdie,
+        /* check otherdie */ 0,
+        error);
+}
+
+
+
+
+int
+dwarf_fixup_AT_reference_die(Dwarf_P_Debug dbg,
+   Dwarf_Half attrnum,
+   Dwarf_P_Die sourcedie,
+   Dwarf_P_Die targetdie,
+   Dwarf_Error *error)
+{
+    Dwarf_P_Attribute a = 0;
+    Dwarf_P_Attribute cur = 0;
+    if (dbg == NULL) {
+        _dwarf_p_error(NULL, error, DW_DLE_DBG_NULL);
+        return DW_DLV_ERROR;
+    }
+    for(cur = sourcedie->di_attrs; cur; cur = cur->ar_next) {
+        if (attrnum == cur->ar_attribute) {
+            a = cur;
+            break;
+        }
+    }
+    if(!a) {
+        _dwarf_p_error(dbg, error, DW_DLE_AT_FIXUP_NULL);
+        return DW_DLV_ERROR;
+    }
+    if(a->ar_ref_die) {
+        _dwarf_p_error(dbg, error, DW_DLE_AT_FIXUP_DUP);
+        return DW_DLV_ERROR;
+    }
+    a->ar_ref_die = targetdie;
+    return DW_DLV_OK;
+}
 
 
 /* This function adds attributes of the flag class.  */
@@ -872,7 +949,7 @@ dwarf_add_AT_flag(Dwarf_P_Debug dbg,
         return ((Dwarf_P_Attribute) DW_DLV_BADADDR);
     }
 
-#if 0    
+#if 0
     switch (attr) {
     case DW_AT_is_optional:
     case DW_AT_artificial:
@@ -889,7 +966,7 @@ dwarf_add_AT_flag(Dwarf_P_Debug dbg,
             }
             break;
     }
-#endif    
+#endif
 
     new_attr = (Dwarf_P_Attribute)
         _dwarf_p_get_alloc(dbg, sizeof(struct Dwarf_P_Attribute_s));
@@ -1020,6 +1097,43 @@ dwarf_add_AT_const_value_string(Dwarf_P_Die ownerdie,
     _dwarf_pro_add_at_to_die(ownerdie, new_attr);
     return new_attr;
 }
+
+Dwarf_P_Attribute
+dwarf_add_AT_with_ref_sig8(Dwarf_P_Die ownerdie,
+    Dwarf_Half attrnum,
+    const Dwarf_Sig8 *sig8_in,
+    Dwarf_Error * error)
+{
+    Dwarf_P_Attribute new_attr = 0;
+    if (ownerdie == NULL) {
+        _dwarf_p_error(NULL, error, DW_DLE_DIE_NULL);
+        return ((Dwarf_P_Attribute) DW_DLV_BADADDR);
+    }
+
+    new_attr = (Dwarf_P_Attribute)
+        _dwarf_p_get_alloc(ownerdie->di_dbg, sizeof(struct Dwarf_P_Attribute_s));
+    if (new_attr == NULL) {
+        _dwarf_p_error(NULL, error, DW_DLE_ALLOC_FAIL);
+        return ((Dwarf_P_Attribute) DW_DLV_BADADDR);
+    }
+    new_attr->ar_attribute = attrnum;
+    new_attr->ar_attribute_form = DW_FORM_ref_sig8;
+    new_attr->ar_nbytes = sizeof (Dwarf_Sig8);
+    new_attr->ar_next = 0;
+
+    new_attr->ar_data =
+        (char *) _dwarf_p_get_alloc(ownerdie->di_dbg, sizeof(Dwarf_Sig8));
+    if (new_attr->ar_data == NULL) {
+        _dwarf_p_error(NULL, error, DW_DLE_ALLOC_FAIL);
+        return ((Dwarf_P_Attribute) DW_DLV_BADADDR);
+    }
+    memcpy(new_attr->ar_data,sig8_in,sizeof(Dwarf_Sig8));
+    new_attr->ar_rel_type = R_MIPS_NONE;
+    new_attr->ar_reloc_len = 0; /* unused for R_MIPS_NONE */
+    _dwarf_pro_add_at_to_die(ownerdie, new_attr);
+    return new_attr;
+}
+
 
 
 Dwarf_P_Attribute

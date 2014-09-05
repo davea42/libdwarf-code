@@ -1,4 +1,4 @@
-/* 
+/*
   Copyright (C) 2000,2004,2005 Silicon Graphics, Inc.  All Rights Reserved.
   Portions Copyright (C) 2007-2012 David Anderson. All Rights Reserved.
   Portions Copyright 2012 SN Systems Ltd. All rights reserved.
@@ -66,7 +66,7 @@ $Header: /plroot/cmplrs.src/v7.4.5m/.RCS/PL/dwarfdump/RCS/globals.h,v 1.25 2006/
 
 #if (!defined(HAVE___UINT32_T)) && defined(HAVE_SYS_TYPES_H) && defined(HAVE___UINT32_T_IN_SYS_TYPES_H)
 #  include <sys/types.h>
-/* we assume __[u]int32_t and __[u]int64_t defined 
+/* we assume __[u]int32_t and __[u]int64_t defined
    since __uint32_t defined in the sys/types.h in use */
 #define HAVE___UINT32_T 1
 #define HAVE___UINT64_T 1
@@ -172,7 +172,7 @@ extern int current_section_id;              /* Section being process. */
 extern Dwarf_Addr CU_base_address;          /* CU Base address. */
 extern Dwarf_Addr CU_high_address;          /* CU High address. */
 
-extern Dwarf_Addr elf_max_address;          /* Largest representable 
+extern Dwarf_Addr elf_max_address;          /* Largest representable
     address offset. */
 extern Dwarf_Half elf_address_size;         /* Target pointer size. */
 
@@ -238,6 +238,7 @@ extern int nTrace[MAX_TRACE_LEVEL + 1];
 #define DEBUG_STR         12
 #define DEBUG_WEAKNAMES   13
 #define DEBUG_TYPES       14
+#define DEBUG_GDB_INDEX   15
 
 extern int verbose;
 extern boolean dense;
@@ -245,7 +246,7 @@ extern boolean ellipsis;
 extern boolean use_mips_regnames;
 extern boolean show_global_offsets;
 extern boolean show_form_used;
-extern boolean display_offsets;  
+extern boolean display_offsets;
 
 extern boolean check_pubname_attr;
 extern boolean check_attr_tag;
@@ -257,11 +258,11 @@ extern boolean check_ranges;       /* Ranges (aranges & ranges) check */
 extern boolean check_fdes;
 extern boolean check_aranges;
 extern boolean check_harmless;
-extern boolean check_abbreviations; 
-extern boolean check_dwarf_constants;  
-extern boolean check_di_gaps; 
-extern boolean check_forward_decl; 
-extern boolean check_self_references; 
+extern boolean check_abbreviations;
+extern boolean check_dwarf_constants;
+extern boolean check_di_gaps;
+extern boolean check_forward_decl;
+extern boolean check_self_references;
 extern boolean check_attr_encoding;   /* Attributes encoding */
 extern boolean suppress_nested_name_search;
 extern boolean suppress_check_extensions_tables;
@@ -292,7 +293,7 @@ typedef enum /* Dwarf_Check_Categories */ {
         are reported and otherwise ignored.  It is difficult to report
         the error when the error is noticed by libdwarf, the error
         is reported at a later time.
-        The other errors dwarfdump reports are also generally harmless 
+        The other errors dwarfdump reports are also generally harmless
         but are detected by dwarfdump so it's possble to report the
         error as soon as the error is discovered. */
     harmless_result,
@@ -322,7 +323,7 @@ extern Dwarf_Unsigned cu_offset;
 extern Dwarf_Off fde_offset_for_cu_low;
 extern Dwarf_Off fde_offset_for_cu_high;
 
-/* Process TAGs for checking mode and reset pRangesInfo table 
+/* Process TAGs for checking mode and reset pRangesInfo table
    if appropriate. */
 extern void tag_specific_checks_setup(Dwarf_Half val,int die_indent_level);
 
@@ -376,14 +377,14 @@ extern void get_abbrev_array_info(Dwarf_Debug dbg,Dwarf_Unsigned offset);
 extern void validate_abbrev_code(Dwarf_Debug dbg,Dwarf_Unsigned abbrev_code);
 
 extern void print_die_and_children(
-    Dwarf_Debug dbg, 
+    Dwarf_Debug dbg,
     Dwarf_Die in_die,
     Dwarf_Bool is_info,
     char **srcfiles,
     Dwarf_Signed cnt);
 extern boolean print_one_die(
-    Dwarf_Debug dbg, 
-    Dwarf_Die die, 
+    Dwarf_Debug dbg,
+    Dwarf_Die die,
     boolean print_information,
     int die_indent_level,
     char **srcfiles,
@@ -396,8 +397,8 @@ extern void update_compiler_target(const char *producer_name);
 extern void add_cu_name_compiler_target(char *name);
 
 /*  General error reporting routines. These were
-    macros for a short time and when changed into functions 
-    they kept (for now) their capitalization. 
+    macros for a short time and when changed into functions
+    they kept (for now) their capitalization.
     The capitalization will likely change. */
 extern void PRINT_CU_INFO();
 extern void DWARF_CHECK_COUNT(Dwarf_Check_Categories category, int inc);
@@ -413,9 +414,9 @@ extern void DWARF_CHECK_ERROR3(Dwarf_Check_Categories category,
 struct esb_s;
 
 extern Dwarf_Die current_cu_die_for_print_frames; /* This is
-    an awful hack, making current_cu_die_for_print_frames public. 
+    an awful hack, making current_cu_die_for_print_frames public.
     But it enables cleaning up (doing all dealloc needed). */
-/* defined in print_sections.c, die for the current compile unit, 
+/* defined in print_sections.c, die for the current compile unit,
    used in get_fde_proc_name() */
 
 extern void printreg(Dwarf_Signed reg,struct dwconf_s *config_data);
@@ -446,6 +447,10 @@ extern Dwarf_Signed local_dwarf_decode_s_leb128(unsigned char *leb128,
 extern void dump_block(char *prefix, char *data, Dwarf_Signed len);
 
 extern void format_sig8_string(Dwarf_Sig8 *data,struct esb_s *out);
+
+extern void print_gdb_index(Dwarf_Debug dbg);
+extern void print_debugfission_index(Dwarf_Debug dbg,const char *type);
+
 
 int
 dwarfdump_print_one_locdesc(Dwarf_Debug dbg,
@@ -487,9 +492,10 @@ void print_any_harmless_errors(Dwarf_Debug dbg);
 #define DW_HDR_DEBUG_TYPES    0x00000400   /* 10 */
 #define DW_HDR_TEXT           0x00000800   /* 11 */ /* 0x0fff */
 #define DW_HDR_HEADER         0x00001000   /* 12 */
+#define DW_HDR_GDB_INDEX      0x00002000   /* 13 */
 
 /* Mask to indicate all sections (by default) */
 #define DW_HDR_ALL            0x80000000
-#define DW_HDR_DEFAULT        0x00000fff
+#define DW_HDR_DEFAULT        0x00002fff
 
 #endif /* globals_INCLUDED */

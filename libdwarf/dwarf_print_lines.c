@@ -5,22 +5,22 @@
   Portions Copyright 2012 SN Systems Ltd. All rights reserved.
 
   This program is free software; you can redistribute it and/or modify it
-  under the terms of version 2.1 of the GNU Lesser General Public License 
+  under the terms of version 2.1 of the GNU Lesser General Public License
   as published by the Free Software Foundation.
 
   This program is distributed in the hope that it would be useful, but
   WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
   Further, this software is distributed without any warranty that it is
-  free of the rightful claim of any third person regarding infringement 
-  or the like.  Any license provided herein, whether implied or 
+  free of the rightful claim of any third person regarding infringement
+  or the like.  Any license provided herein, whether implied or
   otherwise, applies only to this software file.  Patent licenses, if
-  any, provided herein do not apply to combinations of this program with 
-  other software, or any other product whatsoever.  
+  any, provided herein do not apply to combinations of this program with
+  other software, or any other product whatsoever.
 
-  You should have received a copy of the GNU Lesser General Public 
-  License along with this program; if not, write the Free Software 
+  You should have received a copy of the GNU Lesser General Public
+  License along with this program; if not, write the Free Software
   Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston MA 02110-1301,
   USA.
 
@@ -35,7 +35,7 @@
 
 */
 /* The address of the Free Software Foundation is
-   Free Software Foundation, Inc., 51 Franklin St, Fifth Floor, 
+   Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
    Boston, MA 02110-1301, USA.
    SGI has moved from the Crittenden Lane address.
 */
@@ -96,7 +96,7 @@ print_line_detail(
             " %1d", isa);
         dwarf_printf(dbg,
             " 0x%" DW_PR_DUx , discriminator);
-    } 
+    }
     dwarf_printf(dbg,
         "\n");
 }
@@ -205,8 +205,8 @@ int * err_count_out, int only_line_header)
     }
 
 
-    /*  The list of relevant FORMs is small. 
-        DW_FORM_data4, DW_FORM_data8, DW_FORM_sec_offset 
+    /*  The list of relevant FORMs is small.
+        DW_FORM_data4, DW_FORM_data8, DW_FORM_sec_offset
     */
     lres = dwarf_whatform(stmt_list_attr,&attrform,error);
     if (lres != DW_DLV_OK) {
@@ -257,7 +257,7 @@ int * err_count_out, int only_line_header)
         int dres = dwarf_read_line_table_prefix(dbg,
             line_ptr,dbg->de_debug_line.dss_size - line_offset,
             &line_ptr_out,
-            &prefix, 
+            &prefix,
             &bogus_bytes_ptr,
             &bogus_bytes_count,
             error,
@@ -314,7 +314,7 @@ int * err_count_out, int only_line_header)
             (int) prefix.pf_opcode_length_table[i - 1]);
     }
     dwarf_printf(dbg,
-        "  include directories count %d\n", 
+        "  include directories count %d\n",
         (int) prefix.pf_include_directories_count);
     for (u = 0; u < prefix.pf_include_directories_count; ++u) {
         dwarf_printf(dbg,
@@ -322,7 +322,7 @@ int * err_count_out, int only_line_header)
             (int) u, prefix.pf_include_directories[u]);
     }
     dwarf_printf(dbg,
-        "  files count            %d\n", 
+        "  files count            %d\n",
         (int) prefix.pf_files_count);
 
     for (u = 0; u < prefix.pf_files_count; ++u) {
@@ -368,7 +368,7 @@ int * err_count_out, int only_line_header)
         }
         offset = line_ptr - orig_line_ptr;
         dwarf_printf(dbg,
-            "  statement prog offset in section: 0x%" 
+            "  statement prog offset in section: 0x%"
             DW_PR_XZEROS DW_PR_DUx " (%" DW_PR_DUu ")\n",
             offset, offset);
     }
@@ -383,7 +383,7 @@ int * err_count_out, int only_line_header)
         int type = 0;
 
         dwarf_printf(dbg,
-            " [0x%06" DW_PR_DSx "] ", 
+            " [0x%06" DW_PR_DSx "] ",
             (Dwarf_Signed) (line_ptr - orig_line_ptr));
         opcode = *(Dwarf_Small *) line_ptr;
         line_ptr++;
@@ -409,7 +409,7 @@ int * err_count_out, int only_line_header)
 
                 DECODE_LEB128_UWORD(line_ptr, utmp2);
                 dwarf_printf(dbg,
-                    " %" DW_PR_DUu 
+                    " %" DW_PR_DUu
                     " (0x%" DW_PR_XZEROS DW_PR_DUx ")",
                     (Dwarf_Unsigned) utmp2,
                     (Dwarf_Unsigned) utmp2);
@@ -471,8 +471,8 @@ int * err_count_out, int only_line_header)
 
                 DECODE_LEB128_UWORD(line_ptr, utmp2);
                 dwarf_printf(dbg,
-                    "DW_LNS_advance_pc val %" 
-                    DW_PR_DSd " 0x%" 
+                    "DW_LNS_advance_pc val %"
+                    DW_PR_DSd " 0x%"
                     DW_PR_XZEROS DW_PR_DUx "\n",
                     (Dwarf_Signed) (Dwarf_Word) utmp2,
                     (Dwarf_Unsigned) (Dwarf_Word) utmp2);
@@ -487,7 +487,7 @@ int * err_count_out, int only_line_header)
                 DECODE_LEB128_SWORD(line_ptr, stmp);
                 advance_line = (Dwarf_Sword) stmp;
                 dwarf_printf(dbg,
-                    "DW_LNS_advance_line val %" DW_PR_DSd " 0x%" 
+                    "DW_LNS_advance_line val %" DW_PR_DSd " 0x%"
                     DW_PR_XZEROS DW_PR_DSx "\n",
                     (Dwarf_Signed) advance_line,
                     (Dwarf_Signed) advance_line);
@@ -510,7 +510,7 @@ int * err_count_out, int only_line_header)
                 DECODE_LEB128_UWORD(line_ptr, utmp2);
                 column = (Dwarf_Word) utmp2;
                 dwarf_printf(dbg,
-                    "DW_LNS_set_column val %" DW_PR_DSd " 0x%" 
+                    "DW_LNS_set_column val %" DW_PR_DSd " 0x%"
                     DW_PR_XZEROS DW_PR_DSx "\n",
                     (Dwarf_Signed) column, (Dwarf_Signed) column);
                 }
@@ -547,7 +547,7 @@ int * err_count_out, int only_line_header)
                 }
 
                 dwarf_printf(dbg,
-                    "DW_LNS_const_add_pc new address 0x%" 
+                    "DW_LNS_const_add_pc new address 0x%"
                     DW_PR_XZEROS DW_PR_DSx "\n",
                     (Dwarf_Signed) address);
                 }
@@ -558,8 +558,8 @@ int * err_count_out, int only_line_header)
                 line_ptr += sizeof(Dwarf_Half);
                 address = address + fixed_advance_pc;
                 dwarf_printf(dbg,
-                    "DW_LNS_fixed_advance_pc val %" DW_PR_DSd 
-                    " 0x%" DW_PR_XZEROS DW_PR_DSx 
+                    "DW_LNS_fixed_advance_pc val %" DW_PR_DSd
+                    " 0x%" DW_PR_XZEROS DW_PR_DSx
                     " new address 0x%" DW_PR_XZEROS DW_PR_DSx "\n",
                     (Dwarf_Signed) fixed_advance_pc,
                     (Dwarf_Signed) fixed_advance_pc,
@@ -588,7 +588,7 @@ int * err_count_out, int only_line_header)
                 DECODE_LEB128_UWORD(line_ptr, utmp2);
                 isa = utmp2;
                 dwarf_printf(dbg,
-                    "DW_LNS_set_isa new value 0x%" 
+                    "DW_LNS_set_isa new value 0x%"
                     DW_PR_XZEROS DW_PR_DUx ".\n",
                     (Dwarf_Unsigned) utmp2);
                 if (isa != utmp2) {
@@ -639,12 +639,12 @@ int * err_count_out, int only_line_header)
                 break;
             case DW_LNE_set_address:{
                 READ_UNALIGNED(dbg, address, Dwarf_Addr,
-                    line_ptr, 
+                    line_ptr,
                     die->di_cu_context->cc_address_size);
 
                 line_ptr += die->di_cu_context->cc_address_size;
                 dwarf_printf(dbg,
-                    "DW_LNE_set_address address 0x%" 
+                    "DW_LNE_set_address address 0x%"
                     DW_PR_XZEROS DW_PR_DUx "\n",
                     (Dwarf_Unsigned) address);
 

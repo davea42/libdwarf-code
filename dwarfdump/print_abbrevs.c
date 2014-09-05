@@ -1,4 +1,4 @@
-/* 
+/*
   Copyright (C) 2000-2006 Silicon Graphics, Inc.  All Rights Reserved.
   Portions Copyright 2007-2010 Sun Microsystems, Inc. All rights reserved.
   Portions Copyright 2009-2011 SN Systems Ltd. All rights reserved.
@@ -36,8 +36,8 @@
 
 $Header: /plroot/cmplrs.src/v7.4.5m/.RCS/PL/dwarfdump/RCS/print_sections.c,v 1.69 2006/04/17 00:09:56 davea Exp $ */
 /*  The address of the Free Software Foundation is
-    Free Software Foundation, Inc., 51 Franklin St, Fifth Floor, 
-    Boston, MA 02110-1301, USA.  
+    Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
+    Boston, MA 02110-1301, USA.
     SGI has moved from the Crittenden Lane address.
 */
 
@@ -52,13 +52,13 @@ $Header: /plroot/cmplrs.src/v7.4.5m/.RCS/PL/dwarfdump/RCS/print_sections.c,v 1.6
 /* The following relevent for one specific Linker. */
 #define SNLINKER_MAX_ATTRIB_COUNT  16
 
-/* Print data in .debug_abbrev 
+/* Print data in .debug_abbrev
    This is inherently unsafe as it assumes there
    are no byte sequences in .debug_abbrev other than
    legal abbrev sequences.  But the Dwarf spec
    does not promise that. The spec only promises
    that any bytes at an offset referred to from
-   .debug_info are legal sequences. 
+   .debug_info are legal sequences.
 */
 extern void
 print_abbrevs(Dwarf_Debug dbg)
@@ -93,17 +93,17 @@ print_abbrevs(Dwarf_Debug dbg)
         if (abbrev_entry_count == 0) {
             /* Simple innocuous zero : null abbrev entry */
             if (dense) {
-                printf("<%" DW_PR_DUu "><0x%" DW_PR_XZEROS DW_PR_DUx "><%" 
-                    DW_PR_DSd "><%s>\n", 
-                    abbrev_num, 
-                    offset, 
+                printf("<%" DW_PR_DUu "><0x%" DW_PR_XZEROS DW_PR_DUx "><%"
+                    DW_PR_DSd "><%s>\n",
+                    abbrev_num,
+                    offset,
                     (Dwarf_Signed) /* abbrev_code */ 0,
                     "null .debug_abbrev entry");
             } else {
-                printf("<%5" DW_PR_DUu "><0x%" DW_PR_XZEROS DW_PR_DUx 
-                    "><code: %3" DW_PR_DSd "> %-20s\n", 
-                    abbrev_num, 
-                    offset, 
+                printf("<%5" DW_PR_DUu "><0x%" DW_PR_XZEROS DW_PR_DUx
+                    "><code: %3" DW_PR_DSd "> %-20s\n",
+                    abbrev_num,
+                    offset,
                     (Dwarf_Signed) /* abbrev_code */ 0,
                     "null .debug_abbrev entry");
             }
@@ -124,17 +124,17 @@ print_abbrevs(Dwarf_Debug dbg)
             print_error(dbg, "dwarf_get_abbrev_code", tres, err);
         }
         if (dense) {
-            printf("<%" DW_PR_DUu "><0x%" DW_PR_XZEROS  DW_PR_DUx 
-                "><%" DW_PR_DSd "><%s>", 
+            printf("<%" DW_PR_DUu "><0x%" DW_PR_XZEROS  DW_PR_DUx
+                "><%" DW_PR_DSd "><%s>",
                 abbrev_num,
-                offset, abbrev_code, 
+                offset, abbrev_code,
                 get_TAG_name(tag,dwarf_names_print_on_error));
         }
         else {
-            printf("<%5" DW_PR_DUu "><0x%" DW_PR_XZEROS DW_PR_DUx "><code: %3" 
-                DW_PR_DSd "> %-20s", 
+            printf("<%5" DW_PR_DUu "><0x%" DW_PR_XZEROS DW_PR_DUx "><code: %3"
+                DW_PR_DSd "> %-20s",
                 abbrev_num,
-                offset, abbrev_code, 
+                offset, abbrev_code,
                 get_TAG_name(tag,dwarf_names_print_on_error));
         }
         /* Process specific TAGs specially. */
@@ -156,7 +156,7 @@ print_abbrevs(Dwarf_Debug dbg)
         else
             printf("        %s\n", child_name);
         /*  Abbrev just contains the format of a die, which debug_info
-            then points to with the real data. So here we just print the 
+            then points to with the real data. So here we just print the
             given format. */
         for (i = 0; i < abbrev_entry_count; i++) {
             int aeres = 0;
@@ -178,7 +178,7 @@ print_abbrevs(Dwarf_Debug dbg)
                         dwarf_names_print_on_error));
             } else {
                 printf("       <0x%08lx>              %-28s%s\n",
-                    (unsigned long) off, 
+                    (unsigned long) off,
                     get_AT_name(attr,
                         dwarf_names_print_on_error),
                     get_FORM_name((Dwarf_Half) form,
@@ -200,7 +200,7 @@ print_abbrevs(Dwarf_Debug dbg)
 static Dwarf_Unsigned CU_abbrev_count = 0;
 
 /* Abbreviations array info for checking  abbrev tags.
-   The [zero] entry is not used. 
+   The [zero] entry is not used.
    We never shrink the array, but it never grows beyond
    the largest abbreviation count of all the CUs.
 */
@@ -215,7 +215,7 @@ static Dwarf_Unsigned abbrev_array_size = 0;
    current CU and set up a basic abbreviations array info,
    storing the number of attributes per abbreviation.
 */
-void 
+void
 get_abbrev_array_info(Dwarf_Debug dbg, Dwarf_Unsigned offset_in)
 {
     Dwarf_Unsigned offset = offset_in;
@@ -229,7 +229,7 @@ get_abbrev_array_info(Dwarf_Debug dbg, Dwarf_Unsigned offset_in)
 
         Dwarf_Bool bMore = TRUE;
         CU_abbrev_count = 0;
-    
+
         if (abbrev_array == NULL) {
             /* Allocate initial abbreviation array info */
             abbrev_array = (Dwarf_Signed *)
@@ -247,7 +247,7 @@ get_abbrev_array_info(Dwarf_Debug dbg, Dwarf_Unsigned offset_in)
             dwarf_get_abbrev_code(ab,&abbrev_code,&err);
             if (abbrev_code == 0) {
                 /* End of abbreviation table for this CU */
-                ++offset; /* Skip abbreviation code */ 
+                ++offset; /* Skip abbreviation code */
                 bMore = FALSE;
             } else {
                 /* Valid abbreviation code */
@@ -273,7 +273,7 @@ get_abbrev_array_info(Dwarf_Debug dbg, Dwarf_Unsigned offset_in)
 }
 
 /* Validate an abbreviation for the current CU. */
-void 
+void
 validate_abbrev_code(Dwarf_Debug dbg,Dwarf_Unsigned abbrev_code)
 {
     char buf[128];
@@ -281,7 +281,7 @@ validate_abbrev_code(Dwarf_Debug dbg,Dwarf_Unsigned abbrev_code)
     DWARF_CHECK_COUNT(abbreviations_result,1);
     if (abbrev_code < 0 || (abbrev_code && abbrev_code > CU_abbrev_count)) {
         snprintf(buf, sizeof(buf),
-            "Abbrev code %" DW_PR_DUu 
+            "Abbrev code %" DW_PR_DUu
             " outside valid range of [0-%" DW_PR_DUu "]",
             abbrev_code,CU_abbrev_count);
         DWARF_CHECK_ERROR2(abbreviations_result,buf,
@@ -289,10 +289,10 @@ validate_abbrev_code(Dwarf_Debug dbg,Dwarf_Unsigned abbrev_code)
     } else {
         Dwarf_Signed abbrev_entry_count =
             abbrev_array[abbrev_code];
-        if (abbrev_entry_count < 0 || 
+        if (abbrev_entry_count < 0 ||
             abbrev_entry_count > SNLINKER_MAX_ATTRIB_COUNT) {
             snprintf(buf, sizeof(buf),
-                "Abbrev code %" DW_PR_DUu 
+                "Abbrev code %" DW_PR_DUu
                 ", with %" DW_PR_DUu " attributes: "
                 "outside valid range.",
                 abbrev_code,
