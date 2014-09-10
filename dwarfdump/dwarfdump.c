@@ -182,6 +182,8 @@ boolean suppress_nested_name_search = FALSE;
 static boolean uri_options_translation = TRUE;
 static boolean do_print_uri_in_input = TRUE;
 
+/* Print global (unique) error messages */
+boolean print_unique_errors = FALSE;
 boolean found_error_message = FALSE;
 
 /* break_after_n_units is mainly for testing.
@@ -315,6 +317,11 @@ boolean search_print_results = FALSE;
 regex_t search_re;
 #endif
 
+/* Functions used to manage the unique errors table */
+static void allocate_unique_errors_table();
+static void release_unique_errors_table();
+static void dump_unique_errors_table();
+static boolean add_to_unique_errors_table();
 
 /*  These configure items are for the
     frame data.  We're flexible in
@@ -495,6 +502,11 @@ main(int argc, char *argv[])
         pVisitedInfo = AllocateBucketGroup(KIND_VISITED_INFO);
     }
 
+    /* Create the unique error table */
+    if (print_unique_errors) {
+        allocate_unique_errors_table();
+    }
+
     while ((elf = elf_begin(f, cmd, arf)) != 0) {
         Elf32_Ehdr *eh32;
 
@@ -540,6 +552,11 @@ main(int argc, char *argv[])
     if (pVisitedInfo) {
         ReleaseBucketGroup(pVisitedInfo);
         pVisitedInfo = 0;
+    }
+
+    /* Delete the unique error set */
+    if (print_unique_errors) {
+        release_unique_errors_table();
     }
 
 #ifdef HAVE_REGEX
@@ -1271,7 +1288,7 @@ static const char *usage_text[] = {
 "\t\t\t  example: to stop after <num> compilation units",
 "\t\t-i\tprint info section",
 "\t\t-I\tprint sections .gdb_index, .debug_cu_index, .debug_tu_index",
-"\t\t-k[abcdDeEfFgilmMnrRsStu[f]x[e]y] check dwarf information",
+"\t\t-k[abcdDeEfFgGilmMnrRsStu[f]x[e]y] check dwarf information",
 "\t\t   a\tdo all checks",
 "\t\t   b\tcheck abbreviations",     /* Check abbreviations */
 "\t\t   c\texamine DWARF constants", /* Check for valid DWARF constants */
@@ -1282,6 +1299,7 @@ static const char *usage_text[] = {
 "\t\t   f\texamine frame information (use with -f or -F)",
 "\t\t   F\texamine integrity of files-lines attributes", /* Files-Lines integrity */
 "\t\t   g\tcheck debug info gaps", /* Check for debug info gaps */
+"\t\t   G\tprint only unique errors", /* Only print the unique errors */
 "\t\t   i\tdisplay summary for all compilers", /* Summary all compilers */
 "\t\t   l\tcheck location list (.debug_loc)",  /* Location list integrity */
 "\t\t   m\tcheck ranges list (.debug_ranges)", /* Ranges list integrity */
@@ -1836,6 +1854,10 @@ process_args(int argc, char *argv[])
             case 'g':
                 check_di_gaps = TRUE;
                 info_flag = TRUE;
+                break;
+            /* Print just global (unique) errors */
+            case 'G':
+                print_unique_errors = TRUE;
                 break;
             /* Locations list */
             case 'l':
@@ -2654,10 +2676,113 @@ void PRINT_CHECK_RESULT(char *str,
 void DWARF_CHECK_ERROR_PRINT_CU()
 {
     if (check_verbose_mode) {
-        PRINT_CU_INFO();
+        if (print_unique_errors) {
+            if (!found_error_message) {
+                PRINT_CU_INFO();
+            }
+        } else {
+            PRINT_CU_INFO();
+        }
     }
     check_error++;
     record_dwarf_error = TRUE;
+}
+
+/*  Sometimes is useful, just to know the kind of errors in an object file;
+    not much interest in the number of errors; the specific case is just to
+    have a general idea about the DWARF quality in the file */
+static string *set_unique_errors = NULL;
+unsigned int set_unique_errors_entries = 0;
+unsigned int set_unique_errors_size = 0;
+#define SET_UNIQUE_ERRORS_DELTA 64
+
+/*  Create the space to store the unique error messages */
+void allocate_unique_errors_table()
+{
+    if (!set_unique_errors) {
+        set_unique_errors = (string *)
+            malloc(SET_UNIQUE_ERRORS_DELTA * sizeof(string));
+        set_unique_errors_size = SET_UNIQUE_ERRORS_DELTA;
+        set_unique_errors_entries = 0;
+    }
+}
+
+/* Just for debugging purposes, dump the unique errors table */
+void dump_unique_errors_table()
+{
+    unsigned int index;
+    printf("*** Unique Errors Table ***\n");
+    printf("Delta  : %d\n",SET_UNIQUE_ERRORS_DELTA);
+    printf("Size   : %d\n",set_unique_errors_size);
+    printf("Entries: %d\n",set_unique_errors_entries);
+    for (index = 0; index < set_unique_errors_entries; ++index) {
+        printf("%3d: '%s'\n",index,set_unique_errors[index]);
+    }
+}
+
+/*  Release the space used to store the unique error messages */
+void release_unique_errors_table()
+{
+    unsigned int index;
+    for (index = 0; index < set_unique_errors_entries; ++index) {
+        free(set_unique_errors[index]);
+    }
+    free(set_unique_errors);
+}
+
+/*  Returns TRUE if the text is already in the set; otherwise FALSE */
+boolean add_to_unique_errors_table(string error_text)
+{
+    boolean found = FALSE;
+    unsigned int index;
+    size_t len;
+    string stored_text;
+    string filtered_text;
+    string start = NULL;
+    string end = NULL;
+    string pattern = "0x";
+    string white = " ";
+    string question = "?";
+    string ptr;
+
+    /* Create a copy of the incoming text */
+    filtered_text = makename(error_text);
+    len = strlen(filtered_text);
+
+    /*  Remove from the error_text, any hexadecimal numbers (start with 0x),
+        because for some errors, an additional information is given in the
+        form of addresses; we are interested just in the general error. */
+    start = strstr(filtered_text,pattern);
+    while (start) {
+        /* We have found the start of the pattern; look for a space */
+        end = strstr(start,white);
+        if (!end) {
+            /* Preserve any line terminator */
+            end = filtered_text + len -1;
+        }
+        memset(start,*question,end - start);
+        start = strstr(filtered_text,pattern);
+    }
+
+    /* Check if the error text is already in the table */
+    for (index = 0; index < set_unique_errors_entries; ++index) {
+        stored_text = set_unique_errors[index];
+        if (!strcmp(stored_text,filtered_text)) {
+            return TRUE;
+        }
+    }
+
+    /* Store the new text; check if we have space to store the error text */
+    if (set_unique_errors_entries + 1 == set_unique_errors_size) {
+        set_unique_errors_size += SET_UNIQUE_ERRORS_DELTA;
+        set_unique_errors = (string *)realloc(set_unique_errors,
+            set_unique_errors_size * sizeof(string));
+    }
+
+    set_unique_errors[set_unique_errors_entries] = filtered_text;
+    ++set_unique_errors_entries;
+
+    return FALSE;
 }
 
 /*  Print a DWARF error message and if in "reduced" output only print one

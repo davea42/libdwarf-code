@@ -267,7 +267,12 @@ extern boolean check_attr_encoding;   /* Attributes encoding */
 extern boolean suppress_nested_name_search;
 extern boolean suppress_check_extensions_tables;
 extern boolean check_duplicated_attributes;
+
+/* Print global (unique) error messages */
+extern boolean print_unique_errors;
 extern boolean found_error_message;
+/* Print the information only if unique errors is set and it is first time */
+#define PRINTING_UNIQUE (print_unique_errors && !found_error_message)
 
 extern int break_after_n_units;
 

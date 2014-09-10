@@ -337,7 +337,7 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
 
             /* Display the error information */
             if (found_line_error || record_dwarf_error) {
-                if (check_verbose_mode) {
+                if (check_verbose_mode && PRINTING_UNIQUE) {
                     /* Print the record number for better error description */
                     printf("Record = %"  DW_PR_DUu
                         " Addr = 0x%" DW_PR_XZEROS DW_PR_DUx

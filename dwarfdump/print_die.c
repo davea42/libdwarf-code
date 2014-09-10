@@ -1671,7 +1671,7 @@ print_range_attribute(Dwarf_Debug dbg,
                                 DWARF_CHECK_ERROR(ranges_result,
                                     ".debug_ranges: Address outside a "
                                     "valid .text range");
-                                if (check_verbose_mode) {
+                                if (check_verbose_mode && PRINTING_UNIQUE) {
                                     printf(
                                         "Offset = 0x%" DW_PR_XZEROS DW_PR_DUx
                                         ", Base = 0x%" DW_PR_XZEROS DW_PR_DUx
@@ -1692,7 +1692,7 @@ print_range_attribute(Dwarf_Debug dbg,
                     /*  Each entry holds 2 addresses (offsets) */
                     off += elf_address_size * 2;
                 }
-                if (bError && check_verbose_mode) {
+                if (bError && check_verbose_mode && PRINTING_UNIQUE) {
                     printf("\n");
                 }
             }
@@ -2264,7 +2264,7 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
                             DWARF_CHECK_ERROR(ranges_result,
                                 ".debug_info: Incorrect values "
                                 "for low_pc/high_pc");
-                            if (check_verbose_mode) {
+                            if (check_verbose_mode && PRINTING_UNIQUE) {
                                 printf("Low = 0x%" DW_PR_XZEROS DW_PR_DUx
                                     ", High = 0x%" DW_PR_XZEROS DW_PR_DUx "\n",
                                     lowAddr,highAddr);
@@ -2568,7 +2568,7 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
             }
         }
     }
-    if ((PRINTING_DIES && print_information) || bTextFound) {
+    if ((PRINTING_UNIQUE && PRINTING_DIES && print_information) || bTextFound) {
         /*  Print just the Tags and Attributes */
         if (!display_offsets) {
             printf("%-28s\n",atname);
@@ -2994,7 +2994,7 @@ get_location_list(Dwarf_Debug dbg, Dwarf_Die die, Dwarf_Attribute attr,
                         DWARF_CHECK_ERROR(locations_result,
                             ".debug_loc: Address outside a "
                             "valid .text range");
-                        if (check_verbose_mode) {
+                        if (check_verbose_mode && PRINTING_UNIQUE) {
                             printf(
                                 "Offset = 0x%" DW_PR_XZEROS DW_PR_DUx
                                 ", Base = 0x%"  DW_PR_XZEROS DW_PR_DUx ", "
@@ -3036,7 +3036,7 @@ get_location_list(Dwarf_Debug dbg, Dwarf_Die die, Dwarf_Attribute attr,
         }
     }
 
-    if (bError && check_verbose_mode) {
+    if (bError && check_verbose_mode && PRINTING_UNIQUE) {
         printf("\n");
     }
 
