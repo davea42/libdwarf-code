@@ -173,6 +173,7 @@ boolean check_self_references = FALSE;
 boolean check_attr_encoding = FALSE;   /* Attributes encoding */
 boolean generic_1200_regs = FALSE;
 boolean suppress_check_extensions_tables = FALSE;
+boolean check_duplicated_attributes = FALSE;
 
 /* suppress_nested_name_search is a band-aid.
    A workaround. A real fix for N**2 behavior is needed.
@@ -849,6 +850,12 @@ print_specific_checks_results(Compiler *pCompiler)
         PRINT_CHECK_RESULT("attr_encoding", pCompiler, attr_encoding_result);
     }
 
+    /* Duplicated attributes */
+    if (check_duplicated_attributes) {
+        PRINT_CHECK_RESULT("duplicated_attributes",
+            pCompiler, duplicated_attributes_result);
+    }
+
     PRINT_CHECK_RESULT("** Summarize **",pCompiler, total_check_result);
     fflush(stdout);
 }
@@ -1264,11 +1271,12 @@ static const char *usage_text[] = {
 "\t\t\t  example: to stop after <num> compilation units",
 "\t\t-i\tprint info section",
 "\t\t-I\tprint sections .gdb_index, .debug_cu_index, .debug_tu_index",
-"\t\t-k[abcdeEfFgilmMnrRsStu[f]x[e]y] check dwarf information",
+"\t\t-k[abcdDeEfFgilmMnrRsStu[f]x[e]y] check dwarf information",
 "\t\t   a\tdo all checks",
 "\t\t   b\tcheck abbreviations",     /* Check abbreviations */
 "\t\t   c\texamine DWARF constants", /* Check for valid DWARF constants */
 "\t\t   d\tshow check results",      /* Show check results */
+"\t\t   D\tcheck duplicated attributes",  /* Duplicated attributes */
 "\t\t   e\texamine attributes of pubnames",
 "\t\t   E\texamine attributes encodings",  /* Attributes encoding */
 "\t\t   f\texamine frame information (use with -f or -F)",
@@ -1782,6 +1790,7 @@ process_args(int argc, char *argv[])
                 check_self_references = TRUE;  /* Check self references */
                 check_attr_encoding = TRUE;    /* Check attributes encoding */
                 print_usage_tag_attr = TRUE;  /* Print tag-attr usage */
+                check_duplicated_attributes = TRUE; /* Duplicated attributes */
                 break;
             /* Abbreviations */
             case 'b':
@@ -1796,6 +1805,11 @@ process_args(int argc, char *argv[])
             /* Display check results */
             case 'd':
                 check_show_results = TRUE;
+                break;
+            /* Check duplicated attributes */
+            case 'D':
+                check_duplicated_attributes = TRUE;
+                info_flag = TRUE;
                 break;
             case 'e':
                 check_pubname_attr = TRUE;

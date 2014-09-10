@@ -266,6 +266,7 @@ extern boolean check_self_references;
 extern boolean check_attr_encoding;   /* Attributes encoding */
 extern boolean suppress_nested_name_search;
 extern boolean suppress_check_extensions_tables;
+extern boolean check_duplicated_attributes;
 extern boolean found_error_message;
 
 extern int break_after_n_units;
@@ -311,6 +312,7 @@ typedef enum /* Dwarf_Check_Categories */ {
     forward_decl_result,
     self_references_result,
     attr_encoding_result,
+    duplicated_attributes_result,
     total_check_result,
     LAST_CATEGORY  /* Must be last */
 } Dwarf_Check_Categories;

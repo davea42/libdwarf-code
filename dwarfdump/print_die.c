@@ -898,6 +898,7 @@ print_one_die(Dwarf_Debug dbg, Dwarf_Die die,
     boolean ignore_die_stack)
 {
     Dwarf_Signed i = 0;
+    Dwarf_Signed j = 0;
     Dwarf_Off offset = 0;
     Dwarf_Off overall_offset = 0;
     const char * tagname = 0;
@@ -1059,7 +1060,29 @@ print_one_die(Dwarf_Debug dbg, Dwarf_Die die,
         int ares;
 
         ares = dwarf_whatattr(atlist[i], &attr, &err);
+
         if (ares == DW_DLV_OK) {
+            /* Check duplicated attributes; use brute force as the number of
+               attributes is quite small; the problem was detected with the
+               LLVM toolchain, generating more than 12 repeated attributes */
+            if (check_duplicated_attributes) {
+                Dwarf_Half attr_next;
+                DWARF_CHECK_COUNT(duplicated_attributes_result,1);
+                for (j = i + 1; j < atcnt; ++j) {
+                    ares = dwarf_whatattr(atlist[j], &attr_next, &err);
+                    if (ares == DW_DLV_OK) {
+                        if (attr == attr_next) {
+                            DWARF_CHECK_ERROR2(duplicated_attributes_result,
+                                "Duplicated attribute ",
+                                get_AT_name(attr,dwarf_names_print_on_error));
+                        }
+                    } else {
+                        print_error(dbg, "dwarf_whatattr entry missing",
+                            ares, err);
+                    }
+                }
+            }
+
             /* Print using indentation */
             if (!dense && PRINTING_DIES && print_information) {
                 printf("%*s",die_indent_level * 2 + 2 + nColumn," ");
