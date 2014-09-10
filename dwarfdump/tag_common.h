@@ -120,4 +120,7 @@ extern void trim_newline(char *line, int max);
 extern boolean is_blank_line(char *pLine);
 extern int read_value(unsigned int *outval,FILE *f);
 
+/* Define to 1 to support the generation of tag-attr usage */
+#define HAVE_USAGE_TAG_ATTR 1
+
 #endif /* tag_common_INCLUDED */

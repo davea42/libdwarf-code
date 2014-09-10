@@ -53,6 +53,7 @@ $Header: /plroot/cmplrs.src/v7.4.5m/.RCS/PL/dwarfdump/RCS/dwarfdump.c,v 1.48 200
 #include "common.h"
 #include "uri.h"
 #include "esb.h"                /* For flexible string buffer. */
+#include "tag_common.h"
 
 #ifdef WIN32
 extern int elf_open(const char *name,int mode);
@@ -197,6 +198,9 @@ boolean check_verbose_mode = TRUE; /* During '-k' mode, display errors */
 boolean check_frames = FALSE;
 boolean check_frames_extended = FALSE;    /* Extensive frames check */
 boolean check_locations = FALSE;          /* Location list check */
+
+extern boolean print_usage_tag_attr = FALSE;      /* Print basic usage */
+extern boolean print_usage_tag_attr_full = FALSE; /* Print full usage */
 
 static boolean check_all_compilers = TRUE;
 static boolean check_snc_compiler = FALSE; /* Check SNC compiler */
@@ -1192,6 +1196,11 @@ process_one_file(Elf * elf, const char * file_name, int archive,
         print_attributes_encoding(dbg);
     }
 
+    /* Print the tags and attribute usage */
+    if (print_usage_tag_attr) {
+        print_tag_attributes_usage(dbg);
+    }
+
     dres = dwarf_finish(dbg, &err);
     if (dres != DW_DLV_OK) {
         print_error(dbg, "dwarf_finish", dres, err);
@@ -1255,7 +1264,7 @@ static const char *usage_text[] = {
 "\t\t\t  example: to stop after <num> compilation units",
 "\t\t-i\tprint info section",
 "\t\t-I\tprint sections .gdb_index, .debug_cu_index, .debug_tu_index",
-"\t\t-k[abcdeEfFgilmMnrRsStx[e]y] check dwarf information",
+"\t\t-k[abcdeEfFgilmMnrRsStu[f]x[e]y] check dwarf information",
 "\t\t   a\tdo all checks",
 "\t\t   b\tcheck abbreviations",     /* Check abbreviations */
 "\t\t   c\texamine DWARF constants", /* Check for valid DWARF constants */
@@ -1275,6 +1284,10 @@ static const char *usage_text[] = {
 "\t\t   s\tperform checks in silent mode",
 "\t\t   S\tcheck self references to DIEs",
 "\t\t   t\texamine tag-tag relations",
+#ifdef HAVE_USAGE_TAG_ATTR
+"\t\t   u\tprint tag-tree and tag-attribute usage (basic format)",
+"\t\t   uf\tprint tag-tree and tag-attribute usage (full format)",
+#endif /* HAVE_USAGE_TAG_ATTR */
 "\t\t   x\tbasic frames check (.eh_frame, .debug_frame)",
 "\t\t   xe\textensive frames check (.eh_frame, .debug_frame)",
 "\t\t   y\texamine type info",
@@ -1768,6 +1781,7 @@ process_args(int argc, char *argv[])
                 check_forward_decl = TRUE;  /* Check forward declarations */
                 check_self_references = TRUE;  /* Check self references */
                 check_attr_encoding = TRUE;    /* Check attributes encoding */
+                print_usage_tag_attr = TRUE;  /* Print tag-attr usage */
                 break;
             /* Abbreviations */
             case 'b':
@@ -1855,6 +1869,21 @@ process_args(int argc, char *argv[])
                 check_harmless = TRUE;
                 info_flag = TRUE;
                 break;
+#ifdef HAVE_USAGE_TAG_ATTR
+            /* Tag-Tree and Tag-Attr usage */
+            case 'u':
+                print_usage_tag_attr = TRUE;
+                info_flag = TRUE;
+                if (optarg[1]) {
+                    if ('f' == optarg[1]) {
+                        /* -kuf : Full report */
+                        print_usage_tag_attr_full = TRUE;
+                    } else {
+                        usage_error = TRUE;
+                    }
+                }
+                break;
+#endif /* HAVE_USAGE_TAG_ATTR */
             case 'y':
                 check_type_offset = TRUE;
                 check_harmless = TRUE;

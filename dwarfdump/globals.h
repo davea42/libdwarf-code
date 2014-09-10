@@ -276,6 +276,9 @@ extern boolean check_frames;         /* Frames check */
 extern boolean check_frames_extended;/* Extensive frames check */
 extern boolean check_locations;      /* Location list check */
 
+extern boolean print_usage_tag_attr;      /* Print tag-attr basic usage */
+extern boolean print_usage_tag_attr_full; /* Print tag-attr full usage */
+
 /* Check categories corresponding to the -k option */
 typedef enum /* Dwarf_Check_Categories */ {
     abbrev_code_result,
@@ -464,6 +467,9 @@ void safe_strcpy(char *out, long outlen, const char *in, long inlen);
 
 /* Detailed attributes encoding space */
 void print_attributes_encoding(Dwarf_Debug dbg);
+
+/* Detailed tag and attributes usage */
+void print_tag_attributes_usage(Dwarf_Debug dbg);
 
 void print_any_harmless_errors(Dwarf_Debug dbg);
 
