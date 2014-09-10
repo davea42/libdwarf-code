@@ -47,12 +47,10 @@ $Header: /plroot/cmplrs.src/v7.4.5m/.RCS/PL/dwarfdump/RCS/tag_attr.list,v 1.7 20
 0xffffffff
 DW_TAG_structure_type
 DW_TAG_variable  /* GNU gcc usage. */
+DW_TAG_GNU_template_template_parameter /* template instantiations */
 0xffffffff
 DW_TAG_class_type
 DW_TAG_variable  /* GNU gcc usage. */
-DW_TAG_GNU_template_template_parameter /* template instantiations */
-0xffffffff
-DW_TAG_structure_type
 DW_TAG_GNU_template_template_parameter /* template instantiations */
 0xffffffff
 DW_TAG_subprogram

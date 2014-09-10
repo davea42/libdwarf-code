@@ -3580,6 +3580,8 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
                         case DW_TAG_enumeration_type:
                         case DW_TAG_pointer_type:
                         case DW_TAG_reference_type:
+                        case DW_TAG_rvalue_reference_type:
+                        case DW_TAG_restrict_type:
                         case DW_TAG_string_type:
                         case DW_TAG_structure_type:
                         case DW_TAG_subroutine_type:
