@@ -48,6 +48,10 @@
 #include <stdlib.h>
 #include "makename.h"
 
+#ifdef WIN32
+#pragma warning(disable:4996)    /* Warning when migrated to VS2010 */
+#endif /* WIN32 */
+
 char *
 makename(const char *s)
 {

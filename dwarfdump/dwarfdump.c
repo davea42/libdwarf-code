@@ -417,7 +417,7 @@ main(int argc, char *argv[])
     (void) elf_version(EV_NONE);
     if (elf_version(EV_CURRENT) == EV_NONE) {
         (void) fprintf(stderr, "dwarfdump: libelf.a out of date.\n");
-        exit(1);
+        exit(FAILED);
     }
 
     file_name = process_args(argc, argv);
@@ -509,10 +509,10 @@ main(int argc, char *argv[])
     }
 #endif
     close_a_file(f);
-    if (check_error)
-        return FAILED;
-    else
-        return OKAY;
+    /* As the tool have reached this point, it means there are
+       no internal errors and we should return an OKAY condition,
+       regardless if the file being processed has errors. */
+    return OKAY;
 }
 
 void
@@ -742,7 +742,7 @@ print_specific_checks_results(Compiler *pCompiler)
     fflush(stdout);
     fflush(stderr);
     printf("\nDWARF CHECK RESULT\n");
-        printf("<item>                    <checks>    <errors>\n");
+    printf("<item>                    <checks>    <errors>\n");
     if (check_pubname_attr) {
         PRINT_CHECK_RESULT("pubname_attr", pCompiler, pubname_attr_result);
     }
@@ -2458,7 +2458,7 @@ add_cu_name_compiler_target(char *name)
     if (current_compiler < 1) {
         fprintf(stderr,"Current  compiler set to %d, cannot add "
             "Compilation unit name.  Giving up.",current_compiler);
-        exit(1);
+        exit(FAILED);
     }
     pCompiler = &compilers_detected[current_compiler];
     cu_last = pCompiler->cu_last;
