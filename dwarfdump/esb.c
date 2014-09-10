@@ -213,7 +213,7 @@ esb_get_allocated_size(struct esb_s *data)
 
 /*  Append a formatted string */
 void
-esb_append_printf(struct esb_s *data,const char *in_string, ...)
+esb_append_printf_ap(struct esb_s *data,const char *in_string,va_list ap)
 {
 #if WIN32
     #define NULL_DEVICE_FILE "NUL"
@@ -225,8 +225,6 @@ esb_append_printf(struct esb_s *data,const char *in_string, ...)
 
     unsigned needed_size = 0;
     int length = 0;
-    va_list ap;
-    va_start(ap,in_string);
     if (null_file == NULL) {
         null_file = fopen(NULL_DEVICE_FILE,"w");
     }
@@ -244,5 +242,28 @@ esb_append_printf(struct esb_s *data,const char *in_string, ...)
     }
     vsprintf(&data->esb_string[data->esb_used_bytes],in_string,ap);
     data->esb_used_bytes += length;
+}
+
+/*  Append a formatted string */
+void
+esb_append_printf(struct esb_s *data,const char *in_string, ...)
+{
+    va_list ap;
+    va_start(ap,in_string);
+    esb_append_printf_ap(data,in_string,ap);
     va_end(ap);
+}
+
+/* Get a copy of the internal data buffer */
+string
+esb_get_copy(struct esb_s *data)
+{
+    string copy = NULL;
+    size_t len = esb_string_len(data);
+    if (len) {
+        copy = (string)malloc(len);
+        strcpy(copy,esb_get_string(data));
+    }
+
+    return copy;
 }

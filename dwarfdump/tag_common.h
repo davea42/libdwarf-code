@@ -115,7 +115,7 @@ No blank lines or commentary allowed, no symbols, just numbers.
 #define IS_EOF 1
 #define NOT_EOF 0
 
-extern void bad_line_input(char *msg);
+extern void bad_line_input(char *format,...);
 extern void trim_newline(char *line, int max);
 extern boolean is_blank_line(char *pLine);
 extern int read_value(unsigned int *outval,FILE *f);
