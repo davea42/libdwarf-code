@@ -148,11 +148,12 @@ dwarf_tdestroy_inner(struct hs_base*h,
 static unsigned long
 calculate_allowed_fill(unsigned long fill_percent, unsigned long ct)
 {
+    unsigned long v = 0;
     if(ct < 100000) {
-        unsigned long v = (ct *fill_percent)/100;
-        return v;
+        unsigned long v2 = (ct *fill_percent)/100;
+        return v2;
     }
-    unsigned long v = (ct /100)*fill_percent;
+    v = (ct /100)*fill_percent;
     return v;
 }
 

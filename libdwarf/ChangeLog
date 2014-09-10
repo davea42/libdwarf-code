@@ -1,3 +1,10 @@
+2014-09-10:  David Anderson
+     * dwarf_tsearchhash.c(calculate_allowed_fill): Moved a declaration
+       to avoid using a C99 feature.
+     * dwarf_query.c(dwarf_highpc_b): Moved a declaration to avoid using
+        aC99 feature.
+     * dwarf_util.c(dwarf_print): Moved a declaration to avoid using
+        aC99 feature.
 2014-08-11  David Anderson, avoiding some compiler warnings.
      *dwarf_xu_index.c,dwarf_macro.c: Failed to cast the pointer
       returned by _dwarf_get_macro (one place in each file).
