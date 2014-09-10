@@ -16,7 +16,7 @@
 
 /* the following are the 'section' number passed to the called-back
    function.
-   The called-back application must translate this to the 
+   The called-back application must translate this to the
    appropriate elf section number/pointer.
 
    Putting this burden on the application avoids having to store
@@ -36,7 +36,7 @@
    It's up to the caller to know the size of an address (4 or 8)
    and update the right number of bytes.
 */
-typedef int (*Dwarf_addr_callback_func)   (int /*section*/, 
+typedef int (*Dwarf_addr_callback_func)   (int /*section*/,
         Dwarf_Off /*secoff*/, Dwarf_Addr /*existingAddr*/);
 
 /* call this to do the work: it calls back thru cb_func

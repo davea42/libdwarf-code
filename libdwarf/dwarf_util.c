@@ -764,9 +764,10 @@ dwarf_printf(Dwarf_Debug dbg,
         the buffer when necessary, but not excessively
         (but only if we control the buffer size).  */
     while (1) {
+        int olen;
         tries++;
         va_start(ap,format);
-        int olen = vsnprintf(bufdata->dp_buffer,
+        olen = vsnprintf(bufdata->dp_buffer,
             bufdata->dp_buffer_len, format,ap);
         va_end(ap);
         if (olen > -1 && (long)olen < (long)bufdata->dp_buffer_len) {

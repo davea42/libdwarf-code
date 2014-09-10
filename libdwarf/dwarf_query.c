@@ -839,6 +839,7 @@ dwarf_highpc_b(Dwarf_Die die,
         offset_size,attr_form);
 
     if (class == DW_FORM_CLASS_ADDRESS) {
+        Dwarf_Addr addr = 0;
         if (attr_form == DW_FORM_GNU_addr_index ||
             attr_form == DW_FORM_addrx) {
             Dwarf_Unsigned addr_out = 0;
@@ -858,7 +859,6 @@ dwarf_highpc_b(Dwarf_Die die,
             return (DW_DLV_OK);
         }
 
-        Dwarf_Addr addr = 0;
         READ_UNALIGNED(dbg, addr, Dwarf_Addr,
             info_ptr, address_size);
         *return_value = addr;
