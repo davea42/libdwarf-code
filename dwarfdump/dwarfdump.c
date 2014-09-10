@@ -180,6 +180,7 @@ boolean suppress_nested_name_search = FALSE;
 static boolean uri_options_translation = TRUE;
 static boolean do_print_uri_in_input = TRUE;
 
+boolean found_error_message = FALSE;
 
 /* break_after_n_units is mainly for testing.
    It enables easy limiting of output size/running time
@@ -2616,13 +2617,51 @@ void DWARF_CHECK_ERROR_PRINT_CU()
     record_dwarf_error = TRUE;
 }
 
+/*  Print a DWARF error message and if in "reduced" output only print one
+    error of each kind; this feature is usefull, when we are interested only
+    in the kind of errors and not on the number of errors. */
+static void
+print_dwarf_check_error(char *format,...)
+{
+    static struct esb_s dwarf_error_line;
+    static boolean do_init = TRUE;
+    boolean found = FALSE;
+    string error_text = NULL;
+    va_list ap;
+
+    if (do_init) {
+        /* One time initialization */
+        esb_constructor(&dwarf_error_line);
+        do_init = FALSE;
+    }
+
+    /* Generate the full line of text */
+    va_start(ap,format);
+    esb_empty_string(&dwarf_error_line);
+    esb_append_printf_ap(&dwarf_error_line,format,ap);
+    error_text = esb_get_string(&dwarf_error_line);
+
+    if (print_unique_errors) {
+        found = add_to_unique_errors_table(error_text);
+        if (!found) {
+            printf("%s",error_text);
+        }
+    } else {
+        printf("%s",error_text);
+    }
+    va_end(ap);
+
+    /* To indicate if the current error message have been found or not */
+    found_error_message = found;
+}
+
 void DWARF_CHECK_ERROR(Dwarf_Check_Categories category,
     const char *str)
 {
     if (checking_this_compiler()) {
         DWARF_ERROR_COUNT(category,1);
         if (check_verbose_mode) {
-            printf("\n*** DWARF CHECK: %s ***\n", str);
+            print_dwarf_check_error("\n*** DWARF CHECK: %s ***\n", str);
         }
         DWARF_CHECK_ERROR_PRINT_CU();
     }
@@ -2634,7 +2673,8 @@ void DWARF_CHECK_ERROR2(Dwarf_Check_Categories category,
     if (checking_this_compiler()) {
         DWARF_ERROR_COUNT(category,1);
         if (check_verbose_mode) {
-            printf("\n*** DWARF CHECK: %s: %s ***\n", str1, str2);
+            print_dwarf_check_error("\n*** DWARF CHECK: %s: %s ***\n",
+                str1, str2);
         }
         DWARF_CHECK_ERROR_PRINT_CU();
     }
@@ -2646,7 +2686,7 @@ void DWARF_CHECK_ERROR3(Dwarf_Check_Categories category,
     if (checking_this_compiler()) {
         DWARF_ERROR_COUNT(category,1);
         if (check_verbose_mode) {
-            printf("\n*** DWARF CHECK: %s -> %s: %s ***\n",
+            print_dwarf_check_error("\n*** DWARF CHECK: %s -> %s: %s ***\n",
                 str1, str2,strexpl);
         }
         DWARF_CHECK_ERROR_PRINT_CU();

@@ -266,6 +266,7 @@ extern boolean check_self_references;
 extern boolean check_attr_encoding;   /* Attributes encoding */
 extern boolean suppress_nested_name_search;
 extern boolean suppress_check_extensions_tables;
+extern boolean found_error_message;
 
 extern int break_after_n_units;
 
