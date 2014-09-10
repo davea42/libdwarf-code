@@ -4032,7 +4032,6 @@ show_form_itself(int local_show_form,
     }
 }
 
-
 #include "tmp-ta-table.c"
 #include "tmp-ta-ext-table.c"
 

@@ -339,6 +339,9 @@ static char *config_file_defaults[] = {
 };
 static struct dwconf_s config_file_data;
 
+/* Output filename */
+static const char *output_file = 0;
+
 char cu_name[BUFSIZ];
 boolean cu_name_flag = FALSE;
 Dwarf_Unsigned cu_offset = 0;
@@ -402,6 +405,21 @@ main(int argc, char *argv[])
     Elf *elf = 0;
     int archive = 0;
 
+    /* Often we redirect the output to a file, but we have found
+       issues due to the buffering associated with stdout. Some issues
+       were fixed just by the use of 'fflush', but the main issued
+       remained.
+       The stdout stream is buffered, so will only display what's in the
+       buffer after it reaches a newline (or when it's told to). We have a
+       few options to print immediately:
+       - Print to stderr instead using fprintf.
+       - Print to stdout and flush stdout whenever we need it to using fflush.
+       - We can also disable buffering on stdout by using setbuf:
+         setbuf(stdout,NULL);
+         Make stdout unbuffered; this seems to work for all cases.
+    */
+    setbuf(stdout,NULL);
+
     esb_constructor(&config_file_path);
 #ifdef WIN32
     /* Windows specific. */
@@ -409,7 +427,8 @@ main(int argc, char *argv[])
     /* Tried to use SetStdHandle, but it does not work properly. */
     //BOOL bbb = SetStdHandle(STD_ERROR_HANDLE,GetStdHandle(STD_OUTPUT_HANDLE));
     //_iob[2]._file = _iob[1]._file;
-    stderr->_file = stdout->_file;
+    //stderr->_file = stdout->_file;
+    dup2(fileno(stdout),fileno(stderr));
 #endif /* WIN32 */
 
     print_version_details(argv[0],FALSE);
@@ -421,6 +440,20 @@ main(int argc, char *argv[])
     }
 
     file_name = process_args(argc, argv);
+    print_args(argc,argv);
+
+    /* Redirect stdout and stderr to an specific file */
+    if (output_file) {
+        if (NULL == freopen(output_file,"w",stdout)) {
+            fprintf(stderr,
+                "dwarfdump: Unable to redirect output to '%s'\n",output_file);
+            exit(FAILED);
+        }
+        dup2(fileno(stdout),fileno(stderr));
+        /* Record version and arguments in the output file */
+        print_version_details(argv[0],TRUE);
+        print_args(argc,argv);
+    }
 
     /*  Because LibDwarf now generates some new warnings,
         allow the user to hide them by using command line options */
@@ -429,7 +462,7 @@ main(int argc, char *argv[])
         cmd.check_verbose_mode = check_verbose_mode;
         dwarf_record_cmdline_options(cmd);
     }
-    print_args(argc,argv);
+
     f = open_a_file(file_name);
     if (f == -1) {
         fprintf(stderr, "%s ERROR:  can't open %s\n", program_name,
@@ -739,8 +772,6 @@ print_object_header(Elf *elf,Dwarf_Debug dbg,unsigned local_section_map)
 static void
 print_specific_checks_results(Compiler *pCompiler)
 {
-    fflush(stdout);
-    fflush(stderr);
     printf("\nDWARF CHECK RESULT\n");
     printf("<item>                    <checks>    <errors>\n");
     if (check_pubname_attr) {
@@ -870,9 +901,6 @@ print_checks_results()
     int index = 0;
     Compiler *pCompilers;
     Compiler *pCompiler;
-
-    fflush(stdout);
-    fflush(stderr);
 
     /* Sort based on errors detected; the first entry is reserved */
     pCompilers = &compilers_detected[1];
@@ -1169,8 +1197,6 @@ process_one_file(Elf * elf, const char * file_name, int archive,
     }
 
     printf("\n");
-    fflush(stderr);
-    fflush(stdout);
     return 0;
 
 }
@@ -1261,6 +1287,7 @@ static const char *usage_text[] = {
 "\t\t  \t(when printing frame information from multi-gigabyte",
 "\t\t  \tobject files this option may save significant time).",
 "\t\t-N\tprint ranges section",
+"\t\t-O file=<path>\tname the output file",
 "\t\t-o[liaprfoR]\tprint relocation info",
 "\t\t  \tl=line,i=info,a=abbrev,p=pubnames,r=aranges,f=frames,o=loc,R=Ranges",
 "\t\t-p\tprint pubnames section",
@@ -1378,7 +1405,7 @@ process_args(int argc, char *argv[])
 
     /* j unused */
     while ((c = getopt(argc, argv,
-        "#:abc::CdDeE::fFgGhH:iIk:l::mMnNo::pPqQrRsS:t:u:UvVwW::x:yz")) != EOF) {
+        "#:abc::CdDeE::fFgGhH:iIk:l::mMnNo::O:pPqQrRsS:t:u:UvVwW::x:yz")) != EOF) {
 
         switch (c) {
         /* Internal debug level setting. */
@@ -1697,6 +1724,21 @@ process_args(int argc, char *argv[])
                 reloc_map = DW_MASK_PRINT_ALL;
             }
             break;
+        /* Output filename */
+        case 'O':
+            {
+                const char *path = 0;
+                /*  -O name=<filename> */
+                usage_error = TRUE;
+                if (strncmp(optarg,"file=",5) == 0) {
+                    path = do_uri_translation(&optarg[5],"-O file=");
+                    if (strlen(path) > 0) {
+                        usage_error = FALSE;
+                        output_file = path;
+                    }
+                }
+            }
+            break;
         case 'k':
             suppress_print_dwarf();
             oarg = optarg[0];
@@ -1971,9 +2013,6 @@ print_error_and_continue(Dwarf_Debug dbg,
     int dwarf_code,
     Dwarf_Error err)
 {
-    fflush(stdout);
-    fflush(stderr);
-
     printf("\n");
 
     if (dwarf_code == DW_DLV_ERROR) {
@@ -1990,7 +2029,6 @@ print_error_and_continue(Dwarf_Debug dbg,
         printf("%s InternalError:  %s:  code %d\n",
             program_name, msg, dwarf_code);
     }
-    fflush(stdout);
 
     /* Display compile unit name */
     PRINT_CU_INFO();
@@ -2537,7 +2575,6 @@ void PRINT_CU_INFO()
     printf(", Low PC = 0x%08" DW_PR_DUx ", High PC = 0x%08" DW_PR_DUx ,
         CU_base_address,CU_high_address);
     printf("\n");
-    fflush(stdout);
 }
 
 void DWARF_CHECK_COUNT(Dwarf_Check_Categories category, int inc)
