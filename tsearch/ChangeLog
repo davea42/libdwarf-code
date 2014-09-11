@@ -1,3 +1,6 @@
+2014-09-10:  David Anderson
+     * dwarf_tsearchhash.c(calculate_allowed_fill): Moved a declaration
+       to avoid using C99 feature.
 2014-08-04:  David Anderson
      * dwarf_tsearchhash.c: Changed to avoid compiler warnings
        about const casts whereever possible.
