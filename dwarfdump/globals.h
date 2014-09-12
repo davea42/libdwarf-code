@@ -272,7 +272,7 @@ extern boolean check_duplicated_attributes;
 extern boolean print_unique_errors;
 extern boolean found_error_message;
 /* Print the information only if unique errors is set and it is first time */
-#define PRINTING_UNIQUE (print_unique_errors && !found_error_message)
+#define PRINTING_UNIQUE (!found_error_message)
 
 extern int break_after_n_units;
 
