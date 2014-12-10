@@ -170,13 +170,12 @@ cu_index_string(Dwarf_Unsigned index,
     Dwarf_Unsigned culist_len)
 {
     char  temp_space[40];
-    if (index > 162) cout << "dadebug index " <<index<< endl;
     if (index < culist_len) {
         return IToDec(index,4);
     }
     Dwarf_Unsigned type_index = index-culist_len;
     string out = IToDec(index,4);
-    string tnum = "(T" + IToDec(type_index) + ")";
+    string tnum = "(T" + IToDec(type_index,4) + ")";
     out.append(tnum);
     return out;
 }

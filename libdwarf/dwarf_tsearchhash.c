@@ -470,6 +470,9 @@ tsearch_inner( const void *key, struct hs_base* head,
     }
     /* Insert following head record of the chain. */
     q = allocate_ts_entry(key);
+    if (!q) {
+        return q;
+    }
     q->next = s->next;
     s->next = q;
     head->record_count_++;

@@ -466,6 +466,9 @@ tsearch_insert( const void *key,
     int kc = 1;
     if(!h) {
         h = allocate_ts_entry(key);
+        if (!h) {
+            return h;
+        }
         h->color = RED;
         *inserted = TRUE;
         *insertednode = h;
@@ -473,9 +476,19 @@ tsearch_insert( const void *key,
     }
     kc = compar(key,h->keyptr);
     if(kc < 0) {
-        h->llink = tsearch_insert(key,h->llink,compar,inserted, insertednode);
+        struct ts_entry *t = tsearch_insert(key,h->llink,compar,inserted, insertednode);
+        if(!t) {
+           /* out of memory */
+           return t;
+        }
+        h->llink = t;
     } else if (kc > 0) {
-        h->rlink = tsearch_insert(key,h->rlink,compar,inserted, insertednode);
+        struct ts_entry *t = tsearch_insert(key,h->rlink,compar,inserted, insertednode);
+        if(!t) {
+           /* out of memory */
+           return t;
+        }
+        h->rlink = t;
     } else {
         /* Found existing. Return it. */
         return h;

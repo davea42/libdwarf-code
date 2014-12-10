@@ -1,3 +1,11 @@
+2014-12-09  David Anderson
+     * dwarfgen.cc: Add try/catch for bad malloc and
+       any other disasters..
+       Add dwarfgen in the string for all the errors
+       leading to exit
+     * dwarf_tsearchhash.c: Add check for NULL return
+       in tsearch_inner() so we don't just core dump
+       when malloc fails.
 2014-05-08  David Anderson
      * dwarfgen.cc: Now uses the newest form of dwarf_producer_init().
        The old forms no longer are supported.

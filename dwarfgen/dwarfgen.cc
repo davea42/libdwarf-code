@@ -163,7 +163,7 @@ static SectionFromDwarf & FindMySection(const ElfSectIndex & elf_section_index)
         }
         return dwsectab[i];
     }
-    cerr << "Unable to find my dw sec data for elf section " <<
+    cerr << "dwarfgen: Unable to find my dw sec data for elf section " <<
         elf_section_index.getSectIndex() << endl;
     exit(1);
 }
@@ -173,12 +173,12 @@ createnamestr(unsigned strtabstroff)
 {
     Elf_Scn * strscn =elf_newscn(elf);
     if(!strscn) {
-        cerr << "Unable to elf_newscn() on " << outfile << endl;
+        cerr << "dwarfgen: Unable to elf_newscn() on " << outfile << endl;
         exit(1);
     }
     Elf_Data* shstr =elf_newdata(strscn);
     if(!shstr) {
-        cerr << "Unable to elf_newdata() on " << outfile << endl;
+        cerr << "dwarfgen: Unable to elf_newdata() on " << outfile << endl;
         exit(1);
     }
     shstr->d_buf = secstrtab.exposedata();
@@ -190,7 +190,7 @@ createnamestr(unsigned strtabstroff)
 
     Elf32_Shdr * strshdr = elf32_getshdr(strscn);
     if(!strshdr) {
-        cerr << "Unable to elf_getshdr() on " << outfile << endl;
+        cerr << "dwarfgen: Unable to elf_getshdr() on " << outfile << endl;
         exit(1);
     }
     strshdr->sh_name =  strtabstroff;
@@ -258,12 +258,12 @@ create_dw_elf(SectionFromDwarf  &ds)
 {
     Elf_Scn * scn =elf_newscn(elf);
     if(!scn) {
-        cerr << "Unable to elf_newscn() on " << ds.name_  << endl;
+        cerr << "dwarfgen: Unable to elf_newscn() on " << ds.name_  << endl;
         exit(1);
     }
     Elf32_Shdr * shdr = elf32_getshdr(scn);
     if(!shdr) {
-        cerr << "Unable to elf_getshdr() on " << ds.name_ << endl;
+        cerr << "dwarfgen: Unable to elf_getshdr() on " << ds.name_ << endl;
         exit(1);
     }
     shdr->sh_name   = ds.section_name_itself_;
@@ -285,7 +285,7 @@ create_dw_elf(SectionFromDwarf  &ds)
 void ErrorHandler(Dwarf_Error err,Dwarf_Ptr errarg)
 {
     // FIXME do better error handling
-    cerr <<"Giving up, encountered an error" << endl;
+    cerr <<"dwarfgen: Giving up, encountered an error" << endl;
     exit(1);
 }
 
@@ -308,15 +308,14 @@ setinput(enum  WhichInputSource *src,
         *pathreq = false;
         return;
     }
-    cout << "Giving up, only txt obj or def accepted after -t" << endl;
+    cout << "dwarfgen: Giving up, only txt obj or def accepted after -t" << endl;
     exit(1);
 }
 
 int
 main(int argc, char **argv)
 {
-
-
+  try {
     int opt;
     bool pathrequired(false);
     long cu_of_input_we_output = -1;
@@ -337,16 +336,16 @@ main(int argc, char **argv)
             outfile = optarg;
             break;
         case '?':
-            cerr << "Invalid quest? option input " << endl;
+            cerr << "dwarfgen: Invalid quest? option input " << endl;
             exit(1);
 
         default:
-            cerr << "Invalid option input " << endl;
+            cerr << "dwarfgen: Invalid option input " << endl;
             exit(1);
         }
     }
     if ( (optind >= argc) && pathrequired) {
-        cerr << "Expected argument after options! Giving up." << endl;
+        cerr << "dwarfgen: Expected argument after options! Giving up." << endl;
         exit(EXIT_FAILURE);
     }
 
@@ -357,13 +356,13 @@ main(int argc, char **argv)
     if(whichinput == OptReadBin) {
         createIrepFromBinary(infile,Irep);
     } else if (whichinput == OptReadText) {
-        cerr << "text read not supported yet" << endl;
+        cerr << "dwarfgen: dwarfgen: text read not supported yet" << endl;
         exit(EXIT_FAILURE);
     } else if (whichinput == OptPredefined) {
-        cerr << "predefined not supported yet" << endl;
+        cerr << "dwarfgen: predefined not supported yet" << endl;
         exit(EXIT_FAILURE);
     } else {
-        cerr << "Impossible: unknown input style." << endl;
+        cerr << "dwarfgen: Impossible: unknown input style." << endl;
         exit(EXIT_FAILURE);
     }
 
@@ -395,7 +394,7 @@ main(int argc, char **argv)
         &dbg,
         &err);
     if(res != DW_DLV_OK) {
-        cerr << "Failed init_b" << endl;
+        cerr << "dwarfgen: Failed init_b" << endl;
         exit(EXIT_FAILURE);
     }
 
@@ -408,6 +407,20 @@ main(int argc, char **argv)
     dwarf_producer_finish( dbg, 0);
 
     return 0;
+  }
+  catch (std::bad_alloc &ba) {
+     cout << "dwarfgen FAIL:bad alloc caught " << ba.what() << endl;
+     exit(EXIT_FAILURE);
+  }
+  catch (std::exception &e) {
+     cout << "dwarfgen FAIL:std lib exception " << e.what() << endl;
+     exit(EXIT_FAILURE);
+  }
+  catch (...) {
+     cout << "dwarfgen FAIL:other failure " << endl;
+     exit(EXIT_FAILURE);
+  }
+  exit(1);
 }
 
 static void
@@ -416,25 +429,25 @@ write_object_file(Dwarf_P_Debug dbg, IRepresentation &irep)
     int mode =  S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH;
     int fd = open(outfile.c_str(),O_WRONLY|O_CREAT|O_TRUNC, mode);
     if(fd < 0 ) {
-        cerr << "Unable to open " << outfile <<
+        cerr << "dwarfgen: Unable to open " << outfile <<
             " for writing." << endl;
         exit(1);
     }
 
     if(elf_version(EV_CURRENT) == EV_NONE) {
-        cerr << "Bad elf_version" << endl;
+        cerr << "dwarfgen: Bad elf_version" << endl;
         exit(1);
     }
 
     Elf_Cmd cmd = ELF_C_WRITE;
     elf = elf_begin(fd,cmd,0);
     if(!elf) {
-        cerr << "Unable to elf_begin() on " << outfile << endl;
+        cerr << "dwarfgen: Unable to elf_begin() on " << outfile << endl;
         exit(1);
     }
     ehp = elf32_newehdr(elf);
     if(!ehp) {
-        cerr << "Unable to elf_newehdr() on " << outfile << endl;
+        cerr << "dwarfgen: Unable to elf_newehdr() on " << outfile << endl;
         exit(1);
     }
     ehp->e_ident[EI_MAG0] = ELFMAG0;
@@ -463,7 +476,7 @@ write_object_file(Dwarf_P_Debug dbg, IRepresentation &irep)
 
     off_t ures = elf_update(elf,cmd);
     if(ures == (off_t)(-1LL)) {
-        cerr << "Unable to elf_update() on " << outfile << endl;
+        cerr << "dwarfgen: Unable to elf_update() on " << outfile << endl;
         int eer = elf_errno();
         cerr << "Error is " << eer << " " << elf_errmsg(eer) << endl;
         exit(1);
@@ -482,13 +495,13 @@ write_text_section(Elf * elf)
     unsigned  osecnameoff = secstrtab.addString(".text");
     Elf_Scn * scn1 =elf_newscn(elf);
     if(!scn1) {
-        cerr << "Unable to elf_newscn() on " << outfile << endl;
+        cerr << "dwarfgen: Unable to elf_newscn() on " << outfile << endl;
         exit(1);
     }
 
     Elf_Data* ed1 =elf_newdata(scn1);
     if(!ed1) {
-        cerr << "Unable to elf_newdata() on " << outfile << endl;
+        cerr << "dwarfgen: Unable to elf_newdata() on " << outfile << endl;
         exit(1);
     }
     const char *d = "data in section";
@@ -500,7 +513,7 @@ write_text_section(Elf * elf)
     ed1->d_version = EV_CURRENT;
     Elf32_Shdr * shdr1 = elf32_getshdr(scn1);
     if(!shdr1) {
-        cerr << "Unable to elf_getshdr() on " << outfile << endl;
+        cerr << "dwarfgen: Unable to elf_getshdr() on " << outfile << endl;
         exit(1);
     }
     shdr1->sh_name =  osecnameoff;
@@ -524,7 +537,7 @@ InsertDataIntoElf(Dwarf_Signed d,Dwarf_P_Debug dbg,Elf *elf)
 
     Elf_Scn *scn =  elf_getscn(elf,elf_section_index);
     if(!scn) {
-        cerr << "Unable to elf_getscn on disk transform # " << d << endl;
+        cerr << "dwarfgen: Unable to elf_getscn on disk transform # " << d << endl;
         exit(1);
     }
 
@@ -533,7 +546,7 @@ InsertDataIntoElf(Dwarf_Signed d,Dwarf_P_Debug dbg,Elf *elf)
 
     Elf_Data* ed =elf_newdata(scn);
     if(!ed) {
-        cerr << "elf_newdata died on transformed index " << d << endl;
+        cerr << "dwarfgen: elf_newdata died on transformed index " << d << endl;
         exit(1);
     }
     ed->d_buf = bytes;
@@ -594,7 +607,7 @@ bitreplace(char *buf, Dwarf_Unsigned newval,
         uint64_t oldval = *p;
         *p = oldval + my8;
     } else {
-        cerr << " Relocation is length " << length <<
+        cerr << "dwarfgen:  Relocation is length " << length <<
             " which we do not yet handle." << endl;
         exit(1);
     }
@@ -613,14 +626,14 @@ findelfbuf(Elf *elf,Elf_Scn *scn,Dwarf_Unsigned offset, unsigned length)
             continue;
         }
         if(offset < LOFFTODWUNS(ed->d_off)) {
-            cerr << " Relocation at offset  " <<
+            cerr << "dwarfgen:  Relocation at offset  " <<
                 offset << " cannot be accomplished, no buffer. "
                 << endl;
             exit(1);
         }
         Dwarf_Unsigned localoff = offset - ed->d_off;
         if((localoff + length) > ed->d_size) {
-            cerr << " Relocation at offset  " <<
+            cerr << "dwarfgen:  Relocation at offset  " <<
                 offset << " cannot be accomplished, size mismatch. "
                 << endl;
             exit(1);
@@ -655,7 +668,7 @@ write_generated_dbg(Dwarf_P_Debug dbg,Elf * elf,IRepresentation &irep)
     int res = dwarf_get_relocation_info_count(dbg,&reloc_sections_count,
         &drd_version,&err);
     if( res != DW_DLV_OK) {
-        cerr << "Error getting relocation info count." << endl;
+        cerr << "dwarfgen: Error getting relocation info count." << endl;
         exit(1);
 
     }
@@ -677,7 +690,7 @@ write_generated_dbg(Dwarf_P_Debug dbg,Elf * elf,IRepresentation &irep)
             &relocation_buffer_count,
             &reld,&err);
         if (res != DW_DLV_OK) {
-            cerr << "Error getting relocation record " <<
+            cerr << "dwarfgen: Error getting relocation record " <<
                 ct << "."  << endl;
             exit(1);
         }
@@ -687,7 +700,7 @@ write_generated_dbg(Dwarf_P_Debug dbg,Elf * elf,IRepresentation &irep)
             " bufct="     << relocation_buffer_count << endl;
         Elf_Scn *scn =  elf_getscn(elf,si.getSectIndex());
         if(!scn) {
-            cerr << "Unable to elf_getscn  # " << si.getSectIndex() << endl;
+            cerr << "dwarfgen: Unable to elf_getscn  # " << si.getSectIndex() << endl;
             exit(1);
         }
 

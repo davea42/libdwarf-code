@@ -1,3 +1,6 @@
+2014-12-09  David Anderson
+     * print_gdbindex.cc: Make the gdbindex T number (type)
+       match the space formating of the dwarfdump version.
 2014-08-05  David Anderson
      * dwarfdump.cc, common.cc: Updated version string.
 2014-08-04  David Anderson
