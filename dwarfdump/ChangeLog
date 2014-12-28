@@ -1,3 +1,5 @@
+2014-12-28  David Anderson
+     * dwarfdump.c, common.c: Updated version string.
 2014-08-15  David Anderson
      * print_die.c(print_one_die_section): A c99-ism of declarations
        mixed with statements was present. Moved declaration of 'res'
