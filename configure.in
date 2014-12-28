@@ -43,13 +43,6 @@ chckres $? "dwarfdump configure failed"
 echo "done configuring dwarfdump"
 cd ..
 
-cd dwarfdump2 
-echo "configuring dwarfdump2"
-./configure
-chckres $? "dwarfdump2 configure failed"
-echo "done  dwarfdump2"
-cd ..
-
 cd dwarfgen 
 echo "configuring dwarfgen"
 ./configure

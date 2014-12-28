@@ -3659,27 +3659,20 @@ if  test "x$enable_shared" = "xyes"; then :
    shrd='--enable-shared'
 fi
 
-#nonshrd=''
-#AC_ARG_ENABLE(nonshared,AC_HELP_STRING([--disable-nonshared],
-#                [do not build archive library libdwarf.a]))
-#AS_IF([ test "x$enable_nonshared" = "xno"], [
-#   dnl We turn on shared here  as we need at least one thing to build!
-#   nonshrd='--disable-nonshared'
-#   shrd='--enable-shared' ])
 
 chckres() {
 if test $1 != 0
 then
-  echo "Exit,  $2"
+  echo "Configure Error exit:  $2"
   exit 2
 fi
 }
 
 cd libdwarf
-echo "configuring libdwarf $shrd    $nonshrd"
-./configure  "$shrd" "$nonshrd"
+echo "configuring libdwarf $shrd  "
+./configure  "$shrd"
 chckres $? "libdwarf configure failed"
-echo "done configuring libdwarf $shrd    $nonshrd"
+echo "done configuring libdwarf $shrd "
 cd ..
 
 cd dwarfdump
@@ -3689,13 +3682,6 @@ chckres $? "dwarfdump configure failed"
 echo "done configuring dwarfdump"
 cd ..
 
-cd dwarfdump2
-echo "configuring dwarfdump2"
-./configure
-chckres $? "dwarfdump2 configure failed"
-echo "done  dwarfdump2"
-cd ..
-
 cd dwarfgen
 echo "configuring dwarfgen"
 ./configure
@@ -3703,7 +3689,7 @@ chckres $? "dwarfgen configure failed"
 echo "done configuring dwarfgen"
 cd ..
 
-#cd dwarfexample: nothing to configure.
+#dwarfexample: nothing to configure.
 
 ac_config_files="$ac_config_files Makefile"
 

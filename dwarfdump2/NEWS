@@ -1,3 +1,8 @@
+December 28, 2014
+  Ceasing the build and test of dwarfdump2.
+  It is not needed, plain dwarfdump has all the features
+  now (made possible by tsearch).
+  and dwarfdump builds faster and is smaller.
 November 17, 2012
   Added new checking options.
   To get good relocation-handling dwarfdump now expects to read

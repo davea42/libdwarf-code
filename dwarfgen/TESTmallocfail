@@ -1,0 +1,28 @@
+#!/bin/bash
+#
+# This runs dwarfdump/libdwarf with a malloc failure
+# at the $ct'th call to malloc.
+# To expose errors in malloc failure handling.
+
+ct=0
+
+while [ $ct -lt  500 ]
+do
+  echo '===== START TEST'
+  rm -f core
+  rm -f dwarfgen
+  sed -e "s/FAILCOUNT/$ct/" <fakemalloc.in >fakemalloc.c
+  echo TEST $ct
+  grep if fakemalloc.c
+  make
+  ./dwarfgen -h -t obj -c 0  -o test.o ./dwarfgen >junk.x
+  cat junk.x
+  if [ -f core ]
+  then
+    echo "CORE FILE EXISTS, test" $ct
+  fi
+  rm -f core
+  echo '===== END TEST'
+  ct=`expr $ct + 1`
+done
+

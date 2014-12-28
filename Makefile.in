@@ -69,7 +69,6 @@ LDFLAGS =	$(PRELIBS) @LDFLAGS@ $(POSTLIBS)
 basic:
 	cd libdwarf && make
 	cd dwarfdump && make
-	cd dwarfdump2 && make
 
 # The dd target takes the least space and time
 # to build.
@@ -94,12 +93,6 @@ distclean:  clean
 	rm -f dwarfgen/configure.lineno
 	rm -rf dwarfgen/autom4te.cache 
 	rm -f dwarfgen/Makefile
-	rm -f dwarfdump2/config.status 
-	rm -f dwarfdump2/config.log 
-	rm -f dwarfdump2/config.cache 
-	rm -f dwarfdump2/config.h
-	rm -rf dwarfdump2/autom4te.cache 
-	rm -f dwarfdump2/Makefile
 	rm -f dwarfdump/config.status 
 	rm -f dwarfdump/config.log 
 	rm -f dwarfdump/config.cache 

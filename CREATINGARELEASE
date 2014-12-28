@@ -38,10 +38,6 @@ actually does the test running.
 RUNALL.sh 
   Runs one test of the new dwarfdump/libdwarf executable
   against the previously saved dwarfdump/libdwarf executable.
-  Runs one test of the new dwarfdump2/libdwarf executable
-  against the previously saved dwarfdump2/libdwarf executable.
-  Runs one test of the new dwarfdump/libdwarf executable
-  against the new dwarfdump2/libdwarf executable.
 
 The notion of keeping baseline test output and simply
 comparing output of a previous release vs the new 
@@ -49,17 +45,9 @@ candiate release would involve saving some really large files.
 So the present test suite instead runs each test with
 two dwarfdump* versions and compares the output.
 
-Naturally with any significant change one expects
-tests to fail and one will run the tests many times
-to wind up with tests that all pass and because
-one test set compares latest dwarfdump with 
-latest dwarfdump2 output we also know that 
-dwarfdump and dwarfdump2
-work identically.
-
 To run all the tests, most of which
-compare the (committed in tests) dwarfdump and
-dwarfdump2 against your new source: 
+compare the (committed in tests) dwarfdump
+against your new source: 
    sh PICKUPBIN   # This picks up latest source and compiles
                   # (for some files multiple times)
                   # It is essential before each test run.
@@ -74,9 +62,8 @@ To check for failure:
 
 In case all tests pass:
     cp dwarfdump dwarfdump.O
-    cp dwarfdump2 dwarfdump2.O
     commit the updated .O executables as the new baseline good
-    dwarfdump[2] for the next test run.
+    dwarfdump for the next test run.
 
 In the Source:
     sh UPDATEDWARFDUMPVERSION.sh #updates the version string in 4 places

@@ -23,7 +23,7 @@ bldone () {
 
 bldone libdwarf 
 bldone dwarfdump
-bldone dwarfdump2
+#bldone dwarfdump2
 
 
 

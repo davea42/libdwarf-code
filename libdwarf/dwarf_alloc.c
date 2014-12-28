@@ -96,6 +96,16 @@ struct ial_s {
     void (*specialdestructor) (void *);
 };
 
+/*  Used as a way to return meaningful errors when
+    the malloc arena is exhausted (when malloc returns NULL).
+    Not normally used. 
+    New in December 2014.*/
+struct Dwarf_Error_s _dwarf_failsafe_error = {
+    DW_DLE_FAILSAFE_ERRVAL,
+    1
+};
+
+
 /*  To do destructors we need some extra data in every
     _dwarf_get_alloc situation. */
 /* Here is the extra we malloc for a prefix. */
@@ -442,6 +452,16 @@ dwarf_dealloc(Dwarf_Debug dbg,
 
     if (space == NULL) {
         return;
+    }
+    if (alloc_type == DW_DLA_ERROR) {
+       Dwarf_Error ep = (Dwarf_Error)space;
+       if (ep->er_static_alloc) {
+           /*  This is special, malloc arena
+               was exhausted and there is nothing to delete, really. 
+               Set er_errval to signal that the space was dealloc'd. */
+           ep->er_errval = DW_DLE_FAILSAFE_ERRVAL;
+           return;
+       }
     }
     if (dbg == NULL) {
         /*  App error, or an app that failed to succeed in a

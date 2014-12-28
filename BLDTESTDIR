@@ -9,6 +9,8 @@ then
 	echo  Example: BLDTESTDIR 20100501
 	exit 1
 fi
+# Removed dwarfdump2.O from list of files below. December 2014
+#dwarfdump2.O 
 dat=$1
 tmpdir=/var/tmp
 cd dwarftest
@@ -99,7 +101,6 @@ dwarfextract/test1.h \
 dwarfextract/dwarfextract.c \
 val_expr/libpthread-2.5.so \
 ChangeLog \
-dwarfdump2.O \
 frame1/frame1.orig \
 frame1/frame1.c \
 frame1/README \

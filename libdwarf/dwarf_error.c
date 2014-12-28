@@ -351,6 +351,7 @@ const char *_dwarf_errmsgs[] = {
     "DW_DLE_XU_NAME_COL_ERROR(270)",
     "DW_DLE_XU_HASH_ROW_ERROR(271)",
     "DW_DLE_XU_HASH_INDEX_ERROR(272)",
+    "DW_DLE_FAILSAFE_ERRVAL(273)",
 };
 
 
@@ -360,7 +361,20 @@ const char *_dwarf_errmsgs[] = {
     libdwarf consumer document section 3.  Dbg is the Dwarf_debug
     structure being processed.  Error is a pointer to the pointer
     to the error descriptor that will be returned.  Errval is an
-    error code listed in dwarf_error.h.  */
+    error code listed in dwarf_error.h.  
+
+    If the malloc arena is exhausted we return a pointer to
+    a special static error record.  This special singleton
+    is mostly ignored by dwarf_dealloc().
+    Users should not be storing Dwarf_Error pointers
+    for long so this singleton is only going to cause
+    confusion when callers try to save an out-of-memory
+    Dwarf_Error pointer. 
+    The _dwarf_failsafe_error is intended to
+    be an improvement over an abort() call.
+    The failsafe means we will not abort due to
+    a Dwarf_Error struct creation.
+*/
 void
 _dwarf_error(Dwarf_Debug dbg, Dwarf_Error * error, Dwarf_Sword errval)
 {
@@ -375,20 +389,16 @@ _dwarf_error(Dwarf_Debug dbg, Dwarf_Error * error, Dwarf_Sword errval)
             errptr =
                 (Dwarf_Error) _dwarf_get_alloc(dbg, DW_DLA_ERROR, 1);
             if (errptr == NULL) {
-                fprintf(stderr,
-                    "Could not allocate Dwarf_Error structure, "
-                    "abort() in libdwarf.\n");
-                abort();
+                errptr = &_dwarf_failsafe_error; 
+                errptr->er_static_alloc = 1;
             }
         } else {
             /*  We have no dbg to work with. dwarf_init failed. We hack
                 up a special area. */
             errptr = _dwarf_special_no_dbg_error_malloc();
             if (errptr == NULL) {
-                fprintf(stderr,
-                    "Could not allocate Dwarf_Error structure, "
-                    "abort() in libdwarf..\n");
-                abort();
+                errptr = &_dwarf_failsafe_error; 
+                errptr->er_static_alloc = 1;
             }
         }
 
@@ -400,9 +410,8 @@ _dwarf_error(Dwarf_Debug dbg, Dwarf_Error * error, Dwarf_Sword errval)
     if (dbg != NULL && dbg->de_errhand != NULL) {
         errptr = (Dwarf_Error) _dwarf_get_alloc(dbg, DW_DLA_ERROR, 1);
         if (errptr == NULL) {
-            fprintf(stderr, "Could not allocate Dwarf_Error structure,"
-                " abort() in libdwarf.\n");
-            abort();
+            errptr = &_dwarf_failsafe_error; 
+            errptr->er_static_alloc = 1;
         }
         errptr->er_errval = errval;
         dbg->de_errhand(errptr, dbg->de_errarg);

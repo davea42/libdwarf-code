@@ -41,4 +41,22 @@ void _dwarf_error(Dwarf_Debug dbg, Dwarf_Error * error,
 
 struct Dwarf_Error_s {
     Dwarf_Sword er_errval;
+
+    /*  If non-zero the Dwarf_Error_s struct is not malloc'd.
+        To aid when malloc returns NULL.
+        If zero a normal dwarf_dealloc will work.
+        er_static_alloc only accessed by dwarf_alloc.c. 
+
+        If er_static_alloc is 1 in a Dwarf_Error_s
+        struct (set by libdwarf) and client code accidentally
+        turns that 0 to zero through a wild
+        pointer reference (the field is hidden
+        from clients...) then chaos will
+        eventually follow.
+    */
+    int er_static_alloc;
 };
+
+extern struct Dwarf_Error_s _dwarf_failsafe_error;
+
+

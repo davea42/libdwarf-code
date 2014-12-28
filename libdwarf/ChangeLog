@@ -1,3 +1,16 @@
+2014-12-28:  David Anderson
+     * dwarf_alloc.c: Added global _dwarf_failsafe_error
+       to enable better error reporting when malloc arena
+       has no space left. On dwarf_dealloc() avoids attempting
+       a free() of the static struct.
+     * dwarf_error.c,libdwarf.h.in: New error code
+       DW_DLE_FAILSAFE_ERRVAL for the malloc-arena-exhausted
+       case. Now use that static instead of aborting.
+     * dwarf_error.h: New field and library-private extern declaration
+       for the malloc-arena-exhausted case.
+     * libdwarf2.1.mm: Documented the handling of Dwarf_Error
+       when malloc space exhausted.
+     * libdwarf2.1.pdf: Regenerated. Rev 2.23.
 2014-09-10:  David Anderson
      * dwarf_tsearchhash.c(calculate_allowed_fill): Moved a declaration
        to avoid using a C99 feature.

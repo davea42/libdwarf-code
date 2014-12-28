@@ -17,8 +17,3 @@ awk -f UPD.awk  "$x"  dwarfdump/dwarfdump.c >t
 mv t dwarfdump/dwarfdump.c
 awk -f UPD.awk  "$x"  dwarfdump/common.c >t
 mv t dwarfdump/common.c
-awk -f UPD.awk  "$x"  dwarfdump2/dwarfdump.cc > t
-mv t dwarfdump2/dwarfdump.cc
-awk -f UPD.awk  "$x"  dwarfdump2/common.cc >t
-mv t dwarfdump2/common.cc
-

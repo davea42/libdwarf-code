@@ -1,3 +1,11 @@
+2014-12-28  David Anderson
+     * fakemalloc.c,TESTmallocfail: This makes possible
+       a simple test that we handle malloc failure
+       as sensible as possible. The test requires hand
+       modification of the dwarfgen Makefile.
+     * createirepfrombinary.cc: Now prints the libdwarf error
+       number for better error reporting when there is a libdwarf
+       error (running out of malloc space, for example).
 2014-12-09  David Anderson
      * dwarfgen.cc: Add try/catch for bad malloc and
        any other disasters..

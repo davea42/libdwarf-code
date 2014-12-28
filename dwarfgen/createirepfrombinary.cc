@@ -62,6 +62,11 @@ static void readMacroDataFromBinary(Dwarf_Debug dbg, IRepresentation & irep);
 static void readCUDataFromBinary(Dwarf_Debug dbg, IRepresentation & irep);
 static void readGlobals(Dwarf_Debug dbg, IRepresentation & irep);
 
+static void errprint(Dwarf_Error err)
+{
+    cerr << "Error num: " << dwarf_errno(err) << " " << dwarf_errmsg(err) << endl;
+};
+
 class DbgInAutoCloser {
 public:
     DbgInAutoCloser(Dwarf_Debug dbg,int fd): dbg_(dbg),fd_(fd) {};
@@ -148,6 +153,7 @@ readFrameDataFromBinary(Dwarf_Debug dbg, IRepresentation & irep)
             &initial_instructions,&initial_instructions_length,
             &err);
         if(res != DW_DLV_OK) {
+            errprint(err);
             cerr << "Error reading frame data cie index " << i << endl;
             exit(1);
         }
@@ -231,17 +237,20 @@ get_basic_attr_data_one_attr(Dwarf_Debug dbg,
     Dwarf_Half initialform = 0;
     int res = dwarf_whatattr(attr,&attrnum,&error);
     if(res != DW_DLV_OK) {
+        errprint(error);
         cerr << "Unable to get attr number " << endl;
         exit(1);
     }
     res = dwarf_whatform(attr,&finalform,&error);
     if(res != DW_DLV_OK) {
+        errprint(error);
         cerr << "Unable to get attr form " << endl;
         exit(1);
     }
 
     res = dwarf_whatform_direct(attr,&initialform,&error);
     if(res != DW_DLV_OK) {
+        errprint(error);
         cerr << "Unable to get attr direct form " << endl;
         exit(1);
     }
@@ -268,18 +277,21 @@ get_basic_die_data(Dwarf_Debug dbg,
     Dwarf_Error error = 0;
     int res = dwarf_tag(indie,&tagval,&error);
     if(res != DW_DLV_OK) {
+        errprint(error);
         cerr << "Unable to get die tag "<< endl;
         exit(1);
     }
     Dwarf_Off goff = 0;
     res = dwarf_dieoffset(indie,&goff,&error);
     if(res != DW_DLV_OK) {
+        errprint(error);
         cerr << "Unable to get die offset "<< endl;
         exit(1);
     }
     Dwarf_Off localoff = 0;
     res = dwarf_die_CU_offset(indie,&localoff,&error);
     if(res != DW_DLV_OK) {
+        errprint(error);
         cerr << "Unable to get cu die offset "<< endl;
         exit(1);
     }
@@ -302,6 +314,7 @@ get_attrs_of_die(Dwarf_Die in_die,IRDie &irdie,
         return;
     }
     if(res == DW_DLV_ERROR) {
+        errprint(error);
         cerr << "dwarf_attrlist failed " << endl;
         exit(1);
     }
@@ -335,6 +348,7 @@ get_children_of_die(Dwarf_Die in_die,IRDie&irdie,
         return;
     }
     if(res == DW_DLV_ERROR) {
+        errprint(error);
         cerr << "dwarf_child failed " << endl;
         exit(1);
     }
@@ -359,6 +373,7 @@ get_children_of_die(Dwarf_Die in_die,IRDie&irdie,
             break;
         }
         if(res == DW_DLV_ERROR) {
+            errprint(error);
             cerr << "dwarf_siblingof failed " << endl;
             exit(1);
         }
@@ -380,6 +395,7 @@ get_linedata_of_cu_die(Dwarf_Die in_die,IRDie&irdie,
     IRCULineData&culinesdata =  ircudata.getCULines();
     int res = dwarf_srcfiles(in_die,&srcfiles, &srccount,&error);
     if(res == DW_DLV_ERROR) {
+        errprint(error);
         cerr << "dwarf_srcfiles failed " << endl;
         exit(1);
     } else if (res == DW_DLV_NO_ENTRY) {
@@ -400,6 +416,7 @@ get_linedata_of_cu_die(Dwarf_Die in_die,IRDie&irdie,
     Dwarf_Signed linecnt = 0;
     int res2 = dwarf_srclines(in_die,&linebuf,&linecnt, &error);
     if(res == DW_DLV_ERROR) {
+        errprint(error);
         cerr << "dwarf_srclines failed " << endl;
         exit(1);
     } else if (res == DW_DLV_NO_ENTRY) {
@@ -553,6 +570,7 @@ readCUDataFromBinary(Dwarf_Debug dbg, IRepresentation & irep)
             &offset_size, &extension_size,
             &next_cu_header, &error);
         if(res == DW_DLV_ERROR) {
+            errprint(error);
             cerr <<"Error in dwarf_next_cu_header"<< endl;
             exit(1);
         }
@@ -568,6 +586,7 @@ readCUDataFromBinary(Dwarf_Debug dbg, IRepresentation & irep)
         //  not exactly a sibling, but close enough), a cu_die.
         res = dwarf_siblingof(dbg,no_die,&cu_die,&error);
         if(res == DW_DLV_ERROR) {
+            errprint(error);
             cerr <<"Error in dwarf_siblingof on CU die "<< endl;
             exit(1);
         }

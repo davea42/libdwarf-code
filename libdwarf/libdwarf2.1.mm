@@ -8,7 +8,7 @@ n\."
 .nr Hb 5
 \." ==============================================
 \." Put current date in the following at each rev
-.ds vE rev 2.22, July 29, 2014
+.ds vE rev 2.23, December 28, 2014
 \." ==============================================
 \." ==============================================
 .ds | |
@@ -1082,10 +1082,11 @@ a valid \f(CWDwarf_XuIndexHeader\fP pointer as the argument.
 .H 1 "Error Handling"
 The method for detection and disposition of error conditions that arise 
 during access of debugging information via \fIlibdwarf\fP is consistent
-across all \fIlibdwarf\fP functions that are capable of producing an
+across all 
+\fIlibdwarf\fP 
+functions that are capable of producing an
 error.  This section describes the method used by \fIlibdwarf\fP in
 notifying client programs of error conditions. 
-
 .P
 Most functions within \fIlibdwarf\fP accept as an argument a pointer to 
 a \f(CWDwarf_Error\fP descriptor where a \f(CWDwarf_Error\fP descriptor 
@@ -1093,7 +1094,30 @@ is stored if an error is detected by the function.  Routines in the client
 program that provide this argument can query the \f(CWDwarf_Error\fP 
 descriptor to determine the nature of the error and perform appropriate 
 processing. 
-
+The intent is that clients do the appropriate processing
+immediately on encountering an error and then the client
+calls \f(CWdwarf_dealloc\fP to free the descriptor.
+.P
+In the rare case where the malloc arena is exhausted when
+trying to create a Dwarf_Error descriptor a 
+pointer to a statically allocated
+descriptor will be returned.   
+This static descriptor is new in December 2014.
+A call to 
+\f(CWdwarf_dealloc()\fP 
+to free the statically
+allocated descriptor is harmless (it sets the error value
+in the descriptor to  DW_DLE_FAILSAFE_ERRVAL).
+The possible conflation of errors when the arena
+is exhausted
+(and a dwarf_error descriptor is saved past
+the next reader call in any thread)
+is considered better than having
+\fIlibdwarf\fP 
+call
+\f(CWabort()\fP (as earlier 
+\fIlibdwarf\fP 
+did).
 .P
 A client program can also specify a function to be invoked upon detection 
 of an error at the time the library is initialized (see \f(CWdwarf_init()\fP). 
@@ -1105,7 +1129,6 @@ handler and other routines of the client program.  A client program can
 specify or change both the error handling function and the pointer argument 
 after initialization using \f(CWdwarf_seterrhand()\fP and 
 \f(CWdwarf_seterrarg()\fP.
-
 .P
 In the case where \fIlibdwarf\fP functions are not provided a pointer
 to a \f(CWDwarf_Error\fP descriptor, and no error handling function was 

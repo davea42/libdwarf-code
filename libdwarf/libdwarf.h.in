@@ -1121,9 +1121,12 @@ struct Dwarf_Obj_Access_Interface_s {
 #define DW_DLE_XU_HASH_ROW_ERROR               271
 #define DW_DLE_XU_HASH_INDEX_ERROR             272
 
+/* DW_DLE_FAILSAFE_ERRVAL is an aid when out of memory. */
+#define DW_DLE_FAILSAFE_ERRVAL                 273
+
 
     /* DW_DLE_LAST MUST EQUAL LAST ERROR NUMBER */
-#define DW_DLE_LAST        272
+#define DW_DLE_LAST        273
 #define DW_DLE_LO_USER     0x10000
 
     /*  Taken as meaning 'undefined value', this is not
