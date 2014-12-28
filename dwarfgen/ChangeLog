@@ -1,4 +1,6 @@
 2014-12-28  David Anderson
+     * fakemalloc.c: Renamed to fakemalloc.in .
+2014-12-28  David Anderson
      * fakemalloc.c,TESTmallocfail: This makes possible
        a simple test that we handle malloc failure
        as sensible as possible. The test requires hand

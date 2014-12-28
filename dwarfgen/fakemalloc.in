@@ -1,6 +1,3 @@
-
-
-static unsigned count;
 /*
 2000: Could not allocate Dwarf_Error structure, abort() in libdwarf.
 1000: FAIL:bad alloc caughtstd::bad_alloc
@@ -25,13 +22,27 @@ static unsigned count;
 0,1,2,3,4,5: terminate called after throwing an instance of 'std::bad_alloc'
   what():  std::bad_alloc
   Aborted (core dumped)
+
+
+Configure generates the following for Makefile.
+$(CXX) $(CXXFLAGS) -o $@ $(DGOBJECTS) $(LDFLAGS)
+
+In the generated Makefile, replace the above line with
+these two lines.
+$(CC) $(CFLAGS) -c fakemalloc.o
+$(CXX) $(CXXFLAGS) -o $@ $(DGOBJECTS) $(LDFLAGS) fakemalloc.o
+
+Run tests using the script TESTmallocfail
+
 */
 
+static unsigned count;
 extern void * __libc_malloc();
 
 void *malloc(unsigned len)
 {
-  if (count == 499) {
+  /*  Perhaps the test should be count >= FAILCOUNT  ??? */
+  if (count == FAILCOUNT) {
     return 0;
   }
   count++;
