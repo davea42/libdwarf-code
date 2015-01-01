@@ -104,6 +104,13 @@ dwarf_whatform_direct(Dwarf_Attribute attr,
     *return_form = attr->ar_attribute_form_direct;
     return (DW_DLV_OK);
 }
+
+
+/*  This code was contributed some time ago
+    and the return
+    value is in the wrong form, 
+    but we are not fixing it.
+*/
 void *
 dwarf_uncompress_integer_block(
     Dwarf_Debug      dbg,
@@ -1106,6 +1113,7 @@ dwarf_formstring(Dwarf_Attribute attr,
     return (DW_DLV_ERROR);
 }
 
+
 int
 dwarf_formexprloc(Dwarf_Attribute attr,
     Dwarf_Unsigned * return_exprlen,
@@ -1124,10 +1132,19 @@ dwarf_formexprloc(Dwarf_Attribute attr,
         return (DW_DLV_ERROR);
     }
     if (attr->ar_attribute_form == DW_FORM_exprloc ) {
+        Dwarf_Die die = 0;
         Dwarf_Word leb_len = 0;
         Dwarf_Unsigned exprlen =
             (_dwarf_decode_u_leb128(attr->ar_debug_ptr, &leb_len));
         Dwarf_Small * addr = attr->ar_debug_ptr;
+        /*  Is the block entirely in the section, or is
+            there bug somewhere? */
+        die = attr->ar_die;
+        if (_dwarf_reference_outside_section(die,
+            (Dwarf_Small *)addr, ((Dwarf_Small *)addr)+exprlen +leb_len)) {
+            _dwarf_error(dbg, error,DW_DLE_ATTR_OUTSIDE_SECTION);
+            return DW_DLV_ERROR;
+        }
         *return_exprlen = exprlen;
         *block_ptr = addr + leb_len;
         return DW_DLV_OK;

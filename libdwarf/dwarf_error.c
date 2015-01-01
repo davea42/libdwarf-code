@@ -352,6 +352,7 @@ const char *_dwarf_errmsgs[] = {
     "DW_DLE_XU_HASH_ROW_ERROR(271)",
     "DW_DLE_XU_HASH_INDEX_ERROR(272)",
     "DW_DLE_FAILSAFE_ERRVAL(273)",
+    "DW_DLE_DW_DLE_ATTR_OUTSIDE_SECTION(274)",
 };
 
 

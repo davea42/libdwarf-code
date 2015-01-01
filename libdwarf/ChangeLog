@@ -1,3 +1,22 @@
+2014-12-31:  David Anderson
+     * dwarf_error.c: Add DW_DLE_DW_DLE_ATTR_OUTSIDE_SECTION.
+     * libdwarf.h.in: Add DW_DLE_DW_DLE_ATTR_OUTSIDE_SECTION.
+     * dwarf_form.c(dwarf_formexprloc): Call the new function
+       _dwarf_reference_outside_section() as a check
+       for an exprloc with data that is outside the section it
+       belongs in.  Ie, a bug somewhere. Return error
+       DW_DLE_DW_DLE_ATTR_OUTSIDE_SECTION if applicable.
+     * dwarf_frame2.c(read_encoded_ptr): Pass error down so we set
+       a complete Dwarf_Error record at the point of error.
+       Just three functions that could use this were changed.
+     * dwarf_leb.c(_dwarf_decode_u_leb128): Presented with bogus
+       leb values we stop scanning the leb number before
+       overrunning our value-output buffer (and dumping core).
+       The change is reasonably adequate but will not catch
+       all cases.
+     * dwarf_query.c(dwarf_attrlist): Call _dwarf_reference_outside_section
+       to check the pointer is valid.
+     * dwarf_util.c,dwarf_util.h: Implement _dwarf_reference_outside_section().
 2014-12-28:  David Anderson
      * dwarf_alloc.c: Added global _dwarf_failsafe_error
        to enable better error reporting when malloc arena

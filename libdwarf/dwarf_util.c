@@ -480,6 +480,36 @@ _dwarf_string_valid(void *startptr, void *endptr)
     return 0;                   /* FAIL! bad string! */
 }
 
+
+/*  Return non-zero if the start/end are not valid for the
+    die's section. 
+    Return 0 if valid*/
+int
+_dwarf_reference_outside_section(Dwarf_Die die,
+    Dwarf_Small * startaddr,
+    Dwarf_Small * pastend)
+{
+    Dwarf_Debug dbg = 0;
+    Dwarf_CU_Context contxt = 0;
+    struct Dwarf_Section_s *sec = 0;
+
+    contxt = die->di_cu_context;
+    dbg = contxt->cc_dbg;
+    if (die->di_is_info) {
+        sec = &dbg->de_debug_info;
+    } else {
+        sec = &dbg->de_debug_types;
+    }
+    if (startaddr < sec->dss_data) {
+        return 1;
+    }
+    if (pastend > (sec->dss_data + sec->dss_size)) {
+        return 1;
+    }
+    return 0;
+}
+
+
 /*
   A byte-swapping version of memcpy
   for cross-endian use.

@@ -328,5 +328,9 @@ int  _dwarf_load_debug_types(Dwarf_Debug dbg, Dwarf_Error *error);
 void _dwarf_free_abbrev_hash_table_contents(Dwarf_Debug dbg,
     struct Dwarf_Hash_Table_s* hash_table);
 int _dwarf_get_address_size(Dwarf_Debug dbg, Dwarf_Die die);
+int _dwarf_reference_outside_section(Dwarf_Die die,
+    Dwarf_Small * startaddr,
+    Dwarf_Small * pastend);
+
 
 #endif /* DWARF_UTIL_H */

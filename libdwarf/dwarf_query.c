@@ -183,7 +183,10 @@ dwarf_tag(Dwarf_Die die, Dwarf_Half * tag, Dwarf_Error * error)
     return DW_DLV_OK;
 }
 
-
+/*  If the input is improper (see DW_DLV_ERROR)
+    this may leak memory. Such badly formed input
+    should be very very rare.
+*/
 int
 dwarf_attrlist(Dwarf_Die die,
     Dwarf_Attribute ** attrbuf,
@@ -242,6 +245,12 @@ dwarf_attrlist(Dwarf_Die die,
                 DECODE_LEB128_UWORD(info_ptr, utmp6);
                 attr_form = (Dwarf_Half) utmp6;
                 new_attr->ar_attribute_form = attr_form;
+            }
+            if (_dwarf_reference_outside_section(die,
+               (Dwarf_Small*) info_ptr,
+               (Dwarf_Small*) info_ptr)) {
+               _dwarf_error(dbg, error,DW_DLE_ATTR_OUTSIDE_SECTION);
+               return DW_DLV_ERROR;
             }
             new_attr->ar_cu_context = die->di_cu_context;
             new_attr->ar_debug_ptr = info_ptr;
