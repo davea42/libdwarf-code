@@ -1,4 +1,8 @@
 2015-01-03  David Anderson
+     * libdwarf2p.1.mm: Somehow dwarf_transform_to_disk_form()
+       was not documented. Now it is.
+     * libdwarf2p.1.pdf: Regenerated, version 1.38.
+2015-01-03  David Anderson
      * dwarf_allo.c: Comment the allocation table base
        more carefully.
      * dwarf_base_types.h: Making DW_DLA defines more
