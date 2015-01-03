@@ -211,7 +211,7 @@ struct ial_s alloc_instance_basics[ALLOC_AREA_INDEX_TABLE_MAX] = {
     /* 37 DW_DLA_LOC_CHAIN */
     {sizeof(struct Dwarf_Loc_Chain_s),MULTIPLY_NO,  0, 0},
 
-    /* 38 DW_DLA_HASH_TABLE */
+    /* 38 0x26 DW_DLA_HASH_TABLE */
     {sizeof(struct Dwarf_Hash_Table_s),MULTIPLY_NO, 0, 0},
 
     /*  The following really use Global struct: used to be unique struct
@@ -220,25 +220,28 @@ struct ial_s alloc_instance_basics[ALLOC_AREA_INDEX_TABLE_MAX] = {
     DW_DLA_FUNC, DW_DLA_TYPENAME, DW_DLA_VAR, DW_DLA_WEAK also use
     the global types.  */
 
-    /* 39 DW_DLA_FUNC_CONTEXT */
+    /* 39 0x27 DW_DLA_FUNC_CONTEXT */
     {sizeof(struct Dwarf_Global_Context_s),MULTIPLY_NO,  0, 0},
 
-    /* 40 DW_DLA_TYPENAME_CONTEXT */
+    /* 40 0x28 DW_DLA_TYPENAME_CONTEXT */
     {sizeof(struct Dwarf_Global_Context_s),MULTIPLY_NO,  0, 0},
 
-    /* 41 DW_DLA_VAR_CONTEXT */
+    /* 41 0x29 DW_DLA_VAR_CONTEXT */
     {sizeof(struct Dwarf_Global_Context_s),MULTIPLY_NO,  0, 0},
 
-    /* 42 DW_DLA_WEAK_CONTEXT */
+    /* 42 0x2a DW_DLA_WEAK_CONTEXT */
     {sizeof(struct Dwarf_Global_Context_s),MULTIPLY_NO,  0, 0},
 
-    /* 43 DW_DLA_PUBTYPES_CONTEXT DWARF3 */
+    /* 43 0x2b DW_DLA_PUBTYPES_CONTEXT DWARF3 */
     {sizeof(struct Dwarf_Global_Context_s),MULTIPLY_NO,  0, 0},
 
-    {sizeof(struct Dwarf_Hash_Table_Entry_s),MULTIPLY_CT,0,0 }, /* 44 DW_DLA_HASH_TABLE_ENTRY */
+    /* 44 0x2c DW_DLA_HASH_TABLE_ENTRY */
+    {sizeof(struct Dwarf_Hash_Table_Entry_s),MULTIPLY_CT,0,0 }, 
+    /* 0x2d - 0x2f, reserved for future internal use. */
     {sizeof(int),MULTIPLY_NO,  0, 0}, /* reserved for future internal  types*/
     {sizeof(int),MULTIPLY_NO,  0, 0}, /* reserved for future internal  types*/
     {sizeof(int),MULTIPLY_NO,  0, 0}, /* reserved for future internal  types*/
+    /* 0x30-0x36 reserved for future internal use. */ 
     {sizeof(int),MULTIPLY_NO,  0, 0}, /* reserved for future internal  types*/
     {sizeof(int),MULTIPLY_NO,  0, 0}, /* reserved for future internal  types*/
     {sizeof(int),MULTIPLY_NO,  0, 0}, /* reserved for future internal  types*/
@@ -248,10 +251,10 @@ struct ial_s alloc_instance_basics[ALLOC_AREA_INDEX_TABLE_MAX] = {
     {sizeof(int),MULTIPLY_NO,  0, 0}, /* reserved for future internal  types*/
 
     /*  now,  we have types that are public. */
-    /*  55.  New in June 2014. Gdb. */
+    /* 0x37 55.  New in June 2014. Gdb. */
     {sizeof(struct Dwarf_Gdbindex_s),MULTIPLY_NO,  0, 0},
 
-    /*  56.  New in July 2014. DWARF5 DebugFission dwp file sections
+    /* 0x38 56.  New in July 2014. DWARF5 DebugFission dwp file sections
         .debug_cu_index and .debug_tu_index . */
     {sizeof(struct Dwarf_Xu_Index_Header_s),MULTIPLY_NO,  0, 0},
 };

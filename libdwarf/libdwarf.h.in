@@ -1123,11 +1123,17 @@ struct Dwarf_Obj_Access_Interface_s {
 
 /* DW_DLE_FAILSAFE_ERRVAL is an aid when out of memory. */
 #define DW_DLE_FAILSAFE_ERRVAL                 273
-#define DW_DLE_ATTR_OUTSIDE_SECTION            274
-
+#define DW_DLE_ARANGE_ERROR                    274
+#define DW_DLE_PUBNAMES_ERROR                  275
+#define DW_DLE_FUNCNAMES_ERROR                 276
+#define DW_DLE_TYPENAMES_ERROR                 277
+#define DW_DLE_VARNAMES_ERROR                  278
+#define DW_DLE_WEAKNAMES_ERROR                 279
+#define DW_DLE_RELOCS_ERROR                    280
+#define DW_DLE_ATTR_OUTSIDE_SECTION            281
 
     /* DW_DLE_LAST MUST EQUAL LAST ERROR NUMBER */
-#define DW_DLE_LAST        274
+#define DW_DLE_LAST        281
 #define DW_DLE_LO_USER     0x10000
 
     /*  Taken as meaning 'undefined value', this is not

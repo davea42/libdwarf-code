@@ -1,2 +1,11 @@
+2015-01-03  David Anderson
+     * dwarf_allo.c: Comment the allocation table base
+       more carefully.
+     * dwarf_base_types.h: Making DW_DLA defines more
+       readable, more consistent with other instances.
+     * libdwarf.h.in: Adding producer error codes.
+       The producer library has some places error values
+       are misidentified. Main effect: documentation.
+     * dwarf_error.c:  Add the strings for the new error codes.
 2015-01-01  David Anderson
      *	A new year begins.

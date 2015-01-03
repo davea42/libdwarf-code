@@ -352,7 +352,14 @@ const char *_dwarf_errmsgs[] = {
     "DW_DLE_XU_HASH_ROW_ERROR(271)",
     "DW_DLE_XU_HASH_INDEX_ERROR(272)",
     "DW_DLE_FAILSAFE_ERRVAL(273)",
-    "DW_DLE_DW_DLE_ATTR_OUTSIDE_SECTION(274)",
+    "DW_DLE_ARANGE_ERROR(274) producer problem in object generation",
+    "DW_DLE_PUBNAMES_ERROR(275) producer problem in object generation",
+    "DW_DLE_FUNCNAMES_ERROR(276) producer problem in object generation",
+    "DW_DLE_TYPENAMES_ERROR(277) producer problem in object generation",
+    "DW_DLE_VARNAMES_ERROR(278) producer problem in object generation",
+    "DW_DLE_WEAKNAMES_ERROR(279) producer problem in object generation",
+    "DW_DLE_RELOCS_ERROR(280) producer problem in object generation",
+    "DW_DLE_DW_DLE_ATTR_OUTSIDE_SECTION(281)",
 };
 
 

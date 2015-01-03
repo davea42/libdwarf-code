@@ -61,24 +61,26 @@
 
 /*  These are allocation type codes for structs that
     are internal to the Libdwarf Consumer library.  */
-#define DW_DLA_ABBREV_LIST	DW_DLA_RANGES + 1
-#define DW_DLA_CHAIN		DW_DLA_RANGES + 2
-#define DW_DLA_CU_CONTEXT	DW_DLA_RANGES + 3
-#define DW_DLA_FRAME		DW_DLA_RANGES + 4
-#define DW_DLA_GLOBAL_CONTEXT	DW_DLA_RANGES + 5
-#define DW_DLA_FILE_ENTRY	DW_DLA_RANGES + 6
-#define DW_DLA_LINE_CONTEXT	DW_DLA_RANGES + 7
-#define DW_DLA_LOC_CHAIN	DW_DLA_RANGES + 8
-#define DW_DLA_HASH_TABLE	DW_DLA_RANGES + 9
-#define DW_DLA_FUNC_CONTEXT	DW_DLA_RANGES + 10
-#define DW_DLA_TYPENAME_CONTEXT	DW_DLA_RANGES + 11
-#define DW_DLA_VAR_CONTEXT	DW_DLA_RANGES + 12
-#define DW_DLA_WEAK_CONTEXT	DW_DLA_RANGES + 13
-#define DW_DLA_PUBTYPES_CONTEXT	DW_DLA_RANGES + 14 /* DWARF3 */
-#define DW_DLA_HASH_TABLE_ENTRY	DW_DLA_RANGES + 15
+#define DW_DLA_ABBREV_LIST      0x1e
+#define DW_DLA_CHAIN            0x1f
+#define DW_DLA_CU_CONTEXT       0x20
+#define DW_DLA_FRAME            0x21
+#define DW_DLA_GLOBAL_CONTEXT   0x22
+#define DW_DLA_FILE_ENTRY       0x23
+#define DW_DLA_LINE_CONTEXT     0x24
+#define DW_DLA_LOC_CHAIN        0x25
+#define DW_DLA_HASH_TABLE       0x26
+#define DW_DLA_FUNC_CONTEXT     0x27
+#define DW_DLA_TYPENAME_CONTEXT 0x28
+#define DW_DLA_VAR_CONTEXT      0x29
+#define DW_DLA_WEAK_CONTEXT     0x2a
+#define DW_DLA_PUBTYPES_CONTEXT 0x2b  /* DWARF3 */
+#define DW_DLA_HASH_TABLE_ENTRY 0x2c
+/* Thru 0x36 reserved for internal future use. */
 
-/* Maximum number of allocation types for allocation routines. */
-#define MAX_DW_DLA		DW_DLA_HASH_TABLE_ENTRY
+/*  Maximum number of allocation types for allocation routines. 
+    Only used with malloc_check.c and that is basically obsolete. */
+#define MAX_DW_DLA		0x38
 
 /*Dwarf_Word  is unsigned word usable for index, count in memory */
 /*Dwarf_Sword is   signed word usable for index, count in memory */

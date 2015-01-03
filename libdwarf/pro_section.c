@@ -191,7 +191,8 @@ dwarf_transform_to_disk_form(Dwarf_P_Debug dbg, Dwarf_Error * error)
 {
     /*  Section data in written out in a number of buffers. Each
         _generate_*() function returns a cumulative count of buffers for
-        all the sections. get_section_bytes() returns pointers to these
+        all the sections. 
+        dwarf_get_section_bytes() returns pointers to these
         buffers one at a time. */
     int nbufs = 0;
     int sect = 0;
@@ -364,7 +365,7 @@ dwarf_transform_to_disk_form(Dwarf_P_Debug dbg, Dwarf_Error * error)
     if (dbg->de_arange) {
         nbufs = _dwarf_transform_arange_to_disk(dbg, error);
         if (nbufs < 0) {
-            DWARF_P_DBG_ERROR(dbg, DW_DLE_DEBUGINFO_ERROR,
+            DWARF_P_DBG_ERROR(dbg, DW_DLE_ARANGE_ERROR,
                 DW_DLV_NOCOUNT);
         }
     }
@@ -375,7 +376,7 @@ dwarf_transform_to_disk_form(Dwarf_P_Debug dbg, Dwarf_Error * error)
             DEBUG_PUBNAMES,
             error);
         if (nbufs < 0) {
-            DWARF_P_DBG_ERROR(dbg, DW_DLE_DEBUGINFO_ERROR,
+            DWARF_P_DBG_ERROR(dbg, DW_DLE_PUBNAMES_ERROR,
                 DW_DLV_NOCOUNT);
         }
     }
@@ -396,7 +397,7 @@ dwarf_transform_to_disk_form(Dwarf_P_Debug dbg, Dwarf_Error * error)
             DEBUG_FUNCNAMES,
             error);
         if (nbufs < 0) {
-            DWARF_P_DBG_ERROR(dbg, DW_DLE_DEBUGINFO_ERROR,
+            DWARF_P_DBG_ERROR(dbg, DW_DLE_FUNCNAMES_ERROR,
                 DW_DLV_NOCOUNT);
         }
     }
@@ -407,7 +408,7 @@ dwarf_transform_to_disk_form(Dwarf_P_Debug dbg, Dwarf_Error * error)
             DEBUG_TYPENAMES,
             error);
         if (nbufs < 0) {
-            DWARF_P_DBG_ERROR(dbg, DW_DLE_DEBUGINFO_ERROR,
+            DWARF_P_DBG_ERROR(dbg, DW_DLE_TYPENAMES_ERROR,
                 DW_DLV_NOCOUNT);
         }
     }
@@ -419,7 +420,7 @@ dwarf_transform_to_disk_form(Dwarf_P_Debug dbg, Dwarf_Error * error)
             error);
 
         if (nbufs < 0) {
-            DWARF_P_DBG_ERROR(dbg, DW_DLE_DEBUGINFO_ERROR,
+            DWARF_P_DBG_ERROR(dbg, DW_DLE_VARNAMES_ERROR,
                 DW_DLV_NOCOUNT);
         }
     }
@@ -428,21 +429,21 @@ dwarf_transform_to_disk_form(Dwarf_P_Debug dbg, Dwarf_Error * error)
         nbufs = _dwarf_transform_simplename_to_disk(dbg,
             dwarf_snk_weakname, DEBUG_WEAKNAMES, error);
         if (nbufs < 0) {
-            DWARF_P_DBG_ERROR(dbg, DW_DLE_DEBUGINFO_ERROR,
+            DWARF_P_DBG_ERROR(dbg, DW_DLE_WEAKNAMES_ERROR,
                 DW_DLV_NOCOUNT);
         }
     }
 
     {
-        Dwarf_Signed new_secs = 0;
+        Dwarf_Signed new_chunks = 0;
         int res = 0;
 
-        res = dbg->de_transform_relocs_to_disk(dbg, &new_secs);
+        res = dbg->de_transform_relocs_to_disk(dbg, &new_chunks);
         if (res != DW_DLV_OK) {
-            DWARF_P_DBG_ERROR(dbg, DW_DLE_DEBUGINFO_ERROR,
+            DWARF_P_DBG_ERROR(dbg, DW_DLE_RELOCS_ERROR,
                 DW_DLV_NOCOUNT);
         }
-        nbufs += new_secs;
+        nbufs += new_chunks;
     }
     return nbufs;
 }
