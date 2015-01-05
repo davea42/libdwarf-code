@@ -58,7 +58,7 @@ $Header: /plroot/cmplrs.src/v7.4.5m/.RCS/PL/dwarfdump/RCS/dwarfdump.c,v 1.48 200
 extern int elf_open(const char *name,int mode);
 #endif /* WIN32 */
 
-#define DWARFDUMP_VERSION " Wed Dec 31 15:34:57 PST 2014  "
+#define DWARFDUMP_VERSION " Mon Jan  5 11:27:10 PST 2015  "
 
 extern char *optarg;
 
@@ -999,7 +999,7 @@ static int
 process_one_file(Elf * elf, const char * file_name, int archive,
     struct dwconf_s *config_file_data)
 {
-    Dwarf_Debug dbg;
+    Dwarf_Debug dbg = 0;
     int dres;
     struct Dwarf_Printf_Callback_Info_s printfcallbackdata;
 
@@ -1961,7 +1961,12 @@ print_error(Dwarf_Debug dbg,
     Dwarf_Error err)
 {
     print_error_and_continue(dbg,msg,dwarf_code,err);
-    dwarf_finish(dbg, &err);
+    if (dbg) {
+        /*  If dbg was never initialized dwarf_finish
+            can do nothing useful. There is no
+            global-state for libdwarf to clean up. */
+        dwarf_finish(dbg, &err);
+    }
     exit(FAILED);
 }
 /* ARGSUSED */

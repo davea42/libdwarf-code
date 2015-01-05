@@ -165,7 +165,7 @@ dwarf_elf_init_file_ownership(dwarf_elf_handle elf_file_pointer,
         &binary_interface,
         &err);
     if (res != DW_DLV_OK){
-        DWARF_DBG_ERROR(NULL, err, DW_DLV_ERROR);
+        return res;
     }
 
     /*  This mallocs space and returns pointer thru ret_dbg,
@@ -190,6 +190,9 @@ dwarf_elf_init_file_ownership(dwarf_elf_handle elf_file_pointer,
 int
 dwarf_finish(Dwarf_Debug dbg, Dwarf_Error * error)
 {
+    if(!dbg) {
+        DWARF_DBG_ERROR(NULL, DW_DLE_DBG_NULL, DW_DLV_ERROR);
+    }
     dwarf_elf_object_access_finish(dbg->de_obj_file);
 
     return dwarf_object_finish(dbg, error);

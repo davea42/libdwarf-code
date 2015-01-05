@@ -1,2 +1,6 @@
+2015-01-05  David Anderson
+     * dwarfdump.c:  Don't call dwarf_finish() if
+       the dwarf-init call failed.
+     * common.c,dwarfdump.c: Updated version string.
 2015-01-01  David Anderson
      *	A new year begins.
