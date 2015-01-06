@@ -191,7 +191,7 @@ dwarf_transform_to_disk_form(Dwarf_P_Debug dbg, Dwarf_Error * error)
 {
     /*  Section data in written out in a number of buffers. Each
         _generate_*() function returns a cumulative count of buffers for
-        all the sections. 
+        all the sections.
         dwarf_get_section_bytes() returns pointers to these
         buffers one at a time. */
     int nbufs = 0;

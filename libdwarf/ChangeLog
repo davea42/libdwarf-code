@@ -1,4 +1,9 @@
 2015-01-06  David Anderson
+     * 	dwarf_alloc.c, dwarf_base_types.h, dwarf_elf_access.c,
+        dwarf_error.c,dwarf_error.h,dwarf_form.c,dwarf_init_finish.c,
+        dwarf_leb.c,dwarf_query.c,pro_section.c: Fixed indents and
+        removed trailing whitespace.
+2015-01-06  David Anderson
      * dwarf_frame.c( _dwarf_get_fde_info_for_a_pc_row): Cast
        the pointer returned from _dwarf_get_alloc(), somehow
        this cast was omitted.

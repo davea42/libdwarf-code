@@ -851,19 +851,19 @@ dwarf_object_init(Dwarf_Obj_Access_Interface* obj, Dwarf_Handler errhand,
         /* We cannot use any _dwarf_setup()
             error here as
             we are freeing dbg, making that error (setup
-            as part of dbg) stale. 
+            as part of dbg) stale.
             Hence we have to make a new error without a dbg.
-            But error might be NULL and the init call 
+            But error might be NULL and the init call
             error-handler function might be set.
         */
         int myerr = 0;
         if ( (setup_result == DW_DLV_ERROR) && error ) {
-           /*  Preserve our _dwarf_setup error number, but
+            /*  Preserve our _dwarf_setup error number, but
                 this does not apply if error NULL. */
-           myerr = dwarf_errno(*error);
-           /*  deallocate the soon-stale error pointer. */
-           dwarf_dealloc(dbg,*error,DW_DLA_ERROR);
-           *error = 0;
+            myerr = dwarf_errno(*error);
+            /*  deallocate the soon-stale error pointer. */
+            dwarf_dealloc(dbg,*error,DW_DLA_ERROR);
+            *error = 0;
         }
         /*  The status we want to return  here is of _dwarf_setup,
             not of the  _dwarf_free_all_of_one_debug(dbg) call.

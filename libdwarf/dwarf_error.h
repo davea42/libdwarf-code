@@ -45,7 +45,7 @@ struct Dwarf_Error_s {
     /*  If non-zero the Dwarf_Error_s struct is not malloc'd.
         To aid when malloc returns NULL.
         If zero a normal dwarf_dealloc will work.
-        er_static_alloc only accessed by dwarf_alloc.c. 
+        er_static_alloc only accessed by dwarf_alloc.c.
 
         If er_static_alloc is 1 in a Dwarf_Error_s
         struct (set by libdwarf) and client code accidentally

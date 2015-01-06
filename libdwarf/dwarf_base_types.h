@@ -78,7 +78,7 @@
 #define DW_DLA_HASH_TABLE_ENTRY 0x2c
 /* Thru 0x36 reserved for internal future use. */
 
-/*  Maximum number of allocation types for allocation routines. 
+/*  Maximum number of allocation types for allocation routines.
     Only used with malloc_check.c and that is basically obsolete. */
 #define MAX_DW_DLA		0x38
 

@@ -108,7 +108,7 @@ dwarf_whatform_direct(Dwarf_Attribute attr,
 
 /*  This code was contributed some time ago
     and the return
-    value is in the wrong form, 
+    value is in the wrong form,
     but we are not fixing it.
 */
 void *

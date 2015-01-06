@@ -98,7 +98,7 @@ struct ial_s {
 
 /*  Used as a way to return meaningful errors when
     the malloc arena is exhausted (when malloc returns NULL).
-    Not normally used. 
+    Not normally used.
     New in December 2014.*/
 struct Dwarf_Error_s _dwarf_failsafe_error = {
     DW_DLE_FAILSAFE_ERRVAL,
@@ -236,12 +236,12 @@ struct ial_s alloc_instance_basics[ALLOC_AREA_INDEX_TABLE_MAX] = {
     {sizeof(struct Dwarf_Global_Context_s),MULTIPLY_NO,  0, 0},
 
     /* 44 0x2c DW_DLA_HASH_TABLE_ENTRY */
-    {sizeof(struct Dwarf_Hash_Table_Entry_s),MULTIPLY_CT,0,0 }, 
+    {sizeof(struct Dwarf_Hash_Table_Entry_s),MULTIPLY_CT,0,0 },
     /* 0x2d - 0x2f, reserved for future internal use. */
     {sizeof(int),MULTIPLY_NO,  0, 0}, /* reserved for future internal  types*/
     {sizeof(int),MULTIPLY_NO,  0, 0}, /* reserved for future internal  types*/
     {sizeof(int),MULTIPLY_NO,  0, 0}, /* reserved for future internal  types*/
-    /* 0x30-0x36 reserved for future internal use. */ 
+    /* 0x30-0x36 reserved for future internal use. */
     {sizeof(int),MULTIPLY_NO,  0, 0}, /* reserved for future internal  types*/
     {sizeof(int),MULTIPLY_NO,  0, 0}, /* reserved for future internal  types*/
     {sizeof(int),MULTIPLY_NO,  0, 0}, /* reserved for future internal  types*/
@@ -459,14 +459,14 @@ dwarf_dealloc(Dwarf_Debug dbg,
     type = alloc_type;
     malloc_addr = (char *)space - DW_RESERVE;
     if (alloc_type == DW_DLA_ERROR) {
-       Dwarf_Error ep = (Dwarf_Error)space;
-       if (ep->er_static_alloc) {
-           /*  This is special, malloc arena
-               was exhausted and there is nothing to delete, really. 
-               Set er_errval to signal that the space was dealloc'd. */
-           ep->er_errval = DW_DLE_FAILSAFE_ERRVAL;
-           return;
-       }
+        Dwarf_Error ep = (Dwarf_Error)space;
+        if (ep->er_static_alloc) {
+            /*  This is special, malloc arena
+                was exhausted and there is nothing to delete, really. 
+                Set er_errval to signal that the space was dealloc'd. */
+            ep->er_errval = DW_DLE_FAILSAFE_ERRVAL;
+            return;
+        }
     }
     if (dbg == NULL) {
         /*  App error, or an app that failed to succeed in a

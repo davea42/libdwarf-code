@@ -41,9 +41,9 @@
 #include <stdio.h>
 
 /*  10 bytes of leb, 7 bits each part of the number, gives
-    room for a 64bit number. 
+    room for a 64bit number.
     While any number of leading zeroes would be legal, so
-    no max is really truly required here, why would a 
+    no max is really truly required here, why would a
     compiler generate leading zeros?  That would
     be strange.
 */
@@ -114,8 +114,8 @@ _dwarf_decode_u_leb128(Dwarf_Small * leb128, Dwarf_Word * leb128_length)
 
         byte_length++;
         if (byte_length > BYTESLEBMAX) {
-            /* Erroneous input. What to do? 
-               Abort? Return error? Just stop here?*/
+            /*  Erroneous input. What to do? 
+                Abort? Return error? Just stop here?*/
             *leb128_length = BYTESLEBMAX;
             return number;
         }
@@ -153,8 +153,8 @@ _dwarf_decode_s_leb128(Dwarf_Small * leb128, Dwarf_Word * leb128_length)
         byte = *leb128;
         byte_length++;
         if (byte_length > BYTESLEBMAX) {
-            /* Erroneous input. What to do? 
-               Abort? Return error? Just stop here?*/
+            /*  Erroneous input. What to do?
+                Abort? Return error? Just stop here?*/
             *leb128_length = BYTESLEBMAX;
             return number;
         }

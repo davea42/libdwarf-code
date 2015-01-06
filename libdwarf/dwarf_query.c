@@ -247,10 +247,10 @@ dwarf_attrlist(Dwarf_Die die,
                 new_attr->ar_attribute_form = attr_form;
             }
             if (_dwarf_reference_outside_section(die,
-               (Dwarf_Small*) info_ptr,
-               (Dwarf_Small*) info_ptr)) {
-               _dwarf_error(dbg, error,DW_DLE_ATTR_OUTSIDE_SECTION);
-               return DW_DLV_ERROR;
+                (Dwarf_Small*) info_ptr,
+                (Dwarf_Small*) info_ptr)) {
+                _dwarf_error(dbg, error,DW_DLE_ATTR_OUTSIDE_SECTION);
+                return DW_DLV_ERROR;
             }
             new_attr->ar_cu_context = die->di_cu_context;
             new_attr->ar_debug_ptr = info_ptr;
@@ -482,7 +482,6 @@ dwarf_hasattr(Dwarf_Die die,
     *return_bool = (true);
     return DW_DLV_OK;
 }
-
 
 int
 dwarf_attr(Dwarf_Die die,

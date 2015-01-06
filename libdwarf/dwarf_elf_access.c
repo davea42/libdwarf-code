@@ -156,8 +156,8 @@ static int dwarf_elf_object_access_load_section(void* obj_in,
     Dwarf_Small** section_data,
     int* error);
 
-/* dwarf_elf_object_access_internals_init() 
-   On error, set *error with libdwarf error code.
+/*  dwarf_elf_object_access_internals_init()
+    On error, set *error with libdwarf error code.
 */
 static int
 dwarf_elf_object_access_internals_init(void* obj_in,
@@ -1169,9 +1169,9 @@ static const struct Dwarf_Obj_Access_Methods_s dwarf_elf_object_access_methods =
 };
 
 
-/* Interface for the ELF object file implementation.  
-   On error this should set *err with the
-   libdwarf error code.
+/*  Interface for the ELF object file implementation.
+    On error this should set *err with the
+    libdwarf error code.
 */
 int
 dwarf_elf_object_access_init(dwarf_elf_handle elf,
