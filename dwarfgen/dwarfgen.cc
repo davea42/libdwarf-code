@@ -315,112 +315,107 @@ setinput(enum  WhichInputSource *src,
 int
 main(int argc, char **argv)
 {
-  try {
-    int opt;
-    bool pathrequired(false);
-    long cu_of_input_we_output = -1;
-    while((opt=getopt(argc,argv,"o:t:c:h")) != -1) {
-        switch(opt) {
-        case 'c':
-            // At present we can only create a single
-            // cu in the output of the libdwarf producer.
-            cu_of_input_we_output = atoi(optarg);
-            break;
-        case 't':
-            setinput(&whichinput,optarg,&pathrequired);
-            break;
-        case 'h':
-            transformHighpcToConst = true;
-            break;
-        case 'o':
-            outfile = optarg;
-            break;
-        case '?':
-            cerr << "dwarfgen: Invalid quest? option input " << endl;
-            exit(1);
-
-        default:
-            cerr << "dwarfgen: Invalid option input " << endl;
-            exit(1);
+    try {
+        int opt;
+        bool pathrequired(false);
+        long cu_of_input_we_output = -1;
+        while((opt=getopt(argc,argv,"o:t:c:h")) != -1) {
+            switch(opt) {
+            case 'c':
+                // At present we can only create a single
+                // cu in the output of the libdwarf producer.
+                cu_of_input_we_output = atoi(optarg);
+                break;
+            case 't':
+                setinput(&whichinput,optarg,&pathrequired);
+                break;
+            case 'h':
+                transformHighpcToConst = true;
+                break;
+            case 'o':
+                outfile = optarg;
+                break;
+            case '?':
+                cerr << "dwarfgen: Invalid quest? option input " << endl;
+                exit(1);
+            default:
+                cerr << "dwarfgen: Invalid option input " << endl;
+                exit(1);
+            }
         }
-    }
-    if ( (optind >= argc) && pathrequired) {
-        cerr << "dwarfgen: Expected argument after options! Giving up." << endl;
+        if ( (optind >= argc) && pathrequired) {
+            cerr << "dwarfgen: Expected argument after options! Giving up."
+                << endl;
+            exit(EXIT_FAILURE);
+        }
+        if(pathrequired) {
+            infile = argv[optind];
+        }
+
+        if(whichinput == OptReadBin) {
+            createIrepFromBinary(infile,Irep);
+        } else if (whichinput == OptReadText) {
+            cerr << "dwarfgen: dwarfgen: text read not supported yet" << endl;
+            exit(EXIT_FAILURE);
+        } else if (whichinput == OptPredefined) {
+            cerr << "dwarfgen: predefined not supported yet" << endl;
+            exit(EXIT_FAILURE);
+        } else {
+            cerr << "dwarfgen: Impossible: unknown input style." << endl;
+            exit(EXIT_FAILURE);
+        }
+        // Example will return error value thru 'err' pointer
+        // and return DW_DLV_BADADDR if there is an error.
+        int ptrsizeflagbit = DW_DLC_POINTER32;
+        int offsetsizeflagbit = DW_DLC_OFFSET32;
+        const char * isa_name = "x86";
+        const char *dwarf_version = "V2";
+        int endian =  DW_DLC_TARGET_LITTLEENDIAN;
+        Dwarf_Ptr errarg = 0;
+        Dwarf_Error err = 0;
+        void *user_data = 0;
+        Dwarf_P_Debug dbg = 0;
+        // We use DW_DLC_SYMBOLIC_RELOCATIONS so we can
+        // read the relocations and do our own relocating.
+        // See calls of dwarf_get_relocation_info().
+        int res = dwarf_producer_init(
+            DW_DLC_WRITE|ptrsizeflagbit|
+            offsetsizeflagbit|DW_DLC_SYMBOLIC_RELOCATIONS|
+            endian,
+            CallbackFunc,
+            0, // errhand
+            errarg,
+            user_data,
+            isa_name,
+            dwarf_version,
+            0, // No extra identifying strings.
+            &dbg,
+            &err);
+        if(res != DW_DLV_OK) {
+            cerr << "dwarfgen: Failed init_b" << endl;
+            exit(EXIT_FAILURE);
+        }
+        transform_irep_to_dbg(dbg,Irep,cu_of_input_we_output);
+        write_object_file(dbg,Irep);
+        // Example calls ErrorHandler if there is an error
+        // (which does not return, see above)
+        // so no need to test for error.
+        dwarf_producer_finish( dbg, 0);
+        return 0;
+    } // End try
+    catch (std::bad_alloc &ba) {
+        cout << "dwarfgen FAIL:bad alloc caught " << ba.what() << endl;
         exit(EXIT_FAILURE);
     }
-
-    if(pathrequired) {
-        infile = argv[optind];
-    }
-
-    if(whichinput == OptReadBin) {
-        createIrepFromBinary(infile,Irep);
-    } else if (whichinput == OptReadText) {
-        cerr << "dwarfgen: dwarfgen: text read not supported yet" << endl;
-        exit(EXIT_FAILURE);
-    } else if (whichinput == OptPredefined) {
-        cerr << "dwarfgen: predefined not supported yet" << endl;
-        exit(EXIT_FAILURE);
-    } else {
-        cerr << "dwarfgen: Impossible: unknown input style." << endl;
+    catch (std::exception &e) {
+        cout << "dwarfgen FAIL:std lib exception " << e.what() << endl;
         exit(EXIT_FAILURE);
     }
-
-    // Example will return error value thru 'err' pointer
-    // and return DW_DLV_BADADDR if there is an error.
-    int ptrsizeflagbit = DW_DLC_POINTER32;
-    int offsetsizeflagbit = DW_DLC_OFFSET32;
-    const char * isa_name = "x86";
-    const char *dwarf_version = "V2";
-    int endian =  DW_DLC_TARGET_LITTLEENDIAN;
-    Dwarf_Ptr errarg = 0;
-    Dwarf_Error err = 0;
-    void *user_data = 0;
-    Dwarf_P_Debug dbg = 0;
-    // We use DW_DLC_SYMBOLIC_RELOCATIONS so we can
-    // read the relocations and do our own relocating.
-    // See calls of dwarf_get_relocation_info().
-    int res = dwarf_producer_init(
-        DW_DLC_WRITE|ptrsizeflagbit|
-        offsetsizeflagbit|DW_DLC_SYMBOLIC_RELOCATIONS|
-        endian,
-        CallbackFunc,
-        0, // errhand
-        errarg,
-        user_data,
-        isa_name,
-        dwarf_version,
-        0, // No extra identifying strings.
-        &dbg,
-        &err);
-    if(res != DW_DLV_OK) {
-        cerr << "dwarfgen: Failed init_b" << endl;
+    catch (...) {
+        cout << "dwarfgen FAIL:other failure " << endl;
         exit(EXIT_FAILURE);
     }
-
-    transform_irep_to_dbg(dbg,Irep,cu_of_input_we_output);
-
-    write_object_file(dbg,Irep);
-    // Example calls ErrorHandler if there is an error
-    // (which does not return, see above)
-    // so no need to test for error.
-    dwarf_producer_finish( dbg, 0);
-
-    return 0;
-  }
-  catch (std::bad_alloc &ba) {
-     cout << "dwarfgen FAIL:bad alloc caught " << ba.what() << endl;
-     exit(EXIT_FAILURE);
-  }
-  catch (std::exception &e) {
-     cout << "dwarfgen FAIL:std lib exception " << e.what() << endl;
-     exit(EXIT_FAILURE);
-  }
-  catch (...) {
-     cout << "dwarfgen FAIL:other failure " << endl;
-     exit(EXIT_FAILURE);
-  }
-  exit(1);
+    exit(1);
 }
 
 static void
