@@ -103,7 +103,7 @@ No blank lines or commentary allowed, no symbols, just numbers.
 #define  STD_ATTR_TABLE_COLUMNS  7
 /* tag/attr tree common extension maximums. */
 #define EXT_ATTR_TABLE_ROWS 7
-#define EXT_ATTR_TABLE_COLS 7
+#define EXT_ATTR_TABLE_COLS 8
 
 /* The following 2 used in tag_attr.c only. */
 #define ATTR_TABLE_ROW_MAXIMUM STD_ATTR_TABLE_ROWS
@@ -115,9 +115,12 @@ No blank lines or commentary allowed, no symbols, just numbers.
 #define IS_EOF 1
 #define NOT_EOF 0
 
-extern void bad_line_input(char *msg);
+extern void bad_line_input(char *format,...);
 extern void trim_newline(char *line, int max);
 extern boolean is_blank_line(char *pLine);
 extern int read_value(unsigned int *outval,FILE *f);
+
+/* Define to 1 to support the generation of tag-attr usage */
+#define HAVE_USAGE_TAG_ATTR 1
 
 #endif /* tag_common_INCLUDED */

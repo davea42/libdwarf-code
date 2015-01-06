@@ -199,7 +199,7 @@ int _dwarf_internal_srclines(Dwarf_Die die,
 #define LOP_SPECIAL  4
 
 #define WHAT_IS_OPCODE(type,opcode,base,opcode_length,line_ptr,highest_std) \
-    if ((opcode) < (base)) {                            \
+    if ((opcode) < (base)) {                             \
         /*  we know we must treat as a standard op       \
             or a special case. */                        \
         if ((opcode) == DW_EXTENDED_OPCODE) {            \

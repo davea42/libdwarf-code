@@ -65,6 +65,10 @@ static int print_one_die_section(Dwarf_Debug dbg,Dwarf_Bool is_info);
 /* Is this a PU has been invalidated by the SN Systems linker? */
 #define IsInvalidCode(low,high) ((low == elf_max_address) || (low == 0 && high == 0))
 
+#ifdef HAVE_USAGE_TAG_ATTR
+/*  Record TAGs usage */
+static unsigned int tag_usage[DW_TAG_last] = {0};
+#endif /* HAVE_USAGE_TAG_ATTR */
 
 static int get_form_values(Dwarf_Attribute attrib,
     Dwarf_Half * theform, Dwarf_Half * directform);
@@ -644,7 +648,7 @@ print_die_and_children_internal(Dwarf_Debug dbg,
 
         SET_DIE_STACK_ENTRY(die_stack_indent_level,in_die);
 
-        if (check_tag_tree) {
+        if (check_tag_tree || print_usage_tag_attr) {
             DWARF_CHECK_COUNT(tag_tree_result,1);
             if (die_stack_indent_level == 0) {
                 Dwarf_Half tag = 0;
@@ -695,12 +699,15 @@ print_die_and_children_internal(Dwarf_Debug dbg,
                         tag_child)) {
                         /* OK */
                     } else {
-                        DWARF_CHECK_ERROR3(tag_tree_result,
-                            get_TAG_name(tag_parent,
-                                dwarf_names_print_on_error),
-                            get_TAG_name(tag_child,
-                                dwarf_names_print_on_error),
-                            "tag-tree relation is not standard.");
+                        /* Report errors only if tag-tree check is on */
+                        if (check_tag_tree) {
+                            DWARF_CHECK_ERROR3(tag_tree_result,
+                                get_TAG_name(tag_parent,
+                                    dwarf_names_print_on_error),
+                                get_TAG_name(tag_child,
+                                    dwarf_names_print_on_error),
+                                "tag-tree relation is not standard.");
+                        }
                     }
                 }
             }
@@ -891,6 +898,7 @@ print_one_die(Dwarf_Debug dbg, Dwarf_Die die,
     boolean ignore_die_stack)
 {
     Dwarf_Signed i = 0;
+    Dwarf_Signed j = 0;
     Dwarf_Off offset = 0;
     Dwarf_Off overall_offset = 0;
     const char * tagname = 0;
@@ -930,6 +938,13 @@ print_one_die(Dwarf_Debug dbg, Dwarf_Die die,
         print_error(dbg, "accessing tag of die!", tres, err);
     }
     tagname = get_TAG_name(tag,dwarf_names_print_on_error);
+
+#ifdef HAVE_USAGE_TAG_ATTR
+    /* Record usage of TAGs */
+    if (print_usage_tag_attr && tag < DW_TAG_last) {
+        ++tag_usage[tag];
+    }
+#endif /* HAVE_USAGE_TAG_ATTR */
 
     tag_specific_checks_setup(tag,die_indent_level);
     ores = dwarf_dieoffset(die, &overall_offset, &err);
@@ -1045,7 +1060,29 @@ print_one_die(Dwarf_Debug dbg, Dwarf_Die die,
         int ares;
 
         ares = dwarf_whatattr(atlist[i], &attr, &err);
+
         if (ares == DW_DLV_OK) {
+            /* Check duplicated attributes; use brute force as the number of
+               attributes is quite small; the problem was detected with the
+               LLVM toolchain, generating more than 12 repeated attributes */
+            if (check_duplicated_attributes) {
+                Dwarf_Half attr_next;
+                DWARF_CHECK_COUNT(duplicated_attributes_result,1);
+                for (j = i + 1; j < atcnt; ++j) {
+                    ares = dwarf_whatattr(atlist[j], &attr_next, &err);
+                    if (ares == DW_DLV_OK) {
+                        if (attr == attr_next) {
+                            DWARF_CHECK_ERROR2(duplicated_attributes_result,
+                                "Duplicated attribute ",
+                                get_AT_name(attr,dwarf_names_print_on_error));
+                        }
+                    } else {
+                        print_error(dbg, "dwarf_whatattr entry missing",
+                            ares, err);
+                    }
+                }
+            }
+
             /* Print using indentation */
             if (!dense && PRINTING_DIES && print_information) {
                 printf("%*s",die_indent_level * 2 + 2 + nColumn," ");
@@ -1634,7 +1671,7 @@ print_range_attribute(Dwarf_Debug dbg,
                                 DWARF_CHECK_ERROR(ranges_result,
                                     ".debug_ranges: Address outside a "
                                     "valid .text range");
-                                if (check_verbose_mode) {
+                                if (check_verbose_mode && PRINTING_UNIQUE) {
                                     printf(
                                         "Offset = 0x%" DW_PR_XZEROS DW_PR_DUx
                                         ", Base = 0x%" DW_PR_XZEROS DW_PR_DUx
@@ -1655,7 +1692,7 @@ print_range_attribute(Dwarf_Debug dbg,
                     /*  Each entry holds 2 addresses (offsets) */
                     off += elf_address_size * 2;
                 }
-                if (bError && check_verbose_mode) {
+                if (bError && check_verbose_mode && PRINTING_UNIQUE) {
                     printf("\n");
                 }
             }
@@ -1851,7 +1888,7 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
     } else {
         /* ok */
     }
-    if (check_attr_tag && checking_this_compiler()) {
+    if ((check_attr_tag || print_usage_tag_attr) && checking_this_compiler()) {
         const char *tagname = "<tag invalid>";
 
         DWARF_CHECK_COUNT(attr_tag_result,1);
@@ -1866,11 +1903,14 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
         } else if (legal_tag_attr_combination(tag, attr)) {
             /* OK */
         } else {
-            tagname = get_TAG_name(tag,dwarf_names_print_on_error);
-            tag_specific_checks_setup(tag,die_stack_indent_level);
-            DWARF_CHECK_ERROR3(attr_tag_result,tagname,
-                get_AT_name(attr,dwarf_names_print_on_error),
-                "check the tag-attr combination");
+            /* Report errors only if tag-attr check is on */
+            if (check_attr_tag) {
+                tagname = get_TAG_name(tag,dwarf_names_print_on_error);
+                tag_specific_checks_setup(tag,die_stack_indent_level);
+                DWARF_CHECK_ERROR3(attr_tag_result,tagname,
+                    get_AT_name(attr,dwarf_names_print_on_error),
+                    "check the tag-attr combination");
+            }
         }
     }
 
@@ -2224,7 +2264,7 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
                             DWARF_CHECK_ERROR(ranges_result,
                                 ".debug_info: Incorrect values "
                                 "for low_pc/high_pc");
-                            if (check_verbose_mode) {
+                            if (check_verbose_mode && PRINTING_UNIQUE) {
                                 printf("Low = 0x%" DW_PR_XZEROS DW_PR_DUx
                                     ", High = 0x%" DW_PR_XZEROS DW_PR_DUx "\n",
                                     lowAddr,highAddr);
@@ -2528,7 +2568,7 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
             }
         }
     }
-    if ((PRINTING_DIES && print_information) || bTextFound) {
+    if ((PRINTING_UNIQUE && PRINTING_DIES && print_information) || bTextFound) {
         /*  Print just the Tags and Attributes */
         if (!display_offsets) {
             printf("%-28s\n",atname);
@@ -2547,8 +2587,6 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
                 }
             }
         }
-        /*  Due to redirection of stderr */
-        fflush(stdout);
         bTextFound = FALSE;
     }
     esb_destructor(&valname);
@@ -2956,7 +2994,7 @@ get_location_list(Dwarf_Debug dbg, Dwarf_Die die, Dwarf_Attribute attr,
                         DWARF_CHECK_ERROR(locations_result,
                             ".debug_loc: Address outside a "
                             "valid .text range");
-                        if (check_verbose_mode) {
+                        if (check_verbose_mode && PRINTING_UNIQUE) {
                             printf(
                                 "Offset = 0x%" DW_PR_XZEROS DW_PR_DUx
                                 ", Base = 0x%"  DW_PR_XZEROS DW_PR_DUx ", "
@@ -2998,7 +3036,7 @@ get_location_list(Dwarf_Debug dbg, Dwarf_Die die, Dwarf_Attribute attr,
         }
     }
 
-    if (bError && check_verbose_mode) {
+    if (bError && check_verbose_mode && PRINTING_UNIQUE) {
         printf("\n");
     }
 
@@ -3582,6 +3620,8 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
                         case DW_TAG_enumeration_type:
                         case DW_TAG_pointer_type:
                         case DW_TAG_reference_type:
+                        case DW_TAG_rvalue_reference_type:
+                        case DW_TAG_restrict_type:
                         case DW_TAG_string_type:
                         case DW_TAG_structure_type:
                         case DW_TAG_subroutine_type:
@@ -4034,7 +4074,6 @@ show_form_itself(int local_show_form,
     }
 }
 
-
 #include "tmp-ta-table.c"
 #include "tmp-ta-ext-table.c"
 
@@ -4051,6 +4090,19 @@ legal_tag_attr_combination(Dwarf_Half tag, Dwarf_Half attr)
             int known = ((tag_attr_combination_table[tag][index]
                 & bitflag) > 0 ? TRUE : FALSE);
             if (known) {
+#ifdef HAVE_USAGE_TAG_ATTR
+                /* Record usage of pair (tag,attr) */
+                if (print_usage_tag_attr) {
+                    Usage_Tag_Attr *usage_ptr = usage_tag_attr[tag];
+                    while (usage_ptr->attr) {
+                        if (attr == usage_ptr->attr) {
+                            ++usage_ptr->count;
+                            break;
+                        }
+                        ++usage_ptr;
+                    }
+                }
+#endif /* HAVE_USAGE_TAG_ATTR */
                 return TRUE;
             }
         }
@@ -4095,6 +4147,19 @@ legal_tag_tree_combination(Dwarf_Half tag_parent, Dwarf_Half tag_child)
             int known = ((tag_tree_combination_table[tag_parent]
                 [index] & bitflag) > 0 ? TRUE : FALSE);
             if (known) {
+#ifdef HAVE_USAGE_TAG_ATTR
+                /* Record usage of pair (tag_parent,tag_child) */
+                if (print_usage_tag_attr) {
+                    Usage_Tag_Tree *usage_ptr = usage_tag_tree[tag_parent];
+                    while (usage_ptr->tag) {
+                        if (tag_child == usage_ptr->tag) {
+                            ++usage_ptr->count;
+                            break;
+                        }
+                        ++usage_ptr;
+                    }
+                }
+#endif /* HAVE_USAGE_TAG_ATTR */
                 return TRUE;
             }
         }
@@ -4116,3 +4181,130 @@ legal_tag_tree_combination(Dwarf_Half tag_parent, Dwarf_Half tag_child)
     return (FALSE);
 }
 
+/* Print a detailed tag and attributes usage */
+void
+print_tag_attributes_usage(Dwarf_Debug dbg)
+{
+#ifdef HAVE_USAGE_TAG_ATTR
+    /*  Traverse the tag-tree table to print its usage and then use the
+        DW_TAG value as an index into the tag_attr table to print its
+        associated usage all together. */
+    boolean print_header = TRUE;
+    Rate_Tag_Tree *tag_rate;
+    Rate_Tag_Attr *atr_rate;
+    Usage_Tag_Tree *usage_tag_tree_ptr;
+    Usage_Tag_Attr *usage_tag_attr_ptr;
+    Dwarf_Unsigned total_tags = 0;
+    Dwarf_Unsigned total_atrs = 0;
+    Dwarf_Half total_found_tags = 0;
+    Dwarf_Half total_found_atrs = 0;
+    Dwarf_Half total_legal_tags = 0;
+    Dwarf_Half total_legal_atrs = 0;
+    float rate_1;
+    float rate_2;
+    int tag;
+    printf("\n*** TAGS AND ATTRIBUTES USAGE ***\n");
+    for (tag = 1; tag < DW_TAG_last; ++tag) {
+        /* Print usage of children TAGs */
+        if (print_usage_tag_attr_full || tag_usage[tag]) {
+            usage_tag_tree_ptr = usage_tag_tree[tag];
+            if (usage_tag_tree_ptr && print_header) {
+                total_tags += tag_usage[tag];
+                printf("%6d %s\n",
+                    tag_usage[tag],
+                    get_TAG_name(tag,dwarf_names_print_on_error));
+                print_header = FALSE;
+            }
+            while (usage_tag_tree_ptr && usage_tag_tree_ptr->tag) {
+                if (print_usage_tag_attr_full || usage_tag_tree_ptr->count) {
+                    total_tags += usage_tag_tree_ptr->count;
+                    printf("%6s %6d %s\n",
+                        " ",
+                        usage_tag_tree_ptr->count,
+                        get_TAG_name(usage_tag_tree_ptr->tag,
+                            dwarf_names_print_on_error));
+                    /* Record the tag as found */
+                    if (usage_tag_tree_ptr->count) {
+                        ++rate_tag_tree[tag].found;
+                    }
+                }
+                ++usage_tag_tree_ptr;
+            }
+        }
+        /* Print usage of attributes */
+        if (print_usage_tag_attr_full || tag_usage[tag]) {
+            usage_tag_attr_ptr = usage_tag_attr[tag];
+            if (usage_tag_attr_ptr && print_header) {
+                total_tags += tag_usage[tag];
+                printf("%6d %s\n",
+                    tag_usage[tag],
+                    get_TAG_name(tag,dwarf_names_print_on_error));
+                print_header = FALSE;
+            }
+            while (usage_tag_attr_ptr && usage_tag_attr_ptr->attr) {
+                if (print_usage_tag_attr_full || usage_tag_attr_ptr->count) {
+                    total_atrs += usage_tag_attr_ptr->count;
+                    printf("%6s %6d %s\n",
+                        " ",
+                        usage_tag_attr_ptr->count,
+                        get_AT_name(usage_tag_attr_ptr->attr,
+                            dwarf_names_print_on_error));
+                    /* Record the attribute as found */
+                    if (usage_tag_attr_ptr->count) {
+                        ++rate_tag_attr[tag].found;
+                    }
+                }
+                ++usage_tag_attr_ptr;
+            }
+        }
+        print_header = TRUE;
+    }
+    printf("** Summary **\n"
+        "Number of tags      : %10" /*DW_PR_XZEROS*/ DW_PR_DUu "\n"  /* TAGs */
+        "Number of attributes: %10" /*DW_PR_XZEROS*/ DW_PR_DUu "\n"  /* ATRs */,
+        total_tags,
+        total_atrs);
+
+    total_legal_tags = 0;
+    total_found_tags = 0;
+    total_legal_atrs = 0;
+    total_found_atrs = 0;
+
+    /* Print percentage of TAGs covered */
+    printf("\n*** TAGS AND ATTRIBUTES USAGE RATE ***\n");
+    printf("%-32s %-16s %-16s\n"," ","Tags","Attributes");
+    printf("%-32s legal found rate legal found rate\n","TAG name");
+    for (tag = 1; tag < DW_TAG_last; ++tag) {
+        tag_rate = &rate_tag_tree[tag];
+        atr_rate = &rate_tag_attr[tag];
+        if (print_usage_tag_attr_full || tag_rate->found || atr_rate->found) {
+            rate_1 = tag_rate->legal ?
+                (float)((tag_rate->found * 100) / tag_rate->legal) : 0;
+            rate_2 = atr_rate->legal ?
+                (float)((atr_rate->found * 100) / atr_rate->legal) : 0;
+            /* Skip not defined DW_TAG values (See dwarf.h) */
+            if (usage_tag_tree[tag]) {
+                total_legal_tags += tag_rate->legal;
+                total_found_tags += tag_rate->found;
+                total_legal_atrs += atr_rate->legal;
+                total_found_atrs += atr_rate->found;
+                printf("%-32s %5d %5d %3.0f%% %5d %5d %3.0f%%\n",
+                    get_TAG_name(tag,dwarf_names_print_on_error),
+                    tag_rate->legal,tag_rate->found,rate_1,
+                    atr_rate->legal,atr_rate->found,rate_2);
+            }
+        }
+    }
+
+    /* Print a whole summary */
+    rate_1 = total_legal_tags ?
+        (float)((total_found_tags * 100) / total_legal_tags) : 0;
+    rate_2 = total_legal_atrs ?
+        (float)((total_found_atrs * 100) / total_legal_atrs) : 0;
+    printf("%-32s %5d %5d %3.0f%% %5d %5d %3.0f%%\n",
+        "** Summary **",
+        total_legal_tags,total_found_tags,rate_1,
+        total_legal_atrs,total_found_atrs,rate_2);
+
+#endif /* HAVE_USAGE_TAG_ATTR */
+}

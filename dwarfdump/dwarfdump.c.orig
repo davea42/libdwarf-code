@@ -53,13 +53,12 @@ $Header: /plroot/cmplrs.src/v7.4.5m/.RCS/PL/dwarfdump/RCS/dwarfdump.c,v 1.48 200
 #include "common.h"
 #include "uri.h"
 #include "esb.h"                /* For flexible string buffer. */
-#include "tag_common.h"
 
 #ifdef WIN32
 extern int elf_open(const char *name,int mode);
 #endif /* WIN32 */
 
-#define DWARFDUMP_VERSION " Mon Jan  5 11:27:10 PST 2015  "
+#define DWARFDUMP_VERSION " Tue Aug  5 08:15:00 PDT 2014  "
 
 extern char *optarg;
 
@@ -173,7 +172,6 @@ boolean check_self_references = FALSE;
 boolean check_attr_encoding = FALSE;   /* Attributes encoding */
 boolean generic_1200_regs = FALSE;
 boolean suppress_check_extensions_tables = FALSE;
-boolean check_duplicated_attributes = FALSE;
 
 /* suppress_nested_name_search is a band-aid.
    A workaround. A real fix for N**2 behavior is needed.
@@ -182,9 +180,6 @@ boolean suppress_nested_name_search = FALSE;
 static boolean uri_options_translation = TRUE;
 static boolean do_print_uri_in_input = TRUE;
 
-/* Print global (unique) error messages */
-boolean print_unique_errors = FALSE;
-boolean found_error_message = FALSE;
 
 /* break_after_n_units is mainly for testing.
    It enables easy limiting of output size/running time
@@ -201,9 +196,6 @@ boolean check_verbose_mode = TRUE; /* During '-k' mode, display errors */
 boolean check_frames = FALSE;
 boolean check_frames_extended = FALSE;    /* Extensive frames check */
 boolean check_locations = FALSE;          /* Location list check */
-
-extern boolean print_usage_tag_attr = FALSE;      /* Print basic usage */
-extern boolean print_usage_tag_attr_full = FALSE; /* Print full usage */
 
 static boolean check_all_compilers = TRUE;
 static boolean check_snc_compiler = FALSE; /* Check SNC compiler */
@@ -317,11 +309,6 @@ boolean search_print_results = FALSE;
 regex_t search_re;
 #endif
 
-/* Functions used to manage the unique errors table */
-static void allocate_unique_errors_table();
-static void release_unique_errors_table();
-static void dump_unique_errors_table();
-static boolean add_to_unique_errors_table();
 
 /*  These configure items are for the
     frame data.  We're flexible in
@@ -352,7 +339,7 @@ static char *config_file_defaults[] = {
 };
 static struct dwconf_s config_file_data;
 
-/* Output filename */
+/* SN-Carlos: Output filename */
 static const char *output_file = 0;
 
 char cu_name[BUFSIZ];
@@ -418,10 +405,9 @@ main(int argc, char *argv[])
     Elf *elf = 0;
     int archive = 0;
 
-    /* Often we redirect the output to a file, but we have found
-       issues due to the buffering associated with stdout. Some issues
-       were fixed just by the use of 'fflush', but the main issued
-       remained.
+    /* SN-Carlos: Often we redirect the output to a file, but we have found
+       issues due to the buffering associated with stdout. Some issues were
+       fixed just by the use of 'fflush', but the main issued remained.
        The stdout stream is buffered, so will only display what's in the
        buffer after it reaches a newline (or when it's told to). We have a
        few options to print immediately:
@@ -449,18 +435,18 @@ main(int argc, char *argv[])
     (void) elf_version(EV_NONE);
     if (elf_version(EV_CURRENT) == EV_NONE) {
         (void) fprintf(stderr, "dwarfdump: libelf.a out of date.\n");
-        exit(FAILED);
+        exit(1);
     }
 
     file_name = process_args(argc, argv);
     print_args(argc,argv);
 
-    /* Redirect stdout and stderr to an specific file */
+    /* SN-Carlos: Redirect stdout and stderr to an specific file */
     if (output_file) {
         if (NULL == freopen(output_file,"w",stdout)) {
             fprintf(stderr,
                 "dwarfdump: Unable to redirect output to '%s'\n",output_file);
-            exit(FAILED);
+            exit(1);
         }
         dup2(fileno(stdout),fileno(stderr));
         /* Record version and arguments in the output file */
@@ -500,11 +486,6 @@ main(int argc, char *argv[])
         pRangesInfo = AllocateBucketGroup(KIND_RANGES_INFO);
         pLinkonceInfo = AllocateBucketGroup(KIND_SECTIONS_INFO);
         pVisitedInfo = AllocateBucketGroup(KIND_VISITED_INFO);
-    }
-
-    /* Create the unique error table */
-    if (print_unique_errors) {
-        allocate_unique_errors_table();
     }
 
     while ((elf = elf_begin(f, cmd, arf)) != 0) {
@@ -554,21 +535,16 @@ main(int argc, char *argv[])
         pVisitedInfo = 0;
     }
 
-    /* Delete the unique error set */
-    if (print_unique_errors) {
-        release_unique_errors_table();
-    }
-
 #ifdef HAVE_REGEX
     if (search_regex_text) {
         regfree(&search_re);
     }
 #endif
     close_a_file(f);
-    /* As the tool have reached this point, it means there are
-       no internal errors and we should return an OKAY condition,
-       regardless if the file being processed has errors. */
-    return OKAY;
+    if (check_error)
+        return FAILED;
+    else
+        return OKAY;
 }
 
 void
@@ -867,12 +843,6 @@ print_specific_checks_results(Compiler *pCompiler)
         PRINT_CHECK_RESULT("attr_encoding", pCompiler, attr_encoding_result);
     }
 
-    /* Duplicated attributes */
-    if (check_duplicated_attributes) {
-        PRINT_CHECK_RESULT("duplicated_attributes",
-            pCompiler, duplicated_attributes_result);
-    }
-
     PRINT_CHECK_RESULT("** Summarize **",pCompiler, total_check_result);
     fflush(stdout);
 }
@@ -1056,7 +1026,7 @@ static int
 process_one_file(Elf * elf, const char * file_name, int archive,
     struct dwconf_s *config_file_data)
 {
-    Dwarf_Debug dbg = 0;
+    Dwarf_Debug dbg;
     int dres;
     struct Dwarf_Printf_Callback_Info_s printfcallbackdata;
 
@@ -1220,17 +1190,13 @@ process_one_file(Elf * elf, const char * file_name, int archive,
         print_attributes_encoding(dbg);
     }
 
-    /* Print the tags and attribute usage */
-    if (print_usage_tag_attr) {
-        print_tag_attributes_usage(dbg);
-    }
-
     dres = dwarf_finish(dbg, &err);
     if (dres != DW_DLV_OK) {
         print_error(dbg, "dwarf_finish", dres, err);
     }
 
     printf("\n");
+    fflush(stdout);
     return 0;
 
 }
@@ -1288,18 +1254,16 @@ static const char *usage_text[] = {
 "\t\t\t  example: to stop after <num> compilation units",
 "\t\t-i\tprint info section",
 "\t\t-I\tprint sections .gdb_index, .debug_cu_index, .debug_tu_index",
-"\t\t-k[abcdDeEfFgGilmMnrRsStu[f]x[e]y] check dwarf information",
+"\t\t-k[abcdeEfFgilmMnrRsStx[e]y] check dwarf information",
 "\t\t   a\tdo all checks",
 "\t\t   b\tcheck abbreviations",     /* Check abbreviations */
 "\t\t   c\texamine DWARF constants", /* Check for valid DWARF constants */
 "\t\t   d\tshow check results",      /* Show check results */
-"\t\t   D\tcheck duplicated attributes",  /* Duplicated attributes */
 "\t\t   e\texamine attributes of pubnames",
 "\t\t   E\texamine attributes encodings",  /* Attributes encoding */
 "\t\t   f\texamine frame information (use with -f or -F)",
 "\t\t   F\texamine integrity of files-lines attributes", /* Files-Lines integrity */
 "\t\t   g\tcheck debug info gaps", /* Check for debug info gaps */
-"\t\t   G\tprint only unique errors", /* Only print the unique errors */
 "\t\t   i\tdisplay summary for all compilers", /* Summary all compilers */
 "\t\t   l\tcheck location list (.debug_loc)",  /* Location list integrity */
 "\t\t   m\tcheck ranges list (.debug_ranges)", /* Ranges list integrity */
@@ -1310,10 +1274,6 @@ static const char *usage_text[] = {
 "\t\t   s\tperform checks in silent mode",
 "\t\t   S\tcheck self references to DIEs",
 "\t\t   t\texamine tag-tag relations",
-#ifdef HAVE_USAGE_TAG_ATTR
-"\t\t   u\tprint tag-tree and tag-attribute usage (basic format)",
-"\t\t   uf\tprint tag-tree and tag-attribute usage (full format)",
-#endif /* HAVE_USAGE_TAG_ATTR */
 "\t\t   x\tbasic frames check (.eh_frame, .debug_frame)",
 "\t\t   xe\textensive frames check (.eh_frame, .debug_frame)",
 "\t\t   y\texamine type info",
@@ -1327,7 +1287,7 @@ static const char *usage_text[] = {
 "\t\t  \t(when printing frame information from multi-gigabyte",
 "\t\t  \tobject files this option may save significant time).",
 "\t\t-N\tprint ranges section",
-"\t\t-O file=<path>\tname the output file",
+"\t\t-O name=<path>\tname the output file",
 "\t\t-o[liaprfoR]\tprint relocation info",
 "\t\t  \tl=line,i=info,a=abbrev,p=pubnames,r=aranges,f=frames,o=loc,R=Ranges",
 "\t\t-p\tprint pubnames section",
@@ -1445,7 +1405,11 @@ process_args(int argc, char *argv[])
 
     /* j unused */
     while ((c = getopt(argc, argv,
-        "#:abc::CdDeE::fFgGhH:iIk:l::mMnNo::O:pPqQrRsS:t:u:UvVwW::x:yz")) != EOF) {
+<<<<<<< HEAD
+        "#:abc::CdDeE::fFgGhH:ik:l::mMnNo::O:pPqQrRsS:t:u:UvVwW::x:yz")) != EOF) {
+=======
+        "#:abc::CdDeE::fFgGhH:iIk:l::mMnNo::pPqQrRsS:t:u:UvVwW::x:yz")) != EOF) {
+>>>>>>> master
 
         switch (c) {
         /* Internal debug level setting. */
@@ -1764,14 +1728,14 @@ process_args(int argc, char *argv[])
                 reloc_map = DW_MASK_PRINT_ALL;
             }
             break;
-        /* Output filename */
+        /* SN-Carlos: Output filename */
         case 'O':
             {
                 const char *path = 0;
                 /*  -O name=<filename> */
                 usage_error = TRUE;
-                if (strncmp(optarg,"file=",5) == 0) {
-                    path = do_uri_translation(&optarg[5],"-O file=");
+                if (strncmp(optarg,"name=",5) == 0) {
+                    path = do_uri_translation(&optarg[5],"-O name=");
                     if (strlen(path) > 0) {
                         usage_error = FALSE;
                         output_file = path;
@@ -1807,8 +1771,6 @@ process_args(int argc, char *argv[])
                 check_forward_decl = TRUE;  /* Check forward declarations */
                 check_self_references = TRUE;  /* Check self references */
                 check_attr_encoding = TRUE;    /* Check attributes encoding */
-                print_usage_tag_attr = TRUE;  /* Print tag-attr usage */
-                check_duplicated_attributes = TRUE; /* Duplicated attributes */
                 break;
             /* Abbreviations */
             case 'b':
@@ -1823,11 +1785,6 @@ process_args(int argc, char *argv[])
             /* Display check results */
             case 'd':
                 check_show_results = TRUE;
-                break;
-            /* Check duplicated attributes */
-            case 'D':
-                check_duplicated_attributes = TRUE;
-                info_flag = TRUE;
                 break;
             case 'e':
                 check_pubname_attr = TRUE;
@@ -1854,10 +1811,6 @@ process_args(int argc, char *argv[])
             case 'g':
                 check_di_gaps = TRUE;
                 info_flag = TRUE;
-                break;
-            /* Print just global (unique) errors */
-            case 'G':
-                print_unique_errors = TRUE;
                 break;
             /* Locations list */
             case 'l':
@@ -1905,21 +1858,6 @@ process_args(int argc, char *argv[])
                 check_harmless = TRUE;
                 info_flag = TRUE;
                 break;
-#ifdef HAVE_USAGE_TAG_ATTR
-            /* Tag-Tree and Tag-Attr usage */
-            case 'u':
-                print_usage_tag_attr = TRUE;
-                info_flag = TRUE;
-                if (optarg[1]) {
-                    if ('f' == optarg[1]) {
-                        /* -kuf : Full report */
-                        print_usage_tag_attr_full = TRUE;
-                    } else {
-                        usage_error = TRUE;
-                    }
-                }
-                break;
-#endif /* HAVE_USAGE_TAG_ATTR */
             case 'y':
                 check_type_offset = TRUE;
                 check_harmless = TRUE;
@@ -2069,12 +2007,7 @@ print_error(Dwarf_Debug dbg,
     Dwarf_Error err)
 {
     print_error_and_continue(dbg,msg,dwarf_code,err);
-    if (dbg) {
-        /*  If dbg was never initialized dwarf_finish
-            can do nothing useful. There is no
-            global-state for libdwarf to clean up. */
-        dwarf_finish(dbg, &err);
-    }
+    dwarf_finish(dbg, &err);
     exit(FAILED);
 }
 /* ARGSUSED */
@@ -2567,7 +2500,7 @@ add_cu_name_compiler_target(char *name)
     if (current_compiler < 1) {
         fprintf(stderr,"Current  compiler set to %d, cannot add "
             "Compilation unit name.  Giving up.",current_compiler);
-        exit(FAILED);
+        exit(1);
     }
     pCompiler = &compilers_detected[current_compiler];
     cu_last = pCompiler->cu_last;
@@ -2681,151 +2614,10 @@ void PRINT_CHECK_RESULT(char *str,
 void DWARF_CHECK_ERROR_PRINT_CU()
 {
     if (check_verbose_mode) {
-        if (print_unique_errors) {
-            if (!found_error_message) {
-                PRINT_CU_INFO();
-            }
-        } else {
-            PRINT_CU_INFO();
-        }
+        PRINT_CU_INFO();
     }
     check_error++;
     record_dwarf_error = TRUE;
-}
-
-/*  Sometimes is useful, just to know the kind of errors in an object file;
-    not much interest in the number of errors; the specific case is just to
-    have a general idea about the DWARF quality in the file */
-static string *set_unique_errors = NULL;
-unsigned int set_unique_errors_entries = 0;
-unsigned int set_unique_errors_size = 0;
-#define SET_UNIQUE_ERRORS_DELTA 64
-
-/*  Create the space to store the unique error messages */
-void allocate_unique_errors_table()
-{
-    if (!set_unique_errors) {
-        set_unique_errors = (string *)
-            malloc(SET_UNIQUE_ERRORS_DELTA * sizeof(string));
-        set_unique_errors_size = SET_UNIQUE_ERRORS_DELTA;
-        set_unique_errors_entries = 0;
-    }
-}
-
-/* Just for debugging purposes, dump the unique errors table */
-void dump_unique_errors_table()
-{
-    unsigned int index;
-    printf("*** Unique Errors Table ***\n");
-    printf("Delta  : %d\n",SET_UNIQUE_ERRORS_DELTA);
-    printf("Size   : %d\n",set_unique_errors_size);
-    printf("Entries: %d\n",set_unique_errors_entries);
-    for (index = 0; index < set_unique_errors_entries; ++index) {
-        printf("%3d: '%s'\n",index,set_unique_errors[index]);
-    }
-}
-
-/*  Release the space used to store the unique error messages */
-void release_unique_errors_table()
-{
-    unsigned int index;
-    for (index = 0; index < set_unique_errors_entries; ++index) {
-        free(set_unique_errors[index]);
-    }
-    free(set_unique_errors);
-}
-
-/*  Returns TRUE if the text is already in the set; otherwise FALSE */
-boolean add_to_unique_errors_table(string error_text)
-{
-    boolean found = FALSE;
-    unsigned int index;
-    size_t len;
-    string stored_text;
-    string filtered_text;
-    string start = NULL;
-    string end = NULL;
-    string pattern = "0x";
-    string white = " ";
-    string question = "?";
-    string ptr;
-
-    /* Create a copy of the incoming text */
-    filtered_text = makename(error_text);
-    len = strlen(filtered_text);
-
-    /*  Remove from the error_text, any hexadecimal numbers (start with 0x),
-        because for some errors, an additional information is given in the
-        form of addresses; we are interested just in the general error. */
-    start = strstr(filtered_text,pattern);
-    while (start) {
-        /* We have found the start of the pattern; look for a space */
-        end = strstr(start,white);
-        if (!end) {
-            /* Preserve any line terminator */
-            end = filtered_text + len -1;
-        }
-        memset(start,*question,end - start);
-        start = strstr(filtered_text,pattern);
-    }
-
-    /* Check if the error text is already in the table */
-    for (index = 0; index < set_unique_errors_entries; ++index) {
-        stored_text = set_unique_errors[index];
-        if (!strcmp(stored_text,filtered_text)) {
-            return TRUE;
-        }
-    }
-
-    /* Store the new text; check if we have space to store the error text */
-    if (set_unique_errors_entries + 1 == set_unique_errors_size) {
-        set_unique_errors_size += SET_UNIQUE_ERRORS_DELTA;
-        set_unique_errors = (string *)realloc(set_unique_errors,
-            set_unique_errors_size * sizeof(string));
-    }
-
-    set_unique_errors[set_unique_errors_entries] = filtered_text;
-    ++set_unique_errors_entries;
-
-    return FALSE;
-}
-
-/*  Print a DWARF error message and if in "reduced" output only print one
-    error of each kind; this feature is usefull, when we are interested only
-    in the kind of errors and not on the number of errors. */
-static void
-print_dwarf_check_error(char *format,...)
-{
-    static struct esb_s dwarf_error_line;
-    static boolean do_init = TRUE;
-    boolean found = FALSE;
-    string error_text = NULL;
-    va_list ap;
-
-    if (do_init) {
-        /* One time initialization */
-        esb_constructor(&dwarf_error_line);
-        do_init = FALSE;
-    }
-
-    /* Generate the full line of text */
-    va_start(ap,format);
-    esb_empty_string(&dwarf_error_line);
-    esb_append_printf_ap(&dwarf_error_line,format,ap);
-    error_text = esb_get_string(&dwarf_error_line);
-
-    if (print_unique_errors) {
-        found = add_to_unique_errors_table(error_text);
-        if (!found) {
-            printf("%s",error_text);
-        }
-    } else {
-        printf("%s",error_text);
-    }
-    va_end(ap);
-
-    /* To indicate if the current error message have been found or not */
-    found_error_message = found;
 }
 
 void DWARF_CHECK_ERROR(Dwarf_Check_Categories category,
@@ -2834,7 +2626,7 @@ void DWARF_CHECK_ERROR(Dwarf_Check_Categories category,
     if (checking_this_compiler()) {
         DWARF_ERROR_COUNT(category,1);
         if (check_verbose_mode) {
-            print_dwarf_check_error("\n*** DWARF CHECK: %s ***\n", str);
+            printf("\n*** DWARF CHECK: %s ***\n", str);
         }
         DWARF_CHECK_ERROR_PRINT_CU();
     }
@@ -2846,8 +2638,7 @@ void DWARF_CHECK_ERROR2(Dwarf_Check_Categories category,
     if (checking_this_compiler()) {
         DWARF_ERROR_COUNT(category,1);
         if (check_verbose_mode) {
-            print_dwarf_check_error("\n*** DWARF CHECK: %s: %s ***\n",
-                str1, str2);
+            printf("\n*** DWARF CHECK: %s: %s ***\n", str1, str2);
         }
         DWARF_CHECK_ERROR_PRINT_CU();
     }
@@ -2859,7 +2650,7 @@ void DWARF_CHECK_ERROR3(Dwarf_Check_Categories category,
     if (checking_this_compiler()) {
         DWARF_ERROR_COUNT(category,1);
         if (check_verbose_mode) {
-            print_dwarf_check_error("\n*** DWARF CHECK: %s -> %s: %s ***\n",
+            printf("\n*** DWARF CHECK: %s -> %s: %s ***\n",
                 str1, str2,strexpl);
         }
         DWARF_CHECK_ERROR_PRINT_CU();

@@ -132,6 +132,10 @@ extern "C" {
 #define DW_TAG_type_unit                0x41  /* DWARF4 */
 #define DW_TAG_rvalue_reference_type    0x42  /* DWARF4 */
 #define DW_TAG_template_alias           0x43  /* DWARF4 */
+
+/* Next available standard tag value */
+#define DW_TAG_last                     0x44
+
 #define DW_TAG_lo_user                  0x4080
 
 #define DW_TAG_MIPS_loop                0x4081
@@ -338,6 +342,9 @@ extern "C" {
 #define DW_AT_reference                         0x77 /* DWARF5 */
 #define DW_AT_rvalue_reference                  0x78 /* DWARF5 */
 #define DW_AT_macros                            0x79 /* DWARF5 */
+
+/* Next available standard attribute value */
+#define DW_AT_last                              0x80
 
 /* In extensions, we attempt to include the vendor extension
    in the name even when the vendor leaves it out. */

@@ -266,6 +266,13 @@ extern boolean check_self_references;
 extern boolean check_attr_encoding;   /* Attributes encoding */
 extern boolean suppress_nested_name_search;
 extern boolean suppress_check_extensions_tables;
+extern boolean check_duplicated_attributes;
+
+/* Print global (unique) error messages */
+extern boolean print_unique_errors;
+extern boolean found_error_message;
+/* Print the information only if unique errors is set and it is first time */
+#define PRINTING_UNIQUE (!found_error_message)
 
 extern int break_after_n_units;
 
@@ -274,6 +281,9 @@ extern boolean check_verbose_mode;   /* During '-k' mode, display errors */
 extern boolean check_frames;         /* Frames check */
 extern boolean check_frames_extended;/* Extensive frames check */
 extern boolean check_locations;      /* Location list check */
+
+extern boolean print_usage_tag_attr;      /* Print tag-attr basic usage */
+extern boolean print_usage_tag_attr_full; /* Print tag-attr full usage */
 
 /* Check categories corresponding to the -k option */
 typedef enum /* Dwarf_Check_Categories */ {
@@ -307,6 +317,7 @@ typedef enum /* Dwarf_Check_Categories */ {
     forward_decl_result,
     self_references_result,
     attr_encoding_result,
+    duplicated_attributes_result,
     total_check_result,
     LAST_CATEGORY  /* Must be last */
 } Dwarf_Check_Categories;
@@ -463,6 +474,9 @@ void safe_strcpy(char *out, long outlen, const char *in, long inlen);
 
 /* Detailed attributes encoding space */
 void print_attributes_encoding(Dwarf_Debug dbg);
+
+/* Detailed tag and attributes usage */
+void print_tag_attributes_usage(Dwarf_Debug dbg);
 
 void print_any_harmless_errors(Dwarf_Debug dbg);
 

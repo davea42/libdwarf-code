@@ -85,8 +85,8 @@ DW_AT_accessibility
 DW_AT_allocated
 DW_AT_associated
 DW_AT_bit_stride
-DW_AT_byte_size
 DW_AT_bit_size /* Allowed in DWARF4 */
+DW_AT_byte_size
 DW_AT_data_location
 DW_AT_declaration
 DW_AT_description
@@ -579,15 +579,6 @@ DW_AT_name
 DW_AT_sibling
 DW_AT_type
 0xffffffff
-DW_TAG_rvalue_reference_type
-DW_AT_address_class
-DW_AT_allocated
-DW_AT_associated
-DW_AT_data_location
-DW_AT_name
-DW_AT_sibling
-DW_AT_type
-0xffffffff
 DW_TAG_set_type
 DW_AT_decl_column
 DW_AT_decl_file
@@ -758,6 +749,7 @@ DW_AT_decl_file
 DW_AT_decl_line
 DW_AT_const_value
 DW_AT_description
+DW_AT_location /* Allowed in DWARF4 */
 DW_AT_name
 DW_AT_sibling
 DW_AT_type
@@ -830,6 +822,7 @@ DW_AT_decl_column
 DW_AT_decl_file
 DW_AT_decl_line
 DW_AT_description
+DW_AT_name
 DW_AT_sibling
 0xffffffff
 DW_TAG_variable

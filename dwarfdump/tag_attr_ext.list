@@ -44,6 +44,9 @@
 /* Common DWARF extensions */
 
 0xffffffff
+DW_TAG_compile_unit
+DW_AT_APPLE_optimized /* Used by LLVM */
+0xffffffff
 DW_TAG_member
 DW_AT_GNU_guarded_by    /* gcc.gnu.org/wiki/ThreadSafetyAnnotationsInDWARF */
 DW_AT_GNU_pt_guarded_by /* gcc.gnu.org/wiki/ThreadSafetyAnnotationsInDWARF */
@@ -59,6 +62,8 @@ DW_AT_MIPS_fde /* SGI-IRIX uses this */
 DW_AT_GNU_locks_excluded /* gcc.gnu.org/wiki/ThreadSafetyAnnotationsInDWARF */
 DW_AT_GNU_exclusive_locks_required
 DW_AT_GNU_shared_locks_required
+DW_AT_APPLE_omit_frame_ptr  /* Used by LLVM */
+DW_AT_APPLE_optimized /* Used by LLVM */
 0xffffffff
 DW_TAG_variable
 DW_AT_MIPS_linkage_name   /* Used by GNU, SGI-IRIX, and others. */

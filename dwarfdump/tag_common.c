@@ -47,11 +47,15 @@ static int linecount = 0;
 static char line_in[MAX_LINE_SIZE];
 
 void
-bad_line_input(char *msg)
+bad_line_input(char *format,...)
 {
+    va_list ap;
+    va_start(ap,format);
     fprintf(stderr,
-        "tag_(tree,attr) table build failed %s, line %d: \"%s\"  \n",
-        msg, linecount, line_in);
+        "tag_(tree,attr) table build failed, line %d: \"%s\". ",
+        linecount, line_in);
+    vfprintf(stderr,format, ap);
+    fprintf(stderr,"\n");
     exit(FAILED);
 }
 

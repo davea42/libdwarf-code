@@ -627,6 +627,7 @@ this_section_dwarf_relevant(const char *scn_name,int type)
 static int
 _dwarf_setup(Dwarf_Debug dbg, Dwarf_Error * error)
 {
+    Dwarf_Addr *virtual_addresses = 0;
     const char *scn_name = 0;
     int foundDwarf = 0;
     struct Dwarf_Obj_Access_Interface_s * obj = 0;
@@ -669,7 +670,7 @@ _dwarf_setup(Dwarf_Debug dbg, Dwarf_Error * error)
     dbg->de_length_size = obj->methods->get_length_size(obj->object);
     dbg->de_pointer_size = obj->methods->get_pointer_size(obj->object);
 
-  /*  For windows always is 4 ? */
+    /*  For windows always is 4 ? */
 #ifdef WIN32
     dbg->de_pointer_size = 4;
 #endif /* WIN32 */
@@ -714,6 +715,9 @@ _dwarf_setup(Dwarf_Debug dbg, Dwarf_Error * error)
         } else if (res == DW_DLV_ERROR){
             DWARF_DBG_ERROR(dbg, err, DW_DLV_ERROR);
         }
+
+        /* SN-Carlos: Record virtual address for this section. */
+        dbg->de_sections_load_address[section_index] = doas.addr;
 
         scn_name = doas.name;
 
