@@ -1,3 +1,12 @@
+2015-01-06  David Anderson
+     * dwarf_frame.c( _dwarf_get_fde_info_for_a_pc_row): Cast
+       the pointer returned from _dwarf_get_alloc(), somehow
+       this cast was omitted.
+     * dwarf_alloc.c(dwarf_dealloc): Ensure a NULL
+       'space' pointer input is not touched before checking
+       if it is set.
+     * dwarf_init_finish.c(_dwarf_setup): For badly formed Elf
+       ensure we do not use stale pointers.
 2015-01-05  David Anderson
      * dwarf_original_elf_init.c(dwarf_finish): If the Dwarf_Debug is
        not initialized do not use it.

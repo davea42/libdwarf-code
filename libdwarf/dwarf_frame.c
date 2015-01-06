@@ -1454,7 +1454,7 @@ _dwarf_get_fde_info_for_a_pc_row(Dwarf_Fde fde,
 
     cie = fde->fd_cie;
     if (cie->ci_initial_table == NULL) {
-        cie->ci_initial_table = _dwarf_get_alloc(dbg, DW_DLA_FRAME, 1);
+        cie->ci_initial_table = (Dwarf_Frame)_dwarf_get_alloc(dbg, DW_DLA_FRAME, 1);
 
         if (cie->ci_initial_table == NULL) {
             _dwarf_error(dbg, error, DW_DLE_ALLOC_FAIL);

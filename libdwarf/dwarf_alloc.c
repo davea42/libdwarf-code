@@ -450,12 +450,14 @@ void
 dwarf_dealloc(Dwarf_Debug dbg,
     Dwarf_Ptr space, Dwarf_Unsigned alloc_type)
 {
-    unsigned int type = alloc_type;
-    char * malloc_addr = (char *)space - DW_RESERVE;
+    unsigned int type = 0;
+    char * malloc_addr = 0;
 
     if (space == NULL) {
         return;
     }
+    type = alloc_type;
+    malloc_addr = (char *)space - DW_RESERVE;
     if (alloc_type == DW_DLA_ERROR) {
        Dwarf_Error ep = (Dwarf_Error)space;
        if (ep->er_static_alloc) {

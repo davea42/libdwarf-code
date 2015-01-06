@@ -682,6 +682,7 @@ _dwarf_setup(Dwarf_Debug dbg, Dwarf_Error * error)
         sizeof(struct Dwarf_Section_s *));
     if (!sections) {
         /* Impossible case, we hope. Give up. */
+        _dwarf_error(dbg, error, DW_DLE_SECTION_ERROR);
         return DW_DLV_ERROR;
     }
 
@@ -708,7 +709,9 @@ _dwarf_setup(Dwarf_Debug dbg, Dwarf_Error * error)
         res = obj->methods->get_section_info(obj->object,
             obj_section_index,
             &doas, &err);
-        if (res == DW_DLV_ERROR){
+        if (res == DW_DLV_NO_ENTRY){
+            return res;
+        } else if (res == DW_DLV_ERROR){
             DWARF_DBG_ERROR(dbg, err, DW_DLV_ERROR);
         }
 
@@ -845,12 +848,45 @@ dwarf_object_init(Dwarf_Obj_Access_Interface* obj, Dwarf_Handler errhand,
 
     setup_result = _dwarf_setup(dbg, error);
     if (setup_result != DW_DLV_OK) {
+        /* We cannot use any _dwarf_setup()
+            error here as
+            we are freeing dbg, making that error (setup
+            as part of dbg) stale. 
+            Hence we have to make a new error without a dbg.
+            But error might be NULL and the init call 
+            error-handler function might be set.
+        */
+        int myerr = 0;
+        if ( (setup_result == DW_DLV_ERROR) && error ) {
+           /*  Preserve our _dwarf_setup error number, but
+                this does not apply if error NULL. */
+           myerr = dwarf_errno(*error);
+           /*  deallocate the soon-stale error pointer. */
+           dwarf_dealloc(dbg,*error,DW_DLA_ERROR);
+           *error = 0;
+        }
         /*  The status we want to return  here is of _dwarf_setup,
             not of the  _dwarf_free_all_of_one_debug(dbg) call.
             So use a local status variable for the free.  */
         int freeresult = _dwarf_free_all_of_one_debug(dbg);
+        dbg = 0;
+        /* DW_DLV_NO_ENTRY not possible in freeresult */
         if (freeresult == DW_DLV_ERROR) {
-            DWARF_DBG_ERROR(dbg, DW_DLE_DBG_ALLOC, DW_DLV_ERROR);
+            /*  Use the _dwarf_setup error number. 
+                If error is NULL the following will issue
+                a message on stderr and abort(), as without
+                dbg there is no error-handler function.
+                */
+            _dwarf_error(NULL,error,DW_DLE_DBG_ALLOC);
+            return DW_DLV_ERROR;
+        }
+        if (setup_result == DW_DLV_ERROR) {
+            /*  Use the _dwarf_setup error number. 
+                If error is NULL the following will issue
+                a message on stderr and abort(), as without
+                dbg there is no error-handler function.
+                */
+            _dwarf_error(NULL,error,myerr);
         }
         return setup_result;
     }
