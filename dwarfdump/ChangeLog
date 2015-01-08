@@ -1,3 +1,30 @@
+2015-01-08  David Anderson and Carlos Alberto Enciso
+     * Makefile.in: add selftest: rule, which tests esb.c
+     * dwarfdump.c: Add new options -O file=path, -kD -kG -ku kuf.
+       New checking and reporting features intended to give a
+       report on attribute and tag usage.
+       Update version string.
+     * common.c: Update version string.
+     * esb.c, esb.h: Added new interface using stdarg.
+       Added self-test feature.
+     * dwarf_makename.c: new #pragma (not Linux/Unix related).
+     * print_die.c: Implements collecting the new statistics
+       dwarfdump reports.
+     * print_lines.c: New statistics collected.
+     * tag_attr.c: New checks for the tag/attr table correctness.
+     * tag_attr.list: Fixes duplicated entries.
+     * tag_attr.list_ext: Adds APPLE attribute DW_AT_APPLE_optimized
+       that llvm emits.
+     * tag_common.c: bad_line_input() now allows stdarg calls so
+       its easier to emit good error messages.
+     * tag_common.h: bad_line_input() arg list changed a little. Stdarg now.
+     * tag_tree.c: New tag tree checking done. New statistics
+       available.
+     * tag_tree.list:  Adds DW_TAG_unspecified_type,
+       DW_TAG_rvalue_reference_type,
+       DW_TAG_restrict_type.
+     * tag_tree_ext.list: Adds DW_TAG_GNU_template_template_parameter.
+       Fixes duplication of entries.
 2015-01-05  David Anderson
      * dwarfdump.c:  Don't call dwarf_finish() if
        the dwarf-init call failed.

@@ -1,3 +1,12 @@
+2015-01-08  David Anderson
+     * cmplrs/dwarf_addr_finder.h: Fix a comment and remove a trailing
+       whitespace.
+     * dwarf.h: Blank line added accidentally.
+     * dwarf_alloc.c: Removed trailing whitespace.
+     * dwarf_init_finish.c: Remove trailing whitespace. Fix indent.
+     * dwarf_leb.c: Remove trailing whitespace. Fix indent.
+     * dwarf_line.h: Fix macro backslash location, lining things up.
+     * dwarf_util.c: Remove trailing whitespace.
 2015-01-06  David Anderson
      * 	dwarf_alloc.c, dwarf_base_types.h, dwarf_elf_access.c,
         dwarf_error.c,dwarf_error.h,dwarf_form.c,dwarf_init_finish.c,
