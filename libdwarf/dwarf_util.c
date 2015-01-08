@@ -482,7 +482,7 @@ _dwarf_string_valid(void *startptr, void *endptr)
 
 
 /*  Return non-zero if the start/end are not valid for the
-    die's section. 
+    die's section.
     Return 0 if valid*/
 int
 _dwarf_reference_outside_section(Dwarf_Die die,

@@ -191,6 +191,12 @@ clean:
 	rm -f dwarf_names_enum.h
 	rm -f dwarf_names.h 
 	rm -f dwarf_names.c
+	rm -f a.out
+
+selftest:
+	-rm -f ./a.out
+	$(CC) -DSELFTEST -g esb.c
+	./a.out
 
 
 distclean: clean

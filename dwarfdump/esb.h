@@ -72,6 +72,8 @@ size_t esb_string_len(struct esb_s *data);
    is properly initialized. */
 void esb_constructor(struct esb_s *data);
 
+void esb_force_allocation(struct esb_s *data, size_t minlen);
+
 /*  The string is freed, contents of *data set to zeroes. */
 void esb_destructor(struct esb_s *data);
 
@@ -83,8 +85,13 @@ void esb_alloc_size(size_t size);
 size_t esb_get_allocated_size(struct esb_s *data);
 
 /* Append a formatted string */
-void esb_append_printf(struct esb_s *data,const char *in_string, ...);
-void esb_append_printf_ap(struct esb_s *data,const char *in_string,va_list ap);
+void esb_append_printf(struct esb_s *data,const char *format, ...);
+
+/*  Append a formatted string. The 'ap' must be just-setup with
+    va_start(ap,format)  and
+    when esb_append_printf_ap returns the ap is used up 
+    and should not be touched. */
+void esb_append_printf_ap(struct esb_s *data,const char *format,va_list ap);
 
 /* Get a copy of the internal data buffer */
 string esb_get_copy(struct esb_s *data);

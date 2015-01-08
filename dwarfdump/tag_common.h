@@ -44,6 +44,11 @@ $Header: /plroot/cmplrs.src/v7.4.5m/.RCS/PL/dwarfdump/RCS/tag_common.h,v 1.8 200
 */
 #define MAGIC_TOKEN_VALUE 0xffffffff
 
+/*  These next two should match the last DW_TAG+1 and last DW_AT+1 in
+    the standard set from dwarf.h */
+#define DW_TAG_last 0x44
+#define DW_AT_last 0x80
+
 /* TAG_TREE.LIST Expected input format
 
 0xffffffff

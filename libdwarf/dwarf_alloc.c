@@ -462,7 +462,7 @@ dwarf_dealloc(Dwarf_Debug dbg,
         Dwarf_Error ep = (Dwarf_Error)space;
         if (ep->er_static_alloc) {
             /*  This is special, malloc arena
-                was exhausted and there is nothing to delete, really. 
+                was exhausted and there is nothing to delete, really.
                 Set er_errval to signal that the space was dealloc'd. */
             ep->er_errval = DW_DLE_FAILSAFE_ERRVAL;
             return;

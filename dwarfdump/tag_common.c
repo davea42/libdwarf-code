@@ -38,6 +38,7 @@ $Header: /plroot/cmplrs.src/v7.4.5m/.RCS/PL/dwarfdump/RCS/tag_common.c,v 1.8 200
 #include <stdlib.h>/* For exit() declaration etc. */
 #include <errno.h>/* For errno declaration. */
 #include <ctype.h>    /*  For isspace() declaration */
+#include <stdarg.h>    /*  For isspace() declaration */
 
 #include "globals.h"
 #include "naming.h"

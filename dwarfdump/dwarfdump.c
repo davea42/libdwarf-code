@@ -48,6 +48,7 @@ $Header: /plroot/cmplrs.src/v7.4.5m/.RCS/PL/dwarfdump/RCS/dwarfdump.c,v 1.48 200
 #include <fcntl.h>
 #include <limits.h>
 #include <unistd.h>  /* For getopt */
+#include <stdarg.h>  /* For va_start va_arg */
 #include "makename.h"
 #include "dwconf.h"
 #include "common.h"
@@ -202,8 +203,8 @@ boolean check_frames = FALSE;
 boolean check_frames_extended = FALSE;    /* Extensive frames check */
 boolean check_locations = FALSE;          /* Location list check */
 
-extern boolean print_usage_tag_attr = FALSE;      /* Print basic usage */
-extern boolean print_usage_tag_attr_full = FALSE; /* Print full usage */
+boolean print_usage_tag_attr = FALSE;      /* Print basic usage */
+boolean print_usage_tag_attr_full = FALSE; /* Print full usage */
 
 static boolean check_all_compilers = TRUE;
 static boolean check_snc_compiler = FALSE; /* Check SNC compiler */
@@ -418,23 +419,23 @@ main(int argc, char *argv[])
     Elf *elf = 0;
     int archive = 0;
 
-    /* Often we redirect the output to a file, but we have found
-       issues due to the buffering associated with stdout. Some issues
-       were fixed just by the use of 'fflush', but the main issued
-       remained.
-       The stdout stream is buffered, so will only display what's in the
-       buffer after it reaches a newline (or when it's told to). We have a
-       few options to print immediately:
-       - Print to stderr instead using fprintf.
-       - Print to stdout and flush stdout whenever we need it to using fflush.
-       - We can also disable buffering on stdout by using setbuf:
-         setbuf(stdout,NULL);
-         Make stdout unbuffered; this seems to work for all cases.
-    */
-    setbuf(stdout,NULL);
-
     esb_constructor(&config_file_path);
 #ifdef WIN32
+    /*  Often we redirect the output to a file, but we have found
+        issues due to the buffering associated with stdout. Some issues
+        were fixed just by the use of 'fflush', but the main issued
+        remained.
+        The stdout stream is buffered, so will only display what's in the
+        buffer after it reaches a newline (or when it's told to). We have a
+        few options to print immediately:
+        - Print to stderr instead using fprintf.
+        - Print to stdout and flush stdout whenever we need it to using fflush.
+        - We can also disable buffering on stdout by using setbuf:
+            setbuf(stdout,NULL);
+            Make stdout unbuffered; this seems to work for all cases.
+    */
+
+    setbuf(stdout,NULL);
     /* Windows specific. */
     /* Redirect stderr to stdout. */
     /* Tried to use SetStdHandle, but it does not work properly. */
@@ -475,6 +476,7 @@ main(int argc, char *argv[])
         cmd.check_verbose_mode = check_verbose_mode;
         dwarf_record_cmdline_options(cmd);
     }
+
 
     f = open_a_file(file_name);
     if (f == -1) {
@@ -565,9 +567,9 @@ main(int argc, char *argv[])
     }
 #endif
     close_a_file(f);
-    /* As the tool have reached this point, it means there are
-       no internal errors and we should return an OKAY condition,
-       regardless if the file being processed has errors. */
+    /*  As the tool have reached this point, it means there are
+        no internal errors and we should return an OKAY condition,
+        regardless if the file being processed has errors. */
     return OKAY;
 }
 
@@ -2801,19 +2803,22 @@ print_dwarf_check_error(char *format,...)
     boolean found = FALSE;
     string error_text = NULL;
     va_list ap;
+    int netlen = 0;
+    char tinybuf[20];
 
     if (do_init) {
-        /* One time initialization */
         esb_constructor(&dwarf_error_line);
         do_init = FALSE;
     }
+    esb_empty_string(&dwarf_error_line);
 
     /* Generate the full line of text */
     va_start(ap,format);
-    esb_empty_string(&dwarf_error_line);
+    netlen = vsnprintf(tinybuf,sizeof(tinybuf),format,ap);
+    esb_force_allocation(&dwarf_error_line,netlen+1);
+    va_start(ap,format);
     esb_append_printf_ap(&dwarf_error_line,format,ap);
     error_text = esb_get_string(&dwarf_error_line);
-
     if (print_unique_errors) {
         found = add_to_unique_errors_table(error_text);
         if (!found) {
@@ -2822,7 +2827,6 @@ print_dwarf_check_error(char *format,...)
     } else {
         printf("%s",error_text);
     }
-    va_end(ap);
 
     /* To indicate if the current error message have been found or not */
     found_error_message = found;
@@ -2831,6 +2835,7 @@ print_dwarf_check_error(char *format,...)
 void DWARF_CHECK_ERROR(Dwarf_Check_Categories category,
     const char *str)
 {
+
     if (checking_this_compiler()) {
         DWARF_ERROR_COUNT(category,1);
         if (check_verbose_mode) {

@@ -405,7 +405,7 @@ _dwarf_error(Dwarf_Debug dbg, Dwarf_Error * error, Dwarf_Sword errval)
                 up a special area. */
             errptr = _dwarf_special_no_dbg_error_malloc();
             if (errptr == NULL) {
-                errptr = &_dwarf_failsafe_error; 
+                errptr = &_dwarf_failsafe_error;
                 errptr->er_static_alloc = 1;
             }
         }

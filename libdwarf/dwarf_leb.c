@@ -114,7 +114,7 @@ _dwarf_decode_u_leb128(Dwarf_Small * leb128, Dwarf_Word * leb128_length)
 
         byte_length++;
         if (byte_length > BYTESLEBMAX) {
-            /*  Erroneous input. What to do? 
+            /*  Erroneous input. What to do?
                 Abort? Return error? Just stop here?*/
             *leb128_length = BYTESLEBMAX;
             return number;

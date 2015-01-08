@@ -627,7 +627,6 @@ this_section_dwarf_relevant(const char *scn_name,int type)
 static int
 _dwarf_setup(Dwarf_Debug dbg, Dwarf_Error * error)
 {
-    Dwarf_Addr *virtual_addresses = 0;
     const char *scn_name = 0;
     int foundDwarf = 0;
     struct Dwarf_Obj_Access_Interface_s * obj = 0;
@@ -715,9 +714,6 @@ _dwarf_setup(Dwarf_Debug dbg, Dwarf_Error * error)
         } else if (res == DW_DLV_ERROR){
             DWARF_DBG_ERROR(dbg, err, DW_DLV_ERROR);
         }
-
-        /* SN-Carlos: Record virtual address for this section. */
-        dbg->de_sections_load_address[section_index] = doas.addr;
 
         scn_name = doas.name;
 
@@ -876,7 +872,7 @@ dwarf_object_init(Dwarf_Obj_Access_Interface* obj, Dwarf_Handler errhand,
         dbg = 0;
         /* DW_DLV_NO_ENTRY not possible in freeresult */
         if (freeresult == DW_DLV_ERROR) {
-            /*  Use the _dwarf_setup error number. 
+            /*  Use the _dwarf_setup error number.
                 If error is NULL the following will issue
                 a message on stderr and abort(), as without
                 dbg there is no error-handler function.
@@ -885,7 +881,7 @@ dwarf_object_init(Dwarf_Obj_Access_Interface* obj, Dwarf_Handler errhand,
             return DW_DLV_ERROR;
         }
         if (setup_result == DW_DLV_ERROR) {
-            /*  Use the _dwarf_setup error number. 
+            /*  Use the _dwarf_setup error number.
                 If error is NULL the following will issue
                 a message on stderr and abort(), as without
                 dbg there is no error-handler function.
