@@ -118,13 +118,13 @@ allocate_more(struct esb_s *data, size_t len)
     data->esb_allocated_size = new_size;
 }
 
-void 
+void
 esb_force_allocation(struct esb_s *data, size_t minlen)
 {
-     if (data->esb_allocated_size < minlen) {
+    if (data->esb_allocated_size < minlen) {
         size_t increment = minlen - data->esb_allocated_size;
         allocate_more(data,increment);
-     }
+    }
 }
 
 static void
@@ -246,14 +246,14 @@ esb_get_allocated_size(struct esb_s *data)
     return data->esb_allocated_size;
 }
 
-/*  Append a formatted string 
+/*  Append a formatted string
     It is up to the caller to ensure the
     data esb_allocated_size is big enough */
 void
 esb_append_printf_ap(struct esb_s *data,const char *in_string,va_list ap)
 {
     size_t netlen = data->esb_allocated_size - data->esb_used_bytes;
-    int expandedlen = 
+    int expandedlen =
         vsnprintf(&data->esb_string[data->esb_used_bytes],
         netlen,in_string,ap);
     if (netlen < expandedlen) {
@@ -292,7 +292,7 @@ esb_get_copy(struct esb_s *data)
 
 
 void
-validate_esb(int instance, 
+validate_esb(int instance,
    struct esb_s* d,
    size_t explen,
    size_t expalloc,
@@ -300,35 +300,34 @@ validate_esb(int instance,
 {
     printf("TEST instance %d\n",instance);
     if (esb_string_len(d) != explen) {
-         printf("FAIL instance %d  slen %u explen %u\n",
-             instance,(unsigned)esb_string_len(d),(unsigned)explen);
+        printf("FAIL instance %d  slen %u explen %u\n",
+            instance,(unsigned)esb_string_len(d),(unsigned)explen);
     }
     if (d->esb_allocated_size != expalloc) {
-         printf("FAIL instance %d  alloclen %u expalloc %u\n",
-             instance,(unsigned)d->esb_allocated_size,(unsigned)expalloc);
+        printf("FAIL instance %d  alloclen %u expalloc %u\n",
+            instance,(unsigned)d->esb_allocated_size,(unsigned)expalloc);
     }
     if(strcmp(esb_get_string(d),expout)) {
-         printf("FAIL instance %d  str %s expstr %s\n",
-             instance,esb_get_string(d),expout);
+        printf("FAIL instance %d  str %s expstr %s\n",
+            instance,esb_get_string(d),expout);
     }
-    
 }
-void 
+void
 trialprint_1(struct esb_s *d, char *format,...)
 {
-       va_list ap;
-    
-       va_start(ap,format);
-       esb_append_printf_ap(d,format,ap);
+    va_list ap;
+
+    va_start(ap,format);
+    esb_append_printf_ap(d,format,ap);
 }
 
-void 
+void
 trialprint(struct esb_s *d)
 {
-      const char * s = "insert me";
-      trialprint_1(d,"aaaa %s bbbb",s);
+    const char * s = "insert me";
+    trialprint_1(d,"aaaa %s bbbb",s);
 }
-   
+
 
 int main()
 {

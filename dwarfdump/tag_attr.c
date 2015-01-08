@@ -354,11 +354,11 @@ main(int argc, char **argv)
             "static Rate_Tag_Attr rate_tag_attr[] = {\n");
         for (tag = 0; tag < DW_TAG_last; ++tag) {
             if (tag_children[tag]) {
-              legal = tag_attr_legal[tag];
-              aname = 0;
-              dwarf_get_TAG_name(tag,&aname);
-              fprintf(fileOut,
-                  "    %2d, 0, /* 0x%02x - %s */\n",legal,tag,aname);
+                legal = tag_attr_legal[tag];
+                aname = 0;
+                dwarf_get_TAG_name(tag,&aname);
+                fprintf(fileOut,
+                    "    %2d, 0, /* 0x%02x - %s */\n",legal,tag,aname);
             } else {
                 fprintf(fileOut,"     0, 0,\n");
             }
