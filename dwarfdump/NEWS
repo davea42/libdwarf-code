@@ -1,3 +1,8 @@
+January 08, 2015
+  dwarfdump does new checking. See options -kD -kG -ku -kuf.
+  In addition, dwarfdump output can be written to a file without
+  using redirection by using the new  -O file=<path>
+  option.
 January 29, 2014
   Now using dwarf_tsearch() so tsearch is available on every platform.
 November 17, 2012

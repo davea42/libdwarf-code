@@ -1,3 +1,13 @@
+January 8, 2015
+  When malloc fails (out of space) dwarfdump will now
+  use a statically-allocated Dwarf_Error_s struct so it can get
+  the original malloc failure (or other error) reported back to
+  the calling client.  
+
+  Some checks for invalid Elf files were changed to actually 
+  report errors properly.  Thanks to Edward Williamson for 
+  providing test cases with odd errors in the Elf and DWARF. 
+
 May 19, 2014
   REASON FOR RELEASE
   Now handles DebugFission (part of the unreleased standard

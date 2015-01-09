@@ -300,6 +300,12 @@ Checks for errors in constants in debug_info.
 Turns on full reporting of error totals per producer.
 (the default shows less detail).
 .TP
+.B \-kD 
+Turns on reporting of duplicated attributes.
+Duplicated attributes on a single DW_TAG are
+improper DWARF, but at least one compiler
+emitted such.
+.TP
 .B \-ke 
 Turns on reading pubnames and checking for fde errors.
 .TP
@@ -318,7 +324,12 @@ Turns on checking for line table errors.
 .B \-kg 
 Turns on checking for unused gaps in .debug_info (these
 gaps are not an error, just a waste of space).
-
+.TP
+.B \-kG 
+Print only unique errors. Error lines are simpified
+(hex numbers removed, for example) and when
+a given message string would otherwise appear 
+again it is suppressed.
 .TP
 .B \-ki 
 Causes a summary of checking results per compiler (producer)
@@ -350,6 +361,14 @@ Turns on checking DIE references for circular references.
 .TP
 .B \-kt 
 Turns on tag-tag combinations checking.
+.TP
+.B \-ku 
+Print tag-tree and tag-attribute usage (basic format). 
+.TP
+.B \-kuf
+Print tag-tree and tag-attribute usage (full format). 
+For standard TAGs and ATtributes this presents an overview
+of how they were used.
 .TP
 .B \-kx 
 Turns on check_frames.
@@ -412,7 +431,10 @@ are also shown.
 When printing frames, this turns off the search for function names.
 In a really large object the search can take more time than
 one wants to wait, so this avoids the search.
-
+.TP
+.B \-O file=<path>
+The <path> will be used as the file name for output instead 
+of writing to stdout (stdout is the default).
 .TP
 .B \-Q 
 Suppresses section data printing (set automatically with a checking option).
