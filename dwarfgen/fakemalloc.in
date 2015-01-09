@@ -1,4 +1,14 @@
 /*
+
+This file is a simple way (on Linux) to do a certain kind
+of test.  "Code Testing Through Fault Injection" in ":login;"
+magazine (December, 2014. Usenix.org) by Peter Gutmann offered
+a simple example by an unnamed friend: instrument malloc() so
+on call N it returns NULL. Try with N from 0 to some higher
+number (I used 0 to 100).  Run your chosen executable and
+see how it fares.  This test exposed a couple bugs in libdwarf.
+
+Here are some of the example core dumps (running dwarfgen):
 2000: Could not allocate Dwarf_Error structure, abort() in libdwarf.
 1000: FAIL:bad alloc caughtstd::bad_alloc
 500:  FAIL:bad alloc caughtstd::bad_alloc
@@ -23,7 +33,7 @@
   what():  std::bad_alloc
   Aborted (core dumped)
 
-
+-------HOW TO USE:
 Configure generates the following for Makefile.
 $(CXX) $(CXXFLAGS) -o $@ $(DGOBJECTS) $(LDFLAGS)
 
@@ -33,6 +43,7 @@ $(CC) $(CFLAGS) -c fakemalloc.o
 $(CXX) $(CXXFLAGS) -o $@ $(DGOBJECTS) $(LDFLAGS) fakemalloc.o
 
 Run tests using the script TESTmallocfail
+-------
 
 */
 
