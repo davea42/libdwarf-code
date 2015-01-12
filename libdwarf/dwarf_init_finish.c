@@ -180,7 +180,9 @@ add_debug_section_info(Dwarf_Debug dbg,
 /*  If running this long set of tests is slow
     enough to matter one could set up a local
     tsearch tree with all this content and search
-    it instead of this set of sequential tests. */
+    it instead of this set of sequential tests.
+    Or use a switch(){} here with a search tree
+    to to turn name into index for the switch(). */
 static int
 enter_section_in_de_debug_sections_array(Dwarf_Debug dbg,
     const char *scn_name,
@@ -710,8 +712,10 @@ _dwarf_setup(Dwarf_Debug dbg, Dwarf_Error * error)
             obj_section_index,
             &doas, &err);
         if (res == DW_DLV_NO_ENTRY){
+            free(sections);
             return res;
         } else if (res == DW_DLV_ERROR){
+            free(sections);
             DWARF_DBG_ERROR(dbg, err, DW_DLV_ERROR);
         }
 
@@ -733,9 +737,11 @@ _dwarf_setup(Dwarf_Debug dbg, Dwarf_Error * error)
                 &err);
             if (res == DW_DLV_OK) {
                 /* DUPLICATE */
+                free(sections);
                 DWARF_DBG_ERROR(dbg, DW_DLE_SECTION_DUPLICATION,
                     DW_DLV_ERROR);
             } else if (res == DW_DLV_ERROR) {
+                free(sections);
                 DWARF_DBG_ERROR(dbg, err, DW_DLV_ERROR);
             }
             /* No entry: new-to-us section, the normal case. */
@@ -757,6 +763,7 @@ _dwarf_setup(Dwarf_Debug dbg, Dwarf_Error * error)
                         section->ds_duperr,
                         section->ds_emptyerr);
                     if (res != DW_DLV_OK) {
+                        free(sections);
                         return res;
                     }
                     sections[obj_section_index] = section->ds_secdata;
@@ -767,14 +774,17 @@ _dwarf_setup(Dwarf_Debug dbg, Dwarf_Error * error)
                 }else if (res == DW_DLV_NO_ENTRY) {
                     /*  Some sort of bug in the code here.
                         Should be impossible to get here. */
+                    free(sections);
                     DWARF_DBG_ERROR(dbg, DW_DLE_SECTION_ERROR, DW_DLV_ERROR);
                 } else {
+                    free(sections);
                     DWARF_DBG_ERROR(dbg, err, DW_DLV_ERROR);
                 }
             } else if (res == DW_DLV_NO_ENTRY) {
                 /*  We get here for relocation sections.
                     Fall through. */
             } else {
+                free(sections);
                 DWARF_DBG_ERROR(dbg, err, DW_DLV_ERROR);
             }
 
@@ -795,10 +805,7 @@ _dwarf_setup(Dwarf_Debug dbg, Dwarf_Error * error)
     }
 
     /* Free table with section information. */
-    if (sections){
-        free(sections);
-    }
-
+    free(sections);
     if (foundDwarf) {
         return DW_DLV_OK;
     }

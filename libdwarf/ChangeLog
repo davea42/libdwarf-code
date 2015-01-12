@@ -1,3 +1,6 @@
+2015-01-11  David Anderson
+     * dwarf_init_finish.c(_dwarf_setup): For all returns 
+       in _dwarf_setup() free the sections malloc space.
 2015-01-08  David Anderson
      * cmplrs/dwarf_addr_finder.h: Fix a comment and remove a trailing
        whitespace.
