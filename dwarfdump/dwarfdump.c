@@ -60,7 +60,7 @@ $Header: /plroot/cmplrs.src/v7.4.5m/.RCS/PL/dwarfdump/RCS/dwarfdump.c,v 1.48 200
 extern int elf_open(const char *name,int mode);
 #endif /* WIN32 */
 
-#define DWARFDUMP_VERSION " Thu Jan  8 14:11:41 PST 2015  "
+#define DWARFDUMP_VERSION " Mon Jan 12 13:31:00 PST 2015  "
 
 extern char *optarg;
 
@@ -2815,9 +2815,18 @@ print_dwarf_check_error(char *format,...)
     /* Generate the full line of text */
     va_start(ap,format);
     netlen = vsnprintf(tinybuf,sizeof(tinybuf),format,ap);
+    /*  "The object ap may be passed as an argument to another 
+        function; if that function invokes the va_arg() 
+        macro with parameter ap, the value of ap in the calling 
+        function is unspecified and shall be passed to the va_end() 
+        macro prior to any further reference to ap."
+        Single Unix Specification. */
+    va_end(ap);
     esb_force_allocation(&dwarf_error_line,netlen+1);
     va_start(ap,format);
     esb_append_printf_ap(&dwarf_error_line,format,ap);
+    va_end(ap);
+
     error_text = esb_get_string(&dwarf_error_line);
     if (print_unique_errors) {
         found = add_to_unique_errors_table(error_text);

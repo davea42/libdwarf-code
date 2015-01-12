@@ -855,6 +855,7 @@ dwarf_object_init(Dwarf_Obj_Access_Interface* obj, Dwarf_Handler errhand,
 
     setup_result = _dwarf_setup(dbg, error);
     if (setup_result != DW_DLV_OK) {
+        int freeresult = 0;
         /* We cannot use any _dwarf_setup()
             error here as
             we are freeing dbg, making that error (setup
@@ -875,7 +876,7 @@ dwarf_object_init(Dwarf_Obj_Access_Interface* obj, Dwarf_Handler errhand,
         /*  The status we want to return  here is of _dwarf_setup,
             not of the  _dwarf_free_all_of_one_debug(dbg) call.
             So use a local status variable for the free.  */
-        int freeresult = _dwarf_free_all_of_one_debug(dbg);
+        freeresult = _dwarf_free_all_of_one_debug(dbg);
         dbg = 0;
         /* DW_DLV_NO_ENTRY not possible in freeresult */
         if (freeresult == DW_DLV_ERROR) {

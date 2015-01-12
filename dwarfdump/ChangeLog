@@ -1,3 +1,10 @@
+2015-01-12  David Anderson
+     * , tag_common.c: Add comments about va_start, va_end.
+     * esb.c: Add comments about va_start, va_end.
+       Add va_end in the selftest code.
+     * common.c: Update version string.
+     * dwarfdump.c: Update version string. Add va_end()
+       and comments about va_end.
 2015-01-08  David Anderson and Carlos Alberto Enciso
      * Makefile.in: add selftest: rule, which tests esb.c
      * dwarfdump.c: Add new options -O file=path, -kD -kG -ku kuf.

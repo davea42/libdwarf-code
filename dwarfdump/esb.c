@@ -272,6 +272,12 @@ esb_append_printf(struct esb_s *data,const char *in_string, ...)
     va_list ap;
     va_start(ap,in_string);
     esb_append_printf_ap(data,in_string,ap);
+    /*  "The object ap may be passed as an argument to another 
+        function; if that function invokes the va_arg() 
+        macro with parameter ap, the value of ap in the calling 
+        function is unspecified and shall be passed to the va_end() 
+        macro prior to any further reference to ap."
+        Single Unix Specification. */
     va_end(ap);
 }
 
@@ -288,9 +294,9 @@ esb_get_copy(struct esb_s *data)
 
     return copy;
 }
+
+
 #ifdef SELFTEST
-
-
 void
 validate_esb(int instance,
    struct esb_s* d,
@@ -319,6 +325,7 @@ trialprint_1(struct esb_s *d, char *format,...)
 
     va_start(ap,format);
     esb_append_printf_ap(d,format,ap);
+    va_end(ap);
 }
 
 void

@@ -56,6 +56,13 @@ bad_line_input(char *format,...)
         "tag_(tree,attr) table build failed, line %d: \"%s\". ",
         linecount, line_in);
     vfprintf(stderr,format, ap);
+    /*  "The object ap may be passed as an argument to another 
+        function; if that function invokes the va_arg() 
+        macro with parameter ap, the value of ap in the calling 
+        function is unspecified and shall be passed to the va_end() 
+        macro prior to any further reference to ap."
+        Single Unix Specification. */
+    va_end(ap);
     fprintf(stderr,"\n");
     exit(FAILED);
 }
