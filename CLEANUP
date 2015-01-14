@@ -4,7 +4,6 @@
 ( cd dwarfgen ; make clean ;  make distclean )
 ( cd libdwarf ; make clean ;  make distclean )
 ( cd dwarfdump ; make clean ;  make distclean )
-( cd dwarfdump2 ; make clean ;  make distclean )
 rm -f dwarfgen/configure.lineno
 rm -f ALLd*
 rm -f junk* */junk*

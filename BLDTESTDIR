@@ -9,8 +9,6 @@ then
 	echo  Example: BLDTESTDIR 20100501
 	exit 1
 fi
-# Removed dwarfdump2.O from list of files below. December 2014
-#dwarfdump2.O 
 dat=$1
 tmpdir=/var/tmp
 cd dwarftest
