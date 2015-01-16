@@ -40,9 +40,7 @@ print_debugfission_index(Dwarf_Debug dbg,const char *type)
     Dwarf_Unsigned offsets_count = 0;
     Dwarf_Unsigned units_count = 0;
     Dwarf_Unsigned hash_slots_count = 0;
-    Dwarf_Unsigned unused_reserved = 0;
     Dwarf_Error err = 0;
-    const char * ret_type = 0;
     const char * section_name = 0;
     const char * section_type2 = 0;
     const char * section_name2 = 0;

@@ -52,8 +52,8 @@ $Header: /plroot/cmplrs.src/v7.4.5m/.RCS/PL/dwarfdump/RCS/esb.c,v 1.1 2005/08/04
 #include <string.h> /* SELFTEST */
 #include <stdlib.h> /* SELFTEST */
 typedef char * string; /* SELFTEST */
+#include <stdarg.h>   /* For va_start va_arg va_list */
 #endif
-#include <stdarg.h>  /* For va_start etc. */
 #include "esb.h"
 
 /*  INITIAL_ALLOC value takes no account of space for a trailing NUL,
@@ -272,10 +272,10 @@ esb_append_printf(struct esb_s *data,const char *in_string, ...)
     va_list ap;
     va_start(ap,in_string);
     esb_append_printf_ap(data,in_string,ap);
-    /*  "The object ap may be passed as an argument to another 
-        function; if that function invokes the va_arg() 
-        macro with parameter ap, the value of ap in the calling 
-        function is unspecified and shall be passed to the va_end() 
+    /*  "The object ap may be passed as an argument to another
+        function; if that function invokes the va_arg()
+        macro with parameter ap, the value of ap in the calling
+        function is unspecified and shall be passed to the va_end()
         macro prior to any further reference to ap."
         Single Unix Specification. */
     va_end(ap);

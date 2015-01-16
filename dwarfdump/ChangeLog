@@ -1,5 +1,27 @@
+2015-01-15  David Anderson
+     * dwarfdump.c: dump_unique_errors_table() ifdef out
+       of normal compiles, it is unused. Unused local variables
+       removed.
+       Update version string.
+     * esb.c: Moved stdarg.h include just after stdio.h include
+       for positioning consistency.
+     * globals.h: Added stdarg.h include just after stdio.h
+       include as we use va_list a lot and so stdarg.h
+       is required.
+     * print_debugfission.c: Remove two unused local variables.
+     * print_frames.c: Remove trailing whitespace.
+     * tag_attr.c: #include stdarg.h. Add {} to array initializers
+       output to avoid compiler warning.
+     * tag_common.c: Move stdarg.h include to just after
+       stdio.h for positioning consistency.
+       Update version string.
+     * tag_tree.c: Revised include order to start with
+       globals.h and to not duplicate includes of stdio.h etc.
+       Add {} to array initializers
+       output to avoid compiler warning.
+     * testesb.c: Add include of stdarg.h.
 2015-01-12  David Anderson
-     * , tag_common.c: Add comments about va_start, va_end.
+     * tag_common.c: Add comments about va_start, va_end.
      * esb.c: Add comments about va_start, va_end.
        Add va_end in the selftest code.
      * common.c: Update version string.

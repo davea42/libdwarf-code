@@ -32,16 +32,10 @@
   http://oss.sgi.com/projects/GenInfo/NoticeExplan
 
 $Header: /plroot/cmplrs.src/v7.4.5m/.RCS/PL/dwarfdump/RCS/tag_tree.c,v 1.8 2005/12/01 17:34:59 davea Exp $ */
-#include <dwarf.h>
-#include <stdio.h>
+#include "globals.h"
 #include <getopt.h>
-#include <string.h>             /* For strdup() */
-#include <stdlib.h>             /* For exit() declaration etc. */
 #include <errno.h>              /* For errno declaration. */
 #include <unistd.h>
-
-#include "globals.h"
-#include "libdwarf.h"
 #include "common.h"
 #include "tag_common.h"
 
@@ -316,9 +310,9 @@ main(int argc, char **argv)
             for (index = 1; index < cur_tag; ++index) {
                 child_tag = tag_tree_vector[index];
                 dwarf_get_TAG_name(child_tag,&aname);
-                fprintf(fileOut,"    /* 0x%02x */ 0, %s,\n",child_tag,aname);
+                fprintf(fileOut,"    {/* 0x%02x */ 0, %s},\n",child_tag,aname);
             }
-            fprintf(fileOut,"    /* %4s */ 0, 0\n};\n\n"," ");
+            fprintf(fileOut,"    {/* %4s */ 0, 0}\n};\n\n"," ");
             /* Record allowed number of attributes */
             tag_tree_legal[tag] = cur_tag - 1;
         }
@@ -341,7 +335,7 @@ main(int argc, char **argv)
                 aname = 0;
                 dwarf_get_TAG_name(tag,&aname);
                 fprintf(fileOut,
-                    "    tag_tree_%02x, /* 0x%02x - %s */\n",tag,tag,aname);
+                    "   tag_tree_%02x, /* 0x%02x - %s */\n",tag,tag,aname);
             } else {
                 fprintf(fileOut,"    0,\n");
             }
@@ -361,12 +355,12 @@ main(int argc, char **argv)
                 aname = 0;
                 dwarf_get_TAG_name(tag,&aname);
                 fprintf(fileOut,
-                    "    %2d, 0, /* 0x%02x - %s */\n",legal,tag,aname);
+                    "    {%2d, 0 /* 0x%02x - %s */},\n",legal,tag,aname);
             } else {
-                fprintf(fileOut,"     0, 0,\n");
+                fprintf(fileOut,"    {0, 0},\n");
             }
         }
-        fprintf(fileOut,"     0, 0\n};\n\n");
+        fprintf(fileOut,"    {0, 0}\n};\n\n");
         fprintf(fileOut,"#endif /* HAVE_USAGE_TAG_ATTR */\n\n");
     }
 #endif /* HAVE_USAGE_TAG_ATTR */
@@ -395,7 +389,7 @@ main(int argc, char **argv)
             fprintf(fileOut,"/* 0x%02x - %-37s*/\n",u, name);
         } else {
             unsigned k = tag_tree_combination_table[u][0];
-            dwarf_get_TAG_name(u,&name);;
+            dwarf_get_TAG_name(u,&name);
             fprintf(fileOut,"/* 0x%02x - %-37s*/\n", k, name);
         }
         fprintf(fileOut,"    { ");

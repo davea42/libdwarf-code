@@ -34,6 +34,7 @@
 $Header: /plroot/cmplrs.src/v7.4.5m/.RCS/PL/dwarfdump/RCS/tag_attr.c,v 1.8 2005/12/01 17:34:59 davea Exp $ */
 #include <dwarf.h>
 #include <stdio.h>
+#include <stdarg.h>   /* For va_start va_arg va_list */
 #include <getopt.h>
 #include <stdlib.h>             /* For exit() declaration etc. */
 #include <errno.h>              /* For errno declaration. */
@@ -313,9 +314,9 @@ main(int argc, char **argv)
             for (index = 1; index < cur_attr; ++index) {
                 attr = tag_attr_vector[index];
                 dwarf_get_AT_name(attr,&aname);
-                fprintf(fileOut,"    /* 0x%02x */  0, %s,\n",attr,aname);
+                fprintf(fileOut,"    {/* 0x%02x */  0, %s},\n",attr,aname);
             }
-            fprintf(fileOut,"    /* %4s */  0, 0\n};\n\n"," ");
+            fprintf(fileOut,"    {/* %4s */  0, 0}\n};\n\n"," ");
             /* Record allowed number of attributes */
             tag_attr_legal[tag] = cur_attr - 1;
         }
@@ -358,12 +359,12 @@ main(int argc, char **argv)
                 aname = 0;
                 dwarf_get_TAG_name(tag,&aname);
                 fprintf(fileOut,
-                    "    %2d, 0, /* 0x%02x - %s */\n",legal,tag,aname);
+                    "    {%2d, 0, /* 0x%02x - %s */},\n",legal,tag,aname);
             } else {
-                fprintf(fileOut,"     0, 0,\n");
+                fprintf(fileOut,"    {0, 0},\n");
             }
         }
-        fprintf(fileOut,"     0, 0\n};\n\n");
+        fprintf(fileOut,"    {0, 0}\n};\n\n");
         fprintf(fileOut,"#endif /* HAVE_USAGE_TAG_ATTR */\n\n");
     }
 #endif /* HAVE_USAGE_TAG_ATTR */

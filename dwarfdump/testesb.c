@@ -6,6 +6,7 @@
 */
 
 #include <stdio.h>
+#include <stdarg.h>   /* For va_start va_arg va_list */
 #include <string.h>
 typedef char *string;
 

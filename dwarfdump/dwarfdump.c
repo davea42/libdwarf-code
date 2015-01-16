@@ -48,7 +48,6 @@ $Header: /plroot/cmplrs.src/v7.4.5m/.RCS/PL/dwarfdump/RCS/dwarfdump.c,v 1.48 200
 #include <fcntl.h>
 #include <limits.h>
 #include <unistd.h>  /* For getopt */
-#include <stdarg.h>  /* For va_start va_arg */
 #include "makename.h"
 #include "dwconf.h"
 #include "common.h"
@@ -60,7 +59,7 @@ $Header: /plroot/cmplrs.src/v7.4.5m/.RCS/PL/dwarfdump/RCS/dwarfdump.c,v 1.48 200
 extern int elf_open(const char *name,int mode);
 #endif /* WIN32 */
 
-#define DWARFDUMP_VERSION " Mon Jan 12 13:31:00 PST 2015  "
+#define DWARFDUMP_VERSION " Thu Jan 15 14:50:38 PST 2015  "
 
 extern char *optarg;
 
@@ -321,7 +320,9 @@ regex_t search_re;
 /* Functions used to manage the unique errors table */
 static void allocate_unique_errors_table();
 static void release_unique_errors_table();
+#ifdef TESTING
 static void dump_unique_errors_table();
+#endif
 static boolean add_to_unique_errors_table();
 
 /*  These configure items are for the
@@ -2714,6 +2715,7 @@ void allocate_unique_errors_table()
     }
 }
 
+#ifdef TESTING
 /* Just for debugging purposes, dump the unique errors table */
 void dump_unique_errors_table()
 {
@@ -2726,6 +2728,7 @@ void dump_unique_errors_table()
         printf("%3d: '%s'\n",index,set_unique_errors[index]);
     }
 }
+#endif
 
 /*  Release the space used to store the unique error messages */
 void release_unique_errors_table()
@@ -2740,7 +2743,6 @@ void release_unique_errors_table()
 /*  Returns TRUE if the text is already in the set; otherwise FALSE */
 boolean add_to_unique_errors_table(string error_text)
 {
-    boolean found = FALSE;
     unsigned int index;
     size_t len;
     string stored_text;
@@ -2750,7 +2752,6 @@ boolean add_to_unique_errors_table(string error_text)
     string pattern = "0x";
     string white = " ";
     string question = "?";
-    string ptr;
 
     /* Create a copy of the incoming text */
     filtered_text = makename(error_text);
@@ -2815,10 +2816,10 @@ print_dwarf_check_error(char *format,...)
     /* Generate the full line of text */
     va_start(ap,format);
     netlen = vsnprintf(tinybuf,sizeof(tinybuf),format,ap);
-    /*  "The object ap may be passed as an argument to another 
-        function; if that function invokes the va_arg() 
-        macro with parameter ap, the value of ap in the calling 
-        function is unspecified and shall be passed to the va_end() 
+    /*  "The object ap may be passed as an argument to another
+        function; if that function invokes the va_arg()
+        macro with parameter ap, the value of ap in the calling
+        function is unspecified and shall be passed to the va_end()
         macro prior to any further reference to ap."
         Single Unix Specification. */
     va_end(ap);

@@ -89,7 +89,7 @@ void esb_append_printf(struct esb_s *data,const char *format, ...);
 
 /*  Append a formatted string. The 'ap' must be just-setup with
     va_start(ap,format)  and
-    when esb_append_printf_ap returns the ap is used up 
+    when esb_append_printf_ap returns the ap is used up
     and should not be touched. */
 void esb_append_printf_ap(struct esb_s *data,const char *format,va_list ap);
 
