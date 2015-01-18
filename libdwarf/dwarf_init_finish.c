@@ -812,6 +812,125 @@ _dwarf_setup(Dwarf_Debug dbg, Dwarf_Error * error)
     return DW_DLV_NO_ENTRY;
 }
 
+/*  There is one table per CU and one per TU, and each
+    table refers to the associated other DWARF data
+    for that CU or TU.
+    See DW_SECT_* */
+
+static int
+load_debugfission_tables(Dwarf_Debug dbg,Dwarf_Error *error)
+{
+    int i = 0;
+    if (dbg->de_debug_cu_index.dss_size ==0 &&
+        dbg->de_debug_tu_index.dss_size ==0) {
+        /*  This is the normal case.
+            No debug fission. Not a .dwp object. */
+        return DW_DLV_NO_ENTRY;
+    }
+
+    for (i = 0; i < 2; ++i) {
+        Dwarf_Xu_Index_Header xuptr = 0;
+        struct Dwarf_Section_s* dwsect = 0;
+        Dwarf_Unsigned version = 0;
+        Dwarf_Unsigned number_of_cols /* L */ = 0;
+        Dwarf_Unsigned number_of_CUs /* N */ = 0;
+        Dwarf_Unsigned number_of_slots /* M */ = 0;
+        struct Dwarf_Fission_Offsets_s *offsetdata = 0;
+        struct Dwarf_Fission_Per_CU_s *percu = 0;
+        Dwarf_Unsigned cuindex = 0;
+        Dwarf_Unsigned hashindex = 0;
+        const char *secname = 0;
+        int res = 0;
+        const char *type = 0;
+        if (i == 0) {
+            dwsect = &dbg->de_debug_cu_index;
+            type = "cu";
+            offsetdata = &dbg->de_cu_fission_data;
+        } else {
+            dwsect = &dbg->de_debug_tu_index;
+            type = "tu";
+            offsetdata = &dbg->de_tu_fission_data;
+        }
+        if ( !dwsect->dss_size ) {
+            continue;
+        }
+        res = dwarf_get_xu_index_header(dbg,type,
+            &xuptr,&version,&number_of_cols,
+            &number_of_CUs,&number_of_slots,
+            &secname,error);
+        if (res != DW_DLV_OK) {
+            return res;
+        }
+        offsetdata->dfo_version = version;
+        offsetdata->dfo_type = type;
+        offsetdata->dfo_columns = number_of_cols;
+        offsetdata->dfo_entries = number_of_CUs;
+        offsetdata->dfo_slots = number_of_slots;
+        percu= (struct Dwarf_Fission_Per_CU_s *)_dwarf_get_alloc(dbg,
+            DW_DLA_FISSION_PERCU,number_of_CUs);
+        if(!percu) {
+            dwarf_xu_header_free(xuptr);
+            _dwarf_error(dbg,error, DW_DLE_ALLOC_FAIL);
+            return DW_DLA_ERROR;
+        }
+        offsetdata->dfo_per_cu = percu;
+        for(hashindex = 0; hashindex < number_of_slots; ++hashindex) {
+            Dwarf_Unsigned hashval = 0;
+            Dwarf_Unsigned index = 0;
+            Dwarf_Unsigned col = 0;
+            int res = 0;
+            res = dwarf_get_xu_hash_entry(xuptr,hashindex,
+                &hashval,&index,error);
+            if (res == DW_DLV_ERROR) {
+                dwarf_xu_header_free(xuptr);
+                return res;
+            } else if (res == DW_DLV_NO_ENTRY) {
+                /* Impossible */
+                dwarf_xu_header_free(xuptr);
+                return res;
+            } else if (hashval == 0 && index == 0 ) {
+                /* An unused hash slot */
+                continue;
+            }
+            for(col = 0; col < number_of_cols; ++col) {
+                struct Dwarf_Fission_Per_CU_s *thiscu = 0;
+                struct Dwarf_Fission_Section_Offset_s *thisoffset = 0;
+
+                Dwarf_Unsigned off = 0;
+                Dwarf_Unsigned len = 0;
+                const char * name = 0;
+                Dwarf_Unsigned num = 0;
+                res = dwarf_get_xu_section_names(xuptr,
+                    col,&num,&name,error);
+                if (res != DW_DLV_OK) {
+                    dwarf_xu_header_free(xuptr);
+                    return res;
+                }
+                res = dwarf_get_xu_section_offset(xuptr,
+                    index,col,&off,&len,error);
+                if (res != DW_DLV_OK) {
+                    dwarf_xu_header_free(xuptr);
+                    return res;
+                }
+                /* Index is 1 to number_of_CUs +1 */
+                if (index < 1 || index > number_of_CUs ) {
+                    /* Internal error. ??  */
+                    dwarf_xu_header_free(xuptr);
+                    _dwarf_error(dbg,error, DW_DLE_FISSION_INDEX_WRONG);
+                    return DW_DLV_ERROR;
+                }
+                thiscu = percu+(index-1);
+                thiscu->dfp_index = index;
+                thiscu->dfp_hash = hashval;
+                thisoffset = & thiscu->dfp_offsets[num];
+                thisoffset->dfs_offset = off;
+                thisoffset->dfs_size = len;
+            }
+        }
+        dwarf_xu_header_free(xuptr);
+    }
+    return DW_DLV_OK;
+}
 
 /*
     Use a Dwarf_Obj_Access_Interface to kick things off. All other
@@ -854,6 +973,17 @@ dwarf_object_init(Dwarf_Obj_Access_Interface* obj, Dwarf_Handler errhand,
     dbg->de_obj_file = obj;
 
     setup_result = _dwarf_setup(dbg, error);
+    if (setup_result == DW_DLV_OK) {
+        int fission_result = load_debugfission_tables(dbg,error);
+        /*  In most cases we get
+            setup_result == DW_DLV_NO_ENTRY here
+            as having debugfission (.dwp objects)
+            is fairly rare. */
+        if (fission_result == DW_DLV_ERROR) {
+            /*  Something is very wrong. */
+            setup_result = fission_result;
+        }
+    }
     if (setup_result != DW_DLV_OK) {
         int freeresult = 0;
         /* We cannot use any _dwarf_setup()
@@ -898,10 +1028,8 @@ dwarf_object_init(Dwarf_Obj_Access_Interface* obj, Dwarf_Handler errhand,
         }
         return setup_result;
     }
-
     dwarf_harmless_init(&dbg->de_harmless_errors,
         DW_HARMLESS_ERROR_CIRCULAR_LIST_DEFAULT_SIZE);
-
     *ret_dbg = dbg;
     return DW_DLV_OK;
 }

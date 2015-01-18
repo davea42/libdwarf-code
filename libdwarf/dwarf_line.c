@@ -184,6 +184,11 @@ dwarf_srcfiles(Dwarf_Die die,
         return (DW_DLV_ERROR);
     }
     line_ptr = dbg->de_debug_line.dss_data + line_offset;
+    {
+        Dwarf_Unsigned fission_offset =
+            _dwarf_get_fission_addition_die(dbg, die, DW_SECT_LINE);
+        line_ptr += fission_offset;
+    }
     dwarf_dealloc(dbg, stmt_list_attr, DW_DLA_ATTR);
 
     /*  If die has DW_AT_comp_dir attribute, get the string that names

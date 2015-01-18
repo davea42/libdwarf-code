@@ -182,9 +182,11 @@ struct Dwarf_CU_Context_s {
     Dwarf_Byte_Ptr cc_last_abbrev_ptr;
     Dwarf_Hash_Table cc_abbrev_hash_table;
     Dwarf_CU_Context cc_next;
+
     /*unsigned char cc_offset_length; */
     Dwarf_Bool cc_is_info; /* TRUE means context is
         in debug_info, FALSE means is in debug_types. */
+
 };
 
 /*  Consolidates section-specific data in one place.
@@ -314,6 +316,36 @@ struct Dwarf_dbg_sect_s {
 
 
 
+struct Dwarf_Fission_Section_Offset_s {
+   Dwarf_Unsigned dfs_offset;
+   Dwarf_Unsigned dfs_size;
+};
+
+struct Dwarf_Fission_Per_CU_s {
+   unsigned       dfp_index;
+   Dwarf_Unsigned dfp_hash;
+   /* 0 unused, 1-8 are indexed by DW_SECT* */
+   struct Dwarf_Fission_Section_Offset_s dfp_offsets[9];
+};
+
+
+/*  If dfo_version is 0 the struct is empty/unused.
+    and then all the other fields are 0. */
+struct Dwarf_Fission_Offsets_s {
+    unsigned dfo_version; /* 2 is the only supported value */
+
+    /*  pointer to "cu" or "tu", never free
+        the string. */
+    const char *   dfo_type;
+    Dwarf_Unsigned dfo_columns;
+    Dwarf_Unsigned dfo_entries;
+    Dwarf_Unsigned dfo_slots;
+
+    /* Pointer to array of dfo_entries structs. */
+    struct Dwarf_Fission_Per_CU_s *dfo_per_cu;
+};
+
+
 struct Dwarf_Debug_s {
     /*  All file access methods and support data
         are hidden in this structure.
@@ -402,6 +434,8 @@ struct Dwarf_Debug_s {
     struct Dwarf_Section_s de_elf_symtab;
     struct Dwarf_Section_s de_elf_strtab;
 
+    struct Dwarf_Fission_Offsets_s de_cu_fission_data;
+    struct Dwarf_Fission_Offsets_s de_tu_fission_data;
 
     void *(*de_copy_word) (void *, const void *, size_t);
     unsigned char de_same_endian;
@@ -495,4 +529,10 @@ int _dwarf_extract_string_offset_via_str_offsets(Dwarf_Debug dbg,
     Dwarf_Unsigned *str_sect_offset_out,
     Dwarf_Error *error);
 
+/*  FIXME: return DW_DLV_OK etc instead.
+*/
+Dwarf_Unsigned _dwarf_get_fission_addition_die(Dwarf_Debug dbg,
+   Dwarf_Die die, int dw_sect_index);
 
+Dwarf_Unsigned _dwarf_get_fission_addition(Dwarf_Debug dbg,
+   int cu_is_info,Dwarf_Off cu_offset,int dw_sect_index);

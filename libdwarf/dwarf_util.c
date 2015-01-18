@@ -799,10 +799,10 @@ dwarf_printf(Dwarf_Debug dbg,
         va_start(ap,format);
         olen = vsnprintf(bufdata->dp_buffer,
             bufdata->dp_buffer_len, format,ap);
-        /*  "The object ap may be passed as an argument to another 
-            function; if that function invokes the va_arg() 
-            macro with parameter ap, the value of ap in the calling 
-            function is unspecified and shall be passed to the va_end() 
+        /*  "The object ap may be passed as an argument to another
+            function; if that function invokes the va_arg()
+            macro with parameter ap, the value of ap in the calling
+            function is unspecified and shall be passed to the va_end()
             macro prior to any further reference to ap."
             Single Unix Specification. */
         va_end(ap);

@@ -878,6 +878,11 @@ _dwarf_get_loclist_header_start(Dwarf_Debug dbg,
             return (DW_DLV_NO_ENTRY);
         }
     }
+    {
+        Dwarf_Unsigned fissoff =
+            _dwarf_get_fission_addition_die(dbg, attr->ar_die, DW_SECT_LOC);
+        *loclist_offset += fissoff;
+    }
     return DW_DLV_OK;
 }
 

@@ -997,6 +997,14 @@ _dwarf_extract_string_offset_via_str_offsets(Dwarf_Debug dbg,
 
     offsetintable = (index_to_offset_entry*cu_context->cc_length_size )
         + offset_base;
+    {
+        Dwarf_Unsigned fissoff =
+            _dwarf_get_fission_addition(dbg,
+            cu_context->cc_is_info,
+            cu_context->cc_debug_offset,DW_SECT_STR_OFFSETS);
+        offsetintable += fissoff;
+    }
+
     end_offsetintable = offsetintable + cu_context->cc_length_size;
     /* The offsets table is a series of offset-size entries. */
     if ((end_offsetintable) >= dbg->de_debug_str_offsets.dss_size ) {

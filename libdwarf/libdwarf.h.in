@@ -1131,9 +1131,10 @@ struct Dwarf_Obj_Access_Interface_s {
 #define DW_DLE_WEAKNAMES_ERROR                 279
 #define DW_DLE_RELOCS_ERROR                    280
 #define DW_DLE_ATTR_OUTSIDE_SECTION            281
+#define DW_DLE_FISSION_INDEX_WRONG             282
 
     /* DW_DLE_LAST MUST EQUAL LAST ERROR NUMBER */
-#define DW_DLE_LAST        281
+#define DW_DLE_LAST        282
 #define DW_DLE_LO_USER     0x10000
 
     /*  Taken as meaning 'undefined value', this is not

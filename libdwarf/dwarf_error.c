@@ -360,6 +360,7 @@ const char *_dwarf_errmsgs[] = {
     "DW_DLE_WEAKNAMES_ERROR(279) producer problem in object generation",
     "DW_DLE_RELOCS_ERROR(280) producer problem in object generation",
     "DW_DLE_DW_DLE_ATTR_OUTSIDE_SECTION(281)",
+    "DW_DLE_FISSION_INDEX_WRONG(282)",
 };
 
 

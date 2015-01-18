@@ -81,7 +81,6 @@ dwarf_get_abbrev(Dwarf_Debug dbg,
         return (DW_DLV_NO_ENTRY);
     }
 
-
     ret_abbrev = (Dwarf_Abbrev) _dwarf_get_alloc(dbg, DW_DLA_ABBREV, 1);
     if (ret_abbrev == NULL) {
         _dwarf_error(dbg, error, DW_DLE_ALLOC_FAIL);
@@ -98,6 +97,8 @@ dwarf_get_abbrev(Dwarf_Debug dbg,
     *abbr_count = 0;
     if (length != NULL)
         *length = 1;
+    /* FIXME: not dealing with debugfission? */
+
 
     abbrev_ptr = dbg->de_debug_abbrev.dss_data + offset;
     abbrev_section_end =

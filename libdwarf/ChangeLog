@@ -1,3 +1,24 @@
+2015-01-18  David Anderson
+     * dwarf_abbrev.c: Added comment, debugfission not supported
+       in the non-cu-specific interface.
+     * dwarf_alloc.c, dwarf_base_types.h: Add DW_DLA_FISSION_PERCU support.
+     * dwarf_die_deliv.c: Added _dwarf_get_fission_addition_die()
+       and  _dwarf_get_fission_addition() for debugfission support.
+     * dwarf_error.c: Add DW_DLE_FISSION_INDEX_WRONG error string.
+     * dwarf_form.c: Add debugfission support for str_offsets.
+     * dwarf_init_finish.c: Load debugfission tables if such exist
+       in an object.
+     * dwarf_line.c: Add debugfission support for .debug_line.dwo
+     * dwarf_loc.c: Add debugfission support for .debug_loc.dwo
+     * dwarf_macro.c: Add comment that debugfission not supported
+       in the non-CU-specific interface.
+     * dwarf_opaque.h: Add structures for debugfission:
+       Dwarf_Fission_Offsets_s,Dwarf_Fission_Per_CU_s,
+       Dwarf_Fission_Section_Offset_s.
+       declare the new functions in dwarf_die_deliv.c
+     * dwarf_util.c: Remove a few lines of traling whitespace.
+     * dwarf_uxu_index.c: Correct bogus formatting.
+     * libdwarf.h.in: Add DW_DLE_FISSION_INDEX_WRONG .
 2015-01-12  David Anderson
      * dwarf_init_finish.c(_dwarf_setup): Move freeresult
        declaration before statements.

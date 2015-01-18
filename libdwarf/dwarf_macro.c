@@ -178,7 +178,10 @@ _dwarf_macro_stack_pop_index(struct macro_stack_s *ms)
     if maximum_count is 0, treat as if it is infinite.
     get macro data up thru
     maximum_count entries or the end of a compilation
-    unit's entries (whichever comes first).  */
+    unit's entries (whichever comes first).
+
+    This fails badly for a debug fission file (dwp) FIXME.
+*/
 
 int
 dwarf_get_macro_details(Dwarf_Debug dbg,
@@ -244,6 +247,7 @@ dwarf_get_macro_details(Dwarf_Debug dbg,
         free_macro_stack(dbg,&msdata);
         return (DW_DLV_NO_ENTRY);
     }
+    /*   FIXME debugfission is NOT handled here.  */
 
     pnext = macro_base + macro_offset;
     if (maximum_count == 0) {

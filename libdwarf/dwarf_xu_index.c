@@ -223,14 +223,14 @@ int dwarf_get_xu_hash_entry(Dwarf_Xu_Index_Header xuhdr,
 
 static const char * dwp_secnames[] = {
 "No name for zero",
-"DW_SECT_INFO"        /*        1 */ /*".debug_info.dwo"*/,
-"DW_SECT_TYPES"       /*     2 */ /*".debug_types.dwo"*/,
-"DW_SECT_ABBREV"      /*      3 */ /*".debug_abbrev.dwo"*/,
-"DW_SECT_LINE"        /*        4 */ /*".debug_line.dwo"*/,
-"DW_SECT_LOC"         /*         5 */ /*".debug_loc.dwo"*/,
+"DW_SECT_INFO"        /* 1 */ /*".debug_info.dwo"*/,
+"DW_SECT_TYPES"       /* 2 */ /*".debug_types.dwo"*/,
+"DW_SECT_ABBREV"      /* 3 */ /*".debug_abbrev.dwo"*/,
+"DW_SECT_LINE"        /* 4 */ /*".debug_line.dwo"*/,
+"DW_SECT_LOC"         /* 5 */ /*".debug_loc.dwo"*/,
 "DW_SECT_STR_OFFSETS" /* 6 */ /*".debug_str_offsets.dwo"*/,
-"DW_SECT_MACINFO"     /*     7 */ /*".debug_macinfo.dwo"*/,
-"DW_SECT_MACRO"       /*       8 */ /*".debug_macro.dwo"*/,
+"DW_SECT_MACINFO"     /* 7 */ /*".debug_macinfo.dwo"*/,
+"DW_SECT_MACRO"       /* 8 */ /*".debug_macro.dwo"*/,
 "No name > 8",
 };
 
