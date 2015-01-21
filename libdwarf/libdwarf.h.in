@@ -1132,9 +1132,10 @@ struct Dwarf_Obj_Access_Interface_s {
 #define DW_DLE_RELOCS_ERROR                    280
 #define DW_DLE_ATTR_OUTSIDE_SECTION            281
 #define DW_DLE_FISSION_INDEX_WRONG             282
+#define DW_DLE_FISSION_VERSION_ERROR           283
 
     /* DW_DLE_LAST MUST EQUAL LAST ERROR NUMBER */
-#define DW_DLE_LAST        282
+#define DW_DLE_LAST        283
 #define DW_DLE_LO_USER     0x10000
 
     /*  Taken as meaning 'undefined value', this is not
@@ -2429,8 +2430,9 @@ int dwarf_gdbindex_string_by_offset(Dwarf_Gdbindex /*gdbindexptr*/,
 
 void dwarf_gdbindex_free(Dwarf_Gdbindex /*gdbindexptr*/);
 
-/*  END gdbindex operations. */
-/*  START .debug_cu_index and .debug_tu_index operations. */
+/*  END gdbindex/debugfission operations. */
+
+/*  START debugfission dwp .debug_cu_index and .debug_tu_index operations. */
 
 int dwarf_get_xu_index_header(Dwarf_Debug /*dbg*/,
     const char *  section_type, /* "tu" or "cu" */
@@ -2455,7 +2457,8 @@ int dwarf_get_xu_index_section_type(Dwarf_Xu_Index_Header /*xuhdr*/,
 /*  Index values 0 to M-1 are valid. */
 int dwarf_get_xu_hash_entry(Dwarf_Xu_Index_Header /*xuhdr*/,
     Dwarf_Unsigned    /*index*/,
-    /* returns the hash integer. 64 bits. */
+
+    /*  Returns the hash integer. 64 bits.  */
     Dwarf_Unsigned *  /*hash_value*/,
 
     /* returns the index into rows of offset/size tables. */
@@ -2480,8 +2483,37 @@ int dwarf_get_xu_section_offset(Dwarf_Xu_Index_Header /*xuhdr*/,
 
 void dwarf_xu_header_free(Dwarf_Xu_Index_Header /*xuhdr*/);
 
+#define DW_FISSION_SECT_COUNT 9
+/*  User must allocate this struct and pass a pointer to it
+    into dwarf_get_debugfission_for_cu .  */
+struct Dwarf_Debug_Fission_Per_CU_s  {
+    /*  Do not free the string. It contains "cu" or "tu". */
+    const char   * pcu_type;
+    Dwarf_Unsigned pcu_index;
+    Dwarf_Unsigned pcu_hash;  /* 8 byte  */
+    /*  [0] has offset and size 0.
+        [1]-[8] are DW_SECT_* indexes and the
+        values below are  the offset and size
+        of the respective section contribution
+        of a single .dwo object. When pcu_sizes[n] is
+        zero the corresponding section is not present. */
+    Dwarf_Unsigned pcu_offset[DW_FISSION_SECT_COUNT];
+    Dwarf_Unsigned pcu_size[DW_FISSION_SECT_COUNT];
+};
+typedef struct Dwarf_Debug_Fission_Per_CU_s  Dwarf_Debug_Fission_Per_CU ;
+/*  For any Dwarf_Die in a compilation unit, return
+    the debug fission table data through
+    percu_out.   Usually applications
+    will pass in the CU die.
+    Calling code should zero all of the
+    struct Dwarf_Debug_Fission_Per_CU_s before calling this.
+    If there is no debugfission data this returns
+    DW_DLV_NO_ENTRY (only .dwp objects have debugfission data).  */
+int dwarf_get_debugfission_for_die(Dwarf_Die /* die */,
+    Dwarf_Debug_Fission_Per_CU * /* percu_out */,
+    Dwarf_Error * /* err */);
 
-/*  END .debug_cu_index and .debug_tu_index operations. */
+/*  END debugfission dwp .debug_cu_index and .debug_tu_index operations. */
 
 
 /*  Utility operations */

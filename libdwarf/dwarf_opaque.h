@@ -325,7 +325,7 @@ struct Dwarf_Fission_Per_CU_s {
    unsigned       dfp_index;
    Dwarf_Unsigned dfp_hash;
    /* 0 unused, 1-8 are indexed by DW_SECT* */
-   struct Dwarf_Fission_Section_Offset_s dfp_offsets[9];
+   struct Dwarf_Fission_Section_Offset_s dfp_offsets[DW_FISSION_SECT_COUNT];
 };
 
 

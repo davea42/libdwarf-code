@@ -1,5 +1,4 @@
 /*
-
   Copyright (C) 2000-2006 Silicon Graphics, Inc.  All Rights Reserved.
   Portions Copyright (C) 2007-2012 David Anderson. All Rights Reserved.
   Portions Copyright 2012 SN Systems Ltd. All rights reserved.
@@ -160,7 +159,61 @@ _dwarf_find_offdie_CU_Context(Dwarf_Debug dbg, Dwarf_Off offset,
     return (NULL);
 }
 
-/*  FIXME: return DW_DLV_OK etc instead.
+int
+dwarf_get_debugfission_for_die(Dwarf_Die die,
+    struct Dwarf_Debug_Fission_Per_CU_s *fission_out,
+    Dwarf_Error *error)
+{
+    Dwarf_CU_Context context = die->di_cu_context;
+    Dwarf_Debug dbg = context->cc_dbg;
+    int is_info = context->cc_is_info;
+    struct Dwarf_Fission_Offsets_s *fissiondata = 0;
+    struct Dwarf_Fission_Per_CU_s *percu_base = 0;
+    Dwarf_Unsigned cuoff = context->cc_debug_offset;
+    unsigned info_index = 0;
+    unsigned u = 0;
+    const char *type =0;
+
+    info_index = is_info?DW_SECT_INFO:DW_SECT_TYPES;
+    fissiondata = is_info?
+        &dbg->de_cu_fission_data: &dbg->de_tu_fission_data;
+    type = is_info?"cu":"tu";
+    if (fissiondata->dfo_version == 0) {
+        return DW_DLV_NO_ENTRY;
+    }
+    if (fissiondata->dfo_version != 2) {
+        _dwarf_error(dbg, error, DW_DLE_FISSION_VERSION_ERROR);
+        return DW_DLV_ERROR;
+    }
+
+    percu_base = fissiondata->dfo_per_cu;
+    /*  The following is sequential search.
+        We should probably use a faster search
+        mechanism as a dwp can have thousands
+        of dwo units.   */
+    for (u=0; u < fissiondata->dfo_entries; u++) {
+        struct Dwarf_Fission_Per_CU_s *percu = percu_base+u;
+        Dwarf_Unsigned baseoff = percu->dfp_offsets[info_index].dfs_offset;
+        struct Dwarf_Fission_Section_Offset_s *targoff = 0;
+        unsigned m = 0;
+
+        if (cuoff !=  baseoff) {
+            continue;
+        }
+        /* FOUND */
+        fission_out->pcu_type = is_info?"cu":"tu";
+        fission_out->pcu_index = percu->dfp_index;
+        fission_out->pcu_hash = percu->dfp_hash;
+        for (m = 0; m <DW_FISSION_SECT_COUNT ;m++) {
+            fission_out->pcu_offset[m] = percu->dfp_offsets[m].dfs_offset;
+            fission_out->pcu_size[m] = percu->dfp_offsets[m].dfs_size;
+        }
+        return DW_DLV_OK;
+    }
+    return DW_DLV_NO_ENTRY;
+}
+
+/*  FIXME:  _dwarf_get_fission_addition_die return DW_DLV_OK etc instead.
 */
 Dwarf_Unsigned
 _dwarf_get_fission_addition_die(Dwarf_Debug dbg,
@@ -186,7 +239,7 @@ Dwarf_Unsigned
 _dwarf_get_fission_addition(Dwarf_Debug dbg,
    int cu_is_info,Dwarf_Off cu_offset,int dw_sect_index)
 {
-    /* We do not yet know the DIE hash, so we cannot use it
+    /* We may not yet know the CU DIE hash, so we cannot use it
         to identify the offset. */
     struct Dwarf_Fission_Offsets_s *fissiondata = 0;
     unsigned info_index = 0;

@@ -837,11 +837,11 @@ load_debugfission_tables(Dwarf_Debug dbg,Dwarf_Error *error)
         Dwarf_Unsigned number_of_slots /* M */ = 0;
         struct Dwarf_Fission_Offsets_s *offsetdata = 0;
         struct Dwarf_Fission_Per_CU_s *percu = 0;
-        Dwarf_Unsigned cuindex = 0;
         Dwarf_Unsigned hashindex = 0;
         const char *secname = 0;
         int res = 0;
         const char *type = 0;
+
         if (i == 0) {
             dwsect = &dbg->de_debug_cu_index;
             type = "cu";

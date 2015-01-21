@@ -1,3 +1,18 @@
+2015-01-21  David Anderson
+     * Makefile.in: Now with separate dwarf_names.h and dwarf_names.c
+       rules so parallel make works properly.
+     * dwarf.h: Improved the comment on DW_SECT_TYPES as that
+       is not actually part of DWARF5 but is reserved.
+     * dwarf_die_deliv.c: Added dwarf_get_debugfission_for_die().
+       Now dwarfdump and other clients can access
+       and print fission data for a specific CU easily.
+     * dwarf_init_finish.c(load_debugfission_tables): Deleted 
+       unused local variable.
+     * dwarf_opaque.h: Now uses libdwarf.h DW_FISSION_SECT_COUNT
+       for clarity (libdwarf-only name).
+     * libdwarf.h.in: Add DW_DLE_FISSION_VERSION_ERROR as part
+       of error checking. Add prototype for 
+       dwarf_get_debugfission_for_die() and declare its struct argument.
 2015-01-18  David Anderson
      * dwarf_abbrev.c: Added comment, debugfission not supported
        in the non-cu-specific interface.

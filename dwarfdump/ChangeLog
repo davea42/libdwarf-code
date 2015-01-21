@@ -1,3 +1,11 @@
+2015-01-21  David Anderson
+     * common.c, dwarfdump.c: Update version string.
+     * print_die.c: For a DW_FORM_ref_sig8 type signature
+       value, if not printing the actual FORM print
+       <type signature> so the hex value makes sense.
+       It is obviously not a .debug_info global offset.
+       Now prints debug fission (dwp) information for
+       each CU with such.
 2015-01-18  David Anderson
      * common.c, dwarfdump.c: Update version string.
 2015-01-15  David Anderson

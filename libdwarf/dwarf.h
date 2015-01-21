@@ -764,9 +764,11 @@ extern "C" {
 /*  DWARF5 DebugFission object section id values
     for  .dwp object section offsets hash table.
     0 is reserved, not used.
+    2 is actually reserved, not used in DWARF5.
+    But 2 may be seen in some DWARF4 objects.
 */
 #define DW_SECT_INFO        1  /* .debug_info.dwo        DWARF5 */
-#define DW_SECT_TYPES       2  /* .debug_types.dwo       DWARF5 */
+#define DW_SECT_TYPES       2  /* .debug_types.dwo   pre-DWARF5 */
 #define DW_SECT_ABBREV      3  /* .debug_abbrev.dwo      DWARF5 */
 #define DW_SECT_LINE        4  /* .debug_line.dwo        DWARF5 */
 #define DW_SECT_LOC         5  /* .debug_loc.dwo         DWARF5 */
