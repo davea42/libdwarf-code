@@ -189,7 +189,8 @@ typedef Dwarf_Unsigned BIGGEST_UINT;
     and updates the rw_src_data_p to point past what was just read.
 
     It updates w_length_size (to the size of an offset, either 4 or 8)
-    and w_exten_size (set 0 unless this frame has the DWARF3,4 64bit
+    and w_exten_size (set 0 unless this frame has the DWARF3
+    and later  64bit
     extension, in which case w_exten_size is set to 4).
 
     r_dbg is just the current dbg pointer.

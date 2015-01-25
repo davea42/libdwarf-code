@@ -297,6 +297,7 @@ esb_get_copy(struct esb_s *data)
 
 
 #ifdef SELFTEST
+static int failcount = 0;
 void
 validate_esb(int instance,
    struct esb_s* d,
@@ -306,14 +307,17 @@ validate_esb(int instance,
 {
     printf("TEST instance %d\n",instance);
     if (esb_string_len(d) != explen) {
+        ++failcount;
         printf("FAIL instance %d  slen %u explen %u\n",
             instance,(unsigned)esb_string_len(d),(unsigned)explen);
     }
     if (d->esb_allocated_size != expalloc) {
+        ++failcount;
         printf("FAIL instance %d  alloclen %u expalloc %u\n",
             instance,(unsigned)d->esb_allocated_size,(unsigned)expalloc);
     }
     if(strcmp(esb_get_string(d),expout)) {
+        ++failcount;
         printf("FAIL instance %d  str %s expstr %s\n",
             instance,esb_get_string(d),expout);
     }
@@ -393,6 +397,11 @@ int main()
         trialprint(&d);
         validate_esb(14,&d,19,50,"aaaa insert me bbbb");
     }
-    return 0;
+    if (failcount) {
+        printf("FAIL esb test\n");
+        exit(1);
+    }
+    printf("PASS esb test\n");
+    exit(0);
 }
 #endif /* SELFTEST */

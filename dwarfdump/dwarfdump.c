@@ -47,7 +47,7 @@ $Header: /plroot/cmplrs.src/v7.4.5m/.RCS/PL/dwarfdump/RCS/dwarfdump.c,v 1.48 200
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <limits.h>
-#include <unistd.h>  /* For getopt */
+#include "dwgetopt.h"
 #include "makename.h"
 #include "dwconf.h"
 #include "common.h"
@@ -174,6 +174,8 @@ boolean check_attr_encoding = FALSE;   /* Attributes encoding */
 boolean generic_1200_regs = FALSE;
 boolean suppress_check_extensions_tables = FALSE;
 boolean check_duplicated_attributes = FALSE;
+/* lots of checks make no sense on a dwp debugfission object. */
+boolean suppress_checking_on_dwp = FALSE;
 
 /* suppress_nested_name_search is a band-aid.
    A workaround. A real fix for N**2 behavior is needed.
@@ -359,7 +361,6 @@ static const char *output_file = 0;
 
 char cu_name[BUFSIZ];
 boolean cu_name_flag = FALSE;
-Dwarf_Unsigned cu_offset = 0;
 
 Dwarf_Error err;
 
@@ -1447,7 +1448,7 @@ process_args(int argc, char *argv[])
     }
 
     /* j unused */
-    while ((c = getopt(argc, argv,
+    while ((c = dwgetopt(argc, argv,
         "#:abc::CdDeE::fFgGhH:iIk:l::mMnNo::O:pPqQrRsS:t:u:UvVwW::x:yz")) != EOF) {
 
         switch (c) {

@@ -1,3 +1,21 @@
+2015-01-24  David Anderson
+     * dwgetopt.c,dwgetopt.h: Using NetBSD getopt source with
+       modifications to support :: for uniform behavior
+       for all users. Not all getopt are the same. Named dwgetopt().
+     * dwgetopttest.c: Does tests of dwgetopt() for conformance
+       with dwarfdump requirements. See 'make selftest'.
+     * Makefile.in: Now has selftest for dwgetopt and
+       links dwgetopt.o into dwarfdump.
+     * esb.c: Now prints PASS on success and counts errors.
+     * dwarfdump.c: Now calls dwgetopt and includes dwgetopt.h
+       Added a new global so we recognize where needed 
+       not to do some checks when checking (
+       for debugfission some things not sensible).
+     * globals.h: Removed cu_offset (not needed) and added
+       suppress_checking_on_dwp flags.
+     * print_die.c:renamed cu_offset to be a static: dieprint_cu_offset
+       Reset it when finished with a CU. (-k checks got into trouble
+       when both .debug_info and .debug_types present).
 2015-01-21  David Anderson
      * common.c, dwarfdump.c: Update version string.
      * print_die.c: For a DW_FORM_ref_sig8 type signature

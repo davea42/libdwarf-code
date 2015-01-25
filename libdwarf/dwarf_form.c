@@ -244,7 +244,8 @@ dwarf_whatattr(Dwarf_Attribute attr,
 
 
 /*  Convert an offset within the local CU into a section-relative
-    debug_info offset. See dwarf_global_formref() and dwarf_formref()
+    debug_info (or debug_types) offset. 
+    See dwarf_global_formref() and dwarf_formref()
     for additional information on conversion rules.
 */
 int
@@ -253,11 +254,30 @@ dwarf_convert_to_global_offset(Dwarf_Attribute attr,
 {
     Dwarf_Debug dbg = 0;
     Dwarf_CU_Context cu_context = 0;
+    struct Dwarf_Debug_Fission_Per_CU_s fissiondata;
+    int res = 0;
+    int fissionres = 0;
+    Dwarf_Unsigned dwpoffset = 0;
 
-    int res  = get_attr_dbg(&dbg,&cu_context,attr,error);
+    res  = get_attr_dbg(&dbg,&cu_context,attr,error);
     if (res != DW_DLV_OK) {
         return res;
     }
+    memset(&fissiondata,0,sizeof(fissiondata));
+    fissionres =  dwarf_get_debugfission_for_die(attr->ar_die,
+        &fissiondata,error);
+    if(fissionres == DW_DLV_ERROR) {
+        return res;
+    }
+    /* If fissionres is DW_DLV_NO_ENTRY dwpoffset remains zero. */
+    if(fissionres == DW_DLV_OK) {
+        int sect = DW_SECT_TYPES;
+        if(cu_context->cc_is_info) {
+            sect = DW_SECT_INFO;
+        }
+        dwpoffset = fissiondata.pcu_offset[sect];
+    } 
+    
 
     switch (attr->ar_attribute_form) {
     case DW_FORM_ref1:
@@ -268,12 +288,16 @@ dwarf_convert_to_global_offset(Dwarf_Attribute attr,
         /*  It would be nice to put some code to check
             legality of the offset */
         /*  globalize the offset */
-        offset += cu_context->cc_debug_offset;
+        offset += cu_context->cc_debug_offset +dwpoffset;
+
         break;
 
     case DW_FORM_ref_addr:
         /*  This offset is defined to be debug_info global already, so
-            use this value unaltered. */
+            use this value unaltered. 
+            However,  if dwo in dwp it needs adjustment.
+            */
+        offset += dwpoffset;
         break;
 
     default:

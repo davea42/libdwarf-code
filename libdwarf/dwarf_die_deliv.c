@@ -1321,7 +1321,8 @@ dwarf_offdie_b(Dwarf_Debug dbg,
 
         do {
             if ((new_cu_offset +
-                _dwarf_length_of_cu_header_simple(dbg,is_info)) >= section_size) {
+                _dwarf_length_of_cu_header_simple(dbg,is_info)) >= 
+                section_size) {
                 _dwarf_error(dbg, error, DW_DLE_OFFSET_BAD);
                 return (DW_DLV_ERROR);
             }
@@ -1333,7 +1334,6 @@ dwarf_offdie_b(Dwarf_Debug dbg,
                     _dwarf_make_CU_Context has already registered an
                     error we do not do that here: we let the lower error
                     pass thru. */
-
                 return (DW_DLV_ERROR);
             }
 
@@ -1346,7 +1346,8 @@ dwarf_offdie_b(Dwarf_Debug dbg,
             }
 
             new_cu_offset = new_cu_offset + cu_context->cc_length +
-                cu_context->cc_length_size;
+                cu_context->cc_length_size +
+                cu_context->cc_extension_size;
 
         } while (offset >= new_cu_offset);
     }

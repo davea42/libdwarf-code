@@ -47,6 +47,7 @@ FINALOBJECTS = \
 	dwarfdump.o \
 	dwarf_tsearchbal.o \
 	dwconf.o \
+        dwgetopt.o \
 	esb.o \
 	print_abbrevs.o \
 	print_aranges.o \
@@ -196,6 +197,10 @@ clean:
 selftest:
 	-rm -f ./a.out
 	$(CC) -DSELFTEST -g esb.c
+	./a.out
+	-rm -f ./a.out
+	$(CC) -g -c dwgetopt.c
+	$(CC) -g getopttest.c dwgetopt.o
 	./a.out
 
 

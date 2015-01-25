@@ -268,6 +268,8 @@ extern boolean check_attr_encoding;   /* Attributes encoding */
 extern boolean suppress_nested_name_search;
 extern boolean suppress_check_extensions_tables;
 extern boolean check_duplicated_attributes;
+/* lots of checks make no sense on a dwp debugfission object. */
+extern boolean suppress_checking_on_dwp;
 
 /* Print global (unique) error messages */
 extern boolean print_unique_errors;
@@ -331,7 +333,6 @@ extern boolean producer_children_flag;   /* List of CUs per compiler */
 
 extern char cu_name[ ];
 extern boolean cu_name_flag;
-extern Dwarf_Unsigned cu_offset;
 extern Dwarf_Off fde_offset_for_cu_low;
 extern Dwarf_Off fde_offset_for_cu_high;
 

@@ -92,6 +92,10 @@ static int _dwarf_print_one_expr_op(Dwarf_Debug dbg,Dwarf_Loc* expr,
 static int formxdata_print_value(Dwarf_Debug dbg,Dwarf_Attribute attrib,
     struct esb_s *esbp, Dwarf_Error * err, Dwarf_Bool hex_format);
 
+/*  It would be better to  use this as a local variable, but
+    given interactions with many functions it temporarily
+    remains static . */
+static Dwarf_Unsigned dieprint_cu_offset = 0;
 
 static int dwarf_names_print_on_error = 1;
 
@@ -507,6 +511,7 @@ print_one_die_section(Dwarf_Debug dbg,Dwarf_Bool is_info)
             &signature, &typeoffset,
             &next_cu_offset, &err);
         if (nres == DW_DLV_NO_ENTRY) {
+            dieprint_cu_offset = 0;
             return nres;
         }
         if (loop_count == 0 &&!is_info &&
@@ -516,16 +521,19 @@ print_one_die_section(Dwarf_Debug dbg,Dwarf_Bool is_info)
             printf("\n%s\n",section_name);
         }
         if (nres != DW_DLV_OK) {
+            dieprint_cu_offset = 0;
             return nres;
         }
         if (cu_count >=  break_after_n_units) {
             printf("Break at %d\n",cu_count);
+            dieprint_cu_offset = 0;
             break;
         }
         /*  Regardless of any options used, get basic
             information about the current CU: producer, name */
         sres = dwarf_siblingof_b(dbg, NULL,is_info, &cu_die, &err);
         if (sres != DW_DLV_OK) {
+            dieprint_cu_offset = 0;
             print_error(dbg, "siblingof cu header", sres, err);
         }
         /* Get the CU offset for easy error reporting */
@@ -536,7 +544,7 @@ print_one_die_section(Dwarf_Debug dbg,Dwarf_Bool is_info)
                 dwarf_dealloc(dbg, cu_die, DW_DLA_DIE);
                 cu_die = 0;
                 ++cu_count;
-                cu_offset = next_cu_offset;
+                dieprint_cu_offset = next_cu_offset;
                 continue;
             }
         }
@@ -564,7 +572,7 @@ print_one_die_section(Dwarf_Debug dbg,Dwarf_Bool is_info)
         if (!checking_this_compiler()) {
             dwarf_dealloc(dbg, cu_die, DW_DLA_DIE);
             ++cu_count;
-            cu_offset = next_cu_offset;
+            dieprint_cu_offset = next_cu_offset;
             cu_die = 0;
             continue;
         }
@@ -573,6 +581,17 @@ print_one_die_section(Dwarf_Debug dbg,Dwarf_Bool is_info)
         if (fission_data_result == DW_DLV_ERROR) {
             print_error(dbg, "Failure looking for Debug Fission data",
                 fission_data_result, err);
+        }
+        if(fission_data_result == DW_DLV_OK) {
+            /*  In a .dwp file some checks get all sorts
+                of spurious errors.  */
+            suppress_checking_on_dwp = TRUE;
+            check_ranges = FALSE;
+            check_aranges = FALSE;
+            check_decl_file = FALSE;
+            check_lines = FALSE;
+            check_pubname_attr = FALSE;
+            check_fdes = FALSE;
         }
 
         /*  We have not seen the compile unit  yet, reset these
@@ -665,8 +684,9 @@ print_one_die_section(Dwarf_Debug dbg,Dwarf_Bool is_info)
             print_error(dbg, "Regetting cu_die", sres, err);
         }
         ++cu_count;
-        cu_offset = next_cu_offset;
+        dieprint_cu_offset = next_cu_offset;
     }
+    dieprint_cu_offset = 0;
     return nres;
 }
 
@@ -1728,7 +1748,7 @@ print_range_attribute(Dwarf_Debug dbg,
             &rangecount,&bytecount,&err);
         if (rres == DW_DLV_OK) {
             /* Ignore ranges inside a stripped function  */
-            if (check_ranges &&
+            if (!suppress_checking_on_dwp && check_ranges &&
                 in_valid_code && checking_this_compiler()) {
                 Dwarf_Unsigned off = original_off;
 
@@ -1802,7 +1822,9 @@ print_range_attribute(Dwarf_Debug dbg,
             }
             dwarf_ranges_dealloc(dbg,rangeset,rangecount);
         } else if (rres == DW_DLV_ERROR) {
-            if (do_print_dwarf) {
+            if (suppress_checking_on_dwp) {
+                /* Ignore checks */
+            } else if (do_print_dwarf) {
                 printf("\ndwarf_get_ranges() "
                     "cannot find DW_AT_ranges at offset 0x%"
                     DW_PR_XZEROS DW_PR_DUx
@@ -1818,7 +1840,9 @@ print_range_attribute(Dwarf_Debug dbg,
             }
         } else {
             /* NO ENTRY */
-            if (do_print_dwarf) {
+            if (suppress_checking_on_dwp) {
+                /* Ignore checks */
+            } else if (do_print_dwarf) {
                 printf("\ndwarf_get_ranges() "
                     "finds no DW_AT_ranges at offset 0x%"
                     DW_PR_XZEROS DW_PR_DUx
@@ -3699,14 +3723,18 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
             } else if (wres == DW_DLV_NO_ENTRY) {
             }
             if (attr == DW_AT_type) {
-                dres = dwarf_offdie_b(dbg, cu_offset + off,
+                dres = dwarf_offdie_b(dbg, dieprint_cu_offset + off,
                     is_info,
                     &die_for_check, &err);
                 DWARF_CHECK_COUNT(type_offset_result,1);
                 if (dres != DW_DLV_OK) {
                     snprintf(small_buf,sizeof(small_buf),
-                        "DW_AT_type offset does not point to a DIE for global offset 0x%" DW_PR_DUx " cu off 0x%" DW_PR_DUx " local offset 0x%" DW_PR_DUx,
-                        cu_offset + off,cu_offset,off);
+                        "DW_AT_type offset does not point to a DIE "
+                        "for global offset 0x%" DW_PR_DUx
+                        " cu off 0x%" DW_PR_DUx
+                        " local offset 0x%" DW_PR_DUx
+                        " tag 0x%x",
+                        dieprint_cu_offset + off,dieprint_cu_offset,off,tag);
                     DWARF_CHECK_ERROR(type_offset_result,small_buf);
                 } else {
                     int tres2 =

@@ -1,3 +1,10 @@
+2015-01-24  David Anderson
+     * dwarf_form.c: dwarf_convert_to_global_offset() was not
+       accounting for debugfission data (dwp).
+     * dwarf_die_deliv.c(dwarf_offdie_b): Was not adding
+       cc_extension_size into cu header offset (cc_extension_size
+       is rarely non-zero, but its omission was a bug here).
+     * dwarf_util.h: Improved a line of commentary.
 2015-01-21  David Anderson
      * Makefile.in: Now with separate dwarf_names.h and dwarf_names.c
        rules so parallel make works properly.
