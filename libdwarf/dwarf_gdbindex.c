@@ -480,7 +480,6 @@ dwarf_gdbindex_cuvector_inner_attributes(Dwarf_Gdbindex gdbindexptr,
 
 int
 dwarf_gdbindex_cuvector_instance_expand_value(Dwarf_Gdbindex gdbindexptr,
-    /* will be an index passed back by FIXME */
     Dwarf_Unsigned   value,
     Dwarf_Unsigned * cu_index,
     Dwarf_Unsigned * reserved1,

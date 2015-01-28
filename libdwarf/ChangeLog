@@ -1,3 +1,17 @@
+2015-01-28  David Anderson
+     * libdwarf2.1.mm: Fixed .H 2 to .H 3 on
+       dwarf_get_TAG_name etc.
+       Removed duplication of 3 lines of 
+       Global Namespace operations.
+       Added doc of dwarf_dwarf_get_debug_str_index()
+       and fixed a level 2 header (starting the quoted
+       string with a period caused trouble in the
+       output).
+     * libdwarf2.1.pdf. Regenerated. Version 2.25.
+2015-01-25  David Anderson
+     * dwarf_form.c(dwarf_convert_to_global_offset): Removed
+       yesterday's change. The cu_context offset value
+       already has debugfission offset built in.
 2015-01-24  David Anderson
      * dwarf_form.c: dwarf_convert_to_global_offset() was not
        accounting for debugfission data (dwp).

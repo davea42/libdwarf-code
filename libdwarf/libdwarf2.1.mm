@@ -8,7 +8,7 @@ n\."
 .nr Hb 5
 \." ==============================================
 \." Put current date in the following at each rev
-.ds vE rev 2.23, December 28, 2014
+.ds vE rev 2.25, January 28, 2015
 \." ==============================================
 \." ==============================================
 .ds | |
@@ -42,7 +42,7 @@ UNIX is a registered trademark of UNIX System Laboratories, Inc.
 in the United States and other countries.
 .FE
 to access DWARF debugging information entries and DWARF line number
-information (and other DWARF2/3 information). 
+information (and other DWARF2/3/4/5 information). 
 It does not make recommendations as to how the functions
 described in this document should be implemented nor does it
 suggest possible optimizations. 

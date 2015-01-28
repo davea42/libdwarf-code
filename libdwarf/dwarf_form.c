@@ -263,6 +263,9 @@ dwarf_convert_to_global_offset(Dwarf_Attribute attr,
     if (res != DW_DLV_OK) {
         return res;
     }
+#if 0
+    This should not be done. cc_debug_offset has
+    the fission offset (if any) built in already. 
     memset(&fissiondata,0,sizeof(fissiondata));
     fissionres =  dwarf_get_debugfission_for_die(attr->ar_die,
         &fissiondata,error);
@@ -277,6 +280,7 @@ dwarf_convert_to_global_offset(Dwarf_Attribute attr,
         }
         dwpoffset = fissiondata.pcu_offset[sect];
     } 
+#endif
     
 
     switch (attr->ar_attribute_form) {
