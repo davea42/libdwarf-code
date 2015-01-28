@@ -3779,11 +3779,6 @@ This function is new in December 2011.
 These operations operate on the .debug_pubnames section of the debugging 
 information.
 
-
-.H 2 "Global Name Space Operations" 
-These operations operate on the .debug_pubnames section of the debugging 
-information.
-
 .H 3 "Debugger Interface Operations"
 
 .H 4 "dwarf_get_globals()"
