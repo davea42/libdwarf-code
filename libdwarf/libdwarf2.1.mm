@@ -2926,6 +2926,37 @@ attributes which a call to
 would fail with error code 
 \f(CWDW_DLE_MISSING_NEEDED_DEBUG_ADDR_SECTION\fP.
 
+.H 3 "dwarf_get_debug_str_index()"
+
+.DS
+\f(CWint dwarf_get_debug_str_index(
+        Dwarf_Attribute  attr,
+        Dwarf_Unsigned * return_index,
+        Dwarf_Error *    error);\fP
+.DE
+.P
+For an attribute with  form
+\f(CWDW_FORM_strx\fP
+or
+\f(CWDW_FORM_GNU_str_index\fP
+this function retrieves the index (which refers
+to a .debug_str_offsets section in this .dwo).
+.P
+If successful, the function
+\f(CWdwarf_get_debug_str_index()\fP
+returns
+\f(CWDW_DLV_OK\fP
+and
+returns the index through the
+\f(CWreturn_index()\fP pointer.
+.P
+If the passed in attribute does not have
+this form or there is no valid compilation
+unit context for the attribute the
+function returns
+\f(CWDW_DLV_ERROR\fP.
+.P
+\f(CWDW_DLV_NO_ENTRY\fP is not returned.
 
 .H 3 "dwarf_formflag()"
 .DS
@@ -6482,9 +6513,11 @@ to a block of \f(CWDwarf_Ranges\fP array and the
 number of structures in the block.  
 It frees all the data in the array of structures.
 
-.H 2 ".gdb_index operations"
+.H 2 "Gdb Index operations"
 These functions get access to the fast lookup tables
-defined by gdb and gcc.
+defined by gdb and gcc and stored in the
+\f(CW.gdb_index\fP
+section.
 The section is of sufficient complexity that a number of function
 interfaces are needed.
 For additional information see
@@ -7064,6 +7097,16 @@ yet allow good debugging.
 For additional information, see
 "https://gcc.gnu.org/wiki/DebugFissionDWP",
 and eventually, the DWARF5 standard.
+.P
+There are FORM access functions related
+to Debug Fission.
+See 
+\f(CWdwarf_formaddr()\fP
+and
+\f(CWdwarf_get_debug_addr_index()\fP
+and
+\f(CWdwarf_get_debug_str_index()\fP.
+
 .P
 The interfaces here are necessary if one wants to print
 the section.   To access DIE, macro, etc information
