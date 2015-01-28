@@ -7457,26 +7457,26 @@ Examples of bad and good usage are:
 
 
 
-.H 2 "dwarf_get_ACCESS_name()"
+.H 3 "dwarf_get_ACCESS_name()"
 Returns an accessibility code name  through the \f(CWs_out\fP pointer.
-.H 2 "dwarf_get_AT_name()"
+.H 3 "dwarf_get_AT_name()"
 Returns an attribute code name  through the \f(CWs_out\fP pointer.
-.H 2 "dwarf_get_ATE_name()"
+.H 3 "dwarf_get_ATE_name()"
 Returns a base type encoding name  through the \f(CWs_out\fP pointer.
-.H 2 "dwarf_get_ADDR_name()"
+.H 3 "dwarf_get_ADDR_name()"
 Returns an address type encoding name  through the \f(CWs_out\fP pointer.
 As of this writing only  \f(CWDW_ADDR_none\fP is defined in  \f(CWdwarf.h\fP.
-.H 2 "dwarf_get_ATCF_name()"
+.H 3 "dwarf_get_ATCF_name()"
 Returns a SUN code flag encoding name  through the \f(CWs_out\fP pointer.
 This code flag is entirely a DWARF extension.
-.H 2 "dwarf_get_CHILDREN_name()"
+.H 3 "dwarf_get_CHILDREN_name()"
 Returns a child determination name (which
 is seen in the abbreviations section data) through the \f(CWs_out\fP pointer.
 The only value this recognizes for a 'yes' value is 1.
 As a flag value this is not quite correct (any non-zero value means
 yes) but dealing with this is left up to client code (normally
 compilers really do emit a value of 1 for a flag).
-.H 2 "dwarf_get_children_name()"
+.H 3 "dwarf_get_children_name()"
 Returns a child determination name through the \f(CWs_out\fP pointer,
 though this version is really a libdwarf artifact.
 The standard function is  \f(CWdwarf_get_CHILDREN_name()\fP
@@ -7484,53 +7484,53 @@ which appears just above.
 As a flag value this is not quite correct (any non-zero value means
 yes) but dealing with this is left up to client code (normally
 compilers really do emit a value of 1 for a flag).
-.H 2 "dwarf_get_CC_name()"
+.H 3 "dwarf_get_CC_name()"
 Returns  a calling convention case code name through the \f(CWs_out\fP pointer.
-.H 2 "dwarf_get_CFA_name()"
+.H 3 "dwarf_get_CFA_name()"
 Returns  a call frame information instruction
 name through the \f(CWs_out\fP pointer.
-.H 2 "dwarf_get_DS_name()"
+.H 3 "dwarf_get_DS_name()"
 Returns a decimal sign code name  through the \f(CWs_out\fP pointer.
-.H 2 "dwarf_get_DSC_name()"
+.H 3 "dwarf_get_DSC_name()"
 Returns  a discriminant descriptor code name through the \f(CWs_out\fP pointer.
-.H 2 "dwarf_get_EH_name()"
+.H 3 "dwarf_get_EH_name()"
 Returns  a GNU exception header
 code name through the \f(CWs_out\fP pointer.
-.H 2 "dwarf_get_END_name()"
+.H 3 "dwarf_get_END_name()"
 Returns an endian code name  through the \f(CWs_out\fP pointer.
-.H 2 "dwarf_get_FORM_name()"
+.H 3 "dwarf_get_FORM_name()"
 Returns an form code name  through the \f(CWs_out\fP pointer.
-.H 2 "dwarf_get_FRAME_name()"
+.H 3 "dwarf_get_FRAME_name()"
 Returns a frame code name  through the \f(CWs_out\fP pointer.
 These are dependent on the particular ABI, so unless the
 \f(CWdwarf.h\fP used to generate libdwarf matches your ABI
 these names are unlikely to be very useful and certainly
 won't be entirely appropriate.
-.H 2 "dwarf_get_ID_name()"
+.H 3 "dwarf_get_ID_name()"
 Returns  an identifier case code name through the \f(CWs_out\fP pointer.
-.H 2 "dwarf_get_INL_name()"
+.H 3 "dwarf_get_INL_name()"
 Returns  an inline code name through the \f(CWs_out\fP pointer.
-.H 2 "dwarf_get_LANG_name()"
+.H 3 "dwarf_get_LANG_name()"
 Returns  a language code name through the \f(CWs_out\fP pointer.
-.H 2 "dwarf_get_LNE_name()"
+.H 3 "dwarf_get_LNE_name()"
 Returns  a line table extended
 opcode code name through the \f(CWs_out\fP pointer.
-.H 2 "dwarf_get_LNS_name()"
+.H 3 "dwarf_get_LNS_name()"
 Returns  a line table standard
 opcode code name through the \f(CWs_out\fP pointer.
-.H 2 "dwarf_get_MACINFO_name()"
+.H 3 "dwarf_get_MACINFO_name()"
 Returns  a macro information macinfo
 code name through the \f(CWs_out\fP pointer.
-.H 2 "dwarf_get_OP_name()"
+.H 3 "dwarf_get_OP_name()"
 Returns  a DWARF expression operation
 code name through the \f(CWs_out\fP pointer.
-.H 2 "dwarf_get_ORD_name()"
+.H 3 "dwarf_get_ORD_name()"
 Returns  an array ordering code name through the \f(CWs_out\fP pointer.
-.H 2 "dwarf_get_TAG_name()"
+.H 3 "dwarf_get_TAG_name()"
 Returns  a TAG name through the \f(CWs_out\fP pointer.
-.H 2 "dwarf_get_VIRTUALITY_name()"
+.H 3 "dwarf_get_VIRTUALITY_name()"
 Returns  a virtuality code name through the \f(CWs_out\fP pointer.
-.H 2 "dwarf_get_VIS_name()"
+.H 3 "dwarf_get_VIS_name()"
 Returns a visibility code name  through the \f(CWs_out\fP pointer.
 
 
