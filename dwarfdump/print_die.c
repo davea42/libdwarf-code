@@ -353,10 +353,11 @@ print_debug_fission_header(struct Dwarf_Debug_Fission_Per_CU_s *fsd)
         const char *nstring = 0;
         Dwarf_Unsigned off = 0;
         Dwarf_Unsigned size = fsd->pcu_size[i];
+        int res = 0;
         if (size == 0) {
             continue;
         }
-        int res = dwarf_get_SECT_name(i,&nstring);
+        res = dwarf_get_SECT_name(i,&nstring);
         if (res != DW_DLV_OK) {
             nstring = "Unknown SECT";
         }
@@ -400,10 +401,11 @@ print_std_cu_hdr(Dwarf_Unsigned cu_header_length,
                 const char *nstring = 0;
                 Dwarf_Unsigned off = 0;
                 Dwarf_Unsigned size = fsd->pcu_size[i];
+                int res = 0;
                 if (size == 0) {
                     continue;
                 }
-                int res = dwarf_get_SECT_name(i,&nstring);
+                res = dwarf_get_SECT_name(i,&nstring);
                 if (res != DW_DLV_OK) {
                     nstring = "UnknownDW_SECT";
                 }
