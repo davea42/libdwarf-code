@@ -184,8 +184,8 @@ int dwarf_get_xu_index_section_type(Dwarf_Xu_Index_Header xuhdr,
 /*  Index values 0 to M-1 are valid. */
 int dwarf_get_xu_hash_entry(Dwarf_Xu_Index_Header xuhdr,
     Dwarf_Unsigned    index,
-    /* returns the hash integer. 64 bits. */
-    Dwarf_Unsigned *  hash_value,
+    /* returns the hash value. 64 bits. */
+    Dwarf_Sig8     *  hash_value,
 
     /* returns the index into rows of offset/size tables. */
     Dwarf_Unsigned *  index_to_sections,
@@ -198,24 +198,30 @@ int dwarf_get_xu_hash_entry(Dwarf_Xu_Index_Header xuhdr,
         xuhdr->gx_index_table_offset;
     Dwarf_Small *indexentry = 0;
     Dwarf_Small *hashentry = 0;
-    Dwarf_Unsigned hashval = 0;
+    Dwarf_Sig8 hashval;
     Dwarf_Unsigned indexval = 0;
 
-    if (index >= xuhdr->gx_slots_in_hash) {
-        _dwarf_error(dbg, err,  DW_DLE_XU_HASH_ROW_ERROR);
-        return DW_DLV_ERROR;
+/*FIXME: what if no hash. */
+    memset(&hashval,0,sizeof(hashval));
+    if (xuhdr->gx_slots_in_hash > 0) {
+        if (index >= xuhdr->gx_slots_in_hash) {
+            _dwarf_error(dbg, err,  DW_DLE_XU_HASH_ROW_ERROR);
+            return DW_DLV_ERROR;
+        }
+        hashentry = hashtab + (index * HASHSIGNATURELEN);
+        memcpy(&hashval,hashentry,sizeof(hashval));
     }
-    hashentry = hashtab + (index * HASHSIGNATURELEN);
+
     indexentry = indextab + (index * LEN32BIT);
-    READ_UNALIGNED(dbg,hashval,Dwarf_Unsigned,hashentry,
-        HASHSIGNATURELEN);
+    memcpy(hash_value,&hashval,sizeof(hashval));
+
     READ_UNALIGNED(dbg,indexval,Dwarf_Unsigned, indexentry,
         LEN32BIT);
     if (indexval > xuhdr->gx_units_in_index) {
         _dwarf_error(dbg, err,  DW_DLE_XU_HASH_INDEX_ERROR);
         return DW_DLV_ERROR;
     }
-    *hash_value = hashval;
+    
     *index_to_sections = indexval;
     return DW_DLV_OK;
 }

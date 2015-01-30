@@ -2513,6 +2513,12 @@ int dwarf_get_debugfission_for_die(Dwarf_Die /* die */,
     Dwarf_Debug_Fission_Per_CU * /* percu_out */,
     Dwarf_Error * /* err */);
 
+/* Given a key from a .o, find the per-cu information
+    for the CU with that key. */
+int dwarf_get_debugfission_for_key(Dwarf_Unsigned /* key */,
+    Dwarf_Debug_Fission_Per_CU * /* percu_out */,
+    Dwarf_Error * /* err */);
+
 /*  END debugfission dwp .debug_cu_index and .debug_tu_index operations. */
 
 

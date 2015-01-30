@@ -94,7 +94,7 @@ static void ParseDefinitionsAndWriteOutput(void);
 /* We don't need really long lines: the input file is simple. */
 #define MAX_LINE_SIZE 1000
 /* We don't need a variable array size, it just has to be big enough. */
-#define ARRAY_SIZE 256
+#define ARRAY_SIZE 300
 
 /* To store entries from dwarf.h */
 typedef struct {

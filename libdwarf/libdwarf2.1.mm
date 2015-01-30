@@ -8,7 +8,7 @@ n\."
 .nr Hb 5
 \." ==============================================
 \." Put current date in the following at each rev
-.ds vE rev 2.25, January 28, 2015
+.ds vE rev 2.26, January 29, 2015
 \." ==============================================
 \." ==============================================
 .ds | |
@@ -7085,7 +7085,8 @@ We name things "xu" as these sections have the same format
 so we let "x" stand for either section.
 These functions get access to the  index functions needed
 to access and print the contents of an object file
-which is an aggregate of .dwo objects.  These
+which is an aggregate of .dwo objects.  
+These
 sections are implemented in gcc/gdb and are proposed
 to be part of DWARF5 (As of July 2014 DWARF5 is not finished).
 The idea is that much debug information can be separated
@@ -7096,6 +7097,9 @@ yet allow good debugging.
 .P
 For additional information, see
 "https://gcc.gnu.org/wiki/DebugFissionDWP",
+"https://gcc.gnu.org/wiki/DebugFission",
+and
+"http://www.bayarea.net/~cary/dwarf/Accelerated%20Access%20Diagram.png"
 and eventually, the DWARF5 standard.
 .P
 There are FORM access functions related
@@ -7106,15 +7110,29 @@ and
 \f(CWdwarf_get_debug_addr_index()\fP
 and
 \f(CWdwarf_get_debug_str_index()\fP.
-
 .P
-The interfaces here are necessary if one wants to print
-the section.   To access DIE, macro, etc information
+The FORM with the hash value (for a reference
+to  a CU) is 
+\f(CWDW_FORM_ref_sig8\fP.
+FIXME FISSION
+.P
+To look up a name in the hash (to find
+which CU(s) it exists in).
+FIXME FISSION
+.P
+.P
+The second group of interfaces here 
+are necessary if one wants to print
+a .debug_tu_index or .debug_cu_index section.   
+.P
+To access DIE, macro, etc information
 the support is built into DIE, Macro, etc operations
 so applications usually won't need to use these
 operations at all.
-
 .P
+FIXME first FISSION function group here.
+
+
 .H 3 "dwarf_get_xu_index_header()"
 .DS
 int dwarf_get_xu_index_header(Dwarf_Debug dbg,
@@ -7266,7 +7284,7 @@ stale and unusable.
 int dwarf_get_xu_hash_entry(
     Dwarf_Xu_Index_Header xuhdr,
     Dwarf_Unsigned        index,
-    Dwarf_Unsigned *      hash_value,
+    Dwarf_Sig8     *      hash_value,
     Dwarf_Unsigned *      index_to_sections,
     Dwarf_Error *         error);
 .DE

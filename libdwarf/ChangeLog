@@ -1,5 +1,8 @@
-2015-01-29  David Anderson
-     * cmplrs/dwarf_addr_finder.h: Fixed indents.
+2015-01-30  David Anderson
+     * dwarf.h: Adding some DWARF5 defines. 
+       Use with caution: DWARF5 is not yet final.
+     * gennames.c: Local array needed to be bigger
+       due to a longer attribute list.
 2015-01-28  David Anderson
      * libdwarf2.1.mm: Fixed .H 2 to .H 3 on
        dwarf_get_TAG_name etc.
