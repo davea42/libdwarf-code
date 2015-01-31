@@ -1,4 +1,17 @@
 2015-01-31  David Anderson
+     * DWARFDUMPCOPYRIGHT: updated to
+       reflect changes today. Old versions
+       of the copyright notices still shown here.
+     * common.c,dwarfdump.c,dwconf.c,esb.c,makename.c,naming.c,
+       print_abbrevs.c,print_aranges.c,print_die.c,print_frames.c,
+       print_lines.c,print_locs.c,print_macros.c,print_pubnames.c,
+       print_ranges.c,print_reloc.c,print_sections.c,print_static_funcs.c,
+       print_static_vars.c,print_strings.c,print_types.c,print_weaknames.c,
+       strstrnocase.c,tag_attr.c,tag_attr.list,tag_attr_ext.list,
+       tag_common.c,tag_tree.c,tag_tree.list,tag_tree_ext.list,
+       uri.c,uritablebuild.c: Removed obsolete SGI postal
+       address and web references.
+2015-01-31  David Anderson
      * common.h,dwconf.h,esb.h,globals.h,makename.h,naming.h,
        print_frames.h,print_reloc.h,print_sections.h,tag_common.h,uri.h:
        The address and URI for SGI is obsolete and there is no

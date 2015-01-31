@@ -23,17 +23,6 @@
   Foundation, Inc., 59 Temple Place - Suite 330, Boston MA 02111-1307,
   USA.
 
-  Contact information:  Silicon Graphics, Inc., 1500 Crittenden Lane,
-  Mountain View, CA 94043, or:
-
-  http://www.sgi.com
-
-  For further information regarding this notice, see:
-
-  http://oss.sgi.com/projects/GenInfo/NoticeExplan
-
-
-$Header: /plroot/cmplrs.src/v7.4.5m/.RCS/PL/dwarfdump/RCS/tag_attr.list,v 1.7 2005/12/01 17:34:59 davea Exp $
 */
 #include <dwarf.h>
 

@@ -3,6 +3,8 @@
 
 The full text of the GPL version 2 is provided in the file GPL.txt.
 
+See the end of this file for January 2015 changes.
+
 Nearly all the files in this directory have contained a GPL
 copyright, not an LGPL copyright, for years.  The following
 is an example of that copyright as used in the dwarfdump
@@ -83,3 +85,9 @@ marked LGPL and the following copyright applies to those three.
 
   http://oss.sgi.com/projects/GenInfo/NoticeExplan
 
+
+As of 31 January 2015 the lines
+with http://www.sgi.com and oss.sgi.com have been removed.
+sgi.com is readily found on the web and oss.sgi.com
+no longer exists.  No one from SGI still contributes
+to dwarfdump.
