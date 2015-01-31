@@ -1,3 +1,10 @@
+2015-01-30  David Anderson
+     * common.c,dwarfdump.c: Update version string.
+     * globals.h: Added format_sig8_string() to global functions.
+     * print_debug_fission.c: Updated .debug_cu/tu_index hash signature
+       code to match libdwarf (Dwarf_Sig8, not Dwarf_Unsigned).
+       Allow for missing hash (?).
+     * print_die.c: Use format_sig8_string().
 2015-01-29  David Anderson
      * print_die.c: Two places used C99-only variable
        declaration. Moved declarations up to conform to C90.

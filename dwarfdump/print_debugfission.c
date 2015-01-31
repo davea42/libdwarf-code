@@ -30,6 +30,18 @@
 #define TRUE 1
 #define FALSE 0
 
+static int
+hashval_zero(Dwarf_Sig8 *val)
+{
+    int u = 0;
+
+    for(u=0 ; u < sizeof(Dwarf_Sig8);++u) {
+        if (val->signature[u]) {
+            return FALSE;
+        }
+    }  
+    return TRUE;
+}
 
 extern void
 print_debugfission_index(Dwarf_Debug dbg,const char *type)
@@ -107,14 +119,19 @@ print_debugfission_index(Dwarf_Debug dbg,const char *type)
     {
         Dwarf_Unsigned h = 0;
         for( h = 0; h < hash_slots_count; h++) {
-            Dwarf_Unsigned hashval = 0;
+            Dwarf_Sig8 hashval;
             Dwarf_Unsigned index = 0;
             Dwarf_Unsigned col = 0;
+            struct esb_s hashhexstring;
+
+            esb_constructor(&hashhexstring);            
+            memset(&hashval,0,sizeof(hashval));
             res = dwarf_get_xu_hash_entry(xuhdr,h,
                 &hashval,&index,&err);
             if (res == DW_DLV_ERROR) {
                 print_error(dbg,"dwarf_get_xu_hash_entry",res,err);
                 dwarf_xu_header_free(xuhdr);
+                esb_destructor(&hashhexstring);            
                 return;
             } else if (res == DW_DLV_NO_ENTRY) {
                 /* Impossible */
@@ -123,16 +140,19 @@ print_debugfission_index(Dwarf_Debug dbg,const char *type)
                     "No entry?\n",
                     h);
                 dwarf_xu_header_free(xuhdr);
+                esb_destructor(&hashhexstring);            
                 return;
-            } else if (hashval == 0 && index == 0 ) {
+            } else if (hashval_zero(&hashval) && index == 0 ) {
                 /* An unused hash slot, we do not print them */
                 continue;
             }
-            printf("  [%4" DW_PR_DUu "] 0x%016" DW_PR_DUx
+            format_sig8_string(&hashval,&hashhexstring);
+            printf("  [%4" DW_PR_DUu "] %s"
                 " %8" DW_PR_DUu  "\n",
                 h,
-                hashval,
+                esb_get_string(&hashhexstring),
                 index);
+            esb_destructor(&hashhexstring);            
             printf("      col              section   "
                 "offset                size\n");
             for (col = 0; col < offsets_count; col++) {

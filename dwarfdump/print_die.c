@@ -1,5 +1,4 @@
 /*
-
   Copyright (C) 2000-2006 Silicon Graphics, Inc.  All Rights Reserved.
   Portions Copyright 2007-2010 Sun Microsystems, Inc. All rights reserved.
   Portions Copyright 2009-2012 SN Systems Ltd. All rights reserved.
@@ -339,15 +338,19 @@ print_debug_fission_header(struct Dwarf_Debug_Fission_Per_CU_s *fsd)
 {
     const char * fissionsec = ".debug_cu_index";
     unsigned i  = 0;
+    struct esb_s hash_str;
 
+    esb_constructor(&hash_str);
     if (!strcmp(fsd->pcu_type,"tu")) {
         fissionsec = ".debug_tu_index";
     }
     printf("  %-16s = %s\n","fission section",fissionsec);
     printf("  %-16s = 0x%"  DW_PR_XZEROS DW_PR_DUx "\n","Fission index ",
         fsd->pcu_index);
-    printf("  %-16s = 0x%" DW_PR_XZEROS DW_PR_DUx "\n","Fission hash",fsd->pcu_hash);
+    format_sig8_string(&fsd->pcu_hash,&hash_str);
+    printf("  %-16s = %s\n","Fission hash",esb_get_string(&hash_str));
     /* 0 is always unused. Skip it. */
+    esb_destructor(&hash_str);
     printf("  %-16s = %s\n","Fission entries","offset     size        DW_SECTn");
     for( i = 1; i < DW_FISSION_SECT_COUNT; ++i)  {
         const char *nstring = 0;
@@ -392,11 +395,16 @@ print_std_cu_hdr(Dwarf_Unsigned cu_header_length,
         printf(" %s<0x%02x>", "offset_size",
             offset_size);
         if (debug_fission_res == DW_DLV_OK) {
+            struct esb_s hash_str;
             unsigned i = 0;
+
+            esb_constructor(&hash_str);
+            format_sig8_string(&fsd->pcu_hash,&hash_str);
             printf(" %s<0x%" DW_PR_XZEROS  DW_PR_DUx  ">", "fissionindex",
                 fsd->pcu_index);
-            printf(" %s<0x%" DW_PR_XZEROS  DW_PR_DUx  ">", "fissionhash",
-                fsd->pcu_hash);
+            printf(" %s<%s>", "fissionhash",
+                esb_get_string(&hash_str));
+            esb_destructor(&hash_str);
             for( i = 1; i < DW_FISSION_SECT_COUNT; ++i)  {
                 const char *nstring = 0;
                 Dwarf_Unsigned off = 0;

@@ -2456,10 +2456,10 @@ int dwarf_get_xu_index_section_type(Dwarf_Xu_Index_Header /*xuhdr*/,
 
 /*  Index values 0 to M-1 are valid. */
 int dwarf_get_xu_hash_entry(Dwarf_Xu_Index_Header /*xuhdr*/,
-    Dwarf_Unsigned    /*index*/,
+    Dwarf_Unsigned     /*index*/,
 
-    /*  Returns the hash integer. 64 bits.  */
-    Dwarf_Unsigned *  /*hash_value*/,
+    /*  Returns the hash value. 64  bits.  */
+    Dwarf_Sig8 *      /*hash_value*/,
 
     /* returns the index into rows of offset/size tables. */
     Dwarf_Unsigned *  /*index_to_sections*/,
@@ -2490,7 +2490,7 @@ struct Dwarf_Debug_Fission_Per_CU_s  {
     /*  Do not free the string. It contains "cu" or "tu". */
     const char   * pcu_type;
     Dwarf_Unsigned pcu_index;
-    Dwarf_Unsigned pcu_hash;  /* 8 byte  */
+    Dwarf_Sig8     pcu_hash;  /* 8 byte  */
     /*  [0] has offset and size 0.
         [1]-[8] are DW_SECT_* indexes and the
         values below are  the offset and size

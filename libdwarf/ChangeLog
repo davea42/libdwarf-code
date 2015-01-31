@@ -1,4 +1,8 @@
 2015-01-30  David Anderson
+     * dwarf_init_finish.c: Now uses Dwarf_Sig8 for .debug_cu_index.
+     * dwarf_opaque.h: Use Dwarf_Sig8 for the dfp_hash field.
+     * libdwarf.h.in: dwarf_get_xu_hash_entry() uses Dwarf_Sig8 now.
+2015-01-30  David Anderson
      * dwarf.h: Adding some DWARF5 defines. 
        Use with caution: DWARF5 is not yet final.
      * gennames.c: Local array needed to be bigger

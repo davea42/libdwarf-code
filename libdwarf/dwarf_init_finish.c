@@ -812,6 +812,18 @@ _dwarf_setup(Dwarf_Debug dbg, Dwarf_Error * error)
     return DW_DLV_NO_ENTRY;
 }
 
+static int
+all_sig8_bits_zero(Dwarf_Sig8 *val)
+{
+    unsigned u = 0;
+    for(  ; u < sizeof(*val); ++u) {
+        if (val->signature[u] != 0) {
+            return FALSE;
+        }
+    }
+    return TRUE;
+}
+
 /*  There is one table per CU and one per TU, and each
     table refers to the associated other DWARF data
     for that CU or TU.
@@ -875,10 +887,12 @@ load_debugfission_tables(Dwarf_Debug dbg,Dwarf_Error *error)
         }
         offsetdata->dfo_per_cu = percu;
         for(hashindex = 0; hashindex < number_of_slots; ++hashindex) {
-            Dwarf_Unsigned hashval = 0;
+            Dwarf_Sig8 hashval;
             Dwarf_Unsigned index = 0;
             Dwarf_Unsigned col = 0;
             int res = 0;
+
+            memset(&hashval,0,sizeof(hashval));
             res = dwarf_get_xu_hash_entry(xuptr,hashindex,
                 &hashval,&index,error);
             if (res == DW_DLV_ERROR) {
@@ -888,7 +902,7 @@ load_debugfission_tables(Dwarf_Debug dbg,Dwarf_Error *error)
                 /* Impossible */
                 dwarf_xu_header_free(xuptr);
                 return res;
-            } else if (hashval == 0 && index == 0 ) {
+            } else if (all_sig8_bits_zero(&hashval) && index == 0 ) {
                 /* An unused hash slot */
                 continue;
             }

@@ -474,6 +474,8 @@ void clean_up_die_esb();
 void clean_up_syms_malloc_data();
 void safe_strcpy(char *out, long outlen, const char *in, long inlen);
 
+void format_sig8_string(Dwarf_Sig8*data, struct esb_s *out);
+
 /* Detailed attributes encoding space */
 void print_attributes_encoding(Dwarf_Debug dbg);
 
