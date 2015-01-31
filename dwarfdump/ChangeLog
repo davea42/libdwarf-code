@@ -1,3 +1,9 @@
+2015-01-31  David Anderson
+     * common.h,dwconf.h,esb.h,globals.h,makename.h,naming.h,
+       print_frames.h,print_reloc.h,print_sections.h,tag_common.h,uri.h:
+       The address and URI for SGI is obsolete and there is no
+       replacement so deleted some lines from the copyright
+       statements. 
 2015-01-30  David Anderson
      * common.c,dwarfdump.c: Update version string.
      * globals.h: Added format_sig8_string() to global functions.
