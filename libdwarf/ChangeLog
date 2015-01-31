@@ -1,3 +1,17 @@
+2015-01-31  David Anderson
+    * Makefile.in,common.c,common.h,dwarf_abbrev.c,dwarf_abbrev.h,
+      dwarf_addr_finder.c,dwarf_alloc.c,dwarf_alloc.h,dwarf_arange.c,
+      dwarf_arange.h,dwarf_base_types.h,dwarf_die_deliv.c,dwarf_die_deliv.h,
+      dwarf_elf_access.c,dwarf_elf_access.h,dwarf_error.h,dwarf_form.c,
+      dwarf_frame.c,dwarf_frame.h,dwarf_frame2.c,dwarf_frame3.c,dwarf_funcs.c,
+      dwarf_funcs.h,dwarf_gdbindex.c,dwarf_global.c,dwarf_global.h,
+      dwarf_incl.h,dwarf_leb.c,dwarf_line.c,dwarf_line.h,dwarf_line2.c,
+      dwarf_loc.c,dwarf_loc.h,dwarf_macro.c,dwarf_macro.h,
+      dwarf_opaque.h,dwarf_original_elf_init.c,dwarf_print_lines.c,
+      dwarf_pubtypes.c,dwarf_query.c,dwarf_ranges.c,dwarf_reloc_arm.h:
+      Removed obsolete postal address and oss.sgi.com address
+      from copyright.
+
 2015-01-30  David Anderson
      * dwarf_init_finish.c: Now uses Dwarf_Sig8 for .debug_cu_index.
      * dwarf_opaque.h: Use Dwarf_Sig8 for the dfp_hash field.
