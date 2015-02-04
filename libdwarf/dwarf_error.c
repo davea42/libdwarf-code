@@ -362,6 +362,7 @@ const char *_dwarf_errmsgs[] = {
     "DW_DLE_DW_DLE_ATTR_OUTSIDE_SECTION(281)",
     "DW_DLE_FISSION_INDEX_WRONG(282)",
     "DW_DLE_FISSION_VERSION_ERROR(283)",
+    "DW_DLE_NEXT_DIE_LOW_ERROR(284) corrupted DIE tree",
 };
 
 

@@ -214,7 +214,7 @@ int dwarf_get_xu_hash_entry(Dwarf_Xu_Index_Header xuhdr,
         _dwarf_error(dbg, err,  DW_DLE_XU_HASH_INDEX_ERROR);
         return DW_DLV_ERROR;
     }
-    
+
     *index_to_sections = indexval;
     return DW_DLV_OK;
 }

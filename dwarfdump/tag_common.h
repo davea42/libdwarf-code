@@ -36,8 +36,8 @@
 
 /*  These next two should match the last DW_TAG+1 and last DW_AT+1 in
     the standard set from dwarf.h */
-#define DW_TAG_last 0x44
-#define DW_AT_last 0x80
+#define DW_TAG_last 0x4a
+#define DW_AT_last 0x8a
 
 /* TAG_TREE.LIST Expected input format
 
@@ -78,7 +78,7 @@ No blank lines or commentary allowed, no symbols, just numbers.
 
 /*  1 more than the highest number in the DW_TAG defines,
     this is for standard TAGs. Number of rows. */
-#define STD_TAG_TABLE_ROWS 0x44
+#define STD_TAG_TABLE_ROWS 0x4a
 /* Enough entries to have a bit for each standard legal tag. */
 #define STD_TAG_TABLE_COLUMNS 7
 
@@ -95,10 +95,10 @@ No blank lines or commentary allowed, no symbols, just numbers.
 #define COUNT_ATTRIBUTE_STD 7
 
 #define STD_ATTR_TABLE_ROWS STD_TAG_TABLE_ROWS
-#define  STD_ATTR_TABLE_COLUMNS  7
+#define STD_ATTR_TABLE_COLUMNS  16
 /* tag/attr tree common extension maximums. */
 #define EXT_ATTR_TABLE_ROWS 7
-#define EXT_ATTR_TABLE_COLS 8
+#define EXT_ATTR_TABLE_COLS 16
 
 /* The following 2 used in tag_attr.c only. */
 #define ATTR_TABLE_ROW_MAXIMUM STD_ATTR_TABLE_ROWS

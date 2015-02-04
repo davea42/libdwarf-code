@@ -46,6 +46,17 @@
     means "only DW_TAG_subrange_type and DW_TAG_enumeration_type can
     be children of DW_TAG_array_type.
 
+    Since DWARF is generally descriptive, not prescriptive,
+    this list is at best a current understanding of
+    appropriate practice.  Moreover the the dwarf standard
+    does not actually list the tag-tag dependencies.
+    So mistakes in the list below is certainly possible.  
+    Corrections and small-ish sample object files
+    with unusual or interesting tag tree layouts are welcome.
+    Any sample object files should not be proprietary as
+    we may wish to include the object files in the regression test
+    base.
+
     This file is applied to the preprocessor, thus any C comment and
     preprocessor control line is available.
 */
@@ -55,14 +66,22 @@ DW_TAG_access_declaration
 0xffffffff
 DW_TAG_array_type
 DW_TAG_subrange_type
+DW_TAG_dynamic_type
+DW_TAG_generic_subrange
 DW_TAG_enumeration_type
 0xffffffff
 DW_TAG_base_type
+0xffffffff
+DW_TAG_call_site
+DW_TAG_call_site_parameter
+0xffffffff
+DW_TAG_call_site_parameter
 0xffffffff
 DW_TAG_catch_block
 DW_TAG_formal_parameter
 DW_TAG_unspecified_parameters
 DW_TAG_array_type
+
 DW_TAG_class_type
 DW_TAG_enumeration_type
 DW_TAG_pointer_type
@@ -76,7 +95,9 @@ DW_TAG_ptr_to_member_type
 DW_TAG_set_type
 DW_TAG_subrange_type
 DW_TAG_base_type
+DW_TAG_atomic_type
 DW_TAG_const_type
+DW_TAG_atomic_type
 DW_TAG_constant
 DW_TAG_file_type
 DW_TAG_packed_type
@@ -97,12 +118,23 @@ DW_TAG_typedef
 DW_TAG_base_type
 DW_TAG_pointer_type
 DW_TAG_union_type
+DW_TAG_coarray_type
+DW_TAG_dynamic_type
 DW_TAG_const_type
+DW_TAG_atomic_type
 DW_TAG_class_type   /* Nested classes */
 DW_TAG_structure_type   /* Nested structures */
 DW_TAG_enumeration_type /* Nested enums */
 DW_TAG_imported_declaration
 DW_TAG_template_alias  /* C++ 2010 template alias */
+0xffffffff
+DW_TAG_coarray_type
+DW_TAG_subrange_type
+DW_TAG_generic_subrange
+DW_TAG_dynamic_type
+DW_TAG_array_type
+DW_TAG_base_type
+
 0xffffffff
 DW_TAG_common_block
 DW_TAG_variable
@@ -111,6 +143,7 @@ DW_TAG_common_inclusion
 0xffffffff
 DW_TAG_compile_unit
 DW_TAG_array_type
+DW_TAG_dynamic_type
 DW_TAG_class_type
 DW_TAG_enumeration_type
 DW_TAG_imported_declaration
@@ -129,8 +162,11 @@ DW_TAG_module
 DW_TAG_ptr_to_member_type
 DW_TAG_set_type
 DW_TAG_subrange_type
+DW_TAG_generic_subrange
 DW_TAG_base_type
+DW_TAG_coarray_type
 DW_TAG_const_type
+DW_TAG_atomic_type
 DW_TAG_constant
 DW_TAG_file_type
 DW_TAG_namelist
@@ -145,6 +181,7 @@ DW_TAG_unspecified_type
 0xffffffff
 DW_TAG_type_unit
 DW_TAG_array_type
+DW_TAG_dynamic_type
 DW_TAG_class_type
 DW_TAG_enumeration_type
 DW_TAG_imported_declaration
@@ -161,8 +198,11 @@ DW_TAG_module
 DW_TAG_ptr_to_member_type
 DW_TAG_set_type
 DW_TAG_subrange_type
+DW_TAG_generic_subrange
 DW_TAG_base_type
+DW_TAG_coarray_type
 DW_TAG_const_type
+DW_TAG_atomic_type
 DW_TAG_constant
 DW_TAG_file_type
 DW_TAG_namelist
@@ -177,6 +217,8 @@ DW_TAG_template_alias  /* C++ 2010 template alias */
 DW_TAG_condition /* COBOL */
 DW_TAG_constant
 DW_TAG_subrange_type
+0xffffffff
+DW_TAG_atomic_type
 0xffffffff
 DW_TAG_const_type
 0xffffffff
@@ -212,6 +254,7 @@ DW_TAG_inlined_subroutine
 DW_TAG_formal_parameter
 DW_TAG_unspecified_parameters
 DW_TAG_array_type
+DW_TAG_dynamic_type
 DW_TAG_class_type
 DW_TAG_enumeration_type
 DW_TAG_pointer_type
@@ -226,8 +269,11 @@ DW_TAG_inlined_subroutine
 DW_TAG_ptr_to_member_type
 DW_TAG_set_type
 DW_TAG_subrange_type
+DW_TAG_generic_subrange
 DW_TAG_base_type
+DW_TAG_coarray_type
 DW_TAG_const_type
+DW_TAG_atomic_type
 DW_TAG_constant
 DW_TAG_file_type
 DW_TAG_namelist
@@ -244,6 +290,7 @@ DW_TAG_label
 0xffffffff
 DW_TAG_lexical_block
 DW_TAG_array_type
+DW_TAG_dynamic_type
 DW_TAG_class_type
 DW_TAG_enumeration_type
 DW_TAG_imported_declaration
@@ -261,8 +308,11 @@ DW_TAG_module
 DW_TAG_ptr_to_member_type
 DW_TAG_set_type
 DW_TAG_subrange_type
+DW_TAG_generic_subrange
 DW_TAG_base_type
+DW_TAG_coarray_type
 DW_TAG_const_type
+DW_TAG_atomic_type
 DW_TAG_constant
 DW_TAG_namelist
 DW_TAG_packed_type
@@ -282,6 +332,7 @@ DW_TAG_namelist_item
 0xffffffff
 DW_TAG_namespace
 DW_TAG_array_type
+DW_TAG_dynamic_type
 DW_TAG_class_type
 DW_TAG_enumeration_type
 DW_TAG_imported_declaration
@@ -298,8 +349,11 @@ DW_TAG_module
 DW_TAG_ptr_to_member_type
 DW_TAG_set_type
 DW_TAG_subrange_type
+DW_TAG_generic_subrange
 DW_TAG_base_type
+DW_TAG_coarray_type
 DW_TAG_const_type
+DW_TAG_atomic_type
 DW_TAG_constant
 DW_TAG_namelist
 DW_TAG_packed_type
@@ -314,6 +368,7 @@ DW_TAG_packed_type
 DW_TAG_partial_unit
 DW_TAG_array_type
 DW_TAG_class_type
+DW_TAG_dynamic_type
 DW_TAG_enumeration_type
 DW_TAG_imported_declaration
 DW_TAG_pointer_type
@@ -329,8 +384,11 @@ DW_TAG_module
 DW_TAG_ptr_to_member_type
 DW_TAG_set_type
 DW_TAG_subrange_type
+DW_TAG_generic_subrange
 DW_TAG_base_type
+DW_TAG_coarray_type
 DW_TAG_const_type
+DW_TAG_atomic_type
 DW_TAG_constant
 DW_TAG_file_type
 DW_TAG_namelist
@@ -340,38 +398,65 @@ DW_TAG_variable
 DW_TAG_volatile_type
 0xffffffff
 DW_TAG_pointer_type
-DW_TAG_rvalue_reference_type
+DW_TAG_atomic_type
+DW_TAG_const_type
+DW_TAG_packed_type
 DW_TAG_reference_type
 DW_TAG_restrict_type
-DW_TAG_ptr_to_member_type
+DW_TAG_rvalue_reference_type
+DW_TAG_shared_type
+DW_TAG_volatile_type
+
 0xffffffff
 DW_TAG_ptr_to_member_type
-DW_TAG_rvalue_reference_type
-DW_TAG_reference_type
-DW_TAG_pointer_type
-DW_TAG_restrict_type
+
 0xffffffff
 DW_TAG_reference_type
-DW_TAG_rvalue_reference_type
-DW_TAG_reference_type
+DW_TAG_atomic_type
+DW_TAG_const_type
+DW_TAG_packed_type
 DW_TAG_pointer_type
 DW_TAG_restrict_type
-DW_TAG_ptr_to_member_type
+DW_TAG_rvalue_reference_type
+DW_TAG_shared_type
+DW_TAG_volatile_type
+
 0xffffffff
 DW_TAG_rvalue_reference_type
+DW_TAG_atomic_type
+DW_TAG_const_type
+DW_TAG_packed_type
 DW_TAG_pointer_type
-DW_TAG_restrict_type
-DW_TAG_ptr_to_member_type
 DW_TAG_reference_type
+DW_TAG_restrict_type
+DW_TAG_shared_type
+DW_TAG_volatile_type
+
 0xffffffff
 DW_TAG_restrict_type
+DW_TAG_atomic_type
+DW_TAG_const_type
+DW_TAG_packed_type
 DW_TAG_pointer_type
-DW_TAG_ptr_to_member_type
+DW_TAG_reference_type
 DW_TAG_rvalue_reference_type
+DW_TAG_shared_type
+DW_TAG_volatile_type
+
 0xffffffff
 DW_TAG_set_type
 0xffffffff
 DW_TAG_shared_type
+DW_TAG_atomic_type
+DW_TAG_const_type
+DW_TAG_packed_type
+DW_TAG_pointer_type
+DW_TAG_reference_type
+DW_TAG_restrict_type
+DW_TAG_rvalue_reference_type
+DW_TAG_shared_type
+DW_TAG_volatile_type
+
 0xffffffff
 DW_TAG_string_type
 0xffffffff
@@ -387,9 +472,11 @@ DW_TAG_template_type_parameter /* template instantiations */
 DW_TAG_template_value_parameter /* template instantiations */
 DW_TAG_typedef
 DW_TAG_base_type
+DW_TAG_coarray_type
 DW_TAG_pointer_type
 DW_TAG_union_type
 DW_TAG_const_type
+DW_TAG_atomic_type
 DW_TAG_structure_type /* nested structures */
 DW_TAG_enumeration_type /* nested enums */
 DW_TAG_class_type /* nested classes */
@@ -402,9 +489,11 @@ DW_TAG_unspecified_parameters
 DW_TAG_thrown_type
 DW_TAG_template_type_parameter
 DW_TAG_template_value_parameter
+DW_TAG_pointer_type
 DW_TAG_common_inclusion
 DW_TAG_common_block
 DW_TAG_array_type
+DW_TAG_coarray_type
 DW_TAG_class_type
 DW_TAG_enumeration_type
 DW_TAG_pointer_type
@@ -419,8 +508,10 @@ DW_TAG_inlined_subroutine
 DW_TAG_ptr_to_member_type
 DW_TAG_set_type
 DW_TAG_subrange_type
+DW_TAG_generic_subrange
 DW_TAG_base_type
 DW_TAG_const_type
+DW_TAG_atomic_type
 DW_TAG_constant
 DW_TAG_file_type
 DW_TAG_namelist
@@ -433,6 +524,8 @@ DW_TAG_imported_module      /* References to namespaces */
 DW_TAG_imported_declaration /* References to namespaces */
 0xffffffff
 DW_TAG_subrange_type
+0xffffffff
+DW_TAG_generic_subrange
 0xffffffff
 DW_TAG_subroutine_type
 DW_TAG_formal_parameter

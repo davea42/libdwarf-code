@@ -1008,9 +1008,7 @@ dwarf_siblingof_b(Dwarf_Debug dbg,
         cu_info_start = dataptr + off2;
         headerlen = _dwarf_length_of_cu_header(dbg, off2,is_info);
         die_info_ptr = cu_info_start + headerlen;
-        die_info_end = cu_info_start + context->cc_length +
-            context->cc_length_size +
-            context->cc_extension_size;
+        die_info_end = _dwarf_calculate_section_end_ptr(context);
         /*  Recording the CU die pointer so we can later access
             for special FORMs relating to .debug_str_offsets
             and .debug_addr  */
@@ -1032,9 +1030,7 @@ dwarf_siblingof_b(Dwarf_Debug dbg,
         }
         context = die->di_cu_context;
         cu_info_start = dataptr+ context->cc_debug_offset;
-        die_info_end = cu_info_start + context->cc_length +
-            context->cc_length_size +
-            context->cc_extension_size;
+        die_info_end = _dwarf_calculate_section_end_ptr(context);
 
         if ((*die_info_ptr) == 0) {
             return (DW_DLV_NO_ENTRY);
@@ -1050,6 +1046,16 @@ dwarf_siblingof_b(Dwarf_Debug dbg,
                 error);
             if(res2 != DW_DLV_OK) {
                 return res2;
+            }
+            if (die_info_ptr2 < die_info_ptr) {
+                /*  There is something very wrong, our die value
+                    decreased.  Bad DWARF. */
+                _dwarf_error(dbg, error, DW_DLE_NEXT_DIE_LOW_ERROR);
+                return (DW_DLV_ERROR);
+            }
+            if (die_info_ptr2 > die_info_end) {
+                _dwarf_error(dbg, error, DW_DLE_NEXT_DIE_PAST_END);
+                return (DW_DLV_ERROR);
             }
             die_info_ptr = die_info_ptr2;
 
@@ -1067,7 +1073,8 @@ dwarf_siblingof_b(Dwarf_Debug dbg,
             if ((die_info_ptr == die_info_end) ||
                 ((*die_info_ptr) == 0)) {
                 for (; child_depth > 0 && *die_info_ptr == 0;
-                    child_depth--, die_info_ptr++);
+                    child_depth--, die_info_ptr++) {
+                }
             } else {
                 child_depth = has_child ? child_depth + 1 : child_depth;
             }
@@ -1149,16 +1156,13 @@ dwarf_child(Dwarf_Die die,
     Dwarf_Small *dataptr = 0;
     Dwarf_Debug_InfoTypes dis = 0;
     int res = 0;
+    Dwarf_CU_Context context = 0;
 
     CHECK_DIE(die, DW_DLV_ERROR);
     dbg = die->di_cu_context->cc_dbg;
     dis = die->di_is_info? &dbg->de_info_reading:
         &dbg->de_types_reading;
     die_info_ptr = die->di_debug_ptr;
-
-    dataptr = die->di_is_info? dbg->de_debug_info.dss_data:
-        dbg->de_debug_types.dss_data;
-
 
     /*  We are saving a DIE pointer here, but the pointer
         will not be presumed live later, when it is tested. */
@@ -1169,11 +1173,8 @@ dwarf_child(Dwarf_Die die,
     if ((*die_info_ptr) == 0)
         return (DW_DLV_NO_ENTRY);
 
-    die_info_end = dataptr +
-        die->di_cu_context->cc_debug_offset +
-        die->di_cu_context->cc_length +
-        die->di_cu_context->cc_length_size +
-        die->di_cu_context->cc_extension_size;
+    context = die->di_cu_context;
+    die_info_end = _dwarf_calculate_section_end_ptr(context);
 
     res = _dwarf_next_die_info_ptr(die_info_ptr, die->di_cu_context,
         die_info_end,
@@ -1304,7 +1305,7 @@ dwarf_offdie_b(Dwarf_Debug dbg,
 
         do {
             if ((new_cu_offset +
-                _dwarf_length_of_cu_header_simple(dbg,is_info)) >= 
+                _dwarf_length_of_cu_header_simple(dbg,is_info)) >=
                 section_size) {
                 _dwarf_error(dbg, error, DW_DLE_OFFSET_BAD);
                 return (DW_DLV_ERROR);

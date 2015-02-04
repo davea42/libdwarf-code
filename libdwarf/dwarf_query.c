@@ -194,7 +194,7 @@ dwarf_attrlist(Dwarf_Die die,
     abbrev_list = _dwarf_get_abbrev_for_code(die->di_cu_context,
         die->di_abbrev_list->ab_code);
     if (abbrev_list == NULL) {
-        _dwarf_error(dbg, error, DW_DLE_DIE_ABBREV_BAD);
+        _dwarf_error(dbg,error,DW_DLE_CU_DIE_NO_ABBREV_LIST);
         return (DW_DLV_ERROR);
     }
     abbrev_ptr = abbrev_list->ab_abbrev_ptr;
@@ -311,17 +311,19 @@ _dwarf_get_value_ptr(Dwarf_Die die,
     Dwarf_Half curr_attr = 0;
     Dwarf_Half curr_attr_form = 0;
     Dwarf_Byte_Ptr info_ptr = 0;
+    Dwarf_CU_Context context = die->di_cu_context;
+    Dwarf_Byte_Ptr die_info_end = 0;
+    Dwarf_Debug dbg = 0;
 
-    abbrev_list = _dwarf_get_abbrev_for_code(die->di_cu_context,
+    if (!context) {
+        _dwarf_error(NULL,error,DW_DLE_DIE_NO_CU_CONTEXT);
+        return DW_DLV_ERROR;
+    }
+    dbg = context->cc_dbg;
+    die_info_end = _dwarf_calculate_section_end_ptr(context);
+    abbrev_list = _dwarf_get_abbrev_for_code(context,
         die->di_abbrev_list->ab_code);
     if (abbrev_list == NULL) {
-        Dwarf_Debug dbg = 0;
-        Dwarf_CU_Context context = die->di_cu_context;
-        if (!context) {
-            _dwarf_error(dbg,error,DW_DLE_DIE_NO_CU_CONTEXT);
-            return DW_DLV_ERROR;
-        }
-        dbg = context->cc_dbg;
         /*  Should this be DW_DLV_NO_ENTRY? */
         _dwarf_error(dbg,error,DW_DLE_CU_DIE_NO_ABBREV_LIST);
         return DW_DLV_ERROR;
@@ -354,7 +356,7 @@ _dwarf_get_value_ptr(Dwarf_Die die,
             return DW_DLV_OK;
         }
 
-        res = _dwarf_get_size_of_val(die->di_cu_context->cc_dbg,
+        res = _dwarf_get_size_of_val(dbg,
             curr_attr_form,
             die->di_cu_context->cc_version_stamp,
             die->di_cu_context->cc_address_size,
@@ -364,6 +366,12 @@ _dwarf_get_value_ptr(Dwarf_Die die,
             error);
         if (res != DW_DLV_OK) {
             return res;
+        }
+        if ( (die_info_end  - info_ptr) < value_size) {
+            /*  Something badly wrong. We point past end
+                of debug_info or debug_types . */
+            _dwarf_error(dbg,error,DW_DLE_DIE_ABBREV_BAD);
+            return DW_DLV_ERROR;
         }
         info_ptr+= value_size;
     } while (curr_attr != 0 || curr_attr_form != 0);
@@ -1223,6 +1231,26 @@ dwarf_get_version_of_die(Dwarf_Die die,
     *version = cucontext->cc_version_stamp;
     *offset_size = cucontext->cc_length_size;
     return DW_DLV_OK;
+}
+
+Dwarf_Byte_Ptr
+_dwarf_calculate_section_end_ptr(Dwarf_CU_Context context)
+{
+    Dwarf_Debug dbg = 0;
+    Dwarf_Byte_Ptr info_end = 0;
+    Dwarf_Byte_Ptr info_start = 0;
+    Dwarf_Off off2 = 0;
+    Dwarf_Small *dataptr = 0;
+
+    dbg = context->cc_dbg;
+    dataptr = context->cc_is_info? dbg->de_debug_info.dss_data:
+        dbg->de_debug_types.dss_data;
+    off2 = context->cc_debug_offset;
+    info_start = dataptr + off2;
+    info_end = info_start + context->cc_length +
+        context->cc_length_size +
+        context->cc_extension_size;
+    return info_end;
 }
 
 

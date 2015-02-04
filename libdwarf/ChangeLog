@@ -1,3 +1,23 @@
+2015-02-04  David Anderson
+    * dwarf.h: Added new TAGs etc from DWARF5. Since DWARF5 is
+      not a completed standard these new things could change.
+    * dwarf_die_deliv.c: Refactored calculation of end_of CU
+      to ensure uniformity.  Added checks to catch attempts
+      to read past end and coredump (can happen when the DWARF is 
+      erroneous). Notice when bogus attribute wraps memory
+      so the next DIE would be at an earlier address in memory
+      than the current die (DW_DLE_NEXT_DIE_LOW_ERROR).
+    * dwarf_error.c: DW_DLE_NEXT_DIE_LOW_ERROR error code added.
+    * dwarf_form.c: Added check to ensure we do not run off the
+      end of the string section (.debug_str).
+    * dwarf_opaque.h: Declare new internal
+      function  _dwarf_calculate_section_end_ptr().
+    * dwarf_query.c(dwarf_attrlist): 
+      A little bit of refactoring/reordering done to catch
+      errors.
+      Created new function _dwarf_calculate_section_end_ptr().
+    * dwarf_xu_index.c: Removed trailing space, one line..
+    * libdwarf.h.in: Added define of DW_DLE_NEXT_DIE_LOW_ERROR.
 2015-01-31  David Anderson
     * Makefile.in,common.c,common.h,dwarf_abbrev.c,dwarf_abbrev.h,
       dwarf_addr_finder.c,dwarf_alloc.c,dwarf_alloc.h,dwarf_arange.c,

@@ -525,5 +525,7 @@ int _dwarf_extract_string_offset_via_str_offsets(Dwarf_Debug dbg,
 Dwarf_Unsigned _dwarf_get_fission_addition_die(Dwarf_Debug dbg,
    Dwarf_Die die, int dw_sect_index);
 
+Dwarf_Byte_Ptr _dwarf_calculate_section_end_ptr(Dwarf_CU_Context context);
+
 Dwarf_Unsigned _dwarf_get_fission_addition(Dwarf_Debug dbg,
    int cu_is_info,Dwarf_Off cu_offset,int dw_sect_index);

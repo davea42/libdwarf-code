@@ -795,9 +795,17 @@ _dwarf_setup(Dwarf_Debug dbg, Dwarf_Error * error)
                     of the section name. If the current section
                     is a RELA one and the 'sh_info'
                     refers to a debug section, add the relocation data. */
-                if (doas.type == SHT_RELA && sections[doas.info]) {
-                    add_rela_data(sections[doas.info],&doas,
-                        obj_section_index);
+                if (doas.type == SHT_RELA) {
+                    if ( doas.info < section_count) {
+                        if (sections[doas.info]) {
+                            add_rela_data(sections[doas.info],&doas,
+                                obj_section_index);
+                        }
+                    } else {
+                        /* Something is wrong with the ELF file. */
+                        free(sections);
+                        DWARF_DBG_ERROR(dbg, DW_DLE_ELF_SECT_ERR, DW_DLV_ERROR);
+                    }
                 }
             }
             /* Fetch next section */

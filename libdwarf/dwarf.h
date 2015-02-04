@@ -345,8 +345,8 @@ extern "C" {
 #define DW_AT_call_value                        0x7e /* DWARF5 */
 #define DW_AT_call_origin                       0x7f /* DWARF5 */
 #define DW_AT_call_parameter                    0x80 /* DWARF5 */
-#define DW_AT_call_call_pc                      0x81 /* DWARF5 */
-#define DW_AT_call_call_tail_call               0x82 /* DWARF5 */
+#define DW_AT_call_pc                      0x81 /* DWARF5 */
+#define DW_AT_call_tail_call               0x82 /* DWARF5 */
 #define DW_AT_call_target                       0x83 /* DWARF5 */
 #define DW_AT_call_target_clobbered             0x84 /* DWARF5 */
 #define DW_AT_call_data_location                0x85 /* DWARF5 */

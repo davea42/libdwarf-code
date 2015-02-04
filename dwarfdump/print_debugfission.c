@@ -39,7 +39,7 @@ hashval_zero(Dwarf_Sig8 *val)
         if (val->signature[u]) {
             return FALSE;
         }
-    }  
+    }
     return TRUE;
 }
 
@@ -124,14 +124,14 @@ print_debugfission_index(Dwarf_Debug dbg,const char *type)
             Dwarf_Unsigned col = 0;
             struct esb_s hashhexstring;
 
-            esb_constructor(&hashhexstring);            
+            esb_constructor(&hashhexstring);
             memset(&hashval,0,sizeof(hashval));
             res = dwarf_get_xu_hash_entry(xuhdr,h,
                 &hashval,&index,&err);
             if (res == DW_DLV_ERROR) {
                 print_error(dbg,"dwarf_get_xu_hash_entry",res,err);
                 dwarf_xu_header_free(xuhdr);
-                esb_destructor(&hashhexstring);            
+                esb_destructor(&hashhexstring);
                 return;
             } else if (res == DW_DLV_NO_ENTRY) {
                 /* Impossible */
@@ -140,7 +140,7 @@ print_debugfission_index(Dwarf_Debug dbg,const char *type)
                     "No entry?\n",
                     h);
                 dwarf_xu_header_free(xuhdr);
-                esb_destructor(&hashhexstring);            
+                esb_destructor(&hashhexstring);
                 return;
             } else if (hashval_zero(&hashval) && index == 0 ) {
                 /* An unused hash slot, we do not print them */
@@ -152,7 +152,7 @@ print_debugfission_index(Dwarf_Debug dbg,const char *type)
                 h,
                 esb_get_string(&hashhexstring),
                 index);
-            esb_destructor(&hashhexstring);            
+            esb_destructor(&hashhexstring);
             printf("      col              section   "
                 "offset                size\n");
             for (col = 0; col < offsets_count; col++) {

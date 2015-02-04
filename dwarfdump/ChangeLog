@@ -1,3 +1,20 @@
+2015-02-04  David Anderson
+     * 	common.c,dwarfdump.c:Updated version string.
+     * print_debugfission.c: Now we are using a Dwarf_Sig8
+       for fission hash so we introduce an esb_s to do
+       the formatting.
+     * tag_attr.c: Now we format a more detailed message when
+       we detect an insufficient static tag_attr or tag_tree
+       array instance. It's code only used at build time so
+       just giving up is fine: someone changed dwarf.h.
+     * tag_attr.list:  Adding new TAGs and new Attrs
+       from DWARF5. Since the DWARF5 standard not yet final
+       these could change!
+     * tag_attr_ext.list: Added new GNU attributes.
+     * tag_common.h:  updated DW_TAG_last and DW_AT_last 
+        STD_TAG_TABLE_ROWS STD_ATTR_TABLE_COLUMNS values
+       due to dwarf.h updates.
+     * tag_tree.list: New entries from DWARF5.
 2015-01-31  David Anderson
      * DWARFDUMPCOPYRIGHT: updated to
        reflect changes today. Old versions

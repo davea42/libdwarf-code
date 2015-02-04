@@ -29,6 +29,7 @@
 
 #include "config.h"
 #include "dwarf_incl.h"
+#include <stdio.h>
 #include "dwarf_die_deliv.h"
 
 /* This code was repeated many times, now it
@@ -233,7 +234,7 @@ dwarf_whatattr(Dwarf_Attribute attr,
 
 
 /*  Convert an offset within the local CU into a section-relative
-    debug_info (or debug_types) offset. 
+    debug_info (or debug_types) offset.
     See dwarf_global_formref() and dwarf_formref()
     for additional information on conversion rules.
 */
@@ -254,7 +255,7 @@ dwarf_convert_to_global_offset(Dwarf_Attribute attr,
     }
 #if 0
     This should not be done. cc_debug_offset has
-    the fission offset (if any) built in already. 
+    the fission offset (if any) built in already.
     memset(&fissiondata,0,sizeof(fissiondata));
     fissionres =  dwarf_get_debugfission_for_die(attr->ar_die,
         &fissiondata,error);
@@ -268,9 +269,8 @@ dwarf_convert_to_global_offset(Dwarf_Attribute attr,
             sect = DW_SECT_INFO;
         }
         dwpoffset = fissiondata.pcu_offset[sect];
-    } 
+    }
 #endif
-    
 
     switch (attr->ar_attribute_form) {
     case DW_FORM_ref1:
@@ -287,7 +287,7 @@ dwarf_convert_to_global_offset(Dwarf_Attribute attr,
 
     case DW_FORM_ref_addr:
         /*  This offset is defined to be debug_info global already, so
-            use this value unaltered. 
+            use this value unaltered.
             However,  if dwo in dwp it needs adjustment.
             */
         offset += dwpoffset;
@@ -1112,9 +1112,13 @@ dwarf_formstring(Dwarf_Attribute attr,
         if (res != DW_DLV_OK) {
             return res;
         }
+        if (offset >= dbg->de_debug_str.dss_size) {
+            /*  Badly damaged DWARF here. */
+            _dwarf_error(dbg, error, DW_DLE_STRP_OFFSET_BAD);
+            return (DW_DLV_ERROR);
+        }
         if (0 == dbg->de_assume_string_in_bounds) {
-            /* Check that string lies within its   .debug_str.
-            */
+            /* Check that string lies within its   .debug_str.  */
             void *end = dbg->de_debug_str.dss_data +
                 dbg->de_debug_str.dss_size;
             void*begin = dbg->de_debug_str.dss_data + offset;

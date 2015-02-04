@@ -52,8 +52,6 @@ value of a standard attribute that follows that tag
 0xffffffff
 ...
 
-No blank lines or commentary allowed, no symbols, just numbers.
-
 */
 
 unsigned int tag_attr_combination_table[ATTR_TABLE_ROW_MAXIMUM][ATTR_TABLE_COLUMN_MAXIMUM];
@@ -252,13 +250,20 @@ main(int argc, char **argv)
                 unsigned bit = num % BITS_PER_WORD;
 
                 if (idx >= table_columns) {
-                    bad_line_input
-                        ("too many attributes: table incomplete.");
+                    char msg[200];
+                    snprintf(msg, sizeof(msg),
+                        "too many attributes a: table incomplete "
+                        "index %d cols %d.",idx,table_columns);
+                    bad_line_input(msg);
                 }
                 tag_attr_combination_table[tag][idx] |= (1 << bit);
             } else {
                 if (curcol >= table_columns) {
-                    bad_line_input("too many attributes: table incomplete.");
+                    char msg[200];
+                    snprintf(msg, sizeof(msg),
+                        "too many attributes b: table incomplete "
+                        "index %d cols %d.",curcol,table_columns);
+                    bad_line_input(msg);
                 }
                 tag_attr_combination_table[current_row][curcol] = num;
                 curcol++;
@@ -270,7 +275,11 @@ main(int argc, char **argv)
             if (standard_flag) {
                 /* Add attribute to current tag */
                 if (cur_attr >= DW_AT_last) {
-                    bad_line_input("too many attributes: table incomplete.");
+                    char msg[200];
+                    snprintf(msg, sizeof(msg),
+                        "too many attributes c: table incomplete "
+                        "index %d cols %d.",cur_attr,DW_AT_last);
+                    bad_line_input(msg);
                 }
                 /* Check for duplicated entries */
                 if (tag_attr_vector[cur_attr]) {
