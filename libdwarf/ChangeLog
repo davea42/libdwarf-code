@@ -1,3 +1,7 @@
+2015-02-12  David Anderson
+    * dwarf_original_elf_init.c(dwarf_elf_init_file_ownership):
+      When dwarf_elf_object_access_init() returns DW_DLV_ERROR
+      the Dwarf_Error was not getting set. Now it is set.
 2015-02-04  David Anderson
     * dwarf.h: Added new TAGs etc from DWARF5. Since DWARF5 is
       not a completed standard these new things could change.
