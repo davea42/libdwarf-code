@@ -6,9 +6,6 @@
 /* Define to 1 if you have the <elf.h> header file. */
 #undef HAVE_ELF_H
 
-/* Define to 1 if you have the <getopt.h> header file. */
-#undef HAVE_GETOPT_H
-
 /* Define 1 if intptr_t defined in C99 stdint.h */
 #undef HAVE_INTPTR_T
 

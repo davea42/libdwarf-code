@@ -68,6 +68,9 @@
 #include <sys/stat.h> //open
 #include <fcntl.h> //open
 #include "general.h"
+extern "C" {
+#include "dwgetopt.h"
+};
 #include "gelf.h"
 #include "strtabdata.h"
 #include "dwarf.h"
@@ -319,7 +322,7 @@ main(int argc, char **argv)
         int opt;
         bool pathrequired(false);
         long cu_of_input_we_output = -1;
-        while((opt=getopt(argc,argv,"o:t:c:h")) != -1) {
+        while((opt=dwgetopt(argc,argv,"o:t:c:h")) != -1) {
             switch(opt) {
             case 'c':
                 // At present we can only create a single

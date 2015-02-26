@@ -3560,7 +3560,7 @@ fi
 done
 
 
-for ac_header in elf.h getopt.h libelf.h libelf/libelf.h sgidefs.h sys/types.h
+for ac_header in elf.h libelf.h libelf/libelf.h sgidefs.h sys/types.h
 do :
   as_ac_Header=`$as_echo "ac_cv_header_$ac_header" | $as_tr_sh`
 ac_fn_c_check_header_mongrel "$LINENO" "$ac_header" "$as_ac_Header" "$ac_includes_default"

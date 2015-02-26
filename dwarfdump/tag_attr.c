@@ -27,15 +27,15 @@
 #include <dwarf.h>
 #include <stdio.h>
 #include <stdarg.h>   /* For va_start va_arg va_list */
-#include <getopt.h>
 #include <stdlib.h>             /* For exit() declaration etc. */
 #include <errno.h>              /* For errno declaration. */
-#include <unistd.h>             /* For getopt. */
+#include <unistd.h>            
 
 #include "globals.h"
 #include "libdwarf.h"
 #include "common.h"
 #include "tag_common.h"
+#include "dwgetopt.h"
 
 boolean ellipsis = FALSE; /* So we can use dwarf_names.c */
 
@@ -88,7 +88,7 @@ process_args(int argc, char *argv[])
 
     program_name = argv[0];
 
-    while ((c = getopt(argc, argv, "i:o:se")) != EOF) {
+    while ((c = dwgetopt(argc, argv, "i:o:se")) != EOF) {
         switch (c) {
         case 'i':
             input_name = optarg;

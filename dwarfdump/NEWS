@@ -1,3 +1,10 @@
+February  25, 2015
+  Copied dwgetopt.c dwgetopt.h from libdwarf so dwarfdump can
+  use dwgetopt() and still build without necessarily
+  having the libdwarfsource easily available.
+  Some environments do not have a getopt() so copying
+  dwgetopt.h,.h here ensures we have this functionality
+  for everyone.
 January 08, 2015
   dwarfdump does new checking. See options -kD -kG -ku -kuf.
   In addition, dwarfdump output can be written to a file without

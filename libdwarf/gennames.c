@@ -29,10 +29,10 @@
 #include <errno.h>   /* For errno declaration. */
 #include <ctype.h>
 #include <string.h>
-#include <getopt.h>
 #include <unistd.h>
 #include "dwarf.h"
 #include "common.h"
+#include "dwgetopt.h"
 
 /*  gennames.c
     Prints routines to return constant name for the associated value
@@ -134,7 +134,7 @@ process_args(int argc, char *argv[])
 
     program_name = argv[0];
 
-    while ((c = getopt(argc, argv, "i:o:st")) != EOF) {
+    while ((c = dwgetopt(argc, argv, "i:o:st")) != EOF) {
         switch (c) {
         case 'i':
             input_name = optarg;

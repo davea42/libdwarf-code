@@ -1,3 +1,8 @@
+2015-02-22  David Anderson
+    * dwgetopt.h, dwgetopt.c: Copied from dwarfdump so
+      libdwarf can compile without dwarfdump source present.
+    * Makefile.in: Builds dwgetopt.o
+    * gennames.c: Now uses dwgetopt.o
 2015-02-12  David Anderson
     * dwarf_original_elf_init.c(dwarf_elf_init_file_ownership):
       When dwarf_elf_object_access_init() returns DW_DLV_ERROR

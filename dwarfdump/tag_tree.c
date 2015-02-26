@@ -25,11 +25,11 @@
 */
 
 #include "globals.h"
-#include <getopt.h>
 #include <errno.h>              /* For errno declaration. */
 #include <unistd.h>
 #include "common.h"
 #include "tag_common.h"
+#include "dwgetopt.h"
 
 unsigned int tag_tree_combination_table[TAG_TABLE_ROW_MAXIMUM][TAG_TABLE_COLUMN_MAXIMUM];
 
@@ -86,7 +86,7 @@ process_args(int argc, char *argv[])
 
     program_name = argv[0];
 
-    while ((c = getopt(argc, argv, "i:o:es")) != EOF) {
+    while ((c = dwgetopt(argc, argv, "i:o:es")) != EOF) {
         switch (c) {
         case 'i':
             input_name = (char *)strdup(optarg);

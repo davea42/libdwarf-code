@@ -59,8 +59,12 @@ all: dwarfgen
 
 default: $(TARGETS)
 
-dwarfgen: $(HEADERS) $(DGOBJECTS)
-	$(CXX) $(CXXFLAGS) -o $@ $(DGOBJECTS) $(LDFLAGS)
+# We reach-around to libdwarf to get the dwgetopt src, header.
+# We could equally well reach around to dwarfdump.
+dwgetopt.o: $(srcdir)/../libdwarf/dwgetopt.c  $(srcdir)/../libdwarf/dwgetopt.h
+	$(CC) $(CFLAGS) $(INCLUDES) -c $(srcdir)/../libdwarf/dwgetopt.c
+dwarfgen: $(HEADERS) $(DGOBJECTS) dwgetopt.o
+	$(CXX) $(CXXFLAGS) -o $@ $(DGOBJECTS) $(LDFLAGS) dwgetopt.o
 
 test:
 

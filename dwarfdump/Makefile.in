@@ -47,7 +47,6 @@ FINALOBJECTS = \
 	dwarfdump.o \
 	dwarf_tsearchbal.o \
 	dwconf.o \
-        dwgetopt.o \
 	esb.o \
 	print_abbrevs.o \
 	print_aranges.o \
@@ -80,6 +79,7 @@ all: dwarfdump
 HEADERS = $(srcdir)/checkutil.h \
         $(srcdir)/common.h \
         $(srcdir)/dwconf.h \
+        $(srcdir)/dwgetopt.h \
         $(srcdir)/esb.h \
         $(srcdir)/globals.h \
         $(srcdir)/makename.h \
@@ -91,11 +91,13 @@ $(FINALOBJECTS): $(GEN_HFILES)  $(HEADERS) $(srcdir)/naming.c
 
 default: $(TARGETS)
 
-dwarfdump: $(FINALOBJECTS) makename.o naming.o common.o
-	$(CC) $(CFLAGS) -o $@ $(FINALOBJECTS) common.o makename.o naming.o $(LDFLAGS) 
+dwarfdump: $(FINALOBJECTS) makename.o naming.o common.o dwgetopt.o
+	$(CC) $(CFLAGS) -o $@ $(FINALOBJECTS) common.o makename.o naming.o dwgetopt.o $(LDFLAGS) 
 
 #tag_common.o: $(srcdir)/tag_common.c $(HEADERS)  dwarf_names.h
 #	$(CC) $(CFLAGS) -c $(srcdir)/tag_common.c
+dwgetopt.o: $(srcdir)/dwgetopt.h $(srcdir)/dwgetopt.c 
+	$(CC) $(CFLAGS) -c $(srcdir)/dwgetopt.c
 makename.o: $(srcdir)/makename.h $(srcdir)/makename.c 
 	$(CC) $(CFLAGS) -c $(srcdir)/makename.c
 common.o:  $(srcdir)/common.c $(srcdir)/common.h
@@ -113,11 +115,11 @@ trivial_naming.o: $(srcdir)/naming.c
 	$(CC) $(CFLAGS) -DTRIVIAL_NAMING  -c $(srcdir)/naming.c -o trivial_naming.o 
 
 # Use static libdwarf.a
-tag_tree_build:  $(srcdir)/tag_tree.c $(DIRINC)/dwarf.h $(HEADERS) tag_common.o makename.o common.o trivial_naming.o
-	$(CC) $(CFLAGS) $(srcdir)/tag_tree.c tag_common.o common.o makename.o trivial_naming.o ../libdwarf/libdwarf.a $(LDFLAGS) -o tag_tree_build 
+tag_tree_build:  $(srcdir)/tag_tree.c $(DIRINC)/dwarf.h $(HEADERS) tag_common.o makename.o common.o trivial_naming.o dwgetopt.o
+	$(CC) $(CFLAGS) $(srcdir)/tag_tree.c tag_common.o common.o makename.o trivial_naming.o dwgetopt.o ../libdwarf/libdwarf.a $(LDFLAGS) -o tag_tree_build 
 
-tag_attr_build:  $(srcdir)/tag_attr.c $(DIRINC)/dwarf.h $(HEADERS) tag_common.o makename.o common.o trivial_naming.o
-	$(CC) $(CFLAGS) $(srcdir)/tag_attr.c tag_common.o common.o makename.o trivial_naming.o ../libdwarf/libdwarf.a $(LDFLAGS) -o tag_attr_build 
+tag_attr_build:  $(srcdir)/tag_attr.c $(DIRINC)/dwarf.h $(HEADERS) tag_common.o makename.o common.o trivial_naming.o dwgetopt.o
+	$(CC) $(CFLAGS) $(srcdir)/tag_attr.c tag_common.o common.o makename.o trivial_naming.o dwgetopt.o ../libdwarf/libdwarf.a $(LDFLAGS) -o tag_attr_build 
 
 tmp-tt-table.c: $(srcdir)/tag_tree.list tag_tree_build
 	# gcc -E tag_tree.list does not work, so use a .c name

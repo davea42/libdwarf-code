@@ -1,3 +1,13 @@
+2015-02-22  David Anderson
+     * configure.in: removed getopt.h from tests, we use
+       local dwgetopt now.
+     * dwgetopt.h: Function name is dwgetopt. Prototype named right now.
+       Copied from libdwarf dwgetopt.h
+     * configure: regenerated
+     * Makefile.in: build dwgetopt.o
+     * dwgetopt.c: Copied from libdwarf source. 
+     * tag_attr.c,tag_tree.c: Now call dwgetopt() instead of getopt().
+
 2015-02-04  David Anderson
      * 	common.c,dwarfdump.c:Updated version string.
      * print_debugfission.c: Now we are using a Dwarf_Sig8

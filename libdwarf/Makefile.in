@@ -126,14 +126,17 @@ libdwarf.so: dwarf_names.h dwarf_names.c $(OBJS) dwarf_names.o
 
 none:
 	echo "do nothing " $@
+dwgetopt.o: $(srcdir)/dwgetopt.c $(srcdir)/dwgetopt.h
+	$(CC) $(CFLAGS) -c $(srcdir)/dwgetopt.c
 common.o: $(srcdir)/common.c $(srcdir)/common.h
 	$(CC) $(CFLAGS) -c $(srcdir)/common.c
-gennames: $(srcdir)/gennames.c $(srcdir)/dwarf.h common.o
-	$(CC) $(CFLAGS) $(srcdir)/gennames.c common.o $(LDFLAGS) -o gennames
+gennames: $(srcdir)/gennames.c $(srcdir)/dwarf.h common.o dwgetopt.o
+	$(CC) $(CFLAGS) $(srcdir)/gennames.c common.o dwgetopt.o $(LDFLAGS) -o gennames
 dwarf_names.h: dwarf_names.c
 dwarf_names.c: gennames $(srcdir)/dwarf.h
 	rm -f dwarf_names.h dwarf_names.c
 	./gennames  @dwarf_namestable@  -i $(srcdir) -o .
+
 
 
 #
