@@ -501,6 +501,11 @@ main(int argc, char *argv[])
         allocate_unique_errors_table();
     }
 
+    /* Allocate range array to be used by all CUs */
+    if (check_ranges) {
+        allocate_range_array_info();
+    }
+
     while ((elf = elf_begin(f, cmd, arf)) != 0) {
         Elf32_Ehdr *eh32;
 
@@ -546,6 +551,11 @@ main(int argc, char *argv[])
     if (pVisitedInfo) {
         ReleaseBucketGroup(pVisitedInfo);
         pVisitedInfo = 0;
+    }
+
+    /* Release range array to be used by all CUs */
+    if (check_ranges) {
+        release_range_array_info();
     }
 
     /* Delete the unique error set */

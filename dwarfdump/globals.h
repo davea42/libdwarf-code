@@ -354,6 +354,13 @@ extern void print_types(Dwarf_Debug dbg,enum type_type_e type_type);
 extern void print_weaknames(Dwarf_Debug dbg);
 extern void print_exception_tables(Dwarf_Debug dbg);
 
+/*  Space used to record range information */
+extern void allocate_range_array_info();
+extern void release_range_array_info();
+extern void record_range_array_info_entry(Dwarf_Off die_off,
+    Dwarf_Off range_off);
+extern void check_range_array_info(Dwarf_Debug dbg);
+
 struct esb_s;
 extern void print_ranges_list_to_extra(Dwarf_Debug dbg,
     Dwarf_Unsigned off,

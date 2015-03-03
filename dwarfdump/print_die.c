@@ -672,6 +672,11 @@ print_one_die_section(Dwarf_Debug dbg,Dwarf_Bool is_info)
                 PrintBucketGroup(pRangesInfo,TRUE);
             }
 
+            /* Check the range array if in checl mode */
+            if (check_ranges) {
+              check_range_array_info(dbg);
+            }
+
             /*  Traverse the line section if in check mode */
             if (line_flag || check_decl_file) {
                 print_line_numbers_this_cu(dbg, cu_die);
@@ -1750,69 +1755,15 @@ print_range_attribute(Dwarf_Debug dbg,
             /* Ignore ranges inside a stripped function  */
             if (!suppress_checking_on_dwp && check_ranges &&
                 in_valid_code && checking_this_compiler()) {
-                Dwarf_Unsigned off = original_off;
-
-                Dwarf_Signed index = 0;
-                Dwarf_Addr base_address = CU_base_address;
-                Dwarf_Addr lopc = 0;
-                Dwarf_Addr hipc = 0;
-                Dwarf_Bool bError = FALSE;
-
-                /* Ignore last entry, is the end-of-list */
-                for (index = 0; index < rangecount - 1; index++) {
-                    Dwarf_Ranges *r = rangeset + index;
-
-                    if (r->dwr_addr1 == elf_max_address) {
-                        /* (0xffffffff,addr), use specific address (current PU address) */
-                        base_address = r->dwr_addr2;
-                    } else {
-                        /* (offset,offset), update using CU address */
-                        lopc = r->dwr_addr1 + base_address;
-                        hipc = r->dwr_addr2 + base_address;
-                        DWARF_CHECK_COUNT(ranges_result,1);
-
-                        /*  Check the low_pc and high_pc
-                            are within a valid range in
-                            the .text section */
-                        if (IsValidInBucketGroup(pRangesInfo,lopc) &&
-                            IsValidInBucketGroup(pRangesInfo,hipc)) {
-                            /* Valid values; do nothing */
-                        } else {
-                            /*  At this point may be we
-                                are dealing with a
-                                linkonce symbol */
-                            if (IsValidInLinkonce(pLinkonceInfo,
-                                PU_name,lopc,hipc)) {
-                                /* Valid values; do nothing */
-                            } else {
-                                bError = TRUE;
-                                DWARF_CHECK_ERROR(ranges_result,
-                                    ".debug_ranges: Address outside a "
-                                    "valid .text range");
-                                if (check_verbose_mode && PRINTING_UNIQUE) {
-                                    printf(
-                                        "Offset = 0x%" DW_PR_XZEROS DW_PR_DUx
-                                        ", Base = 0x%" DW_PR_XZEROS DW_PR_DUx
-                                        ", "
-                                        "Low = 0x%" DW_PR_XZEROS DW_PR_DUx
-                                        " (0x%" DW_PR_XZEROS  DW_PR_DUx
-                                        "), High = 0x%"
-                                        DW_PR_XZEROS  DW_PR_DUx
-                                        " (0x%" DW_PR_XZEROS DW_PR_DUx
-                                        ")\n",
-                                        off,base_address,lopc,
-                                        r->dwr_addr1,hipc,
-                                        r->dwr_addr2);
-                                }
-                            }
-                        }
-                    }
-                    /*  Each entry holds 2 addresses (offsets) */
-                    off += elf_address_size * 2;
-                }
-                if (bError && check_verbose_mode && PRINTING_UNIQUE) {
-                    printf("\n");
-                }
+                /*  Record the offset, as the ranges check will be done at
+                    the end of the compilation unit; this approach solves
+                    the issue of DWARF4 generating values for the high pc
+                    as offsets relative to the low pc and the compilation
+                    unit having DW_AT_ranges attribute. */
+                Dwarf_Off die_glb_offset = 0;
+                Dwarf_Off die_off = 0;
+                dwarf_die_offsets(die,&die_glb_offset,&die_off,&err);
+                record_range_array_info_entry(die_glb_offset,original_off);
             }
             if (print_information) {
                 *append_extra_string = 1;
@@ -2274,6 +2225,9 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
         {
             Dwarf_Half theform;
             int rv;
+            /* For DWARF4, the high_pc offset from the low_pc */
+            Dwarf_Unsigned highpcOff = 0;
+            Dwarf_Bool offsetDetected = FALSE;
             struct esb_s highpcstr;
             esb_constructor(&highpcstr);
             rv = dwarf_whatform(attrib,&theform,&err);
@@ -2297,6 +2251,23 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
                     A normal consumer would have to add this value to
                     DW_AT_low_pc to get a true pc. */
                 esb_append(&highpcstr,"<offset-from-lowpc>");
+                /*  Update the high_pc value if we are checking the ranges */
+                if (check_ranges && attr == DW_AT_high_pc) {
+                    /* Get the offset value */
+                    int show_form_here = 0;
+                    int res = get_small_encoding_integer_and_name(dbg,
+                              attrib,
+                              &highpcOff,
+                              /* attrname */ (const char *) NULL,
+                              /* err_string */ ( struct esb_s *) NULL,
+                              (encoding_type_func) 0,
+                              &err,show_form_here);
+                    if (res != DW_DLV_OK) {
+                        print_error(dbg, "get_small_encoding_integer_and_name",
+                            res, err);
+                    }
+                    offsetDetected = TRUE;
+                }
             }
             get_attr_value(dbg, tag, die, attrib, srcfiles, cnt,
                 &highpcstr,show_form_used,verbose);
@@ -2322,15 +2293,22 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
             }
 
             /* Record the low and high addresses as we have them */
+            /* For DWARF4 allow the high_pc value as an offset */
             if ((check_decl_file || check_ranges ||
                 check_locations) &&
-                (theform == DW_FORM_addr ||
+                ((theform == DW_FORM_addr ||
                 theform == DW_FORM_GNU_addr_index ||
-                theform == DW_FORM_addrx) ) {
+                theform == DW_FORM_addrx) || offsetDetected)) {
 
                 int res =0;
                 Dwarf_Addr addr = 0;
-                res = dwarf_formaddr(attrib, &addr, &err);
+                /* Calculate the real high_pc value */
+                if (offsetDetected && seen_PU_base_address) {
+                    addr = lowAddr + highpcOff;
+                    res = DW_DLV_OK;
+                } else {
+                  res = dwarf_formaddr(attrib, &addr, &err);
+                }
                 if(res == DW_DLV_OK) {
                     if (attr == DW_AT_low_pc) {
                         lowAddr = addr;
