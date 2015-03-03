@@ -230,6 +230,7 @@ DW_AT_producer
 DW_AT_ranges
 DW_AT_ranges_base
 DW_AT_segment
+DW_AT_sibling
 DW_AT_stmt_list
 DW_AT_str_offsets_base
 DW_AT_use_UTF8
@@ -722,6 +723,7 @@ DW_AT_allocated
 DW_AT_associated
 DW_AT_bit_size
 DW_AT_byte_size
+DW_AT_containing_type
 DW_AT_data_location
 DW_AT_declaration
 DW_AT_description
@@ -743,6 +745,7 @@ DW_AT_accessibility
 DW_AT_address_class
 DW_AT_artificial
 DW_AT_calling_convention
+DW_AT_containing_type
 DW_AT_declaration
 DW_AT_description
 DW_AT_elemental

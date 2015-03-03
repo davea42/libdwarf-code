@@ -73,4 +73,13 @@ DW_AT_name
 DW_AT_GNU_template_name
 DW_AT_GNU_guarded_by /* GNU changed the name of 0x2108! */
 0xffffffff
-
+DW_TAG_GNU_call_site
+DW_AT_abstract_origin
+DW_AT_low_pc
+DW_AT_sibling
+0xffffffff
+DW_TAG_GNU_call_site_parameter
+DW_AT_GNU_call_site_value
+DW_AT_location
+0xffffffff
+  

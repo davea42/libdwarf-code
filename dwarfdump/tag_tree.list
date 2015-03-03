@@ -295,6 +295,7 @@ DW_TAG_class_type
 DW_TAG_enumeration_type
 DW_TAG_imported_declaration
 DW_TAG_imported_module
+DW_TAG_label
 DW_TAG_pointer_type
 DW_TAG_reference_type
 DW_TAG_string_type
@@ -529,6 +530,7 @@ DW_TAG_generic_subrange
 0xffffffff
 DW_TAG_subroutine_type
 DW_TAG_formal_parameter
+DW_TAG_typedef
 DW_TAG_unspecified_parameters
 0xffffffff
 DW_TAG_template_type_parameter
