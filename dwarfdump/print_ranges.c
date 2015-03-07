@@ -116,8 +116,8 @@ printf("\n**** START ****\n");
 printf("\tGLB_OFF: (0x%" DW_PR_XZEROS DW_PR_DUx ") ",die_off);
 printf("\tRGN_OFF: (0x%" DW_PR_XZEROS DW_PR_DUx ")\n",original_off);
 print_ranges_list_to_extra(dbg,original_off,
-            rangeset,rangecount,bytecount,
-            &rangesstr);
+    rangeset,rangecount,bytecount,
+    &rangesstr);
 printf("%s\n", esb_get_string(&rangesstr));
 printf("**** END ****\n");
 /* END <- Just for debugging */
@@ -158,7 +158,7 @@ printf("**** END ****\n");
                     if (check_verbose_mode && do_print) {
                         /*  Update DIEs offset just for printing */
                         int res = dwarf_die_offsets(cu_die,
-                                  &DIE_overall_offset,&DIE_offset,&err);
+                            &DIE_overall_offset,&DIE_offset,&err);
                         if (res != DW_DLV_OK) {
                             print_error(dbg, "dwarf_die_offsets",res,err);
                         }
@@ -277,8 +277,8 @@ check_range_array_info(Dwarf_Debug dbg)
 {
     if (range_array && range_array_count) {
         /*  Traverse the range array and for each entry:
-              Load the ranges
-              Check for any outside conditions */
+            Load the ranges
+            Check for any outside conditions */
         Dwarf_Off original_off = 0;
         Dwarf_Off die_off = 0;
         Dwarf_Unsigned index = 0;
@@ -303,7 +303,7 @@ check_range_array_info(Dwarf_Debug dbg)
                 print_error(dbg,"dwarf_offdie",res,err);
             }
             res = dwarf_get_ranges_a(dbg,original_off,cu_die,
-                    &rangeset,&rangecount,&bytecount,&err);
+                &rangeset,&rangecount,&bytecount,&err);
             if (res == DW_DLV_OK) {
                 check_ranges_list(dbg,die_off,cu_die,original_off,
                     rangeset,rangecount,bytecount);

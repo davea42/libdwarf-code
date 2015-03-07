@@ -37,6 +37,7 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <limits.h>
+#include <unistd.h> /* for dup2() */
 #include "dwgetopt.h"
 #include "makename.h"
 #include "dwconf.h"
@@ -49,7 +50,7 @@
 extern int elf_open(const char *name,int mode);
 #endif /* WIN32 */
 
-#define DWARFDUMP_VERSION " Wed Feb  4 13:30:02 PST 2015  "
+#define DWARFDUMP_VERSION " Tue Mar  3 08:36:03 PST 2015  "
 
 extern char *optarg;
 

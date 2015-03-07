@@ -674,7 +674,7 @@ print_one_die_section(Dwarf_Debug dbg,Dwarf_Bool is_info)
 
             /* Check the range array if in checl mode */
             if (check_ranges) {
-              check_range_array_info(dbg);
+                check_range_array_info(dbg);
             }
 
             /*  Traverse the line section if in check mode */
@@ -2256,12 +2256,12 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
                     /* Get the offset value */
                     int show_form_here = 0;
                     int res = get_small_encoding_integer_and_name(dbg,
-                              attrib,
-                              &highpcOff,
-                              /* attrname */ (const char *) NULL,
-                              /* err_string */ ( struct esb_s *) NULL,
-                              (encoding_type_func) 0,
-                              &err,show_form_here);
+                        attrib,
+                        &highpcOff,
+                        /* attrname */ (const char *) NULL,
+                        /* err_string */ ( struct esb_s *) NULL,
+                        (encoding_type_func) 0,
+                        &err,show_form_here);
                     if (res != DW_DLV_OK) {
                         print_error(dbg, "get_small_encoding_integer_and_name",
                             res, err);
@@ -2307,7 +2307,7 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
                     addr = lowAddr + highpcOff;
                     res = DW_DLV_OK;
                 } else {
-                  res = dwarf_formaddr(attrib, &addr, &err);
+                    res = dwarf_formaddr(attrib, &addr, &err);
                 }
                 if(res == DW_DLV_OK) {
                     if (attr == DW_AT_low_pc) {
@@ -2788,6 +2788,9 @@ _dwarf_print_one_expr_op(Dwarf_Debug dbg,Dwarf_Loc* expr,int index,
         Also, the function 'get_OP_name' handles this case, generating a
         name 'Unknown OP value'.  */
     if (op > DW_OP_hi_user) {
+        /*  March 2015: With Dwarf_Small an unsigned char
+            for lr_atom and op the test will always fail: 
+            this error not reportable. */
         print_error(dbg, "dwarf_op unexpected value!", DW_DLV_OK,
             err);
         return DW_DLV_ERROR;

@@ -29,7 +29,7 @@
 #include <stdarg.h>   /* For va_start va_arg va_list */
 #include <stdlib.h>             /* For exit() declaration etc. */
 #include <errno.h>              /* For errno declaration. */
-#include <unistd.h>            
+#include <unistd.h>
 
 #include "globals.h"
 #include "libdwarf.h"

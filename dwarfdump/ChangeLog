@@ -1,3 +1,30 @@
+2015-03-03  David Anderson
+     * tag_attr.list: Removed DW_AT_sibling from DW_TAG_partial_unit.
+       DW_TAG_compile_unit. Removed DW_AT_containing_type from 
+       DW_TAG_subprogram, DW_TAG_structure_type.
+     * dwarfdump.c,common.c: Update version strings.
+     * print_die.c: Fix indent mistakes. Add comment
+       in _dwarf_print_one_expr_op() that one error is
+       not presently realizable (FreeBSD compiler
+       noticed the situation).
+     * print_ranges.c: Fix indent mistakes.
+     * tag_attr.c: Remove trailing whitespace from a #include line.
+2015-03-03  Carlos Alberto-Enciso
+     * dwarfdump.c: Add allocate_range_array_info(),
+        release_range_array_info() calls to help fix range checking.
+     * globals.h: Add declarations of range checking functions.
+     * print_die.c: Add check_range_array_info() call.
+       Add record_range_array_info_entry() call.
+       Move all the range check code out of print_die.c.
+       Add handling of high_pc as an offset, not just as a value.
+     * print_ranges.c: Delete unneeded includes.
+       Add check_ranges_list() implementation moved from
+       print_die.c. Add new ranges check functions.
+       Range check error messages now appear later in the output,
+       though the content is identical.
+     * tag_attr_ext.list: Add DW_TAG_GNU_call_site and 
+       DW_TAG_GNU_call_site_parameter tag attr combinations.
+     * tag_tree_ext.list: Add DW_TAG_GNU_call_site DW_TAG_call_site_parameter
 2015-02-22  David Anderson
      * configure.in: removed getopt.h from tests, we use
        local dwgetopt now.
