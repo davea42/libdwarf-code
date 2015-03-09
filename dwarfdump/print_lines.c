@@ -1,4 +1,3 @@
-
 /*
   Copyright (C) 2000-2006 Silicon Graphics, Inc.  All Rights Reserved.
   Portions Copyright 2007-2010 Sun Microsystems, Inc. All rights reserved.
@@ -78,6 +77,7 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
     Dwarf_Addr pc = 0;
     Dwarf_Unsigned lineno = 0;
     Dwarf_Unsigned column = 0;
+    Dwarf_Error err = 0;
 
     Dwarf_Bool newstatement = 0;
     Dwarf_Bool lineendsequence = 0;
@@ -97,6 +97,21 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
 
     if (do_print_dwarf) {
         printf("\n.debug_line: line number info for a single cu\n");
+    } else {
+        /* We are checking, not printing. */
+        Dwarf_Half tag = 0;
+        int tres = dwarf_tag(cu_die, &tag, &err);
+        if (tres != DW_DLV_OK) {
+            /*  Something broken here. */
+            print_error(dbg,"Unable to see CU DIE tag "
+                "though we could see it earlier. Something broken.",
+                tres,err);
+            return;
+        } else if (tag == DW_TAG_type_unit) {
+            /*  Not checking since type units missing
+                address range in CU header. */
+            return;
+        } 
     }
     if (verbose > 1) {
         int errcount = 0;

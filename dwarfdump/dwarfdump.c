@@ -50,7 +50,7 @@
 extern int elf_open(const char *name,int mode);
 #endif /* WIN32 */
 
-#define DWARFDUMP_VERSION " Tue Mar  3 08:36:03 PST 2015  "
+#define DWARFDUMP_VERSION " Mon Mar  9 13:45:37 PDT 2015  "
 
 extern char *optarg;
 
@@ -355,6 +355,34 @@ boolean cu_name_flag = FALSE;
 
 Dwarf_Error err;
 
+/*  When we add a 'print' option after an option
+    requests one or more checks
+    we turn off all checking, putting it back to default
+    checking state. */
+static void
+set_checks_off()
+{
+    check_abbrev_code = FALSE;
+    check_pubname_attr = FALSE;
+    check_reloc_offset = FALSE;
+    check_attr_tag = FALSE;
+    check_tag_tree = FALSE;
+    check_type_offset = FALSE;
+    check_decl_file = FALSE;
+    check_lines = FALSE;
+    check_fdes = FALSE;
+    check_ranges = FALSE;
+    check_aranges = FALSE;
+    check_harmless = FALSE;
+    check_abbreviations = FALSE;
+    check_dwarf_constants = FALSE;
+    check_di_gaps = FALSE;
+    check_forward_decl = FALSE;
+    check_self_references = FALSE;
+    check_attr_encoding = FALSE;
+    check_duplicated_attributes = FALSE;
+}
+
 static void suppress_check_dwarf()
 {
     do_print_dwarf = TRUE;
@@ -363,6 +391,7 @@ static void suppress_check_dwarf()
             "checking and printing are separate.\n");
     }
     do_check_dwarf = FALSE;
+    set_checks_off();
 }
 static void suppress_print_dwarf()
 {
@@ -412,6 +441,7 @@ main(int argc, char *argv[])
     Elf *elf = 0;
     int archive = 0;
 
+    set_checks_off();
     esb_constructor(&config_file_path);
 #ifdef WIN32
     /*  Often we redirect the output to a file, but we have found

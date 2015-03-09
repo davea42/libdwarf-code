@@ -756,12 +756,18 @@ print_die_and_children_internal(Dwarf_Debug dbg,
                 tres = dwarf_tag(in_die, &tag, &err);
                 if (tres != DW_DLV_OK) {
                     DWARF_CHECK_ERROR(tag_tree_result,
-                        "Tag-tree root is not DW_TAG_compile_unit");
+                        "Tag-tree root tag unavailable: "
+                        "is not DW_TAG_compile_unit");
                 } else if (tag == DW_TAG_compile_unit) {
+                    /* OK */
+                } else if (tag == DW_TAG_partial_unit) {
+                    /* OK */
+                } else if (tag == DW_TAG_type_unit) {
                     /* OK */
                 } else {
                     DWARF_CHECK_ERROR(tag_tree_result,
-                        "tag-tree root is not DW_TAG_compile_unit");
+                        "tag-tree root is not DW_TAG_compile_unit "
+                        "or DW_TAG_partial_unit or DW_TAG_type_unit");
                 }
             } else {
                 Dwarf_Half tag_parent = 0;
@@ -855,6 +861,8 @@ print_die_and_children_internal(Dwarf_Debug dbg,
                     case DW_TAG_array_type:
                     case DW_TAG_class_type:
                     case DW_TAG_compile_unit:
+                    case DW_TAG_type_unit:
+                    case DW_TAG_partial_unit:
                     case DW_TAG_enumeration_type:
                     case DW_TAG_lexical_block:
                     case DW_TAG_namespace:
@@ -2300,7 +2308,7 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
                 theform == DW_FORM_GNU_addr_index ||
                 theform == DW_FORM_addrx) || offsetDetected)) {
 
-                int res =0;
+                int res = 0;
                 Dwarf_Addr addr = 0;
                 /* Calculate the real high_pc value */
                 if (offsetDetected && seen_PU_base_address) {
@@ -2319,7 +2327,7 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
                             seen_PU_base_address = TRUE;
                             PU_base_address = addr;
                         }
-                    } else {
+                    } else { /* DW_AT_high_pc */
                         highAddr = addr;
                         bSawHigh = TRUE;
                         /*  Record the high address of the last seen PU
