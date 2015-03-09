@@ -75,5 +75,6 @@ main(void)
         "abcdefghij"
         "0123456789"
         "abcdefghij" "0123456789" "abcdefghij" "0123456789");
+    esb_destructor(&data);
     return 0;
 }

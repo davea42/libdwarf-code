@@ -35,6 +35,8 @@ LIBS =		@LIBS@ -L../libdwarf -ldwarf -lelf
 INCLUDES =	-I. -I$(srcdir) -I$(srcdir)/../libdwarf
 CFLAGS =	$(PREINCS) @CFLAGS@ $(INCLUDES) -DCONFPREFIX=${libdir} $(POSTINCS)
 LDFLAGS =	$(PRELIBS) @LDFLAGS@  $(LIBS) $(POSTLIBS)
+#VG =            valgrind --leak-check=full
+VG =
 
 
 INSTALL = cp
@@ -157,10 +159,28 @@ dwarf_names.h: gennames $(DIRINC)/dwarf.h
 	./gennames -s  -i ../libdwarf -o .
 dwarf_names.c: dwarf_names.h
 
-test: esb.o $(srcdir)/testesb.c
-	$(CC) -o test $(srcdir)/testesb.c esb.o
-	./test
+
+test: esb.o dwgetopt.o 
+	echo "ESB test"
+	$(CC) $(CFLAGS) -o test $(srcdir)/testesb.c esb.o
+	$(VG) ./test
 	-rm -f ./test
+	echo "dwgetopt test"
+	$(CC) $(CFLAGS) -o getopttest $(srcdir)/getopttest.c dwgetopt.o
+	$(VG) ./getopttest
+	-rm -f ./getopttest
+	echo "Now use system getopt to validate our tests"
+	$(CC) $(CFLAGS) -DGETOPT_FROM_SYSTEM -o getopttestnat $(srcdir)/getopttest.c dwgetopt.o
+	./getopttestnat -c 1
+	./getopttestnat -c 2
+	./getopttestnat -c 3
+	./getopttestnat -c 5
+selftest:
+	-rm -f ./a.out
+	$(CC) -DSELFTEST -g esb.c
+	./a.out
+	-rm -f ./a.out
+        
 
 
 # This simply assumes that a default INSTALL (cp) command
@@ -195,16 +215,6 @@ clean:
 	rm -f dwarf_names.h 
 	rm -f dwarf_names.c
 	rm -f a.out
-
-selftest:
-	-rm -f ./a.out
-	$(CC) -DSELFTEST -g esb.c
-	./a.out
-	-rm -f ./a.out
-	$(CC) -g -c dwgetopt.c
-	$(CC) -g getopttest.c dwgetopt.o
-	./a.out
-
 
 distclean: clean
 	rm -f config.log config.h config.cache config.status 

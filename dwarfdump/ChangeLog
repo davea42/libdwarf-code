@@ -1,3 +1,10 @@
+2015-03-09  David Anderson
+     * Makefile.in: added new tests of dwgetopt. 
+       Runs not only dwgetopt but system getopt.
+     * dwgetopt.c: Errors could lead to dwarfdump coredump. Fixed.
+     * getopttest.c: Added several new tests. Now one
+       can run single tests and run against either getopt or dwgetopt
+       (set at compile time of getopttest.c).
 2015-03-03  David Anderson
      * tag_attr.list: Removed DW_AT_sibling from DW_TAG_partial_unit.
        DW_TAG_compile_unit. Removed DW_AT_containing_type from 

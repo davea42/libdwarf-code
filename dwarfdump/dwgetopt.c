@@ -52,9 +52,30 @@ char *optarg;      /* argument associated with option */
 #define BADARG  (int)':'
 #define EMSG    ""
 
+/*  Use for testing dwgetopt only. 
+    Not a standard function. */
+void 
+dwgetoptresetfortestingonly()
+{
+   opterr   = 1;
+   optind   = 1;
+   optopt   = 0;
+   optreset = 0;
+   optarg   = 0;
+}
+
 /*
     * getopt --
     * Parse argc/argv argument vector.
+    * a: means 
+    *     -afoo 
+    *     -a foo
+    *     and 'foo' is returned in optarg
+    *  b:: means
+    *     -b  
+    *        and optarg is null
+    *     -bother
+    *        and optarg is 'other'
     */
 int
 dwgetopt(int nargc, char * const nargv[], const char *ostr)
@@ -114,34 +135,39 @@ dwgetopt(int nargc, char * const nargv[], const char *ostr)
             ++optind;
         }
     } else {
-        int oknextarg = 1;
+        int reqnextarg = 1;
         if (oli[1] && (oli[2] == ':')) {
             /* Pair of :: means special treatment of optarg */
-            /* Option-argument is the rest of this argument */
-            oknextarg = 0;
+            reqnextarg = 0;
         }
         /* Option-argument is either the rest of this argument or the
         entire next argument. */
-        if (*place) {
+        if (*place ) {
+            /* Whether : or :: */
             optarg = STRIP_OFF_CONSTNESS(place);
-        } else if (oknextarg && nargc > ++optind) {
-            optarg = nargv[optind];
-        } else if (!oknextarg) {
+        } else if (reqnextarg) { 
+            /* ! *place */
+            if (nargc >= (optind+1)) {
+                ++optind;
+                optarg = nargv[optind];
+            } else {
+                place=EMSG;
+                /*  Next arg required, but is missing */
+                if (*ostr == ':') {
+                    return (BADARG);
+                }
+                if (opterr) {
+                    (void)fprintf(stderr,
+                    "option requires an argument. -- %c\n",
+                    optopt);
+                }
+                return (BADCH);
+            }
+        } else {
+            /* ! *place */
             /* The key part of :: treatment. */
             optarg = NULL;
-        } else {
-            /* option-argument absent */
-            place = EMSG;
-            if (*ostr == ':') {
-                return (BADARG);
-            }
-            if (opterr) {
-                (void)fprintf(stderr,
-                    "option requires an argument -- %c\n",
-                    optopt);
-            }
-            return (BADCH);
-        }
+        } 
         place = EMSG;
         ++optind;
     }
