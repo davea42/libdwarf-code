@@ -279,6 +279,92 @@ test5(void)
     return 0;
 }
 
+static int
+test6(void)
+{
+    int ct = 1;
+    int c = 0;
+    int argct = 2;
+    argv1[0]="a.out";
+    argv1[1]="-H";
+    argv1[2]=0;
+    for ( ;(c = dwgetopt(argct, argv1, "abH:d::")) != EOF; ct++) {
+    switch(ct) {
+    case 1:
+        chkval(ct,c,'?',optarg,0,optind,2,"test61");
+        break;
+    default:
+        printf("FAIL test5 unexpected ct %d in test1 char 0x%x %c\n",ct,c,c);
+        exit(1);
+    }
+    }
+    if (argv1[optind]) {
+        printf("FAIL test6 there is a non-dash arg optind %d got 0x%x\n",
+            optind,(unsigned)argv1[optind]);
+        exit(1);
+    }
+    printf("PASS getopt test6\n");
+    return 0;
+}
+/*  Leading : in opt string */
+static int
+test7(void)
+{
+    int ct = 1;
+    int c = 0;
+    int argct = 2;
+    argv1[0]="a.out";
+    argv1[1]="-H";
+    argv1[2]=0;
+    for ( ;(c = dwgetopt(argct, argv1, ":abH:d::")) != EOF; ct++) {
+    switch(ct) {
+    case 1:
+        chkval(ct,c,':',optarg,0,optind,2,"test71");
+        break;
+    default:
+        printf("FAIL test5 unexpected ct %d in test1 char 0x%x %c\n",ct,c,c);
+        exit(1);
+    }
+    }
+    if (argv1[optind]) {
+        printf("FAIL test7 there is a non-dash arg optind %d got 0x%x\n",
+            optind,(unsigned)argv1[optind]);
+        exit(1);
+    }
+    printf("PASS getopt test7\n");
+    return 0;
+}
+static int
+test8(void)
+{
+    int ct = 1;
+    int c = 0;
+    int argct = 2;
+    argv1[0]="a.out";
+    argv1[1]="-x";
+    argv1[2]=0;
+    for ( ;(c = dwgetopt(argct, argv1, "abH:d::")) != EOF; ct++) {
+    switch(ct) {
+    case 1:
+        chkval(ct,c,'?',optarg,0,optind,2,"test81");
+        break;
+    default:
+        printf("FAIL test5 unexpected ct %d in test1 char 0x%x %c\n",ct,c,c);
+        exit(1);
+    }
+    }
+    if (argv1[optind]) {
+        printf("FAIL test8 there is a non-dash arg optind %d got 0x%x\n",
+            optind,(unsigned)argv1[optind]);
+        exit(1);
+    }
+    printf("PASS getopt test8\n");
+    return 0;
+}
+
+
+
+
 int main(int argc, const char **argv)
 {
     int ct = 0;
@@ -308,6 +394,15 @@ int main(int argc, const char **argv)
         case 5:
             failct = test5();
             break;
+        case 6:
+            failct = test6();
+            break;
+        case 7:
+            failct = test7();
+            break;
+        case 8:
+            failct = test8();
+            break;
         default:
             printf("FAIL: invalid test number %d\n",num);
             exit(1);
@@ -329,6 +424,12 @@ int main(int argc, const char **argv)
     failct += test2();
     dwgetoptresetfortestingonly();
     failct += test3();
+    dwgetoptresetfortestingonly();
+    failct += test6();
+    dwgetoptresetfortestingonly();
+    failct += test7();
+    dwgetoptresetfortestingonly();
+    failct += test8();
     if ( failct) {
         printf("FAIL getopttest\n");
         exit(1);

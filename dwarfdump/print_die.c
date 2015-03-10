@@ -2797,7 +2797,7 @@ _dwarf_print_one_expr_op(Dwarf_Debug dbg,Dwarf_Loc* expr,int index,
         name 'Unknown OP value'.  */
     if (op > DW_OP_hi_user) {
         /*  March 2015: With Dwarf_Small an unsigned char
-            for lr_atom and op the test will always fail: 
+            for lr_atom and op the test will always fail:
             this error not reportable. */
         print_error(dbg, "dwarf_op unexpected value!", DW_DLV_OK,
             err);

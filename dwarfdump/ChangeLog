@@ -1,3 +1,14 @@
+2015-03-10  David Anderson
+     * dwarfdump.c: Update version string.
+     * common.c: Update version string.
+     * dwgetopt.c: Was mishandling options
+       missing their required argument and
+       coredumping dwarfdump.
+     * getopttest.c: Added new tests to ensure
+       we have the dwgetopt() fixes working properly.
+     * Makefile.in: Added new test runs to 'make test'.
+     * print_die.c, print_lines.c: Removed instances
+       of trailing whitespace.
 2015-03-09  David Anderson
      * Makefile.in: added new tests of dwgetopt. 
        Runs not only dwgetopt but system getopt.

@@ -111,7 +111,7 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
             /*  Not checking since type units missing
                 address range in CU header. */
             return;
-        } 
+        }
     }
     if (verbose > 1) {
         int errcount = 0;

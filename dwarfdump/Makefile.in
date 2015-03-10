@@ -175,6 +175,9 @@ test: esb.o dwgetopt.o
 	./getopttestnat -c 2
 	./getopttestnat -c 3
 	./getopttestnat -c 5
+	./getopttestnat -c 6
+	./getopttestnat -c 7
+	./getopttestnat -c 8
 selftest:
 	-rm -f ./a.out
 	$(CC) -DSELFTEST -g esb.c

@@ -1,7 +1,10 @@
+2015-03-10  David Anderson
+     * dwgetopt.c: Was mishandling options
+       missing their required argument.
 2015-03-09  David Anderson
-    *dwgetopt.c: Fixed a bug in handling options.
-     See dwarfdump build for testing code 
-     and test runs for dwgetopt.c
+    * dwgetopt.c: Fixed a bug in handling options.
+      See dwarfdump build for testing code 
+      and test runs for dwgetopt.c
 2015-02-22  David Anderson
     * dwgetopt.h, dwgetopt.c: Copied from dwarfdump so
       libdwarf can compile without dwarfdump source present.

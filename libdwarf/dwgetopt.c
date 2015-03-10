@@ -36,6 +36,14 @@
 * SUCH DAMAGE.
 */
 
+/*  This does not presently handle the option string
+    leading + or leading - features. Such are not used
+    by by libdwarfdump.  Nor does it understand the
+    GNU Env var POSIXLY_CORRECT .
+    It does know of the leading ":" in the option string.
+    See BADCH below.
+    */
+
 #include <stdio.h>
 #include <stdlib.h> /* For exit() */
 #include <string.h> /* For strchr */
@@ -52,9 +60,9 @@ char *optarg;      /* argument associated with option */
 #define BADARG  (int)':'
 #define EMSG    ""
 
-/*  Use for testing dwgetopt only. 
+/*  Use for testing dwgetopt only.
     Not a standard function. */
-void 
+void
 dwgetoptresetfortestingonly()
 {
    opterr   = 1;
@@ -67,12 +75,12 @@ dwgetoptresetfortestingonly()
 /*
     * getopt --
     * Parse argc/argv argument vector.
-    * a: means 
-    *     -afoo 
+    * a: means
+    *     -afoo
     *     -a foo
     *     and 'foo' is returned in optarg
     *  b:: means
-    *     -b  
+    *     -b
     *        and optarg is null
     *     -bother
     *        and optarg is 'other'
@@ -122,7 +130,9 @@ dwgetopt(int nargc, char * const nargv[], const char *ostr)
         }
         if (opterr && *ostr != ':') {
             (void)fprintf(stderr,
-            "unknown option -- %c\n", optopt);
+                "%s: invalid option -- '%c'\n",
+                nargv[0]?nargv[0]:"",
+                optopt);
         }
         return (BADCH);
     }
@@ -145,21 +155,22 @@ dwgetopt(int nargc, char * const nargv[], const char *ostr)
         if (*place ) {
             /* Whether : or :: */
             optarg = STRIP_OFF_CONSTNESS(place);
-        } else if (reqnextarg) { 
+        } else if (reqnextarg) {
             /* ! *place */
-            if (nargc >= (optind+1)) {
-                ++optind;
+            if (nargc > (++optind)) {
                 optarg = nargv[optind];
             } else {
                 place=EMSG;
                 /*  Next arg required, but is missing */
                 if (*ostr == ':') {
+                    /* Leading : in ostr calls for BADARG return. */
                     return (BADARG);
                 }
                 if (opterr) {
                     (void)fprintf(stderr,
-                    "option requires an argument. -- %c\n",
-                    optopt);
+                        "%s: option requires an argument. -- '%c'\n",
+                        nargv[0]?nargv[0]:"",
+                        optopt);
                 }
                 return (BADCH);
             }
@@ -167,7 +178,7 @@ dwgetopt(int nargc, char * const nargv[], const char *ostr)
             /* ! *place */
             /* The key part of :: treatment. */
             optarg = NULL;
-        } 
+        }
         place = EMSG;
         ++optind;
     }
