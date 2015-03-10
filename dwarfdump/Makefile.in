@@ -178,6 +178,7 @@ test: esb.o dwgetopt.o
 	./getopttestnat -c 6
 	./getopttestnat -c 7
 	./getopttestnat -c 8
+	-rm -f ./getopttestnat
 selftest:
 	-rm -f ./a.out
 	$(CC) -DSELFTEST -g esb.c
@@ -218,6 +219,8 @@ clean:
 	rm -f dwarf_names.h 
 	rm -f dwarf_names.c
 	rm -f a.out
+	rm -f getopttest
+	rm -f getopttestnat
 
 distclean: clean
 	rm -f config.log config.h config.cache config.status 
