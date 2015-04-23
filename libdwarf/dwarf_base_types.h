@@ -32,22 +32,65 @@
 #define true                    1
 #define false                   0
 
-/* To identify a cie */
+/* .debug_addr new in DWARF5 */
+#define DW_ADDR_VERSION5   5
+
+/* To identify a cie. That is, for .debug_frame */
 #define DW_CIE_ID 		~(0x0)
 #define DW_CIE_VERSION		1 /* DWARF2 */
 #define DW_CIE_VERSION3		3 /* DWARF3 */
 #define DW_CIE_VERSION4		4 /* DWARF4 */
+#define DW_CIE_VERSION5		5 /* DWARF5 */
 
+/*  For .debug_info DWARF2,3,4,5.
+    .debug_types in DWARF4 only,  and gets DW_CU_VERSION4.  */
 #define DW_CU_VERSION2 2
 #define DW_CU_VERSION3 3
 #define DW_CU_VERSION4 4
+#define DW_CU_VERSION5 5
 
-/* DWARF2,3 and 4 */
+/* DWARF2,3, 4  and 5.*/
 #define DW_ARANGES_VERSION2 2
 
 #define DW_LINE_VERSION2   2
 #define DW_LINE_VERSION3   3
 #define DW_LINE_VERSION4   4
+#define DW_LINE_VERSION5   5
+
+/* .debug_line_str (and .dwo) new in DWARF5. */
+#define DW_LINE_STR_VERSION5   5
+/* .debug_loc (and .dwo) First header version number is  DWARF5. */
+#define DW_LOC_VERSION5   5
+
+
+
+/* .debug_macro (and .dwo) new in DWARF5. */
+#define DW_MACRO_VERSION5   5
+/* .debug_names new in DWARF5. */
+#define DW_NAMES_VERSION5   5
+
+/* .debug_pubnames in DWARF2,3,4. */
+#define DW_PUBNAMES_VERSION2 2
+/* .debug_pubnames in DWARF3,4. */
+#define DW_PUBTYPES_VERSION2 2
+
+/* .debug_ranges gets a version number in header in DWARF5. */
+#define DW_RANGES_VERSION5 5
+
+
+/* .debug_str_offsets (and .dwo) new in DWARF5. */
+#define DW_STR_OFFSETS_VERSION5   5
+
+/* .debug_sup new in DWARF5. */
+#define DW_SUP_VERSION5 5
+
+/* .debug_cu_index new in DWARF5. */
+#define DW_CU_INDEX_VERSION5 5
+/* .debug_tu_index new in DWARF5. */
+#define DW_TU_INDEX_VERSION5 5
+
+
+
 
 
 /*  These are allocation type codes for structs that

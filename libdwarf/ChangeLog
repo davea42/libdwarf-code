@@ -1,3 +1,24 @@
+2015-04-23  David Anderson
+     * dwarf.h: Delete spurious blank lines.
+     * dwarf_base_types.h:  New defines. DW_CIE_VERSION* DW_CU_VERSION**
+       DW_ARANGES_VERSION* DW_LINE_VERSION* DW_LOC_VERSION*
+       DW_LINE_STR_VERSION5, DW_MACRO_VERSION5,
+       DW_LINE_LOC, DW_NAMES_VERSION5, DW_PUBNAMES_VERSION*,
+       DW_PUBTYPES_VERSION*, DW_STR_OFFSETS_VERSION5,
+       DW_SUP_VERSION*, DW_CU_INDEX_VERSION5,
+       DW_TU_INDEX_VERSION5, making version comparisons
+       more precise and including DWARF5.
+     * dwarf_arange.c: CURRENT_VERSION_STAMP -> DW_ARANGES_VERSION2 
+     * dwarf_die_deliv.c,dwarf_global.c,dwarf_line.c, : Use the new 
+       DW_*_VERSION* version names.
+     * dwarf_init_finish.c: Added to 3 comments.
+     * dwarf_loc.c: Use the new DW_*_VERSION* version names.
+       Use a local variable to simpify some comparisons
+       for readability.
+     * dwarf_opaque.h: Update the comments about version numbers.
+       Added new comments foreshadowing changes for DebugFission
+       and DWP. REMOVE CURRENT_VERSION_STAMP* macros as they
+       are no longer used.
 2015-03-10  David Anderson
      * dwgetopt.c: Was mishandling options
        missing their required argument.

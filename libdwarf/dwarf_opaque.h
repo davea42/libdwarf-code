@@ -25,20 +25,43 @@
   USA.
 
 */
-/* The versions applicable by section are:
-    .                  DWARF2 DWARF3 DWARF4
-    .debug_abbrev           -      -      -
-    .debug_aranges          2      2      2
-    .debug_frame            1      3      4
-    .debug_info             2      3      4
-    .debug_line             2      3      4
-    .debug_loc              -      -      -
-    .debug_macinfo          -      -      -
-    .debug_pubtypes         x      2      2
-    .debug_pubnames         2      2      2
-    .debug_ranges           x      -      -
-    .debug_str              -      -      -
-    .debug_types            x      x      4
+/*  Following the nomenclature of the DWARF standard
+    Section Version Numbers (DWARF 5):
+    * means not applicable.
+    - means not defined in that version.
+    The version numbers for .debug_info is the same as .debug_info.dwo
+    (etc for the other dwo sections).
+    The versions applicable by section are:
+    .                  DWARF2 DWARF3 DWARF4 DWARF5
+    .debug_abbrev           *      *      *      *
+    .debug_addr             -      -      -      5
+    .debug_aranges          2      2      2      2
+    .debug_frame            1      3      4      4
+    .debug_info             2      3      4      5
+    .debug_line             2      3      4      5
+    .debug_line_str         -      -      -      5
+    .debug_loc              *      *      *      5
+    .debug_macinfo          *      *      *      -
+    .debug_macro            -      -      -      5
+    .debug_pubnames         2      2      2      -
+    .debug_pubtypes         -      2      2      -
+    .debug_ranges           -      *      *      5
+    .debug_str              *      *      *      *
+    .debug_str_offsets      -      -      -      5
+    .debug_sup              -      -      -      5
+    .debug_types            -      -      4      -
+
+    .debug_abbrev.dwo       -      -      -      *
+    .debug_info.dwo         -      -      -      5
+    .debug_line.dwo         -      -      -      5
+    .debug_loc.dwo          -      -      -      5
+    .debug_macro.dwo        -      -      -      5
+    .debug_str.dwo          -      -      -      *
+    .debug_str_offsets.dwo  -      -      -      5
+
+    .debug_cu_index         -      -      -      5
+    .debug_tu_index         -      -      -      5
+
 */
 
 #include <stddef.h>
@@ -151,7 +174,7 @@ struct Dwarf_CU_Context_s {
         CU die, its value is in cc_addr_base.
         cc_addr_base_present TRUE means cc_addr_base is meaningful, which
         is a check on the correctness of the DWARF.
-        DW_AT_str_offsets_base exists for DW_FORM_strx,
+        DW_AT_str_offsets_base exists for a DW_FORM_strx,
         for GNU a base of zero is apparently fine.
         Fields listed in this order for a tiny space saving.
         Support for these is incomplete.
@@ -176,7 +199,13 @@ struct Dwarf_CU_Context_s {
 
     /*unsigned char cc_offset_length; */
     Dwarf_Bool cc_is_info; /* TRUE means context is
-        in debug_info, FALSE means is in debug_types. */
+        in debug_info, FALSE means is in debug_types.
+        For DWARF5 there is no debug_types section,
+        all DIEs are in .debug_info[.dwo]  */
+
+    /* FIXME Dwarf_Bool cc_tag_is_type; /* TRUE means TAG
+        is DW_TAG_type_unit.  FALSE means TAG is something
+        else. */
 
 };
 
@@ -307,6 +336,20 @@ struct Dwarf_dbg_sect_s {
 
 
 
+/*  These offsets and sizes (Dwarf_Fission*) are
+    for the  DebugFission DWP sections
+    .debug_cu_index and .debug_tu_index.
+    Because the sections in the .dwp contain
+    unrelocated .dwo sections. The offsets
+    taken from the .dwo sections
+    need the dfs_offset applied to
+    find the applicable data correctly.
+
+    When a .dwp is not involved (ie, when
+    there is no .debug_cu_index or .debug_tu_index
+    section) then the dfo_version field
+    in  Dwarf_Fission_Offsets_s will be zero.
+*/
 struct Dwarf_Fission_Section_Offset_s {
    Dwarf_Unsigned dfs_offset;
    Dwarf_Unsigned dfs_size;
@@ -321,13 +364,26 @@ struct Dwarf_Fission_Per_CU_s {
 
 
 /*  If dfo_version is 0 the struct is empty/unused.
-    and then all the other fields are 0. */
+    and then all the other fields are 0.
+    If dfo_version is zero this is not a
+    DWP (.dwp) object file. */
 struct Dwarf_Fission_Offsets_s {
     unsigned dfo_version; /* 2 is the only supported value */
 
     /*  pointer to "cu" or "tu", never free
-        the string. */
+        the string.
+        type refers to the index type
+            'cu'referring to lookups of DW_AT_dwo_id
+                .debug_cu_index
+                which is an 8 byte hash.
+                We use Dwarf_Sig8.
+            'tu' referring to lookups of DW_FORM_ref_sig8 (type unit hash)
+                .debug_tu_index
+                We use Dwarf_Sig8 here too.
+        tu does NOT refer to .debug_types in a DWARF5 object.
+    */
     const char *   dfo_type;
+
     Dwarf_Unsigned dfo_columns;
     Dwarf_Unsigned dfo_entries;
     Dwarf_Unsigned dfo_slots;
@@ -417,6 +473,10 @@ struct Dwarf_Debug_s {
     /* Following for the .gdb_index section.  */
     struct Dwarf_Section_s de_debug_gdbindex;
 
+    /*  Though types in DWARF5 are in .debug_info,
+        these two refer to the DWP index sections and the
+        tu and cu index
+        sections are distinct even in DWARF5. */
     struct Dwarf_Section_s de_debug_cu_index;
     struct Dwarf_Section_s de_debug_tu_index;
 
@@ -425,6 +485,11 @@ struct Dwarf_Debug_s {
     struct Dwarf_Section_s de_elf_symtab;
     struct Dwarf_Section_s de_elf_strtab;
 
+    /*  For a .dwp object file .
+        For DWARF4, type units are in .debug_types
+            (DWP is a GNU extension in DW4)..
+        For DWARF5, type units are in .debug_info.
+    */
     struct Dwarf_Fission_Offsets_s de_cu_fission_data;
     struct Dwarf_Fission_Offsets_s de_tu_fission_data;
 
@@ -467,11 +532,6 @@ struct Dwarf_Chain_s {
     void *ch_item;
     Dwarf_Chain ch_next;
 };
-
-
-#define CURRENT_VERSION_STAMP   2 /* DWARF2 */
-#define CURRENT_VERSION_STAMP3  3 /* DWARF3 */
-#define CURRENT_VERSION_STAMP4  4 /* DWARF4 */
 
     /* Size of cu header version stamp field. */
 #define CU_VERSION_STAMP_SIZE   sizeof(Dwarf_Half)

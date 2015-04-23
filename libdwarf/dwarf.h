@@ -186,13 +186,10 @@ extern "C" {
 #define DW_TAG_SUN_fortran_vax_structure 0x420d /* SUN */
 #define DW_TAG_SUN_hi                   0x42ff /* SUN */
 
-
 #define DW_TAG_hi_user                  0xffff
 
 #define DW_children_no                  0
 #define DW_children_yes                 1
-
-
 
 #define DW_FORM_addr                    0x01
 #define DW_FORM_block2                  0x03

@@ -184,6 +184,9 @@ dwarf_get_debugfission_for_die(Dwarf_Die die,
             continue;
         }
         /* FOUND */
+        /*  If CU is DW_TAG_type_unit use "tu",
+            If CU is another TAG use "cu"
+            FIXME: pcu_type setting not right */
         fission_out->pcu_type = is_info?"cu":"tu";
         fission_out->pcu_index = percu->dfp_index;
         fission_out->pcu_hash = percu->dfp_hash;
@@ -369,15 +372,16 @@ _dwarf_make_CU_Context(Dwarf_Debug dbg,
         return (NULL);
     }
 
-    if (cu_context->cc_version_stamp != CURRENT_VERSION_STAMP
-        && cu_context->cc_version_stamp != CURRENT_VERSION_STAMP3
-        && cu_context->cc_version_stamp != CURRENT_VERSION_STAMP4) {
+    if (cu_context->cc_version_stamp != DW_CU_VERSION2
+        && cu_context->cc_version_stamp != DW_CU_VERSION3
+        && cu_context->cc_version_stamp != DW_CU_VERSION4
+        && cu_context->cc_version_stamp != DW_CU_VERSION5) {
         dwarf_dealloc(dbg, cu_context, DW_DLA_CU_CONTEXT);
         _dwarf_error(dbg, error, DW_DLE_VERSION_STAMP_ERROR);
         return (NULL);
     }
     if (!is_info) {
-        if (cu_context->cc_version_stamp != CURRENT_VERSION_STAMP4) {
+        if (cu_context->cc_version_stamp != DW_CU_VERSION4) {
             dwarf_dealloc(dbg, cu_context, DW_DLA_CU_CONTEXT);
             _dwarf_error(dbg, error, DW_DLE_DEBUG_TYPES_ONLY_DWARF4);
             return (NULL);

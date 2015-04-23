@@ -539,7 +539,7 @@ enter_section_in_de_debug_sections_array(Dwarf_Debug dbg,
         return DW_DLV_OK;
     }
     if(!strcmp(scn_name,".debug_cu_index")) {
-        /* gdb added this. */
+        /* gdb added this in DW4. It is in  standard DWARF5  */
         sectionerr = add_debug_section_info(dbg,".debug_cu_index",
             &dbg->de_debug_cu_index,
             DW_DLE_DUPLICATE_CU_INDEX,0,
@@ -550,7 +550,7 @@ enter_section_in_de_debug_sections_array(Dwarf_Debug dbg,
         return DW_DLV_OK;
     }
     if(!strcmp(scn_name,".debug_tu_index")) {
-        /* gdb added this. */
+        /* gdb added this in DW4. It is in standard DWARF5 */
         sectionerr = add_debug_section_info(dbg,".debug_tu_index",
             &dbg->de_debug_tu_index,
             DW_DLE_DUPLICATE_TU_INDEX,0,
@@ -835,7 +835,11 @@ all_sig8_bits_zero(Dwarf_Sig8 *val)
 /*  There is one table per CU and one per TU, and each
     table refers to the associated other DWARF data
     for that CU or TU.
-    See DW_SECT_* */
+    See DW_SECT_*
+
+    In DWARF4 the type units are in .debug_types
+    In DWARF5 the type units are in .debug_info.
+*/
 
 static int
 load_debugfission_tables(Dwarf_Debug dbg,Dwarf_Error *error)

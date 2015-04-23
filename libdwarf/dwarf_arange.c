@@ -109,7 +109,7 @@ dwarf_get_aranges_list(Dwarf_Debug dbg,
         READ_UNALIGNED(dbg, version, Dwarf_Half,
             arange_ptr, sizeof(Dwarf_Half));
         arange_ptr += sizeof(Dwarf_Half);
-        if (version != CURRENT_VERSION_STAMP) {
+        if (version != DW_ARANGES_VERSION2) {
             _dwarf_error(dbg, error, DW_DLE_VERSION_STAMP_ERROR);
             return (DW_DLV_ERROR);
         }

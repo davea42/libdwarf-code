@@ -1745,9 +1745,10 @@ dwarf_read_line_table_prefix(Dwarf_Debug dbg,
         line_ptr, sizeof(Dwarf_Half));
     prefix_out->pf_version = version;
     line_ptr += sizeof(Dwarf_Half);
-    if (version != CURRENT_VERSION_STAMP &&
-        version != CURRENT_VERSION_STAMP3 &&
-        version != CURRENT_VERSION_STAMP4) {
+    if (version != DW_LINE_VERSION2 &&
+        version != DW_LINE_VERSION3 &&
+        version != DW_LINE_VERSION4 &&
+        version != DW_LINE_VERSION5) {
         _dwarf_error(dbg, err, DW_DLE_VERSION_STAMP_ERROR);
         return (DW_DLV_ERROR);
     }
@@ -1765,7 +1766,7 @@ dwarf_read_line_table_prefix(Dwarf_Debug dbg,
     prefix_out->pf_default_is_stmt = *(unsigned char *) line_ptr;
     line_ptr = line_ptr + sizeof(Dwarf_Small);
 
-    if (version == CURRENT_VERSION_STAMP4) {
+    if (version == DW_LINE_VERSION4) {
         prefix_out->pf_maximum_ops_per_instruction =
             *(unsigned char *) line_ptr;
         line_ptr = line_ptr + sizeof(Dwarf_Small);

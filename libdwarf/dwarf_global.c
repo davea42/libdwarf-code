@@ -232,7 +232,8 @@ _dwarf_internal_get_pubnames_like_data(Dwarf_Debug dbg,
         READ_UNALIGNED(dbg, version, Dwarf_Half,
             pubnames_like_ptr, sizeof(Dwarf_Half));
         pubnames_like_ptr += sizeof(Dwarf_Half);
-        if (version != CURRENT_VERSION_STAMP) {
+        /* ASSERT: DW_PUBNAMES_VERSION2 == DW_PUBTYPES_VERSION2 */
+        if (version != DW_PUBNAMES_VERSION2) {
             _dwarf_error(dbg, error, version_err_num);
             return (DW_DLV_ERROR);
         }
