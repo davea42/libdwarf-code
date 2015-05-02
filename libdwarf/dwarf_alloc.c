@@ -577,6 +577,15 @@ _dwarf_free_all_of_one_debug(Dwarf_Debug dbg)
         erroneous deallocs it is advisable to do the dwarf_deallocs here
         that are not things the user can otherwise request.
         Housecleaning.  */
+    if (dbg->de_cu_hashindex_data) {
+        dwarf_xu_header_free(dbg->de_cu_hashindex_data);
+        dbg->de_cu_hashindex_data = 0;
+    }
+    if (dbg->de_tu_hashindex_data) {
+        dwarf_xu_header_free(dbg->de_tu_hashindex_data);
+        dbg->de_tu_hashindex_data = 0;
+    }
+
     freecontextlist(dbg,&dbg->de_info_reading);
     freecontextlist(dbg,&dbg->de_types_reading);
 

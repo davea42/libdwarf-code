@@ -244,53 +244,38 @@ dwarf_convert_to_global_offset(Dwarf_Attribute attr,
 {
     Dwarf_Debug dbg = 0;
     Dwarf_CU_Context cu_context = 0;
-    struct Dwarf_Debug_Fission_Per_CU_s fissiondata;
     int res = 0;
-    int fissionres = 0;
-    Dwarf_Unsigned dwpoffset = 0;
 
     res  = get_attr_dbg(&dbg,&cu_context,attr,error);
     if (res != DW_DLV_OK) {
         return res;
     }
-#if 0
-    This should not be done. cc_debug_offset has
-    the fission offset (if any) built in already.
-    memset(&fissiondata,0,sizeof(fissiondata));
-    fissionres =  dwarf_get_debugfission_for_die(attr->ar_die,
-        &fissiondata,error);
-    if(fissionres == DW_DLV_ERROR) {
-        return res;
-    }
-    /* If fissionres is DW_DLV_NO_ENTRY dwpoffset remains zero. */
-    if(fissionres == DW_DLV_OK) {
-        int sect = DW_SECT_TYPES;
-        if(cu_context->cc_is_info) {
-            sect = DW_SECT_INFO;
-        }
-        dwpoffset = fissiondata.pcu_offset[sect];
-    }
-#endif
-
     switch (attr->ar_attribute_form) {
     case DW_FORM_ref1:
     case DW_FORM_ref2:
     case DW_FORM_ref4:
     case DW_FORM_ref8:
     case DW_FORM_ref_udata:
+        /*  It is a cu-local offset. Convert to section-global. */
         /*  It would be nice to put some code to check
             legality of the offset */
+        /*  cc_debug_offset always has any DWP Package File
+            offset included (when the cu_context created)
+            so there is no extra work for DWP.
+      
         /*  globalize the offset */
-        offset += cu_context->cc_debug_offset +dwpoffset;
+        offset += cu_context->cc_debug_offset;
 
         break;
 
     case DW_FORM_ref_addr:
         /*  This offset is defined to be debug_info global already, so
             use this value unaltered.
-            However,  if dwo in dwp it needs adjustment.
+
+            Since a DWP package file is not relocated there
+            is no way that this reference offset to an address in
+            any other CU can be correct for a DWP Package File offset
             */
-        offset += dwpoffset;
         break;
 
     default:
@@ -422,12 +407,10 @@ dwarf_formref(Dwarf_Attribute attr,
     return DW_DLV_OK;
 }
 
-/*  dwarf_formsig8 returns in the caller-provided 8 byte area
-    the 8 bytes of a DW_FORM_ref_sig8 (copying the bytes
-    directly to the caller).  Not a string, an 8 byte
-    MD5 hash.  This function is new in DWARF4 libdwarf.
-*/
-int dwarf_formsig8(Dwarf_Attribute attr,
+static int 
+_dwarf_formsig8_internal(Dwarf_Attribute attr,
+    int formexpected,
+    int formerrnum,
     Dwarf_Sig8 * returned_sig_bytes,
     Dwarf_Error*     error)
 {
@@ -441,8 +424,8 @@ int dwarf_formsig8(Dwarf_Attribute attr,
         return res;
     }
 
-    if (attr->ar_attribute_form != DW_FORM_ref_sig8 ) {
-        _dwarf_error(dbg, error, DW_DLE_BAD_REF_SIG8_FORM);
+    if (attr->ar_attribute_form != formexpected ) {
+        _dwarf_error(dbg, error, formerrnum);
         return (DW_DLV_ERROR);
     }
 
@@ -462,6 +445,34 @@ int dwarf_formsig8(Dwarf_Attribute attr,
         sizeof(Dwarf_Sig8));
     return DW_DLV_OK;
 }
+
+int
+dwarf_formsig8_const(Dwarf_Attribute attr,
+    Dwarf_Sig8 * returned_sig_bytes,
+    Dwarf_Error* error)
+{
+    _dwarf_formsig8_internal(attr, DW_FORM_data8,
+        DW_DLE_ATTR_FORM_NOT_DATA8,
+        returned_sig_bytes,error);
+}
+
+/*  dwarf_formsig8 returns in the caller-provided 8 byte area
+    the 8 bytes of a DW_FORM_ref_sig8 (copying the bytes
+    directly to the caller).  Not a string, an 8 byte
+    MD5 hash.  This function is new in DWARF4 libdwarf.
+*/
+int 
+dwarf_formsig8(Dwarf_Attribute attr,
+    Dwarf_Sig8 * returned_sig_bytes,
+    Dwarf_Error* error)
+{
+    _dwarf_formsig8_internal(attr, DW_FORM_ref_sig8,
+        DW_DLE_BAD_REF_SIG8_FORM,
+        returned_sig_bytes,error);
+}
+
+
+
 
 /*  Since this returns section-relative debug_info offsets,
     this can represent all REFERENCE forms correctly
@@ -994,6 +1005,7 @@ _dwarf_extract_string_offset_via_str_offsets(Dwarf_Debug dbg,
     Dwarf_Unsigned index_to_offset_entry = 0;
     Dwarf_Unsigned offsetintable = 0;
     Dwarf_Unsigned end_offsetintable = 0;
+    Dwarf_Unsigned strofflen = 0;
     int res = 0;
 
     res = _dwarf_load_section(dbg, &dbg->de_debug_str_offsets,error);
@@ -1015,13 +1027,12 @@ _dwarf_extract_string_offset_via_str_offsets(Dwarf_Debug dbg,
     offsetintable = (index_to_offset_entry*cu_context->cc_length_size )
         + offset_base;
     {
-        Dwarf_Unsigned fissoff =
-            _dwarf_get_fission_addition(dbg,
-            cu_context->cc_is_info,
-            cu_context->cc_debug_offset,DW_SECT_STR_OFFSETS);
+        Dwarf_Unsigned fissoff = 0;
+        Dwarf_Unsigned size = 0;
+        fissoff = _dwarf_get_dwp_extra_offset(&cu_context->cc_dwp_offsets,
+             DW_SECT_STR_OFFSETS, &size);
         offsetintable += fissoff;
     }
-
     end_offsetintable = offsetintable + cu_context->cc_length_size;
     /* The offsets table is a series of offset-size entries. */
     if ((end_offsetintable) >= dbg->de_debug_str_offsets.dss_size ) {

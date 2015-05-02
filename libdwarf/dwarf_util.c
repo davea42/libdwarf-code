@@ -35,6 +35,45 @@
 
 
 #define MINBUFLEN 1000
+#define TRUE  1
+#define FALSE 0
+
+Dwarf_Bool
+_dwarf_file_has_debug_fission_cu_index(Dwarf_Debug dbg)
+{
+    if(!dbg) {
+         return FALSE;
+    }
+    if (dbg->de_cu_hashindex_data) {
+        return TRUE;
+    }
+    return FALSE;
+}
+Dwarf_Bool
+_dwarf_file_has_debug_fission_tu_index(Dwarf_Debug dbg)
+{
+    if(!dbg) {
+         return FALSE;
+    }
+    if (dbg->de_tu_hashindex_data ) {
+        return TRUE;
+    }
+    return FALSE;
+}
+
+
+Dwarf_Bool
+_dwarf_file_has_debug_fission_index(Dwarf_Debug dbg)
+{
+    if(!dbg) {
+         return FALSE;
+    }
+    if (dbg->de_cu_hashindex_data ||
+        dbg->de_tu_hashindex_data) {
+        return 1;
+    }
+    return FALSE;
+}
 
 /*  Given a form, and a pointer to the bytes encoding
     a value of that form, val_ptr, this function returns
@@ -381,11 +420,29 @@ _dwarf_get_abbrev_for_code(Dwarf_CU_Context cu_context, Dwarf_Unsigned code)
         return (hash_abbrev_entry);
     }
 
-    abbrev_ptr = cu_context->cc_last_abbrev_ptr != NULL ?
-        cu_context->cc_last_abbrev_ptr :
-        dbg->de_debug_abbrev.dss_data + cu_context->cc_abbrev_offset;
-    end_abbrev_ptr = dbg->de_debug_abbrev.dss_data +
-        dbg->de_debug_abbrev.dss_size;
+    if (cu_context->cc_last_abbrev_ptr) {
+        abbrev_ptr = cu_context->cc_last_abbrev_ptr;
+        end_abbrev_ptr = cu_context->cc_last_abbrev_endptr;
+    } else {
+        /*  This is ok because cc_abbrev_offset includes DWP 
+            offset if appropriate. */
+        abbrev_ptr = dbg->de_debug_abbrev.dss_data + 
+            cu_context->cc_abbrev_offset;
+
+        if (cu_context->cc_dwp_offsets.pcu_type)  {
+            /*  In a DWP the abbrevs
+                for this context are known quite precisely. */
+            Dwarf_Unsigned size = 0;
+            /* Ignore the offset returned. Already in cc_abbrev_offset. */
+            _dwarf_get_dwp_extra_offset(&cu_context->cc_dwp_offsets,
+                 DW_SECT_ABBREV,&size);
+            /*  ASSERT: size != 0 */
+            end_abbrev_ptr = abbrev_ptr + size;
+        } else {
+            end_abbrev_ptr = abbrev_ptr +
+                dbg->de_debug_abbrev.dss_size;
+        }
+    }
 
     /*  End of abbrev's as we are past the end entirely.
         THis can happen */
@@ -437,6 +494,7 @@ _dwarf_get_abbrev_for_code(Dwarf_CU_Context cu_context, Dwarf_Unsigned code)
         *abbrev_ptr != 0 && abbrev_code != code);
 
     cu_context->cc_last_abbrev_ptr = abbrev_ptr;
+    cu_context->cc_last_abbrev_endptr = end_abbrev_ptr;
     return (abbrev_code == code ? inner_list_entry : NULL);
 }
 

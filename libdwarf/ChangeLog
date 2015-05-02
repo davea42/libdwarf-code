@@ -1,3 +1,48 @@
+2015-05-01  David Anderson
+     * dwarf.h: Added  DW_DEFAULTED* and DW_IDX* DWARF5 macros.
+     * dwarf_abbrev.c: Expanded comments about the interface
+       used by dwarfdump -a.
+       It is NOT guaranteed to work on all objects.
+       It continues to work usefully on a plain .o .
+     * dwarf_alloc.h: Added code to clean when there
+       are fission package file sections .debug_cu_index or
+       .debug_tu_index.
+     * dwarf_die_deliv.c: Significant changes to internals to support
+       DWARF5 debug fission dwp package objects.
+       Added dwarf_die_from_hash_signature() which lets one
+       find DWP DIE information from a hash signature.
+     * dwarf_error.c: Fifteen new DW_DLE* error messages added related
+       to new DWARF5 sections and to debug fission package files.
+     * dwarf_form.c:  New commentary about offsets rrelated to
+       DWP package files.  New interface dwarf_formsig8_const()
+       to read the DW_FORM_data8  a DW_AT_dwo_id uses.
+     * dwarf_global.c: Added commentary about an old interface
+       and DWARF5 (the old interface does not support DWARF5,
+       newer (but not new) interfaces do).
+     * dwarf_incl.h: Add dwarf_xu_index.h include.
+     * dwarf_init_finish.c: Removed a couple dwo-section
+       readers (they were not real) Added new DWARF5
+       section readers and the appropriate .dwo section readers.
+     * dwarf_line.c,dwarf_loc.c: Added support for getting the correct  line
+     * dwarf_macro.c: Added comment that .debug_macinfo 
+       section not supported in DWP
+       Package File (and .debug_macinfo is not in DWARF5).
+       section offset in a DWP package file.
+     * dwarf_opaque.h: Many New fields for the new sections
+       and DWP Package File support.
+       Various new functions (libdwarf internal) for the
+       new sections.
+     * dwarf_query.c: Added support for DWP Package File offsets.
+     * dwarf_tsearch.h: Added ifndef DWARF_TSEARCH so #include
+       more than once does not lead to difficulty.
+     * dwarf_util.c:  Added support for DWP Package File data.
+     * dwarf_xu_index.c: Added support for DWP Package File data
+       so it can all be read properly.
+     * dwarf_xu_index.h: Added ifndef DWARF_XU_INDEX_H so #include
+       more than once does not lead to difficulty.
+     * libdwarf.h.in: Added dwarf_get_IDX_name() and 
+       dwarf_get_IDX_name(). Added fifteen new DW_DLE error codes.
+       New function dwarf_die_from_hash_signature().
 2015-04-23  David Anderson
      * dwarf.h: Delete spurious blank lines.
      * dwarf_base_types.h:  New defines. DW_CIE_VERSION* DW_CU_VERSION**

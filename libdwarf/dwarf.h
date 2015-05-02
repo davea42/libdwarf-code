@@ -783,6 +783,21 @@ extern "C" {
 
 #define DW_ATE_hi_user                  0xff
 
+
+#define DW_DEFAULTED_no                 0x0      /* DWARF5 */
+#define DW_DEFAULTED_in_class           0x1      /* DWARF5 */
+#define DW_DEFAULTED_out_of_class       0x2      /* DWARF5 */
+
+
+#define DW_IDX_compile_unit             0x1      /* DWARF5 */
+#define DW_IDX_type_unit                0x2      /* DWARF4 only */
+#define DW_IDX_die_offset               0x3      /* DWARF5 */
+#define DW_IDX_parent                   0x4      /* DWARF5 */
+#define DW_IDX_type_hash                0x5      /* DWARF5 */
+#define DW_IDX_lo_user                  0x2000   /* DWARF5 */
+#define DW_IDX_hi_user                  0x0fff   /* DWARF5 */
+
+
 /* DWARF5 Location List Entries in Split Objects */
 #define DW_LLE_end_of_list_entry        0x0      /* DWARF5 */
 #define DW_LLE_base_address_selection_entry 0x01 /* DWARF5 */

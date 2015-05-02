@@ -513,6 +513,8 @@ dwarf_attr(Dwarf_Die die,
     return DW_DLV_OK;
 }
 
+/*  A DWP (.dwp) package object never contains .debug_addr,
+    only a normal .o or executable object. */
 int
 _dwarf_extract_address_from_debug_addr(Dwarf_Debug dbg,
     Dwarf_CU_Context context,
@@ -663,8 +665,8 @@ _dwarf_get_string_base_attr_value(Dwarf_Debug dbg,
     Dwarf_Unsigned cu_die_offset = 0;
     Dwarf_Attribute myattr = 0;
 
-    if(context->cc_string_base_present) {
-        *sbase_out = context->cc_string_base;
+    if(context->cc_str_offsets_base_present) {
+        *sbase_out = context->cc_str_offsets_base;
         return DW_DLV_OK;
     }
     cu_die_offset = context->cc_cu_die_global_sec_offset;
@@ -697,9 +699,12 @@ _dwarf_get_string_base_attr_value(Dwarf_Debug dbg,
             return res;
         }
         *sbase_out  = val;
+        context->cc_str_offsets_base = val;
+        context->cc_str_offsets_base_present = TRUE;
         return DW_DLV_OK;
     }
-    /* NO ENTRY, No other attr.Not even GNU */
+    /*  NO ENTRY, No other attr.Not even GNU, this one is standard
+        DWARF5 only. */
     dwarf_dealloc(dbg,myattr,DW_DLA_ATTR);
     dwarf_dealloc(dbg,cudie,DW_DLA_DIE);
     /*  We do not need a base for a .dwo. We might for .dwp

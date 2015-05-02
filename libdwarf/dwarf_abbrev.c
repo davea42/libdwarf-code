@@ -30,6 +30,26 @@
 #include <stdio.h>
 #include "dwarf_abbrev.h"
 
+/*  This is used to print a .debug_abbrev section without
+    knowing about the DIEs that use the abbrevs.
+
+    When we have a simple .o
+    there is at least a hope of iterating through
+    the abbrevs meaningfully without knowing
+    a CU context.  
+
+    This often fails or gets incorrect info
+    because there is no guarantee the .debug_abbrev
+    section is free of garbage bytes. 
+
+    In an object with multiple CU/TUs the
+    output is difficult/impossible to usefully interpret.
+
+    In a dwp (Package File)  it is really impossible
+    to associate abbrevs with a CU.
+
+*/
+    
 int
 dwarf_get_abbrev(Dwarf_Debug dbg,
     Dwarf_Unsigned offset,
@@ -44,6 +64,7 @@ dwarf_get_abbrev(Dwarf_Debug dbg,
     Dwarf_Abbrev ret_abbrev = 0;
     Dwarf_Unsigned labbr_count = 0;
     Dwarf_Unsigned utmp = 0;
+    Dwarf_Unsigned dwp_abbrev_offset = 0;
 
 
     if (dbg == NULL) {
@@ -80,7 +101,6 @@ dwarf_get_abbrev(Dwarf_Debug dbg,
     *abbr_count = 0;
     if (length != NULL)
         *length = 1;
-    /* FIXME: not dealing with debugfission? */
 
 
     abbrev_ptr = dbg->de_debug_abbrev.dss_data + offset;

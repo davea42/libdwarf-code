@@ -458,6 +458,7 @@ DW_AT_alignment
 DW_AT_description
 DW_AT_name
 DW_AT_sibling
+DW_AT_signature
 DW_AT_start_scope
 0xffffffff
 DW_TAG_label
@@ -469,8 +470,8 @@ DW_AT_description
 DW_AT_low_pc
 DW_AT_name
 DW_AT_segment
-DW_AT_start_scope
 DW_AT_sibling
+DW_AT_start_scope
 0xffffffff
 DW_TAG_lexical_block
 DW_AT_decl_column
@@ -492,7 +493,7 @@ DW_AT_decl_file
 DW_AT_decl_line
 DW_AT_accessibility
 DW_AT_artificial
-DW_AT_bit_offset
+DW_AT_bit_offset /* allowed in DWARF4 */
 DW_AT_bit_size
 DW_AT_byte_size
 DW_AT_bit_size /* Allowed in DWARF4 */

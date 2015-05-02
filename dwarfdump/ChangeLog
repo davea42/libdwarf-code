@@ -1,3 +1,7 @@
+2015-05-01  David Anderson
+     * tag_attr.list: Added a DW_AT_signature and
+       moved a couple attributes to match the standard-document
+       order of attributes.
 2015-03-10  David Anderson
      * dwarfdump.c: Update version string.
      * common.c: Update version string.

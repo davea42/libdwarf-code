@@ -263,16 +263,7 @@ enter_section_in_de_debug_sections_array(Dwarf_Debug dbg,
         }
         return DW_DLV_OK;
     }
-    if(!strcmp(scn_name,".debug_aranges.dwo")) {
-        sectionerr = add_debug_section_info(dbg,".debug_aranges.dwo",
-            &dbg->de_debug_aranges,
-            DW_DLE_DEBUG_ARANGES_DUPLICATE,0,
-            FALSE,err);
-        if (sectionerr != DW_DLV_OK) {
-            return sectionerr;
-        }
-        return DW_DLV_OK;
-    }
+
     if(!strcmp(scn_name,".debug_line")) {
         sectionerr = add_debug_section_info(dbg,".debug_line",
             &dbg->de_debug_line,
@@ -293,6 +284,18 @@ enter_section_in_de_debug_sections_array(Dwarf_Debug dbg,
         }
         return DW_DLV_OK;
     }
+    if(!strcmp(scn_name,".debug_line_str")) {
+        sectionerr = add_debug_section_info(dbg,".debug_line_str",
+            &dbg->de_debug_line_str,
+            DW_DLE_DEBUG_LINE_STR_DUPLICATE,0,
+            FALSE,err);
+        if (sectionerr != DW_DLV_OK) {
+            return sectionerr;
+        }
+        return DW_DLV_OK;
+    }
+
+
     if(!strcmp(scn_name,".debug_frame")) {
         sectionerr = add_debug_section_info(dbg,".debug_frame",
             &dbg->de_debug_frame,
@@ -433,10 +436,23 @@ enter_section_in_de_debug_sections_array(Dwarf_Debug dbg,
         }
         return DW_DLV_OK;
     }
-    if(!strcmp(scn_name,".debug_macinfo.dwo")) {
-        sectionerr = add_debug_section_info(dbg,".debug_macinfo.dwo",
-            &dbg->de_debug_macinfo,
-            DW_DLE_DEBUG_MACINFO_DUPLICATE,0,
+    /*  ".debug_macinfo.dwo" is not allowed.  */
+
+
+    if(!strcmp(scn_name,".debug_macro")) { /* DWARF5 */
+        sectionerr = add_debug_section_info(dbg,".debug_macro",
+            &dbg->de_debug_macro,
+            DW_DLE_DEBUG_MACRO_DUPLICATE,0,
+            FALSE,err);
+        if (sectionerr != DW_DLV_OK) {
+            return sectionerr;
+        }
+        return DW_DLV_OK;
+    }
+    if(!strcmp(scn_name,".debug_macro.dwo")) { /* DWARF5 */
+        sectionerr = add_debug_section_info(dbg,".debug_macro.dwo",
+            &dbg->de_debug_macro,
+            DW_DLE_DEBUG_MACRO_DUPLICATE,0,
             FALSE,err);
         if (sectionerr != DW_DLV_OK) {
             return sectionerr;
@@ -453,16 +469,8 @@ enter_section_in_de_debug_sections_array(Dwarf_Debug dbg,
         }
         return DW_DLV_OK;
     }
-    if(!strcmp(scn_name,".debug_ranges.dwo")) {
-        sectionerr = add_debug_section_info(dbg,".debug_ranges.dwo",
-            &dbg->de_debug_ranges,
-            DW_DLE_DEBUG_RANGES_DUPLICATE,0,
-            TRUE,err);
-        if (sectionerr != DW_DLV_OK) {
-            return sectionerr;
-        }
-        return DW_DLV_OK;
-    }
+    /*  No .debug_ranges.dwo allowed. */
+
     if(!strcmp(scn_name,".debug_str_offsets")) {
         /* New DWARF5 */
         sectionerr = add_debug_section_info(dbg,".debug_str_offsets",
@@ -485,6 +493,19 @@ enter_section_in_de_debug_sections_array(Dwarf_Debug dbg,
         }
         return DW_DLV_OK;
     }
+    if(!strcmp(scn_name,".debug_sup")) { /* DWARF5 */
+        /* New DWARF5 */
+        sectionerr = add_debug_section_info(dbg,".debug_sup",
+            &dbg->de_debug_sup,
+            DW_DLE_DEBUG_SUP_DUPLICATE,0,
+            TRUE,err);
+        if (sectionerr != DW_DLV_OK) {
+            return sectionerr;
+        }
+        return DW_DLV_OK;
+    }
+    /* No .debug_sup.dwo allowed. */
+
     if(!strcmp(scn_name,".symtab")) {
         sectionerr = add_debug_section_info(dbg,".symtab",
             &dbg->de_elf_symtab,
@@ -516,17 +537,8 @@ enter_section_in_de_debug_sections_array(Dwarf_Debug dbg,
         }
         return DW_DLV_OK;
     }
-    if(!strcmp(scn_name,".debug_addr.dwo")) {
-        /* New DWARF5 */
-        sectionerr = add_debug_section_info(dbg,".debug_addr.dwo",
-            &dbg->de_debug_addr,
-            DW_DLE_DEBUG_ADDR_DUPLICATE,0,
-            TRUE,err);
-        if (sectionerr != DW_DLV_OK) {
-            return sectionerr;
-        }
-        return DW_DLV_OK;
-    }
+    /*  No .debug_addr.dwo allowed.  */
+
     if(!strcmp(scn_name,".gdb_index")) {
         /* gdb added this. */
         sectionerr = add_debug_section_info(dbg,".gdb_index",
@@ -538,6 +550,17 @@ enter_section_in_de_debug_sections_array(Dwarf_Debug dbg,
         }
         return DW_DLV_OK;
     }
+    if(!strcmp(scn_name,".debug_names")) { /* NEW DWARF5 */
+        sectionerr = add_debug_section_info(dbg,".debug_names",
+            &dbg->de_debug_names,
+            DW_DLE_DEBUG_NAMES_DUPLICATE,0,
+            FALSE,err);
+        if (sectionerr != DW_DLV_OK) {
+            return sectionerr;
+        }
+        return DW_DLV_OK;
+    }
+    /* No .debug_names.dwo is allowed. */
     if(!strcmp(scn_name,".debug_cu_index")) {
         /* gdb added this in DW4. It is in  standard DWARF5  */
         sectionerr = add_debug_section_info(dbg,".debug_cu_index",
@@ -859,8 +882,6 @@ load_debugfission_tables(Dwarf_Debug dbg,Dwarf_Error *error)
         Dwarf_Unsigned number_of_cols /* L */ = 0;
         Dwarf_Unsigned number_of_CUs /* N */ = 0;
         Dwarf_Unsigned number_of_slots /* M */ = 0;
-        struct Dwarf_Fission_Offsets_s *offsetdata = 0;
-        struct Dwarf_Fission_Per_CU_s *percu = 0;
         Dwarf_Unsigned hashindex = 0;
         const char *secname = 0;
         int res = 0;
@@ -869,11 +890,9 @@ load_debugfission_tables(Dwarf_Debug dbg,Dwarf_Error *error)
         if (i == 0) {
             dwsect = &dbg->de_debug_cu_index;
             type = "cu";
-            offsetdata = &dbg->de_cu_fission_data;
         } else {
             dwsect = &dbg->de_debug_tu_index;
             type = "tu";
-            offsetdata = &dbg->de_tu_fission_data;
         }
         if ( !dwsect->dss_size ) {
             continue;
@@ -882,78 +901,17 @@ load_debugfission_tables(Dwarf_Debug dbg,Dwarf_Error *error)
             &xuptr,&version,&number_of_cols,
             &number_of_CUs,&number_of_slots,
             &secname,error);
+        if (res == DW_DLV_NO_ENTRY) {
+            continue;
+        }
         if (res != DW_DLV_OK) {
             return res;
         }
-        offsetdata->dfo_version = version;
-        offsetdata->dfo_type = type;
-        offsetdata->dfo_columns = number_of_cols;
-        offsetdata->dfo_entries = number_of_CUs;
-        offsetdata->dfo_slots = number_of_slots;
-        percu= (struct Dwarf_Fission_Per_CU_s *)_dwarf_get_alloc(dbg,
-            DW_DLA_FISSION_PERCU,number_of_CUs);
-        if(!percu) {
-            dwarf_xu_header_free(xuptr);
-            _dwarf_error(dbg,error, DW_DLE_ALLOC_FAIL);
-            return DW_DLA_ERROR;
+        if (i == 0) {
+            dbg->de_cu_hashindex_data = xuptr;
+        } else {
+            dbg->de_tu_hashindex_data = xuptr;
         }
-        offsetdata->dfo_per_cu = percu;
-        for(hashindex = 0; hashindex < number_of_slots; ++hashindex) {
-            Dwarf_Sig8 hashval;
-            Dwarf_Unsigned index = 0;
-            Dwarf_Unsigned col = 0;
-            int res = 0;
-
-            memset(&hashval,0,sizeof(hashval));
-            res = dwarf_get_xu_hash_entry(xuptr,hashindex,
-                &hashval,&index,error);
-            if (res == DW_DLV_ERROR) {
-                dwarf_xu_header_free(xuptr);
-                return res;
-            } else if (res == DW_DLV_NO_ENTRY) {
-                /* Impossible */
-                dwarf_xu_header_free(xuptr);
-                return res;
-            } else if (all_sig8_bits_zero(&hashval) && index == 0 ) {
-                /* An unused hash slot */
-                continue;
-            }
-            for(col = 0; col < number_of_cols; ++col) {
-                struct Dwarf_Fission_Per_CU_s *thiscu = 0;
-                struct Dwarf_Fission_Section_Offset_s *thisoffset = 0;
-
-                Dwarf_Unsigned off = 0;
-                Dwarf_Unsigned len = 0;
-                const char * name = 0;
-                Dwarf_Unsigned num = 0;
-                res = dwarf_get_xu_section_names(xuptr,
-                    col,&num,&name,error);
-                if (res != DW_DLV_OK) {
-                    dwarf_xu_header_free(xuptr);
-                    return res;
-                }
-                res = dwarf_get_xu_section_offset(xuptr,
-                    index,col,&off,&len,error);
-                if (res != DW_DLV_OK) {
-                    dwarf_xu_header_free(xuptr);
-                    return res;
-                }
-                /* Index is 1 to number_of_CUs +1 */
-                if (index < 1 || index > number_of_CUs ) {
-                    /* Internal error. ??  */
-                    dwarf_xu_header_free(xuptr);
-                    _dwarf_error(dbg,error, DW_DLE_FISSION_INDEX_WRONG);
-                    return DW_DLV_ERROR;
-                }
-                thiscu = percu+(index-1);
-                thiscu->dfp_index = index;
-                thiscu->dfp_hash = hashval;
-                thisoffset = & thiscu->dfp_offsets[num];
-                thisoffset->dfs_offset = off;
-                thisoffset->dfs_size = len;
-            }
-        }
-        dwarf_xu_header_free(xuptr);
     }
     return DW_DLV_OK;
 }

@@ -163,7 +163,8 @@ _dwarf_macro_stack_pop_index(struct macro_stack_s *ms)
     maximum_count entries or the end of a compilation
     unit's entries (whichever comes first).
 
-    This fails badly for a debug fission file (dwp) FIXME.
+    .debug_macinfo never appears in a .dwp Package File.
+    So offset adjustment for such is not needed.
 */
 
 int

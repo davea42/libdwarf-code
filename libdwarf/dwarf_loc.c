@@ -861,8 +861,14 @@ _dwarf_get_loclist_header_start(Dwarf_Debug dbg,
         }
     }
     {
-        Dwarf_Unsigned fissoff =
-            _dwarf_get_fission_addition_die(dbg, attr->ar_die, DW_SECT_LOC);
+        int fisres = 0;
+        Dwarf_Unsigned fissoff = 0;
+        Dwarf_Unsigned size = 0;
+        fisres = _dwarf_get_fission_addition_die(attr->ar_die, DW_SECT_LOC,
+            &fissoff, &size,error);
+        if(fisres != DW_DLV_OK) {
+            return fisres;
+        }
         *loclist_offset += fissoff;
     }
     return DW_DLV_OK;
