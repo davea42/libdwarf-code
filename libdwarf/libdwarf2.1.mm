@@ -8,7 +8,7 @@ n\."
 .nr Hb 5
 \." ==============================================
 \." Put current date in the following at each rev
-.ds vE rev 2.26, January 29, 2015
+.ds vE rev 2.27, May 05, 2015
 \." ==============================================
 \." ==============================================
 .ds | |
@@ -203,6 +203,9 @@ The following is a brief mention of the changes in this libdwarf from
 the libdwarf draft for DWARF Version 1 and recent changes.
 
 .H 2 "Items Changed"
+.P
+Adding some DWARF5 support and improved DWP Package File
+support, using dwarf_next_cu_header_d().
 .P
 Added a note about dwarf_errmsg(): the string pointer
 returned should be considered ephemeral, not a
@@ -1073,10 +1076,11 @@ section. These sections are used to make possible
 access to .dwo sections gathered into a .dwp object
 as part of the DebugFission project allowing separation
 of an executable from most of its DWARF debugging information.
-As of July 2014 these sections may be produced by gdb
-but are not yet accepted into DWARF5.
+As of May 2015 these sections
+are accepted into DWARF5 but the standard has not
+been released.
 The storage pointed to by this descriptor should be freed 
-using a call to \f(CWdwarf_xh_header_fre()\fP with 
+using a call to \f(CWdwarf_xh_header_free()\fP with 
 a valid \f(CWDwarf_XuIndexHeader\fP pointer as the argument.
 
 .H 1 "Error Handling"
@@ -1802,9 +1806,9 @@ function returns \f(CWDW_DLV_ERROR\fP and sets the
 
 
 
-.H 3 "dwarf_next_cu_header_c()"
+.H 3 "dwarf_next_cu_header_d()"
 .DS
-\f(CWint dwarf_next_cu_header_c(
+\f(CWint dwarf_next_cu_header_d(
         Dwarf_debug dbg,
         Dwarf_Bool is_info,
         Dwarf_Unsigned *cu_header_length,
@@ -1816,10 +1820,11 @@ function returns \f(CWDW_DLV_ERROR\fP and sets the
         Dwarf_Sig8     *signature,
         Dwarf_Unsigned *typeoffset
         Dwarf_Unsigned *next_cu_header,
+        Dwarf_Half     *header_cu_type,
         Dwarf_Error    *error);
 .DE
 The function
-\f(CWdwarf_next_cu_header_c()\fP operates on
+\f(CWdwarf_next_cu_header_d()\fP operates on
 the either the .debug_info   section
 (if \f(CWis_info\fP is non-zero) or .debug_types
 section   
@@ -1894,13 +1899,14 @@ See the DWARF3 or DWARF4 standard, section 7.4.
 .P
 The
 \f(CWsignature\fP pointer is only relevant if
-\f(CWis_info\fP is zero, and if relevant the 8 byte type
+ the CU has a type signature, and if relevant the 8 byte type
 signature of the .debug_types CU header is assigned through
 the pointer.
 .P
 The
-\f(CWtypeoffset\fP pointer is only relevant if
-\f(CWis_info\fP is zero, and if relevant the local offset
+\f(CWtypeoffset\fP pointer is only relevant
+the CU has a type signature
+if relevant the local offset
 within the CU of the the type offset the .debug_types entry
 represents is assigned through the pointer.
 The
@@ -1908,6 +1914,51 @@ The
 DW_AT_type referencing the type unit may reference an inner type,
 such as a  C++ class in a C++ namespace, but the type itself
 has the enclosing namespace in the .debug_type type_unit.
+.P
+The
+\f(CWheader_cu_type\fP pointer is applicable to 
+all  CU headers.
+The value returned through the pointer is either
+\f(CWDW_UT_compile\fP
+\f(CWDW_UT_partial\fP
+\f(CWDW_UT_type\fP
+and identifies the header type of this CU.
+In \f(CWDWARF4\fP a \f(CWDW_UT_type\fP
+will be in \f(CW.debug_types\fP, but in
+\f(CWDWARF5\fP these compilation units are in \f(CW.debug_info\fP
+and the Debug Fission \f(CW.debug_info.dwo\fP . 
+
+.H 3 "dwarf_next_cu_header_c()"
+.DS
+\f(CWint dwarf_next_cu_header_c(
+        Dwarf_debug dbg,
+        Dwarf_Bool is_info,
+        Dwarf_Unsigned *cu_header_length,
+        Dwarf_Half     *version_stamp,
+        Dwarf_Unsigned *abbrev_offset,
+        Dwarf_Half     *address_size,
+        Dwarf_Half     *offset_size,
+        Dwarf_Half     *extension_size,
+        Dwarf_Sig8     *signature,
+        Dwarf_Unsigned *typeoffset
+        Dwarf_Unsigned *next_cu_header,
+        Dwarf_Error    *error);
+.DE
+The function
+\f(CWdwarf_next_cu_header_c()\fP operates on
+the either the .debug_info   section
+(if \f(CWis_info\fP is non-zero) or .debug_types
+section
+(if \f(CWis_info\fP is zero).
+.P
+It operates exactly like
+\f(CWdwarf_next_cu_header_d()\fP but
+is missing the
+\f(CWheader_type\fP field.
+This is kept for compatibility.
+All code using this should be changed to use
+\f(CWdwarf_next_cu_header_d()\fP
+
 
 .H 3 "dwarf_next_cu_header_b()"
 .DS
@@ -7100,7 +7151,7 @@ For additional information, see
 "https://gcc.gnu.org/wiki/DebugFission",
 and
 "http://www.bayarea.net/~cary/dwarf/Accelerated%20Access%20Diagram.png"
-and eventually, the DWARF5 standard.
+and sometime in 2015, the DWARF5 standard.
 .P
 There are FORM access functions related
 to Debug Fission.
@@ -7112,26 +7163,212 @@ and
 \f(CWdwarf_get_debug_str_index()\fP.
 .P
 The FORM with the hash value (for a reference
-to  a CU) is 
+to  a type unit ) is 
 \f(CWDW_FORM_ref_sig8\fP.
-FIXME FISSION
+.P
+In a compilation unit of  Debug Fission object
+(or a .dwp Package FIle) 
+\f(CWDW_AT_dwo_id\fP 
+the hash is expected to be 
+\f(CWDW_FORM_data8\fP.
+.P
+The \f(CWDWARF5\fP standard defines the hash as an 8 byte value
+which we could use \f(CWDwarf_Unsigned\fP.
+Instead (and mostly for type safety) we define
+the value as  a structure whose type name is 
+\f(CWDwarf_Sig8\fP.
+
 .P
 To look up a name in the hash (to find
 which CU(s) it exists in).
-FIXME FISSION
-.P
+use 
+\f(CWdwarf_get_debugfission_for_key()fP,
+defined below.
 .P
 The second group of interfaces here 
-are necessary if one wants to print
+beginning with 
+\f(CWdwarf_get_xu_index_header()\fP
+are useful if one wants to print
 a .debug_tu_index or .debug_cu_index section.   
 .P
 To access DIE, macro, etc information
 the support is built into DIE, Macro, etc operations
 so applications usually won't need to use these
 operations at all.
-.P
-FIXME first FISSION function group here.
 
+.H 3 "Dwarf_Debug_Fission_Per_CU" 
+
+.DS
+#define DW_FISSION_SECT_COUNT 12 
+struct Dwarf_Debug_Fission_Per_CU_s  {
+    /*  Do not free the string. It contains "cu" or "tu". */
+    /*  If this is not set (ie, not a CU/TU in  DWP Package File)
+        then pcu_type will be NULL.  */
+    const char   * pcu_type;
+    /* pcu_index is the index (range 1 to N )
+       into the tu/cu table of offsets and the table
+       of sizes.  1 to N as the zero index is reserved
+       for special purposes.  Not a value one
+       actually needs. */
+    Dwarf_Unsigned pcu_index;
+    Dwarf_Sig8     pcu_hash;  /* 8 byte  */
+    /*  [0] has offset and size 0.
+        [1]-[8] are DW_SECT_* indexes and the
+        values are  the offset and size
+        of the respective section contribution
+        of a single .dwo object. When pcu_size[n] is
+        zero the corresponding section is not present. */
+    Dwarf_Unsigned pcu_offset[DW_FISSION_SECT_COUNT];
+    Dwarf_Unsigned pcu_size[DW_FISSION_SECT_COUNT];
+    Dwarf_Unsigned unused1;
+    Dwarf_Unsigned unused2;
+};
+.DE
+.P
+The structure is used to return data to callers with
+the data from either .debug_tu_index or .debug_cu_index 
+that is applicable to a single compilation unit or type unit.
+.P
+Callers to the applicable functions (see below)
+should allocate the structure and zero all the
+bytes in it.  The structure has a few
+fields that are presently unused. These
+are reserved for future use since it is
+impossible to alter the structure without
+breaking binary compatibility.
+
+.H 3 "dwarf_die_from_hash_signature()" 
+.DS
+int dwarf_die_from_hash_signature(Dwarf_Debug dbg,
+    Dwarf_Sig8 *     hash_sig,
+    const char *     sig_type,
+    Dwarf_Die*       returned_die,
+    Dwarf_Error*     error);
+.DE
+The function
+\f(CWdwarf_die_from_hash_signature()\fP
+is the most direct way to go from
+the hash data from a 
+\f(CWDW_FORM_ref_sig8\fP
+or
+a 
+\f(CWDW_AT_dwo_id\fP (form 
+\f(CWDW_FORM_data8\fP)
+to a DIE from a .dwp package file
+or a .dwo object file ( .dwo access
+not supported yet).
+.P
+The caller passes in
+\f(CWdbg\fP which should be
+\f(CWDwarf_Debug\fP open/initialized
+on a .dwp package file (or a .dwo object file).
+.P
+The caller also  passes in
+\f(CWhash_sig\fP, a pointer to the
+hash signature for which the caller
+wishes to find a DIE.
+.P
+The caller also  passes in
+\f(CWsig_type\fP which must
+contain either "tu" (identifying
+the hash referring to a type unit)
+or "cu" (identifying the hash as referring
+to a compilation unit).
+.P
+On success the function returns
+\f(CWDW_DLV_OK\fP and sets
+\f(CW*returned_die\fP to be a
+pointer to a valid DIE for the 
+compilation unit or type unit.
+If the type is "tu" the DIE returned
+is the specific type DIE that the
+hash refers to. 
+If the type is "cu" the DIE returned
+is the compilation unit DIE of the
+compilation unit referred to.
+.P
+When appropriate the caller should
+free the space of the returned DIE
+by a call something like 
+.DS
+    dwarf_dealloc(dbg,die,DW_DLA_DIE);
+.DE
+.P
+If there is no DWP Package File section
+or the hash cannot be found 
+the function returns
+\f(CWDW_DLV_NO_ENTRY\fP and leaves \f(CWreturned_die\fP
+untouched.  Only .dwo objects and .dwp package files
+have the package file index sections.
+.P
+If there is an error of some sort
+the function returns
+\f(CWDW_DLV_ERROR\fP, leaves \f(CWreturned_die\fP
+untouched, and sets \f(CW*error\fP to indicate
+the precise error encountered.
+.P
+
+
+.H 3 "dwarf_get_debugfission_for_die()" 
+.DS
+int dwarf_get_debugfission_for_die(Dwarf_Die die,
+    Dwarf_Debug_Fission_Per_CU * percu_out,
+    Dwarf_Error *  error);
+.DE
+The function
+\f(CWdwarf_get_debugfission_for_die()\fP
+returns the debug fission for the compilation
+unit the DIE is a part of.
+Any DIE in the compilation (or type) unit
+will get the same result.
+.P
+On a call to this function ensure the pointed-to
+space is fully initialized.
+.P
+On success the function returns
+\f(CWDW_DLV_OK\fP and fills in the
+fields of \f(CW*percu_out\fP for which
+it has data.
+.P
+If there is no DWP Package File section
+the function returns
+\f(CWDW_DLV_NO_ENTRY\fP and leaves \f(CW*percu_out\fP
+untouched.  Only .dwp package files
+have the package file index sections.
+.P
+If there is an error of some sort
+the function returns
+\f(CWDW_DLV_ERROR\fP, leaves \f(CW*percu_out\fP
+untouched, and sets \f(CW*error\fP to indicate
+the precise error encountered.
+
+
+.H 3 "dwarf_get_debugfission_for_key()" 
+.DS
+int dwarf_get_debugfission_for_key(Dwarf_Debug dbg,
+    Dwarf_Sig8 *                 key,
+    const char *                 key_type ,
+    Dwarf_Debug_Fission_Per_CU * percu_out,
+    Dwarf_Error *                error);
+.DE
+
+The function
+\f(CWdwarf_get_debugfission_for_key()\fP
+returns the debug fission data 
+for the 
+compilation unit in a .dwp  package file.
+.P
+If there is no DWP Package File section
+the function returns
+\f(CWDW_DLV_NO_ENTRY\fP and leaves \f(CW*percu_out\fP
+untouched.  Only .dwp package files
+have the package file index sections.
+.P
+If there is an error of some sort
+the function returns
+\f(CWDW_DLV_ERROR\fP, leaves \f(CW*percu_out\fP
+untouched, and sets \f(CW*error\fP to indicate
+the precise error encountered.
 
 .H 3 "dwarf_get_xu_index_header()"
 .DS

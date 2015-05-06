@@ -321,56 +321,6 @@ dwarf_get_xu_section_offset(Dwarf_Xu_Index_Header xuhdr,
     return DW_DLV_OK;
 }
 
-#if 0
-/*  Given a dwp cu or tu table
-    and a hash and the target section
-    index (a DW_SECT* value), find the base and size
-    from the applicable xu.
-*/
-int
-_dwarf_get_base_and_size_given_signature(
-    Dwarf_CU_Context context_in,
-    Dwarf_Sig8 *signature_in,
-    /* xu_sect_index means DW_SECT_info etc. */
-    Dwarf_Unsigned xu_sect_index,
-    Dwarf_Unsigned *base_out,
-    Dwarf_Unsigned *size_out,
-    Dwarf_Error *err)
-{
-    Dwarf_Unsigned i = 0;
-    Dwarf_Unsigned count = 0;
-    struct Dwarf_Fission_Per_CU_s *dfpcu = 0
-    struct Dwarf_Fixxion
-
-    if (!fiss->dfo_version) {
-        return DW_DLV_NO_ENTRY;
-    }
-    if (xu_sect_index >= DW_FISSION_SECT_COUNT) {
-        /*  Software error. Should not happen. */
-        _dwarf_error(dbg, err, DW_DLE_SIGNATURE_SECTION_NUMBER_WRONG);
-        return DW_DLV_ERROR;
-    }
-    count = fiss->dfo_entries;
-    /* Use the hash defined in  7.3.5.3. */
-BOGUS CODE HERE
-    dfpcu = fiss->dfo_per_cu
-    for(i = 0; i < count; ++i,++dfpcu) {
-        if (*signature_in == dfpcu->dfp_hash) {
-            struct Dwarf_Fission_Section_Offset_s *dffso =
-               &dfpcu->dfp_offsets[xu_sect_index];
-            *base_out = dffso->dfs_offset;
-            *size_out = dffso->dfs_size;
-            return  DW_DLV_OK;
-        }
-    }
-    _dwarf_error(dbg, err, DW_DLE_NO_SUCH_SIGNATURE_FOUND);
-    return DW_DLV_ERROR;
-}
-#endif
-
-
-
-
 /* zerohashkey used as all-zero-bits for comparison. */
 static Dwarf_Sig8 zerohashkey;
 
@@ -392,10 +342,8 @@ _dwarf_search_fission_for_key(Dwarf_Debug dbg,
     Dwarf_Unsigned percu_index = 0;
 
     key = *(Dwarf_Unsigned *)(key_in);
-    
     primary_hash = key & mask;
     hashprime =  (((key >>32) &mask) |1);
-
     while (1) {
         int res = dwarf_get_xu_hash_entry(xuhdr,
             primary_hash,&hashentry_key,
@@ -460,27 +408,27 @@ _dwarf_search_fission_for_offset(Dwarf_Debug dbg,
         Dwarf_Unsigned indexn = 0;
         res = dwarf_get_xu_hash_entry(xuhdr,m,&hash,&indexn,error);
         if (res != DW_DLV_OK) {
-                return res;
+            return res;
         }
         if (indexn == 0 &&
             !memcmp(&hash,&zerohashkey,sizeof(Dwarf_Sig8))) {
             /* Empty slot. */
             continue;
         }
-      
+
         Dwarf_Unsigned sec_offset = 0;
         Dwarf_Unsigned sec_size = 0;
         res = dwarf_get_xu_section_offset(xuhdr,
-                indexn,secnum_index,&sec_offset,&sec_size,error);
+            indexn,secnum_index,&sec_offset,&sec_size,error);
         if (res != DW_DLV_OK) {
-                return res;
+            return res;
         }
-            if (sec_offset != offset) {
-                continue;
-            }
-            *percu_index_out = indexn;
-            *key_out = hash;
-            return DW_DLV_OK;
+        if (sec_offset != offset) {
+            continue;
+        }
+        *percu_index_out = indexn;
+        *key_out = hash;
+        return DW_DLV_OK;
     }
     return DW_DLV_NO_ENTRY;
 }
@@ -540,9 +488,9 @@ transform_xu_to_dfp(Dwarf_Xu_Index_Header xuhdr,
         Dwarf_Unsigned sec_size = 0;
         unsigned l_as_sect = secnums[l];
         res = dwarf_get_xu_section_offset(xuhdr,n,l,
-                &sec_off,&sec_size,error);
+            &sec_off,&sec_size,error);
         if (res != DW_DLV_OK) {
-                return res;
+            return res;
         }
         percu_out->pcu_offset[l_as_sect] = sec_off;
         percu_out->pcu_size[l_as_sect] = sec_size;
@@ -553,9 +501,9 @@ transform_xu_to_dfp(Dwarf_Xu_Index_Header xuhdr,
     return DW_DLV_OK;
 }
 
-/*   This should only be called for a CU, never a TU.
-     For a TU the type hash is known while reading
-     the TU Header.  Not so for a CU. */
+/*  This should only be called for a CU, never a TU.
+    For a TU the type hash is known while reading
+    the TU Header.  Not so for a CU. */
 int
 _dwarf_get_debugfission_for_offset(Dwarf_Debug dbg,
     Dwarf_Off    offset_wanted,
@@ -584,7 +532,7 @@ _dwarf_get_debugfission_for_offset(Dwarf_Debug dbg,
         return sres;
     }
 
-    sres = transform_xu_to_dfp(xuhdr,percu_index,&key, 
+    sres = transform_xu_to_dfp(xuhdr,percu_index,&key,
         key_type,percu_out, error);
     return sres;
 
@@ -600,14 +548,23 @@ dwarf_get_debugfission_for_key(Dwarf_Debug dbg,
     int sres = 0;
     int sect_index = 0;
     Dwarf_Unsigned percu_index = 0;
-    
+
+    sres = _dwarf_load_debug_info(dbg,error);
+    if (sres == DW_DLV_ERROR) {
+        return sres;
+    }
+    sres = _dwarf_load_debug_types(dbg,error);
+    if (sres == DW_DLV_ERROR) {
+        return sres;
+    }
+
     sres = _dwarf_get_xuhdr(dbg,key_type, &xuhdr,error);
     if (sres != DW_DLV_OK) {
         return sres;
     }
 
     sres = _dwarf_search_fission_for_key(dbg,
-        xuhdr,key,&percu_index,error); 
+        xuhdr,key,&percu_index,error);
     if (sres != DW_DLV_OK) {
         return sres;
     }

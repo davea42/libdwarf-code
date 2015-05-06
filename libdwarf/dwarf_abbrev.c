@@ -36,11 +36,11 @@
     When we have a simple .o
     there is at least a hope of iterating through
     the abbrevs meaningfully without knowing
-    a CU context.  
+    a CU context.
 
     This often fails or gets incorrect info
     because there is no guarantee the .debug_abbrev
-    section is free of garbage bytes. 
+    section is free of garbage bytes.
 
     In an object with multiple CU/TUs the
     output is difficult/impossible to usefully interpret.
@@ -49,7 +49,7 @@
     to associate abbrevs with a CU.
 
 */
-    
+
 int
 dwarf_get_abbrev(Dwarf_Debug dbg,
     Dwarf_Unsigned offset,

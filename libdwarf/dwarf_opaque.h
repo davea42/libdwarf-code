@@ -149,7 +149,7 @@ struct Dwarf_CU_Context_s {
         to the  DWARF in this compilation unit. 2,3,4,... */
     Dwarf_Half cc_version_stamp;
     /*  cc_abbrev_offset is the section-global offset
-        of the .debug_abbrev section this CU uses. 
+        of the .debug_abbrev section this CU uses.
         Data from CU header. Includes DWP adjustment made
         as soon as we create a cu_context. */
     Dwarf_Unsigned cc_abbrev_offset;
@@ -163,31 +163,31 @@ struct Dwarf_CU_Context_s {
         May be debug_info or debug_types
         but those are distinct.
         Even in DWP this is set to true global offset
-        right away when cu_context created. 
+        right away when cu_context created.
         See cc_is_info flag. */
     Dwarf_Unsigned cc_debug_offset;
 
     /*  cc_signature is in the TU header
-        of a type unit of a TU DIE.  
+        of a type unit of a TU DIE.
         Ignore this field if cc_signature_present is zero.
 
         If cc_unit_type == DW_UT_compile or DW_UT_partial
-          the signature is a CU signature.
+            the signature is a CU signature.
         If cc_unit_type == DW_UT_type
-          the signature is a type signature. */
+            the signature is a type signature. */
     Dwarf_Sig8  cc_type_signature;
 
-    /*  cc_typeoffsets contains the 
+    /*  cc_typeoffsets contains the
         section-local DIE offset of the type
         the signature applies to if the cc_unit_type
         is DW_UT_type.  */
     Dwarf_Unsigned cc_type_signature_offset;
 
-    /*  For each CU and each TU 
+    /*  For each CU and each TU
         in a dwp package file there is
         is a hash and
-        a set of offsets indexed by DW_SECT_* id. 
-        Only one such set per CU or TU. 
+        a set of offsets indexed by DW_SECT_* id.
+        Only one such set per CU or TU.
         The data on all that is in cc_dwp_offsets
 
         If it is a TU the signature in cc_dwp_offsets
@@ -216,8 +216,8 @@ struct Dwarf_CU_Context_s {
         Fields listed in this order for a tiny space saving
         as opposed to greatest clarity.
     */
-    Dwarf_Bool cc_type_signature_present; /* Meaning type signature in TU header
-       or, for CU header, signature in CU DIE. */
+    Dwarf_Bool cc_type_signature_present; /* Meaning type signature
+        in TU header or, for CU header, signature in CU DIE. */
     Dwarf_Bool cc_addr_base_present;       /* Not TRUE in .dwo */
     Dwarf_Bool cc_str_ranges_base_present; /* Not TRUE in .dwo */
     Dwarf_Bool cc_str_offsets_base_present;
@@ -249,7 +249,7 @@ struct Dwarf_CU_Context_s {
         section CUs.
         For DWARF5 all DIEs are in .debug_info[.dwo]  */
 
-    Dwarf_Half cc_unit_type; /* DW_UT_type or DW_UT_compile 
+    Dwarf_Half cc_unit_type; /* DW_UT_type or DW_UT_compile
         or DW_UT_partial (from the CU header in DWARF5).
         Zero until the value is known.
         For DWARF 2,3,4 this is filled in initially
@@ -399,25 +399,24 @@ struct Dwarf_dbg_sect_s {
     in  Dwarf_Fission_Offsets_s will be zero.
 */
 struct Dwarf_Fission_Section_Offset_s {
-   Dwarf_Unsigned dfs_offset;
-   Dwarf_Unsigned dfs_size;
+    Dwarf_Unsigned dfs_offset;
+    Dwarf_Unsigned dfs_size;
 };
 
 struct Dwarf_Fission_Per_CU_s {
-   /*  dfp_index is the number of the compilation unit
-       in the .debug_info.dwo or 
-       .debug_types.dwo(DWARF4 only) sections. 
-       Index starts at 0.
-       May not match the location in
-       dfo_per_cu array of Dwarf_Fission_Per_CU_s.
-       */
-   unsigned       dfp_index;
+    /*  dfp_index is the number of the compilation unit
+        in the .debug_info.dwo or
+        .debug_types.dwo(DWARF4 only) sections.
+        Index starts at 0.
+        May not match the location in
+        dfo_per_cu array of Dwarf_Fission_Per_CU_s.  */
+    unsigned       dfp_index;
 
-   /* Called a signature in most places. */
-   Dwarf_Sig8     dfp_hash;
+    /* Called a signature in most places. */
+    Dwarf_Sig8     dfp_hash;
 
-   /* 0 unused, 1-8 are indexed by DW_SECT* */
-   struct Dwarf_Fission_Section_Offset_s dfp_offsets[DW_FISSION_SECT_COUNT];
+    /* 0 unused, 1-8 are indexed by DW_SECT* */
+    struct Dwarf_Fission_Section_Offset_s dfp_offsets[DW_FISSION_SECT_COUNT];
 };
 
 
@@ -443,9 +442,9 @@ struct Dwarf_Fission_Offsets_s {
     */
     const char *   dfo_type;
     Dwarf_Bool     dfo_is_info; /* TRUE if the section is
-       DWARF4 .debug_types for a "tu" . Else False. */
+        DWARF4 .debug_types for a "tu" . Else False. */
     Dwarf_Bool     dfo_is_type_unit; /* TRUE if this is
-       a type unit. DW_TAG_type_unit. */
+        a type unit. DW_TAG_type_unit. */
 
     Dwarf_Unsigned dfo_columns;
     Dwarf_Unsigned dfo_entries;
@@ -456,7 +455,7 @@ struct Dwarf_Fission_Offsets_s {
 
     /*  Hash table enables finding the index of
         into dfo_per_cu given a signature.
-        Data for tsearch functions. 
+        Data for tsearch functions.
         Initially, just using sequential search.
         is tsearch needed here?
     void * dfo_hash_to_index; */

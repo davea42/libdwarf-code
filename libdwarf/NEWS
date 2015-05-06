@@ -1,4 +1,8 @@
 May 01, 2015
+  dwarf_next_cu_header_d() is the latest extension for CU reading.
+  Earlier versions still supported.
+  dwarf_die_from_hash_signature() added so readers can
+  use a hash to access a dwp package file DIE.
   New support for some of DWARF5 and dwp package file reading.
   More testing and work needed.
 February 25, 2015

@@ -37,6 +37,35 @@
     The --check
     option does some interface and error checking.
 
+    Options new 03 May 2015:
+    These options do something different.
+    They use specific DWARF5 package file libdwarf operations
+    as a way to ensure libdwarf works properly (these
+    specials used by the libdwarf regresson test suite).
+    Examples given assuming dwp object fissionb-ld-new.dwp
+    from the regressiontests
+        --tuhash=hashvalue
+        example: --tuhash=b0dd19898e8aa823
+        It prints a DIE.
+
+        --cuhash=hashvalue
+        example: --cuhash=1e9983f631642b1a
+        It prints a DIE.
+
+        --cufissionhash=hashvalue
+        example: --tufissionhash=1e9983f631642b1a
+        It prints the fission data for this hash.
+
+        --tufissionhash=hashvalue
+        example: --tufissionhash=b0dd19898e8aa823
+        It prints the fission data for this hash.
+
+        --fissionfordie=cunumber
+        example: --fissionfordie=5
+        For CU number 5 (0 is the initial CU/TU)
+        it accesses the CU/TU DIE and then
+        uses that DIE to get the fission data.
+
     To use, try
         make
         ./simplereader simplereader
@@ -58,20 +87,201 @@ struct srcfilesdata {
     int srcfilesres;
 };
 
+#define TRUE 1
+#define FALSE 0
+
 static void read_cu_list(Dwarf_Debug dbg);
-static void print_die_data(Dwarf_Debug dbg, Dwarf_Die print_me,int level,
-   struct srcfilesdata *sf);
-static void get_die_and_siblings(Dwarf_Debug dbg, Dwarf_Die in_die,int in_level,
-   struct srcfilesdata *sf);
+static void print_die_data(Dwarf_Debug dbg, Dwarf_Die print_me,
+    int is_info,int level,
+    struct srcfilesdata *sf);
+static void get_die_and_siblings(Dwarf_Debug dbg, Dwarf_Die in_die,
+    int is_info, int in_level,
+    struct srcfilesdata *sf);
 static void resetsrcfiles(Dwarf_Debug dbg,struct srcfilesdata *sf);
 
 static int namesoptionon = 0;
 static int checkoptionon = 0;
+#if 0
+DW_UT_compile                   0x01  /* DWARF5 */
+DW_UT_type                      0x02  /* DWARF5 */
+DW_UT_partial                   0x03  /* DWARF5 */
+#endif
+
+static int stdrun = TRUE;
+
+static int unittype      = DW_UT_compile;
+static Dwarf_Bool g_is_info = TRUE;
+
+/*  dienumberr is used to count DIEs.
+    The point is to match fissionfordie. */
+static int dienumber = 0;
+static int fissionfordie = -1;
+/*  These hash representations have to be converted to Dwarf_Sig8
+    before use. */
+static const  char * cuhash = 0;
+static const  char * tuhash = 0;
+static const  char * cufissionhash = 0;
+static const  char * tufissionhash = 0;
+
+static unsigned  char_to_uns4bit(unsigned char c)
+{
+    unsigned v;
+    if( c >= '0' && c <= '9') {
+        v =  c - '0';
+    }
+    else if( c >= 'a' && c <= 'f') {
+        v =  c - 'a' + 10;
+    }
+    else if( c >= 'A' && c <= 'F') {
+        v =  c - 'A' + 10;
+    } else {
+        printf("Garbage hex char in %c 0x%x\n",c,c);
+        exit(1);
+    }
+    return v;
+}
+
+static void
+xfrm_to_sig8(const char *cuhash, Dwarf_Sig8 *hash_out)
+{
+    char localhash[16];
+    unsigned hashin_len = strlen(cuhash);
+    unsigned fixed_size = sizeof(localhash);
+    unsigned init_byte = 0;
+    unsigned i;
+
+    memset(localhash,0,fixed_size);
+    if (hashin_len > fixed_size) {
+        printf("FAIL: argument hash too long, len %u val:\"%s\"\n",hashin_len,
+            cuhash);
+        exit(1);
+    }
+    if (hashin_len  < fixed_size) {
+        unsigned add_zeros = fixed_size - hashin_len;
+        for ( ; add_zeros > 0; add_zeros--) {
+            localhash[init_byte] = '0';
+            init_byte++;
+        }
+    }
+    for (i = 0; i < hashin_len; ++i,++init_byte) {
+        localhash[init_byte] = cuhash[i];
+    }
+
+    /*  So now local hash as a full 16 bytes of hex characters with
+        any needed leading zeros.
+        transform it to 8 byte hex signature */
+
+    for (i = 0; i < sizeof(Dwarf_Sig8) ; ++i) {
+        unsigned char hichar = localhash[2*i];
+        unsigned char lochar = localhash[2*i+1];
+        hash_out->signature[i] =
+            (char_to_uns4bit(hichar) << 4)  |
+            char_to_uns4bit(lochar);
+    }
+    printf("Hex key = 0x");
+    for (i = 0; i < sizeof(Dwarf_Sig8) ; ++i) {
+        unsigned char c = hash_out->signature[i];
+        printf("%02x",c);
+    }
+    printf("\n");
+}
+
+static int
+startswithextractnum(const char *arg,const char *lookfor, int *numout)
+{
+    const char *s = 0;
+    unsigned prefixlen = strlen(lookfor);
+    int v = 0;
+    if(strncmp(arg,lookfor,prefixlen)) {
+        return FALSE;
+    }
+    s = arg+prefixlen;
+    /*  We are not making any attempt to deal with garbage.
+        Pass in good data... */
+    v = atoi(s);
+    *numout = v;
+    return TRUE;
+}
+
+static int
+startswithextractstring(const char *arg,const char *lookfor,
+    const char ** ptrout)
+{
+    const char *s = 0;
+    unsigned prefixlen = strlen(lookfor);
+    if(strncmp(arg,lookfor,prefixlen)) {
+        return FALSE;
+    }
+    s = arg+prefixlen;
+    *ptrout = strdup(s);
+    return TRUE;
+}
+
+void
+format_sig8_string(Dwarf_Sig8*data, char* str_buf,unsigned
+  buf_size)
+{
+    unsigned i = 0;
+    char *cp = str_buf;
+    if (buf_size <  19) {
+        printf("FAIL: internal coding error in test.\n");
+        exit(1);
+    }
+    strcpy(cp,"0x");
+    cp += 2;
+    buf_size -= 2;
+    for (; i < sizeof(data->signature); ++i,cp+=2,buf_size--) {
+        snprintf(cp, buf_size, "%02x",
+            (unsigned char)(data->signature[i]));
+    }
+    return;
+}
+
+static void
+print_debug_fission_header(struct Dwarf_Debug_Fission_Per_CU_s *fsd)
+{
+    const char * fissionsec = ".debug_cu_index";
+    unsigned i  = 0;
+    char str_buf[30];
+
+    if (!fsd || !fsd->pcu_type) {
+        /* No fission data. */
+        return;
+    }
+    printf("\n");
+    if (!strcmp(fsd->pcu_type,"tu")) {
+        fissionsec = ".debug_tu_index";
+    }
+    printf("  %-19s = %s\n","Fission section",fissionsec);
+    printf("  %-19s = 0x%"  DW_PR_XZEROS DW_PR_DUx "\n","Fission index ",
+        fsd->pcu_index);
+    format_sig8_string(&fsd->pcu_hash,str_buf,sizeof(str_buf));
+    printf("  %-19s = %s\n","Fission hash",str_buf);
+    /* 0 is always unused. Skip it. */
+    printf("  %-19s = %s\n","Fission entries","offset     size        DW_SECTn");
+    for( i = 1; i < DW_FISSION_SECT_COUNT; ++i)  {
+        const char *nstring = 0;
+        Dwarf_Unsigned off = 0;
+        Dwarf_Unsigned size = fsd->pcu_size[i];
+        int res = 0;
+        if (size == 0) {
+            continue;
+        }
+        res = dwarf_get_SECT_name(i,&nstring);
+        if (res != DW_DLV_OK) {
+            nstring = "Unknown SECT";
+        }
+        off = fsd->pcu_offset[i];
+        printf("  %-19s = 0x%08llx 0x%08llx %2u\n",
+            nstring,
+            off,size,i);
+    }
+}
+
 
 int
 main(int argc, char **argv)
 {
-
     Dwarf_Debug dbg = 0;
     int fd = -1;
     const char *filepath = "<stdin>";
@@ -79,6 +289,7 @@ main(int argc, char **argv)
     Dwarf_Error error;
     Dwarf_Handler errhand = 0;
     Dwarf_Ptr errarg = 0;
+    Dwarf_Sig8 hash8;
 
     if(argc < 2) {
         fd = 0; /* stdin */
@@ -89,6 +300,23 @@ main(int argc, char **argv)
                 namesoptionon=1;
             } else if(strcmp(argv[i],"--check") == 0) {
                 checkoptionon=1;
+            } else if(startswithextractstring(argv[i],"--tuhash=",&tuhash)) {
+                /* done */
+            } else if(startswithextractstring(argv[i],"--cuhash=",&cuhash)) {
+                /* done */
+            } else if(startswithextractstring(argv[i],"--tufissionhash=",
+                &tufissionhash)) {
+                /* done */
+            } else if(startswithextractstring(argv[i],"--cufissionhash=",
+                &cufissionhash)) {
+                /* done */
+            } else if(startswithextractnum(argv[i],"--isinfo=",&g_is_info)) {
+                /* done */
+            } else if(startswithextractnum(argv[i],"--type=",&unittype)) {
+                /* done */
+            } else if(startswithextractnum(argv[i],"--fissionfordie=",
+                &fissionfordie)) {
+                /* done */
             } else {
                 printf("Unknown argument \"%s\" ignored\n",argv[i]);
             }
@@ -107,7 +335,98 @@ main(int argc, char **argv)
         exit(1);
     }
 
-    read_cu_list(dbg);
+    if(cuhash) {
+        Dwarf_Die die;
+        stdrun = FALSE;
+        xfrm_to_sig8(cuhash,&hash8);
+        printf("\n");
+        printf("Getting die for CU key %s\n",cuhash);
+        res = dwarf_die_from_hash_signature(dbg,
+            &hash8,"cu",
+            &die,&error);
+        if (res == DW_DLV_OK) {
+            printf("Hash found.\n");
+            struct srcfilesdata sf;
+            sf.srcfilesres = DW_DLV_ERROR;
+            sf.srcfiles = 0;
+            sf.srcfilescount = 0;
+            print_die_data(dbg,die,g_is_info,0,&sf);
+            dwarf_dealloc(dbg,die, DW_DLA_DIE);
+        } else if (res == DW_DLV_NO_ENTRY) {
+            printf("cuhash DW_DLV_NO_ENTRY.\n");
+        } else { /* DW_DLV_ERROR */
+            printf("cuhash DW_DLV_ERROR %s\n",
+                dwarf_errmsg(error));
+        }
+    }
+    if(tuhash) {
+        Dwarf_Die die;
+        stdrun = FALSE;
+        xfrm_to_sig8(tuhash,&hash8);
+        printf("\n");
+        printf("Getting die for TU key %s\n",tuhash);
+        res = dwarf_die_from_hash_signature(dbg,
+            &hash8,"tu",
+            &die,&error);
+        if (res == DW_DLV_OK) {
+            printf("Hash found.\n");
+            struct srcfilesdata sf;
+            sf.srcfilesres = DW_DLV_ERROR;
+            sf.srcfiles = 0;
+            sf.srcfilescount = 0;
+            print_die_data(dbg,die,g_is_info,0,&sf);
+            dwarf_dealloc(dbg,die, DW_DLA_DIE);
+        } else if (res == DW_DLV_NO_ENTRY) {
+            printf("tuhash DW_DLV_NO_ENTRY.\n");
+        } else { /* DW_DLV_ERROR */
+            printf("tuhash DW_DLV_ERROR %s\n",
+                dwarf_errmsg(error));
+        }
+
+    }
+    if(cufissionhash) {
+        Dwarf_Debug_Fission_Per_CU  fisdata;
+        stdrun = FALSE;
+        memset(&fisdata,0,sizeof(fisdata));
+        xfrm_to_sig8(cufissionhash,&hash8);
+        printf("\n");
+        printf("Getting fission data for CU key %s\n",cufissionhash);
+        res = dwarf_get_debugfission_for_key(dbg,
+            &hash8,"cu",
+            &fisdata,&error);
+        if (res == DW_DLV_OK) {
+            printf("Hash found.\n");
+            print_debug_fission_header(&fisdata);
+        } else if (res == DW_DLV_NO_ENTRY) {
+            printf("cufissionhash DW_DLV_NO_ENTRY.\n");
+        } else { /* DW_DLV_ERROR */
+            printf("cufissionhash DW_DLV_ERROR %s\n",
+                dwarf_errmsg(error));
+        }
+    }
+    if(tufissionhash) {
+        Dwarf_Debug_Fission_Per_CU  fisdata;
+        stdrun = FALSE;
+        memset(&fisdata,0,sizeof(fisdata));
+        xfrm_to_sig8(tufissionhash,&hash8);
+        printf("\n");
+        printf("Getting fission data for TU key %s\n",tufissionhash);
+        res = dwarf_get_debugfission_for_key(dbg,
+            &hash8,"tu",
+            &fisdata,&error);
+        if (res == DW_DLV_OK) {
+            printf("Hash found.\n");
+            print_debug_fission_header(&fisdata);
+        } else if (res == DW_DLV_NO_ENTRY) {
+            printf("tufissionhash DW_DLV_NO_ENTRY.\n");
+        } else { /* DW_DLV_ERROR */
+            printf("tufissionhash DW_DLV_ERROR %s\n",
+                dwarf_errmsg(error));
+        }
+    }
+    if (stdrun) {
+        read_cu_list(dbg);
+    }
     res = dwarf_finish(dbg,&error);
     if(res != DW_DLV_OK) {
         printf("dwarf_finish failed!\n");
@@ -120,12 +439,19 @@ static void
 read_cu_list(Dwarf_Debug dbg)
 {
     Dwarf_Unsigned cu_header_length = 0;
-    Dwarf_Half version_stamp = 0;
+    Dwarf_Half     version_stamp = 0;
     Dwarf_Unsigned abbrev_offset = 0;
-    Dwarf_Half address_size = 0;
+    Dwarf_Half     address_size = 0;
+    Dwarf_Half     offset_size = 0;
+    Dwarf_Half     extension_size = 0;
+    Dwarf_Sig8     signature;
+    Dwarf_Unsigned typeoffset = 0;
     Dwarf_Unsigned next_cu_header = 0;
+    Dwarf_Half     header_cu_type = unittype;
+    Dwarf_Bool     is_info = g_is_info;
     Dwarf_Error error;
     int cu_number = 0;
+
 
     for(;;++cu_number) {
         struct srcfilesdata sf;
@@ -135,11 +461,16 @@ read_cu_list(Dwarf_Debug dbg)
         Dwarf_Die no_die = 0;
         Dwarf_Die cu_die = 0;
         int res = DW_DLV_ERROR;
-        res = dwarf_next_cu_header(dbg,&cu_header_length,
-            &version_stamp, &abbrev_offset, &address_size,
-            &next_cu_header, &error);
+        memset(&signature,0, sizeof(signature));
+        res = dwarf_next_cu_header_d(dbg,is_info,&cu_header_length,
+            &version_stamp, &abbrev_offset,
+            &address_size, &offset_size,
+            &extension_size,&signature,
+            &typeoffset, &next_cu_header,
+            &header_cu_type,&error);
         if(res == DW_DLV_ERROR) {
-            printf("Error in dwarf_next_cu_header\n");
+            char *em = dwarf_errmsg(error);
+            printf("Error in dwarf_next_cu_header: %s\n",em);
             exit(1);
         }
         if(res == DW_DLV_NO_ENTRY) {
@@ -147,9 +478,11 @@ read_cu_list(Dwarf_Debug dbg)
             return;
         }
         /* The CU will have a single sibling, a cu_die. */
-        res = dwarf_siblingof(dbg,no_die,&cu_die,&error);
+        res = dwarf_siblingof_b(dbg,no_die,is_info,
+            &cu_die,&error);
         if(res == DW_DLV_ERROR) {
-            printf("Error in dwarf_siblingof on CU die \n");
+            char *em = dwarf_errmsg(error);
+            printf("Error in dwarf_siblingof on CU die: %s\n",em);
             exit(1);
         }
         if(res == DW_DLV_NO_ENTRY) {
@@ -157,14 +490,15 @@ read_cu_list(Dwarf_Debug dbg)
             printf("no entry! in dwarf_siblingof on CU die \n");
             exit(1);
         }
-        get_die_and_siblings(dbg,cu_die,0,&sf);
+        get_die_and_siblings(dbg,cu_die,is_info,0,&sf);
         dwarf_dealloc(dbg,cu_die,DW_DLA_DIE);
         resetsrcfiles(dbg,&sf);
     }
 }
 
 static void
-get_die_and_siblings(Dwarf_Debug dbg, Dwarf_Die in_die,int in_level,
+get_die_and_siblings(Dwarf_Debug dbg, Dwarf_Die in_die,
+    int is_info,int in_level,
    struct srcfilesdata *sf)
 {
     int res = DW_DLV_ERROR;
@@ -172,7 +506,7 @@ get_die_and_siblings(Dwarf_Debug dbg, Dwarf_Die in_die,int in_level,
     Dwarf_Die child = 0;
     Dwarf_Error error;
 
-    print_die_data(dbg,in_die,in_level,sf);
+    print_die_data(dbg,in_die,is_info,in_level,sf);
 
     for(;;) {
         Dwarf_Die sib_die = 0;
@@ -182,12 +516,13 @@ get_die_and_siblings(Dwarf_Debug dbg, Dwarf_Die in_die,int in_level,
             exit(1);
         }
         if(res == DW_DLV_OK) {
-            get_die_and_siblings(dbg,child,in_level+1,sf);
+            get_die_and_siblings(dbg,child,is_info,in_level+1,sf);
         }
         /* res == DW_DLV_NO_ENTRY */
-        res = dwarf_siblingof(dbg,cur_die,&sib_die,&error);
+        res = dwarf_siblingof_b(dbg,cur_die,is_info,&sib_die,&error);
         if(res == DW_DLV_ERROR) {
-            printf("Error in dwarf_siblingof , level %d \n",in_level);
+            char *em = dwarf_errmsg(error);
+            printf("Error in dwarf_siblingof , level %d :%s \n",in_level,em);
             exit(1);
         }
         if(res == DW_DLV_NO_ENTRY) {
@@ -199,7 +534,7 @@ get_die_and_siblings(Dwarf_Debug dbg, Dwarf_Die in_die,int in_level,
             dwarf_dealloc(dbg,cur_die,DW_DLA_DIE);
         }
         cur_die = sib_die;
-        print_die_data(dbg,cur_die,in_level,sf);
+        print_die_data(dbg,cur_die,is_info,in_level,sf);
     }
     return;
 }
@@ -236,7 +571,8 @@ get_number(Dwarf_Attribute attr,Dwarf_Unsigned *val)
     return;
 }
 static void
-print_subprog(Dwarf_Debug dbg,Dwarf_Die die, int level,
+print_subprog(Dwarf_Debug dbg,Dwarf_Die die, 
+    int is_info, int level,
     struct srcfilesdata *sf,
     const char *name)
 {
@@ -366,7 +702,8 @@ print_subprog(Dwarf_Debug dbg,Dwarf_Die die, int level,
 }
 
 static void
-print_comp_dir(Dwarf_Debug dbg,Dwarf_Die die,int level, struct srcfilesdata *sf)
+print_comp_dir(Dwarf_Debug dbg,Dwarf_Die die,
+    int is_info, int level, struct srcfilesdata *sf)
 {
     int res;
     Dwarf_Error error = 0;
@@ -413,8 +750,11 @@ resetsrcfiles(Dwarf_Debug dbg,struct srcfilesdata *sf)
     sf->srcfilescount = 0;
 }
 
+
+
 static void
-print_die_data(Dwarf_Debug dbg, Dwarf_Die print_me,int level,
+print_die_data_i(Dwarf_Debug dbg, Dwarf_Die print_me,
+    int is_info,int level,
     struct srcfilesdata *sf)
 {
     char *name = 0;
@@ -422,9 +762,9 @@ print_die_data(Dwarf_Debug dbg, Dwarf_Die print_me,int level,
     Dwarf_Half tag = 0;
     const char *tagname = 0;
     int localname = 0;
+    int res = 0;
 
-    int res = dwarf_diename(print_me,&name,&error);
-
+    res = dwarf_diename(print_me,&name,&error);
     if(res == DW_DLV_ERROR) {
         printf("Error in dwarf_diename , level %d \n",level);
         exit(1);
@@ -448,7 +788,7 @@ print_die_data(Dwarf_Debug dbg, Dwarf_Die print_me,int level,
             if(namesoptionon) {
                 printf(    "<%3d> subprogram            : \"%s\"\n",level,name);
             }
-            print_subprog(dbg,print_me,level,sf,name);
+            print_subprog(dbg,print_me,is_info,level,sf,name);
         }
         if( (namesoptionon) && (tag == DW_TAG_compile_unit ||
             tag == DW_TAG_partial_unit ||
@@ -456,7 +796,7 @@ print_die_data(Dwarf_Debug dbg, Dwarf_Die print_me,int level,
 
             resetsrcfiles(dbg,sf);
             printf(    "<%3d> source file           : \"%s\"\n",level,name);
-            print_comp_dir(dbg,print_me,level,sf);
+            print_comp_dir(dbg,print_me,is_info,level,sf);
         }
     } else {
         printf("<%d> tag: %d %s  name: \"%s\"\n",level,tag,tagname,name);
@@ -466,5 +806,38 @@ print_die_data(Dwarf_Debug dbg, Dwarf_Die print_me,int level,
     }
 }
 
+static void
+print_die_data(Dwarf_Debug dbg, Dwarf_Die print_me,
+    int is_info,int level,
+    struct srcfilesdata *sf)
+{
 
+    if (fissionfordie != -1) {
+        Dwarf_Debug_Fission_Per_CU percu;
+        memset(&percu,0,sizeof(percu));
+        if (fissionfordie == dienumber) {
+            Dwarf_Error error = 0;
+            int res = 0;
+            res = dwarf_get_debugfission_for_die(print_me,
+                &percu,&error);
+            if(res == DW_DLV_ERROR) {
+                printf("FAIL: Error in dwarf_diename  on fissionfordie %d\n",
+                    fissionfordie);
+                exit(1);
+            }
+            if(res == DW_DLV_NO_ENTRY) {
+                printf("FAIL: no-entry in dwarf_diename  on fissionfordie %d\n",
+                    fissionfordie);
+                exit(1);
+            }
+            print_die_data_i(dbg,print_me,is_info,level,sf);
+            print_debug_fission_header(&percu);
+            exit(0);
+        }
+        dienumber++;
+        return;
+    }
+    print_die_data_i(dbg,print_me,is_info,level,sf);
+    dienumber++;
+}
 

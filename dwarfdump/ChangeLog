@@ -1,3 +1,8 @@
+2015-05-03  David Anderson
+     * print_die.c: Print the fission data from the
+       index section when we print cu header, not when printing cu DIE.
+       Moved cu header/cu die print code to functions, simplifying
+       calling code.
 2015-05-01  David Anderson
      * tag_attr.list: Added a DW_AT_signature and
        moved a couple attributes to match the standard-document

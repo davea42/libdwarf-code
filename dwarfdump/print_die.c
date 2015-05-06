@@ -330,18 +330,23 @@ print_debug_fission_header(struct Dwarf_Debug_Fission_Per_CU_s *fsd)
     unsigned i  = 0;
     struct esb_s hash_str;
 
+    if (!fsd || !fsd->pcu_type) {
+        /* No fission data. */
+        return;
+    }
+    printf("\n");
     esb_constructor(&hash_str);
     if (!strcmp(fsd->pcu_type,"tu")) {
         fissionsec = ".debug_tu_index";
     }
-    printf("  %-16s = %s\n","fission section",fissionsec);
-    printf("  %-16s = 0x%"  DW_PR_XZEROS DW_PR_DUx "\n","Fission index ",
+    printf("  %-19s = %s\n","Fission section",fissionsec);
+    printf("  %-19s = 0x%"  DW_PR_XZEROS DW_PR_DUx "\n","Fission index ",
         fsd->pcu_index);
     format_sig8_string(&fsd->pcu_hash,&hash_str);
-    printf("  %-16s = %s\n","Fission hash",esb_get_string(&hash_str));
+    printf("  %-19s = %s\n","Fission hash",esb_get_string(&hash_str));
     /* 0 is always unused. Skip it. */
     esb_destructor(&hash_str);
-    printf("  %-16s = %s\n","Fission entries","offset     size        DW_SECTn");
+    printf("  %-19s = %s\n","Fission entries","offset     size        DW_SECTn");
     for( i = 1; i < DW_FISSION_SECT_COUNT; ++i)  {
         const char *nstring = 0;
         Dwarf_Unsigned off = 0;
@@ -355,24 +360,65 @@ print_debug_fission_header(struct Dwarf_Debug_Fission_Per_CU_s *fsd)
             nstring = "Unknown SECT";
         }
         off = fsd->pcu_offset[i];
-        printf("  %-16s = 0x%"  DW_PR_XZEROS DW_PR_DUx " 0x%"
+        printf("  %-19s = 0x%"  DW_PR_XZEROS DW_PR_DUx " 0x%"
             DW_PR_XZEROS DW_PR_DUx " %2d\n",
             nstring,
             off,size,i);
     }
 }
 
+static void
+print_cu_hdr_cudie(Dwarf_Debug dbg,
+    Dwarf_Die cudie,
+    Dwarf_Unsigned overall_offset,
+    Dwarf_Unsigned offset )
+{
+    struct Dwarf_Debug_Fission_Per_CU_s fission_data;
+    int fission_data_result = 0; 
+
+    if (dense) {
+        printf("\n");
+        return;
+    } 
+    memset(&fission_data,0,sizeof(fission_data));
+    printf("\nCOMPILE_UNIT<header overall offset = 0x%"
+        DW_PR_XZEROS DW_PR_DUx ">", 
+        (Dwarf_Unsigned)(overall_offset - offset));
+#if 0
+    if (verbose) {
+        fission_data_result = dwarf_get_debugfission_for_die(cudie,
+            &fission_data,&err);
+        if (fission_data_result == DW_DLV_ERROR) {
+            print_error(dbg,"Failure looking for Debug Fission data",
+                fission_data_result, err);
+        }    
+        print_debug_fission_header(&fission_data);
+    }
+#endif
+    printf(":\n");
+}
+
+
 static  void
-print_std_cu_hdr(Dwarf_Unsigned cu_header_length,
+print_cu_hdr_std(Dwarf_Unsigned cu_header_length,
     Dwarf_Unsigned abbrev_offset,
     Dwarf_Half version_stamp,
     Dwarf_Half address_size,
     /* offset_size is often called length_size in libdwarf. */
     Dwarf_Half offset_size,
     int debug_fission_res,
+    Dwarf_Half cu_type,
     struct Dwarf_Debug_Fission_Per_CU_s * fsd)
 {
+    int res = 0;
+    const char *utname = 0;
+
+    res = dwarf_get_UT_name(cu_type,&utname);
+    if (res != DW_DLV_OK) {
+       utname = "ERROR";
+    }
     if (dense) {
+        printf("<%s>", "cu_header");
         printf(" %s<0x%" DW_PR_XZEROS  DW_PR_DUx
             ">", "cu_header_length",
             cu_header_length);
@@ -384,6 +430,8 @@ print_std_cu_hdr(Dwarf_Unsigned cu_header_length,
             address_size);
         printf(" %s<0x%02x>", "offset_size",
             offset_size);
+        printf(" %s<0x%02x %s>", "cu_type",
+            cu_type,utname);
         if (debug_fission_res == DW_DLV_OK) {
             struct esb_s hash_str;
             unsigned i = 0;
@@ -415,6 +463,7 @@ print_std_cu_hdr(Dwarf_Unsigned cu_header_length,
             }
         }
     } else {
+        printf("\nCU_HEADER:\n");
         printf("  %-16s = 0x%" DW_PR_XZEROS DW_PR_DUx
             " %" DW_PR_DUu
             "\n", "cu_header_length",
@@ -431,13 +480,15 @@ print_std_cu_hdr(Dwarf_Unsigned cu_header_length,
             address_size,address_size);
         printf("  %-16s = 0x%02x       %u\n", "offset_size",
             offset_size,offset_size);
+        printf("  %-16s = 0x%02x       %s\n", "cu_type",
+            cu_type,utname);
         if (debug_fission_res == DW_DLV_OK) {
             print_debug_fission_header(fsd);
         }
     }
 }
 static void
-print_std_cu_signature(Dwarf_Sig8 *signature,Dwarf_Unsigned typeoffset)
+print_cu_hdr_signature(Dwarf_Sig8 *signature,Dwarf_Unsigned typeoffset)
 {
     if (dense) {
         struct esb_s sig8str;
@@ -501,15 +552,17 @@ print_one_die_section(Dwarf_Debug dbg,Dwarf_Bool is_info)
         Dwarf_Die cu_die = 0;
         struct Dwarf_Debug_Fission_Per_CU_s fission_data;
         int fission_data_result = 0;
+        Dwarf_Half cu_type = 0;
 
         memset(&fission_data,0,sizeof(fission_data));
-        nres = dwarf_next_cu_header_c(dbg,
+        nres = dwarf_next_cu_header_d(dbg,
             is_info,
             &cu_header_length, &version_stamp,
             &abbrev_offset, &address_size,
             &length_size,&extension_size,
             &signature, &typeoffset,
-            &next_cu_offset, &err);
+            &next_cu_offset,
+            &cu_type, &err);
         if (nres == DW_DLV_NO_ENTRY) {
             dieprint_cu_offset = 0;
             return nres;
@@ -608,28 +661,23 @@ print_one_die_section(Dwarf_Debug dbg,Dwarf_Bool is_info)
 
         if (info_flag && do_print_dwarf) {
             if (verbose) {
-                if (dense) {
-                    printf("<%s>", "cu_header");
-                } else {
-                    printf("\nCU_HEADER:\n");
-                }
-                print_std_cu_hdr(cu_header_length,abbrev_offset,
+                print_cu_hdr_std(cu_header_length,abbrev_offset,
                     version_stamp,address_size,length_size,
-                    fission_data_result,&fission_data);
-                if (!is_info) {
-                    print_std_cu_signature(&signature,typeoffset);
+                    fission_data_result,cu_type,&fission_data);
+                if (cu_type == DW_UT_type) {
+                    print_cu_hdr_signature(&signature,typeoffset);
                 }
                 if (dense) {
                     printf("\n");
                 }
             } else {
-                if (!is_info) {
+                if (cu_type == DW_UT_type) {
                     if (dense) {
                         printf("<%s>", "cu_header");
                     } else {
                         printf("\nCU_HEADER:\n");
                     }
-                    print_std_cu_signature(&signature,typeoffset);
+                    print_cu_hdr_signature(&signature,typeoffset);
                     if (dense) {
                         printf("\n");
                     }
@@ -1078,36 +1126,7 @@ print_one_die(Dwarf_Debug dbg, Dwarf_Die die,
             die_stack[die_indent_level].already_printed_ = TRUE;
         }
         if (die_indent_level == 0) {
-            if (dense) {
-                printf("\n");
-            } else {
-                struct Dwarf_Debug_Fission_Per_CU_s fission_data;
-                int fission_data_result = 0;
-
-                memset(&fission_data,0,sizeof(fission_data));
-                printf("\nCOMPILE_UNIT<header overall offset = 0x%"
-                    DW_PR_XZEROS DW_PR_DUx ">",
-                    (Dwarf_Unsigned)(overall_offset - offset));
-                fission_data_result = dwarf_get_debugfission_for_die(die,
-                    &fission_data,&err);
-                if (fission_data_result == DW_DLV_ERROR) {
-                    print_error(dbg, "Failure looking for Debug Fission data",
-                        fission_data_result, err);
-                }
-                if (fission_data_result == DW_DLV_OK) {
-                    int cuindex =   DW_SECT_INFO;
-                    Dwarf_Unsigned foff = 0;
-
-                    if (!strcmp(fission_data.pcu_type,"tu")) {
-                        cuindex = DW_SECT_TYPES;
-                    }
-                    foff = fission_data.pcu_offset[cuindex];
-                    printf("<fissioncuoffset = 0x%"
-                        DW_PR_XZEROS DW_PR_DUx ">",
-                        foff);
-                }
-                printf(":\n");
-            }
+            print_cu_hdr_cudie(dbg,die, overall_offset, offset);
         } else if (local_symbols_already_began == FALSE &&
             die_indent_level == 1 && !dense) {
 

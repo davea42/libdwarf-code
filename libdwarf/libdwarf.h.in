@@ -117,7 +117,7 @@ typedef unsigned long long  Dwarf_Addr;     /* target memory address */
 
 typedef void*        Dwarf_Ptr;          /* host machine pointer */
 
-/* Used for DW_FORM_ref_sig8 and DW_AT_dwo_id. 
+/* Used for DW_FORM_ref_sig8 and DW_AT_dwo_id.
    It is not a string, it
    is 8 bytes of a signature one would use to find
    a type unit. See dwarf_formsig8()
@@ -1272,8 +1272,26 @@ dwarf_get_die_section_name(Dwarf_Debug /*dbg*/,
     Dwarf_Error * /*error*/);
 
 
+/*  dwarf_next_cu_header_d() traverses debug_types CU headers.
+    New in May, 2015.
+    */
+int dwarf_next_cu_header_d(Dwarf_Debug /*dbg*/,
+    Dwarf_Bool      /*is_info*/,
+    Dwarf_Unsigned* /*cu_header_length*/,
+    Dwarf_Half*     /*version_stamp*/,
+    Dwarf_Off*      /*abbrev_offset*/,
+    Dwarf_Half*     /*address_size*/,
+    Dwarf_Half*     /*length_size*/,
+    Dwarf_Half*     /*extension_size*/,
+    Dwarf_Sig8*     /*type signature*/,
+    Dwarf_Unsigned* /*typeoffset*/,
+    Dwarf_Unsigned* /*next_cu_header_offset*/,
+    Dwarf_Half    * /*header_cu_type*/,
+    Dwarf_Error*    /*error*/);
+
 /*  Die traversal operations.
     dwarf_next_cu_header_b() traverses debug_info CU headers.
+    Obsolete but supported.
     */
 int dwarf_next_cu_header_b(Dwarf_Debug /*dbg*/,
     Dwarf_Unsigned* /*cu_header_length*/,
@@ -1286,7 +1304,7 @@ int dwarf_next_cu_header_b(Dwarf_Debug /*dbg*/,
     Dwarf_Error*    /*error*/);
 
 /*  dwarf_next_cu_header_types() traverses debug_types CU headers.
-    New in October, 2011
+    New in October, 2011. Obsolete but supported May 2015.
     */
 int dwarf_next_cu_header_c(Dwarf_Debug /*dbg*/,
     Dwarf_Bool      /*is_info*/,
@@ -2519,7 +2537,7 @@ void dwarf_xu_header_free(Dwarf_Xu_Index_Header /*xuhdr*/);
 
 /*  Defined larger than necessary. This struct, being visible,
     will be difficult to change: binary compatibility. */
-#define DW_FISSION_SECT_COUNT 12 
+#define DW_FISSION_SECT_COUNT 12
 
 /*  User must allocate this struct, zero it,
     and pass a pointer to it
@@ -2529,11 +2547,11 @@ struct Dwarf_Debug_Fission_Per_CU_s  {
     /*  If this is not set (ie, not a CU/TU in  DWP Package File)
         then pcu_type will be NULL.  */
     const char   * pcu_type;
-    /* pcu_index is the index (range 1 to N )
-       into the tu/cu table of offsets and the table
-       of sizes.  1 to N as the zero index is reserved
-       for special purposes.  Not a value one
-       actually needs. */
+    /*  pcu_index is the index (range 1 to N )
+        into the tu/cu table of offsets and the table
+        of sizes.  1 to N as the zero index is reserved
+        for special purposes.  Not a value one
+        actually needs. */
     Dwarf_Unsigned pcu_index;
     Dwarf_Sig8     pcu_hash;  /* 8 byte  */
     /*  [0] has offset and size 0.

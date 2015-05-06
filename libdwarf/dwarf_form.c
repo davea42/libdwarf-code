@@ -262,7 +262,7 @@ dwarf_convert_to_global_offset(Dwarf_Attribute attr,
         /*  cc_debug_offset always has any DWP Package File
             offset included (when the cu_context created)
             so there is no extra work for DWP.
-      
+
         /*  globalize the offset */
         offset += cu_context->cc_debug_offset;
 
@@ -407,7 +407,7 @@ dwarf_formref(Dwarf_Attribute attr,
     return DW_DLV_OK;
 }
 
-static int 
+static int
 _dwarf_formsig8_internal(Dwarf_Attribute attr,
     int formexpected,
     int formerrnum,
@@ -461,7 +461,7 @@ dwarf_formsig8_const(Dwarf_Attribute attr,
     directly to the caller).  Not a string, an 8 byte
     MD5 hash.  This function is new in DWARF4 libdwarf.
 */
-int 
+int
 dwarf_formsig8(Dwarf_Attribute attr,
     Dwarf_Sig8 * returned_sig_bytes,
     Dwarf_Error* error)
@@ -1030,7 +1030,7 @@ _dwarf_extract_string_offset_via_str_offsets(Dwarf_Debug dbg,
         Dwarf_Unsigned fissoff = 0;
         Dwarf_Unsigned size = 0;
         fissoff = _dwarf_get_dwp_extra_offset(&cu_context->cc_dwp_offsets,
-             DW_SECT_STR_OFFSETS, &size);
+            DW_SECT_STR_OFFSETS, &size);
         offsetintable += fissoff;
     }
     end_offsetintable = offsetintable + cu_context->cc_length_size;

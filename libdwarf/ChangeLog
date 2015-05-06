@@ -43,6 +43,10 @@
      * libdwarf.h.in: Added dwarf_get_IDX_name() and 
        dwarf_get_IDX_name(). Added fifteen new DW_DLE error codes.
        New function dwarf_die_from_hash_signature().
+     * libdwarf2.1.mm: Rev 2.27. Documented interfaces 
+       dwarf_next_cu_header_d(),dwarf_die_from_hash_signature(),
+       dwarf_get_debugfission_for_die(),dwarf_get_debugfission_for_key().
+     * libdwarf2.1.pdf: Regenerated.
 2015-04-23  David Anderson
      * dwarf.h: Delete spurious blank lines.
      * dwarf_base_types.h:  New defines. DW_CIE_VERSION* DW_CU_VERSION**

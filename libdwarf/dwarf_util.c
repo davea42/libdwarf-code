@@ -42,7 +42,7 @@ Dwarf_Bool
 _dwarf_file_has_debug_fission_cu_index(Dwarf_Debug dbg)
 {
     if(!dbg) {
-         return FALSE;
+        return FALSE;
     }
     if (dbg->de_cu_hashindex_data) {
         return TRUE;
@@ -53,7 +53,7 @@ Dwarf_Bool
 _dwarf_file_has_debug_fission_tu_index(Dwarf_Debug dbg)
 {
     if(!dbg) {
-         return FALSE;
+        return FALSE;
     }
     if (dbg->de_tu_hashindex_data ) {
         return TRUE;
@@ -66,7 +66,7 @@ Dwarf_Bool
 _dwarf_file_has_debug_fission_index(Dwarf_Debug dbg)
 {
     if(!dbg) {
-         return FALSE;
+        return FALSE;
     }
     if (dbg->de_cu_hashindex_data ||
         dbg->de_tu_hashindex_data) {
@@ -424,9 +424,9 @@ _dwarf_get_abbrev_for_code(Dwarf_CU_Context cu_context, Dwarf_Unsigned code)
         abbrev_ptr = cu_context->cc_last_abbrev_ptr;
         end_abbrev_ptr = cu_context->cc_last_abbrev_endptr;
     } else {
-        /*  This is ok because cc_abbrev_offset includes DWP 
+        /*  This is ok because cc_abbrev_offset includes DWP
             offset if appropriate. */
-        abbrev_ptr = dbg->de_debug_abbrev.dss_data + 
+        abbrev_ptr = dbg->de_debug_abbrev.dss_data +
             cu_context->cc_abbrev_offset;
 
         if (cu_context->cc_dwp_offsets.pcu_type)  {
@@ -435,7 +435,7 @@ _dwarf_get_abbrev_for_code(Dwarf_CU_Context cu_context, Dwarf_Unsigned code)
             Dwarf_Unsigned size = 0;
             /* Ignore the offset returned. Already in cc_abbrev_offset. */
             _dwarf_get_dwp_extra_offset(&cu_context->cc_dwp_offsets,
-                 DW_SECT_ABBREV,&size);
+                DW_SECT_ABBREV,&size);
             /*  ASSERT: size != 0 */
             end_abbrev_ptr = abbrev_ptr + size;
         } else {
