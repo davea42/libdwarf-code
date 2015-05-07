@@ -3,8 +3,8 @@ May 01, 2015
   Earlier versions still supported.
   dwarf_die_from_hash_signature() added so readers can
   use a hash to access a dwp package file DIE.
-  New support for some of DWARF5 and dwp package file reading.
-  More testing and work needed.
+  New support for some of DWARF5 and for dwp debug-fission
+  package file reading.
 February 25, 2015
   Now gennames uses dwgetopt() instead of getopt.
   So it will more easily build where no getopt() available.
