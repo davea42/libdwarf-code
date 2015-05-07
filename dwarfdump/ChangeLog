@@ -1,4 +1,5 @@
 2015-05-07  David Anderson
+     * common.c, dwarfdump.c: Update version string.
      * print_die.c: Print DW_AT_dwo_id properly as a Dwarf_Sig8 value.
 2015-05-03  David Anderson
      * print_die.c: Print the fission data from the
