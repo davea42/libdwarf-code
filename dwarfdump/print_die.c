@@ -3859,8 +3859,6 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
             case DW_AT_count:
             case DW_AT_stmt_list:
             case DW_AT_MIPS_fde:
-            case DW_AT_GNU_dwo_id:
-            case DW_AT_dwo_id:
                 {  int show_form_here = 0;
                 wres = get_small_encoding_integer_and_name(dbg,
                     attrib,
@@ -3938,8 +3936,27 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
                 } else {
                     print_error(dbg,"Cannot get DW_AT_const_value ",wres,err);
                 }
-
-
+                break;
+            case DW_AT_GNU_dwo_id:
+            case DW_AT_dwo_id:
+                {
+                Dwarf_Sig8 v;
+                memset(&v,0,sizeof(v));
+                const char *hash_str;
+                wres = dwarf_formsig8_const(attrib,&v,&err);
+                if (wres == DW_DLV_OK){
+                   struct esb_s t; 
+                   esb_constructor(&t);
+                   format_sig8_string(&v,&t);
+                   esb_append(esbp,esb_get_string(&t));
+                   esb_destructor(&t);
+                } else if (wres == DW_DLV_NO_ENTRY) {
+                    /* nothing? */
+                    esb_append(esbp,"Impossible: no entry for formsig8 dwo_id");
+                } else {
+                    print_error(dbg,"Cannot get DW_AT_const_value ",wres,err);
+                }
+                }
                 break;
             case DW_AT_upper_bound:
             case DW_AT_lower_bound:
