@@ -1157,9 +1157,6 @@ _dwarf_pro_generate_debugframe(Dwarf_P_Debug dbg, Dwarf_Error * error)
         int afl_length = 0;
         int res = 0;
         int v0_augmentation = 0;
-#if 0
-        unsigned char *fde_start_point = 0;
-#endif
         char afl_buff[ENCODE_SPACE_NEEDED];
 
         /* Find the CIE associated with this fde. */
@@ -1253,9 +1250,6 @@ _dwarf_pro_generate_debugframe(Dwarf_P_Debug dbg, Dwarf_Error * error)
         /* write out fde */
         GET_CHUNK(dbg, elfsectno, data, fde_length + BEGIN_LEN_SIZE,
             error);
-#if 0
-        fde_start_point = data;
-#endif
         du = fde_length;
         {
             if (extension_size) {
@@ -1348,21 +1342,6 @@ _dwarf_pro_generate_debugframe(Dwarf_P_Debug dbg, Dwarf_Error * error)
                 WRITE_UNALIGNED(dbg, (void *) data, (const void *) &db,
                     sizeof(db), sizeof(Dwarf_Ubyte));
                 data += sizeof(Dwarf_Ubyte);
-#if 0
-                if (curinst->dfp_sym_index) {
-                    int res = dbg->de_reloc_name(dbg,
-                        DEBUG_FRAME,
-                        /* r_offset = */
-                        (data - fde_start_point) + cur_off + uwordb_size,
-                        curinst->dfp_sym_index,
-                        dwarf_drt_data_reloc,
-                        upointer_size);
-                    if (res != DW_DLV_OK) {
-                        _dwarf_p_error(dbg, error, DW_DLE_ALLOC_FAIL);
-                        return (0);
-                    }
-                }
-#endif
                 memcpy((void *) data,
                     (const void *) curinst->dfp_args,
                     curinst->dfp_nbytes);

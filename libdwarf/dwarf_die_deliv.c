@@ -210,58 +210,6 @@ _dwarf_get_fission_addition_die(Dwarf_Die die, int dw_sect_index,
     return DW_DLV_OK;
 }
 
-#if 0
-/*  FIXME: eturn DW_DLV_OK etc instead.
-    FIXME: check dw_sect_index.
-    FIXME: verify hash
-*/
-
-Dwarf_Unsigned
-_dwarf_get_fission_addition(Dwarf_Debug dbg,
-   int cu_is_info,Dwarf_Off cu_offset,int dw_sect_index)
-{
-    /* We may not yet know the CU DIE hash, so we cannot use it
-        to identify the offset. */
-    struct Dwarf_Fission_Offsets_s *fissiondata = 0;
-    unsigned info_index = 0;
-    struct Dwarf_Fission_Per_CU_s *percu_base = 0;
-    unsigned u = 0;
-    Dwarf_Unsigned info_offset = 0;
-
-    fissiondata = cu_is_info?
-        &dbg->de_cu_fission_data: &dbg->de_tu_fission_data;
-    if (fissiondata->dfo_version == 0) {
-        /*  Not  a DWP debugfission file.
-            Because we have some .debug_info or _types
-            without any fission data for existing dbg data
-            there is no fission data at all. */
-        return 0;
-    }
-    info_index = cu_is_info?DW_SECT_INFO:DW_SECT_TYPES;
-    if (dw_sect_index == DW_SECT_INFO && !cu_is_info ) {
-        dw_sect_index = info_index;
-    }
-    percu_base = fissiondata->dfo_per_cu;
-    /*  The following is sequential search.
-        We should probably use a faster search
-        mechanism as a dwp can have thousands
-        of units.   */
-    for (u=0; u < fissiondata->dfo_entries; u++) {
-        Dwarf_Unsigned fissoff = 0;
-        struct Dwarf_Fission_Per_CU_s *percu = percu_base+u;
-        Dwarf_Unsigned baseoff = percu->dfp_offsets[info_index].dfs_offset;
-        /*  FIXME: check dw_sect_index? */
-        if (cu_offset !=  baseoff) {
-            continue;
-        }
-        fissoff = percu->dfp_offsets[dw_sect_index].dfs_offset;
-        return fissoff;
-    }
-    return 0;
-}
-#endif
-
-
 
 /*  This function is used to create a CU Context for
     a compilation-unit that begins at offset in
@@ -1084,7 +1032,7 @@ dwarf_ptr_CU_offset(Dwarf_CU_Context cu_context,
     *cu_off = (di_ptr - dataptr);
     return DW_DLV_OK;
 }
-#if 0
+#if 0 /* FOR DEBUGGING */
 /* Just for debug purposes */
 void print_sib_offset(Dwarf_Die sibling)
 {

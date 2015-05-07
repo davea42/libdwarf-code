@@ -91,11 +91,6 @@ dwgetopt(int nargc, char * const nargv[], const char *ostr)
     static const char *place = EMSG;/* option letter processing */
     char *oli;                      /* option letter list index */
 
-#if 0
-    _DIAGASSERT(nargv != NULL);
-    _DIAGASSERT(ostr != NULL);
-#endif
-
     if (optreset || *place == 0) { /* update scanning pointer */
         optreset = 0;
         place = nargv[optind];

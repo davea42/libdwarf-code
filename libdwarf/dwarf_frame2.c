@@ -173,7 +173,7 @@ validate_length(Dwarf_Debug dbg,
 }
 
 
-#if 0
+#if 0 /* FOR DEBUGGING */
 /* For debugging only. */
 static void
 print_prefix(struct cie_fde_prefix_s *prefix, int line)
@@ -1080,7 +1080,7 @@ dwarf_create_cie_from_start(Dwarf_Debug dbg,
    aug_data_len - length of areas aug_data points to.
 
 */
-#if 0
+#if 0  /* FOR DEBUGGING */
 /* For debugging only. */
 void
 dump_bytes(Dwarf_Small * start, long len)

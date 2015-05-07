@@ -61,7 +61,7 @@ static void dwarf_init_reg_rules_dw3(struct Dwarf_Regtable_Entry3_s *base,
     unsigned first, unsigned last,int initial_value);
 
 
-#if 0
+#if 0  /* FOR DEBUGGING */
 /* Only used for debugging libdwarf. */
 static void dump_frame_rule(char *msg,
     struct Dwarf_Reg_Rule_s *reg_rule);
@@ -2192,7 +2192,7 @@ dwarf_get_fde_augmentation_data(Dwarf_Fde fde,
 }
 
 
-#if 0
+#if 0  /* FOR DEBUGGING */
 /* Used solely for debugging libdwarf. */
 static void
 dump_frame_rule(char *msg, struct Dwarf_Reg_Rule_s *reg_rule)
