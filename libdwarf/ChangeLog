@@ -1,3 +1,14 @@
+2015-06-15  Carlos Alberto Enciso
+     * dwarf_elf_access.c: For Windows version, some compilers generate
+       EM_PPC64 elf type, but the generated code is 32 bits. Set the correct
+       value for 'dbg->de_pointer_size'.
+     * dwarf_init_finish.c: For Windows version, remove the incorrect hard
+       code value for 'dbg->de_pointer_size'.
+     * dwarf_form.c: Add missing 'return' statement in the functions
+       dwarf_formsig8_const() and dwarf_formsig8().
+     * dwarf_xu_indec.c: Fix some C99 issues with local variable declarations
+       in _dwarf_search_fission_for_offset().
+     * dwgetopt.h: Add the guard 'extern "C"'.
 2015-05-08  David Anderson
      * dwarf_die_deliv.c, dwarf_frame2.c, dwarf_frame2.c,
        dwarf_frame.c: The debugging-only #if 0 now have comments

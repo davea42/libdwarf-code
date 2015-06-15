@@ -35,6 +35,10 @@
 * SUCH DAMAGE.
 */
 
+#ifdef __cplusplus
+extern "C" {
+#endif /* __cplusplus */
+
 extern int opterr;
 extern int    optind;
 extern int    optopt;
@@ -42,3 +46,7 @@ extern int    optreset;
 extern char *optarg;
 
 int dwgetopt(int nargc, char * const nargv[], const char *ostr);
+
+#ifdef __cplusplus
+}
+#endif /* __cplusplus */

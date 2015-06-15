@@ -28,6 +28,12 @@
 // irepattrtodbg.cc
 
 #include "config.h"
+
+/* Windows specific header files */
+#ifdef HAVE_STDAFX_H
+#include "stdafx.h"
+#endif /* HAVE_STDAFX_H */
+
 #include <unistd.h>
 #include <stdlib.h> // for exit
 #include <iostream>

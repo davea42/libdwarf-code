@@ -70,6 +70,13 @@
         make
         ./simplereader simplereader
 */
+#include "config.h"
+
+/* Windows specific header files */
+#ifdef HAVE_STDAFX_H
+#include "stdafx.h"
+#endif /* HAVE_STDAFX_H */
+
 #include <sys/types.h> /* For open() */
 #include <sys/stat.h>  /* For open() */
 #include <fcntl.h>     /* For open() */
@@ -98,6 +105,10 @@ static void get_die_and_siblings(Dwarf_Debug dbg, Dwarf_Die in_die,
     int is_info, int in_level,
     struct srcfilesdata *sf);
 static void resetsrcfiles(Dwarf_Debug dbg,struct srcfilesdata *sf);
+
+/*  Use a generic call to open the file, due to issues with Windows */
+int open_a_file(const char * name);
+void close_a_file(int f);
 
 static int namesoptionon = 0;
 static int checkoptionon = 0;
@@ -322,7 +333,7 @@ main(int argc, char **argv)
             }
         }
         filepath = argv[i];
-        fd = open(filepath,O_RDONLY);
+        fd = open_a_file(filepath);
     }
     if(argc > 2) {
     }
@@ -345,8 +356,8 @@ main(int argc, char **argv)
             &hash8,"cu",
             &die,&error);
         if (res == DW_DLV_OK) {
-            printf("Hash found.\n");
             struct srcfilesdata sf;
+            printf("Hash found.\n");
             sf.srcfilesres = DW_DLV_ERROR;
             sf.srcfiles = 0;
             sf.srcfilescount = 0;
@@ -369,8 +380,8 @@ main(int argc, char **argv)
             &hash8,"tu",
             &die,&error);
         if (res == DW_DLV_OK) {
-            printf("Hash found.\n");
             struct srcfilesdata sf;
+            printf("Hash found.\n");
             sf.srcfilesres = DW_DLV_ERROR;
             sf.srcfiles = 0;
             sf.srcfilescount = 0;
@@ -431,7 +442,7 @@ main(int argc, char **argv)
     if(res != DW_DLV_OK) {
         printf("dwarf_finish failed!\n");
     }
-    close(fd);
+    close_a_file(fd);
     return 0;
 }
 
@@ -454,13 +465,13 @@ read_cu_list(Dwarf_Debug dbg)
 
 
     for(;;++cu_number) {
+        Dwarf_Die no_die = 0;
+        Dwarf_Die cu_die = 0;
+        int res = DW_DLV_ERROR;
         struct srcfilesdata sf;
         sf.srcfilesres = DW_DLV_ERROR;
         sf.srcfiles = 0;
         sf.srcfilescount = 0;
-        Dwarf_Die no_die = 0;
-        Dwarf_Die cu_die = 0;
-        int res = DW_DLV_ERROR;
         memset(&signature,0, sizeof(signature));
         res = dwarf_next_cu_header_d(dbg,is_info,&cu_header_length,
             &version_stamp, &abbrev_offset,
@@ -841,3 +852,29 @@ print_die_data(Dwarf_Debug dbg, Dwarf_Die print_me,
     dienumber++;
 }
 
+int
+open_a_file(const char * name)
+{
+    /* Set to a file number that cannot be legal. */
+    int f = -1;
+
+#if defined(__CYGWIN__) || defined(WIN32)
+    /*  It is not possible to share file handles
+        between applications or DLLs. Each application has its own
+        file-handle table. For two applications to use the same file
+        using a DLL, they must both open the file individually.
+        Let the 'libelf' dll to open and close the file.  */
+
+    /* For WIN32 open the file as binary */
+    f = elf_open(name, O_RDONLY | O_BINARY);
+#else
+    f = open(name, O_RDONLY);
+#endif
+    return f;
+}
+
+void
+close_a_file(int f)
+{
+    close(f);
+}

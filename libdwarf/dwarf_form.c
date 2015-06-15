@@ -451,7 +451,7 @@ dwarf_formsig8_const(Dwarf_Attribute attr,
     Dwarf_Sig8 * returned_sig_bytes,
     Dwarf_Error* error)
 {
-    _dwarf_formsig8_internal(attr, DW_FORM_data8,
+    return _dwarf_formsig8_internal(attr, DW_FORM_data8,
         DW_DLE_ATTR_FORM_NOT_DATA8,
         returned_sig_bytes,error);
 }
@@ -466,7 +466,7 @@ dwarf_formsig8(Dwarf_Attribute attr,
     Dwarf_Sig8 * returned_sig_bytes,
     Dwarf_Error* error)
 {
-    _dwarf_formsig8_internal(attr, DW_FORM_ref_sig8,
+    return _dwarf_formsig8_internal(attr, DW_FORM_ref_sig8,
         DW_DLE_BAD_REF_SIG8_FORM,
         returned_sig_bytes,error);
 }

@@ -31,6 +31,12 @@
 // an object intended to hold all the dwarf data.
 
 #include "config.h"
+
+/* Windows specific header files */
+#ifdef HAVE_STDAFX_H
+#include "stdafx.h"
+#endif /* HAVE_STDAFX_H */
+
 #include <unistd.h>
 #include <stdlib.h> // for exit
 #include <iostream>
@@ -62,6 +68,11 @@ static void readMacroDataFromBinary(Dwarf_Debug dbg, IRepresentation & irep);
 static void readCUDataFromBinary(Dwarf_Debug dbg, IRepresentation & irep);
 static void readGlobals(Dwarf_Debug dbg, IRepresentation & irep);
 
+/*  Use a generic call to open the file, due to issues with Windows */
+extern int open_a_file(const char * name);
+extern int create_a_file(const char * name);
+extern void close_a_file(int f);
+
 static void errprint(Dwarf_Error err)
 {
     cerr << "Error num: " << dwarf_errno(err) << " " << dwarf_errmsg(err) << endl;
@@ -87,7 +98,7 @@ createIrepFromBinary(const std::string &infile,
 {
     Dwarf_Debug dbg = 0;
     Dwarf_Error err;
-    int fd = open(infile.c_str(),O_RDONLY, 0);
+    int fd = open_a_file(infile.c_str());
     if(fd < 0 ) {
         cerr << "Unable to open " << infile <<
             " for reading." << endl;
@@ -100,7 +111,7 @@ createIrepFromBinary(const std::string &infile,
         &dbg,
         &err);
     if(res != DW_DLV_OK) {
-        close(fd);
+        close_a_file(fd);
         cerr << "Error init-ing " << infile <<
             " for reading." << endl;
         exit(1);

@@ -2579,7 +2579,7 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
         esb_append(&valname, esb_get_string(&lesb));
         esb_destructor(&lesb);
 
-        if (check_forward_decl || check_self_references) {
+        if (check_forward_decl || check_self_references || search_is_on) {
             Dwarf_Off die_off = 0;
             Dwarf_Off ref_off = 0;
             int res = 0;
@@ -2652,6 +2652,34 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
                             "Invalid forward reference to DIE: ",
                             esb_get_string(&valname));
                     }
+                }
+            }
+
+            /*  When doing search, if the attribute is DW_AT_specification or
+                DW_AT_abstract_origin, get any name associated with the DIE
+                referenced in the offset. The 2 more typical cases are:
+                Member functions, where 2 DIES are generated:
+                    DIE for the declaration and DIE for the definition
+                    and connected via the DW_AT_specification.
+                Inlined functions, where 2 DIES are generated:
+                    DIE for the concrete instance and DIE for the abstract
+                    instance and connected via the DW_AT_abstract_origin.
+            */
+            if (search_is_on && (attr == DW_AT_specification ||
+                                 attr == DW_AT_abstract_origin)) {
+                Dwarf_Die ref_die = 0;
+                /* Follow reference chain, looking for the DIE name */
+                res = dwarf_offdie_b(dbg,ref_off,is_info,&ref_die,&err);
+                if (res == DW_DLV_OK) {
+                    /* Get the DIE name */
+                    char *name = 0;
+                    res = dwarf_diename(ref_die,&name,&err);
+                    if (res == DW_DLV_OK) {
+                        esb_empty_string(&valname);
+                        esb_append(&valname,name);
+                    }
+                    /* Release the allocated DIE */
+                    dwarf_dealloc(dbg,ref_die,DW_DLA_DIE);
                 }
             }
         }
@@ -3941,8 +3969,8 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
             case DW_AT_dwo_id:
                 {
                 Dwarf_Sig8 v;
-                memset(&v,0,sizeof(v));
                 const char *hash_str;
+                memset(&v,0,sizeof(v));
                 wres = dwarf_formsig8_const(attrib,&v,&err);
                 if (wres == DW_DLV_OK){
                    struct esb_s t; 

@@ -24,11 +24,17 @@
   SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 */
-// createirepfrombinary.cc
+// createirepformfrombinary.cc
 // Reads an object and inserts its dwarf data into
 // an object intended to hold all the dwarf data.
 
 #include "config.h"
+
+/* Windows specific header files */
+#ifdef HAVE_STDAFX_H
+#include "stdafx.h"
+#endif /* HAVE_STDAFX_H */
+
 #include <unistd.h>
 #include <stdlib.h> // for exit
 #include <iostream>

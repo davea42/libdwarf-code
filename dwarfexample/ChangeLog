@@ -1,3 +1,8 @@
+2015-06-15  Carlos Alberto Enciso
+     * simplereader.c:  Fix some C99 issues with local variables declaration
+       in main() and read_cu_list().
+       Include the 'config.h' and 'stdafx.h' headers for Windows port.
+       Include the Dwarfdump generic open_a_file() and close_a_file() calls.
 2015-05-05  David Anderson
      * simplereader.c:  Added code to help testing
        in libdwarf DebugFission Package File interfaces.

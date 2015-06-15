@@ -55,6 +55,12 @@
 //         Default is -1 which won't match anything.
 
 #include "config.h"
+
+/* Windows specific header files */
+#ifdef HAVE_STDAFX_H
+#include "stdafx.h"
+#endif /* HAVE_STDAFX_H */
+
 #include <unistd.h>
 #include <stdlib.h> // for exit
 #include <iostream>
@@ -68,9 +74,7 @@
 #include <sys/stat.h> //open
 #include <fcntl.h> //open
 #include "general.h"
-extern "C" {
 #include "dwgetopt.h"
-};
 #include "gelf.h"
 #include "strtabdata.h"
 #include "dwarf.h"
@@ -95,6 +99,10 @@ static string infile;
 static enum  WhichInputSource { OptNone, OptReadText,OptReadBin,OptPredefined}
     whichinput(OptPredefined);
 
+/*  Use a generic call to open the file, due to issues with Windows */
+int open_a_file(const char * name);
+int create_a_file(const char * name);
+void close_a_file(int f);
 
 // This is a global so thet CallbackFunc can get to it
 // If we used the dwarf_producer_init_c() user_data pointer
@@ -424,8 +432,7 @@ main(int argc, char **argv)
 static void
 write_object_file(Dwarf_P_Debug dbg, IRepresentation &irep)
 {
-    int mode =  S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH;
-    int fd = open(outfile.c_str(),O_WRONLY|O_CREAT|O_TRUNC, mode);
+    int fd = create_a_file(outfile.c_str());
     if(fd < 0 ) {
         cerr << "dwarfgen: Unable to open " << outfile <<
             " for writing." << endl;
@@ -482,7 +489,7 @@ write_object_file(Dwarf_P_Debug dbg, IRepresentation &irep)
     cout << " output image size in bytes " << ures << endl;
 
     elf_end(elf);
-    close(fd);
+    close_a_file(fd);
 }
 
 
@@ -714,4 +721,53 @@ write_generated_dbg(Dwarf_P_Debug dbg,Elf * elf,IRepresentation &irep)
             }
         }
     }
+}
+
+int
+open_a_file(const char * name)
+{
+    /* Set to a file number that cannot be legal. */
+    int f = -1;
+
+#if defined(__CYGWIN__) || defined(WIN32)
+    /*  It is not possible to share file handles
+        between applications or DLLs. Each application has its own
+        file-handle table. For two applications to use the same file
+        using a DLL, they must both open the file individually.
+        Let the 'libelf' dll to open and close the file.  */
+
+    /* For WIN32 open the file as binary */
+    f = elf_open(name, O_RDONLY | O_BINARY);
+#else
+    f = open(name, O_RDONLY);
+#endif
+    return f;
+}
+
+int
+create_a_file(const char * name)
+{
+    /* Set to a file number that cannot be legal. */
+    int f = -1;
+
+#if defined(__CYGWIN__) || defined(WIN32)
+    /*  It is not possible to share file handles
+        between applications or DLLs. Each application has its own
+        file-handle table. For two applications to use the same file
+        using a DLL, they must both open the file individually.
+        Let the 'libelf' dll to open and close the file.  */
+
+    /* For WIN32 create the file as binary */
+    f = elf_open(name, O_WRONLY | O_CREAT | O_BINARY);
+#else
+    int mode =  S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH;
+    f = open(name,O_WRONLY | O_CREAT | O_TRUNC, mode);
+#endif
+    return f;
+}
+
+void
+close_a_file(int f)
+{
+    close(f);
 }

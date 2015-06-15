@@ -34,6 +34,7 @@
 #endif /* HAVE_STDAFX_H */
 
 #define DWARFDUMP_VERSION " Thu May  7 08:43:38 PDT 2015  "
+#define RELEASE_DATE      "20150507"
 
 /* The Linux/Unix version does not want a version string to print
    unless -V is on the command line. */
@@ -46,9 +47,9 @@ print_version_details(const char * name,int alwaysprint)
 #else
     char *acType = "Release";
 #endif /* _DEBUG */
-    static char acVersion[32];
+    static char acVersion[64];
     snprintf(acVersion,sizeof(acVersion),
-        "[%s %s %s]",__DATE__,__TIME__,acType);
+        "[%s %s %s (%s)]",__DATE__,__TIME__,acType,RELEASE_DATE);
     printf("%s %s\n",name,acVersion);
 #else  /* !WIN32 */
     if (alwaysprint) {
