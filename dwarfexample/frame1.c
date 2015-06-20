@@ -1,5 +1,5 @@
 /*
-  Copyright (c) 2009-2010 David Anderson.
+  Copyright (c) 2009-2015 David Anderson.
   All rights reserved.
 
   Redistribution and use in source and binary forms, with or without
@@ -36,6 +36,10 @@
     To use, try
         make
         ./frame1 frame1
+
+    gcc/clang may produce .eh_frame without .debug_frame.
+    To read .eh_frame call dwarf_get_fde_list_eh()
+    below instead of dwarf_get_fde_list() .
 */
 #include <sys/types.h> /* For open() */
 #include <sys/stat.h>  /* For open() */
@@ -128,10 +132,13 @@ read_frame_data(Dwarf_Debug dbg)
     Dwarf_Signed fdenum = 0;
 
 
+    /*  If you wish to read .eh_frame data, use
+        dwarf_get_fde_list_eh() instead.  */
     res = dwarf_get_fde_list(dbg,&cie_data,&cie_element_count,
         &fde_data,&fde_element_count,&error);
     if(res == DW_DLV_NO_ENTRY) {
-        printf("No frame data present ");
+        printf("No .debug_frame data present\n");
+        printf("Try dwarf_get_fde_list_eh() to read .eh_frame data\n");
         exit(0);
     }
     if( res == DW_DLV_ERROR) {
