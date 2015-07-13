@@ -14,8 +14,8 @@ char *argv1[20];
 extern void dwgetoptresetfortestingonly();
 
 
-/* for 'extra', read 'optarg', for expextra read expected-optarg
-   for optnum read optind, for expnum read expected-optind
+/* for 'extra', read 'dwoptarg', for expextra read expected-optarg
+   for optnum read dwoptind, for expnum read expected-optind
 */
 static void
 chkval(int ct,int c,int expchar,char *extra,char *expextra,int optnum,int
@@ -33,7 +33,7 @@ chkval(int ct,int c,int expchar,char *extra,char *expextra,int optnum,int
             /* strings match. */
         } else {
             err++;
-            printf("Mismatch %d %s: got optarg %s 0x%x exp optarg %s 0x%x\n",
+            printf("Mismatch %d %s: got dwoptarg %s 0x%x exp optarg %s 0x%x\n",
                 ct,testid,
                 extra?extra:"",(unsigned)extra,
                 expextra?expextra:"", (unsigned)expextra);
@@ -41,7 +41,7 @@ chkval(int ct,int c,int expchar,char *extra,char *expextra,int optnum,int
     }
     if (optnum != expnum) {
         err++;
-        printf("Mismatch %d %s: got optind %d 0x%x exp optind %d 0x%x\n",
+        printf("Mismatch %d %s: got dwoptind %d 0x%x exp optind %d 0x%x\n",
             ct,testid,optnum,optnum,expnum,expnum);
     }
     if (err > 0) {
@@ -50,8 +50,8 @@ chkval(int ct,int c,int expchar,char *extra,char *expextra,int optnum,int
     }
 }
 
-/* for 'extra', read 'optarg', for expextra read expected-optarg
-   for optnum read optind, for expnum read expected-optind
+/* for 'extra', read 'dwoptarg', for expextra read expected-optarg
+   for optnum read dwoptind, for expnum read expected-optind
 static void
 chkval(int ct,int c,int expchar,char *extra,char *expextra,int optnum,int
    expnum,const char *testid) */
@@ -74,22 +74,22 @@ test3(void)
     for ( ;(c = dwgetopt(argct, argv1, "#:abc::d")) != EOF; ct++) {
     switch(ct) {
     case 1:
-        chkval(ct,c,'a',optarg,0,optind,2,"test31");
+        chkval(ct,c,'a',dwoptarg,0,dwoptind,2,"test31");
         break;
     case 2:
-        chkval(ct,c,'#',optarg,"bx",optind,3,"test32");
+        chkval(ct,c,'#',dwoptarg,"bx",dwoptind,3,"test32");
         break;
     case 3:
-        chkval(ct,c,'b',optarg,0,optind,4,"test33");
+        chkval(ct,c,'b',dwoptarg,0,dwoptind,4,"test33");
         break;
     case 4:
-        chkval(ct,c,'c',optarg,0,optind,5,"test34");
+        chkval(ct,c,'c',dwoptarg,0,dwoptind,5,"test34");
         break;
     case 5:
-        chkval(ct,c,'c',optarg,"foo",optind,6,"test35");
+        chkval(ct,c,'c',dwoptarg,"foo",dwoptind,6,"test35");
         break;
     case 6:
-        chkval(ct,c,'d',optarg,0,optind,7,"test36");
+        chkval(ct,c,'d',dwoptarg,0,dwoptind,7,"test36");
         break;
     case 7:
     case 8:
@@ -101,11 +101,11 @@ test3(void)
     }
     }
 #if 0
-    printf(" final check: ct %d optind %d\n",ct,optind);
+    printf(" final check: ct %d dwoptind %d\n",ct,optind);
 #endif
-    if (strcmp(argv1[optind],"progtoread")) {
-        printf("FAIL test3 on non-dash optind %d arg got %s exp %s\n",
-            optind,argv1[optind],"progtoread");
+    if (strcmp(argv1[dwoptind],"progtoread")) {
+        printf("FAIL test3 on non-dash dwoptind %d arg got %s exp %s\n",
+            dwoptind,argv1[optind],"progtoread");
         exit(1);
     }
     printf("PASS getopt test 3\n");
@@ -129,17 +129,17 @@ test2(void)
         "#:abc::")) != EOF; ct++) {
     switch(ct) {
     case 1:
-        chkval(ct,c,'a',optarg,0,optind,2,"test21");
+        chkval(ct,c,'a',dwoptarg,0,dwoptind,2,"test21");
         break;
     case 2:
-        chkval(ct,c,'#',optarg,"pound",optind,3,"test22");
+        chkval(ct,c,'#',dwoptarg,"pound",dwoptind,3,"test22");
         break;
         break;
     case 3:
-        chkval(ct,c,'b',optarg,0,optind,4,"test23");
+        chkval(ct,c,'b',dwoptarg,0,dwoptind,4,"test23");
         break;
     case 4:
-        chkval(ct,c,'c',optarg,"filename",optind,5,"test24");
+        chkval(ct,c,'c',dwoptarg,"filename",dwoptind,5,"test24");
         break;
     default:
         printf("FAIL test2 unexpected ct %d\n",ct);
@@ -147,11 +147,11 @@ test2(void)
     }
     }
 #if 0
-    printf(" final check: ct %d optind %d\n",ct,optind);
+    printf(" final check: ct %d dwoptind %d\n",ct,optind);
 #endif
-    if (argv1[optind]) {
-        printf("FAIL test2 on non-dash arg optind %d got 0x%x exp NULL\n",
-            optind,(unsigned)argv1[optind]);
+    if (argv1[dwoptind]) {
+        printf("FAIL test2 on non-dash arg dwoptind %d got 0x%x exp NULL\n",
+            dwoptind,(unsigned)argv1[optind]);
         exit(1);
     }
     printf("PASS getopt test 2\n");
@@ -184,28 +184,28 @@ test1(void)
         != EOF; ct++) {
     switch(ct) {
     case 1:
-        chkval(ct,c,'a',optarg,0,optind,2,"test11");
+        chkval(ct,c,'a',dwoptarg,0,dwoptind,2,"test11");
         break;
     case 2:
-        chkval(ct,c,'#',optarg,"6",optind,4,"test12");
+        chkval(ct,c,'#',dwoptarg,"6",dwoptind,4,"test12");
         break;
     case 3:
-        chkval(ct,c,'H',optarg,"1",optind,5,"test13");
+        chkval(ct,c,'H',dwoptarg,"1",dwoptind,5,"test13");
         break;
     case 4:
-        chkval(ct,c,'H',optarg,"2",optind,7,"test14");
+        chkval(ct,c,'H',dwoptarg,"2",dwoptind,7,"test14");
         break;
     case 5:
-        chkval(ct,c,'k',optarg,"a",optind,8,"test15");
+        chkval(ct,c,'k',dwoptarg,"a",dwoptind,8,"test15");
         break;
     case 6:
-        chkval(ct,c,'l',optarg,0,optind,9,"test16");
+        chkval(ct,c,'l',dwoptarg,0,dwoptind,9,"test16");
         break;
     case 7:
-        chkval(ct,c,'l',optarg,"v",optind,10,"test17");
+        chkval(ct,c,'l',dwoptarg,"v",dwoptind,10,"test17");
         break;
     case 8:
-        chkval(ct,c,'x',optarg,"path=./foo",optind,12,"test18");
+        chkval(ct,c,'x',dwoptarg,"path=./foo",dwoptind,12,"test18");
         break;
     default:
         printf("FAIL test1 unexpected ct %d in test1\n",ct);
@@ -213,11 +213,11 @@ test1(void)
     }
     }
 #if 0
-    printf(" final check: ct %d optind %d\n",ct,optind);
+    printf(" final check: ct %d dwoptind %d\n",ct,optind);
 #endif
-    if (strcmp(argv1[optind],"progtoread")) {
-        printf("FAIL test1 on non-dash arg optind %d got %s exp %s\n",
-            optind,argv1[optind],"progtoread");
+    if (strcmp(argv1[dwoptind],"progtoread")) {
+        printf("FAIL test1 on non-dash arg dwoptind %d got %s exp %s\n",
+            dwoptind,argv1[optind],"progtoread");
         exit(1);
     }
     printf("PASS getopt test1\n");
@@ -242,25 +242,25 @@ test5(void)
     for ( ;(c = dwgetopt(argct, argv1, "abc:d::")) != EOF; ct++) {
     switch(ct) {
     case 1:
-        chkval(ct,c,'a',optarg,0,optind,1,"test51");
+        chkval(ct,c,'a',dwoptarg,0,dwoptind,1,"test51");
         break;
     case 2:
-        chkval(ct,c,'b',optarg,0,optind,2,"test52");
+        chkval(ct,c,'b',dwoptarg,0,dwoptind,2,"test52");
         break;
     case 3:
-        chkval(ct,c,'a',optarg,0,optind,3,"test53");
+        chkval(ct,c,'a',dwoptarg,0,dwoptind,3,"test53");
         break;
     case 4:
-        chkval(ct,c,'c',optarg,"x",optind,4,"test54");
+        chkval(ct,c,'c',dwoptarg,"x",dwoptind,4,"test54");
         break;
     case 5:
-        chkval(ct,c,'c',optarg,"y",optind,6,"test55");
+        chkval(ct,c,'c',dwoptarg,"y",dwoptind,6,"test55");
         break;
     case 6:
-        chkval(ct,c,'d',optarg,0,optind,7,"test56");
+        chkval(ct,c,'d',dwoptarg,0,dwoptind,7,"test56");
         break;
     case 7:
-        chkval(ct,c,'d',optarg,"a",optind,8,"test17");
+        chkval(ct,c,'d',dwoptarg,"a",dwoptind,8,"test17");
         break;
     default:
         printf("FAIL test5 unexpected ct %d in test1 char 0x%x %c\n",ct,c,c);
@@ -268,11 +268,11 @@ test5(void)
     }
     }
 #if 0
-    printf(" final check: ct %d optind %d\n",ct,optind);
+    printf(" final check: ct %d dwoptind %d\n",ct,optind);
 #endif
-    if (argv1[optind]) {
-        printf("FAIL test5 there is a non-dash arg optind %d got 0x%x\n",
-            optind,(unsigned)argv1[optind]);
+    if (argv1[dwoptind]) {
+        printf("FAIL test5 there is a non-dash arg dwoptind %d got 0x%x\n",
+            dwoptind,(unsigned)argv1[optind]);
         exit(1);
     }
     printf("PASS getopt test5\n");
@@ -291,16 +291,16 @@ test6(void)
     for ( ;(c = dwgetopt(argct, argv1, "abH:d::")) != EOF; ct++) {
     switch(ct) {
     case 1:
-        chkval(ct,c,'?',optarg,0,optind,2,"test61");
+        chkval(ct,c,'?',dwoptarg,0,dwoptind,2,"test61");
         break;
     default:
         printf("FAIL test5 unexpected ct %d in test1 char 0x%x %c\n",ct,c,c);
         exit(1);
     }
     }
-    if (argv1[optind]) {
-        printf("FAIL test6 there is a non-dash arg optind %d got 0x%x\n",
-            optind,(unsigned)argv1[optind]);
+    if (argv1[dwoptind]) {
+        printf("FAIL test6 there is a non-dash arg dwoptind %d got 0x%x\n",
+            dwoptind,(unsigned)argv1[optind]);
         exit(1);
     }
     printf("PASS getopt test6\n");
@@ -319,16 +319,16 @@ test7(void)
     for ( ;(c = dwgetopt(argct, argv1, ":abH:d::")) != EOF; ct++) {
     switch(ct) {
     case 1:
-        chkval(ct,c,':',optarg,0,optind,2,"test71");
+        chkval(ct,c,':',dwoptarg,0,dwoptind,2,"test71");
         break;
     default:
         printf("FAIL test5 unexpected ct %d in test1 char 0x%x %c\n",ct,c,c);
         exit(1);
     }
     }
-    if (argv1[optind]) {
-        printf("FAIL test7 there is a non-dash arg optind %d got 0x%x\n",
-            optind,(unsigned)argv1[optind]);
+    if (argv1[dwoptind]) {
+        printf("FAIL test7 there is a non-dash arg dwoptind %d got 0x%x\n",
+            dwoptind,(unsigned)argv1[optind]);
         exit(1);
     }
     printf("PASS getopt test7\n");
@@ -346,16 +346,16 @@ test8(void)
     for ( ;(c = dwgetopt(argct, argv1, "abH:d::")) != EOF; ct++) {
     switch(ct) {
     case 1:
-        chkval(ct,c,'?',optarg,0,optind,2,"test81");
+        chkval(ct,c,'?',dwoptarg,0,dwoptind,2,"test81");
         break;
     default:
         printf("FAIL test5 unexpected ct %d in test1 char 0x%x %c\n",ct,c,c);
         exit(1);
     }
     }
-    if (argv1[optind]) {
-        printf("FAIL test8 there is a non-dash arg optind %d got 0x%x\n",
-            optind,(unsigned)argv1[optind]);
+    if (argv1[dwoptind]) {
+        printf("FAIL test8 there is a non-dash arg dwoptind %d got 0x%x\n",
+            dwoptind,(unsigned)argv1[optind]);
         exit(1);
     }
     printf("PASS getopt test8\n");

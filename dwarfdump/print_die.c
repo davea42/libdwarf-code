@@ -2563,8 +2563,8 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
 
 
     /*  When dealing with linkonce symbols, the low_pc and high_pc
-        are associated with a specific symbol; SNC always generate a name in
-        the for of DW_AT_MIPS_linkage_name; GCC does not; instead it generates
+        are associated with a specific symbol; SNC always generate a name with
+        DW_AT_MIPS_linkage_name; GCC does not; instead gcc generates
         DW_AT_abstract_origin or DW_AT_specification; in that case we have to
         traverse this attribute in order to get the name for the linkonce */
     case DW_AT_specification:

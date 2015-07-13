@@ -2,9 +2,9 @@
 /*  Modified by David Anderson to work with GNU/Linux and freebsd.
     Added {} for clarity.
     Switched to standard dwarfdump formatting.
-    Treatment of : modified so that :: gets optarg NULL
+    Treatment of : modified so that :: gets dwoptarg NULL
     if space follows the letter
-    (the optarg is set to null).
+    (the dwoptarg is set to null).
 */
 /*
 * Copyright (c) 1987, 1993, 1994
@@ -35,10 +35,10 @@
 * SUCH DAMAGE.
 */
 
-extern int opterr;
-extern int    optind;
-extern int    optopt;
-extern int    optreset;
-extern char *optarg;
+extern int  dwopterr;
+extern int  dwoptind;
+extern int  dwoptopt;
+extern int  dwoptreset;
+extern char *dwoptarg;
 
 int dwgetopt(int nargc, char * const nargv[], const char *ostr);

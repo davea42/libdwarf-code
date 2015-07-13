@@ -622,6 +622,13 @@ is_section_known_already(Dwarf_Debug dbg,
 
     This does not allow for section-groups in object files,
     for which many .debug_info (and other DWARF) sections may exist.
+
+    We process. .rela (SHT_RELA) but not .rel (SHT_REL)
+    sections because with .rela the referencing section
+    offset value is zero whereas with .rel the
+    referencing section value is already correct for
+    the object itself.  In other words, we do it because
+    of the definition of .rela relocations in Elf.
 */
 
 static int

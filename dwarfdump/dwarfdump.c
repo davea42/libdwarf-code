@@ -52,7 +52,7 @@ extern int elf_open(const char *name,int mode);
 
 #define DWARFDUMP_VERSION " Thu May  7 08:43:38 PDT 2015  "
 
-extern char *optarg;
+extern char *dwoptarg;
 
 
 #define OKAY 0
@@ -1466,7 +1466,7 @@ remove_quotes_pair(const char *text)
 static const char *
 process_args(int argc, char *argv[])
 {
-    extern int optind;
+    extern int dwoptind;
     int c = 0;
     boolean usage_error = FALSE;
     int oarg = 0;
@@ -1486,7 +1486,7 @@ process_args(int argc, char *argv[])
         /* Internal debug level setting. */
         case '#':
         {
-            int nTraceLevel =  atoi(optarg);
+            int nTraceLevel =  atoi(dwoptarg);
             if (nTraceLevel >= 0 && nTraceLevel <= MAX_TRACE_LEVEL) {
                 nTrace[nTraceLevel] = 1;
             }
@@ -1507,15 +1507,15 @@ process_args(int argc, char *argv[])
                 /*  -x name=<path> meaning name dwarfdump.conf file -x
                     abi=<abi> meaning select abi from dwarfdump.conf
                     file. Must always select abi to use dwarfdump.conf */
-                if (strncmp(optarg, "name=", 5) == 0) {
-                    path = do_uri_translation(&optarg[5],"-x name=");
+                if (strncmp(dwoptarg, "name=", 5) == 0) {
+                    path = do_uri_translation(&dwoptarg[5],"-x name=");
                     if (strlen(path) < 1) {
                         goto badopt;
                     }
                     esb_empty_string(&config_file_path);
                     esb_append(&config_file_path,path);
-                } else if (strncmp(optarg, "abi=", 4) == 0) {
-                    abi = do_uri_translation(&optarg[4],"-x abi=");
+                } else if (strncmp(dwoptarg, "abi=", 4) == 0) {
+                    abi = do_uri_translation(&dwoptarg[4],"-x abi=");
                     if (strlen(abi) < 1) {
                         goto badopt;
                     }
@@ -1526,7 +1526,7 @@ process_args(int argc, char *argv[])
                     fprintf(stderr, "-x name=<path-to-conf> \n");
                     fprintf(stderr, " and  \n");
                     fprintf(stderr, "-x abi=<abi-in-conf> \n");
-                    fprintf(stderr, "are legal, not -x %s\n", optarg);
+                    fprintf(stderr, "are legal, not -x %s\n", dwoptarg);
                     usage_error = TRUE;
                     break;
                 }
@@ -1555,8 +1555,8 @@ process_args(int argc, char *argv[])
             line_flag = TRUE;
             suppress_check_dwarf();
             /* Enable to suppress offsets printing */
-            if (optarg) {
-                switch (optarg[0]) {
+            if (dwoptarg) {
+                switch (dwoptarg[0]) {
                 /* -ls : suppress <pc> addresses */
                 case 's': line_print_pc = FALSE; break;
                 default: usage_error = TRUE; break;
@@ -1569,7 +1569,7 @@ process_args(int argc, char *argv[])
             break;
         case 'H':
             {
-                int break_val =  atoi(optarg);
+                int break_val =  atoi(dwoptarg);
                 if (break_val > 0) {
                     break_after_n_units = break_val;
                 }
@@ -1608,14 +1608,14 @@ process_args(int argc, char *argv[])
             break;
         case 'c':
             /* Specify compiler name. */
-            if (optarg) {
-                if ('s' == optarg[0]) {
+            if (dwoptarg) {
+                if ('s' == dwoptarg[0]) {
                     /* -cs : Check SNC compiler */
                     check_snc_compiler = TRUE;
                     check_all_compilers = FALSE;
                 }
                 else {
-                    if ('g' == optarg[0]) {
+                    if ('g' == dwoptarg[0]) {
                         /* -cg : Check GCC compiler */
                         check_gcc_compiler = TRUE;
                         check_all_compilers = FALSE;
@@ -1626,7 +1626,7 @@ process_args(int argc, char *argv[])
                         if ((compilers_targeted_count+1) < COMPILER_TABLE_MAX) {
                             Compiler *pCompiler = 0;
                             const char *cmp = 0;
-                            cmp = do_uri_translation(optarg,"-c<compiler name>");
+                            cmp = do_uri_translation(dwoptarg,"-c<compiler name>");
                             /* First compiler at position [1] */
                             compilers_targeted_count++;
                             pCompiler = &compilers_targeted[compilers_targeted_count];
@@ -1665,13 +1665,13 @@ process_args(int argc, char *argv[])
                 search_is_on = TRUE;
                 /* 'v' option, to print number of occurrences */
                 /* -S[v]match|any|regex=text*/
-                if (optarg[0] == 'v') {
-                    ++optarg;
+                if (dwoptarg[0] == 'v') {
+                    ++dwoptarg;
                     search_print_results = TRUE;
                 }
                 /* -S match=<text>*/
-                if (strncmp(optarg,"match=",6) == 0) {
-                    search_match_text = makename(&optarg[6]);
+                if (strncmp(dwoptarg,"match=",6) == 0) {
+                    search_match_text = makename(&dwoptarg[6]);
                     tempstr = remove_quotes_pair(search_match_text);
                     search_match_text = do_uri_translation(tempstr,"-S match=");
                     if (strlen(search_match_text) > 0) {
@@ -1680,8 +1680,8 @@ process_args(int argc, char *argv[])
                 }
                 else {
                     /* -S any=<text>*/
-                    if (strncmp(optarg,"any=",4) == 0) {
-                        search_any_text = makename(&optarg[4]);
+                    if (strncmp(dwoptarg,"any=",4) == 0) {
+                        search_any_text = makename(&dwoptarg[4]);
                         tempstr = remove_quotes_pair(search_any_text);
                         search_any_text = do_uri_translation(tempstr,"-S any=");
                         if (strlen(search_any_text) > 0) {
@@ -1691,8 +1691,8 @@ process_args(int argc, char *argv[])
 #ifdef HAVE_REGEX
                     else {
                         /* -S regex=<regular expression>*/
-                        if (strncmp(optarg,"regex=",6) == 0) {
-                            search_regex_text = makename(&optarg[6]);
+                        if (strncmp(dwoptarg,"regex=",6) == 0) {
+                            search_regex_text = makename(&dwoptarg[6]);
                             tempstr = remove_quotes_pair(
                                 search_regex_text);
                             search_regex_text = do_uri_translation(tempstr,
@@ -1714,7 +1714,7 @@ process_args(int argc, char *argv[])
                 }
                 if (err) {
                     fprintf(stderr,"-S any=<text> or -S match=<text> or -S regex=<text>\n");
-                    fprintf(stderr, "is allowed, not -S %s\n",optarg);
+                    fprintf(stderr, "is allowed, not -S %s\n",dwoptarg);
                     usage_error = TRUE;
                 }
             }
@@ -1751,8 +1751,8 @@ process_args(int argc, char *argv[])
             /* Object Header information (but maybe really print) */
             header_flag = TRUE;
             /* Selected printing of section info */
-            if (optarg) {
-                switch (optarg[0]) {
+            if (dwoptarg) {
+                switch (dwoptarg[0]) {
                 case 'h': section_map |= DW_HDR_HEADER; break;
                 case 'i': section_map |= DW_HDR_DEBUG_INFO;
                     section_map |= DW_HDR_DEBUG_TYPES; break;
@@ -1778,8 +1778,8 @@ process_args(int argc, char *argv[])
             break;
         case 'o':
             reloc_flag = TRUE;
-            if (optarg) {
-                switch (optarg[0]) {
+            if (dwoptarg) {
+                switch (dwoptarg[0]) {
                 case 'i':
                     reloc_map |= (1 << DW_SECTION_REL_DEBUG_INFO);
                     reloc_map |= (1 << DW_SECTION_REL_DEBUG_TYPES); break;
@@ -1805,8 +1805,8 @@ process_args(int argc, char *argv[])
                 const char *path = 0;
                 /*  -O name=<filename> */
                 usage_error = TRUE;
-                if (strncmp(optarg,"file=",5) == 0) {
-                    path = do_uri_translation(&optarg[5],"-O file=");
+                if (strncmp(dwoptarg,"file=",5) == 0) {
+                    path = do_uri_translation(&dwoptarg[5],"-O file=");
                     if (strlen(path) > 0) {
                         usage_error = FALSE;
                         output_file = path;
@@ -1816,7 +1816,7 @@ process_args(int argc, char *argv[])
             break;
         case 'k':
             suppress_print_dwarf();
-            oarg = optarg[0];
+            oarg = dwoptarg[0];
             switch (oarg) {
             case 'a':
                 check_pubname_attr = TRUE;
@@ -1945,8 +1945,8 @@ process_args(int argc, char *argv[])
             case 'u':
                 print_usage_tag_attr = TRUE;
                 info_flag = TRUE;
-                if (optarg[1]) {
-                    if ('f' == optarg[1]) {
+                if (dwoptarg[1]) {
+                    if ('f' == dwoptarg[1]) {
                         /* -kuf : Full report */
                         print_usage_tag_attr_full = TRUE;
                     } else {
@@ -1972,8 +1972,8 @@ process_args(int argc, char *argv[])
                 check_frames = TRUE;
                 frame_flag = TRUE;
                 eh_frame_flag = TRUE;
-                if (optarg[1]) {
-                    if ('e' == optarg[1]) {
+                if (dwoptarg[1]) {
+                    if ('e' == dwoptarg[1]) {
                         /* -xe : Extended frames check */
                         check_frames = FALSE;
                         check_frames_extended = TRUE;
@@ -1990,7 +1990,7 @@ process_args(int argc, char *argv[])
         case 'u': {             /* compile unit */
             const char *tstr = 0;
             cu_name_flag = TRUE;
-            tstr = do_uri_translation(optarg,"-u<cu name>");
+            tstr = do_uri_translation(dwoptarg,"-u<cu name>");
             safe_strcpy(cu_name,sizeof(cu_name), tstr,strlen(tstr));
             }
             break;
@@ -1998,7 +1998,7 @@ process_args(int argc, char *argv[])
             uri_options_translation = FALSE;
             break;
         case 't':
-            oarg = optarg[0];
+            oarg = dwoptarg[0];
             switch (oarg) {
             case 'a':
                 /* all */
@@ -2037,12 +2037,12 @@ process_args(int argc, char *argv[])
         case 'W':
             /* Search results in wide format */
             search_wide_format = TRUE;
-            if (optarg) {
-                if ('c' == optarg[0]) {
+            if (dwoptarg) {
+                if ('c' == dwoptarg[0]) {
                     /* -Wc : Display children tree */
                     display_children_tree = TRUE;
                 } else {
-                    if ('p' == optarg[0]) {
+                    if ('p' == dwoptarg[0]) {
                         /* -Wp : Display parent tree */
                         display_parent_tree = TRUE;
                     } else {
@@ -2085,7 +2085,7 @@ process_args(int argc, char *argv[])
             frame_flag = FALSE;
         }
     }
-    if (usage_error || (optind != (argc - 1))) {
+    if (usage_error || (dwoptind != (argc - 1))) {
         print_usage_message(program_name,usage_text);
         exit(FAILED);
     }
@@ -2094,7 +2094,7 @@ process_args(int argc, char *argv[])
         /* Reduce verbosity when checking (checking means checking-only). */
         verbose = 1;
     }
-    return do_uri_translation(argv[optind],"file-to-process");
+    return do_uri_translation(argv[dwoptind],"file-to-process");
 }
 
 void

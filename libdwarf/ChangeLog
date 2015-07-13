@@ -1,3 +1,8 @@
+2015-07-12  David Anderson
+     * dwarf_init_finish.c: Added commentary about .rela
+     * dwgetopt.c,dwgetopt.h,dwgetopttest.c: Use dwoptind dwoptarg etc, 
+       not optind, optarg, optopt opeerror etc.
+     * gennames.h: use dwoptarg dwoptind, not optarg, optind.
 2015-05-08  David Anderson
      * dwarf_die_deliv.c, dwarf_frame2.c, dwarf_frame2.c,
        dwarf_frame.c: The debugging-only #if 0 now have comments

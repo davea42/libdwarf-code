@@ -2,9 +2,9 @@
 /*  Modified by David Anderson to work with GNU/Linux and freebsd.
     Added {} for clarity.
     Switched to standard dwarfdump formatting.
-    Treatment of : modified so that :: gets optarg NULL
+    Treatment of : modified so that :: gets dwoptarg NULL
     if space follows the letter
-    (the optarg is set to null).
+    (the dwoptarg is set to null).
     renamed to make it clear this is a private version.
 */
 /*
@@ -50,11 +50,11 @@
 
 #define STRIP_OFF_CONSTNESS(a)  ((void *)(size_t)(const void *)(a))
 
-int opterr = 1,     /* if error message should be printed */
-    optind = 1,    /* index into parent argv vector */
-    optopt,        /* character checked for validity */
-    optreset;      /* reset getopt */
-char *optarg;      /* argument associated with option */
+int dwopterr = 1,     /* if error message should be printed */
+    dwoptind = 1,    /* index into parent argv vector */
+    dwoptopt,        /* character checked for validity */
+    dwoptreset;      /* reset getopt */
+char *dwoptarg;      /* argument associated with option */
 
 #define BADCH   (int)'?'
 #define BADARG  (int)':'
@@ -65,11 +65,11 @@ char *optarg;      /* argument associated with option */
 void
 dwgetoptresetfortestingonly()
 {
-   opterr   = 1;
-   optind   = 1;
-   optopt   = 0;
-   optreset = 0;
-   optarg   = 0;
+   dwopterr   = 1;
+   dwoptind   = 1;
+   dwoptopt   = 0;
+   dwoptreset = 0;
+   dwoptarg   = 0;
 }
 
 /*
@@ -78,12 +78,12 @@ dwgetoptresetfortestingonly()
     * a: means
     *     -afoo
     *     -a foo
-    *     and 'foo' is returned in optarg
+    *     and 'foo' is returned in dwoptarg
     *  b:: means
     *     -b
-    *        and optarg is null
+    *        and dwoptarg is null
     *     -bother
-    *        and optarg is 'other'
+    *        and dwoptarg is 'other'
     */
 int
 dwgetopt(int nargc, char * const nargv[], const char *ostr)
@@ -91,48 +91,43 @@ dwgetopt(int nargc, char * const nargv[], const char *ostr)
     static const char *place = EMSG;/* option letter processing */
     char *oli;                      /* option letter list index */
 
-#if 0
-    _DIAGASSERT(nargv != NULL);
-    _DIAGASSERT(ostr != NULL);
-#endif
-
-    if (optreset || *place == 0) { /* update scanning pointer */
-        optreset = 0;
-        place = nargv[optind];
-        if (optind >= nargc || *place++ != '-') {
+    if (dwoptreset || *place == 0) { /* update scanning pointer */
+        dwoptreset = 0;
+        place = nargv[dwoptind];
+        if (dwoptind >= nargc || *place++ != '-') {
             /* Argument is absent or is not an option */
             place = EMSG;
             return (-1);
         }
-        optopt = *place++;
-        if (optopt == '-' && *place == 0) {
+        dwoptopt = *place++;
+        if (dwoptopt == '-' && *place == 0) {
             /* "--" => end of options */
-            ++optind;
+            ++dwoptind;
             place = EMSG;
             return (-1);
         }
-        if (optopt == 0) {
+        if (dwoptopt == 0) {
             /* Solitary '-', treat as a '-' option
                 if the program (eg su) is looking for it. */
             place = EMSG;
             if (strchr(ostr, '-') == NULL) {
                 return -1;
             }
-            optopt = '-';
+            dwoptopt = '-';
         }
     } else {
-        optopt = *place++;
+        dwoptopt = *place++;
     }
     /* See if option letter is one the caller wanted... */
-    if (optopt == ':' || (oli = strchr(ostr, optopt)) == NULL) {
+    if (dwoptopt == ':' || (oli = strchr(ostr, dwoptopt)) == NULL) {
         if (*place == 0) {
-            ++optind;
+            ++dwoptind;
         }
-        if (opterr && *ostr != ':') {
+        if (dwopterr && *ostr != ':') {
             (void)fprintf(stderr,
                 "%s: invalid option -- '%c'\n",
                 nargv[0]?nargv[0]:"",
-                optopt);
+                dwoptopt);
         }
         return (BADCH);
     }
@@ -140,25 +135,25 @@ dwgetopt(int nargc, char * const nargv[], const char *ostr)
     /* Does this option need an argument? */
     if (oli[1] != ':') {
         /* don't need argument */
-        optarg = NULL;
+        dwoptarg = NULL;
         if (*place == 0) {
-            ++optind;
+            ++dwoptind;
         }
     } else {
         int reqnextarg = 1;
         if (oli[1] && (oli[2] == ':')) {
-            /* Pair of :: means special treatment of optarg */
+            /* Pair of :: means special treatment of dwoptarg */
             reqnextarg = 0;
         }
         /* Option-argument is either the rest of this argument or the
         entire next argument. */
         if (*place ) {
             /* Whether : or :: */
-            optarg = STRIP_OFF_CONSTNESS(place);
+            dwoptarg = STRIP_OFF_CONSTNESS(place);
         } else if (reqnextarg) {
             /* ! *place */
-            if (nargc > (++optind)) {
-                optarg = nargv[optind];
+            if (nargc > (++dwoptind)) {
+                dwoptarg = nargv[dwoptind];
             } else {
                 place=EMSG;
                 /*  Next arg required, but is missing */
@@ -166,21 +161,21 @@ dwgetopt(int nargc, char * const nargv[], const char *ostr)
                     /* Leading : in ostr calls for BADARG return. */
                     return (BADARG);
                 }
-                if (opterr) {
+                if (dwopterr) {
                     (void)fprintf(stderr,
                         "%s: option requires an argument. -- '%c'\n",
                         nargv[0]?nargv[0]:"",
-                        optopt);
+                        dwoptopt);
                 }
                 return (BADCH);
             }
         } else {
             /* ! *place */
             /* The key part of :: treatment. */
-            optarg = NULL;
+            dwoptarg = NULL;
         }
         place = EMSG;
-        ++optind;
+        ++dwoptind;
     }
-    return (optopt);  /* return option letter */
+    return (dwoptopt);  /* return option letter */
 }

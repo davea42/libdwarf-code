@@ -327,16 +327,16 @@ main(int argc, char **argv)
             case 'c':
                 // At present we can only create a single
                 // cu in the output of the libdwarf producer.
-                cu_of_input_we_output = atoi(optarg);
+                cu_of_input_we_output = atoi(dwoptarg);
                 break;
             case 't':
-                setinput(&whichinput,optarg,&pathrequired);
+                setinput(&whichinput,dwoptarg,&pathrequired);
                 break;
             case 'h':
                 transformHighpcToConst = true;
                 break;
             case 'o':
-                outfile = optarg;
+                outfile = dwoptarg;
                 break;
             case '?':
                 cerr << "dwarfgen: Invalid quest? option input " << endl;
@@ -346,13 +346,13 @@ main(int argc, char **argv)
                 exit(1);
             }
         }
-        if ( (optind >= argc) && pathrequired) {
+        if ( (dwoptind >= argc) && pathrequired) {
             cerr << "dwarfgen: Expected argument after options! Giving up."
                 << endl;
             exit(EXIT_FAILURE);
         }
         if(pathrequired) {
-            infile = argv[optind];
+            infile = argv[dwoptind];
         }
 
         if(whichinput == OptReadBin) {

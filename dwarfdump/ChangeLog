@@ -1,3 +1,9 @@
+2015-07-12  David Anderson
+     * dwarfdump.c: Use dwoptind dwoptarg, not optind, optarg
+     * dwgetopt.c,dwgetopt.h,dwgetopttest.c,tag_attr.c,
+       tag_tree.c: Use dwoptind dwoptarg etc, 
+       not optind, optarg, optopt op6error etc.
+     * print_die.c: updated commentary.
 2015-05-07  David Anderson
      * common.c, dwarfdump.c: Update version string.
      * print_die.c: Print DW_AT_dwo_id properly as a Dwarf_Sig8 value.

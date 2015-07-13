@@ -137,10 +137,10 @@ process_args(int argc, char *argv[])
     while ((c = dwgetopt(argc, argv, "i:o:st")) != EOF) {
         switch (c) {
         case 'i':
-            input_name = optarg;
+            input_name = dwoptarg;
             break;
         case 'o':
-            output_name = optarg;
+            output_name = dwoptarg;
             break;
         case 's':
             use_switch = TRUE;
@@ -156,7 +156,7 @@ process_args(int argc, char *argv[])
         }
     }
 
-    if (usage_error || 1 == optind || optind != argc) {
+    if (usage_error || 1 == dwoptind || dwoptind != argc) {
         print_usage_message(usage);
         exit(FAILED);
     }
