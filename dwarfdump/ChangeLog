@@ -1,3 +1,6 @@
+2015-09-05  David Anderson
+     * tag_attr.list,tag_attr_ext.list,tag_tree.list: removed
+       trailing whitespace.
 2015-07-12  David Anderson
      * dwarfdump.c: Use dwoptind dwoptarg, not optind, optarg
      * dwgetopt.c,dwgetopt.h,dwgetopttest.c,tag_attr.c,

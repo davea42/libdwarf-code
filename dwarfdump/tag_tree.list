@@ -50,7 +50,7 @@
     this list is at best a current understanding of
     appropriate practice.  Moreover the the dwarf standard
     does not actually list the tag-tag dependencies.
-    So mistakes in the list below is certainly possible.  
+    So mistakes in the list below is certainly possible.
     Corrections and small-ish sample object files
     with unusual or interesting tag tree layouts are welcome.
     Any sample object files should not be proprietary as

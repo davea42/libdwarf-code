@@ -22,7 +22,7 @@
   License along with this program; if not, write the Free Software
   Foundation, Inc., 59 Temple Place - Suite 330, Boston MA 02111-1307,
   USA.
- 
+
 */
 #include <dwarf.h>
 
@@ -236,14 +236,14 @@ DW_AT_use_UTF8
 0xffffffff
 DW_TAG_condition
 DW_AT_decl_column
-DW_AT_decl_file 
+DW_AT_decl_file
 DW_AT_decl_line
 DW_AT_name
 DW_AT_sibling
 0xffffffff
 DW_TAG_const_type
 DW_AT_decl_column
-DW_AT_decl_file 
+DW_AT_decl_file
 DW_AT_decl_line
 DW_AT_alignment
 DW_AT_name
@@ -386,7 +386,7 @@ DW_AT_abstract_origin
 DW_AT_allocated
 DW_AT_associated
 DW_AT_bit_size /* Allowed in DWARF4 */
-DW_AT_bit_stride 
+DW_AT_bit_stride
 DW_AT_byte_size
 DW_AT_byte_stride
 DW_AT_count
