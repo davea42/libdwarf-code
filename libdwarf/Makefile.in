@@ -187,6 +187,7 @@ clean:
 	rm -f ALL
 	rm -f gennames 
 	rm -f dwarf_names_enum.h dwarf_names_new.h dwarf_names.c dwarf_names.h
+	rm -f ./dwarftied
 
 install: all
 	echo "No install provided, see comments in the README"
@@ -196,6 +197,7 @@ distclean:	clean
 	rm -rf autom4te.cache 
 	rm -f Makefile
 	rm -f libdwarf.h
+	rm -f ./dwarftied
 
 tests:
 	$(CC) -DTESTING $(CFLAGS) dwarf_tied.c dwarf_tsearchhash.o -o dwarftied

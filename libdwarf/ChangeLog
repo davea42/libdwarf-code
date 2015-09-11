@@ -1,4 +1,5 @@
 2015-09-11  David Anderson
+     * Makefile.in: clean now removes test executable ./dwarftied
      * dwarf.h: Adding DW_AT_GNU_macros attribute, 0x2119.
 2015-09-11  David Anderson
      * dwarf.h: Adding DW_AT_GNU_discriminator attribute, 0x2136.
