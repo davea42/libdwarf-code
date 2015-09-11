@@ -1155,9 +1155,12 @@ struct Dwarf_Obj_Access_Interface_s {
 #define DW_DLE_DEBUG_NAMES_DUPLICATE           297
 #define DW_DLE_DEBUG_LINE_STR_DUPLICATE        298
 #define DW_DLE_DEBUG_SUP_DUPLICATE             299
+#define DW_DLE_NO_SIGNATURE_TO_LOOKUP          300
+#define DW_DLE_NO_TIED_ADDR_AVAILABLE          301
+#define DW_DLE_NO_TIED_SIG_AVAILABLE           302
 
     /* DW_DLE_LAST MUST EQUAL LAST ERROR NUMBER */
-#define DW_DLE_LAST        299
+#define DW_DLE_LAST        302
 #define DW_DLE_LO_USER     0x10000
 
     /*  Taken as meaning 'undefined value', this is not
@@ -1258,6 +1261,10 @@ int dwarf_object_init(Dwarf_Obj_Access_Interface* /* obj */,
     Dwarf_Handler /* errhand */,
     Dwarf_Ptr     /* errarg */,
     Dwarf_Debug*  /* dbg */,
+    Dwarf_Error*  /* error */);
+
+int dwarf_set_tied_dbg(Dwarf_Debug /*basedbg*/,
+    Dwarf_Debug /*tied_dbg*/,
     Dwarf_Error*  /* error */);
 
 int dwarf_object_finish(Dwarf_Debug /* dbg */,
@@ -1637,7 +1644,6 @@ int dwarf_formaddr(Dwarf_Attribute /*attr*/,
 int dwarf_get_debug_addr_index(Dwarf_Attribute /*attr*/,
     Dwarf_Unsigned * /*return_index*/,
     Dwarf_Error * /*error*/);
-
 
 int dwarf_formflag(Dwarf_Attribute /*attr*/,
     Dwarf_Bool *     /*returned_bool*/,

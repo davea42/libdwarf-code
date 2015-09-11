@@ -1,3 +1,8 @@
+2015-09-11  David Anderson
+     * Makefile.in,dwarf_alloc.c,dwarf_die_deliv.c,dwarf_error.c,dwarf_form.c,
+       dwarf_opaque.h,dwarf_original_elf_init.c,dwarf_query.ckdwarf_tied.c,
+       libdwarf.h.in: Added dwarf_tied.c and -x tied= options. So libdwarf
+       can follow DW_FORM_addrx to get the address from another object.
 2015-09-05  David Anderson
      * dwarf.h: Fixed indentation of two lines with the 0x
        values incorrectly indented.

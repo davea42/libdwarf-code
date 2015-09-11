@@ -374,15 +374,15 @@ print_cu_hdr_cudie(Dwarf_Debug dbg,
     Dwarf_Unsigned offset )
 {
     struct Dwarf_Debug_Fission_Per_CU_s fission_data;
-    int fission_data_result = 0; 
+    int fission_data_result = 0;
 
     if (dense) {
         printf("\n");
         return;
-    } 
+    }
     memset(&fission_data,0,sizeof(fission_data));
     printf("\nCOMPILE_UNIT<header overall offset = 0x%"
-        DW_PR_XZEROS DW_PR_DUx ">", 
+        DW_PR_XZEROS DW_PR_DUx ">",
         (Dwarf_Unsigned)(overall_offset - offset));
 #if 0
     if (verbose) {
@@ -391,7 +391,7 @@ print_cu_hdr_cudie(Dwarf_Debug dbg,
         if (fission_data_result == DW_DLV_ERROR) {
             print_error(dbg,"Failure looking for Debug Fission data",
                 fission_data_result, err);
-        }    
+        }
         print_debug_fission_header(&fission_data);
     }
 #endif
@@ -415,7 +415,7 @@ print_cu_hdr_std(Dwarf_Unsigned cu_header_length,
 
     res = dwarf_get_UT_name(cu_type,&utname);
     if (res != DW_DLV_OK) {
-       utname = "ERROR";
+        utname = "ERROR";
     }
     if (dense) {
         printf("<%s>", "cu_header");
@@ -3945,11 +3945,11 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
                 const char *hash_str;
                 wres = dwarf_formsig8_const(attrib,&v,&err);
                 if (wres == DW_DLV_OK){
-                   struct esb_s t; 
-                   esb_constructor(&t);
-                   format_sig8_string(&v,&t);
-                   esb_append(esbp,esb_get_string(&t));
-                   esb_destructor(&t);
+                    struct esb_s t;
+                    esb_constructor(&t);
+                    format_sig8_string(&v,&t);
+                    esb_append(esbp,esb_get_string(&t));
+                    esb_destructor(&t);
                 } else if (wres == DW_DLV_NO_ENTRY) {
                     /* nothing? */
                     esb_append(esbp,"Impossible: no entry for formsig8 dwo_id");

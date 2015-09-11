@@ -635,6 +635,20 @@ dwarf_global_formref(Dwarf_Attribute attr,
 /*  Part of DebugFission.  So a consumer can get the index when
     the object with the actual debug_addr  is
     elsewhere.  New May 2014*/
+
+int
+_dwarf_get_addr_index_itself(int theform,
+    Dwarf_Small *info_ptr,
+    Dwarf_Unsigned *val_out,
+    Dwarf_Error * error)
+{
+    Dwarf_Unsigned index = 0;
+    Dwarf_Word uleblen = 0;
+    index = _dwarf_decode_u_leb128(info_ptr,&uleblen);
+    *val_out = index;
+    return DW_DLV_OK;
+}
+
 int
 dwarf_get_debug_addr_index(Dwarf_Attribute attr,
     Dwarf_Unsigned * return_index,
@@ -643,12 +657,12 @@ dwarf_get_debug_addr_index(Dwarf_Attribute attr,
     int theform = attr->ar_attribute_form;
     if (theform == DW_FORM_GNU_addr_index ||
         theform == DW_FORM_addrx) {
+        int res = 0;
         Dwarf_Unsigned index = 0;
-        Dwarf_Word uleblen = 0;
-        Dwarf_Small *info_ptr = attr->ar_debug_ptr;
-        index = _dwarf_decode_u_leb128(info_ptr,&uleblen);
+        res = _dwarf_get_addr_index_itself(theform,
+            attr->ar_debug_ptr,&index,error);
         *return_index = index;
-        return DW_DLV_OK;
+        return res;
     }
 
     {
@@ -658,9 +672,11 @@ dwarf_get_debug_addr_index(Dwarf_Attribute attr,
         if (res != DW_DLV_OK) {
             return res;
         }
-        _dwarf_error(dbg, error, DW_DLE_ATTR_FORM_NOT_ADDR_INDEX);
+        _dwarf_error(dbg, error,
+            DW_DLE_ATTR_FORM_NOT_ADDR_INDEX);
+        return (DW_DLV_ERROR);
     }
-    return (DW_DLV_ERROR);
+    return DW_DLV_NO_ENTRY;
 }
 
 /*  Part of DebugFission.  So a dwarf dumper application
@@ -702,17 +718,30 @@ dwarf_formaddr(Dwarf_Attribute attr,
     Dwarf_Debug dbg = 0;
     Dwarf_Addr ret_addr = 0;
     Dwarf_CU_Context cu_context = 0;
+    Dwarf_Half attrform = 0;
 
     int res  = get_attr_dbg(&dbg,&cu_context,attr,error);
     if (res != DW_DLV_OK) {
         return res;
     }
-    if (attr->ar_attribute_form == DW_FORM_GNU_addr_index ||
-        attr->ar_attribute_form == DW_FORM_addrx) {
+    attrform = attr->ar_attribute_form;
+    if (attrform == DW_FORM_GNU_addr_index ||
+        attrform == DW_FORM_addrx) {
         Dwarf_Addr addr_out = 0;
+        int res2;
+        Dwarf_Unsigned index_to_addr = 0;
+
+        res2 = _dwarf_get_addr_index_itself(
+            attrform,
+            attr->ar_debug_ptr,&index_to_addr,error);
+        if(res2 != DW_DLV_OK) {
+            return res2;
+        }
+
+
         res = _dwarf_extract_address_from_debug_addr(dbg,
             cu_context,
-            attr->ar_debug_ptr,
+            index_to_addr,
             &addr_out,
             error);
 
@@ -722,8 +751,8 @@ dwarf_formaddr(Dwarf_Attribute attr,
         *return_addr = addr_out;
         return (DW_DLV_OK);
     }
-    if (attr->ar_attribute_form == DW_FORM_addr
-        /*  || attr->ar_attribute_form == DW_FORM_ref_addr Allowance of
+    if (attrform == DW_FORM_addr
+        /*  || attrform == DW_FORM_ref_addr Allowance of
             DW_FORM_ref_addr was a mistake. The value returned in that
             case is NOT an address it is a global debug_info offset (ie,
             not CU-relative offset within the CU in debug_info). The

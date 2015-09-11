@@ -35,20 +35,6 @@
 
 #define FALSE 0
 #define TRUE 1
-static int
-dwarf_next_cu_header_internal(Dwarf_Debug dbg,
-    Dwarf_Bool is_info,
-    Dwarf_Unsigned * cu_header_length,
-    Dwarf_Half * version_stamp,
-    Dwarf_Unsigned * abbrev_offset,
-    Dwarf_Half * address_size,
-    Dwarf_Half * offset_size,
-    Dwarf_Half * extension_size,
-    Dwarf_Sig8 * signature,
-    Dwarf_Unsigned *typeoffset,
-    Dwarf_Unsigned * next_cu_offset,
-    Dwarf_Half     * header_cu_type,
-    Dwarf_Error * error);
 
 /*  New October 2011.  Enables client code to know if
     it is a debug_info or debug_types context. */
@@ -360,9 +346,11 @@ _dwarf_make_CU_Context(Dwarf_Debug dbg,
             return (NULL);
         }
         /*  Now read the debug_types extra header fields of
-            the signature (8 bytes) and the typeoffset. */
+            the signature (8 bytes) and the typeoffset.
+            This can be in executable, ordinary object,
+            or .dwo or .dwp object. */
         memcpy(&signaturedata,cu_ptr,sizeof(signaturedata));
-        cu_context->cc_type_signature_present = TRUE;
+        cu_context->cc_signature_present = TRUE;
         cu_ptr += sizeof(signaturedata);
         READ_UNALIGNED(dbg, typeoffset, Dwarf_Unsigned,
             cu_ptr, local_length_size);
@@ -489,7 +477,7 @@ dwarf_next_cu_header(Dwarf_Debug dbg,
 {
     Dwarf_Bool is_info = true;
     Dwarf_Half header_type = 0;
-    return dwarf_next_cu_header_internal(dbg,
+    return _dwarf_next_cu_header_internal(dbg,
         is_info,
         cu_header_length,
         version_stamp,
@@ -513,7 +501,7 @@ dwarf_next_cu_header_b(Dwarf_Debug dbg,
 {
     Dwarf_Bool is_info = true;
     Dwarf_Half header_type = 0;
-    return dwarf_next_cu_header_internal(dbg,
+    return _dwarf_next_cu_header_internal(dbg,
         is_info,
         cu_header_length,
         version_stamp,
@@ -541,7 +529,7 @@ dwarf_next_cu_header_c(Dwarf_Debug dbg,
     Dwarf_Error * error)
 {
     Dwarf_Half header_type = 0;
-    return dwarf_next_cu_header_internal(dbg,
+    return _dwarf_next_cu_header_internal(dbg,
         is_info,
         cu_header_length,
         version_stamp,
@@ -570,7 +558,7 @@ dwarf_next_cu_header_d(Dwarf_Debug dbg,
     Dwarf_Half * header_cu_type,
     Dwarf_Error * error)
 {
-    return dwarf_next_cu_header_internal(dbg,
+    return _dwarf_next_cu_header_internal(dbg,
         is_info,
         cu_header_length,
         version_stamp,
@@ -590,20 +578,27 @@ dwarf_next_cu_header_d(Dwarf_Debug dbg,
 /* If sig_present_return not set TRUE here
     then something must be wrong. ??
     Compiler bug?
+    A DWO/DWP CU has different base fields than
+    a normal object/executable, but this finds
+    the base fields for both types.
 */
 static int
-find_context_base_fields_dwo(Dwarf_Debug dbg,
+find_context_base_fields(Dwarf_Debug dbg,
     Dwarf_Die cudie,
     Dwarf_Sig8 *sig_return,
     Dwarf_Bool *sig_present_return,
     Dwarf_Unsigned *str_offsets_base_return,
     Dwarf_Bool *str_offsets_base_present_return,
+    Dwarf_Unsigned *addr_base_return,
+    Dwarf_Bool *addr_base_present_return,
     Dwarf_Error* error)
 {
     Dwarf_Sig8 signature;
     Dwarf_Bool sig_present = FALSE;
     Dwarf_Unsigned str_offsets_base = 0;
+    Dwarf_Unsigned addr_base = 0;
     Dwarf_Bool str_offsets_base_present = FALSE;
+    Dwarf_Bool addr_base_present = FALSE;
     Dwarf_Bool hasit = 0;
     int boolres = 0;
 
@@ -654,6 +649,18 @@ find_context_base_fields_dwo(Dwarf_Debug dbg,
                                 /* Something is badly wrong. */
                                 return udres;
                             }
+                        } else if (attrnum == DW_AT_addr_base){
+                            int udres = 0;
+                            udres = dwarf_formudata(attr,&addr_base,
+                                error);
+                            if(udres == DW_DLV_OK) {
+                                addr_base_present = TRUE;
+                            } else {
+                                dwarf_dealloc(dbg,attr,DW_DLA_ATTR);
+                                dwarf_dealloc(dbg,alist,DW_DLA_LIST);
+                                /* Something is badly wrong. */
+                                return udres;
+                            }
                         }  /* else nothing to do here. */
                     }
                     dwarf_dealloc(dbg,attr,DW_DLA_ATTR);
@@ -687,12 +694,16 @@ find_context_base_fields_dwo(Dwarf_Debug dbg,
     if (str_offsets_base_present) {
         *str_offsets_base_return = str_offsets_base;
     }
+    *addr_base_present_return = addr_base_present;
+    if (addr_base_present) {
+        *addr_base_return = addr_base;
+    }
     return DW_DLV_OK;
 }
 
 
-static int
-dwarf_next_cu_header_internal(Dwarf_Debug dbg,
+int
+_dwarf_next_cu_header_internal(Dwarf_Debug dbg,
     Dwarf_Bool is_info,
     Dwarf_Unsigned * cu_header_length,
     Dwarf_Half * version_stamp,
@@ -817,19 +828,18 @@ dwarf_next_cu_header_internal(Dwarf_Debug dbg,
     if (extension_size != NULL) {
         *extension_size = cu_context->cc_extension_size;
     }
-    if (!is_info) {
-        if (signature) {
-            *signature = cu_context->cc_type_signature;
-        }
-        if (typeoffset) {
-            *typeoffset = cu_context->cc_type_signature_offset;
-        }
+    if (signature) {
+        *signature = cu_context->cc_type_signature;
+    }
+    if (typeoffset) {
+        *typeoffset = cu_context->cc_type_signature_offset;
     }
     if (header_type) {
         *header_type = cu_context->cc_unit_type;
     }
 
-    if (_dwarf_file_has_debug_fission_cu_index(dbg) &&
+    if ( (dbg->de_tied_data.td_is_tied_object ||
+        _dwarf_file_has_debug_fission_cu_index(dbg)) &&
         (cu_context->cc_unit_type == DW_UT_compile ||
             cu_context->cc_unit_type == DW_UT_partial)) {
         /*  ASSERT: !cu_context->cc_type_signature_present */
@@ -846,23 +856,35 @@ dwarf_next_cu_header_internal(Dwarf_Debug dbg,
             Dwarf_Sig8 signature;
             Dwarf_Bool sig_present = FALSE;
             Dwarf_Unsigned str_offsets_base = 0;
+            Dwarf_Unsigned addr_base = 0;
             Dwarf_Bool str_offsets_base_present = FALSE;
-            dwo_idres = find_context_base_fields_dwo(dbg,
+            Dwarf_Bool addr_base_present = FALSE;
+            dwo_idres = find_context_base_fields(dbg,
                 cudie,&signature,&sig_present,
                 &str_offsets_base,&str_offsets_base_present,
+                &addr_base,&addr_base_present,
                 error);
 
             if (dwo_idres == DW_DLV_OK) {
                 if(sig_present) {
+                    /*  This can be in executable or ordinary .o
+                        or .dwo or .dwp */
                     cu_context->cc_type_signature = signature;
-                    cu_context->cc_type_signature_present = TRUE;
+                    cu_context->cc_signature_present = TRUE;
                 } else {
                     dwarf_dealloc(dbg,cudie,DW_DLA_DIE);
                     _dwarf_error(dbg, error, DW_DLE_DWP_MISSING_DWO_ID);
                     return DW_DLV_ERROR;
                 }
+                if (addr_base_present) {
+                    /* This can be in executable or ordinary .o */
+                    cu_context->cc_addr_base = addr_base;
+                    cu_context->cc_addr_base_present = TRUE;
+                }
 
                 if(str_offsets_base_present) {
+                    /*  This can be in executable or ordinary .o
+                        or .dwo or .dwp */
                     cu_context->cc_str_offsets_base = str_offsets_base;
                     cu_context->cc_str_offsets_base_present = TRUE;
                 } else {

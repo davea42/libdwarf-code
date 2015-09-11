@@ -550,6 +550,13 @@ printing frame information (here using ppc as an example).
 The abi is read as a URI string.
 
 .TP
+.B \-x tied=/t/i/depath
+Used when opening a main object that is a .dwo or .dwp file.
+The tied file path names the executable which has
+the .debug_addr section that may be referred to from
+the main object. See Split Objects (aka Debug Fission).
+
+.TP
 .B \-P 
 When checking this adds the list of compilation-unit names
 seen for each producer-compiler to the printed checking results.

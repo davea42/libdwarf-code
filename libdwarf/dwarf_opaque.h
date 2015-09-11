@@ -216,7 +216,7 @@ struct Dwarf_CU_Context_s {
         Fields listed in this order for a tiny space saving
         as opposed to greatest clarity.
     */
-    Dwarf_Bool cc_type_signature_present; /* Meaning type signature
+    Dwarf_Bool cc_signature_present; /* Meaning type signature
         in TU header or, for CU header, signature in CU DIE. */
     Dwarf_Bool cc_addr_base_present;       /* Not TRUE in .dwo */
     Dwarf_Bool cc_str_ranges_base_present; /* Not TRUE in .dwo */
@@ -461,6 +461,30 @@ struct Dwarf_Fission_Offsets_s {
     void * dfo_hash_to_index; */
 };
 
+/*  All the Dwarf_Debug tied-file info in one place.
+    */
+struct Dwarf_Tied_Data_s {
+    /*  Used to access executable from .dwo or .dwp object.
+        Pointer to the tied_to Dwarf_Debug*/
+    Dwarf_Debug td_tied_object;
+
+    /*  TRUE if this object is tied to.
+        It's extra work to look for a DW_AT_dwo_id.
+        This helps us do it only when it may be productive. */
+    Dwarf_Bool td_is_tied_object;
+
+    /*  If non-zero is a dwarf_tsearch 'tree'.
+        Only non-zero if td_is_tied_object is set and
+        we had a reason to build the search tree..
+
+        The Key for each record is a Dwarf_Sig8
+        (8 bytes).
+        The data for each is a pointer to a Dwarf_CU_context
+        record in this dbg (cu_context in
+        one of this dbg's de_cu_context_list). */
+    void *td_tied_search;
+
+};
 
 struct Dwarf_Debug_s {
     /*  All file access methods and support data
@@ -595,6 +619,8 @@ struct Dwarf_Debug_s {
 
     struct Dwarf_Printf_Callback_Info_s  de_printf_callback;
 
+    struct Dwarf_Tied_Data_s de_tied_data;
+
 };
 
 int dwarf_printf(Dwarf_Debug dbg, const char * format, ...)
@@ -644,7 +670,7 @@ int _dwarf_exract_string_offset_via_str_offsets(Dwarf_Debug dbg,
 
 int _dwarf_extract_address_from_debug_addr(Dwarf_Debug dbg,
     Dwarf_CU_Context context,
-    Dwarf_Byte_Ptr info_ptr,
+    Dwarf_Unsigned index,
     Dwarf_Addr *addr_out,
     Dwarf_Error *error);
 
@@ -679,10 +705,52 @@ Dwarf_Unsigned _dwarf_get_dwp_extra_offset(
     struct Dwarf_Debug_Fission_Per_CU_s* dwp,
     unsigned whichone, Dwarf_Unsigned * size);
 
+/*  This will look into the tied Dwarf_Debug
+    to which should have a skeleton CU DIE
+    and an addr_base and also have the .debug_addr
+    section. */
+
+int _dwarf_get_addr_from_tied(Dwarf_Debug dbg,
+    Dwarf_CU_Context context,
+    Dwarf_Unsigned addrindex,
+    Dwarf_Addr *addr_out,
+    Dwarf_Error *error);
+
 
 int _dwarf_get_fission_addition_die(Dwarf_Die die, int dw_sect_index,
    Dwarf_Unsigned* offset, Dwarf_Unsigned*size,
    Dwarf_Error *error);
+
+int _dwarf_get_addr_index_itself(int theform,
+    Dwarf_Small *info_ptr,
+    Dwarf_Unsigned *val_out,
+    Dwarf_Error * error);
+
+int
+_dwarf_search_for_signature(Dwarf_Debug dbg,
+   Dwarf_Sig8 sig,
+   Dwarf_CU_Context *context_out,
+   Dwarf_Error *error);
+
+
+void _dwarf_tied_destroy_free_node(void *node);
+
+int
+_dwarf_next_cu_header_internal(Dwarf_Debug dbg,
+    Dwarf_Bool is_info,
+    Dwarf_Unsigned * cu_header_length,
+    Dwarf_Half * version_stamp,
+    Dwarf_Unsigned * abbrev_offset,
+    Dwarf_Half * address_size,
+    Dwarf_Half * offset_size,
+    Dwarf_Half * extension_size,
+    Dwarf_Sig8 * signature,
+    Dwarf_Unsigned *typeoffset,
+    Dwarf_Unsigned * next_cu_offset,
+    Dwarf_Half     * header_cu_type,
+    Dwarf_Error * error);
+
+
 
 Dwarf_Byte_Ptr _dwarf_calculate_section_end_ptr(Dwarf_CU_Context context);
 

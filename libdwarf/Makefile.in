@@ -72,20 +72,21 @@ OBJS= dwarf_abbrev.o \
         dwarf_global.o \
         dwarf_harmless.o \
         dwarf_init_finish.o  \
+        dwarf_leb.o \
         dwarf_line.o \
         dwarf_line2.o \
         dwarf_loc.o \
 	dwarf_macro.o \
         dwarf_original_elf_init.o \
+        dwarf_pubtypes.o \
         dwarf_query.o \
+        dwarf_ranges.o \
         dwarf_string.o \
         dwarf_stubs.o \
-        dwarf_pubtypes.o \
+        dwarf_tied.o \
+        dwarf_tsearchhash.o \
         dwarf_types.o \
         dwarf_util.o \
-        dwarf_leb.o \
-        dwarf_ranges.o \
-        dwarf_tsearchhash.o \
         dwarf_vars.o \
         dwarf_weaks.o    \
         dwarf_xu_index.o    \
@@ -195,6 +196,10 @@ distclean:	clean
 	rm -rf autom4te.cache 
 	rm -f Makefile
 	rm -f libdwarf.h
+
+tests:
+	$(CC) -DTESTING $(CFLAGS) dwarf_tied.c dwarf_tsearchhash.o -o dwarftied
+	./dwarftied
 
 
 shar:

@@ -326,6 +326,7 @@ static boolean add_to_unique_errors_table();
     variable $HOME .
 */
 static struct esb_s config_file_path;
+static struct esb_s config_file_tiedpath;
 static const char *config_file_abi = 0;
 static char *config_file_defaults[] = {
     "dwarfdump.conf",
@@ -399,8 +400,12 @@ static void suppress_print_dwarf()
     do_check_dwarf = TRUE;
 }
 
-static int process_one_file(Elf * elf, const char * file_name, int archive,
+static int process_one_file(Elf * elf, Elf *elftied,
+    const char * file_name,
+    const char * tied_file_name,
+    int archive,
     struct dwconf_s *conf);
+
 static int
 open_a_file(const char * name)
 {
@@ -428,6 +433,32 @@ close_a_file(int f)
     close(f);
 }
 
+static int
+is_it_known_elf_header(Elf *elf)
+{
+    Elf32_Ehdr *eh32;
+
+#ifdef HAVE_ELF64_GETEHDR
+    Elf64_Ehdr *eh64;
+#endif /* HAVE_ELF64_GETEHDR */
+    eh32 = elf32_getehdr(elf);
+    if (eh32) {
+        return 1;
+    }
+#ifdef HAVE_ELF64_GETEHDR
+    {
+        Elf64_Ehdr *eh64;
+        /* not a 32-bit obj */
+        eh64 = elf64_getehdr(elf);
+        if (eh64) {
+            return 1;
+        }
+    }
+#endif /* HAVE_ELF64_GETEHDR */
+    /* Not something we can handle. */
+    return 0;
+}
+
 /*
    Iterate through dwarf and print all info.
 */
@@ -435,14 +466,19 @@ int
 main(int argc, char *argv[])
 {
     const char * file_name = 0;
+    const char * tied_file_name = 0;
     int f = 0;
+    int ftied = 0;
     Elf_Cmd cmd = 0;
     Elf *arf = 0;
     Elf *elf = 0;
+    Elf *arftied = 0;
+    Elf *elftied = 0;
     int archive = 0;
 
     set_checks_off();
     esb_constructor(&config_file_path);
+    esb_constructor(&config_file_tiedpath);
 #ifdef WIN32
     /*  Often we redirect the output to a file, but we have found
         issues due to the buffering associated with stdout. Some issues
@@ -511,7 +547,33 @@ main(int argc, char *argv[])
     cmd = ELF_C_READ;
     arf = elf_begin(f, cmd, (Elf *) 0);
     if (elf_kind(arf) == ELF_K_AR) {
+        /* This option is never tested and may not work sensibly. */
         archive = 1;
+    }
+
+    if (esb_string_len(&config_file_tiedpath) > 0) {
+        int isknown = 0;
+        tied_file_name = esb_get_string(&config_file_tiedpath);
+        ftied = open_a_file(tied_file_name);
+        fprintf(stderr, "%s ERROR:  can't open tied file %s\n",
+            program_name,
+            tied_file_name);
+        return (FAILED);
+        elftied = elf_begin(f, cmd, (Elf *) 0);
+        if (elf_kind(elftied) == ELF_K_AR) {
+            fprintf(stderr, "%s ERROR:  tied file  %s is "
+                "an archive. Not allowed. Giving up.\n",
+                program_name,
+                tied_file_name);
+            return (FAILED);
+        }
+        isknown = is_it_known_elf_header(elftied);
+        if (!isknown) {
+            fprintf(stderr,
+                "Cannot process tied file %s: unknown format\n",
+                tied_file_name);
+            return FAILED;
+        }
     }
 
     /*  If we are checking .debug_line, .debug_ranges, .debug_aranges,
@@ -538,34 +600,27 @@ main(int argc, char *argv[])
     }
 
     while ((elf = elf_begin(f, cmd, arf)) != 0) {
-        Elf32_Ehdr *eh32;
-
-#ifdef HAVE_ELF64_GETEHDR
-        Elf64_Ehdr *eh64;
-#endif /* HAVE_ELF64_GETEHDR */
-        eh32 = elf32_getehdr(elf);
-        if (!eh32) {
-#ifdef HAVE_ELF64_GETEHDR
-            /* not a 32-bit obj */
-            eh64 = elf64_getehdr(elf);
-            if (!eh64) {
-                /* not a 64-bit obj either! */
-                /* dwarfdump is almost-quiet when not an object */
-                fprintf(stderr, "Can't process %s: unknown format\n",file_name);
-                check_error = 1;
-            } else {
-                process_one_file(elf, file_name, archive,
-                    &config_file_data);
-            }
-#endif /* HAVE_ELF64_GETEHDR */
-        } else {
-            process_one_file(elf, file_name, archive,
-                &config_file_data);
+        int isknown = is_it_known_elf_header(elf);
+        if (!isknown) {
+            /* not a 64-bit obj either! */
+            /* dwarfdump is almost-quiet when not an object */
+            fprintf(stderr, "Can't process %s: unknown format\n",file_name);
+            check_error = 1;
+            cmd = elf_next(elf);
+            elf_end(elf);
+            continue;
         }
+        process_one_file(elf,elftied,
+            file_name, tied_file_name,
+            archive, &config_file_data);
         cmd = elf_next(elf);
         elf_end(elf);
     }
     elf_end(arf);
+    if (elftied) {
+        elf_end(elftied);
+        elftied = 0;
+    }
     /* Trivial malloc space cleanup. */
     clean_up_syms_malloc_data();
 
@@ -1082,38 +1137,12 @@ printf_callback_for_libdwarf(void *userdata,const char *data)
     printf("%s",data);
 }
 
-/*
-  Given a file which we know is an elf file, process
-  the dwarf data.
-
-*/
-static int
-process_one_file(Elf * elf, const char * file_name, int archive,
-    struct dwconf_s *config_file_data)
+/* dbg is often null when dbgtied was passed in. */
+static void
+dbgsetup(Dwarf_Debug dbg,struct dwconf_s *config_file_data)
 {
-    Dwarf_Debug dbg = 0;
-    int dres;
-    struct Dwarf_Printf_Callback_Info_s printfcallbackdata;
-
-    dres = dwarf_elf_init(elf, DW_DLC_READ, NULL, NULL, &dbg, &err);
-    if (dres == DW_DLV_NO_ENTRY) {
-        printf("No DWARF information present in %s\n", file_name);
-        return 0;
-    }
-    if (dres != DW_DLV_OK) {
-        print_error(dbg, "dwarf_elf_init", dres, err);
-    }
-
-    memset(&printfcallbackdata,0,sizeof(printfcallbackdata));
-    printfcallbackdata.dp_fptr = printf_callback_for_libdwarf;
-    dwarf_register_printf_callback(dbg,&printfcallbackdata);
-
-
-    if (archive) {
-        Elf_Arhdr *mem_header = elf_getarhdr(elf);
-
-        printf("\narchive member \t%s\n",
-            mem_header ? mem_header->ar_name : "");
+    if (!dbg) {
+        return;
     }
     dwarf_set_frame_rule_initial_value(dbg,
         config_file_data->cf_initial_rule_value);
@@ -1126,10 +1155,69 @@ process_one_file(Elf * elf, const char * file_name, int archive,
     dwarf_set_frame_undefined_value(dbg,
         config_file_data->cf_undefined_val);
     if (config_file_data->cf_address_size) {
-        dwarf_set_default_address_size(dbg, config_file_data->cf_address_size);
+        dwarf_set_default_address_size(dbg,
+            config_file_data->cf_address_size);
     }
     dwarf_set_harmless_error_list_size(dbg,50);
+}
 
+/*
+  Given a file which we know is an elf file, process
+  the dwarf data.
+
+*/
+static int
+process_one_file(Elf * elf,Elf *elftied,
+    const char * file_name,
+    const char * tied_file_name,
+    int archive,
+    struct dwconf_s *config_file_data)
+{
+    Dwarf_Debug dbg = 0;
+    Dwarf_Debug dbgtied = 0;
+    int dres;
+    struct Dwarf_Printf_Callback_Info_s printfcallbackdata;
+
+    dres = dwarf_elf_init(elf, DW_DLC_READ, NULL, NULL, &dbg, &err);
+    if (dres == DW_DLV_NO_ENTRY) {
+        printf("No DWARF information present in %s\n", file_name);
+        return 0;
+    }
+    if (dres != DW_DLV_OK) {
+        print_error(dbg, "dwarf_elf_init", dres, err);
+    }
+
+    if (elftied) {
+        dres = dwarf_elf_init(elf, DW_DLC_READ, NULL, NULL, &dbgtied,
+            &err);
+        if (dres == DW_DLV_NO_ENTRY) {
+            printf("No DWARF information present in tied file: %s\n",
+                tied_file_name);
+            return 0;
+        }
+        if (dres != DW_DLV_OK) {
+            print_error(dbg, "dwarf_elf_init on tied_file", dres, err);
+        }
+    }
+
+    memset(&printfcallbackdata,0,sizeof(printfcallbackdata));
+    printfcallbackdata.dp_fptr = printf_callback_for_libdwarf;
+    dwarf_register_printf_callback(dbg,&printfcallbackdata);
+    if (dbgtied) {
+        dwarf_register_printf_callback(dbgtied,&printfcallbackdata);
+    }
+    memset(&printfcallbackdata,0,sizeof(printfcallbackdata));
+
+
+
+    if (archive) {
+        Elf_Arhdr *mem_header = elf_getarhdr(elf);
+
+        printf("\narchive member \t%s\n",
+            mem_header ? mem_header->ar_name : "");
+    }
+    dbgsetup(dbg,config_file_data);
+    dbgsetup(dbgtied,config_file_data);
 
     /* Get address size and largest representable address */
     dres = dwarf_get_address_size(dbg,&elf_address_size,&err);
@@ -1139,6 +1227,12 @@ process_one_file(Elf * elf, const char * file_name, int archive,
 
     elf_max_address = (elf_address_size == 8 ) ?
         0xffffffffffffffffULL : 0xffffffff;
+
+    /*  Ok for dbgtied to be NULL. */
+    dres = dwarf_set_tied_dbg(dbg,dbgtied,&err);
+    if (dres != DW_DLV_OK) {
+        print_error(dbg, "dwarf_set_tied_dbg() failed", dres, err);
+    }
 
     /* Get .text and .debug_ranges info if in check mode */
     if (do_check_dwarf) {
@@ -1264,10 +1358,14 @@ process_one_file(Elf * elf, const char * file_name, int archive,
     if (dres != DW_DLV_OK) {
         print_error(dbg, "dwarf_finish", dres, err);
     }
-
+    if (dbgtied) {
+        dres = dwarf_finish(dbgtied,&err);
+        if (dres != DW_DLV_OK) {
+            print_error(dbg, "dwarf_finish on dbgtied", dres, err);
+        }
+    }
     printf("\n");
     return 0;
-
 }
 
 /* Do printing of most sections.
@@ -1394,6 +1492,7 @@ static const char *usage_text[] = {
 "\t\t-V print version information",
 "\t\t-x name=<path>\tname dwarfdump.conf",
 "\t\t-x abi=<abi>\tname abi in dwarfdump.conf",
+/*"\t\t-x tied=<tiedpath>\tname an associated object", FIXME */
 "\t\t-w\tprint weakname section",
 "\t\t-W\tprint parent and children tree (wide format) with the -S option",
 "\t\t-Wp\tprint parent tree (wide format) with the -S option",
@@ -1500,7 +1599,7 @@ process_args(int argc, char *argv[])
         case 'M':
             show_form_used =  TRUE;
             break;
-        case 'x':               /* Select abi/path to use */
+        case 'x':               /* Select which -x option, get value. */
             {
                 const char *path = 0;
                 const char *abi = 0;
@@ -1520,6 +1619,15 @@ process_args(int argc, char *argv[])
                         goto badopt;
                     }
                     config_file_abi = abi;
+                    break;
+                } else if (strncmp(dwoptarg, "tied=", 5) == 0) {
+                    const char *tiedpath = 0;
+                    tiedpath = do_uri_translation(&dwoptarg[5],"-x tied=");
+                    if (strlen(tiedpath) < 1) {
+                        goto badopt;
+                    }
+                    esb_empty_string(&config_file_tiedpath);
+                    esb_append(&config_file_tiedpath,tiedpath);
                     break;
                 } else {
                 badopt:

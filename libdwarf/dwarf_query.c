@@ -518,16 +518,17 @@ dwarf_attr(Dwarf_Die die,
 int
 _dwarf_extract_address_from_debug_addr(Dwarf_Debug dbg,
     Dwarf_CU_Context context,
-    Dwarf_Byte_Ptr info_ptr,
+    Dwarf_Unsigned index_to_addr,
     Dwarf_Addr *addr_out,
     Dwarf_Error *error)
 {
     Dwarf_Unsigned address_base = 0;
-    Dwarf_Unsigned addrindex = 0;
+    Dwarf_Unsigned addrindex = index_to_addr;;
     Dwarf_Unsigned addr_offset = 0;
     Dwarf_Unsigned ret_addr = 0;
     Dwarf_Word leb_len = 0;
     int res = 0;
+
     res = _dwarf_get_address_base_attr_value(dbg,context,
         &address_base, error);
     if (res != DW_DLV_OK) {
@@ -537,7 +538,8 @@ _dwarf_extract_address_from_debug_addr(Dwarf_Debug dbg,
     if (res != DW_DLV_OK) {
         /*  Ignore the inner error, report something meaningful */
         dwarf_dealloc(dbg,*error, DW_DLA_ERROR);
-        _dwarf_error(dbg,error,DW_DLE_MISSING_NEEDED_DEBUG_ADDR_SECTION);
+        _dwarf_error(dbg,error,
+            DW_DLE_MISSING_NEEDED_DEBUG_ADDR_SECTION);
         return DW_DLV_ERROR;
     }
     /*  DW_FORM_addrx has a base value from the CU die:
@@ -546,7 +548,6 @@ _dwarf_extract_address_from_debug_addr(Dwarf_Debug dbg,
     /*  DW_FORM_GNU_addr_index  relies on DW_AT_GNU_addr_base
         which is in the CU die. */
 
-    addrindex = _dwarf_decode_u_leb128(info_ptr, &leb_len);
     addr_offset = address_base + (addrindex * context->cc_address_size);
 
 
@@ -606,14 +607,37 @@ dwarf_lowpc(Dwarf_Die die,
         attr_form == DW_FORM_addrx) {
         Dwarf_Addr addr_out = 0;
         int res2 = 0;
+        Dwarf_Unsigned index_to_addr = 0;
         Dwarf_CU_Context context = die->di_cu_context;
+
+
+        /*  We get the index. It might apply here
+            or in tied object. Checking that next. */
+        res2 = _dwarf_get_addr_index_itself(attr_form,
+            info_ptr,&index_to_addr,error);
+        if(res2 != DW_DLV_OK) {
+            return res2;
+        }
+
         res2 = _dwarf_extract_address_from_debug_addr(dbg,
             context,
-            info_ptr,
+            index_to_addr,
             &addr_out,
             error);
         if (res2 != DW_DLV_OK) {
-            return res2;
+            if (res2 == DW_DLV_ERROR &&dwarf_errno(*error) ==
+                DW_DLE_MISSING_NEEDED_DEBUG_ADDR_SECTION
+                && dbg->de_tied_data.td_tied_object) {
+                int res3 = 0;
+
+                res3 = _dwarf_get_addr_from_tied(dbg,
+                    context,index_to_addr,&addr_out,error);
+                if ( res3 != DW_DLV_OK) {
+                    return res3;
+                }
+            } else {
+                return res2;
+            }
         }
         *return_addr = addr_out;
         return (DW_DLV_OK);
@@ -806,6 +830,7 @@ _dwarf_get_address_base_attr_value(Dwarf_Debug dbg,
     The consumer has to check the return_form or
     return_class to decide if the value returned
     through return_value is an address or an address-offset.
+
     See  DWARF4 section 2.17.2,
     "Contiguous Address Range".
     */
@@ -847,15 +872,43 @@ dwarf_highpc_b(Dwarf_Die die,
         if (attr_form == DW_FORM_GNU_addr_index ||
             attr_form == DW_FORM_addrx) {
             Dwarf_Unsigned addr_out = 0;
+            Dwarf_Unsigned index_to_addr = 0;
             int res2 = 0;
             Dwarf_CU_Context context = die->di_cu_context;
+
+            /*  index_to_addr we get here might apply
+                to this dbg
+                or to tieddbg. */
+            res2 = _dwarf_get_addr_index_itself(attr_form,
+                info_ptr,&index_to_addr,error);
+            if(res2 != DW_DLV_OK) {
+                return res2;
+            }
+
+
             res2 = _dwarf_extract_address_from_debug_addr(dbg,
                 context,
-                info_ptr,
+                index_to_addr,
                 &addr_out,
                 error);
             if(res2 != DW_DLV_OK) {
-                return res;
+                if (res2 == DW_DLV_ERROR &&
+                    dwarf_errno(*error) ==
+                    DW_DLE_MISSING_NEEDED_DEBUG_ADDR_SECTION
+                    && dbg->de_tied_data.td_tied_object) {
+                    /*  .debug_addr is in tied dbg. */
+                    int res3 = 0;
+                    Dwarf_Unsigned index = 0;
+                    /*  .debug_addr is in tied dbg.
+                        Get the index of the addr */
+                    res3 = _dwarf_get_addr_from_tied(dbg,
+                        context,index_to_addr,&addr_out,error);
+                    if ( res3 != DW_DLV_OK) {
+                        return res3;
+                    }
+                } else {
+                    return res2;
+                }
             }
             *return_value = addr_out;
             *return_form = attr_form;
@@ -899,6 +952,59 @@ dwarf_highpc_b(Dwarf_Die die,
     *return_class = class;
     return (DW_DLV_OK);
 }
+
+/* The dbg and context here are a file with DW_FORM_addrx
+    but missing .debug_addr. So go to the tied file
+    and using the signature from the current context
+    locate the target CU in the tied file Then
+    get the address.
+
+*/
+int
+_dwarf_get_addr_from_tied(Dwarf_Debug dbg,
+    Dwarf_CU_Context context,
+    Dwarf_Unsigned index,
+    Dwarf_Addr *addr_out,
+    Dwarf_Error*error)
+{
+    Dwarf_Debug tieddbg = 0;
+    int res = 0;
+    Dwarf_Addr local_addr = 0;
+    Dwarf_CU_Context tiedcontext = 0;
+
+    if (!context->cc_signature_present) {
+        _dwarf_error(dbg, error, DW_DLE_NO_SIGNATURE_TO_LOOKUP);
+        return  DW_DLV_ERROR;
+    }
+    tieddbg = dbg->de_tied_data.td_tied_object;
+    if (!tieddbg) {
+        _dwarf_error(dbg, error, DW_DLE_NO_TIED_ADDR_AVAILABLE);
+        return  DW_DLV_ERROR;
+    }
+    if (!context->cc_signature_present) {
+        _dwarf_error(dbg, error, DW_DLE_NO_TIED_SIG_AVAILABLE);
+        return  DW_DLV_ERROR;
+    }
+    res = _dwarf_search_for_signature(tieddbg,
+        context->cc_type_signature,
+        &tiedcontext,
+        error);
+    if ( res != DW_DLV_OK) {
+        return res;
+    }
+
+    res = _dwarf_extract_address_from_debug_addr(tieddbg,
+        tiedcontext,
+        index,
+        &local_addr,
+        error);
+    if ( res != DW_DLV_OK) {
+        return res;
+    }
+    *addr_out = local_addr;
+    return DW_DLV_OK;
+}
+
 
 
 /*

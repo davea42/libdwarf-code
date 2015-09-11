@@ -280,6 +280,7 @@ tdestroy_free_node(void *nodep)
     free(malloc_addr);
 }
 
+
 /* The sort of hash table entries result in very simple helper functions. */
 static int
 simple_compare_function(const void *l, const void *r)
@@ -294,8 +295,6 @@ simple_compare_function(const void *l, const void *r)
     }
     return 0;
 }
-
-
 
 /*  This function returns a pointer to a region
     of memory.  For alloc_types that are not
@@ -615,6 +614,10 @@ _dwarf_free_all_of_one_debug(Dwarf_Debug dbg)
     }
 
     dwarf_tdestroy(dbg->de_alloc_tree,tdestroy_free_node);
+    if (dbg->de_tied_data.td_tied_search) {
+        dwarf_tdestroy(dbg->de_tied_data.td_tied_search,
+            _dwarf_tied_destroy_free_node);
+    }
     memset(dbg, 0, sizeof(*dbg)); /* Prevent accidental use later. */
     free(dbg);
     return (DW_DLV_OK);
