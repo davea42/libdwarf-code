@@ -440,6 +440,8 @@ extern "C" {
 #define DW_AT_GNU_all_tail_call_sites           0x2116 /* GNU */
 #define DW_AT_GNU_all_call_sites                0x2117 /* GNU */
 #define DW_AT_GNU_all_source_call_sites         0x2118 /* GNU */
+/*  Section offset to .debug_macro section. */
+#define DW_AT_GNU_macros                        0x2119 /* GNU */
 /* The GNU DebugFission project: http://gcc.gnu.org/wiki/DebugFission */
 #define DW_AT_GNU_dwo_name                      0x2130 /* GNU */
 #define DW_AT_GNU_dwo_id                        0x2131 /* GNU */
