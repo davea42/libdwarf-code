@@ -449,6 +449,9 @@ extern "C" {
 #define DW_AT_GNU_pubnames                      0x2134 /* GNU */
 #define DW_AT_GNU_pubtypes                      0x2135 /* GNU */
 
+/* To distinguish distinct basic blocks in a single source line. */
+#define DW_AT_GNU_discriminator                 0x2136 /* GNU */
+
 
 
 /* ALTIUM extension: ALTIUM Compliant location lists (flag) */
