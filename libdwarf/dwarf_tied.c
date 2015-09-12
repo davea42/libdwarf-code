@@ -53,6 +53,20 @@ struct Dwarf_Tied_Entry_s {
   Dwarf_CU_Context dt_context;
 };
 
+void
+_dwarf_dumpsig(const char *msg, Dwarf_Sig8 *sig,int lineno)
+{
+    const char *sigv = 0;
+    unsigned u = 0;
+
+    printf("%s 0x",msg);
+    sigv = &sig->signature[0];
+    for (u = 0; u < 8; u++) {
+        printf("%02x",0xff&sigv[u]);
+    }
+    printf(" line %d\n",lineno);
+}
+
 static void *
 tied_make_entry(Dwarf_Sig8 *key, Dwarf_CU_Context val)
 {
@@ -116,23 +130,19 @@ _dwarf_tied_destroy_free_node(void*nodep)
     CUs from tieddbg. That is a reasonable
     requirement, one hopes. */
 static int
-loop_reading_debug_info_for_cu(
+_dwarf_loop_reading_debug_info_for_cu(
     Dwarf_Debug tieddbg,
     Dwarf_Sig8 sig,
     Dwarf_Error *error)
 {
-    Dwarf_Unsigned cu_header_length = 0;
-    Dwarf_Unsigned abbrev_offset = 0;
-    Dwarf_Half version_stamp = 0;
-    Dwarf_Half address_size = 0;
-    Dwarf_Half extension_size = 0;
-    Dwarf_Half length_size = 0;
-    Dwarf_Sig8 signature;
-    Dwarf_Unsigned typeoffset = 0;
-    Dwarf_Unsigned next_cu_offset = 0;
     unsigned loop_count = 0;
+    /*  We will not find tied signatures
+        for .debug_addr (or line tables) in .debug_types.
+        it seems. Those signatures point from
+        'normal' to 'dwo/dwp'  */
     int is_info = TRUE;
     Dwarf_CU_Context startingcontext = 0;
+    Dwarf_Unsigned next_cu_offset = 0;
 
     startingcontext = tieddbg->de_info_reading.de_cu_context;
 
@@ -148,6 +158,16 @@ loop_reading_debug_info_for_cu(
         int sres = DW_DLV_OK;
         Dwarf_Half cu_type = 0;
         Dwarf_CU_Context latestcontext = 0;
+        Dwarf_Unsigned cu_header_length = 0;
+        Dwarf_Unsigned abbrev_offset = 0;
+        Dwarf_Half version_stamp = 0;
+        Dwarf_Half address_size = 0;
+        Dwarf_Half extension_size = 0;
+        Dwarf_Half length_size = 0;
+        Dwarf_Sig8 signature;
+        Dwarf_Bool has_signature = FALSE;
+        Dwarf_Unsigned typeoffset = 0;
+
 
         memset(&signature,0,sizeof(signature));
         sres = _dwarf_next_cu_header_internal(tieddbg,
@@ -155,21 +175,23 @@ loop_reading_debug_info_for_cu(
             &cu_header_length, &version_stamp,
             &abbrev_offset, &address_size,
             &length_size,&extension_size,
-            &signature, &typeoffset,
+            &signature, &has_signature,
+            &typeoffset,
             &next_cu_offset,
             &cu_type, error);
         if (sres == DW_DLV_NO_ENTRY) {
             break;
         }
+
         latestcontext = tieddbg->de_info_reading.de_cu_context;
 
-        if (latestcontext->cc_signature_present &&
-            latestcontext->cc_addr_base_present ) {
+        if (has_signature) {
             void *retval = 0;
             Dwarf_Sig8 consign =
                 latestcontext->cc_type_signature;
             void *entry =
                 tied_make_entry(&consign,latestcontext);
+
             if (!entry) {
                 return DW_DLV_NO_ENTRY;
             }
@@ -181,6 +203,12 @@ loop_reading_debug_info_for_cu(
                 /* FAILED might be out of memory.*/
                 return DW_DLV_NO_ENTRY;
             }
+#if 0
+            /*  This could be a compiler error. But
+                let us not decide?  FIXME */
+            if (!latestcontext->cc_addr_base_present) {
+            }
+#endif
             return DW_DLV_OK;
         }
     }
@@ -212,7 +240,7 @@ _dwarf_search_for_signature(Dwarf_Debug tieddbg,
     entry.dt_key = sig;
     entry.dt_context = 0;
     entry2 = dwarf_tfind(&entry,
-        tied->td_tied_search,
+        &tied->td_tied_search,
         tied_compare_function);
     if (entry2) {
         struct Dwarf_Tied_Entry_s *e2 =
@@ -224,14 +252,14 @@ _dwarf_search_for_signature(Dwarf_Debug tieddbg,
     /*  We assume the caller is NOT doing
         info section read operations
         on the tieddbg.  */
-    res  = loop_reading_debug_info_for_cu(
+    res  = _dwarf_loop_reading_debug_info_for_cu(
         tieddbg,sig,error);
     if (res == DW_DLV_ERROR) {
         return res;
     }
 
     entry2 = dwarf_tfind(&entry,
-        tied->td_tied_search,
+        &tied->td_tied_search,
         tied_compare_function);
     if (entry2) {
         struct Dwarf_Tied_Entry_s *e2 =

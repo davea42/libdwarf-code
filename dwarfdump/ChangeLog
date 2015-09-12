@@ -1,4 +1,7 @@
 2015-09-11  David Anderson
+     * dwarfdump.c: Fixed copy/paste errors so DebugFission
+       code works (see tieddbg in the source).
+2015-09-11  David Anderson
      * dwarfdump.c, dwarfdump.1: Added -x tied=<path>
        option so one can get .debug_addr data when referencing
        a .dwp or .dwo. Tieing these together.

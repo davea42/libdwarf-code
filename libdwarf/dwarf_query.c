@@ -523,7 +523,7 @@ _dwarf_extract_address_from_debug_addr(Dwarf_Debug dbg,
     Dwarf_Error *error)
 {
     Dwarf_Unsigned address_base = 0;
-    Dwarf_Unsigned addrindex = index_to_addr;;
+    Dwarf_Unsigned addrindex = index_to_addr;
     Dwarf_Unsigned addr_offset = 0;
     Dwarf_Unsigned ret_addr = 0;
     Dwarf_Word leb_len = 0;
@@ -553,7 +553,7 @@ _dwarf_extract_address_from_debug_addr(Dwarf_Debug dbg,
 
     /*  The offsets table is a series of address-size entries
         but with a base. */
-    if ((addr_offset + context->cc_address_size) >=
+    if ((addr_offset + context->cc_address_size) >
         dbg->de_debug_addr.dss_size ) {
         _dwarf_error(dbg, error, DW_DLE_ATTR_FORM_SIZE_BAD);
         return (DW_DLV_ERROR);
@@ -564,6 +564,58 @@ _dwarf_extract_address_from_debug_addr(Dwarf_Debug dbg,
         context->cc_address_size);
     *addr_out = ret_addr;
     return DW_DLV_OK;
+}
+
+/* ASSERT:
+    attr_form == DW_FORM_GNU_addr_index ||
+        attr_form == DW_FORM_addrx
+*/
+int
+_dwarf_look_in_local_and_tied(Dwarf_Half attr_form,
+    Dwarf_CU_Context context,
+    Dwarf_Small *info_ptr,
+    Dwarf_Addr *return_addr,
+    Dwarf_Error *error)
+{
+    Dwarf_Addr addr_out = 0;
+    int res2 = 0;
+    Dwarf_Unsigned index_to_addr = 0;
+    Dwarf_Debug dbg = 0;
+
+    /*  We get the index. It might apply here
+        or in tied object. Checking that next. */
+    res2 = _dwarf_get_addr_index_itself(attr_form,
+        info_ptr,&index_to_addr,error);
+    if(res2 != DW_DLV_OK) {
+        return res2;
+    }
+    dbg = context->cc_dbg;
+
+    res2 = _dwarf_extract_address_from_debug_addr(dbg,
+        context,
+        index_to_addr,
+        &addr_out,
+        error);
+    if (res2 != DW_DLV_OK) {
+        if (res2 == DW_DLV_ERROR &&dwarf_errno(*error) ==
+            DW_DLE_MISSING_NEEDED_DEBUG_ADDR_SECTION
+            && dbg->de_tied_data.td_tied_object) {
+            int res3 = 0;
+
+            /*  We do not want to leak error structs... */
+            dwarf_dealloc(dbg,*error,DW_DLA_ERROR);
+            *error = 0;
+            res3 = _dwarf_get_addr_from_tied(dbg,
+                context,index_to_addr,&addr_out,error);
+            if ( res3 != DW_DLV_OK) {
+                return res3;
+            }
+        } else {
+            return res2;
+        }
+    }
+    *return_addr = addr_out;
+    return (DW_DLV_OK);
 }
 
 
@@ -581,12 +633,13 @@ dwarf_lowpc(Dwarf_Die die,
     int version = 0;
     enum Dwarf_Form_Class class = DW_FORM_CLASS_UNKNOWN;
     int res = 0;
+    Dwarf_CU_Context context = die->di_cu_context;
 
     CHECK_DIE(die, DW_DLV_ERROR);
 
-    dbg = die->di_cu_context->cc_dbg;
-    address_size = die->di_cu_context->cc_address_size;
-    offset_size = die->di_cu_context->cc_length_size;
+    dbg = context->cc_dbg;
+    address_size = context->cc_address_size;
+    offset_size = context->cc_length_size;
     res = _dwarf_get_value_ptr(die, DW_AT_low_pc, &attr_form,&info_ptr,error);
     if(res == DW_DLV_ERROR) {
         return res;
@@ -594,7 +647,7 @@ dwarf_lowpc(Dwarf_Die die,
     if(res == DW_DLV_NO_ENTRY) {
         return res;
     }
-    version = die->di_cu_context->cc_version_stamp;
+    version = context->cc_version_stamp;
     class = dwarf_get_form_class(version,DW_AT_low_pc,
         offset_size,attr_form);
     if (class != DW_FORM_CLASS_ADDRESS) {
@@ -605,42 +658,13 @@ dwarf_lowpc(Dwarf_Die die,
 
     if(attr_form == DW_FORM_GNU_addr_index ||
         attr_form == DW_FORM_addrx) {
-        Dwarf_Addr addr_out = 0;
-        int res2 = 0;
-        Dwarf_Unsigned index_to_addr = 0;
-        Dwarf_CU_Context context = die->di_cu_context;
-
-
-        /*  We get the index. It might apply here
-            or in tied object. Checking that next. */
-        res2 = _dwarf_get_addr_index_itself(attr_form,
-            info_ptr,&index_to_addr,error);
-        if(res2 != DW_DLV_OK) {
-            return res2;
-        }
-
-        res2 = _dwarf_extract_address_from_debug_addr(dbg,
+        res = _dwarf_look_in_local_and_tied(
+            attr_form,
             context,
-            index_to_addr,
-            &addr_out,
+            info_ptr,
+            return_addr,
             error);
-        if (res2 != DW_DLV_OK) {
-            if (res2 == DW_DLV_ERROR &&dwarf_errno(*error) ==
-                DW_DLE_MISSING_NEEDED_DEBUG_ADDR_SECTION
-                && dbg->de_tied_data.td_tied_object) {
-                int res3 = 0;
-
-                res3 = _dwarf_get_addr_from_tied(dbg,
-                    context,index_to_addr,&addr_out,error);
-                if ( res3 != DW_DLV_OK) {
-                    return res3;
-                }
-            } else {
-                return res2;
-            }
-        }
-        *return_addr = addr_out;
-        return (DW_DLV_OK);
+        return res;
     }
     READ_UNALIGNED(dbg, ret_addr, Dwarf_Addr,
         info_ptr, address_size);

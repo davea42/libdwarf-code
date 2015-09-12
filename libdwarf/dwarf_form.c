@@ -727,29 +727,13 @@ dwarf_formaddr(Dwarf_Attribute attr,
     attrform = attr->ar_attribute_form;
     if (attrform == DW_FORM_GNU_addr_index ||
         attrform == DW_FORM_addrx) {
-        Dwarf_Addr addr_out = 0;
-        int res2;
-        Dwarf_Unsigned index_to_addr = 0;
-
-        res2 = _dwarf_get_addr_index_itself(
+        res = _dwarf_look_in_local_and_tied(
             attrform,
-            attr->ar_debug_ptr,&index_to_addr,error);
-        if(res2 != DW_DLV_OK) {
-            return res2;
-        }
-
-
-        res = _dwarf_extract_address_from_debug_addr(dbg,
             cu_context,
-            index_to_addr,
-            &addr_out,
+            attr->ar_debug_ptr,
+            return_addr,
             error);
-
-        if (res != DW_DLV_OK) {
-            return res;
-        }
-        *return_addr = addr_out;
-        return (DW_DLV_OK);
+        return res;
     }
     if (attrform == DW_FORM_addr
         /*  || attrform == DW_FORM_ref_addr Allowance of
@@ -1112,6 +1096,7 @@ dwarf_formstring(Dwarf_Attribute attr,
                 cu_context->cc_debug_offset +
                 cu_context->cc_length + cu_context->cc_length_size +
                 cu_context->cc_extension_size;
+
             if (0 == _dwarf_string_valid(begin, end)) {
                 _dwarf_error(dbg, error, DW_DLE_ATTR_FORM_SIZE_BAD);
                 return (DW_DLV_ERROR);

@@ -745,12 +745,21 @@ _dwarf_next_cu_header_internal(Dwarf_Debug dbg,
     Dwarf_Half * offset_size,
     Dwarf_Half * extension_size,
     Dwarf_Sig8 * signature,
+    Dwarf_Bool * has_signature,
     Dwarf_Unsigned *typeoffset,
     Dwarf_Unsigned * next_cu_offset,
     Dwarf_Half     * header_cu_type,
     Dwarf_Error * error);
 
+int _dwarf_look_in_local_and_tied(Dwarf_Half attr_form,
+    Dwarf_CU_Context context,
+    Dwarf_Small *info_ptr,
+    Dwarf_Addr *return_addr,
+    Dwarf_Error *error);
+
 
 
 Dwarf_Byte_Ptr _dwarf_calculate_section_end_ptr(Dwarf_CU_Context context);
+
+void _dwarf_dumpsig(const char *msg, Dwarf_Sig8 *sig,int lineno);
 

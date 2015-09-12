@@ -206,7 +206,7 @@ dwarf_set_tied_dbg(Dwarf_Debug dbg, Dwarf_Debug tieddbg,Dwarf_Error*error)
     dbg->de_tied_data.td_tied_object = tieddbg;
     if (tieddbg) {
         tieddbg->de_tied_data.td_is_tied_object = TRUE;
-    } 
+    }
     return DW_DLV_OK;
 }
 

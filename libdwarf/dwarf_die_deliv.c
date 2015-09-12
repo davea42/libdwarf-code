@@ -483,7 +483,7 @@ dwarf_next_cu_header(Dwarf_Debug dbg,
         version_stamp,
         abbrev_offset,
         address_size,
-        0,0,0,0,
+        0,0,0,0,0,
         next_cu_offset,
         &header_type,
         error);
@@ -508,7 +508,7 @@ dwarf_next_cu_header_b(Dwarf_Debug dbg,
         abbrev_offset,
         address_size,
         offset_size,extension_size,
-        0,0,
+        0,0,0,
         next_cu_offset,
         &header_type,
         error);
@@ -529,7 +529,7 @@ dwarf_next_cu_header_c(Dwarf_Debug dbg,
     Dwarf_Error * error)
 {
     Dwarf_Half header_type = 0;
-    return _dwarf_next_cu_header_internal(dbg,
+    int res =_dwarf_next_cu_header_internal(dbg,
         is_info,
         cu_header_length,
         version_stamp,
@@ -538,10 +538,12 @@ dwarf_next_cu_header_c(Dwarf_Debug dbg,
         offset_size,
         extension_size,
         signature,
+        0,
         typeoffset,
         next_cu_offset,
         &header_type,
         error);
+    return res;
 }
 int
 dwarf_next_cu_header_d(Dwarf_Debug dbg,
@@ -558,7 +560,7 @@ dwarf_next_cu_header_d(Dwarf_Debug dbg,
     Dwarf_Half * header_cu_type,
     Dwarf_Error * error)
 {
-    return _dwarf_next_cu_header_internal(dbg,
+    int res = _dwarf_next_cu_header_internal(dbg,
         is_info,
         cu_header_length,
         version_stamp,
@@ -567,10 +569,12 @@ dwarf_next_cu_header_d(Dwarf_Debug dbg,
         offset_size,
         extension_size,
         signature,
+        0,
         typeoffset,
         next_cu_offset,
         header_cu_type,
         error);
+    return res;
 }
 
 
@@ -595,94 +599,72 @@ find_context_base_fields(Dwarf_Debug dbg,
 {
     Dwarf_Sig8 signature;
     Dwarf_Bool sig_present = FALSE;
-    Dwarf_Unsigned str_offsets_base = 0;
-    Dwarf_Unsigned addr_base = 0;
+    Dwarf_Off str_offsets_base = 0;
+    Dwarf_Off addr_base = 0;
     Dwarf_Bool str_offsets_base_present = FALSE;
     Dwarf_Bool addr_base_present = FALSE;
-    Dwarf_Bool hasit = 0;
+    Dwarf_Bool hasdwoid = 0;
     int boolres = 0;
 
-    boolres = dwarf_hasattr(cudie,DW_AT_dwo_id,
-        &hasit,error);
-    if (boolres == DW_DLV_OK && !hasit) {
-        boolres = dwarf_hasattr(cudie,DW_AT_GNU_dwo_id,
-            &hasit,error);
-    }
-    if (boolres == DW_DLV_OK) {
-        if (hasit) {
-            Dwarf_Attribute * alist = 0;
-            Dwarf_Signed      atcount = 0;
-            int alres = 0;
+    Dwarf_Attribute * alist = 0;
+    Dwarf_Signed      atcount = 0;
+    int alres = 0;
 
-            alres = dwarf_attrlist(cudie, &alist,
-                &atcount,error);
-            if(alres == DW_DLV_OK) {
-                Dwarf_Signed i = 0;
-                for(i = 0;  i < atcount; ++i) {
-                    Dwarf_Half attrnum;
-                    int ares = 0;
-                    Dwarf_Attribute attr = alist[i];
-                    ares = dwarf_whatattr(attr,&attrnum,error);
-                    if (ares == DW_DLV_OK) {
-                        if (attrnum == DW_AT_dwo_id ||
-                            attrnum == DW_AT_GNU_dwo_id ) {
-                            int sres = 0;
-                            sres = dwarf_formsig8_const(attr,
-                                &signature,error);
-                            if(sres == DW_DLV_OK) {
-                                sig_present = TRUE;
-                            } else {
-                                /* Something is badly wrong. */
-                                dwarf_dealloc(dbg,attr,DW_DLA_ATTR);
-                                dwarf_dealloc(dbg,alist,DW_DLA_LIST);
-                                return sres;
-                            }
-                        } else if (attrnum == DW_AT_str_offsets_base){
-                            int udres = 0;
-                            udres = dwarf_formudata(attr,&str_offsets_base,
-                                error);
-                            if(udres == DW_DLV_OK) {
-                                str_offsets_base_present = TRUE;
-                            } else {
-                                dwarf_dealloc(dbg,attr,DW_DLA_ATTR);
-                                dwarf_dealloc(dbg,alist,DW_DLA_LIST);
-                                /* Something is badly wrong. */
-                                return udres;
-                            }
-                        } else if (attrnum == DW_AT_addr_base){
-                            int udres = 0;
-                            udres = dwarf_formudata(attr,&addr_base,
-                                error);
-                            if(udres == DW_DLV_OK) {
-                                addr_base_present = TRUE;
-                            } else {
-                                dwarf_dealloc(dbg,attr,DW_DLA_ATTR);
-                                dwarf_dealloc(dbg,alist,DW_DLA_LIST);
-                                /* Something is badly wrong. */
-                                return udres;
-                            }
-                        }  /* else nothing to do here. */
+    alres = dwarf_attrlist(cudie, &alist,
+        &atcount,error);
+    if(alres == DW_DLV_OK) {
+        Dwarf_Signed i = 0;
+        for(i = 0;  i < atcount; ++i) {
+            Dwarf_Half attrnum;
+            int ares = 0;
+            Dwarf_Attribute attr = alist[i];
+            ares = dwarf_whatattr(attr,&attrnum,error);
+            if (ares == DW_DLV_OK) {
+                if (attrnum == DW_AT_dwo_id ||
+                    attrnum == DW_AT_GNU_dwo_id ) {
+                    int sres = 0;
+                    sres = dwarf_formsig8_const(attr,
+                        &signature,error);
+                    if(sres == DW_DLV_OK) {
+                        sig_present = TRUE;
+                    } else {
+                        /* Something is badly wrong. */
+                        dwarf_dealloc(dbg,attr,DW_DLA_ATTR);
+                        dwarf_dealloc(dbg,alist,DW_DLA_LIST);
+                        return sres;
                     }
-                    dwarf_dealloc(dbg,attr,DW_DLA_ATTR);
-                }
-                dwarf_dealloc(dbg,alist,DW_DLA_LIST);
-            } else {
-                /* Something is badly wrong. No attrlist. FIXME */
-                _dwarf_error(dbg,error, DW_DLE_DWP_MISSING_DWO_ID);
-                return DW_DLV_ERROR;
+                } else if (attrnum == DW_AT_str_offsets_base){
+                    int udres = 0;
+                    udres = dwarf_global_formref(attr,&str_offsets_base,
+                        error);
+                    if(udres == DW_DLV_OK) {
+                        str_offsets_base_present = TRUE;
+                    } else {
+                        dwarf_dealloc(dbg,attr,DW_DLA_ATTR);
+                        dwarf_dealloc(dbg,alist,DW_DLA_LIST);
+                        /* Something is badly wrong. */
+                        return udres;
+                    }
+                } else if (attrnum == DW_AT_addr_base
+                    || attrnum == DW_AT_GNU_addr_base){
+                    int udres = 0;
+                    udres = dwarf_global_formref(attr,&addr_base,
+                        error);
+                    if(udres == DW_DLV_OK) {
+                        addr_base_present = TRUE;
+                    } else {
+                        dwarf_dealloc(dbg,attr,DW_DLA_ATTR);
+                        dwarf_dealloc(dbg,alist,DW_DLA_LIST);
+                        /* Something is badly wrong. */
+                        return udres;
+                    }
+                }  /* else nothing to do here. */
             }
-        } else {
-            /* There is no DW_AT_dwo_id */
-            /* Something is badly wrong. FIXME */
-            _dwarf_error(dbg,error, DW_DLE_DWP_MISSING_DWO_ID);
-            return DW_DLV_ERROR;
+            dwarf_dealloc(dbg,attr,DW_DLA_ATTR);
         }
+        dwarf_dealloc(dbg,alist,DW_DLA_LIST);
     } else {
-        _dwarf_error(dbg,error, DW_DLE_DWP_MISSING_DWO_ID);
-    }
-    if (!sig_present) {
-        /*  Something is badly wrong.  Likely
-            a compiler error/omission. */
+        /* Something is badly wrong. No attrlist. FIXME */
         _dwarf_error(dbg,error, DW_DLE_DWP_MISSING_DWO_ID);
         return DW_DLV_ERROR;
     }
@@ -712,6 +694,7 @@ _dwarf_next_cu_header_internal(Dwarf_Debug dbg,
     Dwarf_Half * offset_size,
     Dwarf_Half * extension_size,
     Dwarf_Sig8 * signature,
+    Dwarf_Bool * has_signature,
     Dwarf_Unsigned *typeoffset,
     Dwarf_Unsigned * next_cu_offset,
 
@@ -828,12 +811,6 @@ _dwarf_next_cu_header_internal(Dwarf_Debug dbg,
     if (extension_size != NULL) {
         *extension_size = cu_context->cc_extension_size;
     }
-    if (signature) {
-        *signature = cu_context->cc_type_signature;
-    }
-    if (typeoffset) {
-        *typeoffset = cu_context->cc_type_signature_offset;
-    }
     if (header_type) {
         *header_type = cu_context->cc_unit_type;
     }
@@ -848,10 +825,10 @@ _dwarf_next_cu_header_internal(Dwarf_Debug dbg,
             and the base array.
             Also pick up cc_str_offset_base. */
         Dwarf_Die cudie = 0;
+
         int resdwo = dwarf_siblingof_b(dbg,NULL,is_info,
             &cudie, error);
         if (resdwo == DW_DLV_OK) {
-            Dwarf_Bool hasit = 0;
             int dwo_idres = 0;
             Dwarf_Sig8 signature;
             Dwarf_Bool sig_present = FALSE;
@@ -871,10 +848,6 @@ _dwarf_next_cu_header_internal(Dwarf_Debug dbg,
                         or .dwo or .dwp */
                     cu_context->cc_type_signature = signature;
                     cu_context->cc_signature_present = TRUE;
-                } else {
-                    dwarf_dealloc(dbg,cudie,DW_DLA_DIE);
-                    _dwarf_error(dbg, error, DW_DLE_DWP_MISSING_DWO_ID);
-                    return DW_DLV_ERROR;
                 }
                 if (addr_base_present) {
                     /* This can be in executable or ordinary .o */
@@ -887,14 +860,7 @@ _dwarf_next_cu_header_internal(Dwarf_Debug dbg,
                         or .dwo or .dwp */
                     cu_context->cc_str_offsets_base = str_offsets_base;
                     cu_context->cc_str_offsets_base_present = TRUE;
-                } else {
-                    /* Do...what? */
                 }
-            } else {
-                /* DW_DLE_DWP_MISSING_DWO_ID, really */
-                /* something badly wrong. */
-                dwarf_dealloc(dbg,cudie,DW_DLA_DIE);
-                return dwo_idres;
             }
             dwarf_dealloc(dbg,cudie,DW_DLA_DIE);
         } else if (resdwo == DW_DLV_NO_ENTRY) {
@@ -905,6 +871,15 @@ _dwarf_next_cu_header_internal(Dwarf_Debug dbg,
             /* Something is badly wrong. */
             return resdwo;
         }
+    }
+    if (typeoffset) {
+        *typeoffset = cu_context->cc_type_signature_offset;
+    }
+    if (signature ) {
+        *signature = cu_context->cc_type_signature;
+    }
+    if (has_signature ) {
+        *has_signature = cu_context->cc_signature_present;
     }
     new_offset = new_offset + cu_context->cc_length +
         cu_context->cc_length_size + cu_context->cc_extension_size;

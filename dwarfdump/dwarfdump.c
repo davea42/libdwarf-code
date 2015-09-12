@@ -555,11 +555,13 @@ main(int argc, char *argv[])
         int isknown = 0;
         tied_file_name = esb_get_string(&config_file_tiedpath);
         ftied = open_a_file(tied_file_name);
-        fprintf(stderr, "%s ERROR:  can't open tied file %s\n",
-            program_name,
-            tied_file_name);
-        return (FAILED);
-        elftied = elf_begin(f, cmd, (Elf *) 0);
+        if (ftied == -1) {
+            fprintf(stderr, "%s ERROR:  can't open tied file %s\n",
+                program_name,
+                tied_file_name);
+            return (FAILED);
+        }
+        elftied = elf_begin(ftied, cmd, (Elf *) 0);
         if (elf_kind(elftied) == ELF_K_AR) {
             fprintf(stderr, "%s ERROR:  tied file  %s is "
                 "an archive. Not allowed. Giving up.\n",
@@ -1188,7 +1190,7 @@ process_one_file(Elf * elf,Elf *elftied,
     }
 
     if (elftied) {
-        dres = dwarf_elf_init(elf, DW_DLC_READ, NULL, NULL, &dbgtied,
+        dres = dwarf_elf_init(elftied, DW_DLC_READ, NULL, NULL, &dbgtied,
             &err);
         if (dres == DW_DLV_NO_ENTRY) {
             printf("No DWARF information present in tied file: %s\n",
@@ -1357,12 +1359,14 @@ process_one_file(Elf * elf,Elf *elftied,
     dres = dwarf_finish(dbg, &err);
     if (dres != DW_DLV_OK) {
         print_error(dbg, "dwarf_finish", dres, err);
+        dbg = 0;
     }
     if (dbgtied) {
         dres = dwarf_finish(dbgtied,&err);
         if (dres != DW_DLV_OK) {
             print_error(dbg, "dwarf_finish on dbgtied", dres, err);
         }
+        dbgtied = 0;
     }
     printf("\n");
     return 0;
