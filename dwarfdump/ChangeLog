@@ -1,4 +1,8 @@
 2015-09-11  David Anderson
+     * dwarfdump.c: Update usage message to mention
+       -x tied=  and update version strings.
+     * common.c: Update version string.
+2015-09-11  David Anderson
      * dwarfdump.c: Fixed copy/paste errors so DebugFission
        code works (see tieddbg in the source).
 2015-09-11  David Anderson

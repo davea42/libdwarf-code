@@ -50,7 +50,7 @@
 extern int elf_open(const char *name,int mode);
 #endif /* WIN32 */
 
-#define DWARFDUMP_VERSION " Thu May  7 08:43:38 PDT 2015  "
+#define DWARFDUMP_VERSION " Sat Sep 12 14:17:13 PDT 2015  "
 
 extern char *dwoptarg;
 
@@ -1494,9 +1494,9 @@ static const char *usage_text[] = {
 "\t\t-v\tverbose: show more information",
 "\t\t-vv verbose: show even more information",
 "\t\t-V print version information",
-"\t\t-x name=<path>\tname dwarfdump.conf",
 "\t\t-x abi=<abi>\tname abi in dwarfdump.conf",
-/*"\t\t-x tied=<tiedpath>\tname an associated object", FIXME */
+"\t\t-x name=<path>\tname dwarfdump.conf",
+"\t\t-x tied=<tiedpath>\tname an associated object file (Split DWARF)", 
 "\t\t-w\tprint weakname section",
 "\t\t-W\tprint parent and children tree (wide format) with the -S option",
 "\t\t-Wp\tprint parent tree (wide format) with the -S option",
