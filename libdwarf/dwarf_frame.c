@@ -1148,6 +1148,7 @@ dwarf_get_fde_list(Dwarf_Debug dbg,
 
 
 /*  Only works on dwarf sections, not eh_frame
+    because based on DW_AT_MIPS_fde.
     Given a Dwarf_Die, see if it has a
     DW_AT_MIPS_fde attribute and if so use that
     to get an fde offset.
@@ -1163,6 +1164,8 @@ dwarf_get_fde_for_die(Dwarf_Debug dbg,
     Dwarf_Signed signdval = 0;
     Dwarf_Fde new_fde = 0;
     unsigned char *fde_ptr = 0;
+    unsigned char *fde_start_ptr = 0;
+    unsigned char *fde_end_ptr = 0;
     unsigned char *cie_ptr = 0;
     Dwarf_Unsigned cie_id = 0;
 
@@ -1196,7 +1199,9 @@ dwarf_get_fde_for_die(Dwarf_Debug dbg,
     }
 
     fde_offset = signdval;
-    fde_ptr = (dbg->de_debug_frame.dss_data + fde_offset);
+    fde_start_ptr = dbg->de_debug_frame.dss_data;
+    fde_ptr = fde_start_ptr + fde_offset;
+    fde_end_ptr = fde_start_ptr + dbg->de_debug_frame.dss_size;
 
 
     /*  First read in the 'common prefix' to figure out what * we are to
@@ -1219,8 +1224,9 @@ dwarf_get_fde_for_die(Dwarf_Debug dbg,
     /*  Pass NULL, not section pointer, for 3rd argument.
         de_debug_frame.dss_data has no eh_frame relevance. */
     res = dwarf_create_fde_from_after_start(dbg, &prefix,
-        (Dwarf_Small *) NULL,
+        fde_start_ptr,
         fde_ptr,
+        fde_end_ptr,
         /* use_gnu_cie_calc= */ 0,
         /* Dwarf_Cie = */ 0,
         &new_fde, error);
@@ -1255,8 +1261,9 @@ dwarf_get_fde_for_die(Dwarf_Debug dbg,
             de_debug_frame.dss_data has no eh_frame relevance. */
         res2 = dwarf_create_cie_from_after_start(dbg,
             &prefix_c,
-            (Dwarf_Small *) NULL,
+            fde_start_ptr,
             cie_ptr,
+            fde_end_ptr,
             /* cie_count= */ 0,
             /* use_gnu_cie_calc= */
             0, &new_cie, error);

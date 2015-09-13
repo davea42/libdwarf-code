@@ -957,6 +957,13 @@ _dwarf_internal_srclines(Dwarf_Die die,
                         return (DW_DLV_ERROR);
                     }
                     cur_file_entry->fi_file_name = (Dwarf_Small *) line_ptr;
+                    res = _dwarf_check_string_valid(dbg,
+                       line_ptr,line_ptr,line_ptr_end,error);
+                    if (res != DW_DLV_OK) {
+                        dwarf_free_line_table_prefix(&prefix);
+                        return res;
+                    }
+
                     line_ptr = line_ptr + strlen((char *) line_ptr) + 1;
                     cur_file_entry->fi_dir_index = (Dwarf_Sword)
                         _dwarf_decode_u_leb128(line_ptr, &leb128_length);
@@ -1889,6 +1896,7 @@ dwarf_read_line_table_prefix(Dwarf_Debug dbg,
         return (DW_DLV_ERROR);
     }
     while ((*(char *) line_ptr) != '\0') {
+        int res = 0;
         if (directories_count >= directories_malloc) {
             Dwarf_Unsigned expand = 2 * directories_malloc;
             Dwarf_Unsigned bytesalloc = sizeof(Dwarf_Small *) * expand;
@@ -1908,6 +1916,11 @@ dwarf_read_line_table_prefix(Dwarf_Debug dbg,
         }
         prefix_out->pf_include_directories[directories_count] =
             line_ptr;
+        res = _dwarf_check_string_valid(dbg,data_start,line_ptr,
+            line_ptr_end,err);
+        if (res != DW_DLV_OK) {
+            return res;
+        }
         line_ptr = line_ptr + strlen((char *) line_ptr) + 1;
         directories_count++;
         if (line_ptr >= line_ptr_end) {
@@ -1940,6 +1953,7 @@ dwarf_read_line_table_prefix(Dwarf_Debug dbg,
         Dwarf_Unsigned file_length = 0;
         struct Line_Table_File_Entry_s *curline;
         Dwarf_Word leb128_length = 0;
+        int res = 0;
 
 
         if (files_count >= files_malloc) {
@@ -1961,6 +1975,12 @@ dwarf_read_line_table_prefix(Dwarf_Debug dbg,
         curline = prefix_out->pf_line_table_file_entries + files_count;
 
         curline->lte_filename = line_ptr;
+        res = _dwarf_check_string_valid(dbg,data_start,line_ptr,
+            line_ptr_end,err);
+        if (res != DW_DLV_OK) {
+            return res;
+        }
+        
         line_ptr = line_ptr + strlen((char *) line_ptr) + 1;
 
         DECODE_LEB128_UWORD(line_ptr, utmp);

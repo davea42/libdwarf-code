@@ -1,3 +1,10 @@
+2015-09-13  David Anderson
+     * libdwarf.h.in,dwarf_error.c: New error code for 
+       improved string checking.
+     * dwarf_form.c,dwarf_string.c:Now call the string checker
+       on all strings and do a more thorough check.
+     * dwarf_util.c, dwarf_util.h: Revised the interfaces to the 
+       string checker to make it more useful and accurate.
 2015-09-12  David Anderson
      * dwarf_die_deliv.c,dwarf_form.c,dwarf_opaque.h,
        dwarf_original_elf_init.c,dwarf_query.c,dwarf_tied.c:

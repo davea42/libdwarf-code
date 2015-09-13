@@ -499,25 +499,39 @@ _dwarf_get_abbrev_for_code(Dwarf_CU_Context cu_context, Dwarf_Unsigned code)
 }
 
 
-/* return 1 if string ends before 'endptr' else
-** return 0 meaning string is not properly terminated.
-** Presumption is the 'endptr' pts to end of some dwarf section data.
+/*  We check that:
+        areaptr <= strptr.
+        a NUL byte (*p) exists at p < end.
+    and return DW_DLV_ERROR if a check fails.
+
+    de_assume_string_in_bounds
 */
 int
-_dwarf_string_valid(void *startptr, void *endptr)
+_dwarf_check_string_valid(Dwarf_Debug dbg,void *areaptr,
+    void *strptr, void *areaendptr,
+    Dwarf_Error*error)
 {
 
-    char *start = startptr;
-    char *end = endptr;
-
-    while (start < end) {
-        if (*start == 0) {
-            return 1;           /* OK! */
-        }
-        ++start;
-        ++end;
+    Dwarf_Small *start = areaptr;
+    Dwarf_Small *p = strptr;
+    Dwarf_Small *end = areaendptr;
+    if (p < start) {
+        _dwarf_error(dbg,error,DW_DLE_DEBUG_STR_OFFSET_BAD);
+        return DW_DLV_ERROR;
     }
-    return 0;                   /* FAIL! bad string! */
+    if (dbg->de_assume_string_in_bounds) {
+        /* This NOT the default. But folks can choose
+            to live dangerously and just assume strings ok. */
+        return DW_DLV_OK;
+    }
+    while (p < end) {
+        if (*p == 0) {
+            return DW_DLV_OK;
+        }
+        ++p;
+    }
+    _dwarf_error(dbg,error,DW_DLE_STRING_NOT_TERMINATED);
+    return DW_DLV_ERROR; 
 }
 
 
