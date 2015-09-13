@@ -1,3 +1,5 @@
+2015-09-13  David Anderson
+     * dwarfdump.c, common.c: Update version string.
 2015-09-11  David Anderson
      * dwarfdump.c: Update usage message to mention
        -x tied=  and update version strings.
