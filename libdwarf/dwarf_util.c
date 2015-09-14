@@ -499,7 +499,8 @@ _dwarf_get_abbrev_for_code(Dwarf_CU_Context cu_context, Dwarf_Unsigned code)
 }
 
 
-/*  We check that:
+/*
+    We check that:
         areaptr <= strptr.
         a NUL byte (*p) exists at p < end.
     and return DW_DLV_ERROR if a check fails.
@@ -531,7 +532,7 @@ _dwarf_check_string_valid(Dwarf_Debug dbg,void *areaptr,
         ++p;
     }
     _dwarf_error(dbg,error,DW_DLE_STRING_NOT_TERMINATED);
-    return DW_DLV_ERROR; 
+    return DW_DLV_ERROR;
 }
 
 

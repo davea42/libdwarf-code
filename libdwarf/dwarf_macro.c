@@ -277,7 +277,7 @@ dwarf_get_macro_details(Dwarf_Debug dbg,
                 return (DW_DLV_ERROR);
             }
             res = _dwarf_check_string_valid(dbg,
-               macro_base,pnext,macro_end,error);
+                macro_base,pnext,macro_end,error);
             if (res != DW_DLV_OK) {
                 return res;
             }
@@ -408,7 +408,7 @@ dwarf_get_macro_details(Dwarf_Debug dbg,
                 return (DW_DLV_ERROR);
             }
             res = _dwarf_check_string_valid(dbg,
-               macro_base,pnext,macro_end,error);
+                macro_base,pnext,macro_end,error);
             if (res != DW_DLV_OK) {
                 return res;
             }

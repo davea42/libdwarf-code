@@ -958,7 +958,7 @@ _dwarf_internal_srclines(Dwarf_Die die,
                     }
                     cur_file_entry->fi_file_name = (Dwarf_Small *) line_ptr;
                     res = _dwarf_check_string_valid(dbg,
-                       line_ptr,line_ptr,line_ptr_end,error);
+                        line_ptr,line_ptr,line_ptr_end,error);
                     if (res != DW_DLV_OK) {
                         dwarf_free_line_table_prefix(&prefix);
                         return res;
@@ -1980,7 +1980,7 @@ dwarf_read_line_table_prefix(Dwarf_Debug dbg,
         if (res != DW_DLV_OK) {
             return res;
         }
-        
+
         line_ptr = line_ptr + strlen((char *) line_ptr) + 1;
 
         DECODE_LEB128_UWORD(line_ptr, utmp);
