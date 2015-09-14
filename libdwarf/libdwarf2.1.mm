@@ -8,7 +8,7 @@ n\."
 .nr Hb 5
 \." ==============================================
 \." Put current date in the following at each rev
-.ds vE rev 2.27, May 05, 2015
+.ds vE rev 2.28, Sept 13, 2015
 \." ==============================================
 \." ==============================================
 .ds | |
@@ -1502,6 +1502,68 @@ through the \f(CWElf**\fP handle created by \f(CWint dwarf_init()\fP.
 This function is not meaningful for a system that does not use the
 Elf format for objects.
 
+.H 3 "dwarf_set_tied_dbg()"
+.DS
+\f(CWint dwarf_set_tied_dbg(
+        Dwarf_Debug dbg,
+        Dwarf_Debug tieddbg,
+	Dwarf_Error *error)\fP
+.DE
+The function
+\f(CWdwarf_set_tied_dbg()\fP
+enables cross-object
+access of DWARF data.   
+If a DWARF5 Package object
+has 
+\f(CWDW_FORM_addrx\fP
+or
+\f(CWDW_FORM_GNU_addr_index\fP
+in ad address attribute
+one needs both the Package file
+and the executable to extract the actual address with
+\f(CWdwarf_formaddr()\fP.
+So one does a normal 
+\f(CWdwarf_elf_init()\fP
+or
+\f(CWdwarf_init()\fP
+on each object and then tie the two together with
+a call  such as:
+.in +2
+.DS
+\f(CWDwarf_Debug dbg = 0;
+Dwarf_Debug tieddbg = 0;
+Dwarf_Error error = 0;
+int res;
+
+/* Do the dwarf_init() or dwarf_elf_init 
+   calls to set 
+   dbg, tieddbg at this point. Then: */
+res = dwarf_set_tied_dbg(dbg,tieddbg,&error);
+if (res != DW_DLV_OK) {
+    /* Something went wrong*/
+}\fP
+.DE
+.in -2
+
+When done with both dbg and tieddbg 
+do the normal finishing operations on both
+in any order.
+
+It is possible to undo the tieing operation with
+.in +2
+.DS
+\f(CW
+res = dwarf_set_tied_dbg(dbg,NULL,&error);
+if (res != DW_DLV_OK) {
+    /* Something went wrong*/
+}\fP
+.DE
+.in -2
+
+It is not necessary to undo the tieing operation
+before finishing on the dbg and tieddbg.
+
+
 .H 3 "dwarf_finish()"
 .DS
 \f(CWint dwarf_finish(
@@ -2938,14 +3000,12 @@ or a .dwp package file) is
 Such an error means that the  .dwo or .dwp file
 is missing the 
 \f(CW.debug_addr\fP
-section and it is up to the consumer to know how to find
-the executable or object that contains the 
-\f(CW.debug_addr\fP section and how to
-complete the finding of the actual address for the 
-passed in attribute.  
-See
-\f(CWdwarf_get_debug_addr_index()\fP 
-below.
+section.
+When opening a .dwo object file or a .dwp package file
+one should also open the corresponding executable
+and use 
+\f(CWdwarf_set_tied_dbg()\fP
+to associate the objects before calling dwarf_formaddr().
 
 
 
@@ -2962,6 +3022,10 @@ is only valid on attributes with form
 or
 \f(CWDW_FORM_addrx\fP.
 
+The function makes it possible
+to print the
+index from a dwarf dumper program.
+
 When it succeeds,
 \f(CWdwarf_get_debug_addr_index()\fP returns
 \f(CWDW_DLV_OK\fP and sets \f(CW*return_index\fP
@@ -2971,11 +3035,7 @@ the attribute's index (into the
 
 It returns \f(CWDW_DLV_ERROR\fP on error.
 
-This is intended to be called only on
-attributes which a call to 
-\f(CWdwarf_formaddr()\fP
-would fail with error code 
-\f(CWDW_DLE_MISSING_NEEDED_DEBUG_ADDR_SECTION\fP.
+
 
 .H 3 "dwarf_get_debug_str_index()"
 
