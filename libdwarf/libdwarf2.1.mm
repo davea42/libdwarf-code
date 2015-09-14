@@ -8,7 +8,7 @@ n\."
 .nr Hb 5
 \." ==============================================
 \." Put current date in the following at each rev
-.ds vE rev 2.28, Sept 13, 2015
+.ds vE rev 2.29, Sept 14, 2015
 \." ==============================================
 \." ==============================================
 .ds | |
@@ -47,8 +47,7 @@ It does not make recommendations as to how the functions
 described in this document should be implemented nor does it
 suggest possible optimizations. 
 .P
-The document is oriented to reading DWARF version 2 
-and version 3.
+The document is oriented to reading DWARF version 2 and later.
 There are certain sections which are SGI-specific (those
 are clearly identified in the document).
 .P
@@ -203,6 +202,11 @@ The following is a brief mention of the changes in this libdwarf from
 the libdwarf draft for DWARF Version 1 and recent changes.
 
 .H 2 "Items Changed"
+.P
+Adding support for Package Files (DWARF5)
+to enable access of address data using DW_FORM_addrx.
+See dwarf_set_tied_dbg().
+(September 13, 2015)
 .P
 Adding some DWARF5 support and improved DWP Package File
 support, using dwarf_next_cu_header_d().
@@ -1082,6 +1086,39 @@ been released.
 The storage pointed to by this descriptor should be freed 
 using a call to \f(CWdwarf_xh_header_free()\fP with 
 a valid \f(CWDwarf_XuIndexHeader\fP pointer as the argument.
+
+.H 1 "UTF-8 strings"
+\fIlibdwarf\fP 
+is defined, at various points, to return 
+string pointers or to copy strings into
+string areas you define.
+DWARF allows the use of
+\f(CWDW_AT_use_UTF8\f(CW
+(DWARF3 and later)
+\f(CWDW_ATE_UTF\fP
+(DWARF4 and later)
+to specify that the strings returned are actually
+in UTF-8 format. 
+What this means is that if UTF-8 is specfied on
+a particular object it is up to callers that wish
+to print all the characters properly to use language-appropriate
+functions to convert the char * to wide characters and print
+the wide characters.
+All ASCII characters in the strings will print properly
+whether printed as wide characters or not.
+The methods to convert UTF-8 strings they will print
+properly  for all  such strings is beyond the scope of this document.
+.P
+If UTF-8 is not specified then one is probably safe
+in assuming the strings are iso_8859-15 and normal
+C printf() will work fine..
+.P
+In either case  one should be wary of corrupted 
+(accidentally or intentionally)
+strings
+with ASCII control characters in the text.
+Such can cause bad effects if simply printed to a device
+(such as a terminal).
 
 .H 1 "Error Handling"
 The method for detection and disposition of error conditions that arise 
