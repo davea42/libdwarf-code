@@ -50,6 +50,12 @@ print_one_frame_reg_col(Dwarf_Debug dbg,
     Dwarf_Signed offset_relevant,
     Dwarf_Signed offset, Dwarf_Ptr block_ptr);
 
+static void print_frame_inst_bytes(Dwarf_Debug dbg,
+    Dwarf_Ptr cie_init_inst, Dwarf_Signed len,
+    Dwarf_Signed data_alignment_factor,
+    int code_alignment_factor, Dwarf_Half addr_size,
+    struct dwconf_s *config_data);
+
 /*  A strcpy which ensures NUL terminated string
     and never overruns the output.
 */
@@ -1038,7 +1044,7 @@ get_string_from_locs(Dwarf_Debug dbg,
 /*  Print the frame instructions in detail for a glob of instructions.
 */
 
-/*ARGSUSED*/ void
+/*ARGSUSED*/ static void
 print_frame_inst_bytes(Dwarf_Debug dbg,
     Dwarf_Ptr cie_init_inst, Dwarf_Signed len,
     Dwarf_Signed data_alignment_factor,

@@ -428,14 +428,8 @@ extern Dwarf_Die current_cu_die_for_print_frames; /* This is
    used in get_fde_proc_name() */
 
 extern void printreg(Dwarf_Signed reg,struct dwconf_s *config_data);
-extern void print_frame_inst_bytes(Dwarf_Debug dbg,
-    Dwarf_Ptr cie_init_inst, Dwarf_Signed len,
-    Dwarf_Signed data_alignment_factor,
-    int code_alignment_factor, Dwarf_Half addr_size,
-    struct dwconf_s *config_data);
 
-int
-get_proc_name(Dwarf_Debug dbg, Dwarf_Die die, Dwarf_Addr low_pc,
+int get_proc_name(Dwarf_Debug dbg, Dwarf_Die die, Dwarf_Addr low_pc,
     char *proc_name_buf, int proc_name_buf_len, void **pcMap);
 
 void get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
