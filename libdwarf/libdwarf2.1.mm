@@ -8,7 +8,7 @@ n\."
 .nr Hb 5
 \." ==============================================
 \." Put current date in the following at each rev
-.ds vE rev 2.29, Sept 14, 2015
+.ds vE rev 2.30, Sept 14, 2015
 \." ==============================================
 \." ==============================================
 .ds | |
@@ -1106,8 +1106,8 @@ functions to convert the char * to wide characters and print
 the wide characters.
 All ASCII characters in the strings will print properly
 whether printed as wide characters or not.
-The methods to convert UTF-8 strings they will print
-properly  for all  such strings is beyond the scope of this document.
+The methods to convert UTF-8 strings so they will print
+correctly for all  such strings is beyond the scope of this document.
 .P
 If UTF-8 is not specified then one is probably safe
 in assuming the strings are iso_8859-15 and normal

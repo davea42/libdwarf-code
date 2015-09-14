@@ -1,4 +1,8 @@
 2015-09-14  David Anderson
+     * libdwarf2.1.mm: Revision 2.30. Fixed awkward
+       line in UTF-8 section.
+     * libdwarf2.1.pdf: Regenerated
+2015-09-14  David Anderson
      * libdwarf2.1.mm: Revision 2.29. Added text
        to Items Changed section. Added a top level
        UTF-8 strings section.
