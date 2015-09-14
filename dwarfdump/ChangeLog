@@ -1,4 +1,5 @@
 2015-09-14  David Anderson
+     * dwarfdump.c: Remove trailing space.
      * print_frames.c, globals.h: print_frame_inst_bytes() defined and used
        in one file, so made a static function, removed from globals.h
 2015-09-13  David Anderson

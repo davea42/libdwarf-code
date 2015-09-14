@@ -1496,7 +1496,7 @@ static const char *usage_text[] = {
 "\t\t-V print version information",
 "\t\t-x abi=<abi>\tname abi in dwarfdump.conf",
 "\t\t-x name=<path>\tname dwarfdump.conf",
-"\t\t-x tied=<tiedpath>\tname an associated object file (Split DWARF)", 
+"\t\t-x tied=<tiedpath>\tname an associated object file (Split DWARF)",
 "\t\t-w\tprint weakname section",
 "\t\t-W\tprint parent and children tree (wide format) with the -S option",
 "\t\t-Wp\tprint parent tree (wide format) with the -S option",
