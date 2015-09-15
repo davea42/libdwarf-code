@@ -1,4 +1,14 @@
-2015-09-15  David Anderson
+2015-09-15  Carlos Alberto Enciso
+     * dwarf_elf_access.c: For Windows version, 
+       some compilers generate
+       EM_PPC64 elf type, but the generated code is 32 bits.
+       Set the correct
+       value for 'dbg->de_pointer_size'.
+     * dwarf_init_finish.c: For Windows version, 
+       remove the incorrect hard
+       code value for 'dbg->de_pointer_size'.
+     * dwgetopt.h: Add the guard 'extern "C"'.
+2015-09-15  David Anderson and Carlos Alberto Enciso
      * dwarf_form.c (dwarf_formsig8_const): Was failing to
        return its return code.
      * dwarf_xu_index.c (_dwarf_search_fission_for_offset): Was 

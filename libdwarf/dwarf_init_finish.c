@@ -701,11 +701,6 @@ _dwarf_setup(Dwarf_Debug dbg, Dwarf_Error * error)
     dbg->de_length_size = obj->methods->get_length_size(obj->object);
     dbg->de_pointer_size = obj->methods->get_pointer_size(obj->object);
 
-    /*  For windows always is 4 ? */
-#ifdef WIN32
-    dbg->de_pointer_size = 4;
-#endif /* WIN32 */
-
     section_count = obj->methods->get_section_count(obj->object);
 
     /*  Allocate space to record references to debug sections, that can

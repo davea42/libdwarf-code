@@ -1,3 +1,18 @@
+2015-09-15  Carlos Alberto Enciso
+     * common.c: For Windows version, add a symbol with the 
+       release date (taken from the distributed compressed archive),
+       to be used by print_version_details() for better 
+       tracking of versions.
+     * print_die.c: The text search (-S), now follows 
+       the DW_AT_specification
+       and the DW_AT_abstract_origin attributes, 
+       to get the associated name;
+       this finds the declaration and definitions 
+       DIEs for a member functions
+       or the abstract and concrete instance DIEs for inlined functions.
+       Fix some C99 issues with local variable declarations in
+       get_attr_value().
+     * print_aranges.c: Add an extra newline in print_aranges().
 2015-09-15  David Anderson
      * print_die.c: for case DW_AT_dwo_id a c99-ism has been
        changed to be like C89.
@@ -28,6 +43,19 @@
        tag_tree.c: Use dwoptind dwoptarg etc, 
        not optind, optarg, optopt op6error etc.
      * print_die.c: updated commentary.
+=======
+2015-06-15  Carlos Alberto Enciso
+     * common.c: For Windows version, add a symbol with the release date
+       (taken from the distributed compressed archive), to be used by
+       print_version_details() for better tracking of versions.
+     * print_die.c: The text search (-S), now follows the DW_AT_specification
+       and the DW_AT_abstract_origin attributes, to get the associated name;
+       this finds the declaration and definitions DIEs for a member functions
+       or the abstract and concrete instance DIEs for inlined functions.
+       Fix some C99 issues with local variable declarations in
+       get_attr_value().
+     * print_aranges.c: Add an extra newline in print_aranges().
+>>>>>>> carlos_enciso
 2015-05-07  David Anderson
      * common.c, dwarfdump.c: Update version string.
      * print_die.c: Print DW_AT_dwo_id properly as a Dwarf_Sig8 value.
@@ -77,7 +105,7 @@
        noticed the situation).
      * print_ranges.c: Fix indent mistakes.
      * tag_attr.c: Remove trailing whitespace from a #include line.
-2015-03-03  Carlos Alberto-Enciso
+2015-03-03  Carlos Alberto Enciso
      * dwarfdump.c: Add allocate_range_array_info(),
         release_range_array_info() calls to help fix range checking.
      * globals.h: Add declarations of range checking functions.
