@@ -1,3 +1,9 @@
+2015-09-15  David Anderson
+     * dwarf_elf_access.c: Added conditional
+       R_MIPS_64  and  R_MIPS_TLS_TPREL64 defines
+       as the headers I have for freebsd 32bit VM
+       do not define those and we need them for 
+       testinga couple object files.
 2015-09-15  Carlos Alberto Enciso
      * dwarf_elf_access.c: For Windows version, 
        some compilers generate

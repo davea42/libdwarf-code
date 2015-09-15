@@ -81,6 +81,12 @@
 #ifndef R_AARCH64_ABS32
 #define R_AARCH64_ABS32 0x102
 #endif
+#ifndef R_MIPS_64
+#define R_MIPS_64   18
+#endif
+#ifndef R_MIPS_TLS_TPREL64
+#define R_MIPS_TLS_TPREL64	48
+#endif
 
 
 
@@ -731,6 +737,9 @@ is_64bit_abs_reloc(unsigned int type, Dwarf_Half machine)
         r = (0
 #if defined (R_MIPS_64)
             | (type == R_MIPS_64)
+#endif
+#if defined (R_MIPS_32)
+            | (type == R_MIPS_32)
 #endif
 #if defined(R_MIPS_TLS_DTPREL64)
             | (type == R_MIPS_TLS_DTPREL64)
