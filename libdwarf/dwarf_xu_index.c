@@ -406,6 +406,9 @@ _dwarf_search_fission_for_offset(Dwarf_Debug dbg,
     for ( m = 0; m < xuhdr->gx_slots_in_hash; ++m) {
         Dwarf_Sig8 hash;
         Dwarf_Unsigned indexn = 0;
+        Dwarf_Unsigned sec_offset = 0;
+        Dwarf_Unsigned sec_size = 0;
+
         res = dwarf_get_xu_hash_entry(xuhdr,m,&hash,&indexn,error);
         if (res != DW_DLV_OK) {
             return res;
@@ -416,8 +419,6 @@ _dwarf_search_fission_for_offset(Dwarf_Debug dbg,
             continue;
         }
 
-        Dwarf_Unsigned sec_offset = 0;
-        Dwarf_Unsigned sec_size = 0;
         res = dwarf_get_xu_section_offset(xuhdr,
             indexn,secnum_index,&sec_offset,&sec_size,error);
         if (res != DW_DLV_OK) {

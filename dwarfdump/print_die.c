@@ -3941,8 +3941,8 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
             case DW_AT_dwo_id:
                 {
                 Dwarf_Sig8 v;
+                const char *hash_str = 0;
                 memset(&v,0,sizeof(v));
-                const char *hash_str;
                 wres = dwarf_formsig8_const(attrib,&v,&err);
                 if (wres == DW_DLV_OK){
                     struct esb_s t;

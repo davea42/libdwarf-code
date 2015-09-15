@@ -1,3 +1,8 @@
+2015-09-15  David Anderson
+     * dwarf_form.c (dwarf_formsig8_const): Was failing to
+       return its return code.
+     * dwarf_xu_index.c (_dwarf_search_fission_for_offset): Was 
+       failing to return its return code.
 2015-09-14  David Anderson
      * dwarf_form.c,dwarf_global.c,dwarf_line.c,dwarf_macro.c,dwarf_util.c:
        Fixed indents and removed trailing whitespace.

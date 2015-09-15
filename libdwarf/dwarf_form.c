@@ -451,9 +451,10 @@ dwarf_formsig8_const(Dwarf_Attribute attr,
     Dwarf_Sig8 * returned_sig_bytes,
     Dwarf_Error* error)
 {
-    _dwarf_formsig8_internal(attr, DW_FORM_data8,
+    int res  =_dwarf_formsig8_internal(attr, DW_FORM_data8,
         DW_DLE_ATTR_FORM_NOT_DATA8,
         returned_sig_bytes,error);
+    return res;
 }
 
 /*  dwarf_formsig8 returns in the caller-provided 8 byte area
@@ -466,9 +467,10 @@ dwarf_formsig8(Dwarf_Attribute attr,
     Dwarf_Sig8 * returned_sig_bytes,
     Dwarf_Error* error)
 {
-    _dwarf_formsig8_internal(attr, DW_FORM_ref_sig8,
+    int res  = _dwarf_formsig8_internal(attr, DW_FORM_ref_sig8,
         DW_DLE_BAD_REF_SIG8_FORM,
         returned_sig_bytes,error);
+    return res;
 }
 
 
