@@ -755,12 +755,12 @@ _dwarf_get_string_base_attr_value(Dwarf_Debug dbg,
         return DW_DLV_OK;
     }
     /*  NO ENTRY, No other attr.Not even GNU, this one is standard
-        DWARF5 only. */
-    dwarf_dealloc(dbg,myattr,DW_DLA_ATTR);
+        DWARF5 only.  */
     dwarf_dealloc(dbg,cudie,DW_DLA_DIE);
     /*  We do not need a base for a .dwo. We might for .dwp
         and would or .o or executable.
         FIXME: assume we do not need this.
+        Should we really return DW_DLV_NO_ENTRY?
     */
     *sbase_out = 0;
     return DW_DLV_OK;

@@ -1035,6 +1035,12 @@ _dwarf_extract_string_offset_via_str_offsets(Dwarf_Debug dbg,
         res = _dwarf_get_string_base_attr_value(dbg,cu_context,
             &offset_base,error);
         if (res != DW_DLV_OK) {
+            /*  DW_DLV_NO_ENTRY could be acceptable when
+                a producer knows that the base offset will be zero.
+                Hence DW_AT_str_offsets_base missing.
+                Should that be handled here or is that somehow
+                not allowable?
+            */
             return res;
         }
     }
@@ -1049,8 +1055,11 @@ _dwarf_extract_string_offset_via_str_offsets(Dwarf_Debug dbg,
         offsetintable += fissoff;
     }
     end_offsetintable = offsetintable + cu_context->cc_length_size;
-    /* The offsets table is a series of offset-size entries. */
-    if ((end_offsetintable) >= dbg->de_debug_str_offsets.dss_size ) {
+    /*  The offsets table is a series of offset-size entries. 
+        The == case in the test applies when we are at the last table
+        entry, so == is not an error, hence only test >
+    */
+    if (end_offsetintable > dbg->de_debug_str_offsets.dss_size ) {
         _dwarf_error(dbg, error, DW_DLE_ATTR_FORM_SIZE_BAD);
         return (DW_DLV_ERROR);
     }
@@ -1128,6 +1137,9 @@ dwarf_formstring(Dwarf_Attribute attr,
             cu_context,
             &offsettostr,
             error);
+        if (res != DW_DLV_OK) {
+            return res;
+        }
         offset = offsettostr;
         /* FALL THRU */
     } else {
