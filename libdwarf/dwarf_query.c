@@ -537,7 +537,10 @@ _dwarf_extract_address_from_debug_addr(Dwarf_Debug dbg,
     res = _dwarf_load_section(dbg, &dbg->de_debug_addr,error);
     if (res != DW_DLV_OK) {
         /*  Ignore the inner error, report something meaningful */
-        dwarf_dealloc(dbg,*error, DW_DLA_ERROR);
+        if (res == DW_DLV_ERROR) {
+            dwarf_dealloc(dbg,*error, DW_DLA_ERROR);
+            *error = 0;
+        }
         _dwarf_error(dbg,error,
             DW_DLE_MISSING_NEEDED_DEBUG_ADDR_SECTION);
         return DW_DLV_ERROR;
