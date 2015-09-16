@@ -1,4 +1,8 @@
 2015-09-15  David Anderson
+     *  dwarf_form.c(_dwarf_extract_string_offset_via_str_offsets):
+        Modified comment to reflect the current DWARF5 draft (we need not
+        guess about correctness).
+2015-09-15  David Anderson
      * dwarf_query.c, dwarf_form.c: We were failing 
        check for off-end-of debug_str_offsets section correctly
        and had a dwarf_dealloc where it was not wanted.

@@ -1038,8 +1038,9 @@ _dwarf_extract_string_offset_via_str_offsets(Dwarf_Debug dbg,
             /*  DW_DLV_NO_ENTRY could be acceptable when
                 a producer knows that the base offset will be zero.
                 Hence DW_AT_str_offsets_base missing.
-                Should that be handled here or is that somehow
-                not allowable?
+                DWARF5 draft as of September 2015 allows the attribute
+                to be missing (it's up to the compilation tools to
+                make sure that has the correct effect).
             */
             return res;
         }
