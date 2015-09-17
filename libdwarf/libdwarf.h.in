@@ -1691,6 +1691,22 @@ int dwarf_srclines(Dwarf_Die /*die*/,
     Dwarf_Signed *   /*linecount*/,
     Dwarf_Error*     /*error*/);
 
+/* If we have two-level line tables, this will return the
+   logicals table in linebuf and the actuals table in
+   linebuf_actuals. For old-style (one-level) tables, it
+   will return the single table through linebuf, and the
+   value returned through linecount_actuals will be 0.
+   The actual version number is returned through version.
+   For two-level line tables, the version returned will
+   be 0xf006. */
+int dwarf_srclines_two_level(Dwarf_Die /*die*/,
+    Dwarf_Unsigned * /*version*/,
+    Dwarf_Line**     /*linebuf*/,
+    Dwarf_Signed *   /*linecount*/,
+    Dwarf_Line**     /*linebuf_actuals*/,
+    Dwarf_Signed *   /*linecount_actuals*/,
+    Dwarf_Error*     /*error*/);
+
 /* dwarf_srclines_dealloc, created July 2005, is the new
    method for deallocating what dwarf_srclines returns.
    More complete free than using dwarf_dealloc directly. */
@@ -1772,6 +1788,35 @@ int dwarf_pclines(Dwarf_Debug /*dbg*/,
     Dwarf_Signed     /*slide*/,
     Dwarf_Error*     /*error*/);
 /* end line number operations */
+
+/* When reading from an actuals table, dwarf_line_logical()
+   returns the logical row number for the line. */
+int dwarf_linelogical(Dwarf_Line /*line*/,
+    Dwarf_Unsigned * /*returned_logical*/,
+    Dwarf_Error*     /*error*/);
+
+/* When reading from a logicals table, dwarf_linecontext()
+   returns the logical row number corresponding the the
+   calling context for an inlined call. */
+int dwarf_linecontext(Dwarf_Line /*line*/,
+    Dwarf_Unsigned * /*returned_context*/,
+    Dwarf_Error*     /*error*/);
+
+/* When reading from a logicals table, dwarf_linesubprogno()
+   returns the index in the subprograms table of the inlined
+   subprogram. */
+int dwarf_line_subprogno(Dwarf_Line /*line*/,
+    Dwarf_Unsigned * /*ret_subprogno*/,
+    Dwarf_Error *    /*error*/);
+
+/* When reading from a logicals table, dwarf_linesubprog()
+   returns the name of the inlined subprogram, its declaration
+   filename, and its declaration line number, if available. */
+int dwarf_line_subprog(Dwarf_Line /*line*/,
+    char   **        /*returned_subprog_name*/,
+    char   **        /*returned_filename*/,
+    Dwarf_Unsigned * /*returned_lineno*/,
+    Dwarf_Error *    /*error*/);
 
 /* global name space operations (.debug_pubnames access) */
 int dwarf_get_globals(Dwarf_Debug /*dbg*/,

@@ -1,3 +1,7 @@
+2015-09-17  David Anderson
+     * dwarf.h, dwarf_alloc.c,dwarf_base_types.h,dwarf_init_finish.c,
+       dwarf_line.c,dwarf_line.h,dwarf_line2.c,dwarf_util.c,libdwarf.h.in:
+       Adding support for experimental 2-level line table.
 2015-09-15  David Anderson
      *  dwarf_form.c(_dwarf_extract_string_offset_via_str_offsets):
         Modified comment to reflect the current DWARF5 draft (we need not

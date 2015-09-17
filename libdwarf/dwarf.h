@@ -220,7 +220,7 @@ extern "C" {
 #define DW_FORM_ref_sup                 0x1c /* DWARF5 */
 #define DW_FORM_strp_sup                0x1d /* DWARF5 */
 #define DW_FORM_data16                  0x1e /* DWARF5 */
-/* 0x1f was left unused accidentally. Reserved for future use. */
+#define DW_FORM_line_strp               0x1f /* DWARF5 */
 #define DW_FORM_ref_sig8                0x20 /* DWARF4 */
 #define DW_FORM_GNU_addr_index          0x1f01 /* GNU extension in debug_info.dwo.*/
 #define DW_FORM_GNU_str_index           0x1f02 /* GNU extension, somewhat like DW_FORM_strp */
@@ -928,13 +928,6 @@ extern "C" {
 
 #define DW_LANG_hi_user                 0xffff
 
-/*  DWARF5  Line number header entry format name */
-#define DW_LNCT_path            0x1  /* DWARF5 */
-#define DW_LNCT_directory_index 0x2  /* DWARF5 */
-#define DW_LNCT_timestamp       0x3  /* DWARF5 */
-#define DW_LNCT_size            0x4  /* DWARF5 */
-#define DW_LNCT_MD5             0x5  /* DWARF5 */
-
 /* Identifier case name. */
 #define DW_ID_case_sensitive            0x00
 #define DW_ID_up_case                   0x01
@@ -996,6 +989,12 @@ extern "C" {
 #define DW_LNS_set_epilogue_begin       0x0b /* DWARF3 */
 #define DW_LNS_set_isa                  0x0c /* DWARF3 */
 
+/* Experimental two-level line tables. */
+#define DW_LNS_set_address_from_logical 0x0d /* Actuals table only */
+#define DW_LNS_set_subprogram           0x0d /* Logicals table only */
+#define DW_LNS_inlined_call             0x0e /* Logicals table only */
+#define DW_LNS_pop_context              0x0f /* Logicals table only */
+
 /* Line number extended opcode name. */
 #define DW_LNE_end_sequence             0x01
 #define DW_LNE_set_address              0x02
@@ -1018,6 +1017,17 @@ extern "C" {
 #define DW_LNE_HP_source_file_correlation   0x80 /* HP */
 #define DW_LNE_lo_user                  0x80 /* DWARF3 */
 #define DW_LNE_hi_user                  0xff /* DWARF3 */
+
+/* Type codes for line number program content descriptors (DWARF 5).  */
+#define DW_LNCT_path                    0x1
+#define DW_LNCT_directory_index         0x2
+#define DW_LNCT_timestamp               0x3
+#define DW_LNCT_size                    0x4
+#define DW_LNCT_MD5                     0x5
+/* Experimental two-level line tables. */
+#define DW_LNCT_subprogram_name         0x6
+#define DW_LNCT_decl_file               0x7
+#define DW_LNCT_decl_line               0x8
 
 /* These are known values for DW_LNS_set_isa. */
 #define DW_ISA_UNKNOWN   0

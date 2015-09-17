@@ -593,6 +593,7 @@ _dwarf_free_all_of_one_debug(Dwarf_Debug dbg)
     rela_free(&dbg->de_debug_types);
     rela_free(&dbg->de_debug_abbrev);
     rela_free(&dbg->de_debug_line);
+    rela_free(&dbg->de_debug_line_str);
     rela_free(&dbg->de_debug_loc);
     rela_free(&dbg->de_debug_aranges);
     rela_free(&dbg->de_debug_macinfo);

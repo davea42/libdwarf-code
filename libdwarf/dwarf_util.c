@@ -520,6 +520,10 @@ _dwarf_check_string_valid(Dwarf_Debug dbg,void *areaptr,
         _dwarf_error(dbg,error,DW_DLE_DEBUG_STR_OFFSET_BAD);
         return DW_DLV_ERROR;
     }
+    if (p >= end) {
+        _dwarf_error(dbg,error,DW_DLE_DEBUG_STR_OFFSET_BAD);
+        return DW_DLV_ERROR;
+    }
     if (dbg->de_assume_string_in_bounds) {
         /* This NOT the default. But folks can choose
             to live dangerously and just assume strings ok. */

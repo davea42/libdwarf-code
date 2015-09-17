@@ -274,6 +274,16 @@ enter_section_in_de_debug_sections_array(Dwarf_Debug dbg,
         }
         return DW_DLV_OK;
     }
+    if(!strcmp(scn_name,".debug_line_str")) {
+        sectionerr = add_debug_section_info(dbg,".debug_line_str",
+            &dbg->de_debug_line_str,
+            DW_DLE_DEBUG_LINE_DUPLICATE,0,
+            FALSE,err);
+        if (sectionerr != DW_DLV_OK) {
+            return sectionerr;
+        }
+        return DW_DLV_OK;
+    }
     if(!strcmp(scn_name,".debug_line.dwo")) {
         sectionerr = add_debug_section_info(dbg,".debug_line.dwo",
             &dbg->de_debug_line,

@@ -59,6 +59,8 @@
 
 /* .debug_line_str (and .dwo) new in DWARF5. */
 #define DW_LINE_STR_VERSION5   5
+#define EXPERIMENTAL_LINE_TABLES_VERSION  0xf006 /* Experimental two-level line tables */
+
 /* .debug_loc (and .dwo) First header version number is  DWARF5. */
 #define DW_LOC_VERSION5   5
 

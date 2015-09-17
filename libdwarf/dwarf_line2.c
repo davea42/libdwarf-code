@@ -54,7 +54,9 @@ _dwarf_line_address_offsets(Dwarf_Debug dbg,
     int res;
     Dwarf_Line *linebuf;
 
-    res = _dwarf_internal_srclines(die, &linebuf, &lcount,
+    res = _dwarf_internal_srclines(die, /* version= */ NULL,
+        &linebuf, &lcount,
+        /* actuals= */ NULL, /* actualscount= */ NULL,
         /* addrlist= */ true, /* linelist= */ false, err);
     if (res != DW_DLV_OK) {
         return res;

@@ -67,6 +67,13 @@ struct Dwarf_File_Entry_s {
     Dwarf_File_Entry fi_next;
 };
 
+struct Dwarf_Subprog_Entry_s {
+    Dwarf_Small *ds_subprog_name;
+    Dwarf_Unsigned ds_decl_file;
+    Dwarf_Unsigned ds_decl_line;
+};
+
+typedef struct Dwarf_Subprog_Entry_s *Dwarf_Subprog_Entry;
 
 typedef struct Dwarf_Line_Context_s *Dwarf_Line_Context;
 
@@ -87,12 +94,17 @@ struct Dwarf_Line_Context_s {
     /*  Count of number of source files for this set of Dwarf_Line
         structures. */
     Dwarf_Sword lc_file_entry_count;
-    /*  Points to the portion of .debug_line section that contains a
-        list of strings naming the included directories. */
-    Dwarf_Small *lc_include_directories;
+    /*  Array of pointers to included directories. */
+    Dwarf_Small **lc_include_directories;
 
     /*  Count of the number of included directories. */
     Dwarf_Sword lc_include_directories_count;
+
+    /*  Points to an array of subprogram entries. */
+    Dwarf_Subprog_Entry lc_subprogs;
+    
+    /*  Count of the number of subprogram entries. */
+    Dwarf_Sword lc_subprogs_count;
 
     /*  Count of the number of lines for this cu. */
     Dwarf_Sword lc_line_count;
@@ -133,6 +145,8 @@ struct Dwarf_Line_s {
             Dwarf_Sword li_line;  /* source file line number. */
             Dwarf_Half li_column; /* source file column number */
             Dwarf_Small li_isa;   /* New as of DWARF4. */
+            Dwarf_Unsigned li_call_context; /* Two-level line tables. */
+            Dwarf_Unsigned li_subprog; /* Two-level line tables. */
 
             /* To save space, use bit flags. */
             /* indicate start of stmt */
@@ -163,10 +177,14 @@ int _dwarf_line_address_offsets(Dwarf_Debug dbg,
     Dwarf_Unsigned * returncount,
     Dwarf_Error * err);
 int _dwarf_internal_srclines(Dwarf_Die die,
+    Dwarf_Unsigned * version,
     Dwarf_Line ** linebuf,
     Dwarf_Signed * count,
+    Dwarf_Line ** linebuf_actuals,
+    Dwarf_Signed * count_actuals,
     Dwarf_Bool doaddrs,
-    Dwarf_Bool dolines, Dwarf_Error * error);
+    Dwarf_Bool dolines,
+    Dwarf_Error * error);
 
 
 
@@ -260,7 +278,11 @@ struct Line_Table_Prefix_s {
     /* The version is 2 for DWARF2, 3 for DWARF3 */
     Dwarf_Half pf_version;
 
+    Dwarf_Small pf_address_size;
+    Dwarf_Small pf_segment_size;
+
     Dwarf_Unsigned pf_prologue_length;
+    Dwarf_Unsigned pf_actuals_table_offset;
     Dwarf_Small pf_minimum_instruction_length;
 
     /*  Start and end of this CU line area. pf_line_ptr_start +
@@ -285,12 +307,16 @@ struct Line_Table_Prefix_s {
 
     Dwarf_Unsigned pf_include_directories_count;
     /*  Array of pointers to dir strings. pf_include_directories_count
-        entriesin the array. */
+        entries in the array. */
     Dwarf_Small **pf_include_directories;
 
     /* Count of entries in line_table_file_entries array. */
     Dwarf_Unsigned pf_files_count;
     struct Line_Table_File_Entry_s *pf_line_table_file_entries;
+
+    /* Count of entries in subprog_entries array. */
+    Dwarf_Unsigned pf_subprogs_count;
+    Dwarf_Subprog_Entry pf_subprog_entries;
 
     /*  The number to treat as standard ops. This is a special
         accomodation of gcc using the new standard opcodes but not

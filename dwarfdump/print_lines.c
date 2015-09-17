@@ -68,15 +68,21 @@ record_line_error(const char *where, Dwarf_Error err)
     }
 }
 
-extern void
-print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
+static void
+process_line_table(Dwarf_Debug dbg, Dwarf_Line *linebuf, Dwarf_Signed linecount,
+    Dwarf_Bool is_logicals_table, Dwarf_Bool is_actuals_table)
 {
-    Dwarf_Signed linecount = 0;
-    Dwarf_Line *linebuf = NULL;
+    char *padding = 0;
     Dwarf_Signed i = 0;
     Dwarf_Addr pc = 0;
     Dwarf_Unsigned lineno = 0;
+    Dwarf_Unsigned logicalno = 0;
     Dwarf_Unsigned column = 0;
+    Dwarf_Unsigned call_context = 0;
+    string subprog_name = 0;
+    string subprog_filename = 0;
+    Dwarf_Unsigned subprog_line = 0;
+
     Dwarf_Error err = 0;
 
     Dwarf_Bool newstatement = 0;
@@ -87,9 +93,370 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
     int ares = 0;
     int lires = 0;
     int cores = 0;
-    int line_errs = 0;
 
     Dwarf_Bool SkipRecord = FALSE;
+
+    current_section_id = DEBUG_LINE;
+    struct esb_s lastsrc;
+
+    /* line_flag is TRUE */
+    esb_constructor(&lastsrc);
+
+    /* Padding for a nice layout */
+    padding = line_print_pc ? "            " : "";
+    if (do_print_dwarf) {
+            record_dwarf_error = FALSE;  /* Clear error condition */
+        /* Check if print of <pc> address is needed. */
+        printf("\n");
+        if (is_logicals_table) {
+            printf("Logicals Table:\n");
+            printf("%sNS new statement, PE prologue end, "
+                "EB epilogue begin\n",padding);
+            printf("%sDI=val discriminator value\n",
+                padding);
+            printf("%sCC=val context, SB=val subprogram\n",
+                padding);
+        } else if (is_actuals_table) {
+            printf("Actuals Table:\n");
+            printf("%sBB new basic block, ET end of text sequence\n"
+                "%sIS=val ISA number\n",padding,padding);
+
+        } else {
+            printf("%sIS=val ISA number, DI=val discriminator value\n",
+                padding);
+        }
+        if (is_logicals_table || is_actuals_table) {
+            printf("[ row]  ");
+        }
+        if (line_print_pc) {
+            printf("<pc>        ");
+        }
+        if (is_logicals_table) {
+            printf("[lno,col] NS PE EB DI= CC= SB= uri: \"filepath\"\n");
+        } else if (is_actuals_table) {
+            printf("[logical] BB ET IS=\n");
+        } else {
+            printf("[lno,col] NS BB ET PE EB IS= DI= uri: \"filepath\"\n");
+        }
+    }
+    for (i = 0; i < linecount; i++) {
+        Dwarf_Line line = linebuf[i];
+        string filename = 0;
+        int nsres = 0;
+        Dwarf_Bool found_line_error = FALSE;
+        Dwarf_Bool has_is_addr_set = FALSE;
+        char *where = NULL;
+
+        if (check_decl_file && checking_this_compiler()) {
+            /* A line record with addr=0 was detected */
+            if (SkipRecord) {
+                /* Skip records that do not have ís_addr_set' */
+                ares = dwarf_line_is_addr_set(line, &has_is_addr_set, &err);
+                if (ares == DW_DLV_OK && has_is_addr_set) {
+                    SkipRecord = FALSE;
+                }
+                else {
+                    /*  Keep ignoring records until we have
+                        one with 'is_addr_set' */
+                    continue;
+                }
+            }
+        }
+
+        if (check_lines && checking_this_compiler()) {
+            DWARF_CHECK_COUNT(lines_result,1);
+        }
+
+        filename = "<unknown>";
+        if (!is_actuals_table) {
+            sres = dwarf_linesrc(line, &filename, &err);
+            if (sres == DW_DLV_ERROR) {
+                /* Do not terminate processing */
+                where = "dwarf_linesrc()";
+                record_line_error(where,err);
+                found_line_error = TRUE;
+            }
+        }
+
+        ares = dwarf_lineaddr(line, &pc, &err);
+
+        if (ares == DW_DLV_ERROR) {
+            /* Do not terminate processing */
+            where = "dwarf_lineaddr()";
+            record_line_error(where,err);
+            found_line_error = TRUE;
+        }
+        if (ares == DW_DLV_NO_ENTRY) {
+            pc = 0;
+        }
+
+        if (is_actuals_table) {
+            lires = dwarf_linelogical(line, &logicalno, &err);
+            if (lires == DW_DLV_ERROR) {
+                /* Do not terminate processing */
+                where = "dwarf_linelogical()";
+                record_line_error(where,err);
+                found_line_error = TRUE;
+            }
+            if (lires == DW_DLV_NO_ENTRY) {
+                logicalno = -1LL;
+            }
+            column = 0;
+        } else {
+            lires = dwarf_lineno(line, &lineno, &err);
+            if (lires == DW_DLV_ERROR) {
+                /* Do not terminate processing */
+                where = "dwarf_lineno()";
+                record_line_error(where,err);
+                found_line_error = TRUE;
+            }
+            if (lires == DW_DLV_NO_ENTRY) {
+                lineno = -1LL;
+            }
+            cores = dwarf_lineoff_b(line, &column, &err);
+            if (cores == DW_DLV_ERROR) {
+                /* Do not terminate processing */
+                where = "dwarf_lineoff()";
+                record_line_error(where,err);
+                found_line_error = TRUE;
+            }
+            if (cores == DW_DLV_NO_ENTRY) {
+                /*  Zero was always the correct default, meaning
+                    the left edge. DWARF2/3/4 spec sec 6.2.2 */
+                column = 0;
+            }
+        }
+
+        /*  Process any possible error condition, though
+            we won't be at the first such error. */
+        if (check_decl_file && checking_this_compiler()) {
+            DWARF_CHECK_COUNT(decl_file_result,1);
+            if (found_line_error) {
+                DWARF_CHECK_ERROR2(decl_file_result,where,dwarf_errmsg(err));
+            } else if (do_check_dwarf) {
+                /*  Check the address lies with a valid [lowPC:highPC]
+                    in the .text section*/
+                if (IsValidInBucketGroup(pRangesInfo,pc)) {
+                    /* Valid values; do nothing */
+                } else {
+                    /*  At this point may be we are dealing with
+                        a linkonce symbol. The problem we have here
+                        is we have consumed the deug_info section
+                        and we are dealing just with the records
+                        from the .debug_line, so no PU_name is
+                        available and no high_pc. Traverse the linkonce
+                        table if try to match the pc value with
+                        one of those ranges.
+                    */
+                    if (check_lines && checking_this_compiler()) {
+                        DWARF_CHECK_COUNT(lines_result,1);
+                    }
+                    if (FindAddressInBucketGroup(pLinkonceInfo,pc)){
+                        /* Valid values; do nothing */
+                    } else {
+                        /*  The SN Systems Linker generates
+                            line records
+                            with addr=0, when dealing with linkonce
+                            symbols and no stripping */
+                        if (pc) {
+                            char addr_tmp[100];
+                            if (check_lines && checking_this_compiler()) {
+                                snprintf(addr_tmp,sizeof(addr_tmp),
+                                    ".debug_line: Address"
+                                    " 0x%" DW_PR_XZEROS DW_PR_DUx
+                                    " outside a valid .text range",pc);
+                                DWARF_CHECK_ERROR(lines_result,
+                                    addr_tmp);
+                            }
+                        } else {
+                            SkipRecord = TRUE;
+                        }
+                    }
+                }
+                /*  Check the last record for the .debug_line,
+                    the one created by DW_LNE_end_sequence,
+                    is the same as the high_pc
+                    address for the last known user program
+                    unit (PU) */
+                if ((i + 1 == linecount) &&
+                    seen_PU_high_address &&
+                    !is_logicals_table) {
+                    /*  Ignore those PU that have been stripped
+                        by the linker; their low_pc values are
+                        set to -1 (snc linker only) */
+                    /*  It is perfectly sensible for a compiler
+                        to leave a few bytes of NOP or other stuff
+                        after the last instruction in a subprogram,
+                        for cache-alignment or other purposes, so
+                        a mismatch here is not necessarily
+                        an error.  */
+
+                    if (check_lines && checking_this_compiler()) {
+                        DWARF_CHECK_COUNT(lines_result,1);
+                        if ((pc != PU_high_address) &&
+                            (PU_base_address != elf_max_address)) {
+                            char addr_tmp[100];
+                            snprintf(addr_tmp,sizeof(addr_tmp),
+                                ".debug_line: Address"
+                                " 0x%" DW_PR_XZEROS DW_PR_DUx
+                                " may be incorrect"
+                                " as DW_LNE_end_sequence address",pc);
+                            DWARF_CHECK_ERROR(lines_result,
+                                addr_tmp);
+                        }
+                    }
+                }
+            }
+        }
+
+        /* Display the error information */
+        if (found_line_error || record_dwarf_error) {
+            if (check_verbose_mode && PRINTING_UNIQUE) {
+                /* Print the record number for better error description */
+                printf("Record = %"  DW_PR_DUu
+                    " Addr = 0x%" DW_PR_XZEROS DW_PR_DUx
+                    " [%4" DW_PR_DUu ",%2" DW_PR_DUu "] '%s'\n",
+                    i, pc,lineno,column,filename);
+                /* The compilation unit was already printed */
+                if (!check_decl_file) {
+                    PRINT_CU_INFO();
+                }
+            }
+            record_dwarf_error = FALSE;
+            /* Due to a fatal error, skip current record */
+            if (found_line_error) {
+                continue;
+            }
+        }
+        if (do_print_dwarf) {
+            if (is_logicals_table || is_actuals_table) {
+                printf("[%4" DW_PR_DUu "]  ", i + 1);
+            }
+            /* Check if print of <pc> address is needed. */
+            if (line_print_pc) {
+                printf("0x%" DW_PR_XZEROS DW_PR_DUx "  ", pc);
+            }
+            if (is_actuals_table) {
+                printf("[%7" DW_PR_DUu "]", logicalno);
+            } else {
+                printf("[%4" DW_PR_DUu ",%2" DW_PR_DUu "]", lineno, column);
+            }
+        }
+
+        if (!is_actuals_table) {
+            nsres = dwarf_linebeginstatement(line, &newstatement, &err);
+            if (nsres == DW_DLV_OK) {
+                if (newstatement && do_print_dwarf) {
+                    printf(" %s","NS");
+                }
+            } else if (nsres == DW_DLV_ERROR) {
+                print_error(dbg, "linebeginstatment failed", nsres, err);
+            }
+        }
+
+        if (!is_logicals_table) {
+            nsres = dwarf_lineblock(line, &new_basic_block, &err);
+            if (nsres == DW_DLV_OK) {
+                if (new_basic_block && do_print_dwarf) {
+                    printf(" %s","BB");
+                }
+            } else if (nsres == DW_DLV_ERROR) {
+                print_error(dbg, "lineblock failed", nsres, err);
+            }
+            nsres = dwarf_lineendsequence(line, &lineendsequence, &err);
+            if (nsres == DW_DLV_OK) {
+                if (lineendsequence && do_print_dwarf) {
+                    printf(" %s", "ET");
+                }
+            } else if (nsres == DW_DLV_ERROR) {
+                print_error(dbg, "lineendsequence failed", nsres, err);
+            }
+        }
+
+        if (do_print_dwarf) {
+            Dwarf_Bool prologue_end = 0;
+            Dwarf_Bool epilogue_begin = 0;
+            Dwarf_Unsigned isa = 0;
+            Dwarf_Unsigned discriminator = 0;
+            int disres = dwarf_prologue_end_etc(line,
+                &prologue_end,&epilogue_begin,
+                &isa,&discriminator,&err);
+            if (disres == DW_DLV_ERROR) {
+                print_error(dbg, "dwarf_prologue_end_etc() failed",
+                    disres, err);
+            }
+            if (prologue_end && !is_actuals_table) {
+                printf(" PE");
+            }
+            if (epilogue_begin && !is_actuals_table) {
+                printf(" EB");
+            }
+            if (isa && !is_logicals_table) {
+                printf(" IS=0x%" DW_PR_DUx, isa);
+            }
+            if (discriminator && !is_actuals_table) {
+                printf(" DI=0x%" DW_PR_DUx, discriminator);
+            }
+            if (is_logicals_table) {
+                disres = dwarf_linecontext(line, &call_context, &err);
+                if (disres == DW_DLV_ERROR) {
+                    print_error(dbg, "dwarf_linecontext() failed",
+                        disres, err);
+                }
+                if (call_context) {
+                    printf(" CC=%" DW_PR_DUu, call_context);
+                }
+                disres = dwarf_line_subprog(line, &subprog_name,
+                    &subprog_filename, &subprog_line, &err);
+                if (disres == DW_DLV_ERROR) {
+                    print_error(dbg, "dwarf_line_subprog() failed",
+                        disres, err);
+                }
+                if (subprog_name) {
+                    printf(" SB=\"%s\"", subprog_name);
+                }
+            }
+        }
+
+        if (!is_actuals_table) {
+            if (i > 0 &&  verbose < 3  &&
+                strcmp(filename,esb_get_string(&lastsrc)) == 0) {
+                /* Do not print name. */
+            } else {
+                struct esb_s urs;
+                esb_constructor(&urs);
+                esb_append(&urs, " uri: \"");
+                translate_to_uri(filename,&urs);
+                esb_append(&urs,"\"");
+                if (do_print_dwarf) {
+                    printf("%s",esb_get_string(&urs));
+                }
+                esb_destructor(&urs);
+                esb_empty_string(&lastsrc);
+                esb_append(&lastsrc,filename);
+            }
+            if (sres == DW_DLV_OK) {
+                dwarf_dealloc(dbg, filename, DW_DLA_STRING);
+            }
+        }
+
+        if (do_print_dwarf) {
+            printf("\n");
+        }
+    }
+    esb_destructor(&lastsrc);
+}
+
+extern void
+print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
+{
+    Dwarf_Unsigned lineversion = 0;
+    Dwarf_Signed linecount = 0;
+    Dwarf_Line *linebuf = NULL;
+    Dwarf_Signed actualscount = 0;
+    Dwarf_Line *actualsbuf = NULL;
+    int lres = 0;
+    int line_errs = 0;
 
     current_section_id = DEBUG_LINE;
 
@@ -97,21 +464,6 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
 
     if (do_print_dwarf) {
         printf("\n.debug_line: line number info for a single cu\n");
-    } else {
-        /* We are checking, not printing. */
-        Dwarf_Half tag = 0;
-        int tres = dwarf_tag(cu_die, &tag, &err);
-        if (tres != DW_DLV_OK) {
-            /*  Something broken here. */
-            print_error(dbg,"Unable to see CU DIE tag "
-                "though we could see it earlier. Something broken.",
-                tres,err);
-            return;
-        } else if (tag == DW_TAG_type_unit) {
-            /*  Not checking since type units missing
-                address range in CU header. */
-            return;
-        }
     }
     if (verbose > 1) {
         int errcount = 0;
@@ -142,7 +494,8 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
             DWARF_CHECK_COUNT(lines_result,(line_errs-1));
         }
     }
-    lres = dwarf_srclines(cu_die, &linebuf, &linecount, &err);
+    lres = dwarf_srclines_two_level(cu_die, &lineversion, &linebuf, &linecount,
+        &actualsbuf, &actualscount, &err);
     if (lres == DW_DLV_ERROR) {
         /* Do not terminate processing */
         if (check_decl_file) {
@@ -156,11 +509,6 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
     } else if (lres == DW_DLV_NO_ENTRY) {
         /* no line information is included */
     } else {
-        char *padding;
-        struct esb_s lastsrc;
-        esb_constructor(&lastsrc);
-        /* Padding for a nice layout */
-        padding = line_print_pc ? "            " : "";
         if (do_print_dwarf) {
             print_source_intro(cu_die);
             if (verbose) {
@@ -170,272 +518,13 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
                     /* srcfiles= */ 0, /* cnt= */ 0,
                     /* ignore_die_stack= */TRUE);
             }
-            /* Check if print of <pc> address is needed. */
-            printf("\n");
-            printf("%sNS new statement, BB new basic block, "
-                "ET end of text sequence\n",padding);
-            printf("%sPE prologue end, EB epilogue begin\n",padding);
-            printf("%sIA=val ISA number, DI=val discriminator value\n",
-                padding);
-            if (line_print_pc) {
-                printf("<pc>        ");
-            }
-            printf("[row,col] "
-                "NS BB ET PE EB IS= DI= uri: \"filepath\"\n");
         }
-        for (i = 0; i < linecount; i++) {
-            Dwarf_Line line = linebuf[i];
-            string filename = 0;
-            int nsres = 0;
-            Dwarf_Bool found_line_error = FALSE;
-            Dwarf_Bool has_is_addr_set = FALSE;
-            char *where = NULL;
-
-            if (check_decl_file && checking_this_compiler()) {
-                /* A line record with addr=0 was detected */
-                if (SkipRecord) {
-                    /* Skip records that do not have ís_addr_set' */
-                    ares = dwarf_line_is_addr_set(line, &has_is_addr_set, &err);
-                    if (ares == DW_DLV_OK && has_is_addr_set) {
-                        SkipRecord = FALSE;
-                    }
-                    else {
-                        /*  Keep ignoring records until we have
-                            one with 'is_addr_set' */
-                        continue;
-                    }
-                }
-            }
-
-            if (check_lines && checking_this_compiler()) {
-                DWARF_CHECK_COUNT(lines_result,1);
-            }
-            filename = "<unknown>";
-            sres = dwarf_linesrc(line, &filename, &err);
-            if (sres == DW_DLV_ERROR) {
-                /* Do not terminate processing */
-                where = "dwarf_linesrc()";
-                record_line_error(where,err);
-                found_line_error = TRUE;
-            }
-
-            ares = dwarf_lineaddr(line, &pc, &err);
-
-            if (ares == DW_DLV_ERROR) {
-                /* Do not terminate processing */
-                where = "dwarf_lineaddr()";
-                record_line_error(where,err);
-                found_line_error = TRUE;
-            }
-            if (ares == DW_DLV_NO_ENTRY) {
-                pc = 0;
-            }
-            lires = dwarf_lineno(line, &lineno, &err);
-            if (lires == DW_DLV_ERROR) {
-                /* Do not terminate processing */
-                where = "dwarf_lineno()";
-                record_line_error(where,err);
-                found_line_error = TRUE;
-            }
-            if (lires == DW_DLV_NO_ENTRY) {
-                lineno = -1LL;
-            }
-            cores = dwarf_lineoff_b(line, &column, &err);
-            if (cores == DW_DLV_ERROR) {
-                /* Do not terminate processing */
-                where = "dwarf_lineoff()";
-                record_line_error(where,err);
-                found_line_error = TRUE;
-            }
-            if (cores == DW_DLV_NO_ENTRY) {
-                /*  Zero was always the correct default, meaning
-                    the left edge. DWARF2/3/4 spec sec 6.2.2 */
-                column = 0;
-            }
-
-            /*  Process any possible error condition, though
-                we won't be at the first such error. */
-            if (check_decl_file && checking_this_compiler()) {
-                DWARF_CHECK_COUNT(decl_file_result,1);
-                if (found_line_error) {
-                    DWARF_CHECK_ERROR2(decl_file_result,where,dwarf_errmsg(err));
-                } else if (do_check_dwarf) {
-                    /*  Check the address lies with a valid [lowPC:highPC]
-                        in the .text section*/
-                    if (IsValidInBucketGroup(pRangesInfo,pc)) {
-                        /* Valid values; do nothing */
-                    } else {
-                        /*  At this point may be we are dealing with
-                            a linkonce symbol. The problem we have here
-                            is we have consumed the deug_info section
-                            and we are dealing just with the records
-                            from the .debug_line, so no PU_name is
-                            available and no high_pc. Traverse the linkonce
-                            table if try to match the pc value with
-                            one of those ranges.
-                        */
-                        if (check_lines && checking_this_compiler()) {
-                            DWARF_CHECK_COUNT(lines_result,1);
-                        }
-                        if (FindAddressInBucketGroup(pLinkonceInfo,pc)){
-                            /* Valid values; do nothing */
-                        } else {
-                            /*  The SN Systems Linker generates
-                                line records
-                                with addr=0, when dealing with linkonce
-                                symbols and no stripping */
-                            if (pc) {
-                                char addr_tmp[100];
-                                if (check_lines && checking_this_compiler()) {
-                                    snprintf(addr_tmp,sizeof(addr_tmp),
-                                        ".debug_line: Address"
-                                        " 0x%" DW_PR_XZEROS DW_PR_DUx
-                                        " outside a valid .text range",pc);
-                                    DWARF_CHECK_ERROR(lines_result,
-                                        addr_tmp);
-                                }
-                            } else {
-                                SkipRecord = TRUE;
-                            }
-                        }
-                    }
-                    /*  Check the last record for the .debug_line,
-                        the one created by DW_LNE_end_sequence,
-                        is the same as the high_pc
-                        address for the last known user program
-                        unit (PU) */
-                    if ((i + 1 == linecount) &&
-                        seen_PU_high_address) {
-                        /*  Ignore those PU that have been stripped
-                            by the linker; their low_pc values are
-                            set to -1 (snc linker only) */
-                        /*  It is perfectly sensible for a compiler
-                            to leave a few bytes of NOP or other stuff
-                            after the last instruction in a subprogram,
-                            for cache-alignment or other purposes, so
-                            a mismatch here is not necessarily
-                            an error.  */
-
-                        if (check_lines && checking_this_compiler()) {
-                            DWARF_CHECK_COUNT(lines_result,1);
-                            if ((pc != PU_high_address) &&
-                                (PU_base_address != elf_max_address)) {
-                                char addr_tmp[100];
-                                snprintf(addr_tmp,sizeof(addr_tmp),
-                                    ".debug_line: Address"
-                                    " 0x%" DW_PR_XZEROS DW_PR_DUx
-                                    " may be incorrect"
-                                    " as DW_LNE_end_sequence address",pc);
-                                DWARF_CHECK_ERROR(lines_result,
-                                    addr_tmp);
-                            }
-                        }
-                    }
-                }
-            }
-
-            /* Display the error information */
-            if (found_line_error || record_dwarf_error) {
-                if (check_verbose_mode && PRINTING_UNIQUE) {
-                    /* Print the record number for better error description */
-                    printf("Record = %"  DW_PR_DUu
-                        " Addr = 0x%" DW_PR_XZEROS DW_PR_DUx
-                        " [%4" DW_PR_DUu ",%2" DW_PR_DUu "] '%s'\n",
-                        i, pc,lineno,column,filename);
-                    /* The compilation unit was already printed */
-                    if (!check_decl_file) {
-                        PRINT_CU_INFO();
-                    }
-                }
-                record_dwarf_error = FALSE;
-                /* Due to a fatal error, skip current record */
-                if (found_line_error) {
-                    continue;
-                }
-            }
-            if (do_print_dwarf) {
-                /* Check if print of <pc> address is needed. */
-                if (line_print_pc) {
-                    printf("0x%" DW_PR_XZEROS DW_PR_DUx "  ", pc);
-                }
-                printf("[%4" DW_PR_DUu ",%2" DW_PR_DUu "]", lineno, column);
-            }
-
-            nsres = dwarf_linebeginstatement(line, &newstatement, &err);
-            if (nsres == DW_DLV_OK) {
-                if (newstatement && do_print_dwarf) {
-                    printf(" %s","NS");
-                }
-            } else if (nsres == DW_DLV_ERROR) {
-                print_error(dbg, "linebeginstatment failed", nsres, err);
-            }
-            nsres = dwarf_lineblock(line, &new_basic_block, &err);
-            if (nsres == DW_DLV_OK) {
-                if (new_basic_block && do_print_dwarf) {
-                    printf(" %s","BB");
-                }
-            } else if (nsres == DW_DLV_ERROR) {
-                print_error(dbg, "lineblock failed", nsres, err);
-            }
-            nsres = dwarf_lineendsequence(line, &lineendsequence, &err);
-            if (nsres == DW_DLV_OK) {
-                if (lineendsequence && do_print_dwarf) {
-                    printf(" %s", "ET");
-                }
-            } else if (nsres == DW_DLV_ERROR) {
-                print_error(dbg, "lineblock failed", nsres, err);
-            }
-            if (do_print_dwarf) {
-                Dwarf_Bool prologue_end = 0;
-                Dwarf_Bool epilogue_begin = 0;
-                Dwarf_Unsigned isa = 0;
-                Dwarf_Unsigned discriminator = 0;
-                int disres = dwarf_prologue_end_etc(line,
-                    &prologue_end,&epilogue_begin,
-                    &isa,&discriminator,&err);
-                if (disres == DW_DLV_ERROR) {
-                    print_error(dbg, "dwarf_prologue_end_etc() failed",
-                        disres, err);
-                }
-                if (prologue_end) {
-                    printf(" PE");
-                }
-                if (epilogue_begin) {
-                    printf(" EB");
-                }
-                if (isa) {
-                    printf(" IS=0x%" DW_PR_DUx, isa);
-                }
-                if (discriminator) {
-                    printf(" DI=0x%" DW_PR_DUx, discriminator);
-                }
-            }
-
-
-            if (i > 0 &&  verbose < 3  &&
-                strcmp(filename,esb_get_string(&lastsrc)) == 0) {
-                /* Do not print name. */
-            } else {
-                struct esb_s urs;
-                esb_constructor(&urs);
-                esb_append(&urs, " uri: \"");
-                translate_to_uri(filename,&urs);
-                esb_append(&urs,"\"");
-                if (do_print_dwarf) {
-                    printf("%s",esb_get_string(&urs));
-                }
-                esb_destructor(&urs);
-                esb_empty_string(&lastsrc);
-                esb_append(&lastsrc,filename);
-            }
-            if (sres == DW_DLV_OK) {
-                dwarf_dealloc(dbg, filename, DW_DLA_STRING);
-            }
-            if (do_print_dwarf) {
-                printf("\n");
-            }
+        if (actualscount == 0) {
+            process_line_table(dbg, linebuf, linecount, 0, 0);
+        } else {
+            process_line_table(dbg, linebuf, linecount, 1, 0);
+            process_line_table(dbg, actualsbuf, actualscount, 0, 1);
         }
-        esb_destructor(&lastsrc);
         dwarf_srclines_dealloc(dbg, linebuf, linecount);
     }
 }

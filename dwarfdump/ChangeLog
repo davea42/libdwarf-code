@@ -1,3 +1,6 @@
+2015-09-17  David Anderson
+     * print_lines.c: Adding handling of experimental two-level
+       line table.
 2015-09-15  Carlos Alberto Enciso
      * common.c: For Windows version, add a symbol with the 
        release date (taken from the distributed compressed archive),
