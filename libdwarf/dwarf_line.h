@@ -67,6 +67,7 @@ struct Dwarf_File_Entry_s {
     Dwarf_File_Entry fi_next;
 };
 
+/*  Part of two-level line tables support. */
 struct Dwarf_Subprog_Entry_s {
     Dwarf_Small *ds_subprog_name;
     Dwarf_Unsigned ds_decl_file;
@@ -94,16 +95,20 @@ struct Dwarf_Line_Context_s {
     /*  Count of number of source files for this set of Dwarf_Line
         structures. */
     Dwarf_Sword lc_file_entry_count;
-    /*  Array of pointers to included directories. */
+    /*  Points to the portion of .debug_line section that
+        contains a list of strings naming the included
+        directories. */
     Dwarf_Small **lc_include_directories;
 
     /*  Count of the number of included directories. */
     Dwarf_Sword lc_include_directories_count;
 
-    /*  Points to an array of subprogram entries. */
+    /*  Points to an array of subprogram entries.
+        With Two level line tables this may be non-zero. */
     Dwarf_Subprog_Entry lc_subprogs;
     
-    /*  Count of the number of subprogram entries. */
+    /*  Count of the number of subprogram entries
+        With Two level line tables this may be non-zero. */
     Dwarf_Sword lc_subprogs_count;
 
     /*  Count of the number of lines for this cu. */
@@ -114,8 +119,9 @@ struct Dwarf_Line_Context_s {
 
     Dwarf_Debug lc_dbg;
 
-    Dwarf_Half lc_version_number; /* DWARF2/3 version number, 2
-        for DWARF2, 3 for DWARF3. */
+    /* 2 for DWARF2, 3 for DWARF3, 4 for DWARF4, 5 for DWARF5. 
+       0xf006 for experimental two-level line tables. */
+    Dwarf_Half lc_version_number; 
 };
 
 
@@ -275,11 +281,12 @@ struct Line_Table_Prefix_s {
     /* Length of the initial length field itself. */
     Dwarf_Half pf_length_field_length;
 
-    /* The version is 2 for DWARF2, 3 for DWARF3 */
+    /* The version is 2 for DWARF2, 3 for DWARF3 etc */
     Dwarf_Half pf_version;
 
+    /* address size and segment sizefields new in DWARF5 header.  */
     Dwarf_Small pf_address_size;
-    Dwarf_Small pf_segment_size;
+    Dwarf_Small pf_segment_selector_size;
 
     Dwarf_Unsigned pf_prologue_length;
     Dwarf_Unsigned pf_actuals_table_offset;
@@ -314,7 +321,8 @@ struct Line_Table_Prefix_s {
     Dwarf_Unsigned pf_files_count;
     struct Line_Table_File_Entry_s *pf_line_table_file_entries;
 
-    /* Count of entries in subprog_entries array. */
+    /*  Count of entries in subprog_entries array. 
+        This is only used with two-level line tables. */
     Dwarf_Unsigned pf_subprogs_count;
     Dwarf_Subprog_Entry pf_subprog_entries;
 
@@ -329,7 +337,8 @@ struct Line_Table_Prefix_s {
 void dwarf_init_line_table_prefix(struct Line_Table_Prefix_s *pf);
 void dwarf_free_line_table_prefix(struct Line_Table_Prefix_s *pf);
 
-int dwarf_read_line_table_prefix(Dwarf_Debug dbg,
+int _dwarf_read_line_table_prefix(Dwarf_Debug dbg,
+    Dwarf_CU_Context context,
     Dwarf_Small * data_start,
     Dwarf_Unsigned data_length,
     Dwarf_Small ** updated_data_start_out,

@@ -1,3 +1,6 @@
+2015-09-19  David Anderson
+     * print_lines.c: Tweaking two-level line table code, mostly
+       comments..
 2015-09-17  David Anderson
      * print_lines.c: Adding handling of experimental two-level
        line table.

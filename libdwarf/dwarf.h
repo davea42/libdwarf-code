@@ -989,7 +989,14 @@ extern "C" {
 #define DW_LNS_set_epilogue_begin       0x0b /* DWARF3 */
 #define DW_LNS_set_isa                  0x0c /* DWARF3 */
 
-/* Experimental two-level line tables. */
+/*  Experimental two-level line tables. NOT STD DWARF5 */
+/*  MISNAMED: not saying GNU or anything. There are no
+    DW_LNS_lo_user or DW_LNS_hi_user values though. 
+    DW_LNS_set_address_from_logical and
+    DW_LNS_set_subprogram being both 0xd seems...wrong
+    because it makes DW_LNS_* spelling context dependent..
+    EXPERIMENTAL DW_LNS follow.
+*/
 #define DW_LNS_set_address_from_logical 0x0d /* Actuals table only */
 #define DW_LNS_set_subprogram           0x0d /* Logicals table only */
 #define DW_LNS_inlined_call             0x0e /* Logicals table only */

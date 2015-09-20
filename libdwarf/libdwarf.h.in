@@ -1789,27 +1789,31 @@ int dwarf_pclines(Dwarf_Debug /*dbg*/,
     Dwarf_Error*     /*error*/);
 /* end line number operations */
 
-/* When reading from an actuals table, dwarf_line_logical()
+/* Two-level line tables:
+   When reading from an actuals table, dwarf_line_logical()
    returns the logical row number for the line. */
 int dwarf_linelogical(Dwarf_Line /*line*/,
     Dwarf_Unsigned * /*returned_logical*/,
     Dwarf_Error*     /*error*/);
 
-/* When reading from a logicals table, dwarf_linecontext()
+/* Two-level line tables:
+   When reading from a logicals table, dwarf_linecontext()
    returns the logical row number corresponding the the
    calling context for an inlined call. */
 int dwarf_linecontext(Dwarf_Line /*line*/,
     Dwarf_Unsigned * /*returned_context*/,
     Dwarf_Error*     /*error*/);
 
-/* When reading from a logicals table, dwarf_linesubprogno()
+/* Two-level line tables:
+   When reading from a logicals table, dwarf_linesubprogno()
    returns the index in the subprograms table of the inlined
    subprogram. */
 int dwarf_line_subprogno(Dwarf_Line /*line*/,
     Dwarf_Unsigned * /*ret_subprogno*/,
     Dwarf_Error *    /*error*/);
 
-/* When reading from a logicals table, dwarf_linesubprog()
+/* Two-level line tables:
+   When reading from a logicals table, dwarf_linesubprog()
    returns the name of the inlined subprogram, its declaration
    filename, and its declaration line number, if available. */
 int dwarf_line_subprog(Dwarf_Line /*line*/,

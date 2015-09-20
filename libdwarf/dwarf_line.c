@@ -2,6 +2,7 @@
    Copyright (C) 2000-2006 Silicon Graphics, Inc.  All Rights Reserved.
    Portions Copyright (C) 2007-2013 David Anderson. All Rights Reserved.
    Portions Copyright (C) 2010-2012 SN Systems Ltd. All Rights Reserved.
+   Portions Copyright (C) 2015-2015 Google, Inc. All Rights Reserved.
 
    This program is free software; you can redistribute it and/or modify it
    under the terms of version 2.1 of the GNU Lesser General Public License
@@ -108,6 +109,7 @@ dwarf_srcfiles(Dwarf_Die die,
 
     /*  The Dwarf_Debug this die belongs to. */
     Dwarf_Debug dbg = 0;
+    Dwarf_CU_Context context = 0;
 
     /*  Used to chain the file names. */
     Dwarf_Chain curr_chain = NULL;
@@ -127,7 +129,8 @@ dwarf_srcfiles(Dwarf_Die die,
     }
 
     CHECK_DIE(die, DW_DLV_ERROR);
-    dbg = die->di_cu_context->cc_dbg;
+    context = die->di_cu_context;
+    dbg = context->cc_dbg;
 
     resattr = dwarf_attr(die, DW_AT_stmt_list, &stmt_list_attr, error);
     if (resattr != DW_DLV_OK) {
@@ -202,7 +205,8 @@ dwarf_srcfiles(Dwarf_Die die,
     dwarf_init_line_table_prefix(&line_prefix);
     {
         Dwarf_Small *line_ptr_out = 0;
-        int dres = dwarf_read_line_table_prefix(dbg,
+        int dres = _dwarf_read_line_table_prefix(dbg,
+            context,
             line_ptr,
             dbg->de_debug_line.dss_size,
             &line_ptr_out,
@@ -1002,6 +1006,7 @@ _dwarf_internal_srclines(Dwarf_Die die,
         context such as file names and include directories for the set
         of lines being generated. */
     Dwarf_Line_Context line_context = 0;
+    Dwarf_CU_Context context = 0;
 
     struct Line_Table_Prefix_s prefix;
 
@@ -1018,7 +1023,8 @@ _dwarf_internal_srclines(Dwarf_Die die,
         *error = NULL;
 
     CHECK_DIE(die, DW_DLV_ERROR);
-    dbg = die->di_cu_context->cc_dbg;
+    context = die->di_cu_context;
+    dbg = context->cc_dbg;
 
     res = _dwarf_load_section(dbg, &dbg->de_debug_line,error);
     if (res != DW_DLV_OK) {
@@ -1070,7 +1076,8 @@ _dwarf_internal_srclines(Dwarf_Die die,
 
     {
         Dwarf_Small *newlinep = 0;
-        int resp = dwarf_read_line_table_prefix(dbg,
+        int resp = _dwarf_read_line_table_prefix(dbg,
+            context,
             line_ptr,
             dbg->de_debug_line.dss_size,
             &newlinep,
@@ -2019,7 +2026,7 @@ decode_line_string_form(Dwarf_Debug dbg,
         if (res != DW_DLV_OK) {
             return res;
         }
-        *return_str = (char *) (dbg->de_debug_line_str.dss_data + offset);
+        *return_str = (char *) strptr;
         return DW_DLV_OK;
         }
     case DW_FORM_string: {
@@ -2084,7 +2091,8 @@ decode_line_udata_form(Dwarf_Debug dbg,
    Checking-type errors do not stop us, we just report them.
 */
 int
-dwarf_read_line_table_prefix(Dwarf_Debug dbg,
+_dwarf_read_line_table_prefix(Dwarf_Debug dbg,
+    Dwarf_CU_Context cu_context,
     Dwarf_Small * data_start,
     Dwarf_Unsigned data_length,
     Dwarf_Small ** updated_data_start_out,
@@ -2095,6 +2103,7 @@ dwarf_read_line_table_prefix(Dwarf_Debug dbg,
     int *err_count_out)
 {
     Dwarf_Small *line_ptr = data_start;
+    Dwarf_Small *starting_line_ptr = data_start;
     Dwarf_Unsigned total_length = 0;
     int local_length_size = 0;
     int local_extension_size = 0;
@@ -2113,13 +2122,13 @@ dwarf_read_line_table_prefix(Dwarf_Debug dbg,
     if (bogus_bytes_ptr) *bogus_bytes_ptr = 0;
     if (bogus_bytes) *bogus_bytes= 0;
 
-    prefix_out->pf_line_ptr_start = line_ptr;
+    prefix_out->pf_line_ptr_start = starting_line_ptr;
     /* READ_AREA_LENGTH updates line_ptr for consumed bytes */
     READ_AREA_LENGTH(dbg, total_length, Dwarf_Unsigned,
         line_ptr, local_length_size, local_extension_size);
 
 
-    line_ptr_end = line_ptr + total_length;
+    line_ptr_end = starting_line_ptr + total_length;
     prefix_out->pf_line_ptr_end = line_ptr_end;
     prefix_out->pf_length_field_length = local_length_size +
         local_extension_size;
@@ -2130,7 +2139,7 @@ dwarf_read_line_table_prefix(Dwarf_Debug dbg,
         _dwarf_error(dbg, err, DW_DLE_DEBUG_LINE_LENGTH_BAD);
         return (DW_DLV_ERROR);
     }
-    if (line_ptr_end > data_start + data_length) {
+    if (line_ptr_end > starting_line_ptr + data_length) {
         _dwarf_error(dbg, err, DW_DLE_DEBUG_LINE_LENGTH_BAD);
         return (DW_DLV_ERROR);
     }
@@ -2151,8 +2160,12 @@ dwarf_read_line_table_prefix(Dwarf_Debug dbg,
     if (version >= DW_LINE_VERSION5) {
         prefix_out->pf_address_size = *(unsigned char *) line_ptr;
         line_ptr = line_ptr + sizeof(Dwarf_Small);
-        prefix_out->pf_segment_size = *(unsigned char *) line_ptr;
+        prefix_out->pf_segment_selector_size = 
+            *(unsigned char *) line_ptr;
         line_ptr = line_ptr + sizeof(Dwarf_Small);
+    } else {
+        prefix_out->pf_address_size = cu_context->cc_address_size;
+        prefix_out->pf_segment_selector_size = cu_context->cc_segment_selector_size;
     }
 
     READ_UNALIGNED(dbg, prologue_length, Dwarf_Unsigned,
@@ -2383,8 +2396,8 @@ dwarf_read_line_table_prefix(Dwarf_Debug dbg,
                  }
              }
              if (line_ptr >= line_ptr_end) {
-                 _dwarf_error(dbg, err, DW_DLE_LINE_NUMBER_HEADER_ERROR);
-
+                 _dwarf_error(dbg, err, 
+                     DW_DLE_LINE_NUMBER_HEADER_ERROR);
                 return (DW_DLV_ERROR);
             }
         }
@@ -2474,11 +2487,11 @@ dwarf_read_line_table_prefix(Dwarf_Debug dbg,
          ++line_ptr;
      } else {
          /* DWARF 5. */
-         Dwarf_Unsigned filename_format_count;
-         Dwarf_Unsigned *filename_entry_types;
-         Dwarf_Unsigned *filename_entry_forms;
-         Dwarf_Signed i;
-         Dwarf_Signed j;
+         Dwarf_Unsigned filename_format_count = 0;
+         Dwarf_Unsigned *filename_entry_types = 0;
+         Dwarf_Unsigned *filename_entry_forms = 0;
+         Dwarf_Signed i = 0;
+         Dwarf_Signed j = 0;
  
          filename_format_count = *(unsigned char *) line_ptr;
          line_ptr = line_ptr + sizeof(Dwarf_Small);
@@ -2573,12 +2586,12 @@ dwarf_read_line_table_prefix(Dwarf_Debug dbg,
      prefix_out->pf_files_count = files_count;
      /* For two-level line tables, read the subprograms table. */
      if (version == EXPERIMENTAL_LINE_TABLES_VERSION) {
-         Dwarf_Unsigned subprog_format_count;
-         Dwarf_Unsigned *subprog_entry_types;
-         Dwarf_Unsigned *subprog_entry_forms;
-         Dwarf_Unsigned subprogs_count;
-         Dwarf_Signed i;
-         Dwarf_Signed j;
+         Dwarf_Unsigned subprog_format_count = 0;
+         Dwarf_Unsigned *subprog_entry_types = 0;
+         Dwarf_Unsigned *subprog_entry_forms = 0;
+         Dwarf_Unsigned subprogs_count = 0;
+         Dwarf_Signed i = 0;
+         Dwarf_Signed j = 0;
 
 
          subprog_format_count = *(unsigned char *) line_ptr;

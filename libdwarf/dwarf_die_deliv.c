@@ -302,6 +302,10 @@ _dwarf_make_CU_Context(Dwarf_Debug dbg,
     cu_context->cc_abbrev_offset = abbrev_offset;
 
     cu_context->cc_address_size = *(Dwarf_Small *) cu_ptr;
+    /*  The CU header has no selector size. See DW_AT_segment
+        and the DWARF5 line table header and the
+        DWARF5 .debug_aranges header. */
+    cu_context->cc_segment_selector_size = 0;
     ++cu_ptr;
 
 

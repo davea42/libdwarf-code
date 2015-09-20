@@ -1,3 +1,14 @@
+2015-09-19  David Anderson
+     * dwarf.h: Adding commentary. a DW_LNS for two-level line tables
+       looks wrong..
+     * dwarf_die_deliv.c: Adding commentary.
+     * dwarf_line.c: An internal function now has a leading _
+       and a context argument.. Added
+       local names of popular pointers.
+     * dwarf_print_lines.c,dwarf_sort_line.c: An internal 
+       function now has a leading _ and a context argument..
+     * dwarf_opaque.h: Added cc_segment_selector_size to contex structure.
+     * libdwarf.h.in:  Added commentary on two-level line table functions etc.
 2015-09-17  David Anderson
      * dwarf.h, dwarf_alloc.c,dwarf_base_types.h,dwarf_init_finish.c,
        dwarf_line.c,dwarf_line.h,dwarf_line2.c,dwarf_util.c,libdwarf.h.in:

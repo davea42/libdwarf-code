@@ -160,6 +160,7 @@ int * err_count_out, int only_line_header)
 
     /* The Dwarf_Debug this die belongs to. */
     Dwarf_Debug dbg=0;
+    Dwarf_CU_Context context = 0;
     int resattr = DW_DLV_ERROR;
     int lres =    DW_DLV_ERROR;
     int res  =    DW_DLV_ERROR;
@@ -171,7 +172,8 @@ int * err_count_out, int only_line_header)
     }
 
     CHECK_DIE(die, DW_DLV_ERROR);
-    dbg = die->di_cu_context->cc_dbg;
+    context = die->di_cu_context;
+    dbg = context->cc_dbg;
 
     res = _dwarf_load_section(dbg, &dbg->de_debug_line,error);
     if (res != DW_DLV_OK) {
@@ -237,7 +239,8 @@ int * err_count_out, int only_line_header)
     dwarf_init_line_table_prefix(&prefix);
     {
         Dwarf_Small *line_ptr_out = 0;
-        int dres = dwarf_read_line_table_prefix(dbg,
+        int dres = _dwarf_read_line_table_prefix(dbg,
+            context,
             line_ptr,dbg->de_debug_line.dss_size - line_offset,
             &line_ptr_out,
             &prefix,

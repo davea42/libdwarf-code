@@ -157,6 +157,8 @@ struct Dwarf_CU_Context_s {
     /*  cc_address_size is the size of an address in this
         compilation unit. */
     Dwarf_Small cc_address_size;
+    Dwarf_Small cc_segment_selector_size;
+
     /*  cc_debug_offset is the global offset in the section
         of the CU header of this CU.
         That is, it is a section global offset.
