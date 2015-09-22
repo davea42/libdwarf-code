@@ -1,3 +1,8 @@
+2015-09-22  David Anderson
+     * print_lines.c: Fixed indentation and  inconsistencies
+       in spelling line table field hints.
+       Leaving IA as has been for a long time 
+       though it should be spelled IS.
 2015-09-19  David Anderson
      * print_lines.c: Tweaking two-level line table code, mostly
        comments..

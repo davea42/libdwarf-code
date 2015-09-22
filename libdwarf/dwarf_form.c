@@ -1056,7 +1056,7 @@ _dwarf_extract_string_offset_via_str_offsets(Dwarf_Debug dbg,
         offsetintable += fissoff;
     }
     end_offsetintable = offsetintable + cu_context->cc_length_size;
-    /*  The offsets table is a series of offset-size entries. 
+    /*  The offsets table is a series of offset-size entries.
         The == case in the test applies when we are at the last table
         entry, so == is not an error, hence only test >
     */

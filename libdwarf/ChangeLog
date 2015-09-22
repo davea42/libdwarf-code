@@ -1,3 +1,8 @@
+2015-09-22  David Anderson
+     * libdwarf/dwarf.h,dwarf_elf_access.c,dwarf_form.c,dwarf_line.h:
+       Fixed indentation errors.
+     * dwarf_line.c: Fixed indentation and corrected an error
+       introduced a couple days ago.
 2015-09-19  David Anderson
      * dwarf.h: Adding commentary. a DW_LNS for two-level line tables
        looks wrong..

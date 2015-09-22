@@ -107,7 +107,6 @@ process_line_table(Dwarf_Debug dbg, Dwarf_Line *linebuf, Dwarf_Signed linecount,
     /* Padding for a nice layout */
     padding = line_print_pc ? "            " : "";
     if (do_print_dwarf) {
-            record_dwarf_error = FALSE;  /* Clear error condition */
         /* Check if print of <pc> address is needed. */
         printf("\n");
         if (is_logicals_table) {
@@ -124,7 +123,13 @@ process_line_table(Dwarf_Debug dbg, Dwarf_Line *linebuf, Dwarf_Signed linecount,
                 "%sIS=val ISA number\n",padding,padding);
 
         } else {
-            printf("%sIS=val ISA number, DI=val discriminator value\n",
+            /* Standard DWARF line table. */
+            printf("\n");
+            printf("%sNS new statement, BB new basic block, "
+                "ET end of text sequence\n",padding);
+            printf("%sPE prologue end, EB epilogue begin\n",padding);
+            /*  FIXME: Proper spelling is IS, not IA. */
+            printf("%sIA=val ISA number, DI=val discriminator value\n",
                 padding);
         }
         if (is_logicals_table || is_actuals_table) {
@@ -138,7 +143,7 @@ process_line_table(Dwarf_Debug dbg, Dwarf_Line *linebuf, Dwarf_Signed linecount,
         } else if (is_actuals_table) {
             printf("[logical] BB ET IS=\n");
         } else {
-            printf("[lno,col] NS BB ET PE EB IS= DI= uri: \"filepath\"\n");
+            printf("[row,col] NS BB ET PE EB IS= DI= uri: \"filepath\"\n");
         }
     }
     for (i = 0; i < linecount; i++) {
@@ -180,6 +185,7 @@ process_line_table(Dwarf_Debug dbg, Dwarf_Line *linebuf, Dwarf_Signed linecount,
             }
         }
 
+        pc = 0;
         ares = dwarf_lineaddr(line, &pc, &err);
 
         if (ares == DW_DLV_ERROR) {
@@ -187,6 +193,7 @@ process_line_table(Dwarf_Debug dbg, Dwarf_Line *linebuf, Dwarf_Signed linecount,
             where = "dwarf_lineaddr()";
             record_line_error(where,err);
             found_line_error = TRUE;
+            pc = 0;
         }
         if (ares == DW_DLV_NO_ENTRY) {
             pc = 0;
@@ -466,7 +473,23 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
 
     if (do_print_dwarf) {
         printf("\n.debug_line: line number info for a single cu\n");
+    } else {
+        /* We are checking, not printing. */
+        Dwarf_Half tag = 0;
+        int tres = dwarf_tag(cu_die, &tag, &err);
+        if (tres != DW_DLV_OK) {
+            /*  Something broken here. */
+            print_error(dbg,"Unable to see CU DIE tag "
+                "though we could see it earlier. Something broken.",
+                tres,err);
+            return;
+        } else if (tag == DW_TAG_type_unit) {
+            /*  Not checking since type units missing
+                address range in CU header. */
+            return;
+        }
     }
+
     if (verbose > 1) {
         int errcount = 0;
         print_source_intro(cu_die);
@@ -526,7 +549,9 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
         } else {
             process_line_table(dbg, linebuf, linecount, 1, 0);
             process_line_table(dbg, actualsbuf, actualscount, 0, 1);
+            /* FIXME: dealloc actualsbuf? */
         }
         dwarf_srclines_dealloc(dbg, linebuf, linecount);
+        
     }
 }

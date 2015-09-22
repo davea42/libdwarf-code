@@ -290,6 +290,7 @@ struct Line_Table_Prefix_s {
 
     Dwarf_Unsigned pf_prologue_length;
     Dwarf_Unsigned pf_actuals_table_offset;
+    Dwarf_Unsigned pf_logicals_table_offset;
     Dwarf_Small pf_minimum_instruction_length;
 
     /*  Start and end of this CU line area. pf_line_ptr_start +

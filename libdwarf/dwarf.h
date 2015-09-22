@@ -991,7 +991,7 @@ extern "C" {
 
 /*  Experimental two-level line tables. NOT STD DWARF5 */
 /*  MISNAMED: not saying GNU or anything. There are no
-    DW_LNS_lo_user or DW_LNS_hi_user values though. 
+    DW_LNS_lo_user or DW_LNS_hi_user values though.
     DW_LNS_set_address_from_logical and
     DW_LNS_set_subprogram being both 0xd seems...wrong
     because it makes DW_LNS_* spelling context dependent..
