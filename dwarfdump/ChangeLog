@@ -1,4 +1,5 @@
 2015-09-22  David Anderson
+     * print_die.c: Removed trailing whitespace and fixed indentation mistake.
      * print_lines.c: Fixed indentation and  inconsistencies
        in spelling line table field hints.
        Leaving IA as has been for a long time 

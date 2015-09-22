@@ -582,7 +582,7 @@ get_number(Dwarf_Attribute attr,Dwarf_Unsigned *val)
     return;
 }
 static void
-print_subprog(Dwarf_Debug dbg,Dwarf_Die die, 
+print_subprog(Dwarf_Debug dbg,Dwarf_Die die,
     int is_info, int level,
     struct srcfilesdata *sf,
     const char *name)

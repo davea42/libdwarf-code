@@ -478,15 +478,15 @@ tsearch_insert( const void *key,
     if(kc < 0) {
         struct ts_entry *t = tsearch_insert(key,h->llink,compar,inserted, insertednode);
         if(!t) {
-           /* out of memory */
-           return t;
+            /* out of memory */
+            return t;
         }
         h->llink = t;
     } else if (kc > 0) {
         struct ts_entry *t = tsearch_insert(key,h->rlink,compar,inserted, insertednode);
         if(!t) {
-           /* out of memory */
-           return t;
+            /* out of memory */
+            return t;
         }
         h->rlink = t;
     } else {

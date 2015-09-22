@@ -4,7 +4,6 @@
   Portions Copyright 2009-2011 SN Systems Ltd. All rights reserved.
   Portions Copyright 2008-2015 David Anderson. All rights reserved.
   Portions Copyright 2015-2015 Google, Inc. All Rights Reserved
- 
 
   This program is free software; you can redistribute it and/or modify it
   under the terms of version 2 of the GNU General Public License as
@@ -552,6 +551,5 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
             /* FIXME: dealloc actualsbuf? */
         }
         dwarf_srclines_dealloc(dbg, linebuf, linecount);
-        
     }
 }

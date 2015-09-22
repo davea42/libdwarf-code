@@ -1,3 +1,5 @@
+2015-09-22  David Anderson
+     * simplereader.c: Removed trailing whitespace.
 2015-09-15  Carlos Alberto Enciso
      * simplereader.c:  Fix some C99 issues with 
        local variables declaration

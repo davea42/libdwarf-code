@@ -2666,8 +2666,9 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
                     instance and connected via the DW_AT_abstract_origin.
             */
             if (search_is_on && (attr == DW_AT_specification ||
-                                 attr == DW_AT_abstract_origin)) {
+                attr == DW_AT_abstract_origin)) {
                 Dwarf_Die ref_die = 0;
+
                 /* Follow reference chain, looking for the DIE name */
                 res = dwarf_offdie_b(dbg,ref_off,is_info,&ref_die,&err);
                 if (res == DW_DLV_OK) {
@@ -2689,6 +2690,7 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
                 /* This gets the DW_AT_name if this DIE has one. */
                 Dwarf_Addr low_pc =  0;
                 static char proc_name[BUFSIZ];
+
                 proc_name[0] = 0;
                 get_proc_name(dbg,die,low_pc,proc_name,BUFSIZ,/*pcMap=*/0);
                 if (proc_name[0]) {
