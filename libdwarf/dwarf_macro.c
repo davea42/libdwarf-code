@@ -356,7 +356,7 @@ dwarf_get_macro_details(Dwarf_Debug dbg,
     /* extra 2 not really needed */
     space_needed = string_offset + str_space + 2;
     return_data = pdata =
-        _dwarf_get_alloc(dbg, DW_DLA_STRING, space_needed);
+        (Dwarf_Small *)_dwarf_get_alloc(dbg, DW_DLA_STRING, space_needed);
     latest_str_loc = pdata + string_offset;
     if (pdata == 0) {
         free_macro_stack(dbg,&msdata);

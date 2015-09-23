@@ -262,8 +262,7 @@ dwarf_convert_to_global_offset(Dwarf_Attribute attr,
         /*  cc_debug_offset always has any DWP Package File
             offset included (when the cu_context created)
             so there is no extra work for DWP.
-
-        /*  globalize the offset */
+            Globalize the offset */
         offset += cu_context->cc_debug_offset;
 
         break;
@@ -1020,7 +1019,6 @@ _dwarf_extract_string_offset_via_str_offsets(Dwarf_Debug dbg,
     Dwarf_Unsigned index_to_offset_entry = 0;
     Dwarf_Unsigned offsetintable = 0;
     Dwarf_Unsigned end_offsetintable = 0;
-    Dwarf_Unsigned strofflen = 0;
     int res = 0;
 
     res = _dwarf_load_section(dbg, &dbg->de_debug_str_offsets,error);
@@ -1089,7 +1087,6 @@ dwarf_formstring(Dwarf_Attribute attr,
     int res = DW_DLV_ERROR;
     Dwarf_Small *secdataptr = 0;
     Dwarf_Small *secend = 0;
-    Dwarf_Small *strbegin = 0;
     Dwarf_Unsigned secdatalen = 0;
     Dwarf_Small *infoptr = attr->ar_debug_ptr;
     res  = get_attr_dbg(&dbg,&cu_context,attr,error);
@@ -1103,7 +1100,6 @@ dwarf_formstring(Dwarf_Attribute attr,
         secdataptr = (Dwarf_Small *)dbg->de_debug_types.dss_data;
         secdatalen = dbg->de_debug_types.dss_size;
     }
-    strbegin = attr->ar_debug_ptr;
     if (attr->ar_attribute_form == DW_FORM_string) {
         secend = secdataptr + secdatalen;
         Dwarf_Small *begin = attr->ar_debug_ptr;
@@ -1167,7 +1163,7 @@ dwarf_formstring(Dwarf_Attribute attr,
             return (DW_DLV_ERROR);
         }
         secbegin = dbg->de_debug_str.dss_data;
-        strbegin = dbg->de_debug_str.dss_data + offset;
+        strbegin= dbg->de_debug_str.dss_data + offset;
         secend = dbg->de_debug_str.dss_data + dbg->de_debug_str.dss_size;
 
         /*  Ensure the offset lies within the .debug_str */

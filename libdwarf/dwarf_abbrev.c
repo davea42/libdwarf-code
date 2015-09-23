@@ -64,8 +64,6 @@ dwarf_get_abbrev(Dwarf_Debug dbg,
     Dwarf_Abbrev ret_abbrev = 0;
     Dwarf_Unsigned labbr_count = 0;
     Dwarf_Unsigned utmp = 0;
-    Dwarf_Unsigned dwp_abbrev_offset = 0;
-
 
     if (dbg == NULL) {
         _dwarf_error(NULL, error, DW_DLE_DBG_NULL);

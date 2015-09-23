@@ -526,7 +526,6 @@ _dwarf_extract_address_from_debug_addr(Dwarf_Debug dbg,
     Dwarf_Unsigned addrindex = index_to_addr;
     Dwarf_Unsigned addr_offset = 0;
     Dwarf_Unsigned ret_addr = 0;
-    Dwarf_Word leb_len = 0;
     int res = 0;
 
     res = _dwarf_get_address_base_attr_value(dbg,context,
@@ -912,7 +911,6 @@ dwarf_highpc_b(Dwarf_Die die,
                 return res2;
             }
 
-
             res2 = _dwarf_extract_address_from_debug_addr(dbg,
                 context,
                 index_to_addr,
@@ -925,7 +923,7 @@ dwarf_highpc_b(Dwarf_Die die,
                     && dbg->de_tied_data.td_tied_object) {
                     /*  .debug_addr is in tied dbg. */
                     int res3 = 0;
-                    Dwarf_Unsigned index = 0;
+
                     /*  .debug_addr is in tied dbg.
                         Get the index of the addr */
                     res3 = _dwarf_get_addr_from_tied(dbg,

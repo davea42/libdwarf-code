@@ -1,3 +1,6 @@
+2015-09-23  David Anderson
+     * print_lines.c: Removed accidental newline from output.
+     * dwarfdump.c, common.c: Update version string.
 2015-09-22  David Anderson
      * print_die.c: Removed trailing whitespace and fixed indentation mistake.
      * print_lines.c: Fixed indentation and  inconsistencies

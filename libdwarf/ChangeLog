@@ -1,3 +1,19 @@
+2015-09-23  David Anderson
+     * dwarf_abbref.c,dwarf_die_deliv.c,dwarf_init_finish.c,dwarf_query.c: Removed 
+       unused local variables.
+     * dwarf_line.c: Corrected bugs in the two-level line table
+       support and improved error checking.
+       Revamped the line table header reading code for clarity.
+       See dw-linetableheader.txt .
+     * dw-linetableheader.txt: The line table headers are a bit
+       complicated (mostly by the experimental two-level 
+       line table support) so this file shows the header fields
+       in order by version.
+     * dwarf_form.c: Fixed nested comment, removed unused local variables..
+     * dwarf_loc.c: Cast return from _dwarf_get_alloc() to remove
+       a compile warning.
+     * dwarf_tied.c: Removed unused local variable.
+     * dwarf_xu_index.c: Removed unused local variables.
 2015-09-22  David Anderson
      * libdwarf/dwarf.h,dwarf_elf_access.c,dwarf_form.c,dwarf_line.h:
        Fixed indentation errors.

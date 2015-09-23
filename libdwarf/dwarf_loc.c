@@ -1096,7 +1096,7 @@ dwarf_loclist(Dwarf_Attribute attr,
     if (setup_res != DW_DLV_OK) {
         return setup_res;
     }
-    cuvstamp = cuvstamp = cucontext->cc_version_stamp;
+    cuvstamp = cucontext->cc_version_stamp;
     address_size = cucontext->cc_address_size;
     /*  If this is a form_block then it's a location expression. If it's
         DW_FORM_data4 or DW_FORM_data8 it's a loclist offset */

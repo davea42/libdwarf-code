@@ -99,11 +99,10 @@ tied_compare_function(const void *l, const void *r)
 {
     const struct Dwarf_Tied_Entry_s * lp = l;
     const struct Dwarf_Tied_Entry_s * rp = r;
-    unsigned i = 0;
-
     const char *lcp = (const char *)&lp->dt_key.signature;
     const char *rcp = (const char *)&rp->dt_key.signature;
     const char *lcpend = lcp + sizeof(Dwarf_Sig8);
+
     for(; lcp < lcpend; ++lcp,++rcp) {
         if (*lcp < *rcp) {
             return -1;

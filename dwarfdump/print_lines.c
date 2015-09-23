@@ -123,7 +123,6 @@ process_line_table(Dwarf_Debug dbg, Dwarf_Line *linebuf, Dwarf_Signed linecount,
 
         } else {
             /* Standard DWARF line table. */
-            printf("\n");
             printf("%sNS new statement, BB new basic block, "
                 "ET end of text sequence\n",padding);
             printf("%sPE prologue end, EB epilogue begin\n",padding);

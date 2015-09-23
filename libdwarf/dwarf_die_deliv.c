@@ -607,8 +607,6 @@ find_context_base_fields(Dwarf_Debug dbg,
     Dwarf_Off addr_base = 0;
     Dwarf_Bool str_offsets_base_present = FALSE;
     Dwarf_Bool addr_base_present = FALSE;
-    Dwarf_Bool hasdwoid = 0;
-    int boolres = 0;
 
     Dwarf_Attribute * alist = 0;
     Dwarf_Signed      atcount = 0;
@@ -929,7 +927,6 @@ dwarf_die_from_hash_signature(Dwarf_Debug dbg,
     Dwarf_Error*     error)
 {
     Dwarf_Bool is_type_unit = FALSE;
-    Dwarf_Bool is_info = !is_type_unit;
     int sres = 0;
 
     sres = _dwarf_load_debug_info(dbg,error);
@@ -949,7 +946,6 @@ dwarf_die_from_hash_signature(Dwarf_Debug dbg,
         _dwarf_error(dbg,error,DW_DLE_SIG_TYPE_WRONG_STRING);
         return DW_DLV_ERROR;
     }
-    is_info = !is_type_unit;
 
     if (_dwarf_file_has_debug_fission_index(dbg)) {
         /* This is a dwp package file. */
@@ -1514,7 +1510,6 @@ dwarf_child(Dwarf_Die die,
     Dwarf_Debug dbg;
     Dwarf_Word abbrev_code = 0;
     Dwarf_Unsigned utmp = 0;
-    Dwarf_Small *dataptr = 0;
     Dwarf_Debug_InfoTypes dis = 0;
     int res = 0;
     Dwarf_CU_Context context = 0;
