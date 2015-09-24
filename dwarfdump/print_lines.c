@@ -126,8 +126,7 @@ process_line_table(Dwarf_Debug dbg, Dwarf_Line *linebuf, Dwarf_Signed linecount,
             printf("%sNS new statement, BB new basic block, "
                 "ET end of text sequence\n",padding);
             printf("%sPE prologue end, EB epilogue begin\n",padding);
-            /*  FIXME: Proper spelling is IS, not IA. */
-            printf("%sIA=val ISA number, DI=val discriminator value\n",
+            printf("%sIS=val ISA number, DI=val discriminator value\n",
                 padding);
         }
         if (is_logicals_table || is_actuals_table) {

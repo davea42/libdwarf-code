@@ -88,6 +88,59 @@
 #define R_MIPS_TLS_TPREL64	48
 #endif
 
+#ifndef EM_IA_64
+#define EM_IA_64            50
+#endif
+#ifndef R_IA64_SECREL32LSB 
+#define R_IA64_SECREL32LSB 0x64
+#endif
+#ifndef R_IA64_DIR32MSB 
+#define R_IA64_DIR32MSB    0x24
+#endif
+#ifndef R_IA64_DIR32LSB 
+#define R_IA64_DIR32LSB    0x25
+#endif
+#ifndef R_IA64_DIR64MSB 
+#define R_IA64_DIR64MSB    0x26
+#endif
+#ifndef R_IA64_DIR64LSB 
+#define R_IA64_DIR64LSB    0x27
+#endif
+#ifndef R_IA64_SECREL64MSB
+#define R_IA64_SECREL64MSB 0x66
+#endif
+
+#ifndef EM_S390
+#define EM_S390             22
+#endif
+#ifndef R_390_TLS_LDO32 
+#define R_390_TLS_LDO32         52 
+#endif
+#ifndef R_390_TLS_LDO64
+#define R_390_TLS_LDO64         53
+#endif
+
+#ifndef R_390_32 
+#define R_390_32                4 
+#endif
+#ifndef  R_390_64
+#define  R_390_64                22
+#endif
+
+#ifndef EM_SH
+#define EM_SH                42
+#endif
+#ifndef R_SH_DIR32          
+#define R_SH_DIR32           1  
+#endif
+#ifndef R_SH_TLS_DTPOFF32 
+#define R_SH_TLS_DTPOFF32    150
+#endif
+
+
+
+
+
 
 
 #ifdef HAVE_ELF64_GETEHDR

@@ -1,6 +1,11 @@
+2015-09-24  David Anderson
+     * dwarfdump.c, common.c: Update version string.
+     * print_lines.c: IA in line header hint is
+       really spelled IS. Fixed now.
+     * dwarf_elf_access.c: Added R_IA64* and R_390 relocation ifdefs
+       for cases where they are not in a test machines elf.h or the like.
 2015-09-23  David Anderson
      * print_lines.c: Removed accidental newline from output.
-     * dwarfdump.c, common.c: Update version string.
 2015-09-22  David Anderson
      * print_die.c: Removed trailing whitespace and fixed indentation mistake.
      * print_lines.c: Fixed indentation and  inconsistencies

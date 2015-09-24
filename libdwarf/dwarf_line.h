@@ -97,7 +97,7 @@ struct Dwarf_Line_Context_s {
     Dwarf_Sword lc_file_entry_count;
     /*  Points to the portion of .debug_line section that
         contains a list of strings naming the included
-        directories. */
+        directories.  Do not free().*/
     Dwarf_Small **lc_include_directories;
 
     /*  Count of the number of included directories. */
@@ -114,7 +114,9 @@ struct Dwarf_Line_Context_s {
     /*  Count of the number of lines for this cu. */
     Dwarf_Sword lc_line_count;
 
-    /*  Points to name of compilation directory. */
+    /*  Points to name of compilation directory.
+        That string is in a .debug section so
+        do not free this. */
     Dwarf_Small *lc_compilation_directory;
 
     Dwarf_Debug lc_dbg;

@@ -1004,9 +1004,13 @@ _dwarf_internal_srclines(Dwarf_Die die,
 
     /*  Pointer to a Dwarf_Line_Context_s structure that contains the
         context such as file names and include directories for the set
-        of lines being generated. */
+        of lines being generated. 
+        This is always recorded on an 
+        DW_LNS_end_sequence operator, 
+        on  all special opcodes, and on DW_LNS_copy.
+        */
     Dwarf_Line_Context line_context = 0;
-    Dwarf_CU_Context context = 0;
+    Dwarf_CU_Context   cu_context = 0;
 
     struct Line_Table_Prefix_s prefix;
 
@@ -1024,8 +1028,8 @@ _dwarf_internal_srclines(Dwarf_Die die,
     }
 
     CHECK_DIE(die, DW_DLV_ERROR);
-    context = die->di_cu_context;
-    dbg = context->cc_dbg;
+    cu_context = die->di_cu_context;
+    dbg = cu_context->cc_dbg;
 
     res = _dwarf_load_section(dbg, &dbg->de_debug_line,error);
     if (res != DW_DLV_OK) {
@@ -1078,7 +1082,7 @@ _dwarf_internal_srclines(Dwarf_Die die,
     {
         Dwarf_Small *newlinep = 0;
         int resp = _dwarf_read_line_table_prefix(dbg,
-            context,
+            cu_context,
             line_ptr,
             dbg->de_debug_line.dss_size,
             &newlinep,
@@ -1122,7 +1126,8 @@ _dwarf_internal_srclines(Dwarf_Die die,
         cur_file_entry = (Dwarf_File_Entry)
             _dwarf_get_alloc(dbg, DW_DLA_FILE_ENTRY, 1);
         if (cur_file_entry == NULL) {
-            dwarf_free_line_table_prefix(&prefix);
+             dwarf_free_line_table_prefix(&prefix);
+             dwarf_dealloc(dbg,line_context,DW_DLA_LINE_CONTEXT);
             _dwarf_error(dbg, error, DW_DLE_ALLOC_FAIL);
             return (DW_DLV_ERROR);
         }
@@ -1140,10 +1145,12 @@ _dwarf_internal_srclines(Dwarf_Die die,
 
     if (line_ptr_actuals == 0) {
         /* Normal style (single level) line table. */
+        Dwarf_Bool is_actuals_table = false;
         res = read_line_table_program(dbg, line_ptr, line_ptr_end,
             &prefix, line_context, linebuf, count,
             &file_entries, prev_file_entry, &file_entry_count,
-            address_size, doaddrs, dolines, false, NULL, 0, error);
+            address_size, doaddrs, dolines,
+            is_actuals_table,NULL,0, error);
         if (res != DW_DLV_OK) {
             dwarf_free_line_table_prefix(&prefix);
             return res;
@@ -1153,22 +1160,28 @@ _dwarf_internal_srclines(Dwarf_Die die,
         if (count_actuals != NULL)
             *count_actuals = 0;
     } else {
-        Dwarf_Signed tmpcount;
+        Dwarf_Signed tmpcount = 0;
+        Dwarf_Bool is_actuals_table = false;
 
-        /* Two-level line table. */
+        /*  Two-level line table. 
+            First read the logicals table. */
         res = read_line_table_program(dbg, line_ptr, line_ptr_actuals,
             &prefix, line_context, linebuf, count,
             &file_entries, prev_file_entry, &file_entry_count,
-            address_size, doaddrs, dolines, false, NULL, 0, error);
+            address_size, doaddrs, dolines, 
+            is_actuals_table, NULL, 0, error);
         if (res != DW_DLV_OK) {
             dwarf_free_line_table_prefix(&prefix);
             return res;
         }
         if (linebuf_actuals != NULL) {
+            is_actuals_table = true;
+            /* We have an actuals table, so now read that one. */
             res = read_line_table_program(dbg, line_ptr_actuals, line_ptr_end,
                 &prefix, line_context, linebuf_actuals, &tmpcount,
                 NULL, NULL, NULL,
-                address_size, doaddrs, dolines, true, *linebuf, *count, error);
+                address_size, doaddrs, dolines, 
+                is_actuals_table, *linebuf, *count, error);
             if (res != DW_DLV_OK) {
                 dwarf_free_line_table_prefix(&prefix);
                 return res;
@@ -1178,33 +1191,50 @@ _dwarf_internal_srclines(Dwarf_Die die,
         }
     }
 
-    line_context->lc_file_entries = file_entries;
-    line_context->lc_file_entry_count = file_entry_count;
-    line_context->lc_include_directories_count =
-        prefix.pf_include_directories_count;
-    if (prefix.pf_include_directories_count > 0) {
-        /*  This moves the pointer to the list of include directories
-            from the prefix structure to the line_context. We do not
-            want this array deallocated when the prefix structure is
-            deallocated. */
-        line_context->lc_include_directories = prefix.pf_include_directories;
-        prefix.pf_include_directories_count = 0;
-        prefix.pf_include_directories = NULL;
-    }
+    if (*count == 0 && (count_actuals == NULL || *count_actuals == 0)) {
+        /*  Here we have no actual lines of any kind. In other words,
+            it looks like a debugfission line table skeleton.
+            In that case there are no line entries so the context
+            had nowhere to be recorded. Hence we have to delete it
+            else we would leak the context.  */
+        Dwarf_File_Entry fe = file_entries;
 
-    line_context->lc_subprogs_count = prefix.pf_subprogs_count;
-    if (prefix.pf_subprogs_count > 0) {
-        /*  Likewise, we move the pointer to the subprogram entries
-            to the line_context structure. */
-        line_context->lc_subprogs = prefix.pf_subprog_entries;
-        prefix.pf_subprogs_count = 0;
-        prefix.pf_subprog_entries = NULL;
-    }
+        while (fe) {
+            Dwarf_File_Entry fenext = fe->fi_next;
 
-    line_context->lc_line_count = *count;
-    line_context->lc_compilation_directory = comp_dir;
-    line_context->lc_version_number = prefix.pf_version;
-    line_context->lc_dbg = dbg;
+            dwarf_dealloc(dbg, fe, DW_DLA_FILE_ENTRY);
+            fe = fenext; 
+        }
+        dwarf_dealloc(dbg, line_context, DW_DLA_LINE_CONTEXT);
+    } else {
+        line_context->lc_file_entries = file_entries;
+        line_context->lc_file_entry_count = file_entry_count;
+        line_context->lc_include_directories_count =
+            prefix.pf_include_directories_count;
+        if (prefix.pf_include_directories_count > 0) {
+            /*  This moves the pointer to the list of include directories
+                from the prefix structure to the line_context. We do not
+                want this array deallocated when the prefix structure is
+                deallocated. */
+            line_context->lc_include_directories = prefix.pf_include_directories;
+            prefix.pf_include_directories_count = 0;
+            prefix.pf_include_directories = NULL;
+        }
+    
+        line_context->lc_subprogs_count = prefix.pf_subprogs_count;
+        if (prefix.pf_subprogs_count > 0) {
+            /*  Likewise, we move the pointer to the subprogram entries
+                to the line_context structure. */
+            line_context->lc_subprogs = prefix.pf_subprog_entries;
+            prefix.pf_subprogs_count = 0;
+            prefix.pf_subprog_entries = NULL;
+        }
+    
+        line_context->lc_line_count = *count;
+        line_context->lc_compilation_directory = comp_dir;
+        line_context->lc_version_number = prefix.pf_version;
+        line_context->lc_dbg = dbg;
+    }
 
     if (version != NULL) {
         *version = prefix.pf_version;
@@ -2014,10 +2044,10 @@ decode_line_string_form(Dwarf_Debug dbg,
 
         secstart = dbg->de_debug_line_str.dss_data;
         secend = secstart + dbg->de_debug_line_str.dss_size;
-        strptr = secstart + offset;
 
         READ_UNALIGNED(dbg, offset, Dwarf_Unsigned,offsetptr, offset_size);
         *line_ptr += offset_size;
+        strptr = secstart + offset;
 
         res = _dwarf_check_string_valid(dbg,
             secstart,strptr,secend,error);
@@ -2732,15 +2762,17 @@ _dwarf_read_line_table_prefix(Dwarf_Debug dbg,
                     }
                     break;
                 default:
+                    free(subprog_entry_forms);
+                    free(subprog_entry_types);
                     _dwarf_error(dbg, err, DW_DLE_LINE_NUMBER_HEADER_ERROR);
                     return (DW_DLV_ERROR);
                 }
-            }
-            if (line_ptr >= line_ptr_end) {
-                free(subprog_entry_types);
-                free(subprog_entry_forms);
-                _dwarf_error(dbg, err, DW_DLE_LINE_NUMBER_HEADER_ERROR);
-                return (DW_DLV_ERROR);
+                if (line_ptr >= line_ptr_end) {
+                    free(subprog_entry_types);
+                    free(subprog_entry_forms);
+                    _dwarf_error(dbg, err, DW_DLE_LINE_NUMBER_HEADER_ERROR);
+                    return (DW_DLV_ERROR);
+                }
             }
         }
         free(subprog_entry_types);

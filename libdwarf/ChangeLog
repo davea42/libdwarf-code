@@ -1,3 +1,10 @@
+2015-09-24  David Anderson
+     * dwarf_line.c: Renamed a local var for clarity. Added commentary
+       for clarity.  Fixed a memory leak for skeleton lined tables.
+       Added required free() calls on error to avoid memory leaks.
+       Moved an 'overrun' check into a loop to check on every
+       loop iteration.
+     * dwarf_line.h: Added commentary.
 2015-09-23  David Anderson
      * dwarf_abbref.c,dwarf_die_deliv.c,dwarf_init_finish.c,dwarf_query.c: Removed 
        unused local variables.
