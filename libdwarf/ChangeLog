@@ -1,3 +1,7 @@
+2015-09-25  David Anderson
+     * dwarf_line.h: added a comment.
+     * dwarf_print_lines.c: Now finds actuals and logicals
+       tables and prints them. Incomplete but perhaps useful.
 2015-09-24  David Anderson
      * dwarf_line.c: Renamed a local var for clarity. Added commentary
        for clarity.  Fixed a memory leak for skeleton lined tables.

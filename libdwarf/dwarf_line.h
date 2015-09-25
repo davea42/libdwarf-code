@@ -305,7 +305,7 @@ struct Line_Table_Prefix_s {
     Dwarf_Small *pf_line_prologue_start;
 
     Dwarf_Small pf_default_is_stmt;
-    Dwarf_Ubyte pf_maximum_ops_per_instruction;
+    Dwarf_Ubyte pf_maximum_ops_per_instruction; /*DWARF5*/
     Dwarf_Sbyte pf_line_base;
     Dwarf_Small pf_line_range;
 
