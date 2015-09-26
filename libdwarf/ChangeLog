@@ -1,4 +1,8 @@
 2015-09-25  David Anderson
+     * dwarf_print_lines.c: A first cut at detailed line tables.
+       Not yet computing state register values for all two-level
+       line tables here.
+2015-09-25  David Anderson
      * dwarf_line.h: added a comment.
      * dwarf_print_lines.c: Now finds actuals and logicals
        tables and prints them. Incomplete but perhaps useful.

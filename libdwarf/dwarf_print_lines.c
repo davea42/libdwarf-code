@@ -90,6 +90,12 @@ dwarf_printf(dbg,
 /* FIXME */
     } else {
         dwarf_printf(dbg,"\nLogicals Table\n");
+dwarf_printf(dbg,
+"                                                                              spe\n" 
+"                                                                              trp\n"
+"                                                                              moi\n"
+" section     row  op                                                          tll\n"
+" offset      num  code                address/indx fil lne col disc cntx subp ???\n");
         return;
 /* FIXME */
     }
@@ -108,13 +114,14 @@ print_line_detail(
     Dwarf_Debug dbg,
     const char *prefix,
     int opcode,
+    unsigned curr_line,
     struct Dwarf_Line_Registers_s * regs,
     Dwarf_Bool is_single_table, Dwarf_Bool is_actuals_table)
 {
     if(!is_single_table && is_actuals_table) {
         dwarf_printf(dbg,
             "%-15s %3d 0x%" DW_PR_XZEROS DW_PR_DUx 
-            "/%01" DW_PR_DUu 
+            "/%01u"
             " %5lu"  /* lr_line, really logical row */ 
             " %5d"   /* isa */
             "%2d"
@@ -122,7 +129,7 @@ print_line_detail(
             prefix,
             (int) opcode,
             (Dwarf_Unsigned) regs->lr_address,
-            (Dwarf_Unsigned) regs->lr_op_index,
+            (unsigned) regs->lr_op_index,
             (unsigned long) regs->lr_line, /*logical row */
             regs->lr_isa,
             (int) regs->lr_basic_block, 
@@ -131,38 +138,46 @@ print_line_detail(
     }
     if(!is_single_table && !is_actuals_table) {
         dwarf_printf(dbg,
-            "%-15s %3d 0x%" DW_PR_XZEROS DW_PR_DUx 
-            "%2lu   %4lu %2lu %1d",
+            "[%3d] "  /* row number */
+            "%-15s %3d 0x%" DW_PR_XZEROS DW_PR_DUx "/%01u"
+            " %2lu %4lu %1lu",
+            curr_line,
             prefix,
             (int) opcode,
             (Dwarf_Unsigned) regs->lr_address,
+            (unsigned) regs->lr_op_index,
             (unsigned long) regs->lr_file, 
             (unsigned long) regs->lr_line, 
-            (unsigned long) regs->lr_column,
-            (int) regs->lr_is_stmt);
+            (unsigned long) regs->lr_column);
         if (regs->lr_discriminator ||
             regs->lr_prologue_end ||
             regs->lr_epilogue_begin ||
             regs->lr_isa ||
+            regs->lr_is_stmt ||
             regs->lr_context ||
             regs->lr_subprogram) {
             dwarf_printf(dbg,
-                " %1d", regs->lr_prologue_end); /* DWARF3 */
+                "   x%02" DW_PR_DUx , regs->lr_discriminator); /* DWARF4 */
             dwarf_printf(dbg,
-                " %1d", regs->lr_epilogue_begin); /* DWARF3 */
+                "  x%02" DW_PR_DUx , regs->lr_context); /* EXPERIMENTAL */
             dwarf_printf(dbg,
-                " 0x4%" DW_PR_DUx , regs->lr_discriminator); /* DWARF4 */
+                "  x%02" DW_PR_DUx , regs->lr_subprogram); /* EXPERIMENTAL */
             dwarf_printf(dbg,
-                " 0x%4" DW_PR_DUx , regs->lr_context); /* DWARF4 */
+                "  %1d", (int) regs->lr_is_stmt);
             dwarf_printf(dbg,
-                " 0x%4" DW_PR_DUx , regs->lr_subprogram); /* DWARF4 */
+                "%1d", regs->lr_prologue_end); /* DWARF3 */
+            dwarf_printf(dbg,
+                "%1d", regs->lr_epilogue_begin); /* DWARF3 */
         }
         dwarf_printf(dbg, "\n");
         return;
     }
+    /*  In the first quoted line below:   
+        3d looks better than 2d, but best to do that as separate
+        change and test from two-level-line-tables.  */
     dwarf_printf(dbg,
-        "%-15s %3d 0x%" DW_PR_XZEROS DW_PR_DUx " "
-        "%2lu   %4lu %2lu  %1d %1d %1d",
+        "%-15s %2d 0x%" DW_PR_XZEROS DW_PR_DUx " "
+        "%2lu   %4lu %2lu   %1d %1d %1d",
         prefix,
         (int) opcode,
         (Dwarf_Unsigned) regs->lr_address,
@@ -196,6 +211,7 @@ print_statement_program(Dwarf_Debug dbg,
     Dwarf_Die die,
     Dwarf_CU_Context cu_context,
     struct Line_Table_Prefix_s *prefix,
+    Dwarf_Small *orig_line_ptr,
     Dwarf_Small *line_ptr,
     Dwarf_Small *line_ptr_end,
     Dwarf_Bool  is_single_table,
@@ -204,13 +220,20 @@ print_statement_program(Dwarf_Debug dbg,
     int * err_count_out)
 {
     struct Dwarf_Line_Registers_s regs;
-    Dwarf_Small *orig_line_ptr = line_ptr;
     Dwarf_Word leb128_num=0;
     Dwarf_Word leb128_length=0;
     Dwarf_Sword advance_line=0;
     /*  This is the operand of the latest fixed_advance_pc extended
         opcode. */
     Dwarf_Half fixed_advance_pc=0;
+
+    /*  For each new table row in the Logicals table
+        we want to know the row number so we can print it.  
+        Things refer to it.
+        The rows are numbered starting from 1, so we 
+        increment before printing.
+    */
+    unsigned curr_line = 0;
 
     
     regs = default_reg_values;
@@ -222,6 +245,7 @@ print_statement_program(Dwarf_Debug dbg,
         int type = 0;
         Dwarf_Small opcode = 0;
 
+        /* Here we print the table area byte offset. */
         dwarf_printf(dbg,
             " [0x%06" DW_PR_DSx "] ",
             (Dwarf_Signed) (line_ptr - orig_line_ptr));
@@ -284,8 +308,9 @@ print_statement_program(Dwarf_Debug dbg,
             regs.lr_line = regs.lr_line + prefix->pf_line_base +
                 opcode % prefix->pf_line_range;
             sprintf(special, "Specialop %3u", origop);
+            curr_line++;
             print_line_detail(dbg,special,
-                opcode, &regs,is_single_table, is_actuals_table);
+                opcode,curr_line, &regs,is_single_table, is_actuals_table);
             regs.lr_basic_block = false;
             regs.lr_prologue_end = false;
             regs.lr_epilogue_begin = false;
@@ -294,8 +319,9 @@ print_statement_program(Dwarf_Debug dbg,
             switch (opcode) {
 
             case DW_LNS_copy:{
+                curr_line++;
                 print_line_detail(dbg,"DW_LNS_copy",
-                    opcode, &regs,is_single_table, is_actuals_table);
+                    opcode,curr_line, &regs,is_single_table, is_actuals_table);
                 regs.lr_basic_block = false;
                 regs.lr_prologue_end = false;
                 regs.lr_epilogue_begin = false;
@@ -503,9 +529,9 @@ print_statement_program(Dwarf_Debug dbg,
 
             case DW_LNE_end_sequence:{
                 regs.lr_end_sequence = true;
-
+                curr_line++;
                 print_line_detail(dbg,"DW_LNE_end_sequence extended",
-                    opcode, &regs,is_single_table, is_actuals_table);
+                    opcode, curr_line, &regs,is_single_table, is_actuals_table);
                 regs.lr_address = 0;
                 regs.lr_file = 1;
                 regs.lr_line = 1;
@@ -521,8 +547,7 @@ print_statement_program(Dwarf_Debug dbg,
                 }
                 break;
             case DW_LNE_set_address:{
-                Dwarf_Addr address = 0;
-                READ_UNALIGNED(dbg, address, Dwarf_Addr,
+                READ_UNALIGNED(dbg,regs.lr_address, Dwarf_Addr,
                     line_ptr,
                     cu_context->cc_address_size);
 
@@ -530,7 +555,7 @@ print_statement_program(Dwarf_Debug dbg,
                 dwarf_printf(dbg,
                     "DW_LNE_set_address address 0x%"
                     DW_PR_XZEROS DW_PR_DUx "\n",
-                    (Dwarf_Unsigned) address);
+                    (Dwarf_Unsigned) regs.lr_address);
 
                 regs.lr_op_index = 0;
                 }
@@ -789,8 +814,13 @@ _dwarf_internal_printlines(Dwarf_Die die,
         "line offset 0x%" DW_PR_XZEROS DW_PR_DUx " %" DW_PR_DSd "\n",
         (long) prefix.pf_total_length,
         (Dwarf_Unsigned) line_offset, (Dwarf_Signed) line_offset);
-    dwarf_printf(dbg,
-        "line table version 0x%x\n",(int) prefix.pf_version);
+    if (prefix.pf_version <= DW_LINE_VERSION5) {
+        dwarf_printf(dbg,
+            "line table version %d\n",(int) prefix.pf_version);
+    } else {
+        dwarf_printf(dbg,
+            "line table version 0x%x\n",(int) prefix.pf_version);
+    }
     dwarf_printf(dbg,
         "line table length field length %d prologue length %d\n",
         (int)prefix.pf_length_field_length,
@@ -912,6 +942,7 @@ _dwarf_internal_printlines(Dwarf_Die die,
             print_line_header(dbg, is_single_table, is_actuals_table);
             res = print_statement_program(dbg,
                 die, context,&prefix,
+                orig_line_ptr,
                 line_ptr,line_ptr_end,
                 is_single_table,
                 is_actuals_table,
@@ -932,6 +963,7 @@ _dwarf_internal_printlines(Dwarf_Die die,
             print_line_header(dbg, is_single_table, is_actuals_table);
             res = print_statement_program(dbg,
                 die,context,&prefix,
+                orig_line_ptr,
                 line_ptr,line_ptr_actuals,
                 is_single_table,
                 is_actuals_table,
@@ -948,6 +980,7 @@ _dwarf_internal_printlines(Dwarf_Die die,
                 print_line_header(dbg, is_single_table, is_actuals_table);
                 res = print_statement_program(dbg,
                     die,context,&prefix,
+                    orig_line_ptr,
                     line_ptr_actuals,line_ptr_end,
                     is_single_table,
                     is_actuals_table,

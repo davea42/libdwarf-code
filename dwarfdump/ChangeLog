@@ -1,3 +1,8 @@
+2015-09-26  David Anderson
+     * dwarfdump.c, common.c: Update version string.
+     * dwarf_print_lines.c: Now there is a working
+       two-level line, though the line-table
+       registers not set properly by the EXPERIMENTAL operations.
 2015-09-24  David Anderson
      * dwarfdump.c, common.c: Update version string.
      * print_lines.c: IA in line header hint is
