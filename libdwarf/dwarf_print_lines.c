@@ -81,32 +81,30 @@ if (!is_single_tab) {
     if (is_actuals_tab) {
         dwarf_printf(dbg,"\nActuals Table\n");
 dwarf_printf(dbg,
-"                                                         b e\n"
-"                                                         l s\n"
-"                                                         c e\n"
-" section    op                                           k q\n"
-" offset     code                address/index    row isa ? ?\n");
-        return;
-/* FIXME */
+"                                                         be\n"
+"                                                         ls\n"
+"                                                         ce\n"
+" section    op                                           kq\n"
+" offset     code                address/index    row isa ??\n");
+    return;
     } else {
         dwarf_printf(dbg,"\nLogicals Table\n");
 dwarf_printf(dbg,
-"                                                                              spe\n" 
-"                                                                              trp\n"
-"                                                                              moi\n"
-" section     row  op                                                          tll\n"
-" offset      num  code                address/indx fil lne col disc cntx subp ???\n");
-        return;
-/* FIXME */
+"                                                                              s pe\n"
+"                                                                              tirp\n"
+"                                                                              msoi\n"
+" section     row  op                                                          tall\n"
+" offset      num  code                address/indx fil lne col disc cntx subp ????\n");
+    return;
     }
 }
 /* Ugly indenting, but makes lines shorter to see them better. */
 dwarf_printf(dbg,
-"                                                         s b e p e i d\n"
-"                                                         t l s r p s i\n"
-"                                                         m c e o i a s\n"
-" section    op                                       col t k q l l   c\n"
-" offset     code               address     file line umn ? ? ? ? ? \n");
+"                                                        s b e p e i d\n"
+"                                                        t l s r p s i\n"
+"                                                        m c e o i a s\n"
+" section    op                                      col t k q l l   c\n"
+" offset     code              address     file line umn ? ? ? ? ? \n");
 }
 
 static void
@@ -120,34 +118,34 @@ print_line_detail(
 {
     if(!is_single_table && is_actuals_table) {
         dwarf_printf(dbg,
-            "%-15s %3d 0x%" DW_PR_XZEROS DW_PR_DUx 
+            "%-15s %3d 0x%" DW_PR_XZEROS DW_PR_DUx
             "/%01u"
-            " %5lu"  /* lr_line, really logical row */ 
-            " %5d"   /* isa */
-            "%2d"
-            "%2d\n",
+            " %5lu"  /* lr_line, really logical row */
+            " %3d"   /* isa */
+            "   %1d"
+            "%1d\n",
             prefix,
             (int) opcode,
             (Dwarf_Unsigned) regs->lr_address,
             (unsigned) regs->lr_op_index,
             (unsigned long) regs->lr_line, /*logical row */
             regs->lr_isa,
-            (int) regs->lr_basic_block, 
+            (int) regs->lr_basic_block,
             (int) regs->lr_end_sequence);
         return;
     }
     if(!is_single_table && !is_actuals_table) {
         dwarf_printf(dbg,
             "[%3d] "  /* row number */
-            "%-15s %3d 0x%" DW_PR_XZEROS DW_PR_DUx "/%01u"
-            " %2lu %4lu %1lu",
+            "%-15s %3d x%" DW_PR_XZEROS DW_PR_DUx "/%01u"
+            " %2lu %4lu  %1lu",
             curr_line,
             prefix,
             (int) opcode,
             (Dwarf_Unsigned) regs->lr_address,
             (unsigned) regs->lr_op_index,
-            (unsigned long) regs->lr_file, 
-            (unsigned long) regs->lr_line, 
+            (unsigned long) regs->lr_file,
+            (unsigned long) regs->lr_line,
             (unsigned long) regs->lr_column);
         if (regs->lr_discriminator ||
             regs->lr_prologue_end ||
@@ -165,6 +163,8 @@ print_line_detail(
             dwarf_printf(dbg,
                 "  %1d", (int) regs->lr_is_stmt);
             dwarf_printf(dbg,
+                "%1d", (int) regs->lr_isa);
+            dwarf_printf(dbg,
                 "%1d", regs->lr_prologue_end); /* DWARF3 */
             dwarf_printf(dbg,
                 "%1d", regs->lr_epilogue_begin); /* DWARF3 */
@@ -172,7 +172,7 @@ print_line_detail(
         dwarf_printf(dbg, "\n");
         return;
     }
-    /*  In the first quoted line below:   
+    /*  In the first quoted line below:
         3d looks better than 2d, but best to do that as separate
         change and test from two-level-line-tables.  */
     dwarf_printf(dbg,
@@ -184,12 +184,12 @@ print_line_detail(
         (unsigned long) regs->lr_file,
         (unsigned long) regs->lr_line,
         (unsigned long) regs->lr_column,
-        (int) regs->lr_is_stmt, 
-        (int) regs->lr_basic_block, 
+        (int) regs->lr_is_stmt,
+        (int) regs->lr_basic_block,
         (int) regs->lr_end_sequence);
-    if (regs->lr_discriminator || 
-        regs->lr_prologue_end || 
-        regs->lr_epilogue_begin || 
+    if (regs->lr_discriminator ||
+        regs->lr_prologue_end ||
+        regs->lr_epilogue_begin ||
         regs->lr_isa) {
         dwarf_printf(dbg,
             " %1d", regs->lr_prologue_end); /* DWARF3 */
@@ -206,7 +206,7 @@ print_line_detail(
 
 /*  This prints the details of a statement program.
     The two-level table operators are not yet fully handled.  */
-static int 
+static int
 print_statement_program(Dwarf_Debug dbg,
     Dwarf_Die die,
     Dwarf_CU_Context cu_context,
@@ -228,15 +228,16 @@ print_statement_program(Dwarf_Debug dbg,
     Dwarf_Half fixed_advance_pc=0;
 
     /*  For each new table row in the Logicals table
-        we want to know the row number so we can print it.  
+        we want to know the row number so we can print it.
         Things refer to it.
-        The rows are numbered starting from 1, so we 
+        The rows are numbered starting from 1, so we
         increment before printing.
     */
     unsigned curr_line = 0;
 
-    
     regs = default_reg_values;
+
+
     /*  Initialize the part of the state machine dependent on the
         prefix.  */
     regs.lr_is_stmt = prefix->pf_default_is_stmt;
@@ -294,11 +295,11 @@ print_statement_program(Dwarf_Debug dbg,
             opcode = opcode - prefix->pf_opcode_base;
             operation_advance = (opcode / prefix->pf_line_range);
             if (prefix->pf_maximum_ops_per_instruction < 2) {
-                regs.lr_address = regs.lr_address + 
+                regs.lr_address = regs.lr_address +
                     (prefix->pf_minimum_instruction_length *
                     operation_advance);
             } else {
-                regs.lr_address = regs.lr_address + 
+                regs.lr_address = regs.lr_address +
                     (prefix->pf_minimum_instruction_length *
                     ((regs.lr_op_index + operation_advance)/
                     prefix->pf_maximum_ops_per_instruction));
@@ -375,7 +376,7 @@ print_statement_program(Dwarf_Debug dbg,
                 dwarf_printf(dbg,
                     "DW_LNS_set_column val %" DW_PR_DSd " 0x%"
                     DW_PR_XZEROS DW_PR_DSx "\n",
-                    (Dwarf_Signed) regs.lr_column, 
+                    (Dwarf_Signed) regs.lr_column,
                     (Dwarf_Signed) regs.lr_column);
                 }
                 break;
@@ -403,7 +404,7 @@ print_statement_program(Dwarf_Debug dbg,
                 } else {
                     Dwarf_Unsigned operation_advance =
                         (opcode / prefix->pf_line_range);
-                    regs.lr_address = regs.lr_address + 
+                    regs.lr_address = regs.lr_address +
                         prefix->pf_minimum_instruction_length *
                         ((regs.lr_op_index + operation_advance)/
                         prefix->pf_maximum_ops_per_instruction);
@@ -481,7 +482,6 @@ print_statement_program(Dwarf_Debug dbg,
                     dwarf_printf(dbg,"    address/op_index not set. FIXME\n");
                     /* FIXME: incomplete register setting. */
                     regs.lr_line = regs.lr_line + advance_line;
-                    
                 } else {
                     /* DW_LNS_set_subprogram */
                     Dwarf_Unsigned utmp2 = 0;
@@ -648,19 +648,15 @@ print_statement_program(Dwarf_Debug dbg,
     If err_count_out is non-NULL, this is a special 'check'
     call.  */
 static int
-_dwarf_internal_printlines(Dwarf_Die die, 
+_dwarf_internal_printlines(Dwarf_Die die,
     Dwarf_Error * error,
-    int * err_count_out, 
+    int * err_count_out,
     int only_line_header)
 {
     /*  This pointer is used to scan the portion of the .debug_line
         section for the current cu. */
     Dwarf_Small *line_ptr = 0;
     Dwarf_Small *orig_line_ptr = 0;
-
-    /*  This points to the last byte of the .debug_line portion for the
-        current cu. */
-    Dwarf_Small *line_ptr_end = 0;
 
     /*  Pointer to a DW_AT_stmt_list attribute in case it exists in the
         die. */
@@ -681,20 +677,10 @@ _dwarf_internal_printlines(Dwarf_Die die,
     Dwarf_Sword i=0;
     Dwarf_Word u=0;
 
-    /*  This is the current opcode read from the statement program. */
-    Dwarf_Small opcode=0;
-
-
     /*  These variables are used to decode leb128 numbers. Leb128_num
         holds the decoded number, and leb128_length is its length in
         bytes. */
-    Dwarf_Word leb128_num=0;
-    Dwarf_Word leb128_length=0;
-    Dwarf_Sword advance_line=0;
     Dwarf_Half attrform = 0;
-    /*  This is the operand of the latest fixed_advance_pc extended
-        opcode. */
-    Dwarf_Half fixed_advance_pc=0;
 
     /*  In case there are wierd bytes 'after' the line table
         prologue this lets us print something. This is a gcc
@@ -800,7 +786,6 @@ _dwarf_internal_printlines(Dwarf_Die die,
             dwarf_free_line_table_prefix(&prefix);
             return dres;
         }
-        line_ptr_end = prefix.pf_line_ptr_end;
         line_ptr = line_ptr_out;
     }
     if (only_line_header) {
@@ -872,7 +857,6 @@ _dwarf_internal_printlines(Dwarf_Die die,
             "  include dir[%u] %s\n",
             (int) u, prefix.pf_include_directories[u]);
     }
-    
     dwarf_printf(dbg,
         "  files count            %d\n",
         (int) prefix.pf_files_count);
@@ -903,8 +887,25 @@ _dwarf_internal_printlines(Dwarf_Die die,
             (long) fl, (unsigned long) fl);
 
     }
-
-
+    if (prefix.pf_version == EXPERIMENTAL_LINE_TABLES_VERSION) {
+        /*  Print the subprograms list. */
+        Dwarf_Unsigned count = prefix.pf_subprogs_count;
+        Dwarf_Unsigned u = 0;
+        Dwarf_Subprog_Entry sub = prefix.pf_subprog_entries;
+        dwarf_printf(dbg,"  subprograms count"
+            " %" DW_PR_DUu "\n",count);
+        if (count > 0) {
+            dwarf_printf(dbg,"    indx  file   line   name\n");
+        }
+        for (u = 0 ; u < count ; u++,sub++) {
+            dwarf_printf(dbg,"    [%2" DW_PR_DUu "] %4" DW_PR_DUu
+                "    %4" DW_PR_DUu " %s\n",
+                u+1,
+                sub->ds_decl_file,
+                sub->ds_decl_line,
+                sub->ds_subprog_name);
+        }
+    }
     {
         Dwarf_Unsigned offset = 0;
         if (bogus_bytes_count > 0) {
@@ -958,7 +959,6 @@ _dwarf_internal_printlines(Dwarf_Die die,
                 _dwarf_error(dbg, error, DW_DLE_VERSION_STAMP_ERROR);
                 return (DW_DLV_ERROR);
             }
-
             /* Read Logicals */
             print_line_header(dbg, is_single_table, is_actuals_table);
             res = print_statement_program(dbg,
@@ -968,8 +968,6 @@ _dwarf_internal_printlines(Dwarf_Die die,
                 is_single_table,
                 is_actuals_table,
                 error,err_count_out);
-                
-
             if (res != DW_DLV_OK) {
                 dwarf_free_line_table_prefix(&prefix);
                 return res;
@@ -985,7 +983,6 @@ _dwarf_internal_printlines(Dwarf_Die die,
                     is_single_table,
                     is_actuals_table,
                     error,err_count_out);
-
             }
         }
     }

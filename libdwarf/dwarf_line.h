@@ -106,7 +106,7 @@ struct Dwarf_Line_Context_s {
     /*  Points to an array of subprogram entries.
         With Two level line tables this may be non-zero. */
     Dwarf_Subprog_Entry lc_subprogs;
-    
+
     /*  Count of the number of subprogram entries
         With Two level line tables this may be non-zero. */
     Dwarf_Sword lc_subprogs_count;
@@ -121,9 +121,9 @@ struct Dwarf_Line_Context_s {
 
     Dwarf_Debug lc_dbg;
 
-    /* 2 for DWARF2, 3 for DWARF3, 4 for DWARF4, 5 for DWARF5. 
-       0xf006 for experimental two-level line tables. */
-    Dwarf_Half lc_version_number; 
+    /*  2 for DWARF2, 3 for DWARF3, 4 for DWARF4, 5 for DWARF5.
+        0xf006 for experimental two-level line tables. */
+    Dwarf_Half lc_version_number;
 };
 
 
@@ -175,6 +175,11 @@ struct Dwarf_Line_s {
         Dwarf_Off li_offset;  /* for rqs */
     } li_addr_line;
     Dwarf_Line_Context li_context; /* assoc Dwarf_Line_Context_s */
+
+    /*  Set only on the actuals table of a two-level line table.
+        Assists in the dealloc code.
+    */
+    Dwarf_Bool li_is_actuals_table;
 };
 
 
@@ -315,16 +320,22 @@ struct Line_Table_Prefix_s {
         each entry is 0 or 1). */
     Dwarf_Small *pf_opcode_length_table;
 
+    /*   The include directories are populated by different code
+         depending on the DWARF linetable version, but
+         the  content and structures here look the same. */
     Dwarf_Unsigned pf_include_directories_count;
     /*  Array of pointers to dir strings. pf_include_directories_count
         entries in the array. */
     Dwarf_Small **pf_include_directories;
 
+    /*   The file entries are populated by different code
+         depending on the DWARF linetable version, but
+         the content  and structures here look the same. */
     /* Count of entries in line_table_file_entries array. */
     Dwarf_Unsigned pf_files_count;
     struct Line_Table_File_Entry_s *pf_line_table_file_entries;
 
-    /*  Count of entries in subprog_entries array. 
+    /*  Count of entries in subprog_entries array.
         This is only used with two-level line tables. */
     Dwarf_Unsigned pf_subprogs_count;
     Dwarf_Subprog_Entry pf_subprog_entries;

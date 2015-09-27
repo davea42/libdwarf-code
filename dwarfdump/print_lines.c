@@ -542,12 +542,20 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
             }
         }
         if (actualscount == 0) {
-            process_line_table(dbg, linebuf, linecount, 0, 0);
+            Dwarf_Bool is_logicals = FALSE;
+            Dwarf_Bool is_actuals = FALSE;
+            process_line_table(dbg, linebuf, linecount, 
+               is_logicals,is_actuals);
+            dwarf_srclines_dealloc(dbg, linebuf, linecount);
         } else {
-            process_line_table(dbg, linebuf, linecount, 1, 0);
-            process_line_table(dbg, actualsbuf, actualscount, 0, 1);
-            /* FIXME: dealloc actualsbuf? */
+            Dwarf_Bool is_logicals = TRUE;
+            Dwarf_Bool is_actuals = FALSE;
+            process_line_table(dbg, linebuf, linecount, 
+                is_logicals, is_actuals);
+            process_line_table(dbg, actualsbuf, actualscount, 
+                !is_logicals, !is_actuals);
+            dwarf_srclines_dealloc(dbg, linebuf, linecount);
+            dwarf_srclines_dealloc(dbg, actualsbuf, linecount);
         }
-        dwarf_srclines_dealloc(dbg, linebuf, linecount);
     }
 }

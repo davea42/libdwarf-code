@@ -1,8 +1,10 @@
 2015-09-26  David Anderson
      * dwarfdump.c, common.c: Update version string.
-     * dwarf_print_lines.c: Now there is a working
-       two-level line, though the line-table
-       registers not set properly by the EXPERIMENTAL operations.
+     * print_lines.c: Added local variables for clarity
+       in a call, changed the dwarf_srclines_dealloc() location
+       to fully clean up after a two-level line table srcfiles call.
+2015-09-26  David Anderson
+     * dwarfdump.c, common.c: Update version string.
 2015-09-24  David Anderson
      * dwarfdump.c, common.c: Update version string.
      * print_lines.c: IA in line header hint is

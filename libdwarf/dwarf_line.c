@@ -526,6 +526,7 @@ read_line_table_program(Dwarf_Debug dbg,
                 curr_line->li_addr_line.li_l_data.li_call_context = call_context;
                 curr_line->li_addr_line.li_l_data.li_subprog = subprog;
                 curr_line->li_context = line_context;
+                curr_line->li_is_actuals_table = is_actuals_table;
                 line_count++;
 
                 chain_line = (Dwarf_Chain)
@@ -575,6 +576,7 @@ read_line_table_program(Dwarf_Debug dbg,
                     curr_line->li_addr_line.li_l_data.
                         li_end_sequence = end_sequence;
                     curr_line->li_context = line_context;
+                    curr_line->li_is_actuals_table = is_actuals_table;
                     curr_line->li_addr_line.li_l_data.
                         li_epilogue_begin = epilogue_begin;
                     curr_line->li_addr_line.li_l_data.
@@ -796,6 +798,7 @@ read_line_table_program(Dwarf_Debug dbg,
                     curr_line->li_addr_line.li_l_data.
                         li_end_sequence = end_sequence;
                     curr_line->li_context = line_context;
+                    curr_line->li_is_actuals_table = is_actuals_table;
                     curr_line->li_addr_line.li_l_data.
                         li_epilogue_begin = epilogue_begin;
                     curr_line->li_addr_line.li_l_data.
@@ -1004,9 +1007,9 @@ _dwarf_internal_srclines(Dwarf_Die die,
 
     /*  Pointer to a Dwarf_Line_Context_s structure that contains the
         context such as file names and include directories for the set
-        of lines being generated. 
-        This is always recorded on an 
-        DW_LNS_end_sequence operator, 
+        of lines being generated.
+        This is always recorded on an
+        DW_LNS_end_sequence operator,
         on  all special opcodes, and on DW_LNS_copy.
         */
     Dwarf_Line_Context line_context = 0;
@@ -1126,8 +1129,8 @@ _dwarf_internal_srclines(Dwarf_Die die,
         cur_file_entry = (Dwarf_File_Entry)
             _dwarf_get_alloc(dbg, DW_DLA_FILE_ENTRY, 1);
         if (cur_file_entry == NULL) {
-             dwarf_free_line_table_prefix(&prefix);
-             dwarf_dealloc(dbg,line_context,DW_DLA_LINE_CONTEXT);
+            dwarf_free_line_table_prefix(&prefix);
+            dwarf_dealloc(dbg,line_context,DW_DLA_LINE_CONTEXT);
             _dwarf_error(dbg, error, DW_DLE_ALLOC_FAIL);
             return (DW_DLV_ERROR);
         }
@@ -1163,12 +1166,12 @@ _dwarf_internal_srclines(Dwarf_Die die,
         Dwarf_Signed tmpcount = 0;
         Dwarf_Bool is_actuals_table = false;
 
-        /*  Two-level line table. 
+        /*  Two-level line table.
             First read the logicals table. */
         res = read_line_table_program(dbg, line_ptr, line_ptr_actuals,
             &prefix, line_context, linebuf, count,
             &file_entries, prev_file_entry, &file_entry_count,
-            address_size, doaddrs, dolines, 
+            address_size, doaddrs, dolines,
             is_actuals_table, NULL, 0, error);
         if (res != DW_DLV_OK) {
             dwarf_free_line_table_prefix(&prefix);
@@ -1176,18 +1179,20 @@ _dwarf_internal_srclines(Dwarf_Die die,
         }
         if (linebuf_actuals != NULL) {
             is_actuals_table = true;
-            /* We have an actuals table, so now read that one. */
+            /* The call requested an actuals table
+                and one is present. So now read that one. */
             res = read_line_table_program(dbg, line_ptr_actuals, line_ptr_end,
                 &prefix, line_context, linebuf_actuals, &tmpcount,
                 NULL, NULL, NULL,
-                address_size, doaddrs, dolines, 
+                address_size, doaddrs, dolines,
                 is_actuals_table, *linebuf, *count, error);
             if (res != DW_DLV_OK) {
                 dwarf_free_line_table_prefix(&prefix);
                 return res;
             }
-            if (count_actuals != NULL)
+            if (count_actuals != NULL) {
                 *count_actuals = tmpcount;
+            }
         }
     }
 
@@ -1203,7 +1208,7 @@ _dwarf_internal_srclines(Dwarf_Die die,
             Dwarf_File_Entry fenext = fe->fi_next;
 
             dwarf_dealloc(dbg, fe, DW_DLA_FILE_ENTRY);
-            fe = fenext; 
+            fe = fenext;
         }
         dwarf_dealloc(dbg, line_context, DW_DLA_LINE_CONTEXT);
     } else {
@@ -1220,7 +1225,7 @@ _dwarf_internal_srclines(Dwarf_Die die,
             prefix.pf_include_directories_count = 0;
             prefix.pf_include_directories = NULL;
         }
-    
+
         line_context->lc_subprogs_count = prefix.pf_subprogs_count;
         if (prefix.pf_subprogs_count > 0) {
             /*  Likewise, we move the pointer to the subprogram entries
@@ -1229,7 +1234,7 @@ _dwarf_internal_srclines(Dwarf_Die die,
             prefix.pf_subprogs_count = 0;
             prefix.pf_subprog_entries = NULL;
         }
-    
+
         line_context->lc_line_count = *count;
         line_context->lc_compilation_directory = comp_dir;
         line_context->lc_version_number = prefix.pf_version;
@@ -1905,6 +1910,18 @@ dwarf_pclines(Dwarf_Debug dbg,
    free all the resources (in particular, the li_context and its
    lc_file_entries).
    So this function, new July 2005, does it.
+
+   As of September 2015 this will now delete either
+   table of a two-level line table.
+   In the two-level case one calls it once each on
+   both the logicals and actuals tables.
+   (in either order, the order is not critical).
+   Once  the  logicals table is dealloced any
+   use of the actuals table will surely result in chaos.
+   Just do the two calls one after the other.
+
+   In the standard case one calls it just once on the
+   linebuf.
 */
 
 void
@@ -1915,8 +1932,12 @@ dwarf_srclines_dealloc(Dwarf_Debug dbg, Dwarf_Line * linebuf,
     Dwarf_Signed i = 0;
     struct Dwarf_Line_Context_s *context = 0;
 
-    if (count > 0) {
-        /* All these entries share a single context */
+    if (count > 0 && !linebuf[0]->li_is_actuals_table) {
+        /*  All these entries share a single context, and
+            for two-levels tables each table gets it too.
+            Hence we will dealloc ONLY if !is_actuals_table
+            so for single and two-level tables the space
+            is deallocated. */
         context = linebuf[0]->li_context;
     }
     for (i = 0; i < count; ++i) {
@@ -1925,6 +1946,10 @@ dwarf_srclines_dealloc(Dwarf_Debug dbg, Dwarf_Line * linebuf,
     dwarf_dealloc(dbg, linebuf, DW_DLA_LIST);
 
     if (context) {
+        /*  Only called when is_actuals_table is false.
+            Because  logicals table entries also point
+            to the context we defer to the logicals
+            dwarf_srclines_dealloc() to free the chain.. */
         Dwarf_File_Entry fe = context->lc_file_entries;
 
         while (fe) {
@@ -2011,8 +2036,7 @@ print_header_issue(Dwarf_Debug dbg,
             dwarf_printf(dbg,
                 " (unknown section location) ");
         }
-        dwarf_printf(dbg,
-            "***\n");
+        dwarf_printf(dbg,"***\n");
     }
     *err_count_out += 1;
 }
@@ -2048,7 +2072,6 @@ decode_line_string_form(Dwarf_Debug dbg,
         READ_UNALIGNED(dbg, offset, Dwarf_Unsigned,offsetptr, offset_size);
         *line_ptr += offset_size;
         strptr = secstart + offset;
-
         res = _dwarf_check_string_valid(dbg,
             secstart,strptr,secend,error);
         if (res != DW_DLV_OK) {
@@ -2061,7 +2084,7 @@ decode_line_string_form(Dwarf_Debug dbg,
         Dwarf_Small *secend = line_ptr_end;;
         Dwarf_Small *strptr = *line_ptr;
         res = _dwarf_check_string_valid(dbg,
-           strptr ,strptr,secend,error);
+            strptr ,strptr,secend,error);
         if (res != DW_DLV_OK) {
             return res;
         }
@@ -2082,13 +2105,15 @@ decode_line_udata_form(Dwarf_Debug dbg,
     Dwarf_Unsigned *return_val,
     Dwarf_Error * error)
 {
-    Dwarf_Unsigned val;
+    Dwarf_Unsigned val = 0;
+    Dwarf_Small * lp = *line_ptr;
 
     switch (form) {
 
     case DW_FORM_udata:
-        DECODE_LEB128_UWORD(*line_ptr, val);
+        DECODE_LEB128_UWORD(lp, val);
         *return_val = val;
+        *line_ptr = lp;
         return DW_DLV_OK;
 
     default:
@@ -2211,7 +2236,7 @@ _dwarf_read_line_table_prefix(Dwarf_Debug dbg,
         prefix_out->pf_maximum_ops_per_instruction =
             *(unsigned char *) line_ptr;
         line_ptr = line_ptr + sizeof(Dwarf_Small);
-    } 
+    }
     prefix_out->pf_default_is_stmt = *(unsigned char *) line_ptr;
     line_ptr = line_ptr + sizeof(Dwarf_Small);
 
@@ -2237,7 +2262,7 @@ _dwarf_read_line_table_prefix(Dwarf_Debug dbg,
         /*  Determine (as best we can) whether the
             pf_opcode_length_table holds 9 or 12 standard-conforming
             entries.  gcc4 upped to DWARF3's 12 without updating the
-            version number.   
+            version number.
             EXPERIMENTAL_LINE_TABLES_VERSION upped to 15.  */
         int operand_ck_fail = true;
 
@@ -2451,7 +2476,7 @@ _dwarf_read_line_table_prefix(Dwarf_Debug dbg,
         /* Skip trailing nul byte */
         ++line_ptr;
     } else if (version == EXPERIMENTAL_LINE_TABLES_VERSION) {
-        if (*line_ptr != 0) { 
+        if (*line_ptr != 0) {
             _dwarf_error(dbg, err, DW_DLE_LINE_NUMBER_HEADER_ERROR);
             return (DW_DLV_ERROR);
         }
@@ -2462,7 +2487,7 @@ _dwarf_read_line_table_prefix(Dwarf_Debug dbg,
     }
 
     if (version == EXPERIMENTAL_LINE_TABLES_VERSION) {
-        static unsigned char expbytes[5] = {0,0xff,0xff,0x7f, 0x7f }; 
+        static unsigned char expbytes[5] = {0,0xff,0xff,0x7f, 0x7f };
         Dwarf_Unsigned logicals_table_offset = 0;
         Dwarf_Unsigned actuals_table_offset = 0;
         unsigned i = 0;
@@ -2484,7 +2509,6 @@ _dwarf_read_line_table_prefix(Dwarf_Debug dbg,
         line_ptr += local_length_size;
     }
 
-    
     if (version == DW_LINE_VERSION5 ||
         version == EXPERIMENTAL_LINE_TABLES_VERSION) {
         /* DWARF 5. */
@@ -2602,7 +2626,7 @@ _dwarf_read_line_table_prefix(Dwarf_Debug dbg,
             return (DW_DLV_ERROR);
         }
         memset(prefix_out->pf_line_table_file_entries, 0,
-            sizeof(Dwarf_Small *) * files_count);
+            sizeof(struct Line_Table_File_Entry_s) * files_count);
         for (i = 0; i < files_count; i++) {
             struct Line_Table_File_Entry_s *curline =
                 prefix_out->pf_line_table_file_entries + i;
@@ -2717,7 +2741,7 @@ _dwarf_read_line_table_prefix(Dwarf_Debug dbg,
             return (DW_DLV_ERROR);
         }
         memset(prefix_out->pf_subprog_entries, 0,
-            sizeof(Dwarf_Small *) * subprogs_count);
+            sizeof(struct Dwarf_Subprog_Entry_s) * subprogs_count);
         for (i = 0; i < subprogs_count; i++) {
             struct Dwarf_Subprog_Entry_s *curline =
                 prefix_out->pf_subprog_entries + i;
@@ -2775,6 +2799,7 @@ _dwarf_read_line_table_prefix(Dwarf_Debug dbg,
                 }
             }
         }
+
         free(subprog_entry_types);
         free(subprog_entry_forms);
         prefix_out->pf_subprogs_count = subprogs_count;

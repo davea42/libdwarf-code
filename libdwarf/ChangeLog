@@ -1,3 +1,15 @@
+2015-09-26  David Anderson
+     * dwarf_elf_access.c: Removed some trailing spaces.
+     * dwarf_line.c: Update the li_is_actuals_table (new field)
+       where a new line is emitted. For later safe dealloc.
+       Fixed indents and removed trailing spaces.
+       Fixed the dwarf_srclines_dealloc to work properly on
+       all the line table variations.
+     * dwarf_line.h: Removed trailing spaces.
+       Added li_is_actuals_table so the dealloc can work properly.
+     * dwarf_print_lines.c: Fixed the Logicals and Actuals table
+       formatting, Now prints the subprograms table too.
+     * libdwarf.h.in: Added dwarf_get_LNCT_name() to function list.
 2015-09-25  David Anderson
      * dwarf_print_lines.c: A first cut at detailed line tables.
        Not yet computing state register values for all two-level
