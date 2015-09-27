@@ -78,6 +78,7 @@ print_line_header(Dwarf_Debug dbg,
     Dwarf_Bool is_actuals_tab)
 {
 if (!is_single_tab) {
+    /* Ugly indenting follows, it makes lines shorter to see them better. */
     if (is_actuals_tab) {
         dwarf_printf(dbg,"\nActuals Table\n");
 dwarf_printf(dbg,
@@ -93,12 +94,11 @@ dwarf_printf(dbg,
 "                                                                              s pe\n"
 "                                                                              tirp\n"
 "                                                                              msoi\n"
-" section     row  op                                                          tall\n"
-" offset      num  code                address/indx fil lne col disc cntx subp ????\n");
+" section          op                                                          tall\n"
+" offset      row  code                address/indx fil lne col disc cntx subp ????\n");
     return;
     }
 }
-/* Ugly indenting, but makes lines shorter to see them better. */
 dwarf_printf(dbg,
 "                                                        s b e p e i d\n"
 "                                                        t l s r p s i\n"
