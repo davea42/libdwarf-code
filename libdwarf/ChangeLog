@@ -1,3 +1,8 @@
+2015-09-28  David Anderson
+    * dwarf_line.c,dwarf_line.h,dwarf_print_lines.c: made li_ and lr_
+      line register structs agree on spelling of suffix of each name.
+      Now dwarf_srclines (and two-level) use the
+      line register struct instead of a list of local variables.
 2015-09-26  David Anderson
      * dwarf_elf_access.c: Removed some trailing spaces.
      * dwarf_line.c: Update the li_is_actuals_table (new field)

@@ -78,6 +78,7 @@ typedef struct Dwarf_Subprog_Entry_s *Dwarf_Subprog_Entry;
 
 typedef struct Dwarf_Line_Context_s *Dwarf_Line_Context;
 
+
 /*
     This structure provides the context in which the fields of
     a Dwarf_Line structure are interpreted.  They come from the
@@ -127,6 +128,33 @@ struct Dwarf_Line_Context_s {
 };
 
 
+
+/*  The line table set of registers.
+    The state machine state variables.
+    Using names from the DWARF documentation
+    but preceded by lr_.  */
+struct Dwarf_Line_Registers_s {
+    Dwarf_Addr lr_address;        /* DWARF2 */
+    Dwarf_Word lr_file ;          /* DWARF2 */
+    Dwarf_Word lr_line ;          /* DWARF2 */
+    Dwarf_Word lr_column ;        /* DWARF2 */
+    Dwarf_Bool lr_is_stmt;        /* DWARF2 */
+    Dwarf_Bool lr_basic_block;    /* DWARF2 */
+    Dwarf_Bool lr_end_sequence;   /* DWARF2 */
+    Dwarf_Bool lr_prologue_end;   /* DWARF3 */
+    Dwarf_Bool lr_epilogue_begin; /* DWARF3 */
+    Dwarf_Small lr_isa;           /* DWARF3 */
+    Dwarf_Unsigned lr_op_index;      /* DWARF4, operation within VLIW instruction. */
+    Dwarf_Unsigned lr_discriminator; /* DWARF4 */
+    Dwarf_Unsigned lr_call_context;       /* EXPERIMENTAL */
+    Dwarf_Unsigned lr_subprogram;     /* EXPERIMENTAL */
+};
+typedef struct Dwarf_Line_Registers_s *Dwarf_Line_Registers;
+void _dwarf_set_line_table_regs_default_values(Dwarf_Line_Registers regs,
+    Dwarf_Bool is_stmt);
+
+
+
 /*
     This structure defines a row of the line table.
     All of the fields except li_offset have the exact
@@ -154,7 +182,7 @@ struct Dwarf_Line_s {
             Dwarf_Half li_column; /* source file column number */
             Dwarf_Small li_isa;   /* New as of DWARF4. */
             Dwarf_Unsigned li_call_context; /* Two-level line tables. */
-            Dwarf_Unsigned li_subprog; /* Two-level line tables. */
+            Dwarf_Unsigned li_subprogram; /* Two-level line tables. */
 
             /* To save space, use bit flags. */
             /* indicate start of stmt */

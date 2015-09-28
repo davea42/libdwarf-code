@@ -32,44 +32,6 @@
 #include <time.h>
 #include "dwarf_line.h"
 
-/*  The line table set of registers.
-    Using names from the DWARF documentation
-    but preceded by lr_.  */
-struct Dwarf_Line_Registers_s {
-    Dwarf_Addr lr_address;        /* DWARF2 */
-    Dwarf_Word lr_file ;          /* DWARF2 */
-    Dwarf_Word lr_line ;          /* DWARF2 */
-    Dwarf_Word lr_column ;        /* DWARF2 */
-    Dwarf_Bool lr_is_stmt;        /* DWARF2 */
-    Dwarf_Bool lr_basic_block;    /* DWARF2 */
-    Dwarf_Bool lr_end_sequence;   /* DWARF2 */
-    Dwarf_Bool lr_prologue_end;   /* DWARF3 */
-    Dwarf_Bool lr_epilogue_begin; /* DWARF3 */
-    Dwarf_Small lr_isa;           /* DWARF3 */
-    Dwarf_Unsigned lr_op_index;      /* DWARF4 */
-    Dwarf_Unsigned lr_discriminator; /* DWARF4 */
-    Dwarf_Unsigned lr_context;       /* EXPERIMENTAL */
-    Dwarf_Unsigned lr_subprogram;     /* EXPERIMENTAL */
-};
-
-/* To set to initial conditions, copy this in. */
-struct Dwarf_Line_Registers_s default_reg_values = {
-    /* Dwarf_Addr lr_address */ 0,
-    /* Dwarf_Word lr_file */ 1,
-    /* Dwarf_Word lr_line */  1,
-    /* Dwarf_Word lr_column */  0,
-    /* Dwarf_Bool lr_is_stmt */  false,
-    /* Dwarf_Bool lr_basic_block */  false,
-    /* Dwarf_Bool lr_end_sequence */  false,
-    /* Dwarf_Bool lr_prologue_end */  false,
-    /* Dwarf_Bool lr_epilogue_begin */  false,
-    /* Dwarf_Small lr_isa */  0,
-    /* Dwarf_Unsigned lr_op_index  */  0,
-    /* Dwarf_Unsigned lr_discriminator */  0,
-    /* Dwarf_Unsigned lr_context */  0,
-    /* Dwarf_Unsigned lr_subprogram */  0,
-};
-
 
 /* FIXME Need to add prologue_end epilogue_begin isa fields. */
 static void
@@ -99,12 +61,13 @@ dwarf_printf(dbg,
     return;
     }
 }
+/* Single level table */
 dwarf_printf(dbg,
-"                                                        s b e p e i d\n"
-"                                                        t l s r p s i\n"
-"                                                        m c e o i a s\n"
-" section    op                                      col t k q l l   c\n"
-" offset     code              address     file line umn ? ? ? ? ? \n");
+"                                                         s b e p e i d\n"
+"                                                         t l s r p s i\n"
+"                                                         m c e o i a s\n"
+" section    op                                       col t k q l l   c\n"
+" offset     code               address     file line umn ? ? ? ? ? \n");
 }
 
 static void
@@ -152,12 +115,12 @@ print_line_detail(
             regs->lr_epilogue_begin ||
             regs->lr_isa ||
             regs->lr_is_stmt ||
-            regs->lr_context ||
+            regs->lr_call_context ||
             regs->lr_subprogram) {
             dwarf_printf(dbg,
                 "   x%02" DW_PR_DUx , regs->lr_discriminator); /* DWARF4 */
             dwarf_printf(dbg,
-                "  x%02" DW_PR_DUx , regs->lr_context); /* EXPERIMENTAL */
+                "  x%02" DW_PR_DUx , regs->lr_call_context); /* EXPERIMENTAL */
             dwarf_printf(dbg,
                 "  x%02" DW_PR_DUx , regs->lr_subprogram); /* EXPERIMENTAL */
             dwarf_printf(dbg,
@@ -235,12 +198,8 @@ print_statement_program(Dwarf_Debug dbg,
     */
     unsigned curr_line = 0;
 
-    regs = default_reg_values;
-
-
-    /*  Initialize the part of the state machine dependent on the
-        prefix.  */
-    regs.lr_is_stmt = prefix->pf_default_is_stmt;
+    _dwarf_set_line_table_regs_default_values(&regs,
+                    prefix->pf_default_is_stmt);
     /* Start of statement program.  */
     while (line_ptr < line_ptr_end) {
         int type = 0;
@@ -486,7 +445,7 @@ print_statement_program(Dwarf_Debug dbg,
                     /* DW_LNS_set_subprogram */
                     Dwarf_Unsigned utmp2 = 0;
 
-                    regs.lr_context = 0;
+                    regs.lr_call_context = 0;
                     DECODE_LEB128_UWORD(line_ptr, utmp2);
                     regs.lr_subprogram = (Dwarf_Word) utmp2;
                     dwarf_printf(dbg,"DW_LNS_set_subprogram "
@@ -501,7 +460,7 @@ print_statement_program(Dwarf_Debug dbg,
                 Dwarf_Signed utmp = 0;
 
                 DECODE_LEB128_SWORD(line_ptr, stmp);
-                /* regs.lr_context = line_count + stmp; */
+                /* regs.lr_call_context = line_count + stmp; */
                 DECODE_LEB128_UWORD(line_ptr, utmp);
                 regs.lr_subprogram = utmp;
                 dwarf_printf(dbg,"DW_LNS_inlined_call "
@@ -512,6 +471,8 @@ print_statement_program(Dwarf_Debug dbg,
                 }
             case DW_LNS_pop_context:{ /* EXPERIMENTAL_LINE_TABLES_VERSION */
                 dwarf_printf(dbg,"DW_LNS_pop_context. Register values not set.\n");
+                /*  Sets the state machine regs  to the values from the Logical
+                    Table row in the context register.
                 /* FIXME: incomplete register setting. */
                 }
                 break;
@@ -532,25 +493,14 @@ print_statement_program(Dwarf_Debug dbg,
                 curr_line++;
                 print_line_detail(dbg,"DW_LNE_end_sequence extended",
                     opcode, curr_line, &regs,is_single_table, is_actuals_table);
-                regs.lr_address = 0;
-                regs.lr_file = 1;
-                regs.lr_line = 1;
-                regs.lr_column = 0;
-                regs.lr_is_stmt = prefix->pf_default_is_stmt;
-                regs.lr_basic_block = false;
-                regs.lr_end_sequence = false;
-                regs.lr_prologue_end = false;
-                regs.lr_epilogue_begin = false;
-                regs.lr_isa = 0;
-                regs.lr_discriminator = 0;
-                regs.lr_op_index = 0;
+                _dwarf_set_line_table_regs_default_values(&regs,
+                    prefix->pf_default_is_stmt);
                 }
                 break;
             case DW_LNE_set_address:{
                 READ_UNALIGNED(dbg,regs.lr_address, Dwarf_Addr,
                     line_ptr,
                     cu_context->cc_address_size);
-
                 line_ptr += cu_context->cc_address_size;
                 dwarf_printf(dbg,
                     "DW_LNE_set_address address 0x%"
