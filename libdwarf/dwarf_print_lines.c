@@ -28,6 +28,7 @@
 #include "config.h"
 #include "dwarf_incl.h"
 #include <stdio.h>
+#include <stdlib.h>
 #include <time.h>
 #include "dwarf_line.h"
 

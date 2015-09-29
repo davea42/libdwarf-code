@@ -1,4 +1,10 @@
 2015-09-29  David Anderson
+     *  dwarf_line.c,dwarf_line.h,dwarf_line_table_reader_common.c,
+        dwarf_print_lines.c: Moved the prefix reading subroutine
+        into common so the prefix-printing can have 
+        print code added (with ifdef so production does not
+        have it). 
+2015-09-29  David Anderson
      * dwarf_line.c,dwarf_line_table_reader_common.c,dwarf_print_lines.c,
        dwarf_line.h,dwarf_line2.c,libdwarf.h.in:
        Moved some code from dwarf_line_table_reader_common.c to dwarf_line.c.

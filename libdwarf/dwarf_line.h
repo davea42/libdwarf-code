@@ -376,10 +376,37 @@ struct Line_Table_Prefix_s {
 
 };
 
+
+/* Operand counts per standard operand.
+   The initial zero is for DW_LNS_copy.
+   This is an economical way to verify we understand the table
+   of standard-opcode-lengths in the line table prologue.  */
+#define STANDARD_OPERAND_COUNT_DWARF2 9
+#define STANDARD_OPERAND_COUNT_DWARF3 12
+/* For two-level line tables, we have three additional standard opcodes. */
+#define STANDARD_OPERAND_COUNT_TWO_LEVEL 15
+
+void _dwarf_print_header_issue(Dwarf_Debug dbg,
+    const char *specific_msg,
+    Dwarf_Small *data_start,
+    int *err_count_out);
+int _dwarf_decode_line_string_form(Dwarf_Debug dbg,
+    Dwarf_Unsigned form,
+    Dwarf_Unsigned offset_size,
+    Dwarf_Small **line_ptr,
+    Dwarf_Small *line_ptr_end,
+    char **return_str,
+    Dwarf_Error * error);
+int _dwarf_decode_line_udata_form(Dwarf_Debug dbg,
+    Dwarf_Unsigned form,
+    Dwarf_Small **line_ptr,
+    Dwarf_Unsigned *return_val,
+    Dwarf_Error * error);
+
 void dwarf_init_line_table_prefix(struct Line_Table_Prefix_s *pf);
 void dwarf_free_line_table_prefix(struct Line_Table_Prefix_s *pf);
 
-int _dwarf_read_line_table_prefix(Dwarf_Debug dbg,
+static int _dwarf_read_line_table_prefix(Dwarf_Debug dbg,
     Dwarf_CU_Context context,
     Dwarf_Small * data_start,
     Dwarf_Unsigned data_length,
