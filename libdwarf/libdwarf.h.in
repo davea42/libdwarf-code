@@ -1709,7 +1709,7 @@ int dwarf_srclines_two_level(Dwarf_Die /*die*/,
     Dwarf_Error*     /*error*/);
 
 /* dwarf_srclines_dealloc, created July 2005, is the new
-   method for deallocating what dwarf_srclines() 
+   method for deallocating what dwarf_srclines()
    and dwarf_srclines_two_level() return.
    More complete free than using dwarf_dealloc directly. */
 void dwarf_srclines_dealloc(Dwarf_Debug /*dbg*/,

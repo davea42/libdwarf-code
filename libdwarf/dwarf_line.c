@@ -54,8 +54,8 @@ void
 _dwarf_set_line_table_regs_default_values(Dwarf_Line_Registers regs,
     Dwarf_Bool is_stmt)
 {
-     *regs = _dwarf_line_table_regs_default_values;
-     regs->lr_is_stmt = is_stmt;
+    *regs = _dwarf_line_table_regs_default_values;
+    regs->lr_is_stmt = is_stmt;
 }
 
 
@@ -229,6 +229,7 @@ dwarf_srcfiles(Dwarf_Die die,
     if (resattr == DW_DLV_OK) {
         dwarf_dealloc(dbg, comp_dir_attr, DW_DLA_ATTR);
     }
+    /*  We are in dwarf_srcfiles() */
     dwarf_init_line_table_prefix(&line_prefix);
     {
         Dwarf_Small *line_ptr_out = 0;
@@ -358,7 +359,7 @@ dwarf_srcfiles(Dwarf_Die die,
 
 #include "dwarf_line_table_reader_common.c"
 
-/*  Return DW_DLV_OK if ok. else DW_DLV_NO_ENTRY or DW_DLV_ERROR 
+/*  Return DW_DLV_OK if ok. else DW_DLV_NO_ENTRY or DW_DLV_ERROR
     doaddrs is true iff this is being called for SGI IRIX rqs processing
     (ie, not a normal libdwarf dwarf_srclines or two-level  user call at all).
     dolines is true iff this is called by a dwarf_srclines call.
@@ -386,6 +387,7 @@ _dwarf_internal_srclines(Dwarf_Die die,
         actuals table (and the end of the logicals table) for the current
         cu. */
     Dwarf_Small *line_ptr_actuals = 0;
+    Dwarf_Small *section_start = 0;
 
     /*  Pointer to a DW_AT_stmt_list attribute in case it exists in the
         die. */
@@ -464,7 +466,8 @@ _dwarf_internal_srclines(Dwarf_Die die,
         _dwarf_error(dbg, error, DW_DLE_LINE_OFFSET_BAD);
         return (DW_DLV_ERROR);
     }
-    orig_line_ptr = dbg->de_debug_line.dss_data + line_offset;
+    section_start = dbg->de_debug_line.dss_data;
+    orig_line_ptr = section_start + line_offset;
     line_ptr = orig_line_ptr;
     dwarf_dealloc(dbg, stmt_list_attr, DW_DLA_ATTR);
 
@@ -488,6 +491,13 @@ _dwarf_internal_srclines(Dwarf_Die die,
     if (resattr == DW_DLV_OK) {
         dwarf_dealloc(dbg, comp_dir_attr, DW_DLA_ATTR);
     }
+#ifdef dadebug
+printf("dadebug dwarf_internal line  base 0x%llx line %d\n",(unsigned long long)dbg->de_debug_line.dss_data,__LINE__);
+printf("dadebug dwarf_internal line  len 0x%llx \n",(unsigned long long)dbg->de_debug_line.dss_size);
+printf("dadebug dwarf_internal line  offset 0x%llx \n",(unsigned long long)line_offset);
+printf("dadebug dwarf_internal line  origlineptr 0x%llx\n",(unsigned long long)orig_line_ptr);
+#endif
+    /*  We are in dwarf_internal_srclines() */
     dwarf_init_line_table_prefix(&prefix);
 
     {
@@ -549,7 +559,7 @@ _dwarf_internal_srclines(Dwarf_Die die,
 
         cur_file_entry->fi_file_length = pfxfile->lte_length_of_file;
 
-        update_file_entry(cur_file_entry,&file_entries,
+        _dwarf_update_file_entry(cur_file_entry,&file_entries,
             &prev_file_entry,&file_entry_count);
     }
 
@@ -558,9 +568,10 @@ _dwarf_internal_srclines(Dwarf_Die die,
         /* Normal style (single level) line table. */
         Dwarf_Bool is_actuals_table = false;
         Dwarf_Bool is_single_table = true;
-        res = read_line_table_program(dbg, 
+        res = read_line_table_program(dbg,
             line_ptr, line_ptr_end, orig_line_ptr,
-            &prefix, line_context, 
+            section_start,
+            &prefix, line_context,
             linebuf, count,
             &file_entries, prev_file_entry, &file_entry_count,
             address_size, doaddrs, dolines,
@@ -583,8 +594,9 @@ _dwarf_internal_srclines(Dwarf_Die die,
 
         /*  Two-level line table.
             First read the logicals table. */
-        res = read_line_table_program(dbg, 
+        res = read_line_table_program(dbg,
             line_ptr, line_ptr_actuals, orig_line_ptr,
+            section_start,
             &prefix, line_context, linebuf, count,
             &file_entries, prev_file_entry, &file_entry_count,
             address_size, doaddrs, dolines,
@@ -600,8 +612,9 @@ _dwarf_internal_srclines(Dwarf_Die die,
             is_actuals_table = true;
             /* The call requested an actuals table
                 and one is present. So now read that one. */
-            res = read_line_table_program(dbg, 
+            res = read_line_table_program(dbg,
                 line_ptr_actuals, line_ptr_end, orig_line_ptr,
+                section_start,
                 &prefix, line_context, linebuf_actuals, &tmpcount,
                 NULL, NULL, NULL,
                 address_size, doaddrs, dolines,
@@ -643,8 +656,8 @@ _dwarf_internal_srclines(Dwarf_Die die,
                 from the prefix structure to the line_context. We do not
                 want this array deallocated when the prefix structure is
                 deallocated. */
-            line_context->lc_include_directories = 
-                        prefix.pf_include_directories;
+            line_context->lc_include_directories =
+                prefix.pf_include_directories;
             prefix.pf_include_directories_count = 0;
             prefix.pf_include_directories = NULL;
         }
@@ -1639,7 +1652,7 @@ _dwarf_read_line_table_prefix(Dwarf_Debug dbg,
         line_ptr = line_ptr + sizeof(Dwarf_Small);
     } else {
         prefix_out->pf_address_size = cu_context->cc_address_size;
-        prefix_out->pf_segment_selector_size = 
+        prefix_out->pf_segment_selector_size =
             cu_context->cc_segment_selector_size;
     }
 
@@ -2264,6 +2277,47 @@ _dwarf_read_line_table_prefix(Dwarf_Debug dbg,
     return DW_DLV_OK;
 }
 
+void
+_dwarf_update_file_entry(Dwarf_File_Entry  cur_file_entry,
+    Dwarf_File_Entry *file_entries,
+    Dwarf_File_Entry *prev_file_entry,
+    Dwarf_Sword      *file_entry_count)
+{
+    if (*file_entries == NULL) {
+        *file_entries = cur_file_entry;
+    } else {
+        (*prev_file_entry)->fi_next = cur_file_entry;
+    }
+    *prev_file_entry = cur_file_entry;
+    (*file_entry_count)++;
+}
+
+void
+_dwarf_update_chain_list( Dwarf_Chain chain_line,
+    Dwarf_Chain *head_chain, Dwarf_Chain *curr_chain)
+{
+    if (*head_chain == NULL) {
+        *head_chain = chain_line;
+    } else {
+        (*curr_chain)->ch_next = chain_line;
+    }
+    *curr_chain = chain_line;
+}
+
+void
+_dwarf_free_chain_entries(Dwarf_Debug dbg,Dwarf_Chain head,int count)
+{
+    int i = 0;
+    Dwarf_Chain curr_chain = head;
+    for (i = 0; i < count; i++) {
+        Dwarf_Chain t = curr_chain;
+        curr_chain = curr_chain->ch_next;
+        dwarf_dealloc(dbg, t, DW_DLA_CHAIN);
+    }
+}
+
+
+
 /* Initialize the Line_Table_Prefix_s struct.
    memset is not guaranteed a portable initializer, but works
    fine for current architectures.   AFAIK.
@@ -2292,3 +2346,4 @@ dwarf_free_line_table_prefix(struct Line_Table_Prefix_s *pf)
     }
     return;
 }
+

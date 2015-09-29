@@ -1,51 +1,38 @@
+/*
+   Copyright (C) 2000-2006 Silicon Graphics, Inc.  All Rights Reserved.
+   Portions Copyright (C) 2007-2013 David Anderson. All Rights Reserved.
+   Portions Copyright (C) 2010-2012 SN Systems Ltd. All Rights Reserved.
+   Portions Copyright (C) 2015-2015 Google, Inc. All Rights Reserved.
 
+   This program is free software; you can redistribute it and/or modify it
+   under the terms of version 2.1 of the GNU Lesser General Public License
+   as published by the Free Software Foundation.
 
-/*  A function as this code is used twice. */
-static void
-update_file_entry(Dwarf_File_Entry  cur_file_entry,
-    Dwarf_File_Entry *file_entries,
-    Dwarf_File_Entry *prev_file_entry,
-    Dwarf_Sword      *file_entry_count)
-{
-    if (*file_entries == NULL) {
-        *file_entries = cur_file_entry;
-    } else {
-        (*prev_file_entry)->fi_next = cur_file_entry;
-    }
-    *prev_file_entry = cur_file_entry;
-    (*file_entry_count)++;
-}
+   This program is distributed in the hope that it would be useful, but
+   WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
-static void
-update_chain_list( Dwarf_Chain chain_line,
-    Dwarf_Chain *head_chain, Dwarf_Chain *curr_chain)
-{
-    if (*head_chain == NULL) {
-        *head_chain = chain_line;
-    } else {
-        (*curr_chain)->ch_next = chain_line;
-    }
-    *curr_chain = chain_line;
-}
+   Further, this software is distributed without any warranty that it is
+   free of the rightful claim of any third person regarding infringement
+   or the like.  Any license provided herein, whether implied or
+   otherwise, applies only to this software file.  Patent licenses, if
+   any, provided herein do not apply to combinations of this program with
+   other software, or any other product whatsoever.
 
-/*  This is included in two source files, one for normal 
+   You should have received a copy of the GNU Lesser General Public
+   License along with this program; if not, write the Free Software
+   Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston MA 02110-1301,
+   USA.
+
+*/
+
+/*  This is #included twice. Once for
     libdwarf callers and one for dwarfdump which prints
     the internals.
 
     This way we have just one blob of code that reads
     the table operations.  */
 
-static void 
-free_chain_entries(Dwarf_Debug dbg,Dwarf_Chain head,int count)
-{
-    int i = 0;
-    Dwarf_Chain curr_chain = head;
-    for (i = 0; i < count; i++) {
-        Dwarf_Chain t = curr_chain;
-        curr_chain = curr_chain->ch_next;
-        dwarf_dealloc(dbg, t, DW_DLA_CHAIN);
-    }
-}
 
 /*  Read one line table program. For two-level line tables, this
     function is called once for each table. */
@@ -54,6 +41,7 @@ read_line_table_program(Dwarf_Debug dbg,
     Dwarf_Small *line_ptr,
     Dwarf_Small *line_ptr_end,
     Dwarf_Small *orig_line_ptr,
+    Dwarf_Small *section_start,
     struct Line_Table_Prefix_s *prefix,
     Dwarf_Line_Context line_context,
     Dwarf_Line **linebuf,
@@ -63,7 +51,7 @@ read_line_table_program(Dwarf_Debug dbg,
     Dwarf_Sword *file_entry_count,
     Dwarf_Half address_size,
     Dwarf_Bool doaddrs, /* Only true if SGI IRIX rqs calling. */
-    Dwarf_Bool dolines, 
+    Dwarf_Bool dolines,
     Dwarf_Bool is_single_table,
     Dwarf_Bool is_actuals_table,
     /*  If logicals_count > 0 we are in the actuals table
@@ -125,7 +113,7 @@ read_line_table_program(Dwarf_Debug dbg,
 #ifdef PRINTING_DETAILS
         dwarf_printf(dbg,
             " [0x%06" DW_PR_DSx "] ",
-            (Dwarf_Signed) (line_ptr - orig_line_ptr));
+            (Dwarf_Signed) (line_ptr - section_start));
 #endif /* PRINTING_DETAILS */
         opcode = *(Dwarf_Small *) line_ptr;
         line_ptr++;
@@ -183,7 +171,7 @@ read_line_table_program(Dwarf_Debug dbg,
                 regs.lr_address = regs.lr_address + (operation_advance *
                     prefix->pf_minimum_instruction_length);
             } else {
-                regs.lr_address = regs.lr_address + 
+                regs.lr_address = regs.lr_address +
                     (prefix->pf_minimum_instruction_length *
                     ((regs.lr_op_index + operation_advance)/
                     prefix->pf_maximum_ops_per_instruction));
@@ -203,7 +191,7 @@ read_line_table_program(Dwarf_Debug dbg,
                 curr_line =
                     (Dwarf_Line) _dwarf_get_alloc(dbg, DW_DLA_LINE, 1);
                 if (curr_line == NULL) {
-                    free_chain_entries(dbg,head_chain,line_count);
+                    _dwarf_free_chain_entries(dbg,head_chain,line_count);
                     _dwarf_error(dbg, error, DW_DLE_ALLOC_FAIL);
                     return (DW_DLV_ERROR);
                 }
@@ -219,7 +207,7 @@ read_line_table_program(Dwarf_Debug dbg,
                     (Dwarf_Sword) regs.lr_line;
                 curr_line->li_addr_line.li_l_data.li_column =
                     (Dwarf_Half) regs.lr_column;
-                curr_line->li_addr_line.li_l_data.li_is_stmt = 
+                curr_line->li_addr_line.li_l_data.li_is_stmt =
                     regs.lr_is_stmt;
                 curr_line->li_addr_line.li_l_data.li_basic_block =
                     regs.lr_basic_block;
@@ -229,11 +217,11 @@ read_line_table_program(Dwarf_Debug dbg,
                 curr_line->li_addr_line.li_l_data.li_prologue_end =
                     regs.lr_prologue_end;
                 curr_line->li_addr_line.li_l_data.li_isa = regs.lr_isa;
-                curr_line->li_addr_line.li_l_data.li_discriminator = 
+                curr_line->li_addr_line.li_l_data.li_discriminator =
                     regs.lr_discriminator;
-                curr_line->li_addr_line.li_l_data.li_call_context = 
+                curr_line->li_addr_line.li_l_data.li_call_context =
                     regs.lr_call_context;
-                curr_line->li_addr_line.li_l_data.li_subprogram = 
+                curr_line->li_addr_line.li_l_data.li_subprogram =
                     regs.lr_subprogram;
                 curr_line->li_context = line_context;
                 curr_line->li_is_actuals_table = is_actuals_table;
@@ -242,12 +230,12 @@ read_line_table_program(Dwarf_Debug dbg,
                 chain_line = (Dwarf_Chain)
                     _dwarf_get_alloc(dbg, DW_DLA_CHAIN, 1);
                 if (chain_line == NULL) {
-                    free_chain_entries(dbg,head_chain,line_count);
+                    _dwarf_free_chain_entries(dbg,head_chain,line_count);
                     _dwarf_error(dbg, error, DW_DLE_ALLOC_FAIL);
                     return (DW_DLV_ERROR);
                 }
                 chain_line->ch_item = curr_line;
-                update_chain_list(chain_line,&head_chain,&curr_chain);
+                _dwarf_update_chain_list(chain_line,&head_chain,&curr_chain);
             }
 
             regs.lr_basic_block = false;
@@ -267,7 +255,7 @@ read_line_table_program(Dwarf_Debug dbg,
                     curr_line = (Dwarf_Line) _dwarf_get_alloc(dbg,
                         DW_DLA_LINE, 1);
                     if (curr_line == NULL) {
-                        free_chain_entries(dbg,head_chain,line_count);
+                        _dwarf_free_chain_entries(dbg,head_chain,line_count);
                         _dwarf_error(dbg, error, DW_DLE_ALLOC_FAIL);
                         return (DW_DLV_ERROR);
                     }
@@ -297,23 +285,23 @@ read_line_table_program(Dwarf_Debug dbg,
                     curr_line->li_addr_line.li_l_data.
                         li_prologue_end = regs.lr_prologue_end;
                     curr_line->li_addr_line.li_l_data.li_isa = regs.lr_isa;
-                    curr_line->li_addr_line.li_l_data.li_discriminator = 
+                    curr_line->li_addr_line.li_l_data.li_discriminator =
                         regs.lr_discriminator;
-                    curr_line->li_addr_line.li_l_data.li_call_context = 
+                    curr_line->li_addr_line.li_l_data.li_call_context =
                         regs.lr_call_context;
-                    curr_line->li_addr_line.li_l_data.li_subprogram = 
+                    curr_line->li_addr_line.li_l_data.li_subprogram =
                         regs.lr_subprogram;
                     line_count++;
 
                     chain_line = (Dwarf_Chain)
                         _dwarf_get_alloc(dbg, DW_DLA_CHAIN, 1);
                     if (chain_line == NULL) {
-                        free_chain_entries(dbg,head_chain,line_count);
+                        _dwarf_free_chain_entries(dbg,head_chain,line_count);
                         _dwarf_error(dbg, error, DW_DLE_ALLOC_FAIL);
                         return (DW_DLV_ERROR);
                     }
                     chain_line->ch_item = curr_line;
-                    update_chain_list(chain_line,&head_chain,&curr_chain);
+                    _dwarf_update_chain_list(chain_line,&head_chain,&curr_chain);
                 }
 
                 regs.lr_basic_block = false;
@@ -410,7 +398,7 @@ read_line_table_program(Dwarf_Debug dbg,
                 } else {
                     Dwarf_Unsigned operation_advance =
                         (opcode / prefix->pf_line_range);
-                    regs.lr_address = regs.lr_address + 
+                    regs.lr_address = regs.lr_address +
                         prefix->pf_minimum_instruction_length *
                         ((regs.lr_op_index + operation_advance)/
                         prefix->pf_maximum_ops_per_instruction);
@@ -475,7 +463,7 @@ read_line_table_program(Dwarf_Debug dbg,
                     /*  The value of the isa did not fit in our
                         local so we record it wrong. declare an
                         error. */
-                    free_chain_entries(dbg,head_chain,line_count);
+                    _dwarf_free_chain_entries(dbg,head_chain,line_count);
                     _dwarf_error(dbg, error,
                         DW_DLE_LINE_NUM_OPERANDS_BAD);
                     return (DW_DLV_ERROR);
@@ -496,9 +484,9 @@ read_line_table_program(Dwarf_Debug dbg,
                     DECODE_LEB128_SWORD(line_ptr, stmp);
                     advance_line = (Dwarf_Sword) stmp;
                     regs.lr_line = regs.lr_line + advance_line;
-                    if (regs.lr_line >= 1 && 
+                    if (regs.lr_line >= 1 &&
                         regs.lr_line - 1 < logicals_count) {
-                        regs.lr_address = 
+                        regs.lr_address =
                             logicals[regs.lr_line - 1]->li_address;
                         regs.lr_op_index = 0;
 #ifdef PRINTING_DETAILS
@@ -513,7 +501,7 @@ read_line_table_program(Dwarf_Debug dbg,
 #ifdef PRINTING_DETAILS
                         dwarf_printf(dbg,"DW_LNS_set_address_from_logical line is "
                             "%" DW_PR_DSd " 0x%" DW_PR_XZEROS DW_PR_DSx ".\n",
-                            (Dwarf_Signed)regs.lr_line, 
+                            (Dwarf_Signed)regs.lr_line,
                             (Dwarf_Signed)regs.lr_line);
 #endif /* PRINTING_DETAILS */
                     }
@@ -539,7 +527,7 @@ read_line_table_program(Dwarf_Debug dbg,
                 DECODE_LEB128_SWORD(line_ptr, stmp);
                 regs.lr_call_context = line_count + stmp;
                 DECODE_LEB128_UWORD(line_ptr, regs.lr_subprogram);
-            
+
 #ifdef PRINTING_DETAILS
                 dwarf_printf(dbg,"DW_LNS_inlined_call "
                     "%" DW_PR_DSd " (0x%" DW_PR_XZEROS DW_PR_DSx "),"
@@ -566,19 +554,19 @@ read_line_table_program(Dwarf_Debug dbg,
                         logical_chain = logical_chain->ch_next;
                     }
                     logical_line = (Dwarf_Line) logical_chain->ch_item;
-                    regs.lr_file = 
+                    regs.lr_file =
                         logical_line->li_addr_line.li_l_data.li_file;
-                    regs.lr_line = 
+                    regs.lr_line =
                         logical_line->li_addr_line.li_l_data.li_line;
-                    regs.lr_column = 
+                    regs.lr_column =
                         logical_line->li_addr_line.li_l_data.li_column;
-                    regs.lr_discriminator = 
+                    regs.lr_discriminator =
                         logical_line->li_addr_line.li_l_data.li_discriminator;
-                    regs.lr_is_stmt = 
+                    regs.lr_is_stmt =
                         logical_line->li_addr_line.li_l_data.li_is_stmt;
-                    regs.lr_call_context = 
+                    regs.lr_call_context =
                         logical_line->li_addr_line.li_l_data.li_call_context;
-                    regs.lr_subprogram = 
+                    regs.lr_subprogram =
                         logical_line->li_addr_line.li_l_data.li_subprogram;
 #ifdef PRINTING_DETAILS
                     dwarf_printf(dbg,"DW_LNS_pop_context set from logical "
@@ -589,7 +577,7 @@ read_line_table_program(Dwarf_Debug dbg,
                         "%" DW_PR_DUu " (0x%" DW_PR_XZEROS DW_PR_DUx ")\n",
                         logical_num,logical_num);
 #endif /* PRINTING_DETAILS */
-                } 
+                }
                 }
                 break;
             } /* End switch (opcode) */
@@ -613,7 +601,7 @@ read_line_table_program(Dwarf_Debug dbg,
                     curr_line = (Dwarf_Line)
                         _dwarf_get_alloc(dbg, DW_DLA_LINE, 1);
                     if (curr_line == NULL) {
-                        free_chain_entries(dbg,head_chain,line_count);
+                        _dwarf_free_chain_entries(dbg,head_chain,line_count);
                         _dwarf_error(dbg, error, DW_DLE_ALLOC_FAIL);
                         return (DW_DLV_ERROR);
                     }
@@ -643,22 +631,22 @@ read_line_table_program(Dwarf_Debug dbg,
                     curr_line->li_addr_line.li_l_data.
                         li_prologue_end = regs.lr_prologue_end;
                     curr_line->li_addr_line.li_l_data.li_isa = regs.lr_isa;
-                    curr_line->li_addr_line.li_l_data.li_discriminator = 
+                    curr_line->li_addr_line.li_l_data.li_discriminator =
                         regs.lr_discriminator;
-                    curr_line->li_addr_line.li_l_data.li_call_context = 
+                    curr_line->li_addr_line.li_l_data.li_call_context =
                         regs.lr_call_context;
-                    curr_line->li_addr_line.li_l_data.li_subprogram = 
+                    curr_line->li_addr_line.li_l_data.li_subprogram =
                         regs.lr_subprogram;
                     line_count++;
                     chain_line = (Dwarf_Chain)
                         _dwarf_get_alloc(dbg, DW_DLA_CHAIN, 1);
                     if (chain_line == NULL) {
-                        free_chain_entries(dbg,head_chain,line_count);
+                        _dwarf_free_chain_entries(dbg,head_chain,line_count);
                         _dwarf_error(dbg, error, DW_DLE_ALLOC_FAIL);
                         return (DW_DLV_ERROR);
                     }
                     chain_line->ch_item = curr_line;
-                    update_chain_list(chain_line,&head_chain,&curr_chain);
+                    _dwarf_update_chain_list(chain_line,&head_chain,&curr_chain);
                 }
                 _dwarf_set_line_table_regs_default_values(&regs,
                     prefix->pf_default_is_stmt);
@@ -670,7 +658,6 @@ read_line_table_program(Dwarf_Debug dbg,
                     line_ptr, address_size);
                 /* Mark a line record as being DW_LNS_set_address */
                 is_addr_set = true;
-                
 #ifdef PRINTING_DETAILS
                 dwarf_printf(dbg,
                     "DW_LNE_set_address address 0x%"
@@ -682,7 +669,7 @@ read_line_table_program(Dwarf_Debug dbg,
                     curr_line = (Dwarf_Line) _dwarf_get_alloc(dbg,
                         DW_DLA_LINE, 1);
                     if (curr_line == NULL) {
-                        free_chain_entries(dbg,head_chain,line_count);
+                        _dwarf_free_chain_entries(dbg,head_chain,line_count);
                         _dwarf_error(dbg, error, DW_DLE_ALLOC_FAIL);
                         return (DW_DLV_ERROR);
                     }
@@ -698,13 +685,13 @@ read_line_table_program(Dwarf_Debug dbg,
                     chain_line = (Dwarf_Chain)
                         _dwarf_get_alloc(dbg, DW_DLA_CHAIN, 1);
                     if (chain_line == NULL) {
-                        free_chain_entries(dbg,head_chain,line_count);
+                        _dwarf_free_chain_entries(dbg,head_chain,line_count);
                         _dwarf_error(dbg, error, DW_DLE_ALLOC_FAIL);
                         return (DW_DLV_ERROR);
                     }
                     chain_line->ch_item = curr_line;
 
-                    update_chain_list(chain_line,&head_chain,&curr_chain);
+                    _dwarf_update_chain_list(chain_line,&head_chain,&curr_chain);
                 }
                 regs.lr_op_index = 0;
                 line_ptr += address_size;
@@ -717,7 +704,7 @@ read_line_table_program(Dwarf_Debug dbg,
                     cur_file_entry = (Dwarf_File_Entry)
                         _dwarf_get_alloc(dbg, DW_DLA_FILE_ENTRY, 1);
                     if (cur_file_entry == NULL) {
-                        free_chain_entries(dbg,head_chain,line_count);
+                        _dwarf_free_chain_entries(dbg,head_chain,line_count);
                         _dwarf_error(dbg, error, DW_DLE_ALLOC_FAIL);
                         return (DW_DLV_ERROR);
                     }
@@ -725,7 +712,7 @@ read_line_table_program(Dwarf_Debug dbg,
                     res = _dwarf_check_string_valid(dbg,
                         line_ptr,line_ptr,line_ptr_end,error);
                     if (res != DW_DLV_OK) {
-                        free_chain_entries(dbg,head_chain,line_count);
+                        _dwarf_free_chain_entries(dbg,head_chain,line_count);
                         return res;
                     }
                     line_ptr = line_ptr + strlen((char *) line_ptr) + 1;
@@ -738,7 +725,7 @@ read_line_table_program(Dwarf_Debug dbg,
                     cur_file_entry->fi_file_length =
                         _dwarf_decode_u_leb128(line_ptr, &leb128_length);
                     line_ptr = line_ptr + leb128_length;
-                    update_file_entry(cur_file_entry,file_entries,
+                    _dwarf_update_file_entry(cur_file_entry,file_entries,
                         &prev_file_entry,file_entry_count);
 #ifdef PRINTING_DETAILS
                     dwarf_printf(dbg,
@@ -755,10 +742,9 @@ read_line_table_program(Dwarf_Debug dbg,
                     }
                     dwarf_printf(dbg,
                         "    file length %ld 0x%lx\n",
-                        (long) cur_file_entry->fi_file_length, 
+                        (long) cur_file_entry->fi_file_length,
                         (unsigned long) cur_file_entry->fi_file_length);
 #endif /* PRINTING_DETAILS */
-                 
                 }
                 break;
             case DW_LNE_set_discriminator:{
@@ -781,7 +767,7 @@ read_line_table_program(Dwarf_Debug dbg,
                     and the op code and the bytes of operand. */
                 Dwarf_Unsigned remaining_bytes = instr_length -1;
                 if (instr_length < 1 || remaining_bytes > DW_LNE_LEN_MAX) {
-                    free_chain_entries(dbg,head_chain,line_count);
+                    _dwarf_free_chain_entries(dbg,head_chain,line_count);
                     _dwarf_error(dbg, error,
                         DW_DLE_LINE_EXT_OPCODE_BAD);
                     return (DW_DLV_ERROR);
@@ -805,6 +791,7 @@ read_line_table_program(Dwarf_Debug dbg,
 #else /* ! PRINTING_DETAILS */
                 line_ptr += remaining_bytes;
 #endif /* PRINTING_DETAILS */
+                dwarf_printf(dbg,"\n");
                 }
                 break;
             } /* End switch. */
@@ -816,7 +803,7 @@ read_line_table_program(Dwarf_Debug dbg,
         curr_chain = head_chain;
         /*  FIXME: chain cleanup should be a function and called at
             more places in this function.  */
-        free_chain_entries(dbg,head_chain,line_count);
+        _dwarf_free_chain_entries(dbg,head_chain,line_count);
         _dwarf_error(dbg, error, DW_DLE_ALLOC_FAIL);
         return (DW_DLV_ERROR);
     }

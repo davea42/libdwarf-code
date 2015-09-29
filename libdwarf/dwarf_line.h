@@ -348,17 +348,17 @@ struct Line_Table_Prefix_s {
         each entry is 0 or 1). */
     Dwarf_Small *pf_opcode_length_table;
 
-    /*   The include directories are populated by different code
-         depending on the DWARF linetable version, but
-         the  content and structures here look the same. */
+    /*  The include directories are populated by different code
+        depending on the DWARF linetable version, but
+        the  content and structures here look the same. */
     Dwarf_Unsigned pf_include_directories_count;
     /*  Array of pointers to dir strings. pf_include_directories_count
         entries in the array. */
     Dwarf_Small **pf_include_directories;
 
-    /*   The file entries are populated by different code
-         depending on the DWARF linetable version, but
-         the content  and structures here look the same. */
+    /*  The file entries are populated by different code
+        depending on the DWARF linetable version, but
+        the content  and structures here look the same. */
     /* Count of entries in line_table_file_entries array. */
     Dwarf_Unsigned pf_files_count;
     struct Line_Table_File_Entry_s *pf_line_table_file_entries;
@@ -391,3 +391,12 @@ int _dwarf_read_line_table_prefix(Dwarf_Debug dbg,
     Dwarf_Unsigned * bogus_bytes_count,
     Dwarf_Error * err,
     int * err_count_out);
+
+void _dwarf_update_file_entry(Dwarf_File_Entry  cur_file_entry,
+    Dwarf_File_Entry *file_entries,
+    Dwarf_File_Entry *prev_file_entry,
+    Dwarf_Sword      *file_entry_count);
+void _dwarf_update_chain_list( Dwarf_Chain chain_line,
+    Dwarf_Chain *head_chain, Dwarf_Chain *curr_chain);
+void _dwarf_free_chain_entries(Dwarf_Debug dbg,Dwarf_Chain head,int count);
+

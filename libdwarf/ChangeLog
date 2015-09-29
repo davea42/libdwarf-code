@@ -1,3 +1,9 @@
+2015-09-29  David Anderson
+     * dwarf_line.c,dwarf_line_table_reader_common.c,dwarf_print_lines.c,
+       dwarf_line.h,dwarf_line2.c,libdwarf.h.in:
+       Moved some code from dwarf_line_table_reader_common.c to dwarf_line.c.
+       Fixed indent and trailing whitespace. Fixed the 'section offset'
+       code by using the proper value from dss_ptr..
 2015-09-28  David Anderson
      * dwarf_line_table_reader_common.c: New file is the line table reader
        extracted from dwarf_line.c. Now compiled into dwarf_line.c

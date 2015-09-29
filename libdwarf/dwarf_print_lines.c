@@ -1,5 +1,4 @@
 /*
-
   Copyright (C) 2000,2002,2004,2005,2006 Silicon Graphics, Inc.  All Rights Reserved.
   Portions Copyright (C) 2007-2013 David Anderson. All Rights Reserved.
   Portions Copyright 2012 SN Systems Ltd. All rights reserved.
@@ -220,12 +219,13 @@ _dwarf_internal_printlines(Dwarf_Die die,
 
     /* The Dwarf_Debug this die belongs to. */
     Dwarf_Debug dbg=0;
-    Dwarf_CU_Context context = 0;
+    Dwarf_CU_Context cu_context = 0;
     int resattr = DW_DLV_ERROR;
     int lres =    DW_DLV_ERROR;
     int res  =    DW_DLV_ERROR;
     Dwarf_Small *line_ptr_actuals  = 0;
     Dwarf_Small *line_ptr_end = 0;
+    Dwarf_Small *section_start = 0;
 
     /* ***** BEGIN CODE ***** */
 
@@ -234,8 +234,8 @@ _dwarf_internal_printlines(Dwarf_Die die,
     }
 
     CHECK_DIE(die, DW_DLV_ERROR);
-    context = die->di_cu_context;
-    dbg = context->cc_dbg;
+    cu_context = die->di_cu_context;
+    dbg = cu_context->cc_dbg;
 
     res = _dwarf_load_section(dbg, &dbg->de_debug_line,error);
     if (res != DW_DLV_OK) {
@@ -273,9 +273,9 @@ _dwarf_internal_printlines(Dwarf_Die die,
         _dwarf_error(dbg, error, DW_DLE_LINE_OFFSET_BAD);
         return (DW_DLV_ERROR);
     }
-    orig_line_ptr = dbg->de_debug_line.dss_data + line_offset;
+    section_start =  dbg->de_debug_line.dss_data;
+    orig_line_ptr = section_start + line_offset;
     line_ptr = orig_line_ptr;
-
     dwarf_dealloc(dbg, stmt_list_attr, DW_DLA_ATTR);
 
     /*  If die has DW_AT_comp_dir attribute, get the string that names
@@ -298,11 +298,17 @@ _dwarf_internal_printlines(Dwarf_Die die,
     if (resattr == DW_DLV_OK) {
         dwarf_dealloc(dbg, comp_dir_attr, DW_DLA_ATTR);
     }
-
+#ifdef dadebug
+printf("dadebug dwarf_internal line  base 0x%llx line %d\n",(unsigned long long)dbg->de_debug_line.dss_data,__LINE__);
+printf("dadebug dwarf_internal line  len 0x%llx \n",(unsigned long long)dbg->de_debug_line.dss_size);
+printf("dadebug dwarf_internal line  offset 0x%llx \n",(unsigned long long)line_offset);
+printf("dadebug dwarf_internal line  origlineptr 0x%llx\n",(unsigned long long)orig_line_ptr);
+#endif
     dwarf_init_line_table_prefix(&prefix);
     {
         Dwarf_Small *newlinep = 0;
-        int dres = _dwarf_read_line_table_prefix(dbg, context,
+        int dres = _dwarf_read_line_table_prefix(dbg,
+            cu_context,
             line_ptr,dbg->de_debug_line.dss_size,
             &newlinep,
             &prefix,
@@ -448,7 +454,7 @@ _dwarf_internal_printlines(Dwarf_Die die,
         Dwarf_Unsigned offset = 0;
         if (bogus_bytes_count > 0) {
             Dwarf_Unsigned wcount = bogus_bytes_count;
-            Dwarf_Unsigned boffset = bogus_bytes_ptr - orig_line_ptr;
+            Dwarf_Unsigned boffset = bogus_bytes_ptr - section_start;
             dwarf_printf(dbg,
                 "*** DWARF CHECK: the line table prologue  header_length "
                 " is %" DW_PR_DUu " too high, we pretend it is smaller."
@@ -457,7 +463,7 @@ _dwarf_internal_printlines(Dwarf_Die die,
                 wcount, boffset,boffset);
             *err_count_out += 1;
         }
-        offset = line_ptr - orig_line_ptr;
+        offset = line_ptr - section_start;
         dwarf_printf(dbg,
             "  statement prog offset in section: 0x%"
             DW_PR_XZEROS DW_PR_DUx " (%" DW_PR_DUu ")\n",
@@ -467,8 +473,6 @@ _dwarf_internal_printlines(Dwarf_Die die,
 
 
     {
-        Dwarf_Bool is_actuals_table = false;
-        Dwarf_Bool is_single_table = true;
         Dwarf_Line *linebuf = 0;
         Dwarf_Line *linebuf_actuals = 0;
         Dwarf_Signed count = 0;
@@ -494,12 +498,12 @@ _dwarf_internal_printlines(Dwarf_Die die,
             return (DW_DLV_ERROR);
         }
         /*  Fill out a Dwarf_File_Entry list as we use that to implement the
-                define_file operation. */
+            define_file operation. */
         file_entries = prev_file_entry = NULL;
         for (u = 0; u < prefix.pf_files_count; ++u) {
             struct Line_Table_File_Entry_s *pfxfile =
                 prefix.pf_line_table_file_entries + u;
-        
+
             cur_file_entry = (Dwarf_File_Entry)
                 _dwarf_get_alloc(dbg, DW_DLA_FILE_ENTRY, 1);
             if (cur_file_entry == NULL) {
@@ -513,20 +517,18 @@ _dwarf_internal_printlines(Dwarf_Die die,
             cur_file_entry->fi_time_last_mod =
                 pfxfile->lte_last_modification_time;
             cur_file_entry->fi_file_length = pfxfile->lte_length_of_file;
-        
-            update_file_entry(cur_file_entry,&file_entries,
+            _dwarf_update_file_entry(cur_file_entry,&file_entries,
                 &prev_file_entry,&file_entry_count);
         }
         if (!line_ptr_actuals) {
             /* Normal single level line table. */
 
-
             Dwarf_Bool is_single_table = true;
             Dwarf_Bool is_actuals_table = false;
-            Dwarf_Unsigned i = 0;
             print_line_header(dbg, is_single_table, is_actuals_table);
-            res = read_line_table_program(dbg, 
+            res = read_line_table_program(dbg,
                 line_ptr, line_ptr_end, orig_line_ptr,
+                section_start,
                 &prefix, line_context, &linebuf, &count,
                 &file_entries, prev_file_entry, &file_entry_count,
                 address_size, doaddrs, dolines,
@@ -543,20 +545,20 @@ _dwarf_internal_printlines(Dwarf_Die die,
         } else {
             Dwarf_Bool is_single_table = false;
             Dwarf_Bool is_actuals_table = false;
-            Dwarf_Unsigned i = 0;
             if (prefix.pf_version != EXPERIMENTAL_LINE_TABLES_VERSION) {
                 _dwarf_error(dbg, error, DW_DLE_VERSION_STAMP_ERROR);
                 return (DW_DLV_ERROR);
             }
             /* Read Logicals */
             print_line_header(dbg, is_single_table, is_actuals_table);
-            res = read_line_table_program(dbg, 
+            res = read_line_table_program(dbg,
                 line_ptr, line_ptr_actuals, orig_line_ptr,
+                section_start,
                 &prefix, line_context, &linebuf, &count,
                 &file_entries, prev_file_entry, &file_entry_count,
                 address_size, doaddrs, dolines,
                 is_single_table,
-                is_actuals_table, 
+                is_actuals_table,
                 NULL, 0, error,err_count_out);
             if (res != DW_DLV_OK) {
                 dwarf_free_line_table_prefix(&prefix);
@@ -569,15 +571,16 @@ _dwarf_internal_printlines(Dwarf_Die die,
                 /* Read Actuals */
 
                 print_line_header(dbg, is_single_table, is_actuals_table);
-                res = read_line_table_program(dbg, 
-                    line_ptr_actuals, 
+                res = read_line_table_program(dbg,
+                    line_ptr_actuals,
                     line_ptr_end,
                     orig_line_ptr,
+                    section_start,
                     &prefix, line_context, &linebuf_actuals, &count_actuals,
                     NULL, NULL, NULL,
                     address_size, doaddrs, dolines,
                     is_single_table,
-                    is_actuals_table, 
+                    is_actuals_table,
                     linebuf, count, error,
                     err_count_out);
                 if (res != DW_DLV_OK) {
