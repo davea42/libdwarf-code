@@ -138,6 +138,10 @@ dwarf_names.c: gennames $(srcdir)/dwarf.h
 	rm -f dwarf_names.h dwarf_names.c
 	./gennames  @dwarf_namestable@  -i $(srcdir) -o .
 
+dwarf_line.o: $(srcdir)/dwarf.h $(srcdir)/libdwarf.h $(srcdir)//dwarf_line_table_reader_common.c $(srcdir)/dwarf_line.c
+	$(CC) $(CFLAGS) -c $(srcdir)/dwarf_line.c -o $@
+dwarf_print_lines.o: $(srcdir)/dwarf.h $(srcdir)/libdwarf.h $(srcdir)//dwarf_line_table_reader_common.c $(srcdir)/dwarf_print_lines.c
+	$(CC) $(CFLAGS) -c $(srcdir)/dwarf_print_lines.c -o $@
 
 
 #

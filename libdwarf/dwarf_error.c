@@ -382,6 +382,7 @@ const char *_dwarf_errmsgs[] = {
     "DW_DLE_NO_TIED_ADDR_AVAILABLE(301)",
     "DW_DLE_NO_TIED_SIG_AVAILABLE(302)",
     "DW_DLE_STRING_NOT_TERMINATED(303) section data may be corrupted",
+    "DW_DLE_BAD_LINE_TABLE_OPERATION(304) two-level line table botch",
 };
 
 

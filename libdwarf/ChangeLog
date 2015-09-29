@@ -1,4 +1,27 @@
 2015-09-28  David Anderson
+     * dwarf_line_table_reader_common.c: New file is the line table reader
+       extracted from dwarf_line.c. Now compiled into dwarf_line.c
+       and dwarf_print_lines.c with correct two-level line table
+       calculations. No more coding the table twice.
+     * dwarf_line.c,dwarf_print_lines.c: Now #include
+       dwarf_line_table_reader_common.c
+     * Makefile.in: Reflects new source depedencies.
+     * dwarf_line2.c: An internal function interface changed,
+       so accomodated it here.
+     * libdwarf.h.in, dwarf_error.c: New error code, DW_DLE_BAD_LINE_TABLE_OPERATION.
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git checkout -- <file>..." to discard changes in working directory)
+
+	modified:   Makefile.in
+	modified:   dwarf_error.c
+	modified:   dwarf_line.c
+	modified:   dwarf_line2.c
+	modified:   dwarf_line_table_reader_common.c
+	modified:   dwarf_print_lines.c
+	modified:   libdwarf.h.in
+
+2015-09-28  David Anderson
     * dwarf_line.c,dwarf_line.h,dwarf_print_lines.c: made li_ and lr_
       line register structs agree on spelling of suffix of each name.
       Now dwarf_srclines (and two-level) use the
