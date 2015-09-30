@@ -190,7 +190,7 @@ _dwarf_get_fission_addition_die(Dwarf_Die die, int dw_sect_index,
     Dwarf_Unsigned dwpsize = 0;
 
     dwpadd =  _dwarf_get_dwp_extra_offset(&context->cc_dwp_offsets,
-        DW_SECT_LINE,&dwpsize);
+        dw_sect_index,&dwpsize);
     *offset = dwpadd;
     *size = dwpsize;
     return DW_DLV_OK;

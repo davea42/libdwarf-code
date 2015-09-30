@@ -1,4 +1,7 @@
 2015-09-29  David Anderson
+     * dwarf_die_deliv.c,dwarf_line.c,dwarf_print_lines.c: Now looks for
+       and adds the extra offset from debug_fission: DW_SECT_LINE.
+2015-09-29  David Anderson
      *  dwarf_line.c,dwarf_line.h,dwarf_line_table_reader_common.c,
         dwarf_print_lines.c: Moved the prefix reading subroutine
         into common so the prefix-printing can have 
