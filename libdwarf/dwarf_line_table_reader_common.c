@@ -1428,8 +1428,10 @@ read_line_table_program(Dwarf_Debug dbg,
                         is_addr_set;
                     is_addr_set = false;
                     curr_line->li_address = regs.lr_address;
+#ifdef __sgi /* SGI IRIX ONLY */
                     curr_line->li_addr_line.li_offset =
                         line_ptr - dbg->de_debug_line.dss_data;
+#endif /* __sgi */
                     line_count++;
                     chain_line = (Dwarf_Chain)
                         _dwarf_get_alloc(dbg, DW_DLA_CHAIN, 1);

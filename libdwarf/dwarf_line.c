@@ -101,6 +101,7 @@ file_name_is_full_path(Dwarf_Small  *fname)
 #endif
     return 0;
 }
+#include "dwarf_line_table_reader_common.c"
 
 /*  Although source files is supposed to return the
     source files in the compilation-unit, it does
@@ -357,7 +358,6 @@ dwarf_srcfiles(Dwarf_Die die,
 }
 
 
-#include "dwarf_line_table_reader_common.c"
 
 /*  Return DW_DLV_OK if ok. else DW_DLV_NO_ENTRY or DW_DLV_ERROR
     doaddrs is true iff this is being called for SGI IRIX rqs processing

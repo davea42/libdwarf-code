@@ -84,6 +84,7 @@ typedef struct Dwarf_Line_Context_s *Dwarf_Line_Context;
     a Dwarf_Line structure are interpreted.  They come from the
     statement program prologue.  **Updated by dwarf_srclines in
     dwarf_line.c.
+
 */
 struct Dwarf_Line_Context_s {
     /*  Points to a chain of entries providing info about source files
@@ -172,17 +173,32 @@ struct Dwarf_Line_s {
     Dwarf_Addr li_address;  /* pc value of machine instr */
     union addr_or_line_s {
         struct li_inner_s {
-            Dwarf_Unsigned li_discriminator; /* New as of DWARF4 */
-            Dwarf_Sword li_file;  /* int identifying src file */
-            /*  li_file is a number 1-N, indexing into a conceptual
+            /* New as of DWARF4 */
+            Dwarf_Unsigned li_discriminator; 
+
+            /*  int identifying src file 
+                li_file is a number 1-N, indexing into a conceptual
                 source file table as described in dwarf2/3 spec line
                 table doc. (see Dwarf_File_Entry lc_file_entries; and
                 Dwarf_Sword lc_file_entry_count;) */
-            Dwarf_Sword li_line;  /* source file line number. */
-            Dwarf_Half li_column; /* source file column number */
+            Dwarf_Sword li_file;  
+
+            /*  In single-level table is line number in source file. 1-N
+                In logicals table is not used.
+                In actuals table is index into logicals table.  1-N*/
+            Dwarf_Sword li_line;  
+
+            Dwarf_Half li_column; /* source file column number  1-N */
             Dwarf_Small li_isa;   /* New as of DWARF4. */
-            Dwarf_Unsigned li_call_context; /* Two-level line tables. */
-            Dwarf_Unsigned li_subprogram; /* Two-level line tables. */
+
+            /*  Two-level line tables. 
+                Is index from logicals table 
+                into logicals table. 1-N */
+            Dwarf_Unsigned li_call_context; 
+
+            /*  Two-level line tables. 
+                is index into subprograms table. 1-N */
+            Dwarf_Unsigned li_subprogram;   
 
             /* To save space, use bit flags. */
             /* indicate start of stmt */
@@ -200,7 +216,9 @@ struct Dwarf_Line_s {
             /* Mark a line record as being DW_LNS_set_address. */
             unsigned char li_is_addr_set:1;
         } li_l_data;
-        Dwarf_Off li_offset;  /* for rqs */
+#ifdef __sgi /* SGI IRIX ONLY */
+        Dwarf_Off li_offset;  /* for SGI IRIX rqs only*/
+#endif /* __sgi */
     } li_addr_line;
     Dwarf_Line_Context li_context; /* assoc Dwarf_Line_Context_s */
 
@@ -405,19 +423,6 @@ int _dwarf_decode_line_udata_form(Dwarf_Debug dbg,
 
 void dwarf_init_line_table_prefix(struct Line_Table_Prefix_s *pf);
 void dwarf_free_line_table_prefix(struct Line_Table_Prefix_s *pf);
-
-static int _dwarf_read_line_table_prefix(Dwarf_Debug dbg,
-    Dwarf_CU_Context context,
-    Dwarf_Small * data_start,
-    Dwarf_Unsigned data_length,
-    Dwarf_Small ** updated_data_start_out,
-    struct Line_Table_Prefix_s *prefix_out,
-    /*  The following 2 arguments are solely for warning users
-        when there is a surprising 'gap' in the .debug_line info. */
-    Dwarf_Small ** bogus_bytes_ptr,
-    Dwarf_Unsigned * bogus_bytes_count,
-    Dwarf_Error * err,
-    int * err_count_out);
 
 void _dwarf_update_file_entry(Dwarf_File_Entry  cur_file_entry,
     Dwarf_File_Entry *file_entries,

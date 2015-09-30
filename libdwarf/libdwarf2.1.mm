@@ -3608,6 +3608,9 @@ by the corresponding die.
 	Dwarf_Signed *linecount,
         Dwarf_Error *error)\fP
 .DE
+This function is not useful for DWARF5 skeleton line tables nor
+for two-level line tables.
+It works for DWARF2,3,4,5 ordinary single line tables.
 The function \f(CWdwarf_srclines()\fP places all line number descriptors 
 for a single compilation unit into a single block, sets \f(CW*linebuf\fP 
 to point to that block, 

@@ -1699,7 +1699,8 @@ int dwarf_srclines(Dwarf_Die /*die*/,
    value returned through linecount_actuals will be 0.
    The actual version number is returned through version.
    For two-level line tables, the version returned will
-   be 0xf006. */
+   be 0xf006. This will be replaced shortly, consider
+   it temporary. */
 int dwarf_srclines_two_level(Dwarf_Die /*die*/,
     Dwarf_Unsigned * /*version*/,
     Dwarf_Line**     /*linebuf*/,
@@ -1717,7 +1718,8 @@ void dwarf_srclines_dealloc(Dwarf_Debug /*dbg*/,
     Dwarf_Signed      /*count */);
 
 /*  While 'filecount' is signed, the value
-    returned through the pointer is never negative. */
+    returned through the pointer is never negative. 
+    Original libdwarf from 199x.  */
 int dwarf_srcfiles(Dwarf_Die /*die*/,
     char***          /*srcfiles*/,
     Dwarf_Signed *   /*filecount*/,
@@ -1757,8 +1759,9 @@ int dwarf_lineaddr(Dwarf_Line /*line*/,
 int dwarf_lineoff(Dwarf_Line /*line*/,
     Dwarf_Signed  *  /*returned_lineoffset*/,
     Dwarf_Error*     /*error*/);
+
 /*  dwarf_lineoff_b() correctly returns an unsigned column number
-    through the pointer returned_offset.
+    through the pointer returned_lineoffset.
     dwarf_lineoff_b() is new in December 2011.  */
 int dwarf_lineoff_b(Dwarf_Line /*line*/,
     Dwarf_Unsigned * /*returned_lineoffset*/,

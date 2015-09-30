@@ -1,3 +1,14 @@
+2015-09-30  David Anderson
+     * dwarf_global.c,dwarf_line.c,dwarf_line.h,dwarf_line2.c,
+       dwarf_line_table_reader_common.c,dwarf_sort_line.c,libdwarf.h.in:
+       The SGI IRIX only fields in dwarf_line.h ifdef __sgi now.
+       And all code referencing them that way too. Balancing
+       #endif has /* __sgi */ now for searchability.
+       Functions only usable on SGI IRIX only compiled in if __sgi 
+       macro defined.
+     * libdwarf2.1.mm: Added a comment related to experimental
+       two-level line tables.
+
 2015-09-29  David Anderson
      * dwarf_die_deliv.c,dwarf_line.c,dwarf_print_lines.c: Now looks for
        and adds the extra offset from debug_fission: DW_SECT_LINE.

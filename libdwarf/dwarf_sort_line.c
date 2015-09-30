@@ -33,6 +33,7 @@
     is arranged in the same order as the memory layout. */
 
 #include "config.h"
+#ifdef __sgi /* SGI IRIX ONLY */
 #include "dwarf_incl.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -661,3 +662,4 @@ _dwarf_update_line_sec(Dwarf_Small * line_ptr,
     dwarf_free_line_table_prefix(&prefix);
     return (DW_DLV_OK);
 }
+#endif /* __sgi */

@@ -65,7 +65,7 @@ _dwarf_fix_up_offset_irix(Dwarf_Debug dbg,
 #undef LOWER32
     return;
 }
-#endif
+#endif  /* __sgi */
 
 
 int
