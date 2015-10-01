@@ -1,3 +1,6 @@
+2015-10-01  David Anderson
+     * dwarf_global.h: Now the last __sgi related macro (else, endif)
+       have /* __sgi */.
 2015-09-30  David Anderson
      * dwarf_global.c,dwarf_line.c,dwarf_line.h,dwarf_line2.c,
        dwarf_line_table_reader_common.c,dwarf_sort_line.c,libdwarf.h.in:
