@@ -1,3 +1,12 @@
+2015-10-06  David Anderson
+     * dwarfdump.c: Now allow selecting alternate line table
+       reading code so line table routines can be tested thoroughly.
+     * print_lines.c: Uses one of the selected line table routine
+       sets.  Adds new line access routine calls to test those too.
+     * globals.h: Declares new flag line_skeleton_flag;
+     * print_die.c: Moved a local declaration to where it is used.
+       Added a missing DW_DLV_ERROR check so in case of error
+       we do not leak memory.
 2015-09-26  David Anderson
      * dwarfdump.c, common.c: Update version string.
      * print_lines.c: Added local variables for clarity

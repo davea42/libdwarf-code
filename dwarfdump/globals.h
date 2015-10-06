@@ -315,6 +315,7 @@ typedef enum /* Dwarf_Check_Categories */ {
 
 extern boolean info_flag;
 extern boolean line_flag;
+extern boolean line_skeleton_flag;
 extern boolean line_print_pc;        /* Print <pc> addresses. */
 extern boolean use_old_dwarf_loclist;
 extern boolean producer_children_flag;   /* List of CUs per compiler */

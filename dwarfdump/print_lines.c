@@ -31,6 +31,7 @@
 #include "esb.h"
 #include "uri.h"
 #include <ctype.h>
+#include <time.h>
 
 #include "print_sections.h"
 
@@ -89,7 +90,6 @@ process_line_table(Dwarf_Debug dbg, Dwarf_Line *linebuf, Dwarf_Signed linecount,
     Dwarf_Bool newstatement = 0;
     Dwarf_Bool lineendsequence = 0;
     Dwarf_Bool new_basic_block = 0;
-    int lres = 0;
     int sres = 0;
     int ares = 0;
     int lires = 0;
@@ -404,6 +404,7 @@ process_line_table(Dwarf_Debug dbg, Dwarf_Line *linebuf, Dwarf_Signed linecount,
                 printf(" DI=0x%" DW_PR_DUx, discriminator);
             }
             if (is_logicals_table) {
+                call_context = 0;
                 disres = dwarf_linecontext(line, &call_context, &err);
                 if (disres == DW_DLV_ERROR) {
                     print_error(dbg, "dwarf_linecontext() failed",
@@ -412,13 +413,16 @@ process_line_table(Dwarf_Debug dbg, Dwarf_Line *linebuf, Dwarf_Signed linecount,
                 if (call_context) {
                     printf(" CC=%" DW_PR_DUu, call_context);
                 }
+                subprog_name = 0;
                 disres = dwarf_line_subprog(line, &subprog_name,
                     &subprog_filename, &subprog_line, &err);
                 if (disres == DW_DLV_ERROR) {
                     print_error(dbg, "dwarf_line_subprog() failed",
                         disres, err);
                 }
-                if (subprog_name) {
+                if (subprog_name && strlen(subprog_name)) {
+                    /*  We do not print an empty name.
+                        Clutters things up. */
                     printf(" SB=\"%s\"", subprog_name);
                 }
             }
@@ -453,6 +457,156 @@ process_line_table(Dwarf_Debug dbg, Dwarf_Line *linebuf, Dwarf_Signed linecount,
     esb_destructor(&lastsrc);
 }
 
+/* Here we test the interfaces into Dwarf_Line_Context. */
+static void
+print_line_context_record(Dwarf_Debug dbg,
+    Dwarf_Line_Context line_context)
+{
+    int vres = 0;
+    Dwarf_Unsigned lsecoff = 0;
+    Dwarf_Unsigned version = 0;
+    Dwarf_Signed count = 0;
+    Dwarf_Signed i = 0;
+    const char *name = 0;
+    struct esb_s bufr;
+
+    esb_constructor(&bufr);
+    printf("Line Context data\n");
+    vres = dwarf_srclines_table_offset(line_context,&lsecoff,&err);
+    if (vres != DW_DLV_OK) {
+        print_error(dbg,"Error accessing line context"
+            "Something broken.",
+            vres,err);
+        return;
+    }
+    printf(" Line Section Offset 0x%"
+        DW_PR_XZEROS DW_PR_DUx "\n", lsecoff);
+    vres = dwarf_srclines_version(line_context,&version, &err);
+    if (vres != DW_DLV_OK) {
+        print_error(dbg,"Error accessing line context"
+            "Something broken.",
+            vres,err);
+        return;
+    }
+    printf(" version number      0x%" DW_PR_DUx " %" DW_PR_DUu "\n",
+        version,version);
+
+
+    vres = dwarf_srclines_comp_dir(line_context,&name,&err);
+    if (vres != DW_DLV_OK) {
+        print_error(dbg,"Error accessing line context"
+            "Something broken.",
+            vres,err);
+        return;
+    }
+    if (name) {
+        printf(" Compilation directory: %s\n",name);
+    } else {
+        printf(" Compilation directory: <unknown no DW_AT_comp_dir>\n");
+    }
+
+    vres = dwarf_srclines_include_dir_count(line_context,&count,&err);
+    if (vres != DW_DLV_OK) {
+        print_error(dbg,"Error accessing line context"
+            "Something broken.",
+            vres,err);
+        return;
+    }
+    printf(" include directory count 0x%"
+        DW_PR_DUx " %" DW_PR_DSd "\n",
+        (Dwarf_Unsigned)count,count);
+    for(i = 1; i <= count; ++i) {
+        vres = dwarf_srclines_include_dir_data(line_context,i,
+            &name,&err);
+        if (vres != DW_DLV_OK) {
+            print_error(dbg,"Error accessing line context"
+                "Something broken.",
+                vres,err);
+            return;
+        }
+        printf("  [%2" DW_PR_DSd "]  \"%s\"\n",i,name);
+    }
+
+    vres = dwarf_srclines_files_count(line_context,&count,&err);
+    if (vres != DW_DLV_OK) {
+        print_error(dbg,"Error accessing line context"
+            "Something broken.",
+            vres,err);
+        return;
+    }
+    printf( " files count 0x%"
+        DW_PR_DUx " %" DW_PR_DUu "\n",
+        count,count);
+    for(i = 1; i <= count; ++i) {
+        Dwarf_Unsigned dirindex = 0;
+        Dwarf_Unsigned modtime = 0;
+        Dwarf_Unsigned flength = 0;
+
+        vres = dwarf_srclines_files_data(line_context,i,
+            &name,&dirindex, &modtime,&flength,&err);
+        if (vres != DW_DLV_OK) {
+            print_error(dbg,"Error accessing line context"
+                "Something broken.",
+                vres,err);
+            return;
+        }
+        esb_empty_string(&bufr);
+        if (name) {
+            esb_empty_string(&bufr);
+            esb_append(&bufr,"\"");
+            esb_append(&bufr,name);
+            esb_append(&bufr,"\"");
+        } else {
+            esb_append(&bufr,"<ERROR:NULL name in files list>");
+        }
+        printf("  [%2" DW_PR_DSd "]  %-24s ,",
+            i,esb_get_string(&bufr));
+        printf(" directory index  %2" DW_PR_DUu ,modtime);
+        printf(",  file length %2" DW_PR_DUu ,flength);
+        if (modtime) {
+            time_t tt3 = (time_t)modtime;
+
+            /* ctime supplies newline */
+            printf(
+                "file mod time 0x%x %s", (unsigned)tt3, ctime(&tt3));
+        } else {
+            printf("  file mod time 0\n");
+        }
+    }
+    esb_destructor(&bufr);
+
+    vres = dwarf_srclines_subprog_count(line_context,&count,&err);
+    if (vres != DW_DLV_OK) {
+        print_error(dbg,"Error accessing line context"
+            "Something broken.",
+            vres,err);
+        return;
+    }
+    if (count == 0) {
+        return;
+    }
+    printf(" subprograms count (experimental) 0x%"
+        DW_PR_DUx " %" DW_PR_DUu "\n",
+        count,count);
+    for(i = 1; i <= count; ++i) {
+        Dwarf_Unsigned decl_file = 0;
+        Dwarf_Unsigned decl_line = 0;
+        vres = dwarf_srclines_subprog_data(line_context,i,
+            &name,&decl_file, &decl_line,&err);
+        if (vres != DW_DLV_OK) {
+            print_error(dbg,"Error accessing line context"
+                "Something broken.",
+                vres,err);
+            return;
+        }
+        printf("  [%2" DW_PR_DSd "]  \"%s\""
+            ", fileindex %2" DW_PR_DUu
+            ", lineindex  %2" DW_PR_DUu
+            "\n",
+            i,name,decl_file,decl_line);
+    }
+}
+
 extern void
 print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
 {
@@ -461,8 +615,11 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
     Dwarf_Line *linebuf = NULL;
     Dwarf_Signed actualscount = 0;
     Dwarf_Line *actualsbuf = NULL;
+    Dwarf_Signed linecounttotal = 0;
     int lres = 0;
     int line_errs = 0;
+    Dwarf_Bool is_single_table = TRUE;
+    Dwarf_Line_Context line_context = 0;
 
     current_section_id = DEBUG_LINE;
 
@@ -482,7 +639,7 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
             return;
         } else if (tag == DW_TAG_type_unit) {
             /*  Not checking since type units missing
-                address range in CU header. */
+                address or range in CU header. */
             return;
         }
     }
@@ -516,8 +673,18 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
             DWARF_CHECK_COUNT(lines_result,(line_errs-1));
         }
     }
-    lres = dwarf_srclines_two_level(cu_die, &lineversion, &linebuf, &linecount,
-        &actualsbuf, &actualscount, &err);
+    if (line_skeleton_flag) {
+        lres = dwarf_srclines_b(cu_die,&lineversion,
+            &is_single_table,&line_context,
+            &linecounttotal,
+            &err);
+    } else {
+        /* DWARF2,3,4, ok for 5. */
+        /* Useless for experimental line tables */
+        lres = dwarf_srclines(cu_die,
+            &linebuf, &linecount, &err);
+        linecounttotal = linecount;
+    }
     if (lres == DW_DLV_ERROR) {
         /* Do not terminate processing */
         if (check_decl_file) {
@@ -530,7 +697,19 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
         }
     } else if (lres == DW_DLV_NO_ENTRY) {
         /* no line information is included */
-    } else {
+    } else if (linecounttotal > 0) {
+        if(line_skeleton_flag && verbose) {
+            print_line_context_record(dbg,line_context);
+        }
+        if( line_skeleton_flag ) {
+            lres = dwarf_srclines_from_linecontext(line_context,
+                &linebuf,&linecount,
+                &actualsbuf,&actualscount,
+                &err);
+            if (lres != DW_DLV_OK) {
+                print_error(dbg, "dwarf_srclines_from_linecontext fail", lres, err);
+            }
+        } /* linebuf set already if !line_skeleton_flag */
         if (do_print_dwarf) {
             print_source_intro(cu_die);
             if (verbose) {
@@ -541,21 +720,69 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
                     /* ignore_die_stack= */TRUE);
             }
         }
-        if (actualscount == 0) {
+        if(line_skeleton_flag) {
+            if (actualscount == 0) {
+                /* ASSERT: is_single_table == true */
+                Dwarf_Bool is_logicals = FALSE;
+                Dwarf_Bool is_actuals = FALSE;
+                process_line_table(dbg, linebuf, linecount,
+                    is_logicals,is_actuals);
+            } else {
+                /*  We have an experimental two-level line table.
+                    deal with both tables. */
+                Dwarf_Bool is_logicals = TRUE;
+                Dwarf_Bool is_actuals = FALSE;
+                process_line_table(dbg, linebuf, linecount,
+                    is_logicals, is_actuals);
+                process_line_table(dbg, actualsbuf, actualscount,
+                    !is_logicals, !is_actuals);
+            }
+            dwarf_srclines_dealloc_b(line_context);
+        } else {
             Dwarf_Bool is_logicals = FALSE;
             Dwarf_Bool is_actuals = FALSE;
-            process_line_table(dbg, linebuf, linecount, 
-               is_logicals,is_actuals);
-            dwarf_srclines_dealloc(dbg, linebuf, linecount);
-        } else {
-            Dwarf_Bool is_logicals = TRUE;
-            Dwarf_Bool is_actuals = FALSE;
-            process_line_table(dbg, linebuf, linecount, 
+            process_line_table(dbg, linebuf, linecount,
                 is_logicals, is_actuals);
-            process_line_table(dbg, actualsbuf, actualscount, 
-                !is_logicals, !is_actuals);
-            dwarf_srclines_dealloc(dbg, linebuf, linecount);
-            dwarf_srclines_dealloc(dbg, actualsbuf, linecount);
+            dwarf_srclines_dealloc(dbg,linebuf,linecount);
         }
+        /* end, linecounttotal > 0 */
+    } else {
+        /*  linecounttotal == 0. no lines in table.
+            Just a line table header. */
+        if (do_print_dwarf) {
+            int ores = 0;
+            Dwarf_Unsigned off = 0;
+
+            print_source_intro(cu_die);
+            if (verbose) {
+                print_one_die(dbg, cu_die,
+                    /* print_information= */ TRUE,
+                    /* indent_level= */ 0,
+                    /* srcfiles= */ 0, /* cnt= */ 0,
+                    /* ignore_die_stack= */TRUE);
+            }
+            if(line_skeleton_flag) {
+                if (verbose > 2) {
+                    print_line_context_record(dbg,line_context);
+                }
+                ores = dwarf_srclines_table_offset(line_context,
+                    &off,&err);
+                if (ores != DW_DLV_OK) {
+                    print_error(dbg,"dwarf_srclines_table_offset fail",ores,err);
+                } else {
+                    printf(" Line table is present (offset 0x%"
+                        DW_PR_XZEROS DW_PR_DUx
+                        ") but no lines present\n", off);
+                }
+            } else {
+                printf(" Line table is present but no lines present\n");
+            }
+        }
+        if(line_skeleton_flag) {
+            dwarf_srclines_dealloc_b(line_context);
+        } else {
+            dwarf_srclines_dealloc(dbg,linebuf,linecount);
+        }
+        /* end, linecounttotal == 0 */
     }
 }

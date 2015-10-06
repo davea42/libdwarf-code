@@ -374,7 +374,6 @@ print_cu_hdr_cudie(Dwarf_Debug dbg,
     Dwarf_Unsigned offset )
 {
     struct Dwarf_Debug_Fission_Per_CU_s fission_data;
-    int fission_data_result = 0;
 
     if (dense) {
         printf("\n");
@@ -386,6 +385,7 @@ print_cu_hdr_cudie(Dwarf_Debug dbg,
         (Dwarf_Unsigned)(overall_offset - offset));
 #if 0
     if (verbose) {
+        int fission_data_result = 0;
         fission_data_result = dwarf_get_debugfission_for_die(cudie,
             &fission_data,&err);
         if (fission_data_result == DW_DLV_ERROR) {
@@ -1308,6 +1308,10 @@ get_small_encoding_integer_and_name(Dwarf_Debug dbg,
 
     if (vres != DW_DLV_OK) {
         Dwarf_Signed sval = 0;
+        if(vres == DW_DLV_ERROR) {
+            dwarf_dealloc(dbg,err, DW_DLV_ERROR);
+            *err = 0;
+        }
         vres = dwarf_formsdata(attrib, &sval, err);
         if (vres != DW_DLV_OK) {
             vres = dwarf_global_formref(attrib,&uval,err);
@@ -3971,7 +3975,6 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
             case DW_AT_dwo_id:
                 {
                 Dwarf_Sig8 v;
-                const char *hash_str = 0;
                 memset(&v,0,sizeof(v));
                 wres = dwarf_formsig8_const(attrib,&v,&err);
                 if (wres == DW_DLV_OK){

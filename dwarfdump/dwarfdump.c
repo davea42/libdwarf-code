@@ -108,6 +108,17 @@ boolean use_old_dwarf_loclist = FALSE;  /* This so both dwarf_loclist()
     dwarf_loclist_n() */
 
 boolean line_flag = FALSE;
+
+/*  Setting this FALSE tells dwarfdump to use the old
+    line-table interfaces.  using:
+        -x line5=no
+    The new interfaces allow for both two-level line tables
+    and access to line table headers in case
+    we have a DWARF5 skeleton line table (a line table
+    header with no lines).
+    */
+boolean line_skeleton_flag = TRUE;
+
 boolean line_print_pc = TRUE;    /* Print <pc> addresses. */
 static boolean abbrev_flag = FALSE;
 static boolean frame_flag = FALSE;      /* .debug_frame section. */
@@ -1633,11 +1644,29 @@ process_args(int argc, char *argv[])
                     esb_empty_string(&config_file_tiedpath);
                     esb_append(&config_file_tiedpath,tiedpath);
                     break;
+                } else if (strncmp(dwoptarg, "line5=", 6) == 0) {
+                    char lineskelchar = 0;
+                    if (strlen(dwoptarg) < 6) {
+                        goto badopt;
+                    }
+                    lineskelchar = tolower(dwoptarg[6]);
+                    if (lineskelchar == 'y') {
+                        line_skeleton_flag = TRUE;
+                    } else if (lineskelchar == 'n') {
+                        line_skeleton_flag = FALSE;
+                    } else {
+                        goto badopt;
+                    }
+                    break;
                 } else {
                 badopt:
                     fprintf(stderr, "-x name=<path-to-conf> \n");
                     fprintf(stderr, " and  \n");
                     fprintf(stderr, "-x abi=<abi-in-conf> \n");
+                    fprintf(stderr, " and  \n");
+                    fprintf(stderr, "-x tied=<tied-file-path> \n");
+                    fprintf(stderr, " and  \n");
+                    fprintf(stderr, "-x line5={y[es],n[o]}> \n");
                     fprintf(stderr, "are legal, not -x %s\n", dwoptarg);
                     usage_error = TRUE;
                     break;
