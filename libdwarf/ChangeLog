@@ -1,3 +1,29 @@
+2015-10-06  David Anderson
+     * Makefile.in: Removed source files from the build that
+       are only useful to IRIX and only in the context of building
+       an IRIX runtime system.
+     * dwarf_alloc.c: Added constructor/destructor code to
+       Dwarf_Line_Context allocator.
+     * dwarf_elf_access.c: Added additional #defines so we
+       have the IA64 defines we need to compile certain 
+       test cases on freebsd.
+     * dwarf_error.c: Two new error codes for Dwarf_Line_Context
+       checking.
+     * dwarf_line_table_reader_common.c: New file. We can compile
+       the line reading with and without detailed print lines
+       for dwarfdump.  Now only one body of line reading code
+       to maintain.
+     * dwarf_line.c: Moved code out to dwarf_line_table_reader_common.c
+       Refactored to support skeleton line tables (DWARF5) 
+       Eliminated an internal struct, it is no longer needed.
+       a little better.
+       Supports experimental two-level line tables too.
+     * dwarf_print_lines.c: Uses dwarf_line_table_reader_common.c
+       to do much of its work now.
+     * libdwarf.h.in: New interfaces for nicer access to 
+       line table headers.
+     * libdwarf2.1.mm: Partial documentation of the new
+       libdwarf line table interfaces. 
 2015-10-01  David Anderson
      * dwarf_global.h: Now the last __sgi related macro (else, endif)
        have /* __sgi */.

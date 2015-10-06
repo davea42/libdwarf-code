@@ -54,6 +54,12 @@ dwfpic =        @dwfpic@
 CFLAGS =	$(PREINCS) @CFLAGS@ $(INCLUDES) $(dwfpic) $(POSTINCS)
 LDFLAGS =	$(PRELIBS) @LDFLAGS@ $(POSTLIBS)
 
+# These three files are only appropriate for SGI IRIX.
+# There is no reason to think these are of any use to anyone else.
+# As of October 2015 they are removed from OBJS
+#       dwarf_addr_finder.o 
+#	dwarf_sort_line.o 
+#       dwarf_line2.o 
 
 BUILD_BASE = .
 
@@ -74,7 +80,6 @@ OBJS= dwarf_abbrev.o \
         dwarf_init_finish.o  \
         dwarf_leb.o \
         dwarf_line.o \
-        dwarf_line2.o \
         dwarf_loc.o \
 	dwarf_macro.o \
         dwarf_original_elf_init.o \
@@ -90,8 +95,6 @@ OBJS= dwarf_abbrev.o \
         dwarf_vars.o \
         dwarf_weaks.o    \
         dwarf_xu_index.o    \
-        dwarf_addr_finder.o \
-	dwarf_sort_line.o \
 	dwarf_print_lines.o \
 	malloc_check.o \
         pro_alloc.o \

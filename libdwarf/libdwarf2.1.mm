@@ -8,7 +8,7 @@ n\."
 .nr Hb 5
 \." ==============================================
 \." Put current date in the following at each rev
-.ds vE rev 2.30, Sept 14, 2015
+.ds vE rev 2.31, Oct 5, 2015
 \." ==============================================
 \." ==============================================
 .ds | |
@@ -202,6 +202,17 @@ The following is a brief mention of the changes in this libdwarf from
 the libdwarf draft for DWARF Version 1 and recent changes.
 
 .H 2 "Items Changed"
+.P
+Adding support for reading DWARF5 line tables
+and GNU two-level line tables.
+The function dwarf_srclines() still works
+but those using DWARF4 or DWARF5 are 
+advised to switch to dwarf_srclines_b().
+dwarf_srclines()
+cannot handle skeleton line tables sensibly
+and a new interface was needed for two-level
+line tables so the new approach satisfies both.
+(October 5,2015)
 .P
 Adding support for Package Files (DWARF5)
 to enable access of address data using DW_FORM_addrx.
@@ -1087,13 +1098,20 @@ The storage pointed to by this descriptor should be freed
 using a call to \f(CWdwarf_xh_header_free()\fP with 
 a valid \f(CWDwarf_XuIndexHeader\fP pointer as the argument.
 
+.DS
+\f(CWtypedef struct Dwarf_Line_Context_s * Dwarf_Line_Context;\fP
+.DE
+\f(CWdwarf_srclines_b()\fP returns a Dwarf_Line_Context through an argument
+and the new structure pointer lets us access line header information
+conveniently.
+
 .H 1 "UTF-8 strings"
 \fIlibdwarf\fP 
 is defined, at various points, to return 
 string pointers or to copy strings into
 string areas you define.
 DWARF allows the use of
-\f(CWDW_AT_use_UTF8\f(CW
+\f(CWDW_AT_use_UTF8\fP
 (DWARF3 and later)
 \f(CWDW_ATE_UTF\fP
 (DWARF4 and later)
@@ -3595,11 +3613,291 @@ For example, if a file is preprocessed by a language translator,
 this could result in translator output showing 2 or more sets of line
 numbers per translated line of output.
 
-.H 3 "Get A Set of Lines"
+.H 3 "Get A Set of Lines (DWARF5 style)"
+This set of functions works on any DWARF version.
+DWARF2,3,4,5 and the DWARF4 based experimental
+two-level line tables are all supported. 
+What was once done by dwarf_srclines() alone
+is now done with two calls as described here.
+.P
+The interfaces support reading GNU two-level line tables.
+The format of such tables is a topic beyond
+the scope of this document.
+.P
+
+.H 3 "dwarf_srclines_b()"
+.DS
+\f(CWint dwarf_srclines_b(
+        Dwarf_Die die,
+        Dwarf_Unsigned *version_out,
+        Dwarf_Bool     *is_single_table,
+        Dwarf_Line_Context *context_out,
+        Dwarf_Signed *linecount,
+        Dwarf_Error *error)\fP
+.DE
+\f(CWdwarf_srclines()\fP
+takes a single argument as input,
+a pointer to a compilation-unit (CU)  DIE.
+The other arguments are used to return values 
+to the caller.
+On success 
+\f(CWDW_DLV_OK\fP
+is returned and values
+are returned through the pointers.
+If there is no line table
+\f(CWDW_DLV_NO_ENTRY\fP
+is returned
+and no values are returned though the pointers.
+If 
+\f(CWDW_DLV_ERROR\fP
+is returned the
+involved is returned through the
+\f(CWerror\fP
+pointer.
+.P
+The values returned on success are:
+.P
+\f(CW*version_out()\fP
+is set to the version number from
+the line table header for this CU.
+The experimental two-level line table
+value is 0xf006.  Standard numbers
+are 2,3,4 and 5.
+.P
+\f(CW*is_single_table()\fP
+is set to non-zero if the line table
+is an ordinary single line table.
+If the line table is anything else
+it is set to zero.
+.P
+\f(CW*context_out()\fP
+is set to an opaque pointer to a 
+\f(CWDwarf_Line_Context\fO
+record
+which in turn is used to get
+other data from this line table.
+See below.
+.P
+\f(CW*linecount()\fP
+is set to a count of the number of lines
+total in the tables.  It is set to zero
+if the line table header exists but there
+are no lines for that line table header.
+If the lines are in a standard single table
+the count is the total length of the line table.
+If the table is a two-level line table
+the count is the sum of the logicals table
+and the actuals table.
+.P
+See
+\f(CW*dwarf_srclines_dealloc_b()\fP
+for examples showing correct use.
+
+
+
+.H 3 "dwarf_srclines_from_linecontext()"
+.DS
+\f(CWint dwarf_srclines_from_linecontext(
+        Dwarf_Line_Context line_context,
+        Dwarf_Line ** linebuf,
+        Dwarf_Signed *linecount,
+        Dwarf_Line ** linebuf_actuals,
+        Dwarf_Signed *linecount_actuals,
+        Dwarf_Error *error)\fP
+.DE
+\f(CW*dwarf_srclines_from_linecontext()\fP
+gives access to the line tables.
+On success it returns
+\f(CWDW_DLV_OK\fP
+and passes back line tables
+through the pointers.
+.P
+Though
+\f(CWDW_DLV_OK\fP
+will not be returned callers should
+assume it is possible.
+.P
+On error
+\f(CWDW_DLV_ERROR\fP
+is returned and the error code set through
+the
+\f(CWerror\fP
+pointer.
+.P
+On success:
+.P
+\f(CW*linebuf\fP
+is set to an array of Dwarf_Line pointers.
+.P
+\f(CW*linecount\fP is set 
+to the number of pointers in the array.
+.P
+If one is not intending that the experimental two-level
+line tables are of interest then pass NULL
+for
+\f(CW*linebuf_actuals\fP
+and
+\f(CW*linecount_actuals\fP.
+The NULL pointers notify the library
+that the second table is not to be passed back.
+.P
+If a line table is actually a two-level tables
+\f(CW*linebuf\fP is set to point to an array of
+Logicals lines.
+\f(CW*linecount\fP is set to the number of Logicals. 
+\f(CW*linebuf_actals\fP is set to point to an array of
+Actuals lines.
+\f(CW*linecount_actuals\fP is set to the number of Actuals. 
+
+.H 3 "dwarf_srclines_dealloc_b()"
+.DS
+\f(CWvoid dwarf_srclines_dealloc_b(
+        Dwarf_Line_Context line_context,
+        Dwarf_Error *error)\fP
+.DE
+This does a complete deallocation of
+the memory of the 
+\f(CWDwarf_Line_Context\fP
+and the 
+\f(CWDwarf_Line\fP array (or arrays)
+that came from the
+\f(CWDwarf_Line_Context\fP.
+On return you should set any local pointers
+to these buffers to NULL as a reminder
+that any use of the local pointers would 
+be to stale memory.
+
+.in +2
+FIXME
+.DS
+\f(CW
+/* EXAMPLE: DWARF5 style access.  */
+int res;
+\f(CWDwarf_Signed cnt =;
+Dwarf_Die cu_die = 0;
+Dwarf_Line linebuf = 0;
+Dwarf_Signed linecount = 0;
+Dwarf_Line linebuf_actuals = 0;
+Dwarf_Signed linecount_actuals = 0;
+Dwarf_Line_Context line_context = 0;
+Dwarf_Line_Context line_context = 0;
+Dwarf_Signed linecount_total = 0;
+Dwarf_Error err = 0;
+Dwarf_Bool is_single_table;
+int sres;
+...
+/*  we use 'return' here to signify we can do nothing more
+    at this point in the code. */
+sres = dwarf_srclines_b(cu_die,&lineversion,
+    &is_single_table,&linecontext,&linecount_total,&err); 
+if (sres != DW_DLV_OK) {
+    /* Handle the DW_DLV_NO_ENTRY or DW_DLV_ERROR */
+    return;
+}
+/* DW_DLV_OK */ 
+if (linecount_total == 0) {
+    /* There are no lines, just a line header.
+       Do something with the context (header)  information. : */
+    dwarf_srclines_dealloc_b();
+    return;
+} else if(is_single_table) { 
+    /*  Here the lines are standard lines.
+        There is no two-level line table.
+        So we do not refer to 'actuals'. */
+    sres = dwarf_srclines_from_linecontext(cu_die, 
+        &linebuf,&linecount, 
+        NULL, NULL,
+        &err);
+    if (sres != DW_DLV_OK) {
+        /* Error. Clean up the context information. */
+        dwarf_srclines_dealloc_b();
+        return;
+    } else if (is_single_table) {
+        /* The lines are normal line table lines. */
+        for (i = 0; i < linecount; ++i) {
+                /* use linebuf[i] */
+        }
+    } else {
+        /* We have a two-level table. The lines are
+        for (i = 0; i < linecount; ++i) {
+                /* use linebuf[i] */
+        }
+FIXME
+    }
+} else {
+sres = dwarf_srclines_from_linecontext(cu_die, 
+    &linebuf,&linecount, 
+    &linebuf_actuals,&linecount_actuals, 
+    &err);
+if (sres == DW_DLV_OK) {
+    for (i = 0; i < cnt; ++i) {
+                /* use linebuf[i] */
+    }
+    if(!is_single_table) 
+        sres = dwarf_srclines_from_linecontext(cu_die, 
+            &linebuf_actuals,&linecount_actuals, 
+            is_logicals,is_actuals,&err);
+     
+    
+
+    dwarf_srclines_dealloc_b(dbg, linebuf, cnt);
+} else if (sres == DW_DLV_NO_ENTRY }{
+    /* This should be impossible, but
+       do something. There is nothing to free */
+} else {
+    /* ERROR, show the error or something.
+       There is nothing to free */
+}
+\fP
+
+
+
+    }
+}\fP
+.DE
+.in -2
+
+
+FIXME
+
+
+
+.H 2 "Line Context Details (DWARF5 style)"
+FIXME
+\f(CW
+\fP
+.H 3 "dwarf_srclines_table_offset()"
+FIXME
+\f(CW
+\fP
+.H 3 "dwarf_srclines_version()"
+FIXME
+\f(CW
+\fP
+.H 3 "dwarf_srclines_comp_dir()"
+FIXME
+\f(CW
+\fP
+.H 3 "dwarf_srclines_files_count()"
+FIXME
+.H 4 "dwarf_srclines_files_data()"
+FIXME
+.H 3 "dwarf_srclines_include_dir_count()"
+FIXME
+.H 3 "dwarf_srclines_include_dir_data()"
+FIXME
+.H 3 "dwarf_srclines_subprog_count()"
+FIXME
+.H 3 "dwarf_srclines_subprog_data()"
+FIXME
+
+.H 3 "Get A Set of Lines (DWARF2,3,4 style)"
 The function returns information about every source line for a 
 particular compilation-unit.  
 The compilation-unit is specified
 by the corresponding die.
+It does not support DWARF5 skeleton line tables very well
+nor does it support GNU experimental two-level linetables.
 .H 4 "dwarf_srclines()"
 .DS
 \f(CWint dwarf_srclines(
@@ -3616,6 +3914,19 @@ for a single compilation unit into a single block, sets \f(CW*linebuf\fP
 to point to that block, 
 sets \f(CW*linecount\fP to the number of descriptors in this block
 and returns \f(CWDW_DLV_OK\fP.
+.in +2
+.P
+To get a more detailed view of the contents of a dwarf line
+table header see \f(CWdwarf_srclines_b()\fP and
+the routines that use the Dwarf_Line_Context
+information, such as \f(CWdwarf_srcfiles_comp_dir()\fP,
+\f(CWdwarf_srclines_files_count()\fP,
+\f(CWdwarf_srclines_include_dir_count()\fP
+and similar functions.  
+
+.in -2
+
+.P
 The compilation-unit is indicated by the given \f(CWdie\fP which must be
 a compilation-unit die.  
 It returns \f(CWDW_DLV_ERROR\fP on error.  
@@ -3641,27 +3952,12 @@ if (sres == DW_DLV_OK) {
 
 .in -2
 .P
-The following dealloc code (the only documented method before July 2005)
+An alternative using \f(CWdwarf_dealloc()\fP directly
+is no longer (as of 2015) described here. It works as well
+as ever, but it has been obsolete since 2005.
 still works, but does not completely free all data allocated.
 The \f(CWdwarf_srclines_dealloc()\fP routine was created
 to fix the problem of incomplete deallocation.
-.P
-.in +2
-.DS
-\f(CWDwarf_Signed cnt;
-Dwarf_Line *linebuf;
-int sres;
-
-sres = dwarf_srclines(somedie, &linebuf,&cnt, &error);
-if (sres == DW_DLV_OK) {
-        for (i = 0; i < cnt; ++i) {
-                /* use linebuf[i] */
-                dwarf_dealloc(dbg, linebuf[i], DW_DLA_LINE);
-        }
-        dwarf_dealloc(dbg, linebuf, DW_DLA_LIST);
-}\fP
-.DE
-.in -2
 
 .H 3 "Get the set of Source File Names"
 
@@ -3680,8 +3976,7 @@ files named in the statement program prologue are returned.
 When it succeeds
 \f(CWdwarf_srcfiles()\fP returns 
 \f(CWDW_DLV_OK\fP
-and
-puts
+and puts
 the number of source
 files named in the statement program prologue indicated by the given
 \f(CWdie\fP
@@ -3694,8 +3989,9 @@ or \f(CWDW_TAG_type_unit\fP
 .
 The location pointed to by \f(CWsrcfiles\fP is set to point to a list
 of pointers to null-terminated strings that name the source
-files.  
-On a successful return from this function, each of the
+files.
+.P
+On a successful return from  \f(CWdwarf_srcfiles()\fP each of the
 strings returned should be individually freed using \f(CWdwarf_dealloc()\fP
 with the allocation type \f(CWDW_DLA_STRING\fP when no longer of
 interest.  

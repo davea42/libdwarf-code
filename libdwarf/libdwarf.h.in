@@ -511,6 +511,8 @@ typedef struct Dwarf_Arange_s*     Dwarf_Arange;
 typedef struct Dwarf_Gdbindex_s*   Dwarf_Gdbindex;
 struct Dwarf_Xu_Index_Header_s;
 typedef struct Dwarf_Xu_Index_Header_s* Dwarf_Xu_Index_Header;
+struct Dwarf_Line_Context_s;
+typedef struct Dwarf_Line_Context_s *Dwarf_Line_Context;
 
 
 /* Opaque types for Producer Library. */
@@ -1160,9 +1162,11 @@ struct Dwarf_Obj_Access_Interface_s {
 #define DW_DLE_NO_TIED_SIG_AVAILABLE           302
 #define DW_DLE_STRING_NOT_TERMINATED           303
 #define DW_DLE_BAD_LINE_TABLE_OPERATION        304
+#define DW_DLE_LINE_CONTEXT_BOTCH              305
+#define DW_DLE_LINE_CONTEXT_INDEX_WRONG        306
 
     /* DW_DLE_LAST MUST EQUAL LAST ERROR NUMBER */
-#define DW_DLE_LAST        304
+#define DW_DLE_LAST        306
 #define DW_DLE_LO_USER     0x10000
 
     /*  Taken as meaning 'undefined value', this is not
@@ -1692,33 +1696,123 @@ int dwarf_srclines(Dwarf_Die /*die*/,
     Dwarf_Signed *   /*linecount*/,
     Dwarf_Error*     /*error*/);
 
-/* If we have two-level line tables, this will return the
-   logicals table in linebuf and the actuals table in
-   linebuf_actuals. For old-style (one-level) tables, it
-   will return the single table through linebuf, and the
-   value returned through linecount_actuals will be 0.
-   The actual version number is returned through version.
-   For two-level line tables, the version returned will
-   be 0xf006. This will be replaced shortly, consider
-   it temporary. */
-int dwarf_srclines_two_level(Dwarf_Die /*die*/,
-    Dwarf_Unsigned * /*version*/,
-    Dwarf_Line**     /*linebuf*/,
-    Dwarf_Signed *   /*linecount*/,
-    Dwarf_Line**     /*linebuf_actuals*/,
-    Dwarf_Signed *   /*linecount_actuals*/,
-    Dwarf_Error*     /*error*/);
-
-/* dwarf_srclines_dealloc, created July 2005, is the new
-   method for deallocating what dwarf_srclines()
-   and dwarf_srclines_two_level() return.
+/* dwarf_srclines_dealloc, created July 2005, is the
+   appropriate method for deallocating what dwarf_srclines()
+   returns.
    More complete free than using dwarf_dealloc directly. */
 void dwarf_srclines_dealloc(Dwarf_Debug /*dbg*/,
     Dwarf_Line*       /*linebuf*/,
     Dwarf_Signed      /*count */);
 
+/*  New October 2015, must be used to deallocating
+    what is allocated by dwarf_srclines_b() and
+    dwarf_srclines_from_linecontext()  use.
+    Works for DWARF2,3,4,5 and for experimental line tables.
+    It is the only interface that works well with
+    skeleton line tables.
+    It is the only interface that works at all to
+    access experimental two-level line tables. */
+int dwarf_srclines_b(Dwarf_Die /*die*/,
+    Dwarf_Unsigned    * /* version_out*/,
+    Dwarf_Bool        * /* is_single_table */,
+    Dwarf_Line_Context * /* linecontext*/,
+    Dwarf_Signed      * /* lines_count */,
+    Dwarf_Error       * /* error*/);
+/* dwarf_srclines_dealloc_b(), created October 2015, is the
+   appropriate method for deallocating what dwarf_srclines_b()
+   and dwarf_srclines_from_linecontext() allocate.  */
+void dwarf_srclines_dealloc_b(Dwarf_Line_Context /*line_context*/);
+
+/*  Functions passing in a Dwarf_Line_Context  are only
+    available if dwarf_srclines_b() was used to access
+    line table information.  */
+/*  New October 2015.  Returns line details.
+    Works for DWARF2,3,4,5 and for experimental 
+    two-level line tables. A single level table will
+    have resulte in  *linebuf_actuals and *linecount_actuals 
+    to 0. */
+int dwarf_srclines_from_linecontext(Dwarf_Line_Context /*line_context*/,
+    Dwarf_Line**     /*linebuf*/,
+    Dwarf_Signed *   /*linecount*/,
+    Dwarf_Line**     /*linebuf_actuals*/,
+    Dwarf_Signed *   /*linecount_actuals*/,
+    Dwarf_Error  *   /* error*/);
+
+    
+/*  New October 2015. */
+/*    The offset is in the relevent .debug_line or .debug_line.dwo 
+    section (and in a split dwarf package file includes)
+    the base line table offset). */
+int dwarf_srclines_table_offset(Dwarf_Line_Context /*line_context*/,
+    Dwarf_Unsigned * /*offset*/,
+    Dwarf_Error  * /* error*/);
+
+/*  New October 2015. */
+/*  Compilation Directory name for the current CU.
+    section (and in a split dwarf package file includes)
+    the base line table offset).  Do not free() the string,
+    it is on a dwarf section. */
+int dwarf_srclines_comp_dir(Dwarf_Line_Context /*line_context*/,
+    const char ** /*compilation_directory*/,
+    Dwarf_Error  *  /*error*/);
+
+/*  New October 2015. */
+/*  Count is the real count of array entries. */
+int dwarf_srclines_subprog_count(Dwarf_Line_Context /*line_context*/,
+    Dwarf_Signed * /*count*/,
+    Dwarf_Error  * /* error*/);
+
+/*  New October 2015. */
+/*  Index starts with 1, last is 'count' */
+int dwarf_srclines_subprog_data(Dwarf_Line_Context /*line_context*/,
+    Dwarf_Signed     /*index*/,
+    const char **    /*name*/,
+    Dwarf_Unsigned * /*decl_file*/,
+    Dwarf_Unsigned * /*decl_line*/,
+    Dwarf_Error   *  /*error*/);
+
+/*  New October 2015. */
+/*  Count is the real count of array entries. */
+int dwarf_srclines_files_count(Dwarf_Line_Context /*line_context*/,
+    Dwarf_Signed  *  /*count*/,
+    Dwarf_Error   *  /*error*/);
+
+/*  New October 2015. */
+/*  Unlike dwarf_srcfiles() this returns the raw file table
+    strings without the directory being prefixed.
+    Index starts with 1, last is 'count' */
+int dwarf_srclines_files_data(Dwarf_Line_Context /*line_context*/,
+    Dwarf_Signed     /*index*/,
+    const char **    /*name*/,
+    Dwarf_Unsigned * /*directory_index*/,
+    Dwarf_Unsigned * /*last_mod_time*/,
+    Dwarf_Unsigned * /*file_length*/,
+    Dwarf_Error    * /* error*/);
+
+/*  New October 2015. */
+/*  Count is the real count of array entries. */
+int dwarf_srclines_include_dir_count(Dwarf_Line_Context /*line_context*/,
+    Dwarf_Signed *  /*count*/,
+    Dwarf_Error  * /* error*/);
+
+/*  New October 2015. */
+/*  Index starts with 1, last is 'count' */
+int dwarf_srclines_include_dir_data(Dwarf_Line_Context /*line_context*/,
+    Dwarf_Signed    /*index*/,
+    const char **   /*name*/,
+    Dwarf_Error   * /* error*/);
+
+/*  New October 2015. */
+/*  The DWARF version number of this compile-unit 
+    in the .debug_lines section. */
+int dwarf_srclines_version(Dwarf_Line_Context /*line_context*/,
+    Dwarf_Unsigned * /*version*/,
+    Dwarf_Error    * /*error*/);
+
+
+
 /*  While 'filecount' is signed, the value
-    returned through the pointer is never negative. 
+    returned through the pointer is never negative.
     Original libdwarf from 199x.  */
 int dwarf_srcfiles(Dwarf_Die /*die*/,
     char***          /*srcfiles*/,
@@ -3431,6 +3525,7 @@ extern int dwarf_get_MACRO_name (unsigned int /*val_in*/,const char ** /*s_out*/
 extern int dwarf_get_DEFAULT_name (unsigned int /*val_in*/,const char ** /*s_out*/);
 extern int dwarf_get_IDX_name (unsigned int /*val_in*/,const char ** /*s_out*/);
 extern int dwarf_get_LNCT_name (unsigned int /*val_in*/,const char ** /*s_out*/);
+extern int dwarf_get_UT_name (unsigned int /*val_in*/,const char ** /*s_out*/);
 
 /* END FILE */
 

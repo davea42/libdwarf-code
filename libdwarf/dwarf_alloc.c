@@ -191,7 +191,9 @@ struct ial_s alloc_instance_basics[ALLOC_AREA_INDEX_TABLE_MAX] = {
     {sizeof(struct Dwarf_File_Entry_s),MULTIPLY_NO,  0, 0},
 
     /* 36 DW_DLA_LINE_CONTEXT */
-    {sizeof(struct Dwarf_Line_Context_s),MULTIPLY_NO,  0, 0},
+    {sizeof(struct Dwarf_Line_Context_s),MULTIPLY_NO,
+        _dwarf_line_context_constructor,
+        _dwarf_line_context_destructor},
 
     /* 37 DW_DLA_LOC_CHAIN */
     {sizeof(struct Dwarf_Loc_Chain_s),MULTIPLY_NO,  0, 0},

@@ -92,7 +92,7 @@
 #define EM_IA_64            50
 #endif
 #ifndef R_IA64_SECREL32LSB
-#define R_IA64_SECREL32LSB 0x64
+#define R_IA64_SECREL32LSB 0x65
 #endif
 #ifndef R_IA64_DIR32MSB
 #define R_IA64_DIR32MSB    0x24
@@ -106,8 +106,23 @@
 #ifndef R_IA64_DIR64LSB
 #define R_IA64_DIR64LSB    0x27
 #endif
+#ifndef R_IA64_SECREL64LSB
+#define R_IA64_SECREL64LSB 0x67
+#endif
 #ifndef R_IA64_SECREL64MSB
 #define R_IA64_SECREL64MSB 0x66
+#endif
+#ifndef R_IA64_DTPREL32LSB
+#define  R_IA64_DTPREL32LSB 0xb5
+#endif
+#ifndef R_IA64_DTPREL32MSB
+#define  R_IA64_DTPREL32MSB 0xb4
+#endif
+#ifndef R_IA64_DTPREL64LSB
+#define  R_IA64_DTPREL64LSB  0xb7 
+#endif
+#ifndef R_IA64_DTPREL64MSB
+#define  R_IA64_DTPREL64MSB  0xb6
 #endif
 
 #ifndef EM_S390
@@ -670,7 +685,7 @@ is_32bit_abs_reloc(unsigned int type, Dwarf_Half machine)
 #endif /* SH */
 
 #if defined(EM_IA_64) && defined (R_IA64_SECREL32LSB)
-    case EM_IA_64:
+    case EM_IA_64:  /* 32bit? ! */
         r = (0
 #if defined (R_IA64_SECREL32LSB)
             | (type == R_IA64_SECREL32LSB)
@@ -682,6 +697,7 @@ is_32bit_abs_reloc(unsigned int type, Dwarf_Half machine)
             | (type == R_IA64_DTPREL32LSB)
 #endif
             );
+if(!r) printf("dadebug fail 32bit m 0x%x  r 0x%x\n",machine,type);
         break;
 #endif /* EM_IA_64 */
 
@@ -831,10 +847,13 @@ is_64bit_abs_reloc(unsigned int type, Dwarf_Half machine)
 #endif /* EM_SPARC */
 
 #if defined(EM_IA_64) && defined (R_IA64_SECREL64LSB)
-    case EM_IA_64:
+    case EM_IA_64: /* 64bit */
         r = (0
 #if defined (R_IA64_SECREL64LSB)
             | (type == R_IA64_SECREL64LSB)
+#endif
+#if defined (R_IA64_SECREL32LSB)
+            | (type == R_IA64_SECREL32LSB)
 #endif
 #if defined (R_IA64_DIR64LSB)
             | (type == R_IA64_DIR64LSB)
@@ -842,7 +861,11 @@ is_64bit_abs_reloc(unsigned int type, Dwarf_Half machine)
 #if defined (R_IA64_DTPREL64LSB)
             | (type == R_IA64_DTPREL64LSB)
 #endif
+#if defined (R_IA64_REL32LSB)
+            | (type == R_IA64_REL32LSB)
+#endif
             );
+if(!r) printf("dadebug fail 64bit m 0x%x  r 0x%x\n",machine,type);
         break;
 #endif /* EM_IA_64 */
 
@@ -975,6 +998,7 @@ update_entry(Dwarf_Debug dbg,
     } else if (is_64bit_abs_reloc(type, machine)) {
         reloc_size = 8;
     } else {
+printf("dadebug FAIL machine %d 0x%x type %d 0x%x\n",machine,machine,type,type);
         *error = DW_DLE_RELOC_SECTION_RELOC_TARGET_SIZE_UNKNOWN;
         return DW_DLV_ERROR;
     }
