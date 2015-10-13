@@ -435,7 +435,7 @@ typedef unsigned short     Dwarf_Half;
 typedef unsigned char      Dwarf_Small;
 typedef signed long long   Dwarf_Signed;
 typedef unsigned long long Dwarf_Addr;
-typedef void 		   *Dwarf_Ptr;
+typedef void 		  *Dwarf_Ptr;
 typedef void   (*Dwarf_Handler)(Dwarf_Error *error, Dwarf_Ptr errarg);
 .DE
 
@@ -1369,19 +1369,26 @@ uses an invocation of \f(CWdwarf_attrlist()\fP as an example to illustrate
 a technique that can be used to free storage from any \fIlibdwarf\fP 
 routine that returns a list:
 .DS
-\f(CWDwarf_Unsigned atcnt;
-Dwarf_Attribute *atlist;
-int errv;
+\f(CW
+void example1(Dwarf_Die somedie)
+{
+  Dwarf_Debug dbg = 0;
+  Dwarf_Signed atcount;
+  Dwarf_Attribute *atlist;
+  Dwarf_Error error = 0;
+  Dwarf_Signed i = 0;
+  int errv;
 
-errv = dwarf_attrlist(somedie, &atlist,&atcnt, &error);
-if (errv == DW_DLV_OK) {
-
-        for (i = 0; i < atcnt; ++i) {
-                /* use atlist[i] */
-                dwarf_dealloc(dbg, atlist[i], DW_DLA_ATTR);
-        }
-        dwarf_dealloc(dbg, atlist, DW_DLA_LIST);
-}\fP
+  errv = dwarf_attrlist(somedie, &atlist,&atcount, &error);
+  if (errv == DW_DLV_OK) {
+    for (i = 0; i < atcount; ++i) {
+      /* use atlist[i] */
+      dwarf_dealloc(dbg, atlist[i], DW_DLA_ATTR);
+    }
+    dwarf_dealloc(dbg, atlist, DW_DLA_LIST);
+  }
+}
+\fP
 .DE
 
 The \f(CWDwarf_Debug\fP returned from \f(CWdwarf_init()\fP 
@@ -1585,18 +1592,21 @@ on each object and then tie the two together with
 a call  such as:
 .in +2
 .DS
-\f(CWDwarf_Debug dbg = 0;
-Dwarf_Debug tieddbg = 0;
-Dwarf_Error error = 0;
-int res;
+\f(CW
+void example2(Dwarf_Debug dbg, Dwarf_Debug tieddbg)
+{
+  Dwarf_Error error = 0;
+  int res = 0;
 
-/* Do the dwarf_init() or dwarf_elf_init 
-   calls to set 
-   dbg, tieddbg at this point. Then: */
-res = dwarf_set_tied_dbg(dbg,tieddbg,&error);
-if (res != DW_DLV_OK) {
+  /* Do the dwarf_init() or dwarf_elf_init
+     calls to set
+     dbg, tieddbg at this point. Then: */
+  res = dwarf_set_tied_dbg(dbg,tieddbg,&error);
+  if (res != DW_DLV_OK) {
     /* Something went wrong*/
-}\fP
+  }
+}
+\fP
 .DE
 .in -2
 
@@ -1608,10 +1618,16 @@ It is possible to undo the tieing operation with
 .in +2
 .DS
 \f(CW
-res = dwarf_set_tied_dbg(dbg,NULL,&error);
-if (res != DW_DLV_OK) {
+void example3(Dwarf_Debug dbg)
+{
+  Dwarf_Error error = 0;
+  int res = 0;
+  res = dwarf_set_tied_dbg(dbg,NULL,&error);
+  if (res != DW_DLV_OK) {
     /* Something went wrong*/
-}\fP
+  }
+}
+\fP
 .DE
 .in -2
 
@@ -2168,19 +2184,24 @@ tag.
 
 .in +2
 .DS
-\f(CWDwarf_Die return_sib = 0;
-Dwarf_Error error = 0;
-int res;
-Dwarf_Bool is_info = 1;
-/* in_die might be NULL or a valid Dwarf_Die */
-res = dwarf_siblingof_b(dbg,in_die,is_info,&return_sib, &error);
-if (res == DW_DLV_OK) {
-   /* Use return_sib here. */
-   dwarf_dealloc(dbg, return_sib, DW_DLA_DIE);
-   /* return_sib is no longer usable for anything, we
-      ensure we do not use it accidentally with: */
-   return_sib = 0;
-}\fP
+\f(CW
+void example4(Dwarf_Debug dbg,Dwarf_Die in_die,Dwarf_Bool is_info)
+{
+  Dwarf_Die return_sib = 0;
+  Dwarf_Error error = 0;
+  int res = 0;
+
+  /* in_die might be NULL or a valid Dwarf_Die */
+  res = dwarf_siblingof_b(dbg,in_die,is_info,&return_sib, &error);
+  if (res == DW_DLV_OK) {
+    /* Use return_sib here. */
+    dwarf_dealloc(dbg, return_sib, DW_DLA_DIE);
+    /* return_sib is no longer usable for anything, we
+       ensure we do not use it accidentally with: */
+    return_sib = 0;
+  }
+}
+\fP
 .DE
 .in -2
 
@@ -2220,18 +2241,23 @@ The function
 
 .in +2
 .DS
-\f(CWDwarf_Die return_kid = 0;
-Dwarf_Error error = 0;
-int res;
+\f(CW
+void example5(Dwarf_Debug dbg,Dwarf_Die in_die)
+{
+  Dwarf_Die return_kid = 0;
+  Dwarf_Error error = 0;
+  int res = 0;
 
-res = dwarf_child(dbg,in_die,&return_kid, &error);
-if (res == DW_DLV_OK) {
-   /* Use return_kid here. */
-   dwarf_dealloc(dbg, return_kid, DW_DLA_DIE);
-   /* return_die is no longer usable for anything, we
-      ensure we do not use it accidentally with: */
-   return_kid = 0;
-}\fP
+  res = dwarf_child(in_die,&return_kid, &error);
+  if (res == DW_DLV_OK) {
+    /* Use return_kid here. */
+    dwarf_dealloc(dbg, return_kid, DW_DLA_DIE);
+    /* return_die is no longer usable for anything, we
+       ensure we do not use it accidentally with: */
+    return_kid = 0;
+  }
+}
+\fP
 .DE
 .in -2
 
@@ -2279,19 +2305,26 @@ are incorrect.
 
 .in +2
 .DS
-\f(CWDwarf_Error error = 0;
-Dwarf_Die return_die = 0;
-int res;
-int is_info = 1;
+\f(CW
+void example6(Dwarf_Debug dbg,Dwarf_Off die_offset,Dwarf_Bool is_info)
+{
+  Dwarf_Error error = 0;
+  Dwarf_Die return_die = 0;
+  int res = 0;
 
-res = dwarf_offdie_b(dbg,die_offset,is_info,&return_die, &error);
-if (res == DW_DLV_OK) {
-   /* Use return_die here. */
-   dwarf_dealloc(dbg, return_die, DW_DLA_DIE);
-   /* return_die is no longer usable for anything, we
-      ensure we do not use it accidentally with: */
-   return_die = 0;
-}\fP
+  res = dwarf_offdie_b(dbg,die_offset,is_info,&return_die, &error);
+  if (res == DW_DLV_OK) {
+    /* Use return_die here. */
+    dwarf_dealloc(dbg, return_die, DW_DLA_DIE);
+    /* return_die is no longer usable for anything, we
+       ensure we do not use it accidentally with: */
+    return_die = 0;
+  } else {
+    /* res could be NO ENTRY or ERROR, so no
+       dealloc necessary.  */
+  }
+}
+\fP
 .DE
 .in -2
 
@@ -2485,24 +2518,29 @@ does some reasonable printing).
 
 .in +2
 .DS
-int res;
-Dwarf_Off cudieoff = 0;
-Dwarf_Die cudie = 0;
-int is_info = 1; /* 
+\f(CW
+void example7(Dwarf_Debug dbg, Dwarf_Die in_die,Dwarf_Bool is_info)
+{
+  int res = 0;
+  Dwarf_Off cudieoff = 0;
+  Dwarf_Die cudie = 0;
+  Dwarf_Error error = 0;
 
-print_die_data(dbg,in_die);
-res = dwarf_CU_dieoffset_given_die(in_die,&cudieoff,&error);
-if(res != DW_DLV_OK) {
-    printf("FAIL: dwarf_CU_dieoffset_given_die did not work\n");
-    exit(1);
+  print_die_data(dbg,in_die);
+  res = dwarf_CU_dieoffset_given_die(in_die,&cudieoff,&error);
+  if(res != DW_DLV_OK) {
+    /*  FAIL */
+    return;
+  }
+  res = dwarf_offdie_b(dbg,cudieoff,is_info,&cudie,&error);
+  if(res != DW_DLV_OK) {
+    /* FAIL */
+    return;
+  }
+  print_die_data(dbg,cudie);
+  dwarf_dealloc(dbg,cudie, DW_DLA_DIE);
 }
-res = dwarf_offdie_b(dbg,cudieoff,is_info,&cudie,&error);
-if(res != DW_DLV_OK) {
-    printf("FAIL: dwarf_offdie did not work\n");
-    exit(1);
-}
-print_die_data(dbg,cudie);
-dwarf_dealloc(dbg,cudie, DW_DLA_DIE);
+\fPy
 .DE
 .in -2
 
@@ -2621,19 +2659,26 @@ when no longer of interest (see \f(CWdwarf_dealloc()\fP).
 Freeing the attrlist:
 .in +2
 .DS
-\f(CWDwarf_Unsigned atcnt;
-Dwarf_Attribute *atlist;
-int errv;
+\f(CW
+void example8(Dwarf_Debug dbg, Dwarf_Die somedie)
+{
+  Dwarf_Signed atcount = 0;
+  Dwarf_Attribute *atlist = 0;
+  Dwarf_Error error = 0;
+  int errv = 0;
 
-errv = dwarf_attrlist(somedie, &atlist,&atcnt, &error);
-if (errv == DW_DLV_OK) {
+  errv = dwarf_attrlist(somedie, &atlist,&atcount, &error);
+  if (errv == DW_DLV_OK) {
+    Dwarf_Signed i = 0;
 
-        for (i = 0; i < atcnt; ++i) {
-                /* use atlist[i] */
-                dwarf_dealloc(dbg, atlist[i], DW_DLA_ATTR);
-        }
-        dwarf_dealloc(dbg, atlist, DW_DLA_LIST);
-}\fP
+    for (i = 0; i < atcount; ++i) {
+      /* use atlist[i] */
+      dwarf_dealloc(dbg, atlist[i], DW_DLA_ATTR);
+    }
+    dwarf_dealloc(dbg, atlist, DW_DLA_LIST);
+  }
+}
+\fP
 .DE
 .in -2
 .P
@@ -2759,19 +2804,6 @@ It returns \f(CWDW_DLV_NO_ENTRY\fP if
 \f(CWdie\fP does not contain the byte size attribute \f(CWDW_AT_byte_size\fP.
 It returns \f(CWDW_DLV_ERROR\fP if 
 an error occurred.
-
-.\"#if 0
-.\".DS
-.\"\f(CWDwarf_Bool dwarf_isbitfield(
-.\"        Dwarf_Die die, 
-.\"        Dwarf_Error *error)\fP
-.\".DE
-.\"The function \f(CWdwarf_isbitfield()\fP returns \fInon-zero\fP if 
-.\"\f(CWdie\fP is a descriptor for a debugging information entry that 
-.\"represents a bit field member.  It returns \fIzero\fP if \f(CWdie\fP 
-.\"is not associated with a bit field member.  This function is currently
-.\"unimplemented.
-.\"#endif
 
 .H 3 "dwarf_bitsize()"
 .DS
@@ -3398,20 +3430,27 @@ This should be followed by deallocation of the \f(CWllbuf\fP
 using the allocation type \f(CWDW_DLA_LIST\fP.
 .in +2
 .DS
-\f(CWDwarf_Signed lcnt;
-Dwarf_Locdesc **llbuf;
-int lres;
+\f(CW
+void
+example9(Dwarf_Debug dbg,Dwarf_Attribute someattr)
+{
+  Dwarf_Signed lcount = 0;
+  Dwarf_Locdesc **llbuf = 0;
+  Dwarf_Error error = 0;
+  int lres = 0;
 
-lres = dwarf_loclist_n(someattr, &llbuf,&lcnt &error);
-if (lres == DW_DLV_OK) {
-        for (i = 0; i < lcnt; ++i) {
-            /* use llbuf[i] */
-
-            dwarf_dealloc(dbg, llbuf[i]->ld_s, DW_DLA_LOC_BLOCK);
-	    dwarf_dealloc(dbg,llbuf[i], DW_DLA_LOCDESC);
-        }
-        dwarf_dealloc(dbg, llbuf, DW_DLA_LIST);
-}\fP
+  lres = dwarf_loclist_n(someattr, &llbuf,&lcount,&error);
+  if (lres == DW_DLV_OK) {
+    Dwarf_Signed i = 0;
+    for (i = 0; i < lcount; ++i) {
+      /* use llbuf[i] */
+      dwarf_dealloc(dbg, llbuf[i]->ld_s, DW_DLA_LOC_BLOCK);
+      dwarf_dealloc(dbg,llbuf[i], DW_DLA_LOCDESC);
+    }
+    dwarf_dealloc(dbg, llbuf, DW_DLA_LIST);
+  }
+}
+\fP
 .DE
 .in -2
 .P
@@ -3455,30 +3494,24 @@ This should be followed by deallocation of the \f(CWllbuf\fP
 using the allocation type \f(CWDW_DLA_LOCDESC\fP.
 .in +2
 .DS
-\f(CWDwarf_Signed lcnt;
-Dwarf_Locdesc *llbuf;
-int lres;
+\f(CW
+void examplea(Dwarf_Debug dbg,Dwarf_Attribute someattr)
+{
+  Dwarf_Signed lcount = 0;
+  Dwarf_Locdesc *llbuf = 0;
+  Dwarf_Error error = 0;
+  int lres = 0;
 
-lres = dwarf_loclist(someattr, &llbuf,&lcnt,&error);
-if (lres == DW_DLV_OK) {
-	/* lcnt is always 1, (and has always been 1) */ */
+  lres = dwarf_loclist(someattr, &llbuf,&lcount,&error);
+  if (lres == DW_DLV_OK) {
+    /* lcount is always 1, (and has always been 1) */
+    /* Use llbuf here. */
 
-	/* Use llbuf here. */
-
-
-        dwarf_dealloc(dbg, llbuf->ld_s, DW_DLA_LOC_BLOCK);
-        dwarf_dealloc(dbg, llbuf, DW_DLA_LOCDESC);
-/*      Earlier version. 
-*         for (i = 0; i < lcnt; ++i) {
-*             /* use llbuf[i] */
-* 
-*             /* Deallocate Dwarf_Loc block of llbuf[i] */
-*             dwarf_dealloc(dbg, llbuf[i].ld_s, DW_DLA_LOC_BLOCK);
-*         }
-*         dwarf_dealloc(dbg, llbuf, DW_DLA_LOCDESC);
-*/
-
-}\fP
+    dwarf_dealloc(dbg, llbuf->ld_s, DW_DLA_LOC_BLOCK);
+    dwarf_dealloc(dbg, llbuf, DW_DLA_LOCDESC);
+  }
+}
+\fP
 .DE
 .in -2
 .P
@@ -3486,6 +3519,7 @@ if (lres == DW_DLV_OK) {
 .H 3 "dwarf_loclist_from_expr()"
 .DS
 \f(CWint dwarf_loclist_from_expr(
+        Dwarf_Debug dbg,
         Dwarf_Ptr bytes_in, 
         Dwarf_Unsigned bytes_len,
         Dwarf_Locdesc **llbuf,
@@ -3524,23 +3558,24 @@ This should be followed by deallocation of the \f(CWllbuf\fP
 using the allocation type \f(CWDW_DLA_LOCDESC\fP.
 .in +2
 .DS
-\f(CWDwarf_Signed lcnt;
-Dwarf_Locdesc *llbuf;
-int lres;
-/* Example with an empty buffer here. */
-Dwarf_Ptr data = "";
-Dwarf_Unsigned len = 0;
+\f(CW
+void exampleb(Dwarf_Debug dbg,Dwarf_Ptr data, Dwarf_Unsigned len)
+{
+  Dwarf_Signed lcount = 0;
+  Dwarf_Locdesc *llbuf = 0;
+  Dwarf_Error error = 0;
+  int lres = 0;
 
-lres = dwarf_loclist_from_expr(data,len, &llbuf,&lcnt, &error);
-if (lres == DW_DLV_OK) {
-	/* lcnt is always 1 */
+  lres = dwarf_loclist_from_expr(dbg,data,len, &llbuf,&lcount, &error);
+  if (lres == DW_DLV_OK) {
+    /* lcount is always 1 */
+    /* Use llbuf  here.*/
 
-	/* Use llbuf  here.*/
-
-        dwarf_dealloc(dbg, llbuf->ld_s, DW_DLA_LOC_BLOCK);
-        dwarf_dealloc(dbg, llbuf, DW_DLA_LOCDESC);
-
-}\fP
+    dwarf_dealloc(dbg, llbuf->ld_s, DW_DLA_LOC_BLOCK);
+    dwarf_dealloc(dbg, llbuf, DW_DLA_LOCDESC);
+  }
+}
+\fP
 .DE
 .in -2
 .P
@@ -3632,7 +3667,6 @@ the scope of this document.
         Dwarf_Unsigned *version_out,
         Dwarf_Bool     *is_single_table,
         Dwarf_Line_Context *context_out,
-        Dwarf_Signed *linecount,
         Dwarf_Error *error)\fP
 .DE
 \f(CWdwarf_srclines()\fP
@@ -3672,22 +3706,11 @@ it is set to zero.
 .P
 \f(CW*context_out()\fP
 is set to an opaque pointer to a 
-\f(CWDwarf_Line_Context\fO
+\f(CWDwarf_Line_Context\fP
 record
 which in turn is used to get
 other data from this line table.
 See below.
-.P
-\f(CW*linecount()\fP
-is set to a count of the number of lines
-total in the tables.  It is set to zero
-if the line table header exists but there
-are no lines for that line table header.
-If the lines are in a standard single table
-the count is the total length of the line table.
-If the table is a two-level line table
-the count is the sum of the logicals table
-and the actuals table.
 .P
 See
 \f(CW*dwarf_srclines_dealloc_b()\fP
@@ -3701,8 +3724,6 @@ for examples showing correct use.
         Dwarf_Line_Context line_context,
         Dwarf_Line ** linebuf,
         Dwarf_Signed *linecount,
-        Dwarf_Line ** linebuf_actuals,
-        Dwarf_Signed *linecount_actuals,
         Dwarf_Error *error)\fP
 .DE
 \f(CW*dwarf_srclines_from_linecontext()\fP
@@ -3732,6 +3753,44 @@ is set to an array of Dwarf_Line pointers.
 \f(CW*linecount\fP is set 
 to the number of pointers in the array.
 .P
+
+.H 3 "dwarf_srclines_two_levelfrom_linecontext()"
+.DS
+\f(CWint dwarf_srclines_from_linecontext(
+        Dwarf_Line_Context line_context,
+        Dwarf_Line ** linebuf,
+        Dwarf_Signed *linecount,
+        Dwarf_Line ** linebuf_actuals,
+        Dwarf_Signed *linecount_actuals,
+        Dwarf_Error *error)\fP
+.DE
+\f(CW*dwarf_srclines_two_levelfrom_linecontext()\fP
+gives access to the line tables.
+On success it returns
+\f(CWDW_DLV_OK\fP
+and passes back line tables
+through the pointers.
+.P
+Though
+\f(CWDW_DLV_OK\fP
+will not be returned callers should
+assume it is possible.
+.P
+On error
+\f(CWDW_DLV_ERROR\fP
+is returned and the error code set through
+the
+\f(CWerror\fP
+pointer.
+.P
+On success:
+.P
+\f(CW*linebuf\fP
+is set to an array of Dwarf_Line pointers.
+.P
+\f(CW*linecount\fP is set
+to the number of pointers in the array.
+.P
 If one is not intending that the experimental two-level
 line tables are of interest then pass NULL
 for
@@ -3744,10 +3803,10 @@ that the second table is not to be passed back.
 If a line table is actually a two-level tables
 \f(CW*linebuf\fP is set to point to an array of
 Logicals lines.
-\f(CW*linecount\fP is set to the number of Logicals. 
+\f(CW*linecount\fP is set to the number of Logicals.
 \f(CW*linebuf_actals\fP is set to point to an array of
 Actuals lines.
-\f(CW*linecount_actuals\fP is set to the number of Actuals. 
+\f(CW*linecount_actuals\fP is set to the number of Actuals.
 
 .H 3 "dwarf_srclines_dealloc_b()"
 .DS
@@ -3771,96 +3830,118 @@ be to stale memory.
 FIXME
 .DS
 \f(CW
-/* EXAMPLE: DWARF5 style access.  */
-int res;
-\f(CWDwarf_Signed cnt =;
-Dwarf_Die cu_die = 0;
-Dwarf_Line linebuf = 0;
-Dwarf_Signed linecount = 0;
-Dwarf_Line linebuf_actuals = 0;
-Dwarf_Signed linecount_actuals = 0;
-Dwarf_Line_Context line_context = 0;
-Dwarf_Line_Context line_context = 0;
-Dwarf_Signed linecount_total = 0;
-Dwarf_Error err = 0;
-Dwarf_Bool is_single_table;
-int sres;
-...
-/*  we use 'return' here to signify we can do nothing more
-    at this point in the code. */
-sres = dwarf_srclines_b(cu_die,&lineversion,
-    &is_single_table,&linecontext,&linecount_total,&err); 
-if (sres != DW_DLV_OK) {
-    /* Handle the DW_DLV_NO_ENTRY or DW_DLV_ERROR */
+void examplec(Dwarf_Die cu_die)
+{
+  /* EXAMPLE: DWARF5 style access.  */
+  Dwarf_Line  *linebuf = 0;
+  Dwarf_Signed linecount = 0;
+  Dwarf_Line  *linebuf_actuals = 0;
+  Dwarf_Signed linecount_actuals = 0;
+  Dwarf_Line_Context line_context = 0;
+  Dwarf_Signed linecount_total = 0;
+  Dwarf_Unsigned table_count = 0;
+  Dwarf_Unsigned lineversion = 0;
+  Dwarf_Error err = 0;
+  int sres = 0;
+  /* ... */
+  /*  we use 'return' here to signify we can do nothing more
+      at this point in the code. */
+  sres = dwarf_srclines_b(cu_die,&lineversion,
+    &table_count,&line_context,&err);
+  if (sres != DW_DLV_OK) {
+    /*  Handle the DW_DLV_NO_ENTRY  or DW_DLV_ERROR
+        No memory was allocated so there nothing
+        to dealloc. */
     return;
-}
-/* DW_DLV_OK */ 
-if (linecount_total == 0) {
-    /* There are no lines, just a line header.
-       Do something with the context (header)  information. : */
-    dwarf_srclines_dealloc_b();
-    return;
-} else if(is_single_table) { 
-    /*  Here the lines are standard lines.
-        There is no two-level line table.
-        So we do not refer to 'actuals'. */
-    sres = dwarf_srclines_from_linecontext(cu_die, 
-        &linebuf,&linecount, 
-        NULL, NULL,
+  }
+  if (table_count == 0) {
+    /*  A line table with no actual lines.  */
+    /*...do something, see dwarf_srclines_files_count()
+       etc below. */
+
+    dwarf_srclines_dealloc_b(line_context);
+    /*  All the memory is released, the line_context
+        and linebuf zeroed now
+        as a reminder they are stale. */
+    linebuf = 0;
+    line_context = 0;
+  } else if (table_count == 1) {
+    Dwarf_Signed i = 0;
+    /*  Standard dwarf 2,3,4, or 5 line table */
+    /*  Do something. */
+    /*  For this case where we have a line table we will likely
+        wish to get the line details: */
+    sres = dwarf_srclines_from_linecontext(line_context,
+        &linebuf,&linecount,
         &err);
     if (sres != DW_DLV_OK) {
         /* Error. Clean up the context information. */
-        dwarf_srclines_dealloc_b();
+        dwarf_srclines_dealloc_b(line_context);
         return;
-    } else if (is_single_table) {
-        /* The lines are normal line table lines. */
-        for (i = 0; i < linecount; ++i) {
-                /* use linebuf[i] */
-        }
-    } else {
-        /* We have a two-level table. The lines are
-        for (i = 0; i < linecount; ++i) {
-                /* use linebuf[i] */
-        }
-FIXME
     }
-} else {
-sres = dwarf_srclines_from_linecontext(cu_die, 
-    &linebuf,&linecount, 
-    &linebuf_actuals,&linecount_actuals, 
-    &err);
-if (sres == DW_DLV_OK) {
-    for (i = 0; i < cnt; ++i) {
+    /* The lines are normal line table lines. */
+    for (i = 0; i < linecount; ++i) {
                 /* use linebuf[i] */
     }
-    if(!is_single_table) 
-        sres = dwarf_srclines_from_linecontext(cu_die, 
-            &linebuf_actuals,&linecount_actuals, 
-            is_logicals,is_actuals,&err);
-     
-    
+    dwarf_srclines_dealloc_b(line_context);
+    /*  All the memory is released, the line_context
+        and linebuf zeroed now as a reminder they are stale */
+    linebuf = 0;
+    line_context = 0;
+    linecount = 0;
+  } else {
+    Dwarf_Signed i = 0;
+    /* ASSERT: table_count == 2,
+       Experimental two-level line table. Version 0xf006
+       We do not define the meaning of this non-standard
+       set of tables here. */
 
-    dwarf_srclines_dealloc_b(dbg, linebuf, cnt);
-} else if (sres == DW_DLV_NO_ENTRY }{
-    /* This should be impossible, but
-       do something. There is nothing to free */
-} else {
-    /* ERROR, show the error or something.
-       There is nothing to free */
+    /*  For 'something C' (two-level line tables)
+        one codes something like this
+        Note that we do not define the meaning or use of two-level line
+        tables as these are experimental, not standard DWARF. */
+    sres = dwarf_srclines_two_level_from_linecontext(line_context,
+            &linebuf,&linecount,
+            &linebuf_actuals,&linecount_actuals,
+            &err);
+    if (sres == DW_DLV_OK) {
+        for (i = 0; i < linecount; ++i) {
+            /* use linebuf[i], these are the 'logicals' entries. */
+        }
+        for (i = 0; i < linecount_actuals; ++i) {
+                    /* use linebuf_actuals[i], these are the actuals entries */
+        }
+        dwarf_srclines_dealloc_b(line_context);
+        line_context = 0;
+        linebuf = 0;
+        linecount = 0;
+        linebuf_actuals = 0;
+        linecount_actuals = 0;
+    } else if (sres == DW_DLV_NO_ENTRY) {
+        /* This should be impossible, but do something.   */
+        /* Then Free the line_context */
+        dwarf_srclines_dealloc_b(line_context);
+        line_context = 0;
+        linebuf = 0;
+        linecount = 0;
+        linebuf_actuals = 0;
+        linecount_actuals = 0;
+    } else {
+        /* ERROR, show the error or something.
+           Free the line_context. */
+        dwarf_srclines_dealloc_b(line_context);
+        line_context = 0;
+        linebuf = 0;
+        linecount = 0;
+        linebuf_actuals = 0;
+        linecount_actuals = 0;
+    }
+
+  }
 }
 \fP
-
-
-
-    }
-}\fP
 .DE
 .in -2
-
-
-FIXME
-
-
 
 .H 2 "Line Context Details (DWARF5 style)"
 FIXME
@@ -3937,17 +4018,24 @@ when no longer of interest.
 .P
 .in +2
 .DS
-\f(CWDwarf_Signed cnt;
-Dwarf_Line *linebuf;
-int sres;
+\f(CW
+void exampled(Dwarf_Debug dbg,Dwarf_Die somedie)
+{
+  Dwarf_Signed count = 0;
+  Dwarf_Line *linebuf = 0;
+  Dwarf_Signed i = 0;
+  Dwarf_Error error = 0;
+  int sres = 0;
 
-sres = dwarf_srclines(somedie, &linebuf,&cnt, &error);
-if (sres == DW_DLV_OK) {
-        for (i = 0; i < cnt; ++i) {
-                /* use linebuf[i] */
-        }
-        dwarf_srclines_dealloc(dbg, linebuf, cnt);
-}\fP
+  sres = dwarf_srclines(somedie, &linebuf,&count, &error);
+  if (sres == DW_DLV_OK) {
+    for (i = 0; i < count; ++i) {
+      /* use linebuf[i] */
+    }
+    dwarf_srclines_dealloc(dbg, linebuf, count);
+  }
+}
+\fP
 .DE
 
 .in -2
@@ -4003,18 +4091,24 @@ if there is no
 corresponding statement program (i.e., if there is no line information).
 .in +2
 .DS
-\f(CWDwarf_Signed cnt;
-char **srcfiles;
-int res;
+\f(CW
+void examplee(Dwarf_Debug dbg,Dwarf_Die somedie)
+{
+  Dwarf_Signed count = 0;
+  char **srcfiles = 0;
+  Dwarf_Signed i = 0;
+  Dwarf_Error error = 0;
+  int res = 0;
 
-res = dwarf_srcfiles(somedie, &srcfiles,&cnt &error);
-if (res == DW_DLV_OK) {
-
-        for (i = 0; i < cnt; ++i) {
-                /* use srcfiles[i] */
-                dwarf_dealloc(dbg, srcfiles[i], DW_DLA_STRING);
-        }
-        dwarf_dealloc(dbg, srcfiles, DW_DLA_LIST);
+  res = dwarf_srcfiles(somedie, &srcfiles,&count,&error);
+  if (res == DW_DLV_OK) {
+    for (i = 0; i < count; ++i) {
+      /* use srcfiles[i] */
+      dwarf_dealloc(dbg, srcfiles[i], DW_DLA_STRING);
+    }
+    dwarf_dealloc(dbg, srcfiles, DW_DLA_LIST);
+  }
+}
 }\fP
 .DE
 .in -2
@@ -4293,22 +4387,26 @@ See section 6.1.1 "Lookup by Name" in the dwarf standard.
 
 .in +2
 .DS
-\f(CWDwarf_Signed cnt;
-Dwarf_Global *globs;
-int res;
+\f(CW
+void examplef(Dwarf_Debug dbg)
+{
+  Dwarf_Signed count = 0;
+  Dwarf_Global *globs = 0;
+  Dwarf_Signed i = 0;
+  Dwarf_Error  error = 0;
+  int res = 0;
 
-res = dwarf_get_globals(dbg, &globs,&cnt, &error);
-if (res == DW_DLV_OK) {
-
-        for (i = 0; i < cnt; ++i) {
+  res = dwarf_get_globals(dbg, &globs,&count, &error);
+  if (res == DW_DLV_OK) {
+    for (i = 0; i < count; ++i) {
                 /* use globs[i] */
-        }
-        dwarf_globals_dealloc(dbg, globs, cnt);
-}\fP
+    }
+    dwarf_globals_dealloc(dbg, globs, count);
+  }
+}
+\fP
 .DE
 .in -2
-
-
 .P
 The following code is deprecated as of July 15, 2005 as it does not
 free all relevant memory.
@@ -4333,6 +4431,7 @@ int res;
 res = dwarf_get_globals(dbg, &globs,&cnt, &error);
 if (res == DW_DLV_OK) {
 
+        /* OBSOLETE: DO NOT USE to deallocate*/
         for (i = 0; i < cnt; ++i) {
                 /* use globs[i] */
                 dwarf_dealloc(dbg, globs[i], DW_DLA_GLOBAL_CONTEXT);
@@ -4526,18 +4625,24 @@ See section 6.1.1 "Lookup by Name" in the dwarf standard.
 
 .in +2
 .DS
-\f(CWDwarf_Signed cnt;
-Dwarf_Type *types;
-int res;
+\f(CW
+void exampleg(Dwarf_Debug dbg)
+{
+  Dwarf_Error error = 0;
+  Dwarf_Signed count = 0;
+  Dwarf_Type *types = 0;
+  Dwarf_Signed i = 0;
+  int res = 0;
 
-res = dwarf_get_pubtypes(dbg, &types,&cnt, &error);
-if (res == DW_DLV_OK) {
-
-        for (i = 0; i < cnt; ++i) {
-                /* use types[i] */
-        }
-        dwarf_types_dealloc(dbg, types, cnt);
-}\fP
+  res = dwarf_get_pubtypes(dbg, &types,&count, &error);
+  if (res == DW_DLV_OK) {
+    for (i = 0; i < count; ++i) {
+      /* use types[i] */
+    }
+    dwarf_types_dealloc(dbg, types, count);
+  }
+}
+\fP
 .DE
 .in -2
 
@@ -4667,18 +4772,24 @@ interest.  \f(CWdwarf_weaks_dealloc()\fPis new as of July 15, 2005.
 
 .in +2
 .DS
-\f(CWDwarf_Signed cnt;
-Dwarf_Weak *weaks;
-int res;
+\f(CW
+void exampleh(Dwarf_Debug dbg)
+{
+  Dwarf_Error error = 0;
+  Dwarf_Signed count = 0;
+  Dwarf_Weak *weaks = 0;
+  Dwarf_Signed i = 0;
+  int res = 0;
 
-res = dwarf_get_weaks(dbg, &weaks, &cnt, &error);
-if (res == DW_DLV_OK) {
-
-        for (i = 0; i < cnt; ++i) {
-                /* use weaks[i] */
-        }
-        dwarf_weaks_dealloc(dbg, weaks, cnt);
-}\fP
+  res = dwarf_get_weaks(dbg, &weaks, &count, &error);
+  if (res == DW_DLV_OK) {
+    for (i = 0; i < count; ++i) {
+      /* use weaks[i] */
+    }
+    dwarf_weaks_dealloc(dbg, weaks, count);
+  }
+}
+\fP
 .DE
 .in -2
 
@@ -4699,19 +4810,27 @@ followed by the deallocation of the list itself with the allocation type
 
 .in +2
 .DS
-\f(CWDwarf_Signed cnt;
-Dwarf_Weak *weaks;
-int res;
+\f(CW
+void examplei(Dwarf_Debug dbg)
+{
+  Dwarf_Error error = 0;
+  Dwarf_Signed count = 0;
+  Dwarf_Weak *weaks = 0;
+  Dwarf_Signed i = 0;
+  int res = 0;
 
-res = dwarf_get_weaks(dbg, &weaks, &cnt, &error);
-if (res == DW_DLV_OK) {
-
-        for (i = 0; i < cnt; ++i) {
-                /* use weaks[i] */
-                dwarf_dealloc(dbg, weaks[i], DW_DLA_WEAK_CONTEXT);
-        }
-        dwarf_dealloc(dbg, weaks, DW_DLA_LIST);
-}\fP
+  res = dwarf_get_weaks(dbg, &weaks, &count, &error);
+  if (res == DW_DLV_OK) {
+    /* OBSOLETE: do not use dealloc for this.
+       See above */
+    for (i = 0; i < count; ++i) {
+      /* use weaks[i] */
+      dwarf_dealloc(dbg, weaks[i], DW_DLA_WEAK);
+    }
+    dwarf_dealloc(dbg, weaks, DW_DLA_LIST);
+  }
+}
+\fP
 .DE
 .in -2
 
@@ -4831,18 +4950,24 @@ descriptors should be freed using \f(CWdwarf_funcs_dealloc()\fP.
 
 .in +2
 .DS
-\f(CWDwarf_Signed cnt;
-Dwarf_Func *funcs;
-int fres;
+\f(CW
+void examplej(Dwarf_Debug dbg)
+{
+  Dwarf_Error error = 0;
+  Dwarf_Signed count = 0;
+  Dwarf_Func *funcs = 0;
+  Dwarf_Signed i = 0;
+  int fres = 0;
 
-fres = dwarf_get_funcs(dbg, &funcs, &cnt, &error);
-if (fres == DW_DLV_OK) {
-
-        for (i = 0; i < cnt; ++i) {
-                /* use funcs[i] */
-        }
-        dwarf_funcs_dealloc(dbg, funcs, cnt);
-}\fP
+  fres = dwarf_get_funcs(dbg, &funcs, &count, &error);
+  if (fres == DW_DLV_OK) {
+    for (i = 0; i < count; ++i) {
+      /* use funcs[i] */
+    }
+    dwarf_funcs_dealloc(dbg, funcs, count);
+  }
+}
+\fP
 .DE
 .in -2
 
@@ -4864,19 +4989,26 @@ the descriptors are no longer of interest.
 
 .in +2
 .DS
-\f(CWDwarf_Signed cnt;
-Dwarf_Func *funcs;
-int fres;
+\f(CW
+void examplek(Dwarf_Debug dbg)
+{
+  Dwarf_Error error = 0;
+  Dwarf_Func *funcs = 0;
+  Dwarf_Signed count = 0;
+  Dwarf_Signed i = 0;
+  int fres = 0;
 
-fres = dwarf_get_funcs(dbg, &funcs, &error);
-if (fres == DW_DLV_OK) {
-
-        for (i = 0; i < cnt; ++i) {
-                /* use funcs[i] */
-                dwarf_dealloc(dbg, funcs[i], DW_DLA_FUNC_CONTEXT);
-        }
-        dwarf_dealloc(dbg, funcs, DW_DLA_LIST);
-}\fP
+  fres = dwarf_get_funcs(dbg, &funcs,&count, &error);
+  if (fres == DW_DLV_OK) {
+    /* OBSOLETE: see dwarf_funcs_dealloc() above */
+    for (i = 0; i < count; ++i) {
+      /* use funcs[i] */
+      dwarf_dealloc(dbg, funcs[i], DW_DLA_FUNC);
+    }
+    dwarf_dealloc(dbg, funcs, DW_DLA_LIST);
+  }
+}
+\fP
 .DE
 .in -2
 
@@ -5004,18 +5136,24 @@ and frees all memory allocated by \f(CWdwarf_get_types()\fP.
 
 .in +2
 .DS
-\f(CWDwarf_Signed cnt;
-Dwarf_Type *types;
-int res;
+\f(CW
+void examplel(Dwarf_Debug dbg)
+{
+  Dwarf_Error error = 0;
+  Dwarf_Signed count = 0;
+  Dwarf_Type *types = 0;
+  Dwarf_Signed i = 0;
+  int res = 0;
 
-res = dwarf_get_types(dbg, &types,&cnt, &error);
-if (res == DW_DLV_OK) {
-
-        for (i = 0; i < cnt; ++i) {
-                /* use types[i] */
-        }
-        dwarf_types_dealloc(dbg, types, cnt);
-}\fP
+  res = dwarf_get_types(dbg, &types,&count, &error);
+  if (res == DW_DLV_OK) {
+    for (i = 0; i < count; ++i) {
+      /* use types[i] */
+    }
+    dwarf_types_dealloc(dbg, types, count);
+  }
+}
+\fP
 .DE
 .in -2
 
@@ -5038,19 +5176,26 @@ longer of interest.
 
 .in +2
 .DS
-\f(CWDwarf_Signed cnt;
-Dwarf_Type *types;
-int res;
+\f(CW
+void examplem(Dwarf_Debug dbg)
+{
+  Dwarf_Error error = 0;
+  Dwarf_Signed count = 0;
+  Dwarf_Type *types = 0;
+  Dwarf_Signed i = 0;
+  int res = 0;
 
-res = dwarf_get_types(dbg, &types,&cnt, &error);
-if (res == DW_DLV_OK) {
-
-        for (i = 0; i < cnt; ++i) {
-                /* use types[i] */
-                dwarf_dealloc(dbg, types[i], DW_DLA_TYPENAME_CONTEXT);
-        }
-        dwarf_dealloc(dbg, types, DW_DLA_LIST);
-}\fP
+  /*  OBSOLETE: see dwarf_types_dealloc() above */
+  res = dwarf_get_types(dbg, &types,&count, &error);
+  if (res == DW_DLV_OK) {
+    for (i = 0; i < count; ++i) {
+      /* use types[i] */
+      dwarf_dealloc(dbg, types[i], DW_DLA_TYPENAME);
+    }
+    dwarf_dealloc(dbg, types, DW_DLA_LIST);
+  }
+}
+\fP
 .DE
 .in -2
 
@@ -5175,18 +5320,23 @@ freed using \f(CWdwarf_vars_dealloc()\fP.
 
 .in +2
 .DS
-\f(CWDwarf_Signed cnt;
-Dwarf_Var *vars;
-int res;
-
-res = dwarf_get_vars(dbg, &vars,&cnt &error);
-if (res == DW_DLV_OK) {
-
-        for (i = 0; i < cnt; ++i) {
-                /* use vars[i] */
-        }
-        dwarf_vars_dealloc(dbg, vars, cnt);
-}\fP
+\f(CW
+void examplen(Dwarf_Debug dbg)
+{
+  Dwarf_Error error = 0;
+  Dwarf_Signed count = 0;
+  Dwarf_Var *vars = 0;
+  Dwarf_Signed i = 0;
+  int res = 0;
+  res = dwarf_get_vars(dbg, &vars,&count,&error);
+  if (res == DW_DLV_OK) {
+    for (i = 0; i < count; ++i) {
+      /* use vars[i] */
+    }
+    dwarf_vars_dealloc(dbg, vars, count);
+  }
+}
+\fP
 .DE
 .in -2
 
@@ -5206,19 +5356,25 @@ longer of interest.
 
 .in +2
 .DS
-\f(CWDwarf_Signed cnt;
-Dwarf_Var *vars;
-int res;
-
-res = dwarf_get_vars(dbg, &vars,&cnt &error);
-if (res == DW_DLV_OK) {
-
-        for (i = 0; i < cnt; ++i) {
-                /* use vars[i] */
-                dwarf_dealloc(dbg, vars[i], DW_DLA_VAR_CONTEXT);
-        }
-        dwarf_dealloc(dbg, vars, DW_DLA_LIST);
-}\fP
+\f(CW
+void exampleo(Dwarf_Debug dbg)
+{
+  Dwarf_Error error = 0;
+  Dwarf_Signed count = 0;
+  Dwarf_Var *vars = 0;
+  Dwarf_Signed i = 0;
+  int res = 0;
+  res = dwarf_get_vars(dbg, &vars,&count,&error);
+  if (res == DW_DLV_OK) {
+    /* DO NOT USE: see dwarf_vars_dealloc() above */
+    for (i = 0; i < count; ++i) {
+      /* use vars[i] */
+      dwarf_dealloc(dbg, vars[i], DW_DLA_VAR);
+    }
+    dwarf_dealloc(dbg, vars, DW_DLA_LIST);
+  }
+}
+\fP
 .DE
 .in -2
 
@@ -5361,26 +5517,44 @@ no macro information.
 .P
 .in +2
 .DS
-\f(CWDwarf_Unsigned max = 0;
-Dwarf_Off cur_off = 0;
-Dwarf_Signed count = 0;
-Dwarf_Macro_Details *maclist;
-int errv;
+\f(CW
+void examplep(Dwarf_Debug dbg, Dwarf_Off cur_off)
+{
+  Dwarf_Error error = 0;
+  Dwarf_Signed count = 0;
+  Dwarf_Macro_Details *maclist = 0;
+  Dwarf_Signed i = 0;
+  Dwarf_Unsigned max = 500000; /* sanity limit */
+  int errv = 0;
 
-/* Loop through all the compilation units macro info.  
-   This is not guaranteed to work because DWARF does not
-   guarantee every byte in the section is meaningful:
-   there can be garbage between the macro info
-   for CUs.  But this loop will usually work.
-*/
-while((errv = dwarf_get_macro_details(dbg, cur_off,max,
-     &count,&maclist,&error))== DW_DLV_OK) {
+  /* Given an offset from a compilation unit,
+     start at that offset (from DW_AT_macroinfo)
+     and get its macro details. */
+  errv = dwarf_get_macro_details(dbg, cur_off,max,
+       &count,&maclist,&error);
+  if (errv == DW_DLV_OK) {
+    for (i = 0; i < count; ++i) {
+      /* use maclist[i] */
+    }
+    dwarf_dealloc(dbg, maclist, DW_DLA_STRING);
+  }
+  /* Loop through all the compilation units macro info from zero.
+     This is not guaranteed to work because DWARF does not
+     guarantee every byte in the section is meaningful:
+     there can be garbage between the macro info
+     for CUs.  But this loop will sometimes work.
+  */
+  cur_off = 0;
+  while((errv = dwarf_get_macro_details(dbg, cur_off,max,
+       &count,&maclist,&error))== DW_DLV_OK) {
     for (i = 0; i < count; ++i) {
       /* use maclist[i] */
     }
     cur_off = maclist[count-1].dmd_offset + 1;
     dwarf_dealloc(dbg, maclist, DW_DLA_STRING);
-}\fP
+  }
+}
+\fP
 .DE
 
 
@@ -5621,22 +5795,26 @@ This dealloc approach is new as of July 15, 2005.
 
 .in +2
 .DS
-\f(CWDwarf_Signed cnt;
-Dwarf_Cie *cie_data;
-Dwarf_Signed cie_count;
-Dwarf_Fde *fde_data;
-Dwarf_Signed fde_count;
-int fres;
+\f(CW
+void exampleq(Dwarf_Debug dbg)
+{
+  Dwarf_Signed cnt = 0;
+  Dwarf_Cie *cie_data = 0;
+  Dwarf_Signed cie_count = 0;
+  Dwarf_Fde *fde_data = 0;
+  Dwarf_Signed fde_count = 0;
+  int fres = 0;
 
-fres = dwarf_get_fde_list(dbg,&cie_data,&cie_count,
-                &fde_data,&fde_count,&error);
-if (fres == DW_DLV_OK) {
-        dwarf_fde_cie_list_dealloc(dbg, cie_data, cie_count,
-		fde_data,fde_count);
-}\fP
+  fres = dwarf_get_fde_list(dbg,&cie_data,&cie_count,
+    &fde_data,&fde_count,&error);
+  if (fres == DW_DLV_OK) {
+    dwarf_fde_cie_list_dealloc(dbg, cie_data, cie_count,
+      fde_data,fde_count);
+  }
+}
+\fP
 .DE
 .in -2
-
 
 
 .P
@@ -5645,28 +5823,33 @@ free all relevant memory.
 This approach  still works as well as it ever did.
 .in +2
 .DS
-\f(CWDwarf_Signed cnt;
-Dwarf_Cie *cie_data;
-Dwarf_Signed cie_count;
-Dwarf_Fde *fde_data;
-Dwarf_Signed fde_count;
-int fres;
+\f(CW
+/* OBSOLETE EXAMPLE */
+void exampleqb(Dwarf_Debug dbg)
+{
+  Dwarf_Signed cnt = 0;
+  Dwarf_Cie *cie_data = 0;
+  Dwarf_Signed cie_count = 0;
+  Dwarf_Fde *fde_data = 0;
+  Dwarf_Signed fde_count = 0;
+  int fres = 0;
+  fres = dwarf_get_fde_list(dbg,&cie_data,&cie_count,
+    &fde_data,&fde_count,&error);
+  if (fres == DW_DLV_OK) {
+    for (i = 0; i < cie_count; ++i) {
+      /* use cie[i] */ 
+      dwarf_dealloc(dbg, cie_data[i], DW_DLA_CIE);
+    }   
+    for (i = 0; i < fde_count; ++i) {
+      /* use fde[i] */ 
+      dwarf_dealloc(dbg, fde_data[i], DW_DLA_FDE);
+    }
+    dwarf_dealloc(dbg, cie_data, DW_DLA_LIST);
+    dwarf_dealloc(dbg, fde_data, DW_DLA_LIST);
+  }
 
-fres = dwarf_get_fde_list(dbg,&cie_data,&cie_count, 
-		&fde_data,&fde_count,&error);
-if (fres == DW_DLV_OK) {
-
-        for (i = 0; i < cie_count; ++i) {
-                /* use cie[i] */
-                dwarf_dealloc(dbg, cie_data[i], DW_DLA_CIE);
-        }
-        for (i = 0; i < fde_count; ++i) {
-                /* use fde[i] */
-                dwarf_dealloc(dbg, fde_data[i], DW_DLA_FDE);
-        }
-        dwarf_dealloc(dbg, cie_data, DW_DLA_LIST);
-        dwarf_dealloc(dbg, fde_data, DW_DLA_LIST);
-}\fP
+}
+\fP
 .DE
 .in -2
 
@@ -5706,19 +5889,27 @@ This dealloc approach is new as of July 15, 2005.
 
 .in +2
 .DS
-\f(CWDwarf_Signed cnt;
-Dwarf_Cie *cie_data;
-Dwarf_Signed cie_count;
-Dwarf_Fde *fde_data;
-Dwarf_Signed fde_count;
-int fres;
+\f(CW
+void exampler(Dwarf_Debug dbg)
+{
+  Dwarf_Signed count = 0;
+  Dwarf_Cie *cie_data = 0;
+  Dwarf_Signed cie_count = 0;
+  Dwarf_Fde *fde_data = 0;
+  Dwarf_Signed fde_count = 0;
+  Dwarf_Error error = 0;
+  int fres = 0;
 
-fres = dwarf_get_fde_list(dbg,&cie_data,&cie_count,
-                &fde_data,&fde_count,&error);
-if (fres == DW_DLV_OK) {
-        dwarf_fde_cie_list_dealloc(dbg, cie_data, cie_count,
-                fde_data,fde_count);
-}\fP
+  fres = dwarf_get_fde_list(dbg,&cie_data,&cie_count,
+    &fde_data,&fde_count,&error);
+  if (fres == DW_DLV_OK) { 
+    dwarf_fde_cie_list_dealloc(dbg, cie_data, cie_count,
+        fde_data,fde_count);
+  } else { 
+    /* ERROR or NO ENTRY. Do something */
+  }
+}
+\fP
 .DE
 .in -2
 
@@ -6411,19 +6602,23 @@ that a CIE pointer to the frame's CIE be passed in.
 
 .in +2
 .DS
-\f(CWDwarf_Signed cnt;
-Dwarf_Frame_Op *frameops;
-Dwarf_Ptr instruction;
-Dwarf_Unsigned len;
-int res;
+\f(CW
+void examples(Dwarf_Cie cie,Dwarf_Ptr instruction,Dwarf_Unsigned len))
+{
+  Dwarf_Signed cnt = 0;
+  Dwarf_Frame_Op *frameops = 0;
+  int res = 0;
 
-res = expand_frame_instructions(dbg,instruction,len, &frameops,&cnt, &error);
-if (res == DW_DLV_OK) {
+  res = expand_frame_instructions(dbg,instruction,len, 
+    &frameops,&cnt, &error);
+  if (res == DW_DLV_OK) {
     for (i = 0; i < cnt; ++i) {
-        /* use frameops[i] */
+      /* use frameops[i] */
     }
     dwarf_dealloc(dbg, frameops, DW_DLA_FRAME_BLOCK);
-}\fP
+  }
+}
+\fP
 .DE
 .in -2
 .H 4 "dwarf_get_fde_exception_info()"
@@ -6509,36 +6704,35 @@ current procedure, not genuine pc values.
 .in +2
 .DS
 \f(CW
-/* Looping through the dwarf_loc section finding loclists:
-   an example.  */
-int res;
-Dwarf_Unsigned next_entry;
-Dwarf_unsigned offset=0;
-Dwarf_Addr hipc_off;
-Dwarf_Addr lopc_off;
-Dwarf_Ptr data;
-Dwarf_Unsigned entry_len;
-Dwarf_Unsigned next_entry;
-Dwarf_Error err;
+void examplet(Dwarf_Debug dbg,Dwarf_Unsigned offset)
+{
+  /* Looping through the dwarf_loc section finding loclists:
+     an example.  */
+  int res;
+  Dwarf_Unsigned next_entry = 0;
+  Dwarf_Addr hipc_off = 0;
+  Dwarf_Addr lowpc_off = 0;
+  Dwarf_Ptr data = 0;
+  Dwarf_Unsigned entry_len = 0;
+  Dwarf_Error err = 0;
 
-    for(;;) {      
-        res = dwarf_get_loclist_entry(dbg,newoffset,&hipc_off,
-            &lowpc_off, &data, &entry_len,&next_entry,&err);
-        if (res == DW_DLV_OK) {
-            /* A valid entry. */
-            newoffset = next_entry;
-            continue;
-        } else if (res ==DW_DLV_NO_ENTRY) {
-            /* Done! */
-            break;
-        } else {
-            /* Error! */
-            break;
-        }
-         
-
+  for(;;) {
+    res = dwarf_get_loclist_entry(dbg,offset,&hipc_off,
+      &lowpc_off, &data, &entry_len,&next_entry,&err);
+    if (res == DW_DLV_OK) {
+      /* A valid entry. */
+      offset = next_entry;
+      continue;
+    } else if (res ==DW_DLV_NO_ENTRY) {
+      /* Done! */
+      break;
+    } else {
+      /* Error! */
+      break;
     }
-}\fP
+  }
+}
+\fP
 .DE
 .in -2
 
@@ -6707,19 +6901,25 @@ section.
 
 .in +2
 .DS
-\f(CWDwarf_Signed cnt;
-Dwarf_Arange *arang;
-int res;
+\f(CW
+void exampleu(Dwarf_Debug dbg)
+{
+  Dwarf_Signed cnt = 0;
+  Dwarf_Arange *arang = 0;
+  int res = 0;
+  Dwarf_Error error = 0;
 
-res = dwarf_get_aranges(dbg, &arang,&cnt, &error);
-if (res == DW_DLV_OK) {
+  res = dwarf_get_aranges(dbg, &arang,&cnt, &error);
+  if (res == DW_DLV_OK) {
+    for (i = 0; i < cnt; ++i) {
+      /* use arang[i] */
+      dwarf_dealloc(dbg, arang[i], DW_DLA_ARANGE);
+    }
+    dwarf_dealloc(dbg, arang, DW_DLA_LIST);
+  }
 
-        for (i = 0; i < cnt; ++i) {
-                /* use arang[i] */
-                dwarf_dealloc(dbg, arang[i], DW_DLA_ARANGE);
-        }
-        dwarf_dealloc(dbg, arang, DW_DLA_LIST);
-}\fP
+}
+\fP
 .DE
 .in -2
 
@@ -6931,19 +7131,26 @@ dumper applications, most applications will not use it.
 
 .in +2
 .DS
-\f(CWDwarf_Signed cnt;
-Dwarf_Ranges *ranges;
-Dwarf_Unsigned bytes;
-int res;
-res = dwarf_get_ranges_a(dbg,off,dieptr, &ranges,&cnt,&bytes,&error);
-if (res == DW_DLV_OK) {
-        Dwarf_Signed i;
-        for( i = 0; i < cnt; ++i ) {
-            Dwarf_Ranges *cur = ranges+i;
-            /* Use cur. */
-        }
-        dwarf_ranges_dealloc(dbg,ranges,cnt);
-}\fP
+\f(CW
+void examplev(Dwarf_Debug dbg,Dwarf_Unsigned offset,Dwarf_Die die)
+{
+  Dwarf_Signed cnt = 0;
+  Dwarf_Ranges *ranges = 0;
+  Dwarf_Unsigned bytes = 0;
+  Dwarf_Error error = 0;
+  int res = 0;
+  res = dwarf_get_ranges_a(dbg,offset,die, 
+    &ranges,&cnt,&bytes,&error);
+  if (res == DW_DLV_OK) {
+    Dwarf_Signed i;
+    for( i = 0; i < cnt; ++i ) { 
+      Dwarf_Ranges *cur = ranges+i;
+      /* Use cur. */
+    }
+    dwarf_ranges_dealloc(dbg,ranges,cnt);
+  }
+}
+\fP
 .DE
 .in -2
 
@@ -7056,37 +7263,41 @@ example makes it rather too long).
 
 .in +2
 .DS
-\f(CWDwarf_Gdbindex gindexptr;
-Dwarf_Unsigned version = 0;
-Dwarf_Unsigned cu_list_offset = 0;
-Dwarf_Unsigned types_cu_list_offset = 0;
-Dwarf_Unsigned address_area_offset = 0;
-Dwarf_Unsigned symbol_table_offset = 0;
-Dwarf_Unsigned constant_pool_offset = 0;
-Dwarf_Unsigned section_size = 0;
-Dwarf_Unsigned reserved = 0;
-Dwarf_Error error = 0;
-const char ** section_name = 0;
-int res;
-res = dwarf_gdbindex_header(dbg,&gindexptr,
+\f(CW
+void examplew(Dwarf_Debug dbg,Dwarf_Unsigned offset,Dwarf_Die die)
+{
+  Dwarf_Gdbindex gindexptr = 0;
+  Dwarf_Unsigned version = 0;
+  Dwarf_Unsigned cu_list_offset = 0;
+  Dwarf_Unsigned types_cu_list_offset = 0;
+  Dwarf_Unsigned address_area_offset = 0;
+  Dwarf_Unsigned symbol_table_offset = 0;
+  Dwarf_Unsigned constant_pool_offset = 0;
+  Dwarf_Unsigned section_size = 0;
+  Dwarf_Unsigned reserved = 0;
+  Dwarf_Error error = 0;
+  const char * section_name = 0;
+  int res = 0;
+  res = dwarf_gdbindex_header(dbg,&gindexptr,
     &version,&cu_list_offset, &types_cu_list_offset,
     &address_area_offset,&symbol_table_offset,
     &constant_pool_offset, &section_size,
     &reserved,&section_name,&error);
-if (res == DW_DLV_NO_ENTRY) {
+  if (res == DW_DLV_NO_ENTRY) {
        return;
-} else if (res == DW_DLV_ERROR) {
+  } else if (res == DW_DLV_ERROR) {
        return;
-} 
-{
+  }
+  {
     /* do something with the data */
     Dwarf_Unsigned length = 0;
     Dwarf_Unsigned typeslength = 0;
-    res = dwarf_gdbindex_cu_list_array(gindexptr,
+    Dwarf_Unsigned i = 0;
+    res = dwarf_gdbindex_culist_array(gindexptr,
         &length,&error);
     /* Example actions. */
     if (res == DW_DLV_OK) {
-        for(Dwarf_Unsigned i = 0; i < length; ++i) {
+        for(i = 0; i < length; ++i) {
             Dwarf_Unsigned cuoffset = 0;
             Dwarf_Unsigned culength = 0;
             res = dwarf_gdbindex_culist_entry(gindexptr,
@@ -7096,23 +7307,28 @@ if (res == DW_DLV_NO_ENTRY) {
             }
         }
     }
-    res = dwarf_gdbindex_types_cu_list_array(gindexptr,
+    res = dwarf_gdbindex_types_culist_array(gindexptr,
         &typeslength,&error);
     if (res == DW_DLV_OK) {
-        for(Dwarf_Unsigned i = 0; i < typeslength; ++i) {
+        for(i = 0; i < typeslength; ++i) {
             Dwarf_Unsigned cuoffset = 0;
+            Dwarf_Unsigned tuoffset = 0;
             Dwarf_Unsigned culength = 0;
+            Dwarf_Unsigned type_signature  = 0;
             res = dwarf_gdbindex_types_culist_entry(gindexptr,
-                i,&cuoffset,&culength,&error);
+                i,&cuoffset,&tuoffset,&type_signature,&error);
             if (res == DW_DLV_OK) {
-                /* Do something with cuoffset, culength */
+                /* Do something with cuoffset etc. */
             }
         }
     }
     dwarf_gdbindex_free(gindexptr);
-}\fP
+  }
+}
+\fP
 .DE
 .in -2
+
 
 
 
@@ -7261,30 +7477,36 @@ through the pointers.
 Given an open Dwarf_Gdbindex one uses the function as follows:
 .P
 .DS
+\f(CW
+void examplewgdbindex(Dwarf_Gdbindex gdbindex)
 {
-    Dwarf_Unsigned list_len = 0;
-    Dwarf_Unsigned i;
-    int res = dwarf_gdbindex_addressarea(gdbindex,
-        &list_len,err);
+  Dwarf_Unsigned list_len = 0;
+  Dwarf_Unsigned i = 0;
+  int res = 0;
+  Dwarf_Error err = 0;
+
+  res = dwarf_gdbindex_addressarea(gdbindex, &list_len,&err);
+  if (res != DW_DLV_OK) {
+    /* Something wrong, ignore the addressarea */
+  }
+  /* Iterate through the address area. */
+  for( i  = 0; i < list_len; i++) {
+    Dwarf_Unsigned lowpc = 0;
+    Dwarf_Unsigned highpc = 0;
+    Dwarf_Unsigned cu_index,
+    res = dwarf_gdbindex_addressarea_entry(gdbindex,i,
+      &lowpc,&highpc,
+      &cu_index,
+      &err);
     if (res != DW_DLV_OK) {
-        /* Something wrong, ignore the addressarea */
+      /* Something wrong, ignore the addressarea */
+      return;
     }
-    /* Iterate through the address area. */
-    for( i  = 0; i < list_len; i++) {
-        Dwarf_Unsigned lowpc = 0;
-        Dwarf_Unsigned highpc = 0;
-        Dwarf_Unsigned cu_index,
-        res = dwarf_gdbindex_addressarea_entry(gdbindex,i,
-            &lowpc,&highpc,
-            &cu_index,
-            err);
-        if (res != DW_DLV_OK) {
-            /* Something wrong, ignore the addressarea */
-        }
-        /*  We have a valid address area entry, do something
-            with it. */
-    }
+    /*  We have a valid address area entry, do something
+        with it. */
+  }
 }
+\fP
 .DE
 
 
@@ -7318,60 +7540,64 @@ symbol table as follows (using 'return' here to indicate
 we are giving up due to a problem while keeping the 
 example code fairly short):
 .DS
+\f(CW
+void examplex(Dwarf_Gdbindex   gdbindexr)
 {
-    Dwarf_Unsigned symtab_list_length = 0;
-    Dwarf_Unsigned i = 0;
-    int res = dwarf_gdbindex_symboltable_array(gdbindex,
-        &symtab_list_length,err);
-    if (res != DW_DLV_OK) {
-       return;
-    }
-    for( i  = 0; i < symtab_list_length; i++) {
-        Dwarf_Unsigned symnameoffset = 0;
-        Dwarf_Unsigned cuvecoffset = 0;
-        Dwarf_Unsigned ii = 0;
-        const char *name = 0;
-        res = dwarf_gdbindex_symboltable_entry(gdbindex,i,
+  Dwarf_Unsigned symtab_list_length = 0;
+  Dwarf_Unsigned i = 0;
+  Dwarf_Error err = 0;
+  int res = dwarf_gdbindex_symboltable_array(gdbindex,
+    &symtab_list_length,err);
+  if (res != DW_DLV_OK) { 
+    return;
+  } 
+  for( i  = 0; i < symtab_list_length; i++) { 
+    Dwarf_Unsigned symnameoffset = 0;
+    Dwarf_Unsigned cuvecoffset = 0;
+    Dwarf_Unsigned ii = 0;
+    const char *name = 0;
+    res = dwarf_gdbindex_symboltable_entry(gdbindex,i,
             &symnameoffset,&cuvecoffset,
             err);
-        if (res != DW_DLV_OK) {
+    if (res != DW_DLV_OK) {
             return;
-        }
-        res = dwarf_gdbindex_string_by_offset(gdbindex,
-            symnameoffset,&name,err);
-        if(res != DW_DLV_OK) {
-            return;
-        }
-        res = dwarf_gdbindex_cuvector_length(gdbindex,
-            cuvecoffset,&cuvec_len,err);
-        if( res != DW_DLV_OK) {
-            return;
-        }
-        for(ii = 0; ii < cuvec_len; ++ii ) {
-            Dwarf_Unsigned attributes = 0;
-            Dwarf_Unsigned cu_index = 0;
-            Dwarf_Unsigned reserved1 = 0;
-            Dwarf_Unsigned symbol_kind = 0;
-            Dwarf_Unsigned is_static = 0;
-    
-            res = dwarf_gdbindex_cuvector_inner_attributes(
-                gdbindex,cuvecoffset,ii,
-                &attributes,err);
-            if( res != DW_DLV_OK) {
-                return;
-            }
-            /*  'attributes' is a value with various internal
-                fields so we expand the fields. */
-            res = dwarf_gdbindex_cuvector_instance_expand_value(gdbindex,
-                attributes, &cu_index,&reserved1,&symbol_kind, &is_static,
-                err);
-            if( res != DW_DLV_OK) {
-                return;
-            }
-            /* Do something with the attributes. */
-        }
     }
+    res = dwarf_gdbindex_string_by_offset(gdbindex,
+            symnameoffset,&name,err);
+    if(res != DW_DLV_OK) {
+            return;
+    }
+    res = dwarf_gdbindex_cuvector_length(gdbindex,
+            cuvecoffset,&cuvec_len,err);
+    if( res != DW_DLV_OK) {
+            return;
+    }
+    for(ii = 0; ii < cuvec_len; ++ii ) { 
+      Dwarf_Unsigned attributes = 0;
+      Dwarf_Unsigned cu_index = 0;
+      Dwarf_Unsigned reserved1 = 0;
+      Dwarf_Unsigned symbol_kind = 0;
+      Dwarf_Unsigned is_static = 0;
+   
+      res = dwarf_gdbindex_cuvector_inner_attributes(
+        gdbindex,cuvecoffset,ii,
+        &attributes,err);
+      if( res != DW_DLV_OK) {
+        return;
+      }
+      /* 'attributes' is a value with various internal
+         fields so we expand the fields. */
+      res = dwarf_gdbindex_cuvector_instance_expand_value(gdbindex,
+        attributes, &cu_index,&reserved1,&symbol_kind, &is_static,
+        err);
+      if( res != DW_DLV_OK) {
+        return;
+      }
+      /* Do something with the attributes. */
+    } 
+  } 
 }
+\fP
 .DE
 
 .H 3 "dwarf_gdbindex_symboltable_entry()"
@@ -7826,44 +8052,47 @@ and this is not considered an error.
 An example of initializing and disposing
 of a \f(CWDwarf_Xu_Index_Header\fP follows.
 .DS
-int res = 0;
-Dwarf_Xu_Index_Header xuhdr = 0;
-Dwarf_Unsigned version_number = 0;
-Dwarf_Unsigned offsets_count = 0; /*L */
-Dwarf_Unsigned units_count = 0; /* M */
-Dwarf_Unsigned hash_slots_count = 0; /* N */
-Dwarf_Error err = 0;
-const char * ret_type = 0;
-const char * section_name = 0;
-const char *type = "cu"; /* For example. Or "tu" */
-res = dwarf_get_xu_index_header(dbg,
-    type,
-    &xuhdr,
+\f(CW
+void exampley(Dwarf_Debug dbg, const char *type)
+{
+  /* type is "tu" or "cu" */
+  int res = 0;
+  Dwarf_Xu_Index_Header xuhdr = 0;
+  Dwarf_Unsigned version_number = 0;
+  Dwarf_Unsigned offsets_count = 0; /*L */
+  Dwarf_Unsigned units_count = 0; /* M */
+  Dwarf_Unsigned hash_slots_count = 0; /* N */
+  Dwarf_Error err = 0;
+  const char * ret_type = 0;
+  const char * section_name = 0;
+
+  res = dwarf_get_xu_index_header(dbg,
+    type,   
+    &xuhdr, 
     &version_number,
     &offsets_count,
     &units_count,
     &hash_slots_count,
     &section_name,
-    &err);
-if (res == DW_DLV_NO_ENTRY) {
+    &err);  
+  if (res == DW_DLV_NO_ENTRY) {
     /* No such section. */
-    return;
-}
-if (res == DW_DLV_ERROR) {
+    return; 
+  }
+  if (res == DW_DLV_ERROR) {
     /* Something wrong. */
-    return;
-}
-
-if (res == DW_DLV_ERROR) {
+    return; 
+  }
+  if (res == DW_DLV_ERROR) {
     /* Impossible error. */
     dwarf_xu_header_free(xuhdr);
-    return;
+    return; 
+  }
+  /* Do something with the xuhdr here . */
+  dwarf_xu_header_free(xuhdr);
 }
-/* Do something with the xuhdr here . */
-dwarf_xu_header_free(xuhdr);
+\fP
 .DE
-
-
 .H 3 "dwarf_get_xu_index_section_type()"
 .DS
 int dwarf_get_xu_index_section_type(
@@ -7949,27 +8178,42 @@ as the \f(CWrow_index\fP.
 .P
 An example of use follows.
 .DS
-/*  hash_slots_count returned by
-    dwarf_get_xu_index_header(), see above. */
-Dwarf_Unsigned h = 0;
-for( h = 0; h < hash_slots_count; h++) {
-    Dwarf_Unsigned hashval = 0;
+\f(CW
+void examplez( Dwarf_Xu_Index_Header xuhdr,
+  Dwarf_Unsigned hash_slots_count)
+{
+  /*  hash_slots_count returned by
+      dwarf_get_xu_index_header(), see above. */
+  static Dwarf_Sig8 zerohashval;
+
+  Dwarf_Error err = 0;
+  Dwarf_Unsigned h = 0;
+
+  for( h = 0; h < hash_slots_count; h++) {
+    Dwarf_Sig8 hashval;
     Dwarf_Unsigned index = 0;
     Dwarf_Unsigned col = 0;
+    int res = 0;
+
     res = dwarf_get_xu_hash_entry(xuhdr,h,
-                &hashval,&index,&err);
+      &hashval,&index,&err);
     if (res == DW_DLV_ERROR) {
-        /* Oops. hash_slots_count wrong. */
-        return;
+      /* Oops. hash_slots_count wrong. */
+      return;
     } else if (res == DW_DLV_NO_ENTRY) {
-        /* Impossible */
-        return;
-    } else if (hashval == 0 && index == 0 ) {
-        /* An unused hash slot, we do not print them */
-        continue;
+      /* Impossible */
+      return;
+    } else if (!memcmp(&hashval,&zerohashval,sizeof(Dwarf_Sig8))
+      && index == 0 ) {
+      /* An unused hash slot */
+      continue;
     }
-    /*  Here, hashval and index (a row index into offsets and lengths)
-        are valid. */
+    /*Here, hashval and index (a row index into offsets and lengths)
+      are valid. */
+  }
+}
+\fP
+
 .DE
 
 
@@ -8055,15 +8299,23 @@ and
 \f(CWdwarf_get_xu_section_offset()\fP
 follows.
 .DS
-/*  We use  'offsets_count' returned by
-    a dwarf_get_xu_index_header() call. 
-    We use 'index' returned by a 
-    dwarf_get_xu_hash_entry() call. */
-for (col = 0; col < offsets_count; col++) {
+\f(CW
+void exampleza(Dwarf_Xu_Index_Header xuhdr,
+  Dwarf_Unsigned offsets_count, Dwarf_Unsigned index )
+{
+  Dwarf_Error err = 0;
+  Dwarf_Unsigned col = 0;
+  /*  We use  'offsets_count' returned by
+      a dwarf_get_xu_index_header() call.
+      We use 'index' returned by a
+      dwarf_get_xu_hash_entry() call. */
+  for (col = 0; col < offsets_count; col++) {
     Dwarf_Unsigned off = 0;
     Dwarf_Unsigned len = 0;
     const char * name = 0;
     Dwarf_Unsigned num = 0;
+    int res = 0;
+
     res = dwarf_get_xu_section_names(xuhdr,
                     col,&num,&name,&err);
     if (res != DW_DLV_OK) {
@@ -8077,8 +8329,10 @@ for (col = 0; col < offsets_count; col++) {
     /* Here we have the DW_SECT_ name and number
        and the base offset and length of the
        section data applicable to the hash
-       that got us here. 
+       that got us here.
        Use the values.*/
+  }
+
 }
 .DE
 
@@ -8123,22 +8377,26 @@ Examples of bad and good usage are:
 .in +2
 .DS
 \f(CW
-     const char * out;
-     int res;
-     /* The following is wrong, do not do it! */
-     res = dwarf_get_ACCESS_name(DW_TAG_entry_point,&out);
-     /* Nothing one does here with 'res' or 'out'
-        is meaningful. */
+void examplezb(void)
+{
+  const char * out = 0; 
+  int res = 0; 
 
-     /* The following is meaningful.*/
-     res = dwarf_get_TAG_name(DW_TAG_entry_point,&out);
-     if( res == DW_DLV_OK) {
-        /* Here 'out' is a pointer one can use which
-           points to the string "DW_TAG_entry_point". */
-     } else {
-        /* Here 'out' has not been touched, it is 
-           uninitialized.  Do not use it. */
-     }
+  /* The following is wrong, do not do it! */ 
+  res = dwarf_get_ACCESS_name(DW_TAG_entry_point,&out);
+  /* Nothing one does here with 'res' or 'out'
+     is meaningful. */
+
+  /* The following is meaningful.*/
+  res = dwarf_get_TAG_name(DW_TAG_entry_point,&out);
+  if( res == DW_DLV_OK) {
+    /* Here 'out' is a pointer one can use which
+       points to the string "DW_TAG_entry_point". */
+  } else {
+    /* Here 'out' has not been touched, it is
+       uninitialized.  Do not use it. */
+  }
+}
 \fP
 .DE
 .in -2
@@ -8460,6 +8718,8 @@ DW_DLE_BADBITC:Address size passed to
 
 The set of errors returned by \f(CWLibdwarf\fP functions
 is listed below.
+The list does lengthen: the ones listed
+here are not really a complete list.
 Some of the errors are SGI specific.
 
 .DS
@@ -8670,27 +8930,6 @@ Since most error codes are returned from only one  place
 it is normally very useful to simply search the 
 \f(CWlibdwarf\fP source to find
 out where a particular error code is generated.
-
-.H 3 "dwarf_seterrhand()"
-.DS
-\f(CWDwarf_Handler dwarf_seterrhand(
-        Dwarf_Debug dbg,
-        Dwarf_Handler errhand)\fP
-.DE
-The function \f(CWdwarf_seterrhand()\fP replaces the error handler 
-(see \f(CWdwarf_init()\fP) with \f(CWerrhand\fP.  The old error handler 
-is returned.  This function is currently unimplemented.
-
-.H 3 "dwarf_seterrarg()"
-.DS
-\f(CWDwarf_Ptr dwarf_seterrarg(
-        Dwarf_Debug dbg,
-        Dwarf_Ptr errarg)\fP
-.DE
-The function \f(CWdwarf_seterrarg()\fP replaces the pointer to the 
-error handler communication area (see \f(CWdwarf_init()\fP) with 
-\f(CWerrarg\fP.  A pointer to the old area is returned.  This
-function is currently unimplemented.
 
 .H 3 "dwarf_dealloc()"
 .DS

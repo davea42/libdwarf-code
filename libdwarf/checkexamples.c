@@ -990,21 +990,21 @@ void exampleza(Dwarf_Xu_Index_Header xuhdr,
 
 void examplezb(void) 
 {
-     const char * out = 0;
-     int res = 0;
+  const char * out = 0;
+  int res = 0;
 
-     /* The following is wrong, do not do it! */
-     res = dwarf_get_ACCESS_name(DW_TAG_entry_point,&out);
-     /* Nothing one does here with 'res' or 'out'
-        is meaningful. */
+  /* The following is wrong, do not do it! */
+  res = dwarf_get_ACCESS_name(DW_TAG_entry_point,&out);
+  /* Nothing one does here with 'res' or 'out'
+     is meaningful. */
 
-     /* The following is meaningful.*/
-     res = dwarf_get_TAG_name(DW_TAG_entry_point,&out);
-     if( res == DW_DLV_OK) {
-        /* Here 'out' is a pointer one can use which
-           points to the string "DW_TAG_entry_point". */
-     } else {
-        /* Here 'out' has not been touched, it is
-           uninitialized.  Do not use it. */
-     }
+  /* The following is meaningful.*/
+  res = dwarf_get_TAG_name(DW_TAG_entry_point,&out);
+  if( res == DW_DLV_OK) {
+    /* Here 'out' is a pointer one can use which
+       points to the string "DW_TAG_entry_point". */
+  } else {
+    /* Here 'out' has not been touched, it is
+       uninitialized.  Do not use it. */
+  }
 }
