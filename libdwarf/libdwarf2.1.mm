@@ -1,4 +1,4 @@
-n\."
+\."
 \." the following line may be removed if the ff ligature works on your machine
 .lg 0
 \." set up heading formats
@@ -3647,8 +3647,35 @@ There can also be more than one Dwarf_Line per statement.
 For example, if a file is preprocessed by a language translator,
 this could result in translator output showing 2 or more sets of line
 numbers per translated line of output.
+.P
+\f(CW
+\fP 
+As of October 2015 there are two sets of overall access
+and release functions.
+The older set of functions is
+\f(CWdwarf_srclines()\fP 
+with
+\f(CWdwarf_srclines_dealloc()\fP. 
+This set does not handle line table
+headers with no lines.
+.P
+A newer set is
+\f(CWdwarf_srclines_b()\fP 
+with
+\f(CWdwarf_srclines_from_linecontext()\fP 
+and 
+\f(CWdwarf_srclines_dealloc_b()\fP. 
+These functions provide for handling
+both DWARF2 through DWARF5 details
+and give access to line header
+information even if there are no lines
+in a particular compilation unit's line
+table.
+.P
 
-.H 3 "Get A Set of Lines (DWARF5 style)"
+
+
+.H 3 "Get A Set of Lines (including skeleton line tables)"
 This set of functions works on any DWARF version.
 DWARF2,3,4,5 and the DWARF4 based experimental
 two-level line tables are all supported. 
@@ -3661,6 +3688,7 @@ the scope of this document.
 .P
 
 .H 3 "dwarf_srclines_b()"
+This is the
 .DS
 \f(CWint dwarf_srclines_b(
         Dwarf_Die die,
@@ -3669,7 +3697,7 @@ the scope of this document.
         Dwarf_Line_Context *context_out,
         Dwarf_Error *error)\fP
 .DE
-\f(CWdwarf_srclines()\fP
+\f(CWdwarf_srclines_b()\fP
 takes a single argument as input,
 a pointer to a compilation-unit (CU)  DIE.
 The other arguments are used to return values 
@@ -3702,6 +3730,8 @@ are 2,3,4 and 5.
 is set to non-zero if the line table
 is an ordinary single line table.
 If the line table is anything else
+(either a line table header with no lines
+or an experimental two-level line table)
 it is set to zero.
 .P
 \f(CW*context_out()\fP
@@ -3827,7 +3857,6 @@ that any use of the local pointers would
 be to stale memory.
 
 .in +2
-FIXME
 .DS
 \f(CW
 void examplec(Dwarf_Die cu_die)
@@ -3855,7 +3884,8 @@ void examplec(Dwarf_Die cu_die)
     return;
   }
   if (table_count == 0) {
-    /*  A line table with no actual lines.  */
+    /*  A line table with no actual lines.  
+        But with a line table header. */
     /*...do something, see dwarf_srclines_files_count()
        etc below. */
 
@@ -3890,6 +3920,7 @@ void examplec(Dwarf_Die cu_die)
     line_context = 0;
     linecount = 0;
   } else {
+    /* EXPERIMENTAL. NOT IN STANDARD DWARF */
     Dwarf_Signed i = 0;
     /* ASSERT: table_count == 2,
        Experimental two-level line table. Version 0xf006
@@ -3944,42 +3975,222 @@ void examplec(Dwarf_Die cu_die)
 .in -2
 
 .H 2 "Line Context Details (DWARF5 style)"
-FIXME
+New in October 2015.
+When a 
 \f(CW
+Dwarf_Line_Context
 \fP
+has been returned by
+\f(CWdwarf_srclines_b()\fP
+that line context data's details can be retrieved
+with the following set of calls.
 .H 3 "dwarf_srclines_table_offset()"
-FIXME
+.DS
 \f(CW
+int dwarf_srclines_table_offset(Dwarf_Line_Context line_context,
+    Dwarf_Unsigned * offset,
+    Dwarf_Error    * error);
 \fP
-.H 3 "dwarf_srclines_version()"
-FIXME
-\f(CW
-\fP
-.H 3 "dwarf_srclines_comp_dir()"
-FIXME
-\f(CW
-\fP
-.H 3 "dwarf_srclines_files_count()"
-FIXME
-.H 4 "dwarf_srclines_files_data()"
-FIXME
-.H 3 "dwarf_srclines_include_dir_count()"
-FIXME
-.H 3 "dwarf_srclines_include_dir_data()"
-FIXME
-.H 3 "dwarf_srclines_subprog_count()"
-FIXME
-.H 3 "dwarf_srclines_subprog_data()"
-FIXME
+.DE
+On success, this function returns the offset (in the object file
+line section) of the actual line data (i.e. after the line
+header for this compilation unit) through the
+\f(CWoffset\fP
+pointer.
+The offset is probably only of interest when
+printing detailed information about a line table header.
+.P
+In case of error, 
+\f(CWDW_DLV_ERROR\fP
+is returned and the error is set through
+the
+\f(CWerror\fP
+pointer.
+\f(CWDW_DLV_NO_ENTRY\fP
+will not be returned.
 
-.H 3 "Get A Set of Lines (DWARF2,3,4 style)"
+.H 3 "dwarf_srclines_version()"
+.DS
+\f(CW
+int dwarf_srclines_version(Dwarf_Line_Context line_context,
+    Dwarf_Unsigned * version,
+    Dwarf_Error    * error);
+\fP
+.DE
+On success 
+\f(CWDW_DLV_OK\fP
+is returned and the line table version number is returned
+through  the 
+\f(CWversion\fP pointer.
+.P
+In case of error,
+\f(CWDW_DLV_ERROR\fP
+is returned and the error is set through
+the
+\f(CWerror\fP
+pointer.
+\f(CWDW_DLV_NO_ENTRY\fP
+will not be returned.
+
+
+.H 3 "dwarf_srclines_comp_dir()"
+.DS
+\f(CW
+int dwarf_srclines_comp_dir(Dwarf_Line_Context line_context,
+    const char ** compilation_directory,
+    Dwarf_Error * error);
+\fP
+.DE
+On success this returns a pointer to
+the compilation directory string for this
+line table in
+\f(CW*compilation_directory\fP.
+That compilation string may be NULL or the empty
+string.
+.P
+In case of error, 
+\f(CWDW_DLV_ERROR\fP
+is returned and the error is set through
+the
+\f(CWerror\fP
+pointer.
+\f(CWDW_DLV_NO_ENTRY\fP
+will not be returned.
+
+.H 3 "dwarf_srclines_files_count()"
+.DS
+\f(CW
+int dwarf_srclines_files_count(Dwarf_Line_Context line_context,
+    Dwarf_Signed  *  count,
+    Dwarf_Error   *  error);
+\fP
+.DE
+On success, the number of files in the files list of
+a line table header will be returned through
+\f(CWcount\fP.
+.P
+In case of error, 
+\f(CWDW_DLV_ERROR\fP
+is returned and the error is set through
+the
+\f(CWerror\fP
+pointer.
+\f(CWDW_DLV_NO_ENTRY\fP
+will not be returned.
+.H 3 "dwarf_srclines_files_data()"
+.DS
+\f(CW
+int dwarf_srclines_files_data(Dwarf_Line_Context line_context,
+    Dwarf_Signed     index,
+    const char **    name,
+    Dwarf_Unsigned * directory_index,
+    Dwarf_Unsigned * last_mod_time,
+    Dwarf_Unsigned * file_length,
+    Dwarf_Error    * error);
+\fP
+.DE
+On success, data about a single file in
+the files list will be returned through the pointers.
+See DWARF documentation for the meaning of these
+fields.
+\f(CWcount\fP.
+Valid 
+\f(CWindex\fP.
+values are 1 through 
+\f(CWcount\fP,
+reflecting the way the table is defined by DWARF.
+.P
+This returns the raw files data from the
+line table header.
+.P
+In case of error, 
+\f(CWDW_DLV_ERROR\fP
+is returned and the error is set through
+the
+\f(CWerror\fP
+pointer.
+\f(CWDW_DLV_NO_ENTRY\fP
+will not be returned.
+.H 3 "dwarf_srclines_include_dir_count()"
+.DS
+\f(CW
+int dwarf_srclines_include_dir_count(Dwarf_Line_Context line_context,
+    Dwarf_Signed * count,
+    Dwarf_Error  * error);
+\fP
+.DE
+On success, the number of files in the includes list of
+a line table header will be returned through
+\f(CWcount\fP.
+.P
+Valid 
+\f(CWindex\fP.
+values are 1 through 
+\f(CWcount\fP,
+reflecting the way the table is defined by DWARF.
+.P
+In case of error, 
+\f(CWDW_DLV_ERROR\fP
+is returned and the error is set through
+the
+\f(CWerror\fP
+pointer.
+\f(CWDW_DLV_NO_ENTRY\fP
+will not be returned.
+.H 3 "dwarf_srclines_include_dir_data()"
+.DS
+\f(CW
+int dwarf_srclines_include_dir_data(Dwarf_Line_Context line_context,
+    Dwarf_Signed    index,
+    const char **   name,
+    Dwarf_Error  *  error);
+\fP
+.DE
+On success, data about a single file in
+the include files list will be returned through the pointers.
+See DWARF documentation for the meaning of these
+fields.
+.P
+Valid 
+\f(CWindex\fP.
+values are 1 through 
+\f(CWcount\fP,
+reflecting the way the table is defined by DWARF.
+.P
+In case of error, 
+\f(CWDW_DLV_ERROR\fP
+is returned and the error is set through
+the
+\f(CWerror\fP
+pointer.
+\f(CWDW_DLV_NO_ENTRY\fP
+will not be returned.
+.H 3 "dwarf_srclines_subprog_count()"
+\f(CW
+int dwarf_srclines_subprog_count(Dwarf_Line_Context line_context,
+    Dwarf_Signed * count,
+    Dwarf_Error  * error);
+\fP
+This is only useful with experimental two-level line tables.
+.H 3 "dwarf_srclines_subprog_data()"
+\f(CW
+int dwarf_srclines_subprog_data(Dwarf_Line_Context line_context,
+    Dwarf_Signed     index,
+    const char **    name,
+    Dwarf_Unsigned * decl_file,
+    Dwarf_Unsigned * decl_line,
+    Dwarf_Error   *  error);
+\fP
+This is only useful with experimental two-level line tables.
+
+.H 2 "Get A Set of Lines (DWARF2,3,4 style)"
 The function returns information about every source line for a 
 particular compilation-unit.  
 The compilation-unit is specified
 by the corresponding die.
-It does not support DWARF5 skeleton line tables very well
-nor does it support GNU experimental two-level linetables.
-.H 4 "dwarf_srclines()"
+It does not support line tables with no lines very well
+nor does it support experimental two-level linetables.
+.H 3 "dwarf_srclines()"
 .DS
 \f(CWint dwarf_srclines(
         Dwarf_Die die, 
@@ -4047,13 +4258,13 @@ still works, but does not completely free all data allocated.
 The \f(CWdwarf_srclines_dealloc()\fP routine was created
 to fix the problem of incomplete deallocation.
 
-.H 3 "Get the set of Source File Names"
+.H 2 "Get the set of Source File Names"
 
 The function returns the names of the source files that have contributed
 to the compilation-unit represented by the given DIE.  Only the source
 files named in the statement program prologue are returned.
-
-
+.H 3 dwarf_srcfiles() 
+This works for for all line tables.
 .DS
 \f(CWint dwarf_srcfiles(
         Dwarf_Die die,
@@ -4112,12 +4323,16 @@ void examplee(Dwarf_Debug dbg,Dwarf_Die somedie)
 }\fP
 .DE
 .in -2
-.H 3 "Get information about a Single Table Line"
+.H 2 "Get Information About a Single Line Table Line"
 The following functions can be used on the \f(CWDwarf_Line\fP descriptors
-returned by \f(CWdwarf_srclines()\fP to obtain information about the
+returned by 
+\f(CWdwarf_srclines()\fP 
+or
+\f(CWdwarf_srclines_from_linecontext()\fP 
+to obtain information about the
 source lines.
 
-.H 4 "dwarf_linebeginstatement()"
+.H 3 "dwarf_linebeginstatement()"
 .DS
 \f(CWint dwarf_linebeginstatement(
         Dwarf_Line line, 
@@ -4137,7 +4352,7 @@ It returns \f(CWDW_DLV_ERROR\fP on error.
 It never returns \f(CWDW_DLV_NO_ENTRY\fP.
 
 .P
-.H 4 "dwarf_lineendsequence()"
+.H 3 "dwarf_lineendsequence()"
 .DS
 \f(CWint dwarf_lineendsequence(
 	Dwarf_Line line,
@@ -4165,7 +4380,7 @@ returns \f(CWDW_DLV_ERROR\fP on error.
 It never returns \f(CWDW_DLV_NO_ENTRY\fP.
 
 .P
-.H 4 "dwarf_lineno()"
+.H 3 "dwarf_lineno()"
 .DS
 \f(CWint dwarf_lineno(
         Dwarf_Line       line, 
@@ -4180,7 +4395,7 @@ It returns \f(CWDW_DLV_ERROR\fP on error.
 It never returns \f(CWDW_DLV_NO_ENTRY\fP.
 
 .P
-.H 4 "dwarf_line_srcfileno()"
+.H 3 "dwarf_line_srcfileno()"
 .DS
 \f(CWint dwarf_line_srcfileno(
         Dwarf_Line       line, 
@@ -4208,7 +4423,7 @@ The function \f(CWdwarf_line_srcfileno()\fP returns \f(CWDW_DLV_ERROR\fP on erro
 It never returns \f(CWDW_DLV_NO_ENTRY\fP.
 
 .P
-.H 4 "dwarf_lineaddr()"
+.H 3 "dwarf_lineaddr()"
 .DS
 \f(CWint dwarf_lineaddr(
         Dwarf_Line   line, 
@@ -4223,7 +4438,7 @@ It returns \f(CWDW_DLV_ERROR\fP  on error.
 It never returns \f(CWDW_DLV_NO_ENTRY\fP.
 
 .P
-.H 4 "dwarf_lineoff()"
+.H 3 "dwarf_lineoff()"
 .DS
 \f(CWint dwarf_lineoff(
         Dwarf_Line line, 
@@ -4255,7 +4470,7 @@ the pointer-to-signed is left unchanged.
 On error it returns \f(CWDW_DLV_ERROR\fP.
 It never returns \f(CWDW_DLV_NO_ENTRY\fP.
 
-.H 4 "dwarf_linesrc()"
+.H 3 "dwarf_linesrc()"
 .DS
 \f(CWint dwarf_linesrc(
         Dwarf_Line line, 
@@ -4284,7 +4499,7 @@ The storage pointed to by a successful return of
 the allocation type \f(CWDW_DLA_STRING\fP when no longer of interest.
 It never returns \f(CWDW_DLV_NO_ENTRY\fP.
 
-.H 4 "dwarf_lineblock()"
+.H 3 "dwarf_lineblock()"
 .DS
 \f(CWint dwarf_lineblock(
         Dwarf_Line line, 
@@ -4301,7 +4516,7 @@ beginning a basic block).
 It returns \f(CWDW_DLV_ERROR\fP on error.
 It never returns \f(CWDW_DLV_NO_ENTRY\fP.
 
-.H 4 "dwarf_is_addr_set()"
+.H 3 "dwarf_is_addr_set()"
 .DS
 \f(CWint dwarf_line_is_addr_set(
         Dwarf_Line line, 
@@ -4322,7 +4537,7 @@ This is intended to allow consumers to do a more useful job
 printing and analyzing DWARF data, it is not strictly
 necessary.
 
-.H 4 "dwarf_prologue_end_etc()" 
+.H 3 "dwarf_prologue_end_etc()" 
 .DS
 \f(CWint dwarf_prologue_end_etc(Dwarf_Line  line,
         Dwarf_Bool  *    prologue_end,
