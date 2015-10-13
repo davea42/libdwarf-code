@@ -1,3 +1,13 @@
+2015-10-13  David Anderson
+     * dwarf_line.c: Refactored so we have only one
+       piece of code creating file paths from line table data.
+       deleted obsolete code that was #if 0.
+     * libdwarf.h.in: Fleshed out linecontext
+       versions of two-level table readng.
+       Revised  a new interface (dwarf_srclines_b) to
+       make it possible to do a read of just the line header.
+     * libdwarf2.1.mm: Documented new functions.
+       Fixed the example code so it is actually correct
 2015-10-06  David Anderson
      * Makefile.in: Removed source files from the build that
        are only useful to IRIX and only in the context of building

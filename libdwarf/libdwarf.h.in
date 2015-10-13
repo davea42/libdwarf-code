@@ -1384,23 +1384,6 @@ int dwarf_offdie_b(Dwarf_Debug /*dbg*/,
     New October 2011. */
 Dwarf_Bool dwarf_get_die_infotypes_flag(Dwarf_Die /*die*/);
 
-/* Higher level functions (Unimplemented) */
-int dwarf_pcfile(Dwarf_Debug /*dbg*/,
-    Dwarf_Addr       /*pc*/,
-    Dwarf_Die*       /*return_die*/,
-    Dwarf_Error*     /*error*/);
-
-/* Unimplemented */
-int dwarf_pcsubr(Dwarf_Debug /*dbg*/,
-    Dwarf_Addr       /*pc*/,
-    Dwarf_Die*       /*return_die*/,
-    Dwarf_Error*     /*error*/);
-
-/* Unimplemented */
-int dwarf_pcscope(Dwarf_Debug /*dbg*/,
-    Dwarf_Addr       /*pc*/,
-    Dwarf_Die*       /*return_die*/,
-    Dwarf_Error*     /*error*/);
 
 /* operations on DIEs */
 int dwarf_tag(Dwarf_Die /*die*/,
@@ -1522,23 +1505,6 @@ dwarf_loclist_from_expr_b(Dwarf_Debug /*dbg*/,
     Dwarf_Signed * /*listlen*/ ,
     Dwarf_Error *  /*error*/ );
 
-
-/* Unimplemented */
-int dwarf_stringlen(Dwarf_Die /*die*/,
-    Dwarf_Locdesc ** /*returned_locdesc*/,
-    Dwarf_Error*     /*error*/);
-
-/* Unimplemented */
-int dwarf_subscrcnt(Dwarf_Die /*die*/,
-    Dwarf_Signed *   /*returned_count*/,
-    Dwarf_Error*     /*error*/);
-
-/* Unimplemented */
-int dwarf_nthsubscr(Dwarf_Die /*die*/,
-    Dwarf_Unsigned   /*ssndx*/,
-    Dwarf_Die *      /*returned_die*/,
-    Dwarf_Error*     /*error*/);
-
 int dwarf_lowpc(Dwarf_Die /*die*/,
     Dwarf_Addr  *    /*returned_addr*/,
     Dwarf_Error*     /*error*/);
@@ -1564,11 +1530,6 @@ int dwarf_highpc(Dwarf_Die /*die*/,
 
 int dwarf_bytesize(Dwarf_Die /*die*/,
     Dwarf_Unsigned * /*returned_size*/,
-    Dwarf_Error*     /*error*/);
-
-/* Unimplemented */
-int dwarf_isbitfield(Dwarf_Die /*die*/,
-    Dwarf_Bool  *    /*returned_bool*/,
     Dwarf_Error*     /*error*/);
 
 int dwarf_bitsize(Dwarf_Die /*die*/,
@@ -1689,58 +1650,100 @@ int dwarf_formexprloc(Dwarf_Attribute /*attr*/,
 
 /* end attribute query operations. */
 
-/* line number operations */
-/* dwarf_srclines  is the normal interface */
+/* Start line number operations */
+/* dwarf_srclines  is the original interface from 1993. */
 int dwarf_srclines(Dwarf_Die /*die*/,
     Dwarf_Line**     /*linebuf*/,
     Dwarf_Signed *   /*linecount*/,
     Dwarf_Error*     /*error*/);
 
+
+/* If we have two-level line tables, this will return the
+   logicals table in linebuf and the actuals table in
+   linebuf_actuals. For old-style (one-level) tables, it
+   will return the single table through linebuf, and the
+   value returned through linecount_actuals will be 0.
+   The actual version number is returned through version.
+   For two-level line tables, the version returned will
+   be 0xf006. This interface can return data from two-level
+   line tables, which are experimental.
+   Most users will not wish to use dwarf_srclines_two_level() */
+int dwarf_srclines_two_level(Dwarf_Die /*die*/,
+    Dwarf_Unsigned * /*version*/,
+    Dwarf_Line**     /*linebuf*/,
+    Dwarf_Signed *   /*linecount*/,
+    Dwarf_Line**     /*linebuf_actuals*/,
+    Dwarf_Signed *   /*linecount_actuals*/,
+    Dwarf_Error*     /*error*/);
+
 /* dwarf_srclines_dealloc, created July 2005, is the
    appropriate method for deallocating what dwarf_srclines()
-   returns.
-   More complete free than using dwarf_dealloc directly. */
+   and dwarf_srclines_two_level() return.
+   More complete free than using dwarf_dealloc directly.
+
+   When dwarf_srclines_two_level returns two line tables
+   user code should call dwarf_srclines_dealloc()
+   once on each linebuf returned by dwarf_srclines_two_level()
+   first on linebuf_actuals and then on linebuf{_logicals}.   */
+
 void dwarf_srclines_dealloc(Dwarf_Debug /*dbg*/,
     Dwarf_Line*       /*linebuf*/,
     Dwarf_Signed      /*count */);
+
 
 /*  New October 2015, must be used to deallocating
     what is allocated by dwarf_srclines_b() and
     dwarf_srclines_from_linecontext()  use.
     Works for DWARF2,3,4,5 and for experimental line tables.
-    It is the only interface that works well with
-    skeleton line tables.
-    It is the only interface that works at all to
-    access experimental two-level line tables. */
+    New work should use the new Dwarf_Line_Context
+    interfaces.  
+    This also opens a Dwarf_Line_Context struct which
+    is used by dwarf_srcfiles_b()
+    This interface only reads the line table header, so
+    it takes relatively little time. 
+    *is_single_table will be set non-zero for all standard dwarf line sections.
+    *is_single_table will be set zero for line sections with the
+    two_level line table extension (which will have *version_out 0xf006).  */
 int dwarf_srclines_b(Dwarf_Die /*die*/,
-    Dwarf_Unsigned    * /* version_out*/,
-    Dwarf_Bool        * /* is_single_table */,
+    Dwarf_Unsigned     * /* version_out*/,
+    Dwarf_Unsigned     * /* table_count */,
     Dwarf_Line_Context * /* linecontext*/,
-    Dwarf_Signed      * /* lines_count */,
-    Dwarf_Error       * /* error*/);
-/* dwarf_srclines_dealloc_b(), created October 2015, is the
-   appropriate method for deallocating what dwarf_srclines_b()
-   and dwarf_srclines_from_linecontext() allocate.  */
-void dwarf_srclines_dealloc_b(Dwarf_Line_Context /*line_context*/);
+    Dwarf_Error        * /* error*/);
 
 /*  Functions passing in a Dwarf_Line_Context  are only
     available if dwarf_srclines_b() was used to access
     line table information.  */
 /*  New October 2015.  Returns line details.
-    Works for DWARF2,3,4,5 and for experimental 
-    two-level line tables. A single level table will
-    have resulte in  *linebuf_actuals and *linecount_actuals 
-    to 0. */
-int dwarf_srclines_from_linecontext(Dwarf_Line_Context /*line_context*/,
-    Dwarf_Line**     /*linebuf*/,
+    Works for DWARF2,3,4,5.  If linecount
+    returned is zero this is a line table with no lines.*/
+int dwarf_srclines_from_linecontext(
+    Dwarf_Line_Context /*line_context*/,
+    Dwarf_Line  **   /*linebuf*/,
     Dwarf_Signed *   /*linecount*/,
-    Dwarf_Line**     /*linebuf_actuals*/,
+    Dwarf_Error  *   /* error*/);
+
+/*  New October 2015.  Returns line details.
+    Works for DWARF2,3,4,5 and for experimental
+    two-level line tables. A single level table will
+    have *linebuf_actuals and *linecount_actuals set
+    to 0. */
+int dwarf_srclines_two_level_from_linecontext(
+    Dwarf_Line_Context /*line_context*/,
+    Dwarf_Line  **   /*linebuf */,
+    Dwarf_Signed *   /*linecount*/,
+    Dwarf_Line  **   /*linebuf_actuals*/,
     Dwarf_Signed *   /*linecount_actuals*/,
     Dwarf_Error  *   /* error*/);
 
-    
+/* dwarf_srclines_dealloc_b(), created October 2015, is the
+   appropriate method for deallocating everything
+   and dwarf_srclines_from_linecontext(),
+   dwarf_srclines_twolevel_from_linecontext(),
+   and dwarf_srclines_b()  allocate.  */
+void dwarf_srclines_dealloc_b(Dwarf_Line_Context /*line_context*/);
+
 /*  New October 2015. */
-/*    The offset is in the relevent .debug_line or .debug_line.dwo 
+/*    The offset is in the relevent .debug_line or .debug_line.dwo
     section (and in a split dwarf package file includes)
     the base line table offset). */
 int dwarf_srclines_table_offset(Dwarf_Line_Context /*line_context*/,
@@ -1751,13 +1754,13 @@ int dwarf_srclines_table_offset(Dwarf_Line_Context /*line_context*/,
 /*  Compilation Directory name for the current CU.
     section (and in a split dwarf package file includes)
     the base line table offset).  Do not free() the string,
-    it is on a dwarf section. */
+    it is in a dwarf section. */
 int dwarf_srclines_comp_dir(Dwarf_Line_Context /*line_context*/,
     const char ** /*compilation_directory*/,
     Dwarf_Error  *  /*error*/);
 
-/*  New October 2015. */
-/*  Count is the real count of array entries. */
+/*  New October 2015.  Part of the two-level line table extension. */
+/*  Count is the real count of suprogram array entries. */
 int dwarf_srclines_subprog_count(Dwarf_Line_Context /*line_context*/,
     Dwarf_Signed * /*count*/,
     Dwarf_Error  * /* error*/);
@@ -1772,7 +1775,7 @@ int dwarf_srclines_subprog_data(Dwarf_Line_Context /*line_context*/,
     Dwarf_Error   *  /*error*/);
 
 /*  New October 2015. */
-/*  Count is the real count of array entries. */
+/*  Count is the real count of files array entries. */
 int dwarf_srclines_files_count(Dwarf_Line_Context /*line_context*/,
     Dwarf_Signed  *  /*count*/,
     Dwarf_Error   *  /*error*/);
@@ -1790,7 +1793,7 @@ int dwarf_srclines_files_data(Dwarf_Line_Context /*line_context*/,
     Dwarf_Error    * /* error*/);
 
 /*  New October 2015. */
-/*  Count is the real count of array entries. */
+/*  Count is the real count of include array entries. */
 int dwarf_srclines_include_dir_count(Dwarf_Line_Context /*line_context*/,
     Dwarf_Signed *  /*count*/,
     Dwarf_Error  * /* error*/);
@@ -1803,7 +1806,7 @@ int dwarf_srclines_include_dir_data(Dwarf_Line_Context /*line_context*/,
     Dwarf_Error   * /* error*/);
 
 /*  New October 2015. */
-/*  The DWARF version number of this compile-unit 
+/*  The DWARF version number of this compile-unit
     in the .debug_lines section. */
 int dwarf_srclines_version(Dwarf_Line_Context /*line_context*/,
     Dwarf_Unsigned * /*version*/,
@@ -1819,10 +1822,17 @@ int dwarf_srcfiles(Dwarf_Die /*die*/,
     Dwarf_Signed *   /*filecount*/,
     Dwarf_Error*     /*error*/);
 
-/* Unimplemented. */
-int dwarf_dieline(Dwarf_Die /*die*/,
-    Dwarf_Line  *    /*returned_line*/,
-    Dwarf_Error *    /*error*/);
+/*  New October 2015. 
+    Returns the same data as
+    dwarf_srcfiles, but is based on
+    a Dwarf_Line_Context created by 
+    dwarf_srclines_b(). Using this avoids
+    rereading the line table header for this CU. */
+int dwarf_srcfiles_b(Dwarf_Line_Context /*context*/,
+    Dwarf_Unsigned *   /*version*/,
+    char           *** /*srcfiles*/,
+    Dwarf_Signed   *   /*filecount*/,
+    Dwarf_Error    *   /*error*/);
 
 int dwarf_linebeginstatement(Dwarf_Line /*line*/,
     Dwarf_Bool  *    /*returned_bool*/,
@@ -1877,16 +1887,7 @@ int dwarf_prologue_end_etc(Dwarf_Line /* line */,
     Dwarf_Unsigned * /* isa */,
     Dwarf_Unsigned * /* discriminator */,
     Dwarf_Error *    /*error*/);
-
-/* Tertiary interface to line info */
-/* Unimplemented */
-int dwarf_pclines(Dwarf_Debug /*dbg*/,
-    Dwarf_Addr       /*pc*/,
-    Dwarf_Line**     /*linebuf*/,
-    Dwarf_Signed *   /*linecount*/,
-    Dwarf_Signed     /*slide*/,
-    Dwarf_Error*     /*error*/);
-/* end line number operations */
+/* End line table operations */
 
 /* Two-level line tables:
    When reading from an actuals table, dwarf_line_logical()
@@ -1920,6 +1921,7 @@ int dwarf_line_subprog(Dwarf_Line /*line*/,
     char   **        /*returned_filename*/,
     Dwarf_Unsigned * /*returned_lineno*/,
     Dwarf_Error *    /*error*/);
+/* End of line table interfaces. */
 
 /* global name space operations (.debug_pubnames access) */
 int dwarf_get_globals(Dwarf_Debug /*dbg*/,
@@ -2773,7 +2775,6 @@ int dwarf_set_stringcheck(int /*stringcheck*/);
     ignored by libdwarf (and zero on return).
     Returns previous value.  */
 int dwarf_set_reloc_application(int /*apply*/);
-
 
 /* Unimplemented */
 Dwarf_Handler dwarf_seterrhand(Dwarf_Debug /*dbg*/, Dwarf_Handler /*errhand*/);
