@@ -636,14 +636,14 @@ void exampler(Dwarf_Debug dbg)
   Dwarf_Error error = 0;
   int fres = 0;
 
-    fres = dwarf_get_fde_list(dbg,&cie_data,&cie_count,
-      &fde_data,&fde_count,&error);
-    if (fres == DW_DLV_OK) {
-      dwarf_fde_cie_list_dealloc(dbg, cie_data, cie_count,
+  fres = dwarf_get_fde_list(dbg,&cie_data,&cie_count,
+    &fde_data,&fde_count,&error);
+  if (fres == DW_DLV_OK) {
+    dwarf_fde_cie_list_dealloc(dbg, cie_data, cie_count,
         fde_data,fde_count);
-    } else {
-        /* ERROR or NO ENTRY. Do something */
-    }
+  } else {
+    /* ERROR or NO ENTRY. Do something */
+  }
 }
 
 void examples(Dwarf_Debug dbg,Dwarf_Cie cie,
@@ -720,7 +720,8 @@ void examplev(Dwarf_Debug dbg,Dwarf_Unsigned offset,Dwarf_Die die)
   Dwarf_Unsigned bytes = 0;
   Dwarf_Error error = 0;
   int res = 0;
-  res = dwarf_get_ranges_a(dbg,offset,die, &ranges,&count,&bytes,&error);
+  res = dwarf_get_ranges_a(dbg,offset,die, 
+    &ranges,&count,&bytes,&error);
   if (res == DW_DLV_OK) {
     Dwarf_Signed i;
     for( i = 0; i < count; ++i ) {
