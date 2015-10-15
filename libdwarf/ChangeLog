@@ -1,3 +1,26 @@
+2015-10-15  David Anderson
+     * checkexamples.c: Fixed data type in the example code.
+     * dwarf.h: Updated comment about DW_FORM_GNU_strp_alt 
+     * dwarf_elf_access.c: Fixed trailing whitespace and
+       removed debug printf that got left in.
+     * dwarf_error.c: Add new TIED file errors.
+       DW_DLE_NO_TIED_FILE_AVAILABLE, DW_DLE_NO_TIED_STRING_AVAILABLE.
+     * dwarf_form.c: Added support for DW_FORM_GNU_strp_alt.
+     * dwarf_init_finish.c: #if 0 routine all_sig8bits_zero(). 
+     * dwarf_line.c: Now always notice windows-like c: etc
+       as start of a full path. Ensure directories with \ are
+       turned to / in line tables. (for full such transforms
+       configure with --enable-windowspath ) Remove some debug #ifdef
+       lines.
+       Alter the linecontext interface to pass back table count,
+       not linecount.
+     * dwarf_line.h: Add commentary and lc_table_count field.
+     * dwarf_line_table_reader_common.c: Fix indent/trailing whitespace.
+       Now sets lc_table_count;
+     * dwarf_opaque.h: Add _dwarf_get_string_from_tied() interface.
+     * dwarf_print_lines.c: Remove trailing whitespace and some debug printf..
+     * libdwarf.h.in: New error codes. Fix trailing whitespace. Expand
+       commentary.
 2015-10-13  David Anderson
      * dwarf_line.c: Refactored so we have only one
        piece of code creating file paths from line table data.

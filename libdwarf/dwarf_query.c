@@ -1030,8 +1030,6 @@ _dwarf_get_addr_from_tied(Dwarf_Debug dbg,
     return DW_DLV_OK;
 }
 
-
-
 /*
     Takes a die, an attribute attr, and checks if attr
     occurs in die.  Attr is required to be an attribute

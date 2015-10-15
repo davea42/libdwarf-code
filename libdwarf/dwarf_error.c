@@ -385,6 +385,9 @@ const char *_dwarf_errmsgs[] = {
     "DW_DLE_BAD_LINE_TABLE_OPERATION(304) two-level line table botch",
     "DW_DLE_LINE_CONTEXT_BOTCH(305) call is wrong or memory corruption",
     "DW_DLE_LINE_CONTEXT_INDEX_WRONG(306)",
+    "DW_DLE_NO_TIED_STRING_AVAILABLE(307) tied file does not have the string",
+    "DW_DLE_NO_TIED_FILE_AVAILABLE(308) see dwarf_set_tied_dbg()",
+
 };
 
 

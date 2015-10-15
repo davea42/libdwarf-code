@@ -1,3 +1,12 @@
+2015-10-15  David Anderson
+     * dwarfdump.c: Add enum line_flag_type_e so we can test
+       all the srclines interfaces (4 of them). Expand -x
+       for that too.
+     * print_die.c: Support DW_FORM_GNU_strp_alt.
+     * print_lines.c: Update for old and new srclines
+       interfaces.
+     * globals.h: Added the enum line_flag_e variable for
+       recording -x line5= value.
 2015-10-06  David Anderson
      * dwarfdump.c: Now allow selecting alternate line table
        reading code so line table routines can be tested thoroughly.

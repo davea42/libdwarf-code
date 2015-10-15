@@ -697,6 +697,7 @@ print_one_die_section(Dwarf_Debug dbg,Dwarf_Bool is_info)
                 char **srcfiles = 0;
                 int srcf = dwarf_srcfiles(cu_die,
                     &srcfiles, &cnt, &err);
+/*printf("dadebug res %d cnt %d srcfiles[0] %s\n",(int)res,(int)cnt,(cnt>0)?srcfiles[0]:"none"); */
                 if (srcf != DW_DLV_OK) {
                     srcfiles = 0;
                     cnt = 0;
@@ -4050,6 +4051,7 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
     case DW_FORM_string:
     case DW_FORM_strp:
     case DW_FORM_strx:
+    case DW_FORM_GNU_strp_alt: /* An offset to alternate file: tied file */
     case DW_FORM_GNU_str_index: {
         int sres = dwarf_formstring(attrib, &temps, &err);
         if (sres == DW_DLV_OK) {
@@ -4180,20 +4182,6 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
         } else {
             print_error(dbg,
                 "DW_FORM_GNU_ref_alt form with no reference?!",
-                bres, err);
-        }
-        }
-        break;
-    case DW_FORM_GNU_strp_alt: {
-        bres = dwarf_global_formref(attrib, &off, &err);
-        if (bres == DW_DLV_OK) {
-            snprintf(small_buf, sizeof(small_buf),
-                "0x%" DW_PR_XZEROS DW_PR_DUx,
-                (Dwarf_Unsigned) off);
-            esb_append(esbp, small_buf);
-        } else {
-            print_error(dbg,
-                "DW_FORM_GNU_strp_alt form with no reference?!",
                 bres, err);
         }
         }

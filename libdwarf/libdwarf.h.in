@@ -1164,9 +1164,11 @@ struct Dwarf_Obj_Access_Interface_s {
 #define DW_DLE_BAD_LINE_TABLE_OPERATION        304
 #define DW_DLE_LINE_CONTEXT_BOTCH              305
 #define DW_DLE_LINE_CONTEXT_INDEX_WRONG        306
+#define DW_DLE_NO_TIED_STRING_AVAILABLE        307
+#define DW_DLE_NO_TIED_FILE_AVAILABLE          308
 
     /* DW_DLE_LAST MUST EQUAL LAST ERROR NUMBER */
-#define DW_DLE_LAST        306
+#define DW_DLE_LAST        308
 #define DW_DLE_LO_USER     0x10000
 
     /*  Taken as meaning 'undefined value', this is not
@@ -1696,17 +1698,17 @@ void dwarf_srclines_dealloc(Dwarf_Debug /*dbg*/,
     dwarf_srclines_from_linecontext()  use.
     Works for DWARF2,3,4,5 and for experimental line tables.
     New work should use the new Dwarf_Line_Context
-    interfaces.  
+    interfaces.
     This also opens a Dwarf_Line_Context struct which
     is used by dwarf_srcfiles_b()
     This interface only reads the line table header, so
-    it takes relatively little time. 
+    it takes relatively little time.
     *is_single_table will be set non-zero for all standard dwarf line sections.
     *is_single_table will be set zero for line sections with the
     two_level line table extension (which will have *version_out 0xf006).  */
 int dwarf_srclines_b(Dwarf_Die /*die*/,
     Dwarf_Unsigned     * /* version_out*/,
-    Dwarf_Unsigned     * /* table_count */,
+    Dwarf_Small        * /* table_count */,
     Dwarf_Line_Context * /* linecontext*/,
     Dwarf_Error        * /* error*/);
 
@@ -1807,11 +1809,13 @@ int dwarf_srclines_include_dir_data(Dwarf_Line_Context /*line_context*/,
 
 /*  New October 2015. */
 /*  The DWARF version number of this compile-unit
-    in the .debug_lines section. */
+    in the .debug_lines section and the number of
+    actual tables:0 (header with no lines),
+    1 (standard table), or 2 (experimental). */
 int dwarf_srclines_version(Dwarf_Line_Context /*line_context*/,
     Dwarf_Unsigned * /*version*/,
+    Dwarf_Small    * /*table_count*/,
     Dwarf_Error    * /*error*/);
-
 
 
 /*  While 'filecount' is signed, the value
@@ -1822,10 +1826,10 @@ int dwarf_srcfiles(Dwarf_Die /*die*/,
     Dwarf_Signed *   /*filecount*/,
     Dwarf_Error*     /*error*/);
 
-/*  New October 2015. 
+/*  New October 2015.
     Returns the same data as
     dwarf_srcfiles, but is based on
-    a Dwarf_Line_Context created by 
+    a Dwarf_Line_Context created by
     dwarf_srclines_b(). Using this avoids
     rereading the line table header for this CU. */
 int dwarf_srcfiles_b(Dwarf_Line_Context /*context*/,

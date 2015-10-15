@@ -855,6 +855,7 @@ _dwarf_setup(Dwarf_Debug dbg, Dwarf_Error * error)
     return DW_DLV_NO_ENTRY;
 }
 
+#if 0
 static int
 all_sig8_bits_zero(Dwarf_Sig8 *val)
 {
@@ -866,6 +867,7 @@ all_sig8_bits_zero(Dwarf_Sig8 *val)
     }
     return TRUE;
 }
+#endif /* if 0 */
 
 /*  There is one table per CU and one per TU, and each
     table refers to the associated other DWARF data

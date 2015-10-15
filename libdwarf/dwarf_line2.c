@@ -39,7 +39,7 @@
     DW_DLV_ERROR.
 
     Thru pointers, return 2 arrays and a count
-    for rqs (IRIX run-time linker). 
+    for rqs (IRIX run-time linker).
     ONLY meant for SGI IRIX  */
 int
 _dwarf_line_address_offsets(Dwarf_Debug dbg,

@@ -314,6 +314,13 @@ typedef enum /* Dwarf_Check_Categories */ {
 } Dwarf_Check_Categories;
 
 extern boolean info_flag;
+enum line_flag_type_e {
+  std,   /* Meaning choose single table DWARF5 new interfaces. */
+  s2l,   /* Meaning choose two-level DWARF5 new interfaces. */
+  orig,  /* Meaning choose DWARF2,3,4 single level interface. */
+  orig2l /* Meaning choose DWARF 2,3,4 two-level interface. */
+};
+extern enum line_flag_type_e line_flag_selection;
 extern boolean line_flag;
 extern boolean line_skeleton_flag;
 extern boolean line_print_pc;        /* Print <pc> addresses. */

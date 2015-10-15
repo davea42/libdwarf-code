@@ -171,7 +171,7 @@ print_line_detail(
 
 void
 _dwarf_print_line_context_record(Dwarf_Debug dbg,
-    Dwarf_Line_Context line_context) 
+    Dwarf_Line_Context line_context)
 {
     return;
 }
@@ -312,12 +312,6 @@ _dwarf_internal_printlines(Dwarf_Die die,
     if (resattr == DW_DLV_OK) {
         dwarf_dealloc(dbg, comp_dir_attr, DW_DLA_ATTR);
     }
-#ifdef dadebug
-printf("dadebug dwarf_internal line  base 0x%llx line %d\n",(unsigned long long)dbg->de_debug_line.dss_data,__LINE__);
-printf("dadebug dwarf_internal line  len 0x%llx \n",(unsigned long long)dbg->de_debug_line.dss_size);
-printf("dadebug dwarf_internal line  offset 0x%llx \n",(unsigned long long)line_offset);
-printf("dadebug dwarf_internal line  origlineptr 0x%llx\n",(unsigned long long)orig_line_ptr);
-#endif
     line_context = (Dwarf_Line_Context)
         _dwarf_get_alloc(dbg, DW_DLA_LINE_CONTEXT, 1);
     if (line_context == NULL) {
@@ -434,8 +428,8 @@ printf("dadebug dwarf_internal line  origlineptr 0x%llx\n",(unsigned long long)o
             Dwarf_Unsigned tlm2 = 0;
             Dwarf_Unsigned di = 0;
             Dwarf_Unsigned fl = 0;
-           
-            fe = fe2; 
+
+            fe = fe2;
             tlm2 = fe->fi_time_last_mod;
             di = fe->fi_dir_index;
             fl = fe->fi_file_length;
@@ -448,7 +442,7 @@ printf("dadebug dwarf_internal line  origlineptr 0x%llx\n",(unsigned long long)o
                 "    dir index %d\n", (int) di);
             {
                 time_t tt = (time_t) tlm2;
-    
+
                 /* ctime supplies newline */
                 dwarf_printf(dbg,
                     "    last time 0x%x %s",
@@ -498,7 +492,6 @@ printf("dadebug dwarf_internal line  origlineptr 0x%llx\n",(unsigned long long)o
             DW_PR_XZEROS DW_PR_DUx " (%" DW_PR_DUu ")\n",
             offset, offset);
     }
-    
 
     {
         Dwarf_Bool doaddrs = false;
@@ -527,7 +520,7 @@ printf("dadebug dwarf_internal line  origlineptr 0x%llx\n",(unsigned long long)o
         } else {
             Dwarf_Bool is_single_table = false;
             Dwarf_Bool is_actuals_table = false;
-            if (line_context->lc_version_number != 
+            if (line_context->lc_version_number !=
                 EXPERIMENTAL_LINE_TABLES_VERSION) {
                 dwarf_srclines_dealloc_b(line_context);
                 _dwarf_error(dbg, error, DW_DLE_VERSION_STAMP_ERROR);
@@ -555,7 +548,7 @@ printf("dadebug dwarf_internal line  origlineptr 0x%llx\n",(unsigned long long)o
                 res = read_line_table_program(dbg,
                     line_ptr_actuals, line_ptr_end, orig_line_ptr,
                     section_start,
-                    line_context, 
+                    line_context,
                     address_size, doaddrs, dolines,
                     is_single_table,
                     is_actuals_table,
@@ -565,11 +558,7 @@ printf("dadebug dwarf_internal line  origlineptr 0x%llx\n",(unsigned long long)o
                     dwarf_srclines_dealloc_b(line_context);
                     return res;
                 }
-#ifdef dadebug
-printf("dadebug Actuals count %d  line %d\n",(int)tmpcount,__LINE__);
-#endif
             }
-
         }
     }
     dwarf_srclines_dealloc_b(line_context);
@@ -590,11 +579,11 @@ printf("dadebug Actuals count %d  line %d\n",(int)tmpcount,__LINE__);
     _dwarf_print_lines call dwarf_print_lines might
     better emphasize they are intentionally identical, but
     that seemed slightly silly given how short the functions are.
-    Interface adds error_count (output value) February 2009.  
+    Interface adds error_count (output value) February 2009.
 
     These *print_lines() functions print two-level tables in full
     even when the user is not asking for both (ie, when
-    the caller asked for dwarf_srclines().  
+    the caller asked for dwarf_srclines().
     It was an accident, but after a short reflection
     this seems like a good idea for -vvv. */
 int

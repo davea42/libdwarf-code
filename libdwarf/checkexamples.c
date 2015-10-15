@@ -222,7 +222,7 @@ void examplec(Dwarf_Die cu_die)
     Dwarf_Signed linecount_actuals = 0;
     Dwarf_Line_Context line_context = 0;
     Dwarf_Signed linecount_total = 0;
-    Dwarf_Unsigned table_count = 0;
+    Dwarf_Small  table_count = 0;
     Dwarf_Unsigned lineversion = 0;
     Dwarf_Error err = 0;
     int sres = 0;

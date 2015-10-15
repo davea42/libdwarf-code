@@ -84,7 +84,7 @@ typedef struct Dwarf_Subprog_Entry_s *Dwarf_Subprog_Entry;
     statement program prologue.  **Updated by dwarf_srclines in
     dwarf_line.c.
 
-    lc_magic will be DW_CONTEXT_MAGIC unless there is a serious 
+    lc_magic will be DW_CONTEXT_MAGIC unless there is a serious
     programming error somewhere.
     It's set zero when a Line_Context is deallocated.
     Any other value indicates there is bug somewhere.
@@ -93,9 +93,9 @@ typedef struct Dwarf_Subprog_Entry_s *Dwarf_Subprog_Entry;
 struct Dwarf_Line_Context_s {
     unsigned    lc_magic;
 
-    /* lc_new_style_access is non-zero if this was allocated
-       via a dwarf_srclines_b() call or equivalent.
-       Otherwise this is 0.  */
+    /*  lc_new_style_access is non-zero if this was allocated
+        via a dwarf_srclines_b() call or equivalent.
+        Otherwise this is 0.  */
     unsigned char lc_new_style_access;
 
     /* The section offset (in .debug_line
@@ -126,6 +126,8 @@ struct Dwarf_Line_Context_s {
         Meaning lc_line_ptr_start is before the length info. */
     Dwarf_Small *lc_line_ptr_start;
     Dwarf_Small *lc_line_ptr_end;
+    /*  Start of the lines themselves. */
+    Dwarf_Small *lc_line_ptr_lines;
 
     /* Used to check that decoding of the line prologue is done right. */
     Dwarf_Small *lc_line_prologue_start;
@@ -171,7 +173,7 @@ struct Dwarf_Line_Context_s {
 
 
     /*  Points to an array of subprogram entries.
-        With Two level line tables this may be non-zero. 
+        With Two level line tables this may be non-zero.
         An array of Dwarf_Subprogram_Entry_s structs. */
     Dwarf_Subprog_Entry lc_subprogs;
 
@@ -188,6 +190,12 @@ struct Dwarf_Line_Context_s {
     Dwarf_Small *lc_compilation_directory;
 
     Dwarf_Debug lc_dbg;
+
+    /*  zero table count is skeleton, or just missing names.
+        1 is standard table.
+        2 means two-level table (experimantal)
+        Other is a bug somewhere.  */
+    Dwarf_Small lc_table_count;
     Dwarf_Bool lc_is_single_table;
 
     /* For standard line tables  the logicals are
@@ -311,7 +319,7 @@ int _dwarf_line_address_offsets(Dwarf_Debug dbg,
 int _dwarf_internal_srclines(Dwarf_Die die,
     Dwarf_Bool old_interface,
     Dwarf_Unsigned * version,
-    Dwarf_Bool     * is_single_table,
+    Dwarf_Small     * table_count,
     Dwarf_Line_Context *line_context,
     Dwarf_Line ** linebuf,
     Dwarf_Signed * count,

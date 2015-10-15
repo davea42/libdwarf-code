@@ -596,7 +596,8 @@ dwarf_global_formref(Dwarf_Attribute attr,
         break;
     case DW_FORM_sec_offset:
     case DW_FORM_GNU_ref_alt:  /* 2013 GNU extension */
-    case DW_FORM_GNU_strp_alt:  /* 2013 GNU extension */
+    case DW_FORM_GNU_strp_alt: /* 2013 GNU extension */
+    case DW_FORM_strp_sup:     /* DWARF5 */
         {
             /*  DW_FORM_sec_offset first exists in DWARF4.*/
             /*  It is up to the caller to know what the offset
@@ -1119,10 +1120,25 @@ dwarf_formstring(Dwarf_Attribute attr,
         *return_str = (char *) (begin);
         return DW_DLV_OK;
     }
-    if (attr->ar_attribute_form == DW_FORM_GNU_strp_alt) {
-        /* Unsure what this is really. FIXME */
-        *return_str = (char *)"<DW_FORM_GNU_strp_alt not handled>";
-        return DW_DLV_OK;
+    if (attr->ar_attribute_form == DW_FORM_GNU_strp_alt ||
+        attr->ar_attribute_form == DW_FORM_strp_sup) {
+        /*  See dwarfstd.org issue 120604.1 
+            This is the offset in the .debug_str section
+            of another object file. 
+            The 'tied' file notion should apply.  */
+        Dwarf_Off offset = 0;
+        res = dwarf_global_formref(attr, &offset,error);
+        if (res != DW_DLV_OK) {
+            return res;
+        }
+        res = _dwarf_get_string_from_tied(dbg, offset,
+            return_str, error);
+        if (dwarf_errno(*error) == DW_DLE_NO_TIED_FILE_AVAILABLE) {
+           dwarf_dealloc(dbg,*error,DW_DLA_ERROR);
+           *return_str =  (char *)"<DW_FORM_GNU_strp_alt-no-tied-file>";
+           return DW_DLV_OK;
+        }
+        return res;
     }
     if (attr->ar_attribute_form == DW_FORM_GNU_str_index ||
         attr->ar_attribute_form == DW_FORM_strx) {
@@ -1183,6 +1199,56 @@ dwarf_formstring(Dwarf_Attribute attr,
     _dwarf_error(dbg, error, DW_DLE_ATTR_FORM_BAD);
     return (DW_DLV_ERROR);
 }
+
+int
+_dwarf_get_string_from_tied(Dwarf_Debug dbg,
+    Dwarf_Unsigned offset,
+    char **return_str,
+    Dwarf_Error*error)
+{
+    Dwarf_Debug tieddbg = 0;
+    Dwarf_Small *secend = 0;
+    Dwarf_Small *secbegin = 0;
+    Dwarf_Small *strbegin = 0;
+    int res = DW_DLV_ERROR;
+
+    /* Attach errors to dbg, not tieddbg. */
+    tieddbg = dbg->de_tied_data.td_tied_object;
+    if (!tieddbg) {
+        _dwarf_error(dbg, error, DW_DLE_NO_TIED_FILE_AVAILABLE);
+        return  DW_DLV_ERROR;
+    }
+    /* The 'offset' into .debug_str is set. */
+    res = _dwarf_load_section(tieddbg, &tieddbg->de_debug_str,error);
+    if (res != DW_DLV_OK) {
+            return res;
+    }
+    if (offset >= tieddbg->de_debug_str.dss_size) {
+        /*  Badly damaged DWARF here. */
+        _dwarf_error(dbg, error,  DW_DLE_NO_TIED_STRING_AVAILABLE);
+
+        return (DW_DLV_ERROR);
+    }
+    secbegin = tieddbg->de_debug_str.dss_data;
+    strbegin= tieddbg->de_debug_str.dss_data + offset;
+    secend = tieddbg->de_debug_str.dss_data + tieddbg->de_debug_str.dss_size;
+
+    /*  Ensure the offset lies within the .debug_str */
+    if (offset >= tieddbg->de_debug_str.dss_size) {
+        _dwarf_error(dbg, error,  DW_DLE_NO_TIED_STRING_AVAILABLE);
+        return (DW_DLV_ERROR);
+    }
+    /*  Note the oddity:  checking a string in tieddbg, but
+        passing dbg so the error is on the right object. */
+    res= _dwarf_check_string_valid(dbg,secbegin,strbegin, secend,error);
+    if (res != DW_DLV_OK) {
+        return res;
+    }
+    *return_str = (char *) (tieddbg->de_debug_str.dss_data + offset);
+    return DW_DLV_OK;
+}
+
+
 
 
 int

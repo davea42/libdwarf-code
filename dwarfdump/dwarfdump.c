@@ -107,6 +107,7 @@ boolean use_old_dwarf_loclist = FALSE;  /* This so both dwarf_loclist()
     tested. Defaults to new
     dwarf_loclist_n() */
 
+enum line_flag_type_e line_flag_selection = s2l;
 boolean line_flag = FALSE;
 
 /*  Setting this FALSE tells dwarfdump to use the old
@@ -483,7 +484,6 @@ main(int argc, char *argv[])
     Elf_Cmd cmd = 0;
     Elf *arf = 0;
     Elf *elf = 0;
-    Elf *arftied = 0;
     Elf *elftied = 0;
     int archive = 0;
 
@@ -1389,7 +1389,8 @@ process_one_file(Elf * elf,Elf *elftied,
 static void
 do_all()
 {
-    info_flag = line_flag = frame_flag = TRUE;
+    info_flag = frame_flag = TRUE;
+    line_flag = TRUE;
     pubnames_flag = macinfo_flag = TRUE;
     aranges_flag = TRUE;
     /*  Do not do
@@ -1645,15 +1646,17 @@ process_args(int argc, char *argv[])
                     esb_append(&config_file_tiedpath,tiedpath);
                     break;
                 } else if (strncmp(dwoptarg, "line5=", 6) == 0) {
-                    char lineskelchar = 0;
                     if (strlen(dwoptarg) < 6) {
                         goto badopt;
                     }
-                    lineskelchar = tolower(dwoptarg[6]);
-                    if (lineskelchar == 'y') {
-                        line_skeleton_flag = TRUE;
-                    } else if (lineskelchar == 'n') {
-                        line_skeleton_flag = FALSE;
+                    if (!strcmp(&dwoptarg[6],"std")) {
+                        line_flag_selection = std;
+                    } else if (!strcmp(&dwoptarg[6],"s2l")){
+                        line_flag_selection= s2l;
+                    } else if (!strcmp(&dwoptarg[6],"orig")){
+                        line_flag_selection= orig;
+                    } else if (!strcmp(&dwoptarg[6],"orig2l")) {
+                        line_flag_selection= orig2l;
                     } else {
                         goto badopt;
                     }
@@ -1666,7 +1669,7 @@ process_args(int argc, char *argv[])
                     fprintf(stderr, " and  \n");
                     fprintf(stderr, "-x tied=<tied-file-path> \n");
                     fprintf(stderr, " and  \n");
-                    fprintf(stderr, "-x line5={y[es],n[o]}> \n");
+                    fprintf(stderr, "-x line5={std,s2l,orig,orig2l} \n");
                     fprintf(stderr, "are legal, not -x %s\n", dwoptarg);
                     usage_error = TRUE;
                     break;

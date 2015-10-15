@@ -71,7 +71,8 @@ record_line_error(const char *where, Dwarf_Error err)
 }
 
 static void
-process_line_table(Dwarf_Debug dbg, Dwarf_Line *linebuf, Dwarf_Signed linecount,
+process_line_table(Dwarf_Debug dbg, 
+    Dwarf_Line *linebuf, Dwarf_Signed linecount,
     Dwarf_Bool is_logicals_table, Dwarf_Bool is_actuals_table)
 {
     char *padding = 0;
@@ -469,6 +470,7 @@ print_line_context_record(Dwarf_Debug dbg,
     Dwarf_Signed i = 0;
     const char *name = 0;
     struct esb_s bufr;
+    Dwarf_Small table_count = 0;
 
     esb_constructor(&bufr);
     printf("Line Context data\n");
@@ -481,7 +483,8 @@ print_line_context_record(Dwarf_Debug dbg,
     }
     printf(" Line Section Offset 0x%"
         DW_PR_XZEROS DW_PR_DUx "\n", lsecoff);
-    vres = dwarf_srclines_version(line_context,&version, &err);
+    vres = dwarf_srclines_version(line_context,&version,
+        &table_count, &err);
     if (vres != DW_DLV_OK) {
         print_error(dbg,"Error accessing line context"
             "Something broken.",
@@ -490,6 +493,7 @@ print_line_context_record(Dwarf_Debug dbg,
     }
     printf(" version number      0x%" DW_PR_DUx " %" DW_PR_DUu "\n",
         version,version);
+    printf(" number of line tables  %d.\n", table_count);
 
 
     vres = dwarf_srclines_comp_dir(line_context,&name,&err);
@@ -613,12 +617,11 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
     Dwarf_Unsigned lineversion = 0;
     Dwarf_Signed linecount = 0;
     Dwarf_Line *linebuf = NULL;
-    Dwarf_Signed actualscount = 0;
-    Dwarf_Line *actualsbuf = NULL;
-    Dwarf_Signed linecounttotal = 0;
+    Dwarf_Signed linecount_actuals = 0;
+    Dwarf_Line *linebuf_actuals = NULL;
+    Dwarf_Small  table_count = 0;
     int lres = 0;
     int line_errs = 0;
-    Dwarf_Bool is_single_table = TRUE;
     Dwarf_Line_Context line_context = 0;
 
     current_section_id = DEBUG_LINE;
@@ -673,17 +676,55 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
             DWARF_CHECK_COUNT(lines_result,(line_errs-1));
         }
     }
-    if (line_skeleton_flag) {
+    /*  The following is complicated by a desire to test
+        various line table interface functions.  Hence
+        we test line_flag_selection. 
+       
+        Normal code should pick an interface
+        (for most  the best choice is what we here call
+          line_flag_selection == std)
+        and use just that interface set.
+
+        Sorry about the length of the code that
+        results from having so many interfaces.  */
+    if (line_flag_selection == std) {
         lres = dwarf_srclines_b(cu_die,&lineversion,
-            &is_single_table,&line_context,
-            &linecounttotal,
+            &table_count,&line_context,
             &err);
-    } else {
+        if(lres == DW_DLV_OK) {
+            lres = dwarf_srclines_from_linecontext(line_context,
+                &linebuf, &linecount,&err);
+        }
+    } else if (line_flag_selection == orig) {
         /* DWARF2,3,4, ok for 5. */
         /* Useless for experimental line tables */
         lres = dwarf_srclines(cu_die,
             &linebuf, &linecount, &err);
-        linecounttotal = linecount;
+        if(lres == DW_DLV_OK && linecount ){
+            table_count++;
+        }
+    } else if (line_flag_selection == orig2l) {
+        lres = dwarf_srclines_two_level(cu_die,
+            &lineversion,
+            &linebuf, &linecount, 
+            &linebuf_actuals, &linecount_actuals, 
+            &err);
+        if(lres == DW_DLV_OK && linecount){
+            table_count++;
+        }
+        if(lres == DW_DLV_OK && linecount_actuals){
+            table_count++;
+        }
+    } else if (line_flag_selection == s2l) {
+        lres = dwarf_srclines_b(cu_die,&lineversion,
+            &table_count,&line_context,
+            &err);
+        if(lres == DW_DLV_OK) {
+            lres = dwarf_srclines_two_level_from_linecontext(line_context,
+                &linebuf, &linecount,
+                &linebuf_actuals, &linecount_actuals,
+                &err);
+        }
     }
     if (lres == DW_DLV_ERROR) {
         /* Do not terminate processing */
@@ -697,19 +738,11 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
         }
     } else if (lres == DW_DLV_NO_ENTRY) {
         /* no line information is included */
-    } else if (linecounttotal > 0) {
-        if(line_skeleton_flag && verbose) {
+    } else if (table_count > 0) {
+        /* DW_DLV_OK */
+        if(line_context && verbose) {
             print_line_context_record(dbg,line_context);
         }
-        if( line_skeleton_flag ) {
-            lres = dwarf_srclines_from_linecontext(line_context,
-                &linebuf,&linecount,
-                &actualsbuf,&actualscount,
-                &err);
-            if (lres != DW_DLV_OK) {
-                print_error(dbg, "dwarf_srclines_from_linecontext fail", lres, err);
-            }
-        } /* linebuf set already if !line_skeleton_flag */
         if (do_print_dwarf) {
             print_source_intro(cu_die);
             if (verbose) {
@@ -720,34 +753,49 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
                     /* ignore_die_stack= */TRUE);
             }
         }
-        if(line_skeleton_flag) {
-            if (actualscount == 0) {
+        if(line_flag_selection == std || line_flag_selection == s2l) {
+            if (table_count == 0 || table_count == 1) {
                 /* ASSERT: is_single_table == true */
                 Dwarf_Bool is_logicals = FALSE;
                 Dwarf_Bool is_actuals = FALSE;
                 process_line_table(dbg, linebuf, linecount,
                     is_logicals,is_actuals);
             } else {
-                /*  We have an experimental two-level line table.
-                    deal with both tables. */
                 Dwarf_Bool is_logicals = TRUE;
                 Dwarf_Bool is_actuals = FALSE;
                 process_line_table(dbg, linebuf, linecount,
                     is_logicals, is_actuals);
-                process_line_table(dbg, actualsbuf, actualscount,
+                process_line_table(dbg, linebuf_actuals, 
+                    linecount_actuals,
                     !is_logicals, !is_actuals);
             }
             dwarf_srclines_dealloc_b(line_context);
-        } else {
+        } else if (line_flag_selection == orig) {
             Dwarf_Bool is_logicals = FALSE;
             Dwarf_Bool is_actuals = FALSE;
             process_line_table(dbg, linebuf, linecount,
                 is_logicals, is_actuals);
             dwarf_srclines_dealloc(dbg,linebuf,linecount);
+        } else if (line_flag_selection == orig2l) {
+            if (table_count == 1 || table_count == 0) {
+                Dwarf_Bool is_logicals = FALSE;
+                Dwarf_Bool is_actuals = FALSE;
+                process_line_table(dbg, linebuf, linecount,
+                    is_logicals, is_actuals);
+            } else {
+                Dwarf_Bool is_logicals = TRUE;
+                Dwarf_Bool is_actuals = FALSE;
+                process_line_table(dbg, linebuf, linecount,
+                        is_logicals, is_actuals);
+                process_line_table(dbg, linebuf_actuals, linecount_actuals,
+                        !is_logicals, !is_actuals);
+            }
+            dwarf_srclines_dealloc(dbg,linebuf,linecount);
         }
-        /* end, linecounttotal > 0 */
+        /* end, table_count > 0 */
     } else {
-        /*  linecounttotal == 0. no lines in table.
+        /* DW_DLV_OK */
+        /*  table_count == 0. no lines in table.
             Just a line table header. */
         if (do_print_dwarf) {
             int ores = 0;
@@ -761,7 +809,7 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
                     /* srcfiles= */ 0, /* cnt= */ 0,
                     /* ignore_die_stack= */TRUE);
             }
-            if(line_skeleton_flag) {
+            if(line_context) {
                 if (verbose > 2) {
                     print_line_context_record(dbg,line_context);
                 }
@@ -778,9 +826,11 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
                 printf(" Line table is present but no lines present\n");
             }
         }
-        if(line_skeleton_flag) {
+        if(line_flag_selection == std ||
+           line_flag_selection == s2l) {
             dwarf_srclines_dealloc_b(line_context);
         } else {
+            /* Original allocation. */
             dwarf_srclines_dealloc(dbg,linebuf,linecount);
         }
         /* end, linecounttotal == 0 */

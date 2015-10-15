@@ -179,7 +179,7 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
 
     if (version == DW_LINE_VERSION4 ||
         version == DW_LINE_VERSION5 ||
-        version == EXPERIMENTAL_LINE_TABLES_VERSION) { 
+        version == EXPERIMENTAL_LINE_TABLES_VERSION) {
         line_context->lc_maximum_ops_per_instruction =
             *(unsigned char *) line_ptr;
         line_ptr = line_ptr + sizeof(Dwarf_Small);
@@ -338,7 +338,7 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
         line_context->lc_include_directories_count = directories_count;
     } else if (version == EXPERIMENTAL_LINE_TABLES_VERSION) {
         /* Empty old style dir entry list. */
-        line_ptr++;  
+        line_ptr++;
     } else {
         /* No old style directory entries. */
     }
@@ -363,8 +363,8 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
                 return (DW_DLV_ERROR);
             }
             memset(currfile,0,sizeof(struct Dwarf_File_Entry_s));
-            /* Insert early so in case of error we can find
-               and free the record. */
+            /*  Insert early so in case of error we can find
+                and free the record. */
             _dwarf_add_to_files_list(line_context,currfile);
 
             currfile->fi_file_name = line_ptr;
@@ -542,7 +542,7 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
 
         for (i = 0; i < files_count; i++) {
             Dwarf_File_Entry curline = 0;
-            curline = (Dwarf_File_Entry) 
+            curline = (Dwarf_File_Entry)
                 malloc(sizeof(struct Dwarf_File_Entry_s));
             if (curline == NULL) {
                 free(filename_entry_types);
@@ -754,9 +754,18 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
         /*  Ignore the lp_begin calc. Assume line_ptr right.
             Making up for compiler bug. */
         lp_begin = line_ptr;
-
     }
-
+    line_context->lc_line_ptr_start = lp_begin;
+    if (line_context->lc_actuals_table_offset) { 
+       /* This means two tables. */
+       line_context->lc_table_count = 2;
+    } else {
+       if (line_context->lc_line_ptr_end > lp_begin) {
+         line_context->lc_table_count = 1;
+       } else { 
+         line_context->lc_table_count = 0;
+       }
+    }
     *updated_data_start_out = lp_begin;
     return DW_DLV_OK;
 }
@@ -824,7 +833,7 @@ read_line_table_program(Dwarf_Debug dbg,
     /*  Initialize the one state machine variable that depends on the
         prefix.  */
     _dwarf_set_line_table_regs_default_values(&regs,
-         line_context->lc_default_is_stmt);
+        line_context->lc_default_is_stmt);
 
     /* Start of statement program.  */
     while (line_ptr < line_ptr_end) {
