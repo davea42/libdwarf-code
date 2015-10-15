@@ -1,4 +1,7 @@
 2015-10-15  David Anderson
+     * dwarf_util.c,dwarf_query.c: Added DW_FORM_strp_sup as
+       same idea as DW_FORM_GNU_strp_alt.
+2015-10-15  David Anderson
      * checkexamples.c: Fixed data type in the example code.
      * dwarf.h: Updated comment about DW_FORM_GNU_strp_alt 
      * dwarf_elf_access.c: Fixed trailing whitespace and

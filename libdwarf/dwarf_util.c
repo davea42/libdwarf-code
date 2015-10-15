@@ -112,6 +112,7 @@ _dwarf_get_size_of_val(Dwarf_Debug dbg,
     case 0:  return 0;
     case DW_FORM_GNU_ref_alt:
     case DW_FORM_GNU_strp_alt:
+    case DW_FORM_strp_sup:
         *size_out = v_length_size;
         return DW_DLV_OK;
 

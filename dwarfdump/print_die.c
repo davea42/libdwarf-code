@@ -4051,6 +4051,7 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
     case DW_FORM_string:
     case DW_FORM_strp:
     case DW_FORM_strx:
+    case DW_FORM_strp_sup: /* An offset to alternate file: tied file */
     case DW_FORM_GNU_strp_alt: /* An offset to alternate file: tied file */
     case DW_FORM_GNU_str_index: {
         int sres = dwarf_formstring(attrib, &temps, &err);

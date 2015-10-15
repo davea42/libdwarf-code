@@ -1323,13 +1323,14 @@ enum Dwarf_Form_Class dwarf_get_form_class(
     case  DW_FORM_flag:         return DW_FORM_CLASS_FLAG;
     case  DW_FORM_flag_present: return DW_FORM_CLASS_FLAG;
 
-    case  DW_FORM_addrx:           return DW_FORM_CLASS_ADDRESS;
+    case  DW_FORM_addrx:           return DW_FORM_CLASS_ADDRESS; /* DWARF5 */
     case  DW_FORM_GNU_addr_index:  return DW_FORM_CLASS_ADDRESS;
-    case  DW_FORM_strx:            return DW_FORM_CLASS_STRING;
+    case  DW_FORM_strx:            return DW_FORM_CLASS_STRING; /* DWARF5 */
     case  DW_FORM_GNU_str_index:   return DW_FORM_CLASS_STRING;
 
     case  DW_FORM_GNU_ref_alt:  return DW_FORM_CLASS_REFERENCE;
     case  DW_FORM_GNU_strp_alt: return DW_FORM_CLASS_STRING;
+    case  DW_FORM_strp_sup:     return DW_FORM_CLASS_STRING; /* DWARF5 */
 
     case  DW_FORM_indirect:
     default:

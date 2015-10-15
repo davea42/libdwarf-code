@@ -1,4 +1,7 @@
 2015-10-15  David Anderson
+     *  print_die.c: Added DW_FORM_strp_sup,
+        same idea as DW_FORM_GNU_strp_alt.
+2015-10-15  David Anderson
      * dwarfdump.c: Add enum line_flag_type_e so we can test
        all the srclines interfaces (4 of them). Expand -x
        for that too.
