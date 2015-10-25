@@ -8,7 +8,7 @@
 .nr Hb 5
 \." ==============================================
 \." Put current date in the following at each rev
-.ds vE rev 2.31, Oct 5, 2015
+.ds vE rev 2.32, Oct 17, 2015
 \." ==============================================
 \." ==============================================
 .ds | |
@@ -3433,23 +3433,26 @@ using the allocation type \f(CWDW_DLA_LIST\fP.
 \f(CW
 void
 example9(Dwarf_Debug dbg,Dwarf_Attribute someattr)
-{
-  Dwarf_Signed lcount = 0;
-  Dwarf_Locdesc **llbuf = 0;
-  Dwarf_Error error = 0;
-  int lres = 0;
-
-  lres = dwarf_loclist_n(someattr, &llbuf,&lcount,&error);
-  if (lres == DW_DLV_OK) {
-    Dwarf_Signed i = 0;
-    for (i = 0; i < lcount; ++i) {
-      /* use llbuf[i] */
-      dwarf_dealloc(dbg, llbuf[i]->ld_s, DW_DLA_LOC_BLOCK);
-      dwarf_dealloc(dbg,llbuf[i], DW_DLA_LOCDESC);
+{ 
+    Dwarf_Signed lcount = 0;
+    Dwarf_Locdesc **llbuf = 0;
+    Dwarf_Error error = 0;
+    int lres = 0;
+    
+    lres = dwarf_loclist_n(someattr, &llbuf,&lcount,&error);
+    if (lres == DW_DLV_OK) {
+        Dwarf_Signed i = 0;
+        for (i = 0; i < lcount; ++i) {
+            /*  Use llbuf[i]. Both Dwarf_Locdesc and the
+                array of Dwarf_Loc it points to are
+                defined in libdwarf.h: they are
+                not opaque structs. */
+            dwarf_dealloc(dbg, llbuf[i]->ld_s, DW_DLA_LOC_BLOCK);
+            dwarf_dealloc(dbg,llbuf[i], DW_DLA_LOCDESC);
+        }
+        dwarf_dealloc(dbg, llbuf, DW_DLA_LIST);
     }
-    dwarf_dealloc(dbg, llbuf, DW_DLA_LIST);
-  }
-}
+} 
 \fP
 .DE
 .in -2
@@ -6885,6 +6888,11 @@ It would be desirable to specify an interface.
         Dwarf_Unsigned *next_entry,
         Dwarf_Error *error)\fP
 .DE
+This function is ill suited to use with
+21st century DWARF as there is just not
+enough data provided in the interface.
+Do not use this interface.
+.P
 The function reads 
 a location list entry starting at \f(CWoffset\fP and returns 
 through pointers (when successful)
@@ -6894,8 +6902,9 @@ the high pc \f(CWhipc_offset\fP, low pc
 \f(CWentry_len\fP, and the offset of the next location description 
 entry \f(CWnext_entry\fP.  
 .P
-This function will usually work correctly (meaning with most
-objects) but will not work correctly (and can crash
+This function will often work correctly (meaning with most
+objects compiled for DWARF3 or DWARF3) 
+but will not work correctly (and can crash
 an application calling it) if either
 some location list applies to a compilation unit with
 an address_size different from the overall address_size

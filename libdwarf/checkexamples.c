@@ -169,7 +169,10 @@ example9(Dwarf_Debug dbg,Dwarf_Attribute someattr)
     if (lres == DW_DLV_OK) {
         Dwarf_Signed i = 0;
         for (i = 0; i < lcount; ++i) {
-            /* use llbuf[i] */
+            /*  Use llbuf[i]. Both Dwarf_Locdesc and the
+                array of Dwarf_Loc it points to are
+                defined in libdwarf.h: they are
+                not opaque structs. */
             dwarf_dealloc(dbg, llbuf[i]->ld_s, DW_DLA_LOC_BLOCK);
             dwarf_dealloc(dbg,llbuf[i], DW_DLA_LOCDESC);
         }

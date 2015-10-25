@@ -247,6 +247,13 @@ struct ial_s alloc_instance_basics[ALLOC_AREA_INDEX_TABLE_MAX] = {
     /* 0x38 56.  New in July 2014. DWARF5 DebugFission dwp file sections
         .debug_cu_index and .debug_tu_index . */
     {sizeof(struct Dwarf_Xu_Index_Header_s),MULTIPLY_NO,  0, 0},
+
+    /*  These required by new features in DWARF5. Also usable
+        for DWARF2,3,4. */
+    /* 57 DW_DLA_LOC_BLOCK_C */
+    {sizeof(struct Dwarf_Loc_c_s),MULTIPLY_NO, 0, 0},
+    /* 58 DW_DLA_LOCDESC_C */
+    {sizeof(struct Dwarf_Locdesc_c_s),MULTIPLY_NO, 0, 0},
 };
 
 /*  We are simply using the incoming pointer as the key-pointer.

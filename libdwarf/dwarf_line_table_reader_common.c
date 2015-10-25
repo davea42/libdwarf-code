@@ -756,15 +756,15 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
         lp_begin = line_ptr;
     }
     line_context->lc_line_ptr_start = lp_begin;
-    if (line_context->lc_actuals_table_offset) { 
-       /* This means two tables. */
-       line_context->lc_table_count = 2;
+    if (line_context->lc_actuals_table_offset) {
+        /* This means two tables. */
+        line_context->lc_table_count = 2;
     } else {
-       if (line_context->lc_line_ptr_end > lp_begin) {
-         line_context->lc_table_count = 1;
-       } else { 
-         line_context->lc_table_count = 0;
-       }
+        if (line_context->lc_line_ptr_end > lp_begin) {
+            line_context->lc_table_count = 1;
+        } else {
+            line_context->lc_table_count = 0;
+        }
     }
     *updated_data_start_out = lp_begin;
     return DW_DLV_OK;

@@ -131,18 +131,29 @@ struct Dwarf_Sig8_s  {
 typedef struct Dwarf_Sig8_s Dwarf_Sig8;
 
 /* Contains info on an uninterpreted block of data
+   Used with certain frame information functions.
 */
 typedef struct {
-    Dwarf_Unsigned  bl_len;         /* length of block */
+    Dwarf_Unsigned  bl_len;         /* length of block bl_data points at */
     Dwarf_Ptr       bl_data;        /* uninterpreted data */
-    Dwarf_Small     bl_from_loclist; /*non-0 if loclist, else debug_info*/
-    Dwarf_Unsigned  bl_section_offset; /* Section (not CU) offset
-        which 'data' comes from. */
+
+    /*  0 if locdesc, 1 if .debug_info loclist or
+        2 if .debug_info.dwo split dwarf loclist. */
+    Dwarf_Small     bl_from_loclist;
+
+    /* Section (not CU) offset which 'data' comes from. */
+    Dwarf_Unsigned  bl_section_offset;
 } Dwarf_Block;
 
+/* Dwarf_Loc_c_s and Dwarf_Locdesc_c_s are not defined publically. */
+struct Dwarf_Loc_c_s;
+typedef struct Dwarf_Loc_c_s * Dwarf_Loc_c;
 
-/* location record
-*/
+struct Dwarf_Locdesc_c_s;
+typedef struct Dwarf_Locdesc_c_s * Dwarf_Locdesc_c;
+
+/*  Location record. Records up to 2 operand values.
+    Not usable with DWARF5 or DWARF4 with extensions. */
 typedef struct {
     Dwarf_Small     lr_atom;        /* location operation */
     Dwarf_Unsigned  lr_number;      /* operand */
@@ -151,15 +162,38 @@ typedef struct {
 } Dwarf_Loc;
 
 
-/* location description
+/* Location description. DWARF 2,3,4.
+   When this is from a split-dwarf loclist (.debug_loc.dwo)
+   and no tied object is present
+   then ld_lowpc and ld_highpc are actually indices in
+   the .debug_addr section of the tied object).
+   If there is a tied object then these fields are actuall
+   addresses and DW_AT_addr_base in the skeleton CU DIE applies to
+   that .debug_addr.
+
+   Location record. Records up to 2 operand values.
+   Not usable with DWARF5 or DWARF4 with extensions.
+
+   If from DWARF2,3,4 non-split dwarf then things operate as
+   in DWARF2.
+   See dwarf_get_loclist_b() and the other related
+   new functions that
+   avoid using public structures Dwarf_Loc and Dwarf_Locdesc.
 */
 typedef struct {
-    Dwarf_Addr      ld_lopc;        /* beginning of active range */
-    Dwarf_Addr      ld_hipc;        /* end of active range */
+    /*  Beginning of active range. This is actually an offset
+        of an applicable base address, not a pc value.  */
+    Dwarf_Addr      ld_lopc;
+
+    /*  End of active range. This is actually an offset
+        of an applicable base address, not a pc value.  */
+    Dwarf_Addr      ld_hipc;
+
     Dwarf_Half      ld_cents;       /* count of location records */
     Dwarf_Loc*      ld_s;           /* pointer to list of same */
+
+    /*  non-0 if loclist, 1 if non-split (dwarf 2,3,4) */
     Dwarf_Small     ld_from_loclist;
-        /* non-0 if loclist, else debug_info*/
 
     Dwarf_Unsigned  ld_section_offset; /* Section (not CU) offset
         where loc-expr begins*/
@@ -771,7 +805,7 @@ struct Dwarf_Obj_Access_Interface_s {
 #define DW_DLA_FRAME_OP        0x13     /* Dwarf_Frame_Op */
 #define DW_DLA_CIE             0x14     /* Dwarf_Cie */
 #define DW_DLA_FDE             0x15     /* Dwarf_Fde */
-#define DW_DLA_LOC_BLOCK       0x16     /* Dwarf_Loc Block (not used) */
+#define DW_DLA_LOC_BLOCK       0x16     /* Dwarf_Loc */
 #define DW_DLA_FRAME_BLOCK     0x17     /* Dwarf_Frame Block (not used) */
 #define DW_DLA_FUNC            0x18     /* Dwarf_Func */
 #define DW_DLA_TYPENAME        0x19     /* Dwarf_Type */
@@ -784,6 +818,8 @@ struct Dwarf_Obj_Access_Interface_s {
 
 #define DW_DLA_GDBINDEX        0x37     /* Dwarf_Gdbindex */
 #define DW_DLA_XU_INDEX        0x38     /* Dwarf_Xu_Index_Header */
+#define DW_DLA_LOC_BLOCK_C     0x39     /* Dwarf_Loc_c*/
+#define DW_DLA_LOCDESC_C       0x3a     /* Dwarf_Locdesc_c */
 
 /* The augmenter string for CIE */
 #define DW_CIE_AUGMENTER_STRING_V0              "z"
@@ -1166,9 +1202,12 @@ struct Dwarf_Obj_Access_Interface_s {
 #define DW_DLE_LINE_CONTEXT_INDEX_WRONG        306
 #define DW_DLE_NO_TIED_STRING_AVAILABLE        307
 #define DW_DLE_NO_TIED_FILE_AVAILABLE          308
+#define DW_DLE_CU_TYPE_MISSING                 309
+#define DW_DLE_LLE_CODE_UNKNOWN                310
+#define DW_DLE_LOCLIST_INTERFACE_ERROR         311
 
     /* DW_DLE_LAST MUST EQUAL LAST ERROR NUMBER */
-#define DW_DLE_LAST        308
+#define DW_DLE_LAST        311
 #define DW_DLE_LO_USER     0x10000
 
     /*  Taken as meaning 'undefined value', this is not
@@ -1456,12 +1495,56 @@ int dwarf_hasattr(Dwarf_Die /*die*/,
     Dwarf_Bool *     /*returned_bool*/,
     Dwarf_Error*     /*error*/);
 
-/* dwarf_loclist_n preferred over dwarf_loclist */
+/* BEGIN: loclist_b interfaces */
+int dwarf_get_loclist_c (Dwarf_Attribute attr,
+   Dwarf_Locdesc_c **llbuf,
+   Dwarf_Signed *   /*locCount*/,
+   Dwarf_Error*     /*error*/);
+
+int dwarf_get_loclist_entry_c(Dwarf_Locdesc_c, Dwarf_Signed index,
+   Dwarf_Small  *lle_value_out, /* identifies type of loclist entry*/
+   Dwarf_Addr   *lowpc_out,
+   Dwarf_Addr   *hipc_out,
+   Dwarf_Signed *loclist_count_out,
+   Dwarf_Loc_c  *locentry_out,
+   Dwarf_Small  *loclist_source_out, /* 0,1, or 2 */
+   Dwarf_Unsigned *section_offset_out,
+   Dwarf_Addr   * applicable_base_address,
+   Dwarf_Error*     /*error*/);
+
+int dwarf_get_location_op_value_c(Dwarf_Loc_c locexpr,
+   Dwarf_Signed index,
+   Dwarf_Small  *atom_out,
+   Dwarf_Unsigned  *operand1,
+   Dwarf_Unsigned  *operand2,
+   Dwarf_Unsigned  *operand3,
+   Dwarf_Unsigned  *offset_for_branch,
+   Dwarf_Error*     /*error*/);
+
+/*  So one can find the target operator
+    index given an offset. */
+int dwarf_get_location_index_for_offset_c(Dwarf_Loc_c locexpr,
+   Dwarf_Unsigned  targetoffset,
+   Dwarf_Signed   *index_out,
+   Dwarf_Error*     /*error*/);
+
+/* This frees all memory allocated by the applicable
+    dwarf_get_loclist_b() */
+int dwarf_loclist_c_dealloc(Dwarf_Locdesc_c locdesc);
+
+/* END: loclist_b interfaces */
+
+
+/*  dwarf_loclist_n preferred over dwarf_loclist
+    As of 2015 the newest is dwarf_get_loclist_b()
+    and only dwarf_get_loclist_b() will work
+    for DWARF5 (and all earlier versions). */
 int dwarf_loclist_n(Dwarf_Attribute /*attr*/,
     Dwarf_Locdesc*** /*llbuf*/,
     Dwarf_Signed *   /*locCount*/,
     Dwarf_Error*     /*error*/);
 
+/*  The original interfaces.  Please do not use this. */
 int dwarf_loclist(Dwarf_Attribute /*attr*/,  /* inflexible! */
     Dwarf_Locdesc**  /*llbuf*/,
     Dwarf_Signed *   /*locCount*/,
@@ -1496,8 +1579,7 @@ int dwarf_loclist_from_expr_a(Dwarf_Debug /*dbg*/,
     of the applicable compilation unit)
     and offset_size arguments. Added for
     DW_OP_GNU_implicit_pointer. */
-int
-dwarf_loclist_from_expr_b(Dwarf_Debug /*dbg*/,
+int dwarf_loclist_from_expr_b(Dwarf_Debug /*dbg*/,
     Dwarf_Ptr      /*expression_in*/ ,
     Dwarf_Unsigned /*expression_length*/ ,
     Dwarf_Half     /*addr_size*/ ,

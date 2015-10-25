@@ -224,6 +224,10 @@ struct Dwarf_CU_Context_s {
     Dwarf_Bool cc_str_ranges_base_present; /* Not TRUE in .dwo */
     Dwarf_Bool cc_str_offsets_base_present;
 
+    /*  Non zero if this context is a dwo section. Either
+        dwo or dwp file. */
+    Dwarf_Bool cc_is_dwo;
+
     /*  cc_cu_die_offset_present is non-zero if
         cc_cu_die_global_sec_offset is meaningful.  */
     Dwarf_Bool cc_cu_die_offset_present;
@@ -463,8 +467,7 @@ struct Dwarf_Fission_Offsets_s {
     void * dfo_hash_to_index; */
 };
 
-/*  All the Dwarf_Debug tied-file info in one place.
-    */
+/*  All the Dwarf_Debug tied-file info in one place.  */
 struct Dwarf_Tied_Data_s {
     /*  Used to access executable from .dwo or .dwp object.
         Pointer to the tied_to Dwarf_Debug*/

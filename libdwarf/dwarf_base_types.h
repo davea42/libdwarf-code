@@ -117,7 +117,7 @@
 
 /*  Maximum number of allocation types for allocation routines.
     Only used with malloc_check.c and that is basically obsolete. */
-#define MAX_DW_DLA		0x38
+#define MAX_DW_DLA		0x3a
 
 /*Dwarf_Word  is unsigned word usable for index, count in memory */
 /*Dwarf_Sword is   signed word usable for index, count in memory */

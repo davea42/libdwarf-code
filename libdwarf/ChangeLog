@@ -1,3 +1,35 @@
+2015-10-25  David Anderson
+     * checkexamples.c: Add commentary to example9.
+     * dwarf_alloc.c: Add DW_DLA_LOC_BLOCK_C and DW_CLA_LOCDESC_C
+       allocation descriptions to array.
+     * dwarf_alloc.h: Increase ALLOC_AREA_INDEX_TABLE_MAX to match.
+     * dwarf_base_types.h: Increase MAX_DW_DLA to match.
+     * dwarf_die_deliv.c: Switch some returns from pointer to
+       the standard int DW_DLV_OK etc and return pointer through
+       an argument.  Identify which CUs are dwo by checking name
+       for a .dwo ending. Fix whitespace endings.
+     * dwarf_error.c: Add DW_DLE 309 to 311 errors to descriptions array.
+     * dwarf_form.c: Remove trailing whitespace. Reformat one line
+       so it is not so long.
+     * dwarf_line.c: Add {} on if for clarity. 
+       Fix whitespace endings.
+     * dwarf_line_table_reader.c: Fix whitespace endings.
+     * dwarf_loc.c: Refactor loc. expr. reader into a 
+       routine that reads one expression, _darf_read_loc_expr_op()..
+       Add DWARF5 operators.
+       Add preliminary dwo expression support (which will change
+       but this is a start).  Old expression interface now
+       explicitly supports only DWARF 2,3,4. No DWARF5.
+       Add preliminary loclist_c support (it will change).
+       Add commentary about the old loclist interface.
+     * dwarf_loc.h: First cut of new interfaces (functional, not
+       public structs).
+     * dwarf_opaque.h: Add cc_is_dwo flag to cu context struct.
+     * libdwarf.h.in: Rework some loclist commentary.
+       Add first try at new loclist interfaces for DWARF2,3,4,5.
+       New error codes for new loclist/dwo code.
+     * libdwarf2.1.mm: Rev 2.32. New wording on old loclist 
+       interfaces.
 2015-10-15  David Anderson
      * dwarf_util.c,dwarf_query.c: Added DW_FORM_strp_sup as
        same idea as DW_FORM_GNU_strp_alt.

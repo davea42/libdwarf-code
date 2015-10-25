@@ -1122,9 +1122,9 @@ dwarf_formstring(Dwarf_Attribute attr,
     }
     if (attr->ar_attribute_form == DW_FORM_GNU_strp_alt ||
         attr->ar_attribute_form == DW_FORM_strp_sup) {
-        /*  See dwarfstd.org issue 120604.1 
+        /*  See dwarfstd.org issue 120604.1
             This is the offset in the .debug_str section
-            of another object file. 
+            of another object file.
             The 'tied' file notion should apply.  */
         Dwarf_Off offset = 0;
         res = dwarf_global_formref(attr, &offset,error);
@@ -1134,9 +1134,9 @@ dwarf_formstring(Dwarf_Attribute attr,
         res = _dwarf_get_string_from_tied(dbg, offset,
             return_str, error);
         if (dwarf_errno(*error) == DW_DLE_NO_TIED_FILE_AVAILABLE) {
-           dwarf_dealloc(dbg,*error,DW_DLA_ERROR);
-           *return_str =  (char *)"<DW_FORM_GNU_strp_alt-no-tied-file>";
-           return DW_DLV_OK;
+            dwarf_dealloc(dbg,*error,DW_DLA_ERROR);
+            *return_str =  (char *)"<DW_FORM_GNU_strp_alt-no-tied-file>";
+            return DW_DLV_OK;
         }
         return res;
     }
@@ -1221,17 +1221,17 @@ _dwarf_get_string_from_tied(Dwarf_Debug dbg,
     /* The 'offset' into .debug_str is set. */
     res = _dwarf_load_section(tieddbg, &tieddbg->de_debug_str,error);
     if (res != DW_DLV_OK) {
-            return res;
+        return res;
     }
     if (offset >= tieddbg->de_debug_str.dss_size) {
         /*  Badly damaged DWARF here. */
         _dwarf_error(dbg, error,  DW_DLE_NO_TIED_STRING_AVAILABLE);
-
         return (DW_DLV_ERROR);
     }
     secbegin = tieddbg->de_debug_str.dss_data;
     strbegin= tieddbg->de_debug_str.dss_data + offset;
-    secend = tieddbg->de_debug_str.dss_data + tieddbg->de_debug_str.dss_size;
+    secend = tieddbg->de_debug_str.dss_data +
+        tieddbg->de_debug_str.dss_size;
 
     /*  Ensure the offset lies within the .debug_str */
     if (offset >= tieddbg->de_debug_str.dss_size) {
@@ -1239,7 +1239,7 @@ _dwarf_get_string_from_tied(Dwarf_Debug dbg,
         return (DW_DLV_ERROR);
     }
     /*  Note the oddity:  checking a string in tieddbg, but
-        passing dbg so the error is on the right object. */
+        passing dbg so any error is on the right object. */
     res= _dwarf_check_string_valid(dbg,secbegin,strbegin, secend,error);
     if (res != DW_DLV_OK) {
         return res;

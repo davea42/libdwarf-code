@@ -196,6 +196,27 @@ _dwarf_get_fission_addition_die(Dwarf_Die die, int dw_sect_index,
     return DW_DLV_OK;
 }
 
+/*  Not sure if this is the only way to be sure early on in
+    reading a compile unit.  */
+static int
+section_name_ends_with_dwo(const char *name)
+{
+    int lenstr = 0;
+    int dotpos = 0;
+    if (!name) {
+        return FALSE;
+    }
+    lenstr = strlen(name);
+    if (lenstr < 5) {
+        return FALSE;
+    }
+    dotpos = lenstr - 4;
+    if(strcmp(name+dotpos,".dwo")) {
+        return FALSE;
+    }
+    return TRUE;
+}
+
 
 /*  This function is used to create a CU Context for
     a compilation-unit that begins at offset in
@@ -217,13 +238,11 @@ _dwarf_get_fission_addition_die(Dwarf_Die die, int dw_sect_index,
     field of the CU header. so max_cu_local_offset is
     identical to the CU length field.
     max_cu_global_offset is the offset one-past the end
-    of this entire CU.
-
-    This function must always set a dwarf error code
-    before returning NULL. Always.  */
-static Dwarf_CU_Context
+    of this entire CU.  */
+static int
 _dwarf_make_CU_Context(Dwarf_Debug dbg,
-    Dwarf_Off offset,Dwarf_Bool is_info,Dwarf_Error * error)
+    Dwarf_Off offset,Dwarf_Bool is_info,
+    Dwarf_CU_Context * context_out,Dwarf_Error * error)
 {
     Dwarf_CU_Context cu_context = 0;
     Dwarf_Unsigned length = 0;
@@ -236,6 +255,9 @@ _dwarf_make_CU_Context(Dwarf_Debug dbg,
     Dwarf_Byte_Ptr cu_ptr = 0;
     int local_extension_size = 0;
     int local_length_size = 0;
+
+    const char *secname = is_info?dbg->de_debug_info.dss_name:
+        dbg->de_debug_types.dss_name;
     Dwarf_Debug_InfoTypes dis = is_info? &dbg->de_info_reading:
         &dbg->de_types_reading;
     Dwarf_Unsigned section_size = is_info? dbg->de_debug_info.dss_size:
@@ -248,7 +270,7 @@ _dwarf_make_CU_Context(Dwarf_Debug dbg,
         (Dwarf_CU_Context) _dwarf_get_alloc(dbg, DW_DLA_CU_CONTEXT, 1);
     if (cu_context == NULL) {
         _dwarf_error(dbg, error, DW_DLE_ALLOC_FAIL);
-        return (NULL);
+        return DW_DLV_ERROR;
     }
     cu_context->cc_dbg = dbg;
     cu_context->cc_is_info = is_info;
@@ -259,6 +281,9 @@ _dwarf_make_CU_Context(Dwarf_Debug dbg,
         cu_ptr = (Dwarf_Byte_Ptr) (dataptr+offset);
     }
 
+    if (section_name_ends_with_dwo(secname)) {
+        cu_context->cc_is_dwo = TRUE;
+    }
     /* READ_AREA_LENGTH updates cu_ptr for consumed bytes */
     READ_AREA_LENGTH(dbg, length, Dwarf_Unsigned,
         cu_ptr, local_length_size, local_extension_size);
@@ -284,7 +309,7 @@ _dwarf_make_CU_Context(Dwarf_Debug dbg,
         if (unit_type != DW_UT_compile && unit_type != DW_UT_partial
             && unit_type != DW_UT_type) {
             _dwarf_error(dbg, error, DW_DLE_CU_UT_TYPE_ERROR);
-            return NULL;
+            return DW_DLV_ERROR;
         }
     } else {
         /*  We don't know if it is or DW_UT_partial or not. */
@@ -312,7 +337,7 @@ _dwarf_make_CU_Context(Dwarf_Debug dbg,
 
     if (cu_context->cc_address_size  > sizeof(Dwarf_Addr)) {
         _dwarf_error(dbg, error, DW_DLE_CU_ADDRESS_SIZE_BAD);
-        return (NULL);
+        return DW_DLV_ERROR;
     }
 
     is_type_tu = FALSE;
@@ -330,7 +355,7 @@ _dwarf_make_CU_Context(Dwarf_Debug dbg,
 
         dwarf_dealloc(dbg, cu_context, DW_DLA_CU_CONTEXT);
         _dwarf_error(dbg, error, DW_DLE_CU_LENGTH_ERROR);
-        return (NULL);
+        return DW_DLV_ERROR;
     }
 
     if (cu_context->cc_version_stamp != DW_CU_VERSION2
@@ -339,7 +364,7 @@ _dwarf_make_CU_Context(Dwarf_Debug dbg,
         && cu_context->cc_version_stamp != DW_CU_VERSION5) {
         dwarf_dealloc(dbg, cu_context, DW_DLA_CU_CONTEXT);
         _dwarf_error(dbg, error, DW_DLE_VERSION_STAMP_ERROR);
-        return (NULL);
+        return DW_DLV_ERROR;
     }
     if (is_type_tu) {
         if (version != DW_CU_VERSION4 &&
@@ -347,7 +372,7 @@ _dwarf_make_CU_Context(Dwarf_Debug dbg,
             dwarf_dealloc(dbg, cu_context, DW_DLA_CU_CONTEXT);
             /* Error name  misleading, version 5 has types too. */
             _dwarf_error(dbg, error, DW_DLE_DEBUG_TYPES_ONLY_DWARF4);
-            return (NULL);
+            return DW_DLV_ERROR;
         }
         /*  Now read the debug_types extra header fields of
             the signature (8 bytes) and the typeoffset.
@@ -364,7 +389,7 @@ _dwarf_make_CU_Context(Dwarf_Debug dbg,
             if (typeoffset >= max_cu_local_offset) {
                 dwarf_dealloc(dbg, cu_context, DW_DLA_CU_CONTEXT);
                 _dwarf_error(dbg, error, DW_DLE_DEBUG_TYPEOFFSET_BAD);
-                return (NULL);
+                return DW_DLV_ERROR;
             }
         }
     }
@@ -381,7 +406,7 @@ _dwarf_make_CU_Context(Dwarf_Debug dbg,
                 dwarf_dealloc(dbg, cu_context, DW_DLA_CU_CONTEXT);
                 _dwarf_error(dbg, error,
                     DW_DLE_MISSING_REQUIRED_TU_OFFSET_HASH);
-                return NULL;
+                return DW_DLV_ERROR;
             }
         }
     } else {
@@ -395,7 +420,7 @@ _dwarf_make_CU_Context(Dwarf_Debug dbg,
                 dwarf_dealloc(dbg, cu_context, DW_DLA_CU_CONTEXT);
                 _dwarf_error(dbg, error,
                     DW_DLE_MISSING_REQUIRED_CU_OFFSET_HASH);
-                return NULL;
+                return DW_DLV_ERROR;
             }
             /*  Eventually we will see the DW_AT_dwo_id
                 or DW_AT_GNU_dwo_id
@@ -419,14 +444,14 @@ _dwarf_make_CU_Context(Dwarf_Debug dbg,
     if ((Dwarf_Unsigned)abbrev_offset >= dbg->de_debug_abbrev.dss_size) {
         dwarf_dealloc(dbg, cu_context, DW_DLA_CU_CONTEXT);
         _dwarf_error(dbg, error, DW_DLE_ABBREV_OFFSET_ERROR);
-        return (NULL);
+        return DW_DLV_ERROR;
     }
 
     cu_context->cc_abbrev_hash_table =
         (Dwarf_Hash_Table) _dwarf_get_alloc(dbg, DW_DLA_HASH_TABLE, 1);
     if (cu_context->cc_abbrev_hash_table == NULL) {
         _dwarf_error(dbg, error, DW_DLE_ALLOC_FAIL);
-        return (NULL);
+        return DW_DLV_ERROR;
     }
 
     cu_context->cc_debug_offset = offset;
@@ -440,7 +465,8 @@ _dwarf_make_CU_Context(Dwarf_Debug dbg,
         dis->de_cu_context_list_end->cc_next = cu_context;
         dis->de_cu_context_list_end = cu_context;
     }
-    return (cu_context);
+    *context_out  = cu_context;
+    return DW_DLV_OK;
 }
 
 static int
@@ -714,6 +740,7 @@ _dwarf_next_cu_header_internal(Dwarf_Debug dbg,
     Dwarf_CU_Context cu_context = 0;
     Dwarf_Debug_InfoTypes dis = 0;
     Dwarf_Unsigned section_size =  0;
+    int res = 0;
 
 
 
@@ -781,13 +808,10 @@ _dwarf_next_cu_header_internal(Dwarf_Debug dbg,
 
     /* If not, make CU Context for it. */
     if (cu_context == NULL) {
-        cu_context = _dwarf_make_CU_Context(dbg, new_offset,is_info, error);
-        if (cu_context == NULL) {
-            /*  Error if CU Context could not be made. Since
-                _dwarf_make_CU_Context has already registered an error
-                we do not do that here: we let the lower error pass
-                thru. */
-            return (DW_DLV_ERROR);
+        res = _dwarf_make_CU_Context(dbg, new_offset,is_info,
+            &cu_context,error);
+        if (res != DW_DLV_OK) {
+            return res;
         }
     }
 
@@ -1625,6 +1649,7 @@ dwarf_offdie_b(Dwarf_Debug dbg,
     Dwarf_Unsigned abbrev_code = 0;
     Dwarf_Unsigned utmp = 0;
     Dwarf_Debug_InfoTypes dis = 0;
+    int res;
 
 
     if (dbg == NULL) {
@@ -1666,17 +1691,11 @@ dwarf_offdie_b(Dwarf_Debug dbg,
                 _dwarf_error(dbg, error, DW_DLE_OFFSET_BAD);
                 return (DW_DLV_ERROR);
             }
-
-            cu_context =
-                _dwarf_make_CU_Context(dbg, new_cu_offset,is_info, error);
-            if (cu_context == NULL) {
-                /*  Error if CU Context could not be made. Since
-                    _dwarf_make_CU_Context has already registered an
-                    error we do not do that here: we let the lower error
-                    pass thru. */
-                return (DW_DLV_ERROR);
+            res = _dwarf_make_CU_Context(dbg, new_cu_offset,is_info,
+                &cu_context,error);
+            if (res != DW_DLV_OK) {
+                return res;
             }
-
             if (dis->de_offdie_cu_context == NULL) {
                 dis->de_offdie_cu_context = cu_context;
                 dis->de_offdie_cu_context_end = cu_context;

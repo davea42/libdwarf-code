@@ -90,7 +90,7 @@ file_name_is_full_path(Dwarf_Small  *fname)
         return 0;
     }
 /*  This is a windows path test, but we do have
-    a few windows paths in our regression tests... 
+    a few windows paths in our regression tests...
     This is extremely unlikely to cause UN*X/POSIX
     users any problems. */
     if ((firstc >= 'A' && firstc <= 'Z') ||
@@ -118,10 +118,10 @@ special_cat(char *dst,char *src,int srclen)
     for ( ; dst[i1] ; ++i1) {
     }
     for (; i2 < srclen; ++i2,++i1) {
-                dst[i1] = src[i2];
-                if (dst[i1] == '\\') {
-                    dst[i1] = '/';
-                }
+        dst[i1] = src[i2];
+        if (dst[i1] == '\\') {
+            dst[i1] = '/';
+        }
     }
 #else
     strcat(dst, src);
@@ -161,7 +161,7 @@ create_fullest_file_path(Dwarf_Debug dbg,
 
     if (file_name_is_full_path((Dwarf_Small *)file_name)) {
 #ifdef HAVE_WINDOWS_PATH
-        {   unsigned len = strlen(file_name); 
+        {   unsigned len = strlen(file_name);
             char *tmp = (char *) _dwarf_get_alloc(dbg, DW_DLA_STRING,
                 len+1);
             if(tmp) {
@@ -193,11 +193,11 @@ create_fullest_file_path(Dwarf_Debug dbg,
                 allocate.  */
             comp_dir_name = (char *)line_context->lc_compilation_directory;
             compdirnamelen = strlen(comp_dir_name);
-        } 
-        
+        }
+
         if (dirno > line_context->lc_include_directories_count) {
-                _dwarf_error(dbg, error, DW_DLE_INCL_DIR_NUM_BAD);
-                return (DW_DLV_ERROR);
+            _dwarf_error(dbg, error, DW_DLE_INCL_DIR_NUM_BAD);
+            return (DW_DLV_ERROR);
         }
         if (dirno > 0) {
             inc_dir_name = (char *) line_context->lc_include_directories[
@@ -213,23 +213,23 @@ create_fullest_file_path(Dwarf_Debug dbg,
             return (DW_DLV_ERROR);
         }
         if (dirno == 0) {
-           /*  Just use comp dir name */ 
-           if (compdirnamelen > 0) {
+            /*  Just use comp dir name */
+            if (compdirnamelen > 0) {
                 special_cat(full_name,comp_dir_name,compdirnamelen);
                 strcat(full_name, "/");
-           }
-           special_cat(full_name,file_name,filenamelen);
-           *name_ptr_out =  full_name;
-           return DW_DLV_OK;
+            }
+            special_cat(full_name,file_name,filenamelen);
+            *name_ptr_out =  full_name;
+            return DW_DLV_OK;
         }
-        if (incdirnamelen > 0 && 
+        if (incdirnamelen > 0 &&
             file_name_is_full_path((Dwarf_Small*)inc_dir_name) ) {
-           /* Just use inc dir. */
-           special_cat(full_name,inc_dir_name,incdirnamelen);
-           strcat(full_name,"/");
-           special_cat(full_name,file_name,filenamelen);
-           *name_ptr_out = full_name;
-           return DW_DLV_OK;
+            /*  Just use inc dir. */
+                special_cat(full_name,inc_dir_name,incdirnamelen);
+            strcat(full_name,"/");
+            special_cat(full_name,file_name,filenamelen);
+            *name_ptr_out = full_name;
+            return DW_DLV_OK;
         }
         /* Concat all three names. */
         if (compdirnamelen > 0) {
@@ -432,9 +432,9 @@ dwarf_srcfiles(Dwarf_Die die,
                 return (DW_DLV_ERROR);
             }
             curr_chain->ch_item = name_out;
-            if (head_chain == NULL)
+            if (head_chain == NULL) {
                 head_chain = prev_chain = curr_chain;
-            else {
+            } else {
                 prev_chain->ch_next = curr_chain;
                 prev_chain = curr_chain;
             }
@@ -466,7 +466,7 @@ dwarf_srcfiles(Dwarf_Die die,
     }
     /*  Our chain is not recorded in the line_context so
         the line_context destructor will not destroy our list of strings
-        or our strings. 
+        or our strings.
         Our caller has to do the deallocations.  */
 
     *srcfiles = ret_files;
@@ -492,7 +492,7 @@ int
 _dwarf_internal_srclines(Dwarf_Die die,
     Dwarf_Bool is_new_interface,
     Dwarf_Unsigned * version,
-    Dwarf_Small    * table_count, /* returns 0,1, or 2 */            
+    Dwarf_Small    * table_count, /* returns 0,1, or 2 */
     Dwarf_Line_Context *line_context_out,
     Dwarf_Line ** linebuf,
     Dwarf_Signed * linecount,
