@@ -145,12 +145,24 @@ typedef struct {
     Dwarf_Unsigned  bl_section_offset;
 } Dwarf_Block;
 
-/* Dwarf_Loc_c_s and Dwarf_Locdesc_c_s are not defined publically. */
+
+/*  NEW October 2015.  */
+/*  Dwarf_Loc_c_s,Dwarf_Locdesc_c_s, and Dwarf_LocList_c_s
+     are not defined publically. */
 struct Dwarf_Loc_c_s;
 typedef struct Dwarf_Loc_c_s * Dwarf_Loc_c;
 
+/*  NEW October 2015.  */
+/*  This provides access to Dwarf_Loc_c, a single location operator */
 struct Dwarf_Locdesc_c_s;
 typedef struct Dwarf_Locdesc_c_s * Dwarf_Locdesc_c;
+
+/*  NEW October 2015.  */
+/*  This provides access to Dwarf_Locdesc_c, a single location list entry 
+    (or for a locexpr, the fake LocList for the locexpr) */
+struct Dwarf_LocList_c_s;
+typedef struct Dwarf_LocList_c_s * Dwarf_LocList_c;
+
 
 /*  Location record. Records up to 2 operand values.
     Not usable with DWARF5 or DWARF4 with extensions. */
@@ -1491,34 +1503,36 @@ int dwarf_validate_die_sibling(Dwarf_Die /*sibling*/,Dwarf_Off* /*offset*/);
 
 /* convenience functions, alternative to using dwarf_attrlist() */
 int dwarf_hasattr(Dwarf_Die /*die*/,
-    Dwarf_Half       /*attr*/,
-    Dwarf_Bool *     /*returned_bool*/,
-    Dwarf_Error*     /*error*/);
+    Dwarf_Half   /*attr*/,
+    Dwarf_Bool * /*returned_bool*/,
+    Dwarf_Error* /*error*/);
 
-/* BEGIN: loclist_b interfaces */
-int dwarf_get_loclist_c (Dwarf_Attribute attr,
-   Dwarf_Locdesc_c **llbuf,
-   Dwarf_Signed *   /*locCount*/,
-   Dwarf_Error*     /*error*/);
+/*  BEGIN: loclist_c interfaces 
+    NEW October 2015. */
+int dwarf_get_loclist_c (Dwarf_Attribute /*attr*/,
+   Dwarf_LocList_c * /*loclist_head*/,
+   Dwarf_Signed    * /*locCount*/,
+   Dwarf_Error*      /*error*/);
 
-int dwarf_get_loclist_entry_c(Dwarf_Locdesc_c, Dwarf_Signed index,
-   Dwarf_Small  *lle_value_out, /* identifies type of loclist entry*/
-   Dwarf_Addr   *lowpc_out,
-   Dwarf_Addr   *hipc_out,
-   Dwarf_Signed *loclist_count_out,
-   Dwarf_Loc_c  *locentry_out,
-   Dwarf_Small  *loclist_source_out, /* 0,1, or 2 */
-   Dwarf_Unsigned *section_offset_out,
-   Dwarf_Addr   * applicable_base_address,
-   Dwarf_Error*     /*error*/);
+int dwarf_get_loclist_entry_c(Dwarf_LocList_c /*loclist_head*/, 
+   Dwarf_Signed    /*index*/,
+   Dwarf_Small  *  /*lle_value_out*/, /* identifies type of loclist entry*/
+   Dwarf_Addr   *  /*lowpc_out*/,
+   Dwarf_Addr   *  /*hipc_out*/,
+   Dwarf_Signed *  /*loclist_count_out*/,
+   Dwarf_Loc_c  *  /*locentry_out*/, /* Returns pointer to array of entries */
+   Dwarf_Small  *  /*loclist_source_out*/, /* 0,1, or 2 */
+   Dwarf_Unsigned * /*section_offset_out*/,
+   Dwarf_Addr   *  /*applicable_base_address*/,
+   Dwarf_Error  *  /*error*/);
 
-int dwarf_get_location_op_value_c(Dwarf_Loc_c locexpr,
-   Dwarf_Signed index,
-   Dwarf_Small  *atom_out,
-   Dwarf_Unsigned  *operand1,
-   Dwarf_Unsigned  *operand2,
-   Dwarf_Unsigned  *operand3,
-   Dwarf_Unsigned  *offset_for_branch,
+int dwarf_get_location_op_value_c(Dwarf_Loc_c /*locentries*/,
+   Dwarf_Signed     /*index*/,
+   Dwarf_Small    * /*atom_out*/,
+   Dwarf_Unsigned * /*operand1*/,
+   Dwarf_Unsigned * /*operand2*/,
+   Dwarf_Unsigned * /*operand3*/,
+   Dwarf_Unsigned * /*offset_for_branch*/,
    Dwarf_Error*     /*error*/);
 
 /*  So one can find the target operator
@@ -1529,16 +1543,16 @@ int dwarf_get_location_index_for_offset_c(Dwarf_Loc_c locexpr,
    Dwarf_Error*     /*error*/);
 
 /* This frees all memory allocated by the applicable
-    dwarf_get_loclist_b() */
-int dwarf_loclist_c_dealloc(Dwarf_Locdesc_c locdesc);
+    dwarf_get_loclist_c() */
+int dwarf_loclist_c_dealloc(Dwarf_LocList_c /*loclist_head*/);
 
-/* END: loclist_b interfaces */
+/* END: loclist_c interfaces */
 
 
-/*  dwarf_loclist_n preferred over dwarf_loclist
-    As of 2015 the newest is dwarf_get_loclist_b()
-    and only dwarf_get_loclist_b() will work
-    for DWARF5 (and all earlier versions). */
+/*  As of 2015 the preferred interface 
+    is dwarf_get_loclist_c()
+    and only dwarf_get_loclist_c() will work
+    for DWARF5 (and also all earlier versions).  */
 int dwarf_loclist_n(Dwarf_Attribute /*attr*/,
     Dwarf_Locdesc*** /*llbuf*/,
     Dwarf_Signed *   /*locCount*/,

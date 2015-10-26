@@ -389,7 +389,7 @@ const char *_dwarf_errmsgs[] = {
     "DW_DLE_NO_TIED_FILE_AVAILABLE(308) see dwarf_set_tied_dbg()",
     "DW_DLE_CU_TYPE_MISSING(309) libdwarf bug or data corruption",
     "DW_DLE_LLE_CODE_UNKNOWN(310) libdwarf bug or data corruption",
-    "DW_DLE_LOCLIST_INTERFACE_ERROR(311) interface cannot handle new DW_OP*",
+    "DW_DLE_LOCLIST_INTERFACE_ERROR(311) interface cannot do location or DW_OP*",
 };
 
 

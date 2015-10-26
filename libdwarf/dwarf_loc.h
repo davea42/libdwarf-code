@@ -24,10 +24,24 @@
 
 */
 
+/*  NEW October 2015.  */
+/*  Dwarf_Loc_c_s,Dwarf_Locdesc_c_s, and Dwarf_LocList_c_s
+     are not defined publically. */
+struct Dwarf_Loc_c_s;
+typedef struct Dwarf_Loc_c_s * Dwarf_Loc_c;
 
+/*  NEW October 2015.  */
+/*  This provides access to Dwarf_Loc_c, a single location operator */
+struct Dwarf_Locdesc_c_s;
+typedef struct Dwarf_Locdesc_c_s * Dwarf_Locdesc_c;
+
+/*  NEW October 2015.  */
+/*  This provides access to Dwarf_Locdesc_c, a single location list entry
+    (or for a locexpr, the fake LocList for the locexpr) */
+struct Dwarf_LocList_c_s;
+typedef struct Dwarf_LocList_c_s * Dwarf_LocList_c;
 
 typedef struct Dwarf_Loc_Chain_s *Dwarf_Loc_Chain;
-
 struct Dwarf_Loc_Chain_s {
     Dwarf_Small lc_atom;
     Dwarf_Unsigned lc_number;
@@ -106,9 +120,10 @@ struct Dwarf_Locdesc_c_s {
     This struct is opaque. Not visible to callers. */
 struct Dwarf_LocList_c_s {
 
-    /* The array (1 or more entries) of Loc_Desc_c
+    /*  The array (1 or more entries) of 
+        struct Loc_Desc_c_s
         If 1 it may really be a locexpr */
-    Dwarf_LocDesc_c   ll_locdesc;
+    Dwarf_Locdesc_c   ll_locdesc;
     /*  Entry count of the ll_locdesc array.  */
     Dwarf_Unsigned    ll_locdesc_count;
 

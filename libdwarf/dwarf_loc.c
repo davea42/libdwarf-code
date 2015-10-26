@@ -118,7 +118,6 @@ _dwarf_read_loc_expr_op(Dwarf_Debug dbg,
     Dwarf_Error * error)
 {
     Dwarf_Small *loc_ptr = 0;
-    Dwarf_Small *end_ptr = 0;
     Dwarf_Unsigned loc_len = 0;
     Dwarf_Unsigned offset = startoffset_in;
     Dwarf_Unsigned operand1 = 0;
@@ -129,12 +128,15 @@ _dwarf_read_loc_expr_op(Dwarf_Debug dbg,
 
     loc_len = loc_block->bl_len;
     loc_ptr = loc_block->bl_data + offset;
-    end_ptr =  dbg->de_debug_loc.dss_size +
-        dbg->de_debug_loc.dss_data;
 
-    if ((loc_ptr + loc_len) > end_ptr) {
-        _dwarf_error(dbg,error,DW_DLE_DEBUG_LOC_SECTION_SHORT);
-        return DW_DLV_ERROR;
+    if (loc_block->bl_from_loclist) {
+        Dwarf_Small *end_ptr = 0;
+        end_ptr =  dbg->de_debug_loc.dss_size +
+            dbg->de_debug_loc.dss_data;
+        if ( (loc_ptr + loc_len) > end_ptr) {
+            _dwarf_error(dbg,error,DW_DLE_DEBUG_LOC_SECTION_SHORT);
+            return DW_DLV_ERROR;
+        }
     }
     if (offset == loc_len) {
         return DW_DLV_NO_ENTRY;
@@ -588,7 +590,7 @@ _dwarf_read_loc_expr_op(Dwarf_Debug dbg,
         offset = offset + leb128_length;
 
         /*  Next byte is size of following data block.  */
-        operand2 = (Dwarf_Unsigned) loc_ptr;
+        operand2 = *loc_ptr;
         loc_ptr = loc_ptr + 1;
         offset = offset + 1;
 
@@ -660,8 +662,10 @@ _dwarf_read_loc_expr_op(Dwarf_Debug dbg,
         return DW_DLV_ERROR;
     }
     curr_loc->lr_atom = atom;
+    curr_loc->lr_number =  operand1;
     curr_loc->lr_number2 = operand2;
     curr_loc->lr_number3 = operand3;
+    *nextoffset_out = offset;
     return DW_DLV_OK;
 }
 
@@ -1260,6 +1264,11 @@ dwarf_loclist_n(Dwarf_Attribute attr,
     /*  If this is a form_block then it's a location expression. If it's
         DW_FORM_data4 or DW_FORM_data8  in DWARF2 or DWARF3
         (or in DWARF4 or 5 a DW_FORM_sec_offset) it's a loclist offset */
+    if (cuvstamp == DW_CU_VERSION5) {
+        /* Use a newer interface. */
+        _dwarf_error(dbg, error, DW_DLE_LOCLIST_INTERFACE_ERROR);
+        return (DW_DLV_ERROR);
+    }
     if (((cuvstamp == DW_CU_VERSION2 || cuvstamp == DW_CU_VERSION3) &&
         (form == DW_FORM_data4 || form == DW_FORM_data8)) ||
         ((cuvstamp == DW_CU_VERSION4) && form == DW_FORM_sec_offset)) {
@@ -1387,6 +1396,7 @@ dwarf_loclist_n(Dwarf_Attribute attr,
 }
 
 
+#if 0
 /*  New October 2015
     This interface requires the use of interface functions
     to get data from Dwarf_Locdesc_c.  The structures
@@ -1440,84 +1450,8 @@ dwarf_loclist_c(Dwarf_Attribute attr,
         if(setup_res != DW_DLV_OK) {
             return setup_res;
         }
-        if(cucontext->cc_is_dwo) {
-            /*  dwo/dwp loclist.  Cannot get here except in
-                a situation requiring the DWARF5 DW_LLE list controls
-                be present. */
-            /*  There is a lot of repeated code.
-                Split vs non-split loclist. FIXME. */
-            int loclist_count = 0;
-            Dwarf_Unsigned loclist_offset = 0;
-            int off_res  = DW_DLV_ERROR;
-            int count_res = 0;
-            int lli = 0;
-            Dwarf_Addr lowpc = 0;
-            Dwarf_Addr highpc = (Dwarf_Addr)(-1ll); /* HACK */;
-
-            off_res = _dwarf_get_loclist_header_start(dbg,
-                attr, &loclist_offset, error);
-            if (off_res != DW_DLV_OK) {
-                return off_res;
-            }
-            if (loclist_count == 0) {
-                return DW_DLV_NO_ENTRY;
-            }
-            count_res = _dwarf_get_loclist_count_dwo(dbg, loclist_offset,
-                address_size,
-                &loclist_count, error);
-            listlen = loclist_count;
-            if (count_res != DW_DLV_OK) {
-                return count_res;
-            }
-            if (loclist_count == 0) {
-                return DW_DLV_NO_ENTRY;
-            }
-
-            llbuf = (Dwarf_Locdesc_c *)
-                _dwarf_get_alloc(dbg, DW_DLA_LIST, loclist_count);
-            if (!llbuf) {
-                _dwarf_error(dbg, error, DW_DLE_ALLOC_FAIL);
-                return (DW_DLV_ERROR);
-            }
-            for (lli = 0; lli < loclist_count; ++lli) {
-                int lres = 0;
-                Dwarf_Block b;
-                Dwarf_Bool at_end = FALSE;
-
-                blkres = _dwarf_read_loc_section_dwo(dbg, &b,
-                    &lowpc,
-                    &highpc,
-                    &at_end,
-                    loclist_offset,
-                    address_size,
-                    error);
-                if (blkres != DW_DLV_OK) {
-                    _dwarf_cleanup_llbuf_c(dbg, llbuf, lli);
-                    return (blkres);
-                }
-                lres = _dwarf_get_locdesc_c(dbg, &b,
-                    address_size,
-                    cucontext->cc_length_size,
-                    cucontext->cc_version_stamp,
-                    lowpc, highpc,
-                    &locdesc,
-                    error);
-                if (lres != DW_DLV_OK) {
-                    _dwarf_cleanup_llbuf_c(dbg, llbuf, lli);
-                    /* low level error already set: let it be passed back */
-                    return lres;
-                }
-
-                llbuf[lli] = locdesc;
-
-                /* Now get to next loclist entry offset. */
-                loclist_offset = loc_block.bl_section_offset +
-                    loc_block.bl_len;
-            }
-
-            *llbuf_out = llbuf;
-            *listlen_out = listlen;
-            return (DW_DLV_OK);
+        if (cu_context->cc_is_dwo) {
+FIXME
         }
         /*  Non-dwo loclist. If this were a skeleton CU
             (ie, in the base, not dwo/dwp) then
@@ -1640,6 +1574,7 @@ dwarf_loclist_c(Dwarf_Attribute attr,
     *listlen_out = listlen;
     return (DW_DLV_OK);
 }
+#endif /* 0 */
 
 
 

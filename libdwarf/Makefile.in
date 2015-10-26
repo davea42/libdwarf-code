@@ -51,7 +51,8 @@ DEFS =		@DEFS@
 LIBS =		@LIBS@
 INCLUDES =	-I. -I$(srcdir)
 dwfpic =        @dwfpic@
-CFLAGS =	$(PREINCS) @CFLAGS@ $(INCLUDES) $(dwfpic) $(POSTINCS)
+dwfwall =       @dwfwall@
+CFLAGS =	$(PREINCS) @CFLAGS@ $(INCLUDES) $(dwfpic) $(dwfwall) $(POSTINCS)
 LDFLAGS =	$(PRELIBS) @LDFLAGS@ $(POSTLIBS)
 
 # These three files are only appropriate for SGI IRIX.

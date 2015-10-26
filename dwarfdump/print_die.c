@@ -697,7 +697,6 @@ print_one_die_section(Dwarf_Debug dbg,Dwarf_Bool is_info)
                 char **srcfiles = 0;
                 int srcf = dwarf_srcfiles(cu_die,
                     &srcfiles, &cnt, &err);
-/*printf("dadebug res %d cnt %d srcfiles[0] %s\n",(int)res,(int)cnt,(cnt>0)?srcfiles[0]:"none"); */
                 if (srcf != DW_DLV_OK) {
                     srcfiles = 0;
                     cnt = 0;
@@ -3014,24 +3013,26 @@ _dwarf_print_one_expr_op(Dwarf_Debug dbg,Dwarf_Loc* expr,int index,
             snprintf(small_buf, sizeof(small_buf),
                 " 0x%" DW_PR_XZEROS  DW_PR_DUx , opd1);
             esb_append(string_out, small_buf);
-            /*  Followed by 1 byte length field and
-                the const bytes, all pointed to by lr_number2 */
-            bp = (const unsigned char *) expr->lr_number2;
-            /* First get the length */
-            length = *bp;
+
+            length = expr->lr_number2;
             esb_append(string_out," const length: ");
             snprintf(small_buf, sizeof(small_buf),
                 "%u" , length);
             esb_append(string_out, small_buf);
-            /* Now point to the data bytes of the const. */
-            bp++;
 
+#ifdef HANDLING_GNU_CONST_TYPE
+FIXME DW_OP_GNU_const_type
+            /* Now point to the data bytes of the const. */
+            bp = (Dwarf_Small *) expr->lr_number3;
             esb_append(string_out, " contents 0x");
             for (u = 0; u < length; ++u,++bp) {
                 snprintf(small_buf, sizeof(small_buf),
                     "%02x", *bp);
                 esb_append(string_out, small_buf);
             }
+#else
+            esb_append(string_out,"<not handling DW_OP_GNU_const_type yet>");
+#endif
             }
             break;
         case DW_OP_GNU_regval_type:
@@ -3046,6 +3047,9 @@ _dwarf_print_one_expr_op(Dwarf_Debug dbg,Dwarf_Loc* expr,int index,
         case DW_OP_GNU_deref_type:
             snprintf(small_buf, sizeof(small_buf),
                 " 0x%02" DW_PR_DUx , opd1);
+            esb_append(string_out, small_buf);
+            snprintf(small_buf, sizeof(small_buf),
+                " 0x%" DW_PR_XZEROS  DW_PR_DUx , expr->lr_number2);
             esb_append(string_out, small_buf);
             break;
         case DW_OP_GNU_convert:

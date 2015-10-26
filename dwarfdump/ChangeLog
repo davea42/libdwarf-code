@@ -1,3 +1,7 @@
+2015-10-26  David Anderson
+     * print_die.c: Removed debug printf.Corrected DW_OP_GNU_const_type
+       handling (cannot be fully reported
+       for certain new location operators).
 2015-10-15  David Anderson
      *  print_die.c: Added DW_FORM_strp_sup,
         same idea as DW_FORM_GNU_strp_alt.

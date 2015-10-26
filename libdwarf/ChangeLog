@@ -1,3 +1,15 @@
+2015-10-26  David Anderson
+     * Makefile.in: Handle the configure --enable-wall option.
+     * configure.in: Add --enable-wall so we can easily get
+       gcc's -Wall option for the build.
+     * configure: Regenerated.
+     * dwarf_error.c: Amplify the text for DW_DLE_LOCLIST_INTERFACE_ERROR.
+     * dwarf_loc.c(_dwarf_read_loc_expr_op): Correct a sanity test
+       recently introduced.  Ensure the location fields all set.
+       #if 0 some code that will be fixed with the new location
+       interface set.
+     * dwarf_loc.h: Revised the prototypes and commentary for the new
+       location list interfaces.
 2015-10-25  David Anderson
      * checkexamples.c: Add commentary to example9.
      * dwarf_alloc.c: Add DW_DLA_LOC_BLOCK_C and DW_CLA_LOCDESC_C
