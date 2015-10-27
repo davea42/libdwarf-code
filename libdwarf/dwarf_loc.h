@@ -1,6 +1,6 @@
 /*
-
   Copyright (C) 2000, 2004 Silicon Graphics, Inc.  All Rights Reserved.
+  Portions Copyright (C) 2015-2015 David Anderson. All Rights Reserved.
 
   This program is free software; you can redistribute it and/or modify it
   under the terms of version 2.1 of the GNU Lesser General Public License
@@ -21,7 +21,6 @@
   License along with this program; if not, write the Free Software
   Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston MA 02110-1301,
   USA.
-
 */
 
 /*  NEW October 2015.  */
