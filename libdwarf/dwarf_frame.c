@@ -1355,6 +1355,7 @@ dwarf_get_fde_exception_info(Dwarf_Fde fde,
 }
 
 
+
 /*  A consumer code function.
     Given a CIE pointer, return the normal CIE data thru
     pointers.
@@ -1372,7 +1373,33 @@ dwarf_get_cie_info(Dwarf_Cie cie,
     Dwarf_Unsigned * initial_instructions_length,
     Dwarf_Error * error)
 {
-    Dwarf_Debug dbg;
+    Dwarf_Half offset_size = 0;
+    return dwarf_get_cie_info_b(cie,
+        bytes_in_cie,
+        ptr_to_version,
+        augmenter,
+        code_alignment_factor,
+        data_alignment_factor,
+        return_address_register,
+        initial_instructions,
+        initial_instructions_length,
+        &offset_size,
+        error);
+}
+int
+dwarf_get_cie_info_b(Dwarf_Cie cie,
+    Dwarf_Unsigned * bytes_in_cie,
+    Dwarf_Small * ptr_to_version,
+    char **augmenter,
+    Dwarf_Unsigned * code_alignment_factor,
+    Dwarf_Signed * data_alignment_factor,
+    Dwarf_Half * return_address_register,
+    Dwarf_Ptr * initial_instructions,
+    Dwarf_Unsigned * initial_instructions_length,
+    Dwarf_Half * offset_size,
+    Dwarf_Error * error)
+{
+    Dwarf_Debug dbg = 0;
 
     if (cie == NULL) {
         _dwarf_error(NULL, error, DW_DLE_CIE_NULL);
@@ -1402,7 +1429,9 @@ dwarf_get_cie_info(Dwarf_Cie cie,
             cie->ci_length_size +
             cie->ci_extension_size -
             (cie->ci_cie_instr_start - cie->ci_cie_start);
-
+    }
+    if (offset_size) {
+        *offset_size = cie->ci_length_size;
     }
     *bytes_in_cie = (cie->ci_length);
     return (DW_DLV_OK);

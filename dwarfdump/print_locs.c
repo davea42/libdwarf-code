@@ -58,9 +58,9 @@ print_locs(Dwarf_Debug dbg)
     int index = 0;
     int lres = 0;
     int fres = 0;
-
-    /* This is sometimes wrong, we need a frame-specific size. */
     Dwarf_Half address_size = 0;
+    Dwarf_Half offset_size = 0;
+    Dwarf_Half version = 2; /* FAKE */
 
     current_section_id = DEBUG_LOC;
 
@@ -68,8 +68,16 @@ print_locs(Dwarf_Debug dbg)
     if (!do_print_dwarf) {
         return;
     }
+    if(!use_old_dwarf_loclist) {
+        printf("\n");
+        printf("Printing location lists with -l is no longer supported\n");
+    }
 
     fres = dwarf_get_address_size(dbg, &address_size, &err);
+    if (fres != DW_DLV_OK) {
+        print_error(dbg, "dwarf_get_address_size", fres, err);
+    }
+    fres = dwarf_get_offset_size(dbg, &offset_size, &err);
     if (fres != DW_DLV_OK) {
         print_error(dbg, "dwarf_get_address_size", fres, err);
     }
@@ -79,12 +87,15 @@ print_locs(Dwarf_Debug dbg)
     printf("\nFormat <i o b e l>: "
         "index section-offset begin-addr end-addr length-of-block-entry\n");
     esb_constructor(&exprstring);
+    /*  Pre=October 2015 version. */
     while ((lres = dwarf_get_loclist_entry(dbg, offset,
         &hipc_offset, &lopc_offset,
         &data, &entry_len,
         &next_entry,
         &err)) == DW_DLV_OK) {
         get_string_from_locs(dbg,data,entry_len,address_size,
+            offset_size,
+            version,
             &exprstring);
         /* Display offsets */
         if (display_offsets) {

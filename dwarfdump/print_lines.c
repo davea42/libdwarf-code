@@ -71,7 +71,7 @@ record_line_error(const char *where, Dwarf_Error err)
 }
 
 static void
-process_line_table(Dwarf_Debug dbg, 
+process_line_table(Dwarf_Debug dbg,
     Dwarf_Line *linebuf, Dwarf_Signed linecount,
     Dwarf_Bool is_logicals_table, Dwarf_Bool is_actuals_table)
 {
@@ -678,11 +678,11 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
     }
     /*  The following is complicated by a desire to test
         various line table interface functions.  Hence
-        we test line_flag_selection. 
-       
+        we test line_flag_selection.
+
         Normal code should pick an interface
         (for most  the best choice is what we here call
-          line_flag_selection == std)
+        line_flag_selection == std)
         and use just that interface set.
 
         Sorry about the length of the code that
@@ -706,8 +706,8 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
     } else if (line_flag_selection == orig2l) {
         lres = dwarf_srclines_two_level(cu_die,
             &lineversion,
-            &linebuf, &linecount, 
-            &linebuf_actuals, &linecount_actuals, 
+            &linebuf, &linecount,
+            &linebuf_actuals, &linecount_actuals,
             &err);
         if(lres == DW_DLV_OK && linecount){
             table_count++;
@@ -765,7 +765,7 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
                 Dwarf_Bool is_actuals = FALSE;
                 process_line_table(dbg, linebuf, linecount,
                     is_logicals, is_actuals);
-                process_line_table(dbg, linebuf_actuals, 
+                process_line_table(dbg, linebuf_actuals,
                     linecount_actuals,
                     !is_logicals, !is_actuals);
             }
@@ -786,9 +786,9 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
                 Dwarf_Bool is_logicals = TRUE;
                 Dwarf_Bool is_actuals = FALSE;
                 process_line_table(dbg, linebuf, linecount,
-                        is_logicals, is_actuals);
+                    is_logicals, is_actuals);
                 process_line_table(dbg, linebuf_actuals, linecount_actuals,
-                        !is_logicals, !is_actuals);
+                    !is_logicals, !is_actuals);
             }
             dwarf_srclines_dealloc(dbg,linebuf,linecount);
         }
@@ -827,7 +827,7 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
             }
         }
         if(line_flag_selection == std ||
-           line_flag_selection == s2l) {
+            line_flag_selection == s2l) {
             dwarf_srclines_dealloc_b(line_context);
         } else {
             /* Original allocation. */

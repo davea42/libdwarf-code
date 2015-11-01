@@ -621,6 +621,7 @@ ac_includes_default="\
 
 ac_subst_vars='LTLIBOBJS
 LIBOBJS
+dwfwall
 AR
 RANLIB
 INSTALL_DATA
@@ -677,6 +678,7 @@ SHELL'
 ac_subst_files=''
 ac_user_opts='
 enable_option_checking
+enable_wall
 enable_nonstandardprintf
 '
       ac_precious_vars='build_alias
@@ -1295,6 +1297,7 @@ Optional Features:
   --disable-option-checking  ignore unrecognized --enable/--with options
   --disable-FEATURE       do not include FEATURE (same as --enable-FEATURE=no)
   --enable-FEATURE[=ARG]  include FEATURE [ARG=yes]
+  --enable-wall           Add -Wall (default is none)
   --enable-nonstandardprintf
                           Use a special printf format for 64bit (default is
                           NO)
@@ -3629,6 +3632,15 @@ elif test "$ac_cv_header_libelf_libelf_h" = yes; then
 $as_echo "#define LOCATION_OF_LIBELFHEADER <libelf/libelf.h>" >>confdefs.h
 
 fi
+
+
+# Check whether --enable-wall was given.
+if test "${enable_wall+set}" = set; then :
+  enableval=$enable_wall;
+         dwfwall=-Wall
+
+fi
+
 
 cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */

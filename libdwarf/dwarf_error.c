@@ -390,6 +390,8 @@ const char *_dwarf_errmsgs[] = {
     "DW_DLE_CU_TYPE_MISSING(309) libdwarf bug or data corruption",
     "DW_DLE_LLE_CODE_UNKNOWN(310) libdwarf bug or data corruption",
     "DW_DLE_LOCLIST_INTERFACE_ERROR(311) interface cannot do location or DW_OP*",
+    "DW_DLE_LOCLIST_INDEX_ERROR(312)",
+    "DW_DLE_INTERFACE_NOT_SUPPORTED(313)",
 };
 
 

@@ -506,7 +506,8 @@ struct Dwarf_Debug_s {
 
     /*  Number of bytes in the length, and offset field in various
         .debug_* sections.  It's not very meaningful, and is
-        only used in one 'approximate' calculation.  */
+        only used in one 'approximate' calculation.
+        de_offset_size would be a more appropos name. */
     Dwarf_Small de_length_size;
 
     /*  number of bytes in a pointer of the target in various .debug_

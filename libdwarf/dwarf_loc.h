@@ -24,8 +24,8 @@
 */
 
 /*  NEW October 2015.  */
-/*  Dwarf_Loc_c_s,Dwarf_Locdesc_c_s, and Dwarf_LocList_c_s
-     are not defined publically. */
+/*  Dwarf_Loc_c_s,Dwarf_Locdesc_c_s, and Dwarf_Loc_Head_c_s
+    are not defined publically. */
 struct Dwarf_Loc_c_s;
 typedef struct Dwarf_Loc_c_s * Dwarf_Loc_c;
 
@@ -36,9 +36,9 @@ typedef struct Dwarf_Locdesc_c_s * Dwarf_Locdesc_c;
 
 /*  NEW October 2015.  */
 /*  This provides access to Dwarf_Locdesc_c, a single location list entry
-    (or for a locexpr, the fake LocList for the locexpr) */
-struct Dwarf_LocList_c_s;
-typedef struct Dwarf_LocList_c_s * Dwarf_LocList_c;
+    (or for a locexpr, the fake Loc_Head for the locexpr) */
+struct Dwarf_Loc_Head_c_s;
+typedef struct Dwarf_Loc_Head_c_s * Dwarf_Loc_Head_c;
 
 typedef struct Dwarf_Loc_Chain_s *Dwarf_Loc_Chain;
 struct Dwarf_Loc_Chain_s {
@@ -50,6 +50,27 @@ struct Dwarf_Loc_Chain_s {
     Dwarf_Unsigned lc_opnumber;
     Dwarf_Loc_Chain lc_next;
 };
+
+
+/* Contains info on an uninterpreted block of data
+   Used with certain frame information functions.
+*/
+typedef struct {
+    Dwarf_Unsigned  bl_len;         /* length of block bl_data points at */
+    Dwarf_Ptr       bl_data;        /* uninterpreted data */
+
+    /*  0 if location description,
+        1 if .debug_info loclist,
+        2 if .debug_info.dwo split dwarf loclist. */
+    Dwarf_Small     bl_from_loclist;
+
+    /* Section (not CU) offset which 'data' comes from. */
+    Dwarf_Unsigned  bl_section_offset;
+
+    /*  Section offset where the location description itself starts.
+        So a few bytes lower than bl_section_offset */
+    Dwarf_Unsigned  bl_locdesc_offset;
+} Dwarf_Block_c;
 
 /* Location record. Records up to 3 operand values.
    For DWARF5 ops with a 1 byte size and then a block
@@ -100,9 +121,9 @@ struct Dwarf_Locdesc_c_s {
         of an applicable base address, or a length, never a pc value.  */
     Dwarf_Addr      ld_hipc;        /* end of active range */
 
-    /* count of struct Dwarf_Loc_s in array. */
+    /* count of struct Dwarf_Loc_c_s in array. */
     Dwarf_Half      ld_cents;
-    /* pointer to array of struct Dwarf_Loc_s*/
+    /* pointer to array of struct Dwarf_Loc_c_s*/
     Dwarf_Loc_c     ld_s;
 
     Dwarf_Small     ld_from_loclist;
@@ -110,16 +131,19 @@ struct Dwarf_Locdesc_c_s {
     /* Section (not CU) offset where loc-expr begins*/
     Dwarf_Unsigned  ld_section_offset;
 
+    /* Section (not CU) offset where location descr begins*/
+    Dwarf_Unsigned  ld_locdesc_offset;
+
     /* Pointer to our header (in which we are located). */
-    Dwarf_LocList_c  ld_loclist;
+    Dwarf_Loc_Head_c  ld_loclist_head;
 };
 
 /*  A 'header' to the loclist and  the
     location description(s)  attached to an attribute.
     This struct is opaque. Not visible to callers. */
-struct Dwarf_LocList_c_s {
+struct Dwarf_Loc_Head_c_s {
 
-    /*  The array (1 or more entries) of 
+    /*  The array (1 or more entries) of
         struct Loc_Desc_c_s
         If 1 it may really be a locexpr */
     Dwarf_Locdesc_c   ll_locdesc;
@@ -133,5 +157,6 @@ struct Dwarf_LocList_c_s {
 
     /*  The CU Context of this loclist or locexpr. */
     Dwarf_CU_Context ll_context;
-};
 
+    Dwarf_Debug      ll_dbg;
+};

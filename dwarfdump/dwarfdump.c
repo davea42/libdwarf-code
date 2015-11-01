@@ -102,10 +102,14 @@ static const char * do_uri_translation(const char *s,
 static void reset_overall_CU_error_data();
 
 boolean info_flag = FALSE;
-boolean use_old_dwarf_loclist = FALSE;  /* This so both dwarf_loclist()
-    and dwarf_loclist_n() can be
+boolean use_old_dwarf_loclist = FALSE;  /* This so both
+    dwarf_loclist_n()  and dwarf_get_loclist_c()
+    and the dwarf_loclist_from_expr
+    variations can be
     tested. Defaults to new
-    dwarf_loclist_n() */
+    dwarf_get_loclist_c(). See -g option.
+    The original IRIX dwarf_loclist() no longer tested
+    as of October 2015. */
 
 enum line_flag_type_e line_flag_selection = s2l;
 boolean line_flag = FALSE;

@@ -1,3 +1,16 @@
+2015-11-01  David Anderson
+     * Makefile.in, configure.in: Implement --enable-wall for compile-time
+       checking.
+     * configure: Regenerate.
+     * print_die.c:  Add DWARF5 DW_OPs  and .debug_loc.dwo loclists are
+       handled. 
+       Now uses either latest (DWARF5)
+       interfaces or earlier, repurposing the old -g option to select.
+     * print_frames.c,print_frames.h: Printing expressions 
+       (in .debug_frame, .eh_frame) 
+       now honors -g so DWARF5 expressions handled. 
+     * print_lines.c: Fixed some formatting.
+     * print_locs.c: Changes reflecting code calling into print_frames.c
 2015-10-26  David Anderson
      * print_die.c: Removed debug printf.Corrected DW_OP_GNU_const_type
        handling (cannot be fully reported

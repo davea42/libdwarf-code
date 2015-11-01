@@ -447,7 +447,6 @@ void get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
     Dwarf_Signed cnt, struct esb_s *esbp,
     int show_form,int local_verbose);
 
-
 extern Dwarf_Unsigned local_dwarf_decode_u_leb128(unsigned char *leb128,
     unsigned int *leb128_length);
 
@@ -461,11 +460,12 @@ extern void format_sig8_string(Dwarf_Sig8 *data,struct esb_s *out);
 extern void print_gdb_index(Dwarf_Debug dbg);
 extern void print_debugfission_index(Dwarf_Debug dbg,const char *type);
 
-
-int
-dwarfdump_print_one_locdesc(Dwarf_Debug dbg,
-    Dwarf_Locdesc * llbuf,
-    int skip_locdesc_header,
+void dwarfdump_print_one_locdesc(Dwarf_Debug dbg,
+    Dwarf_Locdesc * llbuf, /* 2014 interface */
+    Dwarf_Locdesc_c  locs, /* 2015 interface */
+    Dwarf_Unsigned llent, /* Which locdesc is this */
+    Dwarf_Unsigned entrycount, /* count of DW_OP operators */
+    Dwarf_Addr baseaddr,
     struct esb_s *string_out);
 void clean_up_die_esb();
 void clean_up_syms_malloc_data();

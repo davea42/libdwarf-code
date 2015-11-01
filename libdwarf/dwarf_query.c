@@ -41,6 +41,19 @@ static int _dwarf_get_address_base_attr_value(Dwarf_Debug dbg,
     Dwarf_Unsigned *abase_out,
     Dwarf_Error *error);
 
+int dwarf_get_offset_size(Dwarf_Debug dbg,
+    Dwarf_Half  *    addr_size,
+    Dwarf_Error *    error)
+{
+    Dwarf_Half offset_size = 0;
+    if (dbg == 0) {
+        _dwarf_error(NULL, error, DW_DLE_DBG_NULL);
+        return (DW_DLV_ERROR);
+    }
+    offset_size = dbg->de_length_size;;
+    return DW_DLV_OK;
+}
+
 
 /* This is normally reliable.
 But not always.
@@ -568,6 +581,63 @@ _dwarf_extract_address_from_debug_addr(Dwarf_Debug dbg,
     return DW_DLV_OK;
 }
 
+int
+_dwarf_look_in_local_and_tied_by_index(
+    Dwarf_Debug dbg,
+    Dwarf_CU_Context context,
+    Dwarf_Unsigned index,
+    Dwarf_Addr *return_addr,
+    Dwarf_Error *error)
+{
+    int res2 = 0;
+
+    res2 = _dwarf_extract_address_from_debug_addr(dbg,
+        context, index, return_addr, error);
+    if (res2 != DW_DLV_OK) {
+        if (res2 == DW_DLV_ERROR &&dwarf_errno(*error) ==
+            DW_DLE_MISSING_NEEDED_DEBUG_ADDR_SECTION
+            && dbg->de_tied_data.td_tied_object) {
+            int res3 = 0;
+
+            /*  We do not want to leak error structs... */
+            dwarf_dealloc(dbg,*error,DW_DLA_ERROR);
+            *error = 0;
+            res3 = _dwarf_get_addr_from_tied(dbg,
+                context,index,return_addr,error);
+            if ( res3 != DW_DLV_OK) {
+                return res3;
+            }
+        } else {
+            return res2;
+        }
+    }
+    return (DW_DLV_OK);
+}
+
+/*  The DIE here can be any DIE in the relevant CU.
+    index is an index into .debug_addr */
+int
+dwarf_debug_addr_index_to_addr(Dwarf_Die die,
+    Dwarf_Unsigned index,
+    Dwarf_Addr *return_addr,
+    Dwarf_Error *error)
+{
+    Dwarf_Debug dbg = 0;
+    Dwarf_CU_Context context = 0;
+    int res = 0;
+
+
+    CHECK_DIE(die, DW_DLV_ERROR);
+    context = die->di_cu_context;
+    dbg = context->cc_dbg;
+
+    res = _dwarf_look_in_local_and_tied_by_index(dbg,
+        context,
+        index,
+        return_addr,
+        error);
+    return res;
+}
 /* ASSERT:
     attr_form == DW_FORM_GNU_addr_index ||
         attr_form == DW_FORM_addrx
@@ -579,7 +649,6 @@ _dwarf_look_in_local_and_tied(Dwarf_Half attr_form,
     Dwarf_Addr *return_addr,
     Dwarf_Error *error)
 {
-    Dwarf_Addr addr_out = 0;
     int res2 = 0;
     Dwarf_Unsigned index_to_addr = 0;
     Dwarf_Debug dbg = 0;
@@ -592,34 +661,11 @@ _dwarf_look_in_local_and_tied(Dwarf_Half attr_form,
         return res2;
     }
     dbg = context->cc_dbg;
+    res2 = _dwarf_look_in_local_and_tied_by_index(
+        dbg,context,index_to_addr,return_addr,error);
+    return res2;
 
-    res2 = _dwarf_extract_address_from_debug_addr(dbg,
-        context,
-        index_to_addr,
-        &addr_out,
-        error);
-    if (res2 != DW_DLV_OK) {
-        if (res2 == DW_DLV_ERROR &&dwarf_errno(*error) ==
-            DW_DLE_MISSING_NEEDED_DEBUG_ADDR_SECTION
-            && dbg->de_tied_data.td_tied_object) {
-            int res3 = 0;
-
-            /*  We do not want to leak error structs... */
-            dwarf_dealloc(dbg,*error,DW_DLA_ERROR);
-            *error = 0;
-            res3 = _dwarf_get_addr_from_tied(dbg,
-                context,index_to_addr,&addr_out,error);
-            if ( res3 != DW_DLV_OK) {
-                return res3;
-            }
-        } else {
-            return res2;
-        }
-    }
-    *return_addr = addr_out;
-    return (DW_DLV_OK);
 }
-
 
 int
 dwarf_lowpc(Dwarf_Die die,

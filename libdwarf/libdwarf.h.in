@@ -42,7 +42,7 @@ extern "C" {
 
     The interface is defined as having 8-byte signed and unsigned
     values so it can handle 64-or-32bit target on 64-or-32bit host.
-    Addr is the native size: it represents pointers on
+    Dwarf_Ptr is the native size: it represents pointers on
     the host machine (not the target!).
 
     This contains declarations for types and all producer
@@ -137,7 +137,8 @@ typedef struct {
     Dwarf_Unsigned  bl_len;         /* length of block bl_data points at */
     Dwarf_Ptr       bl_data;        /* uninterpreted data */
 
-    /*  0 if locdesc, 1 if .debug_info loclist or
+    /*  0 if location description,
+        1 if .debug_info loclist,
         2 if .debug_info.dwo split dwarf loclist. */
     Dwarf_Small     bl_from_loclist;
 
@@ -147,8 +148,8 @@ typedef struct {
 
 
 /*  NEW October 2015.  */
-/*  Dwarf_Loc_c_s,Dwarf_Locdesc_c_s, and Dwarf_LocList_c_s
-     are not defined publically. */
+/*  Dwarf_Loc_c_s,Dwarf_Locdesc_c_s, and Dwarf_Loc_Head_c_s
+    are not defined publically. */
 struct Dwarf_Loc_c_s;
 typedef struct Dwarf_Loc_c_s * Dwarf_Loc_c;
 
@@ -158,14 +159,16 @@ struct Dwarf_Locdesc_c_s;
 typedef struct Dwarf_Locdesc_c_s * Dwarf_Locdesc_c;
 
 /*  NEW October 2015.  */
-/*  This provides access to Dwarf_Locdesc_c, a single location list entry 
-    (or for a locexpr, the fake LocList for the locexpr) */
-struct Dwarf_LocList_c_s;
-typedef struct Dwarf_LocList_c_s * Dwarf_LocList_c;
+/*  This provides access to Dwarf_Locdesc_c, a single
+    location list entry (or for a locexpr, the fake
+    Loc_Head for the locexpr) */
+struct Dwarf_Loc_Head_c_s;
+typedef struct Dwarf_Loc_Head_c_s * Dwarf_Loc_Head_c;
 
 
 /*  Location record. Records up to 2 operand values.
-    Not usable with DWARF5 or DWARF4 with extensions. */
+    Not usable with DWARF5 or DWARF4 with location
+    operator  extensions. */
 typedef struct {
     Dwarf_Small     lr_atom;        /* location operation */
     Dwarf_Unsigned  lr_number;      /* operand */
@@ -832,6 +835,7 @@ struct Dwarf_Obj_Access_Interface_s {
 #define DW_DLA_XU_INDEX        0x38     /* Dwarf_Xu_Index_Header */
 #define DW_DLA_LOC_BLOCK_C     0x39     /* Dwarf_Loc_c*/
 #define DW_DLA_LOCDESC_C       0x3a     /* Dwarf_Locdesc_c */
+#define DW_DLA_LOC_HEAD_C      0x3b     /* Dwarf_Loc_Head_c */
 
 /* The augmenter string for CIE */
 #define DW_CIE_AUGMENTER_STRING_V0              "z"
@@ -1217,9 +1221,11 @@ struct Dwarf_Obj_Access_Interface_s {
 #define DW_DLE_CU_TYPE_MISSING                 309
 #define DW_DLE_LLE_CODE_UNKNOWN                310
 #define DW_DLE_LOCLIST_INTERFACE_ERROR         311
+#define DW_DLE_LOCLIST_INDEX_ERROR             312
+#define DW_DLE_INTERFACE_NOT_SUPPORTED         313
 
     /* DW_DLE_LAST MUST EQUAL LAST ERROR NUMBER */
-#define DW_DLE_LAST        311
+#define DW_DLE_LAST        313
 #define DW_DLE_LO_USER     0x10000
 
     /*  Taken as meaning 'undefined value', this is not
@@ -1422,7 +1428,7 @@ int dwarf_offdie(Dwarf_Debug /*dbg*/,
     Dwarf_Die*       /*return_die*/,
     Dwarf_Error*     /*error*/);
 
-/* dwarf_offdie_b() new October 2011 */
+/*  dwarf_offdie_b() new October 2011 */
 /*  Finding die given global (not CU-relative) offset.
     Applies to debug_info (is_info true) or debug_types (is_info false). */
 int dwarf_offdie_b(Dwarf_Debug /*dbg*/,
@@ -1438,33 +1444,47 @@ int dwarf_offdie_b(Dwarf_Debug /*dbg*/,
 Dwarf_Bool dwarf_get_die_infotypes_flag(Dwarf_Die /*die*/);
 
 
-/* operations on DIEs */
+/*  operations on DIEs */
 int dwarf_tag(Dwarf_Die /*die*/,
     Dwarf_Half*      /*return_tag*/,
     Dwarf_Error*     /*error*/);
 
-/* utility? */
-/* dwarf_dieoffset returns the global debug_info
-   section offset, not the CU relative offset. */
+/*  dwarf_dieoffset returns the global debug_info
+    section offset, not the CU relative offset. */
 int dwarf_dieoffset(Dwarf_Die /*die*/,
     Dwarf_Off*       /*return_offset*/,
     Dwarf_Error*     /*error*/);
 
-/* dwarf_CU_dieoffset_given_die returns
-   the global debug_info section offset of the CU die
-   that is the CU containing the given_die
-   (the passed in DIE can be any DIE).
-   This information makes it possible for a consumer to
-   find and print CU context information for any die.
-   See also dwarf_get_cu_die_offset_given_cu_header_offset(). */
+/*  NEW October 2015. DWARF5.
+    The DIE here can be any DIE in the relevant CU.
+    index is an index into .debug_addr.
+    This will look first for .debug_addr
+    in the dbg object DIE
+    and if not there (because the dbg object is
+    a dwo or dwp split dwarf object)
+    will look in the tied object if tied is available. */
+int
+dwarf_debug_addr_index_to_addr(Dwarf_Die /*die*/,
+    Dwarf_Unsigned  /*index*/,
+    Dwarf_Addr    * /*return_addr*/,
+    Dwarf_Error   * /*error*/);
+
+
+/*  dwarf_CU_dieoffset_given_die returns
+    the global debug_info section offset of the CU die
+    that is the CU containing the given_die
+    (the passed in DIE can be any DIE).
+    This information makes it possible for a consumer to
+    find and print CU context information for any die.
+    See also dwarf_get_cu_die_offset_given_cu_header_offset(). */
 int dwarf_CU_dieoffset_given_die(Dwarf_Die /*given_die*/,
     Dwarf_Off*       /*return_offset*/,
     Dwarf_Error*     /*error*/);
 
-/* dwarf_die_CU_offset returns the CU relative offset
-   not the global debug_info section offset, given
-   any DIE in the CU.  See also dwarf_CU_dieoffset_given_die().
-   */
+/*  dwarf_die_CU_offset returns the CU relative offset
+    not the global debug_info section offset, given
+    any DIE in the CU.  See also dwarf_CU_dieoffset_given_die().
+    */
 int dwarf_die_CU_offset(Dwarf_Die /*die*/,
     Dwarf_Off*       /*return_offset*/,
     Dwarf_Error*     /*error*/);
@@ -1507,27 +1527,35 @@ int dwarf_hasattr(Dwarf_Die /*die*/,
     Dwarf_Bool * /*returned_bool*/,
     Dwarf_Error* /*error*/);
 
-/*  BEGIN: loclist_c interfaces 
-    NEW October 2015. */
+/*  BEGIN: loclist_c interfaces
+    NEW October 2015.
+    This works for any attribute that identifies
+    a loclist or a locexpr. When the attribute is a locexpr
+    a single loclist (created by libdwarf)
+    is attached to loclist_head. */
 int dwarf_get_loclist_c (Dwarf_Attribute /*attr*/,
-   Dwarf_LocList_c * /*loclist_head*/,
-   Dwarf_Signed    * /*locCount*/,
-   Dwarf_Error*      /*error*/);
+   Dwarf_Loc_Head_c * /*loclist_head*/,
+   Dwarf_Unsigned   * /*locCount*/,
+   Dwarf_Error      * /*error*/);
 
-int dwarf_get_loclist_entry_c(Dwarf_LocList_c /*loclist_head*/, 
-   Dwarf_Signed    /*index*/,
-   Dwarf_Small  *  /*lle_value_out*/, /* identifies type of loclist entry*/
-   Dwarf_Addr   *  /*lowpc_out*/,
-   Dwarf_Addr   *  /*hipc_out*/,
-   Dwarf_Signed *  /*loclist_count_out*/,
-   Dwarf_Loc_c  *  /*locentry_out*/, /* Returns pointer to array of entries */
-   Dwarf_Small  *  /*loclist_source_out*/, /* 0,1, or 2 */
-   Dwarf_Unsigned * /*section_offset_out*/,
-   Dwarf_Addr   *  /*applicable_base_address*/,
-   Dwarf_Error  *  /*error*/);
+int dwarf_get_locdesc_entry_c(Dwarf_Loc_Head_c /*loclist_head*/,
+   Dwarf_Unsigned    /*index*/,
 
-int dwarf_get_location_op_value_c(Dwarf_Loc_c /*locentries*/,
-   Dwarf_Signed     /*index*/,
+   /* identifies type of locdesc entry*/
+   Dwarf_Small    *  /*lle_value_out*/,
+   Dwarf_Addr     *  /*lowpc_out*/,
+   Dwarf_Addr     *  /*hipc_out*/,
+   Dwarf_Unsigned *  /*loclist_count_out*/,
+
+   /* Returns pointer to specific Locdesc index refers to */
+   Dwarf_Locdesc_c * /*locentry_out*/,
+   Dwarf_Small    *  /*loclist_source_out*/, /* 0,1, or 2 */
+   Dwarf_Unsigned *  /*expression_offset_out*/,
+   Dwarf_Unsigned *  /*locdesc_offset_out*/,
+   Dwarf_Error    *  /*error*/);
+
+int dwarf_get_location_op_value_c(Dwarf_Locdesc_c /*locdesc*/,
+   Dwarf_Unsigned   /*index*/,
    Dwarf_Small    * /*atom_out*/,
    Dwarf_Unsigned * /*operand1*/,
    Dwarf_Unsigned * /*operand2*/,
@@ -1542,14 +1570,25 @@ int dwarf_get_location_index_for_offset_c(Dwarf_Loc_c locexpr,
    Dwarf_Signed   *index_out,
    Dwarf_Error*     /*error*/);
 
+int dwarf_loclist_from_expr_c(Dwarf_Debug dbg,
+    Dwarf_Ptr      expression_in,
+    Dwarf_Unsigned expression_length,
+    Dwarf_Half     address_size,
+    Dwarf_Half     offset_size,
+    Dwarf_Small    dwarf_version,
+    Dwarf_Loc_Head_c* loc_head,
+    Dwarf_Unsigned  * listlen,
+    Dwarf_Error     * error);
+
+
 /* This frees all memory allocated by the applicable
     dwarf_get_loclist_c() */
-int dwarf_loclist_c_dealloc(Dwarf_LocList_c /*loclist_head*/);
+void dwarf_loc_head_c_dealloc(Dwarf_Loc_Head_c /*loclist_head*/);
 
 /* END: loclist_c interfaces */
 
 
-/*  As of 2015 the preferred interface 
+/*  As of 2015 the preferred interface
     is dwarf_get_loclist_c()
     and only dwarf_get_loclist_c() will work
     for DWARF5 (and also all earlier versions).  */
@@ -1611,8 +1650,7 @@ int dwarf_lowpc(Dwarf_Die /*die*/,
     it is not an address, it is an offset from the
     base address (such as lowpc) of the function.
     This is therefore a required interface for DWARF4
-    style DW_AT_highpc.
-    */
+    style DW_AT_highpc.  */
 int dwarf_highpc_b(Dwarf_Die /*die*/,
     Dwarf_Addr  *           /*return_value*/,
     Dwarf_Half  *           /*return_form*/,
@@ -2308,6 +2346,17 @@ int dwarf_get_cie_of_fde(Dwarf_Fde /*fde*/,
     Dwarf_Cie *      /*cie_returned*/,
     Dwarf_Error*     /*error*/);
 
+int dwarf_get_cie_info_b(Dwarf_Cie /*cie*/,
+    Dwarf_Unsigned * /*bytes_in_cie*/,
+    Dwarf_Small*     /*version*/,
+    char        **   /*augmenter*/,
+    Dwarf_Unsigned*  /*code_alignment_factor*/,
+    Dwarf_Signed*    /*data_alignment_factor*/,
+    Dwarf_Half*      /*return_address_register_rule*/,
+    Dwarf_Ptr*       /*initial_instructions*/,
+    Dwarf_Unsigned*  /*initial_instructions_length*/,
+    Dwarf_Half*      /*offset_size*/,
+    Dwarf_Error*     /*error*/);
 int dwarf_get_cie_info(Dwarf_Cie /*cie*/,
     Dwarf_Unsigned * /*bytes_in_cie*/,
     Dwarf_Small*     /*version*/,
@@ -2513,8 +2562,8 @@ int dwarf_print_lines(Dwarf_Die /*cu_die*/,Dwarf_Error * /*error*/,
     The return value is the previous set of callback values.
 */
 
-typedef void (* dwarf_printf_callback_function_type)(void * /*user_pointer*/,
-    const char * /*linecontent*/);
+typedef void (* dwarf_printf_callback_function_type)
+    (void * /*user_pointer*/, const char * /*linecontent*/);
 
 struct Dwarf_Printf_Callback_Info_s {
     void *                        dp_user_pointer;
@@ -2612,6 +2661,10 @@ int dwarf_get_macro_details(Dwarf_Debug /*dbg*/,
     Dwarf_Error *        /*err*/);
 
 
+/*  dwarf_get_offset_size() New October 2015 */
+int dwarf_get_offset_size(Dwarf_Debug /*dbg*/,
+    Dwarf_Half  *    /*offset_size*/,
+    Dwarf_Error *    /*error*/);
 int dwarf_get_address_size(Dwarf_Debug /*dbg*/,
     Dwarf_Half  *    /*addr_size*/,
     Dwarf_Error *    /*error*/);
@@ -3614,6 +3667,7 @@ extern int dwarf_get_ORD_name(unsigned int /*val_in*/, const char ** /*s_out */)
 extern int dwarf_get_DSC_name(unsigned int /*val_in*/, const char ** /*s_out */);
 extern int dwarf_get_LNS_name(unsigned int /*val_in*/, const char ** /*s_out */);
 extern int dwarf_get_LNE_name(unsigned int /*val_in*/, const char ** /*s_out */);
+extern int dwarf_get_LLE_name(unsigned int /*val_in*/, const char ** /*s_out */);
 extern int dwarf_get_ISA_name(unsigned int /*val_in*/, const char ** /*s_out */);
 extern int dwarf_get_MACINFO_name(unsigned int /*val_in*/, const char ** /*s_out */);
 extern int dwarf_get_CFA_name(unsigned int /*val_in*/, const char ** /*s_out */);

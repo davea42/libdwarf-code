@@ -1,3 +1,28 @@
+2015-11-David Anderson
+     * Makefile.in: Split out dwarf_loc2 to put the DWARF5
+       expression code all in one place.
+     * dwarf_alloc.c,dwarf_alloc.h: Three new opaque 
+       structs for DWARF5 expression interfaces.
+     * dwarf_error.c: New error codes for DWARF5 expression interfaces.
+     * dwarf_frame.c: Altered internal interfaces to support
+       DWARF5 expression reading.
+     * dwarf_loc.c: Refactored to support DWARF5 and moved
+       some code into dwarf_loc2.c to segregate the new
+       interfaces for clarity.  
+     * dwarf_loc.h: Definitions of new library-internal structs
+       (opaque to callers).
+     * dwarf_loc2.c: Contains the new DWARF5 location expression
+       interface code. It is not separately compiled, it is
+       #included by dwarf_loc.c.
+     * dwarf_opaque.h: Commentary change.
+     * dwarf_query.c: dwarf_get_offset_size() new.  
+       Refactored to avoid duplicating code.
+     * libdwarf.h.in: DWARF5 location expression interfaces
+       refined and commentary improved.q
+2015-10-28  David Anderson
+     * dwarf_loc2.c: New file with the new code for DWARF5
+       location expressions put here. Not separate compile,
+       this is brought into dwarf_loc.c via a #include there
 2015-10-26  David Anderson
      * Makefile.in: Handle the configure --enable-wall option.
      * configure.in: Add --enable-wall so we can easily get

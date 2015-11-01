@@ -133,6 +133,8 @@ none:
 	echo "do nothing " $@
 dwgetopt.o: $(srcdir)/dwgetopt.c $(srcdir)/dwgetopt.h
 	$(CC) $(CFLAGS) -c $(srcdir)/dwgetopt.c
+dwarf_loc.o: $(srcdir)/dwarf_loc.c  $(srcdir)/dwarf_loc2.c  $(srcdir)/dwarf_loc.h 
+	$(CC) $(CFLAGS) -c $(srcdir)/dwarf_loc.c
 common.o: $(srcdir)/common.c $(srcdir)/common.h
 	$(CC) $(CFLAGS) -c $(srcdir)/common.c
 gennames: $(srcdir)/gennames.c $(srcdir)/dwarf.h common.o dwgetopt.o

@@ -30,10 +30,11 @@ RANLIB =	@RANLIB@
 DEFS =		@DEFS@
 # ../libdwarf gets us to local headers and a libdwarf 
 # archive, usually, so we assume it.
+dwfwall =       @dwfwall@
 DIRINC =        $(srcdir)/../libdwarf
 LIBS =		@LIBS@ -L../libdwarf -ldwarf -lelf
 INCLUDES =	-I. -I$(srcdir) -I$(srcdir)/../libdwarf
-CFLAGS =	$(PREINCS) @CFLAGS@ $(INCLUDES) -DCONFPREFIX=${libdir} $(POSTINCS)
+CFLAGS =	$(PREINCS) @CFLAGS@ $(INCLUDES) $(dwfwall) -DCONFPREFIX=${libdir} $(POSTINCS)
 LDFLAGS =	$(PRELIBS) @LDFLAGS@  $(LIBS) $(POSTLIBS)
 #VG =            valgrind --leak-check=full
 VG =

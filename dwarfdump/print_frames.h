@@ -31,5 +31,7 @@ void get_string_from_locs(Dwarf_Debug dbg,
     Dwarf_Ptr bytes_in,
     Dwarf_Unsigned block_len,
     Dwarf_Half addr_size,
+    Dwarf_Half offset_size,
+    Dwarf_Half version,
     struct esb_s *out_string);
 

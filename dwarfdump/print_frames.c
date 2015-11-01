@@ -46,6 +46,8 @@ print_one_frame_reg_col(Dwarf_Debug dbg,
     Dwarf_Small value_type,
     Dwarf_Unsigned reg_used,
     Dwarf_Half addr_size,
+    Dwarf_Half offset_size,
+    Dwarf_Half version,
     struct dwconf_s *config_data,
     Dwarf_Signed offset_relevant,
     Dwarf_Signed offset, Dwarf_Ptr block_ptr);
@@ -54,6 +56,7 @@ static void print_frame_inst_bytes(Dwarf_Debug dbg,
     Dwarf_Ptr cie_init_inst, Dwarf_Signed len,
     Dwarf_Signed data_alignment_factor,
     int code_alignment_factor, Dwarf_Half addr_size,
+    Dwarf_Half offset_size, Dwarf_Half version,
     struct dwconf_s *config_data);
 
 /*  A strcpy which ensures NUL terminated string
@@ -555,7 +558,8 @@ print_one_fde(Dwarf_Debug dbg, Dwarf_Fde fde,
     Dwarf_Unsigned fde_index,
     Dwarf_Cie * cie_data,
     Dwarf_Signed cie_element_count,
-    Dwarf_Half address_size, int is_eh,
+    Dwarf_Half address_size,
+    Dwarf_Half offset_size,Dwarf_Half version,int is_eh,
     struct dwconf_s *config_data,
     void **pcMap,
     void **lowpcSet,
@@ -734,6 +738,7 @@ print_one_fde(Dwarf_Debug dbg, Dwarf_Fde fde,
                 value_type,
                 reg,
                 address_size,
+                offset_size,version,
                 config_data,
                 offset_relevant, offset, block_ptr);
         }
@@ -794,6 +799,7 @@ print_one_fde(Dwarf_Debug dbg, Dwarf_Fde fde,
                 value_type,
                 reg,
                 address_size,
+                offset_size,version,
                 config_data,
                 offset_relevant, offset, block_ptr);
         }
@@ -841,6 +847,7 @@ print_one_fde(Dwarf_Debug dbg, Dwarf_Fde fde,
             Dwarf_Half return_address_register_rule = 0;
             Dwarf_Ptr initial_instructions = 0;
             Dwarf_Unsigned initial_instructions_length = 0;
+            Dwarf_Half offset_size = 0;
 
             if (cie_index >= cie_element_count) {
                 printf("Bad cie index %" DW_PR_DSd
@@ -850,7 +857,11 @@ print_one_fde(Dwarf_Debug dbg, Dwarf_Fde fde,
                     cie_element_count);
                 exit(1);
             }
-            cires = dwarf_get_cie_info(cie_data[cie_index],
+            cires = dwarf_get_offset_size(dbg,&offset_size,&err);
+            if( cires != DW_DLV_OK) {
+                return res;
+            }
+            cires = dwarf_get_cie_info_b(cie_data[cie_index],
                 &cie_length,
                 &version,
                 &augmenter,
@@ -859,6 +870,7 @@ print_one_fde(Dwarf_Debug dbg, Dwarf_Fde fde,
                 &return_address_register_rule,
                 &initial_instructions,
                 &initial_instructions_length,
+                &offset_size,
                 &err);
             if (cires == DW_DLV_ERROR) {
                 printf
@@ -876,7 +888,9 @@ print_one_fde(Dwarf_Debug dbg, Dwarf_Fde fde,
                         (Dwarf_Signed) ilen,
                         data_alignment_factor,
                         (int) code_alignment_factor,
-                        address_size, config_data);
+                        address_size,
+                        offset_size,
+                        version, config_data);
                 }
             }
         } else if (res == DW_DLV_NO_ENTRY) {
@@ -917,6 +931,12 @@ print_one_cie(Dwarf_Debug dbg, Dwarf_Cie cie,
     Dwarf_Unsigned initial_instructions_length = 0;
     Dwarf_Off cie_off = 0;
     Dwarf_Error err = 0;
+    Dwarf_Half offset_size = 0;
+
+    cires = dwarf_get_offset_size(dbg,&offset_size,&err);
+    if( cires != DW_DLV_OK) {
+        return cires;
+    }
 
     cires = dwarf_get_cie_info(cie,
         &cie_length,
@@ -993,7 +1013,8 @@ print_one_cie(Dwarf_Debug dbg, Dwarf_Cie cie,
                 (Dwarf_Signed) initial_instructions_length,
                 data_alignment_factor,
                 (int) code_alignment_factor,
-                address_size, config_data);
+                address_size,
+                offset_size,version,config_data);
         }
     }
     return DW_DLV_OK;
@@ -1004,15 +1025,70 @@ get_string_from_locs(Dwarf_Debug dbg,
     Dwarf_Ptr bytes_in,
     Dwarf_Unsigned block_len,
     Dwarf_Half addr_size,
+    Dwarf_Half offset_size,
+    Dwarf_Half version,
     struct esb_s *out_string)
 {
-
     Dwarf_Locdesc *locdescarray = 0;
     Dwarf_Signed listlen = 0;
+    Dwarf_Unsigned ulistlen = 0;
     Dwarf_Error err2 =0;
-    int skip_locdesc_header=1;
-    int res = 0;
-    int res2 = dwarf_loclist_from_expr_a(dbg,
+    int res2 = 0;
+    Dwarf_Addr baseaddr = 0; /* Really unknown */
+
+    if(!use_old_dwarf_loclist) {
+        Dwarf_Loc_Head_c head = 0;
+        Dwarf_Locdesc_c locentry = 0;
+        int lres = 0;
+        Dwarf_Unsigned lopc = 0;
+        Dwarf_Unsigned hipc = 0;
+        Dwarf_Unsigned ulocentry_count = 0;
+        Dwarf_Unsigned section_offset = 0;
+        Dwarf_Unsigned locdesc_offset = 0;
+        Dwarf_Small lle_value = 0;
+        Dwarf_Small loclist_source = 0;
+
+        res2 = dwarf_loclist_from_expr_c(dbg,
+            bytes_in,block_len,
+            addr_size,
+            offset_size,
+            version,
+            &head,
+            &ulistlen,
+            &err2);
+        if(res2 == DW_DLV_NO_ENTRY) {
+            return;
+        }
+        if(res2 == DW_DLV_ERROR) {
+            print_error(dbg, "dwarf_get_loclist_from_expr_c",
+                res2, err2);
+        }
+        lres = dwarf_get_locdesc_entry_c(head,
+            0, /* Data from 0th LocDesc */
+            &lle_value,
+            &lopc, &hipc,
+            &ulocentry_count,
+            &locentry,
+            &loclist_source,
+            &section_offset,
+            &locdesc_offset,
+            &err2);
+        if (lres == DW_DLV_ERROR) {
+            print_error(dbg, "dwarf_get_locdesc_entry_c", lres, err2);
+        } else if (lres == DW_DLV_NO_ENTRY) {
+            return;
+        }
+
+        dwarfdump_print_one_locdesc(dbg,
+            NULL,
+            locentry,
+            0, /* index 0: locdesc 0 */
+            ulocentry_count,
+            baseaddr,
+            out_string);
+        dwarf_loc_head_c_dealloc(head);
+    }
+    res2 =dwarf_loclist_from_expr_a(dbg,
         bytes_in,block_len,
         addr_size,
         &locdescarray,
@@ -1024,18 +1100,18 @@ get_string_from_locs(Dwarf_Debug dbg,
     if (res2==DW_DLV_NO_ENTRY) {
         return;
     }
-    /* lcnt is always 1 */
 
-    /* Use locdescarray  here.*/
-    res = dwarfdump_print_one_locdesc(dbg,
+    /* listlen is always 1 */
+    ulistlen = listlen;
+
+
+    dwarfdump_print_one_locdesc(dbg,
         locdescarray,
-        skip_locdesc_header,
+        NULL,
+        0,
+        ulistlen,
+        baseaddr,
         out_string);
-    if (res != DW_DLV_OK) {
-        printf("Bad status from _dwarf_print_one_locdesc %d\n",res);
-        exit(1);
-    }
-
     dwarf_dealloc(dbg, locdescarray->ld_s, DW_DLA_LOC_BLOCK);
     dwarf_dealloc(dbg, locdescarray, DW_DLA_LOCDESC);
     return ;
@@ -1049,6 +1125,7 @@ print_frame_inst_bytes(Dwarf_Debug dbg,
     Dwarf_Ptr cie_init_inst, Dwarf_Signed len,
     Dwarf_Signed data_alignment_factor,
     int code_alignment_factor, Dwarf_Half addr_size,
+    Dwarf_Half offset_size,Dwarf_Half version,
     struct dwconf_s *config_data)
 {
     unsigned char *instp = (unsigned char *) cie_init_inst;
@@ -1303,7 +1380,8 @@ print_frame_inst_bytes(Dwarf_Debug dbg,
                         struct esb_s exprstring;
                         esb_constructor(&exprstring);
                         get_string_from_locs(dbg,
-                            instp+1,block_len,addr_size,&exprstring);
+                            instp+1,block_len,addr_size,
+                            offset_size,version,&exprstring);
                         printf("\t\t%s\n",esb_get_string(&exprstring));
                         esb_destructor(&exprstring);
                     }
@@ -1340,7 +1418,8 @@ print_frame_inst_bytes(Dwarf_Debug dbg,
                         struct esb_s exprstring;
                         esb_constructor(&exprstring);
                         get_string_from_locs(dbg,
-                            instp+1,block_len,addr_size,&exprstring);
+                            instp+1,block_len,addr_size,
+                            offset_size,version,&exprstring);
                         printf("\t\t%s\n",esb_get_string(&exprstring));
                         esb_destructor(&exprstring);
                     }
@@ -1505,7 +1584,8 @@ print_frame_inst_bytes(Dwarf_Debug dbg,
                         struct esb_s exprstring;
                         esb_constructor(&exprstring);
                         get_string_from_locs(dbg,
-                            instp+1,block_len,addr_size,&exprstring);
+                            instp+1,block_len,addr_size,
+                            offset_size,version,&exprstring);
                         printf("\t\t%s\n",esb_get_string(&exprstring));
                         esb_destructor(&exprstring);
                     }
@@ -1585,6 +1665,8 @@ print_one_frame_reg_col(Dwarf_Debug dbg,
     Dwarf_Small value_type,
     Dwarf_Unsigned reg_used,
     Dwarf_Half addr_size,
+    Dwarf_Half offset_size,
+    Dwarf_Half version,
     struct dwconf_s *config_data,
     Dwarf_Signed offset_relevant,
     Dwarf_Signed offset,
@@ -1653,7 +1735,8 @@ print_one_frame_reg_col(Dwarf_Debug dbg,
                 struct esb_s exprstring;
                 esb_constructor(&exprstring);
                 get_string_from_locs(dbg,
-                    block_ptr,offset,addr_size,&exprstring);
+                    block_ptr,offset,addr_size,
+                    offset_size,version,&exprstring);
                 printf("<expr:%s>",esb_get_string(&exprstring));
                 esb_destructor(&exprstring);
             }
@@ -1673,12 +1756,16 @@ print_one_frame_reg_col(Dwarf_Debug dbg,
     The non-3 mean use the old interfaces.
     All combinations of requests are possible.  */
 extern void
-print_frames(Dwarf_Debug dbg, int print_debug_frame, int print_eh_frame,
+print_frames(Dwarf_Debug dbg,
+    int print_debug_frame,
+    int print_eh_frame,
     struct dwconf_s *config_data)
 {
     Dwarf_Signed i;
     int fres = 0;
     Dwarf_Half address_size = 0;
+    Dwarf_Half offset_size = 0;
+    Dwarf_Half version = 0;
     int framed = 0;
     void * map_lowpc_to_name = 0;
 
@@ -1777,7 +1864,8 @@ print_frames(Dwarf_Debug dbg, int print_debug_frame, int print_eh_frame,
             for (i = 0; i < fde_element_count; i++) {
                 print_one_fde(dbg, fde_data[i],
                     i, cie_data, cie_element_count,
-                    address_size, is_eh, config_data,
+                    address_size, offset_size, version,
+                    is_eh, config_data,
                     &map_lowpc_to_name,
                     &lowpcSet,
                     &all_cus_seen);
