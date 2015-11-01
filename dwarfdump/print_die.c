@@ -3161,6 +3161,7 @@ loc_error_check(Dwarf_Debug dbg,
                     lopc,
                     hipcfinal,
                     hipc);
+            }
         }
     }
 }
