@@ -1,4 +1,8 @@
-2015-11-David Anderson
+2015-11-01 David Anderson
+     * configure.in: Added -O0 to --enable-wall.
+       So if a coredump while debugging gdb will work well.
+     * configure: Regenerated.
+2015-11-01 David Anderson
      * Makefile.in: Split out dwarf_loc2 to put the DWARF5
        expression code all in one place.
      * dwarf_alloc.c,dwarf_alloc.h: Three new opaque 

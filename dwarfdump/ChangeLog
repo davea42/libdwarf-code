@@ -1,4 +1,10 @@
 2015-11-01  David Anderson
+     * configure.in: Add -O0 to  --enable-wall.
+       So if a coredump during debugging gdb will work really well.
+     * configure: Regenerated.
+     * print_frames.c: Ommitted a 'return' statement so
+       some output duplicated. Added in the missing return.
+2015-11-01  David Anderson
      * Makefile.in, configure.in: Implement --enable-wall for compile-time
        checking.
      * configure: Regenerate.

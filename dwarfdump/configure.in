@@ -30,7 +30,7 @@ AC_SUBST(dwfwall,[])
 AC_ARG_ENABLE(wall,AC_HELP_STRING([--enable-wall],
         [Add -Wall (default is none)]),
         [ AC_SUBST(dwfwall,[]) ]
-        [ AC_SUBST(dwfwall,[-Wall]) ])
+        [ AC_SUBST(dwfwall,["-Wall -O0"]) ])
 
 AC_TRY_COMPILE([#include "stdafx.h"],[  int p; p = 27;] ,
   AC_DEFINE(HAVE_STDAFX_H,1,

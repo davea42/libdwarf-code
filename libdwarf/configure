@@ -4220,7 +4220,7 @@ fi
 # Check whether --enable-wall was given.
 if test "${enable_wall+set}" = set; then :
   enableval=$enable_wall;
-	 dwfwall=-Wall
+	 dwfwall="-Wall -O0"
 
 fi
 

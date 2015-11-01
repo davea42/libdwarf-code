@@ -1087,6 +1087,7 @@ get_string_from_locs(Dwarf_Debug dbg,
             baseaddr,
             out_string);
         dwarf_loc_head_c_dealloc(head);
+        return;
     }
     res2 =dwarf_loclist_from_expr_a(dbg,
         bytes_in,block_len,
