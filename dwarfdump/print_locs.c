@@ -70,7 +70,8 @@ print_locs(Dwarf_Debug dbg)
     }
     if(!use_old_dwarf_loclist) {
         printf("\n");
-        printf("Printing location lists with -l is no longer supported\n");
+        printf("Printing location lists with -c is no longer supported\n");
+        return;
     }
 
     fres = dwarf_get_address_size(dbg, &address_size, &err);

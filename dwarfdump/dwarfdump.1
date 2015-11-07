@@ -259,9 +259,12 @@ Print .rel*debug_ranges relocations.
 .TP
 .B \-g
 Normally used only for testing libdwarf, this tells dwarfdump to
-print .debug_info and use an older dwarf_loclist() interface
-function (a function that cannot handle all current
+use an older dwarf_loclist() interface
+function (a function that cannot handle all 
+DWARF4 or DWARF5
 location lists).
+Before November 2015 it implied -i, now you should use
+-i -g to also get .debug_info printed.
 .TP
 .B \-V  
 Print a dwarfdump date/version string and stop.
@@ -555,6 +558,19 @@ Used when opening a main object that is a .dwo or .dwp file.
 The tied file path names the executable which has
 the .debug_addr section that may be referred to from
 the main object. See Split Objects (aka Debug Fission).
+.TP
+.B \-x line5=s2l
+Normally used only to test libdwarf interfaces.
+There are 4 different interface function sets and to ensure
+they all work this option lets us choose which
+to use.  The options are 's2l' (default, Allows standard
+and two-level line tables using the latest
+interface functions), 'std' (Allows standard
+single level line tables using the latest
+interface functions), 'orig' (allows DWARF2,3,4
+original line tables using an older
+interface function set), 'orig2l' (allows original line tables
+and some two-level line tables using an older interface set).
 
 .TP
 .B \-P 

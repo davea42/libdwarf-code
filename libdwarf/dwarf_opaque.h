@@ -220,8 +220,8 @@ struct Dwarf_CU_Context_s {
     */
     Dwarf_Bool cc_signature_present; /* Meaning type signature
         in TU header or, for CU header, signature in CU DIE. */
-    Dwarf_Bool cc_addr_base_present;       /* Not TRUE in .dwo */
-    Dwarf_Bool cc_str_ranges_base_present; /* Not TRUE in .dwo */
+    Dwarf_Bool cc_addr_base_present;   /* Not TRUE in .dwo */
+    Dwarf_Bool cc_ranges_base_present; /* Not TRUE in .dwo */
     Dwarf_Bool cc_str_offsets_base_present;
 
     /*  Non zero if this context is a dwo section. Either
@@ -757,11 +757,17 @@ _dwarf_next_cu_header_internal(Dwarf_Debug dbg,
     Dwarf_Half     * header_cu_type,
     Dwarf_Error * error);
 
+/* Relates to .debug_addr */
 int _dwarf_look_in_local_and_tied(Dwarf_Half attr_form,
     Dwarf_CU_Context context,
     Dwarf_Small *info_ptr,
     Dwarf_Addr *return_addr,
     Dwarf_Error *error);
+
+int _dwarf_get_ranges_base_attr_from_tied(Dwarf_Debug dbg,
+    Dwarf_CU_Context context,
+    Dwarf_Unsigned * ranges_base_out,
+    Dwarf_Error    * error);
 
 int _dwarf_get_string_from_tied(Dwarf_Debug dbg, Dwarf_Unsigned offset,
     char **return_str, Dwarf_Error*error);

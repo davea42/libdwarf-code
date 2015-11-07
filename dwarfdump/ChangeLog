@@ -1,3 +1,14 @@
+2015-11-07  David Anderson
+     * dwarfdump.1: Documented -x line5=.
+     * dwarfdump.c: Revised -g so it no longer turns on -i.
+       Revised the meaning of -g to mean use old loclist interfaces
+       (for testing the older interfaces with dwarfdump).
+     * print_die.c(get_small_encoding_integer_and_name): a dwarf_dealloc
+       referenced err whereas *err was correct.
+       Revised loclist output making it look a bit like DWARF5
+       even for DWARF2,3,4 output. Reads better, I think.
+     * print_locs.c: -l gets a 'no longer supported' message 
+       as it was never safe to do anyway.
 2015-11-01  David Anderson
      * configure.in: Add -O0 to  --enable-wall.
        So if a coredump during debugging gdb will work really well.

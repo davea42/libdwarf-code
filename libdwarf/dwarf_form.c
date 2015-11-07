@@ -1211,6 +1211,7 @@ _dwarf_get_string_from_tied(Dwarf_Debug dbg,
     Dwarf_Small *secbegin = 0;
     Dwarf_Small *strbegin = 0;
     int res = DW_DLV_ERROR;
+    Dwarf_Error localerror = 0;
 
     /* Attach errors to dbg, not tieddbg. */
     tieddbg = dbg->de_tied_data.td_tied_object;
@@ -1219,8 +1220,13 @@ _dwarf_get_string_from_tied(Dwarf_Debug dbg,
         return  DW_DLV_ERROR;
     }
     /* The 'offset' into .debug_str is set. */
-    res = _dwarf_load_section(tieddbg, &tieddbg->de_debug_str,error);
-    if (res != DW_DLV_OK) {
+    res = _dwarf_load_section(tieddbg, &tieddbg->de_debug_str,&localerror);
+    if (res == DW_DLV_ERROR) {
+        Dwarf_Unsigned lerrno = dwarf_errno(localerror);
+        dwarf_dealloc(tieddbg,localerror,DW_DLA_ERROR);
+        _dwarf_error(dbg,error,lerrno);
+        return res;
+    } else if (res == DW_DLV_NO_ENTRY) {
         return res;
     }
     if (offset >= tieddbg->de_debug_str.dss_size) {
@@ -1238,10 +1244,13 @@ _dwarf_get_string_from_tied(Dwarf_Debug dbg,
         _dwarf_error(dbg, error,  DW_DLE_NO_TIED_STRING_AVAILABLE);
         return (DW_DLV_ERROR);
     }
-    /*  Note the oddity:  checking a string in tieddbg, but
-        passing dbg so any error is on the right object. */
-    res= _dwarf_check_string_valid(dbg,secbegin,strbegin, secend,error);
-    if (res != DW_DLV_OK) {
+    res= _dwarf_check_string_valid(tieddbg,secbegin,strbegin, secend,localerror);
+    if (res == DW_DLV_ERROR) {
+        Dwarf_Unsigned lerrno = dwarf_errno(localerror);
+        dwarf_dealloc(tieddbg,localerror,DW_DLA_ERROR);
+        _dwarf_error(dbg,error,lerrno);
+        return res;
+    } else if (res == DW_DLV_NO_ENTRY) {
         return res;
     }
     *return_str = (char *) (tieddbg->de_debug_str.dss_data + offset);

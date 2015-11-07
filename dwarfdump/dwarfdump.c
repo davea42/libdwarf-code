@@ -1371,17 +1371,18 @@ process_one_file(Elf * elf,Elf *elftied,
         print_tag_attributes_usage(dbg);
     }
 
-    dres = dwarf_finish(dbg, &err);
-    if (dres != DW_DLV_OK) {
-        print_error(dbg, "dwarf_finish", dres, err);
-        dbg = 0;
-    }
+    /*  Could finish dbg first. Either order ok. */
     if (dbgtied) {
         dres = dwarf_finish(dbgtied,&err);
         if (dres != DW_DLV_OK) {
             print_error(dbg, "dwarf_finish on dbgtied", dres, err);
         }
         dbgtied = 0;
+    }
+    dres = dwarf_finish(dbg, &err);
+    if (dres != DW_DLV_OK) {
+        print_error(dbg, "dwarf_finish", dres, err);
+        dbg = 0;
     }
     printf("\n");
     return 0;
@@ -1685,7 +1686,7 @@ process_args(int argc, char *argv[])
             break;
         case 'g':
             use_old_dwarf_loclist = TRUE;
-            info_flag = TRUE;
+            /*info_flag = TRUE;  removed  from -g. Nov 2015 */
             suppress_check_dwarf();
             break;
         case 'i':

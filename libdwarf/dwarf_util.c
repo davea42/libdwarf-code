@@ -716,11 +716,14 @@ _dwarf_free_abbrev_hash_table_contents(Dwarf_Debug dbg,Dwarf_Hash_Table hash_tab
         abbrev = tb->at_head;
         for (; abbrev; abbrev = nextabbrev) {
             nextabbrev = abbrev->ab_next;
+            abbrev->ab_next = 0;
             dwarf_dealloc(dbg, abbrev, DW_DLA_ABBREV_LIST);
         }
+        tb->at_head = 0;
     }
     /* Frees all the entries at once: an array. */
     dwarf_dealloc(dbg,hash_table->tb_entries,DW_DLA_HASH_TABLE_ENTRY);
+    hash_table->tb_entries = 0;
 }
 
 /*

@@ -1,3 +1,21 @@
+2015-11-07 David Anderson
+     * dwarf_alloc.c: Added new checks so  user mixing up
+       tied dbg with regular dbg won't lead to crashes
+       when calling dwarf_dealloc or dwarf_finish().
+       Zeroed out some fields to recognize space deallocated.
+     * dwarf_die_deliv.c: Added support of split dwarf
+       DW_AT_[GNU_]ranges_base
+     * dwarf_form.c: Load string from tieddbg when appropriate.
+     * dwarf_harmless.c: On free() zero out a field to show that was done.
+     * dwarf_loc.c: Correct the handling of split dwarf loclist.
+     * dwarf_opaque.h: Add cc_ranges_base_present for split dwarf.
+       Add _dwarf_get_ranges_base_attr_from_tied() for split dwarf.
+     * dwarf_query.c: Get and remember skeleton compilaton unit 
+       DW_AT_[GNU_]ranges_base from tied objects for split dwarf.
+     * dwarf_ranges.c: If a tied object present, look for ranges
+       there, not in split dwarf object.
+     * dwarf_util.c: Housekeeping zeros out fields to ensure not
+       used after dealloc.
 2015-11-01 David Anderson
      * configure.in: Added -O0 to --enable-wall.
        So if a coredump while debugging gdb will work well.

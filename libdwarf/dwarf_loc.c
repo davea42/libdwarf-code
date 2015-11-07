@@ -845,6 +845,7 @@ _dwarf_read_loc_section(Dwarf_Debug dbg,
         return DW_DLV_ERROR;
     }
 
+
     READ_UNALIGNED(dbg, start_addr, Dwarf_Addr, beg, address_size);
     READ_UNALIGNED(dbg, end_addr, Dwarf_Addr,
         beg + address_size, address_size);

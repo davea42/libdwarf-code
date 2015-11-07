@@ -742,7 +742,8 @@ print_one_die_section(Dwarf_Debug dbg,Dwarf_Bool is_info)
                 check_range_array_info(dbg);
             }
 
-            /*  Traverse the line section if in check mode */
+            /*  Traverse the line section if in check mode 
+                or if line-printing requested */
             if (line_flag || check_decl_file) {
                 print_line_numbers_this_cu(dbg, cu_die);
             }
@@ -1326,7 +1327,7 @@ get_small_encoding_integer_and_name(Dwarf_Debug dbg,
     if (vres != DW_DLV_OK) {
         Dwarf_Signed sval = 0;
         if(vres == DW_DLV_ERROR) {
-            dwarf_dealloc(dbg,err, DW_DLV_ERROR);
+            dwarf_dealloc(dbg,*err, DW_DLV_ERROR);
             *err = 0;
         }
         vres = dwarf_formsdata(attrib, &sval, err);
@@ -1795,6 +1796,11 @@ print_range_attribute(Dwarf_Debug dbg,
         Dwarf_Ranges *rangeset = 0;
         Dwarf_Signed rangecount = 0;
         Dwarf_Unsigned bytecount = 0;
+        /*  If this is a dwp the ranges will be
+            missing or reported from a tied file. 
+            For now we add the ranges to dbg, not tiedbg
+            as we do not mention tieddbg here. 
+            May need a new interface. FIXME? */
         int rres = dwarf_get_ranges_a(dbg,original_off,
             die,
             &rangeset,
@@ -3166,6 +3172,15 @@ loc_error_check(Dwarf_Debug dbg,
     }
 }
 
+static const char *
+adexplain(Dwarf_Unsigned liberr,
+   const char * alterr)
+{
+    if (liberr == DW_DLE_MISSING_NEEDED_DEBUG_ADDR_SECTION) {
+        return  "no-tied-debug-addr-available";
+    }
+    return alterr;
+}
 
 /*  Fill buffer with location lists
     Buffer esbp expands as needed.
@@ -3184,7 +3199,6 @@ get_location_list(Dwarf_Debug dbg,
     int i;
     int lres = 0;
     unsigned llent = 0;
-    int skip_locdesc_header = 0;
 
     /*  Base address used to update entries in .debug_loc.
         CU_base_address is a global. Terrible way to
@@ -3198,13 +3212,6 @@ get_location_list(Dwarf_Debug dbg,
     /*  This is the section offset of the expression, not
         the location description prefix. */
     Dwarf_Unsigned section_offset = 0;
-
-    /*  This is the section offset of the location description
-        prefix, not
-        the location expression prefix.
-        Zero when it's really not a loclist at all
-        (loclist_source == 0).  */
-    Dwarf_Unsigned locdesc_section_offset = 0;
 
     /* old and new interfaces differ on signedness.  */
     Dwarf_Signed locentry_count = 0;
@@ -3230,10 +3237,9 @@ get_location_list(Dwarf_Debug dbg,
         no_of_elements = sno;
     }
     for (llent = 0; llent < no_of_elements; ++llent) {
-        char small_buf[100];
+        char small_buf[150];
         Dwarf_Unsigned locdesc_offset = 0;
         Dwarf_Locdesc_c locentry = 0; /* 2015 */
-        Dwarf_Loc * oldlocentry = 0; /* older version. */
         Dwarf_Addr lopcfinal = 0;
         Dwarf_Addr hipcfinal = 0;
 
@@ -3261,11 +3267,9 @@ get_location_list(Dwarf_Debug dbg,
             loclist_source = llbuf->ld_from_loclist;
             section_offset = llbuf->ld_section_offset;
             locdesc_offset = section_offset -
-                locentry_count * sizeof(Dwarf_Half) -
-                2 * elf_address_size;
+                 sizeof(Dwarf_Half) - 2 * elf_address_size;
             locentry_count = llbuf->ld_cents;
             ulocentry_count = locentry_count;
-            oldlocentry = llbuf->ld_s;
             if (lopc == elf_max_address) {
                 lle_value = DW_LLE_base_address_selection_entry;
             } else if (lopc== 0 && hipc == 0) {
@@ -3278,12 +3282,18 @@ get_location_list(Dwarf_Debug dbg,
             if (llent == 0) {
                 if (loclist_source == 1) {
                     snprintf(small_buf, sizeof(small_buf),
-                        "<loclist with %ld entries follows>",
+                        "<loclist at offset 0x%"  
+                        DW_PR_XZEROS DW_PR_DUx
+                        " with %ld entries follows>",
+                        locdesc_offset,
                         (long) no_of_elements);
                 } else {
                     /* ASSERT: loclist_source == 2 */
                     snprintf(small_buf, sizeof(small_buf),
-                        "<dwo loclist with %ld entries follows>",
+                        "<dwo loclist at offset 0x%" 
+                        DW_PR_XZEROS DW_PR_DUx
+                        " with %ld entries follows>",
+                        locdesc_offset,
                         (long) no_of_elements);
                 }
                 esb_append(esbp, small_buf);
@@ -3300,6 +3310,10 @@ get_location_list(Dwarf_Debug dbg,
             loclist_source && checking_this_compiler()) {
             checking = TRUE;
         }
+        /*  When dwarf_debug_addr_index_to_addr() fails
+            it is probably DW_DLE_MISSING_NEEDED_DEBUG_ADDR_SECTION 257
+            (because no TIED file supplied)
+            but we don't distinguish that from other errors here. */
         if(loclist_source || checking) {
             /*  Simplifies to use the DWARF5 DW_LLE as the test.*/
             if (lle_value == DW_LLE_base_address_selection_entry) {
@@ -3317,7 +3331,10 @@ get_location_list(Dwarf_Debug dbg,
                         snprintf(small_buf,sizeof(small_buf),
                             "<debug_addr index 0x%"
                             DW_PR_XZEROS DW_PR_DUx
-                            " error finding index >",hipc);
+                            " %s>",hipc,
+                            adexplain(dwarf_errno(err),
+                               "base-address-unavailable")
+                              );
                         esb_append(esbp,small_buf);
                         base_address = 0;
                     } else {
@@ -3353,7 +3370,9 @@ get_location_list(Dwarf_Debug dbg,
                 int foundaddr = FALSE;
                 if (loclist_source == 2) {
                     Dwarf_Addr realaddr = 0;
-                    /* start is index of a slot in .debug_addr section. */
+                    Dwarf_Addr slotindex = lopc;
+                    /*  start (lopc) is index of a slot 
+                        in .debug_addr section. */
                     int res = dwarf_debug_addr_index_to_addr(die,
                         lopc,&realaddr,&err);
                     if(res == DW_DLV_OK) {
@@ -3363,9 +3382,10 @@ get_location_list(Dwarf_Debug dbg,
                         snprintf(small_buf,sizeof(small_buf),
                             "<debug_addr index 0x%"
                             DW_PR_XZEROS DW_PR_DUx
-                            " error finding start index >",lopc);
+                            " %s>",lopc,
+                            adexplain(dwarf_errno(err),
+                               "start-address-unavailable"));
                         esb_append(esbp,small_buf);
-                        return;
                     } else {
                         snprintf(small_buf,sizeof(small_buf),
                             "<debug_addr index 0x%"
@@ -3380,19 +3400,17 @@ get_location_list(Dwarf_Debug dbg,
                         DW_PR_XZEROS DW_PR_DUx
                         " addr  0x%"
                         DW_PR_XZEROS DW_PR_DUx
-                        " addr+base  0x%"
-                        DW_PR_XZEROS DW_PR_DUx
                         " length 0x%"
                         DW_PR_XZEROS DW_PR_DUx
-                        ">",
-                        lopc,realaddr,realaddr+base_address,hipc);
+                        "> ",
+                        slotindex,realaddr,hipc);
                     esb_append(esbp,small_buf);
                 } else {
                     esb_append(esbp,"<Impossible start-length entry>");
                     /* Impossible */
                     lopc = 0;
                 }
-                lopcfinal = lopc + base_address;
+                lopcfinal = lopc;
                 hipcfinal = lopcfinal + hipc;
                 if (checking && foundaddr) {
                     loc_error_check(dbg,lopcfinal, lopc,
@@ -3438,9 +3456,10 @@ get_location_list(Dwarf_Debug dbg,
                         snprintf(small_buf,sizeof(small_buf),
                             "<debug_addr index 0x%"
                             DW_PR_XZEROS DW_PR_DUx
-                            " error finding start index >",lopc);
+                            " %s>",lopc,
+                            adexplain(dwarf_errno(err),
+                               "start-address-unavailable"));
                         esb_append(esbp,small_buf);
-                        return;
                     } else {
                         snprintf(small_buf,sizeof(small_buf),
                             "<debug_addr index 0x%"
@@ -3458,14 +3477,16 @@ get_location_list(Dwarf_Debug dbg,
                         snprintf(small_buf,sizeof(small_buf),
                             "<debug_addr index 0x%"
                             DW_PR_XZEROS DW_PR_DUx
-                            " error finding end index >",hipc);
+                            " %s>",hipc,
+                            adexplain(dwarf_errno(err),
+                               "end-address-unavailable"));
                         esb_append(esbp,small_buf);
                         foundaddr = FALSE;
                     } else {
                         snprintf(small_buf,sizeof(small_buf),
                             "<debug_addr index 0x%"
                             DW_PR_XZEROS DW_PR_DUx
-                            " error finding end index >",hipc);
+                            " problem-finding-end-address >",hipc);
                         esb_append(esbp,small_buf);
                         /* Cannot find .debug_addr */
                         hipcfinal = 0;

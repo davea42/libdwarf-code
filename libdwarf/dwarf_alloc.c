@@ -1,5 +1,4 @@
 /*
-
   Copyright (C) 2000-2005 Silicon Graphics, Inc.  All Rights Reserved.
   Portions Copyright (C) 2007-2011  David Anderson. All Rights Reserved.
 
@@ -101,6 +100,7 @@ struct reserve_size_s {
 /* Here is how we use the extra prefix area. */
 struct reserve_data_s {
    void *rd_dbg;
+   unsigned short rd_length;
    unsigned short rd_type;
 };
 #define DW_RESERVE sizeof(struct reserve_size_s)
@@ -284,13 +284,22 @@ tdestroy_free_node(void *nodep)
         /* Internal error, corrupted data. */
         return;
     }
+    if(!reserve->rd_dbg) {
+         /*  Unused (corrupted?) node in the tree. 
+             Should never happen. */
+         return;
+    }
+    if(!reserve->rd_type) {
+         /*  Unused (corrupted?) node in the tree. 
+             Should never happen. */
+         return;
+    }
 
     if (alloc_instance_basics[type].specialdestructor) {
         alloc_instance_basics[type].specialdestructor(m);
     }
     free(malloc_addr);
 }
-
 
 /* The sort of hash table entries result in very simple helper functions. */
 static int
@@ -369,6 +378,7 @@ _dwarf_get_alloc(Dwarf_Debug dbg,
         /* We are not actually using rd_dbg, we are using rd_type. */
         r->rd_dbg = dbg;
         r->rd_type = alloc_type;
+        r->rd_length = size;
         if (alloc_instance_basics[type].specialconstructor) {
             int res =
                 alloc_instance_basics[type].specialconstructor(dbg, ret_mem);
@@ -450,12 +460,19 @@ dwarf_dealloc(Dwarf_Debug dbg,
 {
     unsigned int type = 0;
     char * malloc_addr = 0;
+    struct reserve_data_s * r = 0;
 
     if (space == NULL) {
         return;
     }
     type = alloc_type;
     malloc_addr = (char *)space - DW_RESERVE;
+    r =(struct reserve_data_s *)malloc_addr;
+    if(dbg != r->rd_dbg) {
+        /*  Something is badly wrong. Better to leak than
+            to crash. */
+        return;
+    }
     if (alloc_type == DW_DLA_ERROR) {
         Dwarf_Error ep = (Dwarf_Error)space;
         if (ep->er_static_alloc) {
@@ -475,6 +492,7 @@ dwarf_dealloc(Dwarf_Debug dbg,
         /* internal or user app error */
         return;
     }
+
 
     if (type == DW_DLA_STRING && string_is_in_debug_section(dbg,space)) {
         /*  A string pointer may point into .debug_info or .debug_string etc.
@@ -565,8 +583,10 @@ freecontextlist(Dwarf_Debug dbg, Dwarf_Debug_InfoTypes dis)
         _dwarf_free_abbrev_hash_table_contents(dbg,hash_table);
         nextcontext = context->cc_next;
         dwarf_dealloc(dbg, hash_table, DW_DLA_HASH_TABLE);
+        context->cc_abbrev_hash_table = 0;
         dwarf_dealloc(dbg, context, DW_DLA_CU_CONTEXT);
     }
+    dis->de_cu_context_list = 0;
 }
 
 /*
@@ -608,8 +628,11 @@ _dwarf_free_all_of_one_debug(Dwarf_Debug dbg)
     rela_free(&dbg->de_debug_loc);
     rela_free(&dbg->de_debug_aranges);
     rela_free(&dbg->de_debug_macinfo);
+    rela_free(&dbg->de_debug_macro);
+    rela_free(&dbg->de_debug_names);
     rela_free(&dbg->de_debug_pubnames);
     rela_free(&dbg->de_debug_str);
+    rela_free(&dbg->de_debug_sup);
     rela_free(&dbg->de_debug_frame);
     rela_free(&dbg->de_debug_frame_eh_gnu);
     rela_free(&dbg->de_debug_pubtypes);
@@ -618,6 +641,11 @@ _dwarf_free_all_of_one_debug(Dwarf_Debug dbg)
     rela_free(&dbg->de_debug_varnames);
     rela_free(&dbg->de_debug_weaknames);
     rela_free(&dbg->de_debug_ranges);
+    rela_free(&dbg->de_debug_str_offsets);
+    rela_free(&dbg->de_debug_addr);
+    rela_free(&dbg->de_debug_gdbindex);
+    rela_free(&dbg->de_debug_cu_index);
+    rela_free(&dbg->de_debug_tu_index);
     dwarf_harmless_cleanout(&dbg->de_harmless_errors);
 
     if (dbg->de_printf_callback.dp_buffer &&
@@ -626,9 +654,11 @@ _dwarf_free_all_of_one_debug(Dwarf_Debug dbg)
     }
 
     dwarf_tdestroy(dbg->de_alloc_tree,tdestroy_free_node);
+    dbg->de_alloc_tree = 0;
     if (dbg->de_tied_data.td_tied_search) {
         dwarf_tdestroy(dbg->de_tied_data.td_tied_search,
             _dwarf_tied_destroy_free_node);
+        dbg->de_tied_data.td_tied_search = 0;
     }
     memset(dbg, 0, sizeof(*dbg)); /* Prevent accidental use later. */
     free(dbg);

@@ -625,14 +625,18 @@ find_context_base_fields(Dwarf_Debug dbg,
     Dwarf_Bool *str_offsets_base_present_return,
     Dwarf_Unsigned *addr_base_return,
     Dwarf_Bool *addr_base_present_return,
+    Dwarf_Unsigned *ranges_base_return,
+    Dwarf_Bool *ranges_base_present_return,
     Dwarf_Error* error)
 {
     Dwarf_Sig8 signature;
     Dwarf_Bool sig_present = FALSE;
     Dwarf_Off str_offsets_base = 0;
+    Dwarf_Off ranges_base = 0;
     Dwarf_Off addr_base = 0;
     Dwarf_Bool str_offsets_base_present = FALSE;
     Dwarf_Bool addr_base_present = FALSE;
+    Dwarf_Bool ranges_base_present = FALSE;
 
     Dwarf_Attribute * alist = 0;
     Dwarf_Signed      atcount = 0;
@@ -686,6 +690,19 @@ find_context_base_fields(Dwarf_Debug dbg,
                         /* Something is badly wrong. */
                         return udres;
                     }
+                } else if (attrnum == DW_AT_ranges_base
+                    || attrnum == DW_AT_GNU_ranges_base){
+                    int udres = 0;
+                    udres = dwarf_global_formref(attr,&ranges_base,
+                        error);
+                    if(udres == DW_DLV_OK) {
+                        ranges_base_present = TRUE;
+                    } else {
+                        dwarf_dealloc(dbg,attr,DW_DLA_ATTR);
+                        dwarf_dealloc(dbg,alist,DW_DLA_LIST);
+                        /* Something is badly wrong. */
+                        return udres;
+                    }
                 }  /* else nothing to do here. */
             }
             dwarf_dealloc(dbg,attr,DW_DLA_ATTR);
@@ -707,6 +724,10 @@ find_context_base_fields(Dwarf_Debug dbg,
     *addr_base_present_return = addr_base_present;
     if (addr_base_present) {
         *addr_base_return = addr_base;
+    }
+    *ranges_base_present_return = ranges_base_present;
+    if (ranges_base_present) {
+        *ranges_base_return = ranges_base;
     }
     return DW_DLV_OK;
 }
@@ -860,12 +881,15 @@ _dwarf_next_cu_header_internal(Dwarf_Debug dbg,
             Dwarf_Bool sig_present = FALSE;
             Dwarf_Unsigned str_offsets_base = 0;
             Dwarf_Unsigned addr_base = 0;
+            Dwarf_Unsigned ranges_base = 0;
             Dwarf_Bool str_offsets_base_present = FALSE;
             Dwarf_Bool addr_base_present = FALSE;
+            Dwarf_Bool ranges_base_present = FALSE;
             dwo_idres = find_context_base_fields(dbg,
                 cudie,&signature,&sig_present,
                 &str_offsets_base,&str_offsets_base_present,
                 &addr_base,&addr_base_present,
+                &ranges_base,&ranges_base_present,
                 error);
 
             if (dwo_idres == DW_DLV_OK) {
@@ -886,6 +910,11 @@ _dwarf_next_cu_header_internal(Dwarf_Debug dbg,
                         or .dwo or .dwp */
                     cu_context->cc_str_offsets_base = str_offsets_base;
                     cu_context->cc_str_offsets_base_present = TRUE;
+                }
+                if(ranges_base_present) {
+                    /*  This can be in executable or ordinary .o */
+                    cu_context->cc_ranges_base = ranges_base;
+                    cu_context->cc_ranges_base_present = TRUE;
                 }
             }
             dwarf_dealloc(dbg,cudie,DW_DLA_DIE);
@@ -1649,8 +1678,6 @@ dwarf_offdie_b(Dwarf_Debug dbg,
     Dwarf_Unsigned abbrev_code = 0;
     Dwarf_Unsigned utmp = 0;
     Dwarf_Debug_InfoTypes dis = 0;
-    int res;
-
 
     if (dbg == NULL) {
         _dwarf_error(NULL, error, DW_DLE_DBG_NULL);
