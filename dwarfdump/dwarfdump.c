@@ -50,7 +50,7 @@
 extern int elf_open(const char *name,int mode);
 #endif /* WIN32 */
 
-#define DWARFDUMP_VERSION " Sat Sep 26 18:10:25 PDT 2015  "
+#define DWARFDUMP_VERSION " Sun Nov  8 10:08:45 PST 2015  "
 
 extern char *dwoptarg;
 

@@ -316,6 +316,9 @@ int _dwarf_get_address_size(Dwarf_Debug dbg, Dwarf_Die die);
 int _dwarf_reference_outside_section(Dwarf_Die die,
     Dwarf_Small * startaddr,
     Dwarf_Small * pastend);
+void _dwarf_error_mv_s_to_t(Dwarf_Debug dbgs,Dwarf_Error *errs,
+    Dwarf_Debug dbgt,Dwarf_Error *errt);
+
 
 
 #endif /* DWARF_UTIL_H */

@@ -890,3 +890,24 @@ dwarf_printf(Dwarf_Debug dbg,
     return 0;
 }
 
+/*  Often errs and errt point to the same Dwarf_Error,
+    So exercise care. */
+
+void
+_dwarf_error_mv_s_to_t(Dwarf_Debug dbgs,Dwarf_Error *errs,
+    Dwarf_Debug dbgt,Dwarf_Error *errt)
+{
+    if(dbgs == dbgt) {
+        if(errs != errt) {
+            Dwarf_Error ers = *errs;
+            *errs = 0;
+            *errt = ers;
+        }
+    } else {
+        int errno = dwarf_errno(*errs);
+        dwarf_dealloc(dbgs,*errs, DW_DLA_ERROR);
+        *errs = 0;
+        _dwarf_error(dbgt,errt, errno);
+    }
+}
+

@@ -1,3 +1,6 @@
+2015-11-08  David Anderson
+     * print_die.c: Fixed indents, removed trailing whitespace.
+     * dwarfdump.c, common.c: Update version string.
 2015-11-07  David Anderson
      * dwarfdump.1: Documented -x line5=.
      * dwarfdump.c: Revised -g so it no longer turns on -i.

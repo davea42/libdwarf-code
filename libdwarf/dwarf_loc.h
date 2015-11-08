@@ -23,23 +23,6 @@
   USA.
 */
 
-/*  NEW October 2015.  */
-/*  Dwarf_Loc_c_s,Dwarf_Locdesc_c_s, and Dwarf_Loc_Head_c_s
-    are not defined publically. */
-struct Dwarf_Loc_c_s;
-typedef struct Dwarf_Loc_c_s * Dwarf_Loc_c;
-
-/*  NEW October 2015.  */
-/*  This provides access to Dwarf_Loc_c, a single location operator */
-struct Dwarf_Locdesc_c_s;
-typedef struct Dwarf_Locdesc_c_s * Dwarf_Locdesc_c;
-
-/*  NEW October 2015.  */
-/*  This provides access to Dwarf_Locdesc_c, a single location list entry
-    (or for a locexpr, the fake Loc_Head for the locexpr) */
-struct Dwarf_Loc_Head_c_s;
-typedef struct Dwarf_Loc_Head_c_s * Dwarf_Loc_Head_c;
-
 typedef struct Dwarf_Loc_Chain_s *Dwarf_Loc_Chain;
 struct Dwarf_Loc_Chain_s {
     Dwarf_Small lc_atom;

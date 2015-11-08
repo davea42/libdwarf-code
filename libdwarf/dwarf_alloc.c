@@ -285,16 +285,15 @@ tdestroy_free_node(void *nodep)
         return;
     }
     if(!reserve->rd_dbg) {
-         /*  Unused (corrupted?) node in the tree. 
-             Should never happen. */
-         return;
+        /*  Unused (corrupted?) node in the tree.
+            Should never happen. */
+        return;
     }
     if(!reserve->rd_type) {
-         /*  Unused (corrupted?) node in the tree. 
-             Should never happen. */
-         return;
+        /*  Unused (corrupted?) node in the tree.
+            Should never happen. */
+        return;
     }
-
     if (alloc_instance_basics[type].specialdestructor) {
         alloc_instance_basics[type].specialdestructor(m);
     }

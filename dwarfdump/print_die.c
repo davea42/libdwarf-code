@@ -742,7 +742,7 @@ print_one_die_section(Dwarf_Debug dbg,Dwarf_Bool is_info)
                 check_range_array_info(dbg);
             }
 
-            /*  Traverse the line section if in check mode 
+            /*  Traverse the line section if in check mode
                 or if line-printing requested */
             if (line_flag || check_decl_file) {
                 print_line_numbers_this_cu(dbg, cu_die);
@@ -1797,9 +1797,9 @@ print_range_attribute(Dwarf_Debug dbg,
         Dwarf_Signed rangecount = 0;
         Dwarf_Unsigned bytecount = 0;
         /*  If this is a dwp the ranges will be
-            missing or reported from a tied file. 
+            missing or reported from a tied file.
             For now we add the ranges to dbg, not tiedbg
-            as we do not mention tieddbg here. 
+            as we do not mention tieddbg here.
             May need a new interface. FIXME? */
         int rres = dwarf_get_ranges_a(dbg,original_off,
             die,
@@ -3267,7 +3267,7 @@ get_location_list(Dwarf_Debug dbg,
             loclist_source = llbuf->ld_from_loclist;
             section_offset = llbuf->ld_section_offset;
             locdesc_offset = section_offset -
-                 sizeof(Dwarf_Half) - 2 * elf_address_size;
+                sizeof(Dwarf_Half) - 2 * elf_address_size;
             locentry_count = llbuf->ld_cents;
             ulocentry_count = locentry_count;
             if (lopc == elf_max_address) {
@@ -3282,7 +3282,7 @@ get_location_list(Dwarf_Debug dbg,
             if (llent == 0) {
                 if (loclist_source == 1) {
                     snprintf(small_buf, sizeof(small_buf),
-                        "<loclist at offset 0x%"  
+                        "<loclist at offset 0x%"
                         DW_PR_XZEROS DW_PR_DUx
                         " with %ld entries follows>",
                         locdesc_offset,
@@ -3290,7 +3290,7 @@ get_location_list(Dwarf_Debug dbg,
                 } else {
                     /* ASSERT: loclist_source == 2 */
                     snprintf(small_buf, sizeof(small_buf),
-                        "<dwo loclist at offset 0x%" 
+                        "<dwo loclist at offset 0x%"
                         DW_PR_XZEROS DW_PR_DUx
                         " with %ld entries follows>",
                         locdesc_offset,
@@ -3333,8 +3333,7 @@ get_location_list(Dwarf_Debug dbg,
                             DW_PR_XZEROS DW_PR_DUx
                             " %s>",hipc,
                             adexplain(dwarf_errno(err),
-                               "base-address-unavailable")
-                              );
+                            "base-address-unavailable"));
                         esb_append(esbp,small_buf);
                         base_address = 0;
                     } else {
@@ -3371,7 +3370,7 @@ get_location_list(Dwarf_Debug dbg,
                 if (loclist_source == 2) {
                     Dwarf_Addr realaddr = 0;
                     Dwarf_Addr slotindex = lopc;
-                    /*  start (lopc) is index of a slot 
+                    /*  start (lopc) is index of a slot
                         in .debug_addr section. */
                     int res = dwarf_debug_addr_index_to_addr(die,
                         lopc,&realaddr,&err);
@@ -3384,7 +3383,7 @@ get_location_list(Dwarf_Debug dbg,
                             DW_PR_XZEROS DW_PR_DUx
                             " %s>",lopc,
                             adexplain(dwarf_errno(err),
-                               "start-address-unavailable"));
+                            "start-address-unavailable"));
                         esb_append(esbp,small_buf);
                     } else {
                         snprintf(small_buf,sizeof(small_buf),
@@ -3458,7 +3457,7 @@ get_location_list(Dwarf_Debug dbg,
                             DW_PR_XZEROS DW_PR_DUx
                             " %s>",lopc,
                             adexplain(dwarf_errno(err),
-                               "start-address-unavailable"));
+                            "start-address-unavailable"));
                         esb_append(esbp,small_buf);
                     } else {
                         snprintf(small_buf,sizeof(small_buf),
@@ -3479,7 +3478,7 @@ get_location_list(Dwarf_Debug dbg,
                             DW_PR_XZEROS DW_PR_DUx
                             " %s>",hipc,
                             adexplain(dwarf_errno(err),
-                               "end-address-unavailable"));
+                            "end-address-unavailable"));
                         esb_append(esbp,small_buf);
                         foundaddr = FALSE;
                     } else {

@@ -484,19 +484,18 @@ dwarf_get_loclist_c(Dwarf_Attribute attr,
                 loclist_offset = loc_block.bl_section_offset +
                     loc_block.bl_len;
             }
-           
         } else {
             /*  Non-dwo loclist. If this were a skeleton CU
                 (ie, in the base, not dwo/dwp) then
                 it could not have a loclist.  */
-            /*   A reference to .debug_loc, with an offset 
-                 in .debug_loc of a loclist */
+            /*  A reference to .debug_loc, with an offset
+                in .debug_loc of a loclist */
             Dwarf_Unsigned loclist_offset = 0;
             int off_res  = DW_DLV_ERROR;
             int count_res = DW_DLV_ERROR;
             int loclist_count = 0;
             int lli = 0;
-    
+
             off_res = _dwarf_get_loclist_header_start(dbg,
                 attr, &loclist_offset, error);
             if (off_res != DW_DLV_OK) {
@@ -530,7 +529,6 @@ dwarf_get_loclist_c(Dwarf_Attribute attr,
             llhead->ll_from_loclist = 1;
             llhead->ll_context = cucontext;
             llhead->ll_dbg = dbg;
-    
             /* New locdesc and Loc,  non-DWO, so old format */
             for (lli = 0; lli < listlen; ++lli) {
                 int lres = 0;
@@ -542,7 +540,7 @@ dwarf_get_loclist_c(Dwarf_Attribute attr,
                     address_size,
                     error);
                 if (blkres != DW_DLV_OK) {
-                        dwarf_loc_head_c_dealloc(llhead);
+                    dwarf_loc_head_c_dealloc(llhead);
                     return (blkres);
                 }
                 loc_block.bl_len = c.bl_len;
@@ -550,7 +548,7 @@ dwarf_get_loclist_c(Dwarf_Attribute attr,
                 loc_block.bl_from_loclist = c.bl_from_loclist;
                 loc_block.bl_section_offset = c.bl_section_offset;
                 loc_block.bl_locdesc_offset = loclist_offset;
-    
+
                 /* Fills in the locdesc at index lli */
                 lres = _dwarf_get_locdesc_c(dbg,
                     lli,
@@ -563,11 +561,11 @@ dwarf_get_loclist_c(Dwarf_Attribute attr,
                     error);
                 if (lres != DW_DLV_OK) {
                     dwarf_loc_head_c_dealloc(llhead);
-                    /*  low level error already set: 
+                    /*  low level error already set:
                         let it be passed back */
                     return lres;
                 }
-    
+
                 /* Now get to next loclist entry offset. */
                 loclist_offset = loc_block.bl_section_offset +
                     loc_block.bl_len;
@@ -696,8 +694,7 @@ dwarf_loclist_from_expr_c(Dwarf_Debug dbg,
     llhead->ll_locdesc_count = local_listlen;
     llhead->ll_from_loclist = 0;
     llhead->ll_context = 0; /* Not available! */
-    llhead->ll_dbg = dbg; 
-
+    llhead->ll_dbg = dbg;
 
     /* An empty location description (block length 0) means the code
     generator emitted no variable, the variable was not generated,

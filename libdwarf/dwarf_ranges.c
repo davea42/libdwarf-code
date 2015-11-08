@@ -36,7 +36,7 @@ struct ranges_entry {
 
 
 /*  Ranges are never in a split dwarf object. In the base object
-    instead. So use the tied_object if present. 
+    instead. So use the tied_object if present.
     We return an error which is on the incoming dbg, not
     the possibly-tied-dbg localdbg. */
 #define MAX_ADDR ((address_size == 8)?0xffffffffffffffffULL:0xffffffff)
@@ -64,7 +64,7 @@ int dwarf_get_ranges_a(Dwarf_Debug dbg,
     Dwarf_Error localerror = 0;
 
     if (localdbg->de_tied_data.td_tied_object) {
-        /*  ASSERT: localdbg->de_debug_ranges is missing: DW_DLV_NO_ENTRY. 
+        /*  ASSERT: localdbg->de_debug_ranges is missing: DW_DLV_NO_ENTRY.
             So lets not look in dbg. */
         Dwarf_CU_Context context = 0;
         int res = 0;
@@ -81,20 +81,17 @@ int dwarf_get_ranges_a(Dwarf_Debug dbg,
         } else if (res == DW_DLV_NO_ENTRY ) {
             /* Nothing else to do. Look in original dbg. */
         } else {
-            /*  Ranges are never in a split dwarf object. In the base object
+            /*  Ranges are never in a split dwarf object.
+                In the base object
                 instead. Use the tied_object */
             localdbg = dbg->de_tied_data.td_tied_object;
         }
     }
-    
+
 
     res = _dwarf_load_section(localdbg, &localdbg->de_debug_ranges,&localerror);
     if (res == DW_DLV_ERROR) {
-        if(localdbg != dbg) {
-            Dwarf_Unsigned lerrno = dwarf_errno(localerror);
-            dwarf_dealloc(localdbg,localerror, DW_DLA_ERROR);
-            _dwarf_error(dbg,error,lerrno);
-        }
+        _dwarf_error_mv_s_to_t(localdbg,&localerror,dbg,error);
         return res;
     } else if (res == DW_DLV_NO_ENTRY) {
         return res;

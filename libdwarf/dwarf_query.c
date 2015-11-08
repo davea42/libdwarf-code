@@ -41,22 +41,21 @@ static int _dwarf_get_ranges_base_attr_value(Dwarf_Debug dbg,
     Dwarf_CU_Context context,
     Dwarf_Unsigned * rabase_out,
     Dwarf_Error    * error);
-    
+
 static int _dwarf_get_address_base_attr_value(Dwarf_Debug dbg,
     Dwarf_CU_Context context,
     Dwarf_Unsigned *abase_out,
     Dwarf_Error *error);
 
 int dwarf_get_offset_size(Dwarf_Debug dbg,
-    Dwarf_Half  *    addr_size,
+    Dwarf_Half  *    offset_size,
     Dwarf_Error *    error)
 {
-    Dwarf_Half offset_size = 0;
     if (dbg == 0) {
         _dwarf_error(NULL, error, DW_DLE_DBG_NULL);
         return (DW_DLV_ERROR);
     }
-    offset_size = dbg->de_length_size;;
+    *offset_size = dbg->de_length_size;;
     return DW_DLV_OK;
 }
 
@@ -533,7 +532,7 @@ dwarf_attr(Dwarf_Die die,
 }
 
 /*  A DWP (.dwp) package object never contains .debug_addr,
-    only a normal .o or executable object. 
+    only a normal .o or executable object.
     Error returned here is on dbg, not tieddbg. */
 int
 _dwarf_extract_address_from_debug_addr(Dwarf_Debug dbg,
@@ -1067,7 +1066,7 @@ dwarf_highpc_b(Dwarf_Die die,
                     && dbg->de_tied_data.td_tied_object) {
                     /*  .debug_addr is in tied dbg. */
                     int res3 = 0;
- 
+
                     /*  Do not leak the above error pointer,
                         we have something else to try here. */
                     dwarf_dealloc(dbg,*error, DW_DLA_ERROR);
@@ -1165,10 +1164,7 @@ _dwarf_get_addr_from_tied(Dwarf_Debug dbg,
         error);
     if ( res == DW_DLV_ERROR) {
         /* Associate the error with dbg, not tieddbg */
-        int errno = dwarf_errno(*error);
-        dwarf_dealloc(tieddbg,*error, DW_DLA_ERROR);
-        *error = 0;
-        _dwarf_error(dbg,error, errno);
+        _dwarf_error_mv_s_to_t(tieddbg,error,dbg,error);
         return res;
     } else if ( res == DW_DLV_NO_ENTRY) {
         return res;
@@ -1181,10 +1177,7 @@ _dwarf_get_addr_from_tied(Dwarf_Debug dbg,
         error);
     if ( res == DW_DLV_ERROR) {
         /* Associate the error with dbg, not tidedbg */
-        int errno = dwarf_errno(*error);
-        dwarf_dealloc(tieddbg,*error, DW_DLA_ERROR);
-        *error = 0;
-        _dwarf_error(dbg,error, errno);
+        _dwarf_error_mv_s_to_t(tieddbg,error,dbg,error);
         return res;
     } else if ( res == DW_DLV_NO_ENTRY) {
         return res;
@@ -1223,10 +1216,7 @@ _dwarf_get_ranges_base_attr_from_tied(Dwarf_Debug dbg,
         error);
     if ( res == DW_DLV_ERROR) {
         /* Associate the error with dbg, not tidedbg */
-        int errno = dwarf_errno(*error);
-        dwarf_dealloc(tieddbg,*error, DW_DLA_ERROR);
-        *error = 0;
-        _dwarf_error(dbg,error, errno);
+        _dwarf_error_mv_s_to_t(tieddbg,error,dbg,error);
         return res;
     } else if ( res != DW_DLV_NO_ENTRY) {
         return res;
@@ -1235,10 +1225,7 @@ _dwarf_get_ranges_base_attr_from_tied(Dwarf_Debug dbg,
         &tiedbase, error);
     if (res != DW_DLV_OK) {
         /* Associate the error with dbg, not tidedbg */
-        int errno = dwarf_errno(*error);
-        dwarf_dealloc(tieddbg,*error, DW_DLA_ERROR);
-        *error = 0;
-        _dwarf_error(dbg,error, errno);
+        _dwarf_error_mv_s_to_t(tieddbg,error,dbg,error);
         return res;
     }
     *tiedbase_out = tiedbase;

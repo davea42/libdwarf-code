@@ -1,3 +1,16 @@
+2015-11-08 David Anderson
+     * dwarf_alloc.c: Fixed indents, trailing whitespace.  
+     * dwarf_loc2.c: Fixed indents, trailing whitespace.  
+     * dwarf_form.c: Made too-long line into 2 lines.
+     * dwarf_loc.h: Removed duplicate Dwarf_Loc_c_s etc declarations.
+     * dwarf_util.c(_dwarf_error_mv_s_to_t),dwarf_util.h: New 
+       function to eliminate duplicative code.: 
+     * dwarf_query.c): Fix bug in dwarf_get_offset_size().
+       Use new _dwarf_error_mv_s_to_t() to get error on correct dbg.
+       Fixed indents, trailing whitespace.
+     * dwarf_ranges.c: Use new _dwarf_error_mv_s_to_t() 
+       to get error on correct dbg.
+       Fixed indents, trailing whitespace.
 2015-11-07 David Anderson
      * dwarf_alloc.c: Added new checks so  user mixing up
        tied dbg with regular dbg won't lead to crashes

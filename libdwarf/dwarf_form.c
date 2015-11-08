@@ -1244,7 +1244,8 @@ _dwarf_get_string_from_tied(Dwarf_Debug dbg,
         _dwarf_error(dbg, error,  DW_DLE_NO_TIED_STRING_AVAILABLE);
         return (DW_DLV_ERROR);
     }
-    res= _dwarf_check_string_valid(tieddbg,secbegin,strbegin, secend,localerror);
+    res= _dwarf_check_string_valid(tieddbg,secbegin,strbegin, secend,
+        &localerror);
     if (res == DW_DLV_ERROR) {
         Dwarf_Unsigned lerrno = dwarf_errno(localerror);
         dwarf_dealloc(tieddbg,localerror,DW_DLA_ERROR);
