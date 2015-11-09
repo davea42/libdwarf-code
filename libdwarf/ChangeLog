@@ -1,3 +1,9 @@
+2015-11-09 David Anderson
+     * libdwarf.h.in: Removed unimplemented function 
+       declarationfrom the file.
+     * libdwarf2.1.mm: Updated with new interface functions
+       for DWARF5 and split dwarf. Version2.33
+     * libdwarf2.1.mm: Regenerated.
 2015-11-08 David Anderson
      * dwarf_alloc.c: Fixed indents, trailing whitespace.  
      * dwarf_loc2.c: Fixed indents, trailing whitespace.  
