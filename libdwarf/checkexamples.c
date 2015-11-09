@@ -158,6 +158,161 @@ void example8(Dwarf_Debug dbg, Dwarf_Die somedie)
 }
 
 void
+example_loclistc(Dwarf_Debug dbg,Dwarf_Attribute someattr)
+{
+    Dwarf_Unsigned lcount = 0;
+    Dwarf_Loc_Head_c loclist_head = 0;
+    Dwarf_Error error = 0;
+    int lres = 0;
+
+    lres = dwarf_get_loclist_c(someattr,&loclist_head,&lcount,&error);
+    if (lres == DW_DLV_OK) {
+        Dwarf_Unsigned i = 0;
+        Dwarf_Locdesc_c locentry = 0;
+
+        /*  Before any return remember to call
+            dwarf_loc_head_c_dealloc(loclist_head); */
+        for (i = 0; i < lcount; ++i) {
+            Dwarf_Small loclist_source = 0;
+            Dwarf_Small lle_value = 0; /* DWARF5 */
+            Dwarf_Addr lopc = 0;
+            Dwarf_Addr hipc = 0;
+            Dwarf_Unsigned ulocentry_count = 0;
+            Dwarf_Locdesc_c locentry = 0;
+
+            /*  section_offset is the section offset of the expression, not
+                the location description prefix. */
+            Dwarf_Unsigned section_offset = 0;
+
+            /*  locdesc_offset is the section offset of the
+                location description prefix. */
+            Dwarf_Unsigned locdesc_offset = 0;
+
+            lres = dwarf_get_locdesc_entry_c(loclist_head,
+                i,
+                &lle_value,&lopc,&hipc,
+                &ulocentry_count,
+                &locentry,
+                &loclist_source,
+                &section_offset,
+                &locdesc_offset,
+                &error);
+            if (lres == DW_DLV_OK) {
+                /*  Here, use loclist_source and
+                    lle_value to determine what
+                    sort of loclist it is and what to do with
+                    the values. locentry_count will only be
+                    more than zero if there is a set of location
+                    operators.
+                    One must use lle_value to determine how
+                    to interpret lopc,hipc as sometimes they
+                    are a target address and sometimes an
+                    index into .debug_addr or even a length. */
+                Dwarf_Unsigned j = 0;
+                int opres = 0;
+                Dwarf_Small op = 0;
+
+                for (j = 0; i < ulocentry_count; ++i) {
+                    Dwarf_Unsigned opd1 = 0;
+                    Dwarf_Unsigned opd2 = 0;
+                    Dwarf_Unsigned opd3 = 0;
+                    Dwarf_Unsigned offsetforbranch = 0;
+
+                    opres = dwarf_get_location_op_value_c(locentry,
+                        j,&op,&opd1, &opd2,&opd3,&offsetforbranch,
+                        &error);
+                    if (opres == DW_DLV_OK) {
+                        /* Do something with the operators. */
+                    } else {
+                        /*Something is wrong. */
+                    }
+                }
+            } else {
+                /* Something is wrong. Do something. */
+            }
+        }
+        /* In case of error or any other situation where one
+            is giving up one can call dwarf_loc_head_c_dealloc()
+            to free all the memory associated with loclist_head.  */
+        dwarf_loc_head_c_dealloc(loclist_head);
+        loclist_head = 0;
+    }
+}
+void
+example_locexprc(Dwarf_Debug dbg,Dwarf_Ptr expr_bytes,
+   Dwarf_Unsigned expr_len,
+   Dwarf_Half addr_size,
+   Dwarf_Half offset_size,
+   Dwarf_Half version)
+{
+    Dwarf_Loc_Head_c head = 0;
+    Dwarf_Locdesc_c locentry = 0;
+    int res2 = 0;
+    Dwarf_Unsigned lopc = 0;
+    Dwarf_Unsigned hipc = 0;
+    Dwarf_Unsigned ulistlen = 0;
+    Dwarf_Unsigned ulocentry_count = 0;
+    Dwarf_Unsigned section_offset = 0;
+    Dwarf_Unsigned locdesc_offset = 0;
+    Dwarf_Small lle_value = 0;
+    Dwarf_Small loclist_source = 0;
+    Dwarf_Unsigned i = 0;
+    Dwarf_Error error = 0;
+
+    res2 = dwarf_loclist_from_expr_c(dbg,
+        expr_bytes,expr_len,
+        addr_size,
+        offset_size,
+        version,
+        &head,
+        &ulistlen,
+        &error);
+    if(res2 == DW_DLV_NO_ENTRY) {
+        return;
+    }
+    if(res2 == DW_DLV_ERROR) {
+        return;
+    }
+    /*  These are a location expression, not loclist.
+        So we just need the 0th entry. */
+    res2 = dwarf_get_locdesc_entry_c(head,
+        0, /* Data from 0th LocDesc */
+        &lle_value,
+        &lopc, &hipc,
+        &ulocentry_count,
+        &locentry,
+        &loclist_source,
+        &section_offset,
+        &locdesc_offset,
+        &error);
+    if (res2 == DW_DLV_ERROR) {
+        dwarf_loc_head_c_dealloc(head);
+        return;
+    } else if (res2 == DW_DLV_NO_ENTRY) {
+        dwarf_loc_head_c_dealloc(head);
+        return;
+    }
+    /*  ASSERT: ulistlen == 1 */
+    for (i = 0; i < ulocentry_count;++i) {
+        Dwarf_Small op = 0;
+        Dwarf_Unsigned opd1 = 0;
+        Dwarf_Unsigned opd2 = 0;
+        Dwarf_Unsigned opd3 = 0;
+        Dwarf_Unsigned offsetforbranch = 0;
+
+        res2 = dwarf_get_location_op_value_c(locentry,
+            i, &op,&opd1,&opd2,&opd3,&offsetforbranch,
+            &error);
+        /* Do something with the expression operator and operands */
+        if (res2 != DW_DLV_OK) {
+            dwarf_loc_head_c_dealloc(head);
+            return;
+        }
+    }
+    dwarf_loc_head_c_dealloc(head);
+}
+
+void
 example9(Dwarf_Debug dbg,Dwarf_Attribute someattr)
 {
     Dwarf_Signed lcount = 0;
