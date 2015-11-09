@@ -8,7 +8,7 @@
 .nr Hb 5
 \." ==============================================
 \." Put current date in the following at each rev
-.ds vE rev 2.32, Oct 17, 2015
+.ds vE rev 2.33, Nov 08, 2015
 \." ==============================================
 \." ==============================================
 .ds | |
@@ -202,6 +202,11 @@ The following is a brief mention of the changes in this libdwarf from
 the libdwarf draft for DWARF Version 1 and recent changes.
 
 .H 2 "Items Changed"
+.P
+Adding support for DWARF5 .debug_loc.dwo
+and split dwarf range tables.
+Added dwarf_get_offset_size().
+(November 08, 2015)
 .P
 Adding support for reading DWARF5 line tables
 and GNU two-level line tables.
@@ -1104,6 +1109,19 @@ a valid \f(CWDwarf_XuIndexHeader\fP pointer as the argument.
 \f(CWdwarf_srclines_b()\fP returns a Dwarf_Line_Context through an argument
 and the new structure pointer lets us access line header information
 conveniently.
+.DS
+\f(CWtypedef struct Dwarf_Loc_c_s * Dwarf_Loc_c;\fP
+\f(CWtypedef struct Dwarf_Locdesc_c_s * Dwarf_Locdesc_c;\fP
+\f(CWtypedef struct Dwarf_Loc_Head_c_s * Dwarf_Loc_Head_c;\fP
+.DE
+\f(CWDwarf_Loc*\fP are involved in the DWARF5
+interfaces to location lists. 
+The new interfaces are all functional and contents
+of the above types
+are not exposed. 
+
+
+
 
 .H 1 "UTF-8 strings"
 \fIlibdwarf\fP 
@@ -2448,6 +2466,33 @@ to the offset of the start of the debugging information entry
 described by \f(CWdie\fP in the section containing dies i.e .debug_info.  
 It returns \f(CWDW_DLV_ERROR\fP on error.
 
+
+.H 3 "dwarf_debug_addr_index_to_addr()"
+.DS
+int dwarf_debug_addr_index_to_addr(Dwarf_Die /*die*/,
+    Dwarf_Unsigned  index,
+    Dwarf_Addr    * return_addr,
+    Dwarf_Error   * error);
+.DE
+Attributes with form DW_FORM_addrx, the
+operation DW_OP_addrx, or
+certain of the split-dwarf location list entries
+give an index value to
+a machine address in the .debug_addr section
+(which is always in .debug_addr even when
+the form/operation are in a split dwarf .dwo section).
+.P
+On successful return this function turns such an index
+into a target address value through the pointer
+\f(CWreturn_addr\fP .
+.P
+If there is an error this may return DW_
+\f(CWDW_DLV_ERROR\fP and it will have
+returned an error through \f(CW*error\fP.
+.P
+If there is no available .debug_addr section this
+may return \f(CWDW_DLV_NO_ENTRY\fP.
+
 .H 3 "dwarf_die_CU_offset()"
 .DS
 \f(CWint dwarf_die_CU_offset(
@@ -3347,7 +3392,8 @@ The \f(CWoffset_size\fP passed in shall be the
 length of an offset in the current compilation unit 
 (4 for 32bit dwarf or 8 for 64bit dwarf).
 The \f(CWform\fP passed in shall be the attribute form number.
-If \f(CWform\fP \f(CWDW_FORM_indirect\fP
+If \f(CWform\fP 
+\f(CWDW_FORM_indirect\fP
 is passed in \f(CWDW_FORM_CLASS_UNKNOWN\fP will be returned
 as this form has no defined 'class'.
 .P
@@ -3360,7 +3406,465 @@ attributes might have this problem.
 The function \f(CWdwarf_get_version_of_die()\fP may be helpful
 in filling out arguments for a call to \f(CWdwarf_get_form_class()\fP.
 
+.H 2 "Location List operations"
+.H 3 "dwarf_get_loclist_c()"
+.DS
+int dwarf_get_loclist_c (Dwarf_Attribute attr,
+   Dwarf_Loc_Head_c * loclist_head,
+   Dwarf_Unsigned   * locCount,
+   Dwarf_Error      * error);
+.DE
+This function returns a pointer that is, in turn,
+used to make possible calls to return the details
+of the location list.
+.P
+The incoming argument
+\f(CWattr\fP
+should have one of the FORMs of a location
+expression or location list.
+.P
+On success this returns 
+\f(CWDW_DLV_OK\fP
+and sets 
+\f(CW*loclist_head\fP
+to a pointer used in further calls (see the example
+and descriptions that follow it).
+\f(CWlocCount\fP 
+is set to the number of entries
+in the location list (or if the FORM is of a location
+expression the
+\f(CWlocCount\fP 
+will be set to one).
+At this point one cannot yet tell if it was a location
+list or a location expression (see .
+\f(CWdwarf_get_locdesc_entry_c{}\fP). 
+.P
+In case of error
+\f(CWDW_DLV_ERROR\fP
+is returned and
+\f(CW*error\fP
+is set to an error designation.
+.P
+A return of
+\f(CWDW_DLV_NO_ENTRY\fP
+may be possible but is a bit odd.
+.DS
+\f(CW
+void
+example_loclistc(Dwarf_Debug dbg,Dwarf_Attribute someattr)
+{
+    Dwarf_Unsigned lcount = 0;
+    Dwarf_Loc_Head_c loclist_head = 0;
+    Dwarf_Error error = 0;
+    int lres = 0;
+
+    lres = dwarf_get_loclist_c(someattr,&loclist_head,&lcount,&error);
+    if (lres == DW_DLV_OK) {
+        Dwarf_Unsigned i = 0;
+        Dwarf_Locdesc_c locentry = 0;
+
+        /*  Before any return remember to call
+            dwarf_loc_head_c_dealloc(loclist_head); */
+        for (i = 0; i < lcount; ++i) {
+            Dwarf_Small loclist_source = 0;
+            Dwarf_Small lle_value = 0; /* DWARF5 */
+            Dwarf_Addr lopc = 0;
+            Dwarf_Addr hipc = 0;
+            Dwarf_Unsigned ulocentry_count = 0;
+            Dwarf_Locdesc_c locentry = 0;
+
+            /*  section_offset is the section offset of the expression, not
+                the location description prefix. */
+            Dwarf_Unsigned section_offset = 0;
+
+            /*  locdesc_offset is the section offset of the
+                location description prefix. */
+            Dwarf_Unsigned locdesc_offset = 0;
+
+            lres = dwarf_get_locdesc_entry_c(loclist_head,
+                i,
+                &lle_value,&lopc,&hipc,
+                &ulocentry_count,
+                &locentry,
+                &loclist_source,
+                &section_offset,
+                &locdesc_offset,
+                &error);
+            if (lres == DW_DLV_OK) {
+                /*  Here, use loclist_source and
+                    lle_value to determine what
+                    sort of loclist it is and what to do with
+                    the values. locentry_count will only be
+                    more than zero if there is a set of location
+                    operators.  
+                    One must use lle_value to determine how
+                    to interpret lopc,hipc as sometimes they
+                    are a target address and sometimes an
+                    index into .debug_addr or even a length. */
+                Dwarf_Unsigned j = 0;
+                int opres = 0;
+                 Dwarf_Small op = 0;
+
+                for (j = 0; i < ulocentry_count; ++i) {
+                    Dwarf_Unsigned opd1 = 0;
+                    Dwarf_Unsigned opd2 = 0;
+                    Dwarf_Unsigned opd3 = 0;
+                    Dwarf_Unsigned offsetforbranch = 0;
+
+                    opres = dwarf_get_location_op_value_c(locentry,
+                        j,&op,&opd1, &opd2,&opd3,&offsetforbranch,
+                        &error);
+                    if (opres == DW_DLV_OK) {
+                        /* Do something with the operators. */
+                    } else {
+                        /*Something is wrong. */
+                    }
+                 
+                }
+                
+            } else {
+                /* Something is wrong. Do something. */
+            }
+             
+        }
+        /* In case of error or any other situation where one
+            is giving up one can call dwarf_loc_head_c_dealloc()
+            to free all the memory associated with loclist_head.  */
+        dwarf_loc_head_c_dealloc(loclist_head);
+        loclist_head = 0;
+    }
+}
+\fP
+.DE
+.H 3 "dwarf_get_locdesc_entry_c()"
+.DS
+int dwarf_get_locdesc_entry_c(Dwarf_Loc_Head_c /*loclist_head*/,
+   Dwarf_Unsigned    /*index*/,
+
+   /* identifies type of locdesc entry*/
+   Dwarf_Small    *  /*lle_value_out*/,
+   Dwarf_Addr     *  /*lowpc_out*/,
+   Dwarf_Addr     *  /*hipc_out*/,
+   Dwarf_Unsigned *  /*loclist_count_out*/,
+
+   /* Returns pointer to specific Locdesc index refers to */
+   Dwarf_Locdesc_c * /*locentry_out*/,
+   Dwarf_Small    *  /*loclist_source_out*/, /* 0,1, or 2 */
+   Dwarf_Unsigned *  /*expression_offset_out*/,
+   Dwarf_Unsigned *  /*locdesc_offset_out*/,
+   Dwarf_Error    *  /*error*/);
+.DE
+This function returns overall information about a
+location list or location description.
+Details about location operators are retrieved
+by a call to 
+\f(CWdwarf_get_location_op_value_c()\fP
+(described
+below).
+The values returned here have been unified, hiding
+irrelevant differences between DWARF2 location expressions/lists
+and DWARF5 split-dwarf location expressions/lists.
+.P
+In case of success
+\f(CWDW_DLV_OK\fP
+is returned and arguments are set through
+the pointers to return values to the caller.
+Now we describe each argument.
+.P
+Return value
+\f(CW*loclist_source_out\fP
+is critical as it identifies the sort of entry we have.
+If its value is zero (0) it identifies the location description
+is a location expression.  In that case 
+\f(CW*lle_value_out\fP,
+\f(CW*lowpc_out\fP, and
+\f(CW*hipc_out\fP are not really interesting.
+And because it is a location expression the 
+\f(CWindex\fP has to have been zero as there is no
+real list, just an expression made to look like a list
+entry.
+.P
+If 
+\f(CW*loclist_source_out\fP is one (1) then this is
+a location list entry in DWARF2,3,4 loclist form.
+Here the 
+\f(CW*lle_value_out\fP
+has been created by libdwarf to match the split-dwarf
+\f(CWDW_LLE_\fP value that the standard loclist entry
+represents
+(
+\f(CWDW_LLE_end_of_list_entry\fP,
+\f(CWDW_LLE_base_address_selection_entry\fP, or
+\f(CWDW_LLE_offset_pair_entry\fP
+).
+.P
+If 
+\f(CW*loclist_source_out\fP is two (2) then this is
+a location list entry in DWARF5 split-dwarf (.dwo)
+location-entry-form.
+\f(CW*lle_value_out\fP
+is set to the
+\f(CWDW_LLE_\fP value that the split-dwarf loclist
+entry contains.
+.P
+The
+\f(CWDW_LLE_\fP value 
+determines how one is to interpret
+\f(CWlopc_out\fP and
+\f(CWhipc_out\fP.
+See the DWARF5 standard.
+.P
+The argument
+\f(CWloclist_count_out\fP
+returns the number of operators in the location expression
+involved (which may be zero).
+.P
+The argument
+\f(CWlocentry_out\fP
+returns an identifier used in calls to
+\f(CWdwarf_get_location_op_value_c()\fP.
+.P
+The argument
+\f(CWexpression_offset_out\fP
+returns the offset (in the .debug_loc(.dso) or .debug_info(.dwo)
+of the location expression itself
+(possibly useful for debugging).
+.P
+The argument
+\f(CWlocdesc_offset_out\fP
+returns the offset (in the .debug_loc(.dso) 
+of the location list entry itself
+(possibly useful for debugging).
+.P
+In case of error
+\f(CWDW_DLV_ERROR\fP
+is returned and
+\f(CW*error\fP
+is set to an error designation.
+.P
+A return of
+\f(CWDW_DLV_NO_ENTRY\fP
+may be possible but is a bit odd.
+
+.H 3 "dwarf_get_location_op_value_c()"
+.DS
+int dwarf_get_location_op_value_c(Dwarf_Locdesc_c locdesc,
+   Dwarf_Unsigned   index,
+   Dwarf_Small    * atom_out,
+   Dwarf_Unsigned * operand1,
+   Dwarf_Unsigned * operand2,
+   Dwarf_Unsigned * operand3,
+   Dwarf_Unsigned * offset_for_branch,
+   Dwarf_Error*     error);
+.DE
+On sucess
+The function
+\f(CWdwarf_get_location_op_value_c()\fP
+returns 
+the information for the single operator
+number 
+\f(CWindex\fP
+from the location expression
+\f(CWlocdesc\fP.
+It sets the following values.
+.P
+\f(CWatom_out\fP
+is set to the applicable operator code, for example 
+\f(CWDW_OP_reg5\fP.
+.P
+\f(CWoperand1\fP,
+\f(CWoperand2\fP, and
+\f(CWoperand3\fP are set to the
+operator operands as applicable (see
+DWARF documents on the operands
+for each operator).
+\f(CWoperand3\fP is new as of DWARF5.
+.P
+When a DWARF operand is not of a size
+fixed by dwarf, or is possibly too large for
+a dwarf stack entry, libdwarf will
+insert a pointer (to memory
+in the dwarf data somewhere) as the operand value.
+\f(CWDW_OP_implicit_value operand 2\fP,
+\f(CWDW_OP_[GNU_]entry_value operand 2\fP,
+and
+\f(CWDW_OP_[GNU_]const_type operand 3\fP
+are instances of this.
+.P
+\f(CWoffset_for_branch\fP is set to the
+offset (in bytes) in this expression of this
+operator.  
+The value makes it possible for callers
+to implement the operator branch
+operators.
+.P
+In case of an error, the
+function returns
+\f(CWDW_DLV_ERROR\fP
+and sets
+\f(CW*error\fP to an error
+value.
+.P
+\f(CWDW_DLV_NO_ENTRY\fP
+is probably not a possible return value, but
+please test for it anyway.
+
+.H 3 "dwarf_loclist_from_expr_c()"
+.DS
+int dwarf_loclist_from_expr_c(Dwarf_Debug dbg,
+    Dwarf_Ptr         expression_in,
+    Dwarf_Unsigned    expression_length,
+    Dwarf_Half        address_size,
+    Dwarf_Half        offset_size,
+    Dwarf_Small       dwarf_version,
+    Dwarf_Loc_Head_c* loc_head,
+    Dwarf_Unsigned  * listlen,
+    Dwarf_Error     * error);
+.DE
+Frame operators such as
+DW_CFA_def_cfa_expression have a location expression
+and the location_expression is accessed with
+this function.
+.P
+On success it returns
+\f(CWDW_DLV_OK\fP and sets the two return arguments
+(explained a few lines later here).
+.P
+The
+\f(CWexpression_in\fP
+argument must contain a valid pointer
+to location expression bytes.
+The
+\f(CWexpression_length\fP
+argument must contain the length of
+that location expression in bytes.
+.P
+The
+\f(CWaddress_size\fP
+argument must contain the size of an address
+on the target machine for this expression
+(normally 4 or 8).
+The
+\f(CWoffset_size\fP
+argument must contain the size of an offset
+in the expression
+(normally 4, sometimes 8).
+The
+\f(CWversion\fP
+argument must contain the dwarf_version
+of the expression 
+(2,3,4, or 5).
+.P
+The returned value
+\f(CW*loc_head\fP
+is  used to actually access the location expression
+details (see the example following).
+.P
+The returned value
+\f(CW*listlen\fP
+is  the number of location expressions
+(ie 1) in the location list
+(for uniformity of access we make it look like
+a single-entry location list).
+.P
+On error the function returns
+\f(CWDW_DLV_ERROR\fP
+and sets
+\f(CW*error\fP to reflect
+the error.
+.P
+A return of
+\f(CWDW_DLV_NO_ENTRY\fP 
+is probably impossible, but
+callers should assume it is possible.
+No return arguments are set in this case.
+
+.DS
+void
+example_locexprc(Dwarf_Debug dbg,Dwarf_Ptr expr_bytes,
+   Dwarf_Unsigned expr_len,
+   Dwarf_Half addr_size,
+   Dwarf_Half offset_size,
+   Dwarf_Half version)
+{
+    Dwarf_Loc_Head_c head = 0;
+    Dwarf_Locdesc_c locentry = 0;
+    int res2 = 0;
+    Dwarf_Unsigned lopc = 0;
+    Dwarf_Unsigned hipc = 0;
+    Dwarf_Unsigned ulistlen = 0;
+    Dwarf_Unsigned ulocentry_count = 0;
+    Dwarf_Unsigned section_offset = 0;
+    Dwarf_Unsigned locdesc_offset = 0;
+    Dwarf_Small lle_value = 0;
+    Dwarf_Small loclist_source = 0;
+    Dwarf_Unsigned i = 0;
+    Dwarf_Error error = 0;
+
+    res2 = dwarf_loclist_from_expr_c(dbg,
+        expr_bytes,expr_len,
+        addr_size,
+        offset_size,
+        version,
+        &head,
+        &ulistlen,
+        &error);
+    if(res2 == DW_DLV_NO_ENTRY) {
+        return;
+    }
+    if(res2 == DW_DLV_ERROR) {
+        return;
+    }
+    /*  These are a location expression, not loclist.
+        So we just need the 0th entry. */
+    res2 = dwarf_get_locdesc_entry_c(head,
+        0, /* Data from 0th LocDesc */
+        &lle_value,
+        &lopc, &hipc,
+        &ulocentry_count,
+        &locentry,
+        &loclist_source,
+        &section_offset,
+        &locdesc_offset,
+        &error);
+    if (res2 == DW_DLV_ERROR) {
+        dwarf_loc_head_c_dealloc(head);
+        return;
+    } else if (res2 == DW_DLV_NO_ENTRY) {
+        dwarf_loc_head_c_dealloc(head);
+        return;
+    }
+    /*  ASSERT: ulistlen == 1 */
+    for (i = 0; i < ulocentry_count;++i) {
+        Dwarf_Small op = 0;
+        Dwarf_Unsigned opd1 = 0;
+        Dwarf_Unsigned opd2 = 0;
+        Dwarf_Unsigned opd3 = 0;
+        Dwarf_Unsigned offsetforbranch = 0;
+
+        res2 = dwarf_get_location_op_value_c(locentry,
+            i, &op,&opd1,&opd2,&opd3,&offsetforbranch,
+            &error);
+        /* Do something with the expression operator and operands */
+        if (res2 != DW_DLV_OK) {
+            dwarf_loc_head_c_dealloc(head);
+            return;
+        }
+    }
+    dwarf_loc_head_c_dealloc(head);
+}
+.DE
+.H 3 "dwarf_loc_head_c_dealloc()"
+.DS
+void dwarf_loc_head_c_dealloc(Dwarf_Loc_Head_c loclist_head);
+.DE
+This function frees all the memory associated with
+the
+\f(CWloclist_head\fP.
+There is no return value.
+
 .H 3 "dwarf_loclist_n()"
+
 .DS
 \f(CWint dwarf_loclist_n(
         Dwarf_Attribute attr, 
@@ -3368,6 +3872,9 @@ in filling out arguments for a call to \f(CWdwarf_get_form_class()\fP.
         Dwarf_Signed  *listlen,
         Dwarf_Error *error)\fP
 .DE
+This interface cannot handle DWARF5 or Split Dwarf.
+Use  \f(CWdwarf_get_loclist_c()\fP and related functions
+instead (as of November 2015).
 The function \f(CWdwarf_loclist_n()\fP sets \f(CW*llbuf\fP to point to 
 an array of \f(CWDwarf_Locdesc\fP pointers corresponding to each of
 the location expressions in a location list, and sets
@@ -3466,6 +3973,8 @@ example9(Dwarf_Debug dbg,Dwarf_Attribute someattr)
         Dwarf_Signed  *listlen,
         Dwarf_Error *error)\fP
 .DE
+Use  \f(CWdwarf_get_loclist_c()\fP and related functions
+instead (as of November 2015).
 The function \f(CWdwarf_loclist()\fP sets \f(CW*llbuf\fP to point to 
 a \f(CWDwarf_Locdesc\fP pointer for the single location expression
 it can return.
@@ -5675,6 +6184,9 @@ should be freed using \f(CWdwarf_dealloc()\fP, with the allocation
 type \f(CWDW_DLA_STRING\fP when no longer of interest.
 
 .H 2 "Macro Information Operations"
+This section refers to DWARF2,DWARF3,and DWARF4
+macro information. These do not apply to DWARF5
+macro data.
 .H 3 "General Macro Operations"
 .H 4 "dwarf_find_macro_value_start()"
 .DS
@@ -5985,7 +6497,7 @@ DW_FRAME_CFA_COL3:1436:means 'cfa register'
 .DE
 
 .P
-.H 4 "dwarf_get_fde_list()"
+.H 3 "dwarf_get_fde_list()"
 .DS
 \f(CWint dwarf_get_fde_list(
         Dwarf_Debug dbg,
@@ -6072,7 +6584,7 @@ void exampleqb(Dwarf_Debug dbg)
 .in -2
 
 .P
-.H 4 "dwarf_get_fde_list_eh()"
+.H 3 "dwarf_get_fde_list_eh()"
 .DS
 \f(CWint dwarf_get_fde_list_eh(
         Dwarf_Debug dbg,
@@ -6133,7 +6645,7 @@ void exampler(Dwarf_Debug dbg)
 
 
 .P
-.H 4 "dwarf_get_cie_of_fde()"
+.H 3 "dwarf_get_cie_of_fde()"
 .DS
 \f(CWint dwarf_get_cie_of_fde(Dwarf_Fde fde,
         Dwarf_Cie *cie_returned,
@@ -6169,7 +6681,7 @@ frame for a particular subroutine or function.
 
 \f(CWint dwarf_get_fde_for_die\fP is SGI/MIPS specific.
 
-.H 4 "dwarf_get_fde_for_die()"
+.H 3 "dwarf_get_fde_for_die()"
 .DS
 \f(CWint dwarf_get_fde_for_die(
         Dwarf_Debug dbg,
@@ -6189,7 +6701,7 @@ the .debug_frame section where the FDE begins.
 If there is no \f(CWDW_AT_MIPS_fde\fP it returns \f(CWDW_DLV_NO_ENTRY\fP.
 If there is an error it returns \f(CWDW_DLV_ERROR\fP.
 
-.H 4 "dwarf_get_fde_range()"
+.H 3 "dwarf_get_fde_range()"
 .DS
 \f(CWint dwarf_get_fde_range(
         Dwarf_Fde fde,
@@ -6243,7 +6755,7 @@ the .debug_frame section.
 
 \f(CWdwarf_get_fde_range()\fP returns \f(CWDW_DLV_ERROR\fP on error.
 
-.H 4 "dwarf_get_cie_info()"
+.H 3 "dwarf_get_cie_info()"
 .DS
 \f(CWint dwarf_get_cie_info(
         Dwarf_Cie       cie,
@@ -6269,7 +6781,7 @@ The other fields are directly taken from
 the cie and returned, via the pointers to the caller.  
 It returns \f(CWDW_DLV_ERROR\fP on error.
 
-.H 4 "dwarf_get_cie_index()"
+.H 3 "dwarf_get_cie_index()"
 .DS
 \f(CWint dwarf_get_cie_index(
         Dwarf_Cie cie,
@@ -6294,7 +6806,7 @@ a cie list before this is meaningful.
 This function is occasionally useful, but is
 little used.
 
-.H 4 "dwarf_get_fde_instr_bytes()"
+.H 3 "dwarf_get_fde_instr_bytes()"
 .DS
 \f(CWint dwarf_get_fde_instr_bytes(
         Dwarf_Fde fde,
@@ -6316,7 +6828,7 @@ The memory pointed to by \f(CWoutinstrs\fP
 must not be changed and there
 is nothing to free.
 
-.H 4 "dwarf_get_fde_info_for_reg()"
+.H 3 "dwarf_get_fde_info_for_reg()"
 This interface is suitable for DWARF2 but is not
 sufficient for DWARF3.  See \f(CWint dwarf_get_fde_info_for_reg3\fP.
 .DS
@@ -6368,7 +6880,7 @@ It is usable with either
 \f(CWdwarf_get_fde_info_for_reg3()\fP instead for all architectures.
 
 
-.H 4 "dwarf_get_fde_info_for_all_regs()"
+.H 3 "dwarf_get_fde_info_for_all_regs()"
 .DS
 \f(CWint dwarf_get_fde_info_for_all_regs(
         Dwarf_Fde fde,
@@ -6397,7 +6909,7 @@ of \f(CWrow_pc\fP.
 please use dwarf_get_fde_info_for_all_regs3() instead for all architectures.
 
 
-.H 4 "dwarf_set_frame_rule_table_size()"
+.H 3 "dwarf_set_frame_rule_table_size()"
 .P
 This allows consumers to set the size of the (internal to libdwarf)
 rule table when using the 'reg3' interfaces (these interfaces
@@ -6431,7 +6943,7 @@ The function returns
 the previous value of the rules table size setting (taken from the 
 \f(CWdbg\fP structure).
 
-.H 4 "dwarf_set_frame_rule_initial_value()"
+.H 3 "dwarf_set_frame_rule_initial_value()"
 This allows consumers to set the initial value
 for rows in the frame tables.  By default it
 is taken from libdwarf.h and is DW_FRAME_REG_INITIAL_VALUE
@@ -6457,7 +6969,7 @@ The function returns
 the previous value of initial value (taken from the 
 \f(CWdbg\fP structure).
 
-.H 4 "dwarf_set_frame_cfa_value()"
+.H 3 "dwarf_set_frame_cfa_value()"
 This allows consumers to set the number of the CFA register
 for rows in the frame tables.  By default it
 is taken from libdwarf.h and is \f(CWDW_FRAME_CFA_COL\fP.
@@ -6479,7 +6991,7 @@ The function returns
 the previous value of the pseudo-register (taken from the
 \f(CWdbg\fP structure).
 
-.H 4 "dwarf_set_frame_same_value()"
+.H 3 "dwarf_set_frame_same_value()"
 This allows consumers to set the number of the pseudo-register
 when DW_CFA_same_value is the operation.  By default it
 is taken from libdwarf.h and is \f(CWDW_FRAME_SAME_VAL\fP.
@@ -6502,7 +7014,7 @@ the previous value of the pseudo-register  (taken from the
 \f(CWdbg\fP structure).
 
 
-.H 4 "dwarf_set_frame_undefined_value()"
+.H 3 "dwarf_set_frame_undefined_value()"
 This allows consumers to set the number of the pseudo-register
  when DW_CFA_undefined_value is the operation.  By default it
 is taken from libdwarf.h and is \f(CWDW_FRAME_UNDEFINED_VAL\fP.
@@ -6524,7 +7036,7 @@ The function returns
 the previous value of the pseudo-register  (taken from the
 \f(CWdbg\fP structure).
 
-.H 4 "dwarf_set_default_address_size()"
+.H 3 "dwarf_set_default_address_size()"
 This allows consumers to set a default address size.
 When one has an object where the
 default address_size does not match the frame address
@@ -6551,7 +7063,7 @@ the previous value of the default address size  (taken from the
 
 
 
-.H 4 "dwarf_get_fde_info_for_reg3()"
+.H 3 "dwarf_get_fde_info_for_reg3()"
 This interface is suitable for DWARF3 and DWARF2.
 It returns the values for a particular real register
 (Not for the CFA register, see dwarf_get_fde_info_for_cfa_reg3()
@@ -6673,7 +7185,7 @@ It is usable with either
 \f(CWdwarf_get_fde_n()\fP or \f(CWdwarf_get_fde_at_pc()\fP.
 
 
-.H 4 "dwarf_get_fde_info_for_cfa_reg3()"
+.H 3 "dwarf_get_fde_info_for_cfa_reg3()"
 .DS
  \f(CWint dwarf_get_fde_info_for_cfa_reg3(Dwarf_Fde fde,
       Dwarf_Addr          pc_requested,
@@ -6696,7 +7208,7 @@ DW_FRAME_UNDEFINED_VALUE).
 
 
 
-.H 4 "dwarf_get_fde_info_for_all_regs3()"
+.H 3 "dwarf_get_fde_info_for_all_regs3()"
 .DS
 \f(CWint dwarf_get_fde_info_for_all_regs3(
         Dwarf_Fde fde,
@@ -6732,7 +7244,7 @@ It is up to the caller to allocate space for
 
 
 
-.H 4 "dwarf_get_fde_n()"
+.H 3 "dwarf_get_fde_n()"
 .DS
 \f(CWint   dwarf_get_fde_n(
         Dwarf_Fde *fde_data,
@@ -6757,7 +7269,7 @@ This function cannot be used unless
 the block of \f(CWDwarf_Fde\fP descriptors has been created by a call to
 \f(CWdwarf_get_fde_list()\fP.
 
-.H 4 "dwarf_get_fde_at_pc()"
+.H 3 "dwarf_get_fde_at_pc()"
 .DS
 \f(CWint   dwarf_get_fde_at_pc(
         Dwarf_Fde *fde_data,
@@ -6786,7 +7298,7 @@ This function cannot be used unless
 the block of \f(CWDwarf_Fde\fP descriptors has been created by a call to
 \f(CWdwarf_get_fde_list()\fP.
 
-.H 4 "dwarf_expand_frame_instructions()"
+.H 3 "dwarf_expand_frame_instructions()"
 .DS
 \f(CWint dwarf_expand_frame_instructions(
         Dwarf_Cie cie,
@@ -6839,7 +7351,7 @@ void examples(Dwarf_Cie cie,Dwarf_Ptr instruction,Dwarf_Unsigned len))
 \fP
 .DE
 .in -2
-.H 4 "dwarf_get_fde_exception_info()"
+.H 3 "dwarf_get_fde_exception_info()"
 .DS
 \f(CWint dwarf_get_fde_exception_info(
     Dwarf_Fde fde,
@@ -7236,6 +7748,26 @@ It returns \f(CWDW_DLV_ERROR\fP on error.
 .H 2 "General Low Level Operations"
 This function is low-level and intended for use only
 by programs such as dwarf-dumpers.
+
+.H 3 "dwarf_get_offset_size()"
+.DS
+\f(CWint dwarf_get_offset_size(Dwarf_Debug dbg,
+	Dwarf_Half  *offset_size,
+        Dwarf_Error *error)\fP
+.DE
+The function \f(CWdwarf_get_offset_size()\fP
+returns \f(CWDW_DLV_OK\fP on success and sets
+the \f(CW*offset_size\fP
+to the size in bytes of an offset.
+In case of error, it returns \f(CWDW_DLV_ERROR\fP
+and does not set \f(CW*offset_size\fP.
+
+The offset size returned is the overall address size,
+which can be misleading if different compilation
+units have different address sizes.
+Many ABIs have only a single address size per
+executable, but differing address sizes are
+becoming more common.
 
 .H 3 "dwarf_get_address_size()"
 .DS

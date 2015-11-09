@@ -1546,8 +1546,6 @@ int dwarf_get_locdesc_entry_c(Dwarf_Loc_Head_c /*loclist_head*/,
    Dwarf_Addr     *  /*lowpc_out*/,
    Dwarf_Addr     *  /*hipc_out*/,
    Dwarf_Unsigned *  /*loclist_count_out*/,
-
-   /* Returns pointer to specific Locdesc index refers to */
    Dwarf_Locdesc_c * /*locentry_out*/,
    Dwarf_Small    *  /*loclist_source_out*/, /* 0,1, or 2 */
    Dwarf_Unsigned *  /*expression_offset_out*/,
@@ -1563,13 +1561,6 @@ int dwarf_get_location_op_value_c(Dwarf_Locdesc_c /*locdesc*/,
    Dwarf_Unsigned * /*offset_for_branch*/,
    Dwarf_Error*     /*error*/);
 
-/*  So one can find the target operator
-    index given an offset. */
-int dwarf_get_location_index_for_offset_c(Dwarf_Loc_c locexpr,
-   Dwarf_Unsigned  targetoffset,
-   Dwarf_Signed   *index_out,
-   Dwarf_Error*     /*error*/);
-
 int dwarf_loclist_from_expr_c(Dwarf_Debug dbg,
     Dwarf_Ptr      expression_in,
     Dwarf_Unsigned expression_length,
@@ -1579,7 +1570,6 @@ int dwarf_loclist_from_expr_c(Dwarf_Debug dbg,
     Dwarf_Loc_Head_c* loc_head,
     Dwarf_Unsigned  * listlen,
     Dwarf_Error     * error);
-
 
 /* This frees all memory allocated by the applicable
     dwarf_get_loclist_c() */
