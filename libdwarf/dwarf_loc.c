@@ -128,15 +128,6 @@ _dwarf_read_loc_expr_op(Dwarf_Debug dbg,
     loc_len = loc_block->bl_len;
     loc_ptr = loc_block->bl_data + offset;
 
-    if (loc_block->bl_from_loclist) {
-        Dwarf_Small *end_ptr = 0;
-        end_ptr =  dbg->de_debug_loc.dss_size +
-            dbg->de_debug_loc.dss_data;
-        if ( (loc_ptr + loc_len) > end_ptr) {
-            _dwarf_error(dbg,error,DW_DLE_DEBUG_LOC_SECTION_SHORT);
-            return DW_DLV_ERROR;
-        }
-    }
     if (offset == loc_len) {
         return DW_DLV_NO_ENTRY;
     }
@@ -723,6 +714,11 @@ _dwarf_get_locdesc(Dwarf_Debug dbg,
     offset = 0;
     op_count = 0;
 
+
+    res = _dwarf_loc_block_sanity_check(dbg,loc_block,error);
+    if (res != DW_DLV_OK) {
+        return res;
+    }
     /* OLD loop getting Loc operators. No DWARF5 */
     while (offset <= loc_block->bl_len) {
         Dwarf_Unsigned nextoffset = 0;

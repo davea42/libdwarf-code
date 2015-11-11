@@ -772,8 +772,6 @@ int _dwarf_get_ranges_base_attr_from_tied(Dwarf_Debug dbg,
 int _dwarf_get_string_from_tied(Dwarf_Debug dbg, Dwarf_Unsigned offset,
     char **return_str, Dwarf_Error*error);
 
-
-
 Dwarf_Byte_Ptr _dwarf_calculate_section_end_ptr(Dwarf_CU_Context context);
 
 void _dwarf_dumpsig(const char *msg, Dwarf_Sig8 *sig,int lineno);

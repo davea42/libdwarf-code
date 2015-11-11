@@ -1,6 +1,10 @@
-2015-11-08  David Anderson
-     * print_die.c: Fixed indents, removed trailing whitespace.
-     * dwarfdump.c, common.c: Update version string.
+2015-11-11  David Anderson
+     * print_abbrevs.c(dwarf_get_array_info): Initialize local variable.
+     * print_die.c(get_location_list): Initialize local variable.:
+     * dwarf_loc.h: Add declaration of _dwarf_loc_block_sanity_check().
+     * dwarf_loc.c: Call new function  _dwarf_loc_block_sanity_check 
+     * dwarf_loc2.c: Implement and call new function 
+       _dwarf_loc_block_sanity_check to avoid duplicating code.
 2015-11-07  David Anderson
      * dwarfdump.1: Documented -x line5=.
      * dwarfdump.c: Revised -g so it no longer turns on -i.

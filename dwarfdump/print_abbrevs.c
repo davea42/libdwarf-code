@@ -214,7 +214,7 @@ get_abbrev_array_info(Dwarf_Debug dbg, Dwarf_Unsigned offset_in)
         Dwarf_Unsigned abbrev_entry_count = 0;
         Dwarf_Unsigned abbrev_code;
         int abres = DW_DLV_OK;
-        Dwarf_Error err;
+        Dwarf_Error err = 0;
 
         Dwarf_Bool bMore = TRUE;
         CU_abbrev_count = 0;

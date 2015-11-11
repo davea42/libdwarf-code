@@ -24,6 +24,28 @@
   USA.
 
 */
+
+int
+_dwarf_loc_block_sanity_check(Dwarf_Debug dbg,
+    Dwarf_Block_c *loc_block,Dwarf_Error* error)
+{
+    if (loc_block->bl_from_loclist) {
+        Dwarf_Small *loc_ptr = 0;
+        Dwarf_Unsigned loc_len = 0;
+        Dwarf_Small *end_ptr = 0;
+
+        loc_ptr = loc_block->bl_data;
+        loc_len = loc_block->bl_len;
+        end_ptr =  dbg->de_debug_loc.dss_size +
+            dbg->de_debug_loc.dss_data;
+        if ((loc_ptr +loc_len) > end_ptr) {
+            _dwarf_error(dbg,error,DW_DLE_DEBUG_LOC_SECTION_SHORT);
+            return DW_DLV_ERROR;
+        }
+    }
+    return DW_DLV_OK;
+}
+
 /*  #included in dwarf_loc.c to compile.
     This in a separate file to make it easy to
     see the early (pre _c) and current (_c) versions
@@ -64,6 +86,10 @@ _dwarf_get_locdesc_c(Dwarf_Debug dbg,
     int res = 0;
 
     /* ***** BEGIN CODE ***** */
+    res = _dwarf_loc_block_sanity_check(dbg,loc_block,error);
+    if (res != DW_DLV_OK) {
+        return res;
+    }
 
     /* New loop getting Loc operators. Non DWO */
     while (offset <= loc_block->bl_len) {

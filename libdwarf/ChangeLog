@@ -1,3 +1,5 @@
+2015-11-11 David Anderson
+     * dwarf_opaque.h: Delete two useless blank lines.
 2015-11-09 David Anderson
      * libdwarf.h.in: Removed unimplemented function 
        declarationfrom the file.
