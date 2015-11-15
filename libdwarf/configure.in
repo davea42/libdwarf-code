@@ -16,7 +16,7 @@ AC_CHECK_HEADERS(alloca.h elf.h elfaccess.h libelf.h libelf/libelf.h  sys/types.
 
 dnl The default libdwarf is the one with struct Elf
 echo Assuming struct Elf for the default libdwarf.h
-cp libdwarf.h.in libdwarf.h
+cp $srcdir/libdwarf.h.in libdwarf.h
 
 AC_CHECK_LIB(elf,elf64_getehdr,
   AC_DEFINE(HAVE_ELF64_GETEHDR,1,
@@ -41,13 +41,13 @@ dnl use struct _Elf as the actual struct type.
 AC_TRY_COMPILE([#include <libelf/libelf.h>  
   struct _Elf; typedef struct _Elf Elf; ],
   [struct _Elf *a = 0; ],
-  [ sed 's/struct Elf/struct _Elf/g' <libdwarf.h.in >libdwarf.h ;
+  [ sed 's/struct Elf/struct _Elf/g' <$srcdir/libdwarf.h.in >libdwarf.h ;
     echo Found struct _Elf in libelf/libelf.h, using it in libdwarf.h ],
   [echo libelf/libelf.h does not have struct _Elf]) 
 AC_TRY_COMPILE([#include <libelf.h>
   struct _Elf; typedef struct _Elf Elf; ],
   [ struct _Elf *a = 0; ],
-  [ sed 's/struct Elf/struct _Elf/g' <libdwarf.h.in >libdwarf.h ;
+  [ sed 's/struct Elf/struct _Elf/g' <$srcdir/libdwarf.h.in >libdwarf.h ;
     echo Found struct _Elf in libelf.h, using it in libdwarf.h ],
   [echo libelf.h does not have struct _Elf]) 
 

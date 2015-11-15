@@ -1,4 +1,8 @@
-To just build libdwarf and dwarfdump one might do:
+BUILDING IN SOURCE TREE
+To just build libdwarf and dwarfdump
+if the source tree is in /a/b/libdwarf-1 
+one might do:
+    cd /a/b/libdwarf-1
     ./configure
     make dd
     #You may need to be root to do the following copy commands
@@ -7,6 +11,20 @@ To just build libdwarf and dwarfdump one might do:
     #The following is optional, not needed to run dwarfdump
     #when doing the default build.
     cp libdwarf/libdwarf.a      /usr/local/lib
+
+BUILDING OUT OF SOURCE TREE
+Or one could  create a new directory, for example,
+    mkdir /var/tmp/dwarfex
+    cd /var/tmp/dwarfex
+    /a/b/libdwarf-1/configure
+    make dd
+In this case the source directory is not touched and
+all objects and files created are under /var/tmp/dwarfex
+
+NOTE: When building out of source tree the source tree
+must be cleaned of any files created by a build
+in the source tree. This is due to the way GNU Make
+VPATH works.
 
 For a simple build of libdwarf, and dwarfdump
 and the other tools:

@@ -1,3 +1,5 @@
+2015-11-15  David Anderson
+     * Makefile.in: Now supports building in a clean separate directory.
 2015-11-11  David Anderson
      * print_abbrevs.c(dwarf_get_array_info): Initialize local variable.
      * print_die.c(get_location_list): Initialize local variable.:

@@ -3825,7 +3825,7 @@ done
 
 
 echo Assuming struct Elf for the default libdwarf.h
-cp libdwarf.h.in libdwarf.h
+cp $srcdir/libdwarf.h.in libdwarf.h
 
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for elf64_getehdr in -lelf" >&5
 $as_echo_n "checking for elf64_getehdr in -lelf... " >&6; }
@@ -3994,7 +3994,7 @@ struct _Elf *a = 0;
 }
 _ACEOF
 if ac_fn_c_try_compile "$LINENO"; then :
-   sed 's/struct Elf/struct _Elf/g' <libdwarf.h.in >libdwarf.h ;
+   sed 's/struct Elf/struct _Elf/g' <$srcdir/libdwarf.h.in >libdwarf.h ;
     echo Found struct _Elf in libelf/libelf.h, using it in libdwarf.h
 else
   echo libelf/libelf.h does not have struct _Elf
@@ -4013,7 +4013,7 @@ main ()
 }
 _ACEOF
 if ac_fn_c_try_compile "$LINENO"; then :
-   sed 's/struct Elf/struct _Elf/g' <libdwarf.h.in >libdwarf.h ;
+   sed 's/struct Elf/struct _Elf/g' <$srcdir/libdwarf.h.in >libdwarf.h ;
     echo Found struct _Elf in libelf.h, using it in libdwarf.h
 else
   echo libelf.h does not have struct _Elf

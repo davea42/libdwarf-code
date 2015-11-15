@@ -1,3 +1,6 @@
+2015-11-15  David Anderson
+     * configure.in, Makefile.in: So we now use configure to build.
+     * configure: Generated
 2015-09-22  David Anderson
      * simplereader.c: Removed trailing whitespace.
 2015-09-15  Carlos Alberto Enciso

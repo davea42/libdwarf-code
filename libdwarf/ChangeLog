@@ -1,3 +1,6 @@
+2015-11-15 David Anderson
+     * Makefile.in,configure.in: These now support building in separate clean directory.
+     * configure: Regenerated.
 2015-11-11 David Anderson
      * dwarf_opaque.h: Delete two useless blank lines.
 2015-11-09 David Anderson

@@ -1,3 +1,6 @@
+2015-11-15:  It is now possible to build
+  outside of the source tree. See README.
+  So configure.in changed a little.
 2015-01-13:  Removed dwarfdump2 and references to it.
   dwarfdump has the (tsearch) features needed so the C++
   version no longer a benefit.

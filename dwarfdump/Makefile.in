@@ -33,7 +33,7 @@ DEFS =		@DEFS@
 dwfwall =       @dwfwall@
 DIRINC =        $(srcdir)/../libdwarf
 LIBS =		@LIBS@ -L../libdwarf -ldwarf -lelf
-INCLUDES =	-I. -I$(srcdir) -I$(srcdir)/../libdwarf
+INCLUDES =	-I. -I$(srcdir) -I../libdwarf -I$(srcdir)/../libdwarf
 CFLAGS =	$(PREINCS) @CFLAGS@ $(INCLUDES) $(dwfwall) -DCONFPREFIX=${libdir} $(POSTINCS)
 LDFLAGS =	$(PRELIBS) @LDFLAGS@  $(LIBS) $(POSTLIBS)
 #VG =            valgrind --leak-check=full

@@ -26,7 +26,7 @@ RM =            rm
 RANLIB =        @RANLIB@
 DEFS =          @DEFS@
 LIBS =          @LIBS@ -L ../libdwarf -ldwarf -lelf
-INCLUDES =      -I. -I$(srcdir) -I$(srcdir)/../libdwarf
+INCLUDES =      -I. -I$(srcdir) -I../libdwarf -I$(srcdir)/../libdwarf
 CXXFLAGS =        @CXXFLAGS@ $(INCLUDES) 
 LDFLAGS =       @LDFLAGS@ $(LIBS)
 
