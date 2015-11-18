@@ -780,8 +780,16 @@ void exampleqb(Dwarf_Debug dbg)
 }
 
 
-void exampler(Dwarf_Debug dbg)
+void exampler(Dwarf_Debug dbg,Dwarf_Addr mypcval)
 {
+    /*  Given a pc value
+        for a function find the FDE and CIE data for
+        the function.
+        Example shows basic access to FDE/CIE plus
+        one way to access details given a PC value.
+        dwarf_get_fde_n() allows accessing all FDE/CIE
+        data so one could build up an application-specific
+        table of information if that is more useful.  */
     Dwarf_Signed count = 0;
     Dwarf_Cie *cie_data = 0;
     Dwarf_Signed cie_count = 0;
@@ -790,14 +798,27 @@ void exampler(Dwarf_Debug dbg)
     Dwarf_Error error = 0;
     int fres = 0;
 
-    fres = dwarf_get_fde_list(dbg,&cie_data,&cie_count,
+    fres = dwarf_get_fde_list_eh(dbg,&cie_data,&cie_count,
         &fde_data,&fde_count,&error);
     if (fres == DW_DLV_OK) {
+        Dwarf_Fde myfde = 0;
+        Dwarf_Addr low_pc = 0;
+        Dwarf_Addr high_pc = 0;
+        fres = dwarf_get_fde_at_pc(fde_data,mypcval,
+            &myfde,&low_pc,&high_pc,
+            &error);
+        if (fres == DW_DLV_OK) {
+            Dwarf_Cie mycie = 0;
+            fres = dwarf_get_cie_of_fde(myfde,&mycie,&error);
+            if (fres == DW_DLV_OK) {
+                /*  Now we can access a range of information
+                    about the fde and cie applicable. */
+            }
+        }
         dwarf_fde_cie_list_dealloc(dbg, cie_data, cie_count,
             fde_data,fde_count);
-    } else {
-        /* ERROR or NO ENTRY. Do something */
     }
+    /* ERROR or NO ENTRY. Do something */
 }
 
 void examples(Dwarf_Debug dbg,Dwarf_Cie cie,

@@ -8,7 +8,7 @@
 .nr Hb 5
 \." ==============================================
 \." Put current date in the following at each rev
-.ds vE rev 2.33, Nov 08, 2015
+.ds vE rev 2.34, Nov 18, 2015
 \." ==============================================
 \." ==============================================
 .ds | |
@@ -88,7 +88,7 @@ and a copy of the standard.
 .H 2 "Copyright"
 Copyright 1993-2006 Silicon Graphics, Inc.
 
-Copyright 2007-2014 David Anderson. 
+Copyright 2007-2015 David Anderson. 
 
 Permission is hereby granted to 
 copy or republish or use any or all of this document without
@@ -186,7 +186,7 @@ appropriate structure in the DWARF data and print (on request) all
 that internal information for human users and libdwarf authors and 
 compiler-writers.  
 Calls in this interface provide data a debugger 
-does not care about.
+does not normally care about.
 .P
 The High-level Interface is for higher level access
 (it is not really a high level interface!).  
@@ -1387,6 +1387,7 @@ uses an invocation of \f(CWdwarf_attrlist()\fP as an example to illustrate
 a technique that can be used to free storage from any \fIlibdwarf\fP 
 routine that returns a list:
 .DS
+.FG "Example1 dwarf_attrlist()"
 \f(CW
 void example1(Dwarf_Die somedie)
 {
@@ -1610,6 +1611,7 @@ on each object and then tie the two together with
 a call  such as:
 .in +2
 .DS
+.FG "Example2 dwarf_set_died_dbg()"
 \f(CW
 void example2(Dwarf_Debug dbg, Dwarf_Debug tieddbg)
 {
@@ -1634,6 +1636,7 @@ in any order.
 
 It is possible to undo the tieing operation with
 .in +2
+.FG "Example3 dwarf_set_tied_dbg() obsolete"
 .DS
 \f(CW
 void example3(Dwarf_Debug dbg)
@@ -2201,6 +2204,7 @@ or \f(CWDW_TAG_type_unit\fP
 tag.
 
 .in +2
+.FG "Example4 dwarf_siblingof()"
 .DS
 \f(CW
 void example4(Dwarf_Debug dbg,Dwarf_Die in_die,Dwarf_Bool is_info)
@@ -2258,6 +2262,7 @@ The function
 \f(CWdwarf_child()\fP to access the other children of \f(CWdie\fP. 
 
 .in +2
+.FG "Example5 dwarf_child()"
 .DS
 \f(CW
 void example5(Dwarf_Debug dbg,Dwarf_Die in_die)
@@ -2322,6 +2327,7 @@ or the \f(CWoffset\fP value
 are incorrect.
 
 .in +2
+.FG "Example6 dwarf_offdie_b()"
 .DS
 \f(CW
 void example6(Dwarf_Debug dbg,Dwarf_Off die_offset,Dwarf_Bool is_info)
@@ -2562,6 +2568,7 @@ printed (assuming \f(CWprint_die_data\fP
 does some reasonable printing).
 
 .in +2
+.FG "Example7 dwarf_CU_dieoffset_given_die()"
 .DS
 \f(CW
 void example7(Dwarf_Debug dbg, Dwarf_Die in_die,Dwarf_Bool is_info)
@@ -2703,6 +2710,7 @@ when no longer of interest (see \f(CWdwarf_dealloc()\fP).
 
 Freeing the attrlist:
 .in +2
+.FG "Example8 dwarf_attrlist() free"
 .DS
 \f(CW
 void example8(Dwarf_Debug dbg, Dwarf_Die somedie)
@@ -4005,6 +4013,7 @@ should be deallocated with the allocation type \f(CWDW_DLA_LOC_BLOCK\fP.
 This should be followed by deallocation of the \f(CWllbuf\fP
 using the allocation type \f(CWDW_DLA_LOCDESC\fP.
 .in +2
+.FG "Examplea dwarf_loclist()"
 .DS
 \f(CW
 void examplea(Dwarf_Debug dbg,Dwarf_Attribute someattr)
@@ -4069,6 +4078,7 @@ should be deallocated with the allocation type \f(CWDW_DLA_LOC_BLOCK\fP.
 This should be followed by deallocation of the \f(CWllbuf\fP
 using the allocation type \f(CWDW_DLA_LOCDESC\fP.
 .in +2
+.FG "Exampleb dwarf_loclist_from_expr()"
 .DS
 \f(CW
 void exampleb(Dwarf_Debug dbg,Dwarf_Ptr data, Dwarf_Unsigned len)
@@ -4369,6 +4379,7 @@ that any use of the local pointers would
 be to stale memory.
 
 .in +2
+.FG "Examplec dwarf_srclines_b()"
 .DS
 \f(CW
 void examplec(Dwarf_Die cu_die)
@@ -4740,8 +4751,10 @@ should be freed using \f(CWdwarf_srclines_dealloc()\fP
 when no longer of interest. 
 .P
 .in +2
+.FG "Exampled dwarf_srclines()"
 .DS
 \f(CW
+/*  dwarf_srclines_b() should be used instead. */
 void exampled(Dwarf_Debug dbg,Dwarf_Die somedie)
 {
   Dwarf_Signed count = 0;
@@ -4813,6 +4826,7 @@ It returns \f(CWDW_DLV_NO_ENTRY\fP
 if there is no
 corresponding statement program (i.e., if there is no line information).
 .in +2
+.FG "Exampled dwarf_srcfiles()"
 .DS
 \f(CW
 void examplee(Dwarf_Debug dbg,Dwarf_Die somedie)
@@ -5113,6 +5127,7 @@ in the .debug_info section.
 See section 6.1.1 "Lookup by Name" in the dwarf standard.
 
 .in +2
+.FG "Exampled dwarf_get_globals()"
 .DS
 \f(CW
 void examplef(Dwarf_Debug dbg)
@@ -5351,6 +5366,7 @@ See section 6.1.1 "Lookup by Name" in the dwarf standard.
 
 
 .in +2
+.FG "Exampled dwarf_get_pubtypes()"
 .DS
 \f(CW
 void exampleg(Dwarf_Debug dbg)
@@ -5498,6 +5514,7 @@ the \f(CWDwarf_Weak\fP descriptors should be freed using
 interest.  \f(CWdwarf_weaks_dealloc()\fPis new as of July 15, 2005.
 
 .in +2
+.FG "Exampleh dwarf_get_weaks()"
 .DS
 \f(CW
 void exampleh(Dwarf_Debug dbg)
@@ -5536,10 +5553,12 @@ followed by the deallocation of the list itself with the allocation type
 \f(CWDW_DLA_LIST\fP when the descriptors are no longer of interest.
 
 .in +2
+.FG "Examplei dwarf_get_weaks() obsolete"
 .DS
 \f(CW
 void examplei(Dwarf_Debug dbg)
 {
+  /* Obsolete. See exampleh instead. */
   Dwarf_Error error = 0;
   Dwarf_Signed count = 0;
   Dwarf_Weak *weaks = 0;
@@ -5676,6 +5695,7 @@ descriptors should be freed using \f(CWdwarf_funcs_dealloc()\fP.
 \f(CWdwarf_funcs_dealloc()\fP is new as of July 15, 2005.
 
 .in +2
+.FG "Examplej dwarf_get_funcs()"
 .DS
 \f(CW
 void examplej(Dwarf_Debug dbg)
@@ -5715,6 +5735,7 @@ of the list itself with the allocation type \f(CWDW_DLA_LIST\fP when
 the descriptors are no longer of interest.
 
 .in +2
+.FG "Examplek dwarf_get_funcs() obsolete"
 .DS
 \f(CW
 void examplek(Dwarf_Debug dbg)
@@ -5727,7 +5748,7 @@ void examplek(Dwarf_Debug dbg)
 
   fres = dwarf_get_funcs(dbg, &funcs,&count, &error);
   if (fres == DW_DLV_OK) {
-    /* OBSOLETE: see dwarf_funcs_dealloc() above */
+    /* OBSOLETE: see dwarf_funcs_dealloc() examplei */
     for (i = 0; i < count; ++i) {
       /* use funcs[i] */
       dwarf_dealloc(dbg, funcs[i], DW_DLA_FUNC);
@@ -5862,6 +5883,7 @@ freed using \f(CWdwarf_types_dealloc()\fP.
 and frees all memory allocated by \f(CWdwarf_get_types()\fP.
 
 .in +2
+.FG "Examplel dwarf_get_types()"
 .DS
 \f(CW
 void examplel(Dwarf_Debug dbg)
@@ -5902,6 +5924,7 @@ with the allocation type \f(CWDW_DLA_LIST\fP when the descriptors are no
 longer of interest.
 
 .in +2
+.FG "Examplel dwarf_get_types() obsolete"
 .DS
 \f(CW
 void examplem(Dwarf_Debug dbg)
@@ -5912,7 +5935,7 @@ void examplem(Dwarf_Debug dbg)
   Dwarf_Signed i = 0;
   int res = 0;
 
-  /*  OBSOLETE: see dwarf_types_dealloc() above */
+  /*  OBSOLETE: see dwarf_types_dealloc() examplel above */
   res = dwarf_get_types(dbg, &types,&count, &error);
   if (res == DW_DLV_OK) {
     for (i = 0; i < count; ++i) {
@@ -6046,6 +6069,7 @@ from \f(CWdwarf_get_vars()\fP, the \f(CWDwarf_Var\fP descriptors should be
 freed using \f(CWdwarf_vars_dealloc()\fP.
 
 .in +2
+.FG "Examplen dwarf_get_vars()"
 .DS
 \f(CW
 void examplen(Dwarf_Debug dbg)
@@ -6082,6 +6106,7 @@ the allocation type \f(CWDW_DLA_LIST\fP when the descriptors are no
 longer of interest.
 
 .in +2
+.FG "Exampleo dwarf_get_vars() obsolete"
 .DS
 \f(CW
 void exampleo(Dwarf_Debug dbg)
@@ -6093,7 +6118,7 @@ void exampleo(Dwarf_Debug dbg)
   int res = 0;
   res = dwarf_get_vars(dbg, &vars,&count,&error);
   if (res == DW_DLV_OK) {
-    /* DO NOT USE: see dwarf_vars_dealloc() above */
+    /* DO NOT USE: see dwarf_vars_dealloc() examplen above */
     for (i = 0; i < count; ++i) {
       /* use vars[i] */
       dwarf_dealloc(dbg, vars[i], DW_DLA_VAR);
@@ -6246,6 +6271,7 @@ is passed in as 0, a \f(CWDW_DLV_NO_ENTRY\fP return means there is
 no macro information.
 .P
 .in +2
+.FG "Examplep dwarf_get_macro_details()"
 .DS
 \f(CW
 void examplep(Dwarf_Debug dbg, Dwarf_Off cur_off)
@@ -6524,6 +6550,7 @@ descriptor should be freed using \f(CWdwarf_fde_cie_list_dealloc()\fP.
 This dealloc approach is new as of July 15, 2005.
 
 .in +2
+.FG "Exampleq dwarf_get_fde_list()"
 .DS
 \f(CW
 void exampleq(Dwarf_Debug dbg)
@@ -6552,6 +6579,7 @@ The following code is deprecated as of July 15, 2005 as it does not
 free all relevant memory.
 This approach  still works as well as it ever did.
 .in +2
+.FG "Exampleqb dwarf_get_fde_list() obsolete"
 .DS
 \f(CW
 /* OBSOLETE EXAMPLE */
@@ -6618,26 +6646,48 @@ descriptor should be freed using \f(CWdwarf_fde_cie_list_dealloc()\fP.
 This dealloc approach is new as of July 15, 2005.
 
 .in +2
+.FG "Exampler dwarf_get_fde_list_eh()"
 .DS
 \f(CW
-void exampler(Dwarf_Debug dbg)
+void exampler(Dwarf_Debug dbg,Dwarf_Addr mypcval)
 {
-  Dwarf_Signed count = 0;
-  Dwarf_Cie *cie_data = 0;
-  Dwarf_Signed cie_count = 0;
-  Dwarf_Fde *fde_data = 0;
-  Dwarf_Signed fde_count = 0;
-  Dwarf_Error error = 0;
-  int fres = 0;
+    /*  Given a pc value
+        for a function find the FDE and CIE data for
+        the function.
+        Example shows basic access to FDE/CIE plus
+        one way to access details given a PC value.
+        dwarf_get_fde_n() allows accessing all FDE/CIE
+        data so one could build up an application-specific
+        table of information if that is more useful.  */
+    Dwarf_Signed count = 0;
+    Dwarf_Cie *cie_data = 0;
+    Dwarf_Signed cie_count = 0;
+    Dwarf_Fde *fde_data = 0;
+    Dwarf_Signed fde_count = 0;
+    Dwarf_Error error = 0;
+    int fres = 0;
 
-  fres = dwarf_get_fde_list(dbg,&cie_data,&cie_count,
-    &fde_data,&fde_count,&error);
-  if (fres == DW_DLV_OK) { 
-    dwarf_fde_cie_list_dealloc(dbg, cie_data, cie_count,
-        fde_data,fde_count);
-  } else { 
+    fres = dwarf_get_fde_list_eh(dbg,&cie_data,&cie_count,
+        &fde_data,&fde_count,&error);
+    if (fres == DW_DLV_OK) {
+        Dwarf_Fde myfde = 0;
+        Dwarf_Addr low_pc = 0;
+        Dwarf_Addr high_pc = 0;
+        fres = dwarf_get_fde_at_pc(fde_data,mypcval,
+            &myfde,&low_pc,&high_pc,
+            &error);
+        if (fres == DW_DLV_OK) {
+            Dwarf_Cie mycie = 0;
+            fres = dwarf_get_cie_of_fde(myfde,&mycie,&error);
+            if (fres == DW_DLV_OK) {
+                /*  Now we can access a range of information
+                    about the fde and cie applicable. */
+            }
+        }
+        dwarf_fde_cie_list_dealloc(dbg, cie_data, cie_count,
+            fde_data,fde_count);
+    }
     /* ERROR or NO ENTRY. Do something */
-  }
 }
 \fP
 .DE
@@ -7331,6 +7381,7 @@ Not all CIEs have the same address-size, so it is crucial
 that a CIE pointer to the frame's CIE be passed in.
 
 .in +2
+.FG "Examples dwarf_expand_frame_instructions()"
 .DS
 \f(CW
 void examples(Dwarf_Cie cie,Dwarf_Ptr instruction,Dwarf_Unsigned len))
@@ -7438,6 +7489,7 @@ The \f(CWhipc_offset\fP,
 low pc \f(CWlopc_offset\fP are offsets from the beginning of the
 current procedure, not genuine pc values.
 .in +2
+.FG "Examples dwarf_get_loclist_entry()"
 .DS
 \f(CW
 void examplet(Dwarf_Debug dbg,Dwarf_Unsigned offset)
@@ -7636,6 +7688,7 @@ It returns \f(CWDW_DLV_NO_ENTRY\fP if there is no .debug_aranges
 section.
 
 .in +2
+.FG "Exampleu dwarf_get_aranges()"
 .DS
 \f(CW
 void exampleu(Dwarf_Debug dbg)
@@ -7886,6 +7939,7 @@ dumper applications, most applications will not use it.
 
 
 .in +2
+.FG "Examplev dwarf_get_ranges_a()"
 .DS
 \f(CW
 void examplev(Dwarf_Debug dbg,Dwarf_Unsigned offset,Dwarf_Die die)
@@ -8018,6 +8072,7 @@ functions (using all the functions in one
 example makes it rather too long).
 
 .in +2
+.FG "Examplew dwarf_get_gdbindex_header()"
 .DS
 \f(CW
 void examplew(Dwarf_Debug dbg,Dwarf_Unsigned offset,Dwarf_Die die)
@@ -8233,6 +8288,7 @@ through the pointers.
 Given an open Dwarf_Gdbindex one uses the function as follows:
 .P
 .DS
+.FG "Examplewgdbindex dwarf_gdbindex_addressarea()"
 \f(CW
 void examplewgdbindex(Dwarf_Gdbindex gdbindex)
 {
@@ -8296,6 +8352,7 @@ symbol table as follows (using 'return' here to indicate
 we are giving up due to a problem while keeping the 
 example code fairly short):
 .DS
+.FG "Examplex dwarf_gdbindex_symboltable_array()"
 \f(CW
 void examplex(Dwarf_Gdbindex   gdbindexr)
 {
@@ -8808,6 +8865,7 @@ and this is not considered an error.
 An example of initializing and disposing
 of a \f(CWDwarf_Xu_Index_Header\fP follows.
 .DS
+.FG "Exampley dwarf_get_xu_index_header()"
 \f(CW
 void exampley(Dwarf_Debug dbg, const char *type)
 {
@@ -8934,6 +8992,7 @@ as the \f(CWrow_index\fP.
 .P
 An example of use follows.
 .DS
+.FG "Examplez dwarf_get_xu_hash_entry()"
 \f(CW
 void examplez( Dwarf_Xu_Index_Header xuhdr,
   Dwarf_Unsigned hash_slots_count)
@@ -9055,6 +9114,7 @@ and
 \f(CWdwarf_get_xu_section_offset()\fP
 follows.
 .DS
+.FG "Exampleza dwarf_get_xu_section_names()"
 \f(CW
 void exampleza(Dwarf_Xu_Index_Header xuhdr,
   Dwarf_Unsigned offsets_count, Dwarf_Unsigned index )
@@ -9132,6 +9192,7 @@ Examples of bad and good usage are:
 
 .in +2
 .DS
+.FG "Examplezb dwarf_get_TAG_name()"
 \f(CW
 void examplezb(void)
 {
