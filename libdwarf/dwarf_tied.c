@@ -127,7 +127,10 @@ _dwarf_tied_destroy_free_node(void*nodep)
 
 /*  This presumes only we are reading the debug_info
     CUs from tieddbg. That is a reasonable
-    requirement, one hopes. */
+    requirement, one hopes. 
+    Currently it reads all the tied CUs at once, unless
+    there is an error..
+    */
 static int
 _dwarf_loop_reading_debug_info_for_cu(
     Dwarf_Debug tieddbg,
@@ -208,10 +211,15 @@ _dwarf_loop_reading_debug_info_for_cu(
             if (!latestcontext->cc_addr_base_present) {
             }
 #endif
-            return DW_DLV_OK;
+            if (!tied_compare_function(&sig,&consign) ) {
+                /*  Identical. We found the matching CU. */
+                return DW_DLV_OK;
+            }
         }
     }
-    return DW_DLV_NO_ENTRY;
+    /*  Apparently we never found the sig we are looking for. 
+        Pretend ok.  Caller will check for success. */
+    return DW_DLV_OK;
 }
 
 

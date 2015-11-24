@@ -1,3 +1,7 @@
+2015-11-24 David Anderson
+     * dwarf_tied.c: Code reading tied CU headers only worked by accident
+       but is fixed. Reads only  as far as needed in tied for the signature
+       being referenced.
 2015-11-15 David Anderson
      * Makefile.in,configure.in: These now support building in separate clean directory.
      * configure: Regenerated.
