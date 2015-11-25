@@ -1,3 +1,13 @@
+2015-11-25 David Anderson
+     * dwarf.h: Removed trailing space.
+     * dwarf_elf_access.c: Small preparation for handling .zdebug.
+     * dwarf_init_finish.c: Preparation for handling .zdebug zlib
+       compressed dwarf .debug_ sections. Uses new function
+       and new SET_UP_SECTION macro to shorten code and ensure
+       no unwanted differences present.
+     * dwarf_tied.c: Remove trailing whitespace.
+     * dwarf_opaque.h: New fields in preparation for .zdebug
+       handling.
 2015-11-24 David Anderson
      * dwarf_tied.c: Code reading tied CU headers only worked by accident
        but is fixed. Reads only  as far as needed in tied for the signature

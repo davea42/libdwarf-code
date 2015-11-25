@@ -993,7 +993,7 @@ extern "C" {
 /*  Not saying GNU or anything. There are no
     DW_LNS_lo_user or DW_LNS_hi_user values though.
     DW_LNS_set_address_from_logical and
-    DW_LNS_set_subprogram being both 0xd 
+    DW_LNS_set_subprogram being both 0xd
     to avoid using up more space in the special opcode table.
     EXPERIMENTAL DW_LNS follow.
 */

@@ -289,6 +289,16 @@ struct Dwarf_Section_s {
         detect duplicates. Ignored after setup done. */
     Dwarf_Small    dss_is_in_use;
 
+    /*  If this is zdebug, to start  data/size are the
+        raw section bytes. Initially dss_requires_decompress
+        set TRUE and dss_data_requires_free set FALSE.
+
+        On translation
+        set dss_data dss_size to point to malloc space
+        set dss_requires_decompress FALSE
+        set dss_requires_free  TRUE; */
+    Dwarf_Small    dss_requires_decompress;
+
     /*  For non-elf, leaving the following fields zero
         will mean they are ignored. */
     /*  dss_link should be zero unless a section has a link
@@ -315,6 +325,9 @@ struct Dwarf_Section_s {
     /*  dss_name must never be freed, it is a quoted string
         in libdwarf. */
     const char * dss_name;
+
+    /* Object section number in object file. */
+    unsigned dss_number;
 };
 
 /*  Overview: if next_to_use== first, no error slots are used.
@@ -368,8 +381,11 @@ typedef struct Dwarf_Debug_InfoTypes_s *Dwarf_Debug_InfoTypes;
 */
 
 struct Dwarf_dbg_sect_s {
-    /* Debug section name must not be freed, is quoted string. */
+    /*  Debug section name must not be freed, is quoted string.
+        This is the name from the object file itself. */
     const char *ds_name;
+    /* The section number in object section numbering. */
+    unsigned ds_number;
     /*   Debug section information, points to de_debug_*member
         (or the like) of the dbg struct.  */
     struct Dwarf_Section_s *ds_secdata;
@@ -377,6 +393,7 @@ struct Dwarf_dbg_sect_s {
     int ds_duperr;                     /* Error code for duplicated section */
     int ds_emptyerr;                   /* Error code for empty section */
     int ds_have_dwarf;                 /* Section contains DWARF */
+    int ds_have_zdebug;                /* Section compressed. */
 };
 
 /*  As the number of debug sections does not change very often, in the case a

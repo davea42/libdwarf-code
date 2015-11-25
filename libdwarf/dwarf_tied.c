@@ -127,7 +127,7 @@ _dwarf_tied_destroy_free_node(void*nodep)
 
 /*  This presumes only we are reading the debug_info
     CUs from tieddbg. That is a reasonable
-    requirement, one hopes. 
+    requirement, one hopes.
     Currently it reads all the tied CUs at once, unless
     there is an error..
     */
@@ -217,7 +217,7 @@ _dwarf_loop_reading_debug_info_for_cu(
             }
         }
     }
-    /*  Apparently we never found the sig we are looking for. 
+    /*  Apparently we never found the sig we are looking for.
         Pretend ok.  Caller will check for success. */
     return DW_DLV_OK;
 }
