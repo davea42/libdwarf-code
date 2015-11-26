@@ -1,3 +1,7 @@
+2015-11-26  David Anderson
+     * common.c,dwarfdump.c: Updated version string.
+     * config.h.in, configure.in, Makefile.in: Deals with
+       zlib when present.
 2015-11-15  David Anderson
      * Makefile.in: Now supports building in a clean separate directory.
 2015-11-11  David Anderson

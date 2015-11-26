@@ -1,3 +1,11 @@
+2015-11-26  David Anderson
+     * config.h.in, configure.in, Makefile.in: Deals with
+       zlib when present.
+     * configure: Generated.
+     * libdwarf/dwarf_error.c: New error codes for zlib use.
+     * dwarf_init_finish.c: Supports zlib and .zdebug sections.
+     * dwarf_opaque.h: New fields for zlib support.
+     * libdwarf.h.in: New error codes for zlib use.
 2015-11-25 David Anderson
      * dwarf.h: Removed trailing space.
      * dwarf_elf_access.c: Small preparation for handling .zdebug.

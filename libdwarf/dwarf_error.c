@@ -392,6 +392,10 @@ const char *_dwarf_errmsgs[] = {
     "DW_DLE_LOCLIST_INTERFACE_ERROR(311) interface cannot do location or DW_OP*",
     "DW_DLE_LOCLIST_INDEX_ERROR(312)",
     "DW_DLE_INTERFACE_NOT_SUPPORTED(313)",
+    "DW_DLE_ZDEBUG_REQUIRES_ZLIB(314) Unable to decompress .zdebug as zlib missing",
+    "DW_DLE_ZDEBUG_INPUT_FORMAT_ODD(315)",
+    "DW_DLE_ZLIB_BUF_ERROR(316) Z_BUF_ERROR buffer size small",
+    "DW_DLE_ZLIB_DATA_ERROR(317) Z_DATA_ERROR compressed data corrupted",
 };
 
 

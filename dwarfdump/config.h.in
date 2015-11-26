@@ -60,6 +60,9 @@
 /* Define to 1 if you have the <unistd.h> header file. */
 #undef HAVE_UNISTD_H
 
+/* Define 1 if zlib (decompression library) seems available. */
+#undef HAVE_ZLIB
+
 /* See if __uint32_t is predefined in the compiler. */
 #undef HAVE___UINT32_T
 

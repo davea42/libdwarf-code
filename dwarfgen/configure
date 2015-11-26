@@ -621,6 +621,7 @@ ac_includes_default="\
 
 ac_subst_vars='LTLIBOBJS
 LIBOBJS
+dwfzlib
 AR
 RANLIB
 INSTALL_DATA
@@ -4166,6 +4167,35 @@ $as_echo "#define HAVE___UINT64_T_IN_SGIDEFS_H 1" >>confdefs.h
 fi
 rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
 
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+#include "zlib.h"
+int
+main ()
+{
+
+    Bytef dest[100];
+    uLongf destlen = 100;
+    Bytef *src = 0;
+    uLong srclen = 3;
+    int res = uncompress(dest,&destlen,src,srclen);
+    if (res == Z_OK) {
+         /* ALL IS WELL */
+    }
+
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_compile "$LINENO"; then :
+
+$as_echo "#define HAVE_ZLIB 1" >>confdefs.h
+
+     dwfzlib=-lz
+
+
+fi
+rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
 
 ac_config_files="$ac_config_files Makefile"
 

@@ -1,3 +1,14 @@
+2015-11-26:  If DWARF section data you intend to read
+  with libdwarf is compressed by zlib (a section name
+  like  .zdebug_info indicates such compression) libdwarf etc
+  will need zlib's headers and archive or shared-library
+  at build and link time. If you  do not have zlib
+  everything will compile fine and will work
+  on ordinary DWARF sections but libdwarf will not be
+  able to read .zdebug_ compressed sections.
+  zlib.h is the main zlib header and libz.a is the
+  most likely zlib library you will encounter.
+  
 2015-11-15:  It is now possible to build
   outside of the source tree. See README.
   So configure.in changed a little.

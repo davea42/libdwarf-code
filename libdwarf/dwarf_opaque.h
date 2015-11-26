@@ -290,13 +290,16 @@ struct Dwarf_Section_s {
     Dwarf_Small    dss_is_in_use;
 
     /*  If this is zdebug, to start  data/size are the
-        raw section bytes. Initially dss_requires_decompress
-        set TRUE and dss_data_requires_free set FALSE.
+        raw section bytes.
+        Initially for all sections dss_data_was_malloc set FALSE
+            and dss_requires_decompress set FALSE.
+        For zdebug dss_requires_decompress then set TRUE
 
-        On translation
-        set dss_data dss_size to point to malloc space
-        set dss_requires_decompress FALSE
-        set dss_requires_free  TRUE; */
+        On translation (ie zlib use and malloc)
+        Set dss_data dss_size to point to malloc space and
+            malloc size.
+        Set dss_requires_decompress FALSE
+        Set dss_was_malloc  TRUE */
     Dwarf_Small    dss_requires_decompress;
 
     /*  For non-elf, leaving the following fields zero

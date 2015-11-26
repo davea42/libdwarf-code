@@ -52,7 +52,8 @@ LIBS =		@LIBS@
 INCLUDES =	-I. -I$(srcdir)
 dwfpic =        @dwfpic@
 dwfwall =       @dwfwall@
-CFLAGS =	$(PREINCS) @CFLAGS@ $(INCLUDES) $(dwfpic) $(dwfwall) $(POSTINCS)
+dwfzlib =       @dwfzlib@
+CFLAGS =	$(PREINCS) @CFLAGS@ $(INCLUDES) $(dwfpic) $(dwfwall)  $(POSTINCS)
 LDFLAGS =	$(PRELIBS) @LDFLAGS@ $(POSTLIBS)
 
 # These three files are only appropriate for SGI IRIX.
@@ -127,7 +128,7 @@ libdwarf.a: dwarf_names.h dwarf_names.c  $(OBJS) dwarf_names.o
 	$(AR) $(ARFLAGS) $@ $(OBJS)  dwarf_names.o > ar-output-temp
 
 libdwarf.so: dwarf_names.h dwarf_names.c $(OBJS) dwarf_names.o
-	$(CC) $(CFLAGS) -shared $(OBJS)  dwarf_names.o -o $@
+	$(CC) $(CFLAGS) -shared $(OBJS)  dwarf_names.o $dwfzlib -o $@
 
 none:
 	echo "do nothing " $@

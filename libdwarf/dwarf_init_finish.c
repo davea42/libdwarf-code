@@ -50,6 +50,9 @@
 #include <libelf/libelf.h>
 #endif
 #endif
+#ifdef HAVE_ZLIB
+#include "zlib.h"
+#endif
 
 #define DWARF_DBG_ERROR(dbg,errval,retval) \
     _dwarf_error(dbg, error, errval); return(retval);
@@ -189,6 +192,19 @@ add_debug_section_info(Dwarf_Debug dbg,
     return DW_DLV_ERROR;
 }
 
+static void
+dump_bytes(Dwarf_Small * start, long len)
+{
+    Dwarf_Small *end = start + len;
+    Dwarf_Small *cur = start;
+
+    for (; cur < end; cur++) {
+        printf(" byte %d, data %02x\n", (int) (cur - start), *cur);
+    }
+
+}
+
+
 /* Return DW_DLV_OK etc. */
 static int
 set_up_section(Dwarf_Debug dbg,
@@ -220,11 +236,13 @@ set_up_section(Dwarf_Debug dbg,
         /*  Now lets see if a targname updated with z matches
             secname. */
         /*  2 ensures NUL and added 'z' are ok */
-        if ((targnamelen+2) < SECNAMEMAX && strncmp(secname,dprefix,7) == 0 ){
-            strncat(buildsecname,targname,7);
+        if ((targnamelen+2) < SECNAMEMAX && strncmp(targname,dprefix,7) == 0 ){
+            strcat(buildsecname,targname+7);
             /* We turned tarname .debug_info to .zdebug_info, for example. */
             finalname = buildsecname;
-            havezdebug = TRUE;
+            if (strcmp(finalname,secname) == 0) {
+                havezdebug = TRUE;
+            }
         }
     }
 
@@ -503,8 +521,11 @@ static int
 this_section_dwarf_relevant(const char *scn_name,int type)
 {
     /* A small helper function for _dwarf_setup(). */
-    if (strncmp(scn_name, ".debug_", 7)
-        && strcmp(scn_name, ".eh_frame")
+    if (0 ==strncmp(scn_name, ".zdebug_", 8) ||
+        0 == strncmp(scn_name, ".debug_", 7) ) {
+        return TRUE;
+    }
+    if(    strcmp(scn_name, ".eh_frame")
         && strcmp(scn_name, ".symtab")
         && strcmp(scn_name, ".strtab")
         && strcmp(scn_name, ".gdb_index")
@@ -906,6 +927,63 @@ dwarf_object_finish(Dwarf_Debug dbg, Dwarf_Error * error)
     return res;
 }
 
+#ifdef HAVE_ZLIB
+/*  The input stream is assumed to contain
+    the four letters
+    ZLIB
+    Followed by 8 bytes of the size of the
+    uncompressed stream. Presented as
+    a big-endian binary number.
+    Following that is the stream to decompress. */
+static int
+do_decompress_zlib(Dwarf_Debug dbg,
+    struct Dwarf_Section_s *section,
+    Dwarf_Error * error)
+{
+    Bytef *src = (Bytef *)section->dss_data;
+    uLong srclen = section->dss_size;
+    int res = 0;
+    Bytef *dest = 0;
+    uLongf destlen = 0;
+    Dwarf_Unsigned uncompressed_len = 0;
+
+    if(strncmp("ZLIB",src,4)) {
+        DWARF_DBG_ERROR(dbg, DW_DLE_ZDEBUG_INPUT_FORMAT_ODD, DW_DLV_ERROR);
+    }
+    {
+        unsigned i = 0;
+        unsigned l = 8;
+        unsigned char *c = src+4;
+        for( ; i < l; ++i,c++) {
+            uncompressed_len <<= 8;
+            uncompressed_len += *c;
+        }
+        src = src + 12;
+        srclen -= 12;
+    }
+    destlen = uncompressed_len;
+    dest = malloc(destlen);
+    if(!dest) {
+        DWARF_DBG_ERROR(dbg, DW_DLE_ALLOC_FAIL, DW_DLV_ERROR);
+    }
+    res = uncompress(dest,&destlen,src,srclen);
+    if (res == Z_BUF_ERROR) {
+        DWARF_DBG_ERROR(dbg, DW_DLE_ZLIB_BUF_ERROR, DW_DLV_ERROR);
+    } else if (res == Z_MEM_ERROR) {
+        DWARF_DBG_ERROR(dbg, DW_DLE_ALLOC_FAIL, DW_DLV_ERROR);
+    } else if (res != Z_OK) {
+        /* Probably Z_DATA_ERROR. */
+        DWARF_DBG_ERROR(dbg, DW_DLE_ZLIB_DATA_ERROR, DW_DLV_ERROR);
+    }
+    /* Z_OK */
+    section->dss_data = dest;
+    section->dss_size = destlen;
+    section->dss_data_was_malloc = TRUE;
+    section->dss_requires_decompress = FALSE;
+    return DW_DLV_OK;
+}
+#endif /* HAVE_ZLIB */
+
 
 /*  Load the ELF section with the specified index and set its
     dss_data pointer to the memory where it was loaded.  */
@@ -934,6 +1012,17 @@ _dwarf_load_section(Dwarf_Debug dbg,
     if (res == DW_DLV_ERROR){
         DWARF_DBG_ERROR(dbg, err, DW_DLV_ERROR);
     }
+    if (section->dss_requires_decompress) {
+#ifdef HAVE_ZLIB
+        res = do_decompress_zlib(dbg,section,error);
+        if (res != DW_DLV_OK) {
+            return res;
+        }
+#else
+        DWARF_DBG_ERROR(dbg,DW_DLE_ZDEBUG_REQUIRES_ZLIB, DW_DLV_ERROR);
+#endif
+    }
+
     if (_dwarf_apply_relocs == 0) {
         return res;
     }

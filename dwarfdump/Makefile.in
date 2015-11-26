@@ -31,8 +31,9 @@ DEFS =		@DEFS@
 # ../libdwarf gets us to local headers and a libdwarf 
 # archive, usually, so we assume it.
 dwfwall =       @dwfwall@
+dwfzlib =       @dwfzlib@
 DIRINC =        $(srcdir)/../libdwarf
-LIBS =		@LIBS@ -L../libdwarf -ldwarf -lelf
+LIBS =		@LIBS@ -L../libdwarf -ldwarf -lelf $(dwfzlib)
 INCLUDES =	-I. -I$(srcdir) -I../libdwarf -I$(srcdir)/../libdwarf
 CFLAGS =	$(PREINCS) @CFLAGS@ $(INCLUDES) $(dwfwall) -DCONFPREFIX=${libdir} $(POSTINCS)
 LDFLAGS =	$(PRELIBS) @LDFLAGS@  $(LIBS) $(POSTLIBS)
