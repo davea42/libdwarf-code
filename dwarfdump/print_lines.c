@@ -50,8 +50,17 @@ print_source_intro(Dwarf_Die cu_die)
     int ores = dwarf_dieoffset(cu_die, &off, &err);
 
     if (ores == DW_DLV_OK) {
-        printf("Source lines (from CU-DIE at .debug_info offset 0x%"
+        int lres = 0;
+        const char *sec_name = 0;
+        lres = dwarf_get_die_section_name_b(cu_die,
+            &sec_name,&err);
+        if (lres != DW_DLV_OK ||  !sec_name || !strlen(sec_name)) {
+            sec_name = ".debug_info";
+        }
+
+        printf("Source lines (from CU-DIE at %s offset 0x%"
             DW_PR_XZEROS DW_PR_DUx "):\n",
+            sec_name,
             (Dwarf_Unsigned) off);
     } else {
         printf("Source lines (for the CU-DIE at unknown location):\n");
@@ -629,7 +638,14 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
     /* line_flag is TRUE */
 
     if (do_print_dwarf) {
-        printf("\n.debug_line: line number info for a single cu\n");
+        const char *sec_name = 0;
+
+        lres = dwarf_get_line_section_name_from_die(cu_die,
+            &sec_name,&err);
+        if (lres != DW_DLV_OK || !sec_name || !strlen(sec_name)) {
+            sec_name = ".debug_line";
+        }
+        printf("\n%s: line number info for a single cu\n", sec_name);
     } else {
         /* We are checking, not printing. */
         Dwarf_Half tag = 0;

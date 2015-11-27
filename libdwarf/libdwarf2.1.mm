@@ -8,7 +8,7 @@
 .nr Hb 5
 \." ==============================================
 \." Put current date in the following at each rev
-.ds vE rev 2.34, Nov 18, 2015
+.ds vE rev 2.35, Nov 26, 2015
 \." ==============================================
 \." ==============================================
 .ds | |
@@ -1925,7 +1925,8 @@ dwarf_get_die_section_name(Dwarf_Debug dbg,
     Dwarf_Error * error);
 .DE
 \f(CWdwarf_get_die_section_name()\fP lets consumers
-access the object section name.
+access the object section name when no specific
+DIE is at hand.
 This is useful for applications wanting to print
 the name, but of course the object section name is not 
 really a part of the DWARF information.
@@ -1933,6 +1934,7 @@ Most applications will
 probably not call this function.
 It can be called at any time
 after the Dwarf_Debug initialization is done.
+See  also \f(CWdwarf_get_die_section_name_b()\fP.
 .P
 The function
 \f(CWdwarf_get_die_section_name()\fP operates on
@@ -1957,6 +1959,40 @@ DW_DLV_NO_ENTRY.
 If there is an internal error detected the
 function returns \f(CWDW_DLV_ERROR\fP and sets the
 \f(CW*error\fP pointer.
+.H 3 "dwarf_get_die_section_name_b()"
+.DS
+int
+dwarf_get_die_section_name_b(Dwarf_Die die,
+    const char ** sec_name,
+    Dwarf_Error * error);
+.DE
+\f(CWdwarf_get_die_section_name_b()\fP lets consumers
+access the object section name when one has a DIE.
+This is useful for applications wanting to print
+the name, but of course the object section name is not
+really a part of the DWARF information.
+Most applications will
+probably not call this function.
+It can be called at any time
+after the Dwarf_Debug initialization is done.
+See  also \f(CWdwarf_get_die_section_name()\fP.
+.P
+If the function succeeds, \f(CW*sec_name\fP is set to
+a pointer to a string with the object section name and
+the function returns \f(CWDW_DLV_OK\fP.
+Do not free the string whose pointer is returned.
+For non-Elf objects it is possible the string pointer
+returned will be NULL or will point to an empty string.
+It is up to the calling application to recognize this
+possibility and deal with it appropriately.
+.P
+If the section does not exist the function returns
+DW_DLV_NO_ENTRY.
+.P
+If there is an internal error detected the
+function returns \f(CWDW_DLV_ERROR\fP and sets the
+\f(CW*error\fP pointer.
+
 
 
 
@@ -4269,6 +4305,39 @@ See
 for examples showing correct use.
 
 
+.H 3 "dwarf_get_line_section_name_from_die()"
+.DS
+\f(CWint dwarf_get_line_section_name_from_die(
+        Dwarf_Die die,
+        const char ** sec_name,
+        Dwarf_Error *error)\fP
+.DE
+\f(CW*dwarf_get_line_section_name_from_die()\fP
+retrieves the object file section name of
+the applicable line section.
+This is useful for applications wanting to print
+the name, but of course the object section name is not
+really a part of the DWARF information.
+Most applications will
+probably not call this function.
+It can be called at any time
+after the Dwarf_Debug initialization is done.
+.P
+If the function succeeds, \f(CW*sec_name\fP is set to
+a pointer to a string with the object section name and
+the function returns \f(CWDW_DLV_OK\fP.
+Do not free the string whose pointer is returned.
+For non-Elf objects it is possible the string pointer
+returned will be NULL or will point to an empty string.
+It is up to the calling application to recognize this
+possibility and deal with it appropriately.
+.P
+If the section does not exist the function returns
+DW_DLV_NO_ENTRY.
+.P
+If there is an internal error detected the
+function returns \f(CWDW_DLV_ERROR\fP and sets the
+\f(CW*error\fP pointer.
 
 .H 3 "dwarf_srclines_from_linecontext()"
 .DS
@@ -7636,6 +7705,43 @@ The .debug_str section contains only strings.  Debuggers need
 never use this interface: it is only for debugging problems with 
 the string section itself.  
 
+.DS
+\f(CWint dwarf_get_string_section_name(Dwarf_Debug dbg,
+    const char ** sec_name,
+    Dwarf_Error  *error)\fP
+.DE
+\f(CWdwarf_get_string_section_name()\fP lets consumers
+access the object string section name.
+This is useful for applications wanting to print
+the name, but of course the object section name is not
+really a part of the DWARF information.
+Most applications will
+probably not call this function.
+It can be called at any time
+after the Dwarf_Debug initialization is done.
+See  also \f(CWdwarf_get_die_section_name_b()\fP.
+.P
+The function
+\f(CWdwarf_get_string_section_name()\fP operates on
+the the .debug_string[.dwo] section.
+.P
+If the function succeeds, \f(CW*sec_name\fP is set to
+a pointer to a string with the object section name and
+the function returns \f(CWDW_DLV_OK\fP.
+Do not free the string whose pointer is returned.
+For non-Elf objects it is possible the string pointer
+returned will be NULL or will point to an empty string.
+It is up to the calling application to recognize this
+possibility and deal with it appropriately.
+.P
+If the section does not exist the function returns
+DW_DLV_NO_ENTRY.
+.P
+If there is an internal error detected the
+function returns \f(CWDW_DLV_ERROR\fP and sets the
+\f(CW*error\fP pointer.
+
+
 .H 3 "dwarf_get_str()"
 .DS
 \f(CWint dwarf_get_str(
@@ -7666,6 +7772,41 @@ If the \f(CWoffset\fP is some other too-large value then
 These functions provide information about address ranges.  Address
 ranges map ranges of pc values to the corresponding compilation-unit
 die that covers the address range.
+
+.H 3 "dwarf_get_aranges_section_name()"
+.DS
+\f(CWint dwarf_get_aranges_section_name(Dwarf_Debug dbg,
+        const char ** sec_name,
+        Dwarf_Error *error)\fP
+.DE
+\f(CW*dwarf_get_aranges_section_name()\fP
+retrieves the object file section name of
+the applicable aranges section.
+This is useful for applications wanting to print
+the name, but of course the object section name is not
+really a part of the DWARF information.
+Most applications will
+probably not call this function.
+It can be called at any time
+after the Dwarf_Debug initialization is done.
+.P
+If the function succeeds, \f(CW*sec_name\fP is set to
+a pointer to a string with the object section name and
+the function returns \f(CWDW_DLV_OK\fP.
+Do not free the string whose pointer is returned.
+For non-Elf objects it is possible the string pointer
+returned will be NULL or will point to an empty string.
+It is up to the calling application to recognize this
+possibility and deal with it appropriately.
+.P
+If the section does not exist the function returns
+DW_DLV_NO_ENTRY.
+.P
+If there is an internal error detected the
+function returns \f(CWDW_DLV_ERROR\fP and sets the
+\f(CW*error\fP pointer.
+
+
 
 .H 3 "dwarf_get_aranges()"
 .DS
@@ -7874,6 +8015,39 @@ or \f(CWdwarf_get_ranges()\fP
 returns a an array
 of Dwarf_Ranges structs, each of which represents a single ranges
 entry.   The struct is defined in  \f(CWlibdwarf.h\fP.
+
+.H 3 "dwarf_get_ranges_section_name()"
+.DS
+\f(CWint dwarf_get_ranges_section_name(Dwarf_Debug dbg,
+        const char ** sec_name,
+        Dwarf_Error *error)\fP
+.DE
+\f(CW*dwarf_get_ranges_section_name()\fP
+retrieves the object file section name of
+the applicable ranges section.
+This is useful for applications wanting to print
+the name, but of course the object section name is not
+really a part of the DWARF information.
+Most applications will
+probably not call this function.
+It can be called at any time
+after the Dwarf_Debug initialization is done.
+.P
+If the function succeeds, \f(CW*sec_name\fP is set to
+a pointer to a string with the object section name and
+the function returns \f(CWDW_DLV_OK\fP.
+Do not free the string whose pointer is returned.
+For non-Elf objects it is possible the string pointer
+returned will be NULL or will point to an empty string.
+It is up to the calling application to recognize this
+possibility and deal with it appropriately.
+.P 
+If the section does not exist the function returns
+DW_DLV_NO_ENTRY.
+.P
+If there is an internal error detected the
+function returns \f(CWDW_DLV_ERROR\fP and sets the
+\f(CW*error\fP pointer.
 
 
 .H 3 "dwarf_get_ranges()"
@@ -9271,11 +9445,13 @@ These are dependent on the particular ABI, so unless the
 these names are unlikely to be very useful and certainly
 won't be entirely appropriate.
 .H 3 "dwarf_get_ID_name()"
-Returns  an identifier case code name through the \f(CWs_out\fP pointer.
+Returns an identifier case code name through the \f(CWs_out\fP pointer.
 .H 3 "dwarf_get_INL_name()"
-Returns  an inline code name through the \f(CWs_out\fP pointer.
+Returns an inline code name through the \f(CWs_out\fP pointer.
 .H 3 "dwarf_get_LANG_name()"
-Returns  a language code name through the \f(CWs_out\fP pointer.
+Returns a language code name through the \f(CWs_out\fP pointer.
+.H 3 "dwarf_get_LLE_name()"
+Returns a split-dwarf loclist code name through the \f(CWs_out\fP pointer.
 .H 3 "dwarf_get_LNE_name()"
 Returns  a line table extended
 opcode code name through the \f(CWs_out\fP pointer.
@@ -9284,6 +9460,9 @@ Returns  a line table standard
 opcode code name through the \f(CWs_out\fP pointer.
 .H 3 "dwarf_get_MACINFO_name()"
 Returns  a macro information macinfo
+code name through the \f(CWs_out\fP pointer.
+.H 3 "dwarf_get_MACRO_name()"
+Returns  a DWARF5 macro information macro
 code name through the \f(CWs_out\fP pointer.
 .H 3 "dwarf_get_OP_name()"
 Returns  a DWARF expression operation

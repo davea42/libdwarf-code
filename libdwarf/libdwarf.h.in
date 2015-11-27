@@ -1340,10 +1340,15 @@ int dwarf_object_finish(Dwarf_Debug /* dbg */,
     Dwarf_Error* /* error */);
 
 /*  Section name access.  Because sections might
-    now end with .dwo  or might not (as of DWARF5)  */
+    now end with .dwo or be .zdebug  or might not. 
+*/
 int
 dwarf_get_die_section_name(Dwarf_Debug /*dbg*/,
     Dwarf_Bool    /*is_info*/,
+    const char ** /*sec_name*/,
+    Dwarf_Error * /*error*/);
+int
+dwarf_get_die_section_name_b(Dwarf_Die /*die*/,
     const char ** /*sec_name*/,
     Dwarf_Error * /*error*/);
 
@@ -1946,6 +1951,11 @@ int dwarf_srclines_version(Dwarf_Line_Context /*line_context*/,
     Dwarf_Error    * /*error*/);
 
 
+int dwarf_get_line_section_name_from_die(Dwarf_Die /*die*/,
+    const char ** /*section_name_out*/,
+    Dwarf_Error * /*error*/);
+
+
 /*  While 'filecount' is signed, the value
     returned through the pointer is never negative.
     Original libdwarf from 199x.  */
@@ -2284,6 +2294,10 @@ int dwarf_get_abbrev_entry(Dwarf_Abbrev /*abbrev*/,
     Dwarf_Off*       /*offset*/,
     Dwarf_Error*     /*error*/);
 
+int dwarf_get_string_section_name(Dwarf_Debug /*dbg*/,
+    const char ** /*section_name_out*/,
+    Dwarf_Error * /*error*/);
+
 /* consumer string section operation */
 int dwarf_get_str(Dwarf_Debug /*dbg*/,
     Dwarf_Off        /*offset*/,
@@ -2469,6 +2483,14 @@ int dwarf_get_aranges(Dwarf_Debug /*dbg*/,
     Dwarf_Arange**   /*aranges*/,
     Dwarf_Signed *   /*arange_count*/,
     Dwarf_Error*     /*error*/);
+
+int dwarf_get_ranges_section_name(Dwarf_Debug /*dbg*/,
+    const char ** /*section_name_out*/,
+    Dwarf_Error * /*error*/);
+
+int dwarf_get_aranges_section_name(Dwarf_Debug /*dbg*/,
+    const char ** /*section_name_out*/,
+    Dwarf_Error * /*error*/);
 
 
 

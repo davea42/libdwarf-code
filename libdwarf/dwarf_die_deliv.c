@@ -1799,4 +1799,22 @@ dwarf_get_die_section_name(Dwarf_Debug dbg,
     return DW_DLV_OK;
 }
 
+/* This one assumes is_info not known to caller but a DIE is known. */
+int
+dwarf_get_die_section_name_b(Dwarf_Die die,
+    const char ** sec_name,
+    Dwarf_Error * error)
+{
+    Dwarf_CU_Context context = 0;
+    Dwarf_Bool is_info = 0;
+    Dwarf_Debug dbg = 0;
+
+    CHECK_DIE(die, DW_DLV_ERROR);
+    context = die->di_cu_context;
+    dbg = context->cc_dbg;
+    is_info = context->cc_is_info;
+    return dwarf_get_die_section_name(dbg,is_info,sec_name,error);
+}
+
+
 

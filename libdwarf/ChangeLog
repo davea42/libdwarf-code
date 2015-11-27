@@ -1,3 +1,12 @@
+2015-11-27  David Anderson
+     * dwarf_die_deliv.c: Added dwarf_get_die_section_name_b().
+     * dwarf_line.c: Added dwarf_get_ranges_section_name()
+       dwarf_get_aranges_section_name(), 
+       dwarf_get_line_section_name_from_die(),
+       dwarf_get_string_section_name.
+     * libdwarf.h.in: Added new function names.
+     * libdwarf2.1.mm: Version 2.35. Documented new functions.
+     * libdwarf2.1.pdf: Regenerated.
 2015-11-26  David Anderson
      * config.h.in, configure.in, Makefile.in: Deals with
        zlib when present.

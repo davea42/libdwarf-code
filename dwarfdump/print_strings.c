@@ -32,7 +32,7 @@
 
 #include "print_sections.h"
 
-/* print data in .debug_string */
+/* print data in .debug_str */
 extern void
 print_strings(Dwarf_Debug dbg)
 {
@@ -40,9 +40,15 @@ print_strings(Dwarf_Debug dbg)
     string name;
     Dwarf_Off offset = 0;
     int sres = 0;
+    const char *sec_name = 0;
 
     current_section_id = DEBUG_STR;
-    printf("\n.debug_string\n");
+    sres = dwarf_get_string_section_name(dbg,
+        &sec_name,&err);
+    if (sres != DW_DLV_OK ||  !sec_name || !strlen(sec_name)) {
+        sec_name = ".debug_str";
+    }
+    printf("\n%s\n",sec_name);
     while ((sres = dwarf_get_str(dbg, offset, &name, &length, &err))
         == DW_DLV_OK) {
         if (display_offsets) {

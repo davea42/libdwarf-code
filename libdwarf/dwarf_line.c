@@ -771,6 +771,88 @@ _dwarf_internal_srclines(Dwarf_Die die,
     return (DW_DLV_OK);
 }
 
+int
+dwarf_get_ranges_section_name(Dwarf_Debug dbg,
+    const char **section_name_out,
+    Dwarf_Error * error)
+{
+    struct Dwarf_Section_s *sec = 0;
+    if (error != NULL) {
+        *error = NULL;
+    }
+    sec = &dbg->de_debug_ranges;
+    if (sec->dss_size == 0) {
+        /* We don't have such a  section at all. */
+        return DW_DLV_NO_ENTRY;
+    }
+    *section_name_out = sec->dss_name;
+    return DW_DLV_OK;
+}
+
+int
+dwarf_get_aranges_section_name(Dwarf_Debug dbg,
+    const char **section_name_out,
+    Dwarf_Error * error)
+{
+    struct Dwarf_Section_s *sec = 0;
+    if (error != NULL) {
+        *error = NULL;
+    }
+    sec = &dbg->de_debug_aranges;
+    if (sec->dss_size == 0) {
+        /* We don't have such a  section at all. */
+        return DW_DLV_NO_ENTRY;
+    }
+    *section_name_out = sec->dss_name;
+    return DW_DLV_OK;
+}
+
+int
+dwarf_get_line_section_name_from_die(Dwarf_Die die,
+    const char **section_name_out,
+    Dwarf_Error * error)
+{
+    /*  The Dwarf_Debug this die belongs to. */
+    Dwarf_Debug dbg = 0;
+    struct Dwarf_Section_s *sec = 0;
+
+    /*  ***** BEGIN CODE ***** */
+    if (error != NULL) {
+        *error = NULL;
+    }
+
+    CHECK_DIE(die, DW_DLV_ERROR);
+    dbg = die->di_cu_context->cc_dbg;
+    sec = &dbg->de_debug_line;
+    if (sec->dss_size == 0) {
+        /* We don't have such a  section at all. */
+        return DW_DLV_NO_ENTRY;
+    }
+    *section_name_out = sec->dss_name;
+    return DW_DLV_OK;
+}
+
+int
+dwarf_get_string_section_name(Dwarf_Debug dbg,
+    const char **section_name_out,
+    Dwarf_Error * error)
+{
+    struct Dwarf_Section_s *sec = 0;
+
+    /*  ***** BEGIN CODE ***** */
+    if (error != NULL) {
+        *error = NULL;
+    }
+
+    sec = &dbg->de_debug_str;
+    if (sec->dss_size == 0) {
+        /* We don't have such a  section at all. */
+        return DW_DLV_NO_ENTRY;
+    }
+    *section_name_out = sec->dss_name;
+    return DW_DLV_OK;
+}
+
 
 int
 dwarf_srclines(Dwarf_Die die,

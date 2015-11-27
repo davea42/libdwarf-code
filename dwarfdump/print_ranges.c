@@ -40,12 +40,18 @@ print_ranges(Dwarf_Debug dbg)
     Dwarf_Unsigned off = 0;
     int group_number = 0;
     int wasdense = 0;
+    int res  = 0;
+    const char *sec_name = 0;
 
     current_section_id = DEBUG_RANGES;
     if (!do_print_dwarf) {
         return;
     }
-    printf("\n.debug_ranges\n");
+    res = dwarf_get_ranges_section_name(dbg,&sec_name,&err);
+    if (res != DW_DLV_OK ||  !sec_name || !strlen(sec_name)) {
+        sec_name = ".debug_ranges";
+    }
+    printf("\n%s\n",sec_name);
 
     /*  Turn off dense, we do not want  print_ranges_list_to_extra
         to use dense form here. */
@@ -72,13 +78,13 @@ print_ranges(Dwarf_Debug dbg)
             printf("%s",val);
             ++group_number;
         } else if (rres == DW_DLV_NO_ENTRY) {
-            printf("End of .debug_ranges.\n");
+            printf("End of %s.\n",sec_name);
             break;
         } else {
             /*  ERROR, which does not quite mean a real error,
                 as we might just be misaligned reading things without
                 a DW_AT_ranges offset.*/
-            printf("End of .debug_ranges..\n");
+            printf("End of %s..\n",sec_name);
             break;
         }
         off += bytecount;
@@ -107,6 +113,13 @@ check_ranges_list(Dwarf_Debug dbg,
     Dwarf_Bool bError = FALSE;
 
     static boolean do_print = TRUE;
+    int res = 0;
+    const char *sec_name = 0;
+    res = dwarf_get_ranges_section_name(dbg,&sec_name,&err);
+    if (res != DW_DLV_OK ||  !sec_name || !strlen(sec_name)) {
+        sec_name = ".debug_ranges";
+    }
+
 #if 0
 {
 /* START -> Just for debugging */
@@ -123,6 +136,7 @@ printf("**** END ****\n");
 /* END <- Just for debugging */
 }
 #endif /* 0 */
+
 
     /* Ignore last entry, is the end-of-list */
     for (index = 0; index < rangecount - 1; index++) {
@@ -151,10 +165,13 @@ printf("**** END ****\n");
                     PU_name,lopc,hipc)) {
                     /* Valid values; do nothing */
                 } else {
+                    char errbuf[100];
+
                     bError = TRUE;
-                    DWARF_CHECK_ERROR(ranges_result,
-                        ".debug_ranges: Address outside a "
-                        "valid .text range");
+                    snprintf(errbuf,sizeof(errbuf),
+                        "%s: Address outside a "
+                        "valid .text range",sec_name);
+                    DWARF_CHECK_ERROR(ranges_result, errbuf);
                     if (check_verbose_mode && do_print) {
                         /*  Update DIEs offset just for printing */
                         int res = dwarf_die_offsets(cu_die,

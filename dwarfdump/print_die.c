@@ -1462,24 +1462,33 @@ print_ranges_list_to_extra(Dwarf_Debug dbg,
     Dwarf_Unsigned bytecount,
     struct esb_s *stringbuf)
 {
+    int res = 0;
     char tmp[200];
-    Dwarf_Signed i;
+    const char * sec_name = 0;
+    Dwarf_Signed i = 0;
+    res = dwarf_get_ranges_section_name(dbg,&sec_name,&err);
+    if(res != DW_DLV_OK ||  !sec_name || !strlen(sec_name)) {
+        sec_name = ".debug_ranges";
+    }
+
     if (dense) {
         snprintf(tmp,sizeof(tmp),
-            "< ranges: %" DW_PR_DSd " ranges at .debug_ranges offset %"
+            "< ranges: %" DW_PR_DSd " ranges at %s offset %"
             DW_PR_DUu " (0x%" DW_PR_XZEROS DW_PR_DUx ") "
             "(%" DW_PR_DUu " bytes)>",
             rangecount,
+            sec_name,
             off,
             off,
             bytecount);
         esb_append(stringbuf,tmp);
     } else {
         snprintf(tmp,sizeof(tmp),
-            "\t\tranges: %" DW_PR_DSd " at .debug_ranges offset %"
+            "\t\tranges: %" DW_PR_DSd " at %s offset %"
             DW_PR_DUu " (0x%" DW_PR_XZEROS DW_PR_DUx ") "
             "(%" DW_PR_DUu " bytes)\n",
             rangecount,
+            sec_name,
             off,
             off,
             bytecount);

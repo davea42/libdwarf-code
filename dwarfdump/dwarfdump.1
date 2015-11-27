@@ -60,6 +60,17 @@ known problem and are only detected inside libdwarf itself.
 These are difficult to properly report in dwarfdump and
 any error strings may not appear close to the time the
 error was encountered.
+.PP
+If zlib compression was used on the DWARF sections
+in the object file being read the
+real section names such as .zdebug_info etc will be reported by
+dwarfdump.  
+When dwarfdump says something is at offset 55 
+of .zdebug_info (or the like) keep in mind that 
+the offset applies to the
+uncompressed section (in memory), 
+not the .zdebug_ compressed section
+in \f2objectfilename\fP. 
 .SH URI STYLE INPUT STRINGS
 .PP
 The <objectfilename> and the options taking name strings look for URIs and

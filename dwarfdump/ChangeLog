@@ -1,3 +1,8 @@
+2015-11-27  David Anderson
+     * dwarfdump.1: Mentions that with zdebug sections offsets
+       refer to expanded object section, not compressed section.
+     * print_aranges.c,print_die.c,print_lines.c,print_ranges.c,
+       print_strings.c: Get the real section name from libdwarf.
 2015-11-26  David Anderson
      * common.c,dwarfdump.c: Updated version string.
      * config.h.in, configure.in, Makefile.in: Deals with
