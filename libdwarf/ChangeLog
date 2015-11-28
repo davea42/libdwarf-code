@@ -3,6 +3,8 @@
        dwarf_get_frame_section_name_eh_gnu() for better section name
        reporting for clients that care about that.
      * libdwarf.h.in: Declared the new section name interfaces.
+     * libdwarf2.1.mm: Documented the new functions. Version 2.36.
+     * libdwarf2.1.pdf: Regenerated.
 2015-11-27  David Anderson
      * dwarf_die_deliv.c: Added dwarf_get_die_section_name_b().
      * dwarf_line.c: Added dwarf_get_ranges_section_name()

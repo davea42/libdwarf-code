@@ -8,7 +8,7 @@
 .nr Hb 5
 \." ==============================================
 \." Put current date in the following at each rev
-.ds vE rev 2.35, Nov 26, 2015
+.ds vE rev 2.36, Nov 28, 2015
 \." ==============================================
 \." ==============================================
 .ds | |
@@ -6592,6 +6592,80 @@ DW_FRAME_CFA_COL3:1436:means 'cfa register'
 .DE
 
 .P
+.H 3 "dwarf_get_frame_section_name()"
+.DS
+\f(CWint dwarf_get_frame_section_name(Dwarf_Debug dbg,
+    const char ** sec_name,
+    Dwarf_Error  *error)\fP
+.DE
+\f(CWdwarf_get_string_section_name()\fP lets consumers
+access the object string section name.
+This is useful for applications wanting to print
+the name, but of course the object section name is not
+really a part of the DWARF information.
+Most applications will
+probably not call this function.
+It can be called at any time
+after the Dwarf_Debug initialization is done.
+See  also \f(CWdwarf_get_frame_section_name_eh_gnu()\fP.
+.P
+The function
+\f(CWdwarf_get_frame_section_name()\fP operates on
+the the .debug_frame section.
+.P
+If the function succeeds, \f(CW*sec_name\fP is set to
+a pointer to a string with the object section name and
+the function returns \f(CWDW_DLV_OK\fP.
+Do not free the string whose pointer is returned.
+For non-Elf objects it is possible the string pointer
+returned will be NULL or will point to an empty string.
+It is up to the calling application to recognize this
+possibility and deal with it appropriately.
+.P
+If the section does not exist the function returns
+DW_DLV_NO_ENTRY.
+.P
+If there is an internal error detected the
+function returns \f(CWDW_DLV_ERROR\fP and sets the
+\f(CW*error\fP pointer.
+
+.H 3 "dwarf_get_frame_section_name_eh_gnu()"
+.DS
+\f(CWint dwarf_get_frame_section_name_eh_gnu(Dwarf_Debug dbg
+    const char ** sec_name,
+    Dwarf_Error  *error)\fP
+.DE
+\f(CWdwarf_get_frame_section_name_eh_gnu()\fP lets consumers
+access the object string section name.
+This is useful for applications wanting to print
+the name, but of course the object section name is not
+really a part of the DWARF information.
+Most applications will
+probably not call this function.
+It can be called at any time
+after the Dwarf_Debug initialization is done.
+See  also \f(CWdwarf_get_frame_section_name()\fP.
+.P
+The function
+\f(CWdwarf_get_frame_section_name_eh_ghu()\fP operates on
+the the .eh_frame section.
+.P
+If the function succeeds, \f(CW*sec_name\fP is set to
+a pointer to a string with the object section name and
+the function returns \f(CWDW_DLV_OK\fP.
+Do not free the string whose pointer is returned.
+For non-Elf objects it is possible the string pointer
+returned will be NULL or will point to an empty string. 
+It is up to the calling application to recognize this
+possibility and deal with it appropriately.
+.P 
+If the section does not exist the function returns
+DW_DLV_NO_ENTRY.
+.P
+If there is an internal error detected the
+function returns \f(CWDW_DLV_ERROR\fP and sets the
+\f(CW*error\fP pointer.
+
 .H 3 "dwarf_get_fde_list()"
 .DS
 \f(CWint dwarf_get_fde_list(
