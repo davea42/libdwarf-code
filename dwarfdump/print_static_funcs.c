@@ -52,7 +52,8 @@ print_static_funcs(Dwarf_Debug dbg)
     if (!do_print_dwarf) {
         return;
     }
-
+    /*  No need to get the real section name, this
+        section not used in modern compilers. */
     printf("\n.debug_static_func\n");
     gfres = dwarf_get_funcs(dbg, &funcbuf, &count, &err);
     if (gfres == DW_DLV_ERROR) {

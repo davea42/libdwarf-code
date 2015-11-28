@@ -49,6 +49,8 @@ print_weaknames(Dwarf_Debug dbg)
     if (!do_print_dwarf) {
         return;
     }
+    /*  No need to get the real section name, this
+        section not used in modern compilers. */
     printf("\n.debug_weaknames\n");
     wkres = dwarf_get_weaks(dbg, &weaknamebuf, &count, &err);
     if (wkres == DW_DLV_ERROR) {

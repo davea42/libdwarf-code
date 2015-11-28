@@ -228,6 +228,7 @@ extern int nTrace[MAX_TRACE_LEVEL + 1];
 #define DEBUG_WEAKNAMES   13
 #define DEBUG_TYPES       14
 #define DEBUG_GDB_INDEX   15
+#define DEBUG_FRAME_EH_GNU 16
 
 extern int verbose;
 extern boolean dense;

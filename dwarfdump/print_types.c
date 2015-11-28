@@ -33,7 +33,7 @@
 #include "print_sections.h"
 #include "print_frames.h"
 
-/* Get all the data in .debug_types or debug_pubtypes. */
+/* Get all the data in .debug_typenames or debug_pubtypes. */
 extern void
 print_types(Dwarf_Debug dbg, enum type_type_e type_type)
 {
@@ -62,6 +62,8 @@ print_types(Dwarf_Debug dbg, enum type_type_e type_type)
     }
 
     if (type_type == DWARF_PUBTYPES) {
+        /*  No need to get the real section name, this
+            section not used in modern compilers. */
         section_name = ".debug_pubtypes";
         offset_err_name = "dwarf_pubtype_name_offsets";
         section_open_name = "dwarf_get_pubtypes";
@@ -72,6 +74,8 @@ print_types(Dwarf_Debug dbg, enum type_type_e type_type)
         dealloctype = dwarf_pubtypes_dealloc;
     } else {
         /* SGI_TYPENAME */
+        /*  No need to get the real section name, this
+            section not used in modern compilers. */
         section_name = ".debug_typenames";
         offset_err_name = "dwarf_type_name_offsets";
         section_open_name = "dwarf_get_types";
@@ -81,7 +85,6 @@ print_types(Dwarf_Debug dbg, enum type_type_e type_type)
         get_cu_offset = dwarf_type_cu_offset;
         dealloctype = dwarf_types_dealloc;
     }
-
 
 
     gtres = get_types(dbg, &typebuf, &count, &err);

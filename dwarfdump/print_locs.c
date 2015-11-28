@@ -82,7 +82,9 @@ print_locs(Dwarf_Debug dbg)
     if (fres != DW_DLV_OK) {
         print_error(dbg, "dwarf_get_address_size", fres, err);
     }
-
+    /*  No need to get the real section name, this
+        print code not needed as cannot be safely used
+        and uses old interface. */
     printf("\n.debug_loc");
 
     printf("\nFormat <i o b e l>: "

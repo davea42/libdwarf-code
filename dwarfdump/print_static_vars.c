@@ -50,7 +50,8 @@ print_static_vars(Dwarf_Debug dbg)
     if (!do_print_dwarf) {
         return;
     }
-
+    /*  No need to get the real section name, this
+        section not used in modern compilers. */
     printf("\n.debug_static_vars\n");
     gvres = dwarf_get_vars(dbg, &varbuf, &count, &err);
     if (gvres == DW_DLV_ERROR) {

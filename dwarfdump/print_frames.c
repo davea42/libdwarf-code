@@ -415,6 +415,7 @@ load_nested_proc_name(Dwarf_Debug dbg, Dwarf_Die die, Dwarf_Addr low_pc,
 */
 static string
 get_fde_proc_name(Dwarf_Debug dbg, Dwarf_Addr low_pc,
+    const char *frame_section_name,
     void **pcMap,
     int *all_cus_seen)
 {
@@ -508,9 +509,12 @@ get_fde_proc_name(Dwarf_Debug dbg, Dwarf_Addr low_pc,
         }
         current_cu_die_for_print_frames = 0;
         if (dres == DW_DLV_ERROR) {
+            char buf [100];
+            snprintf(buf,sizeof(buf),
+                "dwarf_cu_header Child Read finding proc name for %s",
+                frame_section_name);
             print_error(dbg,
-                "dwarf_cu_header Child Read finding proc name for .debug_frame",
-                chres, err);
+                buf, chres, err);
             continue;
         } else if (dres == DW_DLV_NO_ENTRY) {
             ++looping;
@@ -554,7 +558,9 @@ get_fde_proc_name(Dwarf_Debug dbg, Dwarf_Addr low_pc,
 /*  Gather the fde print logic here so the control logic
     determining what FDE to print is clearer.  */
 static int
-print_one_fde(Dwarf_Debug dbg, Dwarf_Fde fde,
+print_one_fde(Dwarf_Debug dbg, 
+    const char *frame_section_name,
+    Dwarf_Fde fde,
     Dwarf_Unsigned fde_index,
     Dwarf_Cie * cie_data,
     Dwarf_Signed cie_element_count,
@@ -607,7 +613,8 @@ print_one_fde(Dwarf_Debug dbg, Dwarf_Fde fde,
         temps = 0;
     } else {
         struct Addr_Map_Entry *mp = 0;
-        temps = get_fde_proc_name(dbg, low_pc,pcMap,all_cus_seen);
+        temps = get_fde_proc_name(dbg, low_pc,
+            frame_section_name,pcMap,all_cus_seen);
         mp = addr_map_find(low_pc,lowpcSet);
         if (check_frames || check_frames_extended) {
             DWARF_CHECK_COUNT(fde_duplication,1);
@@ -1790,15 +1797,22 @@ print_frames(Dwarf_Debug dbg,
         int cie_count = 0;
         int all_cus_seen = 0;
         void * lowpcSet = 0;
-        char *framename = 0;
+        const char *frame_section_name = 0;
         int silent_if_missing = 0;
         int is_eh = 0;
 
         if (framed == 0) {
+            current_section_id = DEBUG_FRAME;
             if (!print_debug_frame) {
                 continue;
             }
-            framename = ".debug_frame";
+            fres = dwarf_get_frame_section_name(dbg,
+                &frame_section_name,&err);
+            if (fres != DW_DLV_OK || !frame_section_name || 
+               !strlen(frame_section_name)) {
+                frame_section_name = ".debug_frame";
+            }
+
             /*  Big question here is how to print all the info?
                 Can print the logical matrix, but that is huge,
                 though could skip lines that don't change.
@@ -1810,6 +1824,7 @@ print_frames(Dwarf_Debug dbg,
                 print_any_harmless_errors(dbg);
             }
         } else {
+            current_section_id = DEBUG_FRAME_EH_GNU;
             if (!print_eh_frame) {
                 continue;
             }
@@ -1831,7 +1846,12 @@ print_frames(Dwarf_Debug dbg,
                 Either that, or print the instruction statement program
                 that describes the changes.  */
             silent_if_missing = 1;
-            framename = ".eh_frame";
+            fres = dwarf_get_frame_section_name_eh_gnu(dbg,
+                &frame_section_name,&err);
+            if (fres != DW_DLV_OK || !frame_section_name || 
+               !strlen(frame_section_name)) {
+                frame_section_name = ".eh_frame";
+            }
             fres = dwarf_get_fde_list_eh(dbg, &cie_data,
                 &cie_element_count, &fde_data,
                 &fde_element_count, &err);
@@ -1848,22 +1868,22 @@ print_frames(Dwarf_Debug dbg,
         }
 
         if (fres == DW_DLV_ERROR) {
-            printf("\n%s\n", framename);
+            printf("\n%s\n", frame_section_name);
             print_error(dbg, "dwarf_get_fde_list", fres, err);
         } else if (fres == DW_DLV_NO_ENTRY) {
             if (!silent_if_missing) {
-                printf("\n%s\n", framename);
+                printf("\n%s\n", frame_section_name);
             }
             /* no frame information */
         } else {                /* DW_DLV_OK */
             /* Do not print if in check mode */
             if (!check_frames_extended) {
-                printf("\n%s\n", framename);
+                printf("\n%s\n", frame_section_name);
                 printf("\nfde:\n");
             }
 
             for (i = 0; i < fde_element_count; i++) {
-                print_one_fde(dbg, fde_data[i],
+                print_one_fde(dbg, frame_section_name, fde_data[i],
                     i, cie_data, cie_element_count,
                     address_size, offset_size, version,
                     is_eh, config_data,

@@ -1,3 +1,14 @@
+2015-11-28  David Anderson
+     * globals.h: Added DEBUG_FRAME_EH_GNU define for consistency..
+     * print_frames.c: use the new dwarf_get_frame_section_name()
+       and dwarf_get_frame_section_name_eh_gnu() functions for
+       section names.
+     * print_lines.c: Use the new dwarf_get_line_section_name_from_die()
+       function for the section name.
+     * print_locs.c,print_macros.c,print_pubnames.c,print_static_funcs.c,
+       print_types.c,print_weaknames.c: Added comments. These are
+       places where the section is either obsolete or the section
+       name is rarely of any use.
 2015-11-27  David Anderson
      * dwarfdump.1: Mentions that with zdebug sections offsets
        refer to expanded object section, not compressed section.

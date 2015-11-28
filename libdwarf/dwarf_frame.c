@@ -68,6 +68,43 @@ static void dump_frame_rule(char *msg,
 #endif
 
 
+int
+dwarf_get_frame_section_name(Dwarf_Debug dbg,
+   const char **sec_name,
+   Dwarf_Error *error)
+{
+    struct Dwarf_Section_s *sec = 0;
+    if (error != NULL) {
+        *error = NULL;
+    }
+    sec = &dbg->de_debug_frame;
+    if (sec->dss_size == 0) {
+        /* We don't have such a  section at all. */
+        return DW_DLV_NO_ENTRY;
+    }
+    *sec_name = sec->dss_name;
+    return DW_DLV_OK;
+}
+
+int
+dwarf_get_frame_section_name_eh_gnu(Dwarf_Debug dbg,
+   const char **sec_name,
+   Dwarf_Error *error)
+{
+    struct Dwarf_Section_s *sec = 0;
+    if (error != NULL) {
+        *error = NULL;
+    }
+    sec = &dbg->de_debug_frame_eh_gnu;
+    if (sec->dss_size == 0) {
+        /* We don't have such a  section at all. */
+        return DW_DLV_NO_ENTRY;
+    }
+    *sec_name = sec->dss_name;
+    return DW_DLV_OK;
+}
+
+
 
 /*
     This function is the heart of the debug_frame stuff.  Don't even

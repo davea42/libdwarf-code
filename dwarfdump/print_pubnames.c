@@ -187,6 +187,8 @@ print_pubnames(Dwarf_Debug dbg)
 
     current_section_id = DEBUG_PUBNAMES;
     if (do_print_dwarf) {
+        /*  No need to get the real section name, this
+            section not used in modern compilers. */
         printf("\n.debug_pubnames\n");
     }
     res = dwarf_get_globals(dbg, &globbuf, &count, &err);

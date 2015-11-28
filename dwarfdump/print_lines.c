@@ -81,6 +81,7 @@ record_line_error(const char *where, Dwarf_Error err)
 
 static void
 process_line_table(Dwarf_Debug dbg,
+    const char *sec_name,
     Dwarf_Line *linebuf, Dwarf_Signed linecount,
     Dwarf_Bool is_logicals_table, Dwarf_Bool is_actuals_table)
 {
@@ -278,9 +279,10 @@ process_line_table(Dwarf_Debug dbg,
                             char addr_tmp[100];
                             if (check_lines && checking_this_compiler()) {
                                 snprintf(addr_tmp,sizeof(addr_tmp),
-                                    ".debug_line: Address"
+                                    "%s: Address"
                                     " 0x%" DW_PR_XZEROS DW_PR_DUx
-                                    " outside a valid .text range",pc);
+                                    " outside a valid .text range",
+                                    sec_name,pc);
                                 DWARF_CHECK_ERROR(lines_result,
                                     addr_tmp);
                             }
@@ -313,10 +315,11 @@ process_line_table(Dwarf_Debug dbg,
                             (PU_base_address != elf_max_address)) {
                             char addr_tmp[100];
                             snprintf(addr_tmp,sizeof(addr_tmp),
-                                ".debug_line: Address"
+                                "%s: Address"
                                 " 0x%" DW_PR_XZEROS DW_PR_DUx
                                 " may be incorrect"
-                                " as DW_LNE_end_sequence address",pc);
+                                " as DW_LNE_end_sequence address",
+                                sec_name,pc);
                             DWARF_CHECK_ERROR(lines_result,
                                 addr_tmp);
                         }
@@ -632,19 +635,19 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
     int lres = 0;
     int line_errs = 0;
     Dwarf_Line_Context line_context = 0;
+    const char *sec_name = 0;
 
     current_section_id = DEBUG_LINE;
 
     /* line_flag is TRUE */
 
-    if (do_print_dwarf) {
-        const char *sec_name = 0;
 
-        lres = dwarf_get_line_section_name_from_die(cu_die,
-            &sec_name,&err);
-        if (lres != DW_DLV_OK || !sec_name || !strlen(sec_name)) {
-            sec_name = ".debug_line";
-        }
+    lres = dwarf_get_line_section_name_from_die(cu_die,
+        &sec_name,&err);
+    if (lres != DW_DLV_OK || !sec_name || !strlen(sec_name)) {
+        sec_name = ".debug_line";
+    }
+    if (do_print_dwarf) {
         printf("\n%s: line number info for a single cu\n", sec_name);
     } else {
         /* We are checking, not printing. */
@@ -774,14 +777,14 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
                 /* ASSERT: is_single_table == true */
                 Dwarf_Bool is_logicals = FALSE;
                 Dwarf_Bool is_actuals = FALSE;
-                process_line_table(dbg, linebuf, linecount,
+                process_line_table(dbg,sec_name, linebuf, linecount,
                     is_logicals,is_actuals);
             } else {
                 Dwarf_Bool is_logicals = TRUE;
                 Dwarf_Bool is_actuals = FALSE;
-                process_line_table(dbg, linebuf, linecount,
+                process_line_table(dbg,sec_name, linebuf, linecount,
                     is_logicals, is_actuals);
-                process_line_table(dbg, linebuf_actuals,
+                process_line_table(dbg,sec_name, linebuf_actuals,
                     linecount_actuals,
                     !is_logicals, !is_actuals);
             }
@@ -789,21 +792,21 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
         } else if (line_flag_selection == orig) {
             Dwarf_Bool is_logicals = FALSE;
             Dwarf_Bool is_actuals = FALSE;
-            process_line_table(dbg, linebuf, linecount,
+            process_line_table(dbg,sec_name, linebuf, linecount,
                 is_logicals, is_actuals);
             dwarf_srclines_dealloc(dbg,linebuf,linecount);
         } else if (line_flag_selection == orig2l) {
             if (table_count == 1 || table_count == 0) {
                 Dwarf_Bool is_logicals = FALSE;
                 Dwarf_Bool is_actuals = FALSE;
-                process_line_table(dbg, linebuf, linecount,
+                process_line_table(dbg,sec_name, linebuf, linecount,
                     is_logicals, is_actuals);
             } else {
                 Dwarf_Bool is_logicals = TRUE;
                 Dwarf_Bool is_actuals = FALSE;
-                process_line_table(dbg, linebuf, linecount,
+                process_line_table(dbg,sec_name, linebuf, linecount,
                     is_logicals, is_actuals);
-                process_line_table(dbg, linebuf_actuals, linecount_actuals,
+                process_line_table(dbg,sec_name, linebuf_actuals, linecount_actuals,
                     !is_logicals, !is_actuals);
             }
             dwarf_srclines_dealloc(dbg,linebuf,linecount);

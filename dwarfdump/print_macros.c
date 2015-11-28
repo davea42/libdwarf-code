@@ -136,6 +136,11 @@ print_macinfo(Dwarf_Debug dbg)
         return;
     }
 
+    /*  No real need to get the real section name, this
+        section not used much in modern compilers
+        as this definition of macro data (V2-V4)
+        is obsolete as it takes too much space to be
+        much used. */
     printf("\n.debug_macinfo\n");
 
     while ((lres = dwarf_get_macro_details(dbg, offset,
