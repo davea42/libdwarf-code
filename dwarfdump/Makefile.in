@@ -60,6 +60,7 @@ FINALOBJECTS = \
 	print_gdbindex.o  \
 	print_lines.o \
 	print_locs.o \
+	print_macro.o \
 	print_macros.o \
 	print_pubnames.o \
 	print_ranges.o \

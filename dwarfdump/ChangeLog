@@ -1,3 +1,10 @@
+2015-11-30  David Anderson
+     * Makefile.in: Add print_macro.o to build list.
+     * dwarfdump.c: Add macro_flag flag to signal print
+       of DWARF5 debug_macro data.
+     * globals.h: Export new macro print function.
+     * print_die.c: Call new macro print function, skip that attr
+       in checking-only run..
 2015-11-28  David Anderson
      * globals.h: Added DEBUG_FRAME_EH_GNU define for consistency..
      * print_frames.c: use the new dwarf_get_frame_section_name()

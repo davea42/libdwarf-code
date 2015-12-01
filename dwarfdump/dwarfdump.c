@@ -129,7 +129,8 @@ static boolean abbrev_flag = FALSE;
 static boolean frame_flag = FALSE;      /* .debug_frame section. */
 static boolean eh_frame_flag = FALSE;   /* GNU .eh_frame section. */
 static boolean pubnames_flag = FALSE;
-static boolean macinfo_flag = FALSE;
+static boolean macinfo_flag = FALSE; /* DWARF2,3,4. Old macro section*/
+boolean macro_flag = FALSE; /* DWARF5(and DWARF4 extension) new macro section */
 static boolean loc_flag = FALSE;
 static boolean aranges_flag = FALSE; /* .debug_aranges section. */
 static boolean ranges_flag = FALSE; /* .debug_ranges section. */
@@ -1397,6 +1398,7 @@ do_all()
     info_flag = frame_flag = TRUE;
     line_flag = TRUE;
     pubnames_flag = macinfo_flag = TRUE;
+    macro_flag = TRUE;
     aranges_flag = TRUE;
     /*  Do not do
         loc_flag = TRUE
@@ -1752,7 +1754,8 @@ process_args(int argc, char *argv[])
             generic_1200_regs = TRUE;
             break;
         case 'm':
-            macinfo_flag = TRUE;
+            macinfo_flag = TRUE; /* DWARF2,3,4 */
+            macro_flag   = TRUE; /* DWARF5 */
             suppress_check_dwarf();
             break;
         case 'c':

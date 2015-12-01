@@ -229,6 +229,7 @@ extern int nTrace[MAX_TRACE_LEVEL + 1];
 #define DEBUG_TYPES       14
 #define DEBUG_GDB_INDEX   15
 #define DEBUG_FRAME_EH_GNU 16
+#define DEBUG_MACRO       17
 
 extern int verbose;
 extern boolean dense;
@@ -314,6 +315,7 @@ typedef enum /* Dwarf_Check_Categories */ {
     LAST_CATEGORY  /* Must be last */
 } Dwarf_Check_Categories;
 
+
 extern boolean info_flag;
 enum line_flag_type_e {
   std,   /* Meaning choose single table DWARF5 new interfaces. */
@@ -327,6 +329,8 @@ extern boolean line_skeleton_flag;
 extern boolean line_print_pc;        /* Print <pc> addresses. */
 extern boolean use_old_dwarf_loclist;
 extern boolean producer_children_flag;   /* List of CUs per compiler */
+
+extern boolean macro_flag; /* DWARF5 and DWARF4 macro extension */
 
 extern char cu_name[ ];
 extern boolean cu_name_flag;
@@ -471,6 +475,9 @@ void dwarfdump_print_one_locdesc(Dwarf_Debug dbg,
 void clean_up_die_esb();
 void clean_up_syms_malloc_data();
 void safe_strcpy(char *out, long outlen, const char *in, long inlen);
+
+void print_macros_5style_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die);
+
 
 void format_sig8_string(Dwarf_Sig8*data, struct esb_s *out);
 

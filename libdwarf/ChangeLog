@@ -1,3 +1,16 @@
+2015-11-30  David Anderson
+     * Makefile.in: Add dwarf_macro5.o to build list.
+     * dwarfdump.c: Add macro_flag flag to signal print
+       of DWARF5 debug_macro data.
+     * dwarf.h: Fix spelling of DWARF5 DW_MACRO fields.
+     * dwarf_alloc.c: Add DW_DLA_MACRO_CONTEXT to alloc list.
+     * dwarf_alloc.h: Add 1 to  ALLOC_AREA_INDEX_TABLE_MAX.
+     * dwarf_init_finish.c: New function dwarf_get_section_max_offsets_c
+       returns sizes of all sections, including DWARF5.
+     * dwarf_macro5.c: New,for DWARF5 macro access.
+       Implements dwarf_get_macro_context() etc.
+     * dwarf_macro5.h: Declare new internal macro structs.
+     * libdwarf.h.in: Declare new macro interfaces.
 2015-11-28  David Anderson
      * dwarf_frame.c: Added dwarf_get_frame_section_name(),
        dwarf_get_frame_section_name_eh_gnu() for better section name

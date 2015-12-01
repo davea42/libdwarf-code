@@ -165,6 +165,10 @@ typedef struct Dwarf_Locdesc_c_s * Dwarf_Locdesc_c;
 struct Dwarf_Loc_Head_c_s;
 typedef struct Dwarf_Loc_Head_c_s * Dwarf_Loc_Head_c;
 
+/* NEW November 2015. For DWARF5 .debug_macro section */
+struct Dwarf_Macro_Context_s;
+typedef struct Dwarf_Macro_Context_s * Dwarf_Loc_Macro_Context;
+
 
 /*  Location record. Records up to 2 operand values.
     Not usable with DWARF5 or DWARF4 with location
@@ -564,6 +568,8 @@ struct Dwarf_Xu_Index_Header_s;
 typedef struct Dwarf_Xu_Index_Header_s* Dwarf_Xu_Index_Header;
 struct Dwarf_Line_Context_s;
 typedef struct Dwarf_Line_Context_s *Dwarf_Line_Context;
+struct Dwarf_Macro_Context_s;
+typedef struct Dwarf_Macro_Context_s *Dwarf_Macro_Context;
 
 
 /* Opaque types for Producer Library. */
@@ -838,6 +844,7 @@ struct Dwarf_Obj_Access_Interface_s {
 #define DW_DLA_LOC_BLOCK_C     0x39     /* Dwarf_Loc_c*/
 #define DW_DLA_LOCDESC_C       0x3a     /* Dwarf_Locdesc_c */
 #define DW_DLA_LOC_HEAD_C      0x3b     /* Dwarf_Loc_Head_c */
+#define DW_DLA_MACRO_CONTEXT   0x3c     /* Dwarf_Macro_Context */
 
 /* The augmenter string for CIE */
 #define DW_CIE_AUGMENTER_STRING_V0              "z"
@@ -1229,9 +1236,12 @@ struct Dwarf_Obj_Access_Interface_s {
 #define DW_DLE_ZDEBUG_INPUT_FORMAT_ODD         315
 #define DW_DLE_ZLIB_BUF_ERROR                  316
 #define DW_DLE_ZLIB_DATA_ERROR                 317
+#define DW_DLE_MACRO_OFFSET_BAD                318
+#define DW_DLE_MACRO_OPCODE_BAD                319
+#define DW_DLE_MACRO_OPCODE_FORM_BAD           320
 
     /* DW_DLE_LAST MUST EQUAL LAST ERROR NUMBER */
-#define DW_DLE_LAST        317
+#define DW_DLE_LAST        320
 #define DW_DLE_LO_USER     0x10000
 
     /*  Taken as meaning 'undefined value', this is not
@@ -2550,6 +2560,19 @@ int dwarf_get_arange_info_b(
     Dwarf_Off     *  /*cu_die_offset*/,
     Dwarf_Error   *  /*error*/ );
 
+/*  BEGIN: DWARF5 .debug_macro  interfaces
+    NEW November 2015.  */
+int dwarf_get_macro_context(Dwarf_Die /*die*/,
+    Dwarf_Unsigned  * /*version_out*/,
+    Dwarf_Macro_Context * /*macro_context*/,
+    Dwarf_Error * /*error*/);
+void dwarf_dealloc_macro_context(Dwarf_Macro_Context /*mc*/);
+int dwarf_get_macro_section_name(Dwarf_Debug dbg,
+   const char **sec_name_out,
+   Dwarf_Error *err);
+
+
+/*  END: DWARF5 .debug_macro interfaces. */
 
 /* consumer .debug_macinfo information interface.
 */
@@ -3558,6 +3581,27 @@ dwarf_get_section_max_offsets_b(Dwarf_Debug /*dbg*/,
     Dwarf_Unsigned * /*debug_ranges_size*/,
     Dwarf_Unsigned * /*debug_pubtypes_size*/,
     Dwarf_Unsigned * /*debug_types_size*/);
+
+int
+dwarf_get_section_max_offsets_c(Dwarf_Debug /*dbg*/,
+    Dwarf_Unsigned * /*debug_info_size*/,
+    Dwarf_Unsigned * /*debug_abbrev_size*/,
+    Dwarf_Unsigned * /*debug_line_size*/,
+    Dwarf_Unsigned * /*debug_loc_size*/,
+    Dwarf_Unsigned * /*debug_aranges_size*/,
+    Dwarf_Unsigned * /*debug_macinfo_size*/,
+    Dwarf_Unsigned * /*debug_pubnames_size*/,
+    Dwarf_Unsigned * /*debug_str_size*/,
+    Dwarf_Unsigned * /*debug_frame_size*/,
+    Dwarf_Unsigned * /*debug_ranges_size*/,
+    Dwarf_Unsigned * /*debug_pubtypes_size*/,
+    Dwarf_Unsigned * /*debug_types_size*/,
+    Dwarf_Unsigned * /*debug_macro_size*/,
+    Dwarf_Unsigned * /*debug_str_offsets_size*/,
+    Dwarf_Unsigned * /*debug_sup_size*/,
+    Dwarf_Unsigned * /*debug_cu_index_size*/,
+    Dwarf_Unsigned * /*debug_tu_index_size*/);
+
 
 /*  The 'set' calls here return the original (before any change
     by these set routines) of the respective fields. */

@@ -747,6 +747,9 @@ print_one_die_section(Dwarf_Debug dbg,Dwarf_Bool is_info)
             if (line_flag || check_decl_file) {
                 print_line_numbers_this_cu(dbg, cu_die);
             }
+            if (macro_flag || check_decl_file) {
+                print_macros_5style_this_cu(dbg, cu_die);
+            }
             dwarf_dealloc(dbg, cu_die, DW_DLA_DIE);
             cu_die = 0;
         } else if (sres == DW_DLV_NO_ENTRY) {
@@ -3769,7 +3772,9 @@ check_attributes_encoding(Dwarf_Half attr,Dwarf_Half theform,
     /*  For 'DW_AT_stmt_list', due to the way is generated, the value
         can be unknown at compile time and only the assembler can decide
         how to represent the offset; ignore this attribute. */
-    if (DW_AT_stmt_list == attr) {
+    if (DW_AT_stmt_list == attr ||
+        DW_AT_macros == attr ||
+        DW_AT_GNU_macros == attr) {
         return;
     }
 

@@ -84,6 +84,7 @@ OBJS= dwarf_abbrev.o \
         dwarf_line.o \
         dwarf_loc.o \
 	dwarf_macro.o \
+	dwarf_macro5.o \
         dwarf_original_elf_init.o \
         dwarf_pubtypes.o \
         dwarf_query.o \

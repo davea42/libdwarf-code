@@ -51,6 +51,7 @@
 #include "dwarf_tsearch.h"
 #include "dwarf_gdbindex.h"
 #include "dwarf_xu_index.h"
+#include "dwarf_macro5.h"
 
 #define TRUE 1
 #define FALSE 0
@@ -256,6 +257,10 @@ struct ial_s alloc_instance_basics[ALLOC_AREA_INDEX_TABLE_MAX] = {
     {sizeof(struct Dwarf_Locdesc_c_s),MULTIPLY_CT, 0, 0},
     /* 59 DW_DLA_LOC_HEAD_C */
     {sizeof(struct Dwarf_Loc_Head_c_s),MULTIPLY_NO, 0, 0},
+    /* 60 DW_DLA_MACRO_CONTEXT */
+    {sizeof(struct Dwarf_Macro_Context_s),MULTIPLY_NO, 
+        _dwarf_macro_constructor,
+        _dwarf_macro_destructor},
 };
 
 /*  We are simply using the incoming pointer as the key-pointer.

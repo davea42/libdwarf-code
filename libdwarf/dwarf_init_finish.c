@@ -1106,6 +1106,46 @@ dwarf_get_section_max_offsets_b(Dwarf_Debug dbg,
     return DW_DLV_OK;
 }
 
+/*  Now with sections new to DWARF5 */
+int
+dwarf_get_section_max_offsets_c(Dwarf_Debug dbg,
+    Dwarf_Unsigned * debug_info_size,
+    Dwarf_Unsigned * debug_abbrev_size,
+    Dwarf_Unsigned * debug_line_size,
+    Dwarf_Unsigned * debug_loc_size,
+    Dwarf_Unsigned * debug_aranges_size,
+    Dwarf_Unsigned * debug_macinfo_size,
+    Dwarf_Unsigned * debug_pubnames_size,
+    Dwarf_Unsigned * debug_str_size,
+    Dwarf_Unsigned * debug_frame_size,
+    Dwarf_Unsigned * debug_ranges_size,
+    Dwarf_Unsigned * debug_typenames_size,
+    Dwarf_Unsigned * debug_types_size,
+    Dwarf_Unsigned * debug_macro_size,
+    Dwarf_Unsigned * debug_str_offsets_size,
+    Dwarf_Unsigned * debug_sup_size,
+    Dwarf_Unsigned * debug_cu_index_size,
+    Dwarf_Unsigned * debug_tu_index_size)
+{
+    *debug_info_size = dbg->de_debug_info.dss_size;
+    *debug_abbrev_size = dbg->de_debug_abbrev.dss_size;
+    *debug_line_size = dbg->de_debug_line.dss_size;
+    *debug_loc_size = dbg->de_debug_loc.dss_size;
+    *debug_aranges_size = dbg->de_debug_aranges.dss_size;
+    *debug_macinfo_size = dbg->de_debug_macinfo.dss_size;
+    *debug_pubnames_size = dbg->de_debug_pubnames.dss_size;
+    *debug_str_size = dbg->de_debug_str.dss_size;
+    *debug_frame_size = dbg->de_debug_frame.dss_size;
+    *debug_ranges_size = dbg->de_debug_ranges.dss_size;
+    *debug_typenames_size = dbg->de_debug_typenames.dss_size;
+    *debug_types_size = dbg->de_debug_types.dss_size;
+    *debug_macro_size = dbg->de_debug_macro.dss_size;
+    *debug_str_offsets_size = dbg->de_debug_str_offsets.dss_size;
+    *debug_sup_size = dbg->de_debug_sup.dss_size;
+    *debug_cu_index_size = dbg->de_debug_cu_index.dss_size;
+    *debug_tu_index_size = dbg->de_debug_tu_index.dss_size;
+    return DW_DLV_OK;
+}
 
 /*  Given a section name, get its size and address */
 int
