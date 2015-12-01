@@ -22,7 +22,7 @@
   USA.
 */
 
-/* 
+/*
    dwarf_macro5.h
    For the DWARF5 .debug_macro section
    (also appears as an extension to DWARF4)
@@ -54,8 +54,8 @@ struct Dwarf_Macro_Context_s {
     /* Section_offset in .debug_macro of macro header */
     Dwarf_Unsigned mc_section_offset;
     Dwarf_Half mc_version_number;
-    /* Total length of the macro data for this CU.
-       Calculated, not part of header. */
+    /*  Total length of the macro data for this CU.
+        Calculated, not part of header. */
     Dwarf_Unsigned mc_total_length;
 
     Dwarf_Half  mc_macro_header_length;
@@ -65,18 +65,20 @@ struct Dwarf_Macro_Context_s {
 
     /* the following three set from the bits in mc_flags  */
     Dwarf_Bool mc_offset_size_flag; /* If 1, offsets 64 bits */
-    Dwarf_Bool mc_debug_line_offset_flag; /* if 1, debug_line offset is present. */
+
+    /* if 1, debug_line offset is present. */
+    Dwarf_Bool mc_debug_line_offset_flag;
 
     /* 4 or 8 */
     Dwarf_Small    mc_offset_size;
 
-    /* If one the operands/opcodes (mc_opcode_forms) table is present
-       in the header. If not we use a default table. 
+    /*  If one the operands/opcodes (mc_opcode_forms) table is present
+        in the header. If not we use a default table.
 
-       Even when there are operands in the  header 
-       the standardops may or may not be 
-       defined in the header. */
-    Dwarf_Bool mc_operands_table_flag; 
+        Even when there are operands in the  header
+        the standardops may or may not be
+        defined in the header. */
+    Dwarf_Bool mc_operands_table_flag;
 
     /*  Count of the Dwarf_Macro_Forms_s structs pointed to by
         mc_opcode_forms.  */

@@ -1,4 +1,6 @@
 2015-11-30  David Anderson
+     * print_frames.c: Remove trailing whitespace.
+2015-11-30  David Anderson
      * Makefile.in: Add print_macro.o to build list.
      * dwarfdump.c: Add macro_flag flag to signal print
        of DWARF5 debug_macro data.

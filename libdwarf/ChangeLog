@@ -1,4 +1,7 @@
 2015-11-30  David Anderson
+     * dwarf_alloc.c,dwarf_macro5.c,dwarf_macro5.h,libdwarf.h.in: 
+       Remove trailing whitespace.
+2015-11-30  David Anderson
      * Makefile.in: Add dwarf_macro5.o to build list.
      * dwarfdump.c: Add macro_flag flag to signal print
        of DWARF5 debug_macro data.

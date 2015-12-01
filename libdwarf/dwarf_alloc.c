@@ -258,7 +258,7 @@ struct ial_s alloc_instance_basics[ALLOC_AREA_INDEX_TABLE_MAX] = {
     /* 59 DW_DLA_LOC_HEAD_C */
     {sizeof(struct Dwarf_Loc_Head_c_s),MULTIPLY_NO, 0, 0},
     /* 60 DW_DLA_MACRO_CONTEXT */
-    {sizeof(struct Dwarf_Macro_Context_s),MULTIPLY_NO, 
+    {sizeof(struct Dwarf_Macro_Context_s),MULTIPLY_NO,
         _dwarf_macro_constructor,
         _dwarf_macro_destructor},
 };

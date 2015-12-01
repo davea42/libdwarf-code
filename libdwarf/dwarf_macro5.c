@@ -15,12 +15,12 @@
   otherwise, applies only to this software file.  Patent licenses, if
   any, provided herein do not apply to combinations of this program with
   other software, or any other product whatsoever.
-    
+
   You should have received a copy of the GNU Lesser General Public
   License along with this program; if not, write the Free Software
   Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston MA 02110-1301,
   USA.
-    
+
 */
 
 #include "config.h"
@@ -60,7 +60,7 @@ struct Dwarf_Macro_Forms_s dw2formsarray[] = {
 
 /* Represents original DWARF 2,3,4 macro info */
 static const struct Dwarf_Macro_OperationsList_s dwarf_default_macinfo_opslist= {
-6, dw2formsarray 
+6, dw2formsarray
 };
 #endif
 
@@ -86,7 +86,7 @@ struct Dwarf_Macro_Forms_s dw5formsarray[] = {
 /* Represents DWARF 5 macro info */
 /* .debug_macro predefined, in order by value  */
 static const struct Dwarf_Macro_OperationsList_s dwarf_default_macro_opslist = {
-13, dw5formsarray 
+13, dw5formsarray
 };
 
 static int
@@ -125,11 +125,11 @@ validate_opcode(Dwarf_Debug dbg,
 
 static int
 read_operands_table(Dwarf_Macro_Context macro_context,
-     Dwarf_Small * macro_header,
-     Dwarf_Small * macro_data,
-     Dwarf_Small * section_base,
-     Dwarf_Unsigned section_size,
-     Dwarf_Error *error)
+    Dwarf_Small * macro_header,
+    Dwarf_Small * macro_data,
+    Dwarf_Small * section_base,
+    Dwarf_Unsigned section_size,
+    Dwarf_Error *error)
 {
     Dwarf_Small* macro_data_start = macro_data;
     Dwarf_Small* table_data_start = macro_data;
@@ -189,7 +189,7 @@ read_operands_table(Dwarf_Macro_Context macro_context,
         _dwarf_error(dbg, error, DW_DLE_ALLOC_FAIL);
         return DW_DLV_ERROR;
     }
-  
+
     curformentry = macro_context->mc_opcode_forms;
     for (i = 0; i < operand_table_count; ++i,++curformentry) {
         Dwarf_Small opcode_number = 0;
@@ -290,8 +290,8 @@ _dwarf_internal_macro_context(Dwarf_Die die,
     }
     macro_header = macro_offset + section_base;
     macro_data = macro_header;
-    
-    macro_context = (Dwarf_Macro_Context) 
+
+    macro_context = (Dwarf_Macro_Context)
         _dwarf_get_alloc(dbg,DW_DLA_MACRO_CONTEXT,1);
     if (!macro_context) {
         _dwarf_error(dbg, error, DW_DLE_ALLOC_FAIL);
@@ -325,7 +325,7 @@ _dwarf_internal_macro_context(Dwarf_Die die,
             return (DW_DLV_ERROR);
         }
         READ_UNALIGNED(dbg,line_table_offset,Dwarf_Unsigned,
-             macro_data,offset_size);
+            macro_data,offset_size);
         macro_data += offset_size;
         macro_context->mc_debug_line_offset = line_table_offset;
     }
@@ -361,7 +361,6 @@ dwarf_get_macro_context(Dwarf_Die cu_die,
 
     res =  _dwarf_internal_macro_context(cu_die,version_out,
         macro_context, error);
-   
     return res;
 }
 
@@ -383,20 +382,19 @@ int dwarf_get_macro_section_name(Dwarf_Debug dbg,
 void
 dwarf_dealloc_macro_context(Dwarf_Macro_Context mc)
 {
-     Dwarf_Debug dbg = mc->mc_dbg;
-     dwarf_dealloc(dbg,mc,DW_DLA_MACRO_CONTEXT);
+    Dwarf_Debug dbg = mc->mc_dbg;
+    dwarf_dealloc(dbg,mc,DW_DLA_MACRO_CONTEXT);
 }
 
-void 
+void
 _dwarf_macro_constructor(Dwarf_Debug dbg, void *m)
 {
     /* Nothing to do */
     Dwarf_Macro_Context mc= (Dwarf_Macro_Context)m;
     /* Arbitrary sentinal. For debugging. */
     mc->mc_sentinal = 0xada;
-    
 }
-void 
+void
 _dwarf_macro_destructor(void *m)
 {
     Dwarf_Macro_Context mc= (Dwarf_Macro_Context)m;
@@ -408,5 +406,3 @@ _dwarf_macro_destructor(void *m)
     /* Just a recognizable sentinal. For debugging.  No real meaning. */
     mc->mc_sentinal = 0xdeadbeef;
 }
-
-
