@@ -1,3 +1,6 @@
+2015-12-02  David Anderson
+     * Makefile.in: Bug building .so. Change $dwfzlib to $(dwfzlib)
+       to fix.
 2015-11-30  David Anderson
      * dwarf_alloc.c,dwarf_macro5.c,dwarf_macro5.h,libdwarf.h.in: 
        Remove trailing whitespace.
