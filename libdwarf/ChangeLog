@@ -1,3 +1,6 @@
+2015-12-02  David Anderson
+     * Makefile.in: Bug building .so. Change $dwfzlib to $(dwfzlib)
+       to fix.
 2015-11-28  David Anderson
      * dwarf_frame.c: Added dwarf_get_frame_section_name(),
        dwarf_get_frame_section_name_eh_gnu() for better section name
