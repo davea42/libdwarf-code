@@ -1,3 +1,5 @@
+2015-12-03  David Anderson
+     * dwarf_macro5.c, dwarf_macro5.c: sentinal->sentinel.
 2015-12-02  David Anderson
      * Makefile.in: Bug building .so. Change $dwfzlib to $(dwfzlib)
        to fix.

@@ -391,8 +391,8 @@ _dwarf_macro_constructor(Dwarf_Debug dbg, void *m)
 {
     /* Nothing to do */
     Dwarf_Macro_Context mc= (Dwarf_Macro_Context)m;
-    /* Arbitrary sentinal. For debugging. */
-    mc->mc_sentinal = 0xada;
+    /* Arbitrary sentinel. For debugging. */
+    mc->mc_sentinel = 0xada;
 }
 void
 _dwarf_macro_destructor(void *m)
@@ -403,6 +403,6 @@ _dwarf_macro_destructor(void *m)
         mc->mc_opcode_forms = 0;
         memset(m,0,sizeof(*mc));
     }
-    /* Just a recognizable sentinal. For debugging.  No real meaning. */
-    mc->mc_sentinal = 0xdeadbeef;
+    /* Just a recognizable sentinel. For debugging.  No real meaning. */
+    mc->mc_sentinel = 0xdeadbeef;
 }

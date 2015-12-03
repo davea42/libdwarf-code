@@ -50,7 +50,7 @@ struct Dwarf_Macro_OperationsList_s {
 #define MACRO_OP_TABLE_FLAG 4
 
 struct Dwarf_Macro_Context_s {
-    Dwarf_Word mc_sentinal;
+    Dwarf_Word mc_sentinel;
     /* Section_offset in .debug_macro of macro header */
     Dwarf_Unsigned mc_section_offset;
     Dwarf_Half mc_version_number;
