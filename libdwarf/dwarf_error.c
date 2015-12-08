@@ -396,6 +396,7 @@ const char *_dwarf_errmsgs[] = {
     "DW_DLE_ZDEBUG_INPUT_FORMAT_ODD(315)",
     "DW_DLE_ZLIB_BUF_ERROR(316) Z_BUF_ERROR buffer size small",
     "DW_DLE_ZLIB_DATA_ERROR(317) Z_DATA_ERROR compressed data corrupted",
+    "DW_DLE_UNKNOWN_FORM(318) Possibly corrupt DWARF data",
 };
 
 

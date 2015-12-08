@@ -97,8 +97,9 @@ dwarf_get_abbrev(Dwarf_Debug dbg,
 
 
     *abbr_count = 0;
-    if (length != NULL)
+    if (length != NULL) {
         *length = 1;
+    }
 
 
     abbrev_ptr = dbg->de_debug_abbrev.dss_data + offset;
@@ -114,6 +115,7 @@ dwarf_get_abbrev(Dwarf_Debug dbg,
             *length = 1;
         }
         return (DW_DLV_OK);
+
     }
 
     DECODE_LEB128_UWORD(abbrev_ptr, utmp);
@@ -128,6 +130,10 @@ dwarf_get_abbrev(Dwarf_Debug dbg,
         attr = (Dwarf_Half) utmp2;
         DECODE_LEB128_UWORD(abbrev_ptr, utmp2);
         attr_form = (Dwarf_Half) utmp2;
+        if (!_dwarf_valid_form_we_know(dbg,attr_form,attr)) {
+            _dwarf_error(NULL, error, DW_DLE_UNKNOWN_FORM);
+            return (DW_DLV_ERROR);
+        }
 
         if (attr != 0)
             (labbr_count)++;

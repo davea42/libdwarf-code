@@ -1,3 +1,11 @@
+2015-12-08  David Anderson
+     * dwarf_abbrev.c,dwarf_die_deliv.c,dwarf_error.c,dwarf_opaque.h,
+       dwarf_query.c,dwarf_util.c,dwarf_util.h: Now check for
+       valid forms when reading forms. Return error code
+       as appropriate (now _dwarf_get_abbrev_for_code returns
+       DW_DLV* as appropriate instead of a pointer).
+     * libdwarf.h.in: New error code for FORM problems,DW_DLE_UNKNOWN_FORM.
+
 2015-12-02  David Anderson
      * Makefile.in: Bug building .so. Change $dwfzlib to $(dwfzlib)
        to fix.

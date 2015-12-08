@@ -321,6 +321,30 @@ copy_abbrev_table_to_new_table(Dwarf_Hash_Table htin,
     }
 }
 
+/*  We allow zero form here, end of list. */
+int
+_dwarf_valid_form_we_know(Dwarf_Debug dbg,
+    Dwarf_Unsigned at_form,
+    Dwarf_Unsigned at_name)
+{
+   if(at_form == 0 && at_name == 0) {
+        return TRUE;
+   }
+   if (at_name == 0) {
+        return FALSE;
+   }
+   if (at_form <= DW_FORM_ref_sig8) {
+        return TRUE;
+   }
+   if (at_form == DW_FORM_GNU_addr_index ||
+       at_form == DW_FORM_GNU_str_index  ||
+       at_form == DW_FORM_GNU_ref_alt ||
+       at_form == DW_FORM_GNU_strp_alt) {
+        return TRUE;
+   }
+   return FALSE;
+}
+
 /*  This function returns a pointer to a Dwarf_Abbrev_List_s
     struct for the abbrev with the given code.  It puts the
     struct on the appropriate hash table.  It also adds all
@@ -346,8 +370,10 @@ copy_abbrev_table_to_new_table(Dwarf_Hash_Table htin,
     never moves once allocated, so the pointer is safe to return.
 
     Returns NULL on error.  */
-Dwarf_Abbrev_List
-_dwarf_get_abbrev_for_code(Dwarf_CU_Context cu_context, Dwarf_Unsigned code)
+int
+_dwarf_get_abbrev_for_code(Dwarf_CU_Context cu_context, Dwarf_Unsigned code,
+    Dwarf_Abbrev_List *list_out,
+    Dwarf_Error *error)
 {
     Dwarf_Debug dbg = cu_context->cc_dbg;
     Dwarf_Hash_Table hash_table_base = cu_context->cc_abbrev_hash_table;
@@ -358,9 +384,7 @@ _dwarf_get_abbrev_for_code(Dwarf_CU_Context cu_context, Dwarf_Unsigned code)
     Dwarf_Unsigned abbrev_tag  = 0;
     Dwarf_Unsigned attr_name = 0;
     Dwarf_Unsigned attr_form = 0;
-
     Dwarf_Abbrev_List hash_abbrev_entry = 0;
-
     Dwarf_Abbrev_List inner_list_entry = 0;
     Dwarf_Hash_Table_Entry inner_hash_entry = 0;
 
@@ -376,7 +400,7 @@ _dwarf_get_abbrev_for_code(Dwarf_CU_Context cu_context, Dwarf_Unsigned code)
             DW_DLA_HASH_TABLE_ENTRY,
             hash_table_base->tb_table_entry_count);
         if (!hash_table_base->tb_entries) {
-            return NULL;
+            return DW_DLV_NO_ENTRY;
         }
 
     } else if (hash_table_base->tb_total_abbrev_count >
@@ -391,7 +415,7 @@ _dwarf_get_abbrev_for_code(Dwarf_CU_Context cu_context, Dwarf_Unsigned code)
             newht.tb_table_entry_count);
 
         if (!newht.tb_entries) {
-            return NULL;
+            return DW_DLV_NO_ENTRY;
         }
         /*  Copy the existing entries to the new table,
             rehashing each.  */
@@ -418,7 +442,8 @@ _dwarf_get_abbrev_for_code(Dwarf_CU_Context cu_context, Dwarf_Unsigned code)
     if (hash_abbrev_entry != NULL) {
         /*  This returns a pointer to an abbrev list entry, not
             the list itself. */
-        return (hash_abbrev_entry);
+        *list_out = hash_abbrev_entry;
+        return DW_DLV_OK;
     }
 
     if (cu_context->cc_last_abbrev_ptr) {
@@ -446,24 +471,25 @@ _dwarf_get_abbrev_for_code(Dwarf_CU_Context cu_context, Dwarf_Unsigned code)
     }
 
     /*  End of abbrev's as we are past the end entirely.
-        THis can happen */
+        This can happen. */
     if (abbrev_ptr > end_abbrev_ptr) {
-        return (NULL);
+        return DW_DLV_NO_ENTRY;
     }
     /*  End of abbrev's for this cu, since abbrev code is 0. */
     if (*abbrev_ptr == 0) {
-        return (NULL);
+        return DW_DLV_NO_ENTRY;
     }
 
     do {
         unsigned new_hashable_val = 0;
         DECODE_LEB128_UWORD(abbrev_ptr, abbrev_code);
         DECODE_LEB128_UWORD(abbrev_ptr, abbrev_tag);
+        unsigned long abcount = 0;
 
         inner_list_entry = (Dwarf_Abbrev_List)
             _dwarf_get_alloc(cu_context->cc_dbg, DW_DLA_ABBREV_LIST, 1);
         if (inner_list_entry == NULL) {
-            return (NULL);
+            return DW_DLV_NO_ENTRY;
         }
 
         new_hashable_val = abbrev_code;
@@ -481,22 +507,34 @@ _dwarf_get_abbrev_for_code(Dwarf_CU_Context cu_context, Dwarf_Unsigned code)
         inner_list_entry->ab_has_child = *(abbrev_ptr++);
         inner_list_entry->ab_abbrev_ptr = abbrev_ptr;
 
+        hash_table_base->tb_total_abbrev_count++;
+
         /*  Cycle thru the abbrev content, ignoring the content except
             to find the end of the content. */
         do {
             DECODE_LEB128_UWORD(abbrev_ptr, attr_name);
             DECODE_LEB128_UWORD(abbrev_ptr, attr_form);
+            if (!_dwarf_valid_form_we_know(dbg,attr_form,attr_name)) {
+                _dwarf_error(dbg,error,DW_DLE_UNKNOWN_FORM);
+                 return DW_DLV_ERROR;
+            }
+
         } while (attr_name != 0 && attr_form != 0);
 
         /*  We may have fallen off the end of content,  that is not
             a botch in the section, as there is no rule that the last
             abbrev need have abbrev_code of 0. */
+
     } while ((abbrev_ptr < end_abbrev_ptr) &&
         *abbrev_ptr != 0 && abbrev_code != code);
 
     cu_context->cc_last_abbrev_ptr = abbrev_ptr;
     cu_context->cc_last_abbrev_endptr = end_abbrev_ptr;
-    return (abbrev_code == code ? inner_list_entry : NULL);
+    if(abbrev_code == code) {
+        *list_out = inner_list_entry;   
+        return DW_DLV_OK;
+    }
+    return DW_DLV_NO_ENTRY;
 }
 
 
