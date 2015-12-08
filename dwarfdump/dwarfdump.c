@@ -455,9 +455,6 @@ is_it_known_elf_header(Elf *elf)
 {
     Elf32_Ehdr *eh32;
 
-#ifdef HAVE_ELF64_GETEHDR
-    Elf64_Ehdr *eh64;
-#endif /* HAVE_ELF64_GETEHDR */
     eh32 = elf32_getehdr(elf);
     if (eh32) {
         return 1;

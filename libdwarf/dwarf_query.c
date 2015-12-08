@@ -205,16 +205,22 @@ dwarf_attrlist(Dwarf_Die die,
     Dwarf_Attribute *attr_ptr = 0;
     Dwarf_Debug dbg = 0;
     Dwarf_Byte_Ptr info_ptr = 0;
+    int lres = 0;
 
     CHECK_DIE(die, DW_DLV_ERROR);
     dbg = die->di_cu_context->cc_dbg;
 
-    abbrev_list = _dwarf_get_abbrev_for_code(die->di_cu_context,
-        die->di_abbrev_list->ab_code);
-    if (abbrev_list == NULL) {
-        _dwarf_error(dbg,error,DW_DLE_CU_DIE_NO_ABBREV_LIST);
-        return (DW_DLV_ERROR);
+    lres = _dwarf_get_abbrev_for_code(die->di_cu_context,
+        die->di_abbrev_list->ab_code,
+        &abbrev_list,error);
+    if (lres == DW_DLV_ERROR) {
+        return lres;
     }
+    if (lres == DW_DLV_NO_ENTRY) {
+        _dwarf_error(dbg, error, DW_DLE_DIE_BAD);
+        return DW_DLV_ERROR;
+    }
+
     abbrev_ptr = abbrev_list->ab_abbrev_ptr;
 
     info_ptr = die->di_debug_ptr;
@@ -227,6 +233,10 @@ dwarf_attrlist(Dwarf_Die die,
         attr = (Dwarf_Half) utmp2;
         DECODE_LEB128_UWORD(abbrev_ptr, utmp2);
         attr_form = (Dwarf_Half) utmp2;
+        if (!_dwarf_valid_form_we_know(dbg,attr_form,attr)) {
+            _dwarf_error(dbg, error, DW_DLE_UNKNOWN_FORM);
+            return DW_DLV_ERROR;
+        }
 
         if (attr != 0) {
             new_attr =
@@ -332,6 +342,7 @@ _dwarf_get_value_ptr(Dwarf_Die die,
     Dwarf_CU_Context context = die->di_cu_context;
     Dwarf_Byte_Ptr die_info_end = 0;
     Dwarf_Debug dbg = 0;
+    int lres = 0;
 
     if (!context) {
         _dwarf_error(NULL,error,DW_DLE_DIE_NO_CU_CONTEXT);
@@ -339,13 +350,17 @@ _dwarf_get_value_ptr(Dwarf_Die die,
     }
     dbg = context->cc_dbg;
     die_info_end = _dwarf_calculate_section_end_ptr(context);
-    abbrev_list = _dwarf_get_abbrev_for_code(context,
-        die->di_abbrev_list->ab_code);
-    if (abbrev_list == NULL) {
-        /*  Should this be DW_DLV_NO_ENTRY? */
+
+    lres = _dwarf_get_abbrev_for_code(context, die->di_abbrev_list->ab_code,
+        &abbrev_list,error);
+    if (lres == DW_DLV_ERROR) {
+        return lres;
+    }
+    if (lres == DW_DLV_NO_ENTRY) {
         _dwarf_error(dbg,error,DW_DLE_CU_DIE_NO_ABBREV_LIST);
         return DW_DLV_ERROR;
     }
+
     abbrev_ptr = abbrev_list->ab_abbrev_ptr;
 
     info_ptr = die->di_debug_ptr;

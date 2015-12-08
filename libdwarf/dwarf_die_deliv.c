@@ -1191,13 +1191,14 @@ _dwarf_next_die_info_ptr(Dwarf_Byte_Ptr die_info_ptr,
     Dwarf_Byte_Ptr info_ptr = 0;
     Dwarf_Byte_Ptr abbrev_ptr = 0;
     Dwarf_Word abbrev_code = 0;
-    Dwarf_Abbrev_List abbrev_list;
+    Dwarf_Abbrev_List abbrev_list = 0;
     Dwarf_Half attr = 0;
     Dwarf_Half attr_form = 0;
     Dwarf_Unsigned offset = 0;
     Dwarf_Word leb128_length = 0;
     Dwarf_Unsigned utmp = 0;
     Dwarf_Debug dbg = 0;
+    int lres = 0;
 
     info_ptr = die_info_ptr;
     DECODE_LEB128_UWORD(info_ptr, utmp);
@@ -1209,8 +1210,12 @@ _dwarf_next_die_info_ptr(Dwarf_Byte_Ptr die_info_ptr,
     }
 
 
-    abbrev_list = _dwarf_get_abbrev_for_code(cu_context, abbrev_code);
-    if (abbrev_list == NULL) {
+    lres = _dwarf_get_abbrev_for_code(cu_context, abbrev_code,
+        &abbrev_list,error);
+    if (lres == DW_DLV_ERROR) {
+        return lres;
+    }
+    if (lres == DW_DLV_NO_ENTRY) {
         _dwarf_error(dbg, error, DW_DLE_NEXT_DIE_NO_ABBREV_LIST);
         return DW_DLV_ERROR;
     }
@@ -1384,6 +1389,7 @@ dwarf_siblingof_b(Dwarf_Debug dbg,
     Dwarf_Byte_Ptr die_info_end = 0;
     Dwarf_Word abbrev_code = 0;
     Dwarf_Unsigned utmp = 0;
+    int lres = 0;
     /* Since die may be NULL, we rely on the input argument. */
     Dwarf_Debug_InfoTypes dis = is_info? &dbg->de_info_reading:
         &dbg->de_types_reading;
@@ -1530,17 +1536,21 @@ dwarf_siblingof_b(Dwarf_Debug dbg,
         return (DW_DLV_NO_ENTRY);
     }
     ret_die->di_abbrev_code = abbrev_code;
-    ret_die->di_abbrev_list =
-        _dwarf_get_abbrev_for_code(ret_die->di_cu_context, abbrev_code);
-    if (ret_die->di_abbrev_list == NULL ) {
+    lres = _dwarf_get_abbrev_for_code(ret_die->di_cu_context, abbrev_code,
+        &ret_die->di_abbrev_list,error);
+    if (lres == DW_DLV_ERROR) {
+        dwarf_dealloc(dbg, ret_die, DW_DLA_DIE);
+        return lres;
+    }
+    if (lres == DW_DLV_NO_ENTRY) {
         dwarf_dealloc(dbg, ret_die, DW_DLA_DIE);
         _dwarf_error(dbg, error, DW_DLE_DIE_ABBREV_LIST_NULL);
-        return (DW_DLV_ERROR);
+        return DW_DLV_ERROR;
     }
     if (die == NULL && !is_cu_tag(ret_die->di_abbrev_list->ab_tag)) {
         dwarf_dealloc(dbg, ret_die, DW_DLA_DIE);
         _dwarf_error(dbg, error, DW_DLE_FIRST_DIE_NOT_CU);
-        return (DW_DLV_ERROR);
+        return DW_DLV_ERROR;
     }
 
     *caller_ret_die = ret_die;
@@ -1566,6 +1576,7 @@ dwarf_child(Dwarf_Die die,
     Dwarf_Debug_InfoTypes dis = 0;
     int res = 0;
     Dwarf_CU_Context context = 0;
+    int lres = 0;
 
     CHECK_DIE(die, DW_DLV_ERROR);
     dbg = die->di_cu_context->cc_dbg;
@@ -1639,12 +1650,16 @@ dwarf_child(Dwarf_Die die,
         return DW_DLV_NO_ENTRY;
     }
     ret_die->di_abbrev_code = abbrev_code;
-    ret_die->di_abbrev_list =
-        _dwarf_get_abbrev_for_code(die->di_cu_context, abbrev_code);
-    if (ret_die->di_abbrev_list == NULL) {
+    lres = _dwarf_get_abbrev_for_code(die->di_cu_context, abbrev_code,
+        &ret_die->di_abbrev_list,error);
+    if (lres == DW_DLV_ERROR) {
+        dwarf_dealloc(dbg, ret_die, DW_DLA_DIE);
+        return lres;
+    }
+    if (lres == DW_DLV_NO_ENTRY) {
         dwarf_dealloc(dbg, ret_die, DW_DLA_DIE);
         _dwarf_error(dbg, error, DW_DLE_DIE_BAD);
-        return (DW_DLV_ERROR);
+        return DW_DLV_ERROR;
     }
 
     *caller_ret_die = ret_die;
@@ -1677,6 +1692,7 @@ dwarf_offdie_b(Dwarf_Debug dbg,
     Dwarf_Byte_Ptr info_ptr = 0;
     Dwarf_Unsigned abbrev_code = 0;
     Dwarf_Unsigned utmp = 0;
+    int lres = 0;
     Dwarf_Debug_InfoTypes dis = 0;
 
     if (dbg == NULL) {
@@ -1687,8 +1703,9 @@ dwarf_offdie_b(Dwarf_Debug dbg,
         &dbg->de_types_reading;
 
     cu_context = _dwarf_find_CU_Context(dbg, offset,is_info);
-    if (cu_context == NULL)
+    if (cu_context == NULL) {
         cu_context = _dwarf_find_offdie_CU_Context(dbg, offset,is_info);
+    }
 
     if (cu_context == NULL) {
         Dwarf_Unsigned section_size = is_info? dbg->de_debug_info.dss_size:
@@ -1761,16 +1778,19 @@ dwarf_offdie_b(Dwarf_Debug dbg,
         return DW_DLV_NO_ENTRY;
     }
     die->di_abbrev_code = abbrev_code;
-    die->di_abbrev_list =
-        _dwarf_get_abbrev_for_code(cu_context, abbrev_code);
-    if (die->di_abbrev_list == NULL) {
+    lres = _dwarf_get_abbrev_for_code(cu_context, abbrev_code,
+        &die->di_abbrev_list,error);
+    if (lres == DW_DLV_ERROR) {
+        dwarf_dealloc(dbg, die, DW_DLA_DIE);
+        return lres;
+    }
+    if (lres == DW_DLV_NO_ENTRY) {
         dwarf_dealloc(dbg, die, DW_DLA_DIE);
         _dwarf_error(dbg, error, DW_DLE_DIE_ABBREV_LIST_NULL);
-        return (DW_DLV_ERROR);
+        return DW_DLV_ERROR;
     }
-
     *new_die = die;
-    return (DW_DLV_OK);
+    return DW_DLV_OK;
 }
 
 /*  This is useful when printing DIE data.

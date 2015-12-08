@@ -1,3 +1,9 @@
+2015-12-08  David Anderson
+     * print_frames.c: Fix indents and remove trailing whitespace.
+       Add comments: Errors in DIE info just result in omitting
+       procedure names, no warning/errors.
+     * dwarfdump.c: Deleted Elf64_Ehdr *eh64 declaration
+       that can never be used.
 2015-11-30  David Anderson
      * print_frames.c: Remove trailing whitespace.
 2015-11-30  David Anderson

@@ -192,6 +192,7 @@ add_debug_section_info(Dwarf_Debug dbg,
     return DW_DLV_ERROR;
 }
 
+#if 0
 static void
 dump_bytes(Dwarf_Small * start, long len)
 {
@@ -203,6 +204,7 @@ dump_bytes(Dwarf_Small * start, long len)
     }
 
 }
+#endif
 
 
 /* Return DW_DLV_OK etc. */
@@ -947,7 +949,7 @@ do_decompress_zlib(Dwarf_Debug dbg,
     uLongf destlen = 0;
     Dwarf_Unsigned uncompressed_len = 0;
 
-    if(strncmp("ZLIB",src,4)) {
+    if(strncmp("ZLIB",(const char *)src,4)) {
         DWARF_DBG_ERROR(dbg, DW_DLE_ZDEBUG_INPUT_FORMAT_ODD, DW_DLV_ERROR);
     }
     {

@@ -451,6 +451,9 @@ get_fde_proc_name(Dwarf_Debug dbg, Dwarf_Addr low_pc,
             &address_size, &next_cu_offset,
             &err);
         if (cures == DW_DLV_ERROR) {
+            /*  If there is a serious error in DIE information
+                we just skip looking for a procedure name. 
+                Perhaps we should report something? */
             return NULL;
         } else if (cures == DW_DLV_NO_ENTRY) {
             /* loop thru the list again */
@@ -461,6 +464,9 @@ get_fde_proc_name(Dwarf_Debug dbg, Dwarf_Addr low_pc,
                 &current_cu_die_for_print_frames,
                 &err);
             if (dres == DW_DLV_ERROR) {
+                /*  If there is a serious error in DIE information
+                    we just skip looking for a procedure name. 
+                    Perhaps we should report something? */
                 return NULL;
             }
         }
