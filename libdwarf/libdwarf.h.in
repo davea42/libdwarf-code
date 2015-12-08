@@ -1229,10 +1229,10 @@ struct Dwarf_Obj_Access_Interface_s {
 #define DW_DLE_ZDEBUG_INPUT_FORMAT_ODD         315
 #define DW_DLE_ZLIB_BUF_ERROR                  316
 #define DW_DLE_ZLIB_DATA_ERROR                 317
-#define DW_DLE_UNKNOWN_FORM                    318
+#define DW_DLE_UNKNOWN_FORM                    321
 
     /* DW_DLE_LAST MUST EQUAL LAST ERROR NUMBER */
-#define DW_DLE_LAST        318
+#define DW_DLE_LAST        321
 #define DW_DLE_LO_USER     0x10000
 
     /*  Taken as meaning 'undefined value', this is not

@@ -1,3 +1,6 @@
+2015-12-08  David Anderson
+     * dwarfdump.c: Deleted Elf64_Ehdr *eh64 declaration
+       that can never be used.
 2015-11-28  David Anderson
      * globals.h: Added DEBUG_FRAME_EH_GNU define for consistency..
      * print_frames.c: use the new dwarf_get_frame_section_name()
