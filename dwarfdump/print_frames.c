@@ -451,6 +451,9 @@ get_fde_proc_name(Dwarf_Debug dbg, Dwarf_Addr low_pc,
             &address_size, &next_cu_offset,
             &err);
         if (cures == DW_DLV_ERROR) {
+            /*  If there is a serious error in DIE information
+                we just skip looking for a procedure name. 
+                Perhaps we should report something? */
             return NULL;
         } else if (cures == DW_DLV_NO_ENTRY) {
             /* loop thru the list again */
@@ -461,6 +464,9 @@ get_fde_proc_name(Dwarf_Debug dbg, Dwarf_Addr low_pc,
                 &current_cu_die_for_print_frames,
                 &err);
             if (dres == DW_DLV_ERROR) {
+                /*  If there is a serious error in DIE information
+                    we just skip looking for a procedure name. 
+                    Perhaps we should report something? */
                 return NULL;
             }
         }
@@ -558,7 +564,7 @@ get_fde_proc_name(Dwarf_Debug dbg, Dwarf_Addr low_pc,
 /*  Gather the fde print logic here so the control logic
     determining what FDE to print is clearer.  */
 static int
-print_one_fde(Dwarf_Debug dbg, 
+print_one_fde(Dwarf_Debug dbg,
     const char *frame_section_name,
     Dwarf_Fde fde,
     Dwarf_Unsigned fde_index,
@@ -1808,8 +1814,8 @@ print_frames(Dwarf_Debug dbg,
             }
             fres = dwarf_get_frame_section_name(dbg,
                 &frame_section_name,&err);
-            if (fres != DW_DLV_OK || !frame_section_name || 
-               !strlen(frame_section_name)) {
+            if (fres != DW_DLV_OK || !frame_section_name ||
+                !strlen(frame_section_name)) {
                 frame_section_name = ".debug_frame";
             }
 
@@ -1848,8 +1854,8 @@ print_frames(Dwarf_Debug dbg,
             silent_if_missing = 1;
             fres = dwarf_get_frame_section_name_eh_gnu(dbg,
                 &frame_section_name,&err);
-            if (fres != DW_DLV_OK || !frame_section_name || 
-               !strlen(frame_section_name)) {
+            if (fres != DW_DLV_OK || !frame_section_name ||
+                !strlen(frame_section_name)) {
                 frame_section_name = ".eh_frame";
             }
             fres = dwarf_get_fde_list_eh(dbg, &cie_data,

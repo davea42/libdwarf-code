@@ -1,4 +1,7 @@
 2015-12-08  David Anderson
+     * dwarf_die_deliv.c,dwarf_query.c,dwarf_util.c,libdwarf.h.in:
+       Fix indents, remove trailing whitespace.
+2015-12-08  David Anderson
      * dwarf_init_finish.c: Added a cast to strncmp() call to
        avoid warning.
      * dwarf_abbrev.c,dwarf_die_deliv.c,dwarf_error.c,dwarf_opaque.h,

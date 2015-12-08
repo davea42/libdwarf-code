@@ -327,22 +327,22 @@ _dwarf_valid_form_we_know(Dwarf_Debug dbg,
     Dwarf_Unsigned at_form,
     Dwarf_Unsigned at_name)
 {
-   if(at_form == 0 && at_name == 0) {
+    if(at_form == 0 && at_name == 0) {
         return TRUE;
-   }
-   if (at_name == 0) {
+    }
+    if (at_name == 0) {
         return FALSE;
-   }
-   if (at_form <= DW_FORM_ref_sig8) {
+    }
+    if (at_form <= DW_FORM_ref_sig8) {
         return TRUE;
-   }
-   if (at_form == DW_FORM_GNU_addr_index ||
-       at_form == DW_FORM_GNU_str_index  ||
-       at_form == DW_FORM_GNU_ref_alt ||
-       at_form == DW_FORM_GNU_strp_alt) {
+    }
+    if (at_form == DW_FORM_GNU_addr_index ||
+        at_form == DW_FORM_GNU_str_index  ||
+        at_form == DW_FORM_GNU_ref_alt ||
+        at_form == DW_FORM_GNU_strp_alt) {
         return TRUE;
-   }
-   return FALSE;
+    }
+    return FALSE;
 }
 
 /*  This function returns a pointer to a Dwarf_Abbrev_List_s
@@ -516,7 +516,7 @@ _dwarf_get_abbrev_for_code(Dwarf_CU_Context cu_context, Dwarf_Unsigned code,
             DECODE_LEB128_UWORD(abbrev_ptr, attr_form);
             if (!_dwarf_valid_form_we_know(dbg,attr_form,attr_name)) {
                 _dwarf_error(dbg,error,DW_DLE_UNKNOWN_FORM);
-                 return DW_DLV_ERROR;
+                return DW_DLV_ERROR;
             }
 
         } while (attr_name != 0 && attr_form != 0);
@@ -531,7 +531,7 @@ _dwarf_get_abbrev_for_code(Dwarf_CU_Context cu_context, Dwarf_Unsigned code,
     cu_context->cc_last_abbrev_ptr = abbrev_ptr;
     cu_context->cc_last_abbrev_endptr = end_abbrev_ptr;
     if(abbrev_code == code) {
-        *list_out = inner_list_entry;   
+        *list_out = inner_list_entry;
         return DW_DLV_OK;
     }
     return DW_DLV_NO_ENTRY;

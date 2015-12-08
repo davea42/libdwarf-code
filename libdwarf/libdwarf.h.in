@@ -229,8 +229,6 @@ typedef struct {
     enum Dwarf_Ranges_Entry_Type  dwr_type;
 } Dwarf_Ranges;
 
- 
-
 /* Frame description instructions expanded.
 */
 typedef struct {
@@ -1343,7 +1341,7 @@ int dwarf_object_finish(Dwarf_Debug /* dbg */,
     Dwarf_Error* /* error */);
 
 /*  Section name access.  Because sections might
-    now end with .dwo or be .zdebug  or might not. 
+    now end with .dwo or be .zdebug  or might not.
 */
 int
 dwarf_get_die_section_name(Dwarf_Debug /*dbg*/,

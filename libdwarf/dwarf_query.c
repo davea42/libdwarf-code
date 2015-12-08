@@ -210,7 +210,7 @@ dwarf_attrlist(Dwarf_Die die,
     CHECK_DIE(die, DW_DLV_ERROR);
     dbg = die->di_cu_context->cc_dbg;
 
-    lres = _dwarf_get_abbrev_for_code(die->di_cu_context, 
+    lres = _dwarf_get_abbrev_for_code(die->di_cu_context,
         die->di_abbrev_list->ab_code,
         &abbrev_list,error);
     if (lres == DW_DLV_ERROR) {
@@ -218,7 +218,7 @@ dwarf_attrlist(Dwarf_Die die,
     }
     if (lres == DW_DLV_NO_ENTRY) {
         _dwarf_error(dbg, error, DW_DLE_DIE_BAD);
-        return (DW_DLV_ERROR);
+        return DW_DLV_ERROR;
     }
 
     abbrev_ptr = abbrev_list->ab_abbrev_ptr;
