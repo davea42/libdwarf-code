@@ -531,7 +531,7 @@ dwarf_create_cie_from_after_start(Dwarf_Debug dbg,
 
     frame_ptr++;
     if (version != DW_CIE_VERSION && version != DW_CIE_VERSION3 &&
-        version != DW_CIE_VERSION4) {
+        version != DW_CIE_VERSION4 && version != DW_CIE_VERSION5) {
         _dwarf_error(dbg, error, DW_DLE_FRAME_VERSION_BAD);
         return (DW_DLV_ERROR);
     }
@@ -850,6 +850,10 @@ dwarf_create_fde_from_after_start(Dwarf_Debug dbg,
         break;
     case aug_past_last:
         break;
+
+    case aug_metaware: /* No special fields. See dwarf_util.h */
+        break;
+
     case aug_unknown:
         _dwarf_error(dbg, error, DW_DLE_FRAME_AUGMENTATION_UNKNOWN);
         return DW_DLV_ERROR;
@@ -1416,8 +1420,9 @@ _dwarf_get_augmentation_type(Dwarf_Debug dbg,
             http://sourceware.org/ml/gdb-patches/2006-12/msg00249.html
             for details. */
         t = aug_armcc;
+    } else if (strcmp(ag_string, "HC") == 0) {
+        t = aug_metaware;
     } else {
-
     }
     return t;
 }

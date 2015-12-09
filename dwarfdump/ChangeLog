@@ -1,4 +1,8 @@
 2015-12-08  David Anderson
+     * common.c,dwarfdump.c: Update version string.
+     * print_frames.c: Fix trailing whitespace.
+       Implement an attempt at DW_CFA_METAWARE_info.
+2015-12-08  David Anderson
      * print_frames.c: Fix indents and remove trailing whitespace.
        Add comments: Errors in DIE info just result in omitting
        procedure names, no warning/errors.
