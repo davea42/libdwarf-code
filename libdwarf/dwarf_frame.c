@@ -718,6 +718,21 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
                 fp_offset = factored_N_value;
                 break;
             }
+        /*  This is for Metaware with augmentation string HC
+            We do not really know what to do with it. */
+        case DW_CFA_METAWARE_info:
+            {
+                factored_N_value =
+                    _dwarf_decode_u_leb128(instr_ptr, &leb128_length);
+                instr_ptr += leb128_length;
+
+                /* Not really known what the value means or is. */
+                cfa_reg.ru_is_off = 1;
+                cfa_reg.ru_value_type = DW_EXPR_OFFSET;
+                cfa_reg.ru_offset_or_block_len = factored_N_value;
+
+                break;
+            }
         case DW_CFA_nop:
             {
                 break;

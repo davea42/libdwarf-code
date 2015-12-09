@@ -3,6 +3,11 @@
      * dwarf_macro5.c, dwarf_macro5.c: sentinal->sentinel.
 =======
 2015-12-08  David Anderson
+     * dwarf.h,dwarf_frame.c: Add DW_CFA_METAWARE_info.
+     * dwarf_frame.h: Add aug_metaware to enum.
+     * dwarf_frame2.c: Add aug_metaware  handling.
+     * dwarf_util.c: Delete unused local variable.
+2015-12-08  David Anderson
      * dwarf_die_deliv.c,dwarf_query.c,dwarf_util.c,libdwarf.h.in:
        Fix indents, remove trailing whitespace. Remove some useless ()
        in return statements.

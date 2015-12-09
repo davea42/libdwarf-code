@@ -202,8 +202,12 @@ enum Dwarf_augmentation_type {
         Arm C RVCT 3.0 SP1 and later). See
         http://sourceware.org/ml/gdb-patches/2006-12/msg00249.html
         for details. */
-        aug_unknown,      /* Unknown augmentation, we cannot do much. */
-        aug_past_last
+    aug_unknown,      /* Unknown augmentation, we cannot do much. */
+
+    /*  HC, From http://sourceforge.net/p/elftoolchain/tickets/397/ */
+    aug_metaware,
+
+    aug_past_last
 };
 
 

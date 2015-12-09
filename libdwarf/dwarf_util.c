@@ -484,7 +484,6 @@ _dwarf_get_abbrev_for_code(Dwarf_CU_Context cu_context, Dwarf_Unsigned code,
         unsigned new_hashable_val = 0;
         DECODE_LEB128_UWORD(abbrev_ptr, abbrev_code);
         DECODE_LEB128_UWORD(abbrev_ptr, abbrev_tag);
-        unsigned long abcount = 0;
 
         inner_list_entry = (Dwarf_Abbrev_List)
             _dwarf_get_alloc(cu_context->cc_dbg, DW_DLA_ABBREV_LIST, 1);

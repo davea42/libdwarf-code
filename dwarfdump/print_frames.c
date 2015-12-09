@@ -452,7 +452,7 @@ get_fde_proc_name(Dwarf_Debug dbg, Dwarf_Addr low_pc,
             &err);
         if (cures == DW_DLV_ERROR) {
             /*  If there is a serious error in DIE information
-                we just skip looking for a procedure name. 
+                we just skip looking for a procedure name.
                 Perhaps we should report something? */
             return NULL;
         } else if (cures == DW_DLV_NO_ENTRY) {
@@ -465,7 +465,7 @@ get_fde_proc_name(Dwarf_Debug dbg, Dwarf_Addr low_pc,
                 &err);
             if (dres == DW_DLV_ERROR) {
                 /*  If there is a serious error in DIE information
-                    we just skip looking for a procedure name. 
+                    we just skip looking for a procedure name.
                     Perhaps we should report something? */
                 return NULL;
             }
@@ -1612,6 +1612,23 @@ print_frame_inst_bytes(Dwarf_Debug dbg,
                 break;
 
 
+            /* Only in Metaware. Unknown meaning. */
+            case DW_CFA_METAWARE_info: {
+                Dwarf_Unsigned val = 0;
+
+                /*  instp is always 1 byte back, so we need +1
+                    when we use it. See the final increment
+                    of this for loop. */
+                val = local_dwarf_decode_u_leb128(instp + 1,
+                    &uleblen);
+                printf("\t%2u DW_CFA_METAWARE_info value: %"
+                    DW_PR_DUu "\n",
+                    loff, val);
+                instp += uleblen;
+                len -= uleblen;
+                off += uleblen;
+                }
+                break;
 #ifdef DW_CFA_GNU_window_save
             case DW_CFA_GNU_window_save:{
                 /*  no information: this just tells unwinder to

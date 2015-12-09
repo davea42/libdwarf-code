@@ -1108,6 +1108,11 @@ extern "C" {
 #define DW_CFA_GNU_args_size     0x2e /* GNU  */
 #define DW_CFA_GNU_negative_offset_extended  0x2f /* GNU */
 
+/* Metaware if HC is augmentation, apparently meaning High C
+   and the op has a single uleb operand.
+   See http://sourceforge.net/p/elftoolchain/tickets/397/  */
+#define DW_CFA_METAWARE_info     0x34
+
 #define DW_CFA_high_user         0x3f
 
 /* GNU exception header encoding.  See the Generic
