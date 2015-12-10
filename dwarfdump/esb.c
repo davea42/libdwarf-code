@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2005 Silicon Graphics, Inc.  All Rights Reserved.
-  Portions Copyright (C) 2013 David Anderson. All Rights Reserved.
+  Portions Copyright (C) 2013-2015 David Anderson. All Rights Reserved.
   This program is free software; you can redistribute it and/or modify it
   under the terms of version 2 of the GNU General Public License as
   published by the Free Software Foundation.
@@ -21,17 +21,22 @@
   Franklin Street - Fifth Floor, Boston MA 02110-1301, USA.
 */
 
-/* esb.c
-   extensible string buffer.
+/*  esb.c
+    extensible string buffer.
 
-   A simple means (vaguely like a C++ class) that
-   enables safely saving strings of arbitrary length built up
-   in small pieces.
+    A simple means (vaguely like a C++ class) that
+    enables safely saving strings of arbitrary length built up
+    in small pieces.
 
-   We really do allow only c strings here. NUL bytes
-   in a string result in adding only up to the NUL and
-   in a warning to stderr.
+    We really do allow only C strings here. NUL bytes
+    in a string result in adding only up to the NUL (and
+    in the case of certain interfaces here a warning
+    to stderr).
 
+    Do selftest as follows:
+        gcc -DSELFTEST esb.c
+        ./a.out
+        valgrind --leak-check=full ./a.out
 */
 
 #ifndef SELFTEST
@@ -187,7 +192,6 @@ esb_empty_string(struct esb_s *data)
     }
     data->esb_used_bytes = 0;
     data->esb_string[0] = 0;
-
 }
 
 
@@ -270,17 +274,19 @@ esb_append_printf(struct esb_s *data,const char *in_string, ...)
     va_end(ap);
 }
 
-/* Get a copy of the internal data buffer */
+/*  Get a copy of the internal data buffer.
+    It is up to the code calling this
+    to free() the string using the
+    pointer returned here. */
 string
 esb_get_copy(struct esb_s *data)
 {
     string copy = NULL;
     size_t len = esb_string_len(data);
     if (len) {
-        copy = (string)malloc(len);
+        copy = (string)malloc(len + 1);
         strcpy(copy,esb_get_string(data));
     }
-
     return copy;
 }
 
@@ -297,17 +303,17 @@ validate_esb(int instance,
     printf("TEST instance %d\n",instance);
     if (esb_string_len(d) != explen) {
         ++failcount;
-        printf("FAIL instance %d  slen %u explen %u\n",
+        printf("FAIL instance %d  esb_string_len() %u explen %u\n",
             instance,(unsigned)esb_string_len(d),(unsigned)explen);
     }
     if (d->esb_allocated_size != expalloc) {
         ++failcount;
-        printf("FAIL instance %d  alloclen %u expalloc %u\n",
+        printf("FAIL instance %d  esb_allocated_size  %u expalloc %u\n",
             instance,(unsigned)d->esb_allocated_size,(unsigned)expalloc);
     }
     if(strcmp(esb_get_string(d),expout)) {
         ++failcount;
-        printf("FAIL instance %d  str %s expstr %s\n",
+        printf("FAIL instance %d esb_get_stringr %s expstr %s\n",
             instance,esb_get_string(d),expout);
     }
 }
@@ -361,6 +367,7 @@ int main()
         struct esb_s d;
         static char oddarray[7] = {'a','b',0,'c','c','d',0};
         esb_constructor(&d);
+        fprintf(stderr,"esb_appendn call error(intentional). Expect msg on stderr\n");
         /* This provokes a msg on stderr. Bad input. */
         esb_appendn(&d,oddarray,6);
         validate_esb(10,&d,2,3,"ab");
@@ -377,6 +384,7 @@ int main()
         esb_force_allocation(&d,7);
         trialprint(&d);
         validate_esb(13,&d,6,7,"aaaa i");
+        esb_destructor(&d);
     }
     {
         struct esb_s d;
@@ -385,7 +393,25 @@ int main()
         esb_force_allocation(&d,50);
         trialprint(&d);
         validate_esb(14,&d,19,50,"aaaa insert me bbbb");
+        esb_destructor(&d);
     }
+    {
+        struct esb_s d;
+        struct esb_s e;
+        string result = NULL;
+        esb_constructor(&d);
+        esb_constructor(&e);
+
+        esb_append(&d,"abcde fghij klmno pqrst");
+        validate_esb(15,&d,23,24,"abcde fghij klmno pqrst");
+
+        result = esb_get_copy(&d);
+        esb_append(&e,result);
+        validate_esb(16,&e,23,24,"abcde fghij klmno pqrst");
+        esb_destructor(&d);
+        esb_destructor(&e);
+    }
+
     if (failcount) {
         printf("FAIL esb test\n");
         exit(1);
