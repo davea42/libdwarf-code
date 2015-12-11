@@ -37,6 +37,9 @@
         gcc -DSELFTEST esb.c
         ./a.out
         valgrind --leak-check=full ./a.out
+
+    The functions assume that
+    pointer arguments of all kinds are not NULL.
 */
 
 #ifndef SELFTEST
@@ -143,8 +146,11 @@ esb_appendn(struct esb_s *data, const char * in_string, size_t len)
 void
 esb_append(struct esb_s *data, const char * in_string)
 {
-    size_t len = strlen(in_string);
-
+    size_t len = 0;
+    if(!in_string) {
+        return;
+    }
+    len = strlen(in_string);
     esb_appendn_internal(data, in_string, len);
 }
 
