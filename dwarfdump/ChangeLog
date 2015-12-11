@@ -1,4 +1,7 @@
 2015-12-11  David Anderson
+     * naming.h,naming.c: Added get_MACRO_name().
+     * print_macro.c: Now reads and prints macro5 header.
+2015-12-11  David Anderson
      * esb.c: esb_append now checks for NULL string pointer.
        Added comment esb functions do NOT check for NULL pointers
        generally.

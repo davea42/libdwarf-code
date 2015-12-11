@@ -1,7 +1,12 @@
-<<<<<<< HEAD
-2015-12-03  David Anderson
-     * dwarf_macro5.c, dwarf_macro5.c: sentinal->sentinel.
-=======
+2015-12-11  David Anderson
+     * dwarf_alloc.c: Remove () around simple return value.
+     * dwarf_error.c: Two new error codes for DWARF5 macro section.
+     * dwarf5_macro.c,dwarf5_macro.h: Add functions 
+       to let reader read/print
+       .debug_macro section header.  Fixed _dwarf_macro_constructor
+       declaration and implementation to return DW_DLV_OK.
+     * libdwarf.h.in: Add functions to let reader read/print
+       .debug_macro section header.
 2015-12-08  David Anderson
      * dwarf.h,dwarf_frame.c: Add DW_CFA_METAWARE_info.
      * dwarf_frame.h: Add aug_metaware to enum.
@@ -21,8 +26,8 @@
        DW_DLV* as appropriate instead of a pointer).
        Left error placeholders for eventual merge with DWARF5 macro code.
      * libdwarf.h.in: New error code for FORM problems,DW_DLE_UNKNOWN_FORM.
-
->>>>>>> master
+2015-12-03  David Anderson
+     * dwarf_macro5.c, dwarf_macro5.c: sentinal->sentinel.
 2015-12-02  David Anderson
      * Makefile.in: Bug building .so. Change $dwfzlib to $(dwfzlib)
        to fix.

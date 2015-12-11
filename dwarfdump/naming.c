@@ -218,6 +218,12 @@ const char * get_MACINFO_name(unsigned int val_in,int printonerr)
    int res = dwarf_get_MACINFO_name(val_in,&v);
    return ellipname(res,val_in,v,"MACINFO",printonerr);
 }
+const char * get_MACRO_name(unsigned int val_in,int printonerr)
+{
+   const char *v = 0;
+   int res = dwarf_get_MACRO_name(val_in,&v);
+   return ellipname(res,val_in,v,"MACRO",printonerr);
+}
 const char * get_CFA_name(unsigned int val_in,int printonerr)
 {
    const char *v = 0;

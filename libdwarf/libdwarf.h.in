@@ -1238,9 +1238,11 @@ struct Dwarf_Obj_Access_Interface_s {
 #define DW_DLE_MACRO_OPCODE_BAD                319
 #define DW_DLE_MACRO_OPCODE_FORM_BAD           320
 #define DW_DLE_UNKNOWN_FORM                    321
+#define DW_DLE_BAD_MACRO_HEADER_POINTER        322
+#define DW_DLE_BAD_MACRO_INDEX                 323
 
     /* DW_DLE_LAST MUST EQUAL LAST ERROR NUMBER */
-#define DW_DLE_LAST        321
+#define DW_DLE_LAST        323
 #define DW_DLE_LO_USER     0x10000
 
     /*  Taken as meaning 'undefined value', this is not
@@ -2569,6 +2571,25 @@ void dwarf_dealloc_macro_context(Dwarf_Macro_Context /*mc*/);
 int dwarf_get_macro_section_name(Dwarf_Debug dbg,
    const char **sec_name_out,
    Dwarf_Error *err);
+int dwarf_macro_operands_table(Dwarf_Macro_Context /*head*/,
+    Dwarf_Half  /*index*/, /* 0 to opcode_count -1 */
+    Dwarf_Half  * /*opcode_number*/,
+    Dwarf_Half  * /*operand_count*/,
+    const Dwarf_Small ** /*operand_array*/,
+    Dwarf_Error * /*error*/);
+int dwarf_macro_context_head(Dwarf_Macro_Context /*head*/,
+    Dwarf_Half     * /*version*/,
+    Dwarf_Unsigned * /*mac_offset*/,
+    Dwarf_Unsigned * /*mac_len*/,
+    Dwarf_Unsigned * /*mac_header_len*/,
+    unsigned *       /*flags*/,
+    Dwarf_Bool *     /*has_line_offset*/,
+    Dwarf_Bool *     /*has_offset_size_64*/,
+    Dwarf_Bool *     /*has_operands_table*/,
+    Dwarf_Half *     /*opcode_count*/,
+    Dwarf_Error *    /*error*/);
+
+
 
 
 /*  END: DWARF5 .debug_macro interfaces. */

@@ -48,6 +48,7 @@ extern const char * get_DSC_name(unsigned int val_in,int printonerr);
 extern const char * get_LNS_name(unsigned int val_in,int printonerr);
 extern const char * get_LNE_name(unsigned int val_in,int printonerr);
 extern const char * get_MACINFO_name(unsigned int val_in,int printonerr);
+extern const char * get_MACRO_name(unsigned int val_in,int printonerr);
 extern const char * get_CFA_name(unsigned int val_in,int printonerr);
 extern const char * get_EH_name(unsigned int val_in,int printonerr);
 extern const char * get_FRAME_name(unsigned int val_in,int printonerr);

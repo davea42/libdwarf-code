@@ -347,7 +347,7 @@ _dwarf_get_alloc(Dwarf_Debug dbg,
     short action = 0;
 
     if (dbg == NULL) {
-        return (NULL);
+        return NULL;
     }
     if (type >= ALLOC_AREA_INDEX_TABLE_MAX) {
         /* internal error */
