@@ -90,6 +90,31 @@ static const struct Dwarf_Macro_OperationsList_s dwarf_default_macro_opslist = {
 };
 
 static int
+valid_form_in_list(Dwarf_Half form)
+{
+    switch(form) {
+    case DW_FORM_block:
+    case DW_FORM_block1:
+    case DW_FORM_block2:
+    case DW_FORM_block4:
+    case DW_FORM_data1:
+    case DW_FORM_data2:
+    case DW_FORM_data4:
+    case DW_FORM_data8:
+    case DW_FORM_data16:
+    case DW_FORM_sdata:
+    case DW_FORM_udata:
+    case DW_FORM_flag:
+    case DW_FORM_sec_offset:
+    case DW_FORM_string:
+    case DW_FORM_strp:
+    case DW_FORM_strx:
+        return TRUE;
+    }
+    return FALSE;
+}
+
+static int
 validate_opcode(Dwarf_Debug dbg,
    struct Dwarf_Macro_Forms_s *curform,
    Dwarf_Error * error)
@@ -160,7 +185,7 @@ read_operands_table(Dwarf_Macro_Context macro_context,
     /* first, get size of table. */
     table_data_start = macro_data;
     for (i = 0; i < operand_table_count; ++i) {
-        /*  Compiler warning about unused opcode_number 
+        /*  Compiler warning about unused opcode_number
             variable should be ignored. */
         Dwarf_Small opcode_number = 0;
         Dwarf_Unsigned formcount = 0;
@@ -217,6 +242,15 @@ read_operands_table(Dwarf_Macro_Context macro_context,
         }
         curformentry->mf_formbytes = macro_data;
         macro_data += formcount;
+        if (opcode_number  > DW_MACRO_undef_strx ) {
+            Dwarf_Half k = 0;
+            for(k = 0; k < formcount; ++k) {
+                if (!valid_form_in_list(curformentry->mf_formbytes[k])) {
+                    _dwarf_error(dbg, error, DW_DLE_MACRO_OP_UNHANDLED);
+                    return (DW_DLV_ERROR);
+                }
+            }
+        }
         int res = validate_opcode(macro_context->mc_dbg,curformentry, error);
         if(res != DW_DLV_OK) {
             return res;
@@ -362,11 +396,11 @@ int dwarf_macro_context_head(Dwarf_Macro_Context head,
     Dwarf_Error *error)
 {
     if (!head || head->mc_sentinel != 0xada) {
-         Dwarf_Debug dbg = 0;
-         if(head) {
-             dbg = head->mc_dbg;
-         }
-         _dwarf_error(dbg, error,DW_DLE_BAD_MACRO_HEADER_POINTER);
+        Dwarf_Debug dbg = 0;
+        if(head) {
+            dbg = head->mc_dbg;
+        }
+        _dwarf_error(dbg, error,DW_DLE_BAD_MACRO_HEADER_POINTER);
         return DW_DLV_ERROR;
     }
     *version = head->mc_version_number;

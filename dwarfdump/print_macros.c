@@ -33,6 +33,8 @@
 #include "print_sections.h"
 #include "print_frames.h"
 
+#define TRUE 1
+#define FALSE 0
 
 struct macro_counts_s {
     long mc_start_file;
@@ -130,6 +132,7 @@ print_macinfo(Dwarf_Debug dbg)
     long group = 0;
     Dwarf_Macro_Details *maclist = NULL;
     int lres = 0;
+    Dwarf_Bool first = TRUE;
 
     current_section_id = DEBUG_MACINFO;
     if (!do_print_dwarf) {
@@ -141,7 +144,6 @@ print_macinfo(Dwarf_Debug dbg)
         as this definition of macro data (V2-V4)
         is obsolete as it takes too much space to be
         much used. */
-    printf("\n.debug_macinfo\n");
 
     while ((lres = dwarf_get_macro_details(dbg, offset,
         max, &count, &maclist,
@@ -150,6 +152,10 @@ print_macinfo(Dwarf_Debug dbg)
         struct macro_counts_s counts;
 
 
+        if (first) {
+            printf("\n.debug_macinfo\n");
+            first = FALSE;
+        }
         memset(&counts, 0, sizeof(counts));
 
         printf("\n");

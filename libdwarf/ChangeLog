@@ -1,3 +1,7 @@
+2015-12-12  David Anderson
+     * dwarf_error.c,libdwarf.h.in: Adding DW_DLE_MACRO_OP_UNHANDLED.
+     * dwarf_macro5.c: Now validates form numbers when there
+       is an extension operator. Fixed indents too.
 2015-12-11  David Anderson
      * dwarf_alloc.c: Remove () around simple return value.
      * dwarf_error.c: Two new error codes for DWARF5 macro section.

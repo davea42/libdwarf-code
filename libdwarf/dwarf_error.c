@@ -402,7 +402,7 @@ const char *_dwarf_errmsgs[] = {
     "DW_DLE_UNKNOWN_FORM(321) Possibly corrupt DWARF data",
     "DW_DLE_BAD_MACRO_HEADER_POINTER(322)",
     "DW_DLE_BAD_MACRO_INDEX(323)",
-
+    "DW_DLE_MACRO_OP_UNHANDLED(324)",
 };
 
 

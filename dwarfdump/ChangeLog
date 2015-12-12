@@ -1,3 +1,6 @@
+2015-12-12  David Anderson
+     * print_macro.c: Now does -vv intro with cu_die print too.
+     * print_macros.c: Only print .debug_macro name if there are some.
 2015-12-11  David Anderson
      * naming.h,naming.c: Added get_MACRO_name().
      * print_macro.c: Now reads and prints macro5 header.

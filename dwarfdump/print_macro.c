@@ -31,6 +31,31 @@
 
 #include "print_sections.h"
 
+static void
+print_source_intro(Dwarf_Die cu_die)
+{   
+    Dwarf_Off off = 0; 
+    int ores = dwarf_dieoffset(cu_die, &off, &err);
+
+    if (ores == DW_DLV_OK) {
+        int lres = 0;
+        const char *sec_name = 0;
+        lres = dwarf_get_die_section_name_b(cu_die,
+            &sec_name,&err);
+        if (lres != DW_DLV_OK ||  !sec_name || !strlen(sec_name)) {
+            sec_name = ".debug_info";
+        }
+
+        printf("Macro data from CU-DIE at %s offset 0x%"
+            DW_PR_XZEROS DW_PR_DUx "):\n",
+            sec_name,
+            (Dwarf_Unsigned) off);
+    } else {
+        printf("Macro data (for the CU-DIE at unknown location):\n");
+    }
+}
+
+
 extern void
 print_macros_5style_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
 {
@@ -71,6 +96,26 @@ print_macros_5style_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
         print_error(dbg,"Unable to dwarf_get_macro_context()",
             lres,err);
         return;
+    }
+    if (do_print_dwarf && verbose > 1) {
+        int errcount = 0;
+        print_source_intro(cu_die);
+        print_one_die(dbg, cu_die,
+            /* print_information= */ 1,
+            /* indent level */0,
+            /* srcfiles= */ 0, /* cnt= */ 0,
+            /* ignore_die_stack= */TRUE);
+#if 0
+        DWARF_CHECK_COUNT(lines_result,1);
+        lres = dwarf_print_lines(cu_die, &err,&errcount);
+        if (errcount > 0) {
+            DWARF_ERROR_COUNT(lines_result,errcount);
+            DWARF_CHECK_COUNT(lines_result,(errcount-1));
+        }
+        if (lres == DW_DLV_ERROR) {
+            print_error(dbg, "dwarf_srclines details", lres, err);
+        }
+#endif
     }
     if (do_print_dwarf) {
         Dwarf_Half lversion =0;
