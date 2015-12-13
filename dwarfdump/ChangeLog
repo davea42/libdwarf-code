@@ -1,3 +1,6 @@
+2015-12-13  David Anderson
+     * print_macro.c: Call new function dwarf_get_macro_ops_count() and
+       print returned values.
 2015-12-12  David Anderson
      * print_macro.c: Now does -vv intro with cu_die print too.
      * print_macros.c: Only print .debug_macro name if there are some.

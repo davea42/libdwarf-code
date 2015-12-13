@@ -49,11 +49,15 @@ struct Dwarf_Macro_OperationsList_s {
 #define MACRO_LINE_OFFSET_FLAG 2
 #define MACRO_OP_TABLE_FLAG 4
 
+/*  Could be reordered to be most space efficient.
+    That might be a little harder to read.  Hmm. */
 struct Dwarf_Macro_Context_s {
     Dwarf_Word mc_sentinel;
+    Dwarf_Half mc_version_number;
+
     /* Section_offset in .debug_macro of macro header */
     Dwarf_Unsigned mc_section_offset;
-    Dwarf_Half mc_version_number;
+
     /*  Total length of the macro data for this CU.
         Calculated, not part of header. */
     Dwarf_Unsigned mc_total_length;
@@ -61,6 +65,10 @@ struct Dwarf_Macro_Context_s {
     Dwarf_Half  mc_macro_header_length;
 
     Dwarf_Small mc_flags;
+
+    /*  If DW_MACRO_start_file is in the operators of this
+        table then the mc_debug_line_offset must be present from
+        the header. */
     Dwarf_Unsigned mc_debug_line_offset;
 
     /* the following three set from the bits in mc_flags  */
@@ -84,6 +92,9 @@ struct Dwarf_Macro_Context_s {
         mc_opcode_forms.  */
     Dwarf_Small  mc_opcode_count;
     struct Dwarf_Macro_Forms_s *mc_opcode_forms;
+
+    Dwarf_Small * mc_macro_header;
+    Dwarf_Small * mc_macro_ops;
 
     Dwarf_Debug mc_dbg;
     Dwarf_CU_Context mc_cu_context;

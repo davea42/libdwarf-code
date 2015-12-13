@@ -33,8 +33,8 @@
 
 static void
 print_source_intro(Dwarf_Die cu_die)
-{   
-    Dwarf_Off off = 0; 
+{
+    Dwarf_Off off = 0;
     int ores = dwarf_dieoffset(cu_die, &off, &err);
 
     if (ores == DW_DLV_OK) {
@@ -63,6 +63,8 @@ print_macros_5style_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
     const char *sec_name = 0;
     Dwarf_Unsigned version = 0;
     Dwarf_Macro_Context macro_context = 0;
+    Dwarf_Unsigned number_of_ops = 0;
+    Dwarf_Unsigned ops_total_byte_len = 0;
 
     current_section_id = DEBUG_MACRO;
     lres = dwarf_get_macro_section_name(dbg,&sec_name,&err);
@@ -98,7 +100,9 @@ print_macros_5style_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
         return;
     }
     if (do_print_dwarf && verbose > 1) {
+#if 0
         int errcount = 0;
+#endif
         print_source_intro(cu_die);
         print_one_die(dbg, cu_die,
             /* print_information= */ 1,
@@ -144,46 +148,62 @@ print_macros_5style_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
         }
         printf("  Macro version: %d\n",lversion);
         if( verbose) {
-            printf("  macro section offset 0x%" DW_PR_XZEROS DW_PR_DUx "\n",mac_offset);
-            printf("  flags: 0x%x, line offset? %u offsetsize 64? %u, operands_table? %u\n",
-               mflags,has_line_offset,has_offset_size_64, has_operands_table);
-            printf("  header length: 0x%" DW_PR_XZEROS DW_PR_DUx 
-                 "  total length: 0x%" DW_PR_XZEROS DW_PR_DUx "\n",
-                 mac_header_len,mac_len);
-           if (has_operands_table) {
-               Dwarf_Half i = 0;
-   
-               for( i = 0; i < opcode_count; ++i) {
-                   Dwarf_Half opcode_num = 0;
-                   Dwarf_Half operand_count = 0;
-                   const Dwarf_Small *operand_array = 0;
-                   Dwarf_Half j = 0;
-                   
-                   lres = dwarf_macro_operands_table(macro_context,
-                       i, &opcode_num, &operand_count,&operand_array,&err);
-                   if (lres == DW_DLV_NO_ENTRY) {
-                       dwarf_dealloc_macro_context(macro_context); 
-                       print_error(dbg,"NO ENTRY? dwarf_macro_operands_table()",
-                          lres,err);
-                       return;
-                   }
-                   if (lres == DW_DLV_ERROR) {
-                       dwarf_dealloc_macro_context(macro_context); 
-                       print_error(dbg,"ERROR from  dwarf_macro_operands_table()",
-                          lres,err);
-                       return;
-                   }
-                   printf("  [%3u]  op: 0x%04x  %20s  operandcount: %u\n",
-                       i,opcode_num, get_MACRO_name(opcode_num, dwarf_names_print_on_error),
-                       operand_count);
-                   for (j = 0; j < operand_count; ++j) {
-                       Dwarf_Small opnd = operand_array[j];
-                       printf("    [%3u] 0x%04x %20s\n", j,opnd,
-                           get_FORM_name(opnd, dwarf_names_print_on_error));
-                   }
-               }
-           }
+            printf("  macro section offset 0x%" DW_PR_XZEROS DW_PR_DUx "\n",
+                mac_offset);
+            printf("  flags: 0x%x, line offset? %u offsetsize 64? %u, "
+                "operands_table? %u\n",
+                mflags,has_line_offset,has_offset_size_64, has_operands_table);
+            printf("  header length: 0x%" DW_PR_XZEROS DW_PR_DUx
+                "  total length: 0x%" DW_PR_XZEROS DW_PR_DUx "\n",
+                mac_header_len,mac_len);
+            if (has_operands_table) {
+                Dwarf_Half i = 0;
+
+                for( i = 0; i < opcode_count; ++i) {
+                    Dwarf_Half opcode_num = 0;
+                    Dwarf_Half operand_count = 0;
+                    const Dwarf_Small *operand_array = 0;
+                    Dwarf_Half j = 0;
+
+                    lres = dwarf_macro_operands_table(macro_context,
+                        i, &opcode_num, &operand_count,&operand_array,&err);
+                    if (lres == DW_DLV_NO_ENTRY) {
+                        dwarf_dealloc_macro_context(macro_context);
+                        print_error(dbg,
+                            "NO ENTRY? dwarf_macro_operands_table()",
+                            lres,err);
+                        return;
+                    }
+                    if (lres == DW_DLV_ERROR) {
+                        dwarf_dealloc_macro_context(macro_context);
+                        print_error(dbg,
+                            "ERROR from  dwarf_macro_operands_table()",
+                            lres,err);
+                        return;
+                    }
+                    printf("  [%3u]  op: 0x%04x  %20s  operandcount: %u\n",
+                        i,opcode_num,
+                        get_MACRO_name(opcode_num, dwarf_names_print_on_error),
+                        operand_count);
+                    for (j = 0; j < operand_count; ++j) {
+                        Dwarf_Small opnd = operand_array[j];
+                        printf("    [%3u] 0x%04x %20s\n", j,opnd,
+                            get_FORM_name(opnd, dwarf_names_print_on_error));
+                    }
+                }
+            }
         }
+        lres = dwarf_get_macro_ops_count(macro_context,
+            &number_of_ops,
+            &ops_total_byte_len, &err);
+        if (lres != DW_DLV_OK) {
+            dwarf_dealloc_macro_context(macro_context);
+            print_error(dbg, "dwarf_get_macro_ops_count ", lres, err);
+            return;
+        }
+        printf("  MacroInformationEntries count: %" DW_PR_DUu
+            ", bytes length: %" DW_PR_DUu "\n",
+            number_of_ops,ops_total_byte_len);
     }
 #if 0
     if (check_lines && checking_this_compiler()) {

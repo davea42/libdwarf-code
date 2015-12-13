@@ -1,3 +1,10 @@
+2015-12-13  David Anderson
+     * dwarf_error.c: Add DW_DLE_MACRO_PAST_END 
+     * libdwarf.h.in: Add DW_DLE_MACRO_PAST_END
+       and dwarf_get_macro_ops_count() declaration.
+     * dwarf_macro5.c: Implement dwarf_get_macro_ops_count()
+       and refactor a little bit.
+     * dwarf_macro5.h: New fields supporting dwarf_get_macro_ops_count().
 2015-12-12  David Anderson
      * dwarf_error.c,libdwarf.h.in: Adding DW_DLE_MACRO_OP_UNHANDLED.
      * dwarf_macro5.c: Now validates form numbers when there
