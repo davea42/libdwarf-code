@@ -55,6 +55,183 @@ print_source_intro(Dwarf_Die cu_die)
     }
 }
 
+static void
+print_macro_ops(Dwarf_Debug dbg,
+    Dwarf_Macro_Context mcontext,
+    Dwarf_Unsigned number_of_ops)
+{
+    unsigned k = 0;
+
+    for (k = 0; k < number_of_ops; ++k) {
+        Dwarf_Unsigned  section_offset = 0;
+        Dwarf_Half      macro_operator = 0;
+        Dwarf_Half      forms_count = 0;
+        const Dwarf_Small *formcode_array = 0;
+        Dwarf_Unsigned  line_number = 0;
+        Dwarf_Unsigned  index = 0;
+        Dwarf_Unsigned  offset =0;
+        const char    * macro_string =0;
+        int lres = 0;
+
+        lres = dwarf_get_macro_op(mcontext,
+            k, &section_offset,&macro_operator,
+            &forms_count, &formcode_array,&err);
+        if (lres != DW_DLV_OK) {
+            print_error(dbg,
+                "ERROR from  dwarf_get_macro_op()",
+                lres,err);
+            return;
+        }
+        printf("   [%3d] 0x%02x %-20s",
+            k,macro_operator,
+                (macro_operator?
+                    get_MACRO_name(macro_operator,dwarf_names_print_on_error):
+                    "end-of-macros"));
+        if (show_form_used && forms_count > 0) {
+            unsigned l = 0;
+            printf("\n     Forms count %2u:",forms_count);
+            for(; l < forms_count;++l) {
+                Dwarf_Small form = formcode_array[l];
+                printf(" 0x%02x %-18s ",
+                    form,
+                    get_FORM_name(form,dwarf_names_print_on_error));
+            }
+            printf("\n   ");
+        }
+        switch(macro_operator) {
+        case 0:
+        case DW_MACRO_end_file:
+            printf("\n");
+            break;
+        case DW_MACRO_define:
+        case DW_MACRO_undef: {
+            lres = dwarf_get_macro_defundef(mcontext,
+                k,
+                &line_number,
+                &index,
+                &offset,
+                &forms_count,
+                &macro_string,
+                &err);
+            if (lres != DW_DLV_OK) {
+                print_error(dbg,
+                    "ERROR from  dwarf_get_macro_defundef()",
+                    lres,err);
+            }
+            printf("  line %" DW_PR_DUu
+                " %s\n",
+                line_number,
+                macro_string?macro_string:"<no-name-available>");
+            break;
+            }
+
+        case DW_MACRO_define_strp:
+        case DW_MACRO_undef_strp: {
+            lres = dwarf_get_macro_defundef(mcontext,
+                k,
+                &line_number,
+                &index,
+                &offset,
+                &forms_count,
+                &macro_string,
+                &err);
+            if (lres != DW_DLV_OK) {
+                print_error(dbg,
+                    "ERROR from  strp dwarf_get_macro_defundef()",
+                    lres,err);
+            }
+            printf("  line %" DW_PR_DUu
+                " str offset 0x%" DW_PR_XZEROS DW_PR_DUx
+                " %s\n",
+                line_number,offset,
+                macro_string?macro_string:"<no-name-available>");
+            break;
+            }
+        case DW_MACRO_define_strx:
+        case DW_MACRO_undef_strx: {
+            lres = dwarf_get_macro_defundef(mcontext,
+                k,
+                &line_number,
+                &index,
+                &offset,
+                &forms_count,
+                &macro_string,
+                &err);
+            if (lres != DW_DLV_OK) {
+                print_error(dbg,
+                    "ERROR from strx dwarf_get_macro_defundef()",
+                    lres,err);
+            }
+            printf("  line %" DW_PR_DUu
+                " index 0x%" DW_PR_XZEROS DW_PR_DUx
+                " str offset 0x%" DW_PR_XZEROS DW_PR_DUx
+                " %s\n",
+                line_number,
+                index,offset,
+                macro_string?macro_string:"<no-name-available>");
+            break;
+            }
+        case DW_MACRO_define_sup:
+        case DW_MACRO_undef_sup: {
+            lres = dwarf_get_macro_defundef(mcontext,
+                k,
+                &line_number,
+                &index,
+                &offset,
+                &forms_count,
+                &macro_string,
+                &err);
+            if (lres != DW_DLV_OK) {
+                print_error(dbg,
+                    "ERROR from sup dwarf_get_macro_defundef()",
+                    lres,err);
+            }
+            printf("  line %" DW_PR_DUu
+                " sup str offset 0x%" DW_PR_XZEROS DW_PR_DUx
+                " %s\n",
+                line_number,offset,
+                macro_string?macro_string:"<no-name-available>");
+            break;
+            }
+        case DW_MACRO_start_file: {
+            lres = dwarf_get_macro_startend_file(mcontext,
+                k,&line_number,
+                &index,
+                &macro_string,&err);
+            printf("  line %" DW_PR_DUu
+                " file number %" DW_PR_DUu
+                " %s\n",
+                line_number,
+                index,
+                macro_string?macro_string:"<no-name-available>");
+            break;
+            }
+        case DW_MACRO_import: {
+            lres = dwarf_get_macro_import(mcontext,
+                k,&offset,&err);
+            if (lres != DW_DLV_OK) {
+                print_error(dbg,
+                    "ERROR from  dwarf_get_macro_import()",
+                    lres,err);
+            }
+            printf("  offset 0x%" DW_PR_XZEROS DW_PR_DUx "\n");
+            break;
+            }
+        case DW_MACRO_import_sup: {
+            lres = dwarf_get_macro_import(mcontext,
+                k,&offset,&err);
+            if (lres != DW_DLV_OK) {
+                print_error(dbg,
+                    "ERROR from  dwarf_get_macro_import()(sup)",
+                    lres,err);
+            }
+            printf("  sup_offset 0x%" DW_PR_XZEROS DW_PR_DUx "\n");
+            break;
+            }
+        }
+    }
+}
+
 
 extern void
 print_macros_5style_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
@@ -90,6 +267,8 @@ print_macros_5style_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
         }
     }
     lres = dwarf_get_macro_context(cu_die,&version,&macro_context,
+        &number_of_ops,
+        &ops_total_byte_len,
         &err);
     if(lres == DW_DLV_NO_ENTRY) {
         return;
@@ -126,15 +305,18 @@ print_macros_5style_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
         Dwarf_Unsigned mac_offset =0;
         Dwarf_Unsigned mac_len =0;
         Dwarf_Unsigned mac_header_len =0;
+        Dwarf_Unsigned line_offset =0;
         unsigned mflags = 0;
         Dwarf_Bool has_line_offset = FALSE;
         Dwarf_Bool has_offset_size_64 = FALSE;
         Dwarf_Bool has_operands_table = FALSE;
         Dwarf_Half opcode_count = 0;
+        unsigned k = 0;
 
         lres = dwarf_macro_context_head(macro_context,
             &lversion, &mac_offset,&mac_len,
             &mac_header_len,&mflags,&has_line_offset,
+            &line_offset,
             &has_offset_size_64,&has_operands_table,
             &opcode_count,&err);
         if(lres == DW_DLV_NO_ENTRY) {
@@ -156,6 +338,10 @@ print_macros_5style_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
             printf("  header length: 0x%" DW_PR_XZEROS DW_PR_DUx
                 "  total length: 0x%" DW_PR_XZEROS DW_PR_DUx "\n",
                 mac_header_len,mac_len);
+            if (has_line_offset) {
+                printf("  debug_line_offset: 0x%" DW_PR_XZEROS DW_PR_DUx "\n",
+                    line_offset);
+            }
             if (has_operands_table) {
                 Dwarf_Half i = 0;
 
@@ -193,17 +379,10 @@ print_macros_5style_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
                 }
             }
         }
-        lres = dwarf_get_macro_ops_count(macro_context,
-            &number_of_ops,
-            &ops_total_byte_len, &err);
-        if (lres != DW_DLV_OK) {
-            dwarf_dealloc_macro_context(macro_context);
-            print_error(dbg, "dwarf_get_macro_ops_count ", lres, err);
-            return;
-        }
         printf("  MacroInformationEntries count: %" DW_PR_DUu
             ", bytes length: %" DW_PR_DUu "\n",
             number_of_ops,ops_total_byte_len);
+        print_macro_ops(dbg,macro_context,number_of_ops);
     }
 #if 0
     if (check_lines && checking_this_compiler()) {

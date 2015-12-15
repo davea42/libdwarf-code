@@ -795,6 +795,11 @@ int _dwarf_get_string_from_tied(Dwarf_Debug dbg, Dwarf_Unsigned offset,
 int _dwarf_valid_form_we_know(Dwarf_Debug dbg,
     Dwarf_Unsigned at_form,
     Dwarf_Unsigned at_name);
+int _dwarf_extract_local_debug_str_string_given_offset(Dwarf_Debug dbg,
+    unsigned attrform,
+    Dwarf_Unsigned offset,
+    char ** return_str,
+    Dwarf_Error *  error);
 
 
 Dwarf_Byte_Ptr _dwarf_calculate_section_end_ptr(Dwarf_CU_Context context);

@@ -1,3 +1,5 @@
+2015-12-15  David Anderson
+     * print_macro.c: Much of printing DWARF5 macros now works.
 2015-12-13  David Anderson
      * print_macro.c: Call new function dwarf_get_macro_ops_count() and
        print returned values.

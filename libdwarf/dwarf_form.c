@@ -1072,6 +1072,53 @@ _dwarf_extract_string_offset_via_str_offsets(Dwarf_Debug dbg,
     return DW_DLV_OK;
 }
 
+int
+_dwarf_extract_local_debug_str_string_given_offset(Dwarf_Debug dbg,
+    unsigned attrform,
+    Dwarf_Unsigned offset,
+    char ** return_str,
+    Dwarf_Error * error)
+{
+    if (attrform == DW_FORM_strp ||
+        attrform == DW_FORM_GNU_str_index ||
+        attrform == DW_FORM_strx) {
+        /* The 'offset' into .debug_str is set. */
+        int res = 0;
+        Dwarf_Small *secend = 0;
+        Dwarf_Small *secbegin = 0;
+        Dwarf_Small *strbegin = 0;
+        res = _dwarf_load_section(dbg, &dbg->de_debug_str,error);
+        if (res != DW_DLV_OK) {
+            return res;
+        }
+        if (offset >= dbg->de_debug_str.dss_size) {
+            /*  Badly damaged DWARF here. */
+            _dwarf_error(dbg, error, DW_DLE_STRP_OFFSET_BAD);
+            return (DW_DLV_ERROR);
+        }
+        secbegin = dbg->de_debug_str.dss_data;
+        strbegin= dbg->de_debug_str.dss_data + offset;
+        secend = dbg->de_debug_str.dss_data + dbg->de_debug_str.dss_size;
+
+        /*  Ensure the offset lies within the .debug_str */
+        if (offset >= dbg->de_debug_str.dss_size) {
+            _dwarf_error(dbg, error, DW_DLE_DEBUG_STR_OFFSET_BAD);
+            return (DW_DLV_ERROR);
+        }
+        res= _dwarf_check_string_valid(dbg,secbegin,strbegin, secend,error);
+        if (res != DW_DLV_OK) {
+            return res;
+        }
+
+        *return_str = (char *) (dbg->de_debug_str.dss_data + offset);
+        return DW_DLV_OK;
+    }
+    _dwarf_error(dbg, error, DW_DLE_ATTR_FORM_BAD);
+    return (DW_DLV_ERROR);
+}
+
+
+
 
 /* Contrary to pre-2005 documentation,
    The string pointer returned thru return_str must
@@ -1162,43 +1209,14 @@ dwarf_formstring(Dwarf_Attribute attr,
                 cu_context->cc_length_size);
         }
     }
-    if (attr->ar_attribute_form == DW_FORM_strp ||
-        attr->ar_attribute_form == DW_FORM_GNU_str_index ||
-        attr->ar_attribute_form == DW_FORM_strx) {
-        /* The 'offset' into .debug_str is set. */
-        Dwarf_Small *secend = 0;
-        Dwarf_Small *secbegin = 0;
-        Dwarf_Small *strbegin = 0;
-        res = _dwarf_load_section(dbg, &dbg->de_debug_str,error);
-        if (res != DW_DLV_OK) {
-            return res;
-        }
-        if (offset >= dbg->de_debug_str.dss_size) {
-            /*  Badly damaged DWARF here. */
-            _dwarf_error(dbg, error, DW_DLE_STRP_OFFSET_BAD);
-            return (DW_DLV_ERROR);
-        }
-        secbegin = dbg->de_debug_str.dss_data;
-        strbegin= dbg->de_debug_str.dss_data + offset;
-        secend = dbg->de_debug_str.dss_data + dbg->de_debug_str.dss_size;
-
-        /*  Ensure the offset lies within the .debug_str */
-        if (offset >= dbg->de_debug_str.dss_size) {
-            _dwarf_error(dbg, error, DW_DLE_DEBUG_STR_OFFSET_BAD);
-            return (DW_DLV_ERROR);
-        }
-        res= _dwarf_check_string_valid(dbg,secbegin,strbegin, secend,error);
-        if (res != DW_DLV_OK) {
-            return res;
-        }
-
-        *return_str = (char *) (dbg->de_debug_str.dss_data + offset);
-        return DW_DLV_OK;
-    }
-
-    _dwarf_error(dbg, error, DW_DLE_ATTR_FORM_BAD);
-    return (DW_DLV_ERROR);
+    res = _dwarf_extract_local_debug_str_string_given_offset(dbg,
+        attr->ar_attribute_form,
+        offset,
+        return_str,
+        error);
+    return res;
 }
+
 
 int
 _dwarf_get_string_from_tied(Dwarf_Debug dbg,

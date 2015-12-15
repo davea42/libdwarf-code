@@ -2566,34 +2566,83 @@ int dwarf_get_arange_info_b(
 /*  BEGIN: DWARF5 .debug_macro  interfaces
     NEW November 2015.  */
 int dwarf_get_macro_context(Dwarf_Die /*die*/,
-    Dwarf_Unsigned  * /*version_out*/,
+    Dwarf_Unsigned      * /*version_out*/,
     Dwarf_Macro_Context * /*macro_context*/,
-    Dwarf_Error * /*error*/);
+    Dwarf_Unsigned      * /*macro_ops_count_out*/,
+    Dwarf_Unsigned      * /*macro_ops_data_length_out*/,
+    Dwarf_Error         * /*error*/);
+
+/*  Just like dwarf_get_macro_context, but instead of using
+    DW_AT_macros or DW_AT_GNU_macros to get the offset we just
+    take the offset given. */
+int dwarf_get_macro_context_by_offset(Dwarf_Die /*die*/,
+    Dwarf_Unsigned        /*offset*/,
+    Dwarf_Unsigned      * /*version_out*/,
+    Dwarf_Macro_Context * /*macro_context*/,
+    Dwarf_Unsigned      * /*macro_ops_count_out*/,
+    Dwarf_Unsigned      */* macro_ops_data_length*/,
+    Dwarf_Error         * /*error*/);
+
 void dwarf_dealloc_macro_context(Dwarf_Macro_Context /*mc*/);
-int dwarf_get_macro_section_name(Dwarf_Debug dbg,
-   const char **sec_name_out,
-   Dwarf_Error *err);
-int dwarf_macro_operands_table(Dwarf_Macro_Context /*head*/,
-    Dwarf_Half  /*index*/, /* 0 to opcode_count -1 */
-    Dwarf_Half  * /*opcode_number*/,
-    Dwarf_Half  * /*operand_count*/,
-    const Dwarf_Small ** /*operand_array*/,
-    Dwarf_Error * /*error*/);
+int dwarf_get_macro_section_name(Dwarf_Debug /*dbg*/,
+    const char ** /*sec_name_out*/,
+    Dwarf_Error * /*err*/);
+
 int dwarf_macro_context_head(Dwarf_Macro_Context /*head*/,
     Dwarf_Half     * /*version*/,
     Dwarf_Unsigned * /*mac_offset*/,
     Dwarf_Unsigned * /*mac_len*/,
     Dwarf_Unsigned * /*mac_header_len*/,
-    unsigned *       /*flags*/,
-    Dwarf_Bool *     /*has_line_offset*/,
-    Dwarf_Bool *     /*has_offset_size_64*/,
-    Dwarf_Bool *     /*has_operands_table*/,
-    Dwarf_Half *     /*opcode_count*/,
-    Dwarf_Error *    /*error*/);
-int dwarf_get_macro_ops_count(Dwarf_Macro_Context /*macro_context*/,
-    Dwarf_Unsigned * /*ops_count_out*/,
-    Dwarf_Unsigned * /*ops_total_length*/,
-    Dwarf_Error *    /*error*/);
+    unsigned       * /*flags*/,
+    Dwarf_Bool     * /*has_line_offset*/,
+    Dwarf_Unsigned * /*line_offset*/,
+    Dwarf_Bool     * /*has_offset_size_64*/,
+    Dwarf_Bool     * /*has_operands_table*/,
+    Dwarf_Half     * /*opcode_count*/,
+    Dwarf_Error    * /*error*/);
+
+/*  Returns data from the operands table
+    in the macro unit header. */
+int dwarf_macro_operands_table(Dwarf_Macro_Context /*head*/,
+    Dwarf_Half    /*index*/, /* 0 to opcode_count -1 */
+    Dwarf_Half  * /*opcode_number*/,
+    Dwarf_Half  * /*operand_count*/,
+    const Dwarf_Small ** /*operand_array*/,
+    Dwarf_Error * /*error*/);
+
+/*  Access to the macro operations, 0 to macro_ops_count_out-1
+    Where the last of these will have macro_operator 0 (which appears
+    in the ops data and means end-of-ops).
+    op_start_section_offset is the section offset of
+    the macro operator (which is a single unsigned byte,
+    and is followed by the macro operand data). */
+int dwarf_get_macro_op(Dwarf_Macro_Context macro_context,
+    Dwarf_Unsigned op_number,
+    Dwarf_Unsigned * op_start_section_offset,
+    Dwarf_Half    * macro_operator,
+    Dwarf_Half    * forms_count,
+    const Dwarf_Small **   formcode_array,
+    Dwarf_Error *error);
+
+int dwarf_get_macro_defundef(Dwarf_Macro_Context /*macro_context*/,
+    Dwarf_Unsigned   /*op_number*/,
+    Dwarf_Unsigned * /*line_number*/,
+    Dwarf_Unsigned * /*index*/,
+    Dwarf_Unsigned * /*offset*/,
+    Dwarf_Half     * /*forms_count*/,
+    const char     ** /*macro_string*/,
+    Dwarf_Error    * /*error*/);
+int dwarf_get_macro_startend_file(Dwarf_Macro_Context /*macro_context*/,
+    Dwarf_Unsigned   /*op_number*/,
+    Dwarf_Unsigned * /*line_number*/,
+    Dwarf_Unsigned * /*name_index_to_line_tab*/,
+    const char     ** /*src_file_name*/,
+    Dwarf_Error    * /*error*/);
+int dwarf_get_macro_import(Dwarf_Macro_Context /*macro_context*/,
+    Dwarf_Unsigned   /*op_number*/,
+    Dwarf_Unsigned * /*target_offset*/,
+    Dwarf_Error    * /*error*/);
+
 
 
 

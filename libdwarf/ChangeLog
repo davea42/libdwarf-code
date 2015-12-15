@@ -1,3 +1,8 @@
+2015-12-15  David Anderson
+     * dwarf_form.c: Refactored to simplify DWARF5 macro code.
+     * dwarf_macro5.c,dwarf_macro5.h,dwarf_opaque.h,libdwarf.h.in:
+       Now support for DWARF5 macros is nearly complete.
+
 2015-12-13  David Anderson
      * dwarf_error.c: Add DW_DLE_MACRO_PAST_END 
      * libdwarf.h.in: Add DW_DLE_MACRO_PAST_END
