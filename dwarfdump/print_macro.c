@@ -244,6 +244,18 @@ print_macros_5style_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
     Dwarf_Unsigned ops_total_byte_len = 0;
 
     current_section_id = DEBUG_MACRO;
+    lres = dwarf_get_macro_context(cu_die,&version,&macro_context,
+        &number_of_ops,
+        &ops_total_byte_len,
+        &err);
+    if(lres == DW_DLV_NO_ENTRY) {
+        return;
+    }
+    if(lres == DW_DLV_ERROR) {
+        print_error(dbg,"Unable to dwarf_get_macro_context()",
+            lres,err);
+        return;
+    }
     lres = dwarf_get_macro_section_name(dbg,&sec_name,&err);
     if (lres != DW_DLV_OK || !sec_name || !strlen(sec_name)) {
         sec_name = ".debug_macro";
@@ -265,18 +277,6 @@ print_macros_5style_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
                 address or range in CU header. */
             return;
         }
-    }
-    lres = dwarf_get_macro_context(cu_die,&version,&macro_context,
-        &number_of_ops,
-        &ops_total_byte_len,
-        &err);
-    if(lres == DW_DLV_NO_ENTRY) {
-        return;
-    }
-    if(lres == DW_DLV_ERROR) {
-        print_error(dbg,"Unable to dwarf_get_macro_context()",
-            lres,err);
-        return;
     }
     if (do_print_dwarf && verbose > 1) {
 #if 0

@@ -1,3 +1,7 @@
+2015-12-16  David Anderson
+     * dwarf_query.c(dwarf_die_offsets): Added commentary..
+       Revised the code so it's a bit easier to read
+       and reason about.
 2015-12-15  David Anderson
      * dwarf_form.c: Refactored to simplify DWARF5 macro code.
      * dwarf_macro5.c,dwarf_macro5.h,dwarf_opaque.h,libdwarf.h.in:

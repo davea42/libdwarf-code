@@ -50,7 +50,7 @@
 extern int elf_open(const char *name,int mode);
 #endif /* WIN32 */
 
-#define DWARFDUMP_VERSION " Tue Dec  8 17:19:17 PST 2015  "
+#define DWARFDUMP_VERSION " Tue Dec 15 16:35:32 PST 2015  "
 
 extern char *dwoptarg;
 
@@ -2807,17 +2807,26 @@ cu_data_is_set()
     }
     return 0;
 }
-/* Print CU basic information */
+
+/*  Print CU basic information but
+    use the local DIE for the offsets. */
 void PRINT_CU_INFO()
 {
+    Dwarf_Unsigned loff = DIE_offset;
+    Dwarf_Unsigned goff = DIE_overall_offset;
+
     if (current_section_id == DEBUG_LINE ||
-        current_section_id == DEBUG_ARANGES) {
-        /*  Only in the DEBUG_LINE/ARANGES case is DIE_CU_offset or
-            DIE_CU_overall_offset what we want to print here.
-            In other cases DIE_CU_offset is not really a CU
-            offset at all. */
-        DIE_offset = DIE_CU_offset;
-        DIE_overall_offset = DIE_CU_overall_offset;
+        current_section_id == DEBUG_ARANGES ||
+        current_section_id == DEBUG_MACRO ||
+        current_section_id == DEBUG_MACINFO ) {
+        /*  These sections involve the CU die, so
+            use the CU offsets.
+            The DEBUG_MAC* cases are logical but
+            not yet useful (Dec 2015).
+            In other cases the local DIE offset makes
+            more sense. */
+        loff = DIE_CU_offset;
+        goff = DIE_CU_overall_offset;
     }
     if (!cu_data_is_set()) {
         return;
@@ -2825,8 +2834,8 @@ void PRINT_CU_INFO()
     printf("\n");
     printf("CU Name = %s\n",CU_name);
     printf("CU Producer = %s\n",CU_producer);
-    printf("DIE OFF = 0x%08" DW_PR_DUx
-        " GOFF = 0x%08" DW_PR_DUx ,DIE_offset,DIE_overall_offset);
+    printf("DIE OFF = 0x%08" DW_PR_DUx " GOFF = 0x%08" DW_PR_DUx ,
+        loff,goff);
     printf(", Low PC = 0x%08" DW_PR_DUx ", High PC = 0x%08" DW_PR_DUx ,
         CU_base_address,CU_high_address);
     printf("\n");

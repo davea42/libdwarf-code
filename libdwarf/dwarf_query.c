@@ -137,7 +137,11 @@ dwarf_die_CU_offset(Dwarf_Die die,
     return DW_DLV_OK;
 }
 
-/*  A common function to get both offsets (local and global) */
+/*  A common function to get both offsets (local and global) 
+    It's unusual in that it sets both return offsets
+    to zero on entry.  Normally we only set any
+    output-args (through their pointers) in case
+    of success.  */
 int
 dwarf_die_offsets(Dwarf_Die die,
     Dwarf_Off *off,
@@ -146,11 +150,12 @@ dwarf_die_offsets(Dwarf_Die die,
 {
     *off = 0;
     *cu_off = 0;
-    if (DW_DLV_OK == dwarf_dieoffset(die,off,error) &&
-        DW_DLV_OK == dwarf_die_CU_offset(die,cu_off,error)) {
-        return DW_DLV_OK;
+    int res = 0;
+    res == dwarf_dieoffset(die,off,error);
+    if (res == DW_DLV_OK) {
+        res = dwarf_die_CU_offset(die,cu_off,error);
     }
-    return DW_DLV_ERROR;
+    return res;
 }
 
 /*  This function returns the global offset

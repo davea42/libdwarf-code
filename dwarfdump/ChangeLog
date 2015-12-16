@@ -1,3 +1,11 @@
+2015-12-16  David Anderson
+     * common.c: Update version string.
+     * dwarfdump.c: Update version string. Fix PRINT_CU_INFO()
+       to do what was intended (and not have a side effect).
+     * print_aranges.c: Folded a too-long line.
+     * print_die.c: Folded  a line so both offsets listed on same line.
+     * print_macro.c: moved macro_context call above the print of
+       ".debug_macro" so if the section does not exist we print nothing.
 2015-12-15  David Anderson
      * print_macro.c: Much of printing DWARF5 macros now works.
 2015-12-13  David Anderson

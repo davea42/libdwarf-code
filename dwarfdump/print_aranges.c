@@ -55,7 +55,8 @@ do_checking(Dwarf_Debug dbg, Dwarf_Arange *arange_buf,Dwarf_Signed i,
         /* Get the CU offset for easy error reporting */
         if (first_cu || cu_die_offset != cu_die_offset_prev) {
             cu_die_offset_prev = cu_die_offset;
-            dres = dwarf_die_offsets(cu_die,&DIE_overall_offset,&DIE_offset,&err);
+            dres = dwarf_die_offsets(cu_die,&DIE_overall_offset,
+                &DIE_offset,&err);
             if (dres != DW_DLV_OK) {
                 print_error(dbg, "dwarf_die_offsets", dres, err);
             }

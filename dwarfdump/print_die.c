@@ -720,8 +720,8 @@ print_one_die_section(Dwarf_Debug dbg,Dwarf_Bool is_info)
                 }
 
                 /* Get the CU offset for easy error reporting */
-                dwarf_die_offsets(cu_die,&DIE_CU_overall_offset,
-                    &DIE_CU_offset,&err);
+                dwarf_die_offsets(cu_die,
+                    &DIE_CU_overall_offset, &DIE_CU_offset,&err);
                 print_die_and_children(dbg, cu_die,is_info, srcfiles, cnt);
                 if (srcf == DW_DLV_OK) {
                     int si = 0;
@@ -1223,8 +1223,8 @@ print_one_die(Dwarf_Debug dbg, Dwarf_Die die,
     bSawLow = FALSE;
     bSawHigh = FALSE;
 
-    /* Get the CU offset for easy error reporting */
-    dwarf_die_offsets(die,&DIE_CU_overall_offset,&DIE_CU_offset,&err);
+    /* Get the offset for easy error reporting: This is not the CU die.  */
+    dwarf_die_offsets(die,&DIE_overall_offset,&DIE_offset,&err);
 
     for (i = 0; i < atcnt; i++) {
         Dwarf_Half attr;
