@@ -57,6 +57,8 @@ do_checking(Dwarf_Debug dbg, Dwarf_Arange *arange_buf,Dwarf_Signed i,
             cu_die_offset_prev = cu_die_offset;
             dres = dwarf_die_offsets(cu_die,&DIE_overall_offset,
                 &DIE_offset,&err);
+            DIE_CU_overall_offset = DIE_overall_offset;
+            DIE_CU_offset = DIE_offset;
             if (dres != DW_DLV_OK) {
                 print_error(dbg, "dwarf_die_offsets", dres, err);
             }
@@ -66,6 +68,8 @@ do_checking(Dwarf_Debug dbg, Dwarf_Arange *arange_buf,Dwarf_Signed i,
         if (dres == DW_DLV_OK) {
             /* Get the CU offset for easy error reporting */
             dwarf_die_offsets(cu_die,&DIE_overall_offset,&DIE_offset,&err);
+            DIE_CU_overall_offset = DIE_overall_offset;
+            DIE_CU_offset = DIE_offset;
             DWARF_CHECK_COUNT(aranges_result,1);
             if (cudieoff2 != cu_die_offset) {
                 printf("Error, cu_die offsets mismatch,  0x%"

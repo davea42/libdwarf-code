@@ -608,6 +608,8 @@ print_one_die_section(Dwarf_Debug dbg,Dwarf_Bool is_info)
         }
         /* Get the CU offset for easy error reporting */
         dwarf_die_offsets(cu_die,&DIE_overall_offset,&DIE_offset,&err);
+        DIE_CU_overall_offset = DIE_overall_offset;
+        DIE_CU_offset = DIE_offset;
 
         if (cu_name_flag) {
             if (should_skip_this_cu(dbg,cu_die,err)) {
@@ -720,8 +722,9 @@ print_one_die_section(Dwarf_Debug dbg,Dwarf_Bool is_info)
                 }
 
                 /* Get the CU offset for easy error reporting */
-                dwarf_die_offsets(cu_die,
-                    &DIE_CU_overall_offset, &DIE_CU_offset,&err);
+                dwarf_die_offsets(cu_die,&DIE_overall_offset,&DIE_offset,&err);
+                DIE_CU_overall_offset = DIE_overall_offset;
+                DIE_CU_offset = DIE_offset;
                 print_die_and_children(dbg, cu_die,is_info, srcfiles, cnt);
                 if (srcf == DW_DLV_OK) {
                     int si = 0;

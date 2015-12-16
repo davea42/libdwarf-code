@@ -1,4 +1,8 @@
 2015-12-16  David Anderson
+     * print_aranges.c, print_die.c: Ensure the four
+       error-reporting globals DIE_[CU_][global_]_offset are 
+       set properly.
+2015-12-16  David Anderson
      * common.c: Update version string.
      * dwarfdump.c: Update version string. Fix PRINT_CU_INFO()
        to do what was intended (and not have a side effect).
