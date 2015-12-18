@@ -111,6 +111,8 @@ check_ranges_list(Dwarf_Debug dbg,
     Dwarf_Addr lopc = 0;
     Dwarf_Addr hipc = 0;
     Dwarf_Bool bError = FALSE;
+    Dwarf_Half elf_address_size = 0;
+    Dwarf_Addr elf_max_address = 0;
 
     static boolean do_print = TRUE;
     int res = 0;
@@ -119,6 +121,7 @@ check_ranges_list(Dwarf_Debug dbg,
     if (res != DW_DLV_OK ||  !sec_name || !strlen(sec_name)) {
         sec_name = ".debug_ranges";
     }
+    get_address_size_and_max(dbg,&elf_address_size,&elf_max_address,&err);
 
 #if 0
 {

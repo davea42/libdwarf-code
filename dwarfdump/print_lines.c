@@ -105,6 +105,7 @@ process_line_table(Dwarf_Debug dbg,
     int ares = 0;
     int lires = 0;
     int cores = 0;
+    Dwarf_Addr elf_max_address = 0;
 
     Dwarf_Bool SkipRecord = FALSE;
 
@@ -114,6 +115,7 @@ process_line_table(Dwarf_Debug dbg,
     /* line_flag is TRUE */
     esb_constructor(&lastsrc);
 
+    get_address_size_and_max(dbg,0,&elf_max_address,&err);
     /* Padding for a nice layout */
     padding = line_print_pc ? "            " : "";
     if (do_print_dwarf) {

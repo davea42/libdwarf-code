@@ -305,9 +305,6 @@ int current_section_id = 0;           /* Section being process */
 Dwarf_Addr CU_base_address = 0;       /* CU Base address */
 Dwarf_Addr CU_high_address = 0;       /* CU High address */
 
-Dwarf_Addr elf_max_address = 0;       /* Largest representable address offset */
-Dwarf_Half elf_address_size = 0;      /* Target pointer size */
-
 /* Display parent/children when in wide format? */
 boolean display_parent_tree = FALSE;
 boolean display_children_tree = FALSE;
@@ -1152,6 +1149,28 @@ printf_callback_for_libdwarf(void *userdata,const char *data)
     printf("%s",data);
 }
 
+void
+get_address_size_and_max(Dwarf_Debug dbg,
+   Dwarf_Half * size,
+   Dwarf_Addr * max,
+   Dwarf_Error *err)
+{
+    int dres = 0;
+    Dwarf_Half lsize = 4;
+    /* Get address size and largest representable address */
+    dres = dwarf_get_address_size(dbg,&lsize,err);
+    if (dres != DW_DLV_OK) {
+        print_error(dbg, "get_address_size()", dres, *err);
+    }
+    if(max) {
+        *max = (lsize == 8 ) ? 0xffffffffffffffffULL : 0xffffffff;
+    }
+    if(size) {
+        *size = lsize;
+    }
+}
+
+
 /* dbg is often null when dbgtied was passed in. */
 static void
 dbgsetup(Dwarf_Debug dbg,struct dwconf_s *config_file_data)
@@ -1190,8 +1209,9 @@ process_one_file(Elf * elf,Elf *elftied,
 {
     Dwarf_Debug dbg = 0;
     Dwarf_Debug dbgtied = 0;
-    int dres;
+    int dres = 0;;
     struct Dwarf_Printf_Callback_Info_s printfcallbackdata;
+    Dwarf_Half elf_address_size = 0;      /* Target pointer size */
 
     dres = dwarf_elf_init(elf, DW_DLC_READ, NULL, NULL, &dbg, &err);
     if (dres == DW_DLV_NO_ENTRY) {
@@ -1233,15 +1253,7 @@ process_one_file(Elf * elf,Elf *elftied,
     }
     dbgsetup(dbg,config_file_data);
     dbgsetup(dbgtied,config_file_data);
-
-    /* Get address size and largest representable address */
-    dres = dwarf_get_address_size(dbg,&elf_address_size,&err);
-    if (dres != DW_DLV_OK) {
-        print_error(dbg, "get_location_list", dres, err);
-    }
-
-    elf_max_address = (elf_address_size == 8 ) ?
-        0xffffffffffffffffULL : 0xffffffff;
+    get_address_size_and_max(dbg,&elf_address_size,0,&err);
 
     /*  Ok for dbgtied to be NULL. */
     dres = dwarf_set_tied_dbg(dbg,dbgtied,&err);

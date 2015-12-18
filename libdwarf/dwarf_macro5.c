@@ -646,7 +646,7 @@ dwarf_get_macro_startend_file(Dwarf_Macro_Context macro_context,
     }
     curop = macro_context->mc_ops + op_number;
     macop = curop->mo_opcode;
-    mdata = curop->mo_data +1;
+    mdata = curop->mo_data;
     if (macop != DW_MACRO_start_file && macop != DW_MACRO_end_file) {
         return DW_DLV_NO_ENTRY;
     }
@@ -711,7 +711,7 @@ dwarf_get_macro_import(Dwarf_Macro_Context macro_context,
     }
     curop = macro_context->mc_ops + op_number;
     macop = curop->mo_opcode;
-    mdata = curop->mo_data +1;
+    mdata = curop->mo_data;
     if (macop != DW_MACRO_import && macop != DW_MACRO_import_sup) {
         return DW_DLV_NO_ENTRY;
     }

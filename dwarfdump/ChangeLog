@@ -1,3 +1,9 @@
+2015-12-18  David Anderson
+     * dwarfdump.c,globals.h print_die.c,print_lines.c,
+       print_macro.c,print_pubnames.c,print_ranges.c:
+       Removed globals elf_max_address and elf_address_size
+       in favor of local variables and new
+       global function get_address_size_and_max().
 2015-12-16  David Anderson
      * print_aranges.c, print_die.c: Ensure the four
        error-reporting globals DIE_[CU_][global_]_offset are 

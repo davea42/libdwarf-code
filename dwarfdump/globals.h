@@ -156,14 +156,12 @@ extern Dwarf_Off  DIE_overall_offset;       /* DIE offset in .debug_info. */
 /* Current CU information for better error reporting. */
 extern Dwarf_Off  DIE_CU_offset;            /* CU DIE offset in compile unit */
 extern Dwarf_Off  DIE_CU_overall_offset;    /* CU DIE offset in .debug_info */
-extern int current_section_id;              /* Section being process. */
-
 extern Dwarf_Addr CU_base_address;          /* CU Base address. */
 extern Dwarf_Addr CU_high_address;          /* CU High address. */
 
-extern Dwarf_Addr elf_max_address;          /* Largest representable
-    address offset. */
-extern Dwarf_Half elf_address_size;         /* Target pointer size. */
+
+extern int current_section_id;              /* Section being process. */
+
 
 /*  Ranges and Location tables for better error checking: see
     dwarfdump.c comments for more information. */
@@ -382,6 +380,12 @@ extern void print_ranges_list_to_extra(Dwarf_Debug dbg,
     Dwarf_Unsigned bytecount,
     struct esb_s *stringbuf);
 boolean should_skip_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die, Dwarf_Error err);
+
+void get_address_size_and_max(Dwarf_Debug dbg,
+   Dwarf_Half * size,
+   Dwarf_Addr * max,
+   Dwarf_Error *err);
+
 
 /* Returns the DW_AT_name of the CU */
 string old_get_cu_name(Dwarf_Debug dbg,Dwarf_Die cu_die,Dwarf_Error err);

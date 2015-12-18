@@ -214,7 +214,7 @@ print_macro_ops(Dwarf_Debug dbg,
                     "ERROR from  dwarf_get_macro_import()",
                     lres,err);
             }
-            printf("  offset 0x%" DW_PR_XZEROS DW_PR_DUx "\n");
+            printf("  offset 0x%" DW_PR_XZEROS DW_PR_DUx "\n",offset);
             break;
             }
         case DW_MACRO_import_sup: {
@@ -225,7 +225,7 @@ print_macro_ops(Dwarf_Debug dbg,
                     "ERROR from  dwarf_get_macro_import()(sup)",
                     lres,err);
             }
-            printf("  sup_offset 0x%" DW_PR_XZEROS DW_PR_DUx "\n");
+            printf("  sup_offset 0x%" DW_PR_XZEROS DW_PR_DUx "\n",offset);
             break;
             }
         }

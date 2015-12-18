@@ -2008,12 +2008,13 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
     boolean found_search_attr = FALSE;
     boolean bTextFound = FALSE;
     Dwarf_Bool is_info = FALSE;
+    Dwarf_Addr elf_max_address = 0;
 
     esb_constructor(&valname);
     is_info = dwarf_get_die_infotypes_flag(die);
     esb_constructor(&esb_extra);
     atname = get_AT_name(attr,dwarf_names_print_on_error);
-
+    get_address_size_and_max(dbg,0,&elf_max_address,&err);
     /*  The following gets the real attribute, even in the face of an
         incorrect doubling, or worse, of attributes. */
     attrib = attr_in;
@@ -3227,6 +3228,8 @@ get_location_list(Dwarf_Debug dbg,
     /*  This is the section offset of the expression, not
         the location description prefix. */
     Dwarf_Unsigned section_offset = 0;
+    Dwarf_Half elf_address_size = 0;
+    Dwarf_Addr elf_max_address = 0;
 
     /* old and new interfaces differ on signedness.  */
     Dwarf_Signed locentry_count = 0;
@@ -3251,6 +3254,7 @@ get_location_list(Dwarf_Debug dbg,
         }
         no_of_elements = sno;
     }
+    get_address_size_and_max(dbg,&elf_address_size,&elf_max_address,&err);
     for (llent = 0; llent < no_of_elements; ++llent) {
         char small_buf[150];
         Dwarf_Unsigned locdesc_offset = 0;

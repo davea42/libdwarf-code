@@ -179,6 +179,7 @@ print_pubnames(Dwarf_Debug dbg)
     Dwarf_Off die_off = 0;
     Dwarf_Off cu_off = 0;
 
+    Dwarf_Addr elf_max_address = 0;
     /* Offset to previous CU */
     Dwarf_Off prev_cu_off = elf_max_address;
 
@@ -191,6 +192,7 @@ print_pubnames(Dwarf_Debug dbg)
             section not used in modern compilers. */
         printf("\n.debug_pubnames\n");
     }
+    get_address_size_and_max(dbg,0,&elf_max_address,&err);
     res = dwarf_get_globals(dbg, &globbuf, &count, &err);
     if (res == DW_DLV_ERROR) {
         print_error(dbg, "dwarf_get_globals", res, err);
