@@ -78,8 +78,8 @@ is_path_separator(Dwarf_Small s)
     attempt to handle windows full paths:
     \\something   or  C:cwdpath.c
 */
-static int
-file_name_is_full_path(Dwarf_Small  *fname)
+int
+_dwarf_file_name_is_full_path(Dwarf_Small  *fname)
 {
     Dwarf_Small firstc = *fname;
     if (is_path_separator(firstc)) {
@@ -159,7 +159,7 @@ create_fullest_file_path(Dwarf_Debug dbg,
         return (DW_DLV_ERROR);
     }
 
-    if (file_name_is_full_path((Dwarf_Small *)file_name)) {
+    if (_dwarf_file_name_is_full_path((Dwarf_Small *)file_name)) {
 #ifdef HAVE_WINDOWS_PATH
         {   unsigned len = strlen(file_name);
             char *tmp = (char *) _dwarf_get_alloc(dbg, DW_DLA_STRING,
@@ -223,7 +223,7 @@ create_fullest_file_path(Dwarf_Debug dbg,
             return DW_DLV_OK;
         }
         if (incdirnamelen > 0 &&
-            file_name_is_full_path((Dwarf_Small*)inc_dir_name) ) {
+            _dwarf_file_name_is_full_path((Dwarf_Small*)inc_dir_name) ) {
             /*  Just use inc dir. */
                 special_cat(full_name,inc_dir_name,incdirnamelen);
             strcat(full_name,"/");
@@ -246,12 +246,24 @@ create_fullest_file_path(Dwarf_Debug dbg,
     return DW_DLV_OK;
 }
 
-
 /*  Although source files is supposed to return the
     source files in the compilation-unit, it does
     not look for any in the statement program.  In
     other words, it ignores those defined using the
-    extended opcode DW_LNE_define_file.  */
+    extended opcode DW_LNE_define_file.
+    We do not know of a producer that uses DW_LNE_define_file.
+
+    In DWARF2,3,4 the array of sourcefiles is represented
+    differently than DWARF5.
+    DWARF 2,3,4:
+        Take the line number from macro information or lines data
+        and subtract 1 to  index into srcfiles.  Any with line
+        number zero are taken to refer to DW_AT_comp_dir from the
+        CU DIE
+    DWARF 5:
+        Index (from macro or lines data) directly into 
+        srcfiles. Index zero is the base
+        compilation directory name. */
 int
 dwarf_srcfiles(Dwarf_Die die,
     char ***srcfiles,
@@ -265,10 +277,9 @@ dwarf_srcfiles(Dwarf_Die die,
         die. */
     Dwarf_Attribute stmt_list_attr;
 
-    /*  Pointer to DW_AT_comp_dir attribute in die. */
-    Dwarf_Attribute comp_dir_attr;
-
+    const char * const_comp_name = 0;
     /*  Pointer to name of compilation directory. */
+    const char * const_comp_dir = 0;
     Dwarf_Small *comp_dir = 0;
 
     /*  Offset into .debug_line specified by a DW_AT_stmt_list
@@ -355,26 +366,14 @@ dwarf_srcfiles(Dwarf_Die die,
     }
     dwarf_dealloc(dbg, stmt_list_attr, DW_DLA_ATTR);
 
-    /*  If die has DW_AT_comp_dir attribute, get the string that names
-        the compilation directory. */
-    resattr = dwarf_attr(die, DW_AT_comp_dir, &comp_dir_attr, error);
+    resattr = _dwarf_internal_get_die_comp_dir(die, &const_comp_dir,
+        &const_comp_name,error);
     if (resattr == DW_DLV_ERROR) {
         return resattr;
     }
-    if (resattr == DW_DLV_OK) {
-        int cres = DW_DLV_ERROR;
-        char *cdir = 0;
 
-        cres = dwarf_formstring(comp_dir_attr, &cdir, error);
-        if (cres == DW_DLV_ERROR) {
-            return cres;
-        } else if (cres == DW_DLV_OK) {
-            comp_dir = (Dwarf_Small *) cdir;
-        }
-    }
-    if (resattr == DW_DLV_OK) {
-        dwarf_dealloc(dbg, comp_dir_attr, DW_DLA_ATTR);
-    }
+    /* Horrible cast away const to match historical interfaces. */
+    comp_dir = (Dwarf_Small *)const_comp_dir;
     line_context = (Dwarf_Line_Context)
         _dwarf_get_alloc(dbg, DW_DLA_LINE_CONTEXT, 1);
     if (line_context == NULL) {
@@ -406,6 +405,9 @@ dwarf_srcfiles(Dwarf_Die die,
         }
         line_ptr = line_ptr_out;
     }
+    /*  For DWARF5, use of DW_AT_comp_dir not needed. 
+        Line table file names and directories 
+        start with comp_dir and name.  FIXME DWARF5 */
     line_context->lc_compilation_directory = comp_dir;
     /* We are in dwarf_srcfiles() */
     {
@@ -520,10 +522,9 @@ _dwarf_internal_srclines(Dwarf_Die die,
         die. */
     Dwarf_Attribute stmt_list_attr = 0;
 
-    /*  Pointer to DW_AT_comp_dir attribute in die. */
-    Dwarf_Attribute comp_dir_attr = 0;
-
+    const char * const_comp_name = 0;
     /*  Pointer to name of compilation directory. */
+    const char * const_comp_dir = NULL;
     Dwarf_Small *comp_dir = NULL;
 
     /*  Offset into .debug_line specified by a DW_AT_stmt_list
@@ -598,24 +599,14 @@ _dwarf_internal_srclines(Dwarf_Die die,
 
     /*  If die has DW_AT_comp_dir attribute, get the string that names
         the compilation directory. */
-    resattr = dwarf_attr(die, DW_AT_comp_dir, &comp_dir_attr, error);
+    resattr = _dwarf_internal_get_die_comp_dir(die, &const_comp_dir,
+        &const_comp_name,error);
     if (resattr == DW_DLV_ERROR) {
         return resattr;
     }
-    if (resattr == DW_DLV_OK) {
-        int cres = DW_DLV_ERROR;
-        char *cdir = 0;
-
-        cres = dwarf_formstring(comp_dir_attr, &cdir, error);
-        if (cres == DW_DLV_ERROR) {
-            return cres;
-        } else if (cres == DW_DLV_OK) {
-            comp_dir = (Dwarf_Small *) cdir;
-        }
-    }
-    if (resattr == DW_DLV_OK) {
-        dwarf_dealloc(dbg, comp_dir_attr, DW_DLA_ATTR);
-    }
+    /* Horrible cast to match historic interfaces. */
+    comp_dir = (Dwarf_Small *)const_comp_dir;
+   
     line_context = (Dwarf_Line_Context)
         _dwarf_get_alloc(dbg, DW_DLA_LINE_CONTEXT, 1);
     if (line_context == NULL) {
@@ -1013,7 +1004,10 @@ dwarf_srclines_table_offset(Dwarf_Line_Context line_context,
 /* New October 2015. */
 /*  If the CU DIE  has no DW_AT_comp_dir then
     the pointer pushed back to *compilation_directory
-    will be NULL. */
+    will be NULL. 
+    Foy DWARF5 the line table header has the compilation
+    directory. FIXME DWARF5.
+    */
 int dwarf_srclines_comp_dir(Dwarf_Line_Context line_context,
     const char **  compilation_directory,
     Dwarf_Error  *  error)

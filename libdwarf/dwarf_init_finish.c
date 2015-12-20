@@ -1024,7 +1024,6 @@ _dwarf_load_section(Dwarf_Debug dbg,
         DWARF_DBG_ERROR(dbg,DW_DLE_ZDEBUG_REQUIRES_ZLIB, DW_DLV_ERROR);
 #endif
     }
-
     if (_dwarf_apply_relocs == 0) {
         return res;
     }

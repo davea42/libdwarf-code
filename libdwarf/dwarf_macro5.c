@@ -103,6 +103,8 @@ int _dwarf_internal_macro_context_by_offset(Dwarf_Debug dbg,
     Dwarf_Unsigned *macro_ops_data_length,
     char **srcfiles,
     Dwarf_Signed srcfilescount,
+    const char *comp_dir,
+    const char *comp_name,
     Dwarf_Error * error);
 
 int _dwarf_internal_macro_context(Dwarf_Die die,
@@ -257,6 +259,28 @@ _dwarf_skim_forms(Dwarf_Debug dbg,
     return DW_DLV_OK;
 }
 
+#if 0
+static void
+dump_bytes(Dwarf_Small * start, long len)
+{
+    Dwarf_Small *end = start + len;
+    Dwarf_Small *cur = start;
+    unsigned pos = 0;
+
+    printf("dump %ld bytes, start at 0x%lx\n",len,(unsigned long)start);
+    printf("0x");
+    for (; cur < end;pos++, cur++) {
+        if (!(pos %4)) {
+            printf(" ");
+        }
+        printf("%02x",*cur);
+    }
+        
+    printf("\n");
+}
+#endif
+
+
 /*  On first call (for this macro_context),
     build_ops_array is FALSE. On second,
     it is TRUE and we know the count so we allocate and fill in
@@ -291,6 +315,7 @@ _dwarf_get_macro_ops_count_internal(Dwarf_Macro_Context macro_context,
     section_base = dbg->de_debug_macro.dss_data;
     section_end = section_base + dbg->de_debug_macro.dss_size;
     mdata = macro_context->mc_macro_ops;
+
     while (mdata < section_end) {
         Dwarf_Small op = 0;
 
@@ -619,6 +644,86 @@ dwarf_get_macro_defundef(Dwarf_Macro_Context macro_context,
     return DW_DLV_NO_ENTRY;
 }
 
+/*  ASSERT: we elsewhere guarantee room to copy into.
+    If trimtarg ==1, trim trailing slash in targ. 
+    Caller should not pass in 'src' 
+    with leading /  */
+void
+specialcat(char *targ,char *src,int trimtarg)
+{
+     char *last = 0;
+
+     while( *targ) {
+         last = targ;
+         targ++;
+     }
+     /* TARG now points at terminating NUL */
+     /* LAST points at final character in targ. */
+     if (trimtarg ) {
+         if(last && *last == '/') {
+             /* Truncate. */
+             *last = 0;
+             targ = last;
+             /* TARG again points at terminating NUL */
+         }
+     }
+     if (last) {
+         *targ++ = '/';
+         *targ = 0;
+         /* TARG again points at terminating NUL */
+     }
+     while (*src) {
+          *targ = *src;
+          targ++;
+          src++;
+     }
+     *targ = 0;
+}
+
+/* If returns NULL caller must handle it. */
+const char * 
+construct_from_dir_and_name(const char *dir,
+   const char *name)
+{
+    int truelen = 0;
+    char *final = 0;
+
+    /* Allow for NUL char and added /  */
+    truelen = strlen(dir) + strlen(name) + 1 +1;
+    final = (char *)malloc(truelen);
+    if(!final) {
+        return NULL;
+    }
+    final[0] = 0;
+    specialcat(final,(char *)dir,1);
+    strcat(final,"/");
+    specialcat(final,(char *)name,0);
+    return final;
+}
+
+/* If returns NULL caller must handle it. */
+const char * 
+construct_at_path_from_parts(Dwarf_Macro_Context mc)
+{
+    if (mc->mc_file_path) {
+        return mc->mc_file_path;
+    }
+    if(!mc->mc_at_comp_dir || !mc->mc_at_comp_dir[0]) {
+        return mc->mc_at_name;
+    }
+    if(_dwarf_file_name_is_full_path((Dwarf_Small *)mc->mc_at_name)) {
+        return mc->mc_at_name;
+    }
+    if (!mc->mc_at_name || !mc->mc_at_name[0]) {
+        return NULL;
+    }
+    /* Dwarf_Macro_Context destructor will free this. */
+    mc->mc_file_path = construct_from_dir_and_name(
+          mc->mc_at_comp_dir,mc->mc_at_name);
+    return mc->mc_file_path;
+}
+
+
 int
 dwarf_get_macro_startend_file(Dwarf_Macro_Context macro_context,
     Dwarf_Unsigned op_number,
@@ -665,14 +770,32 @@ dwarf_get_macro_startend_file(Dwarf_Macro_Context macro_context,
         mdata += uleblen;
         *line_number = linenum;
         *name_index_to_line_tab = srcindex;;
-        trueindex = srcindex-1;
-        if (trueindex > 0 &&
-            trueindex < macro_context->mc_srcfiles_count) {
-            *src_file_name = macro_context->mc_srcfiles[trueindex];
+        /*  For DWARF 2,3,4, decrement by 1.
+            FOR DWARF 5 do not decrement. */
+        if(macro_context->mc_version_number >= 5) {
+           trueindex = srcindex;
+           if (trueindex >= 0 &&
+               trueindex < macro_context->mc_srcfiles_count) {
+               *src_file_name = macro_context->mc_srcfiles[trueindex];
+           } else {
+               *src_file_name = "<no-source-file-name-available>";
+           }
         } else {
-            *src_file_name = "<no-source-file-name-available>";
+            trueindex = srcindex-1;
+            if (trueindex > 0 &&
+                 trueindex < macro_context->mc_srcfiles_count) {
+                 *src_file_name = macro_context->mc_srcfiles[trueindex];
+            } else {
+                 
+                 const char *mcatcomp = construct_at_path_from_parts(
+                     macro_context);
+                 if(mcatcomp) {
+                     *src_file_name = mcatcomp;
+                 } else {
+                     *src_file_name = "<no-source-file-name-available>";
+                 }
+            }
         }
-
     } else {
         /* DW_MACRO_end_file. No operands. */
     }
@@ -938,6 +1061,8 @@ _dwarf_internal_macro_context(Dwarf_Die die,
     Dwarf_Attribute macro_attr = 0;
     Dwarf_Signed srcfiles_count = 0;
     char ** srcfiles = 0;
+    const char *comp_dir = 0;
+    const char *comp_name = 0;
 
     /*  ***** BEGIN CODE ***** */
     if (error != NULL) {
@@ -959,7 +1084,6 @@ _dwarf_internal_macro_context(Dwarf_Die die,
     if (!dbg->de_debug_macro.dss_size) {
         return (DW_DLV_NO_ENTRY);
     }
-
     resattr = dwarf_attr(die, DW_AT_macros, &macro_attr, error);
     if (resattr == DW_DLV_NO_ENTRY) {
         resattr = dwarf_attr(die, DW_AT_GNU_macros, &macro_attr, error);
@@ -979,6 +1103,12 @@ _dwarf_internal_macro_context(Dwarf_Die die,
     if (lres == DW_DLV_ERROR) {
         return lres;
     }
+    lres = _dwarf_internal_get_die_comp_dir(die, &comp_dir,
+        &comp_name,error);
+    if (resattr == DW_DLV_ERROR) {
+        return lres;
+    }
+
     /*  NO ENTRY or OK we accept, though NO ENTRY means there
         are no source files available. */
     lres = _dwarf_internal_macro_context_by_offset(dbg,
@@ -986,6 +1116,8 @@ _dwarf_internal_macro_context(Dwarf_Die die,
         macro_ops_count_out,
         macro_ops_data_length,
         srcfiles,srcfiles_count,
+        comp_dir,
+        comp_name,
         error);
     return lres;
 }
@@ -999,6 +1131,8 @@ _dwarf_internal_macro_context_by_offset(Dwarf_Debug dbg,
     Dwarf_Unsigned      * macro_ops_data_length,
     char **srcfiles,
     Dwarf_Signed srcfilescount,
+    const char *comp_dir,
+    const char *comp_name,
     Dwarf_Error * error)
 {
     Dwarf_Unsigned line_table_offset = 0;
@@ -1053,6 +1187,8 @@ _dwarf_internal_macro_context_by_offset(Dwarf_Debug dbg,
         macro_data,sizeof(Dwarf_Small));
     macro_data += sizeof(Dwarf_Small);
 
+    macro_context->mc_at_comp_dir = comp_dir;
+    macro_context->mc_at_name = comp_name;
     macro_context->mc_srcfiles = srcfiles;
     macro_context->mc_srcfiles_count = srcfilescount;
     macro_context->mc_macro_header = macro_header;
@@ -1278,6 +1414,8 @@ _dwarf_macro_destructor(void *m)
     dealloc_srcfiles(dbg, mc->mc_srcfiles, mc->mc_srcfiles_count);
     mc->mc_srcfiles = 0;
     mc->mc_srcfiles_count = 0;
+    free((void *)mc->mc_file_path);
+    mc->mc_file_path = 0;
     free(mc->mc_ops);
     mc->mc_ops = 0;
     free(mc->mc_opcode_forms);

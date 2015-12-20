@@ -261,6 +261,10 @@ struct Dwarf_CU_Context_s {
         For DWARF 2,3,4 this is filled in initially
         from the CU header and refined by inspecting the TAG
         of the CU DIE to detect DW_UT_partial is applicable.  */
+
+    /*  If non-zero is the DW_AT_comp_dir string from 
+        the DWARF data. Do not free. */
+    const char *  cc_at_comp_dir;
 };
 
 /*  Consolidates section-specific data in one place.
@@ -406,7 +410,7 @@ struct Dwarf_dbg_sect_s {
     This does not yet allow for section-groups in object files,
     for which many .debug_info (and other) sections may exist.
 */
-#define DWARF_MAX_DEBUG_SECTIONS 30
+#define DWARF_MAX_DEBUG_SECTIONS 50
 
 
 
@@ -800,6 +804,8 @@ int _dwarf_extract_local_debug_str_string_given_offset(Dwarf_Debug dbg,
     Dwarf_Unsigned offset,
     char ** return_str,
     Dwarf_Error *  error);
+
+int _dwarf_file_name_is_full_path(Dwarf_Small  *fname);
 
 
 Dwarf_Byte_Ptr _dwarf_calculate_section_end_ptr(Dwarf_CU_Context context);

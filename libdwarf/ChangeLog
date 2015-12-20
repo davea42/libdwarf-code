@@ -1,3 +1,14 @@
+2015-12-19  David Anderson
+     * dwarf_line.c: Rename a function and make it callable
+       from other files: _dwarf_file_name_is_full_path().
+       Refactor creating _dwarf_internal_get_die_comp_dir().
+     * dwarf_macro5.c: Use _dwarf_internal_get_die_comp_dir() and
+       _dwarf_file_name_is_full_path() for DWARF4/5 macro file names.
+     * dwarf_macro5.h: New fields in macro context for the base
+       file name.
+     * dwarf_opaque.h: New field of comp_dir name on CU Context.
+     * dwarf_util.c: Implement _dwarf_internal_get_die_comp_dir().
+     * dwarf_util.h: Declare _dwarf_internal_get_die_comp_dir().
 2015-12-18  David Anderson
      * dwarf_query: One line had trailing whitespace. Fixed.
      * dwarf_macro5.c: Was not getting import offset right.

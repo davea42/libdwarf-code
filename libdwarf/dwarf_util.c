@@ -75,6 +75,63 @@ _dwarf_file_has_debug_fission_index(Dwarf_Debug dbg)
     return FALSE;
 }
 
+int
+_dwarf_internal_get_die_comp_dir(Dwarf_Die die, const char **compdir_out,
+    const char **compname_out,
+    Dwarf_Error *error)
+{
+    Dwarf_Attribute comp_dir_attr = 0;
+    Dwarf_Attribute comp_name_attr = 0;
+    int resattr = 0;
+    Dwarf_Debug dbg = 0;
+
+    dbg = die->di_cu_context->cc_dbg;
+    resattr = dwarf_attr(die, DW_AT_name, &comp_name_attr, error);
+    if (resattr == DW_DLV_ERROR) {
+        return resattr;
+    }
+    if (resattr == DW_DLV_OK) {
+        int cres = DW_DLV_ERROR;
+        char *name = 0;
+
+        cres = dwarf_formstring(comp_name_attr, &name, error);
+        if (cres == DW_DLV_ERROR) {
+            dwarf_dealloc(dbg, comp_name_attr, DW_DLA_ATTR);
+            return cres;
+        } else if (cres == DW_DLV_OK) {
+            *compname_out = (const char *)name;
+        } else {
+            /* FALL thru */
+        }
+    }
+    if (resattr == DW_DLV_OK) {
+        dwarf_dealloc(dbg, comp_name_attr, DW_DLA_ATTR);
+    }
+    resattr = dwarf_attr(die, DW_AT_comp_dir, &comp_dir_attr, error);
+    if (resattr == DW_DLV_ERROR) {
+        return resattr;
+    }
+    if (resattr == DW_DLV_OK) {
+        int cres = DW_DLV_ERROR;
+        char *cdir = 0;
+
+        cres = dwarf_formstring(comp_dir_attr, &cdir, error);
+        if (cres == DW_DLV_ERROR) {
+            dwarf_dealloc(dbg, comp_dir_attr, DW_DLA_ATTR);
+            return cres;
+        } else if (cres == DW_DLV_OK) {
+            *compdir_out = (const char *) cdir;
+        } else {
+            /* FALL thru */
+        }
+    }
+    if (resattr == DW_DLV_OK) {
+        dwarf_dealloc(dbg, comp_dir_attr, DW_DLA_ATTR);
+    }
+    return resattr;
+}
+
+
 /*  Given a form, and a pointer to the bytes encoding
     a value of that form, val_ptr, this function returns
     the length, in bytes, of a value of that form.

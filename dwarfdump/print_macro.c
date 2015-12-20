@@ -311,7 +311,7 @@ print_macros_5style_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
         Dwarf_Bool has_offset_size_64 = FALSE;
         Dwarf_Bool has_operands_table = FALSE;
         Dwarf_Half opcode_count = 0;
-        unsigned k = 0;
+        Dwarf_Half offset_size = 4;
 
         lres = dwarf_macro_context_head(macro_context,
             &lversion, &mac_offset,&mac_len,
@@ -328,13 +328,17 @@ print_macros_5style_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
                 lres,err);
             return;
         }
+        if (has_offset_size_64) {
+            offset_size = 8;
+        }
         printf("  Macro version: %d\n",lversion);
         if( verbose) {
             printf("  macro section offset 0x%" DW_PR_XZEROS DW_PR_DUx "\n",
                 mac_offset);
-            printf("  flags: 0x%x, line offset? %u offsetsize 64? %u, "
+            printf("  flags: 0x%x, line offset? %u offsetsize %u, "
                 "operands_table? %u\n",
                 mflags,has_line_offset,has_offset_size_64, has_operands_table);
+            printf("  offset size 0x%x\n",offset_size);
             printf("  header length: 0x%" DW_PR_XZEROS DW_PR_DUx
                 "  total length: 0x%" DW_PR_XZEROS DW_PR_DUx "\n",
                 mac_header_len,mac_len);

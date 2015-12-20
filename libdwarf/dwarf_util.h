@@ -319,6 +319,9 @@ int _dwarf_reference_outside_section(Dwarf_Die die,
 void _dwarf_error_mv_s_to_t(Dwarf_Debug dbgs,Dwarf_Error *errs,
     Dwarf_Debug dbgt,Dwarf_Error *errt);
 
+int _dwarf_internal_get_die_comp_dir(Dwarf_Die die, const char **compdir_out,
+    const char **comp_name_out,
+    Dwarf_Error *error);
 
 
 #endif /* DWARF_UTIL_H */

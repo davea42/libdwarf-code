@@ -118,6 +118,19 @@ struct Dwarf_Macro_Context_s {
     char **       mc_srcfiles;
     Dwarf_Signed  mc_srcfiles_count;
 
+    /*  These are from CU DIE attribute names. 
+        They may be NULL or point at data in
+        a dwarf section. Do not free(). 
+        This attempts to make up for the lack of a 
+        base file name
+        in DWARF2,3,4 line tables.
+    */
+    const char *  mc_at_comp_dir;
+    const char *  mc_at_name;
+    /*  The following is malloc,so macro_context_s destructor
+        needs to free it. */
+    const char *  mc_file_path;
+
     Dwarf_Debug      mc_dbg;
     Dwarf_CU_Context mc_cu_context;
 

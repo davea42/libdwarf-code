@@ -1,3 +1,5 @@
+2015-12-19  David Anderson
+     * print_macro.c: Print the actual macro offset size we will use.
 2015-12-18  David Anderson
      * dwarfdump.c,globals.h print_die.c,print_lines.c,
        print_macro.c,print_pubnames.c,print_ranges.c:
