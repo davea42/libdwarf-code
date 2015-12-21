@@ -46,18 +46,19 @@
 static void
 print_source_intro(Dwarf_Die cu_die)
 {
+    int ores = 0;
     Dwarf_Off off = 0;
-    int ores = dwarf_dieoffset(cu_die, &off, &err);
 
+    ores = dwarf_dieoffset(cu_die, &off, &err);
     if (ores == DW_DLV_OK) {
         int lres = 0;
         const char *sec_name = 0;
+
         lres = dwarf_get_die_section_name_b(cu_die,
             &sec_name,&err);
         if (lres != DW_DLV_OK ||  !sec_name || !strlen(sec_name)) {
             sec_name = ".debug_info";
         }
-
         printf("Source lines (from CU-DIE at %s offset 0x%"
             DW_PR_XZEROS DW_PR_DUx "):\n",
             sec_name,

@@ -55,7 +55,6 @@ struct Dwarf_Macro_Operator_s {
     Dwarf_Small *    mo_data;
 };
 
-
 #define MACRO_OFFSET_SIZE_FLAG 1
 #define MACRO_LINE_OFFSET_FLAG 2
 #define MACRO_OP_TABLE_FLAG 4
@@ -118,10 +117,10 @@ struct Dwarf_Macro_Context_s {
     char **       mc_srcfiles;
     Dwarf_Signed  mc_srcfiles_count;
 
-    /*  These are from CU DIE attribute names. 
+    /*  These are from CU DIE attribute names.
         They may be NULL or point at data in
-        a dwarf section. Do not free(). 
-        This attempts to make up for the lack of a 
+        a dwarf section. Do not free().
+        This attempts to make up for the lack of a
         base file name
         in DWARF2,3,4 line tables.
     */
@@ -133,7 +132,6 @@ struct Dwarf_Macro_Context_s {
 
     Dwarf_Debug      mc_dbg;
     Dwarf_CU_Context mc_cu_context;
-
 };
 
 

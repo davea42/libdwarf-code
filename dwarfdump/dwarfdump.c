@@ -1285,7 +1285,8 @@ process_one_file(Elf * elf,Elf *elftied,
         print_object_header(elf,dbg,section_map);
     }
     reset_overall_CU_error_data();
-    if (info_flag || line_flag || cu_name_flag || search_is_on ||
+    if (info_flag || line_flag ||
+        macro_flag || cu_name_flag || search_is_on ||
         producer_children_flag) {
         print_infos(dbg,TRUE);
         reset_overall_CU_error_data();
@@ -1304,6 +1305,7 @@ process_one_file(Elf * elf,Elf *elftied,
         print_pubnames(dbg);
     }
     if (macinfo_flag) {
+        /* This is bogus. FIXME. */
         reset_overall_CU_error_data();
         print_macinfo(dbg);
     }

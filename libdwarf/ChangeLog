@@ -1,4 +1,10 @@
 2015-12-19  David Anderson
+     * dwarf_macro5.c: specialcat() had a bug. Fixed 
+       indent/trailing whitespace.
+     * dwarf_macro5.n: Fixed indent/trailing whitespace.
+     * dwarf_line.c: Fixed indent/trailing whitespace.
+     * dwarf_opaque.h: Fixed indent/trailing whitespace.
+2015-12-19  David Anderson
      * dwarf_line.c: Rename a function and make it callable
        from other files: _dwarf_file_name_is_full_path().
        Refactor creating _dwarf_internal_get_die_comp_dir().

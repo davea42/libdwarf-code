@@ -35,19 +35,20 @@ static void
 print_source_intro(Dwarf_Die cu_die)
 {
     Dwarf_Off off = 0;
-    int ores = dwarf_dieoffset(cu_die, &off, &err);
+    int ores = 0;
 
+    ores = dwarf_dieoffset(cu_die, &off, &err);
     if (ores == DW_DLV_OK) {
         int lres = 0;
         const char *sec_name = 0;
+
         lres = dwarf_get_die_section_name_b(cu_die,
             &sec_name,&err);
         if (lres != DW_DLV_OK ||  !sec_name || !strlen(sec_name)) {
             sec_name = ".debug_info";
         }
-
         printf("Macro data from CU-DIE at %s offset 0x%"
-            DW_PR_XZEROS DW_PR_DUx "):\n",
+            DW_PR_XZEROS DW_PR_DUx ":\n",
             sec_name,
             (Dwarf_Unsigned) off);
     } else {
@@ -262,6 +263,7 @@ print_macros_5style_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
     }
     if (do_print_dwarf) {
         printf("\n%s: Macro info for a single cu\n", sec_name);
+        print_source_intro(cu_die);
     } else {
         /* We are checking, not printing. */
         Dwarf_Half tag = 0;
@@ -282,7 +284,6 @@ print_macros_5style_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
 #if 0
         int errcount = 0;
 #endif
-        print_source_intro(cu_die);
         print_one_die(dbg, cu_die,
             /* print_information= */ 1,
             /* indent level */0,

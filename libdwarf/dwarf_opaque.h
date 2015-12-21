@@ -262,7 +262,7 @@ struct Dwarf_CU_Context_s {
         from the CU header and refined by inspecting the TAG
         of the CU DIE to detect DW_UT_partial is applicable.  */
 
-    /*  If non-zero is the DW_AT_comp_dir string from 
+    /*  If non-zero is the DW_AT_comp_dir string from
         the DWARF data. Do not free. */
     const char *  cc_at_comp_dir;
 };

@@ -1,4 +1,11 @@
 2015-12-19  David Anderson
+     * dwarfdump.c: Now we print macros alone by CU with -m
+       (at least for DWARF5 macro format)
+     * print_lines.c(print_source_intro): Minor local 
+       variable ordering change.
+     * print_macro.c(print_source_intro): Minor local 
+       variable ordering change.
+2015-12-19  David Anderson
      * print_macro.c: Print the actual macro offset size we will use.
 2015-12-18  David Anderson
      * dwarfdump.c,globals.h print_die.c,print_lines.c,

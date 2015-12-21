@@ -95,6 +95,7 @@ static const struct Dwarf_Macro_OperationsList_s dwarf_default_macro_opslist = {
 13, dw5formsarray
 };
 
+
 int _dwarf_internal_macro_context_by_offset(Dwarf_Debug dbg,
     Dwarf_Unsigned offset,
     Dwarf_Unsigned  * version_out,
@@ -115,8 +116,6 @@ int _dwarf_internal_macro_context(Dwarf_Die die,
     Dwarf_Unsigned *macro_ops_count_out,
     Dwarf_Unsigned *macro_ops_data_length,
     Dwarf_Error * error);
-
-
 
 static int
 is_std_moperator(Dwarf_Small op)
@@ -275,7 +274,6 @@ dump_bytes(Dwarf_Small * start, long len)
         }
         printf("%02x",*cur);
     }
-        
     printf("\n");
 }
 #endif
@@ -645,43 +643,38 @@ dwarf_get_macro_defundef(Dwarf_Macro_Context macro_context,
 }
 
 /*  ASSERT: we elsewhere guarantee room to copy into.
-    If trimtarg ==1, trim trailing slash in targ. 
-    Caller should not pass in 'src' 
+    If trimtarg ==1, trim trailing slash in targ.
+    Caller should not pass in 'src'
     with leading /  */
-void
+static void
 specialcat(char *targ,char *src,int trimtarg)
 {
-     char *last = 0;
+    char *last = 0;
 
-     while( *targ) {
-         last = targ;
-         targ++;
-     }
-     /* TARG now points at terminating NUL */
-     /* LAST points at final character in targ. */
-     if (trimtarg ) {
-         if(last && *last == '/') {
-             /* Truncate. */
-             *last = 0;
-             targ = last;
-             /* TARG again points at terminating NUL */
-         }
-     }
-     if (last) {
-         *targ++ = '/';
-         *targ = 0;
-         /* TARG again points at terminating NUL */
-     }
-     while (*src) {
-          *targ = *src;
-          targ++;
-          src++;
-     }
-     *targ = 0;
+    while( *targ) {
+        last = targ;
+        targ++;
+    }
+    /* TARG now points at terminating NUL */
+    /* LAST points at final character in targ. */
+    if (trimtarg ) {
+        if(last && *last == '/') {
+            /* Truncate. */
+            *last = 0;
+            targ = last;
+            /* TARG again points at terminating NUL */
+        }
+    }
+    while (*src) {
+        *targ = *src;
+        targ++;
+        src++;
+    }
+    *targ = 0;
 }
 
 /* If returns NULL caller must handle it. */
-const char * 
+const char *
 construct_from_dir_and_name(const char *dir,
    const char *name)
 {
@@ -702,7 +695,7 @@ construct_from_dir_and_name(const char *dir,
 }
 
 /* If returns NULL caller must handle it. */
-const char * 
+const char *
 construct_at_path_from_parts(Dwarf_Macro_Context mc)
 {
     if (mc->mc_file_path) {
@@ -719,7 +712,7 @@ construct_at_path_from_parts(Dwarf_Macro_Context mc)
     }
     /* Dwarf_Macro_Context destructor will free this. */
     mc->mc_file_path = construct_from_dir_and_name(
-          mc->mc_at_comp_dir,mc->mc_at_name);
+        mc->mc_at_comp_dir,mc->mc_at_name);
     return mc->mc_file_path;
 }
 
@@ -773,34 +766,31 @@ dwarf_get_macro_startend_file(Dwarf_Macro_Context macro_context,
         /*  For DWARF 2,3,4, decrement by 1.
             FOR DWARF 5 do not decrement. */
         if(macro_context->mc_version_number >= 5) {
-           trueindex = srcindex;
-           if (trueindex >= 0 &&
-               trueindex < macro_context->mc_srcfiles_count) {
-               *src_file_name = macro_context->mc_srcfiles[trueindex];
-           } else {
-               *src_file_name = "<no-source-file-name-available>";
-           }
+            trueindex = srcindex;
+            if (trueindex >= 0 &&
+                trueindex < macro_context->mc_srcfiles_count) {
+                *src_file_name = macro_context->mc_srcfiles[trueindex];
+            } else {
+                *src_file_name = "<no-source-file-name-available>";
+            }
         } else {
             trueindex = srcindex-1;
-            if (trueindex > 0 &&
-                 trueindex < macro_context->mc_srcfiles_count) {
-                 *src_file_name = macro_context->mc_srcfiles[trueindex];
+            if (srcindex > 0 &&
+                trueindex < macro_context->mc_srcfiles_count) {
+                *src_file_name = macro_context->mc_srcfiles[trueindex];
             } else {
-                 
-                 const char *mcatcomp = construct_at_path_from_parts(
-                     macro_context);
-                 if(mcatcomp) {
-                     *src_file_name = mcatcomp;
-                 } else {
-                     *src_file_name = "<no-source-file-name-available>";
-                 }
+                const char *mcatcomp = construct_at_path_from_parts(
+                    macro_context);
+                if(mcatcomp) {
+                    *src_file_name = mcatcomp;
+                } else {
+                    *src_file_name = "<no-source-file-name-available>";
+                }
             }
         }
     } else {
         /* DW_MACRO_end_file. No operands. */
     }
-
-    /* FIXME */
     return DW_DLV_OK;
 }
 
@@ -844,7 +834,7 @@ dwarf_get_macro_import(Dwarf_Macro_Context macro_context,
     return DW_DLV_OK;
 }
 
-
+/* */
 static int
 valid_macro_form(Dwarf_Half form)
 {

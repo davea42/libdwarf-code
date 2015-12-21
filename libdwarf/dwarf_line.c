@@ -199,7 +199,7 @@ create_fullest_file_path(Dwarf_Debug dbg,
             _dwarf_error(dbg, error, DW_DLE_INCL_DIR_NUM_BAD);
             return (DW_DLV_ERROR);
         }
-        if (dirno > 0) {
+        if (dirno > 0 && fe->fi_dir_index > 0) {
             inc_dir_name = (char *) line_context->lc_include_directories[
                 fe->fi_dir_index - 1];
             incdirnamelen = strlen(inc_dir_name);
@@ -212,7 +212,7 @@ create_fullest_file_path(Dwarf_Debug dbg,
             _dwarf_error(dbg, error, DW_DLE_ALLOC_FAIL);
             return (DW_DLV_ERROR);
         }
-        if (dirno == 0) {
+        if (fe->fi_dir_index == 0) {
             /*  Just use comp dir name */
             if (compdirnamelen > 0) {
                 special_cat(full_name,comp_dir_name,compdirnamelen);
@@ -261,7 +261,7 @@ create_fullest_file_path(Dwarf_Debug dbg,
         number zero are taken to refer to DW_AT_comp_dir from the
         CU DIE
     DWARF 5:
-        Index (from macro or lines data) directly into 
+        Index (from macro or lines data) directly into
         srcfiles. Index zero is the base
         compilation directory name. */
 int
@@ -405,8 +405,8 @@ dwarf_srcfiles(Dwarf_Die die,
         }
         line_ptr = line_ptr_out;
     }
-    /*  For DWARF5, use of DW_AT_comp_dir not needed. 
-        Line table file names and directories 
+    /*  For DWARF5, use of DW_AT_comp_dir not needed.
+        Line table file names and directories
         start with comp_dir and name.  FIXME DWARF5 */
     line_context->lc_compilation_directory = comp_dir;
     /* We are in dwarf_srcfiles() */
@@ -606,7 +606,6 @@ _dwarf_internal_srclines(Dwarf_Die die,
     }
     /* Horrible cast to match historic interfaces. */
     comp_dir = (Dwarf_Small *)const_comp_dir;
-   
     line_context = (Dwarf_Line_Context)
         _dwarf_get_alloc(dbg, DW_DLA_LINE_CONTEXT, 1);
     if (line_context == NULL) {
@@ -1004,7 +1003,7 @@ dwarf_srclines_table_offset(Dwarf_Line_Context line_context,
 /* New October 2015. */
 /*  If the CU DIE  has no DW_AT_comp_dir then
     the pointer pushed back to *compilation_directory
-    will be NULL. 
+    will be NULL.
     Foy DWARF5 the line table header has the compilation
     directory. FIXME DWARF5.
     */
