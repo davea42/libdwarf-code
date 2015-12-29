@@ -828,7 +828,7 @@ dwarf_loc_head_c_dealloc(Dwarf_Loc_Head_c loclist_head)
         Dwarf_Unsigned listlen = loclist_head->ll_locdesc_count;
         Dwarf_Unsigned i = 0;
         for ( ; i < listlen; ++i) {
-            Dwarf_Loc_c loc = desc[i]->ld_s;
+            Dwarf_Loc_c loc = desc[i].ld_s;
             if(loc) {
                 dwarf_dealloc(dbg,loc,DW_DLA_LOC_BLOCK_C);
             }
