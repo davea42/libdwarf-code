@@ -467,6 +467,7 @@ dwarf_get_loclist_c(Dwarf_Attribute attr,
             llhead->ll_locdesc_count = listlen;
             llhead->ll_from_loclist = 2;
             llhead->ll_context = cucontext;
+            llhead->ll_dbg = dbg;
 
             /* New get loc ops, DWO version */
             for (lli = 0; lli < listlen; ++lli) {
@@ -555,6 +556,7 @@ dwarf_get_loclist_c(Dwarf_Attribute attr,
             llhead->ll_from_loclist = 1;
             llhead->ll_context = cucontext;
             llhead->ll_dbg = dbg;
+
             /* New locdesc and Loc,  non-DWO, so old format */
             for (lli = 0; lli < listlen; ++lli) {
                 int lres = 0;
@@ -650,6 +652,7 @@ dwarf_get_loclist_c(Dwarf_Attribute attr,
         llhead->ll_locdesc_count = listlen;
         llhead->ll_from_loclist = 0;
         llhead->ll_context = cucontext;
+        llhead->ll_dbg = dbg;
 
         /*  An empty location description (block length 0) means the
             code generator emitted no variable, the variable was not
@@ -822,9 +825,13 @@ dwarf_loc_head_c_dealloc(Dwarf_Loc_Head_c loclist_head)
     Dwarf_Debug dbg = loclist_head->ll_dbg;
     Dwarf_Locdesc_c desc = loclist_head->ll_locdesc;
     if( desc) {
-        Dwarf_Loc_c loc = desc->ld_s;
-        if(loc) {
-            dwarf_dealloc(dbg,loc,DW_DLA_LOC_BLOCK_C);
+        Dwarf_Unsigned listlen = loclist_head->ll_locdesc_count;
+        Dwarf_Unsigned i = 0;
+        for ( ; i < listlen; ++i) {
+            Dwarf_Loc_c loc = desc[i]->ld_s;
+            if(loc) {
+                dwarf_dealloc(dbg,loc,DW_DLA_LOC_BLOCK_C);
+            }
         }
         dwarf_dealloc(dbg,desc,DW_DLA_LOCDESC_C);
     }

@@ -1,3 +1,7 @@
+2015-12-29  David Anderson
+     * dwarf_loc2.c: ll_dbg was not set, two places.
+       dwarf_loc_head_c_dealloc() was not iterating
+       through the list of locdescs.  Fixed now.
 2015-12-19  David Anderson
      * dwarf_macro5.c: specialcat() had a bug. Fixed 
        indent/trailing whitespace.
