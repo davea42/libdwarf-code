@@ -1201,7 +1201,9 @@ dwarf_elf_object_relocate_a_section(void* obj_in,
     return res;
 }
 
-/* dwarf_elf_object_access_load_section */
+/*  dwarf_elf_object_access_load_section()
+    We are only asked to load sections that
+    libdwarf really needs. */
 static int
 dwarf_elf_object_access_load_section(void* obj_in,
     Dwarf_Half section_index,
@@ -1232,6 +1234,16 @@ dwarf_elf_object_access_load_section(void* obj_in,
             buffer. */
         data = elf_getdata(scn, NULL);
         if (data == NULL) {
+            *error = DW_DLE_MDE;
+            return DW_DLV_ERROR;
+        }
+        if (!data->d_buf) {
+            /*  If NULL it means 'the section has no data'
+                according to libelf documentation.
+                No DWARF-related section should ever have
+                'no data'.  Happens if a section type is
+                SHT_NOBITS and no section libdwarf
+                wants to look at should be SHT_NOBITS. */
             *error = DW_DLE_MDE;
             return DW_DLV_ERROR;
         }

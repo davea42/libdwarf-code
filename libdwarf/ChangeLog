@@ -1,3 +1,7 @@
+2015-12-30  David Anderson
+     * dwarf_elf_access.c(dwarf_elf_object_access_load_section):
+       now test for a NULL data pointer from libelf. Problem caused
+       by DWARF related section being marked SHT_NOBITS.
 2015-12-29  David Anderson
      * dwarf_loc2.c: ll_dbg was not set, two places.
        dwarf_loc_head_c_dealloc() was not iterating
