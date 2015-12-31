@@ -1,3 +1,6 @@
+2015-12-31  David Anderson
+     * configure.in: Now allows --enable-shared and --disable-nonshared
+     * configure: regenerated.
 2015-11-26  David Anderson
      * config.h.in, configure.in, Makefile.in: Deals with
        zlib when present.

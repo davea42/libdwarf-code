@@ -32,6 +32,7 @@ DEFS =		@DEFS@
 # archive, usually, so we assume it.
 dwfwall =       @dwfwall@
 dwfzlib =       @dwfzlib@
+LD_LIBRARY_PATH=../libdwarf
 DIRINC =        $(srcdir)/../libdwarf
 LIBS =		@LIBS@ -L../libdwarf -ldwarf -lelf $(dwfzlib)
 INCLUDES =	-I. -I$(srcdir) -I../libdwarf -I$(srcdir)/../libdwarf
@@ -108,9 +109,6 @@ makename.o: $(srcdir)/makename.h $(srcdir)/makename.c
 common.o:  $(srcdir)/common.c $(srcdir)/common.h
 	$(CC) $(CFLAGS) -c $(srcdir)/common.c
 
-# gennames should use a static libdwarf.
-gennames: $(srcdir)/gennames.c $(DIRINC)/dwarf.h $(HEADERS) common.o
-	$(CC) $(CFLAGS) $(srcdir)/gennames.c common.o ../libdwarf/libdwarf.a $(LDFLAGS) -o gennames
 naming.o:  $(srcdir)/naming.c $(srcdir)/naming.h
 	$(CC) $(CFLAGS) -c $(srcdir)/naming.c
 
@@ -119,48 +117,39 @@ naming.o:  $(srcdir)/naming.c $(srcdir)/naming.h
 trivial_naming.o: $(srcdir)/naming.c
 	$(CC) $(CFLAGS) -DTRIVIAL_NAMING  -c $(srcdir)/naming.c -o trivial_naming.o 
 
-# Use static libdwarf.a
 tag_tree_build:  $(srcdir)/tag_tree.c $(DIRINC)/dwarf.h $(HEADERS) tag_common.o makename.o common.o trivial_naming.o dwgetopt.o
-	$(CC) $(CFLAGS) $(srcdir)/tag_tree.c tag_common.o common.o makename.o trivial_naming.o dwgetopt.o ../libdwarf/libdwarf.a $(LDFLAGS) -o tag_tree_build 
+	LD_LIBRARY_PATH=$$LD_LIBRARY_PATH:$(LD_LIBRARY_PATH) $(CC) $(CFLAGS) $(srcdir)/tag_tree.c tag_common.o common.o makename.o trivial_naming.o dwgetopt.o  $(LDFLAGS) -o tag_tree_build 
 
 tag_attr_build:  $(srcdir)/tag_attr.c $(DIRINC)/dwarf.h $(HEADERS) tag_common.o makename.o common.o trivial_naming.o dwgetopt.o
-	$(CC) $(CFLAGS) $(srcdir)/tag_attr.c tag_common.o common.o makename.o trivial_naming.o dwgetopt.o ../libdwarf/libdwarf.a $(LDFLAGS) -o tag_attr_build 
+	$(CC) $(CFLAGS) $(srcdir)/tag_attr.c tag_common.o common.o makename.o trivial_naming.o dwgetopt.o $(LDFLAGS) -o tag_attr_build 
 
 tmp-tt-table.c: $(srcdir)/tag_tree.list tag_tree_build
 	# gcc -E tag_tree.list does not work, so use a .c name
 	-rm -f  tmp-t1.c
 	cp $(srcdir)/tag_tree.list tmp-t1.c
 	$(CC) $(CFLAGS) -E tmp-t1.c  > ./tmp-tag-tree-build1.tmp
-	./tag_tree_build -s  -i tmp-tag-tree-build1.tmp  -o tmp-tt-table.c
+	LD_LIBRARY_PATH=$$LD_LIBRARY_PATH:$(LD_LIBRARY_PATH) ./tag_tree_build -s  -i tmp-tag-tree-build1.tmp  -o tmp-tt-table.c
 
 tmp-tt-ext-table.c: $(srcdir)/tag_tree_ext.list tag_tree_build
 	# gcc -E tag_tree_ext.list does not work, so use a .c name
 	-rm -f tmp-t4.c
 	cp $(srcdir)/tag_tree_ext.list tmp-t4.c
 	$(CC) $(CFLAGS) -E tmp-t4.c  > ./tmp-tag-tree-build4.tmp
-	./tag_tree_build -e  -i tmp-tag-tree-build4.tmp -o tmp-tt-ext-table.c
+	LD_LIBRARY_PATH=$$LD_LIBRARY_PATH:$(LD_LIBRARY_PATH) ./tag_tree_build -e  -i tmp-tag-tree-build4.tmp -o tmp-tt-ext-table.c
 
 tmp-ta-table.c: $(srcdir)/tag_attr.list tag_attr_build
 	# gcc -E tag_attr.list does not work, so use a .c name
 	-rm -f tmp-t2.c
 	cp $(srcdir)/tag_attr.list tmp-t2.c
 	$(CC) $(CFLAGS)  -E tmp-t2.c  > ./tmp-tag-attr-build2.tmp
-	./tag_attr_build -s -i tmp-tag-attr-build2.tmp -o tmp-ta-table.c
+	LD_LIBRARY_PATH=$$LD_LIBRARY_PATH:$(LD_LIBRARY_PATH) ./tag_attr_build -s -i tmp-tag-attr-build2.tmp -o tmp-ta-table.c
 
 tmp-ta-ext-table.c: $(srcdir)/tag_attr_ext.list tag_attr_build
 	# gcc -E tag_attr_ext.list does not work, so use a .c name
 	-rm -f tmp-t3.c
 	cp $(srcdir)/tag_attr_ext.list tmp-t3.c
 	$(CC) $(CFLAGS)  -E tmp-t3.c  > ./tmp-tag-attr-build3.tmp
-	./tag_attr_build -e -i tmp-tag-attr-build3.tmp -o tmp-ta-ext-table.c
-
-
-# The file dwarf_names.awk generates BOTH dwarf_names.h and dwarf_names.c
-#   be careful of the make dependencies here
-dwarf_names.h: gennames $(DIRINC)/dwarf.h
-	rm -f dwarf_names.h dwarf_names.c
-	./gennames -s  -i ../libdwarf -o .
-dwarf_names.c: dwarf_names.h
+	LD_LIBRARY_PATH=$$LD_LIBRARY_PATH:$(LD_LIBRARY_PATH) ./tag_attr_build -e -i tmp-tag-attr-build3.tmp -o tmp-ta-ext-table.c
 
 
 test: esb.o dwgetopt.o 

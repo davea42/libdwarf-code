@@ -39,17 +39,22 @@ MaxOSX and most don't need to build dwarfgen.
     ./configure
     make all
 
-To also build a shared libdwarf in the process, do:
-    ./configure --enable-shared
-    make
-    cp libdwarf/libdwarf.so <somewhere>
+By default configure compiles and uses libdwarf.a.
 
-When ready to create a new distro,
-do
-./CPTOPUBLIC
-./BLDLIBDWARF yyyymmdd
+With 
+    ./configure --enabled-shared
+both libdwarf.a and libdwarf.so
+are built. The runtimes built will reference libdwarf.so.
+
+With 
+    ./configure --enabled-shared --disable-nonshared
+libdwarf.so is built and used; libdwarf.a is not built.
+
+When ready to create a new source distribution do
+    ./CPTOPUBLIC
+    ./BLDLIBDWARF yyyymmdd
 where that could be
-	./BLDLIBDWARF 20140131
+    ./BLDLIBDWARF 20140131
 as an example.
 
-David Anderson.  Updated December 28, 2014 (removed dwarfdump2)
+David Anderson.  Updated December 31, 2015

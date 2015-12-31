@@ -25,6 +25,23 @@ elif test "$ac_cv_header_libelf_libelf_h" = yes; then
 	[Define to header that first defines elf.])
 fi
 
+dnl default-disabled shared
+shrd=''
+AC_ARG_ENABLE(shared,AC_HELP_STRING([--enable-shared],
+                [build shared library libdwarf.so and use it if present]))
+AS_IF([ test "x$enable_shared" = "xyes"], [
+   shrd='--enable-shared'])
+
+nonshrd=''
+dnl default-enabled nonshared
+AC_SUBST(build_nonshared,[none.a])
+AC_ARG_ENABLE(nonshared,AC_HELP_STRING([--disable-nonshared],
+                [do not build archive library libdwarf.a]))
+AS_IF([ test "x$enable_nonshared" = "xno"], [
+   nonshrd='--disable-shared'
+])
+
+
 dnl This adds compiler option -Wall (gcc compiler warnings)
 AC_SUBST(dwfwall,[])
 AC_ARG_ENABLE(wall,AC_HELP_STRING([--enable-wall],

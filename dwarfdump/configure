@@ -623,6 +623,7 @@ ac_subst_vars='LTLIBOBJS
 LIBOBJS
 dwfzlib
 dwfwall
+build_nonshared
 AR
 RANLIB
 INSTALL_DATA
@@ -679,6 +680,8 @@ SHELL'
 ac_subst_files=''
 ac_user_opts='
 enable_option_checking
+enable_shared
+enable_nonshared
 enable_wall
 enable_nonstandardprintf
 '
@@ -1298,6 +1301,9 @@ Optional Features:
   --disable-option-checking  ignore unrecognized --enable/--with options
   --disable-FEATURE       do not include FEATURE (same as --enable-FEATURE=no)
   --enable-FEATURE[=ARG]  include FEATURE [ARG=yes]
+  --enable-shared         build shared library libdwarf.so and use it if
+                          present
+  --disable-nonshared     do not build archive library libdwarf.a
   --enable-wall           Add -Wall (default is none)
   --enable-nonstandardprintf
                           Use a special printf format for 64bit (default is
@@ -3633,6 +3639,32 @@ elif test "$ac_cv_header_libelf_libelf_h" = yes; then
 $as_echo "#define LOCATION_OF_LIBELFHEADER <libelf/libelf.h>" >>confdefs.h
 
 fi
+
+shrd=''
+# Check whether --enable-shared was given.
+if test "${enable_shared+set}" = set; then :
+  enableval=$enable_shared;
+fi
+
+if  test "x$enable_shared" = "xyes"; then :
+
+   shrd='--enable-shared'
+fi
+
+nonshrd=''
+build_nonshared=none.a
+
+# Check whether --enable-nonshared was given.
+if test "${enable_nonshared+set}" = set; then :
+  enableval=$enable_nonshared;
+fi
+
+if  test "x$enable_nonshared" = "xno"; then :
+
+   nonshrd='--disable-shared'
+
+fi
+
 
 
 # Check whether --enable-wall was given.

@@ -621,6 +621,7 @@ ac_includes_default="\
 ac_subst_vars='LTLIBOBJS
 LIBOBJS
 dwfzlib
+build_nonshared
 AR
 RANLIB
 INSTALL_DATA
@@ -680,6 +681,8 @@ SHELL'
 ac_subst_files=''
 ac_user_opts='
 enable_option_checking
+enable_shared
+enable_nonshared
 '
       ac_precious_vars='build_alias
 host_alias
@@ -1297,6 +1300,14 @@ if test -n "$ac_init_help"; then
      short | recursive ) echo "Configuration of simplereader.c frame1.c:";;
    esac
   cat <<\_ACEOF
+
+Optional Features:
+  --disable-option-checking  ignore unrecognized --enable/--with options
+  --disable-FEATURE       do not include FEATURE (same as --enable-FEATURE=no)
+  --enable-FEATURE[=ARG]  include FEATURE [ARG=yes]
+  --enable-shared         build shared library libdwarf.so and use it if
+                          present
+  --disable-nonshared     do not build archive library libdwarf.a
 
 Some influential environment variables:
   CC          C compiler command
@@ -4167,6 +4178,32 @@ $as_echo "#define HAVE___UINT64_T_IN_SGIDEFS_H 1" >>confdefs.h
 
 fi
 rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+
+shrd=''
+# Check whether --enable-shared was given.
+if test "${enable_shared+set}" = set; then :
+  enableval=$enable_shared;
+fi
+
+if  test "x$enable_shared" = "xyes"; then :
+
+   shrd='--enable-shared'
+fi
+
+nonshrd=''
+build_nonshared=none.a
+
+# Check whether --enable-nonshared was given.
+if test "${enable_nonshared+set}" = set; then :
+  enableval=$enable_nonshared;
+fi
+
+if  test "x$enable_nonshared" = "xno"; then :
+
+   nonshrd='--disable-shared'
+
+fi
+
 
 
 cat confdefs.h - <<_ACEOF >conftest.$ac_ext

@@ -622,6 +622,7 @@ enable_option_checking=no
 ac_subst_vars='LTLIBOBJS
 LIBOBJS
 subdirs
+build_nonshared
 AR
 RANLIB
 INSTALL_DATA
@@ -679,6 +680,7 @@ ac_subst_files=''
 ac_user_opts='
 enable_option_checking
 enable_shared
+enable_nonshared
 '
       ac_precious_vars='build_alias
 host_alias
@@ -1296,7 +1298,9 @@ Optional Features:
   --disable-option-checking  ignore unrecognized --enable/--with options
   --disable-FEATURE       do not include FEATURE (same as --enable-FEATURE=no)
   --enable-FEATURE[=ARG]  include FEATURE [ARG=yes]
-  --enable-shared         build shared library libdwarf.so
+  --enable-shared         build shared library libdwarf.so and use it if
+                          present
+  --disable-nonshared     do not build archive library libdwarf.a
 
 Some influential environment variables:
   CC          C compiler command
@@ -3659,6 +3663,20 @@ fi
 if  test "x$enable_shared" = "xyes"; then :
 
    shrd='--enable-shared'
+fi
+
+nonshrd=''
+build_nonshared=none.a
+
+# Check whether --enable-nonshared was given.
+if test "${enable_nonshared+set}" = set; then :
+  enableval=$enable_nonshared;
+fi
+
+if  test "x$enable_nonshared" = "xno"; then :
+
+   nonshrd='--disable-shared'
+
 fi
 
 

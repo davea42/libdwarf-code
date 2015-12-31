@@ -1,3 +1,6 @@
+2015-12-31  David Anderson
+     * configure.in: Now allows --enable-shared and --disable-nonshared
+     * configure: regenerated.
 2015-12-19  David Anderson
      * dwarfdump.c: Now we print macros alone by CU with -m
        (at least for DWARF5 macro format)

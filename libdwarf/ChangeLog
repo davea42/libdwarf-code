@@ -1,3 +1,6 @@
+2015-12-31  David Anderson
+     * configure.in: Now allows --enable-shared and --disable-nonshared
+     * configure: regenerated.
 2015-12-30  David Anderson
      * dwarf_elf_access.c(dwarf_elf_object_access_load_section):
        now test for a NULL data pointer from libelf. Problem caused

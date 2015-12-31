@@ -52,4 +52,21 @@ AC_TRY_COMPILE([#include "zlib.h"],[
      AC_SUBST(dwfzlib,[-lz])
     ])
 
+dnl default-disabled shared
+shrd=''
+AC_ARG_ENABLE(shared,AC_HELP_STRING([--enable-shared],
+                [build shared library libdwarf.so and use it if present]))
+AS_IF([ test "x$enable_shared" = "xyes"], [
+   shrd='--enable-shared'])
+
+nonshrd=''
+dnl default-enabled nonshared
+AC_SUBST(build_nonshared,[none.a])
+AC_ARG_ENABLE(nonshared,AC_HELP_STRING([--disable-nonshared],
+                [do not build archive library libdwarf.a]))
+AS_IF([ test "x$enable_nonshared" = "xno"], [
+   nonshrd='--disable-shared'
+])
+
+
 AC_OUTPUT(Makefile)
