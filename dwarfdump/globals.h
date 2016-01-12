@@ -241,6 +241,7 @@ extern boolean check_pubname_attr;
 extern boolean check_attr_tag;
 extern boolean check_tag_tree;
 extern boolean check_type_offset;
+extern boolean check_macros;
 extern boolean check_decl_file;
 extern boolean check_lines;
 extern boolean check_ranges;       /* Ranges (aranges & ranges) check */
@@ -328,7 +329,10 @@ extern boolean line_print_pc;        /* Print <pc> addresses. */
 extern boolean use_old_dwarf_loclist;
 extern boolean producer_children_flag;   /* List of CUs per compiler */
 
-extern boolean macro_flag; /* DWARF5 and DWARF4 macro extension */
+extern boolean macro_flag; /* DWARF5.  And DWARF4 macro extension */
+
+/* tsearch tree used in macro checking. */
+extern void *  macro_check_tree;
 
 extern char cu_name[ ];
 extern boolean cu_name_flag;
@@ -480,7 +484,8 @@ void clean_up_die_esb();
 void clean_up_syms_malloc_data();
 void safe_strcpy(char *out, long outlen, const char *in, long inlen);
 
-void print_macros_5style_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die);
+void print_macros_5style_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die,
+    Dwarf_Bool in_import_list, Dwarf_Unsigned offset);
 
 
 void format_sig8_string(Dwarf_Sig8*data, struct esb_s *out);

@@ -1,4 +1,3 @@
-#
 #  Makefile for dwarfdump
 #  This is made very simple so it should work with
 #  any 'make'.
@@ -53,6 +52,7 @@ FINALOBJECTS = \
 	dwarf_tsearchbal.o \
 	dwconf.o \
 	esb.o \
+        macrocheck.o \
 	print_abbrevs.o \
 	print_aranges.o \
 	print_debugfission.o \
@@ -82,12 +82,13 @@ GEN_HFILES = common.o \
 
 all: dwarfdump
 
-HEADERS = $(srcdir)/checkutil.h \
+HEADERS =  $(srcdir)/checkutil.h \
         $(srcdir)/common.h \
         $(srcdir)/dwconf.h \
         $(srcdir)/dwgetopt.h \
         $(srcdir)/esb.h \
         $(srcdir)/globals.h \
+        $(srcdir)/macrocheck.h \
         $(srcdir)/makename.h \
         $(srcdir)/dwarf_tsearch.h \
         $(srcdir)/print_frames.h \
@@ -172,10 +173,16 @@ test: esb.o dwgetopt.o
 	./getopttestnat -c 8
 	-rm -f ./getopttestnat
 selftest:
-	-rm -f ./a.out
-	$(CC) -DSELFTEST -g esb.c
-	./a.out
-	-rm -f ./a.out
+	-rm -f ./selfesb
+	-rm -f ./selfmc
+	$(CC) -g -c -I../libdwarf esb.c
+	$(CC) -g -c -I../libdwarf dwarf_tsearchbal.c
+	$(CC) -DSELFTEST -I../libdwarf -g macrocheck.c esb.o dwarf_tsearchbal.o -o selfmc
+	./selfmc
+	-rm -f ./selfmc
+	$(CC) -DSELFTEST -g esb.c -o selfesb
+	./selfesb
+	-rm -f ./selfesb
         
 
 

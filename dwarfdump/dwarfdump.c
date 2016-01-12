@@ -1,6 +1,7 @@
 /*
+            }
   Copyright (C) 2000,2002,2004,2005 Silicon Graphics, Inc.  All Rights Reserved.
-  Portions Copyright (C) 2007-2013 David Anderson. All Rights Reserved.
+  Portions Copyright (C) 2007-2016 David Anderson. All Rights Reserved.
   Portions Copyright 2007-2010 Sun Microsystems, Inc. All rights reserved.
   Portions Copyright 2012 SN Systems Ltd. All rights reserved.:w
 
@@ -168,6 +169,7 @@ boolean check_attr_tag = FALSE;
 boolean check_tag_tree = FALSE;
 boolean check_type_offset = FALSE;
 boolean check_decl_file = FALSE;
+boolean check_macros = FALSE;
 boolean check_lines = FALSE;
 boolean check_fdes = FALSE;
 boolean check_ranges = FALSE;
@@ -1286,11 +1288,16 @@ process_one_file(Elf * elf,Elf *elftied,
     }
     reset_overall_CU_error_data();
     if (info_flag || line_flag ||
+        check_macros ||
         macro_flag || cu_name_flag || search_is_on ||
         producer_children_flag) {
         print_infos(dbg,TRUE);
         reset_overall_CU_error_data();
         print_infos(dbg,FALSE);
+        if (check_macros) {
+            print_macro_statistics(&macro_check_tree);
+        }
+        clear_macro_statistics(&macro_check_tree);
     }
     if (gdbindex_flag) {
         reset_overall_CU_error_data();
@@ -1455,6 +1462,7 @@ static const char *usage_text[] = {
 "\t\t\t  example: to stop after <num> compilation units",
 "\t\t-i\tprint info section",
 "\t\t-I\tprint sections .gdb_index, .debug_cu_index, .debug_tu_index",
+/* FIXME -kw is check macros */
 "\t\t-k[abcdDeEfFgGilmMnrRsStu[f]x[e]y] check dwarf information",
 "\t\t   a\tdo all checks",
 "\t\t   b\tcheck abbreviations",     /* Check abbreviations */
@@ -1989,6 +1997,8 @@ process_args(int argc, char *argv[])
                 pubnames_flag = info_flag = TRUE;
                 gdbindex_flag = TRUE;
                 check_decl_file = TRUE;
+                check_macros = TRUE;
+                
                 check_frames = TRUE;
                 check_frames_extended = FALSE;
                 check_locations = TRUE;
@@ -2118,6 +2128,10 @@ process_args(int argc, char *argv[])
                 }
                 break;
 #endif /* HAVE_USAGE_TAG_ATTR */
+            case 'w':
+                check_macros = TRUE;
+                macro_flag = TRUE;
+                break;
             case 'y':
                 check_type_offset = TRUE;
                 check_harmless = TRUE;

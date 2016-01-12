@@ -2568,6 +2568,7 @@ int dwarf_get_arange_info_b(
 int dwarf_get_macro_context(Dwarf_Die /*die*/,
     Dwarf_Unsigned      * /*version_out*/,
     Dwarf_Macro_Context * /*macro_context*/,
+    Dwarf_Unsigned      * /*macro_unit_offset_out*/,
     Dwarf_Unsigned      * /*macro_ops_count_out*/,
     Dwarf_Unsigned      * /*macro_ops_data_length_out*/,
     Dwarf_Error         * /*error*/);

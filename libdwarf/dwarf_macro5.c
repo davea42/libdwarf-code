@@ -113,6 +113,7 @@ int _dwarf_internal_macro_context(Dwarf_Die die,
     Dwarf_Unsigned offset,
     Dwarf_Unsigned  * version_out,
     Dwarf_Macro_Context * macro_context_out,
+    Dwarf_Unsigned *macro_unit_offset_out,
     Dwarf_Unsigned *macro_ops_count_out,
     Dwarf_Unsigned *macro_ops_data_length,
     Dwarf_Error * error);
@@ -120,7 +121,7 @@ int _dwarf_internal_macro_context(Dwarf_Die die,
 static int
 is_std_moperator(Dwarf_Small op)
 {
-    if (op > 1 && op <= DW_MACRO_undef_strx) {
+    if (op >= 1 && op <= DW_MACRO_undef_strx) {
         return TRUE;
     }
     return FALSE;
@@ -490,10 +491,9 @@ dwarf_get_macro_defundef(Dwarf_Macro_Context macro_context,
         linenum = _dwarf_decode_u_leb128(mdata,
             &uleblen);
         mdata += uleblen;
-
         content = (const char *)mdata;
-        res = _dwarf_check_string_valid(dbg,mdata,
-            startptr,endptr, error);
+        res = _dwarf_check_string_valid(dbg,
+            startptr,mdata, endptr, error);
         if(res != DW_DLV_OK) {
             return res;
         }
@@ -502,7 +502,6 @@ dwarf_get_macro_defundef(Dwarf_Macro_Context macro_context,
         *offset = 0;
         *forms_count = lformscount;
         *macro_string = content;
-
         }
         return DW_DLV_OK;
     case DW_MACRO_define_strp:
@@ -1036,6 +1035,7 @@ _dwarf_internal_macro_context(Dwarf_Die die,
     Dwarf_Unsigned    offset_in,
     Dwarf_Unsigned  * version_out,
     Dwarf_Macro_Context * macro_context_out,
+    Dwarf_Unsigned      * macro_unit_offset_out,
     Dwarf_Unsigned      * macro_ops_count_out,
     Dwarf_Unsigned      * macro_ops_data_length,
     Dwarf_Error * error)
@@ -1081,7 +1081,7 @@ _dwarf_internal_macro_context(Dwarf_Die die,
     if (resattr != DW_DLV_OK) {
         return resattr;
     }
-    if (offset_specified) {
+    if (!offset_specified) {
         lres = dwarf_global_formref(macro_attr, &macro_offset, error);
         if (lres != DW_DLV_OK) {
             return lres;
@@ -1098,6 +1098,7 @@ _dwarf_internal_macro_context(Dwarf_Die die,
     if (resattr == DW_DLV_ERROR) {
         return lres;
     }
+    *macro_unit_offset_out = macro_offset;
 
     /*  NO ENTRY or OK we accept, though NO ENTRY means there
         are no source files available. */
@@ -1317,6 +1318,7 @@ int
 dwarf_get_macro_context(Dwarf_Die cu_die,
     Dwarf_Unsigned      * version_out,
     Dwarf_Macro_Context * macro_context,
+    Dwarf_Unsigned      * macro_unit_offset_out,
     Dwarf_Unsigned      * macro_ops_count_out,
     Dwarf_Unsigned      * macro_ops_data_length,
     Dwarf_Error * error)
@@ -1330,6 +1332,7 @@ dwarf_get_macro_context(Dwarf_Die cu_die,
         offset,
         version_out,
         macro_context,
+        macro_unit_offset_out,
         macro_ops_count_out,
         macro_ops_data_length,
         error);
@@ -1350,12 +1353,14 @@ dwarf_get_macro_context_by_offset(Dwarf_Die cu_die,
 {
     int res = 0;
     Dwarf_Bool offset_specified = TRUE;
+    Dwarf_Unsigned macro_unit_offset_out = 0;
 
-    res =  _dwarf_internal_macro_context(cu_die,
+    res = _dwarf_internal_macro_context(cu_die,
         offset_specified,
         offset,
         version_out,
         macro_context,
+        &macro_unit_offset_out,
         macro_ops_count_out,
         macro_ops_data_length,
         error);
