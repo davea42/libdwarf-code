@@ -748,11 +748,14 @@ print_one_die_section(Dwarf_Debug dbg,Dwarf_Bool is_info)
             /*  Traverse the line section if in check mode
                 or if line-printing requested */
             if (line_flag || check_decl_file) {
+                int oldsection = current_section_id;
                 print_line_numbers_this_cu(dbg, cu_die);
+                current_section_id = oldsection;
             }
             if (macro_flag || check_macros) {
                 Dwarf_Bool in_import_list = FALSE;
                 Dwarf_Unsigned import_offset = 0;
+                int oldsection = current_section_id;
  
                 print_macros_5style_this_cu(dbg, cu_die,
                    in_import_list,import_offset);
@@ -762,6 +765,7 @@ print_one_die_section(Dwarf_Debug dbg,Dwarf_Bool is_info)
                     print_macros_5style_this_cu(dbg, cu_die,
                         in_import_list,import_offset);
                 }
+                current_section_id = oldsection;
             }
             dwarf_dealloc(dbg, cu_die, DW_DLA_DIE);
             cu_die = 0;

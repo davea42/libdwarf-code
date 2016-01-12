@@ -1,4 +1,13 @@
 2015-01-12  David Anderson
+     * print_abbrevs.c: If an abbreviation number is a bit
+       goofy, accomodate it so we do not write to
+       memory we did not allocate.  It will
+       be caught a bit later in the run as an invalid DIE 
+       or abbreviation.
+     * print_die.c: When we switch sections inside a DIE print
+       save and restore current_section_id to get the best 
+       reporting on errors/checks.
+2015-01-12  David Anderson
      * common.c,dwarfdump.c: Update version string.
 2015-01-12  David Anderson
      * Makefile.in: Adding macrocheck.h, and .c.  Adding

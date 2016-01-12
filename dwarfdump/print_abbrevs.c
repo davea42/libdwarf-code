@@ -239,10 +239,13 @@ get_abbrev_array_info(Dwarf_Debug dbg, Dwarf_Unsigned offset_in)
                 ++offset; /* Skip abbreviation code */
                 bMore = FALSE;
             } else {
-                /* Valid abbreviation code */
+                /* Valid abbreviation code. We hope. */
                 if (abbrev_code > 0) {
-                    if (abbrev_code > abbrev_array_size) {
-                        /* Resize abbreviation array */
+                    while (abbrev_code > abbrev_array_size) {
+                        /*  Resize abbreviation array.
+                            Only a bogus abbreviation number will iterate
+                            more than once, and it will be caught later.
+                            Or we will run out of memory! */
                         abbrev_array_size *= 2;
                         abbrev_array = (Dwarf_Signed *)
                             realloc(abbrev_array,
@@ -261,7 +264,10 @@ get_abbrev_array_info(Dwarf_Debug dbg, Dwarf_Unsigned offset_in)
     }
 }
 
-/* Validate an abbreviation for the current CU. */
+/*  Validate an abbreviation for the current CU. 
+    In case of bogus abbrev input the CU_abbrev_count
+    might not be as large as abbrev_array_size says
+    the array is.  This should catch that case. */
 void
 validate_abbrev_code(Dwarf_Debug dbg,Dwarf_Unsigned abbrev_code)
 {
