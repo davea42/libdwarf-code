@@ -1,4 +1,6 @@
 2015-01-12  David Anderson
+     * common.c,dwarfdump.c: Update version string.
+2015-01-12  David Anderson
      * Makefile.in: Adding macrocheck.h, and .c.  Adding
        selftest of macrocheck.c.
      * dwarfdump.c: Now handles imported DWARF5 macros
