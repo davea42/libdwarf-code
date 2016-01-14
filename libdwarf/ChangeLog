@@ -1,3 +1,5 @@
+2016-01-14  David Anderson
+     * dwarf_query.c(dwarf_die_offsets): 'res ==' corrected to 'res ='.
 2016-01-12  David Anderson
      * dwarf_macro5.c: Fixed DW_MACRO_define/undef
        calls of  _dwarf_check_string_valid().

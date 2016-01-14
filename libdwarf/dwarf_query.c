@@ -151,7 +151,7 @@ dwarf_die_offsets(Dwarf_Die die,
     *off = 0;
     *cu_off = 0;
     int res = 0;
-    res == dwarf_dieoffset(die,off,error);
+    res = dwarf_dieoffset(die,off,error);
     if (res == DW_DLV_OK) {
         res = dwarf_die_CU_offset(die,cu_off,error);
     }
