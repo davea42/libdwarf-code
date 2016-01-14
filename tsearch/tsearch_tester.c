@@ -1069,9 +1069,9 @@ build_filetest(struct myacts **tout, char *pathout,
             recordacts[ixout].action_ = 'a';
             readaddrfail = getaddr(&buf[2],&addr);
             if(readaddrfail) {
-                fprintf(stderr,"Improper value input, line %u of file %s\n"
+                fprintf(stderr,"Improper value input, line %lu of file %s\n"
                     "%s\n",
-                    ct,filename,buf);
+                    (unsigned long)ct,filename,buf);
                 return 1;
             }
             recordacts[ixout].addr_ = addr;
@@ -1081,16 +1081,16 @@ build_filetest(struct myacts **tout, char *pathout,
             recordacts[ixout].action_ = 'd';
             readaddrfail = getaddr(&buf[2],&addr);
             if(readaddrfail) {
-                fprintf(stderr,"Improper value input, line %u of file %s\n"
+                fprintf(stderr,"Improper value input, line %lu of file %s\n"
                     "%s\n",
-                    ct,filename,buf);
+                    (unsigned long)ct,filename,buf);
                 return 1;
             }
             recordacts[ixout].addr_ = addr;
         } else {
-            fprintf(stderr,"Improper input, line %u of file %s\n"
+            fprintf(stderr,"Improper input, line %lu of file %s\n"
                 "%s\n",
-                ct,filename,buf);
+                (unsigned long)ct,filename,buf);
             return 1;
         }
         ixout++;
