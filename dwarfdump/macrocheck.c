@@ -1,5 +1,5 @@
 /*
-  Copyright 2015-2015 David Anderson. All rights reserved.
+  Copyright 2015-2016 David Anderson. All rights reserved.
 
   This program is free software; you can redistribute it and/or modify it
   under the terms of version 2 of the GNU General Public License as
@@ -8,7 +8,7 @@
   This program is distributed in the hope that it would be useful, but
   WITHOUT ANY WARRANTY; without even the implied warranty of
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-    
+
   Further, this software is distributed without any warranty that it is
   free of the rightful claim of any third person regarding infringement
   or the like.  Any license provided herein, whether implied or
@@ -20,7 +20,6 @@
   with this program; if not, write the Free Software Foundation, Inc., 51
   Franklin Street - Fifth Floor, Boston MA 02110-1301, USA.
 */
-
 
 #include "globals.h"
 #include "esb.h"
@@ -95,7 +94,7 @@ macrocheck_map_insert(Dwarf_Unsigned offset,
     if (retval) {
         re = *(struct Macrocheck_Map_Entry_s **)retval;
         if (re != e) {
-            /*  We returned an existing record, e not needed. 
+            /*  We returned an existing record, e not needed.
                 Increment refcounts. */
             re->mp_refcount_primary += add_prim;
             re->mp_refcount_secondary += add_sec;
@@ -104,6 +103,7 @@ macrocheck_map_insert(Dwarf_Unsigned offset,
             /* Record e got added to tree1, do not free record e. */
         }
     }
+    return NULL;
 }
 
 static struct Macrocheck_Map_Entry_s *
@@ -132,7 +132,7 @@ macrocheck_map_destroy(void *map)
 }
 
 
-void 
+void
 add_macro_import(void **base,Dwarf_Bool is_primary,Dwarf_Unsigned offset)
 {
     Dwarf_Unsigned prim_count  = 0;
@@ -145,13 +145,13 @@ add_macro_import(void **base,Dwarf_Bool is_primary,Dwarf_Unsigned offset)
     }
     macrocheck_map_insert(offset,prim_count,sec_count,base);
 }
-void 
+void
 add_macro_import_sup(void **base,Dwarf_Unsigned offset)
 {
     /* FIXME */
     return;
 }
-void 
+void
 add_macro_area_len(void **base, Dwarf_Unsigned offset,
     Dwarf_Unsigned len)
 {
@@ -164,12 +164,13 @@ add_macro_area_len(void **base, Dwarf_Unsigned offset,
 }
 
 static Dwarf_Unsigned reccount = 0;
+
 static void
 macro_walk_count_recs(const void *nodep,const DW_VISIT which,const int depth)
 {
-    struct Macrocheck_Map_Entry_s * re = 
+    struct Macrocheck_Map_Entry_s * re =
         *(struct Macrocheck_Map_Entry_s**)nodep;
-    if (which == dwarf_postorder || which == dwarf_endorder) { 
+    if (which == dwarf_postorder || which == dwarf_endorder) {
         return;
     }
     reccount += 1;
@@ -177,9 +178,9 @@ macro_walk_count_recs(const void *nodep,const DW_VISIT which,const int depth)
 static Dwarf_Unsigned
 macro_count_recs(void **base)
 {
-     reccount = 0;
-     dwarf_twalk(*base,macro_walk_count_recs);
-     return reccount;
+    reccount = 0;
+    dwarf_twalk(*base,macro_walk_count_recs);
+    return reccount;
 }
 
 static Dwarf_Unsigned lowestoff = 0;
@@ -188,10 +189,10 @@ static void
 macro_walk_find_lowest(const void *nodep,const DW_VISIT  which,
     const int  depth)
 {
-    struct Macrocheck_Map_Entry_s * re = 
+    struct Macrocheck_Map_Entry_s * re =
         *(struct Macrocheck_Map_Entry_s**)nodep;
-   
-    if (which == dwarf_postorder || which == dwarf_endorder) { 
+
+    if (which == dwarf_postorder || which == dwarf_endorder) {
         return;
     }
     if (!re->mp_printed) {
@@ -206,19 +207,18 @@ macro_walk_find_lowest(const void *nodep,const DW_VISIT  which,
     }
 }
 
-int 
+int
 get_next_unprinted_macro_offset(void **base, Dwarf_Unsigned * off)
 {
     void *retval = 0;
     struct Macrocheck_Map_Entry_s *re = 0;
     struct Macrocheck_Map_Entry_s *e = 0;
     void *tree = *base;
-   
+
     lowestfound = FALSE;
     lowestoff = 0;
-    
 
-    /*  This walks the tree to find one entry. 
+    /*  This walks the tree to find one entry.
         Which could get slow if the tree has lots of entries. */
     dwarf_twalk(tree,macro_walk_find_lowest);
     if (!lowestfound) {
@@ -228,7 +228,7 @@ get_next_unprinted_macro_offset(void **base, Dwarf_Unsigned * off)
     return DW_DLV_OK;
 }
 
-void 
+void
 mark_macro_offset_printed(void **base, Dwarf_Unsigned offset)
 {
     struct Macrocheck_Map_Entry_s *re = 0;
@@ -259,26 +259,26 @@ macro_walk_to_array(const void *nodep,const DW_VISIT  which,
 static int
 qsort_compare(const void *lin, const void *rin)
 {
-     const struct Macrocheck_Map_Entry_s *l = 
-         *(const struct Macrocheck_Map_Entry_s **)lin;
-     const struct Macrocheck_Map_Entry_s *r = 
-         *(const struct Macrocheck_Map_Entry_s **)rin;
-     if (l->mp_key < r->mp_key) {
-         return -1;
-     }
-     if (l->mp_key > r->mp_key) {
-         return 1;
-     }
-     if (l->mp_len < r->mp_len) {
-         return -1;
-     }
-     if (l->mp_len > r->mp_len) {
-         return 1;
-     }
-     return 0;
+    const struct Macrocheck_Map_Entry_s *l =
+        *(const struct Macrocheck_Map_Entry_s **)lin;
+    const struct Macrocheck_Map_Entry_s *r =
+        *(const struct Macrocheck_Map_Entry_s **)rin;
+    if (l->mp_key < r->mp_key) {
+        return -1;
+    }
+    if (l->mp_key > r->mp_key) {
+        return 1;
+    }
+    if (l->mp_len < r->mp_len) {
+        return -1;
+    }
+    if (l->mp_len > r->mp_len) {
+        return 1;
+    }
+    return 0;
 }
 
-void 
+void
 print_macro_statistics(void **tsbase)
 {
     Dwarf_Unsigned count = 0;
@@ -306,7 +306,7 @@ print_macro_statistics(void **tsbase)
         printf("  Macro checking ERROR: "
             "unable to allocate %" DW_PR_DUu "pointers\n",
             count);
-        return;    
+        return;
     }
     dwarf_twalk(*tsbase,macro_walk_to_array);
     printf("  Macro unit count: %" DW_PR_DUu "\n",count);
@@ -343,22 +343,22 @@ print_macro_statistics(void **tsbase)
         if (r->mp_refcount_primary && r->mp_refcount_secondary) {
             printf(" ERROR: For offset 0x%" DW_PR_XZEROS DW_PR_DUx
                 " there is a nonzero primary count of "
-                "0x%"  DW_PR_XZEROS DW_PR_DUx 
+                "0x%"  DW_PR_XZEROS DW_PR_DUx
                 " with a secondary count of "
-                "0x%"  DW_PR_XZEROS DW_PR_DUx 
+                "0x%"  DW_PR_XZEROS DW_PR_DUx
                 "\n",
                 r->mp_key,
                 r->mp_refcount_primary,
                 r->mp_refcount_secondary);
         }
     }
-    lastend = 
+    lastend =
         mac_as_array[0]->mp_key +
         mac_as_array[0]->mp_len;
     laststart = mac_as_array[0]->mp_key;
-    printf("  Macro Offsets start at 0x%" DW_PR_XZEROS DW_PR_DUx 
+    printf("  Macro Offsets start at 0x%" DW_PR_XZEROS DW_PR_DUx
         " and end at 0x%" DW_PR_XZEROS DW_PR_DUx "\n",
-        lowest, highest); 
+        lowest, highest);
     for (i = 1; i < count ; ++i) {
         Dwarf_Unsigned end = 0;
         struct Macrocheck_Map_Entry_s *r = mac_as_array[i];
@@ -368,14 +368,13 @@ print_macro_statistics(void **tsbase)
             (unsigned)r->mp_key,
             (unsigned)r->mp_len);
 #endif
-       
         if (r->mp_key > lastend) {
             internalgap += (r->mp_key - lastend);
         } else if (r->mp_key < lastend) {
             /* crazy overlap */
             printf(" ERROR: For offset 0x%" DW_PR_XZEROS DW_PR_DUx
                 " there is a crazy overlap with the previous end offset of "
-                "0x%"  DW_PR_XZEROS DW_PR_DUx 
+                "0x%"  DW_PR_XZEROS DW_PR_DUx
                 " (previous start offset of 0x%"  DW_PR_XZEROS DW_PR_DUx ")"
                 "\n",r->mp_key,lastend,laststart);
         }
@@ -385,21 +384,20 @@ print_macro_statistics(void **tsbase)
     wholegap = mac_as_array[0]->mp_key + internalgap;
     if(wholegap) {
         printf("  Macro Offsets internal unused space: "
-            "0x%" DW_PR_XZEROS DW_PR_DUx 
+            "0x%" DW_PR_XZEROS DW_PR_DUx
             "\n",
             internalgap);
         printf("  Macro Offsets total    unused space: "
-            "0x%" DW_PR_XZEROS DW_PR_DUx 
+            "0x%" DW_PR_XZEROS DW_PR_DUx
             "\n",
             wholegap);
     }
-  
-
     free (mac_as_array);
     mac_as_array = 0;
     mac_as_array_next = 0;
 }
-void 
+
+void
 clear_macro_statistics(void **tsbase)
 {
     if(! *tsbase) {
@@ -431,7 +429,6 @@ int main()
     if (count != 2) {
         printf("FAIL: expect count 2, got %" DW_PR_DUu "\n",count);
     }
-    
     print_macro_statistics(&base);
     clear_macro_statistics(&base);
 

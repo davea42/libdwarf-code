@@ -34,6 +34,7 @@
 #include "naming.h"
 #include "esb.h"                /* For flexible string buffer. */
 #include "print_frames.h"       /* for get_string_from_locs() . */
+#include "macrocheck.h"
 #include "tag_common.h"
 
 /*  Traverse a DIE and attributes to check self references */
@@ -756,9 +757,9 @@ print_one_die_section(Dwarf_Debug dbg,Dwarf_Bool is_info)
                 Dwarf_Bool in_import_list = FALSE;
                 Dwarf_Unsigned import_offset = 0;
                 int oldsection = current_section_id;
- 
+
                 print_macros_5style_this_cu(dbg, cu_die,
-                   in_import_list,import_offset);
+                    in_import_list,import_offset);
                 in_import_list = TRUE;
                 while(get_next_unprinted_macro_offset(&macro_check_tree,
                     &import_offset) == DW_DLV_OK) {

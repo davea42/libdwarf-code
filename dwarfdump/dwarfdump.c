@@ -1,5 +1,4 @@
 /*
-            }
   Copyright (C) 2000,2002,2004,2005 Silicon Graphics, Inc.  All Rights Reserved.
   Portions Copyright (C) 2007-2016 David Anderson. All Rights Reserved.
   Portions Copyright 2007-2010 Sun Microsystems, Inc. All rights reserved.
@@ -43,6 +42,7 @@
 #include "makename.h"
 #include "dwconf.h"
 #include "common.h"
+#include "macrocheck.h"
 #include "uri.h"
 #include "esb.h"                /* For flexible string buffer. */
 #include "tag_common.h"
@@ -51,7 +51,7 @@
 extern int elf_open(const char *name,int mode);
 #endif /* WIN32 */
 
-#define DWARFDUMP_VERSION " Tue Jan 12 11:54:44 PST 2016  "
+#define DWARFDUMP_VERSION " Thu Jan 14 14:45:44 PST 2016  "
 
 extern char *dwoptarg;
 
@@ -1998,7 +1998,6 @@ process_args(int argc, char *argv[])
                 gdbindex_flag = TRUE;
                 check_decl_file = TRUE;
                 check_macros = TRUE;
-                
                 check_frames = TRUE;
                 check_frames_extended = FALSE;
                 check_locations = TRUE;

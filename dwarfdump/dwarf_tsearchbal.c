@@ -1,4 +1,4 @@
-/* Copyright (c) 2013-2014, David Anderson
+/* Copyright (c) 2013-2016, David Anderson
 All rights reserved.
 
 Redistribution and use in source and binary forms, with
@@ -800,6 +800,7 @@ tdelete_inner(const void *key,
     balance:
     {
     unsigned k2 = k;
+    /*  The comparison is degenerate in this for statement. Always true. */
     for(  ; k2 >= 0; k2--) {
         struct ts_entry *pk = 0;
         int ak = 0;

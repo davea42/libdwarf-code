@@ -1,4 +1,19 @@
+2015-01-14  David Anderson
+     * common.c: Update version string.
+     * dwarfdump.c: Update version string. Include macrocheck.h.
+       Delete one accidental blank line.
+     * dwarf_tsearchbal.c: Added comment about compiler warning.
+     * dwarf_macrocheck.c: Added missing return statement.
+       Removed trailing whitespace. Fixed broken qsort_compare()
+     * macrocheck.h: Fixed trailing whitespace.  
+     * print_abbrevs.c: Generalized an attribute count warning
+       a bit (see GENERAL_MAX_ATTRIB_COUNT). Fixed the code
+       handling the abbrev_array to be correct and a bit simpler.
+       Added new abbreviations tests.
+     * print_die.c: Include macrocheck.h. Fix trailing whitespace.
 2015-01-12  David Anderson
+     * common.c: Update version string.
+     * dwarfdump.c: Update version string.
      * print_abbrevs.c: If an abbreviation number is a bit
        goofy, accomodate it so we do not write to
        memory we did not allocate.  It will
