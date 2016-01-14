@@ -68,6 +68,7 @@ public:
         finalform_ = r.finalform_;
         initialform_ = r.initialform_;
         formclass_ = r.formclass_;
+        return *this;
     };
     enum Dwarf_Form_Class getFormClass() const { return formclass_; };
 private:
@@ -100,6 +101,7 @@ public:
         initialform_ = r.initialform_;
         formclass_ = r.formclass_;
         address_ = r.address_;
+        return *this;
     };
     IRFormAddress(const IRFormAddress &r) {
         finalform_ = r.finalform_;
@@ -142,6 +144,7 @@ public:
         blockdata_ = r.blockdata_;
         fromloclist_ = r.fromloclist_;
         sectionoffset_ = r.sectionoffset_;
+        return *this;
     };
     IRFormBlock(const IRFormBlock &r) {
         finalform_ = r.finalform_;
@@ -211,6 +214,7 @@ public:
         signedness_ = r.signedness_;
         uval_ = r.uval_;
         sval_ = r.sval_;
+        return *this;
     };
     IRFormConstant(const IRFormConstant &r) {
         finalform_ = r.finalform_;
@@ -267,6 +271,7 @@ public:
         initialform_ = r.initialform_;
         formclass_ = r.formclass_;
         exprlocdata_ = r.exprlocdata_;
+        return *this;
     };
     IRFormExprloc(const IRFormExprloc &r) {
         finalform_ = r.finalform_;
@@ -314,6 +319,7 @@ public:
         finalform_ = r.finalform_;
         formclass_ = r.formclass_;
         flagval_ = r.flagval_;
+        return *this;
     };
     IRFormFlag(const IRFormFlag &r) {
         initialform_ = r.initialform_;
@@ -356,6 +362,7 @@ public:
         initialform_ = r.initialform_;
         formclass_ = r.formclass_;
         debug_line_offset_ = r.debug_line_offset_;
+        return *this;
     };
     IRFormLinePtr(const IRFormLinePtr &r) {
         finalform_ = r.finalform_;
@@ -400,6 +407,7 @@ public:
         initialform_ = r.initialform_;
         formclass_ = r.formclass_;
         loclist_offset_ = r.loclist_offset_;
+        return *this;
     };
     IRFormLoclistPtr(const IRFormLoclistPtr &r) {
         finalform_ = r.finalform_;
@@ -444,6 +452,7 @@ public:
         initialform_ = r.initialform_;
         formclass_ = r.formclass_;
         macro_offset_ = r.macro_offset_;
+        return *this;
     };
     IRFormMacPtr(const IRFormMacPtr &r) {
         finalform_ = r.finalform_;
@@ -488,6 +497,7 @@ public:
         initialform_ = r.initialform_;
         formclass_ = r.formclass_;
         rangelist_offset_ = r.rangelist_offset_;
+        return *this;
     };
     IRFormRangelistPtr(const IRFormRangelistPtr &r) {
         finalform_ = r.finalform_;
@@ -531,6 +541,7 @@ public:
         initialform_ = r.initialform_;
         formclass_ = r.formclass_;
         frame_offset_ = r.frame_offset_;
+        return *this;
     };
     IRFormFramePtr(const IRFormFramePtr &r) {
         finalform_ = r.finalform_;
@@ -584,6 +595,7 @@ public:
         typeSig8_ = r.typeSig8_;
         targetInputDie_ = r.targetInputDie_;
         target_die_ = r.target_die_;
+        return *this;
     };
     IRFormReference(const IRFormReference &r) {
         finalform_ = r.finalform_;
@@ -674,6 +686,7 @@ public:
         formclass_ = r.formclass_;
         formdata_ = r.formdata_;
         strpoffset_ = r.strpoffset_;
+        return *this;
     };
     void setInitialForm(Dwarf_Half v) { initialform_ = v;}
     void setFinalForm(Dwarf_Half v) { finalform_ = v;}
