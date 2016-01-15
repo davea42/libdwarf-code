@@ -1,3 +1,9 @@
+2016-01-15  David Anderson
+     * pro_frame.h, pro_frame.c: The code adding a CIE for output
+       (dwarf_add_frame_cie())
+       was simply assuming that the augmentation string passed in was
+       in stable storage.  Now it uses strdup() to guarantee there
+       no surprises.
 2016-01-14  David Anderson
      * dwarf_query.c(dwarf_die_offsets): 'res ==' corrected to 'res ='.
 2016-01-12  David Anderson
