@@ -18,6 +18,8 @@
 #include "libdwarf.h"
 
 #define NULL 0
+#define FALSE 0
+#define TRUE 1
 
 void example1(Dwarf_Die somedie)
 {
@@ -696,8 +698,167 @@ void exampleo(Dwarf_Debug dbg)
 }
 
 
+/*  This builds an list or some other data structure
+    (not defined) to give an import somewhere to list
+    the import offset and then later to enquire
+    if the list has unexamined offsets.
+    A candidate set of hypothetical functions that
+    callers would write:
+    has_unchecked_import_in_list()
+    get_next_import_from_list()
+    mark_this_offset_as_examined(macro_unit_offset);
+    add_offset_to_list(offset);
+*/
+void examplep5(Dwarf_Debug dbg, Dwarf_Die cu_die)
+{
+    int lres = 0;
+    Dwarf_Unsigned version = 0;
+    Dwarf_Macro_Context macro_context = 0;
+    Dwarf_Unsigned macro_unit_offset = 0;
+    Dwarf_Unsigned number_of_ops = 0;
+    Dwarf_Unsigned ops_total_byte_len = 0;
+    Dwarf_Bool is_primary = TRUE;
+    unsigned k = 0;
+    Dwarf_Error err = 0;
 
-void examplep(Dwarf_Debug dbg, Dwarf_Off cur_off)
+    for(;;) {
+        if (is_primary) {
+            lres = dwarf_get_macro_context(cu_die,
+                &version,&macro_context,
+                &macro_unit_offset,
+                &number_of_ops,
+                &ops_total_byte_len,
+                &err);
+            is_primary = FALSE;
+        } else {
+            if (has_unchecked_import_in_list()) {
+                macro_unit_offset = get_next_import_from_list();
+            } else {
+                /* We are done */
+                break;
+            }
+            lres = dwarf_get_macro_context_by_offset(cu_die,
+                macro_unit_offset,
+                &version,
+                &macro_context,
+                &number_of_ops,
+                &ops_total_byte_len,
+                &err);
+            mark_this_offset_as_examined(macro_unit_offset);
+        }
+
+        if (lres == DW_DLV_ERROR) {
+            /* Something is wrong. */
+            return;
+        }
+        if (lres == DW_DLV_NO_ENTRY) {
+            /* We are done. */
+            break;
+        }
+        /* lres ==  DW_DLV_OK) */
+        for (k = 0; k < number_of_ops; ++k) {
+            Dwarf_Unsigned  section_offset = 0;
+            Dwarf_Half      macro_operator = 0;
+            Dwarf_Half      forms_count = 0;
+            const Dwarf_Small *formcode_array = 0;
+            Dwarf_Unsigned  line_number = 0;
+            Dwarf_Unsigned  index = 0;
+            Dwarf_Unsigned  offset =0;
+            const char    * macro_string =0;
+            int lres = 0;
+
+            lres = dwarf_get_macro_op(macro_context,
+                k, &section_offset,&macro_operator,
+                &forms_count, &formcode_array,&err);
+            if (lres != DW_DLV_OK) {
+                print_error(dbg,
+                    "ERROR from  dwarf_get_macro_op()",
+                    lres,err);
+                dwarf_dealloc_macro_context(macro_context);
+                return;
+            }
+            switch(macro_operator) {
+            case 0:
+                /* Nothing to do. */
+                break;
+            case DW_MACRO_end_file:
+                /* Do something */
+                break;
+            case DW_MACRO_define:
+            case DW_MACRO_undef:
+            case DW_MACRO_define_strp:
+            case DW_MACRO_undef_strp:
+            case DW_MACRO_define_strx:
+            case DW_MACRO_undef_strx:
+            case DW_MACRO_define_sup:
+            case DW_MACRO_undef_sup: {
+                lres = dwarf_get_macro_defundef(macro_context,
+                    k,
+                    &line_number,
+                    &index,
+                    &offset,
+                    &forms_count,
+                    &macro_string,
+                    &err);
+                if (lres != DW_DLV_OK) {
+                    print_error(dbg,
+                        "ERROR from sup dwarf_get_macro_defundef()",
+                        lres,err);
+                    dwarf_dealloc_macro_context(macro_context);
+                    return;
+                }
+                /* do something */
+                }
+                break;
+            case DW_MACRO_start_file: {
+                lres = dwarf_get_macro_startend_file(macro_context,
+                    k,&line_number,
+                    &index,
+                    &macro_string,&err);
+                if (lres != DW_DLV_OK) {
+                    print_error(dbg,
+                        "ERROR from  dwarf_get_macro_startend_file()(sup)",
+                        lres,err);
+                    dwarf_dealloc_macro_context(macro_context);
+                    return;
+                }
+                /* do something */
+                }
+                break;
+            case DW_MACRO_import: {
+                lres = dwarf_get_macro_import(macro_context,
+                    k,&offset,&err);
+                if (lres != DW_DLV_OK) {
+                    print_error(dbg,
+                        "ERROR from  dwarf_get_macro_import()(sup)",
+                        lres,err);
+                    dwarf_dealloc_macro_context(macro_context);
+                    return;
+                }
+                add_offset_to_list(offset);
+                }
+                break;
+            case DW_MACRO_import_sup: {
+                lres = dwarf_get_macro_import(macro_context,
+                    k,&offset,&err);
+                if (lres != DW_DLV_OK) {
+                    print_error(dbg,
+                        "ERROR from  dwarf_get_macro_import()(sup)",
+                        lres,err);
+                    dwarf_dealloc_macro_context(macro_context);
+                    return;
+                }
+                /* do something */
+                }
+                break;
+            }
+        }
+        dwarf_dealloc_macro_context(macro_context);
+        macro_context = 0;
+    }
+}
+
+void examplep2(Dwarf_Debug dbg, Dwarf_Off cur_off)
 {
     Dwarf_Error error = 0;
     Dwarf_Signed count = 0;

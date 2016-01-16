@@ -2617,13 +2617,13 @@ int dwarf_macro_operands_table(Dwarf_Macro_Context /*head*/,
     op_start_section_offset is the section offset of
     the macro operator (which is a single unsigned byte,
     and is followed by the macro operand data). */
-int dwarf_get_macro_op(Dwarf_Macro_Context macro_context,
-    Dwarf_Unsigned op_number,
-    Dwarf_Unsigned * op_start_section_offset,
-    Dwarf_Half    * macro_operator,
-    Dwarf_Half    * forms_count,
-    const Dwarf_Small **   formcode_array,
-    Dwarf_Error *error);
+int dwarf_get_macro_op(Dwarf_Macro_Context /*macro_context*/,
+    Dwarf_Unsigned   /*op_number*/,
+    Dwarf_Unsigned * /*op_start_section_offset*/,
+    Dwarf_Half     * /*macro_operator*/,
+    Dwarf_Half     * /*forms_count*/,
+    const Dwarf_Small **  /*formcode_array*/,
+    Dwarf_Error    * /*error*/);
 
 int dwarf_get_macro_defundef(Dwarf_Macro_Context /*macro_context*/,
     Dwarf_Unsigned   /*op_number*/,
@@ -2631,23 +2631,18 @@ int dwarf_get_macro_defundef(Dwarf_Macro_Context /*macro_context*/,
     Dwarf_Unsigned * /*index*/,
     Dwarf_Unsigned * /*offset*/,
     Dwarf_Half     * /*forms_count*/,
-    const char     ** /*macro_string*/,
+    const char    ** /*macro_string*/,
     Dwarf_Error    * /*error*/);
 int dwarf_get_macro_startend_file(Dwarf_Macro_Context /*macro_context*/,
     Dwarf_Unsigned   /*op_number*/,
     Dwarf_Unsigned * /*line_number*/,
     Dwarf_Unsigned * /*name_index_to_line_tab*/,
-    const char     ** /*src_file_name*/,
+    const char    ** /*src_file_name*/,
     Dwarf_Error    * /*error*/);
 int dwarf_get_macro_import(Dwarf_Macro_Context /*macro_context*/,
     Dwarf_Unsigned   /*op_number*/,
     Dwarf_Unsigned * /*target_offset*/,
     Dwarf_Error    * /*error*/);
-
-
-
-
-
 
 /*  END: DWARF5 .debug_macro interfaces. */
 

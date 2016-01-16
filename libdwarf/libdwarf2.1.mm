@@ -8,7 +8,7 @@
 .nr Hb 5
 \." ==============================================
 \." Put current date in the following at each rev
-.ds vE rev 2.36, Nov 28, 2015
+.ds vE rev 2.37, Jan 15, 2016
 \." ==============================================
 \." ==============================================
 .ds | |
@@ -1120,7 +1120,15 @@ The new interfaces are all functional and contents
 of the above types
 are not exposed. 
 
-
+.DS
+\f(CWtypedef struct Dwarf_Macro_Context_s * Dwarf_Macro_Context;\fP
+.DE
+\f(CWdwarf_get_macro_context()\fP 
+and
+\f(CWdwarf_get_macro_context_by_offset()\fP 
+return a Dwarf_Line_Context through an argument
+and the new structure pointer lets us access 
+macro data from the .debug_macro section.
 
 
 .H 1 "UTF-8 strings"
@@ -6277,9 +6285,316 @@ On a successful return from
 should be freed using \f(CWdwarf_dealloc()\fP, with the allocation 
 type \f(CWDW_DLA_STRING\fP when no longer of interest.
 
-.H 2 "Macro Information Operations"
+.H 2 "Macro Information Operations (DWARF4, DWARF5)"
+This section refers to DWARF4 and later
+macro information from the .debug_macro
+section. 
+While standard operations are supported there
+is as yet no support for implementation-defined
+extensions. 
+Once someone has defined such things it will
+make sense to design an interface for extensions.
+
+.H 3 "Getting access"
+The opaque struct pointer Dwarf_Macro_Context
+is allocated by either 
+\f(CWdwarf_get_macro_context()\fP
+or
+\f(CWdwarf_get_macro_context_by_offset()\fP
+and once the context is no longer needed
+one frees up all its storage by
+\f(CWdwarf_dealloc_macro_context()\fP.
+
+.H 4 "dwarf_get_macro_context()"
+.DS
+\f(CWint dwarf_get_macro_context(Dwarf_Die die,
+    Dwarf_Unsigned      * version_out,
+    Dwarf_Macro_Context * macro_context,
+    Dwarf_Unsigned      * macro_unit_offset_out,
+    Dwarf_Unsigned      * macro_ops_count_out,
+    Dwarf_Unsigned      * macro_ops_data_length_out,
+    Dwarf_Error         * error);\fP
+.DE
+FIXME
+.H 4 "dwarf_get_macro_context_by_offset()"
+.DS
+\f(CWint dwarf_get_macro_context_by_offset(Dwarf_Die die,
+    Dwarf_Unsigned        offset,
+    Dwarf_Unsigned      * version_out,
+    Dwarf_Macro_Context * macro_context,
+    Dwarf_Unsigned      * macro_ops_count_out,
+    Dwarf_Unsigned      * macro_ops_total_byte_len,
+    Dwarf_Error         * error);\fP
+.DE
+FIXME
+
+.H 4 "dwarf_dealloc_macro_context()"
+.DS
+\f(CWvoid dwarf_dealloc_macro_context(Dwarf_Macro_Context mc);\fP
+.DE
+The function 
+\f(CWdwarf_dealloc_macro_context()\fP
+cleans up memory allocated by 
+
+.in +2
+.FG "Examplep5 dwarf_dealloc_macro_context()"
+.DS
+\f(CW
+/*  This builds an list or some other data structure
+    (not defined) to give an import somewhere to list
+    the import offset and then later to enquire
+    if the list has unexamined offsets.
+    A candidate set of hypothetical functions that
+    callers would write:
+    has_unchecked_import_in_list()
+    get_next_import_from_list()
+    mark_this_offset_as_examined(macro_unit_offset);
+    add_offset_to_list(offset);
+*/
+void examplep5(Dwarf_Debug dbg, Dwarf_Die cu_die)
+{
+    int lres = 0;
+    Dwarf_Unsigned version = 0;
+    Dwarf_Macro_Context macro_context = 0;
+    Dwarf_Unsigned macro_unit_offset = 0;
+    Dwarf_Unsigned number_of_ops = 0;
+    Dwarf_Unsigned ops_total_byte_len = 0;
+    Dwarf_Bool is_primary = TRUE;
+    unsigned k = 0;
+    Dwarf_Error err = 0;
+
+    for(;;) {
+        if (is_primary) {
+            lres = dwarf_get_macro_context(cu_die,
+                &version,&macro_context,
+                &macro_unit_offset,
+                &number_of_ops,
+                &ops_total_byte_len,
+                &err);
+            is_primary = FALSE;
+        } else {
+            if (has_unchecked_import_in_list()) {
+                macro_unit_offset = get_next_import_from_list();
+            } else {
+                /* We are done */
+                break;
+            }
+            lres = dwarf_get_macro_context_by_offset(cu_die,
+                macro_unit_offset,
+                &version,
+                &macro_context,
+                &number_of_ops,
+                &ops_total_byte_len,
+                &err);
+            mark_this_offset_as_examined(macro_unit_offset);
+        }
+
+        if (lres == DW_DLV_ERROR) {
+            /* Something is wrong. */
+            return;
+        }
+        if (lres == DW_DLV_NO_ENTRY) {
+            /* We are done. */
+            break;
+        }
+        /* lres ==  DW_DLV_OK) */
+        for (k = 0; k < number_of_ops; ++k) {
+            Dwarf_Unsigned  section_offset = 0;
+            Dwarf_Half      macro_operator = 0;
+            Dwarf_Half      forms_count = 0;
+            const Dwarf_Small *formcode_array = 0;
+            Dwarf_Unsigned  line_number = 0;
+            Dwarf_Unsigned  index = 0;
+            Dwarf_Unsigned  offset =0;
+            const char    * macro_string =0;
+            int lres = 0;
+
+            lres = dwarf_get_macro_op(macro_context,
+                k, &section_offset,&macro_operator,
+                &forms_count, &formcode_array,&err);
+            if (lres != DW_DLV_OK) {
+                print_error(dbg,
+                    "ERROR from  dwarf_get_macro_op()",
+                    lres,err);
+                dwarf_dealloc_macro_context(macro_context);
+                return;
+            }
+            switch(macro_operator) {
+            case 0:
+                /* Nothing to do. */
+                break;
+            case DW_MACRO_end_file:
+                /* Do something */
+                break;
+            case DW_MACRO_define:
+            case DW_MACRO_undef:
+            case DW_MACRO_define_strp:
+            case DW_MACRO_undef_strp:
+            case DW_MACRO_define_strx:
+            case DW_MACRO_undef_strx:
+            case DW_MACRO_define_sup:
+            case DW_MACRO_undef_sup: {
+                lres = dwarf_get_macro_defundef(macro_context,
+                    k,
+                    &line_number,
+                    &index,
+                    &offset,
+                    &forms_count,
+                    &macro_string,
+                    &err);
+                if (lres != DW_DLV_OK) {
+                    print_error(dbg,
+                        "ERROR from sup dwarf_get_macro_defundef()",
+                        lres,err);
+                    dwarf_dealloc_macro_context(macro_context);
+                    return;
+                }
+                /* do something */
+                }
+                break;
+            case DW_MACRO_start_file: {
+                lres = dwarf_get_macro_startend_file(macro_context,
+                    k,&line_number,
+                    &index,
+                    &macro_string,&err);
+                if (lres != DW_DLV_OK) {
+                    print_error(dbg,
+                        "ERROR from  dwarf_get_macro_startend_file()(sup)",
+                        lres,err);
+                    dwarf_dealloc_macro_context(macro_context);
+                    return;
+                }
+                /* do something */
+                }
+                break;
+            case DW_MACRO_import: {
+                lres = dwarf_get_macro_import(macro_context,
+                    k,&offset,&err);
+                if (lres != DW_DLV_OK) {
+                    print_error(dbg,
+                        "ERROR from  dwarf_get_macro_import()(sup)",
+                        lres,err);
+                    dwarf_dealloc_macro_context(macro_context);
+                    return;
+                }
+                add_offset_to_list(offset);
+                }
+                break;
+            case DW_MACRO_import_sup: {
+                lres = dwarf_get_macro_import(macro_context,
+                    k,&offset,&err);
+                if (lres != DW_DLV_OK) {
+                    print_error(dbg,
+                        "ERROR from  dwarf_get_macro_import()(sup)",
+                        lres,err);
+                    dwarf_dealloc_macro_context(macro_context);
+                    return;
+                }
+                /* do something */
+                }
+                break;
+            }
+        }
+        dwarf_dealloc_macro_context(macro_context);
+        macro_context = 0;
+    }
+}
+\fP
+.DE
+.in -2
+
+
+.H 3 "Getting Macro Unit Header Data"
+.H 4 "dwarf_macro_context_head()"
+.DS
+\f(CWint dwarf_macro_context_head(Dwarf_Macro_Context /*head*/,
+    Dwarf_Half     * version,
+    Dwarf_Unsigned * mac_offset,
+    Dwarf_Unsigned * mac_len,
+    Dwarf_Unsigned * mac_header_len,
+    unsigned       * flags,
+    Dwarf_Bool     * has_line_offset,
+    Dwarf_Unsigned * line_offset,
+    Dwarf_Bool     * has_offset_size_64,
+    Dwarf_Bool     * has_operands_table,
+    Dwarf_Half     * opcode_count,
+    Dwarf_Error    * error); \fP
+.DE
+FIXME
+.H 4 "dwarf_macro_operands_table()"
+.DS
+\f(CWint dwarf_macro_operands_table(Dwarf_Macro_Context head,
+    Dwarf_Half    index, /* 0 to opcode_count -1 */
+    Dwarf_Half  * opcode_number,
+    Dwarf_Half  * operand_count,
+    const Dwarf_Small ** operand_array,
+    Dwarf_Error * error); \fP
+.DE
+FIXME
+
+.H 4 "dwarf_get_macro_op()"
+.DS
+\f(CWint dwarf_get_macro_op(Dwarf_Macro_Context macro_context,
+    Dwarf_Unsigned op_number,
+    Dwarf_Unsigned * op_start_section_offset,
+    Dwarf_Half    * macro_operator,
+    Dwarf_Half    * forms_count,
+    const Dwarf_Small **   formcode_array,
+    Dwarf_Error   * error);\fP
+.DE
+FIXME
+
+
+.H 3 "Getting Individual Macro Operations Data"
+
+.H 4 "dwarf_get_macro_op()"
+.DS
+\f(CWint dwarf_get_macro_op(Dwarf_Macro_Context macro_context,
+    Dwarf_Unsigned op_number,
+    Dwarf_Unsigned * op_start_section_offset,
+    Dwarf_Half    * macro_operator,
+    Dwarf_Half    * forms_count,
+    const Dwarf_Small **   formcode_array,
+    Dwarf_Error   * error);\fP
+.DE
+FIXME
+
+.H 4 "dwarf_get_macro_defundef()"
+.DS
+\f(CWint dwarf_get_macro_defundef(Dwarf_Macro_Context macro_context,
+    Dwarf_Unsigned   op_number,
+    Dwarf_Unsigned * line_number,
+    Dwarf_Unsigned * index,
+    Dwarf_Unsigned * offset,
+    Dwarf_Half     * forms_count,
+    const char    ** macro_string,
+    Dwarf_Error    * error);\fP
+.DE
+FIXME
+.H 4 "dwarf_get_macro_startend_file()"
+.DS
+\f(CWint dwarf_get_macro_startend_file(Dwarf_Macro_Context macro_context,
+    Dwarf_Unsigned   op_number,
+    Dwarf_Unsigned * line_number,
+    Dwarf_Unsigned * name_index_to_line_tab,
+    const char    ** src_file_name,
+    Dwarf_Error    * error);\fP
+.DE
+FIXME
+.H 4 "dwarf_get_macro_import()"
+.DS
+\f(CWint dwarf_get_macro_import(Dwarf_Macro_Context macro_context,
+    Dwarf_Unsigned   op_number,
+    Dwarf_Unsigned * target_offset,
+    Dwarf_Error    * error);\fP
+.DE
+FIXME
+
+
+.H 2 "Macro Information Operations (DWARF2, DWARF3, DWARF4)"
 This section refers to DWARF2,DWARF3,and DWARF4
-macro information. These do not apply to DWARF5
+macro information from the .debug_macinfo
+section. These do not apply to DWARF5
 macro data.
 .H 3 "General Macro Operations"
 .H 4 "dwarf_find_macro_value_start()"
@@ -6340,10 +6655,10 @@ is passed in as 0, a \f(CWDW_DLV_NO_ENTRY\fP return means there is
 no macro information.
 .P
 .in +2
-.FG "Examplep dwarf_get_macro_details()"
+.FG "Examplep2 dwarf_get_macro_details()"
 .DS
 \f(CW
-void examplep(Dwarf_Debug dbg, Dwarf_Off cur_off)
+void examplep2(Dwarf_Debug dbg, Dwarf_Off cur_off)
 {
   Dwarf_Error error = 0;
   Dwarf_Signed count = 0;
@@ -6381,6 +6696,7 @@ void examplep(Dwarf_Debug dbg, Dwarf_Off cur_off)
 }
 \fP
 .DE
+.in -2
 
 
 .H 2 "Low Level Frame Operations"
