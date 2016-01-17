@@ -8,7 +8,7 @@
 .nr Hb 5
 \." ==============================================
 \." Put current date in the following at each rev
-.ds vE rev 2.37, Jan 15, 2016
+.ds vE rev 2.38, Jan 16, 2016
 \." ==============================================
 \." ==============================================
 .ds | |
@@ -1607,7 +1607,7 @@ has
 \f(CWDW_FORM_addrx\fP
 or
 \f(CWDW_FORM_GNU_addr_index\fP
-in ad address attribute
+in an address attribute
 one needs both the Package file
 and the executable to extract the actual address with
 \f(CWdwarf_formaddr()\fP.
@@ -6315,7 +6315,53 @@ one frees up all its storage by
     Dwarf_Unsigned      * macro_ops_data_length_out,
     Dwarf_Error         * error);\fP
 .DE
-FIXME
+Given a Compilation Unit (CU) die,
+on success
+\f(CWdwarf_get_macro_context()\fP
+opens a
+\f(CWDwarf_Macro_Context\fP
+and returns a pointer to it and some data from the
+macro unit for that CU.
+The \f(CWDwarf_Macro_Context\fP
+is used to get at the details of the macros.
+.P
+The value 
+\f(CWversion_out\fP
+is set to the DWARF version number of the macro data.
+Version 5 means DWARF5 version information. Version 4
+means the DWARF5 format macro data is present as an
+extension of DWARF4.
+.P
+The value 
+\f(CWmacro_unit_offset_out\fP
+is set to the offset in the .debug_macro section
+of the first byte of macro data for this CU.
+.P
+The value 
+\f(CWmacro_ops_count_out\fP
+is set to the number of macro entries in the macro data
+data for this CU.
+The count includes the final zero entry (which is not
+really a macro, it is a terminator, a zero byte ending
+the macro unit).
+.P
+The value 
+\f(CWmacro_ops_data_length_out\fP
+is set to the number of bytes of data in the macro unit,
+including the macro unit header.
+
+.P
+If 
+\f(CWDW_DLV_NO_ENTRY\fP
+is returned the CU has no macro data attribute or
+there is no .debug_macro section present.
+.P
+On error 
+\f(CWDW_DLV_ERROR\fP
+is returned and 
+the error details are returned through the pointer
+\f(CWerror\fP.
+
 .H 4 "dwarf_get_macro_context_by_offset()"
 .DS
 \f(CWint dwarf_get_macro_context_by_offset(Dwarf_Die die,
@@ -6326,15 +6372,43 @@ FIXME
     Dwarf_Unsigned      * macro_ops_total_byte_len,
     Dwarf_Error         * error);\fP
 .DE
-FIXME
+Given a Compilation Unit (CU) die and
+the offset of an imported macro unit
+\f(CWdwarf_get_macro_context_by_offset()\fP
+opens a
+\f(CWDwarf_Macro_Context\fP
+and returns a pointer to it and some data from the
+macro unit for that CU on success.
+.P
+On success
+the function produces the same output values as
+\f(CWdwarf_get_macro_context()\fP
+except  there is no offset returned (
+the caller provides it).
+.P
+If
+\f(CWDW_DLV_NO_ENTRY\fP
+is returned there is no .debug_macro section present.
+.P
+On error
+\f(CWDW_DLV_ERROR\fP
+is returned and
+the error details are returned through the pointer
+\f(CWerror\fP.
+
+
 
 .H 4 "dwarf_dealloc_macro_context()"
 .DS
-\f(CWvoid dwarf_dealloc_macro_context(Dwarf_Macro_Context mc);\fP
+\f(CWvoid dwarf_dealloc_macro_context(Dwarf_Macro_Context macro_context);\fP
 .DE
 The function 
 \f(CWdwarf_dealloc_macro_context()\fP
-cleans up memory allocated by 
+cleans up memory allocated by a successful
+call to
+\f(CWdwarf_get_macro_context()\fP
+or
+\f(CWdwarf_get_macro_context_by_offset()\fP.
 
 .in +2
 .FG "Examplep5 dwarf_dealloc_macro_context()"
@@ -6507,7 +6581,7 @@ void examplep5(Dwarf_Debug dbg, Dwarf_Die cu_die)
 .H 3 "Getting Macro Unit Header Data"
 .H 4 "dwarf_macro_context_head()"
 .DS
-\f(CWint dwarf_macro_context_head(Dwarf_Macro_Context /*head*/,
+\f(CWint dwarf_macro_context_head(Dwarf_Macro_Context macro_context,
     Dwarf_Half     * version,
     Dwarf_Unsigned * mac_offset,
     Dwarf_Unsigned * mac_len,
@@ -6520,30 +6594,164 @@ void examplep5(Dwarf_Debug dbg, Dwarf_Die cu_die)
     Dwarf_Half     * opcode_count,
     Dwarf_Error    * error); \fP
 .DE
-FIXME
+Given a 
+\f(CWDwarf_Macro_Context\fP
+pointer this function returns the basic fields
+of a macro unit header (Macro Information Header)
+on success.  
+.P
+The value
+\f(CWversion\fP
+is set to the DWARF version number of the macro unit header.
+Version 5 means DWARF5 version information. Version 4
+means the DWARF5 format macro data is present as an
+extension of DWARF4.
+.P
+The value
+\f(CWmac_offset\fP
+is set to the offset in the .debug_macro section
+of the first byte of macro data for this CU.
+.P
+The value
+\f(CWmac_len\fP
+is set to the number of bytes of data in the macro unit,
+including the macro unit header.
+.P
+The value
+\f(CWmac_header_len\fP
+is set to the number of bytes in the macro unit header
+(not a field that is generally useful).
+.P
+The value
+\f(CWflags\fP
+is set to the value of the 
+\f(CWflags\fP
+field of the macro unit header.
+.P
+The value
+\f(CWhas_line_offset\fP
+is set to non-zero if the 
+\f(CWdebug_line_offset_flag\fP
+bit is set in the
+\f(CWflags\fP
+field of the macro unit header.
+If 
+\f(CWhas_line_offset\fP
+is set then
+\f(CWline_offset\fP
+is set to the  value of the 
+\f(CWdebug_line_offset\fP
+field in the macro unit header.
+If 
+\f(CWhas_line_offset\fP
+is not set there is no
+\f(CWdebug_line_offset\fP
+field present in the
+macro unit header.
+.P
+The value
+\f(CWhas_offset_size_64\fP
+is set non-zero if the
+\f(CWoffset_size_flag\fP
+bit is set in the
+\f(CWflags\fP
+field of the macro unit header and in this
+case offset fields in this macro unit are
+64 bits. 
+If
+\f(CWhas_offset_size_64\fP
+is not set then
+offset fields in this macro unit are
+32 bits. 
+.P
+The value
+\f(CWhas_operands_table\fP
+is set to non-zero if the 
+\f(CWopcod_operands_table_flag\fP
+bit is set in the
+\f(CWflags\fP
+field of the macro unit header.
+.P
+If
+\f(CWhas_operands_table\fP
+is set non-zero then
+The value
+\f(CWopcode_count\fP
+is set to the number of opcodes
+in the macro unit header
+\f(CWopcode_operands_table\fP.
+See 
+\f(CWdwarf_get_macro_op()\fP.
+.P
+\f(CWDW_DLV_NO_ENTRY\fP
+is not returned.
+.P
+On error
+\f(CWDW_DLV_ERROR\fP
+is returned and
+the error details are returned through the pointer
+\f(CWerror\fP.
+
 .H 4 "dwarf_macro_operands_table()"
 .DS
-\f(CWint dwarf_macro_operands_table(Dwarf_Macro_Context head,
+\f(CWint dwarf_macro_operands_table(Dwarf_Macro_Context macro_context,
     Dwarf_Half    index, /* 0 to opcode_count -1 */
     Dwarf_Half  * opcode_number,
     Dwarf_Half  * operand_count,
     const Dwarf_Small ** operand_array,
     Dwarf_Error * error); \fP
 .DE
-FIXME
+\f(CWdwarf_macro_operands_table()\fP
+is used to index through the operands table
+in a macro unit header if the operands
+table exists in the macro unit header.
+The operands table provides the mechanism
+for implementations to add extensions
+to the macro operations while allowing
+clients to skip macro operations the
+client code does not recognize.
+.P
+The
+\f(CWmacro_context\fP
+field passed in identifies the macro unit involved.
+The 
+\f(CWindex\fP
+field passed in identifies which macro operand to
+look at. Valid index values are
+zero through
+the
+\f(CWopcode_count\fP-1
+(returned by 
+\f(CWdwarf_macro_context_head()\fP).
+.P
+The 
+\f(CWopcode_number\fP
+value returned through the pointer is
+the the macro operation code.
+The operation code could be one of the
+standard codes or if there are user extensions
+there would be an extension code in the
+\f(CWDW_MACRO_lo_user\fP
+to 
+\f(CWDW_MACRO_hi_user\fP
+range.
+.P
+The 
+\f(CWoperand_count\fP
+returned
+is the number of form codes in the form codes
+array of unsigned bytes
+\f(CWoperand_array\fP.
 
-.H 4 "dwarf_get_macro_op()"
-.DS
-\f(CWint dwarf_get_macro_op(Dwarf_Macro_Context macro_context,
-    Dwarf_Unsigned op_number,
-    Dwarf_Unsigned * op_start_section_offset,
-    Dwarf_Half    * macro_operator,
-    Dwarf_Half    * forms_count,
-    const Dwarf_Small **   formcode_array,
-    Dwarf_Error   * error);\fP
-.DE
-FIXME
-
+.P
+\f(CWDW_DLV_NO_ENTRY\fP
+is not returned.
+.P
+On error
+\f(CWDW_DLV_ERROR\fP
+is returned and
+the error details are returned through the pointer
+\f(CWerror\fP.
 
 .H 3 "Getting Individual Macro Operations Data"
 
@@ -6557,7 +6765,67 @@ FIXME
     const Dwarf_Small **   formcode_array,
     Dwarf_Error   * error);\fP
 .DE
-FIXME
+Use
+\f(CWdwarf_get_macro_op()\fP
+to access the macro operations of this macro unit.
+.P
+The
+\f(CWmacro_context\fP
+field passed in identifies the macro unit involved.
+The 
+\f(CWop_number\fP
+field passed in identifies which macro operand to
+look at. Valid index values are
+zero through 
+\f(CWmacro_ops_count_out\fP-1
+(field returned by
+\f(CWdwarf_get_macro_context()\fP
+or
+\f(CWdwarf_get_macro_context_by_offset()\fP)
+.P
+On success the function returns values
+through the pointers.
+.P
+The
+\f(CWop_start_section_offset\fP
+returned is useful for debugging
+but otherwise is not normally useful.
+It is the byte offset of the beginning
+of this macro operator's data.
+.P
+The
+\f(CWmacro_operator\fP
+returned is one of the defined
+macro operations such as
+\f(CWDW_MACRO_define\fP.
+This is the field you will use to
+choose what call to use to get the
+data for a macro operator.
+For example, for 
+\f(CWDW_MACRO_undef\fP
+one would call 
+\f(CWdwarf_get_macro_defundef()\fP
+(see below)
+to get the details about the undefine.
+.P
+The
+\f(CWforms_count\fP
+returned is useful for debugging
+but otherwise is not normally useful.
+It is the number of bytes of form numbers
+in the 
+\f(CWformcode_array\fP
+of this macro operator's applicable forms.
+
+.P
+\f(CWDW_DLV_NO_ENTRY\fP
+is not returned.
+.P
+On error
+\f(CWDW_DLV_ERROR\fP
+is returned and
+the error details are returned through the pointer
+\f(CWerror\fP.
 
 .H 4 "dwarf_get_macro_defundef()"
 .DS
@@ -6570,7 +6838,79 @@ FIXME
     const char    ** macro_string,
     Dwarf_Error    * error);\fP
 .DE
-FIXME
+Call
+\f(CWdwarf_get_macro_defundef\fP for 
+any of the macro define/undefine operators.
+Which fields are set through the pointers
+depends on the particular operator.
+.P
+The
+\f(CWmacro_context\fP
+field passed in identifies the macro unit involved.
+The 
+\f(CWop_number\fP
+field passed in identifies which macro operand to
+look at. Valid index values are
+zero through 
+\f(CWmacro_ops_count_out\fP-1
+(field returned by
+\f(CWdwarf_get_macro_context()\fP
+or
+\f(CWdwarf_get_macro_context_by_offset()\fP).
+.P
+The
+\f(CWline_number\fP
+field is set with the source line number of the macro.
+.P
+The
+\f(CWindex\fP
+field only set meaningfully if the macro operator is
+\f(CWDW_MACRO_define_strx\fP
+or
+\f(CWDW_MACRO_undef_strx\fP.
+If set it is an index into an array of offsets in the .debug_str_offsets
+section.
+.P
+The
+\f(CWoffset\fP
+field only set meaningfully if the macro operator is
+\f(CWDW_MACRO_define_strx\fP,
+\f(CWDW_MACRO_undef_strx\fP
+\f(CWDW_MACRO_define_strp\fP,
+or
+\f(CWDW_MACRO_undef_strp\fP
+If set it is an offset of a string in the .debug_str section.
+.P
+The
+\f(CWforms_count\fP
+is set to the number of forms 
+that apply to the macro operator.
+.P
+The 
+\f(CWmacro_string\fP
+pointer is used to return a pointer to
+the macro string.
+If the actual string cannot be found
+(as when section with the string is in
+a different object, see 
+\f(CWset_tied_dbg()\fP)
+the string returned may be
+"<:No string available>"
+or
+"<.debug_str_offsets not available>"
+(without the quotes).
+.P
+The function returns
+\f(CWDW_DLV_NO_ENTRY\fP
+if the macro operation is not
+one of the define/undef 
+operations.
+.P
+On error
+\f(CWDW_DLV_ERROR\fP
+is returned and
+the error details are returned through the pointer
+\f(CWerror\fP.
 .H 4 "dwarf_get_macro_startend_file()"
 .DS
 \f(CWint dwarf_get_macro_startend_file(Dwarf_Macro_Context macro_context,
@@ -6580,7 +6920,69 @@ FIXME
     const char    ** src_file_name,
     Dwarf_Error    * error);\fP
 .DE
-FIXME
+Call
+\f(CWdwarf_get_macro_startend_file\fP for 
+operators
+\f(CWDW_MACRO_start_file\fP
+or
+\f(CWDW_MACRO_end_file\fP.
+.P
+The
+\f(CWmacro_context\fP
+field passed in identifies the macro unit involved.
+.P
+The 
+\f(CWop_number\fP
+field passed in identifies which macro operand to
+look at. Valid index values are
+zero through 
+\f(CWmacro_ops_count_out\fP-1
+(field returned by
+\f(CWdwarf_get_macro_context()\fP
+or
+\f(CWdwarf_get_macro_context_by_offset()\fP)
+.P
+For 
+\f(CWDW_MACRO_end_file\fP
+none of the following fields are set
+on successful return, they are only
+set for.
+\f(CWDW_MACRO_start_file\fP
+.P
+The
+\f(CWline_number\fP
+field is set with the source line number of the macro.
+.P
+.P
+The
+\f(CWname_index_to_line_tab\fP
+field is set with the index into the
+file name table of the line table section.
+For DWARF2, DWARF3, DWARF4 line tables
+the index value assumes DWARF2 line table header rules
+(identical to DWARF3, DWARF4 line table header rules).
+For DWARF5
+the index value assumes DWARF5 line table header rules.
+The
+\f(CWsrc_file_name\fP
+is set with the source file name.
+If the index seems wrong or
+the line table is unavailable
+the name returned is "<no-source-file-name-available>");
+
+.P
+The function returns
+\f(CWDW_DLV_NO_ENTRY\fP
+if the macro operation is not
+one of the start/end
+operations.
+.P
+On error
+\f(CWDW_DLV_ERROR\fP
+is returned and
+the error details are returned through the pointer
+\f(CWerror\fP.
+
 .H 4 "dwarf_get_macro_import()"
 .DS
 \f(CWint dwarf_get_macro_import(Dwarf_Macro_Context macro_context,
@@ -6588,7 +6990,47 @@ FIXME
     Dwarf_Unsigned * target_offset,
     Dwarf_Error    * error);\fP
 .DE
-FIXME
+Call
+\f(CWdwarf_get_macro_import\fP for
+operators
+\f(CWDW_MACRO_import\fP
+or
+\f(CWDW_MACRO_import_sup\fP.
+.P
+The
+\f(CWmacro_context\fP
+field passed in identifies the macro unit involved.
+The 
+\f(CWop_number\fP
+field passed in identifies which macro operand to
+look at. Valid index values are
+zero through
+\f(CWmacro_ops_count_out\fP-1
+(field returned by
+\f(CWdwarf_get_macro_context()\fP
+or
+\f(CWdwarf_get_macro_context_by_offset()\fP)
+.P
+On success the 
+\f(CWtarget_offset\fP
+field is set to the
+offset in the referenced section.
+For DW_MACRO_import the referenced section is
+the same section as the macro operation referenced here.
+For DW_MACRO_import_sup the referenced section is
+in a supplementary object.
+.P
+The function returns
+\f(CWDW_DLV_NO_ENTRY\fP
+if the macro operation is not
+one of the import
+operations.
+.P
+On error
+\f(CWDW_DLV_ERROR\fP
+is returned and
+the error details are returned through the pointer
+\f(CWerror\fP.
 
 
 .H 2 "Macro Information Operations (DWARF2, DWARF3, DWARF4)"

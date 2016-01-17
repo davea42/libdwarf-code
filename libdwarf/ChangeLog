@@ -1,3 +1,9 @@
+2016-01-16  David Anderson
+     * libdwarf2.1.mm: Documented DWARF5 macro operations.
+       Version 2.38
+     * libdwarf2.1.pdf: Regenerated.
+     * libdwarf2p.1.pdf: Regenerated following a trivial
+       clarification on cie production made a couple days ago.
 2016-01-15  David Anderson
      * pro_frame.h, pro_frame.c: The code adding a CIE for output
        (dwarf_add_frame_cie())
