@@ -1,3 +1,6 @@
+2016-01-17  David Anderson
+     * dwarf_frame2.c: Added additional checks for
+       bad frame section. Looking for premature end of frame data.
 2016-01-16  David Anderson
      * libdwarf2.1.mm: Documented DWARF5 macro operations.
        Version 2.38

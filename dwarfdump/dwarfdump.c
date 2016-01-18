@@ -51,7 +51,7 @@
 extern int elf_open(const char *name,int mode);
 #endif /* WIN32 */
 
-#define DWARFDUMP_VERSION " Thu Jan 14 14:45:44 PST 2016  "
+#define DWARFDUMP_VERSION " Sun Jan 17 14:06:39 PST 2016  "
 
 extern char *dwoptarg;
 
@@ -100,7 +100,6 @@ int nTrace[MAX_TRACE_LEVEL + 1];
 void build_linkonce_info(Dwarf_Debug dbg);
 static const char * do_uri_translation(const char *s,
     const char *context);
-static void reset_overall_CU_error_data();
 
 boolean info_flag = FALSE;
 boolean use_old_dwarf_loclist = FALSE;  /* This so both
@@ -2805,8 +2804,8 @@ reset_compiler_entry(Compiler *compiler)
     what the reset,or 'I do not know'  value is for
     CU name or producer name for PRINT_CU_INFO. */
 static const char * default_cu_producer = "<unknown>";
-static void
-reset_overall_CU_error_data()
+void
+reset_overall_CU_error_data(void)
 {
    strcpy(CU_name,default_cu_producer);
    strcpy(CU_producer,default_cu_producer);
@@ -2820,7 +2819,7 @@ reset_overall_CU_error_data()
 
 
 static boolean
-cu_data_is_set()
+cu_data_is_set(void)
 {
     if (strcmp(CU_name,default_cu_producer) ||
         strcmp(CU_producer,default_cu_producer)) {
@@ -2843,6 +2842,8 @@ void PRINT_CU_INFO()
     Dwarf_Unsigned goff = DIE_overall_offset;
 
     if (current_section_id == DEBUG_LINE ||
+        current_section_id == DEBUG_FRAME ||
+        current_section_id == DEBUG_FRAME_EH_GNU ||
         current_section_id == DEBUG_ARANGES ||
         current_section_id == DEBUG_MACRO ||
         current_section_id == DEBUG_MACINFO ) {

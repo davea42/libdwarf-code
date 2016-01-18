@@ -487,6 +487,7 @@ void safe_strcpy(char *out, long outlen, const char *in, long inlen);
 void print_macros_5style_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die,
     Dwarf_Bool in_import_list, Dwarf_Unsigned offset);
 
+void reset_overall_CU_error_data(void);
 
 void format_sig8_string(Dwarf_Sig8*data, struct esb_s *out);
 

@@ -1,3 +1,16 @@
+2015-01-17  David Anderson
+     * common.c: Update version string
+     * dwarfdump.c: Made reset_overall_CU_error_data() a global.
+       We now try to show CU name etc on case there is an error
+       reading frame data. Update version strin.
+       Added DEBUG_FRAME DEBUG_FRAME_EH to the PRINT_CU_INFO() tests. 
+       New function: load_CU_error_data().
+     * print_frames.c: Now uses a local Dwarf_Error
+       in a few places (CU names for frames) instead
+       of the global 'err' so we do not get the errors
+       mixed up.
+       We now try to show CU name etc on case there is an error
+       reading frame data.
 2015-01-14  David Anderson
      * common.c: Update version string.
      * dwarfdump.c: Update version string. Include macrocheck.h.

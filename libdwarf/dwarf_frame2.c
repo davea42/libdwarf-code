@@ -529,6 +529,10 @@ dwarf_create_cie_from_after_start(Dwarf_Debug dbg,
         section 6.4.1 */
     Dwarf_Small version = *(Dwarf_Small *) frame_ptr;
 
+    if ((frame_ptr+2) >= section_ptr_end) {
+        _dwarf_error(dbg, error, DW_DLE_DEBUG_FRAME_LENGTH_BAD);
+    }
+
     frame_ptr++;
     if (version != DW_CIE_VERSION && version != DW_CIE_VERSION3 &&
         version != DW_CIE_VERSION4 && version != DW_CIE_VERSION5) {
@@ -544,12 +548,18 @@ dwarf_create_cie_from_after_start(Dwarf_Debug dbg,
         return res;
     }
     frame_ptr = frame_ptr + strlen((char *) frame_ptr) + 1;
+    if (frame_ptr  >= section_ptr_end) {
+        _dwarf_error(dbg, error, DW_DLE_DEBUG_FRAME_LENGTH_BAD);
+    }
     augt = _dwarf_get_augmentation_type(dbg,
         augmentation, use_gnu_cie_calc);
     if (augt == aug_eh) {
         /* REFERENCED *//* Not used in this instance */
         Dwarf_Unsigned exception_table_addr;
 
+        if ((frame_ptr+local_length_size)  >= section_ptr_end) {
+            _dwarf_error(dbg, error, DW_DLE_DEBUG_FRAME_LENGTH_BAD);
+        }
         /* this is per egcs-1.1.2 as on RH 6.0 */
         READ_UNALIGNED(dbg, exception_table_addr,
             Dwarf_Unsigned, frame_ptr, local_length_size);
@@ -560,6 +570,9 @@ dwarf_create_cie_from_after_start(Dwarf_Debug dbg,
         unsigned long size = 0;
 
         if (version == DW_CIE_VERSION4) {
+            if ((frame_ptr+2)  >= section_ptr_end) {
+                _dwarf_error(dbg, error, DW_DLE_DEBUG_FRAME_LENGTH_BAD);
+            }
             address_size = *((unsigned char *)frame_ptr);
             if (address_size  > sizeof(Dwarf_Addr)) {
                 _dwarf_error(dbg, error, DW_DLE_ADDRESS_SIZE_ERROR);
@@ -574,12 +587,21 @@ dwarf_create_cie_from_after_start(Dwarf_Debug dbg,
             }
         }
 
+        
+        /* Not a great test. FIXME */
+        if ((frame_ptr+2)  >= section_ptr_end) {
+            _dwarf_error(dbg, error, DW_DLE_DEBUG_FRAME_LENGTH_BAD);
+        }
         DECODE_LEB128_UWORD(frame_ptr, lreg);
         code_alignment_factor = (Dwarf_Word) lreg;
         data_alignment_factor =
             (Dwarf_Sword) _dwarf_decode_s_leb128(frame_ptr,
                 &leb128_length);
         frame_ptr = frame_ptr + leb128_length;
+        /* Not a great test. FIXME */
+        if ((frame_ptr+1)  >= section_ptr_end) {
+            _dwarf_error(dbg, error, DW_DLE_DEBUG_FRAME_LENGTH_BAD);
+        }
         return_address_register =
             _dwarf_get_return_address_reg(frame_ptr, version, &size);
         if (return_address_register > dbg->de_frame_reg_rules_entry_count) {
@@ -587,6 +609,9 @@ dwarf_create_cie_from_after_start(Dwarf_Debug dbg,
             return (DW_DLV_ERROR);
         }
         frame_ptr += size;
+        if ((frame_ptr)  > section_ptr_end) {
+            _dwarf_error(dbg, error, DW_DLE_DEBUG_FRAME_LENGTH_BAD);
+        }
     }
     switch (augt) {
     case aug_empty_string:
@@ -633,6 +658,10 @@ dwarf_create_cie_from_after_start(Dwarf_Debug dbg,
         int res = DW_DLV_ERROR;
         Dwarf_Unsigned adlen = 0;
 
+        /* Not a great test. FIXME */
+        if ((frame_ptr+1)  > section_ptr_end) {
+            _dwarf_error(dbg, error, DW_DLE_DEBUG_FRAME_LENGTH_BAD);
+        }
         DECODE_LEB128_UWORD(frame_ptr, adlen);
         cie_aug_data_len = adlen;
         cie_aug_data = frame_ptr;
@@ -667,6 +696,9 @@ dwarf_create_cie_from_after_start(Dwarf_Debug dbg,
             code_alignement_factor, return_address_register and
             instruction start? They were clearly uninitalized in the
             previous version and I am leaving them the same way. */
+        }
+        if ((frame_ptr)  > section_ptr_end) {
+            _dwarf_error(dbg, error, DW_DLE_DEBUG_FRAME_LENGTH_BAD);
         }
         break;
     }                           /* End switch on augmentation type. */
