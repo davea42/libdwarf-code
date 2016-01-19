@@ -542,7 +542,7 @@ get_fde_proc_name(Dwarf_Debug dbg, Dwarf_Addr low_pc,
             }
             continue;
         }
-        /*  DW_DLV_OK 
+        /*  DW_DLV_OK
             In normal processing (ie, when doing print_info()
             we would call print_attribute for each die
             including cu_die and thus get CU_base_address,
@@ -1974,12 +1974,12 @@ print_frames(Dwarf_Debug dbg,
     we do not report such.
     Setting these globals as much as possible:
     CU_name CU_producer DIE_CU_offset  DIE_CU_overall_offset
-    CU_base_address CU_high_address 
+    CU_base_address CU_high_address
     Using DW_AT_low_pc, DW_AT_high_pc,DW_AT_name
     DW_AT_producer.
   */
 static void
-load_CU_error_data(Dwarf_Debug dbg,Dwarf_Die cu_die) 
+load_CU_error_data(Dwarf_Debug dbg,Dwarf_Die cu_die)
 {
     Dwarf_Signed atcnt = 0;
     Dwarf_Attribute *atlist = 0;
@@ -2020,7 +2020,7 @@ load_CU_error_data(Dwarf_Debug dbg,Dwarf_Die cu_die)
     }
 
     /* The offsets will be zero if it fails. Let it pass. */
-    atres = dwarf_die_offsets(cu_die,&DIE_overall_offset, 
+    atres = dwarf_die_offsets(cu_die,&DIE_overall_offset,
         &DIE_offset,&loadcuerr);
     if (atres == DW_DLV_ERROR) {
         /*  Something is seriously wrong though. */
@@ -2050,23 +2050,23 @@ load_CU_error_data(Dwarf_Debug dbg,Dwarf_Die cu_die)
         /*  For now we will not fully deal with the complexity of
             DW_AT_high_pc being an offset of low pc. */
         switch(attr) {
-        case DW_AT_low_pc: 
+        case DW_AT_low_pc:
             {
             ares = dwarf_formaddr(attrib, &CU_base_address, &loadcuerr);
             if (ares == DW_DLV_ERROR) {
-                 dwarf_dealloc(dbg,loadcuerr,DW_DLA_ERROR);
-                 loadcuerr = 0;
+                dwarf_dealloc(dbg,loadcuerr,DW_DLA_ERROR);
+                loadcuerr = 0;
             }
             }
             break;
-        case DW_AT_high_pc: 
+        case DW_AT_high_pc:
             {
-            /*  This is wrong for DWARF4 instances where 
+            /*  This is wrong for DWARF4 instances where
                 the attribute is really an offset. */
             ares = dwarf_formaddr(attrib, &CU_base_address, &loadcuerr);
             if (ares == DW_DLV_ERROR) {
-                 dwarf_dealloc(dbg,loadcuerr,DW_DLA_ERROR);
-                 loadcuerr = 0;
+                dwarf_dealloc(dbg,loadcuerr,DW_DLA_ERROR);
+                loadcuerr = 0;
             }
             }
             break;
@@ -2086,11 +2086,11 @@ load_CU_error_data(Dwarf_Debug dbg,Dwarf_Die cu_die)
                 safe_strcpy(CU_producer,sizeof(CU_producer),name,strlen(name));
             }
             esb_destructor(&namestr);
-           }
-           break;
-        default: 
+            }
+            break;
+        default:
             /* do nothing */
-           break;
+            break;
         }
     }
     for (k = 0; k < atcnt; k++) {

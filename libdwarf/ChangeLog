@@ -1,4 +1,6 @@
 2016-01-19  David Anderson
+     * dwarf_form.c, dwarf_frame2.c,: Fix indentation and trailing whitespace.
+2016-01-19  David Anderson
      * dwarf_line.c, dwarf_line_table_reader_common.c,
        dwarf_loc.c, dwarf_macro5.c, dwarf_query.c, pro_die.c:
        Remove silly second ; from ;; where appropriate.

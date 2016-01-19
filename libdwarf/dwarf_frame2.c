@@ -587,7 +587,6 @@ dwarf_create_cie_from_after_start(Dwarf_Debug dbg,
             }
         }
 
-        
         /* Not a great test. FIXME */
         if ((frame_ptr+2)  >= section_ptr_end) {
             _dwarf_error(dbg, error, DW_DLE_DEBUG_FRAME_LENGTH_BAD);

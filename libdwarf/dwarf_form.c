@@ -1185,7 +1185,7 @@ dwarf_formstring(Dwarf_Attribute attr,
         /*  See dwarfstd.org issue 120604.1
             This is the offset in the .debug_str section
             of another object file.
-            The 'tied' file notion should apply.  
+            The 'tied' file notion should apply.
             It is not clear whether both a supplementary
             and a split object might be needed at the same time
             (hence two 'tied' files simultaneously). */
@@ -1218,19 +1218,19 @@ dwarf_formstring(Dwarf_Attribute attr,
         }
         offset = offsettostr;
         break;
-    } 
+    }
     case DW_FORM_strp:
     case DW_FORM_line_strp:{
         READ_UNALIGNED(dbg, offset, Dwarf_Unsigned,
-                infoptr,
-                cu_context->cc_length_size);
+            infoptr,
+            cu_context->cc_length_size);
         break;
     }
     default:
         _dwarf_error(dbg, error, DW_DLE_STRING_FORM_IMPROPER);
         return DW_DLV_ERROR;
     }
-    /*  Now we have offset so read the string from 
+    /*  Now we have offset so read the string from
         debug_str or debug_line_str. */
     res = _dwarf_extract_local_debug_str_string_given_offset(dbg,
         attr->ar_attribute_form,
