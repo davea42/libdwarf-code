@@ -1763,7 +1763,7 @@ _dwarf_decode_line_string_form(Dwarf_Debug dbg,
         return DW_DLV_OK;
         }
     case DW_FORM_string: {
-        Dwarf_Small *secend = line_ptr_end;;
+        Dwarf_Small *secend = line_ptr_end;
         Dwarf_Small *strptr = *line_ptr;
         res = _dwarf_check_string_valid(dbg,
             strptr ,strptr,secend,error);

@@ -55,7 +55,7 @@ int dwarf_get_offset_size(Dwarf_Debug dbg,
         _dwarf_error(NULL, error, DW_DLE_DBG_NULL);
         return (DW_DLV_ERROR);
     }
-    *offset_size = dbg->de_length_size;;
+    *offset_size = dbg->de_length_size;
     return DW_DLV_OK;
 }
 

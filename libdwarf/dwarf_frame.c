@@ -519,7 +519,7 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
 
                 DECODE_LEB128_UWORD(instr_ptr, lreg);
                 reg_no = (reg_num_type) lreg;
-                ERROR_IF_REG_NUM_TOO_HIGH(reg_no, reg_count);;
+                ERROR_IF_REG_NUM_TOO_HIGH(reg_no, reg_count);
                 factored_N_value =
                     _dwarf_decode_u_leb128(instr_ptr, &leb128_length);
                 instr_ptr += leb128_length;

@@ -1159,7 +1159,7 @@ dwarf_loclist_n(Dwarf_Attribute attr,
             if (blkres != DW_DLV_OK) {
                 return (blkres);
             }
-            loc_block.bl_len = tblock->bl_len;;
+            loc_block.bl_len = tblock->bl_len;
             loc_block.bl_data = tblock->bl_data;
             loc_block.bl_from_loclist = tblock->bl_from_loclist;
             loc_block.bl_section_offset = tblock->bl_section_offset;
@@ -1302,7 +1302,7 @@ dwarf_loclist(Dwarf_Attribute attr,
             if (blkres != DW_DLV_OK) {
                 return (blkres);
             }
-            loc_block.bl_len = tblock->bl_len;;
+            loc_block.bl_len = tblock->bl_len;
             loc_block.bl_data = tblock->bl_data;
             loc_block.bl_from_loclist = tblock->bl_from_loclist;
             loc_block.bl_section_offset = tblock->bl_section_offset;

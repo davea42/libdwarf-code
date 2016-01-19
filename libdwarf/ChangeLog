@@ -1,4 +1,8 @@
 2016-01-19  David Anderson
+     * dwarf_line.c, dwarf_line_table_reader_common.c,
+       dwarf_loc.c, dwarf_macro5.c, dwarf_query.c, pro_die.c:
+       Remove silly second ; from ;; where appropriate.
+2016-01-19  David Anderson
      * libdwarf.h.in, dwarf_error.c: New error numbers. 
        DW_DLE_LINE_STRP_OFFSET_BAD, DW_DLE_STRING_FORM_IMPROPER.
      * dwarf_form.c: Added suport for DW_FORM_line_strp into 

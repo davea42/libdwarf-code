@@ -1,3 +1,6 @@
+2015-01-19  David Anderson
+     * print_die.c,tag_tree.c: Change statement ;; by removing
+       second semicolon.
 2015-01-17  David Anderson
      * common.c: Update version string
      * dwarfdump.c: Made reset_overall_CU_error_data() a global.
