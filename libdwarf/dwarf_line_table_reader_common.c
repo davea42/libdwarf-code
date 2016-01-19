@@ -791,7 +791,7 @@ read_line_table_program(Dwarf_Debug dbg,
     Dwarf_Sword i = 0;
     Dwarf_File_Entry cur_file_entry = 0;
     Dwarf_Line *logicals = line_context->lc_linebuf_logicals;
-    Dwarf_Signed logicals_count = line_context->lc_linecount_logicals;;
+    Dwarf_Signed logicals_count = line_context->lc_linecount_logicals;
 
     struct Dwarf_Line_Registers_s regs;
 

@@ -575,9 +575,9 @@ dwarf_get_macro_defundef(Dwarf_Macro_Context macro_context,
             return res;
         }
         if (res == DW_DLV_OK) {
+            char *localstr = 0;
             *index = stringindex;
             *offset = offsettostr;
-            char *localstr = 0;
             res = _dwarf_extract_local_debug_str_string_given_offset(dbg,
                 form1,
                 offsettostr,
@@ -975,6 +975,7 @@ read_operands_table(Dwarf_Macro_Context macro_context,
         Dwarf_Small opcode_number = 0;
         Dwarf_Unsigned formcount = 0;
         Dwarf_Word uleblen = 0;
+        int res = 0;
 
         cur_offset = (2 + macro_data) - section_base;
         if (cur_offset >= section_size) {
@@ -1005,7 +1006,7 @@ read_operands_table(Dwarf_Macro_Context macro_context,
                 }
             }
         }
-        int res = validate_opcode(macro_context->mc_dbg,curformentry, error);
+        res = validate_opcode(macro_context->mc_dbg,curformentry, error);
         if(res != DW_DLV_OK) {
             return res;
         }

@@ -46,6 +46,15 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 */
 
+#if HAVE_CONFIG_H
+#include "config.h"
+#endif /* HAVE_CONFIG_H */
+
+/* SN-Carlos: Windows specific */
+#ifdef HAVE_STDAFX_H
+#include "stdafx.h"
+#endif /* HAVE_STDAFX_H */
+
 /*  The DW_VISIT values passed back to you through
     the callback function in dwarf_twalk();
 */
@@ -63,6 +72,16 @@ DW_VISIT;
    once to get a key you passed in.
 
 */
+
+/*  We rename these so there is no conflict with another version
+    of the tsearch sources, such as is used in dwarfdump. */
+#define dwarf_tsearch  _dwarf_tsearch
+#define dwarf_tfind    _dwarf_tfind
+#define dwarf_tdelete  _dwarf_tdelete
+#define dwarf_twalk    _dwarf_twalk
+#define dwarf_tdestroy _dwarf_tdestroy
+#define dwarf_tdump    _dwarf_tdump
+#define dwarf_initialize_search_hash _dwarf_initialize_search_hash
 
 
 void *dwarf_tsearch(const void * /*key*/, void ** /*rootp*/,

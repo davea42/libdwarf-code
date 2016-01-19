@@ -1210,7 +1210,7 @@ process_one_file(Elf * elf,Elf *elftied,
 {
     Dwarf_Debug dbg = 0;
     Dwarf_Debug dbgtied = 0;
-    int dres = 0;;
+    int dres = 0;
     struct Dwarf_Printf_Callback_Info_s printfcallbackdata;
     Dwarf_Half elf_address_size = 0;      /* Target pointer size */
 

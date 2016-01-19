@@ -998,10 +998,12 @@ _dwarf_error_mv_s_to_t(Dwarf_Debug dbgs,Dwarf_Error *errs,
             *errt = ers;
         }
     } else {
-        int errno = dwarf_errno(*errs);
+        /*  On Windows, there is already a definition for 'errno'
+            #define errno   (*_errno()) */
+        int error_no = dwarf_errno(*errs);
         dwarf_dealloc(dbgs,*errs, DW_DLA_ERROR);
         *errs = 0;
-        _dwarf_error(dbgt,errt, errno);
+        _dwarf_error(dbgt,errt, error_no);
     }
 }
 

@@ -25,6 +25,9 @@
 
 #ifndef globals_INCLUDED
 #define globals_INCLUDED
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 #include "config.h"
 #if (!defined(HAVE_RAW_LIBELF_OK) && defined(HAVE_LIBELF_OFF64_OK) )
@@ -531,4 +534,7 @@ void print_any_harmless_errors(Dwarf_Debug dbg);
 #define DW_HDR_ALL            0x80000000
 #define DW_HDR_DEFAULT        0x00002fff
 
+#ifdef __cplusplus
+}
+#endif
 #endif /* globals_INCLUDED */

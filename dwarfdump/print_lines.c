@@ -110,8 +110,8 @@ process_line_table(Dwarf_Debug dbg,
 
     Dwarf_Bool SkipRecord = FALSE;
 
-    current_section_id = DEBUG_LINE;
     struct esb_s lastsrc;
+    current_section_id = DEBUG_LINE;
 
     /* line_flag is TRUE */
     esb_constructor(&lastsrc);

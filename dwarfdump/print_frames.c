@@ -2073,9 +2073,9 @@ load_CU_error_data(Dwarf_Debug dbg,Dwarf_Die cu_die)
         case DW_AT_name:
         case DW_AT_producer:
             {
+            const char *name = 0;
             struct esb_s namestr;
             esb_constructor(&namestr);
-            const char *name = 0;
 
             get_attr_value(dbg, tag, cu_die, attrib, srcfiles, srccnt,
                 &namestr, local_show_form_used,local_verbose);

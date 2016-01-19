@@ -148,9 +148,9 @@ dwarf_die_offsets(Dwarf_Die die,
     Dwarf_Off *cu_off,
     Dwarf_Error *error)
 {
+    int res = 0;
     *off = 0;
     *cu_off = 0;
-    int res = 0;
     res = dwarf_dieoffset(die,off,error);
     if (res == DW_DLV_OK) {
         res = dwarf_die_CU_offset(die,cu_off,error);
@@ -416,9 +416,13 @@ _dwarf_get_value_ptr(Dwarf_Die die,
     return DW_DLV_NO_ENTRY;
 }
 
-
+/*  Generic function to get the attribute value, when its value
+    represents a string, such as DW_AT_name, etc. */
 int
-dwarf_diename(Dwarf_Die die, char **ret_name, Dwarf_Error * error)
+dwarf_die_text(Dwarf_Die die,
+    Dwarf_Half attr,
+    char **ret_name,
+    Dwarf_Error *error)
 {
     Dwarf_Half attr_form = 0;
     Dwarf_Debug dbg = 0;
@@ -428,7 +432,7 @@ dwarf_diename(Dwarf_Die die, char **ret_name, Dwarf_Error * error)
 
     CHECK_DIE(die, DW_DLV_ERROR);
 
-    res = _dwarf_get_value_ptr(die, DW_AT_name, &attr_form,&info_ptr,error);
+    res = _dwarf_get_value_ptr(die, attr, &attr_form, &info_ptr,error);
     if (res == DW_DLV_ERROR) {
         return res;
     }
@@ -488,6 +492,11 @@ dwarf_diename(Dwarf_Die die, char **ret_name, Dwarf_Error * error)
     return DW_DLV_OK;
 }
 
+int
+dwarf_diename(Dwarf_Die die, char **ret_name, Dwarf_Error * error)
+{
+    return dwarf_die_text(die,DW_AT_name,ret_name,error);
+}
 
 int
 dwarf_hasattr(Dwarf_Die die,
@@ -781,6 +790,25 @@ dwarf_highpc(Dwarf_Die die,
     return (DW_DLV_OK);
 }
 
+/*  If the giving 'die' contains the DW_AT_type attribute, it returns
+    the offset referenced by the attribute.
+    */
+int
+dwarf_dietype_offset(Dwarf_Die die,
+    Dwarf_Off *return_off, Dwarf_Error *error)
+{
+    int res = 0;
+    Dwarf_Off offset = 0;
+    Dwarf_Attribute attr = 0;
+
+    CHECK_DIE(die, DW_DLV_ERROR);
+    res = dwarf_attr(die,DW_AT_type,&attr,error);
+    if (res == DW_DLV_OK) {
+        res = dwarf_global_formref(attr,&offset,error);
+    }
+    *return_off = offset;
+    return res;
+}
 
 int
 _dwarf_get_string_base_attr_value(Dwarf_Debug dbg,
