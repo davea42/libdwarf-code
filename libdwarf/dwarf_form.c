@@ -1080,29 +1080,41 @@ _dwarf_extract_local_debug_str_string_given_offset(Dwarf_Debug dbg,
     Dwarf_Error * error)
 {
     if (attrform == DW_FORM_strp ||
+        attrform == DW_FORM_line_strp ||
         attrform == DW_FORM_GNU_str_index ||
         attrform == DW_FORM_strx) {
-        /* The 'offset' into .debug_str is set. */
+        /*  The 'offset' into .debug_str or .debug_line_str is given,
+            here we turn that into a pointer. */
+        Dwarf_Small   *secend = 0;
+        Dwarf_Small   *secbegin = 0;
+        Dwarf_Small   *strbegin = 0;
+        Dwarf_Unsigned secsize = 0;
+        int errcode = 0;
         int res = 0;
-        Dwarf_Small *secend = 0;
-        Dwarf_Small *secbegin = 0;
-        Dwarf_Small *strbegin = 0;
-        res = _dwarf_load_section(dbg, &dbg->de_debug_str,error);
-        if (res != DW_DLV_OK) {
-            return res;
-        }
-        if (offset >= dbg->de_debug_str.dss_size) {
-            /*  Badly damaged DWARF here. */
-            _dwarf_error(dbg, error, DW_DLE_STRP_OFFSET_BAD);
-            return (DW_DLV_ERROR);
-        }
-        secbegin = dbg->de_debug_str.dss_data;
-        strbegin= dbg->de_debug_str.dss_data + offset;
-        secend = dbg->de_debug_str.dss_data + dbg->de_debug_str.dss_size;
 
-        /*  Ensure the offset lies within the .debug_str */
-        if (offset >= dbg->de_debug_str.dss_size) {
-            _dwarf_error(dbg, error, DW_DLE_DEBUG_STR_OFFSET_BAD);
+        if(attrform == DW_FORM_line_strp) {
+            res = _dwarf_load_section(dbg, &dbg->de_debug_line_str,error);
+            if (res != DW_DLV_OK) {
+                return res;
+            }
+            errcode = DW_DLE_STRP_OFFSET_BAD;
+            secsize = dbg->de_debug_line_str.dss_size;
+            secbegin = dbg->de_debug_line_str.dss_data;
+            strbegin= dbg->de_debug_line_str.dss_data + offset;
+        } else {
+            res = _dwarf_load_section(dbg, &dbg->de_debug_str,error);
+            if (res != DW_DLV_OK) {
+                return res;
+            }
+            errcode = DW_DLE_STRP_OFFSET_BAD;
+            secsize = dbg->de_debug_str.dss_size;
+            secbegin = dbg->de_debug_str.dss_data;
+            strbegin= dbg->de_debug_str.dss_data + offset;
+            secend = dbg->de_debug_str.dss_data + secsize;
+        }
+        if (offset >= secsize) {
+            /*  Badly damaged DWARF here. */
+            _dwarf_error(dbg, error, errcode);
             return (DW_DLV_ERROR);
         }
         res= _dwarf_check_string_valid(dbg,secbegin,strbegin, secend,error);
@@ -1110,7 +1122,7 @@ _dwarf_extract_local_debug_str_string_given_offset(Dwarf_Debug dbg,
             return res;
         }
 
-        *return_str = (char *) (dbg->de_debug_str.dss_data + offset);
+        *return_str = (char *)strbegin;
         return DW_DLV_OK;
     }
     _dwarf_error(dbg, error, DW_DLE_ATTR_FORM_BAD);
@@ -1148,7 +1160,8 @@ dwarf_formstring(Dwarf_Attribute attr,
         secdataptr = (Dwarf_Small *)dbg->de_debug_types.dss_data;
         secdatalen = dbg->de_debug_types.dss_size;
     }
-    if (attr->ar_attribute_form == DW_FORM_string) {
+    switch(attr->ar_attribute_form) {
+    case DW_FORM_string: {
         secend = secdataptr + secdatalen;
         Dwarf_Small *begin = attr->ar_debug_ptr;
         Dwarf_Small *contextend = secdataptr +
@@ -1167,18 +1180,21 @@ dwarf_formstring(Dwarf_Attribute attr,
         *return_str = (char *) (begin);
         return DW_DLV_OK;
     }
-    if (attr->ar_attribute_form == DW_FORM_GNU_strp_alt ||
-        attr->ar_attribute_form == DW_FORM_strp_sup) {
+    case DW_FORM_GNU_strp_alt:
+    case DW_FORM_strp_sup:  {
         /*  See dwarfstd.org issue 120604.1
             This is the offset in the .debug_str section
             of another object file.
-            The 'tied' file notion should apply.  */
-        Dwarf_Off offset = 0;
-        res = dwarf_global_formref(attr, &offset,error);
+            The 'tied' file notion should apply.  
+            It is not clear whether both a supplementary
+            and a split object might be needed at the same time
+            (hence two 'tied' files simultaneously). */
+        Dwarf_Off soffset = 0;
+        res = dwarf_global_formref(attr, &soffset,error);
         if (res != DW_DLV_OK) {
             return res;
         }
-        res = _dwarf_get_string_from_tied(dbg, offset,
+        res = _dwarf_get_string_from_tied(dbg, soffset,
             return_str, error);
         if (dwarf_errno(*error) == DW_DLE_NO_TIED_FILE_AVAILABLE) {
             dwarf_dealloc(dbg,*error,DW_DLA_ERROR);
@@ -1187,8 +1203,8 @@ dwarf_formstring(Dwarf_Attribute attr,
         }
         return res;
     }
-    if (attr->ar_attribute_form == DW_FORM_GNU_str_index ||
-        attr->ar_attribute_form == DW_FORM_strx) {
+    case DW_FORM_GNU_str_index:
+    case DW_FORM_strx: {
         Dwarf_Unsigned offsettostr= 0;
         res = _dwarf_extract_string_offset_via_str_offsets(dbg,
             infoptr,
@@ -1201,14 +1217,21 @@ dwarf_formstring(Dwarf_Attribute attr,
             return res;
         }
         offset = offsettostr;
-        /* FALL THRU */
-    } else {
-        if (attr->ar_attribute_form == DW_FORM_strp) {
-            READ_UNALIGNED(dbg, offset, Dwarf_Unsigned,
+        break;
+    } 
+    case DW_FORM_strp:
+    case DW_FORM_line_strp:{
+        READ_UNALIGNED(dbg, offset, Dwarf_Unsigned,
                 infoptr,
                 cu_context->cc_length_size);
-        }
+        break;
     }
+    default:
+        _dwarf_error(dbg, error, DW_DLE_STRING_FORM_IMPROPER);
+        return DW_DLV_ERROR;
+    }
+    /*  Now we have offset so read the string from 
+        debug_str or debug_line_str. */
     res = _dwarf_extract_local_debug_str_string_given_offset(dbg,
         attr->ar_attribute_form,
         offset,
