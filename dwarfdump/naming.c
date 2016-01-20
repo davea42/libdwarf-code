@@ -37,6 +37,7 @@
 #include "dwarf.h"
 #include "libdwarf.h"
 #include "makename.h"
+#include "naming.h"
 
 static const char *
 skipunder(const char *v)

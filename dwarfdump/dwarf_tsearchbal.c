@@ -659,31 +659,12 @@ rearrange_tree_so_p_llink_null( struct pkrecord * pkarray,
     return k2;
 }
 
-
-/*  If ak is + rotate left.
-    Else ak is -, rotate right.
-    Returns the new head, after rotation, replacing
-    a as head.
-    Caller must update any link pointed to a.
-*/
-struct ts_entry *
-rotatex(struct ts_entry *a,int ak)
-{
-    struct ts_entry *b = getlink(a,ak);
-    struct ts_entry *bx = getlink(b,-ak);
-    setlink(b,-ak,a);
-    setlink(a,ak,bx);
-    return b;
-}
-
-
 /*  Returns deleted node parent unless the head changed.
     Returns NULL if wanted node not found or the tree
         is now empty or the head node changed.
     Sets *did_delete if it found and deleted a node.
     Sets *tree_empty if there are no more user nodes present.
 */
-
 static struct ts_entry *
 tdelete_inner(const void *key,
   struct ts_entry *head,

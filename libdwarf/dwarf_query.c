@@ -608,7 +608,7 @@ _dwarf_extract_address_from_debug_addr(Dwarf_Debug dbg,
     return DW_DLV_OK;
 }
 
-int
+static int
 _dwarf_look_in_local_and_tied_by_index(
     Dwarf_Debug dbg,
     Dwarf_CU_Context context,
@@ -783,7 +783,7 @@ dwarf_highpc(Dwarf_Die die,
 }
 
 /*  If the giving 'die' contains the DW_AT_type attribute, it returns
-    the offset referenced by the attribute.  
+    the offset referenced by the attribute.
     In case of DW_DLV_NO_ENTRY or DW_DLV_ERROR it sets offset zero. */
 int
 dwarf_dietype_offset(Dwarf_Die die,

@@ -8,7 +8,7 @@
 .nr Hb 5
 \." ==============================================
 \." Put current date in the following at each rev
-.ds vE rev 2.38, Jan 16, 2016
+.ds vE rev 2.39, Jan 19, 2016
 \." ==============================================
 \." ==============================================
 .ds | |
@@ -1659,10 +1659,28 @@ void example3(Dwarf_Debug dbg)
 \fP
 .DE
 .in -2
-
+.P
 It is not necessary to undo the tieing operation
 before finishing on the dbg and tieddbg.
-
+.H 3 "dwarf_get_tied_dbg()"
+.DS
+\f(CWint dwarf_get_tied_dbg(
+        Dwarf_Debug   /*dbg*/,
+        Dwarf_Debug * /*tieddbg_out*/,
+	Dwarf_Error * /*error*/)\fP
+.DE
+\f(CWdwarf_get_tied_dbg\fP returns 
+\f(CWDW_DLV_OK\fP and sets 
+\f(CWtieddbg_out\fP to the pointer to
+the 'tied' Dwarf_Debug.
+If there is no 'tied' object
+\f(CWtieddbg_out\fP is set to NULL.
+.P
+On error it returns 
+\f(CWDW_DLV_ERROR\fP.
+.P
+It never returns 
+\f(CWDW_DLV_NO_ENTRY\fP.
 
 .H 3 "dwarf_finish()"
 .DS
@@ -2873,16 +2891,29 @@ value associated with the \f(CWdie\fP descriptor if \f(CWdie\fP
 represents a debugging information entry with the
 \f(CWDW_AT_high_pc attribute\fP and the form is \f(CWDW_FORM_addr\fP
 (meaning the form is of class address).  
-
+.P
 This function is useless for a \f(CWDW_AT_high_pc\fP
 which is encoded as a constant (which was first possible in
 DWARF4).
-
+.P
 It returns \f(CWDW_DLV_NO_ENTRY\fP if \f(CWdie\fP does not have this 
 attribute.
-
+.P
 It returns \f(CWDW_DLV_ERROR\fP if an error occurred or if the
 form is not of class address.
+
+.H 3 "dwarf_dietype_offset()"
+.DS
+\f(CWint dwarf_dietype_offset(Dwarf_Die /*die*/,
+    Dwarf_Off   * /*return_off*/, 
+    Dwarf_Error * /*error*/);\fP
+.DE
+The function \f(CWdwarf_dietype_offset()\fP returns 
+the offset of 
+FIXME
+
+
+
 
 .H 3 "dwarf_bytesize()"
 .DS
@@ -5484,14 +5515,14 @@ On a successful return from this function, the string should
 be freed using \f(CWdwarf_dealloc()\fP, with the allocation type
 \f(CWDW_DLA_STRING\fP when no longer of interest.
 
-.H 4 "dwarf_pubtype_die_offset()"
+.H 4 "dwarf_pubtype_type_die_offset()"
 .DS
-\f(CWint dwarf_pubtype_die_offset(
+\f(CWint dwarf_pubtype_type_die_offset(
         Dwarf_Type type,
         Dwarf_Off  *return_offset,
         Dwarf_Error *error)\fP
 .DE
-The function \f(CWdwarf_pubtype_die_offset()\fP returns
+The function \f(CWdwarf_pubtype_type_die_offset()\fP returns
 \f(CWDW_DLV_OK\fP and sets \f(CW*return_offset\fP to
 the offset in
 the section containing DIEs, i.e. .debug_info, of the DIE representing
@@ -7858,6 +7889,44 @@ of \f(CWrow_pc\fP.
 .P
 \f(CWint dwarf_get_fde_info_for_all_regs\fP is tailored to SGI/MIPS,
 please use dwarf_get_fde_info_for_all_regs3() instead for all architectures.
+
+.H 3 "dwarf_fde_section_offset()"
+.DS
+\f(CWint dwarf_fde_section_offset(
+    Dwarf_Debug       /*dbg*/,
+    Dwarf_Fde         /*in_fde*/,
+    Dwarf_Off *       /*fde_off*/,
+    Dwarf_Off *       /*cie_off*/,
+    Dwarf_Error *error);\fP
+.DE
+On success
+\f(CWdwarf_fde_section_offset()\fP returns
+the .dwarf_line section offset of the fde passed in
+and also the offset of its CIE.
+.P
+It returns \f(CWDW_DLV_ERROR\fP if there is an error. 
+.P
+It returns \f(CWDW_DLV_ERROR\fP if there is an error. 
+.P It is intended to be used by applications like dwarfdump
+when such want to print the offsets of CIEs and FDEs.
+
+.H 3 "dwarf_cie_section_offset()"
+.DS
+\f(CWint  dwarf_cie_section_offset(
+    Dwarf_Debug   /*dbg*/,
+    Dwarf_Cie     /*in_cie*/,
+    Dwarf_Off *   /*cie_off*/,
+    Dwarf_Error * /*err*/);
+    Dwarf_Error *error);\fP
+.DE
+On success
+\f(CWdwarf_cie_section_offset()\fP returns
+the .dwarf_line section offset of the cie passed in.
+.P
+It returns \f(CWDW_DLV_ERROR\fP if there is an error. 
+.P It is intended to be used by applications like dwarfdump
+when such want to print the offsets of CIEs.
+
 
 
 .H 3 "dwarf_set_frame_rule_table_size()"

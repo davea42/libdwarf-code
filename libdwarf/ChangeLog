@@ -1,4 +1,31 @@
 2016-01-19  David Anderson
+     * Makefile.in: Remove dwarf_stubs.o.
+     * configure.in: Add various gcc opts to --enable-wall
+       to get appropriate coverage.
+     * configure: regenerated.
+     * dwarf_macro5.c: File-local functions now declared static.
+     * dwarf_query.c: File-local functions now declared static.
+     * dwarf_stubs.c: No longer this function. It never had a prototype
+       declaration and never had more than return DW_DLV_ERROR as
+       an implementation.
+     * dwarf_util.c: Remove trailing whitespace.
+     * dwarf_original_elf_init.c(dwarf_set_tied_dbg): Added 
+       check for null dbg.
+     * dwgetopt.c: Add include of dwgetopt.h. #if 0 a testing-only function.
+       All functions prototyped, no ().
+     * libdwarf.h.in: Comment out argument names for safety.
+       Added dwarf_get_tied_dbg(), dwarf_dietype_offset(),
+       dwarf_pubtype_type_die_offset() declarations.
+       Sorted the dwarf_get_TAG_name() etc function names.
+     * pro_alloc.c: Documented and commented a useless function,
+       dwarf_p_dealloc(). .
+     * pro_alloc.h: Prototyped both the useful and useless
+       global-to-libdwarf producer 
+       functions _dwarf_p_dealloc and dwarf_p_dealloc.
+     * libdwarf2.1.mm: Documented dwarf_get_tied_dbg(),
+       dwarf_fde_section_offset(), and dwarf_cie_section_offset() 
+     * libdwarf2.1.pdf: Regenerated. Rev 2.39
+2016-01-19  David Anderson
      * dwarf_form.c,dwarf_macro5.c: Ensure declarations 
        before executable statements
      * dwarf_loc.c: Cast pointer to Dwarf_Small* so pointer arithmetic

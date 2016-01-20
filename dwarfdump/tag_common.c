@@ -74,7 +74,7 @@ trim_newline(char *line, int max)
 }
 
 /*  Detect empty lines (and other lines we do not want to read) */
-boolean
+static boolean
 is_skippable_line(char *pLine)
 {
     boolean empty = TRUE;

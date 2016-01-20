@@ -373,8 +373,8 @@ extern void print_weaknames(Dwarf_Debug dbg);
 extern void print_exception_tables(Dwarf_Debug dbg);
 
 /*  Space used to record range information */
-extern void allocate_range_array_info();
-extern void release_range_array_info();
+extern void allocate_range_array_info(void);
+extern void release_range_array_info(void);
 extern void record_range_array_info_entry(Dwarf_Off die_off,
     Dwarf_Off range_off);
 extern void check_range_array_info(Dwarf_Debug dbg);
@@ -424,7 +424,7 @@ extern boolean print_one_die(
     boolean ignore_die_stack);
 
 /* Check for specific compiler */
-extern boolean checking_this_compiler();
+extern boolean checking_this_compiler(void);
 extern void update_compiler_target(const char *producer_name);
 extern void add_cu_name_compiler_target(char *name);
 
@@ -432,10 +432,10 @@ extern void add_cu_name_compiler_target(char *name);
     macros for a short time and when changed into functions
     they kept (for now) their capitalization.
     The capitalization will likely change. */
-extern void PRINT_CU_INFO();
+extern void PRINT_CU_INFO(void);
 extern void DWARF_CHECK_COUNT(Dwarf_Check_Categories category, int inc);
 extern void DWARF_ERROR_COUNT(Dwarf_Check_Categories category, int inc);
-extern void DWARF_CHECK_ERROR_PRINT_CU();
+extern void DWARF_CHECK_ERROR_PRINT_CU(void);
 extern void DWARF_CHECK_ERROR(Dwarf_Check_Categories category,
     const char *str);
 extern void DWARF_CHECK_ERROR2(Dwarf_Check_Categories category,
@@ -483,8 +483,8 @@ void dwarfdump_print_one_locdesc(Dwarf_Debug dbg,
     Dwarf_Unsigned entrycount, /* count of DW_OP operators */
     Dwarf_Addr baseaddr,
     struct esb_s *string_out);
-void clean_up_die_esb();
-void clean_up_syms_malloc_data();
+void clean_up_die_esb(void);
+void clean_up_syms_malloc_data(void);
 void safe_strcpy(char *out, long outlen, const char *in, long inlen);
 
 void print_macros_5style_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die,

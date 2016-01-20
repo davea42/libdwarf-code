@@ -47,6 +47,7 @@
 #include <stdio.h>
 #include <stdlib.h> /* For exit() */
 #include <string.h> /* For strchr */
+#include <dwgetopt.h>
 
 #define STRIP_OFF_CONSTNESS(a)  ((void *)(size_t)(const void *)(a))
 
@@ -60,6 +61,7 @@ char *dwoptarg;      /* argument associated with option */
 #define BADARG  (int)':'
 #define EMSG    ""
 
+#if 0
 /*  Use for testing dwgetopt only.
     Not a standard function. */
 void
@@ -71,6 +73,7 @@ dwgetoptresetfortestingonly()
    dwoptreset = 0;
    dwoptarg   = 0;
 }
+#endif
 
 /*
     * getopt --

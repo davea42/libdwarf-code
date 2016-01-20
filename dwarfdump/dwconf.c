@@ -418,7 +418,7 @@ find_a_file(const char *named_file, char **defaults, const char ** name_used)
 
 /* Start at a token begin, see how long it is,
    return length. */
-unsigned
+static unsigned
 find_token_len(char *cp)
 {
     unsigned len = 0;
