@@ -146,8 +146,9 @@ esb_appendn(struct esb_s *data, const char * in_string, size_t len)
 void
 esb_append(struct esb_s *data, const char * in_string)
 {
-    if (in_string) {
-        size_t len = strlen(in_string);
+    size_t len = 0;
+    if(in_string) {
+        len = strlen(in_string);
         if (len) {
             esb_appendn_internal(data, in_string, len);
         }

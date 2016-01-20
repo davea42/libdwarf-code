@@ -3464,7 +3464,7 @@ get_location_list(Dwarf_Debug dbg,
                         " addr 0x%"
                         DW_PR_XZEROS DW_PR_DUx
                         ">",
-                        lopc,lopcfinal,hipc,hipcfinal);;
+                        lopc,lopcfinal,hipc,hipcfinal);
                 esb_append(esbp,small_buf);
                 if(checking) {
                     loc_error_check(dbg,lopcfinal, lopc,

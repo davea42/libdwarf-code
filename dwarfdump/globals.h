@@ -537,4 +537,5 @@ void print_any_harmless_errors(Dwarf_Debug dbg);
 #ifdef __cplusplus
 }
 #endif
+
 #endif /* globals_INCLUDED */

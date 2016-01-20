@@ -1,3 +1,27 @@
+2016-01-19  David Anderson
+     * dwarf_form.c,dwarf_macro5.c: Ensure declarations 
+       before executable statements
+     * dwarf_loc.c: Cast pointer to Dwarf_Small* so pointer arithmetic
+       works (standard conformance).
+       Ensure declarations before executable statements
+     * dwarf_macro5.c: Ensure declarations before executable statements.
+     * dwarf_query.c: Ensure declarations before executable statements.
+       Add dwarf_dietype_offset() convenience function.
+     * dwarf_util.c: Use a local name that does not conflict
+       with standards. use mydw_errno, not errno.
+     * dwarf_frame2.c(dwarf_read_cie_fde_prefix):  Add tests 
+       to ensure we do not access past end of a section.
+2016-01-19  David Anderson
+     * dwarf_form.c, dwarf_frame2.c,: Fix indentation and trailing whitespace.
+2016-01-19  David Anderson
+     * dwarf_line.c, dwarf_line_table_reader_common.c,
+       dwarf_loc.c, dwarf_macro5.c, dwarf_query.c, pro_die.c:
+       Remove silly second ; from ;; where appropriate.
+2016-01-19  David Anderson
+     * libdwarf.h.in, dwarf_error.c: New error numbers. 
+       DW_DLE_LINE_STRP_OFFSET_BAD, DW_DLE_STRING_FORM_IMPROPER.
+     * dwarf_form.c: Added suport for DW_FORM_line_strp into 
+       dwarf_form_string().
 2016-01-17  David Anderson
      * dwarf_frame2.c: Added additional checks for
        bad frame section. Looking for premature end of frame data.

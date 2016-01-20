@@ -576,6 +576,7 @@ dwarf_get_macro_defundef(Dwarf_Macro_Context macro_context,
         }
         if (res == DW_DLV_OK) {
             char *localstr = 0;
+
             *index = stringindex;
             *offset = offsettostr;
             res = _dwarf_extract_local_debug_str_string_given_offset(dbg,
@@ -761,7 +762,7 @@ dwarf_get_macro_startend_file(Dwarf_Macro_Context macro_context,
             &uleblen);
         mdata += uleblen;
         *line_number = linenum;
-        *name_index_to_line_tab = srcindex;;
+        *name_index_to_line_tab = srcindex;
         /*  For DWARF 2,3,4, decrement by 1.
             FOR DWARF 5 do not decrement. */
         if(macro_context->mc_version_number >= 5) {

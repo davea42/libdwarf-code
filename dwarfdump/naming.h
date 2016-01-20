@@ -26,12 +26,13 @@
 
 
 /* naming.h */
-
-#ifndef naming_INCLUDED
-#define naming_INCLUDED
+#ifndef NAMING_H_INCLUDED
+#define NAMING_H_INCLUDED
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+
 
 extern const char * get_TAG_name(unsigned int val_in,int printonerr);
 extern const char * get_children_name(unsigned int val_in,int printonerr);
@@ -64,4 +65,5 @@ extern const char * get_ADDR_name(unsigned int val_in,int printonerr);
 #ifdef __cplusplus
 }
 #endif
-#endif /* naming_INCLUDED */
+#endif /* NAMING_H_INCLUDED */
+

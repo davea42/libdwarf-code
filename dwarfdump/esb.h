@@ -29,9 +29,8 @@
     the contents: simplifies debugging.
 */
 
-#ifndef __ESB_H
-#define __ESB_H
-
+#ifndef ESB_H
+#define ESB_H
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
@@ -93,5 +92,4 @@ string esb_get_copy(struct esb_s *data);
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */
-
-#endif /* __ESB_H */
+#endif /* ESB_H */

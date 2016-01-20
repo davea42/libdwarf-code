@@ -126,7 +126,7 @@ _dwarf_read_loc_expr_op(Dwarf_Debug dbg,
     Dwarf_Word leb128_length = 0;
 
     loc_len = loc_block->bl_len;
-    loc_ptr = (Dwarf_Small *)loc_block->bl_data + offset;
+    loc_ptr = (Dwarf_Small*)loc_block->bl_data + offset;
 
     if (offset == loc_len) {
         return DW_DLV_NO_ENTRY;
@@ -1090,6 +1090,7 @@ dwarf_loclist_n(Dwarf_Attribute attr,
         if(setup_res != DW_DLV_OK) {
             return setup_res;
         }
+
         off_res = _dwarf_get_loclist_header_start(dbg,
             attr, &loclist_offset, error);
         if (off_res != DW_DLV_OK) {
@@ -1159,7 +1160,7 @@ dwarf_loclist_n(Dwarf_Attribute attr,
             if (blkres != DW_DLV_OK) {
                 return (blkres);
             }
-            loc_block.bl_len = tblock->bl_len;;
+            loc_block.bl_len = tblock->bl_len;
             loc_block.bl_data = tblock->bl_data;
             loc_block.bl_from_loclist = tblock->bl_from_loclist;
             loc_block.bl_section_offset = tblock->bl_section_offset;
@@ -1302,7 +1303,7 @@ dwarf_loclist(Dwarf_Attribute attr,
             if (blkres != DW_DLV_OK) {
                 return (blkres);
             }
-            loc_block.bl_len = tblock->bl_len;;
+            loc_block.bl_len = tblock->bl_len;
             loc_block.bl_data = tblock->bl_data;
             loc_block.bl_from_loclist = tblock->bl_from_loclist;
             loc_block.bl_section_offset = tblock->bl_section_offset;

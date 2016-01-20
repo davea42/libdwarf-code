@@ -377,7 +377,7 @@ main(int argc, char **argv)
         unsigned j = 0;
         const char *name = 0;
         if (standard_flag) {
-            dwarf_get_TAG_name(u,&name);;
+            dwarf_get_TAG_name(u,&name);
             fprintf(fileOut,"/* 0x%02x - %-37s*/\n",u, name);
         } else {
             unsigned k = tag_tree_combination_table[u][0];

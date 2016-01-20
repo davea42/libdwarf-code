@@ -55,7 +55,7 @@ int dwarf_get_offset_size(Dwarf_Debug dbg,
         _dwarf_error(NULL, error, DW_DLE_DBG_NULL);
         return (DW_DLV_ERROR);
     }
-    *offset_size = dbg->de_length_size;;
+    *offset_size = dbg->de_length_size;
     return DW_DLV_OK;
 }
 
@@ -149,6 +149,7 @@ dwarf_die_offsets(Dwarf_Die die,
     Dwarf_Error *error)
 {
     int res = 0;
+
     *off = 0;
     *cu_off = 0;
     res = dwarf_dieoffset(die,off,error);
@@ -791,8 +792,8 @@ dwarf_highpc(Dwarf_Die die,
 }
 
 /*  If the giving 'die' contains the DW_AT_type attribute, it returns
-    the offset referenced by the attribute.
-    */
+    the offset referenced by the attribute.  
+    In case of DW_DLV_NO_ENTRY or DW_DLV_ERROR it sets offset zero. */
 int
 dwarf_dietype_offset(Dwarf_Die die,
     Dwarf_Off *return_off, Dwarf_Error *error)
@@ -809,6 +810,8 @@ dwarf_dietype_offset(Dwarf_Die die,
     *return_off = offset;
     return res;
 }
+
+
 
 int
 _dwarf_get_string_base_attr_value(Dwarf_Debug dbg,

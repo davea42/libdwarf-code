@@ -587,7 +587,6 @@ dwarf_create_cie_from_after_start(Dwarf_Debug dbg,
             }
         }
 
-        
         /* Not a great test. FIXME */
         if ((frame_ptr+2)  >= section_ptr_end) {
             _dwarf_error(dbg, error, DW_DLE_DEBUG_FRAME_LENGTH_BAD);
@@ -965,7 +964,12 @@ dwarf_read_cie_fde_prefix(Dwarf_Debug dbg,
     Dwarf_Small *frame_ptr = frame_ptr_in;
     Dwarf_Small *cie_ptr_addr = 0;
     Dwarf_Unsigned cie_id = 0;
+    Dwarf_Small *section_end = section_ptr_in + section_length_in;
 
+    if(section_end < (frame_ptr +4)) {
+        _dwarf_error(dbg,error,DW_DLE_DEBUG_FRAME_LENGTH_BAD);
+        return DW_DLV_ERROR;
+    }
     /* READ_AREA_LENGTH updates frame_ptr for consumed bytes */
     READ_AREA_LENGTH(dbg, length, Dwarf_Unsigned,
         frame_ptr, local_length_size,
@@ -976,6 +980,10 @@ dwarf_read_cie_fde_prefix(Dwarf_Debug dbg,
             sections (in a.out). Take this as meaning no more CIE/FDE
             data. We should be very close to end of section. */
         return DW_DLV_NO_ENTRY;
+    }
+    if((frame_ptr + local_length_size) >= section_end) {
+        _dwarf_error(dbg,error,DW_DLE_DEBUG_FRAME_LENGTH_BAD);
+        return DW_DLV_ERROR;
     }
 
     cie_ptr_addr = frame_ptr;
