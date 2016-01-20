@@ -579,7 +579,7 @@ print_line_context_record(Dwarf_Debug dbg,
         }
         printf("  [%2" DW_PR_DSd "]  %-24s ,",
             i,esb_get_string(&bufr));
-        printf(" directory index  %2" DW_PR_DUu ,modtime);
+        printf(" directory index  %2" DW_PR_DUu ,dirindex);
         printf(",  file length %2" DW_PR_DUu ,flength);
         if (modtime) {
             time_t tt3 = (time_t)modtime;
@@ -761,10 +761,10 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
         /* no line information is included */
     } else if (table_count > 0) {
         /* DW_DLV_OK */
-        if(line_context && verbose) {
-            print_line_context_record(dbg,line_context);
-        }
         if (do_print_dwarf) {
+            if(line_context && verbose) {
+                print_line_context_record(dbg,line_context);
+            }
             print_source_intro(cu_die);
             if (verbose) {
                 print_one_die(dbg, cu_die,
