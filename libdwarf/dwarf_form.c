@@ -1162,13 +1162,13 @@ dwarf_formstring(Dwarf_Attribute attr,
     }
     switch(attr->ar_attribute_form) {
     case DW_FORM_string: {
-        secend = secdataptr + secdatalen;
         Dwarf_Small *begin = attr->ar_debug_ptr;
         Dwarf_Small *contextend = secdataptr +
             cu_context->cc_debug_offset +
             cu_context->cc_length +
             cu_context->cc_length_size +
             cu_context->cc_extension_size;
+        secend = secdataptr + secdatalen;
         if (contextend < secend) {
             secend = contextend;
         }

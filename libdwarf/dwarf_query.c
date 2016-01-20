@@ -148,9 +148,10 @@ dwarf_die_offsets(Dwarf_Die die,
     Dwarf_Off *cu_off,
     Dwarf_Error *error)
 {
+    int res = 0;
+
     *off = 0;
     *cu_off = 0;
-    int res = 0;
     res = dwarf_dieoffset(die,off,error);
     if (res == DW_DLV_OK) {
         res = dwarf_die_CU_offset(die,cu_off,error);
@@ -780,6 +781,27 @@ dwarf_highpc(Dwarf_Die die,
     }
     return (DW_DLV_OK);
 }
+
+/*  If the giving 'die' contains the DW_AT_type attribute, it returns
+    the offset referenced by the attribute.  
+    In case of DW_DLV_NO_ENTRY or DW_DLV_ERROR it sets offset zero. */
+int
+dwarf_dietype_offset(Dwarf_Die die,
+    Dwarf_Off *return_off, Dwarf_Error *error)
+{
+    int res = 0;
+    Dwarf_Off offset = 0;
+    Dwarf_Attribute attr = 0;
+
+    CHECK_DIE(die, DW_DLV_ERROR);
+    res = dwarf_attr(die,DW_AT_type,&attr,error);
+    if (res == DW_DLV_OK) {
+        res = dwarf_global_formref(attr,&offset,error);
+    }
+    *return_off = offset;
+    return res;
+}
+
 
 
 int

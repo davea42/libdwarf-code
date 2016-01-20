@@ -126,7 +126,7 @@ _dwarf_read_loc_expr_op(Dwarf_Debug dbg,
     Dwarf_Word leb128_length = 0;
 
     loc_len = loc_block->bl_len;
-    loc_ptr = loc_block->bl_data + offset;
+    loc_ptr = (Dwarf_Small*)loc_block->bl_data + offset;
 
     if (offset == loc_len) {
         return DW_DLV_NO_ENTRY;
@@ -1078,10 +1078,6 @@ dwarf_loclist_n(Dwarf_Attribute attr,
         (form == DW_FORM_data4 || form == DW_FORM_data8)) ||
         ((cuvstamp == DW_CU_VERSION4) && form == DW_FORM_sec_offset)) {
 
-        setup_res = context_is_cu_not_tu(cucontext,&is_cu,error);
-        if(setup_res != DW_DLV_OK) {
-            return setup_res;
-        }
         /*  A reference to .debug_loc, with an offset in .debug_loc of a
             loclist */
         Dwarf_Unsigned loclist_offset = 0;
@@ -1089,6 +1085,11 @@ dwarf_loclist_n(Dwarf_Attribute attr,
         int count_res = DW_DLV_ERROR;
         int loclist_count = 0;
         int lli = 0;
+
+        setup_res = context_is_cu_not_tu(cucontext,&is_cu,error);
+        if(setup_res != DW_DLV_OK) {
+            return setup_res;
+        }
 
         off_res = _dwarf_get_loclist_header_start(dbg,
             attr, &loclist_offset, error);

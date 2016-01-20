@@ -105,8 +105,9 @@ get_abstract_origin_funcname(Dwarf_Debug dbg,Dwarf_Attribute attr,
         return DW_DLV_NO_ENTRY;
     }
     for (i = 0; i < atcnt; i++) {
-        Dwarf_Half lattr;
-        int ares;
+        Dwarf_Half lattr = 0;
+        int ares = 0;
+
         ares = dwarf_whatattr(atlist[i], &lattr, &err);
         if (ares == DW_DLV_ERROR) {
             break;
@@ -2073,10 +2074,10 @@ load_CU_error_data(Dwarf_Debug dbg,Dwarf_Die cu_die)
         case DW_AT_name:
         case DW_AT_producer:
             {
-            struct esb_s namestr;
-            esb_constructor(&namestr);
             const char *name = 0;
+            struct esb_s namestr;
 
+            esb_constructor(&namestr);
             get_attr_value(dbg, tag, cu_die, attrib, srcfiles, srccnt,
                 &namestr, local_show_form_used,local_verbose);
             name = esb_get_string(&namestr);

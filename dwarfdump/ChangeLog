@@ -1,4 +1,14 @@
 2015-01-19  David Anderson
+     * dwarfdump.c: Remove duplicate trailing ;
+     * esb.c(esb_append): Straighten out the logic
+       and avoid doing append if the to-be-appended
+       string is empty.
+     * globals.h Add ifdef __cplusplus for extern "C".
+     * esb.h,naming.h: Idempotent #ifndef and __cplusplus extern "C" added.
+     * print_frames.c: Ensure local var starts at zero.
+       Move statement to below declarations.
+     * print_lines.c: Ensure declarations before executable statements.
+2015-01-19  David Anderson
      * print_frames.c: Fix trailing whitespace and indentation.
 2015-01-19  David Anderson
      * print_die.c,tag_tree.c: Change statement ;; by removing

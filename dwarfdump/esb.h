@@ -29,6 +29,11 @@
     the contents: simplifies debugging.
 */
 
+#ifndef ESB_H
+#define ESB_H
+#ifdef __cplusplus
+extern "C" {
+#endif /* __cplusplus */
 
 struct esb_s {
     string  esb_string; /* pointer to the data itself, or  NULL. */
@@ -83,3 +88,8 @@ void esb_append_printf_ap(struct esb_s *data,const char *format,va_list ap);
 
 /* Get a copy of the internal data buffer */
 string esb_get_copy(struct esb_s *data);
+
+#ifdef __cplusplus
+}
+#endif /* __cplusplus */
+#endif /* ESB_H */
