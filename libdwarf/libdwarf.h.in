@@ -1530,6 +1530,11 @@ int dwarf_attr (Dwarf_Die /*die*/,
     Dwarf_Attribute * /*returned_attr*/,
     Dwarf_Error*      /*error*/);
 
+int dwarf_die_text(Dwarf_Die /*die*/,
+    Dwarf_Half    /*attr*/,
+    char       ** /*ret_name*/,
+    Dwarf_Error * /*error*/);
+
 int dwarf_diename(Dwarf_Die /*die*/,
     char   **        /*diename*/,
     Dwarf_Error*     /*error*/);

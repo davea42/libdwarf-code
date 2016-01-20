@@ -419,7 +419,10 @@ _dwarf_get_value_ptr(Dwarf_Die die,
 
 
 int
-dwarf_diename(Dwarf_Die die, char **ret_name, Dwarf_Error * error)
+dwarf_die_text(Dwarf_Die die,
+    Dwarf_Half attr,
+    char **ret_name,
+    Dwarf_Error * error)
 {
     Dwarf_Half attr_form = 0;
     Dwarf_Debug dbg = 0;
@@ -429,7 +432,7 @@ dwarf_diename(Dwarf_Die die, char **ret_name, Dwarf_Error * error)
 
     CHECK_DIE(die, DW_DLV_ERROR);
 
-    res = _dwarf_get_value_ptr(die, DW_AT_name, &attr_form,&info_ptr,error);
+    res = _dwarf_get_value_ptr(die, attr, &attr_form,&info_ptr,error);
     if (res == DW_DLV_ERROR) {
         return res;
     }
@@ -488,6 +491,15 @@ dwarf_diename(Dwarf_Die die, char **ret_name, Dwarf_Error * error)
     *ret_name = (char *) (dbg->de_debug_str.dss_data + string_offset);
     return DW_DLV_OK;
 }
+
+int
+dwarf_diename(Dwarf_Die die,
+    char **ret_name,
+    Dwarf_Error * error)
+{
+    return dwarf_die_text(die,DW_AT_name,ret_name,error);
+}
+
 
 
 int

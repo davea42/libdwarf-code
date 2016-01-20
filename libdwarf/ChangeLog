@@ -1,3 +1,10 @@
+2016-01-20  David Anderson
+     * dwarf_query.c: New function dwarf_die_text() is a general way
+       to get strings from various attributes in a DIE.
+     * libdwarf.h.in: Add prototype for dwarf_die_text().
+     * libdwarf2.1.mm: Document dwarf_die_text().
+     * libdwarf2.1.pdf: Regenerated. Version 2.40.
+
 2016-01-19  David Anderson
      * Makefile.in: Remove dwarf_stubs.o.
      * configure.in: Add various gcc opts to --enable-wall
