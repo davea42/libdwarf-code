@@ -85,18 +85,21 @@ static char name_address_size[] = "address_size:";
 static char name_includeabi[] = "includeabi:";
 static char name_endabi[] = "endabi:";
 
+/*  The namelen field is filled in at runtime with
+    the correct value. Filling in a fake '1' avoids
+    a compiler warning. */
 static struct comtable_s comtable[] = {
-    {LT_BEGINABI, name_begin_abi},
-    {LT_REG, name_reg},
-    {LT_FRAME_INTERFACE, name_frame_interface},
-    {LT_CFA_REG, name_cfa_reg},
-    {LT_INITIAL_REG_VALUE, name_initial_reg_value},
-    {LT_SAME_VAL_REG, name_same_val_reg},
-    {LT_UNDEFINED_VAL_REG, name_undefined_val_reg},
-    {LT_REG_TABLE_SIZE, name_reg_table_size},
-    {LT_ADDRESS_SIZE, name_address_size},
-    {LT_INCLUDEABI, name_includeabi},
-    {LT_ENDABI, name_endabi},
+    {LT_BEGINABI, name_begin_abi,1},
+    {LT_REG, name_reg,1},
+    {LT_FRAME_INTERFACE, name_frame_interface,1},
+    {LT_CFA_REG, name_cfa_reg,1},
+    {LT_INITIAL_REG_VALUE, name_initial_reg_value,1},
+    {LT_SAME_VAL_REG, name_same_val_reg,1},
+    {LT_UNDEFINED_VAL_REG, name_undefined_val_reg,1},
+    {LT_REG_TABLE_SIZE, name_reg_table_size,1},
+    {LT_ADDRESS_SIZE, name_address_size,1},
+    {LT_INCLUDEABI, name_includeabi,1},
+    {LT_ENDABI, name_endabi,1},
 };
 
 struct conf_internal_s {
@@ -879,7 +882,7 @@ parsesame_val_reg(char *cp, const char *fname,
         ++errcount;
         return FALSE;
     }
-    conf->conf_out->cf_same_val = (int) val;
+    conf->conf_out->cf_same_val = val;
     res = ensure_has_no_more_tokens(cp, fname, lineno);
     return res;
 }
@@ -1380,13 +1383,13 @@ init_generic_config_1200_regs(struct dwconf_s *config_file_data)
     Deal sensibly with the special regs as well as numbers
     we know and those we have not been told about.
 
+    We are not allowing negative register numbers.
 */
 void
-print_reg_from_config_data(Dwarf_Signed reg,
+print_reg_from_config_data(Dwarf_Unsigned reg,
     struct dwconf_s *config_data)
 {
     char *name = 0;
-
     if (reg == config_data->cf_cfa_reg) {
         fputs("cfa",stdout);
         return;
@@ -1401,15 +1404,14 @@ print_reg_from_config_data(Dwarf_Signed reg,
     }
 
     if (config_data->cf_regs == 0 ||
-        reg < 0 ||
         reg >= config_data->cf_named_regs_table_size) {
-        printf("r%" DW_PR_DSd "", (Dwarf_Signed) reg);
+        printf("r%" DW_PR_DUu "",reg);
         return;
     }
     name = config_data->cf_regs[reg];
     if (!name) {
         /* Can happen, the reg names table can be sparse. */
-        printf("r%" DW_PR_DSd "", (Dwarf_Signed) reg);
+        printf("r%" DW_PR_DUu "", reg);
         return;
     }
     fputs(name,stdout);

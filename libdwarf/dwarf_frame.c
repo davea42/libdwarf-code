@@ -2164,8 +2164,10 @@ dwarf_fde_section_offset(Dwarf_Debug dbg, Dwarf_Fde in_fde,
     char *start = 0;
     char *loc = 0;
 
-
-
+    if(!in_fde) {
+        _dwarf_error(dbg, err, DW_DLE_FDE_NULL);
+        return DW_DLV_ERROR;
+    }
     start = (char *) in_fde->fd_section_ptr;
     loc = (char *) in_fde->fd_fde_start;
 
@@ -2194,6 +2196,10 @@ dwarf_cie_section_offset(Dwarf_Debug dbg, Dwarf_Cie in_cie,
     char *start = 0;
     char *loc = 0;
 
+    if(!in_cie) {
+        _dwarf_error(dbg, err, DW_DLE_CIE_NULL);
+        return DW_DLV_ERROR;
+    }
     start = (char *) in_cie->ci_section_ptr;
     loc = (char *) in_cie->ci_cie_start;
 

@@ -1,4 +1,17 @@
 2016-01-20
+     * configure.in: Added more compiler optiosn to --enable-wall
+     * configure: Regenerated
+     * dwarf_tsearchbal.c: Fixed warnings.
+     * dwarfdump.c: Fixed warnings.
+     * dwconf.c: Fixed warnings.
+     * dwconf.h: Fixed warnings.
+     * esb.c: Fixed warnings.
+     * globals.h: Fixed warnings.
+     * print_debugfission.c: Fixed warnings.
+     * print_die.c: Fixed warnings.
+     * print_frames.c: Fixed warnings.
+     * print_sections.c: Fixed warnings.
+2016-01-20
      * macrocheck.c: Remove trailing whitespace.
      * print_lines.c: Only print line context record
        if we do_print_dwarf is non-zero. The directory index

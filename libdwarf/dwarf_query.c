@@ -406,7 +406,7 @@ _dwarf_get_value_ptr(Dwarf_Die die,
         if (res != DW_DLV_OK) {
             return res;
         }
-        if ( (die_info_end  - info_ptr) < value_size) {
+        if ((info_ptr + value_size) > die_info_end) {
             /*  Something badly wrong. We point past end
                 of debug_info or debug_types . */
             _dwarf_error(dbg,error,DW_DLE_DIE_ABBREV_BAD);
@@ -1517,7 +1517,8 @@ dw_get_special_offset(Dwarf_Half attrnum)
    to accurately determine the form 'class' as documented
    in the DWARF spec. This is per DWARF4, but will work
    for DWARF2 or 3 as well.  */
-enum Dwarf_Form_Class dwarf_get_form_class(
+enum Dwarf_Form_Class
+dwarf_get_form_class(
     Dwarf_Half dwversion,
     Dwarf_Half attrnum,
     Dwarf_Half offset_size,
@@ -1594,7 +1595,7 @@ enum Dwarf_Form_Class dwarf_get_form_class(
         break;
     };
     return DW_FORM_CLASS_UNKNOWN;
-};
+}
 
 /*  Given a DIE, figure out what the CU's DWARF version is
     and the size of an offset

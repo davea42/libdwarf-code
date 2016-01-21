@@ -248,14 +248,19 @@ esb_get_allocated_size(struct esb_s *data)
 
 /*  Append a formatted string
     It is up to the caller to ensure the
-    data esb_allocated_size is big enough */
+    data esb_allocated_size is big enough. */
 void
 esb_append_printf_ap(struct esb_s *data,const char *in_string,va_list ap)
 {
-    size_t netlen = data->esb_allocated_size - data->esb_used_bytes;
+    int netlen = data->esb_allocated_size - data->esb_used_bytes;
     int expandedlen =
         vsnprintf(&data->esb_string[data->esb_used_bytes],
         netlen,in_string,ap);
+    if (expandedlen < 0) {
+        /*  There was an error.
+            Do nothing. */
+        return;
+    }
     if (netlen < expandedlen) {
         /*  If data was too small, the max written was one less than
             netlen. */

@@ -23,7 +23,9 @@
 */
 
 
-/* declarations helping configure the frame reader.  */
+/*  Declarations helping configure the frame reader.
+    We are not allowing negative register numbers.
+    Which could be  allowed if necessary with a little work. */
 struct dwconf_s {
     char *cf_config_file_path;
     char *cf_abi_name;
@@ -57,14 +59,14 @@ struct dwconf_s {
         is DW_FRAME_SAME_VAL(1035). For other ISA/ABIs may be
         DW_FRAME_UNDEFINED_VAL(1034). */
     unsigned cf_initial_rule_value;
-    int cf_same_val;
-    int cf_undefined_val;
+    unsigned cf_same_val;
+    unsigned cf_undefined_val;
 
     /*  The number of the cfa 'register'. For cf_interface_number 2 of
         MIPS this is 0. For other architectures (and anytime using
         cf_interface_number 3) this should be outside the table, a
         special value such as 1436, not a table column at all).  */
-    int cf_cfa_reg;
+    unsigned cf_cfa_reg;
 
     /*  If non-zero it is the number of bytes in an address
         for the frame data.  Normally it will be zero because
@@ -88,7 +90,7 @@ int find_conf_file_and_read_config(const char *named_file,
 void init_conf_file_data(struct dwconf_s *config_file_data);
 void init_mips_conf_file_data(struct dwconf_s *config_file_data);
 
-void print_reg_from_config_data(Dwarf_Signed reg,
+void print_reg_from_config_data(Dwarf_Unsigned reg,
     struct dwconf_s *config_data);
 
 

@@ -33,7 +33,7 @@
 static int
 hashval_zero(Dwarf_Sig8 *val)
 {
-    int u = 0;
+    unsigned u = 0;
 
     for(u=0 ; u < sizeof(Dwarf_Sig8);++u) {
         if (val->signature[u]) {

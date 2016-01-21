@@ -493,12 +493,17 @@ dwarf_gdbindex_string_by_offset(Dwarf_Gdbindex gdbindexptr,
     const char    ** string_ptr,
     Dwarf_Error   *  error)
 {
-    Dwarf_Small *pooldata = gdbindexptr->gi_section_data +
-        gdbindexptr->gi_constant_pool_offset;
-    Dwarf_Small *section_end = gdbindexptr->gi_section_data +
-        gdbindexptr->gi_section_length;
+    Dwarf_Small *pooldata = 0;
+    Dwarf_Small *section_end = 0;
+    Dwarf_Small *stringitself = 0;
 
-    Dwarf_Small *stringitself = pooldata + stringoffsetinpool;
+    /*  If gdbindexptr NULL or gdbindexptr->gi_dbg is NULL
+        this is not going to go very well. Ugh. FIXME */
+    pooldata = gdbindexptr->gi_section_data +
+        gdbindexptr->gi_constant_pool_offset;
+    section_end = gdbindexptr->gi_section_data +
+        gdbindexptr->gi_section_length;
+    stringitself = pooldata + stringoffsetinpool;
     if (stringitself > section_end) {
         _dwarf_error(gdbindexptr->gi_dbg, error,DW_DLE_GDB_INDEX_INDEX_ERROR);
         return DW_DLV_ERROR;

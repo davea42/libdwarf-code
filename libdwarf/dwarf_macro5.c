@@ -1300,7 +1300,7 @@ int dwarf_macro_operands_table(Dwarf_Macro_Context head,
         return DW_DLV_ERROR;
     }
     dbg = head->mc_dbg;
-    if (index < 0 || index >= head->mc_opcode_count) {
+    if (index >= head->mc_opcode_count) {
         _dwarf_error(dbg, error, DW_DLE_BAD_MACRO_INDEX);
         return DW_DLV_ERROR;
     }

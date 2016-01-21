@@ -531,6 +531,7 @@ dwarf_create_cie_from_after_start(Dwarf_Debug dbg,
 
     if ((frame_ptr+2) >= section_ptr_end) {
         _dwarf_error(dbg, error, DW_DLE_DEBUG_FRAME_LENGTH_BAD);
+        return DW_DLV_ERROR;
     }
 
     frame_ptr++;
@@ -550,6 +551,7 @@ dwarf_create_cie_from_after_start(Dwarf_Debug dbg,
     frame_ptr = frame_ptr + strlen((char *) frame_ptr) + 1;
     if (frame_ptr  >= section_ptr_end) {
         _dwarf_error(dbg, error, DW_DLE_DEBUG_FRAME_LENGTH_BAD);
+        return DW_DLV_ERROR;
     }
     augt = _dwarf_get_augmentation_type(dbg,
         augmentation, use_gnu_cie_calc);
@@ -559,6 +561,7 @@ dwarf_create_cie_from_after_start(Dwarf_Debug dbg,
 
         if ((frame_ptr+local_length_size)  >= section_ptr_end) {
             _dwarf_error(dbg, error, DW_DLE_DEBUG_FRAME_LENGTH_BAD);
+            return DW_DLV_ERROR;
         }
         /* this is per egcs-1.1.2 as on RH 6.0 */
         READ_UNALIGNED(dbg, exception_table_addr,
@@ -572,6 +575,7 @@ dwarf_create_cie_from_after_start(Dwarf_Debug dbg,
         if (version == DW_CIE_VERSION4) {
             if ((frame_ptr+2)  >= section_ptr_end) {
                 _dwarf_error(dbg, error, DW_DLE_DEBUG_FRAME_LENGTH_BAD);
+                return DW_DLV_ERROR;
             }
             address_size = *((unsigned char *)frame_ptr);
             if (address_size  > sizeof(Dwarf_Addr)) {
@@ -590,6 +594,7 @@ dwarf_create_cie_from_after_start(Dwarf_Debug dbg,
         /* Not a great test. FIXME */
         if ((frame_ptr+2)  >= section_ptr_end) {
             _dwarf_error(dbg, error, DW_DLE_DEBUG_FRAME_LENGTH_BAD);
+            return DW_DLV_ERROR;
         }
         DECODE_LEB128_UWORD(frame_ptr, lreg);
         code_alignment_factor = (Dwarf_Word) lreg;
@@ -600,6 +605,7 @@ dwarf_create_cie_from_after_start(Dwarf_Debug dbg,
         /* Not a great test. FIXME */
         if ((frame_ptr+1)  >= section_ptr_end) {
             _dwarf_error(dbg, error, DW_DLE_DEBUG_FRAME_LENGTH_BAD);
+            return DW_DLV_ERROR;
         }
         return_address_register =
             _dwarf_get_return_address_reg(frame_ptr, version, &size);
@@ -610,6 +616,7 @@ dwarf_create_cie_from_after_start(Dwarf_Debug dbg,
         frame_ptr += size;
         if ((frame_ptr)  > section_ptr_end) {
             _dwarf_error(dbg, error, DW_DLE_DEBUG_FRAME_LENGTH_BAD);
+            return DW_DLV_ERROR;
         }
     }
     switch (augt) {
@@ -660,6 +667,7 @@ dwarf_create_cie_from_after_start(Dwarf_Debug dbg,
         /* Not a great test. FIXME */
         if ((frame_ptr+1)  > section_ptr_end) {
             _dwarf_error(dbg, error, DW_DLE_DEBUG_FRAME_LENGTH_BAD);
+            return DW_DLV_ERROR;
         }
         DECODE_LEB128_UWORD(frame_ptr, adlen);
         cie_aug_data_len = adlen;
@@ -698,6 +706,7 @@ dwarf_create_cie_from_after_start(Dwarf_Debug dbg,
         }
         if ((frame_ptr)  > section_ptr_end) {
             _dwarf_error(dbg, error, DW_DLE_DEBUG_FRAME_LENGTH_BAD);
+            return DW_DLV_ERROR;
         }
         break;
     }                           /* End switch on augmentation type. */
@@ -826,6 +835,10 @@ dwarf_create_fde_from_after_start(Dwarf_Debug dbg,
         }
 
     } else {
+        if ((frame_ptr + 2*address_size) > section_ptr_end) {
+            _dwarf_error(dbg,error,DW_DLE_DEBUG_FRAME_LENGTH_BAD);
+            return DW_DLV_ERROR;
+        }
         READ_UNALIGNED(dbg, initial_location, Dwarf_Addr,
             frame_ptr, address_size);
         frame_ptr += address_size;
@@ -847,6 +860,10 @@ dwarf_create_fde_from_after_start(Dwarf_Debug dbg,
         saved_frame_ptr = frame_ptr;
         /*  The first word is an offset into exception tables.
             Defined as a 32bit offset even for CC -64. */
+        if ((frame_ptr + sizeof(Dwarf_sfixed)) > section_ptr_end) {
+            _dwarf_error(dbg,error,DW_DLE_DEBUG_FRAME_LENGTH_BAD);
+            return DW_DLV_ERROR;
+        }
         READ_UNALIGNED(dbg, offset_into_exception_tables,
             Dwarf_Addr, frame_ptr, sizeof(Dwarf_sfixed));
         SIGN_EXTEND(offset_into_exception_tables,
@@ -865,6 +882,10 @@ dwarf_create_fde_from_after_start(Dwarf_Debug dbg,
 
         /* gnu eh fde case. we do not need to do anything */
         /*REFERENCED*/ /* Not used in this instance of the macro */
+        if ((frame_ptr + address_size) > section_ptr_end) {
+            _dwarf_error(dbg,error,DW_DLE_DEBUG_FRAME_LENGTH_BAD);
+            return DW_DLV_ERROR;
+        }
         READ_UNALIGNED(dbg, eh_table_value,
             Dwarf_Unsigned, frame_ptr,
             address_size);

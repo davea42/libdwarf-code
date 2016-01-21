@@ -451,7 +451,7 @@ extern Dwarf_Die current_cu_die_for_print_frames; /* This is
 /* defined in print_sections.c, die for the current compile unit,
    used in get_fde_proc_name() */
 
-extern void printreg(Dwarf_Signed reg,struct dwconf_s *config_data);
+extern void printreg(Dwarf_Unsigned reg,struct dwconf_s *config_data);
 
 int get_proc_name(Dwarf_Debug dbg, Dwarf_Die die, Dwarf_Addr low_pc,
     char *proc_name_buf, int proc_name_buf_len, void **pcMap);
