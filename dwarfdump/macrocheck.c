@@ -28,6 +28,14 @@
 
 #define TRUE 1
 #define FALSE 0
+/*  WARNING: the tree walk functions will, if presented **tree
+    when *tree is wanted, simply find nothing. No error,
+    just bad results. So when a walk produces nothing
+    suspect a code mistake here.
+    The basic problem is void* is a terrible way to 
+    pass in a pointer. But it's how tsearch was defined
+    long ago.
+*/
 
 void *  macro_check_tree;
 
@@ -168,8 +176,6 @@ static Dwarf_Unsigned reccount = 0;
 static void
 macro_walk_count_recs(const void *nodep,const DW_VISIT which,const int depth)
 {
-    struct Macrocheck_Map_Entry_s * re =
-        *(struct Macrocheck_Map_Entry_s**)nodep;
     if (which == dwarf_postorder || which == dwarf_endorder) {
         return;
     }
@@ -208,19 +214,14 @@ macro_walk_find_lowest(const void *nodep,const DW_VISIT  which,
 }
 
 int
-get_next_unprinted_macro_offset(void **base, Dwarf_Unsigned * off)
+get_next_unprinted_macro_offset(void **tree, Dwarf_Unsigned * off)
 {
-    void *retval = 0;
-    struct Macrocheck_Map_Entry_s *re = 0;
-    struct Macrocheck_Map_Entry_s *e = 0;
-    void *tree = *base;
-
     lowestfound = FALSE;
     lowestoff = 0;
 
     /*  This walks the tree to find one entry.
         Which could get slow if the tree has lots of entries. */
-    dwarf_twalk(tree,macro_walk_find_lowest);
+    dwarf_twalk(*tree,macro_walk_find_lowest);
     if (!lowestfound) {
         return DW_DLV_NO_ENTRY;
     }
@@ -289,7 +290,7 @@ print_macro_statistics(void **tsbase)
     Dwarf_Unsigned internalgap = 0;
     Dwarf_Unsigned wholegap = 0;
     Dwarf_Unsigned i = 0;
-    void *comparearg = 0;
+
     if(! *tsbase) {
         return;
     }
@@ -360,7 +361,6 @@ print_macro_statistics(void **tsbase)
         " and end at 0x%" DW_PR_XZEROS DW_PR_DUx "\n",
         lowest, highest);
     for (i = 1; i < count ; ++i) {
-        Dwarf_Unsigned end = 0;
         struct Macrocheck_Map_Entry_s *r = mac_as_array[i];
 #if 0
         printf("debugging i %u off 0x%x len 0x%x\n",

@@ -80,7 +80,7 @@ int standard_flag = FALSE;
 int extended_flag = FALSE;
 
 /* process arguments */
-void
+static void
 process_args(int argc, char *argv[])
 {
     int c = 0;

@@ -284,7 +284,7 @@ dump_bytes(Dwarf_Small * start, long len)
     build_ops_array is FALSE. On second,
     it is TRUE and we know the count so we allocate and fill in
     the ops array. */
-int
+static int
 _dwarf_get_macro_ops_count_internal(Dwarf_Macro_Context macro_context,
     Dwarf_Bool build_ops_array,
     Dwarf_Error *error)
@@ -674,7 +674,7 @@ specialcat(char *targ,char *src,int trimtarg)
 }
 
 /* If returns NULL caller must handle it. */
-const char *
+static const char *
 construct_from_dir_and_name(const char *dir,
    const char *name)
 {
@@ -695,7 +695,7 @@ construct_from_dir_and_name(const char *dir,
 }
 
 /* If returns NULL caller must handle it. */
-const char *
+static const char *
 construct_at_path_from_parts(Dwarf_Macro_Context mc)
 {
     if (mc->mc_file_path) {

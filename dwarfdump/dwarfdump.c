@@ -326,12 +326,12 @@ regex_t search_re;
 #endif
 
 /* Functions used to manage the unique errors table */
-static void allocate_unique_errors_table();
-static void release_unique_errors_table();
+static void allocate_unique_errors_table(void);
+static void release_unique_errors_table(void);
 #ifdef TESTING
-static void dump_unique_errors_table();
+static void dump_unique_errors_table(void);
 #endif
-static boolean add_to_unique_errors_table();
+static boolean add_to_unique_errors_table(string error_text);
 
 /*  These configure items are for the
     frame data.  We're flexible in
@@ -1002,7 +1002,7 @@ qsort_compare_compiler(const void *elem1,const void *elem2)
 
 /* Print a summary of search results */
 static void
-print_search_results()
+print_search_results(void)
 {
     const char *search_type = 0;
     const char *search_text = 0;
@@ -1028,7 +1028,7 @@ print_search_results()
 
 /* Print a summary of checks and errors */
 static void
-print_checks_results()
+print_checks_results(void)
 {
     int index = 0;
     Compiler *pCompilers;
@@ -1144,7 +1144,7 @@ print_checks_results()
 }
 
 /* This is for dwarf_print_lines() */
-void
+static void
 printf_callback_for_libdwarf(void *userdata,const char *data)
 {
     printf("%s",data);
@@ -1410,7 +1410,7 @@ process_one_file(Elf * elf,Elf *elftied,
    Do not do detailed checking.
 */
 static void
-do_all()
+do_all(void)
 {
     info_flag = frame_flag = TRUE;
     line_flag = TRUE;
@@ -2676,7 +2676,7 @@ static boolean current_cu_is_checked_compiler = TRUE;
     compiler of the current compilation unit?
 */
 boolean
-checking_this_compiler()
+checking_this_compiler(void)
 {
     /*  This flag has been update by 'update_compiler_target()'
         and indicates if the current CU is in a targeted compiler
@@ -2836,7 +2836,7 @@ cu_data_is_set(void)
 
 /*  Print CU basic information but
     use the local DIE for the offsets. */
-void PRINT_CU_INFO()
+void PRINT_CU_INFO(void)
 {
     Dwarf_Unsigned loff = DIE_offset;
     Dwarf_Unsigned goff = DIE_overall_offset;
@@ -2923,7 +2923,7 @@ unsigned int set_unique_errors_size = 0;
 #define SET_UNIQUE_ERRORS_DELTA 64
 
 /*  Create the space to store the unique error messages */
-void allocate_unique_errors_table()
+void allocate_unique_errors_table(void)
 {
     if (!set_unique_errors) {
         set_unique_errors = (string *)
@@ -2935,7 +2935,7 @@ void allocate_unique_errors_table()
 
 #ifdef TESTING
 /* Just for debugging purposes, dump the unique errors table */
-void dump_unique_errors_table()
+void dump_unique_errors_table(void)
 {
     unsigned int index;
     printf("*** Unique Errors Table ***\n");
@@ -2949,7 +2949,7 @@ void dump_unique_errors_table()
 #endif
 
 /*  Release the space used to store the unique error messages */
-void release_unique_errors_table()
+void release_unique_errors_table(void)
 {
     unsigned int index;
     for (index = 0; index < set_unique_errors_entries; ++index) {

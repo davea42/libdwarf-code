@@ -167,7 +167,8 @@ const char *kind_list[] = {
   "function(6) ",
   "reserved(7) ",
 };
-const char *
+
+static const char *
 get_kind(unsigned k)
 {
     if (k <= 7) {

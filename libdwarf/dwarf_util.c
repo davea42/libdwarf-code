@@ -998,7 +998,7 @@ _dwarf_error_mv_s_to_t(Dwarf_Debug dbgs,Dwarf_Error *errs,
             *errt = ers;
         }
     } else {
-        /*  Do not stomp on the system errno 
+        /*  Do not stomp on the system errno
             variable if there is one! */
         int mydw_errno = dwarf_errno(*errs);
 

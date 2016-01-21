@@ -202,6 +202,9 @@ dwarf_finish(Dwarf_Debug dbg, Dwarf_Error * error)
 int
 dwarf_set_tied_dbg(Dwarf_Debug dbg, Dwarf_Debug tieddbg,Dwarf_Error*error)
 {
+    if(!dbg) {
+        DWARF_DBG_ERROR(NULL, DW_DLE_DBG_NULL, DW_DLV_ERROR);
+    }
     dbg->de_tied_data.td_tied_object = tieddbg;
     if (tieddbg) {
         tieddbg->de_tied_data.td_is_tied_object = TRUE;

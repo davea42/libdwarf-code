@@ -1,4 +1,20 @@
+
+2015-01-2016  David Anderson
+     * configure.in: Now --enable-wall adds -Wdeclaration-after-statement
+       etc.
+     * configure: Regenerated.
+     * dwarfdump.c: Now all functions have visible prototypes, no ().
+     * dwconf.c: Now local func declared static.
+     * dwgetopt.c: Added include dwgetopt.h. Unused function
+       #if 0 so invisible.
+     * globals.h: Now all functions have prototypes, no ().
+     * macrocheck.c: Removed unused locals. Fixed a
+       dwarf_twalk call to *tree (not just tree).
+     * naming.c: Added include naming.h.
+     * print_gdbindex.c: Made local function static.
+     * tag_attr.c,tag_common.c: Made local function static.
 2015-01-19  David Anderson
+     * dwarf_tsearchbal.c: Deleted the  unused function rotatex().
      * dwarfdump.c: Remove duplicate trailing ;
      * esb.c(esb_append): Straighten out the logic
        and avoid doing append if the to-be-appended

@@ -1,3 +1,5 @@
+2016-01-20  David Anderson
+     * dwarf_tsearchbal.c: Deleted the unused little function rotatex().
 2016-01-14  David Anderson
      * dwarf_tsearchtester.c: Fixed compilation warnings (some of them).
      * dwarf_tsearchbal.c: Added a comment.
