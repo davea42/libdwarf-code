@@ -1,3 +1,5 @@
+2016-01-21  David Anderson
+     * libdwarf.h.in: Typo, */* fixed to be * /*
 2016-01-20  David Anderson
      * dwarf_query.c: New function dwarf_die_text() is a general way
        to get strings from various attributes in a DIE.
