@@ -1,3 +1,16 @@
+2016-01-21  David Anderson
+     * libdwarf.h.in: Typo, */* fixed to be * /*
+     * configure.in: Added new gcc compiler options to --enable-wall.
+     * configure: regenerated.
+     * dwarf_die_deliv.c dwarf_frame.c,dwarf_frame2.c,dwarf_gdbindex.c,
+       dwarf_gdbindex.h,dwarf_line.c,dwarf_line.h,
+       dwarf_line_table_reader_common.c,dwarf_macro5.c,dwarf_query.c,
+       dwarf_tsearchhash.c: Eliminated use of int/Dwarf_Signed 
+       in favor of unsigned types where
+       signed served no purpose. Added ommitted return DW_DLV_NO_ERROR
+       in dwarf_frame2.c.  Other than 'unused parameter' fixed
+       the warnings from gcc.
+       No interfaces changed though. To keep binary compatibility.
 2016-01-20  David Anderson
      * dwarf_query.c: New function dwarf_die_text() is a general way
        to get strings from various attributes in a DIE.

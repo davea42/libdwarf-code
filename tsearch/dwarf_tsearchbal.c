@@ -781,8 +781,8 @@ tdelete_inner(const void *key,
     balance:
     {
     unsigned k2 = k;
-    /*  The comparison is degenerate in this for statement. Always true. */
-    for(  ; k2 >= 0; k2--) {
+    /*  We do not want a test in the for() itself. */
+    for(  ; 1 ; k2--) {
         struct ts_entry *pk = 0;
         int ak = 0;
         int bk = 0;

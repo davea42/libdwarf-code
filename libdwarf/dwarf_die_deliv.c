@@ -135,10 +135,13 @@ dwarf_get_debugfission_for_die(Dwarf_Die die,
     struct Dwarf_Debug_Fission_Per_CU_s *fission_out,
     Dwarf_Error *error)
 {
-    Dwarf_CU_Context context = die->di_cu_context;
-    Dwarf_Debug dbg = context->cc_dbg;
+    Dwarf_CU_Context context = 0;
+    Dwarf_Debug dbg = 0;
     struct Dwarf_Debug_Fission_Per_CU_s * percu = 0;
 
+    CHECK_DIE(die, DW_DLV_ERROR);
+    context = die->di_cu_context;
+    dbg = context->cc_dbg;
     if (!_dwarf_file_has_debug_fission_index(dbg)) {
         return DW_DLV_NO_ENTRY;
     }
@@ -185,10 +188,12 @@ _dwarf_get_fission_addition_die(Dwarf_Die die, int dw_sect_index,
 {
     /* We do not yet know the DIE hash, so we cannot use it
         to identify the offset. */
-    Dwarf_CU_Context context = die->di_cu_context;
+    Dwarf_CU_Context context = 0;
     Dwarf_Unsigned dwpadd = 0;
     Dwarf_Unsigned dwpsize = 0;
 
+    CHECK_DIE(die, DW_DLV_ERROR);
+    context = die->di_cu_context;
     dwpadd =  _dwarf_get_dwp_extra_offset(&context->cc_dwp_offsets,
         dw_sect_index,&dwpsize);
     *offset = dwpadd;
@@ -1806,6 +1811,11 @@ dwarf_get_die_section_name(Dwarf_Debug dbg,
     Dwarf_Error * error)
 {
     struct Dwarf_Section_s *sec = 0;
+
+    if (dbg == NULL) {
+        _dwarf_error(NULL, error, DW_DLE_DBG_NULL);
+        return (DW_DLV_ERROR);
+    }
     if (is_info) {
         sec = &dbg->de_debug_info;
     } else {

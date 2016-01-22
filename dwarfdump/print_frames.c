@@ -1198,7 +1198,7 @@ print_frame_inst_bytes(Dwarf_Debug dbg,
             len -= uleblen;
             off += uleblen;
             printf("\t%2u DW_CFA_offset ", loff);
-            printreg((Dwarf_Signed) reg, config_data);
+            printreg(reg, config_data);
             printf(" %" DW_PR_DSd , (Dwarf_Signed)
                 (((Dwarf_Signed) uval) * data_alignment_factor));
             if (verbose) {
@@ -1211,7 +1211,7 @@ print_frame_inst_bytes(Dwarf_Debug dbg,
         case DW_CFA_restore:
             reg = ibyte & 0x3f;
             printf("\t%2u DW_CFA_restore ", off);
-            printreg((Dwarf_Signed) reg, config_data);
+            printreg(reg, config_data);
             printf("\n");
             break;
 
@@ -1296,7 +1296,7 @@ print_frame_inst_bytes(Dwarf_Debug dbg,
                 len -= uleblen;
                 off += uleblen;
                 printf("\t%2u DW_CFA_offset_extended ", loff);
-                printreg((Dwarf_Signed) uval, config_data);
+                printreg(uval, config_data);
                 printf(" %" DW_PR_DSd ,
                     (Dwarf_Signed) (((Dwarf_Signed) uval2) *
                         data_alignment_factor));
@@ -1313,7 +1313,7 @@ print_frame_inst_bytes(Dwarf_Debug dbg,
                 len -= uleblen;
                 off += uleblen;
                 printf("\t%2u DW_CFA_restore_extended ", loff);
-                printreg((Dwarf_Signed) uval, config_data);
+                printreg(uval, config_data);
                 printf("\n");
                 break;
             case DW_CFA_undefined:
@@ -1322,7 +1322,7 @@ print_frame_inst_bytes(Dwarf_Debug dbg,
                 len -= uleblen;
                 off += uleblen;
                 printf("\t%2u DW_CFA_undefined ", loff);
-                printreg((Dwarf_Signed) uval, config_data);
+                printreg( uval, config_data);
                 printf("\n");
                 break;
             case DW_CFA_same_value:
@@ -1331,7 +1331,7 @@ print_frame_inst_bytes(Dwarf_Debug dbg,
                 len -= uleblen;
                 off += uleblen;
                 printf("\t%2u DW_CFA_same_value ", loff);
-                printreg((Dwarf_Signed) uval, config_data);
+                printreg(uval, config_data);
                 printf("\n");
                 break;
             case DW_CFA_register:
@@ -1345,9 +1345,9 @@ print_frame_inst_bytes(Dwarf_Debug dbg,
                 len -= uleblen;
                 off += uleblen;
                 printf("\t%2u DW_CFA_register ", loff);
-                printreg((Dwarf_Signed) uval, config_data);
+                printreg(uval, config_data);
                 printf(" = ");
-                printreg((Dwarf_Signed) uval2, config_data);
+                printreg(uval2, config_data);
                 printf("\n");
                 break;
             case DW_CFA_remember_state:
@@ -1367,7 +1367,7 @@ print_frame_inst_bytes(Dwarf_Debug dbg,
                 len -= uleblen;
                 off += uleblen;
                 printf("\t%2u DW_CFA_def_cfa ", loff);
-                printreg((Dwarf_Signed) uval, config_data);
+                printreg( uval, config_data);
                 printf(" %" DW_PR_DUu , (unsigned long long) uval2);
                 printf("\n");
                 break;
@@ -1377,7 +1377,7 @@ print_frame_inst_bytes(Dwarf_Debug dbg,
                 len -= uleblen;
                 off += uleblen;
                 printf("\t%2u DW_CFA_def_cfa_register ", loff);
-                printreg((Dwarf_Signed) uval, config_data);
+                printreg(uval, config_data);
                 printf("\n");
                 break;
             case DW_CFA_def_cfa_offset:
@@ -1479,7 +1479,7 @@ print_frame_inst_bytes(Dwarf_Debug dbg,
                     len -= uleblen;
                     off += uleblen;
                     printf("\t%2u DW_CFA_offset_extended_sf ", loff);
-                    printreg((Dwarf_Signed) uval, config_data);
+                    printreg(uval, config_data);
                     printf(" %" DW_PR_DSd , (Dwarf_Signed)
                         ((sval2) * data_alignment_factor));
                     if (verbose) {
@@ -1506,7 +1506,7 @@ print_frame_inst_bytes(Dwarf_Debug dbg,
                     len -= uleblen;
                     off += uleblen;
                     printf("\t%2u DW_CFA_def_cfa_sf ", loff);
-                    printreg((Dwarf_Signed) uval, config_data);
+                    printreg(uval, config_data);
                     printf(" %" DW_PR_DSd , (long long) sval2);
                     printf(" (*data alignment factor=>%" DW_PR_DSd ")",
                         (Dwarf_Signed)(sval2*data_alignment_factor));
@@ -1549,7 +1549,7 @@ print_frame_inst_bytes(Dwarf_Debug dbg,
                     len -= uleblen;
                     off += uleblen;
                     printf("\t%2u DW_CFA_val_offset ", loff);
-                    printreg((Dwarf_Signed)uval, config_data);
+                    printreg(uval, config_data);
                     printf(" %" DW_PR_DSd ,
                         (Dwarf_Signed) (sval2 *
                             data_alignment_factor));
@@ -1579,7 +1579,7 @@ print_frame_inst_bytes(Dwarf_Debug dbg,
                     len -= uleblen;
                     off += uleblen;
                     printf("\t%2u DW_CFA_val_offset_sf ", loff);
-                    printreg((Dwarf_Signed) uval, config_data);
+                    printreg(uval, config_data);
                     printf(" %" DW_PR_DSd , (signed long long)
                         ((sval2) * data_alignment_factor));
                     if (verbose) {
@@ -1703,7 +1703,7 @@ print_frame_inst_bytes(Dwarf_Debug dbg,
    Delegate to the configure code to actually do the print.
 */
 void
-printreg(Dwarf_Signed reg, struct dwconf_s *config_data)
+printreg(Dwarf_Unsigned reg, struct dwconf_s *config_data)
 {
     print_reg_from_config_data(reg, config_data);
 }
@@ -1746,15 +1746,15 @@ print_one_frame_reg_col(Dwarf_Debug dbg,
         }
         if (print_type_title)
             printf("<%s ", type_title);
-        printreg((Dwarf_Signed) rule_id, config_data);
+        printreg(rule_id, config_data);
         printf("=");
         if (offset_relevant == 0) {
-            printreg((Dwarf_Signed) reg_used, config_data);
+            printreg(reg_used, config_data);
             printf(" ");
         } else {
             printf("%02" DW_PR_DSd , offset);
             printf("(");
-            printreg((Dwarf_Signed) reg_used, config_data);
+            printreg(reg_used, config_data);
             printf(") ");
         }
         if (print_type_title)
@@ -1769,7 +1769,7 @@ print_one_frame_reg_col(Dwarf_Debug dbg,
         pexp2:
         if (print_type_title)
             printf("<%s ", type_title);
-        printreg((Dwarf_Signed) rule_id, config_data);
+        printreg(rule_id, config_data);
         printf("=");
         printf("expr-block-len=%" DW_PR_DSd , offset);
         if (print_type_title)

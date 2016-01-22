@@ -375,7 +375,7 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
             }
             line_ptr = line_ptr + strlen((char *) line_ptr) + 1;
             DECODE_LEB128_UWORD(line_ptr, utmp);
-            dir_index = (Dwarf_Sword) utmp;
+            dir_index = (Dwarf_Word) utmp;
             if (dir_index > line_context->lc_include_directories_count) {
                 _dwarf_error(dbg, err, DW_DLE_DIR_INDEX_BAD);
                 return (DW_DLV_ERROR);
@@ -437,8 +437,8 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
         Dwarf_Unsigned *directory_entry_types = 0;
         Dwarf_Unsigned *directory_entry_forms = 0;
         Dwarf_Unsigned directories_count = 0;
-        Dwarf_Signed i = 0;
-        Dwarf_Signed j = 0;
+        Dwarf_Unsigned i = 0;
+        Dwarf_Unsigned j = 0;
         directory_format_count = *(unsigned char *) line_ptr;
         line_ptr = line_ptr + sizeof(Dwarf_Small);
         directory_entry_types = malloc(sizeof(Dwarf_Unsigned) *
@@ -515,8 +515,8 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
         Dwarf_Unsigned *filename_entry_types = 0;
         Dwarf_Unsigned *filename_entry_forms = 0;
         Dwarf_Unsigned files_count = 0;
-        Dwarf_Signed i = 0;
-        Dwarf_Signed j = 0;
+        Dwarf_Unsigned i = 0;
+        Dwarf_Unsigned j = 0;
 
         filename_format_count = *(unsigned char *) line_ptr;
         line_ptr = line_ptr + sizeof(Dwarf_Small);
@@ -630,8 +630,8 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
         Dwarf_Unsigned *subprog_entry_types = 0;
         Dwarf_Unsigned *subprog_entry_forms = 0;
         Dwarf_Unsigned subprogs_count = 0;
-        Dwarf_Signed i = 0;
-        Dwarf_Signed j = 0;
+        Dwarf_Unsigned i = 0;
+        Dwarf_Unsigned j = 0;
 
         subprog_format_count = *(unsigned char *) line_ptr;
         line_ptr = line_ptr + sizeof(Dwarf_Small);
@@ -788,10 +788,10 @@ read_line_table_program(Dwarf_Debug dbg,
     Dwarf_Error *error,
     int *err_count_out)
 {
-    Dwarf_Sword i = 0;
+    Dwarf_Word i = 0;
     Dwarf_File_Entry cur_file_entry = 0;
     Dwarf_Line *logicals = line_context->lc_linebuf_logicals;
-    Dwarf_Signed logicals_count = line_context->lc_linecount_logicals;
+    Dwarf_Unsigned logicals_count = line_context->lc_linecount_logicals;
 
     struct Dwarf_Line_Registers_s regs;
 
@@ -811,7 +811,7 @@ read_line_table_program(Dwarf_Debug dbg,
     Dwarf_Half fixed_advance_pc = 0;
 
     /*  Counts the number of lines in the line matrix. */
-    Dwarf_Sword line_count = 0;
+    Dwarf_Word line_count = 0;
 
     /*  This is the length of an extended opcode instr.  */
     Dwarf_Word instr_length = 0;

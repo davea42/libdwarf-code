@@ -2598,7 +2598,7 @@ int dwarf_get_macro_context_by_offset(Dwarf_Die /*die*/,
     Dwarf_Unsigned      * /*version_out*/,
     Dwarf_Macro_Context * /*macro_context*/,
     Dwarf_Unsigned      * /*macro_ops_count_out*/,
-    Dwarf_Unsigned      */* macro_ops_data_length*/,
+    Dwarf_Unsigned      * /*macro_ops_data_length*/,
     Dwarf_Error         * /*error*/);
 
 void dwarf_dealloc_macro_context(Dwarf_Macro_Context /*mc*/);

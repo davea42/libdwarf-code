@@ -32,7 +32,7 @@
     when *tree is wanted, simply find nothing. No error,
     just bad results. So when a walk produces nothing
     suspect a code mistake here.
-    The basic problem is void* is a terrible way to 
+    The basic problem is void* is a terrible way to
     pass in a pointer. But it's how tsearch was defined
     long ago.
 */

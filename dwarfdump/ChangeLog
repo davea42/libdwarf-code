@@ -1,5 +1,23 @@
-
-2015-01-2016  David Anderson
+2016-01-20
+     * configure.in: Added more compiler optiosn to --enable-wall
+     * configure: Regenerated
+     * dwarf_tsearchbal.c: Fixed warnings.
+     * dwarfdump.c: Fixed warnings.
+     * dwconf.c: Fixed warnings.
+     * dwconf.h: Fixed warnings.
+     * esb.c: Fixed warnings.
+     * globals.h: Fixed warnings.
+     * print_debugfission.c: Fixed warnings.
+     * print_die.c: Fixed warnings.
+     * print_frames.c: Fixed warnings.
+     * print_sections.c: Fixed warnings.
+2016-01-20
+     * macrocheck.c: Remove trailing whitespace.
+     * print_lines.c: Only print line context record
+       if we do_print_dwarf is non-zero. The directory index
+       was printing as 0 in the line_context record. Was a typo
+       in the printf, now fixed.
+2016-01-20
      * configure.in: Now --enable-wall adds -Wdeclaration-after-statement
        etc.
      * configure: Regenerated.
@@ -13,7 +31,7 @@
      * naming.c: Added include naming.h.
      * print_gdbindex.c: Made local function static.
      * tag_attr.c,tag_common.c: Made local function static.
-2015-01-19  David Anderson
+2016-01-19  David Anderson
      * dwarf_tsearchbal.c: Deleted the  unused function rotatex().
      * dwarfdump.c: Remove duplicate trailing ;
      * esb.c(esb_append): Straighten out the logic
@@ -24,12 +42,12 @@
      * print_frames.c: Ensure local var starts at zero.
        Move statement to below declarations.
      * print_lines.c: Ensure declarations before executable statements.
-2015-01-19  David Anderson
+2016-01-19  David Anderson
      * print_frames.c: Fix trailing whitespace and indentation.
-2015-01-19  David Anderson
+2016-01-19  David Anderson
      * print_die.c,tag_tree.c: Change statement ;; by removing
        second semicolon.
-2015-01-17  David Anderson
+2016-01-17  David Anderson
      * common.c: Update version string
      * dwarfdump.c: Made reset_overall_CU_error_data() a global.
        We now try to show CU name etc on case there is an error
@@ -42,7 +60,7 @@
        mixed up.
        We now try to show CU name etc on case there is an error
        reading frame data.
-2015-01-14  David Anderson
+2016-01-14  David Anderson
      * common.c: Update version string.
      * dwarfdump.c: Update version string. Include macrocheck.h.
        Delete one accidental blank line.
@@ -55,7 +73,7 @@
        handling the abbrev_array to be correct and a bit simpler.
        Added new abbreviations tests.
      * print_die.c: Include macrocheck.h. Fix trailing whitespace.
-2015-01-12  David Anderson
+2016-01-12  David Anderson
      * common.c: Update version string.
      * dwarfdump.c: Update version string.
      * print_abbrevs.c: If an abbreviation number is a bit
@@ -66,9 +84,9 @@
      * print_die.c: When we switch sections inside a DIE print
        save and restore current_section_id to get the best 
        reporting on errors/checks.
-2015-01-12  David Anderson
+2016-01-12  David Anderson
      * common.c,dwarfdump.c: Update version string.
-2015-01-12  David Anderson
+2016-01-12  David Anderson
      * Makefile.in: Adding macrocheck.h, and .c.  Adding
        selftest of macrocheck.c.
      * dwarfdump.c: Now handles imported DWARF5 macros

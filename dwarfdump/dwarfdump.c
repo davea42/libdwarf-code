@@ -509,9 +509,11 @@ main(int argc, char *argv[])
     /* Windows specific. */
     /* Redirect stderr to stdout. */
     /* Tried to use SetStdHandle, but it does not work properly. */
-    //BOOL bbb = SetStdHandle(STD_ERROR_HANDLE,GetStdHandle(STD_OUTPUT_HANDLE));
-    //_iob[2]._file = _iob[1]._file;
-    //stderr->_file = stdout->_file;
+#if 0
+    BOOL bbb = SetStdHandle(STD_ERROR_HANDLE,GetStdHandle(STD_OUTPUT_HANDLE));
+    _iob[2]._file = _iob[1]._file;
+    stderr->_file = stdout->_file;
+#endif
     dup2(fileno(stdout),fileno(stderr));
 #endif /* WIN32 */
 

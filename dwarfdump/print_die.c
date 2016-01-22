@@ -123,7 +123,7 @@ struct operation_descr_s {
 };
 struct operation_descr_s opdesc[]= {
     {DW_OP_addr,1,"addr" },
-    {DW_OP_deref,0 },
+    {DW_OP_deref,0,"" },
     {DW_OP_const1u,1,"1u" },
     {DW_OP_const1s,1,"1s" },
     {DW_OP_const2u,1,"2u" },
@@ -2933,21 +2933,7 @@ _dwarf_print_one_expr_op(Dwarf_Debug dbg,
         }
     }
     op_name = get_OP_name(op,dwarf_names_print_on_error);
-
-    /*  We have valid operands whose values are bigger than the
-        DW_OP_nop = 0x96; for example: DW_OP_GNU_push_tls_address = 0xe0
-        Also, the function 'get_OP_name' handles this case, generating a
-        name 'Unknown OP value'.  */
-    if (op > DW_OP_hi_user) {
-        /*  March 2015: With Dwarf_Small an unsigned char
-            for lr_atom and op the test will always fail:
-            this error not reportable. */
-        print_error(dbg, "dwarf_op unexpected value!", DW_DLV_OK,
-            err);
-        return DW_DLV_ERROR;
-    }
     esb_append(string_out, op_name);
-
     if (op_has_no_operands(op)) {
         /* Nothing to add. */
     } else if (op >= DW_OP_breg0 && op <= DW_OP_breg31) {
@@ -3227,7 +3213,7 @@ get_location_list(Dwarf_Debug dbg,
     Dwarf_Unsigned no_of_elements;
     Dwarf_Loc_Head_c loclist_head = 0; /* 2015 loclist interface */
     Dwarf_Error err = 0;
-    int i;
+    Dwarf_Unsigned i = 0;
     int lres = 0;
     unsigned llent = 0;
 
