@@ -3640,6 +3640,8 @@ check_for_type_unsigned(Dwarf_Debug dbg,Dwarf_Die die, struct esb_s *esbp)
         /*esb_append(esbp,"<helper dieoffset NO ENTRY>"); */
         return 0;
     }
+    /*  This might be wrong. See the typedieoffset check below,
+        which is correct... */
     e = helpertree_find(diegoffset,helperbase);
     if(e) {
         /*bracket_hex("<helper FOUND offset ",diegoffset,">",esbp);
@@ -3675,8 +3677,15 @@ check_for_type_unsigned(Dwarf_Debug dbg,Dwarf_Die die, struct esb_s *esbp)
         return 0;
     }
     dwarf_dealloc(dbg,attr,DW_DLA_ATTR);
-    res = dwarf_offdie_b(dbg,typedieoffset,is_info,
-        &typedie,&error);
+    attr = 0;
+    e = helpertree_find(typedieoffset,helperbase);
+    if(e) {
+        /*bracket_hex("<helper FOUND typedieoffset ",typedieoffset,">",esbp);
+        bracket_hex("<helper FOUND val ",e->hm_val,">",esbp); */
+        return e->hm_val;
+    }
+
+    res = dwarf_offdie_b(dbg,typedieoffset,is_info, &typedie,&error);
     if (res == DW_DLV_ERROR) {
         /*bracket_hex( "<helper dwarf_offdie_b  FAIL ",diegoffset,">",esbp); */
         helpertree_add_entry(diegoffset, 0,helperbase);
@@ -3688,8 +3697,6 @@ check_for_type_unsigned(Dwarf_Debug dbg,Dwarf_Die die, struct esb_s *esbp)
         helpertree_add_entry(typedieoffset, 0,helperbase);
         return 0;
     }
-    attr = 0;
-
     res = dwarf_attr(typedie, DW_AT_encoding, &encodingattr,&error);
     if (res == DW_DLV_ERROR) {
         /*bracket_hex( "<helper dwarf_attr typedie  FAIL",diegoffset,">",esbp); */
@@ -4528,11 +4535,12 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
                 Dwarf_Bool chex = FALSE;
                 Dwarf_Die  tdie = die;
                 if(DW_AT_ranges == attr) {
-                    /*  In this case do not look for data type for unsigned/signed. 
+                    /*  In this case do not look for data
+                        type for unsigned/signed.
                         and do use HEX. */
                     chex = TRUE;
                     tdie = NULL;
-                } 
+                }
                 /* Do not use hexadecimal format except for
                     DW_AT_ranges. */
                 wres = formxdata_print_value(dbg,

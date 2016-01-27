@@ -1,3 +1,6 @@
+2016-01-27  David Anderson
+     * print_die.c: Added a helpertree find call on typedieoffset
+       which is really a better check for known signed/unsigned.
 2016-01-26  David Anderson
      * dwarfdump.c,common.c: Update version string.
 2016-01-26  David Anderson
