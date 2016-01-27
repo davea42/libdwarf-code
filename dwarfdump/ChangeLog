@@ -1,3 +1,16 @@
+2016-01-26  David Anderson
+     * Makefile.in: Added helpertree.h, and .c.
+     * dwarfdump.c: Added include helpertree.h
+     * print_die.c: Now attempts (harder) to
+       figure out if a constant is really signed or insigned
+       when printing it. Fixes annoyance with printing attributes
+       longer than 27 characters.
+       Unifies a number of printf-style calls into functions, reducing
+       the number of statically visible calls to sprintf.
+       Attempts to remember whether some things are explicitly
+       typed as signed or unsigned.
+     * helpertree.h, helpertree.c: New. Simple use of tsearch
+       to memo-ize signedness.
 2016-01-20
      * configure.in: Added more compiler optiosn to --enable-wall
      * configure: Regenerated

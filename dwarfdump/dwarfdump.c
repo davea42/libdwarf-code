@@ -43,6 +43,7 @@
 #include "dwconf.h"
 #include "common.h"
 #include "macrocheck.h"
+#include "helpertree.h"
 #include "uri.h"
 #include "esb.h"                /* For flexible string buffer. */
 #include "tag_common.h"
@@ -1405,6 +1406,8 @@ process_one_file(Elf * elf,Elf *elftied,
         dbg = 0;
     }
     printf("\n");
+    helpertree_clear_statistics(&helpertree_offsets_base_info);
+    helpertree_clear_statistics(&helpertree_offsets_base_types);
     return 0;
 }
 

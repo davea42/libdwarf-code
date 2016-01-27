@@ -1137,6 +1137,7 @@ _dwarf_internal_macro_context_by_offset(Dwarf_Debug dbg,
     Dwarf_Unsigned cur_offset = 0;
     Dwarf_Unsigned section_size = 0;
     Dwarf_Small *section_base = 0;
+    Dwarf_Small *section_end = 0;
     Dwarf_Unsigned optablesize = 0;
     Dwarf_Unsigned macro_offset = offset;
     int res = 0;
@@ -1163,6 +1164,7 @@ _dwarf_internal_macro_context_by_offset(Dwarf_Debug dbg,
     }
     macro_header = macro_offset + section_base;
     macro_data = macro_header;
+    section_end = section_base +section_size;
 
 
     macro_context = (Dwarf_Macro_Context)
@@ -1173,6 +1175,10 @@ _dwarf_internal_macro_context_by_offset(Dwarf_Debug dbg,
         return DW_DLV_ERROR;
     }
 
+    if ((section_base + sizeof(Dwarf_Half) + sizeof(Dwarf_Small)) >                     section_end ) {
+        _dwarf_error(dbg, error, DW_DLE_MACRO_OFFSET_BAD);
+        return DW_DLV_ERROR;
+    }
     READ_UNALIGNED(dbg,version, Dwarf_Half,
         macro_data,sizeof(Dwarf_Half));
     macro_data += sizeof(Dwarf_Half);

@@ -52,6 +52,7 @@ FINALOBJECTS = \
 	dwarf_tsearchbal.o \
 	dwconf.o \
 	esb.o \
+        helpertree.o \
         macrocheck.o \
 	print_abbrevs.o \
 	print_aranges.o \
@@ -177,6 +178,9 @@ selftest:
 	-rm -f ./selfmc
 	$(CC) -g -c -I../libdwarf esb.c
 	$(CC) -g -c -I../libdwarf dwarf_tsearchbal.c
+	$(CC) -DSELFTEST -I../libdwarf -g helpertree.c esb.o dwarf_tsearchbal.o -o selfhelpertree
+	./selfhelpertree
+	-rm -f ./selfhelpertree
 	$(CC) -DSELFTEST -I../libdwarf -g macrocheck.c esb.o dwarf_tsearchbal.o -o selfmc
 	./selfmc
 	-rm -f ./selfmc
@@ -220,6 +224,8 @@ clean:
 	rm -f a.out
 	rm -f getopttest
 	rm -f getopttestnat
+	rm -f selfhelpertree
+	rm -f selfmc
 
 distclean: clean
 	rm -f config.log config.h config.cache config.status 
