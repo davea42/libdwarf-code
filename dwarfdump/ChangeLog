@@ -1,4 +1,6 @@
 2016-01-26  David Anderson
+     * dwarfdump.c,common.c: Update version string.
+2016-01-26  David Anderson
      * Makefile.in: Added helpertree.h, and .c.
      * dwarfdump.c: Added include helpertree.h
      * print_die.c: Now attempts (harder) to
