@@ -4166,7 +4166,7 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
             section. */
         bres = dwarf_global_formref(attrib, &off, &err);
         if (bres == DW_DLV_OK) {
-            bracket_hex("<global die offset ",off, ">",esbp);
+            bracket_hex("<GOFF=",off, ">",esbp);
         } else {
             print_error(dbg,
                 "DW_FORM_ref_addr form with no reference?!",
@@ -4254,7 +4254,7 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
             if (fres != DW_DLV_OK) {
                 /*  Report incorrect offset */
                 snprintf(small_buf,sizeof(small_buf),
-                    "%s, global die offset=<0x%"  DW_PR_XZEROS  DW_PR_DUx
+                    "%s, GOFF=<0x%"  DW_PR_XZEROS  DW_PR_DUx
                     ">","invalid offset",goff);
                 print_error(dbg, small_buf, fres, err);
             }
@@ -4277,7 +4277,7 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
             if (die_overall_offset >= goff) {
                 snprintf(small_buf,sizeof(small_buf),
                     "ERROR: Sibling offset 0x%"  DW_PR_XZEROS  DW_PR_DUx
-                    " points %s its own die Global offset "
+                    " points %s its own die GOFF="
                     "0x%"  DW_PR_XZEROS  DW_PR_DUx,
                     goff,
                     (die_overall_offset == goff)?"at":"before",

@@ -1,3 +1,8 @@
+2016-01-28  David Anderson
+     * dwarfdump.c,common.c: Update version string.
+     * print_die.c: Changed the most frequent global die
+       offset values to print as GOFF=0x...
+       for uniformity with -G and space saving from the string 'global die offset'.
 2016-01-27  David Anderson
      * print_die.c: Added a helpertree find call on typedieoffset
        which is really a better check for known signed/unsigned.
