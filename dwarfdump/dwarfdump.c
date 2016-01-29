@@ -43,6 +43,7 @@
 #include "dwconf.h"
 #include "common.h"
 #include "macrocheck.h"
+#include "helpertree.h"
 #include "uri.h"
 #include "esb.h"                /* For flexible string buffer. */
 #include "tag_common.h"
@@ -51,7 +52,7 @@
 extern int elf_open(const char *name,int mode);
 #endif /* WIN32 */
 
-#define DWARFDUMP_VERSION " Sun Jan 17 14:06:39 PST 2016  "
+#define DWARFDUMP_VERSION " Thu Jan 28 16:33:07 PST 2016  "
 
 extern char *dwoptarg;
 
@@ -1405,6 +1406,8 @@ process_one_file(Elf * elf,Elf *elftied,
         dbg = 0;
     }
     printf("\n");
+    helpertree_clear_statistics(&helpertree_offsets_base_info);
+    helpertree_clear_statistics(&helpertree_offsets_base_types);
     return 0;
 }
 

@@ -35,6 +35,7 @@
 #include "esb.h"                /* For flexible string buffer. */
 #include "print_frames.h"       /* for get_string_from_locs() . */
 #include "macrocheck.h"
+#include "helpertree.h"
 #include "tag_common.h"
 
 /*  Traverse a DIE and attributes to check self references */
@@ -81,8 +82,14 @@ static int _dwarf_print_one_expr_op(Dwarf_Debug dbg,
     Dwarf_Loc* expr,
     Dwarf_Locdesc_c exprc,
     int index, Dwarf_Addr baseaddr,struct esb_s *string_out);
-static int formxdata_print_value(Dwarf_Debug dbg,Dwarf_Attribute attrib,
+static int formxdata_print_value(Dwarf_Debug dbg,Dwarf_Die die,Dwarf_Attribute attrib,
     struct esb_s *esbp, Dwarf_Error * err, Dwarf_Bool hex_format);
+static void bracket_hex(const char *s1, Dwarf_Unsigned v,
+    const char *s2, struct esb_s * esbp);
+static void formx_unsigned(Dwarf_Unsigned u, struct esb_s *esbp,
+    Dwarf_Bool hex_format);
+static void formx_signed(Dwarf_Signed s, struct esb_s *esbp);
+
 
 /*  It would be better to  use this as a local variable, but
     given interactions with many functions it temporarily
@@ -2166,7 +2173,10 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
             if (fc == DW_FORM_CLASS_CONSTANT) {
                 struct esb_s classconstantstr;
                 esb_constructor(&classconstantstr);
-                wres = formxdata_print_value(dbg,attrib,&classconstantstr,
+                /*  Makes no sense to look at type of our DIE
+                    to determine how to print the constant. */
+                wres = formxdata_print_value(dbg,NULL,attrib,
+                    &classconstantstr,
                     &err, FALSE);
                 show_form_itself(show_form_used,verbose, theform,
                     directform,&classconstantstr);
@@ -2795,7 +2805,11 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
                     printf("%s", v);
                 }
             } else {
-                printf("%-28s%s\n", atname, esb_get_string(&valname));
+                printf("%-28s", atname);
+                if (strlen(atname) >= 28) {
+                    printf(" ");
+                }
+                printf("%s\n", esb_get_string(&valname));
                 if (append_extra_string) {
                     char *v = esb_get_string(&esb_extra);
                     printf("%s", v);
@@ -2943,9 +2957,7 @@ _dwarf_print_one_expr_op(Dwarf_Debug dbg,
     } else {
         switch (op) {
         case DW_OP_addr:
-            snprintf(small_buf, sizeof(small_buf),
-                " 0x%" DW_PR_XZEROS DW_PR_DUx , opd1);
-            esb_append(string_out, small_buf);
+            bracket_hex(" ",opd1,"",string_out);
             break;
         case DW_OP_const1s:
         case DW_OP_const2s:
@@ -2955,9 +2967,8 @@ _dwarf_print_one_expr_op(Dwarf_Debug dbg,
         case DW_OP_skip:
         case DW_OP_bra:
         case DW_OP_fbreg:
-            snprintf(small_buf, sizeof(small_buf),
-                " %" DW_PR_DSd, (Dwarf_Signed) opd1);
-            esb_append(string_out, small_buf);
+            esb_append(string_out," ");
+            formx_signed(opd1,string_out);
             break;
         case DW_OP_GNU_addr_index: /* unsigned val */
         case DW_OP_addrx: /* DWARF5: unsigned val */
@@ -2979,43 +2990,28 @@ _dwarf_print_one_expr_op(Dwarf_Debug dbg,
             esb_append(string_out, small_buf);
             break;
         case DW_OP_bregx:
-            snprintf(small_buf, sizeof(small_buf),
-                " 0x%" DW_PR_XZEROS DW_PR_DUx , opd1);
-            esb_append(string_out, small_buf);
-            snprintf(small_buf, sizeof(small_buf),
-                "+%" DW_PR_DSd , (Dwarf_Signed) opd2);
-            esb_append(string_out, small_buf);
+            bracket_hex(" ",opd1,"",string_out);
+            esb_append(string_out,"+");
+            formx_signed(opd2,string_out);
             break;
         case DW_OP_call2:
-            snprintf(small_buf, sizeof(small_buf),
-                " 0x%" DW_PR_XZEROS DW_PR_DUx , opd1);
-            esb_append(string_out, small_buf);
+            bracket_hex(" ",opd1,"",string_out);
             break;
         case DW_OP_call4:
-            snprintf(small_buf, sizeof(small_buf),
-                " 0x%" DW_PR_XZEROS DW_PR_DUx , opd1);
-            esb_append(string_out, small_buf);
+            bracket_hex(" ",opd1,"",string_out);
             break;
         case DW_OP_call_ref:
-            snprintf(small_buf, sizeof(small_buf),
-                " 0x%" DW_PR_XZEROS DW_PR_DUx , opd1);
-            esb_append(string_out, small_buf);
+            bracket_hex(" ",opd1,"",string_out);
             break;
         case DW_OP_bit_piece:
-            snprintf(small_buf, sizeof(small_buf),
-                " 0x%" DW_PR_XZEROS  DW_PR_DUx , opd1);
-            esb_append(string_out, small_buf);
-            snprintf(small_buf, sizeof(small_buf),
-                " offset 0x%" DW_PR_DUx , (Dwarf_Signed) opd2);
-            esb_append(string_out, small_buf);
+            bracket_hex(" ",opd1,"",string_out);
+            bracket_hex(" offset ",opd2,"",string_out);
             break;
         case DW_OP_implicit_value:
             {
 #define IMPLICIT_VALUE_PRINT_MAX 12
                 unsigned int print_len = 0;
-                snprintf(small_buf, sizeof(small_buf),
-                    " 0x%" DW_PR_XZEROS DW_PR_DUx , opd1);
-                esb_append(string_out, small_buf);
+                bracket_hex(" ",opd1,"",string_out);
                 /*  The other operand is a block of opd1 bytes. */
                 /*  FIXME */
                 print_len = opd1;
@@ -3050,27 +3046,21 @@ _dwarf_print_one_expr_op(Dwarf_Debug dbg,
             /* No operands. */
             break;
         case DW_OP_GNU_encoded_addr:
-            snprintf(small_buf, sizeof(small_buf),
-                " 0x%" DW_PR_XZEROS  DW_PR_DUx , opd1);
-            esb_append(string_out, small_buf);
+            bracket_hex(" ",opd1,"",string_out);
             break;
         case DW_OP_implicit_pointer:       /* DWARF5 */
         case DW_OP_GNU_implicit_pointer:
-            snprintf(small_buf, sizeof(small_buf),
-                " 0x%" DW_PR_XZEROS  DW_PR_DUx , opd1);
-            esb_append(string_out, small_buf);
-            snprintf(small_buf, sizeof(small_buf),
-                " %" DW_PR_DSd, (Dwarf_Signed)opd2);
-            esb_append(string_out, small_buf);
+            bracket_hex(" ",opd1,"",string_out);
+            esb_append(string_out, " ");
+            formx_signed(opd2,string_out);
             break;
         case DW_OP_entry_value:       /* DWARF5 */
         case DW_OP_GNU_entry_value: {
             const unsigned char *bp = 0;
             unsigned int length = 0;
+
             length = opd1;
-            snprintf(small_buf, sizeof(small_buf),
-                " 0x%" DW_PR_XZEROS  DW_PR_DUx , opd1);
-            esb_append(string_out, small_buf);
+            bracket_hex(" ",opd1,"",string_out);
             bp = (Dwarf_Small *) opd2;
             if (!bp) {
                 esb_append(string_out,
@@ -3085,10 +3075,8 @@ _dwarf_print_one_expr_op(Dwarf_Debug dbg,
             {
             const unsigned char *bp = 0;
             unsigned int length = 0;
-            snprintf(small_buf, sizeof(small_buf),
-                " 0x%" DW_PR_XZEROS  DW_PR_DUx , opd1);
-            esb_append(string_out, small_buf);
 
+            bracket_hex(" ",opd1,"",string_out);
             length = opd2;
             esb_append(string_out," const length: ");
             snprintf(small_buf, sizeof(small_buf),
@@ -3106,22 +3094,21 @@ _dwarf_print_one_expr_op(Dwarf_Debug dbg,
             }
             break;
         case DW_OP_regval_type:           /* DWARF5 */
-        case DW_OP_GNU_regval_type:
+        case DW_OP_GNU_regval_type: {
             snprintf(small_buf, sizeof(small_buf),
                 " 0x%" DW_PR_DUx , opd1);
             esb_append(string_out, small_buf);
-            snprintf(small_buf, sizeof(small_buf),
-                " 0x%" DW_PR_XZEROS  DW_PR_DUx , opd2);
-            esb_append(string_out, small_buf);
+            bracket_hex(" ",opd2,"",string_out);
+            }
             break;
         case DW_OP_deref_type: /* DWARF5 */
-        case DW_OP_GNU_deref_type:
+        case DW_OP_GNU_deref_type: {
             snprintf(small_buf, sizeof(small_buf),
                 " 0x%02" DW_PR_DUx , opd1);
             esb_append(string_out, small_buf);
-            snprintf(small_buf, sizeof(small_buf),
-                " 0x%" DW_PR_XZEROS  DW_PR_DUx , opd2);
-            esb_append(string_out, small_buf);
+
+            bracket_hex(" ",opd2,"",string_out);
+            }
             break;
         case DW_OP_convert: /* DWARF5 */
         case DW_OP_GNU_convert:
@@ -3594,19 +3581,186 @@ formx_unsigned(Dwarf_Unsigned u, struct esb_s *esbp, Dwarf_Bool hex_format)
     esb_append(esbp, small_buf);
 }
 static void
-formx_signed(Dwarf_Signed u, struct esb_s *esbp)
+formx_signed(Dwarf_Signed s, struct esb_s *esbp)
 {
     char small_buf[40];
     snprintf(small_buf, sizeof(small_buf),
-        "%" DW_PR_DSd , u);
+        "%" DW_PR_DSd ,s);
     esb_append(esbp, small_buf);
 }
+static void
+formx_unsigned_and_signed_if_neg(Dwarf_Unsigned tempud,
+    Dwarf_Signed tempd,
+    const char *leader,Dwarf_Bool hex_format,struct esb_s*esbp)
+{
+    formx_unsigned(tempud,esbp,hex_format);
+    if(tempd < 0) {
+        esb_append(esbp,leader);
+        formx_signed(tempd,esbp);
+        esb_append(esbp,")");
+    }
+}
+
+/*  If the DIE DW_AT_type exists and is directly known signed/unsigned
+    return -1 for signed 1 for unsigned.
+    Otherwise return 0 meaning 'no information'.
+    So we only need to a messy lookup once per type-die offset  */
+static int
+check_for_type_unsigned(Dwarf_Debug dbg,Dwarf_Die die, struct esb_s *esbp)
+{
+    int is_info = 0;
+    struct Helpertree_Base_s * helperbase = 0;
+    struct Helpertree_Map_Entry_s *e = 0;
+    int res = 0;
+    Dwarf_Attribute attr = 0;
+    Dwarf_Attribute encodingattr = 0;
+    Dwarf_Error error = 0;
+    Dwarf_Unsigned diegoffset = 0;
+    Dwarf_Unsigned typedieoffset = 0;
+    Dwarf_Die typedie = 0;
+    Dwarf_Unsigned tempud = 0;
+    int show_form_here = FALSE;
+    int retval = 0;
+
+    if(!die) {
+        return 0;
+    }
+    is_info = dwarf_get_die_infotypes_flag(die);
+    if(is_info) {
+        helperbase = &helpertree_offsets_base_info;
+    } else {
+        helperbase = &helpertree_offsets_base_types;
+    }
+    res = dwarf_dieoffset(die,&diegoffset,&error);
+    if (res == DW_DLV_ERROR) {
+        /* esb_append(esbp,"<helper dieoffset FAIL >"); */
+        return 0;
+    } else if (res == DW_DLV_NO_ENTRY) {
+        /* We don't know sign. */
+        /*esb_append(esbp,"<helper dieoffset NO ENTRY>"); */
+        return 0;
+    }
+    /*  This might be wrong. See the typedieoffset check below,
+        which is correct... */
+    e = helpertree_find(diegoffset,helperbase);
+    if(e) {
+        /*bracket_hex("<helper FOUND offset ",diegoffset,">",esbp);
+        bracket_hex("<helper FOUND val ",e->hm_val,">",esbp); */
+        return e->hm_val;
+    }
+
+    /*  We look up the DW_AT_type die, if any, and
+        use that offset to check for signedness. */
+
+    res = dwarf_attr(die, DW_AT_type, &attr,&error);
+    if (res == DW_DLV_ERROR) {
+        /*bracket_hex("<helper dwarf_attr FAIL ",diegoffset,">",esbp); */
+        helpertree_add_entry(diegoffset, 0,helperbase);
+        return 0;
+    } else if (res == DW_DLV_NO_ENTRY) {
+        /* We don't know sign. */
+        /*bracket_hex( "<helper dwarf_attr no entry ",diegoffset,">",esbp); */
+        helpertree_add_entry(diegoffset, 0,helperbase);
+        return 0;
+    }
+    res = dwarf_global_formref(attr, &typedieoffset,&error);
+    if (res == DW_DLV_ERROR) {
+        /*bracket_hex( "<helper global_formreff FAIL" ,diegoffset,">",esbp); */
+        dwarf_dealloc(dbg,attr,DW_DLA_ATTR);
+        helpertree_add_entry(diegoffset, 0,helperbase);
+        return 0;
+    } else if (res == DW_DLV_NO_ENTRY) {
+        /*esb_append(esbp,"helper NO ENTRY  FAIL ");
+        bracket_hex( "<helper global_formreff NO ENTRY" ,diegoffset,">",esbp); */
+        dwarf_dealloc(dbg,attr,DW_DLA_ATTR);
+        helpertree_add_entry(diegoffset, 0,helperbase);
+        return 0;
+    }
+    dwarf_dealloc(dbg,attr,DW_DLA_ATTR);
+    attr = 0;
+    e = helpertree_find(typedieoffset,helperbase);
+    if(e) {
+        /*bracket_hex("<helper FOUND typedieoffset ",typedieoffset,">",esbp);
+        bracket_hex("<helper FOUND val ",e->hm_val,">",esbp); */
+        return e->hm_val;
+    }
+
+    res = dwarf_offdie_b(dbg,typedieoffset,is_info, &typedie,&error);
+    if (res == DW_DLV_ERROR) {
+        /*bracket_hex( "<helper dwarf_offdie_b  FAIL ",diegoffset,">",esbp); */
+        helpertree_add_entry(diegoffset, 0,helperbase);
+        helpertree_add_entry(typedieoffset, 0,helperbase);
+        return 0;
+    } else if (res == DW_DLV_NO_ENTRY) {
+        /*bracket_hex( "<helper dwarf_offdie_b  NO ENTRY ",diegoffset,">",esbp); */
+        helpertree_add_entry(diegoffset, 0,helperbase);
+        helpertree_add_entry(typedieoffset, 0,helperbase);
+        return 0;
+    }
+    res = dwarf_attr(typedie, DW_AT_encoding, &encodingattr,&error);
+    if (res == DW_DLV_ERROR) {
+        /*bracket_hex( "<helper dwarf_attr typedie  FAIL",diegoffset,">",esbp); */
+        dwarf_dealloc(dbg,typedie,DW_DLA_DIE);
+        helpertree_add_entry(diegoffset, 0,helperbase);
+        helpertree_add_entry(typedieoffset, 0,helperbase);
+        return 0;
+    } else if (res == DW_DLV_NO_ENTRY) {
+        /*bracket_hex( "<helper dwarf_attr typedie  NO ENTRY",diegoffset,">",esbp);*/
+        dwarf_dealloc(dbg,typedie,DW_DLA_DIE);
+        helpertree_add_entry(diegoffset, 0,helperbase);
+        helpertree_add_entry(typedieoffset, 0,helperbase);
+        return 0;
+    }
+
+    res = get_small_encoding_integer_and_name(dbg,
+        encodingattr,
+        &tempud,
+        /* attrname */ (const char *) NULL,
+        /* err_string */ ( struct esb_s *) NULL,
+        (encoding_type_func) 0,
+        &error,show_form_here);
+
+    if (res != DW_DLV_OK) {
+        /*bracket_hex( "<helper small encoding FAIL",diegoffset,">",esbp);*/
+        dwarf_dealloc(dbg,typedie,DW_DLA_DIE);
+        dwarf_dealloc(dbg,encodingattr,DW_DLA_ATTR);
+        helpertree_add_entry(diegoffset, 0,helperbase);
+        helpertree_add_entry(typedieoffset, 0,helperbase);
+        return 0;
+    }
+    if (tempud == DW_ATE_signed || tempud == DW_ATE_signed_char) {
+        /*esb_append(esbp,"helper small encoding SIGNED ");*/
+        retval = -1;
+    } else {
+        if (tempud == DW_ATE_unsigned || tempud == DW_ATE_unsigned_char) {
+            /*esb_append(esbp,"helper small encoding UNSIGNED ");*/
+            retval = 1;
+        }
+    }
+    /*bracket_hex( "<helper ENTERED die",diegoffset,">",esbp);
+    bracket_hex( "<helper ENTERED typedie",typedieoffset,">",esbp);*/
+    helpertree_add_entry(diegoffset,retval,helperbase);
+    helpertree_add_entry(typedieoffset, retval,helperbase);
+    dwarf_dealloc(dbg,typedie,DW_DLA_DIE);
+    dwarf_dealloc(dbg,encodingattr,DW_DLA_ATTR);
+    return retval;
+}
+
 /*  We think this is an integer. Figure out how to print it.
     In case the signedness is ambiguous (such as on
     DW_FORM_data1 (ie, unknown signedness) print two ways.
+
+    If we were to look at DW_AT_type in the base DIE
+    we could follow it and determine if the type
+    was unsigned or signed (usually easily) and
+    use that information.
 */
+
+
 static int
-formxdata_print_value(Dwarf_Debug dbg,Dwarf_Attribute attrib,
+formxdata_print_value(Dwarf_Debug dbg,
+    Dwarf_Die die,
+    Dwarf_Attribute attrib,
     struct esb_s *esbp,
     Dwarf_Error * err, Dwarf_Bool hex_format)
 {
@@ -3626,10 +3780,22 @@ formxdata_print_value(Dwarf_Debug dbg,Dwarf_Attribute attrib,
                     we print. */
                 formx_unsigned(tempud,esbp,hex_format);
             } else {
-                formx_unsigned(tempud,esbp,hex_format);
-                esb_append(esbp,"(as signed = ");
-                formx_signed(tempsd,esbp);
-                esb_append(esbp,")");
+                /*  Here we don't know if signed or not and
+                    Assuming one or the other changes the
+                    interpretation of the bits. */
+                int helpertree_unsigned = 0;
+
+                helpertree_unsigned = check_for_type_unsigned(dbg,die,esbp);
+                if (!die || !helpertree_unsigned) {
+                    /* Signedness unclear. */
+                    formx_unsigned_and_signed_if_neg(tempud,tempsd,
+                        " (",hex_format,esbp);
+                } else if (helpertree_unsigned > 0) {
+                    formx_unsigned(tempud,esbp,hex_format);
+                } else {
+                    /* Value signed. */
+                    formx_signed(tempsd,esbp);
+                }
             }
         } else if (sres == DW_DLV_NO_ENTRY) {
             formx_unsigned(tempud,esbp,hex_format);
@@ -3672,6 +3838,18 @@ formxdata_print_value(Dwarf_Debug dbg,Dwarf_Attribute attrib,
     }
     /* Both are DW_DLV_NO_ENTRY which is crazy, impossible. */
     return DW_DLV_NO_ENTRY;
+}
+
+static void
+bracket_hex(const char *s1,
+    Dwarf_Unsigned v,
+    const char *s2,
+    struct esb_s * esbp)
+{
+    Dwarf_Bool hex_format = TRUE;
+    esb_append(esbp,s1);
+    formx_unsigned(v,esbp,hex_format);
+    esb_append(esbp,s2);
 }
 
 static char *
@@ -3955,18 +4133,9 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
                 if(res != DW_DLV_OK) {
                     print_error(dbg, "addr missing index ?!", res, err);
                 }
-                snprintf(small_buf, sizeof(small_buf),
-                    "(addr_index: 0x%" DW_PR_XZEROS DW_PR_DUx
-                    ")" ,
-                    (Dwarf_Unsigned) index);
-                /*  This is normal in a .dwo file. The .debug_addr
-                    is in a .o and in the final executable. */
-                esb_append(esbp, small_buf);
+                bracket_hex("(addr_index: ",index, ")",esbp);
             }
-            snprintf(small_buf, sizeof(small_buf),
-                "0x%" DW_PR_XZEROS DW_PR_DUx ,
-                (Dwarf_Unsigned) addr);
-            esb_append(esbp, small_buf);
+            bracket_hex("",addr,"",esbp);
         } else if (bres == DW_DLV_ERROR) {
             if (DW_DLE_MISSING_NEEDED_DEBUG_ADDR_SECTION ==
                 dwarf_errno(err)) {
@@ -3977,13 +4146,10 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
                 }
 
                 addr = 0;
-                snprintf(small_buf, sizeof(small_buf),
-                    "(addr_index: 0x%" DW_PR_XZEROS DW_PR_DUx
-                    ")<no .debug_addr section>" ,
-                    (Dwarf_Unsigned) index);
+                bracket_hex("(addr_index: ",index,
+                    ")<no .debug_addr section>",esbp);
                 /*  This is normal in a .dwo file. The .debug_addr
                     is in a .o and in the final executable. */
-                esb_append(esbp, small_buf);
             } else {
                 print_error(dbg, "addr formwith no addr?!", bres, err);
             }
@@ -4000,11 +4166,7 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
             section. */
         bres = dwarf_global_formref(attrib, &off, &err);
         if (bres == DW_DLV_OK) {
-            snprintf(small_buf, sizeof(small_buf),
-                "<global die offset 0x%" DW_PR_XZEROS DW_PR_DUx
-                ">",
-                (Dwarf_Unsigned) off);
-            esb_append(esbp, small_buf);
+            bracket_hex("<GOFF=",off, ">",esbp);
         } else {
             print_error(dbg,
                 "DW_FORM_ref_addr form with no reference?!",
@@ -4092,7 +4254,7 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
             if (fres != DW_DLV_OK) {
                 /*  Report incorrect offset */
                 snprintf(small_buf,sizeof(small_buf),
-                    "%s, global die offset=<0x%"  DW_PR_XZEROS  DW_PR_DUx
+                    "%s, GOFF=<0x%"  DW_PR_XZEROS  DW_PR_DUx
                     ">","invalid offset",goff);
                 print_error(dbg, small_buf, fres, err);
             }
@@ -4115,7 +4277,7 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
             if (die_overall_offset >= goff) {
                 snprintf(small_buf,sizeof(small_buf),
                     "ERROR: Sibling offset 0x%"  DW_PR_XZEROS  DW_PR_DUx
-                    " points %s its own die Global offset "
+                    " points %s its own die GOFF="
                     "0x%"  DW_PR_XZEROS  DW_PR_DUx,
                     goff,
                     (die_overall_offset == goff)?"at":"before",
@@ -4129,15 +4291,12 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
             constants. In dense form this results in <<>>. Ugly for
             dense form, but better than ambiguous. davea 9/94 */
         if (show_global_offsets) {
-            snprintf(small_buf, sizeof(small_buf),
-                "<0x%"  DW_PR_XZEROS  DW_PR_DUx " GOFF=0x%"  DW_PR_XZEROS  DW_PR_DUx ">",
-            (Dwarf_Unsigned)off, goff);
+            bracket_hex("<",off,"",esbp);
+            bracket_hex(" GOFF=",goff,">",esbp);
         } else {
-            snprintf(small_buf, sizeof(small_buf),
-                "<0x%" DW_PR_XZEROS DW_PR_DUx ">", off);
+            bracket_hex("<",off,">",esbp);
         }
 
-        esb_append(esbp, small_buf);
         if (check_type_offset) {
             attr = 0;
             wres = dwarf_whatattr(attrib, &attr, &err);
@@ -4284,10 +4443,8 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
                     &err,show_form_here);
 
                 if (wres == DW_DLV_OK) {
-                    snprintf(small_buf, sizeof(small_buf),
-                        "0x%08" DW_PR_DUx ,
-                        tempud);
-                    esb_append(esbp, small_buf);
+                    Dwarf_Bool hex_format = TRUE;
+                    formx_unsigned(tempud,esbp,hex_format);
                     /* Check attribute encoding */
                     if (check_attr_encoding) {
                         check_attributes_encoding(attr,theform,tempud);
@@ -4343,7 +4500,7 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
                 break;
             case DW_AT_const_value:
                 /* Do not use hexadecimal format */
-                wres = formxdata_print_value(dbg,attrib,esbp, &err, FALSE);
+                wres = formxdata_print_value(dbg,die,attrib,esbp, &err, FALSE);
                 if (wres == DW_DLV_OK){
                     /* String appended already. */
                 } else if (wres == DW_DLV_NO_ENTRY) {
@@ -4374,11 +4531,20 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
                 break;
             case DW_AT_upper_bound:
             case DW_AT_lower_bound:
-            default:
+            default:  {
+                Dwarf_Bool chex = FALSE;
+                Dwarf_Die  tdie = die;
+                if(DW_AT_ranges == attr) {
+                    /*  In this case do not look for data
+                        type for unsigned/signed.
+                        and do use HEX. */
+                    chex = TRUE;
+                    tdie = NULL;
+                }
                 /* Do not use hexadecimal format except for
                     DW_AT_ranges. */
-                wres = formxdata_print_value(dbg,attrib,esbp, &err,
-                    (DW_AT_ranges == attr));
+                wres = formxdata_print_value(dbg,
+                    tdie,attrib,esbp, &err, chex);
                 if (wres == DW_DLV_OK) {
                     /* String appended already. */
                 } else if (wres == DW_DLV_NO_ENTRY) {
@@ -4386,6 +4552,7 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
                 } else {
                     print_error(dbg, "Cannot get form data..", wres,
                         err);
+                }
                 }
                 break;
             }
@@ -4407,9 +4574,10 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
     case DW_FORM_sdata:
         wres = dwarf_formsdata(attrib, &tempsd, &err);
         if (wres == DW_DLV_OK) {
-            snprintf(small_buf, sizeof(small_buf),
-                "0x%" DW_PR_XZEROS DW_PR_DUx , tempsd);
-            esb_append(esbp, small_buf);
+            Dwarf_Bool hxform=TRUE;
+            tempud = tempsd;
+            formx_unsigned_and_signed_if_neg(tempud,tempsd,
+                " (",hxform,esbp);
         } else if (wres == DW_DLV_NO_ENTRY) {
             /* nothing? */
         } else {
@@ -4419,9 +4587,8 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
     case DW_FORM_udata:
         wres = dwarf_formudata(attrib, &tempud, &err);
         if (wres == DW_DLV_OK) {
-            snprintf(small_buf, sizeof(small_buf), "0x%" DW_PR_XZEROS DW_PR_DUx ,
-                tempud);
-            esb_append(esbp, small_buf);
+            Dwarf_Bool hex_format = TRUE;
+            formx_unsigned(tempud,esbp,hex_format);
         } else if (wres == DW_DLV_NO_ENTRY) {
             /* nothing? */
         } else {
@@ -4442,13 +4609,9 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
                 Dwarf_Unsigned index = 0;
                 esb_constructor(&saver);
                 sres = dwarf_get_debug_str_index(attrib,&index,&err);
-
                 esb_append(&saver,temps);
                 if(sres == DW_DLV_OK) {
-                    snprintf(small_buf, sizeof(small_buf),
-                        "(indexed string: 0x%" DW_PR_XZEROS DW_PR_DUx ")",
-                        index);
-                    esb_append(esbp, small_buf);
+                    bracket_hex("(indexed string: ",index,")",esbp);
                 } else {
                     esb_append(esbp,"(indexed string:no string provided?)");
                 }
@@ -4522,10 +4685,7 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
                 "Cannot get a  DW_FORM_sec_offset....",
                 wres, err);
         } else {
-            snprintf(small_buf, sizeof(small_buf),
-                "0x%" DW_PR_XZEROS DW_PR_DUx,
-                tempud);
-            esb_append(esbp,small_buf);
+            bracket_hex("",tempud,"",esbp);
         }
         }
 
@@ -4556,10 +4716,7 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
     case DW_FORM_GNU_ref_alt: {
         bres = dwarf_global_formref(attrib, &off, &err);
         if (bres == DW_DLV_OK) {
-            snprintf(small_buf, sizeof(small_buf),
-                "0x%" DW_PR_XZEROS DW_PR_DUx,
-                (Dwarf_Unsigned) off);
-            esb_append(esbp, small_buf);
+            bracket_hex("",off,"",esbp);
         } else {
             print_error(dbg,
                 "DW_FORM_GNU_ref_alt form with no reference?!",
