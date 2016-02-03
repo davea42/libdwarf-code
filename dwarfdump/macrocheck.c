@@ -37,7 +37,8 @@
     long ago.
 */
 
-void *  macro_check_tree;
+void *  macro_check_tree;    /* DWARF5 macros */
+void *  macinfo_check_tree; /* DWARF 2,3,4 macros */
 
 static struct Macrocheck_Map_Entry_s * macrocheck_map_insert(
     Dwarf_Unsigned off,
@@ -280,7 +281,8 @@ qsort_compare(const void *lin, const void *rin)
 }
 
 void
-print_macro_statistics(void **tsbase)
+print_macro_statistics(const char *name,void **tsbase,
+    Dwarf_Unsigned section_size)
 {
     Dwarf_Unsigned count = 0;
     Dwarf_Unsigned lowest = -1ll;
@@ -304,13 +306,14 @@ print_macro_statistics(void **tsbase)
     mac_as_array = (struct Macrocheck_Map_Entry_s **)calloc(count,
         sizeof(struct Macrocheck_Map_Entry_s *));
     if(!mac_as_array) {
-        printf("  Macro checking ERROR: "
+        printf("  Macro checking ERROR %s: "
             "unable to allocate %" DW_PR_DUu "pointers\n",
+            name,
             count);
         return;
     }
     dwarf_twalk(*tsbase,macro_walk_to_array);
-    printf("  Macro unit count: %" DW_PR_DUu "\n",count);
+    printf("  Macro unit count %s: %" DW_PR_DUu "\n",name,count);
     qsort(mac_as_array,
         count,sizeof(struct Macrocheck_Map_Entry_s *),
         qsort_compare);
@@ -378,10 +381,21 @@ print_macro_statistics(void **tsbase)
                 " (previous start offset of 0x%"  DW_PR_XZEROS DW_PR_DUx ")"
                 "\n",r->mp_key,lastend,laststart);
         }
-        lastend = r->mp_key + r->mp_len;
         laststart = r->mp_key;
+        lastend   = laststart + r->mp_len;
     }
+    /*  wholegap is a) starting offset > 0 and b)
+        space after used area before end of section. */
     wholegap = mac_as_array[0]->mp_key + internalgap;
+    if (lastend > section_size) {
+        /* Something seriously wrong */
+        printf(" ERROR: For offset 0x%" DW_PR_XZEROS DW_PR_DUx
+            " there is an overlap with the end of section "
+            "0x%"  DW_PR_XZEROS DW_PR_DUx
+            "\n",laststart,lastend);
+    } else {
+        wholegap += (section_size - lastend);
+    }
     if(wholegap) {
         printf("  Macro Offsets internal unused space: "
             "0x%" DW_PR_XZEROS DW_PR_DUx

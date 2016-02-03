@@ -28,6 +28,7 @@
 #include "globals.h"
 #include "naming.h"
 #include "dwconf.h"
+#include "macrocheck.h"
 #include "esb.h"
 
 #include "print_sections.h"
@@ -52,20 +53,22 @@ print_one_macro_entry_detail(long i,
     struct Dwarf_Macro_Details_s *mdp)
 {
     /* "DW_MACINFO_*: section-offset file-index [line] string\n" */
-    if (mdp->dmd_macro) {
-        printf("%3ld %s: %6" DW_PR_DUu " %2" DW_PR_DSd " [%4"
-            DW_PR_DSd "] \"%s\" \n",
-            i,
-            type,
-            (Dwarf_Unsigned)mdp->dmd_offset,
-            mdp->dmd_fileindex, mdp->dmd_lineno, mdp->dmd_macro);
-    } else {
-        printf("%3ld %s: %6" DW_PR_DUu " %2" DW_PR_DSd " [%4"
-            DW_PR_DSd "] 0\n",
-            i,
-            type,
-            (Dwarf_Unsigned)mdp->dmd_offset,
-            mdp->dmd_fileindex, mdp->dmd_lineno);
+    if (do_print_dwarf) {
+        if (mdp->dmd_macro) {
+            printf("%3ld %s: %6" DW_PR_DUu " %2" DW_PR_DSd " [%4"
+                DW_PR_DSd "] \"%s\" \n",
+                i,
+                type,
+                (Dwarf_Unsigned)mdp->dmd_offset,
+                mdp->dmd_fileindex, mdp->dmd_lineno, mdp->dmd_macro);
+        } else {
+            printf("%3ld %s: %6" DW_PR_DUu " %2" DW_PR_DSd " [%4"
+                DW_PR_DSd "] 0\n",
+                i,
+                type,
+                (Dwarf_Unsigned)mdp->dmd_offset,
+                mdp->dmd_fileindex, mdp->dmd_lineno);
+        }
     }
 
 }
@@ -121,23 +124,20 @@ print_one_macro_entry(long i,
 }
 
 /*  print data in .debug_macinfo */
-/*  FIXME: should print name of file whose index is in macro data
-    here  --  somewhere.  */
 /*ARGSUSED*/ extern void
-print_macinfo(Dwarf_Debug dbg)
+print_macinfo_by_offset(Dwarf_Debug dbg,Dwarf_Unsigned offset)
 {
-    Dwarf_Off offset = 0;
     Dwarf_Unsigned max = 0;
     Dwarf_Signed count = 0;
-    long group = 0;
     Dwarf_Macro_Details *maclist = NULL;
     int lres = 0;
-    Dwarf_Bool first = TRUE;
+    long i = 0;
+    struct macro_counts_s counts;
+    Dwarf_Unsigned totallen = 0;
+    Dwarf_Bool is_primary = TRUE;
+    Dwarf_Error error = 0;
 
     current_section_id = DEBUG_MACINFO;
-    if (!do_print_dwarf) {
-        return;
-    }
 
     /*  No real need to get the real section name, this
         section not used much in modern compilers
@@ -145,43 +145,46 @@ print_macinfo(Dwarf_Debug dbg)
         is obsolete as it takes too much space to be
         much used. */
 
-    while ((lres = dwarf_get_macro_details(dbg, offset,
-        max, &count, &maclist,
-        &err)) == DW_DLV_OK) {
-        long i = 0;
-        struct macro_counts_s counts;
+    lres = dwarf_get_macro_details(dbg, offset,
+        max, &count, &maclist, &error);
+    if (lres == DW_DLV_ERROR) {
+        print_error(dbg, "dwarf_get_macro_details", lres, error);
+    } else if (lres == DW_DLV_NO_ENTRY) {
+        return;
+    }
 
-
-        if (first) {
-            printf("\n.debug_macinfo\n");
-            first = FALSE;
-        }
-        memset(&counts, 0, sizeof(counts));
-
+    memset(&counts, 0, sizeof(counts));
+    if (do_print_dwarf) {
+        printf("\n.debug_macinfo\n");
         printf("\n");
-        printf("compilation-unit .debug_macinfo # %ld\n", group);
-        printf
-            ("num name section-offset file-index [line] \"string\"\n");
-        for (i = 0; i < count; i++) {
-            struct Dwarf_Macro_Details_s *mdp = &maclist[i];
+        printf("compilation-unit .debug_macinfo offset "
+            "0x%" DW_PR_XZEROS DW_PR_DUx "\n",offset);
+        printf("num name section-offset file-index [line] \"string\"\n");
+    }
+    for (i = 0; i < count; i++) {
+        struct Dwarf_Macro_Details_s *mdp = &maclist[i];
 
-            print_one_macro_entry(i, mdp, &counts);
-        }
+        print_one_macro_entry(i, mdp, &counts);
+    }
 
-        if (counts.mc_start_file == 0) {
-            printf
-                ("DW_MACINFO file count of zero is invalid DWARF2/3\n");
-        }
-        if (counts.mc_start_file != counts.mc_end_file) {
-            printf("Counts of DW_MACINFO file (%ld) end_file (%ld) "
-                "do not match!.\n",
-                counts.mc_start_file, counts.mc_end_file);
-        }
-        if (counts.mc_code_zero < 1) {
-            printf("Count of zeros in macro group should be non-zero "
-                "(1 preferred), count is %ld\n",
-                counts.mc_code_zero);
-        }
+    if (counts.mc_start_file == 0) {
+        printf("DW_MACINFO file count of zero is invalid DWARF2/3/4\n");
+    }
+    if (counts.mc_start_file != counts.mc_end_file) {
+        printf("Counts of DW_MACINFO file (%ld) end_file (%ld) "
+            "do not match!.\n",
+            counts.mc_start_file, counts.mc_end_file);
+    }
+    if (counts.mc_code_zero < 1) {
+        printf("Count of zeros in macro group should be non-zero "
+            "(1 preferred), count is %ld\n",
+            counts.mc_code_zero);
+    }
+    /* next byte is  maclist[count - 1].dmd_offset + 1; */
+    totallen = (maclist[count - 1].dmd_offset + 1) - offset;
+    add_macro_import(&macinfo_check_tree,is_primary, offset);
+    add_macro_area_len(&macinfo_check_tree,offset,totallen);
+    if (do_print_dwarf) {
         printf("Macro counts: start file %ld, "
             "end file %ld, "
             "define %ld, "
@@ -195,17 +198,13 @@ print_macinfo(Dwarf_Debug dbg)
             counts.mc_undef,
             counts.mc_extension,
             counts.mc_code_zero, counts.mc_unknown);
-
-
-        /* int type= maclist[count - 1].dmd_type; */
-        /* ASSERT: type is zero */
-
-        offset = maclist[count - 1].dmd_offset + 1;
-        dwarf_dealloc(dbg, maclist, DW_DLA_STRING);
-        ++group;
     }
-    if (lres == DW_DLV_ERROR) {
-        print_error(dbg, "dwarf_get_macro_details", lres, err);
-    }
+
+    /* int type= maclist[count - 1].dmd_type; */
+    /* ASSERT: type is zero */
+
+    dwarf_dealloc(dbg, maclist, DW_DLA_STRING);
+    return;
 }
+
 

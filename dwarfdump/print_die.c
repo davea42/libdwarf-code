@@ -536,6 +536,34 @@ print_cu_hdr_signature(Dwarf_Sig8 *signature,Dwarf_Unsigned typeoffset)
 }
 
 static int
+get_macinfo_offset(Dwarf_Debug dbg,
+    Dwarf_Die cu_die,
+    Dwarf_Unsigned *offset)
+{
+    Dwarf_Attribute attrib= 0;
+    int vres = 0;
+    int ares = 0;
+    Dwarf_Error error = 0;
+
+    ares = dwarf_attr(cu_die, DW_AT_macro_info, &attrib, &error);
+    if (ares == DW_DLV_ERROR) {
+        print_error(dbg, "dwarf_attr on DW_AT_macro_info", ares, error);
+    } else if (ares == DW_DLV_NO_ENTRY) {
+        return ares;
+    }
+    vres = dwarf_global_formref(attrib,offset,&error);
+    if (vres == DW_DLV_ERROR) {
+        dwarf_dealloc(dbg,attrib,DW_DLA_ATTR);
+        print_error(dbg, "dwarf_global_formref on DW_AT_macro_info",
+            vres, error);
+    } else if (vres == DW_DLV_NO_ENTRY) {
+    }
+    dwarf_dealloc(dbg,attrib,DW_DLA_ATTR);
+    return vres;
+}
+
+
+static int
 print_one_die_section(Dwarf_Debug dbg,Dwarf_Bool is_info)
 {
     Dwarf_Unsigned cu_header_length = 0;
@@ -774,6 +802,21 @@ print_one_die_section(Dwarf_Debug dbg,Dwarf_Bool is_info)
                         in_import_list,import_offset);
                 }
                 current_section_id = oldsection;
+            }
+            if (macinfo_flag || check_macros) {
+                int mres = 0;
+                int oldsection = current_section_id;
+                Dwarf_Unsigned offset = 0;
+
+                mres = get_macinfo_offset(dbg,cu_die,&offset);
+                if (mres == DW_DLV_NO_ENTRY) {
+                    /* By far the most likely result. */
+                }else if (mres == DW_DLV_ERROR) {
+                    print_error(dbg, "get_macinfo_offset", mres, err);
+                } else {
+                    print_macinfo_by_offset(dbg,offset);
+                    current_section_id = oldsection;
+                }
             }
             dwarf_dealloc(dbg, cu_die, DW_DLA_DIE);
             cu_die = 0;

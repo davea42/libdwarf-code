@@ -76,6 +76,8 @@ static int check_error = 0;
    reset per CU in tag_specific_checks_setup(). */
 Bucket_Group *pRangesInfo = NULL;
 
+struct section_high_offsets_s section_high_offsets_global;
+
 /* pLinkonceInfo records data about the link once sections.
    If a line range is not valid in the current CU it might
    be valid in a linkonce section, this data records the
@@ -130,7 +132,7 @@ static boolean abbrev_flag = FALSE;
 static boolean frame_flag = FALSE;      /* .debug_frame section. */
 static boolean eh_frame_flag = FALSE;   /* GNU .eh_frame section. */
 static boolean pubnames_flag = FALSE;
-static boolean macinfo_flag = FALSE; /* DWARF2,3,4. Old macro section*/
+boolean macinfo_flag = FALSE; /* DWARF2,3,4. Old macro section*/
 boolean macro_flag = FALSE; /* DWARF5(and DWARF4 extension) new macro section */
 static boolean loc_flag = FALSE;
 static boolean aranges_flag = FALSE; /* .debug_aranges section. */
@@ -626,6 +628,8 @@ main(int argc, char *argv[])
             elf_end(elf);
             continue;
         }
+        memset(&section_high_offsets_global,0,
+            sizeof(section_high_offsets_global));
         process_one_file(elf,elftied,
             file_name, tied_file_name,
             archive, &config_file_data);
@@ -1199,6 +1203,33 @@ dbgsetup(Dwarf_Debug dbg,struct dwconf_s *config_file_data)
     dwarf_set_harmless_error_list_size(dbg,50);
 }
 
+/*  Callable at any time, Sets section sizes with the sizes
+    known as of the call.
+    Repeat whenever about to  reference a size that might not
+    have been set as of the last call. */
+static void
+set_global_section_sizes(Dwarf_Debug dbg)
+{
+    dwarf_get_section_max_offsets_c(dbg,
+        &section_high_offsets_global.debug_info_size,
+        &section_high_offsets_global.debug_abbrev_size,
+        &section_high_offsets_global.debug_line_size,
+        &section_high_offsets_global.debug_loc_size,
+        &section_high_offsets_global.debug_aranges_size,
+        &section_high_offsets_global.debug_macinfo_size,
+        &section_high_offsets_global.debug_pubnames_size,
+        &section_high_offsets_global.debug_str_size,
+        &section_high_offsets_global.debug_frame_size,
+        &section_high_offsets_global.debug_ranges_size,
+        &section_high_offsets_global.debug_pubtypes_size,
+        &section_high_offsets_global.debug_types_size,
+        &section_high_offsets_global.debug_macro_size,
+        &section_high_offsets_global.debug_str_offsets_size,
+        &section_high_offsets_global.debug_sup_size,
+        &section_high_offsets_global.debug_cu_index_size,
+        &section_high_offsets_global.debug_tu_index_size);
+}
+
 /*
   Given a file which we know is an elf file, process
   the dwarf data.
@@ -1290,16 +1321,34 @@ process_one_file(Elf * elf,Elf *elftied,
     }
     reset_overall_CU_error_data();
     if (info_flag || line_flag ||
-        check_macros ||
-        macro_flag || cu_name_flag || search_is_on ||
+        check_macros || macinfo_flag || macro_flag ||
+        cu_name_flag || search_is_on ||
         producer_children_flag) {
+
         print_infos(dbg,TRUE);
         reset_overall_CU_error_data();
         print_infos(dbg,FALSE);
         if (check_macros) {
-            print_macro_statistics(&macro_check_tree);
+            Dwarf_Bool is_primary = TRUE;
+
+            set_global_section_sizes(dbg);
+            if(macro_check_tree) {
+                /* Fake item representing end of section. */
+                /* Length of the fake item is zero. */
+                print_macro_statistics("DWARF5 .debug_macro",
+                    &macro_check_tree,
+                    section_high_offsets_global.debug_macro_size);
+            }
+            if(macinfo_check_tree) {
+                /* Fake item representing end of section. */
+                /* Length of the fake item is zero. */
+                print_macro_statistics("DWARF2 .debug_macinfo",
+                    &macinfo_check_tree,
+                    section_high_offsets_global.debug_macinfo_size);
+            }
         }
         clear_macro_statistics(&macro_check_tree);
+        clear_macro_statistics(&macinfo_check_tree);
     }
     if (gdbindex_flag) {
         reset_overall_CU_error_data();
@@ -1312,11 +1361,6 @@ process_one_file(Elf * elf,Elf *elftied,
     if (pubnames_flag) {
         reset_overall_CU_error_data();
         print_pubnames(dbg);
-    }
-    if (macinfo_flag) {
-        /* This is bogus. FIXME. */
-        reset_overall_CU_error_data();
-        print_macinfo(dbg);
     }
     if (loc_flag) {
         reset_overall_CU_error_data();
@@ -2134,6 +2178,7 @@ process_args(int argc, char *argv[])
             case 'w':
                 check_macros = TRUE;
                 macro_flag = TRUE;
+                macinfo_flag = TRUE;
                 break;
             case 'y':
                 check_type_offset = TRUE;
