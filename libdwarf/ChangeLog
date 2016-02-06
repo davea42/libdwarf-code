@@ -1,4 +1,8 @@
 2016-02-06  David Anderson
+     * dwarf_tsearchhash.c: The original default
+       hash table size (a prime number) was very small. Now its
+       closer to 100.
+2016-02-06  David Anderson
      * dwarf_frame.h: Added fde_fd_eh_table_value. 
        Added fde->fd_gnu_eh_aug_present so presence/absence
        is unambiguous.

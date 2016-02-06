@@ -70,9 +70,10 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 static unsigned long long primes[] =
 {
-#if 1 /* for testing only */
-5,11, 17,23, 31, 47, 53, 79,
+#if 0 /* for testing only */
+5,11, 17,23, 31, 47, 53, 
 #endif
+79,
 1009,
 5591,
 10007,
