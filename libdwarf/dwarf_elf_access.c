@@ -464,8 +464,8 @@ find_section_to_relocate(Dwarf_Debug dbg,Dwarf_Half section_index,
 
 static void
 get_rela_elf32(Dwarf_Small *data, unsigned int i,
-  int endianness,
-  int machine,
+  UNUSEDARG int endianness,
+  UNUSEDARG int machine,
   struct Dwarf_Elf_Rela *relap)
 {
     Elf32_Rela *relp = (Elf32_Rela*)(data + (i * sizeof(Elf32_Rela)));
@@ -930,8 +930,10 @@ is_64bit_abs_reloc(unsigned int type, Dwarf_Half machine)
     The caller may decide to ignore the errors or report them. */
 static int
 update_entry(Dwarf_Debug dbg,
-    Dwarf_Bool is_64bit, Dwarf_Endianness endianess,
-    Dwarf_Half machine, struct Dwarf_Elf_Rela *rela,
+    Dwarf_Bool is_64bit, 
+    UNUSEDARG Dwarf_Endianness endianess,
+    UNUSEDARG Dwarf_Half machine, 
+    struct Dwarf_Elf_Rela *rela,
     Dwarf_Small *target_section,
     Dwarf_Small *symtab_section_data,
     Dwarf_Unsigned symtab_section_size,

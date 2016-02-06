@@ -479,7 +479,7 @@ is_section_known_already(Dwarf_Debug dbg,
     const char *scn_name,
     unsigned   *found_section_number,
     unsigned    start_number,
-    int        *err)
+    UNUSEDARG int        *err)
 {
     unsigned i = start_number;
     for ( ; i < dbg->de_debug_sections_total_entries; ++i) {

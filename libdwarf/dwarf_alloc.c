@@ -558,7 +558,7 @@ _dwarf_get_debug(void)
     No longer used.
 */
 void
-dwarf_print_memory_stats(Dwarf_Debug dbg)
+dwarf_print_memory_stats(UNUSEDARG Dwarf_Debug dbg)
 {
 }
 

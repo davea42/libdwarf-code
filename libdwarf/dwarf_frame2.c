@@ -1492,7 +1492,7 @@ read_encoded_ptr(Dwarf_Debug dbg,
     as augmentations are implementation specific.  */
 /* ARGSUSED */
 enum Dwarf_augmentation_type
-_dwarf_get_augmentation_type(Dwarf_Debug dbg,
+_dwarf_get_augmentation_type(UNUSEDARG Dwarf_Debug dbg,
     Dwarf_Small * augmentation_string,
     int is_gcc_eh_frame)
 {
@@ -1560,7 +1560,7 @@ static int
 get_gcc_eh_augmentation(Dwarf_Debug dbg, Dwarf_Small * frame_ptr,
     unsigned long *size_of_augmentation_data,
     enum Dwarf_augmentation_type augtype,
-    Dwarf_Small * section_pointer,
+    UNUSEDARG Dwarf_Small * section_pointer,
     Dwarf_Small * fde_eh_encoding_out,
     char *augmentation,
     Dwarf_Error *error)

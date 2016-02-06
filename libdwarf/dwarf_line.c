@@ -107,7 +107,8 @@ _dwarf_file_name_is_full_path(Dwarf_Small  *fname)
 #include "dwarf_line_table_reader_common.c"
 
 static void
-special_cat(char *dst,char *src,int srclen)
+special_cat(char *dst,char *src,
+    UNUSEDARG int srclen)
 {
 #if defined (HAVE_WINDOWS_PATH)
     /*  Always '/' instead of '\\', this is a Windows -> Unix

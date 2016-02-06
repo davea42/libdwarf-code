@@ -777,8 +777,8 @@ static int
 read_line_table_program(Dwarf_Debug dbg,
     Dwarf_Small *line_ptr,
     Dwarf_Small *line_ptr_end,
-    Dwarf_Small *orig_line_ptr,
-    Dwarf_Small *section_start,
+    UNUSEDARG Dwarf_Small *orig_line_ptr,
+    UNUSEDARG Dwarf_Small *section_start,
     Dwarf_Line_Context line_context,
     Dwarf_Half address_size,
     Dwarf_Bool doaddrs, /* Only true if SGI IRIX rqs calling. */
@@ -786,7 +786,7 @@ read_line_table_program(Dwarf_Debug dbg,
     Dwarf_Bool is_single_table,
     Dwarf_Bool is_actuals_table,
     Dwarf_Error *error,
-    int *err_count_out)
+    UNUSEDARG int *err_count_out)
 {
     Dwarf_Word i = 0;
     Dwarf_File_Entry cur_file_entry = 0;

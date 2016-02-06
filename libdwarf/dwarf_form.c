@@ -639,10 +639,10 @@ dwarf_global_formref(Dwarf_Attribute attr,
     elsewhere.  New May 2014*/
 
 int
-_dwarf_get_addr_index_itself(int theform,
+_dwarf_get_addr_index_itself(UNUSEDARG int theform,
     Dwarf_Small *info_ptr,
     Dwarf_Unsigned *val_out,
-    Dwarf_Error * error)
+    UNUSEDARG Dwarf_Error * error)
 {
     Dwarf_Unsigned index = 0;
     Dwarf_Word uleblen = 0;
@@ -1008,7 +1008,7 @@ dwarf_formblock(Dwarf_Attribute attr,
 int
 _dwarf_extract_string_offset_via_str_offsets(Dwarf_Debug dbg,
     Dwarf_Small *info_data_ptr,
-    Dwarf_Half   attrnum,
+    UNUSEDARG Dwarf_Half   attrnum,
     Dwarf_Half   attrform,
     Dwarf_CU_Context cu_context,
     Dwarf_Unsigned *str_sect_offset_out,

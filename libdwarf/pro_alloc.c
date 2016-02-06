@@ -119,7 +119,7 @@ _dwarf_p_get_alloc(Dwarf_P_Debug dbg, Dwarf_Unsigned size)
 */
 
 void
-dwarf_p_dealloc(Dwarf_Small * ptr)
+dwarf_p_dealloc(UNUSEDARG Dwarf_Small * ptr)
 {
     return;
 }
@@ -129,7 +129,8 @@ dwarf_p_dealloc(Dwarf_Small * ptr)
 */
 
 void
-_dwarf_p_dealloc(Dwarf_P_Debug dbg, Dwarf_Small * ptr) /* ARGSUSED */
+_dwarf_p_dealloc(UNUSEDARG Dwarf_P_Debug dbg, 
+    Dwarf_Small * ptr) /* ARGSUSED */
 {
   memory_list_t *lp;
   lp = BLOCK_TO_LIST(ptr);
