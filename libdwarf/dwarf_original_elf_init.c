@@ -215,7 +215,7 @@ dwarf_set_tied_dbg(Dwarf_Debug dbg, Dwarf_Debug tieddbg,Dwarf_Error*error)
 /*  Unsure of the use-case of this.
     New September 2015. */
 int
-dwarf_get_tied_dbg(Dwarf_Debug dbg, Dwarf_Debug *tieddbg_out, 
+dwarf_get_tied_dbg(Dwarf_Debug dbg, Dwarf_Debug *tieddbg_out,
     UNUSEDARG Dwarf_Error*error)
 {
     *tieddbg_out = dbg->de_tied_data.td_tied_object;

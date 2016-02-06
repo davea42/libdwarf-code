@@ -1,4 +1,7 @@
 2016-02-06  David Anderson
+    * dwarf_elf_access.c,dwarf_original_elf_init.c,dwarf_tsearchhash.c,
+      libdwarfdefs.h: Remove trailing whitespace.
+2016-02-06  David Anderson
     * configure.in: defines HAVE_UNUSED_ATTRIBUTE 
       if the gcc '__attribute__ ((unused))' compiles ok.
     * config.h.in, configure: Regenerated.

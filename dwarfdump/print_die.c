@@ -1985,7 +1985,7 @@ print_range_attribute(Dwarf_Debug dbg,
 */
 static int
 dot_ok_in_identifier(int tag,
-    UNUSEDARG Dwarf_Die die, 
+    UNUSEDARG Dwarf_Die die,
     const char *val)
 {
     if (strncmp(val,"altabi.",7)) {
@@ -3652,7 +3652,7 @@ formx_unsigned_and_signed_if_neg(Dwarf_Unsigned tempud,
     So we only need to a messy lookup once per type-die offset  */
 static int
 check_for_type_unsigned(Dwarf_Debug dbg,
-    Dwarf_Die die, 
+    Dwarf_Die die,
     UNUSEDARG struct esb_s *esbp)
 {
     int is_info = 0;

@@ -930,9 +930,9 @@ is_64bit_abs_reloc(unsigned int type, Dwarf_Half machine)
     The caller may decide to ignore the errors or report them. */
 static int
 update_entry(Dwarf_Debug dbg,
-    Dwarf_Bool is_64bit, 
+    Dwarf_Bool is_64bit,
     UNUSEDARG Dwarf_Endianness endianess,
-    UNUSEDARG Dwarf_Half machine, 
+    UNUSEDARG Dwarf_Half machine,
     struct Dwarf_Elf_Rela *rela,
     Dwarf_Small *target_section,
     Dwarf_Small *symtab_section_data,

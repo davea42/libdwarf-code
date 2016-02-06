@@ -81,7 +81,7 @@ typedef unsigned long long __uint64_t;
 #ifdef HAVE_UNUSED_ATTRIBUTE
 #define  UNUSEDARG __attribute__ ((unused))
 #else
-#define  UNUSEDARG 
+#define  UNUSEDARG
 #endif
 
 #endif /* LIBDWARFDEFS_H */
