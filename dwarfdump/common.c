@@ -26,6 +26,7 @@
 /* These do little except on Windows */
 
 #include "config.h"
+#include "warningcontrol.h"
 #include "common.h"
 #include <stdio.h>
 /* Windows specific header files */
@@ -39,7 +40,7 @@
 /* The Linux/Unix version does not want a version string to print
    unless -V is on the command line. */
 void
-print_version_details(const char * name,int alwaysprint)
+print_version_details(UNUSEDARG const char * name,int alwaysprint)
 {
 #ifdef WIN32
 #ifdef _DEBUG
@@ -60,7 +61,7 @@ print_version_details(const char * name,int alwaysprint)
 
 
 void
-print_args(int argc, char *argv[])
+print_args(UNUSEDARG int argc, UNUSEDARG char *argv[])
 {
 #ifdef WIN32
     int index = 1;

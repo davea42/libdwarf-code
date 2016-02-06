@@ -78,4 +78,10 @@ typedef unsigned long long __uint64_t;
 #define HAVE___UINT64_T 1
 #endif
 
+#ifdef HAVE_UNUSED_ATTRIBUTE
+#define  UNUSEDARG __attribute__ ((unused))
+#else
+#define  UNUSEDARG 
+#endif
+
 #endif /* LIBDWARFDEFS_H */

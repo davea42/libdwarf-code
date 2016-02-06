@@ -713,7 +713,9 @@ print_any_harmless_errors(Dwarf_Debug dbg)
 }
 
 static void
-print_object_header(Elf *elf,Dwarf_Debug dbg,unsigned local_section_map)
+print_object_header(UNUSEDARG Elf *elf,
+    Dwarf_Debug dbg,
+    unsigned local_section_map)
 {
     /* Debug section names to be included in printing */
     #define DW_SECTNAME_DEBUG_INFO     ".debug_info"
@@ -1152,7 +1154,8 @@ print_checks_results(void)
 
 /* This is for dwarf_print_lines() */
 static void
-printf_callback_for_libdwarf(void *userdata,const char *data)
+printf_callback_for_libdwarf(UNUSEDARG void *userdata,
+    const char *data)
 {
     printf("%s",data);
 }
@@ -1329,8 +1332,6 @@ process_one_file(Elf * elf,Elf *elftied,
         reset_overall_CU_error_data();
         print_infos(dbg,FALSE);
         if (check_macros) {
-            Dwarf_Bool is_primary = TRUE;
-
             set_global_section_sizes(dbg);
             if(macro_check_tree) {
                 /* Fake item representing end of section. */
@@ -2339,7 +2340,7 @@ print_error(Dwarf_Debug dbg,
 }
 /* ARGSUSED */
 void
-print_error_and_continue(Dwarf_Debug dbg,
+print_error_and_continue(UNUSEDARG Dwarf_Debug dbg,
     char * msg,
     int dwarf_code,
     Dwarf_Error err)

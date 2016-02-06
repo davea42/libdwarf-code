@@ -624,7 +624,7 @@ dwarf_twalk(const void *rootp,
 static void
 dwarf_tdestroy_inner(struct hs_base*h,
     void (*free_node)(void *nodep),
-    int depth)
+    UNUSEDARG int depth)
 {
     unsigned long ix = 0;
     unsigned long tsize = h->tablesize_;

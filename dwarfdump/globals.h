@@ -38,6 +38,8 @@ extern "C" {
 #define _GNU_SOURCE 1
 #endif
 
+#include "warningcontrol.h"
+
 /*  We want __uint32_t and __uint64_t and __int32_t __int64_t
     properly defined but not duplicated, since duplicate typedefs
     are not legal C.
@@ -116,6 +118,8 @@ typedef int boolean;
 #ifndef FAILED
 #define FAILED 1
 #endif
+
+
 
 /* size of attrib_buffer, defined in print_die.c */
 #define ATTRIB_BUFSIZ 999
@@ -559,6 +563,12 @@ void print_any_harmless_errors(Dwarf_Debug dbg);
 /* Mask to indicate all sections (by default) */
 #define DW_HDR_ALL            0x80000000
 #define DW_HDR_DEFAULT        0x00002fff
+
+#ifdef HAVE_UNUSED_ATTRIBUTE
+#define  UNUSEDARG __attribute__ ((unused))
+#else
+#define  UNUSEDARG
+#endif
 
 #ifdef __cplusplus
 }

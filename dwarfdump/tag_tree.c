@@ -399,6 +399,9 @@ main(int argc, char **argv)
 }
 
 /* A fake so we can use dwarf_names.c */
-void print_error (Dwarf_Debug dbg, string msg,int res, Dwarf_Error err)
+void print_error (UNUSEDARG Dwarf_Debug dbg, 
+    UNUSEDARG string msg,
+    UNUSEDARG int res, 
+    UNUSEDARG Dwarf_Error err)
 {
 }

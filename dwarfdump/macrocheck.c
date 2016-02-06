@@ -155,7 +155,8 @@ add_macro_import(void **base,Dwarf_Bool is_primary,Dwarf_Unsigned offset)
     macrocheck_map_insert(offset,prim_count,sec_count,base);
 }
 void
-add_macro_import_sup(void **base,Dwarf_Unsigned offset)
+add_macro_import_sup(UNUSEDARG void **base,
+    UNUSEDARG Dwarf_Unsigned offset)
 {
     /* FIXME */
     return;
@@ -175,7 +176,9 @@ add_macro_area_len(void **base, Dwarf_Unsigned offset,
 static Dwarf_Unsigned reccount = 0;
 
 static void
-macro_walk_count_recs(const void *nodep,const DW_VISIT which,const int depth)
+macro_walk_count_recs(UNUSEDARG const void *nodep,
+    const DW_VISIT which,
+    UNUSEDARG const int depth)
 {
     if (which == dwarf_postorder || which == dwarf_endorder) {
         return;
@@ -194,7 +197,7 @@ static Dwarf_Unsigned lowestoff = 0;
 static Dwarf_Bool lowestfound = FALSE;
 static void
 macro_walk_find_lowest(const void *nodep,const DW_VISIT  which,
-    const int  depth)
+    UNUSEDARG const int  depth)
 {
     struct Macrocheck_Map_Entry_s * re =
         *(struct Macrocheck_Map_Entry_s**)nodep;
@@ -246,7 +249,7 @@ static struct Macrocheck_Map_Entry_s **mac_as_array = 0;
 static unsigned mac_as_array_next = 0;
 static void
 macro_walk_to_array(const void *nodep,const DW_VISIT  which,
-    const int  depth)
+    UNUSEDARG const int  depth)
 {
     struct Macrocheck_Map_Entry_s * re =
         *(struct Macrocheck_Map_Entry_s**)nodep;

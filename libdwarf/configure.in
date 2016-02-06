@@ -35,6 +35,20 @@ AC_TRY_COMPILE([#include <sys/types.h>],[  __uint64_t p; p = 3;] ,
   AC_DEFINE(HAVE___UINT64_T_IN_SYS_TYPES_H,1,
 	[Define 1 if sys/types.h defines __uint64_t.]))
 
+AC_TRY_RUN([ 
+  static unsigned foo( unsigned x, __attribute__ ((unused)) int y)
+  {  unsigned x2 = x + 1;
+     return x2;
+  }
+  int main(void) {
+     unsigned y = 0; 
+     y = foo(12,y);
+     return 0;
+  }
+] ,
+  AC_DEFINE(HAVE_UNUSED_ATTRIBUTE,1,
+	[Define 1 if __attribute__ ((unused)) compiles ok.]))
+
 AC_SUBST(dwfzlib,[])
 AC_TRY_COMPILE([#include "zlib.h"],[ 
     Bytef dest[100]; 

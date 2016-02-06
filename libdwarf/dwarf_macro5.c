@@ -1377,7 +1377,7 @@ dwarf_get_macro_context_by_offset(Dwarf_Die cu_die,
 
 int dwarf_get_macro_section_name(Dwarf_Debug dbg,
    const char **sec_name_out,
-   Dwarf_Error *error)
+   UNUSEDARG Dwarf_Error *error)
 {
     struct Dwarf_Section_s *sec = 0;
 

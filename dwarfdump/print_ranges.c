@@ -97,7 +97,7 @@ print_ranges(Dwarf_Debug dbg)
 */
 static void
 check_ranges_list(Dwarf_Debug dbg,
-    Dwarf_Off die_off,
+    UNUSEDARG Dwarf_Off die_off,
     Dwarf_Die cu_die,
     Dwarf_Unsigned original_off,
     Dwarf_Ranges *rangeset,
