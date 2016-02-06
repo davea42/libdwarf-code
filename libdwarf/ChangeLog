@@ -1,3 +1,12 @@
+2016-02-06  David Anderson
+     * dwarf_frame.h: Added fde_fd_eh_table_value. 
+       Added fde->fd_gnu_eh_aug_present so presence/absence
+       is unambiguous.
+     * dwarf_frame.c: Added code to set fd_eh_table_value when
+       appropriate, though there is no interface for dwarfdump to
+       get the value yet.
+     * dwarf_frame2.c: Update the new fields appropriately.
+       Corrected some comments about the eh_frame cie_id field.
 2016-02-05  David Anderson
      * dwarf_frame2.c: Comments in get_cieptr_given_offset()
        were slightly incorrect and one calculation was pointlessly

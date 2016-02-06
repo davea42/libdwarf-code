@@ -671,22 +671,32 @@ print_one_fde(Dwarf_Debug dbg,
     }
 
     /* Do not print if in check mode */
-    if (!check_frames_extended) {
-        printf("<%5" DW_PR_DSd "><0x%" DW_PR_XZEROS  DW_PR_DUx
+    if (do_print_dwarf) {
+        /* Printing the FDE header. */
+        printf("<%5" DW_PR_DSd ">"
+            "<0x%" DW_PR_XZEROS  DW_PR_DUx
             ":0x%" DW_PR_XZEROS DW_PR_DUx
-            "><%s><fde offset 0x%" DW_PR_XZEROS DW_PR_DUx
+            "><%s>"
+            "<cie offset 0x%" DW_PR_XZEROS DW_PR_DUx ":"
+            ":cie index %5"  DW_PR_DUu ">"
+            "<fde offset 0x%" DW_PR_XZEROS DW_PR_DUx
             " length: 0x%" DW_PR_XZEROS  DW_PR_DUx ">",
-            cie_index, (Dwarf_Unsigned)low_pc,
+            fde_index,
+            (Dwarf_Unsigned)low_pc,
             (Dwarf_Unsigned)(low_pc + func_length),
-            temps ? temps : "", (Dwarf_Unsigned)fde_offset, fde_bytes_length);
+            temps ? temps : "",
+            (Dwarf_Unsigned)cie_offset,
+            (Dwarf_Unsigned)cie_index,
+            (Dwarf_Unsigned)fde_offset,
+            fde_bytes_length);
     }
 
 
 
     if (!is_eh) {
-        /* IRIX uses eh_table_offset. */
+        /* IRIX uses eh_table_offset. No one else uses it. */
         /* Do not print if in check mode */
-        if (!check_frames_extended) {
+        if (do_print_dwarf) {
             if (eh_table_offset == DW_DLX_NO_EH_OFFSET) {
                 printf("<eh offset %s>\n", "none");
             } else if (eh_table_offset == DW_DLX_EH_OFFSET_UNAVAILABLE) {
@@ -697,6 +707,7 @@ print_one_fde(Dwarf_Debug dbg,
             }
         }
     } else {
+        /* Printing the .eh_frame header augmentation string, if any. */
         int ares = 0;
         Dwarf_Small *data = 0;
         Dwarf_Unsigned len = 0;
@@ -705,11 +716,10 @@ print_one_fde(Dwarf_Debug dbg,
         if (ares == DW_DLV_NO_ENTRY) {
             /* do nothing. */
         } else if (ares == DW_DLV_OK) {
-            /* Do not print if in check mode */
-            if (!check_frames_extended) {
+            if (do_print_dwarf) {
                 unsigned k2 = 0;
 
-                printf("<eh aug data len 0x%" DW_PR_DUx , len);
+                printf("\n       <eh aug data len 0x%" DW_PR_DUx , len);
                 for (k2 = 0; k2 < len; ++k2) {
                     if (k2 == 0) {
                         printf(" bytes 0x");
@@ -718,12 +728,12 @@ print_one_fde(Dwarf_Debug dbg,
                 }
                 printf(">");
             }
-        }                       /* else DW_DLV_ERROR, do nothing */
-
+        } else {
+            print_error(dbg, "dwarf_get_fde_augmentation_data", ares, oneferr);
+        }
         /* Do not print if in check mode */
-        if (!check_frames_extended) {
+        if (do_print_dwarf) {
             printf("\n");
-
         }
     }
 
@@ -762,7 +772,7 @@ print_one_fde(Dwarf_Debug dbg,
             }
 
             /* Do not print if in check mode */
-            if (!printed_intro_addr && !check_frames_extended) {
+            if (!printed_intro_addr && do_print_dwarf) {
                 printf("        0x%" DW_PR_XZEROS DW_PR_DUx
                     ": ", (Dwarf_Unsigned)j);
                 printed_intro_addr = 1;
@@ -823,7 +833,7 @@ print_one_fde(Dwarf_Debug dbg,
             }
 
             /* Do not print if in check mode */
-            if (!printed_intro_addr && !check_frames_extended) {
+            if (!printed_intro_addr && do_print_dwarf) {
                 printf("        0x%" DW_PR_XZEROS DW_PR_DUx ": ",
                     (Dwarf_Unsigned)j);
                 printed_intro_addr = 1;
@@ -857,7 +867,7 @@ print_one_fde(Dwarf_Debug dbg,
                 &oneferr);
         if (offres == DW_DLV_OK) {
             /* Do not print if in check mode */
-            if (!check_frames_extended) {
+            if (do_print_dwarf) {
                 printf(" fde section offset %" DW_PR_DUu
                     " 0x%" DW_PR_XZEROS DW_PR_DUx
                     " cie offset for fde: %" DW_PR_DUu
@@ -916,7 +926,7 @@ print_one_fde(Dwarf_Debug dbg,
                 ; /* ? */
             } else {
                 /* Do not print if in check mode */
-                if (!check_frames_extended) {
+                if (do_print_dwarf) {
                     print_frame_inst_bytes(dbg, instrs,
                         (Dwarf_Signed) ilen,
                         data_alignment_factor,
@@ -989,8 +999,7 @@ print_one_cie(Dwarf_Debug dbg, Dwarf_Cie cie,
         return DW_DLV_NO_ENTRY;
     }
     {
-        /* Do not print if in check mode */
-        if (!check_frames_extended) {
+        if (do_print_dwarf) {
             printf("<%5" DW_PR_DUu ">\tversion\t\t\t\t%d\n",
                 cie_index, version);
             cires = dwarf_cie_section_offset(dbg, cie, &cie_off, &err);
@@ -1000,6 +1009,8 @@ print_one_cie(Dwarf_Debug dbg, Dwarf_Cie cie,
                     (Dwarf_Unsigned) cie_off,
                     (Dwarf_Unsigned) cie_off);
             }
+            /* This augmentation is from .debug_frame or
+                eh_frame of a cie. . A string. */
             printf("\taugmentation\t\t\t%s\n", augmenter);
             printf("\tcode_alignment_factor\t\t%" DW_PR_DUu "\n",
                 code_alignment_factor);
@@ -1014,16 +1025,20 @@ print_one_cie(Dwarf_Debug dbg, Dwarf_Cie cie,
             Dwarf_Small *data = 0;
             Dwarf_Unsigned len = 0;
 
+            /*  This call only returns  DW_DLV_OK if the augmentation
+                is cie aug from .eh_frame.  The
+                return is DW_DLV_OK only if there is eh_frame
+                style augmentation bytes (its not a string). */
             ares =
                 dwarf_get_cie_augmentation_data(cie, &data, &len, &err);
             if (ares == DW_DLV_NO_ENTRY) {
-                /* do nothing. */
-            } else if (ares == DW_DLV_OK && len > 0) {
-                /* Do not print if in check mode */
-                if (!check_frames_extended) {
+                /*  No Aug data (len zero) do nothing. */
+            } else if (ares == DW_DLV_OK) {
+                /*  We have the gnu eh_frame aug data bytes. */
+                if (do_print_dwarf) {
                     unsigned k2 = 0;
 
-                    printf(" eh aug data len 0x%" DW_PR_DUx , len);
+                    printf("\teh aug data len 0x%" DW_PR_DUx , len);
                     for (k2 = 0; data && k2 < len; ++k2) {
                         if (k2 == 0) {
                             printf(" bytes 0x");
@@ -1036,7 +1051,7 @@ print_one_cie(Dwarf_Debug dbg, Dwarf_Cie cie,
         }
 
         /* Do not print if in check mode */
-        if (!check_frames_extended) {
+        if (do_print_dwarf) {
             printf("\tbytes of initial instructions\t%" DW_PR_DUu "\n",
                 initial_instructions_length);
             printf("\tcie length\t\t\t%" DW_PR_DUu "\n", cie_length);
@@ -1726,7 +1741,7 @@ print_one_frame_reg_col(Dwarf_Debug dbg,
     char *type_title = "";
     int print_type_title = 1;
 
-    if (check_frames_extended) {
+    if (!do_print_dwarf) {
         return;
     }
 
@@ -1920,7 +1935,7 @@ print_frames(Dwarf_Debug dbg,
             /* no frame information */
         } else {                /* DW_DLV_OK */
             /* Do not print if in check mode */
-            if (!check_frames_extended) {
+            if (do_print_dwarf) {
                 printf("\n%s\n", frame_section_name);
                 printf("\nfde:\n");
             }
@@ -1939,18 +1954,16 @@ print_frames(Dwarf_Debug dbg,
                 }
             }
             /* Print the cie set. */
-            if (verbose) {
-                /* Do not print if in check mode */
-                if (!check_frames_extended) {
-                    printf("\ncie:\n");
-                }
-                for (i = 0; i < cie_element_count; i++) {
-                    print_one_cie(dbg, cie_data[i], i, address_size,
-                        config_data);
-                    ++cie_count;
-                    if (cie_count >= break_after_n_units) {
-                        break;
-                    }
+            /* Do not print if in check mode */
+            if (do_print_dwarf) {
+                printf("\ncie:\n");
+            }
+            for (i = 0; i < cie_element_count; i++) {
+                print_one_cie(dbg, cie_data[i], i, address_size,
+                    config_data);
+                ++cie_count;
+                if (cie_count >= break_after_n_units) {
+                    break;
                 }
             }
             dwarf_fde_cie_list_dealloc(dbg, cie_data, cie_element_count,

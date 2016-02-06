@@ -1,3 +1,8 @@
+2016-02-06  David Anderson
+     * print_frames.c: Was printing cie index, not fde index,
+       in the fde output. Now prints more sensibly.
+       Now tests do_print_dwarf, the flag it should have been using,
+       to decide whether to print.
 2016-02-02  David Anderson
      * dwarfdump.c:  Get section sizes so we can do a better
        sanity check on ofsets (ie, call  dwarf_get_section_max_offsets_c()).
