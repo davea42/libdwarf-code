@@ -51,14 +51,10 @@ static int dwarf_create_cie_from_start(Dwarf_Debug dbg,
     Dwarf_Small * section_ptr_end,
     Dwarf_Unsigned cie_id_value,
     Dwarf_Unsigned cie_count,
-int use_gnu_cie_calc,
-Dwarf_Cie * cie_ptr_to_use_out,
-Dwarf_Error * error);
-
-static Dwarf_Small *get_cieptr_given_offset(Dwarf_Unsigned cie_id_value,
     int use_gnu_cie_calc,
-    Dwarf_Small * section_ptr,
-    Dwarf_Small * cie_id_addr);
+    Dwarf_Cie * cie_ptr_to_use_out,
+    Dwarf_Error * error);
+
 static int get_gcc_eh_augmentation(Dwarf_Debug dbg,
     Dwarf_Small * frame_ptr,
     unsigned long
@@ -199,6 +195,38 @@ print_prefix(struct cie_fde_prefix_s *prefix, int line)
 }
 #endif
 
+/*  Make the 'cieptr' consistent across .debug_frame and .eh_frame.
+    Calculate a pointer into section bytes given a cie_id.
+
+    In .debug_frame, the CIE_pointer is an offset in .debug_frame.
+
+    In .eh_frame, the CIE Pointer is, when subtracted from the
+    offset of the current FDE, an offset in .debug_frame.
+    Here the 'offset of the current fde' is apparently
+    the offset of the CIE_pointer field, not the offset
+    of the 'length' field of the fde.
+*/
+
+static Dwarf_Small *
+get_cieptr_given_offset(Dwarf_Unsigned cie_id_value,
+    int use_gnu_cie_calc,
+    Dwarf_Small * section_ptr,
+    Dwarf_Small * cie_id_addr)
+{
+    Dwarf_Small *cieptr = 0;
+
+    if (use_gnu_cie_calc) {
+        /*  cie_id value is offset, in section, of the cie_id itself, to
+            use vm ptr of the value, less the value, to get to the cie
+            itself.  */
+        cieptr = cie_id_addr - cie_id_value;
+    } else {
+        /*  Traditional dwarf section offset is in cie_id */
+        cieptr = section_ptr + cie_id_value;
+    }
+    return cieptr;
+}
+
 
 
 /*  Internal function called from various places to create
@@ -328,13 +356,13 @@ _dwarf_get_fde_list_internal(Dwarf_Debug dbg, Dwarf_Cie ** cie_data,
             continue;
         } else {
             /*  This is an FDE, Frame Description Entry, see the Dwarf
-                Spec, section 6.4.1 */
+                Spec, (section 6.4.1 in DWARF2, DWARF3, DWARF4, ...)
+                Or see the .eh_frame specification,
+                from the Linux Foundation (or other source).  */
             int resf = DW_DLV_ERROR;
             Dwarf_Cie cie_ptr_to_use = 0;
             Dwarf_Fde fde_ptr_to_use = 0;
 
-            /*  Do not call this twice on one prefix, as
-                prefix.cf_cie_id_addr is altered as a side effect. */
             Dwarf_Small *cieptr_val =
                 get_cieptr_given_offset(prefix.cf_cie_id,
                     use_gnu_cie_calc,
@@ -1019,8 +1047,15 @@ dwarf_read_cie_fde_prefix(Dwarf_Debug dbg,
     data_out->cf_length = length;
     data_out->cf_local_length_size = local_length_size;
     data_out->cf_local_extension_size = local_extension_size;
+
+    /*  We do not know if it is a CIE or FDE id yet.
+        How we check depends whether it is .debug_frame
+        or .eh_frame. */
     data_out->cf_cie_id = cie_id;
+    
+    /*  The address of the CIE_id  or FDE_id value in memory.  */
     data_out->cf_cie_id_addr = cie_ptr_addr;
+
     data_out->cf_section_ptr = section_ptr_in;
     data_out->cf_section_index = section_index_in;
     data_out->cf_section_length = section_length_in;
@@ -1540,32 +1575,6 @@ get_gcc_eh_augmentation(Dwarf_Debug dbg, Dwarf_Small * frame_ptr,
     return DW_DLV_OK;
 }
 
-
-/*  Make the 'cie_id_addr' consistent across .debug_frame and .eh_frame.
-    Calculate a pointer into section bytes given a cie_id, which is
-    trivial for .debug_frame, but a bit more work for .eh_frame.
-*/
-static Dwarf_Small *
-get_cieptr_given_offset(Dwarf_Unsigned cie_id_value,
-    int use_gnu_cie_calc,
-    Dwarf_Small * section_ptr,
-    Dwarf_Small * cie_id_addr)
-{
-    Dwarf_Small *cieptr = 0;
-
-    if (use_gnu_cie_calc) {
-        /*  cie_id value is offset, in section, of the cie_id itself, to
-            use vm ptr of the value, less the value, to get to the cie
-            itself. In addition, munge *cie_id_addr to look *as if* it
-            was from real dwarf. */
-        cieptr = (Dwarf_Small *) ((Dwarf_Unsigned) cie_id_addr) -
-            ((Dwarf_Unsigned) cie_id_value);
-    } else {
-        /*  Traditional dwarf section offset is in cie_id */
-        cieptr = (section_ptr + cie_id_value);
-    }
-    return cieptr;
-}
 
 /* To properly release all spaced used.
    Earlier approaches (before July 15, 2005)

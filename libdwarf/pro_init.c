@@ -195,7 +195,7 @@ set_reloc_numbers(Dwarf_P_Debug dbg,Dwarf_Unsigned flags,const char *abiname)
         }
     }
     /* UNREACHED */
-};
+}
 
 static int
 common_init(Dwarf_P_Debug dbg, Dwarf_Unsigned flags, const char *abiname,

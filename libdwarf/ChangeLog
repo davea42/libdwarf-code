@@ -1,3 +1,12 @@
+2016-02-05  David Anderson
+     * dwarf_frame2.c: Comments in get_cieptr_given_offset()
+       were slightly incorrect and one calculation was pointlessly
+       full of casts.  Fixed commentary about the CIE_pointer
+       (CIE id or FDE id) field in a frame header.
+     * dwarf_loc2.c: Fixed compiler warning on signed/unsigned
+       comparison by changing local variable int->Dwarf_Unsigned..  
+     * pro_init.c:  Removed extraneous semicolon to avoid
+       warning for C90.
 2016-01-26  David Anderson
      * dwarf_abbrev.c: Remove useless blank line.
      * dwarf_macro5.c: Add check for macro_import offset correctness.
