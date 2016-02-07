@@ -594,7 +594,7 @@ rearrange_tree_so_p_llink_null( struct pkrecord * pkarray,
     struct ts_entry *head,
     struct ts_entry *r,
     struct ts_entry *p,
-    int pak,
+    UNUSEDARG int pak,
     struct ts_entry *pp,
     int ppak)
 {
