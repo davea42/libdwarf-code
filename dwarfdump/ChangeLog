@@ -1,4 +1,4 @@
-2016-02-06  David Anderson
+2016-02-07  David Anderson
      * common.c,dwarfdump.c: Update version string.
 2016-02-06  David Anderson
      * print_die.c,tag_attr.c,tag_tree.c: Remove trailing whitespace.

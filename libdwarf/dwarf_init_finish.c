@@ -2,7 +2,7 @@
 
   Copyright (C) 2000,2002,2003,2004,2005 Silicon Graphics, Inc. All Rights Reserved.
   Portions Copyright (C) 2008-2010 Arxan Technologies, Inc. All Rights Reserved.
-  Portions Copyright (C) 2009-2013 David Anderson. All Rights Reserved.
+  Portions Copyright (C) 2009-2016 David Anderson. All Rights Reserved.
   Portions Copyright (C) 2010-2012 SN Systems Ltd. All Rights Reserved.
 
   This program is free software; you can redistribute it and/or modify it
@@ -52,6 +52,17 @@
 #endif
 #ifdef HAVE_ZLIB
 #include "zlib.h"
+#endif
+
+/*   If your mingw elf.h is missing SHT_RELA and you do not
+     need SHT_RELA support
+     this define should work for you. 
+     It is the elf value, hopefully it will
+     not cause trouble. If does not work, try -1
+     or something else
+     and let us know what works.  */
+#ifndef SHT_RELA
+#define SHT_RELA 4
 #endif
 
 #define DWARF_DBG_ERROR(dbg,errval,retval) \

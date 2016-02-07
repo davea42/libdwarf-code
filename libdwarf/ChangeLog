@@ -1,3 +1,9 @@
+2016-02-07  David Anderson
+    * README: Mention 
+      https://github.com/jrfonseca/drmingw/tree/master/src/mgwhelp
+    * dwarf_init_finish.c: Kf SHT_RELA not defined define it as 4
+      in hopes that will not cause trouble for mingw.  For Elf
+      objects 4 is the correct value and is defined in elf.h
 2016-02-06  David Anderson
     * dwarf_elf_access.c,dwarf_original_elf_init.c,dwarf_tsearchhash.c,
       libdwarfdefs.h: Remove trailing whitespace.
