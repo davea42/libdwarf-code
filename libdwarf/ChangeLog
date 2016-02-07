@@ -1,4 +1,10 @@
 2016-02-07  David Anderson
+    * dwarf_init_finish.c: Fix indents. remove a trailing space.
+    * dwarf_tsearch.h,dwarf_tsearchhash.c: Now DW_TSHASHTYPE (if not defined
+      otherwise) defines the type returned by the hash function
+      used in tsearchhash.
+    * pro_alloc.c: Removed trailing whitespace.
+2016-02-07  David Anderson
     * README: Mention 
       https://github.com/jrfonseca/drmingw/tree/master/src/mgwhelp
     * dwarf_init_finish.c: If SHT_RELA not defined define it as 4

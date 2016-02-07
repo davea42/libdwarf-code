@@ -107,7 +107,7 @@ static void printlevel(int level)
 /* Not needed for this set of functions. */
 void *
 dwarf_initialize_search_hash( void **treeptr,
-    unsigned long(*hashfunc)(const void *key),
+    DW_TSHASHTYPE(*hashfunc)(const void *key),
     unsigned long size_estimate)
 {
     return *treeptr;

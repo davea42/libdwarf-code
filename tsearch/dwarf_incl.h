@@ -31,3 +31,6 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 #include <stdio.h>
 #include "stdlib.h" /* for exit() */
+#ifndef UNUSEDARG
+#define UNUSEDARG
+#endif

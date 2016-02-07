@@ -54,13 +54,13 @@
 #include "zlib.h"
 #endif
 
-/*   If your mingw elf.h is missing SHT_RELA and you do not
-     need SHT_RELA support
-     this define should work for you. 
-     It is the elf value, hopefully it will
-     not cause trouble. If does not work, try -1
-     or something else
-     and let us know what works.  */
+/*  If your mingw elf.h is missing SHT_RELA and you do not
+    need SHT_RELA support
+    this define should work for you.
+    It is the elf value, hopefully it will
+    not cause trouble. If does not work, try -1
+    or something else
+    and let us know what works.  */
 #ifndef SHT_RELA
 #define SHT_RELA 4
 #endif

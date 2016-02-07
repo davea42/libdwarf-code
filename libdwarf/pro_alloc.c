@@ -129,7 +129,7 @@ dwarf_p_dealloc(UNUSEDARG Dwarf_Small * ptr)
 */
 
 void
-_dwarf_p_dealloc(UNUSEDARG Dwarf_P_Debug dbg, 
+_dwarf_p_dealloc(UNUSEDARG Dwarf_P_Debug dbg,
     Dwarf_Small * ptr) /* ARGSUSED */
 {
   memory_list_t *lp;
