@@ -591,7 +591,8 @@ dwarf_tdelete(const void *key, void **rootp,
 static void
 dwarf_twalk_inner(const struct hs_base *h,
     struct ts_entry *p,
-    void (*action)(const void *nodep, const DW_VISIT which, const int depth),
+    void (*action)(const void *nodep, const DW_VISIT which,
+    UNUSEDARG const int depth),
     UNUSEDARG unsigned level)
 {
     unsigned long ix = 0;
@@ -609,7 +610,8 @@ dwarf_twalk_inner(const struct hs_base *h,
 
 void
 dwarf_twalk(const void *rootp,
-    void (*action)(const void *nodep, const DW_VISIT which, const int depth))
+    void (*action)(const void *nodep, const DW_VISIT which,
+    UNUSEDARG const int depth))
 {
     const struct hs_base *head = (const struct hs_base *)rootp;
     struct ts_entry *root = 0;
@@ -624,7 +626,7 @@ dwarf_twalk(const void *rootp,
 static void
 dwarf_tdestroy_inner(struct hs_base*h,
     void (*free_node)(void *nodep),
-    int depth)
+    UNUSEDARG int depth)
 {
     unsigned long ix = 0;
     unsigned long tsize = h->tablesize_;

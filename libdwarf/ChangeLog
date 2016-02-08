@@ -1,3 +1,9 @@
+2016-02-08  David Anderson
+    * dwarf_alloc.c: Drop VALTYPE, use DW_TSHASHTYPE instead.
+      Use DW_TSHASHTYPE in the hash functions.
+    * dwarf_tied.c: Use DW_TSHASHTYPE in the hash function.
+    * dwarf_tsearchhash.c: Add back the UNUSEDARG to avoid
+      unused argument warnings.
 2016-02-07  David Anderson
     * dwarf_init_finish.c: Fix indents. remove a trailing space.
     * dwarf_tsearch.h,dwarf_tsearchhash.c: Now DW_TSHASHTYPE (if not defined
