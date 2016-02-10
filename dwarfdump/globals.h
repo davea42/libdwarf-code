@@ -38,6 +38,8 @@ extern "C" {
 #define _GNU_SOURCE 1
 #endif
 
+#include "warningcontrol.h"
+
 /*  We want __uint32_t and __uint64_t and __int32_t __int64_t
     properly defined but not duplicated, since duplicate typedefs
     are not legal C.
@@ -116,6 +118,8 @@ typedef int boolean;
 #ifndef FAILED
 #define FAILED 1
 #endif
+
+
 
 /* size of attrib_buffer, defined in print_die.c */
 #define ATTRIB_BUFSIZ 999
@@ -318,6 +322,28 @@ typedef enum /* Dwarf_Check_Categories */ {
 } Dwarf_Check_Categories;
 
 
+struct section_high_offsets_s {
+    Dwarf_Unsigned debug_info_size;
+    Dwarf_Unsigned debug_abbrev_size;
+    Dwarf_Unsigned debug_line_size;
+    Dwarf_Unsigned debug_loc_size;
+    Dwarf_Unsigned debug_aranges_size;
+    Dwarf_Unsigned debug_macinfo_size;
+    Dwarf_Unsigned debug_pubnames_size;
+    Dwarf_Unsigned debug_str_size;
+    Dwarf_Unsigned debug_frame_size;
+    Dwarf_Unsigned debug_ranges_size;
+    Dwarf_Unsigned debug_pubtypes_size;
+    Dwarf_Unsigned debug_types_size;
+    Dwarf_Unsigned debug_macro_size;
+    Dwarf_Unsigned debug_str_offsets_size;
+    Dwarf_Unsigned debug_sup_size;
+    Dwarf_Unsigned debug_cu_index_size;
+    Dwarf_Unsigned debug_tu_index_size;
+};
+extern struct section_high_offsets_s section_high_offsets_global;
+
+
 extern boolean info_flag;
 enum line_flag_type_e {
   std,   /* Meaning choose single table DWARF5 new interfaces. */
@@ -333,9 +359,11 @@ extern boolean use_old_dwarf_loclist;
 extern boolean producer_children_flag;   /* List of CUs per compiler */
 
 extern boolean macro_flag; /* DWARF5.  And DWARF4 macro extension */
+extern boolean macinfo_flag; /* DWARF2,3,4. */
 
 /* tsearch tree used in macro checking. */
-extern void *  macro_check_tree;
+extern void *  macro_check_tree; /* DWARF5 macros. */
+extern void *  macinfo_check_tree; /* DWARF2,3,4 macros */
 
 extern char cu_name[ ];
 extern boolean cu_name_flag;
@@ -443,6 +471,8 @@ extern void DWARF_CHECK_ERROR2(Dwarf_Check_Categories category,
 extern void DWARF_CHECK_ERROR3(Dwarf_Check_Categories category,
     const char *str1, const char *str2, const char *strexpl);
 
+extern void print_macinfo_by_offset(Dwarf_Debug dbg,Dwarf_Unsigned offset);
+
 struct esb_s;
 
 extern Dwarf_Die current_cu_die_for_print_frames; /* This is
@@ -533,6 +563,12 @@ void print_any_harmless_errors(Dwarf_Debug dbg);
 /* Mask to indicate all sections (by default) */
 #define DW_HDR_ALL            0x80000000
 #define DW_HDR_DEFAULT        0x00002fff
+
+#ifdef HAVE_UNUSED_ATTRIBUTE
+#define  UNUSEDARG __attribute__ ((unused))
+#else
+#define  UNUSEDARG
+#endif
 
 #ifdef __cplusplus
 }

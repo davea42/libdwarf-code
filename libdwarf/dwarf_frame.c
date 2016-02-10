@@ -2272,13 +2272,13 @@ dwarf_get_fde_augmentation_data(Dwarf_Fde fde,
         _dwarf_error(NULL, error, DW_DLE_FDE_NULL);
         return (DW_DLV_ERROR);
     }
+    if(!fde->fd_gnu_eh_aug_present) {
+        return DW_DLV_NO_ENTRY;
+    }
     cie = fde->fd_cie;
     if (cie == NULL) {
         _dwarf_error(NULL, error, DW_DLE_CIE_NULL);
         return (DW_DLV_ERROR);
-    }
-    if (cie->ci_gnu_eh_augmentation_len == 0) {
-        return DW_DLV_NO_ENTRY;
     }
     *augdata = (Dwarf_Small *) fde->fd_gnu_eh_augmentation_bytes;
     *augdata_len = fde->fd_gnu_eh_augmentation_len;

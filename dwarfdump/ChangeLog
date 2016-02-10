@@ -1,8 +1,43 @@
+2016-02-07  David Anderson
+     * common.c,dwarfdump.c: Update version string.
+2016-02-06  David Anderson
+     * print_die.c,tag_attr.c,tag_tree.c: Remove trailing whitespace.
+2016-02-06  David Anderson
+     * warningcontrol.h: Defines UNUSEDARG macro as needed.
+     * common.c,dwarf_tsearchbal.c,dwarfdump.c,globals.h,
+       macrocheck.c: Now use UNUSEDARG macro so known-unused
+       args do not cause spurious warnings.
+     * configure.in: Sets HAVE_UNUSED_ATTRIBUTE if the compiler
+       in use supports __attribute ((unused)). So we can have
+       lots of warnings turned on without seeing the warnings
+       we wish to ignore for now.
+     * configure,config.h.in: Regenerated.
+2016-02-06  David Anderson
+     * print_frames.c: Was printing cie index, not fde index,
+       in the fde output. Now prints more sensibly.
+       Now tests do_print_dwarf, the flag it should have been using,
+       to decide whether to print.
+2016-02-02  David Anderson
+     * dwarfdump.c:  Get section sizes so we can do a better
+       sanity check on ofsets (ie, call  dwarf_get_section_max_offsets_c()).
+       Check DWARF2 macros for sanity just as we do DWARF5
+       macros.  Read DWARF2 macros per-cu, not as a standalone
+       section. Add global data section_high_offsets_global,
+       a struct with all known section sizes.
+     * macrocheck.c: New section size argument for more complete
+       size analysis.
+     * globals.h: Declarations for  section_high_offsets_global.
+     * macrocheck.h: Update prototype of print_macro_statistics().
+     * print_die.c: Drop section-as-a-whole macro reporting for
+       macinfo in favor of reporting per CU.
+     * print_macros.c: Allow for print and check runs (not both
+       at once).
 2016-01-28  David Anderson
      * dwarfdump.c,common.c: Update version string.
      * print_die.c: Changed the most frequent global die
        offset values to print as GOFF=0x...
-       for uniformity with -G and space saving from the string 'global die offset'.
+       for uniformity with -G and space saving from the 
+       string 'global die offset'.
 2016-01-27  David Anderson
      * print_die.c: Added a helpertree find call on typedieoffset
        which is really a better check for known signed/unsigned.

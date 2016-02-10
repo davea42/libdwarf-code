@@ -6,7 +6,6 @@
 # test17 is also supposed to fail, it adds 8 twice.
 myexit=0
 
-#These test expecting failure.
 #The following line assumes the test cases have been
 #placed in a directory named 'testcases' and
 #that the .gz versions expanded.
@@ -14,8 +13,16 @@ myexit=0
 #libdwarf regression tests (available from sourceforge)
 #in the directory
 #     tsearchtests
+# It's best to copy the tests from regressiontests
+# into 'testcases'
+# Not change what b refers to.
+# gunzip the .gz files in testcases, not in regressiontets
+# DO NOT expect testpass to match testpass.base
+# as there are pointers being printed. 
+# fldiff (or other graphical diff)  on them will show the patterns match.
 b=testcases
 
+#These test expecting failure.
 echo >testfail
 for opts in "" -byvalue
 do
@@ -32,7 +39,7 @@ done
 
 
 diff  $b/testfail.base testfail
-if test $? -ne 0
+if [  $? -ne 0 ]
 then
    echo FAIL because testfail got unexpected output.
    myexit=1
@@ -76,22 +83,33 @@ do
 done
 
 diff  $b/testpass.base testpass
-if test $? -ne 0
+if [ $? -ne 0 ]
 then
    echo FAIL because testpass got unexpected output.
+   echo "No surprise, there are pointers being printed"
+   echo "try fldiff $b/testpass.base testpass"
    myexit=1
+fi
+lcb=`wc -l < $b/testpass.base`
+lcn=`wc -l < testpass`
+echo
+if [ $lcb -eq $lcn ]
+then
+    echo "Line counts match:  $b/testpass.base testpass"
+else
+    echo "Line counts NO NOT match:  $b/testpass.base testpass"
 fi
 
 
 grep error testpass >testpasserrs
 grep FAIL  testpass >>testpasserrs
 ct=`wc -l <testpasserrs`
-if $ct -ne 0
+if [ $ct -ne 0 ]
 then
     echo FAIL due to error and FAIL lines in testpass
     myexit=1
 fi
-if $myexit -ne 0
+if [ $myexit -ne 0 ]
 then
    echo FAIL the search tests.
    exit 1

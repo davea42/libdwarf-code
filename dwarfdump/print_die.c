@@ -393,8 +393,8 @@ print_debug_fission_header(struct Dwarf_Debug_Fission_Per_CU_s *fsd)
 }
 
 static void
-print_cu_hdr_cudie(Dwarf_Debug dbg,
-    Dwarf_Die cudie,
+print_cu_hdr_cudie(UNUSEDARG Dwarf_Debug dbg,
+    UNUSEDARG Dwarf_Die cudie,
     Dwarf_Unsigned overall_offset,
     Dwarf_Unsigned offset )
 {
@@ -534,6 +534,34 @@ print_cu_hdr_signature(Dwarf_Sig8 *signature,Dwarf_Unsigned typeoffset)
         esb_destructor(&sig8str);
     }
 }
+
+static int
+get_macinfo_offset(Dwarf_Debug dbg,
+    Dwarf_Die cu_die,
+    Dwarf_Unsigned *offset)
+{
+    Dwarf_Attribute attrib= 0;
+    int vres = 0;
+    int ares = 0;
+    Dwarf_Error error = 0;
+
+    ares = dwarf_attr(cu_die, DW_AT_macro_info, &attrib, &error);
+    if (ares == DW_DLV_ERROR) {
+        print_error(dbg, "dwarf_attr on DW_AT_macro_info", ares, error);
+    } else if (ares == DW_DLV_NO_ENTRY) {
+        return ares;
+    }
+    vres = dwarf_global_formref(attrib,offset,&error);
+    if (vres == DW_DLV_ERROR) {
+        dwarf_dealloc(dbg,attrib,DW_DLA_ATTR);
+        print_error(dbg, "dwarf_global_formref on DW_AT_macro_info",
+            vres, error);
+    } else if (vres == DW_DLV_NO_ENTRY) {
+    }
+    dwarf_dealloc(dbg,attrib,DW_DLA_ATTR);
+    return vres;
+}
+
 
 static int
 print_one_die_section(Dwarf_Debug dbg,Dwarf_Bool is_info)
@@ -774,6 +802,21 @@ print_one_die_section(Dwarf_Debug dbg,Dwarf_Bool is_info)
                         in_import_list,import_offset);
                 }
                 current_section_id = oldsection;
+            }
+            if (macinfo_flag || check_macros) {
+                int mres = 0;
+                int oldsection = current_section_id;
+                Dwarf_Unsigned offset = 0;
+
+                mres = get_macinfo_offset(dbg,cu_die,&offset);
+                if (mres == DW_DLV_NO_ENTRY) {
+                    /* By far the most likely result. */
+                }else if (mres == DW_DLV_ERROR) {
+                    print_error(dbg, "get_macinfo_offset", mres, err);
+                } else {
+                    print_macinfo_by_offset(dbg,offset);
+                    current_section_id = oldsection;
+                }
             }
             dwarf_dealloc(dbg, cu_die, DW_DLA_DIE);
             cu_die = 0;
@@ -1598,7 +1641,7 @@ show_attr_form_error(Dwarf_Debug dbg,unsigned attr,unsigned form,struct esb_s *o
 static boolean
 traverse_attribute(Dwarf_Debug dbg, Dwarf_Die die, Dwarf_Half attr,
     Dwarf_Attribute attr_in,
-    boolean print_information,
+    UNUSEDARG boolean print_information,
     char **srcfiles, Dwarf_Signed cnt,
     int die_indent_level)
 {
@@ -1941,7 +1984,9 @@ print_range_attribute(Dwarf_Debug dbg,
     as a questionable DW_AT_name. Which would be silly.
 */
 static int
-dot_ok_in_identifier(int tag,Dwarf_Die die, const char *val)
+dot_ok_in_identifier(int tag,
+    UNUSEDARG Dwarf_Die die,
+    const char *val)
 {
     if (strncmp(val,"altabi.",7)) {
         /*  Ignore the names of the form 'altabi.name',
@@ -2828,7 +2873,7 @@ void
 dwarfdump_print_one_locdesc(Dwarf_Debug dbg,
     Dwarf_Locdesc * llbuf, /* Non-zero for old interface. */
     Dwarf_Locdesc_c locdesc,  /* Non-zero for 2015 interface. */
-    Dwarf_Unsigned llent, /* Which desc we have . */
+    UNUSEDARG Dwarf_Unsigned llent, /* Which desc we have . */
     Dwarf_Unsigned entrycount, /* How many location operators (DW_OP)? */
     Dwarf_Addr  baseaddr,
     struct esb_s *string_out)
@@ -2912,7 +2957,7 @@ _dwarf_print_one_expr_op(Dwarf_Debug dbg,
     Dwarf_Loc* expr,
     Dwarf_Locdesc_c exprc,
     int index,
-    Dwarf_Addr baseaddr,
+    UNUSEDARG Dwarf_Addr baseaddr,
     struct esb_s *string_out)
 {
     /*  local_space_needed is intended to be 'more than big enough'
@@ -3132,7 +3177,7 @@ _dwarf_print_one_expr_op(Dwarf_Debug dbg,
 }
 
 static void
-loc_error_check(Dwarf_Debug dbg,
+loc_error_check(UNUSEDARG Dwarf_Debug dbg,
     Dwarf_Addr lopcfinal,
     Dwarf_Addr lopc,
     Dwarf_Addr hipcfinal,
@@ -3606,7 +3651,9 @@ formx_unsigned_and_signed_if_neg(Dwarf_Unsigned tempud,
     Otherwise return 0 meaning 'no information'.
     So we only need to a messy lookup once per type-die offset  */
 static int
-check_for_type_unsigned(Dwarf_Debug dbg,Dwarf_Die die, struct esb_s *esbp)
+check_for_type_unsigned(Dwarf_Debug dbg,
+    Dwarf_Die die,
+    UNUSEDARG struct esb_s *esbp)
 {
     int is_info = 0;
     struct Helpertree_Base_s * helperbase = 0;
@@ -4901,7 +4948,7 @@ legal_tag_tree_combination(Dwarf_Half tag_parent, Dwarf_Half tag_child)
 
 /* Print a detailed tag and attributes usage */
 void
-print_tag_attributes_usage(Dwarf_Debug dbg)
+print_tag_attributes_usage(UNUSEDARG Dwarf_Debug dbg)
 {
 #ifdef HAVE_USAGE_TAG_ATTR
     /*  Traverse the tag-tree table to print its usage and then use the

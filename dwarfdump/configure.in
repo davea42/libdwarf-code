@@ -77,6 +77,21 @@ AC_TRY_COMPILE([#include <sys/types.h>
         ]; ,
 	AC_DEFINE(HAVE_REGEX,1,
 		[Define 1 if regex seems to be defined]))
+
+AC_TRY_RUN([
+  static unsigned foo( unsigned x, __attribute__ ((unused)) int y)
+  {  unsigned x2 = x + 1;
+     return x2;
+  }
+  int main(void) {
+     unsigned y = 0;
+     y = foo(12,y);
+     return 0;
+  }
+] ,
+  AC_DEFINE(HAVE_UNUSED_ATTRIBUTE,1,
+        [Define 1 if __attribute__ ((unused)) compiles ok.]))
+
 AC_SUBST(dwfzlib,[])
 AC_TRY_COMPILE([#include "zlib.h"],[
     Bytef dest[100];

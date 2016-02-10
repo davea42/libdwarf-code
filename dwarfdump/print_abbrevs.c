@@ -209,9 +209,9 @@ static Dwarf_Unsigned abbrev_array_size = 0;
 static void
 check_abbrev_num_sequence(Dwarf_Unsigned abbrev_code,
     Dwarf_Unsigned last_abbrev_code,
-    Dwarf_Unsigned abbrev_array_size,
-    Dwarf_Unsigned abbrev_entry_count,
-    Dwarf_Unsigned total_abbrevs_counted)
+    UNUSEDARG Dwarf_Unsigned abbrev_array_size,
+    UNUSEDARG Dwarf_Unsigned abbrev_entry_count,
+    UNUSEDARG Dwarf_Unsigned total_abbrevs_counted)
 {
     char buf[128];
 
@@ -360,7 +360,8 @@ get_abbrev_array_info(Dwarf_Debug dbg, Dwarf_Unsigned offset_in)
     might not be as large as abbrev_array_size says
     the array is.  This should catch that case. */
 void
-validate_abbrev_code(Dwarf_Debug dbg,Dwarf_Unsigned abbrev_code)
+validate_abbrev_code(UNUSEDARG Dwarf_Debug dbg,
+    Dwarf_Unsigned abbrev_code)
 {
     char buf[128];
 

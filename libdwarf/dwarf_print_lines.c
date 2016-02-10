@@ -170,8 +170,8 @@ print_line_detail(
 #include "dwarf_line_table_reader_common.c"
 
 void
-_dwarf_print_line_context_record(Dwarf_Debug dbg,
-    Dwarf_Line_Context line_context)
+_dwarf_print_line_context_record(UNUSEDARG Dwarf_Debug dbg,
+    UNUSEDARG Dwarf_Line_Context line_context)
 {
     return;
 }

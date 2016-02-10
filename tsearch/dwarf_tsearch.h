@@ -1,3 +1,5 @@
+#ifndef DWARF_TSEARCH
+#define DWARF_TSEARCH
 /* Copyright (c) 2013, David Anderson
 All rights reserved.
 
@@ -55,6 +57,12 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "stdafx.h"
 #endif /* HAVE_STDAFX_H */
 
+/*  The hashfunc return is now easily changed with
+    cc -Duintptr_t or something. */
+#ifndef DW_TSHASHTYPE
+#define DW_TSHASHTYPE unsigned long
+#endif
+
 /*  The DW_VISIT values passed back to you through
     the callback function in dwarf_twalk();
 */
@@ -72,17 +80,6 @@ DW_VISIT;
    once to get a key you passed in.
 
 */
-
-/*  We rename these so there is no conflict with another version
-    of the tsearch sources, such as is used in dwarfdump. */
-#define dwarf_tsearch  _dwarf_tsearch
-#define dwarf_tfind    _dwarf_tfind
-#define dwarf_tdelete  _dwarf_tdelete
-#define dwarf_twalk    _dwarf_twalk
-#define dwarf_tdestroy _dwarf_tdestroy
-#define dwarf_tdump    _dwarf_tdump
-#define dwarf_initialize_search_hash _dwarf_initialize_search_hash
-
 
 void *dwarf_tsearch(const void * /*key*/, void ** /*rootp*/,
     int (* /*compar*/)(const void *, const void *));
@@ -122,9 +119,9 @@ void dwarf_tdump(const void*root,
 /* Returns NULL  and does nothing
    unless the implemenation used uses a hash tree. */
 void * dwarf_initialize_search_hash( void **treeptr,
-    unsigned long(*hashfunc)(const void *key),
+    DW_TSHASHTYPE (*hashfunc)(const void *key),
     unsigned long size_estimate);
-
+#endif /* DWARF_TSEARCH */
 
 
 

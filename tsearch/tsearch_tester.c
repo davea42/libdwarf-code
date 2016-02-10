@@ -361,7 +361,7 @@ mt_free_func(void *mt_data)
     return;
 }
 #ifdef HASHSEARCH
-static unsigned long
+static DW_TSHASHTYPE
 mt_hashfunc(const void *keyp)
 {
     /* our key here is particularly simple. */
@@ -648,9 +648,11 @@ insertonebypointer(void **tree, unsigned long addr,int ct)
         re = *(struct example_tentry **)retval;
         if(re != mt) {
             /* Found existing, error. */
-            printf("insertonebypointer rec %d addr 0x%lu found record"
+            printf("insertonebypointer rec %d addr %lu 0x%lx found record"
                 " preexisting, error\n",
-                ct,(unsigned long)addr);
+                ct,
+                (unsigned long)addr,
+                (unsigned long)addr);
             mt_free_func(mt);
             return 1;
         } else {
@@ -758,7 +760,7 @@ applybypointer(struct myacts *m,
 
 
 #ifdef HASHSEARCH
-static unsigned long
+static DW_TSHASHTYPE
 value_hashfunc(const void *keyp)
 {
     VALTYPE up = (VALTYPE )keyp;

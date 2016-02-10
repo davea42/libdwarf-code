@@ -187,7 +187,7 @@ int dwarf_get_ranges(Dwarf_Debug dbg,
 
 void
 dwarf_ranges_dealloc(Dwarf_Debug dbg, Dwarf_Ranges * rangesbuf,
-    Dwarf_Signed rangecount)
+    UNUSEDARG Dwarf_Signed rangecount)
 {
     dwarf_dealloc(dbg,rangesbuf, DW_DLA_RANGES);
 }
