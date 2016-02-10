@@ -1725,7 +1725,7 @@ process_args(int argc, char *argv[])
                         goto badopt;
                     }
                     if (!strcmp(&dwoptarg[6],"std")) {
-                        line_flag_selection = std;
+                        line_flag_selection =  singledw5;
                     } else if (!strcmp(&dwoptarg[6],"s2l")){
                         line_flag_selection= s2l;
                     } else if (!strcmp(&dwoptarg[6],"orig")){

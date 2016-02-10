@@ -346,7 +346,7 @@ extern struct section_high_offsets_s section_high_offsets_global;
 
 extern boolean info_flag;
 enum line_flag_type_e {
-  std,   /* Meaning choose single table DWARF5 new interfaces. */
+  singledw5,   /* Meaning choose single table DWARF5 new interfaces. */
   s2l,   /* Meaning choose two-level DWARF5 new interfaces. */
   orig,  /* Meaning choose DWARF2,3,4 single level interface. */
   orig2l /* Meaning choose DWARF 2,3,4 two-level interface. */

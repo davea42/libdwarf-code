@@ -1,4 +1,8 @@
 2016-02-10  David Anderson
+     * globals.h: Change enum val from std to singledw5.
+       Some compilation environments reserve 'std'.
+     * dwarfdump.c,print_lines.c: Use the new spelling.
+2016-02-10  David Anderson
      * common.c,dwarfdump.c: Update version string.
 2016-02-07  David Anderson
      * common.c,dwarfdump.c: Update version string.
