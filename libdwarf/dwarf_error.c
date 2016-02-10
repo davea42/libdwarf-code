@@ -406,6 +406,7 @@ const char *_dwarf_errmsgs[] = {
     "DW_DLE_MACRO_PAST_END(325)",
     "DW_DLE_LINE_STRP_OFFSET_BAD(326)",
     "DW_DLE_STRING_FORM_IMPROPER(327) An internal libdwarf logic error",
+    "DW_DLE_ELF_FLAGS_NOT_AVAILABLE(328) elf/non-elf object confusion?",
 };
 
 
