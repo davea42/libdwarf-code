@@ -97,6 +97,7 @@ which shows simple LGPL code that implements the necessary object
 reading interfaces for PE objects. dwarf_pe.cpp 
 fills out the Dwarf_Obj_Access_Methods 
 object interface and opens an object
+(see dwarf_object_init())
 using the PE object access making the full libdwarf API
 available.
 To enable dection of Windows pathnames as full paths

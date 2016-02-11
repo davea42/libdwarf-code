@@ -703,12 +703,12 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
 
         Normal code should pick an interface
         (for most  the best choice is what we here call
-        line_flag_selection == std)
+        line_flag_selection ==  singledw5)
         and use just that interface set.
 
         Sorry about the length of the code that
         results from having so many interfaces.  */
-    if (line_flag_selection == std) {
+    if (line_flag_selection ==  singledw5) {
         lres = dwarf_srclines_b(cu_die,&lineversion,
             &table_count,&line_context,
             &err);
@@ -774,7 +774,7 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
                     /* ignore_die_stack= */TRUE);
             }
         }
-        if(line_flag_selection == std || line_flag_selection == s2l) {
+        if(line_flag_selection ==  singledw5 || line_flag_selection == s2l) {
             if (table_count == 0 || table_count == 1) {
                 /* ASSERT: is_single_table == true */
                 Dwarf_Bool is_logicals = FALSE;
@@ -847,7 +847,7 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
                 printf(" Line table is present but no lines present\n");
             }
         }
-        if(line_flag_selection == std ||
+        if(line_flag_selection ==  singledw5 ||
             line_flag_selection == s2l) {
             dwarf_srclines_dealloc_b(line_context);
         } else {

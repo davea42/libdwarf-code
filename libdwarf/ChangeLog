@@ -1,3 +1,14 @@
+2016-02-10  David Anderson
+    * README: Improved a comment about Dwarf_Obj_Access_Methods.
+    * dwarf_elf_access.c: New function _dwarf_get_elf_flags_func()
+      extracts the sh_flags field from Elf sections. In an odd way
+      so we preserve binary and source compatibility.+
+    * dwarf_error.c,libdwarf.h.in: New error DW_DLE_ELF_FLAGS_NOT_AVAILABLE.
+    * dwarf_init_finish.c: Use new (global) function pointer
+      _dwarf_get_elf_flags_func_ptr
+      to access extra Elf data without breaking compatibility.
+      Add additional way (SHF_COMPRESSED) to detect zlib
+      compression and expand the compressed data.
 2016-02-08  David Anderson
     * dwarf_alloc.c: Drop VALTYPE, use DW_TSHASHTYPE instead.
       Use DW_TSHASHTYPE in the hash functions.

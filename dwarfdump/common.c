@@ -34,7 +34,7 @@
 #include "stdafx.h"
 #endif /* HAVE_STDAFX_H */
 
-#define DWARFDUMP_VERSION " Sat Feb  6 21:49:18 PST 2016  "
+#define DWARFDUMP_VERSION " Wed Feb 10 09:04:52 PST 2016  "
 #define RELEASE_DATE      "20150507"
 
 /* The Linux/Unix version does not want a version string to print
