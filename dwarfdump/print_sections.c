@@ -49,10 +49,10 @@ void
 deal_with_name_offset_err(Dwarf_Debug dbg,
     char *err_loc,
     char *name, Dwarf_Unsigned die_off,
-    int nres, Dwarf_Error err)
+    int nres, Dwarf_Error aerr)
 {
     if (nres == DW_DLV_ERROR) {
-        Dwarf_Unsigned myerr = dwarf_errno(err);
+        Dwarf_Unsigned myerr = dwarf_errno(aerr);
 
         if (myerr == DW_DLE_OFFSET_BAD) {
             printf("Error: bad offset %s, %s %" DW_PR_DUu
@@ -62,7 +62,7 @@ deal_with_name_offset_err(Dwarf_Debug dbg,
                 die_off,
                 die_off);
         }
-        print_error(dbg, err_loc, nres, err);
+        print_error(dbg, err_loc, nres, aerr);
     }
 }
 

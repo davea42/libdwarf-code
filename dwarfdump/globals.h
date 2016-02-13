@@ -414,7 +414,7 @@ extern void print_ranges_list_to_extra(Dwarf_Debug dbg,
     Dwarf_Signed rangecount,
     Dwarf_Unsigned bytecount,
     struct esb_s *stringbuf);
-boolean should_skip_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die, Dwarf_Error err);
+boolean should_skip_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die);
 
 void get_address_size_and_max(Dwarf_Debug dbg,
    Dwarf_Half * size,
@@ -422,14 +422,16 @@ void get_address_size_and_max(Dwarf_Debug dbg,
    Dwarf_Error *err);
 
 
+#if 0
 /* Returns the DW_AT_name of the CU */
 string old_get_cu_name(Dwarf_Debug dbg,Dwarf_Die cu_die,Dwarf_Error err);
+#endif
 
 /* Returns the producer of the CU */
 int get_cu_name(Dwarf_Debug dbg,Dwarf_Die cu_die,
-    Dwarf_Error err,char **short_name,char **long_name);
+    char **short_name,char **long_name);
 int get_producer_name(Dwarf_Debug dbg,Dwarf_Die cu_die,
-    Dwarf_Error err,struct esb_s *producername);
+    struct esb_s *producername);
 
 /* Get number of abbreviations for a CU */
 extern void get_abbrev_array_info(Dwarf_Debug dbg,Dwarf_Unsigned offset);

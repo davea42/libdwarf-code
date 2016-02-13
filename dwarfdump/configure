@@ -3670,7 +3670,7 @@ fi
 # Check whether --enable-wall was given.
 if test "${enable_wall+set}" = set; then :
   enableval=$enable_wall;
-         dwfwall="-Wall -O0 -Wpointer-arith -Wmissing-declarations -Wmissing-prototypes -Wdeclaration-after-statement -Wextra -Wcomment -Wformat -Wpedantic -Wuninitialized -Wno-long-long"
+         dwfwall="-Wall -O0 -Wpointer-arith -Wmissing-declarations -Wmissing-prototypes -Wdeclaration-after-statement -Wextra -Wcomment -Wformat -Wpedantic -Wuninitialized -Wno-long-long -Wshadow"
 
 fi
 
@@ -3913,7 +3913,6 @@ $as_echo "#define HAVE_LIBELF_OFF64_OK 1" >>confdefs.h
 
 fi
 rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
-
 
 
 ac_config_files="$ac_config_files Makefile"

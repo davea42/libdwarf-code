@@ -698,7 +698,7 @@ dwarf_create_cie_from_after_start(Dwarf_Debug dbg,
     case aug_gcc_eh_z:{
         /*  Here we have Augmentation Data Length (uleb128) followed
             by Augmentation Data bytes (not a string). */
-        int res = DW_DLV_ERROR;
+        int resz = DW_DLV_ERROR;
         Dwarf_Unsigned adlen = 0;
 
         /* Not a great test. FIXME */
@@ -709,7 +709,7 @@ dwarf_create_cie_from_after_start(Dwarf_Debug dbg,
         DECODE_LEB128_UWORD(frame_ptr, adlen);
         cie_aug_data_len = adlen;
         cie_aug_data = frame_ptr;
-        res = gnu_aug_encodings(dbg,
+        resz = gnu_aug_encodings(dbg,
             (char *) augmentation,
             cie_aug_data,
             cie_aug_data_len,
@@ -719,10 +719,10 @@ dwarf_create_cie_from_after_start(Dwarf_Debug dbg,
             &gnu_fde_begin_encoding,
             &gnu_personality_handler_addr,
             error);
-        if (res != DW_DLV_OK) {
+        if (resz != DW_DLV_OK) {
             _dwarf_error(dbg, error,
                 DW_DLE_FRAME_AUGMENTATION_UNKNOWN);
-            return res;
+            return resz;
         }
         frame_ptr += adlen;
         }

@@ -364,7 +364,7 @@ static char *config_file_defaults[] = {
 #endif
     0
 };
-static struct dwconf_s config_file_data;
+static struct dwconf_s g_config_file_data;
 
 /* Output filename */
 static const char *output_file = 0;
@@ -547,9 +547,10 @@ main(int argc, char *argv[])
     /*  Because LibDwarf now generates some new warnings,
         allow the user to hide them by using command line options */
     {
-        Dwarf_Cmdline_Options cmd;
-        cmd.check_verbose_mode = check_verbose_mode;
-        dwarf_record_cmdline_options(cmd);
+        Dwarf_Cmdline_Options wcmd;
+        /* The struct has just one field!. */
+        wcmd.check_verbose_mode = check_verbose_mode;
+        dwarf_record_cmdline_options(wcmd);
     }
 
 
@@ -632,7 +633,7 @@ main(int argc, char *argv[])
             sizeof(section_high_offsets_global));
         process_one_file(elf,elftied,
             file_name, tied_file_name,
-            archive, &config_file_data);
+            archive, &g_config_file_data);
         cmd = elf_next(elf);
         elf_end(elf);
     }
@@ -1160,18 +1161,20 @@ printf_callback_for_libdwarf(UNUSEDARG void *userdata,
     printf("%s",data);
 }
 
+
+/*  Does not return on error. */
 void
 get_address_size_and_max(Dwarf_Debug dbg,
    Dwarf_Half * size,
    Dwarf_Addr * max,
-   Dwarf_Error *err)
+   Dwarf_Error *aerr)
 {
     int dres = 0;
     Dwarf_Half lsize = 4;
     /* Get address size and largest representable address */
-    dres = dwarf_get_address_size(dbg,&lsize,err);
+    dres = dwarf_get_address_size(dbg,&lsize,aerr);
     if (dres != DW_DLV_OK) {
-        print_error(dbg, "get_address_size()", dres, *err);
+        print_error(dbg, "get_address_size()", dres, *aerr);
     }
     if(max) {
         *max = (lsize == 8 ) ? 0xffffffffffffffffULL : 0xffffffff;
@@ -1184,24 +1187,24 @@ get_address_size_and_max(Dwarf_Debug dbg,
 
 /* dbg is often null when dbgtied was passed in. */
 static void
-dbgsetup(Dwarf_Debug dbg,struct dwconf_s *config_file_data)
+dbgsetup(Dwarf_Debug dbg,struct dwconf_s *setup_config_file_data)
 {
     if (!dbg) {
         return;
     }
     dwarf_set_frame_rule_initial_value(dbg,
-        config_file_data->cf_initial_rule_value);
+        setup_config_file_data->cf_initial_rule_value);
     dwarf_set_frame_rule_table_size(dbg,
-        config_file_data->cf_table_entry_count);
+        setup_config_file_data->cf_table_entry_count);
     dwarf_set_frame_cfa_value(dbg,
-        config_file_data->cf_cfa_reg);
+        setup_config_file_data->cf_cfa_reg);
     dwarf_set_frame_same_value(dbg,
-        config_file_data->cf_same_val);
+        setup_config_file_data->cf_same_val);
     dwarf_set_frame_undefined_value(dbg,
-        config_file_data->cf_undefined_val);
-    if (config_file_data->cf_address_size) {
+        setup_config_file_data->cf_undefined_val);
+    if (setup_config_file_data->cf_address_size) {
         dwarf_set_default_address_size(dbg,
-            config_file_data->cf_address_size);
+            setup_config_file_data->cf_address_size);
     }
     dwarf_set_harmless_error_list_size(dbg,50);
 }
@@ -1243,7 +1246,7 @@ process_one_file(Elf * elf,Elf *elftied,
     const char * file_name,
     const char * tied_file_name,
     int archive,
-    struct dwconf_s *config_file_data)
+    struct dwconf_s *l_config_file_data)
 {
     Dwarf_Debug dbg = 0;
     Dwarf_Debug dbgtied = 0;
@@ -1289,8 +1292,8 @@ process_one_file(Elf * elf,Elf *elftied,
         printf("\narchive member \t%s\n",
             mem_header ? mem_header->ar_name : "");
     }
-    dbgsetup(dbg,config_file_data);
-    dbgsetup(dbgtied,config_file_data);
+    dbgsetup(dbg,l_config_file_data);
+    dbgsetup(dbgtied,l_config_file_data);
     get_address_size_and_max(dbg,&elf_address_size,0,&err);
 
     /*  Ok for dbgtied to be NULL. */
@@ -1386,7 +1389,7 @@ process_one_file(Elf * elf,Elf *elftied,
     if (frame_flag || eh_frame_flag) {
         reset_overall_CU_error_data();
         current_cu_die_for_print_frames = 0;
-        print_frames(dbg, frame_flag, eh_frame_flag, config_file_data);
+        print_frames(dbg, frame_flag, eh_frame_flag, l_config_file_data);
     }
     if (static_func_flag) {
         reset_overall_CU_error_data();
@@ -1881,7 +1884,7 @@ process_args(int argc, char *argv[])
             /* -S option: strings for 'any' and 'match' */
             {
                 const char *tempstr = 0;
-                boolean err = TRUE;
+                boolean serr = TRUE;
                 search_is_on = TRUE;
                 /* 'v' option, to print number of occurrences */
                 /* -S[v]match|any|regex=text*/
@@ -1895,7 +1898,7 @@ process_args(int argc, char *argv[])
                     tempstr = remove_quotes_pair(search_match_text);
                     search_match_text = do_uri_translation(tempstr,"-S match=");
                     if (strlen(search_match_text) > 0) {
-                        err = FALSE;
+                        serr = FALSE;
                     }
                 }
                 else {
@@ -1905,7 +1908,7 @@ process_args(int argc, char *argv[])
                         tempstr = remove_quotes_pair(search_any_text);
                         search_any_text = do_uri_translation(tempstr,"-S any=");
                         if (strlen(search_any_text) > 0) {
-                            err = FALSE;
+                            serr = FALSE;
                         }
                     }
 #ifdef HAVE_REGEX
@@ -1925,14 +1928,14 @@ process_args(int argc, char *argv[])
                                         search_regex_text);
                                 }
                                 else {
-                                    err = FALSE;
+                                    serr = FALSE;
                                 }
                             }
                         }
                     }
 #endif /* HAVE_REGEX */
                 }
-                if (err) {
+                if (serr) {
                     fprintf(stderr,"-S any=<text> or -S match=<text> or -S regex=<text>\n");
                     fprintf(stderr, "is allowed, not -S %s\n",dwoptarg);
                     usage_error = TRUE;
@@ -2288,21 +2291,21 @@ process_args(int argc, char *argv[])
         }
     }
 
-    init_conf_file_data(&config_file_data);
+    init_conf_file_data(&g_config_file_data);
     if (config_file_abi && generic_1200_regs) {
         printf("Specifying both -R and -x abi= is not allowed. Use one "
             "or the other.  -x abi= ignored.\n");
         config_file_abi = FALSE;
     }
     if (generic_1200_regs) {
-        init_generic_config_1200_regs(&config_file_data);
+        init_generic_config_1200_regs(&g_config_file_data);
     }
     if (config_file_abi && (frame_flag || eh_frame_flag)) {
         int res = find_conf_file_and_read_config(
             esb_get_string(&config_file_path),
             config_file_abi,
             config_file_defaults,
-            &config_file_data);
+            &g_config_file_data);
 
         if (res > 0) {
             printf
@@ -2327,14 +2330,15 @@ void
 print_error(Dwarf_Debug dbg,
     char * msg,
     int dwarf_code,
-    Dwarf_Error err)
+    Dwarf_Error lerr)
 {
-    print_error_and_continue(dbg,msg,dwarf_code,err);
+    print_error_and_continue(dbg,msg,dwarf_code,lerr);
     if (dbg) {
+        Dwarf_Error ignored_err = 0;
         /*  If dbg was never initialized dwarf_finish
             can do nothing useful. There is no
             global-state for libdwarf to clean up. */
-        dwarf_finish(dbg, &err);
+        dwarf_finish(dbg, &ignored_err);
     }
     exit(FAILED);
 }
@@ -2343,13 +2347,13 @@ void
 print_error_and_continue(UNUSEDARG Dwarf_Debug dbg,
     char * msg,
     int dwarf_code,
-    Dwarf_Error err)
+    Dwarf_Error lerr)
 {
     printf("\n");
 
     if (dwarf_code == DW_DLV_ERROR) {
-        string errmsg = dwarf_errmsg(err);
-        Dwarf_Unsigned myerr = dwarf_errno(err);
+        string errmsg = dwarf_errmsg(lerr);
+        Dwarf_Unsigned myerr = dwarf_errno(lerr);
 
         printf( "%s ERROR:  %s:  %s (%lu)\n",
             program_name, msg, errmsg, (unsigned long) myerr);
@@ -2371,7 +2375,7 @@ print_error_and_continue(UNUSEDARG Dwarf_Debug dbg,
     does not match the command-line-supplied
     cu name.  Else returns false.*/
 boolean
-should_skip_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die, Dwarf_Error err)
+should_skip_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
 {
     Dwarf_Half tag = 0;
     Dwarf_Attribute attrib = 0;
@@ -2379,26 +2383,27 @@ should_skip_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die, Dwarf_Error err)
     int dares = 0;
     int tres = 0;
     int fres = 0;
+    Dwarf_Error lerr = 0;
 
-    tres = dwarf_tag(cu_die, &tag, &err);
+    tres = dwarf_tag(cu_die, &tag, &lerr);
     if (tres != DW_DLV_OK) {
         print_error(dbg, "dwarf_tag in aranges",
-            tres, err);
+            tres, lerr);
     }
     dares = dwarf_attr(cu_die, DW_AT_name, &attrib,
-        &err);
+        &lerr);
     if (dares != DW_DLV_OK) {
         print_error(dbg, "dwarf_attr arange"
             " derived die has no name",
-            dares, err);
+            dares, lerr);
         }
-    fres = dwarf_whatform(attrib, &theform, &err);
+    fres = dwarf_whatform(attrib, &theform, &lerr);
     if (fres == DW_DLV_OK) {
         if (theform == DW_FORM_string
             || theform == DW_FORM_strp) {
             char * temps = 0;
             int sres = dwarf_formstring(attrib, &temps,
-                &err);
+                &lerr);
             if (sres == DW_DLV_OK) {
                 char *p = temps;
                 if (cu_name[0] != '/') {
@@ -2425,21 +2430,22 @@ should_skip_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die, Dwarf_Error err)
             } else {
                 print_error(dbg,
                     "arange: string missing",
-                    sres, err);
+                    sres, lerr);
             }
         }
     } else {
         print_error(dbg,
             "dwarf_whatform unexpected value.",
-            fres, err);
+            fres, lerr);
     }
     dwarf_dealloc(dbg, attrib, DW_DLA_ATTR);
     return FALSE;
 }
 
+#if 0  /* No longer used.  */
 /* Returns the DW_AT_name of the CU */
 string
-old_get_cu_name(Dwarf_Debug dbg, Dwarf_Die cu_die, Dwarf_Error err)
+old_get_cu_name(Dwarf_Debug dbg, Dwarf_Die cu_die, Dwarf_Error lerr)
 {
     static struct esb_s esb_attr_name;
     Dwarf_Half tag;
@@ -2452,7 +2458,7 @@ old_get_cu_name(Dwarf_Debug dbg, Dwarf_Die cu_die, Dwarf_Error err)
     /* Initialize flexible string buffer */
     esb_empty_string(&esb_attr_name);
 
-    tres = dwarf_tag(cu_die, &tag, &err);
+    tres = dwarf_tag(cu_die, &tag, &lerr);
     if (tres != DW_DLV_OK) {
         print_error(dbg, "dwarf_tag in aranges",
             tres, err);
@@ -2498,17 +2504,19 @@ old_get_cu_name(Dwarf_Debug dbg, Dwarf_Die cu_die, Dwarf_Error err)
     /* Return the esb internal string */
     return esb_get_string(&esb_attr_name);
 }
+#endif
 
-/* Returns the cu of the CU */
+/* Returns the cu of the CU. In case of error, give up, do not return. */
 int get_cu_name(Dwarf_Debug dbg, Dwarf_Die cu_die,
-    Dwarf_Error err, string *short_name, string *long_name)
+    string *short_name, string *long_name)
 {
     Dwarf_Attribute name_attr = 0;
+    Dwarf_Error lerr = 0;
     int ares;
 
-    ares = dwarf_attr(cu_die, DW_AT_name, &name_attr, &err);
+    ares = dwarf_attr(cu_die, DW_AT_name, &name_attr, &lerr);
     if (ares == DW_DLV_ERROR) {
-        print_error(dbg, "hassattr on DW_AT_name", ares, err);
+        print_error(dbg, "hassattr on DW_AT_name", ares, lerr);
     } else {
         if (ares == DW_DLV_NO_ENTRY) {
             *short_name = "<unknown name>";
@@ -2541,37 +2549,39 @@ int get_cu_name(Dwarf_Debug dbg, Dwarf_Die cu_die,
             *short_name = esb_get_string(&esb_short_name);
         }
     }
-
     dwarf_dealloc(dbg, name_attr, DW_DLA_ATTR);
     return ares;
 }
 
 /*  Returns the producer of the CU
     Caller must ensure producernameout is
-    a valid, constructed, empty esb_s instance before calling. */
-int get_producer_name(Dwarf_Debug dbg, Dwarf_Die cu_die,
-    Dwarf_Error err, struct esb_s *producernameout)
+    a valid, constructed, empty esb_s instance before calling.
+    Never returns DW_DLV_ERROR.  */
+int
+get_producer_name(Dwarf_Debug dbg, Dwarf_Die cu_die,
+    struct esb_s *producernameout)
 {
     Dwarf_Attribute producer_attr = 0;
+    Dwarf_Error pnerr = 0;
 
-    int ares = dwarf_attr(cu_die, DW_AT_producer, &producer_attr, &err);
+    int ares = dwarf_attr(cu_die, DW_AT_producer,
+        &producer_attr, &pnerr);
     if (ares == DW_DLV_ERROR) {
-        print_error(dbg, "hassattr on DW_AT_producer", ares, err);
+        print_error(dbg, "hassattr on DW_AT_producer", ares, pnerr);
+    }
+    if (ares == DW_DLV_NO_ENTRY) {
+        /*  We add extra quotes so it looks more like
+            the names for real producers that get_attr_value
+            produces. */
+        esb_append(producernameout,"\"<CU-missing-DW_AT_producer>\"");
     } else {
-        if (ares == DW_DLV_NO_ENTRY) {
-            /*  We add extra quotes so it looks more like
-                the names for real producers that get_attr_value
-                produces. */
-            esb_append(producernameout,"\"<CU-missing-DW_AT_producer>\"");
-        } else {
-            /*  DW_DLV_OK */
-            /*  The string return is valid until the next call to this
-                function; so if the caller needs to keep the returned
-                string, the string must be copied (makename()). */
-            get_attr_value(dbg, DW_TAG_compile_unit,
-                cu_die, producer_attr, NULL, 0, producernameout,
-                0 /*show_form_used*/,0 /* verbose */);
-        }
+        /*  DW_DLV_OK */
+        /*  The string return is valid until the next call to this
+            function; so if the caller needs to keep the returned
+            string, the string must be copied (makename()). */
+        get_attr_value(dbg, DW_TAG_compile_unit,
+            cu_die, producer_attr, NULL, 0, producernameout,
+            0 /*show_form_used*/,0 /* verbose */);
     }
     /*  If ares is error or missing case,
         producer_attr will be left

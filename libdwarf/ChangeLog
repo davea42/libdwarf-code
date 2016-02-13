@@ -1,3 +1,18 @@
+2016-02-13  David Anderson
+    * Makefile.in: Add HOSTCFLAGS HOSTLDFLAGS HOSTCC to make
+      it easier to cross-compile.  Remove common.c, common.h
+      (a few lines of code moved to gennames.c).
+    * README: document use of HOSTCC
+    * common.c,common.h: Delete. A few lines of code moved to gennames.c.
+    * configure.in: for AC_TRY_RUN add [],[] for else and for
+      cross-compile cases.
+    * configure: Regenerated.
+    * dwarf_die_deliv.c, dwarf_frame2.c, dwarf_line.c, 
+      dwarf_macro5.c, dwarf_print_lines.c, dwarf_ranges.c:
+      Renamed to avoid shadowing variables with same name. 
+      For clarity.
+    * gennames.c: Incorporates a few lines from common.c
+      so common.c, common.h can be deleted.
 2016-02-10  David Anderson
     * README: Improved a comment about Dwarf_Obj_Access_Methods.
     * dwarf_elf_access.c: New function _dwarf_get_elf_flags_func()

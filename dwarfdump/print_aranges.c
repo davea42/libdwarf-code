@@ -166,12 +166,12 @@ print_aranges(Dwarf_Debug dbg)
                 }
 
                 if (cu_name_flag) {
-                    if (should_skip_this_cu(dbg,cu_die,err)) {
+                    if (should_skip_this_cu(dbg,cu_die)) {
                         continue;
                     }
                 }
                 /* Get producer name for this CU and update compiler list */
-                get_producer_name(dbg,cu_die,err,&producer_name);
+                get_producer_name(dbg,cu_die,&producer_name);
                 update_compiler_target(esb_get_string(&producer_name));
                 esb_destructor(&producer_name);
                 if (!checking_this_compiler()) {

@@ -31,7 +31,6 @@
 #include <string.h>
 #include <unistd.h>
 #include "dwarf.h"
-#include "common.h"
 #include "dwgetopt.h"
 
 /*  gennames.c
@@ -117,12 +116,48 @@ static const char *usage[] = {
     "    -t use 'tables' in generation",
     "",
 };
+void
+print_args(int argc, char *argv[])
+{
+    int index;
+    printf("Arguments: ");
+    for (index = 1; index < argc; ++index) {
+        printf("%s ",argv[index]);
+    }
+    printf("\n");
+}
+
 
 char *program_name = 0;
 static char *input_name = 0;
 static char *output_name = 0;
 static boolean use_switch = TRUE;
 static boolean use_tables = FALSE;
+
+static void
+print_version(const char * name)
+{
+#ifdef _DEBUG
+    const char *acType = "Debug";
+#else
+    const char *acType = "Release";
+#endif /* _DEBUG */
+
+    char acVersion[60];
+    snprintf(acVersion,sizeof(acVersion),"[%s %s %s]",
+        __DATE__,__TIME__,acType);
+    printf("%s %s\n",name,acVersion);
+}
+
+
+static void
+print_usage_message(const char *options[])
+{
+    int index;
+    for (index = 0; *options[index]; ++index) {
+        printf("%s\n",options[index]);
+    }
+}
 
 
 /* process arguments */

@@ -4281,7 +4281,7 @@ fi
 # Check whether --enable-wall was given.
 if test "${enable_wall+set}" = set; then :
   enableval=$enable_wall;
-	 dwfwall="-Wall -O0 -Wpointer-arith -Wmissing-declarations -Wmissing-prototypes -Wdeclaration-after-statement -Wextra -Wcomment -Wformat -Wpedantic -Wuninitialized -Wno-long-long"
+	 dwfwall="-Wall -O0 -Wpointer-arith -Wmissing-declarations -Wmissing-prototypes -Wdeclaration-after-statement -Wextra -Wcomment -Wformat -Wpedantic -Wuninitialized -Wno-long-long -Wshadow"
 
 fi
 

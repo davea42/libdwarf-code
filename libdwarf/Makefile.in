@@ -42,6 +42,7 @@ INSTALL_PROGRAM = @INSTALL_PROGRAM@
 INSTALL_DATA =	@INSTALL_DATA@
 SHELL =		/bin/sh
 CC =		@CC@
+HOSTCC =	@CC@
 AR =		@AR@
 # For use with BSD ar (MacOSX ar) edit the ARFLAGS to be -s
 #ARFLAGS =	@ARFLAGS@
@@ -55,6 +56,8 @@ dwfwall =       @dwfwall@
 dwfzlib =       @dwfzlib@
 CFLAGS =	$(PREINCS) @CFLAGS@ $(INCLUDES) $(dwfpic) $(dwfwall)  $(POSTINCS)
 LDFLAGS =	$(PRELIBS) @LDFLAGS@ $(POSTLIBS)
+HOSTCFLAGS =	$(INCLUDES) 
+HOSTLDFLAGS =	$(PRELIBS) @LDFLAGS@ 
 
 # These three files are only appropriate for SGI IRIX.
 # There is no reason to think these are of any use to anyone else.
@@ -122,7 +125,7 @@ OBJS= dwarf_abbrev.o \
         pro_weaks.o
         
 
-all: @build_shared@ @build_nonshared@
+all: gennames @build_shared@ @build_nonshared@
 
 libdwarf.a: dwarf_names.h dwarf_names.c  $(OBJS) dwarf_names.o
 	$(AR) $(ARFLAGS) $@ $(OBJS)  dwarf_names.o > ar-output-temp
@@ -133,22 +136,24 @@ libdwarf.so: dwarf_names.h dwarf_names.c $(OBJS) dwarf_names.o
 none:
 	echo "do nothing " $@
 dwgetopt.o: $(srcdir)/dwgetopt.c $(srcdir)/dwgetopt.h
-	$(CC) $(CFLAGS) -c $(srcdir)/dwgetopt.c
+	$(HOSTCC) $(HOSTCFLAGS) -c $(srcdir)/dwgetopt.c
 dwarf_loc.o: $(srcdir)/dwarf_loc.c  $(srcdir)/dwarf_loc2.c  $(srcdir)/dwarf_loc.h 
 	$(CC) $(CFLAGS) -c $(srcdir)/dwarf_loc.c
-common.o: $(srcdir)/common.c $(srcdir)/common.h
-	$(CC) $(CFLAGS) -c $(srcdir)/common.c
-gennames: $(srcdir)/gennames.c $(srcdir)/dwarf.h common.o dwgetopt.o
-	$(CC) $(CFLAGS) $(srcdir)/gennames.c common.o dwgetopt.o $(LDFLAGS) -o gennames
+
+# Gennames builds and runs native, even for a cross-build of libdwarf.
+gennames: $(srcdir)/gennames.c $(srcdir)/dwarf.h dwgetopt.o
+	$(HOSTCC) $(HOSTCFLAGS) $(srcdir)/gennames.c dwgetopt.o $(HOSTLDFLAGS) -o gennames
 dwarf_names.h: dwarf_names.c
 dwarf_names.c: gennames $(srcdir)/dwarf.h
 	rm -f dwarf_names.h dwarf_names.c
 	./gennames  @dwarf_namestable@  -i $(srcdir) -o .
+# End gennames build lines
 
 dwarf_line.o: $(srcdir)/dwarf.h libdwarf.h $(srcdir)/dwarf_line_table_reader_common.c $(srcdir)/dwarf_line.c
 	$(CC) $(CFLAGS) -c $(srcdir)/dwarf_line.c -o $@
 dwarf_print_lines.o: $(srcdir)/dwarf.h libdwarf.h $(srcdir)/dwarf_line_table_reader_common.c $(srcdir)/dwarf_print_lines.c
 	$(CC) $(CFLAGS) -c $(srcdir)/dwarf_print_lines.c -o $@
+
 
 
 #

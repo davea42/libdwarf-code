@@ -71,6 +71,7 @@ print_abbrevs(Dwarf_Debug dbg)
     int tres = 0;
     int acres = 0;
     Dwarf_Unsigned abbrev_code = 0;
+    Dwarf_Error paerr = 0;
 
     current_section_id = DEBUG_ABBREV;
 
@@ -78,8 +79,7 @@ print_abbrevs(Dwarf_Debug dbg)
         printf("\n.debug_abbrev\n");
     }
     while ((abres = dwarf_get_abbrev(dbg, offset, &ab,
-        &length, &abbrev_entry_count,
-        &err)) == DW_DLV_OK) {
+        &length, &abbrev_entry_count, &paerr)) == DW_DLV_OK) {
 
         if (abbrev_entry_count == 0) {
             /* Simple innocuous zero : null abbrev entry */
@@ -104,15 +104,15 @@ print_abbrevs(Dwarf_Debug dbg)
             dwarf_dealloc(dbg, ab, DW_DLA_ABBREV);
             continue;
         }
-        tres = dwarf_get_abbrev_tag(ab, &tag, &err);
+        tres = dwarf_get_abbrev_tag(ab, &tag, &paerr);
         if (tres != DW_DLV_OK) {
             dwarf_dealloc(dbg, ab, DW_DLA_ABBREV);
-            print_error(dbg, "dwarf_get_abbrev_tag", tres, err);
+            print_error(dbg, "dwarf_get_abbrev_tag", tres, paerr);
         }
-        tres = dwarf_get_abbrev_code(ab, &abbrev_code, &err);
+        tres = dwarf_get_abbrev_code(ab, &abbrev_code, &paerr);
         if (tres != DW_DLV_OK) {
             dwarf_dealloc(dbg, ab, DW_DLA_ABBREV);
-            print_error(dbg, "dwarf_get_abbrev_code", tres, err);
+            print_error(dbg, "dwarf_get_abbrev_code", tres, paerr);
         }
         if (dense) {
             printf("<%" DW_PR_DUu "><0x%" DW_PR_XZEROS  DW_PR_DUx
@@ -131,11 +131,11 @@ print_abbrevs(Dwarf_Debug dbg)
         /* Process specific TAGs specially. */
         tag_specific_checks_setup(tag,0);
         ++abbrev_num;
-        acres = dwarf_get_abbrev_children_flag(ab, &child_flag, &err);
+        acres = dwarf_get_abbrev_children_flag(ab, &child_flag, &paerr);
         if (acres == DW_DLV_ERROR) {
             dwarf_dealloc(dbg, ab, DW_DLA_ABBREV);
             print_error(dbg, "dwarf_get_abbrev_children_flag", acres,
-                err);
+                paerr);
         }
         if (acres == DW_DLV_NO_ENTRY) {
             child_flag = 0;
@@ -153,10 +153,10 @@ print_abbrevs(Dwarf_Debug dbg)
             int aeres = 0;
 
             aeres =
-                dwarf_get_abbrev_entry(ab, i, &attr, &form, &off, &err);
+                dwarf_get_abbrev_entry(ab, i, &attr, &form, &off, &paerr);
             if (aeres == DW_DLV_ERROR) {
                 dwarf_dealloc(dbg, ab, DW_DLA_ABBREV);
-                print_error(dbg, "dwarf_get_abbrev_entry", aeres, err);
+                print_error(dbg, "dwarf_get_abbrev_entry", aeres, paerr);
             }
             if (aeres == DW_DLV_NO_ENTRY) {
                 attr = -1LL;
@@ -183,7 +183,7 @@ print_abbrevs(Dwarf_Debug dbg)
         }
     }
     if (abres == DW_DLV_ERROR) {
-        print_error(dbg, "dwarf_get_abbrev", abres, err);
+        print_error(dbg, "dwarf_get_abbrev", abres, paerr);
     }
 }
 
@@ -209,7 +209,7 @@ static Dwarf_Unsigned abbrev_array_size = 0;
 static void
 check_abbrev_num_sequence(Dwarf_Unsigned abbrev_code,
     Dwarf_Unsigned last_abbrev_code,
-    UNUSEDARG Dwarf_Unsigned abbrev_array_size,
+    UNUSEDARG Dwarf_Unsigned l_abbrev_array_size,
     UNUSEDARG Dwarf_Unsigned abbrev_entry_count,
     UNUSEDARG Dwarf_Unsigned total_abbrevs_counted)
 {
@@ -294,7 +294,7 @@ get_abbrev_array_info(Dwarf_Debug dbg, Dwarf_Unsigned offset_in)
         Dwarf_Unsigned abbrev_entry_count = 0;
         Dwarf_Unsigned abbrev_code;
         int abres = DW_DLV_OK;
-        Dwarf_Error err = 0;
+        Dwarf_Error aberr = 0;
         Dwarf_Unsigned last_abbrev_code = 0;
 
         Dwarf_Bool bMore = TRUE;
@@ -313,8 +313,8 @@ get_abbrev_array_info(Dwarf_Debug dbg, Dwarf_Unsigned offset_in)
 
         while (bMore && (abres = dwarf_get_abbrev(dbg, offset, &ab,
             &length, &abbrev_entry_count,
-            &err)) == DW_DLV_OK) {
-            dwarf_get_abbrev_code(ab,&abbrev_code,&err);
+            &aberr)) == DW_DLV_OK) {
+            dwarf_get_abbrev_code(ab,&abbrev_code,&aberr);
             if (abbrev_code == 0) {
                 /* End of abbreviation table for this CU */
                 ++offset; /* Skip abbreviation code */
@@ -346,7 +346,7 @@ get_abbrev_array_info(Dwarf_Debug dbg, Dwarf_Unsigned offset_in)
                     offset += length;
                 } else {
                     /* Invalid abbreviation code */
-                    print_error(dbg, "get_abbrev_array_info", abres, err);
+                    print_error(dbg, "get_abbrev_array_info", abres, aberr);
                 }
                 last_abbrev_code = abbrev_code;
             }

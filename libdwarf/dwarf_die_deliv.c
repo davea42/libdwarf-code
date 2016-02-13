@@ -747,7 +747,7 @@ _dwarf_next_cu_header_internal(Dwarf_Debug dbg,
     Dwarf_Half * address_size,
     Dwarf_Half * offset_size,
     Dwarf_Half * extension_size,
-    Dwarf_Sig8 * signature,
+    Dwarf_Sig8 * signature_out,
     Dwarf_Bool * has_signature,
     Dwarf_Unsigned *typeoffset,
     Dwarf_Unsigned * next_cu_offset,
@@ -785,10 +785,10 @@ _dwarf_next_cu_header_internal(Dwarf_Debug dbg,
         new_offset = 0;
         if (!dataptr) {
             Dwarf_Error err2= 0;
-            int res = is_info?_dwarf_load_debug_info(dbg, &err2):
+            int resd = is_info?_dwarf_load_debug_info(dbg, &err2):
                 _dwarf_load_debug_types(dbg,&err2);
 
-            if (res != DW_DLV_OK) {
+            if (resd != DW_DLV_OK) {
                 if (reloc_incomplete(err2)) {
                     /*  We will assume all is ok, though it is not.
                         Relocation errors need not be fatal.  */
@@ -797,12 +797,12 @@ _dwarf_next_cu_header_internal(Dwarf_Debug dbg,
                         "Relocations did not complete successfully, but we are "
                         " ignoring error: %s",dwarf_errmsg(err2));
                     dwarf_insert_harmless_error(dbg,msg_buf);
-                    res = DW_DLV_OK;
+                    resd = DW_DLV_OK;
                 } else {
                     if (error) {
                         *error = err2;
                     }
-                    return res;
+                    return resd;
                 }
 
             }
@@ -882,7 +882,7 @@ _dwarf_next_cu_header_internal(Dwarf_Debug dbg,
             &cudie, error);
         if (resdwo == DW_DLV_OK) {
             int dwo_idres = 0;
-            Dwarf_Sig8 signature;
+            Dwarf_Sig8 dwosignature;
             Dwarf_Bool sig_present = FALSE;
             Dwarf_Unsigned str_offsets_base = 0;
             Dwarf_Unsigned addr_base = 0;
@@ -891,7 +891,7 @@ _dwarf_next_cu_header_internal(Dwarf_Debug dbg,
             Dwarf_Bool addr_base_present = FALSE;
             Dwarf_Bool ranges_base_present = FALSE;
             dwo_idres = find_context_base_fields(dbg,
-                cudie,&signature,&sig_present,
+                cudie,&dwosignature,&sig_present,
                 &str_offsets_base,&str_offsets_base_present,
                 &addr_base,&addr_base_present,
                 &ranges_base,&ranges_base_present,
@@ -901,7 +901,7 @@ _dwarf_next_cu_header_internal(Dwarf_Debug dbg,
                 if(sig_present) {
                     /*  This can be in executable or ordinary .o
                         or .dwo or .dwp */
-                    cu_context->cc_type_signature = signature;
+                    cu_context->cc_type_signature = dwosignature;
                     cu_context->cc_signature_present = TRUE;
                 }
                 if (addr_base_present) {
@@ -935,10 +935,10 @@ _dwarf_next_cu_header_internal(Dwarf_Debug dbg,
     if (typeoffset) {
         *typeoffset = cu_context->cc_type_signature_offset;
     }
-    if (signature ) {
-        *signature = cu_context->cc_type_signature;
+    if (signature_out) {
+        *signature_out = cu_context->cc_type_signature;
     }
-    if (has_signature ) {
+    if (has_signature) {
         *has_signature = cu_context->cc_signature_present;
     }
     new_offset = new_offset + cu_context->cc_length +

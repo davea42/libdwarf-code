@@ -242,7 +242,7 @@ print_pubnames(Dwarf_Debug dbg)
                             and update compiler list */
                         struct esb_s producername;
                         esb_constructor(&producername);
-                        get_producer_name(dbg,die,err,&producername);
+                        get_producer_name(dbg,die,&producername);
                         update_compiler_target(esb_get_string(&producername));
                         esb_destructor(&producername);
                     }

@@ -546,7 +546,7 @@ dwarf_get_macro_defundef(Dwarf_Macro_Context macro_context,
         Dwarf_Word uleblen = 0;
         Dwarf_Unsigned stringindex = 0;
         Dwarf_Unsigned offsettostr= 0;
-        int res = 0;
+        int ress = 0;
         Dwarf_Small form1 =  curop->mo_form->mf_formbytes[1];
 
         linenum = _dwarf_decode_u_leb128(mdata,
@@ -564,29 +564,29 @@ dwarf_get_macro_defundef(Dwarf_Macro_Context macro_context,
 
         /* FIXME */
         /* Redoes the index-getting. Gets offset. */
-        res = _dwarf_extract_string_offset_via_str_offsets(dbg,
+        ress = _dwarf_extract_string_offset_via_str_offsets(dbg,
             mdata,
             DW_AT_macros, /*arbitrary, unused by called routine. */
             form1,
             macro_context->mc_cu_context,
             &offsettostr,
             error);
-        if (res  == DW_DLV_ERROR) {
-            return res;
+        if (ress  == DW_DLV_ERROR) {
+            return ress;
         }
         if (res == DW_DLV_OK) {
             char *localstr = 0;
 
             *index = stringindex;
             *offset = offsettostr;
-            res = _dwarf_extract_local_debug_str_string_given_offset(dbg,
+            ress = _dwarf_extract_local_debug_str_string_given_offset(dbg,
                 form1,
                 offsettostr,
                 &localstr,
                 error);
-            if(res == DW_DLV_ERROR) {
-                return res;
-            } else if (res == DW_DLV_NO_ENTRY){
+            if(ress == DW_DLV_ERROR) {
+                return ress;
+            } else if (ress == DW_DLV_NO_ENTRY){
                 *macro_string = "<:No string available>";
             } else {
                 *macro_string = (const char *)localstr;
@@ -605,7 +605,7 @@ dwarf_get_macro_defundef(Dwarf_Macro_Context macro_context,
         Dwarf_Word uleblen = 0;
         Dwarf_Unsigned supoffset = 0;
         char *localstring = 0;
-        int res = 0;
+        int resup = 0;
 
         linenum = _dwarf_decode_u_leb128(mdata,
             &uleblen);
@@ -618,10 +618,10 @@ dwarf_get_macro_defundef(Dwarf_Macro_Context macro_context,
         *index = 0;
         *offset = supoffset;
         *forms_count = lformscount;
-        res = _dwarf_get_string_from_tied(dbg, supoffset,
+        resup = _dwarf_get_string_from_tied(dbg, supoffset,
             &localstring, error);
-        if (res != DW_DLV_OK) {
-            if (res == DW_DLV_ERROR) {
+        if (resup != DW_DLV_OK) {
+            if (resup == DW_DLV_ERROR) {
                 if(dwarf_errno(*error) == DW_DLE_NO_TIED_FILE_AVAILABLE) {
                     *macro_string =
                         (char *)"<DW_FORM_str_sup-no-tied_file>";

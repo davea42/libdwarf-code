@@ -46,8 +46,9 @@ AC_TRY_RUN([
      return 0;
   }
 ] ,
-  AC_DEFINE(HAVE_UNUSED_ATTRIBUTE,1,
-	[Define 1 if __attribute__ ((unused)) compiles ok.]))
+  [AC_DEFINE(HAVE_UNUSED_ATTRIBUTE,1,
+	[Define 1 if __attribute__ ((unused)) compiles ok.])],
+  [],[])
 
 AC_SUBST(dwfzlib,[])
 AC_TRY_COMPILE([#include "zlib.h"],[ 
@@ -147,7 +148,7 @@ AC_SUBST(dwfwall,[])
 AC_ARG_ENABLE(wall,AC_HELP_STRING([--enable-wall],
 	[Add -Wall (default is none)]),
 	[ AC_SUBST(dwfwall,[]) ]
-	[ AC_SUBST(dwfwall,["-Wall -O0 -Wpointer-arith -Wmissing-declarations -Wmissing-prototypes -Wdeclaration-after-statement -Wextra -Wcomment -Wformat -Wpedantic -Wuninitialized -Wno-long-long"]) ])
+	[ AC_SUBST(dwfwall,["-Wall -O0 -Wpointer-arith -Wmissing-declarations -Wmissing-prototypes -Wdeclaration-after-statement -Wextra -Wcomment -Wformat -Wpedantic -Wuninitialized -Wno-long-long -Wshadow"]) ])
 
 dnl  This changes the gennames option from -s  to -t
 AC_SUBST(dwarf_namestable,[-s])
