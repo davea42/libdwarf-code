@@ -42,6 +42,7 @@ print_types(Dwarf_Debug dbg, enum type_type_e type_type)
     Dwarf_Signed i = 0;
     char *name = NULL;
     int gtres = 0;
+    Dwarf_Error err = 0;
 
     char *section_name = NULL;
     char *offset_err_name = NULL;

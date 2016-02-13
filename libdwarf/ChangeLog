@@ -1,4 +1,7 @@
 2016-02-13  David Anderson
+    * libdwarf2.1.mm: Added dwarf_lineoff_b() documentation.
+      Fixed a typo in dwarf_formexprloc() documentation.
+    * libdwarf2.1.pdf: Regenerated. Version 2.41
     * Makefile.in: Add HOSTCFLAGS HOSTLDFLAGS HOSTCC to make
       it easier to cross-compile.  Remove common.c, common.h
       (a few lines of code moved to gennames.c).

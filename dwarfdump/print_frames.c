@@ -91,7 +91,10 @@ get_abstract_origin_funcname(Dwarf_Debug dbg,Dwarf_Attribute attr,
     int dres = 0;
     int atres;
     int name_found = 0;
-    int res = dwarf_global_formref(attr,&off,&err);
+    int res = 0;
+    Dwarf_Error err = 0;
+
+    res = dwarf_global_formref(attr,&off,&err);
     if (res != DW_DLV_OK) {
         return DW_DLV_NO_ENTRY;
     }
@@ -1836,6 +1839,7 @@ print_frames(Dwarf_Debug dbg,
     Dwarf_Half version = 0;
     int framed = 0;
     void * map_lowpc_to_name = 0;
+    Dwarf_Error err = 0;
 
     current_section_id = DEBUG_FRAME;
 

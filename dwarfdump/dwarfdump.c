@@ -372,8 +372,6 @@ static const char *output_file = 0;
 char cu_name[BUFSIZ];
 boolean cu_name_flag = FALSE;
 
-Dwarf_Error err;
-
 /*  When we add a 'print' option after an option
     requests one or more checks
     we turn off all checking, putting it back to default
@@ -1253,26 +1251,27 @@ process_one_file(Elf * elf,Elf *elftied,
     int dres = 0;
     struct Dwarf_Printf_Callback_Info_s printfcallbackdata;
     Dwarf_Half elf_address_size = 0;      /* Target pointer size */
+    Dwarf_Error onef_err = 0;
 
-    dres = dwarf_elf_init(elf, DW_DLC_READ, NULL, NULL, &dbg, &err);
+    dres = dwarf_elf_init(elf, DW_DLC_READ, NULL, NULL, &dbg, &onef_err);
     if (dres == DW_DLV_NO_ENTRY) {
         printf("No DWARF information present in %s\n", file_name);
         return 0;
     }
     if (dres != DW_DLV_OK) {
-        print_error(dbg, "dwarf_elf_init", dres, err);
+        print_error(dbg, "dwarf_elf_init", dres, onef_err);
     }
 
     if (elftied) {
         dres = dwarf_elf_init(elftied, DW_DLC_READ, NULL, NULL, &dbgtied,
-            &err);
+            &onef_err);
         if (dres == DW_DLV_NO_ENTRY) {
             printf("No DWARF information present in tied file: %s\n",
                 tied_file_name);
             return 0;
         }
         if (dres != DW_DLV_OK) {
-            print_error(dbg, "dwarf_elf_init on tied_file", dres, err);
+            print_error(dbg, "dwarf_elf_init on tied_file", dres, onef_err);
         }
     }
 
@@ -1294,12 +1293,12 @@ process_one_file(Elf * elf,Elf *elftied,
     }
     dbgsetup(dbg,l_config_file_data);
     dbgsetup(dbgtied,l_config_file_data);
-    get_address_size_and_max(dbg,&elf_address_size,0,&err);
+    get_address_size_and_max(dbg,&elf_address_size,0,&onef_err);
 
     /*  Ok for dbgtied to be NULL. */
-    dres = dwarf_set_tied_dbg(dbg,dbgtied,&err);
+    dres = dwarf_set_tied_dbg(dbg,dbgtied,&onef_err);
     if (dres != DW_DLV_OK) {
-        print_error(dbg, "dwarf_set_tied_dbg() failed", dres, err);
+        print_error(dbg, "dwarf_set_tied_dbg() failed", dres, onef_err);
     }
 
     /* Get .text and .debug_ranges info if in check mode */
@@ -1308,7 +1307,7 @@ process_one_file(Elf * elf,Elf *elftied,
         Dwarf_Addr upper = 0;
         Dwarf_Unsigned size = 0;
         int res = 0;
-        res = dwarf_get_section_info_by_name(dbg,".text",&lower,&size,&err);
+        res = dwarf_get_section_info_by_name(dbg,".text",&lower,&size,&onef_err);
         if (DW_DLV_OK == res) {
             upper = lower + size;
         }
@@ -1442,15 +1441,15 @@ process_one_file(Elf * elf,Elf *elftied,
 
     /*  Could finish dbg first. Either order ok. */
     if (dbgtied) {
-        dres = dwarf_finish(dbgtied,&err);
+        dres = dwarf_finish(dbgtied,&onef_err);
         if (dres != DW_DLV_OK) {
-            print_error(dbg, "dwarf_finish on dbgtied", dres, err);
+            print_error(dbg, "dwarf_finish on dbgtied", dres, onef_err);
         }
         dbgtied = 0;
     }
-    dres = dwarf_finish(dbg, &err);
+    dres = dwarf_finish(dbg, &onef_err);
     if (dres != DW_DLV_OK) {
-        print_error(dbg, "dwarf_finish", dres, err);
+        print_error(dbg, "dwarf_finish", dres, onef_err);
         dbg = 0;
     }
     printf("\n");
@@ -2441,70 +2440,6 @@ should_skip_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
     dwarf_dealloc(dbg, attrib, DW_DLA_ATTR);
     return FALSE;
 }
-
-#if 0  /* No longer used.  */
-/* Returns the DW_AT_name of the CU */
-string
-old_get_cu_name(Dwarf_Debug dbg, Dwarf_Die cu_die, Dwarf_Error lerr)
-{
-    static struct esb_s esb_attr_name;
-    Dwarf_Half tag;
-    Dwarf_Attribute attrib;
-    Dwarf_Half theform;
-    int dares;
-    int tres;
-    int fres;
-
-    /* Initialize flexible string buffer */
-    esb_empty_string(&esb_attr_name);
-
-    tres = dwarf_tag(cu_die, &tag, &lerr);
-    if (tres != DW_DLV_OK) {
-        print_error(dbg, "dwarf_tag in aranges",
-            tres, err);
-    }
-    dares = dwarf_attr(cu_die, DW_AT_name, &attrib,
-        &err);
-    if (dares != DW_DLV_OK) {
-        print_error(dbg, "dwarf_attr arange"
-            " derived die has no name",
-            dares, err);
-        }
-    fres = dwarf_whatform(attrib, &theform, &err);
-    if (fres == DW_DLV_OK) {
-        if (theform == DW_FORM_string
-            || theform == DW_FORM_strp) {
-            char * temps = 0;
-            int sres = dwarf_formstring(attrib, &temps,
-                &err);
-            if (sres == DW_DLV_OK) {
-                char *p = temps;
-                if (cu_name[0] != '/') {
-                    p = strrchr(temps, '/');
-                    if (p == NULL) {
-                        p = temps;
-                    } else {
-                        p++;
-                    }
-                }
-                esb_append(&esb_attr_name,p);
-            } else {
-                print_error(dbg,
-                "arange: string missing",
-                sres, err);
-            }
-        }
-    } else {
-        print_error(dbg,
-            "dwarf_whatform unexpected value..",
-            fres, err);
-    }
-    dwarf_dealloc(dbg, attrib, DW_DLA_ATTR);
-
-    /* Return the esb internal string */
-    return esb_get_string(&esb_attr_name);
-}
-#endif
 
 /* Returns the cu of the CU. In case of error, give up, do not return. */
 int get_cu_name(Dwarf_Debug dbg, Dwarf_Die cu_die,

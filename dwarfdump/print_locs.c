@@ -61,6 +61,7 @@ print_locs(Dwarf_Debug dbg)
     Dwarf_Half address_size = 0;
     Dwarf_Half offset_size = 0;
     Dwarf_Half version = 2; /* FAKE */
+    Dwarf_Error err = 0;
 
     current_section_id = DEBUG_LOC;
 

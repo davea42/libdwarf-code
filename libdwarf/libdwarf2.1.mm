@@ -8,7 +8,7 @@
 .nr Hb 5
 \." ==============================================
 \." Put current date in the following at each rev
-.ds vE rev 2.40, Jan 20, 2016
+.ds vE rev 2.41, Feb 13, 2016
 \." ==============================================
 \." ==============================================
 .ds | |
@@ -3453,7 +3453,7 @@ It returns \f(CWDW_DLV_ERROR\fP on error.
 .P
 This form is used to refer to a type unit.
 
-.H 3 "dwarf_formsig8()"
+.H 3 "dwarf_experloc()"
 .DS
 \f(CWint dwarf_formexprloc(
         Dwarf_Attribute attr,
@@ -5130,6 +5130,25 @@ the pointer-to-signed is left unchanged.
 .P
 On error it returns \f(CWDW_DLV_ERROR\fP.
 It never returns \f(CWDW_DLV_NO_ENTRY\fP.
+.H 3 "dwarf_lineoff_b()"
+.DS
+\f(CWint dwarf_lineoff_b(
+        Dwarf_Line line, 
+	Dwarf_Unsigned   * return_lineoff,
+        Dwarf_Error *error)\fP
+.DE
+The function 
+\f(CWdwarf_lineoff_b()\fP
+returns 
+exactly the same as
+\f(CWdwarf_lineoff()\fP
+except the line offset returned
+through 
+\f(CWreturn_lineoff()\fP
+is an unsigned value.
+The signed return offset never made much sense
+but was harmless since line lengths are limited
+by most language standards.
 
 .H 3 "dwarf_linesrc()"
 .DS

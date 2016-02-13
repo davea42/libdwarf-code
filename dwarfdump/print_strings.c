@@ -41,10 +41,14 @@ print_strings(Dwarf_Debug dbg)
     Dwarf_Off offset = 0;
     int sres = 0;
     const char *sec_name = 0;
+    Dwarf_Error err = 0;
 
     current_section_id = DEBUG_STR;
     sres = dwarf_get_string_section_name(dbg,
         &sec_name,&err);
+    if (sres == DW_DLV_ERROR) {
+         dwarf_dealloc(dbg,err,DW_DLA_ERROR);
+    }
     if (sres != DW_DLV_OK ||  !sec_name || !strlen(sec_name)) {
         sec_name = ".debug_str";
     }

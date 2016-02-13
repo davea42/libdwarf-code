@@ -375,7 +375,7 @@ extern Dwarf_Off fde_offset_for_cu_high;
 extern void tag_specific_checks_setup(Dwarf_Half val,int die_indent_level);
 
 extern char *program_name;
-extern Dwarf_Error err;
+
 extern void print_error_and_continue (Dwarf_Debug dbg, string msg,int res, Dwarf_Error err);
 extern void print_error (Dwarf_Debug dbg, string msg,int res, Dwarf_Error err);
 

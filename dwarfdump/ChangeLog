@@ -1,4 +1,11 @@
 2016-02-13  David Anderson
+    * dwarfdump.c,globals.h,print_aranges.c,print_die.c,
+      print_frames.c,print_lines.c,print_locs.c,print_macro.c,
+      print_pubnames.c,print_reloc.ckprint_static_funcs.c,
+      print_static_vars.c,print_strings.c,print_types.c,
+      print_weaknames.c: Removed global Dwarf_Error err
+      and provided local Dwarf_Error as needed.
+2016-02-13  David Anderson
      * configure.in: Add -Wshadow to --enable-shared. Add else and
        cross-compile [] to the AC_TRY_RUN
      * configure: Regenerate.

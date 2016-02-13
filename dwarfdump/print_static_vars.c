@@ -44,6 +44,7 @@ print_static_vars(Dwarf_Debug dbg)
     Dwarf_Off cu_off = 0;
     char *name = 0;
     int gvres = 0;
+    Dwarf_Error err = 0;
 
     current_section_id = DEBUG_STATIC_VARS;
 

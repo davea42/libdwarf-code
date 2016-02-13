@@ -46,6 +46,7 @@ print_static_funcs(Dwarf_Debug dbg)
     Dwarf_Off die_off = 0;
     Dwarf_Off cu_off = 0;
     int gfres = 0;
+    Dwarf_Error err = 0;
 
     current_section_id = DEBUG_STATIC_FUNC;
 

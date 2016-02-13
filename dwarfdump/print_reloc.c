@@ -322,6 +322,8 @@ get_reloc_section(Dwarf_Debug dbg,
     for (index = 0; index < DW_SECTION_REL_DEBUG_NUM; ++index) {
         const char *n = rel_info[index].name_rel;
         const char *na = rel_info[index].name_rela;
+        Dwarf_Error err = 0;
+
         if (strcmp(scn_name, n) == 0) {
             SECT_DATA_SET(rel_info[index].index,sh_type,n)
             return TRUE;
@@ -342,6 +344,7 @@ print_relocinfo(Dwarf_Debug dbg, unsigned reloc_map)
     int is_64bit;
     int res;
     int i;
+    Dwarf_Error err = 0;
 
     for (i = 0; i < DW_SECTION_REL_DEBUG_NUM; i++) {
         sect_data[i].display = reloc_map & (1 << i);
@@ -376,6 +379,7 @@ print_relocinfo_64(Dwarf_Debug dbg, Elf * elf)
     Elf64_Sym *sym_64 = 0;
     char **scn_names = 0;
     int scn_names_cnt = 0;
+    Dwarf_Error err = 0;
 
     ehdr64 = elf64_getehdr(elf);
     if (ehdr64 == NULL) {
@@ -456,6 +460,7 @@ print_relocinfo_32(Dwarf_Debug dbg, Elf * elf)
     Elf32_Sym  *sym = 0;
     char **scn_names = 0;
     int scn_names_cnt = 0;
+    Dwarf_Error err = 0;
 
     ehdr32 = elf32_getehdr(elf);
     if (ehdr32 == NULL) {

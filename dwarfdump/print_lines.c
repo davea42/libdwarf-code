@@ -494,6 +494,7 @@ print_line_context_record(Dwarf_Debug dbg,
     const char *name = 0;
     struct esb_s bufr;
     Dwarf_Small table_count = 0;
+    Dwarf_Error err = 0;
 
     esb_constructor(&bufr);
     printf("Line Context data\n");
@@ -647,6 +648,7 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
     int line_errs = 0;
     Dwarf_Line_Context line_context = 0;
     const char *sec_name = 0;
+    Dwarf_Error err = 0;
 
     current_section_id = DEBUG_LINE;
 

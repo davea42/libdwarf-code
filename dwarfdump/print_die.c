@@ -757,7 +757,7 @@ print_one_die_section(Dwarf_Debug dbg,Dwarf_Bool is_info,
                 Dwarf_Signed cnt = 0;
                 char **srcfiles = 0;
                 int srcf = dwarf_srcfiles(cu_die,
-                    &srcfiles, &cnt, &err);
+                    &srcfiles, &cnt, pod_err);
                 if (srcf != DW_DLV_OK) {
                     srcfiles = 0;
                     cnt = 0;
@@ -829,7 +829,7 @@ print_one_die_section(Dwarf_Debug dbg,Dwarf_Bool is_info,
         } else if (sres == DW_DLV_NO_ENTRY) {
             /* Do nothing I guess. */
         } else {
-            print_error(dbg, "Regetting cu_die", sres, err);
+            print_error(dbg, "Regetting cu_die", sres, *pod_err);
         }
         ++cu_count;
         dieprint_cu_offset = next_cu_offset;
@@ -999,7 +999,7 @@ print_die_and_children_internal(Dwarf_Debug dbg,
             }
         }
 
-        cdres = dwarf_child(in_die, &child, &err);
+        cdres = dwarf_child(in_die, &child, &dacerr);
         /* Check for specific compiler */
         if (check_abbreviations && checking_this_compiler()) {
             Dwarf_Half ab_has_child;
@@ -1008,7 +1008,7 @@ print_die_and_children_internal(Dwarf_Debug dbg,
             tres = dwarf_die_abbrev_children_flag(in_die,&ab_has_child);
             if (tres == DW_DLV_OK) {
                 DWARF_CHECK_COUNT(abbreviations_result,1);
-                tres = dwarf_tag(in_die, &tag, &err);
+                tres = dwarf_tag(in_die, &tag, &dacerr);
                 if (tres == DW_DLV_OK) {
                     switch (tag) {
                     case DW_TAG_array_type:
@@ -1047,7 +1047,7 @@ print_die_and_children_internal(Dwarf_Debug dbg,
                 then the compiler has made a mistake, and
                 the DIE tree is corrupt.  */
             Dwarf_Off child_overall_offset = 0;
-            int cores = dwarf_dieoffset(child, &child_overall_offset, &err);
+            int cores = dwarf_dieoffset(child, &child_overall_offset, &dacerr);
             if (cores == DW_DLV_OK) {
                 char small_buf[200];
                 Dwarf_Off parent_sib_val = get_die_stack_sibling();
@@ -1063,7 +1063,7 @@ print_die_and_children_internal(Dwarf_Debug dbg,
                         parent_sib_val,
                         (parent_sib_val == child_overall_offset)?"at":"before",
                         child_overall_offset);
-                    print_error(dbg,small_buf,DW_DLV_OK,err);
+                    print_error(dbg,small_buf,DW_DLV_OK,dacerr);
                 }
             }
 
@@ -1072,7 +1072,7 @@ print_die_and_children_internal(Dwarf_Debug dbg,
             if (die_stack_indent_level >= DIE_STACK_SIZE ) {
                 print_error(dbg,
                     "ERROR: compiled in DIE_STACK_SIZE limit exceeded",
-                    DW_DLV_OK,err);
+                    DW_DLV_OK,dacerr);
             }
             print_die_and_children_internal(dbg, child,is_info, srcfiles, cnt);
             EMPTY_DIE_STACK_ENTRY(die_stack_indent_level);
@@ -1083,7 +1083,7 @@ print_die_and_children_internal(Dwarf_Debug dbg,
             dwarf_dealloc(dbg, child, DW_DLA_DIE);
             child = 0;
         } else if (cdres == DW_DLV_ERROR) {
-            print_error(dbg, "dwarf_child", cdres, err);
+            print_error(dbg, "dwarf_child", cdres, dacerr);
         }
 
         /* Stop the display of all children */
@@ -1093,14 +1093,14 @@ print_die_and_children_internal(Dwarf_Debug dbg,
             info_flag = FALSE;
         }
 
-        cdres = dwarf_siblingof_b(dbg, in_die,is_info, &sibling, &err);
+        cdres = dwarf_siblingof_b(dbg, in_die,is_info, &sibling, &dacerr);
         if (cdres == DW_DLV_OK) {
             /*  print_die_and_children(dbg, sibling, srcfiles, cnt); We
                 loop around to actually print this, rather than
                 recursing. Recursing is horribly wasteful of stack
                 space. */
         } else if (cdres == DW_DLV_ERROR) {
-            print_error(dbg, "dwarf_siblingof", cdres, err);
+            print_error(dbg, "dwarf_siblingof", cdres, dacerr);
         }
 
         /*  If we have a sibling, verify that its offset
@@ -1114,7 +1114,7 @@ print_die_and_children_internal(Dwarf_Debug dbg,
             if (dwarf_validate_die_sibling(sibling,&glb_off) == DW_DLV_ERROR) {
                 static char msg[128];
                 Dwarf_Off sib_off;
-                dwarf_dieoffset(sibling,&sib_off,&err);
+                dwarf_dieoffset(sibling,&sib_off,&dacerr);
                 sprintf(msg,
                     "GSIB = 0x%" DW_PR_XZEROS  DW_PR_DUx
                     " GOFF = 0x%" DW_PR_XZEROS DW_PR_DUx
@@ -1171,6 +1171,7 @@ print_one_die(Dwarf_Debug dbg, Dwarf_Die die,
     int atres = 0;
     int abbrev_code = dwarf_die_abbrev_code(die);
     boolean attribute_matched = FALSE;
+    Dwarf_Error podie_err = 0;
 
     /* Print using indentation
     < 1><0x000854ff GOFF=0x00546047>    DW_TAG_pointer_type -> 34
@@ -1194,9 +1195,9 @@ print_one_die(Dwarf_Debug dbg, Dwarf_Die die,
         nColumn = 2;
     }
 
-    tres = dwarf_tag(die, &tag, &err);
+    tres = dwarf_tag(die, &tag, &podie_err);
     if (tres != DW_DLV_OK) {
-        print_error(dbg, "accessing tag of die!", tres, err);
+        print_error(dbg, "accessing tag of die!", tres, podie_err);
     }
     tagname = get_TAG_name(tag,pd_dwarf_names_print_on_error);
 
@@ -1208,13 +1209,13 @@ print_one_die(Dwarf_Debug dbg, Dwarf_Die die,
 #endif /* HAVE_USAGE_TAG_ATTR */
 
     tag_specific_checks_setup(tag,die_indent_level);
-    ores = dwarf_dieoffset(die, &overall_offset, &err);
+    ores = dwarf_dieoffset(die, &overall_offset, &podie_err);
     if (ores != DW_DLV_OK) {
-        print_error(dbg, "dwarf_dieoffset", ores, err);
+        print_error(dbg, "dwarf_dieoffset", ores, podie_err);
     }
-    ores = dwarf_die_CU_offset(die, &offset, &err);
+    ores = dwarf_die_CU_offset(die, &offset, &podie_err);
     if (ores != DW_DLV_OK) {
-        print_error(dbg, "dwarf_die_CU_offset", ores, err);
+        print_error(dbg, "dwarf_die_CU_offset", ores, podie_err);
     }
 
     if (dump_visited_info && check_self_references) {
@@ -1295,9 +1296,9 @@ print_one_die(Dwarf_Debug dbg, Dwarf_Die die,
         }
     }
 
-    atres = dwarf_attrlist(die, &atlist, &atcnt, &err);
+    atres = dwarf_attrlist(die, &atlist, &atcnt, &podie_err);
     if (atres == DW_DLV_ERROR) {
-        print_error(dbg, "dwarf_attrlist", atres, err);
+        print_error(dbg, "dwarf_attrlist", atres, podie_err);
     } else if (atres == DW_DLV_NO_ENTRY) {
         /* indicates there are no attrs.  It is not an error. */
         atcnt = 0;
@@ -1308,13 +1309,13 @@ print_one_die(Dwarf_Debug dbg, Dwarf_Die die,
     bSawHigh = FALSE;
 
     /* Get the offset for easy error reporting: This is not the CU die.  */
-    dwarf_die_offsets(die,&DIE_overall_offset,&DIE_offset,&err);
+    dwarf_die_offsets(die,&DIE_overall_offset,&DIE_offset,&podie_err);
 
     for (i = 0; i < atcnt; i++) {
         Dwarf_Half attr;
         int ares;
 
-        ares = dwarf_whatattr(atlist[i], &attr, &err);
+        ares = dwarf_whatattr(atlist[i], &attr, &podie_err);
 
         if (ares == DW_DLV_OK) {
             /*  Check duplicated attributes; use brute force as the number of
@@ -1324,7 +1325,7 @@ print_one_die(Dwarf_Debug dbg, Dwarf_Die die,
                 Dwarf_Half attr_next;
                 DWARF_CHECK_COUNT(duplicated_attributes_result,1);
                 for (j = i + 1; j < atcnt; ++j) {
-                    ares = dwarf_whatattr(atlist[j], &attr_next, &err);
+                    ares = dwarf_whatattr(atlist[j], &attr_next, &podie_err);
                     if (ares == DW_DLV_OK) {
                         if (attr == attr_next) {
                             DWARF_CHECK_ERROR2(duplicated_attributes_result,
@@ -1333,7 +1334,7 @@ print_one_die(Dwarf_Debug dbg, Dwarf_Die die,
                         }
                     } else {
                         print_error(dbg, "dwarf_whatattr entry missing",
-                            ares, err);
+                            ares, podie_err);
                     }
                 }
             }
@@ -1356,7 +1357,7 @@ print_one_die(Dwarf_Debug dbg, Dwarf_Die die,
                 record_dwarf_error = FALSE;
             }
         } else {
-            print_error(dbg, "dwarf_whatattr entry missing", ares, err);
+            print_error(dbg, "dwarf_whatattr entry missing", ares, podie_err);
         }
     }
 
@@ -1554,6 +1555,9 @@ print_ranges_list_to_extra(Dwarf_Debug dbg,
     char tmp[200];
     const char * sec_name = 0;
     Dwarf_Signed i = 0;
+    Dwarf_Error err =0;
+
+
     res = dwarf_get_ranges_section_name(dbg,&sec_name,&err);
     if(res != DW_DLV_OK ||  !sec_name || !strlen(sec_name)) {
         sec_name = ".debug_ranges";
@@ -1625,11 +1629,16 @@ is_location_form(int form)
 }
 
 static void
-show_attr_form_error(Dwarf_Debug dbg,unsigned attr,unsigned form,struct esb_s *out)
+show_attr_form_error(Dwarf_Debug dbg,unsigned attr,
+    unsigned form,
+    struct esb_s *out)
 {
     const char *n = 0;
     int res = 0;
     char buf[30];
+    Dwarf_Error formerr = 0;
+
+
     esb_append(out,"ERROR: Attribute ");
     snprintf(buf,sizeof(buf),"%u",attr);
     esb_append(out,buf);
@@ -1650,7 +1659,7 @@ show_attr_form_error(Dwarf_Debug dbg,unsigned attr,unsigned form,struct esb_s *o
     }
     esb_append(out,n);
     esb_append(out,"), a form which is not appropriate");
-    print_error_and_continue(dbg,esb_get_string(out), DW_DLV_OK,err);
+    print_error_and_continue(dbg,esb_get_string(out), DW_DLV_OK,formerr);
 }
 
 /*  Traverse an attribute and following any reference
@@ -1669,6 +1678,7 @@ traverse_attribute(Dwarf_Debug dbg, Dwarf_Die die, Dwarf_Half attr,
     boolean circular_reference = FALSE;
     Dwarf_Bool is_info = TRUE;
     struct esb_s valname;
+    Dwarf_Error err = 0;
 
     esb_constructor(&valname);
     is_info = dwarf_get_die_infotypes_flag(die);
@@ -1775,6 +1785,7 @@ traverse_one_die(Dwarf_Debug dbg, Dwarf_Attribute attrib, Dwarf_Die die,
     int res = 0;
     boolean circular_reference = FALSE;
     boolean print_information = FALSE;
+    Dwarf_Error err = 0;
 
     res = dwarf_tag(die, &tag, &err);
     if (res != DW_DLV_OK) {
@@ -2199,7 +2210,7 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
         get_small_encoding_integer_and_name(dbg, attrib, &uval,
             "DW_AT_calling_convention",
             &valname, get_CC_name,
-            &err,
+            &paerr,
             show_form_used);
         break;
     case DW_AT_discr_list:      /* DWARF3 */
@@ -2226,10 +2237,10 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
             int wres = 0;
 
             get_form_values(attrib,&theform,&directform);
-            wres = dwarf_get_version_of_die(die ,
-                &version,&offset_size);
+            wres = dwarf_get_version_of_die(die,&version,&offset_size);
             if (wres != DW_DLV_OK) {
-                print_error(dbg,"Cannot get DIE context version number",wres,err);
+                print_error(dbg,"ERROR: Cannot get DIE context version number",
+                    DW_DLV_OK,paerr);
                 break;
             }
             fc = dwarf_get_form_class(version,attr,offset_size,theform);
@@ -3960,11 +3971,10 @@ print_exprloc_content(Dwarf_Debug dbg,Dwarf_Die die,
             }
             esb_append(esbp,": ");
         }
-        ares = dwarf_get_version_of_die(die,
-            &version,&offset_size);
+        ares = dwarf_get_version_of_die(die,&version,&offset_size);
         if (ares != DW_DLV_OK) {
-            print_error(dbg,"Cannot get version size for exprloc die",
-                ares,ecerr);
+            print_error(dbg,"ERROR: Cannot get version size for exprloc die",
+                DW_DLV_ERROR,ecerr);
         }
         ares = dwarf_get_die_address_size(die,&address_size,&ecerr);
         if (wres == DW_DLV_NO_ENTRY) {
@@ -4079,7 +4089,9 @@ print_attributes_encoding(Dwarf_Debug dbg)
         Dwarf_Unsigned bytes_leb128 = 0;
         int index;
         int count = 0;
-        float saved_rate;
+        float saved_rate = 0.0;
+        Dwarf_Error attr_error = 0;
+
         for (index = 0; index < DW_AT_lo_user; ++index) {
             if (attributes_encoding_table[index].leb128) {
                 if (print_header) {
@@ -4113,6 +4125,8 @@ print_attributes_encoding(Dwarf_Debug dbg)
             /* At least we have an entry, print summary and percentage */
             Dwarf_Addr lower = 0;
             Dwarf_Unsigned size = 0;
+            int infoerr = 0;
+
             saved_rate = total_bytes_leb128 * 100 / total_bytes_formx;
             printf("** Summary **                 "
                 "%10" /*DW_PR_XZEROS*/ DW_PR_DUu " "  /* Entries */
@@ -4125,7 +4139,12 @@ print_attributes_encoding(Dwarf_Debug dbg)
                 total_bytes_leb128,
                 saved_rate);
             /* Get .debug_info size (Very unlikely to have an error here). */
-            dwarf_get_section_info_by_name(dbg,".debug_info",&lower,&size,&err);
+            infoerr = dwarf_get_section_info_by_name(dbg,".debug_info",&lower,
+                &size,&attr_error);
+            if (infoerr == DW_DLV_ERROR) {
+                  print_error(dbg, "get_section_info_by_name", 
+                       infoerr,attr_error);
+            }
             saved_rate = (total_bytes_formx - total_bytes_leb128) * 100 / size;
             if (saved_rate > 0) {
                 printf("\n** .debug_info size can be reduced by %.0f%% **\n",
@@ -4169,6 +4188,7 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
     Dwarf_Half direct_form = 0;
     char small_buf[COMPILE_UNIT_NAME_LEN];  /* Size to hold a filename */
     Dwarf_Bool is_info = TRUE;
+    Dwarf_Error err = 0;
 
 
     is_info = dwarf_get_die_infotypes_flag(die);
