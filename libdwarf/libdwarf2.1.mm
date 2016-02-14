@@ -8,7 +8,7 @@
 .nr Hb 5
 \." ==============================================
 \." Put current date in the following at each rev
-.ds vE rev 2.41, Feb 13, 2016
+.ds vE rev 2.42, Feb 14, 2016
 \." ==============================================
 \." ==============================================
 .ds | |
@@ -3453,7 +3453,7 @@ It returns \f(CWDW_DLV_ERROR\fP on error.
 .P
 This form is used to refer to a type unit.
 
-.H 3 "dwarf_experloc()"
+.H 3 "dwarf_formexprloc()"
 .DS
 \f(CWint dwarf_formexprloc(
         Dwarf_Attribute attr,
