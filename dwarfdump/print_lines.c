@@ -44,18 +44,19 @@
 
 
 static void
-print_source_intro(Dwarf_Die cu_die)
+print_source_intro(Dwarf_Debug dbg,Dwarf_Die cu_die)
 {
-    int ores = 0;
-    Dwarf_Off off = 0;
+    int         ores = 0;
+    Dwarf_Off   off = 0;
+    Dwarf_Error src_err = 0;
 
-    ores = dwarf_dieoffset(cu_die, &off, &err);
+    ores = dwarf_dieoffset(cu_die, &off, &src_err);
     if (ores == DW_DLV_OK) {
         int lres = 0;
         const char *sec_name = 0;
 
         lres = dwarf_get_die_section_name_b(cu_die,
-            &sec_name,&err);
+            &sec_name,&src_err);
         if (lres != DW_DLV_OK ||  !sec_name || !strlen(sec_name)) {
             sec_name = ".debug_info";
         }
@@ -63,19 +64,27 @@ print_source_intro(Dwarf_Die cu_die)
             DW_PR_XZEROS DW_PR_DUx "):\n",
             sec_name,
             (Dwarf_Unsigned) off);
+        if (lres == DW_DLV_ERROR) {
+            dwarf_dealloc(dbg,src_err, DW_DLA_ERROR);
+            src_err = 0;
+        }
     } else {
+        if (ores == DW_DLV_ERROR) {
+            dwarf_dealloc(dbg,src_err, DW_DLA_ERROR);
+            src_err = 0;
+        }
         printf("Source lines (for the CU-DIE at unknown location):\n");
     }
 }
 
 static void
-record_line_error(const char *where, Dwarf_Error err)
+record_line_error(const char *where, Dwarf_Error line_err)
 {
     char tmp_buff[500];
     if (check_lines && checking_this_compiler()) {
         snprintf(tmp_buff, sizeof(tmp_buff),
             "Error getting line details calling %s dwarf error is %s",
-            where,dwarf_errmsg(err));
+            where,dwarf_errmsg(line_err));
         DWARF_CHECK_ERROR(lines_result,tmp_buff);
     }
 }
@@ -97,7 +106,7 @@ process_line_table(Dwarf_Debug dbg,
     string subprog_filename = 0;
     Dwarf_Unsigned subprog_line = 0;
 
-    Dwarf_Error err = 0;
+    Dwarf_Error lt_err = 0;
 
     Dwarf_Bool newstatement = 0;
     Dwarf_Bool lineendsequence = 0;
@@ -115,7 +124,7 @@ process_line_table(Dwarf_Debug dbg,
     /* line_flag is TRUE */
     esb_constructor(&lastsrc);
 
-    get_address_size_and_max(dbg,0,&elf_max_address,&err);
+    get_address_size_and_max(dbg,0,&elf_max_address,&lt_err);
     /* Padding for a nice layout */
     padding = line_print_pc ? "            " : "";
     if (do_print_dwarf) {
@@ -168,7 +177,7 @@ process_line_table(Dwarf_Debug dbg,
             /* A line record with addr=0 was detected */
             if (SkipRecord) {
                 /* Skip records that do not have ís_addr_set' */
-                ares = dwarf_line_is_addr_set(line, &has_is_addr_set, &err);
+                ares = dwarf_line_is_addr_set(line, &has_is_addr_set, &lt_err);
                 if (ares == DW_DLV_OK && has_is_addr_set) {
                     SkipRecord = FALSE;
                 }
@@ -186,22 +195,22 @@ process_line_table(Dwarf_Debug dbg,
 
         filename = "<unknown>";
         if (!is_actuals_table) {
-            sres = dwarf_linesrc(line, &filename, &err);
+            sres = dwarf_linesrc(line, &filename, &lt_err);
             if (sres == DW_DLV_ERROR) {
                 /* Do not terminate processing */
                 where = "dwarf_linesrc()";
-                record_line_error(where,err);
+                record_line_error(where,lt_err);
                 found_line_error = TRUE;
             }
         }
 
         pc = 0;
-        ares = dwarf_lineaddr(line, &pc, &err);
+        ares = dwarf_lineaddr(line, &pc, &lt_err);
 
         if (ares == DW_DLV_ERROR) {
             /* Do not terminate processing */
             where = "dwarf_lineaddr()";
-            record_line_error(where,err);
+            record_line_error(where,lt_err);
             found_line_error = TRUE;
             pc = 0;
         }
@@ -210,11 +219,11 @@ process_line_table(Dwarf_Debug dbg,
         }
 
         if (is_actuals_table) {
-            lires = dwarf_linelogical(line, &logicalno, &err);
+            lires = dwarf_linelogical(line, &logicalno, &lt_err);
             if (lires == DW_DLV_ERROR) {
                 /* Do not terminate processing */
                 where = "dwarf_linelogical()";
-                record_line_error(where,err);
+                record_line_error(where,lt_err);
                 found_line_error = TRUE;
             }
             if (lires == DW_DLV_NO_ENTRY) {
@@ -222,21 +231,21 @@ process_line_table(Dwarf_Debug dbg,
             }
             column = 0;
         } else {
-            lires = dwarf_lineno(line, &lineno, &err);
+            lires = dwarf_lineno(line, &lineno, &lt_err);
             if (lires == DW_DLV_ERROR) {
                 /* Do not terminate processing */
                 where = "dwarf_lineno()";
-                record_line_error(where,err);
+                record_line_error(where,lt_err);
                 found_line_error = TRUE;
             }
             if (lires == DW_DLV_NO_ENTRY) {
                 lineno = -1LL;
             }
-            cores = dwarf_lineoff_b(line, &column, &err);
+            cores = dwarf_lineoff_b(line, &column, &lt_err);
             if (cores == DW_DLV_ERROR) {
                 /* Do not terminate processing */
                 where = "dwarf_lineoff()";
-                record_line_error(where,err);
+                record_line_error(where,lt_err);
                 found_line_error = TRUE;
             }
             if (cores == DW_DLV_NO_ENTRY) {
@@ -251,7 +260,7 @@ process_line_table(Dwarf_Debug dbg,
         if (check_decl_file && checking_this_compiler()) {
             DWARF_CHECK_COUNT(decl_file_result,1);
             if (found_line_error) {
-                DWARF_CHECK_ERROR2(decl_file_result,where,dwarf_errmsg(err));
+                DWARF_CHECK_ERROR2(decl_file_result,where,dwarf_errmsg(lt_err));
             } else if (do_check_dwarf) {
                 /*  Check the address lies with a valid [lowPC:highPC]
                     in the .text section*/
@@ -365,32 +374,32 @@ process_line_table(Dwarf_Debug dbg,
         }
 
         if (!is_actuals_table) {
-            nsres = dwarf_linebeginstatement(line, &newstatement, &err);
+            nsres = dwarf_linebeginstatement(line, &newstatement, &lt_err);
             if (nsres == DW_DLV_OK) {
                 if (newstatement && do_print_dwarf) {
                     printf(" %s","NS");
                 }
             } else if (nsres == DW_DLV_ERROR) {
-                print_error(dbg, "linebeginstatment failed", nsres, err);
+                print_error(dbg, "linebeginstatment failed", nsres, lt_err);
             }
         }
 
         if (!is_logicals_table) {
-            nsres = dwarf_lineblock(line, &new_basic_block, &err);
+            nsres = dwarf_lineblock(line, &new_basic_block, &lt_err);
             if (nsres == DW_DLV_OK) {
                 if (new_basic_block && do_print_dwarf) {
                     printf(" %s","BB");
                 }
             } else if (nsres == DW_DLV_ERROR) {
-                print_error(dbg, "lineblock failed", nsres, err);
+                print_error(dbg, "lineblock failed", nsres, lt_err);
             }
-            nsres = dwarf_lineendsequence(line, &lineendsequence, &err);
+            nsres = dwarf_lineendsequence(line, &lineendsequence, &lt_err);
             if (nsres == DW_DLV_OK) {
                 if (lineendsequence && do_print_dwarf) {
                     printf(" %s", "ET");
                 }
             } else if (nsres == DW_DLV_ERROR) {
-                print_error(dbg, "lineendsequence failed", nsres, err);
+                print_error(dbg, "lineendsequence failed", nsres, lt_err);
             }
         }
 
@@ -401,10 +410,10 @@ process_line_table(Dwarf_Debug dbg,
             Dwarf_Unsigned discriminator = 0;
             int disres = dwarf_prologue_end_etc(line,
                 &prologue_end,&epilogue_begin,
-                &isa,&discriminator,&err);
+                &isa,&discriminator,&lt_err);
             if (disres == DW_DLV_ERROR) {
                 print_error(dbg, "dwarf_prologue_end_etc() failed",
-                    disres, err);
+                    disres, lt_err);
             }
             if (prologue_end && !is_actuals_table) {
                 printf(" PE");
@@ -420,20 +429,20 @@ process_line_table(Dwarf_Debug dbg,
             }
             if (is_logicals_table) {
                 call_context = 0;
-                disres = dwarf_linecontext(line, &call_context, &err);
+                disres = dwarf_linecontext(line, &call_context, &lt_err);
                 if (disres == DW_DLV_ERROR) {
                     print_error(dbg, "dwarf_linecontext() failed",
-                        disres, err);
+                        disres, lt_err);
                 }
                 if (call_context) {
                     printf(" CC=%" DW_PR_DUu, call_context);
                 }
                 subprog_name = 0;
                 disres = dwarf_line_subprog(line, &subprog_name,
-                    &subprog_filename, &subprog_line, &err);
+                    &subprog_filename, &subprog_line, &lt_err);
                 if (disres == DW_DLV_ERROR) {
                     print_error(dbg, "dwarf_line_subprog() failed",
-                        disres, err);
+                        disres, lt_err);
                 }
                 if (subprog_name && strlen(subprog_name)) {
                     /*  We do not print an empty name.
@@ -485,6 +494,7 @@ print_line_context_record(Dwarf_Debug dbg,
     const char *name = 0;
     struct esb_s bufr;
     Dwarf_Small table_count = 0;
+    Dwarf_Error err = 0;
 
     esb_constructor(&bufr);
     printf("Line Context data\n");
@@ -638,6 +648,7 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
     int line_errs = 0;
     Dwarf_Line_Context line_context = 0;
     const char *sec_name = 0;
+    Dwarf_Error err = 0;
 
     current_section_id = DEBUG_LINE;
 
@@ -670,7 +681,7 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
 
     if (verbose > 1) {
         int errcount = 0;
-        print_source_intro(cu_die);
+        print_source_intro(dbg,cu_die);
         print_one_die(dbg, cu_die,
             /* print_information= */ 1,
             /* indent level */0,
@@ -765,7 +776,7 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
             if(line_context && verbose) {
                 print_line_context_record(dbg,line_context);
             }
-            print_source_intro(cu_die);
+            print_source_intro(dbg,cu_die);
             if (verbose) {
                 print_one_die(dbg, cu_die,
                     /* print_information= */ TRUE,
@@ -822,7 +833,7 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
             int ores = 0;
             Dwarf_Unsigned off = 0;
 
-            print_source_intro(cu_die);
+            print_source_intro(dbg,cu_die);
             if (verbose) {
                 print_one_die(dbg, cu_die,
                     /* print_information= */ TRUE,

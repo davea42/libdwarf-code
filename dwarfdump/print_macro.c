@@ -37,6 +37,7 @@ print_source_intro(Dwarf_Die cu_die)
 {
     Dwarf_Off off = 0;
     int ores = 0;
+    Dwarf_Error err = 0;
 
     ores = dwarf_dieoffset(cu_die, &off, &err);
     if (ores == DW_DLV_OK) {
@@ -74,6 +75,7 @@ print_macro_ops(Dwarf_Debug dbg,
         Dwarf_Unsigned  offset =0;
         const char    * macro_string =0;
         int lres = 0;
+        Dwarf_Error err = 0;
 
         lres = dwarf_get_macro_op(mcontext,
             k, &section_offset,&macro_operator,
@@ -268,6 +270,7 @@ print_macros_5style_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die,
     Dwarf_Unsigned number_of_ops = 0;
     Dwarf_Unsigned ops_total_byte_len = 0;
     Dwarf_Bool is_primary = TRUE;
+    Dwarf_Error err = 0;
 
     current_section_id = DEBUG_MACRO;
     if(!by_offset) {

@@ -358,10 +358,10 @@ dwarf_srcfiles(Dwarf_Die die,
     {
         Dwarf_Unsigned fission_offset = 0;
         Dwarf_Unsigned fission_size = 0;
-        int res = _dwarf_get_fission_addition_die(die, DW_SECT_LINE,
+        int resl = _dwarf_get_fission_addition_die(die, DW_SECT_LINE,
             &fission_offset,&fission_size,error);
-        if(res != DW_DLV_OK) {
-            return res;
+        if(resl != DW_DLV_OK) {
+            return resl;
         }
         line_ptr += fission_offset;
     }
@@ -585,10 +585,10 @@ _dwarf_internal_srclines(Dwarf_Die die,
     }
     {
         Dwarf_Unsigned fission_size = 0;
-        int res = _dwarf_get_fission_addition_die(die, DW_SECT_LINE,
+        int resf = _dwarf_get_fission_addition_die(die, DW_SECT_LINE,
             &fission_offset,&fission_size,error);
-        if(res != DW_DLV_OK) {
-            return res;
+        if(resf != DW_DLV_OK) {
+            return resf;
         }
         line_ptr += fission_offset;
     }

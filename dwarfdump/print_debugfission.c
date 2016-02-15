@@ -52,7 +52,7 @@ print_debugfission_index(Dwarf_Debug dbg,const char *type)
     Dwarf_Unsigned offsets_count = 0;
     Dwarf_Unsigned units_count = 0;
     Dwarf_Unsigned hash_slots_count = 0;
-    Dwarf_Error err = 0;
+    Dwarf_Error fierr = 0;
     const char * section_name = 0;
     const char * section_type2 = 0;
     const char * section_name2 = 0;
@@ -66,7 +66,7 @@ print_debugfission_index(Dwarf_Debug dbg,const char *type)
         &units_count,
         &hash_slots_count,
         &section_name,
-        &err);
+        &fierr);
     if (res == DW_DLV_NO_ENTRY) {
         /* This applies to most object files. */
         return;
@@ -78,23 +78,23 @@ print_debugfission_index(Dwarf_Debug dbg,const char *type)
     res = dwarf_get_xu_index_section_type(xuhdr,
         &section_type2,
         &section_name2,
-        &err);
+        &fierr);
     if (res == DW_DLV_NO_ENTRY) {
         /* Impossible. */
         print_error(dbg,"dwarf_get_xu_index_section_type",
-            DW_DLE_XU_IMPOSSIBLE_ERROR,err);
+            DW_DLE_XU_IMPOSSIBLE_ERROR,fierr);
         dwarf_xu_header_free(xuhdr);
         return;
     }
     if (res == DW_DLV_ERROR) {
         /* Impossible. FIXME */
-        print_error(dbg,"dwarf_get_xu_index_section_type", res,err);
+        print_error(dbg,"dwarf_get_xu_index_section_type", res,fierr);
         dwarf_xu_header_free(xuhdr);
         return;
     }
     if (strcmp(section_type2,type)) {
         print_error(dbg,"dwarf_get_xu_index_section_type",
-            DW_DLE_XU_IMPOSSIBLE_ERROR,err);
+            DW_DLE_XU_IMPOSSIBLE_ERROR,fierr);
         dwarf_xu_header_free(xuhdr);
         return;
     }
@@ -127,9 +127,9 @@ print_debugfission_index(Dwarf_Debug dbg,const char *type)
             esb_constructor(&hashhexstring);
             memset(&hashval,0,sizeof(hashval));
             res = dwarf_get_xu_hash_entry(xuhdr,h,
-                &hashval,&index,&err);
+                &hashval,&index,&fierr);
             if (res == DW_DLV_ERROR) {
-                print_error(dbg,"dwarf_get_xu_hash_entry",res,err);
+                print_error(dbg,"dwarf_get_xu_hash_entry",res,fierr);
                 dwarf_xu_header_free(xuhdr);
                 esb_destructor(&hashhexstring);
                 return;
@@ -161,16 +161,16 @@ print_debugfission_index(Dwarf_Debug dbg,const char *type)
                 const char * name = 0;
                 Dwarf_Unsigned num = 0;
                 res = dwarf_get_xu_section_names(xuhdr,
-                    col,&num,&name,&err);
+                    col,&num,&name,&fierr);
                 if (res != DW_DLV_OK) {
-                    print_error(dbg,"dwarf_get_xu_section_names",res,err);
+                    print_error(dbg,"dwarf_get_xu_section_names",res,fierr);
                     dwarf_xu_header_free(xuhdr);
                     return;
                 }
                 res = dwarf_get_xu_section_offset(xuhdr,
-                    index,col,&off,&len,&err);
+                    index,col,&off,&len,&fierr);
                 if (res != DW_DLV_OK) {
-                    print_error(dbg,"dwarf_get_xu_section_offset",res,err);
+                    print_error(dbg,"dwarf_get_xu_section_offset",res,fierr);
                     dwarf_xu_header_free(xuhdr);
                     return;
                 }

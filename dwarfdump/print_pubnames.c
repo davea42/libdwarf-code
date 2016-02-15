@@ -80,6 +80,7 @@ print_pubname_style_entry(Dwarf_Debug dbg,
     int ddres = 0;
     int cudres = 0;
     char tmp_buf[100];
+    Dwarf_Error err = 0;
 
     /* get die at die_off */
     dres = dwarf_offdie(dbg, die_off, &die, &err);
@@ -178,11 +179,10 @@ print_pubnames(Dwarf_Debug dbg)
     Dwarf_Signed i = 0;
     Dwarf_Off die_off = 0;
     Dwarf_Off cu_off = 0;
-
     Dwarf_Addr elf_max_address = 0;
     /* Offset to previous CU */
     Dwarf_Off prev_cu_off = elf_max_address;
-
+    Dwarf_Error err = 0;
     char *name = 0;
     int res = 0;
 
@@ -242,7 +242,7 @@ print_pubnames(Dwarf_Debug dbg)
                             and update compiler list */
                         struct esb_s producername;
                         esb_constructor(&producername);
-                        get_producer_name(dbg,die,err,&producername);
+                        get_producer_name(dbg,die,&producername);
                         update_compiler_target(esb_get_string(&producername));
                         esb_destructor(&producername);
                     }

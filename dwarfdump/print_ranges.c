@@ -42,12 +42,13 @@ print_ranges(Dwarf_Debug dbg)
     int wasdense = 0;
     int res  = 0;
     const char *sec_name = 0;
+    Dwarf_Error pr_err = 0;
 
     current_section_id = DEBUG_RANGES;
     if (!do_print_dwarf) {
         return;
     }
-    res = dwarf_get_ranges_section_name(dbg,&sec_name,&err);
+    res = dwarf_get_ranges_section_name(dbg,&sec_name,&pr_err);
     if (res != DW_DLV_OK ||  !sec_name || !strlen(sec_name)) {
         sec_name = ".debug_ranges";
     }
@@ -65,7 +66,7 @@ print_ranges(Dwarf_Debug dbg)
         /*  We do not know what DIE is involved, we use
             the older call here. */
         int rres = dwarf_get_ranges(dbg,off,&rangeset,
-            &rangecount,&bytecount,&err);
+            &rangecount,&bytecount,&pr_err);
         if (rres == DW_DLV_OK) {
             char *val = 0;
             printf(" Ranges group %d:\n",group_number);
@@ -113,15 +114,16 @@ check_ranges_list(Dwarf_Debug dbg,
     Dwarf_Bool bError = FALSE;
     Dwarf_Half elf_address_size = 0;
     Dwarf_Addr elf_max_address = 0;
+    Dwarf_Error rlerr = 0;
 
     static boolean do_print = TRUE;
     int res = 0;
     const char *sec_name = 0;
-    res = dwarf_get_ranges_section_name(dbg,&sec_name,&err);
+    res = dwarf_get_ranges_section_name(dbg,&sec_name,&rlerr);
     if (res != DW_DLV_OK ||  !sec_name || !strlen(sec_name)) {
         sec_name = ".debug_ranges";
     }
-    get_address_size_and_max(dbg,&elf_address_size,&elf_max_address,&err);
+    get_address_size_and_max(dbg,&elf_address_size,&elf_max_address,&rlerr);
 
 #if 0
 {
@@ -177,10 +179,11 @@ printf("**** END ****\n");
                     DWARF_CHECK_ERROR(ranges_result, errbuf);
                     if (check_verbose_mode && do_print) {
                         /*  Update DIEs offset just for printing */
-                        int res = dwarf_die_offsets(cu_die,
-                            &DIE_overall_offset,&DIE_offset,&err);
-                        if (res != DW_DLV_OK) {
-                            print_error(dbg, "dwarf_die_offsets",res,err);
+                        int dioff_res = dwarf_die_offsets(cu_die,
+                            &DIE_overall_offset,&DIE_offset,&rlerr);
+                        if (dioff_res != DW_DLV_OK) {
+                            print_error(dbg, "dwarf_die_offsets",dioff_res,
+                                rlerr);
                         }
                         printf(
                             "Offset = 0x%" DW_PR_XZEROS DW_PR_DUx
@@ -304,6 +307,7 @@ check_range_array_info(Dwarf_Debug dbg)
         Dwarf_Unsigned index = 0;
         Dwarf_Die cu_die;
         int res;
+        Dwarf_Error ra_err = 0;
 
         /*  In case of errors, the correct DIE offset should be
             displayed. At this point we are at the end of the PU */
@@ -318,12 +322,12 @@ check_range_array_info(Dwarf_Debug dbg)
             die_off = range_array[index].die_off;
             original_off = range_array[index].range_off;
 
-            res = dwarf_offdie(dbg,die_off,&cu_die,&err);
+            res = dwarf_offdie(dbg,die_off,&cu_die,&ra_err);
             if (res != DW_DLV_OK) {
-                print_error(dbg,"dwarf_offdie",res,err);
+                print_error(dbg,"dwarf_offdie",res,ra_err);
             }
             res = dwarf_get_ranges_a(dbg,original_off,cu_die,
-                &rangeset,&rangecount,&bytecount,&err);
+                &rangeset,&rangecount,&bytecount,&ra_err);
             if (res == DW_DLV_OK) {
                 check_ranges_list(dbg,die_off,cu_die,original_off,
                     rangeset,rangecount,bytecount);

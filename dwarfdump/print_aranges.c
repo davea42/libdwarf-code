@@ -47,8 +47,9 @@ do_checking(Dwarf_Debug dbg, Dwarf_Arange *arange_buf,Dwarf_Signed i,
     int dres = 0;
     Dwarf_Off cuhdroff = 0;
     Dwarf_Off cudieoff3 = 0;
+    Dwarf_Error checking_err = 0;
     dres = dwarf_get_arange_cu_header_offset(
-        arange_buf[i],&cuhdroff,&err);
+        arange_buf[i],&cuhdroff,&checking_err);
     if (dres == DW_DLV_OK) {
         Dwarf_Off cudieoff2 = 0;
 
@@ -56,18 +57,18 @@ do_checking(Dwarf_Debug dbg, Dwarf_Arange *arange_buf,Dwarf_Signed i,
         if (first_cu || cu_die_offset != cu_die_offset_prev) {
             cu_die_offset_prev = cu_die_offset;
             dres = dwarf_die_offsets(cu_die,&DIE_overall_offset,
-                &DIE_offset,&err);
+                &DIE_offset,&checking_err);
             DIE_CU_overall_offset = DIE_overall_offset;
             DIE_CU_offset = DIE_offset;
             if (dres != DW_DLV_OK) {
-                print_error(dbg, "dwarf_die_offsets", dres, err);
+                print_error(dbg, "dwarf_die_offsets", dres, checking_err);
             }
         }
         dres = dwarf_get_cu_die_offset_given_cu_header_offset(
-            dbg,cuhdroff,&cudieoff2,&err);
+            dbg,cuhdroff,&cudieoff2,&checking_err);
         if (dres == DW_DLV_OK) {
             /* Get the CU offset for easy error reporting */
-            dwarf_die_offsets(cu_die,&DIE_overall_offset,&DIE_offset,&err);
+            dwarf_die_offsets(cu_die,&DIE_overall_offset,&DIE_offset,&checking_err);
             DIE_CU_overall_offset = DIE_overall_offset;
             DIE_CU_offset = DIE_offset;
             DWARF_CHECK_COUNT(aranges_result,1);
@@ -81,13 +82,13 @@ do_checking(Dwarf_Debug dbg, Dwarf_Arange *arange_buf,Dwarf_Signed i,
                     " gets wrong offset");
             }
         } else {
-            print_error(dbg, "dwarf_get_cu_die_offset_given...", dres, err);
+            print_error(dbg, "dwarf_get_cu_die_offset_given...", dres, checking_err);
         }
     } else {
-        print_error(dbg, "dwarf_get_arange_cu_header_offset", dres, err);
+        print_error(dbg, "dwarf_get_arange_cu_header_offset", dres, checking_err);
     }
     dres = dwarf_get_cu_die_offset(arange_buf[i],&cudieoff3,
-        &err);
+        &checking_err);
     if (dres == DW_DLV_OK) {
         DWARF_CHECK_COUNT(aranges_result,1);
         if (cudieoff3 != cu_die_offset) {
@@ -102,7 +103,7 @@ do_checking(Dwarf_Debug dbg, Dwarf_Arange *arange_buf,Dwarf_Signed i,
         }
     } else {
         print_error(dbg, "dwarf_get_cu_die_offset failed ",
-            dres,err);
+            dres,checking_err);
     }
 }
 
@@ -118,6 +119,7 @@ print_aranges(Dwarf_Debug dbg)
     Dwarf_Off prev_off = 0; /* Holds previous CU offset */
     Dwarf_Bool first_cu = TRUE;
     Dwarf_Off cu_die_offset_prev = 0;
+    Dwarf_Error pa_error = 0;
 
     /* Reset the global state, so we can traverse the debug_info */
     seen_CU = FALSE;
@@ -129,15 +131,15 @@ print_aranges(Dwarf_Debug dbg)
     if (do_print_dwarf) {
         const char *sec_name = 0;
         ares = dwarf_get_aranges_section_name(dbg,
-            &sec_name,&err);
+            &sec_name,&pa_error);
         if (ares != DW_DLV_OK || !sec_name || !strlen(sec_name)) {
             sec_name = ".debug_aranges";
         }
         printf("\n%s\n",sec_name);
     }
-    ares = dwarf_get_aranges(dbg, &arange_buf, &count, &err);
+    ares = dwarf_get_aranges(dbg, &arange_buf, &count, &pa_error);
     if (ares == DW_DLV_ERROR) {
-        print_error(dbg, "dwarf_get_aranges", ares, err);
+        print_error(dbg, "dwarf_get_aranges", ares, pa_error);
     } else if (ares == DW_DLV_NO_ENTRY) {
         /* no arange is included */
     } else {
@@ -152,26 +154,26 @@ print_aranges(Dwarf_Debug dbg)
                 &segment,
                 &segment_entry_size,
                 &start, &length,
-                &cu_die_offset, &err);
+                &cu_die_offset, &pa_error);
             if (aires != DW_DLV_OK) {
-                print_error(dbg, "dwarf_get_arange_info", aires, err);
+                print_error(dbg, "dwarf_get_arange_info", aires, pa_error);
             } else {
                 int dres;
                 struct esb_s producer_name;
                 esb_constructor(&producer_name);
                 /*  Get basic locations for error reporting */
-                dres = dwarf_offdie(dbg, cu_die_offset, &cu_die, &err);
+                dres = dwarf_offdie(dbg, cu_die_offset, &cu_die, &pa_error);
                 if (dres != DW_DLV_OK) {
-                    print_error(dbg, "dwarf_offdie", dres, err);
+                    print_error(dbg, "dwarf_offdie", dres, pa_error);
                 }
 
                 if (cu_name_flag) {
-                    if (should_skip_this_cu(dbg,cu_die,err)) {
+                    if (should_skip_this_cu(dbg,cu_die)) {
                         continue;
                     }
                 }
                 /* Get producer name for this CU and update compiler list */
-                get_producer_name(dbg,cu_die,err,&producer_name);
+                get_producer_name(dbg,cu_die,&producer_name);
                 update_compiler_target(esb_get_string(&producer_name));
                 esb_destructor(&producer_name);
                 if (!checking_this_compiler()) {
@@ -187,10 +189,10 @@ print_aranges(Dwarf_Debug dbg)
                 if (start || length) {
                     Dwarf_Off off = 0;
                     int cures3 = dwarf_get_arange_cu_header_offset(
-                        arange_buf[i], &off, &err);
+                        arange_buf[i], &off, &pa_error);
                     if (cures3 != DW_DLV_OK) {
                         print_error(dbg, "dwarf_get_cu_hdr_offset",
-                            cures3, err);
+                            cures3, pa_error);
                     }
 
                     /* Print the CU information if different.  */

@@ -1,3 +1,26 @@
+2016-02-13  David Anderson
+    * dwarfdump.c,globals.h,print_aranges.c,print_die.c,
+      print_frames.c,print_lines.c,print_locs.c,print_macro.c,
+      print_pubnames.c,print_reloc.ckprint_static_funcs.c,
+      print_static_vars.c,print_strings.c,print_types.c,
+      print_weaknames.c: Removed global Dwarf_Error err
+      and provided local Dwarf_Error as needed.
+2016-02-13  David Anderson
+     * configure.in: Add -Wshadow to --enable-shared. Add else and
+       cross-compile [] to the AC_TRY_RUN
+     * configure: Regenerate.
+     * dwarf_tsearchbal.c: Delete shadowed variable p, we use
+       the original instead.
+     * dwarfdump.c: Rename variables to avoid confusing
+       duplicated names (found by -Wshadow). #if 0 the
+       unused function old_get_cu_name(), which should get deleted.
+     * globals.h: Fixed prototypes, #if 0 prototype of
+       the unused function old_get_cu_name().
+     * print_abbrevs.c, print_aranges.c,print_debugfission.c,
+       print_die.c,print_frames.c, print_gdbindex.c, print_lines.c,
+       print_pubnames.c, print_ranges.c, print_sections.c,
+       tag_attr.c, tag_tree.c: Add local Dwarf_Error and 
+       rename variables to avoid shadowing confusion.
 2016-02-10  David Anderson
      * globals.h: Change enum val from std to singledw5.
        Some compilation environments reserve 'std'.

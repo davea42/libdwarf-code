@@ -709,7 +709,6 @@ tdelete_inner(const void *key,
     }
 
     {
-        struct ts_entry *p  = 0;
         struct ts_entry *t  = 0;
         struct ts_entry *r  = 0;
         int pak = 0;

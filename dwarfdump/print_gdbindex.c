@@ -31,15 +31,15 @@ static int
 print_culist_array(Dwarf_Debug dbg,
     Dwarf_Gdbindex  gdbindex,
     Dwarf_Unsigned *cu_list_len,
-    Dwarf_Error * err)
+    Dwarf_Error * culist_err)
 {
     Dwarf_Unsigned list_len = 0;
     Dwarf_Unsigned i;
     int res = dwarf_gdbindex_culist_array(gdbindex,
-        &list_len,err);
+        &list_len,culist_err);
     if (res != DW_DLV_OK) {
         print_error_and_continue(dbg,
-            "dwarf_gdbindex_culist_array failed",res,*err);
+            "dwarf_gdbindex_culist_array failed",res,*culist_err);
         return res;
     }
     printf("  CU list. array length: %" DW_PR_DUu
@@ -50,10 +50,10 @@ print_culist_array(Dwarf_Debug dbg,
         Dwarf_Unsigned cuoffset = 0;
         Dwarf_Unsigned culength = 0;
         res = dwarf_gdbindex_culist_entry(gdbindex,i,
-            &cuoffset,&culength,err);
+            &cuoffset,&culength,culist_err);
         if (res != DW_DLV_OK) {
             print_error_and_continue(dbg,
-                "dwarf_gdbindex_culist_entry failed",res,*err);
+                "dwarf_gdbindex_culist_entry failed",res,*culist_err);
             return res;
         }
         printf("    [%4" DW_PR_DUu "] 0x%"
@@ -71,15 +71,15 @@ print_culist_array(Dwarf_Debug dbg,
 static int
 print_types_culist_array(Dwarf_Debug dbg,
     Dwarf_Gdbindex  gdbindex,
-    Dwarf_Error * err)
+    Dwarf_Error * cular_err)
 {
     Dwarf_Unsigned list_len = 0;
     Dwarf_Unsigned i;
     int res = dwarf_gdbindex_types_culist_array(gdbindex,
-        &list_len,err);
+        &list_len,cular_err);
     if (res != DW_DLV_OK) {
         print_error_and_continue(dbg,
-            "dwarf_gdbindex_types_culist_array failed",res,*err);
+            "dwarf_gdbindex_types_culist_array failed",res,*cular_err);
         return res;
     }
     printf("  TU list. array length: %" DW_PR_DUu
@@ -89,14 +89,15 @@ print_types_culist_array(Dwarf_Debug dbg,
     for( i  = 0; i < list_len; i++) {
         Dwarf_Unsigned cuoffset = 0;
         Dwarf_Unsigned culength = 0;
-        Dwarf_Unsigned signature,
+        Dwarf_Unsigned signature = 0;
+
         res = dwarf_gdbindex_types_culist_entry(gdbindex,i,
             &cuoffset,&culength,
             &signature,
-            err);
+            cular_err);
         if (res != DW_DLV_OK) {
             print_error_and_continue(dbg,
-                "dwarf_gdbindex_culist_entry failed",res,*err);
+                "dwarf_gdbindex_culist_entry failed",res,*cular_err);
             return res;
         }
         printf("    [%4" DW_PR_DUu "] 0x%"
@@ -115,15 +116,15 @@ print_types_culist_array(Dwarf_Debug dbg,
 static int
 print_addressarea(Dwarf_Debug dbg,
     Dwarf_Gdbindex  gdbindex,
-    Dwarf_Error * err)
+    Dwarf_Error * addra_err)
 {
     Dwarf_Unsigned list_len = 0;
     Dwarf_Unsigned i;
     int res = dwarf_gdbindex_addressarea(gdbindex,
-        &list_len,err);
+        &list_len,addra_err);
     if (res != DW_DLV_OK) {
         print_error_and_continue(dbg,
-            "dwarf_gdbindex_addressarea failed",res,*err);
+            "dwarf_gdbindex_addressarea failed",res,*addra_err);
         return res;
     }
     printf("  Address table array length: %" DW_PR_DUu
@@ -133,14 +134,15 @@ print_addressarea(Dwarf_Debug dbg,
     for( i  = 0; i < list_len; i++) {
         Dwarf_Unsigned lowpc = 0;
         Dwarf_Unsigned highpc = 0;
-        Dwarf_Unsigned cu_index,
+        Dwarf_Unsigned cu_index = 0;
+
         res = dwarf_gdbindex_addressarea_entry(gdbindex,i,
             &lowpc,&highpc,
             &cu_index,
-            err);
+            addra_err);
         if (res != DW_DLV_OK) {
             print_error_and_continue(dbg,
-                "dwarf_gdbindex_addressarea_entry failed",res,*err);
+                "dwarf_gdbindex_addressarea_entry failed",res,*addra_err);
             return res;
         }
         printf("    [%4" DW_PR_DUu "] 0x%"
@@ -207,7 +209,7 @@ print_symtab_entry(Dwarf_Debug dbg,
     Dwarf_Unsigned symnameoffset,
     Dwarf_Unsigned cuvecoffset,
     Dwarf_Unsigned culist_len,
-    Dwarf_Error *err)
+    Dwarf_Error *sym_err)
 {
     int res = 0;
     const char *name = 0;
@@ -221,17 +223,17 @@ print_symtab_entry(Dwarf_Debug dbg,
         return DW_DLV_OK;
     }
     res = dwarf_gdbindex_string_by_offset(gdbindex,
-        symnameoffset,&name,err);
+        symnameoffset,&name,sym_err);
     if(res != DW_DLV_OK) {
         print_error_and_continue(dbg,
-            "dwarf_gdbindex_string_by_offset failed",res,*err);
+            "dwarf_gdbindex_string_by_offset failed",res,*sym_err);
         return res;
     }
     res = dwarf_gdbindex_cuvector_length(gdbindex,
-        cuvecoffset,&cuvec_len,err);
+        cuvecoffset,&cuvec_len,sym_err);
     if( res != DW_DLV_OK) {
         print_error_and_continue(dbg,
-            "dwarf_gdbindex_cuvector_length failed",res,*err);
+            "dwarf_gdbindex_cuvector_length failed",res,*sym_err);
         return res;
     }
     if (verbose > 1) {
@@ -250,18 +252,18 @@ print_symtab_entry(Dwarf_Debug dbg,
 
         res = dwarf_gdbindex_cuvector_inner_attributes(
             gdbindex,cuvecoffset,ii,
-            &attributes,err);
+            &attributes,sym_err);
         if( res != DW_DLV_OK) {
             print_error_and_continue(dbg,
-                "dwarf_gdbindex_cuvector_inner_attributes failed",res,*err);
+                "dwarf_gdbindex_cuvector_inner_attributes failed",res,*sym_err);
             return res;
         }
         res = dwarf_gdbindex_cuvector_instance_expand_value(gdbindex,
             attributes, &cu_index,&reserved1,&symbol_kind, &is_static,
-            err);
+            sym_err);
         if( res != DW_DLV_OK) {
             print_error_and_continue(dbg,
-                "dwarf_gdbindex_cuvector_instance_expand_value failed",res,*err);
+                "dwarf_gdbindex_cuvector_instance_expand_value failed",res,*sym_err);
             return res;
         }
         /*  if cu_index is > the cu-count, then it  refers
@@ -312,15 +314,15 @@ static int
 print_symboltable(Dwarf_Debug dbg,
     Dwarf_Gdbindex  gdbindex,
     Dwarf_Unsigned culist_len,
-    Dwarf_Error * err)
+    Dwarf_Error * symt_err)
 {
     Dwarf_Unsigned list_len = 0;
     Dwarf_Unsigned i;
     int res = dwarf_gdbindex_symboltable_array(gdbindex,
-        &list_len,err);
+        &list_len,symt_err);
     if (res != DW_DLV_OK) {
         print_error_and_continue(dbg,
-            "dwarf_gdbindex_symboltable failed",res,*err);
+            "dwarf_gdbindex_symboltable failed",res,*symt_err);
         return res;
     }
     printf("\n  Symbol table: length %" DW_PR_DUu
@@ -334,14 +336,14 @@ print_symboltable(Dwarf_Debug dbg,
         Dwarf_Unsigned cuvecoffset = 0;
         res = dwarf_gdbindex_symboltable_entry(gdbindex,i,
             &symnameoffset,&cuvecoffset,
-            err);
+            symt_err);
         if (res != DW_DLV_OK) {
             print_error_and_continue(dbg,
-                "dwarf_gdbindex_symboltable_entry failed",res,*err);
+                "dwarf_gdbindex_symboltable_entry failed",res,*symt_err);
             return res;
         }
         res = print_symtab_entry(dbg,gdbindex,i,symnameoffset,cuvecoffset,
-            culist_len,err);
+            culist_len,symt_err);
         if (res != DW_DLV_OK) {
             return res;
         }

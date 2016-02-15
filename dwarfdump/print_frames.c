@@ -91,7 +91,10 @@ get_abstract_origin_funcname(Dwarf_Debug dbg,Dwarf_Attribute attr,
     int dres = 0;
     int atres;
     int name_found = 0;
-    int res = dwarf_global_formref(attr,&off,&err);
+    int res = 0;
+    Dwarf_Error err = 0;
+
+    res = dwarf_global_formref(attr,&off,&err);
     if (res != DW_DLV_OK) {
         return DW_DLV_NO_ENTRY;
     }
@@ -551,16 +554,16 @@ get_fde_proc_name(Dwarf_Debug dbg, Dwarf_Addr low_pc,
             CU_name for PRINT_CU_INFO() in case of error.  */
         current_cu_die_for_print_frames = ldie;
         {
-            int chres = 0;
+            int chpfres = 0;
             Dwarf_Die child = 0;
 
-            chres =
+            chpfres =
                 dwarf_child(current_cu_die_for_print_frames, &child,
                     &pnerr);
-            if (chres == DW_DLV_ERROR) {
+            if (chpfres == DW_DLV_ERROR) {
                 load_CU_error_data(dbg,current_cu_die_for_print_frames);
-                print_error(dbg, "dwarf Child Read ", chres, pnerr);
-            } else if (chres == DW_DLV_NO_ENTRY) {
+                print_error(dbg, "dwarf Child Read ", chpfres, pnerr);
+            } else if (chpfres == DW_DLV_NO_ENTRY) {
 
                 ;/* do nothing, loop on cu */
             } else {
@@ -586,16 +589,18 @@ get_fde_proc_name(Dwarf_Debug dbg, Dwarf_Addr low_pc,
 static int
 print_one_fde(Dwarf_Debug dbg,
     const char *frame_section_name,
-    Dwarf_Fde fde,
+    Dwarf_Fde  fde,
     Dwarf_Unsigned fde_index,
     Dwarf_Cie * cie_data,
     Dwarf_Signed cie_element_count,
     Dwarf_Half address_size,
-    Dwarf_Half offset_size,Dwarf_Half version,int is_eh,
+    Dwarf_Half offset_size,
+    Dwarf_Half version,
+    int        is_eh,
     struct dwconf_s *config_data,
-    void **pcMap,
-    void **lowpcSet,
-    int * all_cus_seen)
+    void    ** pcMap,
+    void    ** lowpcSet,
+    int     *  all_cus_seen)
 {
     Dwarf_Addr j = 0;
     Dwarf_Addr low_pc = 0;
@@ -883,14 +888,14 @@ print_one_fde(Dwarf_Debug dbg,
         if (res == DW_DLV_OK) {
             int cires = 0;
             Dwarf_Unsigned cie_length = 0;
-            Dwarf_Small version = 0;
+            Dwarf_Small cie_version = 0;
             string augmenter = 0;
             Dwarf_Unsigned code_alignment_factor = 0;
             Dwarf_Signed data_alignment_factor = 0;
             Dwarf_Half return_address_register_rule = 0;
             Dwarf_Ptr initial_instructions = 0;
             Dwarf_Unsigned initial_instructions_length = 0;
-            Dwarf_Half offset_size = 0;
+            Dwarf_Half cie_offset_size = 0;
 
             if (cie_index >= cie_element_count) {
                 printf("Bad cie index %" DW_PR_DSd
@@ -900,20 +905,20 @@ print_one_fde(Dwarf_Debug dbg,
                     cie_element_count);
                 exit(1);
             }
-            cires = dwarf_get_offset_size(dbg,&offset_size,&oneferr);
+            cires = dwarf_get_offset_size(dbg,&cie_offset_size,&oneferr);
             if( cires != DW_DLV_OK) {
                 return res;
             }
             cires = dwarf_get_cie_info_b(cie_data[cie_index],
                 &cie_length,
-                &version,
+                &cie_version,
                 &augmenter,
                 &code_alignment_factor,
                 &data_alignment_factor,
                 &return_address_register_rule,
                 &initial_instructions,
                 &initial_instructions_length,
-                &offset_size,
+                &cie_offset_size,
                 &oneferr);
             if (cires == DW_DLV_ERROR) {
                 printf
@@ -932,8 +937,8 @@ print_one_fde(Dwarf_Debug dbg,
                         data_alignment_factor,
                         (int) code_alignment_factor,
                         address_size,
-                        offset_size,
-                        version, config_data);
+                        cie_offset_size,
+                        cie_version, config_data);
                 }
             }
         } else if (res == DW_DLV_NO_ENTRY) {
@@ -973,10 +978,10 @@ print_one_cie(Dwarf_Debug dbg, Dwarf_Cie cie,
     Dwarf_Ptr initial_instructions = 0;
     Dwarf_Unsigned initial_instructions_length = 0;
     Dwarf_Off cie_off = 0;
-    Dwarf_Error err = 0;
+    Dwarf_Error onecie_err = 0;
     Dwarf_Half offset_size = 0;
 
-    cires = dwarf_get_offset_size(dbg,&offset_size,&err);
+    cires = dwarf_get_offset_size(dbg,&offset_size,&onecie_err);
     if( cires != DW_DLV_OK) {
         return cires;
     }
@@ -989,9 +994,9 @@ print_one_cie(Dwarf_Debug dbg, Dwarf_Cie cie,
         &data_alignment_factor,
         &return_address_register_rule,
         &initial_instructions,
-        &initial_instructions_length, &err);
+        &initial_instructions_length, &onecie_err);
     if (cires == DW_DLV_ERROR) {
-        print_error(dbg, "dwarf_get_cie_info", cires, err);
+        print_error(dbg, "dwarf_get_cie_info", cires, onecie_err);
     }
     if (cires == DW_DLV_NO_ENTRY) {
         printf("Impossible DW_DLV_NO_ENTRY on cie %" DW_PR_DUu "\n",
@@ -1002,7 +1007,7 @@ print_one_cie(Dwarf_Debug dbg, Dwarf_Cie cie,
         if (do_print_dwarf) {
             printf("<%5" DW_PR_DUu ">\tversion\t\t\t\t%d\n",
                 cie_index, version);
-            cires = dwarf_cie_section_offset(dbg, cie, &cie_off, &err);
+            cires = dwarf_cie_section_offset(dbg, cie, &cie_off, &onecie_err);
             if (cires == DW_DLV_OK) {
                 printf("\tcie section offset\t\t%" DW_PR_DUu
                     " 0x%" DW_PR_XZEROS DW_PR_DUx "\n",
@@ -1030,7 +1035,7 @@ print_one_cie(Dwarf_Debug dbg, Dwarf_Cie cie,
                 return is DW_DLV_OK only if there is eh_frame
                 style augmentation bytes (its not a string). */
             ares =
-                dwarf_get_cie_augmentation_data(cie, &data, &len, &err);
+                dwarf_get_cie_augmentation_data(cie, &data, &len, &onecie_err);
             if (ares == DW_DLV_NO_ENTRY) {
                 /*  No Aug data (len zero) do nothing. */
             } else if (ares == DW_DLV_OK) {
@@ -1834,6 +1839,7 @@ print_frames(Dwarf_Debug dbg,
     Dwarf_Half version = 0;
     int framed = 0;
     void * map_lowpc_to_name = 0;
+    Dwarf_Error err = 0;
 
     current_section_id = DEBUG_FRAME;
 

@@ -414,6 +414,6 @@ main(int argc, char **argv)
 void print_error (UNUSEDARG Dwarf_Debug dbg,
     UNUSEDARG string msg,
     UNUSEDARG int res,
-    UNUSEDARG Dwarf_Error err)
+    UNUSEDARG Dwarf_Error localerr)
 {
 }
