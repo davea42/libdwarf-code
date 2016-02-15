@@ -35,7 +35,7 @@
 #endif /* HAVE_STDAFX_H */
 
 #define DWARFDUMP_VERSION " Wed Feb 10 09:04:52 PST 2016  "
-#define RELEASE_DATE      "20150507"
+#define RELEASE_DATE      "20160210"
 
 /* The Linux/Unix version does not want a version string to print
    unless -V is on the command line. */
