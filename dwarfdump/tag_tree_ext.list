@@ -29,6 +29,17 @@
 /*  list for semantic check of tag-tree relation.
     See tag_tree.list for details.
 
+    Notes:
+        If new top level TAGs are added/removed, update EXT_TAG_TABLE_ROWS
+        If new child TAGs are added/removed, update EXT_TAG_TABLE_COLS
+
+        EXT_TAG_TABLE_ROWS is defined in tag_tree.c and specifies the
+        maximum number of top level TAGs.
+        Current value is 8.
+
+        EXT_TAG_TABLE_COLS is defined in tag_tree.c and specifies the
+        maximum number of entries for the top level TAGs.
+        Current value is 5.
 */
 
 /* Common DWARF extensions */
@@ -62,4 +73,12 @@ DW_TAG_GNU_call_site
 0xffffffff
 DW_TAG_GNU_call_site
 DW_TAG_GNU_call_site_parameter
+0xffffffff
+DW_TAG_GNU_template_parameter_pack
+DW_TAG_template_type_parameter
+DW_TAG_template_value_parameter
+DW_TAG_GNU_template_template_parameter
+0xffffffff
+DW_TAG_GNU_formal_parameter_pack
+DW_TAG_formal_parameter
 0xffffffff

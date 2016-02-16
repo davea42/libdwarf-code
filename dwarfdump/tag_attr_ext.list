@@ -29,6 +29,18 @@
 
 /*  list for semantic check of tag-attr relation.
     See tag_attr.list for details.
+
+    Notes:
+        If new top level TAGs are added/removed, update EXT_ATTR_TABLE_ROWS
+        If new child TAGs are added/removed, update EXT_ATTR_TABLE_COLS
+
+        EXT_ATTR_TABLE_ROWS is defined in tag_tree.c and specifies the
+        maximum number of top level TAGs.
+        Current value is 10.
+
+        EXT_ATTR_TABLE_COLS is defined in tag_tree.c and specifies the
+        maximum number of entries for the top level TAGs.
+        Current value is 10.
 */
 
 /* Common DWARF extensions */
@@ -56,7 +68,6 @@ DW_AT_APPLE_omit_frame_ptr  /* Used by LLVM */
 DW_AT_APPLE_optimized /* Used by LLVM */
 DW_AT_GNU_all_tail_call_sites           0x2116 /* GNU */
 DW_AT_GNU_all_call_sites                0x2117 /* GNU */
-
 0xffffffff
 DW_TAG_variable
 DW_AT_MIPS_linkage_name   /* Used by GNU, SGI-IRIX, and others. */

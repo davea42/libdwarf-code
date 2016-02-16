@@ -83,8 +83,8 @@ No blank lines or commentary allowed, no symbols, just numbers.
 #define STD_TAG_TABLE_COLUMNS 7
 
 /* TAG tree common extension maximums. */
-#define EXT_TAG_TABLE_ROWS  7
-#define EXT_TAG_TABLE_COLS  7
+#define EXT_TAG_TABLE_ROWS  8
+#define EXT_TAG_TABLE_COLS  5
 
 /* The following 2 used in tag_tree.c only. */
 #define TAG_TABLE_ROW_MAXIMUM STD_TAG_TABLE_ROWS
@@ -97,8 +97,8 @@ No blank lines or commentary allowed, no symbols, just numbers.
 #define STD_ATTR_TABLE_ROWS STD_TAG_TABLE_ROWS
 #define STD_ATTR_TABLE_COLUMNS  16
 /* tag/attr tree common extension maximums. */
-#define EXT_ATTR_TABLE_ROWS 11
-#define EXT_ATTR_TABLE_COLS 16
+#define EXT_ATTR_TABLE_ROWS 10
+#define EXT_ATTR_TABLE_COLS 10
 
 /* The following 2 used in tag_attr.c only. */
 #define ATTR_TABLE_ROW_MAXIMUM STD_ATTR_TABLE_ROWS
