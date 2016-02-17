@@ -1,3 +1,14 @@
+
+2016-02-14  DavidAnderson
+    * dwarfdump.c,common.c: Updated version strings.
+    * print_die.c,print_strings.c: fixed indent errors.
+2016-02-14  Carlos Alberto-Enciso
+    * tag_attr_ext.list, tag_tree_ext.list: Adding
+      DW_TAG_GNU_template_parameter_pack,DW_TAG_GNU_formal_parameter_pack.
+    * tag_tree.c: Printed wrong name from tag-tree table in 
+      a comment.
+    * tag_common.h: Ext tag table rows count was higher than needed.
+      Ext attr table rows increased to 11.
 2016-02-13  David Anderson
     * dwarfdump.c,globals.h,print_aranges.c,print_die.c,
       print_frames.c,print_lines.c,print_locs.c,print_macro.c,

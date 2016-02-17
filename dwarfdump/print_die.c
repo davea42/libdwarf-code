@@ -4142,8 +4142,8 @@ print_attributes_encoding(Dwarf_Debug dbg)
             infoerr = dwarf_get_section_info_by_name(dbg,".debug_info",&lower,
                 &size,&attr_error);
             if (infoerr == DW_DLV_ERROR) {
-                  print_error(dbg, "get_section_info_by_name", 
-                       infoerr,attr_error);
+                print_error(dbg, "get_section_info_by_name",
+                    infoerr,attr_error);
             }
             saved_rate = (total_bytes_formx - total_bytes_leb128) * 100 / size;
             if (saved_rate > 0) {

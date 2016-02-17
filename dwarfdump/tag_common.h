@@ -97,7 +97,7 @@ No blank lines or commentary allowed, no symbols, just numbers.
 #define STD_ATTR_TABLE_ROWS STD_TAG_TABLE_ROWS
 #define STD_ATTR_TABLE_COLUMNS  16
 /* tag/attr tree common extension maximums. */
-#define EXT_ATTR_TABLE_ROWS 9
+#define EXT_ATTR_TABLE_ROWS 11
 #define EXT_ATTR_TABLE_COLS 16
 
 /* The following 2 used in tag_attr.c only. */

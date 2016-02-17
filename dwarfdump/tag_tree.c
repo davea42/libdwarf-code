@@ -381,7 +381,7 @@ main(int argc, char **argv)
             fprintf(fileOut,"/* 0x%02x - %-37s*/\n",u, name);
         } else {
             unsigned k = tag_tree_combination_table[u][0];
-            dwarf_get_TAG_name(u,&name);
+            dwarf_get_TAG_name(k,&name);
             fprintf(fileOut,"/* 0x%02x - %-37s*/\n", k, name);
         }
         fprintf(fileOut,"    { ");
