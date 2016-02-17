@@ -48,6 +48,15 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 */
 
+#if HAVE_CONFIG_H
+#include "config.h"
+#endif /* HAVE_CONFIG_H */
+
+/* SN-Carlos: Windows specific */
+#ifdef HAVE_STDAFX_H
+#include "stdafx.h"
+#endif /* HAVE_STDAFX_H */
+
 /*  The hashfunc return is now easily changed with
     cc -Duintptr_t or something. */
 #ifndef DW_TSHASHTYPE

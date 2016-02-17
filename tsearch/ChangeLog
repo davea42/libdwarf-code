@@ -1,3 +1,7 @@
+2016-02-17  David Anderson
+     * tsearch/config.h: Add some things convenient for testing.
+     * tsearch/dwarf_tsearch.c: Convenient for some testing.
+     * dwarf_tsearch.h: Modifications aid in testing tsearch.
 2016-02-07  David Anderson
      * RUNTEST: the script had a couple of problems (typos). Fixed.
        Added comments about running the tests.

@@ -1,4 +1,7 @@
-
+2016-02-17  Carlos Alberto-Enciso
+    *  dwarfdump/tag_attr_ext.list,dwarfdump/tag_common.h,
+       dwarfdump/tag_tree_ext.list: Tighten up the list limits
+       and add commentary about the list limits.
 2016-02-14  DavidAnderson
     * dwarfdump.c,common.c: Updated version strings.
     * print_die.c,print_strings.c: fixed indent errors.
