@@ -190,6 +190,110 @@ dwarf_tag(Dwarf_Die die, Dwarf_Half * tag, Dwarf_Error * error)
     return DW_DLV_OK;
 }
 
+/* Returns the children offsets for the given offset */
+int
+dwarf_offset_list(Dwarf_Debug dbg,
+    Dwarf_Off offset, Dwarf_Bool is_info,
+    Dwarf_Off **offbuf, Dwarf_Unsigned *offcnt, Dwarf_Error * error)
+{
+    Dwarf_Die die = 0;
+    Dwarf_Die child = 0;
+    Dwarf_Die sib_die = 0;
+    Dwarf_Die cur_die = 0;
+    Dwarf_Off cur_off = 0;
+    Dwarf_Word off_count = 0;
+    int res = 0;
+
+    /* Temporary counter. */
+    Dwarf_Unsigned i = 0;
+
+    /* Points to contiguous block of Dwarf_Off's to be returned. */
+    Dwarf_Off *ret_offsets = 0;
+
+    Dwarf_Chain curr_chain = 0;
+    Dwarf_Chain prev_chain = 0;
+    Dwarf_Chain head_chain = 0;
+
+    *offbuf = NULL;
+    *offcnt = 0;
+
+    /* Get DIE for offset */
+    res = dwarf_offdie_b(dbg,offset,is_info,&die,error);
+    if (DW_DLV_OK != res) {
+        return res;
+    }
+
+    /* Get first child for die */
+    res = dwarf_child(die,&child,error);
+    if (DW_DLV_ERROR == res) {
+        return res;
+    }
+
+    cur_die = child;
+    for (;;) {
+        if (DW_DLV_OK == res) {
+            /* Get Global offset for current die */
+            dwarf_dieoffset(cur_die,&cur_off,error);
+
+            /* Record offset in current entry chain */
+            curr_chain = (Dwarf_Chain) _dwarf_get_alloc(dbg, DW_DLA_CHAIN, 1);
+            if (curr_chain == NULL) {
+                _dwarf_error(dbg, error, DW_DLE_ALLOC_FAIL);
+                return (DW_DLV_ERROR);
+            }
+
+            /* Put current offset on singly_linked list. */
+            curr_chain->ch_item = (void *) cur_off;
+            ++off_count;
+
+            if (head_chain == NULL) {
+                head_chain = prev_chain = curr_chain;
+            }
+            else {
+                prev_chain->ch_next = curr_chain;
+                prev_chain = curr_chain;
+            }
+        }
+
+        /* Process any subrange siblings entries if any */
+        sib_die = 0;
+        res = dwarf_siblingof_b(dbg,cur_die,is_info,&sib_die,error);
+        if (DW_DLV_ERROR == res) {
+            return res;
+        }
+        if (DW_DLV_NO_ENTRY == res) {
+            /* Done at this level. */
+            break;
+        }
+        /* res == DW_DLV_OK */
+        if (cur_die != die) {
+            dwarf_dealloc(dbg,cur_die,DW_DLA_DIE);
+        }
+        cur_die = sib_die;
+    }
+
+    /* Points to contiguous block of Dwarf_Off's. */
+    ret_offsets = (Dwarf_Off *) _dwarf_get_alloc(dbg, DW_DLA_LIST, off_count);
+    if (ret_offsets == NULL) {
+        _dwarf_error(dbg, error, DW_DLE_ALLOC_FAIL);
+        return (DW_DLV_ERROR);
+    }
+
+    /*  Store offsets in contiguous block, and deallocate the chain. */
+    curr_chain = head_chain;
+    for (i = 0; i < off_count; i++) {
+        *(ret_offsets + i) = (Dwarf_Off) curr_chain->ch_item;
+        prev_chain = curr_chain;
+        curr_chain = curr_chain->ch_next;
+        dwarf_dealloc(dbg, prev_chain, DW_DLA_CHAIN);
+    }
+
+    *offbuf = ret_offsets;
+    *offcnt = off_count;
+
+    return DW_DLV_OK;
+}
+
 /*  If the input is improper (see DW_DLV_ERROR)
     this may leak memory. Such badly formed input
     should be very very rare.

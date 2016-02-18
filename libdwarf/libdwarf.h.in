@@ -1564,6 +1564,14 @@ int dwarf_hasattr(Dwarf_Die /*die*/,
     Dwarf_Bool * /*returned_bool*/,
     Dwarf_Error* /*error*/);
 
+/* Returns the children offsets for the given offset */
+int dwarf_offset_list(Dwarf_Debug /*dbg*/,
+    Dwarf_Off         /*offset*/,
+    Dwarf_Bool        /*is_info*/,
+    Dwarf_Off      ** /*offbuf*/,
+    Dwarf_Unsigned *  /*offcnt*/,
+    Dwarf_Error    *  /*error*/);
+
 /*  BEGIN: loclist_c interfaces
     NEW October 2015.
     This works for any attribute that identifies
