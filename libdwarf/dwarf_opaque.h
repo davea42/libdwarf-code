@@ -672,6 +672,12 @@ struct Dwarf_Chain_s {
     Dwarf_Chain ch_next;
 };
 
+typedef struct Dwarf_Chain_o *Dwarf_Chain_2;
+struct Dwarf_Chain_o {
+    Dwarf_Off ch_item;
+    Dwarf_Chain_2 ch_next;
+};
+
     /* Size of cu header version stamp field. */
 #define CU_VERSION_STAMP_SIZE   sizeof(Dwarf_Half)
 

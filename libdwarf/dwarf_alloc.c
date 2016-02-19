@@ -261,6 +261,9 @@ struct ial_s alloc_instance_basics[ALLOC_AREA_INDEX_TABLE_MAX] = {
     {sizeof(struct Dwarf_Macro_Context_s),MULTIPLY_NO,
         _dwarf_macro_constructor,
         _dwarf_macro_destructor},
+
+    /* 61 DW_DLA_CHAIN_2 */
+    {sizeof(struct Dwarf_Chain_o),MULTIPLY_NO, 0, 0},
 };
 
 /*  We are simply using the incoming pointer as the key-pointer.
