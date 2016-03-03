@@ -930,7 +930,7 @@ print_specific_checks_results(Compiler *pCompiler)
         PRINT_CHECK_RESULT("line_table", pCompiler, lines_result);
     }
     if (check_fdes) {
-        PRINT_CHECK_RESULT("fde table", pCompiler, fde_duplication);
+        PRINT_CHECK_RESULT("fde_table", pCompiler, fde_duplication);
     }
     if (check_aranges) {
         PRINT_CHECK_RESULT("aranges", pCompiler, aranges_result);
@@ -1423,7 +1423,9 @@ process_one_file(Elf * elf,Elf *elftied,
     }
 
     /* The right time to do this is unclear. But we need to do it. */
-    print_any_harmless_errors(dbg);
+    if (check_harmless) {
+        print_any_harmless_errors(dbg);
+    }
 
     /* Print error report only if errors have been detected */
     /* Print error report if the -kd option */

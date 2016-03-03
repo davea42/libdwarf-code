@@ -4404,9 +4404,9 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
                 if (dres != DW_DLV_OK) {
                     snprintf(small_buf,sizeof(small_buf),
                         "DW_AT_type offset does not point to a DIE "
-                        "for global offset 0x%" DW_PR_DUx
-                        " cu off 0x%" DW_PR_DUx
-                        " local offset 0x%" DW_PR_DUx
+                        "for global offset 0x%" DW_PR_XZEROS DW_PR_DUx
+                        " cu off 0x%" DW_PR_XZEROS DW_PR_DUx
+                        " local offset 0x%" DW_PR_XZEROS DW_PR_DUx
                         " tag 0x%x",
                         dieprint_cu_offset + off,dieprint_cu_offset,off,tag);
                     DWARF_CHECK_ERROR(type_offset_result,small_buf);
@@ -4446,7 +4446,8 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
                         default:
                             {
                                 snprintf(small_buf,sizeof(small_buf),
-                                    "DW_AT_type offset does not point to Type info we got tag 0x%x %s",
+                                    "DW_AT_type offset does not point to Type"
+                                    " info we got tag 0x%x %s",
                                 tag_for_check,
                                 get_TAG_name(tag_for_check,
                                     pd_dwarf_names_print_on_error));

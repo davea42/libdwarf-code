@@ -421,12 +421,6 @@ void get_address_size_and_max(Dwarf_Debug dbg,
    Dwarf_Addr * max,
    Dwarf_Error *err);
 
-
-#if 0
-/* Returns the DW_AT_name of the CU */
-string old_get_cu_name(Dwarf_Debug dbg,Dwarf_Die cu_die,Dwarf_Error err);
-#endif
-
 /* Returns the producer of the CU */
 int get_cu_name(Dwarf_Debug dbg,Dwarf_Die cu_die,
     char **short_name,char **long_name);
