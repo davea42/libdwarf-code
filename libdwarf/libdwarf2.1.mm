@@ -8,7 +8,7 @@
 .nr Hb 5
 \." ==============================================
 \." Put current date in the following at each rev
-.ds vE rev 2.42, Feb 14, 2016
+.ds vE rev 2.43, Mar 07, 2016
 \." ==============================================
 \." ==============================================
 .ds | |
@@ -2935,10 +2935,71 @@ form is not of class address.
     Dwarf_Off   * /*return_off*/, 
     Dwarf_Error * /*error*/);\fP
 .DE
-The function \f(CWdwarf_dietype_offset()\fP returns 
-the offset of 
-FIXME
+On success the function 
+\f(CWdwarf_dietype_offset()\fP
+returns 
+the offset referred to by 
+\f(CWDW_AT_type\fP
+attribute of
+\f(CWdie\fP.
 
+\f(CWDW_DLV_NO_ENTRY\fP
+is returned if the 
+\f(CWdie\fP
+has no
+\f(CWDW_AT_type\fP
+attribute.
+
+\f(CWDW_DLV_ERROR\fP
+is returned if an error is
+detected.
+
+
+.H 3 "dwarf_offset_list()"
+.DS
+\f(CWint dwarf_offset_list(Dwarf_Debug dbg,
+    Dwarf_Off         offset,
+    Dwarf_Bool        is_info,
+    Dwarf_Off      ** offbuf,
+    Dwarf_Unsigned *  offcnt,
+    Dwarf_Error    *  error);
+.DE
+The function 
+\f(CWdwarf_offset_list()\fP
+returns 
+an array of the offsets of the direct children
+of the die 
+at 
+\f(CWoffset()\fP.
+.P
+Freeing the offset_list:
+.in +2
+.FG "Exampleoffset_list dwarf_offset_list() free"
+.DS
+\f(CW
+void exampleoffset_list(Dwarf_Debug dbg, Dwarf_Off dieoffset,
+    Dwarf_Bool is_info)
+{
+    Dwarf_Unsigned offcnt = 0;
+    Dwarf_Off *offbuf = 0;
+    Dwarf_Error error = 0;
+    int errv = 0;
+
+    errv = dwarf_offset_list(dbg,dieoffset, is_info,
+        &offbuf,&offcnt, &error);
+    if (errv == DW_DLV_OK) {
+        Dwarf_Unsigned i = 0;
+
+        for (i = 0; i < offcnt; ++i) {
+            /* use offbuf[i] */
+        }
+        dwarf_dealloc(dbg, offbuf, DW_DLA_LIST);
+    }
+}
+\fP
+.DE
+.in -2
+.P
 
 
 

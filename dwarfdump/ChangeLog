@@ -1,3 +1,9 @@
+2016-03-03  Carlos Alberto-Enciso
+    * dwarfdump.c: Missing '_' just for consistency.
+      Print any harmless errors only the required in command line
+    * globals.h: Unused declaration.
+    * print_die.c: When displaying a DW_AT_type offset error, uses the standard
+      0xdddddddd format.  Wrap to 80 columns, a long line.
 2016-02-17  Carlos Alberto-Enciso
     *  dwarfdump/tag_attr_ext.list,dwarfdump/tag_common.h,
        dwarfdump/tag_tree_ext.list: Tighten up the list limits

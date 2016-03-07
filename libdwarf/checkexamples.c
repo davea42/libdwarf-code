@@ -159,6 +159,27 @@ void example8(Dwarf_Debug dbg, Dwarf_Die somedie)
     }
 }
 
+void exampleoffset_list(Dwarf_Debug dbg, Dwarf_Off dieoffset,
+    Dwarf_Bool is_info)
+{
+    Dwarf_Unsigned offcnt = 0;
+    Dwarf_Off *offbuf = 0;
+    Dwarf_Error error = 0;
+    int errv = 0;
+
+    errv = dwarf_offset_list(dbg,dieoffset, is_info,
+        &offbuf,&offcnt, &error);
+    if (errv == DW_DLV_OK) {
+        Dwarf_Unsigned i = 0;
+
+        for (i = 0; i < offcnt; ++i) {
+            /* use offbuf[i] */
+        }
+        dwarf_dealloc(dbg, offbuf, DW_DLA_LIST);
+    }
+}
+
+
 void
 example_loclistc(Dwarf_Debug dbg,Dwarf_Attribute someattr)
 {

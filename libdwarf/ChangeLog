@@ -1,3 +1,15 @@
+2016-03-01 David Anderson
+    * libdwarf2.1.mm: Documented dwarf_dietype() and
+      dwarf_offset_list().
+    * libdwarf2.1.pdf: Regenerated. Rev 2.43
+    * checkexamples.c: Added example for dwarf_offset_list().
+2016-02-19 Carlos Alberto Enciso 
+   * dwarf_alloc.h, dwarf_alloc.c, dwarf_base_types.h, dwarf_opaque.h:
+      New allocator type (DW_DLA_CHAIN_2), to allow a list of addressed
+      types (address, offset).
+      There was  Memory corruption due to incorrect usage of 
+      memory allocator type.
+    * dwarf_query.c: Use the new allocator type.
 2016-02-14  David Anderson
     * libdwarf2.1.mm: dwarf_exprloc -> dwarf_formexprloc.
       The spelling error was introduced in version 2.41.
