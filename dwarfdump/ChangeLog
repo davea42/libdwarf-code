@@ -1,3 +1,14 @@
+2016-03-07  David Anderson
+    * dwarfdump.c: Update version string. Added CU_low_address so
+      CU_base_address is properly used only for the DWARF 
+      CU 'base address' notion. Print CU_low_address in PRINT_CU_INFO().
+    * common.c: Update version string
+    * globals.h: New macro DROP_ERROR_INSTANCE(d,r,e) improves consistency
+      where we need to drop a Dwarf_Error instance.
+    * print_die.c: Support for CU_low_address. Use DROP_ERROR_INSTANCE
+      where appropriate.
+    * print_frames.c: Use DROP_ERROR_INSTANCE
+      where appropriate.
 2016-03-03  Carlos Alberto-Enciso
     * dwarfdump.c: Missing '_' just for consistency.
       Print any harmless errors only the required in command line

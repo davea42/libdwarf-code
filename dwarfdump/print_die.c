@@ -94,7 +94,8 @@ static void formx_signed(Dwarf_Signed s, struct esb_s *esbp);
 
 /*  It would be better to  use this as a local variable, but
     given interactions with many functions it temporarily
-    remains static . */
+    remains static .  FIXME: make this local and passed around
+    as needed. */
 static Dwarf_Unsigned dieprint_cu_offset = 0;
 
 static int pd_dwarf_names_print_on_error = 1;
@@ -566,8 +567,7 @@ get_macinfo_offset(Dwarf_Debug dbg,
 }
 
 
-/*  This Code ASSUMES errors go to the global err.
-    FIXME: assuming the global is wrong. */
+/*   */
 static int
 print_one_die_section(Dwarf_Debug dbg,Dwarf_Bool is_info,
     Dwarf_Error *pod_err)
@@ -714,6 +714,13 @@ print_one_die_section(Dwarf_Debug dbg,Dwarf_Bool is_info,
         need_CU_name = TRUE;
         need_CU_base_address = TRUE;
         need_CU_high_address = TRUE;
+        /*  Some prerelease gcc versions used ranges but seemingly
+            assumed the lack of a base address in the CU was
+            defined to be a zero base.
+            Assuming a base address (and low and high) is sensible. */
+        CU_base_address = 0;
+        CU_high_address = 0;
+        CU_low_address = 0;
 
         /*  Release the 'cu_die' created by the call
             to 'dwarf_siblingof' at the top of the main loop. */
@@ -928,15 +935,8 @@ print_die_and_children_internal(Dwarf_Debug dbg,
                     tag_parent = 0;
                 if (cres != DW_DLV_OK)
                     tag_child = 0;
-                if(pres == DW_DLV_ERROR) {
-                    dwarf_dealloc(dbg,dacerr,DW_DLA_ERROR);
-                    dacerr = 0;
-                }
-                if(cres == DW_DLV_ERROR) {
-                    dwarf_dealloc(dbg,dacerr2,DW_DLA_ERROR);
-                    dacerr2 = 0;
-                }
-
+                DROP_ERROR_INSTANCE(dbg,pres,dacerr);
+                DROP_ERROR_INSTANCE(dbg,cres,dacerr2);
 
                 /* Check for specific compiler */
                 if (checking_this_compiler()) {
@@ -2083,6 +2083,19 @@ have_a_search_match(const char *valname,const char *atname)
     return FALSE;
 }
 
+/*  Only two types of CU can have highpc or lowpc. */
+static boolean
+tag_type_is_addressable_cu(int tag)
+{
+    if (tag == DW_TAG_compile_unit) {
+        return TRUE;
+    }
+    if (tag == DW_TAG_partial_unit) {
+        return TRUE;
+    }
+    return FALSE;
+}
+
 
 static boolean
 print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
@@ -2445,19 +2458,44 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
             esb_destructor(&highpcstr);
 
             /* Update base and high addresses for CU */
-            if (seen_CU && (need_CU_base_address ||
-                need_CU_high_address)) {
-
+            if (seen_CU && (need_CU_base_address || need_CU_high_address)) {
                 /* Update base address for CU */
-                if (need_CU_base_address && attr == DW_AT_low_pc) {
-                    dwarf_formaddr(attrib, &CU_base_address, &paerr);
-                    need_CU_base_address = FALSE;
+                if (attr == DW_AT_low_pc) {
+                    if (need_CU_base_address &&
+                        tag_type_is_addressable_cu(tag)) {
+                        int res = dwarf_formaddr(attrib, &CU_base_address,
+                            &paerr);
+                        DROP_ERROR_INSTANCE(dbg,res,paerr);
+                        if (res == DW_DLV_OK) {
+                            need_CU_base_address = FALSE;
+                            CU_low_address = CU_base_address;
+                        }
+                    } else if (!CU_low_address) {
+                        /*  We take the first non-zero address
+                            as meaningful. Even if no such in CU DIE. */
+                        int res = dwarf_formaddr(attrib, &CU_low_address,
+                            &paerr);
+                        DROP_ERROR_INSTANCE(dbg,res,paerr);
+                        if (res == DW_DLV_OK) {
+                            /*  Stop looking for base. Bogus, but
+                                there is none available, so stop. */
+                            need_CU_base_address = FALSE;
+                        }
+                    }
                 }
 
                 /* Update high address for CU */
-                if (need_CU_high_address && attr == DW_AT_high_pc) {
-                    dwarf_formaddr(attrib, &CU_high_address, &paerr);
-                    need_CU_high_address = FALSE;
+                if (attr == DW_AT_high_pc) {
+                    if (need_CU_high_address ) {
+                        /*  This is bogus in that it accepts the first
+                            high address in the CU, from any TAG */
+                        int res = dwarf_formaddr(attrib, &CU_high_address,
+                            &paerr);
+                        DROP_ERROR_INSTANCE(dbg,res,paerr);
+                        if (res == DW_DLV_OK) {
+                            need_CU_high_address = FALSE;
+                        }
+                    }
                 }
             }
 
@@ -2477,10 +2515,7 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
                     res = DW_DLV_OK;
                 } else {
                     res = dwarf_formaddr(attrib, &addr, &paerr);
-                    if (res == DW_DLV_ERROR) {
-                        dwarf_dealloc(dbg,paerr,DW_DLA_ERROR);
-                        paerr = 0;
-                    }
+                    DROP_ERROR_INSTANCE(dbg,res,paerr);
                 }
                 if(res == DW_DLV_OK) {
                     if (attr == DW_AT_low_pc) {
@@ -2733,7 +2768,7 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
 
             /* Get the global offset for reference */
             res = dwarf_global_formref(attrib, &ref_off, &paerr);
-            if (res != DW_DLV_OK) {
+            if (res == DW_DLV_ERROR) {
                 int myerr = dwarf_errno(paerr);
                 if (myerr == DW_DLE_REF_SIG8_NOT_HANDLED) {
                     /*  DW_DLE_REF_SIG8_NOT_HANDLED */
@@ -2751,6 +2786,8 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
                 } else {
                     print_error(dbg, "dwarf_die_CU_offsetD", res, paerr);
                 }
+            } else if (res == DW_DLV_NO_ENTRY) {
+                print_error(dbg, "dwarf_die_CU_offsetD (NO ENTRY)", res, paerr);
             }
             res = dwarf_dieoffset(die, &die_off, &paerr);
             if (res != DW_DLV_OK) {
@@ -3284,7 +3321,8 @@ get_location_list(Dwarf_Debug dbg,
 
     /*  Base address used to update entries in .debug_loc.
         CU_base_address is a global. Terrible way to
-        pass in this value. FIXME. */
+        pass in this value. FIXME. See also CU_low_address
+        as base address is special for address ranges */
     Dwarf_Addr base_address = CU_base_address;
     Dwarf_Addr lopc = 0;
     Dwarf_Addr hipc = 0;
@@ -3897,22 +3935,19 @@ formxdata_print_value(Dwarf_Debug dbg,
         not necessary. */
     cleanup:
     if (sres == DW_DLV_OK || ures == DW_DLV_OK) {
-        if (sres == DW_DLV_ERROR) {
-            dwarf_dealloc(dbg,serr,DW_DLA_ERROR);
-        }
-        if (ures == DW_DLV_ERROR) {
-            dwarf_dealloc(dbg,*pverr,DW_DLA_ERROR);
-            *pverr = 0;
-        }
+        DROP_ERROR_INSTANCE(dbg,sres,serr);
+        DROP_ERROR_INSTANCE(dbg,ures,*pverr);
         return DW_DLV_OK;
     }
     if (sres == DW_DLV_ERROR || ures == DW_DLV_ERROR) {
         if (sres == DW_DLV_ERROR && ures == DW_DLV_ERROR) {
             dwarf_dealloc(dbg,serr,DW_DLA_ERROR);
+            serr = 0;
             return DW_DLV_ERROR;
         }
         if (sres == DW_DLV_ERROR) {
             *pverr = serr;
+            serr = 0;
         }
         return DW_DLV_ERROR;
     }

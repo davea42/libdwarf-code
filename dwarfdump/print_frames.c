@@ -2018,11 +2018,8 @@ load_CU_error_data(Dwarf_Debug dbg,Dwarf_Die cu_die)
     }
     atres = dwarf_attrlist(cu_die, &atlist, &atcnt, &loadcuerr);
     if (atres != DW_DLV_OK) {
-        if (atres == DW_DLV_ERROR) {
-            /*  Something is seriously wrong though. */
-            dwarf_dealloc(dbg,loadcuerr,DW_DLA_ERROR);
-            loadcuerr = 0;
-        }
+        /*  Something is seriously wrong if it is DW_DLV_ERROR. */
+        DROP_ERROR_INSTANCE(dbg,atres,loadcuerr);
         return;
     }
     atres = dwarf_tag(cu_die, &tag, &loadcuerr);
@@ -2031,22 +2028,15 @@ load_CU_error_data(Dwarf_Debug dbg,Dwarf_Die cu_die)
             dwarf_dealloc(dbg, atlist[k], DW_DLA_ATTR);
         }
         dwarf_dealloc(dbg, atlist, DW_DLA_LIST);
-        if (atres == DW_DLV_ERROR) {
-            /*  Something is seriously wrong though. */
-            dwarf_dealloc(dbg,loadcuerr,DW_DLA_ERROR);
-            loadcuerr = 0;
-        }
+        /*  Something is seriously wrong if it is DW_DLV_ERROR. */
+        DROP_ERROR_INSTANCE(dbg,atres,loadcuerr);
         return;
     }
 
     /* The offsets will be zero if it fails. Let it pass. */
     atres = dwarf_die_offsets(cu_die,&DIE_overall_offset,
         &DIE_offset,&loadcuerr);
-    if (atres == DW_DLV_ERROR) {
-        /*  Something is seriously wrong though. */
-        dwarf_dealloc(dbg,loadcuerr,DW_DLA_ERROR);
-        loadcuerr = 0;
-    }
+    DROP_ERROR_INSTANCE(dbg,atres,loadcuerr);
 
     DIE_CU_overall_offset = DIE_overall_offset;
     DIE_CU_offset = DIE_offset;
@@ -2061,10 +2051,7 @@ load_CU_error_data(Dwarf_Debug dbg,Dwarf_Die cu_die)
                 dwarf_dealloc(dbg, atlist[k], DW_DLA_ATTR);
             }
             dwarf_dealloc(dbg, atlist, DW_DLA_LIST);
-            if (ares == DW_DLV_ERROR) {
-                dwarf_dealloc(dbg,loadcuerr,DW_DLA_ERROR);
-                loadcuerr = 0;
-            }
+            DROP_ERROR_INSTANCE(dbg,ares,loadcuerr);
             return;
         }
         /*  For now we will not fully deal with the complexity of
@@ -2073,21 +2060,19 @@ load_CU_error_data(Dwarf_Debug dbg,Dwarf_Die cu_die)
         case DW_AT_low_pc:
             {
             ares = dwarf_formaddr(attrib, &CU_base_address, &loadcuerr);
-            if (ares == DW_DLV_ERROR) {
-                dwarf_dealloc(dbg,loadcuerr,DW_DLA_ERROR);
-                loadcuerr = 0;
-            }
+            DROP_ERROR_INSTANCE(dbg,ares,loadcuerr);
+            CU_low_address = CU_base_address;
             }
             break;
         case DW_AT_high_pc:
             {
             /*  This is wrong for DWARF4 instances where
-                the attribute is really an offset. */
-            ares = dwarf_formaddr(attrib, &CU_base_address, &loadcuerr);
-            if (ares == DW_DLV_ERROR) {
-                dwarf_dealloc(dbg,loadcuerr,DW_DLA_ERROR);
-                loadcuerr = 0;
-            }
+                the attribute is really an offset.
+                It's also useless for CU DIEs that do not
+                have the DW_AT_high_pc high so CU_high_address will
+                be zero*/
+            ares = dwarf_formaddr(attrib, &CU_high_address, &loadcuerr);
+            DROP_ERROR_INSTANCE(dbg,ares,loadcuerr);
             }
             break;
         case DW_AT_name:

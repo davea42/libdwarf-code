@@ -52,7 +52,7 @@
 extern int elf_open(const char *name,int mode);
 #endif /* WIN32 */
 
-#define DWARFDUMP_VERSION " Mon Feb 15 09:48:34 PST 2016  "
+#define DWARFDUMP_VERSION " Mon Mar  7 14:28:57 PST 2016  "
 
 extern char *dwoptarg;
 
@@ -286,6 +286,7 @@ char PU_name[COMPILE_UNIT_NAME_LEN];
 char CU_name[COMPILE_UNIT_NAME_LEN];
 char CU_producer[COMPILE_UNIT_NAME_LEN];
 
+/*  Base address has a special meaning in DWARF4 relative to address ranges. */
 boolean seen_PU = FALSE;              /* Detected a PU */
 boolean seen_CU = FALSE;              /* Detected a CU */
 boolean need_CU_name = TRUE;          /* Need CU name */
@@ -306,7 +307,11 @@ Dwarf_Off  DIE_CU_offset = 0;         /* CU DIE offset in compile unit */
 Dwarf_Off  DIE_CU_overall_offset = 0; /* CU DIE offset in .debug_info */
 int current_section_id = 0;           /* Section being process */
 
+/*  Base Address is needed for range lists and must come from a CU.
+    Low address is for information and can come from a function
+    or something in the CU. */
 Dwarf_Addr CU_base_address = 0;       /* CU Base address */
+Dwarf_Addr CU_low_address = 0;        /* CU low address */
 Dwarf_Addr CU_high_address = 0;       /* CU High address */
 
 /* Display parent/children when in wide format? */
@@ -2813,6 +2818,7 @@ reset_overall_CU_error_data(void)
    DIE_CU_overall_offset = 0;
    CU_base_address = 0;
    CU_high_address = 0;
+   CU_low_address = 0;
 }
 
 
@@ -2826,7 +2832,7 @@ cu_data_is_set(void)
     if (DIE_offset  || DIE_overall_offset) {
         return 1;
     }
-    if (CU_base_address || CU_high_address) {
+    if (CU_base_address || CU_low_address || CU_high_address) {
         return 1;
     }
     return 0;
@@ -2838,6 +2844,8 @@ void PRINT_CU_INFO(void)
 {
     Dwarf_Unsigned loff = DIE_offset;
     Dwarf_Unsigned goff = DIE_overall_offset;
+    char lbuf[50];
+    char hbuf[50];
 
     if (current_section_id == DEBUG_LINE ||
         current_section_id == DEBUG_FRAME ||
@@ -2860,10 +2868,27 @@ void PRINT_CU_INFO(void)
     printf("\n");
     printf("CU Name = %s\n",CU_name);
     printf("CU Producer = %s\n",CU_producer);
-    printf("DIE OFF = 0x%08" DW_PR_DUx " GOFF = 0x%08" DW_PR_DUx ,
+    printf("DIE OFF = 0x%" DW_PR_XZEROS DW_PR_DUx
+        " GOFF = 0x%" DW_PR_XZEROS DW_PR_DUx,
         loff,goff);
+    /* We used to print leftover and incorrect values at times. */
+    if ( need_CU_high_address) {
+        strcpy(hbuf,"unknown   ");
+    } else {
+        snprintf(hbuf,sizeof(hbuf),
+            "0x%"  DW_PR_XZEROS DW_PR_DUx,CU_high_address);
+    }
+    if ( need_CU_base_address) {
+        strcpy(lbuf,"unknown   ");
+    } else {
+        snprintf(lbuf,sizeof(lbuf),
+            "0x%"  DW_PR_XZEROS DW_PR_DUx,CU_low_address);
+    }
+#if 0 /* Old format print */
     printf(", Low PC = 0x%08" DW_PR_DUx ", High PC = 0x%08" DW_PR_DUx ,
-        CU_base_address,CU_high_address);
+        CU_low_address,CU_high_address);
+#endif
+    printf(", Low PC = %s, High PC = %s", lbuf,hbuf);
     printf("\n");
 }
 

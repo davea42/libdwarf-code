@@ -119,6 +119,13 @@ typedef int boolean;
 #define FAILED 1
 #endif
 
+/* Used to try to avoid leakage when we hide errors. */
+#define DROP_ERROR_INSTANCE(d,r,e)       \
+    if (r == DW_DLV_ERROR) {             \
+        dwarf_dealloc(d,e,DW_DLA_ERROR); \
+        e = 0;                           \
+    }
+
 
 
 /* size of attrib_buffer, defined in print_die.c */
@@ -163,7 +170,8 @@ extern Dwarf_Off  DIE_overall_offset;       /* DIE offset in .debug_info. */
 /* Current CU information for better error reporting. */
 extern Dwarf_Off  DIE_CU_offset;            /* CU DIE offset in compile unit */
 extern Dwarf_Off  DIE_CU_overall_offset;    /* CU DIE offset in .debug_info */
-extern Dwarf_Addr CU_base_address;          /* CU Base address. */
+extern Dwarf_Addr CU_base_address;          /* CU Base address. See ranges. */
+extern Dwarf_Addr CU_low_address;           /* CU lowest addr. */
 extern Dwarf_Addr CU_high_address;          /* CU High address. */
 
 
