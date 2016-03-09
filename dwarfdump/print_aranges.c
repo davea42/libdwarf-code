@@ -173,7 +173,7 @@ print_aranges(Dwarf_Debug dbg)
                     }
                 }
                 /* Get producer name for this CU and update compiler list */
-                get_producer_name(dbg,cu_die,&producer_name);
+                get_producer_name(dbg,cu_die,cu_die_offset,&producer_name);
                 update_compiler_target(esb_get_string(&producer_name));
                 esb_destructor(&producer_name);
                 if (!checking_this_compiler()) {
@@ -212,6 +212,7 @@ print_aranges(Dwarf_Debug dbg)
                         if (do_print_dwarf){
                             /* There is no die if its a set-end entry */
                             print_one_die(dbg, cu_die,
+                                cu_die_offset,
                                 /* print_information= */ (boolean) TRUE,
                                 /* indent_level = */0,
                                 /* srcfiles= */ 0,

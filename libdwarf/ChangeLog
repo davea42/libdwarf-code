@@ -1,3 +1,5 @@
+2016-03-09 David Anderson
+    * dwarf_form.c: Correct and amplify a comment.
 2016-03-01 David Anderson
     * libdwarf2.1.mm: Documented dwarf_dietype() and
       dwarf_offset_list().

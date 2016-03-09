@@ -1,3 +1,9 @@
+2016-03-09  David Anderson
+    * dwarfdump.c,globals.h,print_aranges.c,print_die.c,print_frames.c,
+      print_lines.c,print_macro.c,print_pubnames.c:
+      Remove the global dieprint_cu_offset, use local vars and pass around instead.
+      Ensure the traverse() logic when checking type references do not evaluate
+      references to other sections. Many argument lists got an additional argument or two.
 2016-03-07  David Anderson
     * dwarfdump.c: Update version string. Added CU_low_address so
       CU_base_address is properly used only for the DWARF 

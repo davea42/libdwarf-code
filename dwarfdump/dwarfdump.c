@@ -2449,7 +2449,9 @@ should_skip_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
 }
 
 /* Returns the cu of the CU. In case of error, give up, do not return. */
-int get_cu_name(Dwarf_Debug dbg, Dwarf_Die cu_die,
+int
+get_cu_name(Dwarf_Debug dbg, Dwarf_Die cu_die,
+    Dwarf_Off dieprint_cu_offset,
     string *short_name, string *long_name)
 {
     Dwarf_Attribute name_attr = 0;
@@ -2473,7 +2475,8 @@ int get_cu_name(Dwarf_Debug dbg, Dwarf_Die cu_die,
             char *filename;
             esb_empty_string(&esb_long_name);
             get_attr_value(dbg, DW_TAG_compile_unit,
-                cu_die, name_attr, NULL, 0, &esb_long_name,
+                cu_die, dieprint_cu_offset,
+                name_attr, NULL, 0, &esb_long_name,
                 0 /*show_form_used*/,0 /* verbose */);
             *long_name = esb_get_string(&esb_long_name);
             /* Generate the short name (filename) */
@@ -2501,6 +2504,7 @@ int get_cu_name(Dwarf_Debug dbg, Dwarf_Die cu_die,
     Never returns DW_DLV_ERROR.  */
 int
 get_producer_name(Dwarf_Debug dbg, Dwarf_Die cu_die,
+    Dwarf_Off dieprint_cu_offset,
     struct esb_s *producernameout)
 {
     Dwarf_Attribute producer_attr = 0;
@@ -2522,7 +2526,8 @@ get_producer_name(Dwarf_Debug dbg, Dwarf_Die cu_die,
             function; so if the caller needs to keep the returned
             string, the string must be copied (makename()). */
         get_attr_value(dbg, DW_TAG_compile_unit,
-            cu_die, producer_attr, NULL, 0, producernameout,
+            cu_die, dieprint_cu_offset,
+            producer_attr, NULL, 0, producernameout,
             0 /*show_form_used*/,0 /* verbose */);
     }
     /*  If ares is error or missing case,

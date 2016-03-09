@@ -271,6 +271,9 @@ print_macros_5style_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die,
     Dwarf_Unsigned ops_total_byte_len = 0;
     Dwarf_Bool is_primary = TRUE;
     Dwarf_Error err = 0;
+    Dwarf_Off dieprint_cu_goffset = 0;
+    Dwarf_Off cudie_local_offset = 0;
+    int atres = 0;
 
     current_section_id = DEBUG_MACRO;
     if(!by_offset) {
@@ -298,6 +301,9 @@ print_macros_5style_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die,
             lres,err);
         return;
     }
+    atres = dwarf_die_offsets(cu_die,&dieprint_cu_goffset,
+        &cudie_local_offset,&err);
+    DROP_ERROR_INSTANCE(dbg,atres,err);
     add_macro_import(&macro_check_tree,is_primary, offset);
     add_macro_area_len(&macro_check_tree,offset,ops_total_byte_len);
     lres = dwarf_get_macro_section_name(dbg,&sec_name,&err);
@@ -334,6 +340,7 @@ print_macros_5style_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die,
         int errcount = 0;
 #endif
         print_one_die(dbg, cu_die,
+            dieprint_cu_goffset,
             /* print_information= */ 1,
             /* indent level */0,
             /* srcfiles= */ 0, /* cnt= */ 0,

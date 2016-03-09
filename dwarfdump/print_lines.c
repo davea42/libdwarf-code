@@ -649,6 +649,9 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
     Dwarf_Line_Context line_context = 0;
     const char *sec_name = 0;
     Dwarf_Error err = 0;
+    Dwarf_Off cudie_local_offset = 0;
+    Dwarf_Off dieprint_cu_goffset = 0;
+    int atres = 0;
 
     current_section_id = DEBUG_LINE;
 
@@ -660,6 +663,11 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
     if (lres != DW_DLV_OK || !sec_name || !strlen(sec_name)) {
         sec_name = ".debug_line";
     }
+    /* The offsets will be zero if it fails. Let it pass. */
+    atres = dwarf_die_offsets(cu_die,&dieprint_cu_goffset,
+        &cudie_local_offset,&err);
+    DROP_ERROR_INSTANCE(dbg,atres,err);
+
     if (do_print_dwarf) {
         printf("\n%s: line number info for a single cu\n", sec_name);
     } else {
@@ -683,6 +691,7 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
         int errcount = 0;
         print_source_intro(dbg,cu_die);
         print_one_die(dbg, cu_die,
+            dieprint_cu_goffset,
             /* print_information= */ 1,
             /* indent level */0,
             /* srcfiles= */ 0, /* cnt= */ 0,
@@ -779,6 +788,7 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
             print_source_intro(dbg,cu_die);
             if (verbose) {
                 print_one_die(dbg, cu_die,
+                    dieprint_cu_goffset,
                     /* print_information= */ TRUE,
                     /* indent_level= */ 0,
                     /* srcfiles= */ 0, /* cnt= */ 0,
@@ -836,6 +846,7 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
             print_source_intro(dbg,cu_die);
             if (verbose) {
                 print_one_die(dbg, cu_die,
+                    dieprint_cu_goffset,
                     /* print_information= */ TRUE,
                     /* indent_level= */ 0,
                     /* srcfiles= */ 0, /* cnt= */ 0,

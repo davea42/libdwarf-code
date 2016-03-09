@@ -601,7 +601,8 @@ dwarf_global_formref(Dwarf_Attribute attr,
         {
             /*  DW_FORM_sec_offset first exists in DWARF4.*/
             /*  It is up to the caller to know what the offset
-                of DW_FORM_sec_offset refers to,
+                of DW_FORM_sec_offset, DW_FORM_strp_sup
+                or DW_FORM_GNU_strp_alt refers to,
                 the offset is not going to refer to .debug_info! */
             unsigned length_size = cu_context->cc_length_size;
             if (length_size == 4) {

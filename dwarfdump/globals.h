@@ -431,8 +431,10 @@ void get_address_size_and_max(Dwarf_Debug dbg,
 
 /* Returns the producer of the CU */
 int get_cu_name(Dwarf_Debug dbg,Dwarf_Die cu_die,
+    Dwarf_Off  dieprint_cu_offset,
     char **short_name,char **long_name);
 int get_producer_name(Dwarf_Debug dbg,Dwarf_Die cu_die,
+    Dwarf_Off  dieprint_cu_offset,
     struct esb_s *producername);
 
 /* Get number of abbreviations for a CU */
@@ -443,12 +445,14 @@ extern void validate_abbrev_code(Dwarf_Debug dbg,Dwarf_Unsigned abbrev_code);
 extern void print_die_and_children(
     Dwarf_Debug dbg,
     Dwarf_Die in_die,
+    Dwarf_Off dieprint_cu_offset,
     Dwarf_Bool is_info,
     char **srcfiles,
     Dwarf_Signed cnt);
 extern boolean print_one_die(
     Dwarf_Debug dbg,
     Dwarf_Die die,
+    Dwarf_Off dieprint_cu_offset,
     boolean print_information,
     int die_indent_level,
     char **srcfiles,
@@ -492,6 +496,7 @@ int get_proc_name(Dwarf_Debug dbg, Dwarf_Die die, Dwarf_Addr low_pc,
 
 void get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
     Dwarf_Die die,
+    Dwarf_Off die_cu_offset,
     Dwarf_Attribute attrib,
     char **srcfiles,
     Dwarf_Signed cnt, struct esb_s *esbp,

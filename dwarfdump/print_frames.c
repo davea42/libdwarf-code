@@ -2012,6 +2012,7 @@ load_CU_error_data(Dwarf_Debug dbg,Dwarf_Die cu_die)
     Dwarf_Signed i = 0;
     Dwarf_Signed k = 0;
     Dwarf_Error loadcuerr = 0;
+    Dwarf_Off cu_die_goff = 0;
 
     if(!cu_die) {
         return;
@@ -2036,6 +2037,7 @@ load_CU_error_data(Dwarf_Debug dbg,Dwarf_Die cu_die)
     /* The offsets will be zero if it fails. Let it pass. */
     atres = dwarf_die_offsets(cu_die,&DIE_overall_offset,
         &DIE_offset,&loadcuerr);
+    cu_die_goff = DIE_overall_offset;
     DROP_ERROR_INSTANCE(dbg,atres,loadcuerr);
 
     DIE_CU_overall_offset = DIE_overall_offset;
@@ -2082,7 +2084,8 @@ load_CU_error_data(Dwarf_Debug dbg,Dwarf_Die cu_die)
             struct esb_s namestr;
 
             esb_constructor(&namestr);
-            get_attr_value(dbg, tag, cu_die, attrib, srcfiles, srccnt,
+            get_attr_value(dbg, tag, cu_die,
+                cu_die_goff,attrib, srcfiles, srccnt,
                 &namestr, local_show_form_used,local_verbose);
             name = esb_get_string(&namestr);
             if(attr == DW_AT_name) {
