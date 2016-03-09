@@ -8,7 +8,7 @@
 .nr Hb 5
 \." ==============================================
 \." Put current date in the following at each rev
-.ds vE rev 2.43, Mar 07, 2016
+.ds vE rev 2.44, Mar 09, 2016
 \." ==============================================
 \." ==============================================
 .ds | |
@@ -2942,18 +2942,19 @@ the offset referred to by
 \f(CWDW_AT_type\fP
 attribute of
 \f(CWdie\fP.
-
+.P
 \f(CWDW_DLV_NO_ENTRY\fP
 is returned if the 
 \f(CWdie\fP
 has no
 \f(CWDW_AT_type\fP
 attribute.
-
+.P
 \f(CWDW_DLV_ERROR\fP
 is returned if an error is
 detected.
-
+.P
+This feature was introduced in February 2016.
 
 .H 3 "dwarf_offset_list()"
 .DS
@@ -2964,15 +2965,33 @@ detected.
     Dwarf_Unsigned *  offcnt,
     Dwarf_Error    *  error);
 .DE
-The function 
+On success The function 
 \f(CWdwarf_offset_list()\fP
 returns 
+\f(CWDW_DLV_OK\fP and
+sets
+\f(CW*offbuf\fP to point to
 an array of the offsets of the direct children
-of the die 
-at 
-\f(CWoffset()\fP.
+of the die
+at
+\f(CWoffset\fP.
+It sets
+\f(CW*offcnt\fP to point to
+the count of entries in
+the
+\f(CWoffset\fP array
 .P
-Freeing the offset_list:
+In case of error it returns
+\f(CWDW_DLV_OK\fP.
+.P
+It does not return
+\f(CWDW_DLV_NO_ENTRY\fP
+but callers should allow 
+for that possibility anyway.
+.P
+This feature was introduced in March 2016.
+.P
+Freeing the offset_list is done as follows.:
 .in +2
 .FG "Exampleoffset_list dwarf_offset_list() free"
 .DS
