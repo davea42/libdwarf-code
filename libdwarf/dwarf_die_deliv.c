@@ -475,9 +475,17 @@ _dwarf_make_CU_Context(Dwarf_Debug dbg,
 }
 
 static int
-reloc_incomplete(Dwarf_Error err)
+reloc_incomplete(int res,Dwarf_Error err)
 {
-    int e = dwarf_errno(err);
+    int e = 0;
+
+    if (res == DW_DLV_OK) {
+        return FALSE;
+    }
+    if (res == DW_DLV_NO_ENTRY) {
+        return FALSE;
+    }
+    e = dwarf_errno(err);
     if (e == DW_DLE_RELOC_MISMATCH_INDEX       ||
         e == DW_DLE_RELOC_MISMATCH_RELOC_INDEX  ||
         e == DW_DLE_RELOC_MISMATCH_STRTAB_INDEX ||
@@ -487,9 +495,9 @@ reloc_incomplete(Dwarf_Error err)
         e == DW_DLE_RELOC_SECTION_PTR_NULL        ||
         e == DW_DLE_RELOC_SECTION_MALLOC_FAIL      ||
         e == DW_DLE_RELOC_SECTION_SYMBOL_INDEX_BAD  ) {
-        return 1;
+        return TRUE;
     }
-    return 0;
+    return FALSE;
 }
 
 
@@ -789,7 +797,7 @@ _dwarf_next_cu_header_internal(Dwarf_Debug dbg,
                 _dwarf_load_debug_types(dbg,&err2);
 
             if (resd != DW_DLV_OK) {
-                if (reloc_incomplete(err2)) {
+                if (reloc_incomplete(resd,err2)) {
                     /*  We will assume all is ok, though it is not.
                         Relocation errors need not be fatal.  */
                     char msg_buf[200];
@@ -798,16 +806,23 @@ _dwarf_next_cu_header_internal(Dwarf_Debug dbg,
                         " ignoring error: %s",dwarf_errmsg(err2));
                     dwarf_insert_harmless_error(dbg,msg_buf);
                     resd = DW_DLV_OK;
+                    /*  Fall thru to use the newly loaded section.
+                        even though it might not be adequately
+                        relocated. */
                 } else {
                     if (error) {
                         *error = err2;
+                        err2 = 0;
                     }
+                    /*  There is nothing here, or
+                        what is here is damaged. */
                     return resd;
                 }
 
             }
         }
-
+        /*  We are leaving new_offset zero. We are at the
+            start of a section. */
     } else {
         new_offset = dis->de_cu_context->cc_debug_offset +
             dis->de_cu_context->cc_length +

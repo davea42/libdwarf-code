@@ -2,7 +2,7 @@
 
   Copyright (C) 2000,2002,2004,2005 Silicon Graphics, Inc. All Rights Reserved.
   Portions Copyright 2007-2010 Sun Microsystems, Inc. All rights reserved.
-  Portions Copyright 2008-2012 David Anderson. All rights reserved.
+  Portions Copyright 2008-2016 David Anderson. All rights reserved.
   Portions Copyright 2010-2012 SN Systems Ltd. All rights reserved.
 
   This program is free software; you can redistribute it and/or modify it
@@ -1197,10 +1197,19 @@ dwarf_formstring(Dwarf_Attribute attr,
         }
         res = _dwarf_get_string_from_tied(dbg, soffset,
             return_str, error);
-        if (dwarf_errno(*error) == DW_DLE_NO_TIED_FILE_AVAILABLE) {
-            dwarf_dealloc(dbg,*error,DW_DLA_ERROR);
+        if (res == DW_DLV_ERROR) {
+            if (!error) {
+                *return_str =  (char *)"<DW_FORM_GNU_strp_alt-no-tied-file>";
+                return res;
+            }
+            if (dwarf_errno(*error) == DW_DLE_NO_TIED_FILE_AVAILABLE) {
+                dwarf_dealloc(dbg,*error,DW_DLA_ERROR);
+                *return_str =  (char *)"<DW_FORM_GNU_strp_alt-no-tied-file>";
+                return DW_DLV_OK;
+            }
+        }
+        if (res == DW_DLV_NO_ENTRY) {
             *return_str =  (char *)"<DW_FORM_GNU_strp_alt-no-tied-file>";
-            return DW_DLV_OK;
         }
         return res;
     }

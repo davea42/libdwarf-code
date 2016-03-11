@@ -1,4 +1,25 @@
 2016-03-11 David Anderson
+    * dwarf_die_deliv.c: Fixed issues with handling NULL
+      Dwarf_Error*  and with mistakes treating DW_DLV_NO_ENTRY
+      as if it were DW_DLV_ERROR.
+    * dwarf_form.c: Only do dwarf_errno(*error) when error is non-null.
+    * dwarf_macro5.c, dwarf_query.c, dwarf_ranges.c: Avoid the 
+      possibility of 
+      doing dwarf_errno(*error) when error is null.
+    * dwarf_util.c(_dwarf_error_mv_s_to_t): Added code to 
+      ensure that nothing crash-worthy happens
+      even if a future internal caller calls it with one or more NULL
+      arguments.
+    * libdwarf2.1.mm: Added a few words about Error Handling in general
+      to clarify earlier wording (earlier wording  was not as explicit
+      as it should have been).
+    * libdwarf2.1.pdf: Regenerated. Version 2.45
+    * dwarf_sort_line.c: Though no longer built or used, added
+      an initializer to a local variable for correctness.
+    * dwarf_addr_finder.c: Though no longer compiled or used (is IRIX only),
+      cleaned up local variable declarations that were not
+      up to the current standard usage in libdwarf.
+2016-03-11 David Anderson
     * Makefile.in: Added a comment about pr and pdf-building.
 2016-03-09 David Anderson
     * libdwarf2.1.mm: Slightly altered the dwarf_offsets_list() documentation.

@@ -8,7 +8,7 @@
 .nr Hb 5
 \." ==============================================
 \." Put current date in the following at each rev
-.ds vE rev 2.44, Mar 09, 2016
+.ds vE rev 2.45, Mar 11, 2016
 \." ==============================================
 \." ==============================================
 .ds | |
@@ -1233,10 +1233,15 @@ and return a value indicating an error condition.
 If an \f(CWerrhand\fP argument was provided to \f(CWdwarf_init()\fP
 at initialization, call \f(CWerrhand()\fP passing it the error descriptor
 and the value of the \f(CWerrarg\fP argument provided to \f(CWdwarf_init()\fP. 
-If the error handling function returns, return a value indicating an 
+If the error handling function returns, return 
+\f(CWDW_DLV_ERROR\fP
+indicating an 
 error condition.
 .LI
-Terminate program execution by calling \f(CWabort(3C)\fP.
+If neither  the \f(CWerror\fP argument nor
+an \f(CWerrhand\fP argument was provided
+Terminate program execution by calling 
+\f(CWabort(3C)\fP.
 .LE
 .SP
 

@@ -1,7 +1,7 @@
 /*
 
   Copyright (C) 2000,2002,2004 Silicon Graphics, Inc.  All Rights Reserved.
-  Portions Copyright (C) 2007-2013 David Anderson. All Rights Reserved.
+  Portions Copyright (C) 2007-2016 David Anderson. All Rights Reserved.
   Portions Copyright 2012 SN Systems Ltd. All rights reserved.
 
   This program is free software; you can redistribute it and/or modify it
@@ -737,8 +737,9 @@ _dwarf_look_in_local_and_tied_by_index(
     res2 = _dwarf_extract_address_from_debug_addr(dbg,
         context, index, return_addr, error);
     if (res2 != DW_DLV_OK) {
-        if (res2 == DW_DLV_ERROR &&dwarf_errno(*error) ==
-            DW_DLE_MISSING_NEEDED_DEBUG_ADDR_SECTION
+        if (res2 == DW_DLV_ERROR &&
+            error &&
+            dwarf_errno(*error) == DW_DLE_MISSING_NEEDED_DEBUG_ADDR_SECTION
             && dbg->de_tied_data.td_tied_object) {
             int res3 = 0;
 
@@ -1219,6 +1220,7 @@ dwarf_highpc_b(Dwarf_Die die,
                 error);
             if(res2 != DW_DLV_OK) {
                 if (res2 == DW_DLV_ERROR &&
+                    error &&
                     dwarf_errno(*error) ==
                     DW_DLE_MISSING_NEEDED_DEBUG_ADDR_SECTION
                     && dbg->de_tied_data.td_tied_object) {

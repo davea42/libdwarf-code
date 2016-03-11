@@ -1,5 +1,5 @@
 /*
-  Copyright (C) 2015-2015 David Anderson. All Rights Reserved.
+  Copyright (C) 2015-2016 David Anderson. All Rights Reserved.
 
   This program is free software; you can redistribute it and/or modify it
   under the terms of version 2.1 of the GNU Lesser General Public License
@@ -606,6 +606,7 @@ dwarf_get_macro_defundef(Dwarf_Macro_Context macro_context,
         Dwarf_Unsigned supoffset = 0;
         char *localstring = 0;
         int resup = 0;
+        Dwarf_Error lerr = 0;
 
         linenum = _dwarf_decode_u_leb128(mdata,
             &uleblen);
@@ -619,25 +620,32 @@ dwarf_get_macro_defundef(Dwarf_Macro_Context macro_context,
         *offset = supoffset;
         *forms_count = lformscount;
         resup = _dwarf_get_string_from_tied(dbg, supoffset,
-            &localstring, error);
+            &localstring, &lerr);
         if (resup != DW_DLV_OK) {
             if (resup == DW_DLV_ERROR) {
-                if(dwarf_errno(*error) == DW_DLE_NO_TIED_FILE_AVAILABLE) {
+                int myerrno = dwarf_errno(lerr);
+                if(myerrno == DW_DLE_NO_TIED_FILE_AVAILABLE) {
                     *macro_string =
                         (char *)"<DW_FORM_str_sup-no-tied_file>";
                 } else {
+                    _dwarf_error(dbg,error,myerrno);
                     *macro_string =
                         (char *)"<Error: DW_FORM_str_sup-got-error>";
                 }
-                dwarf_dealloc(dbg,*error,DW_DLA_ERROR);
+                dwarf_dealloc(dbg,lerr,DW_DLA_ERROR);
             } else {
                 *macro_string = "<DW_FORM_str_sup-no-entry>";
             }
-        } else {
-            *macro_string = (const char *)localstring;
+            return resup;
         }
-        return DW_DLV_OK;
+        *macro_string = (const char *)localstring;
+        /*  If NO ENTRY available, return DW_DLV_NO_ENTRY.
+            We suspect this is better than DW_DLV_OK.  */
+        return resup;
         }
+    default:
+        _dwarf_error(dbg,error,DW_DLE_MACRO_OP_UNHANDLED);
+        return DW_DLV_ERROR;
     }
     return DW_DLV_NO_ENTRY;
 }

@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2000-2005 Silicon Graphics, Inc.  All Rights Reserved.
-  Portions Copyright (C) 2007-2012 David Anderson. All Rights Reserved.
+  Portions Copyright (C) 2007-2016 David Anderson. All Rights Reserved.
   Portions Copyright 2012 SN Systems Ltd. All rights reserved.
 
   This program is free software; you can redistribute it and/or modify it
@@ -985,12 +985,18 @@ dwarf_printf(Dwarf_Debug dbg,
 }
 
 /*  Often errs and errt point to the same Dwarf_Error,
-    So exercise care. */
-
+    So exercise care.
+    All the arguments MUST be non-null.*/
 void
 _dwarf_error_mv_s_to_t(Dwarf_Debug dbgs,Dwarf_Error *errs,
     Dwarf_Debug dbgt,Dwarf_Error *errt)
 {
+    if (!errt || !errs) {
+        return;
+    }
+    if (!dbgs || !dbgt) {
+        return;
+    }
     if(dbgs == dbgt) {
         if(errs != errt) {
             Dwarf_Error ers = *errs;
