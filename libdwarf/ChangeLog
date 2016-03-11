@@ -1,3 +1,5 @@
+2016-03-11 David Anderson
+    * Makefile.in: Added a comment about pr and pdf-building.
 2016-03-09 David Anderson
     * libdwarf2.1.mm: Slightly altered the dwarf_offsets_list() documentation.
     * libdwarf2.1.pdf: Rev 2.44. Regenerated.

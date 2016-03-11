@@ -175,6 +175,7 @@ PSTOPDF=/usr/bin/ps2pdf
 
 # The warning about 'cant break line' is a too-long line used
 # in the table of contents.
+# All pr does here is change each tab to spaces.
 # Ignore the warning (and those like it).
 libdwarf2.1.pdf:  $(BUILD_BASE)/libdwarf2.1.mm
 	-pr -t -e $(BUILD_BASE)/libdwarf2.1.mm \
