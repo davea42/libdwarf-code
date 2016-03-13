@@ -1241,9 +1241,9 @@ _dwarf_next_die_info_ptr(Dwarf_Byte_Ptr die_info_ptr,
     }
     dbg = cu_context->cc_dbg;
 
-    *has_die_child = abbrev_list->ab_has_child;
+    *has_die_child = abbrev_list->abl_has_child;
 
-    abbrev_ptr = abbrev_list->ab_abbrev_ptr;
+    abbrev_ptr = abbrev_list->abl_abbrev_ptr;
     do {
         Dwarf_Unsigned utmp2;
 
@@ -1567,7 +1567,7 @@ dwarf_siblingof_b(Dwarf_Debug dbg,
         _dwarf_error(dbg, error, DW_DLE_DIE_ABBREV_LIST_NULL);
         return DW_DLV_ERROR;
     }
-    if (die == NULL && !is_cu_tag(ret_die->di_abbrev_list->ab_tag)) {
+    if (die == NULL && !is_cu_tag(ret_die->di_abbrev_list->abl_tag)) {
         dwarf_dealloc(dbg, ret_die, DW_DLA_DIE);
         _dwarf_error(dbg, error, DW_DLE_FIRST_DIE_NOT_CU);
         return DW_DLV_ERROR;
@@ -1812,6 +1812,31 @@ dwarf_offdie_b(Dwarf_Debug dbg,
     *new_die = die;
     return DW_DLV_OK;
 }
+
+/*  New March 2016.
+    Lets one cross check the abbreviations section and
+    the DIE information presented  by dwarfdump -i -G -v. */
+int
+dwarf_die_abbrev_global_offset(Dwarf_Die die,
+    Dwarf_Off       * abbrev_goffset,
+    Dwarf_Unsigned  * abbrev_count,
+    Dwarf_Error*      error)
+{
+    Dwarf_Abbrev_List dal = 0;
+    Dwarf_Debug dbg = 0;
+
+    CHECK_DIE(die, DW_DLV_ERROR);
+    dbg = die->di_cu_context->cc_dbg;
+    dal = die->di_abbrev_list;
+    if(!dal) {
+        _dwarf_error(dbg,error,DW_DLE_DWARF_ABBREV_NULL);
+        return DW_DLV_ERROR;
+    }
+    *abbrev_goffset = dal->abl_goffset;
+    *abbrev_count = dal->abl_count;
+    return DW_DLV_OK;
+}
+
 
 /*  This is useful when printing DIE data.
     The string pointer returned must not be freed.

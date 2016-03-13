@@ -1,3 +1,21 @@
+2016-03-12 David Anderson
+    * dwarf_abbrev.c: Uses renamed fields abbrev internal struct.
+      Removes some gratuitous (). Adds clarifying {}
+    * dwarf_abbrev.h: renames Dwarf_Abbrev_s struct fields
+      from ab_tag to dab_tag, etc.
+      Adds global section offset to the fields.
+    * dwarf_die_deliv.c: Uses renamed Abbrev_List fields.
+      Adds dwarf_die_abbrev_global_offset() function so 
+      clients can properly identify where an abbrev entry is
+      in .debug_abbrev.
+    * dwarf_die_deliv.h: renames Dwarf_Abbrev_List 
+      struct fields from ab_tag to abl_tag etc.
+      Adds abl_goffset, abl_count.
+    * dwarf_query.c,dwarf_util.c: Uses renamed Dwarf_Abbrev_List 
+      fields.
+    * libdwarf.h.in: Adds function dwarf_die_abbrev_global_offset().
+    * libdwarf2.1.mm: Documents dwarf_die_abbrev_global_offset().
+    * libdwarf2.1.pdf: Regenerated. Rev 2.46.
 2016-03-11 David Anderson
     * dwarf_die_deliv.c: Fixed issues with handling NULL
       Dwarf_Error*  and with mistakes treating DW_DLV_NO_ENTRY

@@ -64,7 +64,6 @@ print_abbrevs(Dwarf_Debug dbg)
     Dwarf_Signed form = 0;
     Dwarf_Off off = 0;
     Dwarf_Unsigned i = 0;
-    const char * child_name = 0;
     Dwarf_Unsigned abbrev_num = 1;
     Dwarf_Signed child_flag = 0;
     int abres = 0;
@@ -80,30 +79,11 @@ print_abbrevs(Dwarf_Debug dbg)
     }
     while ((abres = dwarf_get_abbrev(dbg, offset, &ab,
         &length, &abbrev_entry_count, &paerr)) == DW_DLV_OK) {
+        const char *tagname = "";
 
-        if (abbrev_entry_count == 0) {
-            /* Simple innocuous zero : null abbrev entry */
-            if (dense) {
-                printf("<%" DW_PR_DUu "><0x%" DW_PR_XZEROS DW_PR_DUx "><%"
-                    DW_PR_DUu "><%s>\n",
-                    abbrev_num,
-                    offset,
-                    (Dwarf_Unsigned) /* abbrev_code */ 0,
-                    "null .debug_abbrev entry");
-            } else {
-                printf("<%5" DW_PR_DUu "><0x%" DW_PR_XZEROS DW_PR_DUx
-                    "><code: %3" DW_PR_DUu "> %-20s\n",
-                    abbrev_num,
-                    offset,
-                    (Dwarf_Unsigned) /* abbrev_code */ 0,
-                    "null .debug_abbrev entry");
-            }
-
-            offset += length;
-            ++abbrev_num;
-            dwarf_dealloc(dbg, ab, DW_DLA_ABBREV);
-            continue;
-        }
+        /*  Here offset is the global offset in .debug_abbrev.
+            The abbrev_num is a relatively worthless counter
+            of all abbreviations.  */
         tres = dwarf_get_abbrev_tag(ab, &tag, &paerr);
         if (tres != DW_DLV_OK) {
             dwarf_dealloc(dbg, ab, DW_DLA_ABBREV);
@@ -114,19 +94,29 @@ print_abbrevs(Dwarf_Debug dbg)
             dwarf_dealloc(dbg, ab, DW_DLA_ABBREV);
             print_error(dbg, "dwarf_get_abbrev_code", tres, paerr);
         }
+        tagname = get_TAG_name(tag,dwarf_names_print_on_error);
+        if (!tag) {
+            tagname = "Abbrev 0: null abbrev entry";
+        }
         if (dense) {
             printf("<%" DW_PR_DUu "><0x%" DW_PR_XZEROS  DW_PR_DUx
-                "><%" DW_PR_DUu "><%s>",
-                abbrev_num,
-                offset, abbrev_code,
-                get_TAG_name(tag,dwarf_names_print_on_error));
+                "><code: %" DW_PR_DUu ">",
+                abbrev_num, offset,abbrev_code);
+            if (verbose) {
+                printf("<length: 0x%" DW_PR_XZEROS  DW_PR_DUx ">",
+                    length);
+            }
+            printf(" %s", tagname);
         }
         else {
-            printf("<%5" DW_PR_DUu "><0x%" DW_PR_XZEROS DW_PR_DUx "><code: %3"
-                DW_PR_DUu "> %-20s",
-                abbrev_num,
-                offset, abbrev_code,
-                get_TAG_name(tag,dwarf_names_print_on_error));
+            printf("<%5" DW_PR_DUu "><0x%" DW_PR_XZEROS DW_PR_DUx
+                "><code: %3" DW_PR_DUu ">",
+                abbrev_num, offset, abbrev_code);
+            if (verbose) {
+                printf("<length: 0x%" DW_PR_XZEROS  DW_PR_DUx ">",
+                    length);
+            }
+            printf(" %-27s", tagname);
         }
         /* Process specific TAGs specially. */
         tag_specific_checks_setup(tag,0);
@@ -140,12 +130,18 @@ print_abbrevs(Dwarf_Debug dbg)
         if (acres == DW_DLV_NO_ENTRY) {
             child_flag = 0;
         }
-        child_name = get_children_name(child_flag,
-            dwarf_names_print_on_error);
-        if (dense)
+        /*  If tag is zero, it is a null byte, not a real abbreviation,
+            so there is no 'children' flag to print.  */
+        if (tag) {
+            const char * child_name = 0;
+
+            child_name = get_children_name(child_flag,
+                dwarf_names_print_on_error);
             printf(" %s", child_name);
-        else
-            printf("        %s\n", child_name);
+        }
+        if(!dense) {
+            printf("\n");
+        }
         /*  Abbrev just contains the format of a die, which debug_info
             then points to with the real data. So here we just print the
             given format. */

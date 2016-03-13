@@ -1329,7 +1329,28 @@ print_one_die(Dwarf_Debug dbg, Dwarf_Die die,
                 }
                 printf("<%s>",tagname);
                 if (verbose) {
-                    printf(" <abbrev %d>",abbrev_code);
+                    Dwarf_Off agoff = 0;
+                    Dwarf_Unsigned acount = 0;
+                    printf(" <abbrev %d",abbrev_code);
+                    if (show_global_offsets) {
+                        int agres = 0;
+
+                        agres = dwarf_die_abbrev_global_offset(die,
+                            &agoff, &acount,&podie_err);
+                        if(agres == DW_DLV_ERROR) {
+                            print_error(dbg, "dwarf_die_abbrev_global_offset",
+                                agres, podie_err);
+                        } else if (agres == DW_DLV_NO_ENTRY) {
+                            print_error(dbg,
+                                "dwarf_die_abbrev_global_offset no entry?",
+                                agres, podie_err);
+                        } else {
+                            printf(" ABGOFF = 0x%" DW_PR_XZEROS DW_PR_DUx
+                                " count = 0x%" DW_PR_XZEROS DW_PR_DUx,
+                                agoff, acount);
+                        }
+                    }
+                    printf(">");
                 }
             } else {
                 if (show_global_offsets) {
@@ -1346,7 +1367,28 @@ print_one_die(Dwarf_Debug dbg, Dwarf_Die die,
                 /* Print using indentation */
                 printf("%*s%s",die_indent_level * 2 + 2," ",tagname);
                 if (verbose) {
-                    printf(" <abbrev %d>",abbrev_code);
+                    Dwarf_Off agoff = 0;
+                    Dwarf_Unsigned acount = 0;
+                    printf(" <abbrev %d",abbrev_code);
+                    if (show_global_offsets) {
+                        int agres = 0;
+
+                        agres = dwarf_die_abbrev_global_offset(die,
+                            &agoff, &acount,&podie_err);
+                        if(agres == DW_DLV_ERROR) {
+                            print_error(dbg, "dwarf_die_abbrev_global_offset",
+                                agres, podie_err);
+                        } else if (agres == DW_DLV_NO_ENTRY) {
+                            print_error(dbg,
+                                "dwarf_die_abbrev_global_offset no entry?",
+                                agres, podie_err);
+                        } else {
+                            printf(" ABGOFF = 0x%" DW_PR_XZEROS DW_PR_DUx
+                                " count = 0x%" DW_PR_XZEROS DW_PR_DUx,
+                                agoff, acount);
+                        }
+                    }
+                    printf(">");
                 }
                 fputs("\n",stdout);
             }

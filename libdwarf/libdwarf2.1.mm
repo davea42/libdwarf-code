@@ -8,7 +8,7 @@
 .nr Hb 5
 \." ==============================================
 \." Put current date in the following at each rev
-.ds vE rev 2.45, Mar 11, 2016
+.ds vE rev 2.46, Mar 12, 2016
 \." ==============================================
 \." ==============================================
 .ds | |
@@ -2759,6 +2759,40 @@ The function was developed to let
 consumer code do better error reporting
 in some circumstances, it is not generally needed.
 
+.H 3 "dwarf_die_abbrev_global_offset()"
+.DS
+\f(CWint dwarf_die_abbrev_global_offset(Dwarf_Die die,
+    Dwarf_Off       * abbrev_offset,
+    Dwarf_Unsigned  * abbrev_count,
+    Dwarf_Error*      error);\fP
+.DE
+The function allows more detailed printing of abbreviation
+data.  
+It is handy for analyzing abbreviations but is not
+normally needed by applications.
+The function first appears in March 2016.  
+.P
+On success the function returns \f(CWDW_DLV_OK\fP
+and sets 
+\f(CW*abbrev_offset\fP
+to the global offset
+in the 
+\f(CW.debug_abbrev\fP
+section of the abbreviation.
+It also sets 
+\f(CW*abbrev_count\fP
+to the number of attribute/form
+pairs in the abbreviation entry. 
+It is possible, though unusual, for the
+count to be zero (meaning there is abbreviation
+instance and a TAG instance which have no attributes).
+.P
+On failure it returns
+\f(CWDW_DLV_ERROR\fP
+and sets \f(CW*error\fP
+.P
+It should never return \f(CWDW_DLV_NO_ENTRY\fP,
+but callers should allow for that possibility..
 
 .H 3 "dwarf_get_version_of_die()"
 .DS

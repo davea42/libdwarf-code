@@ -1475,6 +1475,13 @@ int dwarf_offdie_b(Dwarf_Debug /*dbg*/,
     New October 2011. */
 Dwarf_Bool dwarf_get_die_infotypes_flag(Dwarf_Die /*die*/);
 
+/*  New March 2016.
+    So we can associate a DIE's abbreviations with the contents
+    the abbreviations section. */
+int dwarf_die_abbrev_global_offset(Dwarf_Die /*die*/,
+    Dwarf_Off       * /*abbrev_offset*/,
+    Dwarf_Unsigned  * /*abbrev_count*/,
+    Dwarf_Error*      /*error*/);
 
 /*  operations on DIEs */
 int dwarf_tag(Dwarf_Die /*die*/,

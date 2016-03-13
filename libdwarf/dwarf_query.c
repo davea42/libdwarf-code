@@ -186,7 +186,7 @@ int
 dwarf_tag(Dwarf_Die die, Dwarf_Half * tag, Dwarf_Error * error)
 {
     CHECK_DIE(die, DW_DLV_ERROR);
-    *tag = (die->di_abbrev_list->ab_tag);
+    *tag = die->di_abbrev_list->abl_tag;
     return DW_DLV_OK;
 }
 
@@ -321,7 +321,7 @@ dwarf_attrlist(Dwarf_Die die,
     dbg = die->di_cu_context->cc_dbg;
 
     lres = _dwarf_get_abbrev_for_code(die->di_cu_context,
-        die->di_abbrev_list->ab_code,
+        die->di_abbrev_list->abl_code,
         &abbrev_list,error);
     if (lres == DW_DLV_ERROR) {
         return lres;
@@ -331,7 +331,7 @@ dwarf_attrlist(Dwarf_Die die,
         return DW_DLV_ERROR;
     }
 
-    abbrev_ptr = abbrev_list->ab_abbrev_ptr;
+    abbrev_ptr = abbrev_list->abl_abbrev_ptr;
 
     info_ptr = die->di_debug_ptr;
     SKIP_LEB128_WORD(info_ptr);
@@ -461,7 +461,8 @@ _dwarf_get_value_ptr(Dwarf_Die die,
     dbg = context->cc_dbg;
     die_info_end = _dwarf_calculate_section_end_ptr(context);
 
-    lres = _dwarf_get_abbrev_for_code(context, die->di_abbrev_list->ab_code,
+    lres = _dwarf_get_abbrev_for_code(context,
+        die->di_abbrev_list->abl_code,
         &abbrev_list,error);
     if (lres == DW_DLV_ERROR) {
         return lres;
@@ -471,7 +472,7 @@ _dwarf_get_value_ptr(Dwarf_Die die,
         return DW_DLV_ERROR;
     }
 
-    abbrev_ptr = abbrev_list->ab_abbrev_ptr;
+    abbrev_ptr = abbrev_list->abl_abbrev_ptr;
 
     info_ptr = die->di_debug_ptr;
     SKIP_LEB128_WORD(info_ptr);
@@ -1551,13 +1552,13 @@ dwarf_die_abbrev_code(Dwarf_Die die)
     return die->di_abbrev_code;
 }
 
-/*  Returns a flag through ab_has_child. Non-zero if
+/*  Returns a flag through ablhas_child. Non-zero if
     the DIE has children, zero if it does not.   */
 int
 dwarf_die_abbrev_children_flag(Dwarf_Die die,Dwarf_Half *ab_has_child)
 {
     if (die->di_abbrev_list) {
-        *ab_has_child = die->di_abbrev_list->ab_has_child;
+        *ab_has_child = die->di_abbrev_list->abl_has_child;
         return DW_DLV_OK;
     }
     return DW_DLV_ERROR;

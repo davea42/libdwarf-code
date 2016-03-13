@@ -1,3 +1,11 @@
+2016-03-12  David Anderson
+    * print_abbrevs.c(print_abbrevs): Printed output of an abbrev with code
+      and tag but no attributes was simply wrong. Now fixed.
+      Now avoids printing children flag on a null abbrev (a NUL byte
+      meaning no abbrev is there at all, ending a list of abbrevs).
+    * print_die.c: it was difficult, even with -G -v, to identify
+      the actual offset (in .debug_abbrev) of the abbreviations.
+      Now -i -G -v gives a bit more data on abbreviations.
 2016-03-09  David Anderson
     * dwarfdump.c,globals.h,print_aranges.c,print_die.c,print_frames.c,
       print_lines.c,print_macro.c,print_pubnames.c:

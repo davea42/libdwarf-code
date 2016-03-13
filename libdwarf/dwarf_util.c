@@ -362,15 +362,15 @@ copy_abbrev_table_to_new_table(Dwarf_Hash_Table htin,
         Dwarf_Abbrev_List nextlistent = 0;
 
         for (; listent ; listent = nextlistent) {
-            unsigned newtmp = listent->ab_code;
+            unsigned newtmp = listent->abl_code;
             unsigned newhash = newtmp%entry_out_count;
             Dwarf_Hash_Table_Entry e;
-            nextlistent = listent->ab_next;
+            nextlistent = listent->abl_next;
             e = entry_out+newhash;
             /*  Move_entry_to_new_hash. This reverses the
                 order of the entries, effectively, but
                 that does not seem significant. */
-            listent->ab_next = e->at_head;
+            listent->abl_next = e->at_head;
             e->at_head = listent;
 
             htout->tb_total_abbrev_count++;
@@ -425,6 +425,8 @@ _dwarf_valid_form_we_know(UNUSEDARG Dwarf_Debug dbg,
     While the lists can move and entries can be moved between
     lists on reallocation, any given Dwarf_Abbrev_list entry
     never moves once allocated, so the pointer is safe to return.
+
+    See also dwarf_get_abbrev() in dwarf_abbrev.c.
 
     Returns NULL on error.  */
 int
@@ -494,8 +496,8 @@ _dwarf_get_abbrev_for_code(Dwarf_CU_Context cu_context, Dwarf_Unsigned code,
 
     /* Determine if the 'code' is the list of synonyms already. */
     for (hash_abbrev_entry = entry_cur->at_head;
-        hash_abbrev_entry != NULL && hash_abbrev_entry->ab_code != code;
-        hash_abbrev_entry = hash_abbrev_entry->ab_next);
+        hash_abbrev_entry != NULL && hash_abbrev_entry->abl_code != code;
+        hash_abbrev_entry = hash_abbrev_entry->abl_next);
     if (hash_abbrev_entry != NULL) {
         /*  This returns a pointer to an abbrev list entry, not
             the list itself. */
@@ -539,13 +541,18 @@ _dwarf_get_abbrev_for_code(Dwarf_CU_Context cu_context, Dwarf_Unsigned code,
 
     do {
         unsigned new_hashable_val = 0;
+        Dwarf_Off  abb_goff = 0;
+        Dwarf_Unsigned atcount = 0;
+
+        abb_goff = abbrev_ptr - dbg->de_debug_abbrev.dss_data;
         DECODE_LEB128_UWORD(abbrev_ptr, abbrev_code);
         DECODE_LEB128_UWORD(abbrev_ptr, abbrev_tag);
 
         inner_list_entry = (Dwarf_Abbrev_List)
             _dwarf_get_alloc(cu_context->cc_dbg, DW_DLA_ABBREV_LIST, 1);
         if (inner_list_entry == NULL) {
-            return DW_DLV_NO_ENTRY;
+            _dwarf_error(dbg, error, DW_DLE_ALLOC_FAIL);
+            return DW_DLV_ERROR;
         }
 
         new_hashable_val = abbrev_code;
@@ -553,15 +560,16 @@ _dwarf_get_abbrev_for_code(Dwarf_CU_Context cu_context, Dwarf_Unsigned code,
             hash_table_base->tb_table_entry_count;
         inner_hash_entry = entry_base + hash_num;
         /* Move_entry_to_new_hash */
-        inner_list_entry->ab_next = inner_hash_entry->at_head;
+        inner_list_entry->abl_next = inner_hash_entry->at_head;
         inner_hash_entry->at_head = inner_list_entry;
 
         hash_table_base->tb_total_abbrev_count++;
 
-        inner_list_entry->ab_code = abbrev_code;
-        inner_list_entry->ab_tag = abbrev_tag;
-        inner_list_entry->ab_has_child = *(abbrev_ptr++);
-        inner_list_entry->ab_abbrev_ptr = abbrev_ptr;
+        inner_list_entry->abl_code = abbrev_code;
+        inner_list_entry->abl_tag = abbrev_tag;
+        inner_list_entry->abl_has_child = *(abbrev_ptr++);
+        inner_list_entry->abl_abbrev_ptr = abbrev_ptr;
+        inner_list_entry->abl_goffset =  abb_goff;
 
         hash_table_base->tb_total_abbrev_count++;
 
@@ -574,8 +582,11 @@ _dwarf_get_abbrev_for_code(Dwarf_CU_Context cu_context, Dwarf_Unsigned code,
                 _dwarf_error(dbg,error,DW_DLE_UNKNOWN_FORM);
                 return DW_DLV_ERROR;
             }
-
+            atcount++;
         } while (attr_name != 0 && attr_form != 0);
+        /*  We counted one too high, by counting the NUL
+            byte at end of list. So decrement. */
+        inner_list_entry->abl_count = atcount-1;
 
         /*  We may have fallen off the end of content,  that is not
             a botch in the section, as there is no rule that the last
@@ -809,8 +820,8 @@ _dwarf_free_abbrev_hash_table_contents(Dwarf_Debug dbg,Dwarf_Hash_Table hash_tab
 
         abbrev = tb->at_head;
         for (; abbrev; abbrev = nextabbrev) {
-            nextabbrev = abbrev->ab_next;
-            abbrev->ab_next = 0;
+            nextabbrev = abbrev->abl_next;
+            abbrev->abl_next = 0;
             dwarf_dealloc(dbg, abbrev, DW_DLA_ABBREV_LIST);
         }
         tb->at_head = 0;
