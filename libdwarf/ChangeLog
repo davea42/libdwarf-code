@@ -1,4 +1,13 @@
 2016-03-14 David Anderson
+    * dwarf_error.c(_dwarf_errno): Now prints to stdout and
+      does abort(1) when it has to give up. Instead of
+      using stderr and abort().
+      It is not a good idea for applications to fail to provide
+      error handling, so no one should notice this change.
+    * libdwarf2.1.mm: Documents behavior in case there is no error
+      handling provided by our caller.
+    * libdwarf2.1.pdf: Regenerated. Rev 2.48.
+2016-03-14 David Anderson
     * libdwarf2.1.mm: Documents Dwarf_Handler error handler function.
     * libdwarf2.1.pdf: Regenerated. Rev 2.47.
 2016-03-13 David Anderson

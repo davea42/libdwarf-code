@@ -354,7 +354,8 @@ main(int argc, char **argv)
                 &fissionfordie)) {
                 /* done */
             } else {
-                printf("Unknown argument \"%s\" ignored\n",argv[i]);
+                printf("Unknown argument \"%s\", give up \n",argv[i]);
+                exit(1);
             }
         }
         filepath = argv[i];
@@ -535,7 +536,7 @@ read_cu_list(Dwarf_Debug dbg)
             &cu_die,errp);
         if(res == DW_DLV_ERROR) {
             char *em = errp?dwarf_errmsg(error):"An error";
-            printf("Error in dwarf_siblingof on CU die: %s\n",em);
+            printf("Error in dwarf_siblingof_b on CU die: %s\n",em);
             exit(1);
         }
         if(res == DW_DLV_NO_ENTRY) {
@@ -580,8 +581,9 @@ get_die_and_siblings(Dwarf_Debug dbg, Dwarf_Die in_die,
         /* res == DW_DLV_NO_ENTRY */
         res = dwarf_siblingof_b(dbg,cur_die,is_info,&sib_die,errp);
         if(res == DW_DLV_ERROR) {
-            char *em = errp?dwarf_errmsg(error):"Error siglingof_b";
-            printf("Error in dwarf_siblingof , level %d :%s \n",in_level,em);
+            char *em = errp?dwarf_errmsg(error):"Error siblingof_b";
+            printf("Error in dwarf_siblingof_b , level %d :%s \n",
+                in_level,em);
             exit(1);
         }
         if(res == DW_DLV_NO_ENTRY) {
@@ -798,7 +800,15 @@ print_comp_dir(Dwarf_Debug dbg,Dwarf_Die die,
     Dwarf_Attribute *attrbuf = 0;
     Dwarf_Signed attrcount = 0;
     Dwarf_Signed i;
-    res = dwarf_attrlist(die,&attrbuf,&attrcount,&error);
+    Dwarf_Error *errp = 0;
+
+    if(passnullerror) {
+        errp = 0;
+    } else {
+        errp = &error;
+    }
+
+    res = dwarf_attrlist(die,&attrbuf,&attrcount,errp);
     if(res != DW_DLV_OK) {
         return;
     }
@@ -806,11 +816,11 @@ print_comp_dir(Dwarf_Debug dbg,Dwarf_Die die,
         &error);
     for(i = 0; i < attrcount ; ++i) {
         Dwarf_Half aform;
-        res = dwarf_whatattr(attrbuf[i],&aform,&error);
+        res = dwarf_whatattr(attrbuf[i],&aform,errp);
         if(res == DW_DLV_OK) {
             if(aform == DW_AT_comp_dir) {
                 char *name = 0;
-                res = dwarf_formstring(attrbuf[i],&name,&error);
+                res = dwarf_formstring(attrbuf[i],&name,errp);
                 if(res == DW_DLV_OK) {
                     printf(    "<%3d> compilation directory : \"%s\"\n",
                         level,name);
@@ -934,10 +944,17 @@ print_die_data(Dwarf_Debug dbg, Dwarf_Die print_me,
         Dwarf_Debug_Fission_Per_CU percu;
         memset(&percu,0,sizeof(percu));
         if (fissionfordie == dienumber) {
-            Dwarf_Error error = 0;
             int res = 0;
+            Dwarf_Error error = 0;
+            Dwarf_Error *errp = 0;
+
+            if (passnullerror) {
+                errp = 0;
+            } else {
+                errp = &error;
+            }
             res = dwarf_get_debugfission_for_die(print_me,
-                &percu,&error);
+                &percu,errp);
             if(res == DW_DLV_ERROR) {
                 printf("FAIL: Error in dwarf_diename  on fissionfordie %d\n",
                     fissionfordie);

@@ -1,4 +1,9 @@
 2011-03-14  DavidAnderson <davea42@earthlink.net>
+      * frame1.c: Fixing various compiler warnings.
+      * simplereader.c: In case a badly spelled
+        argument given, exit with message, do not
+        ignore the mistake.
+2011-03-14  DavidAnderson <davea42@earthlink.net>
       * simplereader.c: --simpleerrhand flag
         lets us test an error handler
         when combined with --passnullerror.

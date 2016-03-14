@@ -472,8 +472,11 @@ _dwarf_error(Dwarf_Debug dbg, Dwarf_Error * error, Dwarf_Sword errval)
         dbg->de_errhand(errptr, dbg->de_errarg);
         return;
     }
-    fprintf(stderr,
-        "abort() in libdwarf. No error argument, no handler.\n");
+    fflush(stdout);
+    fprintf(stdout,
+        "\nNow abort() in libdwarf. "
+        "No error argument or handler available.\n");
+    fflush(stdout);
     abort();
 }
 

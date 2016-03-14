@@ -55,11 +55,10 @@
 
 static void read_frame_data(Dwarf_Debug dbg);
 static void print_fde_instrs(Dwarf_Debug dbg, Dwarf_Fde fde,
-   int fdenum, Dwarf_Error *error);
-static void print_regtable(Dwarf_Fde fde,Dwarf_Regtable3 *tab3,int oldrulecount,
-    Dwarf_Debug dbg,Dwarf_Error *error);
+    Dwarf_Error *error);
+static void print_regtable(Dwarf_Regtable3 *tab3);
 static void
-print_cie_instrs(Dwarf_Debug dbg,Dwarf_Cie cie,Dwarf_Error *error);
+print_cie_instrs(Dwarf_Cie cie,Dwarf_Error *error);
 
 
 #define UNDEF_VAL 2000
@@ -163,9 +162,9 @@ read_frame_data(Dwarf_Debug dbg)
                 " to get its cie\n",fdenum);
             exit(1);
         }
-        print_cie_instrs(dbg,cie,&error);
+        print_cie_instrs(cie,&error);
         printf("Print fde %" DW_PR_DSd  "\n",fdenum);
-        print_fde_instrs(dbg,fde_data[fdenum],fdenum,&error);
+        print_fde_instrs(dbg,fde_data[fdenum],&error);
     }
 
     /* Done with the data. */
@@ -174,7 +173,7 @@ read_frame_data(Dwarf_Debug dbg)
     return;
 }
 static void
-print_cie_instrs(Dwarf_Debug dbg,Dwarf_Cie cie,Dwarf_Error *error)
+print_cie_instrs(Dwarf_Cie cie,Dwarf_Error *error)
 {
     int res = DW_DLV_ERROR;
     Dwarf_Unsigned bytes_in_cie = 0;
@@ -197,7 +196,7 @@ print_cie_instrs(Dwarf_Debug dbg,Dwarf_Cie cie,Dwarf_Error *error)
 }
 
 static void
-print_frame_instrs(Dwarf_Debug dbg,Dwarf_Frame_Op *frame_op_list,
+print_frame_instrs(Dwarf_Frame_Op *frame_op_list,
   Dwarf_Signed frame_op_count)
 {
     Dwarf_Signed i = 0;
@@ -214,7 +213,7 @@ print_frame_instrs(Dwarf_Debug dbg,Dwarf_Frame_Op *frame_op_list,
 
 static void
 print_fde_instrs(Dwarf_Debug dbg,
-    Dwarf_Fde fde,int fdenum, Dwarf_Error *error)
+    Dwarf_Fde fde, Dwarf_Error *error)
 {
     int res;
     Dwarf_Addr lowpc = 0;
@@ -269,7 +268,7 @@ print_fde_instrs(Dwarf_Debug dbg,
         printf("dwarf_get_fde_info_for_all_regs3 failed!\n");
         exit(1);
     }
-    print_regtable(fde,&tab3,oldrulecount,dbg,error);
+    print_regtable(&tab3);
 
     res = dwarf_get_fde_instr_bytes(fde,&outinstrs,&instrslen,error);
     if(res != DW_DLV_OK) {
@@ -290,7 +289,7 @@ print_fde_instrs(Dwarf_Debug dbg,
         exit(1);
     }
     printf("Frame op count: %" DW_PR_DUu "\n",frame_op_count);
-    print_frame_instrs(dbg,frame_op_list,frame_op_count);
+    print_frame_instrs(frame_op_list,frame_op_count);
 
     dwarf_dealloc(dbg,frame_op_list, DW_DLA_FRAME_BLOCK);
     free(tab3.rt3_rules);
@@ -316,9 +315,8 @@ print_reg(int r)
 }
 
 static void
-print_one_regentry(const char *prefix,Dwarf_Fde fde,Dwarf_Debug dbg,
-    int oldrulecount,struct Dwarf_Regtable_Entry3_s *entry,
-    Dwarf_Error *  error)
+print_one_regentry(const char *prefix,
+    struct Dwarf_Regtable_Entry3_s *entry)
 {
     int is_cfa = !strcmp("cfa",prefix);
     printf("%s ",prefix);
@@ -388,8 +386,7 @@ print_one_regentry(const char *prefix,Dwarf_Fde fde,Dwarf_Debug dbg,
 }
 
 static void
-print_regtable(Dwarf_Fde fde,Dwarf_Regtable3 *tab3,int oldrulecount,
-    Dwarf_Debug dbg,Dwarf_Error *error)
+print_regtable(Dwarf_Regtable3 *tab3)
 {
     int r;
     /* We won't print too much. A bit arbitrary. */
@@ -397,14 +394,12 @@ print_regtable(Dwarf_Fde fde,Dwarf_Regtable3 *tab3,int oldrulecount,
     if(max > tab3->rt3_reg_table_size) {
         max = tab3->rt3_reg_table_size;
     }
-    print_one_regentry("cfa",fde,dbg,oldrulecount,&tab3->rt3_cfa_rule,
-        error);
+    print_one_regentry("cfa",&tab3->rt3_cfa_rule);
 
     for(r = 0; r < max; r++) {
         char rn[30];
         snprintf(rn,sizeof(rn),"reg %d",r);
-        print_one_regentry(rn, fde,dbg,oldrulecount,tab3->rt3_rules+r,
-            error);
+        print_one_regentry(rn,tab3->rt3_rules+r);
     }
 
 

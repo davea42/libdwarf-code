@@ -8,7 +8,7 @@
 .nr Hb 5
 \." ==============================================
 \." Put current date in the following at each rev
-.ds vE rev 2.47, Mar 14, 2016
+.ds vE rev 2.48, Mar 14, 2016
 \." ==============================================
 \." ==============================================
 .ds | |
@@ -1215,10 +1215,22 @@ specify or change both the error handling function and the pointer argument
 after initialization using \f(CWdwarf_seterrhand()\fP and 
 \f(CWdwarf_seterrarg()\fP.
 .P
-In the case where \fIlibdwarf\fP functions are not provided a pointer
+In the case where 
+\fIlibdwarf\fP 
+functions are not provided a pointer
 to a \f(CWDwarf_Error\fP descriptor, and no error handling function was 
-provided at initialization, \fIlibdwarf\fP functions terminate execution 
-by calling \f(CWabort(3C)\fP.
+provided at initialization, \fIlibdwarf\fP functions 
+print a short message to stdout
+and terminate exectution with
+\f(CWabort()\fP.
+.P
+Before March 2016 
+\fIlibdwarf\fP 
+gave up when there was no error handling
+by 
+emitting a short message on 
+\f(CWstderr\fP
+calling \f(CWabort(3C)\fP.
 
 .P
 The following lists the processing steps taken upon detection of an
