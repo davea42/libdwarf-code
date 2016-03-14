@@ -1,3 +1,9 @@
+2011-03-14  DavidAnderson <davea42@earthlink.net>
+      * simplereader.c: --simpleerrhand flag
+        lets us test an error handler
+        when combined with --passnullerror.
+        Fixed various warnings exposed by
+        configure --enable-wall.
 2011-03-13  DavidAnderson <davea42@earthlink.net>
       * simplereader.c: --passnullerror flag
         lets us test for libdwarf mistakes in

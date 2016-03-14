@@ -27,6 +27,10 @@
 /*  simplereader.c
     This is an example of code reading dwarf .debug_info.
     It is kept simple to expose essential features.
+    Though it now has a bunch of special options to enable
+    testing of specific libdwarf features so it's no longer
+    all that simple...
+
     It does not do all possible error reporting or error handling.
     It does to a bit of error checking as a help in ensuring
     that some code works properly... for error checks.
@@ -99,7 +103,7 @@ struct srcfilesdata {
 
 static void read_cu_list(Dwarf_Debug dbg);
 static void print_die_data(Dwarf_Debug dbg, Dwarf_Die print_me,
-    int is_info,int level,
+    int level,
     struct srcfilesdata *sf);
 static void get_die_and_siblings(Dwarf_Debug dbg, Dwarf_Die in_die,
     int is_info, int in_level,
@@ -154,10 +158,10 @@ static unsigned  char_to_uns4bit(unsigned char c)
 }
 
 static void
-xfrm_to_sig8(const char *cuhash, Dwarf_Sig8 *hash_out)
+xfrm_to_sig8(const char *cuhash_in, Dwarf_Sig8 *hash_out)
 {
     char localhash[16];
-    unsigned hashin_len = strlen(cuhash);
+    unsigned hashin_len = strlen(cuhash_in);
     unsigned fixed_size = sizeof(localhash);
     unsigned init_byte = 0;
     unsigned i;
@@ -165,7 +169,7 @@ xfrm_to_sig8(const char *cuhash, Dwarf_Sig8 *hash_out)
     memset(localhash,0,fixed_size);
     if (hashin_len > fixed_size) {
         printf("FAIL: argument hash too long, len %u val:\"%s\"\n",hashin_len,
-            cuhash);
+            cuhash_in);
         exit(1);
     }
     if (hashin_len  < fixed_size) {
@@ -176,7 +180,7 @@ xfrm_to_sig8(const char *cuhash, Dwarf_Sig8 *hash_out)
         }
     }
     for (i = 0; i < hashin_len; ++i,++init_byte) {
-        localhash[init_byte] = cuhash[i];
+        localhash[init_byte] = cuhash_in[i];
     }
 
     /*  So now local hash as a full 16 bytes of hex characters with
@@ -229,7 +233,7 @@ startswithextractstring(const char *arg,const char *lookfor,
     return TRUE;
 }
 
-void
+static void
 format_sig8_string(Dwarf_Sig8*data, char* str_buf,unsigned
   buf_size)
 {
@@ -290,6 +294,20 @@ print_debug_fission_header(struct Dwarf_Debug_Fission_Per_CU_s *fsd)
     }
 }
 
+/*  If there is no 'error' passed into a dwarf function
+    and there is an error, and an error-handler like this
+    is passed.  This example simply returns so we
+    test how well that action works.  */
+static void
+simple_error_handler(Dwarf_Error error, Dwarf_Ptr errarg)
+{
+    Dwarf_Unsigned unused =  (Dwarf_Unsigned)errarg;
+    printf("\nlibdwarf error detected: 0x%" DW_PR_DUx " %s\n",
+        dwarf_errno(error),dwarf_errmsg(error));
+    printf("libdwarf errarg. Not really used here %" DW_PR_DUu "\n",
+        unused);
+    return;
+}
 
 int
 main(int argc, char **argv)
@@ -303,6 +321,7 @@ main(int argc, char **argv)
     Dwarf_Ptr errarg = 0;
     Dwarf_Sig8 hash8;
     Dwarf_Error *errp  = 0;
+    int simpleerrhand = 0;
 
     if(argc < 2) {
         fd = 0; /* stdin */
@@ -325,6 +344,8 @@ main(int argc, char **argv)
                 /* done */
             } else if(strcmp(argv[i],"--passnullerror") == 0) {
                 passnullerror=1;
+            } else if(strcmp(argv[i],"--simpleerrhand") == 0) {
+                simpleerrhand=1;
             } else if(startswithextractnum(argv[i],"--isinfo=",&g_is_info)) {
                 /* done */
             } else if(startswithextractnum(argv[i],"--type=",&unittype)) {
@@ -349,6 +370,11 @@ main(int argc, char **argv)
     } else {
         errp = &error;
     }
+    if (simpleerrhand) {
+        errhand = simple_error_handler;
+        /* Not a very useful errarg... */
+        errarg = (Dwarf_Ptr)1;
+    }
     res = dwarf_init(fd,DW_DLC_READ,errhand,errarg, &dbg,errp);
     if(res != DW_DLV_OK) {
         printf("Giving up, cannot do DWARF processing\n");
@@ -370,7 +396,7 @@ main(int argc, char **argv)
             sf.srcfilesres = DW_DLV_ERROR;
             sf.srcfiles = 0;
             sf.srcfilescount = 0;
-            print_die_data(dbg,die,g_is_info,0,&sf);
+            print_die_data(dbg,die,0,&sf);
             dwarf_dealloc(dbg,die, DW_DLA_DIE);
         } else if (res == DW_DLV_NO_ENTRY) {
             printf("cuhash DW_DLV_NO_ENTRY.\n");
@@ -394,7 +420,7 @@ main(int argc, char **argv)
             sf.srcfilesres = DW_DLV_ERROR;
             sf.srcfiles = 0;
             sf.srcfilescount = 0;
-            print_die_data(dbg,die,g_is_info,0,&sf);
+            print_die_data(dbg,die,0,&sf);
             dwarf_dealloc(dbg,die, DW_DLA_DIE);
         } else if (res == DW_DLV_NO_ENTRY) {
             printf("tuhash DW_DLV_NO_ENTRY.\n");
@@ -539,7 +565,7 @@ get_die_and_siblings(Dwarf_Debug dbg, Dwarf_Die in_die,
     } else {
         errp = &error;
     }
-    print_die_data(dbg,in_die,is_info,in_level,sf);
+    print_die_data(dbg,in_die,in_level,sf);
 
     for(;;) {
         Dwarf_Die sib_die = 0;
@@ -567,7 +593,7 @@ get_die_and_siblings(Dwarf_Debug dbg, Dwarf_Die in_die,
             dwarf_dealloc(dbg,cur_die,DW_DLA_DIE);
         }
         cur_die = sib_die;
-        print_die_data(dbg,cur_die,is_info,in_level,sf);
+        print_die_data(dbg,cur_die,in_level,sf);
     }
     return;
 }
@@ -620,7 +646,7 @@ get_number(Dwarf_Attribute attr,Dwarf_Unsigned *val)
 }
 static void
 print_subprog(Dwarf_Debug dbg,Dwarf_Die die,
-    int is_info, int level,
+    int level,
     struct srcfilesdata *sf,
     const char *name)
 {
@@ -630,7 +656,7 @@ print_subprog(Dwarf_Debug dbg,Dwarf_Die die,
     Dwarf_Addr lowpc = 0;
     Dwarf_Addr highpc = 0;
     Dwarf_Signed attrcount = 0;
-    Dwarf_Unsigned i;
+    Dwarf_Signed i;
     Dwarf_Unsigned filenum = 0;
     Dwarf_Unsigned linenum = 0;
     char *filename = 0;
@@ -650,9 +676,14 @@ print_subprog(Dwarf_Debug dbg,Dwarf_Die die,
         res = dwarf_whatattr(attrbuf[i],&aform,errp);
         if(res == DW_DLV_OK) {
             if(aform == DW_AT_decl_file) {
+                Dwarf_Signed filenum_s = 0;
+            
                 get_number(attrbuf[i],&filenum);
-                if((filenum > 0) && (sf->srcfilescount > (filenum-1))) {
-                    filename = sf->srcfiles[filenum-1];
+                filenum_s = filenum;
+                /*  Would be good to evaluate filenum_s
+                    sanity here, ensuring filenum_s-1 is sensible. */
+                if((filenum > 0) && (sf->srcfilescount > (filenum_s-1))) {
+                    filename = sf->srcfiles[filenum_s-1];
                 }
             }
             if(aform == DW_AT_decl_line) {
@@ -760,13 +791,13 @@ print_subprog(Dwarf_Debug dbg,Dwarf_Die die,
 
 static void
 print_comp_dir(Dwarf_Debug dbg,Dwarf_Die die,
-    int is_info, int level, struct srcfilesdata *sf)
+    int level, struct srcfilesdata *sf)
 {
     int res;
     Dwarf_Error error = 0;
     Dwarf_Attribute *attrbuf = 0;
     Dwarf_Signed attrcount = 0;
-    Dwarf_Unsigned i;
+    Dwarf_Signed i;
     res = dwarf_attrlist(die,&attrbuf,&attrcount,&error);
     if(res != DW_DLV_OK) {
         return;
@@ -811,7 +842,7 @@ resetsrcfiles(Dwarf_Debug dbg,struct srcfilesdata *sf)
 
 static void
 print_die_data_i(Dwarf_Debug dbg, Dwarf_Die print_me,
-    int is_info,int level,
+    int level,
     struct srcfilesdata *sf)
 {
     char *name = 0;
@@ -871,7 +902,7 @@ print_die_data_i(Dwarf_Debug dbg, Dwarf_Die print_me,
             if(namesoptionon) {
                 printf(    "<%3d> subprogram            : \"%s\"\n",level,name);
             }
-            print_subprog(dbg,print_me,is_info,level,sf,name);
+            print_subprog(dbg,print_me,level,sf,name);
         }
         if( (namesoptionon) && (tag == DW_TAG_compile_unit ||
             tag == DW_TAG_partial_unit ||
@@ -879,7 +910,7 @@ print_die_data_i(Dwarf_Debug dbg, Dwarf_Die print_me,
 
             resetsrcfiles(dbg,sf);
             printf(    "<%3d> source file           : \"%s\"\n",level,name);
-            print_comp_dir(dbg,print_me,is_info,level,sf);
+            print_comp_dir(dbg,print_me,level,sf);
         }
     } else {
         printf("<%d> tag: %d %s  name: \"%s\"",level,tag,tagname,name);
@@ -895,7 +926,7 @@ print_die_data_i(Dwarf_Debug dbg, Dwarf_Die print_me,
 
 static void
 print_die_data(Dwarf_Debug dbg, Dwarf_Die print_me,
-    int is_info,int level,
+    int level,
     struct srcfilesdata *sf)
 {
 
@@ -917,14 +948,14 @@ print_die_data(Dwarf_Debug dbg, Dwarf_Die print_me,
                     fissionfordie);
                 exit(1);
             }
-            print_die_data_i(dbg,print_me,is_info,level,sf);
+            print_die_data_i(dbg,print_me,level,sf);
             print_debug_fission_header(&percu);
             exit(0);
         }
         dienumber++;
         return;
     }
-    print_die_data_i(dbg,print_me,is_info,level,sf);
+    print_die_data_i(dbg,print_me,level,sf);
     dienumber++;
 }
 
