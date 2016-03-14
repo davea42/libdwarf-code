@@ -585,7 +585,7 @@ _dwarf_get_abbrev_for_code(Dwarf_CU_Context cu_context, Dwarf_Unsigned code,
             atcount++;
         } while (attr_name != 0 && attr_form != 0);
         /*  We counted one too high, by counting the NUL
-            byte at end of list. So decrement. */
+            byte pair at end of list. So decrement. */
         inner_list_entry->abl_count = atcount-1;
 
         /*  We may have fallen off the end of content,  that is not

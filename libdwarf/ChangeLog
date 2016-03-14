@@ -1,4 +1,7 @@
 2016-03-14 David Anderson
+    * dwarf_util.c: Changed 'byte' to 'byte pair'
+      in a comment.  Where we read abbreviation AT/FORM lists.
+2016-03-14 David Anderson
     * dwarf_error.c(_dwarf_errno): Now prints to stdout and
       does abort(1) when it has to give up. Instead of
       using stderr and abort().
