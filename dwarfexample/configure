@@ -621,6 +621,7 @@ ac_includes_default="\
 ac_subst_vars='LTLIBOBJS
 LIBOBJS
 dwfzlib
+dwfwall
 build_nonshared
 AR
 RANLIB
@@ -683,6 +684,7 @@ ac_user_opts='
 enable_option_checking
 enable_shared
 enable_nonshared
+enable_wall
 '
       ac_precious_vars='build_alias
 host_alias
@@ -1308,6 +1310,7 @@ Optional Features:
   --enable-shared         build shared library libdwarf.so and use it if
                           present
   --disable-nonshared     do not build archive library libdwarf.a
+  --enable-wall           Add -Wall (default is none)
 
 Some influential environment variables:
   CC          C compiler command
@@ -4203,6 +4206,15 @@ if  test "x$enable_nonshared" = "xno"; then :
    nonshrd='--disable-shared'
 
 fi
+
+
+# Check whether --enable-wall was given.
+if test "${enable_wall+set}" = set; then :
+  enableval=$enable_wall;
+         dwfwall="-Wall -O0 -Wpointer-arith -Wmissing-declarations -Wmissing-prototypes -Wdeclaration-after-statement -Wextra -Wcomment -Wformat -Wpedantic -Wuninitialized -Wno-long-long -Wshadow"
+
+fi
+
 
 
 

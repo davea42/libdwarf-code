@@ -127,6 +127,7 @@ static Dwarf_Bool g_is_info = TRUE;
     The point is to match fissionfordie. */
 static int dienumber = 0;
 static int fissionfordie = -1;
+static int passnullerror = 0;
 /*  These hash representations have to be converted to Dwarf_Sig8
     before use. */
 static const  char * cuhash = 0;
@@ -301,6 +302,7 @@ main(int argc, char **argv)
     Dwarf_Handler errhand = 0;
     Dwarf_Ptr errarg = 0;
     Dwarf_Sig8 hash8;
+    Dwarf_Error *errp  = 0;
 
     if(argc < 2) {
         fd = 0; /* stdin */
@@ -321,6 +323,8 @@ main(int argc, char **argv)
             } else if(startswithextractstring(argv[i],"--cufissionhash=",
                 &cufissionhash)) {
                 /* done */
+            } else if(strcmp(argv[i],"--passnullerror") == 0) {
+                passnullerror=1;
             } else if(startswithextractnum(argv[i],"--isinfo=",&g_is_info)) {
                 /* done */
             } else if(startswithextractnum(argv[i],"--type=",&unittype)) {
@@ -340,7 +344,12 @@ main(int argc, char **argv)
     if(fd < 0) {
         printf("Failure attempting to open \"%s\"\n",filepath);
     }
-    res = dwarf_init(fd,DW_DLC_READ,errhand,errarg, &dbg,&error);
+    if(passnullerror) {
+        errp = 0;
+    } else {
+        errp = &error;
+    }
+    res = dwarf_init(fd,DW_DLC_READ,errhand,errarg, &dbg,errp);
     if(res != DW_DLV_OK) {
         printf("Giving up, cannot do DWARF processing\n");
         exit(1);
@@ -354,7 +363,7 @@ main(int argc, char **argv)
         printf("Getting die for CU key %s\n",cuhash);
         res = dwarf_die_from_hash_signature(dbg,
             &hash8,"cu",
-            &die,&error);
+            &die,errp);
         if (res == DW_DLV_OK) {
             struct srcfilesdata sf;
             printf("Hash found.\n");
@@ -367,7 +376,7 @@ main(int argc, char **argv)
             printf("cuhash DW_DLV_NO_ENTRY.\n");
         } else { /* DW_DLV_ERROR */
             printf("cuhash DW_DLV_ERROR %s\n",
-                dwarf_errmsg(error));
+                errp? dwarf_errmsg(error):"an error");
         }
     }
     if(tuhash) {
@@ -378,7 +387,7 @@ main(int argc, char **argv)
         printf("Getting die for TU key %s\n",tuhash);
         res = dwarf_die_from_hash_signature(dbg,
             &hash8,"tu",
-            &die,&error);
+            &die,errp);
         if (res == DW_DLV_OK) {
             struct srcfilesdata sf;
             printf("Hash found.\n");
@@ -391,7 +400,7 @@ main(int argc, char **argv)
             printf("tuhash DW_DLV_NO_ENTRY.\n");
         } else { /* DW_DLV_ERROR */
             printf("tuhash DW_DLV_ERROR %s\n",
-                dwarf_errmsg(error));
+                errp?dwarf_errmsg(error):"error!");
         }
 
     }
@@ -404,7 +413,7 @@ main(int argc, char **argv)
         printf("Getting fission data for CU key %s\n",cufissionhash);
         res = dwarf_get_debugfission_for_key(dbg,
             &hash8,"cu",
-            &fisdata,&error);
+            &fisdata,errp);
         if (res == DW_DLV_OK) {
             printf("Hash found.\n");
             print_debug_fission_header(&fisdata);
@@ -412,7 +421,7 @@ main(int argc, char **argv)
             printf("cufissionhash DW_DLV_NO_ENTRY.\n");
         } else { /* DW_DLV_ERROR */
             printf("cufissionhash DW_DLV_ERROR %s\n",
-                dwarf_errmsg(error));
+                errp?dwarf_errmsg(error):"error...");
         }
     }
     if(tufissionhash) {
@@ -424,7 +433,7 @@ main(int argc, char **argv)
         printf("Getting fission data for TU key %s\n",tufissionhash);
         res = dwarf_get_debugfission_for_key(dbg,
             &hash8,"tu",
-            &fisdata,&error);
+            &fisdata,errp);
         if (res == DW_DLV_OK) {
             printf("Hash found.\n");
             print_debug_fission_header(&fisdata);
@@ -432,13 +441,13 @@ main(int argc, char **argv)
             printf("tufissionhash DW_DLV_NO_ENTRY.\n");
         } else { /* DW_DLV_ERROR */
             printf("tufissionhash DW_DLV_ERROR %s\n",
-                dwarf_errmsg(error));
+                errp?dwarf_errmsg(error):" Some error");
         }
     }
     if (stdrun) {
         read_cu_list(dbg);
     }
-    res = dwarf_finish(dbg,&error);
+    res = dwarf_finish(dbg,errp);
     if(res != DW_DLV_OK) {
         printf("dwarf_finish failed!\n");
     }
@@ -462,6 +471,7 @@ read_cu_list(Dwarf_Debug dbg)
     Dwarf_Bool     is_info = g_is_info;
     Dwarf_Error error;
     int cu_number = 0;
+    Dwarf_Error *errp  = 0;
 
 
     for(;;++cu_number) {
@@ -473,14 +483,20 @@ read_cu_list(Dwarf_Debug dbg)
         sf.srcfiles = 0;
         sf.srcfilescount = 0;
         memset(&signature,0, sizeof(signature));
+
+        if(passnullerror) {
+            errp = 0;
+        } else {
+            errp = &error;
+        }
         res = dwarf_next_cu_header_d(dbg,is_info,&cu_header_length,
             &version_stamp, &abbrev_offset,
             &address_size, &offset_size,
             &extension_size,&signature,
             &typeoffset, &next_cu_header,
-            &header_cu_type,&error);
+            &header_cu_type,errp);
         if(res == DW_DLV_ERROR) {
-            char *em = dwarf_errmsg(error);
+            char *em = errp?dwarf_errmsg(error):"An error next cu her";
             printf("Error in dwarf_next_cu_header: %s\n",em);
             exit(1);
         }
@@ -490,9 +506,9 @@ read_cu_list(Dwarf_Debug dbg)
         }
         /* The CU will have a single sibling, a cu_die. */
         res = dwarf_siblingof_b(dbg,no_die,is_info,
-            &cu_die,&error);
+            &cu_die,errp);
         if(res == DW_DLV_ERROR) {
-            char *em = dwarf_errmsg(error);
+            char *em = errp?dwarf_errmsg(error):"An error";
             printf("Error in dwarf_siblingof on CU die: %s\n",em);
             exit(1);
         }
@@ -515,13 +531,19 @@ get_die_and_siblings(Dwarf_Debug dbg, Dwarf_Die in_die,
     int res = DW_DLV_ERROR;
     Dwarf_Die cur_die=in_die;
     Dwarf_Die child = 0;
-    Dwarf_Error error;
+    Dwarf_Error error = 0;
+    Dwarf_Error *errp = 0;
 
+    if(passnullerror) {
+        errp = 0;
+    } else {
+        errp = &error;
+    }
     print_die_data(dbg,in_die,is_info,in_level,sf);
 
     for(;;) {
         Dwarf_Die sib_die = 0;
-        res = dwarf_child(cur_die,&child,&error);
+        res = dwarf_child(cur_die,&child,errp);
         if(res == DW_DLV_ERROR) {
             printf("Error in dwarf_child , level %d \n",in_level);
             exit(1);
@@ -530,9 +552,9 @@ get_die_and_siblings(Dwarf_Debug dbg, Dwarf_Die in_die,
             get_die_and_siblings(dbg,child,is_info,in_level+1,sf);
         }
         /* res == DW_DLV_NO_ENTRY */
-        res = dwarf_siblingof_b(dbg,cur_die,is_info,&sib_die,&error);
+        res = dwarf_siblingof_b(dbg,cur_die,is_info,&sib_die,errp);
         if(res == DW_DLV_ERROR) {
-            char *em = dwarf_errmsg(error);
+            char *em = errp?dwarf_errmsg(error):"Error siglingof_b";
             printf("Error in dwarf_siblingof , level %d :%s \n",in_level,em);
             exit(1);
         }
@@ -555,7 +577,15 @@ get_addr(Dwarf_Attribute attr,Dwarf_Addr *val)
     Dwarf_Error error = 0;
     int res;
     Dwarf_Addr uval = 0;
-    res = dwarf_formaddr(attr,&uval,&error);
+    Dwarf_Error *errp  = 0;
+
+    if(passnullerror) {
+        errp = 0;
+    } else {
+        errp = &error;
+    }
+
+    res = dwarf_formaddr(attr,&uval,errp);
     if(res == DW_DLV_OK) {
         *val = uval;
         return;
@@ -569,12 +599,19 @@ get_number(Dwarf_Attribute attr,Dwarf_Unsigned *val)
     int res;
     Dwarf_Signed sval = 0;
     Dwarf_Unsigned uval = 0;
-    res = dwarf_formudata(attr,&uval,&error);
+    Dwarf_Error *errp  = 0;
+
+    if(passnullerror) {
+        errp = 0;
+    } else {
+        errp = &error;
+    }
+    res = dwarf_formudata(attr,&uval,errp);
     if(res == DW_DLV_OK) {
         *val = uval;
         return;
     }
-    res = dwarf_formsdata(attr,&sval,&error);
+    res = dwarf_formsdata(attr,&sval,errp);
     if(res == DW_DLV_OK) {
         *val = sval;
         return;
@@ -597,13 +634,20 @@ print_subprog(Dwarf_Debug dbg,Dwarf_Die die,
     Dwarf_Unsigned filenum = 0;
     Dwarf_Unsigned linenum = 0;
     char *filename = 0;
-    res = dwarf_attrlist(die,&attrbuf,&attrcount,&error);
+    Dwarf_Error *errp = 0;
+
+    if(passnullerror) {
+        errp = 0;
+    } else {
+        errp = &error;
+    }
+    res = dwarf_attrlist(die,&attrbuf,&attrcount,errp);
     if(res != DW_DLV_OK) {
         return;
     }
     for(i = 0; i < attrcount ; ++i) {
         Dwarf_Half aform;
-        res = dwarf_whatattr(attrbuf[i],&aform,&error);
+        res = dwarf_whatattr(attrbuf[i],&aform,errp);
         if(res == DW_DLV_OK) {
             if(aform == DW_AT_decl_file) {
                 get_number(attrbuf[i],&filenum);
@@ -639,15 +683,17 @@ print_subprog(Dwarf_Debug dbg,Dwarf_Die die,
         Dwarf_Half highform = 0;
         enum Dwarf_Form_Class highclass = 0;
 
+        /*  Reusing errp before checking for err here is
+            bogus. FIXME. */
         /*  Should work for DWARF 2/3 DW_AT_high_pc, and
             all high_pc where the FORM is DW_FORM_addr
             Avoid using this interface as of 2013. */
-        hres  = dwarf_highpc(die,&althipc,&error);
+        hres  = dwarf_highpc(die,&althipc,errp);
 
         /* Should work for all DWARF DW_AT_high_pc.  */
-        hresb = dwarf_highpc_b(die,&althipcb,&highform,&highclass,&error);
+        hresb = dwarf_highpc_b(die,&althipcb,&highform,&highclass,errp);
 
-        lres = dwarf_lowpc(die,&altlopc,&error);
+        lres = dwarf_lowpc(die,&altlopc,errp);
         printf("high_pc checking %s ",name);
 
         if (hres == DW_DLV_OK) {
@@ -774,8 +820,17 @@ print_die_data_i(Dwarf_Debug dbg, Dwarf_Die print_me,
     const char *tagname = 0;
     int localname = 0;
     int res = 0;
+    Dwarf_Error *errp = 0;
+    Dwarf_Attribute attr = 0;
+    Dwarf_Half formnum = 0;
+    const char *formname = 0;
 
-    res = dwarf_diename(print_me,&name,&error);
+    if (passnullerror) {
+        errp = 0;
+    } else {
+        errp = &error;
+    }
+    res = dwarf_diename(print_me,&name,errp);
     if(res == DW_DLV_ERROR) {
         printf("Error in dwarf_diename , level %d \n",level);
         exit(1);
@@ -784,7 +839,7 @@ print_die_data_i(Dwarf_Debug dbg, Dwarf_Die print_me,
         name = "<no DW_AT_name attr>";
         localname = 1;
     }
-    res = dwarf_tag(print_me,&tag,&error);
+    res = dwarf_tag(print_me,&tag,errp);
     if(res != DW_DLV_OK) {
         printf("Error in dwarf_tag , level %d \n",level);
         exit(1);
@@ -794,6 +849,23 @@ print_die_data_i(Dwarf_Debug dbg, Dwarf_Die print_me,
         printf("Error in dwarf_get_TAG_name , level %d \n",level);
         exit(1);
     }
+    res = dwarf_attr(print_me,DW_AT_name,&attr, errp);
+    if (res != DW_DLV_OK) {
+        /* do nothing */
+    } else {
+        res = dwarf_whatform(attr,&formnum,errp);
+        if (res != DW_DLV_OK) {
+            printf("Error in dwarf_whatform , level %d \n",level);
+            exit(1);
+        }
+        formname = "form-name-unavailable";
+        res = dwarf_get_FORM_name(formnum,&formname);
+        if (res != DW_DLV_OK) {
+            formname = "UNKNoWn FORM!";
+        }
+        dwarf_dealloc(dbg,attr,DW_DLA_ATTR);
+    }
+
     if(namesoptionon ||checkoptionon) {
         if( tag == DW_TAG_subprogram) {
             if(namesoptionon) {
@@ -810,7 +882,11 @@ print_die_data_i(Dwarf_Debug dbg, Dwarf_Die print_me,
             print_comp_dir(dbg,print_me,is_info,level,sf);
         }
     } else {
-        printf("<%d> tag: %d %s  name: \"%s\"\n",level,tag,tagname,name);
+        printf("<%d> tag: %d %s  name: \"%s\"",level,tag,tagname,name);
+        if (formname) {
+            printf(" FORM 0x%x \"%s\"",formnum, formname);
+        }
+        printf("\n");
     }
     if(!localname) {
         dwarf_dealloc(dbg,name,DW_DLA_STRING);

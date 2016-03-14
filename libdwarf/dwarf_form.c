@@ -1183,6 +1183,7 @@ dwarf_formstring(Dwarf_Attribute attr,
     }
     case DW_FORM_GNU_strp_alt:
     case DW_FORM_strp_sup:  {
+        Dwarf_Error alterr = 0;
         /*  See dwarfstd.org issue 120604.1
             This is the offset in the .debug_str section
             of another object file.
@@ -1191,25 +1192,38 @@ dwarf_formstring(Dwarf_Attribute attr,
             and a split object might be needed at the same time
             (hence two 'tied' files simultaneously). */
         Dwarf_Off soffset = 0;
+
         res = dwarf_global_formref(attr, &soffset,error);
         if (res != DW_DLV_OK) {
             return res;
         }
         res = _dwarf_get_string_from_tied(dbg, soffset,
-            return_str, error);
+            return_str, &alterr);
         if (res == DW_DLV_ERROR) {
-            if (!error) {
-                *return_str =  (char *)"<DW_FORM_GNU_strp_alt-no-tied-file>";
-                return res;
-            }
-            if (dwarf_errno(*error) == DW_DLE_NO_TIED_FILE_AVAILABLE) {
-                dwarf_dealloc(dbg,*error,DW_DLA_ERROR);
-                *return_str =  (char *)"<DW_FORM_GNU_strp_alt-no-tied-file>";
+            if (dwarf_errno(alterr) == DW_DLE_NO_TIED_FILE_AVAILABLE) {
+                dwarf_dealloc(dbg,alterr,DW_DLA_ERROR);
+                if( attr->ar_attribute_form == DW_FORM_GNU_strp_alt) {
+                    *return_str =
+                        (char *)"<DW_FORM_GNU_strp_alt-no-tied-file>";
+                } else {
+                    *return_str =
+                        (char *)"<DW_FORM_strp_sup-no-tied-file>";
+                }
                 return DW_DLV_OK;
             }
+            if (error) {
+                *error = alterr;
+            }
+            return res;
         }
         if (res == DW_DLV_NO_ENTRY) {
-            *return_str =  (char *)"<DW_FORM_GNU_strp_alt-no-tied-file>";
+            if( attr->ar_attribute_form == DW_FORM_GNU_strp_alt) {
+                *return_str =
+                    (char *)"<DW_FORM_GNU_strp_alt-no-tied-file>";
+            }else {
+                *return_str =
+                    (char *)"<DW_FORM_strp_sup-no-tied-file>";
+            }
         }
         return res;
     }

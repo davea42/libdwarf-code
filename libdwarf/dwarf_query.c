@@ -522,79 +522,32 @@ _dwarf_get_value_ptr(Dwarf_Die die,
     return DW_DLV_NO_ENTRY;
 }
 
-
 int
 dwarf_die_text(Dwarf_Die die,
-    Dwarf_Half attr,
+    Dwarf_Half attrnum,
     char **ret_name,
     Dwarf_Error * error)
 {
     Dwarf_Half attr_form = 0;
     Dwarf_Debug dbg = 0;
-    Dwarf_Byte_Ptr info_ptr = 0;
-    Dwarf_Unsigned string_offset = 0;
     int res = DW_DLV_ERROR;
+    Dwarf_Attribute attr = 0;
+    Dwarf_Error lerr = 0;
 
     CHECK_DIE(die, DW_DLV_ERROR);
 
-    res = _dwarf_get_value_ptr(die, attr, &attr_form,&info_ptr,error);
-    if (res == DW_DLV_ERROR) {
-        return res;
-    }
-    if (res == DW_DLV_NO_ENTRY){
-        return res;
-    }
-
-    if (attr_form == DW_FORM_string) {
-        *ret_name = (char *) (info_ptr);
-        return DW_DLV_OK;
-    }
-
+    res = dwarf_attr(die,attrnum,&attr,&lerr);
     dbg = die->di_cu_context->cc_dbg;
-    if (attr_form == DW_FORM_GNU_str_index ||
-        attr_form == DW_FORM_strx) {
-        Dwarf_CU_Context context =    die->di_cu_context;
-        Dwarf_Unsigned offsettostr= 0;
-
-        res = _dwarf_extract_string_offset_via_str_offsets(dbg,
-            info_ptr,
-            DW_AT_name,
-            attr_form,
-            context,
-            &offsettostr,
-            error);
-        if (res != DW_DLV_OK) {
-            return res;
-        }
-        string_offset = offsettostr;
+    if (res == DW_DLV_ERROR) {
+        return DW_DLV_NO_ENTRY;
     }
-
-
-    if (attr_form != DW_FORM_strp && attr_form != DW_FORM_GNU_str_index) {
-        _dwarf_error(dbg, error, DW_DLE_ATTR_FORM_BAD);
-        return (DW_DLV_ERROR);
-    }
-    if( attr_form == DW_FORM_strp) {
-        READ_UNALIGNED(dbg, string_offset, Dwarf_Unsigned,
-            info_ptr, die->di_cu_context->cc_length_size);
-
-    }
-
-    if (string_offset >= dbg->de_debug_str.dss_size) {
-        _dwarf_error(dbg, error, DW_DLE_STRING_OFFSET_BAD);
-        return (DW_DLV_ERROR);
-    }
-
-    res = _dwarf_load_section(dbg, &dbg->de_debug_str,error);
-    if (res != DW_DLV_OK) {
+    if (res == DW_DLV_NO_ENTRY) {
         return res;
     }
-    if (!dbg->de_debug_str.dss_size) {
-        return (DW_DLV_NO_ENTRY);
-    }
-
-    *ret_name = (char *) (dbg->de_debug_str.dss_data + string_offset);
-    return DW_DLV_OK;
+    res = dwarf_formstring(attr,ret_name,error);
+    dwarf_dealloc(dbg,attr, DW_DLA_ATTR);
+    attr = 0;
+    return res;
 }
 
 int
@@ -604,8 +557,6 @@ dwarf_diename(Dwarf_Die die,
 {
     return dwarf_die_text(die,DW_AT_name,ret_name,error);
 }
-
-
 
 int
 dwarf_hasattr(Dwarf_Die die,

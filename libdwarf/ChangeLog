@@ -1,3 +1,10 @@
+2016-03-13 David Anderson
+    * dwarf_query.c: Use dwarf_formstring to read string
+      attributes as it handles all the string types already.
+    * dwarf_form.c: Handle an error in dwarf_formstring()
+      (for tied files, or the lack thereof)
+      differently so it all works properly even if the incoming
+      error argument is null.
 2016-03-12 David Anderson
     * dwarf_abbrev.c: Uses renamed fields abbrev internal struct.
       Removes some gratuitous (). Adds clarifying {}
