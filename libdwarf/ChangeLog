@@ -1,6 +1,9 @@
 2016-03-13 David Anderson
     * dwarf_query.c: Use dwarf_formstring to read string
       attributes as it handles all the string types already.
+      Now dwarf_diename() and dwarf_die_text() call dwarf_formstring()
+      so DW_FORM_strp_sup and DW_FORM_GNU_strp_alt are
+      properly handled(along with all the other string FORMs).
     * dwarf_form.c: Handle an error in dwarf_formstring()
       (for tied files, or the lack thereof)
       differently so it all works properly even if the incoming
