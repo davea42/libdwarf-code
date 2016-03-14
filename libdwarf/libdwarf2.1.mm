@@ -8,7 +8,7 @@
 .nr Hb 5
 \." ==============================================
 \." Put current date in the following at each rev
-.ds vE rev 2.46, Mar 12, 2016
+.ds vE rev 2.47, Mar 14, 2016
 \." ==============================================
 \." ==============================================
 .ds | |
@@ -441,7 +441,7 @@ typedef unsigned char      Dwarf_Small;
 typedef signed long long   Dwarf_Signed;
 typedef unsigned long long Dwarf_Addr;
 typedef void 		  *Dwarf_Ptr;
-typedef void   (*Dwarf_Handler)(Dwarf_Error *error, Dwarf_Ptr errarg);
+typedef void   (*Dwarf_Handler)(Dwarf_Error error, Dwarf_Ptr errarg);
 .DE
 
 .nr aX \n(Fg+1
@@ -1552,6 +1552,47 @@ Since \f(CWdwarf_init()\fP uses the same error handling processing as other
 \fIlibdwarf\fP functions (see \fIError Handling\fP above), client programs 
 will generally supply an \f(CWerror\fP parameter to bypass the default actions 
 during initialization unless the default actions are appropriate. 
+
+.H 3 "Dwarf_Handler function"
+This is an example of a valid error handler function.
+A pointer to this  (or another like it)
+may be passed to 
+\f(CWdwarf_elf_init()\fP
+or
+\f(CWdwarf_init()\fP.
+.DS
+\f(CWstatic void
+simple_error_handler(Dwarf_Error error, Dwarf_Ptr errarg)
+{
+    printf("libdwarf error: %d  %s\n",
+        dwarf_errno(error), dwarf_errmsg(error));
+    exit(1);
+}\fP
+.DE
+.P
+This will only be called if an error is detected inside libdwarf
+and the 
+Dwarf_Error 
+argument passed to libdwarf is NULL.
+A Dwarf_Error will be created with the error number
+assigned by the library and passed to the error handler.
+.P
+The second argument is a copy of the value passed in to
+\f(CWdwarf_elf_init()\fP
+or
+\f(CWdwarf_init()\fP
+as the 
+\f(CWerrarg()\fP argument.
+Typically the init function would be passed
+a pointer to an application-created struct
+containing the data the application needs to 
+do what it wants to do in the error handler.
+.P
+In a language with exceptions or exception-like features
+an exception could be thrown here.
+Or the application could simply give up and call
+\f(CWexit()\fP
+as in the sample given above.
 
 .H 3 "dwarf_elf_init()"
 .DS

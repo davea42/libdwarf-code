@@ -1,3 +1,6 @@
+2016-03-14 David Anderson
+    * libdwarf2.1.mm: Documents Dwarf_Handler error handler function.
+    * libdwarf2.1.pdf: Regenerated. Rev 2.47.
 2016-03-13 David Anderson
     * dwarf_query.c: Use dwarf_formstring to read string
       attributes as it handles all the string types already.
