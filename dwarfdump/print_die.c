@@ -629,7 +629,7 @@ print_one_die_section(Dwarf_Debug dbg,Dwarf_Bool is_info,
     char * cu_long_name = NULL;
     const char * section_name = 0;
     int res = 0;
-    Dwarf_Unsigned dieprint_cu_goffset = 0;
+    Dwarf_Off dieprint_cu_goffset = 0;
 
     current_section_id = is_info?DEBUG_INFO:DEBUG_TYPES;
     res = dwarf_get_die_section_name(dbg, is_info,

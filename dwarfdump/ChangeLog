@@ -1,3 +1,6 @@
+2016-03-17  David Anderson
+    * print_die.c(print_one_die_section): One dieprint_cu_goffset
+      Dwarf_Unsigned->Dwarf_Off. 
 2016-03-12  David Anderson
     * print_abbrevs.c(print_abbrevs): Printed output of an abbrev with code
       and tag but no attributes was simply wrong. Now fixed.
