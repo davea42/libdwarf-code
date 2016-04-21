@@ -42,7 +42,7 @@
 void
 print_version_details(UNUSEDARG const char * name,int alwaysprint)
 {
-#ifdef WIN32
+#ifdef _WIN32
 #ifdef _DEBUG
     char *acType = "Debug";
 #else
@@ -52,34 +52,34 @@ print_version_details(UNUSEDARG const char * name,int alwaysprint)
     snprintf(acVersion,sizeof(acVersion),
         "[%s %s %s (%s)]",__DATE__,__TIME__,acType,RELEASE_DATE);
     printf("%s %s\n",name,acVersion);
-#else  /* !WIN32 */
+#else  /* !_WIN32 */
     if (alwaysprint) {
         printf("%s\n",DWARFDUMP_VERSION);
     }
-#endif /* WIN32 */
+#endif /* _WIN32 */
 }
 
 
 void
 print_args(UNUSEDARG int argc, UNUSEDARG char *argv[])
 {
-#ifdef WIN32
+#ifdef _WIN32
     int index = 1;
     printf("Arguments: ");
     for (index = 1; index < argc; ++index) {
         printf("%s ",argv[index]);
     }
     printf("\n");
-#endif /* WIN32 */
+#endif /* _WIN32 */
 }
 
 void
 print_usage_message(const char *program_name, const char **text)
 {
     unsigned i = 0;
-#ifndef WIN32
+#ifndef _WIN32
     fprintf(stderr,"Usage:  %s  <options> <object file>\n", program_name);
-#endif
+#endif /* _WIN32 */
     for (i = 0; *text[i]; ++i) {
         fprintf(stderr,"%s\n", text[i]);
     }

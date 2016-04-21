@@ -1,3 +1,5 @@
+2016-04-21  Carlos Alberto Enciso
+     * Use the _WIN32 macro to identify a WINDOWS specific code.
 2016-03-14  DavidAnderson <davea42@earthlink.net>
       * frame1.c: Fixing various compiler warnings.
       * simplereader.c: In case a badly spelled
