@@ -1942,7 +1942,7 @@ traverse_one_die(Dwarf_Debug dbg,
         const char * tagname = 0;
         res = dwarf_die_CU_offset(die, &offset, &err);
         if (res != DW_DLV_OK) {
-            print_error(dbg, "dwarf_die_CU_offsetC", res, err);
+            print_error(dbg, "dwarf_die_CU_offset", res, err);
         }
         tagname = get_TAG_name(tag,pd_dwarf_names_print_on_error);
         do_dump_visited_info(die_indent_level,offset,overall_offset,

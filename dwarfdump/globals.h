@@ -102,7 +102,10 @@ typedef unsigned long long  __uint64_t;
 #ifdef HAVE_REGEX
 #include <regex.h>
 #endif
+
+#ifndef __cplusplus
 typedef char * string;
+#endif /* __cplusplus */
 
 #include "checkutil.h"
 #ifndef BOOLEAN_TYPEDEFED
