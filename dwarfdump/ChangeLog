@@ -1,4 +1,6 @@
 2016-04-21  Carlos Alberto Enciso
+     * For a WINDOWS version, display the 32/64 bits configuration.
+2016-04-21  Carlos Alberto Enciso
      * Use the _WIN32 macro to identify a WINDOWS specific code.
 2016-03-17  David Anderson
     * print_die.c(print_one_die_section): One dieprint_cu_goffset
