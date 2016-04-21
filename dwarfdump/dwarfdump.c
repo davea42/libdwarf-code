@@ -493,6 +493,14 @@ main(int argc, char *argv[])
     Elf *elftied = 0;
     int archive = 0;
 
+#ifdef _WIN32
+    /* Open the null device used during formatting printing */
+    if (!esb_open_null_device()) {
+        fprintf(stderr,"dwarfdump: Unable to open null device.\n");
+        exit(FAILED);
+    }
+#endif /* _WIN32 */
+
     set_checks_off();
     esb_constructor(&config_file_path);
     esb_constructor(&config_file_tiedpath);
@@ -679,6 +687,12 @@ main(int argc, char *argv[])
     }
 #endif
     close_a_file(f);
+
+#ifdef _WIN32
+    /* Close the null device used during formatting printing */
+    esb_close_null_device();
+#endif /* _WIN32 */
+
     /*  As the tool have reached this point, it means there are
         no internal errors and we should return an OKAY condition,
         regardless if the file being processed has errors. */
@@ -3050,8 +3064,6 @@ print_dwarf_check_error(char *format,...)
     boolean found = FALSE;
     string error_text = NULL;
     va_list ap;
-    int netlen = 0;
-    char tinybuf[20];
 
     if (do_init) {
         esb_constructor(&dwarf_error_line);
@@ -3059,17 +3071,14 @@ print_dwarf_check_error(char *format,...)
     }
     esb_empty_string(&dwarf_error_line);
 
-    /* Generate the full line of text */
-    va_start(ap,format);
-    netlen = vsnprintf(tinybuf,sizeof(tinybuf),format,ap);
     /*  "The object ap may be passed as an argument to another
         function; if that function invokes the va_arg()
         macro with parameter ap, the value of ap in the calling
         function is unspecified and shall be passed to the va_end()
         macro prior to any further reference to ap."
         Single Unix Specification. */
-    va_end(ap);
-    esb_force_allocation(&dwarf_error_line,netlen+1);
+    /* 'esb_append_printf_ap', does the necessary adjustments to the
+       extensible string buffer. */
     va_start(ap,format);
     esb_append_printf_ap(&dwarf_error_line,format,ap);
     va_end(ap);

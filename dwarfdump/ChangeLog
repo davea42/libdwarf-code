@@ -1,11 +1,32 @@
 2016-04-21  Carlos Alberto Enciso
-     * globals.h: Do not define 'string' for a C++ build; it clashes with
-       the 'std::string'.
-     * print_die.c: Minor typo error. 
+    Printing using the 'esb' module was broken. It seems to work
+    because the default internal buffer size (240), was big enough
+    to receive the resulting output.
+
+    * esb.c, esb.h: Missing prefix 'esb' for 'allocate_more'.
+      Initial buffer size reduced to 16.
+      New function 'esb_open_null_device': open 'null' device.
+      New function 'esb_close_null_device': close 'null' device.
+      New function 'esb_allocate_more_if_needed': allocate more
+      space if required, leaving the contents unchanged, so the
+      caller, does not need to worry about it.
+      There are 2 cases:
+        Windows: use the 'null' device to get the required space
+        UNIX: use a big buffer (512). But if the result is bigger,
+        the original problem will be shown.
+      The function 'esb_append_printf_ap', now takes care of
+      increasing the buffer if needed.
+
+    * dwarfdump.c: In the case of windows, open and close the 'null'
+      device, in order to setup the esb module.
 2016-04-21  Carlos Alberto Enciso
-     * For a WINDOWS version, display the 32/64 bits configuration.
+    * globals.h: Do not define 'string' for a C++ build; it clashes with
+      the 'std::string'.
+    * print_die.c: Minor typo error. 
 2016-04-21  Carlos Alberto Enciso
-     * Use the _WIN32 macro to identify a WINDOWS specific code.
+    * For a WINDOWS version, display the 32/64 bits configuration.
+2016-04-21  Carlos Alberto Enciso
+    * Use the _WIN32 macro to identify a WINDOWS specific code.
 2016-03-17  David Anderson
     * print_die.c(print_one_die_section): One dieprint_cu_goffset
       Dwarf_Unsigned->Dwarf_Off. 
@@ -41,9 +62,9 @@
     * print_die.c: When displaying a DW_AT_type offset error, uses the standard
       0xdddddddd format.  Wrap to 80 columns, a long line.
 2016-02-17  Carlos Alberto-Enciso
-    *  dwarfdump/tag_attr_ext.list,dwarfdump/tag_common.h,
-       dwarfdump/tag_tree_ext.list: Tighten up the list limits
-       and add commentary about the list limits.
+    * dwarfdump/tag_attr_ext.list,dwarfdump/tag_common.h,
+      dwarfdump/tag_tree_ext.list: Tighten up the list limits
+      and add commentary about the list limits.
 2016-02-14  DavidAnderson
     * dwarfdump.c,common.c: Updated version strings.
     * print_die.c,print_strings.c: fixed indent errors.
