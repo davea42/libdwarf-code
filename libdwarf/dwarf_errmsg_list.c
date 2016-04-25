@@ -37,7 +37,7 @@
    define is added to the list in libdwarf.h, a string should be
    added to this Array
 
-   Errors in the list (missing a comma, for example) 
+   Errors in the list (missing a comma, for example)
    happen too often. Making this a separate little file
    simplfies testing for missing-commas/extra-strings.
 
@@ -421,11 +421,11 @@ printone(int i)
     }
 }
 
-int 
-main() 
+int
+main()
 {
     unsigned arraysize = sizeof(_dwarf_errmsgs) / sizeof(char *);
-     
+
     if (arraysize != (DW_DLE_LAST + 1)) {
         printf("Missing or extra entry in dwarf error strings array"
             " %u expected DW_DLE_LAST+1 %d\n",arraysize, DW_DLE_LAST+1);

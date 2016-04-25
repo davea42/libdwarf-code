@@ -1,4 +1,8 @@
 2016-04-25 David Anderson
+    * dwarf_errmsg_list.c: Fixed indent mistakes.
+    * dwarf_leb.c: Fixed places were leb128_length
+      was assumed non-null (dwarf_form.c passes NULL!).
+2016-04-25 David Anderson
     * Makefile.in: Added testing of the _dwarf_errmsgs array.
     * dwarf_error.c: Moved _dwarf_errmsgs out of dwarf_error.c into
       dwarf_errmsg_list.c
