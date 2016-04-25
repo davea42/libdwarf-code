@@ -1,4 +1,11 @@
 2016-04-25 David Anderson
+    * dwarf_tied.c: A C11-ism crept in. Fixed.
+      Added 'static' to local function declaration.
+      Removed unused local variable.
+    * dwarf_errmsg_list.c: Now checks that the number in ()
+      matches the index (and still checks that the array size
+      is the declared size) when compiled -DTESTING. 
+2016-04-25 David Anderson
     * dwarf_errmsg_list.c: Fixed indent mistakes.
     * dwarf_leb.c: Fixed places were leb128_length
       was assumed non-null (dwarf_form.c passes NULL!).

@@ -409,6 +409,8 @@ const char *_dwarf_errmsgs[] = {
 };
 
 #ifdef TESTING
+#define FALSE 0
+#define TRUE 1
 /* This is just to help localize the error. */
 static void
 printone(int i)
@@ -421,10 +423,58 @@ printone(int i)
     }
 }
 
+/* Arbitrary. A much smaller max length value would work. */
+#define MAX_NUM_LENGTH 12
+
+/* return TRUE on error */
+static int
+check_errnum_mismatches(unsigned i)
+{
+    unsigned nextstop = 0;
+    const char *sp = _dwarf_errmsgs[i];
+    const char *cp = sp;
+    unsigned innit = FALSE;
+    unsigned prevchar = 0;
+    unsigned value = 0;
+
+    for( ; *cp; cp++) {
+        unsigned c = 0;
+        c = 0xff & *cp;
+        if ( c >= '0' && c <= '9' && !innit
+            && prevchar != '(') {
+            /* Skip. number part of macro name. */
+            prevchar = c;
+            continue;
+        }
+        if ( c >= '0' && c <= '9') {
+            value = value * 10;
+            value += (c - '0');
+            nextstop++;
+            if (nextstop > MAX_NUM_LENGTH) {
+                break;
+            }
+            innit = TRUE;
+        } else {
+            if (innit) {
+                break;
+            }
+            prevchar= c;
+        }
+    }
+    if (innit) {
+        if (i != value) {
+            return TRUE;
+        }
+    }
+    /* There is no number to check. Ignore it. */
+    return FALSE;
+}
+
 int
 main()
 {
     unsigned arraysize = sizeof(_dwarf_errmsgs) / sizeof(char *);
+    unsigned i = 0;
 
     if (arraysize != (DW_DLE_LAST + 1)) {
         printf("Missing or extra entry in dwarf error strings array"
@@ -444,6 +494,12 @@ main()
         printone(300);
         printone(328);
         exit(1);
+    }
+    for ( i = 0; i <= DW_DLE_LAST; ++i) {
+        if(check_errnum_mismatches(i)) {
+            printf("mismatch value %d is: %s\n",i,_dwarf_errmsgs[i]);
+            exit(1);
+        }
     }
     /* OK. */
     exit(0);
