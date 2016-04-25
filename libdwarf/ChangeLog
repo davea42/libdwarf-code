@@ -1,4 +1,8 @@
 2016-04-25 David Anderson
+    * dwarf_errmsg_list.c: When -DTESTING ensure all the 
+      error messages have a value in () so we can check 
+      that value.
+2016-04-25 David Anderson
     * dwarf_tied.c: A C11-ism crept in. Fixed.
       Added 'static' to local function declaration.
       Removed unused local variable.
