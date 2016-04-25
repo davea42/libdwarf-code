@@ -78,7 +78,7 @@ static FILE *null_device_handle = 0;
 FILE *esb_open_null_device(void)
 {
     if (!null_device_handle) {
-      null_device_handle = fopen(NULL_DEVICE_NAME,"w");
+        null_device_handle = fopen(NULL_DEVICE_NAME,"w");
     }
     return null_device_handle;
 }

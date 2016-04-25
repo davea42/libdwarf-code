@@ -1,4 +1,6 @@
 2016-04-25  David Anderson
+    * esb.c, dwarfdump.c: Fix a couple indent mistakes.
+2016-04-25  David Anderson
     * esb.h, esb.c: The typedef for 'string' is now gone, it
       was never helpful..
     * dwarfdump.c: Remove 'string' use.

@@ -3078,7 +3078,7 @@ print_dwarf_check_error(char *format,...)
         macro prior to any further reference to ap."
         Single Unix Specification. */
     /* 'esb_append_printf_ap', does the necessary adjustments to the
-       extensible string buffer. */
+        extensible string buffer. */
     va_start(ap,format);
     esb_append_printf_ap(&dwarf_error_line,format,ap);
     va_end(ap);
