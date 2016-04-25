@@ -48,9 +48,9 @@
 #include "esb.h"                /* For flexible string buffer. */
 #include "tag_common.h"
 
-#ifdef WIN32
+#ifdef _WIN32
 extern int elf_open(const char *name,int mode);
-#endif /* WIN32 */
+#endif /* _WIN32 */
 
 #define DWARFDUMP_VERSION " Mon Mar  7 14:28:57 PST 2016  "
 
@@ -433,7 +433,7 @@ open_a_file(const char * name)
     /* Set to a file number that cannot be legal. */
     int f = -1;
 
-#if defined(__CYGWIN__) || defined(WIN32)
+#if defined(__CYGWIN__) || defined(_WIN32)
     /*  It is not possible to share file handles
         between applications or DLLs. Each application has its own
         file-handle table. For two applications to use the same file
@@ -493,10 +493,18 @@ main(int argc, char *argv[])
     Elf *elftied = 0;
     int archive = 0;
 
+#ifdef _WIN32
+    /* Open the null device used during formatting printing */
+    if (!esb_open_null_device()) {
+        fprintf(stderr,"dwarfdump: Unable to open null device.\n");
+        exit(FAILED);
+    }
+#endif /* _WIN32 */
+
     set_checks_off();
     esb_constructor(&config_file_path);
     esb_constructor(&config_file_tiedpath);
-#ifdef WIN32
+#ifdef _WIN32
     /*  Often we redirect the output to a file, but we have found
         issues due to the buffering associated with stdout. Some issues
         were fixed just by the use of 'fflush', but the main issued
@@ -521,7 +529,7 @@ main(int argc, char *argv[])
     stderr->_file = stdout->_file;
 #endif
     dup2(fileno(stdout),fileno(stderr));
-#endif /* WIN32 */
+#endif /* _WIN32 */
 
     print_version_details(argv[0],FALSE);
 
@@ -679,6 +687,12 @@ main(int argc, char *argv[])
     }
 #endif
     close_a_file(f);
+
+#ifdef _WIN32
+    /* Close the null device used during formatting printing */
+    esb_close_null_device();
+#endif /* _WIN32 */
+
     /*  As the tool have reached this point, it means there are
         no internal errors and we should return an OKAY condition,
         regardless if the file being processed has errors. */
@@ -758,7 +772,7 @@ print_object_header(UNUSEDARG Elf *elf,
 
     /* Check if header information is required */
     if (local_section_map & DW_HDR_HEADER || local_section_map == DW_HDR_ALL) {
-#ifdef WIN32
+#ifdef _WIN32
     /*  Standard libelf has no function generating the names of the
         encodings, but this libelf apparently does. */
     Elf_Ehdr_Literal eh_literals;
@@ -838,7 +852,7 @@ print_object_header(UNUSEDARG Elf *elf,
         }
 #endif /* HAVE_ELF64_GETEHDR */
     }
-#endif /* WIN32 */
+#endif /* _WIN32 */
     }
     /* Print basic section information is required */
     /* Mask only known sections (debug and text) bits */
@@ -2421,7 +2435,7 @@ should_skip_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
                     }
                 }
                 /* Ignore case if Windows */
-#if WIN32
+#if _WIN32
                 if (stricmp(cu_name, p)) {
                     /* skip this cu. */
                     return TRUE;
@@ -2431,7 +2445,7 @@ should_skip_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
                     /* skip this cu. */
                     return TRUE;
                 }
-#endif /* WIN32 */
+#endif /* _WIN32 */
 
             } else {
                 print_error(dbg,
@@ -2745,11 +2759,11 @@ update_compiler_target(const char *producer_name)
     /* Check for already detected compiler */
     for (index = 1; index <= compilers_detected_count; ++index) {
         if (
-#if WIN32
+#if _WIN32
             !stricmp(compilers_detected[index].name,CU_producer)
 #else
             !strcmp(compilers_detected[index].name,CU_producer)
-#endif
+#endif /* _WIN32 */
             ) {
             /* Set current compiler index */
             current_compiler = index;
@@ -3050,8 +3064,6 @@ print_dwarf_check_error(char *format,...)
     boolean found = FALSE;
     string error_text = NULL;
     va_list ap;
-    int netlen = 0;
-    char tinybuf[20];
 
     if (do_init) {
         esb_constructor(&dwarf_error_line);
@@ -3059,17 +3071,14 @@ print_dwarf_check_error(char *format,...)
     }
     esb_empty_string(&dwarf_error_line);
 
-    /* Generate the full line of text */
-    va_start(ap,format);
-    netlen = vsnprintf(tinybuf,sizeof(tinybuf),format,ap);
     /*  "The object ap may be passed as an argument to another
         function; if that function invokes the va_arg()
         macro with parameter ap, the value of ap in the calling
         function is unspecified and shall be passed to the va_end()
         macro prior to any further reference to ap."
         Single Unix Specification. */
-    va_end(ap);
-    esb_force_allocation(&dwarf_error_line,netlen+1);
+    /* 'esb_append_printf_ap', does the necessary adjustments to the
+       extensible string buffer. */
     va_start(ap,format);
     esb_append_printf_ap(&dwarf_error_line,format,ap);
     va_end(ap);

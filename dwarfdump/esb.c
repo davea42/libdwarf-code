@@ -61,11 +61,35 @@ typedef char * string; /* SELFTEST */
 #else
 /*  There is nothing magic about this size.
     It is just big enough to avoid most resizing. */
-#define INITIAL_ALLOC 240
+#define INITIAL_ALLOC 16
 #endif
 /*  Allow for final NUL */
 static size_t alloc_size = INITIAL_ALLOC;
 
+/* NULL device used when printing formatted strings */
+static FILE *null_device_handle = 0;
+#if _WIN32
+#define NULL_DEVICE_NAME "NUL"
+#else
+#define NULL_DEVICE_NAME "/dev/null"
+#endif /* _WIN32 */
+
+/* Open the null device used during formatting printing */
+FILE *esb_open_null_device()
+{
+    if (!null_device_handle) {
+      null_device_handle = fopen(NULL_DEVICE_NAME,"w");
+    }
+    return null_device_handle;
+}
+
+/* Close the null device used during formatting printing */
+void esb_close_null_device()
+{
+    if (null_device_handle) {
+        fclose(null_device_handle);
+    }
+}
 
 static void
 init_esb_string(struct esb_s *data, size_t min_len)
@@ -98,7 +122,7 @@ init_esb_string(struct esb_s *data, size_t min_len)
     The NUL byte at end has room and this preserves that room.
 */
 static void
-allocate_more(struct esb_s *data, size_t len)
+esb_allocate_more(struct esb_s *data, size_t len)
 {
     size_t new_size = data->esb_allocated_size + len;
     string newd = 0;
@@ -120,7 +144,7 @@ esb_force_allocation(struct esb_s *data, size_t minlen)
 {
     if (data->esb_allocated_size < minlen) {
         size_t increment = minlen - data->esb_allocated_size;
-        allocate_more(data,increment);
+        esb_allocate_more(data,increment);
     }
 }
 
@@ -170,7 +194,7 @@ esb_appendn_internal(struct esb_s *data, const char * in_string, size_t len)
     /*  ASSERT: data->esb_allocated_size > data->esb_used_bytes  */
     remaining = data->esb_allocated_size - data->esb_used_bytes;
     if (remaining <= needed) {
-        allocate_more(data,len);
+        esb_allocate_more(data,len);
     }
     strncpy(&data->esb_string[data->esb_used_bytes], in_string, len);
     data->esb_used_bytes += len;
@@ -246,14 +270,53 @@ esb_get_allocated_size(struct esb_s *data)
     return data->esb_allocated_size;
 }
 
-/*  Append a formatted string
-    It is up to the caller to ensure the
-    data esb_allocated_size is big enough. */
+/*  Make more room. Leaving  contents unchanged, effectively.
+    The NUL byte at end has room and this preserves that room.
+*/
+static void
+esb_allocate_more_if_needed(struct esb_s *data,
+    const char *in_string,va_list ap)
+{
+#ifndef _WIN32
+    static char a_buffer[512];
+#endif /* _WIN32*/
+
+    int netlen = 0;
+    va_list ap_copy;
+
+    /* Preserve the original argument list, to be used a second time */
+    va_copy(ap_copy,ap);
+
+#ifdef _WIN32
+    netlen = vfprintf(null_device_handle,in_string,ap_copy);
+#else
+    netlen = vsnprintf(a_buffer,sizeof(a_buffer),in_string,ap_copy);
+#endif /* _WIN32*/
+
+    /*  "The object ap may be passed as an argument to another
+        function; if that function invokes the va_arg()
+        macro with parameter ap, the value of ap in the calling
+        function is unspecified and shall be passed to the va_end()
+        macro prior to any further reference to ap."
+        Single Unix Specification. */
+    va_end(ap_copy);
+
+    /* Allocate enough space to hold the full text */
+    esb_force_allocation(data,netlen + 1);
+}
+
+/*  Append a formatted string */
 void
 esb_append_printf_ap(struct esb_s *data,const char *in_string,va_list ap)
 {
-    int netlen = data->esb_allocated_size - data->esb_used_bytes;
-    int expandedlen =
+    int netlen = 0;
+    int expandedlen = 0;
+
+    /* Allocate enough space for the input string */
+    esb_allocate_more_if_needed(data,in_string,ap);
+
+    netlen = data->esb_allocated_size - data->esb_used_bytes;
+    expandedlen =
         vsnprintf(&data->esb_string[data->esb_used_bytes],
         netlen,in_string,ap);
     if (expandedlen < 0) {

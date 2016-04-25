@@ -2,6 +2,8 @@
     * dwarf_error.c: The error description
       "DW_DLE_GDB_INDEX_INDEX_ERROR(264)" was missing the
       comma so following errors were reporting the wrong string.
+2016-04-21  Carlos Alberto Enciso
+     * Use the _WIN32 macro to identify a WINDOWS specific code.
 2016-03-14 David Anderson
     * dwarf_util.c: Changed 'byte' to 'byte pair'
       in a comment.  Where we read abbreviation AT/FORM lists.

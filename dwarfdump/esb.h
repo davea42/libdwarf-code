@@ -41,6 +41,10 @@ struct esb_s {
     size_t  esb_used_bytes; /* Amount of space used  or 0 */
 };
 
+/* Open/close the null device used during formatting printing */
+FILE *esb_open_null_device();
+void esb_close_null_device();
+
 /* string length taken from string itself. */
 void esb_append(struct esb_s *data, const char * in_string);
 

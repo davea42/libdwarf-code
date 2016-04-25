@@ -33,13 +33,13 @@
 #include "dwarf_elf_access.h"
 
 /* Include Relocation definitions in the case of Windows */
-#ifdef WIN32
+#ifdef _WIN32
 #include "dwarf_reloc_arm.h"
 #include "dwarf_reloc_mips.h"
 #include "dwarf_reloc_ppc.h"
 #include "dwarf_reloc_ppc64.h"
 #include "dwarf_reloc_x86_64.h"
-#endif /* WIN32 */
+#endif /* _WIN32 */
 
 #ifdef HAVE_ELF_H
 #include <elf.h>
@@ -279,13 +279,13 @@ dwarf_elf_object_access_internals_init(void* obj_in,
     obj->length_size = obj->is_64bit ? 8 : 4;
     obj->pointer_size = obj->is_64bit ? 8 : 4;
 
-#ifdef WIN32
+#ifdef _WIN32
     if (obj->is_64bit && machine == EM_PPC64) {
         /*  The SNC compiler generates the EM_PPC64 machine type for the
             PS3 platform, but is a 32 bits pointer size in user mode. */
         obj->pointer_size = 4;
     }
-#endif /* WIN32 */
+#endif /* _WIN32 */
 
     if (obj->is_64bit && machine != EM_MIPS) {
         /*  MIPS/IRIX makes pointer size and length size 8 for -64.

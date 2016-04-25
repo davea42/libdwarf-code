@@ -370,7 +370,7 @@ find_a_file(const char *named_file, char **defaults, const char ** name_used)
     /* No name given, find a default, if we can. */
     for (i = 0; defaults[i]; ++i) {
         lname = defaults[i];
-#ifdef WIN32
+#ifdef _WIN32
         /*  Open the configuration file, located
             in the directory where the tool is loaded from */
         {
@@ -405,7 +405,7 @@ find_a_file(const char *named_file, char **defaults, const char ** name_used)
                 lname = makename(buf);
             }
         }
-#endif /* WIN32 */
+#endif /* _WIN32 */
         if (verbose > 1) {
             printf("dwarfdump looking for configuration as %s\n",
                 lname);
