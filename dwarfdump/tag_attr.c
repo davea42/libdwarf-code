@@ -73,7 +73,7 @@ static const char *usage[] = {
   ""
 };
 
-char *program_name = 0;
+const char *program_name = 0;
 char *input_name = 0;
 char *output_name = 0;
 int standard_flag = FALSE;
@@ -412,7 +412,7 @@ main(int argc, char **argv)
 }
 /* A fake so we can use dwarf_names.c */
 void print_error (UNUSEDARG Dwarf_Debug dbg,
-    UNUSEDARG string msg,
+    UNUSEDARG const char * msg,
     UNUSEDARG int res,
     UNUSEDARG Dwarf_Error localerr)
 {

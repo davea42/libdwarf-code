@@ -62,7 +62,7 @@ extern char *dwoptarg;
 
 static const char* process_args(int argc, char *argv[]);
 
-char * program_name;
+const char * program_name;
 static int check_error = 0;
 
 /*  The type of Bucket. */
@@ -339,7 +339,7 @@ static void release_unique_errors_table(void);
 #ifdef TESTING
 static void dump_unique_errors_table(void);
 #endif
-static boolean add_to_unique_errors_table(string error_text);
+static boolean add_to_unique_errors_table(char * error_text);
 
 /*  These configure items are for the
     frame data.  We're flexible in
@@ -2348,7 +2348,7 @@ process_args(int argc, char *argv[])
 
 void
 print_error(Dwarf_Debug dbg,
-    char * msg,
+    const char * msg,
     int dwarf_code,
     Dwarf_Error lerr)
 {
@@ -2365,14 +2365,14 @@ print_error(Dwarf_Debug dbg,
 /* ARGSUSED */
 void
 print_error_and_continue(UNUSEDARG Dwarf_Debug dbg,
-    char * msg,
+    const char * msg,
     int dwarf_code,
     Dwarf_Error lerr)
 {
     printf("\n");
 
     if (dwarf_code == DW_DLV_ERROR) {
-        string errmsg = dwarf_errmsg(lerr);
+        char * errmsg = dwarf_errmsg(lerr);
         Dwarf_Unsigned myerr = dwarf_errno(lerr);
 
         printf( "%s ERROR:  %s:  %s (%lu)\n",
@@ -2466,7 +2466,7 @@ should_skip_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
 int
 get_cu_name(Dwarf_Debug dbg, Dwarf_Die cu_die,
     Dwarf_Off dieprint_cu_offset,
-    string *short_name, string *long_name)
+    char * *short_name, char * *long_name)
 {
     Dwarf_Attribute name_attr = 0;
     Dwarf_Error lerr = 0;
@@ -2959,7 +2959,7 @@ void DWARF_CHECK_ERROR_PRINT_CU()
 /*  Sometimes is useful, just to know the kind of errors in an object file;
     not much interest in the number of errors; the specific case is just to
     have a general idea about the DWARF quality in the file */
-static string *set_unique_errors = NULL;
+char ** set_unique_errors = NULL;
 unsigned int set_unique_errors_entries = 0;
 unsigned int set_unique_errors_size = 0;
 #define SET_UNIQUE_ERRORS_DELTA 64
@@ -2968,8 +2968,8 @@ unsigned int set_unique_errors_size = 0;
 void allocate_unique_errors_table(void)
 {
     if (!set_unique_errors) {
-        set_unique_errors = (string *)
-            malloc(SET_UNIQUE_ERRORS_DELTA * sizeof(string));
+        set_unique_errors = (char **)
+            malloc(SET_UNIQUE_ERRORS_DELTA * sizeof(char*));
         set_unique_errors_size = SET_UNIQUE_ERRORS_DELTA;
         set_unique_errors_entries = 0;
     }
@@ -3001,17 +3001,17 @@ void release_unique_errors_table(void)
 }
 
 /*  Returns TRUE if the text is already in the set; otherwise FALSE */
-boolean add_to_unique_errors_table(string error_text)
+boolean add_to_unique_errors_table(char * error_text)
 {
     unsigned int index;
     size_t len;
-    string stored_text;
-    string filtered_text;
-    string start = NULL;
-    string end = NULL;
-    string pattern = "0x";
-    string white = " ";
-    string question = "?";
+    char * stored_text;
+    char * filtered_text;
+    char * start = NULL;
+    char * end = NULL;
+    char * pattern = "0x";
+    char * white = " ";
+    char * question = "?";
 
     /* Create a copy of the incoming text */
     filtered_text = makename(error_text);
@@ -3043,8 +3043,8 @@ boolean add_to_unique_errors_table(string error_text)
     /* Store the new text; check if we have space to store the error text */
     if (set_unique_errors_entries + 1 == set_unique_errors_size) {
         set_unique_errors_size += SET_UNIQUE_ERRORS_DELTA;
-        set_unique_errors = (string *)realloc(set_unique_errors,
-            set_unique_errors_size * sizeof(string));
+        set_unique_errors = (char **)realloc(set_unique_errors,
+            set_unique_errors_size * sizeof(char*));
     }
 
     set_unique_errors[set_unique_errors_entries] = filtered_text;
@@ -3062,7 +3062,7 @@ print_dwarf_check_error(char *format,...)
     static struct esb_s dwarf_error_line;
     static boolean do_init = TRUE;
     boolean found = FALSE;
-    string error_text = NULL;
+    char * error_text = NULL;
     va_list ap;
 
     if (do_init) {

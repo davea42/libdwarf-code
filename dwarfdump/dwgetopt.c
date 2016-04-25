@@ -53,27 +53,13 @@
 
 int dwopterr = 1,     /* if error message should be printed */
     dwoptind = 1,    /* index into parent argv vector */
-    dwoptopt,        /* character checked for validity */
-    dwoptreset;      /* reset getopt */
-char *dwoptarg;      /* argument associated with option */
+    dwoptopt = 0,        /* character checked for validity */
+    dwoptreset = 0;      /* reset getopt */
+char *dwoptarg = 0;      /* argument associated with option */
 
 #define BADCH   (int)'?'
 #define BADARG  (int)':'
 #define EMSG    ""
-
-#if 0
-/*  Use for testing dwgetopt only.
-    Not a standard function. */
-void
-dwgetoptresetfortestingonly()
-{
-   dwopterr   = 1;
-   dwoptind   = 1;
-   dwoptopt   = 0;
-   dwoptreset = 0;
-   dwoptarg   = 0;
-}
-#endif
 
 /*
     * getopt --

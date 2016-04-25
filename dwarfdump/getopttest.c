@@ -3,6 +3,11 @@
 
 #ifdef GETOPT_FROM_SYSTEM
 #define dwgetopt  getopt
+#define dwopterr  opterr
+#define dwoptind  optind
+#define dwoptopt  optopt
+#define dwopterr  opterr
+#define dwoptarg  optarg
 #endif
 
 #include <stdio.h>
@@ -11,15 +16,26 @@
 #include "dwgetopt.h" /* for dwgetopt */
 char *argv1[20];
 
-extern void dwgetoptresetfortestingonly();
+/*  Use for testing dwgetopt only.
+    Not a standard function. */
+static void
+dwgetoptresetfortestingonly(void)
+{
+   dwopterr   = 1;
+   dwoptind   = 1;
+   dwoptopt   = 0;
+   dwoptreset = 0;
+   dwoptarg   = 0;
+}
+
 
 
 /* for 'extra', read 'dwoptarg', for expextra read expected-optarg
    for optnum read dwoptind, for expnum read expected-optind
 */
 static void
-chkval(int ct,int c,int expchar,char *extra,char *expextra,int optnum,int
-   expnum,const char *testid)
+chkval(int ct,int c,int expchar,char *extra,char *expextra,
+    int optnum,int expnum,const char *testid)
 {
     int err = 0;
     if (c != expchar) {
@@ -52,9 +68,8 @@ chkval(int ct,int c,int expchar,char *extra,char *expextra,int optnum,int
 
 /* for 'extra', read 'dwoptarg', for expextra read expected-optarg
    for optnum read dwoptind, for expnum read expected-optind
-static void
-chkval(int ct,int c,int expchar,char *extra,char *expextra,int optnum,int
-   expnum,const char *testid) */
+chkval(int ct,int c,int expchar,char *extra,char *expextra,
+    int optnum,int expnum,const char *testid) */
 
 static int
 test3(void)
@@ -105,7 +120,7 @@ test3(void)
 #endif
     if (strcmp(argv1[dwoptind],"progtoread")) {
         printf("FAIL test3 on non-dash dwoptind %d arg got %s exp %s\n",
-            dwoptind,argv1[optind],"progtoread");
+            dwoptind,argv1[dwoptind],"progtoread");
         exit(1);
     }
     printf("PASS getopt test 3\n");
@@ -151,7 +166,7 @@ test2(void)
 #endif
     if (argv1[dwoptind]) {
         printf("FAIL test2 on non-dash arg dwoptind %d got 0x%x exp NULL\n",
-            dwoptind,(unsigned)argv1[optind]);
+            dwoptind,(unsigned)argv1[dwoptind]);
         exit(1);
     }
     printf("PASS getopt test 2\n");
@@ -217,7 +232,7 @@ test1(void)
 #endif
     if (strcmp(argv1[dwoptind],"progtoread")) {
         printf("FAIL test1 on non-dash arg dwoptind %d got %s exp %s\n",
-            dwoptind,argv1[optind],"progtoread");
+            dwoptind,argv1[dwoptind],"progtoread");
         exit(1);
     }
     printf("PASS getopt test1\n");
@@ -272,7 +287,7 @@ test5(void)
 #endif
     if (argv1[dwoptind]) {
         printf("FAIL test5 there is a non-dash arg dwoptind %d got 0x%x\n",
-            dwoptind,(unsigned)argv1[optind]);
+            dwoptind,(unsigned)argv1[dwoptind]);
         exit(1);
     }
     printf("PASS getopt test5\n");
@@ -300,7 +315,7 @@ test6(void)
     }
     if (argv1[dwoptind]) {
         printf("FAIL test6 there is a non-dash arg dwoptind %d got 0x%x\n",
-            dwoptind,(unsigned)argv1[optind]);
+            dwoptind,(unsigned)argv1[dwoptind]);
         exit(1);
     }
     printf("PASS getopt test6\n");
@@ -328,7 +343,7 @@ test7(void)
     }
     if (argv1[dwoptind]) {
         printf("FAIL test7 there is a non-dash arg dwoptind %d got 0x%x\n",
-            dwoptind,(unsigned)argv1[optind]);
+            dwoptind,(unsigned)argv1[dwoptind]);
         exit(1);
     }
     printf("PASS getopt test7\n");
@@ -355,7 +370,7 @@ test8(void)
     }
     if (argv1[dwoptind]) {
         printf("FAIL test8 there is a non-dash arg dwoptind %d got 0x%x\n",
-            dwoptind,(unsigned)argv1[optind]);
+            dwoptind,(unsigned)argv1[dwoptind]);
         exit(1);
     }
     printf("PASS getopt test8\n");

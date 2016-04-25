@@ -1,3 +1,16 @@
+2016-04-25  David Anderson
+    * esb.h, esb.c: The typedef for 'string' is now gone, it
+      was never helpful..
+    * dwarfdump.c: Remove 'string' use.
+    * dwgetopt.c: Moved test-only function to getopttest.c.
+      Added (void) argument to a the functions with no arguments.
+    * getopttest.c: Repaired failures to to renaming
+      to dwoptind etc and added the test-only
+      function from dwgetopt.c
+    * globals.h: Removed 'string' typedef.
+    * print_die.c,print_frames.c, print_lines.c, print_strings.c,
+      tag_attr.c, tag_tree.c: Removed use of 'string' type, use
+      plain old char*.
 2016-04-21  Carlos Alberto Enciso
     Printing using the 'esb' module was broken. It seems to work
     because the default internal buffer size (240), was big enough

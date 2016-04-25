@@ -75,7 +75,7 @@ static FILE *null_device_handle = 0;
 #endif /* _WIN32 */
 
 /* Open the null device used during formatting printing */
-FILE *esb_open_null_device()
+FILE *esb_open_null_device(void)
 {
     if (!null_device_handle) {
       null_device_handle = fopen(NULL_DEVICE_NAME,"w");
@@ -84,7 +84,7 @@ FILE *esb_open_null_device()
 }
 
 /* Close the null device used during formatting printing */
-void esb_close_null_device()
+void esb_close_null_device(void)
 {
     if (null_device_handle) {
         fclose(null_device_handle);
@@ -94,7 +94,7 @@ void esb_close_null_device()
 static void
 init_esb_string(struct esb_s *data, size_t min_len)
 {
-    string d;
+    char* d;
 
     if (data->esb_allocated_size > 0) {
         return;
@@ -125,7 +125,7 @@ static void
 esb_allocate_more(struct esb_s *data, size_t len)
 {
     size_t new_size = data->esb_allocated_size + len;
-    string newd = 0;
+    char* newd = 0;
 
     if (new_size < alloc_size)
         new_size = alloc_size;
@@ -203,7 +203,7 @@ esb_appendn_internal(struct esb_s *data, const char * in_string, size_t len)
 }
 
 /*  Always returns an empty string or a non-empty string. Never 0. */
-string
+char*
 esb_get_string(struct esb_s *data)
 {
     if (data->esb_allocated_size == 0) {
@@ -353,13 +353,13 @@ esb_append_printf(struct esb_s *data,const char *in_string, ...)
     It is up to the code calling this
     to free() the string using the
     pointer returned here. */
-string
+char*
 esb_get_copy(struct esb_s *data)
 {
-    string copy = NULL;
+    char* copy = NULL;
     size_t len = esb_string_len(data);
     if (len) {
-        copy = (string)malloc(len + 1);
+        copy = (char*)malloc(len + 1);
         strcpy(copy,esb_get_string(data));
     }
     return copy;
@@ -473,7 +473,7 @@ int main()
     {
         struct esb_s d;
         struct esb_s e;
-        string result = NULL;
+        char* result = NULL;
         esb_constructor(&d);
         esb_constructor(&e);
 

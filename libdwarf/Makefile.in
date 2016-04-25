@@ -125,7 +125,7 @@ OBJS= dwarf_abbrev.o \
         pro_weaks.o
         
 
-all: gennames @build_shared@ @build_nonshared@
+all: gennames errmsg_check @build_shared@ @build_nonshared@
 
 libdwarf.a: dwarf_names.h dwarf_names.c  $(OBJS) dwarf_names.o
 	$(AR) $(ARFLAGS) $@ $(OBJS)  dwarf_names.o > ar-output-temp
@@ -139,6 +139,10 @@ dwgetopt.o: $(srcdir)/dwgetopt.c $(srcdir)/dwgetopt.h
 	$(HOSTCC) $(HOSTCFLAGS) -c $(srcdir)/dwgetopt.c
 dwarf_loc.o: $(srcdir)/dwarf_loc.c  $(srcdir)/dwarf_loc2.c  $(srcdir)/dwarf_loc.h 
 	$(CC) $(CFLAGS) -c $(srcdir)/dwarf_loc.c
+
+errmsg_check: $(srcdir)/dwarf_errmsg_list.c $(srcdir)/libdwarf.h 
+	$(HOSTCC) $(HOSTCFLAGS) -DTESTING $(srcdir)/dwarf_errmsg_list.c -o errmsg_check
+	./errmsg_check
 
 # Gennames builds and runs native, even for a cross-build of libdwarf.
 gennames: $(srcdir)/gennames.c $(srcdir)/dwarf.h dwgetopt.o
@@ -205,6 +209,7 @@ clean:
 	rm -f gennames 
 	rm -f dwarf_names_enum.h dwarf_names_new.h dwarf_names.c dwarf_names.h
 	rm -f ./dwarftied
+	rm -f ./errmsg_check
 
 install: all
 	echo "No install provided, see comments in the README"

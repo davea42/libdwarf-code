@@ -1,4 +1,9 @@
 2016-04-25 David Anderson
+    * Makefile.in: Added testing of the _dwarf_errmsgs array.
+    * dwarf_error.c: Moved _dwarf_errmsgs out of dwarf_error.c into
+      dwarf_errmsg_list.c
+    * dwarf_errmsg_list.c: Now has error strings and test code.
+2016-04-25 David Anderson
     * dwarf_error.c: The error description
       "DW_DLE_GDB_INDEX_INDEX_ERROR(264)" was missing the
       comma so following errors were reporting the wrong string.

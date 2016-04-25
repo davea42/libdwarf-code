@@ -37,7 +37,7 @@ extern void
 print_strings(Dwarf_Debug dbg)
 {
     Dwarf_Signed length = 0;
-    string name;
+    char* name = 0;
     Dwarf_Off offset = 0;
     int sres = 0;
     const char *sec_name = 0;

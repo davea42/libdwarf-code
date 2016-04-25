@@ -36,14 +36,14 @@ extern "C" {
 #endif /* __cplusplus */
 
 struct esb_s {
-    string  esb_string; /* pointer to the data itself, or  NULL. */
+    char *  esb_string; /* pointer to the data itself, or  NULL. */
     size_t  esb_allocated_size; /* Size of allocated data or 0 */
     size_t  esb_used_bytes; /* Amount of space used  or 0 */
 };
 
 /* Open/close the null device used during formatting printing */
-FILE *esb_open_null_device();
-void esb_close_null_device();
+FILE *esb_open_null_device(void);
+void esb_close_null_device(void);
 
 /* string length taken from string itself. */
 void esb_append(struct esb_s *data, const char * in_string);
@@ -52,7 +52,7 @@ void esb_append(struct esb_s *data, const char * in_string);
 void esb_appendn(struct esb_s *data, const char * in_string, size_t len);
 
 /* Always returns an empty string or a non-empty string. Never 0. */
-string esb_get_string(struct esb_s *data);
+char * esb_get_string(struct esb_s *data);
 
 
 /* Sets esb_used_bytes to zero. The string is not freed and
@@ -91,7 +91,7 @@ void esb_append_printf(struct esb_s *data,const char *format, ...);
 void esb_append_printf_ap(struct esb_s *data,const char *format,va_list ap);
 
 /* Get a copy of the internal data buffer */
-string esb_get_copy(struct esb_s *data);
+char * esb_get_copy(struct esb_s *data);
 
 #ifdef __cplusplus
 }

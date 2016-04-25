@@ -102,8 +102,8 @@ process_line_table(Dwarf_Debug dbg,
     Dwarf_Unsigned logicalno = 0;
     Dwarf_Unsigned column = 0;
     Dwarf_Unsigned call_context = 0;
-    string subprog_name = 0;
-    string subprog_filename = 0;
+    char* subprog_name = 0;
+    char* subprog_filename = 0;
     Dwarf_Unsigned subprog_line = 0;
 
     Dwarf_Error lt_err = 0;
@@ -167,7 +167,7 @@ process_line_table(Dwarf_Debug dbg,
     }
     for (i = 0; i < linecount; i++) {
         Dwarf_Line line = linebuf[i];
-        string filename = 0;
+        char* filename = 0;
         int nsres = 0;
         Dwarf_Bool found_line_error = FALSE;
         Dwarf_Bool has_is_addr_set = FALSE;

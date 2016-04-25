@@ -103,10 +103,6 @@ typedef unsigned long long  __uint64_t;
 #include <regex.h>
 #endif
 
-#ifndef __cplusplus
-typedef char * string;
-#endif /* __cplusplus */
-
 #include "checkutil.h"
 #ifndef BOOLEAN_TYPEDEFED
 #define BOOLEAN_TYPEDEFED
@@ -385,10 +381,10 @@ extern Dwarf_Off fde_offset_for_cu_high;
    if appropriate. */
 extern void tag_specific_checks_setup(Dwarf_Half val,int die_indent_level);
 
-extern char *program_name;
+extern const char *program_name;
 
-extern void print_error_and_continue (Dwarf_Debug dbg, string msg,int res, Dwarf_Error err);
-extern void print_error (Dwarf_Debug dbg, string msg,int res, Dwarf_Error err);
+extern void print_error_and_continue (Dwarf_Debug dbg, const char * msg,int res, Dwarf_Error err);
+extern void print_error (Dwarf_Debug dbg, const char * msg,int res, Dwarf_Error err);
 
 extern void print_line_numbers_this_cu (Dwarf_Debug dbg, Dwarf_Die in_die);
 

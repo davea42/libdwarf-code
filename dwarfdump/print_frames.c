@@ -183,7 +183,7 @@ get_proc_name(Dwarf_Debug dbg, Dwarf_Die die, Dwarf_Addr low_pc,
     for (i = 0; i < atcnt; i++) {
         Dwarf_Half attr = 0;
         int ares = 0;
-        string temps = 0;
+        char * temps = 0;
         int sres = 0;
         int dres = 0;
 
@@ -428,7 +428,7 @@ load_nested_proc_name(Dwarf_Debug dbg, Dwarf_Die die, Dwarf_Addr low_pc,
     This remembers the CU die and restarts each search at the start
     of  the current cu.
 */
-static string
+static char*
 get_fde_proc_name(Dwarf_Debug dbg, Dwarf_Addr low_pc,
     const char *frame_section_name,
     void **pcMap,
@@ -613,7 +613,7 @@ print_one_fde(Dwarf_Debug dbg,
     Dwarf_Signed eh_table_offset = 0;
     int fres = 0;
     int offres = 0;
-    string temps = 0;
+    char* temps = 0;
     Dwarf_Error oneferr = 0;
     int printed_intro_addr = 0;
 
@@ -889,7 +889,7 @@ print_one_fde(Dwarf_Debug dbg,
             int cires = 0;
             Dwarf_Unsigned cie_length = 0;
             Dwarf_Small cie_version = 0;
-            string augmenter = 0;
+            char* augmenter = 0;
             Dwarf_Unsigned code_alignment_factor = 0;
             Dwarf_Signed data_alignment_factor = 0;
             Dwarf_Half return_address_register_rule = 0;
@@ -971,7 +971,7 @@ print_one_cie(Dwarf_Debug dbg, Dwarf_Cie cie,
     int cires = 0;
     Dwarf_Unsigned cie_length = 0;
     Dwarf_Small version = 0;
-    string augmenter = "";
+    char* augmenter = "";
     Dwarf_Unsigned code_alignment_factor = 0;
     Dwarf_Signed data_alignment_factor = 0;
     Dwarf_Half return_address_register_rule = 0;

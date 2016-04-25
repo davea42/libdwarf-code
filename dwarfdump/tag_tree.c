@@ -41,7 +41,7 @@ static Dwarf_Half tag_children[DW_TAG_last] = {0};
 static Dwarf_Small tag_tree_legal[DW_TAG_last] = {0};
 #endif /* HAVE_USAGE_TAG_ATTR */
 
-string program_name;
+const char * program_name;
 
 boolean ellipsis = FALSE; /* So we can use dwarf_names.c */
 
@@ -400,7 +400,7 @@ main(int argc, char **argv)
 
 /* A fake so we can use dwarf_names.c */
 void print_error (UNUSEDARG Dwarf_Debug dbg,
-    UNUSEDARG string msg,
+    UNUSEDARG const char *msg,
     UNUSEDARG int res,
     UNUSEDARG Dwarf_Error localerr)
 {

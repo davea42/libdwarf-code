@@ -4966,7 +4966,7 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
         }
         break;
     case DW_FORM_sec_offset: { /* DWARF4 */
-        string emptyattrname = 0;
+        char* emptyattrname = 0;
         int show_form_here = 0;
         wres = get_small_encoding_integer_and_name(dbg,
             attrib,
