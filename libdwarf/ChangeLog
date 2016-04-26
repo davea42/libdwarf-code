@@ -1,3 +1,6 @@
+2016-04-26 David Anderson
+    * Makefile.in: The new errmsg_check dependency
+      line was a bit wrong. libdwarf.h should not have $(srcdir)
 2016-04-25 David Anderson
     * dwarf_errmsg_list.c: When -DTESTING ensure all the 
       error messages have a value in () so we can check 

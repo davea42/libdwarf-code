@@ -140,7 +140,7 @@ dwgetopt.o: $(srcdir)/dwgetopt.c $(srcdir)/dwgetopt.h
 dwarf_loc.o: $(srcdir)/dwarf_loc.c  $(srcdir)/dwarf_loc2.c  $(srcdir)/dwarf_loc.h 
 	$(CC) $(CFLAGS) -c $(srcdir)/dwarf_loc.c
 
-errmsg_check: $(srcdir)/dwarf_errmsg_list.c $(srcdir)/libdwarf.h 
+errmsg_check: $(srcdir)/dwarf_errmsg_list.c libdwarf.h
 	$(HOSTCC) $(HOSTCFLAGS) -DTESTING $(srcdir)/dwarf_errmsg_list.c -o errmsg_check
 	./errmsg_check
 
