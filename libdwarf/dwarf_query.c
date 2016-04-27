@@ -308,6 +308,7 @@ dwarf_attrlist(Dwarf_Die die,
     Dwarf_Half attr = 0;
     Dwarf_Half attr_form = 0;
     Dwarf_Byte_Ptr abbrev_ptr = 0;
+    Dwarf_Byte_Ptr abbrev_end = 0;
     Dwarf_Abbrev_List abbrev_list = 0;
     Dwarf_Attribute new_attr = 0;
     Dwarf_Attribute head_attr = NULL;
@@ -315,12 +316,17 @@ dwarf_attrlist(Dwarf_Die die,
     Dwarf_Attribute *attr_ptr = 0;
     Dwarf_Debug dbg = 0;
     Dwarf_Byte_Ptr info_ptr = 0;
+    Dwarf_Byte_Ptr die_info_end = 0;
     int lres = 0;
+    Dwarf_CU_Context context = 0;
 
     CHECK_DIE(die, DW_DLV_ERROR);
-    dbg = die->di_cu_context->cc_dbg;
+    context = die->di_cu_context;
+    dbg = context->cc_dbg;
+    die_info_end =
+        _dwarf_calculate_info_section_end_ptr(context);
 
-    lres = _dwarf_get_abbrev_for_code(die->di_cu_context,
+    lres = _dwarf_get_abbrev_for_code(context,
         die->di_abbrev_list->abl_code,
         &abbrev_list,error);
     if (lres == DW_DLV_ERROR) {
@@ -332,16 +338,18 @@ dwarf_attrlist(Dwarf_Die die,
     }
 
     abbrev_ptr = abbrev_list->abl_abbrev_ptr;
+    abbrev_end = _dwarf_calculate_abbrev_section_end_ptr(context);
+
 
     info_ptr = die->di_debug_ptr;
-    SKIP_LEB128_WORD(info_ptr);
+    SKIP_LEB128_WORD_CK(info_ptr,dbg,error,die_info_end);
 
     do {
         Dwarf_Unsigned utmp2;
 
-        DECODE_LEB128_UWORD(abbrev_ptr, utmp2);
+        DECODE_LEB128_UWORD_CK(abbrev_ptr, utmp2,dbg,error,abbrev_end);
         attr = (Dwarf_Half) utmp2;
-        DECODE_LEB128_UWORD(abbrev_ptr, utmp2);
+        DECODE_LEB128_UWORD_CK(abbrev_ptr, utmp2,dbg,error,abbrev_end);
         attr_form = (Dwarf_Half) utmp2;
         if (!_dwarf_valid_form_we_know(dbg,attr_form,attr)) {
             _dwarf_error(dbg, error, DW_DLE_UNKNOWN_FORM);
@@ -363,7 +371,7 @@ dwarf_attrlist(Dwarf_Die die,
                 Dwarf_Unsigned utmp6;
 
                 /* DECODE_LEB128_UWORD does info_ptr update */
-                DECODE_LEB128_UWORD(info_ptr, utmp6);
+                DECODE_LEB128_UWORD_CK(info_ptr, utmp6,dbg,error,die_info_end);
                 attr_form = (Dwarf_Half) utmp6;
                 new_attr->ar_attribute_form = attr_form;
             }
@@ -445,6 +453,7 @@ _dwarf_get_value_ptr(Dwarf_Die die,
     Dwarf_Error *error)
 {
     Dwarf_Byte_Ptr abbrev_ptr = 0;
+    Dwarf_Byte_Ptr abbrev_end = 0;
     Dwarf_Abbrev_List abbrev_list;
     Dwarf_Half curr_attr = 0;
     Dwarf_Half curr_attr_form = 0;
@@ -459,7 +468,8 @@ _dwarf_get_value_ptr(Dwarf_Die die,
         return DW_DLV_ERROR;
     }
     dbg = context->cc_dbg;
-    die_info_end = _dwarf_calculate_section_end_ptr(context);
+    die_info_end =
+        _dwarf_calculate_info_section_end_ptr(context);
 
     lres = _dwarf_get_abbrev_for_code(context,
         die->di_abbrev_list->abl_code,
@@ -473,24 +483,25 @@ _dwarf_get_value_ptr(Dwarf_Die die,
     }
 
     abbrev_ptr = abbrev_list->abl_abbrev_ptr;
+    abbrev_end = _dwarf_calculate_abbrev_section_end_ptr(context);
 
     info_ptr = die->di_debug_ptr;
-    SKIP_LEB128_WORD(info_ptr);
+    SKIP_LEB128_WORD_CK(info_ptr,dbg,error,die_info_end);
 
     do {
         Dwarf_Unsigned utmp3 = 0;
         Dwarf_Unsigned value_size=0;
         int res = 0;
 
-        DECODE_LEB128_UWORD(abbrev_ptr, utmp3);
+        DECODE_LEB128_UWORD_CK(abbrev_ptr, utmp3,dbg,error,abbrev_end);
         curr_attr = (Dwarf_Half) utmp3;
-        DECODE_LEB128_UWORD(abbrev_ptr, utmp3);
+        DECODE_LEB128_UWORD_CK(abbrev_ptr, utmp3,dbg,error,abbrev_end);
         curr_attr_form = (Dwarf_Half) utmp3;
         if (curr_attr_form == DW_FORM_indirect) {
             Dwarf_Unsigned utmp6;
 
             /* DECODE_LEB128_UWORD updates info_ptr */
-            DECODE_LEB128_UWORD(info_ptr, utmp6);
+            DECODE_LEB128_UWORD_CK(info_ptr, utmp6,dbg,error,die_info_end);
             curr_attr_form = (Dwarf_Half) utmp6;
         }
 
@@ -528,7 +539,6 @@ dwarf_die_text(Dwarf_Die die,
     char **ret_name,
     Dwarf_Error * error)
 {
-    Dwarf_Half attr_form = 0;
     Dwarf_Debug dbg = 0;
     int res = DW_DLV_ERROR;
     Dwarf_Attribute attr = 0;
@@ -1685,7 +1695,7 @@ dwarf_get_version_of_die(Dwarf_Die die,
 }
 
 Dwarf_Byte_Ptr
-_dwarf_calculate_section_end_ptr(Dwarf_CU_Context context)
+_dwarf_calculate_info_section_end_ptr(Dwarf_CU_Context context)
 {
     Dwarf_Debug dbg = 0;
     Dwarf_Byte_Ptr info_end = 0;
@@ -1703,5 +1713,19 @@ _dwarf_calculate_section_end_ptr(Dwarf_CU_Context context)
         context->cc_extension_size;
     return info_end;
 }
+Dwarf_Byte_Ptr
+_dwarf_calculate_abbrev_section_end_ptr(Dwarf_CU_Context context)
+{
+    Dwarf_Debug dbg = 0;
+    Dwarf_Byte_Ptr abbrev_end = 0;
+    Dwarf_Byte_Ptr abbrev_start = 0;
+
+    dbg = context->cc_dbg;
+    abbrev_start = dbg->de_debug_abbrev.dss_data;
+    abbrev_end = abbrev_start + dbg->de_debug_abbrev.dss_size;
+    return abbrev_end;
+}
+
+
 
 

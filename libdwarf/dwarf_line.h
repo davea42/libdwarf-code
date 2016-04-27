@@ -431,6 +431,7 @@ int _dwarf_decode_line_udata_form(Dwarf_Debug dbg,
     Dwarf_Unsigned form,
     Dwarf_Small **line_ptr,
     Dwarf_Unsigned *return_val,
+    Dwarf_Small *line_end_ptr,
     Dwarf_Error * error);
 
 void _dwarf_update_chain_list( Dwarf_Chain chain_line,

@@ -34,13 +34,32 @@
     In 2003 and earlier this was a hand-inlined
     version of _dwarf_decode_u_leb128() which did
     not work correctly if Dwarf_Word was 64 bits.
+
+    April 2016: now uses a reader that is careful.
+    'return' only in case of error
+    else falls through.
 */
-#define DECODE_LEB128_UWORD(ptr, value)               \
+#define DECODE_LEB128_UWORD_CK(ptr, value,dbg,errptr,endptr) \
     do {                                              \
-        Dwarf_Word uleblen;                           \
-        value = _dwarf_decode_u_leb128(ptr,&uleblen); \
+        Dwarf_Word uleblen = 0;                       \
+        Dwarf_Unsigned local = 0;                     \
+        int lu_res = 0;                               \
+        lu_res = _dwarf_decode_u_leb128_chk(ptr,&uleblen,&local,endptr); \
+        if (lu_res == DW_DLV_ERROR) {                 \
+            _dwarf_error(dbg, errptr, DW_DLE_LEB_IMPROPER);  \
+            return DW_DLV_ERROR;                      \
+        }                                             \
+        value = local;                                \
         ptr += uleblen;                               \
     } while (0)
+
+#define DECODE_LEB128_UWORD(ptr, value)               \
+    do {                                             \
+        Dwarf_Word uleblen;                           \
+        value = _dwarf_decode_u_leb128(ptr,&uleblen); \
+        ptr += uleblen;                              \
+    } while (0)
+
 
 /*
     Decodes signed leb128 encoded numbers.
@@ -52,9 +71,22 @@
 */
 #define DECODE_LEB128_SWORD(ptr, value)               \
     do {                                              \
-        Dwarf_Word sleblen;                           \
+        Dwarf_Word sleblen = 0;                       \
         value = _dwarf_decode_s_leb128(ptr,&sleblen); \
         ptr += sleblen;                               \
+    } while (0)
+#define DECODE_LEB128_SWORD_CK(ptr, value,dbg,errptr,endptr) \
+    do {                                              \
+        Dwarf_Word uleblen = 0;                       \
+        Dwarf_Signed local = 0;                       \
+        int lu_res = 0;                               \
+        lu_res = _dwarf_decode_s_leb128_chk(ptr,&uleblen,&local,endptr); \
+        if (lu_res == DW_DLV_ERROR) {                 \
+            _dwarf_error(dbg, errptr, DW_DLE_LEB_IMPROPER);  \
+            return DW_DLV_ERROR;                      \
+        }                                             \
+        value = local;                                \
+        ptr += uleblen;                               \
     } while (0)
 
 
@@ -62,13 +94,46 @@
     Skips leb128_encoded numbers that are guaranteed
     to be no more than 4 bytes long.  Same for both
     signed and unsigned numbers.
+
+    These seem bogus as they assume 4 bytes get a 4 byte
+    word. Wrong. FIXME
 */
 #define SKIP_LEB128_WORD(ptr)                     \
     do {                                          \
         if ((*(ptr++) & 0x80) != 0) {             \
             if ((*(ptr++) & 0x80) != 0) {         \
                 if ((*(ptr++) & 0x80) != 0) {     \
-                    if ((*(ptr++) & 0x80) != 0) { \
+                    ptr++;                        \
+                }                                 \
+            }                                     \
+        }                                         \
+    } while (0)
+
+/*
+    'return' only in case of error
+    else falls through.
+*/
+#define SKIP_LEB128_WORD_CK(ptr,dbg,errptr,endptr)                     \
+    do {                                          \
+        if ((*(ptr++) & 0x80) != 0) {             \
+            if (ptr >= endptr) {                  \
+                _dwarf_error(dbg, errptr, DW_DLE_LEB_IMPROPER); \
+                return DW_DLV_ERROR;              \
+            }                                     \
+            if ((*(ptr++) & 0x80) != 0) {         \
+                if (ptr >= endptr) {              \
+                    _dwarf_error(dbg, errptr, DW_DLE_LEB_IMPROPER); \
+                    return DW_DLV_ERROR;          \
+                }                                 \
+                if ((*(ptr++) & 0x80) != 0) {     \
+                    if (ptr >= endptr) {          \
+                        _dwarf_error(dbg, errptr, DW_DLE_LEB_IMPROPER); \
+                        return DW_DLV_ERROR;      \
+                    }                             \
+                    ptr++;                        \
+                    if (ptr >= endptr) {          \
+                        _dwarf_error(dbg, errptr, DW_DLE_LEB_IMPROPER); \
+                        return DW_DLV_ERROR;      \
                     }                             \
                 }                                 \
             }                                     \
@@ -248,9 +313,18 @@ Dwarf_Unsigned
 _dwarf_decode_u_leb128(Dwarf_Small * leb128,
     Dwarf_Word * leb128_length);
 
-Dwarf_Signed
-_dwarf_decode_s_leb128(Dwarf_Small * leb128,
+/* Fuller checking. Returns DW_DLV_ERROR or DW_DLV_OK
+   Caller must set Dwarf_Error */
+int _dwarf_decode_u_leb128_chk(Dwarf_Small * leb128,
+    Dwarf_Word * leb128_length,
+    Dwarf_Unsigned *outval,Dwarf_Byte_Ptr endptr);
+
+Dwarf_Signed _dwarf_decode_s_leb128(Dwarf_Small * leb128,
     Dwarf_Word * leb128_length);
+
+int _dwarf_decode_s_leb128_chk(Dwarf_Small * leb128,
+    Dwarf_Word * leb128_length,
+    Dwarf_Signed *outval, Dwarf_Byte_Ptr endptr);
 
 int
 _dwarf_get_size_of_val(Dwarf_Debug dbg,
@@ -322,6 +396,5 @@ void _dwarf_error_mv_s_to_t(Dwarf_Debug dbgs,Dwarf_Error *errs,
 int _dwarf_internal_get_die_comp_dir(Dwarf_Die die, const char **compdir_out,
     const char **comp_name_out,
     Dwarf_Error *error);
-
 
 #endif /* DWARF_UTIL_H */

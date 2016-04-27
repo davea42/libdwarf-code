@@ -157,6 +157,8 @@ dwarf_line.o: $(srcdir)/dwarf.h libdwarf.h $(srcdir)/dwarf_line_table_reader_com
 	$(CC) $(CFLAGS) -c $(srcdir)/dwarf_line.c -o $@
 dwarf_print_lines.o: $(srcdir)/dwarf.h libdwarf.h $(srcdir)/dwarf_line_table_reader_common.c $(srcdir)/dwarf_print_lines.c
 	$(CC) $(CFLAGS) -c $(srcdir)/dwarf_print_lines.c -o $@
+dwarf_error.o: $(srcdir)/dwarf.h libdwarf.h $(srcdir)/dwarf_error.c $(srcdir)/dwarf_errmsg_list.c
+	$(CC) $(CFLAGS) -c $(srcdir)/dwarf_error.c -o $@
 
 
 

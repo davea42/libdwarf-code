@@ -1,3 +1,15 @@
+2016-04-27 David Anderson
+    * Makefile.in: Now dwarf_error.o dependency on
+      dwarf_errmsg_list.c is explicit.
+    * dwarf_errmsg_list.c: New error strings.
+    * libdwarf.h.in: New error values for when running off
+      end of section and line range and address size where
+      zero leads to trouble..
+    * dwarf_abbrev.c,dwarf_die_deliv.c, dwarf_frame.c,
+      dwarf_frame.h, dwarf_frame2.c,dwarf_frame3.c,dwarf_leb.c,
+      dwarf_line.c, dwarf_line.h, dwarf_line_table_reader_common.c,
+      dwarf_query.c,dwarf_util.c,dwarf_util.h: 
+      Add checks for running off end of section.
 2016-04-26 David Anderson
     * Makefile.in: The new errmsg_check dependency
       line was a bit wrong. libdwarf.h should not have $(srcdir)

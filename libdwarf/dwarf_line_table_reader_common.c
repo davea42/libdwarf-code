@@ -191,6 +191,10 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
     line_ptr = line_ptr + sizeof(Dwarf_Sbyte);
 
     line_context->lc_line_range = *(unsigned char *) line_ptr;
+    if (!line_context->lc_line_range) {
+        _dwarf_error(dbg, err, DW_DLE_DEBUG_LINE_RANGE_ZERO);
+        return DW_DLV_ERROR;
+    }
     line_ptr = line_ptr + sizeof(Dwarf_Small);
     line_context->lc_opcode_base = *(unsigned char *) line_ptr;
     line_ptr = line_ptr + sizeof(Dwarf_Small);
@@ -374,7 +378,7 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
                 return resl;
             }
             line_ptr = line_ptr + strlen((char *) line_ptr) + 1;
-            DECODE_LEB128_UWORD(line_ptr, utmp);
+            DECODE_LEB128_UWORD_CK(line_ptr, utmp,dbg,err,line_ptr_end);
             dir_index = (Dwarf_Word) utmp;
             if (dir_index > line_context->lc_include_directories_count) {
                 _dwarf_error(dbg, err, DW_DLE_DIR_INDEX_BAD);
@@ -455,10 +459,10 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
             return (DW_DLV_ERROR);
         }
         for (i = 0; i < directory_format_count; i++) {
-            DECODE_LEB128_UWORD(line_ptr, directory_entry_types[i]);
-            DECODE_LEB128_UWORD(line_ptr, directory_entry_forms[i]);
+            DECODE_LEB128_UWORD_CK(line_ptr, directory_entry_types[i],dbg,err,line_ptr_end);
+            DECODE_LEB128_UWORD_CK(line_ptr, directory_entry_forms[i],dbg,err,line_ptr_end);
         }
-        DECODE_LEB128_UWORD(line_ptr, directories_count);
+        DECODE_LEB128_UWORD_CK(line_ptr, directories_count,dbg,err,line_ptr_end);
         line_context->lc_include_directories =
             malloc(sizeof(Dwarf_Small *) * directories_count);
         if (line_context->lc_include_directories == NULL) {
@@ -534,11 +538,13 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
             return (DW_DLV_ERROR);
         }
         for (i = 0; i < filename_format_count; i++) {
-            DECODE_LEB128_UWORD(line_ptr, filename_entry_types[i]);
-            DECODE_LEB128_UWORD(line_ptr, filename_entry_forms[i]);
+            DECODE_LEB128_UWORD_CK(line_ptr, filename_entry_types[i],
+                dbg,err,line_ptr_end);
+            DECODE_LEB128_UWORD_CK(line_ptr, filename_entry_forms[i],
+                dbg,err,line_ptr_end);
         }
-        DECODE_LEB128_UWORD(line_ptr, files_count);
-
+        DECODE_LEB128_UWORD_CK(line_ptr, files_count,
+            dbg,err,line_ptr_end);
 
         for (i = 0; i < files_count; i++) {
             Dwarf_File_Entry curline = 0;
@@ -573,6 +579,7 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
                         filename_entry_forms[j],
                         &line_ptr,
                         &dirindex,
+                        line_ptr_end,
                         err);
                     if (res != DW_DLV_OK) {
                         free(filename_entry_types);
@@ -586,6 +593,7 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
                         filename_entry_forms[j],
                         &line_ptr,
                         &curline->fi_time_last_mod,
+                        line_ptr_end,
                         err);
                     if (res != DW_DLV_OK) {
                         free(filename_entry_types);
@@ -598,6 +606,7 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
                         filename_entry_forms[j],
                         &line_ptr,
                         &curline->fi_file_length,
+                        line_ptr_end,
                         err);
                     if (res != DW_DLV_OK) {
                         free(filename_entry_types);
@@ -650,10 +659,13 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
         }
 
         for (i = 0; i < subprog_format_count; i++) {
-            DECODE_LEB128_UWORD(line_ptr, subprog_entry_types[i]);
-            DECODE_LEB128_UWORD(line_ptr, subprog_entry_forms[i]);
+            DECODE_LEB128_UWORD_CK(line_ptr, subprog_entry_types[i],
+                dbg,err,line_ptr_end);
+            DECODE_LEB128_UWORD_CK(line_ptr, subprog_entry_forms[i],
+                dbg,err,line_ptr_end);
         }
-        DECODE_LEB128_UWORD(line_ptr, subprogs_count);
+        DECODE_LEB128_UWORD_CK(line_ptr, subprogs_count,
+            dbg,err,line_ptr_end);
         line_context->lc_subprogs =
             malloc(sizeof(struct Dwarf_Subprog_Entry_s) * subprogs_count);
         if (line_context->lc_subprogs == NULL) {
@@ -688,6 +700,7 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
                         subprog_entry_forms[j],
                         &line_ptr,
                         &curline->ds_decl_file,
+                        line_ptr_end,
                         err);
                     if (res != DW_DLV_OK) {
                         free(subprog_entry_forms);
@@ -700,6 +713,7 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
                         subprog_entry_forms[j],
                         &line_ptr,
                         &curline->ds_decl_line,
+                        line_ptr_end,
                         err);
                     if (res != DW_DLV_OK) {
                         free(subprog_entry_forms);
@@ -870,7 +884,8 @@ read_line_table_program(Dwarf_Debug dbg,
                     signed read would work as well.    */
                 Dwarf_Unsigned utmp2 = 0;
 
-                DECODE_LEB128_UWORD(line_ptr, utmp2);
+                DECODE_LEB128_UWORD_CK(line_ptr, utmp2,
+                    dbg,error,line_ptr_end);
 #ifdef PRINTING_DETAILS
                 dwarf_printf(dbg,
                     " %" DW_PR_DUu
@@ -1043,7 +1058,8 @@ read_line_table_program(Dwarf_Debug dbg,
             case DW_LNS_advance_pc:{
                 Dwarf_Unsigned utmp2 = 0;
 
-                DECODE_LEB128_UWORD(line_ptr, utmp2);
+                DECODE_LEB128_UWORD_CK(line_ptr, utmp2,
+                    dbg,error,line_ptr_end);
 
 #ifdef PRINTING_DETAILS
                 dwarf_printf(dbg,
@@ -1062,7 +1078,8 @@ read_line_table_program(Dwarf_Debug dbg,
             case DW_LNS_advance_line:{
                 Dwarf_Signed stmp = 0;
 
-                DECODE_LEB128_SWORD(line_ptr, stmp);
+                DECODE_LEB128_SWORD_CK(line_ptr, stmp,
+                    dbg,error,line_ptr_end);
                 advance_line = (Dwarf_Sword) stmp;
 
 #ifdef PRINTING_DETAILS
@@ -1078,7 +1095,8 @@ read_line_table_program(Dwarf_Debug dbg,
             case DW_LNS_set_file:{
                 Dwarf_Unsigned utmp2 = 0;
 
-                DECODE_LEB128_UWORD(line_ptr, utmp2);
+                DECODE_LEB128_UWORD_CK(line_ptr, utmp2,
+                    dbg,error,line_ptr_end);
                 regs.lr_file = (Dwarf_Word) utmp2;
 #ifdef PRINTING_DETAILS
                 dwarf_printf(dbg,
@@ -1089,7 +1107,8 @@ read_line_table_program(Dwarf_Debug dbg,
             case DW_LNS_set_column:{
                 Dwarf_Unsigned utmp2 = 0;
 
-                DECODE_LEB128_UWORD(line_ptr, utmp2);
+                DECODE_LEB128_UWORD_CK(line_ptr, utmp2,
+                    dbg,error,line_ptr_end);
                 regs.lr_column = (Dwarf_Word) utmp2;
 #ifdef PRINTING_DETAILS
                 dwarf_printf(dbg,
@@ -1180,7 +1199,8 @@ read_line_table_program(Dwarf_Debug dbg,
             case DW_LNS_set_isa:{
                 Dwarf_Unsigned utmp2 = 0;
 
-                DECODE_LEB128_UWORD(line_ptr, utmp2);
+                DECODE_LEB128_UWORD_CK(line_ptr, utmp2,
+                    dbg,error,line_ptr_end);
                 regs.lr_isa = utmp2;
 
 #ifdef PRINTING_DETAILS
@@ -1211,7 +1231,8 @@ read_line_table_program(Dwarf_Debug dbg,
                     /* DW_LNS_set_address_from_logical */
                     Dwarf_Signed stmp = 0;
 
-                    DECODE_LEB128_SWORD(line_ptr, stmp);
+                    DECODE_LEB128_SWORD_CK(line_ptr, stmp,
+                        dbg,error,line_ptr_end);
                     advance_line = (Dwarf_Sword) stmp;
                     regs.lr_line = regs.lr_line + advance_line;
                     if (regs.lr_line >= 1 &&
@@ -1240,7 +1261,8 @@ read_line_table_program(Dwarf_Debug dbg,
                     Dwarf_Unsigned utmp2 = 0;
 
                     regs.lr_call_context = 0;
-                    DECODE_LEB128_UWORD(line_ptr, utmp2);
+                    DECODE_LEB128_UWORD_CK(line_ptr, utmp2,
+                        dbg,error,line_ptr_end);
                     regs.lr_subprogram = (Dwarf_Word) utmp2;
 #ifdef PRINTING_DETAILS
                     dwarf_printf(dbg,"DW_LNS_set_subprogram "
@@ -1254,9 +1276,11 @@ read_line_table_program(Dwarf_Debug dbg,
             case DW_LNS_inlined_call: {
                 Dwarf_Signed stmp = 0;
 
-                DECODE_LEB128_SWORD(line_ptr, stmp);
+                DECODE_LEB128_SWORD_CK(line_ptr, stmp,
+                    dbg,error,line_ptr_end);
                 regs.lr_call_context = line_count + stmp;
-                DECODE_LEB128_UWORD(line_ptr, regs.lr_subprogram);
+                DECODE_LEB128_UWORD_CK(line_ptr, regs.lr_subprogram,
+                    dbg,error,line_ptr_end);
 
 #ifdef PRINTING_DETAILS
                 dwarf_printf(dbg,"DW_LNS_inlined_call "
@@ -1316,7 +1340,8 @@ read_line_table_program(Dwarf_Debug dbg,
             Dwarf_Unsigned utmp3 = 0;
             Dwarf_Small ext_opcode = 0;
 
-            DECODE_LEB128_UWORD(line_ptr, utmp3);
+            DECODE_LEB128_UWORD_CK(line_ptr, utmp3,
+                dbg,error,line_ptr_end);
             instr_length = (Dwarf_Word) utmp3;
             /*  Dwarf_Small is a ubyte and the extended opcode is a
                 ubyte, though not stated as clearly in the 2.0.0 spec as
@@ -1482,7 +1507,8 @@ read_line_table_program(Dwarf_Debug dbg,
                 /* New in DWARF4 */
                 Dwarf_Unsigned utmp2 = 0;
 
-                DECODE_LEB128_UWORD(line_ptr, utmp2);
+                DECODE_LEB128_UWORD_CK(line_ptr, utmp2,
+                    dbg,error,line_ptr_end);
                 regs.lr_discriminator = (Dwarf_Word) utmp2;
 
 #ifdef PRINTING_DETAILS

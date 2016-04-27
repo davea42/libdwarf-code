@@ -1218,10 +1218,11 @@ _dwarf_next_die_info_ptr(Dwarf_Byte_Ptr die_info_ptr,
     Dwarf_Word leb128_length = 0;
     Dwarf_Unsigned utmp = 0;
     Dwarf_Debug dbg = 0;
+    Dwarf_Byte_Ptr abbrev_end = 0;
     int lres = 0;
 
     info_ptr = die_info_ptr;
-    DECODE_LEB128_UWORD(info_ptr, utmp);
+    DECODE_LEB128_UWORD_CK(info_ptr, utmp,dbg,error,die_info_end);
     abbrev_code = (Dwarf_Word) utmp;
     if (abbrev_code == 0) {
         /*  Should never happen. Tested before we got here. */
@@ -1244,18 +1245,20 @@ _dwarf_next_die_info_ptr(Dwarf_Byte_Ptr die_info_ptr,
     *has_die_child = abbrev_list->abl_has_child;
 
     abbrev_ptr = abbrev_list->abl_abbrev_ptr;
+    abbrev_end = _dwarf_calculate_abbrev_section_end_ptr(cu_context);
+
     do {
         Dwarf_Unsigned utmp2;
 
-        DECODE_LEB128_UWORD(abbrev_ptr, utmp2);
+        DECODE_LEB128_UWORD_CK(abbrev_ptr, utmp2,dbg,error,abbrev_end);
         attr = (Dwarf_Half) utmp2;
-        DECODE_LEB128_UWORD(abbrev_ptr, utmp2);
+        DECODE_LEB128_UWORD_CK(abbrev_ptr, utmp2,dbg,error,abbrev_end);
         attr_form = (Dwarf_Half) utmp2;
         if (attr_form == DW_FORM_indirect) {
             Dwarf_Unsigned utmp6;
 
             /* DECODE_LEB128_UWORD updates info_ptr */
-            DECODE_LEB128_UWORD(info_ptr, utmp6);
+            DECODE_LEB128_UWORD_CK(info_ptr, utmp6,dbg,error,die_info_end);
             attr_form = (Dwarf_Half) utmp6;
 
         }
@@ -1444,7 +1447,7 @@ dwarf_siblingof_b(Dwarf_Debug dbg,
         cu_info_start = dataptr + off2;
         headerlen = _dwarf_length_of_cu_header(dbg, off2,is_info);
         die_info_ptr = cu_info_start + headerlen;
-        die_info_end = _dwarf_calculate_section_end_ptr(context);
+        die_info_end = _dwarf_calculate_info_section_end_ptr(context);
         /*  Recording the CU die pointer so we can later access
             for special FORMs relating to .debug_str_offsets
             and .debug_addr  */
@@ -1466,7 +1469,7 @@ dwarf_siblingof_b(Dwarf_Debug dbg,
         }
         context = die->di_cu_context;
         cu_info_start = dataptr+ context->cc_debug_offset;
-        die_info_end = _dwarf_calculate_section_end_ptr(context);
+        die_info_end = _dwarf_calculate_info_section_end_ptr(context);
 
         if ((*die_info_ptr) == 0) {
             return (DW_DLV_NO_ENTRY);
@@ -1525,7 +1528,6 @@ dwarf_siblingof_b(Dwarf_Debug dbg,
     if (die_info_ptr >= die_info_end) {
         return (DW_DLV_NO_ENTRY);
     }
-
     if ((*die_info_ptr) == 0) {
         return (DW_DLV_NO_ENTRY);
     }
@@ -1541,7 +1543,7 @@ dwarf_siblingof_b(Dwarf_Debug dbg,
     ret_die->di_cu_context =
         die == NULL ? dis->de_cu_context : die->di_cu_context;
 
-    DECODE_LEB128_UWORD(die_info_ptr, utmp);
+    DECODE_LEB128_UWORD_CK(die_info_ptr, utmp,dbg,error,die_info_end);
     if (die_info_ptr > die_info_end) {
         /*  We managed to go past the end of the CU!.
             Something is badly wrong. */
@@ -1614,7 +1616,7 @@ dwarf_child(Dwarf_Die die,
         return (DW_DLV_NO_ENTRY);
 
     context = die->di_cu_context;
-    die_info_end = _dwarf_calculate_section_end_ptr(context);
+    die_info_end = _dwarf_calculate_info_section_end_ptr(context);
 
     res = _dwarf_next_die_info_ptr(die_info_ptr, die->di_cu_context,
         die_info_end,
@@ -1649,7 +1651,8 @@ dwarf_child(Dwarf_Die die,
     ret_die->di_cu_context = die->di_cu_context;
     ret_die->di_is_info = die->di_is_info;
 
-    DECODE_LEB128_UWORD(die_info_ptr, utmp);
+    DECODE_LEB128_UWORD_CK(die_info_ptr, utmp,
+        dbg,error,die_info_end);
     abbrev_code = (Dwarf_Word) utmp;
 
     dis->de_last_di_ptr = die_info_ptr;
@@ -1714,6 +1717,7 @@ dwarf_offdie_b(Dwarf_Debug dbg,
     Dwarf_Unsigned utmp = 0;
     int lres = 0;
     Dwarf_Debug_InfoTypes dis = 0;
+    Dwarf_Byte_Ptr die_info_end = 0;
 
     if (dbg == NULL) {
         _dwarf_error(NULL, error, DW_DLE_DBG_NULL);
@@ -1775,6 +1779,7 @@ dwarf_offdie_b(Dwarf_Debug dbg,
         } while (offset >= new_cu_offset);
     }
 
+    die_info_end = _dwarf_calculate_info_section_end_ptr(cu_context);
     die = (Dwarf_Die) _dwarf_get_alloc(dbg, DW_DLA_DIE, 1);
     if (die == NULL) {
         _dwarf_error(dbg, error, DW_DLE_ALLOC_FAIL);
@@ -1789,7 +1794,7 @@ dwarf_offdie_b(Dwarf_Debug dbg,
         info_ptr = dataptr + offset;
     }
     die->di_debug_ptr = info_ptr;
-    DECODE_LEB128_UWORD(info_ptr, utmp);
+    DECODE_LEB128_UWORD_CK(info_ptr, utmp,dbg,error,die_info_end);
     abbrev_code = utmp;
     if (abbrev_code == 0) {
         /* we are at a null DIE (or there is a bug). */

@@ -1803,6 +1803,7 @@ _dwarf_decode_line_udata_form(Dwarf_Debug dbg,
     Dwarf_Unsigned form,
     Dwarf_Small **line_ptr,
     Dwarf_Unsigned *return_val,
+    Dwarf_Small *line_end_ptr,
     Dwarf_Error * error)
 {
     Dwarf_Unsigned val = 0;
@@ -1811,7 +1812,7 @@ _dwarf_decode_line_udata_form(Dwarf_Debug dbg,
     switch (form) {
 
     case DW_FORM_udata:
-        DECODE_LEB128_UWORD(lp, val);
+        DECODE_LEB128_UWORD_CK(lp, val,dbg,error,line_end_ptr);
         *return_val = val;
         *line_ptr = lp;
         return DW_DLV_OK;

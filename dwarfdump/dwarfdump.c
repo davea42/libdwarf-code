@@ -2373,10 +2373,13 @@ print_error_and_continue(UNUSEDARG Dwarf_Debug dbg,
 
     if (dwarf_code == DW_DLV_ERROR) {
         char * errmsg = dwarf_errmsg(lerr);
-        Dwarf_Unsigned myerr = dwarf_errno(lerr);
 
-        printf( "%s ERROR:  %s:  %s (%lu)\n",
-            program_name, msg, errmsg, (unsigned long) myerr);
+        /*  We now (April 2016) guarantee the 
+            error number is in
+            the error string so we do not need to print
+            the dwarf_errno() value to show the number. */
+        printf( "%s ERROR:  %s:  %s\n",
+            program_name, msg, errmsg);
     } else if (dwarf_code == DW_DLV_NO_ENTRY) {
         printf("%s NO ENTRY:  %s: \n", program_name, msg);
     } else if (dwarf_code == DW_DLV_OK) {

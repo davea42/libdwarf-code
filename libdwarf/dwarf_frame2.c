@@ -615,9 +615,17 @@ dwarf_create_cie_from_after_start(Dwarf_Debug dbg,
                 return DW_DLV_ERROR;
             }
             address_size = *((unsigned char *)frame_ptr);
+            if (address_size  <  1) {
+                _dwarf_error(dbg, error, DW_DLE_ADDRESS_SIZE_ERROR);
+                return (DW_DLV_ERROR);
+            }
             if (address_size  > sizeof(Dwarf_Addr)) {
                 _dwarf_error(dbg, error, DW_DLE_ADDRESS_SIZE_ERROR);
                 return (DW_DLV_ERROR);
+            }
+            if ((frame_ptr+2)  >= section_ptr_end) {
+                _dwarf_error(dbg, error, DW_DLE_DEBUG_FRAME_LENGTH_BAD);
+                return DW_DLV_ERROR;
             }
             ++frame_ptr;
             segment_size = *((unsigned char *)frame_ptr);
@@ -633,7 +641,7 @@ dwarf_create_cie_from_after_start(Dwarf_Debug dbg,
             _dwarf_error(dbg, error, DW_DLE_DEBUG_FRAME_LENGTH_BAD);
             return DW_DLV_ERROR;
         }
-        DECODE_LEB128_UWORD(frame_ptr, lreg);
+        DECODE_LEB128_UWORD_CK(frame_ptr, lreg,dbg,error,section_ptr_end);
         code_alignment_factor = (Dwarf_Word) lreg;
         data_alignment_factor =
             (Dwarf_Sword) _dwarf_decode_s_leb128(frame_ptr,
@@ -666,7 +674,7 @@ dwarf_create_cie_from_after_start(Dwarf_Debug dbg,
         Dwarf_Word length_of_augmented_fields;
 
         /* Decode the length of augmented fields. */
-        DECODE_LEB128_UWORD(frame_ptr, lreg);
+        DECODE_LEB128_UWORD_CK(frame_ptr, lreg,dbg,error,section_ptr_end);
         length_of_augmented_fields = (Dwarf_Word) lreg;
         /* set the frame_ptr to point at the instruction start. */
         frame_ptr += length_of_augmented_fields;
@@ -706,7 +714,8 @@ dwarf_create_cie_from_after_start(Dwarf_Debug dbg,
             _dwarf_error(dbg, error, DW_DLE_DEBUG_FRAME_LENGTH_BAD);
             return DW_DLV_ERROR;
         }
-        DECODE_LEB128_UWORD(frame_ptr, adlen);
+        DECODE_LEB128_UWORD_CK(frame_ptr, adlen,
+            dbg,error,section_ptr_end);
         cie_aug_data_len = adlen;
         cie_aug_data = frame_ptr;
         resz = gnu_aug_encodings(dbg,
@@ -867,7 +876,8 @@ dwarf_create_fde_from_after_start(Dwarf_Debug dbg,
         {
             Dwarf_Unsigned adlen = 0;
 
-            DECODE_LEB128_UWORD(frame_ptr, adlen);
+            DECODE_LEB128_UWORD_CK(frame_ptr, adlen,
+                dbg,error,section_ptr_end);
             fde_aug_data_len = adlen;
             fde_aug_data = frame_ptr;
             frame_ptr += adlen;
@@ -893,7 +903,8 @@ dwarf_create_fde_from_after_start(Dwarf_Debug dbg,
         Dwarf_Unsigned lreg = 0;
         Dwarf_Word length_of_augmented_fields = 0;
 
-        DECODE_LEB128_UWORD(frame_ptr, lreg);
+        DECODE_LEB128_UWORD_CK(frame_ptr, lreg,
+            dbg,error,section_ptr_end);
         length_of_augmented_fields = (Dwarf_Word) lreg;
 
         saved_frame_ptr = frame_ptr;

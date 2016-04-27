@@ -1,3 +1,7 @@
+2016-04-27  David Anderson
+    * dwarfdump.c: Update version string.
+      Remove a field from printf on error as that duplicates
+      the error number in the error string.
 2016-04-25  David Anderson
     * esb.c, dwarfdump.c: Fix a couple indent mistakes.
 2016-04-25  David Anderson

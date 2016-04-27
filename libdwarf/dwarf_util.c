@@ -545,8 +545,10 @@ _dwarf_get_abbrev_for_code(Dwarf_CU_Context cu_context, Dwarf_Unsigned code,
         Dwarf_Unsigned atcount = 0;
 
         abb_goff = abbrev_ptr - dbg->de_debug_abbrev.dss_data;
-        DECODE_LEB128_UWORD(abbrev_ptr, abbrev_code);
-        DECODE_LEB128_UWORD(abbrev_ptr, abbrev_tag);
+        DECODE_LEB128_UWORD_CK(abbrev_ptr, abbrev_code,
+            dbg,error,end_abbrev_ptr);
+        DECODE_LEB128_UWORD_CK(abbrev_ptr, abbrev_tag,
+            dbg,error,end_abbrev_ptr);
 
         inner_list_entry = (Dwarf_Abbrev_List)
             _dwarf_get_alloc(cu_context->cc_dbg, DW_DLA_ABBREV_LIST, 1);
@@ -576,8 +578,10 @@ _dwarf_get_abbrev_for_code(Dwarf_CU_Context cu_context, Dwarf_Unsigned code,
         /*  Cycle thru the abbrev content, ignoring the content except
             to find the end of the content. */
         do {
-            DECODE_LEB128_UWORD(abbrev_ptr, attr_name);
-            DECODE_LEB128_UWORD(abbrev_ptr, attr_form);
+            DECODE_LEB128_UWORD_CK(abbrev_ptr, attr_name,
+                dbg,error,end_abbrev_ptr);
+            DECODE_LEB128_UWORD_CK(abbrev_ptr, attr_form,
+                dbg,error,end_abbrev_ptr);
             if (!_dwarf_valid_form_we_know(dbg,attr_form,attr_name)) {
                 _dwarf_error(dbg,error,DW_DLE_UNKNOWN_FORM);
                 return DW_DLV_ERROR;
