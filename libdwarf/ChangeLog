@@ -1,4 +1,8 @@
 2016-04-27 David Anderson
+    * dwarf_frame2.c: Now notices a frame-length field
+      which is too large to be meaningful and returns
+      an error..
+2016-04-27 David Anderson
     * Makefile.in: Now dwarf_error.o dependency on
       dwarf_errmsg_list.c is explicit.
     * dwarf_errmsg_list.c: New error strings.

@@ -1072,6 +1072,10 @@ dwarf_read_cie_fde_prefix(Dwarf_Debug dbg,
     data_out->cf_addr_after_prefix = frame_ptr;
 
     data_out->cf_length = length;
+    if (length > section_length_in) {
+        _dwarf_error(dbg,error,DW_DLE_DEBUG_FRAME_LENGTH_BAD);
+        return DW_DLV_ERROR;
+    }
     data_out->cf_local_length_size = local_length_size;
     data_out->cf_local_extension_size = local_extension_size;
 
