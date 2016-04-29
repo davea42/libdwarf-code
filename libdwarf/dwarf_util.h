@@ -41,16 +41,31 @@
 */
 #define DECODE_LEB128_UWORD_CK(ptr, value,dbg,errptr,endptr) \
     do {                                              \
-        Dwarf_Word uleblen = 0;                       \
-        Dwarf_Unsigned local = 0;                     \
+        Dwarf_Word lu_leblen = 0;                     \
+        Dwarf_Unsigned lu_local = 0;                  \
         int lu_res = 0;                               \
-        lu_res = _dwarf_decode_u_leb128_chk(ptr,&uleblen,&local,endptr); \
+        lu_res = _dwarf_decode_u_leb128_chk(ptr,&lu_leblen,&lu_local,endptr); \
         if (lu_res == DW_DLV_ERROR) {                 \
             _dwarf_error(dbg, errptr, DW_DLE_LEB_IMPROPER);  \
             return DW_DLV_ERROR;                      \
         }                                             \
-        value = local;                                \
-        ptr += uleblen;                               \
+        value = lu_local;                             \
+        ptr += lu_leblen;                             \
+    } while (0)
+
+#define DECODE_LEB128_UWORD_LEN_CK(ptr, value,leblen,dbg,errptr,endptr) \
+    do {                                              \
+        Dwarf_Word lu_leblen = 0;                     \
+        Dwarf_Unsigned lu_local = 0;                  \
+        int lu_res = 0;                               \
+        lu_res = _dwarf_decode_u_leb128_chk(ptr,&lu_leblen,&lu_local,endptr); \
+        if (lu_res == DW_DLV_ERROR) {                 \
+            _dwarf_error(dbg, errptr, DW_DLE_LEB_IMPROPER);  \
+            return DW_DLV_ERROR;                      \
+        }                                             \
+        value = lu_local;                             \
+        ptr += lu_leblen;                             \
+        leblen = lu_leblen;                          \
     } while (0)
 
 #define DECODE_LEB128_UWORD(ptr, value)               \
@@ -87,6 +102,21 @@
         }                                             \
         value = local;                                \
         ptr += uleblen;                               \
+    } while (0)
+#define DECODE_LEB128_SWORD_LEN_CK(ptr, value,leblen,dbg,errptr,endptr) \
+    do {                                              \
+        Dwarf_Word lu_leblen = 0;                     \
+        Dwarf_Signed lu_local = 0;                    \
+        int lu_res = 0;                               \
+        lu_res = _dwarf_decode_s_leb128_chk(ptr,&lu_leblen,\
+            &lu_local,endptr); \
+        if (lu_res == DW_DLV_ERROR) {                 \
+            _dwarf_error(dbg, errptr, DW_DLE_LEB_IMPROPER);  \
+            return DW_DLV_ERROR;                      \
+        }                                             \
+        leblen = lu_leblen;                           \
+        value = lu_local;                             \
+        ptr += lu_leblen;                             \
     } while (0)
 
 

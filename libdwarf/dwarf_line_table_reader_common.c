@@ -882,7 +882,7 @@ read_line_table_program(Dwarf_Debug dbg,
                     understand.
                     arbitrary choice of unsigned read.
                     signed read would work as well.    */
-                Dwarf_Unsigned utmp2 = 0;
+                UNUSEDARG Dwarf_Unsigned utmp2 = 0;
 
                 DECODE_LEB128_UWORD_CK(line_ptr, utmp2,
                     dbg,error,line_ptr_end);

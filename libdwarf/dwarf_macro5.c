@@ -206,10 +206,10 @@ _dwarf_skim_forms(Dwarf_Debug dbg,
             mdata += v;
             break;
         case DW_FORM_block:
-            length = _dwarf_decode_u_leb128(mdata, &leb128_length);
+            DECODE_LEB128_UWORD_LEN_CK(mdata,length,leb128_length,
+                dbg, error,section_end);
             v = length + leb128_length;
             totallen += v;
-            mdata += v;
             break;
         case DW_FORM_flag:
             v = 1;
@@ -225,16 +225,14 @@ _dwarf_skim_forms(Dwarf_Debug dbg,
         case DW_FORM_sdata:
             /*  Discard the decoded value, we just want the length
                 of the value. */
-            _dwarf_decode_s_leb128(mdata, &leb128_length);
-            v = leb128_length;
-            mdata += v;
+            DECODE_LEB128_UWORD_LEN_CK(mdata,length,leb128_length,
+                dbg, error,section_end);
             totallen += v;
             break;
         case DW_FORM_strx:
-            _dwarf_decode_u_leb128(mdata, &leb128_length);
-            v = leb128_length;
-            mdata += v;
-            totallen += v;
+            DECODE_LEB128_UWORD_LEN_CK(mdata,length,leb128_length,
+                dbg, error,section_end);
+            totallen += leb128_length;;
             break;
         case DW_FORM_strp:
             v = mcontext->mc_offset_size;
@@ -244,10 +242,9 @@ _dwarf_skim_forms(Dwarf_Debug dbg,
         case DW_FORM_udata:
             /*  Discard the decoded value, we just want the length
                 of the value. */
-            _dwarf_decode_u_leb128(mdata, &leb128_length);
-            v = leb128_length;
-            mdata += v;
-            totallen += v;
+            DECODE_LEB128_UWORD_LEN_CK(mdata,length,leb128_length,
+                dbg, error,section_end);
+            totallen += leb128_length;
             break;
         }
     }
@@ -485,12 +482,10 @@ dwarf_get_macro_defundef(Dwarf_Macro_Context macro_context,
     case DW_MACRO_define:
     case DW_MACRO_undef: {
         Dwarf_Unsigned linenum = 0;
-        Dwarf_Word uleblen = 0;
         const char * content = 0;
 
-        linenum = _dwarf_decode_u_leb128(mdata,
-            &uleblen);
-        mdata += uleblen;
+        DECODE_LEB128_UWORD_CK(mdata,linenum,
+                dbg, error,endptr);
         content = (const char *)mdata;
         res = _dwarf_check_string_valid(dbg,
             startptr,mdata, endptr, error);
@@ -507,16 +502,13 @@ dwarf_get_macro_defundef(Dwarf_Macro_Context macro_context,
     case DW_MACRO_define_strp:
     case DW_MACRO_undef_strp: {
         Dwarf_Unsigned linenum = 0;
-        Dwarf_Word uleblen = 0;
         Dwarf_Unsigned stringoffset = 0;
         Dwarf_Small form1 =  curop->mo_form->mf_formbytes[1];
         char * localstr = 0;
 
 
-        linenum = _dwarf_decode_u_leb128(mdata,
-            &uleblen);
-        mdata += uleblen;
-
+        DECODE_LEB128_UWORD_CK(mdata,linenum,
+                dbg, error,endptr);
         READ_UNALIGNED(dbg,stringoffset,Dwarf_Unsigned,
             mdata,macro_context->mc_offset_size);
         mdata += macro_context->mc_offset_size;
@@ -543,29 +535,25 @@ dwarf_get_macro_defundef(Dwarf_Macro_Context macro_context,
     case DW_MACRO_define_strx:
     case DW_MACRO_undef_strx: {
         Dwarf_Unsigned linenum = 0;
-        Dwarf_Word uleblen = 0;
         Dwarf_Unsigned stringindex = 0;
         Dwarf_Unsigned offsettostr= 0;
         int ress = 0;
+        Dwarf_Byte_Ptr mdata_copy = 0;
         Dwarf_Small form1 =  curop->mo_form->mf_formbytes[1];
 
-        linenum = _dwarf_decode_u_leb128(mdata,
-            &uleblen);
-        mdata += uleblen;
-
+        DECODE_LEB128_UWORD_CK(mdata,linenum, dbg, error,endptr);
         *line_number = linenum;
-        stringindex = _dwarf_decode_u_leb128(mdata,
-            &uleblen);
-        /* leave mdata uchanged for call below */
+        mdata_copy = mdata;
+        DECODE_LEB128_UWORD_CK(mdata_copy,stringindex, dbg, error,endptr);
+        /* mdata_copy is for call below */
 
 
         *index = stringindex;
         *forms_count = lformscount;
 
-        /* FIXME */
         /* Redoes the index-getting. Gets offset. */
         ress = _dwarf_extract_string_offset_via_str_offsets(dbg,
-            mdata,
+            mdata_copy,
             DW_AT_macros, /*arbitrary, unused by called routine. */
             form1,
             macro_context->mc_cu_context,
@@ -602,16 +590,13 @@ dwarf_get_macro_defundef(Dwarf_Macro_Context macro_context,
     case DW_MACRO_define_sup:
     case DW_MACRO_undef_sup: {
         Dwarf_Unsigned linenum = 0;
-        Dwarf_Word uleblen = 0;
         Dwarf_Unsigned supoffset = 0;
         char *localstring = 0;
         int resup = 0;
         Dwarf_Error lerr = 0;
 
-        linenum = _dwarf_decode_u_leb128(mdata,
-            &uleblen);
-        mdata += uleblen;
-
+        DECODE_LEB128_UWORD_CK(mdata,linenum,
+                dbg, error,endptr);
         READ_UNALIGNED(dbg,supoffset,Dwarf_Unsigned,
             mdata,macro_context->mc_offset_size);
         mdata += macro_context->mc_offset_size;
@@ -737,6 +722,8 @@ dwarf_get_macro_startend_file(Dwarf_Macro_Context macro_context,
     Dwarf_Small *mdata = 0;
     unsigned macop = 0;
     struct Dwarf_Macro_Operator_s *curop = 0;
+    Dwarf_Byte_Ptr startptr =  0;
+    Dwarf_Byte_Ptr endptr =  0;
 
     if (!macro_context || macro_context->mc_sentinel != 0xada) {
         if(macro_context) {
@@ -750,6 +737,9 @@ dwarf_get_macro_startend_file(Dwarf_Macro_Context macro_context,
         _dwarf_error(dbg, error,DW_DLE_BAD_MACRO_INDEX);
         return DW_DLV_ERROR;
     }
+    startptr = macro_context->mc_macro_header;
+    endptr = startptr + macro_context->mc_total_length;
+
     curop = macro_context->mc_ops + op_number;
     macop = curop->mo_opcode;
     mdata = curop->mo_data;
@@ -757,18 +747,12 @@ dwarf_get_macro_startend_file(Dwarf_Macro_Context macro_context,
         return DW_DLV_NO_ENTRY;
     }
     if (macop == DW_MACRO_start_file) {
-        Dwarf_Word uleblen = 0;
         Dwarf_Unsigned linenum = 0;
         Dwarf_Unsigned srcindex = 0;
         Dwarf_Signed trueindex = 0;
 
-        linenum = _dwarf_decode_u_leb128(mdata,
-            &uleblen);
-        mdata += uleblen;
-
-        srcindex = _dwarf_decode_u_leb128(mdata,
-            &uleblen);
-        mdata += uleblen;
+        DECODE_LEB128_UWORD_CK(mdata,linenum, dbg, error,endptr);
+        DECODE_LEB128_UWORD_CK(mdata,srcindex, dbg, error,endptr);
         *line_number = linenum;
         *name_index_to_line_tab = srcindex;
         /*  For DWARF 2,3,4, decrement by 1.
@@ -918,6 +902,8 @@ read_operands_table(Dwarf_Macro_Context macro_context,
     unsigned i = 0;
     struct Dwarf_Macro_Forms_s *curformentry = 0;
     Dwarf_Debug dbg = 0;
+    Dwarf_Byte_Ptr startptr = 0;
+    Dwarf_Byte_Ptr endptr = 0;
 
     if (!macro_context || macro_context->mc_sentinel != 0xada) {
         if(macro_context) {
@@ -933,11 +919,15 @@ read_operands_table(Dwarf_Macro_Context macro_context,
         _dwarf_error(dbg, error, DW_DLE_MACRO_OFFSET_BAD);
         return (DW_DLV_ERROR);
     }
+
     READ_UNALIGNED(dbg,operand_table_count,Dwarf_Small,
         macro_data,sizeof(Dwarf_Small));
     macro_data += sizeof(Dwarf_Small);
     /* Estimating minimum size */
     local_size = operand_table_count * 4;
+
+    startptr = macro_context->mc_macro_header;
+    endptr = startptr + macro_context->mc_total_length;
 
     cur_offset = (local_size+ macro_data) - section_base;
     if (cur_offset >= section_size) {
@@ -949,16 +939,14 @@ read_operands_table(Dwarf_Macro_Context macro_context,
     for (i = 0; i < operand_table_count; ++i) {
         /*  Compiler warning about unused opcode_number
             variable should be ignored. */
-        Dwarf_Small opcode_number = 0;
+        UNUSEDARG Dwarf_Small opcode_number = 0;
         Dwarf_Unsigned formcount = 0;
-        Dwarf_Word uleblen = 0;
         READ_UNALIGNED(dbg,opcode_number,Dwarf_Small,
             macro_data,sizeof(Dwarf_Small));
         macro_data += sizeof(Dwarf_Small);
 
-        formcount = _dwarf_decode_u_leb128(macro_data,
-            &uleblen);
-        macro_data += uleblen;
+        DECODE_LEB128_UWORD_CK(macro_data,formcount,
+                dbg, error, endptr);
         cur_offset = (formcount+ macro_data) - section_base;
         if (cur_offset >= section_size) {
             _dwarf_error(dbg, error, DW_DLE_MACRO_OFFSET_BAD);
@@ -983,7 +971,6 @@ read_operands_table(Dwarf_Macro_Context macro_context,
     for (i = 0; i < operand_table_count; ++i,++curformentry) {
         Dwarf_Small opcode_number = 0;
         Dwarf_Unsigned formcount = 0;
-        Dwarf_Word uleblen = 0;
         int res = 0;
 
         cur_offset = (2 + macro_data) - section_base;
@@ -994,11 +981,12 @@ read_operands_table(Dwarf_Macro_Context macro_context,
         READ_UNALIGNED(dbg,opcode_number,Dwarf_Small,
             macro_data,sizeof(Dwarf_Small));
         macro_data += sizeof(Dwarf_Small);
-        formcount = _dwarf_decode_u_leb128(macro_data,
-            &uleblen);
+        DECODE_LEB128_UWORD_CK(macro_data,formcount,
+                dbg, error, endptr);
+
         curformentry->mf_code = opcode_number;
         curformentry->mf_formcount = formcount;
-        macro_data += uleblen;
+        
         cur_offset = (formcount+ macro_data) - section_base;
         if (cur_offset >= section_size) {
             _dwarf_error(dbg, error, DW_DLE_MACRO_OFFSET_BAD);

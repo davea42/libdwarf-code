@@ -240,18 +240,10 @@ _dwarf_get_size_of_val(Dwarf_Debug dbg,
 
     case DW_FORM_block:
     case DW_FORM_exprloc: {
-        int res = 0;
-
-        res = _dwarf_decode_u_leb128_chk(val_ptr, &leb128_length,
-            &length,section_end_ptr);
-        if(res == DW_DLV_OK) {
-            *size_out = length + leb128_length;
-            return res;
-        }
-        if (res == DW_DLV_ERROR) {
-            _dwarf_error(dbg, error, DW_DLE_LEB_IMPROPER);
-        }
-        return res;
+        DECODE_LEB128_UWORD_LEN_CK(val_ptr,length,leb128_length,
+            dbg,error,section_end_ptr);
+        *size_out = length + leb128_length;
+        return DW_DLV_OK;;
     }
 
     case DW_FORM_flag_present:
@@ -268,23 +260,14 @@ _dwarf_get_size_of_val(Dwarf_Debug dbg,
         return DW_DLV_OK;
 
     case DW_FORM_ref_udata: {
-        int res = 0;
-        Dwarf_Unsigned v = 0;
+        UNUSEDARG Dwarf_Unsigned v = 0;
 
         /*  Discard the decoded value, we just want the length
             of the value. */
-        res = _dwarf_decode_u_leb128_chk(val_ptr, &leb128_length,
-            &v, section_end_ptr);
-        if(res == DW_DLV_OK) {
-            *size_out = leb128_length;
-            return res;
-        }
-        if (res == DW_DLV_ERROR) {
-            _dwarf_error(dbg, error, DW_DLE_LEB_IMPROPER);
-        }
-        return res;
-        
-
+        DECODE_LEB128_UWORD_LEN_CK(val_ptr,v,leb128_length,
+            dbg,error,section_end_ptr);
+        *size_out = leb128_length;
+        return DW_DLV_OK;;
     }
 
     case DW_FORM_indirect:
@@ -293,14 +276,8 @@ _dwarf_get_size_of_val(Dwarf_Debug dbg,
             int res = 0;
             Dwarf_Unsigned real_form_len = 0;
 
-            res = _dwarf_decode_u_leb128_chk(val_ptr, &indir_len,
-                &form_indirect, section_end_ptr);
-            if(res != DW_DLV_OK) {
-                if (res == DW_DLV_ERROR) {
-                    _dwarf_error(dbg, error, DW_DLE_LEB_IMPROPER);
-                }
-                return res;
-            }
+            DECODE_LEB128_UWORD_LEN_CK(val_ptr,form_indirect,indir_len,
+                dbg,error,section_end_ptr);
             if (form_indirect == DW_FORM_indirect) {
                 /* We are in big trouble: The true form
                     of DW_FORM_indirect is
@@ -342,21 +319,16 @@ _dwarf_get_size_of_val(Dwarf_Debug dbg,
         return DW_DLV_OK;
 
     case DW_FORM_sdata: {
-        int res = 0;
-        Dwarf_Signed v = 0;
+        /*  Discard the decoded value, we just want the length
+            of the value. */
+        UNUSEDARG Dwarf_Signed v = 0;
 
         /*  Discard the decoded value, we just want the length
             of the value. */
-        res = _dwarf_decode_s_leb128_chk(val_ptr, &leb128_length,
-            &v,section_end_ptr);
-        if(res == DW_DLV_OK) {
-            *size_out = leb128_length;
-            return res;
-        }
-        if (res == DW_DLV_ERROR) {
-            _dwarf_error(dbg, error, DW_DLE_LEB_IMPROPER);
-        }
-        return res;
+        DECODE_LEB128_SWORD_LEN_CK(val_ptr,v,leb128_length,
+                dbg,error,section_end_ptr);
+        *size_out = leb128_length;
+        return DW_DLV_OK;
     }
 
 
@@ -364,19 +336,12 @@ _dwarf_get_size_of_val(Dwarf_Debug dbg,
     case DW_FORM_GNU_addr_index:
     case DW_FORM_strx:
     case DW_FORM_GNU_str_index: {
-        int res = 0;
-        Dwarf_Unsigned v = 0;
+        UNUSEDARG Dwarf_Unsigned v = 0;
 
-        res = _dwarf_decode_u_leb128_chk(val_ptr, &leb128_length,
-            &v, section_end_ptr);
-        if(res == DW_DLV_OK) {
-            *size_out = leb128_length;
-            return res;
-        }
-        if (res == DW_DLV_ERROR) {
-            _dwarf_error(dbg, error, DW_DLE_LEB_IMPROPER);
-        }
-        return res;
+        DECODE_LEB128_UWORD_LEN_CK(val_ptr,v,leb128_length,
+                dbg,error,section_end_ptr);
+        *size_out = leb128_length;
+        return DW_DLV_OK;
     }
 
     case DW_FORM_strp:
@@ -386,19 +351,12 @@ _dwarf_get_size_of_val(Dwarf_Debug dbg,
     case DW_FORM_udata: {
         /*  Discard the decoded value, we just want the length
             of the value. */
-        int res = 0;
-        Dwarf_Unsigned v = 0;
+        UNUSEDARG Dwarf_Unsigned v = 0;
 
-        res = _dwarf_decode_u_leb128_chk(val_ptr, &leb128_length,
-            &v, section_end_ptr);
-        if(res == DW_DLV_OK) {
-            *size_out = leb128_length;
-            return res;
-        }
-        if (res == DW_DLV_ERROR) {
-            _dwarf_error(dbg, error, DW_DLE_LEB_IMPROPER);
-        }
-        return res;
+        DECODE_LEB128_UWORD_LEN_CK(val_ptr,v,leb128_length,
+                dbg,error,section_end_ptr);
+        *size_out = leb128_length;
+        return DW_DLV_OK;
     }
     }
 }
