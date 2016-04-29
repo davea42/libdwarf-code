@@ -334,6 +334,7 @@ _dwarf_get_size_of_val(Dwarf_Debug dbg,
     Dwarf_Small * val_ptr,
     int v_length_size,
     Dwarf_Unsigned *size_out,
+    Dwarf_Small *section_end_ptr,
     Dwarf_Error *error);
 
 struct Dwarf_Hash_Table_Entry_s;

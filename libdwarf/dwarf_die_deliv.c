@@ -1282,8 +1282,8 @@ _dwarf_next_die_info_ptr(Dwarf_Byte_Ptr die_info_ptr,
                     info_ptr, sizeof(Dwarf_Unsigned));
                 break;
             case DW_FORM_ref_udata:
-                offset =
-                    _dwarf_decode_u_leb128(info_ptr, &leb128_length);
+                DECODE_LEB128_UWORD_CK(info_ptr, offset,
+                    dbg,error,die_info_end);
                 break;
             case DW_FORM_ref_addr:
                 /*  Very unusual.  The FORM is intended to refer to
@@ -1331,6 +1331,7 @@ _dwarf_next_die_info_ptr(Dwarf_Byte_Ptr die_info_ptr,
                 info_ptr,
                 cu_context->cc_length_size,
                 &sizeofval,
+                die_info_end,
                 error);
             if(res != DW_DLV_OK) {
                 return res;

@@ -1,3 +1,11 @@
+2016-04-28 David Anderson
+    * dwarf_die_deliv.c: Now _dwarf_next_die_info_ptr() has
+      a section length argument.
+    * dwarf_query.c, dwarf_util.c: Now uses the checked version
+      of leb reading.
+    * dwarf_util.h: Now _dwarf_get_size_of_val() has
+      section_end_ptr argument for checking leb values
+      do not overrun end of section.
 2016-04-27 David Anderson
     * dwarf_frame2.c: Now notices a frame-length field
       which is too large to be meaningful and returns

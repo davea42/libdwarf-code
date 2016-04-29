@@ -393,6 +393,7 @@ dwarf_attrlist(Dwarf_Die die,
                     info_ptr,
                     die->di_cu_context->cc_length_size,
                     &sov,
+                    die_info_end,
                     error);
                 if(res!= DW_DLV_OK) {
                     return res;
@@ -518,6 +519,7 @@ _dwarf_get_value_ptr(Dwarf_Die die,
             info_ptr,
             die->di_cu_context->cc_length_size,
             &value_size,
+            die_info_end,
             error);
         if (res != DW_DLV_OK) {
             return res;
@@ -1138,6 +1140,7 @@ dwarf_highpc_b(Dwarf_Die die,
     Dwarf_Half offset_size = 0;
     enum Dwarf_Form_Class class = DW_FORM_CLASS_UNKNOWN;
     Dwarf_Half version = 0;
+    Dwarf_Byte_Ptr die_info_end = 0;
     int res = 0;
 
     CHECK_DIE(die, DW_DLV_ERROR);
@@ -1151,6 +1154,7 @@ dwarf_highpc_b(Dwarf_Die die,
     if(res == DW_DLV_NO_ENTRY) {
         return res;
     }
+    die_info_end = _dwarf_calculate_info_section_end_ptr(die->di_cu_context);
 
     version = die->di_cu_context->cc_version_stamp;
     offset_size = die->di_cu_context->cc_length_size;
@@ -1231,9 +1235,11 @@ dwarf_highpc_b(Dwarf_Die die,
             }
             if (attr_form == DW_FORM_sdata) {
                 Dwarf_Signed sval = 0;
-                sval = _dwarf_decode_s_leb128(info_ptr2, NULL);
+
                 /*  DWARF4 defines the value as an unsigned offset
                     in section 2.17.2. */
+                DECODE_LEB128_UWORD_CK(info_ptr2, sval,
+                    dbg,error,die_info_end);
                 *return_value = (Dwarf_Unsigned)sval;
             } else {
                 _dwarf_error(dbg, error, DW_DLE_DIE_BAD);
@@ -1379,9 +1385,11 @@ _dwarf_die_attr_unsigned_constant(Dwarf_Die die,
     Dwarf_Unsigned ret_value = 0;
     Dwarf_Debug dbg = 0;
     int res = 0;
+    Dwarf_Byte_Ptr die_info_end = 0;
 
     CHECK_DIE(die, DW_DLV_ERROR);
 
+    die_info_end = _dwarf_calculate_info_section_end_ptr(die->di_cu_context);
     dbg = die->di_cu_context->cc_dbg;
     res = _dwarf_get_value_ptr(die,attr,&attr_form,
         &info_ptr,error);
@@ -1411,9 +1419,15 @@ _dwarf_die_attr_unsigned_constant(Dwarf_Die die,
         *return_val = ret_value;
         return (DW_DLV_OK);
 
-    case DW_FORM_udata:
-        *return_val = (_dwarf_decode_u_leb128(info_ptr, NULL));
-        return (DW_DLV_OK);
+    case DW_FORM_udata: {
+        Dwarf_Unsigned v = 0;
+
+        DECODE_LEB128_UWORD_CK(info_ptr, v,dbg,error,die_info_end);
+        *return_val = v;
+        return DW_DLV_OK;
+
+
+    }
 
     default:
         _dwarf_error(dbg, error, DW_DLE_DIE_BAD);
