@@ -356,7 +356,6 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
             Dwarf_Unsigned dir_index = 0;
             Dwarf_Unsigned lastmod = 0;
             Dwarf_Unsigned file_length = 0;
-            Dwarf_Word leb128_length = 0;
             int resl = 0;
             Dwarf_File_Entry currfile  = 0;
 
@@ -386,13 +385,13 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
             }
             currfile->fi_dir_index = dir_index;
 
-            lastmod = _dwarf_decode_u_leb128(line_ptr, &leb128_length);
-            line_ptr = line_ptr + leb128_length;
+            DECODE_LEB128_UWORD_CK(line_ptr,lastmod,
+                dbg,err, line_ptr_end);
             currfile->fi_time_last_mod = lastmod;
 
             /* Skip over file length. */
-            file_length = _dwarf_decode_u_leb128(line_ptr, &leb128_length);
-            line_ptr = line_ptr + leb128_length;
+            DECODE_LEB128_UWORD_CK(line_ptr,file_length,
+                dbg,err, line_ptr_end);
             currfile->fi_file_length = file_length;
             if (line_ptr >= line_ptr_end) {
                 _dwarf_error(dbg, err, DW_DLE_LINE_NUMBER_HEADER_ERROR);
@@ -817,7 +816,6 @@ read_line_table_program(Dwarf_Debug dbg,
         holds the decoded number, and leb128_length is its length in
         bytes. */
     Dwarf_Word leb128_num = 0;
-    Dwarf_Word leb128_length = 0;
     Dwarf_Sword advance_line = 0;
 
     /*  This is the operand of the latest fixed_advance_pc extended
@@ -1458,6 +1456,7 @@ read_line_table_program(Dwarf_Debug dbg,
             case DW_LNE_define_file:
                 if (dolines) {
                     int res = 0;
+                    Dwarf_Unsigned value = 0;
                     cur_file_entry = (Dwarf_File_Entry)
                         malloc(sizeof(struct Dwarf_File_Entry_s));
                     if (cur_file_entry == NULL) {
@@ -1474,15 +1473,16 @@ read_line_table_program(Dwarf_Debug dbg,
                         return res;
                     }
                     line_ptr = line_ptr + strlen((char *) line_ptr) + 1;
-                    cur_file_entry->fi_dir_index = (Dwarf_Sword)
-                        _dwarf_decode_u_leb128(line_ptr, &leb128_length);
-                    line_ptr = line_ptr + leb128_length;
-                    cur_file_entry->fi_time_last_mod =
-                        _dwarf_decode_u_leb128(line_ptr, &leb128_length);
-                    line_ptr = line_ptr + leb128_length;
-                    cur_file_entry->fi_file_length =
-                        _dwarf_decode_u_leb128(line_ptr, &leb128_length);
-                    line_ptr = line_ptr + leb128_length;
+
+                    DECODE_LEB128_UWORD_CK(line_ptr,value,
+                        dbg,error,line_ptr_end);
+                    cur_file_entry->fi_dir_index = (Dwarf_Sword)value;
+                    DECODE_LEB128_UWORD_CK(line_ptr,value,
+                        dbg,error,line_ptr_end);
+                    cur_file_entry->fi_time_last_mod = value;
+                    DECODE_LEB128_UWORD_CK(line_ptr,value,
+                        dbg,error,line_ptr_end);
+                    cur_file_entry->fi_file_length = value;
 #ifdef PRINTING_DETAILS
                     dwarf_printf(dbg,
                         "DW_LNE_define_file %s \n", cur_file_entry->fi_file_name);

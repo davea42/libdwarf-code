@@ -93,7 +93,7 @@ dwarf_get_aranges_list(Dwarf_Debug dbg,
         int local_length_size;
 
         /*REFERENCED*/ /* Not used in this instance of the macro */
-        int local_extension_size = 0;
+        UNUSEDARG int local_extension_size = 0;
 
         header_ptr = arange_ptr;
 

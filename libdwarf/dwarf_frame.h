@@ -349,9 +349,14 @@ _dwarf_get_augmentation_type(Dwarf_Debug dbg,
     Dwarf_Small *augmentation_string,
     int is_gcc_eh_frame);
 
-Dwarf_Unsigned _dwarf_get_return_address_reg(Dwarf_Small *frame_ptr,
+int _dwarf_get_return_address_reg(Dwarf_Small *frame_ptr,
     int version,
-    unsigned long *size);
+    Dwarf_Debug dbg,
+    Dwarf_Byte_Ptr section_end,
+    unsigned long *size,
+    Dwarf_Unsigned *return_address_register,
+    Dwarf_Error *error);
+
 
 /*  Temporary recording of crucial cie/fde prefix data.
     Vastly simplifies some argument lists.  */

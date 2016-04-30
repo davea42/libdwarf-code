@@ -1,4 +1,16 @@
 2016-04-30 David Anderson
+    * dwarf_frame.c, dwarf_line_table_reader_common.c,
+      dwarf_loc2.c: switch to using DECODE_LEB*_CK.
+    * dwarf_frame.c: Delete unused local variables.
+         Use DECODE_LEB*_CK for better error checking.
+    * dwarf_frame2.c, dwarf_frame.h: Internal functions get new
+      arguments to support DECODE_LEB*_CK. 
+    * dwarf_arange.c: Using UNUSEDARG to suppress warning.
+    * dwarf_line_table_reader_common.c: Use DECODE_LEB*_CK 
+      for better error checking.
+    * dwarf_loc2.c: Use DECODE_LEB*_CK 
+      for better error checking.
+2016-04-30 David Anderson
     * dwarf_die_deliv.c: Deleted unused local variable.
     * dwarf_form.c,dwarf_macro.c, dwarf_macro5.c: Now uses 
       DCODE_LEB128*_CK nearly everywhere

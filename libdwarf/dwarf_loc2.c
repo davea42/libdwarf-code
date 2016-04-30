@@ -195,6 +195,8 @@ _dwarf_read_loc_section_dwo(Dwarf_Debug dbg,
     Dwarf_Small llecode = 0;
     Dwarf_Word leb128_length = 0;
     Dwarf_Unsigned expr_offset  = sec_offset;
+    Dwarf_Byte_Ptr section_end = dbg->de_debug_loc.dss_data
+        + dbg->de_debug_loc.dss_size;
 
     if (sec_offset >= dbg->de_debug_loc.dss_size) {
         /* We're at the end. No more present. */
@@ -218,8 +220,8 @@ _dwarf_read_loc_section_dwo(Dwarf_Debug dbg,
     case DW_LLE_base_address_selection_entry: {
         Dwarf_Unsigned addr_index = 0;
 
-        addr_index = _dwarf_decode_u_leb128(locptr, &leb128_length);
-        locptr += leb128_length;
+        DECODE_LEB128_UWORD_CK(locptr,addr_index,
+            dbg,error,section_end);
         return_block->bl_section_offset = expr_offset;
         /* So this behaves much like non-dwo loclist */
         *lowpc=MAX_ADDR;
@@ -231,11 +233,12 @@ _dwarf_read_loc_section_dwo(Dwarf_Debug dbg,
         Dwarf_Unsigned addr_indexe= 0;
         Dwarf_Half exprlen = 0;
 
-        addr_indexs= _dwarf_decode_u_leb128(locptr, &leb128_length);
-        locptr += leb128_length;
+        DECODE_LEB128_UWORD_CK(locptr,addr_indexs,
+            dbg,error,section_end);
         expr_offset += leb128_length;
-        addr_indexe= _dwarf_decode_u_leb128(locptr, &leb128_length);
-        locptr += leb128_length;
+
+        DECODE_LEB128_UWORD_CK(locptr,addr_indexe,
+            dbg,error,section_end);
         expr_offset +=leb128_length;
 
         *lowpc=addr_indexs;
@@ -263,8 +266,8 @@ _dwarf_read_loc_section_dwo(Dwarf_Debug dbg,
         Dwarf_ufixed  range_length = 0;
         Dwarf_Half exprlen = 0;
 
-        addr_index= _dwarf_decode_u_leb128(locptr, &leb128_length);
-        locptr += leb128_length;
+        DECODE_LEB128_UWORD_CK(locptr,addr_index,
+            dbg,error,section_end);
         expr_offset +=leb128_length;
 
         READ_UNALIGNED(dbg, range_length, Dwarf_ufixed, locptr,

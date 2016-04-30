@@ -62,7 +62,7 @@ static int get_gcc_eh_augmentation(Dwarf_Debug dbg,
     unsigned long
     *size_of_augmentation_data,
     enum Dwarf_augmentation_type augtype,
-    Dwarf_Small * section_pointer,
+    Dwarf_Small * section_end_pointer,
     Dwarf_Small * fde_eh_encoding_out,
     char *augmentation,
     Dwarf_Error *error);
@@ -82,6 +82,7 @@ static int read_encoded_ptr(Dwarf_Debug dbg,
     Dwarf_Small * section_pointer,
     Dwarf_Small * input_field,
     int gnu_encoding,
+    Dwarf_Small * section_ptr_end,
     Dwarf_Half address_size,
     Dwarf_Unsigned * addr,
     Dwarf_Small ** input_field_out,
@@ -594,7 +595,7 @@ dwarf_create_cie_from_after_start(Dwarf_Debug dbg,
         augmentation, use_gnu_cie_calc);
     if (augt == aug_eh) {
         /* REFERENCED *//* Not used in this instance */
-        Dwarf_Unsigned exception_table_addr;
+        UNUSEDARG Dwarf_Unsigned exception_table_addr;
 
         if ((frame_ptr+local_length_size)  >= section_ptr_end) {
             _dwarf_error(dbg, error, DW_DLE_DEBUG_FRAME_LENGTH_BAD);
@@ -652,8 +653,11 @@ dwarf_create_cie_from_after_start(Dwarf_Debug dbg,
             _dwarf_error(dbg, error, DW_DLE_DEBUG_FRAME_LENGTH_BAD);
             return DW_DLV_ERROR;
         }
-        return_address_register =
-            _dwarf_get_return_address_reg(frame_ptr, version, &size);
+        res = _dwarf_get_return_address_reg(frame_ptr, version,
+            dbg,section_ptr_end, &size,&return_address_register,error);
+        if(res != DW_DLV_OK) {
+            return res;
+        }
         if (return_address_register > dbg->de_frame_reg_rules_entry_count) {
             _dwarf_error(dbg, error, DW_DLE_CIE_RET_ADDR_REG_ERROR);
             return (DW_DLV_ERROR);
@@ -693,7 +697,7 @@ dwarf_create_cie_from_after_start(Dwarf_Debug dbg,
 
         err = get_gcc_eh_augmentation(dbg, frame_ptr, &increment,
             augt,
-            prefix->cf_section_ptr,
+            section_ptr_end,
             &eh_fde_encoding,
             (char *) augmentation,error);
         if (err == DW_DLV_ERROR) {
@@ -718,6 +722,10 @@ dwarf_create_cie_from_after_start(Dwarf_Debug dbg,
             dbg,error,section_ptr_end);
         cie_aug_data_len = adlen;
         cie_aug_data = frame_ptr;
+        if (frame_ptr + adlen > section_ptr_end) {
+            _dwarf_error(dbg, error, DW_DLE_DEBUG_FRAME_LENGTH_BAD);
+            return DW_DLV_ERROR;
+        }
         resz = gnu_aug_encodings(dbg,
             (char *) augmentation,
             cie_aug_data,
@@ -851,6 +859,7 @@ dwarf_create_fde_from_after_start(Dwarf_Debug dbg,
                 section_pointer,
                 frame_ptr,
                 cieptr-> ci_gnu_fde_begin_encoding,
+                section_ptr_end,
                 address_size,
                 &initial_location,
                 &fp_updated,error);
@@ -866,6 +875,7 @@ dwarf_create_fde_from_after_start(Dwarf_Debug dbg,
             res = read_encoded_ptr(dbg, (Dwarf_Small *) NULL,
                 frame_ptr,
                 cieptr->ci_gnu_fde_begin_encoding,
+                section_ptr_end,
                 address_size,
                 &address_range, &fp_updated,error);
             if (res != DW_DLV_OK) {
@@ -1326,6 +1336,7 @@ gnu_aug_encodings(Dwarf_Debug dbg, char *augmentation,
                 (Dwarf_Small *) NULL,
                 cur_aug_p,
                 encoding,
+                end_aug_p,
                 address_size,
                 gnu_pers_addr_out,
                 &updated_aug_p,
@@ -1360,12 +1371,12 @@ read_encoded_ptr(Dwarf_Debug dbg,
     Dwarf_Small * section_pointer,
     Dwarf_Small * input_field,
     int gnu_encoding,
+    Dwarf_Small * section_end,
     Dwarf_Half address_size,
     Dwarf_Unsigned * addr,
     Dwarf_Small ** input_field_updated,
     Dwarf_Error *error)
 {
-    Dwarf_Word length = 0;
     int value_type = gnu_encoding & 0xf;
     Dwarf_Small *input_field_original = input_field;
 
@@ -1390,11 +1401,11 @@ read_encoded_ptr(Dwarf_Debug dbg,
         }
         break;
     case DW_EH_PE_uleb128:{
-        Dwarf_Unsigned val = _dwarf_decode_u_leb128(input_field,
-            &length);
+        Dwarf_Unsigned val = 0;
 
+        DECODE_LEB128_UWORD_CK(input_field,val,dbg,error,section_end);
         *addr = val;
-        *input_field_updated = input_field + length;
+        *input_field_updated = input_field;
         }
         break;
     case DW_EH_PE_udata2:{
@@ -1430,11 +1441,11 @@ read_encoded_ptr(Dwarf_Debug dbg,
         break;
 
     case DW_EH_PE_sleb128:{
-        Dwarf_Signed val = _dwarf_decode_s_leb128(input_field,
-            &length);
+        Dwarf_Signed val = 0;
 
+        DECODE_LEB128_SWORD_CK(input_field,val,dbg,error,section_end);
         *addr = (Dwarf_Unsigned) val;
-        *input_field_updated = input_field + length;
+        *input_field_updated = input_field;
         }
         break;
     case DW_EH_PE_sdata2:{
@@ -1568,14 +1579,16 @@ _dwarf_get_augmentation_type(UNUSEDARG Dwarf_Debug dbg,
     caller can increment frame_ptr appropriately).
 
     'frame_ptr' points within section.
-    'section_pointer' points to section base address in memory.
+    'section_end' points to end of section area of interest.
+
+     Why is fde_eh_encoding_out there? It's unused.
 */
 /* ARGSUSED */
 static int
 get_gcc_eh_augmentation(Dwarf_Debug dbg, Dwarf_Small * frame_ptr,
     unsigned long *size_of_augmentation_data,
     enum Dwarf_augmentation_type augtype,
-    UNUSEDARG Dwarf_Small * section_pointer,
+    Dwarf_Small * section_ptr_end,
     Dwarf_Small * fde_eh_encoding_out,
     char *augmentation,
     Dwarf_Error *error)
@@ -1585,12 +1598,13 @@ get_gcc_eh_augmentation(Dwarf_Debug dbg, Dwarf_Small * frame_ptr,
 
     if (augtype == aug_gcc_eh_z) {
         /* Has leading 'z'. */
+        UNUSEDARG Dwarf_Unsigned val = 0;
         Dwarf_Word leb128_length = 0;
 
         /* Dwarf_Unsigned eh_value = */
-        _dwarf_decode_u_leb128(frame_ptr, &leb128_length);
+        DECODE_LEB128_UWORD_LEN_CK(frame_ptr,val,leb128_length,
+            dbg,error,section_ptr_end);
         augdata_size += leb128_length;
-        frame_ptr += leb128_length;
         suffix = augmentation + 1;
     } else {
         /*  Prefix is 'eh'.  As in gcc 3.2. No suffix present

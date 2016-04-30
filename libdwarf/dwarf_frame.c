@@ -223,7 +223,6 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
 
     struct Dwarf_Reg_Rule_s cfa_reg;
 
-
     /*  This is used to end executing frame instructions.  */
     /*  Becomes true when search_pc is true and current_loc */
     /*  is greater than search_pc_val.  */
@@ -232,10 +231,6 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
     /*  Used by the DW_FRAME_advance_loc instr */
     /*  to hold the increment in pc value.  */
     Dwarf_Addr adv_pc;
-
-    /*  Contains the length in bytes of */
-    /*  an leb128 encoded number.  */
-    Dwarf_Word leb128_length;
 
     Dwarf_Half address_size = (cie)? cie->ci_address_size:
         dbg->de_pointer_size;
@@ -381,9 +376,8 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
                     (reg_num_type) (instr & DW_FRAME_INSTR_OFFSET_MASK);
                 ERROR_IF_REG_NUM_TOO_HIGH(reg_no, reg_count);
 
-                factored_N_value =
-                    _dwarf_decode_u_leb128(instr_ptr, &leb128_length);
-                instr_ptr = instr_ptr + leb128_length;
+                DECODE_LEB128_UWORD_CK(instr_ptr, factored_N_value,
+                    dbg,error,final_instr_ptr);
 
                 fp_register = reg_no;
                 fp_offset = factored_N_value;
@@ -521,9 +515,9 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
                     dbg,error,final_instr_ptr);
                 reg_no = (reg_num_type) lreg;
                 ERROR_IF_REG_NUM_TOO_HIGH(reg_no, reg_count);
-                factored_N_value =
-                    _dwarf_decode_u_leb128(instr_ptr, &leb128_length);
-                instr_ptr += leb128_length;
+
+                DECODE_LEB128_UWORD_CK(instr_ptr, factored_N_value,
+                    dbg,error,final_instr_ptr);
 
                 if (need_augmentation) {
                     SIMPLE_ERROR_RETURN(DW_DLE_DF_NO_CIE_AUGMENTATION);
@@ -675,9 +669,8 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
 
                 ERROR_IF_REG_NUM_TOO_HIGH(reg_no, reg_count);
 
-                factored_N_value =
-                    _dwarf_decode_u_leb128(instr_ptr, &leb128_length);
-                instr_ptr += leb128_length;
+                DECODE_LEB128_UWORD_CK(instr_ptr, factored_N_value,
+                    dbg,error,final_instr_ptr);
 
                 if (need_augmentation) {
                     SIMPLE_ERROR_RETURN(DW_DLE_DF_NO_CIE_AUGMENTATION);
@@ -710,9 +703,8 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
 
         case DW_CFA_def_cfa_offset:
             {
-                factored_N_value =
-                    _dwarf_decode_u_leb128(instr_ptr, &leb128_length);
-                instr_ptr += leb128_length;
+                DECODE_LEB128_UWORD_CK(instr_ptr, factored_N_value,
+                    dbg,error,final_instr_ptr);
 
                 if (need_augmentation) {
                     SIMPLE_ERROR_RETURN(DW_DLE_DF_NO_CIE_AUGMENTATION);
@@ -730,9 +722,8 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
             We do not really know what to do with it. */
         case DW_CFA_METAWARE_info:
             {
-                factored_N_value =
-                    _dwarf_decode_u_leb128(instr_ptr, &leb128_length);
-                instr_ptr += leb128_length;
+                DECODE_LEB128_UWORD_CK(instr_ptr, factored_N_value,
+                    dbg,error,final_instr_ptr);
 
                 /* Not really known what the value means or is. */
                 cfa_reg.ru_is_off = 1;
@@ -801,9 +792,9 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
                     dbg,error,final_instr_ptr);
                 reg_no = (reg_num_type) lreg;
                 ERROR_IF_REG_NUM_TOO_HIGH(reg_no, reg_count);
-                signed_factored_N_value =
-                    _dwarf_decode_s_leb128(instr_ptr, &leb128_length);
-                instr_ptr += leb128_length;
+
+                DECODE_LEB128_SWORD_CK(instr_ptr, signed_factored_N_value,
+                    dbg,error,final_instr_ptr);
 
                 if (need_augmentation) {
                     SIMPLE_ERROR_RETURN(DW_DLE_DF_NO_CIE_AUGMENTATION);
@@ -831,9 +822,8 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
                 reg_no = (reg_num_type) lreg;
                 ERROR_IF_REG_NUM_TOO_HIGH(reg_no, reg_count);
 
-                signed_factored_N_value =
-                    _dwarf_decode_s_leb128(instr_ptr, &leb128_length);
-                instr_ptr += leb128_length;
+                DECODE_LEB128_SWORD_CK(instr_ptr, signed_factored_N_value,
+                    dbg,error,final_instr_ptr);
 
                 if (need_augmentation) {
                     SIMPLE_ERROR_RETURN(DW_DLE_DF_NO_CIE_AUGMENTATION);
@@ -855,10 +845,8 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
                     DW_CFA_def_cfa_offset excep the operand is signed
                     and factored. */
 
-                signed_factored_N_value =
-                    _dwarf_decode_s_leb128(instr_ptr, &leb128_length);
-                instr_ptr += leb128_length;
-
+                DECODE_LEB128_SWORD_CK(instr_ptr, signed_factored_N_value,
+                    dbg,error,final_instr_ptr);
                 if (need_augmentation) {
                     SIMPLE_ERROR_RETURN(DW_DLE_DF_NO_CIE_AUGMENTATION);
                 }
@@ -887,9 +875,8 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
 
                 ERROR_IF_REG_NUM_TOO_HIGH(reg_no, reg_count);
 
-                factored_N_value =
-                    _dwarf_decode_u_leb128(instr_ptr, &leb128_length);
-                instr_ptr += leb128_length;
+                DECODE_LEB128_UWORD_CK(instr_ptr, factored_N_value,
+                    dbg,error,final_instr_ptr);
 
                 if (need_augmentation) {
                     SIMPLE_ERROR_RETURN(DW_DLE_DF_NO_CIE_AUGMENTATION);
@@ -918,10 +905,8 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
                 reg_no = (reg_num_type) lreg;
 
                 ERROR_IF_REG_NUM_TOO_HIGH(reg_no, reg_count);
-                signed_factored_N_value =
-                    _dwarf_decode_s_leb128(instr_ptr, &leb128_length);
-                instr_ptr += leb128_length;
-
+                DECODE_LEB128_SWORD_CK(instr_ptr, signed_factored_N_value,
+                    dbg,error,final_instr_ptr);
                 if (need_augmentation) {
                     SIMPLE_ERROR_RETURN(DW_DLE_DF_NO_CIE_AUGMENTATION);
                 }
@@ -1096,9 +1081,14 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
     as a ubyte or as an leb number.
     The form of this value changed for DWARF3.
 */
-Dwarf_Unsigned
-_dwarf_get_return_address_reg(Dwarf_Small * frame_ptr,
-    int version, unsigned long *size)
+int
+_dwarf_get_return_address_reg(Dwarf_Small *frame_ptr,
+    int version,
+    Dwarf_Debug dbg,
+    Dwarf_Byte_Ptr section_end,
+    unsigned long *size,
+    Dwarf_Unsigned *return_address_register,
+    Dwarf_Error *error)
 {
     Dwarf_Unsigned uvalue = 0;
     Dwarf_Word leb128_length = 0;
@@ -1106,11 +1096,14 @@ _dwarf_get_return_address_reg(Dwarf_Small * frame_ptr,
     if (version == 1) {
         *size = 1;
         uvalue = *(unsigned char *) frame_ptr;
-        return uvalue;
+        *return_address_register = uvalue;
+        return DW_DLV_OK;
     }
-    uvalue = _dwarf_decode_u_leb128(frame_ptr, &leb128_length);
+    DECODE_LEB128_UWORD_LEN_CK(frame_ptr,uvalue,leb128_length,
+        dbg,error,section_end);
     *size = leb128_length;
-    return uvalue;
+    *return_address_register = uvalue;
+    return DW_DLV_OK;
 }
 
 
