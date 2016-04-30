@@ -269,7 +269,7 @@ dwarf_get_macro_details(Dwarf_Debug dbg,
         case DW_MACINFO_vendor_ext:
             /* number, string */
             DECODE_LEB128_UWORD_CK(pnext,utemp,dbg,error,
-               macro_end);
+                macro_end);
             if (((Dwarf_Unsigned)(pnext - macro_base)) >=
                 dbg->de_debug_macinfo.dss_size) {
                 free_macro_stack(dbg,&msdata);
@@ -296,7 +296,7 @@ dwarf_get_macro_details(Dwarf_Debug dbg,
         case DW_MACINFO_start_file:
             /* line, file index */
             DECODE_LEB128_UWORD_CK(pnext,utemp,dbg,error,
-               macro_end);
+                macro_end);
             if (((Dwarf_Unsigned)(pnext - macro_base)) >=
                 dbg->de_debug_macinfo.dss_size) {
                 free_macro_stack(dbg,&msdata);
@@ -305,7 +305,7 @@ dwarf_get_macro_details(Dwarf_Debug dbg,
                 return (DW_DLV_ERROR);
             }
             DECODE_LEB128_UWORD_CK(pnext,utemp,dbg,error,
-               macro_end);
+                macro_end);
             if (((Dwarf_Unsigned)(pnext - macro_base)) >=
                 dbg->de_debug_macinfo.dss_size) {
                 free_macro_stack(dbg,&msdata);
@@ -396,9 +396,9 @@ dwarf_get_macro_details(Dwarf_Debug dbg,
         case DW_MACINFO_vendor_ext:
             /* number, string */
             DECODE_LEB128_UWORD_CK(pnext,v1,dbg,error,
-               macro_end);
+                macro_end);
             pdmd->dmd_lineno = v1;
-            
+
             if (((Dwarf_Unsigned)(pnext - macro_base)) >=
                 dbg->de_debug_macinfo.dss_size) {
                 free_macro_stack(dbg,&msdata);
@@ -429,7 +429,7 @@ dwarf_get_macro_details(Dwarf_Debug dbg,
         case DW_MACINFO_start_file:
             /* Line, file index */
             DECODE_LEB128_UWORD_CK(pnext,v1,dbg,error,
-               macro_end);
+                macro_end);
             pdmd->dmd_lineno = v1;
             if (((Dwarf_Unsigned)(pnext - macro_base)) >=
                 dbg->de_debug_macinfo.dss_size) {
@@ -440,7 +440,7 @@ dwarf_get_macro_details(Dwarf_Debug dbg,
                 return (DW_DLV_ERROR);
             }
             DECODE_LEB128_UWORD_CK(pnext,v1,dbg,error,
-               macro_end);
+                macro_end);
             pdmd->dmd_fileindex = v1;
             (void) _dwarf_macro_stack_push_index(dbg, fileindex,
                 &msdata);

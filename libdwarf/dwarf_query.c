@@ -768,12 +768,13 @@ _dwarf_look_in_local_and_tied(Dwarf_Half attr_form,
 
     /*  We get the index. It might apply here
         or in tied object. Checking that next. */
+    dbg = context->cc_dbg;
+
     res2 = _dwarf_get_addr_index_itself(attr_form,
-        info_ptr,&index_to_addr,error);
+        info_ptr,dbg,context, &index_to_addr,error);
     if(res2 != DW_DLV_OK) {
         return res2;
     }
-    dbg = context->cc_dbg;
     /* error is returned on dbg, not tieddbg. */
     res2 = _dwarf_look_in_local_and_tied_by_index(
         dbg,context,index_to_addr,return_addr,error);
@@ -1174,7 +1175,7 @@ dwarf_highpc_b(Dwarf_Die die,
                 to this dbg or to tieddbg. */
             /* error is returned on dbg, not tied */
             res2 = _dwarf_get_addr_index_itself(attr_form,
-                info_ptr,&index_to_addr,error);
+                info_ptr,dbg,context,&index_to_addr,error);
             if(res2 != DW_DLV_OK) {
                 return res2;
             }

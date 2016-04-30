@@ -326,7 +326,7 @@ _dwarf_get_size_of_val(Dwarf_Debug dbg,
         /*  Discard the decoded value, we just want the length
             of the value. */
         DECODE_LEB128_SWORD_LEN_CK(val_ptr,v,leb128_length,
-                dbg,error,section_end_ptr);
+            dbg,error,section_end_ptr);
         *size_out = leb128_length;
         return DW_DLV_OK;
     }
@@ -339,7 +339,7 @@ _dwarf_get_size_of_val(Dwarf_Debug dbg,
         UNUSEDARG Dwarf_Unsigned v = 0;
 
         DECODE_LEB128_UWORD_LEN_CK(val_ptr,v,leb128_length,
-                dbg,error,section_end_ptr);
+            dbg,error,section_end_ptr);
         *size_out = leb128_length;
         return DW_DLV_OK;
     }
@@ -354,7 +354,7 @@ _dwarf_get_size_of_val(Dwarf_Debug dbg,
         UNUSEDARG Dwarf_Unsigned v = 0;
 
         DECODE_LEB128_UWORD_LEN_CK(val_ptr,v,leb128_length,
-                dbg,error,section_end_ptr);
+            dbg,error,section_end_ptr);
         *size_out = leb128_length;
         return DW_DLV_OK;
     }

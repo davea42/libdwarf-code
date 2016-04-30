@@ -1,3 +1,13 @@
+2016-04-30 David Anderson
+    * dwarf_die_deliv.c: Deleted unused local variable.
+    * dwarf_form.c,dwarf_macro.c, dwarf_macro5.c: Now uses 
+      DCODE_LEB128*_CK nearly everywhere
+      for better checking for corrupted data.
+    * dwarf_opaque.h:New argument to _dwarf_get_addr_index_itself()
+      for better data checks..
+    * dwarf_query.c: Uses revised _dwarf_get_addr_index_itself()
+      interface.
+    * dwarf_util.c: Fixed formatting errors.
 2016-04-29 David Anderson
     * dwarf_line_table_reader_common.c, dwarf_macro.c,
       dwarf_macro5.c, dwarf_util.c, dwarf_util.h:

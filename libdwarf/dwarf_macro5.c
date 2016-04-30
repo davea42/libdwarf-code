@@ -485,7 +485,7 @@ dwarf_get_macro_defundef(Dwarf_Macro_Context macro_context,
         const char * content = 0;
 
         DECODE_LEB128_UWORD_CK(mdata,linenum,
-                dbg, error,endptr);
+            dbg, error,endptr);
         content = (const char *)mdata;
         res = _dwarf_check_string_valid(dbg,
             startptr,mdata, endptr, error);
@@ -508,7 +508,7 @@ dwarf_get_macro_defundef(Dwarf_Macro_Context macro_context,
 
 
         DECODE_LEB128_UWORD_CK(mdata,linenum,
-                dbg, error,endptr);
+            dbg, error,endptr);
         READ_UNALIGNED(dbg,stringoffset,Dwarf_Unsigned,
             mdata,macro_context->mc_offset_size);
         mdata += macro_context->mc_offset_size;
@@ -596,7 +596,7 @@ dwarf_get_macro_defundef(Dwarf_Macro_Context macro_context,
         Dwarf_Error lerr = 0;
 
         DECODE_LEB128_UWORD_CK(mdata,linenum,
-                dbg, error,endptr);
+            dbg, error,endptr);
         READ_UNALIGNED(dbg,supoffset,Dwarf_Unsigned,
             mdata,macro_context->mc_offset_size);
         mdata += macro_context->mc_offset_size;
@@ -946,7 +946,7 @@ read_operands_table(Dwarf_Macro_Context macro_context,
         macro_data += sizeof(Dwarf_Small);
 
         DECODE_LEB128_UWORD_CK(macro_data,formcount,
-                dbg, error, endptr);
+            dbg, error, endptr);
         cur_offset = (formcount+ macro_data) - section_base;
         if (cur_offset >= section_size) {
             _dwarf_error(dbg, error, DW_DLE_MACRO_OFFSET_BAD);
@@ -982,11 +982,11 @@ read_operands_table(Dwarf_Macro_Context macro_context,
             macro_data,sizeof(Dwarf_Small));
         macro_data += sizeof(Dwarf_Small);
         DECODE_LEB128_UWORD_CK(macro_data,formcount,
-                dbg, error, endptr);
+            dbg, error, endptr);
 
         curformentry->mf_code = opcode_number;
         curformentry->mf_formcount = formcount;
-        
+
         cur_offset = (formcount+ macro_data) - section_base;
         if (cur_offset >= section_size) {
             _dwarf_error(dbg, error, DW_DLE_MACRO_OFFSET_BAD);

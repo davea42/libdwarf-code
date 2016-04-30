@@ -766,6 +766,8 @@ int _dwarf_get_fission_addition_die(Dwarf_Die die, int dw_sect_index,
 
 int _dwarf_get_addr_index_itself(int theform,
     Dwarf_Small *info_ptr,
+    Dwarf_Debug dbg,
+    Dwarf_CU_Context cu_context,
     Dwarf_Unsigned *val_out,
     Dwarf_Error * error);
 

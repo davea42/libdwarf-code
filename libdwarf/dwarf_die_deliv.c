@@ -1215,7 +1215,6 @@ _dwarf_next_die_info_ptr(Dwarf_Byte_Ptr die_info_ptr,
     Dwarf_Half attr = 0;
     Dwarf_Half attr_form = 0;
     Dwarf_Unsigned offset = 0;
-    Dwarf_Word leb128_length = 0;
     Dwarf_Unsigned utmp = 0;
     Dwarf_Debug dbg = 0;
     Dwarf_Byte_Ptr abbrev_end = 0;
