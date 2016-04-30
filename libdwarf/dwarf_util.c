@@ -207,14 +207,15 @@ _dwarf_get_size_of_val(Dwarf_Debug dbg,
         return DW_DLV_OK;
 
     case DW_FORM_block2:
-        READ_UNALIGNED(dbg, ret_value, Dwarf_Unsigned,
-            val_ptr, sizeof(Dwarf_Half));
+        READ_UNALIGNED_CK(dbg, ret_value, Dwarf_Unsigned,
+            val_ptr, sizeof(Dwarf_Half),error,section_end_ptr);
         *size_out = ret_value + sizeof(Dwarf_Half);
         return DW_DLV_OK;
 
     case DW_FORM_block4:
-        READ_UNALIGNED(dbg, ret_value, Dwarf_Unsigned,
-            val_ptr, sizeof(Dwarf_ufixed));
+        READ_UNALIGNED_CK(dbg, ret_value, Dwarf_Unsigned,
+            val_ptr, sizeof(Dwarf_ufixed),
+            error,section_end_ptr);
         *size_out = ret_value + sizeof(Dwarf_ufixed);
         return DW_DLV_OK;
 

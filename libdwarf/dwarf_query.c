@@ -647,6 +647,8 @@ _dwarf_extract_address_from_debug_addr(Dwarf_Debug dbg,
     Dwarf_Unsigned addr_offset = 0;
     Dwarf_Unsigned ret_addr = 0;
     int res = 0;
+    Dwarf_Byte_Ptr  sectionstart = 0;
+    Dwarf_Unsigned  sectionsize  = 0;
 
     res = _dwarf_get_address_base_attr_value(dbg,context,
         &address_base, error);
@@ -675,14 +677,14 @@ _dwarf_extract_address_from_debug_addr(Dwarf_Debug dbg,
 
     /*  The offsets table is a series of address-size entries
         but with a base. */
-    if ((addr_offset + context->cc_address_size) >
-        dbg->de_debug_addr.dss_size ) {
+    sectionsize = dbg->de_debug_addr.dss_size;
+    if ((addr_offset + context->cc_address_size) > sectionsize) {
         _dwarf_error(dbg, error, DW_DLE_ATTR_FORM_SIZE_BAD);
         return (DW_DLV_ERROR);
     }
-
+    sectionstart = dbg->de_debug_addr.dss_data;
     READ_UNALIGNED(dbg,ret_addr,Dwarf_Addr,
-        dbg->de_debug_addr.dss_data + addr_offset,
+        sectionstart + addr_offset,
         context->cc_address_size);
     *addr_out = ret_addr;
     return DW_DLV_OK;

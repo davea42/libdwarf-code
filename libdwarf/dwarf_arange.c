@@ -69,6 +69,7 @@ dwarf_get_aranges_list(Dwarf_Debug dbg,
     Dwarf_Signed arange_count = 0;
 
     Dwarf_Arange arange = 0;
+    Dwarf_Byte_Ptr arange_end_section = 0;
 
     /*  Used to chain Dwarf_Aranges structs. */
     Dwarf_Chain curr_chain = NULL;
@@ -81,6 +82,7 @@ dwarf_get_aranges_list(Dwarf_Debug dbg,
 
     arange_ptr = dbg->de_debug_aranges.dss_data;
     arange_ptr_start = arange_ptr;
+    arange_end_section = arange_ptr + dbg->de_debug_aranges.dss_size;
     do {
         /*  Length of current set of aranges.
             This is local length, which begins just
@@ -106,16 +108,18 @@ dwarf_get_aranges_list(Dwarf_Debug dbg,
         arange_ptr_past_end = arange_ptr + area_length;
 
 
-        READ_UNALIGNED(dbg, version, Dwarf_Half,
-            arange_ptr, sizeof(Dwarf_Half));
+        READ_UNALIGNED_CK(dbg, version, Dwarf_Half,
+            arange_ptr, sizeof(Dwarf_Half),
+            error,arange_ptr_past_end);
         arange_ptr += sizeof(Dwarf_Half);
         if (version != DW_ARANGES_VERSION2) {
             _dwarf_error(dbg, error, DW_DLE_VERSION_STAMP_ERROR);
             return (DW_DLV_ERROR);
         }
 
-        READ_UNALIGNED(dbg, info_offset, Dwarf_Off,
-            arange_ptr, local_length_size);
+        READ_UNALIGNED_CK(dbg, info_offset, Dwarf_Off,
+            arange_ptr, local_length_size,
+            error,arange_ptr_past_end);
         arange_ptr += local_length_size;
         /* This applies to debug_info only, not to debug_types. */
         if (info_offset >= dbg->de_debug_info.dss_size) {
@@ -166,17 +170,20 @@ dwarf_get_aranges_list(Dwarf_Debug dbg,
                 Surprising since the segment_size was always there
                 in the table header! */
             if ((version  >= 4) && (segment_size != 0)) {
-                READ_UNALIGNED(dbg, segment_selector, Dwarf_Unsigned,
-                    arange_ptr, segment_size);
+                READ_UNALIGNED_CK(dbg, segment_selector, Dwarf_Unsigned,
+                    arange_ptr, segment_size,
+                    error,arange_ptr_past_end);
                 arange_ptr += address_size;
             }
 
-            READ_UNALIGNED(dbg, range_address, Dwarf_Addr,
-                arange_ptr, address_size);
+            READ_UNALIGNED_CK(dbg, range_address, Dwarf_Addr,
+                arange_ptr, address_size,
+                error,arange_ptr_past_end);
             arange_ptr += address_size;
 
-            READ_UNALIGNED(dbg, range_length, Dwarf_Unsigned,
-                arange_ptr, address_size);
+            READ_UNALIGNED_CK(dbg, range_length, Dwarf_Unsigned,
+                arange_ptr, address_size,
+                error,arange_ptr_past_end);
             arange_ptr += address_size;
 
             {
@@ -241,11 +248,9 @@ dwarf_get_aranges_list(Dwarf_Debug dbg,
         /*  For most compilers, arange_ptr == arange_ptr_past_end at
             this point. But not if there were padding bytes */
         arange_ptr = arange_ptr_past_end;
-    } while (arange_ptr <
-        dbg->de_debug_aranges.dss_data + dbg->de_debug_aranges.dss_size);
+    } while (arange_ptr < arange_end_section);
 
-    if (arange_ptr !=
-        dbg->de_debug_aranges.dss_data + dbg->de_debug_aranges.dss_size) {
+    if (arange_ptr != arange_end_section) {
         _dwarf_error(dbg, error, DW_DLE_ARANGE_DECODE_ERROR);
         return (DW_DLV_ERROR);
     }

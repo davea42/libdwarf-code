@@ -198,6 +198,8 @@
    The decl here should avoid any problem of size in the temp.
    This code is ENDIAN DEPENDENT
    The memcpy args are the endian issue.
+
+   for READ_UNALIGNED_CK the error code refers to host endianness.
 */
 typedef Dwarf_Unsigned BIGGEST_UINT;
 
@@ -205,6 +207,19 @@ typedef Dwarf_Unsigned BIGGEST_UINT;
 #define READ_UNALIGNED(dbg,dest,desttype, source, length)                 \
     do {                                                                  \
         BIGGEST_UINT _ltmp = 0;                                           \
+        dbg->de_copy_word( (((char *)(&_ltmp)) + sizeof(_ltmp) - length), \
+            source, length) ;                                             \
+        dest = (desttype)_ltmp;                                           \
+    } while (0)
+
+#define READ_UNALIGNED_CK(dbg,dest,desttype, source, length,error,endptr) \
+    do {                                                                  \
+        BIGGEST_UINT _ltmp = 0;                                           \
+        Dwarf_Byte_Ptr readend = source+length;                           \
+        if (readend > endptr) {                                           \
+            _dwarf_error(dbg, error, DW_DLE_READ_LITTLEENDIAN_ERROR);    \
+            return DW_DLV_ERROR;                                          \
+        }                                                                 \
         dbg->de_copy_word( (((char *)(&_ltmp)) + sizeof(_ltmp) - length), \
             source, length) ;                                             \
         dest = (desttype)_ltmp;                                           \
@@ -231,6 +246,20 @@ typedef Dwarf_Unsigned BIGGEST_UINT;
 #define READ_UNALIGNED(dbg,dest,desttype, source, length) \
     do  {                                                 \
         BIGGEST_UINT _ltmp = 0;                           \
+        dbg->de_copy_word( (char *)(&_ltmp) ,             \
+            source, length) ;                             \
+        dest = (desttype)_ltmp;                           \
+    } while (0)
+
+
+#define READ_UNALIGNED_CK(dbg,dest,desttype, source, length,error,endptr) \
+    do  {                                                 \
+        BIGGEST_UINT _ltmp = 0;                           \
+        Dwarf_Byte_Ptr readend = source+length;           \
+        if (readend > endptr) {                           \
+            _dwarf_error(dbg, error, DW_DLE_READ_BIGENDIAN_ERROR);\
+            return DW_DLV_ERROR;                          \
+        }                                                 \
         dbg->de_copy_word( (char *)(&_ltmp) ,             \
             source, length) ;                             \
         dest = (desttype)_ltmp;                           \

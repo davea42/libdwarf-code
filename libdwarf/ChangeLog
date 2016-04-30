@@ -1,4 +1,11 @@
 2016-04-30 David Anderson
+    * dwarf_arange.c,dwarf_util.c: first use of READ_UNALIGNED_CK.
+    * dwarf_errmsg_list.c, libdwarf.h.in: DW_DLE_READ_LITTLEENDIAN_ERROR
+      and DW_DLE_READ_BIGENDIAN_ERROR are errors possible
+      in READ_UNALIGNED_CK.
+    * dwarf_query.c: Using local variables for shorter lines.
+    * dwarf_util.h: Implement READ_UNALIGNED_CK macros.
+2016-04-30 David Anderson
     * dwarf_frame.c, dwarf_line_table_reader_common.c,
       dwarf_loc2.c: switch to using DECODE_LEB*_CK.
     * dwarf_frame.c: Delete unused local variables.

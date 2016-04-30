@@ -1247,9 +1247,11 @@ struct Dwarf_Obj_Access_Interface_s {
 #define DW_DLE_ELF_FLAGS_NOT_AVAILABLE         328
 #define DW_DLE_LEB_IMPROPER                    329
 #define DW_DLE_DEBUG_LINE_RANGE_ZERO           330
+#define DW_DLE_READ_LITTLEENDIAN_ERROR         331
+#define DW_DLE_READ_BIGENDIAN_ERROR            332
 
     /* DW_DLE_LAST MUST EQUAL LAST ERROR NUMBER */
-#define DW_DLE_LAST        330
+#define DW_DLE_LAST        332
 #define DW_DLE_LO_USER     0x10000
 
     /*  Taken as meaning 'undefined value', this is not
