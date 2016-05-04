@@ -341,7 +341,7 @@ dump_die_offsets(Dwarf_Debug dbg, Dwarf_Die die,
     DROP_ERROR_INSTANCE(dbg,res,dderr);
     res = dwarf_tag(die, &tag, &dderr);
     DROP_ERROR_INSTANCE(dbg,res,dderr);
-    printf("dadebug Die tag 0x%x GOFF 0x%llx Loff 0x%llx %s\n",
+    printf("debugonly: Die tag 0x%x GOFF 0x%llx Loff 0x%llx %s\n",
         tag,goff,loff,msg);
 }
 #endif
@@ -807,10 +807,15 @@ print_one_die_section(Dwarf_Debug dbg,Dwarf_Bool is_info,
                 char **srcfiles = 0;
                 int srcf = dwarf_srcfiles(cu_die,
                     &srcfiles, &cnt, pod_err);
-                if (srcf != DW_DLV_OK) {
+                if (srcf == DW_DLV_ERROR) {
+                    print_error_and_continue(dbg, "dwarf_srcfiles",
+                        srcf,*pod_err);
                     srcfiles = 0;
                     cnt = 0;
-                }
+                } /*DW_DLV_NO_ENTRY generally means there
+                    there is no dW_AT_stmt_list attribute.
+                    and we do not want to print anything
+                    about statements in that case */
 
                 /* Get the CU offset for easy error reporting */
                 dwarf_die_offsets(cu_die,&DIE_overall_offset,&DIE_offset,pod_err);

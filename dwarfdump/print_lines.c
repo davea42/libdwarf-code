@@ -162,7 +162,7 @@ process_line_table(Dwarf_Debug dbg,
         } else if (is_actuals_table) {
             printf("[logical] BB ET IS=\n");
         } else {
-            printf("[row,col] NS BB ET PE EB IS= DI= uri: \"filepath\"\n");
+            printf("[lno,col] NS BB ET PE EB IS= DI= uri: \"filepath\"\n");
         }
     }
     for (i = 0; i < linecount; i++) {
@@ -306,7 +306,8 @@ process_line_table(Dwarf_Debug dbg,
                     the one created by DW_LNE_end_sequence,
                     is the same as the high_pc
                     address for the last known user program
-                    unit (PU) */
+                    unit (PU).
+                    There is no real reason */
                 if ((i + 1 == linecount) &&
                     seen_PU_high_address &&
                     !is_logicals_table) {
@@ -324,13 +325,15 @@ process_line_table(Dwarf_Debug dbg,
                         DWARF_CHECK_COUNT(lines_result,1);
                         if ((pc != PU_high_address) &&
                             (PU_base_address != elf_max_address)) {
-                            char addr_tmp[100];
+                            char addr_tmp[140];
                             snprintf(addr_tmp,sizeof(addr_tmp),
                                 "%s: Address"
                                 " 0x%" DW_PR_XZEROS DW_PR_DUx
-                                " may be incorrect"
-                                " as DW_LNE_end_sequence address",
-                                sec_name,pc);
+                                " DW_LNE_end_sequence address does not"
+                                " exactly match"
+                                " high function addr: "
+                                " 0x%" DW_PR_XZEROS DW_PR_DUx,
+                                sec_name,pc,PU_high_address);
                             DWARF_CHECK_ERROR(lines_result,
                                 addr_tmp);
                         }
@@ -829,7 +832,8 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
                 Dwarf_Bool is_actuals = FALSE;
                 process_line_table(dbg,sec_name, linebuf, linecount,
                     is_logicals, is_actuals);
-                process_line_table(dbg,sec_name, linebuf_actuals, linecount_actuals,
+                process_line_table(dbg,sec_name, 
+                    linebuf_actuals, linecount_actuals,
                     !is_logicals, !is_actuals);
             }
             dwarf_srclines_dealloc(dbg,linebuf,linecount);

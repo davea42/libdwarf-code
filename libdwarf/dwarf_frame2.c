@@ -1,5 +1,4 @@
 /*
-
   Copyright (C) 2000-2006 Silicon Graphics, Inc.  All Rights Reserved.
   Portions Copyright (C) 2007-2012 David Anderson. All Rights Reserved.
   Portions Copyright (C) 2010-2012 SN Systems Ltd. All Rights Reserved.
@@ -1581,7 +1580,7 @@ _dwarf_get_augmentation_type(UNUSEDARG Dwarf_Debug dbg,
     'frame_ptr' points within section.
     'section_end' points to end of section area of interest.
 
-     Why is fde_eh_encoding_out there? It's unused.
+    Why is fde_eh_encoding_out there? It's unused.
 */
 /* ARGSUSED */
 static int

@@ -343,7 +343,7 @@ dwarf_srcfiles(Dwarf_Die die,
     if (attrform != DW_FORM_data4 && attrform != DW_FORM_data8 &&
         attrform != DW_FORM_sec_offset  &&
         attrform != DW_FORM_GNU_ref_alt) {
-        _dwarf_error(dbg, error, DW_DLE_LINE_OFFSET_BAD);
+        _dwarf_error(dbg, error, DW_DLE_LINE_OFFSET_WRONG_FORM);
         return (DW_DLV_ERROR);
     }
     lres = dwarf_global_formref(stmt_list_attr, &line_offset, error);
@@ -1713,6 +1713,10 @@ void
 _dwarf_print_header_issue(Dwarf_Debug dbg,
     const char *specific_msg,
     Dwarf_Small *data_start,
+    Dwarf_Signed value,
+    unsigned index,
+    unsigned tabv,
+    unsigned linetabv,
     int *err_count_out)
 {
     if (!err_count_out) {
@@ -1722,7 +1726,12 @@ _dwarf_print_header_issue(Dwarf_Debug dbg,
     if (dwarf_cmdline_options.check_verbose_mode){
         dwarf_printf(dbg,
             "\n*** DWARF CHECK: "
-            ".debug_line: %s", specific_msg);
+            ".debug_line: %s %lld",
+            specific_msg,value);
+        if (index || tabv || linetabv) {
+            dwarf_printf(dbg,"; Mismatch index %u stdval %u linetabval %u",
+                index,tabv,linetabv);
+        }
 
         if (data_start >= dbg->de_debug_line.dss_data &&
             (data_start < (dbg->de_debug_line.dss_data +

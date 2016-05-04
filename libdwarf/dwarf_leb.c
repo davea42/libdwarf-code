@@ -106,7 +106,8 @@ _dwarf_decode_u_leb128(Dwarf_Small * leb128, Dwarf_Word * leb128_length)
         byte_length++;
         if (byte_length > BYTESLEBMAX) {
             /*  Erroneous input. What to do?
-                Abort? Return error? Just stop here?*/
+                Abort? Return error? Just stop here?
+                Call _dwarf_decode_u_leb128_chk instead. */
             if( leb128_length) {
                 *leb128_length = BYTESLEBMAX;
             }
@@ -222,7 +223,9 @@ _dwarf_decode_s_leb128(Dwarf_Small * leb128, Dwarf_Word * leb128_length)
         byte = *leb128;
         byte_length++;
         if (byte_length > BYTESLEBMAX) {
-            /*  Erroneous input */
+            /*  Erroneous input, as who would put leading
+                0x80 for leading zeros?
+                call _dwarf_decode_s_leb128_chk instead. */
             if (leb128_length) {
                 *leb128_length = BYTESLEBMAX;
             }

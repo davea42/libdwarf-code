@@ -1,3 +1,12 @@
+2016-05-03  David Anderson
+    * dwarfdump.c: revise print_error_maybe_continue() to
+      print additional useful data.
+    * print_die.c: If dwarf_srcfiles() gets DW_DLV_NO_ENTRY
+      do not print a warning. Normal to have no DW_AT_stmt_list.
+    * print_lines.c: Fix column header 'row' changed to 'lno'.
+      Refine a CHECK message to say a DW_LNE_end_sequence
+      does not exactly match function high address. It is not
+      an error, just something about how the code was emitted.
 2016-04-30  David Anderson
     * dwarfdump.c, common.c: Update version string.
 2016-04-27  David Anderson

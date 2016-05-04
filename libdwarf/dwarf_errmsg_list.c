@@ -409,6 +409,10 @@ const char *_dwarf_errmsgs[] = {
     "DW_DLE_DEBUG_LINE_RANGE_ZERO (330) Corrupted line section",
     "DW_DLE_READ_LITTLEENDIAN_ERROR (331) Corrupted dwarfdata littleendian host",
     "DW_DLE_READ_BIGENDIAN_ERROR (332) Corrupted dwarf data bigendian host",
+    "DW_DLE_RELOC_INVALID (333) relocation corruption",
+    "DW_DLE_INFO_HEADER_ERROR(334) Corrupt dwarf",
+    "DW_DLE_ARANGES_HEADER_ERROR(335) Corrupt dwarf",
+    "DW_DLE_LINE_OFFSET_WRONG_FORM(336) Corrupt dwarf",
 };
 
 #ifdef TESTING

@@ -258,9 +258,9 @@ _dwarf_make_CU_Context(Dwarf_Debug dbg,
     Dwarf_Unsigned max_cu_local_offset =  0;
     Dwarf_Unsigned max_cu_global_offset =  0;
     Dwarf_Byte_Ptr cu_ptr = 0;
+    Dwarf_Byte_Ptr section_end_ptr = 0;
     int local_extension_size = 0;
     int local_length_size = 0;
-
     const char *secname = is_info?dbg->de_debug_info.dss_name:
         dbg->de_debug_types.dss_name;
     Dwarf_Debug_InfoTypes dis = is_info? &dbg->de_info_reading:
@@ -270,6 +270,7 @@ _dwarf_make_CU_Context(Dwarf_Debug dbg,
     int unit_type = 0;
     int version = 0;
     int is_type_tu = 0;
+    Dwarf_Small *dataptr = 0;
 
     cu_context =
         (Dwarf_CU_Context) _dwarf_get_alloc(dbg, DW_DLA_CU_CONTEXT, 1);
@@ -280,18 +281,26 @@ _dwarf_make_CU_Context(Dwarf_Debug dbg,
     cu_context->cc_dbg = dbg;
     cu_context->cc_is_info = is_info;
 
-    {
-        Dwarf_Small *dataptr = is_info? dbg->de_debug_info.dss_data:
-            dbg->de_debug_types.dss_data;
-        cu_ptr = (Dwarf_Byte_Ptr) (dataptr+offset);
+    dataptr = is_info? dbg->de_debug_info.dss_data:
+        dbg->de_debug_types.dss_data;
+    if (!dataptr) {
+        _dwarf_error(dbg, error, DW_DLE_INFO_HEADER_ERROR);
+        return DW_DLV_ERROR;
     }
+    if ((offset+4) > section_size) {
+        _dwarf_error(dbg, error, DW_DLE_INFO_HEADER_ERROR);
+        return DW_DLV_ERROR;
+    }
+    section_end_ptr = dataptr+section_size;
+    cu_ptr = (Dwarf_Byte_Ptr) (dataptr+offset);
 
     if (section_name_ends_with_dwo(secname)) {
         cu_context->cc_is_dwo = TRUE;
     }
     /* READ_AREA_LENGTH updates cu_ptr for consumed bytes */
-    READ_AREA_LENGTH(dbg, length, Dwarf_Unsigned,
-        cu_ptr, local_length_size, local_extension_size);
+    READ_AREA_LENGTH_CK(dbg, length, Dwarf_Unsigned,
+        cu_ptr, local_length_size, local_extension_size,
+        error,section_end_ptr);
     cu_context->cc_length_size = local_length_size;
     cu_context->cc_extension_size = local_extension_size;
 
@@ -301,14 +310,14 @@ _dwarf_make_CU_Context(Dwarf_Debug dbg,
     max_cu_global_offset =  offset + length +
         local_extension_size + local_length_size;
 
-    READ_UNALIGNED(dbg, cu_context->cc_version_stamp, Dwarf_Half,
-        cu_ptr, sizeof(Dwarf_Half));
+    READ_UNALIGNED_CK(dbg, cu_context->cc_version_stamp, Dwarf_Half,
+        cu_ptr, sizeof(Dwarf_Half),error,section_end_ptr);
     version = cu_context->cc_version_stamp;
     cu_ptr += sizeof(Dwarf_Half);
     if (version == DW_CU_VERSION5) {
         unsigned char ub = 0;
-        READ_UNALIGNED(dbg, ub, unsigned char,
-            cu_ptr, sizeof(ub));
+        READ_UNALIGNED_CK(dbg, ub, unsigned char,
+            cu_ptr, sizeof(ub),error,section_end_ptr);
         cu_ptr += sizeof(ub);
         unit_type = ub;
         if (unit_type != DW_UT_compile && unit_type != DW_UT_partial
@@ -321,8 +330,8 @@ _dwarf_make_CU_Context(Dwarf_Debug dbg,
         unit_type = is_info?DW_UT_compile:DW_UT_type;
     }
 
-    READ_UNALIGNED(dbg, abbrev_offset, Dwarf_Unsigned,
-        cu_ptr, local_length_size);
+    READ_UNALIGNED_CK(dbg, abbrev_offset, Dwarf_Unsigned,
+        cu_ptr, local_length_size,error,section_end_ptr);
 
     cu_ptr += local_length_size;
 
@@ -338,7 +347,9 @@ _dwarf_make_CU_Context(Dwarf_Debug dbg,
     cu_context->cc_segment_selector_size = 0;
     ++cu_ptr;
 
-
+    if (cu_ptr > section_end_ptr) {
+        _dwarf_error(dbg, error, DW_DLE_INFO_HEADER_ERROR);
+    }
 
     if (cu_context->cc_address_size  > sizeof(Dwarf_Addr)) {
         _dwarf_error(dbg, error, DW_DLE_CU_ADDRESS_SIZE_BAD);
@@ -386,8 +397,8 @@ _dwarf_make_CU_Context(Dwarf_Debug dbg,
         memcpy(&signaturedata,cu_ptr,sizeof(signaturedata));
         cu_context->cc_signature_present = TRUE;
         cu_ptr += sizeof(signaturedata);
-        READ_UNALIGNED(dbg, typeoffset, Dwarf_Unsigned,
-            cu_ptr, local_length_size);
+        READ_UNALIGNED_CK(dbg, typeoffset, Dwarf_Unsigned,
+            cu_ptr, local_length_size,error,section_end_ptr);
         cu_context->cc_type_signature = signaturedata;
         cu_context->cc_type_signature_offset = typeoffset;
         {

@@ -994,6 +994,7 @@ update_entry(Dwarf_Debug dbg,
     UNUSEDARG Dwarf_Half machine,
     struct Dwarf_Elf_Rela *rela,
     Dwarf_Small *target_section,
+    Dwarf_Unsigned target_section_size,
     Dwarf_Small *symtab_section_data,
     Dwarf_Unsigned symtab_section_size,
     Dwarf_Unsigned symtab_section_entrysize,
@@ -1068,6 +1069,12 @@ update_entry(Dwarf_Debug dbg,
             outval.  Some ABIs say no read (for example MIPS),
             but if some do then which ones? */
         Dwarf_Unsigned outval = sym->st_value + addend;
+        /*  -1 as the 0th byte goes at offset, not offset+1. */
+        if ( (offset + reloc_size) > target_section_size) {
+            *error = DW_DLE_RELOC_INVALID;
+            return DW_DLV_ERROR;
+        }
+
         WRITE_UNALIGNED(dbg,target_section + offset,
             &outval,sizeof(outval),reloc_size);
     }
@@ -1085,6 +1092,7 @@ apply_rela_entries(Dwarf_Debug dbg,
     Dwarf_Endianness endianess,
     Dwarf_Half machine,
     Dwarf_Small *target_section,
+    Dwarf_Unsigned target_section_size,
     Dwarf_Small *symtab_section,
     Dwarf_Unsigned symtab_section_size,
     Dwarf_Unsigned symtab_section_entrysize,
@@ -1108,6 +1116,7 @@ apply_rela_entries(Dwarf_Debug dbg,
                 machine,
                 &(relas)[i],
                 target_section,
+                target_section_size,
                 symtab_section,
                 symtab_section_size,
                 symtab_section_entrysize,
@@ -1175,6 +1184,7 @@ loop_through_relocations(
         obj->is_64bit,
         obj->endianness, obj->machine,
         target_section,
+        relocatablesec->dss_size,
         symtab_section,
         symtab_section_size,
         symtab_section_entrysize,

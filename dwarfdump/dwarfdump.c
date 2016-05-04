@@ -2346,40 +2346,30 @@ process_args(int argc, char *argv[])
     return do_uri_translation(argv[dwoptind],"file-to-process");
 }
 
-void
-print_error(Dwarf_Debug dbg,
-    const char * msg,
-    int dwarf_code,
-    Dwarf_Error lerr)
-{
-    print_error_and_continue(dbg,msg,dwarf_code,lerr);
-    if (dbg) {
-        Dwarf_Error ignored_err = 0;
-        /*  If dbg was never initialized dwarf_finish
-            can do nothing useful. There is no
-            global-state for libdwarf to clean up. */
-        dwarf_finish(dbg, &ignored_err);
-    }
-    exit(FAILED);
-}
 /* ARGSUSED */
-void
-print_error_and_continue(UNUSEDARG Dwarf_Debug dbg,
+static void
+print_error_maybe_continue(UNUSEDARG Dwarf_Debug dbg,
     const char * msg,
     int dwarf_code,
-    Dwarf_Error lerr)
+    Dwarf_Error lerr,
+    Dwarf_Bool do_continue)
 {
     printf("\n");
 
     if (dwarf_code == DW_DLV_ERROR) {
         char * errmsg = dwarf_errmsg(lerr);
 
-        /*  We now (April 2016) guarantee the 
+        /*  We now (April 2016) guarantee the
             error number is in
             the error string so we do not need to print
             the dwarf_errno() value to show the number. */
-        printf( "%s ERROR:  %s:  %s\n",
-            program_name, msg, errmsg);
+        if (do_continue) {
+            printf( "%s ERROR:  %s:  %s. Attempting to continue.\n",
+                program_name, msg, errmsg);
+        } else {
+            printf( "%s ERROR:  %s:  %s\n",
+                program_name, msg, errmsg);
+        }
     } else if (dwarf_code == DW_DLV_NO_ENTRY) {
         printf("%s NO ENTRY:  %s: \n", program_name, msg);
     } else if (dwarf_code == DW_DLV_OK) {
@@ -2391,6 +2381,33 @@ print_error_and_continue(UNUSEDARG Dwarf_Debug dbg,
 
     /* Display compile unit name */
     PRINT_CU_INFO();
+}
+
+void
+print_error(Dwarf_Debug dbg,
+    const char * msg,
+    int dwarf_code,
+    Dwarf_Error lerr)
+{
+    print_error_maybe_continue(dbg,msg,dwarf_code,lerr,FALSE);
+    if (dbg) {
+        Dwarf_Error ignored_err = 0;
+        /*  If dbg was never initialized dwarf_finish
+            can do nothing useful. There is no
+            global-state for libdwarf to clean up. */
+        dwarf_finish(dbg, &ignored_err);
+    }
+    exit(FAILED);
+}
+/* ARGSUSED */
+void
+print_error_and_continue(Dwarf_Debug dbg,
+    const char * msg,
+    int dwarf_code,
+    Dwarf_Error lerr)
+{
+    print_error_maybe_continue(dbg,
+        msg,dwarf_code,lerr,TRUE);
 }
 
 /*  Predicate function. Returns 'true' if the CU should

@@ -1,10 +1,25 @@
-2016-04-30 David Anderson
+2016-05-03 David Anderson
+    * dwarf_die_deliv.c: Add checks for overrun of end of section
+      due to corrupted DWARF.
     * dwarf_arange.c,dwarf_util.c: first use of READ_UNALIGNED_CK.
     * dwarf_errmsg_list.c, libdwarf.h.in: DW_DLE_READ_LITTLEENDIAN_ERROR
       and DW_DLE_READ_BIGENDIAN_ERROR are errors possible
-      in READ_UNALIGNED_CK.
+      in READ_UNALIGNED_CK. DW_DLE_LINE_OFFSET_WRONG_FORM gives
+      a more meaningful description of a particular corruption
+      problem (not a new test, just a new error name).
+    * dwarf_elf_access.c: Add a check on relocations to ensure
+      we do not write off the end of the section.
     * dwarf_query.c: Using local variables for shorter lines.
     * dwarf_util.h: Implement READ_UNALIGNED_CK macros.
+    * dwarf_leb.c: Improve a couple comments.
+    * dwarf_line.c: Now use DW_DLE_LINE_OFFSET_WRONG_FORM.
+      Add operandmismatch() to get better debug information
+      in case of corrupted dwarf. Revise the code for
+      clarity.
+    * dwarf_macro5.c: Duplicate free() could result if
+      dwarf_finish() was used to clean up from a dwarf macro
+      context.  Two functions are really static so
+      the function type set properly now.
 2016-04-30 David Anderson
     * dwarf_frame.c, dwarf_line_table_reader_common.c,
       dwarf_loc2.c: switch to using DECODE_LEB*_CK.

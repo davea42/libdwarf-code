@@ -33,6 +33,9 @@
     This way we have just one blob of code that reads
     the table operations.  */
 
+#define TRUE 1
+#define FALSE 0
+
 static unsigned char
 dwarf_standard_opcode_operand_count[STANDARD_OPERAND_COUNT_TWO_LEVEL] = {
     /* DWARF2 */
@@ -61,6 +64,41 @@ dwarf_arm_standard_opcode_operand_count[STANDARD_OPERAND_COUNT_DWARF3] = {
     /* Following are new for DWARF3. */
     0, 0, 1
 };
+
+/* Rather like memcmp but identifies which value pair
+    mismatches (the return value is non-zero if mismatch,
+    zero if match)..
+    mismatch_entry returns the table index that mismatches.
+    tabval returns the table byte value.
+    lineval returns the value from the line table header.  */
+static int
+operandmismatch(unsigned char * table,unsigned table_length,
+    unsigned char *linetable,
+    unsigned check_count,
+    unsigned * mismatch_entry, unsigned * tabval,unsigned *lineval)
+{
+    unsigned i = 0;
+
+    /* check_count better be <= table_length */
+    for (i = 0; i<check_count; ++i) {
+        if (i > table_length) {
+            *mismatch_entry = i;
+            *lineval = linetable[i];
+            *tabval = 0; /* No entry present. */
+            /* A kind of mismatch */
+            return  TRUE;
+        }
+        if (table[i] == linetable[i]) {
+            continue;
+        }
+        *mismatch_entry = i;
+        *tabval = table[i];
+        *lineval = linetable[i];
+        return  TRUE;
+    }
+    /* Matches. */
+    return FALSE;
+}
 
 
 /* Common line table header reading code.
@@ -206,80 +244,75 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
 
     /*  lc_opcode_base is one greater than the size of the array. */
     line_ptr += line_context->lc_opcode_base - 1;
+    line_context->lc_std_op_count = line_context->lc_opcode_base -1;
     {
         /*  Determine (as best we can) whether the
             lc_opcode_length_table holds 9 or 12 standard-conforming
             entries.  gcc4 upped to DWARF3's 12 without updating the
             version number.
             EXPERIMENTAL_LINE_TABLES_VERSION upped to 15.  */
-        int operand_ck_fail = true;
+        unsigned check_count = line_context->lc_std_op_count;
+        unsigned tab_count = sizeof(dwarf_standard_opcode_operand_count);
 
-        if (line_context->lc_opcode_base >= STANDARD_OPERAND_COUNT_DWARF3) {
-            int mismatch = memcmp(dwarf_standard_opcode_operand_count,
+        int operand_ck_fail = true;
+        if (line_context->lc_std_op_count > tab_count) {
+            _dwarf_print_header_issue(dbg,
+                "Too many standard operands in linetable header: ",
+                data_start,
+                line_context->lc_std_op_count,
+                0,0,0,
+                err_count_out);
+            check_count = tab_count;
+        }
+        {
+            unsigned entrynum = 0;
+            unsigned tabv     = 0;
+            unsigned linetabv     = 0;
+
+            int mismatch = operandmismatch(
+                dwarf_standard_opcode_operand_count,
+                tab_count,
                 line_context->lc_opcode_length_table,
-                STANDARD_OPERAND_COUNT_DWARF3);
+                check_count,&entrynum,&tabv,&linetabv);
             if (mismatch) {
                 if (err_count_out) {
                     _dwarf_print_header_issue(dbg,
-                        "standard-operands did not match",
-                        data_start,err_count_out);
+                        "standard-operands did not match, checked",
+                        data_start,
+                        check_count,
+                        entrynum,tabv,linetabv,err_count_out);
                 }
-                mismatch = memcmp(dwarf_arm_standard_opcode_operand_count,
+                if (check_count >
+                    sizeof(dwarf_arm_standard_opcode_operand_count)) {
+                    check_count =
+                        sizeof(dwarf_arm_standard_opcode_operand_count);
+                }
+                mismatch = operandmismatch(
+                    dwarf_arm_standard_opcode_operand_count,
+                    sizeof(dwarf_arm_standard_opcode_operand_count),
                     line_context->lc_opcode_length_table,
-                    STANDARD_OPERAND_COUNT_DWARF3);
+                    check_count,&entrynum,&tabv,&linetabv);
                 if (!mismatch && err_count_out) {
                     _dwarf_print_header_issue(dbg,
-                        "arm (incorrect) operands in use",
-                        data_start,err_count_out);
+                        "arm (incorrect) operands in use: ",
+                        data_start,
+                        check_count,
+                        entrynum,tabv,linetabv,err_count_out);
                 }
             }
             if (!mismatch) {
                 if (version == 2) {
-                    if (err_count_out) {
+                    if (line_context->lc_std_op_count ==
+                        STANDARD_OPERAND_COUNT_DWARF3) {
                         _dwarf_print_header_issue(dbg,
                             "standard DWARF3 operands matched,"
-                            " but is DWARF2 linetable",
-                            data_start,err_count_out);
+                            " but is DWARF2 linetable: count",
+                            data_start,
+                            check_count,
+                            0,0,0, err_count_out);
                     }
                 }
                 operand_ck_fail = false;
-                if (version == EXPERIMENTAL_LINE_TABLES_VERSION) {
-                    line_context->lc_std_op_count =
-                        STANDARD_OPERAND_COUNT_TWO_LEVEL;
-                } else {
-                    line_context->lc_std_op_count =
-                        STANDARD_OPERAND_COUNT_DWARF3;
-                }
-            }
-        }
-        if (operand_ck_fail) {
-            if (line_context->lc_opcode_base >=
-                STANDARD_OPERAND_COUNT_DWARF2) {
-                int mismatch = memcmp(dwarf_standard_opcode_operand_count,
-                    line_context->lc_opcode_length_table,
-                    STANDARD_OPERAND_COUNT_DWARF2);
-
-                if (mismatch) {
-                    if (err_count_out) {
-                        _dwarf_print_header_issue(dbg,
-                            "standard-operands-lengths did not match",
-                            data_start,err_count_out);
-                    }
-                    mismatch = memcmp(dwarf_arm_standard_opcode_operand_count,
-                        line_context->lc_opcode_length_table,
-                        STANDARD_OPERAND_COUNT_DWARF2);
-                    if (!mismatch && err_count_out) {
-                        _dwarf_print_header_issue(dbg,
-                            "arm (incorrect) operand in use",
-                            data_start,err_count_out);
-                    }
-                }
-
-                if (!mismatch) {
-                    operand_ck_fail = false;
-                    line_context->lc_std_op_count =
-                        STANDARD_OPERAND_COUNT_DWARF2;
-                }
             }
         }
         if (operand_ck_fail) {
