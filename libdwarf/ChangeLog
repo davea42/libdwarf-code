@@ -1,3 +1,7 @@
+2016-05-04 David Anderson
+    * dwarf_macro5.c(construct_at_path_from_parts): Move 3 lines 
+      of code up to test for NULL pointer. So we do not 
+      dereference the pointer.
 2016-05-03 David Anderson
     * dwarf_die_deliv.c: Add checks for overrun of end of section
       due to corrupted DWARF.
