@@ -1,0 +1,128 @@
+
+id: DW201605-001
+publicid:
+datereported: 20160502
+reportedby: Yue Liu
+vulnerability: A specially crafted DWARF section
+ results in a duplicate free() in libdwarf and
+ the calling application will crash. 
+product:  libdwarf
+description:
+ In file dwarf_elf_access.c:1071
+ WRITE_UNALIGNED(dbg,target_section + offset,
+     &outval,sizeof(outval),reloc_size);
+ A crafted ELF file may lead to a large offset value, which
+ bigger than the size of target_section heap chunk, then this
+ WRITE_UNALIGNED() function will write the value of &outval
+ out of the heap chunk.
+ offset is a 64bit unsigned int value, so this is more than
+ a heap overflow bug, but also a Out-of-Bound write bug.
+ So WRITE_UNALIGNED() need more strictly checking to prevent
+ this.
+datefixed: 20160504
+references:
+testcase:
+ regressiontests/liu/heapoverflow01.elf
+gitfixid: 98a3da1e8237fe0d45b67ef77f3fa5ed9ff0215f
+endrec:
+
+
+
+id: DW201605-002
+publicid:
+datereported: 20160502
+reportedby: Yue Liu
+vulnerability: A specially crafted DWARF section
+ results in a read outside the bounds of in memory
+ data so the calling application can crash.
+product:  libdwarf
+description:
+
+ Out of bound read bug in libdwarf git code.
+
+ dwarf_dealloc() did not check the Dwarf_Ptr space argument
+ before using it. This will lead to a out-of-bound read bug.
+
+ backtrace:
+ #0  dwarf_dealloc (dbg=dbg@entry=0x655f30, space=0xa0,
+ alloc_type=alloc_type@entry=1) at dwarf_alloc.c:477
+ #1  0x00002aaaaacf3296 in dealloc_srcfiles
+ (dbg=0x655f30, srcfiles=0x66b8f0, srcfiles_count=17) at
+ dwarf_macro5.c:1025 #2  0x00002aaaaacf50e6 in dealloc_srcfiles
+ (srcfiles_count=<optimized out>, srcfiles=<optimized out>,
+ dbg=<optimized out>) at dwarf_macro5.c:1021 -----
+
+ gef> p &r->rd_dbg
+ $14 = (void **) 0x90
+
+datefixed: 20160504
+references:
+testcase:
+ regressiontests/liu/outofbound01.elf
+gitfixid: 98a3da1e8237fe0d45b67ef77f3fa5ed9ff0215f
+endrec:
+
+id: DW201605-003
+publicid:
+datereported: 20160502
+reportedby: Yue Liu
+vulnerability: A specially crafted DWARF section
+ results in an infinite loop that eventually
+ crashes the application.
+product:  libdwarf
+description:
+ In dwarf_get_aranges_list()
+ an invalid count will iterate, reading from memory
+ addresses that increase till it all fails.
+
+datefixed: 20160504
+references:
+testcase:
+ regressiontests/liu/infiniteloop.elf
+gitfixid: 98a3da1e8237fe0d45b67ef77f3fa5ed9ff0215f
+endrec:
+
+id: DW201605-004
+publicid:
+datereported: 20160502
+reportedby: Yue Liu
+vulnerability: A specially crafted DWARF section
+ results in a null dereference reading debugging
+ information entries  which
+ crashes the application.
+product:  libdwarf
+description:
+ If no DW_AT_name is present in a debugging
+ information entry  using DWARF5 macros
+ a null dereference in dwarf_macro5.c will
+ crash the application.
+ 
+datefixed: 20160504
+references:
+testcase:
+ regressiontests/liu/null01.elf
+gitfixid: 98a3da1e8237fe0d45b67ef77f3fa5ed9ff0215f
+endrec:
+
+id: DW201605-005
+publicid:
+datereported: 20160502
+reportedby: Yue Liu
+vulnerability: A specially crafted DWARF section
+ results in  reading a compilation unit header
+ that crashes the application.
+product:  libdwarf
+description:
+ If the data read for a compilation unit header
+ contains a too large length value the library
+ will read outside of its bounds and crash the application.
+datefixed: 20160504
+references:
+testcase:
+ regressiontests/liu/null02.elf
+gitfixid: 98a3da1e8237fe0d45b67ef77f3fa5ed9ff0215f
+endrec:
+
+
+
+
