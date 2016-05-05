@@ -69,6 +69,7 @@ def readbugs(iname):
   inrecord = "n"
   linecount = 0
   text = []
+  usedid ={}
   intext = ''
   bugrec = ''
   buglist = []
@@ -100,10 +101,15 @@ def readbugs(iname):
     fldval = rec[low+1:]
     if fldname == "id:": 
       if inrecord == "y":
-         print "bogus id: at line ",linecount
-         sys.exit(1)
+        print "bogus id: at line ",linecount
+        sys.exit(1)
       inrecord = "y"
-      bugrec = bugrecord.bugrecord(fldval)
+      f = fldval.strip()
+      if usedid.has_key(f) == 1:
+        print "Duplicate Key:",f,"Giving up." 
+        sys.exit(1)
+      usedid[f] = 1
+      bugrec = bugrecord.bugrecord(f)
     elif fldname == "cve:":
       closeouttext(bugrec,intext,text,linecount),
       intext = ""
