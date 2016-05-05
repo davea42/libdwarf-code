@@ -1,4 +1,63 @@
 
+id: DW201605-009
+cve:
+datereported: 20160505
+reportedby: Yue Liu
+vulnerability: NULL dereference in _dwarf_load_section
+product: libdwarf
+description: Test object shows
+ null dereverence at line 1010
+ if(!strncmp("ZLIB",(const char *)src,4)) {
+ in dwarf_init_finish.c
+datefixed:
+references: liu/NULLderefer0505_01.elf
+gitfixid:
+endrec:
+
+id: DW201605-008
+cve:
+datereported: 20160505
+reportedby: Yue Liu
+vulnerability: OOB read in dwarf_get_macro_startend_file()
+product: libdwarf
+description: Test object shows
+ out of bound read.
+ OOB at:
+ line 772  *src_file_name = macro_context->mc_srcfiles[trueindex];
+ in dwarf_macro5.c
+datefixed:
+references: liu/OOB0505_02.elf
+gitfixid:
+endrec:
+
+id: DW201605-007
+cve:
+datereported: 20160505
+reportedby: Yue Liu
+vulnerability: OOB read bug in get_attr_value()
+product: libdwarf
+description: Test object shows
+ out of bound read.
+datefixed:
+references: liu/OOB0505_01.elf
+gitfixid:
+endrec:
+
+id: DW201605-006
+cve:
+datereported: 20160505
+reportedby: Yue Liu
+vulnerability: Two Heap-Overflow bug
+product: libdwarf
+description: Two test objects showing
+ a heap overflow in libdwarf when
+ using dwarfdump.
+datefixed:
+references: liu/free_invalid_address.elf
+ liu/heapoverflow01b.elf
+gitfixid:
+endrec:
+
 id: DW201605-001
 publicid:
 datereported: 20160502
