@@ -44,7 +44,7 @@ description: Test object shows
  not susceptible to that error (DW_DLE_FORM_BLOCK_LENGTH_ERROR).
 datefixed: 20160506
 references: liu/OOB0505_01.elf
-gitfixid:
+gitfixid: eb1472afac95031d0c9dd8c11d527b865fe7deb8
 endrec:
 
 id: DW201605-006
