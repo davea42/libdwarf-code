@@ -349,7 +349,7 @@ process_line_table(Dwarf_Debug dbg,
                 printf("Record = %"  DW_PR_DUu
                     " Addr = 0x%" DW_PR_XZEROS DW_PR_DUx
                     " [%4" DW_PR_DUu ",%2" DW_PR_DUu "] '%s'\n",
-                    i, pc,lineno,column,filename);
+                    i, pc,lineno,column,sanitized(filename));
                 /* The compilation unit was already printed */
                 if (!check_decl_file) {
                     PRINT_CU_INFO();
@@ -450,7 +450,7 @@ process_line_table(Dwarf_Debug dbg,
                 if (subprog_name && strlen(subprog_name)) {
                     /*  We do not print an empty name.
                         Clutters things up. */
-                    printf(" SB=\"%s\"", subprog_name);
+                    printf(" SB=\"%s\"", sanitized(subprog_name));
                 }
             }
         }
@@ -832,7 +832,7 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
                 Dwarf_Bool is_actuals = FALSE;
                 process_line_table(dbg,sec_name, linebuf, linecount,
                     is_logicals, is_actuals);
-                process_line_table(dbg,sec_name, 
+                process_line_table(dbg,sec_name,
                     linebuf_actuals, linecount_actuals,
                     !is_logicals, !is_actuals);
             }

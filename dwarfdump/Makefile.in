@@ -73,6 +73,7 @@ FINALOBJECTS = \
 	print_strings.o \
 	print_types.o \
 	print_weaknames.o  \
+        sanitized.o \
         strstrnocase.o \
         uri.o
 GEN_HFILES = common.o \

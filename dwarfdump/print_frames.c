@@ -659,7 +659,7 @@ print_one_fde(Dwarf_Debug dbg,
                         " is not the first fde with that pc. "
                         "The first is named \"%s\"",
                         (Dwarf_Unsigned)low_pc,
-                        temps);
+                        sanitized(temps));
                 } else {
                     snprintf(msg,sizeof(msg),"An fde low pc of 0x%"
                         DW_PR_DUx
@@ -689,7 +689,7 @@ print_one_fde(Dwarf_Debug dbg,
             fde_index,
             (Dwarf_Unsigned)low_pc,
             (Dwarf_Unsigned)(low_pc + func_length),
-            temps ? temps : "",
+            temps ? sanitized(temps) : "",
             (Dwarf_Unsigned)cie_offset,
             (Dwarf_Unsigned)cie_index,
             (Dwarf_Unsigned)fde_offset,
@@ -1016,7 +1016,7 @@ print_one_cie(Dwarf_Debug dbg, Dwarf_Cie cie,
             }
             /* This augmentation is from .debug_frame or
                 eh_frame of a cie. . A string. */
-            printf("\taugmentation\t\t\t%s\n", augmenter);
+            printf("\taugmentation\t\t\t%s\n", sanitized(augmenter));
             printf("\tcode_alignment_factor\t\t%" DW_PR_DUu "\n",
                 code_alignment_factor);
             printf("\tdata_alignment_factor\t\t%" DW_PR_DSd "\n",

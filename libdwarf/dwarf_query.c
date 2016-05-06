@@ -1712,6 +1712,18 @@ dwarf_get_version_of_die(Dwarf_Die die,
 }
 
 Dwarf_Byte_Ptr
+_dwarf_calculate_info_section_start_ptr(Dwarf_CU_Context context)
+{
+    Dwarf_Debug dbg = 0;
+    Dwarf_Small *dataptr = 0;
+
+    dbg = context->cc_dbg;
+    dataptr = context->cc_is_info? dbg->de_debug_info.dss_data:
+        dbg->de_debug_types.dss_data;
+    return dataptr;
+}
+
+Dwarf_Byte_Ptr
 _dwarf_calculate_info_section_end_ptr(Dwarf_CU_Context context)
 {
     Dwarf_Debug dbg = 0;

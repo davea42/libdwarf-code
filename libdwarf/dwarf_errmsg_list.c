@@ -413,6 +413,7 @@ const char *_dwarf_errmsgs[] = {
     "DW_DLE_INFO_HEADER_ERROR(334) Corrupt dwarf",
     "DW_DLE_ARANGES_HEADER_ERROR(335) Corrupt dwarf",
     "DW_DLE_LINE_OFFSET_WRONG_FORM(336) Corrupt dwarf",
+    "DW_DLE_FORM_BLOCK_LENGTH_ERROR(337) Corrupt dwarf",
 };
 
 #ifdef TESTING

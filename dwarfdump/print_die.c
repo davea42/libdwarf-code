@@ -3102,10 +3102,10 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
                 if (strlen(atname) >= 28) {
                     printf(" ");
                 }
-                printf("%s\n", esb_get_string(&valname));
+                printf("%s\n", sanitized(esb_get_string(&valname)));
                 if (append_extra_string) {
                     char *v = esb_get_string(&esb_extra);
-                    printf("%s", v);
+                    printf("%s", sanitized(v));
                 }
             }
         }
@@ -4682,6 +4682,7 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
         fres = dwarf_formblock(attrib, &tempb, &err);
         if (fres == DW_DLV_OK) {
             unsigned u = 0;
+
             for (u = 0; u < tempb->bl_len; u++) {
                 snprintf(small_buf, sizeof(small_buf), "%02x",
                     *(u + (unsigned char *) tempb->bl_data));

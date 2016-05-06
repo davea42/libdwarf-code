@@ -1,3 +1,13 @@
+May 5, 2016
+  By default dwarfdump sanitizes strings, so if a corrupted
+  DWARF file has non-printable bytes in a string they are
+  each turned into %xx (two hex digits for a single string character).  
+  This is safe for terminals to print and shows the actual value.
+  The '-x nosanitizestrings' option turns off this feature so bytes
+  are shown as printf and your system show them.
+  The same format as uri style, but only using % on characters
+  that may have bad effects if printed to a terminal (not,
+  for example, space or tab characters).
 February  25, 2015
   Copied dwgetopt.c dwgetopt.h from libdwarf so dwarfdump can
   use dwgetopt() and still build without necessarily

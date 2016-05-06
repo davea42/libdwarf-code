@@ -216,8 +216,12 @@ typedef Dwarf_Unsigned BIGGEST_UINT;
     do {                                                                  \
         BIGGEST_UINT _ltmp = 0;                                           \
         Dwarf_Byte_Ptr readend = source+length;                           \
+        if (readend <  source) {                                          \
+            _dwarf_error(dbg, error, DW_DLE_READ_LITTLEENDIAN_ERROR);     \
+            return DW_DLV_ERROR;                                          \
+        }                                                                 \
         if (readend > endptr) {                                           \
-            _dwarf_error(dbg, error, DW_DLE_READ_LITTLEENDIAN_ERROR);    \
+            _dwarf_error(dbg, error, DW_DLE_READ_LITTLEENDIAN_ERROR);     \
             return DW_DLV_ERROR;                                          \
         }                                                                 \
         dbg->de_copy_word( (((char *)(&_ltmp)) + sizeof(_ltmp) - length), \

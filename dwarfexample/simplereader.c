@@ -679,7 +679,7 @@ print_subprog(Dwarf_Debug dbg,Dwarf_Die die,
         if(res == DW_DLV_OK) {
             if(aform == DW_AT_decl_file) {
                 Dwarf_Signed filenum_s = 0;
-            
+
                 get_number(attrbuf[i],&filenum);
                 filenum_s = filenum;
                 /*  Would be good to evaluate filenum_s

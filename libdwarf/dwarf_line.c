@@ -1726,7 +1726,7 @@ _dwarf_print_header_issue(Dwarf_Debug dbg,
     if (dwarf_cmdline_options.check_verbose_mode){
         dwarf_printf(dbg,
             "\n*** DWARF CHECK: "
-            ".debug_line: %s %lld",
+            ".debug_line: %s %" DW_PR_DSd,
             specific_msg,value);
         if (index || tabv || linetabv) {
             dwarf_printf(dbg,"; Mismatch index %u stdval %u linetabval %u",

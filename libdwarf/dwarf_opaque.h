@@ -832,6 +832,8 @@ int (*_dwarf_get_elf_flags_func_ptr)(
     Dwarf_Unsigned *addralign_out,
     int *error);
 
+Dwarf_Byte_Ptr _dwarf_calculate_info_section_start_ptr(Dwarf_CU_Context context);
+
 Dwarf_Byte_Ptr _dwarf_calculate_info_section_end_ptr(Dwarf_CU_Context context);
 Dwarf_Byte_Ptr _dwarf_calculate_abbrev_section_end_ptr(Dwarf_CU_Context context);
 

@@ -54,6 +54,12 @@ looks for "./dwarfdump.conf", "$HOME/.dwarfdump.conf", "<install-prefix>/lib/dwa
 If one or more '-x name=<path>' is given the last of these is
 used and all other such files are ignored.
 .PP
+If '-x nosanitizestrings' is given then unprintable characters
+are not translated to '%xx' (two digit hex
+preceeded by the '%' character)  (with
+this option bogus characters 
+in strings could cause terminal windows to behave oddly).
+.PP
 Some -k (checking) options print so-called harmless errors.
 These are compiler errors that do not cause any
 known problem and are only detected inside libdwarf itself.

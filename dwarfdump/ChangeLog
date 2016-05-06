@@ -1,3 +1,13 @@
+2016-05-05  David Anderson
+    * Makefile.in: Added sanitized.o to objects to build.
+    * dwarfdump.1: Document '-x nosanitizestrings'.
+    * dwarfdump.c: Set internal flag based on '-x nosanitizestrings'.
+    * globals.h: add extern for the flag no_sanitize_string_garbage
+      and the sanitized() interface.
+    * print_die.c,print_frames.c,print_lines.c,
+      print_macro.c, print_macros.c : Call sanitized() on some strings.
+    * sanitized.c: Changes control characters int output to %xx
+      uri-style (by default). See '-x nosanitizestrings'.
 2016-05-03  David Anderson
     * dwarfdump.c: revise print_error_maybe_continue() to
       print additional useful data.

@@ -977,8 +977,9 @@ dwarf_formblock(Dwarf_Attribute attr,
     Dwarf_Unsigned length = 0;
     Dwarf_Small *data = 0;
     Dwarf_Block *ret_block = 0;
-    Dwarf_Small *dataptr = 0;
-    Dwarf_Byte_Ptr section_end = 0;
+    Dwarf_Small *section_start = 0;
+    Dwarf_Small *section_end = 0;
+    Dwarf_Unsigned section_length = 0;
 
     int res  = get_attr_dbg(&dbg,&cu_context,attr,error);
     if (res != DW_DLV_OK) {
@@ -986,6 +987,10 @@ dwarf_formblock(Dwarf_Attribute attr,
     }
     section_end =
         _dwarf_calculate_info_section_end_ptr(cu_context);
+    section_start =
+        _dwarf_calculate_info_section_start_ptr(cu_context);
+    section_length = section_end - section_start;
+
     switch (attr->ar_attribute_form) {
 
     case DW_FORM_block1:
@@ -994,14 +999,16 @@ dwarf_formblock(Dwarf_Attribute attr,
         break;
 
     case DW_FORM_block2:
-        READ_UNALIGNED(dbg, length, Dwarf_Unsigned,
-            attr->ar_debug_ptr, sizeof(Dwarf_Half));
+        READ_UNALIGNED_CK(dbg, length, Dwarf_Unsigned,
+            attr->ar_debug_ptr, sizeof(Dwarf_Half),
+            error,section_end);
         data = attr->ar_debug_ptr + sizeof(Dwarf_Half);
         break;
 
     case DW_FORM_block4:
-        READ_UNALIGNED(dbg, length, Dwarf_Unsigned,
-            attr->ar_debug_ptr, sizeof(Dwarf_ufixed));
+        READ_UNALIGNED_CK(dbg, length, Dwarf_Unsigned,
+            attr->ar_debug_ptr, sizeof(Dwarf_ufixed),
+            error,section_end);
         data = attr->ar_debug_ptr + sizeof(Dwarf_ufixed);
         break;
 
@@ -1013,15 +1020,22 @@ dwarf_formblock(Dwarf_Attribute attr,
             dbg,error,section_end);
         data = attr->ar_debug_ptr + leblen;
         break;
-    }
-
+        }
     default:
-        _dwarf_error(cu_context->cc_dbg, error, DW_DLE_ATTR_FORM_BAD);
+        _dwarf_error(dbg, error, DW_DLE_ATTR_FORM_BAD);
         return (DW_DLV_ERROR);
     }
 
-    if (attr->ar_debug_ptr + length > section_end) {
-        _dwarf_error(dbg, error, DW_DLE_ATTR_FORM_SIZE_BAD);
+    if (length >= section_length) {
+        /*  Sanity test looking for wraparound:
+            when length actually added in
+            it would not be caught.
+            Test could be just >, but >= ok here too.*/
+        _dwarf_error(dbg, error, DW_DLE_FORM_BLOCK_LENGTH_ERROR);
+        return (DW_DLV_ERROR);
+    }
+    if ((attr->ar_debug_ptr + length) > section_end) {
+        _dwarf_error(dbg, error, DW_DLE_FORM_BLOCK_LENGTH_ERROR);
         return (DW_DLV_ERROR);
     }
 
@@ -1034,7 +1048,7 @@ dwarf_formblock(Dwarf_Attribute attr,
     ret_block->bl_len = length;
     ret_block->bl_data = (Dwarf_Ptr) data;
     ret_block->bl_from_loclist = 0;
-    ret_block->bl_section_offset = data - dataptr;
+    ret_block->bl_section_offset = data - section_start;
 
 
     *return_block = ret_block;
@@ -1050,7 +1064,6 @@ _dwarf_extract_string_offset_via_str_offsets(Dwarf_Debug dbg,
     Dwarf_Unsigned *str_sect_offset_out,
     Dwarf_Error *error)
 {
-    Dwarf_Unsigned offsettostr= 0;
     Dwarf_Unsigned offset_base = 0;
     Dwarf_Unsigned index_to_offset_entry = 0;
     Dwarf_Unsigned offsetintable = 0;
@@ -1104,11 +1117,17 @@ _dwarf_extract_string_offset_via_str_offsets(Dwarf_Debug dbg,
         return (DW_DLV_ERROR);
     }
 
-    /* Now read the string offset from the offset table. */
-    READ_UNALIGNED(dbg,offsettostr,Dwarf_Unsigned,
-        dbg->de_debug_str_offsets.dss_data + offsetintable,
-        cu_context->cc_length_size);
-    *str_sect_offset_out = offsettostr;
+    {
+        Dwarf_Unsigned offsettostr = 0;
+        Dwarf_Small *offsets_start = dbg->de_debug_str_offsets.dss_data;
+        Dwarf_Small *offsets_end   = offsets_start +
+            dbg->de_debug_str_offsets.dss_size;
+        /* Now read the string offset from the offset table. */
+        READ_UNALIGNED_CK(dbg,offsettostr,Dwarf_Unsigned,
+            offsets_start+ offsetintable,
+            cu_context->cc_length_size,error,offsets_end);
+        *str_sect_offset_out = offsettostr;
+    }
     return DW_DLV_OK;
 }
 

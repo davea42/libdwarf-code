@@ -151,6 +151,12 @@ extern char PU_name[COMPILE_UNIT_NAME_LEN]; /* PU Name */
 extern char CU_name[COMPILE_UNIT_NAME_LEN]; /* CU Name */
 extern char CU_producer[COMPILE_UNIT_NAME_LEN];  /* CU Producer Name */
 
+/* Set TRUE if you want to simply assume strings to be
+   printed are safe to print. Leave FALSE if you want
+   dangerous or unprintable characters to be switched to the
+   character '?'. */
+extern boolean no_sanitize_string_garbage;
+
 extern boolean seen_PU;                     /* Detected a PU. */
 extern boolean seen_CU;                     /* Detected a CU. */
 extern boolean need_CU_name;                /* Need CU name. */
@@ -481,6 +487,13 @@ extern void DWARF_CHECK_ERROR3(Dwarf_Check_Categories category,
 extern void print_macinfo_by_offset(Dwarf_Debug dbg,Dwarf_Unsigned offset);
 
 struct esb_s;
+
+/*  Eliminate control characters from the input,
+    leaving the input unchanged. Return pointer to
+    an ephemeral location (only callfor printf,
+    and only once per printf! */
+const char * sanitized(const char *s);
+
 
 extern Dwarf_Die current_cu_die_for_print_frames; /* This is
     an awful hack, making current_cu_die_for_print_frames public.

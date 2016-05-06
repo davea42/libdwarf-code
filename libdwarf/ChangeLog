@@ -1,3 +1,19 @@
+2016-05-05 David Anderson
+    * dwarf_form.c: Add a test so that a really large form_block length
+      will not  be considered safe (due to unsigned arithmetic
+      overflow).
+      Fixed the new check-code reading  string offsets section
+      so the endpoint in the check is that section, not debug_info.
+    * dwarf_query.c: New function _dwarf_calculate_info_section_start_ptr()
+      helps in some checking.
+    * dwarf_util.h: Add a test so arithmetic overflow will not show
+      a bogus value as being ok.
+    * libdwarf.h.in,dwarf_errmsg_list.c: Add error code 
+      DW_DLE_FORM_BLOCK_LENGTH_ERROR so we have a specific
+      error for this case.
+    * dwarf_line.c: %lld switched to  "%" DW_PR_DSd
+    * dwarf_opaque.h: Added function declaration for 
+      _dwarf_calculate_info_section_start_ptr().
 2016-05-04 David Anderson
     * dwarf_macro5.c(construct_at_path_from_parts): Move 3 lines 
       of code up to test for NULL pointer. So we do not 

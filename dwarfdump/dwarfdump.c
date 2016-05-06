@@ -1607,6 +1607,9 @@ static const char *usage_text[] = {
 "\t\t-x abi=<abi>\tname abi in dwarfdump.conf",
 "\t\t-x name=<path>\tname dwarfdump.conf",
 "\t\t-x tied=<tiedpath>\tname an associated object file (Split DWARF)",
+#if 0
+"\t\t-x nosanitizestrings\tLet bogus string characters come thru printf",
+#endif
 "\t\t-w\tprint weakname section",
 "\t\t-W\tprint parent and children tree (wide format) with the -S option",
 "\t\t-Wp\tprint parent tree (wide format) with the -S option",
@@ -1759,6 +1762,9 @@ process_args(int argc, char *argv[])
                         goto badopt;
                     }
                     break;
+                } else if (strcmp(dwoptarg, "nosanitizestrings") == 0) {
+                    no_sanitize_string_garbage = TRUE;
+                    break;
                 } else {
                 badopt:
                     fprintf(stderr, "-x name=<path-to-conf> \n");
@@ -1768,6 +1774,8 @@ process_args(int argc, char *argv[])
                     fprintf(stderr, "-x tied=<tied-file-path> \n");
                     fprintf(stderr, " and  \n");
                     fprintf(stderr, "-x line5={std,s2l,orig,orig2l} \n");
+                    fprintf(stderr, " and  \n");
+                    fprintf(stderr, "-x nosanitizestrings \n");
                     fprintf(stderr, "are legal, not -x %s\n", dwoptarg);
                     usage_error = TRUE;
                     break;
@@ -2905,8 +2913,8 @@ void PRINT_CU_INFO(void)
         return;
     }
     printf("\n");
-    printf("CU Name = %s\n",CU_name);
-    printf("CU Producer = %s\n",CU_producer);
+    printf("CU Name = %s\n",sanitized(CU_name));
+    printf("CU Producer = %s\n",sanitized(CU_producer));
     printf("DIE OFF = 0x%" DW_PR_XZEROS DW_PR_DUx
         " GOFF = 0x%" DW_PR_XZEROS DW_PR_DUx,
         loff,goff);

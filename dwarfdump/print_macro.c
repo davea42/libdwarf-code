@@ -130,7 +130,7 @@ print_macro_ops(Dwarf_Debug dbg,
                 printf("  line %" DW_PR_DUu
                     " %s\n",
                     line_number,
-                    macro_string?macro_string:"<no-name-available>");
+                    macro_string?sanitized(macro_string):"<no-name-available>");
             }
             break;
             }
@@ -155,7 +155,7 @@ print_macro_ops(Dwarf_Debug dbg,
                     " str offset 0x%" DW_PR_XZEROS DW_PR_DUx
                     " %s\n",
                     line_number,offset,
-                    macro_string?macro_string:"<no-name-available>");
+                    macro_string?sanitized(macro_string):"<no-name-available>");
             }
             break;
             }
@@ -205,7 +205,7 @@ print_macro_ops(Dwarf_Debug dbg,
                     " sup str offset 0x%" DW_PR_XZEROS DW_PR_DUx
                     " %s\n",
                     line_number,offset,
-                    macro_string?macro_string:"<no-name-available>");
+                    macro_string?sanitized(macro_string):"<no-name-available>");
             }
             break;
             }
@@ -220,7 +220,7 @@ print_macro_ops(Dwarf_Debug dbg,
                     " %s\n",
                     line_number,
                     index,
-                    macro_string?macro_string:"<no-name-available>");
+                    macro_string?sanitized(macro_string):"<no-name-available>");
             }
             break;
             }
