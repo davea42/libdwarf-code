@@ -4,6 +4,11 @@
 ( cd dwarfgen ; make clean ;  make distclean )
 ( cd libdwarf ; make clean ;  make distclean )
 ( cd dwarfdump ; make clean ;  make distclean )
+( cd bugxml ; rm -f bugrecord.pyc )
+( cd bugxml ; rm -f dwarfbug.xml )
+( cd bugxml ; rm -f dwarfbugtail )
+( cd bugxml ; rm -f junk* )
+
 rm -f dwarfgen/configure.lineno
 rm -f ALLd*
 rm -f junk* */junk*
