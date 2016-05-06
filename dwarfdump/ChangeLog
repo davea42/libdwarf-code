@@ -1,3 +1,6 @@
+2016-05-06  David Anderson
+    * sanitized.c: Fixed trailing whitespace and
+      added 'static' to local function definition.
 2016-05-05  David Anderson
     * Makefile.in: Added sanitized.o to objects to build.
     * dwarfdump.1: Document '-x nosanitizestrings'.

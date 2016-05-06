@@ -36,7 +36,7 @@
     as that would be a bit confusing for most readers.
 
     The conversion makes it possble to print UTF-8 strings
-    reproducibly, sort of (not showing the 
+    reproducibly, sort of (not showing the
     real glyph!).
 
     Only call this in a printf or sprintf, and
@@ -87,7 +87,8 @@ boolean no_sanitize_string_garbage;
 
 static  char tmpbuf[4];
 
-const char *as_number(int c)
+static const char *
+as_number(int c)
 {
     snprintf(tmpbuf,sizeof(tmpbuf),"%%%02x",c & 0xff);
     return tmpbuf;
