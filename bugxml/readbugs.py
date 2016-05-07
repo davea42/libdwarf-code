@@ -161,6 +161,11 @@ def readbugs(iname):
       text = []
       intext = ""
       bugrec.setgitfixid(fldval)
+    elif fldname == "tarrelease:":
+      closeouttext(bugrec,intext,text,linecount),
+      text = []
+      intext = ""
+      bugrec.settarrelease(fldval)
     elif fldname == "endrec:":
       closeouttext(bugrec,intext,text,linecount),
       text = []

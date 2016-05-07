@@ -69,6 +69,7 @@ class bugrecord:
     self._datefixed  = ''
     self._references  = []
     self._gitfixid  = ''
+    self._tarrelease  = ''
 
   def setcve(self,pubid):
     if self._cve != '':
@@ -115,6 +116,11 @@ class bugrecord:
       print "Duplicate gitfixid ",self._gitfixid,g
       sys.exit(1)
     self._gitfixid  = g.strip()
+  def settarrelease(self,g):
+    if len(self._tarrelease) != 0:
+      print "Duplicate tarrelease ",self._tarrelease,g
+      sys.exit(1)
+    self._tarrelease  = g.strip()
   def plist(self,title,lines):
     if lines == None:
       print title
@@ -138,6 +144,7 @@ class bugrecord:
     print "datefixed:",self._datefixed
     self.plist("references:",self._references)
     print "gitfixid:",self._gitfixid
+    print "tarrelease:",self._tarrelease
 
   def generate_html(self):
     t = ''.join(['<h3 id="',self._id,'">',self._id,'</h3>'])
@@ -176,6 +183,8 @@ class bugrecord:
 
     #* references 
     t = para("gitfixid",xmlize(self._gitfixid))
+    txt += [t]
+    t = para("tarrelease",xmlize(self._tarrelease))
     txt += [t]
 
     t = '<p> <a href="#top">[top]</a> </p>'
@@ -228,6 +237,8 @@ class bugrecord:
     txt += [t]
 
     t = ''.join(['<gitfixid>',xmlize(self._gitfixid),'</gitfixid>'])
+    txt += [t];
+    t = ''.join(['<tarrelease>',xmlize(self._tarrelease),'</tarrelease>'])
     txt += [t];
 
     t = '</dwbug>'

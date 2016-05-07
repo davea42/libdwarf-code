@@ -14,6 +14,7 @@ description: Test object shows
 datefixed: 20160507
 references: liu/OOB_read4.elf
 gitfixid: b3c1706d48e02fa01be47da3d7a406023e8e63f7
+tarrelease: 20160507
 endrec:
 
 
@@ -30,6 +31,7 @@ description: Test object shows
 datefixed: 20160507
 references: liu/OOB_read3.elf
 gitfixid: b3c1706d48e02fa01be47da3d7a406023e8e63f7
+tarrelease: 20160507
 endrec:
 
 id: DW201605-009
@@ -47,6 +49,7 @@ description: Test object shows
 datefixed: 20160506
 references: liu/NULLderefer0505_01.elf
 gitfixid: b6ec2dfd850929821626ea63fb0a752076a3c08a
+tarrelease: 20160507
 endrec:
 
 id: DW201605-008
@@ -65,6 +68,7 @@ description: Test object shows
 datefixed: 20150506
 references: liu/OOB0505_02.elf
 gitfixid: b6ec2dfd850929821626ea63fb0a752076a3c08a
+tarrelease: 20160507
 endrec:
 
 id: DW201605-007
@@ -82,6 +86,8 @@ description: Test object shows
 datefixed: 20160506
 references: liu/OOB0505_01.elf
 gitfixid: eb1472afac95031d0c9dd8c11d527b865fe7deb8
+gittag: 20160507
+tarrelease: 20160507
 endrec:
 
 id: DW201605-006
@@ -101,6 +107,7 @@ datefixed: 20160504
 references: liu/free_invalid_address.elf
  liu/heapoverflow01b.elf
 gitfixid: 98a3da1e8237fe0d45b67ef77f3fa5ed9ff0215f
+tarrelease: 20160507
 endrec:
 
 id: DW201605-001
@@ -128,6 +135,8 @@ references:
 testcase:
  regressiontests/liu/heapoverflow01.elf
 gitfixid: 98a3da1e8237fe0d45b67ef77f3fa5ed9ff0215f
+gittag: 20160507
+tarrelease: 20160507
 endrec:
 
 
@@ -164,6 +173,7 @@ references:
 testcase:
  regressiontests/liu/outofbound01.elf
 gitfixid: 98a3da1e8237fe0d45b67ef77f3fa5ed9ff0215f
+tarrelease: 20160507
 endrec:
 
 id: DW201605-003
@@ -184,6 +194,7 @@ references:
 testcase:
  regressiontests/liu/infiniteloop.elf
 gitfixid: 98a3da1e8237fe0d45b67ef77f3fa5ed9ff0215f
+tarrelease: 20160507
 endrec:
 
 id: DW201605-004
@@ -206,6 +217,7 @@ references:
 testcase:
  regressiontests/liu/null01.elf
 gitfixid: 98a3da1e8237fe0d45b67ef77f3fa5ed9ff0215f
+tarrelease: 20160507
 endrec:
 
 id: DW201605-005
@@ -225,6 +237,7 @@ references:
 testcase:
  regressiontests/liu/null02.elf
 gitfixid: 98a3da1e8237fe0d45b67ef77f3fa5ed9ff0215f
+tarrelease: 20160507
 endrec:
 
 
