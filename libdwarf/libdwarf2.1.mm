@@ -8,7 +8,7 @@
 .nr Hb 5
 \." ==============================================
 \." Put current date in the following at each rev
-.ds vE rev 2.48, Mar 14, 2016
+.ds vE rev 2.49, May 7, 2016
 \." ==============================================
 \." ==============================================
 .ds | |
@@ -9523,7 +9523,7 @@ the \f(CWtu_offset\fP (the section global offset of the CU
 in .debug_types))
 and \f(CWtu_length\fP (the length of the CU
 in .debug_types) values through the pointers.
-It also returns  the type signature (a 64bit value) throuth
+It also returns  the type signature (a 64bit value) through
 the  \f(CWtype_signature\fP pointer.
 
 .H 3 "dwarf_gdbindex_addressarea()"
@@ -9553,7 +9553,7 @@ of entries in the  address area through the
 int dwarf_gdbindex_addressarea_entry(
     Dwarf_Gdbindex   gdbindexptr,
     Dwarf_Unsigned   entryindex,
-    Dwarf_Unsigned * low_adddress,
+    Dwarf_Unsigned * low_address,
     Dwarf_Unsigned * high_address,
     Dwarf_Unsigned * cu_index,
     Dwarf_Error    * error);
@@ -9823,7 +9823,7 @@ indexing the CU list and the types CU list form a single
 array so the \f(CWcu_index\fP can be indicating either list.
 
 The \f(CWsymbol_kind\fP field is a small integer with the symbol kind(
-zero is reserved, one is a tyhpe, 2 is a variable or enum value, etc).
+zero is reserved, one is a type, 2 is a variable or enum value, etc).
 
 The \f(CWreserved1\fP field  should have the value zero
 and is the value of a bit field defined as reserved for future use.

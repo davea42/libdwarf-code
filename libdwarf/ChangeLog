@@ -1,3 +1,6 @@
+2016-05-07-b David Anderson
+    * libdwarf2.1.mm,libdwarf2p.1.mm: Fixed spelling errors.
+    * libdwarf2.1.pdf,libdwarf2p.1.pdf: Regenerated.
 2016-05-07 David Anderson
     * libdwarf.h.in, dwarf_errmsg_list.c: New error codes for
       stopping due to corrupted frame data.

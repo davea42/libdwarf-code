@@ -11,7 +11,7 @@
 .nr Hb 5
 \." ==============================================
 \." Put current date in the following at each rev
-.ds vE rev 1.38, 03 January 2015
+.ds vE rev 1.39, 07 May 2016
 \." ==============================================
 \." ==============================================
 .ds | |
@@ -210,7 +210,7 @@ and DWARF is configured at run time by its arguments.
 The producer code used to be configured at configure
 time, but the configure time producer configure options
 are no longer used. 
-The configuration was unneccesarily compilated:
+The configuration was unnecessarily complicated:
 the run-time configuration is simpler to understand.
 .LE
 
@@ -710,7 +710,7 @@ strings defined in the isa_relocs array
 in pro_init.c: "irix","mips","x86",
 "x86_64","arm","arm64","ppc","ppc64",
 "sparc". 
-Tthe names are not strictly ISA
+The names are not strictly ISA
 names (nor ABI names) but a hopefully-meaningful
 mixing of the concepts of ISA and ABI.
 The intent is mainly to 
@@ -738,13 +738,13 @@ list of as-yet-undefined options.
 Passing in a null pointer or an empty string
 is acceptable if no such options are needed 
 or used.  All-lowercase option names are reserved to
-the libdwarf implementation itself (specific implemenations
+the libdwarf implementation itself (specific implementations
 may want to use a leading upper-case letter for
 additional options).
 
 .P
 The \f(CWerror\fP argument 
-is set throught he pointer to return specific error  
+is set through the pointer to return specific error  
 if \f(CWerror\fP is non-null and
 and there is an error.  The error details
 will be passed back through this pointer argument.
@@ -1910,7 +1910,7 @@ the sequence generated for the function epilogue code.
 
 Similarly, \f(CWis_prolgue_end\fP is a boolean flag that is true only if
 the instruction at \f(CWcode_address\fP is the last instruction of
-the seqence generated for the function prologue.
+the sequence generated for the function prologue.
 
 \f(CWisa\fP should be zero unless the code 
 at \f(CWcode_address\fP is generated in a non-standard isa.
