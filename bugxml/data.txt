@@ -42,9 +42,9 @@ description: Test object shows
  in dwarf_init_finish.c
  The zlib code was not checking for
  a corrupted length-value.
-datefixed:
+datefixed: 20160506
 references: liu/NULLderefer0505_01.elf
-gitfixid:
+gitfixid: b6ec2dfd850929821626ea63fb0a752076a3c08a
 endrec:
 
 id: DW201605-008
@@ -60,9 +60,9 @@ description: Test object shows
  in dwarf_macro5.c
  A string offset into .debug_str is outside the bounds
  of the .debug_str section.
-datefixed:
+datefixed: 20150506
 references: liu/OOB0505_02.elf
-gitfixid:
+gitfixid: b6ec2dfd850929821626ea63fb0a752076a3c08a
 endrec:
 
 id: DW201605-007
