@@ -415,8 +415,9 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
             {
                 Dwarf_Addr new_loc = 0;
 
-                READ_UNALIGNED(dbg, new_loc, Dwarf_Addr,
-                    instr_ptr, address_size);
+                READ_UNALIGNED_CK(dbg, new_loc, Dwarf_Addr,
+                    instr_ptr, address_size,
+                    error,final_instr_ptr);
                 instr_ptr += address_size;
                 if (new_loc != 0 && current_loc != 0) {
                     /*  Pre-relocation or before current_loc is set the
@@ -426,8 +427,8 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
                         are already relocated.  */
                     if (new_loc <= current_loc) {
                         /*  Within a frame, address must increase.
-                            Seemingly it has not. Seems to be an error. */
-
+                            Seemingly it has not.
+                            Seems to be an error. */
                         SIMPLE_ERROR_RETURN
                             (DW_DLE_DF_NEW_LOC_LESS_OLD_LOC);
                     }
@@ -1516,29 +1517,40 @@ _dwarf_get_fde_info_for_a_pc_row(Dwarf_Fde fde,
 
     if (fde == NULL) {
         _dwarf_error(NULL, error, DW_DLE_FDE_NULL);
-        return (DW_DLV_ERROR);
+        return DW_DLV_ERROR;
     }
 
     dbg = fde->fd_dbg;
     if (dbg == NULL) {
         _dwarf_error(NULL, error, DW_DLE_FDE_DBG_NULL);
-        return (DW_DLV_ERROR);
+        return DW_DLV_ERROR;
     }
 
     if (pc_requested < fde->fd_initial_location ||
         pc_requested >=
         fde->fd_initial_location + fde->fd_address_range) {
         _dwarf_error(dbg, error, DW_DLE_PC_NOT_IN_FDE_RANGE);
-        return (DW_DLV_ERROR);
+        return DW_DLV_ERROR;
     }
 
     cie = fde->fd_cie;
     if (cie->ci_initial_table == NULL) {
+        Dwarf_Small *instrstart = cie->ci_cie_instr_start;
+        Dwarf_Small *instrend = instrstart +cie->ci_length +
+            cie->ci_length_size +
+            cie->ci_extension_size -
+            (cie->ci_cie_instr_start -
+            cie->ci_cie_start);
+
+        if (instrend > cie->ci_cie_end) {
+            _dwarf_error(dbg, error,DW_DLE_CIE_INSTR_PTR_ERROR);
+            return DW_DLV_ERROR;
+        }
         cie->ci_initial_table = (Dwarf_Frame)_dwarf_get_alloc(dbg, DW_DLA_FRAME, 1);
 
         if (cie->ci_initial_table == NULL) {
             _dwarf_error(dbg, error, DW_DLE_ALLOC_FAIL);
-            return (DW_DLV_ERROR);
+            return DW_DLV_ERROR;
         }
         dwarf_init_reg_rules_ru(cie->ci_initial_table->fr_reg,
             0, cie->ci_initial_table->fr_reg_count,dbg->de_frame_rule_initial_value);
@@ -1549,12 +1561,8 @@ _dwarf_get_fde_info_for_a_pc_row(Dwarf_Fde fde,
             /* search_pc */ false,
             /* search_pc_val */ 0,
             /* location */ 0,
-            cie->ci_cie_instr_start,
-            cie->ci_cie_instr_start + (cie->ci_length +
-                cie->ci_length_size +
-                cie->ci_extension_size -
-                (cie->ci_cie_instr_start -
-                cie->ci_cie_start)),
+            instrstart,
+            instrend,
             cie->ci_initial_table, cie, dbg,
             cfa_reg_col_num, &icount,
             error);
@@ -1569,6 +1577,10 @@ _dwarf_get_fde_info_for_a_pc_row(Dwarf_Fde fde,
             fde->fd_length_size +
             fde->fd_extension_size - (fde->fd_fde_instr_start -
                 fde->fd_fde_start);
+        if (instr_end > fde->fd_fde_end) {
+            _dwarf_error(dbg, error,DW_DLE_FDE_INSTR_PTR_ERROR);
+            return DW_DLV_ERROR;
+        }
 
         res = _dwarf_exec_frame_instr( /* make_instr= */ false,
             /* ret_frame_instr= */ NULL,
@@ -2104,6 +2116,8 @@ dwarf_expand_frame_instructions(Dwarf_Cie cie,
     Dwarf_Sword instr_count;
     int res = DW_DLV_ERROR;
     Dwarf_Debug dbg = 0;
+    Dwarf_Small * instr_start = instruction;
+    Dwarf_Small * instr_end = (Dwarf_Small *)instruction + i_length;;
 
     if (cie == 0) {
         _dwarf_error(NULL, error, DW_DLE_DBG_NULL);
@@ -2115,6 +2129,12 @@ dwarf_expand_frame_instructions(Dwarf_Cie cie,
         _dwarf_error(dbg, error, DW_DLE_RET_OP_LIST_NULL);
         return (DW_DLV_ERROR);
     }
+    if ( instr_end < instr_start) {
+        /*  Impossible unless there was wraparond somewhere and
+            we missed it. */
+        _dwarf_error(dbg, error,DW_DLE_FDE_INSTR_PTR_ERROR);
+        return DW_DLV_ERROR;
+    }
 
     /*  The cast to Dwarf_Ptr may get a compiler warning, but it is safe
         as it is just an i_length offset from 'instruction' itself. A
@@ -2125,8 +2145,8 @@ dwarf_expand_frame_instructions(Dwarf_Cie cie,
         /* search_pc */ false,
         /* search_pc_val */ 0,
         /* location */ 0,
-        instruction,
-        (Dwarf_Ptr) ((Dwarf_Unsigned) instruction + i_length),
+        instr_start,
+        instr_end,
         /* Dwarf_Frame */ NULL,
         cie,
         dbg,

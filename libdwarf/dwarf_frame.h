@@ -228,6 +228,7 @@ struct Dwarf_Cie_s {
     Dwarf_Small ci_return_address_register;
     Dwarf_Small *ci_cie_start;
     Dwarf_Small *ci_cie_instr_start;
+    Dwarf_Small *ci_cie_end;
     Dwarf_Debug ci_dbg;
     Dwarf_Frame ci_initial_table;
     Dwarf_Cie ci_next;
@@ -259,6 +260,8 @@ struct Dwarf_Cie_s {
         record the position so fde can get it on fde creation. */
     Dwarf_Unsigned ci_index;
     Dwarf_Small *  ci_section_ptr;
+    Dwarf_Unsigned ci_section_length;
+    Dwarf_Small *  ci_section_end;
     /*  DWARF4 adds address size and segment size to the CIE: the .debug_info
         section may not always be present to allow libdwarf to
         find address_size from the compilation-unit. */
@@ -287,6 +290,7 @@ struct Dwarf_Fde_s {
     Dwarf_Addr fd_address_range;
     Dwarf_Small *fd_fde_start;
     Dwarf_Small *fd_fde_instr_start;
+    Dwarf_Small *fd_fde_end;
     Dwarf_Debug fd_dbg;
 
     /*  fd_offset_into_exception_tables is SGI/IRIX exception table
@@ -314,6 +318,7 @@ struct Dwarf_Fde_s {
     Dwarf_Small * fd_section_ptr;
     Dwarf_Unsigned fd_section_length;
     Dwarf_Unsigned fd_section_index;
+    Dwarf_Small * fd_section_end;
 
     /*  If fd_eh_table_value_set is true, then fd_eh_table_value is
         meaningful.  Never meaningful for .debug_frame, is

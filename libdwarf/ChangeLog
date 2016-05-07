@@ -1,3 +1,8 @@
+2016-05-07 David Anderson
+    * libdwarf.h.in, dwarf_errmsg_list.c: New error codes for
+      stopping due to corrupted frame data.
+    * dwarf_frame.c,dwarf_frame.h,dwarf_frame2.c,dwarf_line.c:
+      Notice frame area overrun and generate error.
 2016-05-06 David Anderson
     * dwarf_errmsg_list.c: Added DW_DLE_ZLIB_SECTION_SHORT.
     * dwarf_form.c: Now checking for section overrun.

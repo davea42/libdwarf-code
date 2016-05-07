@@ -1190,7 +1190,7 @@ print_frame_inst_bytes(Dwarf_Debug dbg,
     unsigned int loff = 0;
     unsigned short u16 = 0;
     unsigned int u32 = 0;
-    unsigned long long u64;
+    unsigned long long u64 = 0;
 
     for (; len > 0;) {
         unsigned char ibyte = *instp;

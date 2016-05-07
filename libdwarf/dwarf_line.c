@@ -364,6 +364,11 @@ dwarf_srcfiles(Dwarf_Die die,
             return resl;
         }
         line_ptr += fission_offset;
+        if (line_ptr > dbg->de_debug_line.dss_data +
+            dbg->de_debug_line.dss_size) {
+            _dwarf_error(dbg, error, DW_DLE_FISSION_ADDITION_ERROR);
+            return DW_DLV_ERROR;
+        }
     }
     dwarf_dealloc(dbg, stmt_list_attr, DW_DLA_ATTR);
 
@@ -518,6 +523,7 @@ _dwarf_internal_srclines(Dwarf_Die die,
         cu. */
     Dwarf_Small *line_ptr_actuals = 0;
     Dwarf_Small *section_start = 0;
+    Dwarf_Small *section_end = 0;
 
     /*  Pointer to a DW_AT_stmt_list attribute in case it exists in the
         die. */
@@ -583,6 +589,8 @@ _dwarf_internal_srclines(Dwarf_Die die,
         _dwarf_error(dbg, error, DW_DLE_LINE_OFFSET_BAD);
         return (DW_DLV_ERROR);
     }
+    section_start = dbg->de_debug_line.dss_data;
+    section_end = section_start  +dbg->de_debug_line.dss_size;
     {
         Dwarf_Unsigned fission_size = 0;
         int resf = _dwarf_get_fission_addition_die(die, DW_SECT_LINE,
@@ -591,12 +599,24 @@ _dwarf_internal_srclines(Dwarf_Die die,
             return resf;
         }
         line_ptr += fission_offset;
+        if (line_ptr > section_end) {
+            _dwarf_error(dbg, error, DW_DLE_FISSION_ADDITION_ERROR);
+            return DW_DLV_ERROR;
+        }
     }
 
     section_start = dbg->de_debug_line.dss_data;
+    section_end = section_start  +dbg->de_debug_line.dss_size;
     orig_line_ptr = section_start + line_offset + fission_offset;
     line_ptr = orig_line_ptr;
     dwarf_dealloc(dbg, stmt_list_attr, DW_DLA_ATTR);
+    if ((line_offset + fission_offset) > dbg->de_debug_line.dss_size) {
+        _dwarf_error(dbg, error, DW_DLE_LINE_OFFSET_BAD);
+    }
+    if (line_ptr > section_end) {
+        _dwarf_error(dbg, error, DW_DLE_LINE_OFFSET_BAD);
+        return DW_DLV_ERROR;
+    }
 
     /*  If die has DW_AT_comp_dir attribute, get the string that names
         the compilation directory. */

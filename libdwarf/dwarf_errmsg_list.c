@@ -415,6 +415,9 @@ const char *_dwarf_errmsgs[] = {
     "DW_DLE_LINE_OFFSET_WRONG_FORM(336) Corrupt dwarf",
     "DW_DLE_FORM_BLOCK_LENGTH_ERROR(337) Corrupt dwarf",
     "DW_DLE_ZLIB_SECTION_SHORT (338) Corrupt dwarf",
+    "DW_DLE_CIE_INSTR_PTR_ERROR (339)",
+    "DW_DLE_FDE_INSTR_PTR_ERROR (340)",
+    "DW_DLE_FISSION_ADDITION_ERROR (341) Corrupt dwarf",
 };
 
 #ifdef TESTING
