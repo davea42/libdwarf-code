@@ -10,9 +10,10 @@ product: libdwarf
 description: Test object shows
  null dereverence at line 62
  of dwarf_line_table_reader.c.
-datefixed:
+ Frame code and linetable code was not noticing data corruption.
+datefixed: 20160507
 references: liu/OOB_read4.elf
-gitfixid:
+gitfixid: b3c1706d48e02fa01be47da3d7a406023e8e63f7
 endrec:
 
 
@@ -25,9 +26,10 @@ product: libdwarf
 description: Test object shows
  null dereverence at line 186
  of dump_block() in print_sections.c
-datefixed:
+ Frame code was not noticing frame data corruption.
+datefixed: 20160507
 references: liu/OOB_read3.elf
-gitfixid:
+gitfixid: b3c1706d48e02fa01be47da3d7a406023e8e63f7
 endrec:
 
 id: DW201605-009
