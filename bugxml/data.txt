@@ -8,7 +8,7 @@ reportedby: Yue Liu
 vulnerability: OOB read bug in _dwarf_read_line_table_header
 product: libdwarf
 description: Test object shows
- null dereverence at line 62
+ null dereference at line 62
  of dwarf_line_table_reader.c.
  Frame code and linetable code was not noticing data corruption.
 datefixed: 20160507
