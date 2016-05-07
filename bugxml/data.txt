@@ -95,7 +95,7 @@ description: Two test objects showing
  by the previous git update.
  Neither gdb nor valgrind find any errors
  when building with yesterday's commit.
-datefixed 20160504:
+datefixed: 20160504
 references: liu/free_invalid_address.elf
  liu/heapoverflow01b.elf
 gitfixid: 98a3da1e8237fe0d45b67ef77f3fa5ed9ff0215f
