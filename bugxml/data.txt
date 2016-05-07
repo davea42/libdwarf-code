@@ -1,4 +1,35 @@
 
+
+
+id: DW201605-011
+cve:
+datereported: 20160506
+reportedby: Yue Liu
+vulnerability: OOB read bug in _dwarf_read_line_table_header
+product: libdwarf
+description: Test object shows
+ null dereverence at line 62
+ of dwarf_line_table_reader.c.
+datefixed:
+references: liu/OOB_read4.elf
+gitfixid:
+endrec:
+
+
+id: DW201605-010
+cve:
+datereported: 20160506
+reportedby: Yue Liu
+vulnerability: OOB read bug in dump_block
+product: libdwarf
+description: Test object shows
+ null dereverence at line 186
+ of dump_block() in print_sections.c
+datefixed:
+references: liu/OOB_read3.elf
+gitfixid:
+endrec:
+
 id: DW201605-009
 cve:
 datereported: 20160505
@@ -9,6 +40,8 @@ description: Test object shows
  null dereverence at line 1010
  if(!strncmp("ZLIB",(const char *)src,4)) {
  in dwarf_init_finish.c
+ The zlib code was not checking for
+ a corrupted length-value.
 datefixed:
 references: liu/NULLderefer0505_01.elf
 gitfixid:
@@ -25,6 +58,8 @@ description: Test object shows
  OOB at:
  line 772  *src_file_name = macro_context->mc_srcfiles[trueindex];
  in dwarf_macro5.c
+ A string offset into .debug_str is outside the bounds
+ of the .debug_str section.
 datefixed:
 references: liu/OOB0505_02.elf
 gitfixid:

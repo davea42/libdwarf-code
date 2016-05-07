@@ -1,3 +1,15 @@
+2016-05-06 David Anderson
+    * dwarf_errmsg_list.c: Added DW_DLE_ZLIB_SECTION_SHORT.
+    * dwarf_form.c: Now checking for section overrun.
+    * dwarf_init_finish.c: Now checking zlib reading
+      for section overrun.
+    * dwarf_macro5.c: Now checking for section overrun and
+      also fixing double delete caused by having
+      _dwarf_get_alloc() space pointing at other _dwarf_get_alloc()
+      space. Because in case of error the order of free 
+      of such is unpredictable!
+    * dwarf_macro5.h: Added comment on mc_srcfiles member.
+    * libdwarf.h.in: Added DW_DLE_ZLIB_SECTION_SHORT.
 2016-05-05 David Anderson
     * dwarf_form.c: Add a test so that a really large form_block length
       will not  be considered safe (due to unsigned arithmetic

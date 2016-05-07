@@ -999,14 +999,20 @@ do_decompress_zlib(Dwarf_Debug dbg,
     struct Dwarf_Section_s *section,
     Dwarf_Error * error)
 {
-    Bytef *src = (Bytef *)section->dss_data;
+    Bytef *basesrc = (Bytef *)section->dss_data;
+    Bytef *src = (Bytef *)basesrc;
     uLong srclen = section->dss_size;
     Dwarf_Unsigned flags = section->dss_flags;
+    Dwarf_Small *endsection = 0;
     int res = 0;
     Bytef *dest = 0;
     uLongf destlen = 0;
     Dwarf_Unsigned uncompressed_len = 0;
 
+    endsection = basesrc + srclen;
+    if ((src + 12) >endsection) {
+        DWARF_DBG_ERROR(dbg, DW_DLE_ZLIB_SECTION_SHORT, DW_DLV_ERROR);
+    }
     if(!strncmp("ZLIB",(const char *)src,4)) {
         unsigned i = 0;
         unsigned l = 8;
@@ -1030,9 +1036,11 @@ do_decompress_zlib(Dwarf_Debug dbg,
         unsigned fldsize    = dbg->de_pointer_size;
         unsigned structsize = 3* fldsize;
 
-        READ_UNALIGNED(dbg,type,Dwarf_Unsigned,ptr,sizeof(Dwarf_ufixed));
+        READ_UNALIGNED_CK(dbg,type,Dwarf_Unsigned,ptr,sizeof(Dwarf_ufixed),
+            error,endsection);
         ptr += fldsize;
-        READ_UNALIGNED(dbg,size,Dwarf_Unsigned,ptr,fldsize);
+        READ_UNALIGNED_CK(dbg,size,Dwarf_Unsigned,ptr,fldsize,
+            error,endsection);
         ptr += fldsize;
         if (type != ELFCOMPRESS_ZLIB) {
             DWARF_DBG_ERROR(dbg, DW_DLE_ZDEBUG_INPUT_FORMAT_ODD, DW_DLV_ERROR);
@@ -1046,6 +1054,9 @@ do_decompress_zlib(Dwarf_Debug dbg,
     } else {
         DWARF_DBG_ERROR(dbg, DW_DLE_ZDEBUG_INPUT_FORMAT_ODD, DW_DLV_ERROR);
     }
+    if( (src +srclen) > endsection) {
+        DWARF_DBG_ERROR(dbg, DW_DLE_ZLIB_SECTION_SHORT, DW_DLV_ERROR);
+    }
     destlen = uncompressed_len;
     dest = malloc(destlen);
     if(!dest) {
@@ -1053,10 +1064,13 @@ do_decompress_zlib(Dwarf_Debug dbg,
     }
     res = uncompress(dest,&destlen,src,srclen);
     if (res == Z_BUF_ERROR) {
+        free(dest);
         DWARF_DBG_ERROR(dbg, DW_DLE_ZLIB_BUF_ERROR, DW_DLV_ERROR);
     } else if (res == Z_MEM_ERROR) {
+        free(dest);
         DWARF_DBG_ERROR(dbg, DW_DLE_ALLOC_FAIL, DW_DLV_ERROR);
     } else if (res != Z_OK) {
+        free(dest);
         /* Probably Z_DATA_ERROR. */
         DWARF_DBG_ERROR(dbg, DW_DLE_ZLIB_DATA_ERROR, DW_DLV_ERROR);
     }

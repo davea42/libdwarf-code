@@ -1254,9 +1254,10 @@ struct Dwarf_Obj_Access_Interface_s {
 #define DW_DLE_ARANGES_HEADER_ERROR            335
 #define DW_DLE_LINE_OFFSET_WRONG_FORM          336
 #define DW_DLE_FORM_BLOCK_LENGTH_ERROR         337
+#define DW_DLE_ZLIB_SECTION_SHORT              338
 
     /* DW_DLE_LAST MUST EQUAL LAST ERROR NUMBER */
-#define DW_DLE_LAST        337
+#define DW_DLE_LAST        338
 #define DW_DLE_LO_USER     0x10000
 
     /*  Taken as meaning 'undefined value', this is not

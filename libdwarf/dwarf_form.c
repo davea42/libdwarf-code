@@ -1,5 +1,4 @@
 /*
-
   Copyright (C) 2000,2002,2004,2005 Silicon Graphics, Inc. All Rights Reserved.
   Portions Copyright 2007-2010 Sun Microsystems, Inc. All rights reserved.
   Portions Copyright 2008-2016 David Anderson. All rights reserved.
@@ -1161,11 +1160,12 @@ _dwarf_extract_local_debug_str_string_given_offset(Dwarf_Debug dbg,
             secbegin = dbg->de_debug_line_str.dss_data;
             strbegin= dbg->de_debug_line_str.dss_data + offset;
         } else {
+            /* DW_FORM_strp */
             res = _dwarf_load_section(dbg, &dbg->de_debug_str,error);
             if (res != DW_DLV_OK) {
                 return res;
             }
-            errcode = DW_DLE_STRP_OFFSET_BAD;
+            errcode = DW_DLE_STRING_OFFSET_BAD;
             secsize = dbg->de_debug_str.dss_size;
             secbegin = dbg->de_debug_str.dss_data;
             strbegin= dbg->de_debug_str.dss_data + offset;
@@ -1208,6 +1208,8 @@ dwarf_formstring(Dwarf_Attribute attr,
     Dwarf_Small *secend = 0;
     Dwarf_Unsigned secdatalen = 0;
     Dwarf_Small *infoptr = attr->ar_debug_ptr;
+    Dwarf_Small *contextend = 0;
+
     res  = get_attr_dbg(&dbg,&cu_context,attr,error);
     if (res != DW_DLV_OK) {
         return res;
@@ -1219,18 +1221,18 @@ dwarf_formstring(Dwarf_Attribute attr,
         secdataptr = (Dwarf_Small *)dbg->de_debug_types.dss_data;
         secdatalen = dbg->de_debug_types.dss_size;
     }
+    contextend = secdataptr +
+        cu_context->cc_debug_offset +
+        cu_context->cc_length +
+        cu_context->cc_length_size +
+        cu_context->cc_extension_size;
+    secend = secdataptr + secdatalen;
+    if (contextend < secend) {
+        secend = contextend;
+    }
     switch(attr->ar_attribute_form) {
     case DW_FORM_string: {
         Dwarf_Small *begin = attr->ar_debug_ptr;
-        Dwarf_Small *contextend = secdataptr +
-            cu_context->cc_debug_offset +
-            cu_context->cc_length +
-            cu_context->cc_length_size +
-            cu_context->cc_extension_size;
-        secend = secdataptr + secdatalen;
-        if (contextend < secend) {
-            secend = contextend;
-        }
 
         res= _dwarf_check_string_valid(dbg,secdataptr,begin, secend,error);
         if (res != DW_DLV_OK) {
@@ -1303,9 +1305,9 @@ dwarf_formstring(Dwarf_Attribute attr,
     }
     case DW_FORM_strp:
     case DW_FORM_line_strp:{
-        READ_UNALIGNED(dbg, offset, Dwarf_Unsigned,
+        READ_UNALIGNED_CK(dbg, offset, Dwarf_Unsigned,
             infoptr,
-            cu_context->cc_length_size);
+            cu_context->cc_length_size,error,secend);
         break;
     }
     default:

@@ -512,7 +512,6 @@ dwarf_get_macro_defundef(Dwarf_Macro_Context macro_context,
         READ_UNALIGNED(dbg,stringoffset,Dwarf_Unsigned,
             mdata,macro_context->mc_offset_size);
         mdata += macro_context->mc_offset_size;
-
         res = _dwarf_extract_local_debug_str_string_given_offset(dbg,
             form1,
             stringoffset,
@@ -920,14 +919,13 @@ read_operands_table(Dwarf_Macro_Context macro_context,
         return (DW_DLV_ERROR);
     }
 
-    READ_UNALIGNED(dbg,operand_table_count,Dwarf_Small,
-        macro_data,sizeof(Dwarf_Small));
+    startptr = macro_context->mc_macro_header;
+    endptr = startptr + macro_context->mc_total_length;
+    READ_UNALIGNED_CK(dbg,operand_table_count,Dwarf_Small,
+        macro_data,sizeof(Dwarf_Small),error,endptr);
     macro_data += sizeof(Dwarf_Small);
     /* Estimating minimum size */
     local_size = operand_table_count * 4;
-
-    startptr = macro_context->mc_macro_header;
-    endptr = startptr + macro_context->mc_total_length;
 
     cur_offset = (local_size+ macro_data) - section_base;
     if (cur_offset >= section_size) {
@@ -941,8 +939,8 @@ read_operands_table(Dwarf_Macro_Context macro_context,
             variable should be ignored. */
         UNUSEDARG Dwarf_Small opcode_number = 0;
         Dwarf_Unsigned formcount = 0;
-        READ_UNALIGNED(dbg,opcode_number,Dwarf_Small,
-            macro_data,sizeof(Dwarf_Small));
+        READ_UNALIGNED_CK(dbg,opcode_number,Dwarf_Small,
+            macro_data,sizeof(Dwarf_Small),error,endptr);
         macro_data += sizeof(Dwarf_Small);
 
         DECODE_LEB128_UWORD_CK(macro_data,formcount,
@@ -1018,12 +1016,11 @@ read_operands_table(Dwarf_Macro_Context macro_context,
     not _dwarf_get_alloc.
 */
 static void
-dealloc_srcfiles(Dwarf_Debug dbg,
-    char ** srcfiles,
+dealloc_macro_srcfiles(char ** srcfiles,
     Dwarf_Signed srcfiles_count)
 {
     Dwarf_Signed i = 0;
-    if (!dbg || !srcfiles_count) {
+    if (!srcfiles || !srcfiles_count) {
         return;
     }
     for (i = 0; i < srcfiles_count; ++i) {
@@ -1032,14 +1029,13 @@ dealloc_srcfiles(Dwarf_Debug dbg,
             srcfiles[i] = 0;
         }
     }
-    dwarf_dealloc(dbg, srcfiles, DW_DLA_LIST);
+    free(srcfiles);
 }
 
 /*  This makes the macro context safe from
     duplicate frees in case of error. */
 static int
-translate_srcfiles_to_srcfiles2(Dwarf_Debug dbg,
-   char **srcfiles,
+translate_srcfiles_to_srcfiles2(char **srcfiles,
    Dwarf_Signed srcfiles_count,
    char **srcfiles2)
 {
@@ -1057,7 +1053,6 @@ translate_srcfiles_to_srcfiles2(Dwarf_Debug dbg,
             return DW_DLV_ERROR;
         }
         strcpy(newstr,ostr);
-        dwarf_dealloc(dbg,ostr,DW_DLA_STRING);
         srcfiles[i] = 0;
         srcfiles2[i] = newstr;
     }
@@ -1088,10 +1083,10 @@ _dwarf_internal_macro_context(Dwarf_Die die,
     char ** srcfiles = 0;
 
     /*  srcfiles uses dwarf_get_alloc for strings
-        so dealloc_srcfiles() here will result in double-dealloc
+        so dealloc_macro_srcfiles() here will result in double-dealloc
         when dwarf_finish() happens to see the string deallocs
         before the macro context dealloc (the context dealloc
-        will call dealloc_srcfiles() !). */
+        will call dealloc_macro_srcfiles() !). */
     char ** srcfiles2 = 0;
 
     const char *comp_dir = 0;
@@ -1139,22 +1134,46 @@ _dwarf_internal_macro_context(Dwarf_Die die,
     lres = _dwarf_internal_get_die_comp_dir(die, &comp_dir,
         &comp_name,error);
     if (resattr == DW_DLV_ERROR) {
+        Dwarf_Signed i = 0;
+        for (i = 0; i < srcfiles_count; ++i) {
+            if(srcfiles[i]) {
+                dwarf_dealloc(dbg, srcfiles[i], DW_DLA_STRING);
+            }
+        }
+        dwarf_dealloc(dbg, srcfiles, DW_DLA_LIST);
+        srcfiles = 0;
         return lres;
     }
     *macro_unit_offset_out = macro_offset;
-    srcfiles2 = (char **)
-        _dwarf_get_alloc(dbg, DW_DLA_LIST, srcfiles_count);
+    /*  We cannot use space allocated by
+        _dwarf_get_alloc() in the macro_context
+        we will allocate shortly.
+        So copy from what we have to a similar data set
+        but malloc space directly. */
+
+
+    srcfiles2 = (char **) calloc(srcfiles_count, sizeof(char *));
     if (!srcfiles2) {
         _dwarf_error(dbg, error, DW_DLE_ALLOC_FAIL);
         return (DW_DLV_ERROR);
     }
-    lres  = translate_srcfiles_to_srcfiles2(dbg,srcfiles,
+    lres  = translate_srcfiles_to_srcfiles2(srcfiles,
         srcfiles_count,srcfiles2);
+    {
+        Dwarf_Signed i = 0;
+        for (i = 0; i < srcfiles_count; ++i) {
+            if(srcfiles[i]) {
+                dwarf_dealloc(dbg, srcfiles[i], DW_DLA_STRING);
+                srcfiles[i] = 0;
+            }
+        }
+        dwarf_dealloc(dbg, srcfiles, DW_DLA_LIST);
+        srcfiles = 0;
+    }
     if (lres == DW_DLV_OK) {
-        dwarf_dealloc(dbg,srcfiles,DW_DLA_LIST);
         srcfiles = 0;
     } else {
-        dealloc_srcfiles(dbg, srcfiles2, srcfiles_count);
+        dealloc_macro_srcfiles(srcfiles2, srcfiles_count);
         _dwarf_error(dbg, error, DW_DLE_ALLOC_FAIL);
         return lres;
     }
@@ -1204,11 +1223,11 @@ _dwarf_internal_macro_context_by_offset(Dwarf_Debug dbg,
 
     res = _dwarf_load_section(dbg, &dbg->de_debug_macro,error);
     if (res != DW_DLV_OK) {
-        dealloc_srcfiles(dbg,srcfiles,srcfilescount);
+        dealloc_macro_srcfiles(srcfiles,srcfilescount);
         return res;
     }
     if (!dbg->de_debug_macro.dss_size) {
-        dealloc_srcfiles(dbg,srcfiles,srcfilescount);
+        dealloc_macro_srcfiles(srcfiles,srcfilescount);
         return (DW_DLV_NO_ENTRY);
     }
 
@@ -1216,7 +1235,7 @@ _dwarf_internal_macro_context_by_offset(Dwarf_Debug dbg,
     section_size = dbg->de_debug_macro.dss_size;
     /*  The '3'  ensures the header initial bytes present too. */
     if ((3+macro_offset) >= section_size) {
-        dealloc_srcfiles(dbg,srcfiles,srcfilescount);
+        dealloc_macro_srcfiles(srcfiles,srcfilescount);
         _dwarf_error(dbg, error, DW_DLE_MACRO_OFFSET_BAD);
         return (DW_DLV_ERROR);
     }
@@ -1228,27 +1247,29 @@ _dwarf_internal_macro_context_by_offset(Dwarf_Debug dbg,
     macro_context = (Dwarf_Macro_Context)
         _dwarf_get_alloc(dbg,DW_DLA_MACRO_CONTEXT,1);
     if (!macro_context) {
-        dealloc_srcfiles(dbg,srcfiles,srcfilescount);
+        dealloc_macro_srcfiles(srcfiles,srcfilescount);
         _dwarf_error(dbg, error, DW_DLE_ALLOC_FAIL);
         return DW_DLV_ERROR;
     }
 
     if ((section_base + sizeof(Dwarf_Half) + sizeof(Dwarf_Small)) >                     section_end ) {
-        dealloc_srcfiles(dbg,srcfiles,srcfilescount);
+        dealloc_macro_srcfiles(srcfiles,srcfilescount);
         _dwarf_error(dbg, error, DW_DLE_MACRO_OFFSET_BAD);
         return DW_DLV_ERROR;
     }
-    READ_UNALIGNED(dbg,version, Dwarf_Half,
-        macro_data,sizeof(Dwarf_Half));
+    /* Note here so if error return we get these freed eventually. */
+    macro_context->mc_srcfiles = srcfiles;
+    macro_context->mc_srcfiles_count = srcfilescount;
+
+    READ_UNALIGNED_CK(dbg,version, Dwarf_Half,
+        macro_data,sizeof(Dwarf_Half),error,section_end);
     macro_data += sizeof(Dwarf_Half);
-    READ_UNALIGNED(dbg,flags, Dwarf_Small,
-        macro_data,sizeof(Dwarf_Small));
+    READ_UNALIGNED_CK(dbg,flags, Dwarf_Small,
+        macro_data,sizeof(Dwarf_Small),error,section_end);
     macro_data += sizeof(Dwarf_Small);
 
     macro_context->mc_at_comp_dir = comp_dir;
     macro_context->mc_at_name = comp_name;
-    macro_context->mc_srcfiles = srcfiles;
-    macro_context->mc_srcfiles_count = srcfilescount;
     macro_context->mc_macro_header = macro_header;
     macro_context->mc_section_offset = macro_offset;
     macro_context->mc_version_number = version;
@@ -1269,8 +1290,8 @@ _dwarf_internal_macro_context_by_offset(Dwarf_Debug dbg,
             _dwarf_error(dbg, error, DW_DLE_MACRO_OFFSET_BAD);
             return (DW_DLV_ERROR);
         }
-        READ_UNALIGNED(dbg,line_table_offset,Dwarf_Unsigned,
-            macro_data,offset_size);
+        READ_UNALIGNED_CK(dbg,line_table_offset,Dwarf_Unsigned,
+            macro_data,offset_size,error,section_end);
         macro_data += offset_size;
         macro_context->mc_debug_line_offset = line_table_offset;
     }
@@ -1470,10 +1491,8 @@ void
 _dwarf_macro_destructor(void *m)
 {
     Dwarf_Macro_Context mc= (Dwarf_Macro_Context)m;
-    Dwarf_Debug dbg = 0;
 
-    dbg = mc->mc_dbg;
-    dealloc_srcfiles(dbg, mc->mc_srcfiles, mc->mc_srcfiles_count);
+    dealloc_macro_srcfiles(mc->mc_srcfiles, mc->mc_srcfiles_count);
     mc->mc_srcfiles = 0;
     mc->mc_srcfiles_count = 0;
     free((void *)mc->mc_file_path);
