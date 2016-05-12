@@ -300,7 +300,7 @@ _dwarf_make_CU_Context(Dwarf_Debug dbg,
     /* READ_AREA_LENGTH updates cu_ptr for consumed bytes */
     READ_AREA_LENGTH_CK(dbg, length, Dwarf_Unsigned,
         cu_ptr, local_length_size, local_extension_size,
-        error,section_end_ptr);
+        error,section_size,section_end_ptr);
     cu_context->cc_length_size = local_length_size;
     cu_context->cc_extension_size = local_extension_size;
 
@@ -1280,16 +1280,19 @@ _dwarf_next_die_info_ptr(Dwarf_Byte_Ptr die_info_ptr,
                 break;
             case DW_FORM_ref2:
                 /* READ_UNALIGNED does not update info_ptr */
-                READ_UNALIGNED(dbg, offset, Dwarf_Unsigned,
-                    info_ptr, sizeof(Dwarf_Half));
+                READ_UNALIGNED_CK(dbg, offset, Dwarf_Unsigned,
+                    info_ptr, sizeof(Dwarf_Half),
+                    error,die_info_end);
                 break;
             case DW_FORM_ref4:
-                READ_UNALIGNED(dbg, offset, Dwarf_Unsigned,
-                    info_ptr, sizeof(Dwarf_ufixed));
+                READ_UNALIGNED_CK(dbg, offset, Dwarf_Unsigned,
+                    info_ptr, sizeof(Dwarf_ufixed),
+                    error,die_info_end);
                 break;
             case DW_FORM_ref8:
-                READ_UNALIGNED(dbg, offset, Dwarf_Unsigned,
-                    info_ptr, sizeof(Dwarf_Unsigned));
+                READ_UNALIGNED_CK(dbg, offset, Dwarf_Unsigned,
+                    info_ptr, sizeof(Dwarf_Unsigned),
+                    error,die_info_end);
                 break;
             case DW_FORM_ref_udata:
                 DECODE_LEB128_UWORD_CK(info_ptr, offset,
@@ -1444,6 +1447,7 @@ dwarf_siblingof_b(Dwarf_Debug dbg,
         Dwarf_Off off2;
         Dwarf_CU_Context context=0;
         Dwarf_Unsigned headerlen = 0;
+        int cres = 0;
 
         /*  If we've not loaded debug_info
             de_cu_context will be NULL. */
@@ -1456,7 +1460,11 @@ dwarf_siblingof_b(Dwarf_Debug dbg,
 
         off2 = context->cc_debug_offset;
         cu_info_start = dataptr + off2;
-        headerlen = _dwarf_length_of_cu_header(dbg, off2,is_info);
+        cres = _dwarf_length_of_cu_header(dbg, off2,is_info,
+            &headerlen,error);
+        if (cres != DW_DLV_OK) {
+            return cres;
+        }
         die_info_ptr = cu_info_start + headerlen;
         die_info_end = _dwarf_calculate_info_section_end_ptr(context);
         /*  Recording the CU die pointer so we can later access

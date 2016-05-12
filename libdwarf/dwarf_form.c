@@ -353,18 +353,21 @@ dwarf_formref(Dwarf_Attribute attr,
         break;
 
     case DW_FORM_ref2:
-        READ_UNALIGNED(dbg, offset, Dwarf_Unsigned,
-            attr->ar_debug_ptr, sizeof(Dwarf_Half));
+        READ_UNALIGNED_CK(dbg, offset, Dwarf_Unsigned,
+            attr->ar_debug_ptr, sizeof(Dwarf_Half),
+            error,section_end);
         break;
 
     case DW_FORM_ref4:
-        READ_UNALIGNED(dbg, offset, Dwarf_Unsigned,
-            attr->ar_debug_ptr, sizeof(Dwarf_ufixed));
+        READ_UNALIGNED_CK(dbg, offset, Dwarf_Unsigned,
+            attr->ar_debug_ptr, sizeof(Dwarf_ufixed),
+            error,section_end);
         break;
 
     case DW_FORM_ref8:
-        READ_UNALIGNED(dbg, offset, Dwarf_Unsigned,
-            attr->ar_debug_ptr, sizeof(Dwarf_Unsigned));
+        READ_UNALIGNED_CK(dbg, offset, Dwarf_Unsigned,
+            attr->ar_debug_ptr, sizeof(Dwarf_Unsigned),
+            error,section_end);
         break;
 
     case DW_FORM_ref_udata: {
@@ -524,18 +527,21 @@ dwarf_global_formref(Dwarf_Attribute attr,
         goto fixoffset;
 
     case DW_FORM_ref2:
-        READ_UNALIGNED(dbg, offset, Dwarf_Unsigned,
-            attr->ar_debug_ptr, sizeof(Dwarf_Half));
+        READ_UNALIGNED_CK(dbg, offset, Dwarf_Unsigned,
+            attr->ar_debug_ptr, sizeof(Dwarf_Half),
+            error,section_end);
         goto fixoffset;
 
     case DW_FORM_ref4:
-        READ_UNALIGNED(dbg, offset, Dwarf_Unsigned,
-            attr->ar_debug_ptr, sizeof(Dwarf_ufixed));
+        READ_UNALIGNED_CK(dbg, offset, Dwarf_Unsigned,
+            attr->ar_debug_ptr, sizeof(Dwarf_ufixed),
+            error,section_end);
         goto fixoffset;
 
     case DW_FORM_ref8:
-        READ_UNALIGNED(dbg, offset, Dwarf_Unsigned,
-            attr->ar_debug_ptr, sizeof(Dwarf_Unsigned));
+        READ_UNALIGNED_CK(dbg, offset, Dwarf_Unsigned,
+            attr->ar_debug_ptr, sizeof(Dwarf_Unsigned),
+            error,section_end);
         goto fixoffset;
 
     case DW_FORM_ref_udata:
@@ -572,8 +578,9 @@ dwarf_global_formref(Dwarf_Attribute attr,
             _dwarf_error(dbg, error, DW_DLE_NOT_REF_FORM);
             return (DW_DLV_ERROR);
         }
-        READ_UNALIGNED(dbg, offset, Dwarf_Unsigned,
-            attr->ar_debug_ptr, sizeof(Dwarf_ufixed));
+        READ_UNALIGNED_CK(dbg, offset, Dwarf_Unsigned,
+            attr->ar_debug_ptr, sizeof(Dwarf_ufixed),
+            error, section_end);
         /* The offset is global. */
         break;
     case DW_FORM_data8:
@@ -581,8 +588,9 @@ dwarf_global_formref(Dwarf_Attribute attr,
             _dwarf_error(dbg, error, DW_DLE_NOT_REF_FORM);
             return (DW_DLV_ERROR);
         }
-        READ_UNALIGNED(dbg, offset, Dwarf_Unsigned,
-            attr->ar_debug_ptr, sizeof(Dwarf_Unsigned));
+        READ_UNALIGNED_CK(dbg, offset, Dwarf_Unsigned,
+            attr->ar_debug_ptr, sizeof(Dwarf_Unsigned),
+            error,section_end);
         /* The offset is global. */
         break;
     case DW_FORM_ref_addr:
@@ -598,11 +606,13 @@ dwarf_global_formref(Dwarf_Attribute attr,
                 length_size = cu_context->cc_length_size;
             }
             if (length_size == 4) {
-                READ_UNALIGNED(dbg, offset, Dwarf_Unsigned,
-                    attr->ar_debug_ptr, sizeof(Dwarf_ufixed));
+                READ_UNALIGNED_CK(dbg, offset, Dwarf_Unsigned,
+                    attr->ar_debug_ptr, sizeof(Dwarf_ufixed),
+                    error,section_end);
             } else if (length_size == 8) {
-                READ_UNALIGNED(dbg, offset, Dwarf_Unsigned,
-                    attr->ar_debug_ptr, sizeof(Dwarf_Unsigned));
+                READ_UNALIGNED_CK(dbg, offset, Dwarf_Unsigned,
+                    attr->ar_debug_ptr, sizeof(Dwarf_Unsigned),
+                    error,section_end);
             } else {
                 _dwarf_error(dbg, error, DW_DLE_FORM_SEC_OFFSET_LENGTH_BAD);
                 return (DW_DLV_ERROR);
@@ -621,11 +631,13 @@ dwarf_global_formref(Dwarf_Attribute attr,
                 the offset is not going to refer to .debug_info! */
             unsigned length_size = cu_context->cc_length_size;
             if (length_size == 4) {
-                READ_UNALIGNED(dbg, offset, Dwarf_Unsigned,
-                    attr->ar_debug_ptr, sizeof(Dwarf_ufixed));
+                READ_UNALIGNED_CK(dbg, offset, Dwarf_Unsigned,
+                    attr->ar_debug_ptr, sizeof(Dwarf_ufixed),
+                    error,section_end);
             } else if (length_size == 8) {
-                READ_UNALIGNED(dbg, offset, Dwarf_Unsigned,
-                    attr->ar_debug_ptr, sizeof(Dwarf_Unsigned));
+                READ_UNALIGNED_CK(dbg, offset, Dwarf_Unsigned,
+                    attr->ar_debug_ptr, sizeof(Dwarf_Unsigned),
+                    error,section_end);
             } else {
                 _dwarf_error(dbg, error, DW_DLE_FORM_SEC_OFFSET_LENGTH_BAD);
                 return (DW_DLV_ERROR);
@@ -773,10 +785,13 @@ dwarf_formaddr(Dwarf_Attribute attr,
             it is a reference inside the debug_info section. No longer
             allowed. */
         ) {
+        Dwarf_Small *section_end =
+            _dwarf_calculate_info_section_end_ptr(cu_context);
 
-        READ_UNALIGNED(dbg, ret_addr, Dwarf_Addr,
+        READ_UNALIGNED_CK(dbg, ret_addr, Dwarf_Addr,
             attr->ar_debug_ptr,
-            cu_context->cc_address_size);
+            cu_context->cc_address_size,
+            error,section_end);
         *return_addr = ret_addr;
         return (DW_DLV_OK);
     }
@@ -845,8 +860,9 @@ dwarf_formudata(Dwarf_Attribute attr,
     switch (attr->ar_attribute_form) {
 
     case DW_FORM_data1:
-        READ_UNALIGNED(dbg, ret_value, Dwarf_Unsigned,
-            attr->ar_debug_ptr, sizeof(Dwarf_Small));
+        READ_UNALIGNED_CK(dbg, ret_value, Dwarf_Unsigned,
+            attr->ar_debug_ptr, sizeof(Dwarf_Small),
+            error,section_end);
         *return_uval = ret_value;
         return DW_DLV_OK;
 
@@ -854,24 +870,27 @@ dwarf_formudata(Dwarf_Attribute attr,
         the right number bits and generates host order.
         So we can just assign to *return_uval. */
     case DW_FORM_data2:{
-        READ_UNALIGNED(dbg, ret_value, Dwarf_Unsigned,
-            attr->ar_debug_ptr, sizeof(Dwarf_Half));
+        READ_UNALIGNED_CK(dbg, ret_value, Dwarf_Unsigned,
+            attr->ar_debug_ptr, sizeof(Dwarf_Half),
+            error,section_end);
         *return_uval = ret_value;
         return DW_DLV_OK;
         }
 
     case DW_FORM_data4:{
-        READ_UNALIGNED(dbg, ret_value, Dwarf_Unsigned,
+        READ_UNALIGNED_CK(dbg, ret_value, Dwarf_Unsigned,
             attr->ar_debug_ptr,
-            sizeof(Dwarf_ufixed));
+            sizeof(Dwarf_ufixed),
+            error,section_end);
         *return_uval = ret_value;
         return DW_DLV_OK;
         }
 
     case DW_FORM_data8:{
-        READ_UNALIGNED(dbg, ret_value, Dwarf_Unsigned,
+        READ_UNALIGNED_CK(dbg, ret_value, Dwarf_Unsigned,
             attr->ar_debug_ptr,
-            sizeof(Dwarf_Unsigned));
+            sizeof(Dwarf_Unsigned),
+            error,section_end);
         *return_uval = ret_value;
         return DW_DLV_OK;
         }
@@ -922,26 +941,29 @@ dwarf_formsdata(Dwarf_Attribute attr,
         So we have to use a cast to get the
         value sign extended in the right way for each case. */
     case DW_FORM_data2:{
-        READ_UNALIGNED(dbg, ret_value, Dwarf_Signed,
+        READ_UNALIGNED_CK(dbg, ret_value, Dwarf_Signed,
             attr->ar_debug_ptr,
-            sizeof(Dwarf_Shalf));
+            sizeof(Dwarf_Shalf),
+            error,section_end);
         *return_sval = (Dwarf_Shalf) ret_value;
         return DW_DLV_OK;
 
         }
 
     case DW_FORM_data4:{
-        READ_UNALIGNED(dbg, ret_value, Dwarf_Signed,
+        READ_UNALIGNED_CK(dbg, ret_value, Dwarf_Signed,
             attr->ar_debug_ptr,
-            sizeof(Dwarf_sfixed));
+            sizeof(Dwarf_sfixed),
+            error,section_end);
         *return_sval = (Dwarf_sfixed) ret_value;
         return DW_DLV_OK;
         }
 
     case DW_FORM_data8:{
-        READ_UNALIGNED(dbg, ret_value, Dwarf_Signed,
+        READ_UNALIGNED_CK(dbg, ret_value, Dwarf_Signed,
             attr->ar_debug_ptr,
-            sizeof(Dwarf_Signed));
+            sizeof(Dwarf_Signed),
+            error,section_end);
         *return_sval = (Dwarf_Signed) ret_value;
         return DW_DLV_OK;
         }

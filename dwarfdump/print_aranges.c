@@ -48,6 +48,11 @@ do_checking(Dwarf_Debug dbg, Dwarf_Arange *arange_buf,Dwarf_Signed i,
     Dwarf_Off cuhdroff = 0;
     Dwarf_Off cudieoff3 = 0;
     Dwarf_Error checking_err = 0;
+    /*  .debug_types has no address ranges, only .debug_info[.dwo] 
+        has them.*/
+    int is_info = 1;
+
+
     dres = dwarf_get_arange_cu_header_offset(
         arange_buf[i],&cuhdroff,&checking_err);
     if (dres == DW_DLV_OK) {
@@ -64,18 +69,18 @@ do_checking(Dwarf_Debug dbg, Dwarf_Arange *arange_buf,Dwarf_Signed i,
                 print_error(dbg, "dwarf_die_offsets", dres, checking_err);
             }
         }
-        dres = dwarf_get_cu_die_offset_given_cu_header_offset(
-            dbg,cuhdroff,&cudieoff2,&checking_err);
+        dres = dwarf_get_cu_die_offset_given_cu_header_offset_b(
+            dbg,cuhdroff,is_info,&cudieoff2,&checking_err);
         if (dres == DW_DLV_OK) {
             /* Get the CU offset for easy error reporting */
             dwarf_die_offsets(cu_die,&DIE_overall_offset,&DIE_offset,&checking_err);
             DIE_CU_overall_offset = DIE_overall_offset;
             DIE_CU_offset = DIE_offset;
             DWARF_CHECK_COUNT(aranges_result,1);
-            if (cudieoff2 != cu_die_offset) {
+            if (cu_die_offset != cudieoff2) {
                 printf("Error, cu_die offsets mismatch,  0x%"
-                    DW_PR_DUx
-                    " != 0x%" DW_PR_DUx " from arange data",
+                    DW_PR_DUx " != 0x%" DW_PR_DUx 
+                    " from arange data",
                     cu_die_offset,cudieoff2);
                 DWARF_CHECK_ERROR(aranges_result,
                     " dwarf_get_cu_die_offset_given_cu..."
@@ -181,7 +186,9 @@ print_aranges(Dwarf_Debug dbg)
                 }
 
                 if (check_aranges) {
-                    do_checking(dbg,arange_buf,i,cu_die_offset,first_cu,
+                     
+                    do_checking(dbg,arange_buf,i,
+                        cu_die_offset,first_cu,
                         cu_die_offset_prev,cu_die);
                 }
                 /*  Get the offset of the cu header itself in the

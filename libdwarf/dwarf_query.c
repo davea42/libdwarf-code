@@ -648,6 +648,7 @@ _dwarf_extract_address_from_debug_addr(Dwarf_Debug dbg,
     Dwarf_Unsigned ret_addr = 0;
     int res = 0;
     Dwarf_Byte_Ptr  sectionstart = 0;
+    Dwarf_Byte_Ptr  sectionend = 0;
     Dwarf_Unsigned  sectionsize  = 0;
 
     res = _dwarf_get_address_base_attr_value(dbg,context,
@@ -672,20 +673,20 @@ _dwarf_extract_address_from_debug_addr(Dwarf_Debug dbg,
     /*  DW_FORM_GNU_addr_index  relies on DW_AT_GNU_addr_base
         which is in the CU die. */
 
+    sectionstart = dbg->de_debug_addr.dss_data;
     addr_offset = address_base + (addrindex * context->cc_address_size);
-
-
     /*  The offsets table is a series of address-size entries
         but with a base. */
     sectionsize = dbg->de_debug_addr.dss_size;
+    sectionend = sectionstart + sectionsize;
     if ((addr_offset + context->cc_address_size) > sectionsize) {
         _dwarf_error(dbg, error, DW_DLE_ATTR_FORM_SIZE_BAD);
         return (DW_DLV_ERROR);
     }
-    sectionstart = dbg->de_debug_addr.dss_data;
-    READ_UNALIGNED(dbg,ret_addr,Dwarf_Addr,
+    READ_UNALIGNED_CK(dbg,ret_addr,Dwarf_Addr,
         sectionstart + addr_offset,
-        context->cc_address_size);
+        context->cc_address_size,
+        error,sectionend);
     *addr_out = ret_addr;
     return DW_DLV_OK;
 }
@@ -771,7 +772,6 @@ _dwarf_look_in_local_and_tied(Dwarf_Half attr_form,
     /*  We get the index. It might apply here
         or in tied object. Checking that next. */
     dbg = context->cc_dbg;
-
     res2 = _dwarf_get_addr_index_itself(attr_form,
         info_ptr,dbg,context, &index_to_addr,error);
     if(res2 != DW_DLV_OK) {
@@ -799,6 +799,7 @@ dwarf_lowpc(Dwarf_Die die,
     enum Dwarf_Form_Class class = DW_FORM_CLASS_UNKNOWN;
     int res = 0;
     Dwarf_CU_Context context = die->di_cu_context;
+    Dwarf_Small *die_info_end = 0;
 
     CHECK_DIE(die, DW_DLV_ERROR);
 
@@ -832,8 +833,10 @@ dwarf_lowpc(Dwarf_Die die,
             error);
         return res;
     }
-    READ_UNALIGNED(dbg, ret_addr, Dwarf_Addr,
-        info_ptr, address_size);
+    die_info_end = _dwarf_calculate_info_section_end_ptr(context);
+    READ_UNALIGNED_CK(dbg, ret_addr, Dwarf_Addr,
+        info_ptr, address_size,
+        error,die_info_end);
 
     *return_addr = ret_addr;
     return (DW_DLV_OK);
@@ -1218,8 +1221,9 @@ dwarf_highpc_b(Dwarf_Die die,
             return (DW_DLV_OK);
         }
 
-        READ_UNALIGNED(dbg, addr, Dwarf_Addr,
-            info_ptr, address_size);
+        READ_UNALIGNED_CK(dbg, addr, Dwarf_Addr,
+            info_ptr, address_size,
+            error,die_info_end);
         *return_value = addr;
     } else {
         int res3 = 0;
@@ -1405,20 +1409,23 @@ _dwarf_die_attr_unsigned_constant(Dwarf_Die die,
         return (DW_DLV_OK);
 
     case DW_FORM_data2:
-        READ_UNALIGNED(dbg, ret_value, Dwarf_Unsigned,
-            info_ptr, sizeof(Dwarf_Shalf));
+        READ_UNALIGNED_CK(dbg, ret_value, Dwarf_Unsigned,
+            info_ptr, sizeof(Dwarf_Shalf),
+            error,die_info_end);
         *return_val = ret_value;
         return (DW_DLV_OK);
 
     case DW_FORM_data4:
-        READ_UNALIGNED(dbg, ret_value, Dwarf_Unsigned,
-            info_ptr, sizeof(Dwarf_sfixed));
+        READ_UNALIGNED_CK(dbg, ret_value, Dwarf_Unsigned,
+            info_ptr, sizeof(Dwarf_sfixed),
+            error,die_info_end);
         *return_val = ret_value;
         return (DW_DLV_OK);
 
     case DW_FORM_data8:
-        READ_UNALIGNED(dbg, ret_value, Dwarf_Unsigned,
-            info_ptr, sizeof(Dwarf_Unsigned));
+        READ_UNALIGNED_CK(dbg, ret_value, Dwarf_Unsigned,
+            info_ptr, sizeof(Dwarf_Unsigned),
+            error,die_info_end);
         *return_val = ret_value;
         return (DW_DLV_OK);
 

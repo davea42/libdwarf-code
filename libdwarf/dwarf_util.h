@@ -199,6 +199,8 @@
    This code is ENDIAN DEPENDENT
    The memcpy args are the endian issue.
 
+   Does not update the 'source' field.
+
    for READ_UNALIGNED_CK the error code refers to host endianness.
 */
 typedef Dwarf_Unsigned BIGGEST_UINT;
@@ -261,7 +263,7 @@ typedef Dwarf_Unsigned BIGGEST_UINT;
         BIGGEST_UINT _ltmp = 0;                           \
         Dwarf_Byte_Ptr readend = source+length;           \
         if (readend > endptr) {                           \
-            _dwarf_error(dbg, error, DW_DLE_READ_BIGENDIAN_ERROR);\
+            _dwarf_error(dbg, error, DW_DLE_READ_LITTLEENDIAN_ERROR);\
             return DW_DLV_ERROR;                          \
         }                                                 \
         dbg->de_copy_word( (char *)(&_ltmp) ,             \
@@ -331,6 +333,7 @@ typedef Dwarf_Unsigned BIGGEST_UINT;
     does not seem necessary (none of the 64bit length seems
     appropriate unless it's  ident[EI_CLASS] == ELFCLASS64).
 */
+#if 0
 #define READ_AREA_LENGTH(r_dbg,w_target,r_targtype,                      \
     rw_src_data_p,w_length_size,w_exten_size)                            \
     do {                                                                 \
@@ -371,9 +374,13 @@ typedef Dwarf_Unsigned BIGGEST_UINT;
             }                                                            \
         }                                                                \
     } while (0)
-
+#endif /* 0 */
+/*  The w_target > r_sectionlen compare is done without adding in case
+    the w_target value read is so large any addition would overflow.
+    A basic value sanity check. */
 #define READ_AREA_LENGTH_CK(r_dbg,w_target,r_targtype,                   \
-    rw_src_data_p,w_length_size,w_exten_size,w_error,r_endptr)           \
+    rw_src_data_p,w_length_size,w_exten_size,w_error,                    \
+    r_sectionlen,r_endptr)                                               \
     do {                                                                 \
         READ_UNALIGNED_CK(r_dbg,w_target,r_targtype,                     \
             rw_src_data_p, ORIGINAL_DWARF_OFFSET_SIZE,                   \
@@ -386,6 +393,11 @@ typedef Dwarf_Unsigned BIGGEST_UINT;
             READ_UNALIGNED_CK(r_dbg,w_target,r_targtype,                 \
                 rw_src_data_p, DISTINGUISHED_VALUE_OFFSET_SIZE,          \
                 w_error,r_endptr);                                       \
+            if (w_target > r_sectionlen) {                               \
+                _dwarf_error(r_dbg,w_error,                              \
+                    DW_DLE_HEADER_LEN_BIGGER_THAN_SECSIZE);              \
+                return DW_DLV_ERROR;                                     \
+            }                                                            \
             rw_src_data_p += DISTINGUISHED_VALUE_OFFSET_SIZE;            \
         } else {                                                         \
             if (w_target == 0 && r_dbg->de_big_endian_object) {          \
@@ -398,6 +410,11 @@ typedef Dwarf_Unsigned BIGGEST_UINT;
                     READ_UNALIGNED_CK(r_dbg,w_target,r_targtype,         \
                         rw_src_data_p, DISTINGUISHED_VALUE_OFFSET_SIZE,  \
                         w_error,r_endptr);                               \
+                    if (w_target > r_sectionlen) {                       \
+                        _dwarf_error(r_dbg,w_error,                      \
+                            DW_DLE_HEADER_LEN_BIGGER_THAN_SECSIZE);      \
+                        return DW_DLV_ERROR;                             \
+                    }                                                    \
                     w_length_size  = DISTINGUISHED_VALUE_OFFSET_SIZE;    \
                     rw_src_data_p += DISTINGUISHED_VALUE_OFFSET_SIZE;    \
                     w_exten_size = 0;                                    \
@@ -408,6 +425,11 @@ typedef Dwarf_Unsigned BIGGEST_UINT;
                     w_exten_size = 0;                                    \
                 }                                                        \
             } else {                                                     \
+                if (w_target > r_sectionlen) {                           \
+                    _dwarf_error(r_dbg,w_error,                          \
+                        DW_DLE_HEADER_LEN_BIGGER_THAN_SECSIZE);          \
+                    return DW_DLV_ERROR;                                 \
+                }                                                        \
                 /* Standard 32 bit dwarf2/dwarf3 */                      \
                 w_exten_size   = 0;                                      \
                 w_length_size  = ORIGINAL_DWARF_OFFSET_SIZE;             \
@@ -487,8 +509,11 @@ int _dwarf_get_abbrev_for_code(Dwarf_CU_Context cu_context,
 int _dwarf_check_string_valid(Dwarf_Debug dbg,void *areaptr,
     void *startptr, void *endptr, Dwarf_Error *error);
 
-Dwarf_Unsigned _dwarf_length_of_cu_header(Dwarf_Debug,
-    Dwarf_Unsigned offset,Dwarf_Bool dinfo);
+int _dwarf_length_of_cu_header(Dwarf_Debug dbg, Dwarf_Unsigned offset,
+    Dwarf_Bool is_info,
+    Dwarf_Unsigned *area_length_out,
+    Dwarf_Error *error);
+
 Dwarf_Unsigned _dwarf_length_of_cu_header_simple(Dwarf_Debug,Dwarf_Bool dinfo);
 
 int  _dwarf_load_debug_info(Dwarf_Debug dbg, Dwarf_Error *error);
@@ -505,5 +530,14 @@ void _dwarf_error_mv_s_to_t(Dwarf_Debug dbgs,Dwarf_Error *errs,
 int _dwarf_internal_get_die_comp_dir(Dwarf_Die die, const char **compdir_out,
     const char **comp_name_out,
     Dwarf_Error *error);
+
+int _dwarf_what_section_are_we(Dwarf_Debug dbg,
+    Dwarf_Small *our_pointer,
+    const char **      section_name_out,
+    Dwarf_Small    **sec_start_ptr_out,
+    Dwarf_Unsigned *sec_len_out,
+    Dwarf_Small    **sec_end_ptr_out,
+    Dwarf_Error *error);
+
 
 #endif /* DWARF_UTIL_H */

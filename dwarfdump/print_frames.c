@@ -78,6 +78,103 @@ safe_strcpy(char *out, long outlen, const char *in, long inlen)
     }
 }
 
+
+
+
+#define MAXLEBLEN 10
+/*
+    decode ULEB
+*/
+static int
+local_dwarf_decode_u_leb128_chk(unsigned char *leb128,
+    unsigned int *leb128_length,
+    Dwarf_Unsigned *value_out,
+    Dwarf_Small *data_end)
+{
+    unsigned char byte = 0;
+    Dwarf_Unsigned number = 0;
+    unsigned int shift = 0;
+    unsigned int byte_length = 1;
+
+    byte = *leb128;
+    if (leb128 >= data_end) {
+        return DW_DLV_ERROR;
+    }
+    for (;;) {
+        number |= (byte & 0x7f) << shift;
+        shift += 7;
+
+        if ((byte & 0x80) == 0) {
+            if (leb128_length != NULL)
+                *leb128_length = byte_length;
+            *value_out = number;
+            return DW_DLV_OK;
+        }
+
+        byte_length++;
+        if (byte_length > MAXLEBLEN) {
+            return DW_DLV_ERROR;
+        }
+        ++leb128;
+        if (leb128 >= data_end) {
+            return DW_DLV_ERROR;
+        }
+        byte = *leb128;
+    }
+    return DW_DLV_ERROR;
+}
+
+#define BITSINBYTE 8
+static int
+local_dwarf_decode_s_leb128_chk(unsigned char *leb128,
+    unsigned int *leb128_length,
+    Dwarf_Signed *value_out,
+    Dwarf_Small *data_end)
+{
+    Dwarf_Signed number = 0;
+    Dwarf_Bool sign = 0;
+    unsigned shift = 0;
+    unsigned char byte = 0;
+    Dwarf_Signed byte_length = 1;
+
+    /*  byte_length being the number of bytes of data absorbed so far in
+        turning the leb into a Dwarf_Signed. */
+
+    if (leb128 >= data_end) {
+        return DW_DLV_ERROR;
+    }
+    byte = *leb128;
+    for (;;) {
+        sign = byte & 0x40;
+        number |= ((Dwarf_Signed) ((byte & 0x7f))) << shift;
+        shift += 7;
+
+        if ((byte & 0x80) == 0) {
+            break;
+        }
+        ++leb128;
+        if (leb128 >= data_end) {
+            return DW_DLV_ERROR;
+        }
+        if (byte_length > MAXLEBLEN) {
+            return DW_DLV_ERROR;
+        }
+        byte = *leb128;
+        byte_length++;
+        
+    }
+
+    if ((shift < sizeof(Dwarf_Signed) * BITSINBYTE) && sign) {
+        number |= -((Dwarf_Signed) 1 << shift);
+    }
+
+    if (leb128_length != NULL)
+        *leb128_length = byte_length;
+    *value_out = number;
+    return DW_DLV_OK;
+}
+
+
 /* For inlined functions, try to find name */
 static int
 get_abstract_origin_funcname(Dwarf_Debug dbg,Dwarf_Attribute attr,
@@ -1176,7 +1273,8 @@ get_string_from_locs(Dwarf_Debug dbg,
 
 /*ARGSUSED*/ static void
 print_frame_inst_bytes(Dwarf_Debug dbg,
-    Dwarf_Ptr cie_init_inst, Dwarf_Signed len,
+    Dwarf_Ptr cie_init_inst, 
+    Dwarf_Signed len,
     Dwarf_Signed data_alignment_factor,
     int code_alignment_factor, Dwarf_Half addr_size,
     Dwarf_Half offset_size,Dwarf_Half version,
@@ -1191,6 +1289,8 @@ print_frame_inst_bytes(Dwarf_Debug dbg,
     unsigned short u16 = 0;
     unsigned int u32 = 0;
     unsigned long long u64 = 0;
+    int res = 0;
+    Dwarf_Small *endpoint = instp + len;
 
     for (; len > 0;) {
         unsigned char ibyte = *instp;
@@ -1213,7 +1313,12 @@ print_frame_inst_bytes(Dwarf_Debug dbg,
         case DW_CFA_offset:
             loff = off;
             reg = ibyte & 0x3f;
-            uval = local_dwarf_decode_u_leb128(instp + 1, &uleblen);
+            res = local_dwarf_decode_u_leb128_chk(instp + 1, &uleblen,
+                &uval,endpoint);
+            if (res != DW_DLV_OK) {
+                printf("ERROR reading leb in DW_CFA_offset\n");
+                return;
+            }
             instp += uleblen;
             len -= uleblen;
             off += uleblen;
@@ -1306,12 +1411,22 @@ print_frame_inst_bytes(Dwarf_Debug dbg,
                     loff,  uval2);
                 break;
             case DW_CFA_offset_extended:
-                uval = local_dwarf_decode_u_leb128(instp + 1, &uleblen);
+                res = local_dwarf_decode_u_leb128_chk(instp + 1, &uleblen,
+                    &uval,endpoint);
+                if (res != DW_DLV_OK) {
+                    printf("ERROR reading leb in DW_CFA_offset_extended\n");
+                    return;
+                }
+           
                 instp += uleblen;
                 len -= uleblen;
                 off += uleblen;
-                uval2 =
-                    local_dwarf_decode_u_leb128(instp + 1, &uleblen);
+                res = local_dwarf_decode_u_leb128_chk(instp + 1, &uleblen,
+                    &uval2,endpoint);
+                if (res != DW_DLV_OK) {
+                    printf("ERROR reading leb in DW_CFA_offset_extended\n");
+                    return;
+                }
                 instp += uleblen;
                 len -= uleblen;
                 off += uleblen;
@@ -1328,7 +1443,12 @@ print_frame_inst_bytes(Dwarf_Debug dbg,
                 break;
 
             case DW_CFA_restore_extended:
-                uval = local_dwarf_decode_u_leb128(instp + 1, &uleblen);
+                res = local_dwarf_decode_u_leb128_chk(instp + 1, &uleblen,
+                    &uval,endpoint);
+                if (res != DW_DLV_OK) {
+                    printf("ERROR reading leb in DW_CFA_restore_extended\n");
+                    return;
+                }
                 instp += uleblen;
                 len -= uleblen;
                 off += uleblen;
@@ -1337,7 +1457,12 @@ print_frame_inst_bytes(Dwarf_Debug dbg,
                 printf("\n");
                 break;
             case DW_CFA_undefined:
-                uval = local_dwarf_decode_u_leb128(instp + 1, &uleblen);
+                res = local_dwarf_decode_u_leb128_chk(instp + 1, &uleblen,
+                    &uval,endpoint);
+                if (res != DW_DLV_OK) {
+                    printf("ERROR reading leb in DW_CFA_undefined\n");
+                    return;
+                }
                 instp += uleblen;
                 len -= uleblen;
                 off += uleblen;
@@ -1346,7 +1471,12 @@ print_frame_inst_bytes(Dwarf_Debug dbg,
                 printf("\n");
                 break;
             case DW_CFA_same_value:
-                uval = local_dwarf_decode_u_leb128(instp + 1, &uleblen);
+                res = local_dwarf_decode_u_leb128_chk(instp + 1, &uleblen,
+                    &uval,endpoint);
+                if (res != DW_DLV_OK) {
+                    printf("ERROR reading leb in DW_CFA_undefined\n");
+                    return;
+                }
                 instp += uleblen;
                 len -= uleblen;
                 off += uleblen;
@@ -1355,12 +1485,21 @@ print_frame_inst_bytes(Dwarf_Debug dbg,
                 printf("\n");
                 break;
             case DW_CFA_register:
-                uval = local_dwarf_decode_u_leb128(instp + 1, &uleblen);
+                res = local_dwarf_decode_u_leb128_chk(instp + 1, &uleblen,
+                    &uval,endpoint);
+                if (res != DW_DLV_OK) {
+                    printf("ERROR reading leb in DW_CFA_register\n");
+                    return;
+                }
                 instp += uleblen;
                 len -= uleblen;
                 off += uleblen;
-                uval2 =
-                    local_dwarf_decode_u_leb128(instp + 1, &uleblen);
+                res = local_dwarf_decode_u_leb128_chk(instp + 1, &uleblen,
+                    &uval2,endpoint);
+                if (res != DW_DLV_OK) {
+                    printf("ERROR reading leb in DW_CFA_register\n");
+                    return;
+                }
                 instp += uleblen;
                 len -= uleblen;
                 off += uleblen;
@@ -1377,12 +1516,21 @@ print_frame_inst_bytes(Dwarf_Debug dbg,
                 printf("\t%2u DW_CFA_restore_state\n", loff);
                 break;
             case DW_CFA_def_cfa:
-                uval = local_dwarf_decode_u_leb128(instp + 1, &uleblen);
+                res = local_dwarf_decode_u_leb128_chk(instp + 1, &uleblen,
+                    &uval,endpoint);
+                if (res != DW_DLV_OK) {
+                    printf("ERROR reading leb in DW_CFA_def_cfa\n");
+                    return;
+                }
                 instp += uleblen;
                 len -= uleblen;
                 off += uleblen;
-                uval2 =
-                    local_dwarf_decode_u_leb128(instp + 1, &uleblen);
+                res = local_dwarf_decode_u_leb128_chk(instp + 1, &uleblen,
+                    &uval2,endpoint);
+                if (res != DW_DLV_OK) {
+                    printf("ERROR reading leb in DW_CFA_def_cfa\n");
+                    return;
+                }
                 instp += uleblen;
                 len -= uleblen;
                 off += uleblen;
@@ -1392,7 +1540,12 @@ print_frame_inst_bytes(Dwarf_Debug dbg,
                 printf("\n");
                 break;
             case DW_CFA_def_cfa_register:
-                uval = local_dwarf_decode_u_leb128(instp + 1, &uleblen);
+                res = local_dwarf_decode_u_leb128_chk(instp + 1, &uleblen,
+                    &uval,endpoint);
+                if (res != DW_DLV_OK) {
+                    printf("ERROR reading leb in DW_CFA_def_cfa_register\n");
+                    return;
+                }
                 instp += uleblen;
                 len -= uleblen;
                 off += uleblen;
@@ -1401,7 +1554,12 @@ print_frame_inst_bytes(Dwarf_Debug dbg,
                 printf("\n");
                 break;
             case DW_CFA_def_cfa_offset:
-                uval = local_dwarf_decode_u_leb128(instp + 1, &uleblen);
+                res = local_dwarf_decode_u_leb128_chk(instp + 1, &uleblen,
+                    &uval,endpoint);
+                if (res != DW_DLV_OK) {
+                    printf("ERROR reading leb in DW_CFA_def_cfa_offset\n");
+                    return;
+                }
                 instp += uleblen;
                 len -= uleblen;
                 off += uleblen;
@@ -1415,9 +1573,13 @@ print_frame_inst_bytes(Dwarf_Debug dbg,
 
             case DW_CFA_def_cfa_expression:     /* DWARF3 */
                 {
-                    Dwarf_Unsigned block_len =
-                        local_dwarf_decode_u_leb128(instp + 1,
-                            &uleblen);
+                    Dwarf_Unsigned block_len = 0;
+                    res = local_dwarf_decode_u_leb128_chk(instp + 1, &uleblen,
+                        &block_len,endpoint);
+                    if (res != DW_DLV_OK) {
+                        printf("ERROR reading leb in DW_CFA_def_cfa_expression\n");
+                        return;
+                    }
 
                     instp += uleblen;
                     len -= uleblen;
@@ -1427,6 +1589,10 @@ print_frame_inst_bytes(Dwarf_Debug dbg,
                         DW_PR_DUu "\n",
                         loff,
                         block_len);
+                    if ((instp+1 + block_len) > endpoint) {
+                        printf("ERROR expression length too long in DW_CFA_def_cfa_expression\n");
+                        return;
+                    }
                     dump_block("\t\t", (char *) instp+1,
                         (Dwarf_Signed) block_len);
                     printf("\n");
@@ -1445,7 +1611,12 @@ print_frame_inst_bytes(Dwarf_Debug dbg,
                 }
                 break;
             case DW_CFA_expression:     /* DWARF3 */
-                uval = local_dwarf_decode_u_leb128(instp + 1, &uleblen);
+                res = local_dwarf_decode_u_leb128_chk(instp + 1, &uleblen,
+                    &uval,endpoint);
+                if (res != DW_DLV_OK) {
+                    printf("ERROR reading leb in DW_CFA_expression\n");
+                    return;
+                }
                 instp += uleblen;
                 len -= uleblen;
                 off += uleblen;
@@ -1453,9 +1624,13 @@ print_frame_inst_bytes(Dwarf_Debug dbg,
                     /*  instp is always 1 byte back, so we need +1
                         when we use it. See the final increment
                         of this for loop. */
-                    Dwarf_Unsigned block_len =
-                        local_dwarf_decode_u_leb128(instp + 1,
-                            &uleblen);
+                    Dwarf_Unsigned block_len = 0;
+                    res = local_dwarf_decode_u_leb128_chk(instp + 1, &uleblen,
+                        &block_len,endpoint);
+                    if (res != DW_DLV_OK) {
+                        printf("ERROR reading leb in DW_CFA_expression\n");
+                        return;
+                    }
 
                     instp += uleblen;
                     len -= uleblen;
@@ -1465,6 +1640,10 @@ print_frame_inst_bytes(Dwarf_Debug dbg,
                         " expr block len %" DW_PR_DUu "\n",
                         loff,  uval,
                         block_len);
+                    if ((instp+1 + block_len) > endpoint) {
+                        printf("ERROR expression length too long in DW_CFA_expression\n");
+                        return;
+                    }
                     dump_block("\t\t", (char *) instp+1,
                         (Dwarf_Signed) block_len);
                     printf("\n");
@@ -1483,17 +1662,28 @@ print_frame_inst_bytes(Dwarf_Debug dbg,
                 }
                 break;
             case DW_CFA_offset_extended_sf: /* DWARF3 */
-                uval = local_dwarf_decode_u_leb128(instp + 1, &uleblen);
+                res = local_dwarf_decode_u_leb128_chk(instp + 1, &uleblen,
+                    &uval,endpoint);
+                if (res != DW_DLV_OK) {
+                    printf("ERROR reading leb in DW_CFA_offset_extended_sf\n");
+                    return;
+                }
+
                 instp += uleblen;
                 len -= uleblen;
                 off += uleblen;
                 {
+                    Dwarf_Signed sval2 = 0;
                     /* instp is always 1 byte back, so we need +1
                         when we use it. See the final increment
                         of this for loop. */
-                    Dwarf_Signed sval2 =
-                        local_dwarf_decode_s_leb128(instp + 1,
-                            &uleblen);
+                    res = local_dwarf_decode_s_leb128_chk(instp + 1, &uleblen,
+                        &sval2,endpoint);
+                    if (res != DW_DLV_OK) {
+                        printf("ERROR reading leb in DW_CFA_offset_extended_sf\n");
+                        return;
+                    }
+
 
                     instp += uleblen;
                     len -= uleblen;
@@ -1513,14 +1703,23 @@ print_frame_inst_bytes(Dwarf_Debug dbg,
                 /*  instp is always 1 byte back, so we need +1
                     when we use it. See the final increment
                     of this for loop. */
-                uval = local_dwarf_decode_u_leb128(instp + 1, &uleblen);
+                res = local_dwarf_decode_u_leb128_chk(instp + 1, &uleblen,
+                    &uval,endpoint);
+                if (res != DW_DLV_OK) {
+                    printf("ERROR reading leb in DW_CFA_def_cfa_sf\n");
+                    return;
+                }
                 instp += uleblen;
                 len -= uleblen;
                 off += uleblen;
                 {
-                    Dwarf_Signed sval2 =
-                        local_dwarf_decode_s_leb128(instp + 1,
-                            &uleblen);
+                    Dwarf_Signed sval2 = 0;
+                    res = local_dwarf_decode_s_leb128_chk(instp + 1, &uleblen,
+                        &sval2,endpoint);
+                    if (res != DW_DLV_OK) {
+                        printf("ERROR reading leb in DW_CFA_def_cfa_sf\n");
+                        return;
+                    }
 
                     instp += uleblen;
                     len -= uleblen;
@@ -1538,9 +1737,13 @@ print_frame_inst_bytes(Dwarf_Debug dbg,
                     /*  instp is always 1 byte back, so we need +1
                         when we use it. See the final increment
                         of this for loop. */
-                    Dwarf_Signed sval =
-                        local_dwarf_decode_s_leb128(instp + 1,
-                            &uleblen);
+                    Dwarf_Signed sval = 0;
+                    res = local_dwarf_decode_s_leb128_chk(instp + 1, &uleblen,
+                        &sval,endpoint);
+                    if (res != DW_DLV_OK) {
+                        printf("ERROR reading leb in DW_CFA_def_cfa_sf\n");
+                        return;
+                    }
 
                     instp += uleblen;
                     len -= uleblen;
@@ -1557,14 +1760,24 @@ print_frame_inst_bytes(Dwarf_Debug dbg,
                 /*  instp is always 1 byte back, so we need +1
                     when we use it. See the final increment
                     of this for loop. */
-                uval = local_dwarf_decode_u_leb128(instp + 1, &uleblen);
+                res = local_dwarf_decode_u_leb128_chk(instp + 1, &uleblen,
+                    &uval,endpoint);
+                if (res != DW_DLV_OK) {
+                    printf("ERROR reading leb in DW_CFA_val_offset\n");
+                    return;
+                }
+
                 instp += uleblen;
                 len -= uleblen;
                 off += uleblen;
                 {
-                    Dwarf_Signed sval2 =
-                        local_dwarf_decode_s_leb128(instp + 1,
-                            &uleblen);
+                    Dwarf_Signed sval2 = 0;
+                    res = local_dwarf_decode_s_leb128_chk(instp + 1, &uleblen,
+                        &sval2,endpoint);
+                    if (res != DW_DLV_OK) {
+                        printf("ERROR reading leb in DW_CFA_val_offset\n");
+                        return;
+                    }
                     instp += uleblen;
                     len -= uleblen;
                     off += uleblen;
@@ -1586,14 +1799,23 @@ print_frame_inst_bytes(Dwarf_Debug dbg,
                 /*  instp is always 1 byte back, so we need +1
                     when we use it. See the final increment
                     of this for loop. */
-                uval = local_dwarf_decode_u_leb128(instp + 1, &uleblen);
+                res = local_dwarf_decode_u_leb128_chk(instp + 1, &uleblen,
+                    &uval,endpoint);
+                if (res != DW_DLV_OK) {
+                    printf("ERROR reading leb in DW_CFA_val_offset_sf\n");
+                    return;
+                }
                 instp += uleblen;
                 len -= uleblen;
                 off += uleblen;
                 {
-                    Dwarf_Signed sval2 =
-                        local_dwarf_decode_s_leb128(instp + 1,
-                            &uleblen);
+                    Dwarf_Signed sval2 = 0;
+                    res = local_dwarf_decode_s_leb128_chk(instp + 1, &uleblen,
+                        &sval2,endpoint);
+                    if (res != DW_DLV_OK) {
+                        printf("ERROR reading leb in DW_CFA_val_offset\n");
+                        return;
+                    }
 
                     instp += uleblen;
                     len -= uleblen;
@@ -1614,14 +1836,23 @@ print_frame_inst_bytes(Dwarf_Debug dbg,
                 /*  instp is always 1 byte back, so we need +1
                     when we use it. See the final increment
                     of this for loop. */
-                uval = local_dwarf_decode_u_leb128(instp + 1, &uleblen);
+                res = local_dwarf_decode_u_leb128_chk(instp + 1, &uleblen,
+                    &uval,endpoint);
+                if (res != DW_DLV_OK) {
+                    printf("ERROR reading leb in DW_CFA_val_expression\n");
+                    return;
+                }
                 instp += uleblen;
                 len -= uleblen;
                 off += uleblen;
                 {
-                    Dwarf_Unsigned block_len =
-                        local_dwarf_decode_u_leb128(instp + 1,
-                            &uleblen);
+                    Dwarf_Unsigned block_len = 0;
+                    res = local_dwarf_decode_u_leb128_chk(instp + 1, &uleblen,
+                        &block_len,endpoint);
+                    if (res != DW_DLV_OK) {
+                        printf("ERROR reading leb in DW_CFA_val_expression\n");
+                        return;
+                    }
 
                     instp += uleblen;
                     len -= uleblen;
@@ -1631,6 +1862,10 @@ print_frame_inst_bytes(Dwarf_Debug dbg,
                         " expr block len %" DW_PR_DUu "\n",
                         loff,  uval,
                         block_len);
+                    if (( instp + 1 + block_len) >endpoint) {
+                        printf("ERROR expression length too long in DW_CFA_val_expression\n");
+                        return;
+                    }
                     dump_block("\t\t", (char *) instp+1,
                         (Dwarf_Signed) block_len);
                     printf("\n");
@@ -1659,8 +1894,12 @@ print_frame_inst_bytes(Dwarf_Debug dbg,
                 /*  instp is always 1 byte back, so we need +1
                     when we use it. See the final increment
                     of this for loop. */
-                val = local_dwarf_decode_u_leb128(instp + 1,
-                    &uleblen);
+                res = local_dwarf_decode_u_leb128_chk(instp + 1, &uleblen,
+                    &val,endpoint);
+                if (res != DW_DLV_OK) {
+                    printf("ERROR reading leb in DW_CFA_METAWARE_info\n");
+                    return;
+                }
                 printf("\t%2u DW_CFA_METAWARE_info value: %"
                     DW_PR_DUu "\n",
                     loff, val);
@@ -1694,8 +1933,12 @@ print_frame_inst_bytes(Dwarf_Debug dbg,
                 /*  instp is always 1 byte back, so we need +1
                     when we use it. See the final increment
                     of this for loop. */
-                lreg = local_dwarf_decode_u_leb128(instp + 1,
-                    &uleblen);
+                res = local_dwarf_decode_u_leb128_chk(instp + 1, &uleblen,
+                    &lreg,endpoint);
+                if (res != DW_DLV_OK) {
+                    printf("ERROR reading leb in DW_CFA_GNU_args_size\n");
+                    return;
+                }
                 printf("\t%2u DW_CFA_GNU_args_size arg size: %"
                     DW_PR_DUu "\n",
                     loff, lreg);

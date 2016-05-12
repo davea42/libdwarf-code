@@ -1,3 +1,12 @@
+2016-05-10  David Anderson
+    * print_aranges.c: Minor commentary change and
+      rearranging lines for clarity.
+    * print_die.c: formwith->form with
+      in an error message. 
+    * print_frames.c: Now checks for bogus expression block 
+      lengths and bogus LEB values. LEB reading functions
+      now here and static functions.
+    * print_sections.c: Moved leb reading functions to print_frames.c
 2016-05-07  David Anderson
     * dwarfdump.c, common.c: Update version string.
     * print_frames.c: For local variable added

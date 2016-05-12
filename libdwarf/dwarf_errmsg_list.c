@@ -418,6 +418,9 @@ const char *_dwarf_errmsgs[] = {
     "DW_DLE_CIE_INSTR_PTR_ERROR (339)",
     "DW_DLE_FDE_INSTR_PTR_ERROR (340)",
     "DW_DLE_FISSION_ADDITION_ERROR (341) Corrupt dwarf",
+    "DW_DLE_HEADER_LEN_BIGGER_THAN_SECSIZE (342) Corrupt dwarf",
+    "DW_DLE_LOCEXPR_OFF_SECTION_END (343) Corrupt dwarf",
+    "DW_DLE_POINTER_SECTION_UNKNOWN (344)",
 };
 
 #ifdef TESTING

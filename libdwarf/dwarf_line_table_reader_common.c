@@ -133,8 +133,9 @@ operandmismatch(unsigned char * table,unsigned table_length,
 static int
 _dwarf_read_line_table_header(Dwarf_Debug dbg,
     Dwarf_CU_Context cu_context,
+    Dwarf_Small * section_start,
     Dwarf_Small * data_start,
-    Dwarf_Unsigned data_length,
+    Dwarf_Unsigned section_length,
     Dwarf_Small ** updated_data_start_out,
     Dwarf_Line_Context  line_context,
     Dwarf_Small ** bogus_bytes_ptr,
@@ -148,8 +149,8 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
     int local_length_size = 0;
     int local_extension_size = 0;
     Dwarf_Unsigned prologue_length = 0;
-
     Dwarf_Half version = 0;
+    Dwarf_Small *section_end = section_start + section_length;
     Dwarf_Small *line_ptr_end = 0;
     Dwarf_Small *lp_begin = 0;
     int res = 0;
@@ -159,29 +160,27 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
 
     line_context->lc_line_ptr_start = starting_line_ptr;
     /* READ_AREA_LENGTH updates line_ptr for consumed bytes */
-    READ_AREA_LENGTH(dbg, total_length, Dwarf_Unsigned,
-        line_ptr, local_length_size, local_extension_size);
+    READ_AREA_LENGTH_CK(dbg, total_length, Dwarf_Unsigned,
+        line_ptr, local_length_size, local_extension_size,
+        err, section_length,section_end);
 
     line_ptr_end = line_ptr + total_length;
     line_context->lc_line_ptr_end = line_ptr_end;
     line_context->lc_length_field_length = local_length_size +
         local_extension_size;
-    line_context->lc_section_offset = starting_line_ptr - dbg->de_debug_line.dss_data;
+    line_context->lc_section_offset = starting_line_ptr -
+        dbg->de_debug_line.dss_data;
     /*  ASSERT: line_context->lc_length_field_length == line_ptr
         -line_context->lc_line_ptr_start; */
-    if (line_ptr_end > dbg->de_debug_line.dss_data +
-        dbg->de_debug_line.dss_size) {
-        _dwarf_error(dbg, err, DW_DLE_DEBUG_LINE_LENGTH_BAD);
-        return (DW_DLV_ERROR);
-    }
-    if (line_ptr_end > starting_line_ptr + data_length) {
+    if (line_ptr_end > section_end) {
         _dwarf_error(dbg, err, DW_DLE_DEBUG_LINE_LENGTH_BAD);
         return (DW_DLV_ERROR);
     }
     line_context->lc_total_length = total_length;
 
-    READ_UNALIGNED(dbg, version, Dwarf_Half,
-        line_ptr, sizeof(Dwarf_Half));
+    READ_UNALIGNED_CK(dbg, version, Dwarf_Half,
+        line_ptr, sizeof(Dwarf_Half),
+        err,line_ptr_end);
     line_context->lc_version_number = version;
     line_ptr += sizeof(Dwarf_Half);
     if (version != DW_LINE_VERSION2 &&
@@ -204,11 +203,16 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
             cu_context->cc_segment_selector_size;
     }
 
-    READ_UNALIGNED(dbg, prologue_length, Dwarf_Unsigned,
-        line_ptr, local_length_size);
+    READ_UNALIGNED_CK(dbg, prologue_length, Dwarf_Unsigned,
+        line_ptr, local_length_size,
+        err,line_ptr_end);
     line_context->lc_prologue_length = prologue_length;
     line_ptr += local_length_size;
     line_context->lc_line_prologue_start = line_ptr;
+    if(line_ptr >= line_ptr_end) {
+        _dwarf_error(dbg, err, DW_DLE_LINE_OFFSET_BAD);
+        return DW_DLV_ERROR;
+    }
 
 
     line_context->lc_minimum_instruction_length =
@@ -227,6 +231,10 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
 
     line_context->lc_line_base = *(signed char *) line_ptr;
     line_ptr = line_ptr + sizeof(Dwarf_Sbyte);
+    if(line_ptr >= line_ptr_end) {
+        _dwarf_error(dbg, err, DW_DLE_LINE_OFFSET_BAD);
+        return DW_DLV_ERROR;
+    }
 
     line_context->lc_line_range = *(unsigned char *) line_ptr;
     if (!line_context->lc_line_range) {
@@ -234,6 +242,10 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
         return DW_DLV_ERROR;
     }
     line_ptr = line_ptr + sizeof(Dwarf_Small);
+    if(line_ptr >= line_ptr_end) {
+        _dwarf_error(dbg, err, DW_DLE_LINE_OFFSET_BAD);
+        return DW_DLV_ERROR;
+    }
     line_context->lc_opcode_base = *(unsigned char *) line_ptr;
     line_ptr = line_ptr + sizeof(Dwarf_Small);
     /*  Set up the array of standard opcode lengths. */
@@ -245,6 +257,10 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
     /*  lc_opcode_base is one greater than the size of the array. */
     line_ptr += line_context->lc_opcode_base - 1;
     line_context->lc_std_op_count = line_context->lc_opcode_base -1;
+    if(line_ptr >= line_ptr_end) {
+        _dwarf_error(dbg, err, DW_DLE_LINE_OFFSET_BAD);
+        return DW_DLV_ERROR;
+    }
     {
         /*  Determine (as best we can) whether the
             lc_opcode_length_table holds 9 or 12 standard-conforming
@@ -322,6 +338,10 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
         }
     }
     /*  At this point we no longer need to check operand counts. */
+    if(line_ptr >= line_ptr_end) {
+        _dwarf_error(dbg, err, DW_DLE_LINE_OFFSET_BAD);
+        return DW_DLV_ERROR;
+    }
 
     if (version < DW_LINE_VERSION5){
         Dwarf_Unsigned directories_count = 0;
@@ -378,6 +398,10 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
         line_ptr++;
     } else {
         /* No old style directory entries. */
+    }
+    if(line_ptr > line_ptr_end) {
+        _dwarf_error(dbg, err, DW_DLE_LINE_OFFSET_BAD);
+        return DW_DLV_ERROR;
     }
     if (version < DW_LINE_VERSION5) {
         if (line_ptr >= line_ptr_end) {
@@ -442,6 +466,10 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
     } else {
         /* No old style filenames entries. */
     }
+    if(line_ptr > line_ptr_end) {
+        _dwarf_error(dbg, err, DW_DLE_LINE_OFFSET_BAD);
+        return DW_DLV_ERROR;
+    }
 
     if (version == EXPERIMENTAL_LINE_TABLES_VERSION) {
         static unsigned char expbytes[5] = {0,0xff,0xff,0x7f, 0x7f };
@@ -456,14 +484,18 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
             }
             line_ptr++;
         }
-        READ_UNALIGNED(dbg, logicals_table_offset, Dwarf_Unsigned,
-            line_ptr, local_length_size);
+        READ_UNALIGNED_CK(dbg, logicals_table_offset, Dwarf_Unsigned,
+            line_ptr, local_length_size,err,line_ptr_end);
         line_context->lc_logicals_table_offset = logicals_table_offset;
         line_ptr += local_length_size;
-        READ_UNALIGNED(dbg, actuals_table_offset, Dwarf_Unsigned,
-            line_ptr, local_length_size);
+        READ_UNALIGNED_CK(dbg, actuals_table_offset, Dwarf_Unsigned,
+            line_ptr, local_length_size,err,line_ptr_end);
         line_context->lc_actuals_table_offset = actuals_table_offset;
         line_ptr += local_length_size;
+        if(line_ptr > line_ptr_end) {
+            _dwarf_error(dbg, err, DW_DLE_LINE_OFFSET_BAD);
+            return DW_DLV_ERROR;
+        }
     }
 
     if (version == DW_LINE_VERSION5 ||
@@ -491,10 +523,13 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
             return (DW_DLV_ERROR);
         }
         for (i = 0; i < directory_format_count; i++) {
-            DECODE_LEB128_UWORD_CK(line_ptr, directory_entry_types[i],dbg,err,line_ptr_end);
-            DECODE_LEB128_UWORD_CK(line_ptr, directory_entry_forms[i],dbg,err,line_ptr_end);
+            DECODE_LEB128_UWORD_CK(line_ptr, directory_entry_types[i],
+                dbg,err,line_ptr_end);
+            DECODE_LEB128_UWORD_CK(line_ptr, directory_entry_forms[i],
+                dbg,err,line_ptr_end);
         }
-        DECODE_LEB128_UWORD_CK(line_ptr, directories_count,dbg,err,line_ptr_end);
+        DECODE_LEB128_UWORD_CK(line_ptr, directories_count,
+            dbg,err,line_ptr_end);
         line_context->lc_include_directories =
             malloc(sizeof(Dwarf_Small *) * directories_count);
         if (line_context->lc_include_directories == NULL) {
@@ -531,7 +566,7 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
                     return (DW_DLV_ERROR);
                 }
             }
-            if (line_ptr >= line_ptr_end) {
+            if (line_ptr > line_ptr_end) {
                 free(directory_entry_types);
                 free(directory_entry_forms);
                 _dwarf_error(dbg, err,
@@ -653,8 +688,7 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
                     _dwarf_error(dbg, err, DW_DLE_LINE_NUMBER_HEADER_ERROR);
                     return (DW_DLV_ERROR);
                 }
-                /*  Should this be just > ??? */
-                if (line_ptr >= line_ptr_end) {
+                if (line_ptr > line_ptr_end) {
                     free(filename_entry_types);
                     free(filename_entry_forms);
                     _dwarf_error(dbg, err, DW_DLE_LINE_NUMBER_HEADER_ERROR);
@@ -674,6 +708,10 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
         Dwarf_Unsigned i = 0;
         Dwarf_Unsigned j = 0;
 
+        if (line_ptr > line_ptr_end) {
+            _dwarf_error(dbg, err, DW_DLE_LINE_NUMBER_HEADER_ERROR);
+            return (DW_DLV_ERROR);
+        }
         subprog_format_count = *(unsigned char *) line_ptr;
         line_ptr = line_ptr + sizeof(Dwarf_Small);
         subprog_entry_types = malloc(sizeof(Dwarf_Unsigned) *
@@ -778,6 +816,10 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
     } else {
         lp_begin = line_context->lc_line_prologue_start +
             line_context->lc_prologue_length;
+    }
+    if(line_ptr > line_ptr_end) {
+        _dwarf_error(dbg, err, DW_DLE_LINE_OFFSET_BAD);
+        return DW_DLV_ERROR;
     }
     if (line_ptr != lp_begin) {
         if (line_ptr > lp_begin) {
@@ -1194,8 +1236,8 @@ read_line_table_program(Dwarf_Debug dbg,
                 }
                 break;
             case DW_LNS_fixed_advance_pc:{
-                READ_UNALIGNED(dbg, fixed_advance_pc, Dwarf_Half,
-                    line_ptr, sizeof(Dwarf_Half));
+                READ_UNALIGNED_CK(dbg, fixed_advance_pc, Dwarf_Half,
+                    line_ptr, sizeof(Dwarf_Half),error,line_ptr_end);
                 line_ptr += sizeof(Dwarf_Half);
                 regs.lr_address = regs.lr_address + fixed_advance_pc;
                 regs.lr_op_index = 0;
@@ -1440,8 +1482,8 @@ read_line_table_program(Dwarf_Debug dbg,
                 break;
 
             case DW_LNE_set_address:{
-                READ_UNALIGNED(dbg, regs.lr_address, Dwarf_Addr,
-                    line_ptr, address_size);
+                READ_UNALIGNED_CK(dbg, regs.lr_address, Dwarf_Addr,
+                    line_ptr, address_size,error,line_ptr_end);
                 /* Mark a line record as being DW_LNS_set_address */
                 is_addr_set = true;
 #ifdef PRINTING_DETAILS

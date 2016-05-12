@@ -3148,7 +3148,8 @@ dwarfdump_print_one_locdesc(Dwarf_Debug dbg,
     /* ASSERT: locs != NULL */
     no_of_ops = entrycount;
     for (i = 0; i < no_of_ops; i++) {
-        int res = _dwarf_print_one_expr_op(dbg,NULL,locdesc,i,
+        int res = 0;
+        res = _dwarf_print_one_expr_op(dbg,NULL,locdesc,i,
             baseaddr,string_out);
         if (res == DW_DLV_ERROR) {
             return;
@@ -4454,7 +4455,7 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
                 /*  This is normal in a .dwo file. The .debug_addr
                     is in a .o and in the final executable. */
             } else {
-                print_error(dbg, "addr formwith no addr?!", bres, err);
+                print_error(dbg, "addr form with no addr?!", bres, err);
             }
         } else {
             print_error(dbg, "addr is a DW_DLV_NO_ENTRY? Impossible.",

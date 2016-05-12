@@ -124,13 +124,15 @@ int dwarf_get_ranges_a(Dwarf_Debug dbg,
             return (DW_DLV_ERROR);
         }
         entry_count++;
-        READ_UNALIGNED(localdbg,re->cur.dwr_addr1,
+        READ_UNALIGNED_CK(localdbg,re->cur.dwr_addr1,
             Dwarf_Addr, rangeptr,
-            address_size);
+            address_size,
+            error,section_end);
         rangeptr +=  address_size;
-        READ_UNALIGNED(localdbg,re->cur.dwr_addr2 ,
+        READ_UNALIGNED_CK(localdbg,re->cur.dwr_addr2 ,
             Dwarf_Addr, rangeptr,
-            address_size);
+            address_size,
+            error,section_end);
         rangeptr +=  address_size;
         if (!base) {
             base = re;

@@ -1258,9 +1258,12 @@ struct Dwarf_Obj_Access_Interface_s {
 #define DW_DLE_CIE_INSTR_PTR_ERROR             339
 #define DW_DLE_FDE_INSTR_PTR_ERROR             340
 #define DW_DLE_FISSION_ADDITION_ERROR          341
+#define DW_DLE_HEADER_LEN_BIGGER_THAN_SECSIZE  342
+#define DW_DLE_LOCEXPR_OFF_SECTION_END         343
+#define DW_DLE_POINTER_SECTION_UNKNOWN         344
 
     /* DW_DLE_LAST MUST EQUAL LAST ERROR NUMBER */
-#define DW_DLE_LAST        341
+#define DW_DLE_LAST        344
 #define DW_DLE_LO_USER     0x10000
 
     /*  Taken as meaning 'undefined value', this is not

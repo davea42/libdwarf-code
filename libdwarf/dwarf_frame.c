@@ -466,8 +466,9 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
 
         case DW_CFA_advance_loc2:
             {
-                READ_UNALIGNED(dbg, adv_loc, Dwarf_Unsigned,
-                    instr_ptr, sizeof(Dwarf_Half));
+                READ_UNALIGNED_CK(dbg, adv_loc, Dwarf_Unsigned,
+                    instr_ptr, sizeof(Dwarf_Half),
+                    error,final_instr_ptr);
                 instr_ptr += sizeof(Dwarf_Half);
                 fp_offset = adv_loc;
 
@@ -488,8 +489,9 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
 
         case DW_CFA_advance_loc4:
             {
-                READ_UNALIGNED(dbg, adv_loc, Dwarf_Unsigned,
-                    instr_ptr, sizeof(Dwarf_ufixed));
+                READ_UNALIGNED_CK(dbg, adv_loc, Dwarf_Unsigned,
+                    instr_ptr, sizeof(Dwarf_ufixed),
+                    error,final_instr_ptr);
                 instr_ptr += sizeof(Dwarf_ufixed);
                 fp_offset = adv_loc;
 

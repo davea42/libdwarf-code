@@ -591,13 +591,14 @@ struct Dwarf_Debug_s {
 
     struct Dwarf_Section_s de_debug_pubtypes; /* DWARF3 .debug_pubtypes */
 
-    struct Dwarf_Section_s de_debug_funcnames;
 
-    /* SGI IRIX extension essentially
-        identical to DWARF3 .debug_pubtypes. */
+    /*  Four SGI IRIX extensions essentially
+        identical to DWARF3 .debug_pubtypes.
+        Only on SGI IRIX. */
+    struct Dwarf_Section_s de_debug_funcnames;
     struct Dwarf_Section_s de_debug_typenames;
-    struct Dwarf_Section_s de_debug_varnames; /* SGI IRIX only. */
-    struct Dwarf_Section_s de_debug_weaknames; /* SGI IRIX only. */
+    struct Dwarf_Section_s de_debug_varnames;
+    struct Dwarf_Section_s de_debug_weaknames;
 
     struct Dwarf_Section_s de_debug_ranges;
     /*  Following two part of DebugFission. */

@@ -1,3 +1,18 @@
+2016-05-10 David Anderson
+    * dwarf_arange.c,dwarf_die_deliv.c: All read operations check for overrun.
+    * dwarf_errmsg_list.c: DW_DLE_HEADER_LEN_BIGGER_THAN_SECSIZE,
+      DW_DLE_LOCEXPR_OFF_SECTION_END, and DW_DLE_POINTER_SECTION_UNKNOWN
+      added to error values.
+    * dwarf_form.c,dwarf_frame.c,dwarf_frame2.c,dwarf_global.c,dwarf_line.c,
+      dwarf_line_table_reader_common.c,dwarf_loc.c,dwarf_loc2.c,
+      dwarf_macro5.c,dwarf_print_lines.c,dwarf_query.c,
+      dwarf_ranges.c,dwarf_util.c, dwarf_xu_index.c: All read 
+      operations check for overrun.
+    * dwarf_opaque.h: Put the 4 SGI-only section data
+      items next to each other to make it clear they
+      are such.
+    * dwarf_util.h: Added some checks to READ_AREA_LENGTH_CK
+    * libdwarf.h.in: Defined the new error names.
 2016-05-07-b David Anderson
     * libdwarf2.1.mm,libdwarf2p.1.mm: Fixed spelling errors.
     * libdwarf2.1.pdf,libdwarf2p.1.pdf: Regenerated.

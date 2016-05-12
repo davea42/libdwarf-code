@@ -1070,7 +1070,8 @@ dwarf_read_cie_fde_prefix(Dwarf_Debug dbg,
     /* READ_AREA_LENGTH updates frame_ptr for consumed bytes */
     READ_AREA_LENGTH_CK(dbg, length, Dwarf_Unsigned,
         frame_ptr, local_length_size,
-        local_extension_size,error,section_end);
+        local_extension_size,error,
+        section_length_in,section_end);
 
     if (length == 0) {
         /*  nul bytes at end of section, seen at end of egcs eh_frame

@@ -751,20 +751,29 @@ _dwarf_memcpy_swap_bytes(void *s1, const void *s2, size_t len)
     given a known cu header location ( an offset in .debug_info
     or debug_types).  */
 /* ARGSUSED */
-Dwarf_Unsigned
+int
 _dwarf_length_of_cu_header(Dwarf_Debug dbg, Dwarf_Unsigned offset,
-    Dwarf_Bool is_info)
+    Dwarf_Bool is_info,
+    Dwarf_Unsigned *area_length_out,
+    Dwarf_Error *error)
 {
     int local_length_size = 0;
     int local_extension_size = 0;
     Dwarf_Unsigned length = 0;
     Dwarf_Unsigned final_size = 0;
-    Dwarf_Small *cuptr =
-        is_info? dbg->de_debug_info.dss_data + offset:
-            dbg->de_debug_types.dss_data+ offset;
+    Dwarf_Small *section_start =
+        is_info? dbg->de_debug_info.dss_data:
+            dbg->de_debug_types.dss_data;
+    Dwarf_Small *cuptr = section_start + offset;
+    Dwarf_Unsigned section_length =
+        is_info? dbg->de_debug_info.dss_size:
+            dbg->de_debug_types.dss_size;
+    Dwarf_Small * section_end_ptr =
+        section_start + section_length;
 
-    READ_AREA_LENGTH(dbg, length, Dwarf_Unsigned,
-        cuptr, local_length_size, local_extension_size);
+    READ_AREA_LENGTH_CK(dbg, length, Dwarf_Unsigned,
+        cuptr, local_length_size, local_extension_size,
+        error,section_length,section_end_ptr);
 
     final_size = local_extension_size +  /* initial extension, if present */
         local_length_size +     /* Size of cu length field. */
@@ -779,7 +788,8 @@ _dwarf_length_of_cu_header(Dwarf_Debug dbg, Dwarf_Unsigned offset,
             /* type offset size */
             local_length_size;
     }
-    return final_size;
+    *area_length_out = final_size;
+    return DW_DLV_OK;
 }
 
 /*  Pretend we know nothing about the CU
@@ -1052,4 +1062,102 @@ _dwarf_error_mv_s_to_t(Dwarf_Debug dbgs,Dwarf_Error *errs,
         _dwarf_error(dbgt,errt, mydw_errno);
     }
 }
+
+static int
+inthissection(struct Dwarf_Section_s *sec,Dwarf_Small *ptr)
+{
+    if (!sec->dss_data) {
+        return FALSE;
+    }
+    if (ptr < sec->dss_data ) {
+        return FALSE;
+    }
+    if (ptr >= (sec->dss_data + sec->dss_size) ) {
+        return FALSE;
+    }
+    return TRUE;
+}
+
+#define FINDSEC(m_s,m_p,n,st,l,e)    \
+do {                                 \
+    if (inthissection((m_s),(m_p))) { \
+        *(n) = (m_s)->dss_name;      \
+        *(st)= (m_s)->dss_data;      \
+        *(l) = (m_s)->dss_size;      \
+        *(e) = (m_s)->dss_data + (m_s)->dss_size; \
+        return DW_DLV_OK;            \
+    }                                \
+} while (0)
+
+
+/* So we can know a section end even when we do not
+    have the section info apriori  It's only
+    needed for a subset of sections. */
+int
+_dwarf_what_section_are_we(Dwarf_Debug dbg,
+    Dwarf_Small    *  our_pointer,
+    const char     ** section_name_out,
+    Dwarf_Small    ** sec_start_ptr_out,
+    Dwarf_Unsigned *  sec_len_out,
+    Dwarf_Small    ** sec_end_ptr_out,
+    UNUSEDARG Dwarf_Error    *  error)
+{
+    FINDSEC(&dbg->de_debug_info,
+        our_pointer, section_name_out,
+        sec_start_ptr_out, sec_len_out, sec_end_ptr_out);
+    FINDSEC(&dbg->de_debug_loc,
+        our_pointer, section_name_out,
+        sec_start_ptr_out, sec_len_out, sec_end_ptr_out);
+    FINDSEC(&dbg->de_debug_line,
+        our_pointer, section_name_out,
+        sec_start_ptr_out, sec_len_out, sec_end_ptr_out);
+    FINDSEC(&dbg->de_debug_aranges,
+        our_pointer, section_name_out,
+        sec_start_ptr_out, sec_len_out, sec_end_ptr_out);
+    FINDSEC(&dbg->de_debug_macro,
+        our_pointer, section_name_out,
+        sec_start_ptr_out, sec_len_out, sec_end_ptr_out);
+    FINDSEC(&dbg->de_debug_ranges,
+        our_pointer, section_name_out,
+        sec_start_ptr_out, sec_len_out, sec_end_ptr_out);
+    FINDSEC(&dbg->de_debug_str_offsets,
+        our_pointer, section_name_out,
+        sec_start_ptr_out, sec_len_out, sec_end_ptr_out);
+    FINDSEC(&dbg->de_debug_addr,
+        our_pointer, section_name_out,
+        sec_start_ptr_out, sec_len_out, sec_end_ptr_out);
+    FINDSEC(&dbg->de_debug_pubtypes,
+        our_pointer, section_name_out,
+        sec_start_ptr_out, sec_len_out, sec_end_ptr_out);
+    FINDSEC(&dbg->de_debug_gdbindex,
+        our_pointer, section_name_out,
+        sec_start_ptr_out, sec_len_out, sec_end_ptr_out);
+    FINDSEC(&dbg->de_debug_abbrev,
+        our_pointer, section_name_out,
+        sec_start_ptr_out, sec_len_out, sec_end_ptr_out);
+    FINDSEC(&dbg->de_debug_cu_index,
+        our_pointer, section_name_out,
+        sec_start_ptr_out, sec_len_out, sec_end_ptr_out);
+    FINDSEC(&dbg->de_debug_tu_index,
+        our_pointer, section_name_out,
+        sec_start_ptr_out, sec_len_out, sec_end_ptr_out);
+    FINDSEC(&dbg->de_debug_line_str,
+        our_pointer, section_name_out,
+        sec_start_ptr_out, sec_len_out, sec_end_ptr_out);
+    FINDSEC(&dbg->de_debug_types,
+        our_pointer, section_name_out,
+        sec_start_ptr_out, sec_len_out, sec_end_ptr_out);
+    FINDSEC(&dbg->de_debug_sup,
+        our_pointer, section_name_out,
+        sec_start_ptr_out, sec_len_out, sec_end_ptr_out);
+    FINDSEC(&dbg->de_debug_frame,
+        our_pointer, section_name_out,
+        sec_start_ptr_out, sec_len_out, sec_end_ptr_out);
+    FINDSEC(&dbg->de_debug_frame_eh_gnu,
+        our_pointer, section_name_out,
+        sec_start_ptr_out, sec_len_out, sec_end_ptr_out);
+    return DW_DLV_NO_ENTRY;
+}
+
+
 

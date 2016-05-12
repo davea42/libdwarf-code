@@ -69,6 +69,7 @@ dwarf_get_aranges_list(Dwarf_Debug dbg,
     Dwarf_Signed arange_count = 0;
 
     Dwarf_Arange arange = 0;
+    Dwarf_Unsigned section_size = 0;
     Dwarf_Byte_Ptr arange_end_section = 0;
 
     /*  Used to chain Dwarf_Aranges structs. */
@@ -82,7 +83,8 @@ dwarf_get_aranges_list(Dwarf_Debug dbg,
 
     arange_ptr = dbg->de_debug_aranges.dss_data;
     arange_ptr_start = arange_ptr;
-    arange_end_section = arange_ptr + dbg->de_debug_aranges.dss_size;
+    section_size = dbg->de_debug_aranges.dss_size;
+    arange_end_section = arange_ptr + section_size;
 
     do {
         /*  Length of current set of aranges.
@@ -100,7 +102,9 @@ dwarf_get_aranges_list(Dwarf_Debug dbg,
         /* READ_AREA_LENGTH updates arange_ptr for consumed bytes */
         READ_AREA_LENGTH_CK(dbg, area_length, Dwarf_Unsigned,
             arange_ptr, local_length_size,
-            local_extension_size,error,arange_end_section);
+            local_extension_size,error,
+            section_size,
+            arange_end_section);
         /*  arange_ptr has been incremented appropriately past
             the length field by READ_AREA_LENGTH. */
         if ((area_length + local_length_size + local_extension_size) >
@@ -471,6 +475,8 @@ dwarf_get_cu_die_offset(Dwarf_Arange arange,
 {
     Dwarf_Debug dbg = 0;
     Dwarf_Off offset = 0;
+    Dwarf_Unsigned headerlen = 0;
+    int cres = 0;
 
     if (arange == NULL) {
         _dwarf_error(NULL, error, DW_DLE_ARANGE_NULL);
@@ -486,7 +492,13 @@ dwarf_get_cu_die_offset(Dwarf_Arange arange,
             return res;
         }
     }
-    *returned_offset = offset + _dwarf_length_of_cu_header(dbg, offset, true);
+
+    cres = _dwarf_length_of_cu_header(dbg, offset,
+        true, &headerlen,error);
+    if (cres != DW_DLV_OK) {
+        return cres;
+    }
+    *returned_offset =  headerlen + offset;
     return DW_DLV_OK;
 }
 
@@ -552,7 +564,9 @@ dwarf_get_arange_info(Dwarf_Arange arange,
         *length = arange->ar_length;
     if (cu_die_offset != NULL) {
         Dwarf_Debug dbg = arange->ar_dbg;
+        Dwarf_Off headerlen = 0;
         Dwarf_Off offset = arange->ar_info_offset;
+        int cres = 0;
 
         /* This applies to debug_info only, not to debug_types. */
         if (!dbg->de_debug_info.dss_data) {
@@ -561,8 +575,13 @@ dwarf_get_arange_info(Dwarf_Arange arange,
                 return res;
             }
         }
-        *cu_die_offset =
-            offset + _dwarf_length_of_cu_header(dbg, offset,true);
+
+        cres = _dwarf_length_of_cu_header(dbg, offset,
+            true, &headerlen,error);
+        if (cres != DW_DLV_OK) {
+            return cres;
+        }
+        *cu_die_offset = headerlen + offset;
     }
     return (DW_DLV_OK);
 }
@@ -597,6 +616,8 @@ dwarf_get_arange_info_b(Dwarf_Arange arange,
     if (cu_die_offset != NULL) {
         Dwarf_Debug dbg = arange->ar_dbg;
         Dwarf_Off offset = arange->ar_info_offset;
+        Dwarf_Unsigned headerlen = 0;
+        int cres = 0;
 
         /* This applies to debug_info only, not to debug_types. */
         if (!dbg->de_debug_info.dss_data) {
@@ -605,8 +626,13 @@ dwarf_get_arange_info_b(Dwarf_Arange arange,
                 return res;
             }
         }
-        *cu_die_offset =
-            offset + _dwarf_length_of_cu_header(dbg, offset,true);
+        cres = _dwarf_length_of_cu_header(dbg, offset,
+            true, &headerlen,error);
+        if (cres != DW_DLV_OK) {
+            return cres;
+        }
+        *cu_die_offset = offset + headerlen;
+
     }
     return (DW_DLV_OK);
 }

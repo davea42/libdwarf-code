@@ -306,6 +306,7 @@ dwarf_srcfiles(Dwarf_Die die,
     int lres = DW_DLV_ERROR;
     unsigned i = 0;
     int res = DW_DLV_ERROR;
+    Dwarf_Small *section_start = 0;
 
     /*  ***** BEGIN CODE ***** */
     /*  Reset error. */
@@ -334,7 +335,7 @@ dwarf_srcfiles(Dwarf_Die die,
     if (!dbg->de_debug_line.dss_size) {
         return (DW_DLV_NO_ENTRY);
     }
-
+    section_start = dbg->de_debug_line.dss_data;
 
     lres = dwarf_whatform(stmt_list_attr,&attrform,error);
     if (lres != DW_DLV_OK) {
@@ -392,6 +393,7 @@ dwarf_srcfiles(Dwarf_Die die,
         Dwarf_Small *line_ptr_out = 0;
         int dres = _dwarf_read_line_table_header(dbg,
             context,
+            section_start,
             line_ptr,
             dbg->de_debug_line.dss_size,
             &line_ptr_out,
@@ -640,7 +642,9 @@ _dwarf_internal_srclines(Dwarf_Die die,
         Dwarf_Small *newlinep = 0;
         int resp = _dwarf_read_line_table_header(dbg,
             cu_context,
-            line_ptr, dbg->de_debug_line.dss_size,
+            section_start,
+            line_ptr,
+            dbg->de_debug_line.dss_size,
             &newlinep,
             line_context,
             NULL,NULL,
@@ -1798,7 +1802,8 @@ _dwarf_decode_line_string_form(Dwarf_Debug dbg,
         secstart = dbg->de_debug_line_str.dss_data;
         secend = secstart + dbg->de_debug_line_str.dss_size;
 
-        READ_UNALIGNED(dbg, offset, Dwarf_Unsigned,offsetptr, offset_size);
+        READ_UNALIGNED_CK(dbg, offset, Dwarf_Unsigned,offsetptr, offset_size,
+            error,line_ptr_end);
         *line_ptr += offset_size;
         strptr = secstart + offset;
         res = _dwarf_check_string_valid(dbg,

@@ -514,12 +514,6 @@ void get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
     Dwarf_Signed cnt, struct esb_s *esbp,
     int show_form,int local_verbose);
 
-extern Dwarf_Unsigned local_dwarf_decode_u_leb128(unsigned char *leb128,
-    unsigned int *leb128_length);
-
-extern Dwarf_Signed local_dwarf_decode_s_leb128(unsigned char *leb128,
-    unsigned int *leb128_length);
-
 extern void dump_block(char *prefix, char *data, Dwarf_Signed len);
 
 extern void format_sig8_string(Dwarf_Sig8 *data,struct esb_s *out);

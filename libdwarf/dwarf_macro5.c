@@ -162,15 +162,17 @@ _dwarf_skim_forms(Dwarf_Debug dbg,
             mdata += v+1;
             break;
         case DW_FORM_block2:
-            READ_UNALIGNED(dbg, ret_value, Dwarf_Unsigned,
-                mdata, sizeof(Dwarf_Half));
+            READ_UNALIGNED_CK(dbg, ret_value, Dwarf_Unsigned,
+                mdata, sizeof(Dwarf_Half),
+                error,section_end);
             v = ret_value + sizeof(Dwarf_Half);
             totallen += v;
             mdata += v;
             break;
         case DW_FORM_block4:
-            READ_UNALIGNED(dbg, ret_value, Dwarf_Unsigned,
-                mdata, sizeof(Dwarf_ufixed));
+            READ_UNALIGNED_CK(dbg, ret_value, Dwarf_Unsigned,
+                mdata, sizeof(Dwarf_ufixed),
+                error,section_end);
             v = ret_value + sizeof(Dwarf_ufixed);
             totallen += v;
             mdata += v;
@@ -509,8 +511,9 @@ dwarf_get_macro_defundef(Dwarf_Macro_Context macro_context,
 
         DECODE_LEB128_UWORD_CK(mdata,linenum,
             dbg, error,endptr);
-        READ_UNALIGNED(dbg,stringoffset,Dwarf_Unsigned,
-            mdata,macro_context->mc_offset_size);
+        READ_UNALIGNED_CK(dbg,stringoffset,Dwarf_Unsigned,
+            mdata,macro_context->mc_offset_size,
+            error,endptr);
         mdata += macro_context->mc_offset_size;
         res = _dwarf_extract_local_debug_str_string_given_offset(dbg,
             form1,
@@ -596,8 +599,9 @@ dwarf_get_macro_defundef(Dwarf_Macro_Context macro_context,
 
         DECODE_LEB128_UWORD_CK(mdata,linenum,
             dbg, error,endptr);
-        READ_UNALIGNED(dbg,supoffset,Dwarf_Unsigned,
-            mdata,macro_context->mc_offset_size);
+        READ_UNALIGNED_CK(dbg,supoffset,Dwarf_Unsigned,
+            mdata,macro_context->mc_offset_size,
+            error,endptr);
         mdata += macro_context->mc_offset_size;
         *line_number = linenum;
         *index = 0;
@@ -758,14 +762,39 @@ dwarf_get_macro_startend_file(Dwarf_Macro_Context macro_context,
             FOR DWARF 5 do not decrement. */
         if(macro_context->mc_version_number >= 5) {
             trueindex = srcindex;
-            if (trueindex >= 0 &&
-                trueindex < macro_context->mc_srcfiles_count) {
+            if (trueindex < 0) {
+                *src_file_name = "<source-file-index-low-no-name-available>";
+                return DW_DLV_OK;
+            }
+            if (trueindex < macro_context->mc_srcfiles_count) {
                 *src_file_name = macro_context->mc_srcfiles[trueindex];
+                return DW_DLV_OK;
             } else {
-                *src_file_name = "<no-source-file-name-available>";
+                *src_file_name = 
+                    "<src-index-high-no-source-file-name-available>";
+                return DW_DLV_OK;
             }
         } else {
-            trueindex = srcindex-1;
+            /* Unsigned to signed here. */
+            trueindex = srcindex;
+            /* Protects against crazy big srcindex, overflow territory. */
+            if (trueindex < 0 ) {
+                /* Something insane here. */
+                *src_file_name = "<source-file-index-low-no-name-available>";
+                return DW_DLV_OK;
+            }
+            /* Protects against crazy big srcindex, overflow territory. */
+            if (trueindex > (macro_context->mc_srcfiles_count+1)) {
+                /* Something insane here. */
+                *src_file_name = 
+                    "<source-file-index-high-no-name-available>";
+                return DW_DLV_OK;
+            }
+            --trueindex;
+            if (trueindex > macro_context->mc_srcfiles_count) {
+                *src_file_name = 
+                    "<adjusted-source-file-index-high-no-name-available>";
+            }
             if (srcindex > 0 &&
                 trueindex < macro_context->mc_srcfiles_count) {
                 *src_file_name = macro_context->mc_srcfiles[trueindex];
@@ -800,6 +829,8 @@ dwarf_get_macro_import(Dwarf_Macro_Context macro_context,
     unsigned macop = 0;
     struct Dwarf_Macro_Operator_s *curop = 0;
     Dwarf_Small *mdata = 0;
+    Dwarf_Byte_Ptr startptr =  0;
+    Dwarf_Byte_Ptr endptr =  0;
 
     if (!macro_context || macro_context->mc_sentinel != 0xada) {
         if(macro_context) {
@@ -808,6 +839,8 @@ dwarf_get_macro_import(Dwarf_Macro_Context macro_context,
         _dwarf_error(dbg, error,DW_DLE_BAD_MACRO_HEADER_POINTER);
         return DW_DLV_ERROR;
     }
+    startptr = macro_context->mc_macro_header;
+    endptr = startptr + macro_context->mc_total_length;
     dbg = macro_context->mc_dbg;
     if (op_number >= macro_context->mc_macro_ops_count) {
         _dwarf_error(dbg, error,DW_DLE_BAD_MACRO_INDEX);
@@ -819,8 +852,9 @@ dwarf_get_macro_import(Dwarf_Macro_Context macro_context,
     if (macop != DW_MACRO_import && macop != DW_MACRO_import_sup) {
         return DW_DLV_NO_ENTRY;
     }
-    READ_UNALIGNED(dbg,supoffset,Dwarf_Unsigned,
-        mdata,macro_context->mc_offset_size);
+    READ_UNALIGNED_CK(dbg,supoffset,Dwarf_Unsigned,
+        mdata,macro_context->mc_offset_size,
+        error,endptr);
     *target_offset = supoffset;
     return DW_DLV_OK;
 }
@@ -976,8 +1010,9 @@ read_operands_table(Dwarf_Macro_Context macro_context,
             _dwarf_error(dbg, error, DW_DLE_MACRO_OFFSET_BAD);
             return (DW_DLV_ERROR);
         }
-        READ_UNALIGNED(dbg,opcode_number,Dwarf_Small,
-            macro_data,sizeof(Dwarf_Small));
+        READ_UNALIGNED_CK(dbg,opcode_number,Dwarf_Small,
+            macro_data,sizeof(Dwarf_Small),
+            error,endptr);
         macro_data += sizeof(Dwarf_Small);
         DECODE_LEB128_UWORD_CK(macro_data,formcount,
             dbg, error, endptr);
