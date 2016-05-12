@@ -161,7 +161,6 @@ local_dwarf_decode_s_leb128_chk(unsigned char *leb128,
         }
         byte = *leb128;
         byte_length++;
-        
     }
 
     if ((shift < sizeof(Dwarf_Signed) * BITSINBYTE) && sign) {
@@ -1273,7 +1272,7 @@ get_string_from_locs(Dwarf_Debug dbg,
 
 /*ARGSUSED*/ static void
 print_frame_inst_bytes(Dwarf_Debug dbg,
-    Dwarf_Ptr cie_init_inst, 
+    Dwarf_Ptr cie_init_inst,
     Dwarf_Signed len,
     Dwarf_Signed data_alignment_factor,
     int code_alignment_factor, Dwarf_Half addr_size,
@@ -1417,7 +1416,6 @@ print_frame_inst_bytes(Dwarf_Debug dbg,
                     printf("ERROR reading leb in DW_CFA_offset_extended\n");
                     return;
                 }
-           
                 instp += uleblen;
                 len -= uleblen;
                 off += uleblen;

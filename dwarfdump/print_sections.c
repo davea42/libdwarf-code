@@ -74,6 +74,8 @@ deal_with_name_offset_err(Dwarf_Debug dbg,
    the one we want from that set,
    making functions needing this offset as readable as possible.
    (avoiding code duplication).
+   In case of error or missing section it returns a zero
+   size, which seems appropriate.
 */
 Dwarf_Unsigned
 get_info_max_offset(Dwarf_Debug dbg)
@@ -89,8 +91,9 @@ get_info_max_offset(Dwarf_Debug dbg)
     Dwarf_Unsigned debug_frame_size = 0;
     Dwarf_Unsigned debug_ranges_size = 0;
     Dwarf_Unsigned debug_pubtypes_size = 0;
+    int res = 0;
 
-    dwarf_get_section_max_offsets(dbg,
+    res = dwarf_get_section_max_offsets(dbg,
         &debug_info_size,
         &debug_abbrev_size,
         &debug_line_size,
@@ -102,7 +105,9 @@ get_info_max_offset(Dwarf_Debug dbg)
         &debug_frame_size,
         &debug_ranges_size,
         &debug_pubtypes_size);
-
+    if (res != DW_DLV_OK) {
+        return 0;
+    }
     return debug_info_size;
 }
 

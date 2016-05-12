@@ -48,7 +48,7 @@ do_checking(Dwarf_Debug dbg, Dwarf_Arange *arange_buf,Dwarf_Signed i,
     Dwarf_Off cuhdroff = 0;
     Dwarf_Off cudieoff3 = 0;
     Dwarf_Error checking_err = 0;
-    /*  .debug_types has no address ranges, only .debug_info[.dwo] 
+    /*  .debug_types has no address ranges, only .debug_info[.dwo]
         has them.*/
     int is_info = 1;
 
@@ -79,7 +79,7 @@ do_checking(Dwarf_Debug dbg, Dwarf_Arange *arange_buf,Dwarf_Signed i,
             DWARF_CHECK_COUNT(aranges_result,1);
             if (cu_die_offset != cudieoff2) {
                 printf("Error, cu_die offsets mismatch,  0x%"
-                    DW_PR_DUx " != 0x%" DW_PR_DUx 
+                    DW_PR_DUx " != 0x%" DW_PR_DUx
                     " from arange data",
                     cu_die_offset,cudieoff2);
                 DWARF_CHECK_ERROR(aranges_result,
@@ -186,7 +186,6 @@ print_aranges(Dwarf_Debug dbg)
                 }
 
                 if (check_aranges) {
-                     
                     do_checking(dbg,arange_buf,i,
                         cu_die_offset,first_cu,
                         cu_die_offset_prev,cu_die);

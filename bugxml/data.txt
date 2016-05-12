@@ -11,9 +11,9 @@ description: Test object shows
  null dereference at line 62
  of dwarf_line_table_reader.c.
  Frame code and linetable code was not noticing data corruption.
-datefixed: 
+datefixed: 20160512
 references: liu/OOB_read4.elf
-gitfixid: 
+gitfixid: 82d8e007851805af0dcaaff41f49a2d48473334b
 tarrelease: 
 endrec:
 
@@ -28,10 +28,10 @@ description: Test object shows
  null dereverence at line 186
  of dump_block() in print_sections.c
  Frame code was not noticing frame data corruption.
-datefixed: 
+datefixed: 20160512
 references: liu/OOB_read3.elf
   liu/OOB_read3_02.elf
-gitfixid: 
+gitfixid: 82d8e007851805af0dcaaff41f49a2d48473334b
 tarrelease: 
 endrec:
 
@@ -66,10 +66,10 @@ description: Test object shows
  in dwarf_macro5.c
  A string offset into .debug_str is outside the bounds
  of the .debug_str section.
-datefixed: 
+datefixed: 20160512
 references: liu/OOB0505_02.elf
  liu/OOB0505_02_02.elf
-gitfixid: 
+gitfixid: 82d8e007851805af0dcaaff41f49a2d48473334b
 tarrelease: 
 endrec:
 

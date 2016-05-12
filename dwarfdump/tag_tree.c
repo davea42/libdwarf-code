@@ -112,6 +112,30 @@ process_args(int argc, char *argv[])
         exit(FAILED);
     }
 }
+/*  New naming routine May 2016.
+    Instead of directly calling dwarf_get_*()
+    When bad tag/attr numbers are presented we return
+    a warning string through the pointer.
+    The thought is that eventually someone will notice the error.
+    It might, of course, be better to emit an error message
+    and stop. */
+static void
+ta_get_TAG_name(unsigned int tagnum,const char **nameout)
+{
+    int res = 0;
+
+    res = dwarf_get_TAG_name(tagnum,nameout);
+    if (res == DW_DLV_OK) {
+        return;
+    }
+    if (res == DW_DLV_NO_ENTRY) {
+        *nameout = "<no name known for the TAG>";
+        return;
+    }
+    *nameout = "<ERROR so no name known for the TAG>";
+    return;
+}
+
 
 int
 main(int argc, char **argv)
@@ -295,13 +319,13 @@ main(int argc, char **argv)
             tag_children[tag] = tag;
             /* Generate reference vector */
             aname = 0;
-            dwarf_get_TAG_name(tag,&aname);
+            ta_get_TAG_name(tag,&aname);
             fprintf(fileOut,"/* 0x%02x - %s */\n",tag,aname);
             fprintf(fileOut,
                 "static Usage_Tag_Tree tag_tree_%02x[] = {\n",tag);
             for (index = 1; index < cur_tag; ++index) {
                 child_tag = tag_tree_vector[index];
-                dwarf_get_TAG_name(child_tag,&aname);
+                ta_get_TAG_name(child_tag,&aname);
                 fprintf(fileOut,"    {/* 0x%02x */ 0, %s},\n",child_tag,aname);
             }
             fprintf(fileOut,"    {/* %4s */ 0, 0}\n};\n\n"," ");
@@ -325,7 +349,7 @@ main(int argc, char **argv)
             tag = tag_children[index];
             if (tag) {
                 aname = 0;
-                dwarf_get_TAG_name(tag,&aname);
+                ta_get_TAG_name(tag,&aname);
                 fprintf(fileOut,
                     "   tag_tree_%02x, /* 0x%02x - %s */\n",tag,tag,aname);
             } else {
@@ -345,7 +369,7 @@ main(int argc, char **argv)
             if (tag_children[tag]) {
                 legal = tag_tree_legal[tag];
                 aname = 0;
-                dwarf_get_TAG_name(tag,&aname);
+                ta_get_TAG_name(tag,&aname);
                 fprintf(fileOut,
                     "    {%2d, 0 /* 0x%02x - %s */},\n",legal,tag,aname);
             } else {
@@ -377,11 +401,11 @@ main(int argc, char **argv)
         unsigned j = 0;
         const char *name = 0;
         if (standard_flag) {
-            dwarf_get_TAG_name(u,&name);
+            ta_get_TAG_name(u,&name);
             fprintf(fileOut,"/* 0x%02x - %-37s*/\n",u, name);
         } else {
             unsigned k = tag_tree_combination_table[u][0];
-            dwarf_get_TAG_name(k,&name);
+            ta_get_TAG_name(k,&name);
             fprintf(fileOut,"/* 0x%02x - %-37s*/\n", k, name);
         }
         fprintf(fileOut,"    { ");

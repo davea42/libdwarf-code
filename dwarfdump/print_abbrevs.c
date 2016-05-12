@@ -148,8 +148,8 @@ print_abbrevs(Dwarf_Debug dbg)
         for (i = 0; i < abbrev_entry_count; i++) {
             int aeres = 0;
 
-            aeres =
-                dwarf_get_abbrev_entry(ab, i, &attr, &form, &off, &paerr);
+            aeres = dwarf_get_abbrev_entry(ab, i, &attr, &form, &off,
+                &paerr);
             if (aeres == DW_DLV_ERROR) {
                 dwarf_dealloc(dbg, ab, DW_DLA_ABBREV);
                 print_error(dbg, "dwarf_get_abbrev_entry", aeres, paerr);
