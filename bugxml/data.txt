@@ -12,7 +12,9 @@ description: Test object shows
  of dwarf_line_table_reader.c.
  Frame code and linetable code was not noticing data corruption.
 datefixed: 20160512
-references: liu/OOB_read4.elf
+references: 
+testcase:
+ regressiontests/liu/OOB_read4.elf
 gitfixid: 82d8e007851805af0dcaaff41f49a2d48473334b
 tarrelease: 
 endrec:
@@ -29,8 +31,10 @@ description: Test object shows
  of dump_block() in print_sections.c
  Frame code was not noticing frame data corruption.
 datefixed: 20160512
-references: liu/OOB_read3.elf
-  liu/OOB_read3_02.elf
+references: 
+testcase: 
+ regressiontests/liu/OOB_read3.elf
+ regressiontests/liu/OOB_read3_02.elf
 gitfixid: 82d8e007851805af0dcaaff41f49a2d48473334b
 tarrelease: 
 endrec:
@@ -48,7 +52,9 @@ description: Test object shows
  The zlib code was not checking for
  a corrupted length-value.
 datefixed: 20160506
-references: liu/NULLderefer0505_01.elf
+references: 
+testcase:
+ regressiontests/liu/NULLderefer0505_01.elf
 gitfixid: b6ec2dfd850929821626ea63fb0a752076a3c08a
 tarrelease: 20160507
 endrec:
@@ -67,8 +73,10 @@ description: Test object shows
  A string offset into .debug_str is outside the bounds
  of the .debug_str section.
 datefixed: 20160512
-references: liu/OOB0505_02.elf
- liu/OOB0505_02_02.elf
+references: 
+testcase:
+ regressiontests/liu/OOB0505_02.elf
+ regressiontests/liu/OOB0505_02_02.elf
 gitfixid: 82d8e007851805af0dcaaff41f49a2d48473334b
 tarrelease: 
 endrec:
@@ -86,7 +94,9 @@ description: Test object shows
  due to wraparound. Added a check
  not susceptible to that error (DW_DLE_FORM_BLOCK_LENGTH_ERROR).
 datefixed: 20160506
-references: liu/OOB0505_01.elf
+references: 
+testcase: 
+ regressiontests/liu/OOB0505_01.elf
 gitfixid: eb1472afac95031d0c9dd8c11d527b865fe7deb8
 gittag: 20160507
 tarrelease: 20160507
@@ -106,8 +116,10 @@ description: Two test objects showing
  Neither gdb nor valgrind find any errors
  when building with yesterday's commit.
 datefixed: 20160504
-references: liu/free_invalid_address.elf
- liu/heapoverflow01b.elf
+references: 
+testcase:
+ regressiontests/liu/free_invalid_address.elf
+ regressiontests/liu/heapoverflow01b.elf
 gitfixid: 98a3da1e8237fe0d45b67ef77f3fa5ed9ff0215f
 tarrelease: 20160507
 endrec:
