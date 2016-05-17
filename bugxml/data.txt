@@ -13,10 +13,10 @@ description: Test object shows
  With a 32bit kernel build the test could show
  a double-free and coredump due to the unchecked invalid
  writes from relocations.
-datefixed: 
+datefixed: 20160517 
 references:
 testcase: regressiontests/liu/HeapOverflow0513.elf
-gitfixid: 
+gitfixid: 10ca310f64368dc083efacac87732c02ef560a92
 tarrelease:
 endrec:
 
