@@ -1,4 +1,25 @@
 
+id: DW201605-012
+cve:
+datereported: 20160513
+reportedby: Yue Liu
+vulnerability: OOB write. From relocation records
+product: libdwarf
+description: Test object shows
+ an invalid write in dwarf_elf_access.c
+ (when doing the relocations).
+ Adding the relocation value to anything overflowed
+ and disguised the bad relocation record.
+ With a 32bit kernel build the test could show
+ a double-free and coredump due to the unchecked invalid
+ writes from relocations.
+datefixed: 
+references:
+testcase: regressiontests/liu/HeapOverflow0513.elf
+gitfixid: 
+tarrelease:
+endrec:
+
 
 
 id: DW201605-011

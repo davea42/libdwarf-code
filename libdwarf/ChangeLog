@@ -1,3 +1,7 @@
+2016-05-16 David Anderson
+    * dwarf_elf_access.c: Check more thoroughly for corrupt
+      relocation records and return an error if such found.
+    * dwarf_macro5.c: Remove trailing whitespace.
 2016-05-10 David Anderson
     * dwarf_arange.c,dwarf_die_deliv.c: All read operations check for overrun.
     * dwarf_errmsg_list.c: DW_DLE_HEADER_LEN_BIGGER_THAN_SECSIZE,

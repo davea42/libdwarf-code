@@ -770,7 +770,7 @@ dwarf_get_macro_startend_file(Dwarf_Macro_Context macro_context,
                 *src_file_name = macro_context->mc_srcfiles[trueindex];
                 return DW_DLV_OK;
             } else {
-                *src_file_name = 
+                *src_file_name =
                     "<src-index-high-no-source-file-name-available>";
                 return DW_DLV_OK;
             }
@@ -786,13 +786,13 @@ dwarf_get_macro_startend_file(Dwarf_Macro_Context macro_context,
             /* Protects against crazy big srcindex, overflow territory. */
             if (trueindex > (macro_context->mc_srcfiles_count+1)) {
                 /* Something insane here. */
-                *src_file_name = 
+                *src_file_name =
                     "<source-file-index-high-no-name-available>";
                 return DW_DLV_OK;
             }
             --trueindex;
             if (trueindex > macro_context->mc_srcfiles_count) {
-                *src_file_name = 
+                *src_file_name =
                     "<adjusted-source-file-index-high-no-name-available>";
             }
             if (srcindex > 0 &&

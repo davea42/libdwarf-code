@@ -1030,9 +1030,12 @@ update_entry(Dwarf_Debug dbg,
         *error = DW_DLE_RELOC_SECTION_SYMBOL_INDEX_BAD;
         return DW_DLV_ERROR;
     }
-
-
-
+    if (offset >= target_section_size) {
+        /*  If offset really big, any add will overflow.
+            So lets stop early if offset is corrupt. */
+        *error = DW_DLE_RELOC_INVALID;
+        return DW_DLV_ERROR;
+    }
     if (is_64bit) {
 #ifdef HAVE_ELF64_SYM
         sym = &((Elf64_Sym*)symtab_section_data)[sym_idx];
@@ -1061,20 +1064,22 @@ update_entry(Dwarf_Debug dbg,
         *error = DW_DLE_RELOC_SECTION_RELOC_TARGET_SIZE_UNKNOWN;
         return DW_DLV_ERROR;
     }
-
-
+    if ( (offset + reloc_size) < offset) {
+        /* Another check for overflow. */
+        *error = DW_DLE_RELOC_INVALID;
+        return DW_DLV_ERROR;
+    }
+    if ( (offset + reloc_size) > target_section_size) {
+        *error = DW_DLE_RELOC_INVALID;
+        return DW_DLV_ERROR;
+    }
     {
         /*  Assuming we do not need to do a READ_UNALIGNED here
             at target_section + offset and add its value to
             outval.  Some ABIs say no read (for example MIPS),
             but if some do then which ones? */
         Dwarf_Unsigned outval = sym->st_value + addend;
-        /*  -1 as the 0th byte goes at offset, not offset+1. */
-        if ( (offset + reloc_size) > target_section_size) {
-            *error = DW_DLE_RELOC_INVALID;
-            return DW_DLV_ERROR;
-        }
-
+        /*  The 0th byte goes at offset. */
         WRITE_UNALIGNED(dbg,target_section + offset,
             &outval,sizeof(outval),reloc_size);
     }
