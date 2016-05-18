@@ -1,4 +1,107 @@
 
+id: DW201605-015
+cve:
+datereported: 20160517
+reportedby: Yue Liu
+vulnerability: OOB read bug in print_frame_inst_bytes()
+product: libdwarf
+description: Test object shows
+ an invalid read in  print_frame_inst_bytes().
+ <pre>
+ 1294         for (; len > 0;) {
+ 1295             unsigned char ibyte = *instp;           <- $pc
+ 1296             int top = ibyte & 0xc0;
+
+ #0  print_frame_inst_bytes (dbg=dbg@entry=0x654c80, 
+    cie_init_inst=<optimized out>, len=503715, data_alignment_factor=-4, 
+    code_alignment_factor=1, addr_size=addr_size@entry=4, offset_size=4, 
+    version=3, config_data=config_data@entry=0x63bda0 
+    <g_config_file_data>) at print_frames.c:1295
+ #1  0x000000000041b64c in print_one_cie (dbg=dbg@entry=0x654c80, 
+    cie=<optimized out>, cie_index=cie_index@entry=1, 
+    address_size=<optimized out>, config_data=
+    config_data@entry=0x63bda0 <g_config_file_data>) at print_frames.c:1161
+ #2  0x000000000041ce92 in print_frames (dbg=0x654c80, 
+    print_debug_frame=print_debug_frame@entry=1, print_eh_frame=0, 
+    config_data=config_data@entry=0x63bda0 <g_config_file_data>) 
+    at print_frames.c:2209
+
+ gef> x/10x $r13
+ 0x5e7981:       Cannot access memory at address 0x5e7981
+ gef> p/x $r13
+ $14 = 0x5e7981
+ </pre>
+ 
+
+datefixed:
+references:
+testcase: regressiontests/liu/OOB0517_03.elf
+gitfixid:
+tarrelease:
+endrec:
+
+
+
+
+id: DW201605-014
+cve:
+datereported: 20160517
+reportedby: Yue Liu
+vulnerability: OOB read bug in dwarf_get_xu_hash_entry()
+product: libdwarf
+description: Test object shows
+ an invalid read in dwarf_get _xu_hash_entry, lin 211.
+ <pre>
+ #0  dwarf_get_xu_hash_entry (xuhdr=xuhdr@entry=0x657360, 
+    index=index@entry=2897626028, hash_value=
+    hash_value@entry=0x7fffffffd5b0, 
+    index_to_sections=index_to_sections@entry=0x7fffffffd5a8, 
+    err=err@entry=0x7fffffffdb08) at dwarf_xu_index.c:211
+ #1  0x00002aaaaacfd05e in _dwarf_search_fission_for_key (
+    dbg=0x654a50, error=0x7fffffffdb08, percu_index_out=<synthetic pointer>,
+    key_in=0x7fffffffd670, xuhdr=0x657360) at dwarf_xu_index.c:363
+ #2  dwarf_get_debugfission_for_key (dbg=dbg@entry=0x654a50, 
+    key=key@entry=0x7fffffffd670, key_type=key_type@entry=0x2aaaaad15e2a 
+    "tu", percu_out=percu_out@entry=0x65a830, 
+    error=error@entry=0x7fffffffdb08) at dwarf_xu_index.c:577
+ </pre>
+datefixed:
+references:
+testcase: regressiontests/liu/OOB0517_02.elf
+gitfixid:
+tarrelease:
+endrec:
+
+
+
+
+id: DW201605-013
+cve:
+datereported: 20160517
+reportedby: Yue Liu
+vulnerability: OOB read bug in print_exprloc_content
+product: libdwarf
+description: Test object shows
+ an invalid write in print_exprloc_content.
+ <pre>
+ #0  print_exprloc_content (dbg=dbg@entry=0x654ea0, 
+    die=die@entry=0x65b110, attrib=attrib@entry=0x65b590, 
+    esbp=esbp@entry=0x7fffffffcef0, showhextoo=1) at print_die.c:4182
+ #1  0x0000000000412fb1 in get_attr_value (dbg=dbg@entry=0x654ea0, 
+    tag=<optimized out>, die=die@entry=0x65b110, 
+    dieprint_cu_goffset=dieprint_cu_goffset@entry=11, 
+    attrib=attrib@entry=0x65b590, srcfiles=srcfiles@entry=0x0, 
+    cnt=cnt@entry=0, esbp=esbp@entry=0x7fffffffcef0, show_form=0, 
+    local_verbose=0) at print_die.c:4972
+ </pre>
+datefixed: 
+references:
+testcase: regressiontests/liu/OOB0517_01.elf
+gitfixid: 
+tarrelease:
+endrec:
+
+
 id: DW201605-012
 cve:
 datereported: 20160513
@@ -155,8 +258,10 @@ vulnerability: A specially crafted DWARF section
 product:  libdwarf
 description:
  In file dwarf_elf_access.c:1071
+ <pre>
  WRITE_UNALIGNED(dbg,target_section + offset,
      &outval,sizeof(outval),reloc_size);
+ </pre>
  A crafted ELF file may lead to a large offset value, which
  bigger than the size of target_section heap chunk, then this
  WRITE_UNALIGNED() function will write the value of &outval
@@ -190,7 +295,7 @@ description:
 
  dwarf_dealloc() did not check the Dwarf_Ptr space argument
  before using it. This will lead to a out-of-bound read bug.
-
+ <pre>
  backtrace:
  #0  dwarf_dealloc (dbg=dbg@entry=0x655f30, space=0xa0,
  alloc_type=alloc_type@entry=1) at dwarf_alloc.c:477
@@ -202,7 +307,7 @@ description:
 
  gef> p &r->rd_dbg
  $14 = (void **) 0x90
-
+ </pre>
 datefixed: 20160504
 references:
 testcase:

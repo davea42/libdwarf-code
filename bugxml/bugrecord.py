@@ -28,23 +28,53 @@
 
 import sys
 
-def xmlize(s):
-  out = []
-  for c in s:
+# Do to a single text line.
+def xmlize(linea):
+  outi =  []
+  l = linea
+  if l.find("<pre>") != -1:
+     s2 = l + '\n'
+     return s2
+  if l.find("</pre>") != -1:
+     s2 = l + '\n'
+     return s2
+  for c in l:
     if c == '<':
-       out += ["&lt;"]
+       outi += ["&lt;"]
     elif c == '>':
-       out += ["&gt;"]
+       outi += ["&gt;"]
     elif c == "&":
-       out += ["&amp;"]
+       outi += ["&amp;"]
     elif c == "'":
-       out += ["&apos;"]
+       outi += ["&apos;"]
     elif c == '"':
-       out += ["&quot;"]
+       outi += ["&quot;"]
     else:
-       out += [c]
-  s2 = ''.join(out)
-  return s2;
+       outi += [c]
+  outi += ["\n"]
+  s2 = ''.join(outi)
+  return s2
+
+def paraline(name,linea):
+  out = ''
+  if len(linea) <1:
+    out = "<p>" + name + ":"+ "</p>"
+    return out
+  out = "<p>" + name + ": "
+  out +=linea 
+  out += "</p>"
+  return out;
+
+def paralines(name,lines):
+  if len(lines) <1:
+    out = "<p>" + name + ":"+ "</p>"
+    return out
+  out = "<p>" + name + ": "
+  for lin in lines:
+     f = xmlize(lin)
+     out += f
+  out += "</p>"
+  return out;
 
 def para(name,str):
   if str ==  None:
@@ -147,98 +177,110 @@ class bugrecord:
     print "tarrelease:",self._tarrelease
 
   def generate_html(self):
-    t = ''.join(['<h3 id="',self._id,'">',self._id,'</h3>'])
+    s5= ''.join(self._id)
+    t = ''.join(['<h3 id="',s5,'">',self._id,'</h3>'])
     txt = [t]
 
-    t = para("id",xmlize(self._id))
+    t = paraline("id",xmlize(self._id))
     txt += [t]
-    t = para("cve",xmlize(self._cve))
+    t = paraline("cve",xmlize(self._cve))
     txt += [t]
-    t = para("datereported",xmlize(self._datereported))
+    t = paraline("datereported",xmlize(self._datereported))
     txt += [t]
-    t = para("reportedby",xmlize(self._reportedby))
+    t = paraline("reportedby",xmlize(self._reportedby))
     txt += [t]
  
-    v = ''.join(self._vulnerability)    
-    t = para("vulnerability",v)
+    #MULTI
+    t = paralines("vulnerability",self._vulnerability)
     txt += [t]
 
 
-    t = para("product",xmlize(self._product))
+    t = paraline("product",xmlize(self._product))
     txt += [t]
     
-    t = para("product",xmlize(self._product))
-
-
-    p = ''.join(self._description)    
-    t = para("description",p)
+    #MULTI
+    t = paralines("description",self._description)
     txt += [t]
 
-    t = para("datefixed",xmlize(self._datefixed))
+    t = paraline("datefixed",xmlize(self._datefixed))
     txt += [t]
 
-    p = ''.join(self._references)    
-    t = para("references",p)
+    #MULTI
+    t = paralines("references",self._references)
     txt += [t]
 
-    #* references 
-    t = para("gitfixid",xmlize(self._gitfixid))
+    t = paraline("gitfixid",xmlize(self._gitfixid))
     txt += [t]
-    t = para("tarrelease",xmlize(self._tarrelease))
+    t = paraline("tarrelease",xmlize(self._tarrelease))
     txt += [t]
 
     t = '<p> <a href="#top">[top]</a> </p>'
     txt += [t]
     return txt
 
+  def paraxml(self,start,main,term):
+    # For single line xml remove the newline from the main text line.
+    out = start
+    l=main.strip()
+    if len(l) > 0:
+      out += l 
+    out += term + "\n" 
+    return out
+  def paraxmlN(self,start,main,term):
+    # For multi line xml leave newlines present.
+    out = start
+    for x in main:
+      l=x.strip()
+      t = xmlize(l);
+      if len(t.strip()) > 0:
+        out += t
+    out += term + "\n"
+    return out
+
+
   def generate_xml(self):
     txt=[]
     t = '<dwbug>'
     txt += [t]
-    t = ''.join(['<dwid>',xmlize(self._id),'</dwid>'])
+     
+    t = self.paraxml('<dwid>',xmlize(self._id),'</dwid>')
     txt += [t]
-    t = ''.join(['<cve>',xmlize(self._cve),'</cve>'])
-    txt += [t]
-    t = ''.join(['<datereported>',xmlize(self._datereported),'</datereported>'])
-    txt += [t];
-    t = ''.join(['<reportedby>',xmlize(self._reportedby),'</reportedby>'])
-    txt += [t];
-    #* vulnerability */
-
-
-
-    t = ''.join(['<product>',xmlize(self._product),'</product>'])
-    txt += [t];
-
-    if len(self._vulnerability) > 0:
-      p = ''.join(self._vulnerability)    
-    else:
-      p = ""
-    t = ''.join(["<vulnerability>",xmlize(p),"</vulnerability>"])
+    t = self.paraxml('<cve>',xmlize(self._cve),'</cve>')
     txt += [t]
 
+    t = self.paraxml('<datereported>',xmlize(self._datereported),'</datereported>')
+    txt += [t];
 
-    if len(self._description) > 0:
-      p = ''.join(self._description)    
-    else:
-      p=""
-    t = ''.join(["<description>",xmlize(p),"</description>"])
+    t = self.paraxml('<reportedby>',xmlize(self._reportedby),'</reportedby>')
+    txt += [t];
+
+    t = self.paraxml('<product>',xmlize(self._product),'</product>')
+    txt += [t];
+
+    
+    #MULTI
+    p = self._vulnerability
+    t = self.paraxmlN("<vulnerability>",p,"</vulnerability>")
     txt += [t]
 
 
-    t = ''.join(['<datefixed>',xmlize(self._datefixed),'</datefixed>'])
-    txt += [t];
-
-    if len(self._references) > 0:
-      p = ''.join(self._references)    
-    else:
-      p = ""
-    t = ''.join(["<references>",xmlize(p),"</references>"])
+    #MULTI
+    p = self._description
+    t = self.paraxmlN("<description>",p,"</description>")
     txt += [t]
 
-    t = ''.join(['<gitfixid>',xmlize(self._gitfixid),'</gitfixid>'])
+
+    t = self.paraxml('<datefixed>',xmlize(self._datefixed),'</datefixed>')
     txt += [t];
-    t = ''.join(['<tarrelease>',xmlize(self._tarrelease),'</tarrelease>'])
+
+    #MULTI
+    p = self._references    
+    t = self.paraxmlN("<references>",p,"</references>")
+    txt += [t]
+
+    t = self.paraxml('<gitfixid>',xmlize(self._gitfixid),'</gitfixid>')
+    txt += [t];
+    t = self.paraxml('<tarrelease>',xmlize(self._tarrelease),'</tarrelease>')
     txt += [t];
 
     t = '</dwbug>'

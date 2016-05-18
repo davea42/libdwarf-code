@@ -85,18 +85,19 @@ def readbugs(iname):
     if ignore_this_line(rec,inrecord) == "y":
       continue
     rec = rec.rstrip()
-    low = rec.find(":")
-    if low == -1 :
-      if inrecord == "n":
-        if len(rec) == 0:
-          continue
+    if inrecord == "n":
+      if len(rec) == 0:
+        continue
+      if  rec.find(":") == -1:
         print "bogus non-blank line at line ",linecount
         sys.exit(1)
-      if intext == '':
-        print "bogus non-blank line. At line ",linecount
-        sys.exit(1)
-      text += [rec]
-      continue
+    if inrecord == "y" and len(rec) > 0:
+      # A multi line entry may have ":" in it.
+      if intext != "" and rec[0] == ' ':
+        s3 = ''.join(rec)
+        text += [s3]
+        continue
+    low = rec.find(":")
     fldname = rec[0:low+1]
     fldval = rec[low+1:]
     if fldname == "id:": 
@@ -109,63 +110,74 @@ def readbugs(iname):
         print "Duplicate Key:",f,"Giving up." 
         sys.exit(1)
       usedid[f] = 1
-      bugrec = bugrecord.bugrecord(f)
+      s4= ''.join(fldval)
+      bugrec = bugrecord.bugrecord(s4)
     elif fldname == "cve:":
       closeouttext(bugrec,intext,text,linecount),
       intext = ""
       text = []
-      bugrec.setcve(fldval)
+      s4= ''.join(fldval)
+      bugrec.setcve(s4)
     elif fldname == "datereported:":
       closeouttext(bugrec,intext,text,linecount),
       intext = ""
       text = []
-      bugrec.setdatereported(fldval)
+      s4= ''.join(fldval)
+      bugrec.setdatereported(s4)
     elif fldname == "reportedby:":
       closeouttext(bugrec,intext,text,linecount),
       intext = ""
       text = []
-      bugrec.setreportedby(fldval)
+      s4= ''.join(fldval)
+      bugrec.setreportedby(s4)
     elif fldname == "vulnerability:":
       closeouttext(bugrec,intext,text,linecount),
       intext = 'v'
       text = []
       if len(fldval) > 0:
-        text = [fldval]
+        s4= ''.join(fldval)
+        text = [s4]
 
     elif fldname == "product:":
       closeouttext(bugrec,intext,text,linecount),
       intext = ""
       text = []
-      bugrec.setproduct(fldval)
+      s4= ''.join(fldval)
+      bugrec.setproduct(s4)
     elif fldname == "description:":
       closeouttext(bugrec,intext,text,linecount),
       text = []
       intext = 'd'
       if len(fldval) > 0:
-        text = [fldval]
+        s4= ''.join(fldval)
+        text = [s4]
 
     elif fldname == "datefixed:":
       closeouttext(bugrec,intext,text,linecount),
       text = []
       intext = ""
-      bugrec.setdatefixed(fldval)
+      s4= ''.join(fldval)
+      bugrec.setdatefixed(s4)
     elif fldname == "references:":
       closeouttext(bugrec,intext,text,linecount),
       text = []
       intext = 'r'
       if len(fldval) > 0:
-        text = [fldval]
+        s4= ''.join(fldval)
+        text = [s4]
 
     elif fldname == "gitfixid:":
       closeouttext(bugrec,intext,text,linecount),
       text = []
       intext = ""
-      bugrec.setgitfixid(fldval)
+      s4= ''.join(fldval)
+      bugrec.setgitfixid(s4)
     elif fldname == "tarrelease:":
       closeouttext(bugrec,intext,text,linecount),
       text = []
       intext = ""
-      bugrec.settarrelease(fldval)
+      s4= ''.join(fldval)
+      bugrec.settarrelease(s4)
     elif fldname == "endrec:":
       closeouttext(bugrec,intext,text,linecount),
       text = []
@@ -176,6 +188,7 @@ def readbugs(iname):
       inrecord = "n"
       text = []
       intext = ""
+      inrecord = "n"
   file.close()
   return buglist
 
