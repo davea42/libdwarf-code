@@ -28,15 +28,22 @@
 
 import sys
 
-# Do to a single text line.
-def xmlize(linea):
+# Use only <pre> or </pre> all by itself in data.xml.
+# No other data on either of such lines.
+def xmlize(linea,inhtml):
   outi =  []
   l = linea
   if l.find("<pre>") != -1:
-     s2 = l + '\n'
+     if inhtml == 'y':
+       s2 = '</p>' +l + '\n'
+     else:
+       s2 = l + '\n'
      return s2
   if l.find("</pre>") != -1:
-     s2 = l + '\n'
+     if inhtml == 'y':
+       s2 = l + '\n' + "<p>"
+     else:
+       s2 = l + '\n' 
      return s2
   for c in l:
     if c == '<':
@@ -45,8 +52,8 @@ def xmlize(linea):
        outi += ["&gt;"]
     elif c == "&":
        outi += ["&amp;"]
-    elif c == "'":
-       outi += ["&apos;"]
+    #elif c == "'":
+    #   outi += ["&apos;"]
     elif c == '"':
        outi += ["&quot;"]
     else:
@@ -71,7 +78,7 @@ def paralines(name,lines):
     return out
   out = "<p>" + name + ": "
   for lin in lines:
-     f = xmlize(lin)
+     f = xmlize(lin,'y')
      out += f
   out += "</p>"
   return out;
@@ -181,13 +188,13 @@ class bugrecord:
     t = ''.join(['<h3 id="',s5,'">',self._id,'</h3>'])
     txt = [t]
 
-    t = paraline("id",xmlize(self._id))
+    t = paraline("id",xmlize(self._id,'y'))
     txt += [t]
-    t = paraline("cve",xmlize(self._cve))
+    t = paraline("cve",xmlize(self._cve,'y'))
     txt += [t]
-    t = paraline("datereported",xmlize(self._datereported))
+    t = paraline("datereported",xmlize(self._datereported,'y'))
     txt += [t]
-    t = paraline("reportedby",xmlize(self._reportedby))
+    t = paraline("reportedby",xmlize(self._reportedby,'y'))
     txt += [t]
  
     #MULTI
@@ -195,23 +202,23 @@ class bugrecord:
     txt += [t]
 
 
-    t = paraline("product",xmlize(self._product))
+    t = paraline("product",xmlize(self._product,'y'))
     txt += [t]
     
     #MULTI
     t = paralines("description",self._description)
     txt += [t]
 
-    t = paraline("datefixed",xmlize(self._datefixed))
+    t = paraline("datefixed",xmlize(self._datefixed,'y'))
     txt += [t]
 
     #MULTI
     t = paralines("references",self._references)
     txt += [t]
 
-    t = paraline("gitfixid",xmlize(self._gitfixid))
+    t = paraline("gitfixid",xmlize(self._gitfixid,'y'))
     txt += [t]
-    t = paraline("tarrelease",xmlize(self._tarrelease))
+    t = paraline("tarrelease",xmlize(self._tarrelease,'y'))
     txt += [t]
 
     t = '<p> <a href="#top">[top]</a> </p>'
@@ -228,10 +235,10 @@ class bugrecord:
     return out
   def paraxmlN(self,start,main,term):
     # For multi line xml leave newlines present.
-    out = start
+    out = start 
     for x in main:
       l=x.strip()
-      t = xmlize(l);
+      t = xmlize(l,'n');
       if len(t.strip()) > 0:
         out += t
     out += term + "\n"
@@ -243,18 +250,18 @@ class bugrecord:
     t = '<dwbug>'
     txt += [t]
      
-    t = self.paraxml('<dwid>',xmlize(self._id),'</dwid>')
+    t = self.paraxml('<dwid>',xmlize(self._id,'n'),'</dwid>')
     txt += [t]
-    t = self.paraxml('<cve>',xmlize(self._cve),'</cve>')
+    t = self.paraxml('<cve>',xmlize(self._cve,'n'),'</cve>')
     txt += [t]
 
-    t = self.paraxml('<datereported>',xmlize(self._datereported),'</datereported>')
+    t = self.paraxml('<datereported>',xmlize(self._datereported,'n'),'</datereported>')
     txt += [t];
 
-    t = self.paraxml('<reportedby>',xmlize(self._reportedby),'</reportedby>')
+    t = self.paraxml('<reportedby>',xmlize(self._reportedby,'n'),'</reportedby>')
     txt += [t];
 
-    t = self.paraxml('<product>',xmlize(self._product),'</product>')
+    t = self.paraxml('<product>',xmlize(self._product,'n'),'</product>')
     txt += [t];
 
     
@@ -270,7 +277,7 @@ class bugrecord:
     txt += [t]
 
 
-    t = self.paraxml('<datefixed>',xmlize(self._datefixed),'</datefixed>')
+    t = self.paraxml('<datefixed>',xmlize(self._datefixed,'n'),'</datefixed>')
     txt += [t];
 
     #MULTI
@@ -278,9 +285,9 @@ class bugrecord:
     t = self.paraxmlN("<references>",p,"</references>")
     txt += [t]
 
-    t = self.paraxml('<gitfixid>',xmlize(self._gitfixid),'</gitfixid>')
+    t = self.paraxml('<gitfixid>',xmlize(self._gitfixid,'n'),'</gitfixid>')
     txt += [t];
-    t = self.paraxml('<tarrelease>',xmlize(self._tarrelease),'</tarrelease>')
+    t = self.paraxml('<tarrelease>',xmlize(self._tarrelease,'n'),'</tarrelease>')
     txt += [t];
 
     t = '</dwbug>'
