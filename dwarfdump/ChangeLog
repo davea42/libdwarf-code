@@ -1,3 +1,7 @@
+2016-05-18  David Anderson
+    * print_die.c: Fix typo in error message.
+    * print_frames.c: Do additional checks for incorrect data
+      when printing frame instructions to avoid dwarfdump crash..
 2016-05-12  David Anderson
     * print_abbrevs.c,print_aranges.c,print_frames.c,print_sections.c:
       Removed trailing whitespace. Fixed indentation.

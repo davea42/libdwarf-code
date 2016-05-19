@@ -1009,8 +1009,7 @@ dwarf_formblock(Dwarf_Attribute attr,
     section_end =
         _dwarf_calculate_info_section_end_ptr(cu_context);
     section_start =
-        _dwarf_calculate_info_section_start_ptr(cu_context);
-    section_length = section_end - section_start;
+        _dwarf_calculate_info_section_start_ptr(cu_context,&section_length);
 
     switch (attr->ar_attribute_form) {
 
@@ -1428,19 +1427,28 @@ dwarf_formexprloc(Dwarf_Attribute attr,
     if (attr->ar_attribute_form == DW_FORM_exprloc ) {
         Dwarf_Die die = 0;
         Dwarf_Word leb_len = 0;
+        Dwarf_Byte_Ptr section_start = 0;
+        Dwarf_Unsigned section_len = 0;
         Dwarf_Byte_Ptr section_end = 0;
         Dwarf_Byte_Ptr info_ptr = 0;
         Dwarf_Unsigned exprlen = 0;
         Dwarf_Small * addr = attr->ar_debug_ptr;
 
         info_ptr = addr;
-        section_end =
-            _dwarf_calculate_info_section_end_ptr(cu_context);
+        section_start =
+            _dwarf_calculate_info_section_start_ptr(cu_context,&section_len);
+        section_end = section_start + section_len;
+
         DECODE_LEB128_UWORD_LEN_CK(info_ptr, exprlen, leb_len,
             dbg,error,section_end);
+        if (exprlen > section_len) {
+            /* Corrupted dwarf!  */
+            _dwarf_error(dbg, error,DW_DLE_ATTR_OUTSIDE_SECTION);
+            return DW_DLV_ERROR;
+        }
+        die = attr->ar_die;
         /*  Is the block entirely in the section, or is
             there bug somewhere? */
-        die = attr->ar_die;
         if (_dwarf_reference_outside_section(die,
             (Dwarf_Small *)addr, ((Dwarf_Small *)addr)+exprlen +leb_len)) {
             _dwarf_error(dbg, error,DW_DLE_ATTR_OUTSIDE_SECTION);

@@ -4167,7 +4167,7 @@ print_exprloc_content(Dwarf_Debug dbg,Dwarf_Die die,
     if (wres == DW_DLV_NO_ENTRY) {
         /* Show nothing?  Impossible. */
     } else if (wres == DW_DLV_ERROR) {
-        print_error(dbg, "Cannot get a  DW_FORM_exprbloc....", wres, ecerr);
+        print_error(dbg, "Cannot get a  DW_FORM_exprloc....", wres, ecerr);
     } else {
         Dwarf_Half address_size = 0;
         Dwarf_Half offset_size = 0;

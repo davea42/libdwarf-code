@@ -1,3 +1,12 @@
+2016-05-18 David Anderson
+    * dwarf_form.c: Directly check expression length against
+      section length in case expression length very very large.
+    * dwarf_query.c: _dwarf_calculate_info_section_*() routines
+      made clearer and the *_start_ptr() instance also now returns
+      the length (via a pointer arg).
+    * dwarf_xu_index.c: Check data read from the section so 
+      a wildly large columns count or slots count will be caught
+      and an error returned.
 2016-05-16 David Anderson
     * dwarf_elf_access.c: Check more thoroughly for corrupt
       relocation records and return an error if such found.

@@ -1273,7 +1273,7 @@ get_string_from_locs(Dwarf_Debug dbg,
 /*ARGSUSED*/ static void
 print_frame_inst_bytes(Dwarf_Debug dbg,
     Dwarf_Ptr cie_init_inst,
-    Dwarf_Signed len,
+    Dwarf_Signed len_in,
     Dwarf_Signed data_alignment_factor,
     int code_alignment_factor, Dwarf_Half addr_size,
     Dwarf_Half offset_size,Dwarf_Half version,
@@ -1289,8 +1289,14 @@ print_frame_inst_bytes(Dwarf_Debug dbg,
     unsigned int u32 = 0;
     unsigned long long u64 = 0;
     int res = 0;
-    Dwarf_Small *endpoint = instp + len;
+    Dwarf_Small *endpoint = 0;
+    Dwarf_Signed len = 0;
 
+    if (len_in <= 0) {
+        return;
+    }
+    len = len_in;
+    endpoint = instp + len;
     for (; len > 0;) {
         unsigned char ibyte = *instp;
         int top = ibyte & 0xc0;
@@ -1341,6 +1347,7 @@ print_frame_inst_bytes(Dwarf_Debug dbg,
 
         default:
             loff = off;
+
             switch (bottom) {
             case DW_CFA_set_loc:
                 /* operand is address, so need address size */
@@ -1587,6 +1594,9 @@ print_frame_inst_bytes(Dwarf_Debug dbg,
                         DW_PR_DUu "\n",
                         loff,
                         block_len);
+                    if (len < 0 || block_len > (Dwarf_Unsigned)len) {
+                        printf("ERROR expression length too long in DW_CFA_def_cfa_expression\n");
+                    }
                     if ((instp+1 + block_len) > endpoint) {
                         printf("ERROR expression length too long in DW_CFA_def_cfa_expression\n");
                         return;
@@ -1608,7 +1618,7 @@ print_frame_inst_bytes(Dwarf_Debug dbg,
                     off += block_len;
                 }
                 break;
-            case DW_CFA_expression:     /* DWARF3 */
+            case DW_CFA_expression:      /* DWARF3 */
                 res = local_dwarf_decode_u_leb128_chk(instp + 1, &uleblen,
                     &uval,endpoint);
                 if (res != DW_DLV_OK) {
@@ -1638,6 +1648,10 @@ print_frame_inst_bytes(Dwarf_Debug dbg,
                         " expr block len %" DW_PR_DUu "\n",
                         loff,  uval,
                         block_len);
+                    if (len < 0 || block_len > (Dwarf_Unsigned)len) {
+                        printf("ERROR expression length too long in DW_CFA_expression\n");
+                        return;
+                    }
                     if ((instp+1 + block_len) > endpoint) {
                         printf("ERROR expression length too long in DW_CFA_expression\n");
                         return;
@@ -1957,6 +1971,12 @@ print_frame_inst_bytes(Dwarf_Debug dbg,
         instp++;
         len--;
         off++;
+        if ( len < 0) {
+            printf("ERROR reading frame instructions, "
+                "remaining length negative: %"
+                DW_PR_DSd "\n",len);
+            return;
+        }
     }
 }
 

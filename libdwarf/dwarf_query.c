@@ -1719,14 +1719,17 @@ dwarf_get_version_of_die(Dwarf_Die die,
 }
 
 Dwarf_Byte_Ptr
-_dwarf_calculate_info_section_start_ptr(Dwarf_CU_Context context)
+_dwarf_calculate_info_section_start_ptr(Dwarf_CU_Context context,
+    Dwarf_Unsigned *section_len)
 {
     Dwarf_Debug dbg = 0;
     Dwarf_Small *dataptr = 0;
+    struct Dwarf_Section_s *sec = 0;
 
     dbg = context->cc_dbg;
-    dataptr = context->cc_is_info? dbg->de_debug_info.dss_data:
-        dbg->de_debug_types.dss_data;
+    sec = context->cc_is_info? &dbg->de_debug_info: &dbg->de_debug_types;
+    dataptr = sec->dss_data;
+    *section_len = sec->dss_size;
     return dataptr;
 }
 
@@ -1755,10 +1758,12 @@ _dwarf_calculate_abbrev_section_end_ptr(Dwarf_CU_Context context)
     Dwarf_Debug dbg = 0;
     Dwarf_Byte_Ptr abbrev_end = 0;
     Dwarf_Byte_Ptr abbrev_start = 0;
+    struct Dwarf_Section_s *sec = 0;
 
     dbg = context->cc_dbg;
-    abbrev_start = dbg->de_debug_abbrev.dss_data;
-    abbrev_end = abbrev_start + dbg->de_debug_abbrev.dss_size;
+    sec = &dbg->de_debug_abbrev;
+    abbrev_start = sec->dss_data;
+    abbrev_end = abbrev_start + sec->dss_size;
     return abbrev_end;
 }
 

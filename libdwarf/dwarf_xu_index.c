@@ -98,7 +98,7 @@ dwarf_get_xu_index_header(Dwarf_Debug dbg,
     section_end = data + sect->dss_size;
 
     if (sect->dss_size < (4*datalen32) ) {
-        _dwarf_error(dbg, error, DW_DLE_ERRONEOUS_GDB_INDEX_SECTION);
+        _dwarf_error(dbg, error, DW_DLE_ERRONEOUS_XU_INDEX_SECTION);
         return (DW_DLV_ERROR);
     }
     READ_UNALIGNED_CK(dbg,local_version, Dwarf_Unsigned,
@@ -119,9 +119,29 @@ dwarf_get_xu_index_header(Dwarf_Debug dbg,
     data += datalen32;
     hash_tab_offset = datalen32*4;
     indexes_tab_offset = hash_tab_offset + (num_slots * HASHSIGNATURELEN);
+    /*  Look for corrupt section data. */
+    if (num_slots > sect->dss_size) {
+        _dwarf_error(dbg, error, DW_DLE_ERRONEOUS_XU_INDEX_SECTION);
+        return (DW_DLV_ERROR);
+    }
+    if ( (4*num_slots) > sect->dss_size) {
+        _dwarf_error(dbg, error, DW_DLE_ERRONEOUS_XU_INDEX_SECTION);
+        return (DW_DLV_ERROR);
+    }
+
     section_offsets_tab_offset = indexes_tab_offset +
         (num_slots *datalen32);
 
+    if ( num_col > sect->dss_size) {
+        /* Something is badly wrong here. */
+        _dwarf_error(dbg, error, DW_DLE_ERRONEOUS_XU_INDEX_SECTION);
+        return (DW_DLV_ERROR);
+    }
+    if ( (4*num_col) > sect->dss_size) {
+        /* Something is badly wrong here. */
+        _dwarf_error(dbg, error, DW_DLE_ERRONEOUS_XU_INDEX_SECTION);
+        return (DW_DLV_ERROR);
+    }
     section_sizes_tab_offset = section_offsets_tab_offset +
         ((num_CUs +1) *num_col* datalen32) ;
     tables_end_offset = section_sizes_tab_offset +
@@ -129,7 +149,7 @@ dwarf_get_xu_index_header(Dwarf_Debug dbg,
 
     if ( tables_end_offset > sect->dss_size) {
         /* Something is badly wrong here. */
-        _dwarf_error(dbg, error, DW_DLE_ERRONEOUS_GDB_INDEX_SECTION);
+        _dwarf_error(dbg, error, DW_DLE_ERRONEOUS_XU_INDEX_SECTION);
         return (DW_DLV_ERROR);
     }
 
@@ -356,6 +376,17 @@ _dwarf_search_fission_for_key(UNUSEDARG Dwarf_Debug dbg,
     Dwarf_Sig8 hashentry_key;
     Dwarf_Unsigned percu_index = 0;
 
+    /*  Look for corrupt section data. */
+    if (slots > xuhdr->gx_section_length) {
+        /* Something is badly wrong here. */
+        _dwarf_error(dbg, error, DW_DLE_ERRONEOUS_XU_INDEX_SECTION);
+        return (DW_DLV_ERROR);
+    }
+    if ( (4*slots) > xuhdr->gx_section_length) {
+        /* Something is badly wrong here. */
+        _dwarf_error(dbg, error, DW_DLE_ERRONEOUS_XU_INDEX_SECTION);
+        return (DW_DLV_ERROR);
+    }
     key = *(Dwarf_Unsigned *)(key_in);
     primary_hash = key & mask;
     hashprime =  (((key >>32) &mask) |1);
