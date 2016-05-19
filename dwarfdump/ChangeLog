@@ -1,4 +1,6 @@
 2016-05-19  David Anderson
+    * dwarfdump.c, common.c: Update version string.
+2016-05-19  David Anderson
     * configure.in: Does a better job reporting configure actions.
     * configure: Regenerated
     * dwarfdump.1: Fixed spelling errors and moved ./dwarfdump.conf
