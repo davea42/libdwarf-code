@@ -31,12 +31,10 @@ description: Test object shows
  gef> p/x $r13
  $14 = 0x5e7981
  </pre>
- 
-
-datefixed:
+datefixed: 20150518
 references:
 testcase: regressiontests/liu/OOB0517_03.elf
-gitfixid:
+gitfixid: ac6673e32f3443a5d36c2217cb814000930b2c54
 tarrelease:
 endrec:
 
@@ -65,10 +63,10 @@ description: Test object shows
     "tu", percu_out=percu_out@entry=0x65a830, 
     error=error@entry=0x7fffffffdb08) at dwarf_xu_index.c:577
  </pre>
-datefixed:
+datefixed: 20150518
 references:
 testcase: regressiontests/liu/OOB0517_02.elf
-gitfixid:
+gitfixid: ac6673e32f3443a5d36c2217cb814000930b2c54
 tarrelease:
 endrec:
 
@@ -94,10 +92,10 @@ description: Test object shows
     cnt=cnt@entry=0, esbp=esbp@entry=0x7fffffffcef0, show_form=0, 
     local_verbose=0) at print_die.c:4972
  </pre>
-datefixed: 
+datefixed: 20150518
 references:
 testcase: regressiontests/liu/OOB0517_01.elf
-gitfixid: 
+gitfixid: ac6673e32f3443a5d36c2217cb814000930b2c54
 tarrelease:
 endrec:
 
