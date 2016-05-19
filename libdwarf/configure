@@ -684,6 +684,7 @@ ac_user_opts='
 enable_option_checking
 enable_shared
 enable_nonshared
+enable_fpic
 enable_wall
 enable_namestable
 enable_nonstandardprintf
@@ -1310,6 +1311,7 @@ Optional Features:
   --enable-FEATURE[=ARG]  include FEATURE [ARG=yes]
   --enable-shared         build shared library libdwarf.so
   --disable-nonshared     do not build archive library libdwarf.a
+  --disable-fpic          do not build with -fPIC
   --enable-wall           Add -Wall (default is none)
   --enable-namestable     Name string functions implemented as binary search
                           (default is with C switch)
@@ -3980,7 +3982,8 @@ $as_echo "#define HAVE___UINT64_T_IN_SYS_TYPES_H 1" >>confdefs.h
 
 fi
 rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
-
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking compiler supports __attribute__ unused " >&5
+$as_echo_n "checking compiler supports __attribute__ unused ... " >&6; }
 if test "$cross_compiling" = yes; then :
 
 else
@@ -4002,6 +4005,11 @@ if ac_fn_c_try_run "$LINENO"; then :
 
 $as_echo "#define HAVE_UNUSED_ATTRIBUTE 1" >>confdefs.h
 
+    { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+$as_echo "yes" >&6; }
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
 fi
 rm -f core *.core core.conftest.* gmon.out bb.out conftest$ac_exeext \
   conftest.$ac_objext conftest.beam conftest.$ac_ext
@@ -4009,6 +4017,8 @@ fi
 
 
 
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking zlib.h usability" >&5
+$as_echo_n "checking zlib.h usability... " >&6; }
 cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 #include "zlib.h"
@@ -4030,12 +4040,17 @@ main ()
 }
 _ACEOF
 if ac_fn_c_try_compile "$LINENO"; then :
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+$as_echo "yes" >&6; }
 
 $as_echo "#define HAVE_ZLIB 1" >>confdefs.h
 
      dwfzlib=-lz
 
 
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
 fi
 rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
 
@@ -4058,6 +4073,7 @@ else
   echo libelf/libelf.h does not have struct _Elf
 fi
 rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+
 cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 #include <libelf.h>
@@ -4097,6 +4113,8 @@ $as_echo "#define HAVE_R_IA_64_DIR32LSB 1" >>confdefs.h
 fi
 rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
 
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking libelf defines struct _Elf" >&5
+$as_echo_n "checking libelf defines struct _Elf... " >&6; }
 cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 #include <libelf.h>
@@ -4112,6 +4130,11 @@ if ac_fn_c_try_compile "$LINENO"; then :
 
 $as_echo "#define HAVE_STRUCT_UNDERSCORE_ELF 1" >>confdefs.h
 
+    { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+$as_echo "yes" >&6; }
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
 fi
 rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
 
@@ -4245,7 +4268,12 @@ rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
 
 build_shared=none
 
+dwfpic=-fPIC
 
+
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking build shared" >&5
+$as_echo_n "checking build shared... " >&6; }
 # Check whether --enable-shared was given.
 if test "${enable_shared+set}" = set; then :
   enableval=$enable_shared;
@@ -4257,11 +4285,21 @@ if  test "x$enable_shared" = "xyes"; then :
 
    dwfpic=-fPIC
 
+   { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+$as_echo "yes" >&6; }
+
+else
+
+   { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
 
 fi
 
+
 build_nonshared=libdwarf.a
 
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking build nonshared" >&5
+$as_echo_n "checking build nonshared... " >&6; }
 # Check whether --enable-nonshared was given.
 if test "${enable_nonshared+set}" = set; then :
   enableval=$enable_nonshared;
@@ -4271,14 +4309,50 @@ if  test "x$enable_nonshared" = "xno"; then :
 
       build_nonshared=none
 
+   { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+
+else
+
+   { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+$as_echo "yes" >&6; }
+
+fi
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking build -fPIC" >&5
+$as_echo_n "checking build -fPIC... " >&6; }
+# Check whether --enable-fpic was given.
+if test "${enable_fpic+set}" = set; then :
+  enableval=$enable_fpic;
+fi
+
+if  test "x$enable_fpic" = "xno"; then :
+
+
+   { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+
+else
+
+   { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+$as_echo "yes" >&6; }
 
 fi
 
 
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking build -Wall" >&5
+$as_echo_n "checking build -Wall... " >&6; }
 # Check whether --enable-wall was given.
 if test "${enable_wall+set}" = set; then :
-  enableval=$enable_wall;
-	 dwfwall="-Wall -O0 -Wpointer-arith -Wmissing-declarations -Wmissing-prototypes -Wdeclaration-after-statement -Wextra -Wcomment -Wformat -Wpedantic -Wuninitialized -Wno-long-long -Wshadow"
+  enableval=$enable_wall;  dwfwall="-Wall -O0 -Wpointer-arith -Wmissing-declarations -Wmissing-prototypes -Wdeclaration-after-statement -Wextra -Wcomment -Wformat -Wpedantic -Wuninitialized -Wno-long-long -Wshadow"
+
+          { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+$as_echo "yes" >&6; }
+else
+
+          { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+
 
 fi
 
@@ -4294,30 +4368,53 @@ if test "${enable_namestable+set}" = set; then :
 fi
 
 
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking enable nonstandardprintf" >&5
+$as_echo_n "checking enable nonstandardprintf... " >&6; }
 # Check whether --enable-nonstandardprintf was given.
 if test "${enable_nonstandardprintf+set}" = set; then :
   enableval=$enable_nonstandardprintf;
 $as_echo "#define HAVE_NONSTANDARD_PRINTF_64_FORMAT 1" >>confdefs.h
 
+          { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+$as_echo "yes" >&6; }
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
 fi
 
 
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking enable  windowspath" >&5
+$as_echo_n "checking enable  windowspath... " >&6; }
 # Check whether --enable-windowspath was given.
 if test "${enable_windowspath+set}" = set; then :
   enableval=$enable_windowspath;
 $as_echo "#define HAVE_WINDOWS_PATH 1" >>confdefs.h
 
+          { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+$as_echo "yes" >&6; }
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
 fi
 
 
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking enable old frame columns" >&5
+$as_echo_n "checking enable old frame columns... " >&6; }
 # Check whether --enable-oldframecol was given.
 if test "${enable_oldframecol+set}" = set; then :
   enableval=$enable_oldframecol;
 $as_echo "#define HAVE_OLD_FRAME_CFA_COL 1" >>confdefs.h
 
+          { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+$as_echo "yes" >&6; }
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
 fi
 
 
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking have windows stdafx.h" >&5
+$as_echo_n "checking have windows stdafx.h... " >&6; }
 cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 #include "stdafx.h"
@@ -4333,26 +4430,44 @@ if ac_fn_c_try_compile "$LINENO"; then :
 
 $as_echo "#define HAVE_STDAFX_H 1" >>confdefs.h
 
+   { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+$as_echo "yes" >&6; }
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
 fi
 rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
 
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking producer generates SGI IRIX output" >&5
+$as_echo_n "checking producer generates SGI IRIX output... " >&6; }
 # Check whether --enable-dwarf_format_sgi_irix was given.
 if test "${enable_dwarf_format_sgi_irix+set}" = set; then :
   enableval=$enable_dwarf_format_sgi_irix;
 $as_echo "#define HAVE_SGI_IRIX_OFFSETS 1" >>confdefs.h
 
+        { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+$as_echo "yes" >&6; }
 else
-  # Check whether --enable-dwarf_format_strict_32bit was given.
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+fi
+
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking producer generates only 32bit" >&5
+$as_echo_n "checking producer generates only 32bit... " >&6; }
+# Check whether --enable-dwarf_format_strict_32bit was given.
 if test "${enable_dwarf_format_strict_32bit+set}" = set; then :
   enableval=$enable_dwarf_format_strict_32bit;
 $as_echo "#define HAVE_STRICT_DWARF2_32BIT_OFFSET 1" >>confdefs.h
 
+          { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+$as_echo "yes" >&6; }
 else
 
 $as_echo "#define HAVE_DWARF2_99_EXTENSION 1" >>confdefs.h
 
-fi
-
+          { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
 fi
 
 

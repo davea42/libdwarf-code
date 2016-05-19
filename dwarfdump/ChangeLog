@@ -1,3 +1,8 @@
+2016-05-19  David Anderson
+    * configure.in: Does a better job reporting configure actions.
+    * configure: Regenerated
+    * dwarfdump.1: Fixed spelling errors and moved ./dwarfdump.conf
+      right one space to get the dot off column 1.
 2016-05-18  David Anderson
     * print_die.c: Fix typo in error message.
     * print_frames.c: Do additional checks for incorrect data

@@ -56,7 +56,7 @@ dwfwall =       @dwfwall@
 dwfzlib =       @dwfzlib@
 CFLAGS =	$(PREINCS) @CFLAGS@ $(INCLUDES) $(dwfpic) $(dwfwall)  $(POSTINCS)
 LDFLAGS =	$(PRELIBS) @LDFLAGS@ $(POSTLIBS)
-HOSTCFLAGS =	$(INCLUDES) 
+HOSTCFLAGS =	$(CFLAGS)
 HOSTLDFLAGS =	$(PRELIBS) @LDFLAGS@ 
 
 # These three files are only appropriate for SGI IRIX.

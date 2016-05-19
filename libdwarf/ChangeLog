@@ -1,3 +1,11 @@
+2016-05-19 David Anderson
+    * Makefile.in: HOST_CFLAGS now references CFLAGS
+      at the request of the Debian project.
+    * configure.in: Now defaults to  -fPIC always
+      (though in a nonshared build one could reasonably 
+      turn it off with --disable-fpic)
+      Adds several messages reporting configure actions.
+    * configure: Regenerated.
 2016-05-18 David Anderson
     * dwarf_form.c: Directly check expression length against
       section length in case expression length very very large.
