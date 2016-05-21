@@ -1,3 +1,105 @@
+id: DW201605-017
+cve:
+datereported: 20160519
+reportedby: Yue Liu
+vulnerability: Null dereference bug in  _dwarf_calculate_info_section_end_ptr().
+product: libdwarfj
+description: 
+ NULL dereference bug in _dwarf_calculate_info_section_end_ptr().
+ <pre>
+ 1742         Dwarf_Off off2 = 0;
+ 1743         Dwarf_Small *dataptr = 0;
+ 1744     
+ 1745         dbg = context->cc_dbg;
+ 1746         dataptr = context->cc_is_info? dbg->de_debug_info.dss_data:                 <- $pc
+ 1747             dbg->de_debug_types.dss_data;
+ 1748         off2 = context->cc_debug_offset;
+ 1749         info_start = dataptr + off2;
+ 1750         info_end = info_start + context->cc_length +
+ 
+ #0  _dwarf_calculate_info_section_end_ptr
+ (context=context@entry=0x0) at dwarf_query.c:1746
+ 
+ #1  0x00002aaaaace307d in
+ _dwarf_extract_string_offset_via_str_offsets
+ (dbg=dbg@entry=0x655a70, info_data_ptr=0x6629f0
+ "", attrnum=attrnum@entry=121,
+ attrform=attrform@entry=26, cu_context=0x0,
+ str_sect_offset_out=str_sect_offset_out@entry=0x7fffffffd718,
+ error=error@entry=0x7fffffffd878) at dwarf_form.c:1099
+ 
+ #2  0x00002aaaaacf4ed7 in dwarf_get_macro_defundef
+ (macro_context=macro_context@entry=0x65b790,
+ op_number=op_number@entry=1,
+ line_number=line_number@entry=0x7fffffffd858,
+ index=index@entry=0x7fffffffd860,
+ offset=offset@entry=0x7fffffffd868,
+ forms_count=forms_count@entry=0x7fffffffd7ce,
+ macro_string=macro_string@entry=0x7fffffffd870,
+ error=error@entry=0x7fffffffd878) at dwarf_macro5.c:557
+ 
+ ------
+ 
+ _dwarf_calculate_info_section_end_ptr (context=context@entry=0x0) at 
+   dwarf_query.c:1746
+ 1746        dataptr = context->cc_is_info? dbg->de_debug_info.dss_data:
+ gef> p/x $rdi
+ $4 = 0x0
+ </pre>
+datefixed:
+references: regressiontests/liu/NULLdereference0519.elf
+gitfixid:
+endrec:
+
+
+
+id: DW201605-016
+cve:
+datereported: 20160519
+reportedby: Yue Liu
+vulnerability: Invalid dwarf leads to 
+ dwarfdump crash in print_frame_inst_bytes.
+product: dwarfdump
+description: Corrupted dwarf crashes dwarfdump
+ <pre>
+ 1297         }
+ 1298         len = len_in;
+ 1299         endpoint = instp + len;
+ 1300         for (; len > 0;) {
+ 1301             unsigned char ibyte = *instp;           <- $pc
+ 1302             int top = ibyte & 0xc0;
+ 1303             int bottom = ibyte & 0x3f;
+ 1304             int delta = 0;
+ 1305             int reg = 0;
+
+ #0  print_frame_inst_bytes (dbg=dbg@entry=0x655ca0,
+ cie_init_inst=<optimized out>, len_in=<optimized out>,
+ data_alignment_factor=-4, code_alignment_factor=4,
+ addr_size=addr_size@entry=4, offset_size=4, version=3,
+ config_data=config_data@entry=0x63cda0 <g_config_file_data>)
+ at print_frames.c:1301
+
+ #1  0x000000000041b70c in print_one_cie
+ (dbg=dbg@entry=0x655ca0, cie=<optimized out>,
+ cie_index=cie_index@entry=2, address_size=<optimized out>,
+ config_data=config_data@entry=0x63cda0 <g_config_file_data>)
+ at print_frames.c:1161
+
+ #2  0x000000000041cf52 in print_frames (dbg=0x655ca0,
+ print_debug_frame=print_debug_frame@entry=1, print_eh_frame=0,
+ config_data=config_data@entry=0x63cda0 <g_config_file_data>)
+ at print_frames.c:2229
+
+ gef> p/x $r13
+ $1 = 0x4bcad8
+ gef> p/x *$r13
+ Cannot access memory at address 0x4bcad8
+ </pre>
+datefixed:
+references: regressiontests/liu/OOB_READ0519.elf
+gitfixid:
+endrec:
+
 
 id: DW201605-015
 cve:
