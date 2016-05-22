@@ -203,6 +203,11 @@ create_fullest_file_path(Dwarf_Debug dbg,
         if (dirno > 0 && fe->fi_dir_index > 0) {
             inc_dir_name = (char *) line_context->lc_include_directories[
                 fe->fi_dir_index - 1];
+            if (!inc_dir_name) {
+                /*  This should never ever happen except in case
+                    of a corrupted object file. */
+                inc_dir_name = "<erroneous NULL include dir pointer>";
+            }
             incdirnamelen = strlen(inc_dir_name);
         }
         full_name = (char *) _dwarf_get_alloc(dbg, DW_DLA_STRING,
@@ -1817,6 +1822,7 @@ _dwarf_decode_line_string_form(Dwarf_Debug dbg,
     case DW_FORM_string: {
         Dwarf_Small *secend = line_ptr_end;
         Dwarf_Small *strptr = *line_ptr;
+
         res = _dwarf_check_string_valid(dbg,
             strptr ,strptr,secend,error);
         if (res != DW_DLV_OK) {

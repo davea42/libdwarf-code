@@ -1,3 +1,13 @@
+2016-05-22 David Anderson
+    * libdwarf.h.in, dwarf_errmsg_list.c: Adding
+      DW_DLE_DIRECTORY_FORMAT_COUNT_VS_DIRECTORIES_MISMATCH error code.
+      Fixed unsigned/signed comparison warning in the table test code.
+    * dwarf_line.c: If we find a null pointer from include directores
+      we substitute "<erroneous NULL include dir pointer>" for the
+      reader.
+    * dwarf_line_table_reader_common.c: Detect a corrupted DWARF5
+      directory count vs directory format count problem and return
+      an error.
 2016-05-20 David Anderson
     * dwarf_macro5.c: Was failing to initialize 
       mc_cu_context leading to coredump.

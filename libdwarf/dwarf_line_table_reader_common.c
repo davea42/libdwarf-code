@@ -538,6 +538,11 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
             _dwarf_error(dbg, err, DW_DLE_ALLOC_FAIL);
             return (DW_DLV_ERROR);
         }
+        if (directory_format_count ==0 &&
+            directories_count > 0) {
+            _dwarf_error(dbg, err, DW_DLE_DIRECTORY_FORMAT_COUNT_VS_DIRECTORIES_MISMATCH);
+            return (DW_DLV_ERROR);
+        }
         memset(line_context->lc_include_directories, 0,
             sizeof(Dwarf_Small *) * directories_count);
 
@@ -545,20 +550,23 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
             for (j = 0; j < directory_format_count; j++) {
 
                 switch (directory_entry_types[j]) {
-                case DW_LNCT_path:
+                case DW_LNCT_path: {
+                    char *inc_dir_ptr = 0;
                     res = _dwarf_decode_line_string_form(dbg,
                         directory_entry_forms[j],
                         local_length_size,
                         &line_ptr,
                         line_ptr_end,
-                        (char **)&line_context->lc_include_directories[i],
+                        &inc_dir_ptr,
                         err);
                     if (res != DW_DLV_OK) {
                         free(directory_entry_types);
                         free(directory_entry_forms);
                         return res;
                     }
+                    line_context->lc_include_directories[i] = inc_dir_ptr;
                     break;
+                }
                 default:
                     free(directory_entry_types);
                     free(directory_entry_forms);

@@ -422,6 +422,7 @@ const char *_dwarf_errmsgs[] = {
     "DW_DLE_LOCEXPR_OFF_SECTION_END (343) Corrupt dwarf",
     "DW_DLE_POINTER_SECTION_UNKNOWN (344)",
     "DW_DLE_ERRONEOUS_XU_INDEX_SECTION(345) XU means cu_ or tu_ index",
+    "DW_DLE_DIRECTORY_FORMAT_COUNT_VS_DIRECTORIES_MISMATCH(346) Inconsistent line table, corrupted.",
 };
 
 #ifdef TESTING
@@ -431,7 +432,7 @@ const char *_dwarf_errmsgs[] = {
 static void
 printone(int i)
 {
-    unsigned arraysize = sizeof(_dwarf_errmsgs) / sizeof(char *);
+    int arraysize = sizeof(_dwarf_errmsgs) / sizeof(char *);
     if ( i >= arraysize) {
         printf("%d is outside the array! Missing something!\n",i);
     } else {

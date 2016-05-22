@@ -1,3 +1,46 @@
+
+
+id: DW201605-018
+cve:
+datereported: 20160522
+reportedby: Yue Liu
+vulnerability: Null dereference in create_fullest_file_path().
+product: libdwarf
+description: The null dereference in create_fullest_file_path()
+ causes a crash. This is due to corrupted dwarf and the fix
+ detects this corruption and if that null string pointer
+ happens undetected a static string is substituted so
+ readers can notice the situation.
+ <pre>
+  202             }
+ 203             if (dirno > 0 && fe->fi_dir_index > 0) {
+ 204                 inc_dir_name = (char *) 
+                         line_context->lc_include_directories[
+ 205                     fe->fi_dir_index - 1];
+ 206                 incdirnamelen = strlen(inc_dir_name);  <- $pc
+ 207             }
+ 208             full_name = (char *) _dwarf_get_alloc(dbg, 
+
+ #0  create_fullest_file_path (dbg=<optimized out>,
+ fe=0x68d510, line_context=0x68c4f0, name_ptr_out=<optimized
+ out>, error=0x7fffffffe2b8) at ./dwarf_line.c:206
+
+ #1  0x00007ffff7b6d3f9 in dwarf_filename (context=<optimized
+ out>, fileno_in=<optimized out>, ret_filename=0x7fffffffe280,
+ error=0x7fffffffe2b8) at ./dwarf_line.c:1418
+
+ #2  dwarf_linesrc (line=<optimized out>,
+ ret_linesrc=<optimized out>, error=<optimized out>) at
+ ./dwarf_line.c:1436
+ </pre>
+datefixed: 
+references:
+gitfixid:
+endrec:
+
+
+
+
 id: DW201605-017
 cve:
 datereported: 20160519
