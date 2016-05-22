@@ -232,7 +232,7 @@ class bugrecord:
     txt += [t]
 
     #MULTI
-    t = paralines("references",s)
+    t = paralines("references",self._references)
     txt += [t]
 
     s,inp= xmlize(self._gitfixid,'y',inpre)
