@@ -1,3 +1,10 @@
+2016-05-20 David Anderson
+    * dwarf_macro5.c: Was failing to initialize 
+      mc_cu_context leading to coredump.
+      If dwarf_srcfiles() returned zero as the count
+      of source files an erroneous calloc() would result in  an
+      objection from valgrind: an erroneous calloc of zero bytes
+      of srcfiles pointers would never be freed.
 2016-05-19 David Anderson
     * Makefile.in: HOST_CFLAGS now references CFLAGS
       at the request of the Debian project.

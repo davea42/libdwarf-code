@@ -165,7 +165,6 @@ def readbugs(iname):
       if len(fldval) > 0:
         s4= ''.join(fldval)
         text = [s4]
-
     elif fldname == "gitfixid:":
       closeouttext(bugrec,intext,text,linecount),
       text = []

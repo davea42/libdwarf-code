@@ -1595,7 +1595,7 @@ print_frame_inst_bytes(Dwarf_Debug dbg,
                         loff,
                         block_len);
                     if (len < 0 || block_len > (Dwarf_Unsigned)len) {
-                        printf("ERROR expression length too long in DW_CFA_def_cfa_expression\n");
+                        printf("ERROR expression length too long in DW_CFA_def_cfa_expression.\n");
                     }
                     if ((instp+1 + block_len) > endpoint) {
                         printf("ERROR expression length too long in DW_CFA_def_cfa_expression\n");
@@ -1874,6 +1874,10 @@ print_frame_inst_bytes(Dwarf_Debug dbg,
                         " expr block len %" DW_PR_DUu "\n",
                         loff,  uval,
                         block_len);
+                    if (len < 0 || block_len > (Dwarf_Unsigned)len) {
+                        printf("ERROR expression length too long in DW_CFA_val_expression.\n");
+                        return;
+                    }
                     if (( instp + 1 + block_len) >endpoint) {
                         printf("ERROR expression length too long in DW_CFA_val_expression\n");
                         return;

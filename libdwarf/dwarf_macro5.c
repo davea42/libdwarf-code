@@ -106,6 +106,7 @@ static int _dwarf_internal_macro_context_by_offset(Dwarf_Debug dbg,
     Dwarf_Signed srcfilescount,
     const char *comp_dir,
     const char *comp_name,
+    Dwarf_CU_Context cu_context,
     Dwarf_Error * error);
 
 static int _dwarf_internal_macro_context(Dwarf_Die die,
@@ -1121,7 +1122,10 @@ _dwarf_internal_macro_context(Dwarf_Die die,
         so dealloc_macro_srcfiles() here will result in double-dealloc
         when dwarf_finish() happens to see the string deallocs
         before the macro context dealloc (the context dealloc
-        will call dealloc_macro_srcfiles() !). */
+        will call dealloc_macro_srcfiles() !).
+
+        Also see the comment at _dwarf_macro_destructor() here.
+    */
     char ** srcfiles2 = 0;
 
     const char *comp_dir = 0;
@@ -1186,31 +1190,32 @@ _dwarf_internal_macro_context(Dwarf_Die die,
         So copy from what we have to a similar data set
         but malloc space directly. */
 
-
-    srcfiles2 = (char **) calloc(srcfiles_count, sizeof(char *));
-    if (!srcfiles2) {
-        _dwarf_error(dbg, error, DW_DLE_ALLOC_FAIL);
-        return (DW_DLV_ERROR);
-    }
-    lres  = translate_srcfiles_to_srcfiles2(srcfiles,
-        srcfiles_count,srcfiles2);
-    {
-        Dwarf_Signed i = 0;
-        for (i = 0; i < srcfiles_count; ++i) {
-            if(srcfiles[i]) {
-                dwarf_dealloc(dbg, srcfiles[i], DW_DLA_STRING);
-                srcfiles[i] = 0;
-            }
+    if (srcfiles_count > 0) {
+        srcfiles2 = (char **) calloc(srcfiles_count, sizeof(char *));
+        if (!srcfiles2) {
+            _dwarf_error(dbg, error, DW_DLE_ALLOC_FAIL);
+            return (DW_DLV_ERROR);
         }
-        dwarf_dealloc(dbg, srcfiles, DW_DLA_LIST);
-        srcfiles = 0;
-    }
-    if (lres == DW_DLV_OK) {
-        srcfiles = 0;
-    } else {
-        dealloc_macro_srcfiles(srcfiles2, srcfiles_count);
-        _dwarf_error(dbg, error, DW_DLE_ALLOC_FAIL);
-        return lres;
+        lres  = translate_srcfiles_to_srcfiles2(srcfiles,
+            srcfiles_count,srcfiles2);
+        {
+            Dwarf_Signed i = 0;
+            for (i = 0; i < srcfiles_count; ++i) {
+                if(srcfiles[i]) {
+                    dwarf_dealloc(dbg, srcfiles[i], DW_DLA_STRING);
+                    srcfiles[i] = 0;
+                }
+            }
+            dwarf_dealloc(dbg, srcfiles, DW_DLA_LIST);
+            srcfiles = 0;
+        }
+        if (lres == DW_DLV_OK) {
+            srcfiles = 0;
+        } else {
+            dealloc_macro_srcfiles(srcfiles2, srcfiles_count);
+            _dwarf_error(dbg, error, DW_DLE_ALLOC_FAIL);
+            return lres;
+        }
     }
 
     /*  NO ENTRY or OK we accept, though NO ENTRY means there
@@ -1222,6 +1227,7 @@ _dwarf_internal_macro_context(Dwarf_Die die,
         srcfiles2,srcfiles_count,
         comp_dir,
         comp_name,
+        cu_context,
         error);
     /*  In case of ERROR or NO_ENTRY srcfiles2 is already freed. */
     return lres;
@@ -1238,6 +1244,7 @@ _dwarf_internal_macro_context_by_offset(Dwarf_Debug dbg,
     Dwarf_Signed srcfilescount,
     const char *comp_dir,
     const char *comp_name,
+    Dwarf_CU_Context cu_context,
     Dwarf_Error * error)
 {
     Dwarf_Unsigned line_table_offset = 0;
@@ -1295,6 +1302,7 @@ _dwarf_internal_macro_context_by_offset(Dwarf_Debug dbg,
     /* Note here so if error return we get these freed eventually. */
     macro_context->mc_srcfiles = srcfiles;
     macro_context->mc_srcfiles_count = srcfilescount;
+    macro_context->mc_cu_context =  cu_context;
 
     READ_UNALIGNED_CK(dbg,version, Dwarf_Half,
         macro_data,sizeof(Dwarf_Half),error,section_end);
@@ -1522,6 +1530,22 @@ _dwarf_macro_constructor(Dwarf_Debug dbg, void *m)
     mc->mc_dbg = dbg;
     return DW_DLV_OK;
 }
+
+/*  Here we free various fields of Dwarf_Macro_Context.
+    The fields do not get dealloc'd.
+    If we had a separate destructor for hand-calling
+    (meaning when an error is detected during creation
+    of a  Dwarf_Macro_Context)
+    and one for calling by dwarf_dealloc() then
+    we could have the hand-calling dwarf_dealloc the fields
+    and the one called on the dealloc of a  Dwarf_Macro_Context
+    could leave the _dwarf_get_alloc() fields for for
+    normal dwarf_finish() cleanup.
+
+    But for now we share this destructor for both purposes
+    so no fields are _dwarf_get_alloc() and all are free-d
+    here..
+*/
 void
 _dwarf_macro_destructor(void *m)
 {
