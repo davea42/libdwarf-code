@@ -46,9 +46,9 @@ description:
  gef> p/x $rdi
  $4 = 0x0
  </pre>
-datefixed:
+datefixed: 20160522
 references: regressiontests/liu/NULLdereference0519.elf
-gitfixid:
+gitfixid: 6fa3f710ee6f21bba7966b963033a91d77c952bd
 endrec:
 
 
@@ -95,9 +95,9 @@ description: Corrupted dwarf crashes dwarfdump
  gef> p/x *$r13
  Cannot access memory at address 0x4bcad8
  </pre>
-datefixed:
+datefixed: 20160522
 references: regressiontests/liu/OOB_READ0519.elf
-gitfixid:
+gitfixid: 6fa3f710ee6f21bba7966b963033a91d77c952bd
 endrec:
 
 
