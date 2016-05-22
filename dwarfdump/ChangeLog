@@ -1,3 +1,5 @@
+2016-05-22  David Anderson
+    * dwarfdump.c, common.c: Update version string.
 2016-05-20  David Anderson
     * print_frames.c: One test for erroneous length was
       incorrectly coded, leading to possible crash when encountering
