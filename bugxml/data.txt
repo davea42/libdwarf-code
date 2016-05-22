@@ -33,9 +33,9 @@ description: The null dereference in create_fullest_file_path()
  ret_linesrc=<optimized out>, error=<optimized out>) at
  ./dwarf_line.c:1436
  </pre>
-datefixed: 
-references:
-gitfixid:
+datefixed: 20160522
+references: dwarftests/liu/NULLdereference0522.elf
+gitfixid: acae971371daa23a19358bc62204007d258fbc5e
 endrec:
 
 
