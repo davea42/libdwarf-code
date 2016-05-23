@@ -1,4 +1,20 @@
 
+id: DW201605-019
+cve:
+datereported: 20160523
+reportedby: Yue Liu
+vulnerability: Null derefernce in print_frame_inst_bytes (dwarfdump)
+product: libdwarf
+description: The null dereference is due to a corrupted
+ object file. Libdwarf was not dealing with empty (bss-like)
+ sections since it really did not expect to see such in
+ sections it reads!  Now libdwarf catches the object error
+ so dwarfdump sees the section as empty (as indeed it is!).
+datefixed: 20160523
+references: dwarftests/liu/NULLdeference0522c.elf
+gitfixid: a55b958926cc67f89a512ed30bb5a22b0adb10f4
+endrec:
+
 
 id: DW201605-018
 cve:
