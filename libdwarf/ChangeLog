@@ -1,3 +1,9 @@
+2016-05-23 David Anderson
+    * Makefile.in: add SONAME libdwarf.so.1 to dynamic section when
+      building shared libdwarf.so
+      We have not made an incompatible interface change since
+      May 19, 2014 (and that was to the producer code not to
+      what DWARF readers use).
 2016-05-22 David Anderson
     * libdwarf.h.in, dwarf_errmsg_list.c: Adding
       DW_DLE_DIRECTORY_FORMAT_COUNT_VS_DIRECTORIES_MISMATCH error code.

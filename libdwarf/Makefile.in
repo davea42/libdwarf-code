@@ -54,6 +54,7 @@ INCLUDES =	-I. -I$(srcdir)
 dwfpic =        @dwfpic@
 dwfwall =       @dwfwall@
 dwfzlib =       @dwfzlib@
+SONAME =        libdwarf.so.1
 CFLAGS =	$(PREINCS) @CFLAGS@ $(INCLUDES) $(dwfpic) $(dwfwall)  $(POSTINCS)
 LDFLAGS =	$(PRELIBS) @LDFLAGS@ $(POSTLIBS)
 HOSTCFLAGS =	$(CFLAGS)
@@ -131,7 +132,7 @@ libdwarf.a: dwarf_names.h dwarf_names.c  $(OBJS) dwarf_names.o
 	$(AR) $(ARFLAGS) $@ $(OBJS)  dwarf_names.o > ar-output-temp
 
 libdwarf.so: dwarf_names.h dwarf_names.c $(OBJS) dwarf_names.o
-	$(CC) $(CFLAGS) -shared $(OBJS)  dwarf_names.o $(dwfzlib) -o $@
+	$(CC) $(CFLAGS) -shared $(OBJS) -Wl,-soname=$(SONAME)  dwarf_names.o $(dwfzlib) -o $@
 
 none:
 	echo "do nothing " $@
