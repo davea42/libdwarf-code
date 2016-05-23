@@ -1,3 +1,8 @@
+May 23, 2016
+  When building a shared-library the soname is set
+  in the dynamic section "libdwarf.so.1".
+  Much more testing of object correctness is done
+  to catch corrupted dwarf and corrupted object files.
 March 14, 2016
   When libdwarf callers provide neither an error argument nor
   an error-handler function pointer libdwarf gives up on detecting

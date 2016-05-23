@@ -1,4 +1,15 @@
 2016-05-23 David Anderson
+    * dwarf_errmsg_list.c, libdwarf.h.in: Added 
+      DW_DLE_COMPRESSED_EMPTY_SECTION.
+    * dwarf_init_finish.c: If load_section gets
+      DW_DLV_NO_ENTRY just return that.
+      If requres-decompress but has no data call it
+      a corrupt Elf section (given what sections
+      libdwarf is interested in).
+    * dwarf_line_table_reader_common.c: Only
+      deal with line table format entries if the
+      count is > 0.
+2016-05-23 David Anderson
     * Makefile.in: add SONAME libdwarf.so.1 to dynamic section when
       building shared libdwarf.so
       We have not made an incompatible interface change since

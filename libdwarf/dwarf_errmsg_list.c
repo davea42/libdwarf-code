@@ -423,6 +423,7 @@ const char *_dwarf_errmsgs[] = {
     "DW_DLE_POINTER_SECTION_UNKNOWN (344)",
     "DW_DLE_ERRONEOUS_XU_INDEX_SECTION(345) XU means cu_ or tu_ index",
     "DW_DLE_DIRECTORY_FORMAT_COUNT_VS_DIRECTORIES_MISMATCH(346) Inconsistent line table, corrupted.",
+    "DW_DLE_COMPRESSED_EMPTY_SECTION(347) corrupt section data",
 };
 
 #ifdef TESTING

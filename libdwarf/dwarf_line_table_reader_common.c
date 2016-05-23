@@ -509,24 +509,26 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
         Dwarf_Unsigned j = 0;
         directory_format_count = *(unsigned char *) line_ptr;
         line_ptr = line_ptr + sizeof(Dwarf_Small);
-        directory_entry_types = malloc(sizeof(Dwarf_Unsigned) *
-            directory_format_count);
-        if (directory_entry_types == NULL) {
-            _dwarf_error(dbg, err, DW_DLE_ALLOC_FAIL);
-            return (DW_DLV_ERROR);
-        }
-        directory_entry_forms = malloc(sizeof(Dwarf_Unsigned) *
-            directory_format_count);
-        if (directory_entry_forms == NULL) {
-            free(directory_entry_types);
-            _dwarf_error(dbg, err, DW_DLE_ALLOC_FAIL);
-            return (DW_DLV_ERROR);
-        }
-        for (i = 0; i < directory_format_count; i++) {
-            DECODE_LEB128_UWORD_CK(line_ptr, directory_entry_types[i],
-                dbg,err,line_ptr_end);
-            DECODE_LEB128_UWORD_CK(line_ptr, directory_entry_forms[i],
-                dbg,err,line_ptr_end);
+        if (directory_format_count > 0) {
+            directory_entry_types = malloc(sizeof(Dwarf_Unsigned) *
+                directory_format_count);
+            if (directory_entry_types == NULL) {
+                _dwarf_error(dbg, err, DW_DLE_ALLOC_FAIL);
+                return (DW_DLV_ERROR);
+            }
+            directory_entry_forms = malloc(sizeof(Dwarf_Unsigned) *
+                directory_format_count);
+            if (directory_entry_forms == NULL) {
+                free(directory_entry_types);
+                _dwarf_error(dbg, err, DW_DLE_ALLOC_FAIL);
+                return (DW_DLV_ERROR);
+            }
+            for (i = 0; i < directory_format_count; i++) {
+                DECODE_LEB128_UWORD_CK(line_ptr, directory_entry_types[i],
+                    dbg,err,line_ptr_end);
+                DECODE_LEB128_UWORD_CK(line_ptr, directory_entry_forms[i],
+                    dbg,err,line_ptr_end);
+            }
         }
         DECODE_LEB128_UWORD_CK(line_ptr, directories_count,
             dbg,err,line_ptr_end);
@@ -564,7 +566,8 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
                         free(directory_entry_forms);
                         return res;
                     }
-                    line_context->lc_include_directories[i] = inc_dir_ptr;
+                    line_context->lc_include_directories[i] = 
+                        (unsigned char *)inc_dir_ptr;
                     break;
                 }
                 default:
