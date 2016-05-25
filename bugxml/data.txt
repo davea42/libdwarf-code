@@ -1,6 +1,6 @@
 
 id: DW201605-019
-cve:
+cve: CVE-2016-5028
 datereported: 20160523
 reportedby: Yue Liu
 vulnerability: Null derefernce in print_frame_inst_bytes (dwarfdump)
@@ -17,7 +17,7 @@ endrec:
 
 
 id: DW201605-018
-cve:
+cve: CVE-2016-5029
 datereported: 20160522
 reportedby: Yue Liu
 vulnerability: Null dereference in create_fullest_file_path().
@@ -58,11 +58,11 @@ endrec:
 
 
 id: DW201605-017
-cve:
+cve: CVE-2016-5030
 datereported: 20160519
 reportedby: Yue Liu
 vulnerability: Null dereference bug in  _dwarf_calculate_info_section_end_ptr().
-product: libdwarfj
+product: libdwarf
 description: 
  NULL dereference bug in _dwarf_calculate_info_section_end_ptr().
  <pre>
@@ -161,7 +161,7 @@ endrec:
 
 
 id: DW201605-015
-cve:
+cve: CVE-2016-5031
 datereported: 20160517
 reportedby: Yue Liu
 vulnerability: OOB read bug in print_frame_inst_bytes()
@@ -202,7 +202,7 @@ endrec:
 
 
 id: DW201605-014
-cve:
+cve: CVE-2016-5032
 datereported: 20160517
 reportedby: Yue Liu
 vulnerability: OOB read bug in dwarf_get_xu_hash_entry()
@@ -233,7 +233,7 @@ endrec:
 
 
 id: DW201605-013
-cve:
+cve: CVE-2016-5033
 datereported: 20160517
 reportedby: Yue Liu
 vulnerability: OOB read bug in print_exprloc_content
@@ -259,7 +259,7 @@ endrec:
 
 
 id: DW201605-012
-cve:
+cve: CVE-2016-5034
 datereported: 20160513
 reportedby: Yue Liu
 vulnerability: OOB write. From relocation records
@@ -281,7 +281,7 @@ endrec:
 
 
 id: DW201605-011
-cve:
+cve: CVE-2016-5035
 datereported: 20160506
 reportedby: Yue Liu
 vulnerability: OOB read bug in _dwarf_read_line_table_header
@@ -298,7 +298,7 @@ endrec:
 
 
 id: DW201605-010
-cve:
+cve: CVE-2016-5036
 datereported: 20160506
 reportedby: Yue Liu
 vulnerability: OOB read bug in dump_block
@@ -315,7 +315,7 @@ tarrelease:
 endrec:
 
 id: DW201605-009
-cve:
+cve: CVE-2016-5037
 datereported: 20160505
 reportedby: Yue Liu
 vulnerability: NULL dereference in _dwarf_load_section
@@ -333,7 +333,7 @@ tarrelease: 20160507
 endrec:
 
 id: DW201605-008
-cve:
+cve: CVE-2016-5038
 datereported: 20160505
 reportedby: Yue Liu
 vulnerability: OOB read in dwarf_get_macro_startend_file()
@@ -353,7 +353,7 @@ tarrelease:
 endrec:
 
 id: DW201605-007
-cve:
+cve: CVE-2016-5039
 datereported: 20160505
 reportedby: Yue Liu
 vulnerability: OOB read bug in get_attr_value()
@@ -392,7 +392,7 @@ tarrelease: 20160507
 endrec:
 
 id: DW201605-001
-publicid:
+cve: CVE-2016-5044
 datereported: 20160502
 reportedby: Yue Liu
 vulnerability: A specially crafted DWARF section
@@ -423,7 +423,7 @@ endrec:
 
 
 id: DW201605-002
-publicid:
+cve: CVE-2016-5043
 datereported: 20160502
 reportedby: Yue Liu
 vulnerability: A specially crafted DWARF section
@@ -456,7 +456,7 @@ tarrelease: 20160507
 endrec:
 
 id: DW201605-003
-publicid:
+cve: CVE-2016-5042
 datereported: 20160502
 reportedby: Yue Liu
 vulnerability: A specially crafted DWARF section
@@ -475,7 +475,7 @@ tarrelease: 20160507
 endrec:
 
 id: DW201605-004
-publicid:
+cve: CVE-2016-5041
 datereported: 20160502
 reportedby: Yue Liu
 vulnerability: A specially crafted DWARF section
@@ -496,7 +496,7 @@ tarrelease: 20160507
 endrec:
 
 id: DW201605-005
-publicid:
+cve: CVE-2016-5040
 datereported: 20160502
 reportedby: Yue Liu
 vulnerability: A specially crafted DWARF section
