@@ -415,6 +415,9 @@ description:
  this.
 datefixed: 20160504
 references: regressiontests/liu/heapoverflow01.elf
+ <pre>
+ https://bugzilla.redhat.com/show_bug.cgi?id=1332141
+ </pre>
 gitfixid: 98a3da1e8237fe0d45b67ef77f3fa5ed9ff0215f
 gittag: 20160507
 tarrelease: 20160507
@@ -451,6 +454,9 @@ description:
  </pre>
 datefixed: 20160504
 references: regressiontests/liu/outofbound01.elf
+ <pre>
+ https://bugzilla.redhat.com/show_bug.cgi?id=1332144
+ </pre>
 gitfixid: 98a3da1e8237fe0d45b67ef77f3fa5ed9ff0215f
 tarrelease: 20160507
 endrec:
@@ -470,6 +476,9 @@ description:
 
 datefixed: 20160504
 references: regressiontests/liu/infiniteloop.elf
+ <pre>
+ https://bugzilla.redhat.com/show_bug.cgi?id=1332145
+ </pre>
 gitfixid: 98a3da1e8237fe0d45b67ef77f3fa5ed9ff0215f
 tarrelease: 20160507
 endrec:
@@ -491,6 +500,9 @@ description:
  
 datefixed: 20160504
 references: regressiontests/liu/null01.elf
+ <pre>
+ https://bugzilla.redhat.com/show_bug.cgi?id=1332148
+ </pre>
 gitfixid: 98a3da1e8237fe0d45b67ef77f3fa5ed9ff0215f
 tarrelease: 20160507
 endrec:
@@ -509,6 +521,9 @@ description:
  will read outside of its bounds and crash the application.
 datefixed: 20160504
 references: regressiontests/liu/null02.elf
+ <pre>
+ https://bugzilla.redhat.com/show_bug.cgi?id=1332149
+ </pre>
 gitfixid: 98a3da1e8237fe0d45b67ef77f3fa5ed9ff0215f
 tarrelease: 20160507
 endrec:
