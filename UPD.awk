@@ -7,5 +7,5 @@ if (ARGC <=  2)  {
     ARGV[1]=""
 }
 }
-$0 ~  /#define DWARFDUMP_VERSION/ { print $1, $2, "\"",v,"\"" }
-$0 !~ /^#define DWARFDUMP_VERSION/ { print $0 }
+$0 ~  /#define DW_VERSION_DATE_STR/ { print $1, $2, "\"",v,"\"" }
+$0 !~ /^#define DW_VERSION_DATE_STR/ { print $0 }
