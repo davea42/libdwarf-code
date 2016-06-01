@@ -211,8 +211,7 @@ def write_all_lines(file,txt):
   for t in txt:
      write_line(file,t)
 
-def generatehtml(list2):
-  name = "./dwarfbugtail"
+def generatehtml(list2,name):
   try:
     file = open(name,"w")
   except IOError,message:
@@ -225,8 +224,7 @@ def generatehtml(list2):
   write_line(file,"</html>")
   file.close()
 
-def generatexml(list2):
-  name = "./dwarfbug.xml"
+def generatexml(list2,name):
   try:
     file = open(name,"w")
   except IOError,message:
@@ -251,6 +249,9 @@ if __name__ == '__main__':
   #for b in list2:
   #  b.printbug()
 
-  generatehtml(list2)
-  generatexml(list2)
+  generatehtml(list2,"./dwarfbugtail")
+  generatexml(list2,"./dwarfbuglohi.xml")
+
+  list2.reverse()
+  generatehtml(list2,"./dwarfbuglohitail")
 
