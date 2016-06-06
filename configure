@@ -623,6 +623,7 @@ ac_subst_vars='LTLIBOBJS
 LIBOBJS
 subdirs
 build_nonshared
+dwfpic
 AR
 RANLIB
 INSTALL_DATA
@@ -3664,6 +3665,8 @@ if  test "x$enable_shared" = "xyes"; then :
 
    shrd='--enable-shared'
 fi
+
+dwfpic=-fPIC
 
 nonshrd=''
 build_nonshared=none.a

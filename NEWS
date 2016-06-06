@@ -1,3 +1,9 @@
+2016-06-01:  Now we use DW_VERSION_DATE_STR for 
+  dates everywhere instead of __DATE__ __TIME__
+  so a repeated build gets identical object output.
+  DW_VERSION_DATE_STR is updated by UPDATEDWARFDUMPVERSION.sh
+  wherever that string is needed.
+  
 2015-11-26:  If DWARF section data you intend to read
   with libdwarf is compressed by zlib (a section name
   like  .zdebug_info indicates such compression) libdwarf etc

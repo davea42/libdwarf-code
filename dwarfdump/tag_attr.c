@@ -39,6 +39,8 @@
 
 boolean ellipsis = FALSE; /* So we can use dwarf_names.c */
 
+#define DW_VERSION_DATE_STR " 2016-06-01 10:41:19-07:00  "
+
 /* Expected input format
 
 0xffffffff
@@ -223,7 +225,7 @@ main(int argc, char **argv)
 
     /*  Generate main header, regardless of contents */
     fprintf(fileOut,"/* Generated code, do not edit. */\n");
-    fprintf(fileOut,"/* Generated on %s  %s */\n",__DATE__,__TIME__);
+    fprintf(fileOut,"/* Generated sourcedate %s */\n",DW_VERSION_DATE_STR);
     fprintf(fileOut,"\n/* BEGIN FILE */\n\n");
 
 #ifdef HAVE_USAGE_TAG_ATTR

@@ -41,6 +41,8 @@ static Dwarf_Half tag_children[DW_TAG_last] = {0};
 static Dwarf_Small tag_tree_legal[DW_TAG_last] = {0};
 #endif /* HAVE_USAGE_TAG_ATTR */
 
+#define DW_VERSION_DATE_STR " 2016-06-01 10:41:19-07:00  "
+
 const char * program_name;
 
 boolean ellipsis = FALSE; /* So we can use dwarf_names.c */
@@ -204,7 +206,7 @@ main(int argc, char **argv)
 
     /*  Generate main header, regardless of contents */
     fprintf(fileOut,"/* Generated code, do not edit. */\n");
-    fprintf(fileOut,"/* Generated on %s  %s */\n",__DATE__,__TIME__);
+    fprintf(fileOut,"/* Generated sourcedate %s */\n",DW_VERSION_DATE_STR );
     fprintf(fileOut,"\n/* BEGIN FILE */\n\n");
 
 #ifdef HAVE_USAGE_TAG_ATTR

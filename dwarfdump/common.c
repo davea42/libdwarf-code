@@ -34,7 +34,7 @@
 #include "stdafx.h"
 #endif /* HAVE_STDAFX_H */
 
-#define DWARFDUMP_VERSION " Sun May 22 13:49:09 PDT 2016  "
+#define DW_VERSION_DATE_STR " 2016-06-01 10:41:19-07:00  "
 #define RELEASE_DATE      "20160307"
 
 /* The Linux/Unix version does not want a version string to print
@@ -59,7 +59,7 @@ print_version_details(UNUSEDARG const char * name,int alwaysprint)
     printf("%s %s\n",name,acVersion);
 #else  /* !_WIN32 */
     if (alwaysprint) {
-        printf("%s\n",DWARFDUMP_VERSION);
+        printf("%s\n",DW_VERSION_DATE_STR);
     }
 #endif /* _WIN32 */
 }

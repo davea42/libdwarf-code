@@ -1,3 +1,9 @@
+2016-06-01  David Anderson
+    * dwarfdump.c, common.c: Update version string.
+      Use DW_VERSION_DATE_STR instead of DWARFDUMP_VERSION
+    * tag_attr.c, tag_tree.c: Use DW_VERSION_DATE_STR instead
+      of __DATE__ __TIME__
+    * Makefile.in: Tweaked for debian build compatibility.
 2016-05-22  David Anderson
     * dwarfdump.c, common.c: Update version string.
 2016-05-20  David Anderson

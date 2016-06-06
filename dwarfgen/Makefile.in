@@ -28,7 +28,7 @@ DEFS =          @DEFS@
 dwfzlib =       @dwfzlib@
 LIBS =          @LIBS@ -L ../libdwarf -ldwarf -lelf $(dwfzlib)
 INCLUDES =      -I. -I$(srcdir) -I../libdwarf -I$(srcdir)/../libdwarf
-CXXFLAGS =        @CXXFLAGS@ $(INCLUDES) 
+CXXFLAGS =      @CPPFLAGS@ @CXXFLAGS@ $(INCLUDES) 
 LDFLAGS =       @LDFLAGS@ $(LIBS)
 
 

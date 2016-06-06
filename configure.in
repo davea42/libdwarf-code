@@ -16,6 +16,7 @@ AC_ARG_ENABLE(shared,AC_HELP_STRING([--enable-shared],
 AS_IF([ test "x$enable_shared" = "xyes"], [
    shrd='--enable-shared'])
 
+AC_SUBST(dwfpic,[-fPIC])
 nonshrd=''
 dnl default-enabled nonshared
 AC_SUBST(build_nonshared,[none.a])

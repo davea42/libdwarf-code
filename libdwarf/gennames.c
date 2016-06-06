@@ -75,6 +75,8 @@ static void PrintArray(void);
 static boolean is_skippable_line(char *pLine);
 static void ParseDefinitionsAndWriteOutput(void);
 
+#define DW_VERSION_DATE_STR " 2016-06-01 10:41:19-07:00  "
+
 /* We don't need really long lines: the input file is simple. */
 #define MAX_LINE_SIZE 1000
 /* We don't need a variable array size, it just has to be big enough. */
@@ -144,8 +146,9 @@ print_version(const char * name)
 #endif /* _DEBUG */
 
     char acVersion[60];
-    snprintf(acVersion,sizeof(acVersion),"[%s %s %s]",
-        __DATE__,__TIME__,acType);
+    snprintf(acVersion,sizeof(acVersion),"[%s %s]",
+        DW_VERSION_DATE_STR,
+        acType);
     printf("%s %s\n",name,acVersion);
 }
 
@@ -276,14 +279,16 @@ GenerateInitialFileLines(void)
 {
     /* Generate entries for 'dwarf_names_enum.h' */
     fprintf(f_names_enum_h,"/* Automatically generated, do not edit. */\n");
-    fprintf(f_names_enum_h,"/* Generated on %s  %s */\n",__DATE__,__TIME__);
+    fprintf(f_names_enum_h,"/* Generated sourcedate %s */\n",
+        DW_VERSION_DATE_STR);
     fprintf(f_names_enum_h,"\n/* BEGIN FILE */\n\n");
     fprintf(f_names_enum_h,"#ifndef __DWARF_NAMES_ENUM_H__\n");
     fprintf(f_names_enum_h,"#define __DWARF_NAMES_ENUM_H__\n");
 
     /* Generate entries for 'dwarf_names_new.h' */
     fprintf(f_names_new_h,"/* Automatically generated, do not edit. */\n");
-    fprintf(f_names_new_h,"/* Generated on %s  %s */\n",__DATE__,__TIME__);
+    fprintf(f_names_new_h,"/* Generated sourcedate %s */\n",
+        DW_VERSION_DATE_STR);
     fprintf(f_names_new_h,"\n/* BEGIN FILE */\n\n");
     fprintf(f_names_new_h,"/* define DWARF_PRINT_PREFIX before this\n");
     fprintf(f_names_new_h,"   point if you wish to.  */\n");
@@ -296,12 +301,14 @@ GenerateInitialFileLines(void)
 
     /* Generate entries for 'dwarf_names.h' */
     fprintf(f_names_h,"/* Generated routines, do not edit. */\n");
-    fprintf(f_names_h,"/* Generated on %s  %s */\n",__DATE__,__TIME__);
+    fprintf(f_names_h,"/* Generated sourcedate %s */\n",
+        DW_VERSION_DATE_STR);
     fprintf(f_names_h,"\n/* BEGIN FILE */\n\n");
 
     /* Generate entries for 'dwarf_names.c' */
     fprintf(f_names_c,"/* Generated routines, do not edit. */\n");
-    fprintf(f_names_c,"/* Generated on %s  %s */\n",__DATE__,__TIME__);
+    fprintf(f_names_c,"/* Generated sourcedate %s */\n",
+        DW_VERSION_DATE_STR);
     fprintf(f_names_c,"\n/* BEGIN FILE */\n\n");
     fprintf(f_names_c,"#include \"dwarf.h\"\n\n");
     fprintf(f_names_c,"#include \"libdwarf.h\"\n\n");

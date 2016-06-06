@@ -55,7 +55,7 @@ dwfpic =        @dwfpic@
 dwfwall =       @dwfwall@
 dwfzlib =       @dwfzlib@
 SONAME =        libdwarf.so.1
-CFLAGS =	$(PREINCS) @CFLAGS@ $(INCLUDES) $(dwfpic) $(dwfwall)  $(POSTINCS)
+CFLAGS =	$(PREINCS) @CPPFLAGS@ @CFLAGS@ $(INCLUDES) $(dwfpic) $(dwfwall)  $(POSTINCS)
 LDFLAGS =	$(PRELIBS) @LDFLAGS@ $(POSTLIBS)
 HOSTCFLAGS =	$(CFLAGS)
 HOSTLDFLAGS =	$(PRELIBS) @LDFLAGS@ 
@@ -132,7 +132,8 @@ libdwarf.a: dwarf_names.h dwarf_names.c  $(OBJS) dwarf_names.o
 	$(AR) $(ARFLAGS) $@ $(OBJS)  dwarf_names.o > ar-output-temp
 
 libdwarf.so: dwarf_names.h dwarf_names.c $(OBJS) dwarf_names.o
-	$(CC) $(CFLAGS) -shared $(OBJS) -Wl,-soname=$(SONAME)  dwarf_names.o $(dwfzlib) -o $@
+	$(CC) $(CFLAGS) $(LDFLAGS) -shared $(OBJS) -Wl,-soname=$(SONAME)  dwarf_names.o $(dwfzlib) -o $@
+	ln libdwarf.so libdwarf.so.1
 
 none:
 	echo "do nothing " $@
@@ -142,7 +143,7 @@ dwarf_loc.o: $(srcdir)/dwarf_loc.c  $(srcdir)/dwarf_loc2.c  $(srcdir)/dwarf_loc.
 	$(CC) $(CFLAGS) -c $(srcdir)/dwarf_loc.c
 
 errmsg_check: $(srcdir)/dwarf_errmsg_list.c libdwarf.h
-	$(HOSTCC) $(HOSTCFLAGS) -DTESTING $(srcdir)/dwarf_errmsg_list.c -o errmsg_check
+	$(HOSTCC) $(HOSTCFLAGS) $(LDFLAGS)  -DTESTING $(srcdir)/dwarf_errmsg_list.c -o errmsg_check
 	./errmsg_check
 
 # Gennames builds and runs native, even for a cross-build of libdwarf.
@@ -202,6 +203,7 @@ mips_extensions.pdf: mips_extensions.mm
 clean:
 	rm -f *.o libdwarf.a 
 	rm -f libdwarf.so
+	rm -f libdwarf.so.1
 	rm -f libdwarf2.1.ps
 	rm -f mips_extensions.ps
 	rm -f libdwarf2p.1.ps

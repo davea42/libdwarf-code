@@ -35,7 +35,7 @@ LD_LIBRARY_PATH=../libdwarf
 DIRINC =        $(srcdir)/../libdwarf
 LIBS =		@LIBS@ -L../libdwarf -ldwarf -lelf $(dwfzlib)
 INCLUDES =	-I. -I$(srcdir) -I../libdwarf -I$(srcdir)/../libdwarf
-CFLAGS =	$(PREINCS) @CFLAGS@ $(INCLUDES) $(dwfwall) -DCONFPREFIX=${libdir} $(POSTINCS)
+CFLAGS =	$(PREINCS) @CPPFLAGS@ @CFLAGS@ $(INCLUDES) $(dwfwall) -DCONFPREFIX=${libdir} $(POSTINCS)
 LDFLAGS =	$(PRELIBS) @LDFLAGS@  $(LIBS) $(POSTLIBS)
 #VG =            valgrind --leak-check=full
 VG =
@@ -126,29 +126,28 @@ tag_tree_build:  $(srcdir)/tag_tree.c $(DIRINC)/dwarf.h $(HEADERS) tag_common.o 
 tag_attr_build:  $(srcdir)/tag_attr.c $(DIRINC)/dwarf.h $(HEADERS) tag_common.o makename.o common.o trivial_naming.o dwgetopt.o
 	$(CC) $(CFLAGS) $(srcdir)/tag_attr.c tag_common.o common.o makename.o trivial_naming.o dwgetopt.o $(LDFLAGS) -o tag_attr_build 
 
+# Plain GNU C dash E does not work on a .list, 
+# so copy to a .c name to run
+# the following four table creations.
 tmp-tt-table.c: $(srcdir)/tag_tree.list tag_tree_build
-	# gcc -E tag_tree.list does not work, so use a .c name
 	-rm -f  tmp-t1.c
 	cp $(srcdir)/tag_tree.list tmp-t1.c
 	$(CC) $(CFLAGS) -E tmp-t1.c  > ./tmp-tag-tree-build1.tmp
 	LD_LIBRARY_PATH=$$LD_LIBRARY_PATH:$(LD_LIBRARY_PATH) ./tag_tree_build -s  -i tmp-tag-tree-build1.tmp  -o tmp-tt-table.c
 
 tmp-tt-ext-table.c: $(srcdir)/tag_tree_ext.list tag_tree_build
-	# gcc -E tag_tree_ext.list does not work, so use a .c name
 	-rm -f tmp-t4.c
 	cp $(srcdir)/tag_tree_ext.list tmp-t4.c
 	$(CC) $(CFLAGS) -E tmp-t4.c  > ./tmp-tag-tree-build4.tmp
 	LD_LIBRARY_PATH=$$LD_LIBRARY_PATH:$(LD_LIBRARY_PATH) ./tag_tree_build -e  -i tmp-tag-tree-build4.tmp -o tmp-tt-ext-table.c
 
 tmp-ta-table.c: $(srcdir)/tag_attr.list tag_attr_build
-	# gcc -E tag_attr.list does not work, so use a .c name
 	-rm -f tmp-t2.c
 	cp $(srcdir)/tag_attr.list tmp-t2.c
 	$(CC) $(CFLAGS)  -E tmp-t2.c  > ./tmp-tag-attr-build2.tmp
 	LD_LIBRARY_PATH=$$LD_LIBRARY_PATH:$(LD_LIBRARY_PATH) ./tag_attr_build -s -i tmp-tag-attr-build2.tmp -o tmp-ta-table.c
 
 tmp-ta-ext-table.c: $(srcdir)/tag_attr_ext.list tag_attr_build
-	# gcc -E tag_attr_ext.list does not work, so use a .c name
 	-rm -f tmp-t3.c
 	cp $(srcdir)/tag_attr_ext.list tmp-t3.c
 	$(CC) $(CFLAGS)  -E tmp-t3.c  > ./tmp-tag-attr-build3.tmp
