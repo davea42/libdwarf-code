@@ -133,7 +133,7 @@ libdwarf.a: dwarf_names.h dwarf_names.c  $(OBJS) dwarf_names.o
 
 libdwarf.so: dwarf_names.h dwarf_names.c $(OBJS) dwarf_names.o
 	$(CC) $(CFLAGS) $(LDFLAGS) -shared $(OBJS) -Wl,-soname=$(SONAME)  dwarf_names.o $(dwfzlib) -o $@
-	ln libdwarf.so libdwarf.so.1
+	ln libdwarf.so $(SONAME)
 
 none:
 	echo "do nothing " $@
@@ -202,8 +202,7 @@ mips_extensions.pdf: mips_extensions.mm
 
 clean:
 	rm -f *.o libdwarf.a 
-	rm -f libdwarf.so
-	rm -f libdwarf.so.1
+	rm -f libdwarf.so*
 	rm -f libdwarf2.1.ps
 	rm -f mips_extensions.ps
 	rm -f libdwarf2p.1.ps

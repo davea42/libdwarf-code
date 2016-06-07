@@ -1,3 +1,6 @@
+2016-06-07 David Anderson
+    * Makefile.in: Use $(SONAME) rather than libdwarf.so.1 whereever
+      possible.
 2016-06-01 David Anderson
     * Makefile.in: Tweaks for debian build compatibility.
     * gennames.c: Use DW_VERSION_DATE_STR instead of __DATE__ __TIME__
