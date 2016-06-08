@@ -84,6 +84,8 @@ US  Unit separator      31 1F   Alt-31  Ctrl-_ ^_
 static struct esb_s localesb;
 
 boolean no_sanitize_string_garbage;
+#define FALSE 0
+#define TRUE 1
 
 static  char tmpbuf[4];
 
@@ -94,6 +96,9 @@ as_number(int c)
     return tmpbuf;
 }
 
+/*  do_sanity_insert() and no_questionable_chars()
+    absolutely must have the same idea of
+    questionable characters.  Be Careful.  */
 static void
 do_sanity_insert( const char *s,struct esb_s *mesb)
 {
@@ -130,16 +135,61 @@ do_sanity_insert( const char *s,struct esb_s *mesb)
     }
 }
 
+/*  This routine improves overall dwarfdump
+    run times a lot by separating strings
+    that might print badly from strings that 
+    will print fine.  
+    In one large test case it reduces run time
+    from 140 seconds to 13 seconds. */
+int
+no_questionable_chars(const char *s) {
+    const char *cp = s;
+
+    for( ; *cp; cp++) {
+        int c = *cp & 0xff ;
+        if (c >= 0x20 && c <=0x7e) {
+            /* Usual case */
+            continue;
+        }
+#ifdef _WIN32
+        if (c == 0x0D) {
+            continue;
+        }
+#endif /* _WIN32 */
+        if (c == 0x0A || c == 0x09 ) {
+            continue;
+        }
+        if (c < 0x20) {
+            return FALSE;
+        }
+        if (c == 0x7f) {
+            return FALSE;
+        }
+    }
+    return TRUE;
+}
+
 const char *
 sanitized(const char *s)
 {
+    
+    const char *sout = 0;
 
     if (no_sanitize_string_garbage) {
         return s;
     }
-
-    /* destructor reconstructs the struct as empty! */
-    esb_destructor(&localesb);
+    if (no_questionable_chars(s)) {
+        /*  The original string is safe as is. */
+        return s;
+    }
+    /*  Using esb_destructor is quite expensive in cpu time
+        when we build the next sanitized string
+        so we just empty the localesb. 
+        One reason it's expensive is that we do the appends
+        in such small batches in do_sanity-insert().
+        */
+    esb_empty_string(&localesb);
     do_sanity_insert(s,&localesb);
-    return esb_get_string(&localesb);
+    sout = esb_get_string(&localesb);
+    return sout;
 }

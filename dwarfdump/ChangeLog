@@ -1,3 +1,8 @@
+2016-06-08  David Anderson
+    * common.c,dwarfdump.c,tag_attr.c,tag_tree.c: 
+      Update version string.
+    * sanitized.c: Only fix strings that have bad
+      characters in them. This improves dwarfdump performance.
 2016-06-01  David Anderson
     * dwarfdump.c, common.c: Update version string.
       Use DW_VERSION_DATE_STR instead of DWARFDUMP_VERSION
