@@ -1,4 +1,7 @@
 2016-06-08 David Anderson
+    * dwarf_init_finish.c, dwarf_line_table_reader_common.c: Remove
+      trailing whitespace. Fix one indent.
+2016-06-08 David Anderson
     * gennames.c: Update version string.
 2016-06-07 David Anderson
     * Makefile.in: Use $(SONAME) rather than libdwarf.so.1 whereever

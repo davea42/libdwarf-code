@@ -1103,31 +1103,31 @@ _dwarf_load_section(Dwarf_Debug dbg,
         and that section is always empty.
         Non-elf object formats must honor that by ensuring that
         (when they assign numbers to 'sections' or 'section-like-things')
-        they never assign a real section section-number  0 to dss_index. 
+        they never assign a real section section-number  0 to dss_index.
 
         There is also a convention for 'bss' that that section and its
-        like sections have no data but do have a size. 
+        like sections have no data but do have a size.
         That is never true of DWARF sections */
     res = o->methods->load_section(
         o->object, section->dss_index,
         &section->dss_data, &err);
-    if (res == DW_DLV_ERROR){
+    if (res == DW_DLV_ERROR) {
         DWARF_DBG_ERROR(dbg, err, DW_DLV_ERROR);
     }
-    if (res == DW_DLV_NO_ENTRY){
-        /*  Gets this for section->dss_index 0. 
+    if (res == DW_DLV_NO_ENTRY) {
+        /*  Gets this for section->dss_index 0.
             Which by ELF definition is a section index
-            which is not used (reserved by Elf to 
+            which is not used (reserved by Elf to
             mean no-section-index).
-            Otherwise NULL dss_data gets error. 
+            Otherwise NULL dss_data gets error.
             BSS would legitimately have no data, but
             no DWARF related section could possbly be bss. */
         return res;
     }
     if (section->dss_requires_decompress) {
         if (!section->dss_data) {
-            /* Impossible. This makes no sense.
-               Corrupt object. */
+            /*  Impossible. This makes no sense.
+                Corrupt object. */
             DWARF_DBG_ERROR(dbg, DW_DLE_COMPRESSED_EMPTY_SECTION, DW_DLV_ERROR);
         }
 #ifdef HAVE_ZLIB

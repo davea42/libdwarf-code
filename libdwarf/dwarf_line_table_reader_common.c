@@ -566,7 +566,7 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
                         free(directory_entry_forms);
                         return res;
                     }
-                    line_context->lc_include_directories[i] = 
+                    line_context->lc_include_directories[i] =
                         (unsigned char *)inc_dir_ptr;
                     break;
                 }

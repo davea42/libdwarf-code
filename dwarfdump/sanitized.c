@@ -137,8 +137,8 @@ do_sanity_insert( const char *s,struct esb_s *mesb)
 
 /*  This routine improves overall dwarfdump
     run times a lot by separating strings
-    that might print badly from strings that 
-    will print fine.  
+    that might print badly from strings that
+    will print fine.
     In one large test case it reduces run time
     from 140 seconds to 13 seconds. */
 int
@@ -172,7 +172,6 @@ no_questionable_chars(const char *s) {
 const char *
 sanitized(const char *s)
 {
-    
     const char *sout = 0;
 
     if (no_sanitize_string_garbage) {
@@ -184,7 +183,7 @@ sanitized(const char *s)
     }
     /*  Using esb_destructor is quite expensive in cpu time
         when we build the next sanitized string
-        so we just empty the localesb. 
+        so we just empty the localesb.
         One reason it's expensive is that we do the appends
         in such small batches in do_sanity-insert().
         */
