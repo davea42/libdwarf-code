@@ -1,3 +1,7 @@
+2016-06-10  David Anderson
+    * print_frames.c: Added commentary as the previous comment
+      about printing CFA and other registers having a 'duplicate row'
+      was a bit terse.
 2016-06-08  David Anderson
     * sanitized.c: Remove trailing whitespace.
 2016-06-08  David Anderson

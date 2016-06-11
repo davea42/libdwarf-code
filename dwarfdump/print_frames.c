@@ -837,7 +837,6 @@ print_one_fde(Dwarf_Debug dbg,
             printf("\n");
         }
     }
-
     for (j = low_pc; j < low_pc + func_length; j++) {
         Dwarf_Half k = 0;
 
@@ -862,13 +861,21 @@ print_one_fde(Dwarf_Debug dbg,
             offset = offset_or_block_len;
             if (fires == DW_DLV_ERROR) {
                 print_error(dbg,
-                    "dwarf_get_fde_info_for_reg", fires, oneferr);
+                    "dwarf_get_fde_info_for_cfa_reg3", fires, oneferr);
             }
             if (fires == DW_DLV_NO_ENTRY) {
                 continue;
             }
             if (row_pc != j) {
-                /* duplicate row */
+                /*  row_pc < j means this pc has no new cfa register 
+                    value, the last one found still applies
+                    hence this is a duplicate row.
+                    row_pc > j cannot happen, the libdwarf function
+                    will not return such.  
+                    We keep iterating as we do not know which
+                    next j will have a  new cfa value, so the 
+                    libdwarf interface is wasteful for the typical 
+                    case where the cfa rarely changes.*/
                 continue;
             }
 
@@ -923,13 +930,17 @@ print_one_fde(Dwarf_Debug dbg,
             if (fires == DW_DLV_ERROR) {
                 printf("\n");
                 print_error(dbg,
-                    "dwarf_get_fde_info_for_reg", fires, oneferr);
+                    "dwarf_get_fde_info_for_reg (or reg3)", fires, oneferr);
             }
             if (fires == DW_DLV_NO_ENTRY) {
                 continue;
             }
             if (row_pc != j) {
-                /* duplicate row */
+                /*  row_pc < j means this pc has no
+                    new register value, the last one found still applies
+                    hence this is a duplicate row.
+                    row_pc > j cannot happen, the libdwarf function
+                    will not return such. */  
                 break;
             }
 
