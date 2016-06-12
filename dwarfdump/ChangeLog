@@ -1,3 +1,6 @@
+2016-06-12  David Anderson
+    * print_frames.c: Using a new frame interface to reduce
+      dwarfdump runtime on frame printing by 10 percent.
 2016-06-10  David Anderson
     * print_frames.c: Added commentary as the previous comment
       about printing CFA and other registers having a 'duplicate row'

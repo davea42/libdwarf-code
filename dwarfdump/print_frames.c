@@ -185,7 +185,7 @@ get_abstract_origin_funcname(Dwarf_Debug dbg,Dwarf_Attribute attr,
     Dwarf_Signed atcnt = 0;
     Dwarf_Signed i = 0;
     int dres = 0;
-    int atres;
+    int atres = 0;
     int name_found = 0;
     int res = 0;
     Dwarf_Error err = 0;
@@ -699,6 +699,7 @@ print_one_fde(Dwarf_Debug dbg,
     int     *  all_cus_seen)
 {
     Dwarf_Addr j = 0;
+    Dwarf_Addr jsave = 0;
     Dwarf_Addr low_pc = 0;
     Dwarf_Unsigned func_length = 0;
     Dwarf_Ptr fde_bytes = NULL;
@@ -840,6 +841,7 @@ print_one_fde(Dwarf_Debug dbg,
     for (j = low_pc; j < low_pc + func_length; j++) {
         Dwarf_Half k = 0;
 
+        jsave = j;
         if (config_data->cf_interface_number == 3) {
             Dwarf_Signed reg = 0;
             Dwarf_Signed offset_relevant = 0;
@@ -848,8 +850,11 @@ print_one_fde(Dwarf_Debug dbg,
             Dwarf_Signed offset = 0;
             Dwarf_Ptr block_ptr = 0;
             Dwarf_Addr row_pc = 0;
+            Dwarf_Bool has_more_rows = 0;
+            Dwarf_Addr subsequent_pc = 0;
 
-            int fires = dwarf_get_fde_info_for_cfa_reg3(fde,
+
+            int fires = dwarf_get_fde_info_for_cfa_reg3_b(fde,
                 j,
                 &value_type,
                 &offset_relevant,
@@ -857,6 +862,8 @@ print_one_fde(Dwarf_Debug dbg,
                 &offset_or_block_len,
                 &block_ptr,
                 &row_pc,
+                &has_more_rows,
+                &subsequent_pc,
                 &oneferr);
             offset = offset_or_block_len;
             if (fires == DW_DLV_ERROR) {
@@ -866,23 +873,25 @@ print_one_fde(Dwarf_Debug dbg,
             if (fires == DW_DLV_NO_ENTRY) {
                 continue;
             }
-            if (row_pc != j) {
-                /*  row_pc < j means this pc has no new cfa register 
-                    value, the last one found still applies
-                    hence this is a duplicate row.
-                    row_pc > j cannot happen, the libdwarf function
-                    will not return such.  
-                    We keep iterating as we do not know which
-                    next j will have a  new cfa value, so the 
-                    libdwarf interface is wasteful for the typical 
-                    case where the cfa rarely changes.*/
-                continue;
-            }
 
+#if 0
+printf("dadebug 0x%llx 0x%llx 0x%llx %d\n",
+j,row_pc,subsequent_pc,has_more_rows); 
+#endif
+            if (!has_more_rows) {
+                j = low_pc+func_length-1;
+            } else {
+                if (subsequent_pc > j) {
+                    /*  Loop head will increment j to make up
+                        for -1 here. */
+                    j = subsequent_pc -1;
+                }
+            }
+    
             /* Do not print if in check mode */
             if (!printed_intro_addr && do_print_dwarf) {
                 printf("        0x%" DW_PR_XZEROS DW_PR_DUx
-                    ": ", (Dwarf_Unsigned)j);
+                    ": ", (Dwarf_Unsigned)jsave);
                 printed_intro_addr = 1;
             }
             print_one_frame_reg_col(dbg, config_data->cf_cfa_reg,
@@ -906,7 +915,7 @@ print_one_fde(Dwarf_Debug dbg,
             if (config_data->cf_interface_number == 3) {
                 fires = dwarf_get_fde_info_for_reg3(fde,
                     k,
-                    j,
+                    jsave,
                     &value_type,
                     &offset_relevant,
                     &reg,
@@ -921,7 +930,7 @@ print_one_fde(Dwarf_Debug dbg,
                 value_type = DW_EXPR_OFFSET;
                 fires = dwarf_get_fde_info_for_reg(fde,
                     k,
-                    j,
+                    jsave,
                     &offset_relevant,
                     &reg,
                     &offset, &row_pc,
@@ -935,8 +944,8 @@ print_one_fde(Dwarf_Debug dbg,
             if (fires == DW_DLV_NO_ENTRY) {
                 continue;
             }
-            if (row_pc != j) {
-                /*  row_pc < j means this pc has no
+            if (row_pc != jsave) {
+                /*  row_pc < jsave means this pc has no
                     new register value, the last one found still applies
                     hence this is a duplicate row.
                     row_pc > j cannot happen, the libdwarf function

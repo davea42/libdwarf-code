@@ -155,6 +155,17 @@ dwarf_get_frame_section_name_eh_gnu(Dwarf_Debug dbg,
     defined by a Cie.  In this case, the Dwarf_Cie pointer cie, is
     NULL.  For an FDE, however, cie points to the associated Cie.
 
+    (4) If search_pc is true and (has_more_rows and subsequent_pc
+        are non-null) then:
+            has_more_rows is set true if there are instruction
+            bytes following the detection of search_over.
+            If all the instruction bytes have been seen
+            then *has_more_rows is set false.
+
+            If *has_more_rows is true then *subsequent_pc
+            is set to the pc value that is the following
+            row in the table.
+
     make_instr - make list of frame instr? 0/1
     ret_frame_instr -  Ptr to list of ptrs to frame instrs
     search_pc  - Search for a pc value?  0/1
@@ -183,6 +194,8 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
     Dwarf_Debug dbg,
     Dwarf_Half reg_num_of_cfa,
     Dwarf_Sword * returned_count,
+    Dwarf_Bool * has_more_rows,
+    Dwarf_Addr * subsequent_pc,
     Dwarf_Error *error)
 {
 /*  The following macro depends on macreg and
@@ -227,6 +240,8 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
     /*  Becomes true when search_pc is true and current_loc */
     /*  is greater than search_pc_val.  */
     Dwarf_Bool search_over = false;
+
+    Dwarf_Addr possible_subsequent_pc = 0;
 
     /*  Used by the DW_FRAME_advance_loc instr */
     /*  to hold the increment in pc value.  */
@@ -364,8 +379,9 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
                 search_over = search_pc &&
                     (current_loc + adv_pc > search_pc_val);
                 /* If gone past pc needed, retain old pc.  */
+                possible_subsequent_pc =  current_loc + adv_pc;
                 if (!search_over) {
-                    current_loc = current_loc + adv_pc;
+                    current_loc = possible_subsequent_pc;
                 }
                 break;
             }
@@ -437,8 +453,9 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
                 search_over = search_pc && (new_loc > search_pc_val);
 
                 /* If gone past pc needed, retain old pc.  */
+                possible_subsequent_pc =  new_loc;
                 if (!search_over) {
-                    current_loc = new_loc;
+                    current_loc = possible_subsequent_pc;
                 }
                 fp_offset = new_loc;
                 break;
@@ -457,9 +474,10 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
                 search_over = search_pc &&
                     (current_loc + adv_loc > search_pc_val);
 
+                possible_subsequent_pc =  current_loc + adv_loc;
                 /* If gone past pc needed, retain old pc.  */
                 if (!search_over) {
-                    current_loc = current_loc + adv_loc;
+                    current_loc = possible_subsequent_pc;
                 }
                 break;
             }
@@ -479,10 +497,10 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
 
                 search_over = search_pc &&
                     (current_loc + adv_loc > search_pc_val);
-
                 /* If gone past pc needed, retain old pc.  */
+                possible_subsequent_pc =  current_loc + adv_loc;
                 if (!search_over) {
-                    current_loc = current_loc + adv_loc;
+                    current_loc = possible_subsequent_pc;
                 }
                 break;
             }
@@ -503,9 +521,10 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
                 search_over = search_pc &&
                     (current_loc + adv_loc > search_pc_val);
 
+                possible_subsequent_pc =  current_loc + adv_loc;
                 /* If gone past pc needed, retain old pc.  */
                 if (!search_over) {
-                    current_loc = current_loc + adv_loc;
+                    current_loc = possible_subsequent_pc;
                 }
                 break;
             }
@@ -1022,6 +1041,21 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
     if (instr_ptr > final_instr_ptr) {
         SIMPLE_ERROR_RETURN(DW_DLE_DF_FRAME_DECODING_ERROR);
     }
+    if (instr_ptr == final_instr_ptr) {
+        if (has_more_rows) {
+            *has_more_rows = false;
+        }
+        if (subsequent_pc) {
+            *subsequent_pc = 0;
+        }
+    } else {
+        if (has_more_rows) {
+            *has_more_rows = true;
+        }
+        if (subsequent_pc) {
+            *subsequent_pc = possible_subsequent_pc;
+        }
+    }
 
     /* Fill in the actual output table, the space the caller passed in. */
     if (table != NULL) {
@@ -1510,6 +1544,8 @@ _dwarf_get_fde_info_for_a_pc_row(Dwarf_Fde fde,
     Dwarf_Addr pc_requested,
     Dwarf_Frame table,
     Dwarf_Half cfa_reg_col_num,
+    Dwarf_Bool * has_more_rows,
+    Dwarf_Addr * subsequent_pc,
     Dwarf_Error * error)
 {
     Dwarf_Debug dbg = 0;
@@ -1567,6 +1603,7 @@ _dwarf_get_fde_info_for_a_pc_row(Dwarf_Fde fde,
             instrend,
             cie->ci_initial_table, cie, dbg,
             cfa_reg_col_num, &icount,
+            NULL,NULL,
             error);
         if (res != DW_DLV_OK) {
             return res;
@@ -1594,6 +1631,8 @@ _dwarf_get_fde_info_for_a_pc_row(Dwarf_Fde fde,
             table,
             cie, dbg,
             cfa_reg_col_num, &icount,
+            has_more_rows,
+            subsequent_pc,
             error);
     }
     if (res != DW_DLV_OK) {
@@ -1652,7 +1691,7 @@ dwarf_get_fde_info_for_all_regs(Dwarf_Fde fde,
     /* _dwarf_get_fde_info_for_a_pc_row will perform more sanity checks
     */
     res = _dwarf_get_fde_info_for_a_pc_row(fde, pc_requested,
-        &fde_table, dbg->de_frame_cfa_col_number, error);
+        &fde_table, dbg->de_frame_cfa_col_number,NULL,NULL, error);
     if (res != DW_DLV_OK) {
         dwarf_free_fde_table(&fde_table);
         return res;
@@ -1727,6 +1766,7 @@ dwarf_get_fde_info_for_all_regs3(Dwarf_Fde fde,
     res = _dwarf_get_fde_info_for_a_pc_row(fde, pc_requested,
         &fde_table,
         dbg->de_frame_cfa_col_number,
+        NULL,NULL,
         error);
     if (res != DW_DLV_OK) {
         dwarf_free_fde_table(&fde_table);
@@ -1763,7 +1803,6 @@ dwarf_get_fde_info_for_all_regs3(Dwarf_Fde fde,
     dwarf_free_fde_table(&fde_table);
     return DW_DLV_OK;
 }
-
 
 /*  Gets the register info for a single register at a given PC value
     for the FDE specified.
@@ -1803,7 +1842,8 @@ dwarf_get_fde_info_for_reg(Dwarf_Fde fde,
     */
     res =
         _dwarf_get_fde_info_for_a_pc_row(fde, pc_requested, &fde_table,
-            dbg->de_frame_cfa_col_number, error);
+            dbg->de_frame_cfa_col_number,
+            NULL,NULL,error);
     if (res != DW_DLV_OK) {
         dwarf_free_fde_table(&fde_table);
         return res;
@@ -1884,6 +1924,7 @@ dwarf_get_fde_info_for_reg3(Dwarf_Fde fde,
     */
     res = _dwarf_get_fde_info_for_a_pc_row(fde, pc_requested, &fde_table,
         dbg->de_frame_cfa_col_number,
+        NULL,NULL,
         error);
     if (res != DW_DLV_OK) {
         dwarf_free_fde_table(&fde_table);
@@ -1909,6 +1950,37 @@ dwarf_get_fde_info_for_reg3(Dwarf_Fde fde,
 
 }
 
+/*  New June 11,2016. Two new arguments which
+    can be used to more efficiently traverse
+    frame data (primarily for dwarfdump and like
+    programs).  */
+int
+dwarf_get_fde_info_for_cfa_reg3(Dwarf_Fde fde,
+    Dwarf_Addr pc_requested,
+    Dwarf_Small * value_type,
+    Dwarf_Signed * offset_relevant,
+    Dwarf_Signed * register_num,
+    Dwarf_Signed * offset_or_block_len,
+    Dwarf_Ptr * block_ptr,
+    Dwarf_Addr * row_pc_out,
+    Dwarf_Error * error)
+{
+    Dwarf_Bool has_more_rows = 0;
+    Dwarf_Addr next_pc = 0;
+    int res = 0;
+    res = dwarf_get_fde_info_for_cfa_reg3_b(fde,
+        pc_requested,
+        value_type,
+        offset_relevant,
+        register_num,
+        offset_or_block_len,
+        block_ptr,
+        row_pc_out,
+        &has_more_rows,
+        &next_pc,
+        error);
+    return res;
+}
 /*  For latest DWARF, this is the preferred interface.
     It more portably deals with the  CFA by not
     making the CFA a column number, which means
@@ -1921,7 +1993,7 @@ dwarf_get_fde_info_for_reg3(Dwarf_Fde fde,
     is the default unless '--enable-oldframecol'
     is used to configure libdwarf).  */
 int
-dwarf_get_fde_info_for_cfa_reg3(Dwarf_Fde fde,
+dwarf_get_fde_info_for_cfa_reg3_b(Dwarf_Fde fde,
     Dwarf_Addr pc_requested,
     Dwarf_Small * value_type,
     Dwarf_Signed * offset_relevant,
@@ -1929,6 +2001,8 @@ dwarf_get_fde_info_for_cfa_reg3(Dwarf_Fde fde,
     Dwarf_Signed * offset_or_block_len,
     Dwarf_Ptr * block_ptr,
     Dwarf_Addr * row_pc_out,
+    Dwarf_Bool * has_more_rows,
+    Dwarf_Addr * subsequent_pc,
     Dwarf_Error * error)
 {
     struct Dwarf_Frame_s fde_table;
@@ -1945,7 +2019,7 @@ dwarf_get_fde_info_for_cfa_reg3(Dwarf_Fde fde,
     if (res != DW_DLV_OK)
         return res;
     res = _dwarf_get_fde_info_for_a_pc_row(fde, pc_requested, &fde_table,
-        dbg->de_frame_cfa_col_number,error);
+        dbg->de_frame_cfa_col_number,has_more_rows,subsequent_pc,error);
     if (res != DW_DLV_OK) {
         dwarf_free_fde_table(&fde_table);
         return res;
@@ -2153,6 +2227,7 @@ dwarf_expand_frame_instructions(Dwarf_Cie cie,
         cie,
         dbg,
         dbg->de_frame_cfa_col_number, &instr_count,
+        NULL,NULL,
         error);
     if (res != DW_DLV_OK) {
         return (res);

@@ -108,7 +108,8 @@ _dwarf_frame_address_offsets(Dwarf_Debug dbg, Dwarf_Addr ** addrlist,
             /* cie= */ 0,
             dbg,
             DW_FRAME_CFA_COL,
-            &icount, err);
+            &icount,
+            NULL, NULL,err);
         if (res == DW_DLV_ERROR) {
             return res;
         } else if (res == DW_DLV_NO_ENTRY) {
@@ -202,7 +203,8 @@ _dwarf_frame_address_offsets(Dwarf_Debug dbg, Dwarf_Addr ** addrlist,
             /* cie= */ 0,
             dbg,
             DW_FRAME_CFA_COL,
-            &icount, err);
+            &icount,
+            NULL,NULL,err);
         if (res == DW_DLV_ERROR) {
             return res;
         } else if (res == DW_DLV_NO_ENTRY) {

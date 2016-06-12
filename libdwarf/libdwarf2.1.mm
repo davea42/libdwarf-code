@@ -8,7 +8,7 @@
 .nr Hb 5
 \." ==============================================
 \." Put current date in the following at each rev
-.ds vE rev 2.49, May 7, 2016
+.ds vE rev 2.50, June 12, 2016
 \." ==============================================
 \." ==============================================
 .ds | |
@@ -8436,14 +8436,112 @@ It is usable with either
       Dwarf_Error *       error)\fP
 .DE
 .P
-This is identical to  \f(CWdwarf_get_fde_info_for_reg3()\fP
+This is identical to  
+\f(CWdwarf_get_fde_info_for_reg3()\fP
 except the returned values are for the CFA rule.
-So register number \f(CW*register_num\fP will be set
+So register number
+\f(CW*register_num\fP
+will be set
 to a real register, not one of the pseudo registers
 (which are usually
 DW_FRAME_CFA_COL3, DW_FRAME_SAME_VALUE, or
 DW_FRAME_UNDEFINED_VALUE).
+.P
+Applications like dwarfdump 
+which access the register rules for every pc
+value in a function may find the following
+function a slight performance improvement
+if the new arguments are used appropriately.
+See \f(CWdwarfdump\fP for an example of use.
 
+.H 3 "dwarf_get_fde_info_for_cfa_reg3_b()"
+.DS
+ \f(CWint dwarf_get_fde_info_for_cfa_reg3_b(Dwarf_Fde fde,
+      Dwarf_Addr          pc_requested,
+      Dwarf_Small *       value_type,
+      Dwarf_Signed*       offset_relevant,
+      Dwarf_Signed*       register_num,
+      Dwarf_Signed*       offset_or_block_len,
+      Dwarf_Ptr   *       block_ptr ,
+      Dwarf_Addr  *       row_pc_out,
+      Dwarf_Bool  *       has_more_rows,
+      Dwarf_Addr  *       subsequent_pc,
+      Dwarf_Error *       error)\fP
+.DE
+.P
+This is identical to  
+\f(CWdwarf_get_fde_info_for_cfa_reg3()\fP
+except for the new arguments
+\f(CWhas_more_rows\fP
+and
+\f(CWsubsequent_pc\fP
+which allow dwarfdump to print the frame information for
+an entire function using about 10 percent less cpu time.
+The two new arguments may be passed in as NULL
+if their values are not needed by the caller.
+.P
+For a tool just wanting the frame information for a single
+pc_value this interface is no more useful nore more
+efficient than
+\f(CWdwarf_get_fde_info_for_cfa_reg3()\fP.
+.P
+The essential difference is that when using
+\f(CWdwarf_get_fde_info_for_cfa_reg3()\fP
+for all pc values for a function the caller
+has no idea what is the next pc value that might
+have new frame data and iterating through
+pc values (calling 
+\f(CWdwarf_get_fde_info_for_cfa_reg3()\fP on each)
+is a waste of cpu cycles.
+With
+\f(CWdwarf_get_fde_info_for_cfa_reg3_b()\fP
+the 
+\f(CWhas_more_rows\fP
+and
+\f(CWsubsequent_pc\fP
+arguments let the caller know whether there
+are further changes and if so at what pc value.
+
+.P
+If 
+\f(CWhas_more_rows\fP
+is non-null
+then 0 is returned through the pointer
+if, for the 
+\f(CWpc_requested\fP
+there is frame data for addresses after
+\f(CWpc_requested\fP
+in the frame.
+And if there are no more rows in the frame data then
+1 is set through the 
+\f(CWhas_more_rows\fP pointer.
+
+.P
+If 
+\f(CWsubsequent_pc\fP
+is non-null
+then the pc-value which has the next
+frame operator is returned through the
+pointer.
+
+
+.H 3 "dwarf_get_fde_info_for_all_regs3()"
+
+
+.H 3 "dwarf_get_fde_info_for_all_regs3()"
+.DS
+\f(CWint dwarf_get_fde_info_for_all_regs3(
+        Dwarf_Fde fde,
+        Dwarf_Addr pc_requested,
+	Dwarf_Regtable3 *reg_table,
+        Dwarf_Addr *row_pc,
+        Dwarf_Error *error)\fP
+.DE
+\f(CWdwarf_get_fde_info_for_all_regs3()\fP returns
+
+
+
+.H 3 "dwarf_get_fde_info_for_all_regs3()"
 
 
 .H 3 "dwarf_get_fde_info_for_all_regs3()"
