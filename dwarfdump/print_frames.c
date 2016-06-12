@@ -874,10 +874,6 @@ print_one_fde(Dwarf_Debug dbg,
                 continue;
             }
 
-#if 0
-printf("dadebug 0x%llx 0x%llx 0x%llx %d\n",
-j,row_pc,subsequent_pc,has_more_rows); 
-#endif
             if (!has_more_rows) {
                 j = low_pc+func_length-1;
             } else {
@@ -887,7 +883,7 @@ j,row_pc,subsequent_pc,has_more_rows);
                     j = subsequent_pc -1;
                 }
             }
-    
+
             /* Do not print if in check mode */
             if (!printed_intro_addr && do_print_dwarf) {
                 printf("        0x%" DW_PR_XZEROS DW_PR_DUx
@@ -949,7 +945,7 @@ j,row_pc,subsequent_pc,has_more_rows);
                     new register value, the last one found still applies
                     hence this is a duplicate row.
                     row_pc > j cannot happen, the libdwarf function
-                    will not return such. */  
+                    will not return such. */
                 break;
             }
 
