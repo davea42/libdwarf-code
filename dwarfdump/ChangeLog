@@ -1,3 +1,7 @@
+
+2016-06-12  David Anderson
+    * common.c,dwarfdump.c,tag_attr.c,tag_tree.c,gennames.c:
+      Update version string.
 2016-06-12  David Anderson
     * print_frames.c: Using a new frame interface to reduce
       dwarfdump runtime on frame printing by 10 percent.
