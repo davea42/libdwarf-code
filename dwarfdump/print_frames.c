@@ -39,6 +39,10 @@
 #include "dwconf.h"
 #include "esb.h"
 #include "addrmap.h"
+#include "naming.h"
+
+#define true 1
+#define false 0
 
 /*  This attempts to provide some data for error messages.
     On failure just give up here and return.
@@ -699,7 +703,6 @@ print_one_fde(Dwarf_Debug dbg,
     int     *  all_cus_seen)
 {
     Dwarf_Addr j = 0;
-    Dwarf_Addr jsave = 0;
     Dwarf_Addr low_pc = 0;
     Dwarf_Unsigned func_length = 0;
     Dwarf_Ptr fde_bytes = NULL;
@@ -840,6 +843,7 @@ print_one_fde(Dwarf_Debug dbg,
     }
     for (j = low_pc; j < low_pc + func_length; j++) {
         Dwarf_Half k = 0;
+        Dwarf_Addr jsave = 0;
 
         jsave = j;
         if (config_data->cf_interface_number == 3) {
@@ -873,7 +877,6 @@ print_one_fde(Dwarf_Debug dbg,
             if (fires == DW_DLV_NO_ENTRY) {
                 continue;
             }
-
             if (!has_more_rows) {
                 j = low_pc+func_length-1;
             } else {
@@ -883,7 +886,6 @@ print_one_fde(Dwarf_Debug dbg,
                     j = subsequent_pc -1;
                 }
             }
-
             /* Do not print if in check mode */
             if (!printed_intro_addr && do_print_dwarf) {
                 printf("        0x%" DW_PR_XZEROS DW_PR_DUx
@@ -946,7 +948,7 @@ print_one_fde(Dwarf_Debug dbg,
                     hence this is a duplicate row.
                     row_pc > j cannot happen, the libdwarf function
                     will not return such. */
-                break;
+                continue;
             }
 
             /* Do not print if in check mode */
@@ -1283,9 +1285,26 @@ get_string_from_locs(Dwarf_Debug dbg,
     return ;
 }
 
+/*  DW_CFA_nop may be omitted for alignment,
+    so we do not flag that one. */
+static int
+lastop_pointless(int op)
+{
+    if (op == DW_CFA_remember_state ||
+        op == DW_CFA_MIPS_advance_loc8 ||
+        op == DW_CFA_advance_loc ||
+        op == DW_CFA_advance_loc4 ||
+        op == DW_CFA_advance_loc2 ||
+        op == DW_CFA_advance_loc1 ||
+        op == DW_CFA_set_loc) {
+        return true;
+    }
+    /* The last op is hopefully useful. */
+    return false;
+}
+
 /*  Print the frame instructions in detail for a glob of instructions.
 */
-
 /*ARGSUSED*/ static void
 print_frame_inst_bytes(Dwarf_Debug dbg,
     Dwarf_Ptr cie_init_inst,
@@ -1307,6 +1326,7 @@ print_frame_inst_bytes(Dwarf_Debug dbg,
     int res = 0;
     Dwarf_Small *endpoint = 0;
     Dwarf_Signed len = 0;
+    int lastop = 0;
 
     if (len_in <= 0) {
         return;
@@ -1320,6 +1340,7 @@ print_frame_inst_bytes(Dwarf_Debug dbg,
         int delta = 0;
         int reg = 0;
 
+        lastop = top;
         switch (top) {
         case DW_CFA_advance_loc:
             delta = ibyte & 0x3f;
@@ -1364,6 +1385,7 @@ print_frame_inst_bytes(Dwarf_Debug dbg,
         default:
             loff = off;
 
+            lastop = top;
             switch (bottom) {
             case DW_CFA_set_loc:
                 /* operand is address, so need address size */
@@ -1997,6 +2019,11 @@ print_frame_inst_bytes(Dwarf_Debug dbg,
                 DW_PR_DSd "\n",len);
             return;
         }
+    }
+    if (lastop_pointless(lastop)) {
+        printf(
+            " Warning: Final FDE operator is useless but not an error. %s\n",
+            get_CFA_name(lastop,true));
     }
 }
 

@@ -1,4 +1,12 @@
-
+2016-06-13  David Anderson
+    * sanitized.c: Added static keyword to declaration of
+      no_questionable_chars().
+    * print_frames.c: Added a warning about a useless
+      frame operator (if such appears, only checkedwith -f -vvv).
+      Ensure we print rows generated even if a pointless last row
+      (a break becomes continue).
+    * common.c,dwarfdump.c,tag_attr.c,tag_tree.c,gennames.c:
+      Update version string.
 2016-06-12  David Anderson
     * common.c,dwarfdump.c,tag_attr.c,tag_tree.c,gennames.c:
       Update version string.

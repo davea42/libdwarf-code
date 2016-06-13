@@ -141,7 +141,7 @@ do_sanity_insert( const char *s,struct esb_s *mesb)
     will print fine.
     In one large test case it reduces run time
     from 140 seconds to 13 seconds. */
-int
+static int
 no_questionable_chars(const char *s) {
     const char *cp = s;
 

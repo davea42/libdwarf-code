@@ -1,3 +1,8 @@
+2016-06-13 David Anderson
+    * dwarf_frame.c: Revised some local assignments so
+      we are sure the same value used as intended.
+      Added some {} on if for consistency with libdwarf use.
+    * gennames.c: Update version string.
 2016-06-12 David Anderson
     * libdwarf/gennames.c: Update version string.
 2016-06-12 David Anderson

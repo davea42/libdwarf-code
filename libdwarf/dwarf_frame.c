@@ -104,8 +104,6 @@ dwarf_get_frame_section_name_eh_gnu(Dwarf_Debug dbg,
     return DW_DLV_OK;
 }
 
-
-
 /*
     This function is the heart of the debug_frame stuff.  Don't even
     think of reading this without reading both the Libdwarf and
@@ -375,11 +373,10 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
                     SIMPLE_ERROR_RETURN(DW_DLE_DF_NO_CIE_AUGMENTATION);
                 }
                 adv_pc = adv_pc * code_alignment_factor;
-
-                search_over = search_pc &&
-                    (current_loc + adv_pc > search_pc_val);
-                /* If gone past pc needed, retain old pc.  */
                 possible_subsequent_pc =  current_loc + adv_pc;
+                search_over = search_pc &&
+                    (possible_subsequent_pc > search_pc_val);
+                /* If gone past pc needed, retain old pc.  */
                 if (!search_over) {
                     current_loc = possible_subsequent_pc;
                 }
@@ -471,10 +468,10 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
                 }
                 adv_loc *= code_alignment_factor;
 
-                search_over = search_pc &&
-                    (current_loc + adv_loc > search_pc_val);
-
                 possible_subsequent_pc =  current_loc + adv_loc;
+                search_over = search_pc &&
+                    (possible_subsequent_pc > search_pc_val);
+
                 /* If gone past pc needed, retain old pc.  */
                 if (!search_over) {
                     current_loc = possible_subsequent_pc;
@@ -495,10 +492,10 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
                 }
                 adv_loc *= code_alignment_factor;
 
-                search_over = search_pc &&
-                    (current_loc + adv_loc > search_pc_val);
-                /* If gone past pc needed, retain old pc.  */
                 possible_subsequent_pc =  current_loc + adv_loc;
+                search_over = search_pc &&
+                    (possible_subsequent_pc > search_pc_val);
+                /* If gone past pc needed, retain old pc.  */
                 if (!search_over) {
                     current_loc = possible_subsequent_pc;
                 }
@@ -518,10 +515,9 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
                 }
                 adv_loc *= code_alignment_factor;
 
-                search_over = search_pc &&
-                    (current_loc + adv_loc > search_pc_val);
-
                 possible_subsequent_pc =  current_loc + adv_loc;
+                search_over = search_pc &&
+                    (possible_subsequent_pc > search_pc_val);
                 /* If gone past pc needed, retain old pc.  */
                 if (!search_over) {
                     current_loc = possible_subsequent_pc;
@@ -1041,7 +1037,9 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
     if (instr_ptr > final_instr_ptr) {
         SIMPLE_ERROR_RETURN(DW_DLE_DF_FRAME_DECODING_ERROR);
     }
-    if (instr_ptr == final_instr_ptr) {
+    /*  If search_over is set the last instr was an advance_loc
+        so we are not done with rows. */
+    if ((instr_ptr == final_instr_ptr) && !search_over) {
         if (has_more_rows) {
             *has_more_rows = false;
         }
@@ -1912,8 +1910,9 @@ dwarf_get_fde_info_for_reg3(Dwarf_Fde fde,
     table_real_data_size = dbg->de_frame_reg_rules_entry_count;
     res = dwarf_initialize_fde_table(dbg, &fde_table,
         table_real_data_size, error);
-    if (res != DW_DLV_OK)
+    if (res != DW_DLV_OK) {
         return res;
+    }
     if (table_column >= table_real_data_size) {
         dwarf_free_fde_table(&fde_table);
         _dwarf_error(dbg, error, DW_DLE_FRAME_TABLE_COL_BAD);
@@ -1931,15 +1930,19 @@ dwarf_get_fde_info_for_reg3(Dwarf_Fde fde,
         return res;
     }
 
-    if (register_num != NULL)
+    if (register_num != NULL) {
         *register_num = fde_table.fr_reg[table_column].ru_register;
-    if (offset_or_block_len != NULL)
+    }
+    if (offset_or_block_len != NULL) {
         *offset_or_block_len =
             fde_table.fr_reg[table_column].ru_offset_or_block_len;
-    if (row_pc_out != NULL)
+    }
+    if (row_pc_out != NULL) {
         *row_pc_out = fde_table.fr_loc;
-    if (block_ptr)
+    }
+    if (block_ptr) {
         *block_ptr = fde_table.fr_reg[table_column].ru_block;
+    }
 
     /*  Without value_type the data cannot be understood, so we insist
         on it being present, we don't test it. */
@@ -2030,10 +2033,12 @@ dwarf_get_fde_info_for_cfa_reg3_b(Dwarf_Fde fde,
     if (offset_or_block_len != NULL)
         *offset_or_block_len =
             fde_table.fr_cfa_rule.ru_offset_or_block_len;
-    if (row_pc_out != NULL)
+    if (row_pc_out != NULL) {
         *row_pc_out = fde_table.fr_loc;
-    if (block_ptr)
+    }
+    if (block_ptr) {
         *block_ptr = fde_table.fr_cfa_rule.ru_block;
+    }
 
     /*  Without value_type the data cannot be understood, so we insist
         on it being present, we don't test it. */
