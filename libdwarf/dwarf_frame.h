@@ -326,6 +326,11 @@ struct Dwarf_Fde_s {
     Dwarf_Unsigned fd_eh_table_value;
     Dwarf_Bool fd_eh_table_value_set;
 
+    /* The following are memoization to save recalculation. */
+    struct Dwarf_Frame_s fd_fde_table;
+    Dwarf_Addr    fd_fde_pc_requested;
+    Dwarf_Bool    fd_have_fde_tab;
+
 };
 
 
@@ -440,3 +445,4 @@ int dwarf_create_cie_from_after_start(Dwarf_Debug dbg,
 
 int _dwarf_frame_constructor(Dwarf_Debug dbg,void * );
 void _dwarf_frame_destructor (void *);
+void _dwarf_fde_destructor (void *);
