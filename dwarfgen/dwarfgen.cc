@@ -114,6 +114,7 @@ static Elf32_Ehdr * ehp = 0;
 static strtabdata secstrtab;
 
 bool transformHighpcToConst = false;
+int  defaultInfoStringForm = DW_FORM_string;
 
 // loff_t is signed for some reason (strange) but we make offsets unsigned.
 #define LOFFTODWUNS(x)  ( (Dwarf_Unsigned)(x))
@@ -330,12 +331,15 @@ main(int argc, char **argv)
         int opt;
         bool pathrequired(false);
         long cu_of_input_we_output = -1;
-        while((opt=dwgetopt(argc,argv,"o:t:c:h")) != -1) {
+        while((opt=dwgetopt(argc,argv,"o:t:c:hs")) != -1) {
             switch(opt) {
             case 'c':
                 // At present we can only create a single
                 // cu in the output of the libdwarf producer.
                 cu_of_input_we_output = atoi(dwoptarg);
+                break;
+            case 's':
+                defaultInfoStringForm = DW_FORM_strp;
                 break;
             case 't':
                 setinput(&whichinput,dwoptarg,&pathrequired);
@@ -404,6 +408,13 @@ main(int argc, char **argv)
             &err);
         if(res != DW_DLV_OK) {
             cerr << "dwarfgen: Failed init_b" << endl;
+            exit(EXIT_FAILURE);
+        }
+        dwarf_pro_set_default_string_form(dbg,
+            defaultInfoStringForm,&err);
+        if(res != DW_DLV_OK) {
+            cerr << "dwarfgen: Failed dwarf_pro_set_default_string_form"
+                << endl;
             exit(EXIT_FAILURE);
         }
         transform_irep_to_dbg(dbg,Irep,cu_of_input_we_output);

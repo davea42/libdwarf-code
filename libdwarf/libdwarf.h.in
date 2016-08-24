@@ -1264,9 +1264,13 @@ struct Dwarf_Obj_Access_Interface_s {
 #define DW_DLE_ERRONEOUS_XU_INDEX_SECTION      345
 #define DW_DLE_DIRECTORY_FORMAT_COUNT_VS_DIRECTORIES_MISMATCH 346
 #define DW_DLE_COMPRESSED_EMPTY_SECTION        347
+#define DW_DLE_SIZE_WRAPAROUND                 348
+#define DW_DLE_ILLOGICAL_TSEARCH               349
+#define DW_DLE_BAD_STRING_FORM                 350
+#define DW_DLE_DEBUGSTR_ERROR                  351
 
     /* DW_DLE_LAST MUST EQUAL LAST ERROR NUMBER */
-#define DW_DLE_LAST        347
+#define DW_DLE_LAST        351
 #define DW_DLE_LO_USER     0x10000
 
     /*  Taken as meaning 'undefined value', this is not
@@ -3156,6 +3160,13 @@ int dwarf_producer_init(
     const char *extra,    /* Extra input strings, comma separated. */
     Dwarf_P_Debug *,      /* dbg_returned */
     Dwarf_Error *         /*error*/);
+
+/*  Returns DW_DLV_OK or DW_DLV_ERROR.
+    The desired form must be DW_FORM_string (the default)
+    or DW_FORM_strp.  */
+int dwarf_pro_set_default_string_form(Dwarf_P_Debug /*dbg*/,
+    int /*desired_form*/,
+    Dwarf_Error*     /*error*/);
 
 Dwarf_Signed dwarf_transform_to_disk_form(Dwarf_P_Debug /*dbg*/,
     Dwarf_Error*     /*error*/);

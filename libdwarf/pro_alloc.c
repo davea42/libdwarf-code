@@ -37,6 +37,7 @@
 #ifdef HAVE_STRING_H
 #include <string.h>
 #endif /* HAVE_STRING_H */
+#include "dwarf_tsearch.h"
 
 /*  When each block is allocated, there is a two-word structure
     allocated at the beginning so the block can go on a list.
@@ -150,6 +151,13 @@ _dwarf_p_dealloc(UNUSEDARG Dwarf_P_Debug dbg,
 }
 
 
+static void
+_dwarf_str_hashtab_freenode(void * nodep)
+{
+    free(nodep);
+}
+
+
 /*
   This routine deallocates all the nodes on the dbg list,
   and then deallocates the dbg structure itself.
@@ -176,6 +184,8 @@ _dwarf_p_dealloc_all(Dwarf_P_Debug dbg)
         /* For some reason we couldn't free all the blocks? */
         return;
     }
+    dwarf_tdestroy(dbg->de_debug_str_hashtab,
+        _dwarf_str_hashtab_freenode);
     _dwarf_p_dealloc(NULL, (void*)dbg);
 }
 

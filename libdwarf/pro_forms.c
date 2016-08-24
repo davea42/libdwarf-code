@@ -32,6 +32,7 @@
 #include <string.h>
 #include <limits.h>
 #include "pro_incl.h"
+#include "pro_die.h"
 #include "pro_expr.h"
 
 #ifndef R_MIPS_NONE
@@ -973,7 +974,8 @@ dwarf_add_AT_string(Dwarf_P_Debug dbg,
     Dwarf_P_Die ownerdie,
     Dwarf_Half attr, char *string, Dwarf_Error * error)
 {
-    Dwarf_P_Attribute new_attr;
+    Dwarf_P_Attribute new_attr = 0;
+    int res = 0;
 
     if (dbg == NULL) {
         _dwarf_p_error(NULL, error, DW_DLE_DBG_NULL);
@@ -1008,20 +1010,12 @@ dwarf_add_AT_string(Dwarf_P_Debug dbg,
     }
 
     new_attr->ar_attribute = attr;
-    new_attr->ar_attribute_form = DW_FORM_string;
-    new_attr->ar_nbytes = strlen(string) + 1;
-    new_attr->ar_next = 0;
 
-    new_attr->ar_data =
-        (char *) _dwarf_p_get_alloc(dbg, strlen(string)+1);
-    if (new_attr->ar_data == NULL) {
-        _dwarf_p_error(dbg, error, DW_DLE_ALLOC_FAIL);
-        return ((Dwarf_P_Attribute) DW_DLV_BADADDR);
+    res = _dwarf_pro_set_string_attr(new_attr,ownerdie->di_dbg,
+        string,error);
+    if (res != DW_DLV_OK) {
+        return (Dwarf_P_Attribute) DW_DLV_BADADDR;
     }
-
-    strcpy(new_attr->ar_data, string);
-    new_attr->ar_rel_type = R_MIPS_NONE;
-    new_attr->ar_reloc_len = 0; /* unused for R_MIPS_NONE */
 
     /* add attribute to the die */
     _dwarf_pro_add_at_to_die(ownerdie, new_attr);
@@ -1033,11 +1027,12 @@ Dwarf_P_Attribute
 dwarf_add_AT_const_value_string(Dwarf_P_Die ownerdie,
     char *string_value, Dwarf_Error * error)
 {
-    Dwarf_P_Attribute new_attr;
+    Dwarf_P_Attribute new_attr = 0;
+    int res = 0;
 
     if (ownerdie == NULL) {
         _dwarf_p_error(NULL, error, DW_DLE_DIE_NULL);
-        return ((Dwarf_P_Attribute) DW_DLV_BADADDR);
+        return (Dwarf_P_Attribute) DW_DLV_BADADDR;
     }
 
     new_attr = (Dwarf_P_Attribute)
@@ -1048,20 +1043,11 @@ dwarf_add_AT_const_value_string(Dwarf_P_Die ownerdie,
     }
 
     new_attr->ar_attribute = DW_AT_const_value;
-    new_attr->ar_attribute_form = DW_FORM_string;
-    new_attr->ar_nbytes = strlen(string_value) + 1;
-    new_attr->ar_next = 0;
-
-    new_attr->ar_data =
-        (char *) _dwarf_p_get_alloc(ownerdie->di_dbg, strlen(string_value)+1);
-    if (new_attr->ar_data == NULL) {
-        _dwarf_p_error(NULL, error, DW_DLE_ALLOC_FAIL);
-        return ((Dwarf_P_Attribute) DW_DLV_BADADDR);
+    res = _dwarf_pro_set_string_attr(new_attr,ownerdie->di_dbg,
+        string_value,error);
+    if (res != DW_DLV_OK) {
+        return (Dwarf_P_Attribute) DW_DLV_BADADDR;
     }
-
-    strcpy(new_attr->ar_data, string_value);
-    new_attr->ar_rel_type = R_MIPS_NONE;
-    new_attr->ar_reloc_len = 0; /* unused for R_MIPS_NONE */
 
     /* add attribute to the die */
     _dwarf_pro_add_at_to_die(ownerdie, new_attr);
@@ -1110,7 +1096,8 @@ Dwarf_P_Attribute
 dwarf_add_AT_producer(Dwarf_P_Die ownerdie,
     char *producer_string, Dwarf_Error * error)
 {
-    Dwarf_P_Attribute new_attr;
+    Dwarf_P_Attribute new_attr = 0;
+    int res = 0;
 
     if (ownerdie == NULL) {
         _dwarf_p_error(NULL, error, DW_DLE_DIE_NULL);
@@ -1125,20 +1112,11 @@ dwarf_add_AT_producer(Dwarf_P_Die ownerdie,
     }
 
     new_attr->ar_attribute = DW_AT_producer;
-    new_attr->ar_attribute_form = DW_FORM_string;
-    new_attr->ar_nbytes = strlen(producer_string) + 1;
-    new_attr->ar_next = 0;
-
-    new_attr->ar_data =
-        (char *) _dwarf_p_get_alloc(ownerdie->di_dbg, strlen(producer_string)+1);
-    if (new_attr->ar_data == NULL) {
-        _dwarf_p_error(NULL, error, DW_DLE_ALLOC_FAIL);
-        return ((Dwarf_P_Attribute) DW_DLV_BADADDR);
+    res = _dwarf_pro_set_string_attr(new_attr,ownerdie->di_dbg,
+        producer_string,error);
+    if (res != DW_DLV_OK) {
+        return (Dwarf_P_Attribute) DW_DLV_BADADDR;
     }
-
-    strcpy(new_attr->ar_data, producer_string);
-    new_attr->ar_rel_type = R_MIPS_NONE;
-    new_attr->ar_reloc_len = 0; /* unused for R_MIPS_NONE */
 
     /* add attribute to the die */
     _dwarf_pro_add_at_to_die(ownerdie, new_attr);

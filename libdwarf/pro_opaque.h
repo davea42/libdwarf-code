@@ -132,10 +132,10 @@ typedef struct Dwarf_P_Per_Sect_String_Attrs_s *Dwarf_P_Per_Sect_String_Attrs;
 #define         DEBUG_VARNAMES  9
 #define         DEBUG_WEAKNAMES 10
 #define         DEBUG_MACINFO   11
-#define         DEBUG_LOC   12
-#define         DEBUG_RANGES 13
-#define         DEBUG_TYPES 14
-#define         DEBUG_PUBTYPES 15
+#define         DEBUG_LOC       12
+#define         DEBUG_RANGES    13
+#define         DEBUG_TYPES     14
+#define         DEBUG_PUBTYPES  15
 
 /* Maximum number of debug_* sections not including the relocations */
 #define         NUM_DEBUG_SECTIONS      16
@@ -194,6 +194,8 @@ struct Dwarf_P_Attribute_s {
     Dwarf_Unsigned ar_rel_symidx; /* when attribute has a
         relocatable value, holds
         index of symbol in SYMTAB */
+    Dwarf_Unsigned ar_debug_str_offset; /* Offset in .debug_str
+        if non-zero. Zero offset never assigned a string. */
     Dwarf_Ubyte ar_rel_type;  /* relocation type */
     Dwarf_Word ar_rel_offset; /* Offset of relocation within block */
     char ar_reloc_len; /* Number of bytes that relocation
@@ -335,6 +337,15 @@ struct Dwarf_P_Per_Sect_String_Attrs_s {
     Dwarf_P_String_Attr sect_sa_list;
 };
 
+/*  dse_key is the hash value of the name.
+    dse_name points into the de_debug_str characters.  */
+struct Dwarf_P_debug_str_entry_s {
+    unsigned dse_key;
+    Dwarf_Unsigned dse_slen; /* includes space for NUL terminator */
+    Dwarf_Unsigned dse_table_offset;
+    char *   dse_name;
+};
+
 /* Fields used by producer */
 struct Dwarf_P_Debug_s {
     /*  Used to catch dso passing dbg to another DSO with incompatible
@@ -357,9 +368,14 @@ struct Dwarf_P_Debug_s {
     /*  Flags from producer_init call */
     Dwarf_Unsigned de_flags;
 
-    /*  This holds information on debug section stream output, including
+    /*  This holds information on debug info section stream output, including
         the stream data */
     Dwarf_P_Section_Data de_debug_sects;
+
+    /* .debug_str section data  */
+    Dwarf_P_Section_Data de_debug_str;
+    void *de_debug_str_hashtab; /* for tsearch */
+    int de_debug_default_str_form; /* Defaults set as DW_FORM_string */
 
     /*  Pointer to the 'current active' section */
     Dwarf_P_Section_Data de_current_active_section;
@@ -393,9 +409,6 @@ struct Dwarf_P_Debug_s {
 
     /* First die, leads to all others */
     Dwarf_P_Die de_dies;
-
-    /* Pointer to list of strings */
-    char *de_strings;
 
     /* Pointer to chain of aranges */
     Dwarf_P_Arange de_arange;

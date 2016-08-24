@@ -1,3 +1,27 @@
+2016-08-23 David Anderson
+    * dwarf_alloc.c,dwarf_frame.c: Remove trailing whitespace.
+    * dwarf_errmsg_list.c:  Has four new error codes to deal
+      with emitting .debug_str from the producer.
+    * gennames.c: Added 'static' to a static function to
+      avoid compiler warnings.
+    * libdwarf.h.in: Four new error codes.
+      A new producer function: dwarf_pro_set_default_string_form() which
+      causes debug_info strings to be emitted in .debug_str where
+      that seems like it might save space.
+    * pro_alloc.c: A new debug_str producer string 
+      hashtab free helper function to clean up the .debug_str
+      hash table..
+    * pro_die.c: Now calls a single function to emit strings and
+      can emit in either .debug_info or .debug_str.
+    * pro_die.h: Declares _dwarf_pro_set_string_attr() now.
+    * pro_forms.c: Some local variables are always initialized now
+      at declaration point. Now uses common code to set up strings.
+    * pro_init.c: Initializes debug_str hash table for strings
+      And sets up the section properly. Defines the hashfunc.
+    * pro_opaque.h: Fixes some spacing awkwardness. Adds
+      .debug_str hash data and eliminates unused data.
+    * pro_section.c: Now emits .debug_str when such is
+      wanted.
 2016-06-13 David Anderson
     * dwarf_alloc.c: Dwarf_Fde_s now has a destructor.
     * dwarf_frame.c,dwarf_frame.h: Now dwarf_get_fde_info_for_reg3 memoizes

@@ -36,6 +36,7 @@
 #include "pro_section.h"        /* for MAGIC_SECT_NO */
 #include "pro_reloc_symbolic.h"
 #include "pro_reloc_stream.h"
+#include "dwarf_tsearch.h"
 
 #define IS_64BITPTR(dbg) ((dbg)->de_flags & DW_DLC_POINTER64 ? 1 : 0)
 #define ISA_IA64(dbg) ((dbg)->de_flags & DW_DLC_ISA_IA64 ? 1 : 0)
@@ -105,6 +106,9 @@ void *_dwarf_memcpy_swap_bytes(void *s1, const void *s2, size_t len);
 static struct Dwarf_P_Section_Data_s init_sect = {
     MAGIC_SECT_NO, 0, 0, 0, 0
 };
+static struct Dwarf_P_Section_Data_s init_sect_debug_str = {
+    MAGIC_SECT_NO, 0, 0, 0, 0
+};
 
 /*  New April 2014.
     Replaces all previous producer init functions.
@@ -161,10 +165,23 @@ dwarf_producer_init(Dwarf_Unsigned flags,
     dbg->de_user_data = user_data;
     res = common_init(dbg, flags,isa_name,dwarf_version,&err_ret);
     if (res != DW_DLV_OK) {
-        DWARF_P_DBG_ERROR(dbg, err_ret,
-            DW_DLV_ERROR);
+        DWARF_P_DBG_ERROR(dbg, err_ret, DW_DLV_ERROR);
     }
     *dbg_returned = dbg;
+    return DW_DLV_OK;
+}
+
+int
+dwarf_pro_set_default_string_form(Dwarf_P_Debug dbg,
+   int form,
+   UNUSEDARG Dwarf_Error * error)
+{
+    if (form != DW_FORM_string &&
+        form != DW_FORM_strp) {
+        _dwarf_p_error(dbg, error, DW_DLE_BAD_STRING_FORM);
+        return DW_DLV_ERROR;
+    }
+    dbg->de_debug_default_str_form = form;
     return DW_DLV_OK;
 }
 
@@ -199,6 +216,30 @@ set_reloc_numbers(Dwarf_P_Debug dbg,
     /* UNREACHED */
 }
 
+/*  This is the Daniel J Bernstein hash function
+    originally posted to Usenet news.
+    http://en.wikipedia.org/wiki/List_of_hash_functions or
+    http://stackoverflow.com/questions/10696223/reason-for-5381-number-in-djb-hash-function).
+*/
+static DW_TSHASHTYPE
+simple_string_hashfunc(const void *keyp)
+{
+    struct Dwarf_P_debug_str_entry_s* mt =
+        (struct Dwarf_P_debug_str_entry_s*) keyp;
+    DW_TSHASHTYPE up = 0;
+    const char *str = (const char *)mt->dse_name;
+    uint32_t hash = 5381;
+    int c  = 0;
+
+    /*  Extra parens suppress warning about assign in test. */
+    while ((c = *str++)) {
+        hash = hash * 33 + c ;
+    }
+    up = hash;
+    return up;
+}
+
+
 static int
 common_init(Dwarf_P_Debug dbg, Dwarf_Unsigned flags, const char *abiname,
     const char *dwarf_version,
@@ -210,6 +251,7 @@ common_init(Dwarf_P_Debug dbg, Dwarf_Unsigned flags, const char *abiname,
     dbg->de_version_magic_number = PRO_VERSION_MAGIC;
     dbg->de_n_debug_sect = 0;
     dbg->de_debug_sects = &init_sect;
+    dbg->de_debug_str = &init_sect_debug_str;
     dbg->de_current_active_section = &init_sect;
     dbg->de_flags = flags;
     _dwarf_init_default_line_header_vals(dbg);
@@ -278,6 +320,11 @@ common_init(Dwarf_P_Debug dbg, Dwarf_Unsigned flags, const char *abiname,
 #endif
 
     }
+
+    /* For .debug_str creation. */
+    dwarf_initialize_search_hash(&dbg->de_debug_str_hashtab,
+        simple_string_hashfunc,0);
+    dbg->de_debug_default_str_form = DW_FORM_string;
 
     /* FIXME: conditional on the DWARF version target,
         dbg->de_output_version. */

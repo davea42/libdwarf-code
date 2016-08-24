@@ -118,7 +118,8 @@ static const char *usage[] = {
     "    -t use 'tables' in generation",
     "",
 };
-void
+
+static void
 print_args(int argc, char *argv[])
 {
     int index;

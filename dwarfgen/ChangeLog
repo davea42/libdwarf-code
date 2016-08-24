@@ -1,3 +1,6 @@
+2016-08-23  David Anderson
+     * dwarfgen.cc: Added the -s option which has .debug_info strings
+       generated into .debug_str.
 2016-06-01  David Anderson
      * Makefile.in: Tweaked for debian build compatibility
 2016-04-21  Carlos Alberto Enciso

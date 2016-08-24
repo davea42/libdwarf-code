@@ -138,6 +138,7 @@ struct Dwarf_P_Rel_Head_s {
     struct Dwarf_P_Rel_s *drh_tail;
 };
 
+static int _dwarf_pro_generate_debug_str(Dwarf_P_Debug dbg, Dwarf_Error * error);
 static int _dwarf_pro_generate_debugline(Dwarf_P_Debug dbg,
     Dwarf_Error * error);
 static int _dwarf_pro_generate_debugframe(Dwarf_P_Debug dbg,
@@ -254,7 +255,7 @@ dwarf_transform_to_disk_form(Dwarf_P_Debug dbg, Dwarf_Error * error)
             break;
 
         case DEBUG_STR:
-            if (dbg->de_strings == NULL) {
+            if (dbg->de_debug_str->ds_data == NULL) {
                 continue;
             }
             break;
@@ -361,6 +362,16 @@ dwarf_transform_to_disk_form(Dwarf_P_Debug dbg, Dwarf_Error * error)
                 DW_DLV_NOCOUNT);
         }
     }
+
+    if (dbg->de_debug_str->ds_data) {
+        nbufs = _dwarf_pro_generate_debug_str(dbg, error);
+        if (nbufs < 0) {
+            DWARF_P_DBG_ERROR(dbg, DW_DLE_DEBUGSTR_ERROR,
+                DW_DLV_NOCOUNT);
+        }
+    }
+
+
 
     if (dbg->de_arange) {
         nbufs = _dwarf_transform_arange_to_disk(dbg, error);
@@ -1965,6 +1976,20 @@ _dwarf_pro_generate_debuginfo(Dwarf_P_Debug dbg, Dwarf_Error * error)
     GET_CHUNK(dbg, abbrevsectno, data, 1, error);
     *data = 0;
     return (int) dbg->de_n_debug_sect;
+}
+
+static int
+_dwarf_pro_generate_debug_str(Dwarf_P_Debug dbg, Dwarf_Error * error)
+{
+    int elfsectno_of_debug_str = 0;
+    unsigned char *data = 0;
+
+    elfsectno_of_debug_str = dbg->de_elf_sects[DEBUG_STR];
+    GET_CHUNK(dbg, elfsectno_of_debug_str, data, dbg->de_debug_str->ds_nbytes,
+        error);
+    memcpy(data,dbg->de_debug_str->ds_data,dbg->de_debug_str->ds_nbytes);
+    return (int) dbg->de_n_debug_sect;
+
 }
 
 

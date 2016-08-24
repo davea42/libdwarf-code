@@ -29,9 +29,14 @@
 #include "config.h"
 #include "libdwarfdefs.h"
 #include <stdio.h>
+#ifdef HAVE_STDLIB_H
+#include <stdlib.h>
+#endif
 #include <string.h>
 #include "pro_incl.h"
 #include "pro_die.h"
+#include "pro_section.h"
+#include "dwarf_tsearch.h"
 
 #ifndef R_MIPS_NONE
 #define R_MIPS_NONE 0
@@ -243,13 +248,257 @@ _dwarf_pro_add_AT_stmt_list(Dwarf_P_Debug dbg,
     return 0;
 }
 
+static int
+_dwarf_debug_str_compare_func(const void *l,const void *r)
+{
+   const struct Dwarf_P_debug_str_entry_s*el = l;
+   const struct Dwarf_P_debug_str_entry_s*er = r;
+   int ir = 0;
+
+   ir = strcmp(el->dse_name,er->dse_name);
+   return ir;
+}
+
+static  void
+debug_str_entry_free_func(void *m)
+{
+    free(m);
+}
+
+static int
+make_debug_str_entry(Dwarf_P_Debug dbg,
+    struct Dwarf_P_debug_str_entry_s **mt_out,
+    char *name,
+    unsigned slen,
+    Dwarf_Error *error)
+{
+    struct Dwarf_P_debug_str_entry_s *mt =
+        (struct  Dwarf_P_debug_str_entry_s *)calloc(
+        sizeof(struct Dwarf_P_debug_str_entry_s),1);
+    if (!mt) {
+        _dwarf_p_error(dbg, error, DW_DLE_ALLOC_FAIL);
+        return DW_DLV_ERROR;
+    }
+
+    mt->dse_key = 0;
+    mt->dse_slen = slen;
+    mt->dse_table_offset = 0;
+    mt->dse_name = name;
+    *mt_out = mt;
+    return DW_DLV_OK;
+}
+#define STRTAB_BASE_ALLOC_SIZE 2048
+static int
+insert_debug_str_data_string(Dwarf_P_Debug dbg,
+    char *name,
+    unsigned slen,
+    Dwarf_Unsigned*adding_at_offset,
+    Dwarf_Error *  error)
+{
+    Dwarf_P_Section_Data sd = dbg->de_debug_str;
+    Dwarf_Unsigned current_offset = 0;
+
+    if (!sd->ds_data) {
+        Dwarf_Unsigned initial_alloc = STRTAB_BASE_ALLOC_SIZE;
+        Dwarf_Unsigned base_insert_offset = 1;
+
+        /*  inserting our first string.
+            Insert at position 1, not zero. */
+        if ( (slen + base_insert_offset) >= STRTAB_BASE_ALLOC_SIZE) {
+            initial_alloc = slen *2+ base_insert_offset;
+        }
+        if (initial_alloc < slen) {
+            _dwarf_p_error(dbg, error, DW_DLE_SIZE_WRAPAROUND);
+            return DW_DLV_ERROR;
+        }
+        sd->ds_data = calloc(1,initial_alloc);
+        if (!sd->ds_data) {
+            _dwarf_p_error(dbg, error, DW_DLE_ALLOC_FAIL);
+            return DW_DLV_ERROR;
+        }
+        sd->ds_orig_alloc = initial_alloc;
+        *adding_at_offset = base_insert_offset;
+        sd->ds_nbytes = slen + base_insert_offset;
+        strcpy(sd->ds_data+base_insert_offset,name);
+        return DW_DLV_OK;
+    }
+    current_offset = sd->ds_nbytes;
+    if ( (current_offset + slen) >= sd->ds_orig_alloc) {
+        unsigned updated_length = sd->ds_orig_alloc;
+        char *newbuf = 0;
+        if (slen > updated_length) {
+            updated_length = slen *2;
+        } else {
+            updated_length = updated_length *2;
+        }
+        if (updated_length < sd->ds_orig_alloc) {
+            _dwarf_p_error(dbg, error, DW_DLE_SIZE_WRAPAROUND);
+            return DW_DLV_ERROR;
+        }
+        newbuf = calloc(1,updated_length);
+        if (!newbuf) {
+            _dwarf_p_error(dbg, error, DW_DLE_ALLOC_FAIL);
+            return DW_DLV_ERROR;
+        }
+        memcpy(newbuf,sd->ds_data,sd->ds_nbytes);
+        free(sd->ds_data);
+        sd->ds_data = newbuf;
+        sd->ds_orig_alloc = updated_length;
+        newbuf = 0;
+    }
+    strcpy(sd->ds_data + current_offset,name);
+    sd->ds_nbytes += slen;
+    *adding_at_offset = current_offset;
+    return DW_DLV_OK;
+}
+
+/*  Find the string offset using the hash table,
+    and if not known, insert the new string. */
+static int
+_dwarf_insert_or_find_in_debug_str(Dwarf_P_Debug dbg,
+    char *name,
+    unsigned slen, /* includes space for trailing NUL */
+    Dwarf_Unsigned *offset_in_debug_str,
+    Dwarf_Error *error)
+{
+    struct Dwarf_P_debug_str_entry_s *mt = 0;
+    struct Dwarf_P_debug_str_entry_s *mt2 = 0;
+    struct Dwarf_P_debug_str_entry_s *retval = 0;
+    struct Dwarf_P_debug_str_entry_s *re = 0;
+    int res = 0;
+    Dwarf_Unsigned adding_at_offset = 0;
+
+    res = make_debug_str_entry(dbg,&mt,name,slen, error);
+    if (res != DW_DLV_OK) {
+        return res;
+    }
+    /*  We do a find as we do not want the string pointer passed in
+        to be in the hash table, we want a pointer into the
+        debug_str table in the hash table. */
+    retval = dwarf_tfind(mt,(void *const*)&dbg->de_debug_str_hashtab,
+        _dwarf_debug_str_compare_func);
+    if (retval) {
+        re = *(struct Dwarf_P_debug_str_entry_s **)retval;
+        *offset_in_debug_str = re->dse_table_offset;
+        debug_str_entry_free_func(mt);
+        return DW_DLV_OK;
+    }
+
+    /*  We know the string is not in .debug_str data yet.
+        Insert it into the big string table and get that
+        offset. */
+
+    res = insert_debug_str_data_string(dbg,name,slen, &adding_at_offset,
+        error);
+    if (res != DW_DLV_OK) {
+        debug_str_entry_free_func(mt);
+        return res;
+    }
+    debug_str_entry_free_func(mt);
+    mt = 0;
+
+    /*  The name is in the string table itself, so use that pointer
+        for the hash table string pointer. */
+    res = make_debug_str_entry(dbg,&mt2,
+        dbg->de_debug_str->ds_data + adding_at_offset,
+        slen,error);
+    if (res != DW_DLV_OK) {
+        return res;
+    }
+    mt2->dse_table_offset = adding_at_offset;
+    retval = dwarf_tsearch(mt2,
+        (void *)&dbg->de_debug_str_hashtab,
+        _dwarf_debug_str_compare_func);
+    if (!retval) {
+        debug_str_entry_free_func(mt2);
+        _dwarf_p_error(dbg, error, DW_DLE_ALLOC_FAIL);
+        return DW_DLV_ERROR;
+    }
+
+    /* This indirection is one of the surprises in using tsearch... */
+    re = *(struct Dwarf_P_debug_str_entry_s **)retval;
+    if (re != mt2) {
+        debug_str_entry_free_func(mt2);
+        /*  Found it in hash tab: illogical as the tsearch_find should
+            have found it. */
+        _dwarf_p_error(dbg, error, DW_DLE_ILLOGICAL_TSEARCH);
+        return DW_DLV_ERROR;
+    }
+    /* we added it to hash, do not free mt2 (which == re). */
+    *offset_in_debug_str = re->dse_table_offset;
+    return DW_DLV_OK;
+}
+
+int _dwarf_pro_set_string_attr(Dwarf_P_Attribute new_attr,
+    Dwarf_P_Debug dbg,
+    char *name,
+    Dwarf_Error *error)
+{
+    int form = dbg->de_debug_default_str_form;
+    unsigned slen = strlen(name)+1;
+
+    if (form == DW_FORM_string ||
+        slen <= dbg->de_offset_size) {
+        new_attr->ar_nbytes = slen;
+        new_attr->ar_next = 0;
+
+        new_attr->ar_data =
+            (char *) _dwarf_p_get_alloc(dbg, slen);
+        if (new_attr->ar_data == NULL) {
+            _dwarf_p_error(dbg, error, DW_DLE_ALLOC_FAIL);
+            return DW_DLV_ERROR;
+        }
+
+        strcpy(new_attr->ar_data, name);
+        new_attr->ar_attribute_form = DW_FORM_string;
+        new_attr->ar_rel_type = R_MIPS_NONE;
+        new_attr->ar_reloc_len = 0; /* unused for R_MIPS_NONE */
+        return DW_DLV_OK;
+    }
+    if (form == DW_FORM_strp) {
+        int uwordb_size = dbg->de_offset_size;
+        Dwarf_Unsigned offset_in_debug_str = 0;
+        int res = 0;
+
+        res = _dwarf_insert_or_find_in_debug_str(dbg,name,slen,
+            &offset_in_debug_str,error);
+        if(res != DW_DLV_OK) {
+            return res;
+        }
+        new_attr->ar_attribute_form = form;
+        new_attr->ar_rel_type = dbg->de_offset_reloc;
+        new_attr->ar_nbytes = uwordb_size;
+        new_attr->ar_next = NULL;
+        new_attr->ar_reloc_len = uwordb_size;
+        new_attr->ar_data = (char *)
+            _dwarf_p_get_alloc(dbg, uwordb_size);
+        if (new_attr->ar_data == NULL) {
+            _dwarf_p_error(dbg, error, DW_DLE_ALLOC_FAIL);
+            return DW_DLV_ERROR;
+        }
+        {
+            Dwarf_Unsigned du = offset_in_debug_str;
+
+            WRITE_UNALIGNED(dbg, (void *) new_attr->ar_data,
+                (const void *) &du, sizeof(du), uwordb_size);
+        }
+
+        return DW_DLV_OK;
+    }
+    _dwarf_p_error(dbg, error, DW_DLE_BAD_STRING_FORM);
+    return DW_DLV_ERROR;
+
+}
+
+
 /*-----------------------------------------------------------------------------
     Add AT_name attribute to die
 ------------------------------------------------------------------------------*/
 Dwarf_P_Attribute
 dwarf_add_AT_name(Dwarf_P_Die die, char *name, Dwarf_Error * error)
 {
-    Dwarf_P_Attribute new_attr;
+    Dwarf_P_Attribute new_attr = 0;
+    int res = 0;
 
     if (die == NULL) {
         DWARF_P_DBG_ERROR(NULL, DW_DLE_DIE_NULL,
@@ -264,20 +513,10 @@ dwarf_add_AT_name(Dwarf_P_Die die, char *name, Dwarf_Error * error)
 
     /* fill in the information */
     new_attr->ar_attribute = DW_AT_name;
-    /* assume that form is string, no debug_str yet */
-    new_attr->ar_attribute_form = DW_FORM_string;
-    new_attr->ar_nbytes = strlen(name) + 1;
-    new_attr->ar_next = NULL;
-    new_attr->ar_reloc_len = 0;
-    new_attr->ar_data = (char *)
-        _dwarf_p_get_alloc(die->di_dbg, strlen(name)+1);
-    if (new_attr->ar_data == NULL) {
-        DWARF_P_DBG_ERROR(NULL, DW_DLE_STRING_ALLOC,
-            (Dwarf_P_Attribute) DW_DLV_BADADDR);
+    res = _dwarf_pro_set_string_attr(new_attr,die->di_dbg,name,error);
+    if (res != DW_DLV_OK) {
+        return (Dwarf_P_Attribute) DW_DLV_BADADDR;
     }
-    strcpy(new_attr->ar_data, name);
-
-    new_attr->ar_rel_type = R_MIPS_NONE;
 
     /* add attribute to the die */
     _dwarf_pro_add_at_to_die(die, new_attr);
@@ -293,7 +532,8 @@ dwarf_add_AT_comp_dir(Dwarf_P_Die ownerdie,
     char *current_working_directory,
     Dwarf_Error * error)
 {
-    Dwarf_P_Attribute new_attr;
+    Dwarf_P_Attribute new_attr = 0;
+    int res = 0;
 
     if (ownerdie == NULL) {
         DWARF_P_DBG_ERROR(NULL, DW_DLE_DIE_NULL,
@@ -309,21 +549,11 @@ dwarf_add_AT_comp_dir(Dwarf_P_Die ownerdie,
 
     /* fill in the information */
     new_attr->ar_attribute = DW_AT_comp_dir;
-    /* assume that form is string, no debug_str yet */
-    new_attr->ar_attribute_form = DW_FORM_string;
-    new_attr->ar_nbytes = strlen(current_working_directory) + 1;
-    new_attr->ar_next = NULL;
-    new_attr->ar_reloc_len = 0;
-    new_attr->ar_data = (char *)
-        _dwarf_p_get_alloc(ownerdie->di_dbg,
-        strlen(current_working_directory)+1);
-    if (new_attr->ar_data == NULL) {
-        DWARF_P_DBG_ERROR(NULL, DW_DLE_STRING_ALLOC,
-            (Dwarf_P_Attribute) DW_DLV_BADADDR);
+    res = _dwarf_pro_set_string_attr(new_attr,ownerdie->di_dbg,
+        current_working_directory,error);
+    if (res != DW_DLV_OK) {
+        return (Dwarf_P_Attribute) DW_DLV_BADADDR;
     }
-    strcpy(new_attr->ar_data, current_working_directory);
-
-    new_attr->ar_rel_type = R_MIPS_NONE;
 
     /* add attribute to the die */
     _dwarf_pro_add_at_to_die(ownerdie, new_attr);

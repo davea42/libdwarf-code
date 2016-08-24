@@ -1926,7 +1926,7 @@ dwarf_get_fde_info_for_reg3(Dwarf_Fde fde,
             _dwarf_error(dbg, error, DW_DLE_FRAME_TABLE_COL_BAD);
             return (DW_DLV_ERROR);
         }
-    
+
         /*  _dwarf_get_fde_info_for_a_pc_row will perform more sanity checks
         */
         res = _dwarf_get_fde_info_for_a_pc_row(fde, pc_requested, fde_table,
