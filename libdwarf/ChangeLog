@@ -1,4 +1,7 @@
 2016-08-23 David Anderson
+    * libdwarf2p.1.mm: Document dwarf_pro_set_default_string_form.
+    * libdwarf2p.1.pdf: Regenerated. Rev 1.40.
+2016-08-23 David Anderson
     * dwarf_alloc.c,dwarf_frame.c: Remove trailing whitespace.
     * dwarf_errmsg_list.c:  Has four new error codes to deal
       with emitting .debug_str from the producer.

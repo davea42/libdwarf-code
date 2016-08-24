@@ -11,7 +11,7 @@
 .nr Hb 5
 \." ==============================================
 \." Put current date in the following at each rev
-.ds vE rev 1.39, 07 May 2016
+.ds vE rev 1.40, 23 August 2016
 \." ==============================================
 \." ==============================================
 .ds | |
@@ -749,7 +749,37 @@ if \f(CWerror\fP is non-null and
 and there is an error.  The error details
 will be passed back through this pointer argument.
 
+.H 3 "dwarf_pro_set_default_string_form()"
 
+.DS
+\f(CWint dwarf_pro_set_default_string_form(
+        Dwarf_P_Debug *dbg,
+        int            desired_form,
+        Dwarf_Error *error) \fP
+.DE
+.P
+The function 
+\f(CWdwarf_pro_set_default_string_form()\fP 
+sets the 
+\f(CWDwarf_P_Debug\fP descriptor to favor one of
+the two allowed values:
+\f(CWDW_FORM_string\fP
+(the default)
+or
+\f(CWDW_FORM_strp\fP.
+.P
+When
+\f(CWDW_FORM_strp\fP
+is selected very short names will still
+use form
+\f(CWDW_FORM_string\fP .
+.P
+The function should be called immediately after a successful call
+to 
+\f(CWdwarf_producer_init()\fP.
+.P
+On success it returns \f(CWDW_DLV_OK\fP.
+On error it returns \f(CWDW_DLV_ERROR\fP.
 
 .H 3 "dwarf_transform_to_disk_form()"
 .DS
