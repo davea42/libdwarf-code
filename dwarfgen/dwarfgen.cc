@@ -1,5 +1,5 @@
 /*
-  Copyright (C) 2010-2013 David Anderson.  All rights reserved.
+  Copyright (C) 2010-2016 David Anderson.  All rights reserved.
 
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions are met:
@@ -115,10 +115,12 @@ static strtabdata secstrtab;
 
 bool transformHighpcToConst = false;
 int  defaultInfoStringForm = DW_FORM_string;
+bool showrelocdetails = false;
 
 // loff_t is signed for some reason (strange) but we make offsets unsigned.
 #define LOFFTODWUNS(x)  ( (Dwarf_Unsigned)(x))
 
+/*  See the Elf ABI for further definitions of these fields. */
 class SectionFromDwarf {
 public:
     std::string name_;
@@ -127,7 +129,15 @@ public:
     int size_;
     Dwarf_Unsigned type_;
     Dwarf_Unsigned flags_;
+
+    /*  type: SHT_REL, RELA: Section header index of the section
+        relocation applies to.
+        SHT_SYMTAB: Section header index of the associated string table. */
     Dwarf_Unsigned link_;
+
+    /*  type: SHT_REL, RELA: Section header index of the section
+        relocation applies to.
+        SHT_SYMTAB: One greater than index of the last local symbol.. */
     Dwarf_Unsigned info_;
 private:
     ElfSectIndex elf_sect_index_;
@@ -180,6 +190,20 @@ static SectionFromDwarf & FindMySection(const ElfSectIndex & elf_section_index)
     exit(1);
 }
 
+static int FindMySectionNum(const ElfSectIndex & elf_section_index)
+{
+    for(unsigned i =0; i < dwsectab.size(); ++i) {
+        if(elf_section_index.getSectIndex() !=
+            dwsectab[i].getSectIndex().getSectIndex()) {
+            continue;
+        }
+        return i;
+    }
+    cerr << "dwarfgen: Unable to find my dw sec index for elf section " <<
+        elf_section_index.getSectIndex() << endl;
+    exit(1);
+}
+
 static unsigned
 createnamestr(unsigned strtabstroff)
 {
@@ -218,10 +242,12 @@ createnamestr(unsigned strtabstroff)
     return  elf_ndxscn(strscn);
 }
 
-
 // This functional interface is defined by libdwarf.
 // Please see the comments in libdwarf2p.1.pdf
 // (libdwarf2p.1.mm)  on this callback interface.
+// Returns (to libdwarf) an Elf section number, so
+// since 0 is always empty and dwarfgen sets 1 to be a fake
+// text section on the first call this returns 2, second 3, etc.
 int CallbackFunc(
     const char* name,
     int                 size,
@@ -236,11 +262,12 @@ int CallbackFunc(
     // Create an elf section.
     // If the data is relocations, we suppress the generation
     // of a section when we intend to do the relocations
-    // ourself (quite normal for dwarfgen but would
+    // ourself (fine for dwarfgen but would
     // be really surprising for a normal compiler
     // back end using the producer code).
 
-    // The section name appears both in the section strings .shstrtab and
+    // The section name appears both in the section strings
+    // .shstrtab and
     // in the elf symtab .symtab and its strings .strtab.
 
     if (0 == strncmp(name,".rel",4))  {
@@ -260,11 +287,16 @@ int CallbackFunc(
     *sect_name_symbol_index = ds.getSectionNameSymidx();
     ElfSectIndex createdsec = create_dw_elf(ds);
 
-    // Do all the data creation before pushing (copying) ds onto dwsectab!
+    // Do all the data creation before pushing
+    // (copying) ds onto dwsectab!
     dwsectab.push_back(ds);
+    // The number returned is elf section, not dwsectab[] index
     return createdsec.getSectIndex();
 }
 
+// Here we create a new Elf section
+// This never happens for relocations in dwarfgen,
+// only a few sections are created by dwarfgen.
 static ElfSectIndex
 create_dw_elf(SectionFromDwarf  &ds)
 {
@@ -289,7 +321,14 @@ create_dw_elf(SectionFromDwarf  &ds)
     shdr->sh_addralign = 1;
     shdr->sh_entsize = 0;
     ElfSectIndex si(elf_ndxscn(scn));
+
     ds.setSectIndex(si);
+    cout << "New Elf section: "<< ds.name_ <<
+        " Type="<< ds.type_ <<
+        " Flags="<< ds.flags_ <<
+        " Elf secnum="<< si.getSectIndex() <<
+        " link section=" << ds.link_<<
+        " info=" << ds.info_ << endl ;
     return  si;
 }
 
@@ -331,12 +370,15 @@ main(int argc, char **argv)
         int opt;
         bool pathrequired(false);
         long cu_of_input_we_output = -1;
-        while((opt=dwgetopt(argc,argv,"o:t:c:hs")) != -1) {
+        while((opt=dwgetopt(argc,argv,"o:t:c:hsr")) != -1) {
             switch(opt) {
             case 'c':
                 // At present we can only create a single
                 // cu in the output of the libdwarf producer.
                 cu_of_input_we_output = atoi(dwoptarg);
+                break;
+            case 'r':
+                showrelocdetails=true;
                 break;
             case 's':
                 defaultInfoStringForm = DW_FORM_strp;
@@ -676,9 +718,10 @@ write_generated_dbg(Dwarf_P_Debug dbg,Elf * elf,IRepresentation &irep)
     }
 
     // Since we are emitting in final form sometimes, we may
-    // do relocation processing here or we may
-    // instead emit relocation records into the object file.
+    // do relocation processing here or we could (but do not)
+    // emit relocation records into the object file.
     // The following is for DW_DLC_SYMBOLIC_RELOCATIONS.
+
     Dwarf_Unsigned reloc_sections_count = 0;
     int drd_version = 0;
     int res = dwarf_get_relocation_info_count(dbg,&reloc_sections_count,
@@ -691,12 +734,18 @@ write_generated_dbg(Dwarf_P_Debug dbg,Elf * elf,IRepresentation &irep)
     cout << "Relocations sections count= " << reloc_sections_count <<
         " relversion=" << drd_version << endl;
     for( Dwarf_Unsigned ct = 0; ct < reloc_sections_count ; ++ct) {
-        // elf_section_index is the elf index of the relocations
-        // themselves.
+        // elf_section_index is the elf index of the
+        // section to be relocated, and the section number
+        // in the object file which we are creating.
+        // In dwarfgen we do not use this as we do not create
+        // relocation sections. Here it is always zero.
         Dwarf_Signed elf_section_index = 0;
-        // elf_section_index_link is the elf index of the section
-        // the relocations apply to.
+
+        // elf_section_index_link is the elf index of the
+        // section  the relocations apply to, such as .debug_info.
+        // An elf index, not dwsectab[] index.
         Dwarf_Signed elf_section_index_link = 0;
+
         // relocation_buffer_count is the number of relocations
         // of this section.
         Dwarf_Unsigned relocation_buffer_count = 0;
@@ -705,18 +754,28 @@ write_generated_dbg(Dwarf_P_Debug dbg,Elf * elf,IRepresentation &irep)
             &elf_section_index_link,
             &relocation_buffer_count,
             &reld,&err);
+        // elf_section_index_link
+        // refers to the output section numbers, not to dwsectab.
         if (res != DW_DLV_OK) {
             cerr << "dwarfgen: Error getting relocation record " <<
                 ct << "."  << endl;
             exit(1);
         }
-        ElfSectIndex si(elf_section_index_link);
-        cout << "Relocs for sec " << ct << " elf-sec=" << elf_section_index <<
-            " link="      << elf_section_index_link <<
-            " bufct="     << relocation_buffer_count << endl;
-        Elf_Scn *scn =  elf_getscn(elf,si.getSectIndex());
+
+        int dwseclink =  FindMySectionNum(elf_section_index_link);
+        ElfSectIndex sitarg = dwsectab[dwseclink].getSectIndex();
+        string linktarg= dwsectab[dwseclink].name_;
+        long int targsec = sitarg.getSectIndex();
+
+        cout << "Relocs for sec=" << ct <<
+            " ourlinkto="       << elf_section_index_link <<
+            " linktoobjsecnum=" << targsec <<
+            " name="            << linktarg <<
+            " reloc-count="     << relocation_buffer_count << endl;
+        Elf_Scn *scn =  elf_getscn(elf,elf_section_index_link);
         if(!scn) {
-            cerr << "dwarfgen: Unable to elf_getscn  # " << si.getSectIndex() << endl;
+            cerr << "dwarfgen: Unable to elf_getscn  # " <<
+                elf_section_index_link << endl;
             exit(1);
         }
 
@@ -726,9 +785,20 @@ write_generated_dbg(Dwarf_P_Debug dbg,Elf * elf,IRepresentation &irep)
             Dwarf_Unsigned newval = FindSymbolValue(symi,irep);
             char *buf_to_update = findelfbuf(elf,scn,
                 rec->drd_offset,rec->drd_length);
+
             if(buf_to_update) {
+                if(showrelocdetails) {
+                    cout << "Reloc "<< r <<
+                        " symindex=" << rec->drd_symbol_index <<
+                        " targoffset= " << IToHex(rec->drd_offset) <<
+                        " newval = " << IToHex(newval) << endl;
+                }
                 bitreplace(buf_to_update, newval,sizeof(newval),
                     rec->drd_length);
+            } else {
+                if(showrelocdetails) {
+                    cout << "Reloc "<< r << "does nothing"<<endl;
+                }
             }
         }
     }

@@ -2,7 +2,7 @@
 
   Copyright (C) 2000,2002,2004 Silicon Graphics, Inc.  All Rights Reserved.
   Portions Copyright 2002-2010 Sun Microsystems, Inc. All rights reserved.
-  Portions Copyright 2011-2014 David Anderson. All Rights Reserved.
+  Portions Copyright 2011-2016 David Anderson. All Rights Reserved.
 
   This program is free software; you can redistribute it and/or modify it
   under the terms of version 2.1 of the GNU Lesser General Public License
@@ -431,18 +431,20 @@ struct Dwarf_P_Debug_s {
         de_simple_name_headers[dwarf_snk_entrycount];
 
     /*  Relocation data. not all sections will actally have relocation
-        info, of course */
+        info, of course.  de_reloc_sect, de_elf_sects, and de_sect_name_idx
+        arrays are exactly in parallel. Not every de_elf_sect has
+        any relocations for it, of course. */
     struct Dwarf_P_Per_Reloc_Sect_s de_reloc_sect[NUM_DEBUG_SECTIONS];
     int de_reloc_next_to_return; /* iterator on reloc sections
         (SYMBOLIC output) */
 
-    /* used in remembering sections */
+    /*  Used in remembering sections. See de_reloc_sect above.  */
     int de_elf_sects[NUM_DEBUG_SECTIONS];  /* elf sect number of
         the section itself, DEBUG_LINE for example */
 
-    Dwarf_Unsigned de_sect_name_idx[NUM_DEBUG_SECTIONS]; /* section
-        name index or handle for the name of the symbol for
+    /*  Section name index or handle for the name of the symbol for
         DEBUG_LINE for example */
+    Dwarf_Unsigned de_sect_name_idx[NUM_DEBUG_SECTIONS];
 
     int de_offset_reloc; /* offset reloc type, R_MIPS_32 for
         example. Specific to the ABI being

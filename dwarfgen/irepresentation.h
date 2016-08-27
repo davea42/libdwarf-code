@@ -1,5 +1,5 @@
 /*
-  Copyright (C) 2010-2013 David Anderson.  All rights reserved.
+  Copyright (C) 2010-2016 David Anderson.  All rights reserved.
 
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions are met:
@@ -65,6 +65,10 @@ private:
     unsigned   nameIndex_;
 };
 
+//  It's very easy to confuse the section number in an elf file
+//  with an array index in dwarfgen.
+//  So this class hold an elf section number
+//  and gives those a recognizable type.
 class ElfSectIndex {
 public:
     ElfSectIndex():elfsect_(0) {};
@@ -77,6 +81,10 @@ private:
 };
 
 
+//  It's very easy to confuse the symbol number in an elf file
+//  with a symbol number in dwarfgen.
+//  So this class hold an elf symbol number number
+//  and gives those a recognizable type.
 class ElfSymIndex {
 public:
     ElfSymIndex():elfsym_(0) {};

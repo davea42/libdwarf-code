@@ -2,7 +2,7 @@
 
   Copyright (C) 2000,2001,2004 Silicon Graphics, Inc.  All Rights Reserved.
   Portions Copyright 2002-2010 Sun Microsystems, Inc. All rights reserved.
-  Portions Copyright 2008-2011 David Anderson, Inc. All rights reserved.
+  Portions Copyright 2008-2016 David Anderson, Inc. All rights reserved.
 
   This program is free software; you can redistribute it and/or modify it
   under the terms of version 2.1 of the GNU Lesser General Public License
@@ -165,17 +165,16 @@ _dwarf_stream_relocs_to_disk(Dwarf_P_Debug dbg,
     Dwarf_Signed * new_sec_count)
 {
     unsigned long total_size = 0;
-    Dwarf_Small *data = 0;
-    int sec_index = 0;
-    unsigned long i = 0;
+    int i = 0;
     Dwarf_Error erre = 0;
     Dwarf_Error *error = &erre;
-
     Dwarf_Signed sec_count = 0;
-
     Dwarf_P_Per_Reloc_Sect p_reloc = &dbg->de_reloc_sect[0];
 
-    for (i = 0; i < NUM_DEBUG_SECTIONS; ++i, ++p_reloc) {
+    for (i = 0; i < NUM_DEBUG_SECTIONS; ++i) {
+        Dwarf_P_Per_Reloc_Sect p_reloc = dbg->de_reloc_sect +i;
+        Dwarf_Small *data = 0;
+        int sec_index = 0;
         unsigned long ct = p_reloc->pr_reloc_total_count;
         unsigned len = 0;
         struct Dwarf_P_Relocation_Block_s *p_blk = 0;
@@ -230,17 +229,13 @@ _dwarf_stream_relocs_to_disk(Dwarf_P_Debug dbg,
             block, simply copies to the output buffer. And frees the
             input block. The new block is in the de_debug_sects list. */
         while (p_blk) {
-
             unsigned long lenk =
                 p_blk->rb_where_to_add_next - p_blk->rb_data;
 
             memcpy(data, p_blk->rb_data, lenk);
-
             data += lenk;
-
             p_blk_last = p_blk;
             p_blk = p_blk->rb_next;
-
             _dwarf_p_dealloc(dbg, (Dwarf_Small *) p_blk_last);
         }
         /* ASSERT: sum of len copied == total_size */

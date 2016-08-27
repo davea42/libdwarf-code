@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2000,2004,2006 Silicon Graphics, Inc.  All Rights Reserved.
-  Portions Copyright (C) 2007-2012 David Anderson. All Rights Reserved.
+  Portions Copyright (C) 2007-2016 David Anderson. All Rights Reserved.
   Portions Copyright 2002-2010 Sun Microsystems, Inc. All rights reserved.
   Portions Copyright 2012 SN Systems Ltd. All rights reserved.
 
@@ -63,11 +63,11 @@ see pro_incl.h
 const char *_dwarf_rel_section_names[] = {
     REL_SEC_PREFIX ".debug_info",
     REL_SEC_PREFIX ".debug_line",
-    REL_SEC_PREFIX ".debug_abbrev",     /* no relocations on this, really */
+    REL_SEC_PREFIX ".debug_abbrev",     /* Nothing here refers to anything. */
     REL_SEC_PREFIX ".debug_frame",
     REL_SEC_PREFIX ".debug_aranges",
     REL_SEC_PREFIX ".debug_pubnames",
-    REL_SEC_PREFIX ".debug_str",
+    REL_SEC_PREFIX ".debug_str",        /* Nothing here refers to anything.*/
     REL_SEC_PREFIX ".debug_funcnames",  /* sgi extension */
     REL_SEC_PREFIX ".debug_typenames",  /* sgi extension */
     REL_SEC_PREFIX ".debug_varnames",   /* sgi extension */
@@ -322,7 +322,6 @@ dwarf_transform_to_disk_form(Dwarf_P_Debug dbg, Dwarf_Error * error)
                     DW_DLV_NOCOUNT);
             }
             dbg->de_elf_sects[sect] = new_base_elf_sect;
-
             dbg->de_sect_name_idx[sect] = du;
         }
     }
@@ -1530,6 +1529,29 @@ has_sibling_die_already(Dwarf_P_Die d)
     return 0;
 }
 
+/*  For DW_FORM_strp we need to set the symindex so we need
+    to check that such applies.  */
+static int
+if_relocatable_string_form(Dwarf_P_Debug dbg, Dwarf_P_Attribute curattr,
+    int *debug_str_reloc,
+    Dwarf_Error *error)
+{
+    if (curattr->ar_rel_type == R_MIPS_NONE) {
+        *debug_str_reloc = 0;
+        return DW_DLV_OK;
+    }
+    if (curattr->ar_attribute_form != DW_FORM_strp) {
+        _dwarf_p_error(dbg, error,DW_DLE_DEBUGSTR_UNEXPECTED_REL);
+        return DW_DLV_ERROR;
+    }
+    if (curattr->ar_rel_type != dbg->de_offset_reloc) {
+        _dwarf_p_error(dbg, error,DW_DLE_DEBUGSTR_UNEXPECTED_REL);
+        return DW_DLV_ERROR;
+    }
+    *debug_str_reloc = 1;
+    return DW_DLV_OK;
+}
+
 /* Generate debug_info and debug_abbrev sections */
 
 static int
@@ -1758,6 +1780,21 @@ _dwarf_pro_generate_debuginfo(Dwarf_P_Debug dbg, Dwarf_Error * error)
                 case DW_AT_macro_info:
                     curattr->ar_rel_symidx =
                         dbg->de_sect_name_idx[DEBUG_MACINFO];
+                case DW_AT_name:
+                case DW_AT_comp_dir:
+                case DW_AT_const_value:
+                case DW_AT_producer: {
+                    int is_debug_str = 0;
+                    int res = if_relocatable_string_form(dbg,curattr,
+                        &is_debug_str,error);
+                    if (res != DW_DLV_OK) {
+                        return -1;
+                    }
+                    if (is_debug_str) {
+                        curattr->ar_rel_symidx =
+                            dbg->de_sect_name_idx[DEBUG_STR];
+                    }
+                    }
                     break;
                 default:
                     break;

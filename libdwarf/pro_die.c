@@ -2,7 +2,7 @@
 
   Copyright (C) 2000,2004 Silicon Graphics, Inc.  All Rights Reserved.
   Portions Copyright 2002-2010 Sun Microsystems, Inc. All rights reserved.
-  Portions Copyright 2011 David Anderson.  All Rights Reserved.
+  Portions Copyright 2011-2016 David Anderson.  All Rights Reserved.
 
   This program is free software; you can redistribute it and/or modify it
   under the terms of version 2.1 of the GNU Lesser General Public License
@@ -470,6 +470,8 @@ int _dwarf_pro_set_string_attr(Dwarf_P_Attribute new_attr,
         new_attr->ar_nbytes = uwordb_size;
         new_attr->ar_next = NULL;
         new_attr->ar_reloc_len = uwordb_size;
+        /*  During transform to disk
+            a symbol index will be applied. */
         new_attr->ar_data = (char *)
             _dwarf_p_get_alloc(dbg, uwordb_size);
         if (new_attr->ar_data == NULL) {

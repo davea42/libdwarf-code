@@ -1,7 +1,7 @@
 /*
 
   Copyright (C) 2000,2004 Silicon Graphics, Inc.  All Rights Reserved.
-  Portions Copyright 2011 David Anderson.  All Rights Reserved.
+  Portions Copyright 2016 David Anderson.  All Rights Reserved.
 
   This program is free software; you can redistribute it and/or modify it
   under the terms of version 2.1 of the GNU Lesser General Public License
@@ -143,30 +143,26 @@ int
 _dwarf_symbolic_relocs_to_disk(Dwarf_P_Debug dbg,
     Dwarf_Signed * new_sec_count)
 {
-    /* unsigned long total_size =0; */
-    Dwarf_Small *data = 0;
-    int sec_index = 0;
-    int res = 0;
-    unsigned long i = 0;
+    int i = 0;
     Dwarf_Error error = 0;
-    Dwarf_Signed sec_count = 0;
-    Dwarf_P_Per_Reloc_Sect p_reloc = &dbg->de_reloc_sect[0];
 
-    for (i = 0; i < NUM_DEBUG_SECTIONS; ++i, ++p_reloc) {
+    for (i = 0; i < NUM_DEBUG_SECTIONS; ++i) {
+        int sec_index = 0;
+        Dwarf_P_Per_Reloc_Sect p_reloc = dbg->de_reloc_sect + i;
         unsigned long ct = p_reloc->pr_reloc_total_count;
-        struct Dwarf_P_Relocation_Block_s *p_blk;
-        struct Dwarf_P_Relocation_Block_s *p_blk_last;
-        int err;
+        struct Dwarf_P_Relocation_Block_s *p_blk = 0;
+        struct Dwarf_P_Relocation_Block_s *p_blk_last = 0;
+        int err = 0;
         if (ct == 0) {
+            /*  No relocations in here. Nothing to do. */
             continue;
         }
-
-        /* len = dbg->de_relocation_record_size; */
-        ++sec_count;
 
         /* total_size = ct *len; */
         sec_index = p_reloc->pr_sect_num_of_reloc_sect;
         if (sec_index == 0) {
+            /*  sec_index zero means we have not processed this
+                section of relocations yet. */
             /*  Call de_callback_func
                 getting section number of reloc section. */
             int rel_section_index = 0;
@@ -180,6 +176,8 @@ _dwarf_symbolic_relocs_to_disk(Dwarf_P_Debug dbg,
                 real arrays. */
 
             if (dbg->de_callback_func) {
+                /*  For symbolic relocations de_callback_func
+                    may well return 0.  */
                 rel_section_index =
                     dbg->de_callback_func(_dwarf_rel_section_names[i],
                         dbg->de_relocation_record_size,
@@ -199,13 +197,14 @@ _dwarf_symbolic_relocs_to_disk(Dwarf_P_Debug dbg,
                 }
             }
             p_reloc->pr_sect_num_of_reloc_sect = rel_section_index;
-            sec_index = rel_section_index;
         }
 
         p_blk = p_reloc->pr_first_block;
 
         if (p_reloc->pr_block_count > 1) {
-            struct Dwarf_P_Relocation_Block_s *new_blk;
+            struct Dwarf_P_Relocation_Block_s *new_blk = 0;
+            Dwarf_Small *data = 0;
+            int res = 0;
 
             /*  HACK , not normal interfaces, trashing p_reloc current
                 contents! */
@@ -240,6 +239,7 @@ _dwarf_symbolic_relocs_to_disk(Dwarf_P_Debug dbg,
                 used (pr_reloc_total_count) */
         }
     }
+    /* There is no section data with symbolic, so there is no count. */
     *new_sec_count = 0;
     return DW_DLV_OK;
 }

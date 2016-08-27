@@ -1,3 +1,14 @@
+2016-08-25 David Anderson
+    * libdwarf.h.in: Added new error code relating to DW_FORM_strp
+      relocations.
+    * dwarf_errmsg_list.c: Added DW_DLE_DEBUGSTR_UNEXPECTED_REL string.
+    * pro_die.c: Added a comment related to DW_FORM_strp.
+    * pro_opaque.h: Added/modified commentary.
+    * pro_section.c: Now sets the correct section symbol for
+      relocations for strings in .debug_str.
+    * pro_reloc.c: Added commentary, deleted blank lines.
+    * pro_reloc_stream.c: Moved declarations to inner
+      contexts where possible. Refined looping for clarity.
 2016-08-23 David Anderson
     * libdwarf2p.1.mm: Document dwarf_pro_set_default_string_form.
     * libdwarf2p.1.pdf: Regenerated. Rev 1.40.

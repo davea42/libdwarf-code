@@ -1,3 +1,9 @@
+2016-08-25  David Anderson
+     * dwarfgen.cc: Clarified and expanded the debug output of dwarfgen
+       about relocations (and added the -r option to expand
+       the output further).
+     * irepresentation.h: Added comments explaining the intent
+       of two small classes.
 2016-08-23  David Anderson
      * dwarfgen.cc: Added the -s option which has .debug_info strings
        generated into .debug_str.
