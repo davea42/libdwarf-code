@@ -1785,9 +1785,9 @@ _dwarf_pro_generate_debuginfo(Dwarf_P_Debug dbg, Dwarf_Error * error)
                 case DW_AT_const_value:
                 case DW_AT_producer: {
                     int is_debug_str = 0;
-                    int res = if_relocatable_string_form(dbg,curattr,
+                    int nres = if_relocatable_string_form(dbg,curattr,
                         &is_debug_str,error);
-                    if (res != DW_DLV_OK) {
+                    if (nres != DW_DLV_OK) {
                         return -1;
                     }
                     if (is_debug_str) {

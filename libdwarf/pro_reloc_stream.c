@@ -169,7 +169,6 @@ _dwarf_stream_relocs_to_disk(Dwarf_P_Debug dbg,
     Dwarf_Error erre = 0;
     Dwarf_Error *error = &erre;
     Dwarf_Signed sec_count = 0;
-    Dwarf_P_Per_Reloc_Sect p_reloc = &dbg->de_reloc_sect[0];
 
     for (i = 0; i < NUM_DEBUG_SECTIONS; ++i) {
         Dwarf_P_Per_Reloc_Sect p_reloc = dbg->de_reloc_sect +i;
@@ -245,7 +244,6 @@ _dwarf_stream_relocs_to_disk(Dwarf_P_Debug dbg,
         p_reloc->pr_first_block = 0;
         p_reloc->pr_last_block = 0;
     }
-
     *new_sec_count = sec_count;
     return DW_DLV_OK;
 }

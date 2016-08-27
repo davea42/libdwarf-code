@@ -1,3 +1,6 @@
+2016-08-27 David Anderson
+    * pro_section.c, pro_reloc_stream.c: In a couple of places names were
+      shadowing other names. Fixed. No change in functionality.
 2016-08-25 David Anderson
     * libdwarf.h.in: Added new error code relating to DW_FORM_strp
       relocations.
