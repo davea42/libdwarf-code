@@ -1,3 +1,7 @@
+August 27, 2016
+  Now the producer is capable of producing .debug_str strings.
+  Strings are never duplicated in .debug_str.
+  See dwarf_pro_set_default_string_form() in libdwarf2p.1.pdf
 May 23, 2016
   When building a shared-library the soname is set
   in the dynamic section "libdwarf.so.1".
