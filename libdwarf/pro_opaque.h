@@ -337,13 +337,24 @@ struct Dwarf_P_Per_Sect_String_Attrs_s {
     Dwarf_P_String_Attr sect_sa_list;
 };
 
-/*  dse_key is the hash value of the name.
-    dse_name points into the de_debug_str characters.  */
 struct Dwarf_P_debug_str_entry_s {
-    unsigned dse_key;
+    Dwarf_P_Debug  dse_dbg;
+    /*  Name used initially with tfind. */
+    char *dse_name;
     Dwarf_Unsigned dse_slen; /* includes space for NUL terminator */
     Dwarf_Unsigned dse_table_offset;
-    char *   dse_name;
+    /*  For tsearch a hash table exists and we have a table offset.
+        dse_dbg->de_debug_str->ds_data + dse_table_offset
+        points to the string. */
+};
+
+struct Dwarf_P_Stats_s {
+    Dwarf_Unsigned ps_str_count;
+    Dwarf_Unsigned ps_str_total_length;
+    Dwarf_Unsigned ps_strp_count_debug_str;
+    Dwarf_Unsigned ps_strp_len_debug_str;
+    Dwarf_Unsigned ps_strp_reused_count;
+    Dwarf_Unsigned ps_strp_reused_len;
 };
 
 /* Fields used by producer */
@@ -513,6 +524,7 @@ struct Dwarf_P_Debug_s {
     struct Dwarf_P_Per_Sect_String_Attrs_s de_sect_string_attr[NUM_DEBUG_SECTIONS];
     /* Hold data needed to init new line output flexibly. */
     struct Dwarf_P_Line_Inits_s de_line_inits;
+    struct Dwarf_P_Stats_s de_stats;
 };
 
 #define CURRENT_VERSION_STAMP   2

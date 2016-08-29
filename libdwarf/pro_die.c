@@ -251,12 +251,32 @@ _dwarf_pro_add_AT_stmt_list(Dwarf_P_Debug dbg,
 static int
 _dwarf_debug_str_compare_func(const void *l,const void *r)
 {
-   const struct Dwarf_P_debug_str_entry_s*el = l;
-   const struct Dwarf_P_debug_str_entry_s*er = r;
-   int ir = 0;
+    const struct Dwarf_P_debug_str_entry_s*el = l;
+    const struct Dwarf_P_debug_str_entry_s*er = r;
+    char *lname =  0;
+    char *rname =  0;
+    int ir = 0;
 
-   ir = strcmp(el->dse_name,er->dse_name);
-   return ir;
+    if (el->dse_table_offset) {
+        /*  When set the name is in the debug_str table. */
+        /*  ASSERT: dse_dbg->de_debug_str->ds_data is non-zero.
+            ASSERT: dse_name NULL. */
+        lname = el->dse_dbg->de_debug_str->ds_data + el->dse_table_offset;
+    } else {
+        /*  ASSERT: dse_name non-null */
+        lname = el->dse_name;
+    }
+    if (er->dse_table_offset) {
+        /*  When set the name is in the debug_str table. */
+        /*  ASSERT: dse_dbg->de_debug_str->ds_data is non-zero.
+            ASSERT: dse_name NULL. */
+        rname = er->dse_dbg->de_debug_str->ds_data + er->dse_table_offset;
+    } else {
+        /*  ASSERT: dse_name non-null */
+        rname = er->dse_name;
+    }
+    ir = strcmp(lname,rname);
+    return ir;
 }
 
 static  void
@@ -270,6 +290,7 @@ make_debug_str_entry(Dwarf_P_Debug dbg,
     struct Dwarf_P_debug_str_entry_s **mt_out,
     char *name,
     unsigned slen,
+    Dwarf_Unsigned offset_in_table,
     Dwarf_Error *error)
 {
     struct Dwarf_P_debug_str_entry_s *mt =
@@ -280,10 +301,16 @@ make_debug_str_entry(Dwarf_P_Debug dbg,
         return DW_DLV_ERROR;
     }
 
-    mt->dse_key = 0;
     mt->dse_slen = slen;
     mt->dse_table_offset = 0;
-    mt->dse_name = name;
+    mt->dse_dbg = dbg;
+    if (offset_in_table) {
+        mt->dse_table_offset = offset_in_table;
+        mt->dse_name = 0;
+    } else {
+        mt->dse_name = name;
+        mt->dse_table_offset = 0;
+    }
     *mt_out = mt;
     return DW_DLV_OK;
 }
@@ -327,6 +354,7 @@ insert_debug_str_data_string(Dwarf_P_Debug dbg,
         unsigned updated_length = sd->ds_orig_alloc;
         char *newbuf = 0;
         if (slen > updated_length) {
+            /*  Very long string passed in. */
             updated_length = slen *2;
         } else {
             updated_length = updated_length *2;
@@ -368,7 +396,7 @@ _dwarf_insert_or_find_in_debug_str(Dwarf_P_Debug dbg,
     int res = 0;
     Dwarf_Unsigned adding_at_offset = 0;
 
-    res = make_debug_str_entry(dbg,&mt,name,slen, error);
+    res = make_debug_str_entry(dbg,&mt,name,slen,0, error);
     if (res != DW_DLV_OK) {
         return res;
     }
@@ -378,6 +406,9 @@ _dwarf_insert_or_find_in_debug_str(Dwarf_P_Debug dbg,
     retval = dwarf_tfind(mt,(void *const*)&dbg->de_debug_str_hashtab,
         _dwarf_debug_str_compare_func);
     if (retval) {
+        dbg->de_stats.ps_strp_reused_count++;
+        dbg->de_stats.ps_strp_reused_len += slen;
+
         re = *(struct Dwarf_P_debug_str_entry_s **)retval;
         *offset_in_debug_str = re->dse_table_offset;
         debug_str_entry_free_func(mt);
@@ -388,24 +419,21 @@ _dwarf_insert_or_find_in_debug_str(Dwarf_P_Debug dbg,
         Insert it into the big string table and get that
         offset. */
 
+    debug_str_entry_free_func(mt);
+    mt = 0;
     res = insert_debug_str_data_string(dbg,name,slen, &adding_at_offset,
         error);
     if (res != DW_DLV_OK) {
-        debug_str_entry_free_func(mt);
         return res;
     }
-    debug_str_entry_free_func(mt);
-    mt = 0;
 
     /*  The name is in the string table itself, so use that pointer
-        for the hash table string pointer. */
-    res = make_debug_str_entry(dbg,&mt2,
-        dbg->de_debug_str->ds_data + adding_at_offset,
-        slen,error);
+        and offset for the string. */
+    res = make_debug_str_entry(dbg,&mt2, 0,
+        slen,adding_at_offset,error);
     if (res != DW_DLV_OK) {
         return res;
     }
-    mt2->dse_table_offset = adding_at_offset;
     retval = dwarf_tsearch(mt2,
         (void *)&dbg->de_debug_str_hashtab,
         _dwarf_debug_str_compare_func);
@@ -424,6 +452,8 @@ _dwarf_insert_or_find_in_debug_str(Dwarf_P_Debug dbg,
         _dwarf_p_error(dbg, error, DW_DLE_ILLOGICAL_TSEARCH);
         return DW_DLV_ERROR;
     }
+    dbg->de_stats.ps_strp_count_debug_str++;
+    dbg->de_stats.ps_strp_len_debug_str += slen;
     /* we added it to hash, do not free mt2 (which == re). */
     *offset_in_debug_str = re->dse_table_offset;
     return DW_DLV_OK;
@@ -448,6 +478,8 @@ int _dwarf_pro_set_string_attr(Dwarf_P_Attribute new_attr,
             _dwarf_p_error(dbg, error, DW_DLE_ALLOC_FAIL);
             return DW_DLV_ERROR;
         }
+        dbg->de_stats.ps_str_count++;
+        dbg->de_stats.ps_str_total_length += slen;
 
         strcpy(new_attr->ar_data, name);
         new_attr->ar_attribute_form = DW_FORM_string;

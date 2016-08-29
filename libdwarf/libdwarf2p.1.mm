@@ -11,7 +11,7 @@
 .nr Hb 5
 \." ==============================================
 \." Put current date in the following at each rev
-.ds vE rev 1.40, 23 August 2016
+.ds vE rev 1.41, 28 August 2016
 \." ==============================================
 \." ==============================================
 .ds | |
@@ -1110,6 +1110,41 @@ internal pointers.
 It is unwise to call this before
 \f(CWdwarf_transform_to_disk_form() \fP has been called.
 .P
+
+.H 3 "dwarf_pro_get_string_stats()"
+.DS
+\f(CWint dwarf_pro_get_string_stats(
+    Dwarf_P_Debug dbg,
+    Dwarf_Unsigned * str_count,
+    Dwarf_Unsigned * str_total_length,
+    Dwarf_Unsigned * strp_count_debug_str,
+    Dwarf_Unsigned * strp_len_debug_str,
+    Dwarf_Unsigned * strp_reused_count,
+    Dwarf_Unsigned * strp_reused_len,
+    Dwarf_Error* error) \fP
+.DE
+If it returns 
+\f(CWDW_DLV_OK\fP 
+the function 
+\f(CWdwarf_producer_finish()\fP 
+returns information about how 
+\f(CWDW_AT_name\fP 
+etc strings were stored in the output object.
+The values suggest how much string duplication
+was detected in the DWARF being created.
+.P
+Call it after calling
+\f(CWdwarf_transform_to_disk_form()\fP
+and before calling
+\f(CWdwarf_producer_finish()\fP .
+It has no effect on the object being output.
+.P
+On error it returns
+\f(CWDW_DLV_ERROR\fP 
+and sets
+\f(CWerror\fP 
+through the pointer.
+
 
 .H 3 "dwarf_producer_finish()"
 .DS

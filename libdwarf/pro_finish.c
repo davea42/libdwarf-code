@@ -30,6 +30,7 @@
 #include "libdwarfdefs.h"
 #include "pro_incl.h"
 
+
 /*  This routine deallocates all memory, and does some
     finishing up */
 /*ARGSUSED*/ Dwarf_Unsigned
@@ -43,3 +44,31 @@ dwarf_producer_finish(Dwarf_P_Debug dbg, Dwarf_Error * error)
     _dwarf_p_dealloc_all(dbg);
     return 0;
 }
+
+int
+dwarf_pro_get_string_stats(Dwarf_P_Debug dbg,
+    Dwarf_Unsigned * str_count,
+    Dwarf_Unsigned * str_total_length,
+    Dwarf_Unsigned * strp_count_debug_str,
+    Dwarf_Unsigned * strp_len_debug_str,
+    Dwarf_Unsigned * strp_reused_count,
+    Dwarf_Unsigned * strp_reused_len,
+    Dwarf_Error    * error)
+{
+    if (!dbg) {
+        _dwarf_p_error(dbg, error, DW_DLE_IA);
+        return DW_DLV_ERROR;
+    }
+    if (dbg->de_version_magic_number !=PRO_VERSION_MAGIC ) {
+        _dwarf_p_error(dbg, error, DW_DLE_VMM);
+        return DW_DLV_ERROR;
+    }
+    *str_count        = dbg->de_stats.ps_str_count;
+    *str_total_length = dbg->de_stats.ps_str_total_length;
+    *strp_count_debug_str  = dbg->de_stats.ps_strp_count_debug_str;
+    *strp_len_debug_str    = dbg->de_stats.ps_strp_len_debug_str;
+    *strp_reused_count  = dbg->de_stats.ps_strp_reused_count;
+    *strp_reused_len   = dbg->de_stats.ps_strp_reused_len;
+    return DW_DLV_OK;
+}
+

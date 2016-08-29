@@ -3970,6 +3970,15 @@ extern Dwarf_Cmdline_Options dwarf_cmdline_options;
 /* Set libdwarf to reflect some application command line options. */
 void dwarf_record_cmdline_options(Dwarf_Cmdline_Options /*options*/);
 
+int dwarf_pro_get_string_stats(Dwarf_P_Debug /*dbg*/,
+    Dwarf_Unsigned * /*str_count*/,
+    Dwarf_Unsigned * /*str_total_length*/,
+    Dwarf_Unsigned * /*count_debug_str*/,
+    Dwarf_Unsigned * /*len_debug_str*/,
+    Dwarf_Unsigned * /*reused_count*/,
+    Dwarf_Unsigned * /*reused_len*/,
+    Dwarf_Error    * /*error*/);
+
 #ifdef __cplusplus
 }
 #endif

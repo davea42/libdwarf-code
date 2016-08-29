@@ -227,10 +227,19 @@ simple_string_hashfunc(const void *keyp)
     struct Dwarf_P_debug_str_entry_s* mt =
         (struct Dwarf_P_debug_str_entry_s*) keyp;
     DW_TSHASHTYPE up = 0;
-    const char *str = (const char *)mt->dse_name;
+    const char *str = 0;
     uint32_t hash = 5381;
     int c  = 0;
 
+    if (!mt->dse_name) {
+        /*  ASSERT: mt->dse_table_offset and
+            mt->dse_dbg->de_debug_str->ds_data are not zero. */
+        str = (const char *)mt->dse_dbg->de_debug_str->ds_data +
+            mt->dse_table_offset;
+    } else {
+        /*  ASSERT: mt->dse_table_offset is zero. */
+        str = (const char *)mt->dse_name;
+    }
     /*  Extra parens suppress warning about assign in test. */
     while ((c = *str++)) {
         hash = hash * 33 + c ;

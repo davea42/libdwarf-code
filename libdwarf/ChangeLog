@@ -1,3 +1,15 @@
+2016-08-28 David Anderson
+    * libdwarf.h.in: Added dwarf_pro_get_string_stats() for producer
+      library users to know how libdwarf handled DW_AT_name etc.
+    * pro_die.c: Corrected the tsearch-related compare/hash functions
+      to work correctly.
+    * pro_finish.c: Implements dwarf_pro_get_string_stats().
+    * pro_init.c: Hash function for tsearch implemented correctly now.
+    * pro_opaque.h: Changed the hash data structure so it can work
+      correctly. Added the statistics struct to the Dwarf_P_Debug
+      structure.
+    * libdwarf2p.1.mm: Documents dwarf_pro_get_string_stats().
+    * libdwarf2p.1.pdf: Revision 1.41. Regenerated.
 2016-08-27 David Anderson
     * pro_section.c, pro_reloc_stream.c: In a couple of places names were
       shadowing other names. Fixed. No change in functionality.

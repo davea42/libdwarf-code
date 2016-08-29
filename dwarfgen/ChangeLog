@@ -1,3 +1,6 @@
+2016-08-28  David Anderson
+     * dwarfgen.cc: Now calls dwarf_pro_get_string_stats()
+       and prints the string counts information.
 2016-08-25  David Anderson
      * dwarfgen.cc: Clarified and expanded the debug output of dwarfgen
        about relocations (and added the -r option to expand

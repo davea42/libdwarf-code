@@ -452,7 +452,7 @@ main(int argc, char **argv)
             cerr << "dwarfgen: Failed init_b" << endl;
             exit(EXIT_FAILURE);
         }
-        dwarf_pro_set_default_string_form(dbg,
+        res = dwarf_pro_set_default_string_form(dbg,
             defaultInfoStringForm,&err);
         if(res != DW_DLV_OK) {
             cerr << "dwarfgen: Failed dwarf_pro_set_default_string_form"
@@ -464,6 +464,24 @@ main(int argc, char **argv)
         // Example calls ErrorHandler if there is an error
         // (which does not return, see above)
         // so no need to test for error.
+        Dwarf_Unsigned str_count = 0;
+        Dwarf_Unsigned str_len = 0;
+        Dwarf_Unsigned debug_str_count = 0;
+        Dwarf_Unsigned debug_str_len = 0;
+        Dwarf_Unsigned reused_count = 0;
+        Dwarf_Unsigned reused_len = 0;
+        res = dwarf_pro_get_string_stats(dbg,
+            &str_count,&str_len,
+            &debug_str_count,
+            &debug_str_len,
+            &reused_count,
+            &reused_len,&err);
+        cout << "Debug_info str count " <<str_count <<
+            ", byte total len " <<str_len << endl;
+        cout << "Debug_str count " <<debug_str_count <<
+            ", byte total len " <<debug_str_len << endl;
+        cout << "Reused debug_str count " <<reused_count <<
+            ", byte total len not emitted " <<reused_len << endl;
         dwarf_producer_finish( dbg, 0);
         return 0;
     } // End try
