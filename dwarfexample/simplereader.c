@@ -116,6 +116,9 @@ void close_a_file(int f);
 
 static int namesoptionon = 0;
 static int checkoptionon = 0;
+static int dumpallnames = 0;
+FILE *dumpallnamesfile = 0;
+static const  char * dumpallnamespath = 0;
 #if 0
 DW_UT_compile                   0x01  /* DWARF5 */
 DW_UT_type                      0x02  /* DWARF5 */
@@ -126,6 +129,9 @@ static int stdrun = TRUE;
 
 static int unittype      = DW_UT_compile;
 static Dwarf_Bool g_is_info = TRUE;
+
+int cu_version_stamp = 0;
+int cu_offset_size = 0;
 
 /*  dienumberr is used to count DIEs.
     The point is to match fissionfordie. */
@@ -330,6 +336,15 @@ main(int argc, char **argv)
         for(i = 1; i < (argc-1) ; ++i) {
             if(strcmp(argv[i],"--names") == 0) {
                 namesoptionon=1;
+            } else if(startswithextractstring(argv[1],"--dumpallnames=",
+                &dumpallnamespath)) {
+                dumpallnames=1;
+                dumpallnamesfile = fopen(dumpallnamespath,"w");
+                if(!dumpallnamesfile) {
+                    printf("Cannot open %s. Giving up.\n",
+                        dumpallnamespath);
+                    exit(1);
+                }
             } else if(strcmp(argv[i],"--check") == 0) {
                 checkoptionon=1;
             } else if(startswithextractstring(argv[i],"--tuhash=",&tuhash)) {
@@ -478,6 +493,9 @@ main(int argc, char **argv)
     if(res != DW_DLV_OK) {
         printf("dwarf_finish failed!\n");
     }
+    if (dumpallnamesfile) {
+        fclose(dumpallnamesfile);
+    }
     close_a_file(fd);
     return 0;
 }
@@ -486,9 +504,9 @@ static void
 read_cu_list(Dwarf_Debug dbg)
 {
     Dwarf_Unsigned cu_header_length = 0;
-    Dwarf_Half     version_stamp = 0;
     Dwarf_Unsigned abbrev_offset = 0;
     Dwarf_Half     address_size = 0;
+    Dwarf_Half     version_stamp = 0;
     Dwarf_Half     offset_size = 0;
     Dwarf_Half     extension_size = 0;
     Dwarf_Sig8     signature;
@@ -531,6 +549,8 @@ read_cu_list(Dwarf_Debug dbg)
             /* Done. */
             return;
         }
+        cu_version_stamp = version_stamp;
+        cu_offset_size   = offset_size;
         /* The CU will have a single sibling, a cu_die. */
         res = dwarf_siblingof_b(dbg,no_die,is_info,
             &cu_die,errp);
@@ -848,6 +868,77 @@ resetsrcfiles(Dwarf_Debug dbg,struct srcfilesdata *sf)
     sf->srcfilescount = 0;
 }
 
+static void
+print_single_string(Dwarf_Debug dbg, Dwarf_Die die,Dwarf_Half attrnum)
+{
+   int res = 0;
+   Dwarf_Error error = 0;
+   char * stringval = 0;
+
+   res = dwarf_die_text(die,attrnum, &stringval,&error);
+   if (res == DW_DLV_OK) {
+       fprintf(dumpallnamesfile,"%s\n",stringval);
+       dwarf_dealloc(dbg,stringval, DW_DLA_STRING);
+   }
+   return;
+}
+
+
+static void
+print_name_strings_attr(Dwarf_Debug dbg, Dwarf_Die die,
+    Dwarf_Attribute attr)
+{
+    int res = 0;
+    Dwarf_Half attrnum = 0;
+    Dwarf_Half finalform = 0;
+    char * name = 0;
+    int version = 0;
+    enum Dwarf_Form_Class cl = DW_FORM_CLASS_UNKNOWN;
+    Dwarf_Error error = 0;
+ 
+    res = dwarf_whatattr(attr,&attrnum,&error);
+    if(res != DW_DLV_OK) {
+        printf("Unable to get attr number");
+        exit(1);
+    }
+
+    res = dwarf_whatform(attr,&finalform,&error);
+    if(res != DW_DLV_OK) {
+        printf("Unable to get attr form");
+        exit(1);
+    }
+
+    cl = dwarf_get_form_class(cu_version_stamp,
+        attrnum,cu_offset_size,finalform);
+
+    if (cl != DW_FORM_CLASS_STRING) {
+        return;
+    }
+    print_single_string(dbg,die,attrnum);
+}
+
+static void
+printnamestrings(Dwarf_Debug dbg, Dwarf_Die die)
+{
+    Dwarf_Error error =0;
+    Dwarf_Attribute *atlist = 0;
+    Dwarf_Signed atcount = 0;
+    int res = 0;
+
+    res = dwarf_attrlist(die,&atlist, &atcount,&error);
+    if (res != DW_DLV_OK) {
+        return;
+    }
+    for (Dwarf_Signed i = 0; i < atcount; ++i) {
+        Dwarf_Attribute attr = atlist[i];
+        // Use an empty attr to get a placeholder on
+        // the attr list for this IRDie.
+        print_name_strings_attr(dbg,die,attr);
+    }
+    dwarf_dealloc(dbg,atlist, DW_DLA_LIST);
+
+}
+
 
 
 static void
@@ -889,6 +980,9 @@ print_die_data_i(Dwarf_Debug dbg, Dwarf_Die print_me,
     if(res != DW_DLV_OK) {
         printf("Error in dwarf_get_TAG_name , level %d \n",level);
         exit(1);
+    }
+    if (dumpallnames) {
+        printnamestrings(dbg,print_me);
     }
     res = dwarf_attr(print_me,DW_AT_name,&attr, errp);
     if (res != DW_DLV_OK) {

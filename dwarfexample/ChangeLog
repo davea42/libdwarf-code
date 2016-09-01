@@ -1,3 +1,8 @@
+2016-09-01  David Anderson
+     * simplereader.c: Adding --dumpallnames option
+       so it becomes easy to analyze string usage in objects.
+       (The analysys to be carried out be other code, not part
+       of the libdwarf distribution.)
 2016-04-21  Carlos Alberto Enciso
      * Use the _WIN32 macro to identify a WINDOWS specific code.
 2016-03-14  DavidAnderson <davea42@earthlink.net>

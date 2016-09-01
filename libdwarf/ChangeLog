@@ -1,3 +1,7 @@
+2016-09-01 David Anderson
+    * libdwarf2.1.mm: Improved the wording for dwarf_diename()
+      and dwarf_die_text().
+    * libdwarf2.1.pdf: Regenerated as Version 2.51.
 2016-08-28 David Anderson
     * libdwarf.h.in: Added dwarf_pro_get_string_stats() for producer
       library users to know how libdwarf handled DW_AT_name etc.

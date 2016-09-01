@@ -8,7 +8,7 @@
 .nr Hb 5
 \." ==============================================
 \." Put current date in the following at each rev
-.ds vE rev 2.50, June 12, 2016
+.ds vE rev 2.51, September 1, 2016
 \." ==============================================
 \." ==============================================
 .ds | |
@@ -2746,42 +2746,61 @@ the function \f(CWdwarf_diename()\fP returns
 \f(CWDW_DLV_OK\fP and sets \f(CW*return_name\fP
 to
 a pointer to a
-null-terminated string of characters that represents the name
-attribute of \f(CWdie\fP.
-It returns \f(CWDW_DLV_NO_ENTRY\fP if 
-\f(CWdie\fP does not have a name attribute.
-It returns \f(CWDW_DLV_ERROR\fP if
-an error occurred.  
+null-terminated string of characters that represents the 
+name attribute 
+(\f(CWDW_AT_name\fP)
+of 
+\f(CWdie\fP.
+.P
 The storage pointed to by a successful return of 
 \f(CWdwarf_diename()\fP should be freed using the allocation type
 \f(CWDW_DLA_STRING\fP when no longer of interest (see 
 \f(CWdwarf_dealloc()\fP).
+.P
+It returns \f(CWDW_DLV_NO_ENTRY\fP if 
+\f(CWdie\fP does not have a name attribute.
+It returns \f(CWDW_DLV_ERROR\fP if
+an error occurred.  
+
 
 .H 3 "dwarf_die_text()"
 .DS
 \f(CWint dwarf_die_text(
         Dwarf_Die die, 
-        Dwarf_Half attr,
+        Dwarf_Half attrnum,
 	char  ** return_name,
         Dwarf_Error *error)\fP
 .DE
 When it succeeds,
-the function \f(CWdwarf_die_text()\fP returns
-\f(CWDW_DLV_OK\fP and sets \f(CW*return_name\fP
+the function 
+\f(CWdwarf_die_text()\fP
+returns
+\f(CWDW_DLV_OK\fP
+and sets 
+\f(CW*return_name\fP
 to
 a pointer to a
 null-terminated string of characters that represents a
 string-value
-attribute of \f(CWdie\fP.
-It returns \f(CWDW_DLV_NO_ENTRY\fP 
-if \f(CWdie\fP does not have the attribute
-\f(CWattr\fP.
-It returns \f(CWDW_DLV_ERROR\fP if
-an error occurred.  
+attribute of 
+\f(CWdie\fP
+if an
+attribute 
+\f(CWattrnum\fP
+is present.
+.P
 The storage pointed to by a successful return of 
-\f(CWdwarf_diename()\fP should be freed using the allocation type
+\f(CWdwarf_die_text()\fP should be freed using the allocation type
 \f(CWDW_DLA_STRING\fP when no longer of interest (see 
 \f(CWdwarf_dealloc()\fP).
+.P
+It returns 
+\f(CWDW_DLV_NO_ENTRY\fP 
+if \f(CWdie\fP does not have the attribute
+\f(CWattrnum\fP.
+It returns 
+\f(CWDW_DLV_ERROR\fP if
+an error occurred.  
 
 .H 3 "dwarf_die_abbrev_code()"
 .DS
