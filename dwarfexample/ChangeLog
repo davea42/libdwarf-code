@@ -1,4 +1,4 @@
-2016-09-01  David Anderson
+2016-09-05  David Anderson
      * simplereader.c: Adding --dumpallnames option
        so it becomes easy to analyze string usage in objects.
        (The analysys to be carried out be other code, not part

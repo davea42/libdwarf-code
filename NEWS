@@ -1,3 +1,8 @@
+2016-09-05:  
+  dwarfexample/simpleexample.c now has a simple option letting one
+  extract all .debug_info, .debug_types strings into a file by
+  themselves in case one wanted to examine string frequencies,
+  for example.
 2016-06-01:  Now we use DW_VERSION_DATE_STR for 
   dates everywhere instead of __DATE__ __TIME__
   so a repeated build gets identical object output.

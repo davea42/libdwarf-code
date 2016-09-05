@@ -1,5 +1,5 @@
 /*
-  Copyright (c) 2009-2013 David Anderson.  All rights reserved.
+  Copyright (c) 2009-2016 David Anderson.  All rights reserved.
 
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions are met:
@@ -40,6 +40,14 @@
 
     The --check
     option does some interface and error checking.
+
+    Option new September 2016:
+        --dumpallnames=filepath
+    This causes all the strings from the .debug_info and .debug_types
+    sections to be written to 'filepath'. Any previous contents
+    of the file are wiped out.
+    This could be handy if you want to use the set of strings to
+    investigate ways to improve the density of strings in some way.
 
     Options new 03 May 2015:
     These options do something different.
@@ -339,12 +347,6 @@ main(int argc, char **argv)
             } else if(startswithextractstring(argv[1],"--dumpallnames=",
                 &dumpallnamespath)) {
                 dumpallnames=1;
-                dumpallnamesfile = fopen(dumpallnamespath,"w");
-                if(!dumpallnamesfile) {
-                    printf("Cannot open %s. Giving up.\n",
-                        dumpallnamespath);
-                    exit(1);
-                }
             } else if(strcmp(argv[i],"--check") == 0) {
                 checkoptionon=1;
             } else if(startswithextractstring(argv[i],"--tuhash=",&tuhash)) {
@@ -374,6 +376,21 @@ main(int argc, char **argv)
             }
         }
         filepath = argv[i];
+        if (dumpallnames) {
+            if (!strcmp(dumpallnamespath,filepath)) {
+                printf("Using --dumpallnames with the same path  "
+                    "(%s) "
+                    "as the file to read is not allowed. giving up.\n",
+                    filepath);
+                exit(1);
+            }
+            dumpallnamesfile = fopen(dumpallnamespath,"w");
+            if(!dumpallnamesfile) {
+                printf("Cannot open %s. Giving up.\n",
+                    dumpallnamespath);
+                exit(1);
+            }
+        }
         fd = open_a_file(filepath);
     }
     if(argc > 2) {
@@ -871,16 +888,16 @@ resetsrcfiles(Dwarf_Debug dbg,struct srcfilesdata *sf)
 static void
 print_single_string(Dwarf_Debug dbg, Dwarf_Die die,Dwarf_Half attrnum)
 {
-   int res = 0;
-   Dwarf_Error error = 0;
-   char * stringval = 0;
+    int res = 0;
+    Dwarf_Error error = 0;
+    char * stringval = 0;
 
-   res = dwarf_die_text(die,attrnum, &stringval,&error);
-   if (res == DW_DLV_OK) {
-       fprintf(dumpallnamesfile,"%s\n",stringval);
-       dwarf_dealloc(dbg,stringval, DW_DLA_STRING);
-   }
-   return;
+    res = dwarf_die_text(die,attrnum, &stringval,&error);
+    if (res == DW_DLV_OK) {
+        fprintf(dumpallnamesfile,"%s\n",stringval);
+        dwarf_dealloc(dbg,stringval, DW_DLA_STRING);
+    }
+    return;
 }
 
 
@@ -891,11 +908,9 @@ print_name_strings_attr(Dwarf_Debug dbg, Dwarf_Die die,
     int res = 0;
     Dwarf_Half attrnum = 0;
     Dwarf_Half finalform = 0;
-    char * name = 0;
-    int version = 0;
     enum Dwarf_Form_Class cl = DW_FORM_CLASS_UNKNOWN;
     Dwarf_Error error = 0;
- 
+
     res = dwarf_whatattr(attr,&attrnum,&error);
     if(res != DW_DLV_OK) {
         printf("Unable to get attr number");
