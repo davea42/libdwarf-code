@@ -1,7 +1,7 @@
 /*
   Copyright (C) 2000-2010 Silicon Graphics, Inc.  All Rights Reserved.
   Portions Copyright (C) 2009-2010 SN Systems Ltd. All Rights Reserved.
-  Portions Copyright (C) 2009-2011 David Anderson. All Rights Reserved.
+  Portions Copyright (C) 2009-2016 David Anderson. All Rights Reserved.
 
   This program is free software; you can redistribute it and/or modify it
   under the terms of version 2 of the GNU General Public License as
@@ -78,9 +78,9 @@ No blank lines or commentary allowed, no symbols, just numbers.
 
 /*  1 more than the highest number in the DW_TAG defines,
     this is for standard TAGs. Number of rows. */
-#define STD_TAG_TABLE_ROWS 0x4a
+#define STD_TAG_TABLE_ROWS  73
 /* Enough entries to have a bit for each standard legal tag. */
-#define STD_TAG_TABLE_COLUMNS 7
+#define STD_TAG_TABLE_COLUMNS 3
 
 /* TAG tree common extension maximums. */
 #define EXT_TAG_TABLE_ROWS  8
@@ -94,15 +94,15 @@ No blank lines or commentary allowed, no symbols, just numbers.
     BITS_PER_WORD fields per word. Dense and quick to inspect */
 #define COUNT_ATTRIBUTE_STD 7
 
-#define STD_ATTR_TABLE_ROWS STD_TAG_TABLE_ROWS
-#define STD_ATTR_TABLE_COLUMNS  16
+#define STD_ATTR_TABLE_ROWS 74
+#define STD_ATTR_TABLE_COLUMNS  5
 /* tag/attr tree common extension maximums. */
 #define EXT_ATTR_TABLE_ROWS 10
 #define EXT_ATTR_TABLE_COLS 10
 
 /* The following 2 used in tag_attr.c only. */
-#define ATTR_TABLE_ROW_MAXIMUM STD_ATTR_TABLE_ROWS
-#define ATTR_TABLE_COLUMN_MAXIMUM  EXT_ATTR_TABLE_COLS
+#define ATTR_TABLE_ROW_MAXIMUM 74
+#define ATTR_TABLE_COLUMN_MAXIMUM  5
 
 /* Bits per 'int' to mark legal attrs. */
 #define BITS_PER_WORD 32

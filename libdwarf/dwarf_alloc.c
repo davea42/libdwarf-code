@@ -52,6 +52,7 @@
 #include "dwarf_gdbindex.h"
 #include "dwarf_xu_index.h"
 #include "dwarf_macro5.h"
+#include "dwarf_dsc.h"
 
 #define TRUE 1
 #define FALSE 0
@@ -265,6 +266,9 @@ struct ial_s alloc_instance_basics[ALLOC_AREA_INDEX_TABLE_MAX] = {
 
     /* 61 DW_DLA_CHAIN_2 */
     {sizeof(struct Dwarf_Chain_o),MULTIPLY_NO, 0, 0},
+    /* 62 DW_DLA_DSC_HEAD 0x3e */
+    {sizeof(struct Dwarf_Dsc_Head_s),MULTIPLY_NO, 0,
+        _dwarf_dsc_destructor},
 };
 
 /*  We are simply using the incoming pointer as the key-pointer.

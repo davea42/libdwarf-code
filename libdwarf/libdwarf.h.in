@@ -169,6 +169,12 @@ typedef struct Dwarf_Loc_Head_c_s * Dwarf_Loc_Head_c;
 struct Dwarf_Macro_Context_s;
 typedef struct Dwarf_Macro_Context_s * Dwarf_Loc_Macro_Context;
 
+/*  NEW September 2016. Allows easy access to DW_AT_discr_list
+    array of discriminant values. Input in blockpointer
+    is a block with a list of uleb or sleb numbers
+    (all one or the other, lebunsignedflag instructs
+    how to read the leb values properly) */
+typedef struct Dwarf_Dsc_Head_s * Dwarf_Dsc_Head;
 
 /*  Location record. Records up to 2 operand values.
     Not usable with DWARF5 or DWARF4 with location
@@ -843,6 +849,8 @@ struct Dwarf_Obj_Access_Interface_s {
 #define DW_DLA_LOCDESC_C       0x3a     /* Dwarf_Locdesc_c */
 #define DW_DLA_LOC_HEAD_C      0x3b     /* Dwarf_Loc_Head_c */
 #define DW_DLA_MACRO_CONTEXT   0x3c     /* Dwarf_Macro_Context */
+/*  0x3d (61) is for libdwarf internal use.               */
+#define DW_DLA_DSC_HEAD        0x3e     /* Dwarf_Dsc_Head */
 
 /* The augmenter string for CIE */
 #define DW_CIE_AUGMENTER_STRING_V0              "z"
@@ -1269,9 +1277,10 @@ struct Dwarf_Obj_Access_Interface_s {
 #define DW_DLE_BAD_STRING_FORM                 350
 #define DW_DLE_DEBUGSTR_ERROR                  351
 #define DW_DLE_DEBUGSTR_UNEXPECTED_REL         352
+#define DW_DLE_DISCR_ARRAY_ERROR               353
 
     /* DW_DLE_LAST MUST EQUAL LAST ERROR NUMBER */
-#define DW_DLE_LAST        352
+#define DW_DLE_LAST        353
 #define DW_DLE_LO_USER     0x10000
 
     /*  Taken as meaning 'undefined value', this is not
@@ -3942,6 +3951,34 @@ int dwarf_get_section_count(Dwarf_Debug /*dbg*/);
 int dwarf_get_version_of_die(Dwarf_Die /*die*/,
     Dwarf_Half * /*version*/,
     Dwarf_Half * /*offset_size*/);
+
+
+int dwarf_discr_list(Dwarf_Debug /*dbg*/,
+    Dwarf_Small    * /*blockpointer*/,
+    Dwarf_Unsigned   /*blocklen*/,
+    Dwarf_Dsc_Head * /*dsc_head_out*/,
+    Dwarf_Unsigned * /*dsc_array_length_out*/,
+    Dwarf_Error    * /*error*/);
+
+/*  NEW September 2016. Allows easy access to DW_AT_discr_list
+    entry. Callers must know which is the appropriate
+    one of the following two interfaces, though both
+    will work. */
+int dwarf_discr_entry_u(Dwarf_Dsc_Head /* dsc */,
+    Dwarf_Unsigned   /*entrynum*/,
+    Dwarf_Half     * /*out_type*/,
+    Dwarf_Unsigned * /*out_discr_low*/,
+    Dwarf_Unsigned * /*out_discr_high*/,
+    Dwarf_Error    * /*error*/);
+
+/*  NEW September 2016. Allows easy access to DW_AT_discr_list
+    entry. */
+int dwarf_discr_entry_s(Dwarf_Dsc_Head /* dsc */,
+    Dwarf_Unsigned   /*entrynum*/,
+    Dwarf_Half     * /*out_type*/,
+    Dwarf_Signed   * /*out_discr_low*/,
+    Dwarf_Signed   * /*out_discr_high*/,
+    Dwarf_Error    * /*error*/);
 
 /*  These make the  LEB encoding routines visible to libdwarf
     callers. Added November, 2012. */

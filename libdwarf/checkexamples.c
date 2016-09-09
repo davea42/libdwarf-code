@@ -124,7 +124,6 @@ void example7(Dwarf_Debug dbg, Dwarf_Die in_die,Dwarf_Bool is_info)
     Dwarf_Die cudie = 0;
     Dwarf_Error error = 0;
 
-    print_die_data(dbg,in_die);
     res = dwarf_CU_dieoffset_given_die(in_die,&cudieoff,&error);
     if(res != DW_DLV_OK) {
         /*  FAIL */
@@ -135,7 +134,7 @@ void example7(Dwarf_Debug dbg, Dwarf_Die in_die,Dwarf_Bool is_info)
         /* FAIL */
         return;
     }
-    print_die_data(dbg,cudie);
+    /* do something with cu_die */
     dwarf_dealloc(dbg,cudie, DW_DLA_DIE);
 }
 
@@ -725,8 +724,8 @@ void exampleo(Dwarf_Debug dbg)
     if the list has unexamined offsets.
     A candidate set of hypothetical functions that
     callers would write:
-    has_unchecked_import_in_list()
-    get_next_import_from_list()
+has_unchecked_import_in_list()
+get_next_import_from_list()
     mark_this_offset_as_examined(macro_unit_offset);
     add_offset_to_list(offset);
 */
@@ -1357,5 +1356,95 @@ void examplezb(void)
     } else {
         /*  Here 'out' has not been touched, it is
             uninitialized.  Do not use it. */
+    }
+}
+
+void example_discr_list(Dwarf_Debug dbg,
+    Dwarf_Die die,
+    Dwarf_Attribute attr,
+    Dwarf_Half attrnum,
+    Dwarf_Bool isunsigned,
+    Dwarf_Half theform,
+    Dwarf_Error *err)
+{
+    /*  The example here assumes that
+        attribute attr is a DW_AT_discr_list. 
+        isunsigned should be set from the signedness
+        of the parent of 'die' per DWARF rules for
+        DW_AT_discr_list. */
+    enum Dwarf_Form_Class fc = DW_FORM_CLASS_UNKNOWN;
+    Dwarf_Half version = 0;
+    Dwarf_Half offset_size = 0;
+    int wres = 0;
+
+    wres = dwarf_get_version_of_die(die,&version,&offset_size);
+    if (wres != DW_DLV_OK) {
+        /* FAIL */
+        return;
+    }
+    fc = dwarf_get_form_class(version,attrnum,offset_size,theform);
+    if (fc == DW_FORM_CLASS_BLOCK) {
+        int fres = 0;
+        Dwarf_Block *tempb = 0;
+        fres = dwarf_formblock(attr, &tempb, err);
+        if (fres == DW_DLV_OK) {
+            Dwarf_Dsc_Head h = 0;
+            Dwarf_Unsigned u = 0;
+            Dwarf_Unsigned arraycount = 0;
+            int sres = 0;
+            Dwarf_Bool unsignedflag =
+            sres = dwarf_discr_list(dbg,tempb->bl_data,
+                tempb->bl_len,
+                &h,&arraycount,err);
+            if (sres == DW_DLV_NO_ENTRY) {
+                /* Nothing here. */
+                dwarf_dealloc(dbg, tempb, DW_DLA_BLOCK);
+                return;
+            }
+            if (sres == DW_DLV_ERROR) {
+                /* FAIL . */
+                dwarf_dealloc(dbg, tempb, DW_DLA_BLOCK);
+                return;
+            }
+            for(u = 0; u < arraycount; u++) {
+                int u2res = 0;
+                Dwarf_Half dtype = 0;
+                Dwarf_Signed dlow = 0;
+                Dwarf_Signed dhigh = 0;
+                Dwarf_Unsigned ulow = 0;
+                Dwarf_Unsigned uhigh = 0;
+
+                if (isunsigned) {
+                  u2res = dwarf_discr_entry_u(h,u, 
+                      &dtype,&ulow,&uhigh,err);
+                } else {
+                  u2res = dwarf_discr_entry_s(h,u, 
+                      &dtype,&dlow,&dhigh,err);
+                }
+                if( u2res == DW_DLV_ERROR) {
+                    /* Something wrong */
+                    dwarf_dealloc(dbg,h,DW_DLA_DSC_HEAD);
+                    dwarf_dealloc(dbg, tempb, DW_DLA_BLOCK);
+                    return;
+                }
+                if( u2res == DW_DLV_NO_ENTRY) {
+                    /* Impossible. u < arraycount. */
+                    dwarf_dealloc(dbg,h,DW_DLA_DSC_HEAD);
+                    dwarf_dealloc(dbg, tempb, DW_DLA_BLOCK);
+                    return;
+                }
+                /*  Do something with dtype, and whichever
+                    of ulow, uhigh,dlow,dhigh got set.
+                    Probably save the values somewhere. 
+                    Simple casting of dlow to ulow 
+                    (or vice versa)
+                    will not get the right value due to 
+                    the nature of LEB values. 
+                    Similarly for uhigh, dhigh.
+                    One must use the right call.  */
+            }
+            dwarf_dealloc(dbg,h,DW_DLA_DSC_HEAD);
+            dwarf_dealloc(dbg, tempb, DW_DLA_BLOCK);
+        }
     }
 }

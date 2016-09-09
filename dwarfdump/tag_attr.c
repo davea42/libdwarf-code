@@ -1,7 +1,7 @@
 /*
   Copyright (C) 2000-2005 Silicon Graphics, Inc.  All Rights Reserved.
   Portions Copyright (C) 2009-2012 SN Systems Ltd. All Rights Reserved.
-  Portions Copyright (C) 2009-2012 David Anderson. All Rights Reserved.
+  Portions Copyright (C) 2009-2016 David Anderson. All Rights Reserved.
 
   This program is free software; you can redistribute it and/or modify it
   under the terms of version 2 of the GNU General Public License as
@@ -156,6 +156,58 @@ ta_get_TAG_name(unsigned int tag,const char **nameout)
     return;
 }
 
+static unsigned maxrowused = 0;
+static unsigned maxcolused = 0;
+
+/*  The argument sizes are declared in tag_common.h, so
+    the max usable is toprow-1 and topcol-1. */
+static void
+check_unused_combo(unsigned toprow,unsigned topcol)
+{
+    if ((toprow-1) !=  maxrowused) {
+        printf("Providing for %u rows but used 0-%u\n",
+            toprow,maxrowused);
+        printf("Giving up\n");
+        exit(1);
+    }
+    if ((topcol-1) != maxcolused) {
+        printf("Providing for %u cols but used 0-%u\n",
+            topcol,maxcolused);
+        printf("Giving up\n");
+        exit(1);
+    }
+
+}
+
+
+static void
+validate_row_col(const char *position,
+    unsigned crow,
+    unsigned ccol,
+    unsigned maxrow,
+    unsigned maxcol)
+{
+    if (crow >= maxrow) {
+        printf("error generating row in tag-attr array, %s "
+            "current row: %u  max allowed: %u\n",
+            position,crow,maxrow-1);
+        exit(1);
+    }
+    if (ccol >= maxcol) {
+        printf("error generating column in tag-attr array, %s "
+            "current row: %u  max allowed: %u\n",
+            position,ccol,maxcol-1);
+        exit(1);
+    }
+    if (crow > maxrowused) {
+        maxrowused = crow;
+    }
+    if (ccol > maxcolused) {
+        maxcolused = ccol;
+    }
+    return;
+}
+
 int
 main(int argc, char **argv)
 {
@@ -256,13 +308,17 @@ main(int argc, char **argv)
             break;
         }
         if (standard_flag) {
+#if 0
             if (tag >= table_rows ) {
                 bad_line_input("tag %d exceeds standard table size",tag);
             }
+#endif
         } else {
             if (current_row >= table_rows) {
                 bad_line_input("too many extended table rows.");
             }
+            validate_row_col("Reading tag",current_row,0,
+                table_rows,table_columns);
             tag_attr_combination_table[current_row][0] = tag;
         }
 
@@ -298,6 +354,8 @@ main(int argc, char **argv)
                         "index %d cols %d.",idx,table_columns);
                     bad_line_input(msg);
                 }
+                validate_row_col("Setting attr bit",tag,idx,
+                    table_rows,table_columns);
                 tag_attr_combination_table[tag][idx] |= (1 << bit);
             } else {
                 if (curcol >= table_columns) {
@@ -307,6 +365,8 @@ main(int argc, char **argv)
                         "index %d cols %d.",curcol,table_columns);
                     bad_line_input(msg);
                 }
+                validate_row_col("Setting attr col",current_row,curcol,
+                    table_rows,table_columns);
                 tag_attr_combination_table[current_row][curcol] = num;
                 curcol++;
 
@@ -370,6 +430,7 @@ main(int argc, char **argv)
 
 #ifdef HAVE_USAGE_TAG_ATTR
     /* Generate the parent of the individual vectors */
+    check_unused_combo(table_rows,table_columns);
     if (standard_flag) {
         unsigned int tag;
         unsigned int legal;

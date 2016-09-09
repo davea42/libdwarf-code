@@ -273,7 +273,7 @@ extern "C" {
 #define DW_AT_decl_file                         0x3a
 #define DW_AT_decl_line                         0x3b
 #define DW_AT_declaration                       0x3c
-#define DW_AT_discr_list                        0x3d
+#define DW_AT_discr_list                        0x3d /* DWARF2 */
 #define DW_AT_encoding                          0x3e
 #define DW_AT_external                          0x3f
 #define DW_AT_frame_base                        0x40

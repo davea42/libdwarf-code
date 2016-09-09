@@ -1,7 +1,7 @@
 /*
   Copyright (C) 2000-2005 Silicon Graphics, Inc.  All Rights Reserved.
   Portions Copyright 2009-2012 SN Systems Ltd. All rights reserved.
-  Portions Copyright 2009-2012 David Anderson. All rights reserved.
+  Portions Copyright 2009-2016 David Anderson. All rights reserved.
 
   This program is free software; you can redistribute it and/or modify it
   under the terms of version 2 of the GNU General Public License as
@@ -21,7 +21,6 @@
   You should have received a copy of the GNU General Public License along
   with this program; if not, write the Free Software Foundation, Inc., 51
   Franklin Street - Fifth Floor, Boston MA 02110-1301, USA.
-
 */
 
 #include "globals.h"
@@ -138,6 +137,58 @@ ta_get_TAG_name(unsigned int tagnum,const char **nameout)
     return;
 }
 
+/*  these are used in assignments. */
+static unsigned maxrowused = 0;
+static unsigned maxcolused = 0;
+
+/*  The argument sizes are declared in tag_common.h, so
+    the max usable is toprow-1 and topcol-1. */
+static void
+check_unused_combo(unsigned toprow,unsigned topcol)
+{
+    if ((toprow-1) !=  maxrowused) {
+        printf("Providing for %u rows but used 0-%u\n",
+            toprow,maxrowused);
+        printf("Giving up\n");
+        exit(1);
+    }
+    if ((topcol-1) != maxcolused) {
+        printf("Providing for %u cols but used 0-%u\n",
+            topcol,maxcolused);
+        printf("Giving up\n");
+        exit(1);
+    }
+
+}
+
+static void
+validate_row_col(const char *position,
+    unsigned crow,
+    unsigned ccol,
+    unsigned maxrow,
+    unsigned maxcol)
+{
+    if (crow >= maxrow) {
+        printf("error generating row in tree tag array, %s "
+            "current row: %u  max allowed: %u\n",
+            position,crow,maxrow-1);
+        exit(1);
+    }
+    if (ccol >= maxcol) {
+        printf("error generating column in tree tag array, %s "
+            "current row: %u  max allowed: %u\n",
+            position,ccol,maxcol-1);
+        exit(1);
+    }
+    if (crow > maxrowused) {
+        maxrowused = crow;
+    }
+    if (ccol > maxcolused) {
+        maxcolused = ccol;
+    }
+    return;
+}
+
 
 int
 main(int argc, char **argv)
@@ -237,13 +288,15 @@ main(int argc, char **argv)
             break;
         }
         if (standard_flag) {
-            if (tag >= table_rows ) {
+            if (current_row >= table_rows ) {
                 bad_line_input("tag value exceeds standard table size");
             }
         } else {
             if (current_row >= table_rows) {
                 bad_line_input("too many extended table rows.");
             }
+            validate_row_col("Reading tag",current_row,0,
+                table_rows,table_columns);
             tag_tree_combination_table[current_row][0] = tag;
         }
         input_eof = read_value(&num,fileInp);
@@ -276,13 +329,17 @@ main(int argc, char **argv)
                         idx,table_columns);
                     bad_line_input("too many TAGs: table incomplete.");
                 }
+                validate_row_col("Update columns bit",tag,idx,
+                    table_rows,table_columns);
                 tag_tree_combination_table[tag][idx] |= (1 << bit);
             } else {
                 if (nTagLoc >= table_columns) {
-                    printf("Attempting to use colum %d, max is %d\n",
+                    printf("Attempting to use column %d, max is %d\n",
                         nTagLoc,table_columns);
                     bad_line_input("too many subTAGs, table incomplete.");
                 }
+                validate_row_col("Update tagloc",current_row,nTagLoc,
+                    table_rows,table_columns);
                 tag_tree_combination_table[current_row][nTagLoc] = num;
                 nTagLoc++;
             }
@@ -383,6 +440,7 @@ main(int argc, char **argv)
     }
 #endif /* HAVE_USAGE_TAG_ATTR */
 
+    check_unused_combo(table_rows, table_columns);
     if (standard_flag) {
         fprintf(fileOut,"#define TAG_TREE_COLUMN_COUNT %d\n\n",table_columns);
         fprintf(fileOut,"#define TAG_TREE_ROW_COUNT %d\n\n",table_rows);

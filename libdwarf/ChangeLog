@@ -1,3 +1,16 @@
+2016-09-08 David Anderson
+    * Makefile.in: Add dwarf_dsc.c to the build to access
+      DW_AT_discr_list attributes.
+    * dwarf.h: Added comment that DW_AT_discr_list is DWARF2.
+    * dwarf_alloc.c, dwarf_alloc.h: Added DW_DLA_DSC_HEAD support.
+    * dwarf_dsc.c: Implement the new discriminant list
+      functions.
+    * dwarf_dsc.h: Internal discriminant types.
+    * libdwarf.h.in: A new opaque type and new functions
+      dwarf_discr_list etc.
+    * dwarf_errmsg_list.c: New error code for
+      discriminants: DW_DLE_DISCR_ARRAY_ERROR.
+    * checkexample.c: Added a new example. for dwarf_descr_list().
 2016-09-01 David Anderson
     * libdwarf2.1.mm: Improved the wording for dwarf_diename()
       and dwarf_die_text().

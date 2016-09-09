@@ -1,3 +1,10 @@
+2016-09-08  David Anderson
+    * print_die.c:  Now we use the new dwarf_discr_list()
+      to read DW_AT_discr_list correctly and print it.
+    * tag_attr.c,tag_tree.c: Now we check for too-small and too-large
+      array sizes and stop the build in case of error.
+    * tag_common.h: Now the static array sizes match
+      the lists.
 2016-06-13  David Anderson
     * sanitized.c: Added static keyword to declaration of
       no_questionable_chars().

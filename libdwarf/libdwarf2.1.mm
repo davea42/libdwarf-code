@@ -8,7 +8,7 @@
 .nr Hb 5
 \." ==============================================
 \." Put current date in the following at each rev
-.ds vE rev 2.51, September 1, 2016
+.ds vE rev 2.52, September 8, 2016
 \." ==============================================
 \." ==============================================
 .ds | |
@@ -1129,6 +1129,16 @@ and
 return a Dwarf_Line_Context through an argument
 and the new structure pointer lets us access 
 macro data from the .debug_macro section.
+
+.DS
+\f(CWtypedef struct Dwarf_Dsc_Head_s * Dwarf_Dsc_Head;\fP
+.DE
+\f(CWdwarf_discr_list()\fP
+returns a Dwarf_Dsc_Head through an argument
+and the new structure pointer lets us access
+macro data from a 
+\f(CWDW_AT_discr_list\fP
+attribute.
 
 
 .H 1 "UTF-8 strings"
@@ -3233,8 +3243,12 @@ an error occurred.
 Based on the attributes form, these operations are concerned with 
 returning uninterpreted attribute data.  Since it is not always 
 obvious from the return value of these functions if an error occurred, 
-one should always supply an \f(CWerror\fP parameter or have arranged 
-to have an error handling function invoked (see \f(CWdwarf_init()\fP)
+one should always supply an 
+\f(CWerror\fP
+parameter or have arranged 
+to have an error handling function invoked (see 
+\f(CWdwarf_init()\fP
+)
 to determine the validity of the returned value and the nature of any 
 errors that may have occurred.
 
@@ -3707,6 +3721,232 @@ attributes might have this problem.
 The function \f(CWdwarf_get_version_of_die()\fP may be helpful
 in filling out arguments for a call to \f(CWdwarf_get_form_class()\fP.
 
+.H 3 "dwarf_discr_list()"
+.DS
+\f(CWint dwarf_discr_list(
+    Dwarf_Debug dbg,
+    Dwarf_Small    * blockpointer,
+    Dwarf_Unsigned   blocklen,
+    Dwarf_Dsc_Head * dsc_head_out,
+    Dwarf_Unsigned * dsc_array_length_out,
+    Dwarf_Error    * error)
+    Dwarf_Error *error)\fP
+.DE
+When it succeeds,
+\f(CWdwarf_discr_list()\fP
+returns
+\f(CWDW_DLV_OK\fP and sets 
+\f(CW*dsc_head_out\fP
+to a pointer to the discriminant information
+for the discriminant list and sets
+\f(CW*dsc_array_length_out\fP
+to the count of discriminant entries.
+The only current applicability is
+the block value of a
+\f(CWDW_AT_discr_list\fP
+attribute.
+.P
+Those values are useful for calls to
+\f(CWdwarf_discr_entry_u()\fP
+or
+\f(CWdwarf_discr_entry_s()\fP
+to get the actual discriminant values.
+See the example below.
+It returns \f(CWDW_DLV_NO_ENTRY\fP if 
+the block is empty.
+It returns 
+\f(CWDW_DLV_ERROR\fP
+if 
+an error occurred.
+.P
+When the call was successful and
+the
+\f(CWDwarf_Dsc_Head\fP
+is no longer needed, call
+\f(CWdwarf_dealloc()\fP
+to free all the space 
+related to this.
+
+.DS
+void example_discr_list(Dwarf_Debug dbg,
+    Dwarf_Die die,
+    Dwarf_Attribute attr,
+    Dwarf_Half attrnum,
+    Dwarf_Bool isunsigned,
+    Dwarf_Half theform,
+    Dwarf_Error *err)
+{
+    /*  The example here assumes that
+        attribute attr is a DW_AT_discr_list. 
+        isunsigned should be set from the signedness
+        of the parent of 'die' per DWARF rules for
+        DW_AT_discr_list. */
+    enum Dwarf_Form_Class fc = DW_FORM_CLASS_UNKNOWN;
+    Dwarf_Half version = 0;
+    Dwarf_Half offset_size = 0;
+    int wres = 0;
+
+    wres = dwarf_get_version_of_die(die,&version,&offset_size);
+    if (wres != DW_DLV_OK) {
+        /* FAIL */
+        return;
+    }
+    fc = dwarf_get_form_class(version,attrnum,offset_size,theform);
+    if (fc == DW_FORM_CLASS_BLOCK) {
+        int fres = 0;
+        Dwarf_Block *tempb = 0;
+        fres = dwarf_formblock(attr, &tempb, err);
+        if (fres == DW_DLV_OK) {
+            Dwarf_Dsc_Head h = 0;
+            Dwarf_Unsigned u = 0;
+            Dwarf_Unsigned arraycount = 0;
+            int sres = 0;
+            Dwarf_Bool unsignedflag =
+            sres = dwarf_discr_list(dbg,tempb->bl_data,
+                tempb->bl_len,
+                &h,&arraycount,err);
+            if (sres == DW_DLV_NO_ENTRY) {
+                /* Nothing here. */
+                dwarf_dealloc(dbg, tempb, DW_DLA_BLOCK);
+                return;
+            }
+            if (sres == DW_DLV_ERROR) {
+                /* FAIL . */
+                dwarf_dealloc(dbg, tempb, DW_DLA_BLOCK);
+                return;
+            }
+            for(u = 0; u < arraycount; u++) {
+                int u2res = 0;
+                Dwarf_Half dtype = 0;
+                Dwarf_Signed dlow = 0;
+                Dwarf_Signed dhigh = 0;
+                Dwarf_Unsigned ulow = 0;
+                Dwarf_Unsigned uhigh = 0;
+
+                if (isunsigned) {
+                  u2res = dwarf_discr_entry_u(h,u, 
+                      &dtype,&ulow,&uhigh,err);
+                } else {
+                  u2res = dwarf_discr_entry_s(h,u, 
+                      &dtype,&dlow,&dhigh,err);
+                }
+                if( u2res == DW_DLV_ERROR) {
+                    /* Something wrong */
+                    dwarf_dealloc(dbg,h,DW_DLA_DSC_HEAD);
+                    dwarf_dealloc(dbg, tempb, DW_DLA_BLOCK);
+                    return;
+                }
+                if( u2res == DW_DLV_NO_ENTRY) {
+                    /* Impossible. u < arraycount. */
+                    dwarf_dealloc(dbg,h,DW_DLA_DSC_HEAD);
+                    dwarf_dealloc(dbg, tempb, DW_DLA_BLOCK);
+                    return;
+                }
+                /*  Do something with dtype, and whichever
+                    of ulow, uhigh,dlow,dhigh got set.
+                    Probably save the values somewhere. 
+                    Simple casting of dlow to ulow (or vice versa)
+                    will not get the right value due to the nature
+                    of LEB values. Similarly for uhigh, dhigh.
+                    One must use the right call.
+                    
+                     */
+            }
+            dwarf_dealloc(dbg,h,DW_DLA_DSC_HEAD);
+            dwarf_dealloc(dbg, tempb, DW_DLA_BLOCK);
+        }
+    }
+}
+.DE
+
+.H 3 "dwarf_discr_entry_u()"
+.DS
+\f(CWint dwarf_discr_entry_u(
+    Dwarf_Dsc_Head dsc_head,
+    Dwarf_Unsigned dsc_array_index,
+    Dwarf_Half *dsc_type,
+    Dwarf_Unsigned *dsc_low,
+    Dwarf_Unsigned *dsc_high,
+    Dwarf_Error *error)\fP
+.DE
+When it succeeds,
+\f(CWdwarf_discr_entry_u()\fP
+returns
+\f(CWDW_DLV_OK\fP and sets 
+\f(CW*dsc_type\fP,
+\f(CW*dsc_low\fP,
+and
+\f(CW*dsc_high\fP
+to the discriminent values for that index.
+Valid 
+\f(CWdsc_array_index\fP
+values 
+are zero to 
+\f(CW(dsc_array_length_out -1)\fP
+from a
+\f(CWdwarf_discr_list()\fP
+call.
+.P
+If 
+\f(CW*dsc_type\fP is
+\f(CWDW_DSC_label\fP
+\f(CW*dsc_low\fP is
+set to the discriminant value
+and
+\f(CW*dsc_high\fP is set to zero.
+.P
+If 
+\f(CW*dsc_type\fP
+is
+\f(CWDW_DSC_range\fP
+\f(CW*dsc_low\fP
+is
+set to the low end of the discriminant
+range and
+and
+\f(CW*dsc_high\fP is set to
+the high end of the discriminant range.
+.P
+Due to the nature of the LEB numbers in
+the discriminant representation in DWARF
+one must call the correct one of 
+\f(CWdwarf_discr_entry_u()\fP
+or
+\f(CWdwarf_discr_entry_s()\fP
+based on whether the discriminant is
+signed or unsigned.
+Casting an unsigned to signed is 
+not always going to get the right value.
+.P
+If 
+\f(CWdsc_array_index\fP
+is outside the range of valid indexes
+the function returns
+\f(CWDW_DLV_NO_ENTRY\fP.
+On error it returns
+\f(CWDW_DLV_ERROR\fP
+and sets
+\f(CW*error\fP
+to an error pointer.
+
+.H 3 "dwarf_discr_entry_s()"
+.DS
+\f(CWint dwarf_discr_entry_s(
+    Dwarf_Dsc_Head dsc_head,
+    Dwarf_Unsigned dsc_array_index,
+    Dwarf_Half *dsc_type,
+    Dwarf_Signed *dsc_low,
+    Dwarf_Signed *dsc_high,
+    Dwarf_Error *error)\fP
+.DE
+This is identical to
+\f(CWdwarf_discr_entry_u()\fP
+except that the discriminant values
+are signed values in this interface.
+Callers must check the discriminant type
+and call the correct function.
+
+
 .H 2 "Location List operations"
 .H 3 "dwarf_get_loclist_c()"
 .DS
@@ -3806,7 +4046,7 @@ example_loclistc(Dwarf_Debug dbg,Dwarf_Attribute someattr)
                 int opres = 0;
                  Dwarf_Small op = 0;
 
-                for (j = 0; i < ulocentry_count; ++i) {
+                for (j = 0; j < ulocentry_count; ++j) {
                     Dwarf_Unsigned opd1 = 0;
                     Dwarf_Unsigned opd2 = 0;
                     Dwarf_Unsigned opd3 = 0;

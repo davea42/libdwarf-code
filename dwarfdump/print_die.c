@@ -1890,7 +1890,6 @@ traverse_attribute(Dwarf_Debug dbg, Dwarf_Die die,
             ++die_indent_level;
             res =dwarf_CU_dieoffset_given_die(ref_die,
                 &target_die_cu_goff, &err);
-                /* Check above call return status? FIXME */
             if (res != DW_DLV_OK) {
                 print_error(dbg, "dwarf_dieoffset() accessing cu_goff die!",
                     res, err);
@@ -2231,6 +2230,173 @@ have_a_search_match(const char *valname,const char *atname)
     return FALSE;
 }
 
+
+/*  Use our local die_stack to try to determine
+    signedness of the DW_AT_discr_list
+    LEB numbers.   Returns -1 if we know
+    it is signed.  Returns 1 if we know it is
+    unsigned.  Returns 0 if we really do not know. */
+static int
+determine_discr_signedness(Dwarf_Debug dbg)
+{
+    Dwarf_Die parent = 0;
+    Dwarf_Half tag = 0;
+    int tres = 0;
+    Dwarf_Error descrerr = 0;
+
+    if (die_stack_indent_level < 1) {
+        /*  We have no idea. */
+        return 0;
+    }
+    parent = die_stack[die_stack_indent_level -1].die_;
+    if (!parent) {
+        /*  We have no idea. */
+        return 0;
+    }
+    tres = dwarf_tag(parent, &tag, &descrerr);
+    if (tres != DW_DLV_OK) {
+        if(tres == DW_DLV_ERROR) {
+            dwarf_dealloc(dbg, descrerr, DW_DLA_ERROR);
+            descrerr =0;
+        }
+        return 0;
+    }
+    if (tag != DW_TAG_variant_part) {
+        return 0;
+    }
+    /*  Expect DW_AT_discr or DW_AT_type here, and if
+        DW_AT_discr, that might have the DW_AT_type. */
+
+    /*   FIXME: Initially lets just punt, say unsigned. */
+    return 1;
+}
+
+static void
+checksignv(Dwarf_Debug dbg,
+   struct esb_s *strout,
+   const char *title,
+   Dwarf_Signed sv,
+   Dwarf_Unsigned uv)
+{
+    char tmpstrb[40];
+
+    /*  The test and output are not entirely meaningful, but
+        it can be useful for readers of dwarfdump output. */
+    if (uv == (Dwarf_Unsigned)sv) {
+        /* Nothing to do here. */
+        return;
+    }
+    esb_append(strout," <");
+    esb_append(strout,title);
+    esb_append(strout," ");
+
+    snprintf(tmpstrb,sizeof(tmpstrb),
+        "%" DW_PR_DSd,sv);
+    esb_append(strout,tmpstrb);
+
+    esb_append(strout,":");
+    snprintf(tmpstrb,sizeof(tmpstrb),
+        "%" DW_PR_DUu,uv);
+    esb_append(strout,tmpstrb);
+    esb_append(strout,">");
+}
+
+static void
+append_discr_array_vals(Dwarf_Debug dbg,
+    Dwarf_Dsc_Head h,
+    Dwarf_Unsigned arraycount,
+    int isunsigned,
+    struct esb_s *strout,
+    Dwarf_Error*paerr)
+{
+    char tmpstrb[100];
+
+    Dwarf_Unsigned u = 0;
+    if (isunsigned == 0) {
+        esb_append(strout,
+            "<discriminant list signedness unknown>");
+    }
+    snprintf(tmpstrb,sizeof(tmpstrb),
+        "\n        discr list array len: "
+        "%" DW_PR_DUu
+        "\n        ",
+        arraycount);
+    esb_append(strout,tmpstrb);
+    for(u = 0; u < arraycount; u++) {
+        int u2res = 0;
+        Dwarf_Half dtype = 0;
+        Dwarf_Unsigned dlow = 0;
+        Dwarf_Unsigned dhigh = 0;
+        Dwarf_Unsigned ulow = 0;
+        Dwarf_Unsigned uhigh = 0;
+
+        snprintf(tmpstrb,sizeof(tmpstrb),
+            "%" DW_PR_DUu,u);
+        u2res = dwarf_discr_entry_u(h,u,
+            &dtype,&ulow,&uhigh,paerr);
+        if (u2res == DW_DLV_ERROR) {
+            print_error(dbg,
+                "DW_AT_discr_list entry access fail\n",
+                u2res, *paerr);
+        }
+        u2res = dwarf_discr_entry_s(h,u,
+            &dtype,&dlow,&dhigh,paerr);
+        if (u2res == DW_DLV_ERROR) {
+            print_error(dbg,
+                "DW_AT_discr_list entry access fail\n",
+                u2res, *paerr);
+        }
+        if (u2res == DW_DLV_NO_ENTRY) {
+            esb_append(strout,"\n          "
+                "discr index missing! ");
+            esb_append(strout,tmpstrb);
+            break;
+        }
+        esb_append(strout,"\n        ");
+        esb_append(strout,tmpstrb);
+        esb_append(strout,": ");
+        snprintf(tmpstrb,sizeof(tmpstrb),
+            "type=%u ",dtype);
+        esb_append(strout,tmpstrb);
+        if (!dtype) {
+            if (isunsigned < 0) {
+                snprintf(tmpstrb,sizeof(tmpstrb),
+                    "discr=%" DW_PR_DSd,dlow);
+                esb_append(strout,tmpstrb);
+                checksignv(dbg,strout,"as signed:unsigned",dlow,ulow);
+            } else {
+                snprintf(tmpstrb,sizeof(tmpstrb),
+                    "discr=%" DW_PR_DUu,ulow);
+                esb_append(strout,tmpstrb);
+                checksignv(dbg,strout,"as signed:unsigned",dlow,ulow);
+            }
+        } else {
+            if (isunsigned < 0) {
+                snprintf(tmpstrb,sizeof(tmpstrb),
+                    "discr range=%" DW_PR_DSd,dlow);
+                esb_append(strout,tmpstrb);
+                checksignv(dbg,strout,"as signed:unsigned",dlow,ulow);
+            } else {
+                snprintf(tmpstrb,sizeof(tmpstrb),
+                    "discr range=%" DW_PR_DUu,ulow);
+                esb_append(strout,tmpstrb);
+                checksignv(dbg,strout,"as signed:unsigned",dlow,ulow);
+            }
+            if (isunsigned < 0) {
+                snprintf(tmpstrb,sizeof(tmpstrb),
+                    ", %" DW_PR_DSd,dhigh);
+                esb_append(strout,tmpstrb);
+                checksignv(dbg,strout,"as signed:unsigned",dhigh,uhigh);
+            } else {
+                snprintf(tmpstrb,sizeof(tmpstrb),
+                    ", %" DW_PR_DUu,uhigh);
+                esb_append(strout,tmpstrb);
+                checksignv(dbg,strout,"as signed:unsigned",dhigh,uhigh);
+            }
+        }
+    }
+}
+
 /*  Only two types of CU can have highpc or lowpc. */
 static boolean
 tag_type_is_addressable_cu(int tag)
@@ -2375,12 +2541,106 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
             &paerr,
             show_form_used);
         break;
-    case DW_AT_discr_list:      /* DWARF3 */
-        get_small_encoding_integer_and_name(dbg, attrib, &uval,
-            "DW_AT_discr_list",
-            &valname, get_DSC_name,
-            &paerr,
-            show_form_used);
+    case DW_AT_discr_list: {      /* DWARF2 */
+        /*  This has one of the block forms.
+            It should be in a DW_TAG_variant.
+            Up to September 2016 it was treated as integer or name
+            here, which was quite wrong. */
+        enum Dwarf_Form_Class fc = DW_FORM_CLASS_UNKNOWN;
+        Dwarf_Half theform = 0;
+        Dwarf_Half directform = 0;
+        Dwarf_Half version = 0;
+        Dwarf_Half offset_size = 0;
+        int wres = 0;
+
+        get_form_values(dbg,attrib,&theform,&directform);
+        wres = dwarf_get_version_of_die(die,&version,&offset_size);
+        if (wres != DW_DLV_OK) {
+            print_error(dbg,"ERROR: Cannot get DIE context version number",
+                DW_DLV_OK,paerr);
+            break;
+        }
+        fc = dwarf_get_form_class(version,attr,offset_size,theform);
+        if (fc == DW_FORM_CLASS_BLOCK) {
+            int fres = 0;
+            Dwarf_Block *tempb = 0;
+            /*  the block is a series of entries each of one
+                of these formats:
+                DW_DSC_label  caselabel
+                DW_DSC_range  lowvalue highvalue
+
+                The values are all LEB. Signed or unsigned
+                depending on the DW_TAG_variant_part owning
+                the DW_TAG_variant.  The DW_TAG_variant_part
+                will have a DW_AT_type or a DW_AT_discr
+                and that attribute will reveal the signedness of all
+                the leb values.
+                As a practical matter DW_DSC_label/DW_DSC_range
+                value (zero or one, so far)
+                can safely be read as ULEB or SLEB
+                and one gets a valid value whereas
+                the caselabel, lowvalue,highvalue must be
+                decoded with the proper sign. the high level
+                (dwarfdump in this case) is the agent that
+                should determine the proper signedness.  */
+
+            fres = dwarf_formblock(attrib, &tempb, &paerr);
+            if (fres == DW_DLV_OK) {
+                struct esb_s bformstr;
+                int isunsigned = 0; /* Meaning unknown */
+                Dwarf_Dsc_Head h = 0;
+                Dwarf_Unsigned arraycount = 0;
+                int sres = 0;
+
+                esb_constructor(&bformstr);
+                show_form_itself(show_form_used,verbose, theform,
+                    directform,&bformstr);
+                isunsigned = determine_discr_signedness(dbg);
+                esb_empty_string(&valname);
+
+                sres = dwarf_discr_list(dbg,tempb->bl_data,
+                    tempb->bl_len,
+                    &h,&arraycount,&paerr);
+                if (sres == DW_DLV_NO_ENTRY) {
+                    esb_append(&bformstr,"<empty discriminant list>");
+                    break;
+                }
+                if (sres == DW_DLV_ERROR) {
+                    print_error(dbg, "DW_AT_discr_list access fail\n",
+                        sres, paerr);
+                }
+                append_discr_array_vals(dbg,h,arraycount,
+                    isunsigned,&bformstr,&paerr);
+
+                if (verbose > 1) {
+                    unsigned u = 0;
+                    char tmpstrb[100];
+                    snprintf(tmpstrb,sizeof(tmpstrb),
+                        "\n        block byte len:"
+                        "0x%" DW_PR_XZEROS DW_PR_DUx
+                        "\n        ",
+                        tempb->bl_len);
+                    esb_append(&bformstr, tmpstrb);
+                    for (u = 0; u < tempb->bl_len; u++) {
+                        snprintf(tmpstrb, sizeof(tmpstrb), "%02x ",
+                            *(u + (unsigned char *)tempb->bl_data));
+                        esb_append(&bformstr, tmpstrb);
+                    }
+                }
+                esb_append(&valname, esb_get_string(&bformstr));
+                dwarf_dealloc(dbg,h,DW_DLA_DSC_HEAD);
+                dwarf_dealloc(dbg, tempb, DW_DLA_BLOCK);
+                esb_destructor(&bformstr);
+                tempb = 0;
+            } else {
+                print_error(dbg, "DW_FORM_blockn cannot get block\n", fres,
+                    paerr);
+            }
+        } else {
+            print_error(dbg, "DW_AT_discr_list is not form BLOCK\n",
+                DW_DLV_OK, paerr);
+        }
+        }
         break;
     case DW_AT_data_member_location:
         {
@@ -4720,7 +4980,7 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
             case DW_AT_accessibility:
             case DW_AT_address_class:
             case DW_AT_calling_convention:
-            case DW_AT_discr_list:      /* DWARF3 */
+            case DW_AT_discr_list:      /* DWARF2 */
             case DW_AT_encoding:
             case DW_AT_identifier_case:
             case DW_AT_MIPS_loop_unroll_factor:

@@ -429,6 +429,7 @@ const char *_dwarf_errmsgs[] = {
     "DW_DLE_BAD_STRING_FORM(350) Not a currently allowed form",
     "DW_DLE_DEBUGSTR_ERROR(351) problem generating .debug_str section",
     "DW_DLE_DEBUGSTR_UNEXPECTED_REL(352) string relocation will be wrong.",
+    "DW_DLE_DISCR_ARRAY_ERROR(353) Internal error in dwarf_discr_list()",
 };
 
 #ifdef TESTING
