@@ -2272,7 +2272,7 @@ determine_discr_signedness(Dwarf_Debug dbg)
 }
 
 static void
-checksignv(Dwarf_Debug dbg,
+checksignv(
    struct esb_s *strout,
    const char *title,
    Dwarf_Signed sv,
@@ -2325,8 +2325,8 @@ append_discr_array_vals(Dwarf_Debug dbg,
     for(u = 0; u < arraycount; u++) {
         int u2res = 0;
         Dwarf_Half dtype = 0;
-        Dwarf_Unsigned dlow = 0;
-        Dwarf_Unsigned dhigh = 0;
+        Dwarf_Signed slow = 0;
+        Dwarf_Signed shigh = 0;
         Dwarf_Unsigned ulow = 0;
         Dwarf_Unsigned uhigh = 0;
 
@@ -2340,7 +2340,7 @@ append_discr_array_vals(Dwarf_Debug dbg,
                 u2res, *paerr);
         }
         u2res = dwarf_discr_entry_s(h,u,
-            &dtype,&dlow,&dhigh,paerr);
+            &dtype,&slow,&shigh,paerr);
         if (u2res == DW_DLV_ERROR) {
             print_error(dbg,
                 "DW_AT_discr_list entry access fail\n",
@@ -2361,37 +2361,37 @@ append_discr_array_vals(Dwarf_Debug dbg,
         if (!dtype) {
             if (isunsigned < 0) {
                 snprintf(tmpstrb,sizeof(tmpstrb),
-                    "discr=%" DW_PR_DSd,dlow);
+                    "discr=%" DW_PR_DSd,slow);
                 esb_append(strout,tmpstrb);
-                checksignv(dbg,strout,"as signed:unsigned",dlow,ulow);
+                checksignv(strout,"as signed:unsigned",slow,ulow);
             } else {
                 snprintf(tmpstrb,sizeof(tmpstrb),
                     "discr=%" DW_PR_DUu,ulow);
                 esb_append(strout,tmpstrb);
-                checksignv(dbg,strout,"as signed:unsigned",dlow,ulow);
+                checksignv(strout,"as signed:unsigned",slow,ulow);
             }
         } else {
             if (isunsigned < 0) {
                 snprintf(tmpstrb,sizeof(tmpstrb),
-                    "discr range=%" DW_PR_DSd,dlow);
+                    "discr range=%" DW_PR_DSd,slow);
                 esb_append(strout,tmpstrb);
-                checksignv(dbg,strout,"as signed:unsigned",dlow,ulow);
+                checksignv(strout,"as signed:unsigned",slow,ulow);
             } else {
                 snprintf(tmpstrb,sizeof(tmpstrb),
                     "discr range=%" DW_PR_DUu,ulow);
                 esb_append(strout,tmpstrb);
-                checksignv(dbg,strout,"as signed:unsigned",dlow,ulow);
+                checksignv(strout,"as signed:unsigned",slow,ulow);
             }
             if (isunsigned < 0) {
                 snprintf(tmpstrb,sizeof(tmpstrb),
-                    ", %" DW_PR_DSd,dhigh);
+                    ", %" DW_PR_DSd,shigh);
                 esb_append(strout,tmpstrb);
-                checksignv(dbg,strout,"as signed:unsigned",dhigh,uhigh);
+                checksignv(strout,"as signed:unsigned",shigh,uhigh);
             } else {
                 snprintf(tmpstrb,sizeof(tmpstrb),
                     ", %" DW_PR_DUu,uhigh);
                 esb_append(strout,tmpstrb);
-                checksignv(dbg,strout,"as signed:unsigned",dhigh,uhigh);
+                checksignv(strout,"as signed:unsigned",shigh,uhigh);
             }
         }
     }

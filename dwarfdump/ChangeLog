@@ -1,3 +1,6 @@
+2016-09-09  David Anderson
+    * print_die.c: Fixed compiler warnings introduced
+      in previous commit.
 2016-09-08  David Anderson
     * print_die.c:  Now we use the new dwarf_discr_list()
       to read DW_AT_discr_list correctly and print it.
