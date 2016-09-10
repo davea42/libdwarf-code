@@ -86,9 +86,14 @@ No blank lines or commentary allowed, no symbols, just numbers.
 #define EXT_TAG_TABLE_ROWS  8
 #define EXT_TAG_TABLE_COLS  5
 
-/* The following 2 used in tag_tree.c only. */
-#define TAG_TABLE_ROW_MAXIMUM STD_TAG_TABLE_ROWS
-#define TAG_TABLE_COLUMN_MAXIMUM  EXT_TAG_TABLE_COLS
+/*  The following 2 used in tag_tree.c only.
+    They must be large enough but they are only used
+    declaring array during build
+    (not compiled into dwarfdump)
+    so if a bit too large there is no
+    side effect on anything.  */
+#define TAG_TABLE_ROW_MAXIMUM     80
+#define TAG_TABLE_COLUMN_MAXIMUM  8
 
 /*  Number of attributes columns per tag. The array is bit fields,
     BITS_PER_WORD fields per word. Dense and quick to inspect */
@@ -100,9 +105,14 @@ No blank lines or commentary allowed, no symbols, just numbers.
 #define EXT_ATTR_TABLE_ROWS 10
 #define EXT_ATTR_TABLE_COLS 10
 
-/* The following 2 used in tag_attr.c only. */
+/*  The following 2 used in tag_attr.c only.
+    They must be large enough but they are only used
+    declaring an array during build
+    (not compiled into dwarfdump)
+    so if a bit too large there is no
+    side effect on anything.  */
 #define ATTR_TABLE_ROW_MAXIMUM 74
-#define ATTR_TABLE_COLUMN_MAXIMUM  5
+#define ATTR_TABLE_COLUMN_MAXIMUM  10
 
 /* Bits per 'int' to mark legal attrs. */
 #define BITS_PER_WORD 32

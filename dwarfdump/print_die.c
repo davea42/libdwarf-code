@@ -2319,7 +2319,7 @@ append_discr_array_vals(Dwarf_Debug dbg,
     snprintf(tmpstrb,sizeof(tmpstrb),
         "\n        discr list array len: "
         "%" DW_PR_DUu
-        "\n        ",
+        "\n",
         arraycount);
     esb_append(strout,tmpstrb);
     for(u = 0; u < arraycount; u++) {
@@ -2329,6 +2329,7 @@ append_discr_array_vals(Dwarf_Debug dbg,
         Dwarf_Signed shigh = 0;
         Dwarf_Unsigned ulow = 0;
         Dwarf_Unsigned uhigh = 0;
+        const char *dsc_name = "";
 
         snprintf(tmpstrb,sizeof(tmpstrb),
             "%" DW_PR_DUu,u);
@@ -2352,12 +2353,16 @@ append_discr_array_vals(Dwarf_Debug dbg,
             esb_append(strout,tmpstrb);
             break;
         }
-        esb_append(strout,"\n        ");
+        esb_append(strout,"        ");
         esb_append(strout,tmpstrb);
         esb_append(strout,": ");
+#if 0
         snprintf(tmpstrb,sizeof(tmpstrb),
             "type=%u ",dtype);
-        esb_append(strout,tmpstrb);
+#endif
+        dsc_name = get_DSC_name(dtype,pd_dwarf_names_print_on_error);
+        esb_append(strout,dsc_name);
+        esb_append(strout," ");
         if (!dtype) {
             if (isunsigned < 0) {
                 snprintf(tmpstrb,sizeof(tmpstrb),
@@ -2394,6 +2399,7 @@ append_discr_array_vals(Dwarf_Debug dbg,
                 checksignv(strout,"as signed:unsigned",shigh,uhigh);
             }
         }
+        esb_append(strout,"\n");
     }
 }
 

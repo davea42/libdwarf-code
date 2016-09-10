@@ -54,6 +54,18 @@ value of a standard attribute that follows that tag
 0xffffffff
 ...
 
+
+The generated tag_attr_combination_table
+is used and generated quite differently
+for standard than for extended tags.
+
+For standard tags the generated table is indexed by
+tag number. All the columns are bit flags.
+
+For extended tags the generated table is indexed (call it j) by 0 - N-1
+and  [j][0] is the tag number and the rest of the columns (1 - N-1) are
+allowed attribute numbers.
+
 */
 
 unsigned int tag_attr_combination_table[ATTR_TABLE_ROW_MAXIMUM][ATTR_TABLE_COLUMN_MAXIMUM];
@@ -187,10 +199,22 @@ validate_row_col(const char *position,
     unsigned maxrow,
     unsigned maxcol)
 {
+    if (crow >= ATTR_TABLE_ROW_MAXIMUM) {
+        printf("error generating row in tag-attr array, %s "
+            "current row: %u  size of static array decl: %u\n",
+            position,crow, ATTR_TABLE_ROW_MAXIMUM);
+        exit(1);
+    }
     if (crow >= maxrow) {
         printf("error generating row in tag-attr array, %s "
             "current row: %u  max allowed: %u\n",
             position,crow,maxrow-1);
+        exit(1);
+    }
+    if (ccol >= ATTR_TABLE_COLUMN_MAXIMUM) {
+        printf("error generating column in tag-attr array, %s "
+            "current col: %u  size of static array decl: %u\n",
+            position,ccol, ATTR_TABLE_COLUMN_MAXIMUM);
         exit(1);
     }
     if (ccol >= maxcol) {
@@ -308,12 +332,13 @@ main(int argc, char **argv)
             break;
         }
         if (standard_flag) {
-#if 0
+            /* In standard case, the row indexed by tag */
             if (tag >= table_rows ) {
                 bad_line_input("tag %d exceeds standard table size",tag);
             }
-#endif
         } else {
+            /*  In extended case, the row indexed by 0-N
+                and column zero has the tag number. */
             if (current_row >= table_rows) {
                 bad_line_input("too many extended table rows.");
             }

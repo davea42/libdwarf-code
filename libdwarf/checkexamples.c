@@ -1368,7 +1368,7 @@ void example_discr_list(Dwarf_Debug dbg,
     Dwarf_Error *err)
 {
     /*  The example here assumes that
-        attribute attr is a DW_AT_discr_list. 
+        attribute attr is a DW_AT_discr_list.
         isunsigned should be set from the signedness
         of the parent of 'die' per DWARF rules for
         DW_AT_discr_list. */
@@ -1415,11 +1415,11 @@ void example_discr_list(Dwarf_Debug dbg,
                 Dwarf_Unsigned uhigh = 0;
 
                 if (isunsigned) {
-                  u2res = dwarf_discr_entry_u(h,u, 
-                      &dtype,&ulow,&uhigh,err);
+                    u2res = dwarf_discr_entry_u(h,u,
+                        &dtype,&ulow,&uhigh,err);
                 } else {
-                  u2res = dwarf_discr_entry_s(h,u, 
-                      &dtype,&dlow,&dhigh,err);
+                    u2res = dwarf_discr_entry_s(h,u,
+                        &dtype,&dlow,&dhigh,err);
                 }
                 if( u2res == DW_DLV_ERROR) {
                     /* Something wrong */
@@ -1435,11 +1435,11 @@ void example_discr_list(Dwarf_Debug dbg,
                 }
                 /*  Do something with dtype, and whichever
                     of ulow, uhigh,dlow,dhigh got set.
-                    Probably save the values somewhere. 
-                    Simple casting of dlow to ulow 
+                    Probably save the values somewhere.
+                    Simple casting of dlow to ulow
                     (or vice versa)
-                    will not get the right value due to 
-                    the nature of LEB values. 
+                    will not get the right value due to
+                    the nature of LEB values.
                     Similarly for uhigh, dhigh.
                     One must use the right call.  */
             }

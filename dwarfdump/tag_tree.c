@@ -168,12 +168,26 @@ validate_row_col(const char *position,
     unsigned maxrow,
     unsigned maxcol)
 {
+    if (crow >= TAG_TABLE_ROW_MAXIMUM) {
+        printf("error generating row in tag-attr array, %s "
+            "current row: %u  size of static array decl: %u\n",
+            position,crow, TAG_TABLE_ROW_MAXIMUM);
+        exit(1);
+    }
+
     if (crow >= maxrow) {
         printf("error generating row in tree tag array, %s "
             "current row: %u  max allowed: %u\n",
             position,crow,maxrow-1);
         exit(1);
     }
+    if (ccol >= TAG_TABLE_COLUMN_MAXIMUM) {
+        printf("error generating column in tag-attr array, %s "
+            "current col: %u  size of static array decl: %u\n",
+            position,ccol, TAG_TABLE_COLUMN_MAXIMUM);
+        exit(1);
+    }
+
     if (ccol >= maxcol) {
         printf("error generating column in tree tag array, %s "
             "current row: %u  max allowed: %u\n",

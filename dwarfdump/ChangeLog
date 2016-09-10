@@ -1,4 +1,17 @@
 2016-09-09  David Anderson
+    * tag_attr.c,tag_tree.c: Further improvements to ensure we do not run
+      off the ends of rows or columns.
+      New commentary on array contents of generated arrays.
+    * tag_tree.c: Further improvements to ensure we do not run
+      off the ends of rows or columns.
+    * tag_attr_ext.list: Removed accidental extra characters.
+      Added DW_AT_GNU_dwo_id to dW_TAG_compile_unit.
+    * tag_common.c: The static declaration of the internal tables
+      used to build table source code was not checked so there
+      were some array entries stepped on. fixed.
+    * tag_common.h: Added commentary.  Made the build-time-only
+      static array declaration size macros more explicit.
+2016-09-09  David Anderson
     * print_die.c: Fixed compiler warnings introduced
       in previous commit.
 2016-09-08  David Anderson
