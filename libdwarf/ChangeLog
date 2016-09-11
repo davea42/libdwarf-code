@@ -1,3 +1,6 @@
+2016-09-11 David Anderson
+    * dwarf_dsc.c: Set the internal flag so we do not redo the
+      leb decoding over and over.
 2016-09-08 David Anderson
     * Makefile.in: Add dwarf_dsc.c to the build to access
       DW_AT_discr_list attributes.

@@ -228,6 +228,7 @@ int dwarf_discr_entry_u(Dwarf_Dsc_Head  dsh ,
         if (res != DW_DLV_OK) {
             return res;
         }
+        dsh->dsh_set_unsigned = TRUE;
     }
     dse = dsh->dsh_array +entrynum;
     *out_type = dse->dsc_type;
@@ -264,6 +265,7 @@ int dwarf_discr_entry_s(Dwarf_Dsc_Head  dsh,
         if (res != DW_DLV_OK) {
             return res;
         }
+        dsh->dsh_set_signed = TRUE;
     }
     dse = dsh->dsh_array +entrynum;
     *out_type = dse->dsc_type;
