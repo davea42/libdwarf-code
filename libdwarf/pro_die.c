@@ -222,7 +222,7 @@ _dwarf_pro_add_AT_stmt_list(Dwarf_P_Debug dbg,
     new_attr = (Dwarf_P_Attribute)
         _dwarf_p_get_alloc(dbg, sizeof(struct Dwarf_P_Attribute_s));
     if (new_attr == NULL) {
-        DWARF_P_DBG_ERROR(NULL, DW_DLE_ATTR_ALLOC, DW_DLV_NOCOUNT);
+        DWARF_P_DBG_ERROR(NULL, DW_DLE_ATTR_ALLOC, DW_DLV_ERROR);
     }
 
     new_attr->ar_attribute = DW_AT_stmt_list;
@@ -235,7 +235,7 @@ _dwarf_pro_add_AT_stmt_list(Dwarf_P_Debug dbg,
     new_attr->ar_data = (char *)
         _dwarf_p_get_alloc(dbg, uwordb_size);
     if (new_attr->ar_data == NULL) {
-        DWARF_P_DBG_ERROR(NULL, DW_DLE_ADDR_ALLOC, DW_DLV_NOCOUNT);
+        DWARF_P_DBG_ERROR(NULL, DW_DLE_ADDR_ALLOC, DW_DLV_ERROR);
     }
     {
         Dwarf_Unsigned du = 0;
@@ -245,7 +245,7 @@ _dwarf_pro_add_AT_stmt_list(Dwarf_P_Debug dbg,
     }
 
     _dwarf_pro_add_at_to_die(first_die, new_attr);
-    return 0;
+    return DW_DLV_OK;
 }
 
 static int
@@ -635,6 +635,7 @@ _dwarf_pro_add_AT_fde(Dwarf_P_Debug dbg,
     return 0;
 }
 
+/* Sept 2016: returns DW_DLV_OK or DW_DLV_ERROR */
 int
 _dwarf_pro_add_AT_macro_info(Dwarf_P_Debug dbg,
     Dwarf_P_Die die,
@@ -644,12 +645,12 @@ _dwarf_pro_add_AT_macro_info(Dwarf_P_Debug dbg,
     int uwordb_size = dbg->de_offset_size;
 
     if (die == NULL) {
-        DWARF_P_DBG_ERROR(NULL, DW_DLE_DIE_NULL, -1);
+        DWARF_P_DBG_ERROR(NULL, DW_DLE_DIE_NULL, DW_DLV_ERROR);
     }
     new_attr = (Dwarf_P_Attribute)
         _dwarf_p_get_alloc(dbg,sizeof(struct Dwarf_P_Attribute_s));
     if (new_attr == NULL) {
-        DWARF_P_DBG_ERROR(NULL, DW_DLE_ATTR_ALLOC, -1);
+        DWARF_P_DBG_ERROR(NULL, DW_DLE_ATTR_ALLOC, DW_DLV_ERROR);
     }
 
     /* fill in the information */
@@ -663,7 +664,7 @@ _dwarf_pro_add_AT_macro_info(Dwarf_P_Debug dbg,
     new_attr->ar_data = (char *)
         _dwarf_p_get_alloc(dbg, uwordb_size);
     if (new_attr->ar_data == NULL) {
-        DWARF_P_DBG_ERROR(NULL, DW_DLE_ADDR_ALLOC, DW_DLV_NOCOUNT);
+        DWARF_P_DBG_ERROR(NULL, DW_DLE_ADDR_ALLOC, DW_DLV_ERROR);
     }
     {
         Dwarf_Unsigned du = offset;
@@ -674,7 +675,7 @@ _dwarf_pro_add_AT_macro_info(Dwarf_P_Debug dbg,
 
     _dwarf_pro_add_at_to_die(die, new_attr);
 
-    return 0;
+    return DW_DLV_OK;
 }
 
 

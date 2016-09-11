@@ -1,3 +1,29 @@
+September 11, 2016
+  The producer code is getting a new batch of functions.
+
+  For each existing producer call returning
+  a value other than DW_DLV_OK/DW_DLV_ERROR/DW_DLV_NO_ENTRY
+  a new function returning one of those three codes with
+  a pointer argument added to return the actual desired
+  value (that used to be the 'return').
+  The existing calls require the caller to do ugly casting
+  to determine whether the call did its work or got an error.
+  The new calls have type-safe interfaces that separate
+  the desired result from the error-indication.
+  So producer calls look more like consumer calls.
+ 
+  The existing historical producer interfaces will remain 
+  unchanged and will continue to be supported. The
+  existing interfaces will simply call the new interfaces
+  so there is no code duplication: Old and new use the same
+  implementation.
+
+  Source and binary compatibility is retained, but
+  users of the producer code can, when they wish, 
+  partially or fully convert to the new interfaces.
+
+  This work will be ongoing and gradual, not 'all at once'.
+  
 August 27, 2016
   Now the producer is capable of producing .debug_str strings.
   Strings are never duplicated in .debug_str.

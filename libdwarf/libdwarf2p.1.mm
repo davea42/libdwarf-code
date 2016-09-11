@@ -11,7 +11,7 @@
 .nr Hb 5
 \." ==============================================
 \." Put current date in the following at each rev
-.ds vE rev 1.41, 28 August 2016
+.ds vE rev 1.42, 11 September 2016
 \." ==============================================
 \." ==============================================
 .ds | |
@@ -384,20 +384,48 @@ application.
 .H 2 "Read-only Properties"
 All pointers returned by or as a result of a \fILibdwarf\fP call should 
 be assumed to point to read-only memory.  
-Except as defined by this document, the results are undefined for 
+Except as defined by this document
+the results are undefined for 
 \fILibdwarf\fP clients that attempt to write to a region pointed to by a 
-return value from a \fILibdwarf\fP call.
+value from a \fILibdwarf\fP call.
 
 .H 2 "Storage Deallocation"
 Calling \f(CWdwarf_producer_finish(dbg)\fP frees all the space, and 
 invalidates all pointers returned from \f(CWLibdwarf\fP functions on 
 or descended from \f(CWdbg\fP).
 
+.H 2 "Error Handling"
+In general any error detected by the producer
+should be considered fatal. 
+That is, it is impossible to produce correct
+output so producing anything seems questionable.
+.P
+The original producer interfaces tended to return
+a pointer or a large integer as a result and
+required the caller to cast that value to determine
+if it was actually a -1 meaning there was an error.
+.P
+Beginning in September 2016 additional interfaces
+will be added to eliminate the necessity for callers
+to do this ugly casting of results.
+The revised functions will return
+DW_DLV_OK, DW_DLV_ERROR, or DW_DLV_NO_ENTRY
+(which are small signed integers) and will
+have an additional pointer argument that will provide
+the value that used to be the return value.
+This will make the interfaces type-safe.
+.P
+The original interfaces will remain so
+binary and source compatibility will be
+retained.
+
+
 .H 1 "Functional Interface"
 This section describes the functions available in the \fILibdwarf\fP
 library.  Each function description includes its definition, followed 
 by a paragraph describing the function's operation.
-
+.P
+The following sections describe these functions.
 .P
 The functions may be categorized into groups: 
 \fIinitialization and termination operations\fP,
@@ -413,10 +441,7 @@ The functions may be categorized into groups:
 \fIlow level (.debug_frame) creation\fP, 
 and
 \fIlocation list (.debug_loc) creation\fP. 
-
 .P
-The following sections describe these functions.
-
 .H 2 "Initialization and Termination Operations"
 These functions setup \f(CWLibdwarf\fP to accumulate debugging information
 for an object, usually a compilation-unit, provided by the producer.
@@ -780,6 +805,39 @@ to
 .P
 On success it returns \f(CWDW_DLV_OK\fP.
 On error it returns \f(CWDW_DLV_ERROR\fP.
+
+.H 3 "dwarf_transform_to_disk_form_b()"
+.DS
+\f(CWint dwarf_transform_to_disk_form_b(
+        Dwarf_P_Debug dbg,
+        Dwarf_Signed *chunk_count_out,
+        Dwarf_Error* error)\fP
+.DE
+The function
+\f(CWdwarf_transform_to_disk_form_b()\fP 
+is new in September 2016. 
+It produces the same result as
+\f(CWdwarf_transform_to_disk_form()\fP 
+but returns the count through the new
+pointer argument
+\f(CWchunk_count_out\fP . 
+.P
+On success it returns
+\f(CWDW_DLV_OK\fP
+and sets
+\f(CWchunk_count_out\fP 
+to
+the number of chunks of section data to be
+accessed by
+\f(CWdwarf_get_section_bytes()\fP .
+.P
+On failure it returns 
+\f(CWDW_DLV_ERROR\fP
+and returns an error pointer through
+\f(CW*error\fP .
+.P
+
+
 
 .H 3 "dwarf_transform_to_disk_form()"
 .DS

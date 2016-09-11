@@ -1278,9 +1278,10 @@ struct Dwarf_Obj_Access_Interface_s {
 #define DW_DLE_DEBUGSTR_ERROR                  351
 #define DW_DLE_DEBUGSTR_UNEXPECTED_REL         352
 #define DW_DLE_DISCR_ARRAY_ERROR               353
+#define DW_DLE_LEB_OUT_ERROR                   354
 
     /* DW_DLE_LAST MUST EQUAL LAST ERROR NUMBER */
-#define DW_DLE_LAST        353
+#define DW_DLE_LAST        354
 #define DW_DLE_LO_USER     0x10000
 
     /*  Taken as meaning 'undefined value', this is not
@@ -3178,7 +3179,12 @@ int dwarf_pro_set_default_string_form(Dwarf_P_Debug /*dbg*/,
     int /*desired_form*/,
     Dwarf_Error*     /*error*/);
 
+/*  the old interface. Still supported. */
 Dwarf_Signed dwarf_transform_to_disk_form(Dwarf_P_Debug /*dbg*/,
+    Dwarf_Error*     /*error*/);
+/*  New September 2016. The preferred interface. */
+int dwarf_transform_to_disk_form_b(Dwarf_P_Debug /*dbg*/,
+    Dwarf_Signed *   /*nbufs_out*/,
     Dwarf_Error*     /*error*/);
 
 Dwarf_Ptr dwarf_get_section_bytes(Dwarf_P_Debug /*dbg*/,

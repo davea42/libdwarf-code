@@ -398,6 +398,7 @@ dwarf_vendor_ext(Dwarf_P_Debug dbg,
 
 int
 _dwarf_pro_transform_macro_info_to_disk(Dwarf_P_Debug dbg,
+    Dwarf_Signed *nbufs,
     Dwarf_Error * error)
 {
     /* Total num of bytes in .debug_macinfo section. */
@@ -429,7 +430,7 @@ _dwarf_pro_transform_macro_info_to_disk(Dwarf_P_Debug dbg,
         macinfo, (unsigned long) mac_num_bytes, error);
     if (macinfo == NULL) {
         _dwarf_p_error(dbg, error, DW_DLE_ALLOC_FAIL);
-        return (0);
+        return DW_DLV_ERROR;
     }
 
     macinfo_ptr = macinfo;
@@ -453,5 +454,6 @@ _dwarf_pro_transform_macro_info_to_disk(Dwarf_P_Debug dbg,
     dbg->de_first_macinfo = NULL;
     dbg->de_current_macinfo = NULL;
 
-    return (int) dbg->de_n_debug_sect;
+    *nbufs = dbg->de_n_debug_sect;
+    return DW_DLV_OK;
 }

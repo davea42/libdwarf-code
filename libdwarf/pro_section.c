@@ -138,13 +138,14 @@ struct Dwarf_P_Rel_Head_s {
     struct Dwarf_P_Rel_s *drh_tail;
 };
 
-static int _dwarf_pro_generate_debug_str(Dwarf_P_Debug dbg, Dwarf_Error * error);
+static int _dwarf_pro_generate_debug_str(Dwarf_P_Debug dbg,
+    Dwarf_Signed *nbufs, Dwarf_Error * error);
 static int _dwarf_pro_generate_debugline(Dwarf_P_Debug dbg,
-    Dwarf_Error * error);
+    Dwarf_Signed *nbufs, Dwarf_Error * error);
 static int _dwarf_pro_generate_debugframe(Dwarf_P_Debug dbg,
-    Dwarf_Error * error);
+    Dwarf_Signed *nbufs, Dwarf_Error * error);
 static int _dwarf_pro_generate_debuginfo(Dwarf_P_Debug dbg,
-    Dwarf_Error * error);
+    Dwarf_Signed *nbufs, Dwarf_Error * error);
 static Dwarf_P_Abbrev _dwarf_pro_getabbrev(Dwarf_P_Die, Dwarf_P_Abbrev);
 static int _dwarf_pro_match_attr
     (Dwarf_P_Attribute, Dwarf_P_Abbrev, int no_attr);
@@ -186,22 +187,42 @@ dwarf_need_debug_line_section(Dwarf_P_Debug dbg)
 /*  Convert debug information to  a format such that
     it can be written on disk.
     Called exactly once per execution.
+    This is the traditional interface. Bad interface design.
 */
 Dwarf_Signed
 dwarf_transform_to_disk_form(Dwarf_P_Debug dbg, Dwarf_Error * error)
+{
+    Dwarf_Signed count = 0;
+    int res = 0;
+
+    res = dwarf_transform_to_disk_form_b(dbg, &count,error);
+    if (res == DW_DLV_ERROR) {
+        return DW_DLV_NOCOUNT;
+    }
+    return count;
+}
+/*  Convert debug information to  a format such that
+    it can be written on disk.
+    Called exactly once per execution.
+    This is the interface design used with the consumer
+    interface, so easier for callers to work with.
+*/
+int
+dwarf_transform_to_disk_form_b(Dwarf_P_Debug dbg, Dwarf_Signed *count,
+    Dwarf_Error * error)
 {
     /*  Section data in written out in a number of buffers. Each
         _generate_*() function returns a cumulative count of buffers for
         all the sections.
         dwarf_get_section_bytes() returns pointers to these
         buffers one at a time. */
-    int nbufs = 0;
+    Dwarf_Signed nbufs = 0;
     int sect = 0;
     int err = 0;
     Dwarf_Unsigned du = 0;
 
     if (dbg->de_version_magic_number != PRO_VERSION_MAGIC) {
-        DWARF_P_DBG_ERROR(dbg, DW_DLE_IA, DW_DLV_NOCOUNT);
+        DWARF_P_DBG_ERROR(dbg, DW_DLE_IA, DW_DLV_ERROR);
     }
 
     /* Create dwarf section headers */
@@ -304,7 +325,7 @@ dwarf_transform_to_disk_form(Dwarf_P_Debug dbg, Dwarf_Error * error)
             continue;
         default:
             /* logic error: missing a case */
-            DWARF_P_DBG_ERROR(dbg, DW_DLE_ELF_SECT_ERR, DW_DLV_NOCOUNT);
+            DWARF_P_DBG_ERROR(dbg, DW_DLE_ELF_SECT_ERR, DW_DLV_ERROR);
         }
         {
             int new_base_elf_sect = 0;
@@ -319,7 +340,7 @@ dwarf_transform_to_disk_form(Dwarf_P_Debug dbg, Dwarf_Error * error)
             }
             if (new_base_elf_sect == -1) {
                 DWARF_P_DBG_ERROR(dbg, DW_DLE_ELF_SECT_ERR,
-                    DW_DLV_NOCOUNT);
+                    DW_DLV_ERROR);
             }
             dbg->de_elf_sects[sect] = new_base_elf_sect;
             dbg->de_sect_name_idx[sect] = du;
@@ -332,115 +353,110 @@ dwarf_transform_to_disk_form(Dwarf_P_Debug dbg, Dwarf_Error * error)
         problems because of relocations. */
 
     if (dwarf_need_debug_line_section(dbg) == TRUE) {
-        nbufs = _dwarf_pro_generate_debugline(dbg, error);
-        if (nbufs < 0) {
-            DWARF_P_DBG_ERROR(dbg, DW_DLE_DEBUGLINE_ERROR,
-                DW_DLV_NOCOUNT);
+        int res = _dwarf_pro_generate_debugline(dbg,&nbufs, error);
+        if (res == DW_DLV_ERROR) {
+            return res;
         }
     }
 
     if (dbg->de_frame_cies) {
-        nbufs = _dwarf_pro_generate_debugframe(dbg, error);
-        if (nbufs < 0) {
-            DWARF_P_DBG_ERROR(dbg, DW_DLE_DEBUGFRAME_ERROR,
-                DW_DLV_NOCOUNT);
+        int res = _dwarf_pro_generate_debugframe(dbg,&nbufs,error);
+        if (res == DW_DLV_ERROR) {
+            return res;
         }
     }
     if (dbg->de_first_macinfo) {
-        nbufs = _dwarf_pro_transform_macro_info_to_disk(dbg, error);
-        if (nbufs < 0) {
-            DWARF_P_DBG_ERROR(dbg, DW_DLE_DEBUGMACINFO_ERROR,
-                DW_DLV_NOCOUNT);
+        int res  = _dwarf_pro_transform_macro_info_to_disk(dbg,
+            &nbufs,error);
+        if (res == DW_DLV_ERROR) {
+            return res;
         }
     }
 
     if (dbg->de_dies) {
-        nbufs = _dwarf_pro_generate_debuginfo(dbg, error);
-        if (nbufs < 0) {
-            DWARF_P_DBG_ERROR(dbg, DW_DLE_DEBUGINFO_ERROR,
-                DW_DLV_NOCOUNT);
+        int res= _dwarf_pro_generate_debuginfo(dbg, &nbufs, error);
+        if (res == DW_DLV_ERROR) {
+            return res;
         }
     }
 
     if (dbg->de_debug_str->ds_data) {
-        nbufs = _dwarf_pro_generate_debug_str(dbg, error);
-        if (nbufs < 0) {
-            DWARF_P_DBG_ERROR(dbg, DW_DLE_DEBUGSTR_ERROR,
-                DW_DLV_NOCOUNT);
+        int res = _dwarf_pro_generate_debug_str(dbg,&nbufs, error);
+        if (res == DW_DLV_ERROR) {
+            return res;
         }
     }
 
 
 
     if (dbg->de_arange) {
-        nbufs = _dwarf_transform_arange_to_disk(dbg, error);
-        if (nbufs < 0) {
-            DWARF_P_DBG_ERROR(dbg, DW_DLE_ARANGE_ERROR,
-                DW_DLV_NOCOUNT);
+        int res = _dwarf_transform_arange_to_disk(dbg,&nbufs, error);
+        if (res == DW_DLV_ERROR) {
+            return res;
         }
     }
 
     if (dbg->de_simple_name_headers[dwarf_snk_pubname].sn_head) {
-        nbufs = _dwarf_transform_simplename_to_disk(dbg,
+        int res = _dwarf_transform_simplename_to_disk(dbg,
             dwarf_snk_pubname,
             DEBUG_PUBNAMES,
+            &nbufs,
             error);
-        if (nbufs < 0) {
-            DWARF_P_DBG_ERROR(dbg, DW_DLE_PUBNAMES_ERROR,
-                DW_DLV_NOCOUNT);
+        if (res == DW_DLV_ERROR) {
+            return res;
         }
     }
     if (dbg->de_simple_name_headers[dwarf_snk_pubtype].sn_head) {
-        nbufs = _dwarf_transform_simplename_to_disk(dbg,
+        int res = _dwarf_transform_simplename_to_disk(dbg,
             dwarf_snk_pubtype,
             DEBUG_PUBTYPES,
+            &nbufs,
             error);
-        if (nbufs < 0) {
-            DWARF_P_DBG_ERROR(dbg, DW_DLE_DEBUGPUBTYPES_ERROR,
-                DW_DLV_NOCOUNT);
+        if (res == DW_DLV_ERROR) {
+            return res;
         }
     }
 
     if (dbg->de_simple_name_headers[dwarf_snk_funcname].sn_head) {
-        nbufs = _dwarf_transform_simplename_to_disk(dbg,
+        int res = _dwarf_transform_simplename_to_disk(dbg,
             dwarf_snk_funcname,
             DEBUG_FUNCNAMES,
+            &nbufs,
             error);
-        if (nbufs < 0) {
-            DWARF_P_DBG_ERROR(dbg, DW_DLE_FUNCNAMES_ERROR,
-                DW_DLV_NOCOUNT);
+        if (res == DW_DLV_ERROR) {
+            return res;
         }
     }
 
     if (dbg->de_simple_name_headers[dwarf_snk_typename].sn_head) {
-        nbufs = _dwarf_transform_simplename_to_disk(dbg,
+        int res = _dwarf_transform_simplename_to_disk(dbg,
             dwarf_snk_typename,
             DEBUG_TYPENAMES,
+            &nbufs,
             error);
-        if (nbufs < 0) {
-            DWARF_P_DBG_ERROR(dbg, DW_DLE_TYPENAMES_ERROR,
-                DW_DLV_NOCOUNT);
+        if (res == DW_DLV_ERROR) {
+            return res;
         }
     }
 
     if (dbg->de_simple_name_headers[dwarf_snk_varname].sn_head) {
-        nbufs = _dwarf_transform_simplename_to_disk(dbg,
+        int res = _dwarf_transform_simplename_to_disk(dbg,
             dwarf_snk_varname,
             DEBUG_VARNAMES,
+            &nbufs,
             error);
-
-        if (nbufs < 0) {
-            DWARF_P_DBG_ERROR(dbg, DW_DLE_VARNAMES_ERROR,
-                DW_DLV_NOCOUNT);
+        if (res == DW_DLV_ERROR) {
+            return res;
         }
     }
 
     if (dbg->de_simple_name_headers[dwarf_snk_weakname].sn_head) {
-        nbufs = _dwarf_transform_simplename_to_disk(dbg,
-            dwarf_snk_weakname, DEBUG_WEAKNAMES, error);
-        if (nbufs < 0) {
-            DWARF_P_DBG_ERROR(dbg, DW_DLE_WEAKNAMES_ERROR,
-                DW_DLV_NOCOUNT);
+        int res = _dwarf_transform_simplename_to_disk(dbg,
+            dwarf_snk_weakname, DEBUG_WEAKNAMES,
+            &nbufs,
+            error);
+        if (res == DW_DLV_ERROR) {
+            return res;
         }
     }
 
@@ -451,60 +467,74 @@ dwarf_transform_to_disk_form(Dwarf_P_Debug dbg, Dwarf_Error * error)
         res = dbg->de_transform_relocs_to_disk(dbg, &new_chunks);
         if (res != DW_DLV_OK) {
             DWARF_P_DBG_ERROR(dbg, DW_DLE_RELOCS_ERROR,
-                DW_DLV_NOCOUNT);
+                DW_DLV_ERROR);
         }
         nbufs += new_chunks;
     }
-    return nbufs;
+    *count = nbufs;
+    return DW_DLV_OK;
 }
 
-static unsigned
+static int
 write_fixed_size(Dwarf_Unsigned val,
     Dwarf_P_Debug dbg,
     int elfsectno,
     Dwarf_Unsigned size,
+    unsigned * size_out,
     Dwarf_Error* error)
 {
     unsigned char *data = 0;
-    GET_CHUNK(dbg, elfsectno, data, size, error);
+    GET_CHUNK_ERR(dbg, elfsectno, data, size, error);
     WRITE_UNALIGNED(dbg, (void *) data, (const void *) &val,
         sizeof(val), size);
-    return size;
+    *size_out = size;
+    return DW_DLV_OK;
 }
 
-static unsigned
+static int
 write_ubyte(unsigned val,
     Dwarf_P_Debug dbg,
     int elfsectno,
+    unsigned *len_out,
     Dwarf_Error* error)
 {
     Dwarf_Ubyte db = val;
     unsigned char *data = 0;
     unsigned len = sizeof(Dwarf_Ubyte);
-    GET_CHUNK(dbg, elfsectno, data,
+    GET_CHUNK_ERR(dbg, elfsectno, data,
         len, error);
     WRITE_UNALIGNED(dbg, (void *) data, (const void *) &db,
         sizeof(db), len);
-    return 1;
+    *len_out = 1;
+    return DW_DLV_OK;;
 }
-static unsigned
+static int
 pretend_write_uval(Dwarf_Unsigned val,
     UNUSEDARG Dwarf_P_Debug dbg,
     UNUSEDARG int elfsectno,
+    unsigned *uval_len_out,
     UNUSEDARG Dwarf_Error* error)
 {
     char buff1[ENCODE_SPACE_NEEDED];
     int nbytes = 0;
-    _dwarf_pro_encode_leb128_nm(val,
+    int res = 0;
+
+    res = _dwarf_pro_encode_leb128_nm(val,
         &nbytes, buff1,
         sizeof(buff1));
-    return nbytes;
+    if (res != DW_DLV_OK) {
+        DWARF_P_DBG_ERROR(dbg,DW_DLE_LEB_OUT_ERROR , DW_DLV_ERROR);
+    }
+    /* FIXME: detect leb error*/
+    *uval_len_out = nbytes;
+    return DW_DLV_OK;
 }
 
-static unsigned
+static int
 write_sval(Dwarf_Signed val,
     Dwarf_P_Debug dbg,
     int elfsectno,
+    unsigned *sval_len_out,
     Dwarf_Error* error)
 {
     char buff1[ENCODE_SPACE_NEEDED];
@@ -514,17 +544,19 @@ write_sval(Dwarf_Signed val,
         &nbytes, buff1,
         sizeof(buff1));
     if (res != DW_DLV_OK) {
-        DWARF_P_DBG_ERROR(dbg, DW_DLE_CHUNK_ALLOC, -1);
+        DWARF_P_DBG_ERROR(dbg, DW_DLE_LEB_OUT_ERROR, DW_DLV_ERROR);
     }
     GET_CHUNK(dbg, elfsectno, data, nbytes, error);
     memcpy((void *) data, (const void *) buff1, nbytes);
-    return nbytes;
+    *sval_len_out = nbytes;
+    return DW_DLV_OK;
 }
 
-static unsigned
+static int
 write_uval(Dwarf_Unsigned val,
     Dwarf_P_Debug dbg,
     int elfsectno,
+    unsigned * uval_len_out,
     Dwarf_Error* error)
 {
     char buff1[ENCODE_SPACE_NEEDED];
@@ -534,27 +566,40 @@ write_uval(Dwarf_Unsigned val,
         &nbytes, buff1,
         sizeof(buff1));
     if (res != DW_DLV_OK) {
-        DWARF_P_DBG_ERROR(dbg, DW_DLE_CHUNK_ALLOC, -1);
+        DWARF_P_DBG_ERROR(dbg, DW_DLE_LEB_OUT_ERROR, DW_DLV_ERROR);
     }
-    GET_CHUNK(dbg, elfsectno, data, nbytes, error);
+    GET_CHUNK_ERR(dbg, elfsectno, data, nbytes, error);
     memcpy((void *) data, (const void *) buff1, nbytes);
-    return nbytes;
+    *uval_len_out = nbytes;
+    return DW_DLV_OK;
 }
 static unsigned
 write_opcode_uval(int opcode,
     Dwarf_P_Debug dbg,
     int elfsectno,
     Dwarf_Unsigned val,
+    unsigned *len_out,
     Dwarf_Error* error)
 {
-    unsigned totallen = write_ubyte(opcode,dbg,elfsectno,error);
-    totallen += write_uval(val,dbg,elfsectno,error);
-    return totallen;
+    unsigned ublen = 0;
+    int res = 0;
+    unsigned uvlen = 0;
+    res  = write_ubyte(opcode,dbg,elfsectno,&ublen,error);
+    if (res != DW_DLV_OK) {
+        DWARF_P_DBG_ERROR(dbg, DW_DLE_LEB_OUT_ERROR, DW_DLV_ERROR);
+    }
+    res = write_uval(val,dbg,elfsectno,&uvlen,error);
+    if (res != DW_DLV_OK) {
+        DWARF_P_DBG_ERROR(dbg, DW_DLE_LEB_OUT_ERROR, DW_DLV_ERROR);
+    }
+    *len_out = ublen +uvlen;
+    return DW_DLV_OK;
 }
 
 /* Generate debug_line section  */
 static int
-_dwarf_pro_generate_debugline(Dwarf_P_Debug dbg, Dwarf_Error * error)
+_dwarf_pro_generate_debugline(Dwarf_P_Debug dbg, Dwarf_Signed * nbufs,
+    Dwarf_Error * error)
 {
     Dwarf_P_Inc_Dir curdir = 0;
     Dwarf_P_F_Entry curentry = 0;
@@ -616,7 +661,7 @@ _dwarf_pro_generate_debugline(Dwarf_P_Debug dbg, Dwarf_Error * error)
         prolog_size += sizeof_ubyte(dbg);
     }
 
-    GET_CHUNK(dbg, elfsectno, data, prolog_size, error);
+    GET_CHUNK_ERR(dbg, elfsectno, data, prolog_size, error);
     start_line_sec = data;
 
     /* copy over the data */
@@ -710,7 +755,7 @@ _dwarf_pro_generate_debugline(Dwarf_P_Debug dbg, Dwarf_Error * error)
     prevline = (Dwarf_P_Line)
         _dwarf_p_get_alloc(dbg, sizeof(struct Dwarf_P_Line_s));
     if (prevline == NULL) {
-        DWARF_P_DBG_ERROR(dbg, DW_DLE_LINE_ALLOC, -1);
+        DWARF_P_DBG_ERROR(dbg, DW_DLE_LINE_ALLOC, DW_DLV_ERROR);
     }
     _dwarf_pro_reg_init(dbg,prevline);
     /* generate opcodes for line numbers */
@@ -734,27 +779,43 @@ _dwarf_pro_generate_debugline(Dwarf_P_Debug dbg, Dwarf_Error * error)
                 /* Advance pc to end of text section. */
                 addr_adv = curline->dpl_address - prevline->dpl_address;
                 if (addr_adv > 0) {
-                    writelen = write_opcode_uval(DW_LNS_advance_pc,dbg,
+                    res = write_opcode_uval(DW_LNS_advance_pc,dbg,
                         elfsectno,
                         addr_adv/
                             dbg->de_line_inits.pi_minimum_instruction_length,
+                        &writelen,
                         error);
+                    if (res != DW_DLV_OK) {
+                        return res;
+                    }
                     sum_bytes += writelen;
                     prevline->dpl_address = curline->dpl_address;
                 }
 
                 /* first null byte */
                 db = 0;
-                writelen = write_ubyte(db,dbg,elfsectno,error);
+                res = write_ubyte(db,dbg,elfsectno,
+                    &writelen,error);
+                if (res != DW_DLV_OK) {
+                    return res;
+                }
                 sum_bytes += writelen;
 
                 /* write length of extended opcode */
                 inst_bytes = sizeof(Dwarf_Ubyte);
-                writelen = write_uval(inst_bytes,dbg,elfsectno,error);
+                res = write_uval(inst_bytes,dbg,elfsectno,
+                    &writelen,error);
+                if (res != DW_DLV_OK) {
+                    return res;
+                }
                 sum_bytes += writelen;
 
                 /* write extended opcode */
-                writelen = write_ubyte(DW_LNE_end_sequence,dbg,elfsectno,error);
+                res = write_ubyte(DW_LNE_end_sequence,dbg,elfsectno,
+                    &writelen,error);
+                if (res != DW_DLV_OK) {
+                    return res;
+                }
                 sum_bytes += writelen;
 
                 /* reset value to original values */
@@ -768,16 +829,28 @@ _dwarf_pro_generate_debugline(Dwarf_P_Debug dbg, Dwarf_Error * error)
 
                 /* first null byte */
                 db = 0;
-                writelen = write_ubyte(db,dbg,elfsectno,error);
+                res = write_ubyte(db,dbg,elfsectno,
+                    &writelen,error);
+                if (res != DW_DLV_OK) {
+                    return res;
+                }
                 sum_bytes += writelen;
 
                 /* write length of extended opcode */
                 inst_bytes = sizeof(Dwarf_Ubyte) + upointer_size;
-                writelen = write_uval(inst_bytes,dbg,elfsectno,error);
+                res = write_uval(inst_bytes,dbg,elfsectno,
+                    &writelen,error);
+                if (res != DW_DLV_OK) {
+                    return res;
+                }
                 sum_bytes += writelen;
 
                 /* write extended opcode */
-                writelen = write_ubyte(DW_LNE_set_address,dbg,elfsectno,error);
+                res = write_ubyte(DW_LNE_set_address,dbg,elfsectno,
+                    &writelen,error);
+                if (res != DW_DLV_OK) {
+                    return res;
+                }
                 sum_bytes += writelen;
 
                 /* reloc for address */
@@ -787,13 +860,16 @@ _dwarf_pro_generate_debugline(Dwarf_P_Debug dbg, Dwarf_Error * error)
                     dwarf_drt_data_reloc,
                     uwordb_size);
                 if (res != DW_DLV_OK) {
-                    DWARF_P_DBG_ERROR(dbg, DW_DLE_CHUNK_ALLOC, -1);
+                    DWARF_P_DBG_ERROR(dbg, DW_DLE_CHUNK_ALLOC, DW_DLV_ERROR);
                 }
 
                 /* write offset (address) */
                 du = curline->dpl_address;
-                writelen = write_fixed_size(du,dbg,elfsectno,
-                    upointer_size,error);
+                res = write_fixed_size(du,dbg,elfsectno,
+                    upointer_size,&writelen,error);
+                if (res != DW_DLV_OK) {
+                    return res;
+                }
                 sum_bytes += writelen;
                 prevline->dpl_address = curline->dpl_address;
                 no_lns_copy = 1;
@@ -808,23 +884,42 @@ _dwarf_pro_generate_debugline(Dwarf_P_Debug dbg, Dwarf_Error * error)
                 unsigned val_len = 0;
                 /* first null byte */
                 db = 0;
-                writelen = write_ubyte(db,dbg,elfsectno,error);
+                res = write_ubyte(db,dbg,elfsectno,&writelen,error);
+                if (res != DW_DLV_OK) {
+                    return res;
+                }
                 sum_bytes += writelen;
 
                 /* Write len of opcode + value here. */
-                val_len = pretend_write_uval(curline->dpl_discriminator,
-                    dbg, elfsectno,error) + 1;
-                writelen = write_uval(val_len +1,dbg,elfsectno,error);
+                res = pretend_write_uval(curline->dpl_discriminator,
+                    dbg, elfsectno,&val_len,error);
+                if (res != DW_DLV_OK) {
+                    return res;
+                }
+                val_len++;
+
+                res = write_uval(val_len +1,dbg,elfsectno,
+                    &writelen,error);
+                if (res != DW_DLV_OK) {
+                    return res;
+                }
                 sum_bytes += writelen;
 
                 /* Write opcode */
-                writelen = write_ubyte(DW_LNE_set_discriminator,
-                    dbg,elfsectno,error);
+                res = write_ubyte(DW_LNE_set_discriminator,
+                    dbg,elfsectno,
+                    &writelen,error);
+                if (res != DW_DLV_OK) {
+                    return res;
+                }
                 sum_bytes += writelen;
 
                 /* Write the value itself. */
-                writelen = write_uval(curline->dpl_discriminator,
-                    dbg,elfsectno,error);
+                res = write_uval(curline->dpl_discriminator,
+                    dbg,elfsectno,&writelen,error);
+                if (res != DW_DLV_OK) {
+                    return res;
+                }
                 sum_bytes += writelen;
                 no_lns_copy = 1;
                 }
@@ -841,48 +936,69 @@ _dwarf_pro_generate_debugline(Dwarf_P_Debug dbg, Dwarf_Error * error)
                     in the line processing/reading engine,
                     so I think no check of prevline is wanted. */
                 if (curline->dpl_epilogue_begin) {
-                    writelen = write_ubyte(DW_LNS_set_epilogue_begin,dbg,
-                        elfsectno, error);
+                    res = write_ubyte(DW_LNS_set_epilogue_begin,dbg,
+                        elfsectno,&writelen, error);
+                    if (res != DW_DLV_OK) {
+                        return res;
+                    }
                     sum_bytes += writelen;
                 }
                 if (curline->dpl_prologue_end) {
-                    writelen = write_ubyte(DW_LNS_set_prologue_end,dbg,
-                        elfsectno, error);
+                    res = write_ubyte(DW_LNS_set_prologue_end,dbg,
+                        elfsectno, &writelen,error);
+                    if (res != DW_DLV_OK) {
+                        return res;
+                    }
                     sum_bytes += writelen;
                 }
                 if (curline->dpl_isa != prevline->dpl_isa) {
-                    writelen = write_opcode_uval(DW_LNS_set_isa,dbg,
-                        elfsectno,
-                            curline->dpl_isa ,error);
+                    res = write_opcode_uval(DW_LNS_set_isa,dbg,
+                        elfsectno, curline->dpl_isa,
+                        &writelen ,error);
+                    if (res != DW_DLV_OK) {
+                        return res;
+                    }
                     sum_bytes += writelen;
                 }
             }
             if (curline->dpl_file != prevline->dpl_file) {
                 db = DW_LNS_set_file;
-                writelen = write_opcode_uval(db,dbg,
+                res = write_opcode_uval(db,dbg,
                     elfsectno,
-                        curline->dpl_file ,error);
+                        curline->dpl_file,&writelen ,error);
+                if (res != DW_DLV_OK) {
+                    return res;
+                }
                 sum_bytes += writelen;
 
                 prevline->dpl_file = curline->dpl_file;
             }
             if (curline->dpl_column != prevline->dpl_column) {
                 db = DW_LNS_set_column;
-                writelen = write_opcode_uval(db,dbg,
-                    elfsectno,
-                        curline->dpl_column ,error);
+                res = write_opcode_uval(db,dbg,
+                    elfsectno, curline->dpl_column , &writelen,error);
+                if (res != DW_DLV_OK) {
+                    return res;
+                }
                 sum_bytes += writelen;
                 prevline->dpl_column = curline->dpl_column;
             }
             if (curline->dpl_is_stmt != prevline->dpl_is_stmt) {
-                writelen = write_ubyte(DW_LNS_negate_stmt,dbg,elfsectno,error);
+                res = write_ubyte(DW_LNS_negate_stmt,dbg,elfsectno,
+                    &writelen,error);
+                if (res != DW_DLV_OK) {
+                    return res;
+                }
                 sum_bytes += writelen;
                 prevline->dpl_is_stmt = curline->dpl_is_stmt;
             }
             if (curline->dpl_basic_block == true &&
                 prevline->dpl_basic_block == false) {
-                writelen = write_ubyte(DW_LNS_set_basic_block,dbg,
-                    elfsectno,error);
+                res = write_ubyte(DW_LNS_set_basic_block,dbg,
+                    elfsectno,&writelen,error);
+                if (res != DW_DLV_OK) {
+                    return res;
+                }
                 sum_bytes += writelen;
                 prevline->dpl_basic_block = curline->dpl_basic_block;
             }
@@ -894,23 +1010,40 @@ _dwarf_pro_generate_debugline(Dwarf_P_Debug dbg, Dwarf_Error * error)
                 unsigned val_len = 0;
                 /* first null byte */
                 db = 0;
-                writelen = write_ubyte(db,dbg,elfsectno,error);
+                res = write_ubyte(db,dbg,elfsectno,&writelen,error);
+                if (res != DW_DLV_OK) {
+                    return res;
+                }
                 sum_bytes += writelen;
 
                 /* Write len of opcode + value here. */
-                val_len = pretend_write_uval(curline->dpl_discriminator,
-                    dbg, elfsectno,error) + 1;
-                writelen = write_uval(val_len +1,dbg,elfsectno,error);
+                res = pretend_write_uval(curline->dpl_discriminator,
+                    dbg, elfsectno,&val_len,error);
+                if (res != DW_DLV_OK) {
+                    return res;
+                }
+                val_len ++;
+                res = write_uval(val_len +1,dbg,elfsectno,
+                    &writelen,error);
+                if (res != DW_DLV_OK) {
+                    return res;
+                }
                 sum_bytes += writelen;
 
                 /* Write opcode */
-                writelen = write_ubyte(DW_LNE_set_discriminator,
-                    dbg,elfsectno,error);
+                res = write_ubyte(DW_LNE_set_discriminator,
+                    dbg,elfsectno,&writelen,error);
+                if (res != DW_DLV_OK) {
+                    return res;
+                }
                 sum_bytes += writelen;
 
                 /* Write the value itself. */
-                writelen = write_uval(curline->dpl_discriminator,
-                    dbg,elfsectno,error);
+                res = write_uval(curline->dpl_discriminator,
+                    dbg,elfsectno,&writelen,error);
+                if (res != DW_DLV_OK) {
+                    return res;
+                }
                 sum_bytes += writelen;
             }
 
@@ -918,13 +1051,16 @@ _dwarf_pro_generate_debugline(Dwarf_P_Debug dbg, Dwarf_Error * error)
 
             line_adv = (int) (curline->dpl_line - prevline->dpl_line);
             if ((addr_adv % MIN_INST_LENGTH) != 0) {
-                DWARF_P_DBG_ERROR(dbg, DW_DLE_WRONG_ADDRESS, -1);
+                DWARF_P_DBG_ERROR(dbg, DW_DLE_WRONG_ADDRESS, DW_DLV_ERROR);
             }
             opc = _dwarf_pro_get_opc(dbg,addr_adv, line_adv);
             if (opc > 0) {
                 /* Use special opcode. */
                 no_lns_copy = 1;
-                writelen = write_ubyte(opc,dbg,elfsectno,error);
+                res = write_ubyte(opc,dbg,elfsectno,&writelen,error);
+                if (res != DW_DLV_OK) {
+                    return res;
+                }
                 sum_bytes += writelen;
                 prevline->dpl_basic_block = false;
                 prevline->dpl_address = curline->dpl_address;
@@ -933,24 +1069,33 @@ _dwarf_pro_generate_debugline(Dwarf_P_Debug dbg, Dwarf_Error * error)
                 /*  opc says use standard opcodes. */
                 if (addr_adv > 0) {
                     db = DW_LNS_advance_pc;
-                    writelen = write_opcode_uval(db,dbg,
+                    res = write_opcode_uval(db,dbg,
                         elfsectno,
                         addr_adv/
                             dbg->de_line_inits.pi_minimum_instruction_length,
+                        &writelen,
                         error);
+                    if (res != DW_DLV_OK) {
+                        return res;
+                    }
                     sum_bytes += writelen;
                     prevline->dpl_basic_block = false;
                     prevline->dpl_address = curline->dpl_address;
                 }
                 if (line_adv != 0) {
                     db = DW_LNS_advance_line;
-                    writelen = write_ubyte(db,dbg,
+                    res = write_ubyte(db,dbg,
                         elfsectno,
+                        &writelen,
                         error);
                     sum_bytes += writelen;
-                    writelen = write_sval(line_adv,dbg,
+                    res = write_sval(line_adv,dbg,
                         elfsectno,
+                        &writelen,
                         error);
+                    if (res != DW_DLV_OK) {
+                        return res;
+                    }
                     sum_bytes += writelen;
                     prevline->dpl_basic_block = false;
                     prevline->dpl_line = curline->dpl_line;
@@ -960,7 +1105,10 @@ _dwarf_pro_generate_debugline(Dwarf_P_Debug dbg, Dwarf_Error * error)
         if (no_lns_copy == 0) { /* if not a special or dw_lne_end_seq
             generate a matrix line */
             unsigned writelen = 0;
-            writelen = write_ubyte(DW_LNS_copy,dbg,elfsectno,error);
+            res = write_ubyte(DW_LNS_copy,dbg,elfsectno,&writelen,error);
+            if (res != DW_DLV_OK) {
+                return res;
+            }
             sum_bytes += writelen;
             prevline->dpl_basic_block = false;
         }
@@ -975,13 +1123,16 @@ _dwarf_pro_generate_debugline(Dwarf_P_Debug dbg, Dwarf_Error * error)
             (const void *) &du, sizeof(du), uwordb_size);
     }
 
-    return (int) dbg->de_n_debug_sect;
+    *nbufs = dbg->de_n_debug_sect;
+    return DW_DLV_OK;
 }
 
 /*
     Generate debug_frame section  */
 static int
-_dwarf_pro_generate_debugframe(Dwarf_P_Debug dbg, Dwarf_Error * error)
+_dwarf_pro_generate_debugframe(Dwarf_P_Debug dbg,
+    Dwarf_Signed *nbufs,
+    Dwarf_Error * error)
 {
     int elfsectno = 0;
     int i = 0;
@@ -1009,7 +1160,7 @@ _dwarf_pro_generate_debugframe(Dwarf_P_Debug dbg, Dwarf_Error * error)
     cie_offs = (long *)
         _dwarf_p_get_alloc(dbg, sizeof(long) * dbg->de_n_cie);
     if (cie_offs == NULL) {
-        DWARF_P_DBG_ERROR(dbg, DW_DLE_CIE_OFFS_ALLOC, -1);
+        DWARF_P_DBG_ERROR(dbg, DW_DLE_CIE_OFFS_ALLOC, DW_DLV_ERROR);
     }
     /*  Generate cie number as we go along.  This writes
         all CIEs first before any FDEs, which is rather
@@ -1036,7 +1187,7 @@ _dwarf_pro_generate_debugframe(Dwarf_P_Debug dbg, Dwarf_Error * error)
             &c_bytes,
             buff1, sizeof(buff1));
         if (res != DW_DLV_OK) {
-            DWARF_P_DBG_ERROR(dbg, DW_DLE_CIE_OFFS_ALLOC, -1);
+            DWARF_P_DBG_ERROR(dbg, DW_DLE_CIE_OFFS_ALLOC, DW_DLV_ERROR);
         }
         /*  Before April 1999, the following was using an unsigned
             encode. That worked ok even though the decoder used the
@@ -1056,7 +1207,7 @@ _dwarf_pro_generate_debugframe(Dwarf_P_Debug dbg, Dwarf_Error * error)
             &d_bytes,
             buff2, sizeof(buff2));
         if (res != DW_DLV_OK) {
-            DWARF_P_DBG_ERROR(dbg, DW_DLE_CIE_OFFS_ALLOC, -1);
+            DWARF_P_DBG_ERROR(dbg, DW_DLE_CIE_OFFS_ALLOC, DW_DLV_ERROR);
         }
         code_al = buff1;
         data_al = buff2;
@@ -1080,7 +1231,7 @@ _dwarf_pro_generate_debugframe(Dwarf_P_Debug dbg, Dwarf_Error * error)
                 sizeof(buff3));
             augmented_al = buff3;
             if (res != DW_DLV_OK) {
-                DWARF_P_DBG_ERROR(dbg, DW_DLE_CIE_OFFS_ALLOC, -1);
+                DWARF_P_DBG_ERROR(dbg, DW_DLE_CIE_OFFS_ALLOC,DW_DLV_ERROR);
             }
             cie_length = uwordb_size +  /* cie_id */
                 sizeof(Dwarf_Ubyte) +   /* cie version */
@@ -1099,7 +1250,7 @@ _dwarf_pro_generate_debugframe(Dwarf_P_Debug dbg, Dwarf_Error * error)
         }
         pad = (int) PADDING(cie_length, upointer_size);
         cie_length += pad;
-        GET_CHUNK(dbg, elfsectno, data, cie_length +
+        GET_CHUNK_ERR(dbg, elfsectno, data, cie_length +
             BEGIN_LEN_SIZE, error);
         if (extension_size) {
             Dwarf_Unsigned x = DISTINGUISHED_VALUE;
@@ -1178,7 +1329,7 @@ _dwarf_pro_generate_debugframe(Dwarf_P_Debug dbg, Dwarf_Error * error)
             indx++;
         }
         if (cie_ptr == NULL) {
-            DWARF_P_DBG_ERROR(dbg, DW_DLE_CIE_NULL, -1);
+            DWARF_P_DBG_ERROR(dbg, DW_DLE_CIE_NULL, DW_DLV_ERROR);
         }
 
         if (strcmp(cie_ptr->cie_aug, DW_CIE_AUGMENTER_STRING_V0) == 0) {
@@ -1189,7 +1340,7 @@ _dwarf_pro_generate_debugframe(Dwarf_P_Debug dbg, Dwarf_Error * error)
                 &afl_length, afl_buff,
                 sizeof(afl_buff));
             if (res != DW_DLV_OK) {
-                DWARF_P_DBG_ERROR(dbg, DW_DLE_CIE_OFFS_ALLOC, -1);
+                DWARF_P_DBG_ERROR(dbg, DW_DLE_CIE_OFFS_ALLOC, DW_DLV_ERROR);
             }
 
             fde_length = curfde->fde_n_bytes +
@@ -1211,7 +1362,7 @@ _dwarf_pro_generate_debugframe(Dwarf_P_Debug dbg, Dwarf_Error * error)
                 die corresponding to this fde.  */
             if (_dwarf_pro_add_AT_fde(dbg, curfde->fde_die, cur_off,
                 error) < 0) {
-                return -1;
+                return DW_DLV_ERROR;
             }
         }
 
@@ -1221,7 +1372,7 @@ _dwarf_pro_generate_debugframe(Dwarf_P_Debug dbg, Dwarf_Error * error)
             dbg->de_sect_name_idx[DEBUG_FRAME],
             dwarf_drt_data_reloc, uwordb_size);
         if (res != DW_DLV_OK) {
-            DWARF_P_DBG_ERROR(dbg, DW_DLE_CHUNK_ALLOC, -1);
+            DWARF_P_DBG_ERROR(dbg, DW_DLE_CHUNK_ALLOC, res );
         }
 
         /* store relocation information for initial location */
@@ -1231,7 +1382,7 @@ _dwarf_pro_generate_debugframe(Dwarf_P_Debug dbg, Dwarf_Error * error)
             curfde->fde_r_symidx,
             dwarf_drt_data_reloc, upointer_size);
         if (res != DW_DLV_OK) {
-            DWARF_P_DBG_ERROR(dbg, DW_DLE_CHUNK_ALLOC, -1);
+            DWARF_P_DBG_ERROR(dbg, DW_DLE_CHUNK_ALLOC, res);
         }
         /*  Store the relocation information for the
             offset_into_exception_info field, if the offset is valid (0
@@ -1248,7 +1399,7 @@ _dwarf_pro_generate_debugframe(Dwarf_P_Debug dbg, Dwarf_Error * error)
                 dwarf_drt_segment_rel,
                 sizeof(Dwarf_sfixed));
             if (res != DW_DLV_OK) {
-                DWARF_P_DBG_ERROR(dbg, DW_DLE_CHUNK_ALLOC, -1);
+                DWARF_P_DBG_ERROR(dbg, DW_DLE_CHUNK_ALLOC, res);
             }
         }
 
@@ -1307,7 +1458,7 @@ _dwarf_pro_generate_debugframe(Dwarf_P_Debug dbg, Dwarf_Error * error)
                 if (res != DW_DLV_OK) {
                     {
                         _dwarf_p_error(dbg, error, DW_DLE_ALLOC_FAIL);
-                        return (0);
+                        return DW_DLV_ERROR;
                     }
                 }
 
@@ -1369,7 +1520,8 @@ _dwarf_pro_generate_debugframe(Dwarf_P_Debug dbg, Dwarf_Error * error)
     }
 
 
-    return (int) dbg->de_n_debug_sect;
+    *nbufs =  dbg->de_n_debug_sect;
+    return DW_DLV_OK;
 }
 
 /*
@@ -1449,10 +1601,10 @@ string_attr_init (Dwarf_P_Debug dbg,
             sizeof(struct Dwarf_P_String_Attr_s) * sect_sa->sect_sa_n_alloc);
         if (sect_sa->sect_sa_list == NULL) {
             sect_sa->sect_sa_n_alloc = 0;
-            return -1;
+            return DW_DLV_ERROR;
         }
     }
-    return 0;
+    return DW_DLV_OK;
 }
 
 static int
@@ -1466,10 +1618,10 @@ string_attr_add (Dwarf_P_Debug dbg,
         unsigned n = sect_sa->sect_sa_n_used++;
         sect_sa->sect_sa_list[n].sa_offset = offset;
         sect_sa->sect_sa_list[n].sa_nbytes = attr->ar_nbytes;
-        return 0;
+        return DW_DLV_OK;
     }
 
-    return -1;
+    return DW_DLV_ERROR;
 }
 
 int
@@ -1523,10 +1675,10 @@ has_sibling_die_already(Dwarf_P_Die d)
     Dwarf_P_Attribute a = 0;
     for(a = d->di_attrs; a ; a = a->ar_next) {
         if(a->ar_attribute == DW_AT_sibling) {
-            return 1;
+            return TRUE;
         }
     }
-    return 0;
+    return FALSE;
 }
 
 /*  For DW_FORM_strp we need to set the symindex so we need
@@ -1555,7 +1707,9 @@ if_relocatable_string_form(Dwarf_P_Debug dbg, Dwarf_P_Attribute curattr,
 /* Generate debug_info and debug_abbrev sections */
 
 static int
-_dwarf_pro_generate_debuginfo(Dwarf_P_Debug dbg, Dwarf_Error * error)
+_dwarf_pro_generate_debuginfo(Dwarf_P_Debug dbg,
+    Dwarf_Signed *nbufs,
+    Dwarf_Error * error)
 {
     int elfsectno_of_debug_info = 0;
     int abbrevsectno = 0;
@@ -1591,7 +1745,7 @@ _dwarf_pro_generate_debuginfo(Dwarf_P_Debug dbg, Dwarf_Error * error)
         sizeof(Dwarf_Half) + /* version stamp */
         uwordb_size +  /* offset into abbrev table */
         sizeof(Dwarf_Ubyte);  /* size of target address */
-    GET_CHUNK(dbg, elfsectno_of_debug_info, data, cu_header_size,
+    GET_CHUNK_ERR(dbg, elfsectno_of_debug_info, data, cu_header_size,
         error);
     start_info_sec = data;
     if (extension_size) {
@@ -1631,14 +1785,18 @@ _dwarf_pro_generate_debuginfo(Dwarf_P_Debug dbg, Dwarf_Error * error)
 
     /*  Create AT_macro_info if appropriate */
     if (dbg->de_first_macinfo != NULL) {
-        if (_dwarf_pro_add_AT_macro_info(dbg, curdie, 0, error) < 0)
-            return -1;
+        res = _dwarf_pro_add_AT_macro_info(dbg, curdie, 0, error);
+        if (res != DW_DLV_OK) {
+            return res;
+        }
     }
 
     /* Create AT_stmt_list attribute if necessary */
     if (dwarf_need_debug_line_section(dbg) == TRUE)
-        if (_dwarf_pro_add_AT_stmt_list(dbg, curdie, error) < 0)
-            return -1;
+        res =_dwarf_pro_add_AT_stmt_list(dbg, curdie, error);
+        if (res != DW_DLV_OK) {
+            return res;
+        }
 
     die_off = cu_header_size;
 
@@ -1650,7 +1808,7 @@ _dwarf_pro_generate_debuginfo(Dwarf_P_Debug dbg, Dwarf_Error * error)
         dbg->de_sect_name_idx[DEBUG_ABBREV],
         dwarf_drt_data_reloc, uwordb_size);
     if (res != DW_DLV_OK) {
-        DWARF_P_DBG_ERROR(dbg, DW_DLE_REL_ALLOC, -1);
+        DWARF_P_DBG_ERROR(dbg, DW_DLE_REL_ALLOC, DW_DLV_ERROR);
     }
 
     /*  Pass 0: only top level dies, add at_sibling attribute to those
@@ -1689,7 +1847,7 @@ _dwarf_pro_generate_debuginfo(Dwarf_P_Debug dbg, Dwarf_Error * error)
 
         curabbrev = _dwarf_pro_getabbrev(curdie, abbrev_head);
         if (curabbrev == NULL) {
-            DWARF_P_DBG_ERROR(dbg, DW_DLE_ABBREV_ALLOC, -1);
+            DWARF_P_DBG_ERROR(dbg, DW_DLE_ABBREV_ALLOC, DW_DLV_ERROR);
         }
         if (abbrev_head == NULL) {
             n_abbrevs = 1;
@@ -1708,11 +1866,11 @@ _dwarf_pro_generate_debuginfo(Dwarf_P_Debug dbg, Dwarf_Error * error)
             &nbytes,
             buff1, sizeof(buff1));
         if (cres != DW_DLV_OK) {
-            DWARF_P_DBG_ERROR(dbg, DW_DLE_ABBREV_ALLOC, -1);
+            DWARF_P_DBG_ERROR(dbg, DW_DLE_ABBREV_ALLOC, DW_DLV_ERROR);
         }
         space = _dwarf_p_get_alloc(dbg, nbytes);
         if (space == NULL) {
-            DWARF_P_DBG_ERROR(dbg, DW_DLE_ABBREV_ALLOC, -1);
+            DWARF_P_DBG_ERROR(dbg, DW_DLE_ABBREV_ALLOC, DW_DLV_ERROR);
         }
         memcpy(space, buff1, nbytes);
         curdie->di_abbrev = space;
@@ -1739,7 +1897,7 @@ _dwarf_pro_generate_debuginfo(Dwarf_P_Debug dbg, Dwarf_Error * error)
                 /*  This will trip with an error if, somehow, one has
                     managed to erroneously have multiple of
                     a given attribute number in a single DIE. */
-                DWARF_P_DBG_ERROR(dbg,DW_DLE_ABBREV_ALLOC, -1);
+                DWARF_P_DBG_ERROR(dbg,DW_DLE_ABBREV_ALLOC, DW_DLV_ERROR);
             }
 
             /*  Remove the attribute from the old list, we
@@ -1788,7 +1946,7 @@ _dwarf_pro_generate_debuginfo(Dwarf_P_Debug dbg, Dwarf_Error * error)
                     int nres = if_relocatable_string_form(dbg,curattr,
                         &is_debug_str,error);
                     if (nres != DW_DLV_OK) {
-                        return -1;
+                        return res;
                     }
                     if (is_debug_str) {
                         curattr->ar_rel_symidx =
@@ -1806,7 +1964,7 @@ _dwarf_pro_generate_debuginfo(Dwarf_P_Debug dbg, Dwarf_Error * error)
                     curattr->ar_reloc_len);
 
                 if (rres != DW_DLV_OK) {
-                    DWARF_P_DBG_ERROR(dbg, DW_DLE_REL_ALLOC, -1);
+                    DWARF_P_DBG_ERROR(dbg, DW_DLE_REL_ALLOC, DW_DLV_ERROR);
                 }
 
             }
@@ -1834,11 +1992,11 @@ _dwarf_pro_generate_debuginfo(Dwarf_P_Debug dbg, Dwarf_Error * error)
 
     res = marker_init(dbg, marker_count);
     if (res == -1) {
-        DWARF_P_DBG_ERROR(dbg, DW_DLE_REL_ALLOC, -1);
+        DWARF_P_DBG_ERROR(dbg, DW_DLE_REL_ALLOC, DW_DLV_ERROR);
     }
     res = string_attr_init(dbg, DEBUG_INFO, string_attr_count);
-    if (res == -1) {
-        DWARF_P_DBG_ERROR(dbg, DW_DLE_REL_ALLOC, -1);
+    if (res != DW_DLV_OK) {
+        DWARF_P_DBG_ERROR(dbg, DW_DLE_REL_ALLOC, DW_DLV_ERROR);
     }
 
     /*  Pass 2: Write out the die information Here 'data' is a
@@ -1850,12 +2008,12 @@ _dwarf_pro_generate_debuginfo(Dwarf_P_Debug dbg, Dwarf_Error * error)
         if (curdie->di_marker != 0) {
             res = marker_add(dbg, curdie->di_offset, curdie->di_marker);
             if (res == -1) {
-                DWARF_P_DBG_ERROR(dbg, DW_DLE_REL_ALLOC, -1);
+                DWARF_P_DBG_ERROR(dbg, DW_DLE_REL_ALLOC, DW_DLV_ERROR);
             }
         }
 
         /* Index to abbreviation table */
-        GET_CHUNK(dbg, elfsectno_of_debug_info,
+        GET_CHUNK_ERR(dbg, elfsectno_of_debug_info,
             data, curdie->di_abbrev_nbytes, error);
 
         memcpy((void *) data,
@@ -1867,14 +2025,14 @@ _dwarf_pro_generate_debuginfo(Dwarf_P_Debug dbg, Dwarf_Error * error)
         string_attr_offset = curdie->di_offset + curdie->di_abbrev_nbytes;
 
         while (curattr) {
-            GET_CHUNK(dbg, elfsectno_of_debug_info, data,
+            GET_CHUNK_ERR(dbg, elfsectno_of_debug_info, data,
                 (unsigned long) curattr->ar_nbytes, error);
             switch (curattr->ar_attribute_form) {
             case DW_FORM_ref1:
                 {
                     if (curattr->ar_ref_die->di_offset >
                         (unsigned) 0xff) {
-                        DWARF_P_DBG_ERROR(dbg, DW_DLE_OFFSET_UFLW, -1);
+                        DWARF_P_DBG_ERROR(dbg, DW_DLE_OFFSET_UFLW, DW_DLV_ERROR);
                     }
                     db = curattr->ar_ref_die->di_offset;
                     WRITE_UNALIGNED(dbg, (void *) data,
@@ -1886,7 +2044,7 @@ _dwarf_pro_generate_debuginfo(Dwarf_P_Debug dbg, Dwarf_Error * error)
                 {
                     if (curattr->ar_ref_die->di_offset >
                         (unsigned) 0xffff) {
-                        DWARF_P_DBG_ERROR(dbg, DW_DLE_OFFSET_UFLW, -1);
+                        DWARF_P_DBG_ERROR(dbg, DW_DLE_OFFSET_UFLW, DW_DLV_ERROR);
                     }
                     dh = curattr->ar_ref_die->di_offset;
                     WRITE_UNALIGNED(dbg, (void *) data,
@@ -1910,7 +2068,8 @@ _dwarf_pro_generate_debuginfo(Dwarf_P_Debug dbg, Dwarf_Error * error)
                 {
                     if (curattr->ar_ref_die->di_offset >
                         (unsigned) 0xffffffff) {
-                        DWARF_P_DBG_ERROR(dbg, DW_DLE_OFFSET_UFLW, -1);
+                        DWARF_P_DBG_ERROR(dbg, DW_DLE_OFFSET_UFLW,
+                            DW_DLV_ERROR);
                     }
                     dw = (Dwarf_Word) curattr->ar_ref_die->di_offset;
                     WRITE_UNALIGNED(dbg, (void *) data,
@@ -1937,7 +2096,8 @@ _dwarf_pro_generate_debuginfo(Dwarf_P_Debug dbg, Dwarf_Error * error)
                             buff1,
                             sizeof(buff1));
                     if (res != DW_DLV_OK) {
-                        DWARF_P_DBG_ERROR(dbg, DW_DLE_ABBREV_ALLOC, -1);
+                        DWARF_P_DBG_ERROR(dbg, DW_DLE_ABBREV_ALLOC,
+                            DW_DLV_ERROR);
                     }
 
                     memcpy(data, buff1, nbytes);
@@ -1961,7 +2121,7 @@ _dwarf_pro_generate_debuginfo(Dwarf_P_Debug dbg, Dwarf_Error * error)
             curdie = curdie->di_child;
         else {
             while (curdie != NULL && curdie->di_right == NULL) {
-                GET_CHUNK(dbg, elfsectno_of_debug_info, data, 1, error);
+                GET_CHUNK_ERR(dbg, elfsectno_of_debug_info, data, 1, error);
                 *data = '\0';
                 curdie = curdie->di_parent;
             }
@@ -1985,23 +2145,43 @@ _dwarf_pro_generate_debuginfo(Dwarf_P_Debug dbg, Dwarf_Error * error)
     curabbrev = abbrev_head;
     while (curabbrev) {
         int idx = 0;
+        unsigned lebcount = 0;
 
-        write_uval(curabbrev->abb_idx,dbg,abbrevsectno,error);
-        write_uval(curabbrev->abb_tag,dbg,abbrevsectno,error);
+        res  = write_uval(curabbrev->abb_idx,dbg,abbrevsectno,
+            &lebcount,error);
+        if (res != DW_DLV_OK) {
+            return res;
+        }
+
+        res  = write_uval(curabbrev->abb_tag,dbg,abbrevsectno,
+            &lebcount,error);
+        if (res != DW_DLV_OK) {
+            return res;
+        }
 
         db = curabbrev->abb_children;
-        write_ubyte(db,dbg,abbrevsectno,error);
+        res = write_ubyte(db,dbg,abbrevsectno,&lebcount,error);
+        if (res != DW_DLV_OK) {
+            return res;
+        }
 
         /* add attributes and forms */
         for (idx = 0; idx < curabbrev->abb_n_attr; idx++) {
-            write_uval(curabbrev->abb_attrs[idx],
-                dbg,abbrevsectno,error);
-
-            write_uval(curabbrev->abb_forms[idx],
-                dbg,abbrevsectno,error);
+            res =write_uval(curabbrev->abb_attrs[idx],
+                dbg,abbrevsectno,
+                &lebcount,error);
+            if (res != DW_DLV_OK) {
+                return res;
+            }
+            res =write_uval(curabbrev->abb_forms[idx],
+                dbg,abbrevsectno,
+                &lebcount,error);
+            if (res != DW_DLV_OK) {
+                return res;
+            }
         }
         /* Two zeros, for last entry, see dwarf2 sec 7.5.3 */
-        GET_CHUNK(dbg, abbrevsectno, data, 2, error);
+        GET_CHUNK_ERR(dbg, abbrevsectno, data, 2, error);
         *data = 0;
         data++;
         *data = 0;
@@ -2010,13 +2190,16 @@ _dwarf_pro_generate_debuginfo(Dwarf_P_Debug dbg, Dwarf_Error * error)
     }
 
     /* one zero, for end of cu, see dwarf2 sec 7.5.3 */
-    GET_CHUNK(dbg, abbrevsectno, data, 1, error);
+    GET_CHUNK_ERR(dbg, abbrevsectno, data, 1, error);
     *data = 0;
-    return (int) dbg->de_n_debug_sect;
+    *nbufs =  dbg->de_n_debug_sect;
+    return DW_DLV_OK;
 }
 
 static int
-_dwarf_pro_generate_debug_str(Dwarf_P_Debug dbg, Dwarf_Error * error)
+_dwarf_pro_generate_debug_str(Dwarf_P_Debug dbg,
+    Dwarf_Signed *nbufs,
+    Dwarf_Error * error)
 {
     int elfsectno_of_debug_str = 0;
     unsigned char *data = 0;
@@ -2025,8 +2208,8 @@ _dwarf_pro_generate_debug_str(Dwarf_P_Debug dbg, Dwarf_Error * error)
     GET_CHUNK(dbg, elfsectno_of_debug_str, data, dbg->de_debug_str->ds_nbytes,
         error);
     memcpy(data,dbg->de_debug_str->ds_data,dbg->de_debug_str->ds_nbytes);
-    return (int) dbg->de_n_debug_sect;
-
+    *nbufs = dbg->de_n_debug_sect;
+    return DW_DLV_OK;
 }
 
 

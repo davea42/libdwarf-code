@@ -131,6 +131,7 @@ int
 _dwarf_transform_simplename_to_disk(Dwarf_P_Debug dbg,
     enum dwarf_sn_kind entrykind,
     int section_index, /* in de_elf_sects etc */
+    Dwarf_Signed *nbufs,
     Dwarf_Error * error)
 {
 
@@ -193,7 +194,7 @@ _dwarf_transform_simplename_to_disk(Dwarf_P_Debug dbg,
         stream_bytes, (unsigned long) stream_bytes_count, error);
     if (stream_bytes == NULL) {
         _dwarf_p_error(dbg, error, DW_DLE_ALLOC_FAIL);
-        return (0);
+        return DW_DLV_ERROR;
     }
     cur_stream_bytes_ptr = stream_bytes;
 
@@ -241,7 +242,7 @@ _dwarf_transform_simplename_to_disk(Dwarf_P_Debug dbg,
 
         if (res != DW_DLV_OK) {
             _dwarf_p_error(dbg, error, DW_DLE_ALLOC_FAIL);
-            return (0);
+            return DW_DLV_ERROR;
         }
     }
 
@@ -270,5 +271,6 @@ _dwarf_transform_simplename_to_disk(Dwarf_P_Debug dbg,
     WRITE_UNALIGNED(dbg, cur_stream_bytes_ptr,
         (const void *) &big_zero,
         sizeof(big_zero), uword_size);
-    return (int) dbg->de_n_debug_sect;
+    *nbufs =  dbg->de_n_debug_sect;
+    return DW_DLV_OK;
 }

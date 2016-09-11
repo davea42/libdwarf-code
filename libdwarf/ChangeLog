@@ -1,4 +1,24 @@
 2016-09-11 David Anderson
+    * dwarf_errmsg_list.c: Adding DW_DLE_LEB_OUT_ERROR.
+    * libdwarf.h.in: Adding DW_DLE_LEB_OUT_ERROR
+      and dwarf_transform_to_disk_form_b(), first steps
+      to making type-safe producer functions.
+    * libdwarf2p.1.mm: Document dwarf_transform_to_disk_form_b().
+    * libdwarf2p.1.pdf: Rev 1.42. 
+    * pro_arange.c: Altered internal interface to _dwarf_transform_arange_to_disk().
+    * pro_die.c: Altered internal error return to use DW_DLV_ERROR.
+    * pro_macinfo.c,pro_macinfo.h: Altered internal interface to
+      _dwarf_pro_transform_macro_info_to_disk().
+    * pro_section.c: Implemented dwarf_transform_to_disk_form_b() and
+      changed internals to use DW_DLV_OK/DW_DLV_ERROR.
+      Many places where errors were ignored now have checks for error.
+    * pro_section.h: Added GET_CHUNK_ERR to return DW_DLV_ERROR
+      on error. Altered internal function _dwarf_transform_arange_to_disk()
+      and _dwarf_transform_simplename_to_disk()
+      to the newer interface.
+    * pro_types.h: Internal declaration of _dwarf_transform_simplename_to_disk()
+      now uses the new interface.
+2016-09-11 David Anderson
     * dwarf_dsc.c: Set the internal flag so we do not redo the
       leb decoding over and over.
 2016-09-08 David Anderson

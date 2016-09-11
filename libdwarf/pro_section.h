@@ -1,6 +1,7 @@
 /*
 
   Copyright (C) 2000,2004 Silicon Graphics, Inc.  All Rights Reserved.
+  Portions (C) 2016 David Anderson .  All Rights Reserved.
 
   This program is free software; you can redistribute it and/or modify it
   under the terms of version 2.1 of the GNU Lesser General Public License
@@ -76,6 +77,14 @@ struct Dwarf_P_Section_Data_s {
 Dwarf_Small *_dwarf_pro_buffer(Dwarf_P_Debug dbg, int sectno,
     unsigned long nbytes);
 
+/* GET_CHUNK_ERROR is new Sept 2016 to use DW_DLV_ERROR. */
+#define GET_CHUNK_ERR(dbg,sectno,ptr,nbytes,error) \
+{ \
+    (ptr) = _dwarf_pro_buffer((dbg),(sectno),(nbytes)); \
+    if ((ptr) == NULL) { \
+        DWARF_P_DBG_ERROR(dbg,DW_DLE_CHUNK_ALLOC,DW_DLV_ERROR); \
+    } \
+}
 #define GET_CHUNK(dbg,sectno,ptr,nbytes,error) \
 { \
     (ptr) = _dwarf_pro_buffer((dbg),(sectno),(nbytes)); \
@@ -86,8 +95,8 @@ Dwarf_Small *_dwarf_pro_buffer(Dwarf_P_Debug dbg, int sectno,
 
 
 
-int
-  _dwarf_transform_arange_to_disk(Dwarf_P_Debug dbg,
+int _dwarf_transform_arange_to_disk(Dwarf_P_Debug dbg,
+    Dwarf_Signed *nbufs,
     Dwarf_Error * error);
 
 /* These are for creating ELF section type codes.

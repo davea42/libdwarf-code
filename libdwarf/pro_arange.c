@@ -100,7 +100,8 @@ dwarf_add_arange_b(Dwarf_P_Debug dbg,
 
 
 int
-_dwarf_transform_arange_to_disk(Dwarf_P_Debug dbg, Dwarf_Error * error)
+_dwarf_transform_arange_to_disk(Dwarf_P_Debug dbg,
+    Dwarf_Signed *nbufs, Dwarf_Error * error)
 {
     /* Total num of bytes in .debug_aranges section. */
     Dwarf_Unsigned arange_num_bytes = 0;
@@ -156,7 +157,7 @@ _dwarf_transform_arange_to_disk(Dwarf_P_Debug dbg, Dwarf_Error * error)
     arange_ptr = arange;
     if (arange == NULL) {
         _dwarf_p_error(dbg, error, DW_DLE_ALLOC_FAIL);
-        return (0);
+        return DW_DLV_ERROR;
     }
     if (extension_word_size) {
         Dwarf_Word x = DISTINGUISHED_VALUE;
@@ -208,7 +209,7 @@ _dwarf_transform_arange_to_disk(Dwarf_P_Debug dbg, Dwarf_Error * error)
             DEBUG_ARANGES, count);
         if (res2 != DW_DLV_OK) {
             _dwarf_p_error(dbg, error, DW_DLE_ALLOC_FAIL);
-            return (0);
+            return DW_DLV_ERROR;
         }
     }
 
@@ -250,7 +251,7 @@ _dwarf_transform_arange_to_disk(Dwarf_P_Debug dbg, Dwarf_Error * error)
             dwarf_drt_data_reloc, upointer_size);
         if (res != DW_DLV_OK) {
             _dwarf_p_error(dbg, error, DW_DLE_ALLOC_FAIL);
-            return (0);
+            return DW_DLV_ERROR;
         }
 
         /* Copy beginning address of range. */
@@ -276,7 +277,7 @@ _dwarf_transform_arange_to_disk(Dwarf_P_Debug dbg, Dwarf_Error * error)
                 upointer_size);
             if (res != DW_DLV_OK) {
                 _dwarf_p_error(dbg, error, DW_DLE_ALLOC_FAIL);
-                return (0);
+                return DW_DLV_ERROR;
             }
 
             /*  arange pre-calc so assem text can do .word end - begin
@@ -306,5 +307,6 @@ _dwarf_transform_arange_to_disk(Dwarf_P_Debug dbg, Dwarf_Error * error)
     WRITE_UNALIGNED(dbg, (void *) arange_ptr,
         (const void *) &big_zero,
         sizeof(big_zero), upointer_size);
-    return (int) dbg->de_n_debug_sect;
+    *nbufs =  dbg->de_n_debug_sect;
+    return DW_DLV_OK;
 }
