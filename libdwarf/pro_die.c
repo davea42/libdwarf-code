@@ -54,34 +54,85 @@ dwarf_new_die(Dwarf_P_Debug dbg,
     Dwarf_Tag tag,
     Dwarf_P_Die parent,
     Dwarf_P_Die child,
-    Dwarf_P_Die left, Dwarf_P_Die right, Dwarf_Error * error)
+    Dwarf_P_Die left, Dwarf_P_Die right,
+    Dwarf_Error * error)
+{
+    Dwarf_P_Die created = 0;
+    int res = 0;
+
+    res = dwarf_new_die_a(dbg,tag,parent,child,
+        left,right,&created,error);
+    if (res != DW_DLV_OK) {
+        return (Dwarf_P_Die)DW_DLV_BADADDR;
+    }
+    return created;
+}
+
+/* New September 2016. Preferred as error checking
+   is easier, no need for ugly cast. */
+int
+dwarf_new_die_a(Dwarf_P_Debug dbg,
+    Dwarf_Tag tag,
+    Dwarf_P_Die parent,
+    Dwarf_P_Die child,
+    Dwarf_P_Die left, Dwarf_P_Die right,
+    Dwarf_P_Die *die_out,
+    Dwarf_Error *error)
 {
     Dwarf_P_Die ret_die = 0;
+    int res = 0;
 
-    Dwarf_P_Die new_die = (Dwarf_P_Die)
+    ret_die = (Dwarf_P_Die)
         _dwarf_p_get_alloc(dbg, sizeof(struct Dwarf_P_Die_s));
-    if (new_die == NULL) {
+    if (ret_die == NULL) {
         DWARF_P_DBG_ERROR(dbg, DW_DLE_DIE_ALLOC,
-            (Dwarf_P_Die) DW_DLV_BADADDR);
+            DW_DLV_ERROR);
     }
-    new_die->di_parent = NULL;
-    new_die->di_left = NULL;
-    new_die->di_right = NULL;
-    new_die->di_child = NULL;
-    new_die->di_last_child = NULL;
-    new_die->di_tag = tag;
-    new_die->di_dbg = dbg;
-    new_die->di_marker = 0;
-    ret_die =
-        dwarf_die_link(new_die, parent, child, left, right, error);
-    return ret_die;
+    ret_die->di_parent = NULL;
+    ret_die->di_left = NULL;
+    ret_die->di_right = NULL;
+    ret_die->di_child = NULL;
+    ret_die->di_last_child = NULL;
+    ret_die->di_tag = tag;
+    ret_die->di_dbg = dbg;
+    ret_die->di_marker = 0;
+    res = dwarf_die_link_a(ret_die, parent, child, left, right,
+        error);
+    if (res != DW_DLV_OK) {
+        _dwarf_p_dealloc(dbg,(Dwarf_Small *)ret_die);
+        ret_die = 0;
+    } else {
+        *die_out = ret_die;
+    }
+    return res;
 }
 
 /*  This function links up a die to specified neighbors
     parent,child,left,right: specify neighbors of the new die. Only
-    one of these may be non-null */
+    one of these may be non-null
+    This is the original version. Use dwarf_die_link_a()
+    instead as that function is easier to use (in checking for error).
+    */
 Dwarf_P_Die
 dwarf_die_link(Dwarf_P_Die new_die,
+    Dwarf_P_Die parent,
+    Dwarf_P_Die child,
+    Dwarf_P_Die left, Dwarf_P_Die right, Dwarf_Error * error)
+{
+    int res = 0;
+
+    res = dwarf_die_link_a(new_die,parent,child,left,right,error);
+    if (res != DW_DLV_OK) {
+        return (Dwarf_P_Die)DW_DLV_BADADDR;
+    }
+    return new_die;
+}
+
+/*  New September 2016.
+    Error return easier to deal with
+    than dwarf_die_link(). */
+int
+dwarf_die_link_a(Dwarf_P_Die new_die,
     Dwarf_P_Die parent,
     Dwarf_P_Die child,
     Dwarf_P_Die left, Dwarf_P_Die right, Dwarf_Error * error)
@@ -93,7 +144,7 @@ dwarf_die_link(Dwarf_P_Die new_die,
         n_nulls++;
         if (new_die->di_parent != NULL) {
             DWARF_P_DBG_ERROR(NULL, DW_DLE_LINK_LOOP,
-                (Dwarf_P_Die) DW_DLV_BADADDR);
+                DW_DLV_ERROR);
         }
         new_die->di_parent = parent;
         if (parent->di_child) {
@@ -117,7 +168,7 @@ dwarf_die_link(Dwarf_P_Die new_die,
         new_die->di_last_child = child;
         if (child->di_parent) {
             DWARF_P_DBG_ERROR(NULL, DW_DLE_PARENT_EXISTS,
-                (Dwarf_P_Die) DW_DLV_BADADDR);
+                DW_DLV_ERROR);
         } else {
             child->di_parent = new_die;
         }
@@ -134,7 +185,7 @@ dwarf_die_link(Dwarf_P_Die new_die,
         left->di_right = new_die;
         if (new_die->di_parent) {
             DWARF_P_DBG_ERROR(NULL, DW_DLE_PARENT_EXISTS,
-                (Dwarf_P_Die) DW_DLV_BADADDR);
+                DW_DLV_ERROR);
         } else {
             new_die->di_parent = left->di_parent;
         }
@@ -151,7 +202,7 @@ dwarf_die_link(Dwarf_P_Die new_die,
         right->di_left = new_die;
         if (new_die->di_parent) {
             DWARF_P_DBG_ERROR(NULL, DW_DLE_PARENT_EXISTS,
-                (Dwarf_P_Die) DW_DLV_BADADDR);
+                DW_DLV_ERROR);
         } else {
             new_die->di_parent = right->di_parent;
         }
@@ -159,10 +210,9 @@ dwarf_die_link(Dwarf_P_Die new_die,
     if (n_nulls > 1) {
         /* Multiple neighbors! error! */
         DWARF_P_DBG_ERROR(NULL, DW_DLE_EXTRA_NEIGHBORS,
-            (Dwarf_P_Die) DW_DLV_BADADDR);
+            DW_DLV_ERROR);
     }
-    return new_die;
-
+    return DW_DLV_OK;
 }
 
 Dwarf_Unsigned

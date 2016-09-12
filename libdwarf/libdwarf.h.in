@@ -3506,7 +3506,18 @@ Dwarf_P_Fde dwarf_fde_cfa_offset(
     Dwarf_Signed    /*offset*/,
     Dwarf_Error*    /*error*/);
 
-/* die creation & addition routines */
+/* die creation & addition routines 
+    dwarf_new_die_a() new September 2016.
+    Preferred over dwarf_new_die(). */
+int dwarf_new_die_a(
+    Dwarf_P_Debug   /*dbg*/,
+    Dwarf_Tag       /*tag*/,
+    Dwarf_P_Die     /*parent*/,
+    Dwarf_P_Die     /*child*/,
+    Dwarf_P_Die     /*left */,
+    Dwarf_P_Die     /*right*/,
+    Dwarf_P_Die   * /*die_out*/,
+    Dwarf_Error*    /*error*/);
 Dwarf_P_Die dwarf_new_die(
     Dwarf_P_Debug    /*dbg*/,
     Dwarf_Tag         /*tag*/,
@@ -3536,6 +3547,16 @@ Dwarf_Unsigned dwarf_get_die_marker(
     Dwarf_Unsigned *  /*marker*/,
     Dwarf_Error *   /*error*/);
 
+/*  New September 2016. Preferred version */
+int dwarf_die_link_a(
+    Dwarf_P_Die     /*die*/,
+    Dwarf_P_Die     /*parent*/,
+    Dwarf_P_Die     /*child*/,
+    Dwarf_P_Die     /*left*/,
+    Dwarf_P_Die     /*right*/,
+    Dwarf_Error*    /*error*/);
+
+/*  Original version. Use dwarf_die_link_a() instead. */
 Dwarf_P_Die dwarf_die_link(
     Dwarf_P_Die     /*die*/,
     Dwarf_P_Die     /*parent*/,
