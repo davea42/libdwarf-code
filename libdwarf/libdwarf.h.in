@@ -3183,7 +3183,7 @@ int dwarf_pro_set_default_string_form(Dwarf_P_Debug /*dbg*/,
 Dwarf_Signed dwarf_transform_to_disk_form(Dwarf_P_Debug /*dbg*/,
     Dwarf_Error*     /*error*/);
 /*  New September 2016. The preferred interface. */
-int dwarf_transform_to_disk_form_b(Dwarf_P_Debug /*dbg*/,
+int dwarf_transform_to_disk_form_a(Dwarf_P_Debug /*dbg*/,
     Dwarf_Signed *   /*nbufs_out*/,
     Dwarf_Error*     /*error*/);
 
@@ -3506,7 +3506,7 @@ Dwarf_P_Fde dwarf_fde_cfa_offset(
     Dwarf_Signed    /*offset*/,
     Dwarf_Error*    /*error*/);
 
-/* die creation & addition routines 
+/*  die creation & addition routines
     dwarf_new_die_a() new September 2016.
     Preferred over dwarf_new_die(). */
 int dwarf_new_die_a(

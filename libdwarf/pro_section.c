@@ -195,7 +195,7 @@ dwarf_transform_to_disk_form(Dwarf_P_Debug dbg, Dwarf_Error * error)
     Dwarf_Signed count = 0;
     int res = 0;
 
-    res = dwarf_transform_to_disk_form_b(dbg, &count,error);
+    res = dwarf_transform_to_disk_form_a(dbg, &count,error);
     if (res == DW_DLV_ERROR) {
         return DW_DLV_NOCOUNT;
     }
@@ -208,7 +208,7 @@ dwarf_transform_to_disk_form(Dwarf_P_Debug dbg, Dwarf_Error * error)
     interface, so easier for callers to work with.
 */
 int
-dwarf_transform_to_disk_form_b(Dwarf_P_Debug dbg, Dwarf_Signed *count,
+dwarf_transform_to_disk_form_a(Dwarf_P_Debug dbg, Dwarf_Signed *count,
     Dwarf_Error * error)
 {
     /*  Section data in written out in a number of buffers. Each

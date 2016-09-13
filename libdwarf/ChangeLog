@@ -1,10 +1,15 @@
 2016-09-12 David Anderson
     * libdwarf.h.in: Declaring dwarf_new_die_a()
       and dwarf_die_link_a().
+      Renamed yesterday's new function dwarf_transform_to_disk_form_b() to
+      dwarf_transform_to_disk_form_a() for consistency
+      with the new dwarf_new_die_a().
     * pro_die.c: Implementing dwarf_new_die_a()
       and dwarf_die_link_a() with easier to use
       error handling than dwarf_new_die()
       and dwarf_die_link().
+    * libdwarf2p.1.mm: Document the new and renamed *_a() functions.
+    * libdwarf2p.1.pdf: Regenerated. Rev 1.43. 
 2016-09-11 David Anderson
     * dwarf_errmsg_list.c: Adding DW_DLE_LEB_OUT_ERROR.
     * libdwarf.h.in: Adding DW_DLE_LEB_OUT_ERROR
