@@ -2366,24 +2366,24 @@ append_discr_array_vals(Dwarf_Debug dbg,
         if (!dtype) {
             if (isunsigned < 0) {
                 snprintf(tmpstrb,sizeof(tmpstrb),
-                    "discr=%" DW_PR_DSd,slow);
+                    "%" DW_PR_DSd,slow);
                 esb_append(strout,tmpstrb);
                 checksignv(strout,"as signed:unsigned",slow,ulow);
             } else {
                 snprintf(tmpstrb,sizeof(tmpstrb),
-                    "discr=%" DW_PR_DUu,ulow);
+                    "%" DW_PR_DUu,ulow);
                 esb_append(strout,tmpstrb);
                 checksignv(strout,"as signed:unsigned",slow,ulow);
             }
         } else {
             if (isunsigned < 0) {
                 snprintf(tmpstrb,sizeof(tmpstrb),
-                    "discr range=%" DW_PR_DSd,slow);
+                    "%" DW_PR_DSd,slow);
                 esb_append(strout,tmpstrb);
                 checksignv(strout,"as signed:unsigned",slow,ulow);
             } else {
                 snprintf(tmpstrb,sizeof(tmpstrb),
-                    "discr range=%" DW_PR_DUu,ulow);
+                    "%" DW_PR_DUu,ulow);
                 esb_append(strout,tmpstrb);
                 checksignv(strout,"as signed:unsigned",slow,ulow);
             }

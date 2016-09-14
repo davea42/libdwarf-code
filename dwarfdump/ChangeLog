@@ -1,3 +1,6 @@
+2016-09-13  David Anderson
+    * print_die.c: Shortened the printing of DW_AT_discr_list
+      to improve readability.
 2016-09-09  David Anderson
     * tag_attr.c,tag_tree.c: Further improvements to ensure we do not run
       off the ends of rows or columns.
