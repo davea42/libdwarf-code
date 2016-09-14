@@ -3187,6 +3187,15 @@ int dwarf_transform_to_disk_form_a(Dwarf_P_Debug /*dbg*/,
     Dwarf_Signed *   /*nbufs_out*/,
     Dwarf_Error*     /*error*/);
 
+/* New September 2016. Preferred. */
+int dwarf_get_section_bytes_a(Dwarf_P_Debug /*dbg*/,
+    Dwarf_Signed     /*dwarf_section*/,
+    Dwarf_Signed*    /*elf_section_index*/,
+    Dwarf_Unsigned*  /*length*/,
+    Dwarf_Ptr     *  /*section_bytes*/,
+    Dwarf_Error*     /*error*/);
+
+/* Original function.  Checking for error is difficult. */
 Dwarf_Ptr dwarf_get_section_bytes(Dwarf_P_Debug /*dbg*/,
     Dwarf_Signed     /*dwarf_section*/,
     Dwarf_Signed*    /*elf_section_index*/,

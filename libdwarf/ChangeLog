@@ -1,3 +1,8 @@
+2016-09-13 David Anderson
+    * pro_section.c: new interface dwarf_get_section_bytes_a().
+    * libdwarf.h.in: Declaration for dwarf_get_section_bytes_a() added.
+    * libdwarf2p.1.mm: Document dwarf_get_section_bytes_a().
+    * libdwarf2p.1.pdf: Regenerated. Rev 1.44. 
 2016-09-12 David Anderson
     * libdwarf.h.in: Declaring dwarf_new_die_a()
       and dwarf_die_link_a().

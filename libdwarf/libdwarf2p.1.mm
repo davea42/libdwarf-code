@@ -11,7 +11,7 @@
 .nr Hb 5
 \." ==============================================
 \." Put current date in the following at each rev
-.ds vE Rev 1.43, 13 September 2016
+.ds vE Rev 1.44, 13 September 2016
 \." ==============================================
 \." ==============================================
 .ds | |
@@ -415,16 +415,18 @@ Beginning in September 2016 additional interfaces
 are being added to eliminate the necessity for callers
 to do this ugly casting of results.
 The revised functions return
-\f(CWDW_DLV_OK\fP
-or  
-\f(CWDW_DLV_ERROR\fP
+\f(CWDW_DLV_OK\fP,
+or
+\f(CWDW_DLV_ERROR\fP.
 (which are small signed integers) and will
 have an additional pointer argument that will provide
 the value that used to be the return value.
 This will make the interfaces type-safe.
 .P
-The consumer code also uses DW_DLV_NO_ENTRY
-but the producer code does not.
+The function
+\f(CWdwarf_get_section_bytes_a()\fP
+can also return
+\f(CWDW_DLV_NO_ENTRY\fP.
 .P
 The original interfaces will remain.
 Binary and source compatibility for old
@@ -432,10 +434,13 @@ code using the older interfaces is retained.
 .P
 The list of new functions added to create interfaces
 with the simpler return value is:
-dwarf_transform_to_disk_form_a(),
-dwarf_new_die_a(),
-dwarf_die_link_a(),
+.DS
+dwarf_transform_to_disk_form_a()
+dwarf_new_die_a()
+dwarf_die_link_a()
+dwarf_get_section_bytes_a()
 (More to be added as time permits).
+.DE
 
 
 
@@ -938,31 +943,49 @@ same meaning.
 .H 3 "dwarf_get_section_bytes()"
 
 .DS
-\f(CWDwarf_Ptr dwarf_get_section_bytes(
+\f(CWint dwarf_get_section_bytes_a(
         Dwarf_P_Debug dbg,
         Dwarf_Signed dwarf_section,
         Dwarf_Signed *elf_section_index, 
         Dwarf_Unsigned *length,
+        Dwarf_Ptr      *section_bytes,
         Dwarf_Error* error)\fP
 .DE
 The function \f(CWdwarf_get_section_bytes() \fP must be called repetitively, 
 with the index \f(CWdwarf_section\fP starting at 0 and continuing for the 
 number of sections 
-returned by \f(CWdwarf_transform_to_disk_form() \fP.
-It returns \f(CWNULL\fP to indicate that there are no more sections of 
+returned by \f(CWdwarf_transform_to_disk_form_a() \fP.
+.P
+It returns 
+\f(CWDW_DLV_NO_ENTRY\fP
+to indicate that there are no more sections of 
 \f(CWDwarf\fP information.  
-For each non-NULL return, the return value
+Normally one would index through using the sectioncount
+from dwarf_transform_to_disk_form_a() so
+\f(CWDW_DLV_NO_ENTRY\fP
+would never be seen.
+
+For each successfull return (return value
+\f(CWDW_DLV_OK\fP),
+\f(CW*section_bytes\fP
 points to \f(CW*length\fP bytes of data that are normally
 added to the output 
 object in \f(CWElf\fP section \f(CW*elf_section\fP by the producer application.
 It is illegal to call these in any order other than 0 through N-1 where
 N is the number of dwarf sections
 returned by \f(CWdwarf_transform_to_disk_form() \fP.
+The elf section number is returned through the pointer
+\f(CWelf_section_index\fP.
+
 The \f(CWdwarf_section\fP
-number is actually ignored: the data is returned as if the
+number is ignored: the data is returned as if the
 caller passed in the correct dwarf_section numbers in the
 required sequence.
-The \f(CWerror\fP argument is not used.
+.P
+In case of an error, 
+\f(CWDW_DLV_ERROR\fP
+is returned and 
+the \f(CWerror\fP argument is set to indicate the error.
 .P
 There is no requirement that the section bytes actually 
 be written to an elf file.
@@ -983,6 +1006,81 @@ by the \f(CWdwarf_producer_finish() \fP call
 (or would be if the \f(CWdwarf_producer_finish() \fP
 was actually correct), along
 with all the other space in use with that Dwarf_P_Debug.
+
+.H 3 "dwarf_get_section_bytes()"
+.DS
+\f(CWDwarf_Ptr dwarf_get_section_bytes(
+        Dwarf_P_Debug dbg,
+        Dwarf_Signed dwarf_section,
+        Dwarf_Signed *elf_section_index, 
+        Dwarf_Unsigned *length,
+        Dwarf_Error* error)\fP
+.DE
+Beginning in September 2016 one should call
+\f(CWdwarf_get_section_bytes_a()\fP
+ in preference to
+\f(CWdwarf_get_section_bytes()\fP as
+the former makes checking for errors easier.
+.P
+The function 
+\f(CWdwarf_get_section_bytes()\fP
+must be called repetitively,
+with the index 
+\f(CWdwarf_section\fP
+starting at 0 and continuing for the
+number of sections
+returned by \f(CWdwarf_transform_to_disk_form() \fP.
+.P
+It returns 
+\f(CWNULL\fP to indicate that there are no more sections of
+\f(CWDwarf\fP information.
+Normally one would index through using the sectioncount
+from dwarf_transform_to_disk_form_a() so
+\f(CWNULL\fP
+would never be seen.
+.P
+For each non-NULL return, the return value
+points to \f(CW*length\fP bytes of data that are normally
+added to the output
+object in \f(CWElf\fP section \f(CW*elf_section\fP by the producer application.
+The elf section number is returned through the pointer
+\f(CWelf_section_index\fP.
+.P
+In case of an error, 
+\f(CWDW_DLV_BADADDR\fP
+is returned and 
+the \f(CWerror\fP argument is set to indicate the error.
+.P
+It is illegal to call these in any order other than 0 through N-1 where
+N is the number of dwarf sections
+returned by \f(CWdwarf_transform_to_disk_form() \fP.
+The \f(CWdwarf_section\fP
+number is actually ignored: the data is returned as if the
+caller passed in the correct dwarf_section numbers in the
+required sequence.
+The \f(CWerror\fP argument is not used.
+.P
+There is no requirement that the section bytes actually
+be written to an elf file.
+For example, consider the .debug_info section and its
+relocation section (the call back function would resulted in
+assigning 'section' numbers and the link field to tie these
+together (.rel.debug_info would have a link to .debug_info).
+One could examine the relocations, split the .debug_info
+data at relocation boundaries, emit byte streams (in hex)
+as assembler output, and at each relocation point,
+emit an assembler directive with a symbol name for the assembler.
+Examining the relocations is awkward though.
+It is much better to use \f(CWdwarf_get_section_relocation_info() \fP
+.P
+
+The memory space of the section byte stream is freed
+by the \f(CWdwarf_producer_finish() \fP call
+(or would be if the \f(CWdwarf_producer_finish() \fP
+was actually correct), along
+with all the other space in use with that Dwarf_P_Debug.
+
+
 
 .H 3 "dwarf_get_relocation_info_count()"
 .DS

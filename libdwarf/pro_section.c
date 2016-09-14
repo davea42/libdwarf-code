@@ -2215,7 +2215,8 @@ _dwarf_pro_generate_debug_str(Dwarf_P_Debug dbg,
 
 /*  Get a buffer of section data.
     section_idx is the elf-section number that this data applies to.
-    length shows length of returned data  */
+    length shows length of returned data  
+    This is the original format. Hard to check for error. */
 
 /*ARGSUSED*/                   /* pretend all args used */
 Dwarf_Ptr
@@ -2224,31 +2225,65 @@ dwarf_get_section_bytes(Dwarf_P_Debug dbg,
     Dwarf_Signed * section_idx,
     Dwarf_Unsigned * length, Dwarf_Error * error)
 {
+    Dwarf_Ptr s_bytes = 0;
+    int res = 0;
+
+    res = dwarf_get_section_bytes_a(dbg,
+        dwarf_section,
+        section_idx,
+        length,
+        &s_bytes,
+        error);
+    if (res == DW_DLV_ERROR) {
+         return (Dwarf_Ptr)DW_DLV_BADADDR;
+    }
+    if (res == DW_DLV_NO_ENTRY) {
+        return NULL;
+    }
+    return s_bytes;
+}
+
+/*  Get a buffer of section data.
+    section_idx is the elf-section number that this data applies to.
+    length shows length of returned data  
+    This is the September 2016 format. Preferred. */
+int
+dwarf_get_section_bytes_a(Dwarf_P_Debug dbg,
+    UNUSEDARG Dwarf_Signed dwarf_section,
+    Dwarf_Signed   * section_idx,
+    Dwarf_Unsigned * length, 
+    Dwarf_Ptr      * section_bytes,
+    Dwarf_Error * error)
+{
     Dwarf_Ptr buf = 0;
 
     if (dbg->de_version_magic_number != PRO_VERSION_MAGIC) {
-        DWARF_P_DBG_ERROR(dbg, DW_DLE_IA, NULL);
+        DWARF_P_DBG_ERROR(dbg, DW_DLE_IA, DW_DLV_ERROR);
     }
-
+    *section_bytes = 0;
+    *length = 0;
     if (dbg->de_debug_sects == 0) {
         /* no more data !! */
-        return NULL;
+        return DW_DLV_NO_ENTRY;
     }
     if (dbg->de_debug_sects->ds_elf_sect_no == MAGIC_SECT_NO) {
         /* no data ever entered !! */
-        return NULL;
+        return DW_DLV_NO_ENTRY;
     }
     *section_idx = dbg->de_debug_sects->ds_elf_sect_no;
     *length = dbg->de_debug_sects->ds_nbytes;
 
     buf = (Dwarf_Ptr *) dbg->de_debug_sects->ds_data;
 
+    /*  Here is the iterator so the next call gets
+        the next section. */
     dbg->de_debug_sects = dbg->de_debug_sects->ds_next;
 
     /*  We may want to call the section stuff more than once: see
         dwarf_reset_section_bytes() do not do: dbg->de_n_debug_sect--; */
 
-    return buf;
+    *section_bytes = buf;
+    return DW_DLV_OK;
 }
 
 /* No errors possible.  */
