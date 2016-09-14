@@ -22,8 +22,6 @@
   USA.
 */
 
-typedef struct Dwarf_Dsc_Head_s *Dwarf_Dsc_Head;
-
 /*  dsc_type: if 0, then dsc_low is a single discriminant value
     and dsc_high is zero..
     If 1, then dsc_low, dsc_high are a discriminant range

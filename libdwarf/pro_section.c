@@ -2215,7 +2215,7 @@ _dwarf_pro_generate_debug_str(Dwarf_P_Debug dbg,
 
 /*  Get a buffer of section data.
     section_idx is the elf-section number that this data applies to.
-    length shows length of returned data  
+    length shows length of returned data
     This is the original format. Hard to check for error. */
 
 /*ARGSUSED*/                   /* pretend all args used */
@@ -2235,7 +2235,7 @@ dwarf_get_section_bytes(Dwarf_P_Debug dbg,
         &s_bytes,
         error);
     if (res == DW_DLV_ERROR) {
-         return (Dwarf_Ptr)DW_DLV_BADADDR;
+        return (Dwarf_Ptr)DW_DLV_BADADDR;
     }
     if (res == DW_DLV_NO_ENTRY) {
         return NULL;
@@ -2245,13 +2245,13 @@ dwarf_get_section_bytes(Dwarf_P_Debug dbg,
 
 /*  Get a buffer of section data.
     section_idx is the elf-section number that this data applies to.
-    length shows length of returned data  
+    length shows length of returned data
     This is the September 2016 format. Preferred. */
 int
 dwarf_get_section_bytes_a(Dwarf_P_Debug dbg,
     UNUSEDARG Dwarf_Signed dwarf_section,
     Dwarf_Signed   * section_idx,
-    Dwarf_Unsigned * length, 
+    Dwarf_Unsigned * length,
     Dwarf_Ptr      * section_bytes,
     Dwarf_Error * error)
 {

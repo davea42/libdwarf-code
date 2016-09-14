@@ -1,3 +1,9 @@
+2016-09-14 David Anderson
+    * dwarf_dsc.h: Removed accidental typedef redeclaration
+      of Dwarf_Dsc_Head: it is already in libdwarf.h and
+      FreeBSD compiler complained.
+    * pro_section.c: Removed trailing whitespace from three lines.
+      Fixed indentation on one line.
 2016-09-13 David Anderson
     * pro_section.c: new interface dwarf_get_section_bytes_a().
     * libdwarf.h.in: Declaration for dwarf_get_section_bytes_a() added.
