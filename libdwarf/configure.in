@@ -12,7 +12,7 @@ AC_CHECK_TOOL(AR, ar)
 
 dnl AC_ARFLAGS
 
-AC_CHECK_HEADERS(alloca.h elf.h elfaccess.h libelf.h libelf/libelf.h  sys/types.h sys/ia64/elf.h)
+AC_CHECK_HEADERS(alloca.h elf.h unistd.h elfaccess.h libelf.h libelf/libelf.h  sys/types.h sys/ia64/elf.h)
 
 dnl The default libdwarf is the one with struct Elf
 echo Assuming struct Elf for the default libdwarf.h

@@ -25,7 +25,9 @@
 
 #include "globals.h"
 #include <errno.h>              /* For errno declaration. */
+#ifdef HAVE_UNISTD_H
 #include <unistd.h>
+#endif
 #include "common.h"
 #include "tag_common.h"
 #include "dwgetopt.h"

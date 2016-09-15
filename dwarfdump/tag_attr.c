@@ -29,7 +29,9 @@
 #include <stdarg.h>   /* For va_start va_arg va_list */
 #include <stdlib.h>             /* For exit() declaration etc. */
 #include <errno.h>              /* For errno declaration. */
+#ifdef HAVE_UNISTD_H
 #include <unistd.h>
+#endif
 
 #include "globals.h"
 #include "libdwarf.h"

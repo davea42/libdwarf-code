@@ -37,7 +37,9 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <limits.h>
+#ifdef HAVE_UNISTD_H
 #include <unistd.h> /* for dup2() */
+#endif
 #include "dwgetopt.h"
 #include "makename.h"
 #include "dwconf.h"
