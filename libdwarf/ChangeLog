@@ -1,4 +1,8 @@
 2016-09-15 David Anderson
+    * dwarf_elf_access.c: Depends on libelf.h, so if libelf.h
+      is missing (as shown in the generated config.h)
+      the compile stops with an error.
+2016-09-15 David Anderson
     * libdwarf.h.in: New interface functions
       dwarf_producer_finish_a() and
       dwarf_add_die_to_debug_a()

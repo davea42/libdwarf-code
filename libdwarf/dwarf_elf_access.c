@@ -49,6 +49,8 @@
 #else
 #ifdef HAVE_LIBELF_LIBELF_H
 #include <libelf/libelf.h>
+#else
+#error Without libelf.h dwarf_elf_access.c cannot compile, so giving up.
 #endif
 #endif
 
