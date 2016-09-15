@@ -1,3 +1,7 @@
+2016-09-15  David Anderson
+    * tag_tree.c: Two local variables had no initializer.
+      Though adding the initializers is logically unnecessary
+      it is the standard way to code in libdwarf/dwarfdump.
 2016-09-13  David Anderson
     * print_die.c: Shortened the printing of DW_AT_discr_list
       to improve readability.

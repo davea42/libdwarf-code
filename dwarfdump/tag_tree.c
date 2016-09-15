@@ -413,8 +413,8 @@ main(int argc, char **argv)
 #ifdef HAVE_USAGE_TAG_ATTR
     /* Generate the parent of the individual vectors */
     if (standard_flag) {
-        unsigned int tag;
-        unsigned int legal;
+        unsigned int tag = 0;
+        unsigned int legal = 0;
 
         fprintf(fileOut,
             "static Usage_Tag_Tree *usage_tag_tree[] = {\n");
