@@ -247,18 +247,32 @@ dwarf_get_die_marker(Dwarf_P_Debug dbg,
     This function adds a die to dbg struct. It should be called using
     the root of all the dies.
 -----------------------------------------------------------------------------*/
+/*  Original form of this call..
+    dwarf_add_die_to_debug_a() is preferred now. */
 Dwarf_Unsigned
 dwarf_add_die_to_debug(Dwarf_P_Debug dbg,
     Dwarf_P_Die first_die, Dwarf_Error * error)
 {
+    int res = dwarf_add_die_to_debug_a(dbg,first_die,error);
+    if (res == DW_DLV_ERROR) {
+        return DW_DLV_NOCOUNT;
+    }
+    return 0;
+}
+
+/*  New September 2016. The new and preferred form. */
+int
+dwarf_add_die_to_debug_a(Dwarf_P_Debug dbg,
+    Dwarf_P_Die first_die, Dwarf_Error * error)
+{
     if (first_die == NULL) {
-        DWARF_P_DBG_ERROR(dbg, DW_DLE_DIE_NULL, DW_DLV_NOCOUNT);
+        DWARF_P_DBG_ERROR(dbg, DW_DLE_DIE_NULL, DW_DLV_ERROR);
     }
     if (first_die->di_tag != DW_TAG_compile_unit) {
-        DWARF_P_DBG_ERROR(dbg, DW_DLE_WRONG_TAG, DW_DLV_NOCOUNT);
+        DWARF_P_DBG_ERROR(dbg, DW_DLE_WRONG_TAG, DW_DLV_ERROR);
     }
     dbg->de_dies = first_die;
-    return 0;
+    return DW_DLV_OK;
 }
 
 int

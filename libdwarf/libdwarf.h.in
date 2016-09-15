@@ -3244,6 +3244,8 @@ void dwarf_reset_section_bytes(Dwarf_P_Debug /*dbg*/);
 
 Dwarf_Unsigned dwarf_producer_finish(Dwarf_P_Debug /*dbg*/,
     Dwarf_Error* /*error*/);
+int dwarf_producer_finish_a(Dwarf_P_Debug /*dbg*/,
+    Dwarf_Error* /*error*/);
 
 /* Producer attribute addition functions. */
 Dwarf_P_Attribute dwarf_add_AT_targ_address(Dwarf_P_Debug /*dbg*/,
@@ -3536,6 +3538,12 @@ Dwarf_P_Die dwarf_new_die(
     Dwarf_P_Die     /*right*/,
     Dwarf_Error*    /*error*/);
 
+/* New September 2016. */
+int dwarf_add_die_to_debug_a(
+    Dwarf_P_Debug   /*dbg*/,
+    Dwarf_P_Die     /*die*/,
+    Dwarf_Error*    /*error*/);
+/*  Original form. Still supported. */
 Dwarf_Unsigned dwarf_add_die_to_debug(
     Dwarf_P_Debug   /*dbg*/,
     Dwarf_P_Die     /*die*/,

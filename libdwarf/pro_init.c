@@ -228,7 +228,7 @@ simple_string_hashfunc(const void *keyp)
         (struct Dwarf_P_debug_str_entry_s*) keyp;
     DW_TSHASHTYPE up = 0;
     const char *str = 0;
-    uint32_t hash = 5381;
+    DW_TSHASHTYPE hash = 5381;
     int c  = 0;
 
     if (!mt->dse_name) {

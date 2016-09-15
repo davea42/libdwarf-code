@@ -11,7 +11,7 @@
 .nr Hb 5
 \." ==============================================
 \." Put current date in the following at each rev
-.ds vE Rev 1.44, 13 September 2016
+.ds vE Rev 1.45, 14 September 2016
 \." ==============================================
 \." ==============================================
 .ds | |
@@ -283,7 +283,7 @@ For example:
 .in +4
  .data 0a0bcc    #producing 3 bytes of data.
  .word mylabel   #producing a reference
- .word endlabel - startlable #producing absolute length
+ .word endlabel - startlabel #producing absolute length
 .in -4
 .fi
 .sp
@@ -381,7 +381,10 @@ The dynamically allocated spaces
 can not be reclaimed  (and must
 not be freed) except that
 all such libdwarf-allocated memory
-is freed by \f(CWdwarf_producer_finish(dbg)\fP.  
+is freed by 
+\f(CWdwarf_producer_finish_a(dbg)\fP  
+or
+\f(CWdwarf_producer_finish(dbg)\fP.  
 
 All data for a particular \f(CWDwarf_P_Debug\fP descriptor
 is separate from the data for any other 
@@ -396,7 +399,7 @@ generally apply to the functions
 described here.
 
 .H 2 "Storage Deallocation"
-Calling \f(CWdwarf_producer_finish(dbg)\fP frees all the space, and 
+Calling \f(CWdwarf_producer_finish_a(dbg)\fP frees all the space, and 
 invalidates all pointers returned from \f(CWLibdwarf\fP functions on 
 or descended from \f(CWdbg\fP).
 
@@ -435,10 +438,12 @@ code using the older interfaces is retained.
 The list of new functions added to create interfaces
 with the simpler return value is:
 .DS
-dwarf_transform_to_disk_form_a()
+dwarf_add_die_to_debug_a()
 dwarf_new_die_a()
 dwarf_die_link_a()
+dwarf_transform_to_disk_form_a()
 dwarf_get_section_bytes_a()
+dwarf_producer_finish_a()
 (More to be added as time permits).
 .DE
 
@@ -489,13 +494,13 @@ call \f(CWdwarf_transform_to_disk_form()\fP to convert the accumulated
 information into byte streams in accordance with the \f(CWDWARF\fP 
 standard.  
 The application would then repeatedly call 
-\f(CWdwarf_get_section_bytes()\fP 
+\f(CWdwarf_get_section_bytes_a()\fP 
 for each of the \f(CW.debug_*\fP created.  
 This gives the producer 
 information about the data bytes to be written to disk.  
 At this point, 
 the producer would release all resource used by \f(CWLibdwarf\fP for 
-this object by calling \f(CWdwarf_producer_finish()\fP.
+this object by calling \f(CWdwarf_producer_finish_a()\fP.
 
 It is also possible to create assembler-input character streams
 from the byte streams created by this library.
@@ -854,7 +859,7 @@ and sets
 to
 the number of chunks of section data to be
 accessed by
-\f(CWdwarf_get_section_bytes()\fP .
+\f(CWdwarf_get_section_bytes_a()\fP .
 .P
 It
 turns the DIE and other information specified
@@ -862,7 +867,7 @@ for this \f(CWDwarf_P_Debug\fP into a stream of
 bytes for each section being produced.
 These byte streams can be retrieved from
 the \f(CWDwarf_P_Debug\fP by calls to
-\f(CWdwarf_get_section_bytes()\fP (see below).
+\f(CWdwarf_get_section_bytes_a()\fP (see below).
 .P
 In case of error
 \f(CWdwarf_transform_to_disk_form()\fP 
@@ -874,7 +879,7 @@ When successful
 returns
 the number of chunks of section data to be
 accessed by
-\f(CWdwarf_get_section_bytes()\fP
+\f(CWdwarf_get_section_bytes_a()\fP
 (see below) and the section data
 provided your code will insert
 into an object file or the like.
@@ -883,7 +888,7 @@ many small chunks.
 Each chunk has a section index
 and a length as well as a pointer to a block of data
 (see
-\f(CWdwarf_get_section_bytes()\fP
+\f(CWdwarf_get_section_bytes_a()\fP
 ).
 .P
 For each unique section being produced 
@@ -901,7 +906,7 @@ For \f(CWDW_DLC_STREAM_RELOCATIONS\fP
 a call to 
 \f(CWDwarf_Callback_Func\fP is made
 by libdwarf for each relocation section.
-Calls to \f(CWdwarf_get_section_bytes()\fP (see below).
+Calls to \f(CWdwarf_get_section_bytes_a()\fP (see below).
 allow the 
 \f(CWdwarf_transform_to_disk_form()\fP  caller
 to get byte streams and write them to
@@ -940,7 +945,7 @@ though both do the same work and have the
 same meaning.
 
 
-.H 3 "dwarf_get_section_bytes()"
+.H 3 "dwarf_get_section_bytes_a()"
 
 .DS
 \f(CWint dwarf_get_section_bytes_a(
@@ -951,10 +956,13 @@ same meaning.
         Dwarf_Ptr      *section_bytes,
         Dwarf_Error* error)\fP
 .DE
-The function \f(CWdwarf_get_section_bytes() \fP must be called repetitively, 
-with the index \f(CWdwarf_section\fP starting at 0 and continuing for the 
+The function \f(CWdwarf_get_section_bytes_a() \fP 
+must be called repetitively, 
+with the index 
+\f(CWdwarf_section\fP starting at 0 and continuing for the 
 number of sections 
-returned by \f(CWdwarf_transform_to_disk_form_a() \fP.
+returned by 
+\f(CWdwarf_transform_to_disk_form_a() \fP.
 .P
 It returns 
 \f(CWDW_DLV_NO_ENTRY\fP
@@ -965,7 +973,7 @@ from dwarf_transform_to_disk_form_a() so
 \f(CWDW_DLV_NO_ENTRY\fP
 would never be seen.
 
-For each successfull return (return value
+For each successful return (return value
 \f(CWDW_DLV_OK\fP),
 \f(CW*section_bytes\fP
 points to \f(CW*length\fP bytes of data that are normally
@@ -1002,8 +1010,8 @@ It is much better to use \f(CWdwarf_get_section_relocation_info() \fP
 .P
 
 The memory space of the section byte stream is freed
-by the \f(CWdwarf_producer_finish() \fP call
-(or would be if the \f(CWdwarf_producer_finish() \fP
+by the \f(CWdwarf_producer_finish_a() \fP call
+(or would be if the \f(CWdwarf_producer_finish_a() \fP
 was actually correct), along
 with all the other space in use with that Dwarf_P_Debug.
 
@@ -1075,8 +1083,8 @@ It is much better to use \f(CWdwarf_get_section_relocation_info() \fP
 .P
 
 The memory space of the section byte stream is freed
-by the \f(CWdwarf_producer_finish() \fP call
-(or would be if the \f(CWdwarf_producer_finish() \fP
+by the \f(CWdwarf_producer_finish_a() \fP call
+(or would be if the \f(CWdwarf_producer_finish_a() \fP
 was actually correct), along
 with all the other space in use with that Dwarf_P_Debug.
 
@@ -1254,8 +1262,8 @@ exception tables and this part may need further work).
 
 .P
 The memory space of the section byte stream is freed
-by the \f(CWdwarf_producer_finish() \fP call
-(or would be if the \f(CWdwarf_producer_finish() \fP
+by the \f(CWdwarf_producer_finish_a() \fP call
+(or would be if the \f(CWdwarf_producer_finish_a() \fP
 was actually correct), along
 with all the other space in use with that Dwarf_P_Debug.
 
@@ -1308,7 +1316,7 @@ It is unwise to call this before
 If it returns 
 \f(CWDW_DLV_OK\fP 
 the function 
-\f(CWdwarf_producer_finish()\fP 
+\f(CWdwarf_pro_get_string_stats()\fP 
 returns information about how 
 \f(CWDW_AT_name\fP 
 etc strings were stored in the output object.
@@ -1318,7 +1326,7 @@ was detected in the DWARF being created.
 Call it after calling
 \f(CWdwarf_transform_to_disk_form()\fP
 and before calling
-\f(CWdwarf_producer_finish()\fP .
+\f(CWdwarf_producer_finish_a()\fP .
 It has no effect on the object being output.
 .P
 On error it returns
@@ -1328,13 +1336,19 @@ and sets
 through the pointer.
 
 
-.H 3 "dwarf_producer_finish()"
+.H 3 "dwarf_producer_finish_a()"
 .DS
-\f(CWDwarf_Unsigned dwarf_producer_finish(
+\f(CWint dwarf_producer_finish_a(
         Dwarf_P_Debug dbg,
         Dwarf_Error* error) \fP
 .DE
-The function \f(CWdwarf_producer_finish() \fP should be called after all 
+This is new in September 2016 and has the newer interface style,
+but is otherwise identical to
+\f(CWdwarf_producer_finish() \fP.
+.P
+The function 
+\f(CWdwarf_producer_finish_a() \fP
+should be called after all 
 the bytes of data have been copied somewhere
 (normally the bytes are written to disk).  
 It frees all dynamic space 
@@ -1343,8 +1357,46 @@ allocated for \f(CWdbg\fP, include space for the structure pointed to by
 This should not be called till the data have been 
 copied or written 
 to disk or are no longer of interest.  
-It returns non-zero if successful, and \f(CWDW_DLV_NOCOUNT\fP 
-if there is an error.
+It returns 
+\f(CWDW_DLV_OK\fP 
+if successful.
+.P
+On error it returns
+\f(CWDW_DLV_ERROR\fP 
+and sets
+\f(CWerror\fP 
+through the pointer.
+
+.H 3 "dwarf_producer_finish()"
+.DS
+\f(CWDwarf_Unsigned dwarf_producer_finish(
+        Dwarf_P_Debug dbg,
+        Dwarf_Error* error) \fP
+.DE
+This is the original interface. 
+It works but calling 
+\f(CWdwarf_producer_finish_a() \fP
+is preferred as it matches the latest libdwarf
+interface standard.
+.P
+The function 
+\f(CWdwarf_producer_finish() \fP
+should be called after all 
+the bytes of data have been copied somewhere
+(normally the bytes are written to disk).  
+It frees all dynamic space 
+allocated for \f(CWdbg\fP, include space for the structure pointed to by
+\f(CWdbg\fP.  
+This should not be called till the data have been 
+copied or written 
+to disk or are no longer of interest.  
+It returns zero if successful.
+.P
+On error it returns
+\f(CWDW_DLV_NOCOUNT\fP 
+and sets
+\f(CWerror\fP 
+through the pointer.
 
 .H 2 "Debugging Information Entry Creation"
 The functions in this section add new \f(CWDIE\fPs to the object,
@@ -1354,6 +1406,28 @@ of each other.
 In addition, there is a function that marks the
 root of the graph thus created.
 
+.H 3 "dwarf_add_die_to_debug_a()"
+.DS
+\f(CWint dwarf_add_die_to_debug_a(
+        Dwarf_P_Debug dbg,
+        Dwarf_P_Die first_die,
+        Dwarf_Error *error) \fP
+.DE
+The function 
+\f(CWdwarf_add_die_to_debug_a() \fP indicates to 
+\f(CWLibdwarf\fP
+the root 
+\f(CWDIE\fP of the 
+\f(CWDIE\fP graph that has been built so far.  
+It is intended to mark the compilation-unit \f(CWDIE\fP for the 
+object represented by \f(CWdbg\fP.  
+The root \f(CWDIE\fP is specified 
+by \f(CWfirst_die\fP.
+.P
+It returns 
+\f(CWDW_DLV_OK\fP on success, and 
+\f(CWDW_DLV_error\fP on error.
+
 .H 3 "dwarf_add_die_to_debug()"
 .DS
 \f(CWDwarf_Unsigned dwarf_add_die_to_debug(
@@ -1361,15 +1435,11 @@ root of the graph thus created.
         Dwarf_P_Die first_die,
         Dwarf_Error *error) \fP
 .DE
-The function \f(CWdwarf_add_die_to_debug() \fP indicates to \f(CWLibdwarf\fP
-the root \f(CWDIE\fP of the \f(CWDIE\fP graph that has been built so 
-far.  
-It is intended to mark the compilation-unit \f(CWDIE\fP for the 
-object represented by \f(CWdbg\fP.  
-The root \f(CWDIE\fP is specified 
-by \f(CWfirst_die\fP.
-
-It returns \f(CW0\fP on success, and \f(CWDW_DLV_NOCOUNT\fP on error.
+This is the original form of the call.
+Use \f(CWdwarf_add_die_to_debug_a() instead.
+.P
+It returns \f(CW0\fP on success, and 
+\f(CWDW_DLV_NOCOUNT\fP on error.
 
 .H 3 "dwarf_new_die_a()"
 .DS
@@ -2357,15 +2427,16 @@ is changed or physically prefixed by
 this producer function, we simply describe the meaning here).
 \f(CWdir_idx\fP is the index of the directory to be
 prefixed in the list builtup using \f(CWdwarf_add_directory_decl()\fP.
-As specified by the DWARF spec, a \f(CWdir_idx\fP of zero will be
+As specified by the DWARF spec, a 
+\f(CWdir_idx\fP of zero will be
 interpreted as meaning the directory of the compilation and
 another index must refer to a valid directory as
 FIXME
 
-
+.P
 \f(CWtime_mod\fP gives the time at which the file was last modified,
 and \f(CWlength\fP gives the length of the file in bytes.
-
+.P
 It returns the index of the source file in the list built up so far
 using this function, on success.  This index can then be used to 
 refer to this source file in calls to \f(CWdwarf_add_line_entry()\fP.

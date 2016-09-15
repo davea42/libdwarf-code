@@ -1,3 +1,16 @@
+2016-09-15 David Anderson
+    * libdwarf.h.in: New interface functions
+      dwarf_producer_finish_a() and
+      dwarf_add_die_to_debug_a()
+      declared, providing libdwarf-standard 
+      int return value.      
+    * libdwarf2p.1.mm: Document dwarf_producer_finish_a()
+      and dwarf_add_die_to_debug_a().
+    * libdwarf2p.1.pdf: Regenerated. Rev 1.45. 
+    * pro_init.c: Remove use of C99 type uint32_t
+      and use DW_TSHASHTYPE instead.
+    * pro_finish.c: Implement dwarf_producer_finish_a().
+    * pro_die.c: Implement dwarf_add_die_to_debug_a().
 2016-09-14 David Anderson
     * dwarf_dsc.h: Removed accidental typedef redeclaration
       of Dwarf_Dsc_Head: it is already in libdwarf.h and
