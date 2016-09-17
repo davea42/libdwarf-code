@@ -12,9 +12,9 @@ description: At line 1533 of dwarf_die_deliv.c a
  Bug report on sourceforge.net bug list for libdwarf.
  The bad pointer dereference is due to libdwarf 
  not noticing that the DWARF in that file is corrupt.
-datefixed: 
+datefixed: 20160917
 references: regressiontests/DW201609-001/test2.o 
-gitfixid: 
+gitfixid: fedd640dad25e07d16f7dd63b08573d51d33707d
 endrec:
 
 
