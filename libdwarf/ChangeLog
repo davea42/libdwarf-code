@@ -1,3 +1,11 @@
+2016-09-17 David Anderson
+    * libdwarf.h.in: Added error code DW_DLE_SIBLING_LIST_IMPROPER.
+    * dwarf_errmsg_list.c: Added DW_DLE_SIBLING_LIST_IMPROPER.
+    * dwarf_die_deliv.c: Vulnerability DW201609-001.
+      Added a check to catch invalid DWARF instead of
+      reading a byte inappropriately (that might not even
+      be addressable).
+      The error code generated is DW_DLE_SIBLING_LIST_IMPROPER.
 2016-09-15 David Anderson
     * configure.in: Add check for unistd.h .
     * configure: Regenerated.

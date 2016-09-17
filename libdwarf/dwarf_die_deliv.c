@@ -1527,11 +1527,40 @@ dwarf_siblingof_b(Dwarf_Debug dbg,
                 }
             }
 
-            /* die_info_ptr can be one-past-end. */
+            /*  die_info_ptr can be one-past-end.  */
             if ((die_info_ptr == die_info_end) ||
                 ((*die_info_ptr) == 0)) {
-                for (; child_depth > 0 && *die_info_ptr == 0;
-                    child_depth--, die_info_ptr++) {
+                /* We are at the end of a sibling list.
+                    get back to the next containing
+                    sibling list (looking for a libling
+                    list with more on it).
+                    */
+                for (;;) {
+                    if (child_depth == 0) {
+                        /*  Meaning there is no outer list,
+                            so stop. */
+                        break;
+                    }
+                    if (die_info_ptr == die_info_end) {
+                        /*  September 2016: do not deref
+                            if we are past end.
+                            If we are at end at this point
+                            it means the sibling list
+                            inside this CU is not properly
+                            terminated. We run off the end.
+                            An error.*/
+                        _dwarf_error(dbg, error,DW_DLE_SIBLING_LIST_IMPROPER);
+                        return (DW_DLV_ERROR);
+                    }
+                    if (*die_info_ptr) {
+                        /* We have a real sibling. */
+                        break;
+                    }
+                    /*  Move out one DIE level.
+                        Move past NUL byte marking end of
+                        this sibling list. */
+                    child_depth--;
+                    die_info_ptr++;
                 }
             } else {
                 child_depth = has_child ? child_depth + 1 : child_depth;

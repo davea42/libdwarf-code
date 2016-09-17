@@ -1,4 +1,23 @@
 
+id: DW201609-001
+cve: 
+datereported: 20160916
+reportedby: STARLAB
+vulnerability: libdwarf die_info_ptr out of bounds read
+product: libdwarf
+description: At line 1533 of dwarf_die_deliv.c a
+ pointer dereference is done with a pointer pointing
+ past the end of the CU data.
+ This in libdwarf-20160613.tar.gz
+ Bug report on sourceforge.net bug list for libdwarf.
+ The bad pointer dereference is due to libdwarf 
+ not noticing that the DWARF in that file is corrupt.
+datefixed: 
+references: regressiontests/DW201609-001/test2.o 
+gitfixid: 
+endrec:
+
+
 id: DW201605-019
 cve: CVE-2016-5028
 datereported: 20160523
@@ -11,7 +30,7 @@ description: The null dereference is due to a corrupted
  sections it reads!  Now libdwarf catches the object error
  so dwarfdump sees the section as empty (as indeed it is!).
 datefixed: 20160523
-references: dwarftests/liu/NULLdeference0522c.elf
+references: regressiontests/liu/NULLdeference0522c.elf
 gitfixid: a55b958926cc67f89a512ed30bb5a22b0adb10f4
 endrec:
 
@@ -50,7 +69,7 @@ description: The null dereference in create_fullest_file_path()
  ./dwarf_line.c:1436
  </pre>
 datefixed: 20160522
-references: dwarftests/liu/NULLdereference0522.elf
+references: regressiontests/liu/NULLdereference0522.elf
 gitfixid: acae971371daa23a19358bc62204007d258fbc5e
 endrec:
 
