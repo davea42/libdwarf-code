@@ -10,6 +10,7 @@ description: With AddressSanitizer,
   <pre>
   See also:
   https://marc.info/?l=oss-security&m=147378394815872&w=2
+  The testcase poc is from this web page.
   </pre>
   <pre>
   ==17411==ERROR: AddressSanitizer: heap-buffer-overflow on address
@@ -33,7 +34,7 @@ description: With AddressSanitizer,
   Unclear as yet if this is the problem
   but it is a problem.
 datefixed:
-references:
+references: regressiontests/DW201609-003/poc
 gitfixid:
 tarrelease:
 endrec:
@@ -42,12 +43,15 @@ endrec:
 id: DW201609-002
 cve: 
 datereported: 20160918
-reportedby: Puzzor
-  https://sourceforge.net/p/libdwarf/bugs/3/t
+reportedby: Shi Ji (@Puzzor)
 vulnerability: libdwarf 20160613 Integer Overflow
 product: libdwarf
 description: In dwarf_get_size_of_val() with
   fuzzed DWARF data we get a SEGV. 
+  <pre>
+  See
+  https://sourceforge.net/p/libdwarf/bugs/3/
+  </pre>
   <pre>
   ==6825== ERROR: AddressSanitizer: SEGV on unknown address 0x0583903c (pc 0xb61f1a98 sp 0xbfa388b4 bp 0xbfa38d08 T0)
   AddressSanitizer can not provide additional info.
@@ -62,7 +66,7 @@ description: In dwarf_get_size_of_val() with
   Unclear as yet if this is the problem
   but it is a problem.
 datefixed: 
-references: 
+references: regressiontests/DW201609-002/DW201609-002-poc
 gitfixid: 
 tarrelease:
 endrec:
@@ -80,6 +84,10 @@ description: At line 1533 of dwarf_die_deliv.c a
  pointer dereference is done with a pointer pointing
  past the end of the CU data.
  <pre>
+ see
+ https://sourceforge.net/p/libdwarf/bugs/2/
+ </pre>
+ <pre>
  READ of size 1 at 0xf4c027ab thread T0
  #0 0x819e4a3 in dwarf_siblingof_b /home/starlab/fuzzing/dwarf-20160613/libdwarf/dwarf_die_deliv.c:1533
  #1 0x8116201 in print_die_and_children_internal /home/starlab/fuzzing/dwarf-20160613/dwarfdump/print_die.c:1157
@@ -89,6 +97,7 @@ description: At line 1533 of dwarf_die_deliv.c a
  </pre>
 datefixed: 20160917
 references: regressiontests/DW201609-001/test2.o 
+  regressiontests/DW201609-001/DW201609-001-poc
 gitfixid: fedd640dad25e07d16f7dd63b08573d51d33707d
 tarrelease:
 endrec:
