@@ -28,6 +28,10 @@ description: With AddressSanitizer,
   /home/starlab/fuzzing/dwarf-20160613/dwarfdump/print_die.c:3523
     #5 0x816e1a2 in print_attribute
   </pre>
+  _dwarf_get_loclist_header_start() is not cautious about values
+  in the header being absurdly large.
+  Unclear as yet if this is the problem
+  but it is a problem.
 datefixed:
 references:
 gitfixid:
@@ -53,6 +57,10 @@ description: In dwarf_get_size_of_val() with
   #4 0x80557a5 in dwarf_child /home/fuzzing/fuzzing/dwarf-20160613/libdwarf/dwarf_die_deliv.c:1640
   #5 0x804b23f in get_die_and_siblings /home/fuzzing/fuzzing/dwarf-20160613/dwarfexample/./simplereader.c:573
   </pre>
+  _dwarf_make_CU_Context() is insufficiently cautious about
+  the length of a CU being absurd. 
+  Unclear as yet if this is the problem
+  but it is a problem.
 datefixed: 
 references: 
 gitfixid: 
