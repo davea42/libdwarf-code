@@ -1,20 +1,88 @@
+id: DW201609-003
+cve: CVE-2016-7410
+datereported: 20160913
+reportedby: https://marc.info/?l=oss-security&m=147391785920048&w=2
+vulnerability: libdwarf 20160613 heap-buffer-overflow
+product: libdwarf
+description: With AddressSanitizer, 
+  we found a Heap-Buffer-overflow in the latest
+  release version of dwarfdump. The crash output is as follows:
+  <pre>
+  See also:
+  https://marc.info/?l=oss-security&m=147378394815872&w=2
+  </pre>
+  <pre>
+  ==17411==ERROR: AddressSanitizer: heap-buffer-overflow on address
+  0xf3808904 at pc 0x80a6f76 bp 0xffb95e78 sp 0xffb95a5c
+  READ of size 4 at 0xf3808904 thread T0
+  ==17411==WARNING: Trying to symbolize code, but external symbolizer is
+  not initialized!
+    #0 0x80a6f75 in __interceptor_memcpy ??:?
+    #1 0x8426c3b in _dwarf_read_loc_section
+  /home/starlab/fuzzing/dwarf-20160613/libdwarf/./dwarf_loc.c:919
+    #2 0x84250e2 in _dwarf_get_loclist_count
+  /home/starlab/fuzzing/dwarf-20160613/libdwarf/./dwarf_loc.c:970
+    #3 0x8438826 in dwarf_get_loclist_c
+  /home/starlab/fuzzing/dwarf-20160613/libdwarf/./dwarf_loc2.c:551
+    #4 0x81a1be8 in get_location_list
+  /home/starlab/fuzzing/dwarf-20160613/dwarfdump/print_die.c:3523
+    #5 0x816e1a2 in print_attribute
+  </pre>
+datefixed:
+references:
+gitfixid:
+tarrelease:
+endrec:
+
+
+id: DW201609-002
+cve: 
+datereported: 20160918
+reportedby: Puzzor
+  https://sourceforge.net/p/libdwarf/bugs/3/t
+vulnerability: libdwarf 20160613 Integer Overflow
+product: libdwarf
+description: In dwarf_get_size_of_val() with
+  fuzzed DWARF data we get a SEGV. 
+  <pre>
+  ==6825== ERROR: AddressSanitizer: SEGV on unknown address 0x0583903c (pc 0xb61f1a98 sp 0xbfa388b4 bp 0xbfa38d08 T0)
+  AddressSanitizer can not provide additional info.
+  #1 0xb61e3c0b (/usr/lib/i386-linux-gnu/libasan.so.0+0xdc0b)
+  #2 0x80a21b1 in _dwarf_get_size_of_val /home/fuzzing/fuzzing/dwarf-20160613/libdwarf/dwarf_util.c:210
+  #3 0x8054214 in _dwarf_next_die_info_ptr /home/fuzzing/fuzzing/dwarf-20160613/libdwarf/dwarf_die_deliv.c:1340
+  #4 0x80557a5 in dwarf_child /home/fuzzing/fuzzing/dwarf-20160613/libdwarf/dwarf_die_deliv.c:1640
+  #5 0x804b23f in get_die_and_siblings /home/fuzzing/fuzzing/dwarf-20160613/dwarfexample/./simplereader.c:573
+  </pre>
+datefixed: 
+references: 
+gitfixid: 
+tarrelease:
+endrec:
+
+
 
 id: DW201609-001
 cve: 
 datereported: 20160916
 reportedby: STARLAB
-vulnerability: libdwarf die_info_ptr out of bounds read
+   https://sourceforge.net/p/libdwarf/bugs/2/
+vulnerability: libdwarf 20160613 die_info_ptr in dwarf_die_deliv.c: 1533 Out-Of_bounds
 product: libdwarf
 description: At line 1533 of dwarf_die_deliv.c a
  pointer dereference is done with a pointer pointing
  past the end of the CU data.
- This in libdwarf-20160613.tar.gz
+ <pre>
+ READ of size 1 at 0xf4c027ab thread T0
+ #0 0x819e4a3 in dwarf_siblingof_b /home/starlab/fuzzing/dwarf-20160613/libdwarf/dwarf_die_deliv.c:1533
+ #1 0x8116201 in print_die_and_children_internal /home/starlab/fuzzing/dwarf-20160613/dwarfdump/print_die.c:1157
  Bug report on sourceforge.net bug list for libdwarf.
  The bad pointer dereference is due to libdwarf 
  not noticing that the DWARF in that file is corrupt.
+ </pre>
 datefixed: 20160917
 references: regressiontests/DW201609-001/test2.o 
 gitfixid: fedd640dad25e07d16f7dd63b08573d51d33707d
+tarrelease:
 endrec:
 
 
@@ -22,7 +90,7 @@ id: DW201605-019
 cve: CVE-2016-5028
 datereported: 20160523
 reportedby: Yue Liu
-vulnerability: Null derefernce in print_frame_inst_bytes (dwarfdump)
+vulnerability: Null dereference in print_frame_inst_bytes (dwarfdump)
 product: libdwarf
 description: The null dereference is due to a corrupted
  object file. Libdwarf was not dealing with empty (bss-like)
@@ -32,6 +100,7 @@ description: The null dereference is due to a corrupted
 datefixed: 20160523
 references: regressiontests/liu/NULLdeference0522c.elf
 gitfixid: a55b958926cc67f89a512ed30bb5a22b0adb10f4
+tarrelease:
 endrec:
 
 
@@ -71,6 +140,7 @@ description: The null dereference in create_fullest_file_path()
 datefixed: 20160522
 references: regressiontests/liu/NULLdereference0522.elf
 gitfixid: acae971371daa23a19358bc62204007d258fbc5e
+tarrelease:
 endrec:
 
 
@@ -127,6 +197,7 @@ description:
 datefixed: 20160522
 references: regressiontests/liu/NULLdereference0519.elf
 gitfixid: 6fa3f710ee6f21bba7966b963033a91d77c952bd
+tarrelease:
 endrec:
 
 
@@ -176,6 +247,7 @@ description: Corrupted dwarf crashes dwarfdump
 datefixed: 20160522
 references: regressiontests/liu/OOB_READ0519.elf
 gitfixid: 6fa3f710ee6f21bba7966b963033a91d77c952bd
+tarrelease:
 endrec:
 
 
@@ -546,7 +618,4 @@ references: regressiontests/liu/null02.elf
 gitfixid: 98a3da1e8237fe0d45b67ef77f3fa5ed9ff0215f
 tarrelease: 20160507
 endrec:
-
-
-
 
