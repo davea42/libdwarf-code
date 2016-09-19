@@ -72,7 +72,7 @@ description: In dwarf_get_size_of_val() with
   _dwarf_make_CU_Context() is insufficiently cautious about
   the length of a CU being absurd. 
   Unclear as yet if this is the problem
-  but it is a problem.
+  but it is a problem and is fixed for next release.
 datefixed: 
 references: regressiontests/DW201609-002/DW201609-002-poc
 gitfixid: 
