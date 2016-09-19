@@ -95,6 +95,12 @@ description: At line 1533 of dwarf_die_deliv.c a
  The bad pointer dereference is due to libdwarf 
  not noticing that the DWARF in that file is corrupt.
  </pre>
+ <pre>
+ The example from the bug report (DW201609-001-poc) has
+ the same problem.
+ dwarfdump now reports DW_DLE_SIBLING_LIST_IMPROPER
+ on both test2.o and DW201609-001-poc.
+ </pre>
 datefixed: 20160917
 references: regressiontests/DW201609-001/test2.o 
   regressiontests/DW201609-001/DW201609-001-poc
