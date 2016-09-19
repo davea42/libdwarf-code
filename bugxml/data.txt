@@ -32,7 +32,15 @@ description: With AddressSanitizer,
   _dwarf_get_loclist_header_start() is not cautious about values
   in the header being absurdly large.
   Unclear as yet if this is the problem
-  but it is a problem.
+  but it is a potential problem (fixed for next release).
+  <pre>
+  Address Sanitizer in gcc reproduces the report.
+  In _dwarf_read_loc_section() the simple calculation of
+  loc_section_end was wrong, so end-of section was
+  incorrect for the local reads.
+  With that fixed we get DW_DLE_READ_LITTLEENDIAN_ERROR when
+  libdwarf attempts to read off end of section.
+  </pre>
 datefixed:
 references: regressiontests/DW201609-003/poc
 gitfixid:
