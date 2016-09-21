@@ -117,9 +117,11 @@ int dwarf_get_ranges_a(Dwarf_Debug dbg,
             return (DW_DLV_ERROR);
         }
         if (rangeptr  >= section_end) {
+            free(re);
             return (DW_DLV_NO_ENTRY);
         }
         if ((rangeptr + (2*address_size)) > section_end) {
+            free(re);
             _dwarf_error(dbg, error, DW_DLE_DEBUG_RANGES_OFFSET_BAD);
             return (DW_DLV_ERROR);
         }

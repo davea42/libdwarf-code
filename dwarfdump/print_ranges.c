@@ -2,7 +2,7 @@
   Copyright (C) 2000-2006 Silicon Graphics, Inc.  All Rights Reserved.
   Portions Copyright 2007-2010 Sun Microsystems, Inc. All rights reserved.
   Portions Copyright 2009-2012 SN Systems Ltd. All rights reserved.
-  Portions Copyright 2008-2012 David Anderson. All rights reserved.
+  Portions Copyright 2008-2016 David Anderson. All rights reserved.
 
   This program is free software; you can redistribute it and/or modify it
   under the terms of version 2 of the GNU General Public License as
@@ -30,6 +30,11 @@
 
 static struct esb_s esb_string;
 
+void
+ranges_esb_string_destructor(void)
+{
+     esb_destructor(&esb_string);
+}
 /* Because we do not know what DIE is involved, if the
    object being printed has different address sizes
    in different compilation units this will not work
@@ -217,6 +222,7 @@ printf("**** END ****\n");
             rangeset,rangecount,bytecount,
             &rangesstr);
         printf("%s\n", esb_get_string(&rangesstr));
+        esb_destructor(&rangesstr);
     }
 
     /*  In the case of printing unique errors, stop the printing of any

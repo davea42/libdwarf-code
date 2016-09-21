@@ -53,10 +53,11 @@ LIBS =		@LIBS@
 INCLUDES =	-I. -I$(srcdir)
 dwfpic =        @dwfpic@
 dwfwall =       @dwfwall@
+dwfsanitize =   @dwfsanitize@
 dwfzlib =       @dwfzlib@
 SONAME =        libdwarf.so.1
-CFLAGS =	$(PREINCS) @CPPFLAGS@ @CFLAGS@ $(INCLUDES) $(dwfpic) $(dwfwall)  $(POSTINCS)
-LDFLAGS =	$(PRELIBS) @LDFLAGS@ $(POSTLIBS)
+CFLAGS =	$(PREINCS) @CPPFLAGS@ @CFLAGS@ $(INCLUDES) $(dwfpic) $(dwfwall) $(dwfsanitize)  $(POSTINCS)
+LDFLAGS =	$(PRELIBS) @LDFLAGS@ $(dwfsanitize) $(POSTLIBS) 
 HOSTCFLAGS =	$(CFLAGS)
 HOSTLDFLAGS =	$(PRELIBS) @LDFLAGS@ 
 

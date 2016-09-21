@@ -1280,9 +1280,10 @@ struct Dwarf_Obj_Access_Interface_s {
 #define DW_DLE_DISCR_ARRAY_ERROR               353
 #define DW_DLE_LEB_OUT_ERROR                   354
 #define DW_DLE_SIBLING_LIST_IMPROPER           355
+#define DW_DLE_LOCLIST_OFFSET_BAD              356
 
     /* DW_DLE_LAST MUST EQUAL LAST ERROR NUMBER */
-#define DW_DLE_LAST        355
+#define DW_DLE_LAST        356
 #define DW_DLE_LO_USER     0x10000
 
     /*  Taken as meaning 'undefined value', this is not

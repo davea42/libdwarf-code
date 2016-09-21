@@ -2,7 +2,7 @@
   Copyright (C) 2000-2006 Silicon Graphics, Inc.  All Rights Reserved.
   Portions Copyright 2007-2010 Sun Microsystems, Inc. All rights reserved.
   Portions Copyright 2009-2012 SN Systems Ltd. All rights reserved.
-  Portions Copyright 2008-2012 David Anderson. All rights reserved.
+  Portions Copyright 2008-2016 David Anderson. All rights reserved.
 
   This program is free software; you can redistribute it and/or modify it
   under the terms of version 2 of the GNU General Public License as
@@ -54,7 +54,6 @@ print_locs(Dwarf_Debug dbg)
     Dwarf_Ptr data = 0;
     Dwarf_Unsigned entry_len = 0;
     Dwarf_Unsigned next_entry = 0;
-    struct esb_s  exprstring;
     int index = 0;
     int lres = 0;
     int fres = 0;
@@ -62,7 +61,9 @@ print_locs(Dwarf_Debug dbg)
     Dwarf_Half offset_size = 0;
     Dwarf_Half version = 2; /* FAKE */
     Dwarf_Error err = 0;
+    struct esb_s  exprstring;
 
+    esb_constructor(&exprstring);
     current_section_id = DEBUG_LOC;
 
     /* Do nothing if not printing. */
@@ -90,7 +91,6 @@ print_locs(Dwarf_Debug dbg)
 
     printf("\nFormat <i o b e l>: "
         "index section-offset begin-addr end-addr length-of-block-entry\n");
-    esb_constructor(&exprstring);
     /*  Pre=October 2015 version. */
     while ((lres = dwarf_get_loclist_entry(dbg, offset,
         &hipc_offset, &lopc_offset,

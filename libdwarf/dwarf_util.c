@@ -202,21 +202,49 @@ _dwarf_get_size_of_val(Dwarf_Debug dbg,
         }
         return DW_DLV_OK;
 
-    case DW_FORM_block1:
-        *size_out =  *(Dwarf_Small *) val_ptr + 1;
+    case DW_FORM_block1: {
+        ptrdiff_t sizeasptrdiff = 0;
+
+        ret_value =  *(Dwarf_Small *) val_ptr;
+        sizeasptrdiff = (ptrdiff_t)ret_value;
+        if (sizeasptrdiff > (section_end_ptr - val_ptr) ||
+            sizeasptrdiff < 0) {
+            _dwarf_error(dbg,error,DW_DLE_FORM_BLOCK_LENGTH_ERROR);
+            return DW_DLV_ERROR;
+        }
+        *size_out = ret_value +1;
+        }
         return DW_DLV_OK;
 
-    case DW_FORM_block2:
+    case DW_FORM_block2: {
+        ptrdiff_t sizeasptrdiff = 0;
+
         READ_UNALIGNED_CK(dbg, ret_value, Dwarf_Unsigned,
             val_ptr, sizeof(Dwarf_Half),error,section_end_ptr);
+        sizeasptrdiff = (ptrdiff_t)ret_value;
+        if (sizeasptrdiff > (section_end_ptr - val_ptr) ||
+            sizeasptrdiff < 0) {
+            _dwarf_error(dbg,error,DW_DLE_FORM_BLOCK_LENGTH_ERROR);
+            return DW_DLV_ERROR;
+        }
         *size_out = ret_value + sizeof(Dwarf_Half);
+        }
         return DW_DLV_OK;
 
-    case DW_FORM_block4:
+    case DW_FORM_block4: {
+        ptrdiff_t sizeasptrdiff = 0;
+
         READ_UNALIGNED_CK(dbg, ret_value, Dwarf_Unsigned,
             val_ptr, sizeof(Dwarf_ufixed),
             error,section_end_ptr);
+        sizeasptrdiff = (ptrdiff_t)ret_value;
+        if (sizeasptrdiff > (section_end_ptr - val_ptr) ||
+            sizeasptrdiff < 0) {
+            _dwarf_error(dbg,error,DW_DLE_FORM_BLOCK_LENGTH_ERROR);
+            return DW_DLV_ERROR;
+        }
         *size_out = ret_value + sizeof(Dwarf_ufixed);
+        }
         return DW_DLV_OK;
 
     case DW_FORM_data1:
@@ -548,7 +576,7 @@ _dwarf_get_abbrev_for_code(Dwarf_CU_Context cu_context, Dwarf_Unsigned code,
             /*  ASSERT: size != 0 */
             end_abbrev_ptr = abbrev_ptr + size;
         } else {
-            end_abbrev_ptr = abbrev_ptr +
+            end_abbrev_ptr = dbg->de_debug_abbrev.dss_data +
                 dbg->de_debug_abbrev.dss_size;
         }
     }

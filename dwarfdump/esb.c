@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2005 Silicon Graphics, Inc.  All Rights Reserved.
-  Portions Copyright (C) 2013-2015 David Anderson. All Rights Reserved.
+  Portions Copyright (C) 2013-2016 David Anderson. All Rights Reserved.
   This program is free software; you can redistribute it and/or modify it
   under the terms of version 2 of the GNU General Public License as
   published by the Free Software Foundation.
@@ -66,6 +66,8 @@ typedef char * string; /* SELFTEST */
 /*  Allow for final NUL */
 static size_t alloc_size = INITIAL_ALLOC;
 
+static int next_esb_id = 0;
+
 /* NULL device used when printing formatted strings */
 static FILE *null_device_handle = 0;
 #if _WIN32
@@ -127,14 +129,17 @@ esb_allocate_more(struct esb_s *data, size_t len)
     size_t new_size = data->esb_allocated_size + len;
     char* newd = 0;
 
-    if (new_size < alloc_size)
+    if (new_size < alloc_size) {
         new_size = alloc_size;
+    }
     newd = realloc(data->esb_string, new_size);
     if (!newd) {
         fprintf(stderr, "dwarfdump is out of memory re-allocating "
             "%lu bytes\n", (unsigned long) new_size);
         exit(5);
     }
+    /*  If the area was reallocated by realloc() the earlier
+        space was free()d by realloc(). */
     data->esb_string = newd;
     data->esb_allocated_size = new_size;
 }
@@ -233,9 +238,6 @@ esb_string_len(struct esb_s *data)
     return data->esb_used_bytes;
 }
 
-
-/*  The following are for testing esb, not use by dwarfdump. */
-
 /*  *data is presumed to contain garbage, not values, and
     is properly initialized here. */
 void
@@ -250,6 +252,7 @@ esb_destructor(struct esb_s *data)
 {
     if (data->esb_string) {
         free(data->esb_string);
+        data->esb_string = 0;
     }
     esb_constructor(data);
 }
@@ -457,18 +460,18 @@ int main()
         esb_constructor(&d);
 
         esb_force_allocation(&d,7);
-        trialprint(&d);
+        esb_append(&d,"aaaa i");
         validate_esb(13,&d,6,7,"aaaa i");
         esb_destructor(&d);
     }
     {
-        struct esb_s d;
-        esb_constructor(&d);
+        struct esb_s d5;
+        esb_constructor(&d5);
 
-        esb_force_allocation(&d,50);
-        trialprint(&d);
-        validate_esb(14,&d,19,50,"aaaa insert me bbbb");
-        esb_destructor(&d);
+        esb_force_allocation(&d5,50);
+        trialprint(&d5);
+        validate_esb(14,&d5,19,50,"aaaa insert me bbbb");
+        esb_destructor(&d5);
     }
     {
         struct esb_s d;

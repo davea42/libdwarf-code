@@ -31,12 +31,13 @@ DEFS =		@DEFS@
 # ../libdwarf gets us to local headers and a libdwarf 
 # archive, usually, so we assume it.
 DIRINC =        $(srcdir)/../libdwarf 
-dwfzlib =       @dwfzlib@
 dwfwall =       @dwfwall@
+dwfsanitize =   @dwfsanitize@
+dwfzlib =       @dwfzlib@
 LIBS =		@LIBS@ -L../libdwarf -ldwarf -lelf $(dwfzlib)
 INCLUDES =	-I. -I$(srcdir) -I../libdwarf -I$(srcdir)/../libdwarf
-CFLAGS =	$(PREINCS) @CFLAGS@ $(INCLUDES) $(dwfwall) -DCONFPREFIX=${libdir} $(POSTINCS)
-LDFLAGS =	$(PRELIBS) @LDFLAGS@  $(LIBS) $(POSTLIBS)
+CFLAGS =	$(PREINCS) @CFLAGS@ $(INCLUDES) $(dwfwall) $(dwfsanitize) -DCONFPREFIX=${libdir} $(POSTINCS)
+LDFLAGS =	$(PRELIBS) @LDFLAGS@ $(dwfsanitize) $(LIBS) $(POSTLIBS)
 #VG =            valgrind --leak-check=full
 VG =
 

@@ -373,6 +373,10 @@ static char *config_file_defaults[] = {
 };
 static struct dwconf_s g_config_file_data;
 
+static struct esb_s esb_short_cu_name;
+static struct esb_s esb_long_cu_name;
+static struct esb_s dwarf_error_line;
+
 /* Output filename */
 static const char *output_file = 0;
 
@@ -506,6 +510,9 @@ main(int argc, char *argv[])
     set_checks_off();
     esb_constructor(&config_file_path);
     esb_constructor(&config_file_tiedpath);
+    esb_constructor(&esb_short_cu_name);
+    esb_constructor(&esb_long_cu_name);
+    esb_constructor(&dwarf_error_line);
 #ifdef _WIN32
     /*  Often we redirect the output to a file, but we have found
         issues due to the buffering associated with stdout. Some issues
@@ -688,6 +695,16 @@ main(int argc, char *argv[])
         regfree(&search_re);
     }
 #endif
+    makename_destructor();
+    esb_destructor(&config_file_path);
+    esb_destructor(&config_file_tiedpath);
+    esb_destructor(&esb_long_cu_name);
+    esb_destructor(&esb_short_cu_name);
+    esb_destructor(&dwarf_error_line);
+    sanitized_string_destructor();
+    ranges_esb_string_destructor();
+    destruct_abbrev_array();
+
     close_a_file(f);
 
 #ifdef _WIN32
@@ -2514,15 +2531,14 @@ get_cu_name(Dwarf_Debug dbg, Dwarf_Die cu_die,
             /*  The string return is valid until the next call to this
                 function; so if the caller needs to keep the returned
                 string, the string must be copied (makename()). */
-            static struct esb_s esb_short_name;
-            static struct esb_s esb_long_name;
-            char *filename;
-            esb_empty_string(&esb_long_name);
+            char *filename = 0;
+
+            esb_empty_string(&esb_long_cu_name);
             get_attr_value(dbg, DW_TAG_compile_unit,
                 cu_die, dieprint_cu_offset,
-                name_attr, NULL, 0, &esb_long_name,
+                name_attr, NULL, 0, &esb_long_cu_name,
                 0 /*show_form_used*/,0 /* verbose */);
-            *long_name = esb_get_string(&esb_long_name);
+            *long_name = esb_get_string(&esb_long_cu_name);
             /* Generate the short name (filename) */
             filename = strrchr(*long_name,'/');
             if (!filename) {
@@ -2533,9 +2549,9 @@ get_cu_name(Dwarf_Debug dbg, Dwarf_Die cu_die,
             } else {
                 filename = *long_name;
             }
-            esb_empty_string(&esb_short_name);
-            esb_append(&esb_short_name,filename);
-            *short_name = esb_get_string(&esb_short_name);
+            esb_empty_string(&esb_short_cu_name);
+            esb_append(&esb_short_cu_name,filename);
+            *short_name = esb_get_string(&esb_short_cu_name);
         }
     }
     dwarf_dealloc(dbg, name_attr, DW_DLA_ATTR);
@@ -3089,7 +3105,6 @@ boolean add_to_unique_errors_table(char * error_text)
 static void
 print_dwarf_check_error(char *format,...)
 {
-    static struct esb_s dwarf_error_line;
     static boolean do_init = TRUE;
     boolean found = FALSE;
     char * error_text = NULL;

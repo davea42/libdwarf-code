@@ -1,3 +1,23 @@
+2016-09-21 David Anderson
+    * configure.in: Support --enable-sanitize
+    * configure: Regenerated.
+    * dwarf_alloc.c: Rearrange DW_DLA_STRING check to avoid
+      calculating and using an address that may not exist.
+      And check earlier for a NULL dbg.
+    * dwarf_die_deliv.c: Add offset and length checks to catch
+      corrupt dwarf.
+    * dwarf_errmsg_list.c: Add DW_DLE_LOCLIST_OFFSET_BAD error code.
+    * dwarf_form.c: Delete three completely blank lines for
+      consistency in formatting..
+    * dwarf_loc.c: Add offset and length checks to catch
+      corrupt dwarf. Correct the initialization of loc_section_end
+      in _dwarf_read_loc_section().
+    * dwarf_ranges.c: Add free() in two places to avoid
+      memory leak.
+    * dwarf_util.c: Add length error checks for DW_FORM_block* .
+      Correct initialization of end_abbrev_ptr in
+      _dwarf_get_abbrev_for_code().
+    * libdwarf.h.in: Add DW_DLE_LOCLIST_OFFSET_BAD.
 2016-09-17 David Anderson
     * libdwarf.h.in: Added error code DW_DLE_SIBLING_LIST_IMPROPER.
     * dwarf_errmsg_list.c: Added DW_DLE_SIBLING_LIST_IMPROPER.

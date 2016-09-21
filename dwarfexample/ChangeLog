@@ -1,3 +1,11 @@
+2016-09-21  David Anderson
+     * Makefile.in: Added dwfsanitize when
+       -fsanitize=address desired.
+     * configure.in: Added --enable-sanitize option.
+     * configure: Regenerated.
+     * simplereader.c: Added trivial static array for string pointers
+       so such can be freed at normal exit to avoid having
+       malloc space problem reports from valgrind.
 2016-09-05  David Anderson
      * simplereader.c: Adding --dumpallnames option
        so it becomes easy to analyze string usage in objects.

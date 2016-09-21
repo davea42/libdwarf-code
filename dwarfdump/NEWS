@@ -1,3 +1,8 @@
+September 20, 2016
+  dwarfdump now frees all memory it used when it terminates normally.
+  No malloc space left behind.
+  It gets a clean report from 
+      valgrind --leak-check=full  --show-leak-kinds=all
 May 5, 2016
   By default dwarfdump sanitizes strings, so if a corrupted
   DWARF file has non-printable bytes in a string they are

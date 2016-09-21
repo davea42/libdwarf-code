@@ -2,7 +2,7 @@
 #define names_h
 /*
     Copyright (C) 2000,2004 Silicon Graphics, Inc.  All Rights Reserved.
-    Portions Copyright 2011 David Anderson. All Rights Reserved.
+    Portions Copyright 2011-2016 David Anderson. All Rights Reserved.
 
     This program is free software; you can redistribute it and/or modify it
     under the terms of version 2 of the GNU General Public License as
@@ -41,4 +41,8 @@
 
 char * makename(const char *); /* Makes a copy of the string in
     a malloc area.  Can never return 0. */
+
+/*  Destroy all makename data. Do just before exit. */
+void makename_destructor(void);
+
 #endif

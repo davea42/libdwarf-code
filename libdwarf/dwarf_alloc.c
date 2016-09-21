@@ -476,6 +476,25 @@ dwarf_dealloc(Dwarf_Debug dbg,
     if (space == NULL) {
         return;
     }
+    if (dbg) {
+        /*  If it's a string in debug_info etc doing
+            (char *)space - DW_RESERVE is totally bogus. */
+        if (alloc_type == DW_DLA_STRING &&
+            string_is_in_debug_section(dbg,space)) {
+            /*  A string pointer may point into .debug_info or
+                .debug_string etc.
+                So must not be freed.  And strings have no need of a
+                specialdestructor().
+                Mostly a historical mistake here. */
+            return;
+        }
+        /*  Otherwise it is an allocated string so it is ok
+            do the (char *)space - DW_RESERVE  */
+    } else {
+        /*  App error, or an app that failed to succeed in a
+            dwarf_init() call. */
+        return;
+    }
     type = alloc_type;
     malloc_addr = (char *)space - DW_RESERVE;
     r =(struct reserve_data_s *)malloc_addr;
@@ -494,24 +513,11 @@ dwarf_dealloc(Dwarf_Debug dbg,
             return;
         }
     }
-    if (dbg == NULL) {
-        /*  App error, or an app that failed to succeed in a
-            dwarf_init() call. */
-        return;
-    }
     if (type >= ALLOC_AREA_INDEX_TABLE_MAX) {
         /* internal or user app error */
         return;
     }
 
-
-    if (type == DW_DLA_STRING && string_is_in_debug_section(dbg,space)) {
-        /*  A string pointer may point into .debug_info or .debug_string etc.
-            So must not be freed.  And strings have no need of a
-            specialdestructor().
-            Mostly a historical mistake here. */
-        return;
-    }
 
     if (alloc_instance_basics[type].specialdestructor) {
         alloc_instance_basics[type].specialdestructor(space);

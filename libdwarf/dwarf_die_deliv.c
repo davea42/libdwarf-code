@@ -287,6 +287,10 @@ _dwarf_make_CU_Context(Dwarf_Debug dbg,
         _dwarf_error(dbg, error, DW_DLE_INFO_HEADER_ERROR);
         return DW_DLV_ERROR;
     }
+    if (offset >= section_size) {
+        _dwarf_error(dbg, error, DW_DLE_INFO_HEADER_ERROR);
+        return DW_DLV_ERROR;
+    }
     if ((offset+4) > section_size) {
         _dwarf_error(dbg, error, DW_DLE_INFO_HEADER_ERROR);
         return DW_DLV_ERROR;
@@ -309,6 +313,14 @@ _dwarf_make_CU_Context(Dwarf_Debug dbg,
     max_cu_local_offset =  length;
     max_cu_global_offset =  offset + length +
         local_extension_size + local_length_size;
+    if(length > section_size) {
+        _dwarf_error(dbg, error, DW_DLE_CU_LENGTH_ERROR);
+        return DW_DLV_ERROR;
+    }
+    if(max_cu_global_offset > section_size) {
+        _dwarf_error(dbg, error, DW_DLE_CU_LENGTH_ERROR);
+        return DW_DLV_ERROR;
+    }
 
     READ_UNALIGNED_CK(dbg, cu_context->cc_version_stamp, Dwarf_Half,
         cu_ptr, sizeof(Dwarf_Half),error,section_end_ptr);
@@ -1337,6 +1349,7 @@ _dwarf_next_die_info_ptr(Dwarf_Byte_Ptr die_info_ptr,
         if (attr_form != 0) {
             int res = 0;
             Dwarf_Unsigned sizeofval = 0;
+            ptrdiff_t  sizeb = 0;
             res = _dwarf_get_size_of_val(cu_context->cc_dbg,
                 attr_form,
                 cu_context->cc_version_stamp,
@@ -1351,6 +1364,12 @@ _dwarf_next_die_info_ptr(Dwarf_Byte_Ptr die_info_ptr,
             }
             /*  It is ok for info_ptr == die_info_end, as we will test
                 later before using a too-large info_ptr */
+            sizeb = (ptrdiff_t)sizeofval;
+            if (sizeb > (die_info_end - info_ptr) ||
+                sizeb < 0) {
+                _dwarf_error(dbg, error, DW_DLE_NEXT_DIE_PAST_END);
+                return DW_DLV_ERROR;
+            }
             info_ptr += sizeofval;
             if (info_ptr > die_info_end) {
                 /*  More than one-past-end indicates a bug somewhere,

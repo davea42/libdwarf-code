@@ -1,5 +1,5 @@
 /*
-  Copyright (C) 2009-2012 David Anderson.  All Rights Reserved.
+  Copyright (C) 2009-2016 David Anderson.  All Rights Reserved.
   Portions Copyright 2012 SN Systems Ltd. All rights reserved.
 
   This program is free software; you can redistribute it and/or modify it
@@ -58,20 +58,29 @@ is_strstrnocase(const char * container, const char * contained)
     for (; *ct; ++ct )
     {
         const unsigned char * cntnd = (const unsigned char *)contained;
-        boolean innerwrong = TRUE;
-        for (; *cntnd; ++cntnd,++ct)
+
+        for (; *cntnd && *ct ; ++cntnd,++ct)
         {
-            char lct = tolower(*ct);
-            char tlc = tolower(*cntnd);
+            unsigned char lct = tolower(*ct);
+            unsigned char tlc = tolower(*cntnd);
             if (lct != tlc) {
-                innerwrong=TRUE;
-                break; /* Go to outer loop */
+                break;
             }
-            innerwrong=FALSE;
         }
-        if (!innerwrong) {
+        if (!*cntnd) {
+            /* We matched all the way to end of contained  */
+            /* ASSERT: innerwrong = FALSE  */
             return TRUE;
         }
+        if (!*ct) {
+            /*  Ran out of container before contained,
+                so no future match of contained
+                is possible. */
+            return FALSE;
+
+        }
+        /*  No match so far.
+            See if there is more in container to check. */
     }
     return FALSE;
 }

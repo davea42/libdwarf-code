@@ -153,6 +153,24 @@ static const  char * tuhash = 0;
 static const  char * cufissionhash = 0;
 static const  char * tufissionhash = 0;
 
+/*  So we get clean reports from valgrind and other tools
+    we clean up strdup strings.
+    With a primitive technique as we need nothing fancy. */
+#define DUPSTRARRAYSIZE 100
+static const char *dupstrarray[DUPSTRARRAYSIZE];
+static unsigned    dupstrused;
+
+static void
+cleanupstr(void)
+{
+    unsigned i = 0;
+    for (i = 0; i < dupstrused; ++i) {
+        free((char *)dupstrarray[i]);
+        dupstrarray[i] = 0;
+    }
+    dupstrused = 0;
+}
+
 static unsigned  char_to_uns4bit(unsigned char c)
 {
     unsigned v;
@@ -244,6 +262,12 @@ startswithextractstring(const char *arg,const char *lookfor,
     }
     s = arg+prefixlen;
     *ptrout = strdup(s);
+    dupstrarray[dupstrused] = *ptrout;
+    dupstrused++;
+    if (dupstrused >= DUPSTRARRAYSIZE) {
+        printf("FAIL: increase the value DUPSTRARRAYSIZE for test purposes\n");
+        exit(1);
+    }
     return TRUE;
 }
 
@@ -322,6 +346,7 @@ simple_error_handler(Dwarf_Error error, Dwarf_Ptr errarg)
         unused);
     return;
 }
+
 
 int
 main(int argc, char **argv)
@@ -411,6 +436,7 @@ main(int argc, char **argv)
     res = dwarf_init(fd,DW_DLC_READ,errhand,errarg, &dbg,errp);
     if(res != DW_DLV_OK) {
         printf("Giving up, cannot do DWARF processing\n");
+        cleanupstr();
         exit(1);
     }
 
@@ -514,6 +540,7 @@ main(int argc, char **argv)
         fclose(dumpallnamesfile);
     }
     close_a_file(fd);
+    cleanupstr();
     return 0;
 }
 

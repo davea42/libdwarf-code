@@ -1,3 +1,42 @@
+2016-09-21  David Anderson
+    * configure.in: Supports --enable-sanitize which
+      sets dwfsanitize so build uses -fsanitize=address .
+    * configure: Regenerated.
+    * Makefile.in: Now uses dwfsanitize (when set)
+      during builds. Added dwarf_tsearchbal.c to the makename
+      build so dwarf_tsearchbal.o is available for tag_tree_build
+      and tag_attr _buildprograms at build time.
+    * dwarfdump.c: Moved all static struct esb_s variables
+      to the top level and ensure they are destructed on
+      normal exit. Destruct all static makename strings, abbrev
+      data, sanitized strings, and ranges strings.
+      Now all allocated memory is freed before a normal exit.
+    * esb.c: Added {} and commentary for clarity. 
+      esb_destructor now a bit more careful (redundantly but
+      helpful for a reader).
+    * globals.h: Declared destructors allowing access to
+      static data allocated in certain source files.
+      Fixed the selftest code.
+    * macrocheck.c: Correct selftest code.
+    * makename.c: Now uses dwarf_tsearch to keep a record of
+      strings it allocates and avoids duplicating strings.
+      A destructor gives a way to free the allocated memory.
+    * makename.h: Added declaration of makename_destructor().
+    * print_abbrevs.c: Implemented destruct_abbrev_array() to
+      clean up a static array.
+    * print_die.c: Tidied up declaration/constructor pairs
+      so it's easier to see that all declarations have a constructor
+      call.
+    * print_lines.c: Tidied up declaration/constructor pair
+      so it's easier to see that the constructor is called.
+    * print_locs.c: Tidied up declaration/constructor pair
+      so it's easier to see that the constructor is called.
+    * print_ranges.c: Implemented ranges_esb_string_destructor()
+      to destruct local static esb string at normal dwarfdump exit.
+    * sanitized.c: Implemented sanitized_string_destructor()
+      to destruct local static esb string at normal dwarfdump exit.
+    * strstrnocase.c: Code could do *ct past end of string.
+      Fixed to avoid that.
 2016-09-15  David Anderson
     * configure.in: Added check for unistd.h.
     * configure: regenerated.

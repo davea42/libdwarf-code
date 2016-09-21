@@ -438,7 +438,7 @@ int main()
     if (count != 1) {
         printf("FAIL: expect count 1, got %" DW_PR_DUu "\n",count);
     }
-    print_macro_statistics(&base);
+    print_macro_statistics("test1",&base,2000);
     add_macro_area_len(&base,200,100);
     add_macro_import(&base,FALSE,350);
     add_macro_area_len(&base,350,100);
@@ -446,7 +446,7 @@ int main()
     if (count != 2) {
         printf("FAIL: expect count 2, got %" DW_PR_DUu "\n",count);
     }
-    print_macro_statistics(&base);
+    print_macro_statistics("test 2",&base,2000);
     clear_macro_statistics(&base);
 
     /* Test two */
@@ -468,7 +468,7 @@ int main()
         printf("FAIL: expect count 3, got %" DW_PR_DUu "\n",count);
     }
 
-    print_macro_statistics(&base);
+    print_macro_statistics("test 3",&base,2000);
     clear_macro_statistics(&base);
     /* Test three */
     add_macro_import(&base,TRUE,50);
@@ -479,7 +479,7 @@ int main()
     add_macro_import(&base,FALSE,60);
     add_macro_area_len(&base,60,10);
 
-    print_macro_statistics(&base);
+    print_macro_statistics("test 4",&base,2000);
     clear_macro_statistics(&base);
     return 0;
 }

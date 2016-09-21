@@ -403,8 +403,8 @@ print_debug_fission_header(struct Dwarf_Debug_Fission_Per_CU_s *fsd)
         /* No fission data. */
         return;
     }
-    printf("\n");
     esb_constructor(&hash_str);
+    printf("\n");
     if (!strcmp(fsd->pcu_type,"tu")) {
         fissionsec = ".debug_tu_index";
     }
@@ -562,6 +562,7 @@ print_cu_hdr_signature(Dwarf_Sig8 *signature,Dwarf_Unsigned typeoffset)
 {
     if (dense) {
         struct esb_s sig8str;
+
         esb_constructor(&sig8str);
         format_sig8_string(signature,&sig8str);
         printf(" %s<%s>", "signature",esb_get_string(&sig8str));
@@ -570,6 +571,7 @@ print_cu_hdr_signature(Dwarf_Sig8 *signature,Dwarf_Unsigned typeoffset)
         esb_destructor(&sig8str);
     } else {
         struct esb_s sig8str;
+
         esb_constructor(&sig8str);
         format_sig8_string(signature,&sig8str);
         printf("  %-16s = %s\n", "signature",esb_get_string(&sig8str));
@@ -706,6 +708,7 @@ print_one_die_section(Dwarf_Debug dbg,Dwarf_Bool is_info,
         {
         /* Get producer name for this CU and update compiler list */
             struct esb_s producername;
+
             esb_constructor(&producername);
             get_producer_name(dbg,cu_die,
                 dieprint_cu_goffset,&producername);
@@ -1547,6 +1550,7 @@ get_small_encoding_integer_and_name(Dwarf_Debug dbg,
         Dwarf_Half theform = 0;
         Dwarf_Half directform = 0;
         struct esb_s fstring;
+
         esb_constructor(&fstring);
         get_form_values(dbg,attrib,&theform,&directform);
         esb_append(&fstring, val_as_string((Dwarf_Half) uval,
@@ -1960,6 +1964,7 @@ traverse_one_die(Dwarf_Debug dbg,
         Dwarf_Half attr = 0;
         struct esb_s bucketgroupstr;
         const char *atname = NULL;
+
         esb_constructor(&bucketgroupstr);
         get_attr_value(dbg, tag, die,
             dieprint_cu_goffset,
@@ -2122,9 +2127,9 @@ print_range_attribute(Dwarf_Debug dbg,
             struct esb_s local;
             char tmp[100];
 
+            esb_constructor(&local);
             snprintf(tmp,sizeof(tmp)," attr 0x%x form 0x%x ",
                 (unsigned)attr,(unsigned)theform);
-            esb_constructor(&local);
             esb_append(&local,
                 " fails to find DW_AT_ranges offset");
             esb_append(&local,tmp);
@@ -2196,8 +2201,8 @@ have_a_search_match(const char *valname,const char *atname)
         */
     struct esb_s esb_match;
     char *s2;
-    esb_constructor(&esb_match);
 
+    esb_constructor(&esb_match);
     trim_quotes(valname,&esb_match);
     s2 = esb_get_string(&esb_match);
     if (search_match_text ) {
@@ -2440,9 +2445,9 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
     Dwarf_Addr elf_max_address = 0;
     Dwarf_Error paerr = 0;
 
+    esb_constructor(&esb_extra);
     esb_constructor(&valname);
     is_info = dwarf_get_die_infotypes_flag(die);
-    esb_constructor(&esb_extra);
     atname = get_AT_name(attr,pd_dwarf_names_print_on_error);
     get_address_size_and_max(dbg,0,&elf_max_address,&paerr);
     /*  The following gets the real attribute, even in the face of an
@@ -2716,6 +2721,7 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
             struct esb_s framebasestr;
             Dwarf_Half theform = 0;
             Dwarf_Half directform = 0;
+
             esb_constructor(&framebasestr);
             get_form_values(dbg,attrib,&theform,&directform);
             if (is_location_form(theform)) {
@@ -2739,6 +2745,7 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
             Dwarf_Half theform = 0;
             Dwarf_Half directform = 0;
             struct esb_s funcformstr;
+
             esb_constructor(&funcformstr);
             get_form_values(dbg,attrib,&theform,&directform);
             get_FLAG_BLOCK_string(dbg, attrib,&funcformstr);
@@ -2758,6 +2765,7 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
             Dwarf_Half theform = 0;
             Dwarf_Half directform = 0;
             struct esb_s cfkindstr;
+
             esb_constructor(&cfkindstr);
             get_form_values(dbg,attrib,&theform,&directform);
             wres = dwarf_formudata (attrib,&tempud, &cferr);
@@ -2783,6 +2791,7 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
             Dwarf_Half theform;
             int rv;
             struct esb_s upperboundstr;
+
             esb_constructor(&upperboundstr);
             rv = dwarf_whatform(attrib,&theform,&paerr);
             /* depending on the form and the attribute, process the form */
@@ -2827,6 +2836,7 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
             Dwarf_Unsigned highpcOff = 0;
             Dwarf_Bool offsetDetected = FALSE;
             struct esb_s highpcstr;
+
             esb_constructor(&highpcstr);
             rv = dwarf_whatform(attrib,&theform,&paerr);
             /*  Depending on the form and the attribute,
@@ -3041,6 +3051,7 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
     case DW_AT_MIPS_linkage_name:
         {
         struct esb_s linkagenamestr;
+
         esb_constructor(&linkagenamestr);
         get_attr_value(dbg, tag, die,
             dieprint_cu_goffset, attrib, srcfiles,
@@ -3054,6 +3065,7 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
             int local_verbose = 0;
             const char *name = 0;
             struct esb_s lesb;
+
             esb_constructor(&lesb);
             get_attr_value(dbg, tag, die,
                 dieprint_cu_goffset,attrib, srcfiles, cnt,
@@ -3070,6 +3082,7 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
     case DW_AT_GNU_template_name:
         {
         struct esb_s templatenamestr;
+
         esb_constructor(&templatenamestr);
         get_attr_value(dbg, tag, die,
             dieprint_cu_goffset,attrib, srcfiles, cnt,
@@ -3083,6 +3096,7 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
             int local_verbose = 0;
             struct esb_s lesb;
             const char *name = 0;
+
             esb_constructor(&lesb);
             get_attr_value(dbg, tag, die,
                 dieprint_cu_goffset,attrib, srcfiles, cnt,
@@ -3114,6 +3128,7 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
             int local_verbose = 0;
             const char *name = 0;
             struct esb_s lesb;
+
             esb_constructor(&lesb);
             get_attr_value(dbg, tag, die,
                 dieprint_cu_goffset,attrib, srcfiles, cnt,
@@ -3130,6 +3145,7 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
             struct esb_s lesb;
             int local_show_form_used = FALSE;
             int local_verbose = 0;
+
             esb_constructor(&lesb);
             get_attr_value(dbg, tag, die,
                 dieprint_cu_goffset,attrib, srcfiles, cnt,
@@ -3144,6 +3160,7 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
     case DW_AT_producer:
         {
         struct esb_s lesb;
+
         esb_constructor(&lesb);
         get_attr_value(dbg, tag, die,
             dieprint_cu_goffset,attrib, srcfiles, cnt,
@@ -3158,6 +3175,7 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
             int show_form_local = FALSE;
             int local_verbose = 0;
             struct esb_s local_e;
+
             esb_constructor(&local_e);
             get_attr_value(dbg, tag, die,
                 dieprint_cu_goffset,attrib, srcfiles, cnt,
@@ -3180,6 +3198,7 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
     case DW_AT_type:
         {
         struct esb_s lesb;
+
         esb_constructor(&lesb);
         get_attr_value(dbg, tag, die,
             dieprint_cu_goffset,attrib, srcfiles, cnt, &lesb,
@@ -3330,6 +3349,7 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
     default:
         {
             struct esb_s lesb;
+
             esb_constructor(&lesb);
             get_attr_value(dbg, tag,die,
                 dieprint_cu_goffset,attrib, srcfiles, cnt, &lesb,
@@ -5087,6 +5107,7 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
                 wres = dwarf_formsig8_const(attrib,&v,&err);
                 if (wres == DW_DLV_OK){
                     struct esb_s t;
+
                     esb_constructor(&t);
                     format_sig8_string(&v,&t);
                     esb_append(esbp,esb_get_string(&t));
@@ -5177,6 +5198,7 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
                 theform == DW_FORM_GNU_str_index) {
                 struct esb_s saver;
                 Dwarf_Unsigned index = 0;
+
                 esb_constructor(&saver);
                 sres = dwarf_get_debug_str_index(attrib,&index,&err);
                 esb_append(&saver,temps);
@@ -5273,6 +5295,7 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
                 wres, err);
         } else {
             struct esb_s sig8str;
+
             esb_constructor(&sig8str);
             format_sig8_string(&sig8data,&sig8str);
             esb_append(esbp,esb_get_string(&sig8str));

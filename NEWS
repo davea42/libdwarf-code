@@ -1,3 +1,7 @@
+2016-09-20:  
+  --enable-sanitize option added to configure. This builds
+  with -fsanitize=address to check for out of bounds
+  memory access. 
 2016-09-05:  
   dwarfexample/simpleexample.c now has a simple option letting one
   extract all .debug_info, .debug_types strings into a file by

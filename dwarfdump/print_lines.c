@@ -2,7 +2,7 @@
   Copyright (C) 2000-2006 Silicon Graphics, Inc.  All Rights Reserved.
   Portions Copyright 2007-2010 Sun Microsystems, Inc. All rights reserved.
   Portions Copyright 2009-2011 SN Systems Ltd. All rights reserved.
-  Portions Copyright 2008-2015 David Anderson. All rights reserved.
+  Portions Copyright 2008-2016 David Anderson. All rights reserved.
   Portions Copyright 2015-2015 Google, Inc. All Rights Reserved
 
   This program is free software; you can redistribute it and/or modify it
@@ -119,11 +119,10 @@ process_line_table(Dwarf_Debug dbg,
     Dwarf_Bool SkipRecord = FALSE;
     struct esb_s lastsrc;
 
+    esb_constructor(&lastsrc);
     current_section_id = DEBUG_LINE;
 
     /* line_flag is TRUE */
-    esb_constructor(&lastsrc);
-
     get_address_size_and_max(dbg,0,&elf_max_address,&lt_err);
     /* Padding for a nice layout */
     padding = line_print_pc ? "            " : "";
@@ -495,9 +494,9 @@ print_line_context_record(Dwarf_Debug dbg,
     Dwarf_Signed count = 0;
     Dwarf_Signed i = 0;
     const char *name = 0;
-    struct esb_s bufr;
     Dwarf_Small table_count = 0;
     Dwarf_Error err = 0;
+    struct esb_s bufr;
 
     esb_constructor(&bufr);
     printf("Line Context data\n");

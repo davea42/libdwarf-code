@@ -30,14 +30,15 @@ DEFS =		@DEFS@
 # ../libdwarf gets us to local headers and a libdwarf 
 # archive, usually, so we assume it.
 dwfwall =       @dwfwall@
+dwfsanitize =   @dwfsanitize@
 dwfzlib =       @dwfzlib@
 LD_LIBRARY_PATH=../libdwarf
 DIRINC =        $(srcdir)/../libdwarf
 LIBS =		@LIBS@ -L../libdwarf -ldwarf -lelf $(dwfzlib)
 INCLUDES =	-I. -I$(srcdir) -I../libdwarf -I$(srcdir)/../libdwarf
-CFLAGS =	$(PREINCS) @CPPFLAGS@ @CFLAGS@ $(INCLUDES) $(dwfwall) -DCONFPREFIX=${libdir} $(POSTINCS)
-LDFLAGS =	$(PRELIBS) @LDFLAGS@  $(LIBS) $(POSTLIBS)
-#VG =            valgrind --leak-check=full
+CFLAGS =	$(PREINCS) @CPPFLAGS@ @CFLAGS@ $(INCLUDES) $(dwfwall) $(dwfsanitize) -DCONFPREFIX=${libdir} $(POSTINCS)
+LDFLAGS =	$(PRELIBS) @LDFLAGS@  $(LIBS) $(dwfsanitize) $(POSTLIBS)
+#VG =            valgrind --leak-check=full  --show-leak-kinds=all
 VG =
 
 
@@ -103,12 +104,12 @@ default: $(TARGETS)
 dwarfdump: $(FINALOBJECTS) makename.o naming.o common.o dwgetopt.o
 	$(CC) $(CFLAGS) -o $@ $(FINALOBJECTS) common.o makename.o naming.o dwgetopt.o $(LDFLAGS) 
 
-#tag_common.o: $(srcdir)/tag_common.c $(HEADERS)  dwarf_names.h
-#	$(CC) $(CFLAGS) -c $(srcdir)/tag_common.c
 dwgetopt.o: $(srcdir)/dwgetopt.h $(srcdir)/dwgetopt.c 
 	$(CC) $(CFLAGS) -c $(srcdir)/dwgetopt.c
-makename.o: $(srcdir)/makename.h $(srcdir)/makename.c 
+
+makename.o dwarf_tsearchbal.o: $(srcdir)/makename.h $(srcdir)/makename.c $(srcdir)/dwarf_tsearchbal.c
 	$(CC) $(CFLAGS) -c $(srcdir)/makename.c
+	$(CC) $(CFLAGS) -c $(srcdir)/dwarf_tsearchbal.c
 common.o:  $(srcdir)/common.c $(srcdir)/common.h
 	$(CC) $(CFLAGS) -c $(srcdir)/common.c
 
@@ -121,10 +122,10 @@ trivial_naming.o: $(srcdir)/naming.c
 	$(CC) $(CFLAGS) -DTRIVIAL_NAMING  -c $(srcdir)/naming.c -o trivial_naming.o 
 
 tag_tree_build:  $(srcdir)/tag_tree.c $(DIRINC)/dwarf.h $(HEADERS) tag_common.o makename.o common.o trivial_naming.o dwgetopt.o
-	LD_LIBRARY_PATH=$$LD_LIBRARY_PATH:$(LD_LIBRARY_PATH) $(CC) $(CFLAGS) $(srcdir)/tag_tree.c tag_common.o common.o makename.o trivial_naming.o dwgetopt.o  $(LDFLAGS) -o tag_tree_build 
+	LD_LIBRARY_PATH=$$LD_LIBRARY_PATH:$(LD_LIBRARY_PATH) $(CC) $(CFLAGS) $(srcdir)/tag_tree.c tag_common.o common.o makename.o  dwarf_tsearchbal.o trivial_naming.o dwgetopt.o  $(LDFLAGS) -o tag_tree_build 
 
-tag_attr_build:  $(srcdir)/tag_attr.c $(DIRINC)/dwarf.h $(HEADERS) tag_common.o makename.o common.o trivial_naming.o dwgetopt.o
-	$(CC) $(CFLAGS) $(srcdir)/tag_attr.c tag_common.o common.o makename.o trivial_naming.o dwgetopt.o $(LDFLAGS) -o tag_attr_build 
+tag_attr_build:  $(srcdir)/tag_attr.c $(DIRINC)/dwarf.h $(HEADERS) tag_common.o makename.o  common.o trivial_naming.o dwgetopt.o
+	$(CC) $(CFLAGS) $(srcdir)/tag_attr.c tag_common.o common.o makename.o trivial_naming.o  dwarf_tsearchbal.o dwgetopt.o $(LDFLAGS) -o tag_attr_build 
 
 # Plain GNU C dash E does not work on a .list, 
 # so copy to a .c name to run
@@ -176,11 +177,15 @@ test: esb.o dwgetopt.o
 selftest:
 	-rm -f ./selfesb
 	-rm -f ./selfmc
+	-rm -f ./selfmakename
 	$(CC) -g -c -I../libdwarf esb.c
 	$(CC) -g -c -I../libdwarf dwarf_tsearchbal.c
+	$(CC) -g -DSELFTEST  -I../libdwarf makename.c dwarf_tsearchbal.o -o selfmakename
 	$(CC) -DSELFTEST -I../libdwarf -g helpertree.c esb.o dwarf_tsearchbal.o -o selfhelpertree
 	./selfhelpertree
 	-rm -f ./selfhelpertree
+	./selfmakename
+	-rm -f ./selfmakename
 	$(CC) -DSELFTEST -I../libdwarf -g macrocheck.c esb.o dwarf_tsearchbal.o -o selfmc
 	./selfmc
 	-rm -f ./selfmc

@@ -59,6 +59,18 @@ AC_ARG_ENABLE(wall,AC_HELP_STRING([--enable-wall],
         [ AC_SUBST(dwfwall,[]) ]
         [ AC_SUBST(dwfwall,["-Wall -O0 -Wpointer-arith -Wmissing-declarations -Wmissing-prototypes -Wdeclaration-after-statement -Wextra -Wcomment -Wformat -Wpedantic -Wuninitialized -Wno-long-long -Wshadow"]) ])
 
+dnl This adds compiler option -fsanitize=address (gcc compiler run-time checks))
+AC_SUBST(dwfsanitize,[])
+AC_MSG_CHECKING(build -fsanitize-address) 
+AC_ARG_ENABLE(sanitize,AC_HELP_STRING([--enable-sanitize],
+       [Add -fsanitize (default is not to)]),
+       [ AC_SUBST(dwfsanitize,["-fsanitize=address"])
+          AC_MSG_RESULT(yes) ],
+       [ AC_SUBST(dwfsanitize,[]) 
+          AC_MSG_RESULT(no)
+        ]
+        )
+
 
 AC_SUBST(dwfzlib,[])
 AC_TRY_COMPILE([#include "zlib.h"],[

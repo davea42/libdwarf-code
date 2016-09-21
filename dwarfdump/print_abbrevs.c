@@ -198,6 +198,14 @@ static Dwarf_Unsigned *abbrev_array = NULL;
 static Dwarf_Unsigned abbrev_array_size = 0;
 #define ABBREV_ARRAY_INITIAL_SIZE 64
 
+void
+destruct_abbrev_array(void)
+{
+    free(abbrev_array);
+    abbrev_array = 0;
+    abbrev_array_size = 0;
+}
+
 /*  Normally abbreviation numbers are allocated in sequence from 1
     and increase by 1
     but in case of a compiler bug or a damaged object file one can

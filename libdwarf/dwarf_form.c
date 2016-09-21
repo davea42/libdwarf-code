@@ -1209,9 +1209,6 @@ _dwarf_extract_local_debug_str_string_given_offset(Dwarf_Debug dbg,
     return (DW_DLV_ERROR);
 }
 
-
-
-
 /* Contrary to pre-2005 documentation,
    The string pointer returned thru return_str must
    never have dwarf_dealloc() applied to it.

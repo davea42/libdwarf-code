@@ -128,12 +128,16 @@ _dwarf_read_loc_expr_op(Dwarf_Debug dbg,
     Dwarf_Small atom = 0;
     Dwarf_Word leb128_length = 0;
 
+    if (offset > loc_block->bl_len) {
+        _dwarf_error(dbg,error,DW_DLE_LOCEXPR_OFF_SECTION_END);
+        return DW_DLV_ERROR;
+    }
     loc_len = loc_block->bl_len;
-    loc_ptr = (Dwarf_Small*)loc_block->bl_data + offset;
-
     if (offset == loc_len) {
         return DW_DLV_NO_ENTRY;
     }
+
+    loc_ptr = (Dwarf_Small*)loc_block->bl_data + offset;
     if ((loc_ptr+1) > section_end) {
         _dwarf_error(dbg,error,DW_DLE_LOCEXPR_OFF_SECTION_END);
         return DW_DLV_ERROR;
@@ -893,7 +897,8 @@ _dwarf_read_loc_section(Dwarf_Debug dbg,
     Dwarf_Error * error)
 {
     Dwarf_Small *beg = dbg->de_debug_loc.dss_data + sec_offset;
-    Dwarf_Small *loc_section_end = beg + dbg->de_debug_loc.dss_size;
+    Dwarf_Small *loc_section_end =
+        dbg->de_debug_loc.dss_data + dbg->de_debug_loc.dss_size;
 
     /*  start_addr and end_addr are actually offsets
         of the applicable base address of the CU.
@@ -936,6 +941,10 @@ _dwarf_read_loc_section(Dwarf_Debug dbg,
             beg + 2 * address_size, sizeof(Dwarf_Half),
             error,loc_section_end);
         /* exprblock_size can be zero, means no expression */
+        if ( exprblock_size >= dbg->de_debug_loc.dss_size) {
+            _dwarf_error(NULL, error, DW_DLE_DEBUG_LOC_SECTION_SHORT);
+            return DW_DLV_ERROR;
+        }
         if ((sec_offset +exprblock_off + exprblock_size) >
             dbg->de_debug_loc.dss_size) {
             _dwarf_error(NULL, error, DW_DLE_DEBUG_LOC_SECTION_SHORT);
@@ -1026,14 +1035,16 @@ _dwarf_setup_loc(Dwarf_Attribute attr,
 static int
 _dwarf_get_loclist_header_start(Dwarf_Debug dbg,
     Dwarf_Attribute attr,
-    Dwarf_Unsigned * loclist_offset,
+    Dwarf_Unsigned * loclist_offset_out,
     Dwarf_Error * error)
 {
-    int blkres = dwarf_global_formref(attr, loclist_offset, error);
+    Dwarf_Unsigned loc_sec_size = 0;
+    Dwarf_Unsigned loclist_offset = 0;
+
+    int blkres = dwarf_global_formref(attr, &loclist_offset, error);
     if (blkres != DW_DLV_OK) {
         return (blkres);
     }
-
     if (!dbg->de_debug_loc.dss_data) {
         int secload = _dwarf_load_section(dbg, &dbg->de_debug_loc,error);
         if (secload != DW_DLV_OK) {
@@ -1043,6 +1054,12 @@ _dwarf_get_loclist_header_start(Dwarf_Debug dbg,
             return (DW_DLV_NO_ENTRY);
         }
     }
+    loc_sec_size = dbg->de_debug_loc.dss_size;
+    if (loclist_offset >= loc_sec_size) {
+        _dwarf_error(dbg, error, DW_DLE_LOCLIST_OFFSET_BAD);
+        return DW_DLV_ERROR;
+    }
+
     {
         int fisres = 0;
         Dwarf_Unsigned fissoff = 0;
@@ -1052,8 +1069,17 @@ _dwarf_get_loclist_header_start(Dwarf_Debug dbg,
         if(fisres != DW_DLV_OK) {
             return fisres;
         }
-        *loclist_offset += fissoff;
+        if (fissoff >= loc_sec_size) {
+            _dwarf_error(dbg, error, DW_DLE_LOCLIST_OFFSET_BAD);
+            return DW_DLV_ERROR;
+        }
+        loclist_offset += fissoff;
+        if  (loclist_offset >= loc_sec_size) {
+            _dwarf_error(dbg, error, DW_DLE_LOCLIST_OFFSET_BAD);
+            return DW_DLV_ERROR;
+        }
     }
+    *loclist_offset_out = loclist_offset;
     return DW_DLV_OK;
 }
 

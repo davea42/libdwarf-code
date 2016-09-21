@@ -25,11 +25,12 @@ AR =            @AR@
 RM =            rm
 RANLIB =        @RANLIB@
 DEFS =          @DEFS@
+dwfsanitize =   @dwfsanitize@
 dwfzlib =       @dwfzlib@
 LIBS =          @LIBS@ -L ../libdwarf -ldwarf -lelf $(dwfzlib)
 INCLUDES =      -I. -I$(srcdir) -I../libdwarf -I$(srcdir)/../libdwarf
-CXXFLAGS =      @CPPFLAGS@ @CXXFLAGS@ $(INCLUDES) 
-LDFLAGS =       @LDFLAGS@ $(LIBS)
+CXXFLAGS =      @CPPFLAGS@ @CXXFLAGS@ $(dwfsanitize) $(INCLUDES) 
+LDFLAGS =       @LDFLAGS@ $(dwfsanitize) $(LIBS)
 
 
 DIRINC = $(srcdir)/../libdwarf

@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2000,2004,2005 Silicon Graphics, Inc.  All Rights Reserved.
-  Portions Copyright (C) 2007-2012 David Anderson. All Rights Reserved.
+  Portions Copyright (C) 2007-2016 David Anderson. All Rights Reserved.
   Portions Copyright 2012 SN Systems Ltd. All rights reserved.
 
   This program is free software; you can redistribute it and/or modify it
@@ -493,7 +493,9 @@ struct esb_s;
     an ephemeral location (only callfor printf,
     and only once per printf! */
 const char * sanitized(const char *s);
-
+void sanitized_string_destructor(void);
+void ranges_esb_string_destructor(void);
+void destruct_abbrev_array(void);
 
 extern Dwarf_Die current_cu_die_for_print_frames; /* This is
     an awful hack, making current_cu_die_for_print_frames public.

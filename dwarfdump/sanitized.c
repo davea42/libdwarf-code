@@ -169,6 +169,12 @@ no_questionable_chars(const char *s) {
     return TRUE;
 }
 
+void
+sanitized_string_destructor(void)
+{
+    esb_destructor(&localesb);
+}
+
 const char *
 sanitized(const char *s)
 {
