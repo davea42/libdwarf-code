@@ -1664,9 +1664,8 @@ read_line_table_program(Dwarf_Debug dbg,
 #else /* ! PRINTING_DETAILS */
                 line_ptr += remaining_bytes;
                 if (line_ptr > line_ptr_end) {
-                     _dwarf_error(dbg, error,
-                         DW_DLE_LINE_TABLE_BAD);
-                     return (DW_DLV_ERROR);
+                    _dwarf_error(dbg, error, DW_DLE_LINE_TABLE_BAD);
+                    return (DW_DLV_ERROR);
                 }
 #endif /* PRINTING_DETAILS */
                 dwarf_printf(dbg,"\n");

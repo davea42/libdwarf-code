@@ -1,7 +1,7 @@
 2016-09-21 David Anderson
     * dwarf_errmsg_list.c,libdwarf.h.in: Added DW_DLE_LINE_TABLE_BAD.
     * dwarf_line_table_reader_common.c: Added tests to prevent running
-      off end of line table.
+      off end of line table. Second commit is fix 3 line indent error.
 2016-09-21 David Anderson
     * configure.in: Support --enable-sanitize
     * configure: Regenerated.
