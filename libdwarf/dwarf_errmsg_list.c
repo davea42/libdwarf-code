@@ -433,6 +433,7 @@ const char *_dwarf_errmsgs[] = {
     "DW_DLE_LEB_OUT_ERROR(354) Insufficient buffer to turn integer to leb",
     "DW_DLE_SIBLING_LIST_IMPROPER(355) Corrupt dwarf",
     "DW_DLE_LOCLIST_OFFSET_BAD(356) Corrupt dwarf",
+    "DW_DLE_LINE_TABLE_BAD(357) Corrupt line table",
 };
 
 #ifdef TESTING
