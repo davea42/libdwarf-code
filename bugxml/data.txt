@@ -1,3 +1,37 @@
+
+id: DW201609-004
+cve: 
+datereported: 20160917
+reportedby: Puzzor
+vulnerability: libdwarf 20160613 Out-of-Bounds read
+product: libdwarf
+description:  read line table program Out-of-Bounds read
+ line_ptr in dwarf_line_table_reader_common.c:1433 Out-of-Bounds read
+ See:
+ <pre>
+ https://bugzilla.redhat.com/show_bug.cgi?id=1377015
+ https://sourceforge.net/p/libdwarf/bugs/4/
+ </pre>
+ <pre>
+ # Address Sanitizer Output
+ ==27763==ERROR: AddressSanitizer: heap-buffer-overflow on address 0xf4603f84 at pc 0x8408ede bp 0xffff6518 sp 0xffff6510
+ READ of size 1 at 0xf4603f84 thread T0
+ #0 0x8408edd in read_line_table_program /home/puzzor/test-fuzzing/code/libdwarf/./dwarf_line_table_reader_common.c:1433
+ #1 0x83f716c in _dwarf_internal_srclines /home/puzzor/test-fuzzing/code/libdwarf/./dwarf_line.c:690
+ #2 0x841436c in dwarf_srclines_b /home/puzzor/test-fuzzing/code/libdwarf/./dwarf_line.c:944
+ #3 0x81fbc28 in print_line_numbers_this_cu /home/puzzor/test-fuzzing/code/dwarfdump/print_lines.c:763
+ #4 0x815c191 in print_one_die_section /home/puzzor/test-fuzzing/code/dwarfdump/print_die.c:850
+ #5 0x81565c1 in print_infos /home/puzzor/test-fuzzing/code/dwarfdump
+ </pre>
+datefixed:
+references: regressiontests/DW201609-004/poc
+gitfixid: 00c791126d01f6f32c7c689c05a620a9d8bc42af
+tarrelease:
+endrec:
+
+
+
+
 id: DW201609-003
 cve: CVE-2016-7410
 datereported: 20160913
@@ -43,7 +77,7 @@ description: With AddressSanitizer,
   </pre>
 datefixed:
 references: regressiontests/DW201609-003/poc
-gitfixid:
+gitfixid: e12f6c0b69c20f58dccc4505309cf7f974c34dc2
 tarrelease:
 endrec:
 
@@ -75,7 +109,7 @@ description: In dwarf_get_size_of_val() with
   but it is a problem and is fixed for next release.
 datefixed: 
 references: regressiontests/DW201609-002/DW201609-002-poc
-gitfixid: 
+gitfixid:  e12f6c0b69c20f58dccc4505309cf7f974c34dc2
 tarrelease:
 endrec:
 
