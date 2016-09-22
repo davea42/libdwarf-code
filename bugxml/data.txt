@@ -25,7 +25,7 @@ description:  read line table program Out-of-Bounds read
  </pre>
 datefixed:
 references: regressiontests/DW201609-004/poc
-gitfixid: 
+gitfixid:  3767305debcba8bd7e1c483ae48c509d25399252
 tarrelease:
 endrec:
 
@@ -77,7 +77,7 @@ description: With AddressSanitizer,
   </pre>
 datefixed:
 references: regressiontests/DW201609-003/poc
-gitfixid: 
+gitfixid:  3767305debcba8bd7e1c483ae48c509d25399252
 tarrelease:
 endrec:
 
@@ -109,7 +109,7 @@ description: In dwarf_get_size_of_val() with
   but it is a problem and is fixed for next release.
 datefixed: 
 references: regressiontests/DW201609-002/DW201609-002-poc
-gitfixid:  
+gitfixid:   3767305debcba8bd7e1c483ae48c509d25399252
 tarrelease:
 endrec:
 
@@ -146,7 +146,7 @@ description: At line 1533 of dwarf_die_deliv.c a
 datefixed: 20160917
 references: regressiontests/DW201609-001/test2.o 
   regressiontests/DW201609-001/DW201609-001-poc
-gitfixid: 
+gitfixid:  3767305debcba8bd7e1c483ae48c509d25399252
 tarrelease:
 endrec:
 
