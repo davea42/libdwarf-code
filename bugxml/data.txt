@@ -25,7 +25,7 @@ description:  read line table program Out-of-Bounds read
  </pre>
 datefixed:
 references: regressiontests/DW201609-004/poc
-gitfixid: 00c791126d01f6f32c7c689c05a620a9d8bc42af
+gitfixid: 
 tarrelease:
 endrec:
 
@@ -77,13 +77,13 @@ description: With AddressSanitizer,
   </pre>
 datefixed:
 references: regressiontests/DW201609-003/poc
-gitfixid: e12f6c0b69c20f58dccc4505309cf7f974c34dc2
+gitfixid: 
 tarrelease:
 endrec:
 
 
 id: DW201609-002
-cve: 
+cve: CVE-2016-7511
 datereported: 20160918
 reportedby: Shi Ji (@Puzzor)
 vulnerability: libdwarf 20160613 Integer Overflow
@@ -109,7 +109,7 @@ description: In dwarf_get_size_of_val() with
   but it is a problem and is fixed for next release.
 datefixed: 
 references: regressiontests/DW201609-002/DW201609-002-poc
-gitfixid:  e12f6c0b69c20f58dccc4505309cf7f974c34dc2
+gitfixid:  
 tarrelease:
 endrec:
 
@@ -146,7 +146,7 @@ description: At line 1533 of dwarf_die_deliv.c a
 datefixed: 20160917
 references: regressiontests/DW201609-001/test2.o 
   regressiontests/DW201609-001/DW201609-001-poc
-gitfixid: fedd640dad25e07d16f7dd63b08573d51d33707d
+gitfixid: 
 tarrelease:
 endrec:
 
