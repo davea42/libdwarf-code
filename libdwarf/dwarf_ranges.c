@@ -34,6 +34,17 @@ struct ranges_entry {
 };
 
 
+static void
+free_allocated_ranges( struct ranges_entry *base) 
+{
+     struct ranges_entry *cur = 0; 
+     struct ranges_entry *next = 0; 
+    for ( cur = base ; cur ; cur = next ) {
+        next = cur->next;
+        free(cur);
+    }
+}
+
 /*  Ranges are never in a split dwarf object. In the base object
     instead. So use the tied_object if present.
     We return an error which is on the incoming dbg, not
@@ -111,17 +122,26 @@ int dwarf_get_ranges_a(Dwarf_Debug dbg,
     beginrangeptr = rangeptr;
 
     for (;;) {
-        struct ranges_entry * re = calloc(sizeof(struct ranges_entry),1);
+        struct ranges_entry * re = 0;
+
+        if (rangeptr == section_end) {
+            break;
+        }
+        if (rangeptr  > section_end) {
+            free_allocated_ranges(base);
+            _dwarf_error(dbg, error, DW_DLE_DEBUG_RANGES_OFFSET_BAD);
+            return (DW_DLV_ERROR);
+            break;
+        }
+        re = calloc(sizeof(struct ranges_entry),1);
         if (!re) {
+            free_allocated_ranges(base);
             _dwarf_error(dbg, error, DW_DLE_DEBUG_RANGES_OUT_OF_MEM);
             return (DW_DLV_ERROR);
         }
-        if (rangeptr  >= section_end) {
-            free(re);
-            return (DW_DLV_NO_ENTRY);
-        }
         if ((rangeptr + (2*address_size)) > section_end) {
             free(re);
+            free_allocated_ranges(base);
             _dwarf_error(dbg, error, DW_DLE_DEBUG_RANGES_OFFSET_BAD);
             return (DW_DLV_ERROR);
         }
@@ -158,6 +178,7 @@ int dwarf_get_ranges_a(Dwarf_Debug dbg,
         _dwarf_get_alloc(dbg,DW_DLA_RANGES,entry_count);
     if (!ranges_data_out) {
         /* Error, apply to original, not local dbg. */
+        free_allocated_ranges(base);
         _dwarf_error(dbg, error, DW_DLE_DEBUG_RANGES_OUT_OF_MEM);
         return (DW_DLV_ERROR);
     }
@@ -170,8 +191,10 @@ int dwarf_get_ranges_a(Dwarf_Debug dbg,
         struct ranges_entry *r = curre;
         *ranges_data_out = curre->cur;
         curre = curre->next;
-        free(r);
     }
+    /* ASSERT: curre == NULL */
+    free_allocated_ranges(base);
+    base = 0;
     /* Callers will often not care about the bytes used. */
     if (bytecount) {
         *bytecount = rangeptr - beginrangeptr;

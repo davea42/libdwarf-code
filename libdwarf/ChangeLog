@@ -1,3 +1,6 @@
+2016-09-22 David Anderson
+    * dwarf_ranges.c: dwarf_get_ranges_a() was allocating at the wrong
+      place and not freeing all it should.
 2016-09-21 David Anderson
     * dwarf_errmsg_list.c,libdwarf.h.in: Added DW_DLE_LINE_TABLE_BAD.
     * dwarf_line_table_reader_common.c: Added tests to prevent running
