@@ -26,7 +26,7 @@ description:  read line table program Out-of-Bounds read
 datefixed:
 references: regressiontests/DW201609-004/poc
 gitfixid:  3767305debcba8bd7e1c483ae48c509d25399252
-tarrelease:
+tarrelease: libdwarf-20160923.tar.gz
 endrec:
 
 
@@ -78,7 +78,7 @@ description: With AddressSanitizer,
 datefixed:
 references: regressiontests/DW201609-003/poc
 gitfixid:  3767305debcba8bd7e1c483ae48c509d25399252
-tarrelease:
+tarrelease: libdwarf-20160923.tar.gz
 endrec:
 
 
@@ -110,7 +110,7 @@ description: In dwarf_get_size_of_val() with
 datefixed: 
 references: regressiontests/DW201609-002/DW201609-002-poc
 gitfixid:   3767305debcba8bd7e1c483ae48c509d25399252
-tarrelease:
+tarrelease: libdwarf-20160923.tar.gz
 endrec:
 
 
@@ -147,7 +147,7 @@ datefixed: 20160917
 references: regressiontests/DW201609-001/test2.o 
   regressiontests/DW201609-001/DW201609-001-poc
 gitfixid:  3767305debcba8bd7e1c483ae48c509d25399252
-tarrelease:
+tarrelease: libdwarf-20160923.tar.gz
 endrec:
 
 
