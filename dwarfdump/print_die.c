@@ -808,11 +808,14 @@ print_one_die_section(Dwarf_Debug dbg,Dwarf_Bool is_info,
             if (print_as_info_or_cu() || search_is_on) {
                 Dwarf_Signed cnt = 0;
                 char **srcfiles = 0;
+                Dwarf_Error srcerr = 0;
                 int srcf = dwarf_srcfiles(cu_die,
-                    &srcfiles, &cnt, pod_err);
+                    &srcfiles, &cnt, &srcerr);
                 if (srcf == DW_DLV_ERROR) {
                     print_error_and_continue(dbg, "dwarf_srcfiles",
-                        srcf,*pod_err);
+                        srcf,srcerr);
+                    dwarf_dealloc(dbg,srcerr,DW_DLA_ERROR);
+                    srcerr = 0;
                     srcfiles = 0;
                     cnt = 0;
                 } /*DW_DLV_NO_ENTRY generally means there

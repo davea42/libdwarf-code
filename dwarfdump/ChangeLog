@@ -1,3 +1,7 @@
+2016-09-22  David Anderson
+    * dwarfdump.c,print_die.c,print_frames.c,print_gdbindex.c:
+      In case of error, dwarf_dealloc the error once it
+      has been printed. Avoiding a small memory leak.
 2016-09-21  David Anderson
     * configure.in: Supports --enable-sanitize which
       sets dwfsanitize so build uses -fsanitize=address .

@@ -227,6 +227,7 @@ print_symtab_entry(Dwarf_Debug dbg,
     if(res != DW_DLV_OK) {
         print_error_and_continue(dbg,
             "dwarf_gdbindex_string_by_offset failed",res,*sym_err);
+        *sym_err = 0;
         return res;
     }
     res = dwarf_gdbindex_cuvector_length(gdbindex,
@@ -424,18 +425,34 @@ print_gdb_index(Dwarf_Debug dbg)
 
     res = print_culist_array(dbg,gdbindex,&culist_len,&error);
     if (res != DW_DLV_OK) {
+        if (res == DW_DLV_ERROR) {
+            dwarf_dealloc(dbg,error, DW_DLA_ERROR);
+            error = 0;
+        }
         return;
     }
     res = print_types_culist_array(dbg,gdbindex,&error);
     if (res != DW_DLV_OK) {
+        if (res == DW_DLV_ERROR) {
+            dwarf_dealloc(dbg,error, DW_DLA_ERROR);
+            error = 0;
+        }
         return;
     }
     res = print_addressarea(dbg,gdbindex,&error);
     if (res != DW_DLV_OK) {
+        if (res == DW_DLV_ERROR) {
+            dwarf_dealloc(dbg,error, DW_DLA_ERROR);
+            error = 0;
+        }
         return;
     }
     res = print_symboltable(dbg,gdbindex,culist_len,&error);
     if (res != DW_DLV_OK) {
+        if (res == DW_DLV_ERROR) {
+            dwarf_dealloc(dbg,error, DW_DLA_ERROR);
+            error = 0;
+        }
         return;
     }
 }

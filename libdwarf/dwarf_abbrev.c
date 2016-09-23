@@ -137,7 +137,7 @@ dwarf_get_abbrev(Dwarf_Debug dbg,
             dbg,error,abbrev_section_end);
         attr_form = (Dwarf_Half) utmp2;
         if (!_dwarf_valid_form_we_know(dbg,attr_form,attr)) {
-            _dwarf_error(NULL, error, DW_DLE_UNKNOWN_FORM);
+            _dwarf_error(dbg, error, DW_DLE_UNKNOWN_FORM);
             return (DW_DLV_ERROR);
         }
         if (attr != 0) {

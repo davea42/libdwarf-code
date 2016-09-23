@@ -33,7 +33,7 @@ static struct esb_s esb_string;
 void
 ranges_esb_string_destructor(void)
 {
-     esb_destructor(&esb_string);
+    esb_destructor(&esb_string);
 }
 /* Because we do not know what DIE is involved, if the
    object being printed has different address sizes

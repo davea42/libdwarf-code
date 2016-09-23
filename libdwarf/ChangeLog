@@ -1,4 +1,14 @@
 2016-09-22 David Anderson
+    * dwarf_abbrev.c: Was calling _dwarf_error() with NULL dbg
+      when a real dbg was available. fixed.
+    * dwarf_alloc.c: Was testing for the static DW_DLA_ERROR
+      too late in dwarf_dealloc(). So the address sanitizer reported the 
+      erroneous address calculation that resulted.
+    * dwarf_error.c,dwarf_error.h: Now  DE_STANDARD,DE_STATIC,DE_MALLOC
+      let dwarf_dealloc free up Dwarf_Error resources properly.
++#define DE_STATIC 1   /* Using global static var */
++#define DE_MALLOC: 
+2016-09-22 David Anderson
     * dwarf_ranges.c: dwarf_get_ranges_a() was allocating at the wrong
       place and not freeing all it should.
 2016-09-21 David Anderson

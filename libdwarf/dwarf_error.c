@@ -75,20 +75,23 @@ _dwarf_error(Dwarf_Debug dbg, Dwarf_Error * error, Dwarf_Sword errval)
         if (dbg != NULL) {
             errptr =
                 (Dwarf_Error) _dwarf_get_alloc(dbg, DW_DLA_ERROR, 1);
-            if (errptr == NULL) {
+            if (!errptr) {
                 errptr = &_dwarf_failsafe_error;
-                errptr->er_static_alloc = 1;
+                errptr->er_static_alloc = DE_STATIC;
+            } else {
+                errptr->er_static_alloc = DE_STANDARD;
             }
         } else {
             /*  We have no dbg to work with. dwarf_init failed. We hack
                 up a special area. */
             errptr = _dwarf_special_no_dbg_error_malloc();
-            if (errptr == NULL) {
+            if (!errptr) {
                 errptr = &_dwarf_failsafe_error;
-                errptr->er_static_alloc = 1;
+                errptr->er_static_alloc = DE_STATIC;
+            } else {
+                errptr->er_static_alloc = DE_MALLOC;
             }
         }
-
         errptr->er_errval = errval;
         *error = errptr;
         return;
@@ -98,7 +101,7 @@ _dwarf_error(Dwarf_Debug dbg, Dwarf_Error * error, Dwarf_Sword errval)
         errptr = (Dwarf_Error) _dwarf_get_alloc(dbg, DW_DLA_ERROR, 1);
         if (errptr == NULL) {
             errptr = &_dwarf_failsafe_error;
-            errptr->er_static_alloc = 1;
+            errptr->er_static_alloc = DE_STATIC;
         }
         errptr->er_errval = errval;
         dbg->de_errhand(errptr, dbg->de_errarg);

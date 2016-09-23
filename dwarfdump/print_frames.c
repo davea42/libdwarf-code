@@ -348,6 +348,8 @@ get_proc_name(Dwarf_Debug dbg, Dwarf_Die die, Dwarf_Addr low_pc,
                             "The .debug_addr section is missing, "
                             "low_pc unavailable",
                             dres,proc_name_err);
+                        dwarf_dealloc(dbg,proc_name_err,DW_DLA_ERROR);
+                        proc_name_err= 0;
                     } else {
                         print_error(dbg, "formaddr in get_proc_name failed",
                             dres, proc_name_err);

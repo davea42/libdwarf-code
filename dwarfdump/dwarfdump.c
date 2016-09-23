@@ -2422,6 +2422,9 @@ print_error(Dwarf_Debug dbg,
         /*  If dbg was never initialized dwarf_finish
             can do nothing useful. There is no
             global-state for libdwarf to clean up. */
+        if (dwarf_code == DW_DLV_ERROR) {
+            dwarf_dealloc(dbg,lerr,DW_DLA_ERROR);
+        }
         dwarf_finish(dbg, &ignored_err);
     }
     exit(FAILED);
