@@ -23,7 +23,7 @@ description:  read line table program Out-of-Bounds read
  #4 0x815c191 in print_one_die_section /home/puzzor/test-fuzzing/code/dwarfdump/print_die.c:850
  #5 0x81565c1 in print_infos /home/puzzor/test-fuzzing/code/dwarfdump
  </pre>
-datefixed:
+datefixed: 20160923
 references: regressiontests/DW201609-004/poc
 gitfixid:  3767305debcba8bd7e1c483ae48c509d25399252
 tarrelease: libdwarf-20160923.tar.gz
@@ -75,7 +75,7 @@ description: With AddressSanitizer,
   With that fixed we get DW_DLE_READ_LITTLEENDIAN_ERROR when
   libdwarf attempts to read off end of section.
   </pre>
-datefixed:
+datefixed: 20160923
 references: regressiontests/DW201609-003/poc
 gitfixid:  3767305debcba8bd7e1c483ae48c509d25399252
 tarrelease: libdwarf-20160923.tar.gz
@@ -107,7 +107,7 @@ description: In dwarf_get_size_of_val() with
   the length of a CU being absurd. 
   Unclear as yet if this is the problem
   but it is a problem and is fixed for next release.
-datefixed: 
+datefixed: 20160923
 references: regressiontests/DW201609-002/DW201609-002-poc
 gitfixid:   3767305debcba8bd7e1c483ae48c509d25399252
 tarrelease: libdwarf-20160923.tar.gz
