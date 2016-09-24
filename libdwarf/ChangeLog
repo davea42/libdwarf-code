@@ -1,3 +1,11 @@
+2016-09-23 David Anderson
+    * gennames.c: gennames -t generated incorrect tables. 
+      gcc -fsanitize=address noticed out of bounds references
+      in the generated code. The code has been wrong for quite a while.
+      It's likely no one was using the table form, gennames -s
+      is generally better to use anyway.
+    * pro_frame.c: Was using strdup() and now uses _dwarf_p_get_alloc()
+      and strcpy() so we do not leak a string.
 2016-09-22 David Anderson
     * dwarf_abbrev.c: Was calling _dwarf_error() with NULL dbg
       when a real dbg was available. fixed.

@@ -77,7 +77,8 @@ dwarf_add_frame_cie(Dwarf_P_Debug dbg,
         dbg->de_last_cie = curcie;
     }
     curcie->cie_version = DW_CIE_VERSION;
-    tmpaug = strdup(augmenter);
+    tmpaug = (char *)_dwarf_p_get_alloc(dbg,strlen(augmenter)+1);
+    strcpy(tmpaug,augmenter);
     if (!tmpaug) {
         DWARF_P_DBG_ERROR(dbg, DW_DLE_CIE_ALLOC, DW_DLV_NOCOUNT);
     }

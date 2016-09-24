@@ -84,9 +84,11 @@ static void ParseDefinitionsAndWriteOutput(void);
 /* We don't need a variable array size, it just has to be big enough. */
 #define ARRAY_SIZE 300
 
+#define MAX_NAME_LEN 64
+
 /* To store entries from dwarf.h */
 typedef struct {
-    char     name[64];  /* short name */
+    char     name[MAX_NAME_LEN];  /* short name */
     unsigned value; /* value */
 } array_data;
 
@@ -330,9 +332,16 @@ GenerateInitialFileLines(void)
         fprintf(f_names_c,"    int low = 0;\n");
         fprintf(f_names_c,"    int high = last;\n");
         fprintf(f_names_c,"    int mid;\n");
+        fprintf(f_names_c,"    int maxval = table[last-1].value;\n");
         fprintf(f_names_c,"\n");
+        fprintf(f_names_c,"    if (value > maxval) {\n");
+        fprintf(f_names_c,"        return DW_DLV_NO_ENTRY;\n");
+        fprintf(f_names_c,"    }\n");
         fprintf(f_names_c,"    while (low < high) {\n");
         fprintf(f_names_c,"        mid = low + ((high - low) / 2);\n");
+        fprintf(f_names_c,"        if(mid == last) {\n");
+        fprintf(f_names_c,"            break;\n");
+        fprintf(f_names_c,"        }\n");
         fprintf(f_names_c,"        if (table[mid].value < value) {\n");
         fprintf(f_names_c,"            low = mid + 1;\n");
         fprintf(f_names_c,"        }\n");
@@ -388,6 +397,7 @@ GenerateOneSet(void)
     unsigned prev_value = 0;
     size_t len;
     char *prefix_id = prefix + prefix_root_len;
+    unsigned actual_array_count = 0;
 
 #ifdef TRACE_ARRAY
     printf("List before sorting:\n");
@@ -427,6 +437,11 @@ GenerateOneSet(void)
     for (u = 0; u < array_count; ++u) {
         /* Check if value already dumped */
         if (u > 0 && group_array[u].value == prev_value) {
+            fprintf(f_names_c,
+                "    /* Skipping alternate spelling of value 0x%x. %s_%s */\n",
+                (unsigned)prev_value,
+                prefix,
+                group_array[u].name);
             continue;
         }
         prev_value = group_array[u].value;
@@ -440,8 +455,8 @@ GenerateOneSet(void)
         if (use_tables) {
             /* The 20 just makes nice formatting in the output. */
             len = 20 - strlen(group_array[u].name);
-            fprintf(f_names_c,"    {/* %3d */ \"%s_%s\", ",
-                u,prefix,group_array[u].name);
+            fprintf(f_names_c,"    {/* %3u */ \"%s_%s\", ",
+                actual_array_count,prefix,group_array[u].name);
             fprintf(f_names_c," %s_%s}", prefix,group_array[u].name);
             fprintf(f_names_c,(u + 1 < array_count) ? ",\n" : "\n");
         } else {
@@ -451,6 +466,7 @@ GenerateOneSet(void)
                 prefix,group_array[u].name);
             fprintf(f_names_c,"        return DW_DLV_OK;\n");
         }
+        ++actual_array_count;
     }
 
     /* Closing entries for 'dwarf_names_enum.h' */
@@ -461,7 +477,7 @@ GenerateOneSet(void)
         fprintf(f_names_c,"    };\n\n");
 
         /* Closing code for 'dwarf_names.c' */
-        fprintf(f_names_c,"    const int last_entry = %d;\n",array_count);
+        fprintf(f_names_c,"    const int last_entry = %d;\n",actual_array_count);
         fprintf(f_names_c,"    /* find the entry */\n");
         fprintf(f_names_c,"    int r = find_entry(Dwarf_%s_n,last_entry,val,s_out);\n",prefix_id);
         fprintf(f_names_c,"    return r; \n");
@@ -557,17 +573,28 @@ ParseDefinitionsAndWriteOutput(void)
 
         /* Be sure we have a valid entry */
         if (array_count >= ARRAY_SIZE) {
-            printf("Too many entries for current group_array size");
+            printf("Too many entries for current group_array size of %d",ARRAY_SIZE);
             exit(1);
         }
 
         /* Move past the second underscore */
         ++second_underscore;
 
-        /* Record current entry */
-        strcpy(group_array[array_count].name,second_underscore);
-        group_array[array_count].value = strtoul(value,NULL,16);
-        ++array_count;
+        {
+            unsigned long v = strtoul(value,NULL,16);
+            /*  Some values are duplicated, that is ok.
+                After the sort we will weed out the duplicate values,
+                see GenerateOneSet(). */
+            /*  Record current entry */
+            if (strlen(second_underscore) >= MAX_NAME_LEN) {
+                printf("Too long a name %s for max len %d\n",
+                    second_underscore,MAX_NAME_LEN);
+                exit(1);
+            }
+            strcpy(group_array[array_count].name,second_underscore);
+            group_array[array_count].value = v;
+            ++array_count;
+        }
     }
     if (pending) {
         /* Generate final prefix set */
