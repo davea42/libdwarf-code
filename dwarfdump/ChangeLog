@@ -1,3 +1,10 @@
+2016-09-23  David Anderson
+    * Makefile.in: A mistake here meant every compile
+      rebuilds all of dwarfdump even with a trivial change.
+      Fixed so now trivial changes just rebuild a minimum.
+      The dependencies here remain incomplete: if you change
+      a data structure you must 'make clean' and recompile
+      everything in dwarfdump.
 2016-09-22  David Anderson
     * dwarfdump.c,print_die.c,print_frames.c,print_gdbindex.c:
       In case of error, dwarf_dealloc the error once it

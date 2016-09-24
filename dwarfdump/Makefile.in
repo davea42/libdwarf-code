@@ -50,7 +50,6 @@ FINALOBJECTS = \
 	addrmap.o \
         checkutil.o \
 	dwarfdump.o \
-	dwarf_tsearchbal.o \
 	dwconf.o \
 	esb.o \
         helpertree.o \
@@ -101,15 +100,18 @@ $(FINALOBJECTS): $(GEN_HFILES)  $(HEADERS) $(srcdir)/naming.c
 
 default: $(TARGETS)
 
-dwarfdump: $(FINALOBJECTS) makename.o naming.o common.o dwgetopt.o
-	$(CC) $(CFLAGS) -o $@ $(FINALOBJECTS) common.o makename.o naming.o dwgetopt.o $(LDFLAGS) 
+dwarfdump: $(FINALOBJECTS) dwarf_tsearchbal.o makename.o naming.o common.o dwgetopt.o
+	$(CC) $(CFLAGS) -o $@ $(FINALOBJECTS) common.o makename.o naming.o dwgetopt.o dwarf_tsearchbal.o  $(LDFLAGS) 
 
 dwgetopt.o: $(srcdir)/dwgetopt.h $(srcdir)/dwgetopt.c 
 	$(CC) $(CFLAGS) -c $(srcdir)/dwgetopt.c
 
-makename.o dwarf_tsearchbal.o: $(srcdir)/makename.h $(srcdir)/makename.c $(srcdir)/dwarf_tsearchbal.c
-	$(CC) $(CFLAGS) -c $(srcdir)/makename.c
+dwarf_tsearchbal.o: $(srcdir)/dwarf_tsearch.h  $(srcdir)/dwarf_tsearchbal.c
 	$(CC) $(CFLAGS) -c $(srcdir)/dwarf_tsearchbal.c
+
+makename.o: $(srcdir)/makename.h $(srcdir)/makename.c 
+	$(CC) $(CFLAGS) -c $(srcdir)/makename.c
+
 common.o:  $(srcdir)/common.c $(srcdir)/common.h
 	$(CC) $(CFLAGS) -c $(srcdir)/common.c
 
@@ -121,10 +123,10 @@ naming.o:  $(srcdir)/naming.c $(srcdir)/naming.h
 trivial_naming.o: $(srcdir)/naming.c
 	$(CC) $(CFLAGS) -DTRIVIAL_NAMING  -c $(srcdir)/naming.c -o trivial_naming.o 
 
-tag_tree_build:  $(srcdir)/tag_tree.c $(DIRINC)/dwarf.h $(HEADERS) tag_common.o makename.o common.o trivial_naming.o dwgetopt.o
+tag_tree_build:  $(srcdir)/tag_tree.c $(DIRINC)/dwarf.h $(HEADERS) tag_common.o makename.o common.o trivial_naming.o dwgetopt.o dwarf_tsearchbal.o
 	LD_LIBRARY_PATH=$$LD_LIBRARY_PATH:$(LD_LIBRARY_PATH) $(CC) $(CFLAGS) $(srcdir)/tag_tree.c tag_common.o common.o makename.o  dwarf_tsearchbal.o trivial_naming.o dwgetopt.o  $(LDFLAGS) -o tag_tree_build 
 
-tag_attr_build:  $(srcdir)/tag_attr.c $(DIRINC)/dwarf.h $(HEADERS) tag_common.o makename.o  common.o trivial_naming.o dwgetopt.o
+tag_attr_build:  $(srcdir)/tag_attr.c $(DIRINC)/dwarf.h $(HEADERS) tag_common.o makename.o  common.o trivial_naming.o dwgetopt.o dwarf_tsearchbal.o
 	$(CC) $(CFLAGS) $(srcdir)/tag_attr.c tag_common.o common.o makename.o trivial_naming.o  dwarf_tsearchbal.o dwgetopt.o $(LDFLAGS) -o tag_attr_build 
 
 # Plain GNU C dash E does not work on a .list, 
