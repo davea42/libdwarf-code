@@ -449,7 +449,7 @@ description: Test object shows
 datefixed: 20160512
 references: regressiontests/liu/OOB_read4.elf
 gitfixid: 82d8e007851805af0dcaaff41f49a2d48473334b
-tarrelease:  libdwarf-20160923.tar.gz
+tarrelease: libdwarf-20160923.tar.gz
 endrec:
 
 
@@ -467,7 +467,7 @@ datefixed: 20160512
 references: regressiontests/liu/OOB_read3.elf
  regressiontests/liu/OOB_read3_02.elf
 gitfixid: 82d8e007851805af0dcaaff41f49a2d48473334b
-tarrelease:  libdwarf-20160923.tar.gz
+tarrelease: libdwarf-20160923.tar.gz
 endrec:
 
 id: DW201605-009
@@ -524,7 +524,7 @@ datefixed: 20160506
 references: regressiontests/liu/OOB0505_01.elf
 gitfixid: eb1472afac95031d0c9dd8c11d527b865fe7deb8
 gittag: 20160507
-tarrelease:6libdwarf-20160507.tar.gz
+tarrelease: libdwarf-20160507.tar.gz
 endrec:
 
 id: DW201605-006
@@ -544,7 +544,7 @@ datefixed: 20160504
 references: regressiontests/liu/free_invalid_address.elf
  regressiontests/liu/heapoverflow01b.elf
 gitfixid: 98a3da1e8237fe0d45b67ef77f3fa5ed9ff0215f
-tarrelease: 20160507
+tarrelease: libdwarf-20160507.tar.gz
 endrec:
 
 id: DW201605-001
