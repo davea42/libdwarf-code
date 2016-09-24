@@ -165,7 +165,7 @@ description: The null dereference is due to a corrupted
 datefixed: 20160523
 references: regressiontests/liu/NULLdeference0522c.elf
 gitfixid: a55b958926cc67f89a512ed30bb5a22b0adb10f4
-tarrelease:
+tarrelease: libdwarf-20160923.tar.gz
 endrec:
 
 
@@ -205,7 +205,7 @@ description: The null dereference in create_fullest_file_path()
 datefixed: 20160522
 references: regressiontests/liu/NULLdereference0522.elf
 gitfixid: acae971371daa23a19358bc62204007d258fbc5e
-tarrelease:
+tarrelease: libdwarf-20160923.tar.gz
 endrec:
 
 
@@ -262,7 +262,7 @@ description:
 datefixed: 20160522
 references: regressiontests/liu/NULLdereference0519.elf
 gitfixid: 6fa3f710ee6f21bba7966b963033a91d77c952bd
-tarrelease:
+tarrelease: libdwarf-20160923.tar.gz
 endrec:
 
 
@@ -312,7 +312,7 @@ description: Corrupted dwarf crashes dwarfdump
 datefixed: 20160522
 references: regressiontests/liu/OOB_READ0519.elf
 gitfixid: 6fa3f710ee6f21bba7966b963033a91d77c952bd
-tarrelease:
+tarrelease: libdwarf-20160923.tar.gz
 endrec:
 
 
@@ -351,7 +351,7 @@ description: Test object shows
 datefixed: 20150518
 references: regressiontests/liu/OOB0517_03.elf
 gitfixid: ac6673e32f3443a5d36c2217cb814000930b2c54
-tarrelease:
+tarrelease: libdwarf-20160923.tar.gz
 endrec:
 
 
@@ -382,7 +382,7 @@ description: Test object shows
 datefixed: 20150518
 references: regressiontests/liu/OOB0517_02.elf
 gitfixid: ac6673e32f3443a5d36c2217cb814000930b2c54
-tarrelease:
+tarrelease: libdwarf-20160923.tar.gz
 endrec:
 
 
@@ -410,7 +410,7 @@ description: Test object shows
 datefixed: 20150518
 references: regressiontests/liu/OOB0517_01.elf
 gitfixid: ac6673e32f3443a5d36c2217cb814000930b2c54
-tarrelease:
+tarrelease: libdwarf-20160923.tar.gz
 endrec:
 
 
@@ -431,7 +431,7 @@ description: Test object shows
 datefixed: 20160517 
 references: regressiontests/liu/HeapOverflow0513.elf
 gitfixid: 10ca310f64368dc083efacac87732c02ef560a92
-tarrelease:
+tarrelease: libdwarf-20160923.tar.gz
 endrec:
 
 
@@ -449,7 +449,7 @@ description: Test object shows
 datefixed: 20160512
 references: regressiontests/liu/OOB_read4.elf
 gitfixid: 82d8e007851805af0dcaaff41f49a2d48473334b
-tarrelease: 
+tarrelease:  libdwarf-20160923.tar.gz
 endrec:
 
 
@@ -467,7 +467,7 @@ datefixed: 20160512
 references: regressiontests/liu/OOB_read3.elf
  regressiontests/liu/OOB_read3_02.elf
 gitfixid: 82d8e007851805af0dcaaff41f49a2d48473334b
-tarrelease: 
+tarrelease:  libdwarf-20160923.tar.gz
 endrec:
 
 id: DW201605-009
@@ -485,7 +485,7 @@ description: Test object shows
 datefixed: 20160506
 references: regressiontests/liu/NULLderefer0505_01.elf
 gitfixid: b6ec2dfd850929821626ea63fb0a752076a3c08a
-tarrelease: 20160507
+tarrelease: libdwarf-20160507.tar.gz
 endrec:
 
 id: DW201605-008
@@ -505,7 +505,7 @@ datefixed: 20160512
 references: regressiontests/liu/OOB0505_02.elf
  regressiontests/liu/OOB0505_02_02.elf
 gitfixid: 82d8e007851805af0dcaaff41f49a2d48473334b
-tarrelease: 
+tarrelease: libdwarf-20160923.tar.gz 
 endrec:
 
 id: DW201605-007
@@ -524,7 +524,7 @@ datefixed: 20160506
 references: regressiontests/liu/OOB0505_01.elf
 gitfixid: eb1472afac95031d0c9dd8c11d527b865fe7deb8
 gittag: 20160507
-tarrelease: 20160507
+tarrelease:6libdwarf-20160507.tar.gz
 endrec:
 
 id: DW201605-006
@@ -576,7 +576,7 @@ references: regressiontests/liu/heapoverflow01.elf
  </pre>
 gitfixid: 98a3da1e8237fe0d45b67ef77f3fa5ed9ff0215f
 gittag: 20160507
-tarrelease: 20160507
+tarrelease: libdwarf-20160507.tar.gz
 endrec:
 
 
@@ -614,7 +614,7 @@ references: regressiontests/liu/outofbound01.elf
  https://bugzilla.redhat.com/show_bug.cgi?id=1332144
  </pre>
 gitfixid: 98a3da1e8237fe0d45b67ef77f3fa5ed9ff0215f
-tarrelease: 20160507
+tarrelease: libdwarf-20160507.tar.gz
 endrec:
 
 id: DW201605-003
@@ -636,7 +636,7 @@ references: regressiontests/liu/infiniteloop.elf
  https://bugzilla.redhat.com/show_bug.cgi?id=1332145
  </pre>
 gitfixid: 98a3da1e8237fe0d45b67ef77f3fa5ed9ff0215f
-tarrelease: 20160507
+tarrelease: libdwarf-20160507.tar.gz
 endrec:
 
 id: DW201605-004
@@ -660,7 +660,7 @@ references: regressiontests/liu/null01.elf
  https://bugzilla.redhat.com/show_bug.cgi?id=1332148
  </pre>
 gitfixid: 98a3da1e8237fe0d45b67ef77f3fa5ed9ff0215f
-tarrelease: 20160507
+tarrelease: libdwarf-20160507.tar.gz
 endrec:
 
 id: DW201605-005
@@ -681,6 +681,6 @@ references: regressiontests/liu/null02.elf
  https://bugzilla.redhat.com/show_bug.cgi?id=1332149
  </pre>
 gitfixid: 98a3da1e8237fe0d45b67ef77f3fa5ed9ff0215f
-tarrelease: 20160507
+tarrelease: libdwarf-20160507.tar.gz
 endrec:
 
