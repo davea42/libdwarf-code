@@ -74,7 +74,9 @@
 #define FALSE 0
 #define TRUE  1
 
-
+/*  Global definition of the function pointer type, typedef
+    in dwarf_opaque.h */
+_dwarf_get_elf_flags_func_ptr_type _dwarf_get_elf_flags_func_ptr;
 
 /* This static is copied to the dbg on dbg init
    so that the static need not be referenced at

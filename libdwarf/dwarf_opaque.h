@@ -826,12 +826,13 @@ int _dwarf_file_name_is_full_path(Dwarf_Small  *fname);
 /*  This is an elf-only extension to get SHF_COMPRESSED flag from sh_flags.
     if pointer not set (which is normal for non-elf objects)
     it is fine.  */
-int (*_dwarf_get_elf_flags_func_ptr)(
+typedef int (*_dwarf_get_elf_flags_func_ptr_type)(
     void* obj_in,
     Dwarf_Half section_index,
     Dwarf_Unsigned *flags_out,
     Dwarf_Unsigned *addralign_out,
     int *error);
+extern _dwarf_get_elf_flags_func_ptr_type _dwarf_get_elf_flags_func_ptr;
 
 Dwarf_Byte_Ptr _dwarf_calculate_info_section_start_ptr(Dwarf_CU_Context context, Dwarf_Unsigned *section_len_out);
 

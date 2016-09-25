@@ -1,3 +1,8 @@
+2016-09-25 David Anderson
+    * dwarf_opaque.h: Accidentally had a function pointer
+      definition _dwarf_get_elf_flags_func_ptr but now has a
+      typedef of _dwarf_get_elf_flags_func_ptr_type instead. 
+    * dwarf_init_finish.c: Add definition of _dwarf_get_elf_flags_func.
 2016-09-23 David Anderson
     * gennames.c: gennames -t generated incorrect tables. 
       gcc -fsanitize=address noticed out of bounds references

@@ -130,12 +130,18 @@ description: At line 1533 of dwarf_die_deliv.c a
  https://sourceforge.net/p/libdwarf/bugs/2/
  </pre>
  <pre>
+ ==8054==ERROR: AddressSanitizer: heap-buffer-overflow on 
+    address 0xf4c027ab at pc 0x819e4a4 bp 0xff88eb38 sp 0xff88eb30
  READ of size 1 at 0xf4c027ab thread T0
  #0 0x819e4a3 in dwarf_siblingof_b /home/starlab/fuzzing/dwarf-20160613/libdwarf/dwarf_die_deliv.c:1533
  #1 0x8116201 in print_die_and_children_internal /home/starlab/fuzzing/dwarf-20160613/dwarfdump/print_die.c:1157
  Bug report on sourceforge.net bug list for libdwarf.
  The bad pointer dereference is due to libdwarf 
  not noticing that the DWARF in that file is corrupt.
+ In addtion
+ The code was not noticing that it could dereference
+ a pointer that pointed out of bounds in the end-sibling-list
+ loop. 
  </pre>
  <pre>
  The example from the bug report (DW201609-001-poc) has
