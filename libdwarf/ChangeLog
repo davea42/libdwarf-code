@@ -1,3 +1,10 @@
+2016-09-26 David Anderson
+    * dwarf_query.c: Removed four lines of code associated with 
+      DWARF5 DW_MACRO_define_strx that
+      should not have existed.
+      There are as yet no testcases using strx, though
+      one fuzzed testcase (liu/NULLdereference0519.elf)
+      made it appear such was in use.
 2016-09-25 David Anderson
     * dwarf_opaque.h: Accidentally had a function pointer
       definition _dwarf_get_elf_flags_func_ptr but now has a

@@ -899,7 +899,6 @@ _dwarf_get_string_base_attr_value(Dwarf_Debug dbg,
 {
     int res = 0;
     Dwarf_Die cudie = 0;
-    Dwarf_Small *cu_die_dataptr = 0;
     Dwarf_Unsigned cu_die_offset = 0;
     Dwarf_Attribute myattr = 0;
 
@@ -909,12 +908,6 @@ _dwarf_get_string_base_attr_value(Dwarf_Debug dbg,
     }
     cu_die_offset = context->cc_cu_die_global_sec_offset;
     context->cc_cu_die_offset_present  = TRUE;
-    if(!cu_die_dataptr) {
-        _dwarf_error(dbg, error,
-            DW_DLE_DEBUG_CU_UNAVAILABLE_FOR_FORM);
-        return (DW_DLV_ERROR);
-
-    }
     res = dwarf_offdie_b(dbg,cu_die_offset,
         context->cc_is_info,
         &cudie,
