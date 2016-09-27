@@ -1,7 +1,7 @@
 /*
   Copyright (C) 2000,2001,2003,2004,2005,2006 Silicon Graphics, Inc.  All Rights Reserved.
   Portions Copyright 2002-2010 Sun Microsystems, Inc. All rights reserved.
-  Portions Copyright 2007-2015 David Anderson. All rights reserved.
+  Portions Copyright 2007-2016 David Anderson. All rights reserved.
 
   This program is free software; you can redistribute it and/or modify it
   under the terms of version 2.1 of the GNU Lesser General Public License
@@ -129,6 +129,8 @@ extern "C" {
 #define DW_TAG_atomic_type              0x47  /* DWARF5 */
 #define DW_TAG_call_site                0x48  /* DWARF5 */
 #define DW_TAG_call_site_parameter      0x49  /* DWARF5 */
+#define DW_TAG_skeleton_unit            0x4a  /* DWARF5 */
+#define DW_TAG_immutable_type           0x4b  /* DWARF5 */
 #define DW_TAG_lo_user                  0x4080
 
 #define DW_TAG_MIPS_loop                0x4081
@@ -222,6 +224,9 @@ extern "C" {
 #define DW_FORM_data16                  0x1e /* DWARF5 */
 #define DW_FORM_line_strp               0x1f /* DWARF5 */
 #define DW_FORM_ref_sig8                0x20 /* DWARF4 */
+#define DW_FORM_implicit_const          0x21 /* DWARF5 */
+#define DW_FORM_loclistx                0x22 /* DWARF5 */
+#define DW_FORM_rnglistx                0x23 /* DWARF5 */
 #define DW_FORM_GNU_addr_index          0x1f01 /* GNU extension in debug_info.dwo.*/
 #define DW_FORM_GNU_str_index           0x1f02 /* GNU extension, somewhat like DW_FORM_strp */
 #define DW_FORM_GNU_ref_alt             0x1f20 /* GNU extension. Offset in .debug_info. */
@@ -330,7 +335,8 @@ extern "C" {
 #define DW_AT_str_offsets_base                  0x72 /* DWARF5 */
 #define DW_AT_addr_base                         0x73 /* DWARF5 */
 #define DW_AT_ranges_base                       0x74 /* DWARF5 */
-#define DW_AT_dwo_id                            0x75 /* DWARF5 */
+  /*  DW_AT_dwo_id, an experiment in some DWARF4. Not DWARF5. */
+#define DW_AT_dwo_id                            0x75 /* DWARF4!*/
 #define DW_AT_dwo_name                          0x76 /* DWARF5 */
 #define DW_AT_reference                         0x77 /* DWARF5 */
 #define DW_AT_rvalue_reference                  0x78 /* DWARF5 */
@@ -351,6 +357,9 @@ extern "C" {
 #define DW_AT_noreturn                          0x87 /* DWARF5 */
 #define DW_AT_alignment                         0x88 /* DWARF5 */
 #define DW_AT_export_symbols                    0x89 /* DWARF5 */
+#define DW_AT_deleted                           0x8a /* DWARF5 */
+#define DW_AT_defaulted                         0x8b /* DWARF5 */
+#define DW_AT_loclists_base                     0x8c /* DWARF5 */
 
 /* In extensions, we attempt to include the vendor extension
    in the name even when the vendor leaves it out. */
@@ -789,6 +798,7 @@ extern "C" {
 #define DW_ATE_hi_user                  0xff
 
 
+/*   DWARF5  Defaulted Member Encodings. */
 #define DW_DEFAULTED_no                 0x0      /* DWARF5 */
 #define DW_DEFAULTED_in_class           0x1      /* DWARF5 */
 #define DW_DEFAULTED_out_of_class       0x2      /* DWARF5 */
@@ -804,11 +814,25 @@ extern "C" {
 
 
 /* DWARF5 Location List Entries in Split Objects */
-#define DW_LLE_end_of_list_entry        0x0      /* DWARF5 */
-#define DW_LLE_base_address_selection_entry 0x01 /* DWARF5 */
-#define DW_LLE_start_end_entry          0x02     /* DWARF5 */
-#define DW_LLE_start_length_entry       0x03     /* DWARF5 */
-#define DW_LLE_offset_pair_entry        0x04     /* DWARF5 */
+#define DW_LLE_end_of_list              0x0      /* DWARF5 */
+#define DW_LLE_base_addressx            0x01 /* DWARF5 */
+#define DW_LLE_startx_endx              0x02     /* DWARF5 */
+#define DW_LLE_startx_length            0x03     /* DWARF5 */
+#define DW_LLE_offset_pair              0x04     /* DWARF5 */
+#define DW_LLE_default_location         0x05     /* DWARF5 */
+#define DW_LLE_base_address             0x06     /* DWARF5 */
+#define DW_LLE_start_end                0x07     /* DWARF5 */
+#define DW_LLE_start_length             0x08     /* DWARF5 */
+
+/* DWARF5 Range List Entries */
+#define DW_RLE_end_of_list              0x00     /* DWARF5 */
+#define DW_RLE_base_addressx            0x01     /* DWARF5 */
+#define DW_RLE_startx_endx              0x02     /* DWARF5 */
+#define DW_RLE_startx_length            0x03     /* DWARF5 */
+#define DW_RLE_offset_pair              0x04     /* DWARF5 */
+#define DW_RLE_base_address             0x05     /* DWARF5 */
+#define DW_RLE_start_end                0x06     /* DWARF5 */
+#define DW_RLE_start_length             0x07     /* DWARF5 */
 
 /* DWARF5 Unit header unit type encodings */
 #define DW_UT_compile                   0x01  /* DWARF5 */
@@ -916,6 +940,7 @@ extern "C" {
 #define DW_LANG_C_plus_plus_14          0x0021 /* DWARF5 */
 #define DW_LANG_Fortran03               0x0022 /* DWARF5 */
 #define DW_LANG_Fortran08               0x0023 /* DWARF5 */
+#define DW_LANG_RenderScript            0x0024 /* DWARF5 */
 #define DW_LANG_lo_user                 0x8000
 #define DW_LANG_Mips_Assembler          0x8001 /* MIPS   */
 #define DW_LANG_Upc                     0x8765 /* UPC, use
@@ -938,6 +963,8 @@ extern "C" {
 #define DW_CC_normal                    0x01
 #define DW_CC_program                   0x02
 #define DW_CC_nocall                    0x03
+#define DW_CC_pass_by_reference         0x04 /* DWARF5 */
+#define DW_CC_pass_by_value             0x05 /* DWARF5 */
 #define DW_CC_lo_user                   0x40
 
 #define DW_CC_GNU_renesas_sh            0x40 /* GNU */
@@ -975,6 +1002,19 @@ extern "C" {
 #define DW_DSC_label                    0x00
 #define DW_DSC_range                    0x01
 
+/*  Line number header entry format encodings. DWARF5 */
+#define DW_LNCT_path                    0x1 /* DWARF5 */
+#define DW_LNCT_directory_index         0x2 /* DWARF5 */
+#define DW_LNCT_timestamp               0x3 /* DWARF5 */
+#define DW_LNCT_size                    0x4 /* DWARF5 */
+#define DW_LNCT_MD5                     0x5 /* DWARF5 */
+/* Experimental two-level line tables. Non standard */
+#define DW_LNCT_GNU_subprogram_name     0x6
+#define DW_LNCT_GNU_decl_file           0x7
+#define DW_LNCT_GNU_decl_line           0x8
+#define DW_LNCT_lo_user                 0x2000 /* DWARF5 */
+#define DW_LNCT_hi_user                 0x3fff /* DWARF5 */
+
 /* Line number standard opcode name. */
 #define DW_LNS_copy                     0x01
 #define DW_LNS_advance_pc               0x02
@@ -1005,7 +1045,7 @@ extern "C" {
 /* Line number extended opcode name. */
 #define DW_LNE_end_sequence             0x01
 #define DW_LNE_set_address              0x02
-#define DW_LNE_define_file              0x03
+#define DW_LNE_define_file              0x03  /* DWARF4 and earlier only */
 #define DW_LNE_set_discriminator        0x04  /* DWARF4 */
 #define DW_LNE_define_file_MD5          0x05  /* DWARF5 */
 
@@ -1024,17 +1064,6 @@ extern "C" {
 #define DW_LNE_HP_source_file_correlation   0x80 /* HP */
 #define DW_LNE_lo_user                  0x80 /* DWARF3 */
 #define DW_LNE_hi_user                  0xff /* DWARF3 */
-
-/* Type codes for line number program content descriptors (DWARF 5).  */
-#define DW_LNCT_path                    0x1
-#define DW_LNCT_directory_index         0x2
-#define DW_LNCT_timestamp               0x3
-#define DW_LNCT_size                    0x4
-#define DW_LNCT_MD5                     0x5
-/* Experimental two-level line tables. */
-#define DW_LNCT_subprogram_name         0x6
-#define DW_LNCT_decl_file               0x7
-#define DW_LNCT_decl_line               0x8
 
 /* These are known values for DW_LNS_set_isa. */
 #define DW_ISA_UNKNOWN   0

@@ -1,3 +1,6 @@
+2016-09-27 David Anderson
+    * dwarf.h: Update with the probably-final DWARF5
+      tags, attributes, etc.
 2016-09-26 David Anderson
     * dwarf_query.c: Removed four lines of code associated with 
       DWARF5 DW_MACRO_define_strx that
