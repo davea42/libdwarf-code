@@ -190,6 +190,10 @@ extern "C" {
 
 #define DW_TAG_hi_user                  0xffff
 
+/*  The following two are non-standard. Use DW_CHILDREN_yes
+    and DW_CHILDREN_no instead.  These could
+    probably be deleted, but someone might be using them,
+    so they remain.  */
 #define DW_children_no                  0
 #define DW_children_yes                 1
 

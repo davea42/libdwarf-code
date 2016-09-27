@@ -1,4 +1,7 @@
 2016-09-27 David Anderson
+    * dwarf.h: Added commentary about DW_children_yes[no] which
+      are non-standard. Use DW_CHILDREN_yes[no] instead.
+2016-09-27 David Anderson
     * dwarf.h: Update with the probably-final DWARF5
       tags, attributes, etc.
 2016-09-26 David Anderson
