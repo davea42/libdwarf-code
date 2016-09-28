@@ -1,4 +1,7 @@
 2016-09-27  David Anderson
+    * esb.c: Deleted file-static variable that was only
+      used for a test. No longer needed.
+2016-09-27  David Anderson
     * print_die.c: Changed the name of experimental
       loclist operators from LLE to LLEX
       as these are in use for certain DWARF4 loclist

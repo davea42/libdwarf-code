@@ -66,8 +66,6 @@ typedef char * string; /* SELFTEST */
 /*  Allow for final NUL */
 static size_t alloc_size = INITIAL_ALLOC;
 
-static int next_esb_id = 0;
-
 /* NULL device used when printing formatted strings */
 static FILE *null_device_handle = 0;
 #if _WIN32
