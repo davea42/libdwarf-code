@@ -3862,11 +3862,11 @@ get_location_list(Dwarf_Debug dbg,
             locentry_count = llbuf->ld_cents;
             ulocentry_count = locentry_count;
             if (lopc == elf_max_address) {
-                lle_value = DW_LLE_base_address_selection_entry;
+                lle_value = DW_LLEX_base_address_selection_entry;
             } else if (lopc== 0 && hipc == 0) {
-                lle_value = DW_LLE_end_of_list_entry;
+                lle_value = DW_LLEX_end_of_list_entry;
             } else {
-                lle_value = DW_LLE_offset_pair_entry;
+                lle_value = DW_LLEX_offset_pair_entry;
             }
         }
         if (!dense && loclist_source) {
@@ -3907,7 +3907,7 @@ get_location_list(Dwarf_Debug dbg,
             but we don't distinguish that from other errors here. */
         if(loclist_source || checking) {
             /*  Simplifies to use the DWARF5 DW_LLE as the test.*/
-            if (lle_value == DW_LLE_base_address_selection_entry) {
+            if (lle_value == DW_LLEX_base_address_selection_entry) {
                 /*  (0xffffffff,addr), use specific address
                     (current PU address) */
                 Dwarf_Addr realaddr = 0;
@@ -3953,10 +3953,10 @@ get_location_list(Dwarf_Debug dbg,
                         base_address);
                     esb_append(esbp,small_buf);
                 }
-            } else if (lle_value == DW_LLE_end_of_list_entry) {
+            } else if (lle_value == DW_LLEX_end_of_list_entry) {
                 /* Nothing to do. */
                 esb_append(esbp,"<end-of-list>");
-            } else if (lle_value == DW_LLE_start_length_entry) {
+            } else if (lle_value == DW_LLEX_start_length_entry) {
                 int foundaddr = FALSE;
                 if (loclist_source == 2) {
                     Dwarf_Addr realaddr = 0;
@@ -4007,7 +4007,7 @@ get_location_list(Dwarf_Debug dbg,
                         hipcfinal, hipc, locdesc_offset, base_address,
                         &bError);
                 }
-            } else if (lle_value == DW_LLE_offset_pair_entry) {
+            } else if (lle_value == DW_LLEX_offset_pair_entry) {
                 /* Same for both loclist_source. */
                 lopcfinal = lopc + base_address;
                 hipcfinal = hipc + base_address;
@@ -4028,7 +4028,7 @@ get_location_list(Dwarf_Debug dbg,
                         hipcfinal, hipc, locdesc_offset, base_address,
                         &bError);
                 }
-            } else if (lle_value == DW_LLE_start_end_entry) {
+            } else if (lle_value == DW_LLEX_start_end_entry) {
                 int foundaddr = FALSE;
                 /* These are NOT relative to base_address */
                 if (loclist_source == 2) {
@@ -4105,7 +4105,7 @@ get_location_list(Dwarf_Debug dbg,
                 }
             } else {
                 snprintf(small_buf,sizeof(small_buf),
-                    "Unexpected LLE code 0x%x, ERROR",lle_value);
+                    "Unexpected LLEX code 0x%x, ERROR",lle_value);
                 print_error(dbg, small_buf, DW_DLV_OK, llerr);
             }
             if (display_offsets && verbose) {

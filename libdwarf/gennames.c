@@ -91,7 +91,7 @@ typedef struct {
     char     name[MAX_NAME_LEN];  /* short name */
     unsigned value; /* value */
     /* Original spot in array.   Lets us guarantee a stable sort. */
-    unsigned original_position; 
+    unsigned original_position;
 } array_data;
 
 /*  A group_array is a grouping from dwarf.h.
@@ -252,7 +252,6 @@ Compare(array_data *elem1,array_data *elem2)
     if (elem1->original_position > elem2->original_position) {
         return 1;
     }
-    
     return 0;
 }
 

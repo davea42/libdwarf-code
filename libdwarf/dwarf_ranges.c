@@ -35,10 +35,10 @@ struct ranges_entry {
 
 
 static void
-free_allocated_ranges( struct ranges_entry *base) 
+free_allocated_ranges( struct ranges_entry *base)
 {
-     struct ranges_entry *cur = 0; 
-     struct ranges_entry *next = 0; 
+    struct ranges_entry *cur = 0;
+    struct ranges_entry *next = 0;
     for ( cur = base ; cur ; cur = next ) {
         next = cur->next;
         free(cur);
@@ -188,7 +188,6 @@ int dwarf_get_ranges_a(Dwarf_Debug dbg,
     for (copyindex = 0; curre && (copyindex < entry_count);
         ++copyindex,++ranges_data_out) {
 
-        struct ranges_entry *r = curre;
         *ranges_data_out = curre->cur;
         curre = curre->next;
     }

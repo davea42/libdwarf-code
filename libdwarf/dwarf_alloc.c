@@ -505,7 +505,7 @@ dwarf_dealloc(Dwarf_Debug dbg,
                 Set er_errval to signal that the space was dealloc'd. */
             _dwarf_failsafe_error.er_errval = DW_DLE_FAILSAFE_ERRVAL;
             return;
-        } 
+        }
         if (ep->er_static_alloc == DE_MALLOC) {
             /*  This is special, we had no arena
                 so just malloc'd a Dwarf_Error_s. */

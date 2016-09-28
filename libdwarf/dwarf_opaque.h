@@ -40,12 +40,15 @@
     .debug_info             2      3      4      5
     .debug_line             2      3      4      5
     .debug_line_str         -      -      -      5
-    .debug_loc              *      *      *      5
+    .debug_loc              *      *      *      -
+    .debug_loclists         -      -      -      5
     .debug_macinfo          *      *      *      -
     .debug_macro            -      -      -      5
+    .debug_names            -      -      -      5
     .debug_pubnames         2      2      2      -
     .debug_pubtypes         -      2      2      -
-    .debug_ranges           -      *      *      5
+    .debug_ranges           -      *      *      -
+    .debug_rnglists         -      -      -      5
     .debug_str              *      *      *      *
     .debug_str_offsets      -      -      -      5
     .debug_sup              -      -      -      5
@@ -54,8 +57,10 @@
     .debug_abbrev.dwo       -      -      -      *
     .debug_info.dwo         -      -      -      5
     .debug_line.dwo         -      -      -      5
-    .debug_loc.dwo          -      -      -      5
+    .debug_loc.dwo          -      -      -      -
+    .debug_loclists.dwo     -      -      -      5
     .debug_macro.dwo        -      -      -      5
+    .debug_rnglists.dwo     -      -      -      5
     .debug_str.dwo          -      -      -      *
     .debug_str_offsets.dwo  -      -      -      5
 
@@ -579,11 +584,13 @@ struct Dwarf_Debug_s {
     struct Dwarf_Section_s de_debug_loc;
     struct Dwarf_Section_s de_debug_aranges;
     struct Dwarf_Section_s de_debug_macinfo;
-    struct Dwarf_Section_s de_debug_macro; /* New in DWARF5 */
-    struct Dwarf_Section_s de_debug_names; /* New in DWARF5 */
+    struct Dwarf_Section_s de_debug_macro;    /* New in DWARF5 */
+    struct Dwarf_Section_s de_debug_names;    /* New in DWARF5 */
     struct Dwarf_Section_s de_debug_pubnames;
     struct Dwarf_Section_s de_debug_str;
-    struct Dwarf_Section_s de_debug_sup;  /* New in DWARF5 */
+    struct Dwarf_Section_s de_debug_sup;      /* New in DWARF5 */
+    struct Dwarf_Section_s de_debug_loclists; /* New in DWARF5 */
+    struct Dwarf_Section_s de_debug_rnglists; /* New in DWARF5 */
     struct Dwarf_Section_s de_debug_frame;
 
     /* gnu: the g++ eh_frame section */
@@ -601,7 +608,7 @@ struct Dwarf_Debug_s {
     struct Dwarf_Section_s de_debug_weaknames;
 
     struct Dwarf_Section_s de_debug_ranges;
-    /*  Following two part of DebugFission. */
+    /*  Following two part of DebugFission and DWARF5 */
     struct Dwarf_Section_s de_debug_str_offsets;
     struct Dwarf_Section_s de_debug_addr;
 

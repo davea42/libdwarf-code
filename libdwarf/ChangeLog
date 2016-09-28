@@ -1,4 +1,25 @@
 2016-09-28 David Anderson
+    * dwarf_errmsg_list.c: Added error codes for
+      duplicated DWARF5 .debug_loclists and .debug_rnglists
+      sections. 
+    * dwarf_init_finish.c: Adds incomplete support for
+      DWARF5 .debug_names.c, .debug_loclists, and .debug_rnglists
+      Adds dwarf_get_section_max_offsets_d() to return all the possible
+      DWARF section sizes across all DWARF2..5
+    * dwarf_line_table_reader_common.c: DW_LNCT renamed as
+      DW_LNCT_GNU as the DWARF5 standard has some differences
+      from the experimental version (no named)DW_LNCT_GNU.
+    * dwarf_loc2.c: Renames DW_LLE to DW_LLEX as these are
+      the non-standard experimental version (not the same
+      as the DWARF5 standard).
+    * dwarf_opaque.h: Updated version number comments.
+      Added new section support data in Dwarf_Debug_s.
+    * dwarf_ranges.c(dwarf_get_ranges_a):  deleted unused local variable.
+    * libdwarf.h.in: New error codes. Declaration for
+      dwarf_get_section_max_offsets_d() added.
+      Now has all the DWARF5 dwarf_get_*_name() function declarations too.
+    * dwarf_error.h: Deleted two unwanted blank lines.
+2016-09-28 David Anderson
     * gennames.c: Now the comparison function to qsort
       guarantees a stable sort by also referencing the
       original array location (a new data item 

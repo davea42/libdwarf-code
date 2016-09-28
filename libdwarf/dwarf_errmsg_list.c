@@ -434,6 +434,8 @@ const char *_dwarf_errmsgs[] = {
     "DW_DLE_SIBLING_LIST_IMPROPER(355) Corrupt dwarf",
     "DW_DLE_LOCLIST_OFFSET_BAD(356) Corrupt dwarf",
     "DW_DLE_LINE_TABLE_BAD(357) Corrupt line table",
+    "DW_DLE_DEBUG_LOClISTS_DUPLICATE(358)",
+    "DW_DLE_DEBUG_RNGLISTS_DUPLICATE(359)",
 };
 
 #ifdef TESTING

@@ -47,8 +47,6 @@ struct Dwarf_Error_s {
         pointer reference (the field is hidden
         from clients...) then chaos will
         eventually follow.
-
-        
     */
     int er_static_alloc;
 };

@@ -1282,9 +1282,11 @@ struct Dwarf_Obj_Access_Interface_s {
 #define DW_DLE_SIBLING_LIST_IMPROPER           355
 #define DW_DLE_LOCLIST_OFFSET_BAD              356
 #define DW_DLE_LINE_TABLE_BAD                  357
+#define DW_DLE_DEBUG_LOClISTS_DUPLICATE        358
+#define DW_DLE_DEBUG_RNGLISTS_DUPLICATE        369
 
     /* DW_DLE_LAST MUST EQUAL LAST ERROR NUMBER */
-#define DW_DLE_LAST        357
+#define DW_DLE_LAST        359
 #define DW_DLE_LO_USER     0x10000
 
     /*  Taken as meaning 'undefined value', this is not
@@ -3807,6 +3809,28 @@ dwarf_get_section_max_offsets_c(Dwarf_Debug /*dbg*/,
     Dwarf_Unsigned * /*debug_sup_size*/,
     Dwarf_Unsigned * /*debug_cu_index_size*/,
     Dwarf_Unsigned * /*debug_tu_index_size*/);
+int
+dwarf_get_section_max_offsets_d(Dwarf_Debug /*dbg*/,
+    Dwarf_Unsigned * /*debug_info_size*/,
+    Dwarf_Unsigned * /*debug_abbrev_size*/,
+    Dwarf_Unsigned * /*debug_line_size*/,
+    Dwarf_Unsigned * /*debug_loc_size*/,
+    Dwarf_Unsigned * /*debug_aranges_size*/,
+    Dwarf_Unsigned * /*debug_macinfo_size*/,
+    Dwarf_Unsigned * /*debug_pubnames_size*/,
+    Dwarf_Unsigned * /*debug_str_size*/,
+    Dwarf_Unsigned * /*debug_frame_size*/,
+    Dwarf_Unsigned * /*debug_ranges_size*/,
+    Dwarf_Unsigned * /*debug_pubtypes_size*/,
+    Dwarf_Unsigned * /*debug_types_size*/,
+    Dwarf_Unsigned * /*debug_macro_size*/,
+    Dwarf_Unsigned * /*debug_str_offsets_size*/,
+    Dwarf_Unsigned * /*debug_sup_size*/,
+    Dwarf_Unsigned * /*debug_cu_index_size*/,
+    Dwarf_Unsigned * /*debug_tu_index_size*/,
+    Dwarf_Unsigned * /*debug_names_size*/,
+    Dwarf_Unsigned * /*debug_loclists_size*/,
+    Dwarf_Unsigned * /*debug_rnglists_size*/);
 
 
 /*  The 'set' calls here return the original (before any change
@@ -3924,42 +3948,43 @@ unsigned dwarf_set_harmless_error_list_size(Dwarf_Debug /*dbg*/,
 /* The following copied from a generated dwarf_names.h */
 
 /* BEGIN FILE */
-
 extern int dwarf_get_ACCESS_name(unsigned int /*val_in*/, const char ** /*s_out */);
 extern int dwarf_get_ADDR_name(unsigned int /*val_in*/, const char ** /*s_out */);
-extern int dwarf_get_AT_name(unsigned int /*val_in*/, const char ** /*s_out */);
 extern int dwarf_get_ATCF_name(unsigned int /*val_in*/, const char ** /*s_out */);
 extern int dwarf_get_ATE_name(unsigned int /*val_in*/, const char ** /*s_out */);
+extern int dwarf_get_AT_name(unsigned int /*val_in*/, const char ** /*s_out */);
 extern int dwarf_get_CC_name(unsigned int /*val_in*/, const char ** /*s_out */);
 extern int dwarf_get_CFA_name(unsigned int /*val_in*/, const char ** /*s_out */);
-extern int dwarf_get_CHILDREN_name(unsigned int /*val_in*/, const char ** /*s_out */);
 extern int dwarf_get_children_name(unsigned int /*val_in*/, const char ** /*s_out */);
-extern int dwarf_get_DEFAULTED_name (unsigned int /*val_in*/,const char ** /*s_out*/);
-extern int dwarf_get_DS_name(unsigned int /*val_in*/, const char ** /*s_out */);
+extern int dwarf_get_CHILDREN_name(unsigned int /*val_in*/, const char ** /*s_out */);
+extern int dwarf_get_DEFAULTED_name(unsigned int /*val_in*/, const char ** /*s_out */);
 extern int dwarf_get_DSC_name(unsigned int /*val_in*/, const char ** /*s_out */);
+extern int dwarf_get_DS_name(unsigned int /*val_in*/, const char ** /*s_out */);
 extern int dwarf_get_EH_name(unsigned int /*val_in*/, const char ** /*s_out */);
 extern int dwarf_get_END_name(unsigned int /*val_in*/, const char ** /*s_out */);
 extern int dwarf_get_FORM_name(unsigned int /*val_in*/, const char ** /*s_out */);
 extern int dwarf_get_FRAME_name(unsigned int /*val_in*/, const char ** /*s_out */);
 extern int dwarf_get_ID_name(unsigned int /*val_in*/, const char ** /*s_out */);
-extern int dwarf_get_IDX_name (unsigned int /*val_in*/,const char ** /*s_out*/);
+extern int dwarf_get_IDX_name(unsigned int /*val_in*/, const char ** /*s_out */);
 extern int dwarf_get_INL_name(unsigned int /*val_in*/, const char ** /*s_out */);
 extern int dwarf_get_ISA_name(unsigned int /*val_in*/, const char ** /*s_out */);
 extern int dwarf_get_LANG_name(unsigned int /*val_in*/, const char ** /*s_out */);
 extern int dwarf_get_LLE_name(unsigned int /*val_in*/, const char ** /*s_out */);
-extern int dwarf_get_LNCT_name (unsigned int /*val_in*/,const char ** /*s_out*/);
+/*  dwarf_get_LLEX_name is likely just temporary. Not standard. */
+extern int dwarf_get_LLEX_name(unsigned int /*val_in*/, const char ** /*s_out */);
+extern int dwarf_get_LNCT_name(unsigned int /*val_in*/, const char ** /*s_out */);
 extern int dwarf_get_LNE_name(unsigned int /*val_in*/, const char ** /*s_out */);
 extern int dwarf_get_LNS_name(unsigned int /*val_in*/, const char ** /*s_out */);
 extern int dwarf_get_MACINFO_name(unsigned int /*val_in*/, const char ** /*s_out */);
-extern int dwarf_get_MACRO_name (unsigned int /*val_in*/,const char ** /*s_out*/);
+extern int dwarf_get_MACRO_name(unsigned int /*val_in*/, const char ** /*s_out */);
 extern int dwarf_get_OP_name(unsigned int /*val_in*/, const char ** /*s_out */);
 extern int dwarf_get_ORD_name(unsigned int /*val_in*/, const char ** /*s_out */);
-extern int dwarf_get_SECT_name (unsigned int /*val_in*/,const char ** /*s_out*/);
+extern int dwarf_get_RLE_name(unsigned int /*val_in*/, const char ** /*s_out */);
+extern int dwarf_get_SECT_name(unsigned int /*val_in*/, const char ** /*s_out */);
 extern int dwarf_get_TAG_name(unsigned int /*val_in*/, const char ** /*s_out */);
-extern int dwarf_get_UT_name (unsigned int /*val_in*/,const char ** /*s_out*/);
+extern int dwarf_get_UT_name(unsigned int /*val_in*/, const char ** /*s_out */);
 extern int dwarf_get_VIRTUALITY_name(unsigned int /*val_in*/, const char ** /*s_out */);
 extern int dwarf_get_VIS_name(unsigned int /*val_in*/, const char ** /*s_out */);
-
 /* END FILE */
 
 /* Convert local offset into global offset */

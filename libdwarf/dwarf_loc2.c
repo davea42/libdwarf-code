@@ -173,11 +173,11 @@ _dwarf_get_locdesc_c(Dwarf_Debug dbg,
     }
     /* Synthesizing the DW_LLE values. */
     if(highpc == 0 && lowpc == 0) {
-        locdesc->ld_lle_value =  DW_LLE_end_of_list_entry;
+        locdesc->ld_lle_value =  DW_LLEX_end_of_list_entry;
     } else if(lowpc == MAX_ADDR) {
-        locdesc->ld_lle_value = DW_LLE_base_address_selection_entry;
+        locdesc->ld_lle_value = DW_LLEX_base_address_selection_entry;
     } else {
-        locdesc->ld_lle_value = DW_LLE_offset_pair_entry;
+        locdesc->ld_lle_value = DW_LLEX_offset_pair_entry;
     }
     locdesc->ld_cents = op_count;
     locdesc->ld_s = block_loc;
@@ -223,12 +223,12 @@ _dwarf_read_loc_section_dwo(Dwarf_Debug dbg,
     locptr = beg +1;
     expr_offset++;
     switch(llecode) {
-    case DW_LLE_end_of_list_entry:
+    case DW_LLEX_end_of_list_entry:
         *at_end = TRUE;
         return_block->bl_section_offset = expr_offset;
         expr_offset++;
         break;
-    case DW_LLE_base_address_selection_entry: {
+    case DW_LLEX_base_address_selection_entry: {
         Dwarf_Unsigned addr_index = 0;
 
         DECODE_LEB128_UWORD_CK(locptr,addr_index,
@@ -239,7 +239,7 @@ _dwarf_read_loc_section_dwo(Dwarf_Debug dbg,
         *highpc=addr_index;
         }
         break;
-    case DW_LLE_start_end_entry: {
+    case DW_LLEX_start_end_entry: {
         Dwarf_Unsigned addr_indexs = 0;
         Dwarf_Unsigned addr_indexe= 0;
         Dwarf_Half exprlen = 0;
@@ -273,7 +273,7 @@ _dwarf_read_loc_section_dwo(Dwarf_Debug dbg,
         }
         }
         break;
-    case DW_LLE_start_length_entry: {
+    case DW_LLEX_start_length_entry: {
         Dwarf_Unsigned addr_index = 0;
         Dwarf_ufixed  range_length = 0;
         Dwarf_Half exprlen = 0;
@@ -308,7 +308,7 @@ _dwarf_read_loc_section_dwo(Dwarf_Debug dbg,
         }
         }
         break;
-    case DW_LLE_offset_pair_entry: {
+    case DW_LLEX_offset_pair_entry: {
         Dwarf_ufixed  startoffset = 0;
         Dwarf_ufixed  endoffset = 0;
         Dwarf_Half exprlen = 0;
@@ -433,6 +433,7 @@ dwarf_get_loclist_c(Dwarf_Attribute attr,
     /*  If this is a form_block then it's a location expression. If it's
         DW_FORM_data4 or DW_FORM_data8  in DWARF2 or DWARF3
         (or in DWARF4 or 5 a DW_FORM_sec_offset) it's a loclist offset */
+    /* In final DWARF5 the situation changes . FIXME */
     if (((cuvstamp == DW_CU_VERSION2 || cuvstamp == DW_CU_VERSION3) &&
         (form == DW_FORM_data4 || form == DW_FORM_data8)) ||
         ((cuvstamp == DW_CU_VERSION4 || cuvstamp == DW_CU_VERSION5) &&
@@ -448,6 +449,7 @@ dwarf_get_loclist_c(Dwarf_Attribute attr,
                 it could not have a loclist.  */
             /*  A reference to .debug_loc.dwo, with an offset
                 in .debug_loc.dwo of a loclist */
+            /* In DWARF5 the situation changes . FIXME */
             Dwarf_Unsigned loclist_offset = 0;
             int off_res  = DW_DLV_ERROR;
             int count_res = DW_DLV_ERROR;
@@ -656,7 +658,7 @@ dwarf_get_loclist_c(Dwarf_Attribute attr,
         }
         listlen = 1; /* One by definition of a location entry. */
         /*  This hack ensures that the Locdesc_c
-            is marked DW_LLE_start_end_entry */
+            is marked DW_LLEX_start_end_entry */
         lowpc = 0;   /* HACK */
         highpc = (Dwarf_Unsigned) (-1LL); /* HACK */
 

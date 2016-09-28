@@ -762,7 +762,7 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
                 line_context->lc_subprogs + i;
             for (j = 0; j < subprog_format_count; j++) {
                 switch (subprog_entry_types[j]) {
-                case DW_LNCT_subprogram_name:
+                case DW_LNCT_GNU_subprogram_name:
                     res = _dwarf_decode_line_string_form(dbg,
                         subprog_entry_forms[j],
                         local_length_size,
@@ -776,7 +776,7 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
                         return res;
                     }
                     break;
-                case DW_LNCT_decl_file:
+                case DW_LNCT_GNU_decl_file:
                     res = _dwarf_decode_line_udata_form(dbg,
                         subprog_entry_forms[j],
                         &line_ptr,
@@ -789,7 +789,7 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
                         return res;
                     }
                     break;
-                case DW_LNCT_decl_line:
+                case DW_LNCT_GNU_decl_line:
                     res = _dwarf_decode_line_udata_form(dbg,
                         subprog_entry_forms[j],
                         &line_ptr,

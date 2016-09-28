@@ -1,3 +1,9 @@
+2016-09-27  David Anderson
+    * print_die.c: Changed the name of experimental
+      loclist operators from LLE to LLEX
+      as these are in use for certain DWARF4 loclist
+      providers.  The DWARF5 LLE don't use the same
+      numberic values as the experimental ones.
 2016-09-23  David Anderson
     * Makefile.in: A mistake here meant every compile
       rebuilds all of dwarfdump even with a trivial change.

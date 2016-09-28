@@ -373,6 +373,7 @@ enter_section_in_de_debug_sections_array(Dwarf_Debug dbg,
         &dbg->de_debug_line,
         DW_DLE_DEBUG_LINE_DUPLICATE,0,
         FALSE,err);
+    /* DWARF5 */
     SET_UP_SECTION(dbg,scn_name,".debug_line_str",
         &dbg->de_debug_line_str,
         DW_DLE_DEBUG_LINE_DUPLICATE,0,
@@ -414,6 +415,41 @@ enter_section_in_de_debug_sections_array(Dwarf_Debug dbg,
     SET_UP_SECTION(dbg,scn_name,".debug_pubtypes",
         &dbg->de_debug_pubtypes,
         /*13*/ DW_DLE_DEBUG_PUBTYPES_DUPLICATE,0,
+        FALSE,err);
+    /* DWARF5 */
+    SET_UP_SECTION(dbg,scn_name,".debug_names",
+        &dbg->de_debug_names,
+        /*13*/ DW_DLE_DEBUG_NAMES_DUPLICATE,0,
+        FALSE,err);
+    /* DWARF5 */
+    SET_UP_SECTION(dbg,scn_name,".debug_loclists",
+        &dbg->de_debug_loclists,
+        /*13*/ DW_DLE_DEBUG_LOClISTS_DUPLICATE,0,
+        FALSE,err);
+    /* DWARF5 */
+    SET_UP_SECTION(dbg,scn_name,".debug_loclists.dwo",
+        &dbg->de_debug_loclists,
+        /*13*/ DW_DLE_DEBUG_LOClISTS_DUPLICATE,0,
+        FALSE,err);
+    /* DWARF5 */
+    SET_UP_SECTION(dbg,scn_name,".debug_rnglists",
+        &dbg->de_debug_rnglists,
+        /*13*/ DW_DLE_DEBUG_RNGLISTS_DUPLICATE,0,
+        FALSE,err);
+    /* DWARF5 */
+    SET_UP_SECTION(dbg,scn_name,".debug_rnglists.dwo",
+        &dbg->de_debug_rnglists,
+        /*13*/ DW_DLE_DEBUG_RNGLISTS_DUPLICATE,0,
+        FALSE,err);
+    /* DWARF5 */
+    SET_UP_SECTION(dbg,scn_name,".debug_str_offsets",
+        &dbg->de_debug_str_offsets,
+        DW_DLE_DEBUG_STR_OFFSETS_DUPLICATE,0,
+        FALSE,err);
+    /* DWARF5 */
+    SET_UP_SECTION(dbg,scn_name,".debug_str_offsets.dwo",
+        &dbg->de_debug_str_offsets,
+        DW_DLE_DEBUG_STR_OFFSETS_DUPLICATE,0,
         FALSE,err);
 
     /* SGI IRIX-only. */
@@ -461,16 +497,6 @@ enter_section_in_de_debug_sections_array(Dwarf_Debug dbg,
         TRUE,err);
     /*  No .debug_ranges.dwo allowed. */
 
-    /* New DWARF5 */
-    SET_UP_SECTION(dbg,scn_name,".debug_str_offsets",
-        &dbg->de_debug_str_offsets,
-        DW_DLE_DEBUG_STR_OFFSETS_DUPLICATE,0,
-        TRUE,err);
-    /* New DWARF5 */
-    SET_UP_SECTION(dbg,scn_name,".debug_str_offsets.dwo",
-        &dbg->de_debug_str_offsets,
-        DW_DLE_DEBUG_STR_OFFSETS_DUPLICATE,0,
-        TRUE,err);
     /* New DWARF5 */
     SET_UP_SECTION(dbg,scn_name,".debug_sup",
         &dbg->de_debug_sup,
@@ -1224,7 +1250,7 @@ dwarf_get_section_max_offsets_b(Dwarf_Debug dbg,
     return DW_DLV_OK;
 }
 
-/*  Now with sections new to DWARF5 */
+/*  Now with sections new to DWARF5 (unofficial list,preliminary) */
 int
 dwarf_get_section_max_offsets_c(Dwarf_Debug dbg,
     Dwarf_Unsigned * debug_info_size,
@@ -1262,6 +1288,53 @@ dwarf_get_section_max_offsets_c(Dwarf_Debug dbg,
     *debug_sup_size = dbg->de_debug_sup.dss_size;
     *debug_cu_index_size = dbg->de_debug_cu_index.dss_size;
     *debug_tu_index_size = dbg->de_debug_tu_index.dss_size;
+    return DW_DLV_OK;
+}
+
+/*  Now with final sections new to DWARF5 (final) */
+int
+dwarf_get_section_max_offsets_d(Dwarf_Debug dbg,
+    Dwarf_Unsigned * debug_info_size,
+    Dwarf_Unsigned * debug_abbrev_size,
+    Dwarf_Unsigned * debug_line_size,
+    Dwarf_Unsigned * debug_loc_size,
+    Dwarf_Unsigned * debug_aranges_size,
+    Dwarf_Unsigned * debug_macinfo_size,
+    Dwarf_Unsigned * debug_pubnames_size,
+    Dwarf_Unsigned * debug_str_size,
+    Dwarf_Unsigned * debug_frame_size,
+    Dwarf_Unsigned * debug_ranges_size,
+    Dwarf_Unsigned * debug_typenames_size,
+    Dwarf_Unsigned * debug_types_size,
+    Dwarf_Unsigned * debug_macro_size,
+    Dwarf_Unsigned * debug_str_offsets_size,
+    Dwarf_Unsigned * debug_sup_size,
+    Dwarf_Unsigned * debug_cu_index_size,
+    Dwarf_Unsigned * debug_tu_index_size,
+    Dwarf_Unsigned * debug_names_size,
+    Dwarf_Unsigned * debug_loclists_size,
+    Dwarf_Unsigned * debug_rnglists_size)
+{
+    *debug_info_size = dbg->de_debug_info.dss_size;
+    *debug_abbrev_size = dbg->de_debug_abbrev.dss_size;
+    *debug_line_size = dbg->de_debug_line.dss_size;
+    *debug_loc_size = dbg->de_debug_loc.dss_size;
+    *debug_aranges_size = dbg->de_debug_aranges.dss_size;
+    *debug_macinfo_size = dbg->de_debug_macinfo.dss_size;
+    *debug_pubnames_size = dbg->de_debug_pubnames.dss_size;
+    *debug_str_size = dbg->de_debug_str.dss_size;
+    *debug_frame_size = dbg->de_debug_frame.dss_size;
+    *debug_ranges_size = dbg->de_debug_ranges.dss_size;
+    *debug_typenames_size = dbg->de_debug_typenames.dss_size;
+    *debug_types_size = dbg->de_debug_types.dss_size;
+    *debug_macro_size = dbg->de_debug_macro.dss_size;
+    *debug_str_offsets_size = dbg->de_debug_str_offsets.dss_size;
+    *debug_sup_size = dbg->de_debug_sup.dss_size;
+    *debug_cu_index_size = dbg->de_debug_cu_index.dss_size;
+    *debug_tu_index_size = dbg->de_debug_tu_index.dss_size;
+    *debug_names_size = dbg->de_debug_names.dss_size;
+    *debug_loclists_size = dbg->de_debug_loclists.dss_size;
+    *debug_rnglists_size = dbg->de_debug_rnglists.dss_size;
     return DW_DLV_OK;
 }
 
