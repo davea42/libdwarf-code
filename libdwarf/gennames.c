@@ -90,6 +90,8 @@ static void ParseDefinitionsAndWriteOutput(void);
 typedef struct {
     char     name[MAX_NAME_LEN];  /* short name */
     unsigned value; /* value */
+    /* Original spot in array.   Lets us guarantee a stable sort. */
+    unsigned original_position; 
 } array_data;
 
 /*  A group_array is a grouping from dwarf.h.
@@ -234,6 +236,7 @@ PrintArray(void)
 }
 #endif /* TRACE_ARRAY */
 
+/* By including original position we force a stable sort */
 static int
 Compare(array_data *elem1,array_data *elem2)
 {
@@ -243,6 +246,13 @@ Compare(array_data *elem1,array_data *elem2)
     if (elem1->value > elem2->value) {
         return 1;
     }
+    if (elem1->original_position < elem2->original_position) {
+        return -1;
+    }
+    if (elem1->original_position > elem2->original_position) {
+        return 1;
+    }
+    
     return 0;
 }
 
@@ -406,7 +416,8 @@ GenerateOneSet(void)
 
     /*  Sort the array, because the values in 'libdwarf.h' are not in
         ascending order; if we use '-t' we must be sure the values are
-        sorted, for the binary search to work properly */
+        sorted, for the binary search to work properly.
+        We want a stable sort, hence mergesort.  */
     qsort((void *)&group_array,array_count,sizeof(array_data),(compfn)Compare);
 
 #ifdef TRACE_ARRAY
@@ -593,6 +604,7 @@ ParseDefinitionsAndWriteOutput(void)
             }
             strcpy(group_array[array_count].name,second_underscore);
             group_array[array_count].value = v;
+            group_array[array_count].original_position = array_count;
             ++array_count;
         }
     }

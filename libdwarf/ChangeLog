@@ -1,4 +1,10 @@
 2016-09-28 David Anderson
+    * gennames.c: Now the comparison function to qsort
+      guarantees a stable sort by also referencing the
+      original array location (a new data item 
+      in the struct).  Needed for  consistent
+      output.
+2016-09-28 David Anderson
     * dwarf_alloc.c: Special function 
       _dwarf_special_no_dbg_error_malloc() was failing
       to return a value. Serious bug. Now it returns
