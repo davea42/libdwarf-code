@@ -1,4 +1,8 @@
 2016-09-27 David Anderson
+    * dwarf.h: The previous experimental DW_LLE_
+      non-standard names are renamed as DW_LLEX_
+      temporarily. Do not use the LLEX names.
+2016-09-27 David Anderson
     * dwarf.h: Added commentary about DW_children_yes[no] which
       are non-standard. Use DW_CHILDREN_yes[no] instead.
 2016-09-27 David Anderson

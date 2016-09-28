@@ -816,6 +816,13 @@ extern "C" {
 #define DW_IDX_lo_user                  0x2000   /* DWARF5 */
 #define DW_IDX_hi_user                  0x0fff   /* DWARF5 */
 
+/* These with not-quite-the-same-names were used in DWARF4
+   and should not be used by anyone. */
+#define DW_LLEX_end_of_list_entry        0x0      /* DWARF4 experimental */
+#define DW_LLEX_base_address_selection_entry 0x01 /* DWARF4 experimental */
+#define DW_LLEX_start_end_entry          0x02     /* DWARF4 experimental */
+#define DW_LLEX_start_length_entry       0x03     /* DWARF4 experimental */
+#define DW_LLEX_offset_pair_entry        0x04     /* DWARF4 experimental */
 
 /* DWARF5 Location List Entries in Split Objects */
 #define DW_LLE_end_of_list              0x0      /* DWARF5 */
