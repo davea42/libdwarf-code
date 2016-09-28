@@ -1,3 +1,8 @@
+2016-09-28 David Anderson
+    * dwarf_alloc.c: Special function 
+      _dwarf_special_no_dbg_error_malloc() was failing
+      to return a value. Serious bug. Now it returns
+      a value.
 2016-09-27 David Anderson
     * dwarf.h: The previous experimental DW_LLE_
       non-standard names are renamed as DW_LLEX_

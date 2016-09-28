@@ -710,5 +710,6 @@ _dwarf_special_no_dbg_error_malloc(void)
     memset(mem, 0, sizeof(struct Dwarf_Error_s));
     e = (Dwarf_Error)mem;
     e->er_static_alloc = DE_MALLOC;
+    return e;
 }
 
