@@ -1,4 +1,19 @@
 2016-09-28 David Anderson
+    * dwarf_opaque.h: New interface for
+      _dwarf_extract_string_offset_via_str_offsets().
+      Remove duplicate declaration of the function.
+    * dwarf_form.c(_dwarf_extract_string_offset_via_str_offsets): 
+      Had a test for end of section
+      on what was sometimes the wrong section. 
+      Now section end passed in and correct.
+      Depending on circumstances such
+      as where elf data was in memory, the
+      result was a single regression test would 
+      get a DW_DLE_LEB_IMPROPER
+      error ... or not get it.
+    * dwarf_macro5.c: A test for DW_DLV_OK was testing the
+      wrong local variable.  
+2016-09-28 David Anderson
     * dwarf_errmsg_list.c: Added error codes for
       duplicated DWARF5 .debug_loclists and .debug_rnglists
       sections. 

@@ -1077,7 +1077,8 @@ dwarf_formblock(Dwarf_Attribute attr,
 
 int
 _dwarf_extract_string_offset_via_str_offsets(Dwarf_Debug dbg,
-    Dwarf_Small *info_data_ptr,
+    Dwarf_Small *data_ptr,
+    Dwarf_Small *end_data_ptr,
     UNUSEDARG Dwarf_Half   attrnum,
     Dwarf_Half   attrform,
     Dwarf_CU_Context cu_context,
@@ -1089,17 +1090,14 @@ _dwarf_extract_string_offset_via_str_offsets(Dwarf_Debug dbg,
     Dwarf_Unsigned offsetintable = 0;
     Dwarf_Unsigned end_offsetintable = 0;
     int res = 0;
-    Dwarf_Byte_Ptr section_end = 0;
 
     res = _dwarf_load_section(dbg, &dbg->de_debug_str_offsets,error);
     if (res != DW_DLV_OK) {
         return res;
     }
 
-    section_end =
-        _dwarf_calculate_info_section_end_ptr(cu_context);
-    DECODE_LEB128_UWORD_CK(info_data_ptr,index_to_offset_entry,
-        dbg,error,section_end);
+    DECODE_LEB128_UWORD_CK(data_ptr,index_to_offset_entry,
+        dbg,error,end_data_ptr);
     /*  DW_FORM_GNU_str_index has no 'base' value.
         DW_FORM_strx has a base value
         for the offset table */
@@ -1310,6 +1308,7 @@ dwarf_formstring(Dwarf_Attribute attr,
         Dwarf_Unsigned offsettostr= 0;
         res = _dwarf_extract_string_offset_via_str_offsets(dbg,
             infoptr,
+            secend,
             attr->ar_attribute,
             attr->ar_attribute_form,
             cu_context,

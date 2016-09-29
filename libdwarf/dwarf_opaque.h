@@ -710,8 +710,9 @@ int _dwarf_get_string_base_attr_value(Dwarf_Debug dbg,
     Dwarf_Unsigned *sbase_out,
     Dwarf_Error *error);
 
-int _dwarf_exract_string_offset_via_str_offsets(Dwarf_Debug dbg,
-    Dwarf_Small *info_data_ptr,
+int _dwarf_extract_string_offset_via_str_offsets(Dwarf_Debug dbg,
+    Dwarf_Small *data_ptr,
+    Dwarf_Small *end_data_ptr,
     Dwarf_Half   attrnum,
     Dwarf_Half   attrform,
     Dwarf_CU_Context cu_context,
@@ -723,14 +724,6 @@ int _dwarf_extract_address_from_debug_addr(Dwarf_Debug dbg,
     Dwarf_CU_Context context,
     Dwarf_Unsigned index,
     Dwarf_Addr *addr_out,
-    Dwarf_Error *error);
-
-int _dwarf_extract_string_offset_via_str_offsets(Dwarf_Debug dbg,
-    Dwarf_Small *info_data_ptr,
-    Dwarf_Half   attrnum,
-    Dwarf_Half   attrform,
-    Dwarf_CU_Context cu_context,
-    Dwarf_Unsigned *str_sect_offset_out,
     Dwarf_Error *error);
 
 int _dwarf_get_base_and_size_given_signature(Dwarf_CU_Context *context,

@@ -557,6 +557,7 @@ dwarf_get_macro_defundef(Dwarf_Macro_Context macro_context,
         /* Redoes the index-getting. Gets offset. */
         ress = _dwarf_extract_string_offset_via_str_offsets(dbg,
             mdata_copy,
+            endptr,
             DW_AT_macros, /*arbitrary, unused by called routine. */
             form1,
             macro_context->mc_cu_context,
@@ -565,7 +566,7 @@ dwarf_get_macro_defundef(Dwarf_Macro_Context macro_context,
         if (ress  == DW_DLV_ERROR) {
             return ress;
         }
-        if (res == DW_DLV_OK) {
+        if (ress == DW_DLV_OK) {
             char *localstr = 0;
 
             *index = stringindex;
