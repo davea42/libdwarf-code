@@ -53,11 +53,6 @@ static void * makename_data;
 #define VALTYPE char *
 #define DW_TSHASHTYPE char *
 
-static DW_TSHASHTYPE
-value_hashfunc(const void *keyp)
-{
-    return (DW_TSHASHTYPE)keyp;
-}
 static int
 value_compare_func(const void *l, const void *r)
 {

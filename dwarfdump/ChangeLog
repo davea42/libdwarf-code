@@ -1,3 +1,9 @@
+2016-09-30  David Anderson
+    * makename.c: The unused static function value_hashfunc()
+      has been removed.
+    * tag_attr.c, tag_tree.c: Changed (1<<bit) to
+      (((unsigned)1)<<bit) to avoid a runtime error
+      (during dwardump build) about the left shift.
 2016-09-27  David Anderson
     * esb.c: Deleted file-static variable that was only
       used for a test. No longer needed.

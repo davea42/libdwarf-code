@@ -347,7 +347,7 @@ main(int argc, char **argv)
                 }
                 validate_row_col("Update columns bit",tag,idx,
                     table_rows,table_columns);
-                tag_tree_combination_table[tag][idx] |= (1 << bit);
+                tag_tree_combination_table[tag][idx] |= (((unsigned)1) << bit);
             } else {
                 if (nTagLoc >= table_columns) {
                     printf("Attempting to use column %d, max is %d\n",

@@ -383,7 +383,7 @@ main(int argc, char **argv)
                 }
                 validate_row_col("Setting attr bit",tag,idx,
                     table_rows,table_columns);
-                tag_attr_combination_table[tag][idx] |= (1 << bit);
+                tag_attr_combination_table[tag][idx] |= (((unsigned)1) << bit);
             } else {
                 if (curcol >= table_columns) {
                     char msg[200];
