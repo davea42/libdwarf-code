@@ -1,4 +1,6 @@
 2016-09-30 David Anderson
+    * Makefile.in: Ensure test executable removed by make clean.
+2016-09-30 David Anderson
     * dwarf_leb.c: Fix decode and encode leb to avoid
       runtime warning from left-shift signed value,
       we got into undefined behavior.
