@@ -28,6 +28,9 @@
 #include "config.h"
 #include "dwarf_incl.h"
 #include <stdio.h>
+#ifdef TESTING
+#include "pro_encode_nm.h"
+#endif
 
 /*  10 bytes of leb, 7 bits each part of the number, gives
     room for a 64bit number.
@@ -37,13 +40,15 @@
     be strange.
 */
 #define BYTESLEBMAX 10
+#define BITSPERBYTE 8
 
 
-/* Decode ULEB */
+/*  Decode ULEB
+    Best not to use this, use _dwarf_decode_u_leb128_chk instead. */
 Dwarf_Unsigned
 _dwarf_decode_u_leb128(Dwarf_Small * leb128, Dwarf_Word * leb128_length)
 {
-    unsigned char byte     = 0;
+    Dwarf_Unsigned byte     = 0;
     Dwarf_Word word_number = 0;
     Dwarf_Unsigned number  = 0;
     Dwarf_Sword shift      = 0;
@@ -93,8 +98,10 @@ _dwarf_decode_u_leb128(Dwarf_Small * leb128, Dwarf_Word * leb128_length)
     byte_length = 1;
     byte = *leb128;
     for (;;) {
-        number |= ((Dwarf_Unsigned) (byte & 0x7f)) << shift;
-
+        if (shift >= (sizeof(number)*BITSPERBYTE)) {
+            return DW_DLV_ERROR;
+        }
+        number |= (byte & 0x7f) << shift;
         if ((byte & 0x80) == 0) {
             if (leb128_length) {
                 *leb128_length = byte_length;
@@ -102,7 +109,6 @@ _dwarf_decode_u_leb128(Dwarf_Small * leb128, Dwarf_Word * leb128_length)
             return (number);
         }
         shift += 7;
-
         byte_length++;
         if (byte_length > BYTESLEBMAX) {
             /*  Erroneous input. What to do?
@@ -123,7 +129,7 @@ int
 _dwarf_decode_u_leb128_chk(Dwarf_Small * leb128, Dwarf_Word * leb128_length,
     Dwarf_Unsigned *outval,Dwarf_Byte_Ptr endptr)
 {
-    unsigned char byte     = 0;
+    Dwarf_Unsigned byte     = 0;
     Dwarf_Word word_number = 0;
     Dwarf_Unsigned number  = 0;
     Dwarf_Sword shift      = 0;
@@ -167,8 +173,10 @@ _dwarf_decode_u_leb128_chk(Dwarf_Small * leb128, Dwarf_Word * leb128_length,
     byte_length = 1;
     byte = *leb128;
     for (;;) {
-        number |= ((Dwarf_Unsigned) (byte & 0x7f)) << shift;
-
+        if (shift >= (sizeof(number)*BITSPERBYTE)) {
+            return DW_DLV_ERROR;
+        }
+        number |= (byte & 0x7f) << shift;
         if ((byte & 0x80) == 0) {
             if (leb128_length) {
                 *leb128_length = byte_length;
@@ -177,7 +185,6 @@ _dwarf_decode_u_leb128_chk(Dwarf_Small * leb128, Dwarf_Word * leb128_length,
             return DW_DLV_OK;
         }
         shift += 7;
-
         byte_length++;
         if (byte_length > BYTESLEBMAX) {
             /*  Erroneous input.  */
@@ -198,14 +205,15 @@ _dwarf_decode_u_leb128_chk(Dwarf_Small * leb128, Dwarf_Word * leb128_length,
 
 #define BITSINBYTE 8
 
-/*  decode SLEB */
+/*  Decode SLEB.
+    Best not to use this, use _dwarf_decode_s_leb128_chk instead. */
 Dwarf_Signed
 _dwarf_decode_s_leb128(Dwarf_Small * leb128, Dwarf_Word * leb128_length)
 {
+    Dwarf_Unsigned byte   = *leb128;
     Dwarf_Signed number  = 0;
     Dwarf_Bool sign      = 0;
     Dwarf_Word shift     = 0;
-    unsigned char byte   = *leb128;
     /*  The byte_length value will be a small non-negative integer. */
     unsigned byte_length = 1;
 
@@ -213,7 +221,10 @@ _dwarf_decode_s_leb128(Dwarf_Small * leb128, Dwarf_Word * leb128_length)
         turning the leb into a Dwarf_Signed. */
     for (;;) {
         sign = byte & 0x40;
-        number |= ((Dwarf_Signed) ((byte & 0x7f))) << shift;
+        if (shift >= (sizeof(number)*BITSPERBYTE)) {
+            return DW_DLV_ERROR;
+        }
+        number |= (byte & 0x7f) << shift;
         shift += 7;
 
         if ((byte & 0x80) == 0) {
@@ -234,7 +245,7 @@ _dwarf_decode_s_leb128(Dwarf_Small * leb128, Dwarf_Word * leb128_length)
     }
 
     if ((shift < sizeof(Dwarf_Signed) * BITSINBYTE) && sign) {
-        number |= -((Dwarf_Signed) 1 << shift);
+        number |= -(Dwarf_Signed)(((Dwarf_Unsigned)1) << shift);
     }
 
     if (leb128_length) {
@@ -247,10 +258,10 @@ int
 _dwarf_decode_s_leb128_chk(Dwarf_Small * leb128, Dwarf_Word * leb128_length,
     Dwarf_Signed *outval,Dwarf_Byte_Ptr endptr)
 {
+    Dwarf_Unsigned byte   = 0;
     Dwarf_Signed number  = 0;
     Dwarf_Bool sign      = 0;
     Dwarf_Word shift     = 0;
-    unsigned char byte   = 0;
     /*  The byte_length value will be a small non-negative integer. */
     unsigned byte_length = 1;
 
@@ -265,7 +276,10 @@ _dwarf_decode_s_leb128_chk(Dwarf_Small * leb128, Dwarf_Word * leb128_length,
     byte   = *leb128;
     for (;;) {
         sign = byte & 0x40;
-        number |= ((Dwarf_Signed) ((byte & 0x7f))) << shift;
+        if (shift >= (sizeof(number)*BITSPERBYTE)) {
+            return DW_DLV_ERROR;
+        }
+        number |= ((Dwarf_Unsigned) ((byte & 0x7f))) << shift;
         shift += 7;
 
         if ((byte & 0x80) == 0) {
@@ -287,7 +301,7 @@ _dwarf_decode_s_leb128_chk(Dwarf_Small * leb128, Dwarf_Word * leb128_length,
     }
 
     if ((shift < sizeof(Dwarf_Signed) * BITSINBYTE) && sign) {
-        number |= -((Dwarf_Signed) 1 << shift);
+        number |= -(Dwarf_Signed)(((Dwarf_Unsigned)1) << shift);
     }
 
     if (leb128_length) {
@@ -296,4 +310,270 @@ _dwarf_decode_s_leb128_chk(Dwarf_Small * leb128, Dwarf_Word * leb128_length,
     *outval = number;
     return DW_DLV_OK;
 }
+
+#ifdef TESTING
+
+static void
+printinteresting(void)
+{
+    Dwarf_Signed v;
+    return;
+}
+
+static Dwarf_Signed stest[] = {
+0,0xff,
+0x800000000000002f,
+0x800000000000003f,
+0x800000000000004f,
+0x8000000000000070,
+0x800000000000007f,
+0x8000000000000080,
+0x800000ffffffffff,
+0x80000000ffffffff,
+0x800000ffffffffff,
+0x8000ffffffffffff,
+0xffffffffffffffff,
+-1703944 /*18446744073707847672 as signed*/,
+562949951588368,
+-1,
+-127,
+-100000,
+-2000000000,
+-4000000000,
+-8000000000,
+-800000000000,
+};
+static Dwarf_Unsigned utest[] = {
+0,0xff,0x7f,0x80,
+0x800000000000002f,
+0x800000000000003f,
+0x800000000000004f,
+0x8000000000000070,
+0x800000000000007f,
+0x8000000000000080,
+0x800000ffffffffff,
+0x80000000ffffffff,
+0x800000ffffffffff,
+0x8000ffffffffffff,
+-1703944 /*18446744073707847672 as signed*/,
+562949951588368,
+0xffff,
+0xffffff,
+0xffffffff,
+0xffffffffff,
+0xffffffffffff,
+0xffffffffffffff,
+0xffffffffffffffff
+};
+
+
+static void
+dump_encoded(char *space,int len)
+{
+#if 0
+    int t;
+
+    printf("encode len %d: ",len);
+    for ( t = 0; t < len; ++t) {
+        printf("%02x",space[t] & 0xff);
+    }
+    printf("\n");
+#endif
+}
+
+
+#define BUFFERLEN 100
+
+
+static unsigned
+signedtest(unsigned len)
+{
+    unsigned errcnt = 0;
+    unsigned t = 0;
+    char bufferspace[BUFFERLEN];
+
+    for ( ; t < len; ++t) {
+        int res = 0;
+        int encodelen = 0;
+        Dwarf_Word decodelen = 0;
+        Dwarf_Signed decodeval = 0;
+
+        res = _dwarf_pro_encode_signed_leb128_nm(
+            stest[t],&encodelen,bufferspace,BUFFERLEN);
+        if (res != DW_DLV_OK) {
+            printf("FAIL signed encode index %u val 0x%llx\n",
+                t,stest[t]);
+            ++errcnt;
+        }
+        dump_encoded(bufferspace,encodelen);
+        res = _dwarf_decode_s_leb128_chk(
+            (Dwarf_Small *)bufferspace,
+            &decodelen,
+            &decodeval,
+            (Dwarf_Byte_Ptr)(&bufferspace[BUFFERLEN-1]));
+        if (res != DW_DLV_OK) {
+            printf("FAIL signed decode index %u val 0x%llx\n",
+                t,stest[t]);
+            ++errcnt;
+        }
+        if (stest[t] != decodeval) {
+            printf("FAIL signed decode val index %u val 0x%llx vs 0x%llx\n",
+                t,stest[t],decodeval);
+            ++errcnt;
+        }
+        if (encodelen != decodelen) {
+            printf("FAIL signed decodelen val index %u val 0x%llx\n",
+                t,stest[t]);
+            ++errcnt;
+        }
+    }
+    return errcnt;
+}
+
+static  unsigned
+unsignedtest(unsigned len)
+{
+    unsigned errcnt = 0;
+    unsigned t = 0;
+    char bufferspace[BUFFERLEN];
+
+    for ( ; t < len; ++t) {
+        int res = 0;
+        int encodelen = 0;
+        Dwarf_Word decodelen = 0;
+        Dwarf_Signed decodeval = 0;
+
+        res = _dwarf_pro_encode_leb128_nm(
+            utest[t],&encodelen,bufferspace,BUFFERLEN);
+        if (res != DW_DLV_OK) {
+            printf("FAIL signed encode index %u val 0x%llx",
+                t,utest[t]);
+            ++errcnt;
+        }
+        dump_encoded(bufferspace,encodelen);
+        res = _dwarf_decode_u_leb128_chk(
+            (Dwarf_Small *)bufferspace,
+            &decodelen,
+            &decodeval,
+            (Dwarf_Byte_Ptr)(&bufferspace[BUFFERLEN-1]));
+        if (res != DW_DLV_OK) {
+            printf("FAIL signed decode index %u val 0x%llx\n",
+                t,utest[t]);
+            ++errcnt;
+        }
+        if (utest[t] != decodeval) {
+            printf("FAIL signed decode val index %u val 0x%llx vs 0x%llx\n",
+                t,utest[t],decodeval);
+            ++errcnt;
+        }
+        if (encodelen != decodelen) {
+            printf("FAIL signed decodelen val index %u val 0x%llx\n",
+                t,utest[t]);
+            ++errcnt;
+        }
+    }
+    return errcnt;
+}
+static char v1[] = { 0x90,
+0x90,
+0x90,
+0x90,
+0x90,
+0x90,
+0x90,
+0x90,
+0x90,
+0x90,
+0x90,
+0x90,
+0x90 };
+
+static char v2[] = {
+0xf4,0xff,
+0xff,
+0xff,
+0x0f,
+0x4c,
+0x00,
+0x00,
+0x00};
+
+static unsigned
+specialtests(void)
+{
+    unsigned errcnt = 0;
+    unsigned vlen = 0;
+    unsigned i = 0;
+    Dwarf_Word decodelen = 0;
+    Dwarf_Signed decodeval = 0;
+    int res;
+
+    vlen = sizeof(v1)/sizeof(char);
+    res = _dwarf_decode_s_leb128_chk(
+        (Dwarf_Small *)v1,
+        &decodelen,
+        &decodeval,
+        (Dwarf_Byte_Ptr)(&v1[vlen]));
+    if (res != DW_DLV_ERROR) {
+        printf("FAIL unsigned decode special v1 \n");
+        ++errcnt;
+    }
+    res = _dwarf_decode_u_leb128_chk(
+        (Dwarf_Small *)v1,
+        &decodelen,
+        &decodeval,
+        (Dwarf_Byte_Ptr)(&v1[vlen]));
+    if (res != DW_DLV_ERROR) {
+        printf("FAIL unsigned decode special v1 \n");
+        ++errcnt;
+    }
+
+    vlen = sizeof(v2)/sizeof(char);
+    res = _dwarf_decode_s_leb128_chk(
+        (Dwarf_Small *)v2,
+        &decodelen,
+        &decodeval,
+        (Dwarf_Byte_Ptr)(&v2[vlen]));
+    if (res != DW_DLV_OK) {
+        printf("FAIL signed decode special v2 \n");
+        ++errcnt;
+    }
+    /*  If you just do (byte & 0x7f) << shift
+        and byte is (or is promoted to) a signed type
+        on the following decode you get the wrong value.
+        Undefined effect in C leads to error.  */
+    res = _dwarf_decode_u_leb128_chk(
+        (Dwarf_Small *)v2,
+        &decodelen,
+        &decodeval,
+        (Dwarf_Byte_Ptr)(&v2[vlen]));
+    if (res != DW_DLV_OK) {
+        printf("FAIL unsigned decode special v2 \n");
+        ++errcnt;
+    }
+    return errcnt;
+}
+
+int main(void)
+{
+    unsigned slen = sizeof(stest)/sizeof(Dwarf_Signed);
+    unsigned ulen = sizeof(utest)/sizeof(Dwarf_Unsigned);
+    unsigned t = 0;
+    int errs = 0;
+
+    printinteresting();
+    errs += signedtest(slen);
+
+    errs += unsignedtest(ulen);
+
+    errs += specialtests();
+
+    if (errs) {
+        printf("FAIL. leb encode/decode errors\n");
+        return 1;
+    }
+    printf("PASS leb tests\n");
+    return 0;
+}
+#endif /* TESTING */
 

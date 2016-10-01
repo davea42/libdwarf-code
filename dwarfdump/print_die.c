@@ -5406,7 +5406,7 @@ legal_tag_attr_combination(Dwarf_Half tag, Dwarf_Half attr)
     if (tag < ATTR_TREE_ROW_COUNT) {
         int index = attr / BITS_PER_WORD;
         if (index < ATTR_TREE_COLUMN_COUNT) {
-            unsigned bitflag = 1 << (attr % BITS_PER_WORD);
+            unsigned bitflag = ((unsigned)1) << (attr % BITS_PER_WORD);
             int known = ((tag_attr_combination_table[tag][index]
                 & bitflag) > 0 ? TRUE : FALSE);
             if (known) {
@@ -5463,7 +5463,7 @@ legal_tag_tree_combination(Dwarf_Half tag_parent, Dwarf_Half tag_child)
     if (tag_parent < TAG_TREE_ROW_COUNT) {
         int index = tag_child / BITS_PER_WORD;
         if (index < TAG_TREE_COLUMN_COUNT) {
-            unsigned bitflag = 1 << (tag_child % BITS_PER_WORD);
+            unsigned bitflag = ((unsigned)1) << (tag_child % BITS_PER_WORD);
             int known = ((tag_tree_combination_table[tag_parent]
                 [index] & bitflag) > 0 ? TRUE : FALSE);
             if (known) {

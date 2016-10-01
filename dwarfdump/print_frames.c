@@ -82,10 +82,8 @@ safe_strcpy(char *out, long outlen, const char *in, long inlen)
     }
 }
 
-
-
-
 #define MAXLEBLEN 10
+#define BITSPERBYTE 8
 /*
     decode ULEB
 */
@@ -95,7 +93,7 @@ local_dwarf_decode_u_leb128_chk(unsigned char *leb128,
     Dwarf_Unsigned *value_out,
     Dwarf_Small *data_end)
 {
-    unsigned char byte = 0;
+    Dwarf_Unsigned byte = 0;
     Dwarf_Unsigned number = 0;
     unsigned int shift = 0;
     unsigned int byte_length = 1;
@@ -105,6 +103,9 @@ local_dwarf_decode_u_leb128_chk(unsigned char *leb128,
         return DW_DLV_ERROR;
     }
     for (;;) {
+        if (shift >= (sizeof(number)*BITSPERBYTE)) {
+            return DW_DLV_ERROR;
+        }
         number |= (byte & 0x7f) << shift;
         shift += 7;
 
@@ -138,8 +139,8 @@ local_dwarf_decode_s_leb128_chk(unsigned char *leb128,
     Dwarf_Signed number = 0;
     Dwarf_Bool sign = 0;
     unsigned shift = 0;
-    unsigned char byte = 0;
-    Dwarf_Signed byte_length = 1;
+    Dwarf_Unsigned byte = 0;
+    unsigned byte_length = 1;
 
     /*  byte_length being the number of bytes of data absorbed so far in
         turning the leb into a Dwarf_Signed. */
@@ -150,7 +151,10 @@ local_dwarf_decode_s_leb128_chk(unsigned char *leb128,
     byte = *leb128;
     for (;;) {
         sign = byte & 0x40;
-        number |= ((Dwarf_Signed) ((byte & 0x7f))) << shift;
+        if (shift >= (sizeof(number)*BITSPERBYTE)) {
+            return DW_DLV_ERROR;
+        }
+        number |= (byte & 0x7f) << shift;
         shift += 7;
 
         if ((byte & 0x80) == 0) {
@@ -168,7 +172,7 @@ local_dwarf_decode_s_leb128_chk(unsigned char *leb128,
     }
 
     if ((shift < sizeof(Dwarf_Signed) * BITSINBYTE) && sign) {
-        number |= -((Dwarf_Signed) 1 << shift);
+        number |= -(Dwarf_Signed)((Dwarf_Unsigned) 1 << shift);
     }
 
     if (leb128_length != NULL)

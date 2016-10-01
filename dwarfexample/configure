@@ -4236,7 +4236,7 @@ fi
 $as_echo_n "checking build -fsanitize-address... " >&6; }
 # Check whether --enable-sanitize was given.
 if test "${enable_sanitize+set}" = set; then :
-  enableval=$enable_sanitize;  dwfsanitize="-fsanitize=address"
+  enableval=$enable_sanitize;  dwfsanitize="-fsanitize=address -fsanitize=leak -fsanitize=undefined"
 
           { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
 $as_echo "yes" >&6; }

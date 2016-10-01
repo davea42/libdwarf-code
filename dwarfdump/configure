@@ -3688,7 +3688,7 @@ $as_echo_n "checking compile with -Wall... " >&6; }
 if test "${enable_wall+set}" = set; then :
   enableval=$enable_wall;  { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
 $as_echo "yes" >&6; }
-          dwfwall="-Wall -O0 -Wpointer-arith -Wmissing-declarations -Wmissing-prototypes -Wdeclaration-after-statement -Wextra -Wcomment -Wformat -Wpedantic -Wuninitialized -Wno-long-long -Wshadow -fsanitize=address"
+          dwfwall="-Wall -O0 -Wpointer-arith -Wmissing-declarations -Wmissing-prototypes -Wdeclaration-after-statement -Wextra -Wcomment -Wformat -Wpedantic -Wuninitialized -Wno-long-long -Wshadow"
 
 else
 
@@ -3702,7 +3702,7 @@ fi
 $as_echo_n "checking build -fsanitize-address... " >&6; }
 # Check whether --enable-sanitize was given.
 if test "${enable_sanitize+set}" = set; then :
-  enableval=$enable_sanitize;  dwfsanitize="-fsanitize=address"
+  enableval=$enable_sanitize;  dwfsanitize="-fsanitize=address -fsanitize=leak -fsanitize=undefined"
 
           { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
 $as_echo "yes" >&6; }

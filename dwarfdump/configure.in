@@ -46,22 +46,21 @@ AS_IF([ test "x$enable_nonshared" = "xno"], [
 
 dnl This adds compiler options for gcc to get as complete
 dnl diagnostics as seems to make sense (subject to change...).
-dnl -fsanitize=address does run-time address checking.
 AC_MSG_CHECKING(compile with -Wall)
 AC_SUBST(dwfwall,[])
 AC_ARG_ENABLE(wall,AC_HELP_STRING([--enable-wall],
         [Add -Wall (default is none)]),
         [ AC_MSG_RESULT(yes)
-          AC_SUBST(dwfwall,["-Wall -O0 -Wpointer-arith -Wmissing-declarations -Wmissing-prototypes -Wdeclaration-after-statement -Wextra -Wcomment -Wformat -Wpedantic -Wuninitialized -Wno-long-long -Wshadow -fsanitize=address"]) ],
+          AC_SUBST(dwfwall,["-Wall -O0 -Wpointer-arith -Wmissing-declarations -Wmissing-prototypes -Wdeclaration-after-statement -Wextra -Wcomment -Wformat -Wpedantic -Wuninitialized -Wno-long-long -Wshadow"]) ],
         [ AC_SUBST(dwfwall,[])
           AC_MSG_RESULT(no) ])
 
-dnl This adds compiler option -fsanitize=address (gcc compiler run-time checks))
+dnl This adds compiler option -fsanitize=address etc (gcc compiler run-time checks))
 AC_SUBST(dwfsanitize,[])
 AC_MSG_CHECKING(build -fsanitize-address) 
 AC_ARG_ENABLE(sanitize,AC_HELP_STRING([--enable-sanitize],
        [Add -fsanitize (default is not to)]),
-       [ AC_SUBST(dwfsanitize,["-fsanitize=address"])
+       [ AC_SUBST(dwfsanitize,["-fsanitize=address -fsanitize=leak -fsanitize=undefined"])
           AC_MSG_RESULT(yes) ],
        [ AC_SUBST(dwfsanitize,[]) 
           AC_MSG_RESULT(no)

@@ -1,4 +1,13 @@
 2016-09-30  David Anderson
+    * configure.in: Add additional -fsanitize tests to
+      --enable-sanitize option.
+    * configure: Regenerated.
+    * print_die.c: Ensure << applied to unsigned
+      to avoid undefined operation. We were getting
+      officially undefined behavior.
+    * tag_attr_ext.list: Removed trailing whitespace from 
+      two lines.
+2016-09-30  David Anderson
     * makename.c: The unused static function value_hashfunc()
       has been removed.
     * tag_attr.c, tag_tree.c: Changed (1<<bit) to

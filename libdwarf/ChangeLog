@@ -1,3 +1,11 @@
+2016-09-30 David Anderson
+    * dwarf_leb.c: Fix decode and encode leb to avoid
+      runtime warning from left-shift signed value,
+      we got into undefined behavior.
+      Add test code used by 'make tests'.
+    * Makefile.in: Add leb testing to 'make tests'
+    * configure.in: Add additional -fsanitize tests.
+    * configure: Regenerated.
 2016-09-28 David Anderson
     * dwarf_opaque.h: New interface for
       _dwarf_extract_string_offset_via_str_offsets().

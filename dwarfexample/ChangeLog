@@ -1,3 +1,7 @@
+2016-09-30  David Anderson
+     * configure.in: Add additional -fsanitize tests to
+       --enable-sanitize
+     * configure: Regenerated.
 2016-09-21  David Anderson
      * Makefile.in: Added dwfsanitize when
        -fsanitize=address desired.

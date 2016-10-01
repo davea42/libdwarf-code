@@ -228,6 +228,8 @@ distclean:	clean
 	rm -f ./dwarftied
 
 tests:
+	$(CC) -DTESTING $(CFLAGS) dwarf_leb.c pro_encode_nm.c -o dwarfleb
+	./dwarfleb
 	$(CC) -DTESTING $(CFLAGS) dwarf_tied.c dwarf_tsearchhash.o -o dwarftied
 	./dwarftied
 

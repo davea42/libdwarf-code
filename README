@@ -57,4 +57,11 @@ where that could be
     ./BLDLIBDWARF 20140131
 as an example.
 
-David Anderson.  Updated December 31, 2015
+Sanity checking:
+Recent gcc has some checks that can be done at runtime.
+  -fsanitize=address
+  -fsanitize=leak
+  -fsanitize=undefined
+which are turned on here by --enable-sanitize at build time.
+
+David Anderson.  Updated September 30,2016.
