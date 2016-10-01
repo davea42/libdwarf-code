@@ -51,7 +51,7 @@ _dwarf_decode_u_leb128(Dwarf_Small * leb128, Dwarf_Word * leb128_length)
     Dwarf_Unsigned byte     = 0;
     Dwarf_Word word_number = 0;
     Dwarf_Unsigned number  = 0;
-    Dwarf_Sword shift      = 0;
+    unsigned shift      = 0;
     /*  The byte_length value will be a small non-negative integer. */
     unsigned byte_length   = 0;
 
@@ -132,7 +132,7 @@ _dwarf_decode_u_leb128_chk(Dwarf_Small * leb128, Dwarf_Word * leb128_length,
     Dwarf_Unsigned byte     = 0;
     Dwarf_Word word_number = 0;
     Dwarf_Unsigned number  = 0;
-    Dwarf_Sword shift      = 0;
+    unsigned shift      = 0;
     /*  The byte_length value will be a small non-negative integer. */
     unsigned byte_length   = 0;
 
