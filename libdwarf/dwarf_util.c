@@ -602,6 +602,11 @@ _dwarf_get_abbrev_for_code(Dwarf_CU_Context cu_context, Dwarf_Unsigned code,
         DECODE_LEB128_UWORD_CK(abbrev_ptr, abbrev_tag,
             dbg,error,end_abbrev_ptr);
 
+        if (abbrev_ptr >= end_abbrev_ptr) {
+            _dwarf_error(dbg, error, DW_DLE_ABBREV_OFF_END);
+            return DW_DLV_ERROR;
+        }
+
         inner_list_entry = (Dwarf_Abbrev_List)
             _dwarf_get_alloc(cu_context->cc_dbg, DW_DLA_ABBREV_LIST, 1);
         if (inner_list_entry == NULL) {

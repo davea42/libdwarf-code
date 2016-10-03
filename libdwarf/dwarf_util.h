@@ -68,14 +68,6 @@
         leblen = lu_leblen;                          \
     } while (0)
 
-#define DECODE_LEB128_UWORD(ptr, value)               \
-    do {                                             \
-        Dwarf_Word uleblen;                           \
-        value = _dwarf_decode_u_leb128(ptr,&uleblen); \
-        ptr += uleblen;                              \
-    } while (0)
-
-
 /*
     Decodes signed leb128 encoded numbers.
     Make sure ptr is a pointer to a 1-byte type.
@@ -84,12 +76,6 @@
     not work correctly if Dwarf_Word was 64 bits.
 
 */
-#define DECODE_LEB128_SWORD(ptr, value)               \
-    do {                                              \
-        Dwarf_Word sleblen = 0;                       \
-        value = _dwarf_decode_s_leb128(ptr,&sleblen); \
-        ptr += sleblen;                               \
-    } while (0)
 #define DECODE_LEB128_SWORD_CK(ptr, value,dbg,errptr,endptr) \
     do {                                              \
         Dwarf_Word uleblen = 0;                       \
@@ -127,19 +113,7 @@
 
     These seem bogus as they assume 4 bytes get a 4 byte
     word. Wrong. FIXME
-*/
-#define SKIP_LEB128_WORD(ptr)                     \
-    do {                                          \
-        if ((*(ptr++) & 0x80) != 0) {             \
-            if ((*(ptr++) & 0x80) != 0) {         \
-                if ((*(ptr++) & 0x80) != 0) {     \
-                    ptr++;                        \
-                }                                 \
-            }                                     \
-        }                                         \
-    } while (0)
 
-/*
     'return' only in case of error
     else falls through.
 */

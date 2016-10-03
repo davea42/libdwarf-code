@@ -145,8 +145,9 @@ dwarf_loc.o: $(srcdir)/dwarf_loc.c  $(srcdir)/dwarf_loc2.c  $(srcdir)/dwarf_loc.
 	$(CC) $(CFLAGS) -c $(srcdir)/dwarf_loc.c
 
 errmsg_check: $(srcdir)/dwarf_errmsg_list.c libdwarf.h
+	grep DW_DLE libdwarf.h >errmsg_check_list
 	$(HOSTCC) $(HOSTCFLAGS) $(LDFLAGS)  -DTESTING $(srcdir)/dwarf_errmsg_list.c -o errmsg_check
-	./errmsg_check
+	./errmsg_check -f errmsg_check_list
 
 # Gennames builds and runs native, even for a cross-build of libdwarf.
 gennames: $(srcdir)/gennames.c $(srcdir)/dwarf.h dwgetopt.o
@@ -217,6 +218,7 @@ clean:
 	rm -f dwarf_names_enum.h dwarf_names_new.h dwarf_names.c dwarf_names.h
 	rm -f ./dwarftied
 	rm -f ./errmsg_check
+	rm -f ./errmsg_check_list
 
 install: all
 	echo "No install provided, see comments in the README"

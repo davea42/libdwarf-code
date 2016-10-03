@@ -1000,7 +1000,7 @@ struct Dwarf_Obj_Access_Interface_s {
 #define DW_DLE_CIE_OFFS_ALLOC                   75
 #define DW_DLE_WRONG_ADDRESS                    76
 #define DW_DLE_EXTRA_NEIGHBORS                  77
-#define    DW_DLE_WRONG_TAG                     78
+#define DW_DLE_WRONG_TAG                        78
 #define DW_DLE_DIE_ALLOC                        79
 #define DW_DLE_PARENT_EXISTS                    80
 #define DW_DLE_DBG_NULL                         81
@@ -1195,8 +1195,7 @@ struct Dwarf_Obj_Access_Interface_s {
 #define DW_DLE_XU_NAME_COL_ERROR               270
 #define DW_DLE_XU_HASH_ROW_ERROR               271
 #define DW_DLE_XU_HASH_INDEX_ERROR             272
-
-/* DW_DLE_FAILSAFE_ERRVAL is an aid when out of memory. */
+/* ..._FAILSAFE_ERRVAL is an aid when out of memory. */
 #define DW_DLE_FAILSAFE_ERRVAL                 273
 #define DW_DLE_ARANGE_ERROR                    274
 #define DW_DLE_PUBNAMES_ERROR                  275
@@ -1283,10 +1282,11 @@ struct Dwarf_Obj_Access_Interface_s {
 #define DW_DLE_LOCLIST_OFFSET_BAD              356
 #define DW_DLE_LINE_TABLE_BAD                  357
 #define DW_DLE_DEBUG_LOClISTS_DUPLICATE        358
-#define DW_DLE_DEBUG_RNGLISTS_DUPLICATE        369
+#define DW_DLE_DEBUG_RNGLISTS_DUPLICATE        359
+#define DW_DLE_ABBREV_OFF_END                  360
 
-    /* DW_DLE_LAST MUST EQUAL LAST ERROR NUMBER */
-#define DW_DLE_LAST        359
+    /* LAST MUST EQUAL LAST ERROR NUMBER */
+#define DW_DLE_LAST        360
 #define DW_DLE_LO_USER     0x10000
 
     /*  Taken as meaning 'undefined value', this is not

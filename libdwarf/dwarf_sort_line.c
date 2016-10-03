@@ -375,7 +375,8 @@ _dwarf_update_line_sec(Dwarf_Small * line_ptr,
 
     /* Start of statement program.  */
     while (line_ptr < line_ptr_end) {
-        int type;
+        int type = 0;
+        Dwarf_Error error = 0;
         Dwarf_Small *stmt_prog_entry_start = line_ptr;
 
         opcode = *(Dwarf_Small *) line_ptr;
@@ -397,7 +398,7 @@ _dwarf_update_line_sec(Dwarf_Small * line_ptr,
                 /* utmp2 set but not used here */
                 Dwarf_Unsigned utmp2;
 
-                DECODE_LEB128_UWORD(line_ptr, utmp2);
+                DECODE_LEB128_UWORD_CK(line_ptr, utmp2,dbg,error,line_ptr_end);
             }
 
         } else if (type == LOP_SPECIAL) {
@@ -419,7 +420,7 @@ _dwarf_update_line_sec(Dwarf_Small * line_ptr,
             case DW_LNS_advance_pc:{
                 Dwarf_Unsigned utmp2;
 
-                DECODE_LEB128_UWORD(line_ptr, utmp2);
+                DECODE_LEB128_UWORD_CK(line_ptr, utmp2,dbg,error,line_ptr_end);
                 leb128_num = (Dwarf_Word) utmp2;
                 address = address +
                     prefix.pf_minimum_instruction_length * leb128_num;
@@ -429,7 +430,7 @@ _dwarf_update_line_sec(Dwarf_Small * line_ptr,
             case DW_LNS_advance_line:{
                 Dwarf_Signed stmp;
 
-                DECODE_LEB128_SWORD(line_ptr, stmp);
+                DECODE_LEB128_SWORD_CK(line_ptr, stmp,dbg,error,line_ptr_end);
                 advance_line = (Dwarf_Sword) stmp;
                 line = line + advance_line;
                 break;
@@ -439,7 +440,7 @@ _dwarf_update_line_sec(Dwarf_Small * line_ptr,
                 /* utmp2 set but not used here. */
                 Dwarf_Unsigned utmp2;
 
-                DECODE_LEB128_UWORD(line_ptr, utmp2);
+                DECODE_LEB128_UWORD_CK(line_ptr, utmp2,dbg,error,line_ptr_end);
                 /* file = (Dwarf_Word)utmp2; */
                 break;
                 }
@@ -448,7 +449,7 @@ _dwarf_update_line_sec(Dwarf_Small * line_ptr,
                 /* utmp2 set but not used here. */
                 Dwarf_Unsigned utmp2;
 
-                DECODE_LEB128_UWORD(line_ptr, utmp2);
+                DECODE_LEB128_UWORD_CK(line_ptr, utmp2,dbg,error,line_ptr_end);
                 /* column = (Dwarf_Word)utmp2; */
                 break;
                 }
@@ -496,7 +497,7 @@ _dwarf_update_line_sec(Dwarf_Small * line_ptr,
             case DW_LNS_set_isa:{
                 Dwarf_Unsigned utmp2;
 
-                DECODE_LEB128_UWORD(line_ptr, utmp2);
+                DECODE_LEB128_UWORD_CK(line_ptr, utmp2,dbg,error,line_ptr_end);
                 isa = utmp2;
                 if (isa != utmp2) {
                     /*  The value of the isa did not fit in our
@@ -513,7 +514,7 @@ _dwarf_update_line_sec(Dwarf_Small * line_ptr,
         } else if (type == LOP_EXTENDED) {
             Dwarf_Unsigned utmp3 = 0;
 
-            DECODE_LEB128_UWORD(line_ptr, utmp3);
+            DECODE_LEB128_UWORD_CK(line_ptr, utmp3,dbg,error,line_ptr_end);
             instr_length = (Dwarf_Word) utmp3;
             ext_opcode = *(Dwarf_Small *) line_ptr;
             line_ptr++;

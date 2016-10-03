@@ -1,3 +1,17 @@
+2016-10-03 David Anderson
+    * Makefile.in: Now run tests at build time to ensure DW_DLE macros correct.
+    * dwarf_errmsg_list.c: Add new error code and add test code to verify
+      DW_DLE_ macros specified correctly.
+    * dwarf_sort_line.c: While this file is not used, for consistency
+      it uses the checking macros so deleting the non-checking ones
+      would not look odd.
+    * dwarf_util.c: Add a check for running off end of abbreviation data
+      at a spot that was missed till now.
+    * dwarf_util.h: Delete unused non-checking DECODE_LEB128_UWORD and
+      DECODE_LEB128_SWORD and SKIP_LEB128_WORD macros.
+    * libdwarf.h.in: Add DW_DLE_ABBREV_OFF_END and correct
+      the numbering (again). Now critical parts 
+      are checked at build time.
 2016-09-30 David Anderson
     * dwarf_leb.c: One comparison was accidentally
       signed vs unsigned. Now both unsigned.
