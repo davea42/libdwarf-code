@@ -599,11 +599,7 @@ _dwarf_get_abbrev_for_code(Dwarf_CU_Context cu_context, Dwarf_Unsigned code,
         is supposed to end with a zero byte. Not ended by end
         of data block.  But we are allowing what is possibly a bit
         more flexible end policy here. */
-#if 0
     if (abbrev_ptr >= end_abbrev_ptr) {
-#else /* dadebug  USE ABOVE */
-    if (abbrev_ptr > end_abbrev_ptr) {
-#endif
         return DW_DLV_NO_ENTRY;
     }
     /*  End of abbrev's for this cu, since abbrev code is 0. */

@@ -1,4 +1,7 @@
 2016-10-04 David Anderson
+    * dwarf_util.c(_dwarf_check_string_valid):
+      removed accidental test code.
+2016-10-04 David Anderson
     * dwarf_leb.c: The 'make tests' test code had some
       warnings, which are now fixed. 
     * libdwarf.h.in: Adding error codes.
