@@ -70,7 +70,8 @@ dwarf_get_str(Dwarf_Debug dbg,
     begin = (char *)secptr + offset;
     end =   (char *)secptr + dbg->de_debug_str.dss_size;
 
-    res = _dwarf_check_string_valid(dbg,secptr,begin,end,error);
+    res = _dwarf_check_string_valid(dbg,secptr,begin,end,
+        DW_DLE_DEBUG_STR_OFFSET_BAD,error);
     if (res != DW_DLV_OK) {
         return res;
     }

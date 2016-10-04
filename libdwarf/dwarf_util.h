@@ -481,7 +481,7 @@ int _dwarf_get_abbrev_for_code(Dwarf_CU_Context cu_context,
 ** Presumption is the 'endptr' pts to end of some dwarf section data.
 */
 int _dwarf_check_string_valid(Dwarf_Debug dbg,void *areaptr,
-    void *startptr, void *endptr, Dwarf_Error *error);
+    void *startptr, void *endptr, int suggested_error, Dwarf_Error *error);
 
 int _dwarf_length_of_cu_header(Dwarf_Debug dbg, Dwarf_Unsigned offset,
     Dwarf_Bool is_info,

@@ -1,3 +1,20 @@
+2016-10-04 David Anderson
+    * dwarf_leb.c: The 'make tests' test code had some
+      warnings, which are now fixed. 
+    * libdwarf.h.in: Adding error codes.
+    * dwarf_util.c(_dwarf_check_string_valid): Uses passed-in error
+      code in case pointer out of bounds.
+      _dwarf_get_size_of_val now calls _dwarf_check_string_valid()
+      on a DW_FORM_string.
+    * dwarf_util.h: _dwarf_check_string_valid() interface changed.
+    * dwarf_errmsg_list.c: Adding error codes.
+    * dwarf_form.c, dwarf_frame2.c, dwarf_global.c,
+      dwarf_line.c, dwarf_line_table_reader_common.c,
+      dwarf_macro.c, dwarf_macro5.c,  dwarf_string.c:
+      Using the new _dwarf_check_string_valid interface and
+      new error codes.
+    * dwarf_elf_access.c: Added commentary about a libelf call
+      and possible outcomes.
 2016-10-03 David Anderson
     * Makefile.in: Now run tests at build time to ensure DW_DLE macros correct.
     * dwarf_errmsg_list.c: Add new error code and add test code to verify

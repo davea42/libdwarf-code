@@ -263,7 +263,17 @@ _dwarf_get_size_of_val(Dwarf_Debug dbg,
         *size_out = 8;
         return DW_DLV_OK;
 
-    case DW_FORM_string:
+    case DW_FORM_string: {
+        int res = 0;
+        res = _dwarf_check_string_valid(dbg,val_ptr,
+            val_ptr,
+            section_end_ptr,
+            DW_DLE_FORM_STRING_BAD_STRING,
+            error);
+        if ( res != DW_DLV_OK) {
+            return res;
+        }
+        }
         *size_out = strlen((char *) val_ptr) + 1;
         return DW_DLV_OK;
 
@@ -582,8 +592,18 @@ _dwarf_get_abbrev_for_code(Dwarf_CU_Context cu_context, Dwarf_Unsigned code,
     }
 
     /*  End of abbrev's as we are past the end entirely.
-        This can happen. */
+        This can happen,though it seems wrong.
+        Or we are at the end of the data block,
+        which we also take as
+        meaning done with abbrevs for this CU. An abbreviations table
+        is supposed to end with a zero byte. Not ended by end
+        of data block.  But we are allowing what is possibly a bit
+        more flexible end policy here. */
+#if 0
+    if (abbrev_ptr >= end_abbrev_ptr) {
+#else /* dadebug  USE ABOVE */
     if (abbrev_ptr > end_abbrev_ptr) {
+#endif
         return DW_DLV_NO_ENTRY;
     }
     /*  End of abbrev's for this cu, since abbrev code is 0. */
@@ -649,9 +669,14 @@ _dwarf_get_abbrev_for_code(Dwarf_CU_Context cu_context, Dwarf_Unsigned code,
             byte pair at end of list. So decrement. */
         inner_list_entry->abl_count = atcount-1;
 
-        /*  We may have fallen off the end of content,  that is not
-            a botch in the section, as there is no rule that the last
-            abbrev need have abbrev_code of 0. */
+        /*  The abbreviations table ends with an entry with a single
+            byte of zero for the abbreviation code.
+            Padding bytes following that zero are allowed, but
+            here we simply stop looking past that zero abbrev.
+
+            We also stop looking if the block/section ends,
+            though the DWARF2 and later standards do not specifically
+            allow section/block end to terminate an abbreviations list. */
 
     } while ((abbrev_ptr < end_abbrev_ptr) &&
         *abbrev_ptr != 0 && abbrev_code != code);
@@ -677,6 +702,7 @@ _dwarf_get_abbrev_for_code(Dwarf_CU_Context cu_context, Dwarf_Unsigned code,
 int
 _dwarf_check_string_valid(Dwarf_Debug dbg,void *areaptr,
     void *strptr, void *areaendptr,
+    int suggested_error,
     Dwarf_Error*error)
 {
 
@@ -684,11 +710,11 @@ _dwarf_check_string_valid(Dwarf_Debug dbg,void *areaptr,
     Dwarf_Small *p = strptr;
     Dwarf_Small *end = areaendptr;
     if (p < start) {
-        _dwarf_error(dbg,error,DW_DLE_DEBUG_STR_OFFSET_BAD);
+        _dwarf_error(dbg,error,suggested_error);
         return DW_DLV_ERROR;
     }
     if (p >= end) {
-        _dwarf_error(dbg,error,DW_DLE_DEBUG_STR_OFFSET_BAD);
+        _dwarf_error(dbg,error,suggested_error);
         return DW_DLV_ERROR;
     }
     if (dbg->de_assume_string_in_bounds) {

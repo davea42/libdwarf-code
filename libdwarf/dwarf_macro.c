@@ -1,7 +1,7 @@
 /*
 
   Copyright (C) 2000-2004 Silicon Graphics, Inc.  All Rights Reserved.
-  Portions Copyright (C) 2007-2012 David Anderson. All Rights Reserved.
+  Portions Copyright (C) 2007-2016 David Anderson. All Rights Reserved.
   Portions Copyright 2012 SN Systems Ltd. All rights reserved.
 
   This program is free software; you can redistribute it and/or modify it
@@ -278,7 +278,8 @@ dwarf_get_macro_details(Dwarf_Debug dbg,
                 return (DW_DLV_ERROR);
             }
             res = _dwarf_check_string_valid(dbg,
-                macro_base,pnext,macro_end,error);
+                macro_base,pnext,macro_end,
+                DW_DLE_MACINFO_STRING_BAD,error);
             if (res != DW_DLV_OK) {
                 return res;
             }
@@ -408,7 +409,8 @@ dwarf_get_macro_details(Dwarf_Debug dbg,
                 return (DW_DLV_ERROR);
             }
             res = _dwarf_check_string_valid(dbg,
-                macro_base,pnext,macro_end,error);
+                macro_base,pnext,macro_end,
+                DW_DLE_MACINFO_STRING_BAD,error);
             if (res != DW_DLV_OK) {
                 return res;
             }

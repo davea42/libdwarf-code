@@ -294,7 +294,8 @@ _dwarf_internal_get_pubnames_like_data(Dwarf_Debug dbg,
             global->gl_name = pubnames_like_ptr;
 
             res = _dwarf_check_string_valid(dbg,section_data_ptr,
-                pubnames_like_ptr,section_end_ptr,error);
+                pubnames_like_ptr,section_end_ptr,
+                DW_DLE_STRING_OFF_END_PUBNAMES_LIKE,error);
             if (res != DW_DLV_OK) {
                 return res;
             }

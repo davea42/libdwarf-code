@@ -491,7 +491,8 @@ dwarf_get_macro_defundef(Dwarf_Macro_Context macro_context,
             dbg, error,endptr);
         content = (const char *)mdata;
         res = _dwarf_check_string_valid(dbg,
-            startptr,mdata, endptr, error);
+            startptr,mdata, endptr, 
+            DW_DLE_MACRO_STRING_BAD,error);
         if(res != DW_DLV_OK) {
             return res;
         }

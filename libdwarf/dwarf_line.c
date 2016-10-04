@@ -1812,7 +1812,8 @@ _dwarf_decode_line_string_form(Dwarf_Debug dbg,
         *line_ptr += offset_size;
         strptr = secstart + offset;
         res = _dwarf_check_string_valid(dbg,
-            secstart,strptr,secend,error);
+            secstart,strptr,secend,
+            DW_DLE_LINE_STRP_OFFSET_BAD,error);
         if (res != DW_DLV_OK) {
             return res;
         }
@@ -1824,7 +1825,7 @@ _dwarf_decode_line_string_form(Dwarf_Debug dbg,
         Dwarf_Small *strptr = *line_ptr;
 
         res = _dwarf_check_string_valid(dbg,
-            strptr ,strptr,secend,error);
+            strptr ,strptr,secend,DW_DLE_LINE_STRING_BAD,error);
         if (res != DW_DLV_OK) {
             return res;
         }

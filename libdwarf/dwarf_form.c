@@ -1195,7 +1195,8 @@ _dwarf_extract_local_debug_str_string_given_offset(Dwarf_Debug dbg,
             _dwarf_error(dbg, error, errcode);
             return (DW_DLV_ERROR);
         }
-        res= _dwarf_check_string_valid(dbg,secbegin,strbegin, secend,error);
+        res= _dwarf_check_string_valid(dbg,secbegin,strbegin, secend,
+            errcode,error);
         if (res != DW_DLV_OK) {
             return res;
         }
@@ -1250,7 +1251,8 @@ dwarf_formstring(Dwarf_Attribute attr,
     case DW_FORM_string: {
         Dwarf_Small *begin = attr->ar_debug_ptr;
 
-        res= _dwarf_check_string_valid(dbg,secdataptr,begin, secend,error);
+        res= _dwarf_check_string_valid(dbg,secdataptr,begin, secend,
+           DW_DLE_FORM_STRING_BAD_STRING,error);
         if (res != DW_DLV_OK) {
             return res;
         }
@@ -1387,6 +1389,7 @@ _dwarf_get_string_from_tied(Dwarf_Debug dbg,
         return (DW_DLV_ERROR);
     }
     res= _dwarf_check_string_valid(tieddbg,secbegin,strbegin, secend,
+        DW_DLE_NO_TIED_STRING_AVAILABLE,
         &localerror);
     if (res == DW_DLV_ERROR) {
         Dwarf_Unsigned lerrno = dwarf_errno(localerror);

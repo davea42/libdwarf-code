@@ -1284,9 +1284,16 @@ struct Dwarf_Obj_Access_Interface_s {
 #define DW_DLE_DEBUG_LOClISTS_DUPLICATE        358
 #define DW_DLE_DEBUG_RNGLISTS_DUPLICATE        359
 #define DW_DLE_ABBREV_OFF_END                  360
+#define DW_DLE_FORM_STRING_BAD_STRING          361
+#define DW_DLE_AUGMENTATION_STRING_OFF_END     362
+#define DW_DLE_STRING_OFF_END_PUBNAMES_LIKE    363
+#define DW_DLE_LINE_STRING_BAD                 364
+#define DW_DLE_DEFINE_FILE_STRING_BAD          365
+#define DW_DLE_MACRO_STRING_BAD                366
+#define DW_DLE_MACINFO_STRING_BAD              367
 
     /* LAST MUST EQUAL LAST ERROR NUMBER */
-#define DW_DLE_LAST        360
+#define DW_DLE_LAST        367
 #define DW_DLE_LO_USER     0x10000
 
     /*  Taken as meaning 'undefined value', this is not

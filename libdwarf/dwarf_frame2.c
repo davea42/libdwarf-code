@@ -581,7 +581,8 @@ dwarf_create_cie_from_after_start(Dwarf_Debug dbg,
     augmentation = frame_ptr;
 
     res = _dwarf_check_string_valid(dbg,section_pointer,
-        frame_ptr,section_ptr_end,error);
+        frame_ptr,section_ptr_end,
+        DW_DLE_AUGMENTATION_STRING_OFF_END,error);
     if (res != DW_DLV_OK) {
         return res;
     }

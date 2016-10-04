@@ -1299,6 +1299,8 @@ dwarf_elf_object_access_load_section(void* obj_in,
 
         scn = elf_getscn(obj->elf, section_index);
         if (scn == NULL) {
+            /*  The section_index does not exist or
+                obj->elf is NULL. */
             *error = DW_DLE_MDE;
             return DW_DLV_ERROR;
         }
@@ -1311,6 +1313,12 @@ dwarf_elf_object_access_load_section(void* obj_in,
             buffer. */
         data = elf_getdata(scn, NULL);
         if (data == NULL) {
+            /*  Most likely means that the Elf section header
+                is damaged/corrupt and the data is  
+                impossible to read into
+                memory.   The size specified in the 
+                Elf section is too large to allocate memory
+                for so the data could not be loaded. */
             *error = DW_DLE_MDE;
             return DW_DLV_ERROR;
         }
