@@ -307,48 +307,6 @@ typedef Dwarf_Unsigned BIGGEST_UINT;
     does not seem necessary (none of the 64bit length seems
     appropriate unless it's  ident[EI_CLASS] == ELFCLASS64).
 */
-#if 0
-#define READ_AREA_LENGTH(r_dbg,w_target,r_targtype,                      \
-    rw_src_data_p,w_length_size,w_exten_size)                            \
-    do {                                                                 \
-        READ_UNALIGNED(r_dbg,w_target,r_targtype,                        \
-        rw_src_data_p, ORIGINAL_DWARF_OFFSET_SIZE);                      \
-        if (w_target == DISTINGUISHED_VALUE) {                           \
-            /* dwarf3 64bit extension */                                 \
-            w_length_size  = DISTINGUISHED_VALUE_OFFSET_SIZE;            \
-            rw_src_data_p += ORIGINAL_DWARF_OFFSET_SIZE;                 \
-            w_exten_size   = ORIGINAL_DWARF_OFFSET_SIZE;                 \
-            READ_UNALIGNED(r_dbg,w_target,r_targtype,                    \
-                rw_src_data_p, DISTINGUISHED_VALUE_OFFSET_SIZE);         \
-            rw_src_data_p += DISTINGUISHED_VALUE_OFFSET_SIZE;            \
-        } else {                                                         \
-            if (w_target == 0 && r_dbg->de_big_endian_object) {          \
-                /* Might be IRIX: We have to distinguish between   */    \
-                /* 32-bit DWARF format and IRIX 64-bit DWARF format. */  \
-                if (r_dbg->de_length_size == 8) {                        \
-                    /* IRIX 64 bit, big endian.  This test */            \
-                    /* is not a truly precise test, a precise test */    \
-                    /* would check if the target was IRIX.  */           \
-                    READ_UNALIGNED(r_dbg,w_target,r_targtype,            \
-                        rw_src_data_p, DISTINGUISHED_VALUE_OFFSET_SIZE); \
-                    w_length_size  = DISTINGUISHED_VALUE_OFFSET_SIZE;    \
-                    rw_src_data_p += DISTINGUISHED_VALUE_OFFSET_SIZE;    \
-                    w_exten_size = 0;                                    \
-                } else {                                                 \
-                    /* 32 bit, big endian */                             \
-                    w_length_size  = ORIGINAL_DWARF_OFFSET_SIZE;         \
-                    rw_src_data_p += w_length_size;                      \
-                    w_exten_size = 0;                                    \
-                }                                                        \
-            } else {                                                     \
-                /* Standard 32 bit dwarf2/dwarf3 */                      \
-                w_exten_size   = 0;                                      \
-                w_length_size  = ORIGINAL_DWARF_OFFSET_SIZE;             \
-                rw_src_data_p += w_length_size;                          \
-            }                                                            \
-        }                                                                \
-    } while (0)
-#endif /* 0 */
 /*  The w_target > r_sectionlen compare is done without adding in case
     the w_target value read is so large any addition would overflow.
     A basic value sanity check. */

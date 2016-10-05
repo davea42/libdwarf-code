@@ -205,7 +205,7 @@ _dwarf_loop_reading_debug_info_for_cu(
                 /* FAILED might be out of memory.*/
                 return DW_DLV_NO_ENTRY;
             }
-#if 0
+#if 0 /* FIXME: do this? Not? */
             /*  This could be a compiler error. But
                 let us not decide?  FIXME */
             if (!latestcontext->cc_addr_base_present) {

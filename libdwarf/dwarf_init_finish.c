@@ -237,7 +237,7 @@ add_debug_section_info(Dwarf_Debug dbg,
     return DW_DLV_ERROR;
 }
 
-#if 0
+#if 0 /* FOR DEBUGGING */
 static void
 dump_bytes(Dwarf_Small * start, long len)
 {
@@ -248,6 +248,17 @@ dump_bytes(Dwarf_Small * start, long len)
         printf(" byte %d, data %02x\n", (int) (cur - start), *cur);
     }
 
+}
+static int
+all_sig8_bits_zero(Dwarf_Sig8 *val)
+{
+    unsigned u = 0;
+    for(  ; u < sizeof(*val); ++u) {
+        if (val->signature[u] != 0) {
+            return FALSE;
+        }
+    }
+    return TRUE;
 }
 #endif
 
@@ -807,20 +818,6 @@ _dwarf_setup(Dwarf_Debug dbg, Dwarf_Error * error)
     }
     return DW_DLV_NO_ENTRY;
 }
-
-#if 0
-static int
-all_sig8_bits_zero(Dwarf_Sig8 *val)
-{
-    unsigned u = 0;
-    for(  ; u < sizeof(*val); ++u) {
-        if (val->signature[u] != 0) {
-            return FALSE;
-        }
-    }
-    return TRUE;
-}
-#endif /* if 0 */
 
 /*  There is one table per CU and one per TU, and each
     table refers to the associated other DWARF data

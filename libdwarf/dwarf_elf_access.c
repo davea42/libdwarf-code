@@ -1314,9 +1314,9 @@ dwarf_elf_object_access_load_section(void* obj_in,
         data = elf_getdata(scn, NULL);
         if (data == NULL) {
             /*  Most likely means that the Elf section header
-                is damaged/corrupt and the data is  
+                is damaged/corrupt and the data is
                 impossible to read into
-                memory.   The size specified in the 
+                memory.   The size specified in the
                 Elf section is too large to allocate memory
                 for so the data could not be loaded. */
             *error = DW_DLE_MDE;

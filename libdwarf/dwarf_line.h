@@ -390,23 +390,6 @@ int _dwarf_internal_srclines(Dwarf_Die die,
 
 #define MAX_LINE_OP_CODE  255
 
-
-# if 0
-/*  The following structs (Line_Table_File_Entry_s,Dwarf_Line_Context_s)
-    and functions allow refactoring common code into a single
-    reader routine.
-*/
-Not used once Prefix struct folded into line context struct.
-/* There can be zero of more of these needed for 1 line prologue. */
-struct Line_Table_File_Entry_s {
-    Dwarf_Small *lte_filename;
-    Dwarf_Unsigned lte_directory_index;
-    Dwarf_Unsigned lte_last_modification_time;
-    Dwarf_Unsigned lte_length_of_file;
-};
-#endif
-
-
 /* Operand counts per standard operand.
    The initial zero is for DW_LNS_copy.
    This is an economical way to verify we understand the table

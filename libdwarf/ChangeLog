@@ -1,4 +1,19 @@
 2016-10-04 David Anderson
+    * dwarf_elf_access.c: Remove trailing whitespace.
+    * dwarf_form.c: Fix an indent.
+    * dwarf_init_finish.c: Comment the #if 0 so it is clear
+      these are for debugging only.
+    * dwarf_leb.c: Remove trailing whitespace.
+    * dwarf_line.c: Remove unused #if 0/#endif code.
+    * dwarf_macro5.c: Remove some obsolete #if 0 code.
+      Comment the remaining #if 0 so it is clear
+      these are for debugging only.
+      Remove trailing whitespace.
+    * dwarf_util.h: Delete obsolete #if 0 macro.
+    * dwgetopt.c: Comment the #if 0 so it is clear
+      these are for debugging only.
+    * pro_frame.h: Delete never-used #if 0 macro.
+2016-10-04 David Anderson
     * dwarf_util.c(_dwarf_check_string_valid):
       removed accidental test code.
 2016-10-04 David Anderson

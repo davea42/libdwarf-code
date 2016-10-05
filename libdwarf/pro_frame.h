@@ -40,9 +40,6 @@ struct Dwarf_P_Frame_Pgm_s {
     Dwarf_Ubyte dfp_opcode; /* opcode - includes reg # */
     char *dfp_args;	 /* operands */
     int dfp_nbytes;	 /* number of bytes in args */
-#if 0
-    Dwarf_Unsigned dfp_sym_index; /* 0 unless reloc needed */
-#endif
     Dwarf_P_Frame_Pgm dfp_next;
 };
 

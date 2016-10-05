@@ -61,7 +61,7 @@ char *dwoptarg;      /* argument associated with option */
 #define BADARG  (int)':'
 #define EMSG    ""
 
-#if 0
+#if 0 /* FOR DEBUGGING ONLY */
 /*  Use for testing dwgetopt only.
     Not a standard function. */
 void
@@ -73,7 +73,7 @@ dwgetoptresetfortestingonly(void)
    dwoptreset = 0;
    dwoptarg   = 0;
 }
-#endif
+#endif /* FOR DEBUGGING ONLY */
 
 /*
     * getopt --

@@ -1252,7 +1252,7 @@ dwarf_formstring(Dwarf_Attribute attr,
         Dwarf_Small *begin = attr->ar_debug_ptr;
 
         res= _dwarf_check_string_valid(dbg,secdataptr,begin, secend,
-           DW_DLE_FORM_STRING_BAD_STRING,error);
+            DW_DLE_FORM_STRING_BAD_STRING,error);
         if (res != DW_DLV_OK) {
             return res;
         }

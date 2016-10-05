@@ -126,7 +126,7 @@ _dwarf_decode_u_leb128(Dwarf_Small * leb128, Dwarf_Word * leb128_length)
 
 /* Decode ULEB with checking */
 int
-_dwarf_decode_u_leb128_chk(Dwarf_Small * leb128, 
+_dwarf_decode_u_leb128_chk(Dwarf_Small * leb128,
     Dwarf_Word * leb128_length,
     Dwarf_Unsigned *outval,
     Dwarf_Byte_Ptr endptr)
@@ -368,7 +368,7 @@ static Dwarf_Unsigned utest[] = {
 };
 
 
-#if 0
+#if 0 /* FOR DEBUGGING */
 static void
 dump_encoded(char *space,int len)
 {
@@ -406,9 +406,6 @@ signedtest(unsigned len)
                 t,stest[t]);
             ++errcnt;
         }
-#if 0
-        dump_encoded(bufferspace,encodelen);
-#endif
         res = _dwarf_decode_s_leb128_chk(
             (Dwarf_Small *)bufferspace,
             &decodelen,
@@ -453,9 +450,6 @@ unsignedtest(unsigned len)
                 t,utest[t]);
             ++errcnt;
         }
-#if 0
-        dump_encoded(bufferspace,encodelen);
-#endif
         res = _dwarf_decode_u_leb128_chk(
             (Dwarf_Small *)bufferspace,
             &decodelen,

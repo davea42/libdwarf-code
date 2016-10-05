@@ -32,11 +32,6 @@
 #endif /* HAVE_STDLIB_H */
 #include "dwarf_macro5.h"
 
-# if 0
-#define LEFTPAREN '('
-#define RIGHTPAREN ')'
-#define SPACE ' '
-#endif
 #define TRUE 1
 #define FALSE 0
 
@@ -50,23 +45,6 @@ static const Dwarf_Small dwarf_udata_strp_form[]    = {DW_FORM_udata,DW_FORM_str
 static const Dwarf_Small dwarf_udata_strp_sup_form[] = {DW_FORM_udata,DW_FORM_strp_sup};
 static const Dwarf_Small dwarf_secoffset_form[]     = {DW_FORM_sec_offset};
 static const Dwarf_Small dwarf_udata_strx_form[]    = {DW_FORM_udata,DW_FORM_strx};
-
-#if 0
-/* We do not presently use this here. It's a view of DW2 macros. */
-struct Dwarf_Macro_Forms_s dw2formsarray[] = {
-    {0,0,0},
-    {DW_MACINFO_define,2,dwarf_udata_string_form},
-    {DW_MACINFO_undef,2,dwarf_udata_string_form},
-    {DW_MACINFO_start_file,2,dwarf_udata_udata_form},
-    {DW_MACINFO_end_file,0,0},
-    {DW_MACINFO_vendor_ext,2,dwarf_udata_string_form},
-};
-
-/* Represents original DWARF 2,3,4 macro info */
-static const struct Dwarf_Macro_OperationsList_s dwarf_default_macinfo_opslist= {
-6, dw2formsarray
-};
-#endif
 
 struct Dwarf_Macro_Forms_s dw5formsarray[] = {
     {0,0,0},
@@ -259,7 +237,7 @@ _dwarf_skim_forms(Dwarf_Debug dbg,
     return DW_DLV_OK;
 }
 
-#if 0
+#if 0 /* FOR DEBUGGING */
 static void
 dump_bytes(Dwarf_Small * start, long len)
 {
@@ -277,7 +255,23 @@ dump_bytes(Dwarf_Small * start, long len)
     }
     printf("\n");
 }
-#endif
+Dwarf_Bool
+is_defundef(unsigned op)
+{
+    switch(op){
+    case DW_MACRO_define:
+    case DW_MACRO_undef:
+    case DW_MACRO_define_strp:
+    case DW_MACRO_undef_strp:
+    case DW_MACRO_define_strx:
+    case DW_MACRO_undef_strx:
+    case DW_MACRO_define_sup:
+    case DW_MACRO_undef_sup:
+        return TRUE;
+    }
+    return FALSE;
+}
+#endif /* FOR DEBUGGING */
 
 
 /*  On first call (for this macro_context),
@@ -419,24 +413,6 @@ dwarf_get_macro_op(Dwarf_Macro_Context macro_context,
     return DW_DLV_OK;
 }
 
-#if 0
-Dwarf_Bool
-is_defundef(unsigned op)
-{
-    switch(op){
-    case DW_MACRO_define:
-    case DW_MACRO_undef:
-    case DW_MACRO_define_strp:
-    case DW_MACRO_undef_strp:
-    case DW_MACRO_define_strx:
-    case DW_MACRO_undef_strx:
-    case DW_MACRO_define_sup:
-    case DW_MACRO_undef_sup:
-        return TRUE;
-    }
-    return FALSE;
-}
-#endif
 
 /*  Here a DW_DLV_NO_ENTRY return means the macro operator
     is not a def/undef operator. */
@@ -491,7 +467,7 @@ dwarf_get_macro_defundef(Dwarf_Macro_Context macro_context,
             dbg, error,endptr);
         content = (const char *)mdata;
         res = _dwarf_check_string_valid(dbg,
-            startptr,mdata, endptr, 
+            startptr,mdata, endptr,
             DW_DLE_MACRO_STRING_BAD,error);
         if(res != DW_DLV_OK) {
             return res;
