@@ -42,6 +42,9 @@
 #define R_MIPS_NONE 0
 #endif
 
+#define TRUE 1
+#define FALSE 0
+
 /* adds an attribute to a die */
 void _dwarf_pro_add_at_to_die(Dwarf_P_Die die, Dwarf_P_Attribute attr);
 
@@ -321,20 +324,22 @@ _dwarf_debug_str_compare_func(const void *l,const void *r)
     char *rname =  0;
     int ir = 0;
 
-    if (el->dse_table_offset) {
+    if (el->dse_has_table_offset) {
         /*  When set the name is in the debug_str table. */
         /*  ASSERT: dse_dbg->de_debug_str->ds_data is non-zero.
             ASSERT: dse_name NULL. */
-        lname = el->dse_dbg->de_debug_str->ds_data + el->dse_table_offset;
+        lname = el->dse_dbg->de_debug_str->ds_data +
+            el->dse_table_offset;
     } else {
         /*  ASSERT: dse_name non-null */
         lname = el->dse_name;
     }
-    if (er->dse_table_offset) {
+    if (er->dse_has_table_offset) {
         /*  When set the name is in the debug_str table. */
         /*  ASSERT: dse_dbg->de_debug_str->ds_data is non-zero.
             ASSERT: dse_name NULL. */
-        rname = er->dse_dbg->de_debug_str->ds_data + er->dse_table_offset;
+        rname = er->dse_dbg->de_debug_str->ds_data +
+            er->dse_table_offset;
     } else {
         /*  ASSERT: dse_name non-null */
         rname = er->dse_name;
@@ -354,6 +359,7 @@ make_debug_str_entry(Dwarf_P_Debug dbg,
     struct Dwarf_P_debug_str_entry_s **mt_out,
     char *name,
     unsigned slen,
+    unsigned char has_offset,
     Dwarf_Unsigned offset_in_table,
     Dwarf_Error *error)
 {
@@ -368,12 +374,19 @@ make_debug_str_entry(Dwarf_P_Debug dbg,
     mt->dse_slen = slen;
     mt->dse_table_offset = 0;
     mt->dse_dbg = dbg;
-    if (offset_in_table) {
+    if (has_offset) {
+        mt->dse_has_table_offset = TRUE;
         mt->dse_table_offset = offset_in_table;
         mt->dse_name = 0;
     } else {
-        mt->dse_name = name;
+        /* ASSERT: name != NULL */
+        mt->dse_has_table_offset = FALSE;
+        /* We just set dse_table_offset so it has
+            a known value, though nothing should refer
+            to dse_table_offset because
+            dse_has_table_offset is FALSE.*/
         mt->dse_table_offset = 0;
+        mt->dse_name = name;
     }
     *mt_out = mt;
     return DW_DLV_OK;
@@ -391,10 +404,13 @@ insert_debug_str_data_string(Dwarf_P_Debug dbg,
 
     if (!sd->ds_data) {
         Dwarf_Unsigned initial_alloc = STRTAB_BASE_ALLOC_SIZE;
-        Dwarf_Unsigned base_insert_offset = 1;
+        Dwarf_Unsigned base_insert_offset = 0;
 
-        /*  inserting our first string.
-            Insert at position 1, not zero. */
+        /*  Inserting our first string.
+            The GNU linker refuses to commonize strings
+            if the section starts with a NUL byte,
+            so start with real string, using a
+            base_insert_offset of 0. */
         if ( (slen + base_insert_offset) >= STRTAB_BASE_ALLOC_SIZE) {
             initial_alloc = slen *2+ base_insert_offset;
         }
@@ -460,7 +476,8 @@ _dwarf_insert_or_find_in_debug_str(Dwarf_P_Debug dbg,
     int res = 0;
     Dwarf_Unsigned adding_at_offset = 0;
 
-    res = make_debug_str_entry(dbg,&mt,name,slen,0, error);
+    res = make_debug_str_entry(dbg,&mt,name,
+        slen,FALSE, 0, error);
     if (res != DW_DLV_OK) {
         return res;
     }
@@ -494,7 +511,7 @@ _dwarf_insert_or_find_in_debug_str(Dwarf_P_Debug dbg,
     /*  The name is in the string table itself, so use that pointer
         and offset for the string. */
     res = make_debug_str_entry(dbg,&mt2, 0,
-        slen,adding_at_offset,error);
+        slen,TRUE,adding_at_offset,error);
     if (res != DW_DLV_OK) {
         return res;
     }

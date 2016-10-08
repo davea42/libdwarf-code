@@ -231,13 +231,12 @@ simple_string_hashfunc(const void *keyp)
     DW_TSHASHTYPE hash = 5381;
     int c  = 0;
 
-    if (!mt->dse_name) {
-        /*  ASSERT: mt->dse_table_offset and
-            mt->dse_dbg->de_debug_str->ds_data are not zero. */
+    if (mt->dse_has_table_offset) {
+        /*  ASSERT: mt->dse_dbg->de_debug_str->ds_data not zero. */
         str = (const char *)mt->dse_dbg->de_debug_str->ds_data +
             mt->dse_table_offset;
     } else {
-        /*  ASSERT: mt->dse_table_offset is zero. */
+        /*  ASSERT: dse_name != 0 */
         str = (const char *)mt->dse_name;
     }
     /*  Extra parens suppress warning about assign in test. */

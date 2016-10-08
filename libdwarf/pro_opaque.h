@@ -341,11 +341,16 @@ struct Dwarf_P_debug_str_entry_s {
     Dwarf_P_Debug  dse_dbg;
     /*  Name used initially with tfind. */
     char *dse_name;
+
     Dwarf_Unsigned dse_slen; /* includes space for NUL terminator */
+
+    /*  See dse_has_table_offset below. */
     Dwarf_Unsigned dse_table_offset;
+
     /*  For tsearch a hash table exists and we have a table offset.
         dse_dbg->de_debug_str->ds_data + dse_table_offset
-        points to the string. */
+        points to the string iff dse_has_table_offset != 0. */
+    unsigned char  dse_has_table_offset;
 };
 
 struct Dwarf_P_Stats_s {

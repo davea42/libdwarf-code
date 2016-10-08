@@ -11,7 +11,7 @@
 .nr Hb 5
 \." ==============================================
 \." Put current date in the following at each rev
-.ds vE Rev 1.45, 14 September 2016
+.ds vE Rev 1.46, 7 October 2016
 \." ==============================================
 \." ==============================================
 .ds | |
@@ -831,6 +831,13 @@ use form
 The function should be called immediately after a successful call
 to 
 \f(CWdwarf_producer_init()\fP.
+.P
+Strings for 
+\f(CWDW_FORM_strp\fP
+are not duplicated in the 
+\f(CW.debug_str\fP
+section: each unique string
+appears exactly once.
 .P
 On success it returns \f(CWDW_DLV_OK\fP.
 On error it returns \f(CWDW_DLV_ERROR\fP.

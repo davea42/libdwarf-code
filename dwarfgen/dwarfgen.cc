@@ -476,11 +476,11 @@ main(int argc, char **argv)
             &debug_str_len,
             &reused_count,
             &reused_len,&err);
-        cout << "Debug_info str count " <<str_count <<
+        cout << "Debug_Str: debug_info str count " <<str_count <<
             ", byte total len " <<str_len << endl;
-        cout << "Debug_str count " <<debug_str_count <<
+        cout << "Debug_Str: count " <<debug_str_count <<
             ", byte total len " <<debug_str_len << endl;
-        cout << "Reused debug_str count " <<reused_count <<
+        cout << "Debug_Str: Reused count " <<reused_count <<
             ", byte total len not emitted " <<reused_len << endl;
         dwarf_producer_finish( dbg, 0);
         return 0;

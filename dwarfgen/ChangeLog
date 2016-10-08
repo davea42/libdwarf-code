@@ -1,3 +1,13 @@
+2016-10-07  David Anderson
+     * dwarfgen.cc:For the reporting of .debug_str 
+       stats (just 3 lines of it)
+       there is now a fixed prefix "Debug_Str:" so it is easier to
+       verify things do not go wrong over time by just comparing
+       those few lines, which should match across
+       and across OS and libelf versions. There will still
+       be 32/64bit differences though as the notion of 'short'
+       string is longer with a 64bit offset in an object..
+       (pointer size is not the issue).
 2016-09-30  David Anderson
      * configure.in: Add additional -fsanitize tests to
        --enable-sanitize.

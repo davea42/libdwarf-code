@@ -1,3 +1,15 @@
+2016-10-07 David Anderson
+    * libdwarf2p.1.mm: Improved the documentation of
+      dwarf_pro_set_default_string_form().
+    * libdwarf2p.1.pdf: Version 1.46. Regenerated.
+    * pro_die.c: Now the code allows modification
+      of the start of real strings in .debug_str easily. 
+      Was a bit brittle before, allowed offset of 1 to work
+      but not zero.
+    * pro_opaque.h: Add dse_has_table_offset member to
+      eliminate brittleness in the logic for .debug_str.
+    * pro_init.c: Use dse_has_table_offset member to
+      eliminate brittleness in the logic for .debug_str.
 2016-10-04 David Anderson
     * dwarf_elf_access.c: Remove trailing whitespace.
     * dwarf_form.c: Fix an indent.
