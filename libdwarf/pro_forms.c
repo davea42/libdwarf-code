@@ -995,9 +995,13 @@ dwarf_add_AT_string(Dwarf_P_Debug dbg,
     }
 
     switch (attr) {
-    case DW_AT_name:
+    /* See also: pro_section.c for same strings attribute list. */
     case DW_AT_comp_dir:
     case DW_AT_const_value:
+    case DW_AT_linkage_name:/* DWARF5, but ok for any version really.*/
+    case DW_AT_MIPS_abstract_name:
+    case DW_AT_MIPS_linkage_name:
+    case DW_AT_name:
     case DW_AT_producer:
         break;
 

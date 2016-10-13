@@ -1,3 +1,8 @@
+2016-10-11 David Anderson
+    * pro_forms.c, pro_section.c: Restoring DW_AT_MIPS_linkage_name
+      and DW_AT_MIPS_abstract_name (lost by accident in July 2007)
+      and adding DW_AT_linkage_name (DWARF5, but usable in
+      earlier DWARF versions if you wish to use it).
 2016-10-07 David Anderson
     * libdwarf2p.1.mm: Improved the documentation of
       dwarf_pro_set_default_string_form().

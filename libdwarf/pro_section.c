@@ -1938,9 +1938,14 @@ _dwarf_pro_generate_debuginfo(Dwarf_P_Debug dbg,
                 case DW_AT_macro_info:
                     curattr->ar_rel_symidx =
                         dbg->de_sect_name_idx[DEBUG_MACINFO];
-                case DW_AT_name:
+                    break;
+                /* See also: pro_forms.c for same strings attribute list. */
                 case DW_AT_comp_dir:
                 case DW_AT_const_value:
+                case DW_AT_linkage_name: /* DWARF5 */
+                case DW_AT_MIPS_abstract_name:
+                case DW_AT_MIPS_linkage_name:
+                case DW_AT_name:
                 case DW_AT_producer: {
                     int is_debug_str = 0;
                     int nres = if_relocatable_string_form(dbg,curattr,
@@ -1966,7 +1971,6 @@ _dwarf_pro_generate_debuginfo(Dwarf_P_Debug dbg,
                 if (rres != DW_DLV_OK) {
                     DWARF_P_DBG_ERROR(dbg, DW_DLE_REL_ALLOC, DW_DLV_ERROR);
                 }
-
             }
             if (curattr->ar_attribute_form == DW_FORM_string) {
                 string_attr_count++;
