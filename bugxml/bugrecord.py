@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 #  Copyright (c) 2016-2016 David Anderson.
 #  All rights reserved.
 #
@@ -120,78 +120,78 @@ class bugrecord:
 
   def setcve(self,pubid):
     if self._cve != '':
-      print "Duplicate cve ",self._cve,pubid
+      print("Duplicate cve ",self._cve,pubid)
       sys.exit(1)
     self._cve  = pubid.strip()
   def setdatereported(self,rep):
     if self._datereported != '':
-      print "Duplicate datereported ",self._datereported,rep
+      print("Duplicate datereported ",self._datereported,rep)
       sys.exit(1)
     self._datereported  = rep.strip()
   def setreportedby(self,rep):
     if self._reportedby != '':
-      print "Duplicate reportedby ",self._reportedby,rep
+      print("Duplicate reportedby ",self._reportedby,rep)
       sys.exit(1)
     self._reportedby  = rep.strip()
   def setvulnerability(self,vuln):
     if len(self._vulnerability) != 0:
-      print "Duplicate vulnerability ",self._vulnerability,vuln
+      print("Duplicate vulnerability ",self._vulnerability,vuln)
       sys.exit(1)
     self._vulnerability  = vuln
   def setproduct(self,p):
     if len(self._product) != 0:
-      print "Duplicate product ",self._product,p
+      print("Duplicate product ",self._product,p)
       sys.exit(1)
     self._product  = p.strip()
   def setdescription(self,d):
     if len(self._description) != 0:
-      print "Duplicate description ",self._description,d
+      print("Duplicate description ",self._description,d)
       sys.exit(1)
     self._description  = d
   def setdatefixed(self,d):
     if len(self._datefixed) != 0:
-      print "Duplicate datefixed ",self._datefixed,d
+      print("Duplicate datefixed ",self._datefixed,d)
       sys.exit(1)
     self._datefixed  = d.strip()
   def setreferences(self,r):
     if len(self._references) != 0:
-      print "Duplicate references ",self._references,r
+      print("Duplicate references ",self._references,r)
       sys.exit(1)
     self._references  = r
   def setgitfixid(self,g):
     if len(self._gitfixid) != 0:
-      print "Duplicate gitfixid ",self._gitfixid,g
+      print("Duplicate gitfixid ",self._gitfixid,g)
       sys.exit(1)
     self._gitfixid  = g.strip()
   def settarrelease(self,g):
     if len(self._tarrelease) != 0:
-      print "Duplicate tarrelease ",self._tarrelease,g
+      print("Duplicate tarrelease ",self._tarrelease,g)
       sys.exit(1)
     self._tarrelease  = g.strip()
   def plist(self,title,lines):
     if lines == None:
-      print title
+      print(title)
       return
     if len(lines) == 1:
-      print title,lines[0]
+      print(title,lines[0])
       return
-    print title
+    print(title)
     for l in lines:
-        print l
+        print(l)
 
   def printbug(self):
-    print ""
-    print "id:",self._id
-    print "cve:",self._cve
-    print "datereported:",self._datereported
-    print "reportedby:",self._reportedby
+    print("")
+    print("id:",self._id)
+    print("cve:",self._cve)
+    print("datereported:",self._datereported)
+    print("reportedby:",self._reportedby)
     self.plist("vulnerability:",self._vulnerability)
-    print "product:",self._product
+    print("product:",self._product)
     self.plist("description:",self._description)
-    print "datefixed:",self._datefixed
+    print("datefixed:",self._datefixed)
     self.plist("references:",self._references)
-    print "gitfixid:",self._gitfixid
-    print "tarrelease:",self._tarrelease
+    print("gitfixid:",self._gitfixid)
+    print("tarrelease:",self._tarrelease)
 
   def generate_html(self):
     s5= ''.join(self._id)

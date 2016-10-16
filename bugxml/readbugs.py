@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 #  Copyright (c) 2016-2016 David Anderson.
 #  All rights reserved.
 #
@@ -53,7 +53,7 @@ def closeouttext(bugrec,intext,text,linecount):
     return
   if intext == "":
     return
-  print "bogus closeout line at line ",linecount
+  print("bogus closeout line at line ",linecount)
   sys.exit(1)
 
 
@@ -63,8 +63,8 @@ def readbugs(iname):
     name = "/home/davea/dwarf/code/bugxml/data.txt"
   try:
       file = open(name,"r")
-  except IOError,message:
-      print "failed to open ",name, message
+  except IOError as message:
+      print("failed to open ",name, message)
 
   inrecord = "n"
   linecount = 0
@@ -89,7 +89,7 @@ def readbugs(iname):
       if len(rec) == 0:
         continue
       if  rec.find(":") == -1:
-        print "bogus non-blank line at line ",linecount
+        print("bogus non-blank line at line ",linecount)
         sys.exit(1)
     if inrecord == "y" and len(rec) > 0:
       # A multi line entry may have ":" in it.
@@ -102,12 +102,12 @@ def readbugs(iname):
     fldval = rec[low+1:]
     if fldname == "id:": 
       if inrecord == "y":
-        print "bogus id: at line ",linecount
+        print("bogus id: at line ",linecount)
         sys.exit(1)
       inrecord = "y"
       f = fldval.strip()
-      if usedid.has_key(f) == 1:
-        print "Duplicate Key:",f,"Giving up." 
+      if f in usedid:
+        print("Duplicate Key:",f,"Giving up.")
         sys.exit(1)
       usedid[f] = 1
       s4= ''.join(fldval)
@@ -181,7 +181,7 @@ def readbugs(iname):
       closeouttext(bugrec,intext,text,linecount),
       text = []
       if inrecord == "n":
-         print "bogus endrec: at line ",linecount
+         print("bogus endrec: at line ",linecount)
          sys.exit(1)
       buglist += [bugrec]
       inrecord = "n"
@@ -214,8 +214,8 @@ def write_all_lines(file,txt):
 def generatehtml(list2,name):
   try:
     file = open(name,"w")
-  except IOError,message:
-    print "failed to open ",name, message
+  except IOError as message:
+    print("failed to open ",name, message)
     sys.exit(1)
   for b in list2:
     txt=b.generate_html()
@@ -227,8 +227,8 @@ def generatehtml(list2,name):
 def generatexml(list2,name):
   try:
     file = open(name,"w")
-  except IOError,message:
-    print "failed to open ",name, message
+  except IOError as message:
+    print("failed to open ",name, message)
     sys.exit(1)
   t = '<?xml version="1.0" encoding="us-ascii"?>'
   write_line(file,t)
