@@ -1349,15 +1349,39 @@ out what form-class it is.
     DW_FORM_CLASS_FRAMEPTR is MIPS/IRIX only, and refers
     to the DW_AT_MIPS_fde attribute (a reference to the
     .debug_frame section).
+
+    DWARF5: 
+    DW_FORM_CLASS_LOCLISTSPTR  is like DW_FORM_CLASS_LOCLIST
+    except that LOCLISTSPTR is aways a section offset,
+    never an index, and LOCLISTSPTR is only referenced
+    by DW_AT_loclists_base.
+    Note DW_FORM_CLASS_LOCLISTSPTR spelling to distinguish 
+    from DW_FORM_CLASS_LOCLISTPTR.
+
+    DWARF5:
+    DW_FORM_CLASS_RNGLISTSPTR  is like DW_FORM_CLASS_RNGLIST
+    except that RNGLISTSPTR is aways a section offset,
+    never an index. DW_FORM_CLASS_RNGLISTSPTR is only
+    referenced by DW_AT_ranges_base.  
 */
 enum Dwarf_Form_Class {
     DW_FORM_CLASS_UNKNOWN,   DW_FORM_CLASS_ADDRESS,
     DW_FORM_CLASS_BLOCK,     DW_FORM_CLASS_CONSTANT,
     DW_FORM_CLASS_EXPRLOC,   DW_FORM_CLASS_FLAG,
-    DW_FORM_CLASS_LINEPTR,   DW_FORM_CLASS_LOCLISTPTR,
-    DW_FORM_CLASS_MACPTR,    DW_FORM_CLASS_RANGELISTPTR,
-    DW_FORM_CLASS_REFERENCE, DW_FORM_CLASS_STRING,
-    DW_FORM_CLASS_FRAMEPTR
+    DW_FORM_CLASS_LINEPTR,
+    DW_FORM_CLASS_LOCLISTPTR,   /* DWARF2,3,4 only */
+    DW_FORM_CLASS_MACPTR,       /* DWARF2,3,4 only */
+    DW_FORM_CLASS_RANGELISTPTR, /* DWARF2,3,4 only */
+    DW_FORM_CLASS_REFERENCE,
+    DW_FORM_CLASS_STRING,
+    DW_FORM_CLASS_FRAMEPTR,      /* MIPS/IRIX DWARF2 only */
+    DW_FORM_CLASS_MACROPTR,      /* DWARF5 */
+    DW_FORM_CLASS_ADDRPTR,       /* DWARF5 */
+    DW_FORM_CLASS_LOCLIST,       /* DWARF5 */
+    DW_FORM_CLASS_LOCLISTSPTR,   /* DWARF5 */
+    DW_FORM_CLASS_RNGLIST,       /* DWARF5 */
+    DW_FORM_CLASS_RNGLISTSPTR,   /* DWARF5 */
+    DW_FORM_CLASS_STROFFSETSPTR, /* DWARF5 */
 };
 
 

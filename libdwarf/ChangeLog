@@ -1,3 +1,7 @@
+2016-10-15 David Anderson
+    * libdwarf.h.in: Added DWARF5 values
+      to enum Dwarf_Form_Class.
+    * dwarf_query.c(dwarf_get_form_class): Added DWARF5 support.
 2016-10-11 David Anderson
     * pro_forms.c, pro_section.c: Restoring DW_AT_MIPS_linkage_name
       and DW_AT_MIPS_abstract_name (lost by accident in July 2007)
