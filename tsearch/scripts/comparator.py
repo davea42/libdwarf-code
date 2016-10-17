@@ -1,7 +1,7 @@
+#!/usr/bin/python3
 # Tries to make sense of a group of timeing runs.
 # From running a debug dwarfdump.
 # David Anderson March 2013.
-
 
 import sys
 
@@ -9,8 +9,8 @@ def myreadin(name):
   l = []
   try:
     file = open(name,"r");
-  except IOError,message:
-    print >> sys.stderr, " File could not be opened:", message
+  except IOError as message:
+    print(" File could not be opened:", message,file=sys.stderr)
     sys.exit(1)
   while(1):
     try:
@@ -24,7 +24,7 @@ def myreadin(name):
        # Ignore empty lines
        continue
     l += [line]
-    #print "line ",line
+    #print("line ",line)
   return l
 
 def splitup(rec):
@@ -49,9 +49,9 @@ def absdiff(a,b):
   return float(a) - float(b)
   
 ct = 0
-print len(sys.argv)
+print( len(sys.argv))
 if len(sys.argv) <= 1:
-  print "Nothing to do"
+  print("Nothing to do")
   sys.exit(1)
 argn = 1;
 filenames=[]
@@ -71,19 +71,19 @@ while argn < len(sys.argv):
     minsizediff = float(sys.argv[argn])
     argn += 1
     continue
-  print "argv[",argn,"] = ", name
+  print("argv[",argn,"] = ", name)
   r = myreadin(name)
   if filelen == 0:
     filelen = len(r)
   else:
     if filelen != len(r):
-       print "file len mismatch",filelen, " vs ",len(r), " on ",name
-  print len(r)
+       print("file len mismatch",filelen, " vs ",len(r), " on ",name)
+  print(len(r))
   basename = computebasename(name)
   filenames += [basename]
   files += [r]
   argn += 1
-print len(files)," files read"
+print(len(files)," files read")
 lnum=0
 while lnum < filelen:
   fnum = 0;
@@ -95,7 +95,7 @@ while lnum < filelen:
   linereport="n"
   while fnum < len(filenames):
     name = filenames[fnum]
-    #print " line ",lnum," file ",name
+    #print(" line ",lnum," file ",name)
     lines = files[fnum]
     ll,rnt,sz,det = splitup(lines[lnum])
     if fnum == 0:
@@ -106,7 +106,7 @@ while lnum < filelen:
        basedet = det
     else:
        if det != basedet:
-          print "mismatch line ",lnum, "file ", basename, " vs ",name
+          print("mismatch line ",lnum, "file ", basename, " vs ",name)
           print basedet , "  vs ", det
           sys.exit(1)
        rntdiff = absdiff(rnt,basernt)

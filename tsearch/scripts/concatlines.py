@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 # extracts a couple preferred numbers from the /bin/time output
 # interspersed with script output...
 # From running a debug dwarfdump.
@@ -72,14 +73,14 @@ final = ""
 myfile = sys.stdin
 ct = 0
 #if len(sys.argv) > 1:
-#  print "argv[1] = ", sys.argv[1]
+#  print("argv[1] = ", sys.argv[1])
 #  v = sys.argv[1]
 #  if v == "-t":
 #    testonly = "y"
 #  elif v == "-v":
 #    testonly = "v"
 #  else:
-#    print "Argument: ", v, " unknown, exiting."
+#    print("Argument: ", v, " unknown, exiting.")
 #    sys.exit(1)
 
 while 1:
@@ -89,16 +90,16 @@ while 1:
   try:
     rec = myfile.readline()
   except:
-    print final
+    print(final)
     break
 
   if len(rec)  < 1:
     f,v = findfinal(final)
-    print v,f
+    print(v,f)
     break;
   if rec.startswith("===") == 1:
     f,v = findfinal(final)
-    print v,f
+    print(v,f)
     final = rec.strip()
   else:
     if rec.startswith("Command") == 1:
