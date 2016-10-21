@@ -1,3 +1,5 @@
+2016-10-21 David Anderson
+    * gennames.c: Update version string.
 2016-10-15 David Anderson
     * libdwarf.h.in: Added DWARF5 values
       to enum Dwarf_Form_Class.

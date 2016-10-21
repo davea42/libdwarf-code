@@ -1,3 +1,6 @@
+2016-10-21  David Anderson
+    * common.c,dwarfdump.c,tag_attr.c,tag_tree.c: Update
+      version strings.
 2016-09-30  David Anderson
     * configure.in: Add additional -fsanitize tests to
       --enable-sanitize option.
