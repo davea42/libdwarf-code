@@ -1129,8 +1129,6 @@ context_is_cu_not_tu(Dwarf_CU_Context context,
     DWARF4 with location extensions.
 
     Does not work for .debug_loc.dwo
-
-    Use dwarf_get_loclist_b() and associated functions.
 */
 int
 dwarf_loclist_n(Dwarf_Attribute attr,
