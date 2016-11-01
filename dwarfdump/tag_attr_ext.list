@@ -106,3 +106,10 @@ DW_TAG_GNU_call_site_parameter
 DW_AT_GNU_call_site_value
 DW_AT_location
 0xffffffff
+DW_TAG_constant
+DW_AT_GNU_numerator
+DW_AT_GNU_denominator
+0xffffffff
+DW_TAG_subrange_type
+DW_AT_GNU_bias
+0xffffffff

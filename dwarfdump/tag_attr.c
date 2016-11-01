@@ -337,12 +337,14 @@ main(int argc, char **argv)
             /* In standard case, the row indexed by tag */
             if (tag >= table_rows ) {
                 bad_line_input("tag %d exceeds standard table size",tag);
+ 
             }
         } else {
             /*  In extended case, the row indexed by 0-N
                 and column zero has the tag number. */
             if (current_row >= table_rows) {
-                bad_line_input("too many extended table rows.");
+                bad_line_input("too many extended table rows. Have %u max %u",
+                    current_row,table_rows);
             }
             validate_row_col("Reading tag",current_row,0,
                 table_rows,table_columns);

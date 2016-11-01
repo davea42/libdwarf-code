@@ -1,3 +1,8 @@
+2016-11-01  David Anderson
+    * tag_attr.c,tag_common.h,tag_attr_ext.list: Adding 
+      Ada GNAT gcc attributes DW_AT_GNU_numerator,
+      DW_AT_GNU_denominator, DW_AT_GNU_bias in the extended
+      table for checking.
 2016-10-21  David Anderson
     * common.c,dwarfdump.c,tag_attr.c,tag_tree.c: Update
       version strings.

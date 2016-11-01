@@ -466,6 +466,10 @@ extern "C" {
 
 /* To distinguish distinct basic blocks in a single source line. */
 #define DW_AT_GNU_discriminator                 0x2136 /* GNU */
+/*  Ada GNAT gcc attributes. constant integer forms. */
+#define DW_AT_GNU_numerator                     0x2303 /* GNU */
+#define DW_AT_GNU_denominator                   0x2304 /* GNU */
+#define DW_AT_GNU_bias                          0x2305 /* GNU */
 
 
 
