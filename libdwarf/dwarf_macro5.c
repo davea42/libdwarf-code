@@ -181,10 +181,17 @@ _dwarf_skim_forms(Dwarf_Debug dbg,
             totallen += v;
             mdata += v;
             break;
-        case DW_FORM_string:
+        case DW_FORM_string: {
+            int res = _dwarf_check_string_valid(dbg,
+                mdata,mdata, section_end,
+                DW_DLE_MACRO_STRING_BAD,error);
+            if(res != DW_DLV_OK) {
+                return res;
+            }
             v = strlen((char *) mdata) + 1;
             totallen += v;
             mdata += v;
+            }
             break;
         case DW_FORM_block:
             DECODE_LEB128_UWORD_LEN_CK(mdata,length,leb128_length,

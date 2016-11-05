@@ -1,7 +1,7 @@
 /*
 
   Copyright (C) 2000-2004 Silicon Graphics, Inc.  All Rights Reserved.
-  Portions Copyright (C) 2007-2012 David Anderson. All Rights Reserved.
+  Portions Copyright (C) 2007-2016 David Anderson. All Rights Reserved.
   Portions Copyright 2012 SN Systems Ltd. All rights reserved.
 
 
@@ -99,6 +99,10 @@ dwarf_get_aranges_list(Dwarf_Debug dbg,
 
 
         header_ptr = arange_ptr;
+        if (header_ptr >= arange_end_section) {
+            _dwarf_error(dbg, error,DW_DLE_ARANGES_HEADER_ERROR);
+            return DW_DLV_ERROR;
+        }
         /* READ_AREA_LENGTH updates arange_ptr for consumed bytes */
         READ_AREA_LENGTH_CK(dbg, area_length, Dwarf_Unsigned,
             arange_ptr, local_length_size,
@@ -107,6 +111,11 @@ dwarf_get_aranges_list(Dwarf_Debug dbg,
             arange_end_section);
         /*  arange_ptr has been incremented appropriately past
             the length field by READ_AREA_LENGTH. */
+
+        if (area_length >  dbg->de_debug_aranges.dss_size) {
+            _dwarf_error(dbg, error,DW_DLE_ARANGES_HEADER_ERROR);
+            return DW_DLV_ERROR;
+        }
         if ((area_length + local_length_size + local_extension_size) >
             dbg->de_debug_aranges.dss_size) {
             _dwarf_error(dbg, error, DW_DLE_ARANGES_HEADER_ERROR);
@@ -114,11 +123,19 @@ dwarf_get_aranges_list(Dwarf_Debug dbg,
         }
 
         end_this_arange = arange_ptr + area_length;
+        if (end_this_arange > arange_end_section) {
+            _dwarf_error(dbg, error,DW_DLE_ARANGES_HEADER_ERROR);
+            return DW_DLV_ERROR;
+        }
 
         READ_UNALIGNED_CK(dbg, version, Dwarf_Half,
             arange_ptr, sizeof(Dwarf_Half),
             error,end_this_arange);
         arange_ptr += sizeof(Dwarf_Half);
+        if (arange_ptr >= end_this_arange) {
+            _dwarf_error(dbg, error, DW_DLE_ARANGES_HEADER_ERROR);
+            return DW_DLV_ERROR;
+        }
         if (version != DW_ARANGES_VERSION2) {
             _dwarf_error(dbg, error, DW_DLE_VERSION_STAMP_ERROR);
             return (DW_DLV_ERROR);
@@ -128,6 +145,10 @@ dwarf_get_aranges_list(Dwarf_Debug dbg,
             arange_ptr, local_length_size,
             error,end_this_arange);
         arange_ptr += local_length_size;
+        if (arange_ptr >= end_this_arange) {
+            _dwarf_error(dbg, error, DW_DLE_ARANGES_HEADER_ERROR);
+            return DW_DLV_ERROR;
+        }
         /* This applies to debug_info only, not to debug_types. */
         if (info_offset >= dbg->de_debug_info.dss_size) {
             FIX_UP_OFFSET_IRIX_BUG(dbg, info_offset,

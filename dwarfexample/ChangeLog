@@ -1,3 +1,6 @@
+2016-11-04  David Anderson
+     * simplereader.c(printnamestrings): Remove C99-ism
+       in favor of C90 style.
 2016-09-30  David Anderson
      * configure.in: Add additional -fsanitize tests to
        --enable-sanitize

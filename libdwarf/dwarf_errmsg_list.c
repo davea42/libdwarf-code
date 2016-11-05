@@ -446,6 +446,7 @@ const char *_dwarf_errmsgs[] = {
     "DW_DLE_DEFINE_FILE_STRING_BAD(365) runs off end of section",
     "DW_DLE_MACRO_STRING_BAD(366) DWARF5 macro def/undef string runs off section data",
     "DW_DLE_MACINFO_STRING_BAD(367) DWARF2..4 macro def/undef string runs off section data",
+    "DW_DLE_ZLIB_UNCOMPRESS_ERROR(368) Surely an invalid uncompress length",
 };
 
 #ifdef TESTING

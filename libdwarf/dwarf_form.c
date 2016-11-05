@@ -1058,6 +1058,14 @@ dwarf_formblock(Dwarf_Attribute attr,
         _dwarf_error(dbg, error, DW_DLE_FORM_BLOCK_LENGTH_ERROR);
         return (DW_DLV_ERROR);
     }
+    if (data > section_end) {
+        _dwarf_error(dbg, error, DW_DLE_FORM_BLOCK_LENGTH_ERROR);
+        return (DW_DLV_ERROR);
+    }
+    if ((data + length) > section_end) {
+        _dwarf_error(dbg, error, DW_DLE_FORM_BLOCK_LENGTH_ERROR);
+        return (DW_DLV_ERROR);
+    }
 
     ret_block = (Dwarf_Block *) _dwarf_get_alloc(dbg, DW_DLA_BLOCK, 1);
     if (ret_block == NULL) {

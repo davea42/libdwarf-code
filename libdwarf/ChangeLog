@@ -1,3 +1,22 @@
+2016-11-04 David Anderson
+    * libdwarf.h.in: Removed trailing whitespace, three places.
+      Added DW_DLE_ZLIB_UNCOMPRESS_ERROR.
+    * dwarf_arange.c(dwarf_get_aranges_list): Add checks for the sanity
+      of aranges headers and values to catch corrupted dwarf..
+    * dwarf_errmsg_list.c: Add DW_DLE_ZLIB_UNCOMPRESS_ERROR to
+      identify impossible zlib compression.
+    * dwarf_form.c:(dwarf_formblock): Check for overrun of
+      a section-end. Return witw DW_DLE_FORM_BLOCK_LENGTH_ERROR as
+      the error when such corrupt dwarf is encountered.
+    * dwarf_init_finish.c(do_decompress_zlib): Check for corrupted
+      zlib compression information and set  DW_DLE_ZLIB_UNCOMPRESS_ERROR
+      when a corrupted expanded-length is found.
+    * dwarf_macro5.c(_dwarf_skim_forms): For DW_FORM_STRING call
+      _dwarf_check_string_valid() to ensure a string does not
+      run off the end of a malloc block.
+    * dwarf_util.c(_dwarf_check_string_valid): Remove and add
+      a blank line to get the usual way functions begin with
+      declarations, a blank line, then code. No change in logic.
 2016-11-01 David Anderson
     * dwarf.h: Adding Ada GNAT gcc attributes DW_AT_GNU_numerator,
       DW_AT_GNU_denominator, DW_AT_GNU_bias.

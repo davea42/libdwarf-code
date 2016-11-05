@@ -701,10 +701,10 @@ _dwarf_check_string_valid(Dwarf_Debug dbg,void *areaptr,
     int suggested_error,
     Dwarf_Error*error)
 {
-
     Dwarf_Small *start = areaptr;
     Dwarf_Small *p = strptr;
     Dwarf_Small *end = areaendptr;
+
     if (p < start) {
         _dwarf_error(dbg,error,suggested_error);
         return DW_DLV_ERROR;

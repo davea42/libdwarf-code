@@ -1018,6 +1018,11 @@ dwarf_object_finish(Dwarf_Debug dbg, Dwarf_Error * error)
     and the decompressed_length.
     Then what follows the implicit Chdr is decompressed.
     */
+
+/*  ALLOWED_ZLIB_INFLATION is a heuristic, not necessarily right.
+    The test case klingler2/compresseddebug.amd64 actually
+    inflates about 8 times. */
+#define ALLOWED_ZLIB_INFLATION 16
 static int
 do_decompress_zlib(Dwarf_Debug dbg,
     struct Dwarf_Section_s *section,
@@ -1060,14 +1065,16 @@ do_decompress_zlib(Dwarf_Debug dbg,
         unsigned fldsize    = dbg->de_pointer_size;
         unsigned structsize = 3* fldsize;
 
-        READ_UNALIGNED_CK(dbg,type,Dwarf_Unsigned,ptr,sizeof(Dwarf_ufixed),
+        READ_UNALIGNED_CK(dbg,type,Dwarf_Unsigned,ptr,
+            sizeof(Dwarf_ufixed),
             error,endsection);
         ptr += fldsize;
         READ_UNALIGNED_CK(dbg,size,Dwarf_Unsigned,ptr,fldsize,
             error,endsection);
         ptr += fldsize;
         if (type != ELFCOMPRESS_ZLIB) {
-            DWARF_DBG_ERROR(dbg, DW_DLE_ZDEBUG_INPUT_FORMAT_ODD, DW_DLV_ERROR);
+            DWARF_DBG_ERROR(dbg, DW_DLE_ZDEBUG_INPUT_FORMAT_ODD, 
+                DW_DLV_ERROR);
         }
         uncompressed_len = size;
         /*  Not using addralign.
@@ -1076,7 +1083,34 @@ do_decompress_zlib(Dwarf_Debug dbg,
         src    += structsize;
         srclen -= structsize;
     } else {
-        DWARF_DBG_ERROR(dbg, DW_DLE_ZDEBUG_INPUT_FORMAT_ODD, DW_DLV_ERROR);
+        DWARF_DBG_ERROR(dbg, DW_DLE_ZDEBUG_INPUT_FORMAT_ODD, 
+            DW_DLV_ERROR);
+    }
+    {
+        /*  According to zlib.net zlib essentially never expands
+            the data when compressing.  There is no statement
+            about  any effective limit in the compression factor
+            though we, here, assume  such a limit to check
+            for sanity in the object file. 
+            These tests are heuristics.  */
+        Dwarf_Unsigned max_inflated_len = srclen*ALLOWED_ZLIB_INFLATION;
+
+        if (srclen > 50)  {
+            /*  If srclen not super tiny lets check the following. */
+            if (uncompressed_len < (srclen/2)) {
+                /*  Violates the approximate invariant about 
+                    compression not actually inflating. */
+                DWARF_DBG_ERROR(dbg, DW_DLE_ZLIB_UNCOMPRESS_ERROR,
+                    DW_DLV_ERROR);
+            }
+        }
+        if (max_inflated_len < srclen) {
+            /* The calculation overflowed. */
+            DWARF_DBG_ERROR(dbg, DW_DLE_ZLIB_UNCOMPRESS_ERROR, DW_DLV_ERROR);
+        }
+        if (uncompressed_len > max_inflated_len) {
+            DWARF_DBG_ERROR(dbg, DW_DLE_ZLIB_UNCOMPRESS_ERROR, DW_DLV_ERROR);
+        }
     }
     if( (src +srclen) > endsection) {
         DWARF_DBG_ERROR(dbg, DW_DLE_ZLIB_SECTION_SHORT, DW_DLV_ERROR);

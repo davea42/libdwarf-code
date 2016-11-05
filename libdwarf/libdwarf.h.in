@@ -1291,9 +1291,10 @@ struct Dwarf_Obj_Access_Interface_s {
 #define DW_DLE_DEFINE_FILE_STRING_BAD          365
 #define DW_DLE_MACRO_STRING_BAD                366
 #define DW_DLE_MACINFO_STRING_BAD              367
+#define DW_DLE_ZLIB_UNCOMPRESS_ERROR           368
 
     /* LAST MUST EQUAL LAST ERROR NUMBER */
-#define DW_DLE_LAST        367
+#define DW_DLE_LAST        368
 #define DW_DLE_LO_USER     0x10000
 
     /*  Taken as meaning 'undefined value', this is not
@@ -1350,19 +1351,19 @@ out what form-class it is.
     to the DW_AT_MIPS_fde attribute (a reference to the
     .debug_frame section).
 
-    DWARF5: 
+    DWARF5:
     DW_FORM_CLASS_LOCLISTSPTR  is like DW_FORM_CLASS_LOCLIST
     except that LOCLISTSPTR is aways a section offset,
     never an index, and LOCLISTSPTR is only referenced
     by DW_AT_loclists_base.
-    Note DW_FORM_CLASS_LOCLISTSPTR spelling to distinguish 
+    Note DW_FORM_CLASS_LOCLISTSPTR spelling to distinguish
     from DW_FORM_CLASS_LOCLISTPTR.
 
     DWARF5:
     DW_FORM_CLASS_RNGLISTSPTR  is like DW_FORM_CLASS_RNGLIST
     except that RNGLISTSPTR is aways a section offset,
     never an index. DW_FORM_CLASS_RNGLISTSPTR is only
-    referenced by DW_AT_ranges_base.  
+    referenced by DW_AT_ranges_base.
 */
 enum Dwarf_Form_Class {
     DW_FORM_CLASS_UNKNOWN,   DW_FORM_CLASS_ADDRESS,
