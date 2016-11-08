@@ -113,3 +113,6 @@ DW_AT_GNU_denominator
 DW_TAG_subrange_type
 DW_AT_GNU_bias
 0xffffffff
+DW_TAG_inlined_subroutine
+DW_AT_GNU_discriminator  /* Used by LLVM */
+0xffffffff
