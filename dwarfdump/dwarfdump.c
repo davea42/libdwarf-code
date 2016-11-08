@@ -583,6 +583,12 @@ main(int argc, char *argv[])
 
     cmd = ELF_C_READ;
     arf = elf_begin(f, cmd, (Elf *) 0);
+    if (!arf) {
+        fprintf(stderr, "%s ERROR:  Unable to obtain ELF descriptor for %s\n",
+            program_name,
+            file_name);
+        return (FAILED);
+    }
     if (elf_kind(arf) == ELF_K_AR) {
         /* This option is never tested and may not work sensibly. */
         archive = 1;
