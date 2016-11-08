@@ -35,7 +35,7 @@
 #endif /* HAVE_STDAFX_H */
 
 #define DW_VERSION_DATE_STR " 2016-10-21 09:13:24-07:00  "
-#define RELEASE_DATE      "20160307"
+#define RELEASE_DATE      "20161021"
 
 /* The Linux/Unix version does not want a version string to print
    unless -V is on the command line. */
