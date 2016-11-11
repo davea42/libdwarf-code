@@ -171,8 +171,14 @@ local_dwarf_decode_s_leb128_chk(unsigned char *leb128,
         byte_length++;
     }
 
-    if ((shift < sizeof(Dwarf_Signed) * BITSINBYTE) && sign) {
-        number |= -(Dwarf_Signed)((Dwarf_Unsigned) 1 << shift);
+    if (sign) {
+        /* The following avoids undefined behavior. */
+        unsigned shiftlim = sizeof(Dwarf_Signed) * BITSINBYTE -1;
+        if (shift < shiftlim) {
+            number |= -(Dwarf_Signed)(((Dwarf_Unsigned)1) << shift);
+        } else if (shift == shiftlim) {
+            number |= (((Dwarf_Unsigned)1) << shift);
+        }
     }
 
     if (leb128_length != NULL)

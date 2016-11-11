@@ -1,3 +1,7 @@
+2016-11-11  David Anderson
+    * print_frames.c: Apply fix to local_dwarf_decode_s_leb128_chk so
+      it matches libdwarf dwarf_leb.c.  A fix for certain bit
+      pattern provoking undefined behavior in C..
 2016-11-01  David Anderson
     * tag_attr.c,tag_common.h,tag_attr_ext.list: Adding 
       Ada GNAT gcc attributes DW_AT_GNU_numerator,
