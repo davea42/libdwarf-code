@@ -1,4 +1,19 @@
 
+id: DW201611-005
+cve:
+datereported: 2016-11-11
+reportedby: Agostino Sarubbo
+vulnerability: negation of -9223372036854775808 cannot be represented in type 
+product: libdwarf
+description: With the right bit pattern in a signed leb number
+ the signed leb decode would execute an unary minus with undefined
+ effect. This is not known to generate an incorrect value,
+ but it could, one supposes.
+datefixed: 2016-11-11
+references: regressiontests/sarubbo-2/00050-libdwarf-negate-itself
+gitfixid: 4f19e1050cd8e9ddf2cb6caa061ff2fec4c9b5f9
+tarrelease:
+endrec:
 
 id: DW201611-004
 cve:
@@ -11,7 +26,7 @@ description: If a non-terminated string
   ends a section it can result in accessing memory not
   in the application.   dwarf_macro5.c(in _dwarf_skim_forms()).
 datefixed: 2016-11-04
-references: regressiontests/00027-libdwarf-heapoverflow-_dwarf_skim_forms
+references: regressiontests/sarubbo-2/00027-libdwarf-heapoverflow-_dwarf_skim_forms
 gitfixid:  583f8834083b5ef834c497f5b47797e16101a9a6
 tarrelease: 
 endrec:
@@ -27,7 +42,7 @@ description:  in dwarf_arange.c(dwarf_get_aranges_list) an aranges
  result in pointers to invalid or inappropriate memory being
  dereferenced.
 datefixed: 2016-11-04
-references: regressiontests/00026-libdwarf-heapoverflow-dwarf_get_aranges_list
+references: regressiontests/sarubbo-2/00026-libdwarf-heapoverflow-dwarf_get_aranges_list
 gitfixid:  583f8834083b5ef834c497f5b47797e16101a9a6
 tarrelease: 
 endrec:
@@ -54,7 +69,7 @@ description: Libdwarf failed to check for a bogus
  libs/elfutils-0.166/work/elfutils-0.166/libelf/elf_getdata.c:318
  </pre>
 datefixed: 2016-11-04
-references: regressiontests/00025-libdwarf-heapoverflow-get_attr_value
+references: regressiontests/sarubbo-2/00025-libdwarf-heapoverflow-get_attr_value
 gitfixid:  583f8834083b5ef834c497f5b47797e16101a9a6
 tarrelease: 
 endrec:
@@ -85,7 +100,7 @@ r2/work/llvm-3.8.1.src/projects/compiler-rt/lib/asan/asan_malloc_linux.cc:53
    #10 0x5145cd in print_one_die_section
  </pre>
 datefixed: 2016-11-04
-references: regressiontests/00024-libdwarf-memalloc-do_decompress_zlib
+references: regressiontests/sarubbo-2/00024-libdwarf-memalloc-do_decompress_zlib
 gitfixid:  583f8834083b5ef834c497f5b47797e16101a9a6
 tarrelease: 
 endrec:
