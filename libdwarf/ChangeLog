@@ -1,3 +1,13 @@
+2016-11-16 David Anderson
+    * dwarf_die_deliv.c(dwarf_child): Added a check for 'at end of DIEs',
+      removed pointless parens in returns, and added {} to make an if()
+      follow normal form.
+    * dwarf_query.c: Removed pointless parens in return.
+    * dwarf_util.c(_dwarf_get_size_of_val): Changed return 0
+      to return DW_DLV_OK so it reads as is supposed to.
+      For DW_FORM_block1 check a pointer for validity before
+      dereferencing. In  _dwarf_check_string_valid() added
+      comments clarifying the intent of the function.
 2016-11-11 David Anderson
     * dwarf_init_finish.c: Remove a few bytes of trailing whitespace.
     * dwarf_leb.c(_dwarf_decode_s_leb128_chk): Now we avoid 

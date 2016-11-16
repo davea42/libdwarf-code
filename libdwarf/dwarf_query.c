@@ -361,7 +361,7 @@ dwarf_attrlist(Dwarf_Die die,
                 (Dwarf_Attribute) _dwarf_get_alloc(dbg, DW_DLA_ATTR, 1);
             if (new_attr == NULL) {
                 _dwarf_error(dbg, error, DW_DLE_ALLOC_FAIL);
-                return (DW_DLV_ERROR);
+                return DW_DLV_ERROR;
             }
 
             new_attr->ar_attribute = attr;

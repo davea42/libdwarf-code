@@ -1679,9 +1679,9 @@ dwarf_child(Dwarf_Die die,
     dis->de_last_di_ptr = die_info_ptr;
 
     /* NULL die has no child. */
-    if ((*die_info_ptr) == 0)
-        return (DW_DLV_NO_ENTRY);
-
+    if ((*die_info_ptr) == 0) {
+        return DW_DLV_NO_ENTRY;
+    }
     context = die->di_cu_context;
     die_info_end = _dwarf_calculate_info_section_end_ptr(context);
 
@@ -1693,6 +1693,9 @@ dwarf_child(Dwarf_Die die,
         error);
     if(res != DW_DLV_OK) {
         return res;
+    }
+    if (die_info_ptr == die_info_end) {
+        return DW_DLV_NO_ENTRY;
     }
     die_info_ptr = die_info_ptr2;
 
@@ -1706,13 +1709,13 @@ dwarf_child(Dwarf_Die die,
             }
             ++dis->de_last_di_ptr;
         }
-        return (DW_DLV_NO_ENTRY);
+        return DW_DLV_NO_ENTRY;
     }
 
     ret_die = (Dwarf_Die) _dwarf_get_alloc(dbg, DW_DLA_DIE, 1);
     if (ret_die == NULL) {
         _dwarf_error(dbg, error, DW_DLE_ALLOC_FAIL);
-        return (DW_DLV_ERROR);
+        return DW_DLV_ERROR;
     }
     ret_die->di_debug_ptr = die_info_ptr;
     ret_die->di_cu_context = die->di_cu_context;

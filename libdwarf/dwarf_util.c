@@ -167,7 +167,7 @@ _dwarf_get_size_of_val(Dwarf_Debug dbg,
         return DW_DLV_ERROR;
 
 
-    case 0:  return 0;
+    case 0:  return DW_DLV_OK;
     case DW_FORM_GNU_ref_alt:
     case DW_FORM_GNU_strp_alt:
     case DW_FORM_strp_sup:
@@ -205,6 +205,10 @@ _dwarf_get_size_of_val(Dwarf_Debug dbg,
     case DW_FORM_block1: {
         ptrdiff_t sizeasptrdiff = 0;
 
+        if (val_ptr >= section_end_ptr) {
+            _dwarf_error(dbg,error,DW_DLE_FORM_BLOCK_LENGTH_ERROR);
+            return DW_DLV_ERROR;
+        }
         ret_value =  *(Dwarf_Small *) val_ptr;
         sizeasptrdiff = (ptrdiff_t)ret_value;
         if (sizeasptrdiff > (section_end_ptr - val_ptr) ||
@@ -731,7 +735,13 @@ _dwarf_check_string_valid(Dwarf_Debug dbg,void *areaptr,
 
 /*  Return non-zero if the start/end are not valid for the
     die's section.
-    Return 0 if valid*/
+    If pastend matches the dss_data+dss_size then
+    pastend is a pointer that cannot be dereferenced.
+    But we allow it as valid here, it is normal for
+    a pointer to point one-past-end in
+    various circumstances (one must
+    avoid dereferencing it, of course).
+    Return 0 if valid. Return 1 if invalid. */
 int
 _dwarf_reference_outside_section(Dwarf_Die die,
     Dwarf_Small * startaddr,
