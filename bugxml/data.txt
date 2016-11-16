@@ -1,4 +1,56 @@
 
+id: DW201611-006
+cve:
+datereported: 2016-11-14
+reportedby: Puzzor (Shi Ji)
+vulnerability: Heap buffer overflow
+product: libdwarf
+description: An object with corrupt contents causes a memory reference
+ out of bounds, a heap buffer overflow reference.
+ <pre>
+ heap-buffer-overflow in dwarf_util.c:208 for val_ptr
+
+ # Version
+ bb9a3492ac5713bed9cf3ae58ddb7afa6e9e98f8
+ (in regression tests here named  heap_buf_overflow.o)
+
+
+ # ASAN Output
+ <0> tag: 17 DW_TAG_compile_unit  name: "strstrnocase.c" FORM 0xe "DW_FORM_strp"
+ <1> tag: 46 DW_TAG_subprogram  name: "is_strstrnocase" FORM 0xe "DW_FORM_strp"
+ =================
+ ==1666==ERROR: AddressSanitizer: heap-buffer-overflow on address 
+   0xb5846db9 at p
+ c 0x080b3a1b bp 0xbfa75d18 sp 0xbfa75d08
+ READ of size 1 at 0xb5846db9 thread T0
+    #0 0x80b3a1a in _dwarf_get_size_of_val /home/puzzor/libdwarf-code/
+        libdwarf/dwarf_util.c:208
+    #1 0x8056602 in _dwarf_next_die_info_ptr /home/puzzor/libdwarf-code/
+        libdwarf/dwarf_die_deliv.c:1353
+    #2 0x8057f4b in dwarf_child /home/puzzor/libdwarf-code/libdwarf/
+       dwarf_die_de liv.c:1688
+    #3 0x804b5fa in get_die_and_siblings simplereader.c:637
+    #4 0x804b65c in get_die_and_siblings simplereader.c:643
+    #5 0x804b3f3 in read_cu_list simplereader.c:611
+    #6 0x804aeae in main simplereader.c:533
+    #7 0xb6ffe275 in __libc_start_main (/lib/i386-linux-gnu/libc.so.6+0x18275)
+    #8 0x80491c0  (/home/puzzor/libdwarf-code/dwarfexample/simplereader+
+         0x80491c 0)
+
+ 0xb5846db9 is located 0 bytes to the right of 249-byte region 
+    [0xb5846cc0,0xb5846db9)
+ allocated by thread T0 here:
+    #0 0xb727fae4 in __interceptor_malloc (/usr/lib/i386-linux-gnu/libasan.so.
+       3+ 0xc3ae4)
+    #1 0xb71a9b98  (/usr/lib/i386-linux-gnu/libelf.so.1+0x9b98)
+ </pre>
+datefixed: 2016-11-16
+references: regressiontests/puzzor/heap_buf_overflow.o
+gitfixid: 5dd64de047cd5ec479fb11fe7ff2692fd819e5e5
+tarrelease:
+endrec:
+
+
 id: DW201611-005
 cve:
 datereported: 2016-11-11
