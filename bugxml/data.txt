@@ -44,6 +44,10 @@ description: An object with corrupt contents causes a memory reference
        3+ 0xc3ae4)
     #1 0xb71a9b98  (/usr/lib/i386-linux-gnu/libelf.so.1+0x9b98)
  </pre>
+ For the orignal bug report see
+ <pre>
+ https://sourceforge.net/p/libdwarf/bugs/5/
+ </pre>
 datefixed: 2016-11-16
 references: regressiontests/puzzor/heap_buf_overflow.o
 gitfixid: 5dd64de047cd5ec479fb11fe7ff2692fd819e5e5
