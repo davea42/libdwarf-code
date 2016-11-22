@@ -385,22 +385,24 @@ validate_abbrev_code(UNUSEDARG Dwarf_Debug dbg,
                 snprintf(buf, sizeof(buf),
                     "Abbrev code %" DW_PR_DUu
                     ", with %" DW_PR_DUu " attributes: "
-                    "outside a maximum of %d.",
+                    "outside a sanity-check maximum of %d.",
                     abbrev_code,
                     abbrev_entry_count,
                     GENERAL_MAX_ATTRIB_COUNT);
                 DWARF_CHECK_ERROR2(abbreviations_result,buf,
-                    "Invalid number of attributes.");
-            } else{
+                    "Number of attributes exceeds sanity check");
+            } else {
+                /*  These apply only to one compiliation environment,
+                    and are not generally applicable.  */
                 snprintf(buf, sizeof(buf),
                     "Abbrev code %" DW_PR_DUu
                     ", with %" DW_PR_DUu " attributes: "
-                    "outside a maximum of %d.",
+                    "outside an SN-LINKER expected-maximum of %d.",
                     abbrev_code,
                     abbrev_entry_count,
                     SNLINKER_MAX_ATTRIB_COUNT);
                 DWARF_CHECK_ERROR2(abbreviations_result,buf,
-                    "Invalid number of attributes.");
+                    "Number of attributes exceeds SN-LINKER-specific sanity check.");
             }
         }
     }
