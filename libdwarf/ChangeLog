@@ -1,3 +1,5 @@
+2016-11-24 David Anderson
+    * Makefile.in: Clean *~
 2016-11-16 David Anderson
     * dwarf_die_deliv.c(dwarf_child): Added a check for 'at end of DIEs',
       removed pointless parens in returns, and added {} to make an if()

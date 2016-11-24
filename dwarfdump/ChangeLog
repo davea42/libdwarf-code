@@ -1,3 +1,5 @@
+2016-11-24 David Anderson
+    * Makefile.in: Clean *~
 2016-11-22  David Anderson
     * print_abbrevs.c: Some -k abbrev warnings did not make it clear that
       they were checking against a heuristic sanity-check value

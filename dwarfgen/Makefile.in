@@ -79,6 +79,7 @@ install: all
 
 clean:
 	-rm -f *.o dwarfgen
+	-rm -f *~
 
 uninstall:
 	-rm -f $(libdir)/dwarfgen.conf

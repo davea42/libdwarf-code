@@ -63,6 +63,7 @@ clean:
 	rm -f *.o
 	rm -f frame1
 	rm -f simplereader
+	rm -f *~
 
 distclean: clean
 	rm -f config.log config.h config.cache config.status 
