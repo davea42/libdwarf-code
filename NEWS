@@ -1,13 +1,16 @@
-2016-09-20:  
+2016-11-30:
+  An alternative build mechanism using cmake is now in the source tree.
+  The builds for product testing continue to be done using configure && make.
+2016-09-20:
   --enable-sanitize option added to configure. This builds
   with -fsanitize=address to check for out of bounds
   memory access. 
-2016-09-05:  
+2016-09-05:
   dwarfexample/simpleexample.c now has a simple option letting one
   extract all .debug_info, .debug_types strings into a file by
   themselves in case one wanted to examine string frequencies,
   for example.
-2016-06-01:  Now we use DW_VERSION_DATE_STR for 
+2016-06-01:  Now we use DW_VERSION_DATE_STR for
   dates everywhere instead of __DATE__ __TIME__
   so a repeated build gets identical object output.
   DW_VERSION_DATE_STR is updated by UPDATEDWARFDUMPVERSION.sh
@@ -23,11 +26,10 @@
   able to read .zdebug_ compressed sections.
   zlib.h is the main zlib header and libz.a is the
   most likely zlib library you will encounter.
-  
+
 2015-11-15:  It is now possible to build
   outside of the source tree. See README.
   So configure.in changed a little.
 2015-01-13:  Removed dwarfdump2 and references to it.
   dwarfdump has the (tsearch) features needed so the C++
   version no longer a benefit.
-
