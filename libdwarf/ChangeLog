@@ -1,3 +1,6 @@
+2016-12-06 David Anderson
+    * dwarf.h: Comments mention certain values unused in
+      DWARF2 and later as being from DWARF1.
 2016-11-24 David Anderson
     * libdwarf/gennames.c: Update version string.
 2016-11-24 David Anderson

@@ -51,6 +51,9 @@ extern "C" {
     Vendors should use a vendor string in names and
     whereever possible avoid duplicating values used by
     other vendor extensions
+
+    The DWARF1 comments indicate values unused in
+    DWARF2 and later but used or reserved in DWARF1.
 */
 
 
@@ -59,15 +62,21 @@ extern "C" {
 #define DW_TAG_entry_point              0x03
 #define DW_TAG_enumeration_type         0x04
 #define DW_TAG_formal_parameter         0x05
+/*  TAG_global_subroutine               0x06 DWARF1 only */
+/*  TAG_global_variable                 0x07 DWARF1 only */
 #define DW_TAG_imported_declaration     0x08
+/*  reserved by DWARF1                  0x09 DWARF1 only */
 #define DW_TAG_label                    0x0a
 #define DW_TAG_lexical_block            0x0b
+/*  TAG_local_variable                  0x0c DWARF1 only. */
 #define DW_TAG_member                   0x0d
+/*  reserved by DWARF1                  0x0e DWARF1 only */
 #define DW_TAG_pointer_type             0x0f
 #define DW_TAG_reference_type           0x10
 #define DW_TAG_compile_unit             0x11
 #define DW_TAG_string_type              0x12
 #define DW_TAG_structure_type           0x13
+/* TAG_subroutine                       0x14 DWARF1 only */
 #define DW_TAG_subroutine_type          0x15
 #define DW_TAG_typedef                  0x16
 #define DW_TAG_union_type               0x17
@@ -198,6 +207,7 @@ extern "C" {
 #define DW_children_yes                 1
 
 #define DW_FORM_addr                    0x01
+/* FORM_REF                             0x02 DWARF1 only */
 #define DW_FORM_block2                  0x03
 #define DW_FORM_block4                  0x04
 #define DW_FORM_data2                   0x05
@@ -239,11 +249,17 @@ extern "C" {
 #define DW_AT_sibling                           0x01
 #define DW_AT_location                          0x02
 #define DW_AT_name                              0x03
+/* reserved DWARF1                              0x04, DWARF1 only */
+/* AT_fund_type                                 0x05, DWARF1 only */
+/* AT_mod_fund_type                             0x06, DWARF1 only */
+/* AT_user_def_type                             0x07, DWARF1 only */
+/* AT_mod_u_d_type                              0x08, DWARF1 only */
 #define DW_AT_ordering                          0x09
 #define DW_AT_subscr_data                       0x0a
 #define DW_AT_byte_size                         0x0b
 #define DW_AT_bit_offset                        0x0c
 #define DW_AT_bit_size                          0x0d
+/* reserved DWARF1                              0x0d, DWARF1 only */
 #define DW_AT_element_list                      0x0f
 #define DW_AT_stmt_list                         0x10
 #define DW_AT_low_pc                            0x11
@@ -270,6 +286,7 @@ extern "C" {
 #define DW_AT_bit_stride                        0x2e /* DWARF3 name */
 #define DW_AT_stride_size                       0x2e /* DWARF2 name */
 #define DW_AT_upper_bound                       0x2f
+/* AT_virtual                                   0x30, DWARF1 only */
 #define DW_AT_abstract_origin                   0x31
 #define DW_AT_accessibility                     0x32
 #define DW_AT_address_class                     0x33
@@ -556,6 +573,7 @@ extern "C" {
 
 #define DW_AT_hi_user                           0x3fff
 
+/* OP values 0x01,0x02,0x04,0x05,0x07 are DWARF1 only */
 #define DW_OP_addr                      0x03
 #define DW_OP_deref                     0x06
 #define DW_OP_const1u                   0x08
