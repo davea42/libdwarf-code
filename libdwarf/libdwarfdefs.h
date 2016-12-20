@@ -84,10 +84,4 @@ typedef unsigned long long __uint64_t;
 #define  UNUSEDARG
 #endif
 
-#ifndef SHF_COMPRESSED
-/*  This from ubuntu xenial. Is in top of trunk binutils
-    as of February 2016. Elf Section Flag */
-#define SHF_COMPRESSED (1 << 11)
-#endif
-
 #endif /* LIBDWARFDEFS_H */

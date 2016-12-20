@@ -1,3 +1,8 @@
+2016-12-20 David Anderson
+    * libdwarfdefs.h: Removed definition of SHF_COMPRESSED.
+      There was no reason to define it early in a local header file.
+    * dwarf_init_finish.c: Added definition of SHF_COMPRESSED.
+      Making it a late definition avoids a conflict with Centos-7.3.
 2016-12-06 David Anderson
     * dwarf.h: Comments mention certain values unused in
       DWARF2 and later as being from DWARF1.

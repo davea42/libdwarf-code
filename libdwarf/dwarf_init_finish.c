@@ -68,6 +68,13 @@
 #define SHT_RELA 4
 #endif
 
+#ifndef SHF_COMPRESSED
+/*  This from ubuntu xenial. Is in top of trunk binutils
+    as of February 2016. Elf Section Flag */
+#define SHF_COMPRESSED (1 << 11)
+#endif
+
+
 #define DWARF_DBG_ERROR(dbg,errval,retval) \
     _dwarf_error(dbg, error, errval); return(retval);
 
