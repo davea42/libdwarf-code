@@ -233,7 +233,7 @@ extern "C" {
 #define DW_FORM_flag_present            0x19 /* DWARF4 */
 #define DW_FORM_strx                    0x1a /* DWARF5 */
 #define DW_FORM_addrx                   0x1b /* DWARF5 */
-#define DW_FORM_ref_sup                 0x1c /* DWARF5 */
+#define DW_FORM_ref_sup4                0x1c /* DWARF5 */
 #define DW_FORM_strp_sup                0x1d /* DWARF5 */
 #define DW_FORM_data16                  0x1e /* DWARF5 */
 #define DW_FORM_line_strp               0x1f /* DWARF5 */
@@ -241,6 +241,7 @@ extern "C" {
 #define DW_FORM_implicit_const          0x21 /* DWARF5 */
 #define DW_FORM_loclistx                0x22 /* DWARF5 */
 #define DW_FORM_rnglistx                0x23 /* DWARF5 */
+#define DW_FORM_ref_sup8                0x24 /* DWARF5 */
 #define DW_FORM_GNU_addr_index          0x1f01 /* GNU extension in debug_info.dwo.*/
 #define DW_FORM_GNU_str_index           0x1f02 /* GNU extension, somewhat like DW_FORM_strp */
 #define DW_FORM_GNU_ref_alt             0x1f20 /* GNU extension. Offset in .debug_info. */

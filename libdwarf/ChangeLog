@@ -1,3 +1,6 @@
+2016-12-25 David Anderson
+    * dwarf.h: DWARF5 changed DW_FORM_ref_sup to DW_FORM_ref_sup4
+      and added DW_FORM_ref_sup8.
 2016-12-20 David Anderson
     * libdwarfdefs.h: Removed definition of SHF_COMPRESSED.
       There was no reason to define it early in a local header file.
