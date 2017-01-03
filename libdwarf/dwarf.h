@@ -872,6 +872,11 @@ extern "C" {
 #define DW_UT_compile                   0x01  /* DWARF5 */
 #define DW_UT_type                      0x02  /* DWARF5 */
 #define DW_UT_partial                   0x03  /* DWARF5 */
+#define DW_UT_skeleton                  0x04  /* DWARF5 */
+#define DW_UT_split_compile             0x05  /* DWARF5 */
+#define DW_UT_split_type                0x06  /* DWARF5 */
+#define DW_UT_lo_user                   0x80  /* DWARF5 */
+#define DW_UT_hi_user                   0xff  /* DWARF5 */
 
 
 /*  DWARF5 DebugFission object section id values
