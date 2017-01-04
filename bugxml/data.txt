@@ -1,4 +1,169 @@
 
+id: DW201611-006
+cve: CVE-2016-9480
+datereported: 2016-11-14
+reportedby: Puzzor (Shi Ji)
+vulnerability: Heap buffer overflow
+product: libdwarf
+description: An object with corrupt contents causes a memory reference
+ out of bounds, a heap buffer overflow reference.
+ <pre>
+ heap-buffer-overflow in dwarf_util.c:208 for val_ptr
+
+ # Version
+ bb9a3492ac5713bed9cf3ae58ddb7afa6e9e98f8
+ (in regression tests here named  heap_buf_overflow.o)
+
+
+ # ASAN Output
+ <0> tag: 17 DW_TAG_compile_unit  name: "strstrnocase.c" FORM 0xe "DW_FORM_strp"
+ <1> tag: 46 DW_TAG_subprogram  name: "is_strstrnocase" FORM 0xe "DW_FORM_strp"
+ =================
+ ==1666==ERROR: AddressSanitizer: heap-buffer-overflow on address 
+   0xb5846db9 at p
+ c 0x080b3a1b bp 0xbfa75d18 sp 0xbfa75d08
+ READ of size 1 at 0xb5846db9 thread T0
+    #0 0x80b3a1a in _dwarf_get_size_of_val /home/puzzor/libdwarf-code/
+        libdwarf/dwarf_util.c:208
+    #1 0x8056602 in _dwarf_next_die_info_ptr /home/puzzor/libdwarf-code/
+        libdwarf/dwarf_die_deliv.c:1353
+    #2 0x8057f4b in dwarf_child /home/puzzor/libdwarf-code/libdwarf/
+       dwarf_die_de liv.c:1688
+    #3 0x804b5fa in get_die_and_siblings simplereader.c:637
+    #4 0x804b65c in get_die_and_siblings simplereader.c:643
+    #5 0x804b3f3 in read_cu_list simplereader.c:611
+    #6 0x804aeae in main simplereader.c:533
+    #7 0xb6ffe275 in __libc_start_main (/lib/i386-linux-gnu/libc.so.6+0x18275)
+    #8 0x80491c0  (/home/puzzor/libdwarf-code/dwarfexample/simplereader+
+         0x80491c 0)
+
+ 0xb5846db9 is located 0 bytes to the right of 249-byte region 
+    [0xb5846cc0,0xb5846db9)
+ allocated by thread T0 here:
+    #0 0xb727fae4 in __interceptor_malloc (/usr/lib/i386-linux-gnu/libasan.so.
+       3+ 0xc3ae4)
+    #1 0xb71a9b98  (/usr/lib/i386-linux-gnu/libelf.so.1+0x9b98)
+ </pre>
+ For the orignal bug report see
+ <pre>
+ https://sourceforge.net/p/libdwarf/bugs/5/
+ </pre>
+datefixed: 2016-11-16
+references: regressiontests/puzzor/heap_buf_overflow.o
+gitfixid: 5dd64de047cd5ec479fb11fe7ff2692fd819e5e5
+tarrelease:
+endrec:
+
+
+id: DW201611-005
+cve:
+datereported: 2016-11-11
+reportedby: Agostino Sarubbo
+vulnerability: negation of -9223372036854775808 cannot be represented in type 
+product: libdwarf
+description: With the right bit pattern in a signed leb number
+ the signed leb decode would execute an unary minus with undefined
+ effect. This is not known to generate an incorrect value,
+ but it could, one supposes.
+datefixed: 2016-11-11
+references: regressiontests/sarubbo-2/00050-libdwarf-negate-itself
+gitfixid: 4f19e1050cd8e9ddf2cb6caa061ff2fec4c9b5f9
+tarrelease:
+endrec:
+
+id: DW201611-004
+cve:
+datereported: 2016-11-02
+reportedby: Agostino Sarubbo
+vulnerability: Heap overflow in dwarf_skim_forms()
+product: libdwarf
+description: If a non-terminated string 
+  in a DWARF5 macro section 
+  ends a section it can result in accessing memory not
+  in the application.   dwarf_macro5.c(in _dwarf_skim_forms()).
+datefixed: 2016-11-04
+references: regressiontests/sarubbo-2/00027-libdwarf-heapoverflow-_dwarf_skim_forms
+gitfixid:  583f8834083b5ef834c497f5b47797e16101a9a6
+tarrelease: 
+endrec:
+
+id: DW201611-003
+cve:
+datereported: 2016-11-02
+reportedby: Agostino Sarubbo
+vulnerability: Bad aranges length leads to overflow and bad pointer
+product: libdwarf
+description:  in dwarf_arange.c(dwarf_get_aranges_list) an aranges
+ header with corrupt data could, with an overflowing calculation,
+ result in pointers to invalid or inappropriate memory being
+ dereferenced.
+datefixed: 2016-11-04
+references: regressiontests/sarubbo-2/00026-libdwarf-heapoverflow-dwarf_get_aranges_list
+gitfixid:  583f8834083b5ef834c497f5b47797e16101a9a6
+tarrelease: 
+endrec:
+
+
+id: DW201611-002
+cve:
+datereported: 2016-11-02
+reportedby: Agostino Sarubbo
+vulnerability: heap overflow in get_attr_value
+product: libdwarf
+description: Libdwarf failed to check for a bogus
+ length in dwarf_form.c (dwarf_formblock()) resulting
+ in a pointer pointing outside of the intended memory
+ region.  Anything could happen in the subsequent
+ use of the bogus pointer.
+ <pre>
+ 0x61300000de1c is located 0 bytes to the right of 348-byte region 
+ [0x61300000dcc0,0x61300000de1c) 
+ allocated by thread T0 here: 
+   #0 0x4c0ad8 in malloc /var/tmp/portage/sys-devel/llvm-3.8.1-
+ r2/work/llvm-3.8.1.src/projects/compiler-rt/lib/asan/asan_malloc_linux.cc:52 
+   #1 0x7f883cfc6206 in __libelf_set_rawdata_wrlock /tmp/portage/dev-
+ libs/elfutils-0.166/work/elfutils-0.166/libelf/elf_getdata.c:318
+ </pre>
+datefixed: 2016-11-04
+references: regressiontests/sarubbo-2/00025-libdwarf-heapoverflow-get_attr_value
+gitfixid:  583f8834083b5ef834c497f5b47797e16101a9a6
+tarrelease: 
+endrec:
+
+id: DW201611-001
+cve:
+datereported: 2016-11-02
+reportedby: Agostino Sarubbo
+vulnerability: Memory allocation failure in do_decompress_zlib
+product: libdwarf
+description: In decompressing a zlib compressed section if
+ the decompressed section size is nonsense (too large)
+ an attempted malloc will fail and could let an exception
+ propagate to callers.
+ <pre>
+  ==27994==WARNING: AddressSanitizer failed to allocate 0x62696c2f7273752f
+  bytes ==27994==AddressSanitizer's allocator is terminating the process
+  instead of returning 0
+  ...
+   #6 0x4c0ab1 in malloc /var/tmp/portage/sys-devel/llvm-3.8.1-
+r2/work/llvm-3.8.1.src/projects/compiler-rt/lib/asan/asan_malloc_linux.cc:53
+#7 0x5b582e in do_decompress_zlib
+/tmp/dwarf-20161021/libdwarf/dwarf_init_finish.c:1085:12
+   #8 0x5b582e in _dwarf_load_section
+/tmp/dwarf-20161021/libdwarf/dwarf_init_finish.c:1159
+   #9 0x5bb479 in dwarf_srcfiles
+/tmp/dwarf-20161021/libdwarf/./dwarf_line.c:336:11
+   #10 0x5145cd in print_one_die_section
+ </pre>
+datefixed: 2016-11-04
+references: regressiontests/sarubbo-2/00024-libdwarf-memalloc-do_decompress_zlib
+gitfixid:  583f8834083b5ef834c497f5b47797e16101a9a6
+tarrelease: 
+endrec:
+
+
+
+
 id: DW201609-004
 cve: 
 datereported: 20160917

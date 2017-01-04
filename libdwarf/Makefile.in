@@ -219,6 +219,7 @@ clean:
 	rm -f ./dwarftied
 	rm -f ./errmsg_check
 	rm -f ./errmsg_check_list
+	rm -f *~
 
 install: all
 	echo "No install provided, see comments in the README"

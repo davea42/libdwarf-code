@@ -68,6 +68,13 @@
 #define SHT_RELA 4
 #endif
 
+#ifndef SHF_COMPRESSED
+/*  This from ubuntu xenial. Is in top of trunk binutils
+    as of February 2016. Elf Section Flag */
+#define SHF_COMPRESSED (1 << 11)
+#endif
+
+
 #define DWARF_DBG_ERROR(dbg,errval,retval) \
     _dwarf_error(dbg, error, errval); return(retval);
 
@@ -1073,7 +1080,7 @@ do_decompress_zlib(Dwarf_Debug dbg,
             error,endsection);
         ptr += fldsize;
         if (type != ELFCOMPRESS_ZLIB) {
-            DWARF_DBG_ERROR(dbg, DW_DLE_ZDEBUG_INPUT_FORMAT_ODD, 
+            DWARF_DBG_ERROR(dbg, DW_DLE_ZDEBUG_INPUT_FORMAT_ODD,
                 DW_DLV_ERROR);
         }
         uncompressed_len = size;
@@ -1083,7 +1090,7 @@ do_decompress_zlib(Dwarf_Debug dbg,
         src    += structsize;
         srclen -= structsize;
     } else {
-        DWARF_DBG_ERROR(dbg, DW_DLE_ZDEBUG_INPUT_FORMAT_ODD, 
+        DWARF_DBG_ERROR(dbg, DW_DLE_ZDEBUG_INPUT_FORMAT_ODD,
             DW_DLV_ERROR);
     }
     {
@@ -1091,14 +1098,14 @@ do_decompress_zlib(Dwarf_Debug dbg,
             the data when compressing.  There is no statement
             about  any effective limit in the compression factor
             though we, here, assume  such a limit to check
-            for sanity in the object file. 
+            for sanity in the object file.
             These tests are heuristics.  */
         Dwarf_Unsigned max_inflated_len = srclen*ALLOWED_ZLIB_INFLATION;
 
         if (srclen > 50)  {
             /*  If srclen not super tiny lets check the following. */
             if (uncompressed_len < (srclen/2)) {
-                /*  Violates the approximate invariant about 
+                /*  Violates the approximate invariant about
                     compression not actually inflating. */
                 DWARF_DBG_ERROR(dbg, DW_DLE_ZLIB_UNCOMPRESS_ERROR,
                     DW_DLV_ERROR);

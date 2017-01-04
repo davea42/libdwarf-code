@@ -19,7 +19,8 @@ INSTALL_PROGRAM = @INSTALL_PROGRAM@
 INSTALL_DATA =  @INSTALL_DATA@
 DATAROOT =      @datarootdir@
 SHELL =         /bin/sh
-CXX =            @CXX@
+CC =            @CC@
+CXX =           @CXX@
 AR =            @AR@
 #ARFLAGS =      @ARFLAGS@
 RM =            rm
@@ -30,6 +31,7 @@ dwfzlib =       @dwfzlib@
 LIBS =          @LIBS@ -L ../libdwarf -ldwarf -lelf $(dwfzlib)
 INCLUDES =      -I. -I$(srcdir) -I../libdwarf -I$(srcdir)/../libdwarf
 CXXFLAGS =      @CPPFLAGS@ @CXXFLAGS@ $(dwfsanitize) $(INCLUDES) 
+CFLAGS =        @CPPFLAGS@ @CFLAGS@ $(dwfsanitize) $(INCLUDES) 
 LDFLAGS =       @LDFLAGS@ $(dwfsanitize) $(LIBS)
 
 
@@ -77,6 +79,7 @@ install: all
 
 clean:
 	-rm -f *.o dwarfgen
+	-rm -f *~
 
 uninstall:
 	-rm -f $(libdir)/dwarfgen.conf

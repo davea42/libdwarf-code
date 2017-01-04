@@ -25,12 +25,19 @@
 
 */
 
+
 #include "config.h"
 #include "dwarf_incl.h"
 #include <stdio.h>
 #ifdef TESTING
 #include "pro_encode_nm.h"
 #endif
+
+/*  Note that with -DTESTING ('make tests')
+    many of the test items
+    only make sense if Dwarf_Unsigned (and Dwarf_Signed)
+    are 64 bits.  The encode/decode logic should
+    be fine whether those types are 64 or 32 bits. */
 
 /*  10 bytes of leb, 7 bits each part of the number, gives
     room for a 64bit number.
@@ -246,8 +253,14 @@ _dwarf_decode_s_leb128(Dwarf_Small * leb128, Dwarf_Word * leb128_length)
         }
     }
 
-    if ((shift < sizeof(Dwarf_Signed) * BITSINBYTE) && sign) {
-        number |= -(Dwarf_Signed)(((Dwarf_Unsigned)1) << shift);
+    if (sign) {
+        /* The following avoids undefined behavior. */
+        unsigned shiftlim = sizeof(Dwarf_Signed) * BITSINBYTE -1;
+        if (shift < shiftlim) {
+            number |= -(Dwarf_Signed)(((Dwarf_Unsigned)1) << shift);
+        } else if (shift == shiftlim) {
+            number |= (((Dwarf_Unsigned)1) << shift);
+        }
     }
 
     if (leb128_length) {
@@ -302,8 +315,14 @@ _dwarf_decode_s_leb128_chk(Dwarf_Small * leb128, Dwarf_Word * leb128_length,
         }
     }
 
-    if ((shift < sizeof(Dwarf_Signed) * BITSINBYTE) && sign) {
-        number |= -(Dwarf_Signed)(((Dwarf_Unsigned)1) << shift);
+    if (sign) {
+        /* The following avoids undefined behavior. */
+        unsigned shiftlim = sizeof(Dwarf_Signed) * BITSINBYTE -1;
+        if (shift < shiftlim) {
+            number |= -(Dwarf_Signed)(((Dwarf_Unsigned)1) << shift);
+        } else if (shift == shiftlim) {
+            number |= (((Dwarf_Unsigned)1) << shift);
+        }
     }
 
     if (leb128_length) {
@@ -329,6 +348,7 @@ static Dwarf_Signed stest[] = {
 0x8000000000000070,
 0x800000000000007f,
 0x8000000000000080,
+0x8000000000000000,
 0x800000ffffffffff,
 0x80000000ffffffff,
 0x800000ffffffffff,
@@ -356,6 +376,7 @@ static Dwarf_Unsigned utest[] = {
 0x80000000ffffffff,
 0x800000ffffffffff,
 0x8000ffffffffffff,
+9223372036854775808ULL,
 -1703944 /*18446744073707847672 as signed*/,
 562949951588368,
 0xffff,
@@ -473,18 +494,11 @@ unsignedtest(unsigned len)
     }
     return errcnt;
 }
-static unsigned char v1[] = { 0x90,
-0x90,
-0x90,
-0x90,
-0x90,
-0x90,
-0x90,
-0x90,
-0x90,
-0x90,
-0x90,
-0x90,
+static unsigned char v1[] = {
+0x90, 0x90, 0x90,
+0x90, 0x90, 0x90,
+0x90, 0x90, 0x90,
+0x90, 0x90, 0x90,
 0x90 };
 
 static unsigned char v2[] = {
@@ -496,6 +510,26 @@ static unsigned char v2[] = {
 0x00,
 0x00,
 0x00};
+
+/*   9223372036854775808 == -9223372036854775808 */
+static unsigned char v3[] = {
+0x80, 0x80, 0x80,
+0x80, 0x80, 0x80,
+0x80, 0x80, 0x80,
+0x41 };
+
+
+/*  This warning with --enable-sanitize is fixed
+    as of November 11, 2016 when decoding test v4.
+    dwarf_leb.c: runtime error: negation of -9223372036854775808 cannot be
+    represented in type 'Dwarf_Signed' (aka 'long long');
+    cast to an unsigned type to negate this value to itself.
+    The actual value here is -4611686018427387904 0xc000000000000000 */
+static unsigned char v4[] = {
+0x80, 0x80, 0x80,
+0x80, 0x80, 0x80,
+0x80, 0x80, 0x40 };
+
 
 static unsigned
 specialtests(void)
@@ -550,6 +584,43 @@ specialtests(void)
         printf("FAIL unsigned decode special v2 \n");
         ++errcnt;
     }
+
+    vlen = sizeof(v3)/sizeof(char);
+    res = _dwarf_decode_s_leb128_chk(
+        (Dwarf_Small *)v3,
+        &decodelen,
+        &decodeval,
+        (Dwarf_Byte_Ptr)(&v3[vlen]));
+    if (res != DW_DLV_OK) {
+        printf("FAIL signed decode special v3 \n");
+        ++errcnt;
+    }
+    if (decodeval != 0x8000000000000000) {
+        printf("FAIL signed decode special v3 value check %lld vs %lld \n",
+            decodeval,(Dwarf_Signed)0x8000000000000000);
+        ++errcnt;
+    }
+
+    vlen = sizeof(v4)/sizeof(char);
+    res = _dwarf_decode_s_leb128_chk(
+        (Dwarf_Small *)v4,
+        &decodelen,
+        &decodeval,
+        (Dwarf_Byte_Ptr)(&v4[vlen]));
+    if (res != DW_DLV_OK) {
+        printf("FAIL signed decode special v4 \n");
+        ++errcnt;
+    }
+    if (decodeval != -4611686018427387904) {
+        printf("FAIL signed decode special v4 value check %lld vs %lld \n",
+            decodeval,-4611686018427387904LL);
+        printf("FAIL signed decode special v4 value check 0x%llx vs 0x%llx \n",
+            decodeval,-4611686018427387904LL);
+        ++errcnt;
+    }
+
+    return errcnt;
+
     return errcnt;
 }
 

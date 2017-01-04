@@ -41,7 +41,7 @@
 
 boolean ellipsis = FALSE; /* So we can use dwarf_names.c */
 
-#define DW_VERSION_DATE_STR " 2016-10-21 09:13:24-07:00  "
+#define DW_VERSION_DATE_STR " 2016-11-24 14:21:17-08:00  "
 
 /* Expected input format
 
@@ -337,7 +337,6 @@ main(int argc, char **argv)
             /* In standard case, the row indexed by tag */
             if (tag >= table_rows ) {
                 bad_line_input("tag %d exceeds standard table size",tag);
- 
             }
         } else {
             /*  In extended case, the row indexed by 0-N

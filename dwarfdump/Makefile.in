@@ -233,6 +233,7 @@ clean:
 	rm -f getopttestnat
 	rm -f selfhelpertree
 	rm -f selfmc
+	rm -f *~
 
 distclean: clean
 	rm -f config.log config.h config.cache config.status 

@@ -1,3 +1,19 @@
+2016-11-24 David Anderson
+    * common.c,dwarfdump.c,tag_attr.c,tag_tree.c:
+      Update version strings.
+2016-11-24 David Anderson
+    * Makefile.in: Clean *~
+2016-11-22  David Anderson
+    * print_abbrevs.c: Some -k abbrev warnings did not make it clear that
+      they were checking against a heuristic sanity-check value
+      for the maximum number of attributes, not a genuine
+      maximum.
+2016-11-22  David Anderson
+    * tag_attr.c: Remove bogus blank line with trailing spaces.
+2016-11-11  David Anderson
+    * print_frames.c: Apply fix to local_dwarf_decode_s_leb128_chk so
+      it matches libdwarf dwarf_leb.c.  A fix for certain bit
+      pattern provoking undefined behavior in C..
 2016-11-01  David Anderson
     * tag_attr.c,tag_common.h,tag_attr_ext.list: Adding 
       Ada GNAT gcc attributes DW_AT_GNU_numerator,

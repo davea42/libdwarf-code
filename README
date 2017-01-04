@@ -1,3 +1,10 @@
+
+A build can be done via cmake, which is
+new as of November 2016.
+
+Standard builds are done by configure/make as
+described below.
+
 BUILDING IN SOURCE TREE
 To just build libdwarf and dwarfdump
 if the source tree is in /a/b/libdwarf-1 
@@ -64,4 +71,4 @@ Recent gcc has some checks that can be done at runtime.
   -fsanitize=undefined
 which are turned on here by --enable-sanitize at build time.
 
-David Anderson.  Updated September 30,2016.
+David Anderson.  Updated November 30, 2016

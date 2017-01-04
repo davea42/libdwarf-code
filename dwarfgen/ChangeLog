@@ -1,3 +1,8 @@
+David Anderson
+    * Makefile.in: Clean *~
+2016-11-20  David Anderson
+     * Makefile.in: Now we have proper setting of CC
+       and CFLAGS, which was missing before.
 2016-10-07  David Anderson
      * dwarfgen.cc:For the reporting of .debug_str 
        stats (just 3 lines of it)
