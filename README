@@ -1,6 +1,11 @@
 
 A build can be done via cmake, which is
 new as of November 2016.
+  mkdir /tmp/builddir
+  cd /tmp/builddir
+  # Assuming the source tree in /a/b/code
+  cmake /a/b/code
+  make
 
 Standard builds are done by configure/make as
 described below.
