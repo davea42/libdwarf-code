@@ -145,9 +145,8 @@ esb_allocate_more(struct esb_s *data, size_t len)
 void
 esb_force_allocation(struct esb_s *data, size_t minlen)
 {
-    if (data->esb_allocated_size < minlen) {
-        size_t increment = minlen - data->esb_allocated_size;
-        esb_allocate_more(data,increment);
+    if (data->esb_allocated_size < data->esb_used_bytes + minlen) {
+        esb_allocate_more(data,minlen);
     }
 }
 
