@@ -242,6 +242,15 @@ extern "C" {
 #define DW_FORM_loclistx                0x22 /* DWARF5 */
 #define DW_FORM_rnglistx                0x23 /* DWARF5 */
 #define DW_FORM_ref_sup8                0x24 /* DWARF5 */
+#define DW_FORM_strx1                   0x25 /* DWARF5 */
+#define DW_FORM_strx2                   0x26 /* DWARF5 */
+#define DW_FORM_strx3                   0x27 /* DWARF5 */
+#define DW_FORM_strx4                   0x29 /* DWARF5 */
+#define DW_FORM_addrx1                  0x29 /* DWARF5 */
+#define DW_FORM_addrx2                  0x2a /* DWARF5 */
+#define DW_FORM_addrx3                  0x2b /* DWARF5 */
+#define DW_FORM_addrx4                  0x2c /* DWARF5 */
+
 #define DW_FORM_GNU_addr_index          0x1f01 /* GNU extension in debug_info.dwo.*/
 #define DW_FORM_GNU_str_index           0x1f02 /* GNU extension, somewhat like DW_FORM_strp */
 #define DW_FORM_GNU_ref_alt             0x1f20 /* GNU extension. Offset in .debug_info. */
@@ -277,13 +286,21 @@ extern "C" {
 #define DW_AT_const_value                       0x1c
 #define DW_AT_containing_type                   0x1d
 #define DW_AT_default_value                     0x1e
+/*  reserved                                    0x1f */
 #define DW_AT_inline                            0x20
 #define DW_AT_is_optional                       0x21
 #define DW_AT_lower_bound                       0x22
+/*  reserved                                    0x23 */
+/*  reserved                                    0x24 */
 #define DW_AT_producer                          0x25
+/*  reserved                                    0x26 */
 #define DW_AT_prototyped                        0x27
+/*  reserved                                    0x28 */
+/*  reserved                                    0x29 */
 #define DW_AT_return_addr                       0x2a
+/*  reserved                                    0x2b */
 #define DW_AT_start_scope                       0x2c
+/*  reserved                                    0x2d */
 #define DW_AT_bit_stride                        0x2e /* DWARF3 name */
 #define DW_AT_stride_size                       0x2e /* DWARF2 name */
 #define DW_AT_upper_bound                       0x2f
@@ -306,7 +323,7 @@ extern "C" {
 #define DW_AT_frame_base                        0x40
 #define DW_AT_friend                            0x41
 #define DW_AT_identifier_case                   0x42
-#define DW_AT_macro_info                        0x43 /* DWARF2-DWARF4, not DWARF5 */
+#define DW_AT_macro_info                        0x43 /* DWARF{234} not DWARF5 */
 #define DW_AT_namelist_item                     0x44
 #define DW_AT_priority                          0x45
 #define DW_AT_segment                           0x46
@@ -357,7 +374,7 @@ extern "C" {
 #define DW_AT_str_offsets_base                  0x72 /* DWARF5 */
 #define DW_AT_addr_base                         0x73 /* DWARF5 */
 #define DW_AT_ranges_base                       0x74 /* DWARF5 */
-  /*  DW_AT_dwo_id, an experiment in some DWARF4. Not DWARF5. */
+  /*  DW_AT_dwo_id, an experiment in some DWARF4+. Not DWARF5! */
 #define DW_AT_dwo_id                            0x75 /* DWARF4!*/
 #define DW_AT_dwo_name                          0x76 /* DWARF5 */
 #define DW_AT_reference                         0x77 /* DWARF5 */
@@ -840,7 +857,7 @@ extern "C" {
 #define DW_IDX_hi_user                  0x0fff   /* DWARF5 */
 
 /* These with not-quite-the-same-names were used in DWARF4
-   and should not be used by anyone. */
+   and never official and should not be used by anyone. */
 #define DW_LLEX_end_of_list_entry        0x0      /* DWARF4 experimental */
 #define DW_LLEX_base_address_selection_entry 0x01 /* DWARF4 experimental */
 #define DW_LLEX_start_end_entry          0x02     /* DWARF4 experimental */
@@ -849,7 +866,7 @@ extern "C" {
 
 /* DWARF5 Location List Entries in Split Objects */
 #define DW_LLE_end_of_list              0x0      /* DWARF5 */
-#define DW_LLE_base_addressx            0x01 /* DWARF5 */
+#define DW_LLE_base_addressx            0x01     /* DWARF5 */
 #define DW_LLE_startx_endx              0x02     /* DWARF5 */
 #define DW_LLE_startx_length            0x03     /* DWARF5 */
 #define DW_LLE_offset_pair              0x04     /* DWARF5 */
@@ -891,8 +908,8 @@ extern "C" {
 #define DW_SECT_LINE        4  /* .debug_line.dwo        DWARF5 */
 #define DW_SECT_LOC         5  /* .debug_loc.dwo         DWARF5 */
 #define DW_SECT_STR_OFFSETS 6  /* .debug_str_offsets.dwo DWARF5 */
-#define DW_SECT_MACINFO     7  /* .debug_macinfo.dwo     DWARF5 */
-#define DW_SECT_MACRO       8  /* .debug_macro.dwo       DWARF5 */
+#define DW_SECT_MACRO       7  /* .debug_macro.dwo       DWARF5 */
+#define DW_SECT_RNGLISTS    8  /* .debug_rnglists.dwo    DWARF5 */
 
 
 /* Decimal Sign codes. */
@@ -900,7 +917,6 @@ extern "C" {
 #define DW_DS_leading_overpunch         0x02 /* DWARF3f */
 #define DW_DS_trailing_overpunch        0x03 /* DWARF3f */
 #define DW_DS_leading_separate          0x04 /* DWARF3f */
-
 #define DW_DS_trailing_separate         0x05 /* DWARF3f */
 
 /* Endian code name. */
@@ -980,6 +996,7 @@ extern "C" {
 #define DW_LANG_Fortran03               0x0022 /* DWARF5 */
 #define DW_LANG_Fortran08               0x0023 /* DWARF5 */
 #define DW_LANG_RenderScript            0x0024 /* DWARF5 */
+#define DW_LANG_BLISS                   0x0025 /* DWARF5 */
 #define DW_LANG_lo_user                 0x8000
 #define DW_LANG_Mips_Assembler          0x8001 /* MIPS   */
 #define DW_LANG_Upc                     0x8765 /* UPC, use
@@ -1086,7 +1103,6 @@ extern "C" {
 #define DW_LNE_set_address              0x02
 #define DW_LNE_define_file              0x03  /* DWARF4 and earlier only */
 #define DW_LNE_set_discriminator        0x04  /* DWARF4 */
-#define DW_LNE_define_file_MD5          0x05  /* DWARF5 */
 
 /* HP extensions. */
 #define DW_LNE_HP_negate_is_UV_update       0x11 /* 17 HP */
