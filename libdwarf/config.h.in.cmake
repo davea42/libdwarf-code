@@ -28,6 +28,15 @@
 /* Define to 1 if you have the <elf.h> header file. */
 #cmakedefine HAVE_ELF_H 1
 
+/* Define to 1 if you have the <sys/elf_86.h> header file. */
+#cmakedefine HAVE_SYS_ELF_386_H 1
+
+/* Define to 1 if you have the <sys/elf_amd64.h> header file. */
+#cmakedefine HAVE_SYS_ELF_AMD64_H 1
+
+/* Define to 1 if you have the <sys/elf_sparc.h> header file. */
+#cmakedefine HAVE_SYS_ELF_SPARC_H 1
+
 /* Define to 1 if you have the <inttypes.h> header file. */
 #cmakedefine HAVE_INTTYPES_H 1
 

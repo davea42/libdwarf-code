@@ -2,7 +2,7 @@
   Copyright (C) 2000-2005 Silicon Graphics, Inc.  All Rights Reserved.
   Portions Copyright 2007-2010 Sun Microsystems, Inc. All rights reserved.
   Portions Copyright 2008-2010 Arxan Technologies, Inc. All Rights Reserved.
-  Portions Copyright 2009-2012 David Anderson. All rights reserved.
+  Portions Copyright 2009-2017 David Anderson. All rights reserved.
   Portions Copyright 2009-2010 Novell Inc. All rights reserved.
   Portions Copyright 2012 SN Systems Ltd. All rights reserved.
 
@@ -43,7 +43,18 @@
 
 #ifdef HAVE_ELF_H
 #include <elf.h>
+/* Relocation definitions are in sys/elf_{mach}.h on Solaris.  */
+#ifdef HAVE_SYS_ELF_AMD64_H
+#include <sys/elf_amd64.h>
 #endif
+#ifdef HAVE_SYS_ELF_386_H
+#include <sys/elf_386.h>
+#endif
+#ifdef HAVE_SYS_ELF_SPARC_H
+#include <sys/elf_SPARC.h>
+#endif
+#endif
+
 #ifdef HAVE_LIBELF_H
 #include <libelf.h>
 #else

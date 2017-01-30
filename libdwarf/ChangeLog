@@ -1,3 +1,13 @@
+2017-01-23 David Anderson
+    * config.h.in.cmake,configure,configure.cmake,configure.in,
+      CMakeLists.txt,Makefile.in:
+      Add checks for sys/elf_386.h sys/elf_amd64.h sys/elf_SPARC.h  so
+      relocations noticed for Solaris.
+      Better diagostic about not-building archive or shared library.
+    * configure: Regenerated
+    * dwarf_elf_access.c: Ifdef added for sys/elf_386.h,sys/elf_amd64.h,
+      sys/elf_SPARC.h so Solaris relocations are found.
+    * Makefile.in
 2017-01-02 David Anderson
     * dwarf.h: DWARF5 added new DW_UT codes compared
       to earlier DWARF5 drafts.

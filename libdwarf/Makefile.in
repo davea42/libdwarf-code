@@ -137,8 +137,11 @@ libdwarf.so: dwarf_names.h dwarf_names.c $(OBJS) dwarf_names.o
 	$(CC) $(CFLAGS) $(LDFLAGS) -shared $(OBJS) -Wl,-soname=$(SONAME)  dwarf_names.o $(dwfzlib) -o $@
 	ln libdwarf.so $(SONAME)
 
-none:
-	echo "do nothing " $@
+nosharedlibrary:
+	echo "Not building shared library libdwarf.so"
+noarchivelibrary:
+	echo "Not building archive library libdwarf.a"
+
 dwgetopt.o: $(srcdir)/dwgetopt.c $(srcdir)/dwgetopt.h
 	$(HOSTCC) $(HOSTCFLAGS) -c $(srcdir)/dwgetopt.c
 dwarf_loc.o: $(srcdir)/dwarf_loc.c  $(srcdir)/dwarf_loc2.c  $(srcdir)/dwarf_loc.h 

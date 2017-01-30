@@ -3828,7 +3828,7 @@ fi
 
 
 
-for ac_header in alloca.h elf.h unistd.h elfaccess.h libelf.h libelf/libelf.h  sys/types.h sys/ia64/elf.h
+for ac_header in alloca.h elf.h unistd.h elfaccess.h libelf.h libelf/libelf.h  sys/types.h sys/elf_386.h sys/elf_amd64.h sys/elf_SPARC.h sys/ia64/elf.h
 do :
   as_ac_Header=`$as_echo "ac_cv_header_$ac_header" | $as_tr_sh`
 ac_fn_c_check_header_mongrel "$LINENO" "$ac_header" "$as_ac_Header" "$ac_includes_default"
@@ -4281,7 +4281,7 @@ rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
 
 
 
-build_shared=none
+build_shared=nosharedlibrary
 
 dwfpic=-fPIC
 
@@ -4322,7 +4322,7 @@ fi
 
 if  test "x$enable_nonshared" = "xno"; then :
 
-      build_nonshared=none
+      build_nonshared=noarchivelibrary
 
    { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
 $as_echo "no" >&6; }

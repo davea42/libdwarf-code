@@ -1,7 +1,7 @@
 include(AutoconfHelper)
 
 ac_init()
-ac_check_headers(alloca.h elf.h elfaccess.h libelf.h libelf/libelf.h  sys/types.h sys/ia64/elf.h)
+ac_check_headers(alloca.h elf.h elfaccess.h libelf.h libelf/libelf.h  sys/types.h sys/elf_386.h sys/elf_amd64.h sys/elf_sparc.h sys/ia64/elf.h)
 
 #  The default libdwarf is the one with struct Elf
 message(STATUS "Assuming struct Elf for the default libdwarf.h")

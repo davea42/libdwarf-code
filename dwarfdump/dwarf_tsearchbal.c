@@ -1,4 +1,4 @@
-/* Copyright (c) 2013-2016, David Anderson
+/* Copyright (c) 2013-2017, David Anderson
 All rights reserved.
 
 Redistribution and use in source and binary forms, with
@@ -522,6 +522,7 @@ dwarf_tsearch(const void *key, void **headin,
         }
         root = allocate_ts_entry(key);
         if(!root) {
+            free(head);
             return NULL;
         }
         head->rlink = root;
