@@ -1,3 +1,6 @@
+2017-01-30 David Anderson
+    * esb.c(esb_force_allocation): Add commentary about to clarify
+      the purpose of the function.
 2017-01-23 David Anderson
     * dwarf_tsearchbal.c(dwarf_tsearch): In memory exhausted situation the
       function could leak a little bit of memory.  

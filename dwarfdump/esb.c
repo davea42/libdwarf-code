@@ -142,6 +142,11 @@ esb_allocate_more(struct esb_s *data, size_t len)
     data->esb_allocated_size = new_size;
 }
 
+/*  Ensure that the total buffer length is at least 'minlen'
+    bytes.  
+    To ensure available unused buffer space is n bytes, 
+    do, for example:
+    esb_force_allocation(esbp,esb_string_len(esbp) + n);  */
 void
 esb_force_allocation(struct esb_s *data, size_t minlen)
 {
