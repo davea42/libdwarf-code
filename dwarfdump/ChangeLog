@@ -1,6 +1,6 @@
 2017-01-31 David Anderson
     * esb.c(esb_force_allocation): Code was wrong all this time.
-      Fixed and corrected commentary.
+      Fixed and corrected commentary. Updated copyright.
 2017-01-30 David Anderson
     * esb.c(esb_force_allocation): Add commentary about to clarify
       the purpose of the function.

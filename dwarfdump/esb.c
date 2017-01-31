@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2005 Silicon Graphics, Inc.  All Rights Reserved.
-  Portions Copyright (C) 2013-2016 David Anderson. All Rights Reserved.
+  Portions Copyright (C) 2013-2017 David Anderson. All Rights Reserved.
   This program is free software; you can redistribute it and/or modify it
   under the terms of version 2 of the GNU General Public License as
   published by the Free Software Foundation.
@@ -143,7 +143,7 @@ esb_allocate_more(struct esb_s *data, size_t len)
 }
 
 /*  Ensure that the total buffer length is large enough that
-    at least minlen bytes are available, unused, 
+    at least minlen bytes are available, unused,
     in the allocation. */
 void
 esb_force_allocation(struct esb_s *data, size_t minlen)
