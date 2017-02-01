@@ -1,4 +1,10 @@
 2017-01-30 David Anderson
+    * dwarf_die_deliv.c(_dwarf_make_CU_Context): Recent change
+      in dwarf.h for DWARF5 package files required a small change
+      here.
+    * dwarf_xu_index.c(dwarf_get_xu_section_names): Recent change
+      in dwarf.h for DWARF5 package files required a small change
+      here and in dwp_secnames[].
     * dwarf.h: Now matches final DWARF5.
 2017-01-23 David Anderson
     * config.h.in.cmake,configure,configure.cmake,configure.in,

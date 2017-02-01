@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2000-2006 Silicon Graphics, Inc.  All Rights Reserved.
-  Portions Copyright (C) 2007-2012 David Anderson. All Rights Reserved.
+  Portions Copyright (C) 2007-2016 David Anderson. All Rights Reserved.
   Portions Copyright 2012 SN Systems Ltd. All rights reserved.
 
   This program is free software; you can redistribute it and/or modify it
@@ -430,7 +430,10 @@ _dwarf_make_CU_Context(Dwarf_Debug dbg,
                 "tu",
                 &cu_context->cc_dwp_offsets,
                 error);
-            if (resdf != DW_DLV_OK) {
+            if (resdf == DW_DLV_ERROR) {
+                dwarf_dealloc(dbg, cu_context, DW_DLA_CU_CONTEXT);
+                return resdf;
+            } else if (resdf == DW_DLV_NO_ENTRY) {
                 dwarf_dealloc(dbg, cu_context, DW_DLA_CU_CONTEXT);
                 _dwarf_error(dbg, error,
                     DW_DLE_MISSING_REQUIRED_TU_OFFSET_HASH);
@@ -444,7 +447,10 @@ _dwarf_make_CU_Context(Dwarf_Debug dbg,
                 offset,
                 &cu_context->cc_dwp_offsets,
                 error);
-            if (resdf != DW_DLV_OK) {
+            if (resdf == DW_DLV_ERROR) {
+                dwarf_dealloc(dbg, cu_context, DW_DLA_CU_CONTEXT);
+                return resdf;
+            } else if (resdf == DW_DLV_NO_ENTRY) {
                 dwarf_dealloc(dbg, cu_context, DW_DLA_CU_CONTEXT);
                 _dwarf_error(dbg, error,
                     DW_DLE_MISSING_REQUIRED_CU_OFFSET_HASH);
