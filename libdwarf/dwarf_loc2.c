@@ -56,7 +56,7 @@ _dwarf_loc_block_sanity_check(Dwarf_Debug dbg,
     overridden by our caller with the true ld_lle_value.  */
 
 static int
-_dwarf_get_locdesc_c(Dwarf_Debug dbg,
+_dwarf_get_locdesc_op_c(Dwarf_Debug dbg,
     Dwarf_Unsigned locdesc_index,
     Dwarf_Loc_Head_c loc_head,
     Dwarf_Block_c * loc_block,
@@ -90,22 +90,28 @@ _dwarf_get_locdesc_c(Dwarf_Debug dbg,
 
     /* ***** BEGIN CODE ***** */
     blockdataptr = loc_block->bl_data;
-    res = _dwarf_what_section_are_we(dbg,
-        blockdataptr,&section_name,&section_start,
-        &section_size,&section_end,error);
-    if (res != DW_DLV_OK) {
-        _dwarf_error(dbg, error,DW_DLE_POINTER_SECTION_UNKNOWN);
-        return DW_DLV_ERROR;
-    }
-    res = _dwarf_loc_block_sanity_check(dbg,loc_block,error);
-    if (res != DW_DLV_OK) {
-        return res;
+    if (!blockdataptr || !loc_block->bl_len) {
+        /*  an empty block has no operations so
+            no section or tests need be done.. */
+    } else {
+        res = _dwarf_what_section_are_we(dbg,
+            blockdataptr,&section_name,&section_start,
+            &section_size,&section_end,error);
+        if (res != DW_DLV_OK) {
+            _dwarf_error(dbg, error,DW_DLE_POINTER_SECTION_UNKNOWN);
+            return DW_DLV_ERROR;
+        }
+        res = _dwarf_loc_block_sanity_check(dbg,loc_block,error);
+        if (res != DW_DLV_OK) {
+            return res;
+        }
     }
     /* New loop getting Loc operators. Non DWO */
     while (offset <= loc_block->bl_len) {
         Dwarf_Unsigned nextoffset = 0;
         struct Dwarf_Loc_c_s temp_loc;
 
+        /*  This call is ok even if bl_data NULL and bl_len 0 */
         res = _dwarf_read_loc_expr_op(dbg,loc_block,
             op_count,
             version_stamp,
@@ -120,7 +126,8 @@ _dwarf_get_locdesc_c(Dwarf_Debug dbg,
             return res;
         }
         if (res == DW_DLV_NO_ENTRY) {
-            /* Normal end. */
+            /*  Normal end. 
+                Also the end for an empty loc_block.  */
             break;
         }
         op_count++;
@@ -158,6 +165,7 @@ _dwarf_get_locdesc_c(Dwarf_Debug dbg,
         return DW_DLV_ERROR;
     }
 
+    /* op_count could be zero. */
     new_loc = head_loc;
     for (i = 0; i < op_count; i++) {
         /* Copying only the fields needed by DWARF 2,3,4 */
@@ -204,7 +212,6 @@ _dwarf_read_loc_section_dwo(Dwarf_Debug dbg,
     Dwarf_Small *beg = dbg->de_debug_loc.dss_data + sec_offset;
     Dwarf_Small *locptr = 0;
     Dwarf_Small llecode = 0;
-    Dwarf_Word leb128_length = 0;
     Dwarf_Unsigned expr_offset  = sec_offset;
     Dwarf_Byte_Ptr section_end = dbg->de_debug_loc.dss_data
         + dbg->de_debug_loc.dss_size;
@@ -243,12 +250,15 @@ _dwarf_read_loc_section_dwo(Dwarf_Debug dbg,
         Dwarf_Unsigned addr_indexs = 0;
         Dwarf_Unsigned addr_indexe= 0;
         Dwarf_Half exprlen = 0;
+        Dwarf_Word leb128_length = 0;
 
-        DECODE_LEB128_UWORD_CK(locptr,addr_indexs,
+        DECODE_LEB128_UWORD_LEN_CK(locptr,addr_indexs,
+            leb128_length,
             dbg,error,section_end);
         expr_offset += leb128_length;
 
-        DECODE_LEB128_UWORD_CK(locptr,addr_indexe,
+        DECODE_LEB128_UWORD_LEN_CK(locptr,addr_indexe,
+            leb128_length,
             dbg,error,section_end);
         expr_offset +=leb128_length;
 
@@ -277,8 +287,10 @@ _dwarf_read_loc_section_dwo(Dwarf_Debug dbg,
         Dwarf_Unsigned addr_index = 0;
         Dwarf_ufixed  range_length = 0;
         Dwarf_Half exprlen = 0;
+        Dwarf_Word leb128_length = 0;
 
-        DECODE_LEB128_UWORD_CK(locptr,addr_index,
+        DECODE_LEB128_UWORD_LEN_CK(locptr,addr_index,
+            leb128_length,
             dbg,error,section_end);
         expr_offset +=leb128_length;
 
@@ -509,8 +521,8 @@ dwarf_get_loclist_c(Dwarf_Attribute attr,
                     dwarf_loc_head_c_dealloc(llhead);
                     return blkres;
                 }
-                /* Fills in the locdesc at index lli */
-                lres = _dwarf_get_locdesc_c(dbg,
+                /* Fills in the locdesc op at index lli */
+                lres = _dwarf_get_locdesc_op_c(dbg,
                     lli,
                     llhead,
                     &loc_block,
@@ -600,7 +612,7 @@ dwarf_get_loclist_c(Dwarf_Attribute attr,
                 loc_block.bl_locdesc_offset = loclist_offset;
 
                 /* Fills in the locdesc at index lli */
-                lres = _dwarf_get_locdesc_c(dbg,
+                lres = _dwarf_get_locdesc_op_c(dbg,
                     lli,
                     llhead,
                     &loc_block,
@@ -682,7 +694,7 @@ dwarf_get_loclist_c(Dwarf_Attribute attr,
             set. Dwarf2, section 2.4.1 In other words, it is not an
             error, and we don't test for block length 0 specially here. */
         /* Fills in the locdesc at index 0 */
-        blkres = _dwarf_get_locdesc_c(dbg,
+        blkres = _dwarf_get_locdesc_op_c(dbg,
             0, /* fake locdesc is index 0 */
             llhead,
             &loc_block,
@@ -755,7 +767,7 @@ dwarf_loclist_from_expr_c(Dwarf_Debug dbg,
     section 2.4.1 In other words, it is not an error, and we don't
     test for block length 0 specially here.  */
 
-    res = _dwarf_get_locdesc_c(dbg,
+    res = _dwarf_get_locdesc_op_c(dbg,
         0,
         llhead,
         &loc_block,

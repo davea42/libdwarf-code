@@ -1,3 +1,8 @@
+2017-03-04 David Anderson
+    * dwarf_loc2.c(_dwarf_get_locdesc_c): Renamed to _dwarf_get_locdesc_op_c
+      and corrected the handling so offsets properly dealt with
+      and so a final empty operator is synthesized properly into an
+      end operator like DWARF5.
 2017-01-30 David Anderson
     * dwarf_die_deliv.c(_dwarf_make_CU_Context): Recent change
       in dwarf.h for DWARF5 package files required a small change
