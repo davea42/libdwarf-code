@@ -2,7 +2,7 @@
   Copyright (C) 2000-2006 Silicon Graphics, Inc.  All Rights Reserved.
   Portions Copyright 2007-2010 Sun Microsystems, Inc. All rights reserved.
   Portions Copyright 2009-2012 SN Systems Ltd. All rights reserved.
-  Portions Copyright 2007-2016 David Anderson. All rights reserved.
+  Portions Copyright 2007-2017 David Anderson. All rights reserved.
 
   This program is free software; you can redistribute it and/or modify it
   under the terms of version 2 of the GNU General Public License as
@@ -1596,7 +1596,7 @@ get_FLAG_BLOCK_string(Dwarf_Debug dbg, Dwarf_Attribute attrib,
     array = dwarf_uncompress_integer_block(dbg,
         1, /* 'true' (meaning signed ints)*/
         32, /* bits per unit */
-        tempb->bl_data,
+        (void *)tempb->bl_data,
         tempb->bl_len,
         &array_len, /* len of out array */
         &fblkerr);
@@ -2612,7 +2612,8 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
                 isunsigned = determine_discr_signedness(dbg);
                 esb_empty_string(&valname);
 
-                sres = dwarf_discr_list(dbg,tempb->bl_data,
+                sres = dwarf_discr_list(dbg,
+                    (Dwarf_Small *)tempb->bl_data,
                     tempb->bl_len,
                     &h,&arraycount,&paerr);
                 if (sres == DW_DLV_NO_ENTRY) {

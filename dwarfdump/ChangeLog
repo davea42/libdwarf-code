@@ -1,3 +1,9 @@
+2017-03-21 David Anderson
+    * print_die.c: Added casts to call args match with the 
+      function declaration.  So a fussy compiler will
+      be less likely to complain.
+    * sanitized.c: Added explicit initializers to global variables.
+      Moved a static var to the function that uses it.
 2017-01-31 David Anderson
     * esb.c(esb_force_allocation): Code was wrong all this time.
       Fixed and corrected commentary. Updated copyright.

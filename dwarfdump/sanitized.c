@@ -1,5 +1,5 @@
 /*
-  Copyright 2016-2016 David Anderson. All rights reserved.
+  Copyright 2016-2017 David Anderson. All rights reserved.
 
   This program is free software; you can redistribute it and/or modify it
   under the terms of version 2 of the GNU General Public License as
@@ -81,17 +81,20 @@ US  Unit separator      31 1F   Alt-31  Ctrl-_ ^_
 */
 
 
-static struct esb_s localesb;
+static struct esb_s localesb = {0,0,0};
 
-boolean no_sanitize_string_garbage;
 #define FALSE 0
 #define TRUE 1
+boolean no_sanitize_string_garbage = FALSE;
 
-static  char tmpbuf[4];
-
+/*  This is safe to use because it is only 
+    callable here and we copy the value 
+    returned in the static buffer 
+    to a safe spot immediately. */
 static const char *
 as_number(int c)
 {
+    static char tmpbuf[4];
     snprintf(tmpbuf,sizeof(tmpbuf),"%%%02x",c & 0xff);
     return tmpbuf;
 }
