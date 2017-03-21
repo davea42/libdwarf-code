@@ -8,7 +8,7 @@
 .nr Hb 5
 \." ==============================================
 \." Put current date in the following at each rev
-.ds vE rev 2.52, September 8, 2016
+.ds vE rev 2.53, March 21, 2017
 \." ==============================================
 \." ==============================================
 .ds | |
@@ -3802,7 +3802,8 @@ void example_discr_list(Dwarf_Debug dbg,
             Dwarf_Unsigned arraycount = 0;
             int sres = 0;
             Dwarf_Bool unsignedflag =
-            sres = dwarf_discr_list(dbg,tempb->bl_data,
+            sres = dwarf_discr_list(dbg,
+                (Dwarf_Small *)tempb->bl_data,
                 tempb->bl_len,
                 &h,&arraycount,err);
             if (sres == DW_DLV_NO_ENTRY) {

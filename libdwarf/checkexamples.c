@@ -1393,7 +1393,8 @@ void example_discr_list(Dwarf_Debug dbg,
             Dwarf_Unsigned arraycount = 0;
             int sres = 0;
             Dwarf_Bool unsignedflag =
-            sres = dwarf_discr_list(dbg,tempb->bl_data,
+            sres = dwarf_discr_list(dbg,
+                (Dwarf_Small *)tempb->bl_data,
                 tempb->bl_len,
                 &h,&arraycount,err);
             if (sres == DW_DLV_NO_ENTRY) {

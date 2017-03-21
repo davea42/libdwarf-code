@@ -1,3 +1,10 @@
+2017-03-21 David Anderson
+    * checkexamples.c: Updated dwarf_discr_list example
+      with a cast to match function declaration.
+    * libdwarf2.1.mm: Updated dwarf_discr_list example
+      with a cast to match function declaration.
+    * libdwarf2.1.pdf: Regenerated. Version 2.53
+
 2017-03-04 David Anderson
     * dwarf_loc2.c(_dwarf_get_locdesc_c): Renamed to _dwarf_get_locdesc_op_c
       and corrected the handling so offsets properly dealt with
