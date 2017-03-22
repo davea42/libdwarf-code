@@ -78,8 +78,21 @@ FS  File separator      28 1C   Alt-28  Ctrl-\ ^\
 GS  Group separator     29 1D   Alt-29  Ctrl-] ^]
 RS  Record separator    30 1E   Alt-30  Ctrl-^ ^^
 US  Unit separator      31 1F   Alt-31  Ctrl-_ ^_
-*/
 
+In addition,  characters decimal 141, 157, 127,128, 129
+143,144,157
+appear to be questionable too.
+Not in iso-8859-1 nor in html character entities list.
+
+We translate all strings with a % to do sanitizing and
+we change a literal ASCII '%' char to %27 so readers
+know any % is a sanitized char. We could double up
+a % into %% on output, but switching to %27 is simpler
+and for readers and prevents ambiguity.
+
+Since we do not handle utf-8 properly nor detect it
+we turn all non-ASCII to %xx below.
+*/
 
 static struct esb_s localesb = {0,0,0};
 
@@ -108,10 +121,16 @@ do_sanity_insert( const char *s,struct esb_s *mesb)
     const char *cp = s;
 
     for( ; *cp; cp++) {
-        int c = *cp & 0xff ;
+        unsigned c = *cp & 0xff ;
+
         if (c >= 0x20 && c <=0x7e) {
-            /* Usual case */
+            /* Usual case, ASCII printable characters. */
             esb_appendn(mesb,cp,1);
+            continue;
+        }
+        if (c == '%') {
+            /* %xx for this too. Simple and unambiguous */
+            esb_append(mesb,as_number(c));
             continue;
         }
 #ifdef _WIN32
@@ -120,19 +139,14 @@ do_sanity_insert( const char *s,struct esb_s *mesb)
             continue;
         }
 #endif /* _WIN32 */
-        if (c == 0x0A || c == 0x09 ) {
-            esb_appendn(mesb,cp,1);
-            continue;
-        }
         if (c < 0x20) {
             esb_append(mesb,as_number(c));
-            /* esb_appendn(mesb,"?",1); */
             continue;
         }
-        if (c == 0x7f) {
-            esb_append(mesb,as_number(c));
-            /* esb_appendn(mesb,"?",1); */
-            continue;
+        if (c >= 0x7f) {
+           /* ISO-8859 or UTF-8. Not handled well yet. */
+           esb_append(mesb,as_number(c));
+           continue;
         }
         esb_appendn(mesb,cp,1);
     }
@@ -149,9 +163,9 @@ no_questionable_chars(const char *s) {
     const char *cp = s;
 
     for( ; *cp; cp++) {
-        int c = *cp & 0xff ;
+        unsigned c = *cp & 0xff ;
         if (c >= 0x20 && c <=0x7e) {
-            /* Usual case */
+            /* Usual case, ASCII printable characters */
             continue;
         }
 #ifdef _WIN32
@@ -162,10 +176,17 @@ no_questionable_chars(const char *s) {
         if (c == 0x0A || c == 0x09 ) {
             continue;
         }
+        if (c == '%') {
+            /* Always sanitize a % ASCII char. */
+            return FALSE;
+        }
         if (c < 0x20) {
             return FALSE;
         }
-        if (c == 0x7f) {
+        if (c >= 0x7f) {
+            /*  This notices iso-8859 and UTF-8 
+                data as we don't deal with them
+                properly in dwarfdump. */
             return FALSE;
         }
     }

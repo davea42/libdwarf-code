@@ -1,4 +1,19 @@
 2017-03-21 David Anderson
+    * dwarf_form.c: Vulnerability DW201703-006
+      and DW201703-001 fixed.
+      Some types of form were not checkeda as being in bounds.
+    * dwarf_leb.c: Vulnerability DW201703-002 fixed.
+      A check for out of bounds was done after the
+      relevant dereference. Fixed.
+    * dwarf_loc.c: Vulnerability DW201703-005 fixed.
+      _dwarf_read_loc_expr_op() was failing to check for
+      a bounds violation.
+    * dwarf_query.c: Vulnerability DW201703-006.
+      A call to _dwarf_reference_outside_section()
+      did not pass a sufficiently careful argument list,
+      so a bounds violation was missed.
+
+2017-03-21 David Anderson
     * checkexamples.c: Updated dwarf_discr_list example
       with a cast to match function declaration.
     * libdwarf2.1.mm: Updated dwarf_discr_list example

@@ -1,4 +1,10 @@
 2017-03-21 David Anderson
+    * sanitized.c: Now all non-ascii bytes are changed to %xx
+      and a % input character is changed to %xx too
+      iso-8859 and for html are now sanitized using URI
+      %xx notation so the printf output looks sensible.
+      These usually represent a corrupted string in an object file.
+2017-03-21 David Anderson
     * print_die.c: Added casts to call args match with the 
       function declaration.  So a fussy compiler will
       be less likely to complain.

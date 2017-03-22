@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2000-2004 Silicon Graphics, Inc.  All Rights Reserved.
-  Portions Copyright (C) 2007-2015 David Anderson. All Rights Reserved.
+  Portions Copyright (C) 2007-2017 David Anderson. All Rights Reserved.
   Portions Copyright (C) 2010-2012 SN Systems Ltd. All Rights Reserved.
 
   This program is free software; you can redistribute it and/or modify it
@@ -147,6 +147,7 @@ _dwarf_read_loc_expr_op(Dwarf_Debug dbg,
     curr_loc->lr_opnumber = opnumber;
     curr_loc->lr_offset = offset;
 
+    /*  loc_ptr is ok to deref, see loc_ptr+1 test just above. */
     atom = *(Dwarf_Small *) loc_ptr;
     loc_ptr++;
     offset++;
@@ -237,6 +238,10 @@ _dwarf_read_loc_expr_op(Dwarf_Debug dbg,
         break;
 
     case DW_OP_const1u:
+        if (loc_ptr >= section_end) {
+            _dwarf_error(dbg,error,DW_DLE_LOCEXPR_OFF_SECTION_END);
+            return DW_DLV_ERROR;
+        }
         operand1 = *(Dwarf_Small *) loc_ptr;
         loc_ptr = loc_ptr + 1;
         if (loc_ptr > section_end) {
@@ -247,6 +252,10 @@ _dwarf_read_loc_expr_op(Dwarf_Debug dbg,
         break;
 
     case DW_OP_const1s:
+        if (loc_ptr >= section_end) {
+            _dwarf_error(dbg,error,DW_DLE_LOCEXPR_OFF_SECTION_END);
+            return DW_DLV_ERROR;
+        }
         operand1 = *(Dwarf_Sbyte *) loc_ptr;
         SIGN_EXTEND(operand1,1);
         loc_ptr = loc_ptr + 1;
@@ -372,6 +381,10 @@ _dwarf_read_loc_expr_op(Dwarf_Debug dbg,
         break;
 
     case DW_OP_pick:
+        if (loc_ptr >= section_end) {
+            _dwarf_error(dbg,error,DW_DLE_LOCEXPR_OFF_SECTION_END);
+            return DW_DLV_ERROR;
+        }
         operand1 = *(Dwarf_Small *) loc_ptr;
         loc_ptr = loc_ptr + 1;
         if (loc_ptr > section_end) {
@@ -388,6 +401,10 @@ _dwarf_read_loc_expr_op(Dwarf_Debug dbg,
         break;
 
     case DW_OP_deref_size:
+        if (loc_ptr >= section_end) {
+            _dwarf_error(dbg,error,DW_DLE_LOCEXPR_OFF_SECTION_END);
+            return DW_DLV_ERROR;
+        }
         operand1 = *(Dwarf_Small *) loc_ptr;
         loc_ptr = loc_ptr + 1;
         if (loc_ptr > section_end) {
@@ -401,6 +418,10 @@ _dwarf_read_loc_expr_op(Dwarf_Debug dbg,
         break;
 
     case DW_OP_xderef_type:        /* DWARF5 */
+        if (loc_ptr >= section_end) {
+            _dwarf_error(dbg,error,DW_DLE_LOCEXPR_OFF_SECTION_END);
+            return DW_DLV_ERROR;
+        }
         operand1 = *(Dwarf_Small *) loc_ptr;
         loc_ptr = loc_ptr + 1;
         if (loc_ptr > section_end) {
@@ -415,6 +436,10 @@ _dwarf_read_loc_expr_op(Dwarf_Debug dbg,
         break;
 
     case DW_OP_xderef_size:
+        if (loc_ptr >= section_end) {
+            _dwarf_error(dbg,error,DW_DLE_LOCEXPR_OFF_SECTION_END);
+            return DW_DLV_ERROR;
+        }
         operand1 = *(Dwarf_Small *) loc_ptr;
         loc_ptr = loc_ptr + 1;
         if (loc_ptr > section_end) {
@@ -520,6 +545,10 @@ _dwarf_read_loc_expr_op(Dwarf_Debug dbg,
         break;
     case DW_OP_deref_type:     /* DWARF5 */
     case DW_OP_GNU_deref_type: /* 0xf6 */
+        if (loc_ptr >= section_end) {
+            _dwarf_error(dbg,error,DW_DLE_LOCEXPR_OFF_SECTION_END);
+            return DW_DLV_ERROR;
+        }
         operand1 = *(Dwarf_Small *) loc_ptr;
         loc_ptr = loc_ptr + 1;
         if (loc_ptr > section_end) {

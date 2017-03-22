@@ -1,7 +1,7 @@
 /*
 
   Copyright (C) 2000,2002,2004 Silicon Graphics, Inc.  All Rights Reserved.
-  Portions Copyright (C) 2007-2016 David Anderson. All Rights Reserved.
+  Portions Copyright (C) 2007-2017 David Anderson. All Rights Reserved.
   Portions Copyright 2012 SN Systems Ltd. All rights reserved.
 
   This program is free software; you can redistribute it and/or modify it
@@ -375,9 +375,13 @@ dwarf_attrlist(Dwarf_Die die,
                 attr_form = (Dwarf_Half) utmp6;
                 new_attr->ar_attribute_form = attr_form;
             }
+            /*  Here the final address must be *inside* the section, as we
+                will read from there, and read at least one byte, we think. 
+                We do not want info_ptr to point past end so we add 1 to
+                the end-pointer.  */ 
             if (_dwarf_reference_outside_section(die,
                 (Dwarf_Small*) info_ptr,
-                (Dwarf_Small*) info_ptr)) {
+                ((Dwarf_Small*) info_ptr )+1)) {
                 _dwarf_error(dbg, error,DW_DLE_ATTR_OUTSIDE_SECTION);
                 return DW_DLV_ERROR;
             }

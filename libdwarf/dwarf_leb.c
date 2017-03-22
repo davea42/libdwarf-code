@@ -1,7 +1,7 @@
 /*
 
   Copyright (C) 2000,2004 Silicon Graphics, Inc.  All Rights Reserved.
-  Portions Copyright 2011 David Anderson. All Rights Reserved.
+  Portions Copyright 2011-2017 David Anderson. All Rights Reserved.
 
   This program is free software; you can redistribute it and/or modify it
   under the terms of version 2.1 of the GNU Lesser General Public License
@@ -301,11 +301,11 @@ _dwarf_decode_s_leb128_chk(Dwarf_Small * leb128, Dwarf_Word * leb128_length,
             break;
         }
         ++leb128;
-        byte = *leb128;
-        byte_length++;
         if (leb128 >= endptr) {
             return DW_DLV_ERROR;
         }
+        byte = *leb128;
+        byte_length++;
         if (byte_length > BYTESLEBMAX) {
             /*  Erroneous input. */
             if (leb128_length) {
