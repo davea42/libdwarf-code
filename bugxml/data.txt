@@ -35,7 +35,7 @@ description:  7/7. A heap overflow in
 
 datefixed: 
 references: regressiontests/marcel/crash7
-gitfixid:
+gitfixid: 
 endrec: DW201703-007
 
 
@@ -72,7 +72,7 @@ description:  6/7. A heap overflow in
 
 datefixed: 2017-03-21
 references: regressiontests/marcel/crash6
-gitfixid:
+gitfixid: cc37d6917011733d776ae228af4e5d6abe9613c1
 endrec: DW201703-006
 
 
@@ -111,7 +111,7 @@ description:  5/7. A heap overflow in
 
 datefixed: 2017-03-21
 references: regressiontests/marcel/crash5
-gitfixid:
+gitfixid: cc37d6917011733d776ae228af4e5d6abe9613c1
 endrec: DW201703-005
 
 id: DW201703-004
@@ -233,7 +233,7 @@ description:  2/7. In _dwarf_decode_s_leb128_chk()
 
 datefixed: 2017-03-21
 references: regressiontests/marcel/crash2
-gitfixid:
+gitfixid: cc37d6917011733d776ae228af4e5d6abe9613c1
 endrec: DW201703-002
 
 
@@ -274,7 +274,7 @@ description:  1/7. In dwarf_formsdata() a few
  </pre>
 datefixed: 2017-03-21
 references: regressiontests/marcel/crash1 
-gitfixid:
+gitfixid: cc37d6917011733d776ae228af4e5d6abe9613c1
 endrec: DW201703-001
 
 
