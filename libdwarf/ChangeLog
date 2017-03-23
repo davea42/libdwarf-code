@@ -1,3 +1,5 @@
+2017-03-23 David Anderson
+    * gennames.c: Update version string.
 2017-03-21 David Anderson
     * dwarf_form.c: Vulnerability DW201703-006
       and DW201703-001 fixed.
