@@ -1,4 +1,8 @@
 2017-03-23 David Anderson
+    * dwarf_query.c(dwarf_dietype_offset): dwarf_dietype_offset()
+      leaked a Dwarf_Attribute. The one line fix
+      removes the leak. 
+2017-03-23 David Anderson
     * gennames.c: Update version string.
 2017-03-21 David Anderson
     * dwarf_form.c: Vulnerability DW201703-006

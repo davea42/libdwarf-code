@@ -888,6 +888,7 @@ dwarf_dietype_offset(Dwarf_Die die,
     res = dwarf_attr(die,DW_AT_type,&attr,error);
     if (res == DW_DLV_OK) {
         res = dwarf_global_formref(attr,&offset,error);
+        dwarf_dealloc(die->di_cu_context->cc_dbg,attr,DW_DLA_ATTR);
     }
     *return_off = offset;
     return res;
