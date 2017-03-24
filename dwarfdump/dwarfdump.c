@@ -1697,6 +1697,42 @@ remove_quotes_pair(const char *text)
     return p;
 }
 
+/*  By trimming a /dwarfdump.O
+    down to /dwarfdump  (keeping any prefix
+    or suffix)
+    we can avoid a sed command in 
+    regressiontests/DWARFTEST.sh
+    and save 12 minutes run time of a regression
+    test.
+    The effect is, when nothing has changed in the
+    normal output, that the program_name matches too.
+    Because we don't want a different name of dwarfdump
+    to cause a mismatch.  */
+static char *
+special_program_name(char *n)
+{
+    char * mp = "/dwarfdump.O";
+    char * revstr = "/dwarfdump";
+    char *cp = n;
+    size_t mslen = strlen(mp);
+    static struct esb_s newprogname;
+
+    esb_constructor(&newprogname);
+    for(  ; *cp; ++cp ) {
+        if (*cp == *mp) {
+            if(!strncmp(cp,mp,mslen)){
+               esb_append(&newprogname,revstr);
+               cp += mslen-1;
+            } else {
+                esb_appendn(&newprogname,cp,1);
+            }
+        } else {
+            esb_appendn(&newprogname,cp,1);
+        }
+    }
+    return esb_get_string(&newprogname);
+}
+
 /* process arguments and return object filename */
 static const char *
 process_args(int argc, char *argv[])
@@ -1706,7 +1742,12 @@ process_args(int argc, char *argv[])
     boolean usage_error = FALSE;
     int oarg = 0;
 
-    program_name = argv[0];
+    special_program_name("a/dwarf");
+    special_program_name("a/dwarfdump.O");
+    special_program_name("./dwarf/aa/dwarfdump.O");
+    special_program_name("./dwarf/aa/dwarfdump.OY");
+    program_name = special_program_name(argv[0]);
+    
 
     suppress_check_dwarf();
     if (argv[1] != NULL && argv[1][0] != '-') {
