@@ -1292,9 +1292,12 @@ struct Dwarf_Obj_Access_Interface_s {
 #define DW_DLE_MACRO_STRING_BAD                366
 #define DW_DLE_MACINFO_STRING_BAD              367
 #define DW_DLE_ZLIB_UNCOMPRESS_ERROR           368
+#define DW_DLE_IMPROPER_DWO_ID                 369
+#define DW_DLE_GROUPNUMBER_ERROR               370
+#define DW_DLE_ADDRESS_SIZE_ZERO               371
 
     /* LAST MUST EQUAL LAST ERROR NUMBER */
-#define DW_DLE_LAST        368
+#define DW_DLE_LAST        371
 #define DW_DLE_LO_USER     0x10000
 
     /*  Taken as meaning 'undefined value', this is not
@@ -1385,11 +1388,24 @@ enum Dwarf_Form_Class {
     DW_FORM_CLASS_STROFFSETSPTR, /* DWARF5 */
 };
 
+/*  These support opening DWARF5 split dwarf objects. */
+#define DW_GROUPNUMBER_ANY  0
+#define DW_GROUPNUMBER_BASE 1
+#define DW_GROUPNUMBER_DWO  2
 
 /*===========================================================================*/
 /*  Dwarf consumer interface initialization and termination operations */
 
-/* Initialization based on Unix open fd (using libelf internally). */
+/*  Initialization based on Unix open fd (using libelf internally). */
+/*  New March 2017 */
+int dwarf_init_b(int    /*fd*/,
+    Dwarf_Unsigned    /*access*/,
+    unsigned          /*groupnumber*/,
+    Dwarf_Handler     /*errhand*/,
+    Dwarf_Ptr         /*errarg*/,
+    Dwarf_Debug*      /*dbg*/,
+    Dwarf_Error*      /*error*/);
+
 int dwarf_init(int    /*fd*/,
     Dwarf_Unsigned    /*access*/,
     Dwarf_Handler     /*errhand*/,
@@ -1397,7 +1413,15 @@ int dwarf_init(int    /*fd*/,
     Dwarf_Debug*      /*dbg*/,
     Dwarf_Error*      /*error*/);
 
-/* Initialization based on libelf/sgi-fastlibelf open pointer. */
+/*  Initialization based on libelf/sgi-fastlibelf open pointer. */
+/*  New March 2017 */
+int dwarf_elf_init_b(dwarf_elf_handle /*elf*/,
+    Dwarf_Unsigned    /*access*/,
+    unsigned          /*group_number*/,
+    Dwarf_Handler     /*errhand*/,
+    Dwarf_Ptr         /*errarg*/,
+    Dwarf_Debug*      /*dbg*/,
+    Dwarf_Error*      /*error*/);
 int dwarf_elf_init(dwarf_elf_handle /*elf*/,
     Dwarf_Unsigned    /*access*/,
     Dwarf_Handler     /*errhand*/,
@@ -1414,6 +1438,14 @@ int dwarf_get_elf(Dwarf_Debug /*dbg*/,
 
 int dwarf_finish(Dwarf_Debug /*dbg*/, Dwarf_Error* /*error*/);
 
+
+/*  NEW March 2017. */
+int dwarf_object_init_b(Dwarf_Obj_Access_Interface* /*obj*/,
+    Dwarf_Handler /*errhand*/,
+    Dwarf_Ptr     /*errarg*/,
+    unsigned      /*groupnumber*/,
+    Dwarf_Debug*  /*dbg*/,
+    Dwarf_Error*  /*error*/);
 
 int dwarf_object_init(Dwarf_Obj_Access_Interface* /*obj*/,
     Dwarf_Handler /*errhand*/,

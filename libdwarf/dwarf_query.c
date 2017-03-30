@@ -376,9 +376,9 @@ dwarf_attrlist(Dwarf_Die die,
                 new_attr->ar_attribute_form = attr_form;
             }
             /*  Here the final address must be *inside* the section, as we
-                will read from there, and read at least one byte, we think. 
+                will read from there, and read at least one byte, we think.
                 We do not want info_ptr to point past end so we add 1 to
-                the end-pointer.  */ 
+                the end-pointer.  */
             if (_dwarf_reference_outside_section(die,
                 (Dwarf_Small*) info_ptr,
                 ((Dwarf_Small*) info_ptr )+1)) {

@@ -1,3 +1,30 @@
+2017-03-30 David Anderson
+    * dwarf_arange.c: Now uses DW_DLE_ADDRESS_SIZE_ZERO
+      to be more precise about the error found in the object.
+    * dwarf_die_deliv.c: Adding DWARF5 cu header reading.
+      Adding support to more fully support split dwarf.
+      Fixed some potential leaks (in case of erroneous DWARF).
+      New functions that add functionality where needed
+      to deal with reading split dwarf DWARF5.
+    * dwarf_errmsg_list.c: Clarified DW_DLE_ADDRESS_SIZE_ERROR 
+      string and added DW_DLE_IMPROPER_DWO_ID DW_DLE_GROUPNUMBER_ERROR
+      and DW_DLE_ADDRESS_SIZE_ZERO.
+    * dwarf_form.c,dwarf_loc.c: Fixed trailing whitespace.
+    * dwarf_init_finish.c: Added support so split dwarf
+      can be read properly.
+      New function dwarf_object_init_b() is part of that support.
+    * dwarf_opaque.c: Added de_groupnumber. Clarified
+      some fields with commentary.
+    * dwarf_original_elf_init.c: New functions
+      dwarf_init_b() dwarf_elf_init_b() for groupnumber
+      support.
+    * dwarf_query.c: Removed trailing whitespace.
+    * dwarf_xu_index.c: Moved static declaration so it
+      is useful in more places in this source.
+    * libdwarf.h.in: Added DW_GROUPNUMBER_ANY, DW_GROUPNUMBER_BASE,
+      DW_GROUPNUMBER_DWO as part of giving better
+      split dwarf support.
+      Declared the new global functions mentioned just above.
 2017-03-23 David Anderson
     * dwarf_query.c(dwarf_dietype_offset): dwarf_dietype_offset()
       leaked a Dwarf_Attribute. The one line fix

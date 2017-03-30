@@ -1459,7 +1459,7 @@ dwarf_formexprloc(Dwarf_Attribute attr,
         }
         die = attr->ar_die;
         /*  Is the block entirely in the section, or is
-            there bug somewhere? 
+            there bug somewhere?
             Here the final addr may be 1 past end of section. */
         if (_dwarf_reference_outside_section(die,
             (Dwarf_Small *)addr, ((Dwarf_Small *)addr)+exprlen +leb_len)) {

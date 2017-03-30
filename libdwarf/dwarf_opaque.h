@@ -175,19 +175,23 @@ struct Dwarf_CU_Context_s {
     Dwarf_Unsigned cc_debug_offset;
 
     /*  cc_signature is in the TU header
-        of a type unit of a TU DIE.
+        of a type unit of a TU DIE (or for DW5 in the
+        skeleton or split_compile header is a dwo_id).
         Ignore this field if cc_signature_present is zero.
 
         If cc_unit_type == DW_UT_compile or DW_UT_partial
-            the signature is a CU signature.
-        If cc_unit_type == DW_UT_type
+            the signature is a CU signature (dwo_id).
+        Some early DW5 drafts encouraged DWARF4 output
+            of some compilers to include dwo_id, but
+            in a messier way(lacking DW_UT_*).
+        If cc_unit_type == DW_UT_type or DW_UT_split_type
             the signature is a type signature. */
     Dwarf_Sig8  cc_type_signature;
 
-    /*  cc_typeoffsets contains the
+    /*  cc_type_signature_offset contains the
         section-local DIE offset of the type
         the signature applies to if the cc_unit_type
-        is DW_UT_type.  */
+        is DW_UT_type or DW_UT_split_type. */
     Dwarf_Unsigned cc_type_signature_offset;
 
     /*  For each CU and each TU
@@ -425,7 +429,6 @@ struct Dwarf_dbg_sect_s {
 #define DWARF_MAX_DEBUG_SECTIONS 50
 
 
-
 /*  These offsets and sizes (Dwarf_Fission*) are
     for the  DebugFission DWP sections
     .debug_cu_index and .debug_tu_index.
@@ -539,6 +542,9 @@ struct Dwarf_Debug_s {
 
     struct Dwarf_Debug_InfoTypes_s de_info_reading;
     struct Dwarf_Debug_InfoTypes_s de_types_reading;
+
+    /* DW_GROUPNUMBER_ANY or BASE or DWO */
+    unsigned de_groupnumber;
 
     /*  Number of bytes in the length, and offset field in various
         .debug_* sections.  It's not very meaningful, and is

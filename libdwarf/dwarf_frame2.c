@@ -618,7 +618,7 @@ dwarf_create_cie_from_after_start(Dwarf_Debug dbg,
             }
             address_size = *((unsigned char *)frame_ptr);
             if (address_size  <  1) {
-                _dwarf_error(dbg, error, DW_DLE_ADDRESS_SIZE_ERROR);
+                _dwarf_error(dbg, error, DW_DLE_ADDRESS_SIZE_ZERO);
                 return (DW_DLV_ERROR);
             }
             if (address_size  > sizeof(Dwarf_Addr)) {

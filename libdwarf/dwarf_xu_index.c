@@ -47,6 +47,9 @@
 #define TRUE 1
 #define FALSE 0
 
+/* zerohashkey used as all-zero-bits for comparison. */
+static Dwarf_Sig8 zerohashkey;
+
 int
 dwarf_get_xu_index_header(Dwarf_Debug dbg,
     /* Pass in section_type "tu" or "cu" */
@@ -236,7 +239,6 @@ int dwarf_get_xu_hash_entry(Dwarf_Xu_Index_Header xuhdr,
 
     indexentry = indextab + (index * LEN32BIT);
     memcpy(hash_value,&hashval,sizeof(hashval));
-
     READ_UNALIGNED_CK(dbg,indexval,Dwarf_Unsigned, indexentry,
         LEN32BIT,
         err,section_end);
@@ -358,8 +360,6 @@ dwarf_get_xu_section_offset(Dwarf_Xu_Index_Header xuhdr,
     return DW_DLV_OK;
 }
 
-/* zerohashkey used as all-zero-bits for comparison. */
-static Dwarf_Sig8 zerohashkey;
 
 static int
 _dwarf_search_fission_for_key(UNUSEDARG Dwarf_Debug dbg,

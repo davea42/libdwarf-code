@@ -1,7 +1,7 @@
 /*
 
   Copyright (C) 2000-2004 Silicon Graphics, Inc.  All Rights Reserved.
-  Portions Copyright (C) 2007-2016 David Anderson. All Rights Reserved.
+  Portions Copyright (C) 2007-2017 David Anderson. All Rights Reserved.
   Portions Copyright 2012 SN Systems Ltd. All rights reserved.
 
 
@@ -165,7 +165,7 @@ dwarf_get_aranges_list(Dwarf_Debug dbg,
             return DW_DLV_ERROR;
         }
         if (address_size  ==  0) {
-            _dwarf_error(dbg, error, DW_DLE_ADDRESS_SIZE_ERROR);
+            _dwarf_error(dbg, error, DW_DLE_ADDRESS_SIZE_ZERO);
             return DW_DLV_ERROR;
         }
         /*  It is not an error if the sizes differ.

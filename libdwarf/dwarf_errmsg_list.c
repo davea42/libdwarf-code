@@ -121,7 +121,7 @@ const char *_dwarf_errmsgs[] = {
     "DW_DLE_CU_LENGTH_ERROR (47)",
     "DW_DLE_VERSION_STAMP_ERROR (48)",
     "DW_DLE_ABBREV_OFFSET_ERROR (49)",
-    "DW_DLE_ADDRESS_SIZE_ERROR (50) Either too large or zero",
+    "DW_DLE_ADDRESS_SIZE_ERROR (50) size too large",
     "DW_DLE_DEBUG_INFO_PTR_NULL (51)",
     "DW_DLE_DIE_NULL (52)",
     "DW_DLE_STRING_OFFSET_BAD (53)",
@@ -447,6 +447,9 @@ const char *_dwarf_errmsgs[] = {
     "DW_DLE_MACRO_STRING_BAD(366) DWARF5 macro def/undef string runs off section data",
     "DW_DLE_MACINFO_STRING_BAD(367) DWARF2..4 macro def/undef string runs off section data",
     "DW_DLE_ZLIB_UNCOMPRESS_ERROR(368) Surely an invalid uncompress length",
+    "DW_DLE_IMPROPER_DWO_ID(369)",
+    "DW_DLE_GROUPNUMBER_ERROR(370) An error determining default target group number",
+    "DW_DLE_ADDRESS_SIZE_ZERO(371)",
 };
 
 #ifdef TESTING

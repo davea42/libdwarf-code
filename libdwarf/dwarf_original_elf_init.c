@@ -57,6 +57,7 @@
 static int
 dwarf_elf_init_file_ownership(dwarf_elf_handle elf_file_pointer,
     int libdwarf_owns_elf,
+    unsigned groupnumber,
     Dwarf_Unsigned access,
     Dwarf_Handler errhand,
     Dwarf_Ptr errarg,
@@ -71,6 +72,18 @@ dwarf_elf_init_file_ownership(dwarf_elf_handle elf_file_pointer,
 int
 dwarf_init(int fd,
     Dwarf_Unsigned access,
+    Dwarf_Handler errhand,
+    Dwarf_Ptr errarg, Dwarf_Debug * ret_dbg, Dwarf_Error * error)
+{
+    return dwarf_init_b(fd,access, DW_GROUPNUMBER_ANY,
+        errhand,errarg,ret_dbg,error);
+}
+
+/* New March 2017 */
+int
+dwarf_init_b(int fd,
+    Dwarf_Unsigned access,
+    unsigned  group_number,
     Dwarf_Handler errhand,
     Dwarf_Ptr errarg, Dwarf_Debug * ret_dbg, Dwarf_Error * error)
 {
@@ -109,13 +122,26 @@ dwarf_init(int fd,
         DWARF_DBG_ERROR(NULL, DW_DLE_ELF_BEGIN_ERROR, DW_DLV_ERROR);
     }
     return dwarf_elf_init_file_ownership(elf_file_pointer,
-        TRUE, access, errhand, errarg, ret_dbg, error);
+        TRUE, group_number, access, errhand, errarg, ret_dbg, error);
 }
 
 /*  An alternate dwarf setup call for consumers using
     libelf.
     When the caller has opened libelf already, so the
     caller must free libelf.  */
+/* New March 2017 */
+int
+dwarf_elf_init_b(dwarf_elf_handle elf_file_pointer,
+    Dwarf_Unsigned access,
+    unsigned group_number,
+    Dwarf_Handler errhand,
+    Dwarf_Ptr errarg,
+    Dwarf_Debug * ret_dbg, Dwarf_Error * error)
+{
+    return dwarf_elf_init_file_ownership(elf_file_pointer,
+        FALSE, group_number,access, errhand, errarg, ret_dbg, error);
+}
+
 int
 dwarf_elf_init(dwarf_elf_handle elf_file_pointer,
     Dwarf_Unsigned access,
@@ -124,7 +150,8 @@ dwarf_elf_init(dwarf_elf_handle elf_file_pointer,
     Dwarf_Debug * ret_dbg, Dwarf_Error * error)
 {
     return dwarf_elf_init_file_ownership(elf_file_pointer,
-        FALSE, access, errhand, errarg, ret_dbg, error);
+        FALSE, DW_GROUPNUMBER_ANY,
+        access, errhand, errarg, ret_dbg, error);
 }
 
 
@@ -132,6 +159,7 @@ dwarf_elf_init(dwarf_elf_handle elf_file_pointer,
 static int
 dwarf_elf_init_file_ownership(dwarf_elf_handle elf_file_pointer,
     int libdwarf_owns_elf,
+    unsigned groupnumber,
     Dwarf_Unsigned access,
     Dwarf_Handler errhand,
     Dwarf_Ptr errarg,
@@ -162,7 +190,8 @@ dwarf_elf_init_file_ownership(dwarf_elf_handle elf_file_pointer,
 
     /*  This mallocs space and returns pointer thru ret_dbg,
         saving  the binary interface in 'ret-dbg' */
-    res = dwarf_object_init(binary_interface, errhand, errarg,
+    res = dwarf_object_init_b(binary_interface, errhand, errarg,
+        groupnumber,
         ret_dbg, error);
     if (res != DW_DLV_OK){
         dwarf_elf_object_access_finish(binary_interface);

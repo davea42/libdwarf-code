@@ -126,7 +126,7 @@ _dwarf_get_locdesc_op_c(Dwarf_Debug dbg,
             return res;
         }
         if (res == DW_DLV_NO_ENTRY) {
-            /*  Normal end. 
+            /*  Normal end.
                 Also the end for an empty loc_block.  */
             break;
         }
