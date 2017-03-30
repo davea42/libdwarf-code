@@ -1,4 +1,6 @@
 2017-03-30 David Anderson
+    * gennames.c: Update version string.
+2017-03-30 David Anderson
     * dwarf_arange.c: Now uses DW_DLE_ADDRESS_SIZE_ZERO
       to be more precise about the error found in the object.
     * dwarf_die_deliv.c: Adding DWARF5 cu header reading.
