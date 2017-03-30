@@ -570,6 +570,17 @@ printing frame information (here using ppc as an example).
 The abi is read as a URI string.
 
 .TP
+.B \-x groupnumber=<n>
+For an object file with both DWARF5 split dwarf (.debug_info.dwo
+for example)  and ordinary
+DWARF sections (.debug_info for example)
+in the single object file
+one must use
+-x groupnumber=2 to print the dwo sections.
+Adding -x tied=<path> naming the same object file ties
+in the non-dwo sections.
+
+.TP
 .B \-x tied=/t/i/depath
 Used when opening a main object that is a .dwo or .dwp file.
 The tied file path names the executable which has

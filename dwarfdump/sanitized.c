@@ -100,9 +100,9 @@ static struct esb_s localesb = {0,0,0};
 #define TRUE 1
 boolean no_sanitize_string_garbage = FALSE;
 
-/*  This is safe to use because it is only 
-    callable here and we copy the value 
-    returned in the static buffer 
+/*  This is safe to use because it is only
+    callable here and we copy the value
+    returned in the static buffer
     to a safe spot immediately. */
 static const char *
 as_number(int c)
@@ -144,9 +144,9 @@ do_sanity_insert( const char *s,struct esb_s *mesb)
             continue;
         }
         if (c >= 0x7f) {
-           /* ISO-8859 or UTF-8. Not handled well yet. */
-           esb_append(mesb,as_number(c));
-           continue;
+            /* ISO-8859 or UTF-8. Not handled well yet. */
+            esb_append(mesb,as_number(c));
+            continue;
         }
         esb_appendn(mesb,cp,1);
     }
@@ -184,7 +184,7 @@ no_questionable_chars(const char *s) {
             return FALSE;
         }
         if (c >= 0x7f) {
-            /*  This notices iso-8859 and UTF-8 
+            /*  This notices iso-8859 and UTF-8
                 data as we don't deal with them
                 properly in dwarfdump. */
             return FALSE;

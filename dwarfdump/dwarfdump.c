@@ -379,9 +379,31 @@ static struct esb_s dwarf_error_line;
 
 /* Output filename */
 static const char *output_file = 0;
+static int group_number = 0;
 
 char cu_name[BUFSIZ];
 boolean cu_name_flag = FALSE;
+
+static int
+get_number_value(char *v_in,long int *v_out)
+{
+    long int v= 0;
+    size_t len = strlen(v_in);
+    char *endptr = 0;
+
+    if (len < 1) {
+        return DW_DLV_ERROR;
+    }
+    v = strtol(v_in,&endptr,10);
+    if (endptr == v_in) {
+        return DW_DLV_NO_ENTRY;
+    }
+    if (*endptr != '\0') {
+        return DW_DLV_ERROR;
+    }
+    *v_out = v;
+    return DW_DLV_OK;
+}
 
 /*  When we add a 'print' option after an option
     requests one or more checks
@@ -1291,7 +1313,10 @@ process_one_file(Elf * elf,Elf *elftied,
     Dwarf_Half elf_address_size = 0;      /* Target pointer size */
     Dwarf_Error onef_err = 0;
 
-    dres = dwarf_elf_init(elf, DW_DLC_READ, NULL, NULL, &dbg, &onef_err);
+    /*  If using a tied file group number should be 2 DW_GROUPNUMBER_DWO
+        but in a dwp or separate-split-dwarf object then
+        0 will find the .dwo data automatically. */
+    dres = dwarf_elf_init_b(elf, DW_DLC_READ,group_number, NULL, NULL, &dbg, &onef_err);
     if (dres == DW_DLV_NO_ENTRY) {
         printf("No DWARF information present in %s\n", file_name);
         return 0;
@@ -1301,7 +1326,9 @@ process_one_file(Elf * elf,Elf *elftied,
     }
 
     if (elftied) {
-        dres = dwarf_elf_init(elftied, DW_DLC_READ, NULL, NULL, &dbgtied,
+        /*  The tied file we define as group 1, BASE. */
+        dres = dwarf_elf_init_b(elftied, DW_DLC_READ,
+            DW_GROUPNUMBER_BASE, NULL, NULL, &dbgtied,
             &onef_err);
         if (dres == DW_DLV_NO_ENTRY) {
             printf("No DWARF information present in tied file: %s\n",
@@ -1624,6 +1651,7 @@ static const char *usage_text[] = {
 "\t\t-vv verbose: show even more information",
 "\t\t-V print version information",
 "\t\t-x abi=<abi>\tname abi in dwarfdump.conf",
+"\t\t-x groupnumber=<n>\tgroupnumber to print",
 "\t\t-x name=<path>\tname dwarfdump.conf",
 "\t\t-x tied=<tiedpath>\tname an associated object file (Split DWARF)",
 #if 0
@@ -1700,7 +1728,7 @@ remove_quotes_pair(const char *text)
 /*  By trimming a /dwarfdump.O
     down to /dwarfdump  (keeping any prefix
     or suffix)
-    we can avoid a sed command in 
+    we can avoid a sed command in
     regressiontests/DWARFTEST.sh
     and save 12 minutes run time of a regression
     test.
@@ -1721,8 +1749,8 @@ special_program_name(char *n)
     for(  ; *cp; ++cp ) {
         if (*cp == *mp) {
             if(!strncmp(cp,mp,mslen)){
-               esb_append(&newprogname,revstr);
-               cp += mslen-1;
+                esb_append(&newprogname,revstr);
+                cp += mslen-1;
             } else {
                 esb_appendn(&newprogname,cp,1);
             }
@@ -1747,8 +1775,6 @@ process_args(int argc, char *argv[])
     special_program_name("./dwarf/aa/dwarfdump.O");
     special_program_name("./dwarf/aa/dwarfdump.OY");
     program_name = special_program_name(argv[0]);
-    
-
     suppress_check_dwarf();
     if (argv[1] != NULL && argv[1][0] != '-') {
         do_all();
@@ -1797,6 +1823,23 @@ process_args(int argc, char *argv[])
                     }
                     config_file_abi = abi;
                     break;
+                } else if (strncmp(dwoptarg, "groupnumber=", 12) == 0) {
+                    /*  By default prints the lowest
+                        groupnumber in the object.
+                        Default is  -x groupnumber=0
+                        For group 1 (standard base dwarfdata)
+                            -x groupnumber=1
+                        For group 1 (DWARF5 .dwo sections and dwp data)
+                            -x groupnumber=2 */
+                        long int gnum = 0;
+                        int res = 0;
+
+                        res = get_number_value(dwoptarg+12,&gnum);
+                        if (res == DW_DLV_OK) {
+                            group_number = gnum;
+                        } else {
+                            goto badopt;
+                        }
                 } else if (strncmp(dwoptarg, "tied=", 5) == 0) {
                     const char *tiedpath = 0;
                     tiedpath = do_uri_translation(&dwoptarg[5],"-x tied=");

@@ -1,3 +1,7 @@
+2017-03-30 David Anderson
+    * dwarfdump.1: Documenting the new -x groupnumber=<n> option.
+    * dwarfdump.c: Adding groupnumber option support.
+    * sanitized.c: Removed trailing whitespace
 2017-03-24 David Anderson
     * dwarfdump.c: Now argv[0] is checked before setting the program_name
       global variable.  If it contains /dwarfdump.O  that part of
