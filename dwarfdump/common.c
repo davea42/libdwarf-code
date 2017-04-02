@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2008-2010 SN Systems.  All Rights Reserved.
-  Portions Copyright (C) 2008-2016 David Anderson.  All Rights Reserved.
+  Portions Copyright (C) 2008-2017 David Anderson.  All Rights Reserved.
   Portions Copyright (C) 2011-2012 SN Systems Ltd.  .  All Rights Reserved.
 
   This program is free software; you can redistribute it and/or modify it
@@ -34,7 +34,7 @@
 #include "stdafx.h"
 #endif /* HAVE_STDAFX_H */
 
-#define DW_VERSION_DATE_STR " 2017-03-30 14:22:23-07:00  "
+#define DW_VERSION_DATE_STR " 2017-04-02 07:43:54-07:00  "
 #define RELEASE_DATE      "20160307"
 
 /* The Linux/Unix version does not want a version string to print

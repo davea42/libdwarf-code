@@ -1,6 +1,6 @@
 /*
     Copyright 2009-2010 SN Systems Ltd. All rights reserved.
-    Portions Copyright 2009-2011 David Anderson. All rights reserved.
+    Portions Copyright 2009-2017 David Anderson. All rights reserved.
 
     This program is free software; you can redistribute it and/or modify it
     under the terms of version 2.1 of the GNU Lesser General Public License
@@ -77,7 +77,7 @@ static void PrintArray(void);
 static boolean is_skippable_line(char *pLine);
 static void ParseDefinitionsAndWriteOutput(void);
 
-#define DW_VERSION_DATE_STR " 2017-03-30 14:22:23-07:00  "
+#define DW_VERSION_DATE_STR " 2017-04-02 07:43:54-07:00  "
 
 /* We don't need really long lines: the input file is simple. */
 #define MAX_LINE_SIZE 1000

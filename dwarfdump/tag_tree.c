@@ -1,7 +1,7 @@
 /*
   Copyright (C) 2000-2005 Silicon Graphics, Inc.  All Rights Reserved.
   Portions Copyright 2009-2012 SN Systems Ltd. All rights reserved.
-  Portions Copyright 2009-2016 David Anderson. All rights reserved.
+  Portions Copyright 2009-2017 David Anderson. All rights reserved.
 
   This program is free software; you can redistribute it and/or modify it
   under the terms of version 2 of the GNU General Public License as
@@ -42,7 +42,7 @@ static Dwarf_Half tag_children[DW_TAG_last] = {0};
 static Dwarf_Small tag_tree_legal[DW_TAG_last] = {0};
 #endif /* HAVE_USAGE_TAG_ATTR */
 
-#define DW_VERSION_DATE_STR " 2017-03-30 14:22:23-07:00  "
+#define DW_VERSION_DATE_STR " 2017-04-02 07:43:54-07:00  "
 
 const char * program_name;
 

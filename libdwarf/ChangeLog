@@ -1,4 +1,6 @@
 2017-04-02 David Anderson
+    * gennames.c: Update version string.
+2017-04-02 David Anderson
     * dwarf_init_finish.c(determine_target_group): Correct the default
       group number code so the if() tests work properly.
 2017-03-30 David Anderson
