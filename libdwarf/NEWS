@@ -1,3 +1,10 @@
+April 02, 2017
+  The consumer code now reads DWARF5 split-dwarf sections.
+  The functions dwarf_init_b() and dwarf_elf_init_b()
+  and dwarf_object_init_b() have a groupnumber argument
+  added.  For non-split-dwarf objects the original
+  dwarf_init() and dwarf_elf_init() and 
+  dwarf_object_init() functions continue to work properly.
 September 11, 2016
   The producer code is getting a new batch of functions.
 

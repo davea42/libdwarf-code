@@ -45,7 +45,7 @@ void example2(Dwarf_Debug dbg, Dwarf_Debug tieddbg)
     Dwarf_Error error = 0;
     int res = 0;
 
-    /*  Do the dwarf_init() or dwarf_elf_init
+    /*  Do the dwarf_init_b() or dwarf_elf_init_b()
         calls to set
         dbg, tieddbg at this point. Then: */
     res = dwarf_set_tied_dbg(dbg,tieddbg,&error);

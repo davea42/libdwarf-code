@@ -607,6 +607,10 @@ Projects using dwarf_elf_init() or dwarf_init() can ignore
 the Dwarf_Obj_Access* structures entirely as all these details
 are completed for you.
 
+As of March 2017 additional functions dwarf_elf_init_b() and dwarf_init_b()
+and dwarf_object_init_b() add a groupnumber argument so DWARF5
+split-dwarf sections can be accessed.
+
 */
 
 typedef struct Dwarf_Obj_Access_Interface_s   Dwarf_Obj_Access_Interface;

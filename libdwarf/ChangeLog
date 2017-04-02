@@ -1,4 +1,10 @@
 2017-04-02 David Anderson
+    * checkexamples.c: Slight change in a comment.
+    * libdwarf.h.in: Added commentary.
+    * libdwarf2.1.mm: Document dwarf_init_b(), dwarf_elf_init_b()
+      and dwarf_object_init_b().
+    * libdwarf2.1.pdf: Regenerate. Version 2.54
+2017-04-02 David Anderson
     * gennames.c: Update version string.
 2017-04-02 David Anderson
     * dwarf_init_finish.c(determine_target_group): Correct the default

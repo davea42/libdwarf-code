@@ -8,7 +8,7 @@
 .nr Hb 5
 \." ==============================================
 \." Put current date in the following at each rev
-.ds vE rev 2.53, March 21, 2017
+.ds vE rev 2.54, April 02, 2017
 \." ==============================================
 \." ==============================================
 .ds | |
@@ -202,6 +202,19 @@ The following is a brief mention of the changes in this libdwarf from
 the libdwarf draft for DWARF Version 1 and recent changes.
 
 .H 2 "Items Changed"
+.P
+Adding dwarf_init_b() and dwarf_elf_init_b()
+and dwarf_object_init_b() with a groupnumber
+option added. DWARF5 adds split-dwarf and
+we call original sections like .debug_info
+group one and new sections like .debug_info.dwo
+group two.
+It has not escaped our attention that this
+numbering can be extended to deal with 
+ELF COMDAT
+section groups of DWARF information, though
+COMDAT groups are not currently supported.
+(April 02, 2017)
 .P
 Adding support for DWARF5 .debug_loc.dwo
 and split dwarf range tables.
@@ -400,6 +413,8 @@ only.
 Support for DWARF3 consumer operations is close to completion.
 .LI "November 2010:
 Added various new functions and improved error checking.
+.LI "March 2017:
+Adding support for DWARF5 split dwarf.
 .LE
 
 .H 1 "Types Definitions"
@@ -662,7 +677,7 @@ If you wish to default to this interface and to the use
 of DW_FRAME_CFA_COL, specify --enable_oldframecol
 at libdwarf configure time.
 Or add a call dwarf_set_frame_cfa_value(dbg,DW_FRAME_CFA_COL)
-after your dwarf_init() call, this call replaces the 
+after your dwarf_init_b() call, this call replaces the 
 default libdwarf-compile-time value with DW_FRAME_CFA_COL.
 .DS
 /* DW_REG_TABLE_SIZE must reflect the number of registers
@@ -764,7 +779,7 @@ It is new in libdwarf as of April 2006.
 The default configure of libdwarf 
 inserts DW_FRAME_CFA_COL3 as the default CFA column.
 Or add a call dwarf_set_frame_cfa_value(dbg,DW_FRAME_CFA_COL3)
-after your dwarf_init() call, this call replaces the 
+after your dwarf_init_b() call, this call replaces the 
 default libdwarf-compile-time value with DW_FRAME_CFA_COL3.
 .P
 The \f(CWDwarf_Regtable3\fP type is used to contain the 
@@ -884,7 +899,8 @@ be a real register number.
 
 .H 3 "Macro Details Record"
 The \f(CWDwarf_Macro_Details\fP type gives information about
-a single entry in the .debug.macinfo section.
+a single entry in the .debug.macinfo section (DWARF2, 
+DWARF3, and DWARF4).
 .DS
 \f(CWstruct Dwarf_Macro_Details_s {
   Dwarf_Off    dmd_offset;
@@ -945,7 +961,7 @@ intended use is described below.
 \f(CWtypedef struct Dwarf_Debug_s* Dwarf_Debug;\fP
 .DE
 An instance of the \f(CWDwarf_Debug\fP type is created as a result of a 
-successful call to \f(CWdwarf_init()\fP, or \f(CWdwarf_elf_init()\fP, 
+successful call to \f(CWdwarf_init_b()\fP, or \f(CWdwarf_elf_init_b()\fP, 
 and is used as a descriptor for subsequent access to most \f(CWlibdwarf\fP
 functions on that object.  The storage pointed to by this descriptor 
 should be not be freed, using the \f(CWdwarf_dealloc()\fP function.
@@ -1215,10 +1231,10 @@ call
 did).
 .P
 A client program can also specify a function to be invoked upon detection 
-of an error at the time the library is initialized (see \f(CWdwarf_init()\fP). 
+of an error at the time the library is initialized (see \f(CWdwarf_init_b()\fP). 
 When a \fIlibdwarf\fP routine detects an error, this function is called
 with two arguments: a code indicating the nature of the error and a pointer
-provided by the client at initialization (again see \f(CWdwarf_init()\fP).
+provided by the client at initialization (again see \f(CWdwarf_init_b()\fP).
 This pointer argument can be used to relay information between the error 
 handler and other routines of the client program.  A client program can 
 specify or change both the error handling function and the pointer argument 
@@ -1252,9 +1268,9 @@ and initialize a \f(CWDwarf_Error\fP descriptor with information describing
 the error, place this descriptor in the area pointed to by \f(CWerror\fP,
 and return a value indicating an error condition.
 .LI
-If an \f(CWerrhand\fP argument was provided to \f(CWdwarf_init()\fP
+If an \f(CWerrhand\fP argument was provided to \f(CWdwarf_init_b()\fP
 at initialization, call \f(CWerrhand()\fP passing it the error descriptor
-and the value of the \f(CWerrarg\fP argument provided to \f(CWdwarf_init()\fP. 
+and the value of the \f(CWerrarg\fP argument provided to \f(CWdwarf_init_b()\fP. 
 If the error handling function returns, return 
 \f(CWDW_DLV_ERROR\fP
 indicating an 
@@ -1445,24 +1461,24 @@ void example1(Dwarf_Die somedie)
 \fP
 .DE
 
-The \f(CWDwarf_Debug\fP returned from \f(CWdwarf_init()\fP 
-or \f(CWdwarf_elf_init()\fP 
+The \f(CWDwarf_Debug\fP returned from \f(CWdwarf_init_b()\fP 
+or \f(CWdwarf_elf_init_b()\fP 
 cannot be freed using \f(CWdwarf_dealloc()\fP.
 The function \f(CWdwarf_finish()\fP will deallocate all dynamic storage
 associated with an instance of a \f(CWDwarf_Debug\fP type.  In particular,
 it will deallocate all dynamically allocated space associated with the
 \f(CWDwarf_Debug\fP descriptor, and finally make the descriptor invalid.
 
-An \f(CWDwarf_Error\fP returned from \f(CWdwarf_init()\fP
-or \f(CWdwarf_elf_init()\fP
+An \f(CWDwarf_Error\fP returned from \f(CWdwarf_init_b()\fP
+or \f(CWdwarf_elf_init_b()\fP
 in case of a failure cannot be freed
 using \f(CWdwarf_dealloc()\fP.
 The only way to free the \f(CWDwarf_Error\fP from either of those
 calls is to use \f2free(3)\fP directly.
 Every \f(CWDwarf_Error\fP must be freed 
 by \f(CWdwarf_dealloc()\fP except those
-returned by \f(CWdwarf_init()\fP
-or \f(CWdwarf_elf_init()\fP.
+returned by \f(CWdwarf_init_b()\fP
+or \f(CWdwarf_elf_init_b()\fP.
 
 .P
 The codes that identify the storage pointed to in calls to 
@@ -1521,12 +1537,13 @@ These functions are concerned with preparing an object file for subsequent
 access by the functions in \fIlibdwarf\fP and with releasing allocated
 resources when access is complete. 
 
-.H 3 "dwarf_init()"
+.H 3 "dwarf_init_()"
 
 .DS
 \f(CWint dwarf_init(
         int fd,
         Dwarf_Unsigned access,
+        unsigned group_number,
         Dwarf_Handler errhand, 
         Dwarf_Ptr errarg,
 	Dwarf_Debug * dbg,
@@ -1541,15 +1558,26 @@ the open file descriptor \f(CWfd\fP.
 does not contain DWARF debugging information.
 \f(CWDW_DLV_ERROR\fP is returned if
 an error occurred.
+.P
 The 
 \f(CWaccess\fP argument indicates what access is allowed for the section. 
 The \f(CWDW_DLC_READ\fP parameter is valid
 for read access (only read access is defined or discussed in this
 document).  
+.P
+The 
+\f(CWgroupnumber\fP argument indicates which group is to be accessed
+Group one is normal dwarf sections such as .debug_info.
+Group two is DWARF5 dwo split-dwarf dwarf sections such as .debug_info.dwo.
+If an object file has only sections from one of the groups then
+passing zero will access that group.
+Otherwise passing zero will access only group one.
+.P
 The \f(CWerrhand\fP 
 argument is a pointer to a function that will be invoked whenever an error 
 is detected as a result of a \fIlibdwarf\fP operation.  The \f(CWerrarg\fP 
 argument is passed as an argument to the \f(CWerrhand\fP function.  
+.P
 The file 
 descriptor associated with the \f(CWfd\fP argument must refer to an ordinary 
 file (i.e. not a pipe, socket, device, /proc entry, etc.), be opened with 
@@ -1559,7 +1587,7 @@ client until after \f(CWdwarf_finish()\fP is called.
 The seek position of 
 the file associated with \f(CWfd\fP is undefined upon return of 
 \f(CWdwarf_init()\fP.
-
+.P
 With SGI IRIX, by default it is allowed that the app
 \f(CWclose()\fP \f(CWfd\fP immediately after calling \f(CWdwarf_init()\fP,
 but that is not  a portable approach (that it
@@ -1575,13 +1603,31 @@ Since \f(CWdwarf_init()\fP uses the same error handling processing as other
 will generally supply an \f(CWerror\fP parameter to bypass the default actions 
 during initialization unless the default actions are appropriate. 
 
+.H 3 "dwarf_init()"
+
+.DS
+\f(CWint dwarf_init(
+        int fd,
+        Dwarf_Unsigned access,
+        Dwarf_Handler errhand, 
+        Dwarf_Ptr errarg,
+	Dwarf_Debug * dbg,
+        Dwarf_Error *error)\fP
+.DE
+This identical to dwarf_init()
+\f(CWdwarf_init_b()\fP
+except that it is missing the groupnumber
+argument so access to an object file containing
+both dwo and non-dwo DWARF5 object sections will
+access only group one (and will ignore the dwo sections).
+
 .H 3 "Dwarf_Handler function"
 This is an example of a valid error handler function.
 A pointer to this  (or another like it)
 may be passed to 
-\f(CWdwarf_elf_init()\fP
+\f(CWdwarf_elf_init_b()\fP
 or
-\f(CWdwarf_init()\fP.
+\f(CWdwarf_init_b()\fP.
 .DS
 \f(CWstatic void
 simple_error_handler(Dwarf_Error error, Dwarf_Ptr errarg)
@@ -1600,7 +1646,7 @@ A Dwarf_Error will be created with the error number
 assigned by the library and passed to the error handler.
 .P
 The second argument is a copy of the value passed in to
-\f(CWdwarf_elf_init()\fP
+\f(CWdwarf_elf_init_b()\fP
 or
 \f(CWdwarf_init()\fP
 as the 
@@ -1616,26 +1662,44 @@ Or the application could simply give up and call
 \f(CWexit()\fP
 as in the sample given above.
 
-.H 3 "dwarf_elf_init()"
+.H 3 "dwarf_elf_init_b()"
 .DS
-\f(CWint dwarf_elf_init(
+\f(CWint dwarf_elf_init_b(
         Elf * elf_file_pointer,
         Dwarf_Unsigned access,
+        unsigned groupnumber,
         Dwarf_Handler errhand, 
         Dwarf_Ptr errarg,
 	Dwarf_Debug * dbg,
         Dwarf_Error *error)\fP
 .DE
-The function \f(CWdwarf_elf_init()\fP is identical to \f(CWdwarf_init()\fP 
+The function \f(CWdwarf_elf_init_b()\fP is identical to \f(CWdwarf_init_b()\fP 
 except that an open \f(CWElf *\fP pointer is passed instead of a file 
 descriptor.  
+.P
 In systems supporting \f(CWELF\fP object files this may be 
-more space or time-efficient than using \f(CWdwarf_init()\fP.
+more space or time-efficient than using \f(CWdwarf_init_b()\fP.
+.P
 The client is allowed to use the \f(CWElf *\fP pointer
 for its own purposes without restriction during the time the 
 \f(CWDwarf_Debug\fP
 is open, except that the client should not  \f(CWelf_end()\fP the
 pointer till after  \f(CWdwarf_finish\fP is called.
+
+.H 3 "dwarf_elf_init()"
+.DS
+\f(CWint dwarf_elf_init(
+        Elf * elf_file_pointer,
+        Dwarf_Unsigned access,
+        Dwarf_Handler errhand,
+        Dwarf_Ptr errarg,
+        Dwarf_Debug * dbg,
+        Dwarf_Error *error)\fP
+.DE
+The function \f(CWdwarf_elf_init()\fP is identical to \f(CWdwarf_init()\fP
+except that an open \f(CWElf *\fP pointer is passed instead of a file
+descriptor.
+
 
 .H 3 "dwarf_get_elf()"
 .DS
@@ -1649,13 +1713,13 @@ the function \f(CWdwarf_get_elf()\fP returns through the
 pointer \f(CWelf\fP the \f(CWElf *\fP handle
 used to access the object represented by the \f(CWDwarf_Debug\fP
 descriptor \f(CWdbg\fP.  It returns \f(CWDW_DLV_ERROR\fP on error.
-
+.P
 Because \f(CWint dwarf_init()\fP opens an Elf descriptor
 on its fd and \f(CWdwarf_finish()\fP does not close that
 descriptor, an app should use \f(CWdwarf_get_elf\fP
 and should call \f(CWelf_end\fP with the pointer returned
 through the \f(CWElf**\fP handle created by \f(CWint dwarf_init()\fP.
-
+.P
 This function is not meaningful for a system that does not use the
 Elf format for objects.
 
@@ -1680,9 +1744,9 @@ one needs both the Package file
 and the executable to extract the actual address with
 \f(CWdwarf_formaddr()\fP.
 So one does a normal 
-\f(CWdwarf_elf_init()\fP
+\f(CWdwarf_elf_init_b()\fP
 or
-\f(CWdwarf_init()\fP
+\f(CWdwarf_init()_b\fP
 on each object and then tie the two together with
 a call  such as:
 .in +2
@@ -1694,7 +1758,7 @@ void example2(Dwarf_Debug dbg, Dwarf_Debug tieddbg)
   Dwarf_Error error = 0;
   int res = 0;
 
-  /* Do the dwarf_init() or dwarf_elf_init
+  /* Do the dwarf_init_b() or dwarf_elf_init_b()
      calls to set
      dbg, tieddbg at this point. Then: */
   res = dwarf_set_tied_dbg(dbg,tieddbg,&error);
@@ -1832,6 +1896,50 @@ certain errors are detected.
 
 The default for this value is FALSE (0) so the extra messages
 are off by default.
+.H 3 "dwarf_object_init_b()"
+.DS
+\f(CWint dwarf_object_init_b(
+    Dwarf_Obj_Access_Interface* obj,
+    Dwarf_Handler errhand,
+    Dwarf_Ptr     errarg,
+    unsigned      groupnumber,
+    Dwarf_Debug*  dbg,
+    Dwarf_Error*  error)\fP
+.DE
+The function
+\f(CWint dwarf_object_init_b()\fP 
+enables access to non-ELF object files
+by allowing the caller to
+then provide
+function pointers to code (user-written,
+not part of libdwarf)  that will
+look, to libdwarf, as if libdwarf was
+reading ELF.
+.P
+Writing the functions needed to support
+non-ELF will require study of ELF
+and of the object format involved.
+The topic is beyond the scope of
+this document.
+
+.H 3 "dwarf_object_init()"
+.DS
+\f(CWint dwarf_object_init(
+    Dwarf_Obj_Access_Interface* obj,
+    Dwarf_Handler errhand,
+    Dwarf_Ptr     errarg,
+    Dwarf_Debug*  dbg,
+    Dwarf_Error*  error)\fP
+.DE
+The function
+\f(CWint dwarf_object_init()\fP 
+is the same as 
+\f(CWint dwarf_object_init_b()\fP 
+except 
+\f(CWint dwarf_object_init()\fP 
+is missing the groupnumber argument so
+DWARF5 split dwarf objects cannot be
+fully handled.
 
 .H 2 "Section size operations"
 .P
@@ -2007,6 +2115,7 @@ pointer may change or become stale without warning.
 These functions are concerned with accessing debugging information 
 entries, whether from a .debug_info, .debug_types, .debug_info.dwo, 
 or .debug_types.dwo . 
+.P
 Since all such sections use similar formats, one
 set of functions suffices.
 
