@@ -1,7 +1,7 @@
 /*
   Copyright (C) 2000,2002,2003,2004,2005 Silicon Graphics, Inc. All Rights Reserved.
   Portions Copyright (C) 2008-2010 Arxan Technologies, Inc. All Rights Reserved.
-  Portions Copyright (C) 2009-2016 David Anderson. All Rights Reserved.
+  Portions Copyright (C) 2009-2017 David Anderson. All Rights Reserved.
   Portions Copyright (C) 2010-2012 SN Systems Ltd. All Rights Reserved.
 
   This program is free software; you can redistribute it and/or modify it
@@ -659,6 +659,8 @@ is_section_known_already(Dwarf_Debug dbg,
             return DW_DLV_OK;
         }
     }
+    /*  If we have both dwo and non-dwo DWARF sections
+        the flavor we do not want to enter will get here. */
     return DW_DLV_NO_ENTRY;
 }
 
@@ -721,7 +723,7 @@ this_section_dwarf_relevant(const char *scn_name,int type)
     If all in one object the default is to deal with DW_GROUPNUMBER_BASE
     and ignore DW_GROUPNUMBER_DWO.
     If only .dwo the default is DW_GROUPNUMBER_DWO.
-    If only non-dwo the default is DW_GROUPNUMBER_BASE. */
+    Otherwise use DW_GROUP_NUMBER_BASE. */
 
 static int
 determine_target_group(Dwarf_Unsigned section_count,
@@ -775,9 +777,12 @@ determine_target_group(Dwarf_Unsigned section_count,
     }
     if (found_group_one) {
         *group_number_out = DW_GROUPNUMBER_BASE;
-    }
-    if (found_group_two) {
-        *group_number_out = DW_GROUPNUMBER_DWO;
+    } else {
+        if (found_group_two) {
+            *group_number_out = DW_GROUPNUMBER_DWO;
+        } else {
+            *group_number_out = DW_GROUPNUMBER_BASE;
+        }
     }
     return DW_DLV_OK;
 }
@@ -887,6 +892,7 @@ _dwarf_setup(Dwarf_Debug dbg, Dwarf_Error * error)
             int found_match = FALSE;
             unsigned initial_start_number = 0;
             unsigned dbg_section_number = 0;
+
             res = is_section_known_already(dbg,scn_name,
                 &dbg_section_number,
                 initial_start_number,
@@ -904,8 +910,10 @@ _dwarf_setup(Dwarf_Debug dbg, Dwarf_Error * error)
             res = enter_section_in_de_debug_sections_array(dbg,scn_name,
                 obj_section_index,&err);
             if (res == DW_DLV_OK) {
-                /*  We just added a new entry in the dbg
-                    de_debug_sections array.  So we know its number. */
+                /*  We usually just added a new entry in the dbg
+                    de_debug_sections array.  So we know its number.
+                    However, if both dwo and non-dwo are in the object
+                    the ones we do not want to add will get here too */
                 unsigned real_start_number = 0;
 
                 if(dbg->de_debug_sections_total_entries) {
@@ -932,10 +940,13 @@ _dwarf_setup(Dwarf_Debug dbg, Dwarf_Error * error)
                     /*  Normal section set up.
                         Fall through. */
                 }else if (res == DW_DLV_NO_ENTRY) {
-                    /*  Some sort of bug in the code here.
-                        Should be impossible to get here. */
-                    free(sections);
-                    DWARF_DBG_ERROR(dbg, DW_DLE_SECTION_ERROR, DW_DLV_ERROR);
+                    /*  This happens when we have dwo and non-dwo
+                        in the object. For each section that we
+                        want to skip based on groupnumber.
+                        When COMDAT section groups supported
+                        this will happen for any other than
+                        the selected group. */
+                    /* Fall Thruough */
                 } else {
                     free(sections);
                     DWARF_DBG_ERROR(dbg, err, DW_DLV_ERROR);
@@ -1107,6 +1118,7 @@ dwarf_object_init_b(Dwarf_Obj_Access_Interface* obj, Dwarf_Handler errhand,
     }
     if (setup_result != DW_DLV_OK) {
         int freeresult = 0;
+        int myerr = 0;
         /* We cannot use any _dwarf_setup()
             error here as
             we are freeing dbg, making that error (setup
@@ -1115,7 +1127,6 @@ dwarf_object_init_b(Dwarf_Obj_Access_Interface* obj, Dwarf_Handler errhand,
             But error might be NULL and the init call
             error-handler function might be set.
         */
-        int myerr = 0;
         if ( (setup_result == DW_DLV_ERROR) && error ) {
             /*  Preserve our _dwarf_setup error number, but
                 this does not apply if error NULL. */

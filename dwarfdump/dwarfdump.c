@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2000,2002,2004,2005 Silicon Graphics, Inc.  All Rights Reserved.
-  Portions Copyright (C) 2007-2016 David Anderson. All Rights Reserved.
+  Portions Copyright (C) 2007-2017 David Anderson. All Rights Reserved.
   Portions Copyright 2007-2010 Sun Microsystems, Inc. All rights reserved.
   Portions Copyright 2012 SN Systems Ltd. All rights reserved.:w
 
@@ -2448,6 +2448,19 @@ process_args(int argc, char *argv[])
     if (usage_error || (dwoptind != (argc - 1))) {
         print_usage_message(program_name,usage_text);
         exit(FAILED);
+    }
+    if (group_number == DW_GROUPNUMBER_DWO) {
+        /*  For split-dwarf/DWO some sections make no sense.
+            This prevents printing of meaningless headers where no
+            data can exist. */
+        pubnames_flag = FALSE;
+        eh_frame_flag = FALSE;
+        frame_flag    = FALSE;
+        macinfo_flag  = FALSE;
+        aranges_flag  = FALSE;
+        ranges_flag   = FALSE;
+        static_func_flag = static_var_flag = FALSE;
+        weakname_flag = FALSE;
     }
 
     if (do_check_dwarf) {
