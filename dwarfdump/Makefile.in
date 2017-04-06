@@ -58,6 +58,7 @@ FINALOBJECTS = \
 	print_aranges.o \
 	print_debugfission.o \
 	print_die.o \
+	print_dnames.o \
 	print_frames.o  \
 	print_gdbindex.o  \
 	print_lines.o \

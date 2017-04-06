@@ -106,6 +106,7 @@ void build_linkonce_info(Dwarf_Debug dbg);
 static const char * do_uri_translation(const char *s,
     const char *context);
 
+boolean debug_names_flag = FALSE;
 boolean info_flag = FALSE;
 boolean use_old_dwarf_loclist = FALSE;  /* This so both
     dwarf_loclist_n()  and dwarf_get_loclist_c()
@@ -280,6 +281,8 @@ boolean record_dwarf_error = FALSE;  /* A test has failed, this
     a short-range hint we should print something we might not
     otherwise print (under the circumstances). */
 
+boolean check_debug_names = FALSE;
+
 
 /* These names make diagnostic messages more complete, the
    fixed length is safe, though ultra long names will get
@@ -431,6 +434,7 @@ set_checks_off()
     check_self_references = FALSE;
     check_attr_encoding = FALSE;
     check_duplicated_attributes = FALSE;
+    check_debug_names = FALSE;
 }
 
 static void suppress_check_dwarf()
@@ -790,6 +794,9 @@ print_object_header(UNUSEDARG Elf *elf,
     #define DW_SECTNAME_DEBUG_TYPES    ".debug_types"
     #define DW_SECTNAME_TEXT           ".text"
     #define DW_SECTNAME_GDB_INDEX      ".gdb_index"
+    #define DW_SECTNAME_EH_FRAME       ".eh_frame"
+    #define DW_SECTNAME_DEBUG_MACRO    ".debug_macro"
+    #define DW_SECTNAME_DEBUG_NAMES    ".debug_names"
 
     static char *sectnames[] = {
         DW_SECTNAME_DEBUG_INFO,
@@ -805,6 +812,9 @@ print_object_header(UNUSEDARG Elf *elf,
         DW_SECTNAME_DEBUG_TYPES,
         DW_SECTNAME_TEXT,
         DW_SECTNAME_GDB_INDEX,
+        DW_SECTNAME_EH_FRAME,
+        DW_SECTNAME_DEBUG_MACRO,
+        DW_SECTNAME_DEBUG_NAMES,
         ""
     };
 
@@ -1481,6 +1491,10 @@ process_one_file(Elf * elf,Elf *elftied,
         reset_overall_CU_error_data();
         print_relocinfo(dbg, reloc_map);
     }
+    if (debug_names_flag) {
+        reset_overall_CU_error_data();
+        print_debug_names(dbg);
+    }
 
     /* Print search results */
     if (search_print_results && search_is_on) {
@@ -1550,6 +1564,7 @@ do_all(void)
     static_func_flag = static_var_flag = TRUE;
     type_flag = weakname_flag = TRUE;
     header_flag = TRUE; /* Dump header info */
+    debug_names_flag = TRUE;
 }
 
 static const char *usage_text[] = {

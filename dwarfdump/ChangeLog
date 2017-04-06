@@ -1,4 +1,6 @@
-
+2017-04-06 David Anderson
+    * dwarfdump.c, Makefile.in, globals.h: 
+      This is a small start on dealing with DWARF5 .debug_names.
 2017-04-02 David Anderson
     * common.c, dwarfdump.c, tag_attr.c, tag_tree.c:Update 
       version string.

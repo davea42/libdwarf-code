@@ -248,6 +248,7 @@ extern int nTrace[MAX_TRACE_LEVEL + 1];
 #define DEBUG_GDB_INDEX   15
 #define DEBUG_FRAME_EH_GNU 16
 #define DEBUG_MACRO       17
+#define DEBUG_NAMES       18
 
 extern int verbose;
 extern boolean dense;
@@ -279,6 +280,7 @@ extern boolean suppress_check_extensions_tables;
 extern boolean check_duplicated_attributes;
 /* lots of checks make no sense on a dwp debugfission object. */
 extern boolean suppress_checking_on_dwp;
+extern boolean check_debug_names;
 
 /* Print global (unique) error messages */
 extern boolean print_unique_errors;
@@ -412,6 +414,7 @@ enum type_type_e {SGI_TYPENAME, DWARF_PUBTYPES} ;
 extern void print_types(Dwarf_Debug dbg,enum type_type_e type_type);
 extern void print_weaknames(Dwarf_Debug dbg);
 extern void print_exception_tables(Dwarf_Debug dbg);
+extern void print_debug_names(Dwarf_Debug dbg);
 
 /*  Space used to record range information */
 extern void allocate_range_array_info(void);
