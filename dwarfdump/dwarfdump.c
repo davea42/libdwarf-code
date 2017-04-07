@@ -106,52 +106,7 @@ void build_linkonce_info(Dwarf_Debug dbg);
 static const char * do_uri_translation(const char *s,
     const char *context);
 
-boolean debug_names_flag = FALSE;
-boolean info_flag = FALSE;
-boolean use_old_dwarf_loclist = FALSE;  /* This so both
-    dwarf_loclist_n()  and dwarf_get_loclist_c()
-    and the dwarf_loclist_from_expr
-    variations can be
-    tested. Defaults to new
-    dwarf_get_loclist_c(). See -g option.
-    The original IRIX dwarf_loclist() no longer tested
-    as of October 2015. */
-
-enum line_flag_type_e line_flag_selection = s2l;
-boolean line_flag = FALSE;
-
-/*  Setting this FALSE tells dwarfdump to use the old
-    line-table interfaces.  using:
-        -x line5=no
-    The new interfaces allow for both two-level line tables
-    and access to line table headers in case
-    we have a DWARF5 skeleton line table (a line table
-    header with no lines).
-    */
-boolean line_skeleton_flag = TRUE;
-
-boolean line_print_pc = TRUE;    /* Print <pc> addresses. */
-static boolean abbrev_flag = FALSE;
-static boolean frame_flag = FALSE;      /* .debug_frame section. */
-static boolean eh_frame_flag = FALSE;   /* GNU .eh_frame section. */
-static boolean pubnames_flag = FALSE;
-boolean macinfo_flag = FALSE; /* DWARF2,3,4. Old macro section*/
-boolean macro_flag = FALSE; /* DWARF5(and DWARF4 extension) new macro section */
-static boolean loc_flag = FALSE;
-static boolean aranges_flag = FALSE; /* .debug_aranges section. */
-static boolean ranges_flag = FALSE; /* .debug_ranges section. */
-static boolean string_flag = FALSE;
-static boolean reloc_flag = FALSE;
-static boolean static_func_flag = FALSE;
-static boolean static_var_flag = FALSE;
-static boolean type_flag = FALSE;
-static boolean weakname_flag = FALSE;
-static boolean header_flag = FALSE; /* Control printing of Elf header. */
-
-/* Control printing of gdb_index section.*/
-static boolean gdbindex_flag = FALSE;
-
-boolean producer_children_flag = FALSE;   /* List of CUs per compiler */
+struct glflags_s glflags;
 
 /* Bitmap for relocations. See globals.h for DW_SECTION_REL_DEBUG_RANGES etc.*/
 static unsigned reloc_map = 0;
@@ -163,45 +118,7 @@ int verbose = 0;
 
 boolean dense = FALSE;
 boolean ellipsis = FALSE;
-boolean show_global_offsets = FALSE; /* Show global and relative offsets */
 boolean show_form_used = FALSE;
-boolean display_offsets = TRUE;  /* Emit offsets */
-
-boolean check_abbrev_code = FALSE;
-boolean check_pubname_attr = FALSE;
-boolean check_reloc_offset = FALSE;
-boolean check_attr_tag = FALSE;
-boolean check_tag_tree = FALSE;
-boolean check_type_offset = FALSE;
-boolean check_decl_file = FALSE;
-boolean check_macros = FALSE;
-boolean check_lines = FALSE;
-boolean check_fdes = FALSE;
-boolean check_ranges = FALSE;
-boolean check_aranges = FALSE;
-boolean check_harmless = FALSE;
-boolean check_abbreviations = FALSE;
-boolean check_dwarf_constants = FALSE;
-boolean check_di_gaps = FALSE;
-boolean check_forward_decl = FALSE;
-boolean check_self_references = FALSE;
-boolean check_attr_encoding = FALSE;   /* Attributes encoding */
-boolean generic_1200_regs = FALSE;
-boolean suppress_check_extensions_tables = FALSE;
-boolean check_duplicated_attributes = FALSE;
-/* lots of checks make no sense on a dwp debugfission object. */
-boolean suppress_checking_on_dwp = FALSE;
-
-/* suppress_nested_name_search is a band-aid.
-   A workaround. A real fix for N**2 behavior is needed.
-*/
-boolean suppress_nested_name_search = FALSE;
-static boolean uri_options_translation = TRUE;
-static boolean do_print_uri_in_input = TRUE;
-
-/* Print global (unique) error messages */
-boolean print_unique_errors = FALSE;
-boolean found_error_message = FALSE;
 
 /* break_after_n_units is mainly for testing.
    It enables easy limiting of output size/running time
@@ -212,20 +129,6 @@ boolean found_error_message = FALSE;
    the -f or -F output to 2 FDEs and 2 CIEs.
 */
 int break_after_n_units = INT_MAX;
-
-boolean check_names = FALSE;
-boolean check_verbose_mode = TRUE; /* During '-k' mode, display errors */
-boolean check_frames = FALSE;
-boolean check_frames_extended = FALSE;    /* Extensive frames check */
-boolean check_locations = FALSE;          /* Location list check */
-
-boolean print_usage_tag_attr = FALSE;      /* Print basic usage */
-boolean print_usage_tag_attr_full = FALSE; /* Print full usage */
-
-static boolean check_all_compilers = TRUE;
-static boolean check_snc_compiler = FALSE; /* Check SNC compiler */
-static boolean check_gcc_compiler = FALSE;
-static boolean print_summary_all = FALSE;
 
 #define COMPILER_TABLE_MAX 100
 typedef struct anc {
@@ -269,21 +172,6 @@ static void reset_compiler_entry(Compiler *compiler);
 static void PRINT_CHECK_RESULT(char *str,
     Compiler *pCompiler, Dwarf_Check_Categories category);
 
-
-/* The check and print flags here make it easy to
-   allow check-only or print-only.  We no longer support
-   check-and-print in a single run.  */
-boolean do_check_dwarf = FALSE;
-boolean do_print_dwarf = FALSE;
-boolean check_show_results = FALSE;  /* Display checks results. */
-boolean record_dwarf_error = FALSE;  /* A test has failed, this
-    is normally set FALSE shortly after being set TRUE, it is
-    a short-range hint we should print something we might not
-    otherwise print (under the circumstances). */
-
-boolean check_debug_names = FALSE;
-
-
 /* These names make diagnostic messages more complete, the
    fixed length is safe, though ultra long names will get
    truncated. */
@@ -319,20 +207,11 @@ Dwarf_Addr CU_base_address = 0;       /* CU Base address */
 Dwarf_Addr CU_low_address = 0;        /* CU low address */
 Dwarf_Addr CU_high_address = 0;       /* CU High address */
 
-/* Display parent/children when in wide format? */
-boolean display_parent_tree = FALSE;
-boolean display_children_tree = FALSE;
-int stop_indent_level = 0;
-
-/* Print search results in wide format? */
-boolean search_wide_format = FALSE;
-/* -S option: strings for 'any' and 'match' */
-boolean search_is_on = FALSE;
 const char *search_any_text = 0;
 const char *search_match_text = 0;
 const char *search_regex_text = 0;
 int search_occurrences = 0;
-boolean search_print_results = FALSE;
+
 #ifdef HAVE_REGEX
 /* -S option: the compiled_regex */
 regex_t search_re;
@@ -379,13 +258,12 @@ static struct dwconf_s g_config_file_data;
 static struct esb_s esb_short_cu_name;
 static struct esb_s esb_long_cu_name;
 static struct esb_s dwarf_error_line;
+static struct esb_s cu_name;
 
 /* Output filename */
 static const char *output_file = 0;
 static int group_number = 0;
 
-char cu_name[BUFSIZ];
-boolean cu_name_flag = FALSE;
 
 static int
 get_number_value(char *v_in,long int *v_out)
@@ -415,42 +293,42 @@ get_number_value(char *v_in,long int *v_out)
 static void
 set_checks_off()
 {
-    check_abbrev_code = FALSE;
-    check_pubname_attr = FALSE;
-    check_reloc_offset = FALSE;
-    check_attr_tag = FALSE;
-    check_tag_tree = FALSE;
-    check_type_offset = FALSE;
-    check_decl_file = FALSE;
-    check_lines = FALSE;
-    check_fdes = FALSE;
-    check_ranges = FALSE;
-    check_aranges = FALSE;
-    check_harmless = FALSE;
-    check_abbreviations = FALSE;
-    check_dwarf_constants = FALSE;
-    check_di_gaps = FALSE;
-    check_forward_decl = FALSE;
-    check_self_references = FALSE;
-    check_attr_encoding = FALSE;
-    check_duplicated_attributes = FALSE;
-    check_debug_names = FALSE;
+    glflags.gf_check_abbrev_code = FALSE;
+    glflags.gf_check_pubname_attr = FALSE;
+    glflags.gf_check_reloc_offset = FALSE;
+    glflags.gf_check_attr_tag = FALSE;
+    glflags.gf_check_tag_tree = FALSE;
+    glflags.gf_check_type_offset = FALSE;
+    glflags.gf_check_decl_file = FALSE;
+    glflags.gf_check_lines = FALSE;
+    glflags.gf_check_fdes = FALSE;
+    glflags.gf_check_ranges = FALSE;
+    glflags.gf_check_aranges = FALSE;
+    glflags.gf_check_harmless = FALSE;
+    glflags.gf_check_abbreviations = FALSE;
+    glflags.gf_check_dwarf_constants = FALSE;
+    glflags.gf_check_di_gaps = FALSE;
+    glflags.gf_check_forward_decl = FALSE;
+    glflags.gf_check_self_references = FALSE;
+    glflags.gf_check_attr_encoding = FALSE;
+    glflags.gf_check_duplicated_attributes = FALSE;
+    glflags.gf_check_debug_names = FALSE;
 }
 
 static void suppress_check_dwarf()
 {
-    do_print_dwarf = TRUE;
-    if (do_check_dwarf) {
+    glflags.gf_do_print_dwarf = TRUE;
+    if (glflags.gf_do_check_dwarf) {
         printf("Warning: check flag turned off, "
             "checking and printing are separate.\n");
     }
-    do_check_dwarf = FALSE;
+    glflags.gf_do_check_dwarf = FALSE;
     set_checks_off();
 }
 static void suppress_print_dwarf()
 {
-    do_print_dwarf = FALSE;
-    do_check_dwarf = TRUE;
+    glflags.gf_do_print_dwarf = FALSE;
+    glflags.gf_do_check_dwarf = TRUE;
 }
 
 static int process_one_file(Elf * elf, Elf *elftied,
@@ -533,12 +411,14 @@ main(int argc, char *argv[])
     }
 #endif /* _WIN32 */
 
+    init_global_flags();
     set_checks_off();
     esb_constructor(&config_file_path);
     esb_constructor(&config_file_tiedpath);
     esb_constructor(&esb_short_cu_name);
     esb_constructor(&esb_long_cu_name);
     esb_constructor(&dwarf_error_line);
+    esb_constructor(&cu_name);
 #ifdef _WIN32
     /*  Often we redirect the output to a file, but we have found
         issues due to the buffering associated with stdout. Some issues
@@ -595,7 +475,7 @@ main(int argc, char *argv[])
     {
         Dwarf_Cmdline_Options wcmd;
         /* The struct has just one field!. */
-        wcmd.check_verbose_mode = check_verbose_mode;
+        wcmd.check_verbose_mode = glflags.gf_check_verbose_mode;
         dwarf_record_cmdline_options(wcmd);
     }
 
@@ -647,20 +527,22 @@ main(int argc, char *argv[])
         expensive) to build all
         of these at once so mistakes in options do not lead
         to coredumps (like -ka -p did once). */
-    if (check_decl_file || check_ranges || check_locations ||
-        do_check_dwarf || check_self_references) {
+    if (glflags.gf_check_decl_file || glflags.gf_check_ranges ||
+        glflags.gf_check_locations ||
+        glflags.gf_do_check_dwarf ||
+        glflags.gf_check_self_references) {
         pRangesInfo = AllocateBucketGroup(KIND_RANGES_INFO);
         pLinkonceInfo = AllocateBucketGroup(KIND_SECTIONS_INFO);
         pVisitedInfo = AllocateBucketGroup(KIND_VISITED_INFO);
     }
 
     /* Create the unique error table */
-    if (print_unique_errors) {
+    if (glflags.gf_print_unique_errors) {
         allocate_unique_errors_table();
     }
 
     /* Allocate range array to be used by all CUs */
-    if (check_ranges) {
+    if (glflags.gf_check_ranges) {
         allocate_range_array_info();
     }
 
@@ -707,12 +589,12 @@ main(int argc, char *argv[])
     }
 
     /* Release range array to be used by all CUs */
-    if (check_ranges) {
+    if (glflags.gf_check_ranges) {
         release_range_array_info();
     }
 
     /* Delete the unique error set */
-    if (print_unique_errors) {
+    if (glflags.gf_print_unique_errors) {
         release_unique_errors_table();
     }
 
@@ -727,6 +609,7 @@ main(int argc, char *argv[])
     esb_destructor(&esb_long_cu_name);
     esb_destructor(&esb_short_cu_name);
     esb_destructor(&dwarf_error_line);
+    esb_destructor(&cu_name);
     sanitized_string_destructor();
     ranges_esb_string_destructor();
     destruct_abbrev_array();
@@ -978,78 +861,78 @@ print_specific_checks_results(Compiler *pCompiler)
 {
     printf("\nDWARF CHECK RESULT\n");
     printf("<item>                    <checks>    <errors>\n");
-    if (check_pubname_attr) {
+    if (glflags.gf_check_pubname_attr) {
         PRINT_CHECK_RESULT("pubname_attr", pCompiler, pubname_attr_result);
     }
-    if (check_attr_tag) {
+    if (glflags.gf_check_attr_tag) {
         PRINT_CHECK_RESULT("attr_tag", pCompiler, attr_tag_result);
     }
-    if (check_tag_tree) {
+    if (glflags.gf_check_tag_tree) {
         PRINT_CHECK_RESULT("tag_tree", pCompiler, tag_tree_result);
     }
-    if (check_type_offset) {
+    if (glflags.gf_check_type_offset) {
         PRINT_CHECK_RESULT("type_offset", pCompiler, type_offset_result);
     }
-    if (check_decl_file) {
+    if (glflags.gf_check_decl_file) {
         PRINT_CHECK_RESULT("decl_file", pCompiler, decl_file_result);
     }
-    if (check_ranges) {
+    if (glflags.gf_check_ranges) {
         PRINT_CHECK_RESULT("ranges", pCompiler, ranges_result);
     }
-    if (check_lines) {
+    if (glflags.gf_check_lines) {
         PRINT_CHECK_RESULT("line_table", pCompiler, lines_result);
     }
-    if (check_fdes) {
+    if (glflags.gf_check_fdes) {
         PRINT_CHECK_RESULT("fde_table", pCompiler, fde_duplication);
     }
-    if (check_aranges) {
+    if (glflags.gf_check_aranges) {
         PRINT_CHECK_RESULT("aranges", pCompiler, aranges_result);
     }
 
-    if (check_names) {
+    if (glflags.gf_check_names) {
         PRINT_CHECK_RESULT("names",pCompiler, names_result);
     }
-    if (check_frames) {
+    if (glflags.gf_check_frames) {
         PRINT_CHECK_RESULT("frames",pCompiler, frames_result);
     }
-    if (check_locations) {
+    if (glflags.gf_check_locations) {
         PRINT_CHECK_RESULT("locations",pCompiler, locations_result);
     }
 
-    if (check_harmless) {
+    if (glflags.gf_check_harmless) {
         PRINT_CHECK_RESULT("harmless_errors", pCompiler, harmless_result);
     }
 
-    if (check_abbreviations) {
+    if (glflags.gf_check_abbreviations) {
         PRINT_CHECK_RESULT("abbreviations", pCompiler, abbreviations_result);
     }
 
-    if (check_dwarf_constants) {
+    if (glflags.gf_check_dwarf_constants) {
         PRINT_CHECK_RESULT("dwarf_constants",
             pCompiler, dwarf_constants_result);
     }
 
-    if (check_di_gaps) {
+    if (glflags.gf_check_di_gaps) {
         PRINT_CHECK_RESULT("debug_info_gaps", pCompiler, di_gaps_result);
     }
 
-    if (check_forward_decl) {
+    if (glflags.gf_check_forward_decl) {
         PRINT_CHECK_RESULT("forward_declarations",
             pCompiler, forward_decl_result);
     }
 
-    if (check_self_references) {
+    if (glflags.gf_check_self_references) {
         PRINT_CHECK_RESULT("self_references",
             pCompiler, self_references_result);
     }
 
     /* Display attributes encoding results */
-    if (check_attr_encoding) {
+    if (glflags.gf_check_attr_encoding) {
         PRINT_CHECK_RESULT("attr_encoding", pCompiler, attr_encoding_result);
     }
 
     /* Duplicated attributes */
-    if (check_duplicated_attributes) {
+    if (glflags.gf_check_duplicated_attributes) {
         PRINT_CHECK_RESULT("duplicated_attributes",
             pCompiler, duplicated_attributes_result);
     }
@@ -1118,7 +1001,7 @@ print_checks_results(void)
         sizeof(Compiler),qsort_compare_compiler);
 
     /* Print list of CUs for each compiler detected */
-    if (producer_children_flag) {
+    if (glflags.gf_producer_children_flag) {
 
         a_name_chain *nc = 0;
         a_name_chain *nc_next = 0;
@@ -1143,7 +1026,8 @@ print_checks_results(void)
 
     /* Print error report only if errors have been detected */
     /* Print error report if the -kd option */
-    if ((do_check_dwarf && check_error) || check_show_results) {
+    if ((glflags.gf_do_check_dwarf && check_error) ||
+        glflags.gf_check_show_results) {
         int count = 0;
         int compilers_not_detected = 0;
         int compilers_verified = 0;
@@ -1198,9 +1082,9 @@ print_checks_results(void)
 
         /*  Print summary if we have verified compilers or
             if the -kd option used. */
-        if (compilers_verified || check_show_results) {
+        if (compilers_verified || glflags.gf_check_show_results) {
             /* Print compilers detected summary*/
-            if (print_summary_all) {
+            if (glflags.gf_print_summary_all) {
                 count = 0;
                 printf("\n*** ERRORS PER COMPILER ***\n");
                 for (index = 1; index <= compilers_detected_count; ++index) {
@@ -1377,7 +1261,7 @@ process_one_file(Elf * elf,Elf *elftied,
     }
 
     /* Get .text and .debug_ranges info if in check mode */
-    if (do_check_dwarf) {
+    if (glflags.gf_do_check_dwarf) {
         Dwarf_Addr lower = 0;
         Dwarf_Addr upper = 0;
         Dwarf_Unsigned size = 0;
@@ -1396,19 +1280,20 @@ process_one_file(Elf * elf,Elf *elftied,
         build_linkonce_info(dbg);
     }
 
-    if (header_flag) {
+    if (glflags.gf_header_flag) {
         print_object_header(elf,dbg,section_map);
     }
     reset_overall_CU_error_data();
-    if (info_flag || line_flag ||
-        check_macros || macinfo_flag || macro_flag ||
-        cu_name_flag || search_is_on ||
-        producer_children_flag) {
+    if (glflags.gf_info_flag || glflags.gf_line_flag ||
+        glflags.gf_check_macros || glflags.gf_macinfo_flag ||
+        glflags.gf_macro_flag ||
+        glflags.gf_cu_name_flag || glflags.gf_search_is_on ||
+        glflags.gf_producer_children_flag) {
 
         print_infos(dbg,TRUE);
         reset_overall_CU_error_data();
         print_infos(dbg,FALSE);
-        if (check_macros) {
+        if (glflags.gf_check_macros) {
             set_global_section_sizes(dbg);
             if(macro_check_tree) {
                 /* Fake item representing end of section. */
@@ -1428,7 +1313,7 @@ process_one_file(Elf * elf,Elf *elftied,
         clear_macro_statistics(&macro_check_tree);
         clear_macro_statistics(&macinfo_check_tree);
     }
-    if (gdbindex_flag) {
+    if (glflags.gf_gdbindex_flag) {
         reset_overall_CU_error_data();
         /*  By definition if gdb_index is present
             then "cu" and "tu" will not be. And vice versa.  */
@@ -1436,40 +1321,41 @@ process_one_file(Elf * elf,Elf *elftied,
         print_debugfission_index(dbg,"cu");
         print_debugfission_index(dbg,"tu");
     }
-    if (pubnames_flag) {
+    if (glflags.gf_pubnames_flag) {
         reset_overall_CU_error_data();
         print_pubnames(dbg);
     }
-    if (loc_flag) {
+    if (glflags.gf_loc_flag) {
         reset_overall_CU_error_data();
         print_locs(dbg);
     }
-    if (abbrev_flag) {
+    if (glflags.gf_abbrev_flag) {
         reset_overall_CU_error_data();
         print_abbrevs(dbg);
     }
-    if (string_flag) {
+    if (glflags.gf_string_flag) {
         reset_overall_CU_error_data();
         print_strings(dbg);
     }
-    if (aranges_flag) {
+    if (glflags.gf_aranges_flag) {
         reset_overall_CU_error_data();
         print_aranges(dbg);
     }
-    if (ranges_flag) {
+    if (glflags.gf_ranges_flag) {
         reset_overall_CU_error_data();
         print_ranges(dbg);
     }
-    if (frame_flag || eh_frame_flag) {
+    if (glflags.gf_frame_flag || glflags.gf_eh_frame_flag) {
         reset_overall_CU_error_data();
         current_cu_die_for_print_frames = 0;
-        print_frames(dbg, frame_flag, eh_frame_flag, l_config_file_data);
+        print_frames(dbg, glflags.gf_frame_flag,
+            glflags.gf_eh_frame_flag, l_config_file_data);
     }
-    if (static_func_flag) {
+    if (glflags.gf_static_func_flag) {
         reset_overall_CU_error_data();
         print_static_funcs(dbg);
     }
-    if (static_var_flag) {
+    if (glflags.gf_static_var_flag) {
         reset_overall_CU_error_data();
         print_static_vars(dbg);
     }
@@ -1477,32 +1363,32 @@ process_one_file(Elf * elf,Elf *elftied,
         SGI_TYPENAME is the same concept but is SGI specific ( it was
         defined 10 years before dwarf pubtypes). */
 
-    if (type_flag) {
+    if (glflags.gf_type_flag) {
         reset_overall_CU_error_data();
         print_types(dbg, DWARF_PUBTYPES);
         reset_overall_CU_error_data();
         print_types(dbg, SGI_TYPENAME);
     }
-    if (weakname_flag) {
+    if (glflags.gf_weakname_flag) {
         reset_overall_CU_error_data();
         print_weaknames(dbg);
     }
-    if (reloc_flag) {
+    if (glflags.gf_reloc_flag) {
         reset_overall_CU_error_data();
         print_relocinfo(dbg, reloc_map);
     }
-    if (debug_names_flag) {
+    if (glflags.gf_debug_names_flag) {
         reset_overall_CU_error_data();
         print_debug_names(dbg);
     }
 
     /* Print search results */
-    if (search_print_results && search_is_on) {
+    if (glflags.gf_search_print_results && glflags.gf_search_is_on) {
         print_search_results();
     }
 
     /* The right time to do this is unclear. But we need to do it. */
-    if (check_harmless) {
+    if (glflags.gf_check_harmless) {
         print_any_harmless_errors(dbg);
     }
 
@@ -1511,12 +1397,12 @@ process_one_file(Elf * elf,Elf *elftied,
     print_checks_results();
 
     /* Print the detailed attribute usage space */
-    if (check_attr_encoding) {
+    if (glflags.gf_check_attr_encoding) {
         print_attributes_encoding(dbg);
     }
 
     /* Print the tags and attribute usage */
-    if (print_usage_tag_attr) {
+    if (glflags.gf_print_usage_tag_attr) {
         print_tag_attributes_usage(dbg);
     }
 
@@ -1545,26 +1431,26 @@ process_one_file(Elf * elf,Elf *elftied,
 static void
 do_all(void)
 {
-    info_flag = frame_flag = TRUE;
-    line_flag = TRUE;
-    pubnames_flag = macinfo_flag = TRUE;
-    macro_flag = TRUE;
-    aranges_flag = TRUE;
+    glflags.gf_info_flag = glflags.gf_frame_flag = TRUE;
+    glflags.gf_line_flag = TRUE;
+    glflags.gf_pubnames_flag = glflags.gf_macinfo_flag = TRUE;
+    glflags.gf_macro_flag = TRUE;
+    glflags.gf_aranges_flag = TRUE;
     /*  Do not do
-        loc_flag = TRUE
-        abbrev_flag = TRUE;
-        ranges_flag = TRUE;
+        glflags.gf_loc_flag = TRUE
+        glflags.gf_abbrev_flag = TRUE;
+        glflags.gf_ranges_flag = TRUE;
         because nothing in
         the DWARF spec guarantees the sections are free of random bytes
         in areas not referenced by .debug_info */
-    string_flag = TRUE;
+    glflags.gf_string_flag = TRUE;
     /*  Do not do
-        reloc_flag = TRUE;
+        glflags.gf_reloc_flag = TRUE;
         as print_relocs makes no sense for non-elf dwarfdump users.  */
-    static_func_flag = static_var_flag = TRUE;
-    type_flag = weakname_flag = TRUE;
-    header_flag = TRUE; /* Dump header info */
-    debug_names_flag = TRUE;
+    glflags.gf_static_func_flag = glflags.gf_static_var_flag = TRUE;
+    glflags.gf_type_flag = glflags.gf_weakname_flag = TRUE;
+    glflags.gf_header_flag = TRUE; /* Dump header info */
+    glflags.gf_debug_names_flag = TRUE;
 }
 
 static const char *usage_text[] = {
@@ -1869,13 +1755,13 @@ process_args(int argc, char *argv[])
                         goto badopt;
                     }
                     if (!strcmp(&dwoptarg[6],"std")) {
-                        line_flag_selection =  singledw5;
+                        glflags.gf_line_flag_selection =  singledw5;
                     } else if (!strcmp(&dwoptarg[6],"s2l")){
-                        line_flag_selection= s2l;
+                        glflags.gf_line_flag_selection= s2l;
                     } else if (!strcmp(&dwoptarg[6],"orig")){
-                        line_flag_selection= orig;
+                        glflags.gf_line_flag_selection= orig;
                     } else if (!strcmp(&dwoptarg[6],"orig2l")) {
-                        line_flag_selection= orig2l;
+                        glflags.gf_line_flag_selection= orig2l;
                     } else {
                         goto badopt;
                     }
@@ -1901,38 +1787,38 @@ process_args(int argc, char *argv[])
             }
             break;
         case 'C':
-            suppress_check_extensions_tables = TRUE;
+            glflags.gf_suppress_check_extensions_tables = TRUE;
             break;
         case 'g':
-            use_old_dwarf_loclist = TRUE;
+            glflags.gf_use_old_dwarf_loclist = TRUE;
             /*info_flag = TRUE;  removed  from -g. Nov 2015 */
             suppress_check_dwarf();
             break;
         case 'i':
-            info_flag = TRUE;
+            glflags.gf_info_flag = TRUE;
             suppress_check_dwarf();
             break;
         case 'I':
-            gdbindex_flag = TRUE;
+            glflags.gf_gdbindex_flag = TRUE;
             suppress_check_dwarf();
             break;
         case 'n':
-            suppress_nested_name_search = TRUE;
+            glflags.gf_suppress_nested_name_search = TRUE;
             break;
         case 'l':
-            line_flag = TRUE;
+            glflags.gf_line_flag = TRUE;
             suppress_check_dwarf();
             /* Enable to suppress offsets printing */
             if (dwoptarg) {
                 switch (dwoptarg[0]) {
                 /* -ls : suppress <pc> addresses */
-                case 's': line_print_pc = FALSE; break;
+                case 's': glflags.gf_line_print_pc = FALSE; break;
                 default: usage_error = TRUE; break;
                 }
             }
             break;
         case 'f':
-            frame_flag = TRUE;
+            glflags.gf_frame_flag = TRUE;
             suppress_check_dwarf();
             break;
         case 'H':
@@ -1944,35 +1830,35 @@ process_args(int argc, char *argv[])
             }
             break;
         case 'F':
-            eh_frame_flag = TRUE;
+            glflags.gf_eh_frame_flag = TRUE;
             suppress_check_dwarf();
             break;
         case 'b':
-            abbrev_flag = TRUE;
+            glflags.gf_abbrev_flag = TRUE;
             suppress_check_dwarf();
             break;
         case 'p':
-            pubnames_flag = TRUE;
+            glflags.gf_pubnames_flag = TRUE;
             suppress_check_dwarf();
             break;
         case 'P':
             /* List of CUs per compiler */
-            producer_children_flag = TRUE;
+            glflags.gf_producer_children_flag = TRUE;
             break;
         case 'r':
-            aranges_flag = TRUE;
+            glflags.gf_aranges_flag = TRUE;
             suppress_check_dwarf();
             break;
         case 'N':
-            ranges_flag = TRUE;
+            glflags.gf_ranges_flag = TRUE;
             suppress_check_dwarf();
             break;
         case 'R':
-            generic_1200_regs = TRUE;
+            glflags.gf_generic_1200_regs = TRUE;
             break;
         case 'm':
-            macinfo_flag = TRUE; /* DWARF2,3,4 */
-            macro_flag   = TRUE; /* DWARF5 */
+            glflags.gf_macinfo_flag = TRUE; /* DWARF2,3,4 */
+            glflags.gf_macro_flag   = TRUE; /* DWARF5 */
             suppress_check_dwarf();
             break;
         case 'c':
@@ -1980,14 +1866,14 @@ process_args(int argc, char *argv[])
             if (dwoptarg) {
                 if ('s' == dwoptarg[0]) {
                     /* -cs : Check SNC compiler */
-                    check_snc_compiler = TRUE;
-                    check_all_compilers = FALSE;
+                    glflags.gf_check_snc_compiler = TRUE;
+                    glflags.gf_check_all_compilers = FALSE;
                 }
                 else {
                     if ('g' == dwoptarg[0]) {
                         /* -cg : Check GCC compiler */
-                        check_gcc_compiler = TRUE;
-                        check_all_compilers = FALSE;
+                        glflags.gf_check_gcc_compiler = TRUE;
+                        glflags.gf_check_all_compilers = FALSE;
                     }
                     else {
                         /*  Assume a compiler version to check,
@@ -2001,7 +1887,7 @@ process_args(int argc, char *argv[])
                             pCompiler = &compilers_targeted[compilers_targeted_count];
                             reset_compiler_entry(pCompiler);
                             pCompiler->name = cmp;
-                            check_all_compilers = FALSE;
+                            glflags.gf_check_all_compilers = FALSE;
                         } else {
                             fprintf(stderr, "Compiler table max %d exceeded, "
                                 "limiting the tracked compilers to %d\n",
@@ -2010,20 +1896,20 @@ process_args(int argc, char *argv[])
                     }
                 }
             } else {
-                loc_flag = TRUE;
+                glflags.gf_loc_flag = TRUE;
                 suppress_check_dwarf();
             }
             break;
         case 'Q':
             /* Q suppresses section data printing. */
-            do_print_dwarf = FALSE;
+            glflags.gf_do_print_dwarf = FALSE;
             break;
         case 'q':
             /* Suppress uri-did-transate notification */
-            do_print_uri_in_input = FALSE;
+            glflags.gf_do_print_uri_in_input = FALSE;
             break;
         case 's':
-            string_flag = TRUE;
+            glflags.gf_string_flag = TRUE;
             suppress_check_dwarf();
             break;
         case 'S':
@@ -2031,12 +1917,12 @@ process_args(int argc, char *argv[])
             {
                 const char *tempstr = 0;
                 boolean serr = TRUE;
-                search_is_on = TRUE;
+                glflags.gf_search_is_on = TRUE;
                 /* 'v' option, to print number of occurrences */
                 /* -S[v]match|any|regex=text*/
                 if (dwoptarg[0] == 'v') {
                     ++dwoptarg;
-                    search_print_results = TRUE;
+                    glflags.gf_search_print_results = TRUE;
                 }
                 /* -S match=<text>*/
                 if (strncmp(dwoptarg,"match=",6) == 0) {
@@ -2102,7 +1988,7 @@ process_args(int argc, char *argv[])
             exit(OKAY);
             break;
         case 'd':
-            do_print_dwarf = TRUE;
+            glflags.gf_do_print_dwarf = TRUE;
             /*  This is sort of useless unless printing,
                 but harmless, so we do not insist we
                 are printing with suppress_check_dwarf(). */
@@ -2110,7 +1996,7 @@ process_args(int argc, char *argv[])
             break;
         case 'D':
             /* Do not emit offset in output */
-            display_offsets = FALSE;
+            glflags.gf_display_offsets = FALSE;
             break;
         case 'e':
             suppress_check_dwarf();
@@ -2118,7 +2004,7 @@ process_args(int argc, char *argv[])
             break;
         case 'E':
             /* Object Header information (but maybe really print) */
-            header_flag = TRUE;
+            glflags.gf_header_flag = TRUE;
             /* Selected printing of section info */
             if (dwoptarg) {
                 switch (dwoptarg[0]) {
@@ -2146,7 +2032,7 @@ process_args(int argc, char *argv[])
             }
             break;
         case 'o':
-            reloc_flag = TRUE;
+            glflags.gf_reloc_flag = TRUE;
             if (dwoptarg) {
                 switch (dwoptarg[0]) {
                 case 'i':
@@ -2188,137 +2074,140 @@ process_args(int argc, char *argv[])
             oarg = dwoptarg[0];
             switch (oarg) {
             case 'a':
-                check_pubname_attr = TRUE;
-                check_attr_tag = TRUE;
-                check_tag_tree = check_type_offset = TRUE;
-                check_names = TRUE;
-                pubnames_flag = info_flag = TRUE;
-                gdbindex_flag = TRUE;
-                check_decl_file = TRUE;
-                check_macros = TRUE;
-                check_frames = TRUE;
-                check_frames_extended = FALSE;
-                check_locations = TRUE;
-                frame_flag = eh_frame_flag = TRUE;
-                check_ranges = TRUE;
-                check_lines = TRUE;
-                check_fdes = TRUE;
-                check_harmless = TRUE;
-                check_aranges = TRUE;
-                aranges_flag = TRUE;  /* Aranges section */
-                check_abbreviations = TRUE;
-                check_dwarf_constants = TRUE;
-                check_di_gaps = TRUE; /* Check debug info gaps */
-                check_forward_decl = TRUE;  /* Check forward declarations */
-                check_self_references = TRUE;  /* Check self references */
-                check_attr_encoding = TRUE;    /* Check attributes encoding */
-                print_usage_tag_attr = TRUE;  /* Print tag-attr usage */
-                check_duplicated_attributes = TRUE; /* Duplicated attributes */
+                glflags.gf_check_pubname_attr = TRUE;
+                glflags.gf_check_attr_tag = TRUE;
+                glflags.gf_check_tag_tree = TRUE;
+                glflags.gf_check_type_offset = TRUE;
+                glflags.gf_check_names = TRUE;
+                glflags.gf_pubnames_flag = TRUE;
+                glflags.gf_info_flag = TRUE;
+                glflags.gf_gdbindex_flag = TRUE;
+                glflags.gf_check_decl_file = TRUE;
+                glflags.gf_check_macros = TRUE;
+                glflags.gf_check_frames = TRUE;
+                glflags.gf_check_frames_extended = FALSE;
+                glflags.gf_check_locations = TRUE;
+                glflags.gf_frame_flag = TRUE;
+                glflags.gf_eh_frame_flag = TRUE;
+                glflags.gf_check_ranges = TRUE;
+                glflags.gf_check_lines = TRUE;
+                glflags.gf_check_fdes = TRUE;
+                glflags.gf_check_harmless = TRUE;
+                glflags.gf_check_aranges = TRUE;
+                glflags.gf_aranges_flag = TRUE;  /* Aranges section */
+                glflags.gf_check_abbreviations = TRUE;
+                glflags.gf_check_dwarf_constants = TRUE;
+                glflags.gf_check_di_gaps = TRUE;
+                glflags.gf_check_forward_decl = TRUE;
+                glflags.gf_check_self_references = TRUE;
+                glflags.gf_check_attr_encoding = TRUE;
+                glflags.gf_print_usage_tag_attr = TRUE;
+                glflags.gf_check_duplicated_attributes = TRUE;
                 break;
             /* Abbreviations */
             case 'b':
-                check_abbreviations = TRUE;
-                info_flag = TRUE;
+                glflags.gf_check_abbreviations = TRUE;
+                glflags.gf_info_flag = TRUE;
                 break;
             /* DWARF constants */
             case 'c':
-                check_dwarf_constants = TRUE;
-                info_flag = TRUE;
+                glflags.gf_check_dwarf_constants = TRUE;
+                glflags.gf_info_flag = TRUE;
                 break;
             /* Display check results */
             case 'd':
-                check_show_results = TRUE;
+                glflags.gf_check_show_results = TRUE;
                 break;
             /* Check duplicated attributes */
             case 'D':
-                check_duplicated_attributes = TRUE;
-                info_flag = TRUE;
+                glflags.gf_check_duplicated_attributes = TRUE;
+                glflags.gf_info_flag = TRUE;
                 break;
             case 'e':
-                check_pubname_attr = TRUE;
-                pubnames_flag = TRUE;
-                check_harmless = TRUE;
-                check_fdes = TRUE;
+                glflags.gf_check_pubname_attr = TRUE;
+                glflags.gf_pubnames_flag = TRUE;
+                glflags.gf_check_harmless = TRUE;
+                glflags.gf_check_fdes = TRUE;
                 break;
             /* Attributes encoding usage */
             case 'E':
-                check_attr_encoding = TRUE;
-                info_flag = TRUE;
+                glflags.gf_check_attr_encoding = TRUE;
+                glflags.gf_info_flag = TRUE;
                 break;
             case 'f':
-                check_harmless = TRUE;
-                check_fdes = TRUE;
+                glflags.gf_check_harmless = TRUE;
+                glflags.gf_check_fdes = TRUE;
                 break;
             /* files-lines */
             case 'F':
-                check_decl_file = TRUE;
-                check_lines = TRUE;
-                info_flag = TRUE;
+                glflags.gf_check_decl_file = TRUE;
+                glflags.gf_check_lines = TRUE;
+                glflags.gf_info_flag = TRUE;
                 break;
             /* Check debug info gaps */
             case 'g':
-                check_di_gaps = TRUE;
-                info_flag = TRUE;
+                glflags.gf_check_di_gaps = TRUE;
+                glflags.gf_info_flag = TRUE;
                 break;
             /* Print just global (unique) errors */
             case 'G':
-                print_unique_errors = TRUE;
+                glflags.gf_print_unique_errors = TRUE;
                 break;
             /* Locations list */
             case 'l':
-                check_locations = TRUE;
-                info_flag = TRUE;
-                loc_flag = TRUE;
+                glflags.gf_check_locations = TRUE;
+                glflags.gf_info_flag = TRUE;
+                glflags.gf_loc_flag = TRUE;
                 break;
             /* Ranges */
             case 'm':
-                check_ranges = TRUE;
-                info_flag = TRUE;
+                glflags.gf_check_ranges = TRUE;
+                glflags.gf_info_flag = TRUE;
                 break;
             /* Aranges */
             case 'M':
-                check_aranges = TRUE;
-                aranges_flag = TRUE;
+                glflags.gf_check_aranges = TRUE;
+                glflags.gf_aranges_flag = TRUE;
                 break;
             /* invalid names */
             case 'n':
-                check_names = TRUE;
-                info_flag = TRUE;
+                glflags.gf_check_names = TRUE;
+                glflags.gf_info_flag = TRUE;
                 break;
             case 'r':
-                check_attr_tag = TRUE;
-                info_flag = TRUE;
-                check_harmless = TRUE;
+                glflags.gf_check_attr_tag = TRUE;
+                glflags.gf_info_flag = TRUE;
+                glflags.gf_check_harmless = TRUE;
                 break;
             /* forward declarations in DW_AT_specification */
             case 'R':
-                check_forward_decl = TRUE;
-                info_flag = TRUE;
+                glflags.gf_check_forward_decl = TRUE;
+                glflags.gf_info_flag = TRUE;
                 break;
             /* Check verbose mode */
             case 's':
-                check_verbose_mode = FALSE;
+                glflags.gf_check_verbose_mode = FALSE;
                 break;
             /*  self references in:
                 DW_AT_specification, DW_AT_type, DW_AT_abstract_origin */
             case 'S':
-                check_self_references = TRUE;
-                info_flag = TRUE;
+                glflags.gf_check_self_references = TRUE;
+                glflags.gf_info_flag = TRUE;
                 break;
             case 't':
-                check_tag_tree = TRUE;
-                check_harmless = TRUE;
-                info_flag = TRUE;
+                glflags.gf_check_tag_tree = TRUE;
+                glflags.gf_check_harmless = TRUE;
+                glflags.gf_info_flag = TRUE;
                 break;
 #ifdef HAVE_USAGE_TAG_ATTR
             /* Tag-Tree and Tag-Attr usage */
             case 'u':
-                print_usage_tag_attr = TRUE;
-                info_flag = TRUE;
+                glflags.gf_print_usage_tag_attr = TRUE;
+                glflags.gf_info_flag = TRUE;
                 if (dwoptarg[1]) {
                     if ('f' == dwoptarg[1]) {
                         /* -kuf : Full report */
-                        print_usage_tag_attr_full = TRUE;
+                        glflags.gf_print_usage_tag_attr_full = TRUE;
                     } else {
                         usage_error = TRUE;
                     }
@@ -2326,32 +2215,32 @@ process_args(int argc, char *argv[])
                 break;
 #endif /* HAVE_USAGE_TAG_ATTR */
             case 'w':
-                check_macros = TRUE;
-                macro_flag = TRUE;
-                macinfo_flag = TRUE;
+                glflags.gf_check_macros = TRUE;
+                glflags.gf_macro_flag = TRUE;
+                glflags.gf_macinfo_flag = TRUE;
                 break;
             case 'y':
-                check_type_offset = TRUE;
-                check_harmless = TRUE;
-                check_decl_file = TRUE;
-                info_flag = TRUE;
-                check_ranges = TRUE;
-                check_aranges = TRUE;
+                glflags.gf_check_type_offset = TRUE;
+                glflags.gf_check_harmless = TRUE;
+                glflags.gf_check_decl_file = TRUE;
+                glflags.gf_info_flag = TRUE;
+                glflags.gf_check_ranges = TRUE;
+                glflags.gf_check_aranges = TRUE;
                 break;
             /* Summary for each compiler */
             case 'i':
-                print_summary_all = TRUE;
+                glflags.gf_print_summary_all = TRUE;
                 break;
             /* Frames check */
             case 'x':
-                check_frames = TRUE;
-                frame_flag = TRUE;
-                eh_frame_flag = TRUE;
+                glflags.gf_check_frames = TRUE;
+                glflags.gf_frame_flag = TRUE;
+                glflags.gf_eh_frame_flag = TRUE;
                 if (dwoptarg[1]) {
                     if ('e' == dwoptarg[1]) {
                         /* -xe : Extended frames check */
-                        check_frames = FALSE;
-                        check_frames_extended = TRUE;
+                        glflags.gf_check_frames = FALSE;
+                        glflags.gf_check_frames_extended = TRUE;
                     } else {
                         usage_error = TRUE;
                     }
@@ -2364,30 +2253,31 @@ process_args(int argc, char *argv[])
             break;
         case 'u': {             /* compile unit */
             const char *tstr = 0;
-            cu_name_flag = TRUE;
+            glflags.gf_cu_name_flag = TRUE;
             tstr = do_uri_translation(dwoptarg,"-u<cu name>");
-            safe_strcpy(cu_name,sizeof(cu_name), tstr,strlen(tstr));
+            esb_append(&cu_name,tstr);
             }
             break;
         case 'U':
-            uri_options_translation = FALSE;
+            glflags.gf_uri_options_translation = FALSE;
             break;
         case 't':
             oarg = dwoptarg[0];
             switch (oarg) {
             case 'a':
                 /* all */
-                static_func_flag = static_var_flag = TRUE;
+                glflags.gf_static_func_flag =  TRUE;
+                glflags.gf_static_var_flag = TRUE;
                 suppress_check_dwarf();
                 break;
             case 'f':
                 /* .debug_static_func */
-                static_func_flag = TRUE;
+                glflags.gf_static_func_flag = TRUE;
                 suppress_check_dwarf();
                 break;
             case 'v':
                 /* .debug_static_var */
-                static_var_flag = TRUE;
+                glflags.gf_static_var_flag = TRUE;
                 suppress_check_dwarf();
                 break;
             default:
@@ -2397,29 +2287,29 @@ process_args(int argc, char *argv[])
             break;
         case 'y':               /* .debug_types */
             suppress_check_dwarf();
-            type_flag = TRUE;
+            glflags.gf_type_flag = TRUE;
             break;
         case 'w':               /* .debug_weaknames */
-            weakname_flag = TRUE;
+            glflags.gf_weakname_flag = TRUE;
             suppress_check_dwarf();
             break;
         case 'z':
             fprintf(stderr, "-z is no longer supported:ignored\n");
             break;
         case 'G':
-            show_global_offsets = TRUE;
+            glflags.gf_show_global_offsets = TRUE;
             break;
         case 'W':
             /* Search results in wide format */
-            search_wide_format = TRUE;
+            glflags.gf_search_wide_format = TRUE;
             if (dwoptarg) {
                 if ('c' == dwoptarg[0]) {
                     /* -Wc : Display children tree */
-                    display_children_tree = TRUE;
+                    glflags.gf_display_children_tree = TRUE;
                 } else {
                     if ('p' == dwoptarg[0]) {
                         /* -Wp : Display parent tree */
-                        display_parent_tree = TRUE;
+                        glflags.gf_display_parent_tree = TRUE;
                     } else {
                         usage_error = TRUE;
                     }
@@ -2427,8 +2317,8 @@ process_args(int argc, char *argv[])
             }
             else {
                 /* -W : Display parent and children tree */
-                display_children_tree = TRUE;
-                display_parent_tree = TRUE;
+                glflags.gf_display_children_tree = TRUE;
+                glflags.gf_display_parent_tree = TRUE;
             }
             break;
         default:
@@ -2438,15 +2328,16 @@ process_args(int argc, char *argv[])
     }
 
     init_conf_file_data(&g_config_file_data);
-    if (config_file_abi && generic_1200_regs) {
+    if (config_file_abi && glflags.gf_generic_1200_regs) {
         printf("Specifying both -R and -x abi= is not allowed. Use one "
             "or the other.  -x abi= ignored.\n");
         config_file_abi = FALSE;
     }
-    if (generic_1200_regs) {
+    if (glflags.gf_generic_1200_regs) {
         init_generic_config_1200_regs(&g_config_file_data);
     }
-    if (config_file_abi && (frame_flag || eh_frame_flag)) {
+    if (config_file_abi &&
+        (glflags.gf_frame_flag || glflags.gf_eh_frame_flag)) {
         int res = find_conf_file_and_read_config(
             esb_get_string(&config_file_path),
             config_file_abi,
@@ -2456,8 +2347,8 @@ process_args(int argc, char *argv[])
         if (res > 0) {
             printf
                 ("Frame not configured due to error(s). Giving up.\n");
-            eh_frame_flag = FALSE;
-            frame_flag = FALSE;
+            glflags.gf_eh_frame_flag = FALSE;
+            glflags.gf_frame_flag = FALSE;
         }
     }
     if (usage_error || (dwoptind != (argc - 1))) {
@@ -2468,17 +2359,18 @@ process_args(int argc, char *argv[])
         /*  For split-dwarf/DWO some sections make no sense.
             This prevents printing of meaningless headers where no
             data can exist. */
-        pubnames_flag = FALSE;
-        eh_frame_flag = FALSE;
-        frame_flag    = FALSE;
-        macinfo_flag  = FALSE;
-        aranges_flag  = FALSE;
-        ranges_flag   = FALSE;
-        static_func_flag = static_var_flag = FALSE;
-        weakname_flag = FALSE;
+        glflags.gf_pubnames_flag = FALSE;
+        glflags.gf_eh_frame_flag = FALSE;
+        glflags.gf_frame_flag    = FALSE;
+        glflags.gf_macinfo_flag  = FALSE;
+        glflags.gf_aranges_flag  = FALSE;
+        glflags.gf_ranges_flag   = FALSE;
+        glflags.gf_static_func_flag = FALSE;
+        glflags.gf_static_var_flag = FALSE;
+        glflags.gf_weakname_flag = FALSE;
     }
 
-    if (do_check_dwarf) {
+    if (glflags.gf_do_check_dwarf) {
         /* Reduce verbosity when checking (checking means checking-only). */
         verbose = 1;
     }
@@ -2587,8 +2479,9 @@ should_skip_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
             int sres = dwarf_formstring(attrib, &temps,
                 &lerr);
             if (sres == DW_DLV_OK) {
+                char *lcun = esb_get_string(&cu_name);
                 char *p = temps;
-                if (cu_name[0] != '/') {
+                if (lcun[0] != '/') {
                     p = strrchr(temps, '/');
                     if (p == NULL) {
                         p = temps;
@@ -2598,12 +2491,12 @@ should_skip_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
                 }
                 /* Ignore case if Windows */
 #if _WIN32
-                if (stricmp(cu_name, p)) {
+                if (stricmp(lcun, p)) {
                     /* skip this cu. */
                     return TRUE;
                 }
 #else
-                if (strcmp(cu_name, p)) {
+                if (strcmp(lcun, p)) {
                     /* skip this cu. */
                     return TRUE;
                 }
@@ -2827,7 +2720,9 @@ tag_specific_checks_setup(Dwarf_Half val,int die_indent_level)
         seen_CU = TRUE;
         /*  If we are checking line information, build
             the table containing the pairs LowPC and HighPC */
-        if (check_decl_file || check_ranges || check_locations) {
+        if (glflags.gf_check_decl_file ||
+            glflags.gf_check_ranges ||
+            glflags.gf_check_locations) {
             ResetBucketGroup(pRangesInfo);
         }
         /*  The following flag indicate that only low_pc and high_pc
@@ -2912,9 +2807,9 @@ update_compiler_target(const char *producer_name)
         /* Internally the strings do not include quotes */
         boolean snc_compiler = hasprefix(CU_producer,"SN")? TRUE : FALSE;
         boolean gcc_compiler = hasprefix(CU_producer,"GNU")?TRUE : FALSE;
-        current_cu_is_checked_compiler = check_all_compilers ||
-            (snc_compiler && check_snc_compiler) ||
-            (gcc_compiler && check_gcc_compiler) ;
+        current_cu_is_checked_compiler = glflags.gf_check_all_compilers ||
+            (snc_compiler && glflags.gf_check_snc_compiler) ||
+            (gcc_compiler && glflags.gf_check_gcc_compiler) ;
     }
 
     /* Check for already detected compiler */
@@ -3104,9 +2999,9 @@ void PRINT_CHECK_RESULT(char *str,
 
 void DWARF_CHECK_ERROR_PRINT_CU()
 {
-    if (check_verbose_mode) {
-        if (print_unique_errors) {
-            if (!found_error_message) {
+    if (glflags.gf_check_verbose_mode) {
+        if (glflags.gf_print_unique_errors) {
+            if (!glflags.gf_found_error_message) {
                 PRINT_CU_INFO();
             }
         } else {
@@ -3114,7 +3009,7 @@ void DWARF_CHECK_ERROR_PRINT_CU()
         }
     }
     check_error++;
-    record_dwarf_error = TRUE;
+    glflags.gf_record_dwarf_error = TRUE;
 }
 
 /*  Sometimes is useful, just to know the kind of errors in an object file;
@@ -3244,7 +3139,7 @@ print_dwarf_check_error(char *format,...)
     va_end(ap);
 
     error_text = esb_get_string(&dwarf_error_line);
-    if (print_unique_errors) {
+    if (glflags.gf_print_unique_errors) {
         found = add_to_unique_errors_table(error_text);
         if (!found) {
             printf("%s",error_text);
@@ -3254,7 +3149,7 @@ print_dwarf_check_error(char *format,...)
     }
 
     /* To indicate if the current error message have been found or not */
-    found_error_message = found;
+    glflags.gf_found_error_message = found;
 }
 
 void DWARF_CHECK_ERROR(Dwarf_Check_Categories category,
@@ -3263,7 +3158,7 @@ void DWARF_CHECK_ERROR(Dwarf_Check_Categories category,
 
     if (checking_this_compiler()) {
         DWARF_ERROR_COUNT(category,1);
-        if (check_verbose_mode) {
+        if (glflags.gf_check_verbose_mode) {
             print_dwarf_check_error("\n*** DWARF CHECK: %s ***\n", str);
         }
         DWARF_CHECK_ERROR_PRINT_CU();
@@ -3275,7 +3170,7 @@ void DWARF_CHECK_ERROR2(Dwarf_Check_Categories category,
 {
     if (checking_this_compiler()) {
         DWARF_ERROR_COUNT(category,1);
-        if (check_verbose_mode) {
+        if (glflags.gf_check_verbose_mode) {
             print_dwarf_check_error("\n*** DWARF CHECK: %s: %s ***\n",
                 str1, str2);
         }
@@ -3288,7 +3183,7 @@ void DWARF_CHECK_ERROR3(Dwarf_Check_Categories category,
 {
     if (checking_this_compiler()) {
         DWARF_ERROR_COUNT(category,1);
-        if (check_verbose_mode) {
+        if (glflags.gf_check_verbose_mode) {
             print_dwarf_check_error("\n*** DWARF CHECK: %s -> %s: %s ***\n",
                 str1, str2,strexpl);
         }
@@ -3304,12 +3199,12 @@ do_uri_translation(const char *s,const char *context)
 {
     struct esb_s str;
     char *finalstr = 0;
-    if (!uri_options_translation) {
+    if (!glflags.gf_uri_options_translation) {
         return makename(s);
     }
     esb_constructor(&str);
     translate_from_uri(s,&str);
-    if (do_print_uri_in_input) {
+    if (glflags.gf_do_print_uri_in_input) {
         if (strcmp(s,esb_get_string(&str))) {
             printf("Uri Translation on option %s\n",context);
             printf("    \'%s\'\n",s);

@@ -450,6 +450,10 @@ const char *_dwarf_errmsgs[] = {
     "DW_DLE_IMPROPER_DWO_ID(369)",
     "DW_DLE_GROUPNUMBER_ERROR(370) An error determining default target group number",
     "DW_DLE_ADDRESS_SIZE_ZERO(371)",
+    "DW_DLE_DEBUG_NAMES_HEADER_ERROR(372)",
+    "DW_DLE_DEBUG_NAMES_AUG_STRING_ERROR(373) corrupt dwarf",
+    "DW_DLE_DEBUG_NAMES_PAD_NON_ZERO(374) corrupt dwarf",
+    "DW_DLE_DEBUG_NAMES_OFF_END(375) corrupt dwarf",
 };
 
 #ifdef TESTING

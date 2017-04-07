@@ -58,7 +58,7 @@ print_types(Dwarf_Debug dbg, enum type_type_e type_type)
         NULL;
 
     /* Do nothing if in check mode */
-    if (!do_print_dwarf) {
+    if (!glflags.gf_do_print_dwarf) {
         return;
     }
 

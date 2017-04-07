@@ -574,6 +574,9 @@ struct Dwarf_Line_Context_s;
 typedef struct Dwarf_Line_Context_s *Dwarf_Line_Context;
 struct Dwarf_Macro_Context_s;
 typedef struct Dwarf_Macro_Context_s *Dwarf_Macro_Context;
+struct Dwarf_Dnames_Head_s;
+typedef struct Dwarf_Dnames_Head_s* Dwarf_Dnames_Head;
+
 
 
 /* Opaque types for Producer Library. */
@@ -855,6 +858,7 @@ struct Dwarf_Obj_Access_Interface_s {
 #define DW_DLA_MACRO_CONTEXT   0x3c     /* Dwarf_Macro_Context */
 /*  0x3d (61) is for libdwarf internal use.               */
 #define DW_DLA_DSC_HEAD        0x3e     /* Dwarf_Dsc_Head */
+#define DW_DLA_DNAMES_HEAD     0x3f     /* Dwarf_Dnames_Head */
 
 /* The augmenter string for CIE */
 #define DW_CIE_AUGMENTER_STRING_V0              "z"
@@ -1299,9 +1303,13 @@ struct Dwarf_Obj_Access_Interface_s {
 #define DW_DLE_IMPROPER_DWO_ID                 369
 #define DW_DLE_GROUPNUMBER_ERROR               370
 #define DW_DLE_ADDRESS_SIZE_ZERO               371
+#define DW_DLE_DEBUG_NAMES_HEADER_ERROR        372
+#define DW_DLE_DEBUG_NAMES_AUG_STRING_ERROR    373
+#define DW_DLE_DEBUG_NAMES_PAD_NON_ZERO        374
+#define DW_DLE_DEBUG_NAMES_OFF_END             375
 
     /* LAST MUST EQUAL LAST ERROR NUMBER */
-#define DW_DLE_LAST        371
+#define DW_DLE_LAST        375
 #define DW_DLE_LO_USER     0x10000
 
     /*  Taken as meaning 'undefined value', this is not
@@ -4084,6 +4092,12 @@ int dwarf_get_section_info_by_index(Dwarf_Debug      /*dbg*/,
 
 /*  Get section count, of object file sections. */
 int dwarf_get_section_count(Dwarf_Debug /*dbg*/);
+
+/*  New April 2017 */
+int dwarf_get_debugnames_header(Dwarf_Debug /*dbg*/,
+    Dwarf_Dnames_Head * /*dn_out*/,
+    Dwarf_Error *       /*error*/);
+
 
 /*  Get the version and offset size of a CU context.
     This is useful as a precursor to

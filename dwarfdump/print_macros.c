@@ -53,7 +53,7 @@ print_one_macro_entry_detail(long i,
     struct Dwarf_Macro_Details_s *mdp)
 {
     /* "DW_MACINFO_*: section-offset file-index [line] string\n" */
-    if (do_print_dwarf) {
+    if (glflags.gf_do_print_dwarf) {
         if (mdp->dmd_macro) {
             printf("%3ld %s: %6" DW_PR_DUu " %2" DW_PR_DSd " [%4"
                 DW_PR_DSd "] \"%s\" \n",
@@ -155,7 +155,7 @@ print_macinfo_by_offset(Dwarf_Debug dbg,Dwarf_Unsigned offset)
     }
 
     memset(&counts, 0, sizeof(counts));
-    if (do_print_dwarf) {
+    if (glflags.gf_do_print_dwarf) {
         printf("\n.debug_macinfo\n");
         printf("\n");
         printf("compilation-unit .debug_macinfo offset "
@@ -185,7 +185,7 @@ print_macinfo_by_offset(Dwarf_Debug dbg,Dwarf_Unsigned offset)
     totallen = (maclist[count - 1].dmd_offset + 1) - offset;
     add_macro_import(&macinfo_check_tree,is_primary, offset);
     add_macro_area_len(&macinfo_check_tree,offset,totallen);
-    if (do_print_dwarf) {
+    if (glflags.gf_do_print_dwarf) {
         printf("Macro counts: start file %ld, "
             "end file %ld, "
             "define %ld, "

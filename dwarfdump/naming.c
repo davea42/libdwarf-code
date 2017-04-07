@@ -59,7 +59,7 @@ static const char *
 ellipname(int res, int val_in, const char *v,const char *ty,int printonerr)
 {
 #ifndef TRIVIAL_NAMING
-    if (check_dwarf_constants && checking_this_compiler()) {
+    if (glflags.gf_check_dwarf_constants && checking_this_compiler()) {
         DWARF_CHECK_COUNT(dwarf_constants_result,1);
     }
 #endif
@@ -69,8 +69,9 @@ ellipname(int res, int val_in, const char *v,const char *ty,int printonerr)
         snprintf(buf,sizeof(buf),"<Unknown %s value 0x%x>",ty,val_in);
         /* Capture any name error in DWARF constants */
 #ifndef TRIVIAL_NAMING
-        if (printonerr && check_dwarf_constants && checking_this_compiler()) {
-            if (check_verbose_mode) {
+        if (printonerr && glflags.gf_check_dwarf_constants &&
+            checking_this_compiler()) {
+            if (glflags.gf_check_verbose_mode) {
                 fprintf(stderr,"%s of %d (0x%x) is unknown to dwarfdump. "
                     "Continuing. \n",ty,val_in,val_in );
             }

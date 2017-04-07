@@ -67,10 +67,10 @@ print_locs(Dwarf_Debug dbg)
     current_section_id = DEBUG_LOC;
 
     /* Do nothing if not printing. */
-    if (!do_print_dwarf) {
+    if (!glflags.gf_do_print_dwarf) {
         return;
     }
-    if(!use_old_dwarf_loclist) {
+    if(!glflags.gf_use_old_dwarf_loclist) {
         printf("\n");
         printf("Printing location lists with -c is no longer supported\n");
         return;
@@ -102,7 +102,7 @@ print_locs(Dwarf_Debug dbg)
             version,
             &exprstring);
         /* Display offsets */
-        if (display_offsets) {
+        if (glflags.gf_display_offsets) {
             ++index;
             printf("  <iobel> [%8d] 0x%" DW_PR_XZEROS DW_PR_DUx,
                 index, offset);

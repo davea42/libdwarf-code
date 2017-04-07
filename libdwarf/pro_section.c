@@ -138,6 +138,8 @@ struct Dwarf_P_Rel_Head_s {
     struct Dwarf_P_Rel_s *drh_tail;
 };
 
+static int _dwarf_pro_generate_debug_names(Dwarf_P_Debug dbg,
+    Dwarf_Signed *nbufs, Dwarf_Error * error);
 static int _dwarf_pro_generate_debug_str(Dwarf_P_Debug dbg,
     Dwarf_Signed *nbufs, Dwarf_Error * error);
 static int _dwarf_pro_generate_debugline(Dwarf_P_Debug dbg,
@@ -179,6 +181,16 @@ dwarf_need_debug_line_section(Dwarf_P_Debug dbg)
 {
     if (dbg->de_lines == NULL && dbg->de_file_entries == NULL
         && dbg->de_inc_dirs == NULL) {
+        return FALSE;
+    }
+    return TRUE;
+}
+
+/*  DWARF5 only. */
+static int
+dwarf_need_debug_names_section(Dwarf_P_Debug dbg)
+{
+    if (!dbg->de_names) {
         return FALSE;
     }
     return TRUE;
@@ -314,6 +326,7 @@ dwarf_transform_to_disk_form_a(Dwarf_P_Debug dbg, Dwarf_Signed *count,
                 continue;
             }
             break;
+        case DEBUG_NAMES: /* DWARF5 */
         case DEBUG_LOC:
             /* Not handled yet. */
             continue;
@@ -445,6 +458,12 @@ dwarf_transform_to_disk_form_a(Dwarf_P_Debug dbg, Dwarf_Signed *count,
             DEBUG_VARNAMES,
             &nbufs,
             error);
+        if (res == DW_DLV_ERROR) {
+            return res;
+        }
+    }
+    if (dwarf_need_debug_names_section(dbg) == TRUE) {
+        int res = _dwarf_pro_generate_debug_names(dbg,&nbufs, error);
         if (res == DW_DLV_ERROR) {
             return res;
         }
@@ -2197,6 +2216,29 @@ _dwarf_pro_generate_debuginfo(Dwarf_P_Debug dbg,
     GET_CHUNK_ERR(dbg, abbrevsectno, data, 1, error);
     *data = 0;
     *nbufs =  dbg->de_n_debug_sect;
+    return DW_DLV_OK;
+}
+static int
+_dwarf_pro_generate_debug_names(Dwarf_P_Debug dbg,
+    Dwarf_Signed *nbufs,
+    Dwarf_Error * error)
+{
+#if 0
+    FIXME: Needs implementation
+    int elfsectno_of_debug_names = 0;
+    unsigned char *data = 0;
+
+    elfsectno_of_debug_names = dbg->de_elf_sects[DEBUG_NAMES];
+    GET_CHUNK(dbg, elfsectno_of_debug_str, data, dbg->de_debug_str->ds_nbytes,
+        error);
+    memcpy(data,dbg->de_debug_str->ds_data,dbg->de_debug_str->ds_nbytes);
+    *nbufs = dbg->de_n_debug_sect;
+#endif
+    if (dbg->de_output_version != 5) {
+        /* FIXME: Bogus error value here. */
+        DWARF_P_DBG_ERROR(dbg, DW_DLE_IA, DW_DLV_ERROR);
+    }
+    /* FIXME: Pretending here */
     return DW_DLV_OK;
 }
 

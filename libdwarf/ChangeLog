@@ -1,4 +1,16 @@
 2017-04-02 David Anderson
+    * dwarf.h: Corrected comment about DW_IDX_type_unit.
+    * dwarf_alloc.c, dwarf_alloc.h: Added support for .debug_names
+      and Dwarf_Dnames_Head.
+    * dwarf_dnames.c,dwarf_dnames.h: Skeleton implemenatation 
+      of .debug_denames section reader.
+    * dwarf_errmsg_list.c: Added new *DEBUG_NAMES* error codes.
+    * libdwarf.h.in: New *DEBUG_NAMES* and new Dwarf_Dnames_Head type.
+    * pro_opaque.h: Now defines DEBUG_NAMES
+    * pro_section.c: Now defines _dwarf_pro_generate_debug_names,
+      and _dwarf_pro_generate_debug_names.
+      A skeleton implementation.
+2017-04-02 David Anderson
     * checkexamples.c: Slight change in a comment.
     * libdwarf.h.in: Added commentary.
     * libdwarf2.1.mm: Document dwarf_init_b(), dwarf_elf_init_b()

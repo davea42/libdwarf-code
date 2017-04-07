@@ -849,7 +849,7 @@ extern "C" {
 
 
 #define DW_IDX_compile_unit             0x1      /* DWARF5 */
-#define DW_IDX_type_unit                0x2      /* DWARF4 only */
+#define DW_IDX_type_unit                0x2      /* DWARF5 */
 #define DW_IDX_die_offset               0x3      /* DWARF5 */
 #define DW_IDX_parent                   0x4      /* DWARF5 */
 #define DW_IDX_type_hash                0x5      /* DWARF5 */

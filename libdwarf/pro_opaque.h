@@ -136,9 +136,10 @@ typedef struct Dwarf_P_Per_Sect_String_Attrs_s *Dwarf_P_Per_Sect_String_Attrs;
 #define         DEBUG_RANGES    13
 #define         DEBUG_TYPES     14
 #define         DEBUG_PUBTYPES  15
+#define         DEBUG_NAMES     16 /* DWARF5 */
 
 /* Maximum number of debug_* sections not including the relocations */
-#define         NUM_DEBUG_SECTIONS      16
+#define         NUM_DEBUG_SECTIONS      17
 
 /*  Describes the data needed to generate line table header info
     so we can vary the init at runtime. */
@@ -431,6 +432,8 @@ struct Dwarf_P_Debug_s {
     Dwarf_P_Arange de_last_arange;
     Dwarf_Sword de_arange_count;
 
+    Dwarf_Ptr de_names;
+
     /* macinfo controls. */
     /* first points to beginning of the list during creation */
     struct dw_macinfo_block_s *de_first_macinfo;
@@ -496,8 +499,9 @@ struct Dwarf_P_Debug_s {
         offsets using dwarf2-99
         extension proposal */
 
-    int de_output_version; /* 2,3,4, or 5. The version number
-        of the output. (not necessarily that of each section). */
+    unsigned char de_output_version; /* 2,3,4, or 5. The version number
+        of the output. (not necessarily that of each section,
+        which depends on the base version). */
 
     int de_ar_data_attribute_form; /* data8, data4 abi &version dependent */
     int de_ar_ref_attr_form; /* ref8 ref4 , abi dependent */

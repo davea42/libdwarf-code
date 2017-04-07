@@ -1,5 +1,4 @@
 /*
-
   Copyright (C) 2017-2017 David Anderson. All Rights Reserved.
 
   This program is free software; you can redistribute it and/or modify it
@@ -25,28 +24,51 @@
 */
 
 
-struct Dwarf_Dnames_Header_s {
-    Dwarf_Debug      dn_dbg;
+#define DWARF_DNAMES_VERSION5 5
+
+struct Dwarf_Dnames_index_header_s {
+    Dwarf_Debug      din_dbg;
+    struct Dwarf_Dnames_index_header_s *din_next;
 
     /* For offset and pointer sanity calculations. */
-    Dwarf_Small    * dn_section_data;
-    Dwarf_Unsigned   dn_section_length;
+    Dwarf_Small    * din_indextable_data;
+    Dwarf_Unsigned   din_indextable_length;
 
-    Dwarf_Unsigned   dn_version;
-    Dwarf_Unsigned   dn_comp_unit_count;
-    Dwarf_Unsigned   dn_local_type_unit_count;
-    Dwarf_Unsigned   dn_foreign_type_unit_count;
-    Dwarf_Unsigned   dn_bucket_count;
-    Dwarf_Unsigned   dn_name_count;
-    Dwarf_Unsigned   dn_abbrev_table_size;
-    Dwarf_Unsigned   dn_augmentation_string_size;
-    const char *     dn_augmentation_string;
+    Dwarf_Unsigned   din_version;
+    Dwarf_Unsigned   din_comp_unit_count;
+    Dwarf_Unsigned   din_local_type_unit_count;
+    Dwarf_Unsigned   din_foreign_type_unit_count;
+    Dwarf_Unsigned   din_bucket_count;
+    Dwarf_Unsigned   din_name_count;
 
-    Dwarf_Small *    dn_cu_list;
-    Dwarf_Small *    dn_local_tu_list;
-    Dwarf_Small *    dn_foreign_tu_list;
-    Dwarf_Small *    dn_hash_table;
-    Dwarf_Small *    dn_name_table;
-    Dwarf_Small *    dn_abbrev_table;
-    Dwarf_Small *    dn_entry_pool;
+    /*  Entry pool size,bytes. Referred to 
+        in the standard as abbrev table size and
+        abbrev table in one place and Entry Pool
+        in another place. */
+ 
+    Dwarf_Unsigned   din_abbrev_table_size; 
+    Dwarf_Unsigned   din_augmentation_string_size;
+    const char *     din_augmentation_string;
+
+    Dwarf_Small *    din_cu_list;
+    Dwarf_Small *    din_local_tu_list;
+    Dwarf_Small *    din_foreign_tu_list;
+    Dwarf_Small *    din_buckets;
+    Dwarf_Small *    din_hash_table;
+    Dwarf_Small *    din_string_offsets;
+    Dwarf_Small *    din_entry_offsets;
+    Dwarf_Small *    din_entry_pool;
 };
+
+
+struct Dwarf_Dnames_Head_s {
+    Dwarf_Debug               dn_dbg;
+    Dwarf_Small             * dn_section_data;
+    Dwarf_Small             * dn_section_end;
+    Dwarf_Unsigned            dn_section_size;
+    unsigned                  dn_inhdr_count;
+    struct Dwarf_Dnames_index_header_s * dn_inhdr_first;
+    struct Dwarf_Dnames_index_header_s * dn_inhdr_last;
+};
+
+void _dwarf_dnames_destructor(void *m);

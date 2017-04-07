@@ -81,7 +81,7 @@ static void
 record_line_error(const char *where, Dwarf_Error line_err)
 {
     char tmp_buff[500];
-    if (check_lines && checking_this_compiler()) {
+    if (glflags.gf_check_lines && checking_this_compiler()) {
         snprintf(tmp_buff, sizeof(tmp_buff),
             "Error getting line details calling %s dwarf error is %s",
             where,dwarf_errmsg(line_err));
@@ -125,8 +125,8 @@ process_line_table(Dwarf_Debug dbg,
     /* line_flag is TRUE */
     get_address_size_and_max(dbg,0,&elf_max_address,&lt_err);
     /* Padding for a nice layout */
-    padding = line_print_pc ? "            " : "";
-    if (do_print_dwarf) {
+    padding = glflags.gf_line_print_pc ? "            " : "";
+    if (glflags.gf_do_print_dwarf) {
         /* Check if print of <pc> address is needed. */
         printf("\n");
         if (is_logicals_table) {
@@ -153,7 +153,7 @@ process_line_table(Dwarf_Debug dbg,
         if (is_logicals_table || is_actuals_table) {
             printf("[ row]  ");
         }
-        if (line_print_pc) {
+        if (glflags.gf_line_print_pc) {
             printf("<pc>        ");
         }
         if (is_logicals_table) {
@@ -172,7 +172,7 @@ process_line_table(Dwarf_Debug dbg,
         Dwarf_Bool has_is_addr_set = FALSE;
         char *where = NULL;
 
-        if (check_decl_file && checking_this_compiler()) {
+        if (glflags.gf_check_decl_file && checking_this_compiler()) {
             /* A line record with addr=0 was detected */
             if (SkipRecord) {
                 /* Skip records that do not have ís_addr_set' */
@@ -188,7 +188,7 @@ process_line_table(Dwarf_Debug dbg,
             }
         }
 
-        if (check_lines && checking_this_compiler()) {
+        if (glflags.gf_check_lines && checking_this_compiler()) {
             DWARF_CHECK_COUNT(lines_result,1);
         }
 
@@ -256,11 +256,11 @@ process_line_table(Dwarf_Debug dbg,
 
         /*  Process any possible error condition, though
             we won't be at the first such error. */
-        if (check_decl_file && checking_this_compiler()) {
+        if (glflags.gf_check_decl_file && checking_this_compiler()) {
             DWARF_CHECK_COUNT(decl_file_result,1);
             if (found_line_error) {
                 DWARF_CHECK_ERROR2(decl_file_result,where,dwarf_errmsg(lt_err));
-            } else if (do_check_dwarf) {
+            } else if (glflags.gf_do_check_dwarf) {
                 /*  Check the address lies with a valid [lowPC:highPC]
                     in the .text section*/
                 if (IsValidInBucketGroup(pRangesInfo,pc)) {
@@ -275,7 +275,8 @@ process_line_table(Dwarf_Debug dbg,
                         table if try to match the pc value with
                         one of those ranges.
                     */
-                    if (check_lines && checking_this_compiler()) {
+                    if (glflags.gf_check_lines &&
+                        checking_this_compiler()) {
                         DWARF_CHECK_COUNT(lines_result,1);
                     }
                     if (FindAddressInBucketGroup(pLinkonceInfo,pc)){
@@ -287,7 +288,8 @@ process_line_table(Dwarf_Debug dbg,
                             symbols and no stripping */
                         if (pc) {
                             char addr_tmp[100];
-                            if (check_lines && checking_this_compiler()) {
+                            if (glflags.gf_check_lines &&
+                                checking_this_compiler()) {
                                 snprintf(addr_tmp,sizeof(addr_tmp),
                                     "%s: Address"
                                     " 0x%" DW_PR_XZEROS DW_PR_DUx
@@ -320,7 +322,8 @@ process_line_table(Dwarf_Debug dbg,
                         a mismatch here is not necessarily
                         an error.  */
 
-                    if (check_lines && checking_this_compiler()) {
+                    if (glflags.gf_check_lines &&
+                        checking_this_compiler()) {
                         DWARF_CHECK_COUNT(lines_result,1);
                         if ((pc != PU_high_address) &&
                             (PU_base_address != elf_max_address)) {
@@ -342,30 +345,30 @@ process_line_table(Dwarf_Debug dbg,
         }
 
         /* Display the error information */
-        if (found_line_error || record_dwarf_error) {
-            if (check_verbose_mode && PRINTING_UNIQUE) {
+        if (found_line_error || glflags.gf_record_dwarf_error) {
+            if (glflags.gf_check_verbose_mode && PRINTING_UNIQUE) {
                 /* Print the record number for better error description */
                 printf("Record = %"  DW_PR_DUu
                     " Addr = 0x%" DW_PR_XZEROS DW_PR_DUx
                     " [%4" DW_PR_DUu ",%2" DW_PR_DUu "] '%s'\n",
                     i, pc,lineno,column,sanitized(filename));
                 /* The compilation unit was already printed */
-                if (!check_decl_file) {
+                if (!glflags.gf_check_decl_file) {
                     PRINT_CU_INFO();
                 }
             }
-            record_dwarf_error = FALSE;
+            glflags.gf_record_dwarf_error = FALSE;
             /* Due to a fatal error, skip current record */
             if (found_line_error) {
                 continue;
             }
         }
-        if (do_print_dwarf) {
+        if (glflags.gf_do_print_dwarf) {
             if (is_logicals_table || is_actuals_table) {
                 printf("[%4" DW_PR_DUu "]  ", i + 1);
             }
             /* Check if print of <pc> address is needed. */
-            if (line_print_pc) {
+            if (glflags.gf_line_print_pc) {
                 printf("0x%" DW_PR_XZEROS DW_PR_DUx "  ", pc);
             }
             if (is_actuals_table) {
@@ -378,7 +381,7 @@ process_line_table(Dwarf_Debug dbg,
         if (!is_actuals_table) {
             nsres = dwarf_linebeginstatement(line, &newstatement, &lt_err);
             if (nsres == DW_DLV_OK) {
-                if (newstatement && do_print_dwarf) {
+                if (newstatement && glflags.gf_do_print_dwarf) {
                     printf(" %s","NS");
                 }
             } else if (nsres == DW_DLV_ERROR) {
@@ -389,7 +392,7 @@ process_line_table(Dwarf_Debug dbg,
         if (!is_logicals_table) {
             nsres = dwarf_lineblock(line, &new_basic_block, &lt_err);
             if (nsres == DW_DLV_OK) {
-                if (new_basic_block && do_print_dwarf) {
+                if (new_basic_block && glflags.gf_do_print_dwarf) {
                     printf(" %s","BB");
                 }
             } else if (nsres == DW_DLV_ERROR) {
@@ -397,7 +400,7 @@ process_line_table(Dwarf_Debug dbg,
             }
             nsres = dwarf_lineendsequence(line, &lineendsequence, &lt_err);
             if (nsres == DW_DLV_OK) {
-                if (lineendsequence && do_print_dwarf) {
+                if (lineendsequence && glflags.gf_do_print_dwarf) {
                     printf(" %s", "ET");
                 }
             } else if (nsres == DW_DLV_ERROR) {
@@ -405,7 +408,7 @@ process_line_table(Dwarf_Debug dbg,
             }
         }
 
-        if (do_print_dwarf) {
+        if (glflags.gf_do_print_dwarf) {
             Dwarf_Bool prologue_end = 0;
             Dwarf_Bool epilogue_begin = 0;
             Dwarf_Unsigned isa = 0;
@@ -464,7 +467,7 @@ process_line_table(Dwarf_Debug dbg,
                 esb_append(&urs, " uri: \"");
                 translate_to_uri(filename,&urs);
                 esb_append(&urs,"\"");
-                if (do_print_dwarf) {
+                if (glflags.gf_do_print_dwarf) {
                     printf("%s",esb_get_string(&urs));
                 }
                 esb_destructor(&urs);
@@ -476,7 +479,7 @@ process_line_table(Dwarf_Debug dbg,
             }
         }
 
-        if (do_print_dwarf) {
+        if (glflags.gf_do_print_dwarf) {
             printf("\n");
         }
     }
@@ -670,7 +673,7 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
         &cudie_local_offset,&err);
     DROP_ERROR_INSTANCE(dbg,atres,err);
 
-    if (do_print_dwarf) {
+    if (glflags.gf_do_print_dwarf) {
         printf("\n%s: line number info for a single cu\n", sec_name);
     } else {
         /* We are checking, not printing. */
@@ -710,7 +713,7 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
         return;
     }
 
-    if (check_lines && checking_this_compiler()) {
+    if (glflags.gf_check_lines && checking_this_compiler()) {
         DWARF_CHECK_COUNT(lines_result,1);
         dwarf_check_lineheader(cu_die,&line_errs);
         if (line_errs > 0) {
@@ -725,12 +728,12 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
 
         Normal code should pick an interface
         (for most  the best choice is what we here call
-        line_flag_selection ==  singledw5)
+        glflags.gf_line_flag_selection ==  singledw5)
         and use just that interface set.
 
         Sorry about the length of the code that
         results from having so many interfaces.  */
-    if (line_flag_selection ==  singledw5) {
+    if (glflags.gf_line_flag_selection ==  singledw5) {
         lres = dwarf_srclines_b(cu_die,&lineversion,
             &table_count,&line_context,
             &err);
@@ -738,7 +741,7 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
             lres = dwarf_srclines_from_linecontext(line_context,
                 &linebuf, &linecount,&err);
         }
-    } else if (line_flag_selection == orig) {
+    } else if (glflags.gf_line_flag_selection == orig) {
         /* DWARF2,3,4, ok for 5. */
         /* Useless for experimental line tables */
         lres = dwarf_srclines(cu_die,
@@ -746,7 +749,7 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
         if(lres == DW_DLV_OK && linecount ){
             table_count++;
         }
-    } else if (line_flag_selection == orig2l) {
+    } else if (glflags.gf_line_flag_selection == orig2l) {
         lres = dwarf_srclines_two_level(cu_die,
             &lineversion,
             &linebuf, &linecount,
@@ -758,7 +761,7 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
         if(lres == DW_DLV_OK && linecount_actuals){
             table_count++;
         }
-    } else if (line_flag_selection == s2l) {
+    } else if (glflags.gf_line_flag_selection == s2l) {
         lres = dwarf_srclines_b(cu_die,&lineversion,
             &table_count,&line_context,
             &err);
@@ -771,11 +774,11 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
     }
     if (lres == DW_DLV_ERROR) {
         /* Do not terminate processing */
-        if (check_decl_file) {
+        if (glflags.gf_check_decl_file) {
             DWARF_CHECK_COUNT(decl_file_result,1);
             DWARF_CHECK_ERROR2(decl_file_result,"dwarf_srclines",
                 dwarf_errmsg(err));
-            record_dwarf_error = FALSE;  /* Clear error condition */
+            glflags.gf_record_dwarf_error = FALSE;  /* Clear error condition */
         } else {
             print_error(dbg, "dwarf_srclines", lres, err);
         }
@@ -783,7 +786,7 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
         /* no line information is included */
     } else if (table_count > 0) {
         /* DW_DLV_OK */
-        if (do_print_dwarf) {
+        if (glflags.gf_do_print_dwarf) {
             if(line_context && verbose) {
                 print_line_context_record(dbg,line_context);
             }
@@ -797,7 +800,7 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
                     /* ignore_die_stack= */TRUE);
             }
         }
-        if(line_flag_selection ==  singledw5 || line_flag_selection == s2l) {
+        if(glflags.gf_line_flag_selection ==  singledw5 || glflags.gf_line_flag_selection == s2l) {
             if (table_count == 0 || table_count == 1) {
                 /* ASSERT: is_single_table == true */
                 Dwarf_Bool is_logicals = FALSE;
@@ -814,13 +817,13 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
                     !is_logicals, !is_actuals);
             }
             dwarf_srclines_dealloc_b(line_context);
-        } else if (line_flag_selection == orig) {
+        } else if (glflags.gf_line_flag_selection == orig) {
             Dwarf_Bool is_logicals = FALSE;
             Dwarf_Bool is_actuals = FALSE;
             process_line_table(dbg,sec_name, linebuf, linecount,
                 is_logicals, is_actuals);
             dwarf_srclines_dealloc(dbg,linebuf,linecount);
-        } else if (line_flag_selection == orig2l) {
+        } else if (glflags.gf_line_flag_selection == orig2l) {
             if (table_count == 1 || table_count == 0) {
                 Dwarf_Bool is_logicals = FALSE;
                 Dwarf_Bool is_actuals = FALSE;
@@ -842,7 +845,7 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
         /* DW_DLV_OK */
         /*  table_count == 0. no lines in table.
             Just a line table header. */
-        if (do_print_dwarf) {
+        if (glflags.gf_do_print_dwarf) {
             int ores = 0;
             Dwarf_Unsigned off = 0;
 
@@ -872,8 +875,8 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
                 printf(" Line table is present but no lines present\n");
             }
         }
-        if(line_flag_selection ==  singledw5 ||
-            line_flag_selection == s2l) {
+        if(glflags.gf_line_flag_selection ==  singledw5 ||
+            glflags.gf_line_flag_selection == s2l) {
             dwarf_srclines_dealloc_b(line_context);
         } else {
             /* Original allocation. */

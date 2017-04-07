@@ -74,7 +74,7 @@ print_abbrevs(Dwarf_Debug dbg)
 
     current_section_id = DEBUG_ABBREV;
 
-    if (do_print_dwarf) {
+    if (glflags.gf_do_print_dwarf) {
         printf("\n.debug_abbrev\n");
     }
     while ((abres = dwarf_get_abbrev(dbg, offset, &ab,
@@ -292,7 +292,7 @@ void
 get_abbrev_array_info(Dwarf_Debug dbg, Dwarf_Unsigned offset_in)
 {
     Dwarf_Unsigned offset = offset_in;
-    if (check_abbreviations) {
+    if (glflags.gf_check_abbreviations) {
         Dwarf_Abbrev ab = 0;
         Dwarf_Unsigned length = 0;
         Dwarf_Unsigned abbrev_entry_count = 0;

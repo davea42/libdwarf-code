@@ -741,7 +741,7 @@ print_one_fde(Dwarf_Debug dbg,
     if (fres == DW_DLV_NO_ENTRY) {
         return DW_DLV_NO_ENTRY;
     }
-    if (cu_name_flag &&
+    if (glflags.gf_cu_name_flag &&
         fde_offset_for_cu_low != DW_DLV_BADOFFSET &&
         (fde_offset < fde_offset_for_cu_low ||
         fde_offset > fde_offset_for_cu_high)) {
@@ -752,18 +752,18 @@ print_one_fde(Dwarf_Debug dbg,
     if (fres == DW_DLV_ERROR) {
         print_error(dbg, "dwarf_get_fde_exception_info", fres, oneferr);
     }
-    if (suppress_nested_name_search) {
+    if (glflags.gf_suppress_nested_name_search) {
         temps = 0;
     } else {
         struct Addr_Map_Entry *mp = 0;
         temps = get_fde_proc_name(dbg, low_pc,
             frame_section_name,pcMap,all_cus_seen);
         mp = addr_map_find(low_pc,lowpcSet);
-        if (check_frames || check_frames_extended) {
+        if (glflags.gf_check_frames || glflags.gf_check_frames_extended) {
             DWARF_CHECK_COUNT(fde_duplication,1);
         }
         if (mp) {
-            if (check_frames || check_frames_extended) {
+            if (glflags.gf_check_frames || glflags.gf_check_frames_extended) {
                 char msg[400];
                 if (temps && (strlen(temps) > 0)) {
                     snprintf(msg,sizeof(msg),"An fde low pc of 0x%"
@@ -788,7 +788,7 @@ print_one_fde(Dwarf_Debug dbg,
     }
 
     /* Do not print if in check mode */
-    if (do_print_dwarf) {
+    if (glflags.gf_do_print_dwarf) {
         /* Printing the FDE header. */
         printf("<%5" DW_PR_DSd ">"
             "<0x%" DW_PR_XZEROS  DW_PR_DUx
@@ -813,7 +813,7 @@ print_one_fde(Dwarf_Debug dbg,
     if (!is_eh) {
         /* IRIX uses eh_table_offset. No one else uses it. */
         /* Do not print if in check mode */
-        if (do_print_dwarf) {
+        if (glflags.gf_do_print_dwarf) {
             if (eh_table_offset == DW_DLX_NO_EH_OFFSET) {
                 printf("<eh offset %s>\n", "none");
             } else if (eh_table_offset == DW_DLX_EH_OFFSET_UNAVAILABLE) {
@@ -833,7 +833,7 @@ print_one_fde(Dwarf_Debug dbg,
         if (ares == DW_DLV_NO_ENTRY) {
             /* do nothing. */
         } else if (ares == DW_DLV_OK) {
-            if (do_print_dwarf) {
+            if (glflags.gf_do_print_dwarf) {
                 unsigned k2 = 0;
 
                 printf("\n       <eh aug data len 0x%" DW_PR_DUx , len);
@@ -849,7 +849,7 @@ print_one_fde(Dwarf_Debug dbg,
             print_error(dbg, "dwarf_get_fde_augmentation_data", ares, oneferr);
         }
         /* Do not print if in check mode */
-        if (do_print_dwarf) {
+        if (glflags.gf_do_print_dwarf) {
             printf("\n");
         }
     }
@@ -899,7 +899,7 @@ print_one_fde(Dwarf_Debug dbg,
                 }
             }
             /* Do not print if in check mode */
-            if (!printed_intro_addr && do_print_dwarf) {
+            if (!printed_intro_addr && glflags.gf_do_print_dwarf) {
                 printf("        0x%" DW_PR_XZEROS DW_PR_DUx
                     ": ", (Dwarf_Unsigned)jsave);
                 printed_intro_addr = 1;
@@ -964,7 +964,7 @@ print_one_fde(Dwarf_Debug dbg,
             }
 
             /* Do not print if in check mode */
-            if (!printed_intro_addr && do_print_dwarf) {
+            if (!printed_intro_addr && glflags.gf_do_print_dwarf) {
                 printf("        0x%" DW_PR_XZEROS DW_PR_DUx ": ",
                     (Dwarf_Unsigned)j);
                 printed_intro_addr = 1;
@@ -998,7 +998,7 @@ print_one_fde(Dwarf_Debug dbg,
                 &oneferr);
         if (offres == DW_DLV_OK) {
             /* Do not print if in check mode */
-            if (do_print_dwarf) {
+            if (glflags.gf_do_print_dwarf) {
                 printf(" fde section offset %" DW_PR_DUu
                     " 0x%" DW_PR_XZEROS DW_PR_DUx
                     " cie offset for fde: %" DW_PR_DUu
@@ -1057,7 +1057,7 @@ print_one_fde(Dwarf_Debug dbg,
                 ; /* ? */
             } else {
                 /* Do not print if in check mode */
-                if (do_print_dwarf) {
+                if (glflags.gf_do_print_dwarf) {
                     print_frame_inst_bytes(dbg, instrs,
                         (Dwarf_Signed) ilen,
                         data_alignment_factor,
@@ -1130,7 +1130,7 @@ print_one_cie(Dwarf_Debug dbg, Dwarf_Cie cie,
         return DW_DLV_NO_ENTRY;
     }
     {
-        if (do_print_dwarf) {
+        if (glflags.gf_do_print_dwarf) {
             printf("<%5" DW_PR_DUu ">\tversion\t\t\t\t%d\n",
                 cie_index, version);
             cires = dwarf_cie_section_offset(dbg, cie, &cie_off, &onecie_err);
@@ -1166,7 +1166,7 @@ print_one_cie(Dwarf_Debug dbg, Dwarf_Cie cie,
                 /*  No Aug data (len zero) do nothing. */
             } else if (ares == DW_DLV_OK) {
                 /*  We have the gnu eh_frame aug data bytes. */
-                if (do_print_dwarf) {
+                if (glflags.gf_do_print_dwarf) {
                     unsigned k2 = 0;
 
                     printf("\teh aug data len 0x%" DW_PR_DUx , len);
@@ -1182,7 +1182,7 @@ print_one_cie(Dwarf_Debug dbg, Dwarf_Cie cie,
         }
 
         /* Do not print if in check mode */
-        if (do_print_dwarf) {
+        if (glflags.gf_do_print_dwarf) {
             printf("\tbytes of initial instructions\t%" DW_PR_DUu "\n",
                 initial_instructions_length);
             printf("\tcie length\t\t\t%" DW_PR_DUu "\n", cie_length);
@@ -1215,7 +1215,7 @@ get_string_from_locs(Dwarf_Debug dbg,
     int res2 = 0;
     Dwarf_Addr baseaddr = 0; /* Really unknown */
 
-    if(!use_old_dwarf_loclist) {
+    if(!glflags.gf_use_old_dwarf_loclist) {
         Dwarf_Loc_Head_c head = 0;
         Dwarf_Locdesc_c locentry = 0;
         int lres = 0;
@@ -2066,7 +2066,7 @@ print_one_frame_reg_col(Dwarf_Debug dbg,
     char *type_title = "";
     int print_type_title = 1;
 
-    if (!do_print_dwarf) {
+    if (!glflags.gf_do_print_dwarf) {
         return;
     }
 
@@ -2204,7 +2204,7 @@ print_frames(Dwarf_Debug dbg,
                 that describes the changes.  */
             fres = dwarf_get_fde_list(dbg, &cie_data, &cie_element_count,
                 &fde_data, &fde_element_count, &err);
-            if (check_harmless) {
+            if (glflags.gf_check_harmless) {
                 print_any_harmless_errors(dbg);
             }
         } else {
@@ -2239,13 +2239,13 @@ print_frames(Dwarf_Debug dbg,
             fres = dwarf_get_fde_list_eh(dbg, &cie_data,
                 &cie_element_count, &fde_data,
                 &fde_element_count, &err);
-            if (check_harmless) {
+            if (glflags.gf_check_harmless) {
                 print_any_harmless_errors(dbg);
             }
         }
 
         /* Do not print any frame info if in check mode */
-        if (check_frames) {
+        if (glflags.gf_check_frames) {
             addr_map_destroy(lowpcSet);
             lowpcSet = 0;
             continue;
@@ -2261,7 +2261,7 @@ print_frames(Dwarf_Debug dbg,
             /* no frame information */
         } else {                /* DW_DLV_OK */
             /* Do not print if in check mode */
-            if (do_print_dwarf) {
+            if (glflags.gf_do_print_dwarf) {
                 printf("\n%s\n", frame_section_name);
                 printf("\nfde:\n");
             }
@@ -2281,7 +2281,7 @@ print_frames(Dwarf_Debug dbg,
             }
             /* Print the cie set. */
             /* Do not print if in check mode */
-            if (do_print_dwarf) {
+            if (glflags.gf_do_print_dwarf) {
                 printf("\ncie:\n");
             }
             for (i = 0; i < cie_element_count; i++) {

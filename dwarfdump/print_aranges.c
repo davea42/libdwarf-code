@@ -133,7 +133,7 @@ print_aranges(Dwarf_Debug dbg)
     need_CU_high_address = TRUE;
 
     current_section_id = DEBUG_ARANGES;
-    if (do_print_dwarf) {
+    if (glflags.gf_do_print_dwarf) {
         const char *sec_name = 0;
         ares = dwarf_get_aranges_section_name(dbg,
             &sec_name,&pa_error);
@@ -172,7 +172,7 @@ print_aranges(Dwarf_Debug dbg)
                     print_error(dbg, "dwarf_offdie", dres, pa_error);
                 }
 
-                if (cu_name_flag) {
+                if (glflags.gf_cu_name_flag) {
                     if (should_skip_this_cu(dbg,cu_die)) {
                         continue;
                     }
@@ -185,7 +185,7 @@ print_aranges(Dwarf_Debug dbg)
                     continue;
                 }
 
-                if (check_aranges) {
+                if (glflags.gf_check_aranges) {
                     do_checking(dbg,arange_buf,i,
                         cu_die_offset,first_cu,
                         cu_die_offset_prev,cu_die);
@@ -215,7 +215,7 @@ print_aranges(Dwarf_Debug dbg)
                             this will do the checks a second time!
                             So only call print_one_die if printing.
                         */
-                        if (do_print_dwarf){
+                        if (glflags.gf_do_print_dwarf){
                             /* There is no die if its a set-end entry */
                             print_one_die(dbg, cu_die,
                                 cu_die_offset,
@@ -228,12 +228,12 @@ print_aranges(Dwarf_Debug dbg)
                         /* Reset the state, so we can traverse the debug_info */
                         seen_CU = FALSE;
                         need_CU_name = TRUE;
-                        if (do_print_dwarf) {
+                        if (glflags.gf_do_print_dwarf) {
                             printf("\n");
                         }
                     }
 
-                    if (do_print_dwarf) {
+                    if (glflags.gf_do_print_dwarf) {
                         /* Print current aranges record */
                         if (segment_entry_size) {
                             printf(
@@ -254,7 +254,7 @@ print_aranges(Dwarf_Debug dbg)
                             (Dwarf_Unsigned)cu_die_offset);
 
                     }
-                    if (verbose && do_print_dwarf) {
+                    if (verbose && glflags.gf_do_print_dwarf) {
                         printf(" cuhdr 0x%" DW_PR_XZEROS DW_PR_DUx "\n",
                             (Dwarf_Unsigned)off);
                     }
@@ -264,7 +264,7 @@ print_aranges(Dwarf_Debug dbg)
                     /*  Must be a range end. We really do want to print
                         this as there is a real record here, an
                         'arange end' record. */
-                    if (do_print_dwarf) {
+                    if (glflags.gf_do_print_dwarf) {
                         printf("\narange end\n");
                     }
                 }/* end start||length test */

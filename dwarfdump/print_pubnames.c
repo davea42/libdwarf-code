@@ -130,7 +130,7 @@ print_pubname_style_entry(Dwarf_Debug dbg,
         }
     }
     /* Display offsets */
-    if (display_offsets) {
+    if (glflags.gf_display_offsets) {
         /* Print 'name'at the end for better layout */
         printf("%s die-in-sect 0x%" DW_PR_XZEROS DW_PR_DUx
             ", cu-in-sect 0x%" DW_PR_XZEROS DW_PR_DUx ","
@@ -151,7 +151,7 @@ print_pubname_style_entry(Dwarf_Debug dbg,
     }
 
     /* Display offsets */
-    if (display_offsets && verbose) {
+    if (glflags.gf_display_offsets && verbose) {
         printf(" cuhdr 0x%" DW_PR_XZEROS DW_PR_DUx , global_cu_offset);
     }
 
@@ -187,7 +187,7 @@ print_pubnames(Dwarf_Debug dbg)
     int res = 0;
 
     current_section_id = DEBUG_PUBNAMES;
-    if (do_print_dwarf) {
+    if (glflags.gf_do_print_dwarf) {
         /*  No need to get the real section name, this
             section not used in modern compilers. */
         printf("\n.debug_pubnames\n");
@@ -218,7 +218,7 @@ print_pubnames(Dwarf_Debug dbg)
                 print_error(dbg, "dwarf_global_cu_offset", cures3, err);
             }
 
-            if (check_pubname_attr) {
+            if (glflags.gf_check_pubname_attr) {
                 Dwarf_Bool has_attr;
                 int ares;
                 int dres;
@@ -278,12 +278,14 @@ print_pubnames(Dwarf_Debug dbg)
             }
 
             /* Now print pubname, after the test */
-            if (do_print_dwarf || (record_dwarf_error && check_verbose_mode)) {
+            if (glflags.gf_do_print_dwarf ||
+                (glflags.gf_record_dwarf_error &&
+                glflags.gf_check_verbose_mode)) {
                 print_pubname_style_entry(dbg,
                     "global",
                     name, die_off, cu_off,
                     global_cu_off, maxoff);
-                record_dwarf_error = FALSE;  /* Clear error condition */
+                glflags.gf_record_dwarf_error = FALSE;
             }
 
         }

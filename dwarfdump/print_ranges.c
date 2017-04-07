@@ -50,7 +50,7 @@ print_ranges(Dwarf_Debug dbg)
     Dwarf_Error pr_err = 0;
 
     current_section_id = DEBUG_RANGES;
-    if (!do_print_dwarf) {
+    if (!glflags.gf_do_print_dwarf) {
         return;
     }
     res = dwarf_get_ranges_section_name(dbg,&sec_name,&pr_err);
@@ -182,7 +182,7 @@ printf("**** END ****\n");
                         "%s: Address outside a "
                         "valid .text range",sec_name);
                     DWARF_CHECK_ERROR(ranges_result, errbuf);
-                    if (check_verbose_mode && do_print) {
+                    if (glflags.gf_check_verbose_mode && do_print) {
                         /*  Update DIEs offset just for printing */
                         int dioff_res = dwarf_die_offsets(cu_die,
                             &DIE_overall_offset,&DIE_offset,&rlerr);
@@ -213,7 +213,7 @@ printf("**** END ****\n");
 
     /*  In the case of errors, we have to print the range records that
         caused the error. */
-    if (bError && check_verbose_mode && do_print) {
+    if (bError && glflags.gf_check_verbose_mode && do_print) {
         struct esb_s rangesstr;
         esb_constructor(&rangesstr);
 
@@ -227,7 +227,8 @@ printf("**** END ****\n");
 
     /*  In the case of printing unique errors, stop the printing of any
         subsequent errors, which have the same text. */
-    if (bError && check_verbose_mode && print_unique_errors) {
+    if (bError && glflags.gf_check_verbose_mode &&
+        glflags.gf_print_unique_errors) {
         do_print = FALSE;
     }
 }

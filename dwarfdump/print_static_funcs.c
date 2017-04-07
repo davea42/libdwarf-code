@@ -50,7 +50,7 @@ print_static_funcs(Dwarf_Debug dbg)
 
     current_section_id = DEBUG_STATIC_FUNC;
 
-    if (!do_print_dwarf) {
+    if (!glflags.gf_do_print_dwarf) {
         return;
     }
     /*  No need to get the real section name, this
@@ -80,7 +80,7 @@ print_static_funcs(Dwarf_Debug dbg)
                 print_error(dbg, "dwarf_global_cu_offset", cures3, err);
             }
 
-            if (check_pubname_attr) {
+            if (glflags.gf_check_pubname_attr) {
                 Dwarf_Bool has_attr;
                 int ares;
                 int dres;
@@ -111,11 +111,12 @@ print_static_funcs(Dwarf_Debug dbg)
                 dwarf_dealloc(dbg, die, DW_DLA_DIE);
             }
 
-            if (do_print_dwarf || record_dwarf_error) {
+            if (glflags.gf_do_print_dwarf ||
+                glflags.gf_record_dwarf_error) {
                 print_pubname_style_entry(dbg,
                     "static-func", name, die_off,
                     cu_off, global_cu_off, maxoff);
-                record_dwarf_error = FALSE;  /* Clear error condition */
+                glflags.gf_record_dwarf_error = FALSE;
             }
         }
         dwarf_funcs_dealloc(dbg, funcbuf, count);

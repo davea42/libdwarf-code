@@ -86,14 +86,14 @@ print_macro_ops(Dwarf_Debug dbg,
                 lres,err);
             return;
         }
-        if (do_print_dwarf) {
+        if (glflags.gf_do_print_dwarf) {
             printf("   [%3d] 0x%02x %-20s",
                 k,macro_operator,
                 (macro_operator?
                     get_MACRO_name(macro_operator,dwarf_names_print_on_error):
                     "end-of-macros"));
         }
-        if (do_print_dwarf && show_form_used && forms_count > 0) {
+        if (glflags.gf_do_print_dwarf && show_form_used && forms_count > 0) {
             unsigned l = 0;
             printf("\n     Forms count %2u:",forms_count);
             for(; l < forms_count;++l) {
@@ -107,7 +107,7 @@ print_macro_ops(Dwarf_Debug dbg,
         switch(macro_operator) {
         case 0:
         case DW_MACRO_end_file:
-            if(do_print_dwarf) {
+            if(glflags.gf_do_print_dwarf) {
                 printf("\n");
             }
             break;
@@ -126,7 +126,7 @@ print_macro_ops(Dwarf_Debug dbg,
                     "ERROR from  dwarf_get_macro_defundef()",
                     lres,err);
             }
-            if (do_print_dwarf) {
+            if (glflags.gf_do_print_dwarf) {
                 printf("  line %" DW_PR_DUu
                     " %s\n",
                     line_number,
@@ -150,7 +150,7 @@ print_macro_ops(Dwarf_Debug dbg,
                     "ERROR from  strp dwarf_get_macro_defundef()",
                     lres,err);
             }
-            if (do_print_dwarf) {
+            if (glflags.gf_do_print_dwarf) {
                 printf("  line %" DW_PR_DUu
                     " str offset 0x%" DW_PR_XZEROS DW_PR_DUx
                     " %s\n",
@@ -174,7 +174,7 @@ print_macro_ops(Dwarf_Debug dbg,
                     "ERROR from strx dwarf_get_macro_defundef()",
                     lres,err);
             }
-            if (do_print_dwarf) {
+            if (glflags.gf_do_print_dwarf) {
                 printf("  line %" DW_PR_DUu
                     " index 0x%" DW_PR_XZEROS DW_PR_DUx
                     " str offset 0x%" DW_PR_XZEROS DW_PR_DUx
@@ -200,7 +200,7 @@ print_macro_ops(Dwarf_Debug dbg,
                     "ERROR from sup dwarf_get_macro_defundef()",
                     lres,err);
             }
-            if (do_print_dwarf) {
+            if (glflags.gf_do_print_dwarf) {
                 printf("  line %" DW_PR_DUu
                     " sup str offset 0x%" DW_PR_XZEROS DW_PR_DUx
                     " %s\n",
@@ -214,7 +214,7 @@ print_macro_ops(Dwarf_Debug dbg,
                 k,&line_number,
                 &index,
                 &macro_string,&err);
-            if (do_print_dwarf) {
+            if (glflags.gf_do_print_dwarf) {
                 printf("  line %" DW_PR_DUu
                     " file number %" DW_PR_DUu
                     " %s\n",
@@ -235,7 +235,7 @@ print_macro_ops(Dwarf_Debug dbg,
             }
             add_macro_import(&macro_check_tree,
                 is_primary,offset);
-            if (do_print_dwarf) {
+            if (glflags.gf_do_print_dwarf) {
                 printf("  offset 0x%" DW_PR_XZEROS DW_PR_DUx "\n",offset);
             }
             break;
@@ -249,7 +249,7 @@ print_macro_ops(Dwarf_Debug dbg,
                     lres,err);
             }
             add_macro_import_sup(&macro_check_tree,offset);
-            if (do_print_dwarf) {
+            if (glflags.gf_do_print_dwarf) {
                 printf("  sup_offset 0x%" DW_PR_XZEROS DW_PR_DUx "\n",offset);
             }
             break;
@@ -310,7 +310,7 @@ print_macros_5style_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die,
     if (lres != DW_DLV_OK || !sec_name || !strlen(sec_name)) {
         sec_name = ".debug_macro";
     }
-    if (do_print_dwarf) {
+    if (glflags.gf_do_print_dwarf) {
         if(!by_offset) {
             printf("\n%s: Macro info for a single cu\n", sec_name);
             print_source_intro(cu_die);
@@ -335,7 +335,7 @@ print_macros_5style_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die,
             return;
         }
     }
-    if (do_print_dwarf && verbose > 1) {
+    if (glflags.gf_do_print_dwarf && verbose > 1) {
 #if 0
         int errcount = 0;
 #endif
@@ -388,10 +388,10 @@ print_macros_5style_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die,
         if (has_offset_size_64) {
             offset_size = 8;
         }
-        if (do_print_dwarf) {
+        if (glflags.gf_do_print_dwarf) {
             printf("  Macro version: %d\n",lversion);
         }
-        if( verbose && do_print_dwarf) {
+        if( verbose && glflags.gf_do_print_dwarf) {
             printf("  macro section offset 0x%" DW_PR_XZEROS DW_PR_DUx "\n",
                 mac_offset);
             printf("  flags: 0x%x, line offset? %u offsetsize %u, "
@@ -442,7 +442,7 @@ print_macros_5style_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die,
                 }
             }
         }
-        if (do_print_dwarf) {
+        if (glflags.gf_do_print_dwarf) {
             printf("  MacroInformationEntries count: %" DW_PR_DUu
                 ", bytes length: %" DW_PR_DUu "\n",
                 number_of_ops,ops_total_byte_len);

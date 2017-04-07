@@ -1,4 +1,22 @@
 2017-04-06 David Anderson
+    * Makefile.in: Add glflags.o. Instead of dozens of
+      boolean variables, a struct with the booleans
+      makes understanding them much easier.
+    * glflags.h, glflags.c: define and initialize all these
+      flags and settings.
+    * dwarfdump.c: Use the new glflags.h setting fields.
+      Add one new one for debug_names (nothing useful
+      implemented yet).
+    * globals.h: Remove the flag global extern lines.
+    * naming.c,print_abbrevs.c, print_aranges.c, print_die.c,
+      print_frames.c, print_gdbindex.c, print_lines.c,
+      print locs.c, print_macro.c, print_macros.c, 
+      print_pubnames.c, print_ranges.c, print_static_funcs.c,
+      print_static_vars.c, print_strings.c, print_types.c,
+      print_weaknames.c: Using the new
+      flag globals as glflags.gf_<member>
+    * print_dnames.c: New for .debug_names printing.
+2017-04-06 David Anderson
     * dwarfdump.c, Makefile.in, globals.h: 
       This is a small start on dealing with DWARF5 .debug_names.
 2017-04-02 David Anderson

@@ -52,6 +52,7 @@ FINALOBJECTS = \
 	dwarfdump.o \
 	dwconf.o \
 	esb.o \
+        glflags.o \
         helpertree.o \
         macrocheck.o \
 	print_abbrevs.o \

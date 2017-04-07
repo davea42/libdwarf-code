@@ -386,7 +386,7 @@ print_gdb_index(Dwarf_Debug dbg)
         &section_name,
         &error);
 
-    if (!do_print_dwarf) {
+    if (!glflags.gf_do_print_dwarf) {
         return;
     }
     if(res == DW_DLV_NO_ENTRY) {

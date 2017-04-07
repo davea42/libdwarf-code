@@ -75,6 +75,7 @@ OBJS= dwarf_abbrev.o \
         dwarf_arange.o \
         dwarf_die_deliv.o \
         dwarf_dsc.o \
+        dwarf_dnames.o \
         dwarf_elf_access.o \
         dwarf_error.o \
         dwarf_form.o \

@@ -55,7 +55,7 @@ print_strings(Dwarf_Debug dbg)
     printf("\n%s\n",sec_name);
     while ((sres = dwarf_get_str(dbg, offset, &name, &length, &err))
         == DW_DLV_OK) {
-        if (display_offsets) {
+        if (glflags.gf_display_offsets) {
             printf("name at offset 0x%" DW_PR_XZEROS DW_PR_DUx
                 ", length %4" DW_PR_DSd " is '%s'\n",
                 (Dwarf_Unsigned)offset, length, name);

@@ -47,7 +47,7 @@ print_weaknames(Dwarf_Debug dbg)
 
     current_section_id = DEBUG_WEAKNAMES;
 
-    if (!do_print_dwarf) {
+    if (!glflags.gf_do_print_dwarf) {
         return;
     }
     /*  No need to get the real section name, this
