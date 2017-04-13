@@ -1,3 +1,18 @@
+2017-04-22 David Anderson
+    * dwarf_alloc.c: Renamed function as _dwarf_debugnames_destructor().
+    * dwarf_dnames.c: Implemented a suite of new functions to allow
+      reading .debug_names. dwarf_debugnames_header() is
+      the entry point to get .debug_names information.
+    * dwarf_dnames.h: new structs and fields to complete
+      getting access to .debug_names section data.
+    * dwarf_form.c: Refactored so dwarf_dnames.c has
+      access to getting form data.
+    * dwarf_opaque.h: Declare new internal .debug_names 
+      access functions.
+    * libdwarf.h.in: Declare new .debug_names functions
+      and new error codes.
+    * pro_section.c: Partial outline for generation of DWARF5
+      .debug_names added.
 2017-04-02 David Anderson
     * dwarf.h: Corrected comment about DW_IDX_type_unit.
     * dwarf_alloc.c, dwarf_alloc.h: Added support for .debug_names

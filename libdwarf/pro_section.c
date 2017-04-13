@@ -2220,7 +2220,7 @@ _dwarf_pro_generate_debuginfo(Dwarf_P_Debug dbg,
 }
 static int
 _dwarf_pro_generate_debug_names(Dwarf_P_Debug dbg,
-    Dwarf_Signed *nbufs,
+    UNUSEDARG Dwarf_Signed *nbufs,
     Dwarf_Error * error)
 {
 #if 0

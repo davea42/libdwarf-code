@@ -454,6 +454,12 @@ const char *_dwarf_errmsgs[] = {
     "DW_DLE_DEBUG_NAMES_AUG_STRING_ERROR(373) corrupt dwarf",
     "DW_DLE_DEBUG_NAMES_PAD_NON_ZERO(374) corrupt dwarf",
     "DW_DLE_DEBUG_NAMES_OFF_END(375) corrupt dwarf",
+    "DW_DLE_DEBUG_NAMES_ABBREV_OVERFLOW(376) Surprising overrun of fixed size array",
+    "DW_DLE_DEBUG_NAMES_ABBREV_CORRUPTION(377)",
+    "DW_DLE_DEBUG_NAMES_NULL_POINTER(378) null argument",
+    "DW_DLE_DEBUG_NAMES_BAD_INDEX_ARG(379) index outside valid range",
+    "DW_DLE_DEBUG_NAMES_ENTRYPOOL_OFFSET(380) offset outside entrypool",
+    "DW_DLE_DEBUG_NAMES_UNHANDLED_FORM(381) Might be corrupt dwarf or incomplete DWARF support",
 };
 
 #ifdef TESTING

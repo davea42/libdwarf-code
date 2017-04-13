@@ -31,6 +31,9 @@
 #include <stdio.h>
 #include "dwarf_die_deliv.h"
 
+#define TRUE 1
+#define FALSE 0
+
 /* This code was repeated many times, now it
    is all in one place. */
 static int
@@ -836,34 +839,44 @@ dwarf_formflag(Dwarf_Attribute attr,
     return (DW_DLV_ERROR);
 }
 
+Dwarf_Bool
+_dwarf_allow_formudata(unsigned form)
+{
+    switch(form) {
+    case DW_FORM_data1:
+    case DW_FORM_data2:
+    case DW_FORM_data4:
+    case DW_FORM_data8:
+    case DW_FORM_udata:
+    return TRUE;
+    }
+    return FALSE;
+}
 /*  If the form is DW_FORM_constx and the .debug_addr section
     is missing, this returns DW_DLV_ERROR and the error number
     in the Dwarf_Error is  DW_DLE_MISSING_NEEDED_DEBUG_ADDR_SECTION.
     When that arises, a consumer should call
     dwarf_get_debug_addr_index() and use that on the appropriate
     .debug_addr section in the executable or another object. */
+
 int
-dwarf_formudata(Dwarf_Attribute attr,
-    Dwarf_Unsigned * return_uval, Dwarf_Error * error)
+_dwarf_formudata_internal(Dwarf_Debug dbg,
+    unsigned form,
+    Dwarf_Byte_Ptr data,
+    Dwarf_Byte_Ptr section_end,
+    Dwarf_Unsigned *return_uval,
+    Dwarf_Unsigned *bytes_read,
+    Dwarf_Error *error)
 {
     Dwarf_Unsigned ret_value = 0;
-    Dwarf_Debug dbg = 0;
-    Dwarf_CU_Context cu_context = 0;
-    Dwarf_Byte_Ptr section_end = 0;
 
-    int res  = get_attr_dbg(&dbg,&cu_context,attr,error);
-    if (res != DW_DLV_OK) {
-        return res;
-    }
-    section_end =
-        _dwarf_calculate_info_section_end_ptr(cu_context);
-    switch (attr->ar_attribute_form) {
-
+    switch (form) {
     case DW_FORM_data1:
         READ_UNALIGNED_CK(dbg, ret_value, Dwarf_Unsigned,
-            attr->ar_debug_ptr, sizeof(Dwarf_Small),
+            data, sizeof(Dwarf_Small),
             error,section_end);
         *return_uval = ret_value;
+        *bytes_read = 1;
         return DW_DLV_OK;
 
     /*  READ_UNALIGNED does the right thing as it reads
@@ -871,36 +884,40 @@ dwarf_formudata(Dwarf_Attribute attr,
         So we can just assign to *return_uval. */
     case DW_FORM_data2:{
         READ_UNALIGNED_CK(dbg, ret_value, Dwarf_Unsigned,
-            attr->ar_debug_ptr, sizeof(Dwarf_Half),
+            data, sizeof(Dwarf_Half),
             error,section_end);
         *return_uval = ret_value;
+        *bytes_read = 2;
         return DW_DLV_OK;
         }
 
     case DW_FORM_data4:{
         READ_UNALIGNED_CK(dbg, ret_value, Dwarf_Unsigned,
-            attr->ar_debug_ptr,
+            data,
             sizeof(Dwarf_ufixed),
             error,section_end);
         *return_uval = ret_value;
+        *bytes_read = 4;
         return DW_DLV_OK;
         }
 
     case DW_FORM_data8:{
         READ_UNALIGNED_CK(dbg, ret_value, Dwarf_Unsigned,
-            attr->ar_debug_ptr,
+            data,
             sizeof(Dwarf_Unsigned),
             error,section_end);
         *return_uval = ret_value;
+        *bytes_read = 8;
         return DW_DLV_OK;
         }
         break;
     /* real udata */
     case DW_FORM_udata: {
-        Dwarf_Byte_Ptr tmp = attr->ar_debug_ptr;
-
-        DECODE_LEB128_UWORD_CK(tmp, ret_value,dbg,error,section_end);
+        Dwarf_Word leblen = 0;
+        DECODE_LEB128_UWORD_LEN_CK(data, ret_value,leblen,
+            dbg,error,section_end);
         *return_uval = ret_value;
+        *bytes_read = leblen;
         return DW_DLV_OK;
     }
 
@@ -913,6 +930,31 @@ dwarf_formudata(Dwarf_Attribute attr,
     }
     _dwarf_error(dbg, error, DW_DLE_ATTR_FORM_BAD);
     return (DW_DLV_ERROR);
+}
+
+int
+dwarf_formudata(Dwarf_Attribute attr,
+    Dwarf_Unsigned * return_uval, Dwarf_Error * error)
+{
+    Dwarf_Debug dbg = 0;
+    Dwarf_CU_Context cu_context = 0;
+    Dwarf_Byte_Ptr section_end = 0;
+    Dwarf_Unsigned bytes_read = 0;
+    Dwarf_Byte_Ptr data =  attr->ar_debug_ptr;
+    unsigned form = 0;
+
+    int res  = get_attr_dbg(&dbg,&cu_context,attr,error);
+    if (res != DW_DLV_OK) {
+        return res;
+    }
+    section_end =
+        _dwarf_calculate_info_section_end_ptr(cu_context);
+    form = attr->ar_attribute_form;
+
+    res = _dwarf_formudata_internal(dbg,
+        form, data, section_end, return_uval,
+        &bytes_read, error);
+    return res;
 }
 
 

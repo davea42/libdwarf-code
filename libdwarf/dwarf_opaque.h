@@ -840,6 +840,15 @@ typedef int (*_dwarf_get_elf_flags_func_ptr_type)(
     int *error);
 extern _dwarf_get_elf_flags_func_ptr_type _dwarf_get_elf_flags_func_ptr;
 
+extern Dwarf_Bool _dwarf_allow_formudata(unsigned form);
+extern int _dwarf_formudata_internal(Dwarf_Debug dbg,
+    unsigned form,
+    Dwarf_Byte_Ptr data,
+    Dwarf_Byte_Ptr section_end,
+    Dwarf_Unsigned *return_uval,
+    Dwarf_Unsigned *bytes_read,
+    Dwarf_Error *error);
+
 Dwarf_Byte_Ptr _dwarf_calculate_info_section_start_ptr(Dwarf_CU_Context context, Dwarf_Unsigned *section_len_out);
 
 Dwarf_Byte_Ptr _dwarf_calculate_info_section_end_ptr(Dwarf_CU_Context context);
