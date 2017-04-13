@@ -1,4 +1,6 @@
-2017-04-22 David Anderson
+2017-04-12 David Anderson
+    * gennames.c: Update version string.
+2017-04-12 David Anderson
     * dwarf_alloc.c: Renamed function as _dwarf_debugnames_destructor().
     * dwarf_dnames.c: Implemented a suite of new functions to allow
       reading .debug_names. dwarf_debugnames_header() is

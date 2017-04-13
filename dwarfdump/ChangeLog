@@ -1,3 +1,6 @@
+2017-04-12 David Anderson
+    * common.c, dwarfdump.c, tag_attr.c, tag_tree.c:Update 
+      version string.
 2017-04-06 David Anderson
     * Makefile.in: Add glflags.o. Instead of dozens of
       boolean variables, a struct with the booleans
