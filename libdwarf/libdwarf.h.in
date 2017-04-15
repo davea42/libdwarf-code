@@ -2000,9 +2000,7 @@ void dwarf_srclines_dealloc(Dwarf_Debug /*dbg*/,
     dwarf_srclines_from_linecontext()  use.
     Works for DWARF2,3,4,5 and for experimental line tables.
     New work should use the new Dwarf_Line_Context
-    interfaces.
-    This also opens a Dwarf_Line_Context struct which
-    is used by dwarf_srcfiles_b()
+    interface.
     This interface only reads the line table header, so
     it takes relatively little time.
     *is_single_table will be set non-zero for all standard dwarf line sections.
@@ -2132,18 +2130,6 @@ int dwarf_srcfiles(Dwarf_Die /*die*/,
     char***          /*srcfiles*/,
     Dwarf_Signed *   /*filecount*/,
     Dwarf_Error*     /*error*/);
-
-/*  New October 2015.
-    Returns the same data as
-    dwarf_srcfiles, but is based on
-    a Dwarf_Line_Context created by
-    dwarf_srclines_b(). Using this avoids
-    rereading the line table header for this CU. */
-int dwarf_srcfiles_b(Dwarf_Line_Context /*context*/,
-    Dwarf_Unsigned *   /*version*/,
-    char           *** /*srcfiles*/,
-    Dwarf_Signed   *   /*filecount*/,
-    Dwarf_Error    *   /*error*/);
 
 int dwarf_linebeginstatement(Dwarf_Line /*line*/,
     Dwarf_Bool  *    /*returned_bool*/,
@@ -3085,18 +3071,6 @@ int _dwarf_cie_section_offset(Dwarf_Debug /*dbg*/,
     Dwarf_Error * /*err*/);
 
 typedef struct Dwarf_Macro_Details_s Dwarf_Macro_Details;
-
-int dwarf_get_macro(Dwarf_Debug /*dbg*/,
-    char *        /*requested_macro_name*/,
-    Dwarf_Addr    /*pc_of_request*/,
-    char **       /*returned_macro_value*/,
-    Dwarf_Error * /*error*/);
-
-int dwarf_get_all_defined_macros(Dwarf_Debug /*dbg*/,
-    Dwarf_Addr     /*pc_of_request*/,
-    Dwarf_Signed * /*returned_count*/,
-    char ***       /*returned_pointers_to_macros*/,
-    Dwarf_Error *  /*error*/);
 
 char *dwarf_find_macro_value_start(char * /*macro_string*/);
 

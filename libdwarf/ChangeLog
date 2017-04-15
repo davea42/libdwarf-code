@@ -1,3 +1,11 @@
+2017-04-15 David Anderson
+    * dwarf_print_lines.c: Added a comment , a reminder
+      that _dwarf_print_line_context_record() was never
+      implemented.
+    * libdwarf.h.in: Deleted mistaken declarations
+      dwarf_srcfiles_b(), dwarf_get_macro(),
+      and dwarf_get_all_defined_macros().
+      No such functions were ever defined.
 2017-04-12 David Anderson
     * gennames.c: Update version string.
 2017-04-12 David Anderson
