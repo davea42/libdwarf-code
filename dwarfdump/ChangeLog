@@ -1,3 +1,5 @@
+2017-04-16 David Anderson
+    * CMakeLists.txt: Added in new files glflangs.c, .h
 2017-04-12 David Anderson
     * common.c, dwarfdump.c, tag_attr.c, tag_tree.c:Update 
       version string.

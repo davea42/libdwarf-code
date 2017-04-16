@@ -1,4 +1,6 @@
 2017-04-16 David Anderson
+    * CMakeLists.txt: Added in the new files dwarf_dnames.c, .h
+2017-04-16 David Anderson
     * README: A common build problem and the fix are mentioned.
     * configure.in: Added more checking messages and results so
       easier diagnose problems.
