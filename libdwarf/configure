@@ -3885,7 +3885,13 @@ if test "x$ac_cv_lib_elf_elf64_getehdr" = xyes; then :
 
 $as_echo "#define HAVE_ELF64_GETEHDR 1" >>confdefs.h
 
+    { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+$as_echo "yes" >&6; }
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
 fi
+
 
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for elf64_getshdr in -lelf" >&5
 $as_echo_n "checking for elf64_getshdr in -lelf... " >&6; }
@@ -3927,15 +3933,23 @@ if test "x$ac_cv_lib_elf_elf64_getshdr" = xyes; then :
 
 $as_echo "#define HAVE_ELF64_GETSHDR 1" >>confdefs.h
 
+    { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+$as_echo "yes" >&6; }
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
 fi
 
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking is __uint32_t predefined in the compiler" >&5
+$as_echo_n "checking is __uint32_t predefined in the compiler... " >&6; }
 cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 
 int
 main ()
 {
-__uint32_t p; p = 3;
+__uint32_t p; p = 2;
   ;
   return 0;
 }
@@ -3944,8 +3958,16 @@ if ac_fn_c_try_compile "$LINENO"; then :
 
 $as_echo "#define HAVE___UINT32_T 1" >>confdefs.h
 
+    { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+$as_echo "yes" >&6; }
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
 fi
 rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking is __uint64_t predefined in the compiler" >&5
+$as_echo_n "checking is __uint64_t predefined in the compiler... " >&6; }
 cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 
@@ -3961,15 +3983,23 @@ if ac_fn_c_try_compile "$LINENO"; then :
 
 $as_echo "#define HAVE___UINT64_T 1" >>confdefs.h
 
+    { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+$as_echo "yes" >&6; }
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
 fi
 rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking is __uint32_t defined in sys/types.h" >&5
+$as_echo_n "checking is __uint32_t defined in sys/types.h... " >&6; }
 cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 #include <sys/types.h>
 int
 main ()
 {
-  __uint32_t p; p = 3;
+  __uint32_t p; p = 4;
   ;
   return 0;
 }
@@ -3978,15 +4008,23 @@ if ac_fn_c_try_compile "$LINENO"; then :
 
 $as_echo "#define HAVE___UINT32_T_IN_SYS_TYPES_H 1" >>confdefs.h
 
+    { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+$as_echo "yes" >&6; }
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
 fi
 rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking is __uint64_t defined in sys/types.h" >&5
+$as_echo_n "checking is __uint64_t defined in sys/types.h... " >&6; }
 cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 #include <sys/types.h>
 int
 main ()
 {
-  __uint64_t p; p = 3;
+  __uint64_t p; p = 5;
   ;
   return 0;
 }
@@ -3995,8 +4033,14 @@ if ac_fn_c_try_compile "$LINENO"; then :
 
 $as_echo "#define HAVE___UINT64_T_IN_SYS_TYPES_H 1" >>confdefs.h
 
+    { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+$as_echo "yes" >&6; }
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
 fi
 rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking compiler supports __attribute__ unused " >&5
 $as_echo_n "checking compiler supports __attribute__ unused ... " >&6; }
 if test "$cross_compiling" = yes; then :
@@ -4110,6 +4154,8 @@ fi
 rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
 
 
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking Intel Itanium relocation types defined" >&5
+$as_echo_n "checking Intel Itanium relocation types defined... " >&6; }
 cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 #include <elf.h>
@@ -4125,6 +4171,11 @@ if ac_fn_c_try_compile "$LINENO"; then :
 
 $as_echo "#define HAVE_R_IA_64_DIR32LSB 1" >>confdefs.h
 
+    { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+$as_echo "yes" >&6; }
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
 fi
 rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
 
@@ -4153,6 +4204,10 @@ $as_echo "no" >&6; }
 fi
 rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
 
+
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking compile with libelf.h works " >&5
+$as_echo_n "checking compile with libelf.h works ... " >&6; }
 cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 
@@ -4170,8 +4225,65 @@ if ac_fn_c_try_compile "$LINENO"; then :
 
 $as_echo "#define HAVE_RAW_LIBELF_OK 1" >>confdefs.h
 
+    { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+$as_echo "yes" >&6; }
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
 fi
 rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking libelf.h exists and has Elf function declarations" >&5
+$as_echo_n "checking libelf.h exists and has Elf function declarations... " >&6; }
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+#include <libelf.h>
+
+int
+main ()
+{
+  int p; char *ident; p = 0;ident=elf_getident(0, 0);
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_compile "$LINENO"; then :
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+$as_echo "yes" >&6; }
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+fi
+rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking libelf/libelf.h exists and has Elf function declarations" >&5
+$as_echo_n "checking libelf/libelf.h exists and has Elf function declarations... " >&6; }
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+#include <libelf/libelf.h>
+
+int
+main ()
+{
+  int p; char *ident; p = 0;ident=elf_getident(0, 0);
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_compile "$LINENO"; then :
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+$as_echo "yes" >&6; }
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+fi
+rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking libelf defines off64_t if _GNU_SOURCE defined" >&5
+$as_echo_n "checking libelf defines off64_t if _GNU_SOURCE defined... " >&6; }
 cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 
@@ -4190,9 +4302,16 @@ if ac_fn_c_try_compile "$LINENO"; then :
 
 $as_echo "#define HAVE_LIBELF_OFF64_OK 1" >>confdefs.h
 
+    { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+$as_echo "yes" >&6; }
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
 fi
 rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
 
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking sgidefs.h present and defines __uint32_t" >&5
+$as_echo_n "checking sgidefs.h present and defines __uint32_t... " >&6; }
 cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 #include <sgidefs.h>
@@ -4208,8 +4327,16 @@ if ac_fn_c_try_compile "$LINENO"; then :
 
 $as_echo "#define HAVE___UINT32_T_IN_SGIDEFS_H 1" >>confdefs.h
 
+    { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+$as_echo "yes" >&6; }
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
 fi
 rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking sgidefs.h present and defines __uint64_t" >&5
+$as_echo_n "checking sgidefs.h present and defines __uint64_t... " >&6; }
 cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 #include <sgidefs.h>
@@ -4225,25 +4352,16 @@ if ac_fn_c_try_compile "$LINENO"; then :
 
 $as_echo "#define HAVE___UINT64_T_IN_SGIDEFS_H 1" >>confdefs.h
 
+    { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+$as_echo "yes" >&6; }
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
 fi
 rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
-cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-#include <sgidefs.h>
-int
-main ()
-{
-  __uint64_t p; p = 27;
-  ;
-  return 0;
-}
-_ACEOF
-if ac_fn_c_try_compile "$LINENO"; then :
 
-$as_echo "#define HAVE___UINT64_T_IN_SGIDEFS_H 1" >>confdefs.h
-
-fi
-rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking is Elf64_Rela defined in elf.h" >&5
+$as_echo_n "checking is Elf64_Rela defined in elf.h... " >&6; }
 cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 #include <elf.h>
@@ -4259,8 +4377,16 @@ if ac_fn_c_try_compile "$LINENO"; then :
 
 $as_echo "#define HAVE_ELF64_RELA 1" >>confdefs.h
 
+    { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+$as_echo "yes" >&6; }
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
 fi
 rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking is Elf64_Sym defined in elf.h" >&5
+$as_echo_n "checking is Elf64_Sym defined in elf.h... " >&6; }
 cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 #include <elf.h>
@@ -4276,6 +4402,11 @@ if ac_fn_c_try_compile "$LINENO"; then :
 
 $as_echo "#define HAVE_ELF64_SYM 1" >>confdefs.h
 
+    { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+$as_echo "yes" >&6; }
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
 fi
 rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
 

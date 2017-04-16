@@ -1,3 +1,8 @@
+2017-04-16 David Anderson
+    * README: A common build problem and the fix are mentioned.
+    * configure.in: Added more checking messages and results so
+      easier diagnose problems.
+    * config.h.in,configure: Regenerated with GNU Autoconf 2.69
 2017-04-15 David Anderson
     * dwarf_print_lines.c: Added a comment , a reminder
       that _dwarf_print_line_context_record() was never

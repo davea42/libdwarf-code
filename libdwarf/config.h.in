@@ -121,7 +121,7 @@
 /* See if __uint64_t is predefined in the compiler. */
 #undef HAVE___UINT64_T
 
-/* Define 1 if is in sgidefs.h. */
+/* Define 1 if __uint64_t is in sgidefs.h. */
 #undef HAVE___UINT64_T_IN_SGIDEFS_H
 
 /* Define 1 if sys/types.h defines __uint64_t. */
