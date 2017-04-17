@@ -35,6 +35,18 @@
 #include "dwarf_frame.h"
 #include "dwarf_arange.h" /* using Arange as a way to build a list */
 
+/*  For a little information about .eh_frame see
+    https://stackoverflow.com/questions/14091231/what-do-the-eh-frame-and-eh-frame-hdr-sections-store-exactly
+    http://refspecs.linuxfoundation.org/LSB_3.0.0/LSB-Core-generic/LSB-Core-generic/ehframechpt.html
+    The above give information about fields and sizes but
+    very very little about content.
+
+    .eh_frame_hdr contains data for C++ unwinding. Namely
+    tables for fast access into .eh_frame.
+*/
+
+
+
 #define TRUE 1
 #define FALSE 0
 
@@ -62,7 +74,6 @@ static int get_gcc_eh_augmentation(Dwarf_Debug dbg,
     *size_of_augmentation_data,
     enum Dwarf_augmentation_type augtype,
     Dwarf_Small * section_end_pointer,
-    Dwarf_Small * fde_eh_encoding_out,
     char *augmentation,
     Dwarf_Error *error);
 
@@ -542,7 +553,6 @@ dwarf_create_cie_from_after_start(Dwarf_Debug dbg,
         in DWARF2 or DWARF3 cie data, below we set it right if
         it is present. */
     Dwarf_Half address_size = dbg->de_pointer_size;
-    Dwarf_Small eh_fde_encoding = 0;
     Dwarf_Small *augmentation = 0;
     Dwarf_Half segment_size = 0;
     Dwarf_Sword data_alignment_factor = -1;
@@ -699,7 +709,6 @@ dwarf_create_cie_from_after_start(Dwarf_Debug dbg,
         err = get_gcc_eh_augmentation(dbg, frame_ptr, &increment,
             augt,
             section_ptr_end,
-            &eh_fde_encoding,
             (char *) augmentation,error);
         if (err == DW_DLV_ERROR) {
             _dwarf_error(dbg, error,DW_DLE_FRAME_AUGMENTATION_UNKNOWN);
@@ -1531,6 +1540,7 @@ read_encoded_ptr(Dwarf_Debug dbg,
     For .eh_frame, gcc from 3.3 uses the z style, earlier used
     only "eh" as augmentation.  We don't yet handle
     decoding .eh_frame with the z style extensions like L P.
+    gnu_aug_encodings() does handle L P.
 
     These are nasty heuristics, but then that's life
     as augmentations are implementation specific.  */
@@ -1599,7 +1609,6 @@ _dwarf_get_augmentation_type(UNUSEDARG Dwarf_Debug dbg,
     'frame_ptr' points within section.
     'section_end' points to end of section area of interest.
 
-    Why is fde_eh_encoding_out there? It's unused.
 */
 /* ARGSUSED */
 static int
@@ -1607,7 +1616,6 @@ get_gcc_eh_augmentation(Dwarf_Debug dbg, Dwarf_Small * frame_ptr,
     unsigned long *size_of_augmentation_data,
     enum Dwarf_augmentation_type augtype,
     Dwarf_Small * section_ptr_end,
-    Dwarf_Small * fde_eh_encoding_out,
     char *augmentation,
     Dwarf_Error *error)
 {

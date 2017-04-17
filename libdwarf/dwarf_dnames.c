@@ -38,13 +38,13 @@
 /*  freedabs attempts to do some cleanup in the face
     of an error. */
 static void
-freedabs(struct Dwarf_D_Abbrev_s *dab) 
+freedabs(struct Dwarf_D_Abbrev_s *dab)
 {
-     struct Dwarf_D_Abbrev_s *tmp = 0;
-     for(; dab; dab = tmp) {
-         tmp = dab->da_next;
-         free(tmp);
-     }
+    struct Dwarf_D_Abbrev_s *tmp = 0;
+    for(; dab; dab = tmp) {
+        tmp = dab->da_next;
+        free(tmp);
+    }
 }
 
 static int
@@ -180,7 +180,7 @@ get_inhdr_cur(Dwarf_Dnames_Head dn,
 
 
 static int
-read_uword_val(Dwarf_Debug dbg, 
+read_uword_val(Dwarf_Debug dbg,
     Dwarf_Small **ptr_in,
     Dwarf_Small *endptr,
     int   errcode,
@@ -503,7 +503,7 @@ free_inhdr_list(struct Dwarf_Dnames_index_header_s *f)
     for multiple CUs or there can be individual indexes
     for some CUs.
     see DWARF5 6.1.1.3 Per_CU versus Per-Module Indexes. */
-int 
+int
 dwarf_debugnames_header(Dwarf_Debug dbg,
     Dwarf_Dnames_Head * dn_out,
     Dwarf_Unsigned    * dn_count_out,

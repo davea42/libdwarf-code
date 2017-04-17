@@ -1,3 +1,6 @@
+2017-04-17 David Anderson
+    * common.c, dwarfdump.c, tag_attr.c, tag_tree.c:Update 
+      version string.
 2017-04-16 David Anderson
     * CMakeLists.txt: Added in new files glflangs.c, .h
 2017-04-12 David Anderson
@@ -28,8 +31,8 @@
     * common.c, dwarfdump.c, tag_attr.c, tag_tree.c:Update 
       version string.
 2017-04-02 David Anderson
-    * dwarfdump.c: If printing group 2 (DWARF5 dwo sections) ensure that
-      printing of those sections only possible 
+    * dwarfdump.c: If printing group 2 (DWARF5 dwo sections) 
+      ensure that printing of those sections only possible 
       in group 1 is turned off.
 2017-03-30 David Anderson
 2017-03-30 David Anderson
@@ -37,9 +40,9 @@
     * dwarfdump.c: Adding groupnumber option support.
     * sanitized.c: Removed trailing whitespace
 2017-03-24 David Anderson
-    * dwarfdump.c: Now argv[0] is checked before setting the program_name
-      global variable.  If it contains /dwarfdump.O  that part of
-      the string is shortened to /dwarfdump.
+    * dwarfdump.c: Now argv[0] is checked before setting the 
+      program_name global variable.  If it contains /dwarfdump.O
+      that part of the string is shortened to /dwarfdump.
       Doing this removes a need for the regressiontests to use sed
       and shortens the regressiontests runtime on a one machine from
       77 minutes to 23 minutes.

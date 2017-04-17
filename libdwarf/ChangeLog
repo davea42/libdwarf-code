@@ -1,3 +1,10 @@
+2017-04-17 David Anderson
+    * gennames.c: Update version string.
+    * dwarf_dnames.c: Fixed indentation of a few lines.
+    * dwarf_frame2.c: Deleted the argument fde_eh_encoding_out
+      from the local function get_gcc_eh_augmentation() as
+      is not needed and got an annoying compiler warning.
+    * dwarf_print_lines.c: Removed trailing whitespace.
 2017-04-16 David Anderson
     * CMakeLists.txt: Added in the new files dwarf_dnames.c, .h
 2017-04-16 David Anderson
