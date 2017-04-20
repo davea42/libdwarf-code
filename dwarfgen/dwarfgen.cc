@@ -1,5 +1,5 @@
 /*
-  Copyright (C) 2010-2016 David Anderson.  All rights reserved.
+  Copyright (C) 2010-2017 David Anderson.  All rights reserved.
 
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions are met:
@@ -370,7 +370,13 @@ main(int argc, char **argv)
         int opt;
         bool pathrequired(false);
         long cu_of_input_we_output = -1;
-        while((opt=dwgetopt(argc,argv,"o:t:c:hsr")) != -1) {
+        int ptrsizeflagbit = DW_DLC_POINTER32;
+        int offsetsizeflagbit = DW_DLC_OFFSET32;
+        const char * isa_name = "x86";
+        const char *dwarf_version = "V2";
+        int endian =  DW_DLC_TARGET_LITTLEENDIAN;
+
+        while((opt=dwgetopt(argc,argv,"o:t:c:hsrv:p:f:")) != -1) {
             switch(opt) {
             case 'c':
                 // At present we can only create a single
@@ -382,6 +388,39 @@ main(int argc, char **argv)
                 break;
             case 's':
                 defaultInfoStringForm = DW_FORM_strp;
+                break;
+            case 'p': /* pointer size: value 4 or 8. */
+                if (!strcmp("4",optarg)) {
+                    ptrsizeflagbit = DW_DLC_POINTER32;
+                } else if (!strcmp("8",optarg)) {
+                    ptrsizeflagbit = DW_DLC_POINTER64;
+                } else {
+                    cerr << "dwarfgen: Invalid p option input " <<
+                        optarg << endl;
+                    exit(1);
+                }
+                break;
+            case 'f': /* offset size: value 4 or 8. */
+                if (!strcmp("4",optarg)) {
+                    offsetsizeflagbit = DW_DLC_OFFSET32;
+                } else if (!strcmp("8",optarg)) {
+                    offsetsizeflagbit = DW_DLC_OFFSET64;
+                } else {
+                    cerr << "dwarfgen: Invalid f option input " <<
+                        optarg << endl;
+                    exit(1);
+                }
+                break;
+            case 'v': /* Version 2 or 5 for now */
+                if (!strcmp("5",optarg)) {
+                    dwarf_version = "V5";
+                } else if (!strcmp("2",optarg)) {
+                    dwarf_version = "V2";
+                } else {
+                    cerr << "dwarfgen: Invalid v option input " <<
+                        optarg << endl;
+                    exit(1);
+                }
                 break;
             case 't':
                 setinput(&whichinput,dwoptarg,&pathrequired);
@@ -421,17 +460,14 @@ main(int argc, char **argv)
             cerr << "dwarfgen: Impossible: unknown input style." << endl;
             exit(EXIT_FAILURE);
         }
+
         // Example will return error value thru 'err' pointer
         // and return DW_DLV_BADADDR if there is an error.
-        int ptrsizeflagbit = DW_DLC_POINTER32;
-        int offsetsizeflagbit = DW_DLC_OFFSET32;
-        const char * isa_name = "x86";
-        const char *dwarf_version = "V2";
-        int endian =  DW_DLC_TARGET_LITTLEENDIAN;
         Dwarf_Ptr errarg = 0;
         Dwarf_Error err = 0;
         void *user_data = 0;
         Dwarf_P_Debug dbg = 0;
+
         // We use DW_DLC_SYMBOLIC_RELOCATIONS so we can
         // read the relocations and do our own relocating.
         // See calls of dwarf_get_relocation_info().
