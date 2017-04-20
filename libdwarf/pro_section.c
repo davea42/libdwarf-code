@@ -3030,10 +3030,6 @@ _dwarf_pro_generate_debug_line_str(Dwarf_P_Debug dbg,
 
 /*  Get a buffer of section data.
     section_idx is the elf-section number that this data applies to.
-
-
-/*  Get a buffer of section data.
-    section_idx is the elf-section number that this data applies to.
     length shows length of returned data
     This is the original format. Hard to check for error. */
 

@@ -1,4 +1,7 @@
 2017-04-20 David Anderson
+    * pro_section.c: A harmless(!) comment-within-comment
+      removed.
+2017-04-20 David Anderson
     * gennames.c: Update version string.
 2017-04-20 David Anderson
     * configure.in: Added additional gcc -W to --enable-wall.
