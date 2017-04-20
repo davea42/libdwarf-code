@@ -1,7 +1,7 @@
 /*
 
   Copyright (C) 2000-2005 Silicon Graphics, Inc.  All Rights Reserved.
-  Portions Copyright (C) 2007-2013 David Anderson. All Rights Reserved.
+  Portions Copyright (C) 2007-2017 David Anderson. All Rights Reserved.
   Portions Copyright (C) 2008-2010 Arxan Technologies, Inc. All Rights Reserved.
 
   This program is free software; you can redistribute it and/or modify it
@@ -270,10 +270,6 @@ struct Dwarf_CU_Context_s {
         For DWARF 2,3,4 this is filled in initially
         from the CU header and refined by inspecting the TAG
         of the CU DIE to detect DW_UT_partial is applicable.  */
-
-    /*  If non-zero is the DW_AT_comp_dir string from
-        the DWARF data. Do not free. */
-    const char *  cc_at_comp_dir;
 };
 
 /*  Consolidates section-specific data in one place.

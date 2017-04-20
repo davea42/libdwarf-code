@@ -2,7 +2,7 @@
 
   Copyright (C) 2000-2010 Silicon Graphics, Inc.  All Rights Reserved.
   Portions Copyright 2007-2010 Sun Microsystems, Inc. All rights reserved.
-  Portions Copyright 2008-2016 David Anderson. All rights reserved.
+  Portions Copyright 2008-2017 David Anderson. All rights reserved.
   Portions Copyright 2008-2010 Arxan Technologies, Inc. All rights reserved.
   Portions Copyright 2010-2012 SN Systems Ltd. All rights reserved.
 
@@ -1313,9 +1313,13 @@ struct Dwarf_Obj_Access_Interface_s {
 #define DW_DLE_DEBUG_NAMES_BAD_INDEX_ARG       379
 #define DW_DLE_DEBUG_NAMES_ENTRYPOOL_OFFSET    380
 #define DW_DLE_DEBUG_NAMES_UNHANDLED_FORM      381
+#define DW_DLE_LNCT_CODE_UNKNOWN               382
+#define DW_DLE_LNCT_FORM_CODE_NOT_HANDLED      383
+#define DW_DLE_LINE_HEADER_LENGTH_BOTCH        384
+#define DW_DLE_STRING_HASHTAB_IDENTITY_ERROR   385
 
     /* LAST MUST EQUAL LAST ERROR NUMBER */
-#define DW_DLE_LAST        381
+#define DW_DLE_LAST        385
 #define DW_DLE_LO_USER     0x10000
 
     /*  Taken as meaning 'undefined value', this is not

@@ -1,6 +1,6 @@
 /*
    Copyright (C) 2000-2006 Silicon Graphics, Inc.  All Rights Reserved.
-   Portions Copyright (C) 2007-2013 David Anderson. All Rights Reserved.
+   Portions Copyright (C) 2007-2017 David Anderson. All Rights Reserved.
    Portions Copyright (C) 2010-2012 SN Systems Ltd. All Rights Reserved.
    Portions Copyright (C) 2015-2015 Google, Inc. All Rights Reserved.
 
@@ -397,6 +397,8 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
     } else if (version == EXPERIMENTAL_LINE_TABLES_VERSION) {
         /* Empty old style dir entry list. */
         line_ptr++;
+    } else if (version == 5) {
+        /* handled below */
     } else {
         /* No old style directory entries. */
     }
@@ -465,6 +467,8 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
             return (DW_DLV_ERROR);
         }
         line_ptr++;
+    } else if (version == 5) {
+        /* handled below */
     } else {
         /* No old style filenames entries. */
     }
@@ -502,7 +506,7 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
 
     if (version == DW_LINE_VERSION5 ||
         version == EXPERIMENTAL_LINE_TABLES_VERSION) {
-        /* DWARF 5. */
+        /* DWARF 5.  directory names.*/
         Dwarf_Unsigned directory_format_count = 0;
         Dwarf_Unsigned *directory_entry_types = 0;
         Dwarf_Unsigned *directory_entry_forms = 0;
@@ -594,7 +598,7 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
 
     if (version == DW_LINE_VERSION5 ||
         version == EXPERIMENTAL_LINE_TABLES_VERSION) {
-        /* DWARF 5. */
+        /* DWARF 5.  file names.*/
         Dwarf_Unsigned filename_format_count = 0;
         Dwarf_Unsigned *filename_entry_types = 0;
         Dwarf_Unsigned *filename_entry_forms = 0;

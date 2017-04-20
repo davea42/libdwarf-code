@@ -2,7 +2,7 @@
 
   Copyright (C) 2000,2004 Silicon Graphics, Inc.  All Rights Reserved.
   Portions Copyright 2002-2010 Sun Microsystems, Inc. All rights reserved.
-  Portions Copyright 2011-2016 David Anderson.  All Rights Reserved.
+  Portions Copyright 2011-2017 David Anderson.  All Rights Reserved.
 
   This program is free software; you can redistribute it and/or modify it
   under the terms of version 2.1 of the GNU Lesser General Public License
@@ -396,10 +396,10 @@ static int
 insert_debug_str_data_string(Dwarf_P_Debug dbg,
     char *name,
     unsigned slen,
+    Dwarf_P_Section_Data sd,
     Dwarf_Unsigned*adding_at_offset,
     Dwarf_Error *  error)
 {
-    Dwarf_P_Section_Data sd = dbg->de_debug_str;
     Dwarf_Unsigned current_offset = 0;
 
     if (!sd->ds_data) {
@@ -462,9 +462,10 @@ insert_debug_str_data_string(Dwarf_P_Debug dbg,
 
 /*  Find the string offset using the hash table,
     and if not known, insert the new string. */
-static int
+int
 _dwarf_insert_or_find_in_debug_str(Dwarf_P_Debug dbg,
     char *name,
+    enum dwarf_which_hash whash,
     unsigned slen, /* includes space for trailing NUL */
     Dwarf_Unsigned *offset_in_debug_str,
     Dwarf_Error *error)
@@ -475,7 +476,27 @@ _dwarf_insert_or_find_in_debug_str(Dwarf_P_Debug dbg,
     struct Dwarf_P_debug_str_entry_s *re = 0;
     int res = 0;
     Dwarf_Unsigned adding_at_offset = 0;
+    void **hashtab = 0;
+    Dwarf_P_Section_Data sd = 0;
+    struct Dwarf_P_Str_stats_s * stats =  0;
 
+    switch (whash) {
+    case _dwarf_hash_debug_str:
+        hashtab =  &dbg->de_debug_str_hashtab;
+        sd =  dbg->de_debug_str;
+        stats = &dbg->de_stats.ps_strp;
+        break;
+    case _dwarf_hash_debug_line_str:
+        hashtab =  &dbg->de_debug_line_str_hashtab;
+        sd =  dbg->de_debug_line_str;
+        stats = &dbg->de_stats.ps_line_strp;
+        break;
+    case _dwarf_hash_debug_str_sup:
+    default:
+        /* Not supported or unknown. */
+        _dwarf_p_error(dbg, error, DW_DLE_STRING_HASHTAB_IDENTITY_ERROR);
+        return DW_DLV_ERROR;
+    }
     res = make_debug_str_entry(dbg,&mt,name,
         slen,FALSE, 0, error);
     if (res != DW_DLV_OK) {
@@ -484,11 +505,12 @@ _dwarf_insert_or_find_in_debug_str(Dwarf_P_Debug dbg,
     /*  We do a find as we do not want the string pointer passed in
         to be in the hash table, we want a pointer into the
         debug_str table in the hash table. */
-    retval = dwarf_tfind(mt,(void *const*)&dbg->de_debug_str_hashtab,
+    retval = dwarf_tfind(mt,(void *const*)hashtab,
         _dwarf_debug_str_compare_func);
     if (retval) {
-        dbg->de_stats.ps_strp_reused_count++;
-        dbg->de_stats.ps_strp_reused_len += slen;
+
+        stats->ps_strp_reused_count++;
+        stats->ps_strp_reused_len += slen;
 
         re = *(struct Dwarf_P_debug_str_entry_s **)retval;
         *offset_in_debug_str = re->dse_table_offset;
@@ -502,8 +524,8 @@ _dwarf_insert_or_find_in_debug_str(Dwarf_P_Debug dbg,
 
     debug_str_entry_free_func(mt);
     mt = 0;
-    res = insert_debug_str_data_string(dbg,name,slen, &adding_at_offset,
-        error);
+    res = insert_debug_str_data_string(dbg,name,slen,sd,
+        &adding_at_offset, error);
     if (res != DW_DLV_OK) {
         return res;
     }
@@ -516,7 +538,7 @@ _dwarf_insert_or_find_in_debug_str(Dwarf_P_Debug dbg,
         return res;
     }
     retval = dwarf_tsearch(mt2,
-        (void *)&dbg->de_debug_str_hashtab,
+        (void *)hashtab,
         _dwarf_debug_str_compare_func);
     if (!retval) {
         debug_str_entry_free_func(mt2);
@@ -533,8 +555,8 @@ _dwarf_insert_or_find_in_debug_str(Dwarf_P_Debug dbg,
         _dwarf_p_error(dbg, error, DW_DLE_ILLOGICAL_TSEARCH);
         return DW_DLV_ERROR;
     }
-    dbg->de_stats.ps_strp_count_debug_str++;
-    dbg->de_stats.ps_strp_len_debug_str += slen;
+    stats->ps_strp_count_debug_str++;
+    stats->ps_strp_len_debug_str += slen;
     /* we added it to hash, do not free mt2 (which == re). */
     *offset_in_debug_str = re->dse_table_offset;
     return DW_DLV_OK;
@@ -573,7 +595,8 @@ int _dwarf_pro_set_string_attr(Dwarf_P_Attribute new_attr,
         Dwarf_Unsigned offset_in_debug_str = 0;
         int res = 0;
 
-        res = _dwarf_insert_or_find_in_debug_str(dbg,name,slen,
+        res = _dwarf_insert_or_find_in_debug_str(dbg,name,
+            _dwarf_hash_debug_str,slen,
             &offset_in_debug_str,error);
         if(res != DW_DLV_OK) {
             return res;

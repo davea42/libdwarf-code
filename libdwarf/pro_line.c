@@ -1,7 +1,7 @@
 /*
 
   Copyright (C) 2000,2004 Silicon Graphics, Inc.  All Rights Reserved.
-  Portions Copyright 2011 David Anderson. All Rights Reserved.
+  Portions Copyright 2011-2017 David Anderson. All Rights Reserved.
 
   This program is free software; you can redistribute it and/or modify it
   under the terms of version 2.1 of the GNU Lesser General Public License
@@ -115,7 +115,8 @@ dwarf_add_line_entry(Dwarf_P_Debug dbg,
 void
 _dwarf_init_default_line_header_vals(Dwarf_P_Debug dbg)
 {
-    dbg->de_line_inits.pi_version = DW_LINE_VERSION2;
+    dbg->de_line_inits.pi_version = dbg->de_output_version;
+
     dbg->de_line_inits.pi_default_is_stmt = DEFAULT_IS_STMT;
     dbg->de_line_inits.pi_minimum_instruction_length = MIN_INST_LENGTH;
     dbg->de_line_inits.pi_maximum_operations_per_instruction = 1;
@@ -250,29 +251,29 @@ dwarf_add_directory_decl(Dwarf_P_Debug dbg,
     char *name, Dwarf_Error * error)
 {
     if (dbg->de_inc_dirs == NULL) {
-        dbg->de_inc_dirs = (Dwarf_P_Inc_Dir)
-            _dwarf_p_get_alloc(dbg, sizeof(struct Dwarf_P_Inc_Dir_s));
+        dbg->de_inc_dirs = (Dwarf_P_F_Entry)
+            _dwarf_p_get_alloc(dbg, sizeof(struct Dwarf_P_F_Entry_s));
         if (dbg->de_inc_dirs == NULL) {
             DWARF_P_DBG_ERROR(dbg, DW_DLE_INCDIR_ALLOC, DW_DLV_NOCOUNT);
         }
         dbg->de_last_inc_dir = dbg->de_inc_dirs;
         dbg->de_n_inc_dirs = 1;
     } else {
-        dbg->de_last_inc_dir->did_next = (Dwarf_P_Inc_Dir)
-            _dwarf_p_get_alloc(dbg, sizeof(struct Dwarf_P_Inc_Dir_s));
-        if (dbg->de_last_inc_dir->did_next == NULL) {
+        dbg->de_last_inc_dir->dfe_next = (Dwarf_P_F_Entry)
+            _dwarf_p_get_alloc(dbg, sizeof(struct Dwarf_P_F_Entry_s));
+        if (dbg->de_last_inc_dir->dfe_next == NULL) {
             DWARF_P_DBG_ERROR(dbg, DW_DLE_INCDIR_ALLOC, DW_DLV_NOCOUNT);
         }
-        dbg->de_last_inc_dir = dbg->de_last_inc_dir->did_next;
+        dbg->de_last_inc_dir = dbg->de_last_inc_dir->dfe_next;
         dbg->de_n_inc_dirs++;
     }
-    dbg->de_last_inc_dir->did_name =
+    dbg->de_last_inc_dir->dfe_name =
         (char *) _dwarf_p_get_alloc(dbg, strlen(name) + 1);
-    if (dbg->de_last_inc_dir->did_name == NULL) {
+    if (dbg->de_last_inc_dir->dfe_name == NULL) {
         DWARF_P_DBG_ERROR(dbg, DW_DLE_STRING_ALLOC, DW_DLV_NOCOUNT);
     }
-    strcpy(dbg->de_last_inc_dir->did_name, name);
-    dbg->de_last_inc_dir->did_next = NULL;
+    strcpy(dbg->de_last_inc_dir->dfe_name, name);
+    dbg->de_last_inc_dir->dfe_next = NULL;
 
     return dbg->de_n_inc_dirs;
 }

@@ -2,7 +2,7 @@
 
   Copyright (C) 2000,2004 Silicon Graphics, Inc.  All Rights Reserved.
   Portions Copyright 2002-2010 Sun Microsystems, Inc. All rights reserved.
-  Portions Copyright 2008-2014 David Anderson, Inc. All rights reserved.
+  Portions Copyright 2008-2017 David Anderson, Inc. All rights reserved.
   Portions Copyright 2012 SN Systems Ltd. All rights reserved.
 
   This program is free software; you can redistribute it and/or modify it
@@ -107,6 +107,9 @@ static struct Dwarf_P_Section_Data_s init_sect = {
     MAGIC_SECT_NO, 0, 0, 0, 0
 };
 static struct Dwarf_P_Section_Data_s init_sect_debug_str = {
+    MAGIC_SECT_NO, 0, 0, 0, 0
+};
+static struct Dwarf_P_Section_Data_s init_sect_debug_line_str = {
     MAGIC_SECT_NO, 0, 0, 0, 0
 };
 
@@ -260,9 +263,9 @@ common_init(Dwarf_P_Debug dbg, Dwarf_Unsigned flags, const char *abiname,
     dbg->de_n_debug_sect = 0;
     dbg->de_debug_sects = &init_sect;
     dbg->de_debug_str = &init_sect_debug_str;
+    dbg->de_debug_line_str = &init_sect_debug_line_str;
     dbg->de_current_active_section = &init_sect;
     dbg->de_flags = flags;
-    _dwarf_init_default_line_header_vals(dbg);
 
 
     if(dbg->de_flags & DW_DLC_POINTER64) {
@@ -272,14 +275,16 @@ common_init(Dwarf_P_Debug dbg, Dwarf_Unsigned flags, const char *abiname,
         dbg->de_pointer_size = 4;
     }
     if(dbg->de_flags & DW_DLC_OFFSET64) {
+        /* Standard DWARF 64bit offset, length field 12 bytes */
         dbg->de_offset_size = 8;
-        dbg->de_64bit_extension = 0;
+        dbg->de_64bit_extension = 1;
     } else {
         if(dbg->de_flags & DW_DLC_IRIX_OFFSET64) {
             dbg->de_offset_size = 8;
-            dbg->de_64bit_extension = 1;
+            dbg->de_64bit_extension = 0;
         } else {
-            /* offset size 4 assumed. */
+            /*  offset size 4 assumed, it is
+                by far the most frequent case.. */
             dbg->de_offset_size = 4;
             dbg->de_64bit_extension = 0;
         }
@@ -299,21 +304,21 @@ common_init(Dwarf_P_Debug dbg, Dwarf_Unsigned flags, const char *abiname,
         *err_ret = DW_DLE_BAD_ABINAME;
         return DW_DLV_ERROR;
     }
-    if(!dwarf_version) {
-        dbg->de_output_version = 2;
-    } else if (!strcmp(dwarf_version,"V2")) {
-        dbg->de_output_version = 2;
-    } else if (!strcmp(dwarf_version,"V3")) {
-        dbg->de_output_version = 3;
-    } else if (!strcmp(dwarf_version,"V4")) {
-        dbg->de_output_version = 4;
-    } else if (!strcmp(dwarf_version,"V5")) {
-        dbg->de_output_version = 5;
-    } else {
-        /* The default. */
-        dbg->de_output_version = 2;
+    dbg->de_output_version = 2;
+    if(dwarf_version) {
+        if (!strcmp(dwarf_version,"V2")) {
+            dbg->de_output_version = 2;
+        } else if (!strcmp(dwarf_version,"V3")) {
+            dbg->de_output_version = 3;
+        } else if (!strcmp(dwarf_version,"V4")) {
+            dbg->de_output_version = 4;
+        } else if (!strcmp(dwarf_version,"V5")) {
+            dbg->de_output_version = 5;
+        } else {
+            *err_ret = DW_DLE_VERSION_STAMP_ERROR;
+            return DW_DLV_ERROR;
+        }
     }
-
     if (flags & DW_DLC_SYMBOLIC_RELOCATIONS) {
         dbg->de_relocation_record_size =
             sizeof(struct Dwarf_Relocation_Data_s);
@@ -328,11 +333,14 @@ common_init(Dwarf_P_Debug dbg, Dwarf_Unsigned flags, const char *abiname,
 #endif
 
     }
+    _dwarf_init_default_line_header_vals(dbg);
 
     /* For .debug_str creation. */
     dwarf_initialize_search_hash(&dbg->de_debug_str_hashtab,
         simple_string_hashfunc,0);
     dbg->de_debug_default_str_form = DW_FORM_string;
+    dwarf_initialize_search_hash(&dbg->de_debug_line_str_hashtab,
+        simple_string_hashfunc,0);
 
     /* FIXME: conditional on the DWARF version target,
         dbg->de_output_version. */

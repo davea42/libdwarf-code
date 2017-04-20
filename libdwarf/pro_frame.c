@@ -1,7 +1,7 @@
 /*
 
   Copyright (C) 2000,2004 Silicon Graphics, Inc.  All Rights Reserved.
-  Portions Copyright 2011-2012  David Anderson. All Rights Reserved.
+  Portions Copyright 2011-2017  David Anderson. All Rights Reserved.
   Portions Copyright 2012 SN Systems Ltd. All rights reserved.
 
   This program is free software; you can redistribute it and/or modify it
@@ -76,7 +76,14 @@ dwarf_add_frame_cie(Dwarf_P_Debug dbg,
         dbg->de_n_cie++;
         dbg->de_last_cie = curcie;
     }
-    curcie->cie_version = DW_CIE_VERSION;
+    curcie->cie_version = 1;
+    if (dbg->de_output_version > 2) {
+        curcie->cie_version = dbg->de_output_version;
+    } else {
+        /*  V2 dwarf has debug_frame as version 1, there
+            is no 2 used in this section. */
+        curcie->cie_version = 1;
+    }
     tmpaug = (char *)_dwarf_p_get_alloc(dbg,strlen(augmenter)+1);
     strcpy(tmpaug,augmenter);
     if (!tmpaug) {
@@ -341,10 +348,10 @@ dwarf_fde_cfa_offset(Dwarf_P_Fde fde,
     For certain operations a val? value must be
     signed (though passed in as unsigned here).
 
-    Currently this does not check that the frame
-    version is 3(for dwarf3) or 4 (for dwarf4)
+    Does not check that the frame
+    version is 3(for dwarf3) or 4 (for dwarf4) or 5
     when applying operations that are only valid for
-    dwarf3 or dwarf4. */
+    particular versions. */
 Dwarf_P_Fde
 dwarf_add_fde_inst(Dwarf_P_Fde fde,
     Dwarf_Small op,

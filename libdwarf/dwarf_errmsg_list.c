@@ -1,7 +1,7 @@
 /*
 
   Copyright (C) 2000-2005 Silicon Graphics, Inc. All Rights Reserved.
-  Portions Copyright (C) 2008-2016 David Anderson.  All Rights Reserved.
+  Portions Copyright (C) 2008-2017 David Anderson.  All Rights Reserved.
 
   This program is free software; you can redistribute it and/or modify it
   under the terms of version 2.1 of the GNU Lesser General Public License
@@ -460,6 +460,10 @@ const char *_dwarf_errmsgs[] = {
     "DW_DLE_DEBUG_NAMES_BAD_INDEX_ARG(379) index outside valid range",
     "DW_DLE_DEBUG_NAMES_ENTRYPOOL_OFFSET(380) offset outside entrypool",
     "DW_DLE_DEBUG_NAMES_UNHANDLED_FORM(381) Might be corrupt dwarf or incomplete DWARF support",
+    "DW_DLE_LNCT_CODE_UNKNOWN(382)",
+    "DW_DLE_LNCT_FORM_CODE_NOT_HANDLED(383) Might be bad form or just not implemented",
+    "DW_DLE_LINE_HEADER_LENGTH_BOTCH(384) Internal libdwarf error",
+    "DW_DLE_STRING_HASHTAB_IDENTITY_ERROR(385) Internal libdwarf error",
 };
 
 #ifdef TESTING

@@ -2,7 +2,7 @@
 
   Copyright (C) 2000,2004 Silicon Graphics, Inc.  All Rights Reserved.
   Portions Copyright 2002-2010 Sun Microsystems, Inc. All rights reserved.
-  Portions Copyright 2011 David Anderson. All rights reserved.
+  Portions Copyright 2011-2017 David Anderson. All rights reserved.
 
   This program is free software; you can redistribute it and/or modify it
   under the terms of version 2.1 of the GNU Lesser General Public License
@@ -59,6 +59,7 @@ dwarf_producer_finish_a(Dwarf_P_Debug dbg, Dwarf_Error * error)
     return DW_DLV_OK ;
 }
 
+/* FIXME: Add stats for debug_line_str. */
 int
 dwarf_pro_get_string_stats(Dwarf_P_Debug dbg,
     Dwarf_Unsigned * str_count,
@@ -69,6 +70,7 @@ dwarf_pro_get_string_stats(Dwarf_P_Debug dbg,
     Dwarf_Unsigned * strp_reused_len,
     Dwarf_Error    * error)
 {
+    struct Dwarf_P_Str_stats_s* ps = 0;
     if (!dbg) {
         _dwarf_p_error(dbg, error, DW_DLE_IA);
         return DW_DLV_ERROR;
@@ -79,10 +81,11 @@ dwarf_pro_get_string_stats(Dwarf_P_Debug dbg,
     }
     *str_count        = dbg->de_stats.ps_str_count;
     *str_total_length = dbg->de_stats.ps_str_total_length;
-    *strp_count_debug_str  = dbg->de_stats.ps_strp_count_debug_str;
-    *strp_len_debug_str    = dbg->de_stats.ps_strp_len_debug_str;
-    *strp_reused_count  = dbg->de_stats.ps_strp_reused_count;
-    *strp_reused_len   = dbg->de_stats.ps_strp_reused_len;
+    ps = &dbg->de_stats.ps_strp;
+    *strp_count_debug_str = ps->ps_strp_count_debug_str;
+    *strp_len_debug_str   = ps->ps_strp_len_debug_str;
+    *strp_reused_count    = ps->ps_strp_reused_count;
+    *strp_reused_len      = ps->ps_strp_reused_len;
     return DW_DLV_OK;
 }
 

@@ -1,3 +1,53 @@
+2017-04-20 David Anderson
+    * configure.in: Added additional gcc -W to --enable-wall.
+    * configure: Regenerated.
+    * dwarf_errmsg_list.c: Added new error codes in
+      new DWARF5 support.
+    * dwarf_line_table_reader_common.c: Improved comments and
+      added specific code for DWARF5 (just clarity here,
+      no real change).
+    * dwarf_opaque.h: Removed unused declaration of cc_at_comp_dir.
+    * dwarf_print_lines.c: Update copyright year.
+    * libdwarf.h.in: Added new DW_DLE codes.
+    * pro_alloc.c: Added tdestroy for the de_debug_line_str_hashtab
+      to support a .debug_line_str section.
+    * pro_arange.c: Renamed local variables for greater clarity
+      and fixed an improper length write to be offset_size.
+    * pro_die.c: Generalized _dwarf_insert_or_find_in_debug_str()
+      so it can apply to the debug_str or debug_line_str sections.
+    * pro_finish.c: We have new statistics arrangement
+      to aid in getting statistics on debug_str and 
+      debug_line_str independently.
+      So a little change needed to get things to compile.
+    * pro_frame.c: Now sets cie_version properly for all
+      DWARF versions.
+    * pro_frame.h: cie_version field changed to proper size (Dwarf_Half).
+    * pro_init.c: Support for .debug_line_str strings added.
+      Corrected ancient serious botch in setting up 64bit output.
+      Tweaked the version setup a little (no real change).
+      Moved _dwarf_init_default_line_header_vals() call to
+      where it actually works right for getting version number.
+    * pro_line.c: Unified handling of include directories
+      and files so that we can reuse code readily.
+      Eliminating one internal struct declaration.
+    * pro_line.h: Added new fields for DWARF5 data.
+      Deleted struct Dwarf_P_Inc_Dir_s.
+    * pro_opaque.h: Rearranged section codes and strings
+      and added in DWARF5 sections.
+      Added fields to Dwarf_P_Line_Inits_s for DWARF5 support.
+      Revised struct Dwarf_P_Stats_s and Dwarf_P_Debug_s 
+      for DWARF5 support.
+    * pro_section.c: Added DWARF5 sections to tables and
+      began the addition to generation of these sections.
+      Refactored debug_line header output for clarity,
+      DWARF5 support, and to avoid code duplication.
+2017-04-19 David Anderson
+    * dwarf_opaque.h: Deleted the unused field cc_at_comp_dir.
+2017-04-17 David Anderson
+    * pro_init.c(common_init): Handling of 64bit offsets
+      was coded wrong, the length field would be emitted
+      incorrectly (confusing standard 64bit offset dwarf
+      with non-standard IRIX 64bit offset dwarf).
 2017-04-17 David Anderson
     * gennames.c: Update version string.
     * dwarf_dnames.c: Fixed indentation of a few lines.

@@ -2,7 +2,7 @@
 
   Copyright (C) 2000,2004 Silicon Graphics, Inc.  All Rights Reserved.
   Portions Copyright 2002-2010 Sun Microsystems, Inc. All rights reserved.
-  Portions Copyright 2011 David Anderson.  All Rights Reserved.
+  Portions Copyright 2011-2017 David Anderson.  All Rights Reserved.
 
   This program is free software; you can redistribute it and/or modify it
   under the terms of version 2.1 of the GNU Lesser General Public License
@@ -185,6 +185,8 @@ _dwarf_p_dealloc_all(Dwarf_P_Debug dbg)
         return;
     }
     dwarf_tdestroy(dbg->de_debug_str_hashtab,
+        _dwarf_str_hashtab_freenode);
+    dwarf_tdestroy(dbg->de_debug_line_str_hashtab,
         _dwarf_str_hashtab_freenode);
     _dwarf_p_dealloc(NULL, (void*)dbg);
 }

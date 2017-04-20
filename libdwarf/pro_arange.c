@@ -1,7 +1,7 @@
 /*
 
   Copyright (C) 2000,2004 Silicon Graphics, Inc.  All Rights Reserved.
-  Portions Copyright 2011 David Anderson.  All Rights Reserved.
+  Portions Copyright 2011-2017 David Anderson.  All Rights Reserved.
 
   This program is free software; you can redistribute it and/or modify it
   under the terms of version 2.1 of the GNU Lesser General Public License
@@ -126,8 +126,11 @@ _dwarf_transform_arange_to_disk(Dwarf_P_Debug dbg,
     const Dwarf_Signed big_zero = 0;
 
     int extension_word_size = dbg->de_64bit_extension ? 4 : 0;
-    int uword_size = dbg->de_offset_size;
+    int offset_size = dbg->de_offset_size;
     int upointer_size = dbg->de_pointer_size;
+
+    /*  All dwarf versions so far use 2 here. */
+    Dwarf_Half version = 2;
     int res = 0;
 
 
@@ -135,9 +138,9 @@ _dwarf_transform_arange_to_disk(Dwarf_P_Debug dbg,
 
     /* Size of the .debug_aranges section header. */
     arange_num_bytes = extension_word_size +
-        uword_size +       /* Size of length field.  */
+        offset_size +       /* Size of length field.  */
         sizeof(Dwarf_Half) +    /* Size of version field. */
-        uword_size +            /* Size of .debug_info offset. */
+        offset_size +            /* Size of .debug_info offset. */
         sizeof(Dwarf_Small) +   /* Size of address size field. */
         sizeof(Dwarf_Small);    /* Size of segment size field. */
 
@@ -169,19 +172,19 @@ _dwarf_transform_arange_to_disk(Dwarf_P_Debug dbg,
     }
 
     /* Write the total length of .debug_aranges section. */
-    adjusted_length = arange_num_bytes - uword_size
+    adjusted_length = arange_num_bytes - offset_size
         - extension_word_size;
     {
         Dwarf_Unsigned du = adjusted_length;
 
         WRITE_UNALIGNED(dbg, (void *) arange_ptr,
-            (const void *) &du, sizeof(du), uword_size);
-        arange_ptr += uword_size;
+            (const void *) &du, sizeof(du), offset_size);
+        arange_ptr += offset_size;
     }
 
     /* Write the version as 2 bytes. */
     {
-        Dwarf_Half verstamp = CURRENT_VERSION_STAMP;
+        Dwarf_Half verstamp = version;
 
         WRITE_UNALIGNED(dbg, (void *) arange_ptr,
             (const void *) &verstamp,
@@ -193,8 +196,8 @@ _dwarf_transform_arange_to_disk(Dwarf_P_Debug dbg,
     /* Write the .debug_info offset.  This is always 0. */
     WRITE_UNALIGNED(dbg, (void *) arange_ptr,
         (const void *) &big_zero,
-        sizeof(big_zero), uword_size);
-    arange_ptr += uword_size;
+        sizeof(big_zero), offset_size);
+    arange_ptr += offset_size;
 
     {
         unsigned long count = dbg->de_arange_count + 1;
@@ -217,9 +220,9 @@ _dwarf_transform_arange_to_disk(Dwarf_P_Debug dbg,
     res = dbg->de_reloc_name(dbg,
         DEBUG_ARANGES,
         extension_word_size +
-        uword_size + sizeof(Dwarf_Half),
+        offset_size + sizeof(Dwarf_Half),
         dbg->de_sect_name_idx[DEBUG_INFO],
-        dwarf_drt_data_reloc, uword_size);
+        dwarf_drt_data_reloc, offset_size);
 
     /* Write the size of addresses. */
     *arange_ptr = dbg->de_pointer_size;
