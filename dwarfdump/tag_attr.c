@@ -41,7 +41,7 @@
 
 boolean ellipsis = FALSE; /* So we can use dwarf_names.c */
 
-#define DW_VERSION_DATE_STR " 2017-04-17 10:22:54-07:00  "
+#define DW_VERSION_DATE_STR " 2017-04-20 12:12:34-07:00  "
 
 /* Expected input format
 

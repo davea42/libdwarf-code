@@ -54,7 +54,7 @@
 extern int elf_open(const char *name,int mode);
 #endif /* _WIN32 */
 
-#define DW_VERSION_DATE_STR " 2017-04-17 10:22:54-07:00  "
+#define DW_VERSION_DATE_STR " 2017-04-20 12:12:34-07:00  "
 
 extern char *dwoptarg;
 

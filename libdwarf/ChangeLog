@@ -1,4 +1,6 @@
 2017-04-20 David Anderson
+    * gennames.c: Update version string.
+2017-04-20 David Anderson
     * configure.in: Added additional gcc -W to --enable-wall.
     * configure: Regenerated.
     * dwarf_errmsg_list.c: Added new error codes in
