@@ -1,9 +1,12 @@
+2017-04-21 David Anderson
+    * pro_section.c: Improved commentary on the abbrev section
+      offset and on the backpatch of overall CU length once CU
+      generated.
 2017-04-20 David Anderson
     * dwarf_die_deliv.c: declaration of local separated from definition
       for easier insertion of debug stuff. Nothing substantive done.
     * dwarf_errmsg_list.c,libdwarf.h.in: Added DW_DLE_UNIT_TYPE_NOT_HANDLED.
     * dwarf_util.c: Fixed setup of debug_info header field reader.
-    * pro_section.c: Corrected the DWARF 5 debug_info CU header
       output code.
 2017-04-20 David Anderson
     * pro_section.c: A harmless(!) comment-within-comment

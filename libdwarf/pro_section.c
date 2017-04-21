@@ -2471,7 +2471,8 @@ _dwarf_pro_generate_debuginfo(Dwarf_P_Debug dbg,
 
     address_size = dbg->de_pointer_size;
     if (version  < 5) {
-        /* write cu header */
+        /* write cu header. abbrev_offset used to
+            generate relocation record below */
         abbrev_offset =  OFFSET_PLUS_EXTENSION_SIZE +
             sizeof(Dwarf_Half)  ;
 
@@ -2517,7 +2518,8 @@ _dwarf_pro_generate_debuginfo(Dwarf_P_Debug dbg,
     } else if (version == 5) {
         /* For now just assume DW_UT_compile FIXME */
 
-        /* write cu header */
+        /* write cu header. abbrev_offset used to
+            generate relocation record below */
         abbrev_offset =  OFFSET_PLUS_EXTENSION_SIZE +
             sizeof(Dwarf_Half) + /* version stamp */
             sizeof(unit_type) +
@@ -2924,8 +2926,9 @@ _dwarf_pro_generate_debuginfo(Dwarf_P_Debug dbg,
         }
     } /* end while (curdir != NULL) */
 
-    /* Write out debug_info size */
-    /* Do not include length field or extension bytes */
+    /*  Write out debug_info size, now that we know it
+        This is back-patching the CU header we created
+        above. */
     du = die_off - OFFSET_PLUS_EXTENSION_SIZE;
     WRITE_UNALIGNED(dbg, (void *) abbr_off_ptr,
         (const void *) &du, sizeof(du), offset_size);

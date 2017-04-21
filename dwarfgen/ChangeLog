@@ -1,3 +1,5 @@
+2017-04-21  David Anderson
+     * dwarfgen.cc: Now supports -v with 2,3,4, or 5.
 2017-04-20  David Anderson
      * dwarfgen.cc: Use dwoptarg. Not optarg. oops.
 2017-04-20  David Anderson

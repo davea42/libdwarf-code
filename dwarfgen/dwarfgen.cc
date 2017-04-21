@@ -412,9 +412,12 @@ main(int argc, char **argv)
                 }
                 break;
             case 'v': /* Version 2 3 4 or 5 */
-                /* Only 2 is reasonably complete. */
                 if (!strcmp("5",dwoptarg)) {
                     dwarf_version = "V5";
+                } else if (!strcmp("4",dwoptarg)) {
+                    dwarf_version = "V4";
+                } else if (!strcmp("3",dwoptarg)) {
+                    dwarf_version = "V3";
                 } else if (!strcmp("2",dwoptarg)) {
                     dwarf_version = "V2";
                 } else {
