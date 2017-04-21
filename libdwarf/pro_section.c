@@ -166,6 +166,20 @@ static Dwarf_P_Abbrev _dwarf_pro_getabbrev(Dwarf_P_Die, Dwarf_P_Abbrev);
 static int _dwarf_pro_match_attr
     (Dwarf_P_Attribute, Dwarf_P_Abbrev, int no_attr);
 
+static void
+dump_bytes(char * msg,Dwarf_Small * start, long len)
+{
+    Dwarf_Small *end = start + len;
+    Dwarf_Small *cur = start;
+
+    printf("%s ",msg);
+    for (; cur < end; cur++) {
+        printf("%02x ", *cur);
+    }
+    printf("\n");
+}
+
+
 /* These macros used as return value for _dwarf_pro_get_opc. */
 #define         OPC_INCS_ZERO           -1
 #define         OPC_OUT_OF_RANGE        -2
@@ -2438,6 +2452,7 @@ _dwarf_pro_generate_debuginfo(Dwarf_P_Debug dbg,
     unsigned string_attr_count = 0;
     unsigned string_attr_offset = 0;
     Dwarf_Small *start_info_sec = 0;
+    Dwarf_Small *abbr_off_ptr = 0;
 
     int offset_size = dbg->de_offset_size;
     /*  extension_size is oddly names. The standard calls
@@ -2454,13 +2469,15 @@ _dwarf_pro_generate_debuginfo(Dwarf_P_Debug dbg,
     abbrev_head = abbrev_tail = NULL;
     elfsectno_of_debug_info = dbg->de_elf_sects[DEBUG_INFO];
 
+    address_size = dbg->de_pointer_size;
     if (version  < 5) {
         /* write cu header */
         abbrev_offset =  OFFSET_PLUS_EXTENSION_SIZE +
-            sizeof(Dwarf_Half) ;
+            sizeof(Dwarf_Half)  ;
 
-        cu_header_size = abbrev_offset + offset_size +
-            sizeof(Dwarf_Ubyte);
+        cu_header_size = abbrev_offset +
+            offset_size + sizeof(Dwarf_Ubyte);
+
         GET_CHUNK_ERR(dbg, elfsectno_of_debug_info, data, cu_header_size,
             error);
         start_info_sec = data;
@@ -2471,6 +2488,7 @@ _dwarf_pro_generate_debuginfo(Dwarf_P_Debug dbg,
                 (const void *) &du, sizeof(du), extension_size);
             data += extension_size;
         }
+        abbr_off_ptr = data;
         du = 0; /* length of debug_info, not counting
             this field itself (unknown at this point). */
         WRITE_UNALIGNED(dbg, (void *) data,
@@ -2486,16 +2504,16 @@ _dwarf_pro_generate_debuginfo(Dwarf_P_Debug dbg,
             (const void *) &du, sizeof(du), offset_size);
         data += offset_size;
 
-        address_size = dbg->de_pointer_size;
-
         WRITE_UNALIGNED(dbg, (void *) data, (const void *) &address_size,
-            sizeof(address_size), 1);
+            sizeof(address_size), sizeof(Dwarf_Ubyte));
+        data += sizeof(Dwarf_Ubyte);
 
         /*  We have filled the chunk we got with GET_CHUNK.
             At this point we
             no longer dare use "data" or "start_info_sec" as a
             pointer any longer except to refer to that first
-            small chunk for the cu header. */
+            small chunk for the cu header to update
+            the section length. */
     } else if (version == 5) {
         /* For now just assume DW_UT_compile FIXME */
 
@@ -2505,6 +2523,7 @@ _dwarf_pro_generate_debuginfo(Dwarf_P_Debug dbg,
             sizeof(unit_type) +
             sizeof(Dwarf_Ubyte);
         cu_header_size = abbrev_offset + offset_size;
+
         GET_CHUNK_ERR(dbg, elfsectno_of_debug_info, data, cu_header_size,
             error);
         start_info_sec = data;
@@ -2515,6 +2534,7 @@ _dwarf_pro_generate_debuginfo(Dwarf_P_Debug dbg,
                 (const void *) &du, sizeof(du), extension_size);
             data += extension_size;
         }
+        abbr_off_ptr = data;
         du = 0; /* length of debug_info, not counting
             this field itself (unknown at this point). */
         WRITE_UNALIGNED(dbg, (void *) data,
@@ -2541,7 +2561,7 @@ _dwarf_pro_generate_debuginfo(Dwarf_P_Debug dbg,
         /*  We have filled the chunk we got with GET_CHUNK. At this point we
             no longer dare use "data" or "start_info_sec" as a pointer any
             longer except to refer to that first small chunk for the cu
-            header. */
+            header to update the section length. */
 
     } else {
         DWARF_P_DBG_ERROR(dbg, DW_DLE_VERSION_STAMP_ERROR, DW_DLV_ERROR);
@@ -2907,7 +2927,7 @@ _dwarf_pro_generate_debuginfo(Dwarf_P_Debug dbg,
     /* Write out debug_info size */
     /* Do not include length field or extension bytes */
     du = die_off - OFFSET_PLUS_EXTENSION_SIZE;
-    WRITE_UNALIGNED(dbg, (void *) (start_info_sec + extension_size),
+    WRITE_UNALIGNED(dbg, (void *) abbr_off_ptr,
         (const void *) &du, sizeof(du), offset_size);
 
 

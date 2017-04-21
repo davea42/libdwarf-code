@@ -816,14 +816,17 @@ _dwarf_memcpy_swap_bytes(void *s1, const void *s2, size_t len)
     given a known cu header location ( an offset in .debug_info
     or debug_types).  */
 /* ARGSUSED */
+
 int
-_dwarf_length_of_cu_header(Dwarf_Debug dbg, Dwarf_Unsigned offset,
+_dwarf_length_of_cu_header(Dwarf_Debug dbg,
+    Dwarf_Unsigned offset,
     Dwarf_Bool is_info,
     Dwarf_Unsigned *area_length_out,
     Dwarf_Error *error)
 {
     int local_length_size = 0;
     int local_extension_size = 0;
+    Dwarf_Half version = 0;
     Dwarf_Unsigned length = 0;
     Dwarf_Unsigned final_size = 0;
     Dwarf_Small *section_start =
@@ -840,19 +843,57 @@ _dwarf_length_of_cu_header(Dwarf_Debug dbg, Dwarf_Unsigned offset,
         cuptr, local_length_size, local_extension_size,
         error,section_length,section_end_ptr);
 
-    final_size = local_extension_size +  /* initial extension, if present */
-        local_length_size +     /* Size of cu length field. */
-        sizeof(Dwarf_Half) +    /* Size of version stamp field. */
-        local_length_size +     /* Size of abbrev offset field. */
-        sizeof(Dwarf_Small);    /* Size of address size field. */
 
-    if (!is_info) {
-        final_size +=
+    READ_UNALIGNED_CK(dbg, version, Dwarf_Half,
+        cuptr, sizeof(Dwarf_Half),error,section_end_ptr);
+    cuptr += sizeof(Dwarf_Half);
+
+    if (version == 5) {
+        Dwarf_Ubyte unit_type = 0;
+
+        READ_UNALIGNED_CK(dbg, unit_type, Dwarf_Ubyte,
+            cuptr, sizeof(Dwarf_Ubyte),error,section_end_ptr);
+        cuptr += sizeof(Dwarf_Ubyte);
+
+        switch (unit_type) {
+        case DW_UT_compile:
+            final_size = local_extension_size +
+                local_length_size  + /* Size of cu length field. */
+                sizeof(Dwarf_Half) + /* Size of version stamp field. */
+                sizeof(Dwarf_Small)+ /* Size of  unit type field. */
+                sizeof(Dwarf_Small)+ /* Size of address size field. */
+                local_length_size ;  /* Size of abbrev offset field. */
+            break;
+        case DW_UT_type:
+        case DW_UT_partial:
+        case DW_UT_skeleton:
+        case DW_UT_split_compile:
+        case DW_UT_split_type:
+        default:
+            _dwarf_error(dbg,error,DW_DLE_UNIT_TYPE_NOT_HANDLED);
+            return DW_DLV_ERROR;
+        }
+    } else if (version == 4) {
+        final_size = local_extension_size +
+            local_length_size  +  /* Size of cu length field. */
+            sizeof(Dwarf_Half) +  /* Size of version stamp field. */
+            local_length_size  +  /* Size of abbrev offset field. */
+            sizeof(Dwarf_Small);  /* Size of address size field. */
+        if (!is_info) {
+            final_size +=
             /* type signature size */
             sizeof (Dwarf_Sig8) +
             /* type offset size */
             local_length_size;
+        }
+    } else if (version < 4) {
+        final_size = local_extension_size +
+            local_length_size  +
+            sizeof(Dwarf_Half) +
+            local_length_size  +
+            sizeof(Dwarf_Small);  /* Size of address size field. */
     }
+
     *area_length_out = final_size;
     return DW_DLV_OK;
 }

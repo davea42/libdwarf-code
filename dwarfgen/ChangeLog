@@ -1,3 +1,5 @@
 2017-04-20  David Anderson
+     * dwarfgen.cc: Use dwoptarg. Not optarg. oops.
+2017-04-20  David Anderson
      * dwarfgen.cc: Added new options allowing 
        specification of the desired dwarf version.

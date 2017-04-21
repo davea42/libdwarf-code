@@ -464,6 +464,7 @@ const char *_dwarf_errmsgs[] = {
     "DW_DLE_LNCT_FORM_CODE_NOT_HANDLED(383) Might be bad form or just not implemented",
     "DW_DLE_LINE_HEADER_LENGTH_BOTCH(384) Internal libdwarf error",
     "DW_DLE_STRING_HASHTAB_IDENTITY_ERROR(385) Internal libdwarf error",
+    "DW_DLE_UNIT_TYPE_NOT_HANDLED(386) Possibly incomplete dwarf5 support",
 };
 
 #ifdef TESTING

@@ -1317,9 +1317,11 @@ struct Dwarf_Obj_Access_Interface_s {
 #define DW_DLE_LNCT_FORM_CODE_NOT_HANDLED      383
 #define DW_DLE_LINE_HEADER_LENGTH_BOTCH        384
 #define DW_DLE_STRING_HASHTAB_IDENTITY_ERROR   385
+#define DW_DLE_UNIT_TYPE_NOT_HANDLED           386
 
     /* LAST MUST EQUAL LAST ERROR NUMBER */
-#define DW_DLE_LAST        385
+#define DW_DLE_LAST        386
+
 #define DW_DLE_LO_USER     0x10000
 
     /*  Taken as meaning 'undefined value', this is not

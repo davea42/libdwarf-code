@@ -390,35 +390,36 @@ main(int argc, char **argv)
                 defaultInfoStringForm = DW_FORM_strp;
                 break;
             case 'p': /* pointer size: value 4 or 8. */
-                if (!strcmp("4",optarg)) {
+                if (!strcmp("4",dwoptarg)) {
                     ptrsizeflagbit = DW_DLC_POINTER32;
-                } else if (!strcmp("8",optarg)) {
+                } else if (!strcmp("8",dwoptarg)) {
                     ptrsizeflagbit = DW_DLC_POINTER64;
                 } else {
                     cerr << "dwarfgen: Invalid p option input " <<
-                        optarg << endl;
+                        dwoptarg << endl;
                     exit(1);
                 }
                 break;
             case 'f': /* offset size: value 4 or 8. */
-                if (!strcmp("4",optarg)) {
+                if (!strcmp("4",dwoptarg)) {
                     offsetsizeflagbit = DW_DLC_OFFSET32;
-                } else if (!strcmp("8",optarg)) {
+                } else if (!strcmp("8",dwoptarg)) {
                     offsetsizeflagbit = DW_DLC_OFFSET64;
                 } else {
                     cerr << "dwarfgen: Invalid f option input " <<
-                        optarg << endl;
+                        dwoptarg << endl;
                     exit(1);
                 }
                 break;
-            case 'v': /* Version 2 or 5 for now */
-                if (!strcmp("5",optarg)) {
+            case 'v': /* Version 2 3 4 or 5 */
+                /* Only 2 is reasonably complete. */
+                if (!strcmp("5",dwoptarg)) {
                     dwarf_version = "V5";
-                } else if (!strcmp("2",optarg)) {
+                } else if (!strcmp("2",dwoptarg)) {
                     dwarf_version = "V2";
                 } else {
                     cerr << "dwarfgen: Invalid v option input " <<
-                        optarg << endl;
+                        dwoptarg << endl;
                     exit(1);
                 }
                 break;
