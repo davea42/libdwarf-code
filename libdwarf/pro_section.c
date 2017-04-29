@@ -166,6 +166,7 @@ static Dwarf_P_Abbrev _dwarf_pro_getabbrev(Dwarf_P_Die, Dwarf_P_Abbrev);
 static int _dwarf_pro_match_attr
     (Dwarf_P_Attribute, Dwarf_P_Abbrev, int no_attr);
 
+#if 0
 static void
 dump_bytes(char * msg,Dwarf_Small * start, long len)
 {
@@ -178,6 +179,7 @@ dump_bytes(char * msg,Dwarf_Small * start, long len)
     }
     printf("\n");
 }
+#endif
 
 
 /* These macros used as return value for _dwarf_pro_get_opc. */
@@ -1542,7 +1544,8 @@ _dwarf_pro_generate_debugline(Dwarf_P_Debug dbg,
                 sum_bytes += writelen;
 
                 /* reloc for address */
-                res = dbg->de_reloc_name(dbg, DEBUG_LINE,
+                res = dbg->de_relocate_by_name_symbol(dbg,
+                    DEBUG_LINE,
                     sum_bytes,  /* r_offset  */
                     curline->dpl_r_symidx,
                     dwarf_drt_data_reloc,
@@ -2086,7 +2089,8 @@ _dwarf_pro_generate_debugframe(Dwarf_P_Debug dbg,
 
         /* store relocation for cie pointer */
 
-        res = dbg->de_reloc_name(dbg, DEBUG_FRAME, cur_off +
+        res = dbg->de_relocate_by_name_symbol(dbg,
+            DEBUG_FRAME, cur_off +
             OFFSET_PLUS_EXTENSION_SIZE /* r_offset */,
             dbg->de_sect_name_idx[DEBUG_FRAME],
             dwarf_drt_data_reloc, offset_size);
@@ -2095,7 +2099,8 @@ _dwarf_pro_generate_debugframe(Dwarf_P_Debug dbg,
         }
 
         /* store relocation information for initial location */
-        res = dbg->de_reloc_name(dbg, DEBUG_FRAME,
+        res = dbg->de_relocate_by_name_symbol(dbg,
+            DEBUG_FRAME,
             cur_off + OFFSET_PLUS_EXTENSION_SIZE +
                 address_size /* r_offset */,
             curfde->fde_r_symidx,
@@ -2109,7 +2114,8 @@ _dwarf_pro_generate_debugframe(Dwarf_P_Debug dbg,
         if (v0_augmentation &&
             curfde->fde_offset_into_exception_tables >= 0) {
 
-            res = dbg->de_reloc_name(dbg, DEBUG_FRAME,
+            res = dbg->de_relocate_by_name_symbol(dbg,
+                DEBUG_FRAME,
                 /* r_offset, where in cie this field starts */
                 cur_off + OFFSET_PLUS_EXTENSION_SIZE +
                     offset_size + 2 * address_size +
@@ -2160,7 +2166,7 @@ _dwarf_pro_generate_debugframe(Dwarf_P_Debug dbg,
                 sizeof(du), address_size);
             data += address_size;
 
-            if (dbg->de_reloc_pair &&
+            if (dbg->de_relocate_pair_by_symbol &&
                 curfde->fde_end_symbol != 0 &&
                 curfde->fde_addr_range == 0) {
                 /*  symbolic reloc, need reloc for length What if we
@@ -2168,8 +2174,8 @@ _dwarf_pro_generate_debugframe(Dwarf_P_Debug dbg,
                     part of 'if'. */
                 Dwarf_Unsigned val;
 
-                res = dbg->de_reloc_pair(dbg,
-                    /* DEBUG_ARANGES, */ DEBUG_FRAME,
+                res = dbg->de_relocate_pair_by_symbol(dbg,
+                    DEBUG_FRAME,
                     cur_off + 2 * offset_size + address_size,
                     /* r_offset */ curfde->fde_r_symidx,
                     curfde->fde_end_symbol,
@@ -2451,7 +2457,6 @@ _dwarf_pro_generate_debuginfo(Dwarf_P_Debug dbg,
     unsigned marker_count = 0;
     unsigned string_attr_count = 0;
     unsigned string_attr_offset = 0;
-    Dwarf_Small *start_info_sec = 0;
     Dwarf_Small *abbr_off_ptr = 0;
 
     int offset_size = dbg->de_offset_size;
@@ -2481,7 +2486,6 @@ _dwarf_pro_generate_debuginfo(Dwarf_P_Debug dbg,
 
         GET_CHUNK_ERR(dbg, elfsectno_of_debug_info, data, cu_header_size,
             error);
-        start_info_sec = data;
         if (extension_size) {
             /* This for a dwarf-standard 64bit offset. */
             du = DISTINGUISHED_VALUE;
@@ -2511,7 +2515,7 @@ _dwarf_pro_generate_debuginfo(Dwarf_P_Debug dbg,
 
         /*  We have filled the chunk we got with GET_CHUNK.
             At this point we
-            no longer dare use "data" or "start_info_sec" as a
+            no longer dare use "data"  as a
             pointer any longer except to refer to that first
             small chunk for the cu header to update
             the section length. */
@@ -2528,7 +2532,6 @@ _dwarf_pro_generate_debuginfo(Dwarf_P_Debug dbg,
 
         GET_CHUNK_ERR(dbg, elfsectno_of_debug_info, data, cu_header_size,
             error);
-        start_info_sec = data;
         if (extension_size) {
             /* Impossible in DW5, really, is for IRIX64. But we allow it. */
             du = DISTINGUISHED_VALUE;
@@ -2561,7 +2564,7 @@ _dwarf_pro_generate_debuginfo(Dwarf_P_Debug dbg,
         data += offset_size;
 
         /*  We have filled the chunk we got with GET_CHUNK. At this point we
-            no longer dare use "data" or "start_info_sec" as a pointer any
+            no longer dare use "data" as a pointer any
             longer except to refer to that first small chunk for the cu
             header to update the section length. */
 
@@ -2594,7 +2597,8 @@ _dwarf_pro_generate_debuginfo(Dwarf_P_Debug dbg,
 
     /*  Relocation for abbrev offset in cu header store relocation
         record in linked list */
-    res = dbg->de_reloc_name(dbg, DEBUG_INFO,
+    res = dbg->de_relocate_by_name_symbol(dbg,
+        DEBUG_INFO,
         abbrev_offset /* r_offset */,
         dbg->de_sect_name_idx[DEBUG_ABBREV],
         dwarf_drt_data_reloc, offset_size);
@@ -2753,7 +2757,8 @@ _dwarf_pro_generate_debuginfo(Dwarf_P_Debug dbg,
                 default:
                     break;
                 }
-                rres = dbg->de_reloc_name(dbg, DEBUG_INFO,
+                rres = dbg->de_relocate_by_name_symbol(dbg,
+                    DEBUG_INFO,
                     die_off + curattr->ar_rel_offset,/* r_offset */
                     curattr->ar_rel_symidx,
                     dwarf_drt_data_reloc,

@@ -203,7 +203,7 @@ _dwarf_transform_arange_to_disk(Dwarf_P_Debug dbg,
         unsigned long count = dbg->de_arange_count + 1;
         int res2 = 0;
 
-        if (dbg->de_reloc_pair) {
+        if (dbg->de_relocate_pair_by_symbol) {
             count = (3 * dbg->de_arange_count) + 1;
         }
         /*  The following is a small optimization: not needed for
@@ -217,7 +217,7 @@ _dwarf_transform_arange_to_disk(Dwarf_P_Debug dbg,
     }
 
     /* reloc for .debug_info */
-    res = dbg->de_reloc_name(dbg,
+    res = dbg->de_relocate_by_name_symbol(dbg,
         DEBUG_ARANGES,
         extension_word_size +
         offset_size + sizeof(Dwarf_Half),
@@ -248,7 +248,7 @@ _dwarf_transform_arange_to_disk(Dwarf_P_Debug dbg,
         given_arange = given_arange->ag_next) {
 
         /* Write relocation record for beginning of address range. */
-        res = dbg->de_reloc_name(dbg, DEBUG_ARANGES,
+        res = dbg->de_relocate_by_name_symbol(dbg, DEBUG_ARANGES,
             arange_ptr - arange,       /* r_offset */
             (long) given_arange->ag_symbol_index,
             dwarf_drt_data_reloc, upointer_size);
@@ -264,7 +264,7 @@ _dwarf_transform_arange_to_disk(Dwarf_P_Debug dbg,
             upointer_size);
         arange_ptr += upointer_size;
 
-        if (dbg->de_reloc_pair &&
+        if (dbg->de_relocate_pair_by_symbol &&
             given_arange->ag_end_symbol_index != 0 &&
             given_arange->ag_length == 0) {
             /*  symbolic reloc, need reloc for length What if we really
@@ -272,7 +272,8 @@ _dwarf_transform_arange_to_disk(Dwarf_P_Debug dbg,
                 'if'. */
             Dwarf_Unsigned val;
 
-            res = dbg->de_reloc_pair(dbg, DEBUG_ARANGES,
+            res = dbg->de_relocate_pair_by_symbol(dbg,
+                DEBUG_ARANGES,
                 arange_ptr - arange,   /* r_offset */
                 given_arange->ag_symbol_index,
                 given_arange->ag_end_symbol_index,

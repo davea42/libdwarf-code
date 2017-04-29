@@ -545,10 +545,10 @@ struct Dwarf_P_Debug_s {
     int de_ar_ref_attr_form; /* ref8 ref4 , abi dependent */
 
     /* simple name relocations */
-    _dwarf_pro_reloc_name_func_ptr de_reloc_name;
+    _dwarf_pro_reloc_name_func_ptr de_relocate_by_name_symbol;
 
     /* relocations for a length, requiring a pair of symbols */
-    _dwarf_pro_reloc_length_func_ptr de_reloc_pair;
+    _dwarf_pro_reloc_length_func_ptr de_relocate_pair_by_symbol;
 
     _dwarf_pro_transform_relocs_func_ptr de_transform_relocs_to_disk;
 

@@ -353,17 +353,21 @@ common_init(Dwarf_P_Debug dbg, Dwarf_Unsigned flags, const char *abiname,
     }
 
     if (flags & DW_DLC_SYMBOLIC_RELOCATIONS) {
-        dbg->de_reloc_name = _dwarf_pro_reloc_name_symbolic;
-        dbg->de_reloc_pair = _dwarf_pro_reloc_length_symbolic;
+        dbg->de_relocate_by_name_symbol =
+            _dwarf_pro_reloc_name_symbolic;
+        dbg->de_relocate_pair_by_symbol =
+            _dwarf_pro_reloc_length_symbolic;
         dbg->de_transform_relocs_to_disk =
             _dwarf_symbolic_relocs_to_disk;
     } else {
         if (IS_64BITPTR(dbg)) {
-            dbg->de_reloc_name = _dwarf_pro_reloc_name_stream64;
+            dbg->de_relocate_by_name_symbol =
+                _dwarf_pro_reloc_name_stream64;
         } else {
-            dbg->de_reloc_name = _dwarf_pro_reloc_name_stream32;
+            dbg->de_relocate_by_name_symbol =
+                _dwarf_pro_reloc_name_stream32;
         }
-        dbg->de_reloc_pair = 0;
+        dbg->de_relocate_pair_by_symbol = 0;
         dbg->de_transform_relocs_to_disk = _dwarf_stream_relocs_to_disk;
     }
     for (k = 0; k < NUM_DEBUG_SECTIONS; ++k) {

@@ -231,7 +231,7 @@ _dwarf_transform_simplename_to_disk(Dwarf_P_Debug dbg,
 
     /* now create the relocation for the compile_unit offset */
     {
-        int res = dbg->de_reloc_name(dbg,
+        int res = dbg->de_relocate_by_name_symbol(dbg,
             section_index,
             extension_size + uword_size +
             sizeof(Dwarf_Half) /* r_offset */ ,

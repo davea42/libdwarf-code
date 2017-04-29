@@ -1,3 +1,11 @@
+2017-04-29 David Anderson
+    * pro_arange.c,pro_init.c, pro_opaque.h, pro_section.c, pro_types.c:
+      Renamed de_reloc_name function pointer as de_relocate_by_name_symbol.
+      Most relocation points use a single section-name elf symbol as
+      the relocation reference.
+      Renamed de_reloc_pair function pointer as de_relocate_pair_by_symbol.
+      dump_bytes() debug code is now #if 0. Deleted set but not used
+      local variable in _dwarf_pro_generate_debuginfo().
 2017-04-21 David Anderson
     * pro_section.c: Improved commentary on the abbrev section
       offset and on the backpatch of overall CU length once CU
