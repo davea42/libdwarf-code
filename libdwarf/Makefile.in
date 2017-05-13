@@ -85,6 +85,7 @@ OBJS= dwarf_abbrev.o \
         dwarf_funcs.o \
         dwarf_gdbindex.o \
         dwarf_global.o \
+        dwarf_groups.o \
         dwarf_harmless.o \
         dwarf_init_finish.o  \
         dwarf_leb.o \

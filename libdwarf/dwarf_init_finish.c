@@ -67,6 +67,10 @@
 #ifndef SHT_RELA
 #define SHT_RELA 4
 #endif
+/*  For COMDAT GROUPS. Guarantees we can compile. We hope. */
+#ifndef SHT_GROUP
+#define SHT_GROUP 17
+#endif
 
 #ifndef SHF_COMPRESSED
 /*  This from ubuntu xenial. Is in top of trunk binutils
@@ -272,18 +276,21 @@ add_debug_section_info(Dwarf_Debug dbg,
     return DW_DLV_ERROR;
 }
 
-#if 0 /* FOR DEBUGGING */
+
+#if 0
 static void
-dump_bytes(Dwarf_Small * start, long len)
+dump_bytes(const char *msg,Dwarf_Small * start, long len)
 {
     Dwarf_Small *end = start + len;
     Dwarf_Small *cur = start;
 
+    printf("dump_bytes: %s ",msg);
     for (; cur < end; cur++) {
-        printf(" byte %d, data %02x\n", (int) (cur - start), *cur);
+        printf("%02x",*cur);
     }
-
+    printf("\n");
 }
+
 static int
 all_sig8_bits_zero(Dwarf_Sig8 *val)
 {
@@ -307,7 +314,7 @@ set_up_section(Dwarf_Debug dbg,
    unsigned obj_sec_num,
    /* The name associated with this secdata */
    const char *targname,
-   /* DW_GROUPNUMBER_ANY or BASE or DWO */
+   /* DW_GROUPNUMBER_ANY or BASE or DWO or some other group num */
    unsigned  groupnum_of_sec,
    struct Dwarf_Section_s *secdata,
    int duperr,int emptyerr,int have_dwarf,
@@ -394,175 +401,176 @@ enter_section_in_de_debug_sections_array(Dwarf_Debug dbg,
     const char *scn_name,
     /* This is the number of the section in the object file. */
     unsigned scn_number,
+    unsigned group_number,
     int *err)
 {
     /*  Setup the table that contains the basic information about the
         sections that are DWARF related. The entries are very unlikely
         to change very often. */
     SET_UP_SECTION(dbg,scn_name,".debug_info",
-        DW_GROUPNUMBER_BASE,
+        group_number,
         &dbg->de_debug_info,
         DW_DLE_DEBUG_INFO_DUPLICATE,DW_DLE_DEBUG_INFO_NULL,
         TRUE,err);
     SET_UP_SECTION(dbg,scn_name,".debug_info.dwo",
-        DW_GROUPNUMBER_DWO,
+        group_number,
         &dbg->de_debug_info,
         DW_DLE_DEBUG_INFO_DUPLICATE,DW_DLE_DEBUG_INFO_NULL,
         TRUE,err);
     SET_UP_SECTION(dbg,scn_name,".debug_types",
-        DW_GROUPNUMBER_BASE,
+        group_number,
         &dbg->de_debug_types,
         DW_DLE_DEBUG_TYPES_DUPLICATE,DW_DLE_DEBUG_TYPES_NULL,
         TRUE,err);
     SET_UP_SECTION(dbg,scn_name,".debug_types.dwo",
-        DW_GROUPNUMBER_DWO,
+        group_number,
         &dbg->de_debug_types,
         DW_DLE_DEBUG_TYPES_DUPLICATE,DW_DLE_DEBUG_TYPES_NULL,
         TRUE,err);
     SET_UP_SECTION(dbg,scn_name,".debug_abbrev",
-        DW_GROUPNUMBER_BASE,
+        group_number,
         &dbg->de_debug_abbrev, /*03*/
         DW_DLE_DEBUG_ABBREV_DUPLICATE,DW_DLE_DEBUG_ABBREV_NULL,
         FALSE,err);
     SET_UP_SECTION(dbg,scn_name,".debug_abbrev.dwo",
-        DW_GROUPNUMBER_DWO,
+        group_number,
         &dbg->de_debug_abbrev, /*03*/
         DW_DLE_DEBUG_ABBREV_DUPLICATE,DW_DLE_DEBUG_ABBREV_NULL,
         FALSE,err);
     SET_UP_SECTION(dbg,scn_name,".debug_aranges",
-        DW_GROUPNUMBER_BASE,
+        group_number,
         &dbg->de_debug_aranges,
         DW_DLE_DEBUG_ARANGES_DUPLICATE,0,
         FALSE,err);
     SET_UP_SECTION(dbg,scn_name,".debug_line",
-        DW_GROUPNUMBER_BASE,
+        group_number,
         &dbg->de_debug_line,
         DW_DLE_DEBUG_LINE_DUPLICATE,0,
         FALSE,err);
     /* DWARF5 */
     SET_UP_SECTION(dbg,scn_name,".debug_line_str",
-        DW_GROUPNUMBER_BASE,
+        group_number,
         &dbg->de_debug_line_str,
         DW_DLE_DEBUG_LINE_DUPLICATE,0,
         FALSE,err);
     SET_UP_SECTION(dbg,scn_name,".debug_line.dwo",
-        DW_GROUPNUMBER_DWO,
+        group_number,
         &dbg->de_debug_line,
         DW_DLE_DEBUG_LINE_DUPLICATE,0,
         FALSE,err);
     SET_UP_SECTION(dbg,scn_name,".debug_frame",
-        DW_GROUPNUMBER_BASE,
+        group_number,
         &dbg->de_debug_frame,
         DW_DLE_DEBUG_FRAME_DUPLICATE,0,
         TRUE,err);
     /* gnu egcs-1.1.2 data */
     SET_UP_SECTION(dbg,scn_name,".eh_frame",
-        DW_GROUPNUMBER_BASE,
+        group_number,
         &dbg->de_debug_frame_eh_gnu,
         DW_DLE_DEBUG_FRAME_DUPLICATE,0,
         TRUE,err);
     SET_UP_SECTION(dbg,scn_name,".debug_loc",
-        DW_GROUPNUMBER_BASE,
+        group_number,
         &dbg->de_debug_loc,
         DW_DLE_DEBUG_LOC_DUPLICATE,0,
         FALSE,err);
     SET_UP_SECTION(dbg,scn_name,".debug_loc.dwo",
-        DW_GROUPNUMBER_DWO,
+        group_number,
         &dbg->de_debug_loc,
         DW_DLE_DEBUG_LOC_DUPLICATE,0,
         FALSE,err);
     SET_UP_SECTION(dbg,scn_name,".debug_pubnames",
-        DW_GROUPNUMBER_BASE,
+        group_number,
         &dbg->de_debug_pubnames,
         DW_DLE_DEBUG_PUBNAMES_DUPLICATE,0,
         FALSE,err);
     SET_UP_SECTION(dbg,scn_name,".debug_str",
-        DW_GROUPNUMBER_BASE,
+        group_number,
         &dbg->de_debug_str,
         DW_DLE_DEBUG_STR_DUPLICATE,0,
         FALSE,err);
     SET_UP_SECTION(dbg,scn_name,".debug_str.dwo",
-        DW_GROUPNUMBER_DWO,
+        group_number,
         &dbg->de_debug_str,
         DW_DLE_DEBUG_STR_DUPLICATE,0,
         FALSE,err);
     /* Section new in DWARF3.  */
     SET_UP_SECTION(dbg,scn_name,".debug_pubtypes",
-        DW_GROUPNUMBER_BASE,
+        group_number,
         &dbg->de_debug_pubtypes,
         /*13*/ DW_DLE_DEBUG_PUBTYPES_DUPLICATE,0,
         FALSE,err);
     /* DWARF5 */
     SET_UP_SECTION(dbg,scn_name,".debug_names",
-        DW_GROUPNUMBER_BASE,
+        group_number,
         &dbg->de_debug_names,
         /*13*/ DW_DLE_DEBUG_NAMES_DUPLICATE,0,
         FALSE,err);
     /* DWARF5 */
     SET_UP_SECTION(dbg,scn_name,".debug_loclists",
-        DW_GROUPNUMBER_BASE,
+        group_number,
         &dbg->de_debug_loclists,
         /*13*/ DW_DLE_DEBUG_LOClISTS_DUPLICATE,0,
         FALSE,err);
     /* DWARF5 */
     SET_UP_SECTION(dbg,scn_name,".debug_loclists.dwo",
-        DW_GROUPNUMBER_DWO,
+        group_number,
         &dbg->de_debug_loclists,
         /*13*/ DW_DLE_DEBUG_LOClISTS_DUPLICATE,0,
         FALSE,err);
     /* DWARF5 */
     SET_UP_SECTION(dbg,scn_name,".debug_rnglists",
-        DW_GROUPNUMBER_BASE,
+        group_number,
         &dbg->de_debug_rnglists,
         /*13*/ DW_DLE_DEBUG_RNGLISTS_DUPLICATE,0,
         FALSE,err);
     /* DWARF5 */
     SET_UP_SECTION(dbg,scn_name,".debug_rnglists.dwo",
-        DW_GROUPNUMBER_DWO,
+        group_number,
         &dbg->de_debug_rnglists,
         /*13*/ DW_DLE_DEBUG_RNGLISTS_DUPLICATE,0,
         FALSE,err);
     /* DWARF5 */
     SET_UP_SECTION(dbg,scn_name,".debug_str_offsets",
-        DW_GROUPNUMBER_BASE,
+        group_number,
         &dbg->de_debug_str_offsets,
         DW_DLE_DEBUG_STR_OFFSETS_DUPLICATE,0,
         FALSE,err);
     /* DWARF5 */
     SET_UP_SECTION(dbg,scn_name,".debug_str_offsets.dwo",
-        DW_GROUPNUMBER_DWO,
+        group_number,
         &dbg->de_debug_str_offsets,
         DW_DLE_DEBUG_STR_OFFSETS_DUPLICATE,0,
         FALSE,err);
 
     /* SGI IRIX-only. */
     SET_UP_SECTION(dbg,scn_name,".debug_funcnames",
-        DW_GROUPNUMBER_BASE,
+        group_number,
         &dbg->de_debug_funcnames,
         /*11*/ DW_DLE_DEBUG_FUNCNAMES_DUPLICATE,0,
         FALSE,err);
     /*  SGI IRIX-only, created years before DWARF3. Content
         essentially identical to .debug_pubtypes.  */
     SET_UP_SECTION(dbg,scn_name,".debug_typenames",
-        DW_GROUPNUMBER_BASE,
+        group_number,
         &dbg->de_debug_typenames,
         /*12*/ DW_DLE_DEBUG_TYPENAMES_DUPLICATE,0,
         FALSE,err);
     /* SGI IRIX-only.  */
     SET_UP_SECTION(dbg,scn_name,".debug_varnames",
-        DW_GROUPNUMBER_BASE,
+        group_number,
         &dbg->de_debug_varnames,
         DW_DLE_DEBUG_VARNAMES_DUPLICATE,0,
         FALSE,err);
     /* SGI IRIX-only. */
     SET_UP_SECTION(dbg,scn_name,".debug_weaknames",
-        DW_GROUPNUMBER_BASE,
+        group_number,
         &dbg->de_debug_weaknames,
         DW_DLE_DEBUG_WEAKNAMES_DUPLICATE,0,
         FALSE,err);
 
     SET_UP_SECTION(dbg,scn_name,".debug_macinfo",
-        DW_GROUPNUMBER_BASE,
+        group_number,
         &dbg->de_debug_macinfo,
         DW_DLE_DEBUG_MACINFO_DUPLICATE,0,
         TRUE,err);
@@ -571,18 +579,18 @@ enter_section_in_de_debug_sections_array(Dwarf_Debug dbg,
 
     /* DWARF5 */
     SET_UP_SECTION(dbg,scn_name,".debug_macro",
-        DW_GROUPNUMBER_BASE,
+        group_number,
         &dbg->de_debug_macro,
         DW_DLE_DEBUG_MACRO_DUPLICATE,0,
         TRUE,err);
     /* DWARF5 */
     SET_UP_SECTION(dbg,scn_name,".debug_macro.dwo",
-        DW_GROUPNUMBER_DWO,
+        group_number,
         &dbg->de_debug_macro,
         DW_DLE_DEBUG_MACRO_DUPLICATE,0,
         TRUE,err);
     SET_UP_SECTION(dbg,scn_name,".debug_ranges",
-        DW_GROUPNUMBER_BASE,
+        group_number,
         &dbg->de_debug_ranges,
         DW_DLE_DEBUG_RANGES_DUPLICATE,0,
         TRUE,err);
@@ -590,26 +598,27 @@ enter_section_in_de_debug_sections_array(Dwarf_Debug dbg,
 
     /* New DWARF5 */
     SET_UP_SECTION(dbg,scn_name,".debug_sup",
-        DW_GROUPNUMBER_BASE,
+        group_number,
         &dbg->de_debug_sup,
         DW_DLE_DEBUG_SUP_DUPLICATE,0,
         TRUE,err);
     /* No .debug_sup.dwo allowed. */
 
+    /*  .symtab and .strtab have to be in any group.  */
     SET_UP_SECTION(dbg,scn_name,".symtab",
-        DW_GROUPNUMBER_ANY,
+        group_number,
         &dbg->de_elf_symtab,
         DW_DLE_DEBUG_SYMTAB_ERR,0,
         FALSE,err);
     SET_UP_SECTION(dbg,scn_name,".strtab",
-        DW_GROUPNUMBER_ANY,
+        group_number,
         &dbg->de_elf_strtab,
         DW_DLE_DEBUG_STRTAB_ERR,0,
         FALSE,err);
 
     /* New DWARF5 */
     SET_UP_SECTION(dbg,scn_name,".debug_addr",
-        DW_GROUPNUMBER_BASE,
+        group_number,
         &dbg->de_debug_addr,
         DW_DLE_DEBUG_ADDR_DUPLICATE,0,
         TRUE,err);
@@ -617,14 +626,14 @@ enter_section_in_de_debug_sections_array(Dwarf_Debug dbg,
 
     /* gdb added this. */
     SET_UP_SECTION(dbg,scn_name,".gdb_index",
-        DW_GROUPNUMBER_BASE,
+        group_number,
         &dbg->de_debug_gdbindex,
         DW_DLE_DUPLICATE_GDB_INDEX,0,
         FALSE,err);
 
     /* New DWARF5 */
     SET_UP_SECTION(dbg,scn_name,".debug_names",
-        DW_GROUPNUMBER_BASE,
+        group_number,
         &dbg->de_debug_names,
         DW_DLE_DEBUG_NAMES_DUPLICATE,0,
         FALSE,err);
@@ -632,7 +641,7 @@ enter_section_in_de_debug_sections_array(Dwarf_Debug dbg,
 
     /* gdb added this in DW4. It is in  standard DWARF5  */
     SET_UP_SECTION(dbg,scn_name,".debug_cu_index",
-        DW_GROUPNUMBER_DWO,
+        group_number,
         &dbg->de_debug_cu_index,
         DW_DLE_DUPLICATE_CU_INDEX,0,
         FALSE,err);
@@ -718,12 +727,104 @@ this_section_dwarf_relevant(const char *scn_name,int type)
     return TRUE;
 }
 
+/*  This assumes any non-Elf object files have no SHT_GROUP
+    sections. So this code will not be invoked on non-Elf objects.
+    One supposes this is unlikely to match any non-Elf
+    version of COMDAT. */
+static int
+insert_sht_list_in_group_map(Dwarf_Debug dbg,
+    struct Dwarf_Obj_Access_Section_s *doas,
+    unsigned comdat_group_number,
+    unsigned section_number,
+    Dwarf_Error *error)
+{
+    struct Dwarf_Section_s secdata;
+    Dwarf_Small * data = 0;
+    int           res = 0;
+    Dwarf_Small*  secend = 0;
+
+    memset(&secdata,0,sizeof(secdata));
+    secdata.dss_size = doas->size;
+    secdata.dss_entrysize = doas->entrysize;
+    secdata.dss_index = section_number;
+    secdata.dss_name = ".group";
+    secdata.dss_number = section_number;
+    res = _dwarf_load_section(dbg,&secdata,error);
+    if (res != DW_DLV_OK) {
+        return res;
+    }
+    if (doas->entrysize != 4) {
+       _dwarf_error(dbg,error,DW_DLE_GROUP_INTERNAL_ERROR);
+       return DW_DLV_ERROR;
+    }
+    if (!secdata.dss_data) {
+       _dwarf_error(dbg,error,DW_DLE_GROUP_INTERNAL_ERROR);
+       return DW_DLV_ERROR;
+    }
+    /*  So now pick up the data in dss_data.
+        It is an array of 32 bit fields.
+        Dwarf_ufixed.  Zero is just a constant 1.
+        Each additional is a section number. */
+    data = secdata.dss_data;
+    secend = data + secdata.dss_size;
+    {
+        unsigned i = 1;
+        unsigned count = doas->size/doas->entrysize;
+        Dwarf_ufixed  val = 0;
+
+        READ_UNALIGNED_CK(dbg,val,Dwarf_ufixed,
+            data,
+            sizeof(Dwarf_ufixed),
+            error,
+            secend);
+        if (val != 1) {
+            /*  Could be corrupted elf object. */
+            _dwarf_error(dbg,error,DW_DLE_GROUP_INTERNAL_ERROR);
+            return DW_DLV_ERROR;
+        }
+
+        data = data + doas->entrysize;
+        for (i = 1 ; i < count ; ++i) {
+            READ_UNALIGNED_CK(dbg,val,Dwarf_ufixed,
+                 data,
+                 sizeof(Dwarf_ufixed),
+                 error,
+                 secend);
+             data += sizeof(Dwarf_ufixed);
+             res = _dwarf_insert_in_group_map(dbg,
+                 comdat_group_number,val,
+                 error);
+             if (res != DW_DLV_OK) {
+                 return res;
+             }
+         }
+    }
+    return DW_DLV_OK;
+}
+
+
+
 /*  split dwarf CUs can be in an object with non-split
     or split may be in a separate object.
-    If all in one object the default is to deal with DW_GROUPNUMBER_BASE
+    If all in one object the default is to deal with group_number
     and ignore DW_GROUPNUMBER_DWO.
     If only .dwo the default is DW_GROUPNUMBER_DWO.
-    Otherwise use DW_GROUP_NUMBER_BASE. */
+    Otherwise use DW_GROUP_NUMBER_BASE.
+
+    If there are COMDAT SHT_GROUP sections, these
+    are assigned group numbers 3-N as needed.
+
+    At present this makes the assumption that COMDAT group sections
+    have lower section numbers than the sections COMDAT refers to.
+    It is not clear whether this is guaranteed, COMDAT is not
+    an official Elf thing and documentation is scarce.
+    In the 1990's SGI folks and others formed a committee
+    andattempted to get COMDAT and a feature allowing section
+    numbers  greater than 16 bits into Elf, but there was no
+    group that was able to approve such things.
+
+    Called once at dbg init  time.
+*/
 
 static int
 determine_target_group(Dwarf_Unsigned section_count,
@@ -732,17 +833,28 @@ determine_target_group(Dwarf_Unsigned section_count,
     Dwarf_Debug dbg,
     Dwarf_Error *error)
 {
-   unsigned obj_section_index = 0;
-   int found_group_one = 0;
-   int found_group_two = 0;
+    unsigned obj_section_index = 0;
+    int found_group_one = 0;
+    int found_group_two = 0;
+    struct Dwarf_Group_Data_s *grp = 0;
+    unsigned comdat_group_next = 3;
+    unsigned lowest_comdat_groupnum = 0;
 
-   for (obj_section_index = 0; obj_section_index < section_count;
+    grp = &dbg->de_groupnumbers;
+    grp->gd_number_of_groups = 0;
+    grp->gd_number_of_sections = section_count;
+    if (grp->gd_map) {
+        _dwarf_error(dbg,error,DW_DLE_GROUP_INTERNAL_ERROR);
+        return DW_DLV_OK;
+    }
+    for (obj_section_index = 0; obj_section_index < section_count;
         ++obj_section_index) {
 
         struct Dwarf_Obj_Access_Section_s doas;
         int res = DW_DLV_ERROR;
         int err = 0;
         const char *scn_name = 0;
+        unsigned groupnumber = 0;
 
         memset(&doas,0,sizeof(doas));
         res = obj->methods->get_section_info(obj->object,
@@ -755,33 +867,118 @@ determine_target_group(Dwarf_Unsigned section_count,
             return res;
         }
 
-        scn_name = doas.name;
+        if (doas.type == SHT_GROUP) {
+            /*  Add to our map. Here we
+                are assuming SHT_GROUP records come first.
+                Till proven wrong. */
+            res = insert_sht_list_in_group_map(dbg,&doas,
+                comdat_group_next,
+                obj_section_index,error);
+            if (res != DW_DLV_OK) {
+                return res;
+            }
+            if (!lowest_comdat_groupnum) {
+                lowest_comdat_groupnum = groupnumber;
+            }
+            ++grp->gd_number_of_groups; 
+            ++comdat_group_next;
+            continue;
+        }
 
+        scn_name = doas.name;
+        if (!this_section_dwarf_relevant(scn_name,doas.type) ) {
+            continue;
+        }
+
+        /*  Now at a 'normal' section. */
+        res = _dwarf_section_get_target_group(dbg,
+            obj_section_index,
+            &groupnumber,error);
+        if (res == DW_DLV_OK ) {
+            /* groupnumber is set. Fall through */
+        } else if (res == DW_DLV_ERROR) {
+            return res;
+        } else { /* DW_DLV_NO_ENTRY */
+            /* fall through, a BASE or DWO group, possibly, or
+               a .rela */
+        }
+
+        if (startswith(scn_name,".rela")   ||
+            (doas.type == SHT_RELA) ) {
+            unsigned linkgroup = 0;
+            res = _dwarf_section_get_target_group(dbg,
+                doas.info,
+                &linkgroup,error);
+            if (res == DW_DLV_OK ) {
+                /* link group number is set. */
+                res = _dwarf_insert_in_group_map(dbg,
+                    linkgroup,obj_section_index,
+                    error);
+                if (res != DW_DLV_OK ) {
+                    return res;
+                }
+            } else if (res == DW_DLV_ERROR) {
+                return res;
+            } else { /* DW_DLV_NO_ENTRY */
+                /* Fall through. */
+            }
+            continue;
+        }
         if (startswith(scn_name,".debug_")   ||
             startswith(scn_name,".zdebug_")  ||
             startswith(scn_name,".eh_frame") ||
             startswith(scn_name,".gdb_index")){
+            if (groupnumber) {
+                /* Already in group map */
+                continue;
+            }
             if (endswith(scn_name,"debug_cu_index") ||
                 endswith(scn_name,"debug_tu_index")) {
                 /* These appear in a .dwp file only. */
+                res = _dwarf_insert_in_group_map(dbg,
+                    DW_GROUPNUMBER_DWO,obj_section_index,
+                    error);
+                if (res != DW_DLV_OK) {
+                    return res;
+                }
                 found_group_two++;
                 continue;
             }
             if (endswith(scn_name,".dwo")) {
+                res = _dwarf_insert_in_group_map(dbg,
+                    DW_GROUPNUMBER_DWO,obj_section_index,
+                    error);
+                if (res != DW_DLV_OK) {
+                    return res;
+                }
                 found_group_two++;
                 continue;
+            }
+            res = _dwarf_insert_in_group_map(dbg,
+                DW_GROUPNUMBER_BASE,obj_section_index,
+                error);
+            if (res != DW_DLV_OK) {
+                return res;
             }
             found_group_one++;
             continue;
         }
     }
+    if (found_group_two) {
+        ++grp->gd_number_of_groups; 
+    }
     if (found_group_one) {
         *group_number_out = DW_GROUPNUMBER_BASE;
+        ++grp->gd_number_of_groups; 
     } else {
         if (found_group_two) {
             *group_number_out = DW_GROUPNUMBER_DWO;
         } else {
-            *group_number_out = DW_GROUPNUMBER_BASE;
+            if (lowest_comdat_groupnum) {
+                *group_number_out = lowest_comdat_groupnum;
+            } else {
+                *group_number_out = DW_GROUPNUMBER_BASE;
+            }
         }
     }
     return DW_DLV_OK;
@@ -867,7 +1064,17 @@ _dwarf_setup(Dwarf_Debug dbg, Dwarf_Error * error)
         struct Dwarf_Obj_Access_Section_s doas;
         int res = DW_DLV_ERROR;
         int err = 0;
+        unsigned groupnumber = 0;
 
+        res = _dwarf_section_get_target_group(dbg,obj_section_index,
+            &groupnumber,error);
+        if (res == DW_DLV_OK ) {
+            /* groupnumber is set. Fall through */
+        } else if (res == DW_DLV_ERROR) {
+            return res;
+        } else { /* DW_DLV_NO_ENTRY */
+            /* fall through, a BASE or DWO group, possibly */
+        }
         memset(&doas,0,sizeof(doas));
         res = obj->methods->get_section_info(obj->object,
             obj_section_index,
@@ -881,6 +1088,13 @@ _dwarf_setup(Dwarf_Debug dbg, Dwarf_Error * error)
         }
 
         scn_name = doas.name;
+        /*  Two sections, .symtab and .strtab need to be in any group */
+        if (strcmp(scn_name,".symtab") && strcmp(scn_name,".strtab")) {
+            /* For most sections need group number match. */
+            if (groupnumber != dbg->de_groupnumber) {
+                continue;
+            }
+        }
 
         if (!this_section_dwarf_relevant(scn_name,doas.type) ) {
             continue;
@@ -908,7 +1122,7 @@ _dwarf_setup(Dwarf_Debug dbg, Dwarf_Error * error)
             }
             /* No entry: new-to-us section, the normal case. */
             res = enter_section_in_de_debug_sections_array(dbg,scn_name,
-                obj_section_index,&err);
+                obj_section_index, groupnumber,&err);
             if (res == DW_DLV_OK) {
                 /*  We usually just added a new entry in the dbg
                     de_debug_sections array.  So we know its number.

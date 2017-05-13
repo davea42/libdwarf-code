@@ -1318,9 +1318,15 @@ struct Dwarf_Obj_Access_Interface_s {
 #define DW_DLE_LINE_HEADER_LENGTH_BOTCH        384
 #define DW_DLE_STRING_HASHTAB_IDENTITY_ERROR   385
 #define DW_DLE_UNIT_TYPE_NOT_HANDLED           386
+#define DW_DLE_GROUP_MAP_ALLOC                 387
+#define DW_DLE_GROUP_MAP_DUPLICATE             388
+#define DW_DLE_GROUP_COUNT_ERROR               389
+#define DW_DLE_GROUP_INTERNAL_ERROR            390
+#define DW_DLE_GROUP_LOAD_ERROR                391
+#define DW_DLE_GROUP_LOAD_READ_ERROR           392
 
     /* LAST MUST EQUAL LAST ERROR NUMBER */
-#define DW_DLE_LAST        386
+#define DW_DLE_LAST        392
 
 #define DW_DLE_LO_USER     0x10000
 
@@ -4271,6 +4277,28 @@ int dwarf_discr_entry_s(Dwarf_Dsc_Head /* dsc */,
     Dwarf_Signed   * /*out_discr_low*/,
     Dwarf_Signed   * /*out_discr_high*/,
     Dwarf_Error    * /*error*/);
+
+/*  New May 2017.  So users can find out what groups (dwo or COMDAT)
+    are in the object and how much to allocate so one can get the
+    group-section map data. */
+int dwarf_sec_group_sizes(Dwarf_Debug /*dbg*/,
+    Dwarf_Unsigned * /*section_count_out*/,
+    Dwarf_Unsigned * /*group_count_out*/,
+    Dwarf_Unsigned * /*selected_group_out*/,
+    Dwarf_Unsigned * /*map_entry_count_out*/,
+    Dwarf_Error    * /*error*/);
+
+/*  New May 2017. Reveals the map between group numbers and section numbers. 
+    Caller must allocate the arrays with space for 'map_entry_count'
+    values and this function fills in the array entries. 
+    Output ordered by group number and section number.
+    */
+int dwarf_sec_group_map(Dwarf_Debug /*dbg*/,
+    Dwarf_Unsigned   /*map_entry_count*/,
+    Dwarf_Unsigned * /*group_numbers_array*/,
+    Dwarf_Unsigned * /*sec_numbers_array*/,
+    Dwarf_Error    * /*error*/);
+
 
 /*  These make the  LEB encoding routines visible to libdwarf
     callers. Added November, 2012. */

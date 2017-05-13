@@ -392,7 +392,7 @@ _dwarf_get_elf_flags_func(
 
     If writing a function vaguely like this for a non-elf object,
     be sure that when section-index is passed in as zero that
-    you set the fields in *ret_scn to reflect an empty section
+    you set the fields in *ret_scn_doas to reflect an empty section
     with an empty string as the section name.  Adjust your
     section indexes of your non-elf-reading-code
     for all the necessary functions in Dwarf_Obj_Access_Methods_s
@@ -407,7 +407,7 @@ int
 dwarf_elf_object_access_get_section_info(
     void* obj_in,
     Dwarf_Half section_index,
-    Dwarf_Obj_Access_Section* ret_scn,
+    Dwarf_Obj_Access_Section* ret_scn_doas,
     int* error)
 {
     dwarf_elf_object_access_internals_t*obj =
@@ -436,15 +436,15 @@ dwarf_elf_object_access_get_section_info(
 
         /*  Get also section 'sh_type' and sh_info' fields, so the caller
             can use it for additional tasks that require that info. */
-        ret_scn->type = shdr64->sh_type;
-        ret_scn->size = shdr64->sh_size;
-        ret_scn->addr = shdr64->sh_addr;
-        ret_scn->link = shdr64->sh_link;
-        ret_scn->info = shdr64->sh_info;
-        ret_scn->entrysize = shdr64->sh_entsize;
-        ret_scn->name = elf_strptr(obj->elf, obj->ehdr64->e_shstrndx,
+        ret_scn_doas->type = shdr64->sh_type;
+        ret_scn_doas->size = shdr64->sh_size;
+        ret_scn_doas->addr = shdr64->sh_addr;
+        ret_scn_doas->link = shdr64->sh_link;
+        ret_scn_doas->info = shdr64->sh_info;
+        ret_scn_doas->entrysize = shdr64->sh_entsize;
+        ret_scn_doas->name = elf_strptr(obj->elf, obj->ehdr64->e_shstrndx,
             shdr64->sh_name);
-        if (ret_scn->name == NULL) {
+        if (ret_scn_doas->name == NULL) {
             *error = DW_DLE_ELF_STRPTR_ERROR;
             return DW_DLV_ERROR;
         }
@@ -461,15 +461,15 @@ dwarf_elf_object_access_get_section_info(
 
     /*  Get also the section type, so the caller can use it for
         additional tasks that require to know the section type. */
-    ret_scn->type = shdr32->sh_type;
-    ret_scn->size = shdr32->sh_size;
-    ret_scn->addr = shdr32->sh_addr;
-    ret_scn->link = shdr32->sh_link;
-    ret_scn->info = shdr32->sh_info;
-    ret_scn->entrysize = shdr32->sh_entsize;
-    ret_scn->name = elf_strptr(obj->elf, obj->ehdr32->e_shstrndx,
+    ret_scn_doas->type = shdr32->sh_type;
+    ret_scn_doas->size = shdr32->sh_size;
+    ret_scn_doas->addr = shdr32->sh_addr;
+    ret_scn_doas->link = shdr32->sh_link;
+    ret_scn_doas->info = shdr32->sh_info;
+    ret_scn_doas->entrysize = shdr32->sh_entsize;
+    ret_scn_doas->name = elf_strptr(obj->elf, obj->ehdr32->e_shstrndx,
         shdr32->sh_name);
-    if (ret_scn->name == NULL) {
+    if (ret_scn_doas->name == NULL) {
         *error = DW_DLE_ELF_STRPTR_ERROR;
         return DW_DLV_ERROR;
     }
@@ -522,6 +522,11 @@ find_section_to_relocate(Dwarf_Debug dbg,Dwarf_Half section_index,
     MATCH_REL_SEC(section_index,dbg->de_debug_varnames,relocatablesec);
     MATCH_REL_SEC(section_index,dbg->de_debug_weaknames,relocatablesec);
     MATCH_REL_SEC(section_index,dbg->de_debug_types,relocatablesec);
+    MATCH_REL_SEC(section_index,dbg->de_debug_macro,relocatablesec);
+    MATCH_REL_SEC(section_index,dbg->de_debug_rnglists,relocatablesec);
+    MATCH_REL_SEC(section_index,dbg->de_debug_loclists,relocatablesec);
+    MATCH_REL_SEC(section_index,dbg->de_debug_aranges,relocatablesec);
+    MATCH_REL_SEC(section_index,dbg->de_debug_sup,relocatablesec);
     /* dbg-> de_debug_tu_index,reloctablesec); */
     /* dbg-> de_debug_cu_index,reloctablesec); */
     /* dbg-> de_debug_gdbindex,reloctablesec); */

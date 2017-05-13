@@ -465,6 +465,12 @@ const char *_dwarf_errmsgs[] = {
     "DW_DLE_LINE_HEADER_LENGTH_BOTCH(384) Internal libdwarf error",
     "DW_DLE_STRING_HASHTAB_IDENTITY_ERROR(385) Internal libdwarf error",
     "DW_DLE_UNIT_TYPE_NOT_HANDLED(386) Possibly incomplete dwarf5 support",
+    "DW_DLE_GROUP_MAP_ALLOC(387) Out of malloc space",
+    "DW_DLE_GROUP_MAP_DUPLICATE(388) Each section # should appear once",
+    "DW_DLE_GROUP_COUNT_ERROR(389) An inconsistency in map entry count",
+    "DW_DLE_GROUP_INTERNAL_ERROR(390) libdwarf data corruption",
+    "DW_DLE_GROUP_LOAD_ERROR(391) corrupt data?",
+    "DW_DLE_GROUP_LOAD_READ_ERROR(392)",
 };
 
 #ifdef TESTING

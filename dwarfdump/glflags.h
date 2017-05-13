@@ -66,6 +66,8 @@ struct glflags_s {
     /* Control printing of gdb_index section.*/
     boolean gf_gdbindex_flag;
 
+    boolean gf_section_groups_flag;
+
     boolean gf_producer_children_flag;   /* List of CUs per compiler */
     boolean gf_check_abbrev_code;
     boolean gf_check_pubname_attr;

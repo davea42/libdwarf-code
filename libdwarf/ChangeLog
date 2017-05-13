@@ -1,3 +1,19 @@
+2017-05-13 David Anderson
+    * CMakeLists.txt, Makefile.in: Add dwarf_groups.c(.o), a new source file.
+    * dwarf_elf_access.c: Added trailing _doas to a local variable so 
+      related uses easily found with grep. Added some sections to
+      the relocatables sections list.
+    * dwarf_errmsg_list.c: Added six new error codes related to groups.
+    * dwarf_groups.c: New file to deal with both split-dwarf and
+      comdat groups.
+    * dwarf_init_finish.c: most of the new code for groups is in this
+      file.
+    * dwarf_opaque.h: New fields for comdat groups. A new small
+      struct, Dwarf_Group_Data_s has the data so it's all in
+      one place.
+    * dwarf_query.c: Trailing blank lines deleted.
+    * libdwarf.h.in: New error codes and new functions for section
+      groups.
 2017-04-29 David Anderson
     * pro_arange.c,pro_init.c, pro_opaque.h, pro_section.c, pro_types.c:
       Renamed de_reloc_name function pointer as de_relocate_by_name_symbol.

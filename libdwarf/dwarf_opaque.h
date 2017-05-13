@@ -526,6 +526,24 @@ struct Dwarf_Tied_Data_s {
 
 };
 
+/*  dg_groupnum 0 does not exist.
+    dg_groupnum 1 is base 
+    dg_groupnum 2 is dwo 
+    dg_groupnum 3 and higher are COMDAT groups (if any). 
+  */
+struct Dwarf_Group_Data_s {
+    /* For traditional DWARF the value is one, just one group. */
+    unsigned gd_number_of_groups;
+
+    /* Raw elf (elf-like) section count. */
+    unsigned gd_number_of_sections;
+
+    unsigned gd_map_entry_count;
+
+    /* A map from section number to group number. */
+    void *gd_map;
+};
+
 struct Dwarf_Debug_s {
     /*  All file access methods and support data
         are hidden in this structure.
@@ -539,11 +557,17 @@ struct Dwarf_Debug_s {
     struct Dwarf_Debug_InfoTypes_s de_info_reading;
     struct Dwarf_Debug_InfoTypes_s de_types_reading;
 
-    /* DW_GROUPNUMBER_ANY or BASE or DWO */
+    /*  DW_GROUPNUMBER_ANY, DW_GROUPNUMBER_BASE, DW_GROUPNUMBER_DWO, 
+        or a comdat group number > 2 
+        Selected at init time of this dbg based on
+        user request and on data in the object. */
     unsigned de_groupnumber;
 
+    /* Supporting data for groupnumbers. */
+    struct Dwarf_Group_Data_s de_groupnumbers;
+
     /*  Number of bytes in the length, and offset field in various
-        .debug_* sections.  It's not very meaningful, and is
+        .debu* sections.  It's not very meaningful, and is
         only used in one 'approximate' calculation.
         de_offset_size would be a more appropos name. */
     Dwarf_Small de_length_size;
@@ -782,6 +806,19 @@ _dwarf_search_for_signature(Dwarf_Debug dbg,
 
 
 void _dwarf_tied_destroy_free_node(void *node);
+void _dwarf_grp_destroy_free_node(void *node);
+int _dwarf_insert_in_group_map(Dwarf_Debug dbg,
+    unsigned groupnum,
+    unsigned section_index,
+    Dwarf_Error * error);
+int
+_dwarf_section_get_target_group(Dwarf_Debug dbg,
+    unsigned   obj_section_index,
+    unsigned * groupnumber,
+    Dwarf_Error    * error);
+
+
+
 
 int
 _dwarf_next_cu_header_internal(Dwarf_Debug dbg,

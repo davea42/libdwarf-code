@@ -1790,7 +1790,3 @@ _dwarf_calculate_abbrev_section_end_ptr(Dwarf_CU_Context context)
     abbrev_end = abbrev_start + sec->dss_size;
     return abbrev_end;
 }
-
-
-
-

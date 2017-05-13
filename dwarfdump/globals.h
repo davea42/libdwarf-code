@@ -482,6 +482,8 @@ void print_attributes_encoding(Dwarf_Debug dbg);
 /* Detailed tag and attributes usage */
 void print_tag_attributes_usage(Dwarf_Debug dbg);
 
+void print_section_groups_data(Dwarf_Debug dbg);
+
 void print_any_harmless_errors(Dwarf_Debug dbg);
 
 /* Definitions for printing relocations. */
@@ -494,6 +496,7 @@ void print_any_harmless_errors(Dwarf_Debug dbg);
 #define DW_SECTION_REL_DEBUG_LOC      6
 #define DW_SECTION_REL_DEBUG_RANGES   7
 #define DW_SECTION_REL_DEBUG_TYPES    8
+#define DW_SECTION_REL_DEBUG_RNGLISTS 9
 #define DW_MASK_PRINT_ALL             0x00ff
 
 /* Definitions for printing sections. */
@@ -510,7 +513,11 @@ void print_any_harmless_errors(Dwarf_Debug dbg);
 #define DW_HDR_DEBUG_TYPES    0x00000400   /* 10 */
 #define DW_HDR_TEXT           0x00000800   /* 11 */ /* 0x0fff */
 #define DW_HDR_HEADER         0x00001000   /* 12 */
+
+/* Also for .debug_cu_index, tu_index */
 #define DW_HDR_GDB_INDEX      0x00002000   /* 13 */
+#define DW_HDR_DEBUG_RNGLISTS 0x00004000   /* 14  */ /* 0x00ff */
+#define DW_HDR_DEBUG_MACINFO  0x00008000   /* 15  */ /* 0x00ff */
 
 /* Mask to indicate all sections (by default) */
 #define DW_HDR_ALL            0x80000000

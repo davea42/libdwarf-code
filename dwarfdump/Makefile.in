@@ -70,6 +70,7 @@ FINALOBJECTS = \
 	print_ranges.o \
 	print_reloc.o \
 	print_sections.o  \
+	print_section_groups.o  \
 	print_static_funcs.o  \
 	print_static_vars.o  \
 	print_strings.o \

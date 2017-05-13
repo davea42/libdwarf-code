@@ -1,3 +1,9 @@
+2017-05-13 David Anderson
+    * CMakeLists.txt, Makefile.in: Mention new print_section_groups.c or .o.
+    * dwarfdump.c: Add needed section names in print_object_header() data.
+      Implement glflags.gf_section_groups_flag.
+    * print_section_groups.c: New, implementing handling of section
+      groups (aka COMDAT).
 2017-04-20 David Anderson
     * common.c, dwarfdump.c, tag_attr.c, tag_tree.c:Update 
       version string.

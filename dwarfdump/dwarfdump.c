@@ -665,39 +665,68 @@ print_object_header(UNUSEDARG Elf *elf,
 {
     /* Debug section names to be included in printing */
     #define DW_SECTNAME_DEBUG_INFO     ".debug_info"
+    #define DW_SECTNAME_DEBUG_INFO_DWO    ".debug_info.dwo"
     #define DW_SECTNAME_DEBUG_LINE     ".debug_line"
+    #define DW_SECTNAME_DEBUG_LINE_DWO     ".debug_line.dwo"
     #define DW_SECTNAME_DEBUG_PUBNAMES ".debug_pubnames"
     #define DW_SECTNAME_DEBUG_ABBREV   ".debug_abbrev"
+    #define DW_SECTNAME_DEBUG_ABBREV_DWO   ".debug_abbrev.dwo"
     #define DW_SECTNAME_DEBUG_ARANGES  ".debug_aranges"
     #define DW_SECTNAME_DEBUG_FRAME    ".debug_frame"
     #define DW_SECTNAME_DEBUG_LOC      ".debug_loc"
+    #define DW_SECTNAME_DEBUG_LOCLISTS      ".debug_loclists"
+    #define DW_SECTNAME_DEBUG_LOCLISTS_DWO      ".debug_loclists.dwo"
     #define DW_SECTNAME_DEBUG_RANGES   ".debug_ranges"
+    #define DW_SECTNAME_DEBUG_RNGLISTS   ".debug_rnglists"
+    #define DW_SECTNAME_DEBUG_RNGLISTS_DWO   ".debug_rnglists.dwo"
     #define DW_SECTNAME_DEBUG_STR      ".debug_str"
+    #define DW_SECTNAME_DEBUG_STR_DWO      ".debug_str.dwo"
+    #define DW_SECTNAME_DEBUG_STR_OFFSETS     ".debug_str_offsets"
+    #define DW_SECTNAME_DEBUG_STR_OFFSETS_DWO ".debug_str_offsets.dwo"
     #define DW_SECTNAME_DEBUG_PUBTYPES ".debug_pubtypes"
     #define DW_SECTNAME_DEBUG_TYPES    ".debug_types"
     #define DW_SECTNAME_TEXT           ".text"
     #define DW_SECTNAME_GDB_INDEX      ".gdb_index"
     #define DW_SECTNAME_EH_FRAME       ".eh_frame"
+    #define DW_SECTNAME_DEBUG_SUP       ".debug_sup"
+    #define DW_SECTNAME_DEBUG_MACINFO    ".debug_macinfo"
     #define DW_SECTNAME_DEBUG_MACRO    ".debug_macro"
+    #define DW_SECTNAME_DEBUG_MACRO_DWO    ".debug_macro.dwo"
     #define DW_SECTNAME_DEBUG_NAMES    ".debug_names"
+    #define DW_SECTNAME_CU_INDEX       ".debug_cu_index"
+    #define DW_SECTNAME_TU_INDEX       ".debug_tu_index"
 
     static char *sectnames[] = {
         DW_SECTNAME_DEBUG_INFO,
+        DW_SECTNAME_DEBUG_INFO_DWO,
         DW_SECTNAME_DEBUG_LINE,
+        DW_SECTNAME_DEBUG_LINE_DWO,
         DW_SECTNAME_DEBUG_PUBNAMES,
         DW_SECTNAME_DEBUG_ABBREV,
+        DW_SECTNAME_DEBUG_ABBREV_DWO,
         DW_SECTNAME_DEBUG_ARANGES,
         DW_SECTNAME_DEBUG_FRAME,
         DW_SECTNAME_DEBUG_LOC,
+        DW_SECTNAME_DEBUG_LOCLISTS,
+        DW_SECTNAME_DEBUG_LOCLISTS_DWO,
         DW_SECTNAME_DEBUG_RANGES,
+        DW_SECTNAME_DEBUG_RNGLISTS,
+        DW_SECTNAME_DEBUG_RNGLISTS_DWO,
         DW_SECTNAME_DEBUG_STR,
+        DW_SECTNAME_DEBUG_STR_DWO,
+        DW_SECTNAME_DEBUG_STR_OFFSETS,
+        DW_SECTNAME_DEBUG_STR_OFFSETS_DWO,
         DW_SECTNAME_DEBUG_PUBTYPES,
         DW_SECTNAME_DEBUG_TYPES,
         DW_SECTNAME_TEXT,
         DW_SECTNAME_GDB_INDEX,
         DW_SECTNAME_EH_FRAME,
+        DW_SECTNAME_DEBUG_MACINFO,
         DW_SECTNAME_DEBUG_MACRO,
+        DW_SECTNAME_DEBUG_MACRO_DWO,
         DW_SECTNAME_DEBUG_NAMES,
+        DW_SECTNAME_CU_INDEX,
+        DW_SECTNAME_TU_INDEX,
         ""
     };
 
@@ -1283,6 +1312,10 @@ process_one_file(Elf * elf,Elf *elftied,
     if (glflags.gf_header_flag) {
         print_object_header(elf,dbg,section_map);
     }
+    if (glflags.gf_section_groups_flag) {
+        print_section_groups_data(dbg);
+    }
+
     reset_overall_CU_error_data();
     if (glflags.gf_info_flag || glflags.gf_line_flag ||
         glflags.gf_check_macros || glflags.gf_macinfo_flag ||
@@ -1432,6 +1465,7 @@ static void
 do_all(void)
 {
     glflags.gf_info_flag = glflags.gf_frame_flag = TRUE;
+    glflags.gf_section_groups_flag = TRUE;
     glflags.gf_line_flag = TRUE;
     glflags.gf_pubnames_flag = glflags.gf_macinfo_flag = TRUE;
     glflags.gf_macro_flag = TRUE;
@@ -1681,6 +1715,7 @@ process_args(int argc, char *argv[])
         do_all();
     }
 
+    glflags.gf_section_groups_flag = TRUE;
     /* j unused */
     while ((c = dwgetopt(argc, argv,
         "#:abc::CdDeE::fFgGhH:iIk:l::mMnNo::O:pPqQrRsS:t:u:UvVwW::x:yz")) != EOF) {
@@ -1768,6 +1803,9 @@ process_args(int argc, char *argv[])
                     break;
                 } else if (strcmp(dwoptarg, "nosanitizestrings") == 0) {
                     no_sanitize_string_garbage = TRUE;
+                    break;
+                } else if (strcmp(dwoptarg,"noprintsectiongroups") == 0){
+                    glflags.gf_section_groups_flag = FALSE;
                     break;
                 } else {
                 badopt:
@@ -2018,10 +2056,17 @@ process_args(int argc, char *argv[])
                 case 'f': section_map |= DW_HDR_DEBUG_FRAME; break;
                 case 'o': section_map |= DW_HDR_DEBUG_LOC; break;
                 case 'R': section_map |= DW_HDR_DEBUG_RANGES; break;
+                       section_map |= DW_HDR_DEBUG_RNGLISTS; break;
                 case 's': section_map |= DW_HDR_DEBUG_STRING; break;
+
+                /*  For both old macinfo and dwarf5  macro */
+                case 'm': section_map |= DW_HDR_DEBUG_MACINFO; break;
                 case 't': section_map |= DW_HDR_DEBUG_PUBTYPES; break;
                 case 'x': section_map |= DW_HDR_TEXT; break;
+
+                /* Also for .debug_tu/cu_index. */
                 case 'I': section_map |= DW_HDR_GDB_INDEX; break;
+
                 /* case 'd', use the default section set */
                 case 'd': section_map |= DW_HDR_DEFAULT; break;
                 default: usage_error = TRUE; break;
