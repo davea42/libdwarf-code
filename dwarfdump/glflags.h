@@ -27,8 +27,6 @@
 
 
 struct glflags_s {
-    boolean gf_debug_names_flag;
-    boolean gf_info_flag;
 
     /* This so both
         dwarf_loclist_n()  and dwarf_get_loclist_c()
@@ -40,32 +38,31 @@ struct glflags_s {
         as of October 2015. */
     boolean gf_use_old_dwarf_loclist;
     enum line_flag_type_e gf_line_flag_selection;
-    boolean gf_line_flag;
-    boolean gf_line_skeleton_flag;
-    boolean gf_line_print_pc;
+
     boolean gf_abbrev_flag;
-    boolean gf_frame_flag;      /* .debug_frame section. */
-    boolean gf_eh_frame_flag;   /* GNU .eh_frame section. */
-    boolean gf_pubnames_flag;
-    boolean gf_macinfo_flag; /* DWARF2,3,4. Old macro section*/
-
-    /* DWARF5(and DWARF4 extension) new macro section */
-    boolean  gf_macro_flag;
-
-    boolean gf_loc_flag;
     boolean gf_aranges_flag; /* .debug_aranges section. */
+    boolean gf_debug_names_flag;
+    boolean gf_eh_frame_flag;   /* GNU .eh_frame section. */
+    boolean gf_frame_flag;      /* .debug_frame section. */
+    boolean gf_gdbindex_flag;   /* .gdbindex section. */
+    boolean gf_info_flag;  /* .debug_info */
+    boolean gf_line_flag;
+    boolean gf_line_print_pc;
+    boolean gf_line_skeleton_flag;
+    boolean gf_loc_flag;
+    boolean gf_macinfo_flag; /* DWARF2,3,4. Old macro section*/
+    boolean gf_macro_flag; /* DWARF5 */
+    boolean gf_pubnames_flag;
     boolean gf_ranges_flag; /* .debug_ranges section. */
+    boolean gf_reloc_flag;  /* Elf relocations, not DWARF. */
+    boolean gf_static_func_flag;/* SGI only */
+    boolean gf_static_var_flag; /* SGI only */
     boolean gf_string_flag;
-    boolean gf_reloc_flag;
-    boolean gf_static_func_flag;
-    boolean gf_static_var_flag;
-    boolean gf_type_flag;
-    boolean gf_weakname_flag;
+    boolean gf_pubtypes_flag;   /* SGI only */
+    boolean gf_types_flag; /* .debug_types, not all CU types */
+    boolean gf_weakname_flag;   /* SGI only */
+
     boolean gf_header_flag; /* Control printing of Elf header. */
-
-    /* Control printing of gdb_index section.*/
-    boolean gf_gdbindex_flag;
-
     boolean gf_section_groups_flag;
 
     boolean gf_producer_children_flag;   /* List of CUs per compiler */

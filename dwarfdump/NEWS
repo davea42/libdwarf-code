@@ -1,4 +1,13 @@
-March 24 20, 2017
+May 17, 2017
+  Now dwarfdump understands both split-dwarf and COMDAT sections
+  (it calls the section-groups 'Groups')
+  so it is possible to properly print all such.  A traditional
+  DWARF2,3,4,5 consumer can ignore section groups.
+  To print in more complicate situations the -x groupnumber=3
+  (3 as an example) lets you choose a specific group/comdat to print.
+  Dwarfdump prints out a section-groupnumber table when appropriate
+  a making it easy to know what groups are present.
+March 24, 2017
   dwarfdump: Now argv[0] is checked before setting the program_name
   global variable.  If it contains '/dwarfdump.O'  that part of
   the string is shortened to '/dwarfdump'.

@@ -101,7 +101,7 @@ print_debugfission_index(Dwarf_Debug dbg,const char *type)
     if(!section_name || !*section_name) {
         section_name = (is_cu?".debug_cu_index":".debug_tu_index");
     }
-    printf("\n%s\n",section_name);
+    printf("\n%s\n",sanitized(section_name));
     printf("  Version:           %" DW_PR_DUu "\n",
         version_number);
     printf("  Number of columns: %" DW_PR_DUu "\n",

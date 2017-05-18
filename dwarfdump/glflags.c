@@ -67,7 +67,7 @@ init_global_flags(void)
     glflags.gf_reloc_flag = FALSE;
     glflags.gf_static_func_flag = FALSE;
     glflags.gf_static_var_flag = FALSE;
-    glflags.gf_type_flag = FALSE;
+    glflags.gf_types_flag = FALSE;
     glflags.gf_weakname_flag = FALSE;
     glflags.gf_header_flag = FALSE; /* Control printing of Elf header. */
     glflags.gf_gdbindex_flag = FALSE;

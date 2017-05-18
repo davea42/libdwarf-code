@@ -322,7 +322,8 @@ validate_die_stack_siblings(Dwarf_Debug dbg)
 static int
 print_as_info_or_cu()
 {
-    return (glflags.gf_info_flag || glflags.gf_cu_name_flag);
+    return (glflags.gf_info_flag || glflags.gf_types_flag
+        || glflags.gf_cu_name_flag);
 }
 
 #if 0
@@ -380,6 +381,7 @@ print_infos(Dwarf_Debug dbg,Dwarf_Bool is_info)
         }
         return;
     }
+    /* !is_info */
     nres = print_one_die_section(dbg,FALSE,&pi_err);
     if (nres == DW_DLV_ERROR) {
         char * errmsg = dwarf_errmsg(pi_err);
@@ -636,16 +638,24 @@ print_one_die_section(Dwarf_Debug dbg,Dwarf_Bool is_info,
     current_section_id = is_info?DEBUG_INFO:DEBUG_TYPES;
     res = dwarf_get_die_section_name(dbg, is_info,
         &section_name,pod_err);
-    if (res != DW_DLV_OK || !section_name ||
-        !strlen(section_name)) {
-        if (is_info) {
-            section_name = ".debug_info";
-        } else  {
-            section_name = ".debug_types";
+    if (res == DW_DLV_NO_ENTRY) {
+        /*  The section is absent. Print nothing for now  FIXME
+            unless is_info (just to match previous practice) FIXME . */
+        if (!is_info) {
+            return DW_DLV_NO_ENTRY;
         }
     }
-    if (print_as_info_or_cu() && is_info && glflags.gf_do_print_dwarf) {
-        printf("\n%s\n",section_name);
+    if (res != DW_DLV_OK) {
+        if(!section_name || !strlen(section_name)) {
+            if (is_info) {
+                section_name = ".debug_info";
+            } else  {
+                section_name = ".debug_types";
+            }
+        }
+    }
+    if (print_as_info_or_cu() && glflags.gf_do_print_dwarf) {
+        printf("\n%s\n",sanitized(section_name));
     }
 
     /* Loop until it fails.  */
@@ -668,12 +678,7 @@ print_one_die_section(Dwarf_Debug dbg,Dwarf_Bool is_info,
         if (nres == DW_DLV_NO_ENTRY) {
             return nres;
         }
-        if (loop_count == 0 &&!is_info &&
-            /*  For .debug_types we don't print the section name
-                unless we really have it. */
-            print_as_info_or_cu() && glflags.gf_do_print_dwarf) {
-            printf("\n%s\n",section_name);
-        }
+
         if (nres != DW_DLV_OK) {
             return nres;
         }
@@ -772,7 +777,8 @@ print_one_die_section(Dwarf_Debug dbg,Dwarf_Bool is_info,
         dwarf_dealloc(dbg, cu_die, DW_DLA_DIE);
         cu_die = 0; /* For debugging, stale die should be NULL. */
 
-        if (glflags.gf_info_flag && glflags.gf_do_print_dwarf) {
+        if ((glflags.gf_info_flag || glflags.gf_types_flag) &&
+            glflags.gf_do_print_dwarf) {
             if (verbose) {
                 print_cu_hdr_std(cu_header_length,abbrev_offset,
                     version_stamp,address_size,length_size,
@@ -1062,6 +1068,7 @@ print_die_and_children_internal(Dwarf_Debug dbg,
                 if (glflags.gf_display_children_tree) {
                     glflags.gf_stop_indent_level = die_stack_indent_level;
                     glflags.gf_info_flag = TRUE;
+                    glflags.gf_types_flag = TRUE;
                 }
             }
         }
@@ -1157,16 +1164,19 @@ print_die_and_children_internal(Dwarf_Debug dbg,
         }
 
         /* Stop the display of all children */
-        if (glflags.gf_display_children_tree && glflags.gf_info_flag &&
+        if (glflags.gf_display_children_tree &&
+            (glflags.gf_info_flag || glflags.gf_types_flag) &&
             glflags.gf_stop_indent_level == die_stack_indent_level) {
 
             glflags.gf_info_flag = FALSE;
+            glflags.gf_types_flag = FALSE;
         }
 
-        cdres = dwarf_siblingof_b(dbg, in_die,is_info, &sibling, &dacerr);
+        cdres = dwarf_siblingof_b(dbg, in_die,is_info,
+            &sibling, &dacerr);
         if (cdres == DW_DLV_OK) {
-            /*  print_die_and_children(dbg, sibling, srcfiles, cnt); We
-                loop around to actually print this, rather than
+            /*  print_die_and_children(dbg, sibling, srcfiles, cnt);
+                We loop around to actually print this, rather than
                 recursing. Recursing is horribly wasteful of stack
                 space. */
         } else if (cdres == DW_DLV_ERROR) {

@@ -56,7 +56,7 @@ print_version_details(UNUSEDARG const char * name,int alwaysprint)
     static char acVersion[64];
     snprintf(acVersion,sizeof(acVersion),
         "[%s %s %s Win%s (%s)]",__DATE__,__TIME__,acType,bits,RELEASE_DATE);
-    printf("%s %s\n",name,acVersion);
+    printf("%s %s\n",sanitized(name),acVersion);
 #else  /* !_WIN32 */
     if (alwaysprint) {
         printf("%s\n",DW_VERSION_DATE_STR);
@@ -72,7 +72,7 @@ print_args(UNUSEDARG int argc, UNUSEDARG char *argv[])
     int index = 1;
     printf("Arguments: ");
     for (index = 1; index < argc; ++index) {
-        printf("%s ",argv[index]);
+        printf("%s ",sanitized(argv[index]));
     }
     printf("\n");
 #endif /* _WIN32 */

@@ -1,6 +1,34 @@
+2017-05-17 David Anderson
+    * CMakeLists.txt: Add section_bitmaps.h,.c.
+    * Makefile.in: Add section_bitmaps.o, section_bitmaps.h.
+      Add section_bitmaps 'make selftest' rules.
+    * section_bitmaps.h, section_bitmaps.c: The bit field code
+      used to control the -E option set was out of date and
+      difficult to get right. Now 'make selftest' ensures that
+      the bits match up with the strings.
+    * glflags.h, glflags.c: Fixed the misnamed gf_type_flag to be
+      gf_types_flag.
+    * globals.h: Move defines to section_bitmaps.h
+    * common.c: Use sanitized() on incoming strings we print.
+    * print_aranges.c,print_debugfission.c: Names from elf now
+      get sanitized() for printing.
+    * print_section_groups.c: Improved one interface. 
+    * print_die.c: Critical fixes so we get the section names on output
+      when we want them, and sanitized().
+    * common.c, print_aranges.c, print_debugfission.c,print_ranges.c,
+      print_strings.c: Calling sanitized() to ensure printf safety.
+    * print_section_groups.c: Revised function interface.
+      Do not use May 13 interface.
+    * print_die.c: Crucial revision so DWARF4 debug_types prints.
+    * dwarfdump.c: Revised flags so the gf_section_groups_flag works.
+      Revised the section bitmaps code.
+    * print_section_groups.c: Delete a printf left in
+      for debugging.
 2017-05-13 David Anderson
-    * CMakeLists.txt, Makefile.in: Mention new print_section_groups.c or .o.
-    * dwarfdump.c: Add needed section names in print_object_header() data.
+    * CMakeLists.txt, Makefile.in: Mention new 
+      print_section_groups.c or .o.
+    * dwarfdump.c: Add needed section names in 
+      print_object_header() data.
       Implement glflags.gf_section_groups_flag.
     * print_section_groups.c: New, implementing handling of section
       groups (aka COMDAT).

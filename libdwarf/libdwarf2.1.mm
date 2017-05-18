@@ -8,7 +8,7 @@
 .nr Hb 5
 \." ==============================================
 \." Put current date in the following at each rev
-.ds vE rev 2.54, April 02, 2017
+.ds vE rev 2.55, May 17, 2017
 \." ==============================================
 \." ==============================================
 .ds | |
@@ -11083,8 +11083,11 @@ to open-source it.
 \f(CWint dwarf_get_section_count(
    Dwarf_Debug dbg) \fP
 .DE 
-
+.P
 Returns a count of the number of object sections found.
+.P
+If there is an incomplete or damaged dbg passed in
+this can return -1;
 
 
 

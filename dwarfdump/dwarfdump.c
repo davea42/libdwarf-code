@@ -663,73 +663,6 @@ print_object_header(UNUSEDARG Elf *elf,
     Dwarf_Debug dbg,
     unsigned local_section_map)
 {
-    /* Debug section names to be included in printing */
-    #define DW_SECTNAME_DEBUG_INFO     ".debug_info"
-    #define DW_SECTNAME_DEBUG_INFO_DWO    ".debug_info.dwo"
-    #define DW_SECTNAME_DEBUG_LINE     ".debug_line"
-    #define DW_SECTNAME_DEBUG_LINE_DWO     ".debug_line.dwo"
-    #define DW_SECTNAME_DEBUG_PUBNAMES ".debug_pubnames"
-    #define DW_SECTNAME_DEBUG_ABBREV   ".debug_abbrev"
-    #define DW_SECTNAME_DEBUG_ABBREV_DWO   ".debug_abbrev.dwo"
-    #define DW_SECTNAME_DEBUG_ARANGES  ".debug_aranges"
-    #define DW_SECTNAME_DEBUG_FRAME    ".debug_frame"
-    #define DW_SECTNAME_DEBUG_LOC      ".debug_loc"
-    #define DW_SECTNAME_DEBUG_LOCLISTS      ".debug_loclists"
-    #define DW_SECTNAME_DEBUG_LOCLISTS_DWO      ".debug_loclists.dwo"
-    #define DW_SECTNAME_DEBUG_RANGES   ".debug_ranges"
-    #define DW_SECTNAME_DEBUG_RNGLISTS   ".debug_rnglists"
-    #define DW_SECTNAME_DEBUG_RNGLISTS_DWO   ".debug_rnglists.dwo"
-    #define DW_SECTNAME_DEBUG_STR      ".debug_str"
-    #define DW_SECTNAME_DEBUG_STR_DWO      ".debug_str.dwo"
-    #define DW_SECTNAME_DEBUG_STR_OFFSETS     ".debug_str_offsets"
-    #define DW_SECTNAME_DEBUG_STR_OFFSETS_DWO ".debug_str_offsets.dwo"
-    #define DW_SECTNAME_DEBUG_PUBTYPES ".debug_pubtypes"
-    #define DW_SECTNAME_DEBUG_TYPES    ".debug_types"
-    #define DW_SECTNAME_TEXT           ".text"
-    #define DW_SECTNAME_GDB_INDEX      ".gdb_index"
-    #define DW_SECTNAME_EH_FRAME       ".eh_frame"
-    #define DW_SECTNAME_DEBUG_SUP       ".debug_sup"
-    #define DW_SECTNAME_DEBUG_MACINFO    ".debug_macinfo"
-    #define DW_SECTNAME_DEBUG_MACRO    ".debug_macro"
-    #define DW_SECTNAME_DEBUG_MACRO_DWO    ".debug_macro.dwo"
-    #define DW_SECTNAME_DEBUG_NAMES    ".debug_names"
-    #define DW_SECTNAME_CU_INDEX       ".debug_cu_index"
-    #define DW_SECTNAME_TU_INDEX       ".debug_tu_index"
-
-    static char *sectnames[] = {
-        DW_SECTNAME_DEBUG_INFO,
-        DW_SECTNAME_DEBUG_INFO_DWO,
-        DW_SECTNAME_DEBUG_LINE,
-        DW_SECTNAME_DEBUG_LINE_DWO,
-        DW_SECTNAME_DEBUG_PUBNAMES,
-        DW_SECTNAME_DEBUG_ABBREV,
-        DW_SECTNAME_DEBUG_ABBREV_DWO,
-        DW_SECTNAME_DEBUG_ARANGES,
-        DW_SECTNAME_DEBUG_FRAME,
-        DW_SECTNAME_DEBUG_LOC,
-        DW_SECTNAME_DEBUG_LOCLISTS,
-        DW_SECTNAME_DEBUG_LOCLISTS_DWO,
-        DW_SECTNAME_DEBUG_RANGES,
-        DW_SECTNAME_DEBUG_RNGLISTS,
-        DW_SECTNAME_DEBUG_RNGLISTS_DWO,
-        DW_SECTNAME_DEBUG_STR,
-        DW_SECTNAME_DEBUG_STR_DWO,
-        DW_SECTNAME_DEBUG_STR_OFFSETS,
-        DW_SECTNAME_DEBUG_STR_OFFSETS_DWO,
-        DW_SECTNAME_DEBUG_PUBTYPES,
-        DW_SECTNAME_DEBUG_TYPES,
-        DW_SECTNAME_TEXT,
-        DW_SECTNAME_GDB_INDEX,
-        DW_SECTNAME_EH_FRAME,
-        DW_SECTNAME_DEBUG_MACINFO,
-        DW_SECTNAME_DEBUG_MACRO,
-        DW_SECTNAME_DEBUG_MACRO_DWO,
-        DW_SECTNAME_DEBUG_NAMES,
-        DW_SECTNAME_CU_INDEX,
-        DW_SECTNAME_TU_INDEX,
-        ""
-    };
-
     /* Preserve original mapping */
     unsigned map_wrk;
 
@@ -854,8 +787,8 @@ print_object_header(UNUSEDARG Elf *elf,
                     print_it = TRUE;
                 } else {
                     /* Check if the section name is a debug section */
-                    for (index = 0; *sectnames[index]; ++index) {
-                        if (!strcmp(sectnames[index],section_name) &&
+                    for (index = 0; *map_sectnames[index].name; ++index) {
+                        if (!strcmp(map_sectnames[index].name,section_name) &&
                             (local_section_map & (1 << index))) {
                             print_it = TRUE;
                             break;
@@ -1239,9 +1172,15 @@ process_one_file(Elf * elf,Elf *elftied,
     /*  If using a tied file group number should be 2 DW_GROUPNUMBER_DWO
         but in a dwp or separate-split-dwarf object then
         0 will find the .dwo data automatically. */
-    dres = dwarf_elf_init_b(elf, DW_DLC_READ,group_number, NULL, NULL, &dbg, &onef_err);
+    dres = dwarf_elf_init_b(elf, DW_DLC_READ,group_number,
+        NULL, NULL, &dbg, &onef_err);
     if (dres == DW_DLV_NO_ENTRY) {
-        printf("No DWARF information present in %s\n", file_name);
+        if (group_number > 0) {
+            printf("No DWARF information present in %s "
+                "for section group %d \n", file_name,group_number);
+        } else {
+            printf("No DWARF information present in %s\n",file_name);
+        }
         return 0;
     }
     if (dres != DW_DLV_OK) {
@@ -1312,12 +1251,19 @@ process_one_file(Elf * elf,Elf *elftied,
     if (glflags.gf_header_flag) {
         print_object_header(elf,dbg,section_map);
     }
+
     if (glflags.gf_section_groups_flag) {
         print_section_groups_data(dbg);
+        /*  If groupnum > 2 this turns off some
+            of the gf_flags here so we don't print
+            section names of things we do not
+            want to print. */
+        update_section_flags_per_groups(dbg);
     }
 
     reset_overall_CU_error_data();
     if (glflags.gf_info_flag || glflags.gf_line_flag ||
+        glflags.gf_types_flag ||
         glflags.gf_check_macros || glflags.gf_macinfo_flag ||
         glflags.gf_macro_flag ||
         glflags.gf_cu_name_flag || glflags.gf_search_is_on ||
@@ -1396,7 +1342,7 @@ process_one_file(Elf * elf,Elf *elftied,
         SGI_TYPENAME is the same concept but is SGI specific ( it was
         defined 10 years before dwarf pubtypes). */
 
-    if (glflags.gf_type_flag) {
+    if (glflags.gf_pubtypes_flag) {
         reset_overall_CU_error_data();
         print_types(dbg, DWARF_PUBTYPES);
         reset_overall_CU_error_data();
@@ -1464,10 +1410,12 @@ process_one_file(Elf * elf,Elf *elftied,
 static void
 do_all(void)
 {
-    glflags.gf_info_flag = glflags.gf_frame_flag = TRUE;
-    glflags.gf_section_groups_flag = TRUE;
+    glflags.gf_frame_flag = TRUE;
+    glflags.gf_info_flag = TRUE;
+    glflags.gf_types_flag =  TRUE; /* .debug_types */
     glflags.gf_line_flag = TRUE;
-    glflags.gf_pubnames_flag = glflags.gf_macinfo_flag = TRUE;
+    glflags.gf_pubnames_flag = TRUE;
+    glflags.gf_macinfo_flag = TRUE;
     glflags.gf_macro_flag = TRUE;
     glflags.gf_aranges_flag = TRUE;
     /*  Do not do
@@ -1481,8 +1429,10 @@ do_all(void)
     /*  Do not do
         glflags.gf_reloc_flag = TRUE;
         as print_relocs makes no sense for non-elf dwarfdump users.  */
-    glflags.gf_static_func_flag = glflags.gf_static_var_flag = TRUE;
-    glflags.gf_type_flag = glflags.gf_weakname_flag = TRUE;
+    glflags.gf_static_func_flag = TRUE; /* SGI only*/
+    glflags.gf_static_var_flag = TRUE; /* SGI only*/
+    glflags.gf_pubtypes_flag = TRUE;  /* both SGI typenames and dwarf_pubtypes. */
+    glflags.gf_weakname_flag = TRUE; /* SGI only*/
     glflags.gf_header_flag = TRUE; /* Dump header info */
     glflags.gf_debug_names_flag = TRUE;
 }
@@ -1714,8 +1664,8 @@ process_args(int argc, char *argv[])
     if (argv[1] != NULL && argv[1][0] != '-') {
         do_all();
     }
-
     glflags.gf_section_groups_flag = TRUE;
+
     /* j unused */
     while ((c = dwgetopt(argc, argv,
         "#:abc::CdDeE::fFgGhH:iIk:l::mMnNo::O:pPqQrRsS:t:u:UvVwW::x:yz")) != EOF) {
@@ -1834,6 +1784,7 @@ process_args(int argc, char *argv[])
             break;
         case 'i':
             glflags.gf_info_flag = TRUE;
+            glflags.gf_types_flag = TRUE;
             suppress_check_dwarf();
             break;
         case 'I':
@@ -2056,11 +2007,12 @@ process_args(int argc, char *argv[])
                 case 'f': section_map |= DW_HDR_DEBUG_FRAME; break;
                 case 'o': section_map |= DW_HDR_DEBUG_LOC; break;
                 case 'R': section_map |= DW_HDR_DEBUG_RANGES; break;
-                       section_map |= DW_HDR_DEBUG_RNGLISTS; break;
-                case 's': section_map |= DW_HDR_DEBUG_STRING; break;
+                    section_map |= DW_HDR_DEBUG_RNGLISTS; break;
+                case 's': section_map |= DW_HDR_DEBUG_STR; break;
 
                 /*  For both old macinfo and dwarf5  macro */
                 case 'm': section_map |= DW_HDR_DEBUG_MACINFO; break;
+
                 case 't': section_map |= DW_HDR_DEBUG_PUBTYPES; break;
                 case 'x': section_map |= DW_HDR_TEXT; break;
 
@@ -2096,7 +2048,7 @@ process_args(int argc, char *argv[])
                 }
             } else {
                 /* Display all relocs */
-                reloc_map = DW_MASK_PRINT_ALL;
+                reloc_map = DW_REL_MASK_PRINT_ALL;
             }
             break;
         /* Output filename */
@@ -2126,6 +2078,7 @@ process_args(int argc, char *argv[])
                 glflags.gf_check_names = TRUE;
                 glflags.gf_pubnames_flag = TRUE;
                 glflags.gf_info_flag = TRUE;
+                glflags.gf_types_flag = TRUE;
                 glflags.gf_gdbindex_flag = TRUE;
                 glflags.gf_check_decl_file = TRUE;
                 glflags.gf_check_macros = TRUE;
@@ -2153,11 +2106,13 @@ process_args(int argc, char *argv[])
             case 'b':
                 glflags.gf_check_abbreviations = TRUE;
                 glflags.gf_info_flag = TRUE;
+                glflags.gf_types_flag = TRUE;
                 break;
             /* DWARF constants */
             case 'c':
                 glflags.gf_check_dwarf_constants = TRUE;
                 glflags.gf_info_flag = TRUE;
+                glflags.gf_types_flag = TRUE;
                 break;
             /* Display check results */
             case 'd':
@@ -2167,6 +2122,7 @@ process_args(int argc, char *argv[])
             case 'D':
                 glflags.gf_check_duplicated_attributes = TRUE;
                 glflags.gf_info_flag = TRUE;
+                glflags.gf_types_flag = TRUE;
                 break;
             case 'e':
                 glflags.gf_check_pubname_attr = TRUE;
@@ -2178,6 +2134,7 @@ process_args(int argc, char *argv[])
             case 'E':
                 glflags.gf_check_attr_encoding = TRUE;
                 glflags.gf_info_flag = TRUE;
+                glflags.gf_types_flag = TRUE;
                 break;
             case 'f':
                 glflags.gf_check_harmless = TRUE;
@@ -2188,11 +2145,13 @@ process_args(int argc, char *argv[])
                 glflags.gf_check_decl_file = TRUE;
                 glflags.gf_check_lines = TRUE;
                 glflags.gf_info_flag = TRUE;
+                glflags.gf_types_flag = TRUE;
                 break;
             /* Check debug info gaps */
             case 'g':
                 glflags.gf_check_di_gaps = TRUE;
                 glflags.gf_info_flag = TRUE;
+                glflags.gf_types_flag = TRUE;
                 break;
             /* Print just global (unique) errors */
             case 'G':
@@ -2202,12 +2161,14 @@ process_args(int argc, char *argv[])
             case 'l':
                 glflags.gf_check_locations = TRUE;
                 glflags.gf_info_flag = TRUE;
+                glflags.gf_types_flag = TRUE;
                 glflags.gf_loc_flag = TRUE;
                 break;
             /* Ranges */
             case 'm':
                 glflags.gf_check_ranges = TRUE;
                 glflags.gf_info_flag = TRUE;
+                glflags.gf_types_flag = TRUE;
                 break;
             /* Aranges */
             case 'M':
@@ -2218,16 +2179,19 @@ process_args(int argc, char *argv[])
             case 'n':
                 glflags.gf_check_names = TRUE;
                 glflags.gf_info_flag = TRUE;
+                glflags.gf_types_flag = TRUE;
                 break;
             case 'r':
                 glflags.gf_check_attr_tag = TRUE;
                 glflags.gf_info_flag = TRUE;
+                glflags.gf_types_flag = TRUE;
                 glflags.gf_check_harmless = TRUE;
                 break;
             /* forward declarations in DW_AT_specification */
             case 'R':
                 glflags.gf_check_forward_decl = TRUE;
                 glflags.gf_info_flag = TRUE;
+                glflags.gf_types_flag = TRUE;
                 break;
             /* Check verbose mode */
             case 's':
@@ -2238,17 +2202,20 @@ process_args(int argc, char *argv[])
             case 'S':
                 glflags.gf_check_self_references = TRUE;
                 glflags.gf_info_flag = TRUE;
+                glflags.gf_types_flag = TRUE;
                 break;
             case 't':
                 glflags.gf_check_tag_tree = TRUE;
                 glflags.gf_check_harmless = TRUE;
                 glflags.gf_info_flag = TRUE;
+                glflags.gf_types_flag = TRUE;
                 break;
 #ifdef HAVE_USAGE_TAG_ATTR
             /* Tag-Tree and Tag-Attr usage */
             case 'u':
                 glflags.gf_print_usage_tag_attr = TRUE;
                 glflags.gf_info_flag = TRUE;
+                glflags.gf_types_flag = TRUE;
                 if (dwoptarg[1]) {
                     if ('f' == dwoptarg[1]) {
                         /* -kuf : Full report */
@@ -2269,6 +2236,7 @@ process_args(int argc, char *argv[])
                 glflags.gf_check_harmless = TRUE;
                 glflags.gf_check_decl_file = TRUE;
                 glflags.gf_info_flag = TRUE;
+                glflags.gf_pubtypes_flag = TRUE;
                 glflags.gf_check_ranges = TRUE;
                 glflags.gf_check_aranges = TRUE;
                 break;
@@ -2330,9 +2298,10 @@ process_args(int argc, char *argv[])
                 break;
             }
             break;
-        case 'y':               /* .debug_types */
+        case 'y':               /* .debug_pubtypes */
+            /* Also for SGI-only, and obsolete, .debug_typenames */
             suppress_check_dwarf();
-            glflags.gf_type_flag = TRUE;
+            glflags.gf_pubtypes_flag = TRUE;
             break;
         case 'w':               /* .debug_weaknames */
             glflags.gf_weakname_flag = TRUE;
@@ -2400,6 +2369,10 @@ process_args(int argc, char *argv[])
         print_usage_message(program_name,usage_text);
         exit(FAILED);
     }
+    /*  FIXME: it seems silly to be printing section names
+        where the section does not exist in the object file.
+        However we continue the long-standard practice
+        of printing such by default in most cases. For now. */
     if (group_number == DW_GROUPNUMBER_DWO) {
         /*  For split-dwarf/DWO some sections make no sense.
             This prevents printing of meaningless headers where no
@@ -2413,6 +2386,13 @@ process_args(int argc, char *argv[])
         glflags.gf_static_func_flag = FALSE;
         glflags.gf_static_var_flag = FALSE;
         glflags.gf_weakname_flag = FALSE;
+    }
+    if (group_number > DW_GROUPNUMBER_BASE) {
+        /* These no longer apply, no one uses. */
+        glflags.gf_static_func_flag = FALSE;
+        glflags.gf_static_var_flag = FALSE;
+        glflags.gf_weakname_flag = FALSE;
+        glflags.gf_pubnames_flag = FALSE;
     }
 
     if (glflags.gf_do_check_dwarf) {

@@ -59,6 +59,22 @@ int dwarf_get_offset_size(Dwarf_Debug dbg,
     return DW_DLV_OK;
 }
 
+#if 0
+static void
+dump_bytes(char * msg,Dwarf_Small * start, long len)
+{
+    Dwarf_Small *end = start + len;
+    Dwarf_Small *cur = start;
+
+    printf("%s ",msg);
+    for (; cur < end; cur++) {
+        printf("%02x ", *cur);
+    }
+    printf("\n");
+}
+#endif
+
+
 
 /* This is normally reliable.
 But not always.

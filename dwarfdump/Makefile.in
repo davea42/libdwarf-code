@@ -76,9 +76,10 @@ FINALOBJECTS = \
 	print_strings.o \
 	print_types.o \
 	print_weaknames.o  \
-        sanitized.o \
-        strstrnocase.o \
-        uri.o
+	sanitized.o \
+	section_bitmaps.o \
+	strstrnocase.o \
+	uri.o
 GEN_HFILES = common.o \
 	tmp-tt-table.c \
 	tmp-ta-table.c \
@@ -97,6 +98,7 @@ HEADERS =  $(srcdir)/checkutil.h \
         $(srcdir)/makename.h \
         $(srcdir)/dwarf_tsearch.h \
         $(srcdir)/print_frames.h \
+        $(srcdir)/section_bitmaps.h \
         $(srcdir)/uri.h
 
 $(FINALOBJECTS): $(GEN_HFILES)  $(HEADERS) $(srcdir)/naming.c
@@ -191,6 +193,9 @@ selftest:
 	-rm -f ./selfhelpertree
 	./selfmakename
 	-rm -f ./selfmakename
+	$(CC) -DSELFTEST -I../libdwarf -g section_bitmaps.c -o section_bitmaps
+	./section_bitmaps
+	-rm -f ./section_bitmaps
 	$(CC) -DSELFTEST -I../libdwarf -g macrocheck.c esb.o dwarf_tsearchbal.o -o selfmc
 	./selfmc
 	-rm -f ./selfmc

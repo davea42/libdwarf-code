@@ -483,45 +483,11 @@ void print_attributes_encoding(Dwarf_Debug dbg);
 void print_tag_attributes_usage(Dwarf_Debug dbg);
 
 void print_section_groups_data(Dwarf_Debug dbg);
+void update_section_flags_per_groups(Dwarf_Debug dbg);
 
 void print_any_harmless_errors(Dwarf_Debug dbg);
 
-/* Definitions for printing relocations. */
-#define DW_SECTION_REL_DEBUG_INFO     0
-#define DW_SECTION_REL_DEBUG_LINE     1
-#define DW_SECTION_REL_DEBUG_PUBNAMES 2
-#define DW_SECTION_REL_DEBUG_ABBREV   3
-#define DW_SECTION_REL_DEBUG_ARANGES  4
-#define DW_SECTION_REL_DEBUG_FRAME    5
-#define DW_SECTION_REL_DEBUG_LOC      6
-#define DW_SECTION_REL_DEBUG_RANGES   7
-#define DW_SECTION_REL_DEBUG_TYPES    8
-#define DW_SECTION_REL_DEBUG_RNGLISTS 9
-#define DW_MASK_PRINT_ALL             0x00ff
-
-/* Definitions for printing sections. */
-#define DW_HDR_DEBUG_INFO     0x00000001   /*  0 */
-#define DW_HDR_DEBUG_LINE     0x00000002   /*  1 */
-#define DW_HDR_DEBUG_PUBNAMES 0x00000004   /*  2 */
-#define DW_HDR_DEBUG_ABBREV   0x00000008   /*  3 */ /* 0x000f */
-#define DW_HDR_DEBUG_ARANGES  0x00000010   /*  4 */
-#define DW_HDR_DEBUG_FRAME    0x00000020   /*  5 */
-#define DW_HDR_DEBUG_LOC      0x00000040   /*  6 */
-#define DW_HDR_DEBUG_RANGES   0x00000080   /*  7 */ /* 0x00ff */
-#define DW_HDR_DEBUG_STRING   0x00000100   /*  8 */
-#define DW_HDR_DEBUG_PUBTYPES 0x00000200   /*  9 */
-#define DW_HDR_DEBUG_TYPES    0x00000400   /* 10 */
-#define DW_HDR_TEXT           0x00000800   /* 11 */ /* 0x0fff */
-#define DW_HDR_HEADER         0x00001000   /* 12 */
-
-/* Also for .debug_cu_index, tu_index */
-#define DW_HDR_GDB_INDEX      0x00002000   /* 13 */
-#define DW_HDR_DEBUG_RNGLISTS 0x00004000   /* 14  */ /* 0x00ff */
-#define DW_HDR_DEBUG_MACINFO  0x00008000   /* 15  */ /* 0x00ff */
-
-/* Mask to indicate all sections (by default) */
-#define DW_HDR_ALL            0x80000000
-#define DW_HDR_DEFAULT        0x00002fff
+#include "section_bitmaps.h"
 
 #ifdef HAVE_UNUSED_ATTRIBUTE
 #define  UNUSEDARG __attribute__ ((unused))

@@ -4288,15 +4288,16 @@ int dwarf_sec_group_sizes(Dwarf_Debug /*dbg*/,
     Dwarf_Unsigned * /*map_entry_count_out*/,
     Dwarf_Error    * /*error*/);
 
-/*  New May 2017. Reveals the map between group numbers and section numbers. 
+/*  New May 2017. Reveals the map between group numbers and section numbers.
     Caller must allocate the arrays with space for 'map_entry_count'
-    values and this function fills in the array entries. 
+    values and this function fills in the array entries.
     Output ordered by group number and section number.
     */
 int dwarf_sec_group_map(Dwarf_Debug /*dbg*/,
     Dwarf_Unsigned   /*map_entry_count*/,
     Dwarf_Unsigned * /*group_numbers_array*/,
     Dwarf_Unsigned * /*sec_numbers_array*/,
+    const char    ** /*sec_names_array*/,
     Dwarf_Error    * /*error*/);
 
 

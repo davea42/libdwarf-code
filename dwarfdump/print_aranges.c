@@ -140,7 +140,7 @@ print_aranges(Dwarf_Debug dbg)
         if (ares != DW_DLV_OK || !sec_name || !strlen(sec_name)) {
             sec_name = ".debug_aranges";
         }
-        printf("\n%s\n",sec_name);
+        printf("\n%s\n",sanitized(sec_name));
     }
     ares = dwarf_get_aranges(dbg, &arange_buf, &count, &pa_error);
     if (ares == DW_DLV_ERROR) {

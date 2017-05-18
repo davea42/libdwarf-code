@@ -34,22 +34,34 @@
 
 #define HASHSEARCH
 
+/*  It has not escaped our attention that the section-group
+    tsearch hash table could
+    be replaced by a simple array with space for each possible
+    section number, each element being the group number.
+    This would be much simpler than what follows here. */
+
 /*  Each section number can appear in at most one record in the hash
     because each section belongs in only one group.
     Each group number appears as often as appropriate. */
+
 struct Dwarf_Group_Map_Entry_s {
-  unsigned  gm_key;  /* section number */
-  unsigned  gm_group_number; /* What group number is. */
+    unsigned  gm_key;  /* section number */
+    unsigned  gm_group_number; /* What group number is. */
+
+    /*  The name is from static storage or from elf,
+        so there is nothing to free on record delete. */
+    const char * gm_section_name;
 };
 
 static void *
-grp_make_entry(unsigned section, unsigned group)
+grp_make_entry(unsigned section, unsigned group,const char *name)
 {
     struct Dwarf_Group_Map_Entry_s *e = 0;
     e = calloc(1,sizeof(struct Dwarf_Group_Map_Entry_s));
     if(e) {
         e->gm_key =    section;
         e->gm_group_number = group;
+        e->gm_section_name = name;
     }
     return e;
 }
@@ -94,6 +106,7 @@ int
 _dwarf_insert_in_group_map(Dwarf_Debug dbg,
     unsigned groupnum,
     unsigned section_index,
+    const char *name,
     Dwarf_Error * error)
 {
     struct Dwarf_Group_Data_s *grp = &dbg->de_groupnumbers;
@@ -111,7 +124,7 @@ _dwarf_insert_in_group_map(Dwarf_Debug dbg,
             return DW_DLV_NO_ENTRY;
         }
     }
-    entry3 = grp_make_entry(section_index,groupnum);
+    entry3 = grp_make_entry(section_index,groupnum,name);
     if (!entry3) {
         _dwarf_error(dbg, error, DW_DLE_GROUP_MAP_ALLOC);
         return DW_DLV_ERROR;
@@ -137,7 +150,7 @@ _dwarf_insert_in_group_map(Dwarf_Debug dbg,
 }
 
 int
-_dwarf_section_get_target_group(Dwarf_Debug dbg,
+_dwarf_section_get_target_group_from_map(Dwarf_Debug dbg,
     unsigned   obj_section_index,
     unsigned * groupnumber_out,
     UNUSEDARG Dwarf_Error    * error)
@@ -151,6 +164,7 @@ _dwarf_section_get_target_group(Dwarf_Debug dbg,
     }
     entry.gm_key = obj_section_index;
     entry.gm_group_number = 0; /* FAKE */
+    entry.gm_section_name = ""; /* FAKE */
 
     entry2 = dwarf_tfind(&entry, &grp->gd_map,grp_compare_function);
     if (entry2) {
@@ -189,6 +203,7 @@ static Dwarf_Unsigned map_reccount = 0;
 static struct temp_map_struc_s {
     Dwarf_Unsigned section;
     Dwarf_Unsigned group;
+    const char *name;
 } *temp_map_data;
 
 
@@ -205,6 +220,7 @@ grp_walk_map(const void *nodep,
     }
     temp_map_data[map_reccount].group   = re->gm_group_number;
     temp_map_data[map_reccount].section = re->gm_key;
+    temp_map_data[map_reccount].name = re->gm_section_name;
     map_reccount += 1;
 }
 
@@ -242,6 +258,7 @@ int dwarf_sec_group_map(Dwarf_Debug dbg,
     Dwarf_Unsigned   map_entry_count,
     Dwarf_Unsigned * group_numbers_array,
     Dwarf_Unsigned * sec_numbers_array,
+    const char   ** sec_names_array,
     Dwarf_Error    * error)
 {
     Dwarf_Unsigned i = 0;
@@ -274,6 +291,7 @@ int dwarf_sec_group_map(Dwarf_Debug dbg,
     for (i =0 ; i < map_reccount; ++i) {
         sec_numbers_array[i] = temp_map_data[i].section;
         group_numbers_array[i] = temp_map_data[i].group;
+        sec_names_array[i] = temp_map_data[i].name;
     }
     free(temp_map_data);
     map_reccount = 0;
@@ -281,7 +299,80 @@ int dwarf_sec_group_map(Dwarf_Debug dbg,
     return DW_DLV_OK;
 }
 
+static const char *dwo_secnames[] = {
+".debug_info.dwo",
+".debug_types.dwo",
+".debug_abbrev.dwo",
+".debug_line.dwo",
+".debug_loc.dwo",
+".debug_str.dwo",
+".debug_loclists.dwo",
+".debug_rnglists.dwo",
+".debug_str_offsets.dwo",
+".debug_macro.dwo",
+".debug_cu_index",
+".debug_tu_index",
+0 };
 
+/*  Assumption: dwo sections are never in a COMDAT group
+    (groupnumber >2)
+    and by definition here are never group 1.
+    Assumption: the map of COMDAT groups (not necessarily all
+    sections, but at least all COMDAT) is complete. */
+int
+_dwarf_dwo_groupnumber_given_name(
+    const char *name,
+    unsigned *grpnum_out)
+{
+    const char **s = 0;
+
+    for (s = dwo_secnames; *s; s++) {
+        if(!strcmp(name,*s)) {
+            *grpnum_out = DW_GROUPNUMBER_DWO;
+            return DW_DLV_OK;
+        }
+    }
+    return DW_DLV_NO_ENTRY;
+}
+
+static unsigned target_group = 0;
+static int found_name_in_group = 0;
+const char *lookfor_name = 0;
+
+static void
+grp_walk_for_name(const void *nodep,
+    const DW_VISIT which,
+    UNUSEDARG const int depth)
+{
+    struct Dwarf_Group_Map_Entry_s *re = 0;
+
+    re = *(struct Dwarf_Group_Map_Entry_s **)nodep;
+    if (which == dwarf_postorder || which == dwarf_endorder) {
+        return;
+    }
+    if (re->gm_group_number == target_group) {
+        if(!strcmp(lookfor_name,re->gm_section_name)) {
+            found_name_in_group = TRUE;
+        }
+    }
+}
+
+
+/* returns TRUE or FALSE */
+int
+_dwarf_section_in_group_by_name(Dwarf_Debug dbg,
+    const char * scn_name,
+    unsigned groupnum)
+{
+    struct Dwarf_Group_Data_s *grp = 0;
+
+    grp = &dbg->de_groupnumbers;
+    found_name_in_group = FALSE;
+    target_group = groupnum;
+    lookfor_name = scn_name;
+    dwarf_twalk(grp->gd_map,grp_walk_for_name);
+    return found_name_in_group;
+}
 
 
 

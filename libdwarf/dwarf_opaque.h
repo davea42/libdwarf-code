@@ -298,6 +298,13 @@ struct Dwarf_Section_s {
         detect duplicates. Ignored after setup done. */
     Dwarf_Small    dss_is_in_use;
 
+    /*  When loading COMDAT they refer (sometimes) to
+        base sections, so we need to have the BASE
+        group sections filled in when the corresponding is
+        not in the COMDAT group list.  .debug_abbrev is
+        an example. */
+    Dwarf_Word     dss_group_number;
+
     /*  If this is zdebug, to start  data/size are the
         raw section bytes.
         Initially for all sections dss_data_was_malloc set FALSE
@@ -409,6 +416,7 @@ struct Dwarf_dbg_sect_s {
         (or the like) of the dbg struct.  */
     struct Dwarf_Section_s *ds_secdata;
 
+    unsigned ds_groupnumber;
     int ds_duperr;                     /* Error code for duplicated section */
     int ds_emptyerr;                   /* Error code for empty section */
     int ds_have_dwarf;                 /* Section contains DWARF */
@@ -527,9 +535,9 @@ struct Dwarf_Tied_Data_s {
 };
 
 /*  dg_groupnum 0 does not exist.
-    dg_groupnum 1 is base 
-    dg_groupnum 2 is dwo 
-    dg_groupnum 3 and higher are COMDAT groups (if any). 
+    dg_groupnum 1 is base
+    dg_groupnum 2 is dwo
+    dg_groupnum 3 and higher are COMDAT groups (if any).
   */
 struct Dwarf_Group_Data_s {
     /* For traditional DWARF the value is one, just one group. */
@@ -557,8 +565,8 @@ struct Dwarf_Debug_s {
     struct Dwarf_Debug_InfoTypes_s de_info_reading;
     struct Dwarf_Debug_InfoTypes_s de_types_reading;
 
-    /*  DW_GROUPNUMBER_ANY, DW_GROUPNUMBER_BASE, DW_GROUPNUMBER_DWO, 
-        or a comdat group number > 2 
+    /*  DW_GROUPNUMBER_ANY, DW_GROUPNUMBER_BASE, DW_GROUPNUMBER_DWO,
+        or a comdat group number > 2
         Selected at init time of this dbg based on
         user request and on data in the object. */
     unsigned de_groupnumber;
@@ -807,18 +815,32 @@ _dwarf_search_for_signature(Dwarf_Debug dbg,
 
 void _dwarf_tied_destroy_free_node(void *node);
 void _dwarf_grp_destroy_free_node(void *node);
-int _dwarf_insert_in_group_map(Dwarf_Debug dbg,
-    unsigned groupnum,
-    unsigned section_index,
-    Dwarf_Error * error);
-int
-_dwarf_section_get_target_group(Dwarf_Debug dbg,
+
+int _dwarf_section_get_target_group(Dwarf_Debug dbg,
     unsigned   obj_section_index,
     unsigned * groupnumber,
     Dwarf_Error    * error);
 
+int _dwarf_dwo_groupnumber_given_name(
+    const char *name,
+    unsigned *grpnum_out);
 
+int _dwarf_section_get_target_group_from_map(Dwarf_Debug dbg,
+    unsigned   obj_section_index,
+    unsigned * groupnumber_out,
+    UNUSEDARG Dwarf_Error    * error);
 
+int _dwarf_insert_in_group_map(Dwarf_Debug dbg,
+    unsigned groupnum,
+    unsigned section_index,
+    const char *name,
+    Dwarf_Error * error);
+
+/* returns TRUE/FALSE: meaning this section name is in
+   map for this groupnum  or not.*/
+int _dwarf_section_in_group_by_name(Dwarf_Debug dbg,
+    const char * scn_name,
+    unsigned groupnum);
 
 int
 _dwarf_next_cu_header_internal(Dwarf_Debug dbg,
