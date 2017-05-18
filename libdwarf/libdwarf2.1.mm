@@ -8,7 +8,7 @@
 .nr Hb 5
 \." ==============================================
 \." Put current date in the following at each rev
-.ds vE rev 2.57, May 18, 2017
+.ds vE rev 2.58, May 18, 2017
 \." ==============================================
 \." ==============================================
 .ds | |
@@ -2002,12 +2002,85 @@ of what compilers generate.
     Dwarf_Debug dbg,
     Dwarf_Unsigned * section_count_out,
     Dwarf_Unsigned * group_count_out,
-    Dwarf_Unsigned * selected_group_out,,
+    Dwarf_Unsigned * selected_group_out,
     Dwarf_Unsigned * map_entry_count_out,
     Dwarf_Error    * error)
 \fP
 .DE
-FIXME
+The function
+\f(CWdwarf_sec_group_sizes()\fP
+may be called on any open 
+\f(CWDwarf_Debug\fP.
+It returns
+\f(CWDW_DLV_OK\fP
+on success and returns
+values via the pointer arguments.
+.P
+Once the
+\f(CWDwarf_Debug\fP
+is open the group
+information is set and it will not change
+for the life of this
+\f(CWDwarf_Debug\fP.
+.P
+The
+\f(CW*section_count_out\fP
+is set to the number of sections
+in the object. Many of the sections
+will be irrelevant to 
+\f(CWlibdwarf\fP.
+.P
+The
+\f(CW*group_count_out\fP
+is set to the number of groups
+in the object (as 
+\f(CWlibdwarf\fP
+counts them).
+An OSO will have exactly one group.
+A DWP object will have exactly one group.
+If is more than one group consumer code
+will likely want to open additional
+\f(CWDwarf_Debug\fP
+objects and request
+relevant information to process the 
+DWARF contents.
+An executable or a DWP object will
+always have a
+\f(CW*group_count_out\fP
+of one(1).
+An executable or a shared library
+cannot have any COMDAT section groups
+as the linker will have dealt with them.
+.P
+The
+\f(CW*selected_group_out\fP
+is set to the group number that
+this
+\f(CWDwarf_Debug\fP
+will focus on.
+See 
+\f(CWdwarf_sec_group_map()\fP
+for additional details on how
+\f(CW*selected_group_out\fP
+is interpreted.
+.P
+The
+\f(CW*map_entry_count_out\fP
+is set to the number of 
+entries in the map.
+See 
+\f(CWdwarf_sec_group_map()\fP.
+
+.P
+On failure it returns
+\f(CWDW_DLV_ERROR\fP
+and sets \f(CW*error\fP
+.P
+The initial implementation never returns
+\f(CWDW_DLV_ERROR\fP
+or
+\f(CWDW_DLV_NO_ENTRY\fP
+but callers should allow for that possibility.
 
 .H 3 " dwarf_sec_group_map()"
 .DS
@@ -2015,13 +2088,90 @@ FIXME
     Dwarf_Debug      dbg,
     Dwarf_Unsigned   map_entry_count,
     Dwarf_Unsigned * group_numbers_array,
-    Dwarf_Unsigned * index_of_name_entry,
+    Dwarf_Unsigned * section_numbers_array,
     const char     ** sec_names_array,
     Dwarf_Error    * error)
 \fP
 .DE
-FIXME
+The function
+\f(CWdwarf_sec_group_map()\fP
+may be called on any open
+\f(CWDwarf_Debug\fP.
 .P
+The caller must allocate
+\f(CWmap_entry_count\fP
+arrays used in the
+following three arguments
+the and pass the appropriate
+pointer into the function as well
+as passing in
+\f(CWmap_entry_count\fP
+itself.
+.P
+The map entries returned cover all the
+DWARF related sections in the object
+though the
+\f(CWselected_group\fP
+value will dictate which of the sections
+in the 
+\f(CWDwarf_Debug\fP
+will actually be accessed via the usual
+\f(CWlibdwarf\fP
+functions.
+That is, only sections in the selected group
+may be directly accessed though libdwarf may
+indirectly access sections in section group
+one(1) so relevant details can be accessed,
+such as abbreviation tables etc.
+Describing the details of this access outside
+the current
+\f(CWselected_group\fP
+goes beyond what this document covers (as of this
+writing).
+
+.P
+It returns
+\f(CWDW_DLV_OK\fP
+on success and sets
+values into the user-allocated
+array elements (sorted by section number):
+.in +2
+.DS
+\f(CW
+group_numbers_array[0]...  group_numbers_array[map_entry_count-1]
+section_numbers_array[0]...  section_numbers_array[map_entry_count-1]
+sec_names_array[0]...  sec_names_array[map_entry_count-1]
+\fP
+.DE
+.in -2
+.P
+\f(CWgroup_numbers_array[0]\fP
+for example
+is set to a group number. One(1), or two(2) or if there are
+COMDAT groups it will be three(3) or higher.
+.P
+\f(CWsection_numbers_array[0]\fP
+for example
+is set to a valid Elf section number
+relevant to  
+\f(CWDWARF\fP
+(each section number shown will be greater than zero). 
+.P
+\f(CWsec_names_array[0]\fP
+for example
+is set to a pointer to a string containing
+the Elf section name of the Elf section number in
+\f(CWsections_number_array[0]\fP.
+.P
+On error the function will return
+\f(CWDW_DLV_ERROR\fP
+or
+\f(CWDW_DLV_NO_ENTRY\fP
+which indicates a serious problem with this object.
+
+
+.P
+Here is an example of use of these functions.
 .in +2
 .DS
 \f(CW

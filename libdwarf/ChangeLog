@@ -1,4 +1,9 @@
 2017-05-18 David Anderson
+    * libdwarf2.1.mm: Filling in documentation of the new sections.
+      Rev 2.58. There is more on this to do.
+    * libdwarf2.1.pdf: Regenerated.
+    * dwarf_groups.c: Inserted a space so things lined up, one place.
+2017-05-18 David Anderson
     * libdwarf2.1.mm: Documenting new functions
       including .debug_names access and group operations.
       Rev 2.57. There is more on this to do.

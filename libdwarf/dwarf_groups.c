@@ -258,7 +258,7 @@ int dwarf_sec_group_map(Dwarf_Debug dbg,
     Dwarf_Unsigned   map_entry_count,
     Dwarf_Unsigned * group_numbers_array,
     Dwarf_Unsigned * sec_numbers_array,
-    const char   ** sec_names_array,
+    const char    ** sec_names_array,
     Dwarf_Error    * error)
 {
     Dwarf_Unsigned i = 0;
