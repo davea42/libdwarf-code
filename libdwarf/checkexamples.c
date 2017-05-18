@@ -1,10 +1,9 @@
-
-/*  The following are taken from libdwarf2.1.mm
-    to verify there are no silly tographical errors
+/*  The following are in libdwarf2.1.mm
+    to verify there are no silly typographical errors
     in that document.
 
     These should not be built routinely nor
-    should it every be executed.
+    should it ever be executed.
 
     The code here is what user code should be,
     hence the code typed here is
@@ -16,8 +15,9 @@
 
 #include "dwarf.h"
 #include "libdwarf.h"
+#include "stdlib.h" /* for free() */
+#include "string.h" /* for memcmp() */
 
-#define NULL 0
 #define FALSE 0
 #define TRUE 1
 
@@ -724,10 +724,12 @@ void exampleo(Dwarf_Debug dbg)
     if the list has unexamined offsets.
     A candidate set of hypothetical functions that
     callers would write:
+
 has_unchecked_import_in_list()
 get_next_import_from_list()
-    mark_this_offset_as_examined(macro_unit_offset);
-    add_offset_to_list(offset);
+mark_this_offset_as_examined(macro_unit_offset);
+add_offset_to_list(offset);
+
 */
 void examplep5(Dwarf_Debug dbg, Dwarf_Die cu_die)
 {
@@ -1448,4 +1450,63 @@ void example_discr_list(Dwarf_Debug dbg,
             dwarf_dealloc(dbg, tempb, DW_DLA_BLOCK);
         }
     }
+}
+
+void examplesecgroup(Dwarf_Debug dbg)
+{
+    int res = 0;
+    Dwarf_Unsigned  section_count = 0;
+    Dwarf_Unsigned  group_count;
+    Dwarf_Unsigned  selected_group = 0;
+    Dwarf_Unsigned  group_map_entry_count = 0;
+    Dwarf_Unsigned *sec_nums = 0;
+    Dwarf_Unsigned *group_nums = 0;
+    const char **   sec_names = 0;
+    Dwarf_Error     error = 0;
+    Dwarf_Unsigned  i = 0;
+
+
+    res = dwarf_sec_group_sizes(dbg,&section_count,
+        &group_count,&selected_group, &group_map_entry_count,
+        &error);
+    if(res != DW_DLV_OK) {
+        /* Something is badly wrong*/
+        return;
+    }
+    /*  In an object without split-dwarf sections
+        or COMDAT sections we now have
+        selected_group == 1. */
+    sec_nums = calloc(group_map_entry_count,sizeof(Dwarf_Unsigned));
+    if(!sec_nums) {
+        /* FAIL. out of memory */
+        return;
+    }
+    group_nums = calloc(group_map_entry_count,sizeof(Dwarf_Unsigned));
+    if(!group_nums) {
+        free(group_nums);
+        /* FAIL. out of memory */
+        return;
+    }
+    sec_names = calloc(group_map_entry_count,sizeof(char*));
+    if(!sec_names) {
+        free(group_nums);
+        free(sec_nums);
+        /* FAIL. out of memory */
+        return;
+    }
+
+    res = dwarf_sec_group_map(dbg,group_map_entry_count,
+        group_nums,sec_nums,sec_names,&error);
+    if(res != DW_DLV_OK) {
+        /* FAIL. Something badly wrong. */
+    }
+    for( i = 0; i < group_map_entry_count; ++i) {
+        /*  Now do something with
+            group_nums[i],sec_nums[i],sec_names[i] */
+    }
+    free(group_nums);
+    free(sec_nums);
+    /*  The strings are in Elf data.
+        Do not free() the strings themselves.*/
+    free(sec_names);
 }

@@ -8,7 +8,7 @@
 .nr Hb 5
 \." ==============================================
 \." Put current date in the following at each rev
-.ds vE rev 2.56, May 18, 2017
+.ds vE rev 2.57, May 18, 2017
 \." ==============================================
 \." ==============================================
 .ds | |
@@ -1968,7 +1968,34 @@ DWARF5 split dwarf objects cannot be
 fully handled.
 
 .H 2 "Section Group Operations"
-FIXME
+The section group data is essential information
+when processing an object with COMDAT section group DWARF sections
+or with both split-dwarf (.dwo sections) 
+and non-split dwarf sections.
+A standard DWARF2 or DWARF3 or DWARF4 object
+(Old Standard Object, or OSO) will
+not contain any of those new sections.
+The DWARF4 standard, Appendix E.1 "Using Compilation Units"
+offers an overview of COMDAT section groups.
+\f(CWlibdwarf\fP
+assigns  the group number one(1) to
+OSO DWARF.
+Any sections that are split dwarf (section name ending in .dwo
+or one of the two special DWP index sections)
+are assigned group number two(2)
+by libdwarf.
+COMDAT section groups are assigned groups numbers 3 and higher as needed.
+.P
+The COMDAT section group uses are not well defined, but
+popular compilations systems are using such sections.
+There is no meaningful documentation
+that we can find (so far) on how the COMDAT
+section groups are used,
+so 
+\f(CWlibdwarf\fP
+is based on observations
+of what compilers generate.
+
 .H 3 "dwarf_sec_group_sizes()"
 .DS
 \f(CW int dwarf_dwarf_sec_group_sizes(
@@ -1994,7 +2021,71 @@ FIXME
 \fP
 .DE
 FIXME
+.P
+.in +2
+.DS
+\f(CW
+void examplesecgroup(Dwarf_Debug dbg)
+{
+    int res = 0;
+    Dwarf_Unsigned  section_count = 0;
+    Dwarf_Unsigned  group_count;
+    Dwarf_Unsigned  selected_group = 0;
+    Dwarf_Unsigned  group_map_entry_count = 0;
+    Dwarf_Unsigned *sec_nums = 0;
+    Dwarf_Unsigned *group_nums = 0;
+    const char **   sec_names = 0;
+    Dwarf_Error     error = 0;
+    Dwarf_Unsigned  i = 0;
 
+
+    res = dwarf_sec_group_sizes(dbg,&section_count,
+        &group_count,&selected_group, &group_map_entry_count,
+        &error);
+    if(res != DW_DLV_OK) {
+        /* Something is badly wrong*/
+        return;
+    }
+    /*  In an object without split-dwarf sections
+        or COMDAT sections we now have
+        selected_group == 1. */
+    sec_nums = calloc(group_map_entry_count,sizeof(Dwarf_Unsigned));
+    if(!sec_nums) {
+        /* FAIL. out of memory */
+        return;
+    }
+    group_nums = calloc(group_map_entry_count,sizeof(Dwarf_Unsigned));
+    if(!group_nums) {
+        free(group_nums);
+        /* FAIL. out of memory */
+        return;
+    }
+    sec_names = calloc(group_map_entry_count,sizeof(char*));
+    if(!sec_names) {
+        free(group_nums);
+        free(sec_nums);
+        /* FAIL. out of memory */
+        return;
+    }
+
+    res = dwarf_sec_group_map(dbg,group_map_entry_count,
+        group_nums,sec_nums,sec_names,&error);
+    if(res != DW_DLV_OK) {
+        /* FAIL. Something badly wrong. */
+    }
+    for( i = 0; i < group_map_entry_count; ++i) {
+        /*  Now do something with
+            group_nums[i],sec_nums[i],sec_names[i] */
+    }
+    free(group_nums);
+    free(sec_nums);
+    /*  The strings are in Elf data.
+        Do not free() the strings themselves.*/
+    free(sec_names);
+}
+\fP
+.DE
+.in -2
 
 .H 2 "Section size operations"
 .P
