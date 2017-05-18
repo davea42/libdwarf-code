@@ -94,7 +94,7 @@ grp_compare_function(const void *l, const void *r)
     return 0;
 }
 
-void
+static void
 _dwarf_grp_destroy_free_node(void*nodep)
 {
     struct Dwarf_Group_Map_Entry_s * enp = nodep;
@@ -374,5 +374,11 @@ _dwarf_section_in_group_by_name(Dwarf_Debug dbg,
     return found_name_in_group;
 }
 
+void
+_dwarf_destroy_group_map(Dwarf_Debug dbg)
+{
+    dwarf_tdestroy(dbg->de_groupnumbers.gd_map,_dwarf_grp_destroy_free_node);
+    dbg->de_groupnumbers.gd_map = 0;
+}
 
 

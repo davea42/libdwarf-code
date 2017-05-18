@@ -814,7 +814,7 @@ _dwarf_search_for_signature(Dwarf_Debug dbg,
 
 
 void _dwarf_tied_destroy_free_node(void *node);
-void _dwarf_grp_destroy_free_node(void *node);
+void _dwarf_destroy_group_map(Dwarf_Debug dbg);
 
 int _dwarf_section_get_target_group(Dwarf_Debug dbg,
     unsigned   obj_section_index,

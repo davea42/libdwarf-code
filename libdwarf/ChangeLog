@@ -1,4 +1,10 @@
 2017-05-18 David Anderson
+    * dwarf_opaque.h: Now names _dwarf_destroy_group_map so the
+      group map destructor can be called when cleaning up a Dwarf_Debug.
+    * dwarf_alloc.c: Call _dwarf_destroy_group_map().
+    * dwarf_groups.c: Implemented _dwarf_destroy_group_map()
+      to clean up the map. 
+2017-05-18 David Anderson
     * dwarf_init_finish.c: One argument was unused in
       is_a_special_section_semi_dwarf() so removed
       that argument. Function is local (static) so safe

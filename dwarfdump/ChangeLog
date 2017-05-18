@@ -1,3 +1,6 @@
+2017-05-18 David Anderson
+    * dwarfdump.c: Fixed a small memory leak in special_program_name().
+      Deleted four lines of test code that never got removed.
 2017-05-17 David Anderson
     * CMakeLists.txt: Add section_bitmaps.h,.c.
     * Makefile.in: Add section_bitmaps.o, section_bitmaps.h.

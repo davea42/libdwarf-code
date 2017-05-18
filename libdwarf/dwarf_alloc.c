@@ -683,6 +683,7 @@ _dwarf_free_all_of_one_debug(Dwarf_Debug dbg)
         free(dbg->de_printf_callback.dp_buffer);
     }
 
+    _dwarf_destroy_group_map(dbg);
     dwarf_tdestroy(dbg->de_alloc_tree,tdestroy_free_node);
     dbg->de_alloc_tree = 0;
     if (dbg->de_tied_data.td_tied_search) {

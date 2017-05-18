@@ -67,6 +67,9 @@ static const char* process_args(int argc, char *argv[]);
 const char * program_name;
 static int check_error = 0;
 
+/* used in special_program_name() only */
+static struct esb_s newprogname;
+
 /*  The type of Bucket. */
 #define KIND_RANGES_INFO       1
 #define KIND_SECTIONS_INFO     2
@@ -454,6 +457,7 @@ main(int argc, char *argv[])
         exit(FAILED);
     }
 
+    esb_constructor(&newprogname);
     file_name = process_args(argc, argv);
     print_args(argc,argv);
 
@@ -613,6 +617,7 @@ main(int argc, char *argv[])
     sanitized_string_destructor();
     ranges_esb_string_destructor();
     destruct_abbrev_array();
+    esb_destructor(&newprogname);
 
     close_a_file(f);
 
@@ -1617,6 +1622,7 @@ remove_quotes_pair(const char *text)
     regressiontests/DWARFTEST.sh
     and save 12 minutes run time of a regression
     test.
+
     The effect is, when nothing has changed in the
     normal output, that the program_name matches too.
     Because we don't want a different name of dwarfdump
@@ -1628,9 +1634,7 @@ special_program_name(char *n)
     char * revstr = "/dwarfdump";
     char *cp = n;
     size_t mslen = strlen(mp);
-    static struct esb_s newprogname;
 
-    esb_constructor(&newprogname);
     for(  ; *cp; ++cp ) {
         if (*cp == *mp) {
             if(!strncmp(cp,mp,mslen)){
@@ -1655,10 +1659,6 @@ process_args(int argc, char *argv[])
     boolean usage_error = FALSE;
     int oarg = 0;
 
-    special_program_name("a/dwarf");
-    special_program_name("a/dwarfdump.O");
-    special_program_name("./dwarf/aa/dwarfdump.O");
-    special_program_name("./dwarf/aa/dwarfdump.OY");
     program_name = special_program_name(argv[0]);
     suppress_check_dwarf();
     if (argv[1] != NULL && argv[1][0] != '-') {
