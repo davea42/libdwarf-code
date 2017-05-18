@@ -8,7 +8,7 @@
 .nr Hb 5
 \." ==============================================
 \." Put current date in the following at each rev
-.ds vE rev 2.55, May 17, 2017
+.ds vE rev 2.56, May 18, 2017
 \." ==============================================
 \." ==============================================
 .ds | |
@@ -203,6 +203,14 @@ the libdwarf draft for DWARF Version 1 and recent changes.
 
 .H 2 "Items Changed"
 .P
+Added COMDAT support. 
+Recent compilers generate COMDAT sections (for some DWARF
+information) routinely so this became important
+recently. The new libdwarf COMDAT support 
+extends the groupnumber
+idea as suggested just below.
+(May 17, 2017)
+.P
 Adding dwarf_init_b() and dwarf_elf_init_b()
 and dwarf_object_init_b() with a groupnumber
 option added. DWARF5 adds split-dwarf and
@@ -211,7 +219,7 @@ group one and new sections like .debug_info.dwo
 group two.
 It has not escaped our attention that this
 numbering can be extended to deal with 
-ELF COMDAT
+Elf COMDAT
 section groups of DWARF information, though
 COMDAT groups are not currently supported.
 (April 02, 2017)
@@ -1537,10 +1545,9 @@ These functions are concerned with preparing an object file for subsequent
 access by the functions in \fIlibdwarf\fP and with releasing allocated
 resources when access is complete. 
 
-.H 3 "dwarf_init_()"
-
+.H 3 "dwarf_init_b()"
 .DS
-\f(CWint dwarf_init(
+\f(CWint dwarf_init_b(
         int fd,
         Dwarf_Unsigned access,
         unsigned group_number,
@@ -1550,7 +1557,7 @@ resources when access is complete.
         Dwarf_Error *error)\fP
 .DE
 When it returns \f(CWDW_DLV_OK\fP,
-the function \f(CWdwarf_init()\fP returns through
+the function \f(CWdwarf_init_b()\fP returns through
 \f(CWdbg\fP a \f(CWDwarf_Debug\fP descriptor 
 that represents a handle for accessing debugging records associated with 
 the open file descriptor \f(CWfd\fP.  
@@ -1569,9 +1576,16 @@ The
 \f(CWgroupnumber\fP argument indicates which group is to be accessed
 Group one is normal dwarf sections such as .debug_info.
 Group two is DWARF5 dwo split-dwarf dwarf sections such as .debug_info.dwo.
+Groups three and higher are for COMDAT groups.
 If an object file has only sections from one of the groups then
 passing zero will access that group.
 Otherwise passing zero will access only group one.
+See 
+\f(CWdwarf_sec_group_sizes()\fP
+and
+\f(CWdwarf_sec_group_map()\fP
+for more group information.
+
 .P
 The \f(CWerrhand\fP 
 argument is a pointer to a function that will be invoked whenever an error 
@@ -1677,8 +1691,10 @@ The function \f(CWdwarf_elf_init_b()\fP is identical to \f(CWdwarf_init_b()\fP
 except that an open \f(CWElf *\fP pointer is passed instead of a file 
 descriptor.  
 .P
-In systems supporting \f(CWELF\fP object files this may be 
-more space or time-efficient than using \f(CWdwarf_init_b()\fP.
+In systems supporting \f(CWElf\fP object files this may be 
+more space or time-efficient than using \f(CWdwarf_init_b()\fP,
+see that function for more detailed description of the
+arguments here..
 .P
 The client is allowed to use the \f(CWElf *\fP pointer
 for its own purposes without restriction during the time the 
@@ -1908,16 +1924,26 @@ are off by default.
 .DE
 The function
 \f(CWint dwarf_object_init_b()\fP 
-enables access to non-ELF object files
+enables access to non-Elf object files
 by allowing the caller to
 then provide
 function pointers to code (user-written,
 not part of libdwarf)  that will
 look, to libdwarf, as if libdwarf was
-reading ELF.
+reading Elf.
+.P
+See
+\f(CWint dwarf_init_b()\fP 
+for additional information on the arguments
+passed in (the
+\f(CWobj\fP argument here
+is a set of function pointers
+and describing how to access non-Elf
+files is beyond the scope of this document.
+ 
 .P
 Writing the functions needed to support
-non-ELF will require study of ELF
+non-Elf will require study of Elf
 and of the object format involved.
 The topic is beyond the scope of
 this document.
@@ -1940,6 +1966,35 @@ except
 is missing the groupnumber argument so
 DWARF5 split dwarf objects cannot be
 fully handled.
+
+.H 2 "Section Group Operations"
+FIXME
+.H 3 "dwarf_sec_group_sizes()"
+.DS
+\f(CW int dwarf_dwarf_sec_group_sizes(
+    Dwarf_Debug dbg,
+    Dwarf_Unsigned * section_count_out,
+    Dwarf_Unsigned * group_count_out,
+    Dwarf_Unsigned * selected_group_out,,
+    Dwarf_Unsigned * map_entry_count_out,
+    Dwarf_Error    * error)
+\fP
+.DE
+FIXME
+
+.H 3 " dwarf_sec_group_map()"
+.DS
+\f(CW int dwarf_sec_group_map(
+    Dwarf_Debug      dbg,
+    Dwarf_Unsigned   map_entry_count,
+    Dwarf_Unsigned * group_numbers_array,
+    Dwarf_Unsigned * index_of_name_entry,
+    const char     ** sec_names_array,
+    Dwarf_Error    * error)
+\fP
+.DE
+FIXME
+
 
 .H 2 "Section size operations"
 .P
@@ -6002,10 +6057,11 @@ described by the \f(CWDwarf_Global\fP descriptor \f(CWglobal\fP.
 It returns \f(CWDW_DLV_ERROR\fP on error.  
 It never returns \f(CWDW_DLV_NO_ENTRY\fP.
 It also returns in the locations 
-pointed to by \f(CWdie_offset\fP, and \f(CWcu_offset\fP, the offsets
-of the DIE representing the 
-pubname, and the DIE
-representing the compilation-unit containing the 
+pointed to by \f(CWdie_offset\fP, and \f(CWcu_offset\fP, 
+the offset of the DIE representing the pubname, 
+and 
+the offset of the DIE representing the compilation-unit 
+containing the 
 pubname, respectively.
 On a 
 successful return from \f(CWdwarf_global_name_offsets()\fP the storage 
@@ -6892,7 +6948,7 @@ static variable described by the \f(CWDwarf_Var\fP descriptor \f(CWvar\fP.
 It also returns in the locations
 pointed to by \f(CWdie_offset\fP, and \f(CWcu_offset\fP, the offsets
 of the DIE representing the 
-file-scope static variable, and the DIE
+
 representing the compilation-unit containing the 
 file-scope static variable, respectively.
 It returns \f(CWDW_DLV_ERROR\fP on error.  
@@ -6901,7 +6957,233 @@ On a successful return from
 \f(CWdwarf_var_name_offsets()\fP the storage pointed to by
 \f(CWreturned_name\fP
 should be freed using \f(CWdwarf_dealloc()\fP, with the allocation 
-type \f(CWDW_DLA_STRING\fP when no longer of interest.
+type 
+\f(CWDW_DLA_STRING\fP
+when no longer of interest.
+
+.H 2 "Names Fast Access (DWARF5) .debug_names"
+The section
+\f(CW.debug_names\fP
+section is new in DWARF5 so a new set
+of functions is defined to access this section.
+This section replaces 
+\f(CW.debug_pubnames\fP
+and 
+\f(CW.debug_pubtypes\fP
+as those older sections were not found to be
+useful in practice.
+FIXME
+.H 3 "dwarf_debugnames_header()"
+.DS
+\f(CWint dwarf_debugnames_header(
+    Dwarf_Debug         dbg,
+    Dwarf_Dnames_Head * dn_out,
+    Dwarf_Unsigned    * dn_index_count_out,
+    Dwarf_Error *error)\fP
+.DE
+.P
+The function
+\f(CWdwarf_debugnames_header()\fP
+allocates an opaque data structure used
+in all the other debugnames calls.
+.P
+Many of the function calls here let one
+extract the entire content of the section,
+which is useful if one wishes to dump the
+section or to use its data to create one's
+own internal data structures.
+.P
+To free space allocated when one has finished
+with these data structures, call 
+.DS
+    Debug_Dnames_Head dn /* Assume set somehow */;
+    ...
+    dwarf_dealloc(dbg,dn,DW_DLA_DNAMES_HEAD);
+.DE
+which will free up all data 
+allocated for 
+\f(CWdwarf_debugnames_header()\fP.
+.P
+FIXME describe arguments. 
+
+.in +2
+.DS
+\f(CW
+void exampledebugnames(Dwarf_Debug dbg)
+{
+FIXME need extended example of debugnames use.
+}
+\fP
+.DE
+.in -2
+FIXME
+
+
+.H 3 " dwarf_debugnames_sizes()"
+.DS
+\f(CW int dwarf_debugnames_sizes(Dwarf_Dnames_Head dn,
+    Dwarf_Unsigned   index_number,
+
+    Dwarf_Unsigned * section_offsets,
+    Dwarf_Unsigned * version,
+    Dwarf_Unsigned * offset_size,
+
+    /* The counts are entry counts, not byte sizes. */
+    Dwarf_Unsigned * comp_unit_count,
+    Dwarf_Unsigned * local_type_unit_count,
+    Dwarf_Unsigned * foreign_type_unit_count,
+    Dwarf_Unsigned * bucket_count,
+    Dwarf_Unsigned * name_count,
+
+    /* The following are counted in bytes */
+    Dwarf_Unsigned * indextable_overall_length,
+    Dwarf_Unsigned * abbrev_table_size,
+    Dwarf_Unsigned * entry_pool_size,
+    Dwarf_Unsigned * augmentation_string_size,
+
+    Dwarf_Error *    error*/)\fP
+.DE
+FIXME
+
+.H 3 " dwarf_debugnames_cu_entry()"
+.DS
+\f(CW int dwarf_debugnames_cu_entry(
+    Dwarf_Dnames_Head dn,
+    Dwarf_Unsigned      index_number,
+    Dwarf_Unsigned      offset_number,
+    Dwarf_Unsigned    * offset_count,
+    Dwarf_Unsigned    * offset,
+    Dwarf_Error *       error)\fP
+.DE
+FIXME
+.H 3 " dwarf_debugnames_local_tu_entry()"
+.DS
+\f(CW int dwarf_debugnames_local_tu_entry(
+    Dwarf_Dnames_Head dn,
+    Dwarf_Unsigned      index_number,
+    Dwarf_Unsigned      offset_number,
+    Dwarf_Unsigned    * offset_count,
+    Dwarf_Unsigned    * offset,
+    Dwarf_Error *       error)
+\fP
+.DE
+FIXME
+.H 3 " dwarf_debugnames_foreign_tu_entry()"
+.DS
+\f(CW int dwarf_debugnames_foreign_tu_entry(
+    Dwarf_Dnames_Head dn,
+    Dwarf_Unsigned      index_number,
+    Dwarf_Unsigned      sig_number,
+    Dwarf_Unsigned    * sig_minimum,
+    Dwarf_Unsigned    * sig_count,
+    Dwarf_Sig8        * signature,
+    Dwarf_Error *       error)
+\fP
+.DE
+FIXME
+.H 3 " dwarf_debugnames_bucket()"
+.DS
+\f(CW int dwarf_debugnames_bucket(
+    Dwarf_Dnames_Head dn,
+    Dwarf_Unsigned      index_number,
+    Dwarf_Unsigned      bucket_number,
+    Dwarf_Unsigned    * bucket_count,
+    Dwarf_Unsigned    * index_of_name_entry,
+    Dwarf_Error *       error)
+\fP
+.DE
+FIXME
+.H 3 " dwarf_debugnames_name()"
+.DS
+\f(CW int dwarf_debugnames_bucket(
+    Dwarf_Dnames_Head dn,
+    Dwarf_Unsigned      index_number,
+    Dwarf_Unsigned      name_entry,
+    Dwarf_Unsigned    * names_count,
+    Dwarf_Sig8        * signature,
+    Dwarf_Unsigned    * offset_to_debug_str,
+    Dwarf_Unsigned    * offset_in_entrypool,
+    Dwarf_Error *       error)
+\fP
+.DE
+FIXME
+.H 3" dwarf_debugnames_abbrev_by_index()"
+.DS
+\f(CW int dwarf_debugnames_abbrev_by_index(
+    Dwarf_Dnames_Head dn,
+    Dwarf_Unsigned      index_number,
+    Dwarf_Unsigned      abbrev_entry,
+    Dwarf_Unsigned    * abbrev_code,
+    Dwarf_Unsigned    * tag,
+    Dwarf_Unsigned    * number_of_abbrev,
+    Dwarf_Unsigned    * number_of_attr_form_entries,
+    Dwarf_Error *       error)
+\fP
+.DE
+FIXME
+.H 3 " dwarf_debugnames_abbrev_by_code()"
+.DS
+\f(CW int dwarf_debugnames_abbrev_by_code(
+    Dwarf_Dnames_Head dn,
+    Dwarf_Unsigned      index_number,
+    Dwarf_Unsigned      abbrev_code,
+    Dwarf_Unsigned    * tag,
+    Dwarf_Unsigned    * index_of_abbrev,
+    Dwarf_Unsigned    * index_of_attr_form_entries,
+    Dwarf_Error *       error)
+\fP
+.DE
+FIXME
+
+.H 3 " dwarf_debugnames_form_by_index()"
+.DS
+\f(CW int dwarf_debugnames_form_by_index(
+    Dwarf_Dnames_Head dn,
+    Dwarf_Unsigned      index_number,
+    Dwarf_Unsigned      abbrev_entry_index,
+    Dwarf_Unsigned      abbrev_form_index,
+    Dwarf_Unsigned    * name_attr_index,
+    Dwarf_Unsigned    * form,
+    Dwarf_Unsigned    * number_of_attr_form_entries,
+    Dwarf_Error *       error)
+\fP
+.DE
+FIXME
+
+.H 3 " dwarf_debugnames_entrypool()"
+.DS
+\f(CW int dwarf_debugnames_entrypool(
+    Dwarf_Dnames_Head dn,
+    Dwarf_Unsigned      index_number,
+    Dwarf_Unsigned      offset_in_entrypool,
+    Dwarf_Unsigned    * abbrev_code,
+    Dwarf_Unsigned    * tag,
+    Dwarf_Unsigned    * value_count,
+    Dwarf_Unsigned    * index_of_abbrev,
+    Dwarf_Unsigned    * offset_of_initial_value,
+    Dwarf_Error *       error)
+\fP
+.DE
+FIXME
+
+.H 3 " dwarf_debugnames_entrypool_values()"
+.DS
+\f(CW int dwarf_debugnames_entrypool_values(
+    Dwarf_Dnames_Head dn,
+    Dwarf_Unsigned      index_number,
+    Dwarf_Unsigned      index_of_abbrev,
+    Dwarf_Unsigned      offset_in_entrypool_of_values,
+    Dwarf_Unsigned    * array_dw_idx_number,
+    Dwarf_Unsigned    * array_form,
+    Dwarf_Unsigned    * array_of_offsets,
+    Dwarf_Sig8        * array_of_signatures,
+    Dwarf_Error *       error)
+\fP
+.DE
+FIXME
+
+
+
 
 .H 2 "Macro Information Operations (DWARF4, DWARF5)"
 This section refers to DWARF4 and later

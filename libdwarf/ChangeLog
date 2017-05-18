@@ -1,3 +1,7 @@
+2017-05-18 David Anderson
+    * libdwarf2.1.mm: Documenting new functions
+      including .debug_names access and group operations.
+      Rev 2.56.
 2017-05-14 David Anderson
     * libdwarf2.1.mm: Added a comment about a special
       case of dwarf_get_section_count().  Rev 2.55 now.
