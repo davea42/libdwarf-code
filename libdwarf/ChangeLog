@@ -1,4 +1,9 @@
 2017-05-18 David Anderson
+    * dwarf_init_finish.c: One argument was unused in
+      is_a_special_section_semi_dwarf() so removed
+      that argument. Function is local (static) so safe
+      to change it. Avoids a compiler warning.
+2017-05-18 David Anderson
     * libdwarf2.1.mm: Filling in documentation of the new sections.
       Rev 2.58. There is more on this to do.
     * libdwarf2.1.pdf: Regenerated.

@@ -719,7 +719,7 @@ is_a_rela_section(const char *scn_name,int type)
 
 /*  ASSERT: names like .debug_ or .zdebug_ never passed in here! */
 static int
-is_a_special_section_semi_dwarf(const char *scn_name,int type)
+is_a_special_section_semi_dwarf(const char *scn_name)
 {
     if (!strcmp(scn_name,".strtab") ||
         !strcmp(scn_name,".symtab")) {
@@ -749,7 +749,7 @@ this_section_dwarf_relevant(const char *scn_name,int type)
     if(!strcmp(scn_name, ".gdb_index")) {
         return TRUE;
     }
-    if(is_a_special_section_semi_dwarf(scn_name,type)) {
+    if(is_a_special_section_semi_dwarf(scn_name)) {
         return TRUE;
     }
     if(is_a_rela_section(scn_name,type)) {
@@ -1037,7 +1037,7 @@ determine_target_group(Dwarf_Unsigned section_count,
         }
 
         /*  ASSERT: groupnumber non-zero now */
-        if (!is_a_special_section_semi_dwarf(scn_name,doas.type)) {
+        if (!is_a_special_section_semi_dwarf(scn_name)) {
             if (mapgroupnumber) {
                 /* Already in group map */
                 continue;
@@ -1198,7 +1198,7 @@ _dwarf_setup(Dwarf_Debug dbg, Dwarf_Error * error)
             continue;
         }
         if (!is_a_rela_section(scn_name,doas.type)
-            && !is_a_special_section_semi_dwarf(scn_name,doas.type)) {
+            && !is_a_special_section_semi_dwarf(scn_name)) {
             /*  We do these actions only for group-related
                 sections.  Do for  .debug_info etc,
                 never for .strtab or .rela.*
