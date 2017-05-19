@@ -846,7 +846,7 @@ is_32bit_abs_reloc(unsigned int type, Dwarf_Half machine)
         break;
 #endif /* EM_S390 */
 
-#if defined(EM_X86_64) && defined (R_X86_64_32)
+#if defined(EM_X86_64) && ( defined(R_X86_64_32) || defined(R_X86_64_PC32) || defined(R_X86_64_DTPOFF32) )
 #if defined(EM_K10M)
     case EM_K10M:
 #endif
@@ -855,6 +855,9 @@ is_32bit_abs_reloc(unsigned int type, Dwarf_Half machine)
 #endif
     case EM_X86_64:
         r = (0
+#if defined (R_X86_64_PC32)
+            | (type == R_X86_64_PC32)
+#endif
 #if defined (R_X86_64_32)
             | (type == R_X86_64_32)
 #endif
@@ -1296,7 +1299,12 @@ dwarf_elf_object_relocate_a_section(void* obj_in,
 
 /*  dwarf_elf_object_access_load_section()
     We are only asked to load sections that
-    libdwarf really needs. */
+    libdwarf really needs.
+    It would be much better if a 'user data pointer'
+    were passed through these interfaces so one
+    part of libdwarf could pass through to this.
+    Or even just if a Dwarf_Debug were passed in.
+    Sigh. */
 static int
 dwarf_elf_object_access_load_section(void* obj_in,
     Dwarf_Half section_index,

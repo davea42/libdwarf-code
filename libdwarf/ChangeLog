@@ -1,4 +1,7 @@
 2017-05-18 David Anderson
+    * dwarf_elf_access.c: Added R_X86_64_PC32 to
+      the list of relocations we can expect to see.
+2017-05-18 David Anderson
     * dwarf_opaque.h: Now names _dwarf_destroy_group_map so the
       group map destructor can be called when cleaning up a Dwarf_Debug.
     * dwarf_alloc.c: Call _dwarf_destroy_group_map().
