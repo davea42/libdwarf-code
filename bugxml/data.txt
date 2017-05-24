@@ -40,7 +40,7 @@ endrec: DW201703-007
 
 
 id: DW201703-006
-cve:
+cve: CVE-2017-9052
 datereported: 2017-03-21
 reportedby: Marcel Bohme and Van-Thuan Pham
 vulnerability: Heap overflow in dwarf_formsdata 
@@ -78,7 +78,7 @@ endrec: DW201703-006
 
 
 id: DW201703-005
-cve:
+cve: CVE-2017-9053
 datereported: 2017-03-21
 reportedby: Marcel Bohme and Van-Thuan Pham
 vulnerability: Heap overflow in _dwarf_read_loc_expr_op()
@@ -197,7 +197,7 @@ endrec: DW201703-003
 
 
 id: DW201703-002
-cve:
+cve: CVE-2017-9054
 datereported: 2017-03-21
 reportedby: Marcel Bohme and Van-Thuan Pham
 vulnerability: Heap overflow in _dwarf_decode_s_leb128_chk()
@@ -238,7 +238,7 @@ endrec: DW201703-002
 
 
 id: DW201703-001
-cve:
+cve: CVE-2017-9055
 datereported: 2017-03-21
 reportedby: Marcel Bohme and Van-Thuan Pham
 vulnerability: Heap overflow in dwarf_formsdata
