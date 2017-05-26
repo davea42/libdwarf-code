@@ -24,6 +24,11 @@
 #ifndef SECTION_BITMAPS_H_INCLUDED
 #define SECTION_BITMAPS_H_INCLUDED
 
+/*  section_bitmaps.h and .c actually involved  bits,
+    bit shifting, and bit masks,
+    but now the 'maps' are simple byte arrays.
+    See reloc_map and section_map in dwarfdump.c */
+
 /* Value is one of the DW_HDR_DEBUG_* names. */
 struct section_map_s {
     const char *name;

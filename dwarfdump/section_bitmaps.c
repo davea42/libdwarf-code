@@ -22,6 +22,11 @@
 */
 
 #include "globals.h"
+/*  section_bitmaps.h and .c actually involved  bits,
+    bit shifting, and bit masks,
+    but now the 'maps' are simple byte arrays.
+    See reloc_map and section_map in dwarfdump.c */
+
 
 #define TRUE  1
 #define FALSE 0
