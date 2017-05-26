@@ -1,3 +1,25 @@
+2017-05-25 David Anderson
+    * common.c,tag_attr.c,tag_tree.c: Update version string.
+    * dwarfdump.c: Update version string.
+      Instead of using bitmaps for printing sections and relocations
+      use char arrays instead. Faster, easier to read, and much
+      easier to expand to the longer lists of sections.
+      By using fixed size arrays for this the compiler can check
+      for simple errors.
+    * print_reloc.c: Moved #defines over to section_bitmap.h
+      Arrays are now fixed size to give compiler the ability to
+      notice simple coding errors.  Added the new DWARF5 sections
+      to lists of what is to print. We do not use zero as a section
+      number so we add an unused zero element to each array.
+    * print_reloc.h: Made idempotent with ifndef.
+    * section_bitmaps.c: Now uses the char array id
+      and indexes starting at 1 (per the #defines in section_bitmaps.h).
+      Revised the code in 'make selftest' to do more complete checking.
+    * section_bitmaps.h: Now all the REL and RELA #defines are here
+      so it's easy to see them all at once.  Now using indexes
+      starting at 1, not bitfields. Faster,simpler, and for a given
+      dwarfdump run the switch from bitmaps  will expand 
+      static data by well under 20 bytes total.
 2017-05-18 David Anderson
     * dwarfdump.c: Fixed a small memory leak in special_program_name().
       Deleted four lines of test code that never got removed.

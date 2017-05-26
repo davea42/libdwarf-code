@@ -1,3 +1,8 @@
+2017-05-25 David Anderson
+    * gennames.c: Update version string.
+    * dwarf_reloc_386.h: Added so dwarfdump can print
+      i386 relocations sensibly.
+    * dwarf_elf_access.c: For WIN32 added dwarf_reloc_386.h include.
 2017-05-18 David Anderson
     * dwarf_elf_access.c: Added R_X86_64_PC32 to
       the list of relocations we can expect to see.

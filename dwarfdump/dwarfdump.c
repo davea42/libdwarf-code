@@ -54,7 +54,7 @@
 extern int elf_open(const char *name,int mode);
 #endif /* _WIN32 */
 
-#define DW_VERSION_DATE_STR " 2017-04-20 12:12:34-07:00  "
+#define DW_VERSION_DATE_STR " 2017-05-25 09:53:27-07:00  "
 
 extern char *dwoptarg;
 
@@ -111,9 +111,10 @@ static const char * do_uri_translation(const char *s,
 
 struct glflags_s glflags;
 
-/* Bitmap for relocations. See globals.h for DW_SECTION_REL_DEBUG_RANGES etc.*/
-static unsigned reloc_map = 0;
-static unsigned section_map = 0;
+/* See section_bitmaps.c, .h Control section header
+   printing. (not DWARF printing)  */
+static char reloc_map[DW_SECTION_REL_ARRAY_SIZE];
+static char section_map[DW_HDR_ARRAY_SIZE];
 
 /*  Start verbose at zero. verbose can
     be incremented with -v but not decremented. */
@@ -665,14 +666,10 @@ print_any_harmless_errors(Dwarf_Debug dbg)
 
 static void
 print_object_header(UNUSEDARG Elf *elf,
-    Dwarf_Debug dbg,
-    unsigned local_section_map)
+    Dwarf_Debug dbg)
 {
-    /* Preserve original mapping */
-    unsigned map_wrk;
-
     /* Check if header information is required */
-    if (local_section_map & DW_HDR_HEADER || local_section_map == DW_HDR_ALL) {
+    if (section_map[DW_HDR_HEADER]) {
 #ifdef _WIN32
     /*  Standard libelf has no function generating the names of the
         encodings, but this libelf apparently does. */
@@ -757,13 +754,9 @@ print_object_header(UNUSEDARG Elf *elf,
     }
     /* Print basic section information is required */
     /* Mask only known sections (debug and text) bits */
-    map_wrk = local_section_map;
-    map_wrk &= (~DW_HDR_HEADER);    /* Remove bit Header */
-    map_wrk &= (~DW_HDR_ALL);       /* Remove bit All */
-    if (map_wrk || local_section_map == DW_HDR_ALL) {
+    if (any_section_header_to_print(section_map)) {
         int nCount = 0;
         int section_index = 0;
-        int index = 0;
         int res = 0;
         const char *section_name = NULL;
         Dwarf_Addr section_addr = 0;
@@ -787,19 +780,9 @@ print_object_header(UNUSEDARG Elf *elf,
             if (res == DW_DLV_OK) {
                 print_it = FALSE;
                 /* Use original mapping */
-                if (local_section_map == DW_HDR_ALL) {
-                    /* Print all sections info */
-                    print_it = TRUE;
-                } else {
-                    /* Check if the section name is a debug section */
-                    for (index = 0; *map_sectnames[index].name; ++index) {
-                        if (!strcmp(map_sectnames[index].name,section_name) &&
-                            (local_section_map & (1 << index))) {
-                            print_it = TRUE;
-                            break;
-                        }
-                    }
-                }
+                /* Check if the section name is a debug section */
+                print_it = section_name_is_debug_and_wanted(section_name,
+                    section_map);
                 if (print_it) {
                     ++printed_sections;
                     printf("  %3d "                         /* nro */
@@ -1254,7 +1237,7 @@ process_one_file(Elf * elf,Elf *elftied,
     }
 
     if (glflags.gf_header_flag) {
-        print_object_header(elf,dbg,section_map);
+        print_object_header(elf,dbg);
     }
 
     if (glflags.gf_section_groups_flag) {
@@ -1997,35 +1980,52 @@ process_args(int argc, char *argv[])
             /* Selected printing of section info */
             if (dwoptarg) {
                 switch (dwoptarg[0]) {
-                case 'h': section_map |= DW_HDR_HEADER; break;
-                case 'i': section_map |= DW_HDR_DEBUG_INFO;
-                    section_map |= DW_HDR_DEBUG_TYPES; break;
-                case 'l': section_map |= DW_HDR_DEBUG_LINE; break;
-                case 'p': section_map |= DW_HDR_DEBUG_PUBNAMES; break;
-                case 'a': section_map |= DW_HDR_DEBUG_ABBREV; break;
-                case 'r': section_map |= DW_HDR_DEBUG_ARANGES; break;
-                case 'f': section_map |= DW_HDR_DEBUG_FRAME; break;
-                case 'o': section_map |= DW_HDR_DEBUG_LOC; break;
-                case 'R': section_map |= DW_HDR_DEBUG_RANGES; break;
-                    section_map |= DW_HDR_DEBUG_RNGLISTS; break;
-                case 's': section_map |= DW_HDR_DEBUG_STR; break;
+                case 'h': section_map[DW_HDR_HEADER] = TRUE; break;
+                case 'i': section_map[DW_HDR_DEBUG_INFO] = TRUE;
+                    section_map[DW_HDR_DEBUG_TYPES] = TRUE;
+                    break;
+                case 'l': section_map[DW_HDR_DEBUG_LINE]=TRUE;
+                    break;
+                case 'p': section_map[DW_HDR_DEBUG_PUBNAMES]=TRUE;
+                    break;
+                case 'a': section_map[DW_HDR_DEBUG_ABBREV]=TRUE;
+                    break;
+                case 'r': section_map[DW_HDR_DEBUG_ARANGES]=TRUE;
+                    break;
+                case 'f': section_map[DW_HDR_DEBUG_FRAME]=TRUE;
+                    break;
+                case 'o': section_map[DW_HDR_DEBUG_LOC]=TRUE;
+                    break;
+                case 'R': section_map[DW_HDR_DEBUG_RANGES]=TRUE;
+                    break;
+                    section_map[DW_HDR_DEBUG_RNGLISTS]=TRUE;
+                    break;
+                case 's': section_map[DW_HDR_DEBUG_STR]=TRUE;
+                    break;
 
                 /*  For both old macinfo and dwarf5  macro */
-                case 'm': section_map |= DW_HDR_DEBUG_MACINFO; break;
+                case 'm': section_map[DW_HDR_DEBUG_MACINFO]=TRUE;
+                    break;
 
-                case 't': section_map |= DW_HDR_DEBUG_PUBTYPES; break;
-                case 'x': section_map |= DW_HDR_TEXT; break;
+                case 't': section_map[DW_HDR_DEBUG_PUBTYPES]=TRUE;
+                    break;
+                case 'x': section_map[DW_HDR_TEXT]=TRUE;
+                    break;
 
-                /* Also for .debug_tu/cu_index. */
-                case 'I': section_map |= DW_HDR_GDB_INDEX; break;
+                case 'I': section_map[DW_HDR_GDB_INDEX]=TRUE;
+                    section_map[DW_HDR_DEBUG_CU_INDEX]=TRUE;
+                    section_map[DW_HDR_DEBUG_TU_INDEX]=TRUE;
+                    section_map[DW_HDR_DEBUG_NAMES]=TRUE;
+                    break;
 
                 /* case 'd', use the default section set */
-                case 'd': section_map |= DW_HDR_DEFAULT; break;
+                case 'd': set_all_section_defaults(section_map); break;
+                    break;
                 default: usage_error = TRUE; break;
                 }
             } else {
                 /* Display header and all sections info */
-                section_map = DW_HDR_ALL;
+                set_all_sections_on(section_map);
             }
             break;
         case 'o':
@@ -2033,22 +2033,38 @@ process_args(int argc, char *argv[])
             if (dwoptarg) {
                 switch (dwoptarg[0]) {
                 case 'i':
-                    reloc_map |= (1 << DW_SECTION_REL_DEBUG_INFO);
-                    reloc_map |= (1 << DW_SECTION_REL_DEBUG_TYPES); break;
-                case 'l': reloc_map |= (1 << DW_SECTION_REL_DEBUG_LINE); break;
-                case 'p': reloc_map |= (1 << DW_SECTION_REL_DEBUG_PUBNAMES); break;
+                    reloc_map[DW_SECTION_REL_DEBUG_INFO]=TRUE;
+                    reloc_map[DW_SECTION_REL_DEBUG_TYPES]=TRUE;
+                    break;
+                case 'l':
+                    reloc_map[DW_SECTION_REL_DEBUG_LINE]=TRUE;
+                    break;
+                case 'p':
+                    reloc_map[DW_SECTION_REL_DEBUG_PUBNAMES]=TRUE;
+                    break;
                 /*  Case a has no effect, no relocations can point out
                     of the abbrev section. */
-                case 'a': reloc_map |= (1 << DW_SECTION_REL_DEBUG_ABBREV); break;
-                case 'r': reloc_map |= (1 << DW_SECTION_REL_DEBUG_ARANGES); break;
-                case 'f': reloc_map |= (1 << DW_SECTION_REL_DEBUG_FRAME); break;
-                case 'o': reloc_map |= (1 << DW_SECTION_REL_DEBUG_LOC); break;
-                case 'R': reloc_map |= (1 << DW_SECTION_REL_DEBUG_RANGES); break;
+                case 'a':
+                    reloc_map[DW_SECTION_REL_DEBUG_ABBREV]=TRUE;
+                    break;
+                case 'r':
+                    reloc_map[DW_SECTION_REL_DEBUG_ARANGES]=TRUE;
+                    break;
+                case 'f':
+                    reloc_map[DW_SECTION_REL_DEBUG_FRAME]=TRUE;
+                    break;
+                case 'o':
+                    reloc_map[DW_SECTION_REL_DEBUG_LOC]=TRUE;
+                    reloc_map[DW_SECTION_REL_DEBUG_LOCLISTS]=TRUE;
+                    break;
+                case 'R':
+                    reloc_map[DW_SECTION_REL_DEBUG_RANGES]=TRUE;
+                    reloc_map[DW_SECTION_REL_DEBUG_RNGLISTS]=TRUE;
+                    break;
                 default: usage_error = TRUE; break;
                 }
             } else {
-                /* Display all relocs */
-                reloc_map = DW_REL_MASK_PRINT_ALL;
+                set_all_reloc_sections_on(reloc_map);
             }
             break;
         /* Output filename */

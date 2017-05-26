@@ -24,49 +24,47 @@
 #ifndef SECTION_BITMAPS_H_INCLUDED
 #define SECTION_BITMAPS_H_INCLUDED
 
-struct section_bitmap_s {
+/* Value is one of the DW_HDR_DEBUG_* names. */
+struct section_map_s {
     const char *name;
-    unsigned    bitvalue;
+    unsigned    value;
 };
 
-extern struct section_bitmap_s  map_sectnames[] ;
+extern struct section_map_s  map_sectnames[] ;
 
-#define DW_HDR_DEBUG_INFO            0x00000001
-#define DW_HDR_DEBUG_INFO_DWO        0x00000002
-#define DW_HDR_DEBUG_LINE            0x00000004
-#define DW_HDR_DEBUG_LINE_DWO        0x00000008
-#define DW_HDR_DEBUG_PUBNAMES        0x00000010
-#define DW_HDR_DEBUG_ABBREV          0x00000020
-#define DW_HDR_DEBUG_ABBREV_DWO      0x00000040
-#define DW_HDR_DEBUG_ARANGES         0x00000080
-#define DW_HDR_DEBUG_FRAME           0x00000100
-#define DW_HDR_DEBUG_LOC             0x00000200
-#define DW_HDR_DEBUG_LOCLISTS        0x00000400
-#define DW_HDR_DEBUG_LOCLISTS_DWO    0x00000800
-#define DW_HDR_DEBUG_RANGES          0x00001000
-#define DW_HDR_DEBUG_RNGLISTS        0x00002000
-#define DW_HDR_DEBUG_RNGLISTS_DWO    0x00004000
-#define DW_HDR_DEBUG_STR             0x00008000
-#define DW_HDR_DEBUG_STR_DWO         0x00010000
-#define DW_HDR_DEBUG_STR_OFFSETS     0x00020000
-#define DW_HDR_DEBUG_STR_OFFSETS_DWO 0x00040000
-#define DW_HDR_DEBUG_PUBTYPES        0x00080000
-#define DW_HDR_DEBUG_TYPES           0x00100000
-#define DW_HDR_TEXT                  0x00200000
-#define DW_HDR_GDB_INDEX             0x00400000
-#define DW_HDR_EH_FRAME              0x00800000
-#define DW_HDR_DEBUG_MACINFO         0x01000000
-#define DW_HDR_DEBUG_MACRO           0x02000000
-#define DW_HDR_DEBUG_MACRO_DWO       0x04000000
-#define DW_HDR_DEBUG_NAMES           0x08000000
-#define DW_HDR_DEBUG_CU_INDEX        0x10000000
-#define DW_HDR_DEBUG_TU_INDEX        0x20000000
-#define DW_HDR_HEADER                0x40000000
-/* No bits left, more sections means a rethink */
+#define DW_HDR_DEBUG_INFO            1
+#define DW_HDR_DEBUG_INFO_DWO        2
+#define DW_HDR_DEBUG_LINE            3
+#define DW_HDR_DEBUG_LINE_DWO        4
+#define DW_HDR_DEBUG_PUBNAMES        5
+#define DW_HDR_DEBUG_ABBREV          6
+#define DW_HDR_DEBUG_ABBREV_DWO      7
+#define DW_HDR_DEBUG_ARANGES         8
+#define DW_HDR_DEBUG_FRAME           9
+#define DW_HDR_DEBUG_LOC             10
+#define DW_HDR_DEBUG_LOCLISTS        11
+#define DW_HDR_DEBUG_LOCLISTS_DWO    12
+#define DW_HDR_DEBUG_RANGES          13
+#define DW_HDR_DEBUG_RNGLISTS        14
+#define DW_HDR_DEBUG_RNGLISTS_DWO    15
+#define DW_HDR_DEBUG_STR             16
+#define DW_HDR_DEBUG_STR_DWO         17
+#define DW_HDR_DEBUG_STR_OFFSETS     18
+#define DW_HDR_DEBUG_STR_OFFSETS_DWO 19
+#define DW_HDR_DEBUG_PUBTYPES        20
+#define DW_HDR_DEBUG_TYPES           21
+#define DW_HDR_TEXT                  22
+#define DW_HDR_GDB_INDEX             23
+#define DW_HDR_EH_FRAME              24
+#define DW_HDR_DEBUG_MACINFO         25
+#define DW_HDR_DEBUG_MACRO           26
+#define DW_HDR_DEBUG_MACRO_DWO       27
+#define DW_HDR_DEBUG_NAMES           28
+#define DW_HDR_DEBUG_CU_INDEX        29
+#define DW_HDR_DEBUG_TU_INDEX        30
+#define DW_HDR_HEADER                31
 
-#define DW_HDR_ALL     0x80000000
-#define DW_HDR_DEFAULT 0x7fffffff
-#define DW_INDEX MASK  0x7fffffff
+#define DW_HDR_ARRAY_SIZE            32
 
 
 
@@ -104,17 +102,74 @@ extern struct section_bitmap_s  map_sectnames[] ;
 #define DW_SECTNAME_DEBUG_CU_INDEX  ".debug_cu_index"
 #define DW_SECTNAME_DEBUG_TU_INDEX  ".debug_tu_index"
 
-/* This part is a bit obsolete: FIXME */
 /* Definitions for printing relocations. */
-#define DW_SECTION_REL_DEBUG_INFO     0
-#define DW_SECTION_REL_DEBUG_LINE     1
-#define DW_SECTION_REL_DEBUG_PUBNAMES 2
-#define DW_SECTION_REL_DEBUG_ABBREV   3
-#define DW_SECTION_REL_DEBUG_ARANGES  4
-#define DW_SECTION_REL_DEBUG_FRAME    5
-#define DW_SECTION_REL_DEBUG_LOC      6
-#define DW_SECTION_REL_DEBUG_RANGES   7
-#define DW_SECTION_REL_DEBUG_TYPES    8
-#define DW_REL_MASK_PRINT_ALL             0x00ff
+#define DW_SECTION_REL_DEBUG_INFO     1
+#define DW_SECTION_REL_DEBUG_LINE     2
+#define DW_SECTION_REL_DEBUG_PUBNAMES 3
+#define DW_SECTION_REL_DEBUG_ABBREV   4
+#define DW_SECTION_REL_DEBUG_ARANGES  5
+#define DW_SECTION_REL_DEBUG_FRAME    6
+#define DW_SECTION_REL_DEBUG_LOC      7
+#define DW_SECTION_REL_DEBUG_LOCLISTS 8
+#define DW_SECTION_REL_DEBUG_RANGES   9
+#define DW_SECTION_REL_DEBUG_RNGLISTS 10
+#define DW_SECTION_REL_DEBUG_TYPES    11
+#define DW_SECTION_REL_DEBUG_STR_OFFSETS 12
+#define DW_SECTION_REL_DEBUG_PUBTYPES    13
+#define DW_SECTION_REL_GDB_INDEX   14
+#define DW_SECTION_REL_EH_FRAME    15
+#define DW_SECTION_REL_DEBUG_SUP         16
+#define DW_SECTION_REL_DEBUG_MACINFO     17
+#define DW_SECTION_REL_DEBUG_MACRO       18
+#define DW_SECTION_REL_DEBUG_NAMES       19
+#define DW_SECTION_REL_ARRAY_SIZE 20
+
+#define DW_SECTNAME_RELA_DEBUG_INFO     ".rela.debug_info"
+#define DW_SECTNAME_RELA_DEBUG_LINE     ".rela.debug_line"
+#define DW_SECTNAME_RELA_DEBUG_PUBNAMES ".rela.debug_pubnames"
+#define DW_SECTNAME_RELA_DEBUG_ABBREV   ".rela.debug_abbrev"
+#define DW_SECTNAME_RELA_DEBUG_ARANGES  ".rela.debug_aranges"
+#define DW_SECTNAME_RELA_DEBUG_FRAME    ".rela.debug_frame"
+#define DW_SECTNAME_RELA_DEBUG_LOC      ".rela.debug_loc"
+#define DW_SECTNAME_RELA_DEBUG_LOCLISTS ".rela.debug_loclists"
+#define DW_SECTNAME_RELA_DEBUG_RANGES   ".rela.debug_ranges"
+#define DW_SECTNAME_RELA_DEBUG_RNGLISTS ".rela.debug_rnglists"
+#define DW_SECTNAME_RELA_DEBUG_TYPES    ".rela.debug_types"
+#define DW_SECTNAME_RELA_DEBUG_STR_OFFSETS    ".rela.debug_str_offsets"
+#define DW_SECTNAME_RELA_DEBUG_PUBTYPES ".rela.debug_pubtypes"
+#define DW_SECTNAME_RELA_GDB_INDEX ".rela.debug_gdb_index"
+#define DW_SECTNAME_RELA_EH_FRAME ".rela.eh_frame"
+#define DW_SECTNAME_RELA_DEBUG_SUP      ".rela.debug_sup"
+#define DW_SECTNAME_RELA_DEBUG_MACINFO  ".rela.debug_macinfo"
+#define DW_SECTNAME_RELA_DEBUG_MACRO    ".rela.debug_macro"
+#define DW_SECTNAME_RELA_DEBUG_NAMES    ".rela.debug_names"
+
+#define DW_SECTNAME_REL_DEBUG_INFO     ".rel.debug_info"
+#define DW_SECTNAME_REL_DEBUG_LINE     ".rel.debug_line"
+#define DW_SECTNAME_REL_DEBUG_PUBNAMES ".rel.debug_pubnames"
+#define DW_SECTNAME_REL_DEBUG_ABBREV   ".rel.debug_abbrev"
+#define DW_SECTNAME_REL_DEBUG_ARANGES  ".rel.debug_aranges"
+#define DW_SECTNAME_REL_DEBUG_FRAME    ".rel.debug_frame"
+#define DW_SECTNAME_REL_DEBUG_LOC      ".rel.debug_loc"
+#define DW_SECTNAME_REL_DEBUG_LOCLISTS ".rel.debug_loclists"
+#define DW_SECTNAME_REL_DEBUG_RANGES   ".rel.debug_ranges"
+#define DW_SECTNAME_REL_DEBUG_RNGLISTS ".rel.debug_rnglists"
+#define DW_SECTNAME_REL_DEBUG_TYPES    ".rel.debug_types"
+#define DW_SECTNAME_REL_DEBUG_STR_OFFSETS ".rel.debug_str_offsets"
+#define DW_SECTNAME_REL_DEBUG_PUBTYPES ".rel.debug_pubtypes"
+#define DW_SECTNAME_REL_GDB_INDEX ".rel.debug_gdb_index"
+#define DW_SECTNAME_REL_EH_FRAME ".rel.eh_frame"
+#define DW_SECTNAME_REL_DEBUG_SUP      ".rel.debug_sup"
+#define DW_SECTNAME_REL_DEBUG_MACINFO  ".rel.debug_macinfo"
+#define DW_SECTNAME_REL_DEBUG_MACRO    ".rel.debug_macro"
+#define DW_SECTNAME_REL_DEBUG_NAMES    ".rel.debug_names"
+
+
+boolean section_name_is_debug_and_wanted(const char *section_name,char *secmap);
+void set_all_section_defaults(char *m);
+void set_all_sections_on(char *m);
+void set_all_reloc_sections_on(char *m);
+boolean any_section_header_to_print(char *section_map);
+
 
 #endif /* SECTION_BITMAPS_H_INCLUDED*/

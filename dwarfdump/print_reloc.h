@@ -22,9 +22,13 @@
   with this program; if not, write the Free Software Foundation, Inc., 51
   Franklin Street - Fifth Floor, Boston MA 02110-1301, USA.
 */
-
+#ifndef PRINT_RELOC_H_INCLUDED
+#define PRINT_RELOC_H_INCLUDED
 #include "dwarf_reloc_arm.h"
 #include "dwarf_reloc_mips.h"
 #include "dwarf_reloc_ppc.h"
 #include "dwarf_reloc_ppc64.h"
 #include "dwarf_reloc_x86_64.h"
+#include "dwarf_reloc_386.h"
+#endif /* PRINT_RELOC_H_INCLUDED */
+

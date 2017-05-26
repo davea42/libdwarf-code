@@ -23,45 +23,23 @@
   Franklin Street - Fifth Floor, Boston MA 02110-1301, USA.
 
 */
-
-
-
-
 #include "globals.h"
+#define DWARF_RELOC_MIPS
+#define DWARF_RELOC_PPC
+#define DWARF_RELOC_PPC64
+#define DWARF_RELOC_ARM
+#define DWARF_RELOC_X86_64
+#define DWARF_RELOC_386
+
 #include "print_reloc.h"
-
-#define DW_SECTION_REL_DEBUG_NUM      9  /* Number of sections */
-/* .debug_abbrev should never have a relocation applied to it as it
-   never refers to another section! (other sections refer to
-   .debug_abbrev) */
-
-#define DW_SECTNAME_RELA_DEBUG          ".rela.debug_"
-#define DW_SECTNAME_RELA_DEBUG_INFO     ".rela.debug_info"
-#define DW_SECTNAME_RELA_DEBUG_LINE     ".rela.debug_line"
-#define DW_SECTNAME_RELA_DEBUG_PUBNAMES ".rela.debug_pubnames"
-#define DW_SECTNAME_RELA_DEBUG_ABBREV   ".rela.debug_abbrev"
-#define DW_SECTNAME_RELA_DEBUG_ARANGES  ".rela.debug_aranges"
-#define DW_SECTNAME_RELA_DEBUG_FRAME    ".rela.debug_frame"
-#define DW_SECTNAME_RELA_DEBUG_LOC      ".rela.debug_loc"
-#define DW_SECTNAME_RELA_DEBUG_RANGES   ".rela.debug_ranges"
-#define DW_SECTNAME_RELA_DEBUG_TYPES    ".rela.debug_types"
-
-#define DW_SECTNAME_REL_DEBUG          ".rel.debug_"
-#define DW_SECTNAME_REL_DEBUG_INFO     ".rel.debug_info"
-#define DW_SECTNAME_REL_DEBUG_LINE     ".rel.debug_line"
-#define DW_SECTNAME_REL_DEBUG_PUBNAMES ".rel.debug_pubnames"
-#define DW_SECTNAME_REL_DEBUG_ABBREV   ".rel.debug_abbrev"
-#define DW_SECTNAME_REL_DEBUG_ARANGES  ".rel.debug_aranges"
-#define DW_SECTNAME_REL_DEBUG_FRAME    ".rel.debug_frame"
-#define DW_SECTNAME_REL_DEBUG_LOC      ".rel.debug_loc"
-#define DW_SECTNAME_REL_DEBUG_RANGES   ".rel.debug_ranges"
-#define DW_SECTNAME_REL_DEBUG_TYPES    ".rel.debug_types"
-
+#include "section_bitmaps.h"
+#include "esb.h"
 
 #define STRING_FOR_DUPLICATE " duplicate"
 #define STRING_FOR_NULL      " null"
 
-static char *sectnames[] = {
+static char *sectnames[DW_SECTION_REL_ARRAY_SIZE] = {
+    "",
     DW_SECTNAME_REL_DEBUG_INFO,
     DW_SECTNAME_REL_DEBUG_LINE,
     DW_SECTNAME_REL_DEBUG_PUBNAMES,
@@ -69,10 +47,22 @@ static char *sectnames[] = {
     DW_SECTNAME_REL_DEBUG_ARANGES,
     DW_SECTNAME_REL_DEBUG_FRAME,
     DW_SECTNAME_REL_DEBUG_LOC,
+    DW_SECTNAME_REL_DEBUG_LOCLISTS,
     DW_SECTNAME_REL_DEBUG_RANGES,
+    DW_SECTNAME_REL_DEBUG_RNGLISTS,
     DW_SECTNAME_REL_DEBUG_TYPES,
+    DW_SECTNAME_REL_DEBUG_STR_OFFSETS,
+    DW_SECTNAME_REL_DEBUG_PUBTYPES,
+    DW_SECTNAME_REL_GDB_INDEX,
+    DW_SECTNAME_REL_EH_FRAME,
+    DW_SECTNAME_REL_DEBUG_SUP,
+    DW_SECTNAME_REL_DEBUG_MACINFO,
+    DW_SECTNAME_REL_DEBUG_MACRO,
+    DW_SECTNAME_REL_DEBUG_NAMES,
 };
-static char *sectnamesa[] = {
+
+static char *sectnamesa[DW_SECTION_REL_ARRAY_SIZE] = {
+    "",
     DW_SECTNAME_RELA_DEBUG_INFO,
     DW_SECTNAME_RELA_DEBUG_LINE,
     DW_SECTNAME_RELA_DEBUG_PUBNAMES,
@@ -80,11 +70,21 @@ static char *sectnamesa[] = {
     DW_SECTNAME_RELA_DEBUG_ARANGES,
     DW_SECTNAME_RELA_DEBUG_FRAME,
     DW_SECTNAME_RELA_DEBUG_LOC,
+    DW_SECTNAME_RELA_DEBUG_LOCLISTS,
     DW_SECTNAME_RELA_DEBUG_RANGES,
+    DW_SECTNAME_RELA_DEBUG_RNGLISTS,
     DW_SECTNAME_RELA_DEBUG_TYPES,
+    DW_SECTNAME_RELA_DEBUG_STR_OFFSETS,
+    DW_SECTNAME_RELA_DEBUG_PUBTYPES,
+    DW_SECTNAME_RELA_GDB_INDEX,
+    DW_SECTNAME_RELA_DEBUG_SUP,
+    DW_SECTNAME_RELA_DEBUG_MACINFO,
+    DW_SECTNAME_RELA_DEBUG_MACRO,
+    DW_SECTNAME_RELA_DEBUG_NAMES,
 };
 
-static char *error_msg_duplicate[] = {
+static char *error_msg_duplicate[DW_SECTION_REL_ARRAY_SIZE] = {
+    "",
     DW_SECTNAME_REL_DEBUG_INFO STRING_FOR_DUPLICATE,
     DW_SECTNAME_REL_DEBUG_LINE STRING_FOR_DUPLICATE,
     DW_SECTNAME_REL_DEBUG_PUBNAMES STRING_FOR_DUPLICATE,
@@ -92,11 +92,22 @@ static char *error_msg_duplicate[] = {
     DW_SECTNAME_REL_DEBUG_ARANGES STRING_FOR_DUPLICATE,
     DW_SECTNAME_REL_DEBUG_FRAME STRING_FOR_DUPLICATE,
     DW_SECTNAME_REL_DEBUG_LOC STRING_FOR_DUPLICATE,
+    DW_SECTNAME_REL_DEBUG_LOCLISTS STRING_FOR_DUPLICATE,
     DW_SECTNAME_REL_DEBUG_RANGES STRING_FOR_DUPLICATE,
+    DW_SECTNAME_REL_DEBUG_RNGLISTS STRING_FOR_DUPLICATE,
     DW_SECTNAME_REL_DEBUG_TYPES STRING_FOR_DUPLICATE,
+    DW_SECTNAME_REL_DEBUG_STR_OFFSETS STRING_FOR_DUPLICATE,
+    DW_SECTNAME_REL_DEBUG_PUBTYPES  STRING_FOR_DUPLICATE,
+    DW_SECTNAME_REL_GDB_INDEX STRING_FOR_DUPLICATE,
+    DW_SECTNAME_REL_EH_FRAME  STRING_FOR_DUPLICATE,
+    DW_SECTNAME_REL_DEBUG_SUP STRING_FOR_DUPLICATE,
+    DW_SECTNAME_REL_DEBUG_MACINFO STRING_FOR_DUPLICATE,
+    DW_SECTNAME_REL_DEBUG_MACRO STRING_FOR_DUPLICATE,
+    DW_SECTNAME_REL_DEBUG_NAMES STRING_FOR_DUPLICATE,
 };
 
-static char *error_msg_null[] = {
+static char *error_msg_null[DW_SECTION_REL_ARRAY_SIZE] = {
+    "",
     DW_SECTNAME_REL_DEBUG_INFO STRING_FOR_NULL,
     DW_SECTNAME_REL_DEBUG_LINE STRING_FOR_NULL,
     DW_SECTNAME_REL_DEBUG_PUBNAMES STRING_FOR_NULL,
@@ -104,8 +115,18 @@ static char *error_msg_null[] = {
     DW_SECTNAME_REL_DEBUG_ARANGES STRING_FOR_NULL,
     DW_SECTNAME_REL_DEBUG_FRAME STRING_FOR_NULL,
     DW_SECTNAME_REL_DEBUG_LOC STRING_FOR_NULL,
-    DW_SECTNAME_REL_DEBUG_RANGES STRING_FOR_NULL,
+    DW_SECTNAME_REL_DEBUG_LOCLISTS STRING_FOR_NULL,
+    DW_SECTNAME_REL_DEBUG_RANGES  STRING_FOR_NULL,
+    DW_SECTNAME_REL_DEBUG_RNGLISTS STRING_FOR_NULL,
     DW_SECTNAME_REL_DEBUG_TYPES STRING_FOR_NULL,
+    DW_SECTNAME_REL_DEBUG_STR_OFFSETS STRING_FOR_NULL,
+    DW_SECTNAME_REL_DEBUG_PUBTYPES STRING_FOR_NULL,
+    DW_SECTNAME_REL_GDB_INDEX STRING_FOR_NULL,
+    DW_SECTNAME_REL_EH_FRAME STRING_FOR_NULL,
+    DW_SECTNAME_REL_DEBUG_SUP STRING_FOR_NULL,
+    DW_SECTNAME_REL_DEBUG_MACINFO STRING_FOR_NULL,
+    DW_SECTNAME_REL_DEBUG_MACRO STRING_FOR_NULL,
+    DW_SECTNAME_REL_DEBUG_NAMES STRING_FOR_NULL,
 };
 
 /*  Include Section type, to be able to deal with all the
@@ -161,6 +182,13 @@ set_relocation_table_names(Dwarf_Small machine_type)
             sizeof(reloc_type_names_ARM) / sizeof(char *);
 #endif /* DWARF_RELOC_ARM */
         break;
+    case EM_386:
+#ifdef DWARF_RELOC_386
+        reloc_type_names = reloc_type_names_386;
+        number_of_reloc_type_names =
+            sizeof(reloc_type_names_386) / sizeof(char *);
+#endif /* DWARF_RELOC_X86_64 */
+        break;
     case EM_X86_64:
 #ifdef DWARF_RELOC_X86_64
         reloc_type_names = reloc_type_names_X86_64;
@@ -188,7 +216,13 @@ get_reloc_type_names(int index)
     const char *retval = 0;
 
     if (index < 0 || index >= number_of_reloc_type_names) {
-        sprintf(buf, "reloc type %d unknown", (int) index);
+        if (number_of_reloc_type_names == 0) {
+            /* No table provided. */
+            sprintf(buf, "reloc type %d", (int) index);
+        } else {
+            /* Table incomplete? */
+            sprintf(buf, "reloc type %d unknown", (int) index);
+        }
         retval = buf;
     } else {
         retval = reloc_type_names[index];
@@ -209,7 +243,7 @@ static struct {
     Dwarf_Bool display; /* Display reloc if TRUE */
     const char *name;         /* Section name */
     Elf64_Xword type;   /* To cover 32 and 64 records types */
-} sect_data[DW_SECTION_REL_DEBUG_NUM];
+} sect_data[DW_SECTION_REL_ARRAY_SIZE];
 
 
 typedef size_t indx_type;
@@ -271,55 +305,95 @@ typedef struct {
     For a given (debug) section there can be a .rel or a .rela,
     not both.
     The name-to-index in this table is fixed, invariant.
-    It has to match other tables like
+
 */
+static REL_INFO rel_info[DW_SECTION_REL_ARRAY_SIZE] = {
+    {0,0,0},
+    {/*1*/ DW_SECTION_REL_DEBUG_INFO,
+    DW_SECTNAME_REL_DEBUG_INFO,
+    DW_SECTNAME_RELA_DEBUG_INFO},
+
+    {/*2*/ DW_SECTION_REL_DEBUG_LINE,
+    DW_SECTNAME_REL_DEBUG_LINE,
+    DW_SECTNAME_RELA_DEBUG_LINE},
+
+    {/*3*/ DW_SECTION_REL_DEBUG_PUBNAMES,
+    DW_SECTNAME_REL_DEBUG_PUBNAMES,
+    DW_SECTNAME_RELA_DEBUG_PUBNAMES},
+
+    {/*4*/ DW_SECTION_REL_DEBUG_ABBREV,
+    DW_SECTNAME_REL_DEBUG_ABBREV,
+    DW_SECTNAME_RELA_DEBUG_ABBREV},
+
+    {/*5*/ DW_SECTION_REL_DEBUG_ARANGES,
+    DW_SECTNAME_REL_DEBUG_ARANGES,
+    DW_SECTNAME_RELA_DEBUG_ARANGES},
+
+    {/*6*/ DW_SECTION_REL_DEBUG_FRAME,
+    DW_SECTNAME_REL_DEBUG_FRAME,
+    DW_SECTNAME_RELA_DEBUG_FRAME},
+
+    {/*7*/ DW_SECTION_REL_DEBUG_LOC,
+    DW_SECTNAME_REL_DEBUG_LOC,
+    DW_SECTNAME_RELA_DEBUG_LOC},
+
+    {/*8*/ DW_SECTION_REL_DEBUG_LOCLISTS,
+    DW_SECTNAME_REL_DEBUG_LOCLISTS,
+    DW_SECTNAME_RELA_DEBUG_LOCLISTS},
+
+    {/*9*/ DW_SECTION_REL_DEBUG_RANGES,
+    DW_SECTNAME_REL_DEBUG_RANGES,
+    DW_SECTNAME_RELA_DEBUG_RANGES},
+
+    {/*10*/ DW_SECTION_REL_DEBUG_RNGLISTS,
+    DW_SECTNAME_REL_DEBUG_RNGLISTS,
+    DW_SECTNAME_RELA_DEBUG_RNGLISTS},
+
+    {/*11*/ DW_SECTION_REL_DEBUG_TYPES,
+    DW_SECTNAME_REL_DEBUG_TYPES,
+    DW_SECTNAME_RELA_DEBUG_TYPES},
+
+    {/*12*/ DW_SECTION_REL_DEBUG_STR_OFFSETS,
+    DW_SECTNAME_REL_DEBUG_STR_OFFSETS,
+    DW_SECTNAME_RELA_DEBUG_STR_OFFSETS},
+
+    {/*13*/ DW_SECTION_REL_DEBUG_PUBTYPES,
+    DW_SECTNAME_REL_DEBUG_PUBTYPES,
+    DW_SECTNAME_RELA_DEBUG_PUBTYPES},
+    {/*14*/ DW_SECTION_REL_GDB_INDEX,
+    DW_SECTNAME_REL_GDB_INDEX,
+    DW_SECTNAME_RELA_GDB_INDEX},
+
+    {/*15*/ DW_SECTION_REL_EH_FRAME,
+    DW_SECTNAME_REL_EH_FRAME,
+    DW_SECTNAME_RELA_EH_FRAME},
+
+    {/*16*/ DW_SECTION_REL_DEBUG_SUP,
+    DW_SECTNAME_REL_DEBUG_SUP,
+    DW_SECTNAME_RELA_DEBUG_SUP},
+
+    {/*17*/ DW_SECTION_REL_DEBUG_MACINFO,
+    DW_SECTNAME_REL_DEBUG_MACINFO,
+    DW_SECTNAME_RELA_DEBUG_MACINFO},
+
+    {/*18*/ DW_SECTION_REL_DEBUG_MACRO,
+    DW_SECTNAME_REL_DEBUG_MACRO,
+    DW_SECTNAME_RELA_DEBUG_MACRO},
+
+    {/*19*/ DW_SECTION_REL_DEBUG_NAMES,
+    DW_SECTNAME_REL_DEBUG_NAMES,
+    DW_SECTNAME_RELA_DEBUG_NAMES},
+};
+
 static int
 get_reloc_section(Dwarf_Debug dbg,
     Elf_Scn *scn,
     char *scn_name,
     Elf64_Word sh_type)
 {
-    static REL_INFO rel_info[DW_SECTION_REL_DEBUG_NUM] = {
-    {/*0*/ DW_SECTION_REL_DEBUG_INFO,
-    DW_SECTNAME_REL_DEBUG_INFO,
-    DW_SECTNAME_RELA_DEBUG_INFO},
-
-    {/*1*/ DW_SECTION_REL_DEBUG_LINE,
-    DW_SECTNAME_REL_DEBUG_LINE,
-    DW_SECTNAME_RELA_DEBUG_LINE},
-
-    {/*2*/ DW_SECTION_REL_DEBUG_PUBNAMES,
-    DW_SECTNAME_REL_DEBUG_PUBNAMES,
-    DW_SECTNAME_RELA_DEBUG_PUBNAMES},
-
-    {/*3*/ DW_SECTION_REL_DEBUG_ABBREV,
-    DW_SECTNAME_REL_DEBUG_ABBREV,
-    DW_SECTNAME_RELA_DEBUG_ABBREV},
-
-    {/*4*/ DW_SECTION_REL_DEBUG_ARANGES,
-    DW_SECTNAME_REL_DEBUG_ARANGES,
-    DW_SECTNAME_RELA_DEBUG_ARANGES},
-
-    {/*5*/ DW_SECTION_REL_DEBUG_FRAME,
-    DW_SECTNAME_REL_DEBUG_FRAME,
-    DW_SECTNAME_RELA_DEBUG_FRAME},
-
-    {/*6*/ DW_SECTION_REL_DEBUG_LOC,
-    DW_SECTNAME_REL_DEBUG_LOC,
-    DW_SECTNAME_RELA_DEBUG_LOC},
-
-    {/*7*/ DW_SECTION_REL_DEBUG_RANGES,
-    DW_SECTNAME_REL_DEBUG_RANGES,
-    DW_SECTNAME_RELA_DEBUG_RANGES},
-
-    {/*8*/ DW_SECTION_REL_DEBUG_TYPES,
-    DW_SECTNAME_REL_DEBUG_TYPES,
-    DW_SECTNAME_RELA_DEBUG_TYPES},
-    };
-
     Elf_Data *data;
     int index;
-    for (index = 0; index < DW_SECTION_REL_DEBUG_NUM; ++index) {
+    for (index = 1; index < DW_SECTION_REL_ARRAY_SIZE; ++index) {
         const char *n = rel_info[index].name_rel;
         const char *na = rel_info[index].name_rela;
         Dwarf_Error err = 0;
@@ -337,7 +411,7 @@ get_reloc_section(Dwarf_Debug dbg,
 }
 
 void
-print_relocinfo(Dwarf_Debug dbg, unsigned reloc_map)
+print_relocinfo(Dwarf_Debug dbg, char * reloc_map)
 {
     Elf *elf;
     char *endr_ident;
@@ -346,8 +420,8 @@ print_relocinfo(Dwarf_Debug dbg, unsigned reloc_map)
     int i;
     Dwarf_Error err = 0;
 
-    for (i = 0; i < DW_SECTION_REL_DEBUG_NUM; i++) {
-        sect_data[i].display = reloc_map & (1 << i);
+    for (i = 1; i < DW_SECTION_REL_ARRAY_SIZE; i++) {
+        sect_data[i].display = reloc_map[i];
         sect_data[i].buf = 0;
         sect_data[i].size = 0;
         sect_data[i].type = SHT_NULL;
@@ -356,7 +430,8 @@ print_relocinfo(Dwarf_Debug dbg, unsigned reloc_map)
     if (res != DW_DLV_OK) {
         print_error(dbg, "dwarf_get_elf error", res, err);
     }
-    if ((endr_ident = elf_getident(elf, NULL)) == NULL) {
+    endr_ident = elf_getident(elf, NULL);
+    if (!endr_ident) {
         print_error(dbg, "DW_ELF_GETIDENT_ERROR", res, err);
     }
     is_64bit = (endr_ident[EI_CLASS] == ELFCLASS64);
@@ -431,7 +506,7 @@ print_relocinfo_64(Dwarf_Debug dbg, Elf * elf)
     /* Set the relocation names based on the machine type */
     set_relocation_table_names(ehdr64->e_machine);
 
-    for (i = 0; i < DW_SECTION_REL_DEBUG_NUM; i++) {
+    for (i = 1; i < DW_SECTION_REL_ARRAY_SIZE; i++) {
         if (sect_data[i].display &&
             sect_data[i].buf != NULL &&
             sect_data[i].size > 0) {
@@ -512,7 +587,7 @@ print_relocinfo_32(Dwarf_Debug dbg, Elf * elf)
     /* Set the relocation names based on the machine type */
     set_relocation_table_names(ehdr32->e_machine);
 
-    for (i = 0; i < DW_SECTION_REL_DEBUG_NUM; i++) {
+    for (i = 1; i < DW_SECTION_REL_ARRAY_SIZE; i++) {
         if (sect_data[i].display &&
             sect_data[i].buf != NULL &&
             sect_data[i].size > 0) {
@@ -555,9 +630,10 @@ print_reloc_information_64(int section_no, Dwarf_Small * buf,
     Dwarf_Half rel_size = SHT_RELA == type ?
         sizeof(Elf64_Rela) : sizeof(Elf64_Rel);
     Dwarf_Unsigned off = 0;
+    struct esb_s tempesb;
 
-    printf("\n%s:\n", type== SHT_RELA?sectnamesa[section_no]:
-        sectnames[section_no]);
+    printf("\n%s:\n", sanitized(type== SHT_RELA?sectnamesa[section_no]:
+        sectnames[section_no]));
 
     /* Print some headers and change the order for better reading */
     printf("Offset     Addend     %-26s Index   Symbol Name\n","Reloc Type");
@@ -600,13 +676,17 @@ print_reloc_information_64(int section_no, Dwarf_Small * buf,
             Elf64_Rela *pa = (Elf64_Rela *)p;
             add = pa->r_addend;
         }
-
+        esb_constructor(&tempesb);
+        esb_append(&tempesb,sanitized(
+            get_reloc_type_names(ELF64_R_TYPE(p->r_info))));
+        /* sanitized uses a static buffer, call just once here */
         printf("0x%08lx 0x%08lx %-26s <%5ld> %s\n",
             (unsigned long int) (p->r_offset),
             (unsigned long int) (add),
-            get_reloc_type_names(ELF64_R_TYPE(p->r_info)),
+            esb_get_string(&tempesb),
             (long)ELF64_R_SYM(p->r_info),
-            name);
+            sanitized(name));
+        esb_destructor(&tempesb);
 #else
         /*  sgi/mips -64 does not have r_info in the 64bit relocations,
             but seperate fields, with 3 types, actually. Only one of
@@ -627,11 +707,18 @@ print_reloc_information_64(int section_no, Dwarf_Small * buf,
         if (!name || !name[0]) {
             name = "<no name>";
         }
+
+        /* sanitized uses a static buffer, call just once here */
+        esb_constructor(&tempesb);
+        esb_append(&tempesb, sanitized(
+            get_reloc_type_names(p->r_type)));
+        /* sanitized uses a static buffer, call just once here */
         printf("%5" DW_PR_DUu " %-26s <%3ld> %s\n",
             (Dwarf_Unsigned) (p->r_offset),
-            get_reloc_type_names(p->r_type),
+            esb_get_string(&tempesb),
             (long)p->r_sym,
-            name);
+            sanitized(name));
+        esb_destructor(&tempesb);
 #endif
     }
 #endif /* HAVE_ELF64_GETEHDR */
@@ -647,9 +734,10 @@ print_reloc_information_32(int section_no, Dwarf_Small * buf,
     Dwarf_Half rel_size = SHT_RELA == type ?
         sizeof(Elf32_Rela) : sizeof(Elf32_Rel);
     Dwarf_Unsigned off = 0;
+    struct esb_s tempesb;
 
-    printf("\n%s:\n", type== SHT_RELA?sectnamesa[section_no]:
-        sectnames[section_no]);
+    printf("\n%s:\n", sanitized(type== SHT_RELA?sectnamesa[section_no]:
+        sectnames[section_no]));
 
 
     /* Print some headers and change the order for better reading. */
@@ -685,12 +773,16 @@ print_reloc_information_32(int section_no, Dwarf_Small * buf,
             Elf32_Rela *pa = (Elf32_Rela *)p;
             add = pa->r_addend;
         }
+        esb_constructor(&tempesb);
+        esb_append(&tempesb,sanitized(
+            get_reloc_type_names(ELF32_R_TYPE(p->r_info))));
         printf("0x%08lx 0x%08lx %-26s <%5ld> %s\n",
             (unsigned long int) (p->r_offset),
             (unsigned long int) (add),
-            get_reloc_type_names(ELF32_R_TYPE(p->r_info)),
+            esb_get_string(&tempesb),
             (long)ELF32_R_SYM(p->r_info),
-            name);
+            sanitized(name));
+        esb_destructor(&tempesb);
     }
 }
 
@@ -705,7 +797,7 @@ readsyms(Elf32_Sym * data, size_t num, Elf * elf, Elf32_Word link)
         return NULL;
     }
     s = buf; /* save pointer to head of array */
-    for (i = 1; i < num; i++, data++, buf++) {
+    for (i = 0; i < num; i++, data++, buf++) {
         buf->indx = i;
         buf->name = (char *) elf_strptr(elf, link, data->st_name);
         buf->value = data->st_value;
@@ -731,7 +823,7 @@ read_64_syms(Elf64_Sym * data, size_t num, Elf * elf, Elf64_Word link)
         return NULL;
     }
     s = buf;                    /* save pointer to head of array */
-    for (i = 1; i < num; i++, data++, buf++) {
+    for (i = 0; i < num; i++, data++, buf++) {
         buf->indx = i;
         buf->name = (char *) elf_strptr(elf, link, data->st_name);
         buf->value = data->st_value;

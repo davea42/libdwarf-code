@@ -23,8 +23,12 @@
 
 #include "globals.h"
 
-struct section_bitmap_s
-map_sectnames[] = {
+#define TRUE  1
+#define FALSE 0
+
+struct section_map_s
+map_sectnames[DW_HDR_ARRAY_SIZE] = {
+    {0,0},
     {DW_SECTNAME_DEBUG_INFO,            DW_HDR_DEBUG_INFO},
     {DW_SECTNAME_DEBUG_INFO_DWO,        DW_HDR_DEBUG_INFO_DWO},
     {DW_SECTNAME_DEBUG_LINE,            DW_HDR_DEBUG_LINE},
@@ -55,30 +59,99 @@ map_sectnames[] = {
     {DW_SECTNAME_DEBUG_NAMES,           DW_HDR_DEBUG_NAMES},
     {DW_SECTNAME_DEBUG_CU_INDEX,        DW_HDR_DEBUG_CU_INDEX},
     {DW_SECTNAME_DEBUG_TU_INDEX,        DW_HDR_DEBUG_TU_INDEX},
-    {"",0}
+    {"Elf Header",                      DW_HDR_HEADER},
 };
+
+static boolean all_sections_on;
+
+boolean
+section_name_is_debug_and_wanted(const char *section_name,char *secmap)
+{
+    unsigned i = 1;
+    if (all_sections_on) {
+        return TRUE;
+    }
+    for ( ; i < DW_HDR_ARRAY_SIZE; ++i) {
+        if(!strcmp(section_name,map_sectnames[i].name) &&
+            secmap[map_sectnames[i].value]) {
+            return TRUE;
+        }
+    }
+    return FALSE;
+}
+
+/* For now defaults matches all but .text. */
+void
+set_all_section_defaults(char *section_map)
+{
+    unsigned i = 1;
+    for ( ; i < DW_HDR_ARRAY_SIZE; ++i) {
+        section_map[i] = TRUE;
+    }
+}
+
+void
+set_all_sections_on(char *section_map)
+{
+    unsigned i = 1;
+    all_sections_on = TRUE;
+    for ( ; i < DW_HDR_ARRAY_SIZE; ++i) {
+        section_map[i] = TRUE;
+    }
+}
+void set_all_reloc_sections_on(char *m)
+{
+    unsigned i = 1;
+    for ( ; i < DW_SECTION_REL_ARRAY_SIZE; ++i) {
+        m[i] = TRUE;
+    }
+}
+
+boolean
+any_section_header_to_print(char *section_map)
+{
+    unsigned i = 1;
+    for ( ; i < DW_HDR_HEADER; ++i) {
+        if(section_map[i]) {
+            return TRUE;
+        }
+    }
+    return FALSE;
+}
 
 #ifdef SELFTEST
 
 int main()
 {
-    unsigned i = 0;
+    unsigned i = 1;
 
-    for ( ; *map_sectnames[i].name ; ++i) {
-        unsigned bitv = 0;
-        if  ( i > 30) {
-            printf("FAIL: map_sections.c ,the table is too large for the current approach\n");
+    unsigned arraycount = sizeof(map_sectnames)/
+        sizeof (struct section_map_s);;
+
+    if (arraycount  !=  DW_HDR_ARRAY_SIZE) {
+        printf("FAIL map_sections.c sections array wrong size "
+            "%u vs %u\n",
+            arraycount,DW_HDR_ARRAY_SIZE);
+        exit(1);
+    }
+    for ( ; i < DW_HDR_ARRAY_SIZE; ++i) {
+
+        struct section_map_s * mp = map_sectnames+i;
+        if (mp->value != i) {
+            printf("FAIL map_sections.c at entry %s we have "
+            "0x%x vs 0x%x"
+                " mismatch\n",
+                mp->name?mp->name:"<no name",
+                mp->value,
+                i);
             exit(1);
         }
-        bitv = 1<<i;
-        if (map_sectnames[i].bitvalue != bitv) {
-            printf("FAIL map_sections.c at entry %s we have 0x%x vs 0x%x"
-                " mismatch\n",
-                map_sectnames[i].name,map_sectnames[i].bitvalue,bitv);
+        if (!mp->name) {
+            printf("FAIL map_sections.c at entry %u we have no name!\n",i);
             exit(1);
         }
     }
-    printf("PASS section bitmaps\n");
+    printf("PASS section maps\n");
     return 0;
 }
 
