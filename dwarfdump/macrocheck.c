@@ -49,6 +49,10 @@ static struct Macrocheck_Map_Entry_s * macrocheck_map_find(
 static void macrocheck_map_destroy(void *map);
 static Dwarf_Unsigned macro_count_recs(void **base);
 
+#ifdef SELFTEST
+int failcount = 0;
+#endif /* SELFTEST */
+
 
 static struct Macrocheck_Map_Entry_s *
 macrocheck_map_create_entry(Dwarf_Unsigned offset,
@@ -309,6 +313,9 @@ print_macro_statistics(const char *name,void **tsbase,
     mac_as_array = (struct Macrocheck_Map_Entry_s **)calloc(count,
         sizeof(struct Macrocheck_Map_Entry_s *));
     if(!mac_as_array) {
+#ifdef SELFTEST
+        ++failcount;
+#endif
         printf("  Macro checking ERROR %s: "
             "unable to allocate %" DW_PR_DUu "pointers\n",
             name,
@@ -341,21 +348,37 @@ print_macro_statistics(const char *name,void **tsbase,
             highest = end;
         }
         if (r->mp_refcount_primary > 1) {
+#ifdef SELFTEST
+            ++failcount;
+#endif
             printf(" ERROR: For offset 0x%" DW_PR_XZEROS DW_PR_DUx
+                " %" DW_PR_DUu
                 " there is a primary count of "
-                "0x%"  DW_PR_XZEROS DW_PR_DUx "\n",
+                "0x%"  DW_PR_XZEROS DW_PR_DUx
+                " %"  DW_PR_DUu "\n",
                 r->mp_key,
+                r->mp_key,
+                r->mp_refcount_primary,
                 r->mp_refcount_primary);
         }
         if (r->mp_refcount_primary && r->mp_refcount_secondary) {
+#ifdef SELFTEST
+            ++failcount;
+#endif
             printf(" ERROR: For offset 0x%" DW_PR_XZEROS DW_PR_DUx
+                " %" DW_PR_DUu
                 " there is a nonzero primary count of "
                 "0x%"  DW_PR_XZEROS DW_PR_DUx
+                " %" DW_PR_DUu
                 " with a secondary count of "
                 "0x%"  DW_PR_XZEROS DW_PR_DUx
+                " %" DW_PR_DUu
                 "\n",
                 r->mp_key,
+                r->mp_key,
                 r->mp_refcount_primary,
+                r->mp_refcount_primary,
+                r->mp_refcount_secondary,
                 r->mp_refcount_secondary);
         }
     }
@@ -378,11 +401,23 @@ print_macro_statistics(const char *name,void **tsbase,
             internalgap += (r->mp_key - lastend);
         } else if (r->mp_key < lastend) {
             /* crazy overlap */
+#ifdef SELFTEST
+            ++failcount;
+#endif
             printf(" ERROR: For offset 0x%" DW_PR_XZEROS DW_PR_DUx
+                " %" DW_PR_DUu
                 " there is a crazy overlap with the previous end offset of "
                 "0x%"  DW_PR_XZEROS DW_PR_DUx
+                " %"  DW_PR_DUu
                 " (previous start offset of 0x%"  DW_PR_XZEROS DW_PR_DUx ")"
-                "\n",r->mp_key,lastend,laststart);
+                " %"  DW_PR_DUu
+                "\n",
+                r->mp_key,
+                r->mp_key,
+                lastend,
+                lastend,
+                laststart,
+                laststart);
         }
         laststart = r->mp_key;
         lastend   = laststart + r->mp_len;
@@ -392,10 +427,16 @@ print_macro_statistics(const char *name,void **tsbase,
     wholegap = mac_as_array[0]->mp_key + internalgap;
     if (lastend > section_size) {
         /* Something seriously wrong */
+#ifdef SELFTEST
+        ++failcount;
+#endif
         printf(" ERROR: For offset 0x%" DW_PR_XZEROS DW_PR_DUx
+            " %" DW_PR_DUu
             " there is an overlap with the end of section "
             "0x%"  DW_PR_XZEROS DW_PR_DUx
-            "\n",laststart,lastend);
+            " %" DW_PR_DUu
+            "\n",laststart,laststart,
+            lastend, lastend);
     } else {
         wholegap += (section_size - lastend);
     }
@@ -426,51 +467,63 @@ clear_macro_statistics(void **tsbase)
 
 
 #ifdef SELFTEST
-
-int main()
+int 
+main()
 {
     void * base = 0;
     Dwarf_Unsigned count = 0;
+    int basefailcount = 0;
 
     /* Test 1 */
     add_macro_import(&base,TRUE,200);
     count = macro_count_recs(&base);
     if (count != 1) {
         printf("FAIL: expect count 1, got %" DW_PR_DUu "\n",count);
+        ++failcount;
     }
     print_macro_statistics("test1",&base,2000);
+
+    /* Test two */
     add_macro_area_len(&base,200,100);
     add_macro_import(&base,FALSE,350);
     add_macro_area_len(&base,350,100);
     count = macro_count_recs(&base);
     if (count != 2) {
         printf("FAIL: expect count 2, got %" DW_PR_DUu "\n",count);
+        ++failcount;
     }
     print_macro_statistics("test 2",&base,2000);
     clear_macro_statistics(&base);
 
-    /* Test two */
+    /* Test three */
+    basefailcount = failcount;
     add_macro_import(&base,TRUE,0);
     add_macro_area_len(&base,0,1000);
-
     add_macro_import(&base,FALSE,2000);
     add_macro_area_len(&base,2000,100);
     mark_macro_offset_printed(&base,2000);
-
     add_macro_import(&base,FALSE,1000);
     add_macro_area_len(&base,1000,900);
-
     add_macro_import(&base,FALSE,1000);
     add_macro_area_len(&base,1000,900);
-
     count = macro_count_recs(&base);
     if (count != 3) {
         printf("FAIL: expect count 3, got %" DW_PR_DUu "\n",count);
+        ++failcount;
     }
-
+    printf("\n  Expect an ERROR about overlap with "
+        "the end of section\n");
     print_macro_statistics("test 3",&base,2000);
     clear_macro_statistics(&base);
-    /* Test three */
+    if ((basefailcount+1) != failcount) {
+        printf("FAIL: Found no error in test 3 checking!\n");
+        ++failcount;
+    } else {
+        failcount = basefailcount;
+    }
+
+    /* Test Four */
+    basefailcount = failcount;
     add_macro_import(&base,TRUE,50);
     add_macro_import(&base,TRUE,50);
     add_macro_area_len(&base,50,50);
@@ -478,9 +531,23 @@ int main()
     add_macro_import(&base,FALSE,50);
     add_macro_import(&base,FALSE,60);
     add_macro_area_len(&base,60,10);
-
+    printf( "\n  Expect an ERROR about offset 50 having 2 primaries\n");
+    printf( "  and Expect an ERROR about offset 50 having 2\n"
+        "  primaries"
+        " and a secondary\n");
+    printf( "  and Expect an ERROR about crazy overlap 60\n");
     print_macro_statistics("test 4",&base,2000);
     clear_macro_statistics(&base);
+    if ((basefailcount + 3) != failcount) {
+        printf("FAIL: Found wrong errors in test 4 checking!\n");
+    } else {
+        failcount = basefailcount;
+    }
+    if (failcount > 0) {
+        printf("FAIL macrocheck selftest\n");
+        exit(1);
+    }
+    printf("PASS macrocheck selftest\n");
     return 0;
 }
 #endif /* SELFTEST */

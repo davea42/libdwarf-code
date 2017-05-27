@@ -1,3 +1,9 @@
+2017-05-27 David Anderson
+    * esb.c: For selftest now indents report lines
+      to make it easier to see the overview pass/fail.
+    * Makefile.in,macrocheck.c,print_reloc.c: Makes macrocheck
+      self test results clearer (pass/fail) and adds a check
+      on the array of relocation section data in print_reloc.c.
 2017-05-26 David Anderson
     * section_bitmaps.h,section_bitmaps.c: Added comments.
 2017-05-25 David Anderson

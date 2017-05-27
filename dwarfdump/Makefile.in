@@ -185,25 +185,28 @@ selftest:
 	-rm -f ./selfesb
 	-rm -f ./selfmc
 	-rm -f ./selfmakename
+	-rm -f ./selfsection_bitmaps
+	-rm -f ./selfprint_reloc
 	$(CC) -g -c -I../libdwarf esb.c
 	$(CC) -g -c -I../libdwarf dwarf_tsearchbal.c
 	$(CC) -g -DSELFTEST  -I../libdwarf makename.c dwarf_tsearchbal.o -o selfmakename
 	$(CC) -DSELFTEST -I../libdwarf -g helpertree.c esb.o dwarf_tsearchbal.o -o selfhelpertree
 	./selfhelpertree
-	-rm -f ./selfhelpertree
+	rm -f ./selfhelpertree
 	./selfmakename
-	-rm -f ./selfmakename
-	$(CC) -DSELFTEST -I../libdwarf -g section_bitmaps.c -o section_bitmaps
-	./section_bitmaps
-	-rm -f ./section_bitmaps
+	rm -f ./selfmakename
 	$(CC) -DSELFTEST -I../libdwarf -g macrocheck.c esb.o dwarf_tsearchbal.o -o selfmc
 	./selfmc
-	-rm -f ./selfmc
+	rm -f ./selfmc
 	$(CC) -DSELFTEST -g esb.c -o selfesb
 	./selfesb
-	-rm -f ./selfesb
-        
-
+	rm -f ./selfesb
+	$(CC) -DSELFTEST -I../libdwarf -g section_bitmaps.c -o selfsection_bitmaps
+	./selfsection_bitmaps
+	rm -f ./selfsection_bitmaps
+	$(CC) -DSELFTEST -I../libdwarf -g print_reloc.c esb.o -o selfprint_reloc
+	./selfprint_reloc
+	rm -f ./selfprint_reloc
 
 # This simply assumes that a default INSTALL (cp) command
 # will work and leave sensible permissions on the resulting files.

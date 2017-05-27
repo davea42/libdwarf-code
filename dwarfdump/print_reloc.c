@@ -385,6 +385,7 @@ static REL_INFO rel_info[DW_SECTION_REL_ARRAY_SIZE] = {
     DW_SECTNAME_RELA_DEBUG_NAMES},
 };
 
+#ifndef SELFTEST
 static int
 get_reloc_section(Dwarf_Debug dbg,
     Elf_Scn *scn,
@@ -866,3 +867,29 @@ clean_up_syms_malloc_data()
     sym_data_64_entry_count = 0;
     sym_data_entry_count = 0;
 }
+#endif /* !SELFTEST */
+
+#ifdef SELFTEST
+/*  SELFTEST here is just to check on table
+    internal consistency. */
+int
+main()
+{
+    int failcount = 0;
+    unsigned long i = 1;
+    for ( ; i < DW_SECTION_REL_ARRAY_SIZE; ++i) {
+        if (rel_info[i].index != i) {
+            printf(" FAIL rel_info check, i = %lu vs %lu\n",
+                i,
+                (unsigned long)rel_info[i].index);
+            ++failcount;
+        }
+    }
+    if(failcount) {
+        printf("FAIL print_reloc selftest\n");
+        exit(1);
+    }
+    printf("PASS print_reloc selftest\n");
+    return 0;
+}
+#endif /* SELFTEST*/
