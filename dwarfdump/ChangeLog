@@ -1,4 +1,7 @@
 2017-05-28 David Anderson
+    * common.c, dwarfdump.c, tag_attr.c, tag_tree.c:Update 
+      version string.
+2017-05-28 David Anderson
     * macrocheck.c: Trivial revision of main() declaration
       to our standard format.
     * print_reloc.c: We were reading one-past the end
