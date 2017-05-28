@@ -467,7 +467,7 @@ clear_macro_statistics(void **tsbase)
 
 
 #ifdef SELFTEST
-int 
+int
 main()
 {
     void * base = 0;

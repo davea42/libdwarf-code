@@ -1,3 +1,14 @@
+2017-05-28 David Anderson
+    * macrocheck.c: Trivial revision of main() declaration
+      to our standard format.
+    * print_reloc.c: We were reading one-past the end
+      of symtab entries(now fixed).  
+      Now relocation sections show the Elf section index
+      and we print them in order as in the object file
+      (earlier it printed in a fixed order not related to
+      the object file).
+      Deleted the rel/rela section name arrays, 
+      we already have the section name at hand.
 2017-05-27 David Anderson
     * esb.c: For selftest now indents report lines
       to make it easier to see the overview pass/fail.

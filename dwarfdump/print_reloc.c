@@ -38,110 +38,25 @@
 #define STRING_FOR_DUPLICATE " duplicate"
 #define STRING_FOR_NULL      " null"
 
-static char *sectnames[DW_SECTION_REL_ARRAY_SIZE] = {
-    "",
-    DW_SECTNAME_REL_DEBUG_INFO,
-    DW_SECTNAME_REL_DEBUG_LINE,
-    DW_SECTNAME_REL_DEBUG_PUBNAMES,
-    DW_SECTNAME_REL_DEBUG_ABBREV,
-    DW_SECTNAME_REL_DEBUG_ARANGES,
-    DW_SECTNAME_REL_DEBUG_FRAME,
-    DW_SECTNAME_REL_DEBUG_LOC,
-    DW_SECTNAME_REL_DEBUG_LOCLISTS,
-    DW_SECTNAME_REL_DEBUG_RANGES,
-    DW_SECTNAME_REL_DEBUG_RNGLISTS,
-    DW_SECTNAME_REL_DEBUG_TYPES,
-    DW_SECTNAME_REL_DEBUG_STR_OFFSETS,
-    DW_SECTNAME_REL_DEBUG_PUBTYPES,
-    DW_SECTNAME_REL_GDB_INDEX,
-    DW_SECTNAME_REL_EH_FRAME,
-    DW_SECTNAME_REL_DEBUG_SUP,
-    DW_SECTNAME_REL_DEBUG_MACINFO,
-    DW_SECTNAME_REL_DEBUG_MACRO,
-    DW_SECTNAME_REL_DEBUG_NAMES,
-};
-
-static char *sectnamesa[DW_SECTION_REL_ARRAY_SIZE] = {
-    "",
-    DW_SECTNAME_RELA_DEBUG_INFO,
-    DW_SECTNAME_RELA_DEBUG_LINE,
-    DW_SECTNAME_RELA_DEBUG_PUBNAMES,
-    DW_SECTNAME_RELA_DEBUG_ABBREV,
-    DW_SECTNAME_RELA_DEBUG_ARANGES,
-    DW_SECTNAME_RELA_DEBUG_FRAME,
-    DW_SECTNAME_RELA_DEBUG_LOC,
-    DW_SECTNAME_RELA_DEBUG_LOCLISTS,
-    DW_SECTNAME_RELA_DEBUG_RANGES,
-    DW_SECTNAME_RELA_DEBUG_RNGLISTS,
-    DW_SECTNAME_RELA_DEBUG_TYPES,
-    DW_SECTNAME_RELA_DEBUG_STR_OFFSETS,
-    DW_SECTNAME_RELA_DEBUG_PUBTYPES,
-    DW_SECTNAME_RELA_GDB_INDEX,
-    DW_SECTNAME_RELA_DEBUG_SUP,
-    DW_SECTNAME_RELA_DEBUG_MACINFO,
-    DW_SECTNAME_RELA_DEBUG_MACRO,
-    DW_SECTNAME_RELA_DEBUG_NAMES,
-};
-
-static char *error_msg_duplicate[DW_SECTION_REL_ARRAY_SIZE] = {
-    "",
-    DW_SECTNAME_REL_DEBUG_INFO STRING_FOR_DUPLICATE,
-    DW_SECTNAME_REL_DEBUG_LINE STRING_FOR_DUPLICATE,
-    DW_SECTNAME_REL_DEBUG_PUBNAMES STRING_FOR_DUPLICATE,
-    DW_SECTNAME_REL_DEBUG_ABBREV STRING_FOR_DUPLICATE,
-    DW_SECTNAME_REL_DEBUG_ARANGES STRING_FOR_DUPLICATE,
-    DW_SECTNAME_REL_DEBUG_FRAME STRING_FOR_DUPLICATE,
-    DW_SECTNAME_REL_DEBUG_LOC STRING_FOR_DUPLICATE,
-    DW_SECTNAME_REL_DEBUG_LOCLISTS STRING_FOR_DUPLICATE,
-    DW_SECTNAME_REL_DEBUG_RANGES STRING_FOR_DUPLICATE,
-    DW_SECTNAME_REL_DEBUG_RNGLISTS STRING_FOR_DUPLICATE,
-    DW_SECTNAME_REL_DEBUG_TYPES STRING_FOR_DUPLICATE,
-    DW_SECTNAME_REL_DEBUG_STR_OFFSETS STRING_FOR_DUPLICATE,
-    DW_SECTNAME_REL_DEBUG_PUBTYPES  STRING_FOR_DUPLICATE,
-    DW_SECTNAME_REL_GDB_INDEX STRING_FOR_DUPLICATE,
-    DW_SECTNAME_REL_EH_FRAME  STRING_FOR_DUPLICATE,
-    DW_SECTNAME_REL_DEBUG_SUP STRING_FOR_DUPLICATE,
-    DW_SECTNAME_REL_DEBUG_MACINFO STRING_FOR_DUPLICATE,
-    DW_SECTNAME_REL_DEBUG_MACRO STRING_FOR_DUPLICATE,
-    DW_SECTNAME_REL_DEBUG_NAMES STRING_FOR_DUPLICATE,
-};
-
-static char *error_msg_null[DW_SECTION_REL_ARRAY_SIZE] = {
-    "",
-    DW_SECTNAME_REL_DEBUG_INFO STRING_FOR_NULL,
-    DW_SECTNAME_REL_DEBUG_LINE STRING_FOR_NULL,
-    DW_SECTNAME_REL_DEBUG_PUBNAMES STRING_FOR_NULL,
-    DW_SECTNAME_REL_DEBUG_ABBREV STRING_FOR_NULL,
-    DW_SECTNAME_REL_DEBUG_ARANGES STRING_FOR_NULL,
-    DW_SECTNAME_REL_DEBUG_FRAME STRING_FOR_NULL,
-    DW_SECTNAME_REL_DEBUG_LOC STRING_FOR_NULL,
-    DW_SECTNAME_REL_DEBUG_LOCLISTS STRING_FOR_NULL,
-    DW_SECTNAME_REL_DEBUG_RANGES  STRING_FOR_NULL,
-    DW_SECTNAME_REL_DEBUG_RNGLISTS STRING_FOR_NULL,
-    DW_SECTNAME_REL_DEBUG_TYPES STRING_FOR_NULL,
-    DW_SECTNAME_REL_DEBUG_STR_OFFSETS STRING_FOR_NULL,
-    DW_SECTNAME_REL_DEBUG_PUBTYPES STRING_FOR_NULL,
-    DW_SECTNAME_REL_GDB_INDEX STRING_FOR_NULL,
-    DW_SECTNAME_REL_EH_FRAME STRING_FOR_NULL,
-    DW_SECTNAME_REL_DEBUG_SUP STRING_FOR_NULL,
-    DW_SECTNAME_REL_DEBUG_MACINFO STRING_FOR_NULL,
-    DW_SECTNAME_REL_DEBUG_MACRO STRING_FOR_NULL,
-    DW_SECTNAME_REL_DEBUG_NAMES STRING_FOR_NULL,
-};
-
 /*  Include Section type, to be able to deal with all the
-    Elf32_Rel, Elf32_Rela, Elf64_Rel, Elf64_Rela relocation types */
-#define SECT_DATA_SET(x,t,n) {                                      \
-    if (sect_data[(x)].buf != NULL) {                               \
-        print_error(dbg, error_msg_duplicate[(x)], DW_DLV_OK, err); \
-    }                                                               \
-    if ((data = elf_getdata(scn, 0)) == NULL || data->d_size == 0) {\
-        print_error(dbg, error_msg_null[(x)],DW_DLV_OK, err);       \
-    }                                                               \
-    sect_data[(x)].buf = data -> d_buf;                             \
-    sect_data[(x)].size = data -> d_size;                           \
-    sect_data[(x)].type = t;                                        \
-    sect_data[(x)].name = n;                                        \
+    Elf32_Rel, Elf32_Rela, Elf64_Rel, Elf64_Rela relocation types
+    print_error does not return, so the following esb_destructor()
+    call is unnecessary but reads well  :-) */
+#define SECT_DATA_SET(x,t,n,sout,r2) {                        \
+    data = elf_getdata(scn, 0);                               \
+    if (!data || !data->d_size) {                             \
+        struct esb_s data_disaster;                           \
+        esb_constructor(&data_disaster);                      \
+        esb_append(&data_disaster,(n));                       \
+        esb_append(&data_disaster,STRING_FOR_NULL);           \
+        print_error(dbg,esb_get_string(&data_disaster),DW_DLV_OK, err); \
+        esb_destructor(&data_disaster);                       \
+    }                                                         \
+    sout[(r2)]      = sect_data[(x)];                         \
+    sout[(r2)].buf  = data->d_buf;                            \
+    sout[(r2)].size = data->d_size;                           \
+    sout[(r2)].type = (t);                                    \
+    sout[(r2)].name = (n);                                    \
     }
 /* Record the relocation table name information */
 static const char **reloc_type_names = NULL;
@@ -237,13 +152,14 @@ get_reloc_type_names(int index)
 #define Elf64_Sym   long
 #endif
 
-static struct {
+struct sect_data_s {
     Dwarf_Small *buf;
     Dwarf_Unsigned size;
     Dwarf_Bool display; /* Display reloc if TRUE */
-    const char *name;         /* Section name */
+    const char *name;   /* Section name */
     Elf64_Xword type;   /* To cover 32 and 64 records types */
-} sect_data[DW_SECTION_REL_ARRAY_SIZE];
+};
+static struct sect_data_s sect_data[DW_SECTION_REL_ARRAY_SIZE];
 
 
 typedef size_t indx_type;
@@ -275,12 +191,14 @@ static void print_reloc_information_64(int section_no,
     Dwarf_Small * buf,
     Dwarf_Unsigned size,
     Elf64_Xword type,
-    char **scn_names,int scn_names_count);
+    char **scn_names,
+    int scn_names_count);
 static void print_reloc_information_32(int section_no,
     Dwarf_Small * buf,
     Dwarf_Unsigned size,
     Elf64_Xword type,
-    char **scn_names,int scn_names_count);
+    char **scn_names,
+    int scn_names_count);
 static SYM *readsyms(Elf32_Sym * data, size_t num, Elf * elf,
     Elf32_Word link);
 static SYM64 *read_64_syms(Elf64_Sym * data, size_t num, Elf * elf,
@@ -360,6 +278,7 @@ static REL_INFO rel_info[DW_SECTION_REL_ARRAY_SIZE] = {
     {/*13*/ DW_SECTION_REL_DEBUG_PUBTYPES,
     DW_SECTNAME_REL_DEBUG_PUBTYPES,
     DW_SECTNAME_RELA_DEBUG_PUBTYPES},
+
     {/*14*/ DW_SECTION_REL_GDB_INDEX,
     DW_SECTNAME_REL_GDB_INDEX,
     DW_SECTNAME_RELA_GDB_INDEX},
@@ -386,29 +305,35 @@ static REL_INFO rel_info[DW_SECTION_REL_ARRAY_SIZE] = {
 };
 
 #ifndef SELFTEST
-static int
+
+static void
 get_reloc_section(Dwarf_Debug dbg,
     Elf_Scn *scn,
     char *scn_name,
-    Elf64_Word sh_type)
+    Elf64_Word sh_type,
+    struct sect_data_s * printable_sect,
+    unsigned sectnum)
 {
     Elf_Data *data;
     int index;
+    /*  Check for reloc records we are interested in. */
     for (index = 1; index < DW_SECTION_REL_ARRAY_SIZE; ++index) {
         const char *n = rel_info[index].name_rel;
         const char *na = rel_info[index].name_rela;
         Dwarf_Error err = 0;
 
         if (strcmp(scn_name, n) == 0) {
-            SECT_DATA_SET(rel_info[index].index,sh_type,n)
-            return TRUE;
+            SECT_DATA_SET(rel_info[index].index,sh_type,n,
+                printable_sect,sectnum)
+            return;
         }
         if (strcmp(scn_name, na) == 0) {
-            SECT_DATA_SET(rel_info[index].index,sh_type,na)
-            return TRUE;
+            SECT_DATA_SET(rel_info[index].index,sh_type,na,
+                printable_sect,sectnum)
+            return;
         }
     }
-    return FALSE;
+    return;
 }
 
 void
@@ -448,12 +373,15 @@ print_relocinfo_64(Dwarf_Debug dbg, Elf * elf)
 {
 #ifdef HAVE_ELF64_GETEHDR
     Elf_Scn *scn = NULL;
+    unsigned sect_number = 0;
     Elf64_Ehdr *ehdr64 = 0;
     Elf64_Shdr *shdr64 = 0;
     char *scn_name = 0;
     int i = 0;
     Elf64_Sym *sym_64 = 0;
     char **scn_names = 0;
+    struct sect_data_s *printable_sects = 0;
+
     int scn_names_cnt = 0;
     Dwarf_Error err = 0;
 
@@ -464,64 +392,87 @@ print_relocinfo_64(Dwarf_Debug dbg, Elf * elf)
 
     /*  Make the section name array big enough
         that we don't need to check for overrun in the loop. */
-    scn_names = (char **)calloc(ehdr64->e_shnum + 1, sizeof(char *));
+    scn_names_cnt = ehdr64->e_shnum + 1;
+    scn_names = (char **)calloc(scn_names_cnt, sizeof(char *));
+    if (!scn_names) {
+        print_error(dbg, "Out of malloc space in relocation print names",
+            DW_DLV_OK, err);
+    }
+    printable_sects = (struct sect_data_s *)calloc(scn_names_cnt,
+        sizeof(struct sect_data_s));
+    if (!printable_sects) {
+        free(scn_names);
+        print_error(dbg, "Out of malloc space in relocation print sects",
+            DW_DLV_OK, err);
+    }
 
+    /*  First nextscn returns section 1 */
     while ((scn = elf_nextscn(elf, scn)) != NULL) {
-
+        ++sect_number;
         shdr64 = elf64_getshdr(scn);
         if (shdr64 == NULL) {
+            free(scn_names);
+            free(printable_sects);
             print_error(dbg, "DW_ELF_GETSHDR_ERROR", DW_DLV_OK, err);
         }
         scn_name = elf_strptr(elf, ehdr64->e_shstrndx, shdr64->sh_name);
         if (scn_name  == NULL) {
             print_error(dbg, "DW_ELF_STRPTR_ERROR", DW_DLV_OK, err);
         }
-
-        if (scn_names) {
             /* elf_nextscn() skips section with index '0' */
-            scn_names[++scn_names_cnt] = scn_name;
-        }
+        scn_names[sect_number] = scn_name;
         if (shdr64->sh_type == SHT_SYMTAB) {
             size_t sym_size = 0;
             size_t count = 0;
 
             sym_64 = (Elf64_Sym *) get_scndata(scn, &sym_size);
             if (sym_64 == NULL) {
-                print_error(dbg, "no symbol table data", DW_DLV_OK,
+                free(scn_names);
+                free(printable_sects);
+                print_error(dbg, "no Elf64 symbol table data", DW_DLV_OK,
                     err);
             }
             count = sym_size / sizeof(Elf64_Sym);
+            if(sym_size%sizeof(Elf64_Sym)) {
+                print_error(dbg, "Elf64 problem reading .symtab data",
+                    DW_DLV_OK, err);
+            }
             sym_64++;
+            count--;
             free(sym_data_64);
+            sym_data_64 = 0;
             sym_data_64 = read_64_syms(sym_64, count, elf, shdr64->sh_link);
             sym_data_64_entry_count = count;
             if (sym_data_64  == NULL) {
-                print_error(dbg, "problem reading symbol table data",
+                free(scn_names);
+                free(printable_sects);
+                print_error(dbg, "problem reading Elf64 symbol table data",
                     DW_DLV_OK, err);
             }
-        } else if (!get_reloc_section(dbg,scn,scn_name,shdr64->sh_type)) {
-            continue;
+        } else  {
+            get_reloc_section(dbg,scn,scn_name,shdr64->sh_type,
+                printable_sects,sect_number);
         }
-    }                           /* while */
+    }
 
     /* Set the relocation names based on the machine type */
     set_relocation_table_names(ehdr64->e_machine);
 
-    for (i = 1; i < DW_SECTION_REL_ARRAY_SIZE; i++) {
-        if (sect_data[i].display &&
-            sect_data[i].buf != NULL &&
-            sect_data[i].size > 0) {
-            print_reloc_information_64(i, sect_data[i].buf,
-                sect_data[i].size, sect_data[i].type,scn_names,
-                scn_names_cnt);
+    for (i = 1; i < ehdr64->e_shnum + 1; i++) {
+        if (printable_sects[i].display &&
+            printable_sects[i].buf != NULL &&
+            printable_sects[i].size > 0) {
+            print_reloc_information_64(i,
+                printable_sects[i].buf,
+                printable_sects[i].size,
+                printable_sects[i].type,
+                scn_names,scn_names_cnt);
         }
     }
-
-    if (scn_names) {
-        free(scn_names);
-        scn_names = 0;
-        scn_names_cnt = 0;
-    }
+    free(printable_sects);
+    free(scn_names);
+    scn_names = 0;
+    scn_names_cnt = 0;
 #endif
 }
 
@@ -531,12 +482,14 @@ print_relocinfo_32(Dwarf_Debug dbg, Elf * elf)
     Elf_Scn *scn = NULL;
     Elf32_Ehdr *ehdr32 = 0;
     Elf32_Shdr *shdr32 = 0;
+    unsigned sect_number = 0;
     char *scn_name = 0;
     int i = 0;
     Elf32_Sym  *sym = 0;
     char **scn_names = 0;
     int scn_names_cnt = 0;
     Dwarf_Error err = 0;
+    struct sect_data_s *printable_sects = 0;
 
     ehdr32 = elf32_getehdr(elf);
     if (ehdr32 == NULL) {
@@ -545,64 +498,87 @@ print_relocinfo_32(Dwarf_Debug dbg, Elf * elf)
 
     /*  Make the section name array big enough
         that we don't need to check for overrun in the loop. */
-    scn_names = (char **)calloc(ehdr32->e_shnum + 1, sizeof(char *));
+    scn_names_cnt = ehdr32->e_shnum + 1;
+    scn_names = (char **)calloc(scn_names_cnt, sizeof(char *));
+    if (!scn_names) {
+        print_error(dbg, "Out of malloc space in relocation print names",
+            DW_DLV_OK, err);
+    }
+    printable_sects = (struct sect_data_s *)calloc(scn_names_cnt,
+        sizeof(struct sect_data_s));
+    if (!printable_sects) {
+        free(scn_names);
+        print_error(dbg, "Out of malloc space in relocation print sects",
+            DW_DLV_OK, err);
+    }
 
     while ((scn = elf_nextscn(elf, scn)) != NULL) {
+        ++sect_number;
         shdr32 = elf32_getshdr(scn);
         if (shdr32 == NULL) {
+            free(printable_sects);
+            free(scn_names);
             print_error(dbg, "DW_ELF_GETSHDR_ERROR", DW_DLV_OK, err);
         }
         scn_name = elf_strptr(elf, ehdr32->e_shstrndx, shdr32->sh_name);
         if (scn_name == NULL) {
+            free(printable_sects);
+            free(scn_names);
             print_error(dbg, "DW_ELF_STRPTR_ERROR", DW_DLV_OK, err);
         }
 
-        if (scn_names) {
-            /* elf_nextscn() skips section with index '0' */
-            scn_names[++scn_names_cnt] = scn_name;
-        }
-
+        scn_names[sect_number] = scn_name;
         if (shdr32->sh_type == SHT_SYMTAB) {
             size_t sym_size = 0;
             size_t count = 0;
 
             sym = (Elf32_Sym *) get_scndata(scn, &sym_size);
             if (sym == NULL) {
-                print_error(dbg, "no symbol table data", DW_DLV_OK,
+                free(printable_sects);
+                free(scn_names);
+                print_error(dbg, "No Elf32 symbol table data", DW_DLV_OK,
                     err);
             }
             count = sym_size / sizeof(Elf32_Sym);
+            if(sym_size%sizeof(Elf32_Sym)) {
+                print_error(dbg, "Elf32 problem reading .symtab data",
+                    DW_DLV_OK, err);
+            }
             sym++;
+            count--;
             free(sym_data);
+            sym_data = 0;
             sym_data = readsyms(sym, count, elf, shdr32->sh_link);
             sym_data_entry_count = count;
             if (sym_data  == NULL) {
-                print_error(dbg, "problem reading symbol table data",
+                free(printable_sects);
+                free(scn_names);
+                print_error(dbg, "problem reading Elf32 symbol table data",
                     DW_DLV_OK, err);
             }
-        } else if (!get_reloc_section(dbg,scn,scn_name,shdr32->sh_type)) {
-            continue;
+        } else {
+            get_reloc_section(dbg,scn,scn_name,shdr32->sh_type,
+                printable_sects,sect_number);
         }
     }  /* End while. */
 
     /* Set the relocation names based on the machine type */
     set_relocation_table_names(ehdr32->e_machine);
-
-    for (i = 1; i < DW_SECTION_REL_ARRAY_SIZE; i++) {
-        if (sect_data[i].display &&
-            sect_data[i].buf != NULL &&
-            sect_data[i].size > 0) {
-            print_reloc_information_32(i, sect_data[i].buf,
-                sect_data[i].size,sect_data[i].type,scn_names,
-                scn_names_cnt);
+    for (i = 1; i < ehdr32->e_shnum + 1; i++) {
+        if (printable_sects[i].display &&
+            printable_sects[i].buf != NULL &&
+            printable_sects[i].size > 0) {
+            print_reloc_information_32(i,
+                printable_sects[i].buf,
+                printable_sects[i].size,
+                printable_sects[i].type,
+                scn_names,scn_names_cnt);
         }
     }
-
-    if (scn_names) {
-        free(scn_names);
-        scn_names = 0;
-        scn_names_cnt = 0;
-    }
+    free(printable_sects);
+    free(scn_names);
+    scn_names = 0;
+    scn_names_cnt = 0;
 }
 
 #if HAVE_ELF64_R_INFO
@@ -624,7 +600,7 @@ print_relocinfo_32(Dwarf_Debug dbg, Elf * elf)
 static void
 print_reloc_information_64(int section_no, Dwarf_Small * buf,
     Dwarf_Unsigned size, Elf64_Xword type,
-    char **scn_names, int scn_names_count)
+    char **scn_names,int scn_names_count)
 {
     /* Include support for Elf64_Rel and Elf64_Rela */
     Dwarf_Unsigned add = 0;
@@ -633,9 +609,7 @@ print_reloc_information_64(int section_no, Dwarf_Small * buf,
     Dwarf_Unsigned off = 0;
     struct esb_s tempesb;
 
-    printf("\n%s:\n", sanitized(type== SHT_RELA?sectnamesa[section_no]:
-        sectnames[section_no]));
-
+    printf("\n[%3d] %s:\n",section_no, sanitized(scn_names[section_no]));
     /* Print some headers and change the order for better reading */
     printf("Offset     Addend     %-26s Index   Symbol Name\n","Reloc Type");
 
@@ -645,6 +619,9 @@ print_reloc_information_64(int section_no, Dwarf_Small * buf,
         /* This works for the Elf64_Rel in linux */
         Elf64_Rel *p = (Elf64_Rel *) (buf + off);
         char *name = 0;
+
+        /*  We subtract 1 from sym indexes since we left
+            symtab entry 0 out of the sym_data[_64] array */
         if (sym_data ) {
             size_t index = ELF64_R_SYM(p->r_info) - 1;
             if (index < sym_data_entry_count) {
@@ -694,6 +671,9 @@ print_reloc_information_64(int section_no, Dwarf_Small * buf,
             which prints here, as only one really used with dwarf */
         Elf64_Rel *p = (Elf64_Rel *) (buf + off);
         char *name = 0;
+
+        /*  We subtract 1 from sym indexes since we left
+            symtab entry 0 out of the sym_data[_64] array */
         if (sym_data ) {
             size_t index = p->r_sym - 1;
             if (index < sym_data_entry_count) {
@@ -737,9 +717,7 @@ print_reloc_information_32(int section_no, Dwarf_Small * buf,
     Dwarf_Unsigned off = 0;
     struct esb_s tempesb;
 
-    printf("\n%s:\n", sanitized(type== SHT_RELA?sectnamesa[section_no]:
-        sectnames[section_no]));
-
+    printf("\n[%3d] %s:\n",section_no, sanitized(scn_names[section_no]));
 
     /* Print some headers and change the order for better reading. */
     printf("Offset     Addend     %-26s Index   Symbol Name\n","Reloc Type");
@@ -748,6 +726,8 @@ print_reloc_information_32(int section_no, Dwarf_Small * buf,
         Elf32_Rel *p = (Elf32_Rel *) (buf + off);
         char *name = 0;
 
+        /*  We subtract 1 from sym indexes since we left
+            symtab entry 0 out of the sym_data[_64] array */
         if (sym_data) {
             size_t index = ELF32_R_SYM(p->r_info) - 1;
             if (index < sym_data_entry_count) {
@@ -787,11 +767,13 @@ print_reloc_information_32(int section_no, Dwarf_Small * buf,
     }
 }
 
+/*  We are only reading and saving syms 1...num-1. */
 static SYM *
 readsyms(Elf32_Sym * data, size_t num, Elf * elf, Elf32_Word link)
 {
-    SYM *s, *buf;
-    indx_type i;
+    SYM *s      = 0;
+    SYM *buf    = 0;
+    indx_type i = 0;
 
     buf = (SYM *) calloc(num, sizeof(SYM));
     if (buf == NULL) {
@@ -811,13 +793,15 @@ readsyms(Elf32_Sym * data, size_t num, Elf * elf, Elf32_Word link)
     return (s);
 }
 
+/*  We are only reading and saving syms 1...num-1. */
 static SYM64 *
 read_64_syms(Elf64_Sym * data, size_t num, Elf * elf, Elf64_Word link)
 {
 #ifdef HAVE_ELF64_GETEHDR
 
-    SYM64 *s, *buf;
-    indx_type i;
+    SYM64 *s    = 0;
+    SYM64 *buf  = 0;
+    indx_type i = 0;
 
     buf = (SYM64 *) calloc(num, sizeof(SYM64));
     if (buf == NULL) {
