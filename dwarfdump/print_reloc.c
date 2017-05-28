@@ -35,9 +35,6 @@
 #include "section_bitmaps.h"
 #include "esb.h"
 
-#define STRING_FOR_DUPLICATE " duplicate"
-#define STRING_FOR_NULL      " null"
-
 /*  Include Section type, to be able to deal with all the
     Elf32_Rel, Elf32_Rela, Elf64_Rel, Elf64_Rela relocation types
     print_error does not return, so the following esb_destructor()
@@ -48,7 +45,7 @@
         struct esb_s data_disaster;                           \
         esb_constructor(&data_disaster);                      \
         esb_append(&data_disaster,(n));                       \
-        esb_append(&data_disaster,STRING_FOR_NULL);           \
+        esb_append(&data_disaster," null");                   \
         print_error(dbg,esb_get_string(&data_disaster),DW_DLV_OK, err); \
         esb_destructor(&data_disaster);                       \
     }                                                         \
