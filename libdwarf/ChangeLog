@@ -1,3 +1,7 @@
+2017-05-30 David Anderson
+    * dwarf_die_deliv.c: Added commentary about the DW_AT_dwo_id
+      found only in experimental DWARF4.
+    * libdwarf.h.in: Added commentary about Dwarf_Sig8 struct.
 2017-05-28 David Anderson
     * gennames.c: Update version string.
 2017-05-25 David Anderson

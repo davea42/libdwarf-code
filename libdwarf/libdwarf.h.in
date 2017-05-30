@@ -117,13 +117,15 @@ typedef unsigned long long  Dwarf_Addr;     /* target memory address */
 
 typedef void*        Dwarf_Ptr;          /* host machine pointer */
 
-/* Used for DW_FORM_ref_sig8 and DW_AT_dwo_id.
+
+/* Used for signatures where ever they appear.
    It is not a string, it
    is 8 bytes of a signature one would use to find
    a type unit. See dwarf_formsig8()
 
    Sometimes it is used in calculations as
-   Dwarf_Unsigned, but that is hidden in libdwarf.
+   Dwarf_Unsigned, but that is done inside libdwarf
+   and the endianness question makes it a bit sketchy.
 */
 struct Dwarf_Sig8_s  {
     char signature[8];

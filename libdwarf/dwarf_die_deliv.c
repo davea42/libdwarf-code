@@ -910,6 +910,11 @@ find_context_base_fields(Dwarf_Debug dbg,
     alres = dwarf_attrlist(cudie, &alist,
         &atcount,error);
     if(alres == DW_DLV_OK) {
+        /*  DW_AT_dwo_id and DW_AT_GNU_dwo_id
+            are only found  in some
+            experimental DWARF4.
+            DWARF5 changed CU header contents
+            to make this attribute unnecessary. */
         Dwarf_Signed i = 0;
         for(i = 0;  i < atcount; ++i) {
             Dwarf_Half attrnum;
