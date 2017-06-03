@@ -555,7 +555,7 @@ dwarf_create_cie_from_after_start(Dwarf_Debug dbg,
     Dwarf_Half address_size = dbg->de_pointer_size;
     Dwarf_Small *augmentation = 0;
     Dwarf_Half segment_size = 0;
-    Dwarf_Sword data_alignment_factor = -1;
+    Dwarf_Signed data_alignment_factor = -1;
     Dwarf_Word code_alignment_factor = 4;
     Dwarf_Unsigned return_address_register = 31;
     int local_length_size = 0;
@@ -655,9 +655,11 @@ dwarf_create_cie_from_after_start(Dwarf_Debug dbg,
         }
         DECODE_LEB128_UWORD_CK(frame_ptr, lreg,dbg,error,section_ptr_end);
         code_alignment_factor = (Dwarf_Word) lreg;
-        data_alignment_factor =
-            (Dwarf_Sword) _dwarf_decode_s_leb128(frame_ptr,
-                &leb128_length);
+        res = (Dwarf_Sword) _dwarf_decode_s_leb128_chk(frame_ptr,
+            &leb128_length,&data_alignment_factor,section_ptr_end);
+        if(res != DW_DLV_OK) {
+            return res;
+        }
         frame_ptr = frame_ptr + leb128_length;
         /* Not a great test. FIXME */
         if ((frame_ptr+1)  >= section_ptr_end) {

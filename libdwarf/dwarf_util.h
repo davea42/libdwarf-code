@@ -180,14 +180,6 @@
 typedef Dwarf_Unsigned BIGGEST_UINT;
 
 #ifdef WORDS_BIGENDIAN
-#define READ_UNALIGNED(dbg,dest,desttype, source, length)                 \
-    do {                                                                  \
-        BIGGEST_UINT _ltmp = 0;                                           \
-        dbg->de_copy_word( (((char *)(&_ltmp)) + sizeof(_ltmp) - length), \
-            source, length) ;                                             \
-        dest = (desttype)_ltmp;                                           \
-    } while (0)
-
 #define READ_UNALIGNED_CK(dbg,dest,desttype, source, length,error,endptr) \
     do {                                                                  \
         BIGGEST_UINT _ltmp = 0;                                           \
@@ -222,16 +214,6 @@ typedef Dwarf_Unsigned BIGGEST_UINT;
         }                                                                  \
     } while (0)
 #else /* LITTLE ENDIAN */
-
-#define READ_UNALIGNED(dbg,dest,desttype, source, length) \
-    do  {                                                 \
-        BIGGEST_UINT _ltmp = 0;                           \
-        dbg->de_copy_word( (char *)(&_ltmp) ,             \
-            source, length) ;                             \
-        dest = (desttype)_ltmp;                           \
-    } while (0)
-
-
 #define READ_UNALIGNED_CK(dbg,dest,desttype, source, length,error,endptr) \
     do  {                                                 \
         BIGGEST_UINT _ltmp = 0;                           \
@@ -371,18 +353,11 @@ typedef Dwarf_Unsigned BIGGEST_UINT;
     } while (0)
 
 
-Dwarf_Unsigned
-_dwarf_decode_u_leb128(Dwarf_Small * leb128,
-    Dwarf_Word * leb128_length);
-
 /* Fuller checking. Returns DW_DLV_ERROR or DW_DLV_OK
    Caller must set Dwarf_Error */
 int _dwarf_decode_u_leb128_chk(Dwarf_Small * leb128,
     Dwarf_Word * leb128_length,
     Dwarf_Unsigned *outval,Dwarf_Byte_Ptr endptr);
-
-Dwarf_Signed _dwarf_decode_s_leb128(Dwarf_Small * leb128,
-    Dwarf_Word * leb128_length);
 
 int _dwarf_decode_s_leb128_chk(Dwarf_Small * leb128,
     Dwarf_Word * leb128_length,

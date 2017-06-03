@@ -1,3 +1,12 @@
+2017-06-03 David Anderson 
+    * dwarf_form.c,dwarf_frame2.c: Now use 
+      _dwarf_decode_s_leb128_chk(), the checked form.
+    * dwarf_leb.c: Deleted _dwarf_decode_u_leb128() and
+      _dwarf_decode_s_leb128(), they are no longer used.
+    * dwarf_reloc_386.h: Removed some trailing whitespace.
+    * dwarf_util.h: Removed READ_UNALIGNED macro. Removed
+      declarations of the deleted two functions
+      _dwarf_decode_u_leb128() and _dwarf_decode_s_leb128()
 2017-05-30 David Anderson
     * dwarf_die_deliv.c: Added commentary about the DW_AT_dwo_id
       found only in experimental DWARF4.

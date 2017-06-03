@@ -123,6 +123,8 @@ dwarf_uncompress_integer_block(
     char * ptr = 0;
     int remain = 0;
     Dwarf_sfixed * array = 0;
+    Dwarf_Byte_Ptr endptr = (Dwarf_Byte_Ptr)input_block+
+        input_length_in_bytes;
 
     if (dbg == NULL) {
         _dwarf_error(NULL, error, DW_DLE_DBG_NULL);
@@ -148,7 +150,14 @@ dwarf_uncompress_integer_block(
     ptr = input_block;
     while (remain > 0) {
         Dwarf_Word len = 0;
-        _dwarf_decode_s_leb128((unsigned char *)ptr, &len);
+        Dwarf_Signed value = 0;
+        int rres = 0;
+
+        rres = _dwarf_decode_s_leb128_chk((unsigned char *)ptr,
+            &len, &value,endptr);
+        if (rres != DW_DLV_OK) {
+            return ((void *)DW_DLV_BADADDR);
+        }
         ptr += len;
         remain -= len;
         output_length_in_units++;
@@ -178,7 +187,14 @@ dwarf_uncompress_integer_block(
     for (i=0; i<output_length_in_units && remain>0; i++) {
         Dwarf_Signed num;
         Dwarf_Word len;
-        num = _dwarf_decode_s_leb128((unsigned char *)ptr, &len);
+        int sres = 0;
+
+        sres = _dwarf_decode_s_leb128_chk((unsigned char *)ptr,
+            &len, &num,endptr);
+        if (sres != DW_DLV_OK) {
+            dwarf_dealloc(dbg,output_block,DW_DLA_STRING);
+            return ((void *) DW_DLV_BADADDR);
+        }
         ptr += len;
         remain -= len;
         array[i] = num;

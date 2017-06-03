@@ -108,7 +108,7 @@ static const char *reloc_type_names_386[] = {
 "R_386_TLS_GD_POP",
 "R_386_TLS_LDM_32",
 "R_386_TLS_LDM_PUSH",
-"R_386_TLS_LDM_CALL", /* 30 */           
+"R_386_TLS_LDM_CALL", /* 30 */
 "R_386_TLS_LDM_POP",
 "R_386_TLS_LDO_32",
 "R_386_TLS_IE_32",
