@@ -713,7 +713,14 @@ is_32bit_abs_reloc(unsigned int type, Dwarf_Half machine)
 #endif /* MIPS case */
 #if defined(EM_SPARC32PLUS)  && defined (R_SPARC_UA32)
     case EM_SPARC32PLUS:
-        r =  (type == R_SPARC_UA32);
+        r = (0
+#if defined(R_SPARC_UA32)
+            | (type == R_SPARC_UA32)
+#endif
+#if defined(R_SPARC_TLS_DTPOFF32)
+            | (type == R_SPARC_TLS_DTPOFF32)
+#endif
+            );
         break;
 #endif
 #if defined(EM_SPARCV9)  && defined (R_SPARC_UA32)

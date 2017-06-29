@@ -1,3 +1,6 @@
+2017-06-29 David Anderson 
+    * dwarf_elf_access.c: Added R_SPARC_TLS_DTPOFF32
+      for the EM_SPARC32PLUS.
 2017-06-03 David Anderson 
     * dwarf_form.c,dwarf_frame2.c: Now use 
       _dwarf_decode_s_leb128_chk(), the checked form.
