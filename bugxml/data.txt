@@ -5,16 +5,18 @@ datereported: 2017-06-28
 reportedby: team OWL337
 vulnerability: Addition overflow in libdwarf leads to segmentation violation 
 product: libdwarf
-description: With a fuzzed object adding a 
-  resulting invalid  value to a pointer
-  can overflow (depending on how the
-  runtime memory is laid out) and
-  an invalid dereference done (segmentation violation).
+description: A fuzzed object with a 
+  resulting invalid value can overflow
+  when added to a valid pointer
+  (depending on how the runtime memory is laid out) 
+  and thereafter a dereference results in a 
+  segmentation violation).
 
  <pre> see
   https://bugzilla.redhat.com/show_bug.cgi?id=1465756
   for contact information of those finding the bug.
-  Fabian Wolff reported the bug via email.
+  Fabian Wolff sent email and provided
+  the link to the web page.
  </pre>
 
 datefixed: 2017-07-06
