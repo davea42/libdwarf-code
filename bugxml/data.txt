@@ -1,3 +1,29 @@
+
+id: DW201706-001
+cve: CVE-2017-9998
+datereported: 2017-06-28
+reportedby: team OWL337
+vulnerability: Addition overflow in libdwarf leads to segmentation violation 
+product: libdwarf
+description: With a fuzzed object adding a 
+  resulting invalid  value to a pointer
+  can overflow (depending on how the
+  runtime memory is laid out) and
+  an invalid dereference done (segmentation violation).
+
+ <pre> see
+  https://bugzilla.redhat.com/show_bug.cgi?id=1465756
+  for contact information of those finding the bug.
+  Fabian Wolff reported the bug via email.
+ </pre>
+
+datefixed: 2017-07-06
+references: regressiontests/wolff/POC1 
+gitfixid:
+endrec: DW201706-001
+
+
+
 id: DW201703-007
 cve:
 datereported: 2017-03-21

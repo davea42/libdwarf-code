@@ -13,12 +13,6 @@ will typically not be mentioned.
 Bugs in dwarfdump are not vulnerabilities in the same way
 and at present these do not get CVE identifiers.
 
-It is a bit experimental.
-It may be that the data will be changed radically
-or moved elsewhere when that becomes appropriate.
-
-Bug DW201605-017 said libdwarfj. Typo. Meant libdwarf.
-
 David Anderson
 Created: 2016-05-03.
-Updated: 2016-05-25
+Updated: 2017-07-06.
