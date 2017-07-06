@@ -1,3 +1,10 @@
+2017-07-06 David Anderson 
+    * dwarf_query.c(_dwarf_get_value_ptr): Did an add that could
+      overflow and segv given certain fuzzing and a certain
+      run time data layout. Fixed so the bad data is detected now
+      and libdwarf returns an error code. A place
+      in _dwarf_extract_address_from_debug_addr()
+      that an overflow might possibly occur fixed too.
 2017-06-29 David Anderson 
     * dwarf_elf_access.c: Added R_SPARC_TLS_DTPOFF32
       for the EM_SPARC32PLUS.

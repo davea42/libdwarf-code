@@ -507,6 +507,7 @@ _dwarf_get_value_ptr(Dwarf_Die die,
     abbrev_end = _dwarf_calculate_abbrev_section_end_ptr(context);
 
     info_ptr = die->di_debug_ptr;
+    /* This ensures and checks die_info_end >= info_ptr */
     SKIP_LEB128_WORD_CK(info_ptr,dbg,error,die_info_end);
 
     do {
@@ -544,11 +545,17 @@ _dwarf_get_value_ptr(Dwarf_Die die,
         if (res != DW_DLV_OK) {
             return res;
         }
-        if ((info_ptr + value_size) > die_info_end) {
-            /*  Something badly wrong. We point past end
-                of debug_info or debug_types . */
-            _dwarf_error(dbg,error,DW_DLE_DIE_ABBREV_BAD);
-            return DW_DLV_ERROR;
+        {
+            /* ptrdiff_t is signed type, so use DW signed type */
+            Dwarf_Signed len = die_info_end - info_ptr;
+            if (len < 0 || (value_size > ((Dwarf_Unsigned)len))) {
+                /*  Something badly wrong. We point past end
+                    of debug_info or debug_types or a
+                    section is unreasonably sized or we are
+                    pointing to two different sections? */
+                _dwarf_error(dbg,error,DW_DLE_DIE_ABBREV_BAD);
+                return DW_DLV_ERROR;
+            }
         }
         info_ptr+= value_size;
     } while (curr_attr != 0 || curr_attr_form != 0);
@@ -699,7 +706,7 @@ _dwarf_extract_address_from_debug_addr(Dwarf_Debug dbg,
         but with a base. */
     sectionsize = dbg->de_debug_addr.dss_size;
     sectionend = sectionstart + sectionsize;
-    if ((addr_offset + context->cc_address_size) > sectionsize) {
+    if (addr_offset > (sectionsize - context->cc_address_size)) {
         _dwarf_error(dbg, error, DW_DLE_ATTR_FORM_SIZE_BAD);
         return (DW_DLV_ERROR);
     }
