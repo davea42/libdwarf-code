@@ -19,7 +19,8 @@ description: With a fuzzed object adding a
 
 datefixed: 2017-07-06
 references: regressiontests/wolff/POC1 
-gitfixid:
+gitfixid: e91681e8841291f57386f26a90897fd1dcf92a6e
+tarrelease: 
 endrec: DW201706-001
 
 
@@ -62,6 +63,7 @@ description:  7/7. A heap overflow in
 datefixed: 
 references: regressiontests/marcel/crash7
 gitfixid: 
+tarrelease: libdwarf-20160507.tar.gz
 endrec: DW201703-007
 
 
@@ -99,6 +101,7 @@ description:  6/7. A heap overflow in
 datefixed: 2017-03-21
 references: regressiontests/marcel/crash6
 gitfixid: cc37d6917011733d776ae228af4e5d6abe9613c1
+tarrelease: libdwarf-20160507.tar.gz
 endrec: DW201703-006
 
 
@@ -138,6 +141,7 @@ description:  5/7. A heap overflow in
 datefixed: 2017-03-21
 references: regressiontests/marcel/crash5
 gitfixid: cc37d6917011733d776ae228af4e5d6abe9613c1
+tarrelease: libdwarf-20160507.tar.gz
 endrec: DW201703-005
 
 id: DW201703-004
@@ -177,6 +181,7 @@ description:  4/7. An apparent heap overflow that
 datefixed:
 references: regressiontests/marcel/crash4
 gitfixid:
+tarrelease: libdwarf-20160507.tar.gz
 endrec: DW201703-004
 
 
@@ -219,6 +224,7 @@ description:  3/7. An apparent heap overflow that
 datefixed: 
 references: regressiontests/marcel/crash3
 gitfixid:
+tarrelease: libdwarf-20160507.tar.gz
 endrec: DW201703-003
 
 
@@ -260,6 +266,7 @@ description:  2/7. In _dwarf_decode_s_leb128_chk()
 datefixed: 2017-03-21
 references: regressiontests/marcel/crash2
 gitfixid: cc37d6917011733d776ae228af4e5d6abe9613c1
+tarrelease: libdwarf-20160507.tar.gz
 endrec: DW201703-002
 
 
@@ -301,6 +308,7 @@ description:  1/7. In dwarf_formsdata() a few
 datefixed: 2017-03-21
 references: regressiontests/marcel/crash1 
 gitfixid: cc37d6917011733d776ae228af4e5d6abe9613c1
+tarrelease: libdwarf-20160507.tar.gz
 endrec: DW201703-001
 
 
@@ -359,7 +367,7 @@ description: An object with corrupt contents causes a memory reference
 datefixed: 2016-11-16
 references: regressiontests/puzzor/heap_buf_overflow.o
 gitfixid: 5dd64de047cd5ec479fb11fe7ff2692fd819e5e5
-tarrelease:
+tarrelease: libdwarf-20160507.tar.gz
 endrec:
 
 
@@ -376,7 +384,7 @@ description: With the right bit pattern in a signed leb number
 datefixed: 2016-11-11
 references: regressiontests/sarubbo-2/00050-libdwarf-negate-itself
 gitfixid: 4f19e1050cd8e9ddf2cb6caa061ff2fec4c9b5f9
-tarrelease:
+tarrelease: libdwarf-20160507.tar.gz
 endrec:
 
 id: DW201611-004
@@ -392,7 +400,6 @@ description: If a non-terminated string
 datefixed: 2016-11-04
 references: regressiontests/sarubbo-2/00027-libdwarf-heapoverflow-_dwarf_skim_forms
 gitfixid:  583f8834083b5ef834c497f5b47797e16101a9a6
-tarrelease: 
 endrec:
 
 id: DW201611-003
@@ -408,7 +415,7 @@ description:  in dwarf_arange.c(dwarf_get_aranges_list) an aranges
 datefixed: 2016-11-04
 references: regressiontests/sarubbo-2/00026-libdwarf-heapoverflow-dwarf_get_aranges_list
 gitfixid:  583f8834083b5ef834c497f5b47797e16101a9a6
-tarrelease: 
+tarrelease: libdwarf-20170416.tar.gz
 endrec:
 
 
@@ -435,7 +442,7 @@ description: Libdwarf failed to check for a bogus
 datefixed: 2016-11-04
 references: regressiontests/sarubbo-2/00025-libdwarf-heapoverflow-get_attr_value
 gitfixid:  583f8834083b5ef834c497f5b47797e16101a9a6
-tarrelease: 
+tarrelease: libdwarf-20170416.tar.gz 
 endrec:
 
 id: DW201611-001
@@ -466,7 +473,7 @@ r2/work/llvm-3.8.1.src/projects/compiler-rt/lib/asan/asan_malloc_linux.cc:53
 datefixed: 2016-11-04
 references: regressiontests/sarubbo-2/00024-libdwarf-memalloc-do_decompress_zlib
 gitfixid:  583f8834083b5ef834c497f5b47797e16101a9a6
-tarrelease: 
+tarrelease: libdwarf-20170416.tar.gz 
 endrec:
 
 
