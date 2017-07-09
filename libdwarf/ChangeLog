@@ -1,3 +1,5 @@
+2017-07-08 David Anderson 
+    * gennames.c: Update version string.
 2017-07-06 David Anderson 
     * dwarf_query.c(_dwarf_get_value_ptr): Did an add that could
       overflow and segv given certain fuzzing and a certain
