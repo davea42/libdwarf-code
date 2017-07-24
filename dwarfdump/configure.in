@@ -10,20 +10,29 @@ AC_CHECK_TOOL(AR, ar)
 dnl AC_ARFLAGS
 
 AC_CHECK_HEADERS(elf.h unistd.h libelf.h libelf/libelf.h sgidefs.h sys/types.h)
-AC_CHECK_LIB(elf,elf64_getehdr,
-  AC_DEFINE(HAVE_ELF64_GETEHDR,1, 
-	[Define to 1 if the elf64_getehdr function is in libelf.a.]))
 
-dnl Find out where the elf header is.
+dnl Windows seems to have libelf.h with the normal elf.h
+dnl data embedded. No literal elf.h  is present.
+dnl Get a best estimate of elf header data location.
+AC_MSG_CHECKING(where is basic elf data)
 if test "$ac_cv_header_elf_h" = yes; then
  AC_DEFINE(LOCATION_OF_LIBELFHEADER,[<elf.h>], [Define to header that first defines elf])
+ AC_MSG_RESULT(<elf.h>)
 elif test "$ac_cv_header_libelf_h" = yes; then
  AC_DEFINE(LOCATION_OF_LIBELFHEADER, [<libelf.h>],
 	[Define to header that first defines elf.])
+ AC_MSG_RESULT(<libelf.h>)
 elif test "$ac_cv_header_libelf_libelf_h" = yes; then
  AC_DEFINE(LOCATION_OF_LIBELFHEADER,[<libelf/libelf.h>],
 	[Define to header that first defines elf.])
+ AC_MSG_RESULT(<libelf/libelf.h>)
+else
+ AC_MSG_RESULT(NO standard ELF HEADERS found)
 fi
+
+AC_CHECK_LIB(elf,elf64_getehdr,
+  AC_DEFINE(HAVE_ELF64_GETEHDR,1, 
+	[Define to 1 if the elf64_getehdr function is in libelf.a.]))
 
 dnl default-disabled shared
 dnl we allow the argument but the result is ignored.

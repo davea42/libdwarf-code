@@ -127,6 +127,9 @@
 /* Define 1 if sys/types.h defines __uint64_t. */
 #undef HAVE___UINT64_T_IN_SYS_TYPES_H
 
+/* Define to header that first defines elf. */
+#undef LOCATION_OF_LIBELFHEADER
+
 /* Define to the address where bug reports for this package should be sent. */
 #undef PACKAGE_BUGREPORT
 

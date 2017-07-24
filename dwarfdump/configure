@@ -3598,6 +3598,32 @@ fi
 
 done
 
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking where is basic elf data" >&5
+$as_echo_n "checking where is basic elf data... " >&6; }
+if test "$ac_cv_header_elf_h" = yes; then
+
+$as_echo "#define LOCATION_OF_LIBELFHEADER <elf.h>" >>confdefs.h
+
+ { $as_echo "$as_me:${as_lineno-$LINENO}: result: <elf.h>" >&5
+$as_echo "<elf.h>" >&6; }
+elif test "$ac_cv_header_libelf_h" = yes; then
+
+$as_echo "#define LOCATION_OF_LIBELFHEADER <libelf.h>" >>confdefs.h
+
+ { $as_echo "$as_me:${as_lineno-$LINENO}: result: <libelf.h>" >&5
+$as_echo "<libelf.h>" >&6; }
+elif test "$ac_cv_header_libelf_libelf_h" = yes; then
+
+$as_echo "#define LOCATION_OF_LIBELFHEADER <libelf/libelf.h>" >>confdefs.h
+
+ { $as_echo "$as_me:${as_lineno-$LINENO}: result: <libelf/libelf.h>" >&5
+$as_echo "<libelf/libelf.h>" >&6; }
+else
+ { $as_echo "$as_me:${as_lineno-$LINENO}: result: NO standard ELF HEADERS found" >&5
+$as_echo "NO standard ELF HEADERS found" >&6; }
+fi
+
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for elf64_getehdr in -lelf" >&5
 $as_echo_n "checking for elf64_getehdr in -lelf... " >&6; }
 if ${ac_cv_lib_elf_elf64_getehdr+:} false; then :
@@ -3640,20 +3666,6 @@ $as_echo "#define HAVE_ELF64_GETEHDR 1" >>confdefs.h
 
 fi
 
-
-if test "$ac_cv_header_elf_h" = yes; then
-
-$as_echo "#define LOCATION_OF_LIBELFHEADER <elf.h>" >>confdefs.h
-
-elif test "$ac_cv_header_libelf_h" = yes; then
-
-$as_echo "#define LOCATION_OF_LIBELFHEADER <libelf.h>" >>confdefs.h
-
-elif test "$ac_cv_header_libelf_libelf_h" = yes; then
-
-$as_echo "#define LOCATION_OF_LIBELFHEADER <libelf/libelf.h>" >>confdefs.h
-
-fi
 
 shrd=''
 # Check whether --enable-shared was given.

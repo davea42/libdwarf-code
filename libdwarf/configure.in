@@ -14,6 +14,25 @@ dnl AC_ARFLAGS
 
 AC_CHECK_HEADERS(alloca.h elf.h unistd.h elfaccess.h libelf.h libelf/libelf.h  sys/types.h sys/elf_386.h sys/elf_amd64.h sys/elf_SPARC.h sys/ia64/elf.h)
 
+dnl Windows seems to have libelf.h with the normal elf.h
+dnl data embedded. No literal elf.h  is present.
+dnl Get a best estimate of elf header data location.
+AC_MSG_CHECKING(where is basic elf data)
+if test "$ac_cv_header_elf_h" = yes; then
+ AC_DEFINE(LOCATION_OF_LIBELFHEADER,[<elf.h>], [Define to header that first defines elf])
+ AC_MSG_RESULT(<elf.h>)
+elif test "$ac_cv_header_libelf_h" = yes; then
+ AC_DEFINE(LOCATION_OF_LIBELFHEADER, [<libelf.h>],
+        [Define to header that first defines elf.])
+ AC_MSG_RESULT(<libelf.h>)
+elif test "$ac_cv_header_libelf_libelf_h" = yes; then
+ AC_DEFINE(LOCATION_OF_LIBELFHEADER,[<libelf/libelf.h>],
+        [Define to header that first defines elf.])
+ AC_MSG_RESULT(<libelf/libelf.h>)
+else
+ AC_MSG_RESULT(NO standard ELF HEADERS found)
+fi
+
 dnl The default libdwarf is the one with struct Elf
 echo Assuming struct Elf for the default libdwarf.h
 cp $srcdir/libdwarf.h.in libdwarf.h
@@ -23,7 +42,7 @@ AC_CHECK_LIB(elf,elf64_getehdr,
   [AC_DEFINE(HAVE_ELF64_GETEHDR,1,
 	[Define to 1 if the elf64_getehdr function is in libelf.a.])
     AC_MSG_RESULT(yes)], 
-    [AC_MSG_RESULT(no)])
+  [AC_MSG_RESULT(no)])
 
 dnl AC_MSG_CHECKING(is elf64_getshdr function in libelf)
 AC_CHECK_LIB(elf,elf64_getshdr,
@@ -116,7 +135,7 @@ AC_TRY_COMPILE([#include <libelf.h>
 dnl checking for ia 64 types, which might be enums, using HAVE_R_IA_64_DIR32LSB
 dnl to stand in for a small set.
 AC_MSG_CHECKING(Intel Itanium relocation types defined)
-AC_TRY_COMPILE([#include <elf.h>],[  int p; p = R_IA_64_DIR32LSB;] ,
+AC_TRY_COMPILE([#include LOCATION_OF_LIBELFHEADER],[  int p; p = R_IA_64_DIR32LSB;] ,
   [AC_DEFINE(HAVE_R_IA_64_DIR32LSB,1,
 	[Define 1 if  R_IA_64_DIR32LSB is defined (might be enum value).])
     AC_MSG_RESULT(yes)],
@@ -128,7 +147,6 @@ AC_TRY_COMPILE([#include <libelf.h>],[ struct _Elf a; int i; i = 0; ] ,
 	[Define 1 if libelf.h defines struct _Elf ]) 
     AC_MSG_RESULT(yes)],
    [AC_MSG_RESULT(no)])
-
 
 
 AC_MSG_CHECKING(compile with libelf.h works )
@@ -182,14 +200,16 @@ AC_TRY_COMPILE([#include <sgidefs.h>],[  __uint64_t p; p = 27;] ,
     [AC_MSG_RESULT(no)])
 
 AC_MSG_CHECKING(is Elf64_Rela defined in elf.h)
-AC_TRY_COMPILE([#include <elf.h>],[  Elf64_Rela p; p.r_offset = 1; ],
+AC_TRY_COMPILE([#include LOCATION_OF_LIBELFHEADER],
+  [  Elf64_Rela p; p.r_offset = 1; ],
   [AC_DEFINE(HAVE_ELF64_RELA,1,
         [Define 1 if Elf64_Rela defined.]) 
     AC_MSG_RESULT(yes)],
     [AC_MSG_RESULT(no)])
 
 AC_MSG_CHECKING(is Elf64_Sym defined in elf.h)
-AC_TRY_COMPILE([#include <elf.h>],[  Elf64_Sym p; p.st_info = 1; ],
+AC_TRY_COMPILE([#include LOCATION_OF_LIBELFHEADER],
+  [  Elf64_Sym p; p.st_info = 1; ],
   [AC_DEFINE(HAVE_ELF64_SYM,1,
         [Define 1 if Elf64_Sym defined.])
     AC_MSG_RESULT(yes)],

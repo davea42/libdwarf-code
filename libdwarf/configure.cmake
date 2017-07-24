@@ -10,6 +10,15 @@ configure_file(libdwarf.h.in libdwarf.h COPYONLY)
 ac_check_lib(elf elf64_getehdr)
 ac_check_lib(elf elf64_getshdr)
 
+# Find out where the elf header is.
+if(HAVE_ELF_H)
+    set(LOCATION_OF_LIBELFHEADER "<elf.h>")
+elseif(HAVE_LIBELF_H)
+    set(LOCATION_OF_LIBELFHEADER "<libelf.h>")
+elseif(HAVE_LIBELF_LIBELF_H)
+    set(LOCATION_OF_LIBELFHEADER "<libelf/libelf.h>")
+endif()
+
 ac_try_compile("
 int main()
 {
@@ -123,7 +132,7 @@ endif()
 #  checking for ia 64 types, which might be enums, using HAVE_R_IA_64_DIR32LSB
 #  to stand in for a small set.
 ac_try_compile("
-#include <elf.h>
+#include ${LOCATION_OF_LIBELFHEADER}
 int main()
 {
     int p; p = R_IA_64_DIR32LSB;
@@ -183,7 +192,7 @@ int main()
 HAVE___UINT64_T_IN_SGIDEFS_H)
 
 ac_try_compile("
-#include <elf.h>
+#include  ${LOCATION_OF_LIBELF_HEADER}
 int main()
 {
     Elf64_Rela p; p.r_offset = 1;
@@ -192,7 +201,7 @@ int main()
 HAVE_ELF64_RELA)
 
 ac_try_compile("
-#include <elf.h>
+#include ${LOCATION_OF_LIBELF_HEADER}
 int main()
 {
     Elf64_Sym p; p.st_info = 1;
