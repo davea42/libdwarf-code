@@ -7,15 +7,15 @@ ac_check_lib(elf elf64_getehdr)
 
 # Find out where the elf header is.
 if(HAVE_ELF_H)
-    set(LOCATION_OF_LIBELFHEADER "<elf.h>")
+    set(HAVE_LOCATION_OF_LIBELFHEADER "<elf.h>")
 elseif(HAVE_LIBELF_H)
-    set(LOCATION_OF_LIBELFHEADER "<libelf.h>")
+    set(HAVE_LOCATION_OF_LIBELFHEADER "<libelf.h>")
 elseif(HAVE_LIBELF_LIBELF_H)
-    set(LOCATION_OF_LIBELFHEADER "<libelf/libelf.h>")
+    set(HAVE_LOCATION_OF_LIBELFHEADER "<libelf/libelf.h>")
 endif()
 
 ac_try_compile("
-#include ${LOCATION_OF_LIBELFHEADER}
+#include ${HAVE_LOCATION_OF_LIBELFHEADER}
 int main()
 {
     Elf64_Rel *p; int i; i = p->r_info;

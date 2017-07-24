@@ -16,14 +16,14 @@ dnl data embedded. No literal elf.h  is present.
 dnl Get a best estimate of elf header data location.
 AC_MSG_CHECKING(where is basic elf data)
 if test "$ac_cv_header_elf_h" = yes; then
- AC_DEFINE(LOCATION_OF_LIBELFHEADER,[<elf.h>], [Define to header that first defines elf])
+ AC_DEFINE(HAVE_LOCATION_OF_LIBELFHEADER,[<elf.h>], [Define to header that first defines elf])
  AC_MSG_RESULT(<elf.h>)
 elif test "$ac_cv_header_libelf_h" = yes; then
- AC_DEFINE(LOCATION_OF_LIBELFHEADER, [<libelf.h>],
+ AC_DEFINE(HAVE_LOCATION_OF_LIBELFHEADER, [<libelf.h>],
 	[Define to header that first defines elf.])
  AC_MSG_RESULT(<libelf.h>)
 elif test "$ac_cv_header_libelf_libelf_h" = yes; then
- AC_DEFINE(LOCATION_OF_LIBELFHEADER,[<libelf/libelf.h>],
+ AC_DEFINE(HAVE_LOCATION_OF_LIBELFHEADER,[<libelf/libelf.h>],
 	[Define to header that first defines elf.])
  AC_MSG_RESULT(<libelf/libelf.h>)
 else
@@ -80,7 +80,7 @@ AC_TRY_COMPILE([#include "stdafx.h"],[  int p; p = 27;] ,
   AC_DEFINE(HAVE_STDAFX_H,1,
         [Define 1 if we have the Windows specific header stdafx.h]))
 
-AC_TRY_COMPILE([#include LOCATION_OF_LIBELFHEADER],  Elf64_Rel *p; int i; i = p->r_info; ,AC_DEFINE(HAVE_ELF64_R_INFO,1,
+AC_TRY_COMPILE([#include HAVE_LOCATION_OF_LIBELFHEADER],  Elf64_Rel *p; int i; i = p->r_info; ,AC_DEFINE(HAVE_ELF64_R_INFO,1,
 	[Define to 1 if the Elf64_Rel structure has r_info field.]))
 AC_TRY_COMPILE([],  __uint32_t p; p = 3; ,AC_DEFINE(HAVE___UINT32_T,
 	1,[See if __uint32_t is predefined in the compiler.  ]))

@@ -19,14 +19,14 @@ dnl data embedded. No literal elf.h  is present.
 dnl Get a best estimate of elf header data location.
 AC_MSG_CHECKING(where is basic elf data)
 if test "$ac_cv_header_elf_h" = yes; then
- AC_DEFINE(LOCATION_OF_LIBELFHEADER,[<elf.h>], [Define to header that first defines elf])
+ AC_DEFINE(HAVE_LOCATION_OF_LIBELFHEADER,[<elf.h>], [Define to header that first defines elf])
  AC_MSG_RESULT(<elf.h>)
 elif test "$ac_cv_header_libelf_h" = yes; then
- AC_DEFINE(LOCATION_OF_LIBELFHEADER, [<libelf.h>],
+ AC_DEFINE(HAVE_LOCATION_OF_LIBELFHEADER, [<libelf.h>],
         [Define to header that first defines elf.])
  AC_MSG_RESULT(<libelf.h>)
 elif test "$ac_cv_header_libelf_libelf_h" = yes; then
- AC_DEFINE(LOCATION_OF_LIBELFHEADER,[<libelf/libelf.h>],
+ AC_DEFINE(HAVE_LOCATION_OF_LIBELFHEADER,[<libelf/libelf.h>],
         [Define to header that first defines elf.])
  AC_MSG_RESULT(<libelf/libelf.h>)
 else
@@ -135,7 +135,7 @@ AC_TRY_COMPILE([#include <libelf.h>
 dnl checking for ia 64 types, which might be enums, using HAVE_R_IA_64_DIR32LSB
 dnl to stand in for a small set.
 AC_MSG_CHECKING(Intel Itanium relocation types defined)
-AC_TRY_COMPILE([#include LOCATION_OF_LIBELFHEADER],[  int p; p = R_IA_64_DIR32LSB;] ,
+AC_TRY_COMPILE([#include HAVE_LOCATION_OF_LIBELFHEADER],[  int p; p = R_IA_64_DIR32LSB;] ,
   [AC_DEFINE(HAVE_R_IA_64_DIR32LSB,1,
 	[Define 1 if  R_IA_64_DIR32LSB is defined (might be enum value).])
     AC_MSG_RESULT(yes)],
@@ -200,7 +200,7 @@ AC_TRY_COMPILE([#include <sgidefs.h>],[  __uint64_t p; p = 27;] ,
     [AC_MSG_RESULT(no)])
 
 AC_MSG_CHECKING(is Elf64_Rela defined in elf.h)
-AC_TRY_COMPILE([#include LOCATION_OF_LIBELFHEADER],
+AC_TRY_COMPILE([#include HAVE_LOCATION_OF_LIBELFHEADER],
   [  Elf64_Rela p; p.r_offset = 1; ],
   [AC_DEFINE(HAVE_ELF64_RELA,1,
         [Define 1 if Elf64_Rela defined.]) 
@@ -208,7 +208,7 @@ AC_TRY_COMPILE([#include LOCATION_OF_LIBELFHEADER],
     [AC_MSG_RESULT(no)])
 
 AC_MSG_CHECKING(is Elf64_Sym defined in elf.h)
-AC_TRY_COMPILE([#include LOCATION_OF_LIBELFHEADER],
+AC_TRY_COMPILE([#include HAVE_LOCATION_OF_LIBELFHEADER],
   [  Elf64_Sym p; p.st_info = 1; ],
   [AC_DEFINE(HAVE_ELF64_SYM,1,
         [Define 1 if Elf64_Sym defined.])

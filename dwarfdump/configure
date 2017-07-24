@@ -3603,19 +3603,19 @@ done
 $as_echo_n "checking where is basic elf data... " >&6; }
 if test "$ac_cv_header_elf_h" = yes; then
 
-$as_echo "#define LOCATION_OF_LIBELFHEADER <elf.h>" >>confdefs.h
+$as_echo "#define HAVE_LOCATION_OF_LIBELFHEADER <elf.h>" >>confdefs.h
 
  { $as_echo "$as_me:${as_lineno-$LINENO}: result: <elf.h>" >&5
 $as_echo "<elf.h>" >&6; }
 elif test "$ac_cv_header_libelf_h" = yes; then
 
-$as_echo "#define LOCATION_OF_LIBELFHEADER <libelf.h>" >>confdefs.h
+$as_echo "#define HAVE_LOCATION_OF_LIBELFHEADER <libelf.h>" >>confdefs.h
 
  { $as_echo "$as_me:${as_lineno-$LINENO}: result: <libelf.h>" >&5
 $as_echo "<libelf.h>" >&6; }
 elif test "$ac_cv_header_libelf_libelf_h" = yes; then
 
-$as_echo "#define LOCATION_OF_LIBELFHEADER <libelf/libelf.h>" >>confdefs.h
+$as_echo "#define HAVE_LOCATION_OF_LIBELFHEADER <libelf/libelf.h>" >>confdefs.h
 
  { $as_echo "$as_me:${as_lineno-$LINENO}: result: <libelf/libelf.h>" >&5
 $as_echo "<libelf/libelf.h>" >&6; }
@@ -3747,7 +3747,7 @@ rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
 
 cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
-#include LOCATION_OF_LIBELFHEADER
+#include HAVE_LOCATION_OF_LIBELFHEADER
 int
 main ()
 {

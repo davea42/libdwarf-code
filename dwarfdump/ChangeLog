@@ -1,4 +1,9 @@
 2017-07-24 David Anderson
+    * configure.in, configure.cmake, config.h.in: Renamed
+      LOCATION_OF_LIBELFHEADER to HAVE_LOCATION_OF_LIBELFHEADER
+      for consistency with config.h.in generally.
+    * configure: Regenerated
+2017-07-24 David Anderson
     * configure.in, configure.cmake: Consistent use of
       LOCATION_OF_LIBELFHEADER so Windows can build libdwarf with
       configure or cmake.
