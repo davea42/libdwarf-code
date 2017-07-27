@@ -653,22 +653,17 @@ enter_section_in_de_debug_sections_array(Dwarf_Debug dbg,
     return DW_DLV_NO_ENTRY;
 }
 static int
-is_section_name_known_already(Dwarf_Debug dbg,
-    const char *scn_name,
-    unsigned   *found_section_number,
-    unsigned    start_number,
-    UNUSEDARG int        *err)
+is_section_name_known_already(Dwarf_Debug dbg, const char *scn_name)
 {
-    unsigned i = start_number;
+    unsigned i = 0;
     for ( ; i < dbg->de_debug_sections_total_entries; ++i) {
         struct Dwarf_dbg_sect_s *section = &dbg->de_debug_sections[i];
         if (!strcmp(scn_name, section->ds_name)) {
-            *found_section_number = i;
+            /*  The caller will declare this a duplicate, an error. */
             return DW_DLV_OK;
         }
     }
-    /*  If we have both dwo and non-dwo DWARF sections
-        the flavor we do not want to enter will get here. */
+    /* This is normal, we expect we've not accepted scn_name already. */  
     return DW_DLV_NO_ENTRY;
 }
 
@@ -1227,13 +1222,8 @@ _dwarf_setup(Dwarf_Debug dbg, Dwarf_Error * error)
             struct Dwarf_dbg_sect_s *section;
 
             int found_match = FALSE;
-            unsigned initial_start_number = 0;
-            unsigned dbg_section_number = 0;
 
-            res = is_section_name_known_already(dbg,scn_name,
-                &dbg_section_number,
-                initial_start_number,
-                &err);
+            res = is_section_name_known_already(dbg,scn_name);
             if (res == DW_DLV_OK) {
                 /* DUPLICATE */
                 free(sections);
@@ -1247,48 +1237,24 @@ _dwarf_setup(Dwarf_Debug dbg, Dwarf_Error * error)
             res = enter_section_in_de_debug_sections_array(dbg,scn_name,
                 obj_section_index, groupnumber,&err);
             if (res == DW_DLV_OK) {
-                /*  We usually just added a new entry in the dbg
-                    de_debug_sections array.  So we know its number.
-                    However, if both dwo and non-dwo are in the object
-                    the ones we do not want to add will get here too */
-                unsigned real_start_number = 0;
-
-                if(dbg->de_debug_sections_total_entries) {
-                    real_start_number =  dbg->de_debug_sections_total_entries-1;
-                }
-                res = is_section_name_known_already(dbg,scn_name,
-                    &dbg_section_number,
-                    real_start_number,
-                    &err);
-                if (res == DW_DLV_OK) {
-                    section = &dbg->de_debug_sections[dbg_section_number];
-                    res = get_basic_section_data(dbg,
-                        section->ds_secdata, &doas,
-                        obj_section_index,
-                        groupnumber,
-                        error,
-                        section->ds_duperr,
-                        section->ds_emptyerr);
-                    if (res != DW_DLV_OK) {
-                        free(sections);
-                        return res;
-                    }
-                    sections[obj_section_index] = section->ds_secdata;
-                    foundDwarf += section->ds_have_dwarf;
-                    found_match = TRUE;
-                    /*  Normal section set up.
-                        Fall through. */
-                }else if (res == DW_DLV_NO_ENTRY) {
-                    /*  This happens when we have dwo and non-dwo
-                        in the object. For each section that we
-                        want to skip based on groupnumber.
-                        COMDAT section groups need group 1
-                        so that gets messy.   */
-                    /* Fall Thruough */
-                } else {
-                    free(sections);
-                    DWARF_DBG_ERROR(dbg, err, DW_DLV_ERROR);
-                }
+               section = &dbg->de_debug_sections[
+                   dbg->de_debug_sections_total_entries-1];
+               res = get_basic_section_data(dbg,
+                   section->ds_secdata, &doas,
+                   obj_section_index,
+                   groupnumber,
+                   error,
+                   section->ds_duperr,
+                   section->ds_emptyerr);
+               if (res != DW_DLV_OK) {
+                   free(sections);
+                   return res;
+               }
+               sections[obj_section_index] = section->ds_secdata;
+               foundDwarf += section->ds_have_dwarf;
+               found_match = TRUE;
+               /*  Normal section set up.
+                   Fall through. */
             } else if (res == DW_DLV_NO_ENTRY) {
                 /*  We get here for relocation sections.
                     Fall through. */
