@@ -25,16 +25,17 @@
 
 /* These do little except on Windows */
 
-#include "config.h"
-#include "warningcontrol.h"
 #include "common.h"
+#include "config.h"
+#include "globals.h"
+#include "warningcontrol.h"
 #include <stdio.h>
 /* Windows specific header files */
 #ifdef HAVE_STDAFX_H
 #include "stdafx.h"
 #endif /* HAVE_STDAFX_H */
 
-#define DW_VERSION_DATE_STR " 2017-07-09 16:38:09-07:00  "
+#define DW_VERSION_DATE_STR " 2017-08-21 08:38:10-07:00  "
 #define RELEASE_DATE      "20160307"
 
 /* The Linux/Unix version does not want a version string to print
@@ -79,11 +80,11 @@ print_args(UNUSEDARG int argc, UNUSEDARG char *argv[])
 }
 
 void
-print_usage_message(const char *program_name, const char **text)
+print_usage_message(const char *program_name_in, const char **text)
 {
     unsigned i = 0;
 #ifndef _WIN32
-    fprintf(stderr,"Usage:  %s  <options> <object file>\n", program_name);
+    fprintf(stderr,"Usage:  %s  <options> <object file>\n", program_name_in);
 #endif /* _WIN32 */
     for (i = 0; *text[i]; ++i) {
         fprintf(stderr,"%s\n", text[i]);

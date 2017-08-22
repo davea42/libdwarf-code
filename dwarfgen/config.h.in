@@ -15,6 +15,9 @@
 /* Define to 1 if you have the <libelf.h> header file. */
 #undef HAVE_LIBELF_H
 
+/* Define to 1 if you have the <libelf/libelf.h> header file. */
+#undef HAVE_LIBELF_LIBELF_H
+
 /* Define to 1 if you have the <memory.h> header file. */
 #undef HAVE_MEMORY_H
 

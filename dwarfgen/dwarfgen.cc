@@ -60,8 +60,9 @@
 #ifdef HAVE_STDAFX_H
 #include "stdafx.h"
 #endif /* HAVE_STDAFX_H */
-
+#if HAVE_UNISTD_H
 #include <unistd.h>
+#endif
 #include <stdlib.h> // for exit
 #include <iostream>
 #include <sstream>
@@ -75,13 +76,22 @@
 #include <fcntl.h> //open
 #include "general.h"
 #include "dwgetopt.h"
+#ifdef HAVE_LIBELF_H
+//  gelf.h is a GNU-only elf header. FIXME
 #include "gelf.h"
+#elif HAVE_LIBELF_LIBELF_H
+#include "libelf/gelf.h"
+#endif
 #include "strtabdata.h"
 #include "dwarf.h"
 #include "libdwarf.h"
 #include "irepresentation.h"
 #include "ireptodbg.h"
 #include "createirepfrombinary.h"
+#ifdef _MSC_VER
+#include <stdint.h>
+#include <io.h>
+#endif
 
 using std::string;
 using std::cout;
@@ -868,7 +878,9 @@ open_a_file(const char * name)
     /* Set to a file number that cannot be legal. */
     int f = -1;
 
-#if defined(__CYGWIN__) || defined(_WIN32)
+#ifdef _MSC_VER
+    f = _open(name, _O_RDONLY| _O_BINARY);
+#elif defined(__CYGWIN__) || defined(WIN32)
     /*  It is not possible to share file handles
         between applications or DLLs. Each application has its own
         file-handle table. For two applications to use the same file
@@ -889,7 +901,9 @@ create_a_file(const char * name)
     /* Set to a file number that cannot be legal. */
     int f = -1;
 
-#if defined(__CYGWIN__) || defined(_WIN32)
+#ifdef _MSC_VER
+    f = _open(name, _O_WRONLY | _O_CREAT | _O_BINARY);
+#elif defined(__CYGWIN__) || defined(WIN32)
     /*  It is not possible to share file handles
         between applications or DLLs. Each application has its own
         file-handle table. For two applications to use the same file
@@ -908,5 +922,9 @@ create_a_file(const char * name)
 void
 close_a_file(int f)
 {
+#ifdef _MSC_VER
+    _close(f);
+#else
     close(f);
+#endif
 }

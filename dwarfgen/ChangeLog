@@ -1,3 +1,11 @@
+2017-08-21  David Anderson
+     * config.h.in: Adding HAVE_LIBELF_LIBELF for consistency.
+     * createirepformfrombinary.cc,createirepfrombinary.cc,
+       irepattrtodbg.cc,ireptodbg.cc:
+       Add ifdef HAVE_UNISTD_H.
+     * dwarfgen.cc:
+       Add ifdef HAVE_UNISTD_H, HAVE_LIBELF_LIBELF_H.
+       Improve #ifdefs for Windows builds.
 2017-04-21  David Anderson
      * dwarfgen.cc: Now supports -v with 2,3,4, or 5.
 2017-04-20  David Anderson

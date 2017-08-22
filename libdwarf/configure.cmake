@@ -7,8 +7,8 @@ ac_check_headers(alloca.h elf.h elfaccess.h libelf.h libelf/libelf.h  sys/types.
 message(STATUS "Assuming struct Elf for the default libdwarf.h")
 configure_file(libdwarf.h.in libdwarf.h COPYONLY)
 
-ac_check_lib(elf elf64_getehdr)
-ac_check_lib(elf elf64_getshdr)
+ac_check_lib(${LIBELF_LIBRARIES} elf elf64_getehdr)
+ac_check_lib(${LIBELF_LIBRARIES} elf elf64_getshdr)
 
 # Find out where the elf header is.
 if(HAVE_ELF_H)
@@ -91,44 +91,31 @@ set(dwfzlib $<$<BOOL:${HAVE_ZIB}>:"z")
 
 #  The following are for FreeBSD and others which
 #  use struct _Elf as the actual struct type.
-ac_try_compile([=[
-#include <libelf/libelf.h>
+if(HAVE_LIBELF_H)
+    set(_Elf_HEADER "<libelf.h>")
+else()
+    set(_Elf_HEADER "<libelf/libelf.h>")
+endif()
+
+ac_try_compile("
+#include ${_Elf_HEADER}
 struct _Elf; 
 typedef struct _Elf Elf;
 int main()
 {
     struct _Elf *a = 0;
     return 0;
-}]=]
-found_in_libefl_libefl_h)
-if(found_in_libefl_libefl_h)
-    message(STATUS "Found struct _Elf in libelf/libelf.h, using it in libdwarf.h") 
+}"
+_Elf_found)
+
+if(_Elf_found)
+   message(STATUS "Found struct _Elf in ${_ELF_HEADER}, using it in libdwarf.h")
+   file(READ libdwarf.h.in CONTENT)
+   string(REPLACE "struct Elf" "struct _Elf" CONTENT ${CONTENT})
+   file(WRITE libdwarf.h ${CONTENT})
 else()
-    message(STATUS "libelf/libelf.h does not have struct _Elf")
+   message(STATUS "${_ELF_HEADER} does not have struct _Elf")
 endif()
-
-ac_try_compile([=[
-#include <libelf.h>
-struct _Elf; 
-typedef struct _Elf Elf;
-int main()
-{
-    struct _Elf *a = 0;
-    return 0;
-}]=]
-found_in_libefl_h)
-if(found_in_libefl_h)
-    message(STATUS "Found struct _Elf in libelf.h, using it in libdwarf.h") 
-else()
-    message(STATUS "libelf.h does not have struct _Elf")
-endif()
-
-if(found_in_libefl_libefl_h OR found_in_libefl_h)
-    file(READ libdwarf.h.in CONTENT)
-    string(REPLACE "struct Elf" "struct _Elf" CONTENT ${CONTENT})
-    file(WRITE libdwarf.h ${CONTENT}) 
-endif()
-
 #  checking for ia 64 types, which might be enums, using HAVE_R_IA_64_DIR32LSB
 #  to stand in for a small set.
 ac_try_compile("
@@ -141,33 +128,36 @@ int main()
 HAVE_R_IA_64_DIR32LSB)
 
 ac_try_compile("
-#include <libelf.h>
+#include ${LOCATION_OF_LIBELFHEADER}
 int main()
 {
     struct _Elf a; int i; i = 0;
     return 0;
 }" 
 HAVE_STRUCT_UNDERSCORE_ELF)
-message(STATUS "Checking libelf defines struct _Elf... ${HAVE_STRUCT_UNDERSCORE_ELF}")
+message(STATUS "Checking  libelf defines struct _Elf... ${HAVE_STRUCT_UNDERSCORE_ELF}")
 
 ac_try_compile("
-#include <libelf.h>
+#include ${LOCATION_OF_LIBELFHEADER}
 int main()
 {
     int p; p = 0;
     return 0;
 }" 
 HAVE_RAW_LIBELF_OK)
+message(STATUS "Checking  some libelf found ... ${HAVE_RAW_LIBELF_OK}")
 
 ac_try_compile("
 #define _GNU_SOURCE
-#include <libelf.h>
+#include ${LOCATION_OF_LIBELFHEADER}
 int main()
 {
     off64_t  p; p = 0;
     return 0;
 }" 
 HAVE_LIBELF_OFF64_OK)
+message(STATUS "Checking  off64_t ok ... ${HAVE_LIBELF_OFF64_OK}")
+
 
 #  the existence of sgidefs.h does not prove it's truly SGI, nor
 #  prove that __uint32_t or __uint64_t is defined therein.

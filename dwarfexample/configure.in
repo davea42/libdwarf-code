@@ -9,7 +9,7 @@ AC_PROG_INSTALL
 AC_CHECK_TOOL(RANLIB, ranlib, :)
 AC_CHECK_TOOL(AR, ar)
 
-AC_CHECK_HEADERS(elf.h libelf.h sgidefs.h sys/types.h)
+AC_CHECK_HEADERS(elf.h unistd.h libelf.h sgidefs.h sys/types.h)
 
 dnl Attempt to determine if it is really IRIX/SGI or 'other'.
 AC_TRY_COMPILE([#include <sgidefs.h>],[  __uint32_t p; p = 27;] ,

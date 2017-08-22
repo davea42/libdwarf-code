@@ -2,8 +2,8 @@ include(AutoconfHelper)
 
 ac_init()
 ac_check_headers(elf.h libelf.h libelf/libelf.h sgidefs.h sys/types.h stdafx.h Windows.h)
-ac_check_lib(elf elf32_getehdr)
-ac_check_lib(elf elf64_getehdr)
+ac_check_lib(${LIBELF_LIBRARIES} elf elf32_getehdr)
+ac_check_lib(${LIBELF_LIBRARIES} elf elf64_getehdr)
 
 # Find out where the elf header is.
 if(HAVE_ELF_H)

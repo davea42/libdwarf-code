@@ -12,7 +12,7 @@ typedef char *string;
 
 #include "esb.h"
 
-void
+static void
 check(string msg, struct esb_s *data, string v)
 {
     string b = esb_get_string(data);

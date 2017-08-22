@@ -49,10 +49,12 @@ chkval(int ct,int c,int expchar,char *extra,char *expextra,
             /* strings match. */
         } else {
             err++;
-            printf("Mismatch %d %s: got dwoptarg %s 0x%x exp optarg %s 0x%x\n",
+            printf("Mismatch %d %s: got dwoptarg %s 0x%lx exp optarg %s 0x%lx\n",
                 ct,testid,
-                extra?extra:"",(unsigned)extra,
-                expextra?expextra:"", (unsigned)expextra);
+                extra?extra:"",
+                (unsigned long)extra,
+                expextra?expextra:"",
+                (unsigned long)expextra);
         }
     }
     if (optnum != expnum) {
@@ -165,8 +167,8 @@ test2(void)
     printf(" final check: ct %d dwoptind %d\n",ct,optind);
 #endif
     if (argv1[dwoptind]) {
-        printf("FAIL test2 on non-dash arg dwoptind %d got 0x%x exp NULL\n",
-            dwoptind,(unsigned)argv1[dwoptind]);
+        printf("FAIL test2 on non-dash arg dwoptind %d got 0x%lx exp NULL\n",
+            dwoptind,(unsigned long)argv1[dwoptind]);
         exit(1);
     }
     printf("PASS getopt test 2\n");
@@ -286,8 +288,8 @@ test5(void)
     printf(" final check: ct %d dwoptind %d\n",ct,optind);
 #endif
     if (argv1[dwoptind]) {
-        printf("FAIL test5 there is a non-dash arg dwoptind %d got 0x%x\n",
-            dwoptind,(unsigned)argv1[dwoptind]);
+        printf("FAIL test5 there is a non-dash arg dwoptind %d got 0x%lx\n",
+            dwoptind,(unsigned long)argv1[dwoptind]);
         exit(1);
     }
     printf("PASS getopt test5\n");
@@ -314,8 +316,8 @@ test6(void)
     }
     }
     if (argv1[dwoptind]) {
-        printf("FAIL test6 there is a non-dash arg dwoptind %d got 0x%x\n",
-            dwoptind,(unsigned)argv1[dwoptind]);
+        printf("FAIL test6 there is a non-dash arg dwoptind %d got 0x%lx\n",
+            dwoptind,(unsigned long)argv1[dwoptind]);
         exit(1);
     }
     printf("PASS getopt test6\n");
@@ -342,8 +344,8 @@ test7(void)
     }
     }
     if (argv1[dwoptind]) {
-        printf("FAIL test7 there is a non-dash arg dwoptind %d got 0x%x\n",
-            dwoptind,(unsigned)argv1[dwoptind]);
+        printf("FAIL test7 there is a non-dash arg dwoptind %d got 0x%lx\n",
+            dwoptind,(unsigned long)argv1[dwoptind]);
         exit(1);
     }
     printf("PASS getopt test7\n");
@@ -369,8 +371,8 @@ test8(void)
     }
     }
     if (argv1[dwoptind]) {
-        printf("FAIL test8 there is a non-dash arg dwoptind %d got 0x%x\n",
-            dwoptind,(unsigned)argv1[dwoptind]);
+        printf("FAIL test8 there is a non-dash arg dwoptind %d got 0x%lx\n",
+            dwoptind,(unsigned long)argv1[dwoptind]);
         exit(1);
     }
     printf("PASS getopt test8\n");

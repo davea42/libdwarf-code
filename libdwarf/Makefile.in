@@ -236,7 +236,7 @@ distclean:	clean
 	rm -f libdwarf.h
 	rm -f ./dwarftied
 
-tests:
+test:
 	$(CC) -DTESTING $(CFLAGS) dwarf_leb.c pro_encode_nm.c -o dwarfleb
 	./dwarfleb
 	$(CC) -DTESTING $(CFLAGS) dwarf_tied.c dwarf_tsearchhash.o -o dwarftied

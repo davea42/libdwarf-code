@@ -1,3 +1,10 @@
+2017-08-21 David Anderson 
+    * Makefile.in: Now 'make test', not 'make tests'.
+      So consistent test name with dwarfdump. 
+    * configure.cmake: Improving the handling of libelf
+      (mainly for Windows) and simplifying this file.
+    * dwarf_init_finish.c: Fixed indentation errors.
+    * gennames.c: Update version string.
 2017-07-27 David Anderson 
     * dwarf_init_finish.c(_dwarf_setup): Removed some dead code and
       that simplified the the logic. Comments fixed

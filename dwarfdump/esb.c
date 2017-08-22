@@ -415,7 +415,16 @@ trialprint(struct esb_s *d)
 
 int main()
 {
+#ifdef _WIN32
+    /* Open the null device used during formatting printing */
+    if (!esb_open_null_device())
     {
+        fprintf(stderr, "esb: Unable to open null device.\n");
+        exit(1);
+    }
+#endif /* _WIN32 */
+
+   {
         struct esb_s d;
         esb_constructor(&d);
         esb_append(&d,"a");
@@ -489,7 +498,10 @@ int main()
         esb_destructor(&d);
         esb_destructor(&e);
     }
-
+#ifdef _WIN32
+    /* Close the null device used during formatting printing */
+    esb_close_null_device();
+#endif /* _WIN32 */
     if (failcount) {
         printf("FAIL esb test\n");
         exit(1);

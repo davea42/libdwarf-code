@@ -34,8 +34,9 @@
 #ifdef HAVE_STDAFX_H
 #include "stdafx.h"
 #endif /* HAVE_STDAFX_H */
-
+#ifdef HAVE_UNITSTD_H
 #include <unistd.h>
+#endif
 #include <stdlib.h> // for exit
 #include <iostream>
 #include <string>
@@ -45,6 +46,7 @@
 #include <string.h> // For memset etc
 #include <sys/stat.h> //open
 #include <fcntl.h> //open
+//  gelf.h is a GNU-only elf header. FIXME
 #include "gelf.h"
 #include "strtabdata.h"
 #include "dwarf.h"

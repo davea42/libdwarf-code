@@ -32,7 +32,7 @@ DEFS =		@DEFS@
 dwfwall =       @dwfwall@
 dwfsanitize =   @dwfsanitize@
 dwfzlib =       @dwfzlib@
-LD_LIBRARY_PATH=../libdwarf
+LIBDWARF_PATH = ../libdwarf
 DIRINC =        $(srcdir)/../libdwarf
 LIBS =		@LIBS@ -L../libdwarf -ldwarf -lelf $(dwfzlib)
 INCLUDES =	-I. -I$(srcdir) -I../libdwarf -I$(srcdir)/../libdwarf
@@ -129,7 +129,7 @@ trivial_naming.o: $(srcdir)/naming.c
 	$(CC) $(CFLAGS) -DTRIVIAL_NAMING  -c $(srcdir)/naming.c -o trivial_naming.o 
 
 tag_tree_build:  $(srcdir)/tag_tree.c $(DIRINC)/dwarf.h $(HEADERS) tag_common.o makename.o common.o trivial_naming.o dwgetopt.o dwarf_tsearchbal.o
-	LD_LIBRARY_PATH=$$LD_LIBRARY_PATH:$(LD_LIBRARY_PATH) $(CC) $(CFLAGS) $(srcdir)/tag_tree.c tag_common.o common.o makename.o  dwarf_tsearchbal.o trivial_naming.o dwgetopt.o  $(LDFLAGS) -o tag_tree_build 
+	LD_LIBRARY_PATH=$$LD_LIBRARY_PATH:$(LIBDWARF_PATH) $(CC) $(CFLAGS) $(srcdir)/tag_tree.c tag_common.o common.o makename.o  dwarf_tsearchbal.o trivial_naming.o dwgetopt.o  $(LDFLAGS) -o tag_tree_build 
 
 tag_attr_build:  $(srcdir)/tag_attr.c $(DIRINC)/dwarf.h $(HEADERS) tag_common.o makename.o  common.o trivial_naming.o dwgetopt.o dwarf_tsearchbal.o
 	$(CC) $(CFLAGS) $(srcdir)/tag_attr.c tag_common.o common.o makename.o trivial_naming.o  dwarf_tsearchbal.o dwgetopt.o $(LDFLAGS) -o tag_attr_build 
@@ -141,25 +141,25 @@ tmp-tt-table.c: $(srcdir)/tag_tree.list tag_tree_build
 	-rm -f  tmp-t1.c
 	cp $(srcdir)/tag_tree.list tmp-t1.c
 	$(CC) $(CFLAGS) -E tmp-t1.c  > ./tmp-tag-tree-build1.tmp
-	LD_LIBRARY_PATH=$$LD_LIBRARY_PATH:$(LD_LIBRARY_PATH) ./tag_tree_build -s  -i tmp-tag-tree-build1.tmp  -o tmp-tt-table.c
+	LD_LIBRARY_PATH=$$LD_LIBRARY_PATH:$(LIBDWARF_PATH) ./tag_tree_build -s  -i tmp-tag-tree-build1.tmp  -o tmp-tt-table.c
 
 tmp-tt-ext-table.c: $(srcdir)/tag_tree_ext.list tag_tree_build
 	-rm -f tmp-t4.c
 	cp $(srcdir)/tag_tree_ext.list tmp-t4.c
 	$(CC) $(CFLAGS) -E tmp-t4.c  > ./tmp-tag-tree-build4.tmp
-	LD_LIBRARY_PATH=$$LD_LIBRARY_PATH:$(LD_LIBRARY_PATH) ./tag_tree_build -e  -i tmp-tag-tree-build4.tmp -o tmp-tt-ext-table.c
+	LD_LIBRARY_PATH=$$LD_LIBRARY_PATH:$(LIBDWARF_PATH) ./tag_tree_build -e  -i tmp-tag-tree-build4.tmp -o tmp-tt-ext-table.c
 
 tmp-ta-table.c: $(srcdir)/tag_attr.list tag_attr_build
 	-rm -f tmp-t2.c
 	cp $(srcdir)/tag_attr.list tmp-t2.c
 	$(CC) $(CFLAGS)  -E tmp-t2.c  > ./tmp-tag-attr-build2.tmp
-	LD_LIBRARY_PATH=$$LD_LIBRARY_PATH:$(LD_LIBRARY_PATH) ./tag_attr_build -s -i tmp-tag-attr-build2.tmp -o tmp-ta-table.c
+	LD_LIBRARY_PATH=$$LD_LIBRARY_PATH:$(LIBDWARF_PATH) ./tag_attr_build -s -i tmp-tag-attr-build2.tmp -o tmp-ta-table.c
 
 tmp-ta-ext-table.c: $(srcdir)/tag_attr_ext.list tag_attr_build
 	-rm -f tmp-t3.c
 	cp $(srcdir)/tag_attr_ext.list tmp-t3.c
 	$(CC) $(CFLAGS)  -E tmp-t3.c  > ./tmp-tag-attr-build3.tmp
-	LD_LIBRARY_PATH=$$LD_LIBRARY_PATH:$(LD_LIBRARY_PATH) ./tag_attr_build -e -i tmp-tag-attr-build3.tmp -o tmp-ta-ext-table.c
+	LD_LIBRARY_PATH=$$LD_LIBRARY_PATH:$(LIBDWARF_PATH) ./tag_attr_build -e -i tmp-tag-attr-build3.tmp -o tmp-ta-ext-table.c
 
 
 test: esb.o dwgetopt.o 
@@ -181,24 +181,23 @@ test: esb.o dwgetopt.o
 	./getopttestnat -c 7
 	./getopttestnat -c 8
 	-rm -f ./getopttestnat
-selftest:
 	-rm -f ./selfesb
 	-rm -f ./selfmc
 	-rm -f ./selfmakename
 	-rm -f ./selfsection_bitmaps
 	-rm -f ./selfprint_reloc
-	$(CC) -g -c -I../libdwarf esb.c
-	$(CC) -g -c -I../libdwarf dwarf_tsearchbal.c
-	$(CC) -g -DSELFTEST  -I../libdwarf makename.c dwarf_tsearchbal.o -o selfmakename
-	$(CC) -DSELFTEST -I../libdwarf -g helpertree.c esb.o dwarf_tsearchbal.o -o selfhelpertree
+	$(CC) -g -c $(INCLUDES) $(srcdir)/esb.c
+	$(CC) -g -c $(INCLUDES) $(srcdir)/dwarf_tsearchbal.c
+	$(CC) -g -DSELFTEST  $(INCLUDES) $(srcdir)/makename.c dwarf_tsearchbal.o -o selfmakename
+	$(CC) -DSELFTEST $(INCLUDES) -g $(srcdir)/helpertree.c esb.o dwarf_tsearchbal.o -o selfhelpertree
 	./selfhelpertree
 	rm -f ./selfhelpertree
 	./selfmakename
 	rm -f ./selfmakename
-	$(CC) -DSELFTEST -I../libdwarf -g macrocheck.c esb.o dwarf_tsearchbal.o -o selfmc
+	$(CC) -DSELFTEST $(INCLUDES) -g $(srcdir)/macrocheck.c esb.o dwarf_tsearchbal.o -o selfmc
 	./selfmc
 	rm -f ./selfmc
-	$(CC) -DSELFTEST -g esb.c -o selfesb
+	$(CC) -DSELFTEST -g $(srcdir)/esb.c -o selfesb
 	./selfesb
 	rm -f ./selfesb
 	$(CC) -DSELFTEST -I../libdwarf -g section_bitmaps.c -o selfsection_bitmaps

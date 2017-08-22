@@ -1,3 +1,20 @@
+2017-08-21 David Anderson
+    * CMakeLists.txt: Fix the TAG_TREE_SOURCES and TAG_ATTR_SOURCES
+      entries.
+    * Makefile.in: Fix a misuse of LD_LIBRARY_PATH and use
+      LIBDWARF_PATH as the path to libdwarf.so.
+    * common.c, dwarfdump.c, tag_attr.c, tag_tree.c:Update 
+      version string.
+    * common.c: #include changes help for builds on Windows.
+      Rename a parameter to avoid accidental name-shadowing.
+    * configure.cmake: Fix ac_check_lib() uses.
+    * dwarfdump.c,dwconf.c,esb.c: Modify #ifdefs to ease building on Windows.
+    * getopttest.c: Cast/printf changes avoid warnings on 32 and 64 bit
+      builds.
+    * macrocheck.c: An extra newline makes the 'make test' output
+      easier to understand.
+    * testesb.c: The check() function is local, so call it 'static' to
+      avoid a compiler warning.
 2017-07-24 David Anderson
     * configure.in, configure.cmake, config.h.in: Renamed
       LOCATION_OF_LIBELFHEADER to HAVE_LOCATION_OF_LIBELFHEADER

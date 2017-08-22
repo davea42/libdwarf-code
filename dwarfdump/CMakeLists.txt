@@ -40,7 +40,7 @@ configure_file(naming.c trivial_naming.c COPYONLY)
 
 set_source_files_properties(trivial_naming.c PROPERTIES COMPILE_DEFINITIONS TRIVIAL_NAMING)
 
-set(TAG_TREE_SOURCES tag_tree.c tag_common.c common.c makename.c trivial_naming.c dwgetopt.c dwarf_tsearchbal.c)
+set(TAG_TREE_SOURCES tag_tree.c tag_common.c common.c makename.c trivial_naming.c dwgetopt.c dwarf_tsearchbal.c sanitized.c esb.c)
 
 add_executable(tag_tree_build ${TAG_TREE_SOURCES})
 
@@ -48,7 +48,7 @@ set_folder(tag_tree_build dwarfdump/generators)
 
 target_link_libraries(tag_tree_build PRIVATE ${dwarf-target})
 
-set(TAG_ATTR_SOURCES tag_attr.c tag_common.c common.c makename.c trivial_naming.c dwgetopt.c dwarf_tsearchbal.c)
+set(TAG_ATTR_SOURCES tag_attr.c tag_common.c common.c makename.c trivial_naming.c dwgetopt.c dwarf_tsearchbal.c sanitized.c esb.c)
  
 add_executable(tag_attr_build ${TAG_ATTR_SOURCES}) 
 

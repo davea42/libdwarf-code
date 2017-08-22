@@ -535,7 +535,7 @@ main()
     printf( "  and Expect an ERROR about offset 50 having 2\n"
         "  primaries"
         " and a secondary\n");
-    printf( "  and Expect an ERROR about crazy overlap 60\n");
+    printf( "  and Expect an ERROR about crazy overlap 60\n\n");
     print_macro_statistics("test 4",&base,2000);
     clear_macro_statistics(&base);
     if ((basefailcount + 3) != failcount) {

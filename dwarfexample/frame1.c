@@ -41,11 +41,14 @@
     To read .eh_frame call dwarf_get_fde_list_eh()
     below instead of dwarf_get_fde_list() .
 */
+#include "config.h"
 #include <sys/types.h> /* For open() */
 #include <sys/stat.h>  /* For open() */
 #include <fcntl.h>     /* For open() */
 #include <stdlib.h>     /* For exit() */
+#ifdef HAVE_UNISTD_H
 #include <unistd.h>     /* For close() */
+#endif
 #include <string.h>     /* For strcmp* */
 #include <stdio.h>
 #include <errno.h>

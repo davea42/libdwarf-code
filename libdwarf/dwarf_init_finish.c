@@ -663,7 +663,7 @@ is_section_name_known_already(Dwarf_Debug dbg, const char *scn_name)
             return DW_DLV_OK;
         }
     }
-    /* This is normal, we expect we've not accepted scn_name already. */  
+    /* This is normal, we expect we've not accepted scn_name already. */
     return DW_DLV_NO_ENTRY;
 }
 
@@ -1237,24 +1237,24 @@ _dwarf_setup(Dwarf_Debug dbg, Dwarf_Error * error)
             res = enter_section_in_de_debug_sections_array(dbg,scn_name,
                 obj_section_index, groupnumber,&err);
             if (res == DW_DLV_OK) {
-               section = &dbg->de_debug_sections[
-                   dbg->de_debug_sections_total_entries-1];
-               res = get_basic_section_data(dbg,
-                   section->ds_secdata, &doas,
-                   obj_section_index,
-                   groupnumber,
-                   error,
-                   section->ds_duperr,
-                   section->ds_emptyerr);
-               if (res != DW_DLV_OK) {
-                   free(sections);
-                   return res;
-               }
-               sections[obj_section_index] = section->ds_secdata;
-               foundDwarf += section->ds_have_dwarf;
-               found_match = TRUE;
-               /*  Normal section set up.
-                   Fall through. */
+                section = &dbg->de_debug_sections[
+                    dbg->de_debug_sections_total_entries-1];
+                res = get_basic_section_data(dbg,
+                    section->ds_secdata, &doas,
+                    obj_section_index,
+                    groupnumber,
+                    error,
+                    section->ds_duperr,
+                    section->ds_emptyerr);
+                if (res != DW_DLV_OK) {
+                    free(sections);
+                    return res;
+                }
+                sections[obj_section_index] = section->ds_secdata;
+                foundDwarf += section->ds_have_dwarf;
+                found_match = TRUE;
+                /*  Normal section set up.
+                    Fall through. */
             } else if (res == DW_DLV_NO_ENTRY) {
                 /*  We get here for relocation sections.
                     Fall through. */
