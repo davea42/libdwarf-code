@@ -1,3 +1,5 @@
+2017-08-22 David Anderson 
+    * gennames.c: Update version string.
 2017-08-21 David Anderson 
     * Makefile.in: Now 'make test', not 'make tests'.
       So consistent test name with dwarfdump. 

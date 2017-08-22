@@ -1,3 +1,6 @@
+2017-08-22 David Anderson
+    * common.c, dwarfdump.c, tag_attr.c, tag_tree.c:Update 
+      version string.
 2017-08-21 David Anderson
     * CMakeLists.txt: Fix the TAG_TREE_SOURCES and TAG_ATTR_SOURCES
       entries.
