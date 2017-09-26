@@ -11,7 +11,7 @@ description: A fuzzed object with a
 
 datefixed: 2017-09-26
 references: regressiontests/sarubbo-3/1.crashes.bin
-gitfixid: 
+gitfixid: bcc2e33908e669bacd397e3c941ffd1db3005d17
 tarrelease:
 endrec: DW201709-001
 
