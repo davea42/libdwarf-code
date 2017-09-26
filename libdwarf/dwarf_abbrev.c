@@ -124,6 +124,10 @@ dwarf_get_abbrev(Dwarf_Debug dbg,
     DECODE_LEB128_UWORD_CK(abbrev_ptr, utmp,
         dbg,error,abbrev_section_end);
     ret_abbrev->dab_tag = utmp;
+    if (abbrev_ptr >= abbrev_section_end) {
+        _dwarf_error(dbg, error, DW_DLE_ABBREV_DECODE_ERROR);
+        return DW_DLV_ERROR;
+    }
     ret_abbrev->dab_has_child = *(abbrev_ptr++);
     ret_abbrev->dab_abbrev_ptr = abbrev_ptr;
 

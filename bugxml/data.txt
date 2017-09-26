@@ -1,3 +1,20 @@
+id: DW201709-001
+cve:
+datereported: 2017-09-19
+reportedby: Agostino Sarubbo
+vulnerability: Incorrect abbrev section could crash caller.
+product: libdwarf
+description: A fuzzed object with a
+  resulting invalid abbrev section where
+  the end of section follows an abbrev tag
+  would dereference a non-existent has-child byte.
+
+datefixed: 2017-09-26
+references: regressiontests/sarubbo-3/1.crashes.bin
+gitfixid: 
+tarrelease:
+endrec: DW201709-001
+
 
 id: DW201706-001
 cve: CVE-2017-9998

@@ -1,3 +1,6 @@
+2017-09-26 David Anderson
+    * common.c, dwarfdump.c, tag_attr.c, tag_tree.c:Update 
+      version string.
 2017-08-22 David Anderson
     * common.c, dwarfdump.c, tag_attr.c, tag_tree.c:Update 
       version string.
