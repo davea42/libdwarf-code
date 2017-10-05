@@ -1,4 +1,7 @@
 2017-10-05 David Anderson
+    * tag_attr.list: Changed the spelling from DW_AT_ranges_base
+      to the final DWARF5 spelling, DW_AT_rnglists_base.
+2017-10-05 David Anderson
     * dwconf.c: Open the config file "r", not "rw".
 2017-09-26 David Anderson
     * common.c, dwarfdump.c, tag_attr.c, tag_tree.c:Update 

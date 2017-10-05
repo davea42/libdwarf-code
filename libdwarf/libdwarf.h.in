@@ -1398,7 +1398,7 @@ out what form-class it is.
     DW_FORM_CLASS_RNGLISTSPTR  is like DW_FORM_CLASS_RNGLIST
     except that RNGLISTSPTR is aways a section offset,
     never an index. DW_FORM_CLASS_RNGLISTSPTR is only
-    referenced by DW_AT_ranges_base.
+    referenced by DW_AT_rnglists_base.
 */
 enum Dwarf_Form_Class {
     DW_FORM_CLASS_UNKNOWN,   DW_FORM_CLASS_ADDRESS,

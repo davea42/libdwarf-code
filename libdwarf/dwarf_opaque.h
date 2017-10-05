@@ -220,7 +220,7 @@ struct Dwarf_CU_Context_s {
         This base field created in DWARF5 to reduce the
         number of string offset relocations a linker must do.
 
-        DW_AT_ranges_base similarly.
+        DW_AT_rnglists_base (briefly called DW_AT_ranges_base) similarly.
         Within the CU, this base means that DW_FORM_sec_offset
         values need not be realocated by the linker.
 
@@ -243,7 +243,7 @@ struct Dwarf_CU_Context_s {
 
     /*  FIXME from DW_AT_addr_base in CU DIE */
     Dwarf_Unsigned cc_addr_base;     /* Zero in .dwo */
-    /*  FIXME from DW_AT_ranges_base in CU DIE */
+    /*  FIXME from DW_AT_rnglists_base in CU DIE */
     Dwarf_Unsigned cc_ranges_base;   /* Zero in .dwo */
     /*  FIXME from DW_AT_str_offsets_base in CU DIE */
     Dwarf_Unsigned cc_str_offsets_base;

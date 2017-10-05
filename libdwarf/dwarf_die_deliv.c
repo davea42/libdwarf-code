@@ -970,7 +970,7 @@ find_context_base_fields(Dwarf_Debug dbg,
                         /* Something is badly wrong. */
                         return udres;
                     }
-                } else if (attrnum == DW_AT_ranges_base
+                } else if (attrnum == DW_AT_rnglists_base
                     || attrnum == DW_AT_GNU_ranges_base){
                     int udres = 0;
                     udres = dwarf_global_formref(attr,&ranges_base,

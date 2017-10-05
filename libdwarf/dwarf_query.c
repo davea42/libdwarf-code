@@ -1094,7 +1094,7 @@ _dwarf_get_ranges_base_attr_value(Dwarf_Debug dbg,
     if(res != DW_DLV_OK) {
         return res;
     }
-    res = dwarf_attr(cudie,DW_AT_ranges_base,
+    res = dwarf_attr(cudie,DW_AT_rnglists_base,
         &myattr,error);
     if(res == DW_DLV_ERROR) {
         dwarf_dealloc(dbg,cudie,DW_DLA_DIE);
@@ -1114,7 +1114,7 @@ _dwarf_get_ranges_base_attr_value(Dwarf_Debug dbg,
     /* NO ENTRY, try the other attr. */
     res = dwarf_attr(cudie,DW_AT_GNU_ranges_base, &myattr,error);
     if(res == DW_DLV_NO_ENTRY) {
-        res = dwarf_attr(cudie,DW_AT_ranges_base, &myattr,error);
+        res = dwarf_attr(cudie,DW_AT_rnglists_base, &myattr,error);
         if (res == DW_DLV_NO_ENTRY) {
             /*  A .o or execeutable skeleton  needs
                 a base , but a .dwo does not.
@@ -1587,7 +1587,7 @@ dw_get_special_offset(Dwarf_Half attrnum,
         }
         return DW_FORM_CLASS_RNGLIST;
         }
-    case DW_AT_ranges_base: /* DWARF5 */
+    case DW_AT_rnglists_base: /* DWARF5 */
         return DW_FORM_CLASS_RNGLISTSPTR;
     case DW_AT_macros:        /* DWARF5 */
         return DW_FORM_CLASS_MACROPTR;

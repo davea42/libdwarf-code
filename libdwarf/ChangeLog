@@ -1,4 +1,9 @@
 2017-09-26 David Anderson 
+    * tag_attr.list,dwarf.h,dwarf_die_deliv.c, dwarf_opaque.h,
+      dwarf_query.c,libdwarf.h.in: Changed DW_AT_ranges_base
+      spelling to DW_AT_rnglists_base to match the final
+      DWARF5 standard. 
+2017-09-26 David Anderson 
     * gennames.c: Update version string.
     * dwarf_abbrev.c: See DW201709-001. A carefully
       constructed invalid abbrev section could result

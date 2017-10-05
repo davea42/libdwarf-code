@@ -228,7 +228,7 @@ DW_AT_main_subprogram
 DW_AT_name
 DW_AT_producer
 DW_AT_ranges
-DW_AT_ranges_base
+DW_AT_rnglists_base
 DW_AT_segment
 DW_AT_stmt_list
 DW_AT_str_offsets_base
@@ -581,7 +581,7 @@ DW_AT_main_subprogram
 DW_AT_name
 DW_AT_producer
 DW_AT_ranges
-DW_AT_ranges_base
+DW_AT_rnglists_base
 DW_AT_segment
 DW_AT_stmt_list
 DW_AT_str_offsets_base

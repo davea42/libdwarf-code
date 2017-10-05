@@ -373,7 +373,9 @@ extern "C" {
 #define DW_AT_rank                              0x71 /* DWARF5 */
 #define DW_AT_str_offsets_base                  0x72 /* DWARF5 */
 #define DW_AT_addr_base                         0x73 /* DWARF5 */
-#define DW_AT_ranges_base                       0x74 /* DWARF5 */
+  /* Use DW_AT_rnglists_base, DW_AT_ranges_base obsolete and 
+  /* was only used in some DWARF5 drafts, not the final DWARF5. */
+#define DW_AT_rnglists_base                     0x74 /* DWARF5 */
   /*  DW_AT_dwo_id, an experiment in some DWARF4+. Not DWARF5! */
 #define DW_AT_dwo_id                            0x75 /* DWARF4!*/
 #define DW_AT_dwo_name                          0x76 /* DWARF5 */
