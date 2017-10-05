@@ -351,7 +351,7 @@ find_a_file(const char *named_file, char **defaults, const char ** name_used)
 {
     FILE *fin = 0;
     const char *lname = named_file;
-    const char *type = "rw";
+    const char *type = "r";
     int i = 0;
 
 #ifdef BUILD_FOR_TEST
