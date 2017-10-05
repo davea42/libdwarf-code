@@ -373,8 +373,8 @@ extern "C" {
 #define DW_AT_rank                              0x71 /* DWARF5 */
 #define DW_AT_str_offsets_base                  0x72 /* DWARF5 */
 #define DW_AT_addr_base                         0x73 /* DWARF5 */
-  /* Use DW_AT_rnglists_base, DW_AT_ranges_base obsolete and 
-  /* was only used in some DWARF5 drafts, not the final DWARF5. */
+  /* Use DW_AT_rnglists_base, DW_AT_ranges_base is obsolete as */
+  /* it was only used in some DWARF5 drafts, not the final DWARF5. */
 #define DW_AT_rnglists_base                     0x74 /* DWARF5 */
   /*  DW_AT_dwo_id, an experiment in some DWARF4+. Not DWARF5! */
 #define DW_AT_dwo_id                            0x75 /* DWARF4!*/
@@ -908,7 +908,7 @@ extern "C" {
 #define DW_SECT_TYPES       2  /* .debug_types.dwo   pre-DWARF5 */
 #define DW_SECT_ABBREV      3  /* .debug_abbrev.dwo      DWARF5 */
 #define DW_SECT_LINE        4  /* .debug_line.dwo        DWARF5 */
-#define DW_SECT_LOC         5  /* .debug_loc.dwo         DWARF5 */
+#define DW_SECT_LOCLISTS    5  /* .debug_loclists.dwo    DWARF5 */
 #define DW_SECT_STR_OFFSETS 6  /* .debug_str_offsets.dwo DWARF5 */
 #define DW_SECT_MACRO       7  /* .debug_macro.dwo       DWARF5 */
 #define DW_SECT_RNGLISTS    8  /* .debug_rnglists.dwo    DWARF5 */
@@ -1123,6 +1123,7 @@ extern "C" {
 #define DW_LNE_hi_user                  0xff /* DWARF3 */
 
 /* These are known values for DW_LNS_set_isa. */
+/* These identifiers are not defined by any DWARFn standard. */
 #define DW_ISA_UNKNOWN   0
 /* The following two are ARM specific. */
 #define DW_ISA_ARM_thumb 1 /* ARM ISA */
@@ -1206,6 +1207,7 @@ extern "C" {
    http://refspecs.freestandards.org/LSB_3.0.0/LSB-Core-generic/LSB-Core-generic/dwarfext.html
    The upper 4 bits indicate how the value is to be applied.
    The lower 4 bits indicate the format of the data.
+   These identifiers are not defined by any DWARFn standard.
 */
 #define DW_EH_PE_absptr   0x00  /* GNU */
 #define DW_EH_PE_uleb128  0x01  /* GNU */
@@ -1245,6 +1247,7 @@ extern "C" {
    Assumes reg 0 never appears as
    a register in DWARF information. Usable for MIPS,
    but never a good idea, really.    */
+/*  These identifiers are not defined by any DWARFn standard. */
 #define DW_FRAME_CFA_COL 0
 
 #define DW_FRAME_REG1   1  /* integer reg 1 */

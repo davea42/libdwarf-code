@@ -1,4 +1,7 @@
-2017-09-26 David Anderson 
+2017-10-05 David Anderson 
+    * dwarf.h,libdwarf/dwarf_loc.c: Corrected spelling to
+      match its use in DWARF5: DW_SECT_LOC -> DW_SECT_LOCLISTS
+2017-10-05 David Anderson 
     * tag_attr.list,dwarf.h,dwarf_die_deliv.c, dwarf_opaque.h,
       dwarf_query.c,libdwarf.h.in: Changed DW_AT_ranges_base
       spelling to DW_AT_rnglists_base to match the final
