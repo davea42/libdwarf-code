@@ -412,6 +412,7 @@ main(int argc, char *argv[])
     Elf *elf = 0;
     Elf *elftied = 0;
     int archive = 0;
+    int archmemnum = 0;
 
 #ifdef _WIN32
     /* Open the null device used during formatting printing */
@@ -562,7 +563,24 @@ main(int argc, char *argv[])
         if (!isknown) {
             /* not a 64-bit obj either! */
             /* dwarfdump is almost-quiet when not an object */
-            fprintf(stderr, "Can't process %s: unknown format\n",file_name);
+            if (archive) {
+                Elf_Arhdr *mem_header = elf_getarhdr(elf);
+                const char *memname = mem_header?
+                    mem_header->ar_name:"";
+
+                /*  / and // archive entries are not archive
+                    objects, but are not errors. */
+                if (strcmp(memname,"/") && strcmp(memname,"//")) {
+                    fprintf(stderr, "Can't process archive member "
+                        "%d %s of %s: unknown format\n",
+                        archmemnum,
+                        memname,
+                        file_name);
+                }
+            } else {
+                fprintf(stderr, "Can't process %s: unknown format\n",
+                    file_name);
+            }
             check_error = 1;
             cmd = elf_next(elf);
             elf_end(elf);
@@ -575,6 +593,7 @@ main(int argc, char *argv[])
             archive, &g_config_file_data);
         cmd = elf_next(elf);
         elf_end(elf);
+        archmemnum += 1;
     }
     elf_end(arf);
     if (elftied) {
@@ -1371,7 +1390,8 @@ process_one_file(Elf * elf,Elf *elftied,
     /* Print error report if the -kd option */
     print_checks_results();
 
-    /* Print the detailed attribute usage space */
+    /*  Print the detailed attribute usage space
+        and free the attributes_encoding data allocated. */
     if (glflags.gf_check_attr_encoding) {
         print_attributes_encoding(dbg);
     }

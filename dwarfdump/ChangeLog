@@ -1,3 +1,14 @@
+2017-10-12 David Anderson
+    * print_section_groups.c: Added a cast on a free() call
+      to avoid a compiler warning.
+    * dwarfdump.c: On an archive (.a) dwarfdump would print
+      a useless warning on encountering  a special / or //
+      member. Now just skips those, and if some other member
+      is not an object dwarfdump prints a more useful message
+      to identify the particular member.
+    * print_die.c: The attributes_encoding_table was not
+      getting reset properly in the case of reading an archive,
+      and that is now fixed.
 2017-10-05 David Anderson
     * tag_attr.list: Changed the spelling from DW_AT_ranges_base
       to the final DWARF5 spelling, DW_AT_rnglists_base.

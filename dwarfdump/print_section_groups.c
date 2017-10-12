@@ -51,7 +51,9 @@ freeall(void)
     sec_nums = 0;
     free(group_nums);
     group_nums = 0;
-    free(sec_names);
+    /*  Cast prevents an ugly warning about the const
+        being stripped off. */
+    free((void*)sec_names);
     sec_names = 0;
 }
 

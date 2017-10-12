@@ -1753,6 +1753,7 @@ do_dump_visited_info(int level, Dwarf_Off loff,Dwarf_Off goff,
         " ",atname,valname);
 }
 
+/*  DW_FORM_data16 should not apply here. */
 static boolean
 is_location_form(int form)
 {
@@ -4534,7 +4535,15 @@ typedef struct attr_encoding {
     Dwarf_Unsigned formx;   /* Space used by current encoding */
     Dwarf_Unsigned leb128;  /* Space used with LEB128 encoding */
 } a_attr_encoding;
+
+/*  The other DW_FORM_datan are lower form values than data16,
+    so the following is safe for the unchanging  static table. */
+static int attributes_encoding_factor[DW_FORM_data16 + 1];
+
+/*  These must be reset for each object if we are processing
+    an archive! see print_attributes_encoding(). */
 static a_attr_encoding *attributes_encoding_table = NULL;
+static boolean attributes_encoding_do_init = TRUE;
 
 /*  Check the potential amount of space wasted by attributes values that can
     be represented as an unsigned LEB128. Only attributes with forms:
@@ -4544,19 +4553,18 @@ static void
 check_attributes_encoding(Dwarf_Half attr,Dwarf_Half theform,
     Dwarf_Unsigned value)
 {
-    static int factor[DW_FORM_data1 + 1];
-    static boolean do_init = TRUE;
 
-    if (do_init) {
+    if (attributes_encoding_do_init) {
         /* Create table on first call */
         attributes_encoding_table = (a_attr_encoding *)calloc(DW_AT_lo_user,
             sizeof(a_attr_encoding));
-        /* We use only 4 slots in the table, for quick access */
-        factor[DW_FORM_data1] = 1;  /* index 0x0b */
-        factor[DW_FORM_data2] = 2;  /* index 0x05 */
-        factor[DW_FORM_data4] = 4;  /* index 0x06 */
-        factor[DW_FORM_data8] = 8;  /* index 0x07 */
-        do_init = FALSE;
+        /* We use only 5 slots in the table, for quick access */
+        attributes_encoding_factor[DW_FORM_data1] = 1; /* index 0x0b */
+        attributes_encoding_factor[DW_FORM_data2] = 2; /* index 0x05 */
+        attributes_encoding_factor[DW_FORM_data4] = 4; /* index 0x06 */
+        attributes_encoding_factor[DW_FORM_data8] = 8; /* index 0x07 */
+        attributes_encoding_factor[DW_FORM_data16] = 16;/* index 0x07 */
+        attributes_encoding_do_init = FALSE;
     }
 
     /* Regardless of the encoding form, count the checks. */
@@ -4572,11 +4580,14 @@ check_attributes_encoding(Dwarf_Half attr,Dwarf_Half theform,
     }
 
     /*  Only checks those attributes that have DW_FORM_dataX:
-        DW_FORM_data1, DW_FORM_data2, DW_FORM_data4 and DW_FORM_data8 */
+        DW_FORM_data1, DW_FORM_data2, DW_FORM_data4 and DW_FORM_data8
+        DWARF5 adds DW_FORM_data16 */
     if (theform == DW_FORM_data1 || theform == DW_FORM_data2 ||
-        theform == DW_FORM_data4 || theform == DW_FORM_data8) {
+        theform == DW_FORM_data4 || theform == DW_FORM_data8 ||
+        theform == DW_FORM_data16) {
         int res = 0;
-        /* Size of the byte stream buffer that needs to be memcpy-ed. */
+        /*  Size of the byte stream buffer that needs to be
+            memcpy-ed. */
         int leb128_size = 0;
         /* To encode the attribute value */
         char encode_buffer[ENCODE_SPACE_NEEDED];
@@ -4585,18 +4596,23 @@ check_attributes_encoding(Dwarf_Half attr,Dwarf_Half theform,
         res = dwarf_encode_leb128(value,&leb128_size,
             encode_buffer,sizeof(encode_buffer));
         if (res == DW_DLV_OK) {
-            if (factor[theform] > leb128_size) {
-                int wasted_bytes = factor[theform] - leb128_size;
+            if (attributes_encoding_factor[theform] > leb128_size) {
+                int wasted_bytes = attributes_encoding_factor[theform]
+                    - leb128_size;
                 snprintf(small_buf, sizeof(small_buf),
                     "%d wasted byte(s)",wasted_bytes);
                 DWARF_CHECK_ERROR2(attr_encoding_result,
-                    get_AT_name(attr,pd_dwarf_names_print_on_error),small_buf);
-                /*  Add the optimized size to the specific attribute, only if
-                    we are dealing with a standard attribute. */
+                    get_AT_name(attr,pd_dwarf_names_print_on_error),
+                    small_buf);
+                /*  Add the optimized size to the specific
+                    attribute, only if we are dealing with
+                    a standard attribute. */
                 if (attr < DW_AT_lo_user) {
                     attributes_encoding_table[attr].entries += 1;
-                    attributes_encoding_table[attr].formx   += factor[theform];
-                    attributes_encoding_table[attr].leb128  += leb128_size;
+                    attributes_encoding_table[attr].formx   +=
+                        attributes_encoding_factor[theform];
+                    attributes_encoding_table[attr].leb128  +=
+                        leb128_size;
                 }
             }
         }
@@ -4680,6 +4696,8 @@ print_attributes_encoding(Dwarf_Debug dbg)
             }
         }
         free(attributes_encoding_table);
+        attributes_encoding_table = 0;
+        attributes_encoding_do_init = TRUE;
     }
 }
 
@@ -5014,6 +5032,7 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
     case DW_FORM_data2:
     case DW_FORM_data4:
     case DW_FORM_data8:
+    case DW_FORM_data16: /* FIXME: DWARF5: needs testing. */
         {
         Dwarf_Half attr = 0;
         fres = dwarf_whatattr(attrib, &attr, &err);
