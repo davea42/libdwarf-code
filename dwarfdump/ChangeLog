@@ -1,4 +1,7 @@
 2017-10-12 David Anderson
+    * dwarfdump.c: Now more careful with archive
+      names presented by libelf and Elf_Arhdr.
+2017-10-12 David Anderson
     * print_section_groups.c: Added a cast on a free() call
       to avoid a compiler warning.
     * dwarfdump.c: On an archive (.a) dwarfdump would print

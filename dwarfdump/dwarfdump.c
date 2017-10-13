@@ -565,7 +565,8 @@ main(int argc, char *argv[])
             /* dwarfdump is almost-quiet when not an object */
             if (archive) {
                 Elf_Arhdr *mem_header = elf_getarhdr(elf);
-                const char *memname = mem_header?
+                const char *memname =
+                    (mem_header && mem_header->ar_name)?
                     mem_header->ar_name:"";
 
                 /*  / and // archive entries are not archive
@@ -574,7 +575,7 @@ main(int argc, char *argv[])
                     fprintf(stderr, "Can't process archive member "
                         "%d %s of %s: unknown format\n",
                         archmemnum,
-                        memname,
+                        sanitized(memname),
                         file_name);
                 }
             } else {
@@ -1229,9 +1230,11 @@ process_one_file(Elf * elf,Elf *elftied,
 
     if (archive) {
         Elf_Arhdr *mem_header = elf_getarhdr(elf);
+        const char *memname =
+            (mem_header && mem_header->ar_name)?
+            mem_header->ar_name:"";
 
-        printf("\narchive member \t%s\n",
-            mem_header ? mem_header->ar_name : "");
+        printf("\narchive member \t%s\n",sanitized(memname));
     }
     dbgsetup(dbg,l_config_file_data);
     dbgsetup(dbgtied,l_config_file_data);
