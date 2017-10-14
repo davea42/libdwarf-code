@@ -35,7 +35,7 @@
 #include "stdafx.h"
 #endif /* HAVE_STDAFX_H */
 
-#define DW_VERSION_DATE_STR " 2017-09-26 13:31:40-07:00  "
+#define DW_VERSION_DATE_STR " 2017-10-13 19:09:46-07:00  "
 #define RELEASE_DATE      "20160307"
 
 /* The Linux/Unix version does not want a version string to print

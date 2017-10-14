@@ -1,4 +1,6 @@
 2017-10-05 David Anderson 
+    * gennames.c: Update version string.
+2017-10-13 David Anderson 
     * dwarf.h,libdwarf/dwarf_loc.c: Corrected spelling to
       match its use in DWARF5: DW_SECT_LOC -> DW_SECT_LOCLISTS
 2017-10-05 David Anderson 
