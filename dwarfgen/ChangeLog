@@ -1,3 +1,8 @@
+2017-10-15  David Anderson
+     * dwarfgen.cc,general.h,ireptodbg.cc: Moved global 
+       command-line options
+       into a single global struct to clarify their use for
+       a reader of the code. See 'cmdoptions'.
 2017-08-21  David Anderson
      * config.h.in: Adding HAVE_LIBELF_LIBELF for consistency.
      * createirepformfrombinary.cc,createirepfrombinary.cc,

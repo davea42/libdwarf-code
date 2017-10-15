@@ -80,7 +80,7 @@ specialAttrTransformations(Dwarf_P_Debug dbg,
     list<IRAttr>& attrs,
     unsigned level)
 {
-    if(!transformHighpcToConst) {
+    if(!cmdoptions.transformHighpcToConst) {
         // No transformation of this sort requested.
         return;
     }

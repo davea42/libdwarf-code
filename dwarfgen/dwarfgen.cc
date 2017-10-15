@@ -123,9 +123,11 @@ static Elf * elf = 0;
 static Elf32_Ehdr * ehp = 0;
 static strtabdata secstrtab;
 
-bool transformHighpcToConst = false;
-int  defaultInfoStringForm = DW_FORM_string;
-bool showrelocdetails = false;
+CmdOptions cmdoptions = {
+    false, //transformHighpcToConst
+    DW_FORM_string, // defaultInfoStringForm
+    false, //showrelocdetails 
+};
 
 // loff_t is signed for some reason (strange) but we make offsets unsigned.
 #define LOFFTODWUNS(x)  ( (Dwarf_Unsigned)(x))
@@ -394,10 +396,10 @@ main(int argc, char **argv)
                 cu_of_input_we_output = atoi(dwoptarg);
                 break;
             case 'r':
-                showrelocdetails=true;
+                cmdoptions.showrelocdetails=true;
                 break;
             case 's':
-                defaultInfoStringForm = DW_FORM_strp;
+                cmdoptions.defaultInfoStringForm = DW_FORM_strp;
                 break;
             case 'p': /* pointer size: value 4 or 8. */
                 if (!strcmp("4",dwoptarg)) {
@@ -440,7 +442,7 @@ main(int argc, char **argv)
                 setinput(&whichinput,dwoptarg,&pathrequired);
                 break;
             case 'h':
-                transformHighpcToConst = true;
+                cmdoptions.transformHighpcToConst = true;
                 break;
             case 'o':
                 outfile = dwoptarg;
@@ -503,7 +505,7 @@ main(int argc, char **argv)
             exit(EXIT_FAILURE);
         }
         res = dwarf_pro_set_default_string_form(dbg,
-            defaultInfoStringForm,&err);
+            cmdoptions.defaultInfoStringForm,&err);
         if(res != DW_DLV_OK) {
             cerr << "dwarfgen: Failed dwarf_pro_set_default_string_form"
                 << endl;
@@ -855,7 +857,7 @@ write_generated_dbg(Dwarf_P_Debug dbg,Elf * elf,IRepresentation &irep)
                 rec->drd_offset,rec->drd_length);
 
             if(buf_to_update) {
-                if(showrelocdetails) {
+                if(cmdoptions.showrelocdetails) {
                     cout << "Reloc "<< r <<
                         " symindex=" << rec->drd_symbol_index <<
                         " targoffset= " << IToHex(rec->drd_offset) <<
@@ -864,7 +866,7 @@ write_generated_dbg(Dwarf_P_Debug dbg,Elf * elf,IRepresentation &irep)
                 bitreplace(buf_to_update, newval,sizeof(newval),
                     rec->drd_length);
             } else {
-                if(showrelocdetails) {
+                if(cmdoptions.showrelocdetails) {
                     cout << "Reloc "<< r << "does nothing"<<endl;
                 }
             }

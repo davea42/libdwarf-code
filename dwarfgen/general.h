@@ -32,8 +32,12 @@
 #include <sstream>
 #include <iomanip>
 
-// Run time flag from command line.
-extern bool transformHighpcToConst;
+// Run time flags from command line.
+extern struct CmdOptions {
+    bool transformHighpcToConst;
+    int  defaultInfoStringForm;
+    bool showrelocdetails;
+} cmdoptions;
 
 template <typename T >
 std::string IToHex(T v,unsigned l=0)
