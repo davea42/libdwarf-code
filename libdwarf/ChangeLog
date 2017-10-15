@@ -1,4 +1,6 @@
 2017-10-15 David Anderson 
+    * dwgetopt.c: Removing unused local variable 'found'.
+2017-10-15 David Anderson 
     * dwgetopt.c,dwgetopt.h: Now handles simple long argument
       names cases.
 2017-10-05 David Anderson 

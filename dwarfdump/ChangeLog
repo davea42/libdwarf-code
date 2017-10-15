@@ -1,4 +1,11 @@
 2017-10-15 David Anderson
+    * dwarfdump.c: Added a call to destruct_abbrev_array()
+      per object so the archive case can work properly with -ka.
+    * dwgetopt.c: Unused local variable 'found' deleted.
+    * print_abbrevs.c:  Now -ka can handle bogus large 
+      abbreviation number
+      without crashing when checking abbreviations..
+2017-10-15 David Anderson
     * dwgetopt.c,dwgetopt.h: Now handles simple long argument
       names cases.
     * getopttest.c: Added tests of long (--)  argument names.

@@ -1418,6 +1418,7 @@ process_one_file(Elf * elf,Elf *elftied,
         dbg = 0;
     }
     printf("\n");
+    destruct_abbrev_array();
     helpertree_clear_statistics(&helpertree_offsets_base_info);
     helpertree_clear_statistics(&helpertree_offsets_base_types);
     return 0;

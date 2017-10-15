@@ -91,7 +91,6 @@ static int dwoptnamematches(
 {
 
     const char *eq = 0;
-    int found = 0;
     unsigned namelen = 0;
     unsigned arglen = 0;
     int d = 0;
