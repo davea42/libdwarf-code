@@ -1,3 +1,6 @@
+2017-10-15 David Anderson 
+    * dwgetopt.c,dwgetopt.h: Now handles simple long argument
+      names cases.
 2017-10-05 David Anderson 
     * gennames.c: Update version string.
 2017-10-13 David Anderson 

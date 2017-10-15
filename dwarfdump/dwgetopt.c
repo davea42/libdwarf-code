@@ -6,6 +6,7 @@
     if space follows the letter
     (the dwoptarg is set to null).
     renamed to make it clear this is a private version.
+    Oct 17 2017: Created dwgetopt_long(). See dwgetopt.h
 */
 /*
 * Copyright (c) 1987, 1993, 1994
@@ -47,19 +48,180 @@
 #include <stdio.h>
 #include <stdlib.h> /* For exit() */
 #include <string.h> /* For strchr */
-#include <dwgetopt.h>
+#include "dwgetopt.h"
 
 #define STRIP_OFF_CONSTNESS(a)  ((void *)(size_t)(const void *)(a))
 
-int dwopterr = 1,     /* if error message should be printed */
+int dwopterr = 1,    /* if error message should be printed */
     dwoptind = 1,    /* index into parent argv vector */
-    dwoptopt = 0,        /* character checked for validity */
-    dwoptreset = 0;      /* reset getopt */
-char *dwoptarg = 0;      /* argument associated with option */
+    dwoptopt,        /* character checked for validity */
+    dwoptreset;      /* reset getopt */
+char *dwoptarg;      /* argument associated with option */
 
 #define BADCH   (int)'?'
 #define BADARG  (int)':'
 #define EMSG    ""
+
+#define TRUE 1
+#define FALSE 0
+
+#if 0 /* FOR DEBUGGING ONLY */
+/*  Use for testing dwgetopt only.
+    Not a standard function. */
+void
+dwgetoptresetfortestingonly(void)
+{
+   dwopterr   = 1;
+   dwoptind   = 1;
+   dwoptopt   = 0;
+   dwoptreset = 0;
+   dwoptarg   = 0;
+}
+#endif /* FOR DEBUGGING ONLY */
+
+
+static const char *place = EMSG;/* option letter processing */
+
+
+static int dwoptnamematches(
+    const struct dwoption *dwlopt,
+    const char *iplace,
+    const char **argloc,
+    int *argerr)
+{
+
+    const char *eq = 0;
+    int found = 0;
+    unsigned namelen = 0;
+    unsigned arglen = 0;
+    int d = 0;
+
+    for(eq = iplace; *eq; ++eq) {
+        if (*eq != '=') {
+            continue;
+        }
+        /* Found  =, arg should follow */
+        namelen = (eq - iplace);
+        if (namelen != (unsigned)strlen(dwlopt->name)) {
+            return FALSE;
+        }
+        eq++;
+        arglen = strlen(eq);
+        break;
+    }
+    if (namelen) {
+        d = strncmp(iplace,dwlopt->name,namelen);
+        if (d) {
+            return FALSE;
+        }
+        if (dwlopt->has_arg == 0) {
+            *argerr = TRUE;
+            return TRUE;
+        }
+        if (arglen) {
+            /*  Discarding const, avoiding warning.
+                Data is in user space, so this is ok. */
+            dwoptarg = (char *)eq;
+            *argloc = (const char *)eq;
+        } else {
+            /* Has arg = but arg is empty. */
+            dwoptarg = 0;
+        }
+        return TRUE;
+    } else {
+        d = strcmp(iplace,dwlopt->name);
+        if (d) {
+            return FALSE;
+        }
+        if (dwlopt->has_arg == 1) {
+            *argerr = TRUE;
+            return TRUE;
+        }
+        dwoptarg = 0;
+        return TRUE;
+    }
+}
+
+
+
+/*  dwgetopt_long
+    A reimplemenation of  a portion of
+    the getopt(3) GNU/Linux  getopt_long().
+    See dwgetopt.h for more details.
+*/
+int dwgetopt_long(int nargc, char *const nargv[],
+    const char *ostr,
+    const struct dwoption* longopts,
+    int *longindex)
+{
+    char *lplace = 0;
+    if (dwoptreset) {
+        /*  Not really supported. */
+        place = EMSG;
+        return (-1);
+    }
+    if (*place) {
+        int v = dwgetopt(nargc,nargv,ostr);
+        return v;
+    }
+    /*  Use local lplace in case we need to call getopt()
+        just below. */
+    lplace = nargv[dwoptind];
+    if (dwoptind >= nargc || *lplace++ != '-') {
+        /* Argument is absent or is not an option */
+        place = EMSG;
+        return (-1);
+    }
+    if  (*lplace  != '-') {
+        /* Notice place not  disturbed. */
+        int v = dwgetopt(nargc,nargv,ostr);
+        return v;
+    }
+    /*  Starts with two dashes.
+        Now we set the global place */
+    place = lplace+1;
+    if (!*place) {
+        /* "--" => end of options */
+        ++dwoptind;
+        place = EMSG;
+        return (-1);
+    }
+
+    /* We think this is a longopt. */
+    {
+    int lo_num = 0;
+
+    for(;;lo_num++) {
+        const struct dwoption *dwlopt = longopts +lo_num;
+        const char * argloc = 0;
+        int argerr = 0;
+        if (!dwlopt->name) {
+            dwoptind++;
+            place = EMSG;
+            return (-1);
+        }
+        if (dwoptnamematches(dwlopt,place,&argloc,&argerr)) {
+            *longindex = lo_num;
+            dwoptarg = 0;
+            if (argloc) {
+                /* Must drop const here. Ugh. */
+                dwoptarg = (char *)argloc;
+            }
+            dwoptind++;
+            place = EMSG;
+            return dwlopt->val;
+        }
+        if (argerr) {
+            place = EMSG;
+            dwoptind++;
+            return (-1);
+        }
+    }
+    place = EMSG;
+    dwoptind++;
+    return (-1);
+    }
+}
 
 /*
     * getopt --
@@ -77,12 +239,12 @@ char *dwoptarg = 0;      /* argument associated with option */
 int
 dwgetopt(int nargc, char * const nargv[], const char *ostr)
 {
-    static const char *place = EMSG;/* option letter processing */
     char *oli;                      /* option letter list index */
 
     if (dwoptreset || *place == 0) { /* update scanning pointer */
         dwoptreset = 0;
         place = nargv[dwoptind];
+
         if (dwoptind >= nargc || *place++ != '-') {
             /* Argument is absent or is not an option */
             place = EMSG;

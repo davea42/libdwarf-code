@@ -8,6 +8,10 @@
 #define dwoptopt  optopt
 #define dwopterr  opterr
 #define dwoptarg  optarg
+
+#define dwno_argument  no_argument
+#define dwrequired_argument  required_argument
+#define dwoptional_argument  optional_argument
 #endif
 
 #include <stdio.h>
@@ -30,48 +34,52 @@ dwgetoptresetfortestingonly(void)
 
 
 
-/* for 'extra', read 'dwoptarg', for expextra read expected-optarg
-   for optnum read dwoptind, for expnum read expected-optind
+/* for rchar read the real int/char returned.
+   for xchar read the expected int/char.
+
+   for roptarg, read dwoptarg (the real optarg val),
+   for xoptarg read expected-optarg
+
+   for roptind read dwoptind,
+   for xoptind read expected-optind
 */
 static void
-chkval(int ct,int c,int expchar,char *extra,char *expextra,
-    int optnum,int expnum,const char *testid)
+chkval(int ct,
+    int rchar,int xchar,
+    char *roptarg,char *xoptarg,
+    int roptind,int xoptind,
+    const char *testid)
 {
     int err = 0;
-    if (c != expchar) {
+    if (rchar != xchar) {
         err++;
         printf("Mismatch %d %s: got char %c 0x%x exp char %c 0x%x\n",
-            ct,testid,c,c,expchar,expchar);
+            ct,testid,rchar,rchar,xchar,xchar);
     }
-    if (extra != expextra) {
+    if (roptarg != xoptarg) {
         /* pointers non-match */
-        if (extra && expextra && (!strcmp(extra,expextra))) {
+        if (roptarg && xoptarg && (!strcmp(roptarg,xoptarg))) {
             /* strings match. */
         } else {
             err++;
             printf("Mismatch %d %s: got dwoptarg %s 0x%lx exp optarg %s 0x%lx\n",
                 ct,testid,
-                extra?extra:"",
-                (unsigned long)extra,
-                expextra?expextra:"",
-                (unsigned long)expextra);
+                roptarg?roptarg:"",
+                (unsigned long)roptarg,
+                xoptarg?xoptarg:"",
+                (unsigned long)xoptarg);
         }
     }
-    if (optnum != expnum) {
+    if (roptind != xoptind) {
         err++;
         printf("Mismatch %d %s: got dwoptind %d 0x%x exp optind %d 0x%x\n",
-            ct,testid,optnum,optnum,expnum,expnum);
+            ct,testid,roptind,roptind,xoptind,xoptind);
     }
     if (err > 0) {
         printf("FAIL getopttest %s\n",testid);
         exit(1);
     }
 }
-
-/* for 'extra', read 'dwoptarg', for expextra read expected-optarg
-   for optnum read dwoptind, for expnum read expected-optind
-chkval(int ct,int c,int expchar,char *extra,char *expextra,
-    int optnum,int expnum,const char *testid) */
 
 static int
 test3(void)
@@ -172,6 +180,217 @@ test2(void)
         exit(1);
     }
     printf("PASS getopt test 2\n");
+    return 0;
+}
+
+
+
+static void chklongval(int ct,
+    int rchar,int xchar,
+    const char *xoptname,
+    struct dwoption *ropt, struct dwoption *xopt,
+    char *roptarg,char *xoptarg,
+    int roptind,int xoptind,
+    const char *testid)
+{
+    int err = 0;
+    if(xopt != ropt || strcmp(ropt->name,xopt->name)) {
+        printf("FAIL name check %s: long opt %s vs %s %s\n",
+            xoptname,
+            ropt->name,xopt->name,
+            testid);
+        ++err;
+    }
+    if (roptarg != xoptarg &&
+        (!roptarg || !xoptarg || strcmp(roptarg,xoptarg))) {
+        printf("FAIL argument check %s: long opt %s vs %s %s\n",
+            xoptname,
+            roptarg?roptarg:"",xoptarg?xoptarg:"",
+            testid);
+        ++err;
+    }
+    if (roptind != xoptind) {
+        printf("FAIL optind check %s: long opt %d vs %d %s\n",
+            xoptname,
+            roptind,xoptind,
+            testid);
+        ++err;
+    }
+
+    if (err > 0) {
+        printf("FAIL long getopttest %s\n",testid);
+        exit(1);
+    }
+}
+
+
+static int
+ltest1(void)
+{
+    int ct = 1;
+    int c = 0;
+    int argct = 13;
+    argv1[0]="a.out";
+    argv1[1]="-ab";
+    argv1[2] = "--simplelong";
+    argv1[3] = "--optarglong";
+    argv1[4] = "--requireoptarglong=val";
+    argv1[5] = "-cd";
+    argv1[6]="progtoread";
+    argv1[7]=0;
+    static struct dwoption  longopts[] =  {
+        {"simplelong",       dwno_argument,      0,0},
+        {"optarglong",       dwoptional_argument,0,0},
+        {"requireoptarglong",dwrequired_argument,0,0},
+        {0,0,0,0}
+    };
+    int longindex = 0;
+
+    for ( ;(c = dwgetopt_long(argct, argv1,
+        "abcd",
+        longopts,&longindex)) != EOF; ct++) {
+    switch(ct) {
+    case 1:
+        chkval(ct,c,'a',dwoptarg,0,dwoptind,1,"ltest12");
+        break;
+    case 2:
+        chkval(ct,c,'b',dwoptarg,0,dwoptind,2,"ltest2");
+        break;
+
+    case 3: {
+        struct dwoption * foundop = longopts + longindex;
+        chklongval(ct,c,0,
+            "simplelong",
+            foundop,longopts+0,
+            dwoptarg,0,
+            dwoptind,3,"ltest3");
+        }
+        break;
+    case 4: {
+        struct dwoption * foundop = longopts + longindex;
+        chklongval(ct,c,0,
+            "optarglong",
+            foundop,longopts+1,
+            dwoptarg,0,
+            dwoptind,4,"ltest4");
+        }
+        break;
+    case 5: {
+        struct dwoption * foundop = longopts + longindex;
+        chklongval(ct,c,0,
+            "requireoptarglong",
+            foundop,longopts+2,
+            dwoptarg,"val",
+            dwoptind,5,"ltest5");
+        }
+        break;
+
+    case 6:
+        chkval(ct,c,'c',dwoptarg,0,dwoptind,5,"ltest6");
+        break;
+    case 7:
+        chkval(ct,c,'d',dwoptarg,0,dwoptind,6,"ltest7");
+        break;
+
+
+    default:
+        printf("FAIL ltest1 unexpected ct %d in ltest1\n",ct);
+        exit(1);
+    }
+    }
+#if 0
+    printf(" final check: ct %d dwoptind %d\n",ct,optind);
+#endif
+    if (strcmp(argv1[dwoptind],"progtoread")) {
+        printf("FAIL ltest1 on non-dash arg dwoptind %d got %s exp %s\n",
+            dwoptind,argv1[dwoptind],"progtoread");
+        exit(1);
+    }
+    printf("PASS getopt ltest1\n");
+    return 0;
+}
+
+static int
+ltest2(void)
+{
+    int ct = 1;
+    int c = 0;
+    int argct = 13;
+    argv1[0]="a.out";
+    argv1[1]="-ab";
+    argv1[2] = "--optarglong";
+    argv1[3] = "--optarglong=";
+    argv1[4] = "--optarglong=val";
+    argv1[5] = "-cd";
+    argv1[6]="progtoread";
+    argv1[7]=0;
+    static struct dwoption  longopts[] =  {
+        {"optarglong",       dwoptional_argument,0,0},
+        {0,0,0,0}
+    };
+    int longindex = 0;
+
+    for ( ;(c = dwgetopt_long(argct, argv1,
+        "abcd",
+        longopts,&longindex)) != EOF; ct++) {
+    switch(ct) {
+    case 1:
+        chkval(ct,c,'a',dwoptarg,0,dwoptind,1,"ltest21");
+        break;
+    case 2:
+        chkval(ct,c,'b',dwoptarg,0,dwoptind,2,"ltest22");
+        break;
+
+    case 3: {
+        struct dwoption * foundop = longopts + longindex;
+        chklongval(ct,c,0,
+            "optarglong",
+            foundop,longopts+0,
+            dwoptarg,0,
+            dwoptind,3,"ltest23");
+        }
+        break;
+    case 4: {
+        struct dwoption * foundop = longopts + longindex;
+        chklongval(ct,c,0,
+            "optarglong",
+            foundop,longopts+0,
+            dwoptarg,0,
+            dwoptind,4,"ltest24");
+        }
+        break;
+    case 5: {
+        struct dwoption * foundop = longopts + longindex;
+        chklongval(ct,c,0,
+            "optarglong",
+            foundop,longopts+0,
+            dwoptarg,"val",
+            dwoptind,5,"ltest25");
+        }
+        break;
+
+    case 6:
+        chkval(ct,c,'c',dwoptarg,0,dwoptind,5,"ltest26");
+        break;
+    case 7:
+        chkval(ct,c,'d',dwoptarg,0,dwoptind,6,"ltest27");
+        break;
+
+
+    default:
+        printf("FAIL ltest1 unexpected ct %d in ltest2\n",ct);
+        exit(1);
+    }
+    }
+#if 0
+    printf(" final check: ct %d dwoptind %d\n",ct,optind);
+#endif
+    if (strcmp(argv1[dwoptind],"progtoread")) {
+        printf("FAIL ltest2 on non-dash arg dwoptind %d got %s exp %s\n",
+            dwoptind,argv1[dwoptind],"progtoread");
+        exit(1);
+    }
+    printf("PASS getopt ltest2\n");
     return 0;
 }
 
@@ -360,6 +579,7 @@ test8(void)
     argv1[0]="a.out";
     argv1[1]="-x";
     argv1[2]=0;
+    /*  We expect a ? because the arg list is improper. */
     for ( ;(c = dwgetopt(argct, argv1, "abH:d::")) != EOF; ct++) {
     switch(ct) {
     case 1:
@@ -434,6 +654,10 @@ int main(int argc, const char **argv)
         printf("FAIL: invalid arg list\n");
             exit(1);
     }
+    failct += ltest1();
+    dwgetoptresetfortestingonly();
+    failct += ltest2();
+    dwgetoptresetfortestingonly();
     failct += test5();
     dwgetoptresetfortestingonly();
     failct += test1();

@@ -35,6 +35,9 @@
 * SUCH DAMAGE.
 */
 
+#ifdef __cplusplus
+extern "C" {
+#endif /* __cplusplus */
 extern int  dwopterr;
 extern int  dwoptind;
 extern int  dwoptopt;
@@ -42,3 +45,41 @@ extern int  dwoptreset;
 extern char *dwoptarg;
 
 int dwgetopt(int nargc, char * const nargv[], const char *ostr);
+
+/*  As of October 2017 it seems adviseable to allow
+    long option names.  So based on a reading of
+    'man 3 getopt' we reimplement a portion of GNU getopt_long().
+    It's a wonderfully sensible design and all the credit
+    should go to the original designers.
+    We are not implementing all the features of GNU/Linux
+    getopt_long(), just the features we wish to use.
+    Specifically, we require val be 0 and flag
+    be NULL and ignore those fields.
+    We do not implement GNU digit_optind at all.
+    Within these restrictions the interface behaves the same
+    as GNU getopt_long() (or so it appears from the
+    getopt documentation:
+    release 4.04 of the Linux man-pages project,
+    GETOPT(3),
+    http://www.kernel.org/doc/man-pages/).
+    */
+
+struct dwoption {
+    const char *name;
+    int has_arg;
+    int *flag;
+    int val;
+};
+#define dwno_argument 0
+#define dwrequired_argument 1
+#define dwoptional_argument 2
+
+int dwgetopt_long(int nargc, char *const nargv[],
+    const char *ostr,
+    const struct dwoption* longopts,
+    int *longindex);
+
+
+#ifdef __cplusplus
+}
+#endif /* __cplusplus */
