@@ -45,7 +45,7 @@ static    Dwarf_Unsigned  group_count;
 static    Dwarf_Unsigned  section_count;
 
 static void
-freeall(void)
+freeall_groups_tables(void)
 {
     free(sec_nums);
     sec_nums = 0;
@@ -55,6 +55,10 @@ freeall(void)
         being stripped off. */
     free((void*)sec_names);
     sec_names = 0;
+    group_map_entry_count = 0;
+    selected_group = 0;
+    group_count = 0;
+    section_count = 0;
 }
 
 #define TRUE 1
@@ -63,39 +67,45 @@ freeall(void)
 static struct  glfsetting_s {
     const char *secname;
     boolean *flag;
+    boolean origset;
+    boolean origflag;
 } glftab[] = {
-{".debug_abbrev",       &glflags.gf_abbrev_flag},
-{".debug_aranges",      &glflags.gf_aranges_flag},
-{".debug_debug_macinfo",&glflags.gf_macinfo_flag},
-{".debug_debug_macro",  &glflags.gf_macro_flag},
-{".debug_debug_names",  &glflags.gf_debug_names_flag},
-{".debug_eh_frame",     &glflags.gf_eh_frame_flag},
-{".debug_frame",        &glflags.gf_frame_flag},
-{".gdb_index",          &glflags.gf_gdbindex_flag},
-{".debug_info",         &glflags.gf_info_flag},
-{".debug_line",         &glflags.gf_line_flag},
-{".debug_loc",          &glflags.gf_loc_flag},
-/*{".debug_loclists",     &glflags.gf_loclists_flag}, */
-{".debug_pubnames",     &glflags.gf_pubnames_flag},
-{".debug_pubtypes",     &glflags.gf_pubtypes_flag}, /* SGI only */
-{".debug_ranges",       &glflags.gf_ranges_flag},
-/*{".debug_rnglists",     &glflags.gf_rnglists_flag},  */
-{".debug_static_func",  &glflags.gf_static_func_flag}, /* SGI only */
-{".debug_static_var",   &glflags.gf_static_var_flag}, /* SGI only */
-{".debug_str",          &glflags.gf_string_flag},
-{".debug_types",        &glflags.gf_types_flag},
-{".debug_weaknames",    &glflags.gf_weakname_flag}, /* SGI only */
-{0,0}
+{".debug_abbrev",       &glflags.gf_abbrev_flag,FALSE,FALSE},
+{".debug_aranges",      &glflags.gf_aranges_flag,FALSE,FALSE},
+{".debug_debug_macinfo",&glflags.gf_macinfo_flag,FALSE,FALSE},
+{".debug_debug_macro",  &glflags.gf_macro_flag,FALSE,FALSE},
+{".debug_debug_names",  &glflags.gf_debug_names_flag,FALSE,FALSE},
+{".debug_eh_frame",     &glflags.gf_eh_frame_flag,FALSE,FALSE},
+{".debug_frame",        &glflags.gf_frame_flag,FALSE,FALSE},
+{".gdb_index",          &glflags.gf_gdbindex_flag,FALSE,FALSE},
+{".debug_info",         &glflags.gf_info_flag,FALSE,FALSE},
+{".debug_line",         &glflags.gf_line_flag,FALSE,FALSE},
+{".debug_loc",          &glflags.gf_loc_flag,FALSE,FALSE},
+/*{".debug_loclists",     &glflags.gf_loclists_flag,FALSE,FALSE}, */
+{".debug_pubnames",     &glflags.gf_pubnames_flag,FALSE,FALSE},
+{".debug_pubtypes",     &glflags.gf_pubtypes_flag,FALSE,FALSE}, /* SGI only */
+{".debug_ranges",       &glflags.gf_ranges_flag,FALSE,FALSE},
+/*{".debug_rnglists",     &glflags.gf_rnglists_flag,FALSE,FALSE},  */
+{".debug_static_func",  &glflags.gf_static_func_flag,FALSE,FALSE}, /* SGI only */
+{".debug_static_var",   &glflags.gf_static_var_flag,FALSE,FALSE}, /* SGI only */
+{".debug_str",          &glflags.gf_string_flag,FALSE,FALSE},
+{".debug_types",        &glflags.gf_types_flag,FALSE,FALSE},
+{".debug_weaknames",    &glflags.gf_weakname_flag,FALSE,FALSE}, /* SGI only */
+{0,0,0,0}
 };
 
 
 /*  If a section is not in group N but is in group 1
-    then turn off its flag. Since groups are never
+    then turn off its flag. Since sections are never
     in both (various DW_DLE*DUPLICATE errors
-    if libdwarf tries to set in both), just look in group one.
+    if libdwarf tries to set in both), just look in
+    group one.
 
-    FIXME: It would be good if, for a wholly missing section related
-    to a flag that the flag got turned off.  */
+    See groups_restore_subsidiary_flags() just below.
+
+    FIXME: It would be good if, for a wholly missing
+    section related to a flag, that the flag got turned
+    off.  */
 static void
 turn_off_subsidiary_flags(UNUSEDARG Dwarf_Debug dbg)
 {
@@ -108,6 +118,10 @@ turn_off_subsidiary_flags(UNUSEDARG Dwarf_Debug dbg)
 
             for( ; glftab[k].secname; ++k ) {
                 if (!strcmp(oursec,glftab[k].secname)) {
+                    if(!glftab[k].origset) {
+                        glftab[k].origset = TRUE;
+                        glftab[k].origflag = *(glftab[k].flag);
+                    }
                     *(glftab[k].flag) = FALSE;
                 }
             }
@@ -115,28 +129,61 @@ turn_off_subsidiary_flags(UNUSEDARG Dwarf_Debug dbg)
     }
 }
 
+/*  Restoring original condition in the glftab array
+    and in the global flags it points to.
+    So that when processing an archive one can restore
+    the user-chosen flags and print subsequent object
+    groups correctly.
+    New October 16, 2017.  */
+
+void
+groups_restore_subsidiary_flags(void)
+{
+    unsigned k = 0;
+
+    /*  Duplicative but harmless free. */
+    freeall_groups_tables();
+
+    for( ; glftab[k].secname; ++k ) {
+        if(glftab[k].origset) {
+            *(glftab[k].flag) = glftab[k].origflag;
+            glftab[k].origset = FALSE;
+            glftab[k].origflag = FALSE;
+        }
+    }
+}
+
+
 /*  NEW May 2017.
     Has a side effect of using the local table set up by
     print_section_groups_data() and then frees the
-    table data. */
+    table data.
+
+    For multi-object archive reading: main() calls
+    groups_restore_subsidiary_flags() at the end
+    of each object file to restore
+    the original flags that turn_off_subsidiary_flags()
+    changed.
+    */
 void
 update_section_flags_per_groups(Dwarf_Debug dbg)
 {
     if (!sec_names) {
         /*  The tables are absent. Internal logic
             error here somewhere. */
+        freeall_groups_tables();
         return;
     }
     if (selected_group == DW_GROUPNUMBER_BASE) {
-        freeall();
+        freeall_groups_tables();
         return;
     }
     if (selected_group == DW_GROUPNUMBER_DWO) {
-        freeall();
+        freeall_groups_tables();
         return;
     }
     turn_off_subsidiary_flags(dbg);
-    freeall();
+    freeall_groups_tables();
 }
 
 /*  NEW May 2017.

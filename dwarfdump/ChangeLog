@@ -1,3 +1,9 @@
+2017-10-16 David Anderson
+    * dwarfdump.c,globals.h,print_ranges.c,print_section_groups.c: a large group
+      of per-object totals/values were not free()d or zeroed for each member
+      of an archive.  Some of the zero/free() was moved from the end of main()
+      to be done per-object and some were simply never completely reset before.
+      These problems were only visible when running dwarfdump on an archive.
 2017-10-15 David Anderson
     * dwarfdump.c: Added a call to destruct_abbrev_array()
       per object so the archive case can work properly with -ka.

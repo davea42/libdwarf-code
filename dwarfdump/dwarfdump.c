@@ -397,6 +397,15 @@ is_it_known_elf_header(Elf *elf)
     return 0;
 }
 
+static void
+clean_up_compilers_detected(void)
+{
+    memset(&compilers_detected[0],0,
+        COMPILER_TABLE_MAX*sizeof(Compiler));
+    compilers_detected_count = 0;
+}
+
+
 /*
    Iterate through dwarf and print all info.
 */
@@ -533,30 +542,6 @@ main(int argc, char *argv[])
         }
     }
 
-    /*  If we are checking .debug_line, .debug_ranges, .debug_aranges,
-        or .debug_loc build the tables containing
-        the pairs LowPC and HighPC. It is safer  (and not
-        expensive) to build all
-        of these at once so mistakes in options do not lead
-        to coredumps (like -ka -p did once). */
-    if (glflags.gf_check_decl_file || glflags.gf_check_ranges ||
-        glflags.gf_check_locations ||
-        glflags.gf_do_check_dwarf ||
-        glflags.gf_check_self_references) {
-        pRangesInfo = AllocateBucketGroup(KIND_RANGES_INFO);
-        pLinkonceInfo = AllocateBucketGroup(KIND_SECTIONS_INFO);
-        pVisitedInfo = AllocateBucketGroup(KIND_VISITED_INFO);
-    }
-
-    /* Create the unique error table */
-    if (glflags.gf_print_unique_errors) {
-        allocate_unique_errors_table();
-    }
-
-    /* Allocate range array to be used by all CUs */
-    if (glflags.gf_check_ranges) {
-        allocate_range_array_info();
-    }
 
     while ((elf = elf_begin(f, cmd, arf)) != 0) {
         int isknown = is_it_known_elf_header(elf);
@@ -589,9 +574,58 @@ main(int argc, char *argv[])
         }
         memset(&section_high_offsets_global,0,
             sizeof(section_high_offsets_global));
+            /*  If we are checking .debug_line, .debug_ranges, .debug_aranges,
+            or .debug_loc build the tables containing
+            the pairs LowPC and HighPC. It is safer  (and not
+            expensive) to build all
+            of these at once so mistakes in options do not lead
+            to coredumps (like -ka -p did once). */
+        if (glflags.gf_check_decl_file || glflags.gf_check_ranges ||
+            glflags.gf_check_locations ||
+            glflags.gf_do_check_dwarf ||
+            glflags.gf_check_self_references) {
+            pRangesInfo = AllocateBucketGroup(KIND_RANGES_INFO);
+            pLinkonceInfo = AllocateBucketGroup(KIND_SECTIONS_INFO);
+            pVisitedInfo = AllocateBucketGroup(KIND_VISITED_INFO);
+        }
+
+        /* Create the unique error table */
+        if (glflags.gf_print_unique_errors) {
+            allocate_unique_errors_table();
+        }
+
+        /* Allocate range array to be used by all CUs */
+        if (glflags.gf_check_ranges) {
+            allocate_range_array_info();
+        }
         process_one_file(elf,elftied,
             file_name, tied_file_name,
             archive, &g_config_file_data);
+        /* Now cleanup object-specific allocations. */
+        /* Trivial malloc space cleanup. */
+        clean_up_syms_malloc_data();
+        if (pRangesInfo) {
+            ReleaseBucketGroup(pRangesInfo);
+            pRangesInfo = 0;
+        }
+        if (pLinkonceInfo) {
+            ReleaseBucketGroup(pLinkonceInfo);
+            pLinkonceInfo = 0;
+        }
+        if (pVisitedInfo) {
+            ReleaseBucketGroup(pVisitedInfo);
+            pVisitedInfo = 0;
+        }
+        /* Release range array to be used by all CUs */
+        if (glflags.gf_check_ranges) {
+            release_range_array_info();
+        }
+        /* Delete the unique error set */
+        if (glflags.gf_print_unique_errors) {
+            release_unique_errors_table();
+        }
+        clean_up_compilers_detected();
+        destruct_abbrev_array();
         cmd = elf_next(elf);
         elf_end(elf);
         archmemnum += 1;
@@ -601,34 +635,9 @@ main(int argc, char *argv[])
         elf_end(elftied);
         elftied = 0;
     }
-    /* Trivial malloc space cleanup. */
-    clean_up_syms_malloc_data();
 
-    if (pRangesInfo) {
-        ReleaseBucketGroup(pRangesInfo);
-        pRangesInfo = 0;
-    }
-
-    if (pLinkonceInfo) {
-        ReleaseBucketGroup(pLinkonceInfo);
-        pLinkonceInfo = 0;
-    }
-
-    if (pVisitedInfo) {
-        ReleaseBucketGroup(pVisitedInfo);
-        pVisitedInfo = 0;
-    }
-
-    /* Release range array to be used by all CUs */
-    if (glflags.gf_check_ranges) {
-        release_range_array_info();
-    }
-
-    /* Delete the unique error set */
-    if (glflags.gf_print_unique_errors) {
-        release_unique_errors_table();
-    }
-
+    /*  These cleanups only necessary once all
+        objects processed. */
 #ifdef HAVE_REGEX
     if (search_regex_text) {
         regfree(&search_re);
@@ -643,7 +652,6 @@ main(int argc, char *argv[])
     esb_destructor(&cu_name);
     sanitized_string_destructor();
     ranges_esb_string_destructor();
-    destruct_abbrev_array();
     esb_destructor(&newprogname);
 
     close_a_file(f);
@@ -1412,12 +1420,14 @@ process_one_file(Elf * elf,Elf *elftied,
         }
         dbgtied = 0;
     }
+    groups_restore_subsidiary_flags();
     dres = dwarf_finish(dbg, &onef_err);
     if (dres != DW_DLV_OK) {
         print_error(dbg, "dwarf_finish", dres, onef_err);
         dbg = 0;
     }
     printf("\n");
+    clean_up_syms_malloc_data();
     destruct_abbrev_array();
     helpertree_clear_statistics(&helpertree_offsets_base_info);
     helpertree_clear_statistics(&helpertree_offsets_base_types);
@@ -3127,6 +3137,9 @@ void release_unique_errors_table(void)
         free(set_unique_errors[index]);
     }
     free(set_unique_errors);
+    set_unique_errors = 0;
+    set_unique_errors_entries = 0;
+    set_unique_errors_size = 0;
 }
 
 /*  Returns TRUE if the text is already in the set; otherwise FALSE */

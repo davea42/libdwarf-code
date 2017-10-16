@@ -194,8 +194,8 @@ print_abbrevs(Dwarf_Debug dbg)
 
 static Dwarf_Unsigned *abbrev_array = NULL;
 /*  Size of the array, the same as the abbrev tag
-    count of the CU with the most of them.  
-    Be careful as abbrev_array[abbrev_array_size] 
+    count of the CU with the most of them.
+    Be careful as abbrev_array[abbrev_array_size]
     is outside the high bound. */
 static Dwarf_Unsigned abbrev_array_size = 0;
 #define ABBREV_ARRAY_INITIAL_SIZE 64

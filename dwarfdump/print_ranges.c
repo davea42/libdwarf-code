@@ -270,6 +270,9 @@ release_range_array_info()
 {
     if (range_array) {
         free(range_array);
+        range_array = 0;
+        range_array_size = 0;
+        range_array_count = 0;
     }
 }
 
