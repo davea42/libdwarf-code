@@ -267,6 +267,10 @@ _dwarf_get_size_of_val(Dwarf_Debug dbg,
         *size_out = 8;
         return DW_DLV_OK;
 
+    case DW_FORM_data16:
+        *size_out = 16;
+        return DW_DLV_OK;
+
     case DW_FORM_string: {
         int res = 0;
         res = _dwarf_check_string_valid(dbg,val_ptr,

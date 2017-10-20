@@ -117,6 +117,16 @@ typedef unsigned long long  Dwarf_Addr;     /* target memory address */
 
 typedef void*        Dwarf_Ptr;          /* host machine pointer */
 
+/*  DWARF5: a container for a DW_FORM_data16 data item.
+    We have no integer types suitable so this special
+    struct is used instead.  It is up to consumers/producers
+    to deal with the contents.
+    New October 18, 2017 .  */
+typedef struct Dwarf_Form_Data16_s {
+    unsigned char fd_data[16];
+} Dwarf_Form_Data16;
+
+
 
 /* Used for signatures where ever they appear.
    It is not a string, it
@@ -1934,6 +1944,10 @@ int dwarf_formflag(Dwarf_Attribute /*attr*/,
     Dwarf_Bool *     /*returned_bool*/,
     Dwarf_Error*     /*error*/);
 
+int dwarf_formdata16(Dwarf_Attribute /*attr*/,
+    Dwarf_Form_Data16  * /*returned_val*/,
+    Dwarf_Error*     /*error*/);
+
 int dwarf_formudata(Dwarf_Attribute /*attr*/,
     Dwarf_Unsigned  * /*returned_val*/,
     Dwarf_Error*     /*error*/);
@@ -3584,6 +3598,16 @@ Dwarf_P_Attribute dwarf_add_AT_flag(Dwarf_P_Debug /*dbg*/,
 Dwarf_P_Attribute dwarf_add_AT_producer(Dwarf_P_Die /*ownerdie*/,
     char*           /*producer_string*/,
     Dwarf_Error*    /*error*/);
+
+/*  October 2017 for DW_FORM_data16. Usable with any attribute,
+    though it should only be in limited use. DWARF5 only.
+    Returns DW_DLV_OK on success, DW_DLV_ERROR on failure.
+    Returns the new attribute pointer through *return_attr. */
+int dwarf_add_AT_data16(Dwarf_P_Die /*ownerdie*/,
+    Dwarf_Half    /*attrnum*/,
+    Dwarf_Form_Data16 * /* pointstovalue */,
+    Dwarf_P_Attribute * /* return_attr */,
+    Dwarf_Error * /*error*/);
 
 /* August 2013 sleb creator. For any attribute. */
 Dwarf_P_Attribute dwarf_add_AT_any_value_sleb(Dwarf_P_Die /*ownerdie*/,

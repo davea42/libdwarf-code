@@ -68,6 +68,7 @@ static Dwarf_Error error;
 
 typedef std::map<std::string,unsigned> pathToUnsignedType;
 
+
 // The first special transformation is converting DW_AT_high_pc
 // from FORM_addr to an offset and we choose FORM_uleb
 // The attrs ref passed in is (sometimes) used to generate
@@ -141,8 +142,9 @@ specialAttrTransformations(Dwarf_P_Debug dbg,
         Dwarf_Half attrform = attr.getFinalForm();
         Dwarf_Form_Class formclass = attr.getFormClass();
         if(attrnum == DW_AT_high_pc) {
-            // Here we want to creat a constant form.
-            // We will assign a FORM of DW_FORM_uleb
+            // Here we want to create a constant form
+            // to test that a const high_pc works.
+            // This is new in DWARF5.
             IRAttr attr2(attrnum,
                 DW_FORM_udata,
                 DW_FORM_udata);
@@ -171,6 +173,90 @@ specialAttrTransformations(Dwarf_P_Debug dbg,
     attrs = revisedattrs;
 }
 
+/* Create a data16 data item out of nothing... */
+static void
+addData16DataItem(Dwarf_P_Debug dbg,
+    IRepresentation & Irep,
+    Dwarf_P_Die ourdie,
+    IRDie &inDie,
+    IRDie &inParent,
+    list<IRAttr>& attrs,
+    unsigned level)
+{
+    static bool alreadydone = false;
+
+    if (alreadydone) {
+        return;
+    }
+    if(!cmdoptions.adddata16) {
+        // No transformation of this sort requested.
+        return;
+    }
+    if (level < 2) {
+        return;
+    }
+
+    Dwarf_Half dietag = inDie.getTag();
+    Dwarf_Half parenttag = inParent.getTag();
+    if(dietag != DW_TAG_variable || parenttag != DW_TAG_subprogram) {
+        return;
+    }
+    list<IRAttr> revisedattrs;
+    for (list<IRAttr>::iterator it = attrs.begin();
+        it != attrs.end();
+        it++) {
+        IRAttr & attr = *it;
+        Dwarf_Half attrnum = attr.getAttrNum();
+        Dwarf_Half attrform = attr.getFinalForm();
+        Dwarf_Form_Class formclass = attr.getFormClass();
+        if(attrnum == DW_AT_name){
+            continue;
+        }
+        if(attrnum == DW_AT_const_value){
+            continue;
+        }
+        revisedattrs.push_back(attr);
+    }
+
+
+    //    add two new attrs.
+    Dwarf_Half attrnum = DW_AT_name;
+    const char *attrname("vardata16");
+    IRAttr attr2(attrnum,
+        DW_FORM_string,
+        DW_FORM_string);
+    attr2.setFormClass(DW_FORM_CLASS_STRING);
+    IRFormString *f = new IRFormString();
+    f->setInitialForm(DW_FORM_string);
+    f->setFinalForm(DW_FORM_string);
+    f->setString(attrname);
+    attr2.setFormData(f);
+    revisedattrs.push_back(attr2);
+
+
+    Dwarf_Form_Data16  data16 = {
+        0x01,0x08,
+        0x02,0x07,
+        0x03,0x06,
+        0x04,0x05,
+        0x05,0x04,
+        0x06,0x03,
+        0x07,0x02,
+        0x08,0x01
+    };
+    IRAttr attrc(DW_AT_const_value, DW_FORM_data16,DW_FORM_data16);
+    attrc.setFormClass(DW_FORM_CLASS_CONSTANT);
+    IRFormConstant *fc = new IRFormConstant(
+        DW_FORM_data16,
+        DW_FORM_data16,
+        DW_FORM_CLASS_CONSTANT,
+        data16);
+    attrc.setFormData(fc);
+    revisedattrs.push_back(attrc);
+    attrs = revisedattrs;
+    alreadydone = true;
+}
+
 
 // Here we emit all the DIEs for a single Die and
 // its children.  When level == 0 the inDie is
@@ -179,7 +265,9 @@ static Dwarf_P_Die
 HandleOneDieAndChildren(Dwarf_P_Debug dbg,
     IRepresentation &Irep,
     IRCUdata &cu,
-    IRDie    &inDie, unsigned level)
+    IRDie    &inDie,
+    IRDie    &inParent,
+    unsigned level)
 {
     list<IRDie>& children = inDie.getChildren();
     // We create our target DIE first so we can link
@@ -197,7 +285,8 @@ HandleOneDieAndChildren(Dwarf_P_Debug dbg,
         it != children.end();
         it++) {
         IRDie & ch = *it;
-        Dwarf_P_Die chp = HandleOneDieAndChildren(dbg,Irep,cu,ch,level+1);
+        Dwarf_P_Die chp = HandleOneDieAndChildren(dbg,Irep,
+            cu,ch,inDie,level+1);
         Dwarf_P_Die res = 0;
         if(lastch) {
             // Link to right of earlier sibling.
@@ -217,6 +306,7 @@ HandleOneDieAndChildren(Dwarf_P_Debug dbg,
 
     // Now any special transformations to the attrs list.
     specialAttrTransformations(dbg,Irep,ourdie,inDie,attrs,level);
+    addData16DataItem(dbg,Irep,ourdie,inDie,inParent,attrs,level);
 
     // Now we add attributes (content), if any, to the
     // output die 'ourdie'.
@@ -354,7 +444,7 @@ emitOneCU( Dwarf_P_Debug dbg,IRepresentation & Irep, IRCUdata&cu,
 
     IRDie & basedie =  cu.baseDie();
     Dwarf_P_Die cudie = HandleOneDieAndChildren(dbg,Irep,
-        cu,basedie,0);
+        cu,basedie,basedie,0);
 
     // Add base die to debug, this is the CU die.
     // This is not a good design as DWARF3/4 have

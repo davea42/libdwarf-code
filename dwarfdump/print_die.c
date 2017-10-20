@@ -92,12 +92,17 @@ static int _dwarf_print_one_expr_op(Dwarf_Debug dbg,
     Dwarf_Loc* expr,
     Dwarf_Locdesc_c exprc,
     int index, Dwarf_Addr baseaddr,struct esb_s *string_out);
-static int formxdata_print_value(Dwarf_Debug dbg,Dwarf_Die die,Dwarf_Attribute attrib,
+static int formxdata_print_value(Dwarf_Debug dbg,
+    Dwarf_Die die,Dwarf_Attribute attrib,
+    Dwarf_Half theform,
     struct esb_s *esbp, Dwarf_Error * err, Dwarf_Bool hex_format);
 static void bracket_hex(const char *s1, Dwarf_Unsigned v,
     const char *s2, struct esb_s * esbp);
 static void formx_unsigned(Dwarf_Unsigned u, struct esb_s *esbp,
     Dwarf_Bool hex_format);
+static void formx_data16(Dwarf_Form_Data16 * u, struct esb_s *esbp,
+    Dwarf_Bool hex_format);
+
 static void formx_signed(Dwarf_Signed s, struct esb_s *esbp);
 
 static int pd_dwarf_names_print_on_error = 1;
@@ -2704,6 +2709,7 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
                 /*  Makes no sense to look at type of our DIE
                     to determine how to print the constant. */
                 wres = formxdata_print_value(dbg,NULL,attrib,
+                    theform,
                     &classconstantstr,
                     &paerr, FALSE);
                 show_form_itself(show_form_used,verbose, theform,
@@ -4178,6 +4184,29 @@ get_location_list(Dwarf_Debug dbg,
     }
 }
 
+/*  New October 2017.
+    The 'decimal' representation here is questionable.
+    */
+static void
+formx_data16(Dwarf_Form_Data16 * u,
+    struct esb_s *esbp, Dwarf_Bool hex_format)
+{
+    char small_buf[20];
+
+    unsigned i = 0;
+    for( ; i < sizeof(Dwarf_Form_Data16); ++i){
+        esb_append(esbp, "0x");
+        if (hex_format) {
+            snprintf(small_buf, sizeof(small_buf),"%02x ",
+                u->fd_data[i]);
+        } else {
+            snprintf(small_buf, sizeof(small_buf),"%02d ",
+                u->fd_data[i]);
+        }
+        esb_append(esbp, small_buf);
+    }
+}
+
 static void
 formx_unsigned(Dwarf_Unsigned u, struct esb_s *esbp, Dwarf_Bool hex_format)
 {
@@ -4190,6 +4219,7 @@ formx_unsigned(Dwarf_Unsigned u, struct esb_s *esbp, Dwarf_Bool hex_format)
     }
     esb_append(esbp, small_buf);
 }
+
 static void
 formx_signed(Dwarf_Signed s, struct esb_s *esbp)
 {
@@ -4373,6 +4403,7 @@ static int
 formxdata_print_value(Dwarf_Debug dbg,
     Dwarf_Die die,
     Dwarf_Attribute attrib,
+    Dwarf_Half theform,
     struct esb_s *esbp,
     Dwarf_Error * pverr, Dwarf_Bool hex_format)
 {
@@ -4382,6 +4413,21 @@ formxdata_print_value(Dwarf_Debug dbg,
     int ures = 0;
     Dwarf_Error serr = 0;
 
+    if (theform == DW_FORM_data16) {
+        Dwarf_Form_Data16 v16;
+        ures = dwarf_formdata16(attrib,
+            &v16,pverr);
+        if (ures == DW_DLV_OK) {
+            formx_data16(&v16,
+                esbp,hex_format);
+            return DW_DLV_OK;
+        } else if (ures == DW_DLV_NO_ENTRY) {
+            /* impossible */
+            return ures;
+        } else {
+            return ures;
+        }
+    }
     ures = dwarf_formudata(attrib, &tempud, pverr);
     sres = dwarf_formsdata(attrib, &tempsd, &serr);
     if (ures == DW_DLV_OK) {
@@ -4563,7 +4609,7 @@ check_attributes_encoding(Dwarf_Half attr,Dwarf_Half theform,
         attributes_encoding_factor[DW_FORM_data2] = 2; /* index 0x05 */
         attributes_encoding_factor[DW_FORM_data4] = 4; /* index 0x06 */
         attributes_encoding_factor[DW_FORM_data8] = 8; /* index 0x07 */
-        attributes_encoding_factor[DW_FORM_data16] = 16;/* index 0x07 */
+        attributes_encoding_factor[DW_FORM_data16] = 16;/* index 0x1e */
         attributes_encoding_do_init = FALSE;
     }
 
@@ -4581,10 +4627,10 @@ check_attributes_encoding(Dwarf_Half attr,Dwarf_Half theform,
 
     /*  Only checks those attributes that have DW_FORM_dataX:
         DW_FORM_data1, DW_FORM_data2, DW_FORM_data4 and DW_FORM_data8
-        DWARF5 adds DW_FORM_data16 */
+        DWARF5 adds DW_FORM_data16, but we ignore data16 here
+        as it makes no sense as a uleb. */
     if (theform == DW_FORM_data1 || theform == DW_FORM_data2 ||
-        theform == DW_FORM_data4 || theform == DW_FORM_data8 ||
-        theform == DW_FORM_data16) {
+        theform == DW_FORM_data4 || theform == DW_FORM_data8 ) {
         int res = 0;
         /*  Size of the byte stream buffer that needs to be
             memcpy-ed. */
@@ -5032,7 +5078,7 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
     case DW_FORM_data2:
     case DW_FORM_data4:
     case DW_FORM_data8:
-    case DW_FORM_data16: /* FIXME: DWARF5: needs testing. */
+    case DW_FORM_data16:
         {
         Dwarf_Half attr = 0;
         fres = dwarf_whatattr(attrib, &attr, &err);
@@ -5137,7 +5183,8 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
                 break;
             case DW_AT_const_value:
                 /* Do not use hexadecimal format */
-                wres = formxdata_print_value(dbg,die,attrib,esbp, &err, FALSE);
+                wres = formxdata_print_value(dbg,die,attrib,
+                    theform,esbp, &err, FALSE);
                 if (wres == DW_DLV_OK){
                     /* String appended already. */
                 } else if (wres == DW_DLV_NO_ENTRY) {
@@ -5182,7 +5229,8 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
                 /* Do not use hexadecimal format except for
                     DW_AT_ranges. */
                 wres = formxdata_print_value(dbg,
-                    tdie,attrib,esbp, &err, chex);
+                    tdie,attrib,
+                    theform,esbp, &err, chex);
                 if (wres == DW_DLV_OK) {
                     /* String appended already. */
                 } else if (wres == DW_DLV_NO_ENTRY) {

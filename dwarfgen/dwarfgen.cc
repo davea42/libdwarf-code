@@ -126,7 +126,8 @@ static strtabdata secstrtab;
 CmdOptions cmdoptions = {
     false, //transformHighpcToConst
     DW_FORM_string, // defaultInfoStringForm
-    false, //showrelocdetails 
+    false, //showrelocdetails
+    false, //adddata16
 };
 
 // loff_t is signed for some reason (strange) but we make offsets unsigned.
@@ -387,9 +388,25 @@ main(int argc, char **argv)
         const char * isa_name = "x86";
         const char *dwarf_version = "V2";
         int endian =  DW_DLC_TARGET_LITTLEENDIAN;
+        int longindex;
+        static struct dwoption longopts[] = {
+            {"adddata16",dwno_argument,0,0},
+            {0,0,0,0},
+        };
 
-        while((opt=dwgetopt(argc,argv,"o:t:c:hsrv:p:f:")) != -1) {
+        while((opt=dwgetopt_long(argc,argv,
+            "o:t:c:hsrv:p:f:",
+            longopts,&longindex)) != -1) {
             switch(opt) {
+            case 0:
+                if(longindex == 0) {
+                    cmdoptions.adddata16 = true;
+                } else {
+                    cerr << "dwarfgen: Invalid lnogoption input " <<
+                        longindex << endl;
+                    exit(1);
+                }
+                break;
             case 'c':
                 // At present we can only create a single
                 // cu in the output of the libdwarf producer.

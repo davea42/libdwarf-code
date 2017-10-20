@@ -470,6 +470,7 @@ dwarf_add_AT_unsigned_const(Dwarf_P_Debug dbg,
     case DW_AT_start_scope:
     case DW_AT_stride_size: /* DW_AT_bit_stride  is DWARF3 name */
     case DW_AT_count:
+    case DW_AT_high_pc:     /* DWARF5: allowing const udata high_pc */
     case DW_AT_associated:
     case DW_AT_allocated:
     case DW_AT_upper_bound:
@@ -1032,22 +1033,24 @@ dwarf_add_AT_const_value_string(Dwarf_P_Die ownerdie,
     char *string_value, Dwarf_Error * error)
 {
     Dwarf_P_Attribute new_attr = 0;
+    Dwarf_P_Debug dbg = 0;
     int res = 0;
 
     if (ownerdie == NULL) {
-        _dwarf_p_error(NULL, error, DW_DLE_DIE_NULL);
+        _dwarf_p_error(dbg, error, DW_DLE_DIE_NULL);
         return (Dwarf_P_Attribute) DW_DLV_BADADDR;
     }
+    dbg = ownerdie->di_dbg;
 
     new_attr = (Dwarf_P_Attribute)
-        _dwarf_p_get_alloc(ownerdie->di_dbg, sizeof(struct Dwarf_P_Attribute_s));
+        _dwarf_p_get_alloc(dbg, sizeof(struct Dwarf_P_Attribute_s));
     if (new_attr == NULL) {
-        _dwarf_p_error(NULL, error, DW_DLE_ALLOC_FAIL);
+        _dwarf_p_error(dbg, error, DW_DLE_ALLOC_FAIL);
         return ((Dwarf_P_Attribute) DW_DLV_BADADDR);
     }
 
     new_attr->ar_attribute = DW_AT_const_value;
-    res = _dwarf_pro_set_string_attr(new_attr,ownerdie->di_dbg,
+    res = _dwarf_pro_set_string_attr(new_attr,dbg,
         string_value,error);
     if (res != DW_DLV_OK) {
         return (Dwarf_P_Attribute) DW_DLV_BADADDR;
@@ -1065,15 +1068,18 @@ dwarf_add_AT_with_ref_sig8(Dwarf_P_Die ownerdie,
     Dwarf_Error * error)
 {
     Dwarf_P_Attribute new_attr = 0;
+    Dwarf_P_Debug dbg = 0;
+
     if (ownerdie == NULL) {
-        _dwarf_p_error(NULL, error, DW_DLE_DIE_NULL);
+        _dwarf_p_error(dbg, error, DW_DLE_DIE_NULL);
         return ((Dwarf_P_Attribute) DW_DLV_BADADDR);
     }
+    dbg = ownerdie->di_dbg;
 
     new_attr = (Dwarf_P_Attribute)
-        _dwarf_p_get_alloc(ownerdie->di_dbg, sizeof(struct Dwarf_P_Attribute_s));
+        _dwarf_p_get_alloc(dbg, sizeof(struct Dwarf_P_Attribute_s));
     if (new_attr == NULL) {
-        _dwarf_p_error(NULL, error, DW_DLE_ALLOC_FAIL);
+        _dwarf_p_error(dbg, error, DW_DLE_ALLOC_FAIL);
         return ((Dwarf_P_Attribute) DW_DLV_BADADDR);
     }
     new_attr->ar_attribute = attrnum;
@@ -1082,9 +1088,9 @@ dwarf_add_AT_with_ref_sig8(Dwarf_P_Die ownerdie,
     new_attr->ar_next = 0;
 
     new_attr->ar_data =
-        (char *) _dwarf_p_get_alloc(ownerdie->di_dbg, sizeof(Dwarf_Sig8));
+        (char *) _dwarf_p_get_alloc(dbg, sizeof(Dwarf_Sig8));
     if (new_attr->ar_data == NULL) {
-        _dwarf_p_error(NULL, error, DW_DLE_ALLOC_FAIL);
+        _dwarf_p_error(dbg, error, DW_DLE_ALLOC_FAIL);
         return ((Dwarf_P_Attribute) DW_DLV_BADADDR);
     }
     memcpy(new_attr->ar_data,sig8_in,sizeof(Dwarf_Sig8));
@@ -1101,22 +1107,23 @@ dwarf_add_AT_producer(Dwarf_P_Die ownerdie,
     char *producer_string, Dwarf_Error * error)
 {
     Dwarf_P_Attribute new_attr = 0;
+    Dwarf_P_Debug dbg = 0;
     int res = 0;
 
     if (ownerdie == NULL) {
-        _dwarf_p_error(NULL, error, DW_DLE_DIE_NULL);
+        _dwarf_p_error(dbg, error, DW_DLE_DIE_NULL);
         return ((Dwarf_P_Attribute) DW_DLV_BADADDR);
     }
-
+    dbg = ownerdie->di_dbg;
     new_attr = (Dwarf_P_Attribute)
-        _dwarf_p_get_alloc(ownerdie->di_dbg, sizeof(struct Dwarf_P_Attribute_s));
+        _dwarf_p_get_alloc(dbg, sizeof(struct Dwarf_P_Attribute_s));
     if (new_attr == NULL) {
-        _dwarf_p_error(NULL, error, DW_DLE_ALLOC_FAIL);
+        _dwarf_p_error(dbg, error, DW_DLE_ALLOC_FAIL);
         return ((Dwarf_P_Attribute) DW_DLV_BADADDR);
     }
 
     new_attr->ar_attribute = DW_AT_producer;
-    res = _dwarf_pro_set_string_attr(new_attr,ownerdie->di_dbg,
+    res = _dwarf_pro_set_string_attr(new_attr,dbg,
         producer_string,error);
     if (res != DW_DLV_OK) {
         return (Dwarf_P_Attribute) DW_DLV_BADADDR;
@@ -1147,18 +1154,20 @@ dwarf_add_AT_any_value_sleb(Dwarf_P_Die ownerdie,
 {
     Dwarf_P_Attribute new_attr = 0;
     int leb_size = 0;
+    Dwarf_P_Debug dbg = 0;
     char encode_buffer[ENCODE_SPACE_NEEDED];
     int res = 0;
 
     if (ownerdie == NULL) {
-        _dwarf_p_error(NULL, error, DW_DLE_DIE_NULL);
+        _dwarf_p_error(dbg, error, DW_DLE_DIE_NULL);
         return ((Dwarf_P_Attribute) DW_DLV_BADADDR);
     }
+    dbg = ownerdie->di_dbg;
 
     new_attr = (Dwarf_P_Attribute)
-        _dwarf_p_get_alloc(ownerdie->di_dbg, sizeof(struct Dwarf_P_Attribute_s));
+        _dwarf_p_get_alloc(dbg, sizeof(struct Dwarf_P_Attribute_s));
     if (new_attr == NULL) {
-        _dwarf_p_error(NULL, error, DW_DLE_ALLOC_FAIL);
+        _dwarf_p_error(dbg, error, DW_DLE_ALLOC_FAIL);
         return ((Dwarf_P_Attribute) DW_DLV_BADADDR);
     }
 
@@ -1172,13 +1181,13 @@ dwarf_add_AT_any_value_sleb(Dwarf_P_Die ownerdie,
         encode_buffer,
         sizeof(encode_buffer));
     if (res != DW_DLV_OK) {
-        _dwarf_p_error(NULL, error, DW_DLE_ALLOC_FAIL);
+        _dwarf_p_error(dbg, error, DW_DLE_ALLOC_FAIL);
         return ((Dwarf_P_Attribute) DW_DLV_BADADDR);
     }
     new_attr->ar_data = (char *)
-        _dwarf_p_get_alloc(ownerdie->di_dbg, leb_size);
+        _dwarf_p_get_alloc(dbg, leb_size);
     if (new_attr->ar_data == NULL) {
-        _dwarf_p_error(NULL, error, DW_DLE_ALLOC_FAIL);
+        _dwarf_p_error(dbg, error, DW_DLE_ALLOC_FAIL);
         return ((Dwarf_P_Attribute) DW_DLV_BADADDR);
     }
     memcpy(new_attr->ar_data, encode_buffer, leb_size);
@@ -1201,6 +1210,45 @@ dwarf_add_AT_const_value_unsignedint(Dwarf_P_Die ownerdie,
         error);
 }
 
+int
+dwarf_add_AT_data16(Dwarf_P_Die ownerdie,
+    Dwarf_Half attrnum,
+    Dwarf_Form_Data16 * ptr_to_val,
+    Dwarf_P_Attribute * attr_return,
+    Dwarf_Error * error)
+{
+    Dwarf_P_Attribute new_attr;
+    int val_size = sizeof(Dwarf_Form_Data16);
+    Dwarf_P_Debug dbg = 0;
+
+    if (ownerdie == NULL) {
+        _dwarf_p_error(dbg, error, DW_DLE_DIE_NULL);
+        return DW_DLV_ERROR;
+    }
+    dbg = ownerdie->di_dbg;
+    new_attr = (Dwarf_P_Attribute)
+        _dwarf_p_get_alloc(dbg, sizeof(struct Dwarf_P_Attribute_s));
+    if (new_attr == NULL) {
+        _dwarf_p_error(dbg, error, DW_DLE_ALLOC_FAIL);
+        return DW_DLV_ERROR;
+    }
+    new_attr->ar_attribute = attrnum;
+    new_attr->ar_attribute_form = DW_FORM_data16;
+    new_attr->ar_rel_type = R_MIPS_NONE;
+    new_attr->ar_reloc_len = 0; /* unused for R_MIPS_NONE */
+    new_attr->ar_next = 0;
+    new_attr->ar_data = (char *)
+        _dwarf_p_get_alloc(dbg, val_size);
+    if (new_attr->ar_data == NULL) {
+        _dwarf_p_error(dbg, error, DW_DLE_ALLOC_FAIL);
+        return DW_DLV_ERROR;
+    }
+    memcpy(new_attr->ar_data, ptr_to_val->fd_data, val_size);
+    new_attr->ar_nbytes = val_size;
+    _dwarf_pro_add_at_to_die(ownerdie, new_attr);
+    *attr_return = new_attr;
+    return DW_DLV_OK;
+}
 
 Dwarf_P_Attribute
 dwarf_add_AT_any_value_uleb(Dwarf_P_Die ownerdie,
@@ -1210,16 +1258,17 @@ dwarf_add_AT_any_value_uleb(Dwarf_P_Die ownerdie,
 {
     Dwarf_P_Attribute new_attr;
     int leb_size;
+    Dwarf_P_Debug dbg = 0;
     char encode_buffer[ENCODE_SPACE_NEEDED];
     int res;
 
     if (ownerdie == NULL) {
-        _dwarf_p_error(NULL, error, DW_DLE_DIE_NULL);
+        _dwarf_p_error(dbg, error, DW_DLE_DIE_NULL);
         return ((Dwarf_P_Attribute) DW_DLV_BADADDR);
     }
 
     new_attr = (Dwarf_P_Attribute)
-        _dwarf_p_get_alloc(ownerdie->di_dbg, sizeof(struct Dwarf_P_Attribute_s));
+        _dwarf_p_get_alloc(dbg, sizeof(struct Dwarf_P_Attribute_s));
     if (new_attr == NULL) {
         _dwarf_p_error(NULL, error, DW_DLE_ALLOC_FAIL);
         return ((Dwarf_P_Attribute) DW_DLV_BADADDR);
@@ -1235,13 +1284,13 @@ dwarf_add_AT_any_value_uleb(Dwarf_P_Die ownerdie,
         encode_buffer,
         sizeof(encode_buffer));
     if (res != DW_DLV_OK) {
-        _dwarf_p_error(NULL, error, DW_DLE_ALLOC_FAIL);
+        _dwarf_p_error(dbg, error, DW_DLE_ALLOC_FAIL);
         return ((Dwarf_P_Attribute) DW_DLV_BADADDR);
     }
     new_attr->ar_data = (char *)
-        _dwarf_p_get_alloc(ownerdie->di_dbg, leb_size);
+        _dwarf_p_get_alloc(dbg, leb_size);
     if (new_attr->ar_data == NULL) {
-        _dwarf_p_error(NULL, error, DW_DLE_ALLOC_FAIL);
+        _dwarf_p_error(dbg, error, DW_DLE_ALLOC_FAIL);
         return ((Dwarf_P_Attribute) DW_DLV_BADADDR);
     }
     memcpy(new_attr->ar_data, encode_buffer, leb_size);

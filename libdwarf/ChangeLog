@@ -1,3 +1,10 @@
+2017-10-20 David Anderson 
+    * dwarf_form.c: New function: dwarf_formdata16() reads
+      DW_FORM_data16.
+    * dwarf_query.c,dwarf_util.c: Added support for DW_FORM_data16.
+    * libdwarf.h.in: Declarations for new functions dwarf_add_AT_data16()
+      and dwarf_formdata16() and new datatype Dwarf_Form_Data16 (since there
+      is no numerical type we can use at present).
 2017-10-15 David Anderson 
     * dwgetopt.c: Removing unused local variable 'found'.
 2017-10-15 David Anderson 

@@ -1699,6 +1699,7 @@ dwarf_get_form_class(
     case  DW_FORM_block2: return DW_FORM_CLASS_BLOCK;
     case  DW_FORM_block4: return DW_FORM_CLASS_BLOCK;
 
+    case  DW_FORM_data16:  return DW_FORM_CLASS_CONSTANT;
     case  DW_FORM_data1:  return DW_FORM_CLASS_CONSTANT;
     case  DW_FORM_sdata:  return DW_FORM_CLASS_CONSTANT;
     case  DW_FORM_udata:  return DW_FORM_CLASS_CONSTANT;

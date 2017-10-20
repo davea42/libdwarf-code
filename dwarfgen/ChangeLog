@@ -1,3 +1,6 @@
+2017-10-20  David Anderson
+     * createirepformfrombinary.cc,irepattrtodbg.cc, irepform.h,
+       ireptodbg.cc: Added support for DW_FORM_data16.
 2017-10-15  David Anderson
      * dwarfgen.cc,general.h,ireptodbg.cc: Moved global 
        command-line options

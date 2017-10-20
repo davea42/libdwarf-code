@@ -247,12 +247,24 @@ IRFormConstant::IRFormConstant(IRFormInterface * interface)
     signedness_=SIGN_NOT_SET;
     uval_=0;
     sval_=0;
+    Dwarf_Error error = 0;
 
 
+    if (finalform == DW_FORM_data16) {
+        Dwarf_Form_Data16 data16;
+        int rd16 = dwarf_formdata16(interface->attr_,&data16,
+            &error);
+        if (rd16 != DW_DLV_OK) {
+            cerr << "Unable to read constant data16  value. "
+                "Impossible error.\n" << endl;
+            exit(1);
+        }
+        setValues16(&data16, SIGN_UNKNOWN);
+        return;
+    }
     enum Signedness oursign = SIGN_NOT_SET;
     Dwarf_Unsigned uval = 0;
     Dwarf_Signed sval = 0;
-    Dwarf_Error error = 0;
     int ress = dwarf_formsdata(interface->attr_, &sval,&error);
     int resu = dwarf_formudata(interface->attr_, &uval,&error);
     if(resu == DW_DLV_OK ) {

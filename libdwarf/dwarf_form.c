@@ -768,6 +768,53 @@ dwarf_get_debug_str_index(Dwarf_Attribute attr,
 }
 
 
+int
+dwarf_formdata16(Dwarf_Attribute attr,
+    Dwarf_Form_Data16  * returned_val,
+    Dwarf_Error*     error)
+{
+    Dwarf_Half attrform = 0;
+    Dwarf_CU_Context cu_context = 0;
+    Dwarf_Debug dbg = 0;
+    int res  = 0;
+    Dwarf_Small *section_end = 0;
+    Dwarf_Unsigned section_length = 0;
+    Dwarf_Small *section_start = 0;
+    Dwarf_Small *data16end = 0;
+
+    if (attr == NULL) {
+        _dwarf_error(NULL, error, DW_DLE_ATTR_NULL);
+        return DW_DLV_ERROR;
+    }
+    if (returned_val == NULL) {
+        _dwarf_error(NULL, error, DW_DLE_ATTR_NULL);
+        return DW_DLV_ERROR;
+    }
+    attrform = attr->ar_attribute_form;
+    if (attrform != DW_FORM_data16) {
+        _dwarf_error(dbg, error, DW_DLE_ATTR_FORM_BAD);
+        return DW_DLV_ERROR;
+    }
+    res  = get_attr_dbg(&dbg,&cu_context,attr,error);
+    if (res != DW_DLV_OK) {
+        return res;
+    }
+    section_start = _dwarf_calculate_info_section_start_ptr(
+        cu_context,&section_length);
+    section_end = section_start + section_length;
+    data16end = attr->ar_debug_ptr + sizeof(Dwarf_Form_Data16);
+    if (attr->ar_debug_ptr < section_start ||
+        section_end < data16end) {
+        _dwarf_error(dbg, error,DW_DLE_ATTR_OUTSIDE_SECTION);
+        return DW_DLV_ERROR;
+    }
+    memcpy(returned_val, attr->ar_debug_ptr,
+        sizeof(Dwarf_Form_Data16));
+    return DW_DLV_OK;
+}
+
+
+
 
 int
 dwarf_formaddr(Dwarf_Attribute attr,
@@ -824,6 +871,7 @@ dwarf_formflag(Dwarf_Attribute attr,
     Dwarf_Bool * ret_bool, Dwarf_Error * error)
 {
     Dwarf_CU_Context cu_context = 0;
+    Dwarf_Debug dbg = 0;
 
     if (attr == NULL) {
         _dwarf_error(NULL, error, DW_DLE_ATTR_NULL);
@@ -835,8 +883,9 @@ dwarf_formflag(Dwarf_Attribute attr,
         _dwarf_error(NULL, error, DW_DLE_ATTR_NO_CU_CONTEXT);
         return (DW_DLV_ERROR);
     }
+    dbg = cu_context->cc_dbg;
 
-    if (cu_context->cc_dbg == NULL) {
+    if (dbg == NULL) {
         _dwarf_error(NULL, error, DW_DLE_ATTR_DBG_NULL);
         return (DW_DLV_ERROR);
     }
@@ -851,7 +900,7 @@ dwarf_formflag(Dwarf_Attribute attr,
         *ret_bool = *(Dwarf_Small *)(attr->ar_debug_ptr);
         return (DW_DLV_OK);
     }
-    _dwarf_error(cu_context->cc_dbg, error, DW_DLE_ATTR_FORM_BAD);
+    _dwarf_error(dbg, error, DW_DLE_ATTR_FORM_BAD);
     return (DW_DLV_ERROR);
 }
 

@@ -101,7 +101,7 @@ AddAttrToDie(Dwarf_P_Debug dbg,
 
     switch(formclass) {
     case DW_FORM_CLASS_UNKNOWN:
-        cerr << "ERROR Impossible DW_FORM_CLASS_UNKNOWN, attrnum "
+        cerr << "ERROR AddAttrToDie: Impossible DW_FORM_CLASS_UNKNOWN, attrnum "
             <<attrnum << endl;
         break;
     case DW_FORM_CLASS_ADDRESS:
@@ -147,6 +147,20 @@ AddAttrToDie(Dwarf_P_Debug dbg,
         IRFormConstant::Signedness sn = f->getSignedness();
         Dwarf_Unsigned uval = 0;
         Dwarf_P_Attribute a = 0;
+
+        if (form == DW_FORM_data16) {
+            Dwarf_Form_Data16 val = f->getData16Val();
+            int res = dwarf_add_AT_data16(outdie,
+                attrnum,&val,&a,&error);
+            if (res != DW_DLV_OK) {
+                cerr <<
+                "ERROR AddAttrToDie: "
+                "dwarf_add_AT_ data16 class constant fails,"
+                " attrnum " << attrnum <<
+                " res "<<res << endl;
+            }
+            break;
+        }
         if (sn == IRFormConstant::SIGNED) {
             Dwarf_Signed sval = f->getSignedVal();
             if (form == DW_FORM_sdata) {
@@ -174,7 +188,8 @@ AddAttrToDie(Dwarf_P_Debug dbg,
             }
         }
         if( reinterpret_cast<myintfromp>(a) == DW_DLV_BADADDR) {
-            cerr << "ERROR dwarf_add_AT_ class constant fails, attrnum "
+            cerr << "ERROR dwarf_add_AT_ class constant fails,"
+                " BADATTR on attrnum "
                 <<attrnum << endl;
 
         }

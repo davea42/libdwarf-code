@@ -1,3 +1,5 @@
+2017-10-20 David Anderson
+    * print_die.c: Now handles DW_FORM_data16.
 2017-10-16 David Anderson
     * dwarfdump.c,globals.h,print_ranges.c,print_section_groups.c: a large group
       of per-object totals/values were not free()d or zeroed for each member

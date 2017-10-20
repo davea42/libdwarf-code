@@ -37,6 +37,7 @@ extern struct CmdOptions {
     bool transformHighpcToConst;
     int  defaultInfoStringForm;
     bool showrelocdetails;
+    bool adddata16;
 } cmdoptions;
 
 template <typename T >

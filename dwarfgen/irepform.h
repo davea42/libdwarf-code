@@ -190,7 +190,7 @@ public:
         formclass_(DW_FORM_CLASS_CONSTANT),
         signedness_(SIGN_NOT_SET),
         uval_(0), sval_(0)
-        {}
+        { memset(&data16_,0,sizeof(data16_)); };
     IRFormConstant(IRFormInterface *);
     ~IRFormConstant() {};
     IRFormConstant(Dwarf_Half finalform,
@@ -206,6 +206,18 @@ public:
         uval_ = uval;
         sval_ = sval;
     };
+    IRFormConstant(Dwarf_Half finalform,
+        Dwarf_Half initialform,
+        enum Dwarf_Form_Class formclass,
+        Dwarf_Form_Data16& data16) {
+        finalform_ = finalform;
+        initialform_ = initialform;
+        formclass_ = DW_FORM_CLASS_CONSTANT;
+        signedness_ = SIGN_UNKNOWN;
+        uval_ = 0;
+        sval_ = 0;
+        data16_ = data16;
+    };
     IRFormConstant & operator=(const IRFormConstant &r) {
         if(this == &r) return *this;
         finalform_ = r.finalform_;
@@ -214,6 +226,7 @@ public:
         signedness_ = r.signedness_;
         uval_ = r.uval_;
         sval_ = r.sval_;
+        data16_ = r.data16_;
         return *this;
     };
     IRFormConstant(const IRFormConstant &r) {
@@ -223,6 +236,7 @@ public:
         signedness_ = r.signedness_;
         uval_ = r.uval_;
         sval_ = r.sval_;
+        data16_ = r.data16_;
     }
     virtual IRFormConstant * clone() const {
         return new IRFormConstant(*this);
@@ -235,6 +249,7 @@ public:
     Signedness getSignedness() const {return signedness_; };
     Dwarf_Signed getSignedVal() const {return sval_;};
     Dwarf_Unsigned getUnsignedVal() const {return uval_;};
+    Dwarf_Form_Data16 getData16Val() const {return data16_;};
 private:
     Dwarf_Half finalform_;
     // In most cases directform == indirect form.
@@ -248,7 +263,14 @@ private:
     // Both uval_ and sval_ are always set to the same bits.
     Dwarf_Unsigned uval_;
     Dwarf_Signed sval_;
+    Dwarf_Form_Data16 data16_;
 
+    void setValues16(Dwarf_Form_Data16 *v,
+        enum Signedness s) {
+        uval_ = 0;
+        sval_ = 0;
+        data16_ = *v;
+    }
     void setValues(Dwarf_Signed sval, Dwarf_Unsigned uval,
         enum Signedness s) {
         signedness_ = s;
