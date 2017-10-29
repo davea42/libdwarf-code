@@ -1,3 +1,5 @@
+2017-10-29 David Anderson 
+    * dwarf.h: There was a typo in DW_FORM_strx4.
 2017-10-20 David Anderson 
     * dwarf_form.c: New function: dwarf_formdata16() reads
       DW_FORM_data16.

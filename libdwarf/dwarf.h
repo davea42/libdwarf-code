@@ -245,7 +245,7 @@ extern "C" {
 #define DW_FORM_strx1                   0x25 /* DWARF5 */
 #define DW_FORM_strx2                   0x26 /* DWARF5 */
 #define DW_FORM_strx3                   0x27 /* DWARF5 */
-#define DW_FORM_strx4                   0x29 /* DWARF5 */
+#define DW_FORM_strx4                   0x28 /* DWARF5 */
 #define DW_FORM_addrx1                  0x29 /* DWARF5 */
 #define DW_FORM_addrx2                  0x2a /* DWARF5 */
 #define DW_FORM_addrx3                  0x2b /* DWARF5 */
