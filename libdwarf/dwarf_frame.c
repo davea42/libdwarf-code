@@ -460,8 +460,11 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
 
         case DW_CFA_advance_loc1:
             {
-                fp_offset = adv_loc = *(Dwarf_Small *) instr_ptr;
+                READ_UNALIGNED_CK(dbg, adv_loc, Dwarf_Unsigned,
+                    instr_ptr, sizeof(Dwarf_Small),
+                    error,final_instr_ptr);
                 instr_ptr += sizeof(Dwarf_Small);
+                fp_offset = adv_loc;
 
                 if (need_augmentation) {
                     SIMPLE_ERROR_RETURN(DW_DLE_DF_NO_CIE_AUGMENTATION);

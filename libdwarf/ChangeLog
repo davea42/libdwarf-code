@@ -1,3 +1,8 @@
+2017-11-01 David Anderson 
+    * dwarf_frame.c(_dwarf_exec_frame_instr):
+      An invalid frame section with 
+      a DW_CFA_advance_loc1 could result in dereferencing
+      an invalid pointer.  Now fixed.
 2017-10-29 David Anderson 
     * dwarf.h: There was a typo in DW_FORM_strx4.
 2017-10-20 David Anderson 

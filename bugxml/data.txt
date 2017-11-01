@@ -1,3 +1,26 @@
+
+id: DW201711-001
+cve:
+datereported: 2017-11-01
+reportedby: Agostino Sarubbo
+vulnerability: Incorrect frame section could crash caller
+product: libdwarf
+description: A fuzzed object with a
+  resulting invalid frame section
+  with DW_CFA_advance_loc1 implying
+  data off-the-end-of-section
+  will dereference an invalid pointer.
+  Corrected code checks now (all other cases
+  were already checked).
+datefixed: 2017-11-02
+references: regressiontests/sarubbo-8/1.crashes.bin
+gitfixid: 
+tarrelease:
+endrec: DW201711-001
+
+
+
+
 id: DW201709-001
 cve:
 datereported: 2017-09-19
