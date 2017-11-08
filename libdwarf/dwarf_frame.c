@@ -1132,6 +1132,10 @@ _dwarf_get_return_address_reg(Dwarf_Small *frame_ptr,
     Dwarf_Word leb128_length = 0;
 
     if (version == 1) {
+        if (frame_ptr >= section_end) {
+            _dwarf_error(NULL, error, DW_DLE_DF_FRAME_DECODING_ERROR);
+            return DW_DLV_ERROR;
+        }
         *size = 1;
         uvalue = *(unsigned char *) frame_ptr;
         *return_address_register = uvalue;

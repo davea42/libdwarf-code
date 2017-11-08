@@ -192,8 +192,16 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
         return (DW_DLV_ERROR);
     }
     if (version == DW_LINE_VERSION5) {
+        if (line_ptr >= line_ptr_end) {
+            _dwarf_error(dbg, err, DW_DLE_DEBUG_LINE_LENGTH_BAD);
+            return (DW_DLV_ERROR);
+        }
         line_context->lc_address_size = *(unsigned char *) line_ptr;
         line_ptr = line_ptr + sizeof(Dwarf_Small);
+        if (line_ptr >= line_ptr_end) {
+            _dwarf_error(dbg, err, DW_DLE_DEBUG_LINE_LENGTH_BAD);
+            return (DW_DLV_ERROR);
+        }
         line_context->lc_segment_selector_size =
             *(unsigned char *) line_ptr;
         line_ptr = line_ptr + sizeof(Dwarf_Small);
@@ -209,12 +217,10 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
     line_context->lc_prologue_length = prologue_length;
     line_ptr += local_length_size;
     line_context->lc_line_prologue_start = line_ptr;
-    if(line_ptr >= line_ptr_end) {
-        _dwarf_error(dbg, err, DW_DLE_LINE_OFFSET_BAD);
-        return DW_DLV_ERROR;
+    if (line_ptr >= line_ptr_end) {
+        _dwarf_error(dbg, err, DW_DLE_DEBUG_LINE_LENGTH_BAD);
+        return (DW_DLV_ERROR);
     }
-
-
     line_context->lc_minimum_instruction_length =
         *(unsigned char *) line_ptr;
     line_ptr = line_ptr + sizeof(Dwarf_Small);
@@ -222,20 +228,31 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
     if (version == DW_LINE_VERSION4 ||
         version == DW_LINE_VERSION5 ||
         version == EXPERIMENTAL_LINE_TABLES_VERSION) {
+        if (line_ptr >= line_ptr_end) {
+            _dwarf_error(dbg, err, DW_DLE_DEBUG_LINE_LENGTH_BAD);
+            return (DW_DLV_ERROR);
+        }
         line_context->lc_maximum_ops_per_instruction =
             *(unsigned char *) line_ptr;
         line_ptr = line_ptr + sizeof(Dwarf_Small);
     }
+    if (line_ptr >= line_ptr_end) {
+        _dwarf_error(dbg, err, DW_DLE_DEBUG_LINE_LENGTH_BAD);
+        return (DW_DLV_ERROR);
+    }
     line_context->lc_default_is_stmt = *(unsigned char *) line_ptr;
     line_ptr = line_ptr + sizeof(Dwarf_Small);
 
+    if (line_ptr >= line_ptr_end) {
+        _dwarf_error(dbg, err, DW_DLE_DEBUG_LINE_LENGTH_BAD);
+        return (DW_DLV_ERROR);
+    }
     line_context->lc_line_base = *(signed char *) line_ptr;
     line_ptr = line_ptr + sizeof(Dwarf_Sbyte);
     if(line_ptr >= line_ptr_end) {
         _dwarf_error(dbg, err, DW_DLE_LINE_OFFSET_BAD);
         return DW_DLV_ERROR;
     }
-
     line_context->lc_line_range = *(unsigned char *) line_ptr;
     if (!line_context->lc_line_range) {
         _dwarf_error(dbg, err, DW_DLE_DEBUG_LINE_RANGE_ZERO);
@@ -462,6 +479,10 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
         /* Skip trailing nul byte */
         ++line_ptr;
     } else if (version == EXPERIMENTAL_LINE_TABLES_VERSION) {
+        if (line_ptr >= line_ptr_end) {
+            _dwarf_error(dbg, err, DW_DLE_LINE_NUMBER_HEADER_ERROR);
+            return (DW_DLV_ERROR);
+        }
         if (*line_ptr != 0) {
             _dwarf_error(dbg, err, DW_DLE_LINE_NUMBER_HEADER_ERROR);
             return (DW_DLV_ERROR);
@@ -484,6 +505,10 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
         unsigned i = 0;
 
         for ( ; i < 5; ++i) {
+            if (line_ptr >= line_ptr_end) {
+                _dwarf_error(dbg, err, DW_DLE_LINE_NUMBER_HEADER_ERROR);
+                return (DW_DLV_ERROR);
+            }
             if (*line_ptr != expbytes[i]) {
                 _dwarf_error(dbg, err, DW_DLE_LINE_NUMBER_HEADER_ERROR);
                 return (DW_DLV_ERROR);
@@ -513,6 +538,11 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
         Dwarf_Unsigned directories_count = 0;
         Dwarf_Unsigned i = 0;
         Dwarf_Unsigned j = 0;
+
+        if (line_ptr >= line_ptr_end) {
+            _dwarf_error(dbg, err, DW_DLE_LINE_NUMBER_HEADER_ERROR);
+            return (DW_DLV_ERROR);
+        }
         directory_format_count = *(unsigned char *) line_ptr;
         line_ptr = line_ptr + sizeof(Dwarf_Small);
         if (directory_format_count > 0) {
@@ -606,6 +636,10 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
         Dwarf_Unsigned i = 0;
         Dwarf_Unsigned j = 0;
 
+        if (line_ptr >= line_ptr_end) {
+            _dwarf_error(dbg, err, DW_DLE_LINE_NUMBER_HEADER_ERROR);
+            return (DW_DLV_ERROR);
+        }
         filename_format_count = *(unsigned char *) line_ptr;
         line_ptr = line_ptr + sizeof(Dwarf_Small);
         filename_entry_types = malloc(sizeof(Dwarf_Unsigned) *
@@ -1586,12 +1620,6 @@ read_line_table_program(Dwarf_Debug dbg,
                         return res;
                     }
                     line_ptr = line_ptr + strlen((char *) line_ptr) + 1;
-                    if (line_ptr >= line_ptr_end) {
-                        _dwarf_error(dbg, error,
-                            DW_DLE_LINE_TABLE_BAD);
-                        return DW_DLV_ERROR;
-                    }
-
                     DECODE_LEB128_UWORD_CK(line_ptr,value,
                         dbg,error,line_ptr_end);
                     cur_file_entry->fi_dir_index = (Dwarf_Sword)value;

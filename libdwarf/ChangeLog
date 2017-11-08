@@ -1,3 +1,15 @@
+2017-11-08 David Anderson 
+    * dwarf_die_deliv.c(_dwarf_die_next_info_ptr): Dereferencing
+      a pointer not fully checked could lead to segv in libdwarf.
+    * dwarf_frame.c(_dwarf_get_return_address_reg): Dereferencing
+      a pointer not fully checked could lead to segv in libdwarf.
+    * dwarf_frame2.c(dwarf_create_cie_from_after_start): Dereferencing
+      a pointer not fully checked could lead to segv in libdwarf.
+    * dwarf_line_table_reader_common.c(_dwarf_read_line_table_header):
+      DW201711-002 fix. Dereferencing
+      pointers not fully checked could lead to segv in libdwarf.
+    * dwarf_query.c(_dwarf_die_attr_unsigned_constant): Dereferencing
+      a pointer not fully checked could lead to segv in libdwarf.
 2017-11-01 David Anderson 
     * dwarf_frame.c(_dwarf_exec_frame_instr):
       An invalid frame section with 

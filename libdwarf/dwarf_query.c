@@ -1426,7 +1426,10 @@ _dwarf_die_attr_unsigned_constant(Dwarf_Die die,
     }
     switch (attr_form) {
     case DW_FORM_data1:
-        *return_val = (*(Dwarf_Small *) info_ptr);
+        READ_UNALIGNED_CK(dbg, ret_value, Dwarf_Unsigned,
+            info_ptr, sizeof(Dwarf_Small),
+            error,die_info_end);
+        *return_val = ret_value;
         return (DW_DLV_OK);
 
     case DW_FORM_data2:

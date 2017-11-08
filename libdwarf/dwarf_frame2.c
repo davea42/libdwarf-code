@@ -567,14 +567,18 @@ dwarf_create_cie_from_after_start(Dwarf_Debug dbg,
     unsigned char gnu_lsda_encoding = 0;
     unsigned char gnu_fde_begin_encoding = 0;
     int res = 0;
+    Dwarf_Small version = 0;
 
 
     enum Dwarf_augmentation_type augt = aug_unknown;
 
-
     /*  This is a CIE, Common Information Entry: See the dwarf spec,
         section 6.4.1 */
-    Dwarf_Small version = *(Dwarf_Small *) frame_ptr;
+    if (frame_ptr >= section_ptr_end) {
+        _dwarf_error(dbg, error, DW_DLE_DEBUG_FRAME_LENGTH_BAD);
+        return DW_DLV_ERROR;
+    }
+    version = *(Dwarf_Small *) frame_ptr;
 
     if ((frame_ptr+2) >= section_ptr_end) {
         _dwarf_error(dbg, error, DW_DLE_DEBUG_FRAME_LENGTH_BAD);
@@ -648,7 +652,7 @@ dwarf_create_cie_from_after_start(Dwarf_Debug dbg,
             }
         }
 
-        /* Not a great test. FIXME */
+        /* Not a great test. But the DECODE* do checking so ok.  */
         if ((frame_ptr+2)  >= section_ptr_end) {
             _dwarf_error(dbg, error, DW_DLE_DEBUG_FRAME_LENGTH_BAD);
             return DW_DLV_ERROR;
