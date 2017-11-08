@@ -11,9 +11,9 @@ description: An carefully crafted object with a
   dereferencing outside the line table from
   libdwarf/dwarf_line_table_reader_common.c . 
   A segmentation-fault/core-dump is possible.
-datefixed:
-references: 
-gitfixid: 
+datefixed: 2017-11-08
+references: regressiontests/sarubbo-9/3.crashes.bin
+gitfixid: a1644f4dde7dd5990537ff7ad22a9e94b8723186
 tarrelease:
 endrec: DW201711-002
 
@@ -29,8 +29,7 @@ description: A carefully crafted object with a
   data off-the-end-of-section
   will dereference an invalid pointer.
   A segmentation fault and core dump is possible.
-  Corrected code checks now (all other cases
-  were already checked).
+  Corrected code checks now.
 datefixed: 2017-11-02
 references: regressiontests/sarubbo-8/1.crashes.bin
 gitfixid: 44349d7991e44dd3751794f76537cabcf65ee28d
