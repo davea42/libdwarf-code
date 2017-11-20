@@ -1,3 +1,7 @@
+2017-11-20 David Anderson
+    * configure.in: Just do TRY_COMPILE instead of TRY_RUN
+      to avoid issues in a cross-compile.
+    * configure: Regenerated.
 2017-10-20 David Anderson
     * print_die.c: Now handles DW_FORM_data16.
 2017-10-16 David Anderson
