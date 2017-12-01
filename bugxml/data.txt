@@ -13,9 +13,9 @@ description: A carefully crafted object with an
   caller reference off the end of the frame 
   section.  
   A segmentation-fault/core-dump is possible.
-datefixed: 
-references: 
-gitfixid: 
+datefixed: 2017-12-01
+references: sarubbo-10/1.crashes.bin
+gitfixid: 329ea8e56bc9550260cae6e2e9756bfbe7e2ff6d 
 tarrelease:
 endrec: DW201712-001
 
