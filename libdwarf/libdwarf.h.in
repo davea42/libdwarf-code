@@ -1336,9 +1336,10 @@ struct Dwarf_Obj_Access_Interface_s {
 #define DW_DLE_GROUP_INTERNAL_ERROR            390
 #define DW_DLE_GROUP_LOAD_ERROR                391
 #define DW_DLE_GROUP_LOAD_READ_ERROR           392
+#define DW_DLE_AUG_DATA_LENGTH_BAD             393
 
     /* LAST MUST EQUAL LAST ERROR NUMBER */
-#define DW_DLE_LAST        392
+#define DW_DLE_LAST        393
 
 #define DW_DLE_LO_USER     0x10000
 

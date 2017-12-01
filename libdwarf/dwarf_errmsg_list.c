@@ -471,6 +471,7 @@ const char *_dwarf_errmsgs[] = {
     "DW_DLE_GROUP_INTERNAL_ERROR(390) libdwarf data corruption",
     "DW_DLE_GROUP_LOAD_ERROR(391) corrupt data?",
     "DW_DLE_GROUP_LOAD_READ_ERROR(392)",
+    "DW_DLE_AUG_DATA_LENGTH_BAD(393) Data does not fit in section",
 };
 
 #ifdef TESTING

@@ -739,7 +739,7 @@ dwarf_create_cie_from_after_start(Dwarf_Debug dbg,
         cie_aug_data_len = adlen;
         cie_aug_data = frame_ptr;
         if (frame_ptr + adlen > section_ptr_end) {
-            _dwarf_error(dbg, error, DW_DLE_DEBUG_FRAME_LENGTH_BAD);
+            _dwarf_error(dbg, error, DW_DLE_AUG_DATA_LENGTH_BAD);
             return DW_DLV_ERROR;
         }
         resz = gnu_aug_encodings(dbg,
@@ -910,6 +910,10 @@ dwarf_create_fde_from_after_start(Dwarf_Debug dbg,
             fde_aug_data_len = adlen;
             fde_aug_data = frame_ptr;
             frame_ptr += adlen;
+            if (frame_ptr + adlen > section_ptr_end) {
+                _dwarf_error(dbg, error, DW_DLE_AUG_DATA_LENGTH_BAD);
+                return DW_DLV_ERROR;
+            }
         }
 
     } else {

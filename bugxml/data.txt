@@ -1,4 +1,26 @@
 
+id: DW201712-001
+cve:
+datereported: 2017-12-01
+reportedby: Agostino Sarubbo
+vulnerability: Incorrect frame section could let caller crash
+product: libdwarf
+description: A carefully crafted object with an
+  invalid frame section
+  can result in passing back data to a caller of 
+  dwarf_get_fde_augmentation_data()
+  is erroneous and will result in the 
+  caller reference off the end of the frame 
+  section.  
+  A segmentation-fault/core-dump is possible.
+datefixed: 
+references: 
+gitfixid: 
+tarrelease:
+endrec: DW201712-001
+
+
+
 id: DW201711-002
 cve:
 datereported: 2017-11-08
