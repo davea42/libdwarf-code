@@ -1,3 +1,8 @@
+2017-12-01 David Anderson 
+    * dwarf_frame2.c: dwarf_get_fde_augmentation_data() could
+      return data that would result in segfaulting in a caller.
+      Now the length is checked and if in error
+      then DW_DLE_AUG_DATA_LENGTH_BAD is set as the error.
 2017-11-08 David Anderson 
     * dwarf_die_deliv.c(_dwarf_die_next_info_ptr): Dereferencing
       a pointer not fully checked could lead to segv in libdwarf.
