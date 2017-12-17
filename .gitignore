@@ -1,3 +1,6 @@
 *.[oa]
 junk*
 *~
+build/
+cscope.files
+TAGS

@@ -1,3 +1,5 @@
+2017-12-17  David Anderson
+     * dwarfgen.1: The options to dwarfgen are now documented.
 2017-10-20  David Anderson
      * createirepformfrombinary.cc,irepattrtodbg.cc, irepform.h,
        ireptodbg.cc: Added support for DW_FORM_data16.

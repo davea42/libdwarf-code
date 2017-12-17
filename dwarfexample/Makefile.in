@@ -36,7 +36,8 @@ dwfsanitize =   @dwfsanitize@
 dwfzlib =       @dwfzlib@
 LIBS =		@LIBS@ -L../libdwarf -ldwarf -lelf $(dwfzlib)
 INCLUDES =	-I. -I$(srcdir) -I../libdwarf -I$(srcdir)/../libdwarf
-CFLAGS =	$(PREINCS) @CFLAGS@ $(INCLUDES) $(dwfwall) $(dwfsanitize) -DCONFPREFIX=${libdir} $(POSTINCS)
+CFLAGS =	$(PREINCS) @CPPFLAGS@  @CFLAGS@ $(INCLUDES) \
+                $(dwfwall) $(dwfsanitize) -DCONFPREFIX=${libdir} $(POSTINCS)
 LDFLAGS =	$(PRELIBS) @LDFLAGS@ $(dwfsanitize) $(LIBS) $(POSTLIBS)
 #VG =            valgrind --leak-check=full
 VG =
