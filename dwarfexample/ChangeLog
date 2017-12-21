@@ -1,3 +1,6 @@
+2017-12-21  David Anderson
+     * simplereader.c: A DIE was not getting deallocated, now
+       it is deallocated, avoiding a memory leak. 
 2017-12-17  David Anderson
      * Makefile.in: Add CPPFLAGS, helpful for one user build,
        harmless to others. 

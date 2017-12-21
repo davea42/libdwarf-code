@@ -646,9 +646,13 @@ get_die_and_siblings(Dwarf_Debug dbg, Dwarf_Die in_die,
             exit(1);
         }
         if(res == DW_DLV_OK) {
-            get_die_and_siblings(dbg,child,is_info,in_level+1,sf);
+            get_die_and_siblings(dbg,child,is_info,
+                in_level+1,sf);
+            /* No longer need 'child' die. */
+            dwarf_dealloc(dbg,child,DW_DLA_DIE);
+            child = 0;
         }
-        /* res == DW_DLV_NO_ENTRY */
+        /* res == DW_DLV_NO_ENTRY or DW_DLV_OK */
         res = dwarf_siblingof_b(dbg,cur_die,is_info,&sib_die,errp);
         if(res == DW_DLV_ERROR) {
             char *em = errp?dwarf_errmsg(error):"Error siblingof_b";
@@ -663,6 +667,7 @@ get_die_and_siblings(Dwarf_Debug dbg, Dwarf_Die in_die,
         /* res == DW_DLV_OK */
         if(cur_die != in_die) {
             dwarf_dealloc(dbg,cur_die,DW_DLA_DIE);
+            cur_die = 0;
         }
         cur_die = sib_die;
         print_die_data(dbg,cur_die,in_level,sf);
