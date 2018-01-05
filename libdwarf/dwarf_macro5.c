@@ -1,5 +1,5 @@
 /*
-  Copyright (C) 2015-2016 David Anderson. All Rights Reserved.
+  Copyright (C) 2015-2018 David Anderson. All Rights Reserved.
 
   This program is free software; you can redistribute it and/or modify it
   under the terms of version 2.1 of the GNU Lesser General Public License
@@ -319,10 +319,6 @@ _dwarf_get_macro_ops_count_internal(Dwarf_Macro_Context macro_context,
     while (mdata < section_end) {
         Dwarf_Small op = 0;
 
-        if (mdata >= section_end)  {
-            _dwarf_error(dbg, error, DW_DLE_MACRO_PAST_END);
-            return DW_DLV_ERROR;
-        }
         op = *mdata;
         ++opcount;
         ++mdata;
