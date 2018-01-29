@@ -1,7 +1,7 @@
 /*
   Copyright (C) 2000,2002,2004,2005 Silicon Graphics, Inc. All Rights Reserved.
   Portions Copyright 2007-2010 Sun Microsystems, Inc. All rights reserved.
-  Portions Copyright 2008-2017 David Anderson. All rights reserved.
+  Portions Copyright 2008-2018 David Anderson. All rights reserved.
   Portions Copyright 2010-2012 SN Systems Ltd. All rights reserved.
 
   This program is free software; you can redistribute it and/or modify it
@@ -422,9 +422,13 @@ dwarf_formref(Dwarf_Attribute attr,
             It is used for precompiled headers.
             The valid condition will be: 'offset == maximumoffset'. */
         Dwarf_Half tag = 0;
-        if (DW_DLV_OK != dwarf_tag(attr->ar_die,&tag,error)) {
-            _dwarf_error(dbg, error, DW_DLE_DIE_BAD);
-            return (DW_DLV_ERROR);
+        int tres = dwarf_tag(attr->ar_die,&tag,error);
+        if (tres != DW_DLV_OK) {
+            if (tres == DW_DLV_NO_ENTRY) {
+                _dwarf_error(dbg, error, DW_DLE_NO_TAG_FOR_DIE);
+                return DW_DLV_ERROR;
+            }
+            return DW_DLV_ERROR;
         }
 
         if (DW_TAG_compile_unit != tag &&
@@ -433,7 +437,7 @@ dwarf_formref(Dwarf_Attribute attr,
             _dwarf_error(dbg, error, DW_DLE_ATTR_FORM_OFFSET_BAD);
             /* Return the incorrect offset for better error reporting */
             *ret_offset = (offset);
-            return (DW_DLV_ERROR);
+            return DW_DLV_ERROR;
         }
     }
     *ret_offset = (offset);

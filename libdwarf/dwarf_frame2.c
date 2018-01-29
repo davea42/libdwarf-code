@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2000-2006 Silicon Graphics, Inc.  All Rights Reserved.
-  Portions Copyright (C) 2007-2012 David Anderson. All Rights Reserved.
+  Portions Copyright (C) 2007-2018 David Anderson. All Rights Reserved.
   Portions Copyright (C) 2010-2012 SN Systems Ltd. All Rights Reserved.
 
   This program is free software; you can redistribute it and/or modify it
@@ -800,6 +800,11 @@ dwarf_create_cie_from_after_start(Dwarf_Debug dbg,
         (Dwarf_Small) code_alignment_factor;
     new_cie->ci_return_address_register = return_address_register;
     new_cie->ci_cie_start = prefix->cf_start_addr;
+
+    if ( frame_ptr > section_ptr_end) {
+        _dwarf_error(dbg, error, DW_DLE_DF_FRAME_DECODING_ERROR);
+        return (DW_DLV_ERROR);
+    }
     new_cie->ci_cie_instr_start = frame_ptr;
     new_cie->ci_dbg = dbg;
     new_cie->ci_augmentation_type = augt;
@@ -816,7 +821,12 @@ dwarf_create_cie_from_after_start(Dwarf_Debug dbg,
     new_cie->ci_section_ptr = prefix->cf_section_ptr;
     new_cie->ci_section_end = section_ptr_end;
     new_cie->ci_cie_end = new_cie->ci_cie_start + new_cie->ci_length +
-        new_cie->ci_length_size+ new_cie->ci_extension_size,
+        new_cie->ci_length_size+ new_cie->ci_extension_size;
+    if ( new_cie->ci_cie_end > section_ptr_end) {
+        _dwarf_error(dbg, error, DW_DLE_DF_FRAME_DECODING_ERROR);
+        return (DW_DLV_ERROR);
+    }
+
     /* The Following new in DWARF4 */
     new_cie->ci_address_size = address_size;
     new_cie->ci_segment_size = segment_size;
@@ -997,6 +1007,11 @@ dwarf_create_fde_from_after_start(Dwarf_Debug dbg,
         _dwarf_error(dbg, error, DW_DLE_FRAME_AUGMENTATION_UNKNOWN);
         return DW_DLV_ERROR;
     }                           /* End switch on augmentation type */
+    if ( frame_ptr > section_ptr_end) {
+        _dwarf_error(dbg, error, DW_DLE_DF_FRAME_DECODING_ERROR);
+        return (DW_DLV_ERROR);
+    }
+
     new_fde = (Dwarf_Fde) _dwarf_get_alloc(dbg, DW_DLA_FDE, 1);
     if (new_fde == NULL) {
         _dwarf_error(dbg, error, DW_DLE_ALLOC_FAIL);
@@ -1014,10 +1029,16 @@ dwarf_create_fde_from_after_start(Dwarf_Debug dbg,
     new_fde->fd_initial_loc_pos = initloc;
     new_fde->fd_address_range = address_range;
     new_fde->fd_fde_start = prefix->cf_start_addr;
+
     new_fde->fd_fde_instr_start = frame_ptr;
     new_fde->fd_fde_end = prefix->cf_start_addr +
         prefix->cf_length +  prefix->cf_local_length_size  +
         prefix->cf_local_extension_size;
+    if ( new_fde->fd_fde_end > section_ptr_end) {
+        _dwarf_error(dbg, error, DW_DLE_DF_FRAME_DECODING_ERROR);
+        return (DW_DLV_ERROR);
+    }
+
     new_fde->fd_dbg = dbg;
     new_fde->fd_offset_into_exception_tables =
         offset_into_exception_tables;

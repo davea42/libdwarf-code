@@ -1,7 +1,7 @@
 /*
 
   Copyright (C) 2000-2004 Silicon Graphics, Inc.  All Rights Reserved.
-  Portions Copyright (C) 2007-2017 David Anderson. All Rights Reserved.
+  Portions Copyright (C) 2007-2018 David Anderson. All Rights Reserved.
   Portions Copyright 2012 SN Systems Ltd. All rights reserved.
 
 
@@ -171,8 +171,11 @@ dwarf_get_aranges_list(Dwarf_Debug dbg,
         /*  It is not an error if the sizes differ.
             Unusual, but not an error. */
         arange_ptr = arange_ptr + sizeof(Dwarf_Small);
-        if (arange_ptr > end_this_arange) {
+
+        /*  The following deref means we better check the pointer for off-end. */
+        if (arange_ptr >= end_this_arange) {
             _dwarf_error(dbg, error, DW_DLE_ARANGE_OFFSET_BAD);
+            return DW_DLV_ERROR;
         }
 
         /*  Even DWARF2 had a segment_size field here, meaning
@@ -184,8 +187,11 @@ dwarf_get_aranges_list(Dwarf_Debug dbg,
             return (DW_DLV_ERROR);
         }
         arange_ptr = arange_ptr + sizeof(Dwarf_Small);
+
+        /* Code below will check for == end_this_arange as appropriate. */
         if (arange_ptr > end_this_arange) {
             _dwarf_error(dbg, error, DW_DLE_ARANGE_OFFSET_BAD);
+            return (DW_DLV_ERROR);
         }
 
         range_entry_size = 2*address_size + segment_size;
@@ -195,9 +201,7 @@ dwarf_get_aranges_list(Dwarf_Debug dbg,
         if (remainder != 0) {
             arange_ptr = arange_ptr + (2 * address_size) - remainder;
         }
-        if (arange_ptr > end_this_arange) {
-            _dwarf_error(dbg, error, DW_DLE_ARANGE_OFFSET_BAD);
-        }
+
         do {
             Dwarf_Addr range_address = 0;
             Dwarf_Unsigned segment_selector = 0;

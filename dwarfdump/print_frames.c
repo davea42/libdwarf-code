@@ -1,7 +1,7 @@
 /*
   Copyright (C) 2006 Silicon Graphics, Inc.  All Rights Reserved.
   Portions Copyright (C) 2011-2012 SN Systems Ltd. All Rights Reserved.
-  Portions Copyright (C) 2007-2012 David Anderson. All Rights Reserved.
+  Portions Copyright (C) 2007-2018 David Anderson. All Rights Reserved.
 
   This program is free software; you can redistribute it and/or modify it
   under the terms of version 2 of the GNU General Public License as
@@ -993,6 +993,7 @@ print_one_fde(Dwarf_Debug dbg,
         int res = 0;
 
         res = dwarf_get_fde_instr_bytes(fde, &instrs, &ilen, &oneferr);
+        /* res will be checked below. */
         offres =
             dwarf_fde_section_offset(dbg, fde, &fde_off, &cie_off,
                 &oneferr);
@@ -1315,7 +1316,51 @@ lastop_pointless(int op)
     return false;
 }
 
+
+/*  iregion_start, iregion_end are the overall
+    block of fde/cie instructions.
+    idata, idata end are the area next to be read
+    and they must lie within the iregion* range.
+    The end address is one past the last byte.
+
+    We are decoding here, libdwarf has
+    not decoded these bytes, so it is up to us to
+    check for corrupt data in the frame section.
+*/
+static int
+check_finstr_addrs(unsigned char *iregionstart,
+  unsigned char *idata,
+  unsigned char *idata_end,
+  unsigned char *iregionend,
+  const char *msg)
+{
+    if ( idata > idata_end) {
+        /* zero length allowed.  But maybe overflow happened. */
+        printf("ERROR: frame instruction internal error reading %s\n",
+            msg);
+        return DW_DLV_ERROR;
+    }
+    if (idata < iregionstart) {
+        printf("ERROR: frame instruction overflow(?) reading"
+            "  %s\n", msg);
+        return DW_DLV_ERROR;
+    }
+    if (idata_end > iregionend) {
+        Dwarf_Unsigned bytes_in = 0;
+        bytes_in = idata - iregionstart;
+        printf("ERROR: frame instruction reads off end"
+            " %" DW_PR_DUu
+            " bytes into instructions for %s\n",
+            bytes_in,msg);
+        return DW_DLV_ERROR;
+    }
+    return DW_DLV_OK;
+}
+
+
 /*  Print the frame instructions in detail for a glob of instructions.
+    The frame data has not been checked by libdwarf as libdwarf has not
+    transformed it into simple structs. We are reading the raw data.
 */
 /*ARGSUSED*/ static void
 print_frame_inst_bytes(Dwarf_Debug dbg,
@@ -1327,6 +1372,7 @@ print_frame_inst_bytes(Dwarf_Debug dbg,
     struct dwconf_s *config_data)
 {
     unsigned char *instp = (unsigned char *) cie_init_inst;
+    unsigned char *startpoint = instp;
     Dwarf_Unsigned uval = 0;
     Dwarf_Unsigned uval2 = 0;
     unsigned int uleblen = 0;
@@ -1346,11 +1392,19 @@ print_frame_inst_bytes(Dwarf_Debug dbg,
     len = len_in;
     endpoint = instp + len;
     for (; len > 0;) {
-        unsigned char ibyte = *instp;
-        int top = ibyte & 0xc0;
-        int bottom = ibyte & 0x3f;
+        unsigned char ibyte = 0;
+        int top = 0;
+        int bottom = 0;
         int delta = 0;
         int reg = 0;
+
+        if (check_finstr_addrs(startpoint,instp,instp+1,endpoint,
+            "start next instruction") != DW_DLV_OK) {
+            return;
+        }
+        ibyte = *instp;
+        top = ibyte & 0xc0;
+        bottom = ibyte & 0x3f;
 
         lastop = top;
         switch (top) {
@@ -1402,6 +1456,12 @@ print_frame_inst_bytes(Dwarf_Debug dbg,
             case DW_CFA_set_loc:
                 /* operand is address, so need address size */
                 /* which will be 4 or 8. */
+                if (check_finstr_addrs(startpoint,
+                    instp+1, instp+addr_size+1,
+                    endpoint,
+                    "DW_CFA_set_loc") != DW_DLV_OK) {
+                    return;
+                }
                 switch (addr_size) {
                 case 4:
                     {
@@ -1431,6 +1491,12 @@ print_frame_inst_bytes(Dwarf_Debug dbg,
                     loff,  uval);
                 break;
             case DW_CFA_advance_loc1:
+                if (check_finstr_addrs(startpoint,
+                    instp+1, instp+2,
+                    endpoint,
+                    "DW_CFA_advance_loc1") != DW_DLV_OK) {
+                    return;
+                }
                 delta = (unsigned char) *(instp + 1);
                 uval2 = delta;
                 instp += 1;
@@ -1440,6 +1506,12 @@ print_frame_inst_bytes(Dwarf_Debug dbg,
                     loff, uval2);
                 break;
             case DW_CFA_advance_loc2:
+                if (check_finstr_addrs(startpoint,
+                    instp+1, instp+3,
+                    endpoint,
+                    "DW_CFA_advance_loc2") != DW_DLV_OK) {
+                    return;
+                }
                 memcpy(&u16, instp + 1, 2);
                 uval2 = u16;
                 instp += 2;
@@ -1449,6 +1521,12 @@ print_frame_inst_bytes(Dwarf_Debug dbg,
                     loff,  uval2);
                 break;
             case DW_CFA_advance_loc4:
+                if (check_finstr_addrs(startpoint,
+                    instp+1, instp+5,
+                    endpoint,
+                    "DW_CFA_advance_loc4") != DW_DLV_OK) {
+                    return;
+                }
                 memcpy(&u32, instp + 1, 4);
                 uval2 = u32;
                 instp += 4;
@@ -1458,6 +1536,12 @@ print_frame_inst_bytes(Dwarf_Debug dbg,
                     loff, uval2);
                 break;
             case DW_CFA_MIPS_advance_loc8:
+                if (check_finstr_addrs(startpoint,
+                    instp+1, instp+9,
+                    endpoint,
+                    "DW_CFA_MIPS_advance_loc8") != DW_DLV_OK) {
+                    return;
+                }
                 memcpy(&u64, instp + 1, 8);
                 uval2 = u64;
                 instp += 8;
@@ -1646,9 +1730,12 @@ print_frame_inst_bytes(Dwarf_Debug dbg,
                         block_len);
                     if (len < 0 || block_len > (Dwarf_Unsigned)len) {
                         printf("ERROR expression length too long in DW_CFA_def_cfa_expression.\n");
+                        return;
                     }
-                    if ((instp+1 + block_len) > endpoint) {
-                        printf("ERROR expression length too long in DW_CFA_def_cfa_expression\n");
+                    if (check_finstr_addrs(startpoint,
+                        instp+1, instp+block_len+1,
+                        endpoint,
+                        "DW_CFA_def_cfa_expression") != DW_DLV_OK) {
                         return;
                     }
                     dump_block("\t\t", (char *) instp+1,
@@ -1702,8 +1789,10 @@ print_frame_inst_bytes(Dwarf_Debug dbg,
                         printf("ERROR expression length too long in DW_CFA_expression\n");
                         return;
                     }
-                    if ((instp+1 + block_len) > endpoint) {
-                        printf("ERROR expression length too long in DW_CFA_expression\n");
+                    if (check_finstr_addrs(startpoint,
+                        instp+1, instp+block_len+1,
+                        endpoint,
+                        "DW_CFA_expression") != DW_DLV_OK) {
                         return;
                     }
                     dump_block("\t\t", (char *) instp+1,
@@ -1928,8 +2017,10 @@ print_frame_inst_bytes(Dwarf_Debug dbg,
                         printf("ERROR expression length too long in DW_CFA_val_expression.\n");
                         return;
                     }
-                    if (( instp + 1 + block_len) >endpoint) {
-                        printf("ERROR expression length too long in DW_CFA_val_expression\n");
+                    if (check_finstr_addrs(startpoint,
+                        instp+1, instp+block_len+1,
+                        endpoint,
+                        "DW_CFA_val_expression") != DW_DLV_OK) {
                         return;
                     }
                     dump_block("\t\t", (char *) instp+1,
@@ -2120,6 +2211,8 @@ print_one_frame_reg_col(Dwarf_Debug dbg,
             strcpy(pref, "<");
             strcat(pref, type_title);
             strcat(pref, "bytes:");
+            /*  The data being dumped comes direct from
+                libdwarf so libdwarf validated it. */
             dump_block(pref, block_ptr, offset);
             printf("%s", "> ");
             if (verbose) {

@@ -2,7 +2,7 @@
 
   Copyright (C) 2000-2010 Silicon Graphics, Inc.  All Rights Reserved.
   Portions Copyright 2007-2010 Sun Microsystems, Inc. All rights reserved.
-  Portions Copyright 2008-2017 David Anderson. All rights reserved.
+  Portions Copyright 2008-2018 David Anderson. All rights reserved.
   Portions Copyright 2008-2010 Arxan Technologies, Inc. All rights reserved.
   Portions Copyright 2010-2012 SN Systems Ltd. All rights reserved.
 
@@ -1337,9 +1337,13 @@ struct Dwarf_Obj_Access_Interface_s {
 #define DW_DLE_GROUP_LOAD_ERROR                391
 #define DW_DLE_GROUP_LOAD_READ_ERROR           392
 #define DW_DLE_AUG_DATA_LENGTH_BAD             393
+#define DW_DLE_ABBREV_MISSING                  394
+#define DW_DLE_NO_TAG_FOR_DIE                  395
+#define DW_DLE_LOWPC_WRONG_CLASS               396
+#define DW_DLE_HIGHPC_WRONG_FORM               397
 
     /* LAST MUST EQUAL LAST ERROR NUMBER */
-#define DW_DLE_LAST        393
+#define DW_DLE_LAST        397
 
 #define DW_DLE_LO_USER     0x10000
 

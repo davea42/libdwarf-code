@@ -3,4 +3,22 @@
       A test duplicated the preceding loop condition so
       the body of the test was dead code. Removed the
       dead code.
+2018-01-29 David Anderson
+    * dwarf_arange.c: Improve and comment checks for
+      stepping off the end of arange data.
+    * dwarf_die_deliv.c: Make an error code 
+      returned a bit more specific. 
+      DW_DLA_DIE_BAD becomes DW_DLE_ABBREV_MISSING.
+    * dwarf_errmsg_list.c: Added new error codes
+      DW_DLE_ABBREV_MISSING DW_DLE_NO_TAG_FOR_DIE
+      DW_DLE_LOWPC_WRONG_CLASS DW_DLE_HIGHPC_WRONG_FORM.
+    * dwarf_form.c: Used DW_DLE_NO_TAG_FOR_DIE instead of
+      DW_DLA_DIE_BAD to make an error return more specific.
+    * dwarf_frame2.c: Add new checks for corrupted dwarf
+      frame data.
+    * dwarf_query.c: Added error check and changed
+      DW_DLE_DIE_BAD to DW_DLE_ABBREV_MISSING in one place.
+      Other DWARF corruption checks and error refinements added.
+    * libdwarf.h.in: Added the defines for the new DW_DLE
+      codes.
 

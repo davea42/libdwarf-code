@@ -1,7 +1,7 @@
 /*
 
   Copyright (C) 2000-2005 Silicon Graphics, Inc. All Rights Reserved.
-  Portions Copyright (C) 2008-2017 David Anderson.  All Rights Reserved.
+  Portions Copyright (C) 2008-2018 David Anderson.  All Rights Reserved.
 
   This program is free software; you can redistribute it and/or modify it
   under the terms of version 2.1 of the GNU Lesser General Public License
@@ -472,6 +472,10 @@ const char *_dwarf_errmsgs[] = {
     "DW_DLE_GROUP_LOAD_ERROR(391) corrupt data?",
     "DW_DLE_GROUP_LOAD_READ_ERROR(392)",
     "DW_DLE_AUG_DATA_LENGTH_BAD(393) Data does not fit in section",
+    "DW_DLE_ABBREV_MISSING(394) Unable to find abbrev for DIE",
+    "DW_DLE_NO_TAG_FOR_DIE(395)",
+    "DW_DLE_LOWPC_WRONG_CLASS(396) found in dwarf_lowpc()",
+    "DW_DLE_HIGHPC_WRONG_FORM(397) found in dwarf_highpc()",
 };
 
 #ifdef TESTING

@@ -1,7 +1,7 @@
 /*
 
   Copyright (C) 2000,2002,2004 Silicon Graphics, Inc.  All Rights Reserved.
-  Portions Copyright (C) 2007-2017 David Anderson. All Rights Reserved.
+  Portions Copyright (C) 2007-2018 David Anderson. All Rights Reserved.
   Portions Copyright 2012 SN Systems Ltd. All rights reserved.
 
   This program is free software; you can redistribute it and/or modify it
@@ -349,7 +349,7 @@ dwarf_attrlist(Dwarf_Die die,
         return lres;
     }
     if (lres == DW_DLV_NO_ENTRY) {
-        _dwarf_error(dbg, error, DW_DLE_DIE_BAD);
+        _dwarf_error(dbg, error, DW_DLE_ABBREV_MISSING);
         return DW_DLV_ERROR;
     }
 
@@ -359,6 +359,11 @@ dwarf_attrlist(Dwarf_Die die,
 
     info_ptr = die->di_debug_ptr;
     SKIP_LEB128_WORD_CK(info_ptr,dbg,error,die_info_end);
+    if (info_ptr >= die_info_end) {
+        /* Stepped off the end SKIPping the leb  */
+        _dwarf_error(dbg, error, DW_DLE_DIE_BAD);
+        return DW_DLV_ERROR;
+    }
 
     do {
         Dwarf_Unsigned utmp2;
@@ -385,6 +390,12 @@ dwarf_attrlist(Dwarf_Die die,
             new_attr->ar_attribute_form = attr_form;
             if (attr_form == DW_FORM_indirect) {
                 Dwarf_Unsigned utmp6;
+                if (_dwarf_reference_outside_section(die,
+                    (Dwarf_Small*) info_ptr,
+                    ((Dwarf_Small*) info_ptr )+1)) {
+                    _dwarf_error(dbg, error,DW_DLE_ATTR_OUTSIDE_SECTION);
+                    return DW_DLV_ERROR;
+                }
 
                 /* DECODE_LEB128_UWORD does info_ptr update */
                 DECODE_LEB128_UWORD_CK(info_ptr, utmp6,dbg,error,die_info_end);
@@ -845,7 +856,7 @@ dwarf_lowpc(Dwarf_Die die,
         offset_size,attr_form);
     if (class != DW_FORM_CLASS_ADDRESS) {
         /* Not the correct form for DW_AT_low_pc */
-        _dwarf_error(dbg, error, DW_DLE_DIE_BAD);
+        _dwarf_error(dbg, error, DW_DLE_LOWPC_WRONG_CLASS);
         return (DW_DLV_ERROR);
     }
 
@@ -890,7 +901,7 @@ dwarf_highpc(Dwarf_Die die,
     if (form != DW_FORM_addr) {
         /* Not the correct form for DWARF2/3 DW_AT_high_pc */
         Dwarf_Debug dbg = die->di_cu_context->cc_dbg;
-        _dwarf_error(dbg, error, DW_DLE_DIE_BAD);
+        _dwarf_error(dbg, error, DW_DLE_HIGHPC_WRONG_FORM);
         return (DW_DLV_ERROR);
     }
     return (DW_DLV_OK);
@@ -1270,8 +1281,8 @@ dwarf_highpc_b(Dwarf_Die die,
                     dbg,error,die_info_end);
                 *return_value = (Dwarf_Unsigned)sval;
             } else {
-                _dwarf_error(dbg, error, DW_DLE_DIE_BAD);
-                return (DW_DLV_ERROR);
+                _dwarf_error(dbg, error, DW_DLE_HIGHPC_WRONG_FORM);
+                return DW_DLV_ERROR;
             }
         } else {
             *return_value = v;
@@ -1279,7 +1290,7 @@ dwarf_highpc_b(Dwarf_Die die,
     }
     *return_form = attr_form;
     *return_class = class;
-    return (DW_DLV_OK);
+    return DW_DLV_OK;
 }
 
 /* The dbg and context here are a file with DW_FORM_addrx
