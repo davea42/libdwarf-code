@@ -42,7 +42,7 @@ static Dwarf_Half tag_children[DW_TAG_last] = {0};
 static Dwarf_Small tag_tree_legal[DW_TAG_last] = {0};
 #endif /* HAVE_USAGE_TAG_ATTR */
 
-#define DW_VERSION_DATE_STR " 2017-12-01 11:14:36-08:00  "
+#define DW_VERSION_DATE_STR " 2018-01-29 11:08:35-08:00  "
 
 const char * program_name;
 

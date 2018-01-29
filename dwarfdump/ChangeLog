@@ -1,4 +1,7 @@
-
 2018-01-29 David Anderson
     * print_frames.c: When printing detailed frame data
       ensure we check for corrupt data.
+2018-01-29 David Anderson
+    * common.c,dwarfdump.c,tag_attr.c,tag_tree.c:
+      Update version string
+

@@ -21,4 +21,6 @@
       Other DWARF corruption checks and error refinements added.
     * libdwarf.h.in: Added the defines for the new DW_DLE
       codes.
+2018-01-29 David Anderson
+    * gennames.c: Update version string.
 
