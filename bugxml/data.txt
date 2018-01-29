@@ -1,4 +1,24 @@
 
+id: DW201801-001
+cve:
+datereported: 2018-01-28
+reportedby: Agostino Sarubbo
+vulnerability: Incorrect frame section can crash dwarfdump
+product: dwarfdump
+description: A carefully crafted object with an
+  invalid frame section set of initial-instructions
+  can crash the frame-instructions decode in
+  dwarfdump. In addition, a couple places in libdwarf
+  are not as careful in checking frame data as
+  they should be.
+  A segmentation-fault/core-dump is possible.
+datefixed: 2018-01-29
+references: sarubbo-11/testcase{1,2,3,4,5}.bin
+gitfixid: 3cdaabbeea38b8459f411e95536d7cf33b5a1763  
+tarrelease:
+endrec: DW201801-001
+
+
 id: DW201712-001
 cve:
 datereported: 2017-12-01
