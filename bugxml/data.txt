@@ -14,8 +14,8 @@ description: A carefully crafted object with an
   A segmentation-fault/core-dump is possible.
 datefixed: 2018-01-29
 references: sarubbo-11/testcase{1,2,3,4,5}.bin
-gitfixid: 3cdaabbeea38b8459f411e95536d7cf33b5a1763  
-tarrelease:
+gitfixid:  7af0ecddfafed88446969cbf8c888356ad485d99
+tarrelease: 2018-01-29
 endrec: DW201801-001
 
 
