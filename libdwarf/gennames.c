@@ -490,7 +490,7 @@ GenerateOneSet(void)
         fprintf(f_names_c,"    const int last_entry = %d;\n",actual_array_count);
         fprintf(f_names_c,"    /* find the entry */\n");
         fprintf(f_names_c,"    int r = find_entry(Dwarf_%s_n,last_entry,val,s_out);\n",prefix_id);
-        fprintf(f_names_c,"    return r; \n");
+        fprintf(f_names_c,"    return r;\n");
         fprintf(f_names_c,"}\n");
     } else {
         fprintf(f_names_c,"    }\n");
