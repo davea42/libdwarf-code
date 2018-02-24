@@ -22,6 +22,13 @@
 
 */
 
+#ifndef ADDRMAP_H
+#define ADDRMAP_H
+
+#ifdef __cplusplus
+extern "C" {
+#endif /* __cplusplus */
+
 struct Addr_Map_Entry {
     Dwarf_Unsigned mp_key;
     char * mp_name;
@@ -31,3 +38,9 @@ struct Addr_Map_Entry * addr_map_insert(Dwarf_Unsigned addr,
     char *name, void **map);
 struct Addr_Map_Entry * addr_map_find(Dwarf_Unsigned addr, void **map);
 void addr_map_destroy(void *map);
+
+#ifdef __cplusplus
+}
+#endif /* __cplusplus */
+
+#endif /* ADDRMAP_H */

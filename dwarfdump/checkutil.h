@@ -26,6 +26,10 @@
 #ifndef CHECKUTIL_H
 #define CHECKUTIL_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif /* __cplusplus */
+
 /*  Map information.
     Depending on the specific functions used various
     fields here are either used or ignored.
@@ -94,5 +98,8 @@ void SetLimitsBucketGroup(Bucket_Group *pBucketGroup,Dwarf_Addr lower,Dwarf_Addr
 Dwarf_Bool IsValidInLinkonce(Bucket_Group *pLo,
     const char *name,Dwarf_Addr lopc,Dwarf_Addr hipc);
 
+#ifdef __cplusplus
+}
+#endif /* __cplusplus */
 
 #endif /* CHECKUTIL_H */

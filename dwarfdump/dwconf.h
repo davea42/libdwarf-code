@@ -22,6 +22,12 @@
     Franklin Street - Fifth Floor, Boston MA 02110-1301, USA.
 */
 
+#ifndef DWCONFIG_H
+#define DWCONFIG_H
+
+#ifdef __cplusplus
+extern "C" {
+#endif /* __cplusplus */
 
 /*  Declarations helping configure the frame reader.
     We are not allowing negative register numbers.
@@ -95,3 +101,9 @@ void print_reg_from_config_data(Dwarf_Unsigned reg,
 
 
 void init_generic_config_1200_regs(struct dwconf_s *conf);
+
+#ifdef __cplusplus
+}
+#endif /* __cplusplus */
+
+#endif /* DWCONFIG_H */

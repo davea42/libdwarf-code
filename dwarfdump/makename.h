@@ -39,10 +39,18 @@
     use of this is very rare.
 */
 
+#ifdef __cplusplus
+extern "C" {
+#endif /* __cplusplus */
+
 char * makename(const char *); /* Makes a copy of the string in
     a malloc area.  Can never return 0. */
 
 /*  Destroy all makename data. Do just before exit. */
 void makename_destructor(void);
 
-#endif
+#ifdef __cplusplus
+}
+#endif /* __cplusplus */
+
+#endif /* MAKENAME_H */
