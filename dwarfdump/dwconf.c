@@ -27,9 +27,9 @@
 #include "config.h"
 #ifdef HAVE_STDAFX_H
 #include "stdafx.h"
-+#elif defined(HAVE_WINDOWS_H)
-+#include <Windows.h>
-+#define BOOLEAN_TYPEDEFED 1
+#elif defined(HAVE_WINDOWS_H)
+#include <Windows.h>
+#define BOOLEAN_TYPEDEFED 1
 #endif /* HAVE_STDAFX_H */
 
 #include "globals.h"
