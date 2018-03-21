@@ -1,3 +1,6 @@
+2018-03-21 David Anderson
+    * print_die.c: Add support for DWARF5 FORMs.
+    * print_lines.c: Fix a too-long line.
 2018-01-29 David Anderson
     * print_frames.c: When printing detailed frame data
       ensure we check for corrupt data.
