@@ -1,4 +1,7 @@
 2018-03-21 David Anderson
+    * common.c,dwarfdump.c,tag_attr.c,tag_tree.c: Updated
+      version string.
+2018-03-21 David Anderson
     * print_die.c: Add support for DWARF5 FORMs.
     * print_lines.c: Fix a too-long line.
 2018-01-29 David Anderson

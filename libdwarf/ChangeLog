@@ -1,4 +1,6 @@
 2018-03-21 David Anderson
+    * gennames.c: Updated version string.
+2018-03-21 David Anderson
     * dwarf_elf_access.c: Allow for relocations on .debug_str_offsets.
     * dwarf_errmsg_list.c: Clarified meaning of
       DW_DLE_DIE_ABBREV_LIST_NULL, added new errors
