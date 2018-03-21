@@ -66,6 +66,9 @@ struct Dwarf_File_Entry_s {
 
     /* Length in bytes of the file. */
     Dwarf_Unsigned fi_file_length;
+
+    Dwarf_Form_Data16   fi_md5_value;
+    char                fi_md5_present;
 };
 
 /*  Part of two-level line tables support. */

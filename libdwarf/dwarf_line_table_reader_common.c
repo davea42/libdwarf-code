@@ -1,6 +1,6 @@
 /*
    Copyright (C) 2000-2006 Silicon Graphics, Inc.  All Rights Reserved.
-   Portions Copyright (C) 2007-2017 David Anderson. All Rights Reserved.
+   Portions Copyright (C) 2007-2018 David Anderson. All Rights Reserved.
    Portions Copyright (C) 2010-2012 SN Systems Ltd. All Rights Reserved.
    Portions Copyright (C) 2015-2015 Google, Inc. All Rights Reserved.
 
@@ -732,11 +732,33 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
                         return res;
                     }
                     break;
-                case DW_LNCT_MD5: /* Not yet implemented */
+                case DW_LNCT_MD5: { /* form DW_FORM_data16 */
+                    if (filename_entry_forms[j] != DW_FORM_data16) {
+                        free(filename_entry_types);
+                        free(filename_entry_forms);
+                        _dwarf_error(dbg, err,DW_DLE_LNCT_MD5_WRONG_FORM);
+                        return  DW_DLV_ERROR;
+                    }
+                    res = _dwarf_extract_data16(dbg,
+                        line_ptr,
+                        line_ptr,
+                        line_ptr_end,
+                        &curline->fi_md5_value,
+                        err);
+                    if (res != DW_DLV_OK) {
+                        free(filename_entry_types);
+                        free(filename_entry_forms);
+                        return res;
+                    }
+                    curline->fi_md5_present = TRUE;
+                    line_ptr = line_ptr + sizeof(curline->fi_md5_value);
+                    }
+                    break;
+
                 default:
                     free(filename_entry_types);
                     free(filename_entry_forms);
-                    _dwarf_error(dbg, err, DW_DLE_LINE_NUMBER_HEADER_ERROR);
+                    _dwarf_error(dbg, err,DW_DLE_LINE_NUMBER_HEADER_ERROR);
                     return (DW_DLV_ERROR);
                 }
                 if (line_ptr > line_ptr_end) {

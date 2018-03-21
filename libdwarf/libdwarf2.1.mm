@@ -8,7 +8,7 @@
 .nr Hb 5
 \." ==============================================
 \." Put current date in the following at each rev
-.ds vE rev 2.60, March 16, 2018
+.ds vE rev 2.61, March 20, 2018
 \." ==============================================
 \." ==============================================
 .ds | |
@@ -5598,7 +5598,70 @@ the
 pointer.
 \f(CWDW_DLV_NO_ENTRY\fP
 will not be returned.
+
+.H 3 "dwarf_srclines_files_data_b()"
+This supplants
+\f(CWdwarf_srclines_files_data()\fP
+as of March 2018
+to allow access to the md5 value in DWARF5.
+The function
+\f(CWdwarf_srclines_files_data()\fP
+continues to be supported.
+.DS
+\f(CW
+int dwarf_srclines_files_data_b(Dwarf_Line_Context line_context,
+    Dwarf_Signed     index,
+    const char **    name,
+    Dwarf_Unsigned * directory_index,
+    Dwarf_Unsigned * last_mod_time,
+    Dwarf_Unsigned * file_length,
+    Dwarf_Form_Data16 ** md5_value,
+    Dwarf_Error    * error);
+\fP
+.DE
+On success, data about a single file in
+the files list will be returned through the pointers.
+See DWARF documentation for the meaning of these
+fields.
+\f(CWcount\fP.
+Valid
+\f(CWindex\fP.
+values are 1 through
+\f(CWcount\fP,
+reflecting the way the table is defined by DWARF2,3,4.
+For a dwarf5 line table index values 0...count-1 are legal.
+This is certainly awkward.
+.P
+If 
+\f(CWmd5_value\fP 
+is non-null it is used to pass a back
+a pointer to a 
+\f(CWDwarf_Form_Data16\fP md5 value if
+the md5 value is present. Otherwise
+a zero value is passed back to indicate there
+was no such field.
+The 16-byte value pointed to is inside
+the line_context, so if you want to keep
+the value you should probably copy it
+to storage you control.
+.P
+This returns the raw files data from the
+line table header.
+.P
+In case of error,
+\f(CWDW_DLV_ERROR\fP
+is returned and the error is set through
+the
+\f(CWerror\fP
+pointer.
+\f(CWDW_DLV_NO_ENTRY\fP
+will not be returned.
+
+
 .H 3 "dwarf_srclines_files_data()"
+This interface was created in October 2015.
+It cannot return the DWARF5 MD5 value.
+See the newer dwarf_srclines_files_data_b().
 .DS
 \f(CW
 int dwarf_srclines_files_data(Dwarf_Line_Context line_context,
@@ -5619,7 +5682,9 @@ Valid
 \f(CWindex\fP.
 values are 1 through 
 \f(CWcount\fP,
-reflecting the way the table is defined by DWARF.
+reflecting the way the table is defined by DWARF2,3,4.
+For a dwarf5 line table index values 0...count-1 are legal.
+This is certainly awkward.
 .P
 This returns the raw files data from the
 line table header.
@@ -5632,6 +5697,8 @@ the
 pointer.
 \f(CWDW_DLV_NO_ENTRY\fP
 will not be returned.
+
+
 .H 3 "dwarf_srclines_include_dir_count()"
 .DS
 \f(CW
@@ -5648,7 +5715,9 @@ Valid
 \f(CWindex\fP.
 values are 1 through 
 \f(CWcount\fP,
-reflecting the way the table is defined by DWARF.
+reflecting the way the table is defined by DWARF 2,3 and 4.
+For a dwarf5 line table index values 0...count-1 are legal.
+This is certainly awkward.
 .P
 In case of error, 
 \f(CWDW_DLV_ERROR\fP

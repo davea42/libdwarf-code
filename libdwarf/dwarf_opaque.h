@@ -1,7 +1,7 @@
 /*
 
   Copyright (C) 2000-2005 Silicon Graphics, Inc.  All Rights Reserved.
-  Portions Copyright (C) 2007-2017 David Anderson. All Rights Reserved.
+  Portions Copyright (C) 2007-2018 David Anderson. All Rights Reserved.
   Portions Copyright (C) 2008-2010 Arxan Technologies, Inc. All Rights Reserved.
 
   This program is free software; you can redistribute it and/or modify it
@@ -908,6 +908,14 @@ Dwarf_Byte_Ptr _dwarf_calculate_info_section_start_ptr(Dwarf_CU_Context context,
 
 Dwarf_Byte_Ptr _dwarf_calculate_info_section_end_ptr(Dwarf_CU_Context context);
 Dwarf_Byte_Ptr _dwarf_calculate_abbrev_section_end_ptr(Dwarf_CU_Context context);
+
+int _dwarf_extract_data16(Dwarf_Debug dbg,
+    Dwarf_Small *data,
+    Dwarf_Small *section_start,
+    Dwarf_Small *section_end,
+    Dwarf_Form_Data16  * returned_val,
+    Dwarf_Error *error);
+
 
 void _dwarf_dumpsig(const char *msg, Dwarf_Sig8 *sig,int lineno);
 

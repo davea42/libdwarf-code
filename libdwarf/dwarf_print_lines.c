@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2000,2002,2004,2005,2006 Silicon Graphics, Inc.  All Rights Reserved.
-  Portions Copyright (C) 2007-2017 David Anderson. All Rights Reserved.
+  Portions Copyright (C) 2007-2018 David Anderson. All Rights Reserved.
   Portions Copyright 2012 SN Systems Ltd. All rights reserved.
 
   This program is free software; you can redistribute it and/or modify it
@@ -455,6 +455,16 @@ _dwarf_internal_printlines(Dwarf_Die die,
             dwarf_printf(dbg,
                 "    file length %ld 0x%lx\n",
                 (long) fl, (unsigned long) fl);
+            if (fe->fi_md5_present) {
+                char *c = (char *)&fe->fi_md5_value;
+                char *end = c+sizeof(fe->fi_md5_value);
+                dwarf_printf(dbg, "    file md5 value 0x");
+                while(c < end) {
+                    dwarf_printf(dbg,"%02x",0xff&*c);
+                    ++c;
+                }
+                dwarf_printf(dbg,"\n");
+            }
         }
     }
 

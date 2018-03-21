@@ -224,7 +224,7 @@ const char *_dwarf_errmsgs[] = {
     "DW_DLE_ELF_GETIDENT_ERROR (148)",
     "DW_DLE_NO_AT_MIPS_FDE (149)",
     "DW_DLE_NO_CIE_FOR_FDE (150)",
-    "DW_DLE_DIE_ABBREV_LIST_NULL (151)",
+    "DW_DLE_DIE_ABBREV_LIST_NULL (151) No abbrev exists for the requested abbrev code" ,
     "DW_DLE_DEBUG_FUNCNAMES_DUPLICATE (152)",
     "DW_DLE_DEBUG_FUNCNAMES_NULL (153) .debug_funcnames section present but "
         "elf_getdata() failed or section is zero-length",
@@ -476,6 +476,9 @@ const char *_dwarf_errmsgs[] = {
     "DW_DLE_NO_TAG_FOR_DIE(395)",
     "DW_DLE_LOWPC_WRONG_CLASS(396) found in dwarf_lowpc()",
     "DW_DLE_HIGHPC_WRONG_FORM(397) found in dwarf_highpc()",
+    "DW_DLE_STR_OFFSETS_BASE_WRONG_FORM(398)",
+    "DW_DLE_DATA16_OUTSIDE_SECTION(399)",
+    "DW_DLE_LNCT_MD5_WRONG_FORM(400)",
 };
 
 #ifdef TESTING
