@@ -2,7 +2,7 @@
   Copyright (C) 2000-2006 Silicon Graphics, Inc.  All Rights Reserved.
   Portions Copyright 2007-2010 Sun Microsystems, Inc. All rights reserved.
   Portions Copyright 2009-2011 SN Systems Ltd. All rights reserved.
-  Portions Copyright 2008-2016 David Anderson. All rights reserved.
+  Portions Copyright 2008-2018 David Anderson. All rights reserved.
   Portions Copyright 2015-2015 Google, Inc. All Rights Reserved
 
   This program is free software; you can redistribute it and/or modify it
@@ -865,7 +865,8 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
                 ores = dwarf_srclines_table_offset(line_context,
                     &off,&err);
                 if (ores != DW_DLV_OK) {
-                    print_error(dbg,"dwarf_srclines_table_offset fail",ores,err);
+                    print_error(dbg,"dwarf_srclines_table_offset fail",
+                        ores,err);
                 } else {
                     printf(" Line table is present (offset 0x%"
                         DW_PR_XZEROS DW_PR_DUx

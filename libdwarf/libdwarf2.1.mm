@@ -8,7 +8,7 @@
 .nr Hb 5
 \." ==============================================
 \." Put current date in the following at each rev
-.ds vE rev 2.58, May 18, 2017
+.ds vE rev 2.61, March 20, 2018
 \." ==============================================
 \." ==============================================
 .ds | |
@@ -513,6 +513,10 @@ The following aggregate types are defined by
 \f(CWDwarf_Regtable3\fP. 
 While most of \f(CWlibdwarf\fP acts on or returns simple values or
 opaque pointer types, this small set of structures seems useful.
+Yet, at the same time, these public structures are inflexible
+as any change in format or content
+breaks binary (and possibly source in some cases)
+compatibility.
 
 .H 3 "Location Record"
 The \f(CWDwarf_Loc\fP type identifies a single atom of a location description
@@ -628,7 +632,9 @@ necessarily at any useful alignment.
 .H 3 "Frame Operation Codes: DWARF 2"
 This interface is adequate for DWARF2 but not for DWARF3.
 A separate interface usable for DWARF3 and for DWARF2 is described below.
-This interface is deprecated. Use the interface for DWARF3 and DWARF2.
+This interface DWARF2 interface is deprecated. 
+Use the interface for DWARF3 (see below) for all versions
+of DWARF.
 See also the section "Low Level Frame Operations" below.
 .P
 The DWARF2 \f(CWDwarf_Frame_Op\fP type is used to contain the data of a single
@@ -725,7 +731,7 @@ the consumer code should add the value to
 the value of the register \f(CWdw_regnum\fP to produce the
 value.  
 
-.H 3 "Frame Operation Codes: DWARF 3 (and DWARF2)"
+.H 3 "Frame Operation Codes: DWARF 3 (for DWARF2 and later )
 This interface is adequate for DWARF3 and for DWARF2 (and DWARF4).
 It is new in libdwarf in April 2006.
 See also the section "Low Level Frame Operations" below.
@@ -781,7 +787,7 @@ bytes long.
 stream of the frame instructions) of this operation.  It starts at 0
 for a given frame descriptor.
 
-.H 3 "Frame Regtable: DWARF 3"
+.H 3 "Frame Regtable: DWARF 3 (for DWARF2 and later)"
 This interface is adequate for DWARF3 and for DWARF2.
 It is new in libdwarf as of April 2006.
 The default configure of libdwarf 
@@ -909,6 +915,7 @@ be a real register number.
 The \f(CWDwarf_Macro_Details\fP type gives information about
 a single entry in the .debug.macinfo section (DWARF2, 
 DWARF3, and DWARF4).
+It is not useful for DWARF 5 .debug_macro section data.
 .DS
 \f(CWstruct Dwarf_Macro_Details_s {
   Dwarf_Off    dmd_offset;
@@ -1180,12 +1187,12 @@ in UTF-8 format.
 What this means is that if UTF-8 is specfied on
 a particular object it is up to callers that wish
 to print all the characters properly to use language-appropriate
-functions to convert the char * to wide characters and print
-the wide characters.
+functions to print Unicode strings appropriately.
 All ASCII characters in the strings will print properly
 whether printed as wide characters or not.
 The methods to convert UTF-8 strings so they will print
-correctly for all  such strings is beyond the scope of this document.
+correctly for all  such strings 
+is beyond the scope of this document.
 .P
 If UTF-8 is not specified then one is probably safe
 in assuming the strings are iso_8859-15 and normal
@@ -1399,9 +1406,14 @@ Sometimes other similar phrases are used.
 .H 1 "Memory Management"
 Several of the functions that comprise \fIlibdwarf\fP return pointers 
 (opaque descriptors) to structures that have been dynamically allocated 
-by the library.  To aid in the management of dynamic memory, the function 
+by the library.  
+To manage dynamic memory the function 
 \f(CWdwarf_dealloc()\fP is provided to free storage allocated as a result 
-of a call to a \fIlibdwarf\fP function.  This section describes the strategy 
+of a call to a \fIlibdwarf\fP function.  
+Some additional functions (described later)
+are provided to free storage
+in particular circumstances.
+This section describes the general strategy 
 that should be taken by a client program in managing dynamic storage.
 
 .H 2 "Read-only Properties"
@@ -1912,6 +1924,7 @@ certain errors are detected.
 
 The default for this value is FALSE (0) so the extra messages
 are off by default.
+
 .H 3 "dwarf_object_init_b()"
 .DS
 \f(CWint dwarf_object_init_b(
@@ -1940,7 +1953,20 @@ passed in (the
 is a set of function pointers
 and describing how to access non-Elf
 files is beyond the scope of this document.
- 
+.P
+As a hint, note that the source files with
+dwarf_elf_init_file_ownership() (dwarf_original_elf_init.c)
+and 
+dwarf_elf_object_access_init() (dwarf_elf_access.c)
+are the only sources that would need replacement
+for a different object format.
+The replacement would need to emulate certain
+conventions of Elf objects, (mainly that 
+section index
+0 is an empty section) but the rest of
+libdwarf uses what these two source files set up
+without knowing how to operate on Elf.
+
 .P
 Writing the functions needed to support
 non-Elf will require study of Elf
@@ -5572,7 +5598,70 @@ the
 pointer.
 \f(CWDW_DLV_NO_ENTRY\fP
 will not be returned.
+
+.H 3 "dwarf_srclines_files_data_b()"
+This supplants
+\f(CWdwarf_srclines_files_data()\fP
+as of March 2018
+to allow access to the md5 value in DWARF5.
+The function
+\f(CWdwarf_srclines_files_data()\fP
+continues to be supported.
+.DS
+\f(CW
+int dwarf_srclines_files_data_b(Dwarf_Line_Context line_context,
+    Dwarf_Signed     index,
+    const char **    name,
+    Dwarf_Unsigned * directory_index,
+    Dwarf_Unsigned * last_mod_time,
+    Dwarf_Unsigned * file_length,
+    Dwarf_Form_Data16 ** md5_value,
+    Dwarf_Error    * error);
+\fP
+.DE
+On success, data about a single file in
+the files list will be returned through the pointers.
+See DWARF documentation for the meaning of these
+fields.
+\f(CWcount\fP.
+Valid
+\f(CWindex\fP.
+values are 1 through
+\f(CWcount\fP,
+reflecting the way the table is defined by DWARF2,3,4.
+For a dwarf5 line table index values 0...count-1 are legal.
+This is certainly awkward.
+.P
+If 
+\f(CWmd5_value\fP 
+is non-null it is used to pass a back
+a pointer to a 
+\f(CWDwarf_Form_Data16\fP md5 value if
+the md5 value is present. Otherwise
+a zero value is passed back to indicate there
+was no such field.
+The 16-byte value pointed to is inside
+the line_context, so if you want to keep
+the value you should probably copy it
+to storage you control.
+.P
+This returns the raw files data from the
+line table header.
+.P
+In case of error,
+\f(CWDW_DLV_ERROR\fP
+is returned and the error is set through
+the
+\f(CWerror\fP
+pointer.
+\f(CWDW_DLV_NO_ENTRY\fP
+will not be returned.
+
+
 .H 3 "dwarf_srclines_files_data()"
+This interface was created in October 2015.
+It cannot return the DWARF5 MD5 value.
+See the newer dwarf_srclines_files_data_b().
 .DS
 \f(CW
 int dwarf_srclines_files_data(Dwarf_Line_Context line_context,
@@ -5593,7 +5682,9 @@ Valid
 \f(CWindex\fP.
 values are 1 through 
 \f(CWcount\fP,
-reflecting the way the table is defined by DWARF.
+reflecting the way the table is defined by DWARF2,3,4.
+For a dwarf5 line table index values 0...count-1 are legal.
+This is certainly awkward.
 .P
 This returns the raw files data from the
 line table header.
@@ -5606,6 +5697,8 @@ the
 pointer.
 \f(CWDW_DLV_NO_ENTRY\fP
 will not be returned.
+
+
 .H 3 "dwarf_srclines_include_dir_count()"
 .DS
 \f(CW
@@ -5622,7 +5715,9 @@ Valid
 \f(CWindex\fP.
 values are 1 through 
 \f(CWcount\fP,
-reflecting the way the table is defined by DWARF.
+reflecting the way the table is defined by DWARF 2,3 and 4.
+For a dwarf5 line table index values 0...count-1 are legal.
+This is certainly awkward.
 .P
 In case of error, 
 \f(CWDW_DLV_ERROR\fP
@@ -7429,7 +7524,9 @@ FIXME
 .H 2 "Macro Information Operations (DWARF4, DWARF5)"
 This section refers to DWARF4 and later
 macro information from the .debug_macro
-section. 
+section (for DWARF 4 some producers
+generated .debug_macro before its formal
+standardization in DWARF 5). 
 While standard operations are supported there
 is as yet no support for implementation-defined
 extensions. 

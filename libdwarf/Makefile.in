@@ -61,13 +61,6 @@ LDFLAGS =	$(PRELIBS) @LDFLAGS@ $(dwfsanitize) $(POSTLIBS)
 HOSTCFLAGS =	$(CFLAGS)
 HOSTLDFLAGS =	$(PRELIBS) @LDFLAGS@ 
 
-# These three files are only appropriate for SGI IRIX.
-# There is no reason to think these are of any use to anyone else.
-# As of October 2015 they are removed from OBJS
-#       dwarf_addr_finder.o 
-#	dwarf_sort_line.o 
-#       dwarf_line2.o 
-
 BUILD_BASE = .
 
 OBJS= dwarf_abbrev.o \

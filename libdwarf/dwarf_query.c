@@ -372,6 +372,7 @@ dwarf_attrlist(Dwarf_Die die,
         attr = (Dwarf_Half) utmp2;
         DECODE_LEB128_UWORD_CK(abbrev_ptr, utmp2,dbg,error,abbrev_end);
         attr_form = (Dwarf_Half) utmp2;
+
         if (!_dwarf_valid_form_we_know(dbg,attr_form,attr)) {
             _dwarf_error(dbg, error, DW_DLE_UNKNOWN_FORM);
             return DW_DLV_ERROR;
@@ -962,7 +963,14 @@ _dwarf_get_string_base_attr_value(Dwarf_Debug dbg,
     }
     if (res == DW_DLV_OK) {
         Dwarf_Unsigned val = 0;
-        res = dwarf_formudata(myattr,&val,error);
+        /* Expect DW_FORM_sec_offset */
+        if (myattr->ar_attribute_form != DW_FORM_sec_offset) {
+            dwarf_dealloc(dbg,myattr,DW_DLA_ATTR);
+            dwarf_dealloc(dbg,cudie,DW_DLA_DIE);
+            _dwarf_error(dbg, error,DW_DLE_STR_OFFSETS_BASE_WRONG_FORM);
+            return (DW_DLV_ERROR);
+        }
+        res = dwarf_global_formref(myattr,&val,error);
         dwarf_dealloc(dbg,myattr,DW_DLA_ATTR);
         dwarf_dealloc(dbg,cudie,DW_DLA_DIE);
         if(res != DW_DLV_OK) {

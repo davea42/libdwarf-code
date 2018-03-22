@@ -2,7 +2,7 @@
   Copyright (C) 2000-2006 Silicon Graphics, Inc.  All Rights Reserved.
   Portions Copyright 2007-2010 Sun Microsystems, Inc. All rights reserved.
   Portions Copyright 2009-2012 SN Systems Ltd. All rights reserved.
-  Portions Copyright 2007-2017 David Anderson. All rights reserved.
+  Portions Copyright 2007-2018 David Anderson. All rights reserved.
 
   This program is free software; you can redistribute it and/or modify it
   under the terms of version 2 of the GNU General Public License as
@@ -357,7 +357,8 @@ form_refers_local_info(Dwarf_Half form)
 {
     if (form == DW_FORM_GNU_ref_alt ||
         form == DW_FORM_GNU_strp_alt ||
-        form == DW_FORM_strp_sup ) {
+        form == DW_FORM_strp_sup ||
+        form == DW_FORM_line_strp ) {
         /*  These do not refer to the current
             section and cannot be checked
             as if they did. */
@@ -3586,7 +3587,7 @@ _dwarf_print_one_expr_op(Dwarf_Debug dbg,
             formx_signed(opd1,string_out);
             break;
         case DW_OP_GNU_addr_index: /* unsigned val */
-        case DW_OP_addrx: /* DWARF5: unsigned val */
+        case DW_OP_addrx:  /* DWARF5: unsigned val */
         case DW_OP_GNU_const_index:
         case DW_OP_constx: /* DWARF5: unsigned val */
         case DW_OP_const1u:
@@ -4805,6 +4806,10 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
     switch (theform) {
     case DW_FORM_GNU_addr_index:
     case DW_FORM_addrx:
+    case DW_FORM_addrx1    :  /* DWARF5 */
+    case DW_FORM_addrx2    :  /* DWARF5 */
+    case DW_FORM_addrx3    :  /* DWARF5 */
+    case DW_FORM_addrx4    :  /* DWARF5 */
     case DW_FORM_addr:
         bres = dwarf_formaddr(attrib, &addr, &err);
         if (bres == DW_DLV_OK) {
@@ -4902,7 +4907,6 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
             }
         }
         }
-
         break;
     case DW_FORM_ref1:
     case DW_FORM_ref2:
@@ -5281,15 +5285,26 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
             print_error(dbg, "Cannot get formudata....", wres, err);
         }
         break;
+    /* various forms for strings. */
     case DW_FORM_string:
     case DW_FORM_strp:
-    case DW_FORM_strx:
-    case DW_FORM_strp_sup: /* An offset to alternate file: tied file */
-    case DW_FORM_GNU_strp_alt: /* An offset to alternate file: tied file */
+    case DW_FORM_strx:   /* DWARF5 */
+    case DW_FORM_strx1:  /* DWARF5 */
+    case DW_FORM_strx2:  /* DWARF5 */
+    case DW_FORM_strx3:  /* DWARF5 */
+    case DW_FORM_strx4:  /* DWARF5 */
+    case DW_FORM_strp_sup: /* DWARF5 String in altrnt: tied file */
+    case DW_FORM_GNU_strp_alt: /* String in altrnt: tied file */
+    case DW_FORM_line_strp: /* DWARF5, offset to .debug_line_str */
+        /*  unsigned offset in size of an offset */
     case DW_FORM_GNU_str_index: {
         int sres = dwarf_formstring(attrib, &temps, &err);
         if (sres == DW_DLV_OK) {
             if (theform == DW_FORM_strx ||
+                theform == DW_FORM_strx1 ||
+                theform == DW_FORM_strx2 ||
+                theform == DW_FORM_strx3 ||
+                theform == DW_FORM_strx4 ||
                 theform == DW_FORM_GNU_str_index) {
                 struct esb_s saver;
                 Dwarf_Unsigned index = 0;
@@ -5309,14 +5324,22 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
             }
         } else if (sres == DW_DLV_NO_ENTRY) {
             if (theform == DW_FORM_strx ||
-                theform == DW_FORM_GNU_str_index) {
+                theform == DW_FORM_GNU_str_index ||
+                theform == DW_FORM_strx1 ||
+                theform == DW_FORM_strx2 ||
+                theform == DW_FORM_strx3 ||
+                theform == DW_FORM_strx4 ) {
                 esb_append(esbp, "(indexed string,no string provided?)");
             } else {
                 esb_append(esbp, "<no string provided?>");
             }
         } else {
             if (theform == DW_FORM_strx ||
-                theform == DW_FORM_GNU_str_index) {
+                theform == DW_FORM_GNU_str_index ||
+                theform == DW_FORM_strx1 ||
+                theform == DW_FORM_strx2 ||
+                theform == DW_FORM_strx3 ||
+                theform == DW_FORM_strx4 ) {
                 print_error(dbg, "Cannot get an indexed string....",
                     sres, err);
             } else {
@@ -5401,6 +5424,39 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
         }
         }
         break;
+    case DW_FORM_implicit_const: {  /* DWARF5, attr val is signed uleb */
+        wres = dwarf_formsdata(attrib, &tempsd, &err);
+        if (wres == DW_DLV_OK) {
+            Dwarf_Bool hxform=TRUE;
+            tempud = tempsd;
+            formx_unsigned_and_signed_if_neg(tempud,tempsd,
+                " (",hxform,esbp);
+        } else if (wres == DW_DLV_NO_ENTRY) {
+            /* nothing? */
+        } else {
+            print_error(dbg, "Cannot get formsdata, "
+                "DW_FORM_implicit_const..", wres, err);
+        }
+        }
+        break;
+
+    case DW_FORM_loclistx:   /* DWARF5, index into .debug_loclists */
+    case DW_FORM_rnglistx: { /* DWARF5, index into .debug_rnglists */
+        /* FIXME: print loclist or rnglist  info */
+        wres = dwarf_formudata(attrib, &tempud, &err);
+        if (wres == DW_DLV_OK) {
+            Dwarf_Bool hex_format = TRUE;
+            formx_unsigned(tempud,esbp,hex_format);
+        } else if (wres == DW_DLV_NO_ENTRY) {
+            /* nothing? */
+        } else {
+            print_error(dbg, "Cannot get formudata"
+                " on DW_FORM_loclistx....", wres, err);
+        }
+        }
+        break;
+    case DW_FORM_ref_sup4: /* DWARF5 */
+    case DW_FORM_ref_sup8: /* DWARF5 */
     case DW_FORM_GNU_ref_alt: {
         bres = dwarf_global_formref(attrib, &off, &err);
         if (bres == DW_DLV_OK) {

@@ -1341,9 +1341,12 @@ struct Dwarf_Obj_Access_Interface_s {
 #define DW_DLE_NO_TAG_FOR_DIE                  395
 #define DW_DLE_LOWPC_WRONG_CLASS               396
 #define DW_DLE_HIGHPC_WRONG_FORM               397
+#define DW_DLE_STR_OFFSETS_BASE_WRONG_FORM     398
+#define DW_DLE_DATA16_OUTSIDE_SECTION          399
+#define DW_DLE_LNCT_MD5_WRONG_FORM             400
 
     /* LAST MUST EQUAL LAST ERROR NUMBER */
-#define DW_DLE_LAST        397
+#define DW_DLE_LAST        400
 
 #define DW_DLE_LO_USER     0x10000
 
@@ -2114,6 +2117,21 @@ int dwarf_srclines_subprog_data(Dwarf_Line_Context /*line_context*/,
 int dwarf_srclines_files_count(Dwarf_Line_Context /*line_context*/,
     Dwarf_Signed  *  /*count*/,
     Dwarf_Error   *  /*error*/);
+
+
+/*  New March 2018. Same as dwarf_srclines_files_data,
+    but adds the md5ptr field so cases where DW_LNCT_MD5
+    is present can return pointer to the MD5 value.
+    With DWARF 5 index starts with 0.  */
+int
+dwarf_srclines_files_data_b(Dwarf_Line_Context line_context,
+    Dwarf_Signed     index_in,
+    const char **    name,
+    Dwarf_Unsigned * directory_index,
+    Dwarf_Unsigned * last_mod_time,
+    Dwarf_Unsigned * file_length,
+    Dwarf_Form_Data16 ** md5ptr,
+    Dwarf_Error    * error);
 
 /*  New October 2015. */
 /*  Unlike dwarf_srcfiles() this returns the raw file table

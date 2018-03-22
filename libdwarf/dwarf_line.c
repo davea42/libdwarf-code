@@ -1,6 +1,6 @@
 /*
    Copyright (C) 2000-2006 Silicon Graphics, Inc.  All Rights Reserved.
-   Portions Copyright (C) 2007-2015 David Anderson. All Rights Reserved.
+   Portions Copyright (C) 2007-2018 David Anderson. All Rights Reserved.
    Portions Copyright (C) 2010-2012 SN Systems Ltd. All Rights Reserved.
    Portions Copyright (C) 2015-2015 Google, Inc. All Rights Reserved.
 
@@ -1131,21 +1131,60 @@ dwarf_srclines_files_data(Dwarf_Line_Context line_context,
     Dwarf_Unsigned * file_length,
     Dwarf_Error    * error)
 {
+    return dwarf_srclines_files_data_b(
+        line_context,index_in,name,directory_index,
+        last_mod_time,file_length,0,error);
+}
+
+
+/* New March 2018 adding DWARF5 data. */
+int
+dwarf_srclines_files_data_b(Dwarf_Line_Context line_context,
+    Dwarf_Signed     index_in,
+    const char **    name,
+    Dwarf_Unsigned * directory_index,
+    Dwarf_Unsigned * last_mod_time,
+    Dwarf_Unsigned * file_length,
+    Dwarf_Form_Data16 ** data16ptr,
+    Dwarf_Error    * error)
+{
     Dwarf_File_Entry fi = 0;
     Dwarf_Unsigned i  =0;
+    unsigned baseindex = 1;
     /*  Negative values not sensible. Leaving traditional
         signed interfaces. */
     Dwarf_Unsigned index = (Dwarf_Unsigned)index_in;
+
+
     if (!line_context || line_context->lc_magic != DW_CONTEXT_MAGIC) {
         _dwarf_error(NULL, error, DW_DLE_LINE_CONTEXT_BOTCH);
         return (DW_DLV_ERROR);
     }
-    if (index < 1 || index > line_context->lc_file_entry_count) {
-        _dwarf_error(NULL, error, DW_DLE_LINE_CONTEXT_INDEX_WRONG);
-        return (DW_DLV_ERROR);
+
+    /*  Special accomodation of the special gnu experimental
+        version number (a high number) so we cannot just
+        say '5 or greater'. This is awkward, but at least
+        if there is a version 6 or later it still allows
+        the experimental table.  */
+#define SANE_MAX_LINE_TABLE_STANDARD 20
+    if (line_context->lc_version_number < DW_LINE_VERSION5 ||
+        line_context->lc_version_number > SANE_MAX_LINE_TABLE_STANDARD) {
+        if (index < 1 || index > line_context->lc_file_entry_count) {
+            _dwarf_error(NULL, error, DW_DLE_LINE_CONTEXT_INDEX_WRONG);
+            return (DW_DLV_ERROR);
+        }
+        baseindex = 1;
+    } else {
+        /* zero index makes sense. Is base file of compilation. */
+        if (index > line_context->lc_file_entry_count) {
+            _dwarf_error(NULL, error, DW_DLE_LINE_CONTEXT_INDEX_WRONG);
+            return (DW_DLV_ERROR);
+        }
+        baseindex = 0;
     }
+
     fi = line_context->lc_file_entries;
-    for ( i = 1; i < index; i++) {
+    for ( i = baseindex; i < index; i++) {
         fi = fi->fi_next;
     }
     if(name) {
@@ -1160,8 +1199,17 @@ dwarf_srclines_files_data(Dwarf_Line_Context line_context,
     if (file_length) {
         *file_length = fi->fi_file_length;
     }
+    if (data16ptr) {
+        if (fi->fi_md5_present) {
+            *data16ptr = &fi->fi_md5_value;
+        } else {
+            *data16ptr = 0;
+        }
+    }
     return DW_DLV_OK;
 }
+
+
 
 
 /* New October 2015. */

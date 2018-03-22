@@ -2,7 +2,7 @@
   Copyright (C) 2000-2005 Silicon Graphics, Inc.  All Rights Reserved.
   Portions Copyright 2007-2010 Sun Microsystems, Inc. All rights reserved.
   Portions Copyright 2008-2010 Arxan Technologies, Inc. All Rights Reserved.
-  Portions Copyright 2009-2017 David Anderson. All rights reserved.
+  Portions Copyright 2009-2018 David Anderson. All rights reserved.
   Portions Copyright 2009-2010 Novell Inc. All rights reserved.
   Portions Copyright 2012 SN Systems Ltd. All rights reserved.
 
@@ -528,6 +528,7 @@ find_section_to_relocate(Dwarf_Debug dbg,Dwarf_Half section_index,
     MATCH_REL_SEC(section_index,dbg->de_debug_loclists,relocatablesec);
     MATCH_REL_SEC(section_index,dbg->de_debug_aranges,relocatablesec);
     MATCH_REL_SEC(section_index,dbg->de_debug_sup,relocatablesec);
+    MATCH_REL_SEC(section_index,dbg->de_debug_str_offsets,relocatablesec);
     /* dbg-> de_debug_tu_index,reloctablesec); */
     /* dbg-> de_debug_cu_index,reloctablesec); */
     /* dbg-> de_debug_gdbindex,reloctablesec); */

@@ -645,12 +645,13 @@ dwarf_global_formref(Dwarf_Attribute attr,
     case DW_FORM_sec_offset:
     case DW_FORM_GNU_ref_alt:  /* 2013 GNU extension */
     case DW_FORM_GNU_strp_alt: /* 2013 GNU extension */
-    case DW_FORM_strp_sup:     /* DWARF5 */
+    case DW_FORM_strp_sup:     /* DWARF5, sup string section */
+    case DW_FORM_line_strp:    /* DWARF5, .debug_line_str section */
         {
             /*  DW_FORM_sec_offset first exists in DWARF4.*/
             /*  It is up to the caller to know what the offset
                 of DW_FORM_sec_offset, DW_FORM_strp_sup
-                or DW_FORM_GNU_strp_alt refers to,
+                or DW_FORM_GNU_strp_alt etc refer to,
                 the offset is not going to refer to .debug_info! */
             unsigned length_size = cu_context->cc_length_size;
             if (length_size == 4) {
@@ -690,7 +691,7 @@ dwarf_global_formref(Dwarf_Attribute attr,
     elsewhere.  New May 2014*/
 
 int
-_dwarf_get_addr_index_itself(UNUSEDARG int theform,
+_dwarf_get_addr_index_itself(int theform,
     Dwarf_Small *info_ptr,
     Dwarf_Debug dbg,
     Dwarf_CU_Context cu_context,
@@ -702,8 +703,36 @@ _dwarf_get_addr_index_itself(UNUSEDARG int theform,
 
     section_end =
         _dwarf_calculate_info_section_end_ptr(cu_context);
-    DECODE_LEB128_UWORD_CK(info_ptr,index,
-        dbg,error,section_end);
+    switch(theform){
+    case DW_FORM_GNU_addr_index:
+    case DW_FORM_addrx:
+        DECODE_LEB128_UWORD_CK(info_ptr,index,
+            dbg,error,section_end);
+        break;
+    case DW_FORM_addrx1:
+        READ_UNALIGNED_CK(dbg, index, Dwarf_Unsigned,
+            info_ptr, 1,
+            error,section_end);
+        break;
+    case DW_FORM_addrx2:
+        READ_UNALIGNED_CK(dbg, index, Dwarf_Unsigned,
+            info_ptr, 2,
+            error,section_end);
+        break;
+    case DW_FORM_addrx3:
+        READ_UNALIGNED_CK(dbg, index, Dwarf_Unsigned,
+            info_ptr, 3,
+            error,section_end);
+        break;
+    case DW_FORM_addrx4:
+        READ_UNALIGNED_CK(dbg, index, Dwarf_Unsigned,
+            info_ptr, 4,
+            error,section_end);
+        break;
+    default:
+        _dwarf_error(dbg, error, DW_DLE_ATTR_FORM_NOT_ADDR_INDEX);
+        return DW_DLV_ERROR;
+    }
     *val_out = index;
     return DW_DLV_OK;
 }
@@ -736,9 +765,54 @@ dwarf_get_debug_addr_index(Dwarf_Attribute attr,
     return DW_DLV_ERROR;
 }
 
+static int
+dw_read_index_val_itself(Dwarf_Debug dbg,
+   unsigned theform,
+   Dwarf_Small *info_ptr,
+   Dwarf_Small *section_end,
+   Dwarf_Unsigned *return_index,
+   Dwarf_Error *error)
+{
+    Dwarf_Unsigned index = 0;
+
+    switch(theform) {
+    case DW_FORM_strx:
+    case DW_FORM_GNU_str_index:
+        DECODE_LEB128_UWORD_CK(info_ptr,index,
+            dbg,error,section_end);
+        break;
+    case DW_FORM_strx1:
+        READ_UNALIGNED_CK(dbg, index, Dwarf_Unsigned,
+            info_ptr, 1,
+            error,section_end);
+        break;
+    case DW_FORM_strx2:
+        READ_UNALIGNED_CK(dbg, index, Dwarf_Unsigned,
+            info_ptr, 2,
+            error,section_end);
+        break;
+    case DW_FORM_strx3:
+        READ_UNALIGNED_CK(dbg, index, Dwarf_Unsigned,
+            info_ptr, 3,
+            error,section_end);
+        break;
+    case DW_FORM_strx4:
+        READ_UNALIGNED_CK(dbg, index, Dwarf_Unsigned,
+            info_ptr, 4,
+            error,section_end);
+        break;
+    default:
+        _dwarf_error(dbg, error, DW_DLE_ATTR_FORM_NOT_STR_INDEX);
+        return DW_DLV_ERROR;
+    }
+    *return_index = index;
+    return DW_DLV_OK;
+}
+
 /*  Part of DebugFission.  So a dwarf dumper application
     can get the index and print it for the user.
-    A convenience function.  New May 2014*/
+    A convenience function.  New May 2014
+    Also used with DWARF5 forms.  */
 int
 dwarf_get_debug_str_index(Dwarf_Attribute attr,
     Dwarf_Unsigned *return_index,
@@ -749,6 +823,9 @@ dwarf_get_debug_str_index(Dwarf_Attribute attr,
     Dwarf_Debug dbg = 0;
     int res  = 0;
     Dwarf_Byte_Ptr section_end =  0;
+    Dwarf_Unsigned index = 0;
+    Dwarf_Small *info_ptr = 0;
+    int indxres = 0;
 
     res = get_attr_dbg(&dbg,&cu_context,attr,error);
     if (res != DW_DLV_OK) {
@@ -756,21 +833,38 @@ dwarf_get_debug_str_index(Dwarf_Attribute attr,
     }
     section_end =
         _dwarf_calculate_info_section_end_ptr(cu_context);
+    info_ptr = attr->ar_debug_ptr;
 
-    if (theform == DW_FORM_strx ||
-        theform == DW_FORM_GNU_str_index) {
-        Dwarf_Unsigned index = 0;
-        Dwarf_Small *info_ptr = attr->ar_debug_ptr;
-
-        DECODE_LEB128_UWORD_CK(info_ptr,index,
-            dbg,error,section_end);
+    indxres = dw_read_index_val_itself(dbg, theform, info_ptr,
+        section_end, &index,error);
+    if (indxres == DW_DLV_OK) {
         *return_index = index;
-        return DW_DLV_OK;
+        return indxres;
     }
-    _dwarf_error(dbg, error, DW_DLE_ATTR_FORM_NOT_ADDR_INDEX);
-    return (DW_DLV_ERROR);
+    return indxres;
 }
 
+
+int
+_dwarf_extract_data16(Dwarf_Debug dbg,
+    Dwarf_Small *data,
+    Dwarf_Small *section_start,
+    Dwarf_Small *section_end,
+    Dwarf_Form_Data16  * returned_val,
+    Dwarf_Error *error)
+{
+    Dwarf_Small *data16end = 0;
+
+    data16end = data + sizeof(Dwarf_Form_Data16);
+    if (data  < section_start ||
+        section_end < data16end) {
+        _dwarf_error(dbg, error,DW_DLE_DATA16_OUTSIDE_SECTION);
+        return DW_DLV_ERROR;
+    }
+    memcpy(returned_val, data, sizeof(Dwarf_Form_Data16));
+    return DW_DLV_OK;
+
+}
 
 int
 dwarf_formdata16(Dwarf_Attribute attr,
@@ -784,7 +878,6 @@ dwarf_formdata16(Dwarf_Attribute attr,
     Dwarf_Small *section_end = 0;
     Dwarf_Unsigned section_length = 0;
     Dwarf_Small *section_start = 0;
-    Dwarf_Small *data16end = 0;
 
     if (attr == NULL) {
         _dwarf_error(NULL, error, DW_DLE_ATTR_NULL);
@@ -806,15 +899,11 @@ dwarf_formdata16(Dwarf_Attribute attr,
     section_start = _dwarf_calculate_info_section_start_ptr(
         cu_context,&section_length);
     section_end = section_start + section_length;
-    data16end = attr->ar_debug_ptr + sizeof(Dwarf_Form_Data16);
-    if (attr->ar_debug_ptr < section_start ||
-        section_end < data16end) {
-        _dwarf_error(dbg, error,DW_DLE_ATTR_OUTSIDE_SECTION);
-        return DW_DLV_ERROR;
-    }
-    memcpy(returned_val, attr->ar_debug_ptr,
-        sizeof(Dwarf_Form_Data16));
-    return DW_DLV_OK;
+
+    res = _dwarf_extract_data16(dbg, attr->ar_debug_ptr,
+        section_start, section_end,
+        returned_val,  error);
+    return res;
 }
 
 
@@ -834,8 +923,12 @@ dwarf_formaddr(Dwarf_Attribute attr,
         return res;
     }
     attrform = attr->ar_attribute_form;
-    if (attrform == DW_FORM_GNU_addr_index ||
-        attrform == DW_FORM_addrx) {
+    if (attrform == DW_FORM_addrx ||
+        attrform == DW_FORM_addrx1 ||
+        attrform == DW_FORM_addrx2 ||
+        attrform == DW_FORM_addrx3 ||
+        attrform == DW_FORM_addrx4 ||
+        attrform == DW_FORM_GNU_addr_index) {
         res = _dwarf_look_in_local_and_tied(
             attrform,
             cu_context,
@@ -917,6 +1010,7 @@ _dwarf_allow_formudata(unsigned form)
     case DW_FORM_data4:
     case DW_FORM_data8:
     case DW_FORM_udata:
+    case DW_FORM_loclistx:
     return TRUE;
     }
     return FALSE;
@@ -981,6 +1075,7 @@ _dwarf_formudata_internal(Dwarf_Debug dbg,
         }
         break;
     /* real udata */
+    case DW_FORM_loclistx:
     case DW_FORM_udata: {
         Dwarf_Word leblen = 0;
         DECODE_LEB128_UWORD_LEN_CK(data, ret_value,leblen,
@@ -1083,6 +1178,7 @@ dwarf_formsdata(Dwarf_Attribute attr,
         return DW_DLV_OK;
         }
 
+    case DW_FORM_implicit_const:
     case DW_FORM_sdata: {
         Dwarf_Byte_Ptr tmp = attr->ar_debug_ptr;
 
@@ -1213,18 +1309,22 @@ _dwarf_extract_string_offset_via_str_offsets(Dwarf_Debug dbg,
     Dwarf_Unsigned offsetintable = 0;
     Dwarf_Unsigned end_offsetintable = 0;
     int res = 0;
+    int idxres = 0;
 
     res = _dwarf_load_section(dbg, &dbg->de_debug_str_offsets,error);
     if (res != DW_DLV_OK) {
         return res;
     }
+    idxres = dw_read_index_val_itself(dbg,
+        attrform,data_ptr,end_data_ptr,&index_to_offset_entry,error);
+    if ( idxres != DW_DLV_OK) {
+        return idxres;
+    }
 
-    DECODE_LEB128_UWORD_CK(data_ptr,index_to_offset_entry,
-        dbg,error,end_data_ptr);
     /*  DW_FORM_GNU_str_index has no 'base' value.
-        DW_FORM_strx has a base value
+        DW_FORM_strx* has a base value
         for the offset table */
-    if( attrform == DW_FORM_strx) {
+    if( attrform != DW_FORM_GNU_str_index) {
         res = _dwarf_get_string_base_attr_value(dbg,cu_context,
             &offset_base,error);
         if (res != DW_DLV_OK) {
@@ -1282,6 +1382,10 @@ _dwarf_extract_local_debug_str_string_given_offset(Dwarf_Debug dbg,
     if (attrform == DW_FORM_strp ||
         attrform == DW_FORM_line_strp ||
         attrform == DW_FORM_GNU_str_index ||
+        attrform == DW_FORM_strx1 ||
+        attrform == DW_FORM_strx2 ||
+        attrform == DW_FORM_strx3 ||
+        attrform == DW_FORM_strx4 ||
         attrform == DW_FORM_strx) {
         /*  The 'offset' into .debug_str or .debug_line_str is given,
             here we turn that into a pointer. */
@@ -1302,7 +1406,7 @@ _dwarf_extract_local_debug_str_string_given_offset(Dwarf_Debug dbg,
             secbegin = dbg->de_debug_line_str.dss_data;
             strbegin= dbg->de_debug_line_str.dss_data + offset;
         } else {
-            /* DW_FORM_strp */
+            /* DW_FORM_strp  etc */
             res = _dwarf_load_section(dbg, &dbg->de_debug_str,error);
             if (res != DW_DLV_OK) {
                 return res;
@@ -1429,7 +1533,11 @@ dwarf_formstring(Dwarf_Attribute attr,
         return res;
     }
     case DW_FORM_GNU_str_index:
-    case DW_FORM_strx: {
+    case DW_FORM_strx:
+    case DW_FORM_strx1:
+    case DW_FORM_strx2:
+    case DW_FORM_strx3:
+    case DW_FORM_strx4: {
         Dwarf_Unsigned offsettostr= 0;
         res = _dwarf_extract_string_offset_via_str_offsets(dbg,
             infoptr,

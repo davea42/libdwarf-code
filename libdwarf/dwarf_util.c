@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2000-2005 Silicon Graphics, Inc.  All Rights Reserved.
-  Portions Copyright (C) 2007-2016 David Anderson. All Rights Reserved.
+  Portions Copyright (C) 2007-2018 David Anderson. All Rights Reserved.
   Portions Copyright 2012 SN Systems Ltd. All rights reserved.
 
   This program is free software; you can redistribute it and/or modify it
@@ -365,6 +365,7 @@ _dwarf_get_size_of_val(Dwarf_Debug dbg,
         *size_out = 8;
         return DW_DLV_OK;
 
+    case DW_FORM_implicit_const:
     case DW_FORM_sdata: {
         /*  Discard the decoded value, we just want the length
             of the value. */
@@ -377,8 +378,40 @@ _dwarf_get_size_of_val(Dwarf_Debug dbg,
         *size_out = leb128_length;
         return DW_DLV_OK;
     }
+    case DW_FORM_ref_sup4:
+        *size_out = 4;
+        return DW_DLV_OK;
+    case DW_FORM_ref_sup8:
+        *size_out = 8;
+        return DW_DLV_OK;
 
+    case DW_FORM_addrx1:
+        *size_out = 1;
+        return DW_DLV_OK;
+    case DW_FORM_addrx2:
+        *size_out = 2;
+        return DW_DLV_OK;
+    case DW_FORM_addrx3:
+        *size_out = 4;
+        return DW_DLV_OK;
+    case DW_FORM_addrx4:
+        *size_out = 4;
+        return DW_DLV_OK;
+    case DW_FORM_strx1:
+        *size_out = 1;
+        return DW_DLV_OK;
+    case DW_FORM_strx2:
+        *size_out = 2;
+        return DW_DLV_OK;
+    case DW_FORM_strx3:
+        *size_out = 4;
+        return DW_DLV_OK;
+    case DW_FORM_strx4:
+        *size_out = 4;
+        return DW_DLV_OK;
 
+    case DW_FORM_loclistx:
+    case DW_FORM_rnglistx:
     case DW_FORM_addrx:
     case DW_FORM_GNU_addr_index:
     case DW_FORM_strx:
@@ -391,6 +424,7 @@ _dwarf_get_size_of_val(Dwarf_Debug dbg,
         return DW_DLV_OK;
     }
 
+    case DW_FORM_line_strp:
     case DW_FORM_strp:
         *size_out = v_length_size;
         return DW_DLV_OK;
@@ -460,7 +494,7 @@ _dwarf_valid_form_we_know(UNUSEDARG Dwarf_Debug dbg,
     if (at_name == 0) {
         return FALSE;
     }
-    if (at_form <= DW_FORM_ref_sig8) {
+    if (at_form <= DW_FORM_addrx4 ) {
         return TRUE;
     }
     if (at_form == DW_FORM_GNU_addr_index ||

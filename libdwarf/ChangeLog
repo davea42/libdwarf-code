@@ -1,3 +1,31 @@
+2018-03-21 David Anderson
+    * gennames.c: Updated version string.
+2018-03-21 David Anderson
+    * dwarf_elf_access.c: Allow for relocations on .debug_str_offsets.
+    * dwarf_errmsg_list.c: Clarified meaning of
+      DW_DLE_DIE_ABBREV_LIST_NULL, added new errors
+      DW_DLE_STR_OFFSETS_BASE_WRONG_FORM,
+      DW_DLE_DATA16_OUTSIDE_SECTION,
+      DW_DLE_LNCT_MD5_WRONG_FORM
+    * dwarf_form.c: Added support for DWARF5 new FORMs.
+    * dwarf_line.c: Added dwarf_srclines_files_data_b()
+      so clients needing DWARF5 line table support can
+      get the DW_LNCT_MD5 value if it is present.
+    * dwarf_line.h: Added support for the DWARF5
+      MD5 data.
+    * dwarf_line_table_reader_common.c: Added 
+      DW_LNCT_MD5 support.
+    * dwarf_opaque.h: Added _dwarf_extract_data16 so we do not
+      have code duplication reading this data.
+    * dwarf_print_lines.c: If MD5 present, we now print it.
+    * dwarf_query.c: Correct handling of form for
+      DW_AT_str_offsets_base.
+    * dwarf_util.c: Add support for DWARF5 FORMs.
+    * libdwarf.h.in: Define the values of the new
+      DW_DLE codes mentioned above.
+      Declare new function dwarf_srclines_files_data_b()
+    * libdwarf2.1.mm: Document new function. Rev 2.61.
+    * libdwarf2.1.pdf: Generated Rev 2.61
 2018-01-05 David Anderson
     * dwarf_macro5.c(_dwarf_get_macro_ops_count_internal):
       A test duplicated the preceding loop condition so
