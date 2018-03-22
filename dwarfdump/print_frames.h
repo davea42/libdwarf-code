@@ -22,6 +22,13 @@
     Franklin Street - Fifth Floor, Boston MA 02110-1301, USA.
 */
 
+#ifndef PRINT_FRAMES_H
+#define PRINT_FRAMES_H
+
+#ifdef __cplusplus
+extern "C" {
+#endif /* __cplusplus */
+
 int print_one_cie(Dwarf_Debug dbg, Dwarf_Cie cie,
     Dwarf_Unsigned cie_index,
     Dwarf_Half address_size,
@@ -35,3 +42,8 @@ void get_string_from_locs(Dwarf_Debug dbg,
     Dwarf_Half version,
     struct esb_s *out_string);
 
+#ifdef __cplusplus
+}
+#endif /* __cplusplus */
+
+#endif /* PRINT_FRAMES_H */

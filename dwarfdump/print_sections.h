@@ -22,6 +22,12 @@
     Franklin Street - Fifth Floor, Boston MA 02110-1301, USA.
 */
 
+#ifndef PRINT_SECTIONS_H
+#define PRINT_SECTIONS_H
+
+#ifdef __cplusplus
+extern "C" {
+#endif /* __cplusplus */
 
 extern int dwarf_names_print_on_error;
 
@@ -41,3 +47,9 @@ void print_pubname_style_entry(Dwarf_Debug dbg,
     Dwarf_Unsigned cu_off,
     Dwarf_Unsigned global_cu_off,
     Dwarf_Unsigned maxoff);
+
+#ifdef __cplusplus
+}
+#endif /* __cplusplus */
+
+#endif /* PRINT_SECTIONS_H */
