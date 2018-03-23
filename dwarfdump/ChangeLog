@@ -1,3 +1,6 @@
+2018-03-22 David Anderson
+    * print_lines.c: Now works with DWARF5 line table,
+      showing correct file index for all versions.
 2018-03-21 David Anderson
     * common.c,dwarfdump.c,tag_attr.c,tag_tree.c: Updated
       version string.

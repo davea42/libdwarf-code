@@ -42,6 +42,8 @@
         filename
 */
 
+#define DW_LINE_VERSION5 5
+
 
 static void
 print_source_intro(Dwarf_Debug dbg,Dwarf_Die cu_die)
@@ -500,6 +502,8 @@ print_line_context_record(Dwarf_Debug dbg,
     Dwarf_Small table_count = 0;
     Dwarf_Error err = 0;
     struct esb_s bufr;
+    unsigned linecountbase = 0;
+    unsigned linecountmax = 0;
 
     esb_constructor(&bufr);
     printf("Line Context data\n");
@@ -570,7 +574,16 @@ print_line_context_record(Dwarf_Debug dbg,
     printf( " files count 0x%"
         DW_PR_DUx " %" DW_PR_DUu "\n",
         count,count);
-    for(i = 1; i <= count; ++i) {
+    /*  Set up so just one loop control needed
+        for all versions of line tables. */
+    if (version == DW_LINE_VERSION5) {
+        linecountbase = 0;
+        linecountmax = count;
+    } else {
+        linecountbase = 1;
+        linecountmax = count +1;
+    }
+    for(i = linecountbase; i < linecountmax; ++i) {
         Dwarf_Unsigned dirindex = 0;
         Dwarf_Unsigned modtime = 0;
         Dwarf_Unsigned flength = 0;

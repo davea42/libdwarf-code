@@ -1167,26 +1167,29 @@ dwarf_srclines_files_data_b(Dwarf_Line_Context line_context,
         if there is a version 6 or later it still allows
         the experimental table.  */
 #define SANE_MAX_LINE_TABLE_STANDARD 20
+    fi = line_context->lc_file_entries;
     if (line_context->lc_version_number < DW_LINE_VERSION5 ||
         line_context->lc_version_number > SANE_MAX_LINE_TABLE_STANDARD) {
+        /* zero nonsensical, start at 1. index <= count meaningful. */
         if (index < 1 || index > line_context->lc_file_entry_count) {
             _dwarf_error(NULL, error, DW_DLE_LINE_CONTEXT_INDEX_WRONG);
             return (DW_DLV_ERROR);
         }
-        baseindex = 1;
-    } else {
-        /* zero index makes sense. Is base file of compilation. */
-        if (index > line_context->lc_file_entry_count) {
+        for ( i = 1; i < index; i++) {
+            fi = fi->fi_next;
+        }
+    } else {  /* DW_LINE_VERSION5 */
+        /* zero index makes sense. Is base file of compilation.
+            index < count is correct.  */
+        if (index >= line_context->lc_file_entry_count) {
             _dwarf_error(NULL, error, DW_DLE_LINE_CONTEXT_INDEX_WRONG);
             return (DW_DLV_ERROR);
         }
-        baseindex = 0;
+        for ( i = 0; i < index; i++) {
+            fi = fi->fi_next;
+        }
     }
 
-    fi = line_context->lc_file_entries;
-    for ( i = baseindex; i < index; i++) {
-        fi = fi->fi_next;
-    }
     if(name) {
         *name = (const char *)fi->fi_file_name;
     }

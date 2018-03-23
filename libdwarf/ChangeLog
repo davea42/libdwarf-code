@@ -1,3 +1,7 @@
+2018-03-22 David Anderson
+    * dwarf_line.c, dwarf_print_lines.c: Index file
+      numbers for all versions of DWARF (DWARF5
+      indexes starting at 0).
 2018-03-21 David Anderson
     * gennames.c: Updated version string.
 2018-03-21 David Anderson
