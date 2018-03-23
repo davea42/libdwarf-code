@@ -432,16 +432,22 @@ _dwarf_internal_printlines(Dwarf_Die die,
             Dwarf_Unsigned tlm2 = 0;
             Dwarf_Unsigned di = 0;
             Dwarf_Unsigned fl = 0;
+            unsigned filenum = 0;
 
             fe = fe2;
             tlm2 = fe->fi_time_last_mod;
             di = fe->fi_dir_index;
             fl = fe->fi_file_length;
+            filenum = fiu+1; /* Assuming DWARF2,3,4 */
+            if (line_context->lc_version_number == DW_LINE_VERSION5) {
+                /* index starts 0 for DWARF5, show 0 base. */
+                filenum = fiu;
+            }
 
             dwarf_printf(dbg,
                 "  file[%u]  %s (file-number: %u) \n",
                 (unsigned) fiu, (char *) fe->fi_file_name,
-                (unsigned)(fiu+1));
+                (unsigned)(filenum));
             dwarf_printf(dbg,
                 "    dir index %d\n", (int) di);
             {
