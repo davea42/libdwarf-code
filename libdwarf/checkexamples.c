@@ -10,6 +10,15 @@
     PUBLIC DOMAIN.
     This file is not part of libdwarf, though
     it appears in the same directory as libdwarf.
+
+    compile with
+cc -c -Wall -O0 -Wpointer-arith  -Wdeclaration-after-statement \
+-Wextra -Wcomment -Wformat -Wpedantic -Wuninitialized \
+-Wno-long-long -Wshadow -Wbad-function-cast \
+-Wmissing-parameter-type -Wnested-externs checkexamples.c
+
+    and expect to see lots of warnings, most of which
+    are nothing of interest.
 */
 
 
@@ -190,7 +199,6 @@ example_loclistc(Dwarf_Debug dbg,Dwarf_Attribute someattr)
     lres = dwarf_get_loclist_c(someattr,&loclist_head,&lcount,&error);
     if (lres == DW_DLV_OK) {
         Dwarf_Unsigned i = 0;
-        Dwarf_Locdesc_c locentry = 0;
 
         /*  Before any return remember to call
             dwarf_loc_head_c_dealloc(loclist_head); */
@@ -430,8 +438,41 @@ void examplec(Dwarf_Die cu_die)
         line_context = 0;
     } else if (table_count == 1) {
         Dwarf_Signed i = 0;
+        Dwarf_Signed baseindex = 0;
+        Dwarf_Signed file_count = 0;
+        Dwarf_Signed endindex = 0;
         /*  Standard dwarf 2,3,4, or 5 line table */
         /*  Do something. */
+
+        /*  First let us index through all the files listed
+            in the line table header. */
+        sres = dwarf_srclines_files_indexes(line_context,
+            &baseindex,&file_count,&endindex,&err);
+        if (sres != DW_DLV_OK) {
+            /* Something badly wrong! */
+            return;
+        }
+        /*  Works for DWARF2,3,4 (one-based index)
+            and DWARF5 (zero-based index) */
+        for (i = baseindex; i < endindex; i++) {
+            Dwarf_Unsigned dirindex = 0;
+            Dwarf_Unsigned modtime = 0;
+            Dwarf_Unsigned flength = 0;
+            Dwarf_Form_Data16 *md5data = 0;
+            int vres = 0;
+            const char *name = 0;
+
+            vres = dwarf_srclines_files_data_b(line_context,i,
+                &name,&dirindex, &modtime,&flength,
+                &md5data,&err);
+            if (vres != DW_DLV_OK) {
+                /* something very wrong. */
+                return;
+            }
+            /* do something */
+        }
+
+
         /*  For this case where we have a line table we will likely
             wish to get the line details: */
         sres = dwarf_srclines_from_linecontext(line_context,
@@ -787,15 +828,13 @@ void examplep5(Dwarf_Debug dbg, Dwarf_Die cu_die)
             Dwarf_Unsigned  index = 0;
             Dwarf_Unsigned  offset =0;
             const char    * macro_string =0;
-            int lres = 0;
+            int lres2 = 0;
 
-            lres = dwarf_get_macro_op(macro_context,
+            lres2 = dwarf_get_macro_op(macro_context,
                 k, &section_offset,&macro_operator,
                 &forms_count, &formcode_array,&err);
-            if (lres != DW_DLV_OK) {
-                print_error(dbg,
-                    "ERROR from  dwarf_get_macro_op()",
-                    lres,err);
+            if (lres2 != DW_DLV_OK) {
+                /* Some error. Deal with it */
                 dwarf_dealloc_macro_context(macro_context);
                 return;
             }
@@ -814,7 +853,7 @@ void examplep5(Dwarf_Debug dbg, Dwarf_Die cu_die)
             case DW_MACRO_undef_strx:
             case DW_MACRO_define_sup:
             case DW_MACRO_undef_sup: {
-                lres = dwarf_get_macro_defundef(macro_context,
+                lres2 = dwarf_get_macro_defundef(macro_context,
                     k,
                     &line_number,
                     &index,
@@ -822,10 +861,8 @@ void examplep5(Dwarf_Debug dbg, Dwarf_Die cu_die)
                     &forms_count,
                     &macro_string,
                     &err);
-                if (lres != DW_DLV_OK) {
-                    print_error(dbg,
-                        "ERROR from sup dwarf_get_macro_defundef()",
-                        lres,err);
+                if (lres2 != DW_DLV_OK) {
+                    /* Some error. Deal with it */
                     dwarf_dealloc_macro_context(macro_context);
                     return;
                 }
@@ -833,14 +870,12 @@ void examplep5(Dwarf_Debug dbg, Dwarf_Die cu_die)
                 }
                 break;
             case DW_MACRO_start_file: {
-                lres = dwarf_get_macro_startend_file(macro_context,
+                lres2 = dwarf_get_macro_startend_file(macro_context,
                     k,&line_number,
                     &index,
                     &macro_string,&err);
-                if (lres != DW_DLV_OK) {
-                    print_error(dbg,
-                        "ERROR from  dwarf_get_macro_startend_file()(sup)",
-                        lres,err);
+                if (lres2 != DW_DLV_OK) {
+                    /* Some error. Deal with it */
                     dwarf_dealloc_macro_context(macro_context);
                     return;
                 }
@@ -848,12 +883,10 @@ void examplep5(Dwarf_Debug dbg, Dwarf_Die cu_die)
                 }
                 break;
             case DW_MACRO_import: {
-                lres = dwarf_get_macro_import(macro_context,
+                lres2 = dwarf_get_macro_import(macro_context,
                     k,&offset,&err);
-                if (lres != DW_DLV_OK) {
-                    print_error(dbg,
-                        "ERROR from  dwarf_get_macro_import()(sup)",
-                        lres,err);
+                if (lres2 != DW_DLV_OK) {
+                    /* Some error. Deal with it */
                     dwarf_dealloc_macro_context(macro_context);
                     return;
                 }
@@ -861,12 +894,10 @@ void examplep5(Dwarf_Debug dbg, Dwarf_Die cu_die)
                 }
                 break;
             case DW_MACRO_import_sup: {
-                lres = dwarf_get_macro_import(macro_context,
+                lres2 = dwarf_get_macro_import(macro_context,
                     k,&offset,&err);
-                if (lres != DW_DLV_OK) {
-                    print_error(dbg,
-                        "ERROR from  dwarf_get_macro_import()(sup)",
-                        lres,err);
+                if (lres2 != DW_DLV_OK) {
+                    /* Some error. Deal with it */
                     dwarf_dealloc_macro_context(macro_context);
                     return;
                 }
@@ -973,7 +1004,6 @@ void exampler(Dwarf_Debug dbg,Dwarf_Addr mypcval)
         dwarf_get_fde_n() allows accessing all FDE/CIE
         data so one could build up an application-specific
         table of information if that is more useful.  */
-    Dwarf_Signed count = 0;
     Dwarf_Cie *cie_data = 0;
     Dwarf_Signed cie_count = 0;
     Dwarf_Fde *fde_data = 0;
@@ -1165,7 +1195,7 @@ void examplewgdbindex(Dwarf_Gdbindex gdbindex)
     for( i  = 0; i < list_len; i++) {
         Dwarf_Unsigned lowpc = 0;
         Dwarf_Unsigned highpc = 0;
-        Dwarf_Unsigned cu_index,
+        Dwarf_Unsigned cu_index = 0;
         res = dwarf_gdbindex_addressarea_entry(gdbindex,i,
             &lowpc,&highpc,
             &cu_index,
