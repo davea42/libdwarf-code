@@ -32,7 +32,6 @@
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
 #endif
-#include "dwarf.h"
 #include "dwgetopt.h"
 
 /*  gennames.c

@@ -23,6 +23,7 @@
 */
 
 #include "globals.h"
+#include "sanitized.h"
 #include "naming.h"
 #include "dwconf.h"
 

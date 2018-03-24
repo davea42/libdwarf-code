@@ -40,6 +40,7 @@
 #ifdef HAVE_UNISTD_H
 #include <unistd.h> /* for dup2() */
 #endif
+#include "sanitized.h"
 #include "dwgetopt.h"
 #include "makename.h"
 #include "dwconf.h"

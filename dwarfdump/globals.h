@@ -423,12 +423,6 @@ extern void print_macinfo_by_offset(Dwarf_Debug dbg,Dwarf_Unsigned offset);
 
 struct esb_s;
 
-/*  Eliminate control characters from the input,
-    leaving the input unchanged. Return pointer to
-    an ephemeral location (only callfor printf,
-    and only once per printf! */
-const char * sanitized(const char *s);
-void sanitized_string_destructor(void);
 void ranges_esb_string_destructor(void);
 void destruct_abbrev_array(void);
 

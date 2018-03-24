@@ -27,7 +27,7 @@
 
 #include "common.h"
 #include "config.h"
-#include "globals.h"
+#include "sanitized.h"
 #include "warningcontrol.h"
 #include <stdio.h>
 /* Windows specific header files */

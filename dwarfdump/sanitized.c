@@ -22,9 +22,7 @@
 
 */
 
-#include "globals.h"
-#include "naming.h"
-#include "dwconf.h"
+#include "sanitized.h"
 #include "esb.h"
 
 /*  This does a uri-style conversion of control characters.

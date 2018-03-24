@@ -34,6 +34,7 @@
 #include "print_reloc.h"
 #include "section_bitmaps.h"
 #include "esb.h"
+#include "sanitized.h"
 
 /*  Include Section type, to be able to deal with all the
     Elf32_Rel, Elf32_Rela, Elf64_Rel, Elf64_Rela relocation types
