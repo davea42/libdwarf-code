@@ -40,7 +40,6 @@
 #ifdef HAVE_UNISTD_H
 #include <unistd.h> /* for dup2() */
 #endif
-#include "sanitized.h"
 #include "dwgetopt.h"
 #include "makename.h"
 #include "dwconf.h"
@@ -49,6 +48,7 @@
 #include "helpertree.h"
 #include "uri.h"
 #include "esb.h"                /* For flexible string buffer. */
+#include "sanitized.h"
 #include "tag_common.h"
 
 #ifdef _WIN32

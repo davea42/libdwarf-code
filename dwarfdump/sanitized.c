@@ -22,8 +22,11 @@
 
 */
 
-#include "sanitized.h"
+/*  Definitions for TRUE, FALSE, etc. */
+#include "defined_types.h"
+
 #include "esb.h"
+#include "sanitized.h"
 
 /*  This does a uri-style conversion of control characters.
     So  SOH prints as %01 for example.
@@ -94,8 +97,6 @@ we turn all non-ASCII to %xx below.
 
 static struct esb_s localesb = {0,0,0};
 
-#define FALSE 0
-#define TRUE 1
 boolean no_sanitize_string_garbage = FALSE;
 
 /*  This is safe to use because it is only

@@ -32,10 +32,10 @@
 */
 
 #include "globals.h"
-#include "sanitized.h"
 #include "naming.h"
 #include "dwconf.h"
 #include "esb.h"
+#include "sanitized.h"
 
 #include "print_sections.h"
 

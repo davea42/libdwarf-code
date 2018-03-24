@@ -104,19 +104,7 @@ typedef unsigned long long  __uint64_t;
 #endif
 
 #include "checkutil.h"
-#ifndef BOOLEAN_TYPEDEFED
-#define BOOLEAN_TYPEDEFED
-typedef int boolean;
-#endif /* BOOLEAN_TYPEDEFED */
-#ifndef FALSE
-#define FALSE 0
-#endif
-#ifndef TRUE
-#define TRUE 1
-#endif
-#ifndef FAILED
-#define FAILED 1
-#endif
+#include "defined_types.h"
 
 /* Used to try to avoid leakage when we hide errors. */
 #define DROP_ERROR_INSTANCE(d,r,e)       \

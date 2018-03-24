@@ -42,14 +42,8 @@
     pointer arguments of all kinds are not NULL.
 */
 
-#ifndef SELFTEST
-#include "globals.h"
-#else
-#include <stdio.h> /* SELFTEST */
-#include <string.h> /* SELFTEST */
-#include <stdlib.h> /* SELFTEST */
+#ifdef SELFTEST
 typedef char * string; /* SELFTEST */
-#include <stdarg.h>   /* For va_start va_arg va_list */
 #endif
 #include "esb.h"
 

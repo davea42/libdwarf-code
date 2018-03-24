@@ -21,6 +21,17 @@
   Franklin Street - Fifth Floor, Boston MA 02110-1301, USA.
 */
 
+#ifndef URI_H
+#define URI_H
+
+#ifdef __cplusplus
+extern "C" {
+#endif /* __cplusplus */
+
 void translate_to_uri(const char * filename, struct esb_s *out);
 void translate_from_uri(const char * input, struct esb_s *out);
 
+#ifdef __cplusplus
+}
+#endif /* __cplusplus */
+#endif /* URI_H */

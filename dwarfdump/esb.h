@@ -31,6 +31,12 @@
 
 #ifndef ESB_H
 #define ESB_H
+
+#include <stdio.h>
+#include <stdarg.h>   /* For va_start va_arg va_list */
+#include <stdlib.h>
+#include <string.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */

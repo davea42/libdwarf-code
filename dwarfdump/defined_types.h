@@ -21,21 +21,24 @@
   Franklin Street - Fifth Floor, Boston MA 02110-1301, USA.
 */
 
-#ifndef SANITIZED_H
-#define SANITIZED_H
+#ifndef DEFINED_TYPES_H
+#define DEFINED_TYPES_H
 
-#ifdef __cplusplus
-extern "C" {
-#endif /* __cplusplus */
-
-/*  Eliminate control characters from the input,
-    leaving the input unchanged. Return pointer to
-    an ephemeral location (only callfor printf,
-    and only once per printf! */
-const char * sanitized(const char *s);
-void sanitized_string_destructor(void);
+#ifndef BOOLEAN_TYPEDEFED
+#define BOOLEAN_TYPEDEFED
+typedef int boolean;
+#endif /* BOOLEAN_TYPEDEFED */
+#ifndef FALSE
+#define FALSE 0
+#endif
+#ifndef TRUE
+#define TRUE 1
+#endif
+#ifndef FAILED
+#define FAILED 1
+#endif
 
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */
-#endif /* SANITIZED_H */
+#endif /* DEFINED_TYPES_H */

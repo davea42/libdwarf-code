@@ -31,9 +31,9 @@
 
 
 #include "globals.h"
-#include "sanitized.h"
 #include "naming.h"
 #include "esb.h"                /* For flexible string buffer. */
+#include "sanitized.h"
 #include "print_frames.h"       /* for get_string_from_locs() . */
 #include "macrocheck.h"
 #include "helpertree.h"

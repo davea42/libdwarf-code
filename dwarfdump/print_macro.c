@@ -22,10 +22,10 @@
 */
 
 #include "globals.h"
-#include "sanitized.h"
 #include "naming.h"
 #include "dwconf.h"
 #include "esb.h"
+#include "sanitized.h"
 #include "uri.h"
 #include <ctype.h>
 #include <time.h>

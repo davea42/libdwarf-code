@@ -26,8 +26,8 @@
 */
 
 #include "globals.h"
-#include "sanitized.h"
 #include "esb.h"
+#include "sanitized.h"
 
 static struct esb_s esb_string;
 
