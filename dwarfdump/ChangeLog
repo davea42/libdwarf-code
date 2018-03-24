@@ -1,3 +1,7 @@
+2018-03-24 David Anderson
+    * print_lines.c: Now uses dwarf_srclines_files_indexes()
+      to simplify printing of DWARF2,3,4 and 5 line headers
+      in a simple uniform way.
 2018-03-22 David Anderson
     * print_lines.c: Now works with DWARF5 line table,
       showing correct file index for all versions.

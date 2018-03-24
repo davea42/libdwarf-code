@@ -479,6 +479,7 @@ const char *_dwarf_errmsgs[] = {
     "DW_DLE_STR_OFFSETS_BASE_WRONG_FORM(398)",
     "DW_DLE_DATA16_OUTSIDE_SECTION(399)",
     "DW_DLE_LNCT_MD5_WRONG_FORM(400)",
+    "DW_DLE_LINE_HEADER_CORRUPT(401) possible data corruption",
 };
 
 #ifdef TESTING
