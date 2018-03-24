@@ -1,3 +1,27 @@
+2018-03-24 David Anderson
+    * checkexamples.c: This is just example code for
+      libdwarf2.1.mm, not part of libdwarf. Now 
+      checked by cc for errors and organized in the
+      same order the examples appear in the .mm.
+    * dwarf_errmsg_list.c: Added error code
+      DW_DLE_LINE_HEADER_CORRUPT.
+    * dwarf_line.c(_dwarf_set_line_table_regs_default_values):
+      Add line-table header version number argument so the
+      function works for DWARF5 (and earlier as well).
+      Now uses dwarf_srclines_files_indexes() several places,
+      simplifying the code.
+    * dwarf_line.h: Adds new fields to Dwarf_Line_Context_s
+      so that dwarf_srclines_files_indexes() logic is
+      simple.
+    * dwarf_line_table_reader_common.c: Passes version number
+      to _dwarf_set_line_table_regs_default_values() so it
+      works right for DWARF5 (and for earlier DWARF).
+    * libdwarf.h.in: Added DW_DLE_LINE_HEADER_CORRUPT to
+      error list. Added function dwarf_srclines_files_indexes().
+    * libdwarf2.1.mm: Rev 2.61. Document the new function
+      dwarf_srclines_files_indexes()
+      and update all examples for formatting and correct C.
+    * libdwarf2.1.pdf: Regenerated, Rev 2.61.
 2018-03-22 David Anderson
     * dwarf_line.c, dwarf_print_lines.c: Index file
       numbers for all versions of DWARF (DWARF5

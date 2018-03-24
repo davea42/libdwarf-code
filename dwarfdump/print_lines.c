@@ -496,14 +496,16 @@ print_line_context_record(Dwarf_Debug dbg,
     int vres = 0;
     Dwarf_Unsigned lsecoff = 0;
     Dwarf_Unsigned version = 0;
-    Dwarf_Signed count = 0;
+    Dwarf_Signed dir_count = 0;
+    Dwarf_Signed baseindex = 0;
+    Dwarf_Signed file_count = 0;
+    Dwarf_Signed endindex = 0;
     Dwarf_Signed i = 0;
+    Dwarf_Signed subprog_count = 0;
     const char *name = 0;
     Dwarf_Small table_count = 0;
     Dwarf_Error err = 0;
     struct esb_s bufr;
-    unsigned linecountbase = 0;
-    unsigned linecountmax = 0;
 
     esb_constructor(&bufr);
     printf("Line Context data\n");
@@ -542,7 +544,7 @@ print_line_context_record(Dwarf_Debug dbg,
         printf(" Compilation directory: <unknown no DW_AT_comp_dir>\n");
     }
 
-    vres = dwarf_srclines_include_dir_count(line_context,&count,&err);
+    vres = dwarf_srclines_include_dir_count(line_context,&dir_count,&err);
     if (vres != DW_DLV_OK) {
         print_error(dbg,"Error accessing line context"
             "Something broken.",
@@ -551,8 +553,8 @@ print_line_context_record(Dwarf_Debug dbg,
     }
     printf(" include directory count 0x%"
         DW_PR_DUx " %" DW_PR_DSd "\n",
-        (Dwarf_Unsigned)count,count);
-    for(i = 1; i <= count; ++i) {
+        (Dwarf_Unsigned)dir_count,dir_count);
+    for(i = 1; i <= dir_count; ++i) {
         vres = dwarf_srclines_include_dir_data(line_context,i,
             &name,&err);
         if (vres != DW_DLV_OK) {
@@ -564,7 +566,8 @@ print_line_context_record(Dwarf_Debug dbg,
         printf("  [%2" DW_PR_DSd "]  \"%s\"\n",i,name);
     }
 
-    vres = dwarf_srclines_files_count(line_context,&count,&err);
+    vres = dwarf_srclines_files_indexes(line_context,
+        &baseindex,&file_count,&endindex,&err);
     if (vres != DW_DLV_OK) {
         print_error(dbg,"Error accessing line context"
             "Something broken.",
@@ -573,23 +576,18 @@ print_line_context_record(Dwarf_Debug dbg,
     }
     printf( " files count 0x%"
         DW_PR_DUx " %" DW_PR_DUu "\n",
-        count,count);
+        file_count,file_count);
     /*  Set up so just one loop control needed
         for all versions of line tables. */
-    if (version == DW_LINE_VERSION5) {
-        linecountbase = 0;
-        linecountmax = count;
-    } else {
-        linecountbase = 1;
-        linecountmax = count +1;
-    }
-    for(i = linecountbase; i < linecountmax; ++i) {
+    for(i = baseindex; i < endindex; ++i) {
         Dwarf_Unsigned dirindex = 0;
         Dwarf_Unsigned modtime = 0;
         Dwarf_Unsigned flength = 0;
+        Dwarf_Form_Data16 *md5data = 0;
 
-        vres = dwarf_srclines_files_data(line_context,i,
-            &name,&dirindex, &modtime,&flength,&err);
+        vres = dwarf_srclines_files_data_b(line_context,i,
+            &name,&dirindex, &modtime,&flength,
+            &md5data,&err);
         if (vres != DW_DLV_OK) {
             print_error(dbg,"Error accessing line context"
                 "Something broken.",
@@ -609,6 +607,16 @@ print_line_context_record(Dwarf_Debug dbg,
             i,esb_get_string(&bufr));
         printf(" directory index  %2" DW_PR_DUu ,dirindex);
         printf(",  file length %2" DW_PR_DUu ,flength);
+        if (md5data) {
+            char *c = (char *)md5data;
+            char *end = c+sizeof(*md5data);
+            printf(", file md5 value 0x");
+            while(c < end) {
+                printf("%02x",0xff&*c);
+                ++c;
+            }
+            printf(" ");
+        }
         if (modtime) {
             time_t tt3 = (time_t)modtime;
 
@@ -621,20 +629,24 @@ print_line_context_record(Dwarf_Debug dbg,
     }
     esb_destructor(&bufr);
 
-    vres = dwarf_srclines_subprog_count(line_context,&count,&err);
+    vres = dwarf_srclines_subprog_count(line_context,&subprog_count,
+        &err);
     if (vres != DW_DLV_OK) {
         print_error(dbg,"Error accessing line context"
             "Something broken.",
             vres,err);
         return;
     }
-    if (count == 0) {
+    if (subprog_count == 0) {
         return;
     }
+    /*  The following is for the experimental table
+        which is only DWARF4 so far, so no need for
+        a dwarf_srclines_subprog_indexes() function. Yet. */
     printf(" subprograms count (experimental) 0x%"
         DW_PR_DUx " %" DW_PR_DUu "\n",
-        count,count);
-    for(i = 1; i <= count; ++i) {
+        subprog_count,subprog_count);
+    for(i = 1; i <= subprog_count; ++i) {
         Dwarf_Unsigned decl_file = 0;
         Dwarf_Unsigned decl_line = 0;
         vres = dwarf_srclines_subprog_data(line_context,i,

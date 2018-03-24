@@ -993,6 +993,7 @@ read_line_table_program(Dwarf_Debug dbg,
     /*  Initialize the one state machine variable that depends on the
         prefix.  */
     _dwarf_set_line_table_regs_default_values(&regs,
+        line_context->lc_version_number,
         line_context->lc_default_is_stmt);
 
     /* Start of statement program.  */
@@ -1565,6 +1566,7 @@ read_line_table_program(Dwarf_Debug dbg,
                     _dwarf_update_chain_list(chain_line,&head_chain,&curr_chain);
                 }
                 _dwarf_set_line_table_regs_default_values(&regs,
+                    line_context->lc_version_number,
                     line_context->lc_default_is_stmt);
                 }
                 break;
