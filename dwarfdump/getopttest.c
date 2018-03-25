@@ -1,6 +1,5 @@
 /* This is for testing the local getopt. */
 
-
 #ifdef GETOPT_FROM_SYSTEM
 #define dwgetopt  getopt
 #define dwopterr  opterr
@@ -9,9 +8,8 @@
 #define dwopterr  opterr
 #define dwoptarg  optarg
 
-#define dwno_argument  no_argument
-#define dwrequired_argument  required_argument
-#define dwoptional_argument  optional_argument
+/*  Leave dw_noargument etc to be defined
+    as 0,1,2 as that matches system getopt.h */
 #endif
 
 #include <stdio.h>
@@ -185,8 +183,7 @@ test2(void)
 
 
 
-static void chklongval(int ct,
-    int rchar,int xchar,
+static void chklongval(
     const char *xoptname,
     struct dwoption *ropt, struct dwoption *xopt,
     char *roptarg,char *xoptarg,
@@ -230,14 +227,6 @@ ltest1(void)
     int ct = 1;
     int c = 0;
     int argct = 13;
-    argv1[0]="a.out";
-    argv1[1]="-ab";
-    argv1[2] = "--simplelong";
-    argv1[3] = "--optarglong";
-    argv1[4] = "--requireoptarglong=val";
-    argv1[5] = "-cd";
-    argv1[6]="progtoread";
-    argv1[7]=0;
     static struct dwoption  longopts[] =  {
         {"simplelong",       dwno_argument,      0,0},
         {"optarglong",       dwoptional_argument,0,0},
@@ -246,6 +235,15 @@ ltest1(void)
     };
     int longindex = 0;
 
+
+    argv1[0]="a.out";
+    argv1[1]="-ab";
+    argv1[2] = "--simplelong";
+    argv1[3] = "--optarglong";
+    argv1[4] = "--requireoptarglong=val";
+    argv1[5] = "-cd";
+    argv1[6]="progtoread";
+    argv1[7]=0;
     for ( ;(c = dwgetopt_long(argct, argv1,
         "abcd",
         longopts,&longindex)) != EOF; ct++) {
@@ -259,7 +257,7 @@ ltest1(void)
 
     case 3: {
         struct dwoption * foundop = longopts + longindex;
-        chklongval(ct,c,0,
+        chklongval(
             "simplelong",
             foundop,longopts+0,
             dwoptarg,0,
@@ -268,7 +266,7 @@ ltest1(void)
         break;
     case 4: {
         struct dwoption * foundop = longopts + longindex;
-        chklongval(ct,c,0,
+        chklongval(
             "optarglong",
             foundop,longopts+1,
             dwoptarg,0,
@@ -277,7 +275,7 @@ ltest1(void)
         break;
     case 5: {
         struct dwoption * foundop = longopts + longindex;
-        chklongval(ct,c,0,
+        chklongval(
             "requireoptarglong",
             foundop,longopts+2,
             dwoptarg,"val",
@@ -316,6 +314,12 @@ ltest2(void)
     int ct = 1;
     int c = 0;
     int argct = 13;
+    static struct dwoption  longopts[] =  {
+        {"optarglong",       dwoptional_argument,0,0},
+        {0,0,0,0}
+    };
+    int longindex = 0;
+
     argv1[0]="a.out";
     argv1[1]="-ab";
     argv1[2] = "--optarglong";
@@ -324,12 +328,6 @@ ltest2(void)
     argv1[5] = "-cd";
     argv1[6]="progtoread";
     argv1[7]=0;
-    static struct dwoption  longopts[] =  {
-        {"optarglong",       dwoptional_argument,0,0},
-        {0,0,0,0}
-    };
-    int longindex = 0;
-
     for ( ;(c = dwgetopt_long(argct, argv1,
         "abcd",
         longopts,&longindex)) != EOF; ct++) {
@@ -343,7 +341,7 @@ ltest2(void)
 
     case 3: {
         struct dwoption * foundop = longopts + longindex;
-        chklongval(ct,c,0,
+        chklongval(
             "optarglong",
             foundop,longopts+0,
             dwoptarg,0,
@@ -352,7 +350,7 @@ ltest2(void)
         break;
     case 4: {
         struct dwoption * foundop = longopts + longindex;
-        chklongval(ct,c,0,
+        chklongval(
             "optarglong",
             foundop,longopts+0,
             dwoptarg,0,
@@ -361,7 +359,7 @@ ltest2(void)
         break;
     case 5: {
         struct dwoption * foundop = longopts + longindex;
-        chklongval(ct,c,0,
+        chklongval(
             "optarglong",
             foundop,longopts+0,
             dwoptarg,"val",

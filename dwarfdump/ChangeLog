@@ -1,3 +1,13 @@
+2018-03-25 David Anderson
+    * defined_types.h,dwarfdump/dwarfdump.c,esb.c,esb.h,
+      globals.h,print_aranges.c,print_die.c,print_frames.c,
+      print_lines.c,print_macro.c,print_macros.c,rint_ranges.c,
+      sanitized.c,sanitized.h,uri.h:
+      Updated copyright year on the merged changes.
+    * getopttest.c: Fixed compiler warnings (this
+      is just for selftest, not usually compiled).
+2018-03-25 Carlos Alberto Enciso:
+    * many: Merged header simplifications into master.
 2018-03-24 David Anderson
     * print_lines.c: Now uses dwarf_srclines_files_indexes()
       to simplify printing of DWARF2,3,4 and 5 line headers
