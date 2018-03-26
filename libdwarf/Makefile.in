@@ -42,7 +42,7 @@ INSTALL_PROGRAM = @INSTALL_PROGRAM@
 INSTALL_DATA =	@INSTALL_DATA@
 SHELL =		/bin/sh
 CC =		@CC@
-HOSTCC =	@CC@
+CC_FOR_BUILD =	@CC_FOR_BUILD@
 AR =		@AR@
 # For use with BSD ar (MacOSX ar) edit the ARFLAGS to be -s
 #ARFLAGS =	@ARFLAGS@
@@ -144,16 +144,16 @@ dwarf_loc.o: $(srcdir)/dwarf_loc.c  $(srcdir)/dwarf_loc2.c  $(srcdir)/dwarf_loc.
 # No object built here gets into libdwarf.
 errmsg_check: $(srcdir)/dwarf_errmsg_list.c libdwarf.h
 	grep DW_DLE libdwarf.h >errmsg_check_list
-	$(HOSTCC) $(HOSTCFLAGS) $(LDFLAGS)  -DTESTING $(srcdir)/dwarf_errmsg_list.c -o errmsg_check
+	$(CC_FOR_BUILD) $(HOSTCFLAGS) $(LDFLAGS)  -DTESTING $(srcdir)/dwarf_errmsg_list.c -o errmsg_check
 	./errmsg_check -f errmsg_check_list
 # end errmsg_check build lines
 
 # Gennames builds and runs native, even for a cross-build of libdwarf.
 # No object built here gets into libdwarf.
 gennames: $(srcdir)/gennames.c $(srcdir)/dwarf.h dwgetopt.o
-	$(HOSTCC) $(HOSTCFLAGS) $(srcdir)/gennames.c dwgetopt.o $(HOSTLDFLAGS) -o gennames
+	$(CC_FOR_BUILD) $(HOSTCFLAGS) $(srcdir)/gennames.c dwgetopt.o $(HOSTLDFLAGS) -o gennames
 dwgetopt.o: $(srcdir)/dwgetopt.c $(srcdir)/dwgetopt.h
-	$(HOSTCC) $(HOSTCFLAGS) -c $(srcdir)/dwgetopt.c
+	$(CC_FOR_BUILD) $(HOSTCFLAGS) -c $(srcdir)/dwgetopt.c
 dwarf_names.h: dwarf_names.c
 dwarf_names.c: gennames $(srcdir)/dwarf.h
 	rm -f dwarf_names.h dwarf_names.c

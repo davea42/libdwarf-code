@@ -22,6 +22,7 @@ INSTALL_DATA =	@INSTALL_DATA@
 DATAROOT =      @datarootdir@
 SHELL =		/bin/sh
 CC =		@CC@
+CC_FOR_BUILD =  @CC_FOR_BUILD@
 AR =		@AR@
 ARFLAGS =	@ARFLAGS@
 RM =		rm
@@ -38,6 +39,7 @@ LIBS =		@LIBS@ -L../libdwarf -ldwarf -lelf $(dwfzlib)
 INCLUDES =	-I. -I$(srcdir) -I../libdwarf -I$(srcdir)/../libdwarf
 CFLAGS =	$(PREINCS) @CPPFLAGS@ @CFLAGS@ $(INCLUDES) $(dwfwall) $(dwfsanitize) -DCONFPREFIX=${libdir} $(POSTINCS)
 LDFLAGS =	$(PRELIBS) @LDFLAGS@  $(LIBS) $(dwfsanitize) $(POSTLIBS)
+LDBUILDFLAGS = $(PRELIBS) @LDFLAGS@  $(POSTLIBS)
 #VG =            valgrind --leak-check=full  --show-leak-kinds=all
 VG =
 
@@ -123,16 +125,32 @@ common.o:  $(srcdir)/common.c $(srcdir)/common.h
 naming.o:  $(srcdir)/naming.c $(srcdir)/naming.h
 	$(CC) $(CFLAGS) -c $(srcdir)/naming.c
 
-# We need this as naming.o has external references we cannot have
+# We need trivial_naming.o as naming.o has external references we cannot have
 # in the tree builds.
-trivial_naming.o: $(srcdir)/naming.c
-	$(CC) $(CFLAGS) -DTRIVIAL_NAMING  -c $(srcdir)/naming.c -o trivial_naming.o 
 
-tag_tree_build:  $(srcdir)/tag_tree.c $(DIRINC)/dwarf.h $(HEADERS) tag_common.o makename.o common.o trivial_naming.o dwgetopt.o dwarf_tsearchbal.o
-	LD_LIBRARY_PATH=$$LD_LIBRARY_PATH:$(LIBDWARF_PATH) $(CC) $(CFLAGS) $(srcdir)/tag_tree.c tag_common.o common.o makename.o  dwarf_tsearchbal.o trivial_naming.o dwgetopt.o  $(LDFLAGS) -o tag_tree_build 
+# Here doing build-time program creation, things here are 
+# not part of the build of dwarfdump itself.
+# Nor is libdwarf itself involve, though we do reach around to names.c in libdwarf
+btag_common.o: $(srcdir)/tag_common.c
+	$(CC_FOR_BUILD) $(CFLAGS) -DTRIVIAL_NAMING  -c $(srcdir)/tag_common.c -o btag_common.o 
+bnames.o: $(srcdir)/../libdwarf/dwarf_names.c
+	$(CC_FOR_BUILD) $(CFLAGS) -DTRIVIAL_NAMING  -c $(srcdir)/../libdwarf/dwarf_names.c -o bnames.o 
+btrivial_naming.o: $(srcdir)/naming.c
+	$(CC_FOR_BUILD) $(CFLAGS) -DTRIVIAL_NAMING  -c $(srcdir)/naming.c -o btrivial_naming.o 
+bmakename.o: $(srcdir)/makename.h $(srcdir)/makename.c 
+	$(CC_FOR_BUILD) $(CFLAGS) -c $(srcdir)/makename.c -o bmakename.o
+bdwarf_tsearchbal.o: $(srcdir)/dwarf_tsearch.h  $(srcdir)/dwarf_tsearchbal.c
+	$(CC_FOR_BUILD) $(CFLAGS) -c $(srcdir)/dwarf_tsearchbal.c -o bdwarf_tsearchbal.o
+bcommon.o:  $(srcdir)/common.c $(srcdir)/common.h
+	$(CC_FOR_BUILD) $(CFLAGS) -c $(srcdir)/common.c -o bcommon.o
+bdwgetopt.o: $(srcdir)/dwgetopt.h $(srcdir)/dwgetopt.c 
+	$(CC_FOR_BUILD) $(CFLAGS) -c $(srcdir)/dwgetopt.c -o bdwgetopt.o
 
-tag_attr_build:  $(srcdir)/tag_attr.c $(DIRINC)/dwarf.h $(HEADERS) tag_common.o makename.o  common.o trivial_naming.o dwgetopt.o dwarf_tsearchbal.o
-	$(CC) $(CFLAGS) $(srcdir)/tag_attr.c tag_common.o common.o makename.o trivial_naming.o  dwarf_tsearchbal.o dwgetopt.o $(LDFLAGS) -o tag_attr_build 
+tag_tree_build:  $(srcdir)/tag_tree.c $(DIRINC)/dwarf.h $(HEADERS) btag_common.o bmakename.o bcommon.o btrivial_naming.o bdwgetopt.o bdwarf_tsearchbal.o bnames.o
+	LD_LIBRARY_PATH=$$LD_LIBRARY_PATH:$(LIBDWARF_PATH) $(CC_FOR_BUILD) $(CFLAGS) $(srcdir)/tag_tree.c btag_common.o bcommon.o bmakename.o  bdwarf_tsearchbal.o btrivial_naming.o bdwgetopt.o bnames.o  $(LDBUILDFLAGS) -o tag_tree_build 
+
+tag_attr_build:  $(srcdir)/tag_attr.c $(DIRINC)/dwarf.h $(HEADERS) btag_common.o bmakename.o  bcommon.o btrivial_naming.o bdwgetopt.o bdwarf_tsearchbal.o bnames.o
+	$(CC_FOR_BUILD) $(CFLAGS) $(srcdir)/tag_attr.c btag_common.o bcommon.o bmakename.o btrivial_naming.o  bdwarf_tsearchbal.o bdwgetopt.o bnames.o $(LDBUILDFLAGS) -o tag_attr_build 
 
 # Plain GNU C dash E does not work on a .list, 
 # so copy to a .c name to run
@@ -140,26 +158,27 @@ tag_attr_build:  $(srcdir)/tag_attr.c $(DIRINC)/dwarf.h $(HEADERS) tag_common.o 
 tmp-tt-table.c: $(srcdir)/tag_tree.list tag_tree_build
 	-rm -f  tmp-t1.c
 	cp $(srcdir)/tag_tree.list tmp-t1.c
-	$(CC) $(CFLAGS) -E tmp-t1.c  > ./tmp-tag-tree-build1.tmp
+	$(CC_FOR_BUILD) $(CFLAGS) -E tmp-t1.c  > ./tmp-tag-tree-build1.tmp
 	LD_LIBRARY_PATH=$$LD_LIBRARY_PATH:$(LIBDWARF_PATH) ./tag_tree_build -s  -i tmp-tag-tree-build1.tmp  -o tmp-tt-table.c
 
 tmp-tt-ext-table.c: $(srcdir)/tag_tree_ext.list tag_tree_build
 	-rm -f tmp-t4.c
 	cp $(srcdir)/tag_tree_ext.list tmp-t4.c
-	$(CC) $(CFLAGS) -E tmp-t4.c  > ./tmp-tag-tree-build4.tmp
+	$(CC_FOR_BUILD) $(CFLAGS) -E tmp-t4.c  > ./tmp-tag-tree-build4.tmp
 	LD_LIBRARY_PATH=$$LD_LIBRARY_PATH:$(LIBDWARF_PATH) ./tag_tree_build -e  -i tmp-tag-tree-build4.tmp -o tmp-tt-ext-table.c
 
 tmp-ta-table.c: $(srcdir)/tag_attr.list tag_attr_build
 	-rm -f tmp-t2.c
 	cp $(srcdir)/tag_attr.list tmp-t2.c
-	$(CC) $(CFLAGS)  -E tmp-t2.c  > ./tmp-tag-attr-build2.tmp
+	$(CC_FOR_BUILD) $(CFLAGS)  -E tmp-t2.c  > ./tmp-tag-attr-build2.tmp
 	LD_LIBRARY_PATH=$$LD_LIBRARY_PATH:$(LIBDWARF_PATH) ./tag_attr_build -s -i tmp-tag-attr-build2.tmp -o tmp-ta-table.c
 
 tmp-ta-ext-table.c: $(srcdir)/tag_attr_ext.list tag_attr_build
 	-rm -f tmp-t3.c
 	cp $(srcdir)/tag_attr_ext.list tmp-t3.c
-	$(CC) $(CFLAGS)  -E tmp-t3.c  > ./tmp-tag-attr-build3.tmp
+	$(CC_FOR_BUILD) $(CFLAGS)  -E tmp-t3.c  > ./tmp-tag-attr-build3.tmp
 	LD_LIBRARY_PATH=$$LD_LIBRARY_PATH:$(LIBDWARF_PATH) ./tag_attr_build -e -i tmp-tag-attr-build3.tmp -o tmp-ta-ext-table.c
+#===== done with build-time program creation and build-time use of those programs
 
 
 test: esb.o dwgetopt.o 

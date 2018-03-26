@@ -1,8 +1,12 @@
 2018-03-25 David Anderson
+    * configure.in: Support for cross compiling
+    * configure: regenerated.
+    * Makefile.in: Support for cross compiling
+2018-03-25 David Anderson
     * defined_types.h,dwarfdump/dwarfdump.c,esb.c,esb.h,
       globals.h,print_aranges.c,print_die.c,print_frames.c,
-      print_lines.c,print_macro.c,print_macros.c,rint_ranges.c,
-      sanitized.c,sanitized.h,uri.h:
+      print_lines.c,print_macro.c,print_macros.c,
+      print_ranges.c, sanitized.c,sanitized.h,uri.h:
       Updated copyright year on the merged changes.
     * getopttest.c: Fixed compiler warnings (this
       is just for selftest, not usually compiled).
