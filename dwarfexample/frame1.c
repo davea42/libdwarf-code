@@ -206,8 +206,8 @@ print_frame_instrs(Dwarf_Frame_Op *frame_op_list,
     printf("Base op. Ext op. Reg. Offset. Instr-offset.\n");
     for(i = 0; i < frame_op_count; ++i) {
         printf("[%2" DW_PR_DSd "]", i);
-        printf(" %d. ", frame_op_list[i].fp_base_op);
-        printf(" %4d. ", frame_op_list[i].fp_extended_op);
+        printf(" %2d. ", frame_op_list[i].fp_base_op);
+        printf(" %3d. ", frame_op_list[i].fp_extended_op);
         printf(" %3d. ", frame_op_list[i].fp_register);
         printf(" %6" DW_PR_DSd ". ", frame_op_list[i].fp_offset);
         printf(" 0x%08" DW_PR_DUx ". ", frame_op_list[i].fp_instr_offset);
