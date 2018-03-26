@@ -1,3 +1,6 @@
+2018-03-25 David Anderson
+    * Makefile.in: Add comments about what is built for build
+      system (as opposed to host or target).
 2018-03-24 David Anderson
     * checkexamples.c: This is just example code for
       libdwarf2.1.mm, not part of libdwarf. Now 

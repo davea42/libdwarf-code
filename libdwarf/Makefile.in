@@ -140,12 +140,16 @@ noarchivelibrary:
 dwarf_loc.o: $(srcdir)/dwarf_loc.c  $(srcdir)/dwarf_loc2.c  $(srcdir)/dwarf_loc.h 
 	$(CC) $(CFLAGS) -c $(srcdir)/dwarf_loc.c
 
+# errmsg_check builds and runs native, even for a cross-build of libdwarf.
+# No object built here gets into libdwarf.
 errmsg_check: $(srcdir)/dwarf_errmsg_list.c libdwarf.h
 	grep DW_DLE libdwarf.h >errmsg_check_list
 	$(HOSTCC) $(HOSTCFLAGS) $(LDFLAGS)  -DTESTING $(srcdir)/dwarf_errmsg_list.c -o errmsg_check
 	./errmsg_check -f errmsg_check_list
+# end errmsg_check build lines
 
 # Gennames builds and runs native, even for a cross-build of libdwarf.
+# No object built here gets into libdwarf.
 gennames: $(srcdir)/gennames.c $(srcdir)/dwarf.h dwgetopt.o
 	$(HOSTCC) $(HOSTCFLAGS) $(srcdir)/gennames.c dwgetopt.o $(HOSTLDFLAGS) -o gennames
 dwgetopt.o: $(srcdir)/dwgetopt.c $(srcdir)/dwgetopt.h
