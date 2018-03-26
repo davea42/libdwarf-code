@@ -1,5 +1,5 @@
 /*
-  Copyright (c) 2009-2015 David Anderson.
+  Copyright (c) 2009-2018 David Anderson.
   All rights reserved.
 
   Redistribution and use in source and binary forms, with or without
