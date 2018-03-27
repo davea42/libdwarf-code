@@ -88,6 +88,8 @@ For example, on Xubuntu 16.04 x86_64 the following works.
   git pull latest libdwarf/dwarfdump code tree.
 cd code
 sudo apt-get install gcc-arm-linux-gnueabihf
+  [Note possible confusion in the following text, may not
+  be absolutely correct. Needs work. ]
   Now ensure libelf.h libelf.a or .so is in the gcc-arm-linux-gnueabihf
   tree in the correct places. If the build machine has zlib (aka libz)
   but the arm tree does not the --disable-libz should work to
@@ -97,10 +99,10 @@ sudo apt-get install gcc-arm-linux-gnueabihf
   the arm tree.
 
 cd libdwarf 
-./configure --host=--host=arm-linux-gnueabihf --disable-libz
+./configure --host=arm-linux-gnueabihf --disable-libz
 make
 cd ../dwarfdump 
-./configure --host=--host=arm-linux-gnueabihf --disable-libz
+./configure --host=arm-linux-gnueabihf --disable-libz
 make
 
 
