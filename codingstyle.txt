@@ -173,19 +173,24 @@ than living at the primary level where it belongs. Consider
 the following:
 
     foo = malloc (sizeof (foo_t));
-    if (foo) {					/* Yuck! */
-        ...
+    if (foo) { /* Yuck! The error return becomes
+               hard to see.  */
+        ...  
         /* lots of code to initialize foo */
         ...
         return DW_DLV_OK;
     }
+    _dwarf_error(dbg,error,DW_DLE_MALLOC_RETURNS_NULL);
     return DW_DLV_ERROR;
 
 This kind of gratuitous nesting can be avoided by following
 a pattern of handling exceptional cases early and returning:
 
     foo = malloc (sizeof (foo_t));
-    if (foo == NULL) {
+    /*  A test foo == NULL is fine but the following
+        is better as there is  no danger of 
+        turning == into = by accident. */
+    if (!foo) {
         _dwarf_error(dbg,error,DW_DLE_MALLOC_RETURNS_NULL);
         return DW_DLV_ERROR;
     }
@@ -194,11 +199,32 @@ a pattern of handling exceptional cases early and returning:
 	
     return DW_DLV_OK;
 
+
 The return statement is often the best thing to use in a
 pattern like this. If it's not available due to additional
 nesting above which require some cleanup after the current
 block, then consider splitting the current block into a new
 function before using goto.
+
+Test or Loop with Side Effect
+-----------------------------
+
+Never do:
+    if ((foo = malloc (sizeof (foo_t)))) {
+or
+    if (foo = malloc (sizeof (foo_t))) {
+
+as the reader has to think carefully about it, 
+whereas
+    foo = malloc (sizeof (foo_t));
+    if (foo) {
+is more transparent (in some sense) and 
+makes it easier to stop( in debugger) or
+add a printf in case this is a point where
+things might be going wrong somehow.
+
+Also see "Managing nested blocks" just above.
+
 
 
 Lookup Tables
