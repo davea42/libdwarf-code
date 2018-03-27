@@ -1,3 +1,7 @@
+2018-03-27:
+  All the DWARF5 FORMs appear to be dealt with.
+  It's now possible to cross-compile libdwarf and dwarfdump.
+  See the README.
 2016-11-30:
   An alternative build mechanism using cmake is now in the source tree.
   The builds for product testing continue to be done using configure && make.

@@ -685,13 +685,14 @@ SHELL'
 ac_subst_files=''
 ac_user_opts='
 enable_option_checking
+enable_libz
+enable_nonstandardprintf
 enable_shared
 enable_nonshared
 enable_fpic
 enable_wall
 enable_sanitize
 enable_namestable
-enable_nonstandardprintf
 enable_windowspath
 enable_oldframecol
 enable_dwarf_format_sgi_irix
@@ -1324,6 +1325,10 @@ Optional Features:
   --disable-option-checking  ignore unrecognized --enable/--with options
   --disable-FEATURE       do not include FEATURE (same as --enable-FEATURE=no)
   --enable-FEATURE[=ARG]  include FEATURE [ARG=yes]
+  --disable-libz          do not link against library libz
+  --enable-nonstandardprintf
+                          Use a special printf format for 64bit (default is
+                          NO)
   --enable-shared         build shared library libdwarf.so
   --disable-nonshared     do not build archive library libdwarf.a
   --disable-fpic          do not build with -fPIC
@@ -1331,9 +1336,6 @@ Optional Features:
   --enable-sanitize       Add -fsanitize (default is not to)
   --enable-namestable     Name string functions implemented as binary search
                           (default is with C switch)
-  --enable-nonstandardprintf
-                          Use a special printf format for 64bit (default is
-                          NO)
   --enable-windowspath    Detect certain Windows paths as full paths (default
                           is NO)
   --enable-oldframecol    Use HAVE_OLD_FRAME_CFA_COL (default is to use new
@@ -4107,26 +4109,28 @@ $as_echo "no" >&6; }
 fi
 rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
 
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking compiler supports __attribute__ unused " >&5
-$as_echo_n "checking compiler supports __attribute__ unused ... " >&6; }
-if test "$cross_compiling" = yes; then :
-
-else
-  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking checking if __attribute__ unused compiles ok" >&5
+$as_echo_n "checking checking if __attribute__ unused compiles ok... " >&6; }
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 
   static unsigned foo( unsigned x, __attribute__ ((unused)) int y)
   {  unsigned x2 = x + 1;
      return x2;
   }
-  int main(void) {
+
+int
+main ()
+{
+
      unsigned y = 0;
      y = foo(12,y);
-     return 0;
-  }
 
+  ;
+  return 0;
+}
 _ACEOF
-if ac_fn_c_try_run "$LINENO"; then :
+if ac_fn_c_try_compile "$LINENO"; then :
 
 $as_echo "#define HAVE_UNUSED_ATTRIBUTE 1" >>confdefs.h
 
@@ -4136,15 +4140,39 @@ else
   { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
 $as_echo "no" >&6; }
 fi
-rm -f core *.core core.conftest.* gmon.out bb.out conftest$ac_exeext \
-  conftest.$ac_objext conftest.beam conftest.$ac_ext
+rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking should we look for libz aka zlib" >&5
+$as_echo_n "checking should we look for libz aka zlib... " >&6; }
+# Check whether --enable-libz was given.
+if test "${enable_libz+set}" = set; then :
+  enableval=$enable_libz;
+fi
+
+if  test "x$enable_libz" = "xno"; then :
+
+   ignorelibz="y"
+   { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+
+else
+   { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+$as_echo "yes" >&6; }
 fi
 
 
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking should we check for libz aka zlib" >&5
+$as_echo_n "checking should we check for libz aka zlib... " >&6; }
+if  test x$ignorelibz = "xy" ; then :
+   { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+else
 
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking zlib.h usability" >&5
-$as_echo_n "checking zlib.h usability... " >&6; }
-cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+$as_echo "yes" >&6; }
+  { $as_echo "$as_me:${as_lineno-$LINENO}: checking are zlib.h and libz usable" >&5
+$as_echo_n "checking are zlib.h and libz usable... " >&6; }
+  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 #include "zlib.h"
 int
@@ -4165,19 +4193,36 @@ main ()
 }
 _ACEOF
 if ac_fn_c_try_compile "$LINENO"; then :
-  { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
-$as_echo "yes" >&6; }
 
 $as_echo "#define HAVE_ZLIB 1" >>confdefs.h
 
      dwfzlib=-lz
 
+     { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+$as_echo "yes" >&6; }
 
 else
   { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
 $as_echo "no" >&6; }
 fi
 rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+
+fi
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking enable nonstandardprintf" >&5
+$as_echo_n "checking enable nonstandardprintf... " >&6; }
+# Check whether --enable-nonstandardprintf was given.
+if test "${enable_nonstandardprintf+set}" = set; then :
+  enableval=$enable_nonstandardprintf;
+$as_echo "#define HAVE_NONSTANDARD_PRINTF_64_FORMAT 1" >>confdefs.h
+
+          { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+$as_echo "yes" >&6; }
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+fi
+
 
 cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
@@ -4367,7 +4412,7 @@ if ac_fn_c_try_compile "$LINENO"; then :
 
 $as_echo "#define HAVE_LIBELF_OFF64_OK 1" >>confdefs.h
 
-    { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+   { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
 $as_echo "yes" >&6; }
 else
   { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
@@ -4483,8 +4528,8 @@ dwfpic=-fPIC
 
 
 
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking build shared" >&5
-$as_echo_n "checking build shared... " >&6; }
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking do we build shared" >&5
+$as_echo_n "checking do we build shared... " >&6; }
 # Check whether --enable-shared was given.
 if test "${enable_shared+set}" = set; then :
   enableval=$enable_shared;
@@ -4509,8 +4554,8 @@ fi
 
 build_nonshared=libdwarf.a
 
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking build nonshared" >&5
-$as_echo_n "checking build nonshared... " >&6; }
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking do we build nonshared" >&5
+$as_echo_n "checking do we build nonshared... " >&6; }
 # Check whether --enable-nonshared was given.
 if test "${enable_nonshared+set}" = set; then :
   enableval=$enable_nonshared;
@@ -4529,6 +4574,7 @@ else
 $as_echo "yes" >&6; }
 
 fi
+
 
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking build -fPIC" >&5
 $as_echo_n "checking build -fPIC... " >&6; }
@@ -4593,21 +4639,6 @@ if test "${enable_namestable+set}" = set; then :
 
 	 dwarf_namestable=-t
 
-fi
-
-
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking enable nonstandardprintf" >&5
-$as_echo_n "checking enable nonstandardprintf... " >&6; }
-# Check whether --enable-nonstandardprintf was given.
-if test "${enable_nonstandardprintf+set}" = set; then :
-  enableval=$enable_nonstandardprintf;
-$as_echo "#define HAVE_NONSTANDARD_PRINTF_64_FORMAT 1" >>confdefs.h
-
-          { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
-$as_echo "yes" >&6; }
-else
-  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
-$as_echo "no" >&6; }
 fi
 
 

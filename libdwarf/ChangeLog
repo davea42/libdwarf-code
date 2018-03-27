@@ -1,3 +1,6 @@
+2018-03-27 David Anderson
+    * configure.in: Cross compiling tested, working.
+    * configure: regenerated.
 2018-03-25 David Anderson
     * configure.in: Support for cross compiling
     * configure: regenerated.

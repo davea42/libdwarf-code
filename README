@@ -9,6 +9,8 @@ new as of November 2016.
 
 Standard builds are done by configure/make as
 described below.
+Cross-Compiles are described below, see
+CROSS COMPILES.
 
 BUILDING IN SOURCE TREE
 To just build libdwarf and dwarfdump
@@ -76,4 +78,32 @@ Recent gcc has some checks that can be done at runtime.
   -fsanitize=undefined
 which are turned on here by --enable-sanitize at build time.
 
-David Anderson.  Updated November 30, 2016
+CROSS-COMPILES:
+For those wishing to build libdwarf (and possibly dwarfdump)
+for a different machine than the build machine
+it is now possible to do that.
+
+For example, on Xubuntu 16.04 the following works.
+
+cd code
+sudo apt-get install gcc-arm-linux-gnueabihf
+  Now ensure libelf.h libelf.a or .so is in the gcc-arm-linux-gnueabihf
+  tree in the correct places. If the build machine has zlib (aka libz)
+  but the arm tree does not the --disable-libz should work to
+  enable building.  If the build and arm trees both have
+  libelf and libz then remove the --disable-libz. 
+  Neither libz nor libelf are installed automatically in
+  the arm tree.
+
+cd libdwarf 
+./configure --host=--host=arm-linux-gnueabihf --disable-libz
+make
+cd ../dwarfdump 
+./configure --host=--host=arm-linux-gnueabihf --disable-libz
+make
+
+
+
+
+
+David Anderson.  Updated March 27, 2018
