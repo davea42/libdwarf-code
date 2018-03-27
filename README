@@ -99,10 +99,10 @@ sudo apt-get install gcc-arm-linux-gnueabihf
   the arm tree.
 
 cd libdwarf 
-./configure --host=arm-linux-gnueabihf --disable-libz
+./configure --build=i686-pc-linux-gnu --host=arm-linux-gnueabihf --disable-libz
 make
 cd ../dwarfdump 
-./configure --host=arm-linux-gnueabihf --disable-libz
+./configure --build=i686-pc-linux-gnu  --host=arm-linux-gnueabihf --disable-libz
 make
 
 
