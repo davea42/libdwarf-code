@@ -4014,13 +4014,9 @@ $as_echo_n "checking is __uint32_t predefined in the compiler... " >&6; }
 cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 
-int
-main ()
-{
-__uint32_t p; p = 2;
-  ;
-  return 0;
-}
+   int main() {
+        __uint32_t p; p = 2;
+   }
 _ACEOF
 if ac_fn_c_try_compile "$LINENO"; then :
 
@@ -4039,13 +4035,9 @@ $as_echo_n "checking is __uint64_t predefined in the compiler... " >&6; }
 cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 
-int
-main ()
-{
-__uint64_t p; p = 3;
-  ;
-  return 0;
-}
+   int main() {
+       __uint64_t p; p = 3;
+   }
 _ACEOF
 if ac_fn_c_try_compile "$LINENO"; then :
 
@@ -4064,13 +4056,9 @@ $as_echo_n "checking is __uint32_t defined in sys/types.h... " >&6; }
 cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 #include <sys/types.h>
-int
-main ()
-{
-  __uint32_t p; p = 4;
-  ;
-  return 0;
-}
+  int main() {
+     __uint32_t p; p = 4;
+  }
 _ACEOF
 if ac_fn_c_try_compile "$LINENO"; then :
 
@@ -4089,13 +4077,9 @@ $as_echo_n "checking is __uint64_t defined in sys/types.h... " >&6; }
 cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 #include <sys/types.h>
-int
-main ()
-{
-  __uint64_t p; p = 5;
-  ;
-  return 0;
-}
+   int main() {
+     __uint64_t p; p = 5;
+   }
 _ACEOF
 if ac_fn_c_try_compile "$LINENO"; then :
 
@@ -4118,17 +4102,11 @@ cat confdefs.h - <<_ACEOF >conftest.$ac_ext
   {  unsigned x2 = x + 1;
      return x2;
   }
-
-int
-main ()
-{
-
+  int goo() {
      unsigned y = 0;
      y = foo(12,y);
+  }
 
-  ;
-  return 0;
-}
 _ACEOF
 if ac_fn_c_try_compile "$LINENO"; then :
 
@@ -4175,22 +4153,16 @@ $as_echo_n "checking are zlib.h and libz usable... " >&6; }
   cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 #include "zlib.h"
-int
-main ()
-{
-
-    Bytef dest[100];
-    uLongf destlen = 100;
-    Bytef *src = 0;
-    uLong srclen = 3;
-    int res = uncompress(dest,&destlen,src,srclen);
-    if (res == Z_OK) {
+    int main() {
+      Bytef dest[100];
+      uLongf destlen = 100;
+      Bytef *src = 0;
+      uLong srclen = 3;
+      int res = uncompress(dest,&destlen,src,srclen);
+      if (res == Z_OK) {
          /* ALL IS WELL */
+      }
     }
-
-  ;
-  return 0;
-}
 _ACEOF
 if ac_fn_c_try_compile "$LINENO"; then :
 
@@ -4228,13 +4200,10 @@ cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 #include <libelf/libelf.h>
   struct _Elf; typedef struct _Elf Elf;
-int
-main ()
-{
-struct _Elf *a = 0;
-  ;
-  return 0;
-}
+
+  int main() {
+      struct _Elf *a = 0;
+  }
 _ACEOF
 if ac_fn_c_try_compile "$LINENO"; then :
    sed 's/struct Elf/struct _Elf/g' <$srcdir/libdwarf.h.in >libdwarf.h ;
@@ -4248,13 +4217,9 @@ cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 #include <libelf.h>
   struct _Elf; typedef struct _Elf Elf;
-int
-main ()
-{
- struct _Elf *a = 0;
-  ;
-  return 0;
-}
+  int main() {
+      struct _Elf *a = 0;
+  }
 _ACEOF
 if ac_fn_c_try_compile "$LINENO"; then :
    sed 's/struct Elf/struct _Elf/g' <$srcdir/libdwarf.h.in >libdwarf.h ;
@@ -4270,13 +4235,9 @@ $as_echo_n "checking Intel Itanium relocation types defined... " >&6; }
 cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 #include HAVE_LOCATION_OF_LIBELFHEADER
-int
-main ()
-{
-  int p; p = R_IA_64_DIR32LSB;
-  ;
-  return 0;
-}
+  int main () {
+      int p; p = R_IA_64_DIR32LSB;
+  }
 _ACEOF
 if ac_fn_c_try_compile "$LINENO"; then :
 
@@ -4295,13 +4256,9 @@ $as_echo_n "checking libelf defines struct _Elf... " >&6; }
 cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 #include <libelf.h>
-int
-main ()
-{
- struct _Elf a; int i; i = 0;
-  ;
-  return 0;
-}
+  int main() {
+    struct _Elf a; int i; i = 0;
+  }
 _ACEOF
 if ac_fn_c_try_compile "$LINENO"; then :
 
@@ -4320,16 +4277,10 @@ rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
 $as_echo_n "checking compile with libelf.h works ... " >&6; }
 cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
-
 #include <libelf.h>
-
-int
-main ()
-{
-  int p; p = 0;
-  ;
-  return 0;
-}
+  int main() {
+    int p; p = 0;
+  }
 _ACEOF
 if ac_fn_c_try_compile "$LINENO"; then :
 
@@ -4348,15 +4299,10 @@ $as_echo_n "checking libelf.h exists and has Elf function declarations... " >&6;
 cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 
-#include <libelf.h>
-
-int
-main ()
-{
-  int p; char *ident; p = 0;ident=elf_getident(0, 0);
-  ;
-  return 0;
-}
+  #include <libelf.h>
+  int main() {
+    int p; char *ident; p = 0;ident=elf_getident(0, 0);
+  }
 _ACEOF
 if ac_fn_c_try_compile "$LINENO"; then :
   { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
@@ -4373,14 +4319,9 @@ cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 
 #include <libelf/libelf.h>
-
-int
-main ()
-{
-  int p; char *ident; p = 0;ident=elf_getident(0, 0);
-  ;
-  return 0;
-}
+  int main() {
+    int p; char *ident; p = 0;ident=elf_getident(0, 0);
+  }
 _ACEOF
 if ac_fn_c_try_compile "$LINENO"; then :
   { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
@@ -4399,14 +4340,9 @@ cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 
 #define _GNU_SOURCE
 #include <libelf.h>
-
-int
-main ()
-{
-  off64_t  p; p = 0;
-  ;
-  return 0;
-}
+   int main() {
+     off64_t  p; p = 0;
+   }
 _ACEOF
 if ac_fn_c_try_compile "$LINENO"; then :
 
@@ -4425,13 +4361,9 @@ $as_echo_n "checking sgidefs.h present and defines __uint32_t... " >&6; }
 cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 #include <sgidefs.h>
-int
-main ()
-{
-  __uint32_t p; p = 27;
-  ;
-  return 0;
-}
+  int main() {
+    __uint32_t p; p = 27;
+  }
 _ACEOF
 if ac_fn_c_try_compile "$LINENO"; then :
 
@@ -4450,13 +4382,9 @@ $as_echo_n "checking sgidefs.h present and defines __uint64_t... " >&6; }
 cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 #include <sgidefs.h>
-int
-main ()
-{
-  __uint64_t p; p = 27;
-  ;
-  return 0;
-}
+  int main() {
+    __uint64_t p; p = 27;
+  }
 _ACEOF
 if ac_fn_c_try_compile "$LINENO"; then :
 
@@ -4475,13 +4403,9 @@ $as_echo_n "checking is Elf64_Rela defined in elf.h... " >&6; }
 cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 #include HAVE_LOCATION_OF_LIBELFHEADER
-int
-main ()
-{
-  Elf64_Rela p; p.r_offset = 1;
-  ;
-  return 0;
-}
+  int main() {
+    Elf64_Rela p; p.r_offset = 1;
+  }
 _ACEOF
 if ac_fn_c_try_compile "$LINENO"; then :
 
@@ -4500,13 +4424,9 @@ $as_echo_n "checking is Elf64_Sym defined in elf.h... " >&6; }
 cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 #include HAVE_LOCATION_OF_LIBELFHEADER
-int
-main ()
-{
-  Elf64_Sym p; p.st_info = 1;
-  ;
-  return 0;
-}
+  int main() {
+    Elf64_Sym p; p.st_info = 1;
+  }
 _ACEOF
 if ac_fn_c_try_compile "$LINENO"; then :
 
@@ -4677,13 +4597,9 @@ $as_echo_n "checking have windows stdafx.h... " >&6; }
 cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 #include "stdafx.h"
-int
-main ()
-{
-  int p; p = 27;
-  ;
-  return 0;
-}
+  int main() {
+    int p; p = 27;
+  }
 _ACEOF
 if ac_fn_c_try_compile "$LINENO"; then :
 

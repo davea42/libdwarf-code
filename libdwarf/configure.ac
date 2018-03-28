@@ -1,5 +1,7 @@
 dnl Process this file with autoconf to produce a configure script.
 dnl AC_INIT(libdwarf.h)
+dnl Uses AC_COMPILE_IFELSE from 2.50 and later
+AC_PREREQ([2.50])
 AC_INIT()
 AC_CONFIG_HEADER(config.h)
 
@@ -53,43 +55,56 @@ AC_CHECK_LIB(elf,elf64_getshdr,
   [AC_MSG_RESULT(no)])
 
 AC_MSG_CHECKING(is __uint32_t predefined in the compiler)
-AC_TRY_COMPILE( ,  __uint32_t p; p = 2; ,
+AC_COMPILE_IFELSE([AC_LANG_SOURCE([[  
+   int main() {
+        __uint32_t p; p = 2;
+   } ]])],
    [AC_DEFINE(HAVE___UINT32_T,1,
 	[See if __uint32_t is predefined in the compiler.])
     AC_MSG_RESULT(yes)],
    [AC_MSG_RESULT(no)])
 
 AC_MSG_CHECKING(is __uint64_t predefined in the compiler)
-AC_TRY_COMPILE( ,  __uint64_t p; p = 3; ,
+AC_COMPILE_IFELSE([AC_LANG_SOURCE([[ 
+   int main() {
+       __uint64_t p; p = 3;
+   } ]])],
    [AC_DEFINE(HAVE___UINT64_T,1,
 	[See if __uint64_t is predefined in the compiler.])
     AC_MSG_RESULT(yes)],
    [AC_MSG_RESULT(no)])
 
 AC_MSG_CHECKING(is __uint32_t defined in sys/types.h)
-AC_TRY_COMPILE([#include <sys/types.h>],[  __uint32_t p; p = 4;] ,
+AC_COMPILE_IFELSE([AC_LANG_SOURCE([[#include <sys/types.h>
+  int main() {
+     __uint32_t p; p = 4;
+  } ]])],
   [AC_DEFINE(HAVE___UINT32_T_IN_SYS_TYPES_H,1,
 	[Define 1 if sys/types.h defines __uint32_t.])
     AC_MSG_RESULT(yes)],
    [AC_MSG_RESULT(no)])
 
 AC_MSG_CHECKING(is __uint64_t defined in sys/types.h)
-AC_TRY_COMPILE([#include <sys/types.h>],[  __uint64_t p; p = 5;] ,
+AC_COMPILE_IFELSE([[AC_LANG_SOURCE([#include <sys/types.h>
+   int main() {
+     __uint64_t p; p = 5;
+   } ])],
   [AC_DEFINE(HAVE___UINT64_T_IN_SYS_TYPES_H,1,
 	[Define 1 if sys/types.h defines __uint64_t.])
     AC_MSG_RESULT(yes)],
    [AC_MSG_RESULT(no)])
 
 AC_MSG_CHECKING(checking if __attribute__ unused compiles ok)
-AC_TRY_COMPILE([
+AC_COMPILE_IFELSE([AC_LANG_SOURCE([[
   static unsigned foo( unsigned x, __attribute__ ((unused)) int y)
   {  unsigned x2 = x + 1;
      return x2;
   }
-  ] , [
+  int goo() {
      unsigned y = 0;
      y = foo(12,y);
-  ],
+  }
+  ]])],
   [AC_DEFINE(HAVE_UNUSED_ATTRIBUTE,1,
       [Define 1 if __attribute__ ((unused)) compiles ok.])
     AC_MSG_RESULT(yes)],
@@ -110,16 +125,17 @@ AS_IF([ test x$ignorelibz = "xy" ],
   [
   AC_MSG_RESULT(yes)
   AC_MSG_CHECKING(are zlib.h and libz usable)
-  AC_TRY_COMPILE([#include "zlib.h"],[
-    Bytef dest[100];
-    uLongf destlen = 100;
-    Bytef *src = 0;
-    uLong srclen = 3;
-    int res = uncompress(dest,&destlen,src,srclen);
-    if (res == Z_OK) {
+  AC_COMPILE_IFELSE([AC_LANG_SOURCE([[#include "zlib.h"
+    int main() {
+      Bytef dest[100];
+      uLongf destlen = 100;
+      Bytef *src = 0;
+      uLong srclen = 3;
+      int res = uncompress(dest,&destlen,src,srclen);
+      if (res == Z_OK) {
          /* ALL IS WELL */
-    }
-    ],
+      }
+    } ]])],
     [AC_DEFINE(HAVE_ZLIB,1,
         [Define 1 if zlib (decompression library) seems available.])
      AC_SUBST(dwfzlib,[-lz])
@@ -138,16 +154,21 @@ AC_ARG_ENABLE(nonstandardprintf,AS_HELP_STRING([--enable-nonstandardprintf],
 
 dnl The following are for FreeBSD and others which
 dnl use struct _Elf as the actual struct type.
-AC_TRY_COMPILE([#include <libelf/libelf.h>  
-  struct _Elf; typedef struct _Elf Elf; ],
-  [struct _Elf *a = 0; ],
+AC_COMPILE_IFELSE([AC_LANG_SOURCE([[#include <libelf/libelf.h>  
+  struct _Elf; typedef struct _Elf Elf; 
+
+  int main() {
+      struct _Elf *a = 0;
+  } ]])],
   [ sed 's/struct Elf/struct _Elf/g' <$srcdir/libdwarf.h.in >libdwarf.h ;
     echo Found struct _Elf in libelf/libelf.h, using it in libdwarf.h ],
   [echo libelf/libelf.h does not have struct _Elf]) 
 
-AC_TRY_COMPILE([#include <libelf.h>
-  struct _Elf; typedef struct _Elf Elf; ],
-  [ struct _Elf *a = 0; ],
+AC_COMPILE_IFELSE([AC_LANG_SOURCE([[#include <libelf.h>
+  struct _Elf; typedef struct _Elf Elf;
+  int main() {
+      struct _Elf *a = 0;
+  } ]])],
   [ sed 's/struct Elf/struct _Elf/g' <$srcdir/libdwarf.h.in >libdwarf.h ;
     echo Found struct _Elf in libelf.h, using it in libdwarf.h ],
   [echo libelf.h does not have struct _Elf]) 
@@ -156,14 +177,20 @@ AC_TRY_COMPILE([#include <libelf.h>
 dnl checking for ia 64 types, which might be enums, using HAVE_R_IA_64_DIR32LSB
 dnl to stand in for a small set.
 AC_MSG_CHECKING(Intel Itanium relocation types defined)
-AC_TRY_COMPILE([#include HAVE_LOCATION_OF_LIBELFHEADER],[  int p; p = R_IA_64_DIR32LSB;] ,
+AC_COMPILE_IFELSE([AC_LANG_SOURCE([[#include HAVE_LOCATION_OF_LIBELFHEADER
+  int main () {
+      int p; p = R_IA_64_DIR32LSB;
+  } ]])],
   [AC_DEFINE(HAVE_R_IA_64_DIR32LSB,1,
 	[Define 1 if  R_IA_64_DIR32LSB is defined (might be enum value).])
     AC_MSG_RESULT(yes)],
    [AC_MSG_RESULT(no)])
 
 AC_MSG_CHECKING(libelf defines struct _Elf)
-AC_TRY_COMPILE([#include <libelf.h>],[ struct _Elf a; int i; i = 0; ] ,
+AC_COMPILE_IFELSE([AC_LANG_SOURCE([[#include <libelf.h>  
+  int main() {
+    struct _Elf a; int i; i = 0; 
+  } ]])],
   [AC_DEFINE(HAVE_STRUCT_UNDERSCORE_ELF,1,
 	[Define 1 if libelf.h defines struct _Elf ]) 
     AC_MSG_RESULT(yes)],
@@ -171,34 +198,41 @@ AC_TRY_COMPILE([#include <libelf.h>],[ struct _Elf a; int i; i = 0; ] ,
 
 
 AC_MSG_CHECKING(compile with libelf.h works )
-AC_TRY_COMPILE([
-#include <libelf.h>
-],[  int p; p = 0; ] ,
+AC_COMPILE_IFELSE([AC_LANG_SOURCE([[#include <libelf.h>
+  int main() {
+    int p; p = 0; 
+  } ]])],
   [AC_DEFINE(HAVE_RAW_LIBELF_OK,1,
 	[Define 1 if plain libelf builds.])
     AC_MSG_RESULT(yes)],
     [AC_MSG_RESULT(no)])
 
 AC_MSG_CHECKING(libelf.h exists and has Elf function declarations)
-AC_TRY_COMPILE([
-#include <libelf.h>
-],[  int p; char *ident; p = 0;ident=elf_getident(0, 0);] ,
+AC_COMPILE_IFELSE([AC_LANG_SOURCE([[
+  #include <libelf.h>
+  int main() {
+    int p; char *ident; p = 0;ident=elf_getident(0, 0);
+  } ]])],
   [AC_MSG_RESULT(yes)],
   [AC_MSG_RESULT(no)])
 
 AC_MSG_CHECKING(libelf/libelf.h exists and has Elf function declarations)
-AC_TRY_COMPILE([
+AC_COMPILE_IFELSE([AC_LANG_SOURCE([]
 #include <libelf/libelf.h>
-],[  int p; char *ident; p = 0;ident=elf_getident(0, 0);] ,
+  int main() {
+    int p; char *ident; p = 0;ident=elf_getident(0, 0);
+  } ]])],
   [AC_MSG_RESULT(yes)],
   [AC_MSG_RESULT(no)])
 
 
 AC_MSG_CHECKING(libelf defines off64_t if _GNU_SOURCE defined)
-AC_TRY_COMPILE([
+AC_COMPILE_IFELSE([AC_LANG_SOURCE([[
 #define _GNU_SOURCE
 #include <libelf.h>
-],[  off64_t  p; p = 0;] ,
+   int main() {
+     off64_t  p; p = 0;
+   } ]])],
   [AC_DEFINE(HAVE_LIBELF_OFF64_OK,1,
       [Define 1 if  off64 is defined via libelf with GNU_SOURCE.])
    AC_MSG_RESULT(yes)],
@@ -207,30 +241,41 @@ AC_TRY_COMPILE([
 dnl the existence of sgidefs.h does not prove it's truly SGI, nor
 dnl prove that __uint32_t or __uint64_t is defined therein.
 AC_MSG_CHECKING(sgidefs.h present and defines __uint32_t)
-AC_TRY_COMPILE([#include <sgidefs.h>],[  __uint32_t p; p = 27;] ,
+AC_COMPILE_IFELSE([AC_LANG_SOURCE([[#include <sgidefs.h>
+  int main() {
+    __uint32_t p; p = 27;
+  } ]])],
+  
   [AC_DEFINE(HAVE___UINT32_T_IN_SGIDEFS_H,1,
         [Define 1 if __uint32_t is in sgidefs.h.])
     AC_MSG_RESULT(yes)],
     [AC_MSG_RESULT(no)])
 
 AC_MSG_CHECKING(sgidefs.h present and defines __uint64_t)
-AC_TRY_COMPILE([#include <sgidefs.h>],[  __uint64_t p; p = 27;] ,
+AC_COMPILE_IFELSE([AC_LANG_SOURCE([[#include <sgidefs.h>
+  int main() {
+    __uint64_t p; p = 27;
+  } ]])],
   [AC_DEFINE(HAVE___UINT64_T_IN_SGIDEFS_H,1,
         [Define 1 if __uint64_t is in sgidefs.h.]) 
     AC_MSG_RESULT(yes)],
     [AC_MSG_RESULT(no)])
 
 AC_MSG_CHECKING(is Elf64_Rela defined in elf.h)
-AC_TRY_COMPILE([#include HAVE_LOCATION_OF_LIBELFHEADER],
-  [  Elf64_Rela p; p.r_offset = 1; ],
+AC_COMPILE_IFELSE([AC_LANG_SOURCE([[#include HAVE_LOCATION_OF_LIBELFHEADER
+  int main() {
+    Elf64_Rela p; p.r_offset = 1;
+  } ]])],
   [AC_DEFINE(HAVE_ELF64_RELA,1,
         [Define 1 if Elf64_Rela defined.]) 
     AC_MSG_RESULT(yes)],
     [AC_MSG_RESULT(no)])
 
 AC_MSG_CHECKING(is Elf64_Sym defined in elf.h)
-AC_TRY_COMPILE([#include HAVE_LOCATION_OF_LIBELFHEADER],
-  [  Elf64_Sym p; p.st_info = 1; ],
+AC_COMPILE_IFELSE([AC_LANG_SOURCE([[#include HAVE_LOCATION_OF_LIBELFHEADER
+  int main() {
+    Elf64_Sym p; p.st_info = 1;
+  } ]])],
   [AC_DEFINE(HAVE_ELF64_SYM,1,
         [Define 1 if Elf64_Sym defined.])
     AC_MSG_RESULT(yes)],
@@ -328,7 +373,10 @@ AC_ARG_ENABLE(oldframecol,AC_HELP_STRING([--enable-oldframecol],
         [AC_MSG_RESULT(no) ])
 
 AC_MSG_CHECKING(have windows stdafx.h) 
-AC_TRY_COMPILE([#include "stdafx.h"],[  int p; p = 27;] ,
+AC_COMPILE_IFELSE([AC_LANG_SOURCE([[#include "stdafx.h"
+  int main() {
+    int p; p = 27;
+  } ]])],
   [AC_DEFINE(HAVE_STDAFX_H,1,
         [Define 1 if we have the Windows specific header stdafx.h])
    AC_MSG_RESULT(yes)],
