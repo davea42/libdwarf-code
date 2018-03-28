@@ -1,4 +1,4 @@
-/* config.h.in.  Generated from configure.in by autoheader.  */
+/* config.h.in.  Generated from configure.ac by autoheader.  */
 
 /* Define if building universal (internal helper macro) */
 #undef AC_APPLE_UNIVERSAL_BUILD
@@ -42,13 +42,16 @@
 /* Define to 1 if you have the <unistd.h> header file. */
 #undef HAVE_UNISTD_H
 
-/* Define 1 if zlib (decompression library) seems available. */
+/* Define 1 if zlib decompression available. */
 #undef HAVE_ZLIB
+
+/* Define to 1 if you have the <zlib.h> header file. */
+#undef HAVE_ZLIB_H
 
 /* Define 1 if __uint32_t is in sgidefs.h. */
 #undef HAVE___UINT32_T_IN_SGIDEFS_H
 
-/* Define 1 if is in sgidefs.h. */
+/* Define 1 if __uint64_t is in sgidefs.h. */
 #undef HAVE___UINT64_T_IN_SGIDEFS_H
 
 /* Define to the address where bug reports for this package should be sent. */

@@ -1,4 +1,8 @@
 2017-03-28  David Anderson
+     * configure.ac: Using configure commands that
+       are considered currently good practice.
+     * configure, config.h.in: regenerated.
+2017-03-28  David Anderson
      * configure.in: renamed configure.ac
 2017-03-26  David Anderson
      * frame1.c: Fixed the omission, in printing register data,
