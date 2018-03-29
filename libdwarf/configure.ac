@@ -1,5 +1,5 @@
-dnl Process this file with autoconf to produce a configure script.
-dnl AC_INIT(libdwarf.h)
+enl Process this file with autoheader, autoconf 
+dnl to produce a configure script.
 dnl Uses AC_COMPILE_IFELSE from 2.50 and later
 AC_PREREQ([2.50])
 AC_INIT()
@@ -15,23 +15,32 @@ AC_CHECK_TOOL(AR, ar)
 
 dnl AC_ARFLAGS
 
-AC_CHECK_HEADERS(alloca.h elf.h unistd.h elfaccess.h libelf.h libelf/libelf.h  sys/types.h sys/elf_386.h sys/elf_amd64.h sys/elf_SPARC.h sys/ia64/elf.h)
+AC_CHECK_HEADERS([ alloca.h elf.h unistd.h elfaccess.h libelf.h libelf/libelf.h  sys/types.h sys/elf_386.h sys/elf_amd64.h sys/elf_SPARC.h sys/ia64/elf.h zlib.h ])
 
 dnl Windows seems to have libelf.h with the normal elf.h
 dnl data embedded. No literal elf.h  is present.
 dnl Get a best estimate of elf header data location.
+dnl FIXME The name HAVE_LOCATION_OF_LIBELFHEADER is just wrong,
+dnl this finds location of Elf header, not libelf header, though
+dnl the files might be one and the same..
 AC_MSG_CHECKING(where is basic elf data)
 if test "$ac_cv_header_elf_h" = yes; then
+ dnl UNIX/Linux standard
+ firstlibelfhdr="<elf.h>"
  AC_DEFINE(HAVE_LOCATION_OF_LIBELFHEADER,[<elf.h>], [Define to header that first defines elf])
  AC_MSG_RESULT(<elf.h>)
 elif test "$ac_cv_header_libelf_h" = yes; then
+ dnl Possibly Windows ?
  AC_DEFINE(HAVE_LOCATION_OF_LIBELFHEADER, [<libelf.h>],
         [Define to header that first defines elf.])
+ firstlibelfhdr="<libelf.h>"
  AC_MSG_RESULT(<libelf.h>)
 elif test "$ac_cv_header_libelf_libelf_h" = yes; then
+ dnl Unusual header layout. No elf.h? When would this happen?
  AC_DEFINE(HAVE_LOCATION_OF_LIBELFHEADER,[<libelf/libelf.h>],
         [Define to header that first defines elf.])
  AC_MSG_RESULT(<libelf/libelf.h>)
+ firstlibelfhdr="<libelf/libelf.h>"
 else
  AC_MSG_RESULT(NO standard ELF HEADERS found)
 fi
@@ -40,15 +49,15 @@ dnl The default libdwarf is the one with struct Elf
 echo Assuming struct Elf for the default libdwarf.h
 cp $srcdir/libdwarf.h.in libdwarf.h
 
-dnl AC_MSG_CHECKING(is elf64_getehdr function in libelf)
-AC_CHECK_LIB(elf,elf64_getehdr,
+AC_MSG_CHECKING(is elf64_getehdr function in libelf)
+AC_SEARCH_LIBS([elf64_getehdr],[elf],
   [AC_DEFINE(HAVE_ELF64_GETEHDR,1,
 	[Define to 1 if the elf64_getehdr function is in libelf.a.])
     AC_MSG_RESULT(yes)], 
   [AC_MSG_RESULT(no)])
 
-dnl AC_MSG_CHECKING(is elf64_getshdr function in libelf)
-AC_CHECK_LIB(elf,elf64_getshdr,
+AC_MSG_CHECKING(is elf64_getshdr function in libelf)
+AC_SEARCH_LIBS([elf64_getshdr],[elf],
   [AC_DEFINE(HAVE_ELF64_GETSHDR,1,
 	[Define to 1 if the elf64_getshdr function is in libelf.a.])
     AC_MSG_RESULT(yes)],
@@ -85,10 +94,10 @@ AC_COMPILE_IFELSE([AC_LANG_SOURCE([[#include <sys/types.h>
    [AC_MSG_RESULT(no)])
 
 AC_MSG_CHECKING(is __uint64_t defined in sys/types.h)
-AC_COMPILE_IFELSE([[AC_LANG_SOURCE([#include <sys/types.h>
+AC_COMPILE_IFELSE([AC_LANG_SOURCE([[#include <sys/types.h>
    int main() {
      __uint64_t p; p = 5;
-   } ])],
+   } ]])],
   [AC_DEFINE(HAVE___UINT64_T_IN_SYS_TYPES_H,1,
 	[Define 1 if sys/types.h defines __uint64_t.])
     AC_MSG_RESULT(yes)],
@@ -110,22 +119,35 @@ AC_COMPILE_IFELSE([AC_LANG_SOURCE([[
     AC_MSG_RESULT(yes)],
   [AC_MSG_RESULT(no)])
 
-AC_MSG_CHECKING(should we look for libz aka zlib)
-AC_ARG_ENABLE(libz,AC_HELP_STRING([--disable-libz],
-   [do not link against library libz]))
-AS_IF([ test "x$enable_libz" = "xno"], [
-   ignorelibz="y"
-   AC_MSG_RESULT(no)
-   ],[ AC_MSG_RESULT(yes)])
+AC_MSG_CHECKING(is libelf.h present and calls compile) 
+AC_COMPILE_IFELSE([AC_LANG_SOURCE(
+   [[
+#include <elf.h>
+#include <libelf.h>
+    int main() {
+      int fd = 1; Elf_Cmd cmd = 0; Elf *elf = 0;
+      elf = elf_begin(fd,cmd,elf);
+      if (elf) {
+         /* ALL IS WELL */
+      }
+    } ]])],
+    [ AC_MSG_RESULT(yes) ],
+    [ AC_MSG_RESULT(no)])
+AC_MSG_CHECKING(libelf has elf_begin function)
+AC_SEARCH_LIBS([elf_begin],[elf],
+    [ AC_MSG_RESULT(yes) ],
+    [ AC_MSG_RESULT(no) ])
 
 AC_SUBST(dwfzlib,[])
-AC_MSG_CHECKING(should we check for libz aka zlib)
-AS_IF([ test x$ignorelibz = "xy" ],
-  [ AC_MSG_RESULT(no) ],
-  [
-  AC_MSG_RESULT(yes)
-  AC_MSG_CHECKING(are zlib.h and libz usable)
-  AC_COMPILE_IFELSE([AC_LANG_SOURCE([[#include "zlib.h"
+AC_MSG_CHECKING(libz aka zlib has uncompress function)
+AC_SEARCH_LIBS([uncompress],[z],
+    [ libzlib=y
+      AC_MSG_RESULT(yes) ],
+    [ libzlib=n
+      AC_MSG_RESULT(no) ])
+
+AC_MSG_CHECKING(is zlib.h present)
+AC_COMPILE_IFELSE([AC_LANG_SOURCE([[#include "zlib.h"
     int main() {
       Bytef dest[100];
       uLongf destlen = 100;
@@ -136,13 +158,20 @@ AS_IF([ test x$ignorelibz = "xy" ],
          /* ALL IS WELL */
       }
     } ]])],
+    [ libzheader="y"
+     AC_MSG_RESULT(yes)
+    ],
+    [ libzheader="n"
+     AC_MSG_RESULT(no)])
+
+AC_MSG_CHECKING(are zlib.h and its library present)
+AS_IF([ test x$libzlib = "xy" -a x$libzheader = "xy" ],
     [AC_DEFINE(HAVE_ZLIB,1,
-        [Define 1 if zlib (decompression library) seems available.])
+        [Define 1 if zlib decompression  available.])
      AC_SUBST(dwfzlib,[-lz])
      AC_MSG_RESULT(yes)
     ],
     [AC_MSG_RESULT(no)])
-])
 
 AC_MSG_CHECKING(enable nonstandardprintf)
 AC_ARG_ENABLE(nonstandardprintf,AS_HELP_STRING([--enable-nonstandardprintf],
@@ -177,7 +206,7 @@ AC_COMPILE_IFELSE([AC_LANG_SOURCE([[#include <libelf.h>
 dnl checking for ia 64 types, which might be enums, using HAVE_R_IA_64_DIR32LSB
 dnl to stand in for a small set.
 AC_MSG_CHECKING(Intel Itanium relocation types defined)
-AC_COMPILE_IFELSE([AC_LANG_SOURCE([[#include HAVE_LOCATION_OF_LIBELFHEADER
+AC_COMPILE_IFELSE([AC_LANG_SOURCE([[#include <elf.h>
   int main () {
       int p; p = R_IA_64_DIR32LSB;
   } ]])],
@@ -187,7 +216,7 @@ AC_COMPILE_IFELSE([AC_LANG_SOURCE([[#include HAVE_LOCATION_OF_LIBELFHEADER
    [AC_MSG_RESULT(no)])
 
 AC_MSG_CHECKING(libelf defines struct _Elf)
-AC_COMPILE_IFELSE([AC_LANG_SOURCE([[#include <libelf.h>  
+AC_COMPILE_IFELSE([AC_LANG_SOURCE([[#include <elf.h>  
   int main() {
     struct _Elf a; int i; i = 0; 
   } ]])],
@@ -203,7 +232,7 @@ AC_COMPILE_IFELSE([AC_LANG_SOURCE([[#include <libelf.h>
     int p; p = 0; 
   } ]])],
   [AC_DEFINE(HAVE_RAW_LIBELF_OK,1,
-	[Define 1 if plain libelf builds.])
+	[Define 1 if plain libelf include builds.])
     AC_MSG_RESULT(yes)],
     [AC_MSG_RESULT(no)])
 
@@ -217,7 +246,7 @@ AC_COMPILE_IFELSE([AC_LANG_SOURCE([[
   [AC_MSG_RESULT(no)])
 
 AC_MSG_CHECKING(libelf/libelf.h exists and has Elf function declarations)
-AC_COMPILE_IFELSE([AC_LANG_SOURCE([]
+AC_COMPILE_IFELSE([AC_LANG_SOURCE([[
 #include <libelf/libelf.h>
   int main() {
     int p; char *ident; p = 0;ident=elf_getident(0, 0);
@@ -262,7 +291,7 @@ AC_COMPILE_IFELSE([AC_LANG_SOURCE([[#include <sgidefs.h>
     [AC_MSG_RESULT(no)])
 
 AC_MSG_CHECKING(is Elf64_Rela defined in elf.h)
-AC_COMPILE_IFELSE([AC_LANG_SOURCE([[#include HAVE_LOCATION_OF_LIBELFHEADER
+AC_COMPILE_IFELSE([AC_LANG_SOURCE([[#include $firstlibelfhdr
   int main() {
     Elf64_Rela p; p.r_offset = 1;
   } ]])],
@@ -272,7 +301,7 @@ AC_COMPILE_IFELSE([AC_LANG_SOURCE([[#include HAVE_LOCATION_OF_LIBELFHEADER
     [AC_MSG_RESULT(no)])
 
 AC_MSG_CHECKING(is Elf64_Sym defined in elf.h)
-AC_COMPILE_IFELSE([AC_LANG_SOURCE([[#include HAVE_LOCATION_OF_LIBELFHEADER
+AC_COMPILE_IFELSE([AC_LANG_SOURCE([[#include $firstlibelfhdr
   int main() {
     Elf64_Sym p; p.st_info = 1;
   } ]])],

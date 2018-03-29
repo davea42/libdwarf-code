@@ -11,7 +11,7 @@ AC_PROG_INSTALL
 AC_CHECK_TOOL(RANLIB, ranlib, :)
 AC_CHECK_TOOL(AR, ar)
 
-AC_CHECK_HEADERS(elf.h unistd.h libelf.h sgidefs.h sys/types.h zlib.h)
+AC_CHECK_HEADERS([elf.h unistd.h libelf.h sgidefs.h sys/types.h zlib.h])
 
 dnl Attempt to determine if it is really IRIX/SGI or 'other'.
 AC_MSG_CHECKING(check if __uint32_t in IRIX sgidefs.h)
@@ -87,6 +87,7 @@ AC_ARG_ENABLE(sanitize,AC_HELP_STRING([--enable-sanitize],
           AC_MSG_RESULT(no) ]
        )
 
+AC_SUBST(dwfzlib,[])
 AC_MSG_CHECKING(libz aka zlib has uncompress function)
 AC_SEARCH_LIBS([uncompress],[z],
     [ libzlib=y 
@@ -111,7 +112,6 @@ AC_COMPILE_IFELSE([AC_LANG_SOURCE([[#include "zlib.h"
     ],
     [ libzheader="n" 
      AC_MSG_RESULT(no)])
-
 
 AC_MSG_CHECKING(are zlib.h and its library present)
 AS_IF([ test x$libzlib = "xy" -a x$libzheader = "xy" ],

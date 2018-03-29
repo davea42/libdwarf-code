@@ -52,7 +52,7 @@
 /* Define 1 to default to old DW_FRAME_CFA_COL */
 #undef HAVE_OLD_FRAME_CFA_COL
 
-/* Define 1 if plain libelf builds. */
+/* Define 1 if plain libelf include builds. */
 #undef HAVE_RAW_LIBELF_OK
 
 /* Define 1 if R_IA_64_DIR32LSB is defined (might be enum value). */
@@ -109,8 +109,11 @@
 /* Define 1 if want to allow Windows full path detection */
 #undef HAVE_WINDOWS_PATH
 
-/* Define 1 if zlib (decompression library) seems available. */
+/* Define 1 if zlib decompression available. */
 #undef HAVE_ZLIB
+
+/* Define to 1 if you have the <zlib.h> header file. */
+#undef HAVE_ZLIB_H
 
 /* See if __uint32_t is predefined in the compiler. */
 #undef HAVE___UINT32_T

@@ -685,7 +685,6 @@ SHELL'
 ac_subst_files=''
 ac_user_opts='
 enable_option_checking
-enable_libz
 enable_nonstandardprintf
 enable_shared
 enable_nonshared
@@ -1325,7 +1324,6 @@ Optional Features:
   --disable-option-checking  ignore unrecognized --enable/--with options
   --disable-FEATURE       do not include FEATURE (same as --enable-FEATURE=no)
   --enable-FEATURE[=ARG]  include FEATURE [ARG=yes]
-  --disable-libz          do not link against library libz
   --enable-nonstandardprintf
                           Use a special printf format for 64bit (default is
                           NO)
@@ -3871,7 +3869,7 @@ fi
 
 
 
-for ac_header in alloca.h elf.h unistd.h elfaccess.h libelf.h libelf/libelf.h  sys/types.h sys/elf_386.h sys/elf_amd64.h sys/elf_SPARC.h sys/ia64/elf.h
+for ac_header in  alloca.h elf.h unistd.h elfaccess.h libelf.h libelf/libelf.h  sys/types.h sys/elf_386.h sys/elf_amd64.h sys/elf_SPARC.h sys/ia64/elf.h zlib.h
 do :
   as_ac_Header=`$as_echo "ac_cv_header_$ac_header" | $as_tr_sh`
 ac_fn_c_check_header_mongrel "$LINENO" "$ac_header" "$as_ac_Header" "$ac_includes_default"
@@ -3888,6 +3886,7 @@ done
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking where is basic elf data" >&5
 $as_echo_n "checking where is basic elf data... " >&6; }
 if test "$ac_cv_header_elf_h" = yes; then
+  firstlibelfhdr="<elf.h>"
 
 $as_echo "#define HAVE_LOCATION_OF_LIBELFHEADER <elf.h>" >>confdefs.h
 
@@ -3897,6 +3896,7 @@ elif test "$ac_cv_header_libelf_h" = yes; then
 
 $as_echo "#define HAVE_LOCATION_OF_LIBELFHEADER <libelf.h>" >>confdefs.h
 
+ firstlibelfhdr="<libelf.h>"
  { $as_echo "$as_me:${as_lineno-$LINENO}: result: <libelf.h>" >&5
 $as_echo "<libelf.h>" >&6; }
 elif test "$ac_cv_header_libelf_libelf_h" = yes; then
@@ -3905,6 +3905,7 @@ $as_echo "#define HAVE_LOCATION_OF_LIBELFHEADER <libelf/libelf.h>" >>confdefs.h
 
  { $as_echo "$as_me:${as_lineno-$LINENO}: result: <libelf/libelf.h>" >&5
 $as_echo "<libelf/libelf.h>" >&6; }
+ firstlibelfhdr="<libelf/libelf.h>"
 else
  { $as_echo "$as_me:${as_lineno-$LINENO}: result: NO standard ELF HEADERS found" >&5
 $as_echo "NO standard ELF HEADERS found" >&6; }
@@ -3913,13 +3914,14 @@ fi
 echo Assuming struct Elf for the default libdwarf.h
 cp $srcdir/libdwarf.h.in libdwarf.h
 
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for elf64_getehdr in -lelf" >&5
-$as_echo_n "checking for elf64_getehdr in -lelf... " >&6; }
-if ${ac_cv_lib_elf_elf64_getehdr+:} false; then :
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking is elf64_getehdr function in libelf" >&5
+$as_echo_n "checking is elf64_getehdr function in libelf... " >&6; }
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for library containing elf64_getehdr" >&5
+$as_echo_n "checking for library containing elf64_getehdr... " >&6; }
+if ${ac_cv_search_elf64_getehdr+:} false; then :
   $as_echo_n "(cached) " >&6
 else
-  ac_check_lib_save_LIBS=$LIBS
-LIBS="-lelf  $LIBS"
+  ac_func_search_save_LIBS=$LIBS
 cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 
@@ -3938,18 +3940,35 @@ return elf64_getehdr ();
   return 0;
 }
 _ACEOF
-if ac_fn_c_try_link "$LINENO"; then :
-  ac_cv_lib_elf_elf64_getehdr=yes
-else
-  ac_cv_lib_elf_elf64_getehdr=no
+for ac_lib in '' elf; do
+  if test -z "$ac_lib"; then
+    ac_res="none required"
+  else
+    ac_res=-l$ac_lib
+    LIBS="-l$ac_lib  $ac_func_search_save_LIBS"
+  fi
+  if ac_fn_c_try_link "$LINENO"; then :
+  ac_cv_search_elf64_getehdr=$ac_res
 fi
 rm -f core conftest.err conftest.$ac_objext \
-    conftest$ac_exeext conftest.$ac_ext
-LIBS=$ac_check_lib_save_LIBS
+    conftest$ac_exeext
+  if ${ac_cv_search_elf64_getehdr+:} false; then :
+  break
 fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_elf_elf64_getehdr" >&5
-$as_echo "$ac_cv_lib_elf_elf64_getehdr" >&6; }
-if test "x$ac_cv_lib_elf_elf64_getehdr" = xyes; then :
+done
+if ${ac_cv_search_elf64_getehdr+:} false; then :
+
+else
+  ac_cv_search_elf64_getehdr=no
+fi
+rm conftest.$ac_ext
+LIBS=$ac_func_search_save_LIBS
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_search_elf64_getehdr" >&5
+$as_echo "$ac_cv_search_elf64_getehdr" >&6; }
+ac_res=$ac_cv_search_elf64_getehdr
+if test "$ac_res" != no; then :
+  test "$ac_res" = "none required" || LIBS="$ac_res $LIBS"
 
 $as_echo "#define HAVE_ELF64_GETEHDR 1" >>confdefs.h
 
@@ -3961,13 +3980,14 @@ $as_echo "no" >&6; }
 fi
 
 
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for elf64_getshdr in -lelf" >&5
-$as_echo_n "checking for elf64_getshdr in -lelf... " >&6; }
-if ${ac_cv_lib_elf_elf64_getshdr+:} false; then :
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking is elf64_getshdr function in libelf" >&5
+$as_echo_n "checking is elf64_getshdr function in libelf... " >&6; }
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for library containing elf64_getshdr" >&5
+$as_echo_n "checking for library containing elf64_getshdr... " >&6; }
+if ${ac_cv_search_elf64_getshdr+:} false; then :
   $as_echo_n "(cached) " >&6
 else
-  ac_check_lib_save_LIBS=$LIBS
-LIBS="-lelf  $LIBS"
+  ac_func_search_save_LIBS=$LIBS
 cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 
@@ -3986,18 +4006,35 @@ return elf64_getshdr ();
   return 0;
 }
 _ACEOF
-if ac_fn_c_try_link "$LINENO"; then :
-  ac_cv_lib_elf_elf64_getshdr=yes
-else
-  ac_cv_lib_elf_elf64_getshdr=no
+for ac_lib in '' elf; do
+  if test -z "$ac_lib"; then
+    ac_res="none required"
+  else
+    ac_res=-l$ac_lib
+    LIBS="-l$ac_lib  $ac_func_search_save_LIBS"
+  fi
+  if ac_fn_c_try_link "$LINENO"; then :
+  ac_cv_search_elf64_getshdr=$ac_res
 fi
 rm -f core conftest.err conftest.$ac_objext \
-    conftest$ac_exeext conftest.$ac_ext
-LIBS=$ac_check_lib_save_LIBS
+    conftest$ac_exeext
+  if ${ac_cv_search_elf64_getshdr+:} false; then :
+  break
 fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_elf_elf64_getshdr" >&5
-$as_echo "$ac_cv_lib_elf_elf64_getshdr" >&6; }
-if test "x$ac_cv_lib_elf_elf64_getshdr" = xyes; then :
+done
+if ${ac_cv_search_elf64_getshdr+:} false; then :
+
+else
+  ac_cv_search_elf64_getshdr=no
+fi
+rm conftest.$ac_ext
+LIBS=$ac_func_search_save_LIBS
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_search_elf64_getshdr" >&5
+$as_echo "$ac_cv_search_elf64_getshdr" >&6; }
+ac_res=$ac_cv_search_elf64_getshdr
+if test "$ac_res" != no; then :
+  test "$ac_res" = "none required" || LIBS="$ac_res $LIBS"
 
 $as_echo "#define HAVE_ELF64_GETSHDR 1" >>confdefs.h
 
@@ -4120,37 +4157,161 @@ $as_echo "no" >&6; }
 fi
 rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
 
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking should we look for libz aka zlib" >&5
-$as_echo_n "checking should we look for libz aka zlib... " >&6; }
-# Check whether --enable-libz was given.
-if test "${enable_libz+set}" = set; then :
-  enableval=$enable_libz;
-fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking is libelf.h present and calls compile" >&5
+$as_echo_n "checking is libelf.h present and calls compile... " >&6; }
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
 
-if  test "x$enable_libz" = "xno"; then :
-
-   ignorelibz="y"
-   { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
-$as_echo "no" >&6; }
-
-else
+#include <elf.h>
+#include <libelf.h>
+    int main() {
+      int fd = 1; Elf_Cmd cmd = 0; Elf *elf = 0;
+      elf = elf_begin(fd,cmd,elf);
+      if (elf) {
+         /* ALL IS WELL */
+      }
+    }
+_ACEOF
+if ac_fn_c_try_compile "$LINENO"; then :
    { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
 $as_echo "yes" >&6; }
+else
+   { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+fi
+rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking libelf has elf_begin function" >&5
+$as_echo_n "checking libelf has elf_begin function... " >&6; }
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for library containing elf_begin" >&5
+$as_echo_n "checking for library containing elf_begin... " >&6; }
+if ${ac_cv_search_elf_begin+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  ac_func_search_save_LIBS=$LIBS
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+/* Override any GCC internal prototype to avoid an error.
+   Use char because int might match the return type of a GCC
+   builtin and then its argument prototype would still apply.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+char elf_begin ();
+int
+main ()
+{
+return elf_begin ();
+  ;
+  return 0;
+}
+_ACEOF
+for ac_lib in '' elf; do
+  if test -z "$ac_lib"; then
+    ac_res="none required"
+  else
+    ac_res=-l$ac_lib
+    LIBS="-l$ac_lib  $ac_func_search_save_LIBS"
+  fi
+  if ac_fn_c_try_link "$LINENO"; then :
+  ac_cv_search_elf_begin=$ac_res
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext
+  if ${ac_cv_search_elf_begin+:} false; then :
+  break
+fi
+done
+if ${ac_cv_search_elf_begin+:} false; then :
+
+else
+  ac_cv_search_elf_begin=no
+fi
+rm conftest.$ac_ext
+LIBS=$ac_func_search_save_LIBS
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_search_elf_begin" >&5
+$as_echo "$ac_cv_search_elf_begin" >&6; }
+ac_res=$ac_cv_search_elf_begin
+if test "$ac_res" != no; then :
+  test "$ac_res" = "none required" || LIBS="$ac_res $LIBS"
+   { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+$as_echo "yes" >&6; }
+else
+   { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
 fi
 
 
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking should we check for libz aka zlib" >&5
-$as_echo_n "checking should we check for libz aka zlib... " >&6; }
-if  test x$ignorelibz = "xy" ; then :
-   { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
-$as_echo "no" >&6; }
-else
 
-  { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking libz aka zlib has uncompress function" >&5
+$as_echo_n "checking libz aka zlib has uncompress function... " >&6; }
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for library containing uncompress" >&5
+$as_echo_n "checking for library containing uncompress... " >&6; }
+if ${ac_cv_search_uncompress+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  ac_func_search_save_LIBS=$LIBS
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+/* Override any GCC internal prototype to avoid an error.
+   Use char because int might match the return type of a GCC
+   builtin and then its argument prototype would still apply.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+char uncompress ();
+int
+main ()
+{
+return uncompress ();
+  ;
+  return 0;
+}
+_ACEOF
+for ac_lib in '' z; do
+  if test -z "$ac_lib"; then
+    ac_res="none required"
+  else
+    ac_res=-l$ac_lib
+    LIBS="-l$ac_lib  $ac_func_search_save_LIBS"
+  fi
+  if ac_fn_c_try_link "$LINENO"; then :
+  ac_cv_search_uncompress=$ac_res
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext
+  if ${ac_cv_search_uncompress+:} false; then :
+  break
+fi
+done
+if ${ac_cv_search_uncompress+:} false; then :
+
+else
+  ac_cv_search_uncompress=no
+fi
+rm conftest.$ac_ext
+LIBS=$ac_func_search_save_LIBS
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_search_uncompress" >&5
+$as_echo "$ac_cv_search_uncompress" >&6; }
+ac_res=$ac_cv_search_uncompress
+if test "$ac_res" != no; then :
+  test "$ac_res" = "none required" || LIBS="$ac_res $LIBS"
+   libzlib=y
+      { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
 $as_echo "yes" >&6; }
-  { $as_echo "$as_me:${as_lineno-$LINENO}: checking are zlib.h and libz usable" >&5
-$as_echo_n "checking are zlib.h and libz usable... " >&6; }
-  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+else
+   libzlib=n
+      { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+fi
+
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking is zlib.h present" >&5
+$as_echo_n "checking is zlib.h present... " >&6; }
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 #include "zlib.h"
     int main() {
@@ -4165,6 +4326,20 @@ $as_echo_n "checking are zlib.h and libz usable... " >&6; }
     }
 _ACEOF
 if ac_fn_c_try_compile "$LINENO"; then :
+   libzheader="y"
+     { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+$as_echo "yes" >&6; }
+
+else
+   libzheader="n"
+     { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+fi
+rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking are zlib.h and its library present" >&5
+$as_echo_n "checking are zlib.h and its library present... " >&6; }
+if  test x$libzlib = "xy" -a x$libzheader = "xy" ; then :
 
 $as_echo "#define HAVE_ZLIB 1" >>confdefs.h
 
@@ -4176,9 +4351,6 @@ $as_echo "yes" >&6; }
 else
   { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
 $as_echo "no" >&6; }
-fi
-rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
-
 fi
 
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking enable nonstandardprintf" >&5
@@ -4234,7 +4406,7 @@ rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
 $as_echo_n "checking Intel Itanium relocation types defined... " >&6; }
 cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
-#include HAVE_LOCATION_OF_LIBELFHEADER
+#include <elf.h>
   int main () {
       int p; p = R_IA_64_DIR32LSB;
   }
@@ -4255,7 +4427,7 @@ rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
 $as_echo_n "checking libelf defines struct _Elf... " >&6; }
 cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
-#include <libelf.h>
+#include <elf.h>
   int main() {
     struct _Elf a; int i; i = 0;
   }
@@ -4402,7 +4574,7 @@ rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
 $as_echo_n "checking is Elf64_Rela defined in elf.h... " >&6; }
 cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
-#include HAVE_LOCATION_OF_LIBELFHEADER
+#include $firstlibelfhdr
   int main() {
     Elf64_Rela p; p.r_offset = 1;
   }
@@ -4423,7 +4595,7 @@ rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
 $as_echo_n "checking is Elf64_Sym defined in elf.h... " >&6; }
 cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
-#include HAVE_LOCATION_OF_LIBELFHEADER
+#include $firstlibelfhdr
   int main() {
     Elf64_Sym p; p.st_info = 1;
   }

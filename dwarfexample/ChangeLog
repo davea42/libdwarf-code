@@ -1,3 +1,6 @@
+2017-03-29  David Anderson
+     * configure.ac: Corrected AC_CHECK_HEADERS.
+     * configure: regenerated.
 2017-03-28  David Anderson
      * configure.ac: Using configure commands that
        are considered currently good practice.

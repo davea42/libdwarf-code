@@ -1,4 +1,4 @@
-/* config.h.in.  Generated from configure.in by autoheader.  */
+/* config.h.in.  Generated from configure.ac by autoheader.  */
 
 /* Define to 1 if the elf64_getehdr function is in libelf.a. */
 #undef HAVE_ELF64_GETEHDR
@@ -29,9 +29,6 @@
 
 /* Define 1 if need nonstandard printf format for 64bit */
 #undef HAVE_NONSTANDARD_PRINTF_64_FORMAT
-
-/* Define 1 if plain libelf builds. */
-#undef HAVE_RAW_LIBELF_OK
 
 /* Define 1 if regex seems to be defined */
 #undef HAVE_REGEX
@@ -66,7 +63,7 @@
 /* Define 1 if __attribute__ ((unused)) compiles ok. */
 #undef HAVE_UNUSED_ATTRIBUTE
 
-/* Define 1 if zlib (decompression library) seems available. */
+/* Define 1 if zlib decompression available. */
 #undef HAVE_ZLIB
 
 /* See if __uint32_t is predefined in the compiler. */

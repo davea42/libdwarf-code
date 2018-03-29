@@ -1,3 +1,9 @@
+2018-03-29 David Anderson
+    * configure.ac: Corrected AC_CHECK_HEADERS use.
+      Removed AC_TRY_COMPILE in favor of AC_COMPILE_IFELSE.
+      Revamped checks for libelf and zlib.
+    * configure: regenerated
+    * config.h.in: regenerated
 2018-03-28 David Anderson
     * configure.in renamed configure.ac
 2018-03-27 David Anderson

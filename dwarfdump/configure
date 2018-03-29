@@ -622,6 +622,7 @@ ac_includes_default="\
 ac_subst_vars='LTLIBOBJS
 LIBOBJS
 dwfzlib
+dwelflib
 dwfsanitize
 dwfwall
 build_nonshared
@@ -687,7 +688,6 @@ enable_shared
 enable_nonshared
 enable_wall
 enable_sanitize
-enable_libz
 enable_nonstandardprintf
 '
       ac_precious_vars='build_alias
@@ -1322,7 +1322,6 @@ Optional Features:
   --disable-nonshared     do not build archive library libdwarf.a
   --enable-wall           Add -Wall (default is none)
   --enable-sanitize       Add -fsanitize (default is not to)
-  --disable-libz          do not link against library libz
   --enable-nonstandardprintf
                           Use a special printf format for 64bit (default is
                           NO)
@@ -3777,135 +3776,162 @@ $as_echo "no" >&6; }
 
 fi
 
-
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking checking for windows stdafx.h" >&5
+$as_echo_n "checking checking for windows stdafx.h... " >&6; }
 cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 #include "stdafx.h"
-int
-main ()
-{
-  int p; p = 27;
-  ;
-  return 0;
-}
+  int main() {
+     Elf64_Rel *p; int i; i = p->r_info;
+  }
 _ACEOF
 if ac_fn_c_try_compile "$LINENO"; then :
 
 $as_echo "#define HAVE_STDAFX_H 1" >>confdefs.h
 
+   { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+$as_echo "yes" >&6; }
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
 fi
 rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
 
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking do we have ELF64_R struc" >&5
+$as_echo_n "checking do we have ELF64_R struc... " >&6; }
 cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 #include HAVE_LOCATION_OF_LIBELFHEADER
-int
-main ()
-{
-Elf64_Rel *p; int i; i = p->r_info;
-  ;
-  return 0;
-}
+   int main() {
+      Elf64_Rel *p; int i; i = p->r_info; ,
+   }
 _ACEOF
 if ac_fn_c_try_compile "$LINENO"; then :
 
 $as_echo "#define HAVE_ELF64_R_INFO 1" >>confdefs.h
 
+    { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+$as_echo "yes" >&6; }
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
 fi
 rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking is __uint32_t predefined in the compiler" >&5
+$as_echo_n "checking is __uint32_t predefined in the compiler... " >&6; }
 cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 
-int
-main ()
-{
-__uint32_t p; p = 3;
-  ;
-  return 0;
-}
+   int main() {
+        __uint32_t p; p = 2;
+   }
 _ACEOF
 if ac_fn_c_try_compile "$LINENO"; then :
 
 $as_echo "#define HAVE___UINT32_T 1" >>confdefs.h
 
+    { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+$as_echo "yes" >&6; }
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
 fi
 rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking is __uint64_t predefined in the compiler" >&5
+$as_echo_n "checking is __uint64_t predefined in the compiler... " >&6; }
 cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 
-int
-main ()
-{
-__uint64_t p; p = 3;
-  ;
-  return 0;
-}
+   int main() {
+       __uint64_t p; p = 3;
+   }
 _ACEOF
 if ac_fn_c_try_compile "$LINENO"; then :
 
 $as_echo "#define HAVE___UINT64_T 1" >>confdefs.h
 
+    { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+$as_echo "yes" >&6; }
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
 fi
 rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking is __uint32_t defined in sys/types.h" >&5
+$as_echo_n "checking is __uint32_t defined in sys/types.h... " >&6; }
 cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 #include <sys/types.h>
-int
-main ()
-{
-  __uint32_t p; p = 3;
-  ;
-  return 0;
-}
+  int main() {
+     __uint32_t p; p = 4;
+  }
 _ACEOF
 if ac_fn_c_try_compile "$LINENO"; then :
 
 $as_echo "#define HAVE___UINT32_T_IN_SYS_TYPES_H 1" >>confdefs.h
 
+    { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+$as_echo "yes" >&6; }
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
 fi
 rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking is __uint64_t defined in sys/types.h" >&5
+$as_echo_n "checking is __uint64_t defined in sys/types.h... " >&6; }
 cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 #include <sys/types.h>
-int
-main ()
-{
-  __uint64_t p; p = 3;
-  ;
-  return 0;
-}
+   int main() {
+     __uint64_t p; p = 5;
+   }
 _ACEOF
 if ac_fn_c_try_compile "$LINENO"; then :
 
 $as_echo "#define HAVE___UINT64_T_IN_SYS_TYPES_H 1" >>confdefs.h
 
+    { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+$as_echo "yes" >&6; }
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
 fi
 rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
 
+
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking is regex defined" >&5
+$as_echo_n "checking is regex defined... " >&6; }
 cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 #include <sys/types.h>
-        #include <regex.h>
-int
-main ()
-{
-  int i;
+#include <regex.h>
+   int main() {
+        int i;
         regex_t r;
         int cflags = REG_EXTENDED;
         const char *s = "abc";
         i = regcomp(&r,s,cflags);
         regfree(&r);
-        ;
-  ;
-  return 0;
-}
+   }
 _ACEOF
 if ac_fn_c_try_compile "$LINENO"; then :
 
 $as_echo "#define HAVE_REGEX 1" >>confdefs.h
 
+    { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+$as_echo "yes" >&6; }
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
 fi
 rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+
 
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking checking if __attribute__ unused compiles ok" >&5
 $as_echo_n "checking checking if __attribute__ unused compiles ok... " >&6; }
@@ -3916,17 +3942,11 @@ cat confdefs.h - <<_ACEOF >conftest.$ac_ext
   {  unsigned x2 = x + 1;
      return x2;
   }
-
-int
-main ()
-{
-
+  int goo() {
      unsigned y = 0;
      y = foo(12,y);
+  }
 
-  ;
-  return 0;
-}
 _ACEOF
 if ac_fn_c_try_compile "$LINENO"; then :
 
@@ -3940,57 +3960,206 @@ $as_echo "no" >&6; }
 fi
 rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
 
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking should we look for libz aka zlib" >&5
-$as_echo_n "checking should we look for libz aka zlib... " >&6; }
-# Check whether --enable-libz was given.
-if test "${enable_libz+set}" = set; then :
-  enableval=$enable_libz;
-fi
 
-if  test "x$enable_libz" = "xno"; then :
 
-   ignorelibz="y"
-   { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
-$as_echo "no" >&6; }
-
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking libelf has elf_begin function" >&5
+$as_echo_n "checking libelf has elf_begin function... " >&6; }
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for library containing elf_begin" >&5
+$as_echo_n "checking for library containing elf_begin... " >&6; }
+if ${ac_cv_search_elf_begin+:} false; then :
+  $as_echo_n "(cached) " >&6
 else
-   { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
-$as_echo "yes" >&6; }
-fi
-
-
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking should we check for libz aka zlib" >&5
-$as_echo_n "checking should we check for libz aka zlib... " >&6; }
-if  test x$ignorelibz = "xy" ; then :
-   { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
-$as_echo "no" >&6; }
-else
-
-  { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
-$as_echo "yes" >&6; }
-  { $as_echo "$as_me:${as_lineno-$LINENO}: checking are zlib.h and libz usable" >&5
-$as_echo_n "checking are zlib.h and libz usable... " >&6; }
-  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+  ac_func_search_save_LIBS=$LIBS
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
-#include "zlib.h"
+
+/* Override any GCC internal prototype to avoid an error.
+   Use char because int might match the return type of a GCC
+   builtin and then its argument prototype would still apply.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+char elf_begin ();
 int
 main ()
 {
-
-    Bytef dest[100];
-    uLongf destlen = 100;
-    Bytef *src = 0;
-    uLong srclen = 3;
-    int res = uncompress(dest,&destlen,src,srclen);
-    if (res == Z_OK) {
-         /* ALL IS WELL */
-    }
-
+return elf_begin ();
   ;
   return 0;
 }
 _ACEOF
+for ac_lib in '' elf; do
+  if test -z "$ac_lib"; then
+    ac_res="none required"
+  else
+    ac_res=-l$ac_lib
+    LIBS="-l$ac_lib  $ac_func_search_save_LIBS"
+  fi
+  if ac_fn_c_try_link "$LINENO"; then :
+  ac_cv_search_elf_begin=$ac_res
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext
+  if ${ac_cv_search_elf_begin+:} false; then :
+  break
+fi
+done
+if ${ac_cv_search_elf_begin+:} false; then :
+
+else
+  ac_cv_search_elf_begin=no
+fi
+rm conftest.$ac_ext
+LIBS=$ac_func_search_save_LIBS
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_search_elf_begin" >&5
+$as_echo "$ac_cv_search_elf_begin" >&6; }
+ac_res=$ac_cv_search_elf_begin
+if test "$ac_res" != no; then :
+  test "$ac_res" = "none required" || LIBS="$ac_res $LIBS"
+   libelflib=y
+      { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+$as_echo "yes" >&6; }
+else
+   libelflib=n
+      { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+fi
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking is libelf header present and library linkable" >&5
+$as_echo_n "checking is libelf header present and library linkable... " >&6; }
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+#include "HAVE_LOCATION_OF_LIBELF_HEADER"
+    int main() {
+      int fd = 1;
+      Elf_Cmd cmd = 0;
+      Elf *elf = 0;
+
+      elf = elf_begin(fd,cmd,&elf);
+      if (res) {
+         /* ALL IS WELL */
+      }
+    }
+_ACEOF
 if ac_fn_c_try_compile "$LINENO"; then :
+   libelfheader="y"
+     { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+$as_echo "yes" >&6; }
+
+else
+   libelfheader="n"
+     { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+fi
+rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking are libelf.h and its library present and linkable" >&5
+$as_echo_n "checking are libelf.h and its library present and linkable... " >&6; }
+if  test x$libelflib = "xy" -a x$libelfheader = "xy" ; then :
+   { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+$as_echo "yes" >&6; }
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+fi
+
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking libz aka zlib has uncompress function" >&5
+$as_echo_n "checking libz aka zlib has uncompress function... " >&6; }
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for library containing uncompress" >&5
+$as_echo_n "checking for library containing uncompress... " >&6; }
+if ${ac_cv_search_uncompress+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  ac_func_search_save_LIBS=$LIBS
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+/* Override any GCC internal prototype to avoid an error.
+   Use char because int might match the return type of a GCC
+   builtin and then its argument prototype would still apply.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+char uncompress ();
+int
+main ()
+{
+return uncompress ();
+  ;
+  return 0;
+}
+_ACEOF
+for ac_lib in '' z; do
+  if test -z "$ac_lib"; then
+    ac_res="none required"
+  else
+    ac_res=-l$ac_lib
+    LIBS="-l$ac_lib  $ac_func_search_save_LIBS"
+  fi
+  if ac_fn_c_try_link "$LINENO"; then :
+  ac_cv_search_uncompress=$ac_res
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext
+  if ${ac_cv_search_uncompress+:} false; then :
+  break
+fi
+done
+if ${ac_cv_search_uncompress+:} false; then :
+
+else
+  ac_cv_search_uncompress=no
+fi
+rm conftest.$ac_ext
+LIBS=$ac_func_search_save_LIBS
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_search_uncompress" >&5
+$as_echo "$ac_cv_search_uncompress" >&6; }
+ac_res=$ac_cv_search_uncompress
+if test "$ac_res" != no; then :
+  test "$ac_res" = "none required" || LIBS="$ac_res $LIBS"
+   libzlib=y
+      { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+$as_echo "yes" >&6; }
+else
+   libzlib=n
+      { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+fi
+
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking is zlib.h present" >&5
+$as_echo_n "checking is zlib.h present... " >&6; }
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+#include "zlib.h"
+    int main() {
+      Bytef dest[100];
+      uLongf destlen = 100;
+      Bytef *src = 0;
+      uLong srclen = 3;
+      int res = uncompress(dest,&destlen,src,srclen);
+      if (res == Z_OK) {
+         /* ALL IS WELL */
+      }
+    }
+_ACEOF
+if ac_fn_c_try_compile "$LINENO"; then :
+   libzheader="y"
+     { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+$as_echo "yes" >&6; }
+
+else
+   libzheader="n"
+     { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+fi
+rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking are zlib.h and its library present" >&5
+$as_echo_n "checking are zlib.h and its library present... " >&6; }
+if  test x$libzlib = "xy" -a x$libzheader = "xy" ; then :
 
 $as_echo "#define HAVE_ZLIB 1" >>confdefs.h
 
@@ -4002,9 +4171,6 @@ $as_echo "yes" >&6; }
 else
   { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
 $as_echo "no" >&6; }
-fi
-rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
-
 fi
 
 
@@ -4023,32 +4189,6 @@ $as_echo "no" >&6; }
 fi
 
 
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking compile with libelf.h works " >&5
-$as_echo_n "checking compile with libelf.h works ... " >&6; }
-cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-
-#include <libelf.h>
-
-int
-main ()
-{
-  int p; p = 0;
-  ;
-  return 0;
-}
-_ACEOF
-if ac_fn_c_try_compile "$LINENO"; then :
-
-$as_echo "#define HAVE_RAW_LIBELF_OK 1" >>confdefs.h
-
-    { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
-$as_echo "yes" >&6; }
-else
-  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
-$as_echo "no" >&6; }
-fi
-rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
 
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking libelf defines off64_t if _GNU_SOURCE defined" >&5
 $as_echo_n "checking libelf defines off64_t if _GNU_SOURCE defined... " >&6; }
@@ -4057,14 +4197,9 @@ cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 
 #define _GNU_SOURCE
 #include <libelf.h>
-
-int
-main ()
-{
-  off64_t  p; p = 0;
-  ;
-  return 0;
-}
+   int main() {
+     off64_t  p; p = 0;
+   }
 _ACEOF
 if ac_fn_c_try_compile "$LINENO"; then :
 
@@ -4077,6 +4212,7 @@ else
 $as_echo "no" >&6; }
 fi
 rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+
 
 
 ac_config_files="$ac_config_files Makefile"
