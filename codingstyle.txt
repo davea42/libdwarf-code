@@ -1,4 +1,4 @@
-
+Latest update: 30 March 2018
 Adapted from the Cairo coding style document
 
 Libdwarf/dwarfdump  coding style.
@@ -19,14 +19,14 @@ Most of the guidelines here are demonstrated by examples,
 appear given its length). Most of the examples are positive
 examples that you should imitate. The few negative examples
 are clearly marked with a comment of /* Yuck! */. Please
-don't submit code to cairo that looks like any of these.
+don't submit code for libdwarf that looks like any of these.
 
 Indentation
 -----------
 Each new level is indented 4 more spaces than the previous level:
 
     if (condition) {
-        do_something ();
+        do_something();
     }
 Done solely with space characters.  The simple project on
 sourceforge.net, dicheck-da, detects all instances of tabs,
@@ -41,10 +41,10 @@ Braces
 Most of the code in cairo uses bracing in the style of K&R:
 
     if (condition) {
-        do_this ();
-        do_that ();
+        do_this();
+        do_that();
     } else {
-        do_the_other ();
+        do_the_other();
     }
 
 and that is the preferred style.
@@ -53,16 +53,16 @@ Even if all of the substatements of an if statement are single
 statements, the optional braces must always appear.
 
     if (condition) {
-        do_this ();
+        do_this();
     } else {
-        do_that ();
+        do_that();
     }
 
 Never
-    if (condition)       /* Yuck */
-        do_this ();      /* Yuck */
-    else                 /* Yuck */
-        do_the_other (); /* Yuck */
+    if (condition)      /* Yuck */
+        do_this();      /* Yuck */
+    else                /* Yuck */
+        do_the_other(); /* Yuck */
 
 Note that this last example also shows a situation in which the
 opening brace can be on its own line, though usually it looks
@@ -71,7 +71,7 @@ like this example. The following can be difficult to read.
 	if (condition &&
 	    other_condition &&
 	    yet_another) { /* But we usually do put the brace here */	
-	    do_something ();
+	    do_something();
 	}
 
 
@@ -88,8 +88,8 @@ struct _Dwarf_Data_s {
     struct Something_s  op;
     double tolerance;
     Dwarf_Unsigned line_width;
-    Dwarf_Unsigned;
-    Dwarf_Unsigned;
+    Dwarf_Unsigned line_height;
+    Dwarf_Unsigned line_thickness;
     
     /*  Notice the _s on struct declarations
         And notice indent of this comment
@@ -100,7 +100,9 @@ struct _Dwarf_Data_s {
     ...
 };
 
-Never Use a space before a left parenthesis.
+
+Never use a space before a function-call left parenthesis
+or a macro-call left parenthesis. 
 
 Don't eliminate newlines just because things would still fit
 on one line. This breaks the expected visual structure of
@@ -112,9 +114,10 @@ Eliminate trailing whitespace on any line. Also, avoid putting
 initial or final blank lines into any file, and never use
 multiple blank lines instead of a single blank line.
 
-Use dicheck (see above) to find trailing whitespace.
+Use dicheck (see above) to find trailing whitespace
+and indentation inconsistencies.
 
-You might also find the git-stripspace utility helpful which
+You might find the git-stripspace utility helpful which
 acts as a filter to remove trailing whitespace as well as
 initial, final, and duplicate blank lines.
 
@@ -125,7 +128,7 @@ function definitions should always take the following form:
     my_function (Dwarf_Debug dbg, Dwarf_Unsigned second_arg,
         Dwarf_Error *error)
     {
-        do_my_things ();
+        do_my_things();
     }
 
 
@@ -155,8 +158,33 @@ the parameter types and names so that the names are aligned:
         double	*double_star_arg,
         double	 double_arg);
 
-Note that parameters with a * prefix are aligned one character
+Parameters with a * prefix are aligned one character
 to the left so that the actual names are aligned.
+
+Struct Format and Content
+-------------------------
+
+Usually, avoid adding a comment alongside declarations
+unless it is a very short comment.  The following example
+uses meaningless x y z field names (sorry), but but does
+show a short prefix related to the struct name.  Generally
+struct members should have a prefix common to that struct and
+hopefully distinct from other struct declarations.  This short
+prefix makes it much easier to find all uses of a particular
+field in the code (with grep).
+
+    struct Dwarf_Nothing_Special_s {
+        int ns_x; /* usually avoid comment here this is Yuck!
+            and this is even worse as continuation.  Yuck! */
+
+        /*  Comment here about y with blank line above
+            and belows to make it clear which line 
+            referred to. */  
+        unsigned ns_y;
+
+        unsigned ns_z; 
+    };
+
 
 Managing nested blocks
 ----------------------
@@ -226,6 +254,21 @@ things might be going wrong somehow.
 Also see "Managing nested blocks" just above.
 
 
+Macro Tests Commented
+---------------------
+
+#ifdef SOME_MACRO
+#else /* !SOME_MACRO */ 
+#endif /* !SOME_MACRO */
+
+#ifdef OTHER_MACRO
+#endif /* OTHER_MACRO */
+
+The comments add clarity when one is not familiar with code in
+the area but are not required if the #else #endif are within a
+couple lines of the #if(def).  In a spot with nested #if(def)
+the comments become necessary to avoid confusing the reader.
+There is nothing wrong with adding them everywhere.
 
 Lookup Tables
 -----------------
