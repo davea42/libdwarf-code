@@ -87,6 +87,13 @@ It has been tested with host and target set to an ARM
 with build on X86_64.  See
   https://gcc.gnu.org/onlinedocs/gccint/Configure-Terms.html
 for standard GNU usage of build, host, and target.
+See also:
+https://www.gnu.org/software/autoconf/manual/autoconf.html#Specifying-Target-Triplets
+
+The autoconf documentation strongly suggests adding --build
+to the configure commands
+and in the example below adding --build=i686-pc-linux-gnu
+is known to work on the test machine.
 
 The following is an example. Currently
 configure figures out the build environment
@@ -96,6 +103,8 @@ On build machine:
 sudo apt-get install gcc-arm-linux-gnueabihf
 #  Install libelf and zlib (libz) into
 #  the gcc cross-build tree too.
+
+
 
 mkdir emptycross
 cd emptycross
