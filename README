@@ -83,22 +83,30 @@ For those wishing to build libdwarf (and possibly dwarfdump)
 for a different machine than the build machine
 it is now possible to do that.
 
-For example, on Xubuntu 16.04 x86_64 the following works.
+It has been tested with host and target set to an ARM
+with build on X86_64.  See
+  https://gcc.gnu.org/onlinedocs/gccint/Configure-Terms.html
+for standard GNU usage of build, host, and target.
 
-  git pull latest libdwarf/dwarfdump code tree.
-cd code
+The following is an example. Currently
+configure figures out the build environment
+for itself so we don't use --build here.
+
+On build machine:
 sudo apt-get install gcc-arm-linux-gnueabihf
-#  Install libelf and zlib (libz) also.
+#  Install libelf and zlib (libz) into
+#  the gcc cross-build tree too.
 
+mkdir emptycross
+cd emptycross
+git clone git://git.code.sf.net/p/libdwarf/code
+cd code
 cd libdwarf 
 ./configure --host=arm-linux-gnueabihf
 make
 cd ../dwarfdump 
 ./configure --host=arm-linux-gnueabihf
 make
+# done
 
-
-
-
-
-David Anderson.  Updated March 29, 2018
+David Anderson.  Updated March 30, 2018
