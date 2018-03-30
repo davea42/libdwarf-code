@@ -3803,7 +3803,7 @@ cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 #include HAVE_LOCATION_OF_LIBELFHEADER
    int main() {
-      Elf64_Rel *p; int i; i = p->r_info; ,
+      Elf64_Rel *p; int i; i = p->r_info;
    }
 _ACEOF
 if ac_fn_c_try_compile "$LINENO"; then :

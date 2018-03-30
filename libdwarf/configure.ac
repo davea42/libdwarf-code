@@ -291,7 +291,7 @@ AC_COMPILE_IFELSE([AC_LANG_SOURCE([[#include <sgidefs.h>
     [AC_MSG_RESULT(no)])
 
 AC_MSG_CHECKING(is Elf64_Rela defined in elf.h)
-AC_COMPILE_IFELSE([AC_LANG_SOURCE([[#include $firstlibelfhdr
+AC_COMPILE_IFELSE([AC_LANG_SOURCE([[#include <elf.h>
   int main() {
     Elf64_Rela p; p.r_offset = 1;
   } ]])],
@@ -301,7 +301,7 @@ AC_COMPILE_IFELSE([AC_LANG_SOURCE([[#include $firstlibelfhdr
     [AC_MSG_RESULT(no)])
 
 AC_MSG_CHECKING(is Elf64_Sym defined in elf.h)
-AC_COMPILE_IFELSE([AC_LANG_SOURCE([[#include $firstlibelfhdr
+AC_COMPILE_IFELSE([AC_LANG_SOURCE([[#include <elf.h>
   int main() {
     Elf64_Sym p; p.st_info = 1;
   } ]])],

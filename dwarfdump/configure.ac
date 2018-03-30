@@ -93,7 +93,7 @@ AC_COMPILE_IFELSE([AC_LANG_SOURCE([[#include "stdafx.h"
 AC_MSG_CHECKING(do we have ELF64_R struc)
 AC_COMPILE_IFELSE([AC_LANG_SOURCE([[#include HAVE_LOCATION_OF_LIBELFHEADER
    int main() {
-      Elf64_Rel *p; int i; i = p->r_info; ,
+      Elf64_Rel *p; int i; i = p->r_info; 
    } ]])],
    [AC_DEFINE(HAVE_ELF64_R_INFO,1,
 	[Define to 1 if the Elf64_Rel structure has r_info field.])
