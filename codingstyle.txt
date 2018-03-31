@@ -122,22 +122,39 @@ acts as a filter to remove trailing whitespace as well as
 initial, final, and duplicate blank lines.
 
 As a special case of the bracing and whitespace guidelines,
-function definitions should always take the following form:
+function definitions  in libdwarf should always take the following form:
 
-    void
+    int
     my_function (Dwarf_Debug dbg, Dwarf_Unsigned second_arg,
+        Dwarf_Unsigned* ret_value;
         Dwarf_Error *error)
     {
         do_my_things();
+        /*  The meaning of life */
+        *ret_value = 42;
+        return DW_DLV_OK;
     }
 
+And in dwarfdump, etc, the code tends to follow this form
+too (but far from always).
 
-And function prototypes should similarly have the return type
-(and associated specifiers and qualifiers) on a line above
-the function, so that the function name is flush left.
+
+Function prototypes inside libdwarf headers 
+(as opposed to .c files)
+usually have the return type
+(and associated specifiers and qualifiers) the same
+line as the function name. If the line gets long
+addtional lines are appropriate.
+
+Function prototypes inside libdwarf.h always comment
+out argument names (but not types) to preserve the caller's
+macro namespace.  Because it is a public header, unlike
+all the other headers in libdwarf/dwarfdump/simpleexample.
+
+In .c files the function name starts a line as shown above.
 
 Notice, above, how a too-long argument line gets folded
-with indent.
+with standard indentation(4).
 
 Break up long lines (> ~72 characters) and use whitespace to
 align things nicely. For example the arguments in a long list
