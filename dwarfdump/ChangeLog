@@ -1,3 +1,12 @@
+2018-04-02 David Anderson
+    * CMakeLists.txt: Added defined_types.h to the set_source_group
+      HEADERS list, but cmake is not currently working
+      with libdwarf or dwarfdump.
+    * configure.ac: Removed AC_CHECK_LIB and replaced
+      with the newer AC_SEARCH_LIBS.
+      Removed two cases using HAVE_LOCATION_OF_LIBELF_HEADER
+      that never worked, it seems.
+    * configure: Regenerated
 2018-03-29 David Anderson
     * configure.ac: Corrected AC_CHECK_HEADERS use.
       Removed AC_TRY_COMPILE in favor of AC_COMPILE_IFELSE.

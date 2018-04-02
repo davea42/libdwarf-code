@@ -3666,13 +3666,14 @@ else
 $as_echo "NO standard ELF HEADERS found" >&6; }
 fi
 
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for elf64_getehdr in -lelf" >&5
-$as_echo_n "checking for elf64_getehdr in -lelf... " >&6; }
-if ${ac_cv_lib_elf_elf64_getehdr+:} false; then :
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking libelf has elf_getehdr function" >&5
+$as_echo_n "checking libelf has elf_getehdr function... " >&6; }
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for library containing elf64_getehdr" >&5
+$as_echo_n "checking for library containing elf64_getehdr... " >&6; }
+if ${ac_cv_search_elf64_getehdr+:} false; then :
   $as_echo_n "(cached) " >&6
 else
-  ac_check_lib_save_LIBS=$LIBS
-LIBS="-lelf  $LIBS"
+  ac_func_search_save_LIBS=$LIBS
 cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 
@@ -3691,21 +3692,43 @@ return elf64_getehdr ();
   return 0;
 }
 _ACEOF
-if ac_fn_c_try_link "$LINENO"; then :
-  ac_cv_lib_elf_elf64_getehdr=yes
-else
-  ac_cv_lib_elf_elf64_getehdr=no
+for ac_lib in '' elf; do
+  if test -z "$ac_lib"; then
+    ac_res="none required"
+  else
+    ac_res=-l$ac_lib
+    LIBS="-l$ac_lib  $ac_func_search_save_LIBS"
+  fi
+  if ac_fn_c_try_link "$LINENO"; then :
+  ac_cv_search_elf64_getehdr=$ac_res
 fi
 rm -f core conftest.err conftest.$ac_objext \
-    conftest$ac_exeext conftest.$ac_ext
-LIBS=$ac_check_lib_save_LIBS
+    conftest$ac_exeext
+  if ${ac_cv_search_elf64_getehdr+:} false; then :
+  break
 fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_elf_elf64_getehdr" >&5
-$as_echo "$ac_cv_lib_elf_elf64_getehdr" >&6; }
-if test "x$ac_cv_lib_elf_elf64_getehdr" = xyes; then :
+done
+if ${ac_cv_search_elf64_getehdr+:} false; then :
+
+else
+  ac_cv_search_elf64_getehdr=no
+fi
+rm conftest.$ac_ext
+LIBS=$ac_func_search_save_LIBS
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_search_elf64_getehdr" >&5
+$as_echo "$ac_cv_search_elf64_getehdr" >&6; }
+ac_res=$ac_cv_search_elf64_getehdr
+if test "$ac_res" != no; then :
+  test "$ac_res" = "none required" || LIBS="$ac_res $LIBS"
 
 $as_echo "#define HAVE_ELF64_GETEHDR 1" >>confdefs.h
 
+      { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+$as_echo "yes" >&6; }
+else
+   { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
 fi
 
 
@@ -3801,7 +3824,7 @@ rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
 $as_echo_n "checking do we have ELF64_R struc... " >&6; }
 cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
-#include HAVE_LOCATION_OF_LIBELFHEADER
+#include <libelf.h>
    int main() {
       Elf64_Rel *p; int i; i = p->r_info;
    }
@@ -4030,7 +4053,7 @@ fi
 $as_echo_n "checking is libelf header present and library linkable... " >&6; }
 cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
-#include "HAVE_LOCATION_OF_LIBELF_HEADER"
+#include <libelf.h>
     int main() {
       int fd = 1;
       Elf_Cmd cmd = 0;

@@ -31,9 +31,12 @@ else
  AC_MSG_RESULT(NO standard ELF HEADERS found)
 fi
 
-AC_CHECK_LIB(elf,elf64_getehdr,
-  AC_DEFINE(HAVE_ELF64_GETEHDR,1, 
-	[Define to 1 if the elf64_getehdr function is in libelf.a.]))
+AC_MSG_CHECKING(libelf has elf_getehdr function)
+AC_SEARCH_LIBS([elf64_getehdr],[elf],
+    [ AC_DEFINE(HAVE_ELF64_GETEHDR,1,
+        [Define to 1 if the elf64_getehdr function is in libelf.a.])
+      AC_MSG_RESULT(yes) ],
+    [ AC_MSG_RESULT(no) ])
 
 dnl default-disabled shared
 dnl we allow the argument but the result is ignored.
@@ -90,8 +93,10 @@ AC_COMPILE_IFELSE([AC_LANG_SOURCE([[#include "stdafx.h"
    AC_MSG_RESULT(yes)],
   [AC_MSG_RESULT(no)])
 
+dnl Using following does not work
+dnl AC_COMPILE_IFELSE([AC_LANG_SOURCE([[#include HAVE_LOCATION_OF_LIBELFHEADER
 AC_MSG_CHECKING(do we have ELF64_R struc)
-AC_COMPILE_IFELSE([AC_LANG_SOURCE([[#include HAVE_LOCATION_OF_LIBELFHEADER
+AC_COMPILE_IFELSE([AC_LANG_SOURCE([[#include <libelf.h>
    int main() {
       Elf64_Rel *p; int i; i = p->r_info; 
    } ]])],
@@ -184,8 +189,10 @@ AC_SEARCH_LIBS([elf_begin],[elf],
       AC_MSG_RESULT(yes) ],
     [ libelflib=n
       AC_MSG_RESULT(no) ])
+dnl using following does not work
+dnl AC_COMPILE_IFELSE([AC_LANG_SOURCE([[#include "HAVE_LOCATION_OF_LIBELF_HEADER"
 AC_MSG_CHECKING(is libelf header present and library linkable)
-AC_COMPILE_IFELSE([AC_LANG_SOURCE([[#include "HAVE_LOCATION_OF_LIBELF_HEADER"
+AC_COMPILE_IFELSE([AC_LANG_SOURCE([[#include <libelf.h>
     int main() {
       int fd = 1;
       Elf_Cmd cmd = 0;

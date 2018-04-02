@@ -1,6 +1,8 @@
 
-A build can be done via cmake, which is
-new as of November 2016.
+At the present time using cmake to build
+fails, so the following that worked
+in November 2016 fails at least as of March 2018.
+Sorry. Not sure what changed that broke cmake.
   mkdir /tmp/builddir
   cd /tmp/builddir
   # Assuming the source tree in /a/b/code

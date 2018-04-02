@@ -17,7 +17,8 @@ set_source_group(SOURCES "Source Files" addrmap.c checkutil.c dwarfdump.c dwconf
 	print_sections.c  print_section_groups.c print_static_funcs.c  print_static_vars.c print_strings.c print_types.c print_weaknames.c  
 	sanitized.c section_bitmaps.c strstrnocase.c uri.c dwgetopt.c makename.c naming.c common.c $<TARGET_OBJECTS:esb_and_tsearchbal>)
 	
-set_source_group(HEADERS "Header Files" checkutil.h common.h dwconf.h dwgetopt.h esb.h glflags.h globals.h macrocheck.h 
+set_source_group(HEADERS "Header Files" checkutil.h common.h dwconf.h
+	dwgetopt.h esb.h glflags.h globals.h macrocheck.h defined_types.h
 	makename.h dwarf_tsearch.h print_frames.h section_bitmaps.h uri.h)
 
 set_source_group(CONFIGURATION_FILES "Configuration Files" configure.cmake config.h.in.cmake ${CMAKE_CURRENT_BINARY_DIR}/config.h)
