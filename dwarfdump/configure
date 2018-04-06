@@ -3820,8 +3820,8 @@ $as_echo "no" >&6; }
 fi
 rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
 
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking do we have ELF64_R struc" >&5
-$as_echo_n "checking do we have ELF64_R struc... " >&6; }
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking do we have Elf64_Rel struct" >&5
+$as_echo_n "checking do we have Elf64_Rel struct... " >&6; }
 cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 #include <elf.h>

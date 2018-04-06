@@ -95,7 +95,7 @@ AC_COMPILE_IFELSE([AC_LANG_SOURCE([[#include "stdafx.h"
 
 dnl Using following does not work
 dnl AC_COMPILE_IFELSE([AC_LANG_SOURCE([[#include HAVE_LOCATION_OF_LIBELFHEADER
-AC_MSG_CHECKING(do we have ELF64_R struc)
+AC_MSG_CHECKING(do we have Elf64_Rel struct)
 AC_COMPILE_IFELSE([AC_LANG_SOURCE([[#include <elf.h>
    int main() {
       Elf64_Rel *p; int i; i = p->r_info; 
