@@ -1,3 +1,7 @@
+2018-04-06 David Anderson
+    * configure.ac: Previous recent change introduced a mistake.
+      Now we set HAVE_ELF64_R_INFO as intended all along.
+    * configure: Regenerated
 2018-04-02 David Anderson
     * CMakeLists.txt: Added defined_types.h to the set_source_group
       HEADERS list, but cmake is not currently working

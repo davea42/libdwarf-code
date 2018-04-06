@@ -3824,7 +3824,7 @@ rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
 $as_echo_n "checking do we have ELF64_R struc... " >&6; }
 cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
-#include <libelf.h>
+#include <elf.h>
    int main() {
       Elf64_Rel *p; int i; i = p->r_info;
    }
