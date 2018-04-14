@@ -1,4 +1,6 @@
 2018-04-14 David Anderson
+    * CMakeLists.txt: Added new source/header files to cmake.
+2018-04-14 David Anderson
     * libdwarf2.1.mm: Complete doc on the new .debug_str_offsets
       interfaces.
     * Regenerated. Rev 2.63.

@@ -14,6 +14,7 @@ set_source_group(SOURCES "Source Files" addrmap.c checkutil.c dwarfdump.c dwconf
 	macrocheck.c print_abbrevs.c print_aranges.c print_debugfission.c print_die.c 
 	print_dnames.c print_frames.c  print_gdbindex.c
 	print_lines.c print_locs.c print_macro.c print_macros.c print_pubnames.c print_ranges.c print_reloc.c 
+	print_str_offsets.c
 	print_sections.c  print_section_groups.c print_static_funcs.c  print_static_vars.c print_strings.c print_types.c print_weaknames.c  
 	sanitized.c section_bitmaps.c strstrnocase.c uri.c dwgetopt.c makename.c naming.c common.c $<TARGET_OBJECTS:esb_and_tsearchbal>)
 	

@@ -1,4 +1,6 @@
 2018-04-13 David Anderson
+    * CMakeLists.txt: Added new source files to cmake info.
+2018-04-13 David Anderson
     * common.c,tag_attr.c,tag_tree.c: Updated
       version string.
     * configure.ac: Added a comment about HAVE_LOCATION_OF_LIBELFHEADER
