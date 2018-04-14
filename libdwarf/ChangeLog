@@ -1,3 +1,7 @@
+2018-04-14 David Anderson
+    * libdwarf2.1.mm: Complete doc on the new .debug_str_offsets
+      interfaces.
+    * Regenerated. Rev 2.63.
 2018-04-13 David Anderson
     * gennames.c: Updated version string.
     * Makefile.in: Added dwarf_str_offsets.o to target list.

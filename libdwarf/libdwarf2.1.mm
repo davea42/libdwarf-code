@@ -10088,7 +10088,73 @@ for bugs in the section.
 \f(CW
 void examplestringoffsets(Dwarf_Debug dbg)
 {
-FIXME
+    int res = 0;
+    Dwarf_Str_Offsets_Table sot = 0;
+    Dwarf_Unsigned wasted_byte_count = 0;
+    Dwarf_Unsigned table_count = 0;
+    Dwarf_Error error = 0;
+
+    res = dwarf_open_str_offsets_table_access(dbg, &sot,&error);
+    if(res == DW_DLV_NO_ENTRY) {
+        /* No such table */
+        return;
+    }
+    if(res == DW_DLV_ERROR) {
+        /* Something is very wrong. Print the error? */
+        return;
+    }
+    for(;;) {
+        Dwarf_Unsigned unit_length =0;
+        Dwarf_Unsigned unit_length_offset =0;
+        Dwarf_Unsigned table_start_offset =0;
+        Dwarf_Half     entry_size = 0;
+        Dwarf_Half     version =0;
+        Dwarf_Half     padding =0;
+        Dwarf_Unsigned table_value_count =0;
+        Dwarf_Unsigned i = 0;
+        Dwarf_Unsigned table_entry_value = 0;
+
+        res = dwarf_next_str_offsets_table(sot,
+            &unit_length, &unit_length_offset,
+            &table_start_offset,
+            &entry_size,&version,&padding,
+            &table_value_count,&error);
+        if (res == DW_DLV_NO_ENTRY) {
+            /* We have dealt with all tables */
+            break;
+        }
+        if (res == DW_DLV_ERROR) {
+            /* Something badly wrong. Do something. */
+            return;
+        }
+        /*  One could call dwarf_str_offsets_statistics to
+            get the wasted bytes so far, but we do not do that
+            in this example. */
+        /*  Possibly print the various table-related values
+            returned just above. */
+        for (i=0; i < table_value_count; ++i) {
+            res = dwarf_str_offsets_value_by_index(sot,i,
+                &table_entry_value,&error);
+            if (res != DW_DLV_OK) {
+                /* Something is badly wrong. Do something. */
+                return;
+            }
+            /*  Do something with the table_entry_value
+                at this index. Maybe just print it.
+                It is an offset in .debug_str. */
+        }
+    }
+    res = dwarf_str_offsets_statistics(sot,&wasted_byte_count,
+        &table_count,&error);
+    if (res == DW_DLV_OK) {
+        /*  The wasted byte count is set. Print it or something.
+            One hopes zero bytes are wasted.
+            Print the table count if one is interested. */
+    }
+    res = dwarf_close_str_offsets_table_access(sot,&error);
+    /*  There is little point in checking the return value
+        as little can be done about any error. */
+    sot = 0;
 }
 \fP
 .DE
@@ -10096,21 +10162,210 @@ FIXME
 
 
 .H 3 "dwarf_open_str_offsets_table_access()"
-FIXME
+.DS
+\f(CWint dwarf_open_str_offsets_table_access(
+    Dwarf_Debug dbg,
+    Dwarf_Str_Offsets_Table * table_data,
+    Dwarf_Error             * error);\fP
+.DE
+\f(CWdwarf_open_str_offsets_table_access()\fP
+creates an opaque struct and returns a pointer to
+it on success.  That struct pointer is used
+in all subsequent operations on the table.
+Through the function
+\f(CWdwarf_next_str_offsets_table()\fP
+the caller can iterate through each of the
+per-CU offset tables.
+.P
+If there is no such section, or if the section
+is empty the function returns DW_DLV_NO_ENTRY.
+.P
+If there is an error (such as out-of-memory)
+the function returns DW_DLV_ERROR and sets
+an error value through the
+\f(CWerror\fP
+pointer.
+
 .H 3 "dwarf_close_str_offsets_table_access()"
-FIXME
+.DS
+\f(CWint
+dwarf_close_str_offsets_table_access(
+    Dwarf_Str_Offsets_Table  table_data,
+    Dwarf_Error             * error);\fP
+.DE
+On success,
+\f(CWdwarf_close_str_offsets_table_access()\fP
+frees any allocated data associated with the
+struct pointed to by
+\f(CWtable_data\fP
+and returns DW_DLV_OK.
+It is up to the caller to set the 
+\f(CWtable_data\fP
+pointer to NULL if desired. The pointer
+is unusable at that point and any other
+calls to libdwarf using that pointer will fail.
+.P
+It returns DW_DLV_OK on error.
+Any error suggests there is memory corruption
+or an error in the call.
+Something serious happened.
+.P
+It never returns DW_DLV_NO_ENTRY, but if it did
+there would be nothing the caller could do anyway..
+.P
+If one forgets to call this function
+the memory allocated will be freed automatically
+by to call to
+\f(CWdwarf_finish()\fP,
+as is true of all other data allocated by libdwarf.
+
 .H 3 "dwarf_next_str_offsets_table()"
-FIXME
+.DS
+\f(CWint dwarf_next_str_offsets_table(
+    Dwarf_Str_Offsets_Table table,
+    Dwarf_Unsigned *unit_length_out,
+    Dwarf_Unsigned *unit_length_offset_out,
+    Dwarf_Unsigned *table_start_offset_out,
+    Dwarf_Half     *entry_size_out,
+    Dwarf_Half     *version_out,
+    Dwarf_Half     *padding_out,
+    Dwarf_Unsigned *table_value_count_out,
+    Dwarf_Error    * error);\fP
+.DE
+Each call to
+\f(CWdwarf_next_str_offsets_table()\fP
+returns the next String Offsets table
+in the .debug_str_offsets section.
+Typically there would be one such table
+for each CU in .debug_info[.dwo] contributing
+to .debug_str_offsets.
+The
+\f(CWtable\fP
+contains (internally, hidden) the section offset
+of the next table.
+.P
+On success it returns DW_DLV_OK and
+sets various fields representing data about
+the current table (fields described below).
+.P
+If there are no more tables it returns
+DW_DLV_NO_ENTRY.
+.P
+On error it returns DW_DLV_ERROR and passes back
+error details through the
+\f(CWerror\fP
+pointer.
+.P
+The returned values are intended to let the caller
+understand the table header and the table in detail.
+These pointers are only used if the call returned
+DW_DLV_OK. 
+.P
+\f(CWunit_length_out\fP
+is set to the unit_length of
+a String Offsets Table Header.
+Which means it gives the length,
+in bytes, of the data following
+the length value that belongs
+to this table.
+.P
+\f(CWunit_length_offset_out\fP
+is set to the section offset of
+the table header.
+.P
+\f(CWtable_start_offset_out\fP
+is set to the section offset of
+the array of offsets in this table.
+.P
+\f(CWentry_size_out\fP
+is set to the size of a table entry.
+Which is 4 for 32-bit offsets
+in this table
+and 8 for 64-bit offsets in this table.
+.P
+\f(CWversion_out\fP
+is set to the version number in the
+table header.
+The only current valid value is 5.
+.P
+\f(CWpadding_out\fP
+is set to the 16-bit padding value
+in the table header.
+In a correct table header the value is zero.
+.P
+\f(CWtable_value_count_out\fP
+is set to the number of entries in
+the array of offsets in this table.
+Each entry is
+\f(CWentry_size_out\fP
+bytes long.
+Use this value in calling
+\f(CWdwarf_str_offsets_value_by_index()\fP.
 .H 3 "dwarf_str_offsets_value_by_index()"
-FIXME
+.DS
+\f(CWint dwarf_str_offsets_value_by_index(
+    Dwarf_Str_Offsets_Table sot,
+    Dwarf_Unsigned index,
+    Dwarf_Unsigned *stroffset,
+    Dwarf_Error *error);\fP
+.DE
+On success,
+\f(CWdwarf_str_offsets_value_by_index()\fP
+returns DW_DLV_OK and sets 
+the offset from the array of string
+offsets in the current table at the input 
+\f(CWindex\fP.
+.P
+Valid index values are zero through
+\f(CWtable_value_count_out - 1\fP
+.P
+A function is used instead of simply
+letting callers use pointers
+as libdwarf correctly handles
+endianness differences 
+(between the system running libdwarf
+and the object file being inspected)
+so offsets
+can be reported properly.
+.P
+DW_DLV_ERROR is returned on error.
+.P
+DW_DLV_NO_ENTRY is never returned.
+
 .H 3 "dwarf_str_offsets_statistics()"
+.DS
+\f(CWint dwarf_str_offsets_statistics(
+    Dwarf_Str_Offsets_Table table_data,
+    Dwarf_Unsigned * wasted_byte_count,
+    Dwarf_Unsigned * table_count,
+    Dwarf_Error    * error);\fP
+.DE
 Normally called after all tables have been inspected to
 return (through a pointer)
 the count of apparently-wasted bytes in the section.
-FIXME
-
-
-
+It can be called at any point that the 
+\f(CWDwarf_Str_Offsets_Table\fP
+pointer is valid.
+.P
+On error it returns DW_DLV_ERROR and sets
+an error value through the pointer.
+.P
+DW_DLV_NO_ENTRY is never returned.
+.P
+On success it returns DW_DLV_OK
+and sets values through the two pointers.
+Calling just after each table is accessed by
+\f(CWdwarf_next_str_offsets_table()\fP
+will reveal the sum of all wasted bytes at
+that point in iterating through the section.
+.P
+\f(CWtable_count\fP
+is the count of table headers encountered so far.
+.P
+By wasted bytes we mean bytes in between tables.
+libdwarf has no idea whether any 
+apparently-valid table data
+is in fact useless.
 
 .H 2 "Address Range Operations"
 These functions provide information about address ranges.  Address
