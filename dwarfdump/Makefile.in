@@ -76,6 +76,7 @@ FINALOBJECTS = \
 	print_static_funcs.o  \
 	print_static_vars.o  \
 	print_strings.o \
+        print_str_offsets.o \
 	print_types.o \
 	print_weaknames.o  \
 	sanitized.o \

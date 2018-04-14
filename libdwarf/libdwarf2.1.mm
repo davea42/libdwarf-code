@@ -8,7 +8,7 @@
 .nr Hb 5
 \." ==============================================
 \." Put current date in the following at each rev
-.ds vE rev 2.62, March 23, 2018
+.ds vE rev 2.63, April 13, 2018
 \." ==============================================
 \." ==============================================
 .ds | |
@@ -10007,6 +10007,7 @@ The .debug_str section contains only strings.  Debuggers need
 never use this interface: it is only for debugging problems with 
 the string section itself.  
 
+.H 3 "dwarf_get_string_section_name()"
 .DS
 \f(CWint dwarf_get_string_section_name(Dwarf_Debug dbg,
     const char ** sec_name,
@@ -10069,6 +10070,47 @@ If we are at the end of the section (that is, \f(CWoffset\fP
 is one past the end of the section) \f(CWDW_DLV_NO_ENTRY\fP is returned.
 If the \f(CWoffset\fP is some other too-large value then
 \f(CWDW_DLV_ERROR\fP is returned.
+
+.H 2 "String Offsets Section Operations"
+The .debug_str_offsets section contains only 
+table arrays (with headers) and Debuggers should never
+need to use this interface.  
+The normal string access functions use the section tables
+transparently.
+The functions here are only intended
+to allow dwarfdump (or the like) print the section
+completely and to help compiler developers look
+for bugs in the section.
+
+.in +2
+.FG "examplestringoffsets dwarf_open_str_offsets_table_access() etc"
+.DS
+\f(CW
+void examplestringoffsets(Dwarf_Debug dbg)
+{
+FIXME
+}
+\fP
+.DE
+.in -2
+
+
+.H 3 "dwarf_open_str_offsets_table_access()"
+FIXME
+.H 3 "dwarf_close_str_offsets_table_access()"
+FIXME
+.H 3 "dwarf_next_str_offsets_table()"
+FIXME
+.H 3 "dwarf_str_offsets_value_by_index()"
+FIXME
+.H 3 "dwarf_str_offsets_statistics()"
+Normally called after all tables have been inspected to
+return (through a pointer)
+the count of apparently-wasted bytes in the section.
+FIXME
+
+
+
 
 .H 2 "Address Range Operations"
 These functions provide information about address ranges.  Address

@@ -143,6 +143,7 @@ struct glflags_s {
     boolean gf_cu_name_flag;
     boolean gf_show_global_offsets;
     boolean gf_display_offsets;
+    boolean gf_print_str_offsets;
 };
 
 extern struct glflags_s glflags;

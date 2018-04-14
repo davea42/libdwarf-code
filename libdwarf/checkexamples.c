@@ -1236,6 +1236,81 @@ void examplet(Dwarf_Debug dbg,Dwarf_Unsigned offset)
     }
 }
 
+/* We'll do in one function and not worry about
+   memory leakage to keep the example short.
+   dwarf_finish() will deallocate  if we do not
+   do so here. */
+void examplestroffsets(Dwarf_Debug dbg)
+{
+    int res = 0;
+    Dwarf_Str_Offsets_Table sot = 0;
+    Dwarf_Unsigned wasted_byte_count = 0;
+    Dwarf_Unsigned table_count = 0;
+    Dwarf_Error error = 0;
+
+    res = dwarf_open_str_offsets_table_access(dbg, &sot,&error);
+    if(res == DW_DLV_NO_ENTRY) {
+        /* No such table */
+        return;
+    }
+    if(res == DW_DLV_ERROR) {
+        /* Something is very wrong. Print the error? */
+        return;
+    }
+    for(;;) {
+        Dwarf_Unsigned unit_length =0;
+        Dwarf_Unsigned unit_length_offset =0;
+        Dwarf_Unsigned table_start_offset =0;
+        Dwarf_Half     entry_size = 0;
+        Dwarf_Half     version =0;
+        Dwarf_Half     padding =0;
+        Dwarf_Unsigned table_value_count =0;
+        Dwarf_Unsigned i = 0;
+        Dwarf_Unsigned table_entry_value = 0;
+
+        res = dwarf_next_str_offsets_table(sot,
+            &unit_length, &unit_length_offset,
+            &table_start_offset,
+            &entry_size,&version,&padding,
+            &table_value_count,&error);
+        if (res == DW_DLV_NO_ENTRY) {
+            /* We have dealt with all tables */
+            break;
+        }
+        if (res == DW_DLV_ERROR) {
+            /* Something badly wrong. Do something. */
+            return;
+        }
+        /*  One could call dwarf_str_offsets_statistics to
+            get the wasted bytes so far, but we do not do that
+            in this example. */
+        /*  Possibly print the various table-related values
+            returned just above. */
+        for (i=0; i < table_value_count; ++i) {
+            res = dwarf_str_offsets_value_by_index(sot,i,
+                &table_entry_value,&error);
+            if (res != DW_DLV_OK) {
+                /* Something is badly wrong. Do something. */
+                return;
+            }
+            /*  Do something with the table_entry_value
+                at this index. Maybe just print it.
+                It is an offset in .debug_str. */
+        }
+    }
+    res = dwarf_str_offsets_statistics(sot,&wasted_byte_count,
+        &table_count,&error);
+    if (res == DW_DLV_OK) {
+        /*  The wasted byte count is set. Print it or something.
+            One hopes zero bytes are wasted.
+            Print the table count if one is interested. */
+    }
+    res = dwarf_close_str_offsets_table_access(sot,&error);
+    /*  There is little point in checking the return value
+        as little can be done about any error. */
+    sot = 0;
+}
+
 void exampleu(Dwarf_Debug dbg)
 {
     Dwarf_Signed count = 0;

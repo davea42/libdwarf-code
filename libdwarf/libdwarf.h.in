@@ -871,6 +871,7 @@ struct Dwarf_Obj_Access_Interface_s {
 /*  0x3d (61) is for libdwarf internal use.               */
 #define DW_DLA_DSC_HEAD        0x3e     /* Dwarf_Dsc_Head */
 #define DW_DLA_DNAMES_HEAD     0x3f     /* Dwarf_Dnames_Head */
+#define DW_DLA_STR_OFFSETS     0x40     /* struct Dwarf_Str_Offsets_Table_s */
 
 /* The augmenter string for CIE */
 #define DW_CIE_AUGMENTER_STRING_V0              "z"
@@ -1345,9 +1346,16 @@ struct Dwarf_Obj_Access_Interface_s {
 #define DW_DLE_DATA16_OUTSIDE_SECTION          399
 #define DW_DLE_LNCT_MD5_WRONG_FORM             400
 #define DW_DLE_LINE_HEADER_CORRUPT             401
+#define DW_DLE_STR_OFFSETS_NULLARGUMENT        402
+#define DW_DLE_STR_OFFSETS_NULL_DBG            403
+#define DW_DLE_STR_OFFSETS_NO_MAGIC            404
+#define DW_DLE_STR_OFFSETS_ARRAY_SIZE          405
+#define DW_DLE_STR_OFFSETS_VERSION_WRONG       406
+#define DW_DLE_STR_OFFSETS_ARRAY_INDEX_WRONG   407
+#define DW_DLE_STR_OFFSETS_EXTRA_BYTES         408
 
     /* LAST MUST EQUAL LAST ERROR NUMBER */
-#define DW_DLE_LAST        401
+#define DW_DLE_LAST        408
 
 #define DW_DLE_LO_USER     0x10000
 
@@ -4175,6 +4183,71 @@ int dwarf_get_ranges_a(Dwarf_Debug /*dbg*/,
 void dwarf_ranges_dealloc(Dwarf_Debug /*dbg*/,
     Dwarf_Ranges * /*rangesbuf*/,
     Dwarf_Signed /*rangecount*/);
+
+/*  New April 2018.
+    Allows applications to print the .debug_str_offsets
+    section.
+    Beginning at starting_offset zero,
+    returns data about the first table found.
+    The value *next_table_offset is the value
+    of the next table (if any), one byte past
+    the end of the table whose data is returned..
+    Returns DW_DLV_NO_ENTRY if the starting offset
+    is past the end of valid data.
+    
+    There is no guarantee that there are no non-0 nonsense
+    bytes in the section outside of useful tables, 
+    so this can fail and return nonsense or 
+    DW_DLV_ERROR  if such garbage exists.
+*/
+
+struct Dwarf_Str_Offsets_Table_s;
+typedef struct  Dwarf_Str_Offsets_Table_s *  Dwarf_Str_Offsets_Table;
+
+/*  Allocates a struct Dwarf_Str_Offsets_Table_s for the section
+    and returns DW_DLV_OK and sets a pointer to the struct through
+    the table_data pointer if successful. 
+
+    If there is no such section it returns DW_DLV_NO_ENTRY. */
+int dwarf_open_str_offsets_table_access(Dwarf_Debug  /*dbg*/,
+    Dwarf_Str_Offsets_Table * /*table_data*/,
+    Dwarf_Error             * /*error*/);
+
+/*  Close access, free table_data. */
+int dwarf_close_str_offsets_table_access(
+    Dwarf_Str_Offsets_Table   /*table_data*/,
+    Dwarf_Error             * /*error*/);
+
+/*  Call till it returns DW_DLV_NO_ENTRY (normal end)
+    or DW_DLV_ERROR (error) and stop.
+
+    On successful call, call dwarf_str_offsets_table_entry()
+    to get the individual table values on the now-active table. */
+int dwarf_next_str_offsets_table( Dwarf_Str_Offsets_Table /*table_data*/,
+    Dwarf_Unsigned * /*unit_length*/,
+    Dwarf_Unsigned * /*unit_length_offset*/,
+    Dwarf_Unsigned * /*table_start_offset*/,
+    Dwarf_Half     * /*entry_size*/,
+    Dwarf_Half     * /*version*/,
+    Dwarf_Half     * /*padding*/,
+    Dwarf_Unsigned * /*table_value_count*/,
+    Dwarf_Error    * /*error*/);
+
+/*  Valid index values n:  0 <= n <  table_entry_count  
+    for the active table */ 
+int dwarf_str_offsets_value_by_index(Dwarf_Str_Offsets_Table /*table_data*/,
+    Dwarf_Unsigned   /*index_to_entry*/,
+    Dwarf_Unsigned * /*entry_value*/, 
+    Dwarf_Error    * /*error*/);
+
+/*  After all str_offsets read this reports final
+    wasted-bytes count. */
+int dwarf_str_offsets_statistics(Dwarf_Str_Offsets_Table /*table_data*/,
+    Dwarf_Unsigned * /*wasted_byte_count*/,
+    Dwarf_Unsigned * /*table_count*/,
+    Dwarf_Error    * /*error*/);
+
+
 
 /* The harmless error list is a circular buffer of
    errors we note but which do not stop us from processing

@@ -468,6 +468,7 @@ void print_section_groups_data(Dwarf_Debug dbg);
 void update_section_flags_per_groups(Dwarf_Debug dbg);
 void groups_restore_subsidiary_flags(void);
 
+void print_str_offsets_section(Dwarf_Debug dbg);
 
 void print_any_harmless_errors(Dwarf_Debug dbg);
 

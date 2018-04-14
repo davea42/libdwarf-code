@@ -54,6 +54,7 @@
 #include "dwarf_macro5.h"
 #include "dwarf_dnames.h"
 #include "dwarf_dsc.h"
+#include "dwarf_str_offsets.h"
 
 #define TRUE 1
 #define FALSE 0
@@ -273,6 +274,8 @@ struct ial_s alloc_instance_basics[ALLOC_AREA_INDEX_TABLE_MAX] = {
     /* 63 DW_DLA_DNAMES_HEAD 0x3f */
     {sizeof(struct Dwarf_Dnames_Head_s),MULTIPLY_NO, 0,
         _dwarf_debugnames_destructor},
+    /* 64 DW_DLA_STR_OFFSETS 0x40 */
+    {sizeof(struct Dwarf_Str_Offsets_Table_s),MULTIPLY_NO, 0,0},
 };
 
 /*  We are simply using the incoming pointer as the key-pointer.

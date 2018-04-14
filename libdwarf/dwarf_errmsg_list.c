@@ -480,6 +480,13 @@ const char *_dwarf_errmsgs[] = {
     "DW_DLE_DATA16_OUTSIDE_SECTION(399)",
     "DW_DLE_LNCT_MD5_WRONG_FORM(400)",
     "DW_DLE_LINE_HEADER_CORRUPT(401) possible data corruption",
+    "DW_DLE_STR_OFFSETS_NULLARGUMENT(402) improper call",
+    "DW_DLE_STR_OFFSETS_NULL_DBG(403) improper call",
+    "DW_DLE_STR_OFFSETS_NO_MAGIC(404) improper call",
+    "DW_DLE_STR_OFFSETS_ARRAY_SIZE(405) Not a multiple of entry size",
+    "DW_DLE_STR_OFFSETS_VERSION_WRONG(406) Must be 5 ",
+    "DW_DLE_STR_OFFSETS_ARRAY_INDEX_WRONG(407) Requested outside bound",
+    "DW_DLE_STR_OFFSETS_EXTRA_BYTES(408) Unused non-zero bytes end section",
 };
 
 #ifdef TESTING

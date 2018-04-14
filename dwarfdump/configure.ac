@@ -15,6 +15,8 @@ AC_CHECK_HEADERS([elf.h unistd.h libelf.h libelf/libelf.h sgidefs.h sys/types.h]
 dnl Windows seems to have libelf.h with the normal elf.h
 dnl data embedded. No literal elf.h  is present.
 dnl Get a best estimate of elf header data location.
+dnl The name HAVE_LOCATION_OF_LIBELFHEADER is just wrong, 
+dnl this is looking for the location of the Elf header data.
 AC_MSG_CHECKING(where is basic elf data)
 if test "$ac_cv_header_elf_h" = yes; then
  AC_DEFINE(HAVE_LOCATION_OF_LIBELFHEADER,[<elf.h>], [Define to header that first defines elf])

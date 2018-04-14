@@ -91,6 +91,7 @@ OBJS= dwarf_abbrev.o \
         dwarf_query.o \
         dwarf_ranges.o \
         dwarf_string.o \
+        dwarf_str_offsets.o \
         dwarf_tied.o \
         dwarf_tsearchhash.o \
         dwarf_types.o \

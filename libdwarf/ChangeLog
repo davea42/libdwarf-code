@@ -1,3 +1,18 @@
+2018-04-13 David Anderson
+    * gennames.c: Updated version string.
+    * Makefile.in: Added dwarf_str_offsets.o to target list.
+    * checkexamples.c: Added example code for the .debug_str_offsets
+      section interfaces.
+    * dwarf_alloc.h: Update ALLOC_AREA_INDEX_TABLE_MAX for new
+      allocatable.
+    * dwarf_alloc.c:Add #include and array entry for DW_DLA_STR_OFFSETS
+    * libdwarf.h.in:
+    * dwarf_errmsg_list.c: Added new .debug_str_offsets section
+      reader error codes.
+    * dwarf_str_offsets.h: New. Hidden struct for .debug_str_offsets
+      interfaces.
+    * dwarf_str_offsets.c: New for .debug_str_offsets.
+    * libdwarf2.1.mm: Incomplete doc on the new interfaces.
 2018-03-29 David Anderson
     * configure.ac: Now uses AC_COMPILE_IFELSE 
       instead of AC_TRY_COMPILE. Substantial changes

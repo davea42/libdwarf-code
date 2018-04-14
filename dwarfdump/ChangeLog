@@ -1,3 +1,16 @@
+2018-04-13 David Anderson
+    * common.c,tag_attr.c,tag_tree.c: Updated
+      version string.
+    * configure.ac: Added a comment about HAVE_LOCATION_OF_LIBELFHEADER
+    * dwarfdump.c:  Added support for option --print_str_offsets
+      to print .debug_str_offsets.
+      Updated version string.
+    * glflags.h: Added new flag: boolean gf_print_str_offsets.
+    * globals.h: Added print function print_str_offsets_section()
+      to interfaces.
+    * print_str_offsets.c: New code to print the .debug_str_offsets
+      section independent of anything else.
+    * Makefile.in: Added print_str_offsets.o to targets.
 2018-04-06 David Anderson
     * configure.ac: Previous recent change introduced a mistake.
       Now we set HAVE_ELF64_R_INFO as intended all along.

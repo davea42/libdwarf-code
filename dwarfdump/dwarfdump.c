@@ -55,7 +55,7 @@
 extern int elf_open(const char *name,int mode);
 #endif /* _WIN32 */
 
-#define DW_VERSION_DATE_STR " 2018-03-21 15:18:55-07:00  "
+#define DW_VERSION_DATE_STR " 2018-04-14 13:18:36-07:00  "
 
 extern char *dwoptarg;
 
@@ -1419,6 +1419,11 @@ process_one_file(Elf * elf,Elf *elftied,
         print_tag_attributes_usage(dbg);
     }
 
+    if (glflags.gf_print_str_offsets) {
+        /*  print the .debug_str_offsets section, if any. */
+        print_str_offsets_section(dbg);
+    }
+
     /*  Could finish dbg first. Either order ok. */
     if (dbgtied) {
         dres = dwarf_finish(dbgtied,&onef_err);
@@ -1690,6 +1695,11 @@ process_args(int argc, char *argv[])
     int c = 0;
     boolean usage_error = FALSE;
     int oarg = 0;
+    int longindex = 0;
+    static struct dwoption  longopts[] =  {
+        {"print-str-offsets",  dwno_argument,  0,1},
+        {0,0,0,0}
+    };
 
     program_name = special_program_name(argv[0]);
     suppress_check_dwarf();
@@ -1699,11 +1709,14 @@ process_args(int argc, char *argv[])
     glflags.gf_section_groups_flag = TRUE;
 
     /* j unused */
-    while ((c = dwgetopt(argc, argv,
-        "#:abc::CdDeE::fFgGhH:iIk:l::mMnNo::O:pPqQrRsS:t:u:UvVwW::x:yz")) != EOF) {
+    while ((c = dwgetopt_long(argc, argv,
+        "#:abc::CdDeE::fFgGhH:iIk:l::mMnNo::O:pPqQrRsS:t:u:UvVwW::x:yz",
+        longopts,&longindex)) != EOF) {
 
         switch (c) {
-        /* Internal debug level setting. */
+        case  1:
+            glflags.gf_print_str_offsets = TRUE;
+            break;
         case '#':
         {
             int nTraceLevel =  atoi(dwoptarg);
