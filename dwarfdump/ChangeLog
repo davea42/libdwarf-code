@@ -1,4 +1,5 @@
 2018-04-14 David Anderson
+    * dwarfdump.1: Add --print-str-offsets.
     * dwarfdump.c: Add --print-str-offsets to the usage text.
 2018-04-13 David Anderson
     * CMakeLists.txt: Added new source files to cmake info.
