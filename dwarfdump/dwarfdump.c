@@ -1551,6 +1551,7 @@ static const char *usage_text[] = {
 "\t\t-o[liaprfoR]\tprint relocation info",
 "\t\t  \tl=line,i=info,a=abbrev,p=pubnames,r=aranges,f=frames,o=loc,R=Ranges",
 "\t\t-p\tprint pubnames section",
+"\t\t--print-str-offsets\tprint details from the .debug_str_offsets section", 
 "\t\t-P\tprint list of compile units per producer", /* List of CUs per compiler */
 "\t\t-Q\tsuppress printing section data",
 "\t\t-r\tprint aranges section",
