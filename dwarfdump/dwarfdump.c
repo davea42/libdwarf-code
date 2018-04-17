@@ -55,7 +55,7 @@
 extern int elf_open(const char *name,int mode);
 #endif /* _WIN32 */
 
-#define DW_VERSION_DATE_STR " 2018-04-14 13:18:36-07:00  "
+#define DW_VERSION_DATE_STR " 2018-04-16 19:12:32-07:00  "
 
 extern char *dwoptarg;
 
@@ -1551,7 +1551,7 @@ static const char *usage_text[] = {
 "\t\t-o[liaprfoR]\tprint relocation info",
 "\t\t  \tl=line,i=info,a=abbrev,p=pubnames,r=aranges,f=frames,o=loc,R=Ranges",
 "\t\t-p\tprint pubnames section",
-"\t\t--print-str-offsets\tprint details from the .debug_str_offsets section", 
+"\t\t--print-str-offsets\tprint details from the .debug_str_offsets section",
 "\t\t-P\tprint list of compile units per producer", /* List of CUs per compiler */
 "\t\t-Q\tsuppress printing section data",
 "\t\t-r\tprint aranges section",

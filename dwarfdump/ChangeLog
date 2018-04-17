@@ -1,3 +1,6 @@
+2018-04-16 David Anderson
+    * common.c,dwarfdump.c,tag_attr.c,tag_tree.c:
+      Update version string
 2018-04-14 David Anderson
     * dwarfdump.1: Add --print-str-offsets.
     * dwarfdump.c: Add --print-str-offsets to the usage text.
