@@ -1,3 +1,5 @@
+2018-04-17 David Anderson
+    * dwgetopt.c: Changed to match correction in dwarfdump version.
 2018-04-16 David Anderson
     * dwarf_str_offsets.c: Removed debug call to dump_bytes()
     * gennames.c: Updated version string.

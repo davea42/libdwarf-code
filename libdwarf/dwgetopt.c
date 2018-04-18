@@ -194,10 +194,16 @@ int dwgetopt_long(int nargc, char *const nargv[],
         const struct dwoption *dwlopt = longopts +lo_num;
         const char * argloc = 0;
         int argerr = 0;
+
         if (!dwlopt->name) {
             dwoptind++;
+            (void)fprintf(stderr,
+                "%s: invalid long option '--%s'\n",
+                nargv[0]?nargv[0]:"",
+                place);
+            *longindex = -1;
             place = EMSG;
-            return (-1);
+            return (BADCH);
         }
         if (dwoptnamematches(dwlopt,place,&argloc,&argerr)) {
             *longindex = lo_num;
@@ -211,11 +217,18 @@ int dwgetopt_long(int nargc, char *const nargv[],
             return dwlopt->val;
         }
         if (argerr) {
+            /* arg option  missing if required, present but not allowed. */
+            *longindex = lo_num;
+            (void)fprintf(stderr,
+                "%s: inappropriate long option argument '--%s'\n",
+                nargv[0]?nargv[0]:"",
+                place);
             place = EMSG;
             dwoptind++;
-            return (-1);
+            return (BADCH);
         }
     }
+    /* Can never get here */
     place = EMSG;
     dwoptind++;
     return (-1);

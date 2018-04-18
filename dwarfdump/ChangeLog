@@ -1,3 +1,16 @@
+2018-04-17 David Anderson
+    * dwarfdump.c, dwarfdump.1: The -h option has not been supported
+      for years (it printed an IRIX table of no interest now)
+      so now -h means print the help message showing the options
+      available.
+    * dwgetopt.c: Now prints the name of any incorrect long-option
+      it sees and prints if user-specified =arg
+      on a long option violates requirements . For either returns -1.
+      Should have done that all along.
+    * getopttest.c: Added tests and revised the checking functions
+      to show all the relevant data if a test fails.  Added line number
+      of the original test to the output so it's easier to find
+      the actual test.
 2018-04-16 David Anderson
     * common.c,dwarfdump.c,tag_attr.c,tag_tree.c:
       Update version string

@@ -1502,7 +1502,7 @@ static const char *usage_text[] = {
 "\t\t-F\tprint gnu .eh_frame section",
 "\t\t-g\t(use incomplete loclist support)",
 "\t\t-G\tshow global die offsets",
-"\t\t-h\tprint IRIX exception tables (unsupported)",
+"\t\t-h\tprint the dwarfdump help message (this options list) (",
 "\t\t-H <num>\tlimit output to the first <num> major units",
 "\t\t\t  example: to stop after <num> compilation units",
 "\t\t-i\tprint info section",
@@ -1731,6 +1731,9 @@ process_args(int argc, char *argv[])
             }
             break;
         }
+        case 'h':
+            print_usage_message(program_name,usage_text);
+            exit(OKAY);
         case 'M':
             show_form_used =  TRUE;
             break;
@@ -2444,8 +2447,14 @@ process_args(int argc, char *argv[])
             glflags.gf_frame_flag = FALSE;
         }
     }
-    if (usage_error || (dwoptind != (argc - 1))) {
-        print_usage_message(program_name,usage_text);
+    if (usage_error ) {
+        printf("%s option error.\n",program_name);
+        printf("To see the options list: %s -h\n",program_name);
+        exit(FAILED);
+    }
+    if (dwoptind != (argc - 1)) {
+        printf("No object file name provided to %s\n",program_name);
+        printf("To see the options list: %s -h\n",program_name);
         exit(FAILED);
     }
     /*  FIXME: it seems silly to be printing section names
