@@ -2,6 +2,7 @@
 
 #ifdef GETOPT_FROM_SYSTEM
 #define dwgetopt  getopt
+#define dwgetopt_long  getopt_long
 #define dwopterr  opterr
 #define dwoptind  optind
 #define dwoptopt  optopt
@@ -39,6 +40,8 @@ static int turnprintable(int c)
     return '.';
 }
 
+
+
 static void
 printcheckargs(
     int ct,
@@ -49,8 +52,9 @@ printcheckargs(
     int testline)
 {
     printf("chkval entry ct %d test %s line %d\n",ct,testid,testline);
-    printf("       rchar %x xchar %x roptarg %s xoptarg %s\n",
-        rchar,xchar,
+    printf("       rchar 0x%x('%c') xchar 0x%x('%c') roptarg %s xoptarg %s\n",
+        rchar,turnprintable(rchar),
+        xchar,turnprintable(xchar),
         roptarg?roptarg:"",xoptarg?xoptarg:"");
     printf("       roptind %d xoptind %d\n",roptind,xoptind);
 }
@@ -586,6 +590,9 @@ test9(void)
     int ct = 1;
     int c = 0;
     int argct = 13;
+    /*  If an argument is required and there is no =
+        in the input, the next argv is taken as the optarg.
+        This was found by experiment. */
     static struct dwoption  longopts[] =  {
         {"simplelong",       dwno_argument,      0,1},
         {"optarglong",       dwoptional_argument,0,2},
@@ -593,44 +600,115 @@ test9(void)
         {0,0,0,0}
     };
     int longindex = 0;
-
+    int stop = 0;
 
     argv1[0]="a.out";
-    argv1[1]="-ab";
-    argv1[2] = "--optarglong";
-    argv1[3] = "--bogustest";
-    argv1[4] = "--requireoptarglong";
-    argv1[5] = "-cd";
-    argv1[6]="progtoread";
-    argv1[7]=0;
+    argv1[1]="-acb";
+    argv1[2] = "--bogusarg";
+    argv1[3] = "-cd";
+    argv1[4]="progtoread";
+    argv1[5]=0;
     for ( ;(c = dwgetopt_long(argct, argv1,
         "abcd",
         longopts,&longindex)) != EOF; ct++) {
 
         switch(ct) {
         case 1:
-            chkval(ct,c,'a',dwoptarg,0,dwoptind,1,"ltest9.1",__LINE__);
+            chkval(ct,c,'a',dwoptarg,0,dwoptind,1,
+                "ltest9.1",__LINE__);
             break;
         case 2:
-            chkval(ct,c,'b',dwoptarg,0,dwoptind,2,"ltest9.2",__LINE__);
+            chkval(ct,c,'c',dwoptarg,0,dwoptind,1,
+                "ltest9.2",__LINE__);
             break;
         case 3:
-            chkval_long(ct,c,2,dwoptarg,0,dwoptind,3,longindex,1,
-                "ltest9.3",__LINE__);
+            chkval(ct,c,'b',dwoptarg,0,dwoptind,2,
+                "ltest9.2",__LINE__);
             break;
         case 4:
-            chkval_long(ct,c,'?',dwoptarg,0,dwoptind,4,longindex,-1,
+            /* invalid long option */
+            chkval_long(ct,c,'?',dwoptarg,0,dwoptind,3,
+                longindex,0,
                 "ltest9.4",__LINE__);
-            break;
-        case 5:
-            chkval_long(ct,c,3,dwoptarg,0,dwoptind,5,longindex,2,
-                "ltest9.5",__LINE__);
+            stop = 1;
             break;
         default:
             break;
         }
+        if (stop) {
+            break;
+        }
     }
     printf("PASS getopt test9\n");
+    return 0;
+}
+
+
+static int
+test10(void)
+{
+    int ct = 1;
+    int c = 0;
+    int argct = 13;
+    /*  If an argument is required and there is no =
+        in the input, the next argv is taken as the optarg.
+        This was found by experiment. */
+    static struct dwoption  longopts[] =  {
+        {"simplelong",       dwno_argument,      0,1},
+        {"optarglong",       dwoptional_argument,0,2},
+        {"requireoptarglong",dwrequired_argument,0,3},
+        {0,0,0,0}
+    };
+    int longindex = 0;
+    int done=0;
+
+    argv1[0]="a.out";
+    argv1[1]="-acb";
+    argv1[2] = "--optarglong";
+    argv1[3] = "--simplelong=oops";
+    argv1[4] = "-cd";
+    argv1[5]="progtoread";
+    argv1[6]=0;
+
+    for ( ;(c = dwgetopt_long(argct, argv1,
+        "abcd",
+        longopts,&longindex)) != EOF; ct++) {
+
+        switch(ct) {
+        case 1:
+            chkval(ct,c,'a',dwoptarg,0,dwoptind,1,
+                "ltest10.1",__LINE__);
+            break;
+        case 2:
+            chkval(ct,c,'c',dwoptarg,0,dwoptind,1,
+                "ltest10.2",__LINE__);
+            break;
+        case 3:
+            chkval(ct,c,'b',dwoptarg,0,dwoptind,2,
+                "ltest10.3",__LINE__);
+            break;
+        case 4:
+            chkval_long(ct,c,2,dwoptarg,0,dwoptind,3,
+                longindex,1,
+                "ltest10.4",__LINE__);
+            break;
+        case 5:
+            /*  This one has error . =arg when
+                none allowed */
+            chkval_long(ct,c,'?',dwoptarg,0,
+                dwoptind,4,
+                longindex,1,
+                "ltest10.5",__LINE__);
+            done=1;
+            break;
+        default:
+            break;
+        }
+        if (done) {
+            break;
+        }
+    }
+    printf("PASS getopt test10\n");
     return 0;
 }
 
@@ -677,6 +755,9 @@ int main(int argc, const char **argv)
         case 9:
             failct = test9();
             break;
+        case 10:
+            failct = test10();
+            break;
         default:
             printf("FAIL: invalid test number %d\n",num);
             exit(1);
@@ -710,6 +791,8 @@ int main(int argc, const char **argv)
     failct += test8();
     dwgetoptresetfortestingonly();
     failct += test9();
+    dwgetoptresetfortestingonly();
+    failct += test10();
     if ( failct) {
         printf("FAIL getopttest\n");
         exit(1);

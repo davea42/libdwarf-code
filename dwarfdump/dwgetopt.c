@@ -83,7 +83,10 @@ dwgetoptresetfortestingonly(void)
 static const char *place = EMSG;/* option letter processing */
 
 
-static int dwoptnamematches(
+/*  Post Condition:
+    if return FALSE then *argerr is set false. */
+static int
+dwoptnamematches(
     const struct dwoption *dwlopt,
     const char *iplace,
     const char **argloc,
@@ -194,6 +197,7 @@ int dwgetopt_long(int nargc, char *const nargv[],
         const struct dwoption *dwlopt = longopts +lo_num;
         const char * argloc = 0;
         int argerr = 0;
+        int resmatch = 0;
 
         if (!dwlopt->name) {
             dwoptind++;
@@ -201,31 +205,60 @@ int dwgetopt_long(int nargc, char *const nargv[],
                 "%s: invalid long option '--%s'\n",
                 nargv[0]?nargv[0]:"",
                 place);
-            *longindex = -1;
+            /* Leave longindex unchanged. */
             place = EMSG;
             return (BADCH);
         }
-        if (dwoptnamematches(dwlopt,place,&argloc,&argerr)) {
-            *longindex = lo_num;
+        resmatch= dwoptnamematches(dwlopt,place,
+            &argloc,&argerr);
+        if (resmatch) {
             dwoptarg = 0;
             if (argloc) {
                 /* Must drop const here. Ugh. */
                 dwoptarg = (char *)argloc;
             }
-            dwoptind++;
-            place = EMSG;
-            return dwlopt->val;
         }
         if (argerr) {
-            /* arg option  missing if required, present but not allowed. */
+            /*  resmatch  == TRUE
+
+                arg option  missing if required, present
+                but not allowed.
+                GNU Behavior not well documented.
+                Had to experiment.
+
+                if argument-not-allowed, and we have one,
+                do ???
+
+                If argument-required,
+                then here GNU
+                would take the next argv as the argument.
+                we are not currently doing that. */
+            /**longindex = lo_num; */
+            if (dwlopt->has_arg) {
+                /*  Missing required arg, this does not
+                    match GNU getopt_long behavior
+                    of taking next argv as the arg value.
+                    and thus making getopt_long succeed. */
+                (void)fprintf(stderr,
+                    "%s: missing required long option argument '--%s'\n",
+                    nargv[0]?nargv[0]:"",
+                    place);
+            } else {
+                /* has arg but should not */
+                (void)fprintf(stderr,
+                    "%s: option '--%s' does not allow an argument\n",
+                    nargv[0]?nargv[0]:"",
+                    dwlopt->name);
+            }
+            dwoptind++;
+            place = EMSG;
+            return (BADCH);
+        }
+        if (resmatch) {
             *longindex = lo_num;
-            (void)fprintf(stderr,
-                "%s: inappropriate long option argument '--%s'\n",
-                nargv[0]?nargv[0]:"",
-                place);
             place = EMSG;
             dwoptind++;
-            return (BADCH);
+            return dwlopt->val;
         }
     }
     /* Can never get here */

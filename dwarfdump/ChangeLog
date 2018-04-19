@@ -1,3 +1,10 @@
+2018-04-19 David Anderson
+    * Makefile.in: Added additional lines to test native
+      getopt_long to verify dwgetopt_long works consistently
+      with GNU getopt_long (for the features tested, anyway).
+    * dwgetopt.c: Better checking for dwgetopt_long correctness.
+    * getopttest.c: Added tests and revised the checking to
+      avoid nasty corner cases.
 2018-04-17 David Anderson
     * dwarfdump.c, dwarfdump.1: The -h option has not been supported
       for years (it printed an IRIX table of no interest now)

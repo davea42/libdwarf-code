@@ -200,6 +200,8 @@ test: esb.o dwgetopt.o
 	./getopttestnat -c 6
 	./getopttestnat -c 7
 	./getopttestnat -c 8
+	./getopttestnat -c 9
+	./getopttestnat -c 10
 	-rm -f ./getopttestnat
 	-rm -f ./selfesb
 	-rm -f ./selfmc
