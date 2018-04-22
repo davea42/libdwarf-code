@@ -85,10 +85,15 @@ print_str_offsets_section(Dwarf_Debug dbg)
                 "dwarf_next_str_offsets_table", res,error);
             return;
         }
-        printf(" .debug_str_offsets table %" DW_PR_DUu "\n",tabnum);
-        printf(" hdroffset   0x%" DW_PR_XZEROS DW_PR_DUx "\n",
+        if (tabnum == 0) {
+            printf("\n.debug_str_offsets\n");
+        } else {
+            printf("\n");
+        }
+        printf(" table %" DW_PR_DUu "\n",tabnum);
+        printf(" tableheader 0x%" DW_PR_XZEROS DW_PR_DUx "\n",
             unit_length_offset);
-        printf(" tableoffset 0x%" DW_PR_XZEROS DW_PR_DUx "\n",
+        printf(" arrayoffset 0x%" DW_PR_XZEROS DW_PR_DUx "\n",
             table_start_offset);
         printf(" unit length 0x%" DW_PR_XZEROS DW_PR_DUx "\n",
             unit_length);
@@ -98,7 +103,7 @@ print_str_offsets_section(Dwarf_Debug dbg)
             printf("Error: padding is non-zero. Something is wrong.\n");
         }
         printf(" padding     0x%x\n",padding);
-        printf(" Number of entries: %" DW_PR_DUu "\n",table_value_count);
+        printf(" arraysize   %" DW_PR_DUu "\n",table_value_count);
 
         /*  Lets print 4 per row. */
         count_in_row = 0;
@@ -127,17 +132,25 @@ print_str_offsets_section(Dwarf_Debug dbg)
             printf("\n");
             count_in_row = 0;
         }
+        res = dwarf_str_offsets_statistics(sot,&wasted_byte_count,
+            &table_count,&error);
+        if (res == DW_DLV_OK) {
+            printf(" wasted      %" DW_PR_DUu " bytes\n",
+                wasted_byte_count);
+        }
     }
-    res = dwarf_str_offsets_statistics(sot,&wasted_byte_count,
-        &table_count,&error);
-    if (res == DW_DLV_OK) {
-        printf(" Wasted bytes in section: %" DW_PR_DUu "\n",
-            wasted_byte_count);
-    } else {
-        print_error_and_continue(dbg,
-            "dwarf_open_str_offsets_statistics",
-            res, error);
-        return;
+    if (wasted_byte_count) {
+        res = dwarf_str_offsets_statistics(sot,&wasted_byte_count,
+            &table_count,&error);
+        if (res == DW_DLV_OK) {
+            printf(" finalwasted %" DW_PR_DUu " bytes\n",
+                wasted_byte_count);
+        } else {
+            print_error_and_continue(dbg,
+                "dwarf_open_str_offsets_statistics",
+                res, error);
+            return;
+        }
     }
     res = dwarf_close_str_offsets_table_access(sot,&error);
     if (res != DW_DLV_OK) {

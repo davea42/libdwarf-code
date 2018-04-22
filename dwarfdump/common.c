@@ -35,7 +35,7 @@
 #include "stdafx.h"
 #endif /* HAVE_STDAFX_H */
 
-#define DW_VERSION_DATE_STR " 2018-04-16 19:12:32-07:00  "
+#define DW_VERSION_DATE_STR " 2018-04-22 09:11:24-07:00  "
 #define RELEASE_DATE      "20160307"
 
 /* The Linux/Unix version does not want a version string to print
@@ -79,14 +79,15 @@ print_args(UNUSEDARG int argc, UNUSEDARG char *argv[])
 #endif /* _WIN32 */
 }
 
+/*  Going to stdout as of April 2018.
+    dwarfdump only calls if requested by user.  */
 void
-print_usage_message(const char *program_name_in, const char **text)
+print_usage_message(
+    UNUSEDARG const char *program_name_in, 
+    const char **text)
 {
     unsigned i = 0;
-#ifndef _WIN32
-    fprintf(stderr,"Usage:  %s  <options> <object file>\n", program_name_in);
-#endif /* _WIN32 */
     for (i = 0; *text[i]; ++i) {
-        fprintf(stderr,"%s\n", text[i]);
+        printf("%s\n", text[i]);
     }
 }
