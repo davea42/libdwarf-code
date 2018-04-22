@@ -2,6 +2,7 @@
 
 #ifdef GETOPT_FROM_SYSTEM
 #define dwgetopt  getopt
+#define dwgetopt_long  getopt_long
 #define dwopterr  opterr
 #define dwoptind  optind
 #define dwoptopt  optopt
@@ -31,6 +32,32 @@ dwgetoptresetfortestingonly(void)
 }
 
 
+static int turnprintable(int c)
+{
+    if ( c >= 0x20 && c <= 0x7f) {
+        return c;
+    }
+    return '.';
+}
+
+
+
+static void
+printcheckargs(
+    int ct,
+    int rchar,int xchar,
+    char *roptarg,char *xoptarg,
+    int roptind,int xoptind,
+    const char *testid,
+    int testline)
+{
+    printf("chkval entry ct %d test %s line %d\n",ct,testid,testline);
+    printf("       rchar 0x%x('%c') xchar 0x%x('%c') roptarg %s xoptarg %s\n",
+        rchar,turnprintable(rchar),
+        xchar,turnprintable(xchar),
+        roptarg?roptarg:"",xoptarg?xoptarg:"");
+    printf("       roptind %d xoptind %d\n",roptind,xoptind);
+}
 
 /* for rchar read the real int/char returned.
    for xchar read the expected int/char.
@@ -42,17 +69,22 @@ dwgetoptresetfortestingonly(void)
    for xoptind read expected-optind
 */
 static void
-chkval(int ct,
+chkval(
+    int ct,
     int rchar,int xchar,
     char *roptarg,char *xoptarg,
     int roptind,int xoptind,
-    const char *testid)
+    const char *testid,
+    int testline)
 {
     int err = 0;
+
     if (rchar != xchar) {
+        int pr = turnprintable(rchar);
+        int px = turnprintable(xchar);
         err++;
-        printf("Mismatch %d %s: got char %c 0x%x exp char %c 0x%x\n",
-            ct,testid,rchar,rchar,xchar,xchar);
+        printf("Mismatch %d %s line  %d: got char %c %d 0x%x; exp char %c %d 0x%x\n",
+            ct,testid,testline,pr,rchar,rchar,px,xchar,xchar);
     }
     if (roptarg != xoptarg) {
         /* pointers non-match */
@@ -60,8 +92,8 @@ chkval(int ct,
             /* strings match. */
         } else {
             err++;
-            printf("Mismatch %d %s: got dwoptarg %s 0x%lx exp optarg %s 0x%lx\n",
-                ct,testid,
+            printf("Mismatch %d %s line %d: got dwoptarg %s 0x%lx exp optarg %s 0x%lx\n",
+                ct,testid,testline,
                 roptarg?roptarg:"",
                 (unsigned long)roptarg,
                 xoptarg?xoptarg:"",
@@ -70,11 +102,39 @@ chkval(int ct,
     }
     if (roptind != xoptind) {
         err++;
-        printf("Mismatch %d %s: got dwoptind %d 0x%x exp optind %d 0x%x\n",
-            ct,testid,roptind,roptind,xoptind,xoptind);
+        printf("Mismatch %d %s line %d: got dwoptind %d 0x%x exp optind %d 0x%x\n",
+            ct,testid,testline,
+            roptind,roptind,xoptind,xoptind);
     }
     if (err > 0) {
-        printf("FAIL getopttest %s\n",testid);
+        printcheckargs(ct,rchar,xchar,roptarg,xoptarg,roptind,xoptind,testid,testline);
+        printf("FAIL getopttest %s line %d\n",testid,testline);
+        exit(1);
+    }
+}
+
+static void chkval_long(
+    int ct,
+    int rchar,int xchar,
+    char *roptarg,char *xoptarg,
+    int roptind,int xoptind,
+    int rlongindex, int xlongindex,
+    const char *testid,int testline)
+{
+    int err = 0;
+
+    chkval(ct,rchar,xchar,roptarg,xoptarg,roptind,xoptind,testid,testline);
+    if (rlongindex != xlongindex) {
+        printf("chkval_long entry ct %d test %s line %d\n",ct,testid,testline);
+        printf("       rlongindex %d xlongindex %d\n",
+            rlongindex,xlongindex);
+        ++err;
+        printf("Mismatch %d %s line %d:  on longopt longindex got %d expected %d\n",
+            ct,testid,testline,
+            rlongindex,xlongindex);
+    }
+    if (err > 0) {
+        printf("FAIL getopttest %s line %d\n",testid,testline);
         exit(1);
     }
 }
@@ -97,22 +157,22 @@ test3(void)
     for ( ;(c = dwgetopt(argct, argv1, "#:abc::d")) != EOF; ct++) {
     switch(ct) {
     case 1:
-        chkval(ct,c,'a',dwoptarg,0,dwoptind,2,"test31");
+        chkval(ct,c,'a',dwoptarg,0,dwoptind,2,"test31",__LINE__);
         break;
     case 2:
-        chkval(ct,c,'#',dwoptarg,"bx",dwoptind,3,"test32");
+        chkval(ct,c,'#',dwoptarg,"bx",dwoptind,3,"test32",__LINE__);
         break;
     case 3:
-        chkval(ct,c,'b',dwoptarg,0,dwoptind,4,"test33");
+        chkval(ct,c,'b',dwoptarg,0,dwoptind,4,"test33",__LINE__);
         break;
     case 4:
-        chkval(ct,c,'c',dwoptarg,0,dwoptind,5,"test34");
+        chkval(ct,c,'c',dwoptarg,0,dwoptind,5,"test34",__LINE__);
         break;
     case 5:
-        chkval(ct,c,'c',dwoptarg,"foo",dwoptind,6,"test35");
+        chkval(ct,c,'c',dwoptarg,"foo",dwoptind,6,"test35",__LINE__);
         break;
     case 6:
-        chkval(ct,c,'d',dwoptarg,0,dwoptind,7,"test36");
+        chkval(ct,c,'d',dwoptarg,0,dwoptind,7,"test36",__LINE__);
         break;
     case 7:
     case 8:
@@ -152,17 +212,17 @@ test2(void)
         "#:abc::")) != EOF; ct++) {
     switch(ct) {
     case 1:
-        chkval(ct,c,'a',dwoptarg,0,dwoptind,2,"test21");
+        chkval(ct,c,'a',dwoptarg,0,dwoptind,2,"test21",__LINE__);
         break;
     case 2:
-        chkval(ct,c,'#',dwoptarg,"pound",dwoptind,3,"test22");
+        chkval(ct,c,'#',dwoptarg,"pound",dwoptind,3,"test22",__LINE__);
         break;
         break;
     case 3:
-        chkval(ct,c,'b',dwoptarg,0,dwoptind,4,"test23");
+        chkval(ct,c,'b',dwoptarg,0,dwoptind,4,"test23",__LINE__);
         break;
     case 4:
-        chkval(ct,c,'c',dwoptarg,"filename",dwoptind,5,"test24");
+        chkval(ct,c,'c',dwoptarg,"filename",dwoptind,5,"test24",__LINE__);
         break;
     default:
         printf("FAIL test2 unexpected ct %d\n",ct);
@@ -181,46 +241,6 @@ test2(void)
     return 0;
 }
 
-
-
-static void chklongval(
-    const char *xoptname,
-    struct dwoption *ropt, struct dwoption *xopt,
-    char *roptarg,char *xoptarg,
-    int roptind,int xoptind,
-    const char *testid)
-{
-    int err = 0;
-    if(xopt != ropt || strcmp(ropt->name,xopt->name)) {
-        printf("FAIL name check %s: long opt %s vs %s %s\n",
-            xoptname,
-            ropt->name,xopt->name,
-            testid);
-        ++err;
-    }
-    if (roptarg != xoptarg &&
-        (!roptarg || !xoptarg || strcmp(roptarg,xoptarg))) {
-        printf("FAIL argument check %s: long opt %s vs %s %s\n",
-            xoptname,
-            roptarg?roptarg:"",xoptarg?xoptarg:"",
-            testid);
-        ++err;
-    }
-    if (roptind != xoptind) {
-        printf("FAIL optind check %s: long opt %d vs %d %s\n",
-            xoptname,
-            roptind,xoptind,
-            testid);
-        ++err;
-    }
-
-    if (err > 0) {
-        printf("FAIL long getopttest %s\n",testid);
-        exit(1);
-    }
-}
-
-
 static int
 ltest1(void)
 {
@@ -228,13 +248,12 @@ ltest1(void)
     int c = 0;
     int argct = 13;
     static struct dwoption  longopts[] =  {
-        {"simplelong",       dwno_argument,      0,0},
-        {"optarglong",       dwoptional_argument,0,0},
-        {"requireoptarglong",dwrequired_argument,0,0},
+        {"simplelong",       dwno_argument,      0,1000},
+        {"optarglong",       dwoptional_argument,0,1001},
+        {"requireoptarglong",dwrequired_argument,0,1002},
         {0,0,0,0}
     };
     int longindex = 0;
-
 
     argv1[0]="a.out";
     argv1[1]="-ab";
@@ -249,45 +268,29 @@ ltest1(void)
         longopts,&longindex)) != EOF; ct++) {
     switch(ct) {
     case 1:
-        chkval(ct,c,'a',dwoptarg,0,dwoptind,1,"ltest12");
+        chkval(ct,c,'a',dwoptarg,0,dwoptind,1,"ltest1.1",__LINE__);
         break;
     case 2:
-        chkval(ct,c,'b',dwoptarg,0,dwoptind,2,"ltest2");
+        chkval(ct,c,'b',dwoptarg,0,dwoptind,2,"ltest1.2",__LINE__);
         break;
 
-    case 3: {
-        struct dwoption * foundop = longopts + longindex;
-        chklongval(
-            "simplelong",
-            foundop,longopts+0,
-            dwoptarg,0,
-            dwoptind,3,"ltest3");
-        }
+    case 3:
+        chkval_long(ct,c,1000,dwoptarg,0,dwoptind,3,longindex,0,
+            "ltest1.3",__LINE__);
         break;
-    case 4: {
-        struct dwoption * foundop = longopts + longindex;
-        chklongval(
-            "optarglong",
-            foundop,longopts+1,
-            dwoptarg,0,
-            dwoptind,4,"ltest4");
-        }
+    case 4:
+        chkval_long(ct,c,1001,dwoptarg,0,dwoptind,4,longindex,1,
+            "ltest1.4",__LINE__);
         break;
-    case 5: {
-        struct dwoption * foundop = longopts + longindex;
-        chklongval(
-            "requireoptarglong",
-            foundop,longopts+2,
-            dwoptarg,"val",
-            dwoptind,5,"ltest5");
-        }
+    case 5:
+        chkval_long(ct,c,1002,dwoptarg,"val",dwoptind,5,longindex,2,
+            "ltest1.5",__LINE__);
         break;
-
     case 6:
-        chkval(ct,c,'c',dwoptarg,0,dwoptind,5,"ltest6");
+        chkval(ct,c,'c',dwoptarg,0,dwoptind,5,"ltest1.6",__LINE__);
         break;
     case 7:
-        chkval(ct,c,'d',dwoptarg,0,dwoptind,6,"ltest7");
+        chkval(ct,c,'d',dwoptarg,0,dwoptind,6,"ltest1.7",__LINE__);
         break;
 
 
@@ -315,7 +318,7 @@ ltest2(void)
     int c = 0;
     int argct = 13;
     static struct dwoption  longopts[] =  {
-        {"optarglong",       dwoptional_argument,0,0},
+        {"optarglong",       dwoptional_argument,0,6},
         {0,0,0,0}
     };
     int longindex = 0;
@@ -333,45 +336,29 @@ ltest2(void)
         longopts,&longindex)) != EOF; ct++) {
     switch(ct) {
     case 1:
-        chkval(ct,c,'a',dwoptarg,0,dwoptind,1,"ltest21");
+        chkval(ct,c,'a',dwoptarg,0,dwoptind,1,"ltest21",__LINE__);
         break;
     case 2:
-        chkval(ct,c,'b',dwoptarg,0,dwoptind,2,"ltest22");
+        chkval(ct,c,'b',dwoptarg,0,dwoptind,2,"ltest22",__LINE__);
         break;
 
-    case 3: {
-        struct dwoption * foundop = longopts + longindex;
-        chklongval(
-            "optarglong",
-            foundop,longopts+0,
-            dwoptarg,0,
-            dwoptind,3,"ltest23");
-        }
+    case 3:
+        chkval_long(ct,c,6,dwoptarg,0,dwoptind,3,longindex,0,
+            "ltest23",__LINE__);
         break;
-    case 4: {
-        struct dwoption * foundop = longopts + longindex;
-        chklongval(
-            "optarglong",
-            foundop,longopts+0,
-            dwoptarg,0,
-            dwoptind,4,"ltest24");
-        }
+    case 4:
+        chkval_long(ct,c,6,dwoptarg,0,dwoptind,4,longindex,0,
+            "ltest24",__LINE__);
         break;
-    case 5: {
-        struct dwoption * foundop = longopts + longindex;
-        chklongval(
-            "optarglong",
-            foundop,longopts+0,
-            dwoptarg,"val",
-            dwoptind,5,"ltest25");
-        }
+    case 5:
+        chkval_long(ct,c,6,dwoptarg,"val",dwoptind,5,longindex,0,
+            "ltest25",__LINE__);
         break;
-
     case 6:
-        chkval(ct,c,'c',dwoptarg,0,dwoptind,5,"ltest26");
+        chkval(ct,c,'c',dwoptarg,0,dwoptind,5,"ltest26",__LINE__);
         break;
     case 7:
-        chkval(ct,c,'d',dwoptarg,0,dwoptind,6,"ltest27");
+        chkval(ct,c,'d',dwoptarg,0,dwoptind,6,"ltest27",__LINE__);
         break;
 
 
@@ -418,28 +405,28 @@ test1(void)
         != EOF; ct++) {
     switch(ct) {
     case 1:
-        chkval(ct,c,'a',dwoptarg,0,dwoptind,2,"test11");
+        chkval(ct,c,'a',dwoptarg,0,dwoptind,2,"test11",__LINE__);
         break;
     case 2:
-        chkval(ct,c,'#',dwoptarg,"6",dwoptind,4,"test12");
+        chkval(ct,c,'#',dwoptarg,"6",dwoptind,4,"test12",__LINE__);
         break;
     case 3:
-        chkval(ct,c,'H',dwoptarg,"1",dwoptind,5,"test13");
+        chkval(ct,c,'H',dwoptarg,"1",dwoptind,5,"test13",__LINE__);
         break;
     case 4:
-        chkval(ct,c,'H',dwoptarg,"2",dwoptind,7,"test14");
+        chkval(ct,c,'H',dwoptarg,"2",dwoptind,7,"test14",__LINE__);
         break;
     case 5:
-        chkval(ct,c,'k',dwoptarg,"a",dwoptind,8,"test15");
+        chkval(ct,c,'k',dwoptarg,"a",dwoptind,8,"test15",__LINE__);
         break;
     case 6:
-        chkval(ct,c,'l',dwoptarg,0,dwoptind,9,"test16");
+        chkval(ct,c,'l',dwoptarg,0,dwoptind,9,"test16",__LINE__);
         break;
     case 7:
-        chkval(ct,c,'l',dwoptarg,"v",dwoptind,10,"test17");
+        chkval(ct,c,'l',dwoptarg,"v",dwoptind,10,"test17",__LINE__);
         break;
     case 8:
-        chkval(ct,c,'x',dwoptarg,"path=./foo",dwoptind,12,"test18");
+        chkval(ct,c,'x',dwoptarg,"path=./foo",dwoptind,12,"test18",__LINE__);
         break;
     default:
         printf("FAIL test1 unexpected ct %d in test1\n",ct);
@@ -476,25 +463,25 @@ test5(void)
     for ( ;(c = dwgetopt(argct, argv1, "abc:d::")) != EOF; ct++) {
     switch(ct) {
     case 1:
-        chkval(ct,c,'a',dwoptarg,0,dwoptind,1,"test51");
+        chkval(ct,c,'a',dwoptarg,0,dwoptind,1,"test51",__LINE__);
         break;
     case 2:
-        chkval(ct,c,'b',dwoptarg,0,dwoptind,2,"test52");
+        chkval(ct,c,'b',dwoptarg,0,dwoptind,2,"test52",__LINE__);
         break;
     case 3:
-        chkval(ct,c,'a',dwoptarg,0,dwoptind,3,"test53");
+        chkval(ct,c,'a',dwoptarg,0,dwoptind,3,"test53",__LINE__);
         break;
     case 4:
-        chkval(ct,c,'c',dwoptarg,"x",dwoptind,4,"test54");
+        chkval(ct,c,'c',dwoptarg,"x",dwoptind,4,"test54",__LINE__);
         break;
     case 5:
-        chkval(ct,c,'c',dwoptarg,"y",dwoptind,6,"test55");
+        chkval(ct,c,'c',dwoptarg,"y",dwoptind,6,"test55",__LINE__);
         break;
     case 6:
-        chkval(ct,c,'d',dwoptarg,0,dwoptind,7,"test56");
+        chkval(ct,c,'d',dwoptarg,0,dwoptind,7,"test56",__LINE__);
         break;
     case 7:
-        chkval(ct,c,'d',dwoptarg,"a",dwoptind,8,"test17");
+        chkval(ct,c,'d',dwoptarg,"a",dwoptind,8,"test17",__LINE__);
         break;
     default:
         printf("FAIL test5 unexpected ct %d in test1 char 0x%x %c\n",ct,c,c);
@@ -525,7 +512,7 @@ test6(void)
     for ( ;(c = dwgetopt(argct, argv1, "abH:d::")) != EOF; ct++) {
     switch(ct) {
     case 1:
-        chkval(ct,c,'?',dwoptarg,0,dwoptind,2,"test61");
+        chkval(ct,c,'?',dwoptarg,0,dwoptind,2,"test61",__LINE__);
         break;
     default:
         printf("FAIL test5 unexpected ct %d in test1 char 0x%x %c\n",ct,c,c);
@@ -553,7 +540,7 @@ test7(void)
     for ( ;(c = dwgetopt(argct, argv1, ":abH:d::")) != EOF; ct++) {
     switch(ct) {
     case 1:
-        chkval(ct,c,':',dwoptarg,0,dwoptind,2,"test71");
+        chkval(ct,c,':',dwoptarg,0,dwoptind,2,"test7.1",__LINE__);
         break;
     default:
         printf("FAIL test5 unexpected ct %d in test1 char 0x%x %c\n",ct,c,c);
@@ -581,7 +568,7 @@ test8(void)
     for ( ;(c = dwgetopt(argct, argv1, "abH:d::")) != EOF; ct++) {
     switch(ct) {
     case 1:
-        chkval(ct,c,'?',dwoptarg,0,dwoptind,2,"test81");
+        chkval(ct,c,'?',dwoptarg,0,dwoptind,2,"test8.1",__LINE__);
         break;
     default:
         printf("FAIL test5 unexpected ct %d in test1 char 0x%x %c\n",ct,c,c);
@@ -597,6 +584,133 @@ test8(void)
     return 0;
 }
 
+static int
+test9(void)
+{
+    int ct = 1;
+    int c = 0;
+    int argct = 13;
+    /*  If an argument is required and there is no =
+        in the input, the next argv is taken as the optarg.
+        This was found by experiment. */
+    static struct dwoption  longopts[] =  {
+        {"simplelong",       dwno_argument,      0,1},
+        {"optarglong",       dwoptional_argument,0,2},
+        {"requireoptarglong",dwrequired_argument,0,3},
+        {0,0,0,0}
+    };
+    int longindex = 0;
+    int stop = 0;
+
+    argv1[0]="a.out";
+    argv1[1]="-acb";
+    argv1[2] = "--bogusarg";
+    argv1[3] = "-cd";
+    argv1[4]="progtoread";
+    argv1[5]=0;
+    for ( ;(c = dwgetopt_long(argct, argv1,
+        "abcd",
+        longopts,&longindex)) != EOF; ct++) {
+
+        switch(ct) {
+        case 1:
+            chkval(ct,c,'a',dwoptarg,0,dwoptind,1,
+                "ltest9.1",__LINE__);
+            break;
+        case 2:
+            chkval(ct,c,'c',dwoptarg,0,dwoptind,1,
+                "ltest9.2",__LINE__);
+            break;
+        case 3:
+            chkval(ct,c,'b',dwoptarg,0,dwoptind,2,
+                "ltest9.2",__LINE__);
+            break;
+        case 4:
+            /* invalid long option */
+            chkval_long(ct,c,'?',dwoptarg,0,dwoptind,3,
+                longindex,0,
+                "ltest9.4",__LINE__);
+            stop = 1;
+            break;
+        default:
+            break;
+        }
+        if (stop) {
+            break;
+        }
+    }
+    printf("PASS getopt test9\n");
+    return 0;
+}
+
+
+static int
+test10(void)
+{
+    int ct = 1;
+    int c = 0;
+    int argct = 13;
+    /*  If an argument is required and there is no =
+        in the input, the next argv is taken as the optarg.
+        This was found by experiment. */
+    static struct dwoption  longopts[] =  {
+        {"simplelong",       dwno_argument,      0,1},
+        {"optarglong",       dwoptional_argument,0,2},
+        {"requireoptarglong",dwrequired_argument,0,3},
+        {0,0,0,0}
+    };
+    int longindex = 0;
+    int done=0;
+
+    argv1[0]="a.out";
+    argv1[1]="-acb";
+    argv1[2] = "--optarglong";
+    argv1[3] = "--simplelong=oops";
+    argv1[4] = "-cd";
+    argv1[5]="progtoread";
+    argv1[6]=0;
+
+    for ( ;(c = dwgetopt_long(argct, argv1,
+        "abcd",
+        longopts,&longindex)) != EOF; ct++) {
+
+        switch(ct) {
+        case 1:
+            chkval(ct,c,'a',dwoptarg,0,dwoptind,1,
+                "ltest10.1",__LINE__);
+            break;
+        case 2:
+            chkval(ct,c,'c',dwoptarg,0,dwoptind,1,
+                "ltest10.2",__LINE__);
+            break;
+        case 3:
+            chkval(ct,c,'b',dwoptarg,0,dwoptind,2,
+                "ltest10.3",__LINE__);
+            break;
+        case 4:
+            chkval_long(ct,c,2,dwoptarg,0,dwoptind,3,
+                longindex,1,
+                "ltest10.4",__LINE__);
+            break;
+        case 5:
+            /*  This one has error . =arg when
+                none allowed */
+            chkval_long(ct,c,'?',dwoptarg,0,
+                dwoptind,4,
+                longindex,1,
+                "ltest10.5",__LINE__);
+            done=1;
+            break;
+        default:
+            break;
+        }
+        if (done) {
+            break;
+        }
+    }
+    printf("PASS getopt test10\n");
+    return 0;
+}
 
 
 
@@ -638,6 +752,12 @@ int main(int argc, const char **argv)
         case 8:
             failct = test8();
             break;
+        case 9:
+            failct = test9();
+            break;
+        case 10:
+            failct = test10();
+            break;
         default:
             printf("FAIL: invalid test number %d\n",num);
             exit(1);
@@ -669,6 +789,10 @@ int main(int argc, const char **argv)
     failct += test7();
     dwgetoptresetfortestingonly();
     failct += test8();
+    dwgetoptresetfortestingonly();
+    failct += test9();
+    dwgetoptresetfortestingonly();
+    failct += test10();
     if ( failct) {
         printf("FAIL getopttest\n");
         exit(1);

@@ -55,7 +55,7 @@
 extern int elf_open(const char *name,int mode);
 #endif /* _WIN32 */
 
-#define DW_VERSION_DATE_STR " 2018-04-14 13:18:36-07:00  "
+#define DW_VERSION_DATE_STR " 2018-04-16 19:12:32-07:00  "
 
 extern char *dwoptarg;
 
@@ -1502,7 +1502,7 @@ static const char *usage_text[] = {
 "\t\t-F\tprint gnu .eh_frame section",
 "\t\t-g\t(use incomplete loclist support)",
 "\t\t-G\tshow global die offsets",
-"\t\t-h\tprint IRIX exception tables (unsupported)",
+"\t\t-h\tprint the dwarfdump help message (this options list) (",
 "\t\t-H <num>\tlimit output to the first <num> major units",
 "\t\t\t  example: to stop after <num> compilation units",
 "\t\t-i\tprint info section",
@@ -1551,7 +1551,7 @@ static const char *usage_text[] = {
 "\t\t-o[liaprfoR]\tprint relocation info",
 "\t\t  \tl=line,i=info,a=abbrev,p=pubnames,r=aranges,f=frames,o=loc,R=Ranges",
 "\t\t-p\tprint pubnames section",
-"\t\t--print-str-offsets\tprint details from the .debug_str_offsets section", 
+"\t\t--print-str-offsets\tprint details from the .debug_str_offsets section",
 "\t\t-P\tprint list of compile units per producer", /* List of CUs per compiler */
 "\t\t-Q\tsuppress printing section data",
 "\t\t-r\tprint aranges section",
@@ -1731,6 +1731,9 @@ process_args(int argc, char *argv[])
             }
             break;
         }
+        case 'h':
+            print_usage_message(program_name,usage_text);
+            exit(OKAY);
         case 'M':
             show_form_used =  TRUE;
             break;
@@ -2444,8 +2447,14 @@ process_args(int argc, char *argv[])
             glflags.gf_frame_flag = FALSE;
         }
     }
-    if (usage_error || (dwoptind != (argc - 1))) {
-        print_usage_message(program_name,usage_text);
+    if (usage_error ) {
+        printf("%s option error.\n",program_name);
+        printf("To see the options list: %s -h\n",program_name);
+        exit(FAILED);
+    }
+    if (dwoptind != (argc - 1)) {
+        printf("No object file name provided to %s\n",program_name);
+        printf("To see the options list: %s -h\n",program_name);
         exit(FAILED);
     }
     /*  FIXME: it seems silly to be printing section names

@@ -50,7 +50,7 @@
         return DW_DLV_ERROR;                                          \
     }
 
-#if 1
+#if 0
 static void
 dump_bytes(char * msg,Dwarf_Small * start, long len)
 {
@@ -106,7 +106,6 @@ dwarf_open_str_offsets_table_access(Dwarf_Debug dbg,
     local_table_data->so_section_start_ptr = offsets_start_ptr;
     local_table_data->so_section_end_ptr = offsets_start_ptr +sec_size;
     local_table_data->so_section_size = sec_size;
-dump_bytes("dadebug str offsets",offsets_start_ptr,sec_size);
     local_table_data->so_next_table_offset = 0;
     local_table_data->so_wasted_section_bytes = 0;
     /*  get_alloc zeroed all the bits, no need to repeat that here. */
@@ -255,7 +254,7 @@ dwarf_next_str_offsets_table(Dwarf_Str_Offsets_Table sot,
     }
 
     if ((table_start_ptr + MIN_HEADER_LENGTH) > sot->so_section_end_ptr) {
-        /*  We have some nonsense non-zero extra bytes! 
+        /*  We have some nonsense non-zero extra bytes!
             Should we generate error? Or ignore? */
         _dwarf_error(sot->so_dbg,error,
             DW_DLE_STR_OFFSETS_EXTRA_BYTES);
