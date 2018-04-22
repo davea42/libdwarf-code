@@ -221,8 +221,8 @@ main(int argc, char **argv)
     unsigned int index = 0;
 
     print_version_details(argv[0],FALSE);
-    process_args(argc,argv);
     print_args(argc,argv);
+    process_args(argc,argv);
 
     if (!input_name ) {
         fprintf(stderr,"Input name required, not supplied.\n");

@@ -210,8 +210,8 @@ int
 main(int argc,char **argv)
 {
     print_version(argv[0]);
-    process_args(argc,argv);
     print_args(argc,argv);
+    process_args(argc,argv);
     OpenAllFiles();
     GenerateInitialFileLines();
     ParseDefinitionsAndWriteOutput();
