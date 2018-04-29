@@ -62,10 +62,10 @@ do_checking(Dwarf_Debug dbg, Dwarf_Arange *arange_buf,Dwarf_Signed i,
         /* Get the CU offset for easy error reporting */
         if (first_cu || cu_die_offset != cu_die_offset_prev) {
             cu_die_offset_prev = cu_die_offset;
-            dres = dwarf_die_offsets(cu_die,&DIE_overall_offset,
-                &DIE_offset,&checking_err);
-            DIE_CU_overall_offset = DIE_overall_offset;
-            DIE_CU_offset = DIE_offset;
+            dres = dwarf_die_offsets(cu_die,&glflags.DIE_overall_offset,
+                &glflags.DIE_offset,&checking_err);
+            glflags.DIE_CU_overall_offset = glflags.DIE_overall_offset;
+            glflags.DIE_CU_offset = glflags.DIE_offset;
             if (dres != DW_DLV_OK) {
                 print_error(dbg, "dwarf_die_offsets", dres, checking_err);
             }
@@ -74,9 +74,10 @@ do_checking(Dwarf_Debug dbg, Dwarf_Arange *arange_buf,Dwarf_Signed i,
             dbg,cuhdroff,is_info,&cudieoff2,&checking_err);
         if (dres == DW_DLV_OK) {
             /* Get the CU offset for easy error reporting */
-            dwarf_die_offsets(cu_die,&DIE_overall_offset,&DIE_offset,&checking_err);
-            DIE_CU_overall_offset = DIE_overall_offset;
-            DIE_CU_offset = DIE_offset;
+            dwarf_die_offsets(cu_die,&glflags.DIE_overall_offset,
+                              &glflags.DIE_offset,&checking_err);
+            glflags.DIE_CU_overall_offset = glflags.DIE_overall_offset;
+            glflags.DIE_CU_offset = glflags.DIE_offset;
             DWARF_CHECK_COUNT(aranges_result,1);
             if (cu_die_offset != cudieoff2) {
                 printf("Error, cu_die offsets mismatch,  0x%"
@@ -128,12 +129,12 @@ print_aranges(Dwarf_Debug dbg)
     Dwarf_Error pa_error = 0;
 
     /* Reset the global state, so we can traverse the debug_info */
-    seen_CU = FALSE;
-    need_CU_name = TRUE;
-    need_CU_base_address = TRUE;
-    need_CU_high_address = TRUE;
+    glflags.seen_CU = FALSE;
+    glflags.need_CU_name = TRUE;
+    glflags.need_CU_base_address = TRUE;
+    glflags.need_CU_high_address = TRUE;
 
-    current_section_id = DEBUG_ARANGES;
+    glflags.current_section_id = DEBUG_ARANGES;
     if (glflags.gf_do_print_dwarf) {
         const char *sec_name = 0;
         ares = dwarf_get_aranges_section_name(dbg,
@@ -227,8 +228,8 @@ print_aranges(Dwarf_Debug dbg)
                                 /* ignore_die_stack= */TRUE);
                         }
                         /* Reset the state, so we can traverse the debug_info */
-                        seen_CU = FALSE;
-                        need_CU_name = TRUE;
+                        glflags.seen_CU = FALSE;
+                        glflags.need_CU_name = TRUE;
                         if (glflags.gf_do_print_dwarf) {
                             printf("\n");
                         }
@@ -255,7 +256,7 @@ print_aranges(Dwarf_Debug dbg)
                             (Dwarf_Unsigned)cu_die_offset);
 
                     }
-                    if (verbose && glflags.gf_do_print_dwarf) {
+                    if (glflags.verbose && glflags.gf_do_print_dwarf) {
                         printf(" cuhdr 0x%" DW_PR_XZEROS DW_PR_DUx "\n",
                             (Dwarf_Unsigned)off);
                     }

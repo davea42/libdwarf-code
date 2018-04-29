@@ -48,7 +48,7 @@ print_static_funcs(Dwarf_Debug dbg)
     int gfres = 0;
     Dwarf_Error err = 0;
 
-    current_section_id = DEBUG_STATIC_FUNC;
+    glflags.current_section_id = DEBUG_STATIC_FUNC;
 
     if (!glflags.gf_do_print_dwarf) {
         return;

@@ -45,7 +45,7 @@ print_weaknames(Dwarf_Debug dbg)
     int wkres = 0;
     Dwarf_Error err = 0;
 
-    current_section_id = DEBUG_WEAKNAMES;
+    glflags.current_section_id = DEBUG_WEAKNAMES;
 
     if (!glflags.gf_do_print_dwarf) {
         return;

@@ -123,7 +123,7 @@ process_line_table(Dwarf_Debug dbg,
     struct esb_s lastsrc;
 
     esb_constructor(&lastsrc);
-    current_section_id = DEBUG_LINE;
+    glflags.current_section_id = DEBUG_LINE;
 
     /* line_flag is TRUE */
     get_address_size_and_max(dbg,0,&elf_max_address,&lt_err);
@@ -266,7 +266,7 @@ process_line_table(Dwarf_Debug dbg,
             } else if (glflags.gf_do_check_dwarf) {
                 /*  Check the address lies with a valid [lowPC:highPC]
                     in the .text section*/
-                if (IsValidInBucketGroup(pRangesInfo,pc)) {
+                if (IsValidInBucketGroup(glflags.pRangesInfo,pc)) {
                     /* Valid values; do nothing */
                 } else {
                     /*  At this point may be we are dealing with
@@ -282,7 +282,7 @@ process_line_table(Dwarf_Debug dbg,
                         checking_this_compiler()) {
                         DWARF_CHECK_COUNT(lines_result,1);
                     }
-                    if (FindAddressInBucketGroup(pLinkonceInfo,pc)){
+                    if (FindAddressInBucketGroup(glflags.pLinkonceInfo,pc)){
                         /* Valid values; do nothing */
                     } else {
                         /*  The SN Systems Linker generates
@@ -313,7 +313,7 @@ process_line_table(Dwarf_Debug dbg,
                     unit (PU).
                     There is no real reason */
                 if ((i + 1 == linecount) &&
-                    seen_PU_high_address &&
+                    glflags.seen_PU_high_address &&
                     !is_logicals_table) {
                     /*  Ignore those PU that have been stripped
                         by the linker; their low_pc values are
@@ -328,8 +328,8 @@ process_line_table(Dwarf_Debug dbg,
                     if (glflags.gf_check_lines &&
                         checking_this_compiler()) {
                         DWARF_CHECK_COUNT(lines_result,1);
-                        if ((pc != PU_high_address) &&
-                            (PU_base_address != elf_max_address)) {
+                        if ((pc != glflags.PU_high_address) &&
+                            (glflags.PU_base_address != elf_max_address)) {
                             char addr_tmp[140];
                             snprintf(addr_tmp,sizeof(addr_tmp),
                                 "%s: Address"
@@ -338,7 +338,7 @@ process_line_table(Dwarf_Debug dbg,
                                 " exactly match"
                                 " high function addr: "
                                 " 0x%" DW_PR_XZEROS DW_PR_DUx,
-                                sec_name,pc,PU_high_address);
+                                sec_name,pc,glflags.PU_high_address);
                             DWARF_CHECK_ERROR(lines_result,
                                 addr_tmp);
                         }
@@ -461,7 +461,7 @@ process_line_table(Dwarf_Debug dbg,
         }
 
         if (!is_actuals_table) {
-            if (i > 0 &&  verbose < 3  &&
+            if (i > 0 &&  glflags.verbose < 3  &&
                 strcmp(filename,esb_get_string(&lastsrc)) == 0) {
                 /* Do not print name. */
             } else {
@@ -684,7 +684,7 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
     Dwarf_Off dieprint_cu_goffset = 0;
     int atres = 0;
 
-    current_section_id = DEBUG_LINE;
+    glflags.current_section_id = DEBUG_LINE;
 
     /* line_flag is TRUE */
 
@@ -718,7 +718,7 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
         }
     }
 
-    if (verbose > 1) {
+    if (glflags.verbose > 1) {
         int errcount = 0;
         print_source_intro(dbg,cu_die);
         print_one_die(dbg, cu_die,
@@ -813,11 +813,11 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
     } else if (table_count > 0) {
         /* DW_DLV_OK */
         if (glflags.gf_do_print_dwarf) {
-            if(line_context && verbose) {
+            if(line_context && glflags.verbose) {
                 print_line_context_record(dbg,line_context);
             }
             print_source_intro(dbg,cu_die);
-            if (verbose) {
+            if (glflags.verbose) {
                 print_one_die(dbg, cu_die,
                     dieprint_cu_goffset,
                     /* print_information= */ TRUE,
@@ -876,7 +876,7 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
             Dwarf_Unsigned off = 0;
 
             print_source_intro(dbg,cu_die);
-            if (verbose) {
+            if (glflags.verbose) {
                 print_one_die(dbg, cu_die,
                     dieprint_cu_goffset,
                     /* print_information= */ TRUE,
@@ -885,7 +885,7 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
                     /* ignore_die_stack= */TRUE);
             }
             if(line_context) {
-                if (verbose > 2) {
+                if (glflags.verbose > 2) {
                     print_line_context_record(dbg,line_context);
                 }
                 ores = dwarf_srclines_table_offset(line_context,

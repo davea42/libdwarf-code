@@ -743,9 +743,9 @@ print_one_fde(Dwarf_Debug dbg,
         return DW_DLV_NO_ENTRY;
     }
     if (glflags.gf_cu_name_flag &&
-        fde_offset_for_cu_low != DW_DLV_BADOFFSET &&
-        (fde_offset < fde_offset_for_cu_low ||
-        fde_offset > fde_offset_for_cu_high)) {
+        glflags.fde_offset_for_cu_low != DW_DLV_BADOFFSET &&
+        (fde_offset < glflags.fde_offset_for_cu_low ||
+        fde_offset > glflags.fde_offset_for_cu_high)) {
         return DW_DLV_NO_ENTRY;
     }
     /* eh_table_offset is IRIX ONLY. */
@@ -983,7 +983,7 @@ print_one_fde(Dwarf_Debug dbg,
             printed_intro_addr = 0;
         }
     }
-    if (verbose > 1) {
+    if (glflags.verbose > 1) {
         Dwarf_Off fde_off = 0;
         Dwarf_Off cie_off = 0;
 
@@ -1413,7 +1413,7 @@ print_frame_inst_bytes(Dwarf_Debug dbg,
             delta = ibyte & 0x3f;
             printf("\t%2u DW_CFA_advance_loc %d", off,
                 (int) (delta * code_alignment_factor));
-            if (verbose) {
+            if (glflags.verbose) {
                 printf("  (%d * %d)", (int) delta,
                     (int) code_alignment_factor);
             }
@@ -1435,7 +1435,7 @@ print_frame_inst_bytes(Dwarf_Debug dbg,
             printreg(reg, config_data);
             printf(" %" DW_PR_DSd , (Dwarf_Signed)
                 (((Dwarf_Signed) uval) * data_alignment_factor));
-            if (verbose) {
+            if (glflags.verbose) {
                 printf("  (%" DW_PR_DUu " * %" DW_PR_DSd ")", uval,
                     data_alignment_factor);
             }
@@ -1575,7 +1575,7 @@ print_frame_inst_bytes(Dwarf_Debug dbg,
                 printf(" %" DW_PR_DSd ,
                     (Dwarf_Signed) (((Dwarf_Signed) uval2) *
                         data_alignment_factor));
-                if (verbose) {
+                if (glflags.verbose) {
                     printf("  (%" DW_PR_DUu " * %d)",  uval2,
                         (int) data_alignment_factor);
                 }
@@ -1742,7 +1742,7 @@ print_frame_inst_bytes(Dwarf_Debug dbg,
                     dump_block("\t\t", (char *) instp+1,
                         (Dwarf_Signed) block_len);
                     printf("\n");
-                    if (verbose) {
+                    if (glflags.verbose) {
                         struct esb_s exprstring;
                         esb_constructor(&exprstring);
                         get_string_from_locs(dbg,
@@ -1799,7 +1799,7 @@ print_frame_inst_bytes(Dwarf_Debug dbg,
                     dump_block("\t\t", (char *) instp+1,
                         (Dwarf_Signed) block_len);
                     printf("\n");
-                    if (verbose) {
+                    if (glflags.verbose) {
                         struct esb_s exprstring;
                         esb_constructor(&exprstring);
                         get_string_from_locs(dbg,
@@ -1844,7 +1844,7 @@ print_frame_inst_bytes(Dwarf_Debug dbg,
                     printreg(uval, config_data);
                     printf(" %" DW_PR_DSd , (Dwarf_Signed)
                         ((sval2) * data_alignment_factor));
-                    if (verbose) {
+                    if (glflags.verbose) {
                         printf("  (%" DW_PR_DSd " * %d)", sval2,
                             (int) data_alignment_factor);
                     }
@@ -1938,7 +1938,7 @@ print_frame_inst_bytes(Dwarf_Debug dbg,
                     printf(" %" DW_PR_DSd ,
                         (Dwarf_Signed) (sval2 *
                             data_alignment_factor));
-                    if (verbose) {
+                    if (glflags.verbose) {
                         printf("  (%" DW_PR_DSd " * %d)",
                             (Dwarf_Signed) sval2,
                             (int) data_alignment_factor);
@@ -1976,7 +1976,7 @@ print_frame_inst_bytes(Dwarf_Debug dbg,
                     printreg(uval, config_data);
                     printf(" %" DW_PR_DSd , (signed long long)
                         ((sval2) * data_alignment_factor));
-                    if (verbose) {
+                    if (glflags.verbose) {
                         printf("  (%" DW_PR_DSd " * %d)", sval2,
                             (int) data_alignment_factor);
                     }
@@ -2027,7 +2027,7 @@ print_frame_inst_bytes(Dwarf_Debug dbg,
                     dump_block("\t\t", (char *) instp+1,
                         (Dwarf_Signed) block_len);
                     printf("\n");
-                    if (verbose) {
+                    if (glflags.verbose) {
                         struct esb_s exprstring;
                         esb_constructor(&exprstring);
                         get_string_from_locs(dbg,
@@ -2206,7 +2206,7 @@ print_one_frame_reg_col(Dwarf_Debug dbg,
         printf("expr-block-len=%" DW_PR_DSd , offset);
         if (print_type_title)
             printf("%s", "> ");
-        if (verbose) {
+        if (glflags.verbose) {
             char pref[40];
 
             strcpy(pref, "<");
@@ -2216,7 +2216,7 @@ print_one_frame_reg_col(Dwarf_Debug dbg,
                 libdwarf so libdwarf validated it. */
             dump_block(pref, block_ptr, offset);
             printf("%s", "> ");
-            if (verbose) {
+            if (glflags.verbose) {
                 struct esb_s exprstring;
                 esb_constructor(&exprstring);
                 get_string_from_locs(dbg,
@@ -2255,7 +2255,7 @@ print_frames(Dwarf_Debug dbg,
     void * map_lowpc_to_name = 0;
     Dwarf_Error err = 0;
 
-    current_section_id = DEBUG_FRAME;
+    glflags.current_section_id = DEBUG_FRAME;
 
     /*  The address size here will not be right for all frames.
         Only in DWARF4 is there a real address size known
@@ -2280,7 +2280,7 @@ print_frames(Dwarf_Debug dbg,
         int is_eh = 0;
 
         if (framed == 0) {
-            current_section_id = DEBUG_FRAME;
+            glflags.current_section_id = DEBUG_FRAME;
             if (!print_debug_frame) {
                 continue;
             }
@@ -2302,7 +2302,7 @@ print_frames(Dwarf_Debug dbg,
                 print_any_harmless_errors(dbg);
             }
         } else {
-            current_section_id = DEBUG_FRAME_EH_GNU;
+            glflags.current_section_id = DEBUG_FRAME_EH_GNU;
             if (!print_eh_frame) {
                 continue;
             }
@@ -2369,7 +2369,7 @@ print_frames(Dwarf_Debug dbg,
                     &lowpcSet,
                     &all_cus_seen);
                 ++frame_count;
-                if (frame_count >= break_after_n_units) {
+                if (frame_count >= glflags.break_after_n_units) {
                     break;
                 }
             }
@@ -2382,7 +2382,7 @@ print_frames(Dwarf_Debug dbg,
                 print_one_cie(dbg, cie_data[i], i, address_size,
                     config_data);
                 ++cie_count;
-                if (cie_count >= break_after_n_units) {
+                if (cie_count >= glflags.break_after_n_units) {
                     break;
                 }
             }
@@ -2449,13 +2449,13 @@ load_CU_error_data(Dwarf_Debug dbg,Dwarf_Die cu_die)
     }
 
     /* The offsets will be zero if it fails. Let it pass. */
-    atres = dwarf_die_offsets(cu_die,&DIE_overall_offset,
-        &DIE_offset,&loadcuerr);
-    cu_die_goff = DIE_overall_offset;
+    atres = dwarf_die_offsets(cu_die,&glflags.DIE_overall_offset,
+        &glflags.DIE_offset,&loadcuerr);
+    cu_die_goff = glflags.DIE_overall_offset;
     DROP_ERROR_INSTANCE(dbg,atres,loadcuerr);
 
-    DIE_CU_overall_offset = DIE_overall_offset;
-    DIE_CU_offset = DIE_offset;
+    glflags.DIE_CU_overall_offset = glflags.DIE_overall_offset;
+    glflags.DIE_CU_offset = glflags.DIE_offset;
     for (i = 0; i < atcnt; i++) {
         Dwarf_Half attr = 0;
         int ares = 0;
@@ -2475,9 +2475,9 @@ load_CU_error_data(Dwarf_Debug dbg,Dwarf_Die cu_die)
         switch(attr) {
         case DW_AT_low_pc:
             {
-            ares = dwarf_formaddr(attrib, &CU_base_address, &loadcuerr);
+            ares = dwarf_formaddr(attrib, &glflags.CU_base_address, &loadcuerr);
             DROP_ERROR_INSTANCE(dbg,ares,loadcuerr);
-            CU_low_address = CU_base_address;
+            glflags.CU_low_address = glflags.CU_base_address;
             }
             break;
         case DW_AT_high_pc:
@@ -2487,7 +2487,7 @@ load_CU_error_data(Dwarf_Debug dbg,Dwarf_Die cu_die)
                 It's also useless for CU DIEs that do not
                 have the DW_AT_high_pc high so CU_high_address will
                 be zero*/
-            ares = dwarf_formaddr(attrib, &CU_high_address, &loadcuerr);
+            ares = dwarf_formaddr(attrib, &glflags.CU_high_address, &loadcuerr);
             DROP_ERROR_INSTANCE(dbg,ares,loadcuerr);
             }
             break;
@@ -2503,9 +2503,11 @@ load_CU_error_data(Dwarf_Debug dbg,Dwarf_Die cu_die)
                 &namestr, local_show_form_used,local_verbose);
             name = esb_get_string(&namestr);
             if(attr == DW_AT_name) {
-                safe_strcpy(CU_name,sizeof(CU_name),name,strlen(name));
+                safe_strcpy(glflags.CU_name,sizeof(glflags.CU_name),name,
+                    strlen(name));
             } else {
-                safe_strcpy(CU_producer,sizeof(CU_producer),name,strlen(name));
+                safe_strcpy(glflags.CU_producer,sizeof(glflags.CU_producer),
+                    name,strlen(name));
             }
             esb_destructor(&namestr);
             }

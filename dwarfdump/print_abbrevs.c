@@ -72,7 +72,7 @@ print_abbrevs(Dwarf_Debug dbg)
     Dwarf_Unsigned abbrev_code = 0;
     Dwarf_Error paerr = 0;
 
-    current_section_id = DEBUG_ABBREV;
+    glflags.current_section_id = DEBUG_ABBREV;
 
     if (glflags.gf_do_print_dwarf) {
         printf("\n.debug_abbrev\n");
@@ -98,11 +98,11 @@ print_abbrevs(Dwarf_Debug dbg)
         if (!tag) {
             tagname = "Abbrev 0: null abbrev entry";
         }
-        if (dense) {
+        if (glflags.dense) {
             printf("<%" DW_PR_DUu "><0x%" DW_PR_XZEROS  DW_PR_DUx
                 "><code: %" DW_PR_DUu ">",
                 abbrev_num, offset,abbrev_code);
-            if (verbose) {
+            if (glflags.verbose) {
                 printf("<length: 0x%" DW_PR_XZEROS  DW_PR_DUx ">",
                     length);
             }
@@ -112,7 +112,7 @@ print_abbrevs(Dwarf_Debug dbg)
             printf("<%5" DW_PR_DUu "><0x%" DW_PR_XZEROS DW_PR_DUx
                 "><code: %3" DW_PR_DUu ">",
                 abbrev_num, offset, abbrev_code);
-            if (verbose) {
+            if (glflags.verbose) {
                 printf("<length: 0x%" DW_PR_XZEROS  DW_PR_DUx ">",
                     length);
             }
@@ -139,7 +139,7 @@ print_abbrevs(Dwarf_Debug dbg)
                 dwarf_names_print_on_error);
             printf(" %s", child_name);
         }
-        if(!dense) {
+        if(!glflags.dense) {
             printf("\n");
         }
         /*  Abbrev just contains the format of a die, which debug_info
@@ -158,7 +158,7 @@ print_abbrevs(Dwarf_Debug dbg)
                 attr = -1LL;
                 form = -1LL;
             }
-            if (dense) {
+            if (glflags.dense) {
                 printf(" <%ld>%s<%s>", (unsigned long) off,
                     get_AT_name(attr,dwarf_names_print_on_error),
                     get_FORM_name((Dwarf_Half) form,
@@ -174,7 +174,7 @@ print_abbrevs(Dwarf_Debug dbg)
         }
         dwarf_dealloc(dbg, ab, DW_DLA_ABBREV);
         offset += length;
-        if (dense) {
+        if (glflags.dense) {
             printf("\n");
         }
     }

@@ -94,7 +94,8 @@ print_macro_ops(Dwarf_Debug dbg,
                     get_MACRO_name(macro_operator,dwarf_names_print_on_error):
                     "end-of-macros"));
         }
-        if (glflags.gf_do_print_dwarf && show_form_used && forms_count > 0) {
+        if (glflags.gf_do_print_dwarf && glflags.show_form_used &&
+            forms_count > 0) {
             unsigned l = 0;
             printf("\n     Forms count %2u:",forms_count);
             for(; l < forms_count;++l) {
@@ -276,7 +277,7 @@ print_macros_5style_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die,
     Dwarf_Off cudie_local_offset = 0;
     int atres = 0;
 
-    current_section_id = DEBUG_MACRO;
+    glflags.current_section_id = DEBUG_MACRO;
     if(!by_offset) {
         lres = dwarf_get_macro_context(cu_die,
             &version,&macro_context,
@@ -336,7 +337,7 @@ print_macros_5style_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die,
             return;
         }
     }
-    if (glflags.gf_do_print_dwarf && verbose > 1) {
+    if (glflags.gf_do_print_dwarf && glflags.verbose > 1) {
 #if 0
         int errcount = 0;
 #endif
@@ -392,7 +393,7 @@ print_macros_5style_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die,
         if (glflags.gf_do_print_dwarf) {
             printf("  Macro version: %d\n",lversion);
         }
-        if( verbose && glflags.gf_do_print_dwarf) {
+        if (glflags.verbose && glflags.gf_do_print_dwarf) {
             printf("  macro section offset 0x%" DW_PR_XZEROS DW_PR_DUx "\n",
                 mac_offset);
             printf("  flags: 0x%x, line offset? %u offsetsize %u, "

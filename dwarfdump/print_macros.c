@@ -139,7 +139,7 @@ print_macinfo_by_offset(Dwarf_Debug dbg,Dwarf_Unsigned offset)
     Dwarf_Bool is_primary = TRUE;
     Dwarf_Error error = 0;
 
-    current_section_id = DEBUG_MACINFO;
+    glflags.current_section_id = DEBUG_MACINFO;
 
     /*  No real need to get the real section name, this
         section not used much in modern compilers

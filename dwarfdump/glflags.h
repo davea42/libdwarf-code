@@ -25,10 +25,76 @@
     global struct as it has been hard to know how many there
     were or what they were all for. */
 
+enum line_flag_type_e {
+  singledw5,  /* Meaning choose single table DWARF5 new interfaces. */
+  s2l,        /* Meaning choose two-level DWARF5 new interfaces. */
+  orig,       /* Meaning choose DWARF2,3,4 single level interface. */
+  orig2l      /* Meaning choose DWARF 2,3,4 two-level interface. */
+};
+
+/* Check categories corresponding to the -k option */
+typedef enum /* Dwarf_Check_Categories */ {
+    abbrev_code_result,
+    pubname_attr_result,
+    reloc_offset_result,
+    attr_tag_result,
+    tag_tree_result,
+    type_offset_result,
+    decl_file_result,
+    ranges_result,
+    lines_result,
+    aranges_result,
+    /*  Harmless errors are errors detected inside libdwarf but
+        not reported via DW_DLE_ERROR returns because the errors
+        won't really affect client code.  The 'harmless' errors
+        are reported and otherwise ignored.  It is difficult to report
+        the error when the error is noticed by libdwarf, the error
+        is reported at a later time.
+        The other errors dwarfdump reports are also generally harmless
+        but are detected by dwarfdump so it's possble to report the
+        error as soon as the error is discovered. */
+    harmless_result,
+    fde_duplication,
+    frames_result,
+    locations_result,
+    names_result,
+    abbreviations_result,
+    dwarf_constants_result,
+    di_gaps_result,
+    forward_decl_result,
+    self_references_result,
+    attr_encoding_result,
+    duplicated_attributes_result,
+    total_check_result,
+    LAST_CATEGORY  /* Must be last */
+} Dwarf_Check_Categories;
+
+struct section_high_offsets_s {
+    Dwarf_Unsigned debug_info_size;
+    Dwarf_Unsigned debug_abbrev_size;
+    Dwarf_Unsigned debug_line_size;
+    Dwarf_Unsigned debug_loc_size;
+    Dwarf_Unsigned debug_aranges_size;
+    Dwarf_Unsigned debug_macinfo_size;
+    Dwarf_Unsigned debug_pubnames_size;
+    Dwarf_Unsigned debug_str_size;
+    Dwarf_Unsigned debug_frame_size;
+    Dwarf_Unsigned debug_ranges_size;
+    Dwarf_Unsigned debug_pubtypes_size;
+    Dwarf_Unsigned debug_types_size;
+    Dwarf_Unsigned debug_macro_size;
+    Dwarf_Unsigned debug_str_offsets_size;
+    Dwarf_Unsigned debug_sup_size;
+    Dwarf_Unsigned debug_cu_index_size;
+    Dwarf_Unsigned debug_tu_index_size;
+};
+
+/* Options to enable debug tracing. */
+#define MAX_TRACE_LEVEL 10
 
 struct glflags_s {
 
-    /* This so both
+    /*  This so both
         dwarf_loclist_n()  and dwarf_get_loclist_c()
         and the dwarf_loclist_from_expr
         variations can be
@@ -115,7 +181,7 @@ struct glflags_s {
     boolean gf_check_gcc_compiler;
     boolean gf_print_summary_all;
 
-    /* The check and print flags here make it easy to
+    /*  The check and print flags here make it easy to
         allow check-only or print-only.  We no longer support
         check-and-print in a single run.  */
     boolean gf_do_check_dwarf;
@@ -144,10 +210,149 @@ struct glflags_s {
     boolean gf_show_global_offsets;
     boolean gf_display_offsets;
     boolean gf_print_str_offsets;
+
+    /*  Base address has a special meaning in DWARF4 relative to address ranges. */
+    boolean seen_PU;                  /* Detected a PU */
+    boolean seen_CU;                  /* Detected a CU */
+    boolean need_CU_name;             /* Need CU name */
+    boolean need_CU_base_address;     /* Need CU Base address */
+    boolean need_CU_high_address;     /* Need CU High address */
+    boolean need_PU_valid_code;       /* Need PU valid code */
+
+    boolean seen_PU_base_address;     /* Detected a Base address for PU */
+    boolean seen_PU_high_address;     /* Detected a High address for PU */
+    Dwarf_Addr PU_base_address;       /* PU Base address */
+    Dwarf_Addr PU_high_address;       /* PU High address */
+
+    Dwarf_Off  DIE_offset;            /* DIE offset in compile unit */
+    Dwarf_Off  DIE_overall_offset;    /* DIE offset in .debug_info */
+
+    /*  These globals enable better error reporting. */
+    Dwarf_Off  DIE_CU_offset;         /* CU DIE offset in compile unit */
+    Dwarf_Off  DIE_CU_overall_offset; /* CU DIE offset in .debug_info */
+    int current_section_id;           /* Section being process */
+
+    /*  Base Address is needed for range lists and must come from a CU.
+        Low address is for information and can come from a function
+        or something in the CU. */
+    Dwarf_Addr CU_base_address;       /* CU Base address */
+    Dwarf_Addr CU_low_address;        /* CU low address */
+    Dwarf_Addr CU_high_address;       /* CU High address */
+
+    Dwarf_Off fde_offset_for_cu_low;
+    Dwarf_Off fde_offset_for_cu_high;
+
+    const char *program_name;
+
+    const char *search_any_text;
+    const char *search_match_text;
+    const char *search_regex_text;
+    int search_occurrences;
+
+    /* -S option: the compiled_regex */
+#if !defined(USER_TOOL)
+#ifdef HAVE_REGEX
+    regex_t *search_re;
+#endif
+#endif /* USER_TOOL */
+
+    /*  Start verbose at zero. verbose can
+        be incremented with -v but not decremented. */
+    int verbose;
+
+    boolean dense;
+    boolean ellipsis;
+    boolean show_form_used;
+
+    /*  break_after_n_units is mainly for testing.
+        It enables easy limiting of output size/running time
+        when one wants the output limited.
+        For example,
+          -H 2
+        limits the -i output to 2 compilation units and
+        the -f or -F output to 2 FDEs and 2 CIEs.
+    */
+    int break_after_n_units;
+
+    struct section_high_offsets_s *section_high_offsets_global;
+
+#if !defined(USER_TOOL)
+    /*  pRangesInfo records the DW_AT_high_pc and DW_AT_low_pc
+        and is used to check that line range info falls inside
+        the known valid ranges.   The data is per CU, and is
+        reset per CU in tag_specific_checks_setup(). */
+    Bucket_Group *pRangesInfo;
+
+    /*  pLinkonceInfo records data about the link once sections.
+        If a line range is not valid in the current CU it might
+        be valid in a linkonce section, this data records the
+        linkonce sections.  So it is filled in when an
+        object file is read and remains unchanged for an entire
+        object file.  */
+    Bucket_Group *pLinkonceInfo;
+
+    /*  pVisitedInfo records a recursive traversal of DIE attributes
+        DW_AT_specification DW_AT_abstract_origin DW_AT_type
+        that let DWARF refer (as in a general graph) to
+        arbitrary other DIEs.
+        These traversals use pVisitedInfo to
+        detect any compiler errors that introduce circular references.
+        Printing of the traversals is also done on request.
+        Entries are added and deleted as they are visited in
+        a depth-first traversal.  */
+    Bucket_Group *pVisitedInfo;
+#endif /* USER_TOOL */
+
+    /*  Compilation Unit information for improved error messages.
+        If the strings are too short we just truncate so fixed length
+        here is fine.  */
+    #define COMPILE_UNIT_NAME_LEN 512
+    char PU_name[COMPILE_UNIT_NAME_LEN]; /* PU Name */
+    char CU_name[COMPILE_UNIT_NAME_LEN]; /* CU Name */
+    char CU_producer[COMPILE_UNIT_NAME_LEN];  /* CU Producer Name */
+
+    /*  Options to enable debug tracing. */
+    int nTrace[MAX_TRACE_LEVEL + 1];
 };
 
 extern struct glflags_s glflags;
 
 extern void init_global_flags(void);
 
+/*  Shortcuts for additional trace options */
+#define DUMP_OPTIONS                0   /* Dump options. */
+#define DUMP_RANGES_INFO            1   /* Dump RangesInfo Table. */
+#define DUMP_LOCATION_SECTION_INFO  2   /* Dump Location (.debug_loc) Info. */
+#define DUMP_RANGES_SECTION_INFO    3   /* Dump Ranges (.debug_ranges) Info. */
+#define DUMP_LINKONCE_INFO          4   /* Dump Linkonce Table. */
+#define DUMP_VISITED_INFO           5   /* Dump Visited Info. */
 
+#define dump_options                glflags.nTrace[DUMP_OPTIONS]
+#define dump_ranges_info            glflags.nTrace[DUMP_RANGES_INFO]
+#define dump_location_section_info  glflags.nTrace[DUMP_LOCATION_SECTION_INFO]
+#define dump_ranges_section_info    glflags.nTrace[DUMP_RANGES_SECTION_INFO]
+#define dump_linkonce_info          glflags.nTrace[DUMP_LINKONCE_INFO]
+#define dump_visited_info           glflags.nTrace[DUMP_VISITED_INFO]
+
+/* Section IDs */
+#define DEBUG_ABBREV      1
+#define DEBUG_ARANGES     2
+#define DEBUG_FRAME       3
+#define DEBUG_INFO        4
+#define DEBUG_LINE        5
+#define DEBUG_LOC         6
+#define DEBUG_MACINFO     7
+#define DEBUG_PUBNAMES    8
+#define DEBUG_RANGES      9
+#define DEBUG_STATIC_VARS 10
+#define DEBUG_STATIC_FUNC 11
+#define DEBUG_STR         12
+#define DEBUG_WEAKNAMES   13
+#define DEBUG_TYPES       14
+#define DEBUG_GDB_INDEX   15
+#define DEBUG_FRAME_EH_GNU 16
+#define DEBUG_MACRO       17
+#define DEBUG_NAMES       18
+
+/* Print the information only if unique errors is set and it is first time */
+#define PRINTING_UNIQUE (!glflags.gf_found_error_message)

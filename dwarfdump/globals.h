@@ -99,12 +99,14 @@ typedef unsigned long long  __uint64_t;
 #endif
 #include <dwarf.h>
 #include <libdwarf.h>
+
 #ifdef HAVE_REGEX
 #include <regex.h>
 #endif
 
 #include "checkutil.h"
 #include "defined_types.h"
+#include "glflags.h"
 
 /* Used to try to avoid leakage when we hide errors. */
 #define DROP_ERROR_INSTANCE(d,r,e)       \
@@ -113,210 +115,31 @@ typedef unsigned long long  __uint64_t;
         e = 0;                           \
     }
 
-
-
-/* size of attrib_buffer, defined in print_die.c */
-#define ATTRIB_BUFSIZ 999
-
-typedef struct {
-    int checks;
-    int errors;
-} Dwarf_Check_Result;
-
-/* Compilation Unit information for improved error messages.
-   If the strings are too short we just truncate so fixed length
-   here is fine.  */
-#define COMPILE_UNIT_NAME_LEN 512
-extern char PU_name[COMPILE_UNIT_NAME_LEN]; /* PU Name */
-extern char CU_name[COMPILE_UNIT_NAME_LEN]; /* CU Name */
-extern char CU_producer[COMPILE_UNIT_NAME_LEN];  /* CU Producer Name */
-
 /* Set TRUE if you want to simply assume strings to be
    printed are safe to print. Leave FALSE if you want
    dangerous or unprintable characters to be switched to the
    character '?'. */
 extern boolean no_sanitize_string_garbage;
 
-extern boolean seen_PU;                     /* Detected a PU. */
-extern boolean seen_CU;                     /* Detected a CU. */
-extern boolean need_CU_name;                /* Need CU name. */
-extern boolean need_CU_base_address;        /* Need CU Base address. */
-extern boolean need_CU_high_address;        /* Need CU High address. */
-extern boolean need_PU_valid_code;          /* Need PU valid code. */
-
-extern boolean seen_PU_base_address;        /* Detected a Base address for PU */
-extern boolean seen_PU_high_address;        /* Detected a High address for PU */
-extern Dwarf_Addr PU_base_address;          /* PU Base address */
-extern Dwarf_Addr PU_high_address;          /* PU High address */
-
-extern Dwarf_Off  DIE_offset;               /* DIE offset in compile unit. */
-extern Dwarf_Off  DIE_overall_offset;       /* DIE offset in .debug_info. */
-
-/* Current CU information for better error reporting. */
-extern Dwarf_Off  DIE_CU_offset;            /* CU DIE offset in compile unit */
-extern Dwarf_Off  DIE_CU_overall_offset;    /* CU DIE offset in .debug_info */
-extern Dwarf_Addr CU_base_address;          /* CU Base address. See ranges. */
-extern Dwarf_Addr CU_low_address;           /* CU lowest addr. */
-extern Dwarf_Addr CU_high_address;          /* CU High address. */
-
-extern int current_section_id;              /* Section being process. */
-
-/*  Ranges and Location tables for better error checking: see
-    dwarfdump.c comments for more information. */
-extern Bucket_Group *pRangesInfo;
-extern Bucket_Group *pLinkonceInfo;
-extern Bucket_Group *pVisitedInfo;
-
 /* Calculate wasted space */
 extern void calculate_attributes_usage(Dwarf_Half attr,Dwarf_Half theform,
     Dwarf_Unsigned value);
 
-/* Able to generate report on search */
-extern const char *search_any_text;
-extern const char *search_match_text;
-extern const char *search_regex_text;
-extern int search_occurrences;
-#ifdef HAVE_REGEX
-extern regex_t search_re;
-#endif
 extern boolean is_strstrnocase(const char *data, const char *pattern);
-
-/* Options to enable debug tracing. */
-#define MAX_TRACE_LEVEL 10
-extern int nTrace[MAX_TRACE_LEVEL + 1];
-
-#define DUMP_OPTIONS                0   /* Dump options. */
-#define DUMP_RANGES_INFO            1   /* Dump RangesInfo Table. */
-#define DUMP_LOCATION_SECTION_INFO  2   /* Dump Location (.debug_loc) Info. */
-#define DUMP_RANGES_SECTION_INFO    3   /* Dump Ranges (.debug_ranges) Info. */
-#define DUMP_LINKONCE_INFO          4   /* Dump Linkonce Table. */
-#define DUMP_VISITED_INFO           5   /* Dump Visited Info. */
-
-#define dump_options                nTrace[DUMP_OPTIONS]
-#define dump_ranges_info            nTrace[DUMP_RANGES_INFO]
-#define dump_location_section_info  nTrace[DUMP_LOCATION_SECTION_INFO]
-#define dump_ranges_section_info    nTrace[DUMP_RANGES_SECTION_INFO]
-#define dump_linkonce_info          nTrace[DUMP_LINKONCE_INFO]
-#define dump_visited_info           nTrace[DUMP_VISITED_INFO]
-
-/* Section IDs */
-#define DEBUG_ABBREV      1
-#define DEBUG_ARANGES     2
-#define DEBUG_FRAME       3
-#define DEBUG_INFO        4
-#define DEBUG_LINE        5
-#define DEBUG_LOC         6
-#define DEBUG_MACINFO     7
-#define DEBUG_PUBNAMES    8
-#define DEBUG_RANGES      9
-#define DEBUG_STATIC_VARS 10
-#define DEBUG_STATIC_FUNC 11
-#define DEBUG_STR         12
-#define DEBUG_WEAKNAMES   13
-#define DEBUG_TYPES       14
-#define DEBUG_GDB_INDEX   15
-#define DEBUG_FRAME_EH_GNU 16
-#define DEBUG_MACRO       17
-#define DEBUG_NAMES       18
-
-extern int verbose;
-extern boolean dense;
-extern boolean ellipsis;
-extern boolean use_mips_regnames;
-extern boolean show_form_used;
-
-/* Print the information only if unique errors is set and it is first time */
-#define PRINTING_UNIQUE (!glflags.gf_found_error_message)
-
-extern int break_after_n_units;
-
-/* Check categories corresponding to the -k option */
-typedef enum /* Dwarf_Check_Categories */ {
-    abbrev_code_result,
-    pubname_attr_result,
-    reloc_offset_result,
-    attr_tag_result,
-    tag_tree_result,
-    type_offset_result,
-    decl_file_result,
-    ranges_result,
-    lines_result,
-    aranges_result,
-    /*  Harmless errors are errors detected inside libdwarf but
-        not reported via DW_DLE_ERROR returns because the errors
-        won't really affect client code.  The 'harmless' errors
-        are reported and otherwise ignored.  It is difficult to report
-        the error when the error is noticed by libdwarf, the error
-        is reported at a later time.
-        The other errors dwarfdump reports are also generally harmless
-        but are detected by dwarfdump so it's possble to report the
-        error as soon as the error is discovered. */
-    harmless_result,
-    fde_duplication,
-    frames_result,
-    locations_result,
-    names_result,
-    abbreviations_result,
-    dwarf_constants_result,
-    di_gaps_result,
-    forward_decl_result,
-    self_references_result,
-    attr_encoding_result,
-    duplicated_attributes_result,
-    total_check_result,
-    LAST_CATEGORY  /* Must be last */
-} Dwarf_Check_Categories;
-
-
-struct section_high_offsets_s {
-    Dwarf_Unsigned debug_info_size;
-    Dwarf_Unsigned debug_abbrev_size;
-    Dwarf_Unsigned debug_line_size;
-    Dwarf_Unsigned debug_loc_size;
-    Dwarf_Unsigned debug_aranges_size;
-    Dwarf_Unsigned debug_macinfo_size;
-    Dwarf_Unsigned debug_pubnames_size;
-    Dwarf_Unsigned debug_str_size;
-    Dwarf_Unsigned debug_frame_size;
-    Dwarf_Unsigned debug_ranges_size;
-    Dwarf_Unsigned debug_pubtypes_size;
-    Dwarf_Unsigned debug_types_size;
-    Dwarf_Unsigned debug_macro_size;
-    Dwarf_Unsigned debug_str_offsets_size;
-    Dwarf_Unsigned debug_sup_size;
-    Dwarf_Unsigned debug_cu_index_size;
-    Dwarf_Unsigned debug_tu_index_size;
-};
-extern struct section_high_offsets_s section_high_offsets_global;
-
-enum line_flag_type_e {
-  singledw5,   /* Meaning choose single table DWARF5 new interfaces. */
-  s2l,   /* Meaning choose two-level DWARF5 new interfaces. */
-  orig,  /* Meaning choose DWARF2,3,4 single level interface. */
-  orig2l /* Meaning choose DWARF 2,3,4 two-level interface. */
-};
-
-#include "glflags.h"
 
 /* tsearch tree used in macro checking. */
 extern void *  macro_check_tree; /* DWARF5 macros. */
 extern void *  macinfo_check_tree; /* DWARF2,3,4 macros */
 
-extern Dwarf_Off fde_offset_for_cu_low;
-extern Dwarf_Off fde_offset_for_cu_high;
-
 /* Process TAGs for checking mode and reset pRangesInfo table
    if appropriate. */
 extern void tag_specific_checks_setup(Dwarf_Half val,int die_indent_level);
-
-extern const char *program_name;
 
 extern void print_error_and_continue (Dwarf_Debug dbg, const char * msg,int res, Dwarf_Error err);
 extern void print_error (Dwarf_Debug dbg, const char * msg,int res, Dwarf_Error err);
 
 extern void print_line_numbers_this_cu (Dwarf_Debug dbg, Dwarf_Die in_die);
 
-struct dwconf_s;
 extern void print_frames (Dwarf_Debug dbg, int print_debug_frame,
     int print_eh_frame,struct dwconf_s *);
 extern void print_ranges (Dwarf_Debug dbg);
@@ -343,7 +166,6 @@ extern void record_range_array_info_entry(Dwarf_Off die_off,
     Dwarf_Off range_off);
 extern void check_range_array_info(Dwarf_Debug dbg);
 
-struct esb_s;
 extern void print_ranges_list_to_extra(Dwarf_Debug dbg,
     Dwarf_Unsigned off,
     Dwarf_Ranges *rangeset,
@@ -408,8 +230,6 @@ extern void DWARF_CHECK_ERROR3(Dwarf_Check_Categories category,
     const char *str1, const char *str2, const char *strexpl);
 
 extern void print_macinfo_by_offset(Dwarf_Debug dbg,Dwarf_Unsigned offset);
-
-struct esb_s;
 
 void ranges_esb_string_destructor(void);
 void destruct_abbrev_array(void);

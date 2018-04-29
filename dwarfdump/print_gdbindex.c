@@ -217,7 +217,7 @@ print_symtab_entry(Dwarf_Debug dbg,
     Dwarf_Unsigned ii = 0;
 
     if (symnameoffset == 0 && cuvecoffset == 0) {
-        if (verbose > 1) {
+        if (glflags.verbose > 1) {
             printf("        [%4" DW_PR_DUu "] \"empty-hash-entry\"\n", index);
         }
         return DW_DLV_OK;
@@ -237,7 +237,7 @@ print_symtab_entry(Dwarf_Debug dbg,
             "dwarf_gdbindex_cuvector_length failed",res,*sym_err);
         return res;
     }
-    if (verbose > 1) {
+    if (glflags.verbose > 1) {
         printf("     [%4" DW_PR_DUu "]"
             "stroff 0x%"    DW_PR_XZEROS DW_PR_DUx
             " cuvecoff 0x%"    DW_PR_XZEROS DW_PR_DUx
@@ -298,7 +298,7 @@ print_symtab_entry(Dwarf_Debug dbg,
                     "global ",
                 get_kind(symbol_kind));
         }
-        if (verbose > 1) {
+        if (glflags.verbose > 1) {
             printf("        [%4" DW_PR_DUu "]"
                 "attr 0x%"    DW_PR_XZEROS DW_PR_DUx
                 " cuindx 0x%"    DW_PR_XZEROS DW_PR_DUx
@@ -373,7 +373,7 @@ print_gdb_index(Dwarf_Debug dbg)
     Dwarf_Unsigned culist_len = 0;
 
     int res = 0;
-    current_section_id = DEBUG_GDB_INDEX;
+    glflags.current_section_id = DEBUG_GDB_INDEX;
     res = dwarf_gdbindex_header(dbg, &gdbindex,
         &version,
         &cu_list_offset,

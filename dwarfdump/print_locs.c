@@ -64,7 +64,7 @@ print_locs(Dwarf_Debug dbg)
     struct esb_s  exprstring;
 
     esb_constructor(&exprstring);
-    current_section_id = DEBUG_LOC;
+    glflags.current_section_id = DEBUG_LOC;
 
     /* Do nothing if not printing. */
     if (!glflags.gf_do_print_dwarf) {
@@ -106,7 +106,7 @@ print_locs(Dwarf_Debug dbg)
             ++index;
             printf("  <iobel> [%8d] 0x%" DW_PR_XZEROS DW_PR_DUx,
                 index, offset);
-            if (verbose) {
+            if (glflags.verbose) {
                 printf(" <expr-off 0x%"  DW_PR_XZEROS  DW_PR_DUx ">",
                     next_entry - entry_len);
             }

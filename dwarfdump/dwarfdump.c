@@ -65,7 +65,6 @@ extern char *dwoptarg;
 
 static const char* process_args(int argc, char *argv[]);
 
-const char * program_name;
 static int check_error = 0;
 
 /* used in special_program_name() only */
@@ -75,35 +74,6 @@ static struct esb_s newprogname;
 #define KIND_RANGES_INFO       1
 #define KIND_SECTIONS_INFO     2
 #define KIND_VISITED_INFO      3
-
-/* pRangesInfo records the DW_AT_high_pc and DW_AT_low_pc
-   and is used to check that line range info falls inside
-   the known valid ranges.   The data is per CU, and is
-   reset per CU in tag_specific_checks_setup(). */
-Bucket_Group *pRangesInfo = NULL;
-
-struct section_high_offsets_s section_high_offsets_global;
-
-/* pLinkonceInfo records data about the link once sections.
-   If a line range is not valid in the current CU it might
-   be valid in a linkonce section, this data records the
-   linkonce sections.  So it is filled in when an
-   object file is read and remains unchanged for an entire
-   object file.  */
-Bucket_Group *pLinkonceInfo = NULL;
-/*  pVisitedInfo records a recursive traversal of DIE attributes
-    DW_AT_specification DW_AT_abstract_origin DW_AT_type
-    that let DWARF refer (as in a general graph) to
-    arbitrary other DIEs.
-    These traversals use pVisitedInfo to
-    detect any compiler errors that introduce circular references.
-    Printing of the traversals is also done on request.
-    Entries are added and deleted as they are visited in
-    a depth-first traversal.  */
-Bucket_Group *pVisitedInfo = NULL;
-
-/* Options to enable debug tracing */
-int nTrace[MAX_TRACE_LEVEL + 1];
 
 /* Build section information */
 void build_linkonce_info(Dwarf_Debug dbg);
@@ -117,29 +87,16 @@ struct glflags_s glflags;
 static char reloc_map[DW_SECTION_REL_ARRAY_SIZE];
 static char section_map[DW_HDR_ARRAY_SIZE];
 
-/*  Start verbose at zero. verbose can
-    be incremented with -v but not decremented. */
-int verbose = 0;
-
-boolean dense = FALSE;
-boolean ellipsis = FALSE;
-boolean show_form_used = FALSE;
-
-/* break_after_n_units is mainly for testing.
-   It enables easy limiting of output size/running time
-   when one wants the output limited.
-   For example,
-    -H 2
-   limits the -i output to 2 compilation units and
-   the -f or -F output to 2 FDEs and 2 CIEs.
-*/
-int break_after_n_units = INT_MAX;
-
 #define COMPILER_TABLE_MAX 100
 typedef struct anc {
     struct anc *next;
     char *item;
 } a_name_chain;
+
+typedef struct {
+    int checks;
+    int errors;
+} Dwarf_Check_Result;
 
 /*  Records information about compilers (producers) found in the
     debug information, including the check results for several
@@ -176,51 +133,6 @@ static int current_compiler = -1;
 static void reset_compiler_entry(Compiler *compiler);
 static void PRINT_CHECK_RESULT(char *str,
     Compiler *pCompiler, Dwarf_Check_Categories category);
-
-/* These names make diagnostic messages more complete, the
-   fixed length is safe, though ultra long names will get
-   truncated. */
-char PU_name[COMPILE_UNIT_NAME_LEN];
-char CU_name[COMPILE_UNIT_NAME_LEN];
-char CU_producer[COMPILE_UNIT_NAME_LEN];
-
-/*  Base address has a special meaning in DWARF4 relative to address ranges. */
-boolean seen_PU = FALSE;              /* Detected a PU */
-boolean seen_CU = FALSE;              /* Detected a CU */
-boolean need_CU_name = TRUE;          /* Need CU name */
-boolean need_CU_base_address = TRUE;  /* Need CU Base address */
-boolean need_CU_high_address = TRUE;  /* Need CU High address */
-boolean need_PU_valid_code = TRUE;    /* Need PU valid code */
-
-boolean seen_PU_base_address = FALSE; /* Detected a Base address for PU */
-boolean seen_PU_high_address = FALSE; /* Detected a High address for PU */
-Dwarf_Addr PU_base_address = 0;       /* PU Base address */
-Dwarf_Addr PU_high_address = 0;       /* PU High address */
-
-Dwarf_Off  DIE_offset = 0;            /* DIE offset in compile unit */
-Dwarf_Off  DIE_overall_offset = 0;    /* DIE offset in .debug_info */
-
-/*  These globals  enable better error reporting. */
-Dwarf_Off  DIE_CU_offset = 0;         /* CU DIE offset in compile unit */
-Dwarf_Off  DIE_CU_overall_offset = 0; /* CU DIE offset in .debug_info */
-int current_section_id = 0;           /* Section being process */
-
-/*  Base Address is needed for range lists and must come from a CU.
-    Low address is for information and can come from a function
-    or something in the CU. */
-Dwarf_Addr CU_base_address = 0;       /* CU Base address */
-Dwarf_Addr CU_low_address = 0;        /* CU low address */
-Dwarf_Addr CU_high_address = 0;       /* CU High address */
-
-const char *search_any_text = 0;
-const char *search_match_text = 0;
-const char *search_regex_text = 0;
-int search_occurrences = 0;
-
-#ifdef HAVE_REGEX
-/* -S option: the compiled_regex */
-regex_t search_re;
-#endif
 
 /* Functions used to manage the unique errors table */
 static void allocate_unique_errors_table(void);
@@ -504,7 +416,7 @@ main(int argc, char *argv[])
 
     f = open_a_file(file_name);
     if (f == -1) {
-        fprintf(stderr, "%s ERROR:  can't open %s\n", program_name,
+        fprintf(stderr, "%s ERROR:  can't open %s\n", glflags.program_name,
             file_name);
         return (FAILED);
     }
@@ -513,7 +425,7 @@ main(int argc, char *argv[])
     arf = elf_begin(f, cmd, (Elf *) 0);
     if (!arf) {
         fprintf(stderr, "%s ERROR:  Unable to obtain ELF descriptor for %s\n",
-            program_name,
+            glflags.program_name,
             file_name);
         return (FAILED);
     }
@@ -528,7 +440,7 @@ main(int argc, char *argv[])
         ftied = open_a_file(tied_file_name);
         if (ftied == -1) {
             fprintf(stderr, "%s ERROR:  can't open tied file %s\n",
-                program_name,
+                glflags.program_name,
                 tied_file_name);
             return (FAILED);
         }
@@ -536,7 +448,7 @@ main(int argc, char *argv[])
         if (elf_kind(elftied) == ELF_K_AR) {
             fprintf(stderr, "%s ERROR:  tied file  %s is "
                 "an archive. Not allowed. Giving up.\n",
-                program_name,
+                glflags.program_name,
                 tied_file_name);
             return (FAILED);
         }
@@ -579,8 +491,8 @@ main(int argc, char *argv[])
             elf_end(elf);
             continue;
         }
-        memset(&section_high_offsets_global,0,
-            sizeof(section_high_offsets_global));
+        memset(glflags.section_high_offsets_global,0,
+            sizeof(glflags.section_high_offsets_global));
             /*  If we are checking .debug_line, .debug_ranges, .debug_aranges,
             or .debug_loc build the tables containing
             the pairs LowPC and HighPC. It is safer  (and not
@@ -591,9 +503,9 @@ main(int argc, char *argv[])
             glflags.gf_check_locations ||
             glflags.gf_do_check_dwarf ||
             glflags.gf_check_self_references) {
-            pRangesInfo = AllocateBucketGroup(KIND_RANGES_INFO);
-            pLinkonceInfo = AllocateBucketGroup(KIND_SECTIONS_INFO);
-            pVisitedInfo = AllocateBucketGroup(KIND_VISITED_INFO);
+            glflags.pRangesInfo = AllocateBucketGroup(KIND_RANGES_INFO);
+            glflags.pLinkonceInfo = AllocateBucketGroup(KIND_SECTIONS_INFO);
+            glflags.pVisitedInfo = AllocateBucketGroup(KIND_VISITED_INFO);
         }
 
         /* Create the unique error table */
@@ -611,17 +523,17 @@ main(int argc, char *argv[])
         /* Now cleanup object-specific allocations. */
         /* Trivial malloc space cleanup. */
         clean_up_syms_malloc_data();
-        if (pRangesInfo) {
-            ReleaseBucketGroup(pRangesInfo);
-            pRangesInfo = 0;
+        if (glflags.pRangesInfo) {
+            ReleaseBucketGroup(glflags.pRangesInfo);
+            glflags.pRangesInfo = 0;
         }
-        if (pLinkonceInfo) {
-            ReleaseBucketGroup(pLinkonceInfo);
-            pLinkonceInfo = 0;
+        if (glflags.pLinkonceInfo) {
+            ReleaseBucketGroup(glflags.pLinkonceInfo);
+            glflags.pLinkonceInfo = 0;
         }
-        if (pVisitedInfo) {
-            ReleaseBucketGroup(pVisitedInfo);
-            pVisitedInfo = 0;
+        if (glflags.pVisitedInfo) {
+            ReleaseBucketGroup(glflags.pVisitedInfo);
+            glflags.pVisitedInfo = 0;
         }
         /* Release range array to be used by all CUs */
         if (glflags.gf_check_ranges) {
@@ -646,8 +558,8 @@ main(int argc, char *argv[])
     /*  These cleanups only necessary once all
         objects processed. */
 #ifdef HAVE_REGEX
-    if (search_regex_text) {
-        regfree(&search_re);
+    if (glflags.search_regex_text) {
+        regfree(glflags.search_re);
     }
 #endif
     makename_destructor();
@@ -960,23 +872,23 @@ print_search_results(void)
 {
     const char *search_type = 0;
     const char *search_text = 0;
-    if (search_any_text) {
+    if (glflags.search_any_text) {
         search_type = "any";
-        search_text = search_any_text;
+        search_text = glflags.search_any_text;
     } else {
-        if (search_match_text) {
+        if (glflags.search_match_text) {
             search_type = "match";
-            search_text = search_match_text;
+            search_text = glflags.search_match_text;
         } else {
             search_type = "regex";
-            search_text = search_regex_text;
+            search_text = glflags.search_regex_text;
         }
     }
     fflush(stdout);
     fflush(stderr);
     printf("\nSearch type      : '%s'\n",search_type);
     printf("Pattern searched : '%s'\n",search_text);
-    printf("Occurrences Found: %d\n",search_occurrences);
+    printf("Occurrences Found: %d\n",glflags.search_occurrences);
     fflush(stdout);
 }
 
@@ -1162,23 +1074,23 @@ static void
 set_global_section_sizes(Dwarf_Debug dbg)
 {
     dwarf_get_section_max_offsets_c(dbg,
-        &section_high_offsets_global.debug_info_size,
-        &section_high_offsets_global.debug_abbrev_size,
-        &section_high_offsets_global.debug_line_size,
-        &section_high_offsets_global.debug_loc_size,
-        &section_high_offsets_global.debug_aranges_size,
-        &section_high_offsets_global.debug_macinfo_size,
-        &section_high_offsets_global.debug_pubnames_size,
-        &section_high_offsets_global.debug_str_size,
-        &section_high_offsets_global.debug_frame_size,
-        &section_high_offsets_global.debug_ranges_size,
-        &section_high_offsets_global.debug_pubtypes_size,
-        &section_high_offsets_global.debug_types_size,
-        &section_high_offsets_global.debug_macro_size,
-        &section_high_offsets_global.debug_str_offsets_size,
-        &section_high_offsets_global.debug_sup_size,
-        &section_high_offsets_global.debug_cu_index_size,
-        &section_high_offsets_global.debug_tu_index_size);
+        &glflags.section_high_offsets_global->debug_info_size,
+        &glflags.section_high_offsets_global->debug_abbrev_size,
+        &glflags.section_high_offsets_global->debug_line_size,
+        &glflags.section_high_offsets_global->debug_loc_size,
+        &glflags.section_high_offsets_global->debug_aranges_size,
+        &glflags.section_high_offsets_global->debug_macinfo_size,
+        &glflags.section_high_offsets_global->debug_pubnames_size,
+        &glflags.section_high_offsets_global->debug_str_size,
+        &glflags.section_high_offsets_global->debug_frame_size,
+        &glflags.section_high_offsets_global->debug_ranges_size,
+        &glflags.section_high_offsets_global->debug_pubtypes_size,
+        &glflags.section_high_offsets_global->debug_types_size,
+        &glflags.section_high_offsets_global->debug_macro_size,
+        &glflags.section_high_offsets_global->debug_str_offsets_size,
+        &glflags.section_high_offsets_global->debug_sup_size,
+        &glflags.section_high_offsets_global->debug_cu_index_size,
+        &glflags.section_high_offsets_global->debug_tu_index_size);
 }
 
 /*
@@ -1273,8 +1185,8 @@ process_one_file(Elf * elf,Elf *elftied,
         }
 
         /* Set limits for Ranges Information */
-        if (pRangesInfo) {
-            SetLimitsBucketGroup(pRangesInfo,lower,upper);
+        if (glflags.pRangesInfo) {
+            SetLimitsBucketGroup(glflags.pRangesInfo,lower,upper);
         }
 
         /* Build section information */
@@ -1312,14 +1224,14 @@ process_one_file(Elf * elf,Elf *elftied,
                 /* Length of the fake item is zero. */
                 print_macro_statistics("DWARF5 .debug_macro",
                     &macro_check_tree,
-                    section_high_offsets_global.debug_macro_size);
+                    glflags.section_high_offsets_global->debug_macro_size);
             }
             if(macinfo_check_tree) {
                 /* Fake item representing end of section. */
                 /* Length of the fake item is zero. */
                 print_macro_statistics("DWARF2 .debug_macinfo",
                     &macinfo_check_tree,
-                    section_high_offsets_global.debug_macinfo_size);
+                    glflags.section_high_offsets_global->debug_macinfo_size);
             }
         }
         clear_macro_statistics(&macro_check_tree);
@@ -1702,7 +1614,7 @@ process_args(int argc, char *argv[])
         {0,0,0,0}
     };
 
-    program_name = special_program_name(argv[0]);
+    glflags.program_name = special_program_name(argv[0]);
     suppress_check_dwarf();
     if (argv[1] != NULL && argv[1][0] != '-') {
         do_all();
@@ -1722,20 +1634,20 @@ process_args(int argc, char *argv[])
         {
             int nTraceLevel =  atoi(dwoptarg);
             if (nTraceLevel >= 0 && nTraceLevel <= MAX_TRACE_LEVEL) {
-                nTrace[nTraceLevel] = 1;
+                glflags.nTrace[nTraceLevel] = 1;
             }
             /* Display dwarfdump debug options. */
             if (dump_options) {
-                print_usage_message(program_name,usage_debug_text);
+                print_usage_message(glflags.program_name,usage_debug_text);
                 exit(OKAY);
             }
             break;
         }
         case 'h':
-            print_usage_message(program_name,usage_text);
+            print_usage_message(glflags.program_name,usage_text);
             exit(OKAY);
         case 'M':
-            show_form_used =  TRUE;
+            glflags.show_form_used =  TRUE;
             break;
         case 'x':               /* Select which -x option, get value. */
             {
@@ -1863,7 +1775,7 @@ process_args(int argc, char *argv[])
             {
                 int break_val =  atoi(dwoptarg);
                 if (break_val > 0) {
-                    break_after_n_units = break_val;
+                    glflags.break_after_n_units = break_val;
                 }
             }
             break;
@@ -1964,20 +1876,22 @@ process_args(int argc, char *argv[])
                 }
                 /* -S match=<text>*/
                 if (strncmp(dwoptarg,"match=",6) == 0) {
-                    search_match_text = makename(&dwoptarg[6]);
-                    tempstr = remove_quotes_pair(search_match_text);
-                    search_match_text = do_uri_translation(tempstr,"-S match=");
-                    if (strlen(search_match_text) > 0) {
+                    glflags.search_match_text = makename(&dwoptarg[6]);
+                    tempstr = remove_quotes_pair(glflags.search_match_text);
+                    glflags.search_match_text =
+                      do_uri_translation(tempstr, "-S match=");
+                    if (strlen(glflags.search_match_text) > 0) {
                         serr = FALSE;
                     }
                 }
                 else {
                     /* -S any=<text>*/
                     if (strncmp(dwoptarg,"any=",4) == 0) {
-                        search_any_text = makename(&dwoptarg[4]);
-                        tempstr = remove_quotes_pair(search_any_text);
-                        search_any_text = do_uri_translation(tempstr,"-S any=");
-                        if (strlen(search_any_text) > 0) {
+                        glflags.search_any_text = makename(&dwoptarg[4]);
+                        tempstr = remove_quotes_pair(glflags.search_any_text);
+                        glflags.search_any_text =
+                          do_uri_translation(tempstr,"-S any=");
+                        if (strlen(glflags.search_any_text) > 0) {
                             serr = FALSE;
                         }
                     }
@@ -1985,17 +1899,19 @@ process_args(int argc, char *argv[])
                     else {
                         /* -S regex=<regular expression>*/
                         if (strncmp(dwoptarg,"regex=",6) == 0) {
-                            search_regex_text = makename(&dwoptarg[6]);
+                            glflags.search_regex_text = makename(&dwoptarg[6]);
                             tempstr = remove_quotes_pair(
-                                search_regex_text);
-                            search_regex_text = do_uri_translation(tempstr,
+                                glflags.search_regex_text);
+                            glflags.search_regex_text =
+                              do_uri_translation(tempstr,
                                 "-S regex=");
-                            if (strlen(search_regex_text) > 0) {
-                                if (regcomp(&search_re,search_regex_text,
+                            if (strlen(glflags.search_regex_text) > 0) {
+                                if (regcomp(glflags.search_re,
+                                    glflags.search_regex_text,
                                     REG_EXTENDED)) {
                                     fprintf(stderr,
                                         "regcomp: unable to compile %s\n",
-                                        search_regex_text);
+                                        glflags.search_regex_text);
                                 }
                                 else {
                                     serr = FALSE;
@@ -2006,7 +1922,8 @@ process_args(int argc, char *argv[])
 #endif /* HAVE_REGEX */
                 }
                 if (serr) {
-                    fprintf(stderr,"-S any=<text> or -S match=<text> or -S regex=<text>\n");
+                    fprintf(stderr,"-S any=<text> or -S match=<text> or"
+                                   " -S regex=<text>\n");
                     fprintf(stderr, "is allowed, not -S %s\n",dwoptarg);
                     usage_error = TRUE;
                 }
@@ -2018,7 +1935,7 @@ process_args(int argc, char *argv[])
             do_all();
             break;
         case 'v':
-            verbose++;
+            glflags.verbose++;
             break;
         case 'V':
             /* Display dwarfdump compilation date and time */
@@ -2030,7 +1947,7 @@ process_args(int argc, char *argv[])
             /*  This is sort of useless unless printing,
                 but harmless, so we do not insist we
                 are printing with suppress_check_dwarf(). */
-            dense = TRUE;
+            glflags.dense = TRUE;
             break;
         case 'D':
             /* Do not emit offset in output */
@@ -2038,7 +1955,7 @@ process_args(int argc, char *argv[])
             break;
         case 'e':
             suppress_check_dwarf();
-            ellipsis = TRUE;
+            glflags.ellipsis = TRUE;
             break;
         case 'E':
             /* Object Header information (but maybe really print) */
@@ -2448,13 +2365,13 @@ process_args(int argc, char *argv[])
         }
     }
     if (usage_error ) {
-        printf("%s option error.\n",program_name);
-        printf("To see the options list: %s -h\n",program_name);
+        printf("%s option error.\n",glflags.program_name);
+        printf("To see the options list: %s -h\n",glflags.program_name);
         exit(FAILED);
     }
     if (dwoptind != (argc - 1)) {
-        printf("No object file name provided to %s\n",program_name);
-        printf("To see the options list: %s -h\n",program_name);
+        printf("No object file name provided to %s\n",glflags.program_name);
+        printf("To see the options list: %s -h\n",glflags.program_name);
         exit(FAILED);
     }
     /*  FIXME: it seems silly to be printing section names
@@ -2485,7 +2402,7 @@ process_args(int argc, char *argv[])
 
     if (glflags.gf_do_check_dwarf) {
         /* Reduce verbosity when checking (checking means checking-only). */
-        verbose = 1;
+        glflags.verbose = 1;
     }
     return do_uri_translation(argv[dwoptind],"file-to-process");
 }
@@ -2509,18 +2426,18 @@ print_error_maybe_continue(UNUSEDARG Dwarf_Debug dbg,
             the dwarf_errno() value to show the number. */
         if (do_continue) {
             printf( "%s ERROR:  %s:  %s. Attempting to continue.\n",
-                program_name, msg, errmsg);
+                glflags.program_name, msg, errmsg);
         } else {
             printf( "%s ERROR:  %s:  %s\n",
-                program_name, msg, errmsg);
+                glflags.program_name, msg, errmsg);
         }
     } else if (dwarf_code == DW_DLV_NO_ENTRY) {
-        printf("%s NO ENTRY:  %s: \n", program_name, msg);
+        printf("%s NO ENTRY:  %s: \n", glflags.program_name, msg);
     } else if (dwarf_code == DW_DLV_OK) {
-        printf("%s:  %s \n", program_name, msg);
+        printf("%s:  %s \n", glflags.program_name, msg);
     } else {
         printf("%s InternalError:  %s:  code %d\n",
-            program_name, msg, dwarf_code);
+            glflags.program_name, msg, dwarf_code);
     }
 
     /* Display compile unit name */
@@ -2805,7 +2722,7 @@ build_linkonce_info(Dwarf_Debug dbg)
                     *linkonce_names[nIndex])) {
 
                     /* Insert only linkonce sections */
-                    AddEntryIntoBucketGroup(pLinkonceInfo,
+                    AddEntryIntoBucketGroup(glflags.pLinkonceInfo,
                         section_index,
                         section_addr,section_addr,
                         section_addr + section_size,
@@ -2818,7 +2735,7 @@ build_linkonce_info(Dwarf_Debug dbg)
     }
 
     if (dump_linkonce_info) {
-        PrintBucketGroup(pLinkonceInfo,TRUE);
+        PrintBucketGroup(glflags.pLinkonceInfo,TRUE);
     }
 }
 
@@ -2830,18 +2747,18 @@ tag_specific_checks_setup(Dwarf_Half val,int die_indent_level)
     switch (val) {
     case DW_TAG_compile_unit:
         /* To help getting the compile unit name */
-        seen_CU = TRUE;
+        glflags.seen_CU = TRUE;
         /*  If we are checking line information, build
             the table containing the pairs LowPC and HighPC */
         if (glflags.gf_check_decl_file ||
             glflags.gf_check_ranges ||
             glflags.gf_check_locations) {
-            ResetBucketGroup(pRangesInfo);
+            ResetBucketGroup(glflags.pRangesInfo);
         }
         /*  The following flag indicate that only low_pc and high_pc
             values found in DW_TAG_subprograms are going to be considered when
             building the address table used to check ranges, lines, etc */
-        need_PU_valid_code = TRUE;
+        glflags.need_PU_valid_code = TRUE;
         break;
 
     case DW_TAG_subprogram:
@@ -2850,11 +2767,11 @@ tag_specific_checks_setup(Dwarf_Half val,int die_indent_level)
             /*  A DW_TAG_subprogram can be nested, when is used to
                 declare a member function for a local class; process the DIE
                 only if we are at level zero in the DIEs tree */
-            seen_PU = TRUE;
-            seen_PU_base_address = FALSE;
-            seen_PU_high_address = FALSE;
-            PU_name[0] = 0;
-            need_PU_valid_code = TRUE;
+            glflags.seen_PU = TRUE;
+            glflags.seen_PU_base_address = FALSE;
+            glflags.seen_PU_high_address = FALSE;
+            glflags.PU_name[0] = 0;
+            glflags.need_PU_valid_code = TRUE;
         }
         break;
     }
@@ -2899,7 +2816,7 @@ update_compiler_target(const char *producer_name)
     Dwarf_Bool cFound = FALSE;
     int index = 0;
 
-    safe_strcpy(CU_producer,sizeof(CU_producer),producer_name,
+    safe_strcpy(glflags.CU_producer,sizeof(glflags.CU_producer),producer_name,
         strlen(producer_name));
     current_cu_is_checked_compiler = FALSE;
 
@@ -2910,7 +2827,8 @@ update_compiler_target(const char *producer_name)
     /* Find a compiler version to check */
     if (compilers_targeted_count) {
         for (index = 1; index <= compilers_targeted_count; ++index) {
-            if (is_strstrnocase(CU_producer,compilers_targeted[index].name)) {
+            if (is_strstrnocase(glflags.CU_producer,
+                compilers_targeted[index].name)) {
                 compilers_targeted[index].verified = TRUE;
                 current_cu_is_checked_compiler = TRUE;
                 break;
@@ -2918,8 +2836,10 @@ update_compiler_target(const char *producer_name)
         }
     } else {
         /* Internally the strings do not include quotes */
-        boolean snc_compiler = hasprefix(CU_producer,"SN")? TRUE : FALSE;
-        boolean gcc_compiler = hasprefix(CU_producer,"GNU")?TRUE : FALSE;
+        boolean snc_compiler = 
+            hasprefix(glflags.CU_producer,"SN") ? TRUE : FALSE;
+        boolean gcc_compiler = 
+            hasprefix(glflags.CU_producer,"GNU") ? TRUE : FALSE;
         current_cu_is_checked_compiler = glflags.gf_check_all_compilers ||
             (snc_compiler && glflags.gf_check_snc_compiler) ||
             (gcc_compiler && glflags.gf_check_gcc_compiler) ;
@@ -2929,7 +2849,7 @@ update_compiler_target(const char *producer_name)
     for (index = 1; index <= compilers_detected_count; ++index) {
         if (
 #if _WIN32
-            !stricmp(compilers_detected[index].name,CU_producer)
+            !stricmp(compilers_detected[index].name,glflags.CU_producer)
 #else
             !strcmp(compilers_detected[index].name,CU_producer)
 #endif /* _WIN32 */
@@ -2944,7 +2864,7 @@ update_compiler_target(const char *producer_name)
         /* Record a new detected compiler name. */
         if (compilers_detected_count + 1 < COMPILER_TABLE_MAX) {
             Compiler *pCompiler = 0;
-            char *cmp = makename(CU_producer);
+            char *cmp = makename(glflags.CU_producer);
             /* Set current compiler index, first compiler at position [1] */
             current_compiler = ++compilers_detected_count;
             pCompiler = &compilers_detected[current_compiler];
@@ -2998,29 +2918,30 @@ static const char * default_cu_producer = "<unknown>";
 void
 reset_overall_CU_error_data(void)
 {
-   strcpy(CU_name,default_cu_producer);
-   strcpy(CU_producer,default_cu_producer);
-   DIE_offset = 0;
-   DIE_overall_offset = 0;
-   DIE_CU_offset = 0;
-   DIE_CU_overall_offset = 0;
-   CU_base_address = 0;
-   CU_high_address = 0;
-   CU_low_address = 0;
+   strcpy(glflags.CU_name,default_cu_producer);
+   strcpy(glflags.CU_producer,default_cu_producer);
+   glflags.DIE_offset = 0;
+   glflags.DIE_overall_offset = 0;
+   glflags.DIE_CU_offset = 0;
+   glflags.DIE_CU_overall_offset = 0;
+   glflags.CU_base_address = 0;
+   glflags.CU_high_address = 0;
+   glflags.CU_low_address = 0;
 }
 
 
 static boolean
 cu_data_is_set(void)
 {
-    if (strcmp(CU_name,default_cu_producer) ||
-        strcmp(CU_producer,default_cu_producer)) {
+    if (strcmp(glflags.CU_name,default_cu_producer) ||
+        strcmp(glflags.CU_producer,default_cu_producer)) {
         return 1;
     }
-    if (DIE_offset  || DIE_overall_offset) {
+    if (glflags.DIE_offset || glflags.DIE_overall_offset) {
         return 1;
     }
-    if (CU_base_address || CU_low_address || CU_high_address) {
+    if (glflags.CU_base_address || glflags.CU_low_address ||
+        glflags.CU_high_address) {
         return 1;
     }
     return 0;
@@ -3030,47 +2951,47 @@ cu_data_is_set(void)
     use the local DIE for the offsets. */
 void PRINT_CU_INFO(void)
 {
-    Dwarf_Unsigned loff = DIE_offset;
-    Dwarf_Unsigned goff = DIE_overall_offset;
+    Dwarf_Unsigned loff = glflags.DIE_offset;
+    Dwarf_Unsigned goff = glflags.DIE_overall_offset;
     char lbuf[50];
     char hbuf[50];
 
-    if (current_section_id == DEBUG_LINE ||
-        current_section_id == DEBUG_FRAME ||
-        current_section_id == DEBUG_FRAME_EH_GNU ||
-        current_section_id == DEBUG_ARANGES ||
-        current_section_id == DEBUG_MACRO ||
-        current_section_id == DEBUG_MACINFO ) {
+    if (glflags.current_section_id == DEBUG_LINE ||
+        glflags.current_section_id == DEBUG_FRAME ||
+        glflags.current_section_id == DEBUG_FRAME_EH_GNU ||
+        glflags.current_section_id == DEBUG_ARANGES ||
+        glflags.current_section_id == DEBUG_MACRO ||
+        glflags.current_section_id == DEBUG_MACINFO ) {
         /*  These sections involve the CU die, so
             use the CU offsets.
             The DEBUG_MAC* cases are logical but
             not yet useful (Dec 2015).
             In other cases the local DIE offset makes
             more sense. */
-        loff = DIE_CU_offset;
-        goff = DIE_CU_overall_offset;
+        loff = glflags.DIE_CU_offset;
+        goff = glflags.DIE_CU_overall_offset;
     }
     if (!cu_data_is_set()) {
         return;
     }
     printf("\n");
-    printf("CU Name = %s\n",sanitized(CU_name));
-    printf("CU Producer = %s\n",sanitized(CU_producer));
+    printf("CU Name = %s\n",sanitized(glflags.CU_name));
+    printf("CU Producer = %s\n",sanitized(glflags.CU_producer));
     printf("DIE OFF = 0x%" DW_PR_XZEROS DW_PR_DUx
         " GOFF = 0x%" DW_PR_XZEROS DW_PR_DUx,
         loff,goff);
     /* We used to print leftover and incorrect values at times. */
-    if ( need_CU_high_address) {
+    if (glflags.need_CU_high_address) {
         strcpy(hbuf,"unknown   ");
     } else {
         snprintf(hbuf,sizeof(hbuf),
-            "0x%"  DW_PR_XZEROS DW_PR_DUx,CU_high_address);
+            "0x%"  DW_PR_XZEROS DW_PR_DUx,glflags.CU_high_address);
     }
-    if ( need_CU_base_address) {
+    if (glflags.need_CU_base_address) {
         strcpy(lbuf,"unknown   ");
     } else {
         snprintf(lbuf,sizeof(lbuf),
-            "0x%"  DW_PR_XZEROS DW_PR_DUx,CU_low_address);
+            "0x%"  DW_PR_XZEROS DW_PR_DUx,glflags.CU_low_address);
     }
 #if 0 /* Old format print */
     printf(", Low PC = 0x%08" DW_PR_DUx ", High PC = 0x%08" DW_PR_DUx ,

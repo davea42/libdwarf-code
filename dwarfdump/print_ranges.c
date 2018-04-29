@@ -50,7 +50,7 @@ print_ranges(Dwarf_Debug dbg)
     const char *sec_name = 0;
     Dwarf_Error pr_err = 0;
 
-    current_section_id = DEBUG_RANGES;
+    glflags.current_section_id = DEBUG_RANGES;
     if (!glflags.gf_do_print_dwarf) {
         return;
     }
@@ -62,8 +62,8 @@ print_ranges(Dwarf_Debug dbg)
 
     /*  Turn off dense, we do not want  print_ranges_list_to_extra
         to use dense form here. */
-    wasdense = dense;
-    dense = 0;
+    wasdense = glflags.dense;
+    glflags.dense = 0;
     for (;;) {
         Dwarf_Ranges *rangeset = 0;
         Dwarf_Signed rangecount = 0;
@@ -96,7 +96,7 @@ print_ranges(Dwarf_Debug dbg)
         }
         off += bytecount;
     }
-    dense = wasdense;
+    glflags.dense = wasdense;
 }
 
 /*  Extracted this from print_range_attribute() to isolate the check of
@@ -114,7 +114,7 @@ check_ranges_list(Dwarf_Debug dbg,
     Dwarf_Unsigned off = original_off;
 
     Dwarf_Signed index = 0;
-    Dwarf_Addr base_address = CU_base_address;
+    Dwarf_Addr base_address = glflags.CU_base_address;
     Dwarf_Addr lopc = 0;
     Dwarf_Addr hipc = 0;
     Dwarf_Bool bError = FALSE;
@@ -165,15 +165,15 @@ printf("**** END ****\n");
             /*  Check the low_pc and high_pc
                 are within a valid range in
                 the .text section */
-            if (IsValidInBucketGroup(pRangesInfo,lopc) &&
-                IsValidInBucketGroup(pRangesInfo,hipc)) {
+            if (IsValidInBucketGroup(glflags.pRangesInfo,lopc) &&
+                IsValidInBucketGroup(glflags.pRangesInfo,hipc)) {
                 /* Valid values; do nothing */
             } else {
                 /*  At this point may be we
                     are dealing with a
                     linkonce symbol */
-                if (IsValidInLinkonce(pLinkonceInfo,
-                    PU_name,lopc,hipc)) {
+                if (IsValidInLinkonce(glflags.pLinkonceInfo,
+                    glflags.PU_name,lopc,hipc)) {
                     /* Valid values; do nothing */
                 } else {
                     char errbuf[100];
@@ -186,7 +186,8 @@ printf("**** END ****\n");
                     if (glflags.gf_check_verbose_mode && do_print) {
                         /*  Update DIEs offset just for printing */
                         int dioff_res = dwarf_die_offsets(cu_die,
-                            &DIE_overall_offset,&DIE_offset,&rlerr);
+                            &glflags.DIE_overall_offset,
+                            &glflags.DIE_offset,&rlerr);
                         if (dioff_res != DW_DLV_OK) {
                             print_error(dbg, "dwarf_die_offsets",dioff_res,
                                 rlerr);
@@ -322,7 +323,7 @@ check_range_array_info(Dwarf_Debug dbg)
 
         /*  In case of errors, the correct DIE offset should be
             displayed. At this point we are at the end of the PU */
-        Dwarf_Off DIE_overall_offset_bak = DIE_overall_offset;
+        Dwarf_Off DIE_overall_offset_bak = glflags.DIE_overall_offset;
 
         for (index = 0; index < range_array_count; ++index) {
             Dwarf_Ranges *rangeset = 0;
@@ -349,6 +350,6 @@ check_range_array_info(Dwarf_Debug dbg)
         reset_range_array_info();
 
         /*  Point back to the end of the PU */
-        DIE_overall_offset = DIE_overall_offset_bak;
+        glflags.DIE_overall_offset = DIE_overall_offset_bak;
     }
 }

@@ -88,7 +88,7 @@ ellipname(int res, int val_in, const char *v,const char *ty,int printonerr)
         n = makename(buf);
         return n;
     }
-    if (ellipsis) {
+    if (glflags.ellipsis) {
         return skipunder(v);
     }
     return v;

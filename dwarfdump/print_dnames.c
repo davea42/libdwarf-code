@@ -36,7 +36,7 @@ print_debug_names(Dwarf_Debug dbg)
         printf("dwarfdump giving up. exit.\n");
         exit(1);
     }
-    current_section_id = DEBUG_NAMES;
+    glflags.current_section_id = DEBUG_NAMES;
 
     /* Do nothing if not printing. */
     if (!glflags.gf_do_print_dwarf) {

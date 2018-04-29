@@ -44,7 +44,7 @@ print_strings(Dwarf_Debug dbg)
     const char *sec_name = 0;
     Dwarf_Error err = 0;
 
-    current_section_id = DEBUG_STR;
+    glflags.current_section_id = DEBUG_STR;
     sres = dwarf_get_string_section_name(dbg,
         &sec_name,&err);
     if (sres == DW_DLV_ERROR) {

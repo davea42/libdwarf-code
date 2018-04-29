@@ -151,7 +151,7 @@ print_pubname_style_entry(Dwarf_Debug dbg,
     }
 
     /* Display offsets */
-    if (glflags.gf_display_offsets && verbose) {
+    if (glflags.gf_display_offsets && glflags.verbose) {
         printf(" cuhdr 0x%" DW_PR_XZEROS DW_PR_DUx , global_cu_offset);
     }
 
@@ -186,7 +186,7 @@ print_pubnames(Dwarf_Debug dbg)
     char *name = 0;
     int res = 0;
 
-    current_section_id = DEBUG_PUBNAMES;
+    glflags.current_section_id = DEBUG_PUBNAMES;
     if (glflags.gf_do_print_dwarf) {
         /*  No need to get the real section name, this
             section not used in modern compilers. */

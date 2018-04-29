@@ -27,6 +27,12 @@
 
 #include "globals.h"
 
+#ifdef HAVE_REGEX
+regex_t _search_re;
+#endif
+
+struct section_high_offsets_s _section_high_offsets_global;
+
 void
 init_global_flags(void)
 {
@@ -151,4 +157,87 @@ init_global_flags(void)
     glflags.gf_cu_name_flag         = FALSE;
     glflags.gf_show_global_offsets  = FALSE;
     glflags.gf_display_offsets      = TRUE;
+
+    /*  Base address has a special meaning in DWARF4 relative to address ranges. */
+    glflags.seen_PU = FALSE;              /* Detected a PU */
+    glflags.seen_CU = FALSE;              /* Detected a CU */
+    glflags.need_CU_name = TRUE;          /* Need CU name */
+    glflags.need_CU_base_address = TRUE;  /* Need CU Base address */
+    glflags.need_CU_high_address = TRUE;  /* Need CU High address */
+    glflags.need_PU_valid_code = TRUE;    /* Need PU valid code */
+
+    glflags.seen_PU_base_address = FALSE; /* Detected a Base address for PU */
+    glflags.seen_PU_high_address = FALSE; /* Detected a High address for PU */
+    glflags.PU_base_address = 0;       /* PU Base address */
+    glflags.PU_high_address = 0;       /* PU High address */
+
+    glflags.DIE_offset = 0;            /* DIE offset in compile unit */
+    glflags.DIE_overall_offset = 0;    /* DIE offset in .debug_info */
+
+    /*  These globals  enable better error reporting. */
+    glflags.DIE_CU_offset = 0;         /* CU DIE offset in compile unit */
+    glflags.DIE_CU_overall_offset = 0; /* CU DIE offset in .debug_info */
+    glflags.current_section_id = 0;           /* Section being process */
+
+    /*  Base Address is needed for range lists and must come from a CU.
+        Low address is for information and can come from a function
+        or something in the CU. */
+    glflags.CU_base_address = 0;       /* CU Base address */
+    glflags.CU_low_address = 0;        /* CU low address */
+    glflags.CU_high_address = 0;       /* CU High address */
+
+    glflags.fde_offset_for_cu_low = DW_DLV_BADOFFSET;
+    glflags.fde_offset_for_cu_high = DW_DLV_BADOFFSET;
+
+    glflags.program_name = NULL;
+
+    /* Able to generate report on search */
+    glflags.search_any_text = 0;
+    glflags.search_match_text = 0;
+    glflags.search_regex_text = 0;
+    glflags.search_occurrences = 0;
+
+#if !defined(USER_TOOL)
+#ifdef HAVE_REGEX
+    glflags.search_re = &_search_re;
+#endif
+#endif /* USER_TOOL */
+
+    /*  Start verbose at zero. verbose can
+        be incremented with -v but not decremented. */
+    glflags.verbose = 0;
+
+    glflags.dense = FALSE;
+    glflags.ellipsis = FALSE;
+    glflags.show_form_used = FALSE;
+
+    /* break_after_n_units is mainly for testing.
+       It enables easy limiting of output size/running time
+       when one wants the output limited.
+       For example,
+        -H 2
+       limits the -i output to 2 compilation units and
+       the -f or -F output to 2 FDEs and 2 CIEs.
+    */
+    glflags.break_after_n_units = INT_MAX;
+
+    glflags.section_high_offsets_global = &_section_high_offsets_global;
+
+#if !defined(USER_TOOL)
+    glflags.pRangesInfo = NULL;
+    glflags.pLinkonceInfo = NULL;
+    glflags.pVisitedInfo = NULL;
+#endif /* USER_TOOL */
+
+    /* These names make diagnostic messages more complete, the
+       fixed length is safe, though ultra long names will get
+       truncated. */
+    glflags.PU_name[0] = 0;
+    glflags.CU_name[0] = 0;
+    glflags.CU_producer[0] = 0;
+
+    /*  Options to enable debug tracing. */
+    for (int i = 0; i <= MAX_TRACE_LEVEL; ++i) {
+       glflags.nTrace[i] = 0;
+    }
 }

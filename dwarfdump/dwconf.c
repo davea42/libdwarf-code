@@ -40,8 +40,6 @@
 #include "dwconf.h"
 #include "makename.h"
 
-extern int verbose;
-
 /* The nesting level is arbitrary,  2 should suffice.
    But at least this prevents an infinite loop.
 */
@@ -190,7 +188,7 @@ find_conf_file_and_read_config_inner(const char *named_file,
             "(add options -v -v to see what file names tried)\n");
         return errcount;
     }
-    if (verbose > 1) {
+    if (glflags.verbose > 1) {
         printf("dwarfdump using configuration file %s\n", name_used);
     }
     conf_internal->conf_name_used = name_used;
@@ -360,7 +358,7 @@ find_a_file(const char *named_file, char **defaults, const char ** name_used)
 
     if (lname && (strlen(lname) > 0)) {
         /* Name given, just assume it is fully correct, try no other. */
-        if (verbose > 1) {
+        if (glflags.verbose > 1) {
             printf("dwarfdump looking for configuration as %s\n",
                 lname);
         }
@@ -410,7 +408,7 @@ find_a_file(const char *named_file, char **defaults, const char ** name_used)
             }
         }
 #endif /* _WIN32 */
-        if (verbose > 1) {
+        if (glflags.verbose > 1) {
             printf("dwarfdump looking for configuration as %s\n",
                 lname);
         }
