@@ -108,6 +108,9 @@ typedef unsigned long long  __uint64_t;
 #include "defined_types.h"
 #include "glflags.h"
 
+struct dwconf_s;
+struct esb_s;
+
 /* Used to try to avoid leakage when we hide errors. */
 #define DROP_ERROR_INSTANCE(d,r,e)       \
     if (r == DW_DLV_ERROR) {             \

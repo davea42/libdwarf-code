@@ -197,11 +197,9 @@ init_global_flags(void)
     glflags.search_regex_text = 0;
     glflags.search_occurrences = 0;
 
-#if !defined(USER_TOOL)
 #ifdef HAVE_REGEX
     glflags.search_re = &_search_re;
 #endif
-#endif /* USER_TOOL */
 
     /*  Start verbose at zero. verbose can
         be incremented with -v but not decremented. */
@@ -223,11 +221,9 @@ init_global_flags(void)
 
     glflags.section_high_offsets_global = &_section_high_offsets_global;
 
-#if !defined(USER_TOOL)
     glflags.pRangesInfo = NULL;
     glflags.pLinkonceInfo = NULL;
     glflags.pVisitedInfo = NULL;
-#endif /* USER_TOOL */
 
     /* These names make diagnostic messages more complete, the
        fixed length is safe, though ultra long names will get

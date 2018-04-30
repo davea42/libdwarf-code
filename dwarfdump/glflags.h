@@ -250,11 +250,9 @@ struct glflags_s {
     int search_occurrences;
 
     /* -S option: the compiled_regex */
-#if !defined(USER_TOOL)
 #ifdef HAVE_REGEX
     regex_t *search_re;
 #endif
-#endif /* USER_TOOL */
 
     /*  Start verbose at zero. verbose can
         be incremented with -v but not decremented. */
@@ -276,7 +274,6 @@ struct glflags_s {
 
     struct section_high_offsets_s *section_high_offsets_global;
 
-#if !defined(USER_TOOL)
     /*  pRangesInfo records the DW_AT_high_pc and DW_AT_low_pc
         and is used to check that line range info falls inside
         the known valid ranges.   The data is per CU, and is
@@ -301,7 +298,6 @@ struct glflags_s {
         Entries are added and deleted as they are visited in
         a depth-first traversal.  */
     Bucket_Group *pVisitedInfo;
-#endif /* USER_TOOL */
 
     /*  Compilation Unit information for improved error messages.
         If the strings are too short we just truncate so fixed length
