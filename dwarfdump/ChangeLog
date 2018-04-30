@@ -1,3 +1,13 @@
+2018-04-22 David Anderson
+    * print_str_offsets.c: Created consistent terminology
+      for the parts of a table and reflecting that in
+      the table output. The DWARF5 standard uses more
+      than one set of terms for the section contents.
+    * dwarfdump.c,tag_attr.c,tag_tree.c:
+      Update version string
+    * common.c: Update version string. 
+      Now that  usage text in full is only on request 
+      it now becomes stdout instead of stderr.
 2018-04-19 David Anderson
     * Makefile.in: Added additional lines to test native
       getopt_long to verify dwgetopt_long works consistently

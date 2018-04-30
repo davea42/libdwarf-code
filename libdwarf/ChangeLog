@@ -1,3 +1,6 @@
+2018-04-22 David Anderson
+    * gennames.c: Updated version string.
+    * libdwarf.h.in: Removed trailing comma from enumeration list.
 2018-04-19 David Anderson
     * dwgetopt.c: Changed to match correction in dwarfdump version.
 2018-04-17 David Anderson

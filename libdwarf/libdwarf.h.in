@@ -1444,7 +1444,7 @@ enum Dwarf_Form_Class {
     DW_FORM_CLASS_LOCLISTSPTR,   /* DWARF5 */
     DW_FORM_CLASS_RNGLIST,       /* DWARF5 */
     DW_FORM_CLASS_RNGLISTSPTR,   /* DWARF5 */
-    DW_FORM_CLASS_STROFFSETSPTR, /* DWARF5 */
+    DW_FORM_CLASS_STROFFSETSPTR  /* DWARF5 */
 };
 
 /*  These support opening DWARF5 split dwarf objects. */
