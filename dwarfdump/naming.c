@@ -88,9 +88,11 @@ ellipname(int res, int val_in, const char *v,const char *ty,int printonerr)
         n = makename(buf);
         return n;
     }
+#ifndef TRIVIAL_NAMING
     if (glflags.ellipsis) {
         return skipunder(v);
     }
+#endif
     return v;
 }
 

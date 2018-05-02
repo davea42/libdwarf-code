@@ -2851,7 +2851,7 @@ update_compiler_target(const char *producer_name)
 #if _WIN32
             !stricmp(compilers_detected[index].name,glflags.CU_producer)
 #else
-            !strcmp(compilers_detected[index].name,CU_producer)
+            !strcmp(compilers_detected[index].name,glflags.CU_producer)
 #endif /* _WIN32 */
             ) {
             /* Set current compiler index */

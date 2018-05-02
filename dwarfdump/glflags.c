@@ -26,6 +26,7 @@
     were or what they were all for. */
 
 #include "globals.h"
+#include <limits.h>
 
 #ifdef HAVE_REGEX
 regex_t _search_re;
