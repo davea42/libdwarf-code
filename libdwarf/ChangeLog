@@ -1,3 +1,8 @@
+2018-05-01 Carlos Enciso
+    * gennames.c: Reversed the order of calling process_args()
+      vs print_args(). There is no visible difference for
+      linux/unix, and is just to match the convention
+      now used in dwarfdump for the ordering.  
 2018-04-22 David Anderson
     * gennames.c: Updated version string.
     * libdwarf.h.in: Removed trailing comma from enumeration list.

@@ -1,3 +1,13 @@
+2018-05-01 Carlos Enciso
+    * common.c,dwarfdump.c,dwconf.c,glflags.c,glflags.h,globals.h,
+      naming.c,print_abbrevs.c,print_aranges.c,print_die.c,
+      print_dnames.c,print_frames.c,print_gdbindex.c,print_lines.c,
+      print_locs.c,print_macro.c,print_macros.c,print_pubnames.c,
+      print_ranges.c,print_static_funcs.c,print_static_vars.c,
+      print_strings.c,print_weaknames.c,tag_attr.c,tag_tree.c:
+      Moved the remaining individual global flags and what they
+      control into glflags.h, making it easier to understand
+      what one is looking at when reading the code.
 2018-04-22 David Anderson
     * print_str_offsets.c: Created consistent terminology
       for the parts of a table and reflecting that in
