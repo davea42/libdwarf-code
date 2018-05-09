@@ -266,7 +266,7 @@ struct glflags_s {
         It enables easy limiting of output size/running time
         when one wants the output limited.
         For example,
-          -H 2
+            -H 2
         limits the -i output to 2 compilation units and
         the -f or -F output to 2 FDEs and 2 CIEs.
     */

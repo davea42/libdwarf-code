@@ -84,7 +84,7 @@ print_args(UNUSEDARG int argc, UNUSEDARG char *argv[])
     dwarfdump only calls if requested by user.  */
 void
 print_usage_message(
-    UNUSEDARG const char *program_name_in, 
+    UNUSEDARG const char *program_name_in,
     const char **text)
 {
     unsigned i = 0;

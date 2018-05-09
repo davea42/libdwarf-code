@@ -700,7 +700,7 @@ print_one_die_section(Dwarf_Debug dbg,Dwarf_Bool is_info,
         }
         /* Get the CU offset for easy error reporting */
         dwarf_die_offsets(cu_die,&glflags.DIE_overall_offset,
-                          &glflags.DIE_offset,pod_err);
+            &glflags.DIE_offset,pod_err);
         glflags.DIE_CU_overall_offset = glflags.DIE_overall_offset;
         glflags.DIE_CU_offset = glflags.DIE_offset;
         dieprint_cu_goffset = glflags.DIE_overall_offset;
@@ -837,7 +837,7 @@ print_one_die_section(Dwarf_Debug dbg,Dwarf_Bool is_info,
 
                 /* Get the CU offset for easy error reporting */
                 dwarf_die_offsets(cu_die,&glflags.DIE_overall_offset,
-                                  &glflags.DIE_offset,pod_err);
+                    &glflags.DIE_offset,pod_err);
                 glflags.DIE_CU_overall_offset = glflags.DIE_overall_offset;
                 glflags.DIE_CU_offset = glflags.DIE_offset;
                 dieprint_cu_goffset = glflags.DIE_overall_offset;
@@ -971,7 +971,7 @@ print_die_and_children_internal(Dwarf_Debug dbg,
     for (;;) {
         /* Get the CU offset for easy error reporting */
         dwarf_die_offsets(in_die,&glflags.DIE_overall_offset,
-                          &glflags.DIE_offset,&dacerr);
+            &glflags.DIE_offset,&dacerr);
 
         SET_DIE_STACK_ENTRY(die_stack_indent_level,in_die,
             dieprint_cu_goffset);
@@ -1441,7 +1441,7 @@ print_one_die(Dwarf_Debug dbg, Dwarf_Die die,
 
     /* Get the offset for easy error reporting: This is not the CU die.  */
     dwarf_die_offsets(die,&glflags.DIE_overall_offset,
-                      &glflags.DIE_offset,&podie_err);
+        &glflags.DIE_offset,&podie_err);
 
     for (i = 0; i < atcnt; i++) {
         Dwarf_Half attr;
@@ -2926,7 +2926,7 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
                     if (glflags.need_CU_base_address &&
                         tag_type_is_addressable_cu(tag)) {
                         int res = dwarf_formaddr(attrib,
-                          &glflags.CU_base_address, &paerr);
+                            &glflags.CU_base_address, &paerr);
                         DROP_ERROR_INSTANCE(dbg,res,paerr);
                         if (res == DW_DLV_OK) {
                             glflags.need_CU_base_address = FALSE;

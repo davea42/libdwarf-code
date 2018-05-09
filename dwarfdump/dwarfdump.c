@@ -1879,7 +1879,7 @@ process_args(int argc, char *argv[])
                     glflags.search_match_text = makename(&dwoptarg[6]);
                     tempstr = remove_quotes_pair(glflags.search_match_text);
                     glflags.search_match_text =
-                      do_uri_translation(tempstr, "-S match=");
+                        do_uri_translation(tempstr, "-S match=");
                     if (strlen(glflags.search_match_text) > 0) {
                         serr = FALSE;
                     }
@@ -1890,7 +1890,7 @@ process_args(int argc, char *argv[])
                         glflags.search_any_text = makename(&dwoptarg[4]);
                         tempstr = remove_quotes_pair(glflags.search_any_text);
                         glflags.search_any_text =
-                          do_uri_translation(tempstr,"-S any=");
+                            do_uri_translation(tempstr,"-S any=");
                         if (strlen(glflags.search_any_text) > 0) {
                             serr = FALSE;
                         }
@@ -1903,7 +1903,7 @@ process_args(int argc, char *argv[])
                             tempstr = remove_quotes_pair(
                                 glflags.search_regex_text);
                             glflags.search_regex_text =
-                              do_uri_translation(tempstr,
+                                do_uri_translation(tempstr,
                                 "-S regex=");
                             if (strlen(glflags.search_regex_text) > 0) {
                                 if (regcomp(glflags.search_re,
@@ -1923,7 +1923,7 @@ process_args(int argc, char *argv[])
                 }
                 if (serr) {
                     fprintf(stderr,"-S any=<text> or -S match=<text> or"
-                                   " -S regex=<text>\n");
+                        " -S regex=<text>\n");
                     fprintf(stderr, "is allowed, not -S %s\n",dwoptarg);
                     usage_error = TRUE;
                 }
@@ -2836,9 +2836,9 @@ update_compiler_target(const char *producer_name)
         }
     } else {
         /* Internally the strings do not include quotes */
-        boolean snc_compiler = 
+        boolean snc_compiler =
             hasprefix(glflags.CU_producer,"SN") ? TRUE : FALSE;
-        boolean gcc_compiler = 
+        boolean gcc_compiler =
             hasprefix(glflags.CU_producer,"GNU") ? TRUE : FALSE;
         current_cu_is_checked_compiler = glflags.gf_check_all_compilers ||
             (snc_compiler && glflags.gf_check_snc_compiler) ||

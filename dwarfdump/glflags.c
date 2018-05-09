@@ -210,13 +210,13 @@ init_global_flags(void)
     glflags.ellipsis = FALSE;
     glflags.show_form_used = FALSE;
 
-    /* break_after_n_units is mainly for testing.
-       It enables easy limiting of output size/running time
-       when one wants the output limited.
-       For example,
-        -H 2
-       limits the -i output to 2 compilation units and
-       the -f or -F output to 2 FDEs and 2 CIEs.
+    /*  break_after_n_units is mainly for testing.
+        It enables easy limiting of output size/running time
+        when one wants the output limited.
+        For example,
+            -H 2
+        limits the -i output to 2 compilation units and
+        the -f or -F output to 2 FDEs and 2 CIEs.
     */
     glflags.break_after_n_units = INT_MAX;
 
@@ -226,15 +226,15 @@ init_global_flags(void)
     glflags.pLinkonceInfo = NULL;
     glflags.pVisitedInfo = NULL;
 
-    /* These names make diagnostic messages more complete, the
-       fixed length is safe, though ultra long names will get
-       truncated. */
+    /*  These names make diagnostic messages more complete, the
+        fixed length is safe, though ultra long names will get
+        truncated. */
     glflags.PU_name[0] = 0;
     glflags.CU_name[0] = 0;
     glflags.CU_producer[0] = 0;
 
     /*  Options to enable debug tracing. */
     for (int i = 0; i <= MAX_TRACE_LEVEL; ++i) {
-       glflags.nTrace[i] = 0;
+        glflags.nTrace[i] = 0;
     }
 }
