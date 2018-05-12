@@ -28,11 +28,22 @@
 #include "globals.h"
 #include <limits.h>
 
+#include "esb.h"                /* For flexible string buffer. */
+#include "dwconf.h"
+
 #ifdef HAVE_REGEX
 regex_t _search_re;
 #endif
 
-struct section_high_offsets_s _section_high_offsets_global;
+static struct section_high_offsets_s _section_high_offsets_global;
+static struct dwconf_s _config_file_data;
+
+/* used in special_program_name() only */
+static struct esb_s _newprogname;
+
+static struct esb_s _cu_name;
+static struct esb_s _config_file_path;
+static struct esb_s _config_file_tiedpath;
 
 void
 init_global_flags(void)
@@ -237,4 +248,100 @@ init_global_flags(void)
     for (int i = 0; i <= MAX_TRACE_LEVEL; ++i) {
         glflags.nTrace[i] = 0;
     }
+
+    /*  Output filename */
+    glflags.output_file = 0;
+    glflags.group_number = 0;
+
+    /*  Global esb-buffers. */
+    glflags.newprogname = &_newprogname;
+    esb_constructor(glflags.newprogname);
+
+    glflags.cu_name = &_cu_name;
+    esb_constructor(glflags.cu_name);
+
+    glflags.config_file_path = &_config_file_path;
+    esb_constructor(glflags.config_file_path);
+
+    glflags.config_file_tiedpath = &_config_file_tiedpath;
+    esb_constructor(glflags.config_file_tiedpath);
+
+    glflags.config_file_data = &_config_file_data;
+
+    /*  Check errors. */
+    glflags.check_error = 0;
 }
+
+void
+reset_global_flags(void)
+{
+    esb_destructor(glflags.newprogname);
+    esb_destructor(glflags.cu_name);
+    esb_destructor(glflags.config_file_path);
+    esb_destructor(glflags.config_file_tiedpath);
+}
+
+/*  When we add a 'print' option after an option
+    requests one or more checks
+    we turn off all checking, putting it back to default
+    checking state. */
+void
+set_checks_off()
+{
+    glflags.gf_check_abbrev_code = FALSE;
+    glflags.gf_check_pubname_attr = FALSE;
+    glflags.gf_check_reloc_offset = FALSE;
+    glflags.gf_check_attr_tag = FALSE;
+    glflags.gf_check_tag_tree = FALSE;
+    glflags.gf_check_type_offset = FALSE;
+    glflags.gf_check_decl_file = FALSE;
+    glflags.gf_check_lines = FALSE;
+    glflags.gf_check_fdes = FALSE;
+    glflags.gf_check_ranges = FALSE;
+    glflags.gf_check_aranges = FALSE;
+    glflags.gf_check_harmless = FALSE;
+    glflags.gf_check_abbreviations = FALSE;
+    glflags.gf_check_dwarf_constants = FALSE;
+    glflags.gf_check_di_gaps = FALSE;
+    glflags.gf_check_forward_decl = FALSE;
+    glflags.gf_check_self_references = FALSE;
+    glflags.gf_check_attr_encoding = FALSE;
+    glflags.gf_check_duplicated_attributes = FALSE;
+    glflags.gf_check_debug_names = FALSE;
+}
+
+/*  Making this a named string makes it simpler to change
+    what the reset,or 'I do not know'  value is for
+    CU name or producer name for PRINT_CU_INFO. */
+static const char * default_cu_producer = "<unknown>";
+void
+reset_overall_CU_error_data(void)
+{
+   strcpy(glflags.CU_name,default_cu_producer);
+   strcpy(glflags.CU_producer,default_cu_producer);
+   glflags.DIE_offset = 0;
+   glflags.DIE_overall_offset = 0;
+   glflags.DIE_CU_offset = 0;
+   glflags.DIE_CU_overall_offset = 0;
+   glflags.CU_base_address = 0;
+   glflags.CU_high_address = 0;
+   glflags.CU_low_address = 0;
+}
+
+boolean
+cu_data_is_set(void)
+{
+    if (strcmp(glflags.CU_name,default_cu_producer) ||
+        strcmp(glflags.CU_producer,default_cu_producer)) {
+        return 1;
+    }
+    if (glflags.DIE_offset || glflags.DIE_overall_offset) {
+        return 1;
+    }
+    if (glflags.CU_base_address || glflags.CU_low_address ||
+        glflags.CU_high_address) {
+        return 1;
+    }
+    return 0;
+}
+

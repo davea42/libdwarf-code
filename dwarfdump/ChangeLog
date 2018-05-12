@@ -1,9 +1,27 @@
+2018-05-11 Carlos Alberto Enciso
+	* New files: command_options.c,command_options.h
+	  Command line arguments processing; the original code moved
+	  from dwarfdump.c.
+	* New files: producer_info.c,producer_info.h
+	  Record statistics about the producers (compilers). The original
+	  code moved from dwarfdump.c.
+    * glflags.c,glflags.h,globals.h:
+	  Moved the remaining individual global flags and what they
+	  control into glflags.h.
+	* section_bitmaps.c,section_bitmaps.h: process the header and
+	  relocation maps. Original code moved from dwarfdump.c
+    * dwarfdump.c:
+	  Moved the code for command line arguments processing to
+	  command_options.c and producer_info.c.
+	* print_reloc.c,sanitized.h,defined_types.h,dwconf.c,print_aranges.c
+	  Minor changes due to refactoring of the command line and
+	  producer refactoring.
 2018-05-09 David Anderson
     * common.c,dwarfdump.c,glflags.c,glflags.h,print_aranges.c,
       print_die.c: Fixed indents to match dicheck requirements
       and removed some trailing whitespace.
 
-2018-05-01 Carlos Enciso
+2018-05-01 Carlos Alberto Enciso
     * common.c,dwarfdump.c,dwconf.c,glflags.c,glflags.h,globals.h,
       naming.c,print_abbrevs.c,print_aranges.c,print_die.c,
       print_dnames.c,print_frames.c,print_gdbindex.c,print_lines.c,

@@ -1,5 +1,5 @@
 /*
-  Copyright 2011-2018 David Anderson. All rights reserved.
+  Copyright 2010-2018 David Anderson. All rights reserved.
 
   This program is free software; you can redistribute it and/or modify it
   under the terms of version 2 of the GNU General Public License as
@@ -21,26 +21,18 @@
   Franklin Street - Fifth Floor, Boston MA 02110-1301, USA.
 */
 
-#ifndef DEFINED_TYPES_H
-#define DEFINED_TYPES_H
+#ifndef COMMAND_OPTIONS_H
+#define COMMAND_OPTIONS_H
 
-#ifndef BOOLEAN_TYPEDEFED
-#define BOOLEAN_TYPEDEFED
-typedef int boolean;
-#endif /* BOOLEAN_TYPEDEFED */
-#ifndef FALSE
-#define FALSE 0
-#endif
-#ifndef TRUE
-#define TRUE 1
-#endif
-#ifndef FAILED
-#define FAILED 1
-#endif
+#ifdef __cplusplus
+extern "C" {
+#endif /* __cplusplus */
 
-#define OKAY 0
+const char *process_args(int argc, char *argv[]);
+const char *do_uri_translation(const char *s,const char *context);
 
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */
-#endif /* DEFINED_TYPES_H */
+
+#endif /* COMMAND_OPTIONS_H */

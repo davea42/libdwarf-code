@@ -25,6 +25,9 @@
     global struct as it has been hard to know how many there
     were or what they were all for. */
 
+struct esb_s;
+struct dwconf_s;
+
 enum line_flag_type_e {
   singledw5,  /* Meaning choose single table DWARF5 new interfaces. */
   s2l,        /* Meaning choose two-level DWARF5 new interfaces. */
@@ -309,11 +312,29 @@ struct glflags_s {
 
     /*  Options to enable debug tracing. */
     int nTrace[MAX_TRACE_LEVEL + 1];
+
+    /* Output filename */
+    const char *output_file;
+    int group_number;
+
+    /*  Global esb-buffers. */
+    struct esb_s *newprogname;
+    struct esb_s *cu_name;
+    struct esb_s *config_file_path;
+    struct esb_s *config_file_tiedpath;
+    struct dwconf_s *config_file_data;
+
+    /*  Check errors. */
+    int check_error;
 };
 
 extern struct glflags_s glflags;
 
-extern void init_global_flags(void);
+void init_global_flags(void);
+void reset_global_flags(void);
+void set_checks_off();
+void reset_overall_CU_error_data(void);
+boolean cu_data_is_set(void);
 
 /*  Shortcuts for additional trace options */
 #define DUMP_OPTIONS                0   /* Dump options. */

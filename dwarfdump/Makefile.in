@@ -50,13 +50,14 @@ binprefix =
 
 FINALOBJECTS = \
 	addrmap.o \
-        checkutil.o \
+  checkutil.o \
 	dwarfdump.o \
 	dwconf.o \
+  command_options.c \
 	esb.o \
-        glflags.o \
-        helpertree.o \
-        macrocheck.o \
+  glflags.o \
+  helpertree.o \
+  macrocheck.o \
 	print_abbrevs.o \
 	print_aranges.o \
 	print_debugfission.o \
@@ -76,9 +77,10 @@ FINALOBJECTS = \
 	print_static_funcs.o  \
 	print_static_vars.o  \
 	print_strings.o \
-        print_str_offsets.o \
+  print_str_offsets.o \
 	print_types.o \
 	print_weaknames.o  \
+  producer_info.o \
 	sanitized.o \
 	section_bitmaps.o \
 	strstrnocase.o \
@@ -93,6 +95,7 @@ all: dwarfdump
 
 HEADERS =  $(srcdir)/checkutil.h \
         $(srcdir)/common.h \
+        $(srcdir)/command_options.h \
         $(srcdir)/dwconf.h \
         $(srcdir)/dwgetopt.h \
         $(srcdir)/esb.h \
@@ -101,6 +104,7 @@ HEADERS =  $(srcdir)/checkutil.h \
         $(srcdir)/makename.h \
         $(srcdir)/dwarf_tsearch.h \
         $(srcdir)/print_frames.h \
+        $(srcdir)/producer_info.h \
         $(srcdir)/section_bitmaps.h \
         $(srcdir)/uri.h
 

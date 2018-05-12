@@ -10,7 +10,7 @@ target_include_directories(esb_and_tsearchbal PRIVATE
 msvc_posix(esb_and_tsearchbal)
 
 set_source_group(SOURCES "Source Files" addrmap.c checkutil.c dwarfdump.c dwconf.c helpertree.c 
-	glflags.c
+	glflags.c command_options.c producer_info.c
 	macrocheck.c print_abbrevs.c print_aranges.c print_debugfission.c print_die.c 
 	print_dnames.c print_frames.c  print_gdbindex.c
 	print_lines.c print_locs.c print_macro.c print_macros.c print_pubnames.c print_ranges.c print_reloc.c 

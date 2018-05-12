@@ -118,12 +118,6 @@ struct esb_s;
         e = 0;                           \
     }
 
-/* Set TRUE if you want to simply assume strings to be
-   printed are safe to print. Leave FALSE if you want
-   dangerous or unprintable characters to be switched to the
-   character '?'. */
-extern boolean no_sanitize_string_garbage;
-
 /* Calculate wasted space */
 extern void calculate_attributes_usage(Dwarf_Half attr,Dwarf_Half theform,
     Dwarf_Unsigned value);
@@ -153,7 +147,7 @@ extern void print_locs (Dwarf_Debug dbg);
 extern void print_abbrevs (Dwarf_Debug dbg);
 extern void print_strings (Dwarf_Debug dbg);
 extern void print_aranges (Dwarf_Debug dbg);
-extern void print_relocinfo (Dwarf_Debug dbg,char *relmap);
+extern void print_relocinfo (Dwarf_Debug dbg);
 extern void print_static_funcs(Dwarf_Debug dbg);
 extern void print_static_vars(Dwarf_Debug dbg);
 enum type_type_e {SGI_TYPENAME, DWARF_PUBTYPES} ;
@@ -276,8 +270,6 @@ void safe_strcpy(char *out, long outlen, const char *in, long inlen);
 
 void print_macros_5style_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die,
     Dwarf_Bool in_import_list, Dwarf_Unsigned offset);
-
-void reset_overall_CU_error_data(void);
 
 void format_sig8_string(Dwarf_Sig8*data, struct esb_s *out);
 

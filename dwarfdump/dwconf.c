@@ -25,6 +25,7 @@
 
 /* Windows specific */
 #include "config.h"
+
 #ifdef HAVE_STDAFX_H
 #include "stdafx.h"
 #elif defined(HAVE_WINDOWS_H)
@@ -337,7 +338,7 @@ test_canonical_append(void)
    combining separate name and path components.
    This is  an arbitrary choice...
 
-    The defaults are listed in dwarfdump.c in the array
+    The defaults are listed in command_options.c in the array
     config_file_defaults[].
 
     Since named_file comes from an esb_get_string, lname

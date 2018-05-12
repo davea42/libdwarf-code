@@ -25,7 +25,7 @@
 /*  section_bitmaps.h and .c actually involved  bits,
     bit shifting, and bit masks,
     but now the 'maps' are simple byte arrays.
-    See reloc_map and section_map in dwarfdump.c */
+    See reloc_map and section_map in command_options.c */
 
 
 #define TRUE  1
@@ -67,10 +67,15 @@ map_sectnames[DW_HDR_ARRAY_SIZE] = {
     {"Elf Header",                      DW_HDR_HEADER},
 };
 
+/* See section_bitmaps.c, .h Control section header
+   printing. (not DWARF printing)  */
+static char reloc_map[DW_SECTION_REL_ARRAY_SIZE];
+static char section_map[DW_HDR_ARRAY_SIZE];
+
 static boolean all_sections_on;
 
 boolean
-section_name_is_debug_and_wanted(const char *section_name,char *secmap)
+section_name_is_debug_and_wanted(const char *section_name)
 {
     unsigned i = 1;
     if (all_sections_on) {
@@ -78,7 +83,7 @@ section_name_is_debug_and_wanted(const char *section_name,char *secmap)
     }
     for ( ; i < DW_HDR_ARRAY_SIZE; ++i) {
         if(!strcmp(section_name,map_sectnames[i].name) &&
-            secmap[map_sectnames[i].value]) {
+            section_map[map_sectnames[i].value]) {
             return TRUE;
         }
     }
@@ -87,7 +92,7 @@ section_name_is_debug_and_wanted(const char *section_name,char *secmap)
 
 /* For now defaults matches all but .text. */
 void
-set_all_section_defaults(char *section_map)
+set_all_section_defaults()
 {
     unsigned i = 1;
     for ( ; i < DW_HDR_ARRAY_SIZE; ++i) {
@@ -96,7 +101,7 @@ set_all_section_defaults(char *section_map)
 }
 
 void
-set_all_sections_on(char *section_map)
+set_all_sections_on()
 {
     unsigned i = 1;
     all_sections_on = TRUE;
@@ -104,16 +109,16 @@ set_all_sections_on(char *section_map)
         section_map[i] = TRUE;
     }
 }
-void set_all_reloc_sections_on(char *m)
+void set_all_reloc_sections_on()
 {
     unsigned i = 1;
     for ( ; i < DW_SECTION_REL_ARRAY_SIZE; ++i) {
-        m[i] = TRUE;
+        reloc_map[i] = TRUE;
     }
 }
 
 boolean
-any_section_header_to_print(char *section_map)
+any_section_header_to_print()
 {
     unsigned i = 1;
     for ( ; i < DW_HDR_HEADER; ++i) {
@@ -122,6 +127,40 @@ any_section_header_to_print(char *section_map)
         }
     }
     return FALSE;
+}
+
+/*  TRUE if the section map entry specified by the index has been enabled. */
+boolean
+section_map_enabled(unsigned index)
+{
+    if (index <= 0 || index >= DW_HDR_ARRAY_SIZE)
+        return FALSE;
+    return section_map[index];
+}
+
+void
+enable_section_map_entry(unsigned index)
+{
+    if (index > 0 && index < DW_HDR_ARRAY_SIZE) {
+        section_map[index] = TRUE;
+    }
+}
+
+/*  TRUE if the reloc map entry specified by the index has been enabled. */
+boolean
+reloc_map_enabled(unsigned index)
+{
+    if (index <= 0 || index >= DW_SECTION_REL_ARRAY_SIZE)
+        return FALSE;
+    return reloc_map[index];
+}
+
+void
+enable_reloc_map_entry(unsigned index)
+{
+    if (index > 0 && index < DW_SECTION_REL_ARRAY_SIZE) {
+        reloc_map[index] = TRUE;
+    }
 }
 
 #ifdef SELFTEST

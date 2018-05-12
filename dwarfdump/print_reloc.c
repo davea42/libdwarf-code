@@ -335,7 +335,7 @@ get_reloc_section(Dwarf_Debug dbg,
 }
 
 void
-print_relocinfo(Dwarf_Debug dbg, char * reloc_map)
+print_relocinfo(Dwarf_Debug dbg)
 {
     Elf *elf;
     char *endr_ident;
@@ -345,7 +345,7 @@ print_relocinfo(Dwarf_Debug dbg, char * reloc_map)
     Dwarf_Error err = 0;
 
     for (i = 1; i < DW_SECTION_REL_ARRAY_SIZE; i++) {
-        sect_data[i].display = reloc_map[i];
+        sect_data[i].display = reloc_map_enabled(i);
         sect_data[i].buf = 0;
         sect_data[i].size = 0;
         sect_data[i].type = SHT_NULL;

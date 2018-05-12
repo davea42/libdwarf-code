@@ -25,15 +25,18 @@
 
 /* These do little except on Windows */
 
-#include "common.h"
 #include "config.h"
-#include "sanitized.h"
-#include "warningcontrol.h"
-#include <stdio.h>
+
 /* Windows specific header files */
 #ifdef HAVE_STDAFX_H
 #include "stdafx.h"
 #endif /* HAVE_STDAFX_H */
+
+#include "common.h"
+#include "defined_types.h"
+#include "sanitized.h"
+#include "warningcontrol.h"
+#include <stdio.h>
 
 #define DW_VERSION_DATE_STR " 2018-04-22 09:11:24-07:00  "
 #define RELEASE_DATE      "20180416"
