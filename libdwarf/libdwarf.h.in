@@ -2823,22 +2823,24 @@ int dwarf_get_fde_info_for_reg3(Dwarf_Fde /*fde*/,
     Dwarf_Addr       /*pc_requested*/,
     Dwarf_Small  *   /*value_type*/,
     Dwarf_Signed *   /*offset_relevant*/,
-    Dwarf_Signed*    /*register*/,
-    Dwarf_Signed*    /*offset_or_block_len*/,
-    Dwarf_Ptr   *    /*block_ptr */,
-    Dwarf_Addr*      /*row_pc_out*/,
-    Dwarf_Error*     /*error*/);
+    Dwarf_Signed *   /*register*/,
+    Dwarf_Signed *   /*offset_or_block_len*/,
+    Dwarf_Ptr    *   /*block_ptr */,
+    Dwarf_Addr   *   /*row_pc_out*/,
+    Dwarf_Error  *    /*error*/);
 
 int dwarf_get_fde_info_for_reg3_b(Dwarf_Fde /*fde*/,
     Dwarf_Half       /*table_column*/,
     Dwarf_Addr       /*pc_requested*/,
     Dwarf_Small  *   /*value_type*/,
     Dwarf_Signed *   /*offset_relevant*/,
-    Dwarf_Signed*    /*register*/,
-    Dwarf_Signed*    /*offset_or_block_len*/,
-    Dwarf_Ptr   *    /*block_ptr */,
-    Dwarf_Addr*      /*row_pc_out*/,
-    Dwarf_Error*     /*error*/);
+    Dwarf_Signed *    /*register*/,
+    Dwarf_Signed *    /*offset_or_block_len*/,
+    Dwarf_Ptr    *    /*block_ptr */,
+    Dwarf_Addr   *    /*row_pc_out*/,
+    Dwarf_Bool   *    /* has_more_rows */,
+    Dwarf_Addr   *    /* subsequent_pc */,
+    Dwarf_Error  *    /*error*/);
 
 /*  Use this or the next function to get the cfa.
     New function, June 11, 2016*/

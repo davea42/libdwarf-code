@@ -1,4 +1,7 @@
 2018-05-14 David Anderson
+    * dwarf_frame.c: Implemented dwarf_get_fde_info_for_reg3_b().
+    * libdwarf.h.in: Fixed arg list for dwarf_get_fde_info_for_reg3_b.
+2018-05-14 David Anderson
     * libdwarf.h.in: Declare new frame function,
       next commit will have the code in dwarf_frame.c.
 2018-05-01 Carlos Enciso

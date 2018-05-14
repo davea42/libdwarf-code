@@ -39,6 +39,7 @@
 #include "makename.h"
 #include "naming.h"
 
+#ifndef TRIVIAL_NAMING
 static const char *
 skipunder(const char *v)
 {
@@ -54,6 +55,7 @@ skipunder(const char *v)
     }
     return "";
 }
+#endif /*  TRIVIAL_NAMING */
 
 static const char *
 ellipname(int res, int val_in, const char *v,const char *ty,int printonerr)

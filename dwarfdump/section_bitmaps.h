@@ -172,16 +172,16 @@ extern struct section_map_s  map_sectnames[] ;
 
 boolean section_name_is_debug_and_wanted(const char *section_name);
 
-void set_all_section_defaults();
+void set_all_section_defaults(void);
 
-boolean any_section_header_to_print();
+boolean any_section_header_to_print(void);
 
 void enable_section_map_entry(unsigned index);
 boolean section_map_enabled(unsigned index);
-void set_all_sections_on();
+void set_all_sections_on(void);
 
 void enable_reloc_map_entry(unsigned index);
 boolean reloc_map_enabled(unsigned index);
-void set_all_reloc_sections_on();
+void set_all_reloc_sections_on(void);
 
 #endif /* SECTION_BITMAPS_H_INCLUDED*/

@@ -1,3 +1,11 @@
+2018-05-14 David Anderson
+        * dwarfdump.c: gcc caught a memset given a pointer
+          as the size. Fixed.
+        * naming.c: Needed #ifndef TRIVIAL_NAMING
+          around skipunder() to compile without warnings.
+        * section_bitmaps.c, section_bitmaps.h: Needed 
+          (void) as function argument list, for example
+          set_all_sections_on(void) .
 2018-05-14 Carlos Alberto Enciso
 	* Rename producer_info.[ch] to compiler_info.[ch].
 2018-05-11 Carlos Alberto Enciso

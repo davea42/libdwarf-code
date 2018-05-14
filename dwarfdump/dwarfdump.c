@@ -319,7 +319,7 @@ main(int argc, char *argv[])
             continue;
         }
         memset(glflags.section_high_offsets_global,0,
-            sizeof(glflags.section_high_offsets_global));
+            sizeof(*glflags.section_high_offsets_global));
             /*  If we are checking .debug_line, .debug_ranges, .debug_aranges,
             or .debug_loc build the tables containing
             the pairs LowPC and HighPC. It is safer  (and not

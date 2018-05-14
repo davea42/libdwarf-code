@@ -1,5 +1,5 @@
 /*
-  Copyright (C) 2017-2017 David Anderson. All Rights Reserved.
+  Copyright (C) 2017-2018 David Anderson. All Rights Reserved.
 
   This program is free software; you can redistribute it and/or modify it
   under the terms of version 2 of the GNU General Public License as
@@ -92,7 +92,7 @@ section_name_is_debug_and_wanted(const char *section_name)
 
 /* For now defaults matches all but .text. */
 void
-set_all_section_defaults()
+set_all_section_defaults(void)
 {
     unsigned i = 1;
     for ( ; i < DW_HDR_ARRAY_SIZE; ++i) {
@@ -101,7 +101,7 @@ set_all_section_defaults()
 }
 
 void
-set_all_sections_on()
+set_all_sections_on(void)
 {
     unsigned i = 1;
     all_sections_on = TRUE;
@@ -109,7 +109,7 @@ set_all_sections_on()
         section_map[i] = TRUE;
     }
 }
-void set_all_reloc_sections_on()
+void set_all_reloc_sections_on(void)
 {
     unsigned i = 1;
     for ( ; i < DW_SECTION_REL_ARRAY_SIZE; ++i) {
@@ -118,7 +118,7 @@ void set_all_reloc_sections_on()
 }
 
 boolean
-any_section_header_to_print()
+any_section_header_to_print(void)
 {
     unsigned i = 1;
     for ( ; i < DW_HDR_HEADER; ++i) {

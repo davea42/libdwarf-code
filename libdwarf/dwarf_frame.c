@@ -1,7 +1,6 @@
 /*
-
   Copyright (C) 2000-2006 Silicon Graphics, Inc.  All Rights Reserved.
-  Portions Copyright (C) 2007-2012 David Anderson. All Rights Reserved.
+  Portions Copyright (C) 2007-2018 David Anderson. All Rights Reserved.
   Portions Copyright 2012 SN Systems Ltd. All rights reserved.
 
   This program is free software; you can redistribute it and/or modify it
@@ -1085,14 +1084,14 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
     }
 
     if (make_instr) {
-        /*  Allocate list of pointers to Dwarf_Frame_Op's.  */
+        /*  Allocate array of Dwarf_Frame_Op structs.  */
         head_instr_block = (Dwarf_Frame_Op *)
             _dwarf_get_alloc(dbg, DW_DLA_FRAME_BLOCK, instr_count);
         if (head_instr_block == NULL) {
             SIMPLE_ERROR_RETURN(DW_DLE_DF_ALLOC_FAIL);
         }
 
-        /*  Store pointers to Dwarf_Frame_Op's in this list and
+        /*  Store Dwarf_Frame_Op instances in this array and
             deallocate the structs that chain the Dwarf_Frame_Op's. */
         curr_instr_item = head_instr_chain;
         for (i = 0; i < instr_count; i++) {
@@ -1809,11 +1808,14 @@ dwarf_get_fde_info_for_all_regs3(Dwarf_Fde fde,
     return DW_DLV_OK;
 }
 
-/*  Gets the register info for a single register at a given PC value
+/*  Obsolete as of 2006.
+    Gets the register info for a single register at a given PC value
     for the FDE specified.
 
     This is the old MIPS interface and should no longer be used.
-    Use dwarf_get_fde_info_for_reg3() instead.  */
+    Use dwarf_get_fde_info_for_reg3() instead.
+    It can not handle DWARF3 or later properly as it
+    assumes the CFA is representable as a table column. */
 int
 dwarf_get_fde_info_for_reg(Dwarf_Fde fde,
     Dwarf_Half table_column,
@@ -1907,6 +1909,48 @@ dwarf_get_fde_info_for_reg3(Dwarf_Fde fde,
     Dwarf_Addr * row_pc_out,
     Dwarf_Error * error)
 {
+    int res = dwarf_get_fde_info_for_reg3_b(fde,
+        table_column, pc_requested, value_type,
+        offset_relevant, register_num,
+        offset_or_block_len,
+        block_ptr,
+        row_pc_out,
+        /*  Not looking for the has_more_rows flag
+            nor for the next pc in the frame data. */
+        NULL,NULL,
+        error);
+    return res;
+}
+
+
+/*  New May 2018.
+    If one is tracking the value of a single table
+    column through a function, this lets us
+    skip to the next pc value easily.
+
+    if pc_requested is a change from the last
+    pc_requested on this pc, this function
+    returns *has_more_rows and *subsequent_pc
+    (null pointers passed are acceptable, the
+    assignment through the pointer is skipped
+    if the pointer is null).
+    Otherwise *has_more_rows and *subsequent_pc
+    are not set.
+    */
+int
+dwarf_get_fde_info_for_reg3_b(Dwarf_Fde fde,
+    Dwarf_Half table_column,
+    Dwarf_Addr pc_requested,
+    Dwarf_Small * value_type,
+    Dwarf_Signed * offset_relevant,
+    Dwarf_Signed * register_num,
+    Dwarf_Signed * offset_or_block_len,
+    Dwarf_Ptr * block_ptr,
+    Dwarf_Addr * row_pc_out,
+    Dwarf_Bool * has_more_rows,
+    Dwarf_Addr * subsequent_pc,
+    Dwarf_Error * error)
+{
     struct Dwarf_Frame_s * fde_table = &(fde->fd_fde_table);
     int res = DW_DLV_ERROR;
 
@@ -1916,6 +1960,9 @@ dwarf_get_fde_info_for_reg3(Dwarf_Fde fde,
     FDE_NULL_CHECKS_AND_SET_DBG(fde, dbg);
 
     if (!fde->fd_have_fde_tab  ||
+    /*  The test is just in case it's not inside the table. For non-MIPS
+        it could be outside the table and that is just fine, it was
+        really a mistake to put it in the table in 1993.  */
         fde->fd_fde_pc_requested != pc_requested) {
         if (fde->fd_have_fde_tab) {
             dwarf_free_fde_table(fde_table);
@@ -1938,7 +1985,7 @@ dwarf_get_fde_info_for_reg3(Dwarf_Fde fde,
         */
         res = _dwarf_get_fde_info_for_a_pc_row(fde, pc_requested, fde_table,
             dbg->de_frame_cfa_col_number,
-            NULL,NULL,
+            has_more_rows,subsequent_pc,
             error);
         if (res != DW_DLV_OK) {
             dwarf_free_fde_table(fde_table);
@@ -1971,10 +2018,18 @@ dwarf_get_fde_info_for_reg3(Dwarf_Fde fde,
 
 }
 
-/*  New June 11,2016. Two new arguments which
-    can be used to more efficiently traverse
-    frame data (primarily for dwarfdump and like
-    programs).  */
+/*  New 2006.
+    For current DWARF, this is a preferred interface.
+
+    Compared to dwarf_get_fde_info_for_reg()
+    it more correctly deals with the  CFA by not
+    making the CFA a column number, which means
+    DW_FRAME_CFA_COL3 becomes, like DW_CFA_SAME_VALUE,
+    a special value, not something one uses as an index.
+
+    See also dwarf_get_fde_info_for_cfa_reg3_b(), which
+    is slightly preferred.
+    */
 int
 dwarf_get_fde_info_for_cfa_reg3(Dwarf_Fde fde,
     Dwarf_Addr pc_requested,
@@ -2002,8 +2057,18 @@ dwarf_get_fde_info_for_cfa_reg3(Dwarf_Fde fde,
         error);
     return res;
 }
-/*  For latest DWARF, this is the preferred interface.
-    It more portably deals with the  CFA by not
+
+/*  New June 11,2016.
+    For current DWARF, this is a preferred interface.
+
+    Has extra arguments has_more_rows and next_pc
+    (compared to dwarf_get_fde_info_for_cfa_reg3())
+    which can be used to more efficiently traverse
+    frame data (primarily for dwarfdump and like
+    programs).
+
+    Like dwarf_get_fde_info_for_cfa_reg3() it
+    deals with the  CFA by not
     making the CFA a column number, which means
     DW_FRAME_CFA_COL3 becomes, like DW_CFA_SAME_VALUE,
     a special value, not something one uses as an index.
@@ -2235,10 +2300,6 @@ dwarf_expand_frame_instructions(Dwarf_Cie cie,
         return DW_DLV_ERROR;
     }
 
-    /*  The cast to Dwarf_Ptr may get a compiler warning, but it is safe
-        as it is just an i_length offset from 'instruction' itself. A
-        caller has made a big mistake if the result is not a valid
-        pointer. */
     res = _dwarf_exec_frame_instr( /* make_instr= */ true,
         returned_op_list,
         /* search_pc */ false,
