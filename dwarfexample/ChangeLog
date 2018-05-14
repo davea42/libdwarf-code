@@ -1,14 +1,4 @@
-2017-03-29  David Anderson
-     * configure.ac: Corrected AC_CHECK_HEADERS.
-     * configure: regenerated.
-2017-03-28  David Anderson
-     * configure.ac: Using configure commands that
-       are considered currently good practice.
-     * configure, config.h.in: regenerated.
-2017-03-28  David Anderson
-     * configure.in: renamed configure.ac
-2017-03-26  David Anderson
-     * frame1.c: Fixed the omission, in printing register data,
-       of fp_register from the output. Modified the formatting
-       there to be in nice clean columns to match the heading.
-       Update copyright year.
+2018-05-12  David Anderson
+     * frame1.c: Adding new code (select with option
+       --just-print-selected-regs) to test a new
+       frame access function.
