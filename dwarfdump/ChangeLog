@@ -1,3 +1,5 @@
+2018-05-14 Carlos Alberto Enciso
+	* Rename producer_info.[ch] to compiler_info.[ch].
 2018-05-11 Carlos Alberto Enciso
 	* New files: command_options.c,command_options.h
 	  Command line arguments processing; the original code moved
@@ -20,7 +22,6 @@
     * common.c,dwarfdump.c,glflags.c,glflags.h,print_aranges.c,
       print_die.c: Fixed indents to match dicheck requirements
       and removed some trailing whitespace.
-
 2018-05-01 Carlos Alberto Enciso
     * common.c,dwarfdump.c,dwconf.c,glflags.c,glflags.h,globals.h,
       naming.c,print_abbrevs.c,print_aranges.c,print_die.c,

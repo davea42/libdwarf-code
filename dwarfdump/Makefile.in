@@ -53,7 +53,8 @@ FINALOBJECTS = \
   checkutil.o \
 	dwarfdump.o \
 	dwconf.o \
-  command_options.c \
+  command_options.o \
+  compiler_info.o \
 	esb.o \
   glflags.o \
   helpertree.o \
@@ -80,7 +81,6 @@ FINALOBJECTS = \
   print_str_offsets.o \
 	print_types.o \
 	print_weaknames.o  \
-  producer_info.o \
 	sanitized.o \
 	section_bitmaps.o \
 	strstrnocase.o \
@@ -96,6 +96,7 @@ all: dwarfdump
 HEADERS =  $(srcdir)/checkutil.h \
         $(srcdir)/common.h \
         $(srcdir)/command_options.h \
+        $(srcdir)/compiler_info.h \
         $(srcdir)/dwconf.h \
         $(srcdir)/dwgetopt.h \
         $(srcdir)/esb.h \
@@ -104,7 +105,6 @@ HEADERS =  $(srcdir)/checkutil.h \
         $(srcdir)/makename.h \
         $(srcdir)/dwarf_tsearch.h \
         $(srcdir)/print_frames.h \
-        $(srcdir)/producer_info.h \
         $(srcdir)/section_bitmaps.h \
         $(srcdir)/uri.h
 

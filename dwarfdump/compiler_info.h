@@ -21,8 +21,8 @@
   Franklin Street - Fifth Floor, Boston MA 02110-1301, USA.
 */
 
-#ifndef PRODUCER_INFO_H
-#define PRODUCER_INFO_H
+#ifndef COMPILER_INFO_H
+#define COMPILER_INFO_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -68,4 +68,4 @@ extern boolean record_producer(char *name);
 }
 #endif /* __cplusplus */
 
-#endif /* PRODUCER_INFO_H */
+#endif /* COMPILER_INFO_H */

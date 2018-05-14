@@ -52,7 +52,7 @@
 #include "tag_common.h"
 
 #include "command_options.h"
-#include "producer_info.h"
+#include "compiler_info.h"
 
 #ifdef _WIN32
 extern int elf_open(const char *name,int mode);

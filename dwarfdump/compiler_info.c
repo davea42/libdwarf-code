@@ -25,7 +25,7 @@
 #include "makename.h"
 
 #include "command_options.h"
-#include "producer_info.h"
+#include "compiler_info.h"
 
 /* Record compilers  whose CU names have been seen.
    Full CU names recorded here, though only a portion
