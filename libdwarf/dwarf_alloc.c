@@ -34,6 +34,7 @@
 
 #include "dwarf_incl.h"
 #include "dwarf_error.h"
+#include "dwarf_alloc.h"
 /*  These files are included to get the sizes
     of structs for malloc.
 */

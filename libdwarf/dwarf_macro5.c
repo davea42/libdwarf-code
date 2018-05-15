@@ -31,6 +31,7 @@
 #endif /* HAVE_STDLIB_H */
 
 #include "dwarf_incl.h"
+#include "dwarf_alloc.h"
 #include "dwarf_error.h"
 #include "dwarf_util.h"
 #include "dwarf_macro5.h"

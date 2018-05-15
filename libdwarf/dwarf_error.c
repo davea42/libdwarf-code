@@ -32,6 +32,7 @@
 #include <stdlib.h>
 
 #include "dwarf_incl.h"
+#include "dwarf_alloc.h"
 #include "dwarf_error.h"
 
 /* Array to hold string representation of errors. Any time a
