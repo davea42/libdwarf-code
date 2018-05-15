@@ -1,4 +1,6 @@
 2018-05-14 David Anderson
+    * gennames.c: Updated version string.
+2018-05-14 David Anderson
     * dwarf_frame2.c: Do a thorough check of every non-zero
       augmentation data length in a way that will catch
       integer overflows.
