@@ -5551,8 +5551,8 @@ show_form_itself(int local_show_form,
     }
 }
 
-#include "tmp-ta-table.c"
-#include "tmp-ta-ext-table.c"
+#include "tmp-ta-table.h"
+#include "tmp-ta-ext-table.h"
 
 static int
 legal_tag_attr_combination(Dwarf_Half tag, Dwarf_Half attr)
@@ -5603,8 +5603,8 @@ legal_tag_attr_combination(Dwarf_Half tag, Dwarf_Half attr)
     return (FALSE);
 }
 
-#include "tmp-tt-table.c"
-#include "tmp-tt-ext-table.c"
+#include "tmp-tt-table.h"
+#include "tmp-tt-ext-table.h"
 
 /*  Look only at valid table entries
     The check here must match the building-logic in

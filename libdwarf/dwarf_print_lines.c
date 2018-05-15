@@ -167,7 +167,7 @@ print_line_detail(
 }
 
 
-#include "dwarf_line_table_reader_common.c"
+#include "dwarf_line_table_reader_common.h"
 
 /* Not yet implemented, at least not usefully. FIXME */
 void

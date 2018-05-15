@@ -260,5 +260,3 @@ const char * get_ADDR_name(unsigned int val_in,int printonerr)
    int res = dwarf_get_ADDR_name(val_in,&v);
    return ellipname(res,val_in,v,"ADDR",printonerr);
 }
-
-

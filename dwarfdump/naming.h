@@ -1,4 +1,3 @@
-
 /*
     Copyright (C) 2000-2005 Silicon Graphics, Inc. All Rights Reserved.
     Portions Copyright (C) 2007-2011 David Anderson. All Rights Reserved.
@@ -66,4 +65,3 @@ extern const char * get_ADDR_name(unsigned int val_in,int printonerr);
 }
 #endif
 #endif /* NAMING_H_INCLUDED */
-

@@ -456,4 +456,3 @@ print_gdb_index(Dwarf_Debug dbg)
         return;
     }
 }
-

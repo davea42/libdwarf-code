@@ -344,4 +344,3 @@ cu_data_is_set(void)
     }
     return 0;
 }
-

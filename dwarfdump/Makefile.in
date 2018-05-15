@@ -86,10 +86,10 @@ FINALOBJECTS = \
 	strstrnocase.o \
 	uri.o
 GEN_HFILES = common.o \
-	tmp-tt-table.c \
-	tmp-ta-table.c \
-	tmp-ta-ext-table.c \
-	tmp-tt-ext-table.c 
+	tmp-tt-table.h \
+	tmp-ta-table.h \
+	tmp-ta-ext-table.h \
+	tmp-tt-ext-table.h 
 
 all: dwarfdump
 
@@ -160,29 +160,29 @@ tag_attr_build:  $(srcdir)/tag_attr.c $(DIRINC)/dwarf.h $(HEADERS) btag_common.o
 # Plain GNU C dash E does not work on a .list, 
 # so copy to a .c name to run
 # the following four table creations.
-tmp-tt-table.c: $(srcdir)/tag_tree.list tag_tree_build
+tmp-tt-table.h: $(srcdir)/tag_tree.list tag_tree_build
 	-rm -f  tmp-t1.c
 	cp $(srcdir)/tag_tree.list tmp-t1.c
 	$(CC_FOR_BUILD) $(CFLAGS) -E tmp-t1.c  > ./tmp-tag-tree-build1.tmp
-	LD_LIBRARY_PATH=$$LD_LIBRARY_PATH:$(LIBDWARF_PATH) ./tag_tree_build -s  -i tmp-tag-tree-build1.tmp  -o tmp-tt-table.c
+	LD_LIBRARY_PATH=$$LD_LIBRARY_PATH:$(LIBDWARF_PATH) ./tag_tree_build -s  -i tmp-tag-tree-build1.tmp  -o tmp-tt-table.h
 
-tmp-tt-ext-table.c: $(srcdir)/tag_tree_ext.list tag_tree_build
+tmp-tt-ext-table.h: $(srcdir)/tag_tree_ext.list tag_tree_build
 	-rm -f tmp-t4.c
 	cp $(srcdir)/tag_tree_ext.list tmp-t4.c
 	$(CC_FOR_BUILD) $(CFLAGS) -E tmp-t4.c  > ./tmp-tag-tree-build4.tmp
-	LD_LIBRARY_PATH=$$LD_LIBRARY_PATH:$(LIBDWARF_PATH) ./tag_tree_build -e  -i tmp-tag-tree-build4.tmp -o tmp-tt-ext-table.c
+	LD_LIBRARY_PATH=$$LD_LIBRARY_PATH:$(LIBDWARF_PATH) ./tag_tree_build -e  -i tmp-tag-tree-build4.tmp -o tmp-tt-ext-table.h
 
-tmp-ta-table.c: $(srcdir)/tag_attr.list tag_attr_build
+tmp-ta-table.h: $(srcdir)/tag_attr.list tag_attr_build
 	-rm -f tmp-t2.c
 	cp $(srcdir)/tag_attr.list tmp-t2.c
 	$(CC_FOR_BUILD) $(CFLAGS)  -E tmp-t2.c  > ./tmp-tag-attr-build2.tmp
-	LD_LIBRARY_PATH=$$LD_LIBRARY_PATH:$(LIBDWARF_PATH) ./tag_attr_build -s -i tmp-tag-attr-build2.tmp -o tmp-ta-table.c
+	LD_LIBRARY_PATH=$$LD_LIBRARY_PATH:$(LIBDWARF_PATH) ./tag_attr_build -s -i tmp-tag-attr-build2.tmp -o tmp-ta-table.h
 
-tmp-ta-ext-table.c: $(srcdir)/tag_attr_ext.list tag_attr_build
+tmp-ta-ext-table.h: $(srcdir)/tag_attr_ext.list tag_attr_build
 	-rm -f tmp-t3.c
 	cp $(srcdir)/tag_attr_ext.list tmp-t3.c
 	$(CC_FOR_BUILD) $(CFLAGS)  -E tmp-t3.c  > ./tmp-tag-attr-build3.tmp
-	LD_LIBRARY_PATH=$$LD_LIBRARY_PATH:$(LIBDWARF_PATH) ./tag_attr_build -e -i tmp-tag-attr-build3.tmp -o tmp-ta-ext-table.c
+	LD_LIBRARY_PATH=$$LD_LIBRARY_PATH:$(LIBDWARF_PATH) ./tag_attr_build -e -i tmp-tag-attr-build3.tmp -o tmp-ta-ext-table.h
 #===== done with build-time program creation and build-time use of those programs
 
 

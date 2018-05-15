@@ -1,4 +1,15 @@
 2018-05-15 David Anderson
+    * tmp-tt-table.c,tmp-ta-table.c,tmp-ta-ext-table.c, 
+      tmp-tt-ext-table.c: All endings changed from .c to .h 
+      as these are all used via #include.
+    * Makefile.in: Reflect the .c->.h change for these files.
+    * checkutil.c,dwarf_tsearch.h,dwarf_tsearchbal.c,
+      glflags.c,naming.c,naming.h,print_debugfission.c,
+      print_die.c,print_frames.c,print_gdbindex.c,print_macros.c,
+      print_pubnames.c,print_reloc.h,print_sections.c,
+      print_static_vars.c,uri.c,uritablebuild.c: 
+      Removed trailing blank lines.
+2018-05-15 David Anderson
     * command_options.c: Removed an extra break on option -ER
       that was an accident. It's been broken for quite a long time.
       section_map[DW_HDR_DEBUG_RNGLISTS]=TRUE, applicable

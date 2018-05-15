@@ -138,14 +138,14 @@ nosharedlibrary:
 noarchivelibrary:
 	echo "Not building archive library libdwarf.a"
 
-dwarf_loc.o: $(srcdir)/dwarf_loc.c  $(srcdir)/dwarf_loc2.c  $(srcdir)/dwarf_loc.h 
+dwarf_loc.o: $(srcdir)/dwarf_loc.c  $(srcdir)/dwarf_loc2.h  $(srcdir)/dwarf_loc.h 
 	$(CC) $(CFLAGS) -c $(srcdir)/dwarf_loc.c
 
 # errmsg_check builds and runs native, even for a cross-build of libdwarf.
 # No object built here gets into libdwarf.
-errmsg_check: $(srcdir)/dwarf_errmsg_list.c libdwarf.h
+errmsg_check: $(srcdir)/dwarf_errmsg_list.h libdwarf.h
 	grep DW_DLE libdwarf.h >errmsg_check_list
-	$(CC_FOR_BUILD) $(HOSTCFLAGS) $(LDFLAGS)  -DTESTING $(srcdir)/dwarf_errmsg_list.c -o errmsg_check
+	$(CC_FOR_BUILD) $(HOSTCFLAGS) $(LDFLAGS) $(srcdir)/dwarf_test_errmsg_list.c -o errmsg_check
 	./errmsg_check -f errmsg_check_list
 # end errmsg_check build lines
 
@@ -161,11 +161,11 @@ dwarf_names.c: gennames $(srcdir)/dwarf.h
 	./gennames  @dwarf_namestable@  -i $(srcdir) -o .
 # End gennames build lines
 
-dwarf_line.o: $(srcdir)/dwarf.h libdwarf.h $(srcdir)/dwarf_line_table_reader_common.c $(srcdir)/dwarf_line.c
+dwarf_line.o: $(srcdir)/dwarf.h libdwarf.h $(srcdir)/dwarf_line_table_reader_common.h $(srcdir)/dwarf_line.c
 	$(CC) $(CFLAGS) -c $(srcdir)/dwarf_line.c -o $@
-dwarf_print_lines.o: $(srcdir)/dwarf.h libdwarf.h $(srcdir)/dwarf_line_table_reader_common.c $(srcdir)/dwarf_print_lines.c
+dwarf_print_lines.o: $(srcdir)/dwarf.h libdwarf.h $(srcdir)/dwarf_line_table_reader_common.h $(srcdir)/dwarf_print_lines.c
 	$(CC) $(CFLAGS) -c $(srcdir)/dwarf_print_lines.c -o $@
-dwarf_error.o: $(srcdir)/dwarf.h libdwarf.h $(srcdir)/dwarf_error.c $(srcdir)/dwarf_errmsg_list.c
+dwarf_error.o: $(srcdir)/dwarf.h libdwarf.h $(srcdir)/dwarf_error.c $(srcdir)/dwarf_errmsg_list.h
 	$(CC) $(CFLAGS) -c $(srcdir)/dwarf_error.c -o $@
 
 
@@ -216,6 +216,7 @@ clean:
 	rm -f ar-output-temp
 	rm -f junk 
 	rm -f ALL
+	rm -f dwarf_loc2.c
 	rm -f gennames 
 	rm -f dwarfleb 
 	rm -f dwarf_names_enum.h dwarf_names_new.h dwarf_names.c dwarf_names.h

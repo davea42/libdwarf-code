@@ -1680,4 +1680,4 @@ dwarf_get_loclist_entry(Dwarf_Debug dbg,
 }
 
 /* Bring in the code for the October 2015 interfaces. */
-#include "dwarf_loc2.c"
+#include "dwarf_loc2.h"

@@ -208,5 +208,3 @@ print_macinfo_by_offset(Dwarf_Debug dbg,Dwarf_Unsigned offset)
     dwarf_dealloc(dbg, maclist, DW_DLA_STRING);
     return;
 }
-
-

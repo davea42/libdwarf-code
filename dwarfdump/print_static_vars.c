@@ -88,4 +88,3 @@ print_static_vars(Dwarf_Debug dbg)
         dwarf_vars_dealloc(dbg, varbuf, count);
     }
 }                               /* print_static_vars */
-

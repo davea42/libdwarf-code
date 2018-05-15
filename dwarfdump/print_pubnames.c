@@ -292,4 +292,3 @@ print_pubnames(Dwarf_Debug dbg)
         dwarf_globals_dealloc(dbg, globbuf, count);
     }
 }   /* print_pubnames() */
-

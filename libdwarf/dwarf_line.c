@@ -109,7 +109,7 @@ _dwarf_file_name_is_full_path(Dwarf_Small  *fname)
 /* End Windows style */
     return 0;
 }
-#include "dwarf_line_table_reader_common.c"
+#include "dwarf_line_table_reader_common.h"
 
 static void
 special_cat(char *dst,char *src,

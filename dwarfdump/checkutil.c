@@ -569,4 +569,3 @@ Dwarf_Bool IsValidInLinkonce(Bucket_Group *pLo,
     }
     return FALSE;
 }
-

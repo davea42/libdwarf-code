@@ -1,3 +1,16 @@
+2018-05-15 David Anderson
+    * dwarf_loc2.c, dwarf_line_table_reader_common.c,
+      dwarf_errmsg_list.c: Renamed to end in .h, not .c,
+      as these are all targets of #include.
+    * dwarf_test_errmsg_list.c: New file with the test code
+      extracted from dwarf_errmsg_list.c and #including
+      the new dwarf_errmsg_list.h
+    * Makefile.in: Renamings .c to .h and the errmsg checking
+      builds the new dwarf_test_errmsg_list.c
+      The -DTESTING in building dwarf_test_errmsg_list.c
+      is no longer necessary.
+    * dwarf_error.c, dwarf_line.c,dwarf_print_lines.c:  
+      Reflect the .c->h renamings
 2018-05-14 David Anderson
     * libdwarf.h.in: Removed trailing whitespace.
 2018-05-14 David Anderson

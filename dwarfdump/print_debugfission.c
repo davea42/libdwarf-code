@@ -188,4 +188,3 @@ print_debugfission_index(Dwarf_Debug dbg,const char *type)
     }
     dwarf_xu_header_free(xuhdr);
 }
-

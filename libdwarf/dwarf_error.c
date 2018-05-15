@@ -42,7 +42,7 @@
    define is added to the list in libdwarf.h, a string should be
    added to this Array
 */
-#include "dwarf_errmsg_list.c"
+#include "dwarf_errmsg_list.h"
 
 /*  This function performs error handling as described in the
     libdwarf consumer document section 3.  Dbg is the Dwarf_debug

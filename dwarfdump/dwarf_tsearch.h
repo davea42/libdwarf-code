@@ -105,7 +105,3 @@ void dwarf_tdump(const void*root,
 void * dwarf_initialize_search_hash( void **treeptr,
     unsigned long(*hashfunc)(const void *key),
     unsigned long size_estimate);
-
-
-
-
