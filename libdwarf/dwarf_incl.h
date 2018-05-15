@@ -45,6 +45,7 @@
 #include <string.h>  /* strcpy() strlen() */
 #include <dwarf.h>
 #include <libdwarf.h>
+#include <stddef.h>
 
 #include "dwarf_base_types.h"
 #include "dwarf_opaque.h"

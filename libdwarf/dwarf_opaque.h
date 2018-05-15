@@ -68,8 +68,6 @@
 
 */
 
-#include <stddef.h>
-
 /*  The 'debug_info' names below are non-zero (non-NULL) only
     if we are processing a debug_info section. And vice versa
     for a debug_types section. */
