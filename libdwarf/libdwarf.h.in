@@ -4207,10 +4207,10 @@ void dwarf_ranges_dealloc(Dwarf_Debug /*dbg*/,
     the end of the table whose data is returned..
     Returns DW_DLV_NO_ENTRY if the starting offset
     is past the end of valid data.
-    
+
     There is no guarantee that there are no non-0 nonsense
-    bytes in the section outside of useful tables, 
-    so this can fail and return nonsense or 
+    bytes in the section outside of useful tables,
+    so this can fail and return nonsense or
     DW_DLV_ERROR  if such garbage exists.
 */
 
@@ -4219,7 +4219,7 @@ typedef struct  Dwarf_Str_Offsets_Table_s *  Dwarf_Str_Offsets_Table;
 
 /*  Allocates a struct Dwarf_Str_Offsets_Table_s for the section
     and returns DW_DLV_OK and sets a pointer to the struct through
-    the table_data pointer if successful. 
+    the table_data pointer if successful.
 
     If there is no such section it returns DW_DLV_NO_ENTRY. */
 int dwarf_open_str_offsets_table_access(Dwarf_Debug  /*dbg*/,
@@ -4246,11 +4246,11 @@ int dwarf_next_str_offsets_table( Dwarf_Str_Offsets_Table /*table_data*/,
     Dwarf_Unsigned * /*table_value_count*/,
     Dwarf_Error    * /*error*/);
 
-/*  Valid index values n:  0 <= n <  table_entry_count  
-    for the active table */ 
+/*  Valid index values n:  0 <= n <  table_entry_count
+    for the active table */
 int dwarf_str_offsets_value_by_index(Dwarf_Str_Offsets_Table /*table_data*/,
     Dwarf_Unsigned   /*index_to_entry*/,
-    Dwarf_Unsigned * /*entry_value*/, 
+    Dwarf_Unsigned * /*entry_value*/,
     Dwarf_Error    * /*error*/);
 
 /*  After all str_offsets read this reports final

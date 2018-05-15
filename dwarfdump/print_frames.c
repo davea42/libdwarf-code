@@ -861,11 +861,11 @@ print_one_fde(Dwarf_Debug dbg,
         } else if (ares == DW_DLV_OK) {
             if (glflags.gf_do_print_dwarf) {
                 printf("\n       <eh aug data len 0x%" DW_PR_DUx, len);
-                if(len) { 
+                if(len) {
                     if(!valid_fde_content(fde_bytes,fde_bytes_length,
                         data,len) ) {
                         printf("ERROR:The .eh_frame augmentation data "
-                           "is too large to print");
+                            "is too large to print");
                     } else {
                         Dwarf_Unsigned k2 = 0;
 
@@ -874,8 +874,8 @@ print_one_fde(Dwarf_Debug dbg,
                                 printf(" bytes 0x");
                             }
                             printf("%02x ", (unsigned char) data[k2]);
-                         }
-                     }
+                        }
+                    }
                 }
                 printf(">");
             }

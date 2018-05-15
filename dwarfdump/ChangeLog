@@ -1,7 +1,9 @@
 2018-05-14 David Anderson
+    * command_options.c,compiler_info.c,print_frames.c: Fix
+      indents, remove trailing whitespace.
+2018-05-14 David Anderson
     * dwarfdump.c,tag_attr.c,tag_tree.c, common.c:
       Update version string
-
 2018-05-14 David Anderson
         * print_frames.c: Validate augmentation bytes from
           eh_frame to catch bogus augmentation length.

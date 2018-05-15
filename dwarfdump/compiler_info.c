@@ -225,9 +225,9 @@ update_compiler_target(const char *producer_name)
         }
     } else {
         /* Internally the strings do not include quotes */
-        boolean snc_compiler = 
+        boolean snc_compiler =
             hasprefix(glflags.CU_producer,"SN") ? TRUE : FALSE;
-        boolean gcc_compiler = 
+        boolean gcc_compiler =
             hasprefix(glflags.CU_producer,"GNU") ? TRUE : FALSE;
         current_cu_is_checked_compiler = glflags.gf_check_all_compilers ||
             (snc_compiler && glflags.gf_check_snc_compiler) ||
