@@ -39,9 +39,6 @@
 #include "dwarf_harmless.h"
 
 /* For consistency, use the HAVE_LIBELF_H symbol */
-#ifdef HAVE_ELF_H
-#include <elf.h>
-#endif
 #ifdef HAVE_LIBELF_H
 #include <libelf.h>
 #else

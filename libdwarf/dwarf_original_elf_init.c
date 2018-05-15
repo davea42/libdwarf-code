@@ -31,9 +31,6 @@
 #include "dwarf_incl.h"
 #include "dwarf_elf_access.h"
 
-#ifdef HAVE_ELF_H
-#include <elf.h>
-#endif
 #ifdef HAVE_LIBELF_H
 #include <libelf.h>
 #else

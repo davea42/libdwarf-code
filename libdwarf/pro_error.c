@@ -27,9 +27,6 @@
 
 #include "config.h"
 #include "libdwarfdefs.h"
-#ifdef HAVE_ELF_H
-#include <elf.h>
-#endif
 
 #include <stdio.h>
 #include <sys/stat.h>

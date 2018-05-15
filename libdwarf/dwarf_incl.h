@@ -42,19 +42,12 @@
 #endif /* HAVE_STDAFX_H */
 
 #include "libdwarfdefs.h"
-#include <string.h>
-
-#ifdef HAVE_ELF_H
-#include <elf.h>
-#endif
-
-#include <limits.h>
+#include <string.h>  /* strcpy() strlen() */
 #include <dwarf.h>
 #include <libdwarf.h>
 
 #include "dwarf_base_types.h"
 #include "dwarf_alloc.h"
-#include "dwarf_xu_index.h"
 #include "dwarf_opaque.h"
 #include "dwarf_error.h"
 #include "dwarf_util.h"

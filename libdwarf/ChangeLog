@@ -1,4 +1,11 @@
 2018-05-15 David Anderson
+    * dwarf_die_deliv.c,dwarf_dsc.c,dwarf_error.c,
+      dwarf_init_finish.c,dwarf_original_elf_init.c,
+      pro_error.c,pro_line.c: Removed the unnecessary
+      inclusion of elf.h. 
+    * dwarf_incl.h: Removed the unnecessary
+      inclusion of elf.h, limits.h, and dwarf_xu_index.h. 
+2018-05-15 David Anderson
     * dwarf_abbrev.c,dwarf_alloc.c,dwarf_die_deliv.c,
       dwarf_dsc.c,dwarf_dsc.h,dwarf_elf_access.c,dwarf_error.h,
       dwarf_gdbindex.h,dwarf_global.h,dwarf_groups.c,

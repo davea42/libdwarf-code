@@ -29,9 +29,7 @@
 #include "libdwarfdefs.h"
 #include <stdio.h>
 #include <string.h>
-#ifdef HAVE_ELF_H
-#include <elf.h>
-#endif
+
 #include "pro_incl.h"
 #include "pro_line.h"
 

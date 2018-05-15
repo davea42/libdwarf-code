@@ -29,10 +29,6 @@
 
 #include "config.h"
 #include "dwarf_incl.h"
-#ifdef HAVE_ELF_H
-#include <elf.h>
-#endif
-
 #include <stdio.h>
 #include <sys/stat.h>
 #include <sys/types.h>
