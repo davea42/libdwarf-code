@@ -24,12 +24,13 @@
 */
 
 #include "config.h"
-#include "dwarf_incl.h"
-
 #include <stdio.h>
 #ifdef HAVE_STDLIB_H
 #include <stdlib.h>
 #endif
+
+#include "dwarf_incl.h"
+#include "dwarf_error.h"
 #include "dwarf_util.h"
 #include "dwarf_dsc.h"
 

@@ -29,6 +29,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "dwarf_incl.h"
+#include "dwarf_error.h"
 #include "dwarf_util.h"
 #include "dwarf_frame.h"
 #include "dwarf_arange.h" /* Using Arange as a way to build a list */

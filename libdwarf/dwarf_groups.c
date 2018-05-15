@@ -24,10 +24,11 @@
 */
 
 #include "config.h"
+#include <stdio.h>
 #include "dwarf_incl.h"
+#include "dwarf_error.h"
 #include "dwarf_tsearch.h"
 #include <stdlib.h>
-#include <stdio.h>
 
 #define TRUE  1
 #define FALSE 0

@@ -28,6 +28,7 @@
 #include "config.h"
 #include <stdio.h> /* for debugging only. */
 #include "dwarf_incl.h"
+#include "dwarf_error.h"
 #include "dwarf_util.h"
 #include "dwarf_loc.h"
 

@@ -74,7 +74,6 @@ OBJS= dwarf_abbrev.o \
         dwarf_form.o \
         dwarf_frame.o \
         dwarf_frame2.o \
-        dwarf_frame3.o \
         dwarf_funcs.o \
         dwarf_gdbindex.o \
         dwarf_global.o \

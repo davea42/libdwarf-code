@@ -28,9 +28,6 @@
 */
 
 #include "config.h"
-#include "dwarf_incl.h"
-#include "dwarf_elf_access.h"
-
 #ifdef HAVE_LIBELF_H
 #include <libelf.h>
 #else
@@ -38,12 +35,16 @@
 #include <libelf/libelf.h>
 #endif
 #endif
-
 #include <stdio.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <string.h>
 #include <stdlib.h>
+
+#include "dwarf_incl.h"
+#include "dwarf_error.h"
+#include "dwarf_elf_access.h"
+
 
 #define DWARF_DBG_ERROR(dbg,errval,retval) \
     _dwarf_error(dbg, error, errval); return(retval);

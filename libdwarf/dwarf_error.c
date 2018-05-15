@@ -25,14 +25,14 @@
 
 */
 
-
-
 #include "config.h"
-#include "dwarf_incl.h"
 #include <stdio.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <stdlib.h>
+
+#include "dwarf_incl.h"
+#include "dwarf_error.h"
 
 /* Array to hold string representation of errors. Any time a
    define is added to the list in libdwarf.h, a string should be

@@ -31,6 +31,7 @@
 #include <time.h>
 
 #include "dwarf_incl.h"
+#include "dwarf_error.h"
 #include "dwarf_util.h"
 #include "dwarf_line.h"
 

@@ -49,5 +49,4 @@
 #include "dwarf_base_types.h"
 #include "dwarf_alloc.h"
 #include "dwarf_opaque.h"
-#include "dwarf_error.h"
 #endif /* DWARF_INCL_H */

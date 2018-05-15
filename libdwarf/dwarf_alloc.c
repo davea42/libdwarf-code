@@ -27,12 +27,13 @@
 #undef  DEBUG
 
 #include "config.h"
-#include "dwarf_incl.h"
 #include <sys/types.h>
 
 #include <stdlib.h>
 #include <stdio.h>
 
+#include "dwarf_incl.h"
+#include "dwarf_error.h"
 /*  These files are included to get the sizes
     of structs for malloc.
 */

@@ -1,4 +1,11 @@
 2018-05-15 David Anderson
+    * Makefile.in: dwarf_frame3.c now gone from build.
+      It should be removed. Nothing in it is used.
+    * dwarf_incl.h: Removed dwarf_error.h include
+    * dwarf_*: put includes in local normal order
+      and added include dwarf_error.h as needed
+      (in many files).
+2018-05-15 David Anderson
     * dwarf_incl.h: Removed dwarf_util.h include
     * dwarf_abbrev.c,dwarf_alloc.c,dwarf_arange.c,dwarf_die_deliv.c,
       dwarf_dnames.c,dwarf_form.c,dwarf_frame.c,dwarf_frame2.c,
