@@ -1,3 +1,5 @@
+2018-05-15  David Anderson
+     * frame1.c: Removed trailing blank line.
 2018-05-12  David Anderson
      * frame1.c: Adding new code (select with option
        --just-print-selected-regs) to test a new

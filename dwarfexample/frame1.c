@@ -687,7 +687,3 @@ print_regtable(Dwarf_Regtable3 *tab3)
 
 
 }
-
-
-
-
