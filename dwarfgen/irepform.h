@@ -1,5 +1,5 @@
 /*
-  Copyright (C) 2010-2013 David Anderson.  All rights reserved.
+  Copyright (C) 2010-2018 David Anderson.  All rights reserved.
 
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions are met:
@@ -731,4 +731,3 @@ private:
 // Factory Method.
 IRForm *formFactory(Dwarf_Debug dbg, Dwarf_Attribute attr,
     IRCUdata &cudata,IRAttr & irattr);
-
