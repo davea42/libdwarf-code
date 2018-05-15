@@ -1,3 +1,9 @@
+2018-05-15 David Anderson
+    * command_options.c: Removed an extra break on option -ER
+      that was an accident. It's been broken for quite a long time.
+      section_map[DW_HDR_DEBUG_RNGLISTS]=TRUE, applicable
+      to DWARF5, was getting ignored due to the mistake.
+      This has to do with printing section header information.
 2018-05-14 David Anderson
     * command_options.c,compiler_info.c,print_frames.c: Fix
       indents, remove trailing whitespace.

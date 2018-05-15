@@ -747,7 +747,6 @@ process_args(int argc, char *argv[])
                     break;
                 case 'R':
                     enable_section_map_entry(DW_HDR_DEBUG_RANGES);
-                    break;
                     enable_section_map_entry(DW_HDR_DEBUG_RNGLISTS);
                     break;
                 case 's':
