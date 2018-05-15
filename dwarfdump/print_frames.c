@@ -697,6 +697,31 @@ get_fde_proc_name(Dwarf_Debug dbg, Dwarf_Addr low_pc,
     return (NULL);
 }
 
+/*  Attempting to take care of overflows so we
+    only accept good as TRUE. */
+static Dwarf_Bool
+valid_fde_content(Dwarf_Small * fde_start,
+    Dwarf_Unsigned fde_length,
+    Dwarf_Small * data_ptr,
+    Dwarf_Unsigned data_ptr_length)
+{
+    Dwarf_Small * fde_end = fde_start + fde_length;
+    Dwarf_Small * data_end = 0;
+
+    if (data_ptr < fde_start ||
+        data_ptr >= fde_end) {
+        return FALSE;
+    }
+    data_end = data_ptr + data_ptr_length;
+    if ( data_end < fde_start || data_end < data_ptr) {
+        return FALSE;
+    }
+    if ( data_end  >= fde_end) {
+        return FALSE;
+    }
+    return TRUE;
+}
+
 /*  Gather the fde print logic here so the control logic
     determining what FDE to print is clearer.  */
 static int
@@ -835,14 +860,22 @@ print_one_fde(Dwarf_Debug dbg,
             /* do nothing. */
         } else if (ares == DW_DLV_OK) {
             if (glflags.gf_do_print_dwarf) {
-                unsigned k2 = 0;
+                printf("\n       <eh aug data len 0x%" DW_PR_DUx, len);
+                if(len) { 
+                    if(!valid_fde_content(fde_bytes,fde_bytes_length,
+                        data,len) ) {
+                        printf("ERROR:The .eh_frame augmentation data "
+                           "is too large to print");
+                    } else {
+                        Dwarf_Unsigned k2 = 0;
 
-                printf("\n       <eh aug data len 0x%" DW_PR_DUx , len);
-                for (k2 = 0; k2 < len; ++k2) {
-                    if (k2 == 0) {
-                        printf(" bytes 0x");
-                    }
-                    printf("%02x ", (unsigned char) data[k2]);
+                        for (k2 = 0; k2 < len; ++k2) {
+                            if (k2 == 0) {
+                                printf(" bytes 0x");
+                            }
+                            printf("%02x ", (unsigned char) data[k2]);
+                         }
+                     }
                 }
                 printf(">");
             }

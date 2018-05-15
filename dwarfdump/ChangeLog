@@ -1,4 +1,7 @@
 2018-05-14 David Anderson
+        * print_frames.c: Validate augmentation bytes from
+          eh_frame to catch bogus augmentation length.
+2018-05-14 David Anderson
         * dwarfdump.c: gcc caught a memset given a pointer
           as the size. Fixed.
         * naming.c: Needed #ifndef TRIVIAL_NAMING

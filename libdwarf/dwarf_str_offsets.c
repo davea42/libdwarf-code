@@ -118,9 +118,12 @@ dwarf_close_str_offsets_table_access(
     Dwarf_Str_Offsets_Table  table_data,
     Dwarf_Error             * error)
 {
+    Dwarf_Debug dbg = 0;
+
     VALIDATE_SOT(table_data)
+    dbg = table_data->so_dbg;
     table_data->so_magic_value = 0xdead;
-    dwarf_dealloc(table_data->so_dbg,error, DW_DLA_STR_OFFSETS);
+    dwarf_dealloc(dbg,table_data, DW_DLA_STR_OFFSETS);
     return DW_DLV_OK;
 }
 

@@ -1,4 +1,10 @@
 2018-05-14 David Anderson
+    * dwarf_frame2.c: Do a thorough check of every non-zero
+      augmentation data length in a way that will catch
+      integer overflows.
+    * dwarf_str_offsets.c: Fixed a botch in the original
+      dwarf_dealloc in dwarf_close_str_offsets_table_access().
+2018-05-14 David Anderson
     * dwarf_frame.c: Implemented dwarf_get_fde_info_for_reg3_b().
     * libdwarf.h.in: Fixed arg list for dwarf_get_fde_info_for_reg3_b.
 2018-05-14 David Anderson
