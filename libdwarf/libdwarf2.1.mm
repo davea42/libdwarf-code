@@ -8,7 +8,7 @@
 .nr Hb 5
 \." ==============================================
 \." Put current date in the following at each rev
-.ds vE rev 2.63, April 13, 2018
+.ds vE rev 2.64, May 12, 2018
 \." ==============================================
 \." ==============================================
 .ds | |
@@ -88,7 +88,7 @@ and a copy of the standard.
 .H 2 "Copyright"
 Copyright 1993-2006 Silicon Graphics, Inc.
 
-Copyright 2007-2015 David Anderson. 
+Copyright 2007-2018 David Anderson. 
 
 Permission is hereby granted to 
 copy or republish or use any or all of this document without
@@ -202,6 +202,12 @@ The following is a brief mention of the changes in this libdwarf from
 the libdwarf draft for DWARF Version 1 and recent changes.
 
 .H 2 "Items Changed"
+.P
+All references to Dwarf_Frame_Op3 have been removed
+as that struct was never created or available.
+The new function dwarf_get_fde_info_for_reg3_b()
+is documented.
+(May 12, 2018)
 .P
 With DWARF5 it became harder to use
 dwarf_srclines_data_b() as DWARF5 changed
@@ -641,16 +647,20 @@ to index through the data.  The data pointed to by \f(CWbl_data\fP is not
 necessarily at any useful alignment.
 
 .H 3 "Frame Operation Codes: DWARF 2"
-This interface is adequate for DWARF2 but not for DWARF3.
-A separate interface usable for DWARF3 and for DWARF2 is described below.
+FIXME
+This interface is adequate for DWARF2 but 
+not entirely suitable for DWARF3 or later.
+A new (functional) interface is needed.
 This interface DWARF2 interface is deprecated. 
 Use the interface for DWARF3 (see below) for all versions
 of DWARF.
 See also the section "Low Level Frame Operations" below.
 .P
-The DWARF2 \f(CWDwarf_Frame_Op\fP type is used to contain the data of a single
+The DWARF2 \f(CWDwarf_Frame_Op\fP type is
+used to contain the data of a single
 instruction of an instruction-sequence of low-level information from the 
-section containing frame information.  This is ordinarily used by 
+section containing frame information.
+This is ordinarily used by 
 Internal-level Consumers trying to print everything in detail.
 
 .DS
@@ -669,19 +679,33 @@ extended op code) and is zero otherwise.
 .P
 \f(CWfp_register\fP 
 is any (or the first) register value as defined
-in the \f(CWCall Frame Instruction Encodings\fP figure
-in the \f(CWdwarf\fP document.
-If not used with the Op it is 0.
+in the \f(CWCall frame instruction encodings\fP
+in the \f(CWdwarf\fP document
+(in DWARF3 see Figure 40,in DWARF5 see table 7.29).
+If not used with the operation it is 0.
 .P
 \f(CWfp_offset\fP
 is the address, delta, offset, or second register as defined
-in the \f(CWCall Frame Instruction Encodings\fP figure
-in the \f(CWdwarf\fP document.
+in the 
+\f(CWCall frame instruction encodings\fP
+documentation.
 If this is an \f(CWaddress\fP then the value should be cast to
 \f(CW(Dwarf_Addr)\fP before being used.
+
 In any implementation this field *must* be as large as the
-larger of Dwarf_Signed and Dwarf_Addr for this to work properly.
+largest of Dwarf_Ptr, Dwarf_Signed, and Dwarf_Addr
+for this to work properly.
 If not used with the op it is 0.
+If the fp_extended_op is 
+\f(CWDW_CFA_def_cfa\fP
+or
+\f(CWDW_CFA_val_expression\fP
+or
+\f(CWDW_CFA_expression\fP
+then 
+\f(CWfp_offset\fP
+is a pointer to an expression block in the in-memory
+copy of the frame section.
 .P
 \f(CWfp_instr_offset\fP is the byte_offset (within the instruction
 stream of the frame instructions) of this operation.  It starts at 0
@@ -689,7 +713,7 @@ for a given frame descriptor.
 
 .H 3 "Frame Regtable: DWARF 2"
 This interface is adequate for DWARF2 
-and MIPS but not for DWARF3.
+and MIPS but not for DWARF3 or later.
 A separate and preferred interface usable for DWARF3 and for DWARF2
 is described below.
 See also the section "Low Level Frame Operations" below.
@@ -743,63 +767,13 @@ the value of the register \f(CWdw_regnum\fP to produce the
 value.  
 
 .H 3 "Frame Operation Codes: DWARF 3 (for DWARF2 and later )
-This interface is adequate for DWARF3 and for DWARF2 (and DWARF4).
-It is new in libdwarf in April 2006.
-See also the section "Low Level Frame Operations" below.
-.P
-The DWARF2 \f(CWDwarf_Frame_Op3\fP type is used to contain the data of a single
-instruction of an instruction-sequence of low-level information from the 
-section containing frame information.  This is ordinarily used by 
-Internal-level Consumers trying to print everything in detail.
+This interface was intended
+to be  adequate for DWARF3 and for DWARF2 (and DWARF4)
+but was never implemented.
 
-.DS
-\f(CWtypedef struct {
-        Dwarf_Small     fp_base_op;
-        Dwarf_Small     fp_extended_op;
-        Dwarf_Half      fp_register;
-
-        /* Value may be signed, depends on op.
-           Any applicable data_alignment_factor has
-           not been applied, this is the  raw offset. */
-        Dwarf_Unsigned  fp_offset_or_block_len;
-        Dwarf_Small     *fp_expr_block;
-
-        Dwarf_Off       fp_instr_offset;
-} Dwarf_Frame_Op3;\fP
-.DE
-
-\f(CWfp_base_op\fP is the 2-bit basic op code.  \f(CWfp_extended_op\fP is 
-the 6-bit extended opcode (if \f(CWfp_base_op\fP indicated there was an 
-extended op code) and is zero otherwise.
-.P
-\f(CWfp_register\fP 
-is any (or the first) register value as defined
-in the \f(CWCall Frame Instruction Encodings\fP figure
-in the \f(CWdwarf\fP document.
-If not used with the Op it is 0.
-.P
-\f(CWfp_offset_or_block_len\fP
-is the address, delta, offset, or second register as defined
-in the \f(CWCall Frame Instruction Encodings\fP figure
-in the \f(CWdwarf\fP document. Or (depending on the op, it
-may be the length of the dwarf-expression block pointed to
-by \f(CWfp_expr_block\fP.
-If this is an \f(CWaddress\fP then the value should be cast to
-\f(CW(Dwarf_Addr)\fP before being used.
-In any implementation this field *must* be as large as the
-larger of Dwarf_Signed and Dwarf_Addr for this to work properly.
-If not used with the op it is 0.
-.P
-\f(CWfp_expr_block\fP (if applicable to the op)
-points to a dwarf-expression block which is \f(CWfp_offset_or_block_len\fP
-bytes long.
-.P
-\f(CWfp_instr_offset\fP is the byte_offset (within the instruction
-stream of the frame instructions) of this operation.  It starts at 0
-for a given frame descriptor.
 
 .H 3 "Frame Regtable: DWARF 3 (for DWARF2 and later)"
-This interface is adequate for DWARF3 and for DWARF2.
+This interface is adequate for DWARF2 and later versions.
 It is new in libdwarf as of April 2006.
 The default configure of libdwarf 
 inserts DW_FRAME_CFA_COL3 as the default CFA column.
@@ -8488,7 +8462,8 @@ Several frame functions work transparently for either set, we
 will focus on the ones that are not equally suitable
 now.
 .P
-The original DWARF2 interface set still exists (dwarf_get_fde_info_for_reg(),
+The original DWARF2 interface set still exists
+(dwarf_get_fde_info_for_reg(),
 dwarf_get_fde_info_for_cfa_reg(), and dwarf_get_fde_info_for_all_regs())
 and works adequately for MIPS/IRIX DWARF2 and ABI/ISA sets
 that are sufficiently similar to MIPS.
@@ -8935,10 +8910,10 @@ void exampler(Dwarf_Debug dbg,Dwarf_Addr mypcval)
 \f(CWdwarf_get_cie_of_fde()\fP stores a \f(CWDwarf_Cie\fP
 into the  \f(CWDwarf_Cie\fP that \f(CWcie_returned\fP points at.
 
-If one has called dwarf_get_fde_list and does not wish
-to dwarf_dealloc() all the individual FDEs immediately, one
-must also avoid dwarf_dealloc-ing the CIEs for those FDEs
-not immediately dealloc'd.
+If one has called 
+\f(CWdwarf_get_fde_list()\fP
+must avoid dwarf_dealloc-ing the FDEs and  the CIEs for those FDEs
+individually (see its documentation here).
 Failing to observe this restriction will cause the  FDE(s) not
 dealloc'd to become invalid: an FDE contains (hidden in it)
 a CIE pointer which will be be invalid (stale, pointing to freed memory)
@@ -8949,7 +8924,6 @@ If one later passes an FDE with a stale internal CIE pointer
 to one of the routines taking an FDE as input the result will
 be failure of the call (returning DW_DLV_ERROR) at best and
 it is possible a coredump or worse will happen (eventually).
-
 
 \f(CWdwarf_get_cie_of_fde()\fP returns 
 \f(CWDW_DLV_OK\fP if it is successful (it will be
@@ -9383,9 +9357,10 @@ the previous value of the default address size  (taken from the
 
 
 .H 3 "dwarf_get_fde_info_for_reg3()"
-This interface is suitable for DWARF3 and DWARF2.
+This interface is suitable for DWARF2 and later.
 It returns the values for a particular real register
-(Not for the CFA register, see dwarf_get_fde_info_for_cfa_reg3()
+(Not for the CFA virtual register, 
+see dwarf_get_fde_info_for_cfa_reg3()
 below).
 If the application is going to retrieve the value for more
 than a few \f(CWtable_column\fP values at this \f(CWpc_requested\fP
@@ -9407,6 +9382,9 @@ of the additional setup that requires of the caller).
         Dwarf_Addr   *row_pc,
         Dwarf_Error  *error);\fP
 .DE
+See also the nearly identical function
+\f(CWdwarf_get_fde_info_for_reg3_b().
+.P
 \f(CWdwarf_get_fde_info_for_reg3()\fP returns
 \f(CWDW_DLV_OK\fP on success. 
 It sets \f(CW*value_type\fP
@@ -9429,6 +9407,7 @@ row specified by \f(CWpc_requested\fP and column specified by
 In this case  the  \f(CW*register_num\fP will be set
 to DW_FRAME_CFA_COL3 (.  This is an offset(N) rule
 as specified in the DWARF3/2 documents.
+.P
 Adding the value of \f(CW*offset_or_block_len\fP
 to the value of the CFA register gives the address
 of a location holding the previous value of 
@@ -9503,6 +9482,48 @@ of the other output arguments are touched.
 It is usable with either 
 \f(CWdwarf_get_fde_n()\fP or \f(CWdwarf_get_fde_at_pc()\fP.
 
+.H 3 "dwarf_get_fde_info_for_reg3_b()"
+This interface is suitable for DWARF2 and later.
+It returns the values for a particular real register
+(Not for the CFA virtual register,
+see dwarf_get_fde_info_for_cfa_reg3_b()
+below).
+If the application is going to retrieve the value for more
+than a few \f(CWtable_column\fP values at this \f(CWpc_requested\fP
+(by calling this function multiple times)
+it is much more efficient to
+call dwarf_get_fde_info_for_all_regs3() (in spite
+of the additional setup that requires of the caller).
+
+.DS
+\f(CWint dwarf_get_fde_info_for_reg3_b(
+        Dwarf_Fde fde,
+        Dwarf_Half table_column,
+        Dwarf_Addr pc_requested,
+        Dwarf_Small  *value_type,
+        Dwarf_Signed *offset_relevant,
+        Dwarf_Signed *register_num,
+        Dwarf_Signed *offset_or_block_len,
+        Dwarf_Ptr    *block_ptr,
+        Dwarf_Addr   *row_pc,
+        Dwarf_Bool   *has_more_rows,
+        Dwarf_Addr   *subsequent_pc,
+        Dwarf_Error  *error);\fP
+.DE
+.P
+This is identical to  
+\f(CWdwarf_get_fde_info_for_reg3()\fP
+except for the new arguments
+\f(CWhas_more_rows\fP
+and
+\f(CWsubsequent_pc\fP
+which allow the caller to 
+know if there are more rows in the frame table
+and what the next pc value in the frame table
+for this fde is.
+The two new arguments may be passed in as NULL
+if their values are not needed by the caller.
+
 
 .H 3 "dwarf_get_fde_info_for_cfa_reg3()"
 .DS
@@ -9556,8 +9577,9 @@ except for the new arguments
 \f(CWhas_more_rows\fP
 and
 \f(CWsubsequent_pc\fP
-which allow dwarfdump to print the frame information for
-an entire function using about 10 percent less cpu time.
+which allow the caller to 
+know if there are more rows in the frame table
+and what the next pc value is.
 The two new arguments may be passed in as NULL
 if their values are not needed by the caller.
 .P
@@ -9598,32 +9620,16 @@ And if there are no more rows in the frame data then
 \f(CWhas_more_rows\fP pointer.
 
 .P
-If 
+If  
 \f(CWsubsequent_pc\fP
 is non-null
 then the pc-value which has the next
 frame operator is returned through the
-pointer.
-
-
-.H 3 "dwarf_get_fde_info_for_all_regs3()"
-
-
-.H 3 "dwarf_get_fde_info_for_all_regs3()"
-.DS
-\f(CWint dwarf_get_fde_info_for_all_regs3(
-        Dwarf_Fde fde,
-        Dwarf_Addr pc_requested,
-	Dwarf_Regtable3 *reg_table,
-        Dwarf_Addr *row_pc,
-        Dwarf_Error *error)\fP
-.DE
-\f(CWdwarf_get_fde_info_for_all_regs3()\fP returns
-
-
-
-.H 3 "dwarf_get_fde_info_for_all_regs3()"
-
+pointer. If no more rows are present
+zero is returned through the pointer, but
+please use 
+\f(CWhas_more_rows\fP
+to determine if there are more rows.
 
 .H 3 "dwarf_get_fde_info_for_all_regs3()"
 .DS

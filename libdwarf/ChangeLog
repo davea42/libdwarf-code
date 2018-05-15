@@ -1,4 +1,8 @@
 2018-05-14 David Anderson
+    * libdwarf2.1.mm: Documented dwarf_get_fde_info_for_reg3_b().
+      Refined some comments about frame data.
+    * libdwarf2.1.pdf: Regenerated. Version 2.64
+2018-05-14 David Anderson
     * gennames.c: Updated version string.
 2018-05-14 David Anderson
     * dwarf_frame2.c: Do a thorough check of every non-zero
