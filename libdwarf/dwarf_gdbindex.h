@@ -87,11 +87,3 @@ struct Dwarf_Gdbindex_s {
 
     Dwarf_Small *    gi_string_pool;
 };
-
-
-
-
-
-
-
-

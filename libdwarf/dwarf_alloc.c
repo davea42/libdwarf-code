@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2000-2005 Silicon Graphics, Inc.  All Rights Reserved.
-  Portions Copyright (C) 2007-2011  David Anderson. All Rights Reserved.
+  Portions Copyright (C) 2007-2018  David Anderson. All Rights Reserved.
 
   This program is free software; you can redistribute it and/or modify it
   under the terms of version 2.1 of the GNU Lesser General Public License
@@ -720,4 +720,3 @@ _dwarf_special_no_dbg_error_malloc(void)
     e->er_static_alloc = DE_MALLOC;
     return e;
 }
-

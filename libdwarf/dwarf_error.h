@@ -52,5 +52,3 @@ struct Dwarf_Error_s {
 };
 
 extern struct Dwarf_Error_s _dwarf_failsafe_error;
-
-

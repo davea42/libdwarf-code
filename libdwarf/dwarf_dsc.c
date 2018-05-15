@@ -1,5 +1,5 @@
 /*
-  Copyright (C) 2016-2016 David Anderson. All Rights Reserved.
+  Copyright (C) 2016-2018 David Anderson. All Rights Reserved.
 
   This program is free software; you can redistribute it and/or modify it
   under the terms of version 2.1 of the GNU Lesser General Public License
@@ -284,4 +284,3 @@ _dwarf_dsc_destructor(void *m)
     free(h->dsh_block);
     h->dsh_block = 0;
 }
-

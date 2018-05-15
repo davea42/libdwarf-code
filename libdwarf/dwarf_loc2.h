@@ -873,4 +873,3 @@ dwarf_loc_head_c_dealloc(Dwarf_Loc_Head_c loclist_head)
     }
     dwarf_dealloc(dbg,loclist_head,DW_DLA_LOC_HEAD_C);
 }
-

@@ -34,5 +34,3 @@
 /* Computes amount of padding necessary to align n to a k-boundary. */
 /* Important: Assumes n, k both GREATER than zero. */
 #define PADDING(n, k) ( (k)-1 - ((n)-1)%(k) )
-
-

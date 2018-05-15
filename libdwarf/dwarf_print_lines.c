@@ -647,5 +647,3 @@ dwarf_check_lineheader(Dwarf_Die die, int *err_count_out)
         only_line_header);
     return;
 }
-
-

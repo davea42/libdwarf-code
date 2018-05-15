@@ -1,5 +1,5 @@
 /*
-  Copyright (C) 2008-2016 David Anderson. All Rights Reserved.
+  Copyright (C) 2008-2018 David Anderson. All Rights Reserved.
   Portions Copyright 2012 SN Systems Ltd. All rights reserved.
 
   This program is free software; you can redistribute it and/or modify it
@@ -219,4 +219,3 @@ dwarf_ranges_dealloc(Dwarf_Debug dbg, Dwarf_Ranges * rangesbuf,
 {
     dwarf_dealloc(dbg,rangesbuf, DW_DLA_RANGES);
 }
-

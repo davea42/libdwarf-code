@@ -1,4 +1,4 @@
-/* Copyright (c) 2013-2014, David Anderson
+/* Copyright (c) 2013-2018, David Anderson
 All rights reserved.
 
 Redistribution and use in source and binary forms, with
@@ -673,6 +673,3 @@ dwarf_tdestroy(void *rootp, void (*free_node)(void *nodep))
     free(root);
     free(head);
 }
-
-
-

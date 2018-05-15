@@ -1,5 +1,4 @@
 /*
-
   Copyright (C) 2000-2005 Silicon Graphics, Inc.  All Rights Reserved.
   Portions Copyright (C) 2007-2018 David Anderson. All Rights Reserved.
   Portions Copyright (C) 2008-2010 Arxan Technologies, Inc. All Rights Reserved.
@@ -918,4 +917,3 @@ int _dwarf_extract_data16(Dwarf_Debug dbg,
 
 
 void _dwarf_dumpsig(const char *msg, Dwarf_Sig8 *sig,int lineno);
-

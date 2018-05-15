@@ -1,4 +1,15 @@
 2018-05-15 David Anderson
+    * dwarf_abbrev.c,dwarf_alloc.c,dwarf_die_deliv.c,
+      dwarf_dsc.c,dwarf_dsc.h,dwarf_elf_access.c,dwarf_error.h,
+      dwarf_gdbindex.h,dwarf_global.h,dwarf_groups.c,
+      dwarf_harmless.c,dwarf_harmless.h,dwarf_leb.c,dwarf_loc.h,
+      dwarf_loc2.h,dwarf_opaque.h,dwarf_print_lines.c,
+      dwarf_ranges.c,dwarf_string.c,dwarf_tsearch.h,
+      dwarf_tsearchhash.c,dwarf_util.c,dwarf_xu_index.c,
+      dwarf_xu_index.h,pro_alloc.c,pro_die.h,pro_finish.c,
+      pro_util.h: Removed trailing blank lines.
+      Updated copyright year.
+2018-05-15 David Anderson
     * dwarf_loc2.c, dwarf_line_table_reader_common.c,
       dwarf_errmsg_list.c: Renamed to end in .h, not .c,
       as these are all targets of #include.

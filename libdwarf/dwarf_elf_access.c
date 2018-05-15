@@ -1482,5 +1482,3 @@ dwarf_get_elf(Dwarf_Debug dbg, dwarf_elf_handle * elf,
     _dwarf_error(dbg, error, DW_DLE_FNO);
     return DW_DLV_ERROR;
 }
-
-

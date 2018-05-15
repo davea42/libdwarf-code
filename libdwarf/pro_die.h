@@ -62,4 +62,3 @@ int _dwarf_pro_set_string_attr(Dwarf_P_Attribute new_attr,
     Dwarf_P_Debug dbg,
     char *name,
     Dwarf_Error *error);
-

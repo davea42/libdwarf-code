@@ -1302,6 +1302,3 @@ _dwarf_what_section_are_we(Dwarf_Debug dbg,
         sec_start_ptr_out, sec_len_out, sec_end_ptr_out);
     return DW_DLV_NO_ENTRY;
 }
-
-
-

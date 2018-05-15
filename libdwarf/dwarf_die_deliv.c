@@ -1,5 +1,4 @@
 /*
-
   Copyright (C) 2000-2006 Silicon Graphics, Inc.  All Rights Reserved.
   Portions Copyright (C) 2007-2018 David Anderson. All Rights Reserved.
   Portions Copyright 2012 SN Systems Ltd. All rights reserved.
@@ -2231,6 +2230,3 @@ dwarf_get_die_section_name_b(Dwarf_Die die,
     is_info = context->cc_is_info;
     return dwarf_get_die_section_name(dbg,is_info,sec_name,error);
 }
-
-
-
