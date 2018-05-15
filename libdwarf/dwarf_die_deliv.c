@@ -26,9 +26,9 @@
 */
 
 #include "config.h"
-#include "dwarf_incl.h"
-
 #include <stdio.h>
+#include "dwarf_incl.h"
+#include "dwarf_util.h"
 #include "dwarf_die_deliv.h"
 
 #define FALSE 0

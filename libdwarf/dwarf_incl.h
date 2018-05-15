@@ -50,5 +50,4 @@
 #include "dwarf_alloc.h"
 #include "dwarf_opaque.h"
 #include "dwarf_error.h"
-#include "dwarf_util.h"
 #endif /* DWARF_INCL_H */

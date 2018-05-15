@@ -27,12 +27,13 @@
 */
 
 #include "config.h"
-#include "dwarf_incl.h"
 #include <stdio.h>
 #include <limits.h>
 #ifdef HAVE_STDLIB_H
 #include <stdlib.h>
 #endif /* HAVE_STDLIB_H */
+#include "dwarf_incl.h"
+#include "dwarf_util.h"
 #include "dwarf_macro.h"
 
 

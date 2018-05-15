@@ -36,6 +36,7 @@
 /*  These files are included to get the sizes
     of structs for malloc.
 */
+#include "dwarf_util.h"
 #include "dwarf_line.h"
 #include "dwarf_global.h"
 #include "dwarf_arange.h"

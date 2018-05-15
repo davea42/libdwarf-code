@@ -26,9 +26,10 @@
 /*  This provides access to the DWARF5 .debug_names section. */
 
 #include "config.h"
-#include "dwarf_incl.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include "dwarf_incl.h"
+#include "dwarf_util.h"
 #include "dwarf_global.h"
 #include "dwarf_dnames.h"
 

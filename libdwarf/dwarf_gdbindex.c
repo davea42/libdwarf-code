@@ -25,9 +25,10 @@
 */
 
 #include "config.h"
-#include "dwarf_incl.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include "dwarf_incl.h"
+#include "dwarf_util.h"
 #include "dwarf_gdbindex.h"
 
 #define TRUE 1

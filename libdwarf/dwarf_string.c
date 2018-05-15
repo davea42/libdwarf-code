@@ -26,6 +26,7 @@
 
 #include "config.h"
 #include "dwarf_incl.h"
+#include "dwarf_util.h"
 
 int
 dwarf_get_str(Dwarf_Debug dbg,

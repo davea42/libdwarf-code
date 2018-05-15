@@ -27,8 +27,6 @@
 */
 
 #include "config.h"
-#include "dwarf_incl.h"
-
 #include <stdio.h>
 #include <sys/stat.h>
 #include <sys/types.h>
@@ -36,6 +34,7 @@
 #include <stdlib.h>
 
 #include "dwarf_incl.h"
+#include "dwarf_util.h"
 #include "dwarf_harmless.h"
 
 /* For consistency, use the HAVE_LIBELF_H symbol */

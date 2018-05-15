@@ -25,8 +25,9 @@
 */
 
 #include "config.h"
-#include "dwarf_incl.h"
 #include <stdio.h>
+#include "dwarf_incl.h"
+#include "dwarf_util.h"
 #include "dwarf_abbrev.h"
 
 /*  This is used to print a .debug_abbrev section without

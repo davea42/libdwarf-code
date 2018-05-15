@@ -26,10 +26,12 @@
 */
 
 #include "config.h"
-#include "dwarf_incl.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+
+#include "dwarf_incl.h"
+#include "dwarf_util.h"
 #include "dwarf_line.h"
 
 #define PRINTING_DETAILS 1

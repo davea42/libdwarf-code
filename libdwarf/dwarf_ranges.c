@@ -27,6 +27,7 @@
 #include "config.h"
 #include <stdlib.h>
 #include "dwarf_incl.h"
+#include "dwarf_util.h"
 
 struct ranges_entry {
    struct ranges_entry *next;

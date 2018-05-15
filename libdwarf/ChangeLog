@@ -1,4 +1,12 @@
 2018-05-15 David Anderson
+    * dwarf_incl.h: Removed dwarf_util.h include
+    * dwarf_abbrev.c,dwarf_alloc.c,dwarf_arange.c,dwarf_die_deliv.c,
+      dwarf_dnames.c,dwarf_form.c,dwarf_frame.c,dwarf_frame2.c,
+      dwarf_gdbindex.c,dwarf_global.c,dwarf_init_finish.c,dwarf_line.c,
+      dwarf_loc.c,dwarf_macro5.c,dwarf_print_lines.c,dwarf_query.c,
+      dwarf_ranges.c,dwarf_str_offsets.c,dwarf_util.c,dwarf_xu_index.c,
+      dwarf_string.c,dwarf_macro.c: Added include dwarf_util.h.
+2018-05-15 David Anderson
     * dwarf_die_deliv.c,dwarf_dsc.c,dwarf_error.c,
       dwarf_init_finish.c,dwarf_original_elf_init.c,
       pro_error.c,pro_line.c: Removed the unnecessary

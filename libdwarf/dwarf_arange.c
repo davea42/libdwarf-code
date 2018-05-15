@@ -30,6 +30,7 @@
 #include "config.h"
 #include "dwarf_incl.h"
 #include <stdio.h>
+#include "dwarf_util.h"
 #include "dwarf_arange.h"
 #include "dwarf_global.h"  /* for _dwarf_fixup_* */
 
