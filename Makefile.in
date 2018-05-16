@@ -80,7 +80,7 @@ all:    basic
 	cd dwarfexample && make
 
 clean:
-	sh ./CLEANUP
+	sh scripts/CLEANUP
 
 install: all
 	echo "No install provided, see comments in the README"

@@ -2,6 +2,9 @@
 #
 #newpref sets directory name with date, more
 #like normal linux packages.
+echo This is largely obsolete.
+exit 1
+
 if [ $# != 1 ]
 then
 	echo  Usage: BLDTESTDIR yyyymmdd

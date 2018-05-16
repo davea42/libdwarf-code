@@ -1,5 +1,6 @@
 #!/bin/sh
-exit 0; #modify this before running.
+echo "Largely out of date, fix before running"
+exit 1; #modify this before running.
 cat > tarlist.tmp <<EOF
 libdwarf2002April28.tar.gz 
 libdwarf2002Oct23.tar.gz
