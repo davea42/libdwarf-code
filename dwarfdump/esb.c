@@ -45,7 +45,9 @@
 #ifdef SELFTEST
 typedef char * string; /* SELFTEST */
 #endif
+#include <stdlib.h> /* for ABORT when impossible happens. */
 #include "esb.h"
+#define TRUE 1
 
 /*  INITIAL_ALLOC value takes no account of space for a trailing NUL,
     the NUL is accounted for in init_esb_string
@@ -67,6 +69,12 @@ static FILE *null_device_handle = 0;
 #else
 #define NULL_DEVICE_NAME "/dev/null"
 #endif /* _WIN32 */
+
+#define ESB_BUFFER_INITIAL_SIZE  512
+static int esb_static_bufferlen = 0;
+static char esb_static_alloc[ESB_BUFFER_INITIAL_SIZE];
+static char esb_static_buffer_mallocd = 0;
+static char * esb_static_buffer = esb_static_alloc;
 
 /* Open the null device used during formatting printing */
 FILE *esb_open_null_device(void)
@@ -267,83 +275,58 @@ esb_get_allocated_size(struct esb_s *data)
     return data->esb_allocated_size;
 }
 
-/*  Make more room. Leaving  contents unchanged, effectively.
-    The NUL byte at end has room and this preserves that room.
-*/
-static void
-esb_allocate_more_if_needed(struct esb_s *data,
-    const char *in_string,va_list ap)
-{
-#ifndef _WIN32
-    static char a_buffer[512];
-#endif /* _WIN32*/
-
-    int netlen = 0;
-    va_list ap_copy;
-
-    /* Preserve the original argument list, to be used a second time */
-    va_copy(ap_copy,ap);
-
-#ifdef _WIN32
-    netlen = vfprintf(null_device_handle,in_string,ap_copy);
-#else
-    netlen = vsnprintf(a_buffer,sizeof(a_buffer),in_string,ap_copy);
-#endif /* _WIN32*/
-
-    /*  "The object ap may be passed as an argument to another
-        function; if that function invokes the va_arg()
-        macro with parameter ap, the value of ap in the calling
-        function is unspecified and shall be passed to the va_end()
-        macro prior to any further reference to ap."
-        Single Unix Specification. */
-    va_end(ap_copy);
-
-    /* Allocate enough space to hold the full text */
-    esb_force_allocation(data,netlen + 1);
-}
-
-/*  Append a formatted string */
-void
-esb_append_printf_ap(struct esb_s *data,const char *in_string,va_list ap)
-{
-    int netlen = 0;
-    int expandedlen = 0;
-
-    /* Allocate enough space for the input string */
-    esb_allocate_more_if_needed(data,in_string,ap);
-
-    netlen = data->esb_allocated_size - data->esb_used_bytes;
-    expandedlen =
-        vsnprintf(&data->esb_string[data->esb_used_bytes],
-        netlen,in_string,ap);
-    if (expandedlen < 0) {
-        /*  There was an error.
-            Do nothing. */
-        return;
-    }
-    if (netlen < expandedlen) {
-        /*  If data was too small, the max written was one less than
-            netlen. */
-        data->esb_used_bytes += netlen - 1;
-    } else {
-        data->esb_used_bytes += expandedlen;
-    }
-}
-
 /*  Append a formatted string */
 void
 esb_append_printf(struct esb_s *data,const char *in_string, ...)
 {
     va_list ap;
+    int len = 0;
+    int len2 = 0;
+
+    if (!null_device_handle) {
+        if(!esb_open_null_device()) {
+            esb_append(data," Unable to open null printf device on:");
+            esb_append(data,in_string);
+            return;
+        }
+    }
     va_start(ap,in_string);
-    esb_append_printf_ap(data,in_string,ap);
-    /*  "The object ap may be passed as an argument to another
-        function; if that function invokes the va_arg()
-        macro with parameter ap, the value of ap in the calling
-        function is unspecified and shall be passed to the va_end()
-        macro prior to any further reference to ap."
-        Single Unix Specification. */
+    len = vfprintf(null_device_handle,in_string,ap);
     va_end(ap);
+
+    if (esb_static_bufferlen <= len) {
+        if (esb_static_buffer_mallocd) {
+            /* extra 50 is arbitrary */
+            char * newbuf = realloc(esb_static_buffer,len+50);
+            if (!newbuf) {
+                esb_append(data,"Unable to realloc esb static buffer for: ");
+                esb_append(data,in_string);
+                return;
+            }
+            esb_static_buffer = newbuf;
+            esb_static_bufferlen = len+50;
+        } else {
+            char * newbuf = malloc(len + 10);
+            if (!newbuf) {
+                esb_append(data,"Unable to realloc esb static buffer for: ");
+                esb_append(data,in_string);
+                return;
+            }
+            esb_static_buffer = newbuf;
+            esb_static_buffer_mallocd = TRUE;
+            esb_static_bufferlen = len+50;
+        }
+    }
+    va_start(ap,in_string);
+    len2 = vsprintf(esb_static_buffer,in_string,ap);
+    va_end(ap);
+    if (len2 >  len) {
+        /*  We are in big trouble, this should be impossible.
+            We have trashed something in memory. */
+        abort();
+    }
+    esb_appendn(data,esb_static_buffer,len2);
+    return ;
 }
 
 /*  Get a copy of the internal data buffer.
@@ -389,21 +372,12 @@ validate_esb(int instance,
             instance,esb_get_string(d),expout);
     }
 }
-void
-trialprint_1(struct esb_s *d, char *format,...)
-{
-    va_list ap;
-
-    va_start(ap,format);
-    esb_append_printf_ap(d,format,ap);
-    va_end(ap);
-}
 
 void
 trialprint(struct esb_s *d)
 {
-    const char * s = "insert me";
-    trialprint_1(d,"aaaa %s bbbb",s);
+    const char * s = "insert me %d\n";
+    esb_append_printf(d,s,1);
 }
 
 
@@ -473,7 +447,7 @@ int main()
 
         esb_force_allocation(&d5,50);
         trialprint(&d5);
-        validate_esb(14,&d5,19,50,"aaaa insert me bbbb");
+        validate_esb(14,&d5,12,50,"insert me 1\n");
         esb_destructor(&d5);
     }
     {

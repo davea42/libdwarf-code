@@ -460,7 +460,8 @@ specialtests(void)
         printf("FAIL signed decode special v3 \n");
         ++errcnt;
     }
-    if (decodeval != 0x8000000000000000) {
+    if ((Dwarf_Unsigned)decodeval !=
+        (Dwarf_Unsigned)0x8000000000000000) {
         printf("FAIL signed decode special v3 value check %lld vs %lld \n",
             decodeval,(Dwarf_Signed)0x8000000000000000);
         ++errcnt;

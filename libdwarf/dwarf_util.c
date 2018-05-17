@@ -28,7 +28,7 @@
 #include "config.h"
 #include <stdio.h>
 #include <stdarg.h>
-#include <stdlib.h> /* For free() */
+#include <stdlib.h> /* For free() and emergency abort() */
 #include "dwarf_incl.h"
 #include "dwarf_alloc.h"
 #include "dwarf_error.h"
@@ -40,6 +40,15 @@
 #define MINBUFLEN 1000
 #define TRUE  1
 #define FALSE 0
+
+#if _WIN32
+#define NULL_DEVICE_NAME "NUL"
+#else
+#define NULL_DEVICE_NAME "/dev/null"
+#endif /* _WIN32 */
+
+/* NULL device used when printing formatted strings */
+static FILE *null_device_handle = 0;
 
 Dwarf_Bool
 _dwarf_file_has_debug_fission_cu_index(Dwarf_Debug dbg)
@@ -1094,48 +1103,57 @@ dwarf_register_printf_callback( Dwarf_Debug dbg,
 }
 
 
-/* start is a minimum size, but may be zero. */
-static void bufferdoublesize(struct  Dwarf_Printf_Callback_Info_s *bufdata)
+/*  Return 0 if we fail here.
+    Else return the requested len value. */
+static unsigned buffersetsize(
+    struct  Dwarf_Printf_Callback_Info_s *bufdata,
+    int len)
 {
     char *space = 0;
-    unsigned int targlen = 0;
-    if (bufdata->dp_buffer_len == 0) {
-        targlen = MINBUFLEN;
-    } else {
-        targlen = bufdata->dp_buffer_len * 2;
-        if (targlen < bufdata->dp_buffer_len) {
-            /* Overflow, we cannot do this doubling. */
-            return;
+
+    if (!null_device_handle) {
+        null_device_handle = fopen(NULL_DEVICE_NAME,"w");
+        if(!null_device_handle) {
+            return 0;
         }
     }
+    if (bufdata->dp_buffer_user_provided) {
+        return bufdata->dp_buffer_len;
+    }
     /* Make big enough for a trailing NUL char. */
-    space = (char *)malloc(targlen+1);
+    space = (char *)malloc(len+1);
     if (!space) {
-        /* Out of space, we cannot double it. */
-        return;
+        /* Out of space, we cannot do anything. */
+        return 0;
     }
     free(bufdata->dp_buffer);
     bufdata->dp_buffer = space;
-    bufdata->dp_buffer_len = targlen;
-    return;
+    bufdata->dp_buffer_len = len;
+    return len;
 }
 
+/*  We are only using C90 facilities, not C99,
+    in libdwarf/dwarfdump. */
 int
 dwarf_printf(Dwarf_Debug dbg,
     const char * format,
     ...)
 {
     va_list ap;
-    int maxtries = 4;
-    int tries = 0;
+    unsigned bff = 0;
     struct Dwarf_Printf_Callback_Info_s *bufdata =
         &dbg->de_printf_callback;
+
     dwarf_printf_callback_function_type func = bufdata->dp_fptr;
     if (!func) {
         return 0;
     }
     if (!bufdata->dp_buffer) {
-        bufferdoublesize(bufdata);
+        bff = buffersetsize(bufdata,MINBUFLEN);
+        if (!bff) {
+            /*  Something is wrong. */
+            return 0;
+        }
         if (!bufdata->dp_buffer) {
             /*  Something is wrong. Possibly caller
                 set up callback wrong. */
@@ -1143,38 +1161,39 @@ dwarf_printf(Dwarf_Debug dbg,
         }
     }
 
-    /*  Here we ensure (or nearly ensure) we expand
-        the buffer when necessary, but not excessively
-        (but only if we control the buffer size).  */
-    while (1) {
-        int olen = 0;
-        tries++;
+    {
+        int plen = 0;
+        int nlen = 0;
         va_start(ap,format);
-        olen = vsnprintf(bufdata->dp_buffer,
-            bufdata->dp_buffer_len, format,ap);
-        /*  "The object ap may be passed as an argument to another
-            function; if that function invokes the va_arg()
-            macro with parameter ap, the value of ap in the calling
-            function is unspecified and shall be passed to the va_end()
-            macro prior to any further reference to ap."
-            Single Unix Specification. */
+        plen = vfprintf(null_device_handle,format,ap);
         va_end(ap);
-        if (olen > -1 && (long)olen < (long)bufdata->dp_buffer_len) {
-            /*  The caller had better copy or dispose
-                of the contents, as next-call will overwrite them. */
-            func(bufdata->dp_user_pointer,bufdata->dp_buffer);
-            return 0;
+
+        if (!bufdata->dp_buffer_user_provided) {
+            if (plen >= (int)bufdata->dp_buffer_len) {
+                bff = buffersetsize(bufdata,plen+2);
+                if (!bff) {
+                    /*  Something is wrong.  */
+                    return 0;
+                }
+            }
+        } else {
+            if (plen >= (int)bufdata->dp_buffer_len) {
+                /*  We are stuck! User did not
+                    give us space needed!  */
+                return 0;
+            }
         }
-        if (bufdata->dp_buffer_user_provided) {
-            func(bufdata->dp_user_pointer,bufdata->dp_buffer);
-            return 0;
+
+        va_start(ap,format);
+        nlen = vsprintf(bufdata->dp_buffer, format,ap);
+        va_end(ap);
+        if ( nlen > plen) {
+            /*  Should be impossible. We trashed
+                some memory */
+            abort();
         }
-        if (tries > maxtries) {
-            /* we did all we could, print what we have space for. */
-            func(bufdata->dp_user_pointer,bufdata->dp_buffer);
-            return 0;
-        }
-        bufferdoublesize(bufdata);
+        func(bufdata->dp_user_pointer,bufdata->dp_buffer);
+        return nlen;
     }
     /* Not reached. */
     return 0;

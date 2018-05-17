@@ -90,12 +90,6 @@ size_t esb_get_allocated_size(struct esb_s *data);
 /* Append a formatted string */
 void esb_append_printf(struct esb_s *data,const char *format, ...);
 
-/*  Append a formatted string. The 'ap' must be just-setup with
-    va_start(ap,format)  and
-    when esb_append_printf_ap returns the ap is used up
-    and should not be touched. */
-void esb_append_printf_ap(struct esb_s *data,const char *format,va_list ap);
-
 /* Get a copy of the internal data buffer */
 char * esb_get_copy(struct esb_s *data);
 

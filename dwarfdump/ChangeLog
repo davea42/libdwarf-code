@@ -1,3 +1,7 @@
+2018-05-16 David Anderson
+    * dwarfdump.c,esb.c,esb.h,globals.h: Removed of C99
+      vsnprintf and completely removed esb_printf_append_ap()
+      from esb.
 2018-05-15 David Anderson
     * tmp-tt-table.c,tmp-ta-table.c,tmp-ta-ext-table.c, 
       tmp-tt-ext-table.c: All endings changed from .c to .h 

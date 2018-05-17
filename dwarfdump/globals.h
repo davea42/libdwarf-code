@@ -219,10 +219,8 @@ extern void PRINT_CU_INFO(void);
 extern void DWARF_CHECK_COUNT(Dwarf_Check_Categories category, int inc);
 extern void DWARF_ERROR_COUNT(Dwarf_Check_Categories category, int inc);
 extern void DWARF_CHECK_ERROR_PRINT_CU(void);
-extern void DWARF_CHECK_ERROR(Dwarf_Check_Categories category,
-    const char *str);
-extern void DWARF_CHECK_ERROR2(Dwarf_Check_Categories category,
-    const char *str1, const char *str2);
+#define DWARF_CHECK_ERROR(c,d)    DWARF_CHECK_ERROR3(c,d,0,0)
+#define DWARF_CHECK_ERROR2(c,d,e) DWARF_CHECK_ERROR3(c,d,e,0)
 extern void DWARF_CHECK_ERROR3(Dwarf_Check_Categories category,
     const char *str1, const char *str2, const char *strexpl);
 

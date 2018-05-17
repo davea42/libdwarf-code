@@ -1,3 +1,6 @@
+2018-05-16 David Anderson
+    * dwarf_leb.c, dwarf_util.c: Removed use of C99
+      like vsnprintf. Now using C90.
 2018-05-15 David Anderson
     * dwarf_incl.h: Inserted <stddef.h> include here.
       stddef.h defines really basic useful C90 things like NULL. 

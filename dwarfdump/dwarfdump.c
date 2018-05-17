@@ -1506,33 +1506,44 @@ boolean add_to_unique_errors_table(char * error_text)
 }
 
 /*  Print a DWARF error message and if in "reduced" output only print one
-    error of each kind; this feature is usefull, when we are interested only
-    in the kind of errors and not on the number of errors. */
+    error of each kind; this feature is useful, when we are interested only
+    in the kind of errors and not on the number of errors.
+    PRECONDITION: if s3 non-null so are s1,s2.
+        If  s2 is non-null so is s1.
+        s1 is always non-null. */
 static void
-print_dwarf_check_error(char *format,...)
+print_dwarf_check_error(const char *s1,const char *s2, const char *s3)
 {
     static boolean do_init = TRUE;
     boolean found = FALSE;
     char * error_text = NULL;
-    va_list ap;
+    static char *leader =  "\n*** DWARF CHECK: ";
+    static char *trailer = " ***\n";
 
     if (do_init) {
         esb_constructor(&dwarf_error_line);
         do_init = FALSE;
     }
     esb_empty_string(&dwarf_error_line);
+    esb_append(&dwarf_error_line,leader);
 
-    /*  "The object ap may be passed as an argument to another
-        function; if that function invokes the va_arg()
-        macro with parameter ap, the value of ap in the calling
-        function is unspecified and shall be passed to the va_end()
-        macro prior to any further reference to ap."
-        Single Unix Specification. */
-    /* 'esb_append_printf_ap', does the necessary adjustments to the
-        extensible string buffer. */
-    va_start(ap,format);
-    esb_append_printf_ap(&dwarf_error_line,format,ap);
-    va_end(ap);
+    /*  print_dwarf_check_error("\n*** DWARF CHECK: %s ***\n", str);
+        print_dwarf_check_error("\n*** DWARF CHECK: %s: %s ***\n",
+        print_dwarf_check_error("\n*** DWARF CHECK: %s -> %s: %s ***\n", */
+    if (s3) {
+        esb_append(&dwarf_error_line,s1);
+        esb_append(&dwarf_error_line," -> ");
+        esb_append(&dwarf_error_line,s2);
+        esb_append(&dwarf_error_line,": ");
+        esb_append(&dwarf_error_line,s3);
+    } else if (s2) {
+        esb_append(&dwarf_error_line,s1);
+        esb_append(&dwarf_error_line,": ");
+        esb_append(&dwarf_error_line,s2);
+    } else {
+        esb_append(&dwarf_error_line,s1);
+    }
+    esb_append(&dwarf_error_line,trailer);
 
     error_text = esb_get_string(&dwarf_error_line);
     if (glflags.gf_print_unique_errors) {
@@ -1548,40 +1559,13 @@ print_dwarf_check_error(char *format,...)
     glflags.gf_found_error_message = found;
 }
 
-void DWARF_CHECK_ERROR(Dwarf_Check_Categories category,
-    const char *str)
-{
-
-    if (checking_this_compiler()) {
-        DWARF_ERROR_COUNT(category,1);
-        if (glflags.gf_check_verbose_mode) {
-            print_dwarf_check_error("\n*** DWARF CHECK: %s ***\n", str);
-        }
-        DWARF_CHECK_ERROR_PRINT_CU();
-    }
-}
-
-void DWARF_CHECK_ERROR2(Dwarf_Check_Categories category,
-    const char *str1, const char *str2)
-{
-    if (checking_this_compiler()) {
-        DWARF_ERROR_COUNT(category,1);
-        if (glflags.gf_check_verbose_mode) {
-            print_dwarf_check_error("\n*** DWARF CHECK: %s: %s ***\n",
-                str1, str2);
-        }
-        DWARF_CHECK_ERROR_PRINT_CU();
-    }
-}
-
 void DWARF_CHECK_ERROR3(Dwarf_Check_Categories category,
     const char *str1, const char *str2, const char *strexpl)
 {
     if (checking_this_compiler()) {
         DWARF_ERROR_COUNT(category,1);
         if (glflags.gf_check_verbose_mode) {
-            print_dwarf_check_error("\n*** DWARF CHECK: %s -> %s: %s ***\n",
-                str1, str2,strexpl);
+            print_dwarf_check_error(str1, str2,strexpl);
         }
         DWARF_CHECK_ERROR_PRINT_CU();
     }
