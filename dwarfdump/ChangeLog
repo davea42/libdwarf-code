@@ -1,3 +1,8 @@
+2018-05-19 David Anderson
+    * print_die.c,print_lines.c,print_macros.c,
+      print_pubnames.c,print_ranges.c: Replace snprintf with esb_append_printf.
+    * sanitized.c: Deleted a function call and snprintf with
+      simple esb_append_printf.
 2018-05-17 David Anderson
     * Makefile.in: Adding esb.c to build time of tag_tree_build
       and tag_attr_build. See besb.o

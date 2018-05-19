@@ -24,6 +24,7 @@
 #include "globals.h"
 #include "naming.h"
 #include "esb.h"
+#include "sanitized.h"
 
 #include "print_sections.h"
 
@@ -170,33 +171,32 @@ const char *kind_list[] = {
   "reserved(7) ",
 };
 
-static const char *
-get_kind(unsigned k)
+static void
+get_kind_string(struct esb_s *out,unsigned k)
 {
     if (k <= 7) {
-        return kind_list[k];
+        esb_append(out,sanitized(kind_list[k]));
     }
-    return "kind-erroneous";
+    esb_append(out, "kind-erroneous");
 }
 
 /*  NOTE: Returns pointer to static local string.
     Use the returned pointer immediately or
     things will not work properly.  */
-static char *
-cu_index_string(Dwarf_Unsigned index,
+static void
+get_cu_index_string(struct esb_s *out,
+    Dwarf_Unsigned index,
     Dwarf_Unsigned culist_len)
 {
-    static char temp_space[40];
     Dwarf_Unsigned type_index = 0;
     if (index < culist_len) {
-        snprintf(temp_space,sizeof(temp_space), "%4" DW_PR_DUu,index);
-        return temp_space;
+        esb_append_printf(out,"%4" DW_PR_DUu,index);
+        return;
     }
     type_index = index-culist_len;
-    snprintf(temp_space,sizeof(temp_space),
-        "%4" DW_PR_DUu "(T%4" DW_PR_DUu ")",
+    esb_append_printf(out, "%4" DW_PR_DUu "(T%4" DW_PR_DUu ")",
         index,type_index);
-    return temp_space;
+    return;
 }
 
 
@@ -250,6 +250,8 @@ print_symtab_entry(Dwarf_Debug dbg,
         Dwarf_Unsigned reserved1 = 0;
         Dwarf_Unsigned symbol_kind = 0;
         Dwarf_Unsigned is_static = 0;
+        struct esb_s   tmp_cuindx;
+        struct esb_s   tmp_kind;
 
         res = dwarf_gdbindex_cuvector_inner_attributes(
             gdbindex,cuvecoffset,ii,
@@ -269,35 +271,41 @@ print_symtab_entry(Dwarf_Debug dbg,
         }
         /*  if cu_index is > the cu-count, then it  refers
             to a tu_index of  'cu_index - cu-count' */
+        esb_constructor(&tmp_cuindx);
+        esb_constructor(&tmp_kind);
+        get_kind_string(&tmp_kind,symbol_kind),
+        get_cu_index_string(&tmp_cuindx,cu_index,culist_len);
         if (cuvec_len == 1) {
             printf("  [%4" DW_PR_DUu "]"
                 "%s"
                 " [%s %s] \"%s\"\n",
                 index,
-                cu_index_string(cu_index,culist_len),
+                esb_get_string(&tmp_cuindx),
                 is_static?
                     "static ":
                     "global ",
-                get_kind(symbol_kind),
-                name);
+                esb_get_string(&tmp_kind),
+                sanitized(name));
         } else if (ii == 0) {
             printf("  [%4" DW_PR_DUu "] \"%s\"\n" ,
                 index,
-                name);
+                sanitized(name));
             printf("         %s [%s %s]\n",
-                cu_index_string(cu_index,culist_len),
+                esb_get_string(&tmp_cuindx),
                 is_static?
                     "static ":
                     "global ",
-                get_kind(symbol_kind));
+                esb_get_string(&tmp_kind));
         }else{
             printf("         %s [%s %s]\n",
-                cu_index_string(cu_index,culist_len),
+                esb_get_string(&tmp_cuindx),
                 is_static?
                     "static ":
                     "global ",
-                get_kind(symbol_kind));
+                esb_get_string(&tmp_kind));
         }
+        esb_destructor(&tmp_cuindx);
+        esb_destructor(&tmp_kind);
         if (glflags.verbose > 1) {
             printf("        [%4" DW_PR_DUu "]"
                 "attr 0x%"    DW_PR_XZEROS DW_PR_DUx

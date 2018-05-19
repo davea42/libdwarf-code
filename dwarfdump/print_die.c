@@ -1199,7 +1199,7 @@ print_die_and_children_internal(Dwarf_Debug dbg,
 
             Dwarf_Off glb_off;
             DWARF_CHECK_COUNT(di_gaps_result,1);
-            if (dwarf_validate_die_sibling(sibling,&glb_off) == 
+            if (dwarf_validate_die_sibling(sibling,&glb_off) ==
                 DW_DLV_ERROR) {
                 Dwarf_Off sib_off;
                 struct esb_s msg;

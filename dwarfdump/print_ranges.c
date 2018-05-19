@@ -176,13 +176,16 @@ printf("**** END ****\n");
                     glflags.PU_name,lopc,hipc)) {
                     /* Valid values; do nothing */
                 } else {
-                    char errbuf[100];
+                    struct esb_s errbuf;
 
                     bError = TRUE;
-                    snprintf(errbuf,sizeof(errbuf),
+                    esb_constructor(&errbuf);
+                    esb_append_printf(&errbuf,
                         "%s: Address outside a "
                         "valid .text range",sanitized(sec_name));
-                    DWARF_CHECK_ERROR(ranges_result, errbuf);
+                    DWARF_CHECK_ERROR(ranges_result, 
+                        esb_get_string(&errbuf));
+                    esb_destructor(&errbuf);
                     if (glflags.gf_check_verbose_mode && do_print) {
                         /*  Update DIEs offset just for printing */
                         int dioff_res = dwarf_die_offsets(cu_die,

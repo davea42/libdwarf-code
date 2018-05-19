@@ -99,18 +99,6 @@ static struct esb_s localesb = {0,0,0};
 
 boolean no_sanitize_string_garbage = FALSE;
 
-/*  This is safe to use because it is only
-    callable here and we copy the value
-    returned in the static buffer
-    to a safe spot immediately. */
-static const char *
-as_number(int c)
-{
-    static char tmpbuf[4];
-    snprintf(tmpbuf,sizeof(tmpbuf),"%%%02x",c & 0xff);
-    return tmpbuf;
-}
-
 /*  do_sanity_insert() and no_questionable_chars()
     absolutely must have the same idea of
     questionable characters.  Be Careful.  */
@@ -129,7 +117,7 @@ do_sanity_insert( const char *s,struct esb_s *mesb)
         }
         if (c == '%') {
             /* %xx for this too. Simple and unambiguous */
-            esb_append(mesb,as_number(c));
+            esb_append_printf(mesb, "%%%02x",c & 0xff);
             continue;
         }
 #ifdef _WIN32
@@ -139,12 +127,12 @@ do_sanity_insert( const char *s,struct esb_s *mesb)
         }
 #endif /* _WIN32 */
         if (c < 0x20) {
-            esb_append(mesb,as_number(c));
+            esb_append_printf(mesb, "%%%02x",c & 0xff);
             continue;
         }
         if (c >= 0x7f) {
             /* ISO-8859 or UTF-8. Not handled well yet. */
-            esb_append(mesb,as_number(c));
+            esb_append_printf(mesb, "%%%02x",c & 0xff);
             continue;
         }
         esb_appendn(mesb,cp,1);

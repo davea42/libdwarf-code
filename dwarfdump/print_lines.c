@@ -83,12 +83,15 @@ print_source_intro(Dwarf_Debug dbg,Dwarf_Die cu_die)
 static void
 record_line_error(const char *where, Dwarf_Error line_err)
 {
-    char tmp_buff[500];
     if (glflags.gf_check_lines && checking_this_compiler()) {
-        snprintf(tmp_buff, sizeof(tmp_buff),
+        struct esb_s  tmp_buff;
+
+        esb_constructor(&tmp_buff);
+        esb_append_printf(&tmp_buff,
             "Error getting line details calling %s dwarf error is %s",
             where,dwarf_errmsg(line_err));
-        DWARF_CHECK_ERROR(lines_result,tmp_buff);
+        DWARF_CHECK_ERROR(lines_result,esb_get_string(&tmp_buff));
+        esb_destructor(&tmp_buff);
     }
 }
 
@@ -293,13 +296,18 @@ process_line_table(Dwarf_Debug dbg,
                             char addr_tmp[100];
                             if (glflags.gf_check_lines &&
                                 checking_this_compiler()) {
-                                snprintf(addr_tmp,sizeof(addr_tmp),
+                                struct esb_s addr_tmp;   
+
+                                esb_constructor(&addr_tmp); 
+                                esb_append_printf(&addr_tmp,
                                     "%s: Address"
                                     " 0x%" DW_PR_XZEROS DW_PR_DUx
                                     " outside a valid .text range",
-                                    sec_name,pc);
+                                    sanitized(sec_name),
+                                    pc);
                                 DWARF_CHECK_ERROR(lines_result,
-                                    addr_tmp);
+                                    esb_get_string(&addr_tmp));
+                                esb_destructor(&addr_tmp); 
                             }
                         } else {
                             SkipRecord = TRUE;

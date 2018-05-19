@@ -114,12 +114,15 @@ print_one_macro_entry(long i,
 
     default:
         {
-            char create_type[50];       /* More than large enough. */
+            struct esb_s typeb;
 
+            esb_constructor(&typeb);
             counts->mc_unknown++;
-            snprintf(create_type, sizeof(create_type),
+            esb_append_printf(&typeb, 
                 "DW_MACINFO_0x%x", mdp->dmd_type);
-            print_one_macro_entry_detail(i, create_type, mdp);
+            print_one_macro_entry_detail(i, 
+                esb_get_string(&typeb), mdp);
+            esb_destructor(&typeb);
         }
         break;
     }
