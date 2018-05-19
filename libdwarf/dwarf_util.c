@@ -47,9 +47,6 @@
 #define NULL_DEVICE_NAME "/dev/null"
 #endif /* _WIN32 */
 
-/* NULL device used when printing formatted strings */
-static FILE *null_device_handle = 0;
-
 Dwarf_Bool
 _dwarf_file_has_debug_fission_cu_index(Dwarf_Debug dbg)
 {
@@ -1103,19 +1100,22 @@ dwarf_register_printf_callback( Dwarf_Debug dbg,
 }
 
 
-/*  Return 0 if we fail here.
+/*  Allocate a bigger buffer if necessary.
+    Do not worry about previous content of the buffer.
+    Return 0 if we fail here.
     Else return the requested len value. */
-static unsigned buffersetsize(
+static unsigned buffersetsize(Dwarf_Debug dbg,
     struct  Dwarf_Printf_Callback_Info_s *bufdata,
     int len)
 {
     char *space = 0;
 
-    if (!null_device_handle) {
-        null_device_handle = fopen(NULL_DEVICE_NAME,"w");
-        if(!null_device_handle) {
+    if (!dbg->de_printf_callback_null_device_handle) {
+        FILE *de = fopen(NULL_DEVICE_NAME,"w");
+        if(!de) {
             return 0;
         }
+        dbg->de_printf_callback_null_device_handle = de;
     }
     if (bufdata->dp_buffer_user_provided) {
         return bufdata->dp_buffer_len;
@@ -1143,13 +1143,18 @@ dwarf_printf(Dwarf_Debug dbg,
     unsigned bff = 0;
     struct Dwarf_Printf_Callback_Info_s *bufdata =
         &dbg->de_printf_callback;
+    FILE * null_device_handle = 0;
 
     dwarf_printf_callback_function_type func = bufdata->dp_fptr;
     if (!func) {
         return 0;
     }
-    if (!bufdata->dp_buffer) {
-        bff = buffersetsize(bufdata,MINBUFLEN);
+    null_device_handle =
+        (FILE *) dbg->de_printf_callback_null_device_handle;
+    if (!bufdata->dp_buffer || !null_device_handle) {
+        /*  Sets dbg device handle for later use if not
+            set already. */
+        bff = buffersetsize(dbg,bufdata,MINBUFLEN);
         if (!bff) {
             /*  Something is wrong. */
             return 0;
@@ -1164,13 +1169,19 @@ dwarf_printf(Dwarf_Debug dbg,
     {
         int plen = 0;
         int nlen = 0;
+        null_device_handle =
+            (FILE *) dbg->de_printf_callback_null_device_handle;
+        if (!null_device_handle) {
+            /*  Something is wrong. */
+            return 0;
+        }
         va_start(ap,format);
         plen = vfprintf(null_device_handle,format,ap);
         va_end(ap);
 
         if (!bufdata->dp_buffer_user_provided) {
             if (plen >= (int)bufdata->dp_buffer_len) {
-                bff = buffersetsize(bufdata,plen+2);
+                bff = buffersetsize(dbg,bufdata,plen+2);
                 if (!bff) {
                     /*  Something is wrong.  */
                     return 0;
@@ -1185,12 +1196,14 @@ dwarf_printf(Dwarf_Debug dbg,
         }
 
         va_start(ap,format);
-        nlen = vsprintf(bufdata->dp_buffer, format,ap);
+        nlen = vsprintf(bufdata->dp_buffer,
+            format,ap);
         va_end(ap);
         if ( nlen > plen) {
-            /*  Should be impossible. We trashed
-                some memory */
-            abort();
+            /* Impossible. Memory is corrupted now */
+            fprintf(stderr,"\nlibdwarf impossible sprintf error %s %d\n",
+                __FILE__,__LINE__);
+            exit(1);
         }
         func(bufdata->dp_user_pointer,bufdata->dp_buffer);
         return nlen;

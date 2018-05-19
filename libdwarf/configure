@@ -4574,7 +4574,7 @@ rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
 $as_echo_n "checking is Elf64_Rela defined in elf.h... " >&6; }
 cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
-#include $firstlibelfhdr
+#include <elf.h>
   int main() {
     Elf64_Rela p; p.r_offset = 1;
   }
@@ -4595,7 +4595,7 @@ rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
 $as_echo_n "checking is Elf64_Sym defined in elf.h... " >&6; }
 cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
-#include $firstlibelfhdr
+#include <elf.h>
   int main() {
     Elf64_Sym p; p.st_info = 1;
   }

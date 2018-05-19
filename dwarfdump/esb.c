@@ -45,7 +45,6 @@
 #ifdef SELFTEST
 typedef char * string; /* SELFTEST */
 #endif
-#include <stdlib.h> /* for ABORT when impossible happens. */
 #include "esb.h"
 #define TRUE 1
 
@@ -70,12 +69,6 @@ static FILE *null_device_handle = 0;
 #define NULL_DEVICE_NAME "/dev/null"
 #endif /* _WIN32 */
 
-#define ESB_BUFFER_INITIAL_SIZE  512
-static int esb_static_bufferlen = 0;
-static char esb_static_alloc[ESB_BUFFER_INITIAL_SIZE];
-static char esb_static_buffer_mallocd = 0;
-static char * esb_static_buffer = esb_static_alloc;
-
 /* Open the null device used during formatting printing */
 FILE *esb_open_null_device(void)
 {
@@ -90,9 +83,12 @@ void esb_close_null_device(void)
 {
     if (null_device_handle) {
         fclose(null_device_handle);
+        null_device_handle = 0;
     }
 }
 
+/*  min_len is overall space wanted for initial alloc.
+    ASSERT: esb_allocated_size == 0 */
 static void
 init_esb_string(struct esb_s *data, size_t min_len)
 {
@@ -101,9 +97,10 @@ init_esb_string(struct esb_s *data, size_t min_len)
     if (data->esb_allocated_size > 0) {
         return;
     }
-    /* Only esb_constructor applied. Allow for string space. */
+    /*  Only esb_constructor applied so far.
+        Now Allow for string space. */
     if (min_len <= alloc_size) {
-        min_len = alloc_size +1;/* Allow for NUL at end */
+        min_len = alloc_size;
     } else  {
         min_len++ ; /* Allow for NUL at end */
     }
@@ -126,9 +123,13 @@ init_esb_string(struct esb_s *data, size_t min_len)
 static void
 esb_allocate_more(struct esb_s *data, size_t len)
 {
-    size_t new_size = data->esb_allocated_size + len;
+    size_t new_size = 0;
     char* newd = 0;
 
+    if (data->esb_allocated_size == 0) {
+        init_esb_string(data, alloc_size);
+    }
+    new_size = data->esb_allocated_size + len;
     if (new_size < alloc_size) {
         new_size = alloc_size;
     }
@@ -150,14 +151,45 @@ esb_allocate_more(struct esb_s *data, size_t len)
 void
 esb_force_allocation(struct esb_s *data, size_t minlen)
 {
-    if (data->esb_allocated_size < (data->esb_used_bytes + minlen)) {
-        esb_allocate_more(data,minlen);
+    size_t target_len = 0;
+
+    if (data->esb_allocated_size == 0) {
+        init_esb_string(data, alloc_size);
+    }
+    target_len = data->esb_used_bytes + minlen;
+    if (data->esb_allocated_size < target_len) {
+        size_t needed = target_len - data->esb_allocated_size;
+        esb_allocate_more(data,needed);
     }
 }
 
+/*  The 'len' is believed. Do not pass in strings < len bytes long.
+    For strlen(in_string) > len bytes we take the initial len bytes.
+    len does not include the trailing NUL. */
 static void
-esb_appendn_internal(struct esb_s *data, const char * in_string, size_t len);
+esb_appendn_internal(struct esb_s *data, const char * in_string, size_t len)
+{
+    size_t remaining = 0;
+    size_t needed = len;
 
+    if (data->esb_allocated_size == 0) {
+        size_t maxlen = (len > alloc_size)? (len):alloc_size;
+
+        init_esb_string(data, maxlen);
+    }
+    /*  ASSERT: data->esb_allocated_size > data->esb_used_bytes  */
+    remaining = data->esb_allocated_size - data->esb_used_bytes - 1;
+    if (remaining <= needed) {
+        size_t alloc_amt = needed - remaining;
+        esb_allocate_more(data,alloc_amt);
+    }
+    strncpy(&data->esb_string[data->esb_used_bytes], in_string, len);
+    data->esb_used_bytes += len;
+    /* Insist on explicit NUL terminator */
+    data->esb_string[data->esb_used_bytes] = 0;
+}
+
+/* len >= strlen(in_string) */
 void
 esb_appendn(struct esb_s *data, const char * in_string, size_t len)
 {
@@ -173,7 +205,8 @@ esb_appendn(struct esb_s *data, const char * in_string, size_t len)
     esb_appendn_internal(data, in_string, len);
 }
 
-/*  The length is gotten from the in_string itself. */
+/*  The length is gotten from the in_string itself, this
+    is the usual way to add string data.. */
 void
 esb_append(struct esb_s *data, const char * in_string)
 {
@@ -186,30 +219,10 @@ esb_append(struct esb_s *data, const char * in_string)
     }
 }
 
-/*  The 'len' is believed. Do not pass in strings < len bytes long. */
-static void
-esb_appendn_internal(struct esb_s *data, const char * in_string, size_t len)
-{
-    size_t remaining = 0;
-    size_t needed = len;
-
-    if (data->esb_allocated_size == 0) {
-        size_t maxlen = (len >= alloc_size)? (len):alloc_size;
-
-        init_esb_string(data, maxlen);
-    }
-    /*  ASSERT: data->esb_allocated_size > data->esb_used_bytes  */
-    remaining = data->esb_allocated_size - data->esb_used_bytes;
-    if (remaining <= needed) {
-        esb_allocate_more(data,len);
-    }
-    strncpy(&data->esb_string[data->esb_used_bytes], in_string, len);
-    data->esb_used_bytes += len;
-    /* Insist on explicit NUL terminator */
-    data->esb_string[data->esb_used_bytes] = 0;
-}
 
 /*  Always returns an empty string or a non-empty string. Never 0. */
+
+
 char*
 esb_get_string(struct esb_s *data)
 {
@@ -261,11 +274,15 @@ esb_destructor(struct esb_s *data)
 
 
 /*  To get all paths in the code tested, this sets the
-    allocation/reallocation to the given value, which can be quite small
-    but must not be zero. */
+    initial allocation/reallocation file-static
+    which can be quite small but must not be zero
+    The alloc_size variable  is used for initializations. */
 void
 esb_alloc_size(size_t size)
 {
+    if (size < 1) {
+        size = 1;
+    }
     alloc_size = size;
 }
 
@@ -282,6 +299,7 @@ esb_append_printf(struct esb_s *data,const char *in_string, ...)
     va_list ap;
     int len = 0;
     int len2 = 0;
+    int remaining = 0;
 
     if (!null_device_handle) {
         if(!esb_open_null_device()) {
@@ -294,39 +312,33 @@ esb_append_printf(struct esb_s *data,const char *in_string, ...)
     len = vfprintf(null_device_handle,in_string,ap);
     va_end(ap);
 
-    if (esb_static_bufferlen <= len) {
-        if (esb_static_buffer_mallocd) {
-            /* extra 50 is arbitrary */
-            char * newbuf = realloc(esb_static_buffer,len+50);
-            if (!newbuf) {
-                esb_append(data,"Unable to realloc esb static buffer for: ");
-                esb_append(data,in_string);
-                return;
-            }
-            esb_static_buffer = newbuf;
-            esb_static_bufferlen = len+50;
-        } else {
-            char * newbuf = malloc(len + 10);
-            if (!newbuf) {
-                esb_append(data,"Unable to realloc esb static buffer for: ");
-                esb_append(data,in_string);
-                return;
-            }
-            esb_static_buffer = newbuf;
-            esb_static_buffer_mallocd = TRUE;
-            esb_static_bufferlen = len+50;
-        }
+    if (data->esb_allocated_size == 0) {
+        init_esb_string(data, alloc_size);
+    }
+    remaining = data->esb_allocated_size - data->esb_used_bytes -1;
+    if (remaining < len) {
+        esb_allocate_more(data, len);
     }
     va_start(ap,in_string);
-    len2 = vsprintf(esb_static_buffer,in_string,ap);
+#ifdef HAVE_VSNPRINTF
+    len2 = vsnprintf(&data->esb_string[data->esb_used_bytes],
+        data->esb_allocated_size,
+#else
+    len2 = vsprintf(&data->esb_string[data->esb_used_bytes],
+#endif
+        in_string,ap);
     va_end(ap);
+    data->esb_used_bytes += len2;
     if (len2 >  len) {
         /*  We are in big trouble, this should be impossible.
             We have trashed something in memory. */
-        abort();
+        fprintf(stderr,
+            "dwarfdump esb internal error, vsprintf botch "
+            " %lu  < %lu \n",
+            (unsigned long) len2, (unsigned long) len);
+        exit(5);
     }
-    esb_appendn(data,esb_static_buffer,len2);
-    return ;
+    return;
 }
 
 /*  Get a copy of the internal data buffer.
@@ -337,6 +349,8 @@ char*
 esb_get_copy(struct esb_s *data)
 {
     char* copy = NULL;
+
+    /* is ok as is if esb_allocated_size is 0 */
     size_t len = esb_string_len(data);
     if (len) {
         copy = (char*)malloc(len + 1);
@@ -353,32 +367,26 @@ validate_esb(int instance,
    struct esb_s* d,
    size_t explen,
    size_t expalloc,
-   const char *expout)
+   const char *expout,
+   int line )
 {
-    printf("  TEST instance %d\n",instance);
     if (esb_string_len(d) != explen) {
         ++failcount;
-        printf("  FAIL instance %d  esb_string_len() %u explen %u\n",
-            instance,(unsigned)esb_string_len(d),(unsigned)explen);
+        printf("  FAIL instance %d  esb_string_len() %u explen %u line %d\n",
+            instance,(unsigned)esb_string_len(d),(unsigned)explen,line);
     }
     if (d->esb_allocated_size != expalloc) {
         ++failcount;
-        printf("  FAIL instance %d  esb_allocated_size  %u expalloc %u\n",
-            instance,(unsigned)d->esb_allocated_size,(unsigned)expalloc);
+        printf("  FAIL instance %d  esb_allocated_size  %u expalloc %u line %d\n",
+            instance,(unsigned)d->esb_allocated_size,(unsigned)expalloc,line);
     }
     if(strcmp(esb_get_string(d),expout)) {
         ++failcount;
-        printf("  FAIL instance %d esb_get_stringr %s expstr %s\n",
-            instance,esb_get_string(d),expout);
+        printf("  FAIL instance %d esb_get_stringr %s expstr %s line %d\n",
+            instance,esb_get_string(d),expout,line);
     }
 }
 
-void
-trialprint(struct esb_s *d)
-{
-    const char * s = "insert me %d\n";
-    esb_append_printf(d,s,1);
-}
 
 
 int main()
@@ -396,73 +404,78 @@ int main()
         struct esb_s d;
         esb_constructor(&d);
         esb_append(&d,"a");
-        validate_esb(1,&d,1,2,"a");
+        validate_esb(1,&d,1,2,"a",__LINE__);
         esb_append(&d,"b");
-        validate_esb(2,&d,2,3,"ab");
+        validate_esb(2,&d,2,3,"ab",__LINE__);
         esb_append(&d,"c");
-        validate_esb(3,&d,3,4,"abc");
+        validate_esb(3,&d,3,4,"abc",__LINE__);
         esb_empty_string(&d);
-        validate_esb(4,&d,0,4,"");
+        validate_esb(4,&d,0,4,"",__LINE__);
         esb_destructor(&d);
     }
     {
         struct esb_s d;
+
         esb_constructor(&d);
         esb_append(&d,"aa");
-        validate_esb(6,&d,2,3,"aa");
+        validate_esb(6,&d,2,3,"aa",__LINE__);
         esb_append(&d,"bbb");
-        validate_esb(7,&d,5,6,"aabbb");
+        validate_esb(7,&d,5,6,"aabbb",__LINE__);
         esb_append(&d,"c");
-        validate_esb(8,&d,6,7,"aabbbc");
+        validate_esb(8,&d,6,7,"aabbbc",__LINE__);
         esb_empty_string(&d);
-        validate_esb(9,&d,0,7,"");
+        validate_esb(9,&d,0,7,"",__LINE__);
         esb_destructor(&d);
     }
     {
         struct esb_s d;
         static char oddarray[7] = {'a','b',0,'c','c','d',0};
+
         esb_constructor(&d);
         fprintf(stderr,"  esb_appendn call error(intentional). Expect msg on stderr\n");
         /* This provokes a msg on stderr. Bad input. */
         esb_appendn(&d,oddarray,6);
-        validate_esb(10,&d,2,3,"ab");
+        validate_esb(10,&d,2,3,"ab",__LINE__);
         esb_appendn(&d,"cc",1);
-        validate_esb(11,&d,3,4,"abc");
+        validate_esb(11,&d,3,4,"abc",__LINE__);
         esb_empty_string(&d);
-        validate_esb(12,&d,0,4,"");
+        validate_esb(12,&d,0,4,"",__LINE__);
         esb_destructor(&d);
     }
     {
         struct esb_s d;
-        esb_constructor(&d);
 
+        esb_constructor(&d);
         esb_force_allocation(&d,7);
         esb_append(&d,"aaaa i");
-        validate_esb(13,&d,6,7,"aaaa i");
+        validate_esb(13,&d,6,7,"aaaa i",__LINE__);
         esb_destructor(&d);
     }
     {
         struct esb_s d5;
-        esb_constructor(&d5);
+        const char * s = "insert me %d";
 
+        esb_constructor(&d5);
         esb_force_allocation(&d5,50);
-        trialprint(&d5);
-        validate_esb(14,&d5,12,50,"insert me 1\n");
+        esb_append(&d5,"aaa ");
+        esb_append_printf(&d5,s,1);
+        esb_append(&d5,"zzz");
+        validate_esb(14,&d5,18,50,"aaa insert me 1zzz",__LINE__);
         esb_destructor(&d5);
     }
     {
         struct esb_s d;
         struct esb_s e;
-        char* result = NULL;
         esb_constructor(&d);
         esb_constructor(&e);
 
+        char* result = NULL;
         esb_append(&d,"abcde fghij klmno pqrst");
-        validate_esb(15,&d,23,24,"abcde fghij klmno pqrst");
+        validate_esb(15,&d,23,24,"abcde fghij klmno pqrst",__LINE__);
 
         result = esb_get_copy(&d);
         esb_append(&e,result);
-        validate_esb(16,&e,23,24,"abcde fghij klmno pqrst");
+        validate_esb(16,&e,23,24,"abcde fghij klmno pqrst",__LINE__);
         esb_destructor(&d);
         esb_destructor(&e);
     }

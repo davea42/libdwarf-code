@@ -1,3 +1,21 @@
+2018-05-17 David Anderson
+    * Makefile.in: Adding esb.c to build time of tag_tree_build
+      and tag_attr_build. See besb.o
+    * config.h.in: #undef for HAVE_VSNPRINTF and HAVE_SNPRINTF
+    * configure: regenerated
+    * configure.ac: Added AC_CHECK_FUNCS(snprintf),
+      AC_CHECK_FUNCS(vsnprintf)
+    * esb.c: Removed static buffers. No longer needed.
+      Allocated extra byte in esb_force_allocation()
+      and in calls to esb_allocate_more.
+      Checks HAVE_VSNPRINTF. Added extra checks
+      of esb_append_printf().
+      Moved one static function up in the source 
+      to eliminate an explicit prototype.
+    * esb.h: Added comments documenting esb_s field use.
+    * print_die.c,print_reloc.c,tag_attr.c,
+      tag_tree.c,uri.c: Removed snprintf,sprintf. Using esb_append_printf.
+    * makename.c: Removed noise from selftest, just print pass/fail.
 2018-05-16 David Anderson
     * dwarfdump.c,esb.c,esb.h,globals.h: Removed of C99
       vsnprintf and completely removed esb_printf_append_ap()

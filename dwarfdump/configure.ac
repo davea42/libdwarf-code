@@ -107,6 +107,8 @@ AC_COMPILE_IFELSE([AC_LANG_SOURCE([[#include <elf.h>
     AC_MSG_RESULT(yes)],
    [AC_MSG_RESULT(no)])
 
+AC_CHECK_FUNCS(snprintf)
+AC_CHECK_FUNCS(vsnprintf)
 
 AC_MSG_CHECKING(is __uint32_t predefined in the compiler)
 AC_COMPILE_IFELSE([AC_LANG_SOURCE([[

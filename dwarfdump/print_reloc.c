@@ -58,7 +58,7 @@
     }
 /* Record the relocation table name information */
 static const char **reloc_type_names = NULL;
-static Dwarf_Small number_of_reloc_type_names = 0;
+static int   number_of_reloc_type_names = 0;
 
 /* Set the relocation names based on the machine type */
 static void
@@ -122,25 +122,22 @@ set_relocation_table_names(Dwarf_Small machine_type)
     If buf is used, it is static, so beware: it
     will be overwritten by the next call.
 */
-static const char *
-get_reloc_type_names(int index)
+static void
+get_reloc_type_names(int index,struct esb_s* outbuf)
 {
-    static char buf[100];
-    const char *retval = 0;
-
     if (index < 0 || index >= number_of_reloc_type_names) {
         if (number_of_reloc_type_names == 0) {
             /* No table provided. */
-            sprintf(buf, "reloc type %d", (int) index);
+            esb_append_printf(outbuf,
+                "reloc type %d", (int) index);
         } else {
             /* Table incomplete? */
-            sprintf(buf, "reloc type %d unknown", (int) index);
+            esb_append_printf(outbuf,
+                "reloc type %d unknown", (int) index);
         }
-        retval = buf;
-    } else {
-        retval = reloc_type_names[index];
+        return;
     }
-    return retval;
+    esb_append(outbuf, reloc_type_names[index]);
 }
 
 #ifndef HAVE_ELF64_GETEHDR
@@ -606,6 +603,7 @@ print_reloc_information_64(int section_no, Dwarf_Small * buf,
         sizeof(Elf64_Rela) : sizeof(Elf64_Rel);
     Dwarf_Unsigned off = 0;
     struct esb_s tempesb;
+    struct esb_s tempesc;
 
     printf("\n[%3d] %s:\n",section_no, sanitized(scn_names[section_no]));
     /* Print some headers and change the order for better reading */
@@ -653,8 +651,9 @@ print_reloc_information_64(int section_no, Dwarf_Small * buf,
             add = pa->r_addend;
         }
         esb_constructor(&tempesb);
-        esb_append(&tempesb,sanitized(
-            get_reloc_type_names(ELF64_R_TYPE(p->r_info))));
+        esb_constructor(&tempesc);
+        get_reloc_type_names(ELF64_R_TYPE(p->r_info),&tempesc);
+        esb_append(&tempesb,sanitized(esb_get_string(&tempesc)));
         /* sanitized uses a static buffer, call just once here */
         printf("0x%08lx 0x%08lx %-26s <%5ld> %s\n",
             (unsigned long int) (p->r_offset),
@@ -663,6 +662,7 @@ print_reloc_information_64(int section_no, Dwarf_Small * buf,
             (long)ELF64_R_SYM(p->r_info),
             sanitized(name));
         esb_destructor(&tempesb);
+        esb_destructor(&tempesc);
 #else
         /*  sgi/mips -64 does not have r_info in the 64bit relocations,
             but seperate fields, with 3 types, actually. Only one of
@@ -687,17 +687,17 @@ print_reloc_information_64(int section_no, Dwarf_Small * buf,
             name = "<no name>";
         }
 
-        /* sanitized uses a static buffer, call just once here */
         esb_constructor(&tempesb);
-        esb_append(&tempesb, sanitized(
-            get_reloc_type_names(p->r_type)));
-        /* sanitized uses a static buffer, call just once here */
+        esb_constructor(&tempesc);
+        get_reloc_type_names(p->r_type,&tempesc));
+        esb_append(&tempesb,sanitized(esb_get_string(&tempesc)));
         printf("%5" DW_PR_DUu " %-26s <%3ld> %s\n",
             (Dwarf_Unsigned) (p->r_offset),
             esb_get_string(&tempesb),
             (long)p->r_sym,
             sanitized(name));
         esb_destructor(&tempesb);
+        esb_destructor(&tempesc);
 #endif
     }
 #endif /* HAVE_ELF64_GETEHDR */
@@ -714,6 +714,7 @@ print_reloc_information_32(int section_no, Dwarf_Small * buf,
         sizeof(Elf32_Rela) : sizeof(Elf32_Rel);
     Dwarf_Unsigned off = 0;
     struct esb_s tempesb;
+    struct esb_s tempesc;
 
     printf("\n[%3d] %s:\n",section_no, sanitized(scn_names[section_no]));
 
@@ -753,8 +754,10 @@ print_reloc_information_32(int section_no, Dwarf_Small * buf,
             add = pa->r_addend;
         }
         esb_constructor(&tempesb);
-        esb_append(&tempesb,sanitized(
-            get_reloc_type_names(ELF32_R_TYPE(p->r_info))));
+        esb_constructor(&tempesc);
+        get_reloc_type_names(ELF32_R_TYPE(p->r_info),&tempesc);
+        esb_append(&tempesb,esb_get_string(&tempesc));
+        /* sanitized uses a static buffer, call just once here */
         printf("0x%08lx 0x%08lx %-26s <%5ld> %s\n",
             (unsigned long int) (p->r_offset),
             (unsigned long int) (add),
@@ -762,6 +765,7 @@ print_reloc_information_32(int section_no, Dwarf_Small * buf,
             (long)ELF32_R_SYM(p->r_info),
             sanitized(name));
         esb_destructor(&tempesb);
+        esb_destructor(&tempesc);
     }
 }
 

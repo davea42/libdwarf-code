@@ -161,9 +161,15 @@ validate_length(Dwarf_Debug dbg,
     Dwarf_Unsigned mod = total_len % address_size;
 
     if (mod != 0) {
-        char msg[DW_HARMLESS_ERROR_MSG_STRING_SIZE];
+        static char msg[DW_HARMLESS_ERROR_MSG_STRING_SIZE];
         Dwarf_Unsigned sectionoffset = ciefde_start - section_ptr;
-        snprintf(msg,sizeof(msg),
+
+        if (!cieorfde || (strlen(cieorfde) > 3)) {
+            /*  Coding error or memory corruption? */
+            cieorfde = "ERROR!";
+        }
+
+        sprintf(msg,
             "DW_DLE_DEBUG_FRAME_LENGTH_NOT_MULTIPLE"
             " len=0x%" DW_PR_XZEROS DW_PR_DUx
             ", len size=0x%"  DW_PR_XZEROS DW_PR_DUx

@@ -95,7 +95,7 @@ makename(const char *s)
         return "";
     }
 #ifdef SELFTEST
-    printf("Selftest with name %s\n",s);
+    /*printf("Selftest with name %s\n",s);*/
 #endif
 
     newstr = (char *)strdup(s);

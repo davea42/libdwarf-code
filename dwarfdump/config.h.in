@@ -36,6 +36,12 @@
 /* Define to 1 if you have the <sgidefs.h> header file. */
 #undef HAVE_SGIDEFS_H
 
+/* Define to 1 if you have the `snprintf' function. */
+#undef HAVE_SNPRINTF
+
+/* Define to 1 if you have the `vsnprintf' function. */
+#undef HAVE_VSNPRINTF
+
 /* Define 1 if we have the Windows specific header stdafx.h */
 #undef HAVE_STDAFX_H
 

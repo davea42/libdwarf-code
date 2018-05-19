@@ -651,7 +651,10 @@ _dwarf_free_all_of_one_debug(Dwarf_Debug dbg)
         dwarf_xu_header_free(dbg->de_tu_hashindex_data);
         dbg->de_tu_hashindex_data = 0;
     }
-
+    if( dbg->de_printf_callback_null_device_handle) {
+        fclose(dbg->de_printf_callback_null_device_handle);
+        dbg->de_printf_callback_null_device_handle = 0;
+    }
     freecontextlist(dbg,&dbg->de_info_reading);
     freecontextlist(dbg,&dbg->de_types_reading);
 

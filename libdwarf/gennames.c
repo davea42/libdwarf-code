@@ -1,6 +1,6 @@
 /*
     Copyright 2009-2010 SN Systems Ltd. All rights reserved.
-    Portions Copyright 2009-2017 David Anderson. All rights reserved.
+    Portions Copyright 2009-2018 David Anderson. All rights reserved.
 
     This program is free software; you can redistribute it and/or modify it
     under the terms of version 2.1 of the GNU Lesser General Public License
@@ -151,11 +151,7 @@ print_version(const char * name)
     const char *acType = "Release";
 #endif /* _DEBUG */
 
-    char acVersion[60];
-    snprintf(acVersion,sizeof(acVersion),"[%s %s]",
-        DW_VERSION_DATE_STR,
-        acType);
-    printf("%s %s\n",name,acVersion);
+    printf("%s [%s %s]\n",name,DW_VERSION_DATE_STR,acType);
 }
 
 
@@ -260,11 +256,23 @@ open_path(const char *base, const char *file, const char *direction)
     FILE *f = 0;
     /*  POSIX PATH_MAX  would suffice, normally stdio BUFSIZ is larger
         than PATH_MAX */
-    char path_name[BUFSIZ];
-    snprintf(path_name,sizeof(path_name),"%s/%s",base,file);
+    static char path_name[BUFSIZ];
+
+    /* 2 == space for / and NUL */
+    size_t netlen = strlen(file) +strlen(base) + 2;
+
+    if (netlen >= BUFSIZ) {
+        printf("Error opening '%s/%s', name too long\n",base,file);
+        exit(1);
+    }
+
+    strcpy(path_name,base);
+    strcat(path_name,"/");
+    strcat(path_name,file);
+
     f = fopen(path_name,direction);
     if (!f) {
-        printf("Error openning '%s'\n",path_name);
+        printf("Error opening '%s'\n",path_name);
         exit(1);
     }
     return f;

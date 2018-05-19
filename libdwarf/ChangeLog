@@ -1,3 +1,22 @@
+2018-05-17 David Anderson
+    * config.h.in: Added #undef HAVE_VSNPRINTF HAVE_SNPRINTF
+    * configure: regenerated.
+    * configure.ac: Added AC_CHECK_FUNCS(snprintf) 
+      AC_CHECK_FUNCS(vsnprintf)
+    * dwarf_alloc.c(_dwarf_free_all_of_one_debug): Added fclose
+      of dbg->de_printf_callback_null_device_handle.
+    * dwarf_opaque.h: Added de_printf_callback_null_device_handle
+      Dwarf_Debug member.
+    * dwarf_arange.c,dwarf_die_deliv.c,dwarf_frame2.c,
+      gennames.c: Use static buffers, not on-stack char
+      array targets for sprintf/snprintf.
+      Testing HAVE_SNPRINTF(HAVE_VSNPRINTF) and use c99 function 
+      if present, else c90
+    * dwarf_util.c:  Putting  null_device_handle in Dwarf_Debug 
+      struct Use static buffers, not on-stack char array targets for
+      sprintf/snprintf.
+      Testing HAVE_SNPRINTF(HAVE_VSNPRINTF) and use c99 function 
+      if present, else c90.
 2018-05-16 David Anderson
     * dwarf_leb.c, dwarf_util.c: Removed use of C99
       like vsnprintf. Now using C90.

@@ -1079,11 +1079,26 @@ _dwarf_next_cu_header_internal(Dwarf_Debug dbg,
             if (resd != DW_DLV_OK) {
                 if (reloc_incomplete(resd,err2)) {
                     /*  We will assume all is ok, though it is not.
-                        Relocation errors need not be fatal.  */
-                    char msg_buf[200];
-                    snprintf(msg_buf,sizeof(msg_buf),
-                        "Relocations did not complete successfully, but we are "
-                        " ignoring error: %s",dwarf_errmsg(err2));
+                        Relocation errors need not be fatal. */
+                    char msg_buf[300];
+                    char *dwerrmsg = 0;
+                    char *msgprefix =
+                        "Relocations did not complete successfully, "
+                        "but we are " " ignoring error: ";
+                    size_t totallen = 0;
+                    size_t prefixlen = 0;
+
+                    dwerrmsg = dwarf_errmsg(err2);
+                    prefixlen = strlen(msgprefix);
+                    totallen = prefixlen + strlen(dwerrmsg);
+                    if( totallen >= sizeof(msg_buf)) {
+                        /*  Impossible unless something corrupted.
+                            Provide a shorter dwerrmsg*/
+                        strcpy(msg_buf,"Error:corrupted dwarf message table!");
+                    } else {
+                        strcpy(msg_buf,msgprefix);
+                        strcpy(msg_buf+prefixlen,dwerrmsg);
+                    }
                     dwarf_insert_harmless_error(dbg,msg_buf);
                     resd = DW_DLV_OK;
                     /*  Fall thru to use the newly loaded section.

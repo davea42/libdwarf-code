@@ -694,6 +694,7 @@ struct Dwarf_Debug_s {
     struct Dwarf_Harmless_s de_harmless_errors;
 
     struct Dwarf_Printf_Callback_Info_s  de_printf_callback;
+    void *   de_printf_callback_null_device_handle;
 
     struct Dwarf_Tied_Data_s de_tied_data;
 

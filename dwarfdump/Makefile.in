@@ -138,8 +138,12 @@ naming.o:  $(srcdir)/naming.c $(srcdir)/naming.h
 # Nor is libdwarf itself involve, though we do reach around to names.c in libdwarf
 btag_common.o: $(srcdir)/tag_common.c
 	$(CC_FOR_BUILD) $(CFLAGS) -DTRIVIAL_NAMING  -c $(srcdir)/tag_common.c -o btag_common.o 
-bnames.o: $(srcdir)/../libdwarf/dwarf_names.c
+bnames.o:
 	$(CC_FOR_BUILD) $(CFLAGS) -DTRIVIAL_NAMING  -c $(srcdir)/../libdwarf/dwarf_names.c -o bnames.o 
+
+besb.o: $(srcdir)/esb.c
+	$(CC_FOR_BUILD) $(CFLAGS) -DTRIVIAL_NAMING  -c $(srcdir)/esb.c -o besb.o 
+
 btrivial_naming.o: $(srcdir)/naming.c
 	$(CC_FOR_BUILD) $(CFLAGS) -DTRIVIAL_NAMING  -c $(srcdir)/naming.c -o btrivial_naming.o 
 bmakename.o: $(srcdir)/makename.h $(srcdir)/makename.c 
@@ -151,11 +155,11 @@ bcommon.o:  $(srcdir)/common.c $(srcdir)/common.h
 bdwgetopt.o: $(srcdir)/dwgetopt.h $(srcdir)/dwgetopt.c 
 	$(CC_FOR_BUILD) $(CFLAGS) -c $(srcdir)/dwgetopt.c -o bdwgetopt.o
 
-tag_tree_build:  $(srcdir)/tag_tree.c $(DIRINC)/dwarf.h $(HEADERS) btag_common.o bmakename.o bcommon.o btrivial_naming.o bdwgetopt.o bdwarf_tsearchbal.o bnames.o
-	LD_LIBRARY_PATH=$$LD_LIBRARY_PATH:$(LIBDWARF_PATH) $(CC_FOR_BUILD) $(CFLAGS) $(srcdir)/tag_tree.c btag_common.o bcommon.o bmakename.o  bdwarf_tsearchbal.o btrivial_naming.o bdwgetopt.o bnames.o  $(LDBUILDFLAGS) -o tag_tree_build 
+tag_tree_build:  $(srcdir)/tag_tree.c $(DIRINC)/dwarf.h $(HEADERS) btag_common.o bmakename.o bcommon.o btrivial_naming.o bdwgetopt.o besb.o  bdwarf_tsearchbal.o bnames.o
+	LD_LIBRARY_PATH=$$LD_LIBRARY_PATH:$(LIBDWARF_PATH) $(CC_FOR_BUILD) $(CFLAGS) $(srcdir)/tag_tree.c btag_common.o bcommon.o bmakename.o  bdwarf_tsearchbal.o btrivial_naming.o bdwgetopt.o besb.o bnames.o  $(LDBUILDFLAGS) -o tag_tree_build 
 
-tag_attr_build:  $(srcdir)/tag_attr.c $(DIRINC)/dwarf.h $(HEADERS) btag_common.o bmakename.o  bcommon.o btrivial_naming.o bdwgetopt.o bdwarf_tsearchbal.o bnames.o
-	$(CC_FOR_BUILD) $(CFLAGS) $(srcdir)/tag_attr.c btag_common.o bcommon.o bmakename.o btrivial_naming.o  bdwarf_tsearchbal.o bdwgetopt.o bnames.o $(LDBUILDFLAGS) -o tag_attr_build 
+tag_attr_build:  $(srcdir)/tag_attr.c $(DIRINC)/dwarf.h $(HEADERS) btag_common.o bmakename.o  bcommon.o btrivial_naming.o bdwgetopt.o bdwarf_tsearchbal.o bnames.o besb.o
+	LD_LIBRARY_PATH=$$LD_LIBRARY_PATH:$(LIBDWARF_PATH) $(CC_FOR_BUILD) $(CFLAGS) $(srcdir)/tag_attr.c btag_common.o bcommon.o bmakename.o btrivial_naming.o besb.o  bdwarf_tsearchbal.o bdwgetopt.o bnames.o $(LDBUILDFLAGS) -o tag_attr_build 
 
 # Plain GNU C dash E does not work on a .list, 
 # so copy to a .c name to run

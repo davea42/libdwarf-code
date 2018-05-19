@@ -36,6 +36,7 @@
 #include "globals.h"
 #include "libdwarf.h"
 #include "common.h"
+#include "esb.h"
 #include "tag_common.h"
 #include "dwgetopt.h"
 
@@ -371,27 +372,32 @@ main(int argc, char **argv)
 #endif /* HAVE_USAGE_TAG_ATTR */
 
         while (num != MAGIC_TOKEN_VALUE) {
+            struct esb_s msg_buf;
+
+            esb_constructor(&msg_buf);
             if (standard_flag) {
                 unsigned idx = num / BITS_PER_WORD;
                 unsigned bit = num % BITS_PER_WORD;
 
                 if (idx >= table_columns) {
-                    char msg[200];
-                    snprintf(msg, sizeof(msg),
+                    int len = 0;
+
+                    esb_append_printf(&msg_buf,
                         "too many attributes a: table incomplete "
                         "index %d cols %d.",idx,table_columns);
-                    bad_line_input(msg);
+                    bad_line_input(esb_get_string(&msg_buf));
                 }
                 validate_row_col("Setting attr bit",tag,idx,
                     table_rows,table_columns);
                 tag_attr_combination_table[tag][idx] |= (((unsigned)1) << bit);
             } else {
                 if (curcol >= table_columns) {
-                    char msg[200];
-                    snprintf(msg, sizeof(msg),
+                    int len = 0;
+
+                    esb_append_printf(&msg_buf,
                         "too many attributes b: table incomplete "
                         "index %d cols %d.",curcol,table_columns);
-                    bad_line_input(msg);
+                    bad_line_input(esb_get_string(&msg_buf));
                 }
                 validate_row_col("Setting attr col",current_row,curcol,
                     table_rows,table_columns);
@@ -405,11 +411,13 @@ main(int argc, char **argv)
             if (standard_flag) {
                 /* Add attribute to current tag */
                 if (cur_attr >= DW_AT_last) {
-                    char msg[200];
-                    snprintf(msg, sizeof(msg),
+                    int len = 0;
+
+                    esb_empty_string(&msg_buf);
+                    esb_append_printf(&msg_buf,
                         "too many attributes c: table incomplete "
                         "index %d cols %d.",cur_attr,DW_AT_last);
-                    bad_line_input(msg);
+                    bad_line_input(esb_get_string(&msg_buf));
                 }
                 /* Check for duplicated entries */
                 if (tag_attr_vector[cur_attr]) {
@@ -419,6 +427,7 @@ main(int argc, char **argv)
                 cur_attr++;
             }
 #endif /* HAVE_USAGE_TAG_ATTR */
+            esb_destructor(&msg_buf);
 
             input_eof = read_value(&num,fileInp);
             if (IS_EOF == input_eof) {

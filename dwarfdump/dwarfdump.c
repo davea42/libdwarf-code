@@ -954,6 +954,7 @@ process_one_file(Elf * elf,Elf *elftied,
     printf("\n");
     clean_up_syms_malloc_data();
     destruct_abbrev_array();
+    esb_close_null_device();
     helpertree_clear_statistics(&helpertree_offsets_base_info);
     helpertree_clear_statistics(&helpertree_offsets_base_types);
     return 0;

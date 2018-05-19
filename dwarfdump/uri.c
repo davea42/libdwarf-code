@@ -288,12 +288,6 @@ static char dwarfdump_ctype_table[256] = {
 1, /* 0xfe */
 0, /* other: 0xff */
 };
-static char *
-xchar(int c, char *buf, int size)
-{
-    snprintf(buf, size,"%%%02x",c);
-    return buf;
-}
 
 /* Translate dangerous and some other characters to safe
    %xx form.
@@ -301,8 +295,8 @@ xchar(int c, char *buf, int size)
 void
 translate_to_uri(const char * filename, struct esb_s *out)
 {
-    char buf[8];
     const char *cp = 0;
+
     for (cp = filename  ; *cp; ++cp) {
         char v[2];
         int c = 0xff & (unsigned char)*cp;
@@ -311,8 +305,7 @@ translate_to_uri(const char * filename, struct esb_s *out)
             v[1] = 0;
             esb_append(out,v);
         } else {
-            char *b = xchar(c,buf,sizeof(buf));
-            esb_append(out,b);
+            esb_append_printf(out, "%%%02x",c);
         }
     }
 }

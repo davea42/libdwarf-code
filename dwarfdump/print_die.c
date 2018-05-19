@@ -1199,17 +1199,21 @@ print_die_and_children_internal(Dwarf_Debug dbg,
 
             Dwarf_Off glb_off;
             DWARF_CHECK_COUNT(di_gaps_result,1);
-            if (dwarf_validate_die_sibling(sibling,&glb_off) == DW_DLV_ERROR) {
-                static char msg[128];
+            if (dwarf_validate_die_sibling(sibling,&glb_off) == 
+                DW_DLV_ERROR) {
                 Dwarf_Off sib_off;
+                struct esb_s msg;
+
+                esb_constructor(&msg);
                 dwarf_dieoffset(sibling,&sib_off,&dacerr);
-                sprintf(msg,
+                esb_append_printf(&msg,
                     "GSIB = 0x%" DW_PR_XZEROS  DW_PR_DUx
                     " GOFF = 0x%" DW_PR_XZEROS DW_PR_DUx
                     " Gap = %" DW_PR_DUu " bytes",
                     sib_off,glb_off,sib_off-glb_off);
                 DWARF_CHECK_ERROR2(di_gaps_result,
-                    "Incorrect sibling chain",msg);
+                    "Incorrect sibling chain",esb_get_string(&msg));
+                esb_destructor(&msg);
             }
         }
 
