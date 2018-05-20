@@ -293,12 +293,11 @@ process_line_table(Dwarf_Debug dbg,
                             with addr=0, when dealing with linkonce
                             symbols and no stripping */
                         if (pc) {
-                            char addr_tmp[100];
                             if (glflags.gf_check_lines &&
                                 checking_this_compiler()) {
-                                struct esb_s addr_tmp;   
+                                struct esb_s addr_tmp;
 
-                                esb_constructor(&addr_tmp); 
+                                esb_constructor(&addr_tmp);
                                 esb_append_printf(&addr_tmp,
                                     "%s: Address"
                                     " 0x%" DW_PR_XZEROS DW_PR_DUx
@@ -307,7 +306,7 @@ process_line_table(Dwarf_Debug dbg,
                                     pc);
                                 DWARF_CHECK_ERROR(lines_result,
                                     esb_get_string(&addr_tmp));
-                                esb_destructor(&addr_tmp); 
+                                esb_destructor(&addr_tmp);
                             }
                         } else {
                             SkipRecord = TRUE;

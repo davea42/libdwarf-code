@@ -176,6 +176,7 @@ get_kind_string(struct esb_s *out,unsigned k)
 {
     if (k <= 7) {
         esb_append(out,sanitized(kind_list[k]));
+        return;
     }
     esb_append(out, "kind-erroneous");
 }

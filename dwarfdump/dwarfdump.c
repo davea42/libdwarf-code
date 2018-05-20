@@ -1372,15 +1372,17 @@ void PRINT_CU_INFO(void)
         loff,goff);
     /* We used to print leftover and incorrect values at times. */
     if (glflags.need_CU_high_address) {
-        strcpy(hbuf,"unknown   ");
+        safe_strcpy(hbuf,sizeof(hbuf),"unknown   ",10);
     } else {
-        snprintf(hbuf,sizeof(hbuf),
+        /* safe, hbuf is large enough. */
+        sprintf(hbuf,
             "0x%"  DW_PR_XZEROS DW_PR_DUx,glflags.CU_high_address);
     }
     if (glflags.need_CU_base_address) {
-        strcpy(lbuf,"unknown   ");
+        safe_strcpy(lbuf,sizeof(lbuf),"unknown   ",10);
     } else {
-        snprintf(lbuf,sizeof(lbuf),
+        /* safe, lbuf is large enough. */
+        sprintf(lbuf,
             "0x%"  DW_PR_XZEROS DW_PR_DUx,glflags.CU_low_address);
     }
 #if 0 /* Old format print */

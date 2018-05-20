@@ -317,15 +317,17 @@ static const char * default_cu_producer = "<unknown>";
 void
 reset_overall_CU_error_data(void)
 {
-   strcpy(glflags.CU_name,default_cu_producer);
-   strcpy(glflags.CU_producer,default_cu_producer);
-   glflags.DIE_offset = 0;
-   glflags.DIE_overall_offset = 0;
-   glflags.DIE_CU_offset = 0;
-   glflags.DIE_CU_overall_offset = 0;
-   glflags.CU_base_address = 0;
-   glflags.CU_high_address = 0;
-   glflags.CU_low_address = 0;
+    safe_strcpy(glflags.CU_name,sizeof(glflags.CU_name),
+        default_cu_producer,strlen(default_cu_producer));
+    safe_strcpy(glflags.CU_producer,sizeof(glflags.CU_producer),
+        default_cu_producer,strlen(default_cu_producer));
+    glflags.DIE_offset = 0;
+    glflags.DIE_overall_offset = 0;
+    glflags.DIE_CU_offset = 0;
+    glflags.DIE_CU_overall_offset = 0;
+    glflags.CU_base_address = 0;
+    glflags.CU_high_address = 0;
+    glflags.CU_low_address = 0;
 }
 
 boolean

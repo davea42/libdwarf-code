@@ -1,5 +1,20 @@
+2018-05-20 David Anderson
+    * dwarfdump.c: Change strcpy to safe_strcpy. Comment a safe sprintf
+      call.
+    * glflags.c: Change strcpy to safe_strcpy and fix indents.
+    * dwconf.c: Change strcpy to safe_strcpy.
+    * print_frames.c: Change snprintf to esb_append.
+      Change the name of a local pointer to make it clearer
+      it is not the same as other similar local variables.
+      Use esb instead of char *, 
+      Change strcpy to safe_strcpy (and eliminate strcat).
+    * print_gdbindex.c: Reinserted return statement that
+      was accidentally dropped.
+    * print_lines.c,print_macros.c: Remove trailing whitespace.
+    * print_ranges.c: Remove trailing whitespace.
+    * tag_attr.c: Remove unused 'len' local variable, 3 places.
 2018-05-19 David Anderson
-    * print_die.c,print_lines.c,print_macros.c,
+    * print_die.c,print_lines.c,print_macros.c,print_gdbindex.c,
       print_pubnames.c,print_ranges.c: Replace snprintf with esb_append_printf.
     * sanitized.c: Deleted a function call and snprintf with
       simple esb_append_printf.

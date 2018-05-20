@@ -380,8 +380,6 @@ main(int argc, char **argv)
                 unsigned bit = num % BITS_PER_WORD;
 
                 if (idx >= table_columns) {
-                    int len = 0;
-
                     esb_append_printf(&msg_buf,
                         "too many attributes a: table incomplete "
                         "index %d cols %d.",idx,table_columns);
@@ -392,8 +390,6 @@ main(int argc, char **argv)
                 tag_attr_combination_table[tag][idx] |= (((unsigned)1) << bit);
             } else {
                 if (curcol >= table_columns) {
-                    int len = 0;
-
                     esb_append_printf(&msg_buf,
                         "too many attributes b: table incomplete "
                         "index %d cols %d.",curcol,table_columns);
@@ -411,8 +407,6 @@ main(int argc, char **argv)
             if (standard_flag) {
                 /* Add attribute to current tag */
                 if (cur_attr >= DW_AT_last) {
-                    int len = 0;
-
                     esb_empty_string(&msg_buf);
                     esb_append_printf(&msg_buf,
                         "too many attributes c: table incomplete "

@@ -183,7 +183,7 @@ printf("**** END ****\n");
                     esb_append_printf(&errbuf,
                         "%s: Address outside a "
                         "valid .text range",sanitized(sec_name));
-                    DWARF_CHECK_ERROR(ranges_result, 
+                    DWARF_CHECK_ERROR(ranges_result,
                         esb_get_string(&errbuf));
                     esb_destructor(&errbuf);
                     if (glflags.gf_check_verbose_mode && do_print) {

@@ -380,6 +380,7 @@ find_a_file(const char *named_file, char **defaults, const char ** name_used)
             static char szPath[MAX_PATH];
             if (GetModuleFileName(NULL,szPath,MAX_PATH)) {
                 char *pDir = strrchr(szPath,'/');
+                size_t len = 0;
                 if (!pDir) {
                     pDir = strrchr(szPath,'\\');
                     if (!pDir) {
@@ -389,7 +390,8 @@ find_a_file(const char *named_file, char **defaults, const char ** name_used)
                 }
                 /* Add the configuration name to the pathname */
                 ++pDir;
-                strcpy(pDir,"dwarfdump.conf");
+                len = pDir - szPath;
+                safe_strcpy(pDir,sizeof(szPath)-len,"dwarfdump.conf",14);
                 lname = szPath;
             }
         }

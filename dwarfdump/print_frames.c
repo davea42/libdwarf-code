@@ -228,11 +228,11 @@ get_abstract_origin_funcname(Dwarf_Debug dbg,Dwarf_Attribute attr,
         } else if (ares == DW_DLV_OK) {
             if (lattr == DW_AT_name) {
                 int sres = 0;
-                char* temps = 0;
-                sres = dwarf_formstring(atlist[i], &temps, &err);
+                char* tempsl = 0;
+                sres = dwarf_formstring(atlist[i], &tempsl, &err);
                 if (sres == DW_DLV_OK) {
-                    long len = (long) strlen(temps);
-                    safe_strcpy(name_out, maxlen, temps, len);
+                    long len = (long) strlen(tempsl);
+                    safe_strcpy(name_out, maxlen, tempsl, len);
                     name_found = 1;
                     break;
                 }
@@ -644,12 +644,15 @@ get_fde_proc_name(Dwarf_Debug dbg, Dwarf_Addr low_pc,
         }
         current_cu_die_for_print_frames = 0;
         if (dres == DW_DLV_ERROR) {
-            char buf [100];
-            snprintf(buf,sizeof(buf),
-                "dwarf_cu_header Child Read finding proc name for %s",
-                frame_section_name);
+            struct esb_s msg;
+
+            esb_constructor(&msg);
+            esb_append(&msg,
+                "dwarf_cu_header Child Read finding proc name for %s");
+            esb_append(&msg,sanitized(frame_section_name));
             print_error(dbg,
-                buf, chres, pnerr);
+                esb_get_string(&msg), chres, pnerr);
+            esb_destructor(&msg);
             continue;
         } else if (dres == DW_DLV_NO_ENTRY) {
             ++looping;
@@ -751,7 +754,7 @@ print_one_fde(Dwarf_Debug dbg,
     Dwarf_Signed eh_table_offset = 0;
     int fres = 0;
     int offres = 0;
-    char* temps = 0;
+    struct esb_s temps;
     Dwarf_Error oneferr = 0;
     int printed_intro_addr = 0;
 
@@ -778,35 +781,48 @@ print_one_fde(Dwarf_Debug dbg,
     if (fres == DW_DLV_ERROR) {
         print_error(dbg, "dwarf_get_fde_exception_info", fres, oneferr);
     }
+    esb_constructor(&temps);
     if (glflags.gf_suppress_nested_name_search) {
-        temps = 0;
+        /* do nothing. */
     } else {
         struct Addr_Map_Entry *mp = 0;
-        temps = get_fde_proc_name(dbg, low_pc,
-            frame_section_name,pcMap,all_cus_seen);
+        char *sptr = 0;
+
         mp = addr_map_find(low_pc,lowpcSet);
         if (glflags.gf_check_frames || glflags.gf_check_frames_extended) {
             DWARF_CHECK_COUNT(fde_duplication,1);
         }
+        {
+            char *sptr = 0;
+            sptr = get_fde_proc_name(dbg, low_pc,
+                frame_section_name,pcMap,all_cus_seen);
+            if (sptr) {
+                esb_append(&temps,sanitized(sptr));
+            }
+        }
         if (mp) {
             if (glflags.gf_check_frames || glflags.gf_check_frames_extended) {
-                char msg[400];
-                if (temps && (strlen(temps) > 0)) {
-                    snprintf(msg,sizeof(msg),"An fde low pc of 0x%"
+                struct esb_s msg;
+
+                esb_constructor(&msg);
+                if (esb_string_len(&temps) > 0) {
+                    esb_append_printf(&msg,
+                        "An fde low pc of 0x%"
                         DW_PR_DUx
                         " is not the first fde with that pc. "
                         "The first is named \"%s\"",
                         (Dwarf_Unsigned)low_pc,
-                        sanitized(temps));
+                        esb_get_string(&temps));
                 } else {
-                    snprintf(msg,sizeof(msg),"An fde low pc of 0x%"
+                    esb_append_printf(&msg,
+                        "An fde low pc of 0x%"
                         DW_PR_DUx
                         " is not the first fde with that pc. "
                         "The first is not named.",
                         (Dwarf_Unsigned)low_pc);
-
                 }
-                DWARF_CHECK_ERROR(fde_duplication,msg);
+                DWARF_CHECK_ERROR(fde_duplication,esb_get_string(&msg));
+                esb_destructor(&msg);
             }
         } else {
             addr_map_insert(low_pc,0,lowpcSet);
@@ -827,12 +843,13 @@ print_one_fde(Dwarf_Debug dbg,
             fde_index,
             (Dwarf_Unsigned)low_pc,
             (Dwarf_Unsigned)(low_pc + func_length),
-            temps ? sanitized(temps) : "",
+            esb_get_string(&temps),
             (Dwarf_Unsigned)cie_offset,
             (Dwarf_Unsigned)cie_index,
             (Dwarf_Unsigned)fde_offset,
             fde_bytes_length);
     }
+    esb_destructor(&temps);
 
 
 
@@ -2241,10 +2258,14 @@ print_one_frame_reg_col(Dwarf_Debug dbg,
             printf("%s", "> ");
         if (glflags.verbose) {
             char pref[40];
+            size_t len = 0;
 
-            strcpy(pref, "<");
-            strcat(pref, type_title);
-            strcat(pref, "bytes:");
+            safe_strcpy(pref,sizeof(pref), "<",1);
+            len = 1;
+            safe_strcpy(pref+len,sizeof(pref)-len,
+                type_title,strlen(type_title));
+            len = strlen(pref);
+            safe_strcpy(pref+len,sizeof(pref)-len, "bytes:",6);
             /*  The data being dumped comes direct from
                 libdwarf so libdwarf validated it. */
             dump_block(pref, block_ptr, offset);
