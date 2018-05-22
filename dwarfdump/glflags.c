@@ -245,8 +245,11 @@ init_global_flags(void)
     glflags.CU_producer[0] = 0;
 
     /*  Options to enable debug tracing. */
-    for (int i = 0; i <= MAX_TRACE_LEVEL; ++i) {
-        glflags.nTrace[i] = 0;
+    {
+        int i = 0;
+        for ( ; i <= MAX_TRACE_LEVEL; ++i) {
+            glflags.nTrace[i] = 0;
+        }
     }
 
     /*  Output filename */
