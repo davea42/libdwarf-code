@@ -54,9 +54,10 @@ typedef char * string; /* SELFTEST */
 #ifdef SELFTEST
 #define INITIAL_ALLOC 1  /* SELFTEST */
 #else
-/*  There is nothing magic about this size.
+/*  Some testing of a variety of small objects
+    showed 
     It is just big enough to avoid most resizing. */
-#define INITIAL_ALLOC 16
+#define INITIAL_ALLOC 100
 #endif
 /*  Allow for final NUL */
 static size_t alloc_size = INITIAL_ALLOC;

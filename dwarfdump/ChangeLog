@@ -1,4 +1,8 @@
 2018-05-22 David Anderson
+    * esb.c: Changed INITIAL_ALLOC to 100 as experiments
+      show that a length in a range near 100 gives
+      the best runtimes, by 10-20% user time. 
+2018-05-22 David Anderson
     * glflags.c: Removed the c99 'for (int i=0;'
       and declare the 'i' separately.
 2018-05-20 David Anderson
