@@ -1,4 +1,7 @@
 2018-05-22 David Anderson
+    * glflags.h, glflags.c: set_checks_off(void) needed
+      the (void) as argument to be a C90 prototype.
+2018-05-22 David Anderson
     * esb.c: Changed INITIAL_ALLOC to 100 as experiments
       show that a length in a range near 100 gives
       the best runtimes, by 10-20% user time. 
