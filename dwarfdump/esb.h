@@ -63,6 +63,14 @@ struct esb_s {
     size_t  esb_used_bytes; /* Amount of space used  or 0,
         which does not include the trailing NUL.
         Matches what strlen(esb_string) would return. */
+    /*  rigid means never do malloc.
+        fixed means the size is a user buffer  but
+        if we run out of room feel free to malloc space
+        (and then unset esb_fixed).
+        An esb can be (fixed and rigid), (fixed and not rigid),
+        or (not fixed and not rigid).  */
+    char    esb_fixed;
+    char    esb_rigid;
 };
 
 /* Open/close the null device used during formatting printing */
@@ -92,6 +100,10 @@ size_t esb_string_len(struct esb_s *data);
 /* *data is presumed to contain garbage, not values, and
    is properly initialized. */
 void esb_constructor(struct esb_s *data);
+#if 0
+void esb_constructor_rigid(struct esb_s *data,char *buf,size_t buflen);
+#endif
+void esb_constructor_fixed(struct esb_s *data,char *buf,size_t buflen);
 
 void esb_force_allocation(struct esb_s *data, size_t minlen);
 

@@ -95,7 +95,7 @@ Since we do not handle utf-8 properly nor detect it
 we turn all non-ASCII to %xx below.
 */
 
-static struct esb_s localesb = {0,0,0};
+static struct esb_s localesb = {0,0,0,0,0};
 
 boolean no_sanitize_string_garbage = FALSE;
 

@@ -51,11 +51,12 @@ typedef char * string; /* SELFTEST */
 /*  INITIAL_ALLOC value takes no account of space for a trailing NUL,
     the NUL is accounted for in init_esb_string
     and in later tests against esb_allocated_size. */
+#undef MALLOC_COUNT
 #ifdef SELFTEST
 #define INITIAL_ALLOC 1  /* SELFTEST */
+#define MALLOC_COUNT 1
 #else
-/*  Some testing of a variety of small objects
-    showed 
+/*  There is nothing magic about this size.
     It is just big enough to avoid most resizing. */
 #define INITIAL_ALLOC 100
 #endif
@@ -69,6 +70,12 @@ static FILE *null_device_handle = 0;
 #else
 #define NULL_DEVICE_NAME "/dev/null"
 #endif /* _WIN32 */
+
+
+#ifdef MALLOC_COUNT
+long malloc_count = 0;
+long malloc_size = 0;
+#endif
 
 /* Open the null device used during formatting printing */
 FILE *esb_open_null_device(void)
@@ -106,6 +113,10 @@ init_esb_string(struct esb_s *data, size_t min_len)
         min_len++ ; /* Allow for NUL at end */
     }
     d = malloc(min_len);
+#ifdef MALLOC_COUNT
+    ++malloc_count;
+    malloc_size += min_len;
+#endif
     if (!d) {
         fprintf(stderr,
             "dwarfdump is out of memory allocating %lu bytes\n",
@@ -127,6 +138,9 @@ esb_allocate_more(struct esb_s *data, size_t len)
     size_t new_size = 0;
     char* newd = 0;
 
+    if (data->esb_rigid) {
+        return;
+    }
     if (data->esb_allocated_size == 0) {
         init_esb_string(data, alloc_size);
     }
@@ -134,9 +148,29 @@ esb_allocate_more(struct esb_s *data, size_t len)
     if (new_size < alloc_size) {
         new_size = alloc_size;
     }
-    newd = realloc(data->esb_string, new_size);
+    if (data->esb_fixed) {
+        size_t copylen = data->esb_used_bytes;
+        if ((new_size-1) < copylen) {
+            copylen = new_size -1;
+        }
+        newd = malloc(new_size);
+#ifdef MALLOC_COUNT
+        ++malloc_count;
+        malloc_size += len;
+#endif
+        if (newd) {
+            strncpy(newd,data->esb_string,copylen);
+            newd[copylen] = 0;
+        }
+    } else {
+        newd = realloc(data->esb_string, new_size);
+#ifdef MALLOC_COUNT
+        ++malloc_count;
+        malloc_size += len;
+#endif
+    }
     if (!newd) {
-        fprintf(stderr, "dwarfdump is out of memory re-allocating "
+        fprintf(stderr, "dwarfdump is out of memory allocating "
             "%lu bytes\n", (unsigned long) new_size);
         exit(5);
     }
@@ -144,6 +178,7 @@ esb_allocate_more(struct esb_s *data, size_t len)
         space was free()d by realloc(). */
     data->esb_string = newd;
     data->esb_allocated_size = new_size;
+    data->esb_fixed = 0;
 }
 
 /*  Ensure that the total buffer length is large enough that
@@ -154,6 +189,9 @@ esb_force_allocation(struct esb_s *data, size_t minlen)
 {
     size_t target_len = 0;
 
+    if (data->esb_rigid) {
+        return;
+    }
     if (data->esb_allocated_size == 0) {
         init_esb_string(data, alloc_size);
     }
@@ -181,8 +219,16 @@ esb_appendn_internal(struct esb_s *data, const char * in_string, size_t len)
     /*  ASSERT: data->esb_allocated_size > data->esb_used_bytes  */
     remaining = data->esb_allocated_size - data->esb_used_bytes - 1;
     if (remaining <= needed) {
-        size_t alloc_amt = needed - remaining;
-        esb_allocate_more(data,alloc_amt);
+        if (data->esb_rigid && len > remaining) {
+            len = remaining;
+        } else {
+            size_t alloc_amt = needed - remaining;
+            esb_allocate_more(data,alloc_amt);
+        }
+    }
+    if (len ==  0) {
+        /* No room for anything more, or no more requested. */
+        return;
     }
     strncpy(&data->esb_string[data->esb_used_bytes], in_string, len);
     data->esb_used_bytes += len;
@@ -262,10 +308,49 @@ esb_constructor(struct esb_s *data)
     memset(data, 0, sizeof(*data));
 }
 
+#if 0
+void
+esb_constructor_rigid(struct esb_s *data,char *buf,size_t buflen)
+{
+    memset(data, 0, sizeof(*data));
+    data->esb_string = buf;
+    data->esb_string[0] = 0;
+    data->esb_allocated_size = buflen;
+    data->esb_used_bytes = 0;
+    data->esb_rigid = 1;
+    data->esb_fixed = 1;
+}
+#endif
+
+/*  ASSERT: buflen > 0 */
+void
+esb_constructor_fixed(struct esb_s *data,char *buf,size_t buflen)
+{
+    memset(data, 0, sizeof(*data));
+    if  (buflen < 1) {
+        return;
+    }
+    data->esb_string = buf;
+    data->esb_string[0] = 0;
+    data->esb_allocated_size = buflen;
+    data->esb_used_bytes = 0;
+    data->esb_rigid = 0;
+    data->esb_fixed = 1;
+}
+
+
 /*  The string is freed, contents of *data set to zeroes. */
 void
 esb_destructor(struct esb_s *data)
 {
+    if(data->esb_fixed) {
+        data->esb_allocated_size = 0;
+        data->esb_used_bytes = 0;
+        data->esb_string = 0;
+        data->esb_rigid = 0;
+        data->esb_fixed = 0;
+        return;
+    }
     if (data->esb_string) {
         free(data->esb_string);
         data->esb_string = 0;
@@ -318,7 +403,12 @@ esb_append_printf(struct esb_s *data,const char *in_string, ...)
     }
     remaining = data->esb_allocated_size - data->esb_used_bytes -1;
     if (remaining < len) {
-        esb_allocate_more(data, len);
+        if (data->esb_rigid) {
+            /* No room, give up. */
+            return;
+        } else {
+            esb_allocate_more(data, len);
+        }
     }
     va_start(ap,in_string);
 #ifdef HAVE_VSNPRINTF
@@ -328,6 +418,7 @@ esb_append_printf(struct esb_s *data,const char *in_string, ...)
     len2 = vsprintf(&data->esb_string[data->esb_used_bytes],
 #endif
         in_string,ap);
+
     va_end(ap);
     data->esb_used_bytes += len2;
     if (len2 >  len) {
@@ -355,6 +446,10 @@ esb_get_copy(struct esb_s *data)
     size_t len = esb_string_len(data);
     if (len) {
         copy = (char*)malloc(len + 1);
+#ifdef MALLOC_COUNT
+        ++malloc_count;
+        malloc_size += len+1;
+#endif
         strcpy(copy,esb_get_string(data));
     }
     return copy;
@@ -479,6 +574,27 @@ int main()
         validate_esb(16,&e,23,24,"abcde fghij klmno pqrst",__LINE__);
         esb_destructor(&d);
         esb_destructor(&e);
+    }
+    {
+        struct esb_s d5;
+        char bufs[4];
+        char bufl[60];
+        const char * s = "insert me %d";
+
+        esb_constructor_fixed(&d5,bufs,sizeof(bufs));
+        esb_append(&d5,"aaa ");
+        esb_append_printf(&d5,s,1);
+        esb_append(&d5,"zzz");
+        validate_esb(17,&d5,18,19,"aaa insert me 1zzz",__LINE__);
+        esb_destructor(&d5);
+
+        esb_constructor_fixed(&d5,bufl,sizeof(bufl));
+        esb_append(&d5,"aaa ");
+        esb_append_printf(&d5,s,1);
+        esb_append(&d5,"zzz");
+        validate_esb(17,&d5,18,60,"aaa insert me 1zzz",__LINE__);
+        esb_destructor(&d5);
+
     }
 #ifdef _WIN32
     /* Close the null device used during formatting printing */

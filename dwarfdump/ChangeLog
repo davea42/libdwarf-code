@@ -1,3 +1,13 @@
+2018-05-23 David Anderson
+    * esb.c, esb.h: Added esb_constructor_fixed()
+      and new fields in esb_s to support use of
+      a static buffer so normally no malloc needed
+      when using the esb.
+    * print_frames.c: Changed, where appropriate,
+      to use esb_constructor_fixed.
+    * dwarfdump/sanitized.c: The static initializer
+      of all zero needed update for the new esb_s
+      declaration.
 2018-05-22 David Anderson
     * glflags.h, glflags.c: set_checks_off(void) needed
       the (void) as argument to be a C90 prototype.

@@ -645,8 +645,9 @@ get_fde_proc_name(Dwarf_Debug dbg, Dwarf_Addr low_pc,
         current_cu_die_for_print_frames = 0;
         if (dres == DW_DLV_ERROR) {
             struct esb_s msg;
+            char local_buf[300];
 
-            esb_constructor(&msg);
+            esb_constructor_fixed(&msg,local_buf,sizeof(local_buf));
             esb_append(&msg,
                 "dwarf_cu_header Child Read finding proc name for %s");
             esb_append(&msg,sanitized(frame_section_name));
@@ -757,6 +758,8 @@ print_one_fde(Dwarf_Debug dbg,
     struct esb_s temps;
     Dwarf_Error oneferr = 0;
     int printed_intro_addr = 0;
+    char local_buf[100];
+    char temps_buf[200];
 
     fres = dwarf_get_fde_range(fde,
         &low_pc, &func_length,
@@ -777,19 +780,21 @@ print_one_fde(Dwarf_Debug dbg,
         return DW_DLV_NO_ENTRY;
     }
     /* eh_table_offset is IRIX ONLY. */
-    fres = dwarf_get_fde_exception_info(fde, &eh_table_offset, &oneferr);
+    fres = dwarf_get_fde_exception_info(fde,
+        &eh_table_offset, &oneferr);
     if (fres == DW_DLV_ERROR) {
-        print_error(dbg, "dwarf_get_fde_exception_info", fres, oneferr);
+        print_error(dbg, "dwarf_get_fde_exception_info",
+            fres, oneferr);
     }
-    esb_constructor(&temps);
+    esb_constructor_fixed(&temps,temps_buf,sizeof(temps_buf));
     if (glflags.gf_suppress_nested_name_search) {
         /* do nothing. */
     } else {
         struct Addr_Map_Entry *mp = 0;
-        char *sptr = 0;
 
         mp = addr_map_find(low_pc,lowpcSet);
-        if (glflags.gf_check_frames || glflags.gf_check_frames_extended) {
+        if (glflags.gf_check_frames ||
+            glflags.gf_check_frames_extended) {
             DWARF_CHECK_COUNT(fde_duplication,1);
         }
         {
@@ -801,10 +806,12 @@ print_one_fde(Dwarf_Debug dbg,
             }
         }
         if (mp) {
-            if (glflags.gf_check_frames || glflags.gf_check_frames_extended) {
+            if (glflags.gf_check_frames ||
+                glflags.gf_check_frames_extended) {
                 struct esb_s msg;
 
-                esb_constructor(&msg);
+                esb_constructor_fixed(&msg,
+                    local_buf,sizeof(local_buf));
                 if (esb_string_len(&temps) > 0) {
                     esb_append_printf(&msg,
                         "An fde low pc of 0x%"
@@ -1436,6 +1443,7 @@ print_frame_inst_bytes(Dwarf_Debug dbg,
     Dwarf_Small *endpoint = 0;
     Dwarf_Signed len = 0;
     int lastop = 0;
+    char exprstr_buf[200];
 
     if (len_in <= 0) {
         return;
@@ -1794,7 +1802,9 @@ print_frame_inst_bytes(Dwarf_Debug dbg,
                     printf("\n");
                     if (glflags.verbose) {
                         struct esb_s exprstring;
-                        esb_constructor(&exprstring);
+
+                        esb_constructor_fixed(&exprstring,exprstr_buf,
+                            sizeof(exprstr_buf));
                         get_string_from_locs(dbg,
                             instp+1,block_len,addr_size,
                             offset_size,version,&exprstring);
@@ -1851,7 +1861,10 @@ print_frame_inst_bytes(Dwarf_Debug dbg,
                     printf("\n");
                     if (glflags.verbose) {
                         struct esb_s exprstring;
-                        esb_constructor(&exprstring);
+
+                        esb_constructor_fixed(&exprstring,
+                            exprstr_buf,
+                            sizeof(exprstr_buf));
                         get_string_from_locs(dbg,
                             instp+1,block_len,addr_size,
                             offset_size,version,&exprstring);
@@ -1864,7 +1877,8 @@ print_frame_inst_bytes(Dwarf_Debug dbg,
                 }
                 break;
             case DW_CFA_offset_extended_sf: /* DWARF3 */
-                res = local_dwarf_decode_u_leb128_chk(instp + 1, &uleblen,
+                res = local_dwarf_decode_u_leb128_chk(instp + 1,
+                    &uleblen,
                     &uval,endpoint);
                 if (res != DW_DLV_OK) {
                     printf("ERROR reading leb in DW_CFA_offset_extended_sf\n");
@@ -2079,7 +2093,10 @@ print_frame_inst_bytes(Dwarf_Debug dbg,
                     printf("\n");
                     if (glflags.verbose) {
                         struct esb_s exprstring;
-                        esb_constructor(&exprstring);
+
+                        esb_constructor_fixed(&exprstring,
+                            exprstr_buf,
+                            sizeof(exprstr_buf));
                         get_string_from_locs(dbg,
                             instp+1,block_len,addr_size,
                             offset_size,version,&exprstring);
@@ -2272,7 +2289,10 @@ print_one_frame_reg_col(Dwarf_Debug dbg,
             printf("%s", "> ");
             if (glflags.verbose) {
                 struct esb_s exprstring;
-                esb_constructor(&exprstring);
+                char local_buf[300];
+
+                esb_constructor_fixed(&exprstring,local_buf,
+                    sizeof(local_buf));
                 get_string_from_locs(dbg,
                     block_ptr,offset,addr_size,
                     offset_size,version,&exprstring);
