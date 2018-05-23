@@ -332,7 +332,7 @@ extern struct glflags_s glflags;
 
 void init_global_flags(void);
 void reset_global_flags(void);
-void set_checks_off();
+void set_checks_off(void);
 void reset_overall_CU_error_data(void);
 boolean cu_data_is_set(void);
 
