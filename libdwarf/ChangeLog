@@ -1,3 +1,12 @@
+2018-05-24 David Anderson
+    * dwarf_aranges.c: Calling dwarf_get_aranges() 
+      without loading .debug_info and .debug_abbrev
+      resulted in an error when checking for the
+      sanity of an offset into .debug_info: 
+      DW_DLE_ARANGE_OFFSET_BAD.
+      Now libdwarf ensures the needed sections are loaded
+      because the 'section length' of compressed
+      sections is only correct after such are loaded.
 2018-05-17 David Anderson
     * config.h.in: Added #undef HAVE_VSNPRINTF HAVE_SNPRINTF
     * configure: regenerated.

@@ -345,6 +345,16 @@ dwarf_get_aranges(Dwarf_Debug dbg,
     if (res != DW_DLV_OK) {
         return res;
     }
+    /*  aranges points in to info, so if info needs expanding
+        we have to load it. */
+    res = _dwarf_load_section(dbg, &dbg->de_debug_info, error);
+    if (res != DW_DLV_OK) {
+        return res;
+    }
+    res = _dwarf_load_section(dbg, &dbg->de_debug_abbrev, error);
+    if (res != DW_DLV_OK) {
+        return res;
+    }
 
     res = dwarf_get_aranges_list(dbg,&head_chain,&arange_count,error);
     if (res != DW_DLV_OK) {
