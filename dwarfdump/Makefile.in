@@ -139,7 +139,7 @@ naming.o:  $(srcdir)/naming.c $(srcdir)/naming.h
 btag_common.o: $(srcdir)/tag_common.c
 	$(CC_FOR_BUILD) $(CFLAGS) -DTRIVIAL_NAMING  -c $(srcdir)/tag_common.c -o btag_common.o 
 bnames.o:
-	$(CC_FOR_BUILD) $(CFLAGS) -DTRIVIAL_NAMING  -c $(srcdir)/../libdwarf/dwarf_names.c -o bnames.o 
+	$(CC_FOR_BUILD) $(CFLAGS) -DTRIVIAL_NAMING  -c ../libdwarf/dwarf_names.c -o bnames.o 
 
 besb.o: $(srcdir)/esb.c
 	$(CC_FOR_BUILD) $(CFLAGS) -DTRIVIAL_NAMING  -c $(srcdir)/esb.c -o besb.o 
