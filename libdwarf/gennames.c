@@ -76,7 +76,7 @@ static void PrintArray(void);
 static boolean is_skippable_line(char *pLine);
 static void ParseDefinitionsAndWriteOutput(void);
 
-#define DW_VERSION_DATE_STR " 2018-05-14 20:26:11-07:00  "
+#define DW_VERSION_DATE_STR " 2018-05-26 17:04:57-07:00  "
 
 /* We don't need really long lines: the input file is simple. */
 #define MAX_LINE_SIZE 1000

@@ -38,7 +38,7 @@
 #include "warningcontrol.h"
 #include <stdio.h>
 
-#define DW_VERSION_DATE_STR " 2018-05-14 20:26:11-07:00  "
+#define DW_VERSION_DATE_STR " 2018-05-26 17:04:57-07:00  "
 #define RELEASE_DATE      "20180416"
 
 

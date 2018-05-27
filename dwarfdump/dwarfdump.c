@@ -58,7 +58,7 @@
 extern int elf_open(const char *name,int mode);
 #endif /* _WIN32 */
 
-#define DW_VERSION_DATE_STR " 2018-05-14 20:26:11-07:00  "
+#define DW_VERSION_DATE_STR " 2018-05-26 17:04:57-07:00  "
 
 #define BYTES_PER_INSTRUCTION 4
 

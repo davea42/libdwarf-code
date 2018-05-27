@@ -1,4 +1,6 @@
 2018-05-26 David Anderson
+    * gennames.c:
+      Update version string
     * dwarf_arange.c: Instead of load_section(dbg,.debug_info, 
       and then *_abbrevr, call the combined _info and _abbrev 
       function _dwarf_load_debug_info() as is done everywhere else.

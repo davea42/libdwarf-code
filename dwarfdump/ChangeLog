@@ -1,3 +1,6 @@
+2018-05-26 David Anderson
+    * dwarfdump.c,tag_attr.c,tag_tree.c, common.c:
+      Update version string
 2018-05-23 David Anderson
     * esb.c, esb.h: Added esb_constructor_fixed()
       and new fields in esb_s to support use of
