@@ -1,5 +1,6 @@
 2018-05-30 David Anderson
-    * Create libdwarf_version.h to hold the
+    * Makefile.in: Add gennames dependency on libdwarf_version.h
+    * libdwarf_version.h: Create to hold the
       DW_VERSION_DATE_STR string.
 2018-05-26 David Anderson
     * gennames.c:
