@@ -58,13 +58,5 @@ if (ARGC <=  2)  {
 $0 ~  /#define DW_VERSION_DATE_STR/ { print $1, $2, "\"",v,"\"" }
 $0 !~ /^#define DW_VERSION_DATE_STR/ { print $0 }
 EOF
-awk -f $sloc/UPD.awk  "$x"  $l/dwarfdump/dwarfdump.c >t
-mv t $l/dwarfdump/dwarfdump.c
-awk -f $sloc/UPD.awk  "$x"  $l/dwarfdump/common.c >t
-mv t $l/dwarfdump/common.c
-awk -f $sloc/UPD.awk  "$x"  $l/dwarfdump/tag_attr.c >t
-mv t $l/dwarfdump/tag_attr.c
-awk -f $sloc/UPD.awk  "$x"  dwarfdump/tag_tree.c >t
-mv t $l/dwarfdump/tag_tree.c
-awk -f $sloc/UPD.awk  "$x"  $l/libdwarf/gennames.c >t
-mv t $l/libdwarf/gennames.c
+awk -f $sloc/UPD.awk  "$x"  $l/libdwarf/libdwarf_version.h >t
+mv t $l/libdwarf/libdwarf_version.h

@@ -29,10 +29,8 @@
 #include <errno.h>   /* For errno declaration. */
 #include <ctype.h>
 #include <string.h>
-#ifdef HAVE_UNISTD_H
-#include <unistd.h>
-#endif
 #include "dwgetopt.h"
+#include "libdwarf_version.h" /* for DW_VERSION_DATE_STR */
 
 /*  gennames.c
     Prints routines to return constant name for the associated value
@@ -75,8 +73,6 @@ static void PrintArray(void);
 #endif /* TRACE_ARRAY */
 static boolean is_skippable_line(char *pLine);
 static void ParseDefinitionsAndWriteOutput(void);
-
-#define DW_VERSION_DATE_STR " 2018-05-26 17:04:57-07:00  "
 
 /* We don't need really long lines: the input file is simple. */
 #define MAX_LINE_SIZE 1000

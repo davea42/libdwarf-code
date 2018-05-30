@@ -39,10 +39,9 @@
 #include "esb.h"
 #include "tag_common.h"
 #include "dwgetopt.h"
+#include "libdwarf_version.h" /* for DW_VERSION_DATE_STR,RELEASE DATE*/
 
 boolean ellipsis = FALSE; /* So we can use dwarf_names.c */
-
-#define DW_VERSION_DATE_STR " 2018-05-26 17:04:57-07:00  "
 
 /* Expected input format
 

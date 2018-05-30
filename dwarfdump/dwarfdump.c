@@ -50,6 +50,7 @@
 #include "esb.h"                /* For flexible string buffer. */
 #include "sanitized.h"
 #include "tag_common.h"
+#include "libdwarf_version.h" /* for DW_VERSION_DATE_STR */
 
 #include "command_options.h"
 #include "compiler_info.h"
@@ -57,8 +58,6 @@
 #ifdef _WIN32
 extern int elf_open(const char *name,int mode);
 #endif /* _WIN32 */
-
-#define DW_VERSION_DATE_STR " 2018-05-26 17:04:57-07:00  "
 
 #define BYTES_PER_INSTRUCTION 4
 

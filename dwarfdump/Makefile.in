@@ -97,10 +97,12 @@ HEADERS =  $(srcdir)/checkutil.h \
         $(srcdir)/common.h \
         $(srcdir)/command_options.h \
         $(srcdir)/compiler_info.h \
+        $(srcdir)/defined_types.h \
         $(srcdir)/dwconf.h \
         $(srcdir)/dwgetopt.h \
         $(srcdir)/esb.h \
         $(srcdir)/globals.h \
+        $(srcdir)/../libdwarf/libdwarf_version.h \
         $(srcdir)/macrocheck.h \
         $(srcdir)/makename.h \
         $(srcdir)/dwarf_tsearch.h \

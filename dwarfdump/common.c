@@ -36,11 +36,10 @@
 #include "defined_types.h"
 #include "sanitized.h"
 #include "warningcontrol.h"
+#include "libdwarf_version.h" /* for DW_VERSION_DATE_STR */
 #include <stdio.h>
 
-#define DW_VERSION_DATE_STR " 2018-05-26 17:04:57-07:00  "
 #define RELEASE_DATE      "20180416"
-
 
 /* The Linux/Unix version does not want a version string to print
    unless -V is on the command line. */

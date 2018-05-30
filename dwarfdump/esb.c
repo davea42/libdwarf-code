@@ -159,8 +159,8 @@ esb_allocate_more(struct esb_s *data, size_t len)
         malloc_size += len;
 #endif
         if (newd) {
-            strncpy(newd,data->esb_string,copylen);
-            newd[copylen] = 0;
+            /* Tiny bit Faster than strncpy + NUL assign. */
+            strcpy(newd,data->esb_string);
         }
     } else {
         newd = realloc(data->esb_string, new_size);

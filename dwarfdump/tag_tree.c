@@ -31,6 +31,7 @@
 #include "common.h"
 #include "tag_common.h"
 #include "dwgetopt.h"
+#include "libdwarf_version.h" /* for DW_VERSION_DATE_STR */
 
 unsigned int tag_tree_combination_table[TAG_TABLE_ROW_MAXIMUM][TAG_TABLE_COLUMN_MAXIMUM];
 
@@ -41,8 +42,6 @@ static Dwarf_Half tag_parents[DW_TAG_last] = {0};
 static Dwarf_Half tag_children[DW_TAG_last] = {0};
 static Dwarf_Small tag_tree_legal[DW_TAG_last] = {0};
 #endif /* HAVE_USAGE_TAG_ATTR */
-
-#define DW_VERSION_DATE_STR " 2018-05-26 17:04:57-07:00  "
 
 const char * program_name;
 
