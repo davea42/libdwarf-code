@@ -1,4 +1,6 @@
 2018-05-30 David Anderson
+    * Fix botch in revised Makefile.in.
+2018-05-30 David Anderson
     * Makefile.in: Add gennames dependency on libdwarf_version.h
     * libdwarf_version.h: Create to hold the
       DW_VERSION_DATE_STR string.

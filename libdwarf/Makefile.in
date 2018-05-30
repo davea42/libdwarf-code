@@ -150,7 +150,7 @@ errmsg_check: $(srcdir)/dwarf_errmsg_list.h libdwarf.h
 
 # Gennames builds and runs native, even for a cross-build of libdwarf.
 # No object built here gets into libdwarf.
-gennames: $(srcdir)/gennames.c $(srcdir)/dwarf.h dwgetopt.o $srcdir)/libdwarf_version.h
+gennames: $(srcdir)/gennames.c $(srcdir)/dwarf.h dwgetopt.o $(srcdir)/libdwarf_version.h
 	$(CC_FOR_BUILD) $(HOSTCFLAGS) $(srcdir)/gennames.c dwgetopt.o $(HOSTLDFLAGS) -o gennames
 dwgetopt.o: $(srcdir)/dwgetopt.c $(srcdir)/dwgetopt.h
 	$(CC_FOR_BUILD) $(HOSTCFLAGS) -c $(srcdir)/dwgetopt.c
