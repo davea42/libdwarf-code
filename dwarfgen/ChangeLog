@@ -1,4 +1,7 @@
-
+2018-06-05  David Anderson
+     * configure.ac: Now configure.in gone, using configure.ac.
+     * configure: regenerated.
+     * config.h.in: Regenerated, HAVE_LIBELF_LIBELF gone.
 2018-06-05  David Anderson
      * dwarfgen.cc: Remove erroneous _MSC_VER
        per Carlos Alberto Enciso.
