@@ -101,7 +101,7 @@
 #include <string.h>
 #include "dwarf.h"
 #include "libdwarf.h"
-#ifdef _MSC_VER
+#ifdef _WIN32
 #include <stdint.h>
 #include <io.h>
 #endif
@@ -1130,9 +1130,7 @@ open_a_file(const char * name)
     /* Set to a file number that cannot be legal. */
     int f = -1;
 
-#ifdef _MSC_VER
-    f = _open(name, _O_RDONLY| _O_BINARY);
-#elif defined(__CYGWIN__) || defined(WIN32)
+#if defined(__CYGWIN__) || defined(WIN32)
     /*  It is not possible to share file handles
         between applications or DLLs. Each application has its own
         file-handle table. For two applications to use the same file
@@ -1150,9 +1148,5 @@ open_a_file(const char * name)
 void
 close_a_file(int f)
 {
-#ifdef _MSC_VER
-    _close(f);
-#else
     close(f);
-#endif
 }

@@ -1,4 +1,8 @@
-2017-12-17  David Anderson
+
+2018-06-05  David Anderson
+     * dwarfgen.cc: Remove erroneous _MSC_VER
+       per Carlos Alberto Enciso.
+2018-05-28  David Anderson
      * createirepformfrombinary.cc,createirepfrombinary.cc,
        general.h,irepattrtodbg.cc,irepdie.h,
        irepform.h,ireppubnames.h: Removed trailing
