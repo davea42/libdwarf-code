@@ -1,4 +1,6 @@
 2018-06-05  David Anderson
+     * dwarfdump.c:  Change WIN32 to _WIN32.
+2018-06-05  David Anderson
      * configure.ac: Now configure.in gone, using configure.ac.
      * configure: regenerated.
      * config.h.in: Regenerated, HAVE_LIBELF_LIBELF gone.

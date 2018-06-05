@@ -102,7 +102,7 @@ open_a_file(const char * name)
         using a DLL, they must both open the file individually.
         Let the 'libelf' dll to open and close the file.  */
 
-    /* For WIN32 open the file as binary */
+    /* For _WIN32 open the file as binary */
     f = elf_open(name, O_RDONLY | O_BINARY);
 #else
     f = open(name, O_RDONLY);
@@ -442,7 +442,7 @@ print_object_header(UNUSEDARG Elf *elf,
 {
     /* Check if header information is required */
     if (section_map_enabled(DW_HDR_HEADER)) {
-#ifdef WIN32
+#ifdef _WIN32
 #ifdef HAVE_ELF32_GETEHDR
     /*  Standard libelf has no function generating the names of the
         encodings, but this libelf apparently does. */
@@ -524,7 +524,7 @@ print_object_header(UNUSEDARG Elf *elf,
 #endif /* HAVE_ELF64_GETEHDR */
     }
 #endif /* HAVE_ELF32_GETEHDR */
-#endif /* WIN32 */
+#endif /* _WIN32 */
     }
     /* Print basic section information is required */
     /* Mask only known sections (debug and text) bits */

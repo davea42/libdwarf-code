@@ -1,8 +1,7 @@
 2018-06-05  David Anderson
      * simplereader.c: Remove erroneous _MSC_VER
        per Carlos Alberto Enciso.
-2018-05-15  David Anderson
-     * frame1.c: Removed trailing blank line.
+       Change WIN32 to _WIN32.
 2018-05-12  David Anderson
      * frame1.c: Adding new code (select with option
        --just-print-selected-regs) to test a new

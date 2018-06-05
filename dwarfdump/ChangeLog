@@ -1,6 +1,7 @@
 2018-06-05 David Anderson
     * dwarfdump.c: Remove erroneous _MSC_VER
-      per Carlos Alberto Enciso.
+      per Carlos Alberto Enciso. 
+      Change WIN32 to _WIN32.
 2018-05-26 David Anderson
     * common.c,dwarfdump.c,tag_attr.c,tag_tree.c:
       Remove DW_VERSION_DATE_STR
