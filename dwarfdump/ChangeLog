@@ -1,3 +1,7 @@
+2018-06-07 David Anderson
+    * print_frames.c: Vincent T. noticed unnecessary and/or
+      incorrect casts, here fixed. Also fixed some too-long
+      lines -- changed the existing line break to a better place. 
 2018-06-05 David Anderson
     * dwarfdump.c: Remove erroneous _MSC_VER
       per Carlos Alberto Enciso. 
