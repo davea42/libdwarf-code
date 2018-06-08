@@ -32,6 +32,7 @@
 #ifndef ESB_H
 #define ESB_H
 
+#include "config.h"
 #include <stdio.h>
 #include <stdarg.h>   /* For va_start va_arg va_list */
 #include <stdlib.h>
@@ -73,6 +74,15 @@ struct esb_s {
     char    esb_rigid;
 };
 
+/*  Mirroring the broken code in libdwarf.h.in  */
+#if (_MIPS_SZLONG == 64)
+typedef long esb_int;
+typedef unsigned long esb_unsigned;
+#else
+typedef long long esb_int;
+typedef unsigned long long esb_unsigned;
+#endif
+
 /* Open/close the null device used during formatting printing */
 FILE *esb_open_null_device(void);
 void esb_close_null_device(void);
@@ -100,9 +110,7 @@ size_t esb_string_len(struct esb_s *data);
 /* *data is presumed to contain garbage, not values, and
    is properly initialized. */
 void esb_constructor(struct esb_s *data);
-#if 0
 void esb_constructor_rigid(struct esb_s *data,char *buf,size_t buflen);
-#endif
 void esb_constructor_fixed(struct esb_s *data,char *buf,size_t buflen);
 
 void esb_force_allocation(struct esb_s *data, size_t minlen);
@@ -119,6 +127,9 @@ size_t esb_get_allocated_size(struct esb_s *data);
 
 /* Append a formatted string */
 void esb_append_printf(struct esb_s *data,const char *format, ...);
+void esb_append_printf_s(struct esb_s *data,const char *format,const char *s);
+void esb_append_printf_i(struct esb_s *data,const char *format,esb_int);
+void esb_append_printf_u(struct esb_s *data,const char *format,esb_unsigned);
 
 /* Get a copy of the internal data buffer */
 char * esb_get_copy(struct esb_s *data);
