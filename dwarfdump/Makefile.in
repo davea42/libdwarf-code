@@ -194,9 +194,9 @@ tmp-ta-ext-table.h: $(srcdir)/tag_attr_ext.list tag_attr_build
 
 test: esb.o dwgetopt.o 
 	echo "ESB test"
-	$(CC) $(CFLAGS) -o test $(srcdir)/testesb.c esb.o
-	$(VG) ./test
-	-rm -f ./test
+	$(CC) -DSELFTEST -g $(srcdir)/testesb.c  $(srcdir)/esb.c -o selfesb
+	./testesb
+	-rm -f ./testesb
 	echo "dwgetopt test"
 	$(CC) $(CFLAGS) -o getopttest $(srcdir)/getopttest.c dwgetopt.o
 	$(VG) ./getopttest
@@ -213,7 +213,6 @@ test: esb.o dwgetopt.o
 	./getopttestnat -c 9
 	./getopttestnat -c 10
 	-rm -f ./getopttestnat
-	-rm -f ./selfesb
 	-rm -f ./selfmc
 	-rm -f ./selfmakename
 	-rm -f ./selfsection_bitmaps
@@ -229,15 +228,13 @@ test: esb.o dwgetopt.o
 	$(CC) -DSELFTEST $(INCLUDES) -g $(srcdir)/macrocheck.c esb.o dwarf_tsearchbal.o -o selfmc
 	./selfmc
 	rm -f ./selfmc
-	$(CC) -DSELFTEST -g $(srcdir)/esb.c -o selfesb
-	./selfesb
-	rm -f ./selfesb
 	$(CC) -DSELFTEST -I../libdwarf -g section_bitmaps.c -o selfsection_bitmaps
 	./selfsection_bitmaps
 	rm -f ./selfsection_bitmaps
-	$(CC) -DSELFTEST -I../libdwarf -g print_reloc.c esb.o -o selfprint_reloc
+	$(CC) -DSELFTEST -I../libdwarf -g $(srcdir)/print_reloc.c esb.o  -o selfprint_reloc
 	./selfprint_reloc
 	rm -f ./selfprint_reloc
+	-rm -f esh.o
 
 # This simply assumes that a default INSTALL (cp) command
 # will work and leave sensible permissions on the resulting files.

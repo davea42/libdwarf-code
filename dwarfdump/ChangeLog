@@ -1,3 +1,10 @@
+2018-06-08 David Anderson
+    * Makefile.in: Altered the esb testing lines.
+    * testesb.c: Now this is the esb test code.
+    * esb.c: Removed test code, moved to testesb.c.
+      Added esb_append_printf_s(), esb_append_printf_i() and
+      esb_append_printf_u() to get faster formatting without
+      any varargs.
 2018-06-07 David Anderson
     * print_frames.c: Vincent T. noticed unnecessary and/or
       incorrect casts, here fixed. Also fixed some too-long
