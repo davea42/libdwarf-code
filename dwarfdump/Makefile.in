@@ -194,7 +194,7 @@ tmp-ta-ext-table.h: $(srcdir)/tag_attr_ext.list tag_attr_build
 
 test: esb.o dwgetopt.o 
 	echo "ESB test"
-	$(CC) -DSELFTEST -g $(srcdir)/testesb.c  $(srcdir)/esb.c -o selfesb
+	$(CC) -DSELFTEST -g $(srcdir)/testesb.c  $(srcdir)/esb.c -o testesb
 	./testesb
 	-rm -f ./testesb
 	echo "dwgetopt test"

@@ -69,8 +69,8 @@ int main()
         exit(1);
     }
 #endif /* _WIN32 */
-    {   /*  First lets establish standard sprintf on 
-            cases of interest. */
+    {   /*  First lets establish standard sprintf on
+        cases of interest. */
         struct esb_s d5;
         char bufs[4];
         char bufl[60];
@@ -169,6 +169,7 @@ int main()
             Now inserts particular string instead. */
         esb_appendn(&d,oddarray,6);
         validate_esb(10,&d,23,24,"ESBERR_appendn bad call",__LINE__);
+        /*  The next one just keeps the previous ESBERR* and adds a 'c' */
         esb_appendn(&d,"cc",1);
         validate_esb(11,&d,24,25,"ESBERR_appendn bad callc",__LINE__);
         esb_empty_string(&d);
