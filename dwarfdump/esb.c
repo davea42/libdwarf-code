@@ -658,7 +658,7 @@ static char v32m[] = {"-2147483648"};
 static char v64m[] = {"-9223372036854775808"};
 
 /*  We deal with formats like:
-    %d   %5d %05d (and ld and lld too). */
+    %d   %5d %05d %+d %+5d (and ld and lld too). */
 void
 esb_append_printf_i(struct esb_s *data,const char *format,esb_int v)
 {
@@ -668,6 +668,7 @@ esb_append_printf_i(struct esb_s *data,const char *format,esb_int v)
     const char *numptr = 0;
     size_t fixedlen = 0;
     int leadingzero = 0;
+    int pluscount = 0;
     int lcount = 0;
     int ucount = 0;
     int dcount = 0;
@@ -689,6 +690,10 @@ esb_append_printf_i(struct esb_s *data,const char *format,esb_int v)
     next++;
     if (format[next] == '-') {
         ESBERR("ESBERR_printf_i - format not supported");
+        next++;
+    }
+    if (format[next] == '+') {
+        pluscount++;
         next++;
     }
     if (format[next] == '0') {
@@ -791,6 +796,10 @@ esb_append_printf_i(struct esb_s *data,const char *format,esb_int v)
                 --digptr;
                 digcharlen++;
                 *digptr = '-';
+            } else if (pluscount) {
+                --digptr;
+                digcharlen++;
+                *digptr = '+';
             }
         }
         if (fixedlen > 0) {
@@ -804,6 +813,11 @@ esb_append_printf_i(struct esb_s *data,const char *format,esb_int v)
                 } else {
                     if (*digptr == '-') {
                         esb_appendn_internal(data,"-",1);
+                        esb_appendn_internal_zeros(data,prefixcount);
+                        digptr++;
+                        esb_appendn_internal(data,digptr,digcharlen-1);
+                    } else if (*digptr == '+') {
+                        esb_appendn_internal(data,"+",1);
                         esb_appendn_internal_zeros(data,prefixcount);
                         digptr++;
                         esb_appendn_internal(data,digptr,digcharlen-1);

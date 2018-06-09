@@ -124,8 +124,18 @@ int main()
         esb_destructor(&d5);
 
         esb_constructor_fixed(&d5,bufs,sizeof(bufs));
-        esb_append_printf(&d5,"aaa %x bbb",12);
-        validate_esb(210,&d5,9,13,"aaa c bbb",__LINE__);
+        esb_append_printf(&d5,"aaa %+d bbb",12);
+        validate_esb(210,&d5,11,15,"aaa +12 bbb",__LINE__);
+        esb_destructor(&d5);
+
+        esb_constructor_fixed(&d5,bufs,sizeof(bufs));
+        esb_append_printf(&d5,"aaa %+6d bbb",12);
+        validate_esb(211,&d5,14,18,"aaa    +12 bbb",__LINE__);
+        esb_destructor(&d5);
+
+        esb_constructor_fixed(&d5,bufs,sizeof(bufs));
+        esb_append_printf(&d5,"aaa %6d bbb",(int)i);
+        validate_esb(212,&d5,14,18,"aaa    -33 bbb",__LINE__);
         esb_destructor(&d5);
 
 
@@ -352,6 +362,31 @@ int main()
         esb_constructor_fixed(&d5,bufs,sizeof(bufs));
         esb_append_printf_u(&d5,"aaa %6u bbb",u);
         validate_esb(31,&d5,14,15,"aaa     37 bbb",__LINE__);
+        esb_destructor(&d5);
+
+    }
+    {
+        struct esb_s d5;
+        char bufs[4];
+        char bufl[60];
+        esb_int i = -33;
+        esb_unsigned u = 0;
+
+        esb_constructor_fixed(&d5,bufs,sizeof(bufs));
+        esb_append_printf_i(&d5,"aaa %+d bbb",i);
+        validate_esb(18,&d5,11,12,"aaa -33 bbb",__LINE__);
+        esb_destructor(&d5);
+
+        i = 33;
+        esb_constructor_fixed(&d5,bufs,sizeof(bufs));
+        esb_append_printf_i(&d5,"aaa %+d bbb",i);
+        validate_esb(18,&d5,11,12,"aaa +33 bbb",__LINE__);
+        esb_destructor(&d5);
+
+        i = -2;
+        esb_constructor_fixed(&d5,bufs,sizeof(bufs));
+        esb_append_printf_i(&d5,"aaa %+4d bbb",i);
+        validate_esb(19,&d5,12,13,"aaa   -2 bbb",__LINE__);
         esb_destructor(&d5);
 
     }

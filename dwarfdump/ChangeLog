@@ -1,3 +1,8 @@
+2018-06-09 David Anderson
+    * esb.c, testesb.c: These now support and test %+d.
+    * print_die.c: Used esb_constructor_fixed() and
+      esb_append_printf_s,_i,_u(), replacing 
+      many s[n]printf.
 2018-06-08 David Anderson
     * Makefile.in: Altered the esb testing lines.
     * testesb.c: Now this is the esb test code.
