@@ -758,28 +758,40 @@ esb_append_printf_i(struct esb_s *data,const char *format,esb_int v)
         esb_int remaining = v;
         int vissigned = 0;
         esb_int divisor = 10;
+        int done = 0;
 
         *digptr = 0;
         --digptr;
         if (v < 0) {
             vissigned = 1;
             remaining = -v;
-        }
-        if(vissigned && v == remaining) {
-            /* is max possible negative, special case */
+            /*  This test is for twos-complement
+                machines and would be better done via
+                configure with a compile-time check
+                so we do not need a size test at runtime. */
             if (sizeof(v) == 8) {
-                memcpy(digbuf,v64m,sizeof(v64m));
-                digcharlen = sizeof(v64m)-1;
+                esb_unsigned vm = 0x7fffffffffffffffULL;
+                if (vm == (esb_unsigned)~v) {
+                    memcpy(digbuf,v64m,sizeof(v64m));
+                    digcharlen = sizeof(v64m)-1;
+                    digptr = digbuf;
+                    done = 1;
+                }
             } else if (sizeof(v) == 4) {
-                memcpy(digbuf,v32m,sizeof(v32m));
-                digcharlen = sizeof(v32m)-1;
+                esb_unsigned vm = 0x7fffffffL;
+                if (vm == (esb_unsigned)~v) {
+                    memcpy(digbuf,v32m,sizeof(v32m));
+                    digcharlen = sizeof(v32m)-1;
+                    digptr = digbuf;
+                    done = 1;
+                }
             }else {
                 ESBERR("ESBERR_sizeof_v_i");
                 /* error */
                 return;
             }
-            digptr = digbuf;
-        } else {
+        }
+        if(!done) {
             for ( ;; ) {
                 esb_unsigned dig = 0;
 

@@ -1,4 +1,7 @@
 2018-06-09 David Anderson
+    * esb.c: Fixed an issue printing the most-negative integer.
+    * print_die.c: Now all the relevant places avoid s[n]printf.
+2018-06-09 David Anderson
     * esb.c, testesb.c: These now support and test %+d.
     * print_die.c: Used esb_constructor_fixed() and
       esb_append_printf_s,_i,_u(), replacing 
