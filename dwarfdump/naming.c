@@ -38,6 +38,7 @@
 #include "libdwarf.h"
 #include "makename.h"
 #include "naming.h"
+#include "esb.h"
 
 #ifndef TRIVIAL_NAMING
 static const char *
@@ -68,7 +69,17 @@ ellipname(int res, int val_in, const char *v,const char *ty,int printonerr)
     if (res != DW_DLV_OK) {
         char buf[100];
         char *n;
+#ifdef ORIGINAL_SPRINTF
         snprintf(buf,sizeof(buf),"<Unknown %s value 0x%x>",ty,val_in);
+#else
+        struct esb_s eb;
+
+        esb_constructor_fixed(&eb,buf,sizeof(buf));
+        esb_append_printf_s(&eb,
+            "<Unknown %s",ty);
+        esb_append_printf_u(&eb,
+            " value 0x%x>",val_in);
+#endif
         /* Capture any name error in DWARF constants */
 #ifndef TRIVIAL_NAMING
         if (printonerr && glflags.gf_check_dwarf_constants &&
@@ -87,7 +98,13 @@ ellipname(int res, int val_in, const char *v,const char *ty,int printonerr)
                 "Continuing. \n",ty,val_in,val_in );
         }
 #endif
+
+#ifdef ORIGINAL_SPRINTF
         n = makename(buf);
+#else
+        n = makename(esb_get_string(&eb));
+        esb_destructor(&eb);
+#endif
         return n;
     }
 #ifndef TRIVIAL_NAMING

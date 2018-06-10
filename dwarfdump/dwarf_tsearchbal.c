@@ -94,8 +94,9 @@ static void printlevel(int level)
     int len = 0;
     int targetlen = 4 + level;
     int shownlen = 0;
-    char number[10];
-    len = snprintf(number,sizeof(number),"<%d>",level);
+    char number[40];
+    /* This is a safe sprintf. No need for esb here. */
+    len = sprintf(number,"<%d>",level);
     printf("%s",number);
     shownlen = len;
     while(shownlen < targetlen) {

@@ -1,4 +1,13 @@
 2018-06-10 David Anderson
+    * checkutil.c: snprintf-> esb
+    * common.c: snprint -> printf
+    * dwarf_tsearchbal.c: snprintf -> sprintf, it is safe.
+    * naming.c: snprintf-> esb.
+    * print_die.c: Trimmed the size of a buffer in a safe
+      sprintf use.
+    * esb.c: Modified to remove an implementation-defined
+      conversion issue.
+2018-06-10 David Anderson
     * esb.c: Added checks so passing %s to _d or _u gets
       a useful output (an ESBERR string).
     * print_abbrevs.c,print_die.c,print_lines.c: Converted

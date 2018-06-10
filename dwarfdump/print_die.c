@@ -4533,7 +4533,7 @@ get_location_list(Dwarf_Debug dbg,
                         &bError);
                 }
             } else {
-                char sbuf2[80];
+                char sbuf2[50];
                 sprintf(sbuf2,
                     "Unexpected LLEX code 0x%x, ERROR",lle_value);
                 print_error(dbg, sbuf2, DW_DLV_OK, llerr);

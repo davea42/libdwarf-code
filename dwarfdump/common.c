@@ -57,10 +57,15 @@ print_version_details(UNUSEDARG const char * name,int alwaysprint)
 #else
   char *bits = "32";
 #endif /* _WIN64 */
+#ifdef ORIGINAL_SPRINTF
     static char acVersion[64];
     snprintf(acVersion,sizeof(acVersion),
         "[%s %s %s Win%s (%s)]",__DATE__,__TIME__,acType,bits,RELEASE_DATE);
-    printf("%s %s\n",sanitized(name),acVersion);
+    printf("%s %s\n", sanitized(name),acVersion)
+#else
+    printf("%s [%s %s %s Win%s (%s)]\n", 
+        sanitized(name),__DATE__,__TIME__,acType,bits,RELEASE_DATE);
+#endif /* !ORIGINAL_SPRINTF */
 #else  /* !_WIN32 */
     if (alwaysprint) {
         printf("%s\n",DW_VERSION_DATE_STR);

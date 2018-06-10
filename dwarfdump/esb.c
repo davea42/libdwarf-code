@@ -683,6 +683,7 @@ esb_append_printf_i(struct esb_s *data,const char *format,esb_int v)
     int Xcount = 0;
     char *ctable = dtable;
     size_t prefixlen = 0;
+    int done = 0;
 
     while (format[next] && format[next] != '%') {
         ++next;
@@ -769,13 +770,11 @@ esb_append_printf_i(struct esb_s *data,const char *format,esb_int v)
         esb_int remaining = v;
         int vissigned = 0;
         esb_int divisor = 10;
-        int done = 0;
 
         *digptr = 0;
         --digptr;
         if (v < 0) {
             vissigned = 1;
-            remaining = -v;
             /*  This test is for twos-complement
                 machines and would be better done via
                 configure with a compile-time check
@@ -787,6 +786,8 @@ esb_append_printf_i(struct esb_s *data,const char *format,esb_int v)
                     digcharlen = sizeof(v64m)-1;
                     digptr = digbuf;
                     done = 1;
+                } else {
+                    remaining = -v;
                 }
             } else if (sizeof(v) == 4) {
                 esb_unsigned vm = 0x7fffffffL;
@@ -795,6 +796,8 @@ esb_append_printf_i(struct esb_s *data,const char *format,esb_int v)
                     digcharlen = sizeof(v32m)-1;
                     digptr = digbuf;
                     done = 1;
+                } else {
+                    remaining = -v;
                 }
             }else {
                 ESBERR("ESBERR_sizeof_v_i");
