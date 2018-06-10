@@ -305,6 +305,7 @@ validate_die_stack_siblings(Dwarf_Debug dbg)
                 char small_buf[150];
                 Dwarf_Error ouerr = 0;
                 /* safe: all values known length. */
+#ifdef ORIGINAL_SPRINTF
                 sprintf(small_buf,
                     "Die stack sibling error, outer global offset "
                     "0x%"  DW_PR_XZEROS DW_PR_DUx
@@ -314,6 +315,21 @@ validate_die_stack_siblings(Dwarf_Debug dbg)
                     outersiboffset,
                     innersiboffset);
                 print_error(dbg,small_buf, DW_DLV_OK, ouerr);
+#else
+                struct esb_s pm;
+                esb_constructor_fixed(&pm,small_buf,sizeof(small_buf));
+                esb_append_printf_u(&pm,
+                    "Die stack sibling error, outer global offset "
+                    "0x%"  DW_PR_XZEROS DW_PR_DUx,outersiboffset);
+                esb_append_printf_u(&pm,
+                    " less than inner global offset "
+                    "0x%"  DW_PR_XZEROS DW_PR_DUx
+                    ", the DIE tree is erroneous.",
+                    innersiboffset);
+                print_error(dbg,esb_get_string(&pm),
+                    DW_DLV_OK,ouerr);
+                esb_destructor(&pm);
+#endif
             }
             /*  We only need check one level with an offset
                 at each entry. */
@@ -1138,6 +1154,7 @@ print_die_and_children_internal(Dwarf_Debug dbg,
                     (parent_sib_val <= child_overall_offset )) {
                     char small_buf[180];
 
+#ifdef ORIGINAL_SPRINTF
                     /* safe: all values known length. */
                     sprintf(small_buf,
                         "A parent DW_AT_sibling of "
@@ -1151,6 +1168,28 @@ print_die_and_children_internal(Dwarf_Debug dbg,
                             "at":"before",
                         child_overall_offset);
                     print_error(dbg,small_buf,DW_DLV_OK,dacerr);
+#else
+                    struct esb_s pm;
+
+                    esb_constructor_fixed(&pm,small_buf,
+                        sizeof(small_buf));
+                    esb_append_printf_u(&pm,
+                        "A parent DW_AT_sibling of "
+                        "0x%" DW_PR_XZEROS  DW_PR_DUx,
+                        parent_sib_val);
+                    esb_append_printf_s(&pm,
+                        " points %s the first child ",
+                        (parent_sib_val == child_overall_offset)?
+                            "at":"before");
+                    esb_append_printf_u(&pm,
+                        "0x%"  DW_PR_XZEROS  DW_PR_DUx
+                        " so the die tree is corrupt "
+                        "(showing section, not CU, offsets). ",
+                        child_overall_offset);
+                    print_error(dbg,esb_get_string(&pm),
+                        DW_DLV_OK,dacerr);
+                    esb_destructor(&pm);
+#endif
                 }
             }
 
@@ -2600,8 +2639,8 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
     Dwarf_Bool is_info = FALSE;
     Dwarf_Addr elf_max_address = 0;
     Dwarf_Error paerr = 0;
-    static char valbuf[200];
-    static char xtrabuf[200];
+    char valbuf[500];
+    char xtrabuf[200];
 
 #ifdef ORIGINAL_SPRINTF
     esb_constructor(&esb_extra);
@@ -4071,7 +4110,7 @@ get_location_list(Dwarf_Debug dbg,
         Dwarf_Locdesc_c locentry = 0; /* 2015 */
         Dwarf_Addr lopcfinal = 0;
         Dwarf_Addr hipcfinal = 0;
-        
+
         if (!glflags.gf_use_old_dwarf_loclist) {
             lres = dwarf_get_locdesc_entry_c(loclist_head,
                 llent,
@@ -4351,17 +4390,17 @@ get_location_list(Dwarf_Debug dbg,
 #else
                 esb_append_printf_u(esbp,
                     "< offset pair low-off : 0x%"
-                        DW_PR_XZEROS DW_PR_DUx,lopc);
+                    DW_PR_XZEROS DW_PR_DUx,lopc);
                 esb_append_printf_u(esbp,
-                        " addr  0x%"
-                        DW_PR_XZEROS DW_PR_DUx,lopcfinal);
+                    " addr  0x%"
+                    DW_PR_XZEROS DW_PR_DUx,lopcfinal);
                 esb_append_printf_u(esbp,
-                        " high-off  0x%"
-                        DW_PR_XZEROS DW_PR_DUx,hipc);
+                    " high-off  0x%"
+                    DW_PR_XZEROS DW_PR_DUx,hipc);
                 esb_append_printf_u(esbp,
-                        " addr 0x%"
-                        DW_PR_XZEROS DW_PR_DUx
-                        ">",hipcfinal);
+                    " addr 0x%"
+                    DW_PR_XZEROS DW_PR_DUx
+                    ">",hipcfinal);
 #endif
                 if(checking) {
                     loc_error_check(dbg,lopcfinal, lopc,
@@ -4459,30 +4498,30 @@ get_location_list(Dwarf_Debug dbg,
 #ifdef ORIGINAL_SPRINTF
                     snprintf(small_buf,sizeof(small_buf),
                         "< start-end low-index : 0x%"
-                            DW_PR_XZEROS DW_PR_DUx
-                            " addr  0x%"
-                            DW_PR_XZEROS DW_PR_DUx
-                            " high-index  0x%"
-                            DW_PR_XZEROS DW_PR_DUx
-                            " addr 0x%"
-                            DW_PR_XZEROS DW_PR_DUx
-                            ">",
-                            lopc,lopcfinal,hipc,hipcfinal);
+                        DW_PR_XZEROS DW_PR_DUx
+                        " addr  0x%"
+                        DW_PR_XZEROS DW_PR_DUx
+                        " high-index  0x%"
+                        DW_PR_XZEROS DW_PR_DUx
+                        " addr 0x%"
+                        DW_PR_XZEROS DW_PR_DUx
+                        ">",
+                        lopc,lopcfinal,hipc,hipcfinal);
                     esb_append(esbp,small_buf);
 #else
                     esb_append_printf_u(esbp,
                         "< start-end low-index : 0x%"
-                            DW_PR_XZEROS DW_PR_DUx,lopc);
+                        DW_PR_XZEROS DW_PR_DUx,lopc);
                     esb_append_printf_u(esbp,
-                            " addr  0x%"
-                            DW_PR_XZEROS DW_PR_DUx,lopcfinal);
+                        " addr  0x%"
+                        DW_PR_XZEROS DW_PR_DUx,lopcfinal);
                     esb_append_printf_u(esbp,
-                            " high-index  0x%"
-                            DW_PR_XZEROS DW_PR_DUx,hipc);
+                        " high-index  0x%"
+                        DW_PR_XZEROS DW_PR_DUx,hipc);
                     esb_append_printf_u(esbp,
-                            " addr 0x%"
-                            DW_PR_XZEROS DW_PR_DUx
-                            ">",hipcfinal);
+                        " addr 0x%"
+                        DW_PR_XZEROS DW_PR_DUx
+                        ">",hipcfinal);
 #endif
                 } else {
                     esb_append(esbp,"<Impossible start-end entry>");
@@ -4595,7 +4634,7 @@ formx_unsigned(Dwarf_Unsigned u, struct esb_s *esbp, Dwarf_Bool hex_format)
         snprintf(small_buf, sizeof(small_buf),
             "0x%"  DW_PR_XZEROS DW_PR_DUx , u);
         esb_append(esbp, small_buf);
-#else 
+#else
         esb_append_printf_u(esbp,
             "0x%"  DW_PR_XZEROS DW_PR_DUx , u);
 #endif

@@ -1,3 +1,8 @@
+2018-06-10 David Anderson
+    * esb.c: Added checks so passing %s to _d or _u gets
+      a useful output (an ESBERR string).
+    * print_abbrevs.c,print_die.c,print_lines.c: Converted
+      all sprintf to the new esb_append_printf_s,i,u.
 2018-06-09 David Anderson
     * esb.c: Fixed an issue printing the most-negative integer.
     * print_die.c: Now all the relevant places avoid s[n]printf.

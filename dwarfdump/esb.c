@@ -428,6 +428,7 @@ esb_append_printf_s(struct esb_s *data,const char *format,const char *s)
     }
     next = (endptr - format);
     if (format[next] != 's') {
+        ESBERR("ESBERR_pct_s_missing_in_s");
         return;
     }
     next++;
@@ -574,17 +575,23 @@ esb_append_printf_u(struct esb_s *data,const char *format,esb_unsigned v)
         Xcount++;
         next++;
     }
+    if (format[next] == 's') {
+        ESBERR("ESBERR_pct_scount_in_u");
+        return;
+    }
 
     if ( (Xcount +xcount+dcount+ucount) > 1) {
-        ESBERR("ESBERR_xcount_etc_u");
+        ESBERR("ESBERR_pct_xcount_etc_u");
         /* error */
         return;
     }
     if (lcount > 2) {
+        ESBERR("ESBERR_pct_lcount_error_u");
         /* error */
         return;
     }
     if (dcount > 0) {
+        ESBERR("ESBERR_pct_dcount_error_u");
         /* error */
         return;
     }
@@ -744,6 +751,10 @@ esb_append_printf_i(struct esb_s *data,const char *format,esb_int v)
     if (format[next] == 'X') {
         Xcount++;
         next++;
+    }
+    if (format[next] == 's') {
+        ESBERR("ESBERR_pct_scount_in_i");
+        return;
     }
     if (!dcount || (lcount >2) ||
         (Xcount +xcount+dcount+ucount) > 1) {

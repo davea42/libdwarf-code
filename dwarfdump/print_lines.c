@@ -85,11 +85,15 @@ record_line_error(const char *where, Dwarf_Error line_err)
 {
     if (glflags.gf_check_lines && checking_this_compiler()) {
         struct esb_s  tmp_buff;
+        char buftmp[140];
 
-        esb_constructor(&tmp_buff);
-        esb_append_printf(&tmp_buff,
-            "Error getting line details calling %s dwarf error is %s",
-            where,dwarf_errmsg(line_err));
+        esb_constructor_fixed(&tmp_buff,buftmp,sizeof(buftmp));
+        esb_append_printf_s(&tmp_buff,
+            "Error getting line details calling %s",
+            where);
+        esb_append_printf_s(&tmp_buff,
+            " dwarf error is %s",
+            dwarf_errmsg(line_err));
         DWARF_CHECK_ERROR(lines_result,esb_get_string(&tmp_buff));
         esb_destructor(&tmp_buff);
     }
@@ -121,13 +125,13 @@ process_line_table(Dwarf_Debug dbg,
     int ares = 0;
     int lires = 0;
     int cores = 0;
+    char lastsrc_tmp[500];
+    struct esb_s lastsrc;
     Dwarf_Addr elf_max_address = 0;
     Dwarf_Bool SkipRecord = FALSE;
-    struct esb_s lastsrc;
 
-    esb_constructor(&lastsrc);
+    esb_constructor_fixed(&lastsrc,lastsrc_tmp,sizeof(lastsrc_tmp));
     glflags.current_section_id = DEBUG_LINE;
-
     /* line_flag is TRUE */
     get_address_size_and_max(dbg,0,&elf_max_address,&lt_err);
     /* Padding for a nice layout */
@@ -295,18 +299,21 @@ process_line_table(Dwarf_Debug dbg,
                         if (pc) {
                             if (glflags.gf_check_lines &&
                                 checking_this_compiler()) {
-                                struct esb_s addr_tmp;
+                                char abuf[40];
+                                struct esb_s atm;
 
-                                esb_constructor(&addr_tmp);
-                                esb_append_printf(&addr_tmp,
-                                    "%s: Address"
+                                esb_constructor_fixed(&atm,
+                                    abuf,sizeof(abuf));
+                                esb_append_printf_s(&atm,
+                                    "%s: Address",
+                                    sanitized(sec_name));
+                                esb_append_printf_u(&atm,
                                     " 0x%" DW_PR_XZEROS DW_PR_DUx
                                     " outside a valid .text range",
-                                    sanitized(sec_name),
                                     pc);
                                 DWARF_CHECK_ERROR(lines_result,
-                                    esb_get_string(&addr_tmp));
-                                esb_destructor(&addr_tmp);
+                                    esb_get_string(&atm));
+                                esb_destructor(&atm);
                             }
                         } else {
                             SkipRecord = TRUE;
@@ -338,6 +345,7 @@ process_line_table(Dwarf_Debug dbg,
                         if ((pc != glflags.PU_high_address) &&
                             (glflags.PU_base_address != elf_max_address)) {
                             char addr_tmp[140];
+#ifdef ORIGINAL_SPRINTF
                             snprintf(addr_tmp,sizeof(addr_tmp),
                                 "%s: Address"
                                 " 0x%" DW_PR_XZEROS DW_PR_DUx
@@ -348,6 +356,25 @@ process_line_table(Dwarf_Debug dbg,
                                 sec_name,pc,glflags.PU_high_address);
                             DWARF_CHECK_ERROR(lines_result,
                                 addr_tmp);
+#else
+                            struct esb_s cm;
+
+                            esb_constructor_fixed(&cm,addr_tmp,
+                                sizeof(addr_tmp));
+                            esb_append_printf_s(&cm,
+                                "%s: Address",sanitized(sec_name));
+                            esb_append_printf_u(&cm,
+                                " 0x%" DW_PR_XZEROS DW_PR_DUx
+                                " DW_LNE_end_sequence address does not"
+                                " exactly match",pc);
+                            esb_append_printf_u(&cm,
+                                " high function addr: "
+                                " 0x%" DW_PR_XZEROS DW_PR_DUx,
+                                glflags.PU_high_address);
+                            DWARF_CHECK_ERROR(lines_result,
+                                esb_get_string(&cm));
+                            esb_destructor(&cm);
+#endif
                         }
                     }
                 }
@@ -408,13 +435,15 @@ process_line_table(Dwarf_Debug dbg,
             } else if (nsres == DW_DLV_ERROR) {
                 print_error(dbg, "lineblock failed", nsres, lt_err);
             }
-            nsres = dwarf_lineendsequence(line, &lineendsequence, &lt_err);
+            nsres = dwarf_lineendsequence(line, &lineendsequence,
+                &lt_err);
             if (nsres == DW_DLV_OK) {
                 if (lineendsequence && glflags.gf_do_print_dwarf) {
                     printf(" %s", "ET");
                 }
             } else if (nsres == DW_DLV_ERROR) {
-                print_error(dbg, "lineendsequence failed", nsres, lt_err);
+                print_error(dbg, "lineendsequence failed",
+                    nsres, lt_err);
             }
         }
 
@@ -473,7 +502,9 @@ process_line_table(Dwarf_Debug dbg,
                 /* Do not print name. */
             } else {
                 struct esb_s urs;
-                esb_constructor(&urs);
+                char atmp2[200];
+
+                esb_constructor_fixed(&urs,atmp2,sizeof(atmp2));
                 esb_append(&urs, " uri: \"");
                 translate_to_uri(filename,&urs);
                 esb_append(&urs,"\"");
@@ -514,8 +545,9 @@ print_line_context_record(Dwarf_Debug dbg,
     Dwarf_Small table_count = 0;
     Dwarf_Error err = 0;
     struct esb_s bufr;
+    char bufr_tmp[100];
 
-    esb_constructor(&bufr);
+    esb_constructor_fixed(&bufr,bufr_tmp,sizeof(bufr_tmp));
     printf("Line Context data\n");
     vres = dwarf_srclines_table_offset(line_context,&lsecoff,&err);
     if (vres != DW_DLV_OK) {

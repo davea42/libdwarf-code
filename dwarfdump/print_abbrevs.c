@@ -228,6 +228,7 @@ check_abbrev_num_sequence(Dwarf_Unsigned abbrev_code,
     DWARF_CHECK_COUNT(abbreviations_result,1);
     if (abbrev_code > last_abbrev_code) {
         if ((abbrev_code-last_abbrev_code) > 100 ) {
+#ifdef ORIGINAL_SPRINTF
             snprintf(buf, sizeof(buf),
                 "Abbrev code %" DW_PR_DUu
                 " skips up by %" DW_PR_DUu
@@ -237,8 +238,25 @@ check_abbrev_num_sequence(Dwarf_Unsigned abbrev_code,
                 last_abbrev_code);
             DWARF_CHECK_ERROR2(abbreviations_result,buf,
                 "Questionable abbreviation code! Not checking reuse.");
+#else
+            struct esb_s ar;
+            esb_constructor_fixed(&ar,buf,sizeof(buf));
+            esb_append_printf_u(&ar,
+                "Abbrev code %" DW_PR_DUu,abbrev_code);
+            esb_append_printf_u(&ar,
+                " skips up by %" DW_PR_DUu,
+                (abbrev_code-last_abbrev_code));
+            esb_append_printf_u(&ar,
+                " from last abbrev code of %" DW_PR_DUu ,
+                last_abbrev_code);
+            DWARF_CHECK_ERROR2(abbreviations_result,
+                esb_get_string(&ar),
+                "Questionable abbreviation code! Not checking reuse.");
+            esb_destructor(&ar);
+#endif
             return 0;
         } else if ((abbrev_code-last_abbrev_code) > 1 ) {
+#ifdef ORIGINAL_SPRINTF
             snprintf(buf, sizeof(buf),
                 "Abbrev code %" DW_PR_DUu
                 " skips up by %" DW_PR_DUu
@@ -248,8 +266,26 @@ check_abbrev_num_sequence(Dwarf_Unsigned abbrev_code,
                 last_abbrev_code);
             DWARF_CHECK_ERROR2(abbreviations_result,buf,
                 "Questionable abbreviation code.");
+#else
+            struct esb_s ar;
+            esb_constructor_fixed(&ar,buf,sizeof(buf));
+            esb_append_printf_u(&ar,
+                "Abbrev code %" DW_PR_DUu,
+                abbrev_code);
+            esb_append_printf_u(&ar,
+                " skips up by %" DW_PR_DUu,
+                (abbrev_code-last_abbrev_code));
+            esb_append_printf_u(&ar,
+                " from last abbrev code of %" DW_PR_DUu ,
+                last_abbrev_code);
+            DWARF_CHECK_ERROR2(abbreviations_result,
+                esb_get_string(&ar),
+                "Questionable abbreviation code.");
+            esb_destructor(&ar);
+#endif
         }
     } else if (abbrev_code < last_abbrev_code) {
+#ifdef ORIGINAL_SPRINT
         snprintf(buf, sizeof(buf),
             "Abbrev code %" DW_PR_DUu
             " skips down by %" DW_PR_DUu
@@ -259,13 +295,43 @@ check_abbrev_num_sequence(Dwarf_Unsigned abbrev_code,
             last_abbrev_code);
         DWARF_CHECK_ERROR2(abbreviations_result,buf,
             "Questionable abbreviation code.");
+#else
+        struct esb_s ar;
+        esb_constructor_fixed(&ar,buf,sizeof(buf));
+        esb_append_printf_u(&ar,
+            "Abbrev code %" DW_PR_DUu,abbrev_code);
+        esb_append_printf_u(&ar,
+            " skips down by %" DW_PR_DUu,
+            (last_abbrev_code - abbrev_code));
+        esb_append_printf_u(&ar,
+            " from last abbrev code of %" DW_PR_DUu ,
+            last_abbrev_code);
+        DWARF_CHECK_ERROR2(abbreviations_result,
+            esb_get_string(&ar),
+            "Questionable abbreviation code.");
+        esb_destructor(&ar);
+#endif
     } else {
+#ifdef ORIGINAL_SPRINTF
         snprintf(buf, sizeof(buf),
             "Abbrev code %" DW_PR_DUu
             " unchanged from last abbrev code!.",
             abbrev_code);
         DWARF_CHECK_ERROR2(abbreviations_result,buf,
             "Questionable abbreviation code.");
+#else
+        struct esb_s ar;
+
+        esb_constructor_fixed(&ar,buf,sizeof(buf));
+        esb_append_printf_u(&ar,
+            "Abbrev code %" DW_PR_DUu
+            " unchanged from last abbrev code!.",
+            abbrev_code);
+        DWARF_CHECK_ERROR2(abbreviations_result,
+            esb_get_string(&ar),
+            "Questionable abbreviation code.");
+        esb_destructor(&ar);
+#endif
     }
     return abbrev_code;
 }
@@ -277,25 +343,58 @@ check_reused_code(Dwarf_Unsigned abbrev_code,
     char buf[128];
 
     if (abbrev_code >= abbrev_array_size) {
+#ifdef ORIGINAL_SPRINTF
         snprintf(buf, sizeof(buf),
             "Abbrev code %" DW_PR_DUu
             " entry_count unchecked: %" DW_PR_DUu  " ",
             abbrev_code,abbrev_entry_count);
         DWARF_CHECK_ERROR2(abbreviations_result,buf,
             "Questionable abbreviation code.");
+#else
+        struct esb_s ar;
+
+        esb_constructor_fixed(&ar,buf,sizeof(buf));
+        esb_append_printf_u(&ar,
+            "Abbrev code %" DW_PR_DUu,
+            abbrev_code);
+        esb_append_printf_u(&ar,
+            " entry_count unchecked: %" DW_PR_DUu  " ",
+            abbrev_entry_count);
+        DWARF_CHECK_ERROR2(abbreviations_result,
+            esb_get_string(&ar),
+            "Questionable abbreviation code.");
+        esb_destructor(&ar);
+#endif
         return;
     }
     if (abbrev_array[abbrev_code]) {
         DWARF_CHECK_COUNT(abbreviations_result,1);
         /* This abbrev code slot was used before. */
         if (abbrev_array[abbrev_code] == abbrev_entry_count) {
+#ifdef ORIGINAL_SPRINTF
             snprintf(buf, sizeof(buf),
                 "Abbrev code %" DW_PR_DUu
                 " reused for same entry_count: %" DW_PR_DUu  " ",
                 abbrev_code,abbrev_entry_count);
             DWARF_CHECK_ERROR2(abbreviations_result,buf,
                 "Questionable abbreviation code.");
+#else
+            struct esb_s ar;
+
+            esb_constructor_fixed(&ar,buf,sizeof(buf));
+            esb_append_printf_u(&ar,
+                "Abbrev code %" DW_PR_DUu,
+                abbrev_code);
+            esb_append_printf_u(&ar,
+                " reused for same entry_count: %" DW_PR_DUu  " ",
+                abbrev_entry_count);
+            DWARF_CHECK_ERROR2(abbreviations_result,
+                esb_get_string(&ar),
+                "Questionable abbreviation code.");
+            esb_destructor(&ar);
+#endif
         } else {
+#ifdef ORIGINAL_SPRINTF
             snprintf(buf, sizeof(buf),
                 "Abbrev code %" DW_PR_DUu
                 " reused for different entry_count. "
@@ -306,6 +405,25 @@ check_reused_code(Dwarf_Unsigned abbrev_code,
                 abbrev_entry_count);
             DWARF_CHECK_ERROR2(abbreviations_result,buf,
                 "Invalid abbreviation code.");
+#else
+            struct esb_s ar;
+
+            esb_constructor_fixed(&ar,buf,sizeof(buf));
+            esb_append_printf_u(&ar,
+                "Abbrev code %" DW_PR_DUu,
+                abbrev_code);
+            esb_append_printf_u(&ar,
+                " reused for different entry_count. "
+                " %" DW_PR_DUu , abbrev_array[abbrev_code]);
+            esb_append_printf_u(&ar,
+                " now %" DW_PR_DUu
+                " ",
+                abbrev_entry_count);
+            DWARF_CHECK_ERROR2(abbreviations_result,
+                esb_get_string(&ar),
+                "Invalid abbreviation code.");
+            esb_destructor(&ar);
+#endif
         }
     }
 }
@@ -419,17 +537,33 @@ validate_abbrev_code(UNUSEDARG Dwarf_Debug dbg,
 
     DWARF_CHECK_COUNT(abbreviations_result,1);
     if (abbrev_code && abbrev_code >= abbrev_array_size) {
+#ifdef ORIGINAL_SPRINTF
         snprintf(buf, sizeof(buf),
             "Abbrev code %" DW_PR_DUu
             " outside valid range of [0-%" DW_PR_DUu "]",
             abbrev_code,abbrev_array_size);
         DWARF_CHECK_ERROR2(abbreviations_result,buf,
             "Invalid abbreviation code.");
+#else
+        struct esb_s ar;
+        esb_constructor_fixed(&ar,buf,sizeof(buf));
+        esb_append_printf_u(&ar,
+            "Abbrev code %" DW_PR_DUu, abbrev_code);
+        esb_append_printf_u(&ar,
+            " outside valid range of [0-%" DW_PR_DUu "]",
+            abbrev_array_size);
+        DWARF_CHECK_ERROR2(abbreviations_result,
+            esb_get_string(&ar),
+            "Invalid abbreviation code.");
+
+        esb_destructor(&ar);
+#endif
     } else {
         Dwarf_Unsigned abbrev_entry_count =
             abbrev_array[abbrev_code];
         if (abbrev_entry_count > SNLINKER_MAX_ATTRIB_COUNT) {
             if (abbrev_entry_count > GENERAL_MAX_ATTRIB_COUNT) {
+#ifdef ORIGINAL_SPRINTF
                 snprintf(buf, sizeof(buf),
                     "Abbrev code %" DW_PR_DUu
                     ", with %" DW_PR_DUu " attributes: "
@@ -439,9 +573,27 @@ validate_abbrev_code(UNUSEDARG Dwarf_Debug dbg,
                     GENERAL_MAX_ATTRIB_COUNT);
                 DWARF_CHECK_ERROR2(abbreviations_result,buf,
                     "Number of attributes exceeds sanity check");
+#else
+                struct esb_s ar;
+                esb_constructor_fixed(&ar,buf,sizeof(buf));
+                esb_append_printf_u(&ar,
+                    "Abbrev code %" DW_PR_DUu,abbrev_code);
+                esb_append_printf_u(&ar,
+                    ", with %" DW_PR_DUu " attributes: ",
+                    abbrev_entry_count);
+                esb_append_printf_i(&ar,
+                    "outside a sanity-check maximum of %d.",
+                    GENERAL_MAX_ATTRIB_COUNT);
+
+                DWARF_CHECK_ERROR2(abbreviations_result,
+                    esb_get_string(&ar),
+                    "Number of attributes exceeds sanity check");
+                esb_destructor(&ar);
+#endif
             } else {
                 /*  These apply only to one compiliation environment,
                     and are not generally applicable.  */
+#ifdef ORIGINAL_SPRINTF
                 snprintf(buf, sizeof(buf),
                     "Abbrev code %" DW_PR_DUu
                     ", with %" DW_PR_DUu " attributes: "
@@ -450,7 +602,25 @@ validate_abbrev_code(UNUSEDARG Dwarf_Debug dbg,
                     abbrev_entry_count,
                     SNLINKER_MAX_ATTRIB_COUNT);
                 DWARF_CHECK_ERROR2(abbreviations_result,buf,
-                    "Number of attributes exceeds SN-LINKER-specific sanity check.");
+                    "Number of attributes exceeds "
+                    "SN-LINKER-specific sanity check.");
+#else
+                struct esb_s ar;
+                esb_constructor_fixed(&ar,buf,sizeof(buf));
+                esb_append_printf_u(&ar,
+                    "Abbrev code %" DW_PR_DUu,abbrev_code);
+                esb_append_printf_u(&ar,
+                    ", with %" DW_PR_DUu " attributes: ",
+                    abbrev_entry_count);
+                esb_append_printf_i(&ar,
+                    "outside an SN-LINKER expected-maximum of %d.",
+                    SNLINKER_MAX_ATTRIB_COUNT);
+                DWARF_CHECK_ERROR2(abbreviations_result,
+                    esb_get_string(&ar),
+                    "Number of attributes exceeds "
+                    "SN-LINKER-specific sanity check.");
+                esb_destructor(&ar);
+#endif
             }
         }
     }
