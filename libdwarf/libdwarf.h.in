@@ -265,20 +265,6 @@ typedef struct {
     Dwarf_Off       fp_instr_offset;
 } Dwarf_Frame_Op; /* DWARF2 */
 
-typedef struct {
-    Dwarf_Small     fp_base_op;
-    Dwarf_Small     fp_extended_op;
-    Dwarf_Half      fp_register;
-
-    /*  Value may be signed, depends on op.
-        Any applicable data_alignment_factor has
-        not been applied, this is the  raw offset. */
-    Dwarf_Unsigned  fp_offset_or_block_len;
-    Dwarf_Small     *fp_expr_block;
-
-    Dwarf_Off       fp_instr_offset;
-} Dwarf_Frame_Op3;  /* DWARF3 and DWARF2 compatible */
-
 /*  ***IMPORTANT NOTE, TARGET DEPENDENCY ****
     DW_REG_TABLE_SIZE must be at least as large as
     the number of registers
