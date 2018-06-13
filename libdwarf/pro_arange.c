@@ -139,7 +139,7 @@ _dwarf_transform_arange_to_disk(Dwarf_P_Debug dbg,
     /* Size of the .debug_aranges section header. */
     arange_num_bytes = extension_word_size +
         offset_size +       /* Size of length field.  */
-        sizeof(Dwarf_Half) +    /* Size of version field. */
+        DWARF_HALF_SIZE +    /* Size of version field. */
         offset_size +            /* Size of .debug_info offset. */
         sizeof(Dwarf_Small) +   /* Size of address size field. */
         sizeof(Dwarf_Small);    /* Size of segment size field. */
@@ -188,8 +188,8 @@ _dwarf_transform_arange_to_disk(Dwarf_P_Debug dbg,
 
         WRITE_UNALIGNED(dbg, (void *) arange_ptr,
             (const void *) &verstamp,
-            sizeof(verstamp), sizeof(Dwarf_Half));
-        arange_ptr += sizeof(Dwarf_Half);
+            sizeof(verstamp), DWARF_HALF_SIZE);
+        arange_ptr += DWARF_HALF_SIZE;
     }
 
 
@@ -220,7 +220,7 @@ _dwarf_transform_arange_to_disk(Dwarf_P_Debug dbg,
     res = dbg->de_relocate_by_name_symbol(dbg,
         DEBUG_ARANGES,
         extension_word_size +
-        offset_size + sizeof(Dwarf_Half),
+        offset_size + DWARF_HALF_SIZE,
         dbg->de_sect_name_idx[DEBUG_INFO],
         dwarf_drt_data_reloc, offset_size);
 

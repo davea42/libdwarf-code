@@ -284,11 +284,13 @@ dwarf_next_str_offsets_table(Dwarf_Str_Offsets_Table sot,
     /*  table_start_ptr was incremented past the length data. */
     table_end_ptr = table_start_ptr + length;
     READ_UNALIGNED_CK(sot->so_dbg, version, Dwarf_Half,
-        table_start_ptr, sizeof(Dwarf_Half),error,sot->so_section_end_ptr);
-    table_start_ptr += sizeof(Dwarf_Half);
+        table_start_ptr, DWARF_HALF_SIZE,
+        error,sot->so_section_end_ptr);
+    table_start_ptr += DWARF_HALF_SIZE;
     READ_UNALIGNED_CK(sot->so_dbg, padding, Dwarf_Half,
-        table_start_ptr, sizeof(Dwarf_Half),error,sot->so_section_end_ptr);
-    table_start_ptr += sizeof(Dwarf_Half);
+        table_start_ptr, DWARF_HALF_SIZE,
+        error,sot->so_section_end_ptr);
+    table_start_ptr += DWARF_HALF_SIZE;
 
     if (version != DW_STR_OFFSETS_VERSION5) {
         _dwarf_error(sot->so_dbg,error,

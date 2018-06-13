@@ -719,7 +719,7 @@ struct Dwarf_Chain_o {
 };
 
     /* Size of cu header version stamp field. */
-#define CU_VERSION_STAMP_SIZE   sizeof(Dwarf_Half)
+#define CU_VERSION_STAMP_SIZE   DWARF_HALF_SIZE
 
     /* Size of cu header address size field. */
 #define CU_ADDRESS_SIZE_SIZE    sizeof(Dwarf_Small)

@@ -179,10 +179,10 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
     line_context->lc_total_length = total_length;
 
     READ_UNALIGNED_CK(dbg, version, Dwarf_Half,
-        line_ptr, sizeof(Dwarf_Half),
+        line_ptr, DWARF_HALF_SIZE,
         err,line_ptr_end);
     line_context->lc_version_number = version;
-    line_ptr += sizeof(Dwarf_Half);
+    line_ptr += DWARF_HALF_SIZE;
     if (version != DW_LINE_VERSION2 &&
         version != DW_LINE_VERSION3 &&
         version != DW_LINE_VERSION4 &&
@@ -1311,8 +1311,8 @@ read_line_table_program(Dwarf_Debug dbg,
                 break;
             case DW_LNS_fixed_advance_pc:{
                 READ_UNALIGNED_CK(dbg, fixed_advance_pc, Dwarf_Half,
-                    line_ptr, sizeof(Dwarf_Half),error,line_ptr_end);
-                line_ptr += sizeof(Dwarf_Half);
+                    line_ptr, DWARF_HALF_SIZE,error,line_ptr_end);
+                line_ptr += DWARF_HALF_SIZE;
                 if (line_ptr > line_ptr_end) {
                     _dwarf_error(dbg, error,
                         DW_DLE_LINE_TABLE_BAD);

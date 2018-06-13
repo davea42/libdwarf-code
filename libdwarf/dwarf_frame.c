@@ -487,9 +487,9 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
         case DW_CFA_advance_loc2:
             {
                 READ_UNALIGNED_CK(dbg, adv_loc, Dwarf_Unsigned,
-                    instr_ptr, sizeof(Dwarf_Half),
+                    instr_ptr, DWARF_HALF_SIZE,
                     error,final_instr_ptr);
-                instr_ptr += sizeof(Dwarf_Half);
+                instr_ptr += DWARF_HALF_SIZE;
                 fp_offset = adv_loc;
 
                 if (need_augmentation) {

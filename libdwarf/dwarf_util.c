@@ -233,14 +233,14 @@ _dwarf_get_size_of_val(Dwarf_Debug dbg,
         ptrdiff_t sizeasptrdiff = 0;
 
         READ_UNALIGNED_CK(dbg, ret_value, Dwarf_Unsigned,
-            val_ptr, sizeof(Dwarf_Half),error,section_end_ptr);
+            val_ptr, DWARF_HALF_SIZE,error,section_end_ptr);
         sizeasptrdiff = (ptrdiff_t)ret_value;
         if (sizeasptrdiff > (section_end_ptr - val_ptr) ||
             sizeasptrdiff < 0) {
             _dwarf_error(dbg,error,DW_DLE_FORM_BLOCK_LENGTH_ERROR);
             return DW_DLV_ERROR;
         }
-        *size_out = ret_value + sizeof(Dwarf_Half);
+        *size_out = ret_value + DWARF_HALF_SIZE;
         }
         return DW_DLV_OK;
 
@@ -892,8 +892,8 @@ _dwarf_length_of_cu_header(Dwarf_Debug dbg,
 
 
     READ_UNALIGNED_CK(dbg, version, Dwarf_Half,
-        cuptr, sizeof(Dwarf_Half),error,section_end_ptr);
-    cuptr += sizeof(Dwarf_Half);
+        cuptr, DWARF_HALF_SIZE,error,section_end_ptr);
+    cuptr += DWARF_HALF_SIZE;
 
     if (version == 5) {
         Dwarf_Ubyte unit_type = 0;
@@ -906,7 +906,7 @@ _dwarf_length_of_cu_header(Dwarf_Debug dbg,
         case DW_UT_compile:
             final_size = local_extension_size +
                 local_length_size  + /* Size of cu length field. */
-                sizeof(Dwarf_Half) + /* Size of version stamp field. */
+                DWARF_HALF_SIZE + /* Size of version stamp field. */
                 sizeof(Dwarf_Small)+ /* Size of  unit type field. */
                 sizeof(Dwarf_Small)+ /* Size of address size field. */
                 local_length_size ;  /* Size of abbrev offset field. */
@@ -923,7 +923,7 @@ _dwarf_length_of_cu_header(Dwarf_Debug dbg,
     } else if (version == 4) {
         final_size = local_extension_size +
             local_length_size  +  /* Size of cu length field. */
-            sizeof(Dwarf_Half) +  /* Size of version stamp field. */
+            DWARF_HALF_SIZE +  /* Size of version stamp field. */
             local_length_size  +  /* Size of abbrev offset field. */
             sizeof(Dwarf_Small);  /* Size of address size field. */
         if (!is_info) {
@@ -936,7 +936,7 @@ _dwarf_length_of_cu_header(Dwarf_Debug dbg,
     } else if (version < 4) {
         final_size = local_extension_size +
             local_length_size  +
-            sizeof(Dwarf_Half) +
+            DWARF_HALF_SIZE +
             local_length_size  +
             sizeof(Dwarf_Small);  /* Size of address size field. */
     }
@@ -952,8 +952,8 @@ _dwarf_length_of_cu_header_simple(Dwarf_Debug dbg,
     Dwarf_Bool dinfo)
 {
     Dwarf_Unsigned finalsize = 0;
-    finalsize =  dbg->de_length_size +        /* Size of cu length field. */
-        sizeof(Dwarf_Half) +    /* Size of version stamp field. */
+    finalsize =  dbg->de_length_size + /* Size of cu length field. */
+        DWARF_HALF_SIZE +    /* Size of version stamp field. */
         dbg->de_length_size +   /* Size of abbrev offset field. */
         sizeof(Dwarf_Small);    /* Size of address size field. */
     if (!dinfo) {

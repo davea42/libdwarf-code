@@ -266,9 +266,9 @@ read_a_name_index(Dwarf_Dnames_Head dn,
     end_dnames = curptr + area_length;
 
     READ_UNALIGNED_CK(dbg, version, Dwarf_Half,
-        curptr, sizeof(Dwarf_Half),
+        curptr, DWARF_HALF_SIZE,
         error,end_dnames);
-    curptr += sizeof(Dwarf_Half);
+    curptr += DWARF_HALF_SIZE;
     if (curptr >= end_dnames) {
         _dwarf_error(dbg, error,DW_DLE_DEBUG_NAMES_HEADER_ERROR);
         return DW_DLV_ERROR;
@@ -278,9 +278,9 @@ read_a_name_index(Dwarf_Dnames_Head dn,
         return (DW_DLV_ERROR);
     }
     READ_UNALIGNED_CK(dbg, padding, Dwarf_Half,
-        curptr, sizeof(Dwarf_Half),
+        curptr, DWARF_HALF_SIZE,
         error,end_dnames);
-    curptr += sizeof(Dwarf_Half);
+    curptr += DWARF_HALF_SIZE;
     if (curptr >= end_dnames) {
         _dwarf_error(dbg, error,DW_DLE_DEBUG_NAMES_HEADER_ERROR);
         return DW_DLV_ERROR;

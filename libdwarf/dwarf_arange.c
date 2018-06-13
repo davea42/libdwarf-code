@@ -132,9 +132,9 @@ dwarf_get_aranges_list(Dwarf_Debug dbg,
         }
 
         READ_UNALIGNED_CK(dbg, version, Dwarf_Half,
-            arange_ptr, sizeof(Dwarf_Half),
+            arange_ptr, DWARF_HALF_SIZE,
             error,end_this_arange);
-        arange_ptr += sizeof(Dwarf_Half);
+        arange_ptr += DWARF_HALF_SIZE;
         if (arange_ptr >= end_this_arange) {
             _dwarf_error(dbg, error, DW_DLE_ARANGES_HEADER_ERROR);
             return DW_DLV_ERROR;

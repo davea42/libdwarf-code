@@ -376,7 +376,7 @@ dwarf_formref(Dwarf_Attribute attr,
 
     case DW_FORM_ref2:
         READ_UNALIGNED_CK(dbg, offset, Dwarf_Unsigned,
-            attr->ar_debug_ptr, sizeof(Dwarf_Half),
+            attr->ar_debug_ptr, DWARF_HALF_SIZE,
             error,section_end);
         break;
 
@@ -554,7 +554,7 @@ dwarf_global_formref(Dwarf_Attribute attr,
 
     case DW_FORM_ref2:
         READ_UNALIGNED_CK(dbg, offset, Dwarf_Unsigned,
-            attr->ar_debug_ptr, sizeof(Dwarf_Half),
+            attr->ar_debug_ptr, DWARF_HALF_SIZE,
             error,section_end);
         goto fixoffset;
 
@@ -1050,7 +1050,7 @@ _dwarf_formudata_internal(Dwarf_Debug dbg,
         So we can just assign to *return_uval. */
     case DW_FORM_data2:{
         READ_UNALIGNED_CK(dbg, ret_value, Dwarf_Unsigned,
-            data, sizeof(Dwarf_Half),
+            data, DWARF_HALF_SIZE,
             error,section_end);
         *return_uval = ret_value;
         *bytes_read = 2;
@@ -1234,9 +1234,9 @@ dwarf_formblock(Dwarf_Attribute attr,
 
     case DW_FORM_block2:
         READ_UNALIGNED_CK(dbg, length, Dwarf_Unsigned,
-            attr->ar_debug_ptr, sizeof(Dwarf_Half),
+            attr->ar_debug_ptr, DWARF_HALF_SIZE,
             error,section_end);
-        data = attr->ar_debug_ptr + sizeof(Dwarf_Half);
+        data = attr->ar_debug_ptr + DWARF_HALF_SIZE;
         break;
 
     case DW_FORM_block4:

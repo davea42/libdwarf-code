@@ -1290,9 +1290,8 @@ _dwarf_pro_generate_debugline(Dwarf_P_Debug dbg,
 
     dh =  inits->pi_version;
     WRITE_UNALIGNED(dbg, (void *) data, (const void *) &dh,
-        sizeof(dh), sizeof(Dwarf_Half));
-    data += sizeof(Dwarf_Half);
-
+        sizeof(dh), DWARF_HALF_SIZE);
+    data +=  DWARF_HALF_SIZE;
     if (version == 5 ) {
         /* address size, seg sel size now */
         db = inits->pi_address_size;
@@ -2479,7 +2478,7 @@ _dwarf_pro_generate_debuginfo(Dwarf_P_Debug dbg,
         /* write cu header. abbrev_offset used to
             generate relocation record below */
         abbrev_offset =  OFFSET_PLUS_EXTENSION_SIZE +
-            sizeof(Dwarf_Half)  ;
+            DWARF_HALF_SIZE  ;
 
         cu_header_size = abbrev_offset +
             offset_size + sizeof(Dwarf_Ubyte);
@@ -2501,8 +2500,8 @@ _dwarf_pro_generate_debuginfo(Dwarf_P_Debug dbg,
         data += offset_size;
 
         WRITE_UNALIGNED(dbg, (void *) data, (const void *) &version,
-            sizeof(version), sizeof(Dwarf_Half));
-        data += sizeof(Dwarf_Half);
+            sizeof(version), DWARF_HALF_SIZE);
+        data += DWARF_HALF_SIZE;
 
         du = 0;/* offset into abbrev table, not yet known. */
         WRITE_UNALIGNED(dbg, (void *) data,
@@ -2525,7 +2524,7 @@ _dwarf_pro_generate_debuginfo(Dwarf_P_Debug dbg,
         /* write cu header. abbrev_offset used to
             generate relocation record below */
         abbrev_offset =  OFFSET_PLUS_EXTENSION_SIZE +
-            sizeof(Dwarf_Half) + /* version stamp */
+            DWARF_HALF_SIZE + /* version stamp */
             sizeof(unit_type) +
             sizeof(Dwarf_Ubyte);
         cu_header_size = abbrev_offset + offset_size;
@@ -2547,8 +2546,8 @@ _dwarf_pro_generate_debuginfo(Dwarf_P_Debug dbg,
         data += offset_size;
 
         WRITE_UNALIGNED(dbg, (void *) data, (const void *) &version,
-            sizeof(version), sizeof(Dwarf_Half));
-        data += sizeof(Dwarf_Half);
+            sizeof(version), DWARF_HALF_SIZE);
+        data += DWARF_HALF_SIZE;
 
         WRITE_UNALIGNED(dbg, (void *) data, (const void *) &unit_type,
             sizeof(unit_type), sizeof(Dwarf_Ubyte));
@@ -2850,7 +2849,7 @@ _dwarf_pro_generate_debuginfo(Dwarf_P_Debug dbg,
                     dh = curattr->ar_ref_die->di_offset;
                     WRITE_UNALIGNED(dbg, (void *) data,
                         (const void *) &dh,
-                        sizeof(dh), sizeof(Dwarf_Half));
+                        sizeof(dh), DWARF_HALF_SIZE);
                     break;
                 }
             case DW_FORM_ref_addr:

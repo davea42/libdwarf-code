@@ -84,4 +84,6 @@ typedef unsigned long long __uint64_t;
 #define  UNUSEDARG
 #endif
 
+#define DWARF_HALF_SIZE 2
+
 #endif /* LIBDWARFDEFS_H */

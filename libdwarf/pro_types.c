@@ -175,7 +175,7 @@ _dwarf_transform_simplename_to_disk(Dwarf_P_Debug dbg,
     /* Size of the .debug_typenames (or similar) section header. */
     stream_bytes_count = extension_size + uword_size +  /* Size of
         length field. */
-        sizeof(Dwarf_Half) +    /* Size of version field. */
+        DWARF_HALF_SIZE +    /* Size of version field. */
         uword_size +            /* Size of .debug_info offset. */
         uword_size;             /* Size of .debug_names. */
 
@@ -219,8 +219,8 @@ _dwarf_transform_simplename_to_disk(Dwarf_P_Debug dbg,
 
         WRITE_UNALIGNED(dbg, cur_stream_bytes_ptr,
             (const void *) &verstamp,
-            sizeof(verstamp), sizeof(Dwarf_Half));
-        cur_stream_bytes_ptr += sizeof(Dwarf_Half);
+            sizeof(verstamp), DWARF_HALF_SIZE);
+        cur_stream_bytes_ptr += DWARF_HALF_SIZE;
     }
 
     /* Write the offset of the compile-unit. */
@@ -234,7 +234,7 @@ _dwarf_transform_simplename_to_disk(Dwarf_P_Debug dbg,
         int res = dbg->de_relocate_by_name_symbol(dbg,
             section_index,
             extension_size + uword_size +
-            sizeof(Dwarf_Half) /* r_offset */ ,
+            DWARF_HALF_SIZE /* r_offset */ ,
             /* debug_info section name symbol */
             dbg->de_sect_name_idx[DEBUG_INFO],
             dwarf_drt_data_reloc,

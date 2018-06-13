@@ -146,9 +146,9 @@ _dwarf_skim_forms(Dwarf_Debug dbg,
             break;
         case DW_FORM_block2:
             READ_UNALIGNED_CK(dbg, ret_value, Dwarf_Unsigned,
-                mdata, sizeof(Dwarf_Half),
+                mdata, DWARF_HALF_SIZE,
                 error,section_end);
-            v = ret_value + sizeof(Dwarf_Half);
+            v = ret_value + DWARF_HALF_SIZE;
             totallen += v;
             mdata += v;
             break;
@@ -1279,7 +1279,7 @@ _dwarf_internal_macro_context_by_offset(Dwarf_Debug dbg,
         return DW_DLV_ERROR;
     }
 
-    if ((section_base + sizeof(Dwarf_Half) + sizeof(Dwarf_Small)) >                     section_end ) {
+    if ((section_base + DWARF_HALF_SIZE + sizeof(Dwarf_Small)) >                     section_end ) {
         dealloc_macro_srcfiles(srcfiles,srcfilescount);
         _dwarf_error(dbg, error, DW_DLE_MACRO_OFFSET_BAD);
         return DW_DLV_ERROR;
@@ -1290,8 +1290,8 @@ _dwarf_internal_macro_context_by_offset(Dwarf_Debug dbg,
     macro_context->mc_cu_context =  cu_context;
 
     READ_UNALIGNED_CK(dbg,version, Dwarf_Half,
-        macro_data,sizeof(Dwarf_Half),error,section_end);
-    macro_data += sizeof(Dwarf_Half);
+        macro_data, DWARF_HALF_SIZE,error,section_end);
+    macro_data +=  DWARF_HALF_SIZE;
     READ_UNALIGNED_CK(dbg,flags, Dwarf_Small,
         macro_data,sizeof(Dwarf_Small),error,section_end);
     macro_data += sizeof(Dwarf_Small);

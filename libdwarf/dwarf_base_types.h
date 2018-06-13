@@ -147,6 +147,8 @@ typedef __int32_t Dwarf_sfixed;
 typedef __uint64_t Dwarf_ufixed64;
 typedef __int64_t Dwarf_sfixed64;
 
+#define DWARF_HALF_SIZE 2
+
 
 typedef struct Dwarf_Abbrev_List_s *Dwarf_Abbrev_List;
 typedef struct Dwarf_File_Entry_s *Dwarf_File_Entry;

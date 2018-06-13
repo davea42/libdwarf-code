@@ -939,7 +939,7 @@ _dwarf_read_loc_section(Dwarf_Debug dbg,
     Dwarf_Addr end_addr = 0;
     Dwarf_Half exprblock_size = 0;
     Dwarf_Unsigned exprblock_off =
-        2 * address_size + sizeof(Dwarf_Half);
+        2 * address_size + DWARF_HALF_SIZE;
 
     if (sec_offset >= dbg->de_debug_loc.dss_size) {
         /* We're at the end. No more present. */
@@ -962,15 +962,15 @@ _dwarf_read_loc_section(Dwarf_Debug dbg,
         /*  If start_addr and end_addr are 0, it's the end and no
             exprblock_size field follows. */
         exprblock_size = 0;
-        exprblock_off -= sizeof(Dwarf_Half);
+        exprblock_off -= DWARF_HALF_SIZE;
     } else if (start_addr == MAX_ADDR) {
         /*  End address is a base address, no exprblock_size field here
             either */
         exprblock_size = 0;
-        exprblock_off -= sizeof(Dwarf_Half);
+        exprblock_off -=  DWARF_HALF_SIZE;
     } else {
         READ_UNALIGNED_CK(dbg, exprblock_size, Dwarf_Half,
-            beg + 2 * address_size, sizeof(Dwarf_Half),
+            beg + 2 * address_size, DWARF_HALF_SIZE,
             error,loc_section_end);
         /* exprblock_size can be zero, means no expression */
         if ( exprblock_size >= dbg->de_debug_loc.dss_size) {
