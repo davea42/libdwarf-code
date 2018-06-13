@@ -1,3 +1,10 @@
+2018-06-13 David Anderson
+    * configure.ac: New option --enable-elf-open 
+      setting HAVE_ELF_OPEN 
+    * config.h.in: HAVE_ELF_OPEN
+    * configure.ac: Regenerated.
+    * dwarfdump.c: Now uses open() unless HAVE_ELF_OPEN
+      is explicitly set.
 2018-06-10 David Anderson
     * checkutil.c: Fixed indentation mistake.
     * common.c: Removed trailing blank.

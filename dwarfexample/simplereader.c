@@ -106,6 +106,20 @@
 #include <io.h>
 #endif
 
+#ifndef O_RDONLY
+/*  This is for a Windows environment */
+# define O_RDONLY _O_RDONLY
+#endif
+
+#ifdef _O_BINARY
+/*  This is for a Windows environment */
+#define O_BINARY _O_BINARY
+#else
+# ifndef O_BINARY
+# define O_BINARY 0  /* So it does nothing in Linux/Unix */
+# endif
+#endif /* O_BINARY */
+
 struct srcfilesdata {
     char ** srcfiles;
     Dwarf_Signed srcfilescount;
@@ -1130,17 +1144,15 @@ open_a_file(const char * name)
     /* Set to a file number that cannot be legal. */
     int f = -1;
 
-#if defined(__CYGWIN__) || defined(_WIN32)
+#if HAVE_ELF_OPEN
     /*  It is not possible to share file handles
         between applications or DLLs. Each application has its own
         file-handle table. For two applications to use the same file
         using a DLL, they must both open the file individually.
-        Let the 'libelf' dll to open and close the file.  */
-
-    /* For _WIN32 open the file as binary */
+        Let the 'libelf' dll open and close the file.  */
     f = elf_open(name, O_RDONLY | O_BINARY);
 #else
-    f = open(name, O_RDONLY);
+    f = open(name, O_RDONLY |O_BINARY);
 #endif
     return f;
 }

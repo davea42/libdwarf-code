@@ -686,6 +686,7 @@ ac_user_opts='
 enable_option_checking
 enable_shared
 enable_nonshared
+enable_elf_open
 enable_wall
 enable_sanitize
 enable_nonstandardprintf
@@ -1320,6 +1321,7 @@ Optional Features:
   --enable-shared         build shared library libdwarf.so and use it if
                           present
   --disable-nonshared     do not build archive library libdwarf.a
+  --enable-elf_open       use elf_open not open
   --enable-wall           Add -Wall (default is none)
   --enable-sanitize       Add -fsanitize (default is not to)
   --enable-nonstandardprintf
@@ -3829,6 +3831,25 @@ if  test "x$enable_nonshared" = "xno"; then :
 
    nonshrd='--disable-shared'
 
+fi
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking do we expect elf_open exists as an open() alternative " >&5
+$as_echo_n "checking do we expect elf_open exists as an open() alternative ... " >&6; }
+# Check whether --enable-elf_open was given.
+if test "${enable_elf_open+set}" = set; then :
+  enableval=$enable_elf_open;
+fi
+
+if  test "x$enable_elf_open" = "xyes"; then :
+
+
+$as_echo "#define HAVE_ELF_OPEN 1" >>confdefs.h
+
+     { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+$as_echo "yes" >&6; }
+else
+   { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
 fi
 
 

@@ -70,10 +70,11 @@ AC_MSG_CHECKING(should we use full compiler warnings)
 AC_SUBST(dwfwall,[])
 AC_ARG_ENABLE(wall,AC_HELP_STRING([--enable-wall],
         [Add -Wall (default is none)]),
+        [ AC_SUBST(dwfwall,["-Wall -O0 -Wpointer-arith -Wmissing-declarations -Wmissing-prototypes -Wdeclaration-after-statement -Wextra -Wcomment -Wformat -Wpedantic -Wuninitialized -Wno-long-long -Wshadow" ])
+          AC_MSG_RESULT(yes) ],
         [ AC_SUBST(dwfwall,[]) 
-          AC_MSG_RESULT(no)],
-        [ AC_SUBST(dwfwall,["-Wall -O0 -Wpointer-arith -Wmissing-declarations -Wmissing-prototypes -Wdeclaration-after-statement -Wextra -Wcomment -Wformat -Wpedantic -Wuninitialized -Wno-long-long -Wshadow"])
-          AC_MSG_RESULT(yes)] )
+          AC_MSG_RESULT(no)]
+        )
 
 dnl This adds compiler option -fsanitize=address (gcc compiler run-time checks))
 AC_MSG_CHECKING(should we use full runtime sanitization checks)
@@ -86,6 +87,14 @@ AC_ARG_ENABLE(sanitize,AC_HELP_STRING([--enable-sanitize],
        [ AC_SUBST(dwfsanitize,[]) 
           AC_MSG_RESULT(no) ]
        )
+AC_MSG_CHECKING(do we expect elf_open exists as an open() alternative )
+AC_ARG_ENABLE(elf_open,AC_HELP_STRING([--enable-elf_open],
+                [use elf_open not open]))
+AS_IF([ test "x$enable_elf_open" = "xyes"], [
+   AC_DEFINE(HAVE_ELF_OPEN,1,
+     [Define to 1 if we use elf_open in preference to open])
+     AC_MSG_RESULT(yes) ],
+   [ AC_MSG_RESULT(no)])
 
 AC_SUBST(dwfzlib,[])
 AC_MSG_CHECKING(libz aka zlib has uncompress function)

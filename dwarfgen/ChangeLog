@@ -1,3 +1,10 @@
+2018-06-13  David Anderson
+     * configure.ac: New option --enable-elf-open
+       setting HAVE_ELF_OPEN
+     * config.h.in: HAVE_ELF_OPEN
+     * configure.ac: Regenerated.
+     * dwarfgen.cc.c: Now uses open() unless HAVE_ELF_OPEN
+       is explicitly set.
 2018-06-05  David Anderson
      * dwarfdump.c:  Change WIN32 to _WIN32.
 2018-06-05  David Anderson

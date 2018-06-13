@@ -64,6 +64,17 @@ AC_ARG_ENABLE(sanitize,AC_HELP_STRING([--enable-sanitize],
         ]
         )
 
+AC_MSG_CHECKING(do we expect elf_open exists as an open() alternative )
+AC_ARG_ENABLE(elf_open,AC_HELP_STRING([--enable-elf_open],
+                [use elf_open not open]))
+AS_IF([ test "x$enable_elf_open" = "xyes"], [
+   AC_DEFINE(HAVE_ELF_OPEN,1,
+     [Define to 1 if we use elf_open in preference to open])
+     AC_MSG_RESULT(yes) ],
+   [ AC_MSG_RESULT(no)])
+
+
+
 
 dnl default-disabled shared
 shrd=''

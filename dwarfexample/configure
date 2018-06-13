@@ -686,6 +686,7 @@ enable_shared
 enable_nonshared
 enable_wall
 enable_sanitize
+enable_elf_open
 '
       ac_precious_vars='build_alias
 host_alias
@@ -1321,6 +1322,7 @@ Optional Features:
   --disable-nonshared     do not build archive library libdwarf.a
   --enable-wall           Add -Wall (default is none)
   --enable-sanitize       Add -fsanitize (default is not to)
+  --enable-elf_open       use elf_open not open
 
 Some influential environment variables:
   CC          C compiler command
@@ -3966,14 +3968,15 @@ $as_echo_n "checking should we use full compiler warnings... " >&6; }
 
 # Check whether --enable-wall was given.
 if test "${enable_wall+set}" = set; then :
-  enableval=$enable_wall;
-          { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
-$as_echo "no" >&6; }
-else
-   dwfwall="-Wall -O0 -Wpointer-arith -Wmissing-declarations -Wmissing-prototypes -Wdeclaration-after-statement -Wextra -Wcomment -Wformat -Wpedantic -Wuninitialized -Wno-long-long -Wshadow"
+  enableval=$enable_wall;  dwfwall="-Wall -O0 -Wpointer-arith -Wmissing-declarations -Wmissing-prototypes -Wdeclaration-after-statement -Wextra -Wcomment -Wformat -Wpedantic -Wuninitialized -Wno-long-long -Wshadow"
 
           { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
 $as_echo "yes" >&6; }
+else
+
+          { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+
 fi
 
 
@@ -3995,6 +3998,24 @@ $as_echo "no" >&6; }
 
 fi
 
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking do we expect elf_open exists as an open() alternative " >&5
+$as_echo_n "checking do we expect elf_open exists as an open() alternative ... " >&6; }
+# Check whether --enable-elf_open was given.
+if test "${enable_elf_open+set}" = set; then :
+  enableval=$enable_elf_open;
+fi
+
+if  test "x$enable_elf_open" = "xyes"; then :
+
+
+$as_echo "#define HAVE_ELF_OPEN 1" >>confdefs.h
+
+     { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+$as_echo "yes" >&6; }
+else
+   { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+fi
 
 
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking libz aka zlib has uncompress function" >&5
