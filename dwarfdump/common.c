@@ -63,7 +63,7 @@ print_version_details(UNUSEDARG const char * name,int alwaysprint)
         "[%s %s %s Win%s (%s)]",__DATE__,__TIME__,acType,bits,RELEASE_DATE);
     printf("%s %s\n", sanitized(name),acVersion)
 #else
-    printf("%s [%s %s %s Win%s (%s)]\n", 
+    printf("%s [%s %s %s Win%s (%s)]\n",
         sanitized(name),__DATE__,__TIME__,acType,bits,RELEASE_DATE);
 #endif /* !ORIGINAL_SPRINTF */
 #else  /* !_WIN32 */

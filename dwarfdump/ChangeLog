@@ -1,4 +1,7 @@
 2018-06-10 David Anderson
+    * checkutil.c: Fixed indentation mistake.
+    * common.c: Removed trailing blank.
+2018-06-10 David Anderson
     * checkutil.c: snprintf-> esb
     * common.c: snprint -> printf
     * dwarf_tsearchbal.c: snprintf -> sprintf, it is safe.

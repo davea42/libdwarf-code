@@ -559,8 +559,8 @@ Dwarf_Bool IsValidInLinkonce(Bucket_Group *pLo,
         This is not defined in DWARF so not correct for all
         compilers. */
 #ifdef ORIGINAL_SPRINTF
-     snprintf(section_name,sizeof(section_name),"%s%s",lo_text,name);
-     pBucketData = FindNameInBucketGroup(pLo,section_name);
+    snprintf(section_name,sizeof(section_name),"%s%s",lo_text,name);
+    pBucketData = FindNameInBucketGroup(pLo,section_name);
 #else
     struct esb_s sn;
 
