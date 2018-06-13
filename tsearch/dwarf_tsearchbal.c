@@ -998,6 +998,3 @@ dwarf_tdestroy(void *rootp, void (*free_node)(void *nodep))
     }
     free(head);
 }
-
-
-

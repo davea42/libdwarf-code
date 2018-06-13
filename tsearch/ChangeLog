@@ -1,3 +1,7 @@
+2018-06-13  David Anderson
+     * dwarf_tsearchbal.c,dwarf_tsearch.c, dwarf_tsearchhash.c,
+       dwarf_tsearchbin.c,dwarf_tsearchepp.c,dwarf_tsearchred.c:
+       Removed 3 trailing blank lines from each.
 2017-01-23  David Anderson
      * dwarf_tsearchbal.c,dwarf_tsearchbin.c,dwarf_tsearchepp.c(dwarf_tsearch):
        In case memory exausted the function could leak a small amount
