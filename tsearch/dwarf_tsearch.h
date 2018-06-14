@@ -122,6 +122,3 @@ void * dwarf_initialize_search_hash( void **treeptr,
     DW_TSHASHTYPE (*hashfunc)(const void *key),
     unsigned long size_estimate);
 #endif /* DWARF_TSEARCH */
-
-
-

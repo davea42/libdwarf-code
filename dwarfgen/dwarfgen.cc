@@ -107,6 +107,17 @@
 # endif
 #endif /* O_BINARY */
 
+/*  These are for a Windows environment */
+#ifdef _O_WRONLY
+#define O_WRONLY _O_WRONLY
+#endif
+#ifdef _O_CREAT
+#define O_CREAT _O_CREAT
+#endif
+#ifdef _O_TRUNC
+#define O_TRUNC _O_TRUNC
+#endif
+
 using std::string;
 using std::cout;
 using std::cerr;
@@ -939,7 +950,7 @@ create_a_file(const char * name)
     f = elf_open(name, O_WRONLY | O_CREAT | O_BINARY);
 #else
     int mode =  S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH;
-    f = open(name,O_WRONLY | O_CREAT | O_TRUNC, mode);
+    f = open(name,O_WRONLY | O_CREAT | O_TRUNC | O_BINARY, mode);
 #endif
     return f;
 }

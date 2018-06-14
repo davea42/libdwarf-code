@@ -1,4 +1,3 @@
-
 /* Nothing here, really, a placeholder. */
 
 /* Define to 1 if tsearch is based on the AVL algorithm. */

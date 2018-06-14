@@ -1,3 +1,6 @@
+2018-06-14  David Anderson
+     * Added #ifdef for Windows environment
+       builds. _O_WRONLY etc for creating a file.
 2018-06-13  David Anderson
      * configure.ac: New option --enable-elf-open
        setting HAVE_ELF_OPEN
