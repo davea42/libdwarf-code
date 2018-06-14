@@ -689,7 +689,6 @@ enable_nonshared
 enable_elf_open
 enable_wall
 enable_sanitize
-enable_nonstandardprintf
 '
       ac_precious_vars='build_alias
 host_alias
@@ -1324,9 +1323,6 @@ Optional Features:
   --enable-elf_open       use elf_open not open
   --enable-wall           Add -Wall (default is none)
   --enable-sanitize       Add -fsanitize (default is not to)
-  --enable-nonstandardprintf
-                          Use a special printf format for 64bit (default is
-                          NO)
 
 Some influential environment variables:
   CC          C compiler command
@@ -4305,22 +4301,6 @@ else
   { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
 $as_echo "no" >&6; }
 fi
-
-
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking enable nonstandardprintf" >&5
-$as_echo_n "checking enable nonstandardprintf... " >&6; }
-# Check whether --enable-nonstandardprintf was given.
-if test "${enable_nonstandardprintf+set}" = set; then :
-  enableval=$enable_nonstandardprintf;
-$as_echo "#define HAVE_NONSTANDARD_PRINTF_64_FORMAT 1" >>confdefs.h
-
-          { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
-$as_echo "yes" >&6; }
-else
-  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
-$as_echo "no" >&6; }
-fi
-
 
 
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking libelf defines off64_t if _GNU_SOURCE defined" >&5

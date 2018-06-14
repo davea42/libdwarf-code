@@ -1,5 +1,5 @@
-/*
-  Copyright (C) 2010-2017 David Anderson.  All rights reserved.
+/*  
+  Copyright (C) 2010-2018 David Anderson.  All rights reserved.
 
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions are met:
@@ -78,9 +78,9 @@
 #include "dwgetopt.h"
 #ifdef HAVE_LIBELF_H
 //  gelf.h is a GNU-only elf header. FIXME
-#include "gelf.h"
+#include "libelf.h"
 #elif HAVE_LIBELF_LIBELF_H
-#include "libelf/gelf.h"
+#include "libelf/libelf.h"
 #endif
 #include "strtabdata.h"
 #include "dwarf.h"
@@ -930,7 +930,7 @@ open_a_file(const char * name)
         Let the 'libelf' dll open and close the file.  */
     f = elf_open(name, O_RDONLY | O_BINARY);
 #else
-    f = open(name, O_RDONLY |O_BINARY);
+    f = open(name, O_RDONLY | O_BINARY);
 #endif
     return f;
 }

@@ -538,7 +538,7 @@ esb_append_printf_u(struct esb_s *data,const char *format,esb_unsigned v)
     next = (endptr - format);
     /*  Following is lx lu or u or llx llu , we take
         all this to mean 64 bits, */
-#ifdef HAVE_NONSTANDARD_PRINTF_64_FORMAT
+#ifdef _WIN32
     if (format[next] == 'I') {
         /*lcount++;*/
         next++;
@@ -550,7 +550,7 @@ esb_append_printf_u(struct esb_s *data,const char *format,esb_unsigned v)
     if (format[next] == '4') {
         /*lcount++;*/
         next++;
-#endif
+#endif /* _WIN32 */
     if (format[next] == 'l') {
         lcount++;
         next++;
@@ -716,7 +716,7 @@ esb_append_printf_i(struct esb_s *data,const char *format,esb_int v)
     next = (endptr - format);
     /*  Following is lx lu or u or llx llu , we take
         all this to mean 64 bits, */
-#ifdef HAVE_NONSTANDARD_PRINTF_64_FORMAT
+#ifdef _WIN32
     if (format[next] == 'I') {
         /*lcount++;*/
         next++;

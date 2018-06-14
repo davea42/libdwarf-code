@@ -1,4 +1,14 @@
 2018-06-14  David Anderson
+     * Makefile.in
+     * config.h.in,configure.ac
+       Removed unnecessary defines and checks.
+     * configure: Regenerated
+     * createirepformfrombinary.cc,createirepfrombinary.cc,
+       irepattrtodbg.cc,ireptodbg.cc:
+       Removed unnecessary #includes 
+     * dwarfgen.cc:  Removed unnecessary #includes.
+       Switch from gelf.h (GNU only) to libelf.h.
+2018-06-14  David Anderson
      * Added #ifdef for Windows environment
        builds. _O_WRONLY etc for creating a file.
 2018-06-13  David Anderson

@@ -3849,7 +3849,7 @@ else
 fi
 
 
-for ac_header in elf.h unistd.h libelf.h sgidefs.h sys/types.h zlib.h
+for ac_header in unistd.h libelf.h sys/types.h
 do :
   as_ac_Header=`$as_echo "ac_cv_header_$ac_header" | $as_tr_sh`
 ac_fn_c_check_header_mongrel "$LINENO" "$ac_header" "$as_ac_Header" "$ac_includes_default"
@@ -3861,70 +3861,6 @@ _ACEOF
 fi
 
 done
-
-
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking check if __uint32_t in IRIX sgidefs.h" >&5
-$as_echo_n "checking check if __uint32_t in IRIX sgidefs.h... " >&6; }
-cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-#include <sgidefs.h>
-  int main() {
-   __uint32_t p; p = 27;
-  }
-_ACEOF
-if ac_fn_c_try_compile "$LINENO"; then :
-
-$as_echo "#define HAVE___UINT32_T_IN_SGIDEFS_H 1" >>confdefs.h
-
-   { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
-$as_echo "yes" >&6; }
-else
-  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
-$as_echo "no" >&6; }
-fi
-rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
-
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking check if __uint64_t in IRIX sgidefs.h" >&5
-$as_echo_n "checking check if __uint64_t in IRIX sgidefs.h... " >&6; }
-cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-#include <sgidefs.h>
-  int main() {
-    __uint64_t p; p = 27;
-  }
-_ACEOF
-if ac_fn_c_try_compile "$LINENO"; then :
-
-$as_echo "#define HAVE___UINT64_T_IN_SGIDEFS_H 1" >>confdefs.h
-
-   { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
-$as_echo "yes" >&6; }
-else
-  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
-$as_echo "no" >&6; }
-fi
-rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
-
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking is C99 intptr_t in stdint.h" >&5
-$as_echo_n "checking is C99 intptr_t in stdint.h... " >&6; }
-cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-#include <stdint.h>
-  int main() {
-    intptr_t p; p = 27;
-  }
-_ACEOF
-if ac_fn_c_try_compile "$LINENO"; then :
-
-$as_echo "#define HAVE_INTPTR_T 1" >>confdefs.h
-
-   { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
-$as_echo "yes" >&6; }
-else
-  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
-$as_echo "no" >&6; }
-fi
-rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
 
 
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking should we enable shared lib" >&5
@@ -4073,57 +4009,13 @@ $as_echo "$ac_cv_search_uncompress" >&6; }
 ac_res=$ac_cv_search_uncompress
 if test "$ac_res" != no; then :
   test "$ac_res" = "none required" || LIBS="$ac_res $LIBS"
-   libzlib=y
+   dwfzlib=-lz
+
       { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
 $as_echo "yes" >&6; }
 else
-   libzlib=n
+
       { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
-$as_echo "no" >&6; }
-fi
-
-
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking is zlib.h present" >&5
-$as_echo_n "checking is zlib.h present... " >&6; }
-cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-#include "zlib.h"
-    int main() {
-      Bytef dest[100];
-      uLongf destlen = 100;
-      Bytef *src = 0;
-      uLong srclen = 3;
-      int res = uncompress(dest,&destlen,src,srclen);
-      if (res == Z_OK) {
-         /* ALL IS WELL */
-      }
-    }
-_ACEOF
-if ac_fn_c_try_compile "$LINENO"; then :
-   libzheader="y"
-     { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
-$as_echo "yes" >&6; }
-
-else
-   libzheader="n"
-     { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
-$as_echo "no" >&6; }
-fi
-rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
-
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking are zlib.h and its library present" >&5
-$as_echo_n "checking are zlib.h and its library present... " >&6; }
-if  test x$libzlib = "xy" -a x$libzheader = "xy" ; then :
-
-$as_echo "#define HAVE_ZLIB 1" >>confdefs.h
-
-     dwfzlib=-lz
-
-     { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
-$as_echo "yes" >&6; }
-
-else
-  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
 $as_echo "no" >&6; }
 fi
 

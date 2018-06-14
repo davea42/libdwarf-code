@@ -54,7 +54,9 @@ HEADERS = \
   irepdie.h \
   irepframe.h \
   irepform.h \
+  irepline.h \
   irepmacro.h \
+  ireppubnames.h \
   irepresentation.h \
   ireptodbg.h \
   strtabdata.h 

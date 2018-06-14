@@ -43,10 +43,6 @@
 #include <map>
 #include <vector>
 #include <string.h> // For memset etc
-#include <sys/stat.h> //open
-#include <fcntl.h> //open
-//  gelf.h is a GNU-only elf header. FIXME
-#include "gelf.h"
 #include "strtabdata.h"
 #include "dwarf.h"
 #include "libdwarf.h"

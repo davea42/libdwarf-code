@@ -10,47 +10,16 @@ AC_PROG_INSTALL
 AC_CHECK_TOOL(RANLIB, ranlib, :)
 AC_CHECK_TOOL(AR, ar)
 
-AC_CHECK_HEADERS(elf.h libelf.h sgidefs.h sys/types.h)
+AC_CHECK_HEADERS(libelf.h)
 
-dnl Attempt to determine if it is really IRIX/SGI or 'other'.
-AC_TRY_COMPILE([#include <sgidefs.h>],[  __uint32_t p; p = 27;] ,
-  AC_DEFINE(HAVE___UINT32_T_IN_SGIDEFS_H,1,
-        [Define 1 if __uint32_t is in sgidefs.h.]))
-AC_TRY_COMPILE([#include <sgidefs.h>],[  __uint64_t p; p = 27;] ,
-  AC_DEFINE(HAVE___UINT64_T_IN_SGIDEFS_H,1,
-        [Define 1 if __uint64_t is in sgidefs.h.]))
-AC_TRY_COMPILE([#include <sgidefs.h>],[  __uint64_t p; p = 27;] ,
-  AC_DEFINE(HAVE___UINT64_T_IN_SGIDEFS_H,1,
-        [Define 1 if  is in sgidefs.h.]))
-dnl the existence of sgidefs.h does not prove it's truly SGI, nor
-dnl prove that __uint32_t or __uint64_t is defined therein.
-AC_TRY_COMPILE([#include <sgidefs.h>],[  __uint32_t p; p = 27;] ,
-  AC_DEFINE(HAVE___UINT32_T_IN_SGIDEFS_H,1,
-        [Define 1 if __uint32_t is in sgidefs.h.]))
-AC_TRY_COMPILE([#include <stdint.h>],[intptr_t p; p = 27;] ,
-  AC_DEFINE(HAVE_INTPTR_T,1,
-        [Define 1 if intptr_t defined in C99 stdint.h]))
-AC_TRY_COMPILE([#include <sgidefs.h>],[  __uint64_t p; p = 27;] ,
-  AC_DEFINE(HAVE___UINT64_T_IN_SGIDEFS_H,1,
-        [Define 1 if __uint64_t is in sgidefs.h.]))
-AC_TRY_COMPILE([#include <sgidefs.h>],[  __uint64_t p; p = 27;] ,
-  AC_DEFINE(HAVE___UINT64_T_IN_SGIDEFS_H,1,
-        [Define 1 if  is in sgidefs.h.]))
 AC_SUBST(dwfzlib,[])
-AC_TRY_COMPILE([#include "zlib.h"],[
-    Bytef dest[100]; 
-    uLongf destlen = 100;
-    Bytef *src = 0;
-    uLong srclen = 3;
-    int res = uncompress(dest,&destlen,src,srclen);
-    if (res == Z_OK) {
-         /* ALL IS WELL */ 
-    }
-    ] ,
-    [AC_DEFINE(HAVE_ZLIB,1,
-        [Define 1 if zlib (decompression library) seems available.])
-     AC_SUBST(dwfzlib,[-lz])
-    ])
+AC_MSG_CHECKING(libz aka zlib has uncompress function)
+AC_SEARCH_LIBS([uncompress],[z],
+    [ AC_SUBST(dwfzlib,[-lz])
+      AC_MSG_RESULT(yes) ],
+    [ AC_SUBST(dwfzlib,[])
+      AC_MSG_RESULT(no) ])
+
 
 dnl This adds compiler option -fsanitize=address (gcc compiler run-time checks))
 AC_SUBST(dwfsanitize,[])

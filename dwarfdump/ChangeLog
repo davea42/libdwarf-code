@@ -1,4 +1,6 @@
 2018-06-13 David Anderson
+    * Remove mention of HAVE_NONSTANDARD_PRINTF.
+2018-06-13 David Anderson
     * configure.ac: New option --enable-elf-open 
       setting HAVE_ELF_OPEN 
     * config.h.in: HAVE_ELF_OPEN

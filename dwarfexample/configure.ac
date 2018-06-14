@@ -11,39 +11,7 @@ AC_PROG_INSTALL
 AC_CHECK_TOOL(RANLIB, ranlib, :)
 AC_CHECK_TOOL(AR, ar)
 
-AC_CHECK_HEADERS([elf.h unistd.h libelf.h sgidefs.h sys/types.h zlib.h])
-
-dnl Attempt to determine if it is really IRIX/SGI or 'other'.
-AC_MSG_CHECKING(check if __uint32_t in IRIX sgidefs.h)
-AC_COMPILE_IFELSE([AC_LANG_SOURCE([[#include <sgidefs.h>
-  int main() {
-   __uint32_t p; p = 27;
-  } ]])],
-  [AC_DEFINE(HAVE___UINT32_T_IN_SGIDEFS_H,1,
-        [Define 1 if __uint32_t is in sgidefs.h.])
-   AC_MSG_RESULT(yes)],
-  [AC_MSG_RESULT(no)])
-  
-AC_MSG_CHECKING(check if __uint64_t in IRIX sgidefs.h)
-AC_COMPILE_IFELSE([AC_LANG_SOURCE([[#include <sgidefs.h>
-  int main() {
-    __uint64_t p; p = 27;
-  } ]])],
-  [AC_DEFINE(HAVE___UINT64_T_IN_SGIDEFS_H,1,
-        [Define 1 if __uint64_t is in sgidefs.h.])
-   AC_MSG_RESULT(yes)],
-  [AC_MSG_RESULT(no)])
-
-AC_MSG_CHECKING(is C99 intptr_t in stdint.h)
-AC_COMPILE_IFELSE([AC_LANG_SOURCE([[#include <stdint.h>
-  int main() {
-    intptr_t p; p = 27;
-  } ]])],
-  [AC_DEFINE(HAVE_INTPTR_T,1,
-        [Define 1 if intptr_t defined in C99 stdint.h])
-   AC_MSG_RESULT(yes)],
-  [AC_MSG_RESULT(no)])
-
+AC_CHECK_HEADERS([unistd.h libelf.h sys/types.h])
 
 dnl default-disabled shared
 AC_MSG_CHECKING(should we enable shared lib)
@@ -99,38 +67,10 @@ AS_IF([ test "x$enable_elf_open" = "xyes"], [
 AC_SUBST(dwfzlib,[])
 AC_MSG_CHECKING(libz aka zlib has uncompress function)
 AC_SEARCH_LIBS([uncompress],[z],
-    [ libzlib=y 
+    [ AC_SUBST(dwfzlib,[-lz])
       AC_MSG_RESULT(yes) ],
-    [ libzlib=n
+    [ AC_SUBST(dwfzlib,[])
       AC_MSG_RESULT(no) ])
-
-AC_MSG_CHECKING(is zlib.h present)
-AC_COMPILE_IFELSE([AC_LANG_SOURCE([[#include "zlib.h"
-    int main() {
-      Bytef dest[100];
-      uLongf destlen = 100;
-      Bytef *src = 0;
-      uLong srclen = 3;
-      int res = uncompress(dest,&destlen,src,srclen);
-      if (res == Z_OK) {
-         /* ALL IS WELL */
-      }
-    } ]])],
-    [ libzheader="y"
-     AC_MSG_RESULT(yes)
-    ],
-    [ libzheader="n" 
-     AC_MSG_RESULT(no)])
-
-AC_MSG_CHECKING(are zlib.h and its library present)
-AS_IF([ test x$libzlib = "xy" -a x$libzheader = "xy" ],
-    [AC_DEFINE(HAVE_ZLIB,1,
-        [Define 1 if zlib decompression  available.])
-     AC_SUBST(dwfzlib,[-lz])
-     AC_MSG_RESULT(yes)
-    ],
-    [AC_MSG_RESULT(no)])
-
 
 AC_OUTPUT(Makefile)
 

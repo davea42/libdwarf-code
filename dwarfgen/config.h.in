@@ -3,14 +3,8 @@
 /* Define if building universal (internal helper macro) */
 #undef AC_APPLE_UNIVERSAL_BUILD
 
-/* Define to 1 if you have the <elf.h> header file. */
-#undef HAVE_ELF_H
-
 /* Define to 1 if we use elf_open in preference to open */
 #undef HAVE_ELF_OPEN
-
-/* Define 1 if intptr_t defined in C99 stdint.h */
-#undef HAVE_INTPTR_T
 
 /* Define to 1 if you have the <inttypes.h> header file. */
 #undef HAVE_INTTYPES_H
@@ -20,9 +14,6 @@
 
 /* Define to 1 if you have the <memory.h> header file. */
 #undef HAVE_MEMORY_H
-
-/* Define to 1 if you have the <sgidefs.h> header file. */
-#undef HAVE_SGIDEFS_H
 
 /* Define to 1 if you have the <stdint.h> header file. */
 #undef HAVE_STDINT_H
@@ -47,12 +38,6 @@
 
 /* Define 1 if zlib (decompression library) seems available. */
 #undef HAVE_ZLIB
-
-/* Define 1 if __uint32_t is in sgidefs.h. */
-#undef HAVE___UINT32_T_IN_SGIDEFS_H
-
-/* Define 1 if is in sgidefs.h. */
-#undef HAVE___UINT64_T_IN_SGIDEFS_H
 
 /* Define to the address where bug reports for this package should be sent. */
 #undef PACKAGE_BUGREPORT
