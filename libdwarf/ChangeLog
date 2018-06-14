@@ -1,12 +1,15 @@
+2018-06-14 David Anderson
+    * libdwarf.h.in: Simplified definitions of Dwarf_Unsigned etc
+      and DW_PR*.
 2018-06-12 David Anderson
-    *   dwarf_arange.c dwarf_base_types.h dwarf_die_deliv.c,
-        dwarf_dnames.c,dwarf_form.c,dwarf_frame.c,dwarf_global.c,
-        dwarf_line_table_reader_common.h,dwarf_loc.c,dwarf_macro5.c,
-        dwarf_opaque.h,dwarf_str_offsets.c,dwarf_util.c,libdwarfdefs.h,
-        pro_arange.c,pro_section.c,pro_types.c,pro_util.h:
-        Now, if Dwarf_Half is not defined 16 bits it is likely
-        that everything will still work right.
-        We don't use sizeof(Dwarf_Half) now.
+    * dwarf_arange.c dwarf_base_types.h dwarf_die_deliv.c,
+      dwarf_dnames.c,dwarf_form.c,dwarf_frame.c,dwarf_global.c,
+      dwarf_line_table_reader_common.h,dwarf_loc.c,dwarf_macro5.c,
+      dwarf_opaque.h,dwarf_str_offsets.c,dwarf_util.c,libdwarfdefs.h,
+      pro_arange.c,pro_section.c,pro_types.c,pro_util.h:
+      Now, if Dwarf_Half is not defined 16 bits it is likely
+      that everything will still work right.
+      We don't use sizeof(Dwarf_Half) now.
 2018-06-12 David Anderson
     * libdwarf.h.in: Removed Dwarf_Frame_Op3
       struct declaration. It was never used

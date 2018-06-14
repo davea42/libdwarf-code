@@ -70,50 +70,29 @@ typedef struct Elf* dwarf_elf_handle;
 */
 /*#define DW_PR_XZEROS "" */
 #define DW_PR_XZEROS "08"
-#if (_MIPS_SZLONG == 64)
-/* Special case for MIPS, so -64 (LP64) build gets simple -long-.
-   Non-MIPS LP64 or ILP64 environments should probably ensure
-   _MIPS_SZLONG set to 64 everywhere this header is #included.
-*/
-typedef int             Dwarf_Bool;         /* boolean type */
-typedef unsigned long   Dwarf_Off;          /* 4 or 8 byte file offset */
-typedef unsigned long   Dwarf_Unsigned;     /* 4 or 8 byte unsigned value */
-typedef unsigned short  Dwarf_Half;         /* 2 byte unsigned value */
-typedef unsigned char   Dwarf_Small;        /* 1 byte unsigned value */
-typedef signed   long   Dwarf_Signed;       /* 4 or 8 byte signed value */
-typedef unsigned long   Dwarf_Addr;         /* target memory address */
-#define  DW_PR_DUx  "lx"
-#define  DW_PR_DSx  "lx"
-#define  DW_PR_DUu  "lu"
-#define  DW_PR_DSd  "ld"
 
-#else /* 32-bit */
-/* This is for ILP32, allowing i/o of 64bit dwarf info.
-   Also should be fine for LP64 and ILP64 cases.
-*/
-typedef int                 Dwarf_Bool;     /* boolean type */
-typedef unsigned long long  Dwarf_Off;      /* 8 byte file offset */
-typedef unsigned long long  Dwarf_Unsigned; /* 8 byte unsigned value*/
-typedef unsigned short      Dwarf_Half;     /* 2 byte unsigned value */
-typedef unsigned char       Dwarf_Small;    /* 1 byte unsigned value */
-typedef signed   long long  Dwarf_Signed;   /* 8 byte signed value */
-typedef unsigned long long  Dwarf_Addr;     /* target memory address */
-#define  DW_PR_DUx  "llx"
-#define  DW_PR_DSx  "llx"
-#define  DW_PR_DUu  "llu"
-#define  DW_PR_DSd  "lld"
-#endif
-#ifdef HAVE_NONSTANDARD_PRINTF_64_FORMAT
-/* Windows does not use std C formatting, so allow it. */
-#undef DW_PR_DUx
-#undef DW_PR_DSx
-#undef DW_PR_DUu
-#undef DW_PR_DSd
-#define  DW_PR_DUx  "I64x"
-#define  DW_PR_DSx  "I64x"
-#define  DW_PR_DUu  "I64u"
-#define  DW_PR_DSd  "I64d"
-#endif /* HAVE_NONSTANDARD_FORMAT */
+typedef unsigned long long Dwarf_Unsigned;
+typedef signed   long long Dwarf_Signed;
+typedef unsigned long long Dwarf_Off;
+typedef unsigned long long Dwarf_Addr;
+typedef int                Dwarf_Bool;   /* boolean type */
+typedef unsigned short     Dwarf_Half;   /* 2 byte unsigned value */
+typedef unsigned char      Dwarf_Small;  /* 1 byte unsigned value */
+/*  If sizeof(Dwarf_Half) is greater than  2
+    we intend libdwarf should work anyway, but
+    as of June 14, 2018 it only mostly works. */
+
+#ifdef _WIN32
+#define DW_PR_DUx "I64x"
+#define DW_PR_DSx "I64x"
+#define DW_PR_DUu "I64u"
+#define DW_PR_DSd "I64d"
+#else
+#define DW_PR_DUx "llx"
+#define DW_PR_DSx "llx"
+#define DW_PR_DUu "llu"
+#define DW_PR_DSd "lld"
+#endif /* DW_PR defines */
 
 typedef void*        Dwarf_Ptr;          /* host machine pointer */
 
