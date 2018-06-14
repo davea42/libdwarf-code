@@ -1,3 +1,9 @@
+2018-06-14:
+  A small simplification of build options simplifies building
+  across different environments.  If your environment needs
+  to use the non-standard elf_open() call instead of unix/linux open()
+  then do <path>/configure --enable-elf-open which sets
+  HAVE_ELF_OPEN in config.h.
 2018-03-27:
   All the DWARF5 FORMs appear to be dealt with.
   It's now possible to cross-compile libdwarf and dwarfdump.

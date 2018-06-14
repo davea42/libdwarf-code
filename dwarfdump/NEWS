@@ -1,3 +1,8 @@
+June 14, 2018
+  A small simplification of build options simplifies building
+  across different environments.  If your environment needs
+  to use the non-standard elf_open() call instead of plain open()
+  then at configure time do --enable-elf-open.
 May 17, 2017
   Now dwarfdump understands both split-dwarf and COMDAT sections
   (it calls the section-groups 'Groups')
