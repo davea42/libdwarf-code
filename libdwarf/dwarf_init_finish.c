@@ -793,14 +793,14 @@ insert_sht_list_in_group_map(Dwarf_Debug dbg,
     }
     /*  So now pick up the data in dss_data.
         It is an array of 32 bit fields.
-        Dwarf_ufixed.  Zero is just a constant 1.
+        Entry zero is just a constant 1.
         Each additional is a section number. */
     data = secdata.dss_data;
     secend = data + secdata.dss_size;
     {
         unsigned i = 1;
         unsigned count = doas->size/doas->entrysize;
-        Dwarf_ufixed  fval = 0;
+        Dwarf_Unsigned  fval = 0;
 
         /*  The fields treatments with  regard
             to endianness is unclear.  In any case a single
@@ -811,9 +811,9 @@ insert_sht_list_in_group_map(Dwarf_Debug dbg,
             reader to byte swap and then fix things.
             At least one test case has big-endian
             data but little-endian SHT_GROUP data. */
-        READ_UNALIGNED_CK(dbg,fval,Dwarf_ufixed,
+        READ_UNALIGNED_CK(dbg,fval,Dwarf_Unsigned,
             data,
-            sizeof(Dwarf_ufixed),
+            DWARF_32BIT_SIZE,
             error,
             secend);
         if (fval != 1 && fval != 0x1000000) {
@@ -825,19 +825,19 @@ insert_sht_list_in_group_map(Dwarf_Debug dbg,
         data = data + doas->entrysize;
         for (i = 1 ; i < count ; ++i) {
 
-            Dwarf_ufixed  val = 0;
-            READ_UNALIGNED_CK(dbg,val,Dwarf_ufixed,
+            Dwarf_Unsigned  val = 0;
+            READ_UNALIGNED_CK(dbg,val,Dwarf_Unsigned,
                 data,
-                sizeof(Dwarf_ufixed),
+                DWARF_32BIT_SIZE,
                 error,
                 secend);
             if (val > section_count) {
                 /*  Might be confused endianness by
                     the compiler generating the SHT_GROUP.
                     This is pretty horrible. */
-                Dwarf_ufixed valr = 0;
+                Dwarf_Unsigned valr = 0;
                 _dwarf_memcpy_swap_bytes(&valr,&val,
-                    sizeof(Dwarf_ufixed));
+                    DWARF_32BIT_SIZE);
                 if (valr > section_count) {
                     _dwarf_error(dbg,error,DW_DLE_GROUP_INTERNAL_ERROR);
                     return DW_DLV_ERROR;
@@ -867,7 +867,7 @@ insert_sht_list_in_group_map(Dwarf_Debug dbg,
                     doasx.type) ) {
                     continue;
                 }
-                data += sizeof(Dwarf_ufixed);
+                data += DWARF_32BIT_SIZE;
                 *did_add_map = TRUE;
                 res = _dwarf_insert_in_group_map(dbg,
                     comdat_group_number,val,
@@ -1553,7 +1553,7 @@ do_decompress_zlib(Dwarf_Debug dbg,
         unsigned structsize = 3* fldsize;
 
         READ_UNALIGNED_CK(dbg,type,Dwarf_Unsigned,ptr,
-            sizeof(Dwarf_ufixed),
+            DWARF_32BIT_SIZE,
             error,endsection);
         ptr += fldsize;
         READ_UNALIGNED_CK(dbg,size,Dwarf_Unsigned,ptr,fldsize,

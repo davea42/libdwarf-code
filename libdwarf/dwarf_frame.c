@@ -226,8 +226,7 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
         pc-value corresponding to the frame instructions.
         Starts at zero when the caller has no value to pass in. */
 
-    /*  Must be min de_pointer_size bytes and must be at least sizeof
-        Dwarf_ufixed */
+    /*  Must be min de_pointer_size bytes and must be at least 4 */
     Dwarf_Unsigned adv_loc = 0;
 
     unsigned reg_count = dbg->de_frame_reg_rules_entry_count;
@@ -510,9 +509,9 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
         case DW_CFA_advance_loc4:
             {
                 READ_UNALIGNED_CK(dbg, adv_loc, Dwarf_Unsigned,
-                    instr_ptr, sizeof(Dwarf_ufixed),
+                    instr_ptr, DWARF_32BIT_SIZE,
                     error,final_instr_ptr);
-                instr_ptr += sizeof(Dwarf_ufixed);
+                instr_ptr += DWARF_32BIT_SIZE;
                 fp_offset = adv_loc;
 
                 if (need_augmentation) {

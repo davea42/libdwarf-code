@@ -1463,14 +1463,14 @@ _dwarf_die_attr_unsigned_constant(Dwarf_Die die,
 
     case DW_FORM_data4:
         READ_UNALIGNED_CK(dbg, ret_value, Dwarf_Unsigned,
-            info_ptr, sizeof(Dwarf_sfixed),
+            info_ptr, DWARF_32BIT_SIZE,
             error,die_info_end);
         *return_val = ret_value;
         return (DW_DLV_OK);
 
     case DW_FORM_data8:
         READ_UNALIGNED_CK(dbg, ret_value, Dwarf_Unsigned,
-            info_ptr, sizeof(Dwarf_Unsigned),
+            info_ptr, DWARF_64BIT_SIZE,
             error,die_info_end);
         *return_val = ret_value;
         return (DW_DLV_OK);

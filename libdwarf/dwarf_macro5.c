@@ -154,9 +154,9 @@ _dwarf_skim_forms(Dwarf_Debug dbg,
             break;
         case DW_FORM_block4:
             READ_UNALIGNED_CK(dbg, ret_value, Dwarf_Unsigned,
-                mdata, sizeof(Dwarf_ufixed),
+                mdata, DWARF_32BIT_SIZE,
                 error,section_end);
-            v = ret_value + sizeof(Dwarf_ufixed);
+            v = ret_value + DWARF_32BIT_SIZE;
             totallen += v;
             mdata += v;
             break;

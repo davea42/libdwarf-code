@@ -973,15 +973,15 @@ dwarf_create_fde_from_after_start(Dwarf_Debug dbg,
         saved_frame_ptr = frame_ptr;
         /*  The first word is an offset into exception tables.
             Defined as a 32bit offset even for CC -64. */
-        if ((frame_ptr + sizeof(Dwarf_sfixed)) > section_ptr_end) {
+        if ((frame_ptr + DWARF_32BIT_SIZE) > section_ptr_end) {
             _dwarf_error(dbg,error,DW_DLE_DEBUG_FRAME_LENGTH_BAD);
             return DW_DLV_ERROR;
         }
         READ_UNALIGNED_CK(dbg, offset_into_exception_tables,
-            Dwarf_Addr, frame_ptr, sizeof(Dwarf_sfixed),
+            Dwarf_Addr, frame_ptr, DWARF_32BIT_SIZE,
             error,section_ptr_end);
         SIGN_EXTEND(offset_into_exception_tables,
-            sizeof(Dwarf_sfixed));
+            DWARF_32BIT_SIZE);
         frame_ptr = saved_frame_ptr + length_of_augmented_fields;
         }
         break;
@@ -1496,11 +1496,10 @@ read_encoded_ptr(Dwarf_Debug dbg,
     case DW_EH_PE_udata4:{
         Dwarf_Unsigned ret_value = 0;
 
-        /* ASSERT: sizeof(Dwarf_ufixed) == 4 */
         READ_UNALIGNED_CK(dbg, ret_value, Dwarf_Unsigned,
-            input_field, sizeof(Dwarf_ufixed),error,section_end);
+            input_field, DWARF_32BIT_SIZE,error,section_end);
         *addr = ret_value;
-        *input_field_updated = input_field + sizeof(Dwarf_ufixed);
+        *input_field_updated = input_field + DWARF_32BIT_SIZE;
         }
         break;
 
@@ -1509,9 +1508,9 @@ read_encoded_ptr(Dwarf_Debug dbg,
 
         /* ASSERT: sizeof(Dwarf_Unsigned) == 8 */
         READ_UNALIGNED_CK(dbg, ret_value, Dwarf_Unsigned,
-            input_field, sizeof(Dwarf_Unsigned),error,section_end);
+            input_field, DWARF_64BIT_SIZE,error,section_end);
         *addr = ret_value;
-        *input_field_updated = input_field + sizeof(Dwarf_Unsigned);
+        *input_field_updated = input_field +  DWARF_64BIT_SIZE;
         }
         break;
 
@@ -1537,13 +1536,12 @@ read_encoded_ptr(Dwarf_Debug dbg,
     case DW_EH_PE_sdata4:{
         Dwarf_Unsigned val = 0;
 
-        /* ASSERT: sizeof(Dwarf_ufixed) == 4 */
         READ_UNALIGNED_CK(dbg, val,
             Dwarf_Unsigned, input_field,
-            sizeof(Dwarf_ufixed),error,section_end);
-        SIGN_EXTEND(val, sizeof(Dwarf_ufixed));
+            DWARF_32BIT_SIZE,error,section_end);
+        SIGN_EXTEND(val, DWARF_32BIT_SIZE);
         *addr = (Dwarf_Unsigned) val;
-        *input_field_updated = input_field + sizeof(Dwarf_ufixed);
+        *input_field_updated = input_field + DWARF_32BIT_SIZE;
         }
         break;
     case DW_EH_PE_sdata8:{
@@ -1552,9 +1550,9 @@ read_encoded_ptr(Dwarf_Debug dbg,
         /* ASSERT: sizeof(Dwarf_Unsigned) == 8 */
         READ_UNALIGNED_CK(dbg, val,
             Dwarf_Unsigned, input_field,
-            sizeof(Dwarf_Unsigned),error,section_end);
+            DWARF_64BIT_SIZE,error,section_end);
         *addr = (Dwarf_Unsigned) val;
-        *input_field_updated = input_field + sizeof(Dwarf_Unsigned);
+        *input_field_updated = input_field + DWARF_64BIT_SIZE;
         }
         break;
     default:

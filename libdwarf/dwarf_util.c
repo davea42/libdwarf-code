@@ -248,7 +248,7 @@ _dwarf_get_size_of_val(Dwarf_Debug dbg,
         ptrdiff_t sizeasptrdiff = 0;
 
         READ_UNALIGNED_CK(dbg, ret_value, Dwarf_Unsigned,
-            val_ptr, sizeof(Dwarf_ufixed),
+            val_ptr, DWARF_32BIT_SIZE,
             error,section_end_ptr);
         sizeasptrdiff = (ptrdiff_t)ret_value;
         if (sizeasptrdiff > (section_end_ptr - val_ptr) ||
@@ -256,7 +256,7 @@ _dwarf_get_size_of_val(Dwarf_Debug dbg,
             _dwarf_error(dbg,error,DW_DLE_FORM_BLOCK_LENGTH_ERROR);
             return DW_DLV_ERROR;
         }
-        *size_out = ret_value + sizeof(Dwarf_ufixed);
+        *size_out = ret_value + DWARF_32BIT_SIZE;
         }
         return DW_DLV_OK;
 

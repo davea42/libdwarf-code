@@ -70,6 +70,10 @@ typedef signed short Dwarf_Shalf;
 typedef __uint32_t Dwarf_ufixed;
 typedef __int32_t Dwarf_sfixed;
 
+#define DWARF_HALF_SIZE 2
+#define DWARF_32BIT_SIZE 4
+#define DWARF_64BIT_SIZE 8
+
 /*
     producer:
     This struct is used to hold information about all

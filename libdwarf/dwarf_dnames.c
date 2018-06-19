@@ -187,17 +187,17 @@ read_uword_val(Dwarf_Debug dbg,
     Dwarf_Small **ptr_in,
     Dwarf_Small *endptr,
     int   errcode,
-    Dwarf_ufixed *val_out,
+    Dwarf_Unsigned *val_out,
     Dwarf_Unsigned area_length,
     Dwarf_Error *error)
 {
-    Dwarf_ufixed val = 0;
+    Dwarf_Unsigned val = 0;
     Dwarf_Small *ptr = *ptr_in;
 
     READ_UNALIGNED_CK(dbg, val, Dwarf_ufixed,
-        ptr, sizeof(Dwarf_ufixed),
+        ptr, DWARF_32BIT_SIZE,
         error,endptr);
-    ptr += sizeof(Dwarf_ufixed);
+    ptr += DWARF_32BIT_SIZE;
     if (ptr >= endptr) {
         _dwarf_error(dbg, error,errcode);
         return DW_DLV_ERROR;
@@ -232,13 +232,13 @@ read_a_name_index(Dwarf_Dnames_Head dn,
     Dwarf_Small *end_dnames = 0;
     Dwarf_Half version = 0;
     Dwarf_Half padding = 0;
-    Dwarf_ufixed comp_unit_count = 0;
-    Dwarf_ufixed local_type_unit_count = 0;
-    Dwarf_ufixed foreign_type_unit_count = 0;
-    Dwarf_ufixed bucket_count = 0;
-    Dwarf_ufixed name_count = 0;
-    Dwarf_ufixed abbrev_table_size = 0; /* bytes */
-    Dwarf_ufixed augmentation_string_size = 0; /* bytes */
+    Dwarf_Unsigned comp_unit_count = 0;
+    Dwarf_Unsigned local_type_unit_count = 0;
+    Dwarf_Unsigned foreign_type_unit_count = 0;
+    Dwarf_Unsigned bucket_count = 0;
+    Dwarf_Unsigned name_count = 0;
+    Dwarf_Unsigned abbrev_table_size = 0; /* bytes */
+    Dwarf_Unsigned augmentation_string_size = 0; /* bytes */
     int res = 0;
     const char *str_utf8 = 0;
     Dwarf_Small *curptr = *curptr_in;
@@ -423,7 +423,7 @@ read_a_name_index(Dwarf_Dnames_Head dn,
     }
 
     di_header->din_buckets = curptr;
-    curptr +=  sizeof(Dwarf_ufixed) * bucket_count;
+    curptr +=  DWARF_32BIT_SIZE * bucket_count;
     if(curptr > end_dnames) {
         free(di_header->din_augmentation_string);
         free(di_header);
@@ -441,7 +441,7 @@ read_a_name_index(Dwarf_Dnames_Head dn,
     }
 
     di_header->din_string_offsets = curptr;
-    curptr +=  sizeof(Dwarf_ufixed) * name_count;
+    curptr +=  DWARF_32BIT_SIZE * name_count;
     if(curptr > end_dnames) {
         free(di_header->din_augmentation_string);
         free(di_header);
@@ -450,7 +450,7 @@ read_a_name_index(Dwarf_Dnames_Head dn,
     }
 
     di_header->din_entry_offsets = curptr;
-    curptr +=  sizeof(Dwarf_ufixed) * name_count;
+    curptr +=  DWARF_32BIT_SIZE * name_count;
     if(curptr > end_dnames) {
         free(di_header->din_augmentation_string);
         free(di_header);
@@ -882,11 +882,11 @@ int dwarf_debugnames_bucket(Dwarf_Dnames_Head dn,
     if (index_of_name_entry) {
         Dwarf_Unsigned offsetval = 0;
         Dwarf_Small *ptr = cur->din_buckets +
-            bucket_number * sizeof(Dwarf_ufixed);
+            bucket_number * DWARF_32BIT_SIZE;
         Dwarf_Small *endptr = cur->din_hash_table;
 
         READ_UNALIGNED_CK(dbg, offsetval, Dwarf_Unsigned,
-            ptr, sizeof(Dwarf_ufixed),
+            ptr, DWARF_32BIT_SIZE,
             error,endptr);
         *index_of_name_entry = offsetval;
     }
@@ -939,22 +939,22 @@ dwarf_debugnames_name(Dwarf_Dnames_Head dn,
     if (offset_to_debug_str) {
         Dwarf_Unsigned offsetval = 0;
         Dwarf_Small *ptr = cur->din_string_offsets +
-            name_entry * sizeof(Dwarf_ufixed);
+            name_entry * DWARF_32BIT_SIZE;
         Dwarf_Small *endptr = cur->din_abbreviations;
 
         READ_UNALIGNED_CK(dbg, offsetval, Dwarf_Unsigned,
-            ptr, sizeof(Dwarf_ufixed),
+            ptr, DWARF_32BIT_SIZE,
             error,endptr);
         *offset_to_debug_str = offsetval;
     }
     if (offset_in_entrypool) {
         Dwarf_Unsigned offsetval = 0;
         Dwarf_Small *ptr = cur->din_entry_offsets +
-            name_entry * sizeof(Dwarf_ufixed);
+            name_entry * DWARF_32BIT_SIZE;
         Dwarf_Small *endptr = cur->din_abbreviations;
 
         READ_UNALIGNED_CK(dbg, offsetval, Dwarf_Unsigned,
-            ptr, sizeof(Dwarf_ufixed),
+            ptr, DWARF_32BIT_SIZE,
             error,endptr);
         *offset_in_entrypool = offsetval;
     }

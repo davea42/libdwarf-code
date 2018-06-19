@@ -1585,12 +1585,12 @@ _dwarf_next_die_info_ptr(Dwarf_Byte_Ptr die_info_ptr,
                 break;
             case DW_FORM_ref4:
                 READ_UNALIGNED_CK(dbg, offset, Dwarf_Unsigned,
-                    info_ptr, sizeof(Dwarf_ufixed),
+                    info_ptr, DWARF_32BIT_SIZE,
                     error,die_info_end);
                 break;
             case DW_FORM_ref8:
                 READ_UNALIGNED_CK(dbg, offset, Dwarf_Unsigned,
-                    info_ptr, sizeof(Dwarf_Unsigned),
+                    info_ptr, DWARF_64BIT_SIZE,
                     error,die_info_end);
                 break;
             case DW_FORM_ref_udata:

@@ -1,3 +1,12 @@
+2018-06-19 David Anderson
+    * dwarf_base_types.h,dwarf_die_deliv.c,dwarf_dnames.c,
+      dwarf_form.c,dwarf_frame.c,dwarf_frame2.c,dwarf_init_finish.c,
+      dwarf_loc2.h,dwarf_macro5.c,dwarf_query.c,dwarf_str_offsets.c,
+      dwarf_util.c,pro_opaque.h: Now defining using 
+      DWARF_32BIT_SIZE DWARF_64BIT_SIZE DWARF_HALF_SIZE
+      instead of using sizeof(Dwarf_Unsigned) or sizeof(Dwarf_Half).
+      Making it clearer we're reading the size the standard
+      says the items are.
 2018-06-14 David Anderson
     * libdwarf.h.in: Simplified definitions of Dwarf_Unsigned etc
       and DW_PR*.

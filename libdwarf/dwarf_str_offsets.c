@@ -169,20 +169,20 @@ find_next_str_offsets_tab(Dwarf_Str_Offsets_Table sot,
     Dwarf_Unsigned offset  = starting_offset;
 
     word_ptra = word_ptrb = sot->so_section_start_ptr +offset;
-    for ( ; ; word_ptrb += sizeof(Dwarf_ufixed)) {
-        Dwarf_ufixed one32bit = 0;
+    for ( ; ; word_ptrb += DWARF_32BIT_SIZE) {
+        Dwarf_Unsigned one32bit = 0;
         if (word_ptrb >= sot->so_section_end_ptr) {
             sot->so_wasted_section_bytes += (word_ptrb - word_ptra);
             return DW_DLV_NO_ENTRY;
         }
-        READ_UNALIGNED_CK(sot->so_dbg, one32bit, Dwarf_ufixed,
-            word_ptrb, sizeof(Dwarf_ufixed),
+        READ_UNALIGNED_CK(sot->so_dbg, one32bit, Dwarf_Unsigned,
+            word_ptrb, DWARF_32BIT_SIZE,
             error,sot->so_section_end_ptr);
         if (one32bit) {
             /* Found a value */
             break;
         }
-        offset += sizeof(Dwarf_ufixed);
+        offset += DWARF_32BIT_SIZE;
     }
     sot->so_wasted_section_bytes += (word_ptrb - word_ptra);
     *table_offset_out = offset;

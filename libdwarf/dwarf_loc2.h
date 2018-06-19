@@ -249,7 +249,7 @@ _dwarf_read_loc_section_dwo(Dwarf_Debug dbg,
     case DW_LLEX_start_end_entry: {
         Dwarf_Unsigned addr_indexs = 0;
         Dwarf_Unsigned addr_indexe= 0;
-        Dwarf_Half exprlen = 0;
+        Dwarf_Unsigned exprlen = 0;
         Dwarf_Word leb128_length = 0;
 
         DECODE_LEB128_UWORD_LEN_CK(locptr,addr_indexs,
@@ -265,11 +265,11 @@ _dwarf_read_loc_section_dwo(Dwarf_Debug dbg,
         *lowpc=addr_indexs;
         *highpc=addr_indexe;
 
-        READ_UNALIGNED_CK(dbg, exprlen, Dwarf_Half, locptr,
-            sizeof(exprlen),
+        READ_UNALIGNED_CK(dbg, exprlen, Dwarf_Unsigned, locptr,
+            DWARF_HALF_SIZE,
             error,section_end);
-        locptr += sizeof(exprlen);
-        expr_offset += sizeof(exprlen);
+        locptr += DWARF_HALF_SIZE;
+        expr_offset += DWARF_HALF_SIZE;
 
         return_block->bl_len = exprlen;
         return_block->bl_data = locptr;
@@ -285,8 +285,8 @@ _dwarf_read_loc_section_dwo(Dwarf_Debug dbg,
         break;
     case DW_LLEX_start_length_entry: {
         Dwarf_Unsigned addr_index = 0;
-        Dwarf_ufixed  range_length = 0;
-        Dwarf_Half exprlen = 0;
+        Dwarf_Unsigned  range_length = 0;
+        Dwarf_Unsigned exprlen = 0;
         Dwarf_Word leb128_length = 0;
 
         DECODE_LEB128_UWORD_LEN_CK(locptr,addr_index,
@@ -294,17 +294,17 @@ _dwarf_read_loc_section_dwo(Dwarf_Debug dbg,
             dbg,error,section_end);
         expr_offset +=leb128_length;
 
-        READ_UNALIGNED_CK(dbg, range_length, Dwarf_ufixed, locptr,
-            sizeof(range_length),
+        READ_UNALIGNED_CK(dbg, range_length, Dwarf_Unsigned, locptr,
+            DWARF_32BIT_SIZE,
             error,section_end);
-        locptr += sizeof(range_length);
-        expr_offset += sizeof(range_length);
+        locptr += DWARF_32BIT_SIZE;
+        expr_offset += DWARF_32BIT_SIZE;
 
-        READ_UNALIGNED_CK(dbg, exprlen, Dwarf_Half, locptr,
-            sizeof(exprlen),
+        READ_UNALIGNED_CK(dbg, exprlen, Dwarf_Unsigned, locptr,
+            DWARF_HALF_SIZE,
             error,section_end);
-        locptr += sizeof(exprlen);
-        expr_offset += sizeof(exprlen);
+        locptr += DWARF_HALF_SIZE;
+        expr_offset += DWARF_HALF_SIZE;
 
         *lowpc = addr_index;
         *highpc = range_length;
@@ -321,29 +321,31 @@ _dwarf_read_loc_section_dwo(Dwarf_Debug dbg,
         }
         break;
     case DW_LLEX_offset_pair_entry: {
-        Dwarf_ufixed  startoffset = 0;
-        Dwarf_ufixed  endoffset = 0;
-        Dwarf_Half exprlen = 0;
+        Dwarf_Unsigned  startoffset = 0;
+        Dwarf_Unsigned  endoffset = 0;
+        Dwarf_Unsigned exprlen = 0;
 
-        READ_UNALIGNED_CK(dbg, startoffset, Dwarf_ufixed, locptr,
-            sizeof(startoffset),
+        READ_UNALIGNED_CK(dbg, startoffset,
+            Dwarf_Unsigned, locptr,
+            DWARF_32BIT_SIZE,
             error,section_end);
-        locptr += sizeof(startoffset);
-        expr_offset += sizeof(startoffset);
+        locptr += DWARF_32BIT_SIZE;
+        expr_offset += DWARF_32BIT_SIZE;
 
-        READ_UNALIGNED_CK(dbg, endoffset, Dwarf_ufixed, locptr,
-            sizeof(endoffset),
+        READ_UNALIGNED_CK(dbg, endoffset,
+            Dwarf_Unsigned, locptr,
+            DWARF_32BIT_SIZE,
             error,section_end);
-        locptr += sizeof(endoffset);
-        expr_offset += sizeof(endoffset);
+        locptr += DWARF_32BIT_SIZE;
+        expr_offset +=  DWARF_32BIT_SIZE;
         *lowpc= startoffset;
         *highpc = endoffset;
 
-        READ_UNALIGNED_CK(dbg, exprlen, Dwarf_Half, locptr,
-            sizeof(exprlen),
+        READ_UNALIGNED_CK(dbg, exprlen, Dwarf_Unsigned, locptr,
+            DWARF_HALF_SIZE,
             error,section_end);
-        locptr += sizeof(exprlen);
-        expr_offset += sizeof(exprlen);
+        locptr += DWARF_HALF_SIZE;
+        expr_offset += DWARF_HALF_SIZE;
 
         return_block->bl_len = exprlen;
         return_block->bl_data = locptr;
