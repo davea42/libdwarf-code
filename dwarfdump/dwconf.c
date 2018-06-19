@@ -28,8 +28,8 @@
 
 #ifdef HAVE_STDAFX_H
 #include "stdafx.h"
-#elif defined(HAVE_WINDOWS_H)
-#include <Windows.h>
+#elif defined(_WIN32)
+#include <windows.h>
 #define BOOLEAN_TYPEDEFED 1
 #endif /* HAVE_STDAFX_H */
 

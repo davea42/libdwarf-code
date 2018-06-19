@@ -61,7 +61,7 @@ print_version_details(UNUSEDARG const char * name,int alwaysprint)
     static char acVersion[64];
     snprintf(acVersion,sizeof(acVersion),
         "[%s %s %s Win%s (%s)]",__DATE__,__TIME__,acType,bits,RELEASE_DATE);
-    printf("%s %s\n", sanitized(name),acVersion)
+    printf("%s %s\n", sanitized(name),acVersion);
 #else
     printf("%s [%s %s %s Win%s (%s)]\n",
         sanitized(name),__DATE__,__TIME__,acType,bits,RELEASE_DATE);
