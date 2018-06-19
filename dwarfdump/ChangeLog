@@ -1,3 +1,8 @@
+2018-06-19 David Anderson
+    * common.c: Added missing ; for Windows code
+    * dwconf.c: ifdef _WIN32, not a HAVE* name.
+      Spell include windows.h not Windows.h for maximum
+      compatibility.
 2018-06-13 David Anderson
     * Remove mention of HAVE_NONSTANDARD_PRINTF.
 2018-06-13 David Anderson
