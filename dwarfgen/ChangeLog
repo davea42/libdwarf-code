@@ -1,3 +1,6 @@
+2018-06-19  David Anderson
+     * dwarfgen.cc: Now it's intended to build for Linux
+       or Windows and get usable file open modes automatically.
 2018-06-14  David Anderson
      * Makefile.in
      * config.h.in,configure.ac

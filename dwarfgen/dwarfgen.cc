@@ -1,4 +1,4 @@
-/*  
+/*
   Copyright (C) 2010-2018 David Anderson.  All rights reserved.
 
   Redistribution and use in source and binary forms, with or without
@@ -93,21 +93,23 @@
 #include <io.h>
 #endif
 
+#ifdef _WIN32
 #ifndef O_RDONLY
 /*  This is for a Windows environment */
 # define O_RDONLY _O_RDONLY
 #endif
-
 #ifdef _O_BINARY
 /*  This is for a Windows environment */
 #define O_BINARY _O_BINARY
-#else
+#endif
+#else /* !_WIN32 */
 # ifndef O_BINARY
 # define O_BINARY 0  /* So it does nothing in Linux/Unix */
 # endif
-#endif /* O_BINARY */
+#endif /* !_WIN32 */
 
 /*  These are for a Windows environment */
+#ifdef _WIN32
 #ifdef _O_WRONLY
 #define O_WRONLY _O_WRONLY
 #endif
@@ -117,6 +119,27 @@
 #ifdef _O_TRUNC
 #define O_TRUNC _O_TRUNC
 #endif
+#ifdef _S_IREAD
+#define S_IREAD _S_IREAD
+#endif
+#ifdef _S_IWRITE
+#define S_IWRITE _S_IWRITE
+#endif
+/* open modes S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH */
+#ifndef S_IRUSR
+#define S_IREAD _S_IREAD
+#endif
+#ifndef S_IWUSR
+#define S_IWUSR _S_IWRITE
+#endif
+#ifndef S_IRGRP
+#define S_IRGRP 0
+#endif
+#ifndef S_IROTH
+#define S_IROTH 0
+#endif
+#endif /* _WIN32 */
+
 
 using std::string;
 using std::cout;
