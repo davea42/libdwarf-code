@@ -1,4 +1,7 @@
 2018-06-19 David Anderson
+    * pro_util.h: Deleted unused sizeof_sbyte macro,
+      simplified sizeof_ubyte to 1.
+2018-06-19 David Anderson
     * dwarf_base_types.h,dwarf_die_deliv.c,dwarf_dnames.c,
       dwarf_form.c,dwarf_frame.c,dwarf_frame2.c,dwarf_init_finish.c,
       dwarf_loc2.h,dwarf_macro5.c,dwarf_query.c,dwarf_str_offsets.c,
