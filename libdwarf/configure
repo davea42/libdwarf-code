@@ -685,7 +685,6 @@ SHELL'
 ac_subst_files=''
 ac_user_opts='
 enable_option_checking
-enable_nonstandardprintf
 enable_shared
 enable_nonshared
 enable_fpic
@@ -1324,9 +1323,6 @@ Optional Features:
   --disable-option-checking  ignore unrecognized --enable/--with options
   --disable-FEATURE       do not include FEATURE (same as --enable-FEATURE=no)
   --enable-FEATURE[=ARG]  include FEATURE [ARG=yes]
-  --enable-nonstandardprintf
-                          Use a special printf format for 64bit (default is
-                          NO)
   --enable-shared         build shared library libdwarf.so
   --disable-nonshared     do not build archive library libdwarf.a
   --disable-fpic          do not build with -fPIC
@@ -4352,21 +4348,6 @@ else
   { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
 $as_echo "no" >&6; }
 fi
-
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking enable nonstandardprintf" >&5
-$as_echo_n "checking enable nonstandardprintf... " >&6; }
-# Check whether --enable-nonstandardprintf was given.
-if test "${enable_nonstandardprintf+set}" = set; then :
-  enableval=$enable_nonstandardprintf;
-$as_echo "#define HAVE_NONSTANDARD_PRINTF_64_FORMAT 1" >>confdefs.h
-
-          { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
-$as_echo "yes" >&6; }
-else
-  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
-$as_echo "no" >&6; }
-fi
-
 
 cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */

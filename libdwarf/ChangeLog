@@ -1,4 +1,8 @@
 2018-06-19 David Anderson
+    * configure.ac, config.h.in: Removed
+      HAVE_NONSTANDARD_PRINTF_64_FORMAT.
+    * configure: Regenerated.
+2018-06-19 David Anderson
     * pro_util.h: Deleted unused sizeof_sbyte macro,
       simplified sizeof_ubyte to 1.
 2018-06-19 David Anderson

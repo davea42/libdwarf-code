@@ -173,14 +173,6 @@ AS_IF([ test x$libzlib = "xy" -a x$libzheader = "xy" ],
     ],
     [AC_MSG_RESULT(no)])
 
-AC_MSG_CHECKING(enable nonstandardprintf)
-AC_ARG_ENABLE(nonstandardprintf,AS_HELP_STRING([--enable-nonstandardprintf],
-        [Use a special printf format for 64bit (default is NO)]),
-        [ AC_DEFINE([HAVE_NONSTANDARD_PRINTF_64_FORMAT],[1],
-           [Define 1 if need nonstandard printf format for 64bit] )
-          AC_MSG_RESULT(yes)],
-        [AC_MSG_RESULT(no)])
-
 dnl The following are for FreeBSD and others which
 dnl use struct _Elf as the actual struct type.
 AC_COMPILE_IFELSE([AC_LANG_SOURCE([[#include <libelf/libelf.h>  

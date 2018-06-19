@@ -46,9 +46,6 @@
 /* Define to 1 if you have the <memory.h> header file. */
 #undef HAVE_MEMORY_H
 
-/* Define 1 if need nonstandard printf format for 64bit */
-#undef HAVE_NONSTANDARD_PRINTF_64_FORMAT
-
 /* Define 1 to default to old DW_FRAME_CFA_COL */
 #undef HAVE_OLD_FRAME_CFA_COL
 
