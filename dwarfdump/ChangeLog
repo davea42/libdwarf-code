@@ -1,3 +1,6 @@
+2018-06-21 David Anderson
+    * esb.c: For _WIN32 a closing } was missing
+      int two places. Fixed.
 2018-06-19 David Anderson
     * common.c: Added missing ; for Windows code
     * dwconf.c: ifdef _WIN32, not a HAVE* name.

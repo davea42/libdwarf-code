@@ -550,6 +550,7 @@ esb_append_printf_u(struct esb_s *data,const char *format,esb_unsigned v)
     if (format[next] == '4') {
         /*lcount++;*/
         next++;
+    }
 #endif /* _WIN32 */
     if (format[next] == 'l') {
         lcount++;
@@ -728,6 +729,7 @@ esb_append_printf_i(struct esb_s *data,const char *format,esb_int v)
     if (format[next] == '4') {
         /*lcount++;*/
         next++;
+    }
 #endif
     if (format[next] == 'l') {
         lcount++;
