@@ -1,3 +1,6 @@
+2018-06-25 David Anderson
+    * dwconf.c: Add || defined(HAVE_WINDOWS_H) to #elif defined(_WIN32)
+      for wider compatibility.
 2018-06-21 David Anderson
     * esb.c: For _WIN32 a closing } was missing
       int two places. Fixed.
