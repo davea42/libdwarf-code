@@ -46,7 +46,7 @@ freedabs(struct Dwarf_D_Abbrev_s *dab)
     struct Dwarf_D_Abbrev_s *tmp = 0;
     for(; dab; dab = tmp) {
         tmp = dab->da_next;
-        free(tmp);
+        free(dab);
     }
 }
 

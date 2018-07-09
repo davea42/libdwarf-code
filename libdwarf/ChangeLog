@@ -1,3 +1,5 @@
+2018-07-09 David Anderson
+    * dwarf_dnames.c: free(tmp) -> free(dab) in freedabs().
 2018-06-19 David Anderson
     * configure.ac, config.h.in: Removed
       HAVE_NONSTANDARD_PRINTF_64_FORMAT.
