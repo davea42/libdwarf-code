@@ -1,0 +1,7 @@
+2018-07-16 David Anderson
+    * CLEANUP: Now uses distclean so  deleted a few lines here.
+    * fixlibdwarfelf.sh: Used by configure to create libdwarf.h
+      from libdwarf.h.in
+    * generatedcasetext.c: A utility used to generate a ctype-like
+      table for converting to uri-style.  The table exists 
+      in dwarfdump so this C file likely will not be used again.

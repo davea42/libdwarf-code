@@ -1,0 +1,291 @@
+
+        {"print-most",  dwnoargument, 0,'a'},
+
+        {"print-abbrev",  dwnoargument, 0,'b'},
+
+        {"print-aranges",  dwnoargument, 0,'r'},
+
+        {"print-eh-frame",  dwnoargument, 0,'F'},
+
+        {"print-fission",  dwnoargument, 0,'I'},
+
+        {"print-frame",  dwnoargument, 0,'f'},
+
+        {"print-info",  dwnoargument, 0,'i'},
+
+        {"print-lines",  dwnoargument, 0,'l'},
+
+        /* -ls as --print-lines-short assigned 300 */
+        {"print-lines-short",  dwnoargument, 0,300},
+
+        {"print-loc",  dwnoargument, 0,'c'},
+
+        {"print-macinfo",  dwnoargument, 0,'m'},
+
+        {"print-producers",  dwnoargument, 0,'P'},
+
+        {"print-pubnames",  dwnoargument, 0,'p'},
+
+        {"print-ranges",  dwnoargument, 0,'N'},
+
+        /* -ta as --print-static assigned 301 */
+        {"print-static",  dwnoargument, 0,301},
+
+        /* -tf as --print-static-func assigned 302 */
+        {"print-static-func",  dwnoargument, 0,302},
+
+        /* -tv as --print-static-var assigned 303 */
+        {"print-static-var",  dwnoargument, 0,303},
+
+        {"print-strings",  dwnoargument, 0,'s'},
+
+        {"print-str-offsets",  dwnoargument, 0,304},
+
+        {"print-type",  dwnoargument, 0,'y'},
+
+        {"print-weakname",  dwnoargument, 0,'w'},
+
+        /* -#<num> as --debug-tracelevel=<n> assigned 305 */
+        {"debug-tracelevel",  dwrequired_argument, 0,305},
+
+        {"reloc",  dwnoargument, 0,'o'},
+
+        /* -oa as --reloc-abbrev assigned 306 */
+        {"reloc-abbrev",  dwnoargument, 0,306},
+
+        /* -or as --reloc-aranges assigned 307 */
+        {"reloc-aranges",  dwnoargument, 0,307},
+
+        /* -of as --reloc-frames assigned 308 */
+        {"reloc-frames",  dwnoargument, 0,308},
+
+        /* -oi as --reloc-info assigned 309 */
+        {"reloc-info",  dwnoargument, 0,309},
+
+        /* -ol as --reloc-line assigned 310 */
+        {"reloc-line",  dwnoargument, 0,310},
+
+        /* -oo as --reloc-loc assigned 311 */
+        {"reloc-loc",  dwnoargument, 0,311},
+
+        /* -op as --reloc-pubnames assigned 312 */
+        {"reloc-pubnames",  dwnoargument, 0,312},
+
+        /* -oR as --reloc-ranges assigned 313 */
+        {"reloc-ranges",  dwnoargument, 0,313},
+
+        {"elf",  dwnoargument, 0,'E'},
+
+        /* -Ea as --elf-abbrev assigned 314 */
+        {"elf-abbrev",  dwnoargument, 0,314},
+
+        /* -Er as --elf-aranges assigned 315 */
+        {"elf-aranges",  dwnoargument, 0,315},
+
+        /* -Ed as --elf-default assigned 316 */
+        {"elf-default",  dwnoargument, 0,316},
+
+        /* -Ef as --elf-frames assigned 317 */
+        {"elf-frames",  dwnoargument, 0,317},
+
+        /* -Eh as --elf-header assigned 318 */
+        {"elf-header",  dwnoargument, 0,318},
+
+        /* -Ei as --elf-info assigned 319 */
+        {"elf-info",  dwnoargument, 0,319},
+
+        /* -El as --elf-line assigned 320 */
+        {"elf-line",  dwnoargument, 0,320},
+
+        /* -Eo as --elf-loc assigned 321 */
+        {"elf-loc",  dwnoargument, 0,321},
+
+        /* -Ep as --elf-pubnames assigned 322 */
+        {"elf-pubnames",  dwnoargument, 0,322},
+
+        /* -Et as --elf-pubtypes assigned 323 */
+        {"elf-pubtypes",  dwnoargument, 0,323},
+
+        /* -ER as --elf-ranges assigned 324 */
+        {"elf-ranges",  dwnoargument, 0,324},
+
+        /* -Es as --elf-strings assigned 325 */
+        {"elf-strings",  dwnoargument, 0,325},
+
+        /* -Ex as --elf-text assigned 326 */
+        {"elf-text",  dwnoargument, 0,326},
+
+        /* -kb as --check-abbrev assigned 327 */
+        {"check-abbrev",  dwnoargument, 0,327},
+
+        /* -ka as --check-all assigned 328 */
+        {"check-all",  dwnoargument, 0,328},
+
+        /* -kM as --check-aranges assigned 329 */
+        {"check-aranges",  dwnoargument, 0,329},
+
+        /* -kD as --check-attr-dup assigned 330 */
+        {"check-attr-dup",  dwnoargument, 0,330},
+
+        /* -kE as --check-attr-encodings assigned 331 */
+        {"check-attr-encodings",  dwnoargument, 0,331},
+
+        /* -kn as --check-attr-names assigned 332 */
+        {"check-attr-names",  dwnoargument, 0,332},
+
+        /* -kc as --check-constants assigned 333 */
+        {"check-constants",  dwnoargument, 0,333},
+
+        /* -kF as --check-files-lines assigned 334 */
+        {"check-files-lines",  dwnoargument, 0,334},
+
+        /* -kR as --check-forward-refs assigned 335 */
+        {"check-forward-refs",  dwnoargument, 0,335},
+
+        /* -kx as --check-frame-basic assigned 336 */
+        {"check-frame-basic",  dwnoargument, 0,336},
+
+        /* -kxe as --check-frame-extended assigned 337 */
+        {"check-frame-extended",  dwnoargument, 0,337},
+
+        /* -kf as --check-frame-info assigned 338 */
+        {"check-frame-info",  dwnoargument, 0,338},
+
+        /* -kg as --check-gaps assigned 339 */
+        {"check-gaps",  dwnoargument, 0,339},
+
+        /* -kl as --check-loc assigned 340 */
+        {"check-loc",  dwnoargument, 0,340},
+
+        /* -kw as --check-macros assigned 341 */
+        {"check-macros",  dwnoargument, 0,341},
+
+        /* -ke as --check-pubnames assigned 342 */
+        {"check-pubnames",  dwnoargument, 0,342},
+
+        /* -km as --check-ranges assigned 343 */
+        {"check-ranges",  dwnoargument, 0,343},
+
+        /* -kS as --check-self-refs assigned 344 */
+        {"check-self-refs",  dwnoargument, 0,344},
+
+        /* -kd as --check-show assigned 345 */
+        {"check-show",  dwnoargument, 0,345},
+
+        /* -ks as --check-silent assigned 346 */
+        {"check-silent",  dwnoargument, 0,346},
+
+        /* -ki as --check-summary assigned 347 */
+        {"check-summary",  dwnoargument, 0,347},
+
+        /* -kr as --check-tag-attr assigned 348 */
+        {"check-tag-attr",  dwnoargument, 0,348},
+
+        /* -kt as --check-tag-tag assigned 349 */
+        {"check-tag-tag",  dwnoargument, 0,349},
+
+        /* -ky as --check-type assigned 350 */
+        {"check-type",  dwnoargument, 0,350},
+
+        /* -kG as --check-unique assigned 351 */
+        {"check-unique",  dwnoargument, 0,351},
+
+        /* -ku as --check-usage assigned 352 */
+        {"check-usage",  dwnoargument, 0,352},
+
+        /* -kuf as --check-usage-extended assigned 353 */
+        {"check-usage-extended",  dwnoargument, 0,353},
+
+        {"format-attr-name",  dwnoargument, 0,'M'},
+
+        {"format-dense",  dwnoargument, 0,'d'},
+
+        {"format-ellipsis",  dwnoargument, 0,'e'},
+
+        {"format-global-offsets",  dwnoargument, 0,'G'},
+
+        {"format-registers",  dwnoargument, 0,'R'},
+
+        {"format-suppress-data",  dwnoargument, 0,'Q'},
+
+        {"format-suppress-offsets",  dwnoargument, 0,'D'},
+
+        {"format-suppress-lookup",  dwnoargument, 0,'n'},
+
+        {"format-extensions",  dwnoargument, 0,'C'},
+
+        {"format-loc",  dwnoargument, 0,'g'},
+
+        /* -x line5=<selection> as --format-linetable-read-type=<sel> assigned 354 */
+        {"format-linetable-read-type",  dwrequired_argument, 0,354},
+
+        /* -u<file> as --format-file=<file> assigned 355 */
+        {"format-file",  dwrequired_argument, 0,355},
+
+        /* -H<num> as --format-limit=<num> assigned 356 */
+        {"format-limit",  dwrequired_argument, 0,356},
+
+        /* -c<str> as --format-producer=<str> assigned 357 */
+        {"format-producer",  dwrequired_argument, 0,357},
+
+        /* -cg as --format-gcc assigned 358 */
+        {"format-gcc",  dwnoargument, 0,358},
+
+        /* -cs as --format-snc assigned 359 */
+        {"format-snc",  dwnoargument, 0,359},
+
+        /* -x groupnumber=<n> as --format-group=<n> assigned 360 */
+        {"format-group",  dwrequired_argument, 0,360},
+
+        /* -x noprintsectiongroups as --format-no-print_section_groups assigned 361 */
+        {"format-no-print_section_groups",  dwnoargument, 0,361},
+
+        /* -x nosanitizestrings as --format-no-sanitize-strings assigned 362 */
+        {"format-no-sanitize-strings",  dwnoargument, 0,362},
+
+        /* -O file=<path> as --file-output=<path> assigned 363 */
+        {"file-output",  dwrequired_argument, 0,363},
+
+        /* -x abi=<abi> as --file-abi=<abi> assigned 364 */
+        {"file-abi",  dwrequired_argument, 0,364},
+
+        /* -x name=<path> as --file-config=<path> assigned 365 */
+        {"file-config",  dwrequired_argument, 0,365},
+
+        /* -x tied=<path> as --file-tied=<path> assigned 366 */
+        {"file-tied",  dwrequired_argument, 0,366},
+
+        /* -S any=<text> as --search-any=<text> assigned 367 */
+        {"search-any",  dwrequired_argument, 0,367},
+
+        /* -Svany=<text> as --search-any-count=<text> assigned 368 */
+        {"search-any-count",  dwrequired_argument, 0,368},
+
+        /* -S match=<text> as --search-match=<text> assigned 369 */
+        {"search-match",  dwrequired_argument, 0,369},
+
+        /* -Svmatch=<text> as --search-match-count=<text> assigned 370 */
+        {"search-match-count",  dwrequired_argument, 0,370},
+
+        /* -S regex=<text> as --search-regex=<text> assigned 371 */
+        {"search-regex",  dwrequired_argument, 0,371},
+
+        /* -Svregex=<text> as --search-regex-count=<text> assigned 372 */
+        {"search-regex-count",  dwrequired_argument, 0,372},
+
+        {"search-print-tree",  dwnoargument, 0,'W'},
+
+        /* -Wp as --search-print-parent assigned 373 */
+        {"search-print-parent",  dwnoargument, 0,373},
+
+        /* -Wc as --search-print-children assigned 374 */
+        {"search-print-children",  dwnoargument, 0,374},
+
+        {"help",  dwnoargument, 0,'h'},
+
+        {"verbose",  dwnoargument, 0,'v'},
+
+        /* -vv as --verbose-more assigned 375 */
+        {"verbose-more",  dwnoargument, 0,375},
+
+        {"version",  dwnoargument, 0,'V'},
