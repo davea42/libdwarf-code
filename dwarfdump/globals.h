@@ -82,8 +82,7 @@ typedef unsigned long long  __uint64_t;
 #include <stdlib.h>
 #include <string.h>
 
-/* Windows specific */
-#ifdef HAVE_STDAFX_H
+#if defined(_WIN32) && defined(HAVE_STDAFX_H)
 #include "stdafx.h"
 #endif /* HAVE_STDAFX_H */
 

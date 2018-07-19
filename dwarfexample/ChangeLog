@@ -1,3 +1,9 @@
+2018-07-16 David Anderson
+    * simplereader.c: Refines the ifdef of HAVE_STDAFX_H
+2018-07-16 David Anderson
+    * simplereader.c: Changed // comments to /* */
+    * Makefile.am: New, used by autotools to create configure.
+    * configure.ac, Makefile.in, config.h.in: Deleted.
 2018-06-14  David Anderson
     * Makefile.in,config.h.in,configure,configure.ac:
       Removed unnecessary configure lines, regenerated

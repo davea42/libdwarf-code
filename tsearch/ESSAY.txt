@@ -1,50 +1,51 @@
 Some thoughts about tsearch.
 
 David Anderson
-Updated 15 February 2014.
+Updated 15 February 2014
+Updated 24 June 2018 (fixing a typo and regularizing
+line lengths).
 
-Tsearch() was defined and implemented fairly early in
-the history of UNIX, but I don't know exactly when.
-The earliest documentation I have is from the 1991
-edition of UNIX System V Release 4 Programmer's Reference
-Manual.
+Tsearch() was defined and implemented fairly early in the
+history of UNIX, but I don't know exactly when.  The earliest
+documentation I have is from the 1991 edition of UNIX System
+V Release 4 Programmer's Reference Manual.
 
-It is useful because it enables one to make a searchable tree
-of, well, any data one might have need to search.   Tsearch never needs
-to understand the format of the data.
+It is useful because it enables one to make a searchable
+tree of, well, any data one might have need to search.
+Tsearch never needs to understand the format of the data.
 
 The functions defined there are  tsearch(), tfind(),
-tdelete(), and twalk().  The description is just
-as difficult to understand as the documentation in release 3.54
-of the Linux man-pages project (the most recent I have on hand).
+tdelete(), and twalk().  The description is just as difficult
+to understand as the documentation in release 3.54 of the
+Linux man-pages project (the most recent I have on hand).
 
 The Single Unix Specification page on tsearch() etc is slightly
-different text from the Programmer's Reference Manual and the 
-Linux man page, but no clearer.
+different text from the Programmer's Reference Manual and
+the Linux man page, but no clearer.
 
-The confusion is partly due to the interface definition.  Until the
-late 20th century only limited attention was given to interface
-design.  By the late 20th century it seems clear that any
-newly designed tsearch-like functionality would have a significantly
-different interface.   An example of an improved interface is
-the GNU/Linux function hsearch_r().  Making the return value
-a small integer defining what the function actually did
-(and using other arguments to return additional values as
-necessary) significantly simplifies the discussion.
+The confusion is partly due to the interface definition.
+Until the late 20th century only limited attention was given
+to interface design.  By the late 20th century it seems clear
+that any newly designed tsearch-like functionality would
+have a significantly different interface.   An example of an
+improved interface is the GNU/Linux function hsearch_r().
+Making the return value a small integer defining what the
+function actually did (and using other arguments to return
+additional values as necessary) significantly simplifies
+the discussion.
 
-Here though we are talking about the old and standard interface.
-We attempt to clarify the messy parts. See the examples provided
-for actual code.
+Here though we are talking about the old and standard
+interface.  We attempt to clarify the messy parts. See the
+examples provided for actual code.
 
 The functions and tables of tsearch are not thread safe.
-Nor thread-aware.  Any access to one of tables at the
-same time the table is being updated will lead to chaos
-eventually.
+Nor thread-aware.  Any access to one of tables at the same
+time the table is being updated will lead to chaos eventually.
 
-Any table tsearch maintains consists of records
-of undefined (meaning the definition
-is local to the internals) content each record 
-of which contains, as one element, a copy of a KEY pointer.
+Any table tsearch maintains consists of records of undefined
+(meaning the definition is local to the internals) content
+each record of which contains, as one element, a copy of a
+KEY pointer.
 
 In the following I freely use tsearch for dwarf_tsearch
 etc. The functionality and interfaces are identical.
@@ -52,11 +53,10 @@ etc. The functionality and interfaces are identical.
 =========
 Further reading 
 
-The canonical reference for binary trees and the
-algorithm reference for most of the tsearch code is 
-Donald E. Knuth,
-"The Art of Computer Programming" Volume 3 Sorting and Searching,
-Second Edition. 
+The canonical reference for binary trees and the algorithm
+reference for most of the tsearch code is Donald E. Knuth,
+"The Art of Computer Programming" Volume 3 Sorting and
+Searching, Second Edition.
 
 "Algorithms" Fourth Edition, Robert Sedgewick and Kevin Wayne,
 is the basis for the red-black tree coding.
@@ -112,42 +112,41 @@ tsearch:
 void *tsearch(const void *key, void **rootp,
     int (*compar)(const void *l, const void *r));
 
-Our terminology comes from the above declaration.
-tsearch() returns a pointer.  If tsearch 
-fails due to an out of memory or internal error
-it returns NULL.  Otherwise it returns a non-null
-pointer (see Return value, below).
+Our terminology comes from the above declaration.  tsearch()
+returns a pointer.  If tsearch fails due to an out of memory
+or internal error it returns NULL.  Otherwise it returns a
+non-null pointer (see Return value, below).
 
 KEY: 
-First we will define KEY as it is ordinarily used. 
-KEY is a pointer to an object you define and initialize.
-The object must remain in stable
-storage for as long as the table has a copy of the KEY
-pointing to the object.   Example:
+First we will define KEY as it is ordinarily used.  KEY is a
+pointer to an object you define and initialize.  The object
+must remain in stable storage for as long as the table has
+a copy of the KEY pointing to the object.   Example:
+
     struct mystruct *key_a = malloc(sizeof(struct mystruct));
     initialize(key_a, my data to fill in struct...);
     void *r = tsearch(key_a,&treeroot,comparfunc);
 
 ROOTP:
-This must be the address of a void* datum.
-Before the first call of tsearch the value of *rootp must
-be NULL (set by you somehow).
-The contents are maintained by tsearch thereafter.
+This must be the address of a void* datum.  Before the first
+call of tsearch the value of *rootp must be NULL (set by you
+somehow).  The contents are maintained by tsearch thereafter.
 
 COMPAR:
-A function you write whose argments (when tsearch internals call it)
-are KEY pointers from two records (your records).  The function should
-return -1 if the record KEY l points to is considered less than
-the recorda KEY r points to. Return zero of the values
-are considered to match.  Return 1 otherwise.
+A function you write whose argments (when tsearch internals
+call it) are KEY pointers from two records (your records).
+The function should return -1 if the record KEY l points to is
+considered less than the recorda KEY r points to. Return zero
+if the values are considered to match.  Return 1 otherwise.
+
 Example:  int comparefunc(const void *l,const void *r) { 
 struct mystruct *lp = l;
 struct mystruct *rp = r;
 if(lp->myv <  rp->myv) return -1;
 if(lp->myv ==  rp->myv) return 0;
 return 1; }
-Of course the comparison need not be of simple values, it could involve
-anything. This is just a simple sketch.
+Of course the comparison need not be of simple values, it
+could involve anything. This is just a simple sketch.
 
 Return value:
 If tsearch() returns NULL something went wrong. There was insufficient memory
@@ -176,8 +175,8 @@ Tfind:
 void *find(const void *key, void **rootp,
     int (*compar)(const void *l, const void *r));
 
-The interfaces are the same but the return value is
-(in contrast with tsearch) reasonably clear:
+The interfaces are the same but the return value is (in
+contrast with tsearch) reasonably clear:
 
 A non-null return is a key (pointer).
 It never adds a new record, it simple tries to find a record.
@@ -233,9 +232,9 @@ where what 'free key' means is to free whatever 'key = xxxx'
 allocated. Which means do the same for 'free r'.
 
 Of course if your keys point into to a static array of data
-then free is unnecessary, but how often will the data
-be in static memory?  
-And if it is in static storage, why do any free at all?
+then free is unnecessary, but how often will the data be in
+static memory?  And if it is in static storage, why do any
+free at all?
 
 
 
@@ -244,9 +243,8 @@ Tdestroy:
 void *tdestroy((void * root,
     void (*free_node)(void * key));
 
-This frees all memory the tree system has and
-along the way it calls 'free_node' for each
-node in the tree. 
+This frees all memory the tree system has and along the way
+it calls 'free_node' for each node in the tree.
 
 It empties the tree, but, oddly, the root argument
 is a simple pointer to the root, not a pointer-to-pointer.
@@ -269,27 +267,26 @@ void tdump(const void *rootp,
     char *(*keyprint)(const void *key),
     const char * msg);
 
-This is unique to the dwarf_tsearch library.
-It prints (to standard out) a representation of the tree.
-The output is indented one space per level and ordered such
-that turning the output 90 degrees clockwise shows a kind
-of picture of the tree structure in the way trees
-are normally shown in books.
-It may be of slight interest for debugging trees if the
-trees are not too large.
+This is unique to the dwarf_tsearch library.  It prints (to
+standard out) a representation of the tree.  The output is
+indented one space per level and ordered such that turning
+the output 90 degrees clockwise shows a kind of picture of the
+tree structure in the way trees are normally shown in books.
+It may be of slight interest for debugging trees if the trees
+are not too large.
 
-The 'msg' argument is just a character string of interest to you, something
-identifying the output. It is printed once and otherwise ignored.
+The 'msg' argument is just a character string of interest
+to you, something identifying the output. It is printed once
+and otherwise ignored.
 
-The 'keyprint' argument is a pointer to
-a function you write.  The function 
-is called for each node in turn. It
-should return a pointer to a string with whatever
-data from the passed-in-by-tdump key you wish to show. 
-Normally the pointer returned from keyprint should be pointing to a 
-static area so there is no issue with memory leakage to worry about.
-tdump will print the returned string immediately and will not refer
-to it again.
+The 'keyprint' argument is a pointer to a function you write.
+The function is called for each node in turn. It should
+return a pointer to a string with whatever data from the
+passed-in-by-tdump key you wish to show.  Normally the pointer
+returned from keyprint should be pointing to a static area
+so there is no issue with memory leakage to worry about.
+tdump will print the returned string immediately and will
+not refer to it again.
 
 
 ============

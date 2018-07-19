@@ -1,6 +1,20 @@
-2018-06-25 David Anderson
-    * dwconf.c: Add || defined(HAVE_WINDOWS_H) to #elif defined(_WIN32)
-      for wider compatibility.
+2018-07-16 David Anderson
+    * dwarf_tsearch.h: Corrected web-reference links in
+      the comments.
+    * uritableblebuild.c: Changed some commentary to have
+      shorter line lengths. Added comment explaining
+      how the source was used in creating uri.c .
+    * common.c: Refines the ifdef HAVE_STDAFX_H.
+    * dwarf_tsearch.h: Remove obsolete link in comment and
+      substitute a valid link.
+    * dwarf_tsearchbal.c: Remove include of dwarf_incl.h and 
+      use config.h to set UNUSEDARG as appropriate.
+    * dwconf.c,globals.h: Refines the ifdef HAVE_STDAFX_H.
+    * uritablebuild.c: Reformat initial comments to fit
+      on shorter lines.
+2018-07-16 David Anderson
+    * Makefile.am: New, used by autotools to create configure.
+    * configure.ac, Makefile.in, config.h.in: Deleted.
 2018-06-21 David Anderson
     * esb.c: For _WIN32 a closing } was missing
       int two places. Fixed.

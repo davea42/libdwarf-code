@@ -1,3 +1,18 @@
+2018-07-16 David Anderson
+    * createirepformfrombinary.cc: Refines ifdef of HAVE_STDAFX_H
+    * createirepfrombinary.cc: Refines ifdef of HAVE_STDAFX_H
+      Delete unused local variable.
+    * dwarfgen.cc: Refines ifdef of HAVE_STDAFX_H.
+      Changes certain function_argument names to avoid
+      shadowing a global. For example, elf -> elf_w
+    * general.h: Remove pointless trailing ; ending IToHex()
+    * irepattrtodbg.cc: Refines ifdef of HAVE_STDAFX_H.
+      Rename local vars to avoid shadowing. Example: form -> form_a
+    * ireptodbg.cc: Refines ifdef of HAVE_STDAFX_H.
+      Rename local vars to avoid shadowing. Example: error -> lerror
+2018-07-16 David Anderson
+    * Makefile.am: New, used by autotools to create configure.
+    * configure.ac, Makefile.in, config.h.in: Deleted.
 2018-06-19  David Anderson
      * dwarfgen.cc: Now it's intended to build for Linux
        or Windows and get usable file open modes automatically.

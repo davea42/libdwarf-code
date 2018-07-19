@@ -58,7 +58,11 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
 #include "config.h"
-#include "dwarf_incl.h"
+#ifdef HAVE_UNUSED_ATTRIBUTE
+#define  UNUSEDARG __attribute__ ((unused))
+#else
+#define  UNUSEDARG
+#endif
 #include "stdlib.h" /* for free() */
 #include <stdio.h> /* for printf */
 #include "dwarf_tsearch.h"

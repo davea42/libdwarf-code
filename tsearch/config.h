@@ -18,4 +18,3 @@
 
 /* Define 1 if we have the Windows specific header stdafx.h */
 #undef HAVE_STDAFX_H
-#define HAVE_STDAFX_H 1

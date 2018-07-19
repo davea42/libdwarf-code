@@ -30,7 +30,7 @@
 #include "config.h"
 
 /* Windows specific header files */
-#ifdef HAVE_STDAFX_H
+#if defined(_WIN32) && defined(HAVE_STDAFX_H)
 #include "stdafx.h"
 #endif /* HAVE_STDAFX_H */
 #if HAVE_UNISTD_H
@@ -319,7 +319,7 @@ HandleOneDieAndChildren(Dwarf_P_Debug dbg,
 static void
 HandleLineData(Dwarf_P_Debug dbg,IRepresentation & Irep, IRCUdata&cu)
 {
-    Dwarf_Error error = 0;
+    Dwarf_Error lerror = 0;
     // We refer to files by fileno, this builds an index.
     pathToUnsignedType pathmap;
 
@@ -341,11 +341,12 @@ HandleLineData(Dwarf_P_Debug dbg,IRepresentation & Irep, IRCUdata&cu)
         const std::string&path = li.getpath();
         unsigned pathindex = 0;
         pathToUnsignedType::const_iterator it = pathmap.find(path);
+
         if(it == pathmap.end()) {
-            Dwarf_Error error = 0;
+            Dwarf_Error l2error = 0;
             Dwarf_Unsigned idx = dwarf_add_file_decl(
                 dbg,const_cast<char *>(path.c_str()),
-                0,0,0,&error);
+                0,0,0,&l2error);
             if(idx == DW_DLV_NOCOUNT) {
                 cerr << "Error from dwarf_add_file_decl() on " <<
                     path << endl;
@@ -368,7 +369,7 @@ HandleLineData(Dwarf_P_Debug dbg,IRepresentation & Irep, IRCUdata&cu)
                 exit(1);
             }
             Dwarf_Unsigned res = dwarf_lne_set_address(dbg,
-                a,elfsymidx,&error);
+                a,elfsymidx,&lerror);
             if(res == DW_DLV_NOCOUNT) {
                 cerr << "Error building line, dwarf_lne_set_address" <<
                     endl;
@@ -378,7 +379,7 @@ HandleLineData(Dwarf_P_Debug dbg,IRepresentation & Irep, IRCUdata&cu)
             firstline = false;
         } else if( endsequence) {
             Dwarf_Unsigned esres = dwarf_lne_end_sequence(dbg,
-                a,&error);
+                a,&lerror);
             if(esres == DW_DLV_NOCOUNT) {
                 cerr << "Error building line, dwarf_lne_end_sequence" <<
                     endl;
@@ -412,7 +413,7 @@ HandleLineData(Dwarf_P_Debug dbg,IRepresentation & Irep, IRCUdata&cu)
             isprologueend,
             isa,
             discriminator,
-            &error);
+            &lerror);
         if(lires == DW_DLV_NOCOUNT) {
             cerr << "Error building line, dwarf_add_line_entry" <<
                 endl;
@@ -436,7 +437,7 @@ emitOneCU( Dwarf_P_Debug dbg,IRepresentation & Irep, IRCUdata&cu,
     // We descend the the tree, creating DIEs and linking
     // them in as we return back up the tree of recursing
     // on IRDie children.
-    Dwarf_Error error;
+    Dwarf_Error lerror;
 
     IRDie & basedie =  cu.baseDie();
     Dwarf_P_Die cudie = HandleOneDieAndChildren(dbg,Irep,
@@ -446,7 +447,7 @@ emitOneCU( Dwarf_P_Debug dbg,IRepresentation & Irep, IRCUdata&cu,
     // This is not a good design as DWARF3/4 have
     // requirements of multiple CUs in a single creation,
     // which cannot be handled yet.
-    Dwarf_Unsigned res = dwarf_add_die_to_debug(dbg,cudie,&error);
+    Dwarf_Unsigned res = dwarf_add_die_to_debug(dbg,cudie,&lerror);
     if(res != DW_DLV_OK)  {
         cerr << "Unable to add_die_to_debug " << endl;
         exit(1);

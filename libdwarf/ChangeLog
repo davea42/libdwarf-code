@@ -1,5 +1,12 @@
+2018-07-16 David Anderson
+    * dwarf_incl.h: Refine ifdef of HAVE_STDAFX_H.
+    * dwarf_tsearch.h: Correcting web references in comments.
+    * pro_incl.h: Refine ifdef of HAVE_STDAFX_H.
+2018-07-16 David Anderson
+    * Makefile.am: New, used by autotools to create configure.
+    * configure.ac, Makefile.in, config.h.in: Deleted.
 2018-07-09 David Anderson
-    * dwarf_dnames.c: free(tmp) -> free(dab) in freedabs().
+    * dwarf_dnames.c: free(tmp) -> free(dab)
 2018-06-19 David Anderson
     * configure.ac, config.h.in: Removed
       HAVE_NONSTANDARD_PRINTF_64_FORMAT.

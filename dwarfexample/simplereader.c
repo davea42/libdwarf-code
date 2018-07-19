@@ -85,7 +85,7 @@
 #include "config.h"
 
 /* Windows specific header files */
-#ifdef HAVE_STDAFX_H
+#if defined(_WIN32) && defined(HAVE_STDAFX_H)
 #include "stdafx.h"
 #endif /* HAVE_STDAFX_H */
 
@@ -999,8 +999,8 @@ printnamestrings(Dwarf_Debug dbg, Dwarf_Die die)
     }
     for (i = 0; i < atcount; ++i) {
         Dwarf_Attribute attr = atlist[i];
-        // Use an empty attr to get a placeholder on
-        // the attr list for this IRDie.
+        /*  Use an empty attr to get a placeholder on
+            the attr list for this IRDie. */
         print_name_strings_attr(dbg,die,attr);
     }
     dwarf_dealloc(dbg,atlist, DW_DLA_LIST);

@@ -60,7 +60,7 @@ std::string IToHex(T v,unsigned l=0)
     }
     s << v ;
     return s.str();
-};
+}
 
 template <typename T>
 std::string  BldName(const std::string & prefix, T v)

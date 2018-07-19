@@ -30,7 +30,7 @@
 #include "config.h"
 
 /* Windows specific header files */
-#ifdef HAVE_STDAFX_H
+#if defined(_WIN32) && defined(HAVE_STDAFX_H)
 #include "stdafx.h"
 #endif /* HAVE_STDAFX_H */
 #if HAVE_UNISTD_H
@@ -93,7 +93,7 @@ AddAttrToDie(Dwarf_P_Debug dbg,
     int attrnum = irattr.getAttrNum();
     enum Dwarf_Form_Class formclass = irattr.getFormClass();
     // IRForm is an abstract base class.
-    IRForm *form = irattr.getFormData();
+    IRForm *form_a = irattr.getFormData();
 
     switch(formclass) {
     case DW_FORM_CLASS_UNKNOWN:
@@ -102,7 +102,7 @@ AddAttrToDie(Dwarf_P_Debug dbg,
         break;
     case DW_FORM_CLASS_ADDRESS:
         {
-        IRFormAddress *f = dynamic_cast<IRFormAddress *>(form);
+        IRFormAddress *f = dynamic_cast<IRFormAddress *>(form_a);
         if (!f) {
             cerr << "ERROR Impossible DW_FORM_CLASS_ADDRESS cast fails, attrnum "
                 <<attrnum << endl;
@@ -137,14 +137,13 @@ AddAttrToDie(Dwarf_P_Debug dbg,
         break;
     case DW_FORM_CLASS_CONSTANT:
         {
-        IRFormConstant *f = dynamic_cast<IRFormConstant *>(form);
-        Dwarf_Half form = f->getFinalForm();
+        IRFormConstant *f = dynamic_cast<IRFormConstant *>(form_a);
+        Dwarf_Half formv = f->getFinalForm();
         // FIXME: Handle form indirect
         IRFormConstant::Signedness sn = f->getSignedness();
-        Dwarf_Unsigned uval = 0;
         Dwarf_P_Attribute a = 0;
 
-        if (form == DW_FORM_data16) {
+        if (formv == DW_FORM_data16) {
             Dwarf_Form_Data16 val = f->getData16Val();
             int res = dwarf_add_AT_data16(outdie,
                 attrnum,&val,&a,&error);
@@ -159,7 +158,7 @@ AddAttrToDie(Dwarf_P_Debug dbg,
         }
         if (sn == IRFormConstant::SIGNED) {
             Dwarf_Signed sval = f->getSignedVal();
-            if (form == DW_FORM_sdata) {
+            if (formv == DW_FORM_sdata) {
                 a = dwarf_add_AT_any_value_sleb(
                     outdie,attrnum,
                     sval,&error);
@@ -172,15 +171,15 @@ AddAttrToDie(Dwarf_P_Debug dbg,
                     sval,&error);
             }
         } else {
-            Dwarf_Unsigned uval = f->getUnsignedVal();
-            if (form == DW_FORM_udata) {
+            Dwarf_Unsigned uval_i = f->getUnsignedVal();
+            if (formv == DW_FORM_udata) {
                 a = dwarf_add_AT_any_value_uleb(
                     outdie,attrnum,
-                    uval,&error);
+                    uval_i,&error);
             } else {
                 a = dwarf_add_AT_unsigned_const(dbg,
                     outdie,attrnum,
-                    uval,&error);
+                    uval_i,&error);
             }
         }
         if( reinterpret_cast<myintfromp>(a) == DW_DLV_BADADDR) {
@@ -198,7 +197,7 @@ AddAttrToDie(Dwarf_P_Debug dbg,
         break;
     case DW_FORM_CLASS_FLAG:
         {
-        IRFormFlag *f = dynamic_cast<IRFormFlag *>(form);
+        IRFormFlag *f = dynamic_cast<IRFormFlag *>(form_a);
         if (!f) {
             cerr << "ERROR Impossible DW_FORM_CLASS_FLAG cast fails, attrnum "
                 <<attrnum << endl;
@@ -250,7 +249,7 @@ AddAttrToDie(Dwarf_P_Debug dbg,
         // global DIE reference  or a
         // sig8 reference.
         //FIXME
-        IRFormReference *r = dynamic_cast<IRFormReference *>(form);
+        IRFormReference *r = dynamic_cast<IRFormReference *>(form_a);
         if (!r) {
             cerr << "ERROR Impossible DW_FORM_CLASS_REFERENCE cast fails, attrnum "
                 <<attrnum << endl;
@@ -328,7 +327,7 @@ AddAttrToDie(Dwarf_P_Debug dbg,
         break;
     case DW_FORM_CLASS_STRING:
         {
-        IRFormString *f = dynamic_cast<IRFormString *>(form);
+        IRFormString *f = dynamic_cast<IRFormString *>(form_a);
         if (!f) {
             cerr << "ERROR Impossible DW_FORM_CLASS_STRING cast fails, attrnum "
                 <<attrnum << endl;
@@ -387,9 +386,10 @@ IRCUdata::updateClassReferenceTargets()
             IRDie* d = it->target_;
             Dwarf_P_Die sourcedie = it->sourcedie_;
             Dwarf_P_Die targetdie = d->getGeneratedDie();
-            Dwarf_Error error = 0;
+            Dwarf_Error lerror = 0;
+
             int res = dwarf_fixup_AT_reference_die(it->dbg_,
-                it->attrnum_,sourcedie,targetdie,&error);
+                it->attrnum_,sourcedie,targetdie,&lerror);
             if(res != DW_DLV_OK) {
                 cerr << "Improper dwarf_fixup_AT_reference_die call"
                     << endl;

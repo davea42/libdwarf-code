@@ -49,7 +49,11 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
 #include "config.h"
-#include "dwarf_incl.h"
+#ifdef HAVE_UNUSED_ATTRIBUTE
+#define  UNUSEDARG __attribute__ ((unused))
+#else
+#define  UNUSEDARG
+#endif
 #include "stdlib.h" /* for free() */
 #include <stdio.h> /* for printf */
 #include "dwarf_tsearch.h"
@@ -276,7 +280,7 @@ dwarf_tsearch(const void *key, void **headpin,
         int allocatedhead = 0;
         if(!head) {
             head = allocate_ts_entry(0);
-            allocatedhead = 1
+            allocatedhead = 1;
         }
         if(!head) {
             return NULL;

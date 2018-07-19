@@ -30,8 +30,7 @@
 
 #include "config.h"
 
-/* Windows specific header files */
-#ifdef HAVE_STDAFX_H
+#if defined(_WIN32) && defined(HAVE_STDAFX_H)
 #include "stdafx.h"
 #endif /* HAVE_STDAFX_H */
 #ifdef HAVE_UNITSTD_H

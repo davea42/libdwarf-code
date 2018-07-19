@@ -37,7 +37,7 @@
 #define _GNU_SOURCE 1
 #endif
 
-#ifdef HAVE_STDAFX_H /* Windows specific. */
+#if defined(_WIN32) && defined(HAVE_STDAFX_H)
 #include "stdafx.h"
 #endif /* HAVE_STDAFX_H */
 

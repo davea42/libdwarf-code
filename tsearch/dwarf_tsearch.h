@@ -38,7 +38,8 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     of any version of tsearch. Only uses
     of tsearch were examined, not tsearch source code.
 
-    See http://reality.sgiweb.org/davea/tsearch.html
+    See https://www.prevanders.net/tsearch.html
+    and https://www.prevanders.net/dwarf.html#tsearch
     for information about tsearch.
 
     We are matching the standard functional
@@ -53,7 +54,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #endif /* HAVE_CONFIG_H */
 
 /* SN-Carlos: Windows specific */
-#ifdef HAVE_STDAFX_H
+#if defined(_WIN32) && defined(HAVE_STDAFX_H)
 #include "stdafx.h"
 #endif /* HAVE_STDAFX_H */
 

@@ -1,3 +1,20 @@
+2018-06-24:
+  The configure has been completely rewritten to follow
+  current standards and practices. For simple builds
+  the standard
+    ./configure
+    make
+  works as always, but the generated libdwarf.a appears
+  in libdwarf/.libs/libdwarf.a , as does the shared object
+  if "./configure --enable-shared" is used.
+  
+  To build dwarfgen one adds the configure option --enable-dwarfgen
+    instead of using 'make all'.
+  To build the example code one adds the configure option 
+    --enable-dwarfexample  instead of using 'make all'.
+
+  "mkdir /tmp/bld ; cd /tmp/bld ; <sourcebase>/configure"
+  continues to work, as does configure --host=<name>  .
 2018-06-14:
   A small simplification of build options simplifies building
   across different environments.  If your environment needs

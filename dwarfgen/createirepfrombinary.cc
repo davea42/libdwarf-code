@@ -33,7 +33,7 @@
 #include "config.h"
 
 /* Windows specific header files */
-#ifdef HAVE_STDAFX_H
+#if defined(_WIN32) && defined(HAVE_STDAFX_H)
 #include "stdafx.h"
 #endif /* HAVE_STDAFX_H */
 #if HAVE_UNISTD_H
@@ -674,7 +674,6 @@ readGlobals(Dwarf_Debug dbg, IRepresentation & irep)
     Dwarf_Global *globs = 0;
     Dwarf_Type   *types = 0;
     Dwarf_Signed  cnt = 0;
-    Dwarf_Signed  i = 0;
     int res = 0;
     IRPubsData  &pubdata = irep.pubnamedata();
 

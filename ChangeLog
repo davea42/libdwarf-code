@@ -1,7 +1,5 @@
-2018-06-24  David Anderson
+2018-07-19  David Anderson
     * NEWS, README: Updated to match the new configure code.
-2018-06-23  David Anderson
-    * ChangeLog: Now with this ChangeLog file. Now
-      configure is created by autoreconf -vif
+    * configure.ac: Now configure is created by autoreconf -vif
       and the only configure.ac is here in the same
       directory as this ChangeLog.
