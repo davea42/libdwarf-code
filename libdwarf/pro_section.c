@@ -784,7 +784,7 @@ determine_form_size(Dwarf_P_Debug dbg,
         if (write_out) {
             res = append_uval(lf->def_form_code, dbg,
                 data,
-                &val_len,error);
+                &val_len2,error);
         } else {
             res = pretend_write_uval(lf->def_form_code, dbg,
                 &val_len2,error);

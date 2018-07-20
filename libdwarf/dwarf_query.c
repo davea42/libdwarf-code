@@ -1280,7 +1280,7 @@ dwarf_highpc_b(Dwarf_Die die,
             if(res3 == DW_DLV_ERROR) {
                 return res3;
             }
-            if(res == DW_DLV_NO_ENTRY) {
+            if(res3 == DW_DLV_NO_ENTRY) {
                 return res3;
             }
             if (attr_form == DW_FORM_sdata) {

@@ -109,7 +109,9 @@ fill_in_abbrevs_table(struct Dwarf_Dnames_index_header_s * dn,
                 break;
             }
             if (idxcount >= ABB_PAIRS_MAX) {
+                free(curdab);
                 freedabs(firstdab);
+                firstdab = 0;
                 _dwarf_error(dbg, error,
                     DW_DLE_DEBUG_NAMES_ABBREV_OVERFLOW);
                 return DW_DLV_OK;
@@ -120,7 +122,7 @@ fill_in_abbrevs_table(struct Dwarf_Dnames_index_header_s * dn,
         }
         curdab->da_pairs_count = idxcount;
         abcur = inner +1;
-        if (firstdab) {
+        if (!firstdab) {
             firstdab  = curdab;
             lastdab  = curdab;
         } else {
@@ -129,6 +131,7 @@ fill_in_abbrevs_table(struct Dwarf_Dnames_index_header_s * dn,
         }
     }
     if (!foundabend) {
+        freedabs(firstdab);
         _dwarf_error(dbg, error,
             DW_DLE_DEBUG_NAMES_ABBREV_CORRUPTION);
         return DW_DLV_OK;
@@ -154,6 +157,7 @@ fill_in_abbrevs_table(struct Dwarf_Dnames_index_header_s * dn,
             free(tmpa);
             tmpa = tmpb;
         }
+        tmpa = 0;
         /*  Now the list has turned into an array. We can ignore
             the list aspect. */
     }
@@ -389,6 +393,7 @@ read_a_name_index(Dwarf_Dnames_Head dn,
                 the padding. */
             for( ; cp < cpend; ++cp) {
                 if(*cp) {
+                    free(di_header);
                     _dwarf_error(dbg, error,
                         DW_DLE_DEBUG_NAMES_PAD_NON_ZERO);
                     return DW_DLV_ERROR;

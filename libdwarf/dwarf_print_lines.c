@@ -631,9 +631,6 @@ _dwarf_print_lines(Dwarf_Die die, Dwarf_Error * error)
         &err_count,
         only_line_header);
     /* No way to get error count back in this interface */
-    if (res != DW_DLV_OK) {
-        return res;
-    }
     return res;
 }
 

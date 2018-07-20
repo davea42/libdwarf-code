@@ -1,3 +1,6 @@
+2018-07-20  David Anderson
+     * dwarf_tsearchhash.c: Added UNUSEDARG
+       where appropriate.
 2018-07-16  David Anderson
      * dwarf_tsearch.h: Corrected obsolete web references.
        Refined HAVE_STDAFX_H ifdef.

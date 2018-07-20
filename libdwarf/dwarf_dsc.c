@@ -183,7 +183,7 @@ int dwarf_discr_list(Dwarf_Debug dbg,
 
     ary = (struct Dwarf_Dsc_Entry_s *)calloc(arraycount,
         sizeof(struct Dwarf_Dsc_Entry_s));
-    if(!h) {
+    if(!ary) {
         dwarf_dealloc(dbg,h,DW_DLA_DSC_HEAD);
         _dwarf_error(dbg, error, DW_DLE_ALLOC_FAIL);
         return DW_DLV_ERROR;

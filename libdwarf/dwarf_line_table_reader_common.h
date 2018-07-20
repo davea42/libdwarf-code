@@ -578,6 +578,8 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
         }
         if (directory_format_count ==0 &&
             directories_count > 0) {
+            free(directory_entry_types);
+            free(directory_entry_forms);
             _dwarf_error(dbg, err, DW_DLE_DIRECTORY_FORMAT_COUNT_VS_DIRECTORIES_MISMATCH);
             return (DW_DLV_ERROR);
         }
@@ -670,6 +672,7 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
                 malloc(sizeof(struct Dwarf_File_Entry_s));
             if (curline == NULL) {
                 free(filename_entry_types);
+                free(filename_entry_forms);
                 _dwarf_error(dbg, err, DW_DLE_ALLOC_FAIL);
                 return (DW_DLV_ERROR);
             }

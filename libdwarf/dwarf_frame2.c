@@ -421,7 +421,7 @@ _dwarf_get_fde_list_internal(Dwarf_Debug dbg, Dwarf_Cie ** cie_data,
                     dealloc_fde_cie_list_internal(head_fde_ptr,
                         head_cie_ptr);
                     return resf;
-                } else if (res == DW_DLV_NO_ENTRY) {
+                } else if (resf == DW_DLV_NO_ENTRY) {
                     return resf;
                 }
                 ++cie_count;
@@ -1685,7 +1685,8 @@ get_gcc_eh_augmentation(Dwarf_Debug dbg, Dwarf_Small * frame_ptr,
         suffix = augmentation + 2;
     }
     /*  FIXME: This could run  too far. */
-    for (; *suffix; ++suffix) {
+    /* for (; *suffix; ++suffix) if we think we can do something  */
+    if (*suffix) {
         /*  We have no idea what this is as yet. Some extensions beyond
             dwarf exist which we do not yet handle. */
         _dwarf_error(dbg, error, DW_DLE_FRAME_AUGMENTATION_UNKNOWN);

@@ -326,11 +326,6 @@ _dwarf_get_macro_ops_count_internal(Dwarf_Macro_Context macro_context,
         op = *mdata;
         ++opcount;
         ++mdata;
-        /*  Here so we would set it for the zero op,
-            though that is kind of redundant since
-            the curopsentry starts out zero-d.
-            if (build_ops_array)
-                curopsentry->mo_opcode = op;  */
         if (!op) {
             Dwarf_Unsigned opslen = 0;
             /*  End of ops, this is terminator, count the ending 0
@@ -372,7 +367,9 @@ _dwarf_get_macro_ops_count_internal(Dwarf_Macro_Context macro_context,
             _dwarf_error(dbg, error, DW_DLE_MACRO_PAST_END);
             return DW_DLV_ERROR;
         }
-        curopsentry++;
+        if (build_ops_array) {
+            curopsentry++;
+        }
     }
     _dwarf_error(dbg, error, DW_DLE_MACRO_PAST_END);
     return DW_DLV_ERROR;
@@ -510,8 +507,8 @@ dwarf_get_macro_defundef(Dwarf_Macro_Context macro_context,
         *offset = stringoffset;
         *forms_count = lformscount;
         if (res == DW_DLV_ERROR) {
-            return res;
             *macro_string = "<Error: getting local .debug_str>";
+            return res;
         } else if (res == DW_DLV_NO_ENTRY) {
             *macro_string = "<Error: NO_ENTRY on .debug_string (strp)>";
         } else {

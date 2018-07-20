@@ -85,10 +85,10 @@ dwarf_add_frame_cie(Dwarf_P_Debug dbg,
         curcie->cie_version = 1;
     }
     tmpaug = (char *)_dwarf_p_get_alloc(dbg,strlen(augmenter)+1);
-    strcpy(tmpaug,augmenter);
     if (!tmpaug) {
         DWARF_P_DBG_ERROR(dbg, DW_DLE_CIE_ALLOC, DW_DLV_NOCOUNT);
     }
+    strcpy(tmpaug,augmenter);
     curcie->cie_aug = tmpaug;
     curcie->cie_code_align = code_align;
     curcie->cie_data_align = data_align;

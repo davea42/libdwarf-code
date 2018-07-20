@@ -287,7 +287,9 @@ dwarf_get_abbrev_entry(Dwarf_Abbrev abbrev,
     or .debug_types need to be initialized to anything specific.
     Any garbage bytes may cause trouble.  Not all compilers/linkers
     leave unreferenced garbage bytes in .debug_abbrev, so this may
-    work for most objects. */
+    work for most objects. 
+    In case of error could return a bogus value, there is
+    no documented way to detect error. */
 int
 dwarf_get_abbrev_count(Dwarf_Debug dbg)
 {
@@ -297,7 +299,7 @@ dwarf_get_abbrev_count(Dwarf_Debug dbg)
     Dwarf_Unsigned attr_count = 0;
     Dwarf_Unsigned abbrev_count = 0;
     int abres = DW_DLV_OK;
-    Dwarf_Error err;
+    Dwarf_Error err = 0;
 
     while ((abres = dwarf_get_abbrev(dbg, offset, &ab,
         &length, &attr_count,
@@ -306,6 +308,10 @@ dwarf_get_abbrev_count(Dwarf_Debug dbg)
         ++abbrev_count;
         offset += length;
         dwarf_dealloc(dbg, ab, DW_DLA_ABBREV);
+    }
+    if (err) {
+        dwarf_dealloc(dbg,err,DW_DLA_ERROR);
+        err = 0;
     }
     return abbrev_count;
 }

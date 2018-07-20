@@ -1,3 +1,30 @@
+2018-07-20 David Anderson
+    * libdwarf_version.h: Updated version string.
+    * pro_frame.c: Coverity CID 186989. Dereferenced tmpaug
+      before NULL check. Fixed.
+    * pro_section.c: Coverity CID 186990. copy-paste error
+      changed val_len to val_len2.
+    * dwarf_abbrev.c: Coverity CID 186982. dwarf_get_abbrev_count()
+      could leak Dwarf_Error. No longer can.
+    * dwarf_print_lines.c: Coverity CID 186973. Remove useless code.
+    * dwarf_ranges.c: Coverity CID 186909. Ensure null not
+      dereferenced.
+    * dwarf_dnames.c: Coverity CID 186899. If needed !firstdab, 
+      not firstdab. Also, free local allocations on error.
+    * dwarf_dsc.c: Coverity CID 186898. Null check on wrong variable.
+    * dwarf_tsearchhash.c: Coverity CID 186893. Leak on error fixed.
+    * dwarf_query.c: Coverity CID 186892. Testing res, now res3.
+    * dwarf_macro5.c: Coverity CID 186891. Dead code moved to 
+      correct place.
+      Coverity CID 186906. Only increment curopsonly if non-null.
+    * dwarf_dnames.c: Coverity CID 186889. Fixed leak on error.
+    * dwarf_die_deliv.c: Coverity CID 186888. Fixed: Removed
+      assignment overridden later.
+      Coverity CID 186904: deref before: null check, dataptr,dis.
+    * dwarf_frame2.c: Coverity CID 186885. Fixed: loop inappropriate.
+      Coverity CID 186908. Fixed test res->resf.
+    * dwarf_line_table_reader_common.h: Coverity CID 186886. 
+      Fixed leak.
 2018-07-16 David Anderson
     * dwarf_incl.h: Refine ifdef of HAVE_STDAFX_H.
     * dwarf_tsearch.h: Correcting web references in comments.

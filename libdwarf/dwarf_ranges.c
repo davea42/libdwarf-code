@@ -51,7 +51,10 @@ free_allocated_ranges( struct ranges_entry *base)
 /*  Ranges are never in a split dwarf object. In the base object
     instead. So use the tied_object if present.
     We return an error which is on the incoming dbg, not
-    the possibly-tied-dbg localdbg. */
+    the possibly-tied-dbg localdbg. 
+    If incoming die is NULL there is no context, so do not look
+    for a tied file, and address_size is the size
+    of the overall object, not the address_size of the context. */
 #define MAX_ADDR ((address_size == 8)?0xffffffffffffffffULL:0xffffffff)
 int dwarf_get_ranges_a(Dwarf_Debug dbg,
     Dwarf_Off rangesoffset,
@@ -76,7 +79,7 @@ int dwarf_get_ranges_a(Dwarf_Debug dbg,
     Dwarf_Debug localdbg = dbg;
     Dwarf_Error localerror = 0;
 
-    if (localdbg->de_tied_data.td_tied_object) {
+    if (die &&localdbg->de_tied_data.td_tied_object) {
         /*  ASSERT: localdbg->de_debug_ranges is missing: DW_DLV_NO_ENTRY.
             So lets not look in dbg. */
         Dwarf_CU_Context context = 0;
