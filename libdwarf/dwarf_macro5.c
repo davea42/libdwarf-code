@@ -1154,7 +1154,7 @@ _dwarf_internal_macro_context(Dwarf_Die die,
     }
     lres = _dwarf_internal_get_die_comp_dir(die, &comp_dir,
         &comp_name,error);
-    if (resattr == DW_DLV_ERROR) {
+    if (lres == DW_DLV_ERROR) {
         Dwarf_Signed i = 0;
         for (i = 0; i < srcfiles_count; ++i) {
             if(srcfiles[i]) {

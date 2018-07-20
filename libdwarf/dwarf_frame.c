@@ -2216,11 +2216,6 @@ dwarf_get_fde_at_pc(Dwarf_Fde * fde_data,
     /*  Assumes fde_data table has at least one entry. */
     entryfde = *fde_data;
     FDE_NULL_CHECKS_AND_SET_DBG(entryfde, dbg);
-
-    if (dbg == NULL) {
-        _dwarf_error(NULL, error, DW_DLE_FDE_DBG_NULL);
-        return (DW_DLV_ERROR);
-    }
     fdecount = entryfde->fd_is_eh?
         dbg->de_fde_count_eh:dbg->de_fde_count;
     {

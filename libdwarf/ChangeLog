@@ -1,4 +1,9 @@
 2018-07-20 David Anderson
+    * dwarf_frame.c: Coverity CID 186901.
+      Removed duplicate check for dbg null.
+    * dwarf_macro5.c: Coverity CID 186890.
+      Was testing wrong status value. resattr -> lres
+2018-07-20 David Anderson
     * dwarf_arange.c(dwarf_get_aranges_list): Coverity CID 186976. 
       This function has a serious problem, it reads agranges
       without knowing the CU version number so anything
