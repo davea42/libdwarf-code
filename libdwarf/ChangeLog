@@ -1,4 +1,41 @@
 2018-07-20 David Anderson
+    * dwarf_arange.c(dwarf_get_aranges_list): Coverity CID 186976. 
+      This function has a serious problem, it reads agranges
+      without knowing the CU version number so anything
+      with segment_selector != 0 could be read wrong.
+      Unless the compiler authors did in early versions
+      what DWARF4 called for in aranges: a segment selector
+      value.
+    * dwarf_elf_access.c(update_entry): Coverity CID 187700. 
+      If we do not have
+      ELF64 symbol type available avoid letting us fall through
+      to dereference a null pointer.
+    * dwarf_print_lines.c(dwarf_print_lines): Coverity CID 186985.
+      Coverity CID 186973
+      Remove if(){} as it is not needed.
+    * dwarf_macro.c(dwarf_get_macro_details): Coverity CID 186980.
+      Removed dead code for count==0 as count will be at least 1.
+    * pro_arange.c: Coverity CID 186974.
+      Delete redundant check for null.
+    * pro_section.c(dwarf_pro_getabbrev): Coverity CID 186983.
+      Avoid dereferencing forms/attrs if they are null.
+    * pro_forms.c(dwarf_add_AT_location_expr): Coverity CID 186984.
+      Was potentially reading more from input than could
+      possibly exist in the fixed-maximum-length input.
+      Coverity CID 186975. Make block_size Dwarf_Unsigned
+      to (possibly) avoid this warning.
+    * pro_expr.c(dwarf_add_expr_gen): Coverity CID 186987.
+      Add break; to the last case in the switch.
+    * pro_macinfo.c(dwarf_vendor_ext): Coverity CID 186988.
+      Coverity CIE 186981
+      Deleting dead code.
+    * pro_types.c(_dwarf_transform_simplename_to_disk)): 
+      Coverity CID 186977. Delete dead code.
+    * pro_init.c(common_init): Coverity CID 187001. Now we avoid
+      dereferencing a potentially NULL pointer abiname.
+    * pro_frame.c(dwarf_add_fde_inst): Coverity CID 186979.
+      Added missing check of 'res' variable.
+2018-07-20 David Anderson
     * libdwarf_version.h: Updated version string.
     * pro_frame.c: Coverity CID 186989. Dereferenced tmpaug
       before NULL check. Fixed.

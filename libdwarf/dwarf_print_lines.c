@@ -617,9 +617,6 @@ dwarf_print_lines(Dwarf_Die die, Dwarf_Error * error,int *error_count)
     int res = _dwarf_internal_printlines(die, error,
         error_count,
         only_line_header);
-    if (res != DW_DLV_OK) {
-        return res;
-    }
     return res;
 }
 int

@@ -158,10 +158,6 @@ _dwarf_transform_arange_to_disk(Dwarf_P_Debug dbg,
     GET_CHUNK(dbg, dbg->de_elf_sects[DEBUG_ARANGES],
         arange, (unsigned long) arange_num_bytes, error);
     arange_ptr = arange;
-    if (arange == NULL) {
-        _dwarf_p_error(dbg, error, DW_DLE_ALLOC_FAIL);
-        return DW_DLV_ERROR;
-    }
     if (extension_word_size) {
         Dwarf_Word x = DISTINGUISHED_VALUE;
 

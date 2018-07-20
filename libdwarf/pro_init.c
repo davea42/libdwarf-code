@@ -194,6 +194,9 @@ set_reloc_numbers(Dwarf_P_Debug dbg,
     const char *abiname)
 {
     struct isa_relocs_s *isap = 0;
+    if (!abiname) {
+        return DW_DLV_NO_ENTRY;
+    }
     for(isap = &isa_relocs[0];  ;isap++) {
         if (!isap->name_) {
             /* No more names known. Never found the one we wanted. */

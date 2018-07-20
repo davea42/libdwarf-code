@@ -347,6 +347,8 @@ dwarf_get_macro_details(Dwarf_Debug dbg,
             return (DW_DLV_ERROR);
         }
     }
+    /*  ASSERT: count == 0 is impossible, it will be at least 1
+        given the previous for-loop. */
     if (count == 0) {
         free_macro_stack(dbg,&msdata);
         _dwarf_error(dbg, error, DW_DLE_DEBUG_MACRO_INTERNAL_ERR);

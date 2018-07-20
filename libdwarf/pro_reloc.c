@@ -56,13 +56,12 @@ _dwarf_pro_pre_alloc_n_reloc_slots(Dwarf_P_Debug dbg,
     unsigned long slots_in_blk = (unsigned long) newslots;
     unsigned long rel_rec_size = dbg->de_relocation_record_size;
 
-    if (prel->pr_first_block)
+    if (prel->pr_first_block) {
         return DW_DLV_OK;       /* do nothing */
+    }
 
     len = sizeof(struct Dwarf_P_Relocation_Block_s) +
         slots_in_blk * rel_rec_size;
-
-
     data = (struct Dwarf_P_Relocation_Block_s *)
         _dwarf_p_get_alloc(dbg, len);
     if (!data) {
@@ -81,8 +80,6 @@ _dwarf_pro_pre_alloc_n_reloc_slots(Dwarf_P_Debug dbg,
     prel->pr_first_block = data;
     prel->pr_last_block = data;
     prel->pr_block_count = 1;
-
-
     return DW_DLV_OK;
 }
 

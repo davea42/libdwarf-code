@@ -211,9 +211,17 @@ dwarf_get_aranges_list(Dwarf_Debug dbg,
             Dwarf_Unsigned range_length = 0;
             /*  For segmented address spaces, the first field to
                 read is a segment selector (new in DWARF4).
-                Surprising since the segment_size was always there
+                The version number DID NOT CHANGE from 2, which
+                is quite surprising.
+                Also surprising since the segment_size
+                was always there
                 in the table header! */
-            if ((version  >= 4) && (segment_size != 0)) {
+            /*  We want to test cu_version here but
+                currently with no way to do that. 
+                So we just hope no one using 
+                segment_selectors, really. FIXME */
+            if ( segment_size) {
+                /*  Only applies if cu_version >= 4. */
                 READ_UNALIGNED_CK(dbg, segment_selector, Dwarf_Unsigned,
                     arange_ptr, segment_size,
                     error,end_this_arange);

@@ -216,7 +216,6 @@ _dwarf_symbolic_relocs_to_disk(Dwarf_P_Debug dbg,
                 return res;
             }
             new_blk = p_reloc->pr_first_block;
-
             data = (Dwarf_Small *) new_blk->rb_data;
 
             /*  The following loop does the consolidation to a single

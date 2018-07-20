@@ -192,10 +192,6 @@ _dwarf_transform_simplename_to_disk(Dwarf_P_Debug dbg,
     /* Now we know how long the entire section is */
     GET_CHUNK(dbg, dbg->de_elf_sects[section_index],
         stream_bytes, (unsigned long) stream_bytes_count, error);
-    if (stream_bytes == NULL) {
-        _dwarf_p_error(dbg, error, DW_DLE_ALLOC_FAIL);
-        return DW_DLV_ERROR;
-    }
     cur_stream_bytes_ptr = stream_bytes;
 
     if (extension_size) {

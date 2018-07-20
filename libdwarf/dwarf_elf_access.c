@@ -1070,6 +1070,10 @@ update_entry(Dwarf_Debug dbg,
     if (is_64bit) {
 #ifdef HAVE_ELF64_SYM
         sym = &((Elf64_Sym*)symtab_section_data)[sym_idx];
+#else
+        /* We cannot handle this object without 64_SYMs. */
+        *error = DW_DLE_RELOC_SECTION_RELOC_TARGET_SIZE_UNKNOWN;
+        return DW_DLV_ERROR;
 #endif
     } else {
         sym32 = &((Elf32_Sym*)symtab_section_data)[sym_idx];

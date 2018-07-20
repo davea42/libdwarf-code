@@ -3277,16 +3277,19 @@ _dwarf_pro_getabbrev(Dwarf_P_Die die, Dwarf_P_Abbrev head)
         attrs = (Dwarf_ufixed *)
             _dwarf_p_get_alloc(die->di_dbg,
                 sizeof(Dwarf_ufixed) * die->di_n_attr);
-        if (attrs == NULL)
+        if (attrs == NULL) {
             return NULL;
+        }
     }
     nattrs = 0;
     curattr = die->di_attrs;
-    while (curattr) {
-        attrs[nattrs] = curattr->ar_attribute;
-        forms[nattrs] = curattr->ar_attribute_form;
-        nattrs++;
-        curattr = curattr->ar_next;
+    if (forms && attrs) {
+        while (curattr) {
+            attrs[nattrs] = curattr->ar_attribute;
+            forms[nattrs] = curattr->ar_attribute_form;
+            nattrs++;
+            curattr = curattr->ar_next;
+        }
     }
 
     curabbrev = (Dwarf_P_Abbrev)
@@ -3306,7 +3309,6 @@ _dwarf_pro_getabbrev(Dwarf_P_Die die, Dwarf_P_Abbrev head)
     curabbrev->abb_n_attr = die->di_n_attr;
     curabbrev->abb_idx = 0;
     curabbrev->abb_next = NULL;
-
     return curabbrev;
 }
 

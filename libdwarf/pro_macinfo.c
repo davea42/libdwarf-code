@@ -343,10 +343,6 @@ dwarf_end_macro_file(Dwarf_P_Debug dbg, Dwarf_Error * error)
         return (DW_DLV_ERROR);
     }
     res = libdwarf_compose_complete(dbg, &compose_error_type);
-    if (res != DW_DLV_OK) {
-        _dwarf_p_error(NULL, error, compose_error_type);
-        return (DW_DLV_ERROR);
-    }
     return DW_DLV_OK;
 }
 
@@ -387,10 +383,6 @@ dwarf_vendor_ext(Dwarf_P_Debug dbg,
     }
     libdwarf_compose_add_string(dbg, string, len);
     libdwarf_compose_complete(dbg, &compose_error_type);
-    if (res != DW_DLV_OK) {
-        _dwarf_p_error(NULL, error, compose_error_type);
-        return (DW_DLV_ERROR);
-    }
     return DW_DLV_OK;
 }
 
@@ -428,10 +420,6 @@ _dwarf_pro_transform_macro_info_to_disk(Dwarf_P_Debug dbg,
 
     GET_CHUNK(dbg, dbg->de_elf_sects[DEBUG_MACINFO],
         macinfo, (unsigned long) mac_num_bytes, error);
-    if (macinfo == NULL) {
-        _dwarf_p_error(dbg, error, DW_DLE_ALLOC_FAIL);
-        return DW_DLV_ERROR;
-    }
 
     macinfo_ptr = macinfo;
     m_prev = 0;

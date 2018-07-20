@@ -498,6 +498,10 @@ dwarf_add_fde_inst(Dwarf_P_Fde fde,
             res = _dwarf_pro_encode_signed_leb128_nm(val2s, &nbytes2,
                 buff2, sizeof(buff2));
         }
+        if (res != DW_DLV_OK) {
+            _dwarf_p_error(dbg, error, DW_DLE_STRING_ALLOC);
+            return ((Dwarf_P_Fde) DW_DLV_BADADDR);
+        }
 
         res = _dwarf_pro_encode_leb128_nm(val2, &nbytes2,
             buff2, sizeof(buff2));

@@ -440,8 +440,7 @@ dwarf_add_expr_gen(Dwarf_P_Expr expr,
             return (DW_DLV_NOCOUNT);
         }
         operand_size += operand2_size;
-
-
+        break;
     default:
         _dwarf_p_error(expr->ex_dbg, error, DW_DLE_BAD_EXPR_OPCODE);
         return (DW_DLV_NOCOUNT);
