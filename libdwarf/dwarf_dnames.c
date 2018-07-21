@@ -50,6 +50,29 @@ freedabs(struct Dwarf_D_Abbrev_s *dab)
     }
 }
 
+/*  Encapsulates DECODE_LEB128_UWORD_CK
+    so the caller can free resources
+    in case of problems. */
+static int
+read_uword_ab(Dwarf_Small **lp,
+    Dwarf_Unsigned *out_p,
+    Dwarf_Debug dbg,
+    Dwarf_Error *err,
+    Dwarf_Small *lpend)
+
+{
+    Dwarf_Small *inptr = *lp;
+    Dwarf_Unsigned out = 0;
+
+    /* The macro updates inptr */
+    DECODE_LEB128_UWORD_CK(inptr,
+        out, dbg,err,lpend);
+    *lp = inptr;
+    *out_p = out;
+    return DW_DLV_OK;
+}
+
+
 static int
 fill_in_abbrevs_table(struct Dwarf_Dnames_index_header_s * dn,
     Dwarf_Error * error)
@@ -72,39 +95,50 @@ fill_in_abbrevs_table(struct Dwarf_Dnames_index_header_s * dn,
         Dwarf_Unsigned form = 0;
         Dwarf_Small *inner = 0;
         unsigned idxcount = 0;
+        int res = 0;
 
-        DECODE_LEB128_UWORD_CK(abcur,
-            code,dbg,error,
-            tabend);
+        res = read_uword_ab(&abcur,&code,dbg,error,tabend);
+        if (res != DW_DLV_OK) {
+            freedabs(firstdab);
+            return res;
+        }
         if (code == 0) {
             foundabend = TRUE;
             break;
         }
-        /*  abcur updated by macro */
-        DECODE_LEB128_UWORD_CK(abcur,
-            tag,dbg,error,
-            tabend);
+
+        res = read_uword_ab(&abcur,&tag,dbg,error,tabend);
+        if (res != DW_DLV_OK) {
+            freedabs(firstdab);
+            return res;
+        }
         inner = abcur;
         curdab = (struct Dwarf_D_Abbrev_s *)calloc(1,
             sizeof(struct Dwarf_D_Abbrev_s));
         if(!curdab) {
             freedabs(firstdab);
+            firstdab = 0;
             _dwarf_error(dbg, error, DW_DLE_ALLOC_FAIL);
-            return DW_DLV_OK;
+            return DW_DLV_ERROR;
         }
         curdab->da_tag = tag;
         curdab->da_abbrev_code = code;
         abcount++;
         for(;;) {
-            DECODE_LEB128_UWORD_CK(inner,
-                idx,dbg,error,
-                tabend);
-
-            /*  inner updated by macro */
-            DECODE_LEB128_UWORD_CK(inner,
-                form,dbg,error,
-                tabend);
-
+            res = read_uword_ab(&inner,&idx,dbg,error,tabend);
+            if (res != DW_DLV_OK) {
+                free(curdab);
+                freedabs(firstdab);
+                firstdab = 0;
+                return res;
+            }
+            res = read_uword_ab(&inner,&form,dbg,error,tabend);
+            if (res != DW_DLV_OK) {
+                free(curdab);
+                freedabs(firstdab);
+                firstdab = 0;
+                return res;
+            }
             if (!idx && !form) {
                 break;
             }
@@ -114,7 +148,7 @@ fill_in_abbrevs_table(struct Dwarf_Dnames_index_header_s * dn,
                 firstdab = 0;
                 _dwarf_error(dbg, error,
                     DW_DLE_DEBUG_NAMES_ABBREV_OVERFLOW);
-                return DW_DLV_OK;
+                return DW_DLV_ERROR;
             }
             curdab->da_pairs[idxcount].ap_index = idx;
             curdab->da_pairs[idxcount].ap_form = form;
@@ -152,12 +186,14 @@ fill_in_abbrevs_table(struct Dwarf_Dnames_index_header_s * dn,
         for(ct = 0; ct < abcount; ++ct) {
             struct Dwarf_D_Abbrev_s *tmpb =tmpa->da_next;
             /*  da_next no longer means anything */
-            tmpa->da_next = 0;
             dn->din_abbrev_list[ct] = *tmpa;
-            free(tmpa);
+            dn->din_abbrev_list[ct].da_next = 0;
             tmpa = tmpb;
         }
+        freedabs(firstdab);
         tmpa = 0;
+        firstdab = 0;
+        lastdab = 0;
         /*  Now the list has turned into an array. We can ignore
             the list aspect. */
     }
@@ -550,7 +586,7 @@ dwarf_debugnames_header(Dwarf_Debug dbg,
         DW_DLA_DNAMES_HEAD, 1);
     if(!dn_header) {
         _dwarf_error(dbg, error, DW_DLE_ALLOC_FAIL);
-        return (DW_DLV_ERROR);
+        return DW_DLV_ERROR;
     }
     dn_header->dn_section_data = start_section;
     dn_header->dn_section_size = section_size;

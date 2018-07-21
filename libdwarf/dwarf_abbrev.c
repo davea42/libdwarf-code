@@ -287,7 +287,7 @@ dwarf_get_abbrev_entry(Dwarf_Abbrev abbrev,
     or .debug_types need to be initialized to anything specific.
     Any garbage bytes may cause trouble.  Not all compilers/linkers
     leave unreferenced garbage bytes in .debug_abbrev, so this may
-    work for most objects. 
+    work for most objects.
     In case of error could return a bogus value, there is
     no documented way to detect error. */
 int

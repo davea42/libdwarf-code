@@ -493,6 +493,13 @@ _dwarf_make_CU_Context(Dwarf_Debug dbg,
         We need to add in the base from the .debug_cu_index
         or .debug_tu_index . Done below */
 
+    /*  There is some duplication of setting is_type_tu
+        and types_extra_len due to variations
+        across DWARF versions. */
+    if (!is_info) {
+        /* DWARF4 */
+        is_type_tu = TRUE;
+    }
     if (version ==  DW_CU_VERSION5) {
         /*  DW5 introduces new header fields, depending on UT type.
             See DW5 section 7.5.1.x */
@@ -519,12 +526,16 @@ _dwarf_make_CU_Context(Dwarf_Debug dbg,
         }
 
     }
+    if (is_type_tu) {
+        /*  types CU headers have extra header bytes.
+            DWARF4 or DWARF5 */
+        types_extra_len = sizeof(signaturedata) + local_length_size;
+    }
 
     if (cu_ptr > section_end_ptr) {
         dwarf_dealloc(dbg, cu_context, DW_DLA_CU_CONTEXT);
         _dwarf_error(dbg, error, DW_DLE_INFO_HEADER_ERROR);
     }
-
     if (!address_size) {
         dwarf_dealloc(dbg, cu_context, DW_DLA_CU_CONTEXT);
         _dwarf_error(dbg,error,DW_DLE_ADDRESS_SIZE_ZERO);
@@ -536,24 +547,12 @@ _dwarf_make_CU_Context(Dwarf_Debug dbg,
         _dwarf_error(dbg,error,DW_DLE_ADDRESS_SIZE_ERROR);
         return DW_DLV_ERROR;
     }
-
-
-
     if (cu_context->cc_address_size  > sizeof(Dwarf_Addr)) {
         dwarf_dealloc(dbg, cu_context, DW_DLA_CU_CONTEXT);
         _dwarf_error(dbg, error, DW_DLE_CU_ADDRESS_SIZE_BAD);
         return DW_DLV_ERROR;
     }
 
-    is_type_tu = FALSE;
-    if (!is_info ||
-        (version == DW_CU_VERSION5 && unit_type == DW_UT_type )) {
-        is_type_tu = TRUE;
-    }
-    if (is_type_tu) {
-        /* types CU headers have extra header bytes. */
-        types_extra_len = sizeof(signaturedata) + local_length_size;
-    }
 
 
     /*  Compare the space following the length field

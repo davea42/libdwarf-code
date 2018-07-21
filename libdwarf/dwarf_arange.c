@@ -217,8 +217,8 @@ dwarf_get_aranges_list(Dwarf_Debug dbg,
                 was always there
                 in the table header! */
             /*  We want to test cu_version here but
-                currently with no way to do that. 
-                So we just hope no one using 
+                currently with no way to do that.
+                So we just hope no one using
                 segment_selectors, really. FIXME */
             if ( segment_size) {
                 /*  Only applies if cu_version >= 4. */

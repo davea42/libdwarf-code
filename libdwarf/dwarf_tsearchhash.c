@@ -615,7 +615,7 @@ dwarf_twalk_inner(const struct hs_base *h,
 
 void
 dwarf_twalk(const void *rootp,
-    void (*action)(const void *nodep, const DW_VISIT which, 
+    void (*action)(const void *nodep, const DW_VISIT which,
         UNUSEDARG const int depth))
 {
     const struct hs_base *head = (const struct hs_base *)rootp;

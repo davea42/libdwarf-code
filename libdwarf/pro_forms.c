@@ -690,7 +690,7 @@ dwarf_add_AT_location_expr(Dwarf_P_Debug dbg,
     break;
     }
 
-    /*  Compute the number of bytes needed to hold constant. 
+    /*  Compute the number of bytes needed to hold constant.
         This is a bit fake in that the size will never
         be particularly large and always < UINT_MAX. */
     if (block_size <= UCHAR_MAX) {
@@ -757,7 +757,7 @@ dwarf_add_AT_location_expr(Dwarf_P_Debug dbg,
     if (block_size > sizeof(loc_expr->ex_byte_stream)) {
         /* ex_byte_stream has a fixed max value. */
         _dwarf_p_error(dbg, error, DW_DLE_EXPR_LENGTH_BAD);
-        return DW_DLV_BADADDR;
+        return ((Dwarf_P_Attribute) DW_DLV_BADADDR);
     }
     memcpy(block_dest_ptr, &(loc_expr->ex_byte_stream[0]), block_size);
 

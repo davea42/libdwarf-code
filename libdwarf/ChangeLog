@@ -1,3 +1,34 @@
+2018-07-21 David Anderson
+    * dwarf_init_finish.c: Coverity CID 186884.
+      Revised the logic for clarity and added comments
+      too.
+    * libdwarf_version.h: Update version string.
+    * dwarf_dnames.c: Coverity CID 186887.
+      Encapsulating
+      DECODE_LEB128_UWORD_CK in a function
+      so we can catch an error
+      and free appropriate resources.
+      Fixed cases of error where DW_DLV_OK returned.
+    * dwarf_abbrev.c,dwarf_arange.c,dwarf_die_deliv.c,
+      dwarf_ranges.c,dwarf_tsearchhash.c: 
+      Removed trailing whitespace.
+    * dwarf_xu_index.c: Coverity CID 186894.
+      We know the string length (2) so we just assign the
+      bytes directly avoiding any possibility of overrun.
+    * pro_reloc_symbolic.c(_dwarf_symbolic_relocs_to_disk): 
+      Coverity CID 186978.
+      Was dereferencing a pointer after zeroing the
+      pointer, now fixed and the obfuscating single-call
+      function code moved to where used, deleted function.  
+    * dwarf_macro.c: Coverity CID 186980.
+      Removed code testing for zero count as it is impossible
+      to get to that spot with count==0.
+    * pro_forms.c: The new return of error is now
+      return ((Dwarf_P_Attribute) DW_DLV_BADADDR);
+      to at least avoid a warning about this
+      necessary uglyness of pointer/integer confusion.
+      The dwarf reader (consumer) interfaces have none
+      of this.
 2018-07-20 David Anderson
     * dwarf_line_table_reader_common.h: Encapsulating
       DECODE_LEB128_UWORD_CK in a function

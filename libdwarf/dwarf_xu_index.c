@@ -166,7 +166,11 @@ dwarf_get_xu_index_header(Dwarf_Debug dbg,
         _dwarf_error(dbg, error, DW_DLE_ALLOC_FAIL);
         return (DW_DLV_ERROR);
     }
-    strcpy(indexptr->gx_type,section_type);
+    /*  Only "cu" or "tu" allowed, that is checked above.
+        But for safety we just copy the allowed bytes*/
+    indexptr->gx_type[0] = section_type[0];
+    indexptr->gx_type[1] = section_type[1];
+    indexptr->gx_type[2] = 0;
     indexptr->gx_dbg = dbg;
     indexptr->gx_section_length = sect->dss_size;
     indexptr->gx_section_data   = sect->dss_data;
