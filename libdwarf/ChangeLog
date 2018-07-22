@@ -1,3 +1,7 @@
+2018-07-22 David Anderson
+    * pro_reloc_symbolic.c(_dwarf_symbolic_relocs_to_disk): 
+      Coverity CID 186884. A much cleaner and more
+      readable fix.
 2018-07-21 David Anderson
     * libdwarf_version.h: Updated version string.
     * dwarf_init_finish.c: Coverity CID 186884.

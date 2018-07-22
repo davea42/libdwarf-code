@@ -183,9 +183,11 @@ _dwarf_symbolic_relocs_to_disk(Dwarf_P_Debug dbg,
 
         /*  If pr_block_count 0 or 1 then the blocks are
             an array (with 0 or 1 entries) so we'll just
-            fall through to the end of this loop, no 
-            more work to do here.  */
-        if (p_reloc->pr_block_count > 1) {
+            return to the for loop. No more work to do here.  */
+        if (p_reloc->pr_block_count < 2) {
+            continue;
+        }
+        {
             /*  Since more than one relocation on the section
                 we now convert the list of relocation blocks
                 into a proper array of blocks. */

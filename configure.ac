@@ -626,6 +626,7 @@ AS_IF(
          [
           enable_sanitize="yes"
           DWARF_CFLAGS="$DWARF_CFLAGS -fsanitize=address -fsanitize=leak -fsanitize=undefined"
+          LDFLAGS="$LDFLAGS -fsanitize=address -fsanitize=leak -fsanitize=undefined"
          ],
          [enable_sanitize="no"])
      CFLAGS=${CFLAGS_save}
@@ -762,6 +763,7 @@ echo
 echo "Compilation............: make (or gmake)"
 echo "  CPPFLAGS.............: $CPPFLAGS"
 echo "  CFLAGS...............: $CFLAGS"
+echo "  DWARF_CFLAGS.........: $DWARF_CFLAGS"
 echo "  LDFLAGS..............: $LDFLAGS"
 echo "  DWARF_LIBS...........: $DWARF_LIBS"
 echo
