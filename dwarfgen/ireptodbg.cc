@@ -28,6 +28,12 @@
 // ireptodbg.cc
 
 #include "config.h"
+#ifdef HAVE_UNUSED_ATTRIBUTE
+#define  UNUSEDARG __attribute__ ((unused))
+#else
+#define  UNUSEDARG
+#endif
+
 
 /* Windows specific header files */
 #if defined(_WIN32) && defined(HAVE_STDAFX_H)
@@ -70,12 +76,12 @@ typedef std::map<std::string,unsigned> pathToUnsignedType;
 // The attrs ref passed in is (sometimes) used to generate
 // a new attrs list for the caller.
 static void
-specialAttrTransformations(Dwarf_P_Debug dbg,
-    IRepresentation & Irep,
-    Dwarf_P_Die ourdie,
+specialAttrTransformations(Dwarf_P_Debug dbg UNUSEDARG,
+    IRepresentation & Irep UNUSEDARG,
+    Dwarf_P_Die ourdie UNUSEDARG,
     IRDie &inDie,
     list<IRAttr>& attrs,
-    unsigned level)
+    unsigned level UNUSEDARG)
 {
     if(!cmdoptions.transformHighpcToConst) {
         // No transformation of this sort requested.
@@ -96,7 +102,6 @@ specialAttrTransformations(Dwarf_P_Debug dbg,
         Dwarf_Half attrnum = attr.getAttrNum();
         Dwarf_Half attrform = attr.getFinalForm();
         Dwarf_Form_Class formclass = attr.getFormClass();
-        IRForm * form = attr.getFormData();
         if(attrnum == DW_AT_high_pc) {
             if (attrform == DW_FORM_udata) {
                 // Already the right form for the test.
@@ -135,8 +140,6 @@ specialAttrTransformations(Dwarf_P_Debug dbg,
         it++) {
         IRAttr & attr = *it;
         Dwarf_Half attrnum = attr.getAttrNum();
-        Dwarf_Half attrform = attr.getFinalForm();
-        Dwarf_Form_Class formclass = attr.getFormClass();
         if(attrnum == DW_AT_high_pc) {
             // Here we want to create a constant form
             // to test that a const high_pc works.
@@ -171,9 +174,9 @@ specialAttrTransformations(Dwarf_P_Debug dbg,
 
 /* Create a data16 data item out of nothing... */
 static void
-addData16DataItem(Dwarf_P_Debug dbg,
-    IRepresentation & Irep,
-    Dwarf_P_Die ourdie,
+addData16DataItem(Dwarf_P_Debug dbg UNUSEDARG,
+    IRepresentation & Irep UNUSEDARG,
+    Dwarf_P_Die ourdie UNUSEDARG,
     IRDie &inDie,
     IRDie &inParent,
     list<IRAttr>& attrs,
@@ -203,8 +206,6 @@ addData16DataItem(Dwarf_P_Debug dbg,
         it++) {
         IRAttr & attr = *it;
         Dwarf_Half attrnum = attr.getAttrNum();
-        Dwarf_Half attrform = attr.getFinalForm();
-        Dwarf_Form_Class formclass = attr.getFormClass();
         if(attrnum == DW_AT_name){
             continue;
         }
@@ -270,7 +271,7 @@ HandleOneDieAndChildren(Dwarf_P_Debug dbg,
     // children to it, but add no content yet.
     Dwarf_P_Die ourdie = dwarf_new_die(dbg,inDie.getTag(),NULL,NULL,
         NULL,NULL,&error);
-    if (reinterpret_cast<Dwarf_Signed>(ourdie) == DW_DLV_BADADDR) {
+    if (reinterpret_cast<Dwarf_Addr>(ourdie) == DW_DLV_BADADDR) {
         cerr << "Die creation failure.  "<< endl;
         exit(1);
     }
@@ -292,7 +293,7 @@ HandleOneDieAndChildren(Dwarf_P_Debug dbg,
             res  = dwarf_die_link(chp,ourdie,NULL,NULL, NULL,&error);
         }
         // Bad cast here, FIXME
-        if (reinterpret_cast<Dwarf_Signed>(res) == DW_DLV_BADADDR) {
+        if (reinterpret_cast<Dwarf_Addr>(res) == DW_DLV_BADADDR) {
             cerr << "Die link failure.  "<< endl;
             exit(1);
         }
@@ -317,7 +318,9 @@ HandleOneDieAndChildren(Dwarf_P_Debug dbg,
 }
 
 static void
-HandleLineData(Dwarf_P_Debug dbg,IRepresentation & Irep, IRCUdata&cu)
+HandleLineData(Dwarf_P_Debug dbg,
+    IRepresentation & Irep UNUSEDARG,
+    IRCUdata&cu)
 {
     Dwarf_Error lerror = 0;
     // We refer to files by fileno, this builds an index.
@@ -347,7 +350,7 @@ HandleLineData(Dwarf_P_Debug dbg,IRepresentation & Irep, IRCUdata&cu)
             Dwarf_Unsigned idx = dwarf_add_file_decl(
                 dbg,const_cast<char *>(path.c_str()),
                 0,0,0,&l2error);
-            if(idx == DW_DLV_NOCOUNT) {
+            if((Dwarf_Signed)idx == DW_DLV_NOCOUNT) {
                 cerr << "Error from dwarf_add_file_decl() on " <<
                     path << endl;
                 exit(1);
@@ -370,7 +373,7 @@ HandleLineData(Dwarf_P_Debug dbg,IRepresentation & Irep, IRCUdata&cu)
             }
             Dwarf_Unsigned res = dwarf_lne_set_address(dbg,
                 a,elfsymidx,&lerror);
-            if(res == DW_DLV_NOCOUNT) {
+            if((Dwarf_Signed)res == DW_DLV_NOCOUNT) {
                 cerr << "Error building line, dwarf_lne_set_address" <<
                     endl;
                 exit(1);
@@ -380,7 +383,7 @@ HandleLineData(Dwarf_P_Debug dbg,IRepresentation & Irep, IRCUdata&cu)
         } else if( endsequence) {
             Dwarf_Unsigned esres = dwarf_lne_end_sequence(dbg,
                 a,&lerror);
-            if(esres == DW_DLV_NOCOUNT) {
+            if((Dwarf_Signed)esres == DW_DLV_NOCOUNT) {
                 cerr << "Error building line, dwarf_lne_end_sequence" <<
                     endl;
                 exit(1);
@@ -414,7 +417,7 @@ HandleLineData(Dwarf_P_Debug dbg,IRepresentation & Irep, IRCUdata&cu)
             isa,
             discriminator,
             &lerror);
-        if(lires == DW_DLV_NOCOUNT) {
+        if((Dwarf_Signed)lires == DW_DLV_NOCOUNT) {
             cerr << "Error building line, dwarf_add_line_entry" <<
                 endl;
             exit(1);
@@ -431,8 +434,9 @@ HandleLineData(Dwarf_P_Debug dbg,IRepresentation & Irep, IRCUdata&cu)
 // defined by the DWARF spec.
 //
 static void
-emitOneCU( Dwarf_P_Debug dbg,IRepresentation & Irep, IRCUdata&cu,
-    int cu_of_input_we_output)
+emitOneCU( Dwarf_P_Debug dbg,IRepresentation & Irep,
+    IRCUdata&cu,
+    int cu_of_input_we_output UNUSEDARG)
 {
     // We descend the the tree, creating DIEs and linking
     // them in as we return back up the tree of recursing
@@ -481,13 +485,21 @@ transform_debug_info(Dwarf_P_Debug dbg,
 }
 static void
 transform_cie_fde(Dwarf_P_Debug dbg,
-    IRepresentation & Irep,int cu_of_input_we_output)
+    IRepresentation & Irep,
+    int cu_of_input_we_output UNUSEDARG)
 {
     Dwarf_Error err = 0;
-    std::vector<IRCie> &cie_vec = Irep.framedata().get_cie_vec();
-    std::vector<IRFde> &fde_vec = Irep.framedata().get_fde_vec();
+    std::vector<IRCie> &cie_vec =
+        Irep.framedata().get_cie_vec();
+    std::vector<IRFde> &fde_vec =
+        Irep.framedata().get_fde_vec();
 
-    for(size_t i = 0; i < cie_vec.size(); ++i) {
+    // cievecsize Signed as dwarf_add_frame_cie
+    // returns signed to accomodate its error
+    // value return
+    Dwarf_Signed cievecsize = cie_vec.size();
+
+    for(Dwarf_Signed i = 0; i < cievecsize ; ++i) {
         IRCie &ciein = cie_vec[i];
         Dwarf_Unsigned version = 0;
         string aug;
@@ -518,6 +530,7 @@ transform_cie_fde(Dwarf_P_Debug dbg,
             Dwarf_Unsigned code_len = 0;
             Dwarf_Addr code_virt_addr = 0;
             Dwarf_Signed cie_input_index = 0;
+
             fdein.get_fde_base_data(&code_virt_addr,
                 &code_len, &cie_input_index);
             if(cie_input_index != i) {
@@ -563,7 +576,8 @@ transform_cie_fde(Dwarf_P_Debug dbg,
 
 static void
 transform_macro_info(Dwarf_P_Debug dbg,
-   IRepresentation & Irep,int cu_of_input_we_output)
+   IRepresentation & Irep,
+   int cu_of_input_we_output UNUSEDARG)
 {
     IRMacro &macrodata = Irep.macrodata();
     std::vector<IRMacroRecord> &macrov = macrodata.getMacroVec();
@@ -592,7 +606,7 @@ transform_macro_info(Dwarf_P_Debug dbg,
 // comparing the input-die global offset.
 static
 Dwarf_P_Die findTargetDieByOffset(IRDie& indie,
-   Dwarf_Unsigned targetglobaloff)
+    Dwarf_Unsigned targetglobaloff)
 {
     Dwarf_Unsigned globoff = indie.getGlobalOffset();
     if(globoff == targetglobaloff) {
@@ -618,17 +632,16 @@ Dwarf_P_Die findTargetDieByOffset(IRDie& indie,
 // and attach the pubname/type entry to it.
 static void
 transform_debug_pubnames_types_inner(Dwarf_P_Debug dbg,
-   IRepresentation & Irep,int cu_of_input_we_output,
-   IRCUdata&cu)
+    IRepresentation & Irep,
+    int cu_of_input_we_output UNUSEDARG,
+    IRCUdata&cu)
 {
     // First, get the target CU. */
     Dwarf_Unsigned targetcuoff= cu.getCUdieOffset();
-
     IRDie &basedie = cu.baseDie();
-    Dwarf_P_Die p_die = basedie.getGeneratedDie();
-
     IRPubsData& pubs = Irep.pubnamedata();
     std::list<IRPub> &nameslist = pubs.getPubnames();
+
     if(!nameslist.empty()) {
         for ( list<IRPub>::iterator it = nameslist.begin();
         it != nameslist.end();

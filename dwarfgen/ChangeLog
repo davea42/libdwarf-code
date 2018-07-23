@@ -1,3 +1,32 @@
+2018-07-23 David Anderson
+    * createirepformfrombinary.cc: Removed unused local variable.
+      #define UNUSEDARG appropriately
+    * createirepfrombinary.cc: Removed extra ';'.
+      #define UNUSEDARG appropriately
+      mark static functions as such to avoid warnings.
+      Mark arguments UNUSEDARG where appropriate.
+      Test the correct libdwarf return value.
+      Delete unused local variables.
+    * dwarfgen.cc: Declared functions for C callbacks
+      as extern C.
+      #define UNUSEDARG appropriately
+    * general.h: Reformat the header comments to avoid
+      too-long lines.
+      Delete duplicative comments.
+    * irepattrtodbg.cc: Fixed reinterpret casts to be
+      the correct type which made the typedef myintptrt
+      unused (and now deleted).
+      #define UNUSEDARG appropriately
+      Mark arguments UNUSEDARG where appropriate.
+    * irepdie.h, irepform.h: Mark arguments 
+      UNUSEDARG where appropriate.
+    * ireptodbg.cc:Fixed reinterpret casts to be
+      the correct type, fixing signed/unsigned
+      comparison warnings.  Removed some unused
+      local variables. Fixed a couple declarations
+      to avoid signed/unsigned comparison warnings.
+      #define UNUSEDARG appropriately
+      Mark arguments UNUSEDARG where appropriate.
 2018-07-22 David Anderson
     * dwarfgen.cc: The relocations processing was assuming
       alignment of 32bit and 64bit values. Now no longer

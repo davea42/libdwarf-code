@@ -370,7 +370,6 @@ do_uri_translation(const char *s,const char *context)
 const char *
 process_args(int argc, char *argv[])
 {
-    extern int dwoptind;
     int c = 0;
     boolean usage_error = FALSE;
     int oarg = 0;

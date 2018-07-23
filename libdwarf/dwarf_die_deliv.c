@@ -1733,7 +1733,6 @@ dwarf_siblingof_b(Dwarf_Debug dbg,
     int lres = 0;
     /* Since die may be NULL, we rely on the input argument. */
     Dwarf_Debug_InfoTypes dis = 0;
-        &dbg->de_types_reading;
     Dwarf_Small *dataptr =  0;
 
     if (dbg == NULL) {

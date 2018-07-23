@@ -30,6 +30,13 @@
 
 #include "config.h"
 
+#ifdef HAVE_UNUSED_ATTRIBUTE
+#define  UNUSEDARG __attribute__ ((unused))
+#else
+#define  UNUSEDARG
+#endif
+
+
 #if defined(_WIN32) && defined(HAVE_STDAFX_H)
 #include "stdafx.h"
 #endif /* HAVE_STDAFX_H */
@@ -81,9 +88,9 @@ private:
 IRForm *formFactory(Dwarf_Debug dbg,
     Dwarf_Attribute attr,IRCUdata &cudata,IRAttr & irattr)
 {
-    Dwarf_Error err = 0;
     IRFormInterface interface(dbg,attr,cudata,irattr);
     enum Dwarf_Form_Class cl = irattr.getFormClass();
+
     switch(cl) {
     case DW_FORM_CLASS_UNKNOWN:
         break;

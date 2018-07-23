@@ -569,12 +569,13 @@ AC_SUBST([struct_elf])
 AC_C_BIGENDIAN
 
 # gcc accepts even totally bogus -Wno flags. Other compilers..no
-# -Wno-long-long -Wno-pedantic-ms-format
+# -Wno-long-long suppresses warnings on 'long long'
+# -Wno-pedantic-ms-format
 # compiler flags
 AS_IF(
     [ test "x$enable_wall" = "xyes" ],
     [ 
-       cxx_compiler_flags="-Wall -Wextra -Wpointer-arith -Wmissing-declarations -Wcomment -Wformat -Wpedantic -Wuninitialized -Wshadow "
+       cxx_compiler_flags="-Wall -Wextra -Wpointer-arith -Wmissing-declarations -Wcomment -Wformat -Wpedantic -Wuninitialized -Wshadow -Wno-long-long"
 
        c_compiler_flags="${cxx_compiler_flags} -Wmissing-prototypes -Wdeclaration-after-statement -Wbad-function-cast -Wmissing-parameter-type -Wnested-externs"
     ]

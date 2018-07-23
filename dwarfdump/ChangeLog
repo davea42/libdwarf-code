@@ -1,3 +1,6 @@
+2018-07-13 David Anderson
+    * command_options.c: Removed duplicate extern declaration
+      of dwoptind.
 2018-07-16 David Anderson
     * dwarf_tsearch.h: Corrected web-reference links in
       the comments.

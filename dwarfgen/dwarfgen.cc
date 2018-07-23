@@ -56,6 +56,13 @@
 
 #include "config.h"
 
+#ifdef HAVE_UNUSED_ATTRIBUTE
+#define  UNUSEDARG __attribute__ ((unused))
+#else
+#define  UNUSEDARG
+#endif
+
+
 /* Windows specific header files */
 #if defined(_WIN32) && defined(HAVE_STDAFX_H)
 #include "stdafx.h"
@@ -146,6 +153,22 @@ using std::cout;
 using std::cerr;
 using std::endl;
 using std::vector;
+#ifdef __cplusplus
+extern "C" {
+int CallbackFunc(
+    const char* name,
+    int                 size,
+    Dwarf_Unsigned      type,
+    Dwarf_Unsigned      flags,
+    Dwarf_Unsigned      link,
+    Dwarf_Unsigned      info,
+    Dwarf_Unsigned*     sect_name_symbol_index,
+    void *              user_data,
+    int*                error);
+}
+void ErrorHandler(Dwarf_Error err,Dwarf_Ptr errarg);
+#endif
+
 
 static void write_object_file(Dwarf_P_Debug dbg, IRepresentation &irep);
 static void write_text_section(Elf * elf);
@@ -303,6 +326,7 @@ createnamestr(unsigned strtabstroff)
     return  elf_ndxscn(strscn);
 }
 
+
 // This functional interface is defined by libdwarf.
 // Please see the comments in libdwarf2p.1.pdf
 // (libdwarf2p.1.mm)  on this callback interface.
@@ -317,8 +341,8 @@ int CallbackFunc(
     Dwarf_Unsigned      link,
     Dwarf_Unsigned      info,
     Dwarf_Unsigned*     sect_name_symbol_index,
-    void *              user_data,
-    int*                error)
+    void *              user_data UNUSEDARG,
+    int*                error UNUSEDARG)
 {
     // Create an elf section.
     // If the data is relocations, we suppress the generation
@@ -354,6 +378,7 @@ int CallbackFunc(
     // The number returned is elf section, not dwsectab[] index
     return createdsec.getSectIndex();
 }
+
 
 // Here we create a new Elf section
 // This never happens for relocations in dwarfgen,
@@ -394,7 +419,8 @@ create_dw_elf(SectionFromDwarf  &ds)
 }
 
 // Default error handler of libdwarf producer code.
-void ErrorHandler(Dwarf_Error err,Dwarf_Ptr errarg)
+void ErrorHandler(Dwarf_Error err UNUSEDARG,
+    Dwarf_Ptr errarg UNUSEDARG)
 {
     // FIXME do better error handling
     cerr <<"dwarfgen: Giving up, encountered an error" << endl;
@@ -618,7 +644,7 @@ main(int argc, char **argv)
 }
 
 static void
-write_object_file(Dwarf_P_Debug dbg, IRepresentation &irep)
+write_object_file(Dwarf_P_Debug dbg, IRepresentation &irep UNUSEDARG)
 {
     int fd = create_a_file(outfile.c_str());
     if(fd < 0 ) {
@@ -788,7 +814,8 @@ FindSymbolValue(ElfSymIndex symi,IRepresentation &irep)
 /* Lets not assume that the quantities are aligned. */
 static void
 bitreplace(char *buf, Dwarf_Unsigned newval,
-    size_t newvalsize,int length)
+    size_t newvalsize UNUSEDARG,
+    int length)
 {
     if(length == 4) {
         uint32_t my4 = newval;
@@ -811,7 +838,9 @@ bitreplace(char *buf, Dwarf_Unsigned newval,
 
 // This remembers nothing, so is dreadfully slow.
 static char *
-findelfbuf(Elf *elf_f,Elf_Scn *scn,Dwarf_Unsigned offset, unsigned length)
+findelfbuf(Elf *elf_f UNUSEDARG ,Elf_Scn *scn,
+    Dwarf_Unsigned offset,
+    unsigned length)
 {
     Elf_Data * edbase = 0;
     Elf_Data * ed = elf_getdata(scn,edbase);

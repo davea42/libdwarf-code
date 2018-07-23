@@ -344,7 +344,7 @@ GenerateInitialFileLines(void)
         fprintf(f_names_c,"    int low = 0;\n");
         fprintf(f_names_c,"    int high = last;\n");
         fprintf(f_names_c,"    int mid;\n");
-        fprintf(f_names_c,"    int maxval = table[last-1].value;\n");
+        fprintf(f_names_c,"    unsigned maxval = table[last-1].value;\n");
         fprintf(f_names_c,"\n");
         fprintf(f_names_c,"    if (value > maxval) {\n");
         fprintf(f_names_c,"        return DW_DLV_NO_ENTRY;\n");

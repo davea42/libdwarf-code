@@ -34,7 +34,7 @@
 #include "pro_line.h"
 
 static
-Dwarf_Unsigned _dwarf_pro_add_line_entry(Dwarf_P_Debug,
+Dwarf_Signed _dwarf_pro_add_line_entry(Dwarf_P_Debug,
     Dwarf_Unsigned file_index,
     Dwarf_Addr code_address,
     Dwarf_Unsigned symidx,
@@ -56,7 +56,9 @@ Dwarf_Unsigned _dwarf_pro_add_line_entry(Dwarf_P_Debug,
     This function actually calls _dwarf_pro_add_line_entry(), with
     an extra parameter, the opcode. Done so that interface calls
     dwarf_lne_set_address() and dwarf_lne_end_sequence() can use
-    this internal routine. */
+    this internal routine. 
+
+    The return value is really signed. Bogus interface.*/
 Dwarf_Unsigned
 dwarf_add_line_entry_b(Dwarf_P_Debug dbg,
     Dwarf_Unsigned file_index,
@@ -83,6 +85,9 @@ dwarf_add_line_entry_b(Dwarf_P_Debug dbg,
         isepilbeg,isprolend,isa,discriminator, error);
     return retval;
 }
+
+
+/*  The return value is really signed. Bogus interface.*/
 Dwarf_Unsigned
 dwarf_add_line_entry(Dwarf_P_Debug dbg,
     Dwarf_Unsigned file_index,
@@ -193,7 +198,7 @@ dwarf_lne_end_sequence(Dwarf_P_Debug dbg,
     Opc indicates if an opcode needs to be generated, rather than just
     an entry in the matrix. During opcodes generation time, these
     opcodes will be used. */
-static Dwarf_Unsigned
+static Dwarf_Signed
 _dwarf_pro_add_line_entry(Dwarf_P_Debug dbg,
     Dwarf_Unsigned file_index,
     Dwarf_Addr code_address,

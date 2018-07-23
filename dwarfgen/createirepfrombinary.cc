@@ -32,6 +32,13 @@
 
 #include "config.h"
 
+#ifdef HAVE_UNUSED_ATTRIBUTE
+#define  UNUSEDARG __attribute__ ((unused))
+#else
+#define  UNUSEDARG
+#endif
+
+
 /* Windows specific header files */
 #if defined(_WIN32) && defined(HAVE_STDAFX_H)
 #include "stdafx.h"
@@ -76,7 +83,7 @@ extern void close_a_file(int f);
 static void errprint(Dwarf_Error err)
 {
     cerr << "Error num: " << dwarf_errno(err) << " " << dwarf_errmsg(err) << endl;
-};
+}
 
 class DbgInAutoCloser {
 public:
@@ -238,7 +245,7 @@ readCUMacroDataFromBinary(Dwarf_Debug dbg, IRepresentation & irep,
     dwarf_dealloc(dbg, md, DW_DLA_STRING);
 }
 
-void
+static void
 get_basic_attr_data_one_attr(Dwarf_Debug dbg,
     Dwarf_Attribute attr,IRCUdata &cudata,IRAttr & irattr)
 {
@@ -280,8 +287,8 @@ get_basic_attr_data_one_attr(Dwarf_Debug dbg,
     }
     irattr.setFormData(formFactory(dbg,attr,cudata,irattr));
 }
-void
-get_basic_die_data(Dwarf_Debug dbg,
+static void
+get_basic_die_data(Dwarf_Debug dbg UNUSEDARG,
     Dwarf_Die indie,IRDie &irdie)
 {
     Dwarf_Half tagval = 0;
@@ -313,7 +320,7 @@ get_basic_die_data(Dwarf_Debug dbg,
 static void
 get_attrs_of_die(Dwarf_Die in_die,IRDie &irdie,
     IRCUdata &cudata,
-    IRepresentation &irep,
+    IRepresentation &irep UNUSEDARG,
     Dwarf_Debug dbg)
 {
     Dwarf_Error error = 0;
@@ -395,9 +402,9 @@ get_children_of_die(Dwarf_Die in_die,IRDie&irdie,
 }
 
 static void
-get_linedata_of_cu_die(Dwarf_Die in_die,IRDie&irdie,
+get_linedata_of_cu_die(Dwarf_Die in_die,IRDie&irdie UNUSEDARG,
     IRCUdata &ircudata,
-    IRepresentation &irep,
+    IRepresentation &irep UNUSEDARG,
     Dwarf_Debug dbg)
 {
     Dwarf_Error error = 0;
@@ -426,11 +433,11 @@ get_linedata_of_cu_die(Dwarf_Die in_die,IRDie&irdie,
     Dwarf_Line * linebuf = 0;
     Dwarf_Signed linecnt = 0;
     int res2 = dwarf_srclines(in_die,&linebuf,&linecnt, &error);
-    if(res == DW_DLV_ERROR) {
+    if(res2 == DW_DLV_ERROR) {
         errprint(error);
         cerr << "dwarf_srclines failed " << endl;
         exit(1);
-    } else if (res == DW_DLV_NO_ENTRY) {
+    } else if (res2 == DW_DLV_NO_ENTRY) {
         // No data.
         cerr << "dwarf_srclines failed NO_ENTRY, crazy "
             "since srcfiles worked" << endl;
@@ -542,10 +549,8 @@ getToplevelOffsetAttr(Dwarf_Die cu_die,Dwarf_Half attrnumber,
     Dwarf_Attribute attr = 0;
     int res = dwarf_attr(cu_die,attrnumber,&attr, &error);
     bool foundit = false;
-    Dwarf_Off sectoff = 0;
+
     if(res == DW_DLV_OK) {
-        Dwarf_Signed sval = 0;
-        Dwarf_Unsigned uval = 0;
         res = dwarf_global_formref(attr,&offset,&error);
         if(res == DW_DLV_OK) {
             foundit = true;

@@ -1,8 +1,18 @@
+2018-07-23 David Anderson
+    * libdwarf_version.h: Updated version string.
+    * pro_line.c: Added comments on the oddness 
+      of some return values (signed vs unsigned and
+      error returns).
+    * dwarf_die_deliv.c: Removed a statement that
+      had no effect (A leftover of recent changes).
+    * gennames.c: Signed vs unsigned compare was accidental
+      in the code this generates.
+      Changed the local var to unsigned.
 2018-07-22 David Anderson
-     * dwarf_init_finish.c: Now calls _dwarf_safe_strcpy()
+    * dwarf_init_finish.c: Now calls _dwarf_safe_strcpy()
        so we are sure there is no string overrun.
-     * dwarf_util.c: Implements _dwarf_safe_strcpy().
-     * dwarf_util.h: Declares _dwarf_safe_strcpy().
+    * dwarf_util.c: Implements _dwarf_safe_strcpy().
+    * dwarf_util.h: Declares _dwarf_safe_strcpy().
 2018-07-22 David Anderson
     * pro_reloc_symbolic.c(_dwarf_symbolic_relocs_to_disk): 
       Coverity CID 186884. A much cleaner and more
