@@ -1,4 +1,4 @@
-#!/bin/sh
+ #!/bin/sh
 # CPTOPUBLIC [uv] [nouv]
 # This is used in (copied into) each script to adjust
 # our location to the code directory above dwarfdump, libdwarf, etc.

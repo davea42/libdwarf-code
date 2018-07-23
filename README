@@ -124,13 +124,17 @@ do
   make
 Then 
   make check
-will the special test scripts: dwarfdump/runtests.sh
+will run the special test scripts: dwarfdump/runtests.sh
 libdwarf/runtests.sh (each must be run in its directory,
 neither requires any arguments, just run each).
 
-The command
-  make release 
+To create a release file do:
+  ./configure --enable-dwarfexample --enable-dwarfgen
+  make
+  make dist
 will generate a libdwarf-yyyymmdd.tar.gz file with the files
 needed in a release
+  scripts/CPLIBDWARFTAR is an example of generating 
+fingerprints for the release file and copying the file.
 
-David Anderson.  Updated July 7, 2018
+David Anderson.  Updated July 23, 2018
