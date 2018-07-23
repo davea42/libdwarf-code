@@ -15,4 +15,7 @@ $PSTOPDF libdwarf2.1.ps libdwarf2.1.pdf
 pr -t -e  libdwarf2p.1.mm  | tbl | $TROFF -mm >libdwarf2p.1.ps
 $PSTOPDF libdwarf2p.1.ps libdwarf2p.1.pdf
 
+rm libdwarf2.1.ps
+rm libdwarf2p.1.ps
+
 

@@ -208,35 +208,7 @@ COPYING \
 LGPL.txt \
 LIBDWARFCOPYRIGHT
 
-
 TESTS=./runtests.sh
-
-docbld:pdfbld
-pdf: pdfbld
-bldpdf: pdfbld
-pdfbld: libdwarf2.1.pdf libdwarf2p.1.pdf
-#Oriented to using gsroff now.
-TROFF=/usr/bin/groff
-#TROFFDEV="-T ps"
-TROFFDEV=
-PSTOPDF=/usr/bin/ps2pdf
-# pr expands tabs to spaces: this avoids problems with tab
-# interpretation
-
-# The warning about 'cant break line' is a too-long line used
-# in the table of contents.
-# All pr does here is change each tab to spaces.
-# Ignore the warning (and those like it).
-libdwarf2.1.pdf:  $(top_srcdir)/libdwarf/libdwarf2.1.mm
-	-pr -t -e $(top_srcdir)/libdwarf/libdwarf2.1.mm \
-                  | tbl | $(TROFF) $(TROFFDEV) -mm >libdwarf2.1.ps
-	$(PSTOPDF) libdwarf2.1.ps libdwarf2.1.pdf
-
-libdwarf2p.1.pdf:  $(top_srcdir)/libdwarf/libdwarf2p.1.mm
-	-pr -t -e  $(top_srcdir)/libdwarf/libdwarf2p.1.mm \
-                  | tbl | $(TROFF) $(TROFFDEV) -mm >libdwarf2p.1.ps
-	$(PSTOPDF) libdwarf2p.1.ps libdwarf2p.1.pdf
-
 
 libdwarfdevdir = $(datadir)/libdwarf/libdwarf-devel
 libdwarfdev_DATA = \

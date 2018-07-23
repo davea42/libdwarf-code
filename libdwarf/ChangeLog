@@ -1,4 +1,10 @@
 2018-07-23 David Anderson
+    * Makefile.am: Make it impossible for Make to build the 
+      libdwarf pdf files. We do not want users to be required
+      to have the pdf tools.
+    * pdfbld.sh: A script to build the libdwarf pdf files
+      when required (the .mm files rarely change).
+2018-07-23 David Anderson
     * libdwarf_version.h: Updated version string.
     * pro_line.c: Added comments on the oddness 
       of some return values (signed vs unsigned and
