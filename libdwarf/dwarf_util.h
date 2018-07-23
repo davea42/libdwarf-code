@@ -446,5 +446,9 @@ int _dwarf_what_section_are_we(Dwarf_Debug dbg,
     Dwarf_Small    **sec_end_ptr_out,
     Dwarf_Error *error);
 
+/*  A strcpy which ensures NUL terminated string
+    and never overruns the output.
+*/
+void _dwarf_safe_strcpy(char *out, long outlen, const char *in, long inlen);
 
 #endif /* DWARF_UTIL_H */

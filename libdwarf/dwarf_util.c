@@ -1337,3 +1337,18 @@ _dwarf_what_section_are_we(Dwarf_Debug dbg,
         sec_start_ptr_out, sec_len_out, sec_end_ptr_out);
     return DW_DLV_NO_ENTRY;
 }
+
+/*  A strcpy which ensures NUL terminated string
+    and never overruns the output.
+*/
+void
+_dwarf_safe_strcpy(char *out, long outlen, const char *in, long inlen)
+{
+    if (inlen >= (outlen - 1)) {
+        strncpy(out, in, outlen - 1);
+        out[outlen - 1] = 0;
+    } else {
+        strcpy(out, in);
+    }
+}
+

@@ -327,32 +327,43 @@ set_up_section(Dwarf_Debug dbg,
         course non- .debug too, but those never zlib) .
         SECNAMEMAX should be a little bigger than any section
         name we care about as possibly compressed. */
-    #define SECNAMEMAX 36
+#define SECNAMEMAX 36
     char buildsecname[SECNAMEMAX];
     unsigned secnamelen = strlen(secname);
     static const char *dprefix = ".debug_";
+#define DPREFIXLEN 7
     static const char *zprefix = ".zdebug_";
+#define ZPREFIXLEN 8
     int havezdebug = FALSE;
     unsigned targnamelen = strlen(targname);
     const char *finaltargname = targname;
 
-    if(secnamelen < SECNAMEMAX && !strncmp(secname,zprefix,8)) {
+    /*  For example, if the secname is .zdebug_info
+        we update the finaltargname to .debug_info
+        to match with the particular (known, predefined)
+        object section name.
+        See the SET_UP_SECTION macro.  */
+
+    if(secnamelen < SECNAMEMAX && 
+        !strncmp(secname,zprefix,ZPREFIXLEN)) {
         /*  zprefix matches the object section name
-            so the section is compressed */
-        strcpy(buildsecname,zprefix);
+            so the section is compressed 
+            targname never shows .z<anything>. */
+        _dwarf_safe_strcpy(buildsecname,SECNAMEMAX,zprefix,ZPREFIXLEN);
 
         /*  Now lets see if a targname updated with z matches
             secname. */
         /*  2 ensures NUL and added 'z' are ok */
-        if (!strncmp(targname,dprefix,7)) {
-            unsigned finaltlen = 0;
-            /*  Target section (names known
-                to libdwarf as a dwarf section)
-                starts with .debug_    .
-                The +3 is just safety. */
-            finaltlen = strlen(buildsecname) + (targnamelen +3 - 7);
+        if (!strncmp(targname,dprefix,DPREFIXLEN)) {
+            char *buildendspace = buildsecname + ZPREFIXLEN;
+            unsigned buildendspaceleft = SECNAMEMAX - ZPREFIXLEN;
+            const char *tailsec = targname + DPREFIXLEN;
+            unsigned finaltlen = targnamelen - DPREFIXLEN;
+            
             if (finaltlen < SECNAMEMAX){
-                strcat(buildsecname,targname+7);
+                _dwarf_safe_strcpy(buildendspace,buildendspaceleft,
+                    tailsec,finaltlen);
+                    
                 /*  We turned targname .debug_info to
                     .zdebug_info, for example.
                     We accept the input as an example
@@ -370,6 +381,9 @@ set_up_section(Dwarf_Debug dbg,
             }
         }
     }
+#undef ZPREFIXLEN
+#undef DPREFIXLEN
+#undef SECNAMEMAX
 
     /* SETUP_SECTION. See also BUILDING_SECTIONS, BUILDING_MAP  */
     if(!strcmp(secname,finaltargname)) {

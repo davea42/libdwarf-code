@@ -1,4 +1,9 @@
 2018-07-22 David Anderson
+     * dwarf_init_finish.c: Now calls _dwarf_safe_strcpy()
+       so we are sure there is no string overrun.
+     * dwarf_util.c: Implements _dwarf_safe_strcpy().
+     * dwarf_util.h: Declares _dwarf_safe_strcpy().
+2018-07-22 David Anderson
     * pro_reloc_symbolic.c(_dwarf_symbolic_relocs_to_disk): 
       Coverity CID 186884. A much cleaner and more
       readable fix.

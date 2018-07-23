@@ -785,20 +785,23 @@ FindSymbolValue(ElfSymIndex symi,IRepresentation &irep)
     return symv;
 }
 
+/* Lets not assume that the quantities are aligned. */
 static void
 bitreplace(char *buf, Dwarf_Unsigned newval,
     size_t newvalsize,int length)
 {
     if(length == 4) {
         uint32_t my4 = newval;
-        uint32_t * p = reinterpret_cast<uint32_t *>(buf );
-        uint32_t oldval = *p;
-        *p = oldval + my4;
+        uint32_t oldval = 0;
+        memcpy(&oldval,buf,length);
+        oldval += my4;
+        memcpy(buf,&oldval,length);
     } else if (length == 8) {
         uint64_t my8 = newval;
-        uint64_t * p = reinterpret_cast<uint64_t *>(buf );
-        uint64_t oldval = *p;
-        *p = oldval + my8;
+        uint64_t oldval = 0;
+        memcpy(&oldval,buf,length);
+        oldval += my8;
+        memcpy(buf,&oldval,length);
     } else {
         cerr << "dwarfgen:  Relocation is length " << length <<
             " which we do not yet handle." << endl;

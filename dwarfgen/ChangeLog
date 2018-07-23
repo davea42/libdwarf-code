@@ -1,3 +1,7 @@
+2018-07-22 David Anderson
+    * dwarfgen.cc: The relocations processing was assuming
+      alignment of 32bit and 64bit values. Now no longer
+      makes that incorrect assumption.
 2018-07-16 David Anderson
     * createirepformfrombinary.cc: Refines ifdef of HAVE_STDAFX_H
     * createirepfrombinary.cc: Refines ifdef of HAVE_STDAFX_H
