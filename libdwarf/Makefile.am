@@ -205,6 +205,7 @@ ChangeLog2016 \
 ChangeLog2017 \
 CMakeLists.txt \
 COPYING \
+bldpdf.sh \
 LGPL.txt \
 LIBDWARFCOPYRIGHT
 
