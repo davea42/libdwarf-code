@@ -1,3 +1,8 @@
+2018-07-24 David Anderson
+    * dwarf_init_finish.c(set_up_section): A simple
+      revision eliminates any copying and simplifies
+      the logic. And eliminates the use of safe_strcpy().
+    * dwarf_util.h, dwarf_util.c: Remove safe_strcpy().
 2018-07-23 David Anderson
     * Makefile.am: Make it impossible for Make to build the 
       libdwarf pdf files. We do not want users to be required

@@ -326,67 +326,52 @@ set_up_section(Dwarf_Debug dbg,
     /*  Here accomodate the .debug or .zdebug version, (and of
         course non- .debug too, but those never zlib) .
         SECNAMEMAX should be a little bigger than any section
-        name we care about as possibly compressed. */
-#define SECNAMEMAX 36
-    char buildsecname[SECNAMEMAX];
-    unsigned secnamelen = strlen(secname);
+        name we care about as possibly compressed, which
+        is to say bigger than any standard section name. */
+#define SECNAMEMAX 30
+    int secnamelen = strlen(secname);
     static const char *dprefix = ".debug_";
 #define DPREFIXLEN 7
     static const char *zprefix = ".zdebug_";
 #define ZPREFIXLEN 8
     int havezdebug = FALSE;
-    unsigned targnamelen = strlen(targname);
-    const char *finaltargname = targname;
+    int namesmatch = FALSE;
 
     /*  For example, if the secname is .zdebug_info
         we update the finaltargname to .debug_info
         to match with the particular (known, predefined)
         object section name.
+        We add one character, so check
+        to see if it will, in the end, fit.
         See the SET_UP_SECTION macro.  */
 
-    if(secnamelen < SECNAMEMAX && 
-        !strncmp(secname,zprefix,ZPREFIXLEN)) {
-        /*  zprefix matches the object section name
-            so the section is compressed 
-            targname never shows .z<anything>. */
-        _dwarf_safe_strcpy(buildsecname,SECNAMEMAX,zprefix,ZPREFIXLEN);
-
-        /*  Now lets see if a targname updated with z matches
-            secname. */
-        /*  2 ensures NUL and added 'z' are ok */
-        if (!strncmp(targname,dprefix,DPREFIXLEN)) {
-            char *buildendspace = buildsecname + ZPREFIXLEN;
-            unsigned buildendspaceleft = SECNAMEMAX - ZPREFIXLEN;
-            const char *tailsec = targname + DPREFIXLEN;
-            unsigned finaltlen = targnamelen - DPREFIXLEN;
-            
-            if (finaltlen < SECNAMEMAX){
-                _dwarf_safe_strcpy(buildendspace,buildendspaceleft,
-                    tailsec,finaltlen);
-                    
-                /*  We turned targname .debug_info to
-                    .zdebug_info, for example.
-                    We accept the input as an example
-                    of the original targname so fake
-                    the finaltargname. */
-                finaltargname = buildsecname;
-                if (!strcmp(finaltargname,secname)) {
-                    havezdebug = TRUE;
-                }
-                /*  If we did not match secname and finaltargname
-                    here we will wind up skipping this
-                    libdwarf target section below as it is
-                    apparently not the right target for this
-                    secname. */
-            }
-        }
+    if(secnamelen >= SECNAMEMAX) {
+        /*  This is not the target section.
+            our caller will keep looking. */
+        return DW_DLV_NO_ENTRY;
+    }
+    if((secnamelen+1) < SECNAMEMAX && 
+        !strncmp(secname,zprefix,ZPREFIXLEN) &&
+        !strcmp(secname+ZPREFIXLEN,targname+DPREFIXLEN)) {
+            /*  zprefix version matches the object section
+                name so the section is compressed and is
+                the section this targname applies to. */ 
+            havezdebug = TRUE;
+            namesmatch = TRUE;
+    } else if (!strcmp(secname,targname)) {
+        namesmatch = TRUE;
     }
 #undef ZPREFIXLEN
 #undef DPREFIXLEN
 #undef SECNAMEMAX
+    if(!namesmatch) {
+        /*  This is not the target section.
+            our caller will keep looking. */
+            return DW_DLV_NO_ENTRY;
+    }
 
     /* SETUP_SECTION. See also BUILDING_SECTIONS, BUILDING_MAP  */
-    if(!strcmp(secname,finaltargname)) {
+    {
         /*  The section name is a match with targname, or
             the .zdebug version of targname. */
         int sectionerr = 0;
@@ -401,11 +386,8 @@ set_up_section(Dwarf_Debug dbg,
             /* *err is set already */
             return sectionerr;
         }
-        return DW_DLV_OK;
     }
-    /*  This is not the target section.
-        our caller will keep looking. */
-    return DW_DLV_NO_ENTRY;
+    return DW_DLV_OK;
 }
 
 #define SET_UP_SECTION(mdbg,mname,mtarg,mgrp,minfo,me1,me2,mdw,mer) \
