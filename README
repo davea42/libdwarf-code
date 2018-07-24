@@ -17,6 +17,13 @@ libelf and zlib have to be installed to build libdwarf and
 dwarfdump.  For example, in Ubuntu 16.04, install using:
    sudo apt-get install zlib1g zlib1g-dev libelf1 libelf-dev
 
+zlib is available in source from http://zlib.net
+
+libelf is available in source from  
+http://www.mr511.de/software/
+and
+https://github.com/vtorri/libelf
+
 BUILDING OUT OF SOURCE TREE
 Or one could  create a new directory, for example,
     mkdir /var/tmp/dwarfex
