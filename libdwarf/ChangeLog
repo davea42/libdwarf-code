@@ -1,4 +1,19 @@
 2018-07-24 David Anderson
+    * dwarf_line_table_reader_common.h:Removed trailing whitespace
+      and fixed indentations.
+    * pro_line.c: Removed trailing whitespace.
+    * pro_reloc.c,pro_reloc.h: Defines 
+      _dwarf_pro_pre_alloc_specific_reloc_slots().
+      Deletes _dwarf_pro_pre_alloc_n_reloc_slots()
+    * pro_reloc_symbolic.c: Now uses 
+      _dwarf_pro_pre_alloc_specific_reloc_slots()  so
+      static analysis can understand what the code does.
+      Fixes Coverity CID 186978.
+    * pro_arange.c: Now uses  
+      _dwarf_pro_pre_alloc_specific_reloc_slots
+      instead of
+      _dwarf_pro_pre_alloc_n_reloc_slots.
+2018-07-24 David Anderson
     * dwarf_init_finish.c(set_up_section): A simple
       revision eliminates any copying and simplifies
       the logic. And eliminates the use of safe_strcpy().

@@ -43,16 +43,19 @@
     relocations count we can preallocate the right size block.
     Called from just 2 places.
 
+    We use 'slots' so we don't have to do a new
+    allocation for every relocation, just a new
+    allocation every n slots. slots_in_block.
+
     returns DW_DLV_OK or  DW_DLV_ERROR
 */
 int
-_dwarf_pro_pre_alloc_n_reloc_slots(Dwarf_P_Debug dbg,
-    int rel_sec_index,
+_dwarf_pro_pre_alloc_specific_reloc_slots(Dwarf_P_Debug dbg,
+    Dwarf_P_Per_Reloc_Sect prel,
     Dwarf_Unsigned newslots)
 {
     unsigned long len = 0;
     struct Dwarf_P_Relocation_Block_s *data = 0;
-    Dwarf_P_Per_Reloc_Sect prel = &dbg->de_reloc_sect[rel_sec_index];
     unsigned long slots_in_blk = (unsigned long) newslots;
     unsigned long rel_rec_size = dbg->de_relocation_record_size;
 
@@ -113,20 +116,16 @@ _dwarf_pro_alloc_reloc_slots(Dwarf_P_Debug dbg, int rel_sec_index)
         prel->pr_last_block->rb_next = data;
         prel->pr_last_block = data;
         prel->pr_block_count += 1;
-
     } else {
-
         prel->pr_first_block = data;
         prel->pr_last_block = data;
         prel->pr_block_count = 1;
     }
-
     data->rb_slots_in_block = slots_in_blk;
     data->rb_next_slot_to_use = 0;
     data->rb_where_to_add_next =
         ((char *) data) + sizeof(struct Dwarf_P_Relocation_Block_s);
     data->rb_data = data->rb_where_to_add_next;
-
     return DW_DLV_OK;
 
 }

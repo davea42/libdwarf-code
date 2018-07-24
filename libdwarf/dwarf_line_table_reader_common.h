@@ -109,13 +109,12 @@ read_uword_de(Dwarf_Small **lp,
     Dwarf_Debug dbg,
     Dwarf_Error *err,
     Dwarf_Small *lpend)
- 
 {
     Dwarf_Small *inptr = *lp;
     Dwarf_Unsigned out = 0;
-    DECODE_LEB128_UWORD_CK(inptr, 
-                    out,
-                    dbg,err,lpend);
+    DECODE_LEB128_UWORD_CK(inptr,
+        out,
+        dbg,err,lpend);
     *lp = inptr;
     *out_p = out;
     return DW_DLV_OK;
@@ -582,31 +581,30 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
                 return (DW_DLV_ERROR);
             }
             for (i = 0; i < directory_format_count; i++) {
-  
                 dres=read_uword_de(&line_ptr,directory_entry_types+i,
-                   dbg,err,line_ptr_end);
+                    dbg,err,line_ptr_end);
                 if (dres != DW_DLV_OK) {
                     free(directory_entry_types);
                     free(directory_entry_forms);
                     return dres;
                 }
-                /* DECODE_LEB128_UWORD_CK(line_ptr, 
+                /* DECODE_LEB128_UWORD_CK(line_ptr,
                     directory_entry_types[i],
                     dbg,err,line_ptr_end); */
                 dres=read_uword_de(&line_ptr,directory_entry_forms+i,
-                   dbg,err,line_ptr_end);
+                    dbg,err,line_ptr_end);
                 if (dres != DW_DLV_OK) {
                     free(directory_entry_types);
                     free(directory_entry_forms);
                     return dres;
                 }
-                /* DECODE_LEB128_UWORD_CK(line_ptr, 
+                /* DECODE_LEB128_UWORD_CK(line_ptr,
                     directory_entry_forms[i],
                     dbg,err,line_ptr_end); */
             }
         }
         dres = read_uword_de(&line_ptr,&directories_count,
-           dbg,err,line_ptr_end);
+            dbg,err,line_ptr_end);
         if (dres != DW_DLV_OK) {
             free(directory_entry_types);
             free(directory_entry_forms);
@@ -626,7 +624,7 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
             directories_count > 0) {
             free(directory_entry_types);
             free(directory_entry_forms);
-            _dwarf_error(dbg, err, 
+            _dwarf_error(dbg, err,
                 DW_DLE_DIRECTORY_FORMAT_COUNT_VS_DIRECTORIES_MISMATCH);
             return (DW_DLV_ERROR);
         }
@@ -696,7 +694,7 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
             filename_format_count);
         if (filename_entry_types == NULL) {
             _dwarf_error(dbg, err, DW_DLE_ALLOC_FAIL);
-            return (DW_DLV_ERROR);
+            return DW_DLV_ERROR;
         }
         filename_entry_forms = malloc(sizeof(Dwarf_Unsigned) *
             filename_format_count);
@@ -707,7 +705,7 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
         }
         for (i = 0; i < filename_format_count; i++) {
             dres=read_uword_de(&line_ptr,filename_entry_types+i,
-                   dbg,err,line_ptr_end);
+                dbg,err,line_ptr_end);
             if (dres != DW_DLV_OK) {
                 free(filename_entry_types);
                 free(filename_entry_forms);
@@ -716,7 +714,7 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
             /* DECODE_LEB128_UWORD_CK(line_ptr, filename_entry_types[i]
                 dbg,err,line_ptr_end); */
             dres=read_uword_de(&line_ptr,filename_entry_forms+i,
-                   dbg,err,line_ptr_end);
+                dbg,err,line_ptr_end);
             if (dres != DW_DLV_OK) {
                 free(filename_entry_types);
                 free(filename_entry_forms);
@@ -726,11 +724,11 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
                 dbg,err,line_ptr_end); */
         }
         dres=read_uword_de(&line_ptr,&files_count,
-                   dbg,err,line_ptr_end);
+            dbg,err,line_ptr_end);
         if (dres != DW_DLV_OK) {
-                free(filename_entry_types);
-                free(filename_entry_forms);
-                return dres;
+            free(filename_entry_types);
+            free(filename_entry_forms);
+            return dres;
         }
         /* DECODE_LEB128_UWORD_CK(line_ptr, files_count,
             dbg,err,line_ptr_end); */
@@ -877,7 +875,7 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
         for (i = 0; i < subprog_format_count; i++) {
 
             dres=read_uword_de(&line_ptr,subprog_entry_types+i,
-                   dbg,err,line_ptr_end);
+                dbg,err,line_ptr_end);
             if (dres != DW_DLV_OK) {
                 free(subprog_entry_types);
                 free(subprog_entry_forms);
@@ -886,7 +884,7 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
             /* DECODE_LEB128_UWORD_CK(line_ptr, subprog_entry_types[i],
                 dbg,err,line_ptr_end); */
             dres=read_uword_de(&line_ptr,subprog_entry_forms+i,
-                   dbg,err,line_ptr_end);
+                dbg,err,line_ptr_end);
             if (dres != DW_DLV_OK) {
                 free(subprog_entry_types);
                 free(subprog_entry_forms);
@@ -896,11 +894,11 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
                 dbg,err,line_ptr_end); */
         }
         dres=read_uword_de(&line_ptr,&subprogs_count,
-                   dbg,err,line_ptr_end);
+            dbg,err,line_ptr_end);
         if (dres != DW_DLV_OK) {
-                free(subprog_entry_types);
-                free(subprog_entry_forms);
-                return dres;
+            free(subprog_entry_types);
+            free(subprog_entry_forms);
+            return dres;
         }
         /* DECODE_LEB128_UWORD_CK(line_ptr, subprogs_count,
             dbg,err,line_ptr_end); */

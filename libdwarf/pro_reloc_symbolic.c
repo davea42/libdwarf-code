@@ -202,19 +202,19 @@ _dwarf_symbolic_relocs_to_disk(Dwarf_P_Debug dbg,
             p_reloc->pr_first_block = 0;
             p_reloc->pr_last_block = 0;
             p_reloc->pr_block_count = 0;
+            /*  Now we know a number making a single
+                array. Replaces DEFAULT_SLOTS_PER_BLOCK */
             p_reloc->pr_slots_per_block_to_alloc = ct;
 
-            /* Creating new single block for all 'ct' entries */
-            res = _dwarf_pro_pre_alloc_n_reloc_slots(dbg, (int) i, ct);
+            /*  Creating new single block for all 'ct' entries.
+                Assigns a pointer value to pr_first_block
+                (which means our p_reloc).
+                It updates p_reloc->pr_first_block */
+            res = _dwarf_pro_pre_alloc_specific_reloc_slots(dbg,
+                p_reloc,ct);
             if (res != DW_DLV_OK) {
                 return res;
             }
-            /*  p_reloc is still at the same location, it does
-                not move because it is dbg->de_reloc_sect[i].
-                But its pr_first_block->data is
-                a new mostly-zeroed-out record (as are the others
-                in the array _dwarf_pro_pre_alloc_n_reloc_slots
-                creates. */
 
             new_blk = p_reloc->pr_first_block;
             data = (Dwarf_Small *) new_blk->rb_data;
@@ -224,10 +224,13 @@ _dwarf_symbolic_relocs_to_disk(Dwarf_P_Debug dbg,
                 p_blk points to the old singly-linked-list
                     and is the
                     only access to that list.
-                data is a pointer to the new array of ct entries.
+                data is a pointer to the new array of ct entries
+                which is our target(destination) of the copies.
                 */
             do {
                 struct Dwarf_P_Relocation_Block_s *p_blk_last = 0;
+                /*  len identifies the data in all the slots
+                    in use in this block. */
                 unsigned long len =
                     p_blk->rb_where_to_add_next - p_blk->rb_data;
                 memcpy(data, p_blk->rb_data, len);
@@ -236,7 +239,9 @@ _dwarf_symbolic_relocs_to_disk(Dwarf_P_Debug dbg,
                 p_blk = p_blk->rb_next;
                 _dwarf_p_dealloc(dbg, (Dwarf_Small *) p_blk_last);
             } while (p_blk);
-            /* ASSERT: the dangling p_blk list all dealloc'd */
+            /*  ASSERT: the dangling p_blk list all dealloc'd
+                which is really a no-op, all deallocations
+                take place at producer_finish().  */
             /* ASSERT: sum of len copied == total_size */
             new_blk->rb_next_slot_to_use = ct;
             new_blk->rb_where_to_add_next = (char *) data;

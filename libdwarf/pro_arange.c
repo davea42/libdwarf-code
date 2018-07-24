@@ -198,14 +198,17 @@ _dwarf_transform_arange_to_disk(Dwarf_P_Debug dbg,
     {
         unsigned long count = dbg->de_arange_count + 1;
         int res2 = 0;
+        Dwarf_P_Per_Reloc_Sect p_reloc =
+            &dbg->de_reloc_sect[DEBUG_ARANGES];
 
         if (dbg->de_relocate_pair_by_symbol) {
             count = (3 * dbg->de_arange_count) + 1;
         }
         /*  The following is a small optimization: not needed for
-            correctness */
-        res2 = _dwarf_pro_pre_alloc_n_reloc_slots(dbg,
-            DEBUG_ARANGES, count);
+            correctness.  Does nothing if
+            preloc->pr_first_block is non-null */
+        res2 = _dwarf_pro_pre_alloc_specific_reloc_slots(dbg,
+            p_reloc, count);
         if (res2 != DW_DLV_OK) {
             _dwarf_p_error(dbg, error, DW_DLE_ALLOC_FAIL);
             return DW_DLV_ERROR;

@@ -330,7 +330,7 @@ set_up_section(Dwarf_Debug dbg,
         is to say bigger than any standard section name. */
 #define SECNAMEMAX 30
     int secnamelen = strlen(secname);
-    static const char *dprefix = ".debug_";
+    /* static const char *dprefix = ".debug_"; */
 #define DPREFIXLEN 7
     static const char *zprefix = ".zdebug_";
 #define ZPREFIXLEN 8
@@ -350,12 +350,12 @@ set_up_section(Dwarf_Debug dbg,
             our caller will keep looking. */
         return DW_DLV_NO_ENTRY;
     }
-    if((secnamelen+1) < SECNAMEMAX && 
+    if((secnamelen+1) < SECNAMEMAX &&
         !strncmp(secname,zprefix,ZPREFIXLEN) &&
         !strcmp(secname+ZPREFIXLEN,targname+DPREFIXLEN)) {
             /*  zprefix version matches the object section
                 name so the section is compressed and is
-                the section this targname applies to. */ 
+                the section this targname applies to. */
             havezdebug = TRUE;
             namesmatch = TRUE;
     } else if (!strcmp(secname,targname)) {

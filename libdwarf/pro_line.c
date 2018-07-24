@@ -56,7 +56,7 @@ Dwarf_Signed _dwarf_pro_add_line_entry(Dwarf_P_Debug,
     This function actually calls _dwarf_pro_add_line_entry(), with
     an extra parameter, the opcode. Done so that interface calls
     dwarf_lne_set_address() and dwarf_lne_end_sequence() can use
-    this internal routine. 
+    this internal routine.
 
     The return value is really signed. Bogus interface.*/
 Dwarf_Unsigned
