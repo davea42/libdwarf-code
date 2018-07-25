@@ -141,7 +141,7 @@ To create a release file do:
   make dist
 will generate a libdwarf-yyyymmdd.tar.gz file with the files
 needed in a release
-  scripts/CPLIBDWARFTAR is an example of generating 
+  scripts/CPTARTOWEBDIR is an example of generating 
 fingerprints for the release file and copying the file.
 
 David Anderson.  Updated July 23, 2018
