@@ -153,9 +153,8 @@ using std::cout;
 using std::cerr;
 using std::endl;
 using std::vector;
-#ifdef __cplusplus
 extern "C" {
-int CallbackFunc(
+static int CallbackFunc(
     const char* name,
     int                 size,
     Dwarf_Unsigned      type,
@@ -165,10 +164,8 @@ int CallbackFunc(
     Dwarf_Unsigned*     sect_name_symbol_index,
     void *              user_data,
     int*                error);
-}
-void ErrorHandler(Dwarf_Error err,Dwarf_Ptr errarg);
-#endif
-
+} 
+// End extern "C"
 
 static void write_object_file(Dwarf_P_Debug dbg, IRepresentation &irep);
 static void write_text_section(Elf * elf);
@@ -333,7 +330,7 @@ createnamestr(unsigned strtabstroff)
 // Returns (to libdwarf) an Elf section number, so
 // since 0 is always empty and dwarfgen sets 1 to be a fake
 // text section on the first call this returns 2, second 3, etc.
-int CallbackFunc(
+static int CallbackFunc(
     const char* name,
     int                 size,
     Dwarf_Unsigned      type,
@@ -416,15 +413,6 @@ create_dw_elf(SectionFromDwarf  &ds)
         " link section=" << ds.link_<<
         " info=" << ds.info_ << endl ;
     return  si;
-}
-
-// Default error handler of libdwarf producer code.
-void ErrorHandler(Dwarf_Error err UNUSEDARG,
-    Dwarf_Ptr errarg UNUSEDARG)
-{
-    // FIXME do better error handling
-    cerr <<"dwarfgen: Giving up, encountered an error" << endl;
-    exit(1);
 }
 
 
