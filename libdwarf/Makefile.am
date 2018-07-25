@@ -205,6 +205,7 @@ ChangeLog2016 \
 ChangeLog2017 \
 CMakeLists.txt \
 COPYING \
+libdwarf.h.in \
 pdfbld.sh \
 LGPL.txt \
 LIBDWARFCOPYRIGHT
