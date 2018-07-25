@@ -27,6 +27,7 @@ else
   cp "$full"  "$t/$b"
 fi
 set -x
+ls -l "$t/$b"
 md5sum "$t/$b"
 echo " "
 sha512sum "$t/$b" | fold -w 32
