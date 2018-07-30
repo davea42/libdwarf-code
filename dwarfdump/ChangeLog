@@ -1,3 +1,8 @@
+2018-07-30 David Anderson
+    * tag_attr.list,tag_attr_ext.list,tag_common.h,tag_tree.list,
+      tag_tree_ext.list: Some important relationships needed to be
+      added to avoid -ka warnings about normal DWARF.
+      And the table sizes are just a tiny bit bigger.
 2018-07-13 David Anderson
     * command_options.c: Removed duplicate extern declaration
       of dwoptind.

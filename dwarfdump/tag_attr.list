@@ -171,6 +171,7 @@ DW_AT_allocated
 DW_AT_associated
 DW_AT_bit_size /* Allowed in DWARF4 */
 DW_AT_byte_size
+DW_AT_containing_type
 DW_AT_data_location
 DW_AT_declaration
 DW_AT_description
@@ -497,10 +498,12 @@ DW_AT_bit_offset /* allowed in DWARF4 */
 DW_AT_bit_size
 DW_AT_byte_size
 DW_AT_bit_size /* Allowed in DWARF4 */
+DW_AT_const_value 
 DW_AT_data_bit_offset
 DW_AT_data_member_location
 DW_AT_declaration
 DW_AT_description
+DW_AT_external
 DW_AT_mutable
 DW_AT_name
 DW_AT_sibling
@@ -726,6 +729,7 @@ DW_AT_data_location
 DW_AT_declaration
 DW_AT_description
 DW_AT_export_symbols
+DW_AT_linkage_name
 DW_AT_name
 DW_AT_sibling
 DW_AT_signature
@@ -743,6 +747,7 @@ DW_AT_accessibility
 DW_AT_address_class
 DW_AT_artificial
 DW_AT_calling_convention
+DW_AT_containing_type
 DW_AT_declaration
 DW_AT_description
 DW_AT_elemental

@@ -101,9 +101,11 @@ DW_TAG_GNU_call_site
 DW_AT_abstract_origin
 DW_AT_low_pc
 DW_AT_sibling
+DW_AT_GNU_tail_call
 0xffffffff
 DW_TAG_GNU_call_site_parameter
 DW_AT_GNU_call_site_value
+DW_AT_abstract_origin
 DW_AT_location
 0xffffffff
 DW_TAG_constant
@@ -115,4 +117,6 @@ DW_AT_GNU_bias
 0xffffffff
 DW_TAG_inlined_subroutine
 DW_AT_GNU_discriminator  /* Used by LLVM */
+0xffffffff
+DW_TAG_lexical_block
 0xffffffff

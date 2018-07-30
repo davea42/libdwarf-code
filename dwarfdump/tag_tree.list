@@ -145,6 +145,7 @@ DW_TAG_compile_unit
 DW_TAG_array_type
 DW_TAG_dynamic_type
 DW_TAG_class_type
+DW_TAG_dwarf_procedure
 DW_TAG_enumeration_type
 DW_TAG_imported_declaration
 DW_TAG_pointer_type

@@ -1,3 +1,6 @@
+2018-07-30 David Anderson
+    * pro_dnames.c, pro_dnames.h: New, these just placeholders
+      for the moment. To write out .debug_names.
 2018-07-24 David Anderson
     * libdwarf_version.h: Updated version string.
     * dwarf_line_table_reader_common.h:Removed trailing whitespace
