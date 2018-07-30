@@ -877,6 +877,9 @@ process_args(int argc, char *argv[])
                 glflags.gf_check_abbreviations = TRUE;
                 glflags.gf_info_flag = TRUE;
                 glflags.gf_types_flag = TRUE;
+                /*  For some checks is worth trying the plain
+                    .debug_abbrev section on its own. */
+                glflags.gf_abbrev_flag = TRUE;
                 break;
             /* DWARF constants */
             case 'c':
@@ -893,6 +896,9 @@ process_args(int argc, char *argv[])
                 glflags.gf_check_duplicated_attributes = TRUE;
                 glflags.gf_info_flag = TRUE;
                 glflags.gf_types_flag = TRUE;
+                /*  For some checks is worth trying the plain
+                    .debug_abbrev section on its own. */
+                glflags.gf_abbrev_flag = TRUE;
                 break;
             case 'e':
                 glflags.gf_check_pubname_attr = TRUE;

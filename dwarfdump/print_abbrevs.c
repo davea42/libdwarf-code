@@ -37,6 +37,9 @@
 
 #include "print_sections.h"
 
+#define TRUE  1
+#define FALSE 0
+
 
 /* The following relevent for one specific Linker. */
 #define SNLINKER_MAX_ATTRIB_COUNT  16
@@ -80,6 +83,8 @@ print_abbrevs(Dwarf_Debug dbg)
     while ((abres = dwarf_get_abbrev(dbg, offset, &ab,
         &length, &abbrev_entry_count, &paerr)) == DW_DLV_OK) {
         const char *tagname = "";
+        unsigned *abbrev_table_check = 0;
+        unsigned abbrev_table_used = 0;
 
         /*  Here offset is the global offset in .debug_abbrev.
             The abbrev_num is a relatively worthless counter
@@ -98,25 +103,27 @@ print_abbrevs(Dwarf_Debug dbg)
         if (!tag) {
             tagname = "Abbrev 0: null abbrev entry";
         }
-        if (glflags.dense) {
-            printf("<%" DW_PR_DUu "><0x%" DW_PR_XZEROS  DW_PR_DUx
-                "><code: %" DW_PR_DUu ">",
-                abbrev_num, offset,abbrev_code);
-            if (glflags.verbose) {
-                printf("<length: 0x%" DW_PR_XZEROS  DW_PR_DUx ">",
-                    length);
+        if ( glflags.gf_do_print_dwarf) {
+            if (glflags.dense) {
+                printf("<%" DW_PR_DUu "><0x%" DW_PR_XZEROS  DW_PR_DUx
+                    "><code: %" DW_PR_DUu ">",
+                    abbrev_num, offset,abbrev_code);
+                if (glflags.verbose) {
+                    printf("<length: 0x%" DW_PR_XZEROS  DW_PR_DUx ">",
+                        length);
+                }
+                printf(" %s", tagname);
             }
-            printf(" %s", tagname);
-        }
-        else {
-            printf("<%5" DW_PR_DUu "><0x%" DW_PR_XZEROS DW_PR_DUx
-                "><code: %3" DW_PR_DUu ">",
-                abbrev_num, offset, abbrev_code);
-            if (glflags.verbose) {
-                printf("<length: 0x%" DW_PR_XZEROS  DW_PR_DUx ">",
-                    length);
+            else {
+                printf("<%5" DW_PR_DUu "><0x%" DW_PR_XZEROS DW_PR_DUx
+                    "><code: %3" DW_PR_DUu ">",
+                    abbrev_num, offset, abbrev_code);
+                if (glflags.verbose) {
+                    printf("<length: 0x%" DW_PR_XZEROS  DW_PR_DUx ">",
+                        length);
+                }
+                printf(" %-27s", tagname);
             }
-            printf(" %-27s", tagname);
         }
         /* Process specific TAGs specially. */
         tag_specific_checks_setup(tag,0);
@@ -132,7 +139,7 @@ print_abbrevs(Dwarf_Debug dbg)
         }
         /*  If tag is zero, it is a null byte, not a real abbreviation,
             so there is no 'children' flag to print.  */
-        if (tag) {
+        if (tag && glflags.gf_do_print_dwarf) {
             const char * child_name = 0;
 
             child_name = get_children_name(child_flag,
@@ -140,11 +147,18 @@ print_abbrevs(Dwarf_Debug dbg)
             printf(" %s", child_name);
         }
         if(!glflags.dense) {
-            printf("\n");
+            if ( glflags.gf_do_print_dwarf) {
+                printf("\n");
+            }
         }
         /*  Abbrev just contains the format of a die, which debug_info
             then points to with the real data. So here we just print the
             given format. */
+        if (abbrev_entry_count > 0) {
+            abbrev_table_check = (unsigned *)calloc(sizeof(unsigned),
+                abbrev_entry_count);
+            abbrev_table_used = 0;
+        }
         for (i = 0; i < abbrev_entry_count; i++) {
             int aeres = 0;
 
@@ -157,24 +171,60 @@ print_abbrevs(Dwarf_Debug dbg)
             if (aeres == DW_DLV_NO_ENTRY) {
                 attr = -1LL;
                 form = -1LL;
-            }
-            if (glflags.dense) {
-                printf(" <%ld>%s<%s>", (unsigned long) off,
-                    get_AT_name(attr,dwarf_names_print_on_error),
-                    get_FORM_name((Dwarf_Half) form,
-                        dwarf_names_print_on_error));
             } else {
-                printf("       <0x%08lx>              %-28s%s\n",
-                    (unsigned long) off,
-                    get_AT_name(attr,
-                        dwarf_names_print_on_error),
-                    get_FORM_name((Dwarf_Half) form,
-                        dwarf_names_print_on_error));
+                abbrev_table_check[abbrev_table_used] = attr;
+                ++abbrev_table_used;
+            }
+            if ( glflags.gf_do_print_dwarf) {
+                if (glflags.dense) {
+                    printf(" <%ld>%s<%s>", (unsigned long) off,
+                        get_AT_name(attr,dwarf_names_print_on_error),
+                        get_FORM_name((Dwarf_Half) form,
+                            dwarf_names_print_on_error));
+                } else {
+                    printf("       <0x%08lx>              %-28s%s\n",
+                        (unsigned long) off,
+                        get_AT_name(attr,
+                            dwarf_names_print_on_error),
+                        get_FORM_name((Dwarf_Half) form,
+                            dwarf_names_print_on_error));
+                }
             }
         }
+        if (glflags.gf_check_duplicated_attributes) {
+            unsigned l = 0;
+            unsigned done = FALSE;
+
+            DWARF_CHECK_COUNT(duplicated_attributes_result,1);
+            /*  Warn if we have duplicated ATtributes. */
+            for(l = 0; !done && l < abbrev_table_used; ++l) {
+                unsigned m = 0;
+                for (m = 0; !done && m < abbrev_table_used; ++m) {
+                    if (m == l) {
+                        continue;
+                    }
+                    if (abbrev_table_check[l] != abbrev_table_check[m]) {
+                        continue;
+                    }
+                    DWARF_CHECK_ERROR2(duplicated_attributes_result,
+                        "Duplicated attribute ",
+                        get_AT_name(abbrev_table_check[l],
+                            dwarf_names_print_on_error));
+                    printf("  ERROR: Duplicated Attribute in .debug_abbrev"
+                        " at <0x%" DW_PR_XZEROS DW_PR_DUx
+                        "> %s . Continuing\n",
+                        (Dwarf_Unsigned) off,
+                        get_AT_name(abbrev_table_check[l],
+                            dwarf_names_print_on_error));
+                    done = TRUE;
+                }
+            }
+        }
+        free(abbrev_table_check);
+        abbrev_table_used = 0;
         dwarf_dealloc(dbg, ab, DW_DLA_ABBREV);
         offset += length;
-        if (glflags.dense) {
+        if (glflags.gf_do_print_dwarf && glflags.dense) {
             printf("\n");
         }
     }
