@@ -47,7 +47,7 @@ scripts/BLDLIBDWARF \
 scripts/BLDLIBDWARFTAR \
 scripts/BLDTESTDIR \
 scripts/CLEANUP \
-scripts/CPLIBDWARFTAR \
+scripts/CPTARTOWEBDIR \
 scripts/CPTOPUBLIC \
 scripts/CREATINGARELEASE \
 scripts/GETTOTOP \

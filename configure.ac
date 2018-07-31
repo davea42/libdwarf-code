@@ -1,20 +1,25 @@
 ###Copyright (C) 2018 Vincent Torri <vincent dot torri at gmail dot com>
 ###This code is public domain and can be freely used or copied.
 
+dnl defines the version name of  the libdwarf.so
 m4_define([v_maj], [1])
-m4_define([v_min], [5])
+m4_define([v_min], [0])
 m4_define([v_mic], [0])
-m4_define([v_ver], [v_maj.v_min.v_mic])
+###m4_define([v_ver], [v_maj.v_min.v_mic])
+###Returning to older version, .so.1
+m4_define([v_ver], [v_maj])
 
 m4_define([v_rel], [])
-
 m4_define([lt_cur], [m4_eval(v_maj + v_min)])
 m4_define([lt_rev], [v_mic])
 m4_define([lt_age], [v_min])
 
-m4_define([v_date], [m4_esyscmd_s([date "+%Y%m%d"])])
+### Sets the release name. 
+###m4_define([v_date], [m4_esyscmd_s([date "+%Y%m%d"])])
+m4_define([v_date], [20180730])])
 
 AC_PREREQ([2.52])
+### 2nd arg to AC_INIT is the version 'number'.
 AC_INIT([libdwarf], [v_date], [libdwarf-list -at- linuxmail -dot- org])
 AC_CONFIG_SRCDIR([configure.ac])
 AC_CONFIG_HEADERS([config.h])
