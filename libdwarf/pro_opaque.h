@@ -112,6 +112,7 @@ typedef struct Dwarf_P_Simple_name_header_s *Dwarf_P_Simple_name_header;
 typedef struct Dwarf_P_Arange_s *Dwarf_P_Arange;
 typedef struct Dwarf_P_Per_Reloc_Sect_s *Dwarf_P_Per_Reloc_Sect;
 typedef struct Dwarf_P_Per_Sect_String_Attrs_s *Dwarf_P_Per_Sect_String_Attrs;
+typedef struct Dwarf_P_Dnames_s *Dwarf_P_Dnames;
 
 /* Defined to get at the elf section numbers and section name
    indices in symtab for the dwarf sections
@@ -133,7 +134,7 @@ typedef struct Dwarf_P_Per_Sect_String_Attrs_s *Dwarf_P_Per_Sect_String_Attrs;
 #define         DEBUG_RANGES    12
 #define         DEBUG_TYPES     13
 #define         DEBUG_PUBTYPES  14
-#define         DEBUG_NAMES     15 /* DWARF5 */
+#define         DEBUG_NAMES     15 /* DWARF5. aka dnames */
 #define         DEBUG_STR       16
 #define         DEBUG_LINE_STR  17
 #define         DEBUG_MACRO     18 /* DWARF 5. */
@@ -471,7 +472,10 @@ struct Dwarf_P_Debug_s {
     Dwarf_P_Arange de_last_arange;
     Dwarf_Sword de_arange_count;
 
-    Dwarf_Ptr de_names;
+    /* debug_names  de_dnames is base of dnames info
+       before disk form */
+    Dwarf_P_Dnames de_dnames;
+    Dwarf_P_Section_Data de_dnames_sect;
 
     /* macinfo controls. */
     /* first points to beginning of the list during creation */

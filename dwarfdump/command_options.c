@@ -113,6 +113,7 @@ static const char *usage_text[] = {
 "\t\t-o[liaprfoR]\tprint relocation info",
 "\t\t  \tl=line,i=info,a=abbrev,p=pubnames,r=aranges,f=frames,o=loc,R=Ranges",
 "\t\t-p\tprint pubnames section",
+"\t\t--print-debug-names\tprint details from the .debug_names section",
 "\t\t--print-str-offsets\tprint details from the .debug_str_offsets section",
 "\t\t-P\tprint list of compile units per producer", /* List of CUs per compiler */
 "\t\t-Q\tsuppress printing section data",
@@ -375,7 +376,8 @@ process_args(int argc, char *argv[])
     int oarg = 0;
     int longindex = 0;
     static struct dwoption  longopts[] =  {
-        {"print-str-offsets",  dwno_argument,  0,1},
+        {"print-str-offsets",  dwno_argument,  0,1000},
+        {"print-debug-names",  dwno_argument,  0,1001},
         {0,0,0,0}
     };
 
@@ -392,8 +394,11 @@ process_args(int argc, char *argv[])
         longopts,&longindex)) != EOF) {
 
         switch (c) {
-        case  1:
+        case  1000:
             glflags.gf_print_str_offsets = TRUE;
+            break;
+        case  1001:
+            glflags.gf_debug_names_flag = TRUE;
             break;
         case '#':
         {

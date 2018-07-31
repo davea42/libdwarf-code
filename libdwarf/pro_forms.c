@@ -43,11 +43,6 @@
 /* Indicates no relocation needed. */
 #define NO_ELF_SYM_INDEX        0
 
-
-/* Adds an attribute to a die */
-extern void _dwarf_pro_add_at_to_die(Dwarf_P_Die die,
-    Dwarf_P_Attribute attr);
-
 /*  This function adds an attribute whose value is
     a target address to the given die.  The attribute
     is given the name provided by attr.  The address
@@ -477,6 +472,8 @@ dwarf_add_AT_unsigned_const(Dwarf_P_Debug dbg,
     case DW_AT_lower_bound:
     case DW_AT_call_file:
     case DW_AT_call_line:
+    case DW_AT_data_member_location:
+    case DW_AT_trampoline:
         break;
 
     default:
@@ -1020,9 +1017,7 @@ dwarf_add_AT_string(Dwarf_P_Debug dbg,
         }
             break;
     }
-
     new_attr->ar_attribute = attr;
-
     res = _dwarf_pro_set_string_attr(new_attr,ownerdie->di_dbg,
         string,error);
     if (res != DW_DLV_OK) {

@@ -1,5 +1,4 @@
 /*
-    
   Copyright 2018-2018 David Anderson.  All Rights Reserved.
 
   This program is free software; you can redistribute it
@@ -32,13 +31,16 @@
 #include <stdio.h>
 #include <string.h>
 #ifdef HAVE_ELFACCESS_H
-#include <elfaccess.h> 
+#include <elfaccess.h>
 #endif
 #include "pro_incl.h"
 #include "pro_arange.h"
 #include "pro_section.h"
 #include "pro_reloc.h"
 #include "pro_dnames.h"
+
+#define FALSE 0
+#define TRUE  1
 
 
 int
@@ -57,7 +59,7 @@ dwarf_force_debug_names(Dwarf_P_Debug dbg,
         _dwarf_p_get_alloc(dbg, sizeof(struct Dwarf_P_Dnames_s));
     if (dn == NULL) {
         _dwarf_p_error(dbg, error, DW_DLE_ALLOC_FAIL);
-        return DW_DLV_ERROR:
+        return DW_DLV_ERROR;
     }
     if (!dbg->de_dnames) {
         dbg->de_dnames = dn;
@@ -66,5 +68,3 @@ dwarf_force_debug_names(Dwarf_P_Debug dbg,
 
     return DW_DLV_OK;
 }
-
-

@@ -53,6 +53,7 @@ int _dwarf_pro_add_AT_stmt_list(Dwarf_P_Debug dbg,
     Dwarf_P_Die first_die,
     Dwarf_Error * error);
 
+
 int _dwarf_pro_add_AT_macro_info(Dwarf_P_Debug dbg,
     Dwarf_P_Die first_die,
     Dwarf_Unsigned offset,
@@ -62,3 +63,6 @@ int _dwarf_pro_set_string_attr(Dwarf_P_Attribute new_attr,
     Dwarf_P_Debug dbg,
     char *name,
     Dwarf_Error *error);
+
+/* adds an attribute to a die */
+void _dwarf_pro_add_at_to_die(Dwarf_P_Die die, Dwarf_P_Attribute attr);

@@ -103,7 +103,26 @@ static int read_encoded_ptr(Dwarf_Debug dbg,
 
 
 
-static int qsort_compare(const void *elem1, const void *elem2);
+/*  Called by qsort to compare FDE entries.
+    Consumer code expects the array of FDE pointers to be
+    in address order.
+*/
+static int
+qsort_compare(const void *elem1, const void *elem2)
+{
+    const Dwarf_Fde fde1 = *(const Dwarf_Fde *) elem1;
+    const Dwarf_Fde fde2 = *(const Dwarf_Fde *) elem2;
+    Dwarf_Addr addr1 = fde1->fd_initial_location;
+    Dwarf_Addr addr2 = fde2->fd_initial_location;
+
+    if (addr1 < addr2) {
+        return -1;
+    } else if (addr1 > addr2) {
+        return 1;
+    }
+    return 0;
+}
+
 
 
 /*  Adds 'newone' to the end of the list starting at 'head'
@@ -1082,27 +1101,6 @@ dwarf_create_fde_from_after_start(Dwarf_Debug dbg,
     return DW_DLV_OK;
 }
 
-/*  Called by qsort to compare FDE entries.
-    Consumer code expects the array of FDE pointers to be
-    in address order.
-*/
-static int
-qsort_compare(const void *elem1, const void *elem2)
-{
-    const Dwarf_Fde fde1 = *(const Dwarf_Fde *) elem1;
-    const Dwarf_Fde fde2 = *(const Dwarf_Fde *) elem2;
-    Dwarf_Addr addr1 = fde1->fd_initial_location;
-    Dwarf_Addr addr2 = fde2->fd_initial_location;
-
-    if (addr1 < addr2) {
-        return -1;
-    } else if (addr1 > addr2) {
-        return 1;
-    }
-    return 0;
-}
-
-
 /*  Read in the common cie/fde prefix, including reading
     the cie-value which shows which this is: cie or fde.  */
 int
@@ -1578,9 +1576,6 @@ read_encoded_ptr(Dwarf_Debug dbg,
     }
     return DW_DLV_OK;
 }
-
-
-
 
 /*  All augmentation string checking done here now.
 

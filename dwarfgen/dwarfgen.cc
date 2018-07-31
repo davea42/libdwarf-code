@@ -448,11 +448,13 @@ main(int argc, char **argv)
         int ptrsizeflagbit = DW_DLC_POINTER32;
         int offsetsizeflagbit = DW_DLC_OFFSET32;
         const char * isa_name = "x86";
+        bool force_empty_dnames = false;
         const char *dwarf_version = "V2";
         int endian =  DW_DLC_TARGET_LITTLEENDIAN;
         int longindex;
         static struct dwoption longopts[] = {
-            {"adddata16",dwno_argument,0,0},
+            {"adddata16",dwno_argument,0,1000},
+            {"force-empty-dnames",dwno_argument,0,1001},
             {0,0,0,0},
         };
 
@@ -460,7 +462,7 @@ main(int argc, char **argv)
             "o:t:c:hsrv:p:f:",
             longopts,&longindex)) != -1) {
             switch(opt) {
-            case 0:
+            case 1000:
                 if(longindex == 0) {
                     cmdoptions.adddata16 = true;
                 } else {
@@ -468,6 +470,9 @@ main(int argc, char **argv)
                         longindex << endl;
                     exit(1);
                 }
+                break;
+            case 1001:
+                force_empty_dnames = true;
                 break;
             case 'c':
                 // At present we can only create a single
@@ -589,6 +594,15 @@ main(int argc, char **argv)
             cerr << "dwarfgen: Failed dwarf_pro_set_default_string_form"
                 << endl;
             exit(EXIT_FAILURE);
+        }
+        if (force_empty_dnames) {
+            res = dwarf_force_debug_names(dbg,&err);
+            if (res != DW_DLV_OK) {
+                cerr << "dwarfgen: "
+                    "Failed dwarf_force_debug_names"
+                    << endl;
+                exit(EXIT_FAILURE);
+            }
         }
         transform_irep_to_dbg(dbg,Irep,cu_of_input_we_output);
         write_object_file(dbg,Irep);
@@ -865,9 +879,20 @@ write_generated_dbg(Dwarf_P_Debug dbg,Elf * elf_w,
     IRepresentation &irep)
 {
     Dwarf_Error err = 0;
-    Dwarf_Signed sectioncount =
-        dwarf_transform_to_disk_form(dbg,0);
+    Dwarf_Signed sectioncount = 0;
 
+
+    int res = dwarf_transform_to_disk_form_a(dbg,&sectioncount,&err);
+    if (res != DW_DLV_OK) {
+       if (res == DW_DLV_ERROR) {
+           string msg(dwarf_errmsg(err));
+           cerr << "Dwarfgen fails: " << msg << endl;
+           exit(1);
+       }
+       /* ASSERT: rex == DW_DLV_NO_ENTRY */
+       cerr << "Dwarfgen fails, some internal error " << endl;
+       exit(1);
+    }
     Dwarf_Signed d = 0;
     for(d = 0; d < sectioncount ; ++d) {
         InsertDataIntoElf(d,dbg,elf_w);
@@ -880,7 +905,7 @@ write_generated_dbg(Dwarf_P_Debug dbg,Elf * elf_w,
 
     Dwarf_Unsigned reloc_sections_count = 0;
     int drd_version = 0;
-    int res = dwarf_get_relocation_info_count(dbg,&reloc_sections_count,
+    res = dwarf_get_relocation_info_count(dbg,&reloc_sections_count,
         &drd_version,&err);
     if( res != DW_DLV_OK) {
         cerr << "dwarfgen: Error getting relocation info count." << endl;

@@ -1,3 +1,7 @@
+2018-07-31 David Anderson
+    * command_options.c: New option --print-debug-names.
+    * print_dnames.c: Giving print_debug_names() some
+      content.
 2018-07-30 David Anderson
     * command_options.c: For abbreviation checking also try running
       print_abbrevs() with its checks. 

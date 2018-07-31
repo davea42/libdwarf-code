@@ -269,13 +269,13 @@ HandleOneDieAndChildren(Dwarf_P_Debug dbg,
     list<IRDie>& children = inDie.getChildren();
     // We create our target DIE first so we can link
     // children to it, but add no content yet.
-    Dwarf_P_Die ourdie = dwarf_new_die(dbg,inDie.getTag(),NULL,NULL,
+    Dwarf_P_Die gendie = dwarf_new_die(dbg,inDie.getTag(),NULL,NULL,
         NULL,NULL,&error);
-    if (reinterpret_cast<Dwarf_Addr>(ourdie) == DW_DLV_BADADDR) {
+    if (reinterpret_cast<Dwarf_Addr>(gendie) == DW_DLV_BADADDR) {
         cerr << "Die creation failure.  "<< endl;
         exit(1);
     }
-    inDie.setGeneratedDie(ourdie);
+    inDie.setGeneratedDie(gendie);
 
     Dwarf_P_Die lastch = 0;
     for ( list<IRDie>::iterator it = children.begin();
@@ -290,7 +290,7 @@ HandleOneDieAndChildren(Dwarf_P_Debug dbg,
             res = dwarf_die_link(chp,NULL,NULL,lastch,NULL,&error);
         } else {
             // Link as first child.
-            res  = dwarf_die_link(chp,ourdie,NULL,NULL, NULL,&error);
+            res  = dwarf_die_link(chp,gendie,NULL,NULL, NULL,&error);
         }
         // Bad cast here, FIXME
         if (reinterpret_cast<Dwarf_Addr>(res) == DW_DLV_BADADDR) {
@@ -302,19 +302,19 @@ HandleOneDieAndChildren(Dwarf_P_Debug dbg,
     list<IRAttr>& attrs = inDie.getAttributes();
 
     // Now any special transformations to the attrs list.
-    specialAttrTransformations(dbg,Irep,ourdie,inDie,attrs,level);
-    addData16DataItem(dbg,Irep,ourdie,inDie,inParent,attrs,level);
+    specialAttrTransformations(dbg,Irep,gendie,inDie,attrs,level);
+    addData16DataItem(dbg,Irep,gendie,inDie,inParent,attrs,level);
 
     // Now we add attributes (content), if any, to the
-    // output die 'ourdie'.
+    // output die 'gendie'.
     for (list<IRAttr>::iterator it = attrs.begin();
         it != attrs.end();
         it++) {
         IRAttr & attr = *it;
 
-        AddAttrToDie(dbg,Irep,cu,ourdie,inDie,attr);
+        AddAttrToDie(dbg,Irep,cu,gendie,inDie,attr);
     }
-    return ourdie;
+    return gendie;
 }
 
 static void

@@ -4,25 +4,28 @@
   Portions Copyright 2002-2010 Sun Microsystems, Inc. All rights reserved.
   Portions Copyright 2012 SN Systems Ltd. All rights reserved.
 
-  This program is free software; you can redistribute it and/or modify it
-  under the terms of version 2.1 of the GNU Lesser General Public License
-  as published by the Free Software Foundation.
+  This program is free software; you can redistribute it
+  and/or modify it under the terms of version 2.1 of the
+  GNU Lesser General Public License as published by the Free
+  Software Foundation.
 
-  This program is distributed in the hope that it would be useful, but
-  WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+  This program is distributed in the hope that it would be
+  useful, but WITHOUT ANY WARRANTY; without even the implied
+  warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+  PURPOSE.
 
-  Further, this software is distributed without any warranty that it is
-  free of the rightful claim of any third person regarding infringement
-  or the like.  Any license provided herein, whether implied or
-  otherwise, applies only to this software file.  Patent licenses, if
-  any, provided herein do not apply to combinations of this program with
-  other software, or any other product whatsoever.
+  Further, this software is distributed without any warranty
+  that it is free of the rightful claim of any third person
+  regarding infringement or the like.  Any license provided
+  herein, whether implied or otherwise, applies only to this
+  software file.  Patent licenses, if any, provided herein
+  do not apply to combinations of this program with other
+  software, or any other product whatsoever.
 
-  You should have received a copy of the GNU Lesser General Public
-  License along with this program; if not, write the Free Software
-  Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston MA 02110-1301,
-  USA.
+  You should have received a copy of the GNU Lesser General
+  Public License along with this program; if not, write the
+  Free Software Foundation, Inc., 51 Franklin Street - Fifth
+  Floor, Boston MA 02110-1301, USA.
 
 */
 
@@ -33,6 +36,9 @@
 #ifdef   HAVE_ELFACCESS_H
 #include <elfaccess.h>
 #endif
+#ifdef HAVE_STDLIB_H
+#include <stdlib.h>
+#endif
 #include "pro_incl.h"
 #include "pro_section.h"
 #include "pro_line.h"
@@ -40,6 +46,8 @@
 #include "pro_die.h"
 #include "pro_macinfo.h"
 #include "pro_types.h"
+#include "pro_dnames.h"
+
 
 #ifndef SHF_MIPS_NOSTRIP
 /* if this is not defined, we probably don't need it: just use 0 */
@@ -55,6 +63,13 @@
 #ifndef FALSE
 #define FALSE 0
 #endif
+
+struct Dwarf_Sort_Abbrev_s {
+    unsigned dsa_attr;
+    unsigned dsa_form;
+    Dwarf_P_Attribute dsa_attrp;
+};
+
 
 /* Must match up with pro_section.h defines of DEBUG_INFO etc
 and sectnames (below).  REL_SEC_PREFIX is either ".rel" or ".rela"
@@ -76,7 +91,7 @@ const char *_dwarf_rel_section_names[] = {
     REL_SEC_PREFIX ".debug_ranges",
     REL_SEC_PREFIX ".debug_types",      /* new in DWARF4 */
     REL_SEC_PREFIX ".debug_pubtypes",   /* new in DWARF3 */
-    REL_SEC_PREFIX ".debug_names",      /* DWARF5 */
+    REL_SEC_PREFIX ".debug_names",      /* DWARF5 aka dnames */
     REL_SEC_PREFIX ".debug_str",        /* Nothing here refers to anything.*/
     REL_SEC_PREFIX ".debug_rnglists",   /* DWARF5. */
     REL_SEC_PREFIX ".debug_line_str",   /* DWARF5. Nothing referselsewhere */
@@ -105,7 +120,7 @@ const char *_dwarf_sectnames[] = {
     ".debug_ranges",
     ".debug_types",             /* new in DWARF4 */
     ".debug_pubtypes",          /* new in DWARF3 */
-    ".debug_names",             /* new in DWARF5 */
+    ".debug_names",             /* new in DWARF5. aka dnames */
     ".debug_str",
     ".debug_line_str",          /* new in DWARF5 */
     ".debug_macro",             /* new in DWARF5 */
@@ -162,9 +177,6 @@ static int _dwarf_pro_generate_debugframe(Dwarf_P_Debug dbg,
     Dwarf_Signed *nbufs, Dwarf_Error * error);
 static int _dwarf_pro_generate_debuginfo(Dwarf_P_Debug dbg,
     Dwarf_Signed *nbufs, Dwarf_Error * error);
-static Dwarf_P_Abbrev _dwarf_pro_getabbrev(Dwarf_P_Die, Dwarf_P_Abbrev);
-static int _dwarf_pro_match_attr
-    (Dwarf_P_Attribute, Dwarf_P_Abbrev, int no_attr);
 
 #if 0
 static void
@@ -180,6 +192,35 @@ dump_bytes(char * msg,Dwarf_Small * start, long len)
     printf("\n");
 }
 #endif
+
+static void
+print_single_abbrev(Dwarf_P_Abbrev c, unsigned idx)
+{
+    unsigned j = 0;
+
+    printf(" %2u idx %2u tag 0x%x attrct %2u\n",idx,
+        (unsigned)c->abb_idx,
+        (unsigned)c->abb_tag,
+        (unsigned)c->abb_n_attr);
+
+    for ( ; j < (unsigned)c->abb_n_attr; ++j) {
+        printf("  %2u attr 0x%2x  form 0x%2x\n",
+            j,
+            (unsigned)c->abb_attrs[j],
+            (unsigned)c->abb_forms[j]);
+    }
+}
+static void
+print_curabbrev(const char *where,
+    Dwarf_P_Abbrev curabbrev)
+{
+    Dwarf_P_Abbrev ca = 0;
+    unsigned i = 0;
+    for(ca = curabbrev; ca ; ca = ca->abb_next,++i) {
+        printf("ABBREV %u from %s\n",i,where);
+        print_single_abbrev(ca,i);
+    }
+}
 
 
 /* These macros used as return value for _dwarf_pro_get_opc. */
@@ -253,7 +294,13 @@ dwarf_need_debug_line_section(Dwarf_P_Debug dbg)
 static int
 dwarf_need_debug_names_section(Dwarf_P_Debug dbg)
 {
-    if (!dbg->de_names) {
+    if (dbg->de_output_version <  5) {
+        return FALSE;
+    }
+    if (!dbg->de_dnames) {
+        return FALSE;
+    }
+    if (!dbg->de_dnames->dn_create_section) {
         return FALSE;
     }
     return TRUE;
@@ -390,6 +437,10 @@ dwarf_transform_to_disk_form_a(Dwarf_P_Debug dbg, Dwarf_Signed *count,
             }
             break;
         case DEBUG_NAMES: /* DWARF5 */
+            if (dwarf_need_debug_names_section(dbg) == FALSE) {
+                continue;
+            }
+            break;
         case DEBUG_LOC:
             /* Not handled yet. */
             continue;
@@ -560,7 +611,6 @@ dwarf_transform_to_disk_form_a(Dwarf_P_Debug dbg, Dwarf_Signed *count,
         }
     }
     if (dwarf_need_debug_names_section(dbg) == TRUE) {
-        /* FIXME TODO debug_names */
         int res = _dwarf_pro_generate_debug_names(dbg,&nbufs, error);
         if (res == DW_DLV_ERROR) {
             return res;
@@ -2430,7 +2480,474 @@ if_relocatable_string_form(Dwarf_P_Debug dbg, Dwarf_P_Attribute curattr,
     return DW_DLV_OK;
 }
 
+/*  Tries to see if given attribute and form combination
+    of the attr exists in the given abbreviation.
+    abbrevs and attrs are sorted in attrnum order. */
+static int
+_dwarf_pro_match_attr(Dwarf_P_Attribute attr,
+    Dwarf_P_Abbrev abbrev, int no_attr)
+{
+    int i = 0;
+    Dwarf_P_Attribute curatp = attr;
+
+    for (i = 0; i < no_attr && curatp; i++,curatp = curatp->ar_next ) {
+        if (curatp->ar_attribute != abbrev->abb_attrs[i] ||
+            curatp->ar_attribute_form != abbrev->abb_forms[i]) {
+            return 0;
+        }
+    }
+    return 1;
+}
+
+static int
+verify_ab_no_dups(struct Dwarf_Sort_Abbrev_s *sortab,
+    int attrcount)
+{
+    int k = 0;
+    unsigned preva = 0;
+    struct Dwarf_Sort_Abbrev_s *ab = sortab;
+
+    if (attrcount < 2) {
+        return DW_DLV_OK;
+    }
+    for(k = 0; k < attrcount; ++k,++ab) {
+        if (k) {
+            if (preva >= ab->dsa_attr) {
+                return DW_DLV_ERROR;
+            }
+        }
+        preva = ab->dsa_attr;
+    }
+    return DW_DLV_OK;
+}
+
+static int
+abcompare(const void *l_in, const void *r_in)
+{
+    struct Dwarf_Sort_Abbrev_s *l =
+        (struct Dwarf_Sort_Abbrev_s *)l_in;
+    struct Dwarf_Sort_Abbrev_s *r =
+        (struct Dwarf_Sort_Abbrev_s *)r_in;
+    if (l->dsa_attr < r->dsa_attr) {
+        return -1;
+    }
+    if (l->dsa_attr > r->dsa_attr) {
+        return +1;
+    }
+    /* ASSERT: This never happens in correct dwarf. */
+    return 0;
+}
+
+/*  Handles abbreviations. It takes a die, searches through
+    current list of abbreviations for a matching one. If it
+    finds one, it returns a pointer to the abbrev through
+    the ab_out pointer, and if it does not,
+    it returns a new abbrev through the ab_out pointer.
+
+    The die->die_attrs are sorted by attribute and the curabbrev
+    attrs are too.
+
+    It is up to the user of this function to
+    link it up to the abbreviation head. If it is a new abbrev
+    abb_idx has 0. */
+static int
+_dwarf_pro_getabbrev(Dwarf_P_Debug dbg,
+    Dwarf_P_Die die, Dwarf_P_Abbrev head,
+    Dwarf_P_Abbrev*ab_out,Dwarf_Error *error)
+{
+    Dwarf_P_Abbrev curabbrev = 0;
+    Dwarf_P_Attribute curattr = 0;
+    int match = 0;
+    Dwarf_ufixed *forms = 0;
+    Dwarf_ufixed *attrs = 0;
+    int attrcount = die->di_n_attr;
+
+    curabbrev = head;
+    print_curabbrev(" loop in pro_getabbref, attr count ",curabbrev);
+    /*  Loop thru the currently known abbreviations needed
+        to see if we can share an existing abbrev.  */
+    while (curabbrev) {
+        if ((die->di_tag == curabbrev->abb_tag) &&
+            ((die->di_child != NULL &&
+            curabbrev->abb_children == DW_CHILDREN_yes) ||
+            (die->di_child == NULL &&
+            curabbrev->abb_children == DW_CHILDREN_no)) &&
+            (attrcount == curabbrev->abb_n_attr)) {
+
+            /*  There is a chance of a match, basic
+                characterists match. Now Check the attrs and
+                forms. */
+            curattr = die->di_attrs;
+            match = _dwarf_pro_match_attr(curattr,
+                    curabbrev,
+                    (int) curabbrev->abb_n_attr);
+            if (match == 1) {
+                /*  This tag/children/abbrev-list matches
+                    the incoming die needs exactly. Reuse
+                    this abbreviation. */
+                *ab_out = curabbrev;
+                return DW_DLV_OK;
+            }
+        }
+        curabbrev = curabbrev->abb_next;
+    }
+    /* no match, create new abbreviation */
+    if (attrcount) {
+        forms = (Dwarf_ufixed *)
+            _dwarf_p_get_alloc(die->di_dbg,
+                sizeof(Dwarf_ufixed) * attrcount);
+        if (forms == NULL) {
+            DWARF_P_DBG_ERROR(dbg, DW_DLE_ABBREV_ALLOC, DW_DLV_ERROR);
+        }
+        attrs = (Dwarf_ufixed *)
+            _dwarf_p_get_alloc(die->di_dbg,
+                sizeof(Dwarf_ufixed) * attrcount);
+        if (attrs == NULL) {
+            DWARF_P_DBG_ERROR(dbg, DW_DLE_ABBREV_ALLOC, DW_DLV_ERROR);
+        }
+    }
+    curattr = die->di_attrs;
+    if (forms && attrs && attrcount) {
+        struct Dwarf_Sort_Abbrev_s *sortab = 0;
+        struct Dwarf_Sort_Abbrev_s *ap = 0;
+        int k = 0;
+        int res = 0;
+
+        sortab = (struct Dwarf_Sort_Abbrev_s *)
+            malloc(sizeof(struct Dwarf_Sort_Abbrev_s)*attrcount);
+        if(!sortab) {
+            DWARF_P_DBG_ERROR(dbg, DW_DLE_ABBREV_ALLOC, DW_DLV_ERROR);
+        }
+        /*  ASSERT curattr->ar_next chain length == attrcount  */
+        ap = sortab;
+        for(; curattr; ++ap, curattr = curattr->ar_next) {
+            ap->dsa_attr = curattr->ar_attribute;
+            ap->dsa_form = curattr->ar_attribute_form;
+            ap->dsa_attrp = 0;
+        }
+
+        qsort(sortab,attrcount,sizeof(struct Dwarf_Sort_Abbrev_s),
+            abcompare);
+        ap = sortab;
+        k = 0;
+        res = verify_ab_no_dups(sortab,attrcount);
+        if (res != DW_DLV_OK) {
+            DWARF_P_DBG_ERROR(dbg,DW_DLE_DUP_ATTR_ON_DIE,DW_DLV_ERROR);
+        }
+        for( ; k < attrcount; ++k,++ap) {
+            attrs[k] = ap->dsa_attr;
+            forms[k] = ap->dsa_form;
+        }
+        free(sortab);
+    }
+
+    curabbrev = (Dwarf_P_Abbrev)
+        _dwarf_p_get_alloc(die->di_dbg, sizeof(struct Dwarf_P_Abbrev_s));
+    if (curabbrev == NULL) {
+        DWARF_P_DBG_ERROR(dbg, DW_DLE_ABBREV_ALLOC, DW_DLV_ERROR);
+    }
+
+    if (die->di_child == NULL) {
+        curabbrev->abb_children = DW_CHILDREN_no;
+    } else {
+        curabbrev->abb_children = DW_CHILDREN_yes;
+    }
+    curabbrev->abb_tag = die->di_tag;
+    curabbrev->abb_attrs = attrs;
+    curabbrev->abb_forms = forms;
+    curabbrev->abb_n_attr = attrcount;
+    curabbrev->abb_idx = 0;
+    curabbrev->abb_next = NULL;
+    *ab_out = curabbrev;
+    return DW_DLV_OK;
+}
+
 /* Generate debug_info and debug_abbrev sections */
+
+
+/*  DWARF 2,3,4  */
+static int
+generate_debuginfo_header_2(Dwarf_P_Debug dbg,
+    unsigned *abbrev_offset_io,
+    unsigned char **data_io,
+    int     *cu_header_size_out,
+    Dwarf_Small **abbr_off_ptr_out,
+    Dwarf_Half version,
+    int extension_size,
+    Dwarf_Ubyte address_size,
+    Dwarf_Error * error)
+{
+    unsigned abbrev_offset = *abbrev_offset_io;
+    unsigned char * data = *data_io;
+    int offset_size = dbg->de_offset_size;
+    int elfsectno_of_debug_info = dbg->de_elf_sects[DEBUG_INFO];
+    int cu_header_size = 0;
+    Dwarf_Unsigned du = 0;
+    Dwarf_Small *abbr_off_ptr = 0;
+
+    /* write cu header. abbrev_offset used to
+        generate relocation record below */
+    abbrev_offset =  OFFSET_PLUS_EXTENSION_SIZE +
+        DWARF_HALF_SIZE  ;
+
+    cu_header_size = abbrev_offset +
+        offset_size + sizeof(Dwarf_Ubyte);
+
+    GET_CHUNK_ERR(dbg, elfsectno_of_debug_info, data, cu_header_size,
+        error);
+    if (extension_size) {
+        /* This for a dwarf-standard 64bit offset. */
+        du = DISTINGUISHED_VALUE;
+        WRITE_UNALIGNED(dbg, (void *) data,
+                (const void *) &du, sizeof(du), extension_size);
+        data += extension_size;
+    }
+    abbr_off_ptr = data;
+    du = 0; /* length of debug_info, not counting
+        this field itself (unknown at this point). */
+    WRITE_UNALIGNED(dbg, (void *) data,
+        (const void *) &du, sizeof(du), offset_size);
+    data += offset_size;
+
+    WRITE_UNALIGNED(dbg, (void *) data, (const void *) &version,
+        sizeof(version), DWARF_HALF_SIZE);
+    data += DWARF_HALF_SIZE;
+
+    du = 0;/* offset into abbrev table, not yet known. */
+    WRITE_UNALIGNED(dbg, (void *) data,
+        (const void *) &du, sizeof(du), offset_size);
+    data += offset_size;
+
+    WRITE_UNALIGNED(dbg, (void *) data, (const void *) &address_size,
+        sizeof(address_size), sizeof(Dwarf_Ubyte));
+    data += sizeof(Dwarf_Ubyte);
+
+    /*  We have filled the chunk we got with GET_CHUNK.
+        At this point we
+        no longer dare use "data"  as a
+        pointer any longer except to refer to that first
+        small chunk for the cu header to update
+        the section length. */
+    *abbrev_offset_io = abbrev_offset;
+    *data_io = data;
+    *cu_header_size_out = cu_header_size;
+    *abbr_off_ptr_out = abbr_off_ptr;
+    return DW_DLV_OK;
+}
+
+/*  DWARF 2,3,4  */
+static int
+generate_debuginfo_header_5(Dwarf_P_Debug dbg,
+    unsigned       *abbrev_offset_io,
+    unsigned char **data_io,
+    int            *cu_header_size_out,
+    Dwarf_Small   **abbr_off_ptr_out,
+    Dwarf_Half      version,
+    Dwarf_Ubyte     unit_type,
+    int             extension_size,
+    Dwarf_Ubyte     address_size,
+    Dwarf_Error    *error)
+{
+    int offset_size = dbg->de_offset_size;
+    unsigned abbrev_offset = *abbrev_offset_io;
+    unsigned char * data = *data_io;
+    int elfsectno_of_debug_info = dbg->de_elf_sects[DEBUG_INFO];
+    int cu_header_size = 0;
+    Dwarf_Unsigned du = 0;
+    Dwarf_Small *abbr_off_ptr = 0;
+
+
+    /*  write cu header. abbrev_offset used to
+        generate relocation record below */
+    abbrev_offset =  OFFSET_PLUS_EXTENSION_SIZE +
+        DWARF_HALF_SIZE + /* version stamp */
+        sizeof(unit_type) +
+        sizeof(Dwarf_Ubyte);
+    cu_header_size = abbrev_offset + offset_size;
+
+    GET_CHUNK_ERR(dbg, elfsectno_of_debug_info, data, cu_header_size,
+            error);
+    if (extension_size) {
+        /* Impossible in DW5, really, is for IRIX64. But we allow it. */
+        du = DISTINGUISHED_VALUE;
+        WRITE_UNALIGNED(dbg, (void *) data,
+                (const void *) &du, sizeof(du), extension_size);
+        data += extension_size;
+    }
+    abbr_off_ptr = data;
+    du = 0; /* length of debug_info, not counting
+        this field itself (unknown at this point). */
+    WRITE_UNALIGNED(dbg, (void *) data,
+        (const void *) &du, sizeof(du), offset_size);
+    data += offset_size;
+
+    WRITE_UNALIGNED(dbg, (void *) data,
+        (const void *) &version,
+        sizeof(version), DWARF_HALF_SIZE);
+    data += DWARF_HALF_SIZE;
+
+    WRITE_UNALIGNED(dbg, (void *) data,
+        (const void *) &unit_type,
+        sizeof(unit_type), sizeof(Dwarf_Ubyte));
+    data += sizeof(Dwarf_Ubyte);
+
+    WRITE_UNALIGNED(dbg, (void *) data, (const void *) &address_size,
+        sizeof(address_size), sizeof(Dwarf_Ubyte));
+    data += sizeof(Dwarf_Ubyte);
+
+    du = 0;/* offset into abbrev table, not yet known. */
+    WRITE_UNALIGNED(dbg, (void *) data,
+        (const void *) &du, sizeof(du), offset_size);
+    data += offset_size;
+
+    /*  We have filled the chunk we got with GET_CHUNK.
+        At this point we
+        no longer dare use "data" as a pointer any
+        longer except to refer to that first small chunk for the cu
+        header to update the section length. */
+
+    *abbrev_offset_io = abbrev_offset;
+    *data_io = data;
+    *cu_header_size_out = cu_header_size;
+    *abbr_off_ptr_out = abbr_off_ptr;
+    return DW_DLV_OK;
+}
+
+/* Write out debug_abbrev section */
+static int
+write_out_debug_abbrev(Dwarf_P_Debug dbg,
+    Dwarf_P_Abbrev abbrev_head,
+    Dwarf_Error * error)
+{
+    Dwarf_P_Abbrev curabbrev = abbrev_head;
+    unsigned char *data = 0;
+    int res = 0;
+    int abbrevsectno = dbg->de_elf_sects[DEBUG_ABBREV];
+
+    print_curabbrev(" loop in write abbrev",curabbrev);
+    while (curabbrev) {
+        int idx = 0;
+        unsigned lebcount = 0;
+        Dwarf_Ubyte db = 0;
+
+        res  = write_uval(curabbrev->abb_idx,dbg,abbrevsectno,
+            &lebcount,error);
+        if (res != DW_DLV_OK) {
+            return res;
+        }
+
+        res  = write_uval(curabbrev->abb_tag,dbg,abbrevsectno,
+            &lebcount,error);
+        if (res != DW_DLV_OK) {
+            return res;
+        }
+
+        db = curabbrev->abb_children;
+        res = write_ubyte(db,dbg,abbrevsectno,&lebcount,error);
+        if (res != DW_DLV_OK) {
+            return res;
+        }
+
+        /* add attributes and forms */
+        for (idx = 0; idx < curabbrev->abb_n_attr; idx++) {
+            res =write_uval(curabbrev->abb_attrs[idx],
+                dbg,abbrevsectno,
+                &lebcount,error);
+            if (res != DW_DLV_OK) {
+                return res;
+            }
+            res =write_uval(curabbrev->abb_forms[idx],
+                dbg,abbrevsectno,
+                &lebcount,error);
+            if (res != DW_DLV_OK) {
+                return res;
+            }
+        }
+        /* Two zeros, for last entry, see dwarf2 sec 7.5.3 */
+        GET_CHUNK_ERR(dbg, abbrevsectno, data, 2, error);
+        *data = 0;
+        data++;
+        *data = 0;
+
+        curabbrev = curabbrev->abb_next;
+    }
+    /* one zero, for end of cu, see dwarf2 sec 7.5.3 */
+    GET_CHUNK_ERR(dbg, abbrevsectno, data, 1, error);
+    *data = 0;
+    return DW_DLV_OK;
+}
+
+static int
+sort_die_attrs(Dwarf_P_Debug dbg,Dwarf_P_Die die,
+    Dwarf_Error *error)
+{
+    struct Dwarf_Sort_Abbrev_s *sortab = 0;
+    struct Dwarf_Sort_Abbrev_s *ap = 0;
+    Dwarf_P_Attribute at = 0;
+    Dwarf_P_Attribute sorted_attrlist = 0;
+    Dwarf_P_Attribute sorted_tail = 0;
+    int attrcount = die->di_n_attr;
+    int res = 0;
+
+    int k = 0;
+#if 1
+    at = die->di_attrs;
+    for(; at; ++ap, at = at->ar_next) {
+printf("dadebug attr 0x%x form 0x%x\n",at->ar_attribute,at->ar_attribute_form);
+    }
+#endif
+
+    if (attrcount < 2) {
+        return DW_DLV_OK;
+    }
+
+    sortab = (struct Dwarf_Sort_Abbrev_s *)
+        malloc(sizeof(struct Dwarf_Sort_Abbrev_s)*attrcount);
+    if(!sortab) {
+        DWARF_P_DBG_ERROR(dbg, DW_DLE_ABBREV_ALLOC, DW_DLV_ERROR);
+    }
+    /*  ASSERT at->ar_next chain length == attrcount  */
+    ap = sortab;
+    at = die->di_attrs;
+#if 1
+{ unsigned ct = 0;
+    for(; at; ++ap, at = at->ar_next) {
+        ap->dsa_attr = at->ar_attribute;
+        ap->dsa_form = at->ar_attribute_form;
+        ap->dsa_attrp = at;
+        ++ct;
+    }
+    printf("dadebug sort_die_attrs counted %u line %d\n",ct,__LINE__);
+}
+#endif
+    qsort(sortab,attrcount,sizeof(struct Dwarf_Sort_Abbrev_s),
+        abcompare);
+    res = verify_ab_no_dups(sortab,attrcount);
+    if (res != DW_DLV_OK) {
+        DWARF_P_DBG_ERROR(dbg, DW_DLE_DUP_ATTR_ON_DIE, DW_DLV_ERROR);
+    }
+    ap = sortab;
+    k = 0;
+    for( ; k < attrcount; ++k,++ap) {
+        Dwarf_P_Attribute localptr = ap->dsa_attrp;
+        if (!sorted_attrlist) {
+            sorted_attrlist = localptr;
+            sorted_tail = sorted_attrlist;
+            localptr->ar_next = 0;
+            continue;
+        }
+        sorted_tail->ar_next  = localptr;
+        sorted_tail = localptr;
+        localptr->ar_next = 0;
+    }
+    /*  Now replace the list with the same pointers
+        but in order sorted by attribute. */
+    die->di_attrs = sorted_attrlist;
+    free(sortab);
+    return DW_DLV_OK;
+}
+
+
 
 static int
 _dwarf_pro_generate_debuginfo(Dwarf_P_Debug dbg,
@@ -2438,7 +2955,6 @@ _dwarf_pro_generate_debuginfo(Dwarf_P_Debug dbg,
     Dwarf_Error * error)
 {
     int elfsectno_of_debug_info = 0;
-    int abbrevsectno = 0;
     unsigned char *data = 0;
     int cu_header_size = 0;
     Dwarf_P_Abbrev curabbrev = 0;
@@ -2467,108 +2983,38 @@ _dwarf_pro_generate_debuginfo(Dwarf_P_Debug dbg,
         this is non-standard IRIX64 64 bit offset. */
     Dwarf_Half version = dbg->de_output_version;
     int extension_size = dbg->de_64bit_extension ? 4 : 0;
+
+    /* For now just assume DW_UT_compile FIXME */
     Dwarf_Ubyte unit_type = DW_UT_compile;
     Dwarf_Ubyte address_size = 0;
 
-    abbrev_head = abbrev_tail = NULL;
     elfsectno_of_debug_info = dbg->de_elf_sects[DEBUG_INFO];
-
     address_size = dbg->de_pointer_size;
     if (version  < 5) {
-        /* write cu header. abbrev_offset used to
-            generate relocation record below */
-        abbrev_offset =  OFFSET_PLUS_EXTENSION_SIZE +
-            DWARF_HALF_SIZE  ;
-
-        cu_header_size = abbrev_offset +
-            offset_size + sizeof(Dwarf_Ubyte);
-
-        GET_CHUNK_ERR(dbg, elfsectno_of_debug_info, data, cu_header_size,
+        res = generate_debuginfo_header_2(dbg,
+            &abbrev_offset,
+            &data,
+            &cu_header_size,
+            &abbr_off_ptr,
+            version,  extension_size, address_size,
             error);
-        if (extension_size) {
-            /* This for a dwarf-standard 64bit offset. */
-            du = DISTINGUISHED_VALUE;
-            WRITE_UNALIGNED(dbg, (void *) data,
-                (const void *) &du, sizeof(du), extension_size);
-            data += extension_size;
+        if (res != DW_DLV_OK) {
+            return res;
         }
-        abbr_off_ptr = data;
-        du = 0; /* length of debug_info, not counting
-            this field itself (unknown at this point). */
-        WRITE_UNALIGNED(dbg, (void *) data,
-            (const void *) &du, sizeof(du), offset_size);
-        data += offset_size;
-
-        WRITE_UNALIGNED(dbg, (void *) data, (const void *) &version,
-            sizeof(version), DWARF_HALF_SIZE);
-        data += DWARF_HALF_SIZE;
-
-        du = 0;/* offset into abbrev table, not yet known. */
-        WRITE_UNALIGNED(dbg, (void *) data,
-            (const void *) &du, sizeof(du), offset_size);
-        data += offset_size;
-
-        WRITE_UNALIGNED(dbg, (void *) data, (const void *) &address_size,
-            sizeof(address_size), sizeof(Dwarf_Ubyte));
-        data += sizeof(Dwarf_Ubyte);
-
-        /*  We have filled the chunk we got with GET_CHUNK.
-            At this point we
-            no longer dare use "data"  as a
-            pointer any longer except to refer to that first
-            small chunk for the cu header to update
-            the section length. */
     } else if (version == 5) {
-        /* For now just assume DW_UT_compile FIXME */
-
-        /* write cu header. abbrev_offset used to
-            generate relocation record below */
-        abbrev_offset =  OFFSET_PLUS_EXTENSION_SIZE +
-            DWARF_HALF_SIZE + /* version stamp */
-            sizeof(unit_type) +
-            sizeof(Dwarf_Ubyte);
-        cu_header_size = abbrev_offset + offset_size;
-
-        GET_CHUNK_ERR(dbg, elfsectno_of_debug_info, data, cu_header_size,
+        res = generate_debuginfo_header_5(dbg,
+            &abbrev_offset,
+            &data,
+            &cu_header_size,
+            &abbr_off_ptr,
+            version, unit_type, extension_size, address_size,
             error);
-        if (extension_size) {
-            /* Impossible in DW5, really, is for IRIX64. But we allow it. */
-            du = DISTINGUISHED_VALUE;
-            WRITE_UNALIGNED(dbg, (void *) data,
-                (const void *) &du, sizeof(du), extension_size);
-            data += extension_size;
+        if (res != DW_DLV_OK) {
+            return res;
         }
-        abbr_off_ptr = data;
-        du = 0; /* length of debug_info, not counting
-            this field itself (unknown at this point). */
-        WRITE_UNALIGNED(dbg, (void *) data,
-            (const void *) &du, sizeof(du), offset_size);
-        data += offset_size;
-
-        WRITE_UNALIGNED(dbg, (void *) data, (const void *) &version,
-            sizeof(version), DWARF_HALF_SIZE);
-        data += DWARF_HALF_SIZE;
-
-        WRITE_UNALIGNED(dbg, (void *) data, (const void *) &unit_type,
-            sizeof(unit_type), sizeof(Dwarf_Ubyte));
-        data += sizeof(Dwarf_Ubyte);
-
-        WRITE_UNALIGNED(dbg, (void *) data, (const void *) &address_size,
-            sizeof(address_size), sizeof(Dwarf_Ubyte));
-        data += sizeof(Dwarf_Ubyte);
-
-        du = 0;/* offset into abbrev table, not yet known. */
-        WRITE_UNALIGNED(dbg, (void *) data,
-            (const void *) &du, sizeof(du), offset_size);
-        data += offset_size;
-
-        /*  We have filled the chunk we got with GET_CHUNK. At this point we
-            no longer dare use "data" as a pointer any
-            longer except to refer to that first small chunk for the cu
-            header to update the section length. */
-
     } else {
-        DWARF_P_DBG_ERROR(dbg, DW_DLE_VERSION_STAMP_ERROR, DW_DLV_ERROR);
+        DWARF_P_DBG_ERROR(dbg, DW_DLE_VERSION_STAMP_ERROR,
+            DW_DLV_ERROR);
     }
 
     curdie = dbg->de_dies;
@@ -2583,6 +3029,9 @@ _dwarf_pro_generate_debuginfo(Dwarf_P_Debug dbg,
         }
     } else {
         /* FIXME need to add code to emit DWARF5 macro data. */
+#if 0
+            res = _dwarf_pro_add_AT_macro5_info(dbg, curdie, 0, error);
+#endif
     }
 
     /* Create AT_stmt_list attribute if necessary */
@@ -2622,13 +3071,12 @@ _dwarf_pro_generate_debuginfo(Dwarf_P_Debug dbg,
     }
 
     /* Pass 1: create abbrev info, get die offsets, calc relocations */
+    abbrev_head = abbrev_tail = NULL;
     marker_count = 0;
     string_attr_count = 0;
     while (curdie != NULL) {
         int nbytes = 0;
         Dwarf_P_Attribute curattr = 0;
-        Dwarf_P_Attribute new_first_attr = 0;
-        Dwarf_P_Attribute new_last_attr = 0;
         char *space = 0;
         int cres = 0;
         char buff1[ENCODE_SPACE_NEEDED];
@@ -2636,13 +3084,23 @@ _dwarf_pro_generate_debuginfo(Dwarf_P_Debug dbg,
 
         curdie->di_offset = die_off;
 
-        if (curdie->di_marker != 0)
+        if (curdie->di_marker != 0) {
             marker_count++;
-
-        curabbrev = _dwarf_pro_getabbrev(curdie, abbrev_head);
-        if (curabbrev == NULL) {
-            DWARF_P_DBG_ERROR(dbg, DW_DLE_ABBREV_ALLOC, DW_DLV_ERROR);
         }
+        cres  =sort_die_attrs(dbg,curdie,error);
+        if (cres != DW_DLV_OK) {
+            /* DW_DLV_NO_ENTRY is impossible. */
+            return cres;
+        }
+
+        /*  Find or create a final abbrev record for the
+            debug_abbrev section we will write (below). */
+        cres  = _dwarf_pro_getabbrev(dbg,curdie, abbrev_head,&curabbrev,
+            error);
+        if (cres != DW_DLV_OK) {
+            return cres;
+        }
+        print_curabbrev(" loop in generate_debuginfo ",curabbrev);
         if (abbrev_head == NULL) {
             n_abbrevs = 1;
             curabbrev->abb_idx = n_abbrevs;
@@ -2656,6 +3114,10 @@ _dwarf_pro_generate_debuginfo(Dwarf_P_Debug dbg,
                 abbrev_tail = curabbrev;
             }
         }
+        /*  We know the abbrev number to use now.
+            So create the bytes of the leb with the
+            value and save those bytes in di_abbrev,
+            we will emit in Pass 2 (below). */
         cres = _dwarf_pro_encode_leb128_nm(curabbrev->abb_idx,
             &nbytes,
             buff1, sizeof(buff1));
@@ -2671,50 +3133,20 @@ _dwarf_pro_generate_debuginfo(Dwarf_P_Debug dbg,
         curdie->di_abbrev_nbytes = nbytes;
         die_off += nbytes;
 
-        /* Resorting the attributes!! */
-        new_first_attr = new_last_attr = NULL;
         curattr = curdie->di_attrs;
+#if 1
+/* dadebug */
         for (i = 0; i < (int)curabbrev->abb_n_attr; i++) {
-            Dwarf_P_Attribute cur = 0;
-            Dwarf_P_Attribute lastattr = 0;
-
-            /*  The following should always find an attribute!
-                It starts from the beginning of the remaining list
-                of attributes on the DIE.*/
-            for (cur = lastattr = curattr;
-                cur && (curabbrev->abb_attrs[i] != cur->ar_attribute);
-                lastattr = cur, cur = cur->ar_next)
-            {
-            }
-
-            if (!cur) {
-                /*  This will trip with an error if, somehow, one has
-                    managed to erroneously have multiple of
-                    a given attribute number in a single DIE. */
-                DWARF_P_DBG_ERROR(dbg,DW_DLE_ABBREV_ALLOC, DW_DLV_ERROR);
-            }
-
-            /*  Remove the attribute from the old list, we
-                will place it on the new list. */
-            if (cur == curattr) {
-                curattr = cur->ar_next;
-            } else {
-                lastattr->ar_next = cur->ar_next;
-            }
-
-            cur->ar_next = NULL;
-
-            /* Add the attribute'cur' to the new list. */
-            if (new_first_attr == NULL) {
-                new_first_attr = new_last_attr = cur;
-            } else {
-                new_last_attr->ar_next = cur;
-                new_last_attr = cur;
-            }
+        printf("dadebug curabbrev %d attrptr 0x%lx\n",(int)i,
+            (unsigned long)curabbrev->abb_attrs[i]);
         }
+/* dadebug */
+#endif
+        /*  The abbrev and DIE attr lists match, so the die
+            abbrevs are in the correct order,
+            curdie->di_attrs.  */
 
         /*  Now we attach the attributes list to the die. */
-        curdie->di_attrs = new_first_attr;
         curattr = curdie->di_attrs;
 
         while (curattr) {
@@ -2773,21 +3205,22 @@ _dwarf_pro_generate_debuginfo(Dwarf_P_Debug dbg,
             die_off += curattr->ar_nbytes;
             curattr = curattr->ar_next;
         }
-
-        /* depth first search */
-        if (curdie->di_child)
+        /* Depth first access to all the DIEs. */
+        if (curdie->di_child) {
             curdie = curdie->di_child;
-        else {
+        } else {
             while (curdie != NULL && curdie->di_right == NULL) {
                 curdie = curdie->di_parent;
-                die_off++;      /* since we are writing a null die at
-                    the end of each sibling chain */
+                die_off++; /* since we are writing a
+                    null die at the end of each
+                    sibling chain */
             }
-            if (curdie != NULL)
+            if (curdie != NULL) {
                 curdie = curdie->di_right;
+            }
         }
 
-    } /* end while (curdie != NULL) */
+    } /* end while (curdie != NULL), the per-die loop */
 
     res = marker_init(dbg, marker_count);
     if (res == -1) {
@@ -2940,84 +3373,32 @@ _dwarf_pro_generate_debuginfo(Dwarf_P_Debug dbg,
 
     data = 0;                   /* Emphasise not usable now */
 
-    /* Write out debug_abbrev section */
-    abbrevsectno = dbg->de_elf_sects[DEBUG_ABBREV];
-
-    curabbrev = abbrev_head;
-    while (curabbrev) {
-        int idx = 0;
-        unsigned lebcount = 0;
-        Dwarf_Ubyte db = 0;
-
-        res  = write_uval(curabbrev->abb_idx,dbg,abbrevsectno,
-            &lebcount,error);
-        if (res != DW_DLV_OK) {
-            return res;
-        }
-
-        res  = write_uval(curabbrev->abb_tag,dbg,abbrevsectno,
-            &lebcount,error);
-        if (res != DW_DLV_OK) {
-            return res;
-        }
-
-        db = curabbrev->abb_children;
-        res = write_ubyte(db,dbg,abbrevsectno,&lebcount,error);
-        if (res != DW_DLV_OK) {
-            return res;
-        }
-
-        /* add attributes and forms */
-        for (idx = 0; idx < curabbrev->abb_n_attr; idx++) {
-            res =write_uval(curabbrev->abb_attrs[idx],
-                dbg,abbrevsectno,
-                &lebcount,error);
-            if (res != DW_DLV_OK) {
-                return res;
-            }
-            res =write_uval(curabbrev->abb_forms[idx],
-                dbg,abbrevsectno,
-                &lebcount,error);
-            if (res != DW_DLV_OK) {
-                return res;
-            }
-        }
-        /* Two zeros, for last entry, see dwarf2 sec 7.5.3 */
-        GET_CHUNK_ERR(dbg, abbrevsectno, data, 2, error);
-        *data = 0;
-        data++;
-        *data = 0;
-
-        curabbrev = curabbrev->abb_next;
+    res = write_out_debug_abbrev(dbg,
+        abbrev_head, error);
+    if (res != DW_DLV_OK) {
+        return res;
     }
 
-    /* one zero, for end of cu, see dwarf2 sec 7.5.3 */
-    GET_CHUNK_ERR(dbg, abbrevsectno, data, 1, error);
-    *data = 0;
     *nbufs =  dbg->de_n_debug_sect;
     return DW_DLV_OK;
 }
+
 static int
 _dwarf_pro_generate_debug_names(Dwarf_P_Debug dbg,
     UNUSEDARG Dwarf_Signed *nbufs,
-    Dwarf_Error * error)
+    Dwarf_Error * error UNUSEDARG)
 {
 #if 0
+    int elfsectno_of_debug_names =  dbg->de_elf_sects[DEBUG_NAMES];
     FIXME: Needs implementation
-    int elfsectno_of_debug_names = 0;
     unsigned char *data = 0;
 
-    elfsectno_of_debug_names = dbg->de_elf_sects[DEBUG_NAMES];
-    GET_CHUNK(dbg, elfsectno_of_debug_str, data, dbg->de_debug_str->ds_nbytes,
+    GET_CHUNK(dbg, elfsectno_of_debug_names, data,
+        dbg->de_debug_names->ds_nbytes,
         error);
-    memcpy(data,dbg->de_debug_str->ds_data,dbg->de_debug_str->ds_nbytes);
-    *nbufs = dbg->de_n_debug_sect;
+    memcpy(data,dbg->de_debug_names->ds_data,dbg->de_debug_names->ds_nbytes);
 #endif
-    if (dbg->de_output_version != 5) {
-        /* FIXME: Bogus error value here. */
-        DWARF_P_DBG_ERROR(dbg, DW_DLE_IA, DW_DLV_ERROR);
-    }
-    /* FIXME: Pretending here */
+    *nbufs = dbg->de_n_debug_sect;
     return DW_DLV_OK;
 }
 
@@ -3219,114 +3600,4 @@ _dwarf_pro_buffer(Dwarf_P_Debug dbg,
         cursect->ds_nbytes += nbytes;
         return space_for_caller;
     }
-}
-
-/*  Handles abbreviations. It takes a die, searches through
-    current list of abbreviations for matching one. If it
-    finds one, it returns a pointer to the abbrev, and if it does not,
-    it returns a new abbrev. It is up to the user of this function to
-    link it up to the abbreviation head. If it is a new abbrev
-    abb_idx has 0. */
-static Dwarf_P_Abbrev
-_dwarf_pro_getabbrev(Dwarf_P_Die die, Dwarf_P_Abbrev head)
-{
-    Dwarf_P_Abbrev curabbrev;
-    Dwarf_P_Attribute curattr;
-    int res1;
-    int nattrs;
-    int match;
-    Dwarf_ufixed *forms = 0;
-    Dwarf_ufixed *attrs = 0;
-
-    curabbrev = head;
-    while (curabbrev) {
-        if ((die->di_tag == curabbrev->abb_tag) &&
-            ((die->di_child != NULL &&
-            curabbrev->abb_children == DW_CHILDREN_yes) ||
-            (die->di_child == NULL &&
-            curabbrev->abb_children == DW_CHILDREN_no)) &&
-            (die->di_n_attr == curabbrev->abb_n_attr)) {
-
-            /* There is a chance of a match. */
-            curattr = die->di_attrs;
-            match = 1;          /* Assume match found. */
-            while (match && curattr) {
-                res1 = _dwarf_pro_match_attr(curattr,
-                    curabbrev,
-                    (int) curabbrev->abb_n_attr);
-                if (res1 == 0) {
-                    match = 0;
-                }
-                curattr = curattr->ar_next;
-            }
-            if (match == 1) {
-                return curabbrev;
-            }
-        }
-        curabbrev = curabbrev->abb_next;
-    }
-
-    /* no match, create new abbreviation */
-    if (die->di_n_attr != 0) {
-        forms = (Dwarf_ufixed *)
-            _dwarf_p_get_alloc(die->di_dbg,
-                sizeof(Dwarf_ufixed) * die->di_n_attr);
-        if (forms == NULL) {
-            return NULL;
-        }
-        attrs = (Dwarf_ufixed *)
-            _dwarf_p_get_alloc(die->di_dbg,
-                sizeof(Dwarf_ufixed) * die->di_n_attr);
-        if (attrs == NULL) {
-            return NULL;
-        }
-    }
-    nattrs = 0;
-    curattr = die->di_attrs;
-    if (forms && attrs) {
-        while (curattr) {
-            attrs[nattrs] = curattr->ar_attribute;
-            forms[nattrs] = curattr->ar_attribute_form;
-            nattrs++;
-            curattr = curattr->ar_next;
-        }
-    }
-
-    curabbrev = (Dwarf_P_Abbrev)
-        _dwarf_p_get_alloc(die->di_dbg, sizeof(struct Dwarf_P_Abbrev_s));
-    if (curabbrev == NULL) {
-        return NULL;
-    }
-
-    if (die->di_child == NULL) {
-        curabbrev->abb_children = DW_CHILDREN_no;
-    } else {
-        curabbrev->abb_children = DW_CHILDREN_yes;
-    }
-    curabbrev->abb_tag = die->di_tag;
-    curabbrev->abb_attrs = attrs;
-    curabbrev->abb_forms = forms;
-    curabbrev->abb_n_attr = die->di_n_attr;
-    curabbrev->abb_idx = 0;
-    curabbrev->abb_next = NULL;
-    return curabbrev;
-}
-
-/*  Tries to see if given attribute and form combination
-    exists in the given abbreviation */
-static int
-_dwarf_pro_match_attr(Dwarf_P_Attribute attr,
-    Dwarf_P_Abbrev abbrev, int no_attr)
-{
-    int i;
-    int found = 0;
-
-    for (i = 0; i < no_attr; i++) {
-        if (attr->ar_attribute == abbrev->abb_attrs[i] &&
-            attr->ar_attribute_form == abbrev->abb_forms[i]) {
-            found = 1;
-            break;
-        }
-    }
-    return found;
 }

@@ -83,7 +83,7 @@ AddAttrToDie(Dwarf_P_Debug dbg,
     IRepresentation & Irep,
     IRCUdata  &cu,
     Dwarf_P_Die outdie,
-    IRDie & irdie UNUSEDARG,
+    IRDie & irdie, //UNUSEDARG
     IRAttr &irattr)
 {
     int attrnum = irattr.getAttrNum();
@@ -181,7 +181,7 @@ AddAttrToDie(Dwarf_P_Debug dbg,
         if( reinterpret_cast<Dwarf_Addr>(a) == DW_DLV_BADADDR) {
             cerr << "ERROR dwarf_add_AT_ class constant fails,"
                 " BADATTR on attrnum "
-                <<attrnum << endl;
+                << attrnum << " Continuing" << endl;
 
         }
         }
@@ -336,6 +336,7 @@ AddAttrToDie(Dwarf_P_Debug dbg,
         char *mystr = const_cast<char *>(f->getString().c_str());
         switch(attrnum) {
         case DW_AT_name:
+cerr << "dadebug outdie string, die at name: " << mystr << endl;
             a = dwarf_add_AT_name(outdie,mystr,&error);
             break;
         case DW_AT_producer:
@@ -345,6 +346,7 @@ AddAttrToDie(Dwarf_P_Debug dbg,
             a = dwarf_add_AT_comp_dir(outdie,mystr,&error);
             break;
         default:
+cerr << "dadebug outdie string, die at name: " << irdie.getName() << endl;
             a = dwarf_add_AT_string(dbg,outdie,attrnum,mystr,
                 &error);
             break;

@@ -1,3 +1,26 @@
+2018-07-31 David Anderson
+    * Makefile.am: add pro_dnames.h pro_dnames.c for
+      .debug_names support..
+    * dwarf_errmsg_list.h: Add DW_DLE_DUP_ATTR_ON_DIE error
+      code.
+    * dwarf_frame2.c:  Move qsort_compare up to top of
+      file to avoid a forward declaration.
+    * dwarf_init_finish.c: Additional comments.
+    * dwarf_util.c:  Corrected comment. Moved local
+      variable declarations down to where needed.
+    * libdwarf.h.in: Declare new function
+      dwarf_force_debug_names() used for testing.
+    * pro_die.h: Add comment. 
+    * pro_dnames.c: Remove junk whitespace.
+    * pro_forms.c(_dwarf_pro_add_at_to_die):
+      Add DW_AT_data_member_location, DW_AT_trampoline
+      to the allowed set.
+    * pro_opaque.h: Add de_dnames_sect to Dwarf_P_Debug_s.
+    * pro_section.c: Now sorts abbreviations by attribute
+      number.  Refactors header generation to make
+      it easier to read the code. Refactors 
+      _dwarf_pro_getabbrev() for clarity (using newly-sorted
+      abbreviation list).
 2018-07-30 David Anderson
     * pro_dnames.c, pro_dnames.h: New, these just placeholders
       for the moment. To write out .debug_names.

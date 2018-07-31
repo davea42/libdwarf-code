@@ -480,5 +480,6 @@ const char *_dwarf_errmsgs[] = {
     "DW_DLE_STR_OFFSETS_VERSION_WRONG(406) Must be 5 ",
     "DW_DLE_STR_OFFSETS_ARRAY_INDEX_WRONG(407) Requested outside bound",
     "DW_DLE_STR_OFFSETS_EXTRA_BYTES(408) Unused non-zero bytes end section",
+    "DW_DLE_DUP_ATTR_ON_DIE(409) Compiler error, object improper DWARF",
 };
 #endif /* DWARF_ERRMSG_LIST_H */

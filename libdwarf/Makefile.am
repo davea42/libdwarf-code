@@ -145,6 +145,8 @@ pro_arange.c \
 pro_arange.h \
 pro_die.c \
 pro_die.h \
+pro_dnames.h \
+pro_dnames.c \
 pro_encode_nm.c \
 pro_encode_nm.h \
 pro_error.c \

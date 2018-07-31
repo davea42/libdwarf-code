@@ -40,6 +40,7 @@ EXTRA_DIST = \
 CMakeLists.txt \
 README.md \
 appveyor.yml \
+runtests.sh \
 bugxml \
 cmake \
 codingstyle.txt \

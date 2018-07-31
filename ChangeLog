@@ -1,3 +1,5 @@
+2018-07-31  David Anderson
+    * Makefile.am: add runtests.sh to files in distribution
 2018-07-23  David Anderson
     * configure.ac: Reintroduced CXX -wno-long-long
       to avoid spurious warnings from C++ when using

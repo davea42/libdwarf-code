@@ -162,13 +162,14 @@ am_libdwarf_la_OBJECTS = libdwarf_la-dwarf_abbrev.lo \
 	libdwarf_la-dwarf_vars.lo libdwarf_la-dwarf_weaks.lo \
 	libdwarf_la-dwarf_xu_index.lo libdwarf_la-malloc_check.lo \
 	libdwarf_la-pro_alloc.lo libdwarf_la-pro_arange.lo \
-	libdwarf_la-pro_die.lo libdwarf_la-pro_encode_nm.lo \
-	libdwarf_la-pro_error.lo libdwarf_la-pro_expr.lo \
-	libdwarf_la-pro_finish.lo libdwarf_la-pro_forms.lo \
-	libdwarf_la-pro_frame.lo libdwarf_la-pro_funcs.lo \
-	libdwarf_la-pro_init.lo libdwarf_la-pro_line.lo \
-	libdwarf_la-pro_macinfo.lo libdwarf_la-pro_pubnames.lo \
-	libdwarf_la-pro_reloc.lo libdwarf_la-pro_reloc_stream.lo \
+	libdwarf_la-pro_die.lo libdwarf_la-pro_dnames.lo \
+	libdwarf_la-pro_encode_nm.lo libdwarf_la-pro_error.lo \
+	libdwarf_la-pro_expr.lo libdwarf_la-pro_finish.lo \
+	libdwarf_la-pro_forms.lo libdwarf_la-pro_frame.lo \
+	libdwarf_la-pro_funcs.lo libdwarf_la-pro_init.lo \
+	libdwarf_la-pro_line.lo libdwarf_la-pro_macinfo.lo \
+	libdwarf_la-pro_pubnames.lo libdwarf_la-pro_reloc.lo \
+	libdwarf_la-pro_reloc_stream.lo \
 	libdwarf_la-pro_reloc_symbolic.lo libdwarf_la-pro_section.lo \
 	libdwarf_la-pro_types.lo libdwarf_la-pro_vars.lo \
 	libdwarf_la-pro_weaks.lo
@@ -697,6 +698,8 @@ pro_arange.c \
 pro_arange.h \
 pro_die.c \
 pro_die.h \
+pro_dnames.h \
+pro_dnames.c \
 pro_encode_nm.c \
 pro_encode_nm.h \
 pro_error.c \
@@ -926,6 +929,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdwarf_la-pro_alloc.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdwarf_la-pro_arange.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdwarf_la-pro_die.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdwarf_la-pro_dnames.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdwarf_la-pro_encode_nm.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdwarf_la-pro_error.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdwarf_la-pro_expr.Plo@am__quote@
@@ -1245,6 +1249,13 @@ libdwarf_la-pro_die.lo: pro_die.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='pro_die.c' object='libdwarf_la-pro_die.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdwarf_la_CFLAGS) $(CFLAGS) -c -o libdwarf_la-pro_die.lo `test -f 'pro_die.c' || echo '$(srcdir)/'`pro_die.c
+
+libdwarf_la-pro_dnames.lo: pro_dnames.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdwarf_la_CFLAGS) $(CFLAGS) -MT libdwarf_la-pro_dnames.lo -MD -MP -MF $(DEPDIR)/libdwarf_la-pro_dnames.Tpo -c -o libdwarf_la-pro_dnames.lo `test -f 'pro_dnames.c' || echo '$(srcdir)/'`pro_dnames.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libdwarf_la-pro_dnames.Tpo $(DEPDIR)/libdwarf_la-pro_dnames.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='pro_dnames.c' object='libdwarf_la-pro_dnames.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdwarf_la_CFLAGS) $(CFLAGS) -c -o libdwarf_la-pro_dnames.lo `test -f 'pro_dnames.c' || echo '$(srcdir)/'`pro_dnames.c
 
 libdwarf_la-pro_encode_nm.lo: pro_encode_nm.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdwarf_la_CFLAGS) $(CFLAGS) -MT libdwarf_la-pro_encode_nm.lo -MD -MP -MF $(DEPDIR)/libdwarf_la-pro_encode_nm.Tpo -c -o libdwarf_la-pro_encode_nm.lo `test -f 'pro_encode_nm.c' || echo '$(srcdir)/'`pro_encode_nm.c

@@ -166,8 +166,11 @@ get_basic_section_data(Dwarf_Debug dbg,
         DWARF_DBG_ERROR(dbg, duperr, DW_DLV_ERROR);
     }
     if (doas->size == 0) {
+        /*  As of 2018 it seems impossible to detect
+            (via dwarfdump) whether emptyerr has any
+            practical effect, whether TRUE or FALSE.  */
         if (emptyerr == 0 ) {
-            /* Allow empty section. */
+            /*  Allow empty section. */
             return DW_DLV_OK;
         }
         /* Know no reason to allow section */

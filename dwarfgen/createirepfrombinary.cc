@@ -346,7 +346,6 @@ get_attrs_of_die(Dwarf_Die in_die,IRDie &irdie,
         // recorded for references, not a local temp IRAttr.
         IRAttr & lastirattr = attrlist.back();
         get_basic_attr_data_one_attr(dbg,attr,cudata,lastirattr);
-
     }
     dwarf_dealloc(dbg,atlist, DW_DLA_LIST);
 }

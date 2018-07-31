@@ -1,3 +1,12 @@
+2018-07-31 David Anderson
+    * createirepfrombinary.cc: Delete blank line.
+    * dwarfgen.cc: Adding new option --force-empty-dnames
+      to force out .debug_names section (even if empty).
+      Added dwarf_transform_to_disk_form_a() which
+      does the same as dwarf_transform_to_disk_form() but
+      has a status as the return value and returns its
+      value via a pointer arg.
+    * irepattrtodbg.cc: Removing some useless whitespace.
 2018-07-24 David Anderson
     * dwarfgen.cc: CallbackFunc() was awkwardly declared
       (now more sensibly declared as static function, 

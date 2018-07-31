@@ -45,9 +45,6 @@
 #define TRUE 1
 #define FALSE 0
 
-/* adds an attribute to a die */
-void _dwarf_pro_add_at_to_die(Dwarf_P_Die die, Dwarf_P_Attribute attr);
-
 /*  This function creates a new die.
     tag: tag of the new die to be created
     parent,child,left,right: specify neighbors of the new die. Only

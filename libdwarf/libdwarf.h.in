@@ -1318,9 +1318,10 @@ struct Dwarf_Obj_Access_Interface_s {
 #define DW_DLE_STR_OFFSETS_VERSION_WRONG       406
 #define DW_DLE_STR_OFFSETS_ARRAY_INDEX_WRONG   407
 #define DW_DLE_STR_OFFSETS_EXTRA_BYTES         408
+#define DW_DLE_DUP_ATTR_ON_DIE                 409
 
     /* LAST MUST EQUAL LAST ERROR NUMBER */
-#define DW_DLE_LAST        408
+#define DW_DLE_LAST        409
 
 #define DW_DLE_LO_USER     0x10000
 
@@ -3995,6 +3996,18 @@ Dwarf_Unsigned dwarf_add_weakname(
     Dwarf_P_Die      /*die*/,
     char*            /*weak_name*/,
     Dwarf_Error*     /*error*/);
+
+/*  .debug_names producer functions */
+
+/*  dwarf_force_debug_names forces creation
+    of .debug_names (if DWARF5 being produced)
+    even if empty. Only for testing libdwarf. */
+int dwarf_force_debug_names(Dwarf_P_Debug /* dbg */,
+    Dwarf_Error*     /*error*/);
+
+/*  Other debug_names functions are needed... FIXME */
+
+/*  end .debug_names producer functions */
 
 /*  .debug_macinfo producer functions
     Functions must be called in right order: the section is output

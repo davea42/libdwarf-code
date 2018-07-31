@@ -541,7 +541,7 @@ _dwarf_valid_form_we_know(UNUSEDARG Dwarf_Debug dbg,
 
     See also dwarf_get_abbrev() in dwarf_abbrev.c.
 
-    Returns NULL on error.  */
+    Returns DW_DLV_ERROR on error.  */
 int
 _dwarf_get_abbrev_for_code(Dwarf_CU_Context cu_context, Dwarf_Unsigned code,
     Dwarf_Abbrev_List *list_out,
@@ -554,8 +554,6 @@ _dwarf_get_abbrev_for_code(Dwarf_CU_Context cu_context, Dwarf_Unsigned code,
     Dwarf_Word hash_num = 0;
     Dwarf_Unsigned abbrev_code = 0;
     Dwarf_Unsigned abbrev_tag  = 0;
-    Dwarf_Unsigned attr_name = 0;
-    Dwarf_Unsigned attr_form = 0;
     Dwarf_Abbrev_List hash_abbrev_entry = 0;
     Dwarf_Abbrev_List inner_list_entry = 0;
     Dwarf_Hash_Table_Entry inner_hash_entry = 0;
@@ -702,16 +700,20 @@ _dwarf_get_abbrev_for_code(Dwarf_CU_Context cu_context, Dwarf_Unsigned code,
         /*  Cycle thru the abbrev content, ignoring the content except
             to find the end of the content. */
         do {
-            DECODE_LEB128_UWORD_CK(abbrev_ptr, attr_name,
-                dbg,error,end_abbrev_ptr);
-            DECODE_LEB128_UWORD_CK(abbrev_ptr, attr_form,
-                dbg,error,end_abbrev_ptr);
-            if (!_dwarf_valid_form_we_know(dbg,attr_form,attr_name)) {
-                _dwarf_error(dbg,error,DW_DLE_UNKNOWN_FORM);
-                return DW_DLV_ERROR;
-            }
-            atcount++;
-        } while (attr_name != 0 && attr_form != 0);
+            Dwarf_Unsigned attr_name = 0;
+            Dwarf_Unsigned attr_form = 0;
+            do {
+                DECODE_LEB128_UWORD_CK(abbrev_ptr, attr_name,
+                    dbg,error,end_abbrev_ptr);
+                DECODE_LEB128_UWORD_CK(abbrev_ptr, attr_form,
+                    dbg,error,end_abbrev_ptr);
+                if (!_dwarf_valid_form_we_know(dbg,attr_form,attr_name)) {
+                    _dwarf_error(dbg,error,DW_DLE_UNKNOWN_FORM);
+                    return DW_DLV_ERROR;
+                }
+                atcount++;
+            } while (attr_name != 0 && attr_form != 0);
+        }
         /*  We counted one too high, by counting the NUL
             byte pair at end of list. So decrement. */
         inner_list_entry->abl_count = atcount-1;
