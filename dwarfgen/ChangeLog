@@ -1,3 +1,7 @@
+2018-07-31 David Anderson
+    * Makefile.am: Moved ChangeLog etc out of /usr/share
+      but have them in the distribution. Now make install
+      puts nothing of dwarfgen in /usr/local/share.
 2018-07-24 David Anderson
     * dwarfgen.cc: CallbackFunc() was awkwardly declared
       (now more sensibly declared as static function, 

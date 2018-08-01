@@ -1,4 +1,8 @@
 2018-07-13 David Anderson
+    * Makefile.am: Add dwarfdump.1 to output. Move
+      COPYRIGHT and a few files out of the installed set,
+      leaving just dwarfdump.1, and libdwarf*pdf in
+      /usr/local/share.
     * command_options.c: Removed duplicate extern declaration
       of dwoptind.
 2018-07-16 David Anderson

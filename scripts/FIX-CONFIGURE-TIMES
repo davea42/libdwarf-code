@@ -1,0 +1,83 @@
+#/bin/sh
+
+# After doing  a copy of the source tree (as by 'cp -r')
+# the timestamps are not always
+# such that a build will work. File timestamps matter
+# with the new configure.  
+# If the 'configure ; make' ends in failure with a message about
+# aclocal-1.15 being missing then this script
+# will fix that problem.
+# With 'cp -rp' the problem should not arise.  
+
+l=`pwd`
+echo $l
+lb=`basename $l`
+ld=`dirname $l`
+#echo " lb: $lb"
+#echo " ld: $ld"
+cdtarg=.
+sloc=$l/scripts
+if [ x$lb = "xscripts" ]
+then
+  #echo "ld: $ld"
+  ldb=`basename $ld`
+  #echo "ldb: $ldb"
+  if [ x$ldb = "xcode" ]
+  then
+     cdtarg=..
+     sloc=$l
+  else
+     echo "Run from */code, not $l , giving up."
+     exit 1
+  fi
+  cd $cdtarg
+  if [ $? -ne 0 ]
+  then
+     echo "cd $cdtarg failed, giving up."
+     exit 1
+  fi
+else
+  if [ x$lb = "xcode" ]
+  then
+    cdtarg="."
+  else
+    echo "Run from */code, not $l , giving up."
+    exit 1
+  fi
+  # No need to cd.
+fi
+l=`pwd`
+#echo "Now at $l"
+#echo "sloc $sloc"
+
+
+for i in \
+ ltmain.sh \
+ autom4te.cache/output.0 \
+ autom4te.cache/traces.0 \
+ aclocal.m4 \
+ configure \
+ autom4te.cache/traces.1 \
+ autom4te.cache/output.1 \
+ autom4te.cache/requests \
+ config.h.in \
+ ar-lib \
+ compile \
+ config.guess \
+ config.sub \
+ install-sh \
+ missing \
+ INSTALL \
+ Makefile.in \
+ test-driver \
+ dwarfdump/Makefile.in \
+ dwarfexample/Makefile.in \
+ dwarfgen/Makefile.in \
+ depcomp \
+ libdwarf/Makefile.in 
+do
+   sleep 1
+   echo "now touch $i"
+   touch $i
+done
+

@@ -1,3 +1,7 @@
+2018-07-31 David Anderson
+    * Makefile.am: Move all but libdwarf*pdf out of the
+      /usr/local/share install set, keep them all in the
+      distribution set.
 2018-07-24 David Anderson
     * libdwarf_version.h: Updated version string.
     * dwarf_line_table_reader_common.h:Removed trailing whitespace

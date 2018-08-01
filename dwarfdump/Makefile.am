@@ -187,9 +187,15 @@ dwarfdump_LDADD = \
 $(top_builddir)/libdwarf/libdwarf.la \
 @DWARF_LIBS@
 
-dwarfdumpdir = $(datadir)/libdwarf/dwarfdump
-dwarfdump_DATA = \
+TESTS = ./runtests.sh
+
+man_MANS = dwarfdump.1
+
+EXTRA_DIST = \
+$(man_MANS) \
 COPYING \
+DWARFDUMPCOPYRIGHT \
+GPL.txt \
 ChangeLog \
 ChangeLog2006 \
 ChangeLog2007 \
@@ -203,12 +209,6 @@ ChangeLog2014 \
 ChangeLog2015 \
 ChangeLog2016 \
 ChangeLog2017 \
-DWARFDUMPCOPYRIGHT \
-GPL.txt
-
-TESTS = ./runtests.sh
-
-EXTRA_DIST = \
 CMakeLists.txt \
 NEWS \
 README \
