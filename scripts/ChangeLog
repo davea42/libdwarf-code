@@ -1,3 +1,6 @@
+2018-08-02 David Anderson
+    * FIX-CONFIGURE-TIMES: Added another cautionary
+      check before doing anything.
 2018-08-01 David Anderson
     * FIX-CONFIGURE-TIMES: Was not cautious enough about
       whether it was in the right place and also was fussy

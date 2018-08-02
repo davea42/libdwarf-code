@@ -20,7 +20,7 @@ cdtarg=.
 sloc=$l/scripts
 
 rightplace() {
-for i in dwarfdump dwarfgen libdwarf dwarfexample m4
+for i in dwarfdump dwarfgen libdwarf dwarfexample m4 scripts
 do
   if [ ! -d $i ] 
   then

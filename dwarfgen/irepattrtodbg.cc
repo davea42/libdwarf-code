@@ -336,7 +336,6 @@ AddAttrToDie(Dwarf_P_Debug dbg,
         char *mystr = const_cast<char *>(f->getString().c_str());
         switch(attrnum) {
         case DW_AT_name:
-cerr << "dadebug outdie string, die at name: " << mystr << endl;
             a = dwarf_add_AT_name(outdie,mystr,&error);
             break;
         case DW_AT_producer:
@@ -346,7 +345,6 @@ cerr << "dadebug outdie string, die at name: " << mystr << endl;
             a = dwarf_add_AT_comp_dir(outdie,mystr,&error);
             break;
         default:
-cerr << "dadebug outdie string, die at name: " << irdie.getName() << endl;
             a = dwarf_add_AT_string(dbg,outdie,attrnum,mystr,
                 &error);
             break;

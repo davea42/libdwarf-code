@@ -1,4 +1,6 @@
 2018-08-02 David Anderson
+    * irepattrtodbg.cc: Fixed a typo and removed/#if 0
+      some debugging code
     * Makefile.am: Removed unused variables and references
       to them.
 2018-07-31 David Anderson

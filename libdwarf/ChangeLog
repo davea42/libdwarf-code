@@ -1,4 +1,7 @@
 2018-08-02 David Anderson
+    * pro_section.c: #if 0 or comment out
+      some debug code.
+    * dwarf_util.c:Replaced accidental loss of 'do'.
     * Makefile.am: Removed unused variables and references
       to them.
 2018-07-31 David Anderson
