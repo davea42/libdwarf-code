@@ -1,4 +1,5 @@
 2018-08-02 David Anderson
+    * libdwarf_version.h: Updated version date.
     * pro_section.c: #if 0 or comment out
       some debug code.
     * dwarf_util.c:Replaced accidental loss of 'do'.
