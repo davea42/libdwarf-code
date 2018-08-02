@@ -6,75 +6,79 @@
 # with the new configure.  
 # If the 'configure ; make' ends in failure with a message about
 # aclocal-1.15 being missing then this script
-# will fix that problem.
+# will likely fix that problem.
 # With 'cp -rp' the problem should not arise.  
+# Note that one user found the command:
+#  touch aclocal.m4 Makefile.am configure Makefile.in
+# sufficient to avoid the problem.
 
 l=`pwd`
 echo $l
 lb=`basename $l`
 ld=`dirname $l`
-#echo " lb: $lb"
-#echo " ld: $ld"
 cdtarg=.
 sloc=$l/scripts
+
+rightplace() {
+for i in dwarfdump dwarfgen libdwarf dwarfexample m4
+do
+  if [ ! -d $i ] 
+  then
+    echo "$i is not a directory of $1."
+    echo "we are not in the right place to touch configure etc"
+    echo "to fix the missing aclocal-1.15 problem."
+    echo "No action taken"
+    exit 1
+  fi
+done
+}
+
 if [ x$lb = "xscripts" ]
 then
   #echo "ld: $ld"
   ldb=`basename $ld`
   #echo "ldb: $ldb"
-  if [ x$ldb = "xcode" ]
-  then
-     cdtarg=..
-     sloc=$l
-  else
-     echo "Run from */code, not $l , giving up."
-     exit 1
-  fi
-  cd $cdtarg
-  if [ $? -ne 0 ]
-  then
-     echo "cd $cdtarg failed, giving up."
-     exit 1
-  fi
+  echo "We appear to start in libdwarf scripts directory"
+  echo "Change directory .."
+  cd  ..
+  echo "Are we in the right directory now?" `pwd`
+  rightplace `pwd`
 else
-  if [ x$lb = "xcode" ]
-  then
-    cdtarg="."
-  else
-    echo "Run from */code, not $l , giving up."
-    exit 1
-  fi
-  # No need to cd.
+  echo "Are we in the right directory?"
+  rightplace `pwd`
 fi
 l=`pwd`
-#echo "Now at $l"
-#echo "sloc $sloc"
+echo "Now touch files to get timestamps usable."
 
-
-for i in \
- ltmain.sh \
+for i in                 \
+ ltmain.sh               \
+ aclocal.m4              \
+ Makefile.am             \
+ dwarfdump/Makefile.am   \
+ dwarfexample/Makefile.am \
+ dwarfgen/Makefile.am    \
+ libdwarf/Makefile.am    \
+ configure               \
  autom4te.cache/output.0 \
  autom4te.cache/traces.0 \
- aclocal.m4 \
- configure \
  autom4te.cache/traces.1 \
  autom4te.cache/output.1 \
  autom4te.cache/requests \
- config.h.in \
- ar-lib \
- compile \
+ config.h.in  \
+ ar-lib       \
+ compile      \
  config.guess \
- config.sub \
- install-sh \
- missing \
- INSTALL \
- Makefile.in \
- test-driver \
- dwarfdump/Makefile.in \
+ config.sub   \
+ install-sh   \
+ missing      \
+ INSTALL      \
+ Makefile.in  \
+ test-driver  \
+ dwarfdump/Makefile.in    \
+ dwarfgen/Makefile.in     \
+ libdwarf/Makefile.in     \
  dwarfexample/Makefile.in \
- dwarfgen/Makefile.in \
- depcomp \
- libdwarf/Makefile.in 
+ depcomp
 do
    sleep 1
    echo "now touch $i"

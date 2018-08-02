@@ -1,3 +1,8 @@
+2018-08-01 David Anderson
+    * FIX-CONFIGURE-TIMES: Was not cautious enough about
+      whether it was in the right place and also was fussy
+      about the top-level name being 'code'.
+      Both issues fixed.
 2018-07-16 David Anderson
     * CLEANUP: Now uses distclean so  deleted a few lines here.
     * fixlibdwarfelf.sh: Used by configure to create libdwarf.h
