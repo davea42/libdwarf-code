@@ -1,20 +1,25 @@
 ###Copyright (C) 2018 Vincent Torri <vincent dot torri at gmail dot com>
 ###This code is public domain and can be freely used or copied.
 
+dnl defines the version name of  the libdwarf.so
 m4_define([v_maj], [1])
-m4_define([v_min], [5])
+m4_define([v_min], [0])
 m4_define([v_mic], [0])
-m4_define([v_ver], [v_maj.v_min.v_mic])
+###m4_define([v_ver], [v_maj.v_min.v_mic])
+###Returning to older version, .so.1
+m4_define([v_ver], [v_maj])
 
 m4_define([v_rel], [])
-
 m4_define([lt_cur], [m4_eval(v_maj + v_min)])
 m4_define([lt_rev], [v_mic])
 m4_define([lt_age], [v_min])
 
-m4_define([v_date], [m4_esyscmd_s([date "+%Y%m%d"])])
+### Sets the release name. 
+###m4_define([v_date], [m4_esyscmd_s([date "+%Y%m%d"])])
+m4_define([v_date], [20180730])])
 
 AC_PREREQ([2.52])
+### 2nd arg to AC_INIT is the version 'number'.
 AC_INIT([libdwarf], [v_date], [libdwarf-list -at- linuxmail -dot- org])
 AC_CONFIG_SRCDIR([configure.ac])
 AC_CONFIG_HEADERS([config.h])
@@ -155,10 +160,8 @@ AC_PROG_CC_C_O
 
 ### Checks for libraries
 
-AC_SUBST([DWARF_CFLAGS])
 AC_SUBST([DWARF_LIBS])
-AC_ARG_VAR([DWARF_CFLAGS], [C compiler flags for DWARF])
-AC_ARG_VAR([DWARF_LIBS], [linker flags for DWARF])
+AC_ARG_VAR([DWARF_LIBS], [linker flags when linking libdwarf])
 
 
 ### Checks for header files
@@ -170,7 +173,6 @@ AC_CHECK_HEADERS([windows.h])
 # test Elf headers in the preprocessor path search
 
 CPPFLAGS_save=${CPPFLAGS}
-CPPFLAGS="${CPPFLAGS} ${DWARF_CFLAGS}"
 
 # test libelf.h header. exits if not found
 AC_CHECK_HEADERS([libelf.h libelf/libelf.h])
@@ -181,8 +183,8 @@ AS_IF(
 AC_CHECK_HEADERS([zlib.h])
 AS_IF(
     [test "x${ac_cv_header_zlib_h}" = "xyes"],
-    [ have_pc_zlib="yes" ; echo "have zlib dadebug" ],
-    [ have_pc_zlib="no" ; echo "no zlib dadebug" ])
+    [ have_pc_zlib="yes" ; echo "have zlib" ],
+    [ have_pc_zlib="no" ; echo "no zlib" ])
 
 AC_CHECK_HEADERS([elf.h elfaccess.h sys/elf_386.h sys/elf_amd64.h sys/elf_SPARC.h sys/ia64/elf.h])
 
@@ -377,7 +379,7 @@ AS_IF(
     [test "x${have_elf64_rela}" = "xno"],
     [
      CPPFLAGS_save=${CPPFLAGS}
-     CPPFLAGS="${CPPFLAGS} -D__LIBELF64 ${DWARF_CFLAGS}"
+     CPPFLAGS="${CPPFLAGS} -D__LIBELF64"
      AC_LINK_IFELSE(
          [AC_LANG_PROGRAM(
               [[
@@ -397,7 +399,6 @@ p.r_offset = 1;
               ]])
          ],
          [
-          DWARF_CFLAGS="-D__LIBELF64 ${DWARF_CFLAGS}"
           AC_DEFINE([HAVE_ELF64_RELA], [1], [Set to 1 if Elf64_Rela defined in elf.h.])
           have_elf64_rela="yes"
          ],
@@ -437,7 +438,7 @@ AS_IF(
     [test "x${have_elf64_rel}" = "xno"],
     [
      CPPFLAGS_save=${CPPFLAGS}
-     CPPFLAGS="${CPPFLAGS} -D__LIBELF64 ${DWARF_CFLAGS}"
+     CPPFLAGS="${CPPFLAGS} -D__LIBELF64"
      AC_LINK_IFELSE(
          [AC_LANG_PROGRAM(
               [[
@@ -457,7 +458,6 @@ p.r_info = 1;
               ]])
          ],
          [
-          DWARF_CFLAGS="-D__LIBELF64 ${DWARF_CFLAGS}"
           AC_DEFINE([HAVE_ELF64_R_INFO], [1], [Set to 1 if Elf64_Rel structure as r_info field.])
           have_elf64_rel="yes"
          ],
@@ -497,7 +497,7 @@ AS_IF(
     [test "x${have_elf64_sym}" = "xno"],
     [
      CPPFLAGS_save=${CPPFLAGS}
-     CPPFLAGS="${CPPFLAGS} -D__LIBELF64 ${DWARF_CFLAGS}"
+     CPPFLAGS="${CPPFLAGS} -D__LIBELF64"
      AC_LINK_IFELSE(
          [AC_LANG_PROGRAM(
               [[
@@ -517,7 +517,6 @@ p.st_info = 1;
               ]])
          ],
          [
-          DWARF_CFLAGS="-D__LIBELF64 ${DWARF_CFLAGS}"
           AC_DEFINE([HAVE_ELF64_SYM], [1], [Set to 1 if Elf64_Sym defined in elf.h.])
           have_elf64_sym="yes"
          ],
@@ -622,6 +621,7 @@ AS_IF(
     [
      CFLAGS_save=${CFLAGS}
      CFLAGS="${CFLAGS} -fsanitize=address -fsanitize=leak -fsanitize=undefined"
+     DWARF_CFLAGS=
      AC_COMPILE_IFELSE(
          [AC_LANG_PROGRAM([[]], [[]])],
          [
@@ -630,7 +630,8 @@ AS_IF(
           LDFLAGS="$LDFLAGS -fsanitize=address -fsanitize=leak -fsanitize=undefined"
          ],
          [enable_sanitize="no"])
-     CFLAGS=${CFLAGS_save}
+     CFLAGS="${CFLAGS_save} ${DWARF_CFLAGS}" 
+     DWARF_CFLAGS=
     ])
 
 AC_MSG_CHECKING([whether sanitize options are used])
@@ -646,7 +647,7 @@ AC_FUNC_ALLOCA
 
 # elf64_getehdr
 CPPFLAGS_save=${CPPFLAGS}
-CPPFLAGS="${CPPFLAGS} ${DWARF_CFLAGS}"
+CPPFLAGS="${CPPFLAGS}"
 LIBS_save=${LIBS}
 LIBS="${LIBS} ${DWARF_LIBS}"
 AC_SEARCH_LIBS(
@@ -712,7 +713,6 @@ regfree(&r);
 AC_MSG_CHECKING([for regex library])
 AC_MSG_RESULT([${have_regex}])
 
-
 ### Checks for system services
 
 AC_CONFIG_FILES([
@@ -737,7 +737,8 @@ echo "$PACKAGE $VERSION"
 echo
 echo "Configuration Options Summary:"
 echo
-echo "  OS...................: ${host_os}"
+echo "  BuildOS..............: ${build_os}"
+echo "  HostOS...............: ${host_os}"
 echo
 echo "  shared library.......: ${enable_shared}"
 echo "  static library.......: ${enable_static}"
@@ -764,9 +765,16 @@ echo
 echo "Compilation............: make (or gmake)"
 echo "  CPPFLAGS.............: $CPPFLAGS"
 echo "  CFLAGS...............: $CFLAGS"
-echo "  DWARF_CFLAGS.........: $DWARF_CFLAGS"
 echo "  LDFLAGS..............: $LDFLAGS"
+echo "  LIBS.................: $LIBS"
+echo "  DWARF_LIBS used in linking libdwarf"
 echo "  DWARF_LIBS...........: $DWARF_LIBS"
+echo "  *FOR_BUILD used building executables built and run to generate" 
+echo "  C source). Motivated by cross-compilation. "
+echo "  Executables not part of the final products."
+echo "  CPPFLAGS_FOR_BUILD...: $CPPFLAGS_FOR_BUILD"
+echo "  CFLAGS_FOR_BUILD.....: $CFLAGS_FOR_BUILD"
+echo "  LDFLAGS_FOR_BUILD....: $LDLAGS_FOR_BUILD"
 echo
 echo "Installation...........: make install (as root if needed, with 'su' or 'sudo')"
 echo "  prefix...............: $prefix"

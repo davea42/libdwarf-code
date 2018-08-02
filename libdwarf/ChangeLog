@@ -1,3 +1,10 @@
+2018-08-02 David Anderson
+    * Makefile.am: Removed unused variables and references
+      to them.
+2018-07-31 David Anderson
+    * Makefile.am: Move all but libdwarf*pdf out of the
+      /usr/local/share install set, keep them all in the
+      distribution set.
 2018-07-31 David Anderson
     * Makefile.am: add pro_dnames.h pro_dnames.c for
       .debug_names support..
@@ -16,14 +23,18 @@
       Add DW_AT_data_member_location, DW_AT_trampoline
       to the allowed set.
     * pro_opaque.h: Add de_dnames_sect to Dwarf_P_Debug_s.
-    * pro_section.c: Now sorts abbreviations by attribute
+    * pro_section.c: Now sorts abbreviations by attribute 
       number.  Refactors header generation to make
-      it easier to read the code. Refactors 
+      it easier to read the code. Refactors
       _dwarf_pro_getabbrev() for clarity (using newly-sorted
       abbreviation list).
 2018-07-30 David Anderson
     * pro_dnames.c, pro_dnames.h: New, these just placeholders
       for the moment. To write out .debug_names.
+2018-08-02 David Anderson
+    * Makefile.am: Removed unused variables and references
+      to them.
+
 2018-07-24 David Anderson
     * libdwarf_version.h: Updated version string.
     * dwarf_line_table_reader_common.h:Removed trailing whitespace

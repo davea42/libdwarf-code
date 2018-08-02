@@ -1,3 +1,10 @@
+2018-08-02 David Anderson
+    * Makefile.am: Removed unused variables and references
+      to them.
+2018-07-31 David Anderson
+    * Makefile.am: Moves ChangeLog and other files
+      to the distribution,
+      and out of the set of installed files.
 2018-07-16 David Anderson
     * simplereader.c: Refines the ifdef of HAVE_STDAFX_H
 2018-07-16 David Anderson

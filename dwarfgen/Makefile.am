@@ -28,15 +28,14 @@ strtabdata.h
 
 dwarfgen_CPPFLAGS = -I$(top_srcdir)/libdwarf -I$(top_builddir)/libdwarf
 
-dwarfgen_CXXFLAGS = @DWARF_CFLAGS@ @DWARF_CXXFLAGS_WARN@
+dwarfgen_CXXFLAGS =
 
 dwarfgen_LDADD = \
 $(top_builddir)/dwarfdump/dwarfdump-dwgetopt.o \
 $(top_builddir)/libdwarf/libdwarf.la \
 @DWARF_LIBS@
 
-dwarfgendir = $(datadir)/libdwarf/dwarfgen
-dwarfgen_DATA = \
+EXTRA_DIST = \
 COPYING \
 ChangeLog \
 ChangeLog2011 \
@@ -45,9 +44,7 @@ ChangeLog2013 \
 ChangeLog2014 \
 ChangeLog2015 \
 ChangeLog2016 \
-ChangeLog2017
-
-EXTRA_DIST = \
+ChangeLog2017 \
 CMakeLists.txt \
 NEWS \
 README \

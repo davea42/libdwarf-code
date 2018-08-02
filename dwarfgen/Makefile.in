@@ -17,7 +17,6 @@
 ###Copyright (C) 2018 Vincent Torri <vincent dot torri at gmail dot com
 ###This code is public domain and can be freely used or copied.
 
-
 VPATH = @srcdir@
 am__is_gnu_make = { \
   if test -z '$(MAKELEVEL)'; then \
@@ -107,7 +106,7 @@ mkinstalldirs = $(install_sh) -d
 CONFIG_HEADER = $(top_builddir)/config.h
 CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
-am__installdirs = "$(DESTDIR)$(bindir)" "$(DESTDIR)$(dwarfgendir)"
+am__installdirs = "$(DESTDIR)$(bindir)"
 PROGRAMS = $(bin_PROGRAMS)
 am_dwarfgen_OBJECTS = dwarfgen-createirepformfrombinary.$(OBJEXT) \
 	dwarfgen-createirepfrombinary.$(OBJEXT) \
@@ -183,34 +182,6 @@ am__can_run_installinfo = \
     n|no|NO) false;; \
     *) (install-info --version) >/dev/null 2>&1;; \
   esac
-am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
-am__vpath_adj = case $$p in \
-    $(srcdir)/*) f=`echo "$$p" | sed "s|^$$srcdirstrip/||"`;; \
-    *) f=$$p;; \
-  esac;
-am__strip_dir = f=`echo $$p | sed -e 's|^.*/||'`;
-am__install_max = 40
-am__nobase_strip_setup = \
-  srcdirstrip=`echo "$(srcdir)" | sed 's/[].[^$$\\*|]/\\\\&/g'`
-am__nobase_strip = \
-  for p in $$list; do echo "$$p"; done | sed -e "s|$$srcdirstrip/||"
-am__nobase_list = $(am__nobase_strip_setup); \
-  for p in $$list; do echo "$$p $$p"; done | \
-  sed "s| $$srcdirstrip/| |;"' / .*\//!s/ .*/ ./; s,\( .*\)/[^/]*$$,\1,' | \
-  $(AWK) 'BEGIN { files["."] = "" } { files[$$2] = files[$$2] " " $$1; \
-    if (++n[$$2] == $(am__install_max)) \
-      { print $$2, files[$$2]; n[$$2] = 0; files[$$2] = "" } } \
-    END { for (dir in files) print dir, files[dir] }'
-am__base_list = \
-  sed '$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;s/\n/ /g' | \
-  sed '$$!N;$$!N;$$!N;$$!N;s/\n/ /g'
-am__uninstall_files_from_dir = { \
-  test -z "$$files" \
-    || { test ! -d "$$dir" && test ! -f "$$dir" && test ! -r "$$dir"; } \
-    || { echo " ( cd '$$dir' && rm -f" $$files ")"; \
-         $(am__cd) "$$dir" && rm -f $$files; }; \
-  }
-DATA = $(dwarfgen_DATA)
 am__tagged_files = $(HEADERS) $(SOURCES) $(TAGS_FILES) $(LISP)
 # Read a list of newline-separated strings from the standard input,
 # and print each of them once, without duplicates.  Input order is
@@ -264,7 +235,6 @@ DEPDIR = @DEPDIR@
 DLLTOOL = @DLLTOOL@
 DSYMUTIL = @DSYMUTIL@
 DUMPBIN = @DUMPBIN@
-DWARF_CFLAGS = @DWARF_CFLAGS@
 DWARF_CFLAGS_WARN = @DWARF_CFLAGS_WARN@
 DWARF_CXXFLAGS_WARN = @DWARF_CXXFLAGS_WARN@
 DWARF_LIBS = @DWARF_LIBS@
@@ -394,14 +364,13 @@ ireptodbg.h \
 strtabdata.h
 
 dwarfgen_CPPFLAGS = -I$(top_srcdir)/libdwarf -I$(top_builddir)/libdwarf
-dwarfgen_CXXFLAGS = @DWARF_CFLAGS@ @DWARF_CXXFLAGS_WARN@
+dwarfgen_CXXFLAGS = 
 dwarfgen_LDADD = \
 $(top_builddir)/dwarfdump/dwarfdump-dwgetopt.o \
 $(top_builddir)/libdwarf/libdwarf.la \
 @DWARF_LIBS@
 
-dwarfgendir = $(datadir)/libdwarf/dwarfgen
-dwarfgen_DATA = \
+EXTRA_DIST = \
 COPYING \
 ChangeLog \
 ChangeLog2011 \
@@ -410,9 +379,7 @@ ChangeLog2013 \
 ChangeLog2014 \
 ChangeLog2015 \
 ChangeLog2016 \
-ChangeLog2017
-
-EXTRA_DIST = \
+ChangeLog2017 \
 CMakeLists.txt \
 NEWS \
 README \
@@ -620,27 +587,6 @@ mostlyclean-libtool:
 
 clean-libtool:
 	-rm -rf .libs _libs
-install-dwarfgenDATA: $(dwarfgen_DATA)
-	@$(NORMAL_INSTALL)
-	@list='$(dwarfgen_DATA)'; test -n "$(dwarfgendir)" || list=; \
-	if test -n "$$list"; then \
-	  echo " $(MKDIR_P) '$(DESTDIR)$(dwarfgendir)'"; \
-	  $(MKDIR_P) "$(DESTDIR)$(dwarfgendir)" || exit 1; \
-	fi; \
-	for p in $$list; do \
-	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
-	  echo "$$d$$p"; \
-	done | $(am__base_list) | \
-	while read files; do \
-	  echo " $(INSTALL_DATA) $$files '$(DESTDIR)$(dwarfgendir)'"; \
-	  $(INSTALL_DATA) $$files "$(DESTDIR)$(dwarfgendir)" || exit $$?; \
-	done
-
-uninstall-dwarfgenDATA:
-	@$(NORMAL_UNINSTALL)
-	@list='$(dwarfgen_DATA)'; test -n "$(dwarfgendir)" || list=; \
-	files=`for p in $$list; do echo $$p; done | sed -e 's|^.*/||'`; \
-	dir='$(DESTDIR)$(dwarfgendir)'; $(am__uninstall_files_from_dir)
 
 ID: $(am__tagged_files)
 	$(am__define_uniq_tagged_files); mkid -fID $$unique
@@ -726,9 +672,9 @@ distdir: $(DISTFILES)
 	done
 check-am: all-am
 check: check-am
-all-am: Makefile $(PROGRAMS) $(DATA)
+all-am: Makefile $(PROGRAMS)
 installdirs:
-	for dir in "$(DESTDIR)$(bindir)" "$(DESTDIR)$(dwarfgendir)"; do \
+	for dir in "$(DESTDIR)$(bindir)"; do \
 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
 	done
 install: install-am
@@ -784,7 +730,7 @@ info: info-am
 
 info-am:
 
-install-data-am: install-dwarfgenDATA
+install-data-am:
 
 install-dvi: install-dvi-am
 
@@ -830,7 +776,7 @@ ps: ps-am
 
 ps-am:
 
-uninstall-am: uninstall-binPROGRAMS uninstall-dwarfgenDATA
+uninstall-am: uninstall-binPROGRAMS
 
 .MAKE: install-am install-strip
 
@@ -840,14 +786,13 @@ uninstall-am: uninstall-binPROGRAMS uninstall-dwarfgenDATA
 	distclean-libtool distclean-tags distdir dvi dvi-am html \
 	html-am info info-am install install-am install-binPROGRAMS \
 	install-data install-data-am install-dvi install-dvi-am \
-	install-dwarfgenDATA install-exec install-exec-am install-html \
-	install-html-am install-info install-info-am install-man \
-	install-pdf install-pdf-am install-ps install-ps-am \
-	install-strip installcheck installcheck-am installdirs \
-	maintainer-clean maintainer-clean-generic mostlyclean \
-	mostlyclean-compile mostlyclean-generic mostlyclean-libtool \
-	pdf pdf-am ps ps-am tags tags-am uninstall uninstall-am \
-	uninstall-binPROGRAMS uninstall-dwarfgenDATA
+	install-exec install-exec-am install-html install-html-am \
+	install-info install-info-am install-man install-pdf \
+	install-pdf-am install-ps install-ps-am install-strip \
+	installcheck installcheck-am installdirs maintainer-clean \
+	maintainer-clean-generic mostlyclean mostlyclean-compile \
+	mostlyclean-generic mostlyclean-libtool pdf pdf-am ps ps-am \
+	tags tags-am uninstall uninstall-am uninstall-binPROGRAMS
 
 .PRECIOUS: Makefile
 

@@ -12,7 +12,7 @@ gennames.c \
 dwgetopt.c \
 dwgetopt.h
 
-gennames_CFLAGS =  @DWARF_CFLAGS@ @DWARF_CFLAGS_WARN@
+gennames_CFLAGS = 
 
 BUILT_SOURCES = \
 dwarf_names.c
@@ -180,7 +180,7 @@ pro_util.h \
 pro_vars.c \
 pro_weaks.c
 
-libdwarf_la_CFLAGS = @DWARF_CFLAGS@ @DWARF_CFLAGS_WARN@
+libdwarf_la_CFLAGS = 
 
 libdwarf_la_LIBADD = @DWARF_LIBS@
 
@@ -189,8 +189,17 @@ libdwarf_la_LDFLAGS = -fPIC -no-undefined -version-info @version_info@ @release_
 # checkexamples.c
 # dwarf_stubs.c
 
-libdwarfdir = $(datadir)/libdwarf/libdwarf
-libdwarf_DATA = \
+include_HEADERS = $(top_srcdir)/libdwarf/dwarf.h libdwarf.h
+
+libdwarfdevdir = $(datadir)/libdwarf/libdwarf-devel
+libdwarfdev_DATA = \
+libdwarf2.1.pdf \
+libdwarf2p.1.pdf 
+
+EXTRA_DIST = \
+COPYING \
+LGPL.txt \
+LIBDWARFCOPYRIGHT \
 CHANGES \
 ChangeLog \
 ChangeLog2006 \
@@ -205,29 +214,14 @@ ChangeLog2014 \
 ChangeLog2015 \
 ChangeLog2016 \
 ChangeLog2017 \
-CMakeLists.txt \
-COPYING \
-libdwarf.h.in \
-pdfbld.sh \
-LGPL.txt \
-LIBDWARFCOPYRIGHT
-
-TESTS=./runtests.sh
-
-libdwarfdevdir = $(datadir)/libdwarf/libdwarf-devel
-libdwarfdev_DATA = \
 CODINGSTYLE \
 libdwarf2.1.mm \
-libdwarf2.1.pdf \
 libdwarf2p.1.mm \
-libdwarf2p.1.pdf \
 mips_extensions.mm \
-mips_extensions.pdf
-
-include_HEADERS = $(top_srcdir)/libdwarf/dwarf.h libdwarf.h
-
-EXTRA_DIST = \
+mips_extensions.pdf  \
 CMakeLists.txt \
+libdwarf.h.in \
+pdfbld.sh \
 NEWS \
 README \
 configure.cmake \

@@ -17,7 +17,6 @@
 ###Copyright (C) 2018 Vincent Torri <vincent dot torri at gmail dot com
 ###This code is public domain and can be freely used or copied.
 
-
 VPATH = @srcdir@
 am__is_gnu_make = { \
   if test -z '$(MAKELEVEL)'; then \
@@ -107,24 +106,21 @@ mkinstalldirs = $(install_sh) -d
 CONFIG_HEADER = $(top_builddir)/config.h
 CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
-am__installdirs = "$(DESTDIR)$(bindir)" "$(DESTDIR)$(dwarfexampledir)"
+am__installdirs = "$(DESTDIR)$(bindir)"
 PROGRAMS = $(bin_PROGRAMS)
 am_frame1_OBJECTS = frame1-frame1.$(OBJEXT)
 frame1_OBJECTS = $(am_frame1_OBJECTS)
-frame1_DEPENDENCIES = $(top_builddir)/libdwarf/libdwarf.la
+am__DEPENDENCIES_1 =
+frame1_DEPENDENCIES = $(top_builddir)/libdwarf/libdwarf.la \
+	$(am__DEPENDENCIES_1)
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
 am__v_lt_0 = --silent
 am__v_lt_1 = 
-frame1_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
-	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(frame1_CFLAGS) $(CFLAGS) \
-	$(AM_LDFLAGS) $(LDFLAGS) -o $@
 am_simplereader_OBJECTS = simplereader-simplereader.$(OBJEXT)
 simplereader_OBJECTS = $(am_simplereader_OBJECTS)
-simplereader_DEPENDENCIES = $(top_builddir)/libdwarf/libdwarf.la
-simplereader_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
-	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(simplereader_CFLAGS) \
-	$(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
+simplereader_DEPENDENCIES = $(top_builddir)/libdwarf/libdwarf.la \
+	$(am__DEPENDENCIES_1)
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
 am__v_P_0 = false
@@ -166,34 +162,6 @@ am__can_run_installinfo = \
     n|no|NO) false;; \
     *) (install-info --version) >/dev/null 2>&1;; \
   esac
-am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
-am__vpath_adj = case $$p in \
-    $(srcdir)/*) f=`echo "$$p" | sed "s|^$$srcdirstrip/||"`;; \
-    *) f=$$p;; \
-  esac;
-am__strip_dir = f=`echo $$p | sed -e 's|^.*/||'`;
-am__install_max = 40
-am__nobase_strip_setup = \
-  srcdirstrip=`echo "$(srcdir)" | sed 's/[].[^$$\\*|]/\\\\&/g'`
-am__nobase_strip = \
-  for p in $$list; do echo "$$p"; done | sed -e "s|$$srcdirstrip/||"
-am__nobase_list = $(am__nobase_strip_setup); \
-  for p in $$list; do echo "$$p $$p"; done | \
-  sed "s| $$srcdirstrip/| |;"' / .*\//!s/ .*/ ./; s,\( .*\)/[^/]*$$,\1,' | \
-  $(AWK) 'BEGIN { files["."] = "" } { files[$$2] = files[$$2] " " $$1; \
-    if (++n[$$2] == $(am__install_max)) \
-      { print $$2, files[$$2]; n[$$2] = 0; files[$$2] = "" } } \
-    END { for (dir in files) print dir, files[dir] }'
-am__base_list = \
-  sed '$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;s/\n/ /g' | \
-  sed '$$!N;$$!N;$$!N;$$!N;s/\n/ /g'
-am__uninstall_files_from_dir = { \
-  test -z "$$files" \
-    || { test ! -d "$$dir" && test ! -f "$$dir" && test ! -r "$$dir"; } \
-    || { echo " ( cd '$$dir' && rm -f" $$files ")"; \
-         $(am__cd) "$$dir" && rm -f $$files; }; \
-  }
-DATA = $(dwarfexample_DATA)
 am__tagged_files = $(HEADERS) $(SOURCES) $(TAGS_FILES) $(LISP)
 # Read a list of newline-separated strings from the standard input,
 # and print each of them once, without duplicates.  Input order is
@@ -247,7 +215,6 @@ DEPDIR = @DEPDIR@
 DLLTOOL = @DLLTOOL@
 DSYMUTIL = @DSYMUTIL@
 DUMPBIN = @DUMPBIN@
-DWARF_CFLAGS = @DWARF_CFLAGS@
 DWARF_CFLAGS_WARN = @DWARF_CFLAGS_WARN@
 DWARF_CXXFLAGS_WARN = @DWARF_CXXFLAGS_WARN@
 DWARF_LIBS = @DWARF_LIBS@
@@ -361,16 +328,19 @@ simplereader_SOURCES = simplereader.c
 simplereader_CPPFLAGS = -I$(top_srcdir)/libdwarf \
   -I$(top_builddir)/libdwarf
 
-simplereader_CFLAGS = @DWARF_CFLAGS_WARN@
-simplereader_LDADD = $(top_builddir)/libdwarf/libdwarf.la
+###simplereader_CFLAGS = 
+simplereader_LDADD = $(top_builddir)/libdwarf/libdwarf.la \
+$(DWARF_LIBS)
+
 frame1_SOURCES = frame1.c
 frame1_CPPFLAGS = -I$(top_srcdir)/libdwarf \
   -I$(top_builddir)/libdwarf
 
-frame1_CFLAGS = @DWARF_CFLAGS_WARN@
-frame1_LDADD = $(top_builddir)/libdwarf/libdwarf.la
-dwarfexampledir = $(datadir)/libdwarf/dwarfexample
-dwarfexample_DATA = \
+###frame1_CFLAGS =  @DWARF_CFLAGS_WARN@
+frame1_LDADD = $(top_builddir)/libdwarf/libdwarf.la \
+$(DWARF_LIBS)
+
+EXTRA_DIST = \
 ChangeLog \
 ChangeLog2009 \
 ChangeLog2010 \
@@ -380,9 +350,7 @@ ChangeLog2013 \
 ChangeLog2014 \
 ChangeLog2015 \
 ChangeLog2016 \
-ChangeLog2017
-
-EXTRA_DIST = \
+ChangeLog2017 \
 CMakeLists.txt \
 NEWS \
 configure.cmake \
@@ -473,11 +441,11 @@ clean-binPROGRAMS:
 
 frame1$(EXEEXT): $(frame1_OBJECTS) $(frame1_DEPENDENCIES) $(EXTRA_frame1_DEPENDENCIES) 
 	@rm -f frame1$(EXEEXT)
-	$(AM_V_CCLD)$(frame1_LINK) $(frame1_OBJECTS) $(frame1_LDADD) $(LIBS)
+	$(AM_V_CCLD)$(LINK) $(frame1_OBJECTS) $(frame1_LDADD) $(LIBS)
 
 simplereader$(EXEEXT): $(simplereader_OBJECTS) $(simplereader_DEPENDENCIES) $(EXTRA_simplereader_DEPENDENCIES) 
 	@rm -f simplereader$(EXEEXT)
-	$(AM_V_CCLD)$(simplereader_LINK) $(simplereader_OBJECTS) $(simplereader_LDADD) $(LIBS)
+	$(AM_V_CCLD)$(LINK) $(simplereader_OBJECTS) $(simplereader_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -513,59 +481,38 @@ distclean-compile:
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LTCOMPILE) -c -o $@ $<
 
 frame1-frame1.o: frame1.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(frame1_CPPFLAGS) $(CPPFLAGS) $(frame1_CFLAGS) $(CFLAGS) -MT frame1-frame1.o -MD -MP -MF $(DEPDIR)/frame1-frame1.Tpo -c -o frame1-frame1.o `test -f 'frame1.c' || echo '$(srcdir)/'`frame1.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(frame1_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT frame1-frame1.o -MD -MP -MF $(DEPDIR)/frame1-frame1.Tpo -c -o frame1-frame1.o `test -f 'frame1.c' || echo '$(srcdir)/'`frame1.c
 @am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/frame1-frame1.Tpo $(DEPDIR)/frame1-frame1.Po
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='frame1.c' object='frame1-frame1.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(frame1_CPPFLAGS) $(CPPFLAGS) $(frame1_CFLAGS) $(CFLAGS) -c -o frame1-frame1.o `test -f 'frame1.c' || echo '$(srcdir)/'`frame1.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(frame1_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o frame1-frame1.o `test -f 'frame1.c' || echo '$(srcdir)/'`frame1.c
 
 frame1-frame1.obj: frame1.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(frame1_CPPFLAGS) $(CPPFLAGS) $(frame1_CFLAGS) $(CFLAGS) -MT frame1-frame1.obj -MD -MP -MF $(DEPDIR)/frame1-frame1.Tpo -c -o frame1-frame1.obj `if test -f 'frame1.c'; then $(CYGPATH_W) 'frame1.c'; else $(CYGPATH_W) '$(srcdir)/frame1.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(frame1_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT frame1-frame1.obj -MD -MP -MF $(DEPDIR)/frame1-frame1.Tpo -c -o frame1-frame1.obj `if test -f 'frame1.c'; then $(CYGPATH_W) 'frame1.c'; else $(CYGPATH_W) '$(srcdir)/frame1.c'; fi`
 @am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/frame1-frame1.Tpo $(DEPDIR)/frame1-frame1.Po
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='frame1.c' object='frame1-frame1.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(frame1_CPPFLAGS) $(CPPFLAGS) $(frame1_CFLAGS) $(CFLAGS) -c -o frame1-frame1.obj `if test -f 'frame1.c'; then $(CYGPATH_W) 'frame1.c'; else $(CYGPATH_W) '$(srcdir)/frame1.c'; fi`
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(frame1_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o frame1-frame1.obj `if test -f 'frame1.c'; then $(CYGPATH_W) 'frame1.c'; else $(CYGPATH_W) '$(srcdir)/frame1.c'; fi`
 
 simplereader-simplereader.o: simplereader.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(simplereader_CPPFLAGS) $(CPPFLAGS) $(simplereader_CFLAGS) $(CFLAGS) -MT simplereader-simplereader.o -MD -MP -MF $(DEPDIR)/simplereader-simplereader.Tpo -c -o simplereader-simplereader.o `test -f 'simplereader.c' || echo '$(srcdir)/'`simplereader.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(simplereader_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT simplereader-simplereader.o -MD -MP -MF $(DEPDIR)/simplereader-simplereader.Tpo -c -o simplereader-simplereader.o `test -f 'simplereader.c' || echo '$(srcdir)/'`simplereader.c
 @am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/simplereader-simplereader.Tpo $(DEPDIR)/simplereader-simplereader.Po
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='simplereader.c' object='simplereader-simplereader.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(simplereader_CPPFLAGS) $(CPPFLAGS) $(simplereader_CFLAGS) $(CFLAGS) -c -o simplereader-simplereader.o `test -f 'simplereader.c' || echo '$(srcdir)/'`simplereader.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(simplereader_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o simplereader-simplereader.o `test -f 'simplereader.c' || echo '$(srcdir)/'`simplereader.c
 
 simplereader-simplereader.obj: simplereader.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(simplereader_CPPFLAGS) $(CPPFLAGS) $(simplereader_CFLAGS) $(CFLAGS) -MT simplereader-simplereader.obj -MD -MP -MF $(DEPDIR)/simplereader-simplereader.Tpo -c -o simplereader-simplereader.obj `if test -f 'simplereader.c'; then $(CYGPATH_W) 'simplereader.c'; else $(CYGPATH_W) '$(srcdir)/simplereader.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(simplereader_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT simplereader-simplereader.obj -MD -MP -MF $(DEPDIR)/simplereader-simplereader.Tpo -c -o simplereader-simplereader.obj `if test -f 'simplereader.c'; then $(CYGPATH_W) 'simplereader.c'; else $(CYGPATH_W) '$(srcdir)/simplereader.c'; fi`
 @am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/simplereader-simplereader.Tpo $(DEPDIR)/simplereader-simplereader.Po
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='simplereader.c' object='simplereader-simplereader.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(simplereader_CPPFLAGS) $(CPPFLAGS) $(simplereader_CFLAGS) $(CFLAGS) -c -o simplereader-simplereader.obj `if test -f 'simplereader.c'; then $(CYGPATH_W) 'simplereader.c'; else $(CYGPATH_W) '$(srcdir)/simplereader.c'; fi`
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(simplereader_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o simplereader-simplereader.obj `if test -f 'simplereader.c'; then $(CYGPATH_W) 'simplereader.c'; else $(CYGPATH_W) '$(srcdir)/simplereader.c'; fi`
 
 mostlyclean-libtool:
 	-rm -f *.lo
 
 clean-libtool:
 	-rm -rf .libs _libs
-install-dwarfexampleDATA: $(dwarfexample_DATA)
-	@$(NORMAL_INSTALL)
-	@list='$(dwarfexample_DATA)'; test -n "$(dwarfexampledir)" || list=; \
-	if test -n "$$list"; then \
-	  echo " $(MKDIR_P) '$(DESTDIR)$(dwarfexampledir)'"; \
-	  $(MKDIR_P) "$(DESTDIR)$(dwarfexampledir)" || exit 1; \
-	fi; \
-	for p in $$list; do \
-	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
-	  echo "$$d$$p"; \
-	done | $(am__base_list) | \
-	while read files; do \
-	  echo " $(INSTALL_DATA) $$files '$(DESTDIR)$(dwarfexampledir)'"; \
-	  $(INSTALL_DATA) $$files "$(DESTDIR)$(dwarfexampledir)" || exit $$?; \
-	done
-
-uninstall-dwarfexampleDATA:
-	@$(NORMAL_UNINSTALL)
-	@list='$(dwarfexample_DATA)'; test -n "$(dwarfexampledir)" || list=; \
-	files=`for p in $$list; do echo $$p; done | sed -e 's|^.*/||'`; \
-	dir='$(DESTDIR)$(dwarfexampledir)'; $(am__uninstall_files_from_dir)
 
 ID: $(am__tagged_files)
 	$(am__define_uniq_tagged_files); mkid -fID $$unique
@@ -651,9 +598,9 @@ distdir: $(DISTFILES)
 	done
 check-am: all-am
 check: check-am
-all-am: Makefile $(PROGRAMS) $(DATA)
+all-am: Makefile $(PROGRAMS)
 installdirs:
-	for dir in "$(DESTDIR)$(bindir)" "$(DESTDIR)$(dwarfexampledir)"; do \
+	for dir in "$(DESTDIR)$(bindir)"; do \
 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
 	done
 install: install-am
@@ -709,7 +656,7 @@ info: info-am
 
 info-am:
 
-install-data-am: install-dwarfexampleDATA
+install-data-am:
 
 install-dvi: install-dvi-am
 
@@ -755,7 +702,7 @@ ps: ps-am
 
 ps-am:
 
-uninstall-am: uninstall-binPROGRAMS uninstall-dwarfexampleDATA
+uninstall-am: uninstall-binPROGRAMS
 
 .MAKE: install-am install-strip
 
@@ -765,14 +712,13 @@ uninstall-am: uninstall-binPROGRAMS uninstall-dwarfexampleDATA
 	distclean-libtool distclean-tags distdir dvi dvi-am html \
 	html-am info info-am install install-am install-binPROGRAMS \
 	install-data install-data-am install-dvi install-dvi-am \
-	install-dwarfexampleDATA install-exec install-exec-am \
-	install-html install-html-am install-info install-info-am \
-	install-man install-pdf install-pdf-am install-ps \
-	install-ps-am install-strip installcheck installcheck-am \
-	installdirs maintainer-clean maintainer-clean-generic \
-	mostlyclean mostlyclean-compile mostlyclean-generic \
-	mostlyclean-libtool pdf pdf-am ps ps-am tags tags-am uninstall \
-	uninstall-am uninstall-binPROGRAMS uninstall-dwarfexampleDATA
+	install-exec install-exec-am install-html install-html-am \
+	install-info install-info-am install-man install-pdf \
+	install-pdf-am install-ps install-ps-am install-strip \
+	installcheck installcheck-am installdirs maintainer-clean \
+	maintainer-clean-generic mostlyclean mostlyclean-compile \
+	mostlyclean-generic mostlyclean-libtool pdf pdf-am ps ps-am \
+	tags tags-am uninstall uninstall-am uninstall-binPROGRAMS
 
 .PRECIOUS: Makefile
 
