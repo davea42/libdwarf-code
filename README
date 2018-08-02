@@ -10,8 +10,6 @@ To just build libdwarf and dwarfdump if the source tree is
 in /a/b/libdwarf-1 one might do:
     cd /a/b/libdwarf-1 ./configure make
 
-
-
 LIBRARY REQUIREMENTS
 libelf and zlib have to be installed to build libdwarf and
 dwarfdump.  For example, in Ubuntu 16.04, install using:
@@ -56,6 +54,54 @@ With
     ./configure --enable-shared --disable-nonshared
 libdwarf.so is built and used; libdwarf.a is not built.
 
+BUILD FAILURE
+If the 'make' step fails with the message
+"WARNING: 'aclocal-1.15' is missing on your system."
+then the timestamps of the source tree are not in the proper
+relationships.  Creating a source copy using  'cp -r' can
+caus this. Much better to use 'cp -rp'.  Change directory to
+the top of the source tree and do
+   sh scripts/FIX-CONFIGURE-TIMES
+to  update the relevant timestamps.
+Then redo the configure and the make should work.
+
+THE USUAL ENVIRONMENT VARIABLES
+
+The following default to sensible values
+you may set environment variables as usual
+with GNU configure.
+CPPFLAGS
+CFLAGS
+LDFLAGS
+
+The following environment variables (if set) override
+values used in building helper executables (at build time)
+that are run at build time to build C source
+to be compiled into libdwarf and dwarfdump.
+It's not likely you will have any need to
+set your own values for these. 
+These helper executables are ignored
+by 'make install'.
+
+CFLAGS_FOR_BUILD
+CPPFLAGS_FOR_BUILD
+LDFLAGS_FOR_BUILD
+
+Normally the simple defaults for these will work
+and will suffice.
+
+Having separate variables for the build-time
+is necessary to support cross-building. For example
+if compiling on x86_64 and building libdwarf for Arm7.
+
+
+DEBUGGING MAKE
+
+To see what compile/link commands are actually
+being used by the generated Makefiles try V=1, as in
+    make V=1
+
+
 INSTALL AND UNINSTALL
 
 The default install is to /usr/local
@@ -75,12 +121,15 @@ Recent gcc has some checks that can be done at runtime.
   -fsanitize=address
   -fsanitize=leak
   -fsanitize=undefined
-which are turned on here by --enable-sanitize at build time.
+which are turned on here by '<path>/configure --enable-sanitize'.
+
+The --enable-sanitize option unlikely to work when
+cross-compiling.
 
 CROSS-COMPILES
 
 For those wishing to build libdwarf (and possibly dwarfdump)
-for a different machine than the build machine
+for a different host machine than the build machine
 it is now possible to do that.
 
 It has been tested with host and target set to an ARM with
@@ -107,10 +156,6 @@ mkdir emptycross
 cd emptycross
 git clone git://git.code.sf.net/p/libdwarf/code
 cd code
-cd libdwarf 
-./configure --host=arm-linux-gnueabihf
-make
-cd ../dwarfdump 
 ./configure --host=arm-linux-gnueabihf
 make
 # done
@@ -134,6 +179,9 @@ Then
 will run the special test scripts: dwarfdump/runtests.sh
 libdwarf/runtests.sh (each must be run in its directory,
 neither requires any arguments, just run each).
+As of this writing this must be done (as shown)
+in the source directory, it does not currently
+work if running the configure in a build directory.
 
 To create a release file do:
   ./configure --enable-dwarfexample --enable-dwarfgen
@@ -144,4 +192,8 @@ needed in a release
   scripts/CPTARTOWEBDIR is an example of generating 
 fingerprints for the release file and copying the file.
 
-David Anderson.  Updated July 23, 2018
+See the configure.ac for the version used.  
+For example: 'm4_define([v_date], [20180730])])'
+
+
+David Anderson.  Updated August 2, 2018

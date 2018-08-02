@@ -1,3 +1,6 @@
+2018-08-02  David Anderson
+    * README: Added and corrected some details of the new
+      configure.
 2018-07-31  David Anderson
     * configure.ac: Fix the .so version number fields to be
       1 0 0, not 1 5 0
