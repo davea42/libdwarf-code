@@ -1,3 +1,6 @@
+2018-08-02 David Anderson
+    * Makefile.am: Removed unused variables and references
+      to them.
 2018-07-31 David Anderson
     * Makefile.am: Moved ChangeLog etc out of /usr/share
       but have them in the distribution. Now make install

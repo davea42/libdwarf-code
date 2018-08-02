@@ -110,20 +110,17 @@ am__installdirs = "$(DESTDIR)$(bindir)"
 PROGRAMS = $(bin_PROGRAMS)
 am_frame1_OBJECTS = frame1-frame1.$(OBJEXT)
 frame1_OBJECTS = $(am_frame1_OBJECTS)
-frame1_DEPENDENCIES = $(top_builddir)/libdwarf/libdwarf.la
+am__DEPENDENCIES_1 =
+frame1_DEPENDENCIES = $(top_builddir)/libdwarf/libdwarf.la \
+	$(am__DEPENDENCIES_1)
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
 am__v_lt_0 = --silent
 am__v_lt_1 = 
-frame1_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
-	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(frame1_CFLAGS) $(CFLAGS) \
-	$(AM_LDFLAGS) $(LDFLAGS) -o $@
 am_simplereader_OBJECTS = simplereader-simplereader.$(OBJEXT)
 simplereader_OBJECTS = $(am_simplereader_OBJECTS)
-simplereader_DEPENDENCIES = $(top_builddir)/libdwarf/libdwarf.la
-simplereader_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
-	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(simplereader_CFLAGS) \
-	$(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
+simplereader_DEPENDENCIES = $(top_builddir)/libdwarf/libdwarf.la \
+	$(am__DEPENDENCIES_1)
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
 am__v_P_0 = false
@@ -218,7 +215,6 @@ DEPDIR = @DEPDIR@
 DLLTOOL = @DLLTOOL@
 DSYMUTIL = @DSYMUTIL@
 DUMPBIN = @DUMPBIN@
-DWARF_CFLAGS = @DWARF_CFLAGS@
 DWARF_CFLAGS_WARN = @DWARF_CFLAGS_WARN@
 DWARF_CXXFLAGS_WARN = @DWARF_CXXFLAGS_WARN@
 DWARF_LIBS = @DWARF_LIBS@
@@ -332,14 +328,18 @@ simplereader_SOURCES = simplereader.c
 simplereader_CPPFLAGS = -I$(top_srcdir)/libdwarf \
   -I$(top_builddir)/libdwarf
 
-simplereader_CFLAGS = @DWARF_CFLAGS_WARN@
-simplereader_LDADD = $(top_builddir)/libdwarf/libdwarf.la
+###simplereader_CFLAGS = 
+simplereader_LDADD = $(top_builddir)/libdwarf/libdwarf.la \
+$(DWARF_LIBS)
+
 frame1_SOURCES = frame1.c
 frame1_CPPFLAGS = -I$(top_srcdir)/libdwarf \
   -I$(top_builddir)/libdwarf
 
-frame1_CFLAGS = @DWARF_CFLAGS_WARN@
-frame1_LDADD = $(top_builddir)/libdwarf/libdwarf.la
+###frame1_CFLAGS =  @DWARF_CFLAGS_WARN@
+frame1_LDADD = $(top_builddir)/libdwarf/libdwarf.la \
+$(DWARF_LIBS)
+
 EXTRA_DIST = \
 ChangeLog \
 ChangeLog2009 \
@@ -441,11 +441,11 @@ clean-binPROGRAMS:
 
 frame1$(EXEEXT): $(frame1_OBJECTS) $(frame1_DEPENDENCIES) $(EXTRA_frame1_DEPENDENCIES) 
 	@rm -f frame1$(EXEEXT)
-	$(AM_V_CCLD)$(frame1_LINK) $(frame1_OBJECTS) $(frame1_LDADD) $(LIBS)
+	$(AM_V_CCLD)$(LINK) $(frame1_OBJECTS) $(frame1_LDADD) $(LIBS)
 
 simplereader$(EXEEXT): $(simplereader_OBJECTS) $(simplereader_DEPENDENCIES) $(EXTRA_simplereader_DEPENDENCIES) 
 	@rm -f simplereader$(EXEEXT)
-	$(AM_V_CCLD)$(simplereader_LINK) $(simplereader_OBJECTS) $(simplereader_LDADD) $(LIBS)
+	$(AM_V_CCLD)$(LINK) $(simplereader_OBJECTS) $(simplereader_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -481,32 +481,32 @@ distclean-compile:
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LTCOMPILE) -c -o $@ $<
 
 frame1-frame1.o: frame1.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(frame1_CPPFLAGS) $(CPPFLAGS) $(frame1_CFLAGS) $(CFLAGS) -MT frame1-frame1.o -MD -MP -MF $(DEPDIR)/frame1-frame1.Tpo -c -o frame1-frame1.o `test -f 'frame1.c' || echo '$(srcdir)/'`frame1.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(frame1_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT frame1-frame1.o -MD -MP -MF $(DEPDIR)/frame1-frame1.Tpo -c -o frame1-frame1.o `test -f 'frame1.c' || echo '$(srcdir)/'`frame1.c
 @am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/frame1-frame1.Tpo $(DEPDIR)/frame1-frame1.Po
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='frame1.c' object='frame1-frame1.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(frame1_CPPFLAGS) $(CPPFLAGS) $(frame1_CFLAGS) $(CFLAGS) -c -o frame1-frame1.o `test -f 'frame1.c' || echo '$(srcdir)/'`frame1.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(frame1_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o frame1-frame1.o `test -f 'frame1.c' || echo '$(srcdir)/'`frame1.c
 
 frame1-frame1.obj: frame1.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(frame1_CPPFLAGS) $(CPPFLAGS) $(frame1_CFLAGS) $(CFLAGS) -MT frame1-frame1.obj -MD -MP -MF $(DEPDIR)/frame1-frame1.Tpo -c -o frame1-frame1.obj `if test -f 'frame1.c'; then $(CYGPATH_W) 'frame1.c'; else $(CYGPATH_W) '$(srcdir)/frame1.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(frame1_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT frame1-frame1.obj -MD -MP -MF $(DEPDIR)/frame1-frame1.Tpo -c -o frame1-frame1.obj `if test -f 'frame1.c'; then $(CYGPATH_W) 'frame1.c'; else $(CYGPATH_W) '$(srcdir)/frame1.c'; fi`
 @am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/frame1-frame1.Tpo $(DEPDIR)/frame1-frame1.Po
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='frame1.c' object='frame1-frame1.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(frame1_CPPFLAGS) $(CPPFLAGS) $(frame1_CFLAGS) $(CFLAGS) -c -o frame1-frame1.obj `if test -f 'frame1.c'; then $(CYGPATH_W) 'frame1.c'; else $(CYGPATH_W) '$(srcdir)/frame1.c'; fi`
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(frame1_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o frame1-frame1.obj `if test -f 'frame1.c'; then $(CYGPATH_W) 'frame1.c'; else $(CYGPATH_W) '$(srcdir)/frame1.c'; fi`
 
 simplereader-simplereader.o: simplereader.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(simplereader_CPPFLAGS) $(CPPFLAGS) $(simplereader_CFLAGS) $(CFLAGS) -MT simplereader-simplereader.o -MD -MP -MF $(DEPDIR)/simplereader-simplereader.Tpo -c -o simplereader-simplereader.o `test -f 'simplereader.c' || echo '$(srcdir)/'`simplereader.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(simplereader_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT simplereader-simplereader.o -MD -MP -MF $(DEPDIR)/simplereader-simplereader.Tpo -c -o simplereader-simplereader.o `test -f 'simplereader.c' || echo '$(srcdir)/'`simplereader.c
 @am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/simplereader-simplereader.Tpo $(DEPDIR)/simplereader-simplereader.Po
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='simplereader.c' object='simplereader-simplereader.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(simplereader_CPPFLAGS) $(CPPFLAGS) $(simplereader_CFLAGS) $(CFLAGS) -c -o simplereader-simplereader.o `test -f 'simplereader.c' || echo '$(srcdir)/'`simplereader.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(simplereader_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o simplereader-simplereader.o `test -f 'simplereader.c' || echo '$(srcdir)/'`simplereader.c
 
 simplereader-simplereader.obj: simplereader.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(simplereader_CPPFLAGS) $(CPPFLAGS) $(simplereader_CFLAGS) $(CFLAGS) -MT simplereader-simplereader.obj -MD -MP -MF $(DEPDIR)/simplereader-simplereader.Tpo -c -o simplereader-simplereader.obj `if test -f 'simplereader.c'; then $(CYGPATH_W) 'simplereader.c'; else $(CYGPATH_W) '$(srcdir)/simplereader.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(simplereader_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT simplereader-simplereader.obj -MD -MP -MF $(DEPDIR)/simplereader-simplereader.Tpo -c -o simplereader-simplereader.obj `if test -f 'simplereader.c'; then $(CYGPATH_W) 'simplereader.c'; else $(CYGPATH_W) '$(srcdir)/simplereader.c'; fi`
 @am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/simplereader-simplereader.Tpo $(DEPDIR)/simplereader-simplereader.Po
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='simplereader.c' object='simplereader-simplereader.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(simplereader_CPPFLAGS) $(CPPFLAGS) $(simplereader_CFLAGS) $(CFLAGS) -c -o simplereader-simplereader.obj `if test -f 'simplereader.c'; then $(CYGPATH_W) 'simplereader.c'; else $(CYGPATH_W) '$(srcdir)/simplereader.c'; fi`
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(simplereader_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o simplereader-simplereader.obj `if test -f 'simplereader.c'; then $(CYGPATH_W) 'simplereader.c'; else $(CYGPATH_W) '$(srcdir)/simplereader.c'; fi`
 
 mostlyclean-libtool:
 	-rm -f *.lo

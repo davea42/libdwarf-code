@@ -235,7 +235,6 @@ DEPDIR = @DEPDIR@
 DLLTOOL = @DLLTOOL@
 DSYMUTIL = @DSYMUTIL@
 DUMPBIN = @DUMPBIN@
-DWARF_CFLAGS = @DWARF_CFLAGS@
 DWARF_CFLAGS_WARN = @DWARF_CFLAGS_WARN@
 DWARF_CXXFLAGS_WARN = @DWARF_CXXFLAGS_WARN@
 DWARF_LIBS = @DWARF_LIBS@
@@ -365,7 +364,7 @@ ireptodbg.h \
 strtabdata.h
 
 dwarfgen_CPPFLAGS = -I$(top_srcdir)/libdwarf -I$(top_builddir)/libdwarf
-dwarfgen_CXXFLAGS = @DWARF_CFLAGS@ @DWARF_CXXFLAGS_WARN@
+dwarfgen_CXXFLAGS = @DWARF_CFLAGS@ 
 dwarfgen_LDADD = \
 $(top_builddir)/dwarfdump/dwarfdump-dwgetopt.o \
 $(top_builddir)/libdwarf/libdwarf.la \

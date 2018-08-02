@@ -12,7 +12,7 @@ gennames.c \
 dwgetopt.c \
 dwgetopt.h
 
-gennames_CFLAGS =  @DWARF_CFLAGS@ @DWARF_CFLAGS_WARN@
+gennames_CFLAGS = 
 
 BUILT_SOURCES = \
 dwarf_names.c
@@ -178,7 +178,7 @@ pro_util.h \
 pro_vars.c \
 pro_weaks.c
 
-libdwarf_la_CFLAGS = @DWARF_CFLAGS@ @DWARF_CFLAGS_WARN@
+libdwarf_la_CFLAGS = 
 
 libdwarf_la_LIBADD = @DWARF_LIBS@
 

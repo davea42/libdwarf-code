@@ -295,7 +295,6 @@ DEPDIR = @DEPDIR@
 DLLTOOL = @DLLTOOL@
 DSYMUTIL = @DSYMUTIL@
 DUMPBIN = @DUMPBIN@
-DWARF_CFLAGS = @DWARF_CFLAGS@
 DWARF_CFLAGS_WARN = @DWARF_CFLAGS_WARN@
 DWARF_CXXFLAGS_WARN = @DWARF_CXXFLAGS_WARN@
 DWARF_LIBS = @DWARF_LIBS@
@@ -411,7 +410,7 @@ gennames.c \
 dwgetopt.c \
 dwgetopt.h
 
-gennames_CFLAGS = @DWARF_CFLAGS@ @DWARF_CFLAGS_WARN@
+gennames_CFLAGS = 
 BUILT_SOURCES = dwarf_names.c errmsg_check_list
 gn_verbose = $(gn_verbose_@AM_V@)
 gn_verbose_ = $(gn_verbose_@AM_DEFAULT_V@)
@@ -553,7 +552,7 @@ pro_util.h \
 pro_vars.c \
 pro_weaks.c
 
-libdwarf_la_CFLAGS = @DWARF_CFLAGS@ @DWARF_CFLAGS_WARN@
+libdwarf_la_CFLAGS = 
 libdwarf_la_LIBADD = @DWARF_LIBS@
 libdwarf_la_LDFLAGS = -fPIC -no-undefined -version-info @version_info@ @release_info@
 

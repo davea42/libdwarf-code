@@ -28,7 +28,7 @@ strtabdata.h
 
 dwarfgen_CPPFLAGS = -I$(top_srcdir)/libdwarf -I$(top_builddir)/libdwarf
 
-dwarfgen_CXXFLAGS = @DWARF_CFLAGS@ @DWARF_CXXFLAGS_WARN@
+dwarfgen_CXXFLAGS = @DWARF_CFLAGS@ 
 
 dwarfgen_LDADD = \
 $(top_builddir)/dwarfdump/dwarfdump-dwgetopt.o \

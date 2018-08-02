@@ -34,14 +34,14 @@ tag_attr.c \
 tag_common.c \
 tag_common.h
 
-tag_attr_build_CFLAGS =  @DWARF_CFLAGS@ @DWARF_CFLAGS_WARN@
+tag_attr_build_CFLAGS =  
 tag_attr_build_CPPFLAGS = -DTRIVIAL_NAMING \
 -I$(top_builddir) \
 -I$(top_srcdir)/libdwarf  \
 -I$(top_builddir)/libdwarf
 
 tag_attr_build$(BUILD_EXEEXT): $(top_srcdir)/dwarfdump/tag_attr.c $(top_builddir)/libdwarf/dwarf_names.c $(top_srcdir)/dwarfdump/common.c $(top_srcdir)/dwarfdump/dwarf_tsearchbal.c $(top_srcdir)/dwarfdump/dwgetopt.c $(top_srcdir)/dwarfdump/esb.c $(top_srcdir)/dwarfdump/makename.c $(top_srcdir)/dwarfdump/naming.c $(top_srcdir)/dwarfdump/sanitized.c $(top_srcdir)/dwarfdump/tag_common.c
-	$(CC_FOR_BUILD) $(tag_attr_build_CPPFLAGS) $(tag_attr_build_CFLAGS) $(top_srcdir)/dwarfdump/tag_attr.c $(top_builddir)/libdwarf/dwarf_names.c  $(top_srcdir)/dwarfdump/common.c $(top_srcdir)/dwarfdump/dwarf_tsearchbal.c $(top_srcdir)/dwarfdump/dwgetopt.c $(top_srcdir)/dwarfdump/esb.c $(top_srcdir)/dwarfdump/makename.c $(top_srcdir)/dwarfdump/naming.c $(top_srcdir)/dwarfdump/sanitized.c $(top_srcdir)/dwarfdump/tag_common.c -o $@
+	$(CC_FOR_BUILD) $(tag_attr_build_CPPFLAGS) $(tag_attr_build_CFLAGS) $(CFLAGS_FOR_BUILD) $(top_srcdir)/dwarfdump/tag_attr.c $(top_builddir)/libdwarf/dwarf_names.c  $(top_srcdir)/dwarfdump/common.c $(top_srcdir)/dwarfdump/dwarf_tsearchbal.c $(top_srcdir)/dwarfdump/dwgetopt.c $(top_srcdir)/dwarfdump/esb.c $(top_srcdir)/dwarfdump/makename.c $(top_srcdir)/dwarfdump/naming.c $(top_srcdir)/dwarfdump/sanitized.c $(top_srcdir)/dwarfdump/tag_common.c -o $@
 
 ### tag_tree_build
 
@@ -63,15 +63,15 @@ tag_common.c \
 tag_common.h \
 tag_tree.c
 
-tag_tree_build_CFLAGS = @DWARF_CFLAGS@ @DWARF_CFLAGS_WARN@
+tag_tree_build_CFLAGS = 
 
-tag_tree_build_CPPFLAGS = -DTRIVIAL_NAMING \
+tag_tree_build_CPPFLAGS = @CPPFLAGS@ -DTRIVIAL_NAMING \
 -I$(top_builddir) \
 -I$(top_srcdir)/libdwarf \
 -I$(top_builddir)/libdwarf
 
 tag_tree_build$(BUILD_EXEEXT): $(top_srcdir)/dwarfdump/tag_tree.c $(top_builddir)/libdwarf/dwarf_names.c $(top_srcdir)/dwarfdump/common.c $(top_srcdir)/dwarfdump/dwarf_tsearchbal.c $(top_srcdir)/dwarfdump/dwgetopt.c $(top_srcdir)/dwarfdump/esb.c $(top_srcdir)/dwarfdump/makename.c $(top_srcdir)/dwarfdump/naming.c $(top_srcdir)/dwarfdump/sanitized.c $(top_srcdir)/dwarfdump/tag_common.c
-	$(CC_FOR_BUILD) $(tag_tree_build_CPPFLAGS) $(tag_tree_build_CFLAGS) $(top_srcdir)/dwarfdump/tag_tree.c $(top_builddir)/libdwarf/dwarf_names.c $(top_srcdir)/dwarfdump/common.c $(top_srcdir)/dwarfdump/dwarf_tsearchbal.c $(top_srcdir)/dwarfdump/dwgetopt.c $(top_srcdir)/dwarfdump/esb.c $(top_srcdir)/dwarfdump/makename.c $(top_srcdir)/dwarfdump/naming.c $(top_srcdir)/dwarfdump/sanitized.c $(top_srcdir)/dwarfdump/tag_common.c -o $@
+	$(CC_FOR_BUILD) $(CFLAGS_FOR_BUILD) $(tag_tree_build_CPPFLAGS) $(tag_tree_build_CFLAGS) $(top_srcdir)/dwarfdump/tag_tree.c $(top_builddir)/libdwarf/dwarf_names.c $(top_srcdir)/dwarfdump/common.c $(top_srcdir)/dwarfdump/dwarf_tsearchbal.c $(top_srcdir)/dwarfdump/dwgetopt.c $(top_srcdir)/dwarfdump/esb.c $(top_srcdir)/dwarfdump/makename.c $(top_srcdir)/dwarfdump/naming.c $(top_srcdir)/dwarfdump/sanitized.c $(top_srcdir)/dwarfdump/tag_common.c -o $@
 
 
 BUILT_SOURCES = \
@@ -92,25 +92,25 @@ tag_tree_ext.list:
 tmp-tt-table.h: tag_tree.list tag_tree_build$(BUILD_EXEEXT)
 	$(AM_V_at)rm -f tmp-t1.c
 	$(AM_V_at)cp $(top_srcdir)/dwarfdump/tag_tree.list tmp-t1.c
-	$(AM_V_at)$(CC) $(CFLAGS) -I$(top_srcdir)/libdwarf @DWARF_CFLAGS@ -E tmp-t1.c > tmp-tag-tree-build1.tmp
+	$(AM_V_at)$(CC) $(CFLAGS) -I$(top_srcdir)/libdwarf -E tmp-t1.c > tmp-tag-tree-build1.tmp
 	$(gn_verbose)./tag_tree_build$(BUILD_EXEEXT) -s -i tmp-tag-tree-build1.tmp -o tmp-tt-table.h
 
 tmp-ta-table.h: tag_attr.list tag_attr_build$(BUILD_EXEEXT)
 	$(AM_V_at)rm -f tmp-t2.c
 	$(AM_V_at)cp $(top_srcdir)/dwarfdump/tag_attr.list tmp-t2.c
-	$(AM_V_at)$(CC) $(CFLAGS) -I$(top_srcdir)/libdwarf @DWARF_CFLAGS@ -E tmp-t2.c > tmp-tag-attr-build2.tmp
+	$(AM_V_at)$(CC) $(CFLAGS) -I$(top_srcdir)/libdwarf  -E tmp-t2.c > tmp-tag-attr-build2.tmp
 	$(gn_verbose)./tag_attr_build$(BUILD_EXEEXT) -s -i tmp-tag-attr-build2.tmp -o tmp-ta-table.h
 
 tmp-ta-ext-table.h: tag_attr_ext.list tag_attr_build$(BUILD_EXEEXT)
 	$(AM_V_at)rm -f tmp-t3.c
 	$(AM_V_at)cp $(top_srcdir)/dwarfdump/tag_attr_ext.list tmp-t3.c
-	$(AM_V_at)$(CC) $(CFLAGS) -I$(top_srcdir)/libdwarf @DWARF_CFLAGS@ -E tmp-t3.c > tmp-tag-attr-build3.tmp
+	$(AM_V_at)$(CC) $(CFLAGS) -I$(top_srcdir)/libdwarf -E tmp-t3.c > tmp-tag-attr-build3.tmp
 	$(gn_verbose)./tag_attr_build$(BUILD_EXEEXT) -e -i tmp-tag-attr-build3.tmp -o tmp-ta-ext-table.h
 
 tmp-tt-ext-table.h: tag_tree_ext.list tag_tree_build$(EXEEXT)
 	$(AM_V_at)rm -f tmp-t4.c
 	$(AM_V_at)cp $(top_srcdir)/dwarfdump/tag_tree_ext.list tmp-t4.c
-	$(AM_V_at)$(CC) $(CFLAGS) -I$(top_srcdir)/libdwarf @DWARF_CFLAGS@ -E tmp-t4.c > tmp-tag-tree-build4.tmp
+	$(AM_V_at)$(CC) $(CFLAGS) -I$(top_srcdir)/libdwarf  -E tmp-t4.c > tmp-tag-tree-build4.tmp
 	$(gn_verbose)./tag_tree_build$(BUILD_EXEEXT) -e -i tmp-tag-tree-build4.tmp -o tmp-tt-ext-table.h
 
 dwarfdump_SOURCES = \
@@ -179,9 +179,10 @@ uri.c \
 uri.h \
 warningcontrol.h
 
-dwarfdump_CPPFLAGS = -I$(top_srcdir)/libdwarf -I$(top_builddir)/libdwarf
+dwarfdump_CPPFLAGS =  -I$(top_srcdir)/libdwarf \
+-I$(top_builddir)/libdwarf
 
-dwarfdump_CFLAGS =  @DWARF_CFLAGS@ @DWARF_CFLAGS_WARN@ 
+dwarfdump_CFLAGS =  
 
 dwarfdump_LDADD = \
 $(top_builddir)/libdwarf/libdwarf.la \

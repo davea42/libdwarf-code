@@ -1,3 +1,7 @@
+2018-08-02 David Anderson
+    * Makefile.am: Removed unused variables and references
+      to them.
+    * Makefile.in: Regenerated (usually won't mention this).
 2018-07-13 David Anderson
     * Makefile.am: Add dwarfdump.1 to output. Move
       COPYRIGHT and a few files out of the installed set,

@@ -1,4 +1,8 @@
 2018-08-02  David Anderson
+    * configure.ac: Deleted unneeded variables.
+      Now env vars like CFLAGS work in standard fashion.
+    * configure: Regenerated
+2018-08-02  David Anderson
     * README: Added and corrected some details of the new
       configure.
 2018-07-31  David Anderson
