@@ -226,16 +226,28 @@ set_reloc_numbers(Dwarf_P_Debug dbg,
     originally posted to Usenet news.
     http://en.wikipedia.org/wiki/List_of_hash_functions or
     http://stackoverflow.com/questions/10696223/reason-for-5381-number-in-djb-hash-function).
+    See Also DWARF5 Section 7.33
 */
 static DW_TSHASHTYPE
-simple_string_hashfunc(const void *keyp)
+_dwarf_string_hashfunc(const char *str)
+{
+    DW_TSHASHTYPE up = 0;
+    DW_TSHASHTYPE hash = 5381;
+    int c  = 0;
+
+    /*  Extra parens suppress warning about assign in test. */
+    while ((c = *str++)) {
+        hash = hash * 33 + c ;
+    }
+    up = hash;
+    return up;
+}
+static DW_TSHASHTYPE
+key_simple_string_hashfunc(const void *keyp)
 {
     struct Dwarf_P_debug_str_entry_s* mt =
         (struct Dwarf_P_debug_str_entry_s*) keyp;
-    DW_TSHASHTYPE up = 0;
     const char *str = 0;
-    DW_TSHASHTYPE hash = 5381;
-    int c  = 0;
 
     if (mt->dse_has_table_offset) {
         /*  ASSERT: mt->dse_dbg->de_debug_str->ds_data not zero. */
@@ -245,12 +257,7 @@ simple_string_hashfunc(const void *keyp)
         /*  ASSERT: dse_name != 0 */
         str = (const char *)mt->dse_name;
     }
-    /*  Extra parens suppress warning about assign in test. */
-    while ((c = *str++)) {
-        hash = hash * 33 + c ;
-    }
-    up = hash;
-    return up;
+    return _dwarf_string_hashfunc(str);
 }
 
 
@@ -340,10 +347,10 @@ common_init(Dwarf_P_Debug dbg, Dwarf_Unsigned flags, const char *abiname,
 
     /* For .debug_str creation. */
     dwarf_initialize_search_hash(&dbg->de_debug_str_hashtab,
-        simple_string_hashfunc,0);
+        key_simple_string_hashfunc,0);
     dbg->de_debug_default_str_form = DW_FORM_string;
     dwarf_initialize_search_hash(&dbg->de_debug_line_str_hashtab,
-        simple_string_hashfunc,0);
+        key_simple_string_hashfunc,0);
 
     /* FIXME: conditional on the DWARF version target,
         dbg->de_output_version. */

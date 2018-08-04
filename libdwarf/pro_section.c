@@ -2515,7 +2515,6 @@ verify_ab_no_dups(struct Dwarf_Sort_Abbrev_s *sortab,
     for(k = 0; k < attrcount; ++k,++ab) {
         if (k) {
             if (preva >= ab->dsa_attr) {
-printf("dadebug attr 0x%x 0x%x num %d count %d line %d\n",preva,ab->dsa_attr,k,attrcount,__LINE__);
                 return DW_DLV_ERROR;
             }
         }
@@ -2566,9 +2565,6 @@ _dwarf_pro_getabbrev(Dwarf_P_Debug dbg,
     int attrcount = die->di_n_attr;
 
     curabbrev = head;
-#if 0
-    print_curabbrev(" loop in pro_getabbref, attr count ",curabbrev);
-#endif
     /*  Loop thru the currently known abbreviations needed
         to see if we can share an existing abbrev.  */
     while (curabbrev) {
@@ -2584,8 +2580,8 @@ _dwarf_pro_getabbrev(Dwarf_P_Debug dbg,
                 forms. */
             curattr = die->di_attrs;
             match = _dwarf_pro_match_attr(curattr,
-                    curabbrev,
-                    (int) curabbrev->abb_n_attr);
+                curabbrev,
+                (int) curabbrev->abb_n_attr);
             if (match == 1) {
                 /*  This tag/children/abbrev-list matches
                     the incoming die needs exactly. Reuse
@@ -2637,7 +2633,6 @@ _dwarf_pro_getabbrev(Dwarf_P_Debug dbg,
         k = 0;
         res = verify_ab_no_dups(sortab,attrcount);
         if (res != DW_DLV_OK) {
-printf("dadebug line %d\n",__LINE__);
             DWARF_P_DBG_ERROR(dbg,DW_DLE_DUP_ATTR_ON_DIE,DW_DLV_ERROR);
         }
         for( ; k < attrcount; ++k,++ap) {
@@ -2705,7 +2700,7 @@ generate_debuginfo_header_2(Dwarf_P_Debug dbg,
         /* This for a dwarf-standard 64bit offset. */
         du = DISTINGUISHED_VALUE;
         WRITE_UNALIGNED(dbg, (void *) data,
-                (const void *) &du, sizeof(du), extension_size);
+            (const void *) &du, sizeof(du), extension_size);
         data += extension_size;
     }
     abbr_off_ptr = data;
@@ -2741,7 +2736,7 @@ generate_debuginfo_header_2(Dwarf_P_Debug dbg,
     return DW_DLV_OK;
 }
 
-/*  DWARF 2,3,4  */
+/*  DWARF 5 */
 static int
 generate_debuginfo_header_5(Dwarf_P_Debug dbg,
     unsigned       *abbrev_offset_io,
@@ -2772,12 +2767,12 @@ generate_debuginfo_header_5(Dwarf_P_Debug dbg,
     cu_header_size = abbrev_offset + offset_size;
 
     GET_CHUNK_ERR(dbg, elfsectno_of_debug_info, data, cu_header_size,
-            error);
+        error);
     if (extension_size) {
         /* Impossible in DW5, really, is for IRIX64. But we allow it. */
         du = DISTINGUISHED_VALUE;
         WRITE_UNALIGNED(dbg, (void *) data,
-                (const void *) &du, sizeof(du), extension_size);
+            (const void *) &du, sizeof(du), extension_size);
         data += extension_size;
     }
     abbr_off_ptr = data;
@@ -2830,9 +2825,6 @@ write_out_debug_abbrev(Dwarf_P_Debug dbg,
     int res = 0;
     int abbrevsectno = dbg->de_elf_sects[DEBUG_ABBREV];
 
-#if 0
-    print_curabbrev(" loop in write abbrev",curabbrev);
-#endif
     while (curabbrev) {
         int idx = 0;
         unsigned lebcount = 0;
@@ -2918,12 +2910,10 @@ sort_die_attrs(Dwarf_P_Debug dbg,Dwarf_P_Die die,
         ap->dsa_attrp = at;
         ++ct;
     }
-/*printf("dadebug sort_die_attrs counted %u line %d\n",ct,__LINE__); */
     qsort(sortab,attrcount,sizeof(struct Dwarf_Sort_Abbrev_s),
         abcompare);
     res = verify_ab_no_dups(sortab,attrcount);
     if (res != DW_DLV_OK) {
-printf("dadebug line %d\n",__LINE__);
         DWARF_P_DBG_ERROR(dbg, DW_DLE_DUP_ATTR_ON_DIE, DW_DLV_ERROR);
     }
     ap = sortab;
@@ -3092,7 +3082,6 @@ _dwarf_pro_generate_debuginfo(Dwarf_P_Debug dbg,
             /* DW_DLV_NO_ENTRY is impossible. */
             return cres;
         }
-
         /*  Find or create a final abbrev record for the
             debug_abbrev section we will write (below). */
         cres  = _dwarf_pro_getabbrev(dbg,curdie, abbrev_head,&curabbrev,
@@ -3100,9 +3089,6 @@ _dwarf_pro_generate_debuginfo(Dwarf_P_Debug dbg,
         if (cres != DW_DLV_OK) {
             return cres;
         }
-#if 0
-        print_curabbrev(" loop in generate_debuginfo ",curabbrev);
-#endif
         if (abbrev_head == NULL) {
             n_abbrevs = 1;
             curabbrev->abb_idx = n_abbrevs;
@@ -3136,14 +3122,6 @@ _dwarf_pro_generate_debuginfo(Dwarf_P_Debug dbg,
         die_off += nbytes;
 
         curattr = curdie->di_attrs;
-#if 0
-/* dadebug */
-        for (i = 0; i < (int)curabbrev->abb_n_attr; i++) {
-        printf("dadebug curabbrev %d attrptr 0x%lx\n",(int)i,
-            (unsigned long)curabbrev->abb_attrs[i]);
-        }
-/* dadebug */
-#endif
         /*  The abbrev and DIE attr lists match, so the die
             abbrevs are in the correct order,
             curdie->di_attrs.  */

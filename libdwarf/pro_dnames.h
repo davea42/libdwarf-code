@@ -26,10 +26,54 @@
 
 */
 
+/*  The numbers here are almost all 32 bits.
+    Not long  long ever.
+    In the public function interfaces we'll use Dwarf_Unsigned though,
+    for call consistency with everything else.  */
+
+typedef Dwarf_ufixed dn_type;
+
+struct Dwarf_P_Dnames_Head_s {
+    Dwarf_Unsigned dh_unit_length;
+    unsigned       dh_version;
+    dn_type dh_comp_unit_count;
+    dn_type dh_local_type_unit_count;
+    dn_type dh_foreign_type_unit_count;
+    dn_type dh_bucket_count;
+    dn_type dh_name_count;
+    dn_type dh_abbrev_table_size;
+    dn_type dh_augmentation_string_size;
+    const char *   dh_augmentation_string;
+};
+
+struct Dwarf_P_Dnames_uarray_s {
+    dn_type  dne_allocated;
+    dn_type  dne_used;
+    dn_type  *dne_values;
+};
+struct Dwarf_P_Dnames_sarray_s {
+    dn_type     dne_allocated;
+    dn_type     dne_used;
+    Dwarf_Sig8 *dne_values;
+};
+
 
 struct Dwarf_P_Dnames_s {
-    Dwarf_Small dn_create_section;   
-    /*  Other data needed to really
-        create anything but empty
-        section, FIXME */
+    Dwarf_Small dn_create_section;
+    struct Dwarf_P_Dnames_Head_s dn_header;
+    struct Dwarf_P_Dnames_uarray_s dn_cunit_offset;
+    struct Dwarf_P_Dnames_uarray_s dn_tunit_offset;
+    struct Dwarf_P_Dnames_sarray_s dn_sunit_sigs;
+
+    struct Dwarf_P_Dnames_uarray_s dn_buckets;
+
+    /* Hashes count applies to string offsets and entry offsets arrays too. */
+    struct Dwarf_P_Dnames_uarray_s dn_hashes;
+    struct Dwarf_P_Dnames_uarray_s dn_string_offsets;
+    struct Dwarf_P_Dnames_uarray_s dn_entry_pool;
+
+    Dwarf_Small *dn_index_entry_pool;
+    Dwarf_Small  dn_index_entry_pool_size;
+    Dwarf_Small  dn_index_entry_pool_used;
+
 };

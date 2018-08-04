@@ -726,7 +726,7 @@ _dwarf_get_abbrev_for_code(Dwarf_CU_Context cu_context, Dwarf_Unsigned code,
 
             We also stop looking if the block/section ends,
             though the DWARF2 and later standards do not specifically
-            allow section/block end to terminate an abbreviations 
+            allow section/block end to terminate an abbreviations
             list. */
 
     } while ((abbrev_ptr < end_abbrev_ptr) &&

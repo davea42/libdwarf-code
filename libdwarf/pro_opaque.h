@@ -472,8 +472,8 @@ struct Dwarf_P_Debug_s {
     Dwarf_P_Arange de_last_arange;
     Dwarf_Sword de_arange_count;
 
-    /* debug_names  de_dnames is base of dnames info
-       before disk form */
+    /*  debug_names  de_dnames is base of dnames info
+        before disk form */
     Dwarf_P_Dnames de_dnames;
     Dwarf_P_Section_Data de_dnames_sect;
 

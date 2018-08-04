@@ -1,3 +1,11 @@
+2018-08-04 David Anderson
+    * dwarf_util.h: Remove trailing whitespace.
+    * pro_dnames.h: Preliminary structs for writing .debug_names
+    * pro_section.c: Corrected a comment. Removed some debug
+      code. Fixed indent mistakes.
+    * pro_opaque.h: Fixed indent error.
+    * pro_init.c: Extracted Bernstein hash into its own function.
+      Fixed indent errors.
 2018-08-02 David Anderson
     * libdwarf_version.h: Updated version date.
     * pro_section.c: #if 0 or comment out
