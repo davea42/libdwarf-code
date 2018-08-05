@@ -377,8 +377,8 @@ print_gdb_index(Dwarf_Debug dbg)
     Dwarf_Unsigned constant_pool_offset = 0;
     Dwarf_Unsigned section_size = 0;
     Dwarf_Unsigned unused = 0;
+    const char *section_name = 0; /* unused */
     Dwarf_Error error = 0;
-    const char *section_name = 0;
     Dwarf_Unsigned culist_len = 0;
 
     int res = 0;
@@ -403,13 +403,19 @@ print_gdb_index(Dwarf_Debug dbg)
             say nothing. */
         return;
     }
-    if (!section_name || !*section_name) {
-        section_name = ".gdb_index";
-    }
-    printf("\n%s\n",section_name);
-    if( res == DW_DLV_ERROR) {
-        print_error(dbg,"dwarf_gdbindex_header",res,error);
+    if(res == DW_DLV_ERROR) {
+        printf("\n%s\n",".gdb_index not readable, error.");
         return;
+    }
+    {
+        struct esb_s truename;
+        char buf[40];
+
+        esb_constructor_fixed(&truename,buf,sizeof(buf));
+        get_true_section_name(dbg,".gdb_index",
+            &truename,TRUE);
+        printf("\n%s\n",sanitized(esb_get_string(&truename)));
+        esb_destructor(&truename);
     }
 
     printf("  Version             : "

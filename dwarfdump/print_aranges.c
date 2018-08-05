@@ -136,13 +136,14 @@ print_aranges(Dwarf_Debug dbg)
 
     glflags.current_section_id = DEBUG_ARANGES;
     if (glflags.gf_do_print_dwarf) {
-        const char *sec_name = 0;
-        ares = dwarf_get_aranges_section_name(dbg,
-            &sec_name,&pa_error);
-        if (ares != DW_DLV_OK || !sec_name || !strlen(sec_name)) {
-            sec_name = ".debug_aranges";
-        }
-        printf("\n%s\n",sanitized(sec_name));
+        struct esb_s truename;
+        char buf[40];
+
+        esb_constructor_fixed(&truename,buf,sizeof(buf));
+        get_true_section_name(dbg,".debug_aranges",
+            &truename,TRUE);
+        printf("\n%s\n",sanitized(esb_get_string(&truename)));
+        esb_destructor(&truename);
     }
     ares = dwarf_get_aranges(dbg, &arange_buf, &count, &pa_error);
     if (ares == DW_DLV_ERROR) {

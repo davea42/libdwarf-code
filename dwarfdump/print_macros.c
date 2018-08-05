@@ -160,7 +160,14 @@ print_macinfo_by_offset(Dwarf_Debug dbg,Dwarf_Unsigned offset)
 
     memset(&counts, 0, sizeof(counts));
     if (glflags.gf_do_print_dwarf) {
-        printf("\n.debug_macinfo\n");
+        struct esb_s truename;
+        char buf[40];
+
+        esb_constructor_fixed(&truename,buf,sizeof(buf));
+        get_true_section_name(dbg,".debug_macinfo",
+            &truename,TRUE);
+        printf("\n%s\n",sanitized(esb_get_string(&truename)));
+        esb_destructor(&truename);
         printf("\n");
         printf("compilation-unit .debug_macinfo offset "
             "0x%" DW_PR_XZEROS DW_PR_DUx "\n",offset);

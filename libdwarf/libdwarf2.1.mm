@@ -8,7 +8,7 @@
 .nr Hb 5
 \." ==============================================
 \." Put current date in the following at each rev
-.ds vE rev 2.64, May 12, 2018
+.ds vE rev 2.65, August 5, 2018
 \." ==============================================
 \." ==============================================
 .ds | |
@@ -1977,6 +1977,55 @@ except
 is missing the groupnumber argument so
 DWARF5 split dwarf objects cannot be
 fully handled.
+
+.H 3 "dwarf_get_real_section_name()"
+.DS
+\f(CWint dwarf_get_real_section_name( Dwarf_Debug dbg,
+    const char  * std_section_name,
+    const char ** actual_sec_name_out,
+    Dwarf_Small * marked_compressed,
+    Dwarf_Small * marked_shf_compressed,
+    Dwarf_Error * error);
+.DE
+FIXME
+Elf sections are sometimes compressed to reduce the disk
+footprint of the sections.
+It's sometimes interesting to library users
+what the real name was in the object file and whether it
+was compressed.  Libdwarf uncompresses such sections
+automatically.
+It's not usually necessary to know the true name or
+anything about compression.
+.P
+\f(CW
+\fP 
+The caller passes in a  
+\f(CWDwarf_Debug\fP 
+pointer
+and a standard section name such as ".debug_info" .
+On success the function returns (through the
+other arguments) the true section name and a
+flag which, if non-zero means the section was compressed
+and a flag which, if non-zero means the section had
+the Elf section flag SHF_COMPRESSED set.
+The caller must ensure that the memory pointed to
+by 
+\f(CWactual_sec_name_out\fP, 
+\f(CWmarked_compressed\fP, and 
+\f(CWmarked_shf_compressed\fP 
+is zero at the point of call.
+.P
+If the section name passed in is not used by libdwarf
+for this object file
+the function returns
+\f(CWDW_DLV_NO_ENTRY\fP 
+.P
+On error the function returns 
+\f(CWDW_DLV_ERROR\fP.
+.P
+The string pointed to by 
+\f(CW*actual_sec_name_out\fP
+must not be free()d.
 
 .H 2 "Section Group Operations"
 The section group data is essential information

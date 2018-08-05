@@ -208,6 +208,7 @@ get_basic_section_data(Dwarf_Debug dbg,
         secdata->dss_addralign = addralign;
         if (flags & SHF_COMPRESSED) {
             secdata->dss_requires_decompress = TRUE;
+            secdata->dss_shf_compressed = TRUE;
         }
     }
     return DW_DLV_OK;
@@ -239,6 +240,7 @@ static int
 add_debug_section_info(Dwarf_Debug dbg,
     /* Name as seen in object file. */
     const char *name,
+    const char *standard_section_name,
     unsigned obj_sec_num,
     struct Dwarf_Section_s *secdata,
     unsigned groupnum,
@@ -264,7 +266,8 @@ add_debug_section_info(Dwarf_Debug dbg,
         debug_section->ds_number = obj_sec_num;
         debug_section->ds_secdata = secdata;
         debug_section->ds_groupnumber =  groupnum;
-        secdata->dss_name = name;
+        secdata->dss_name = name; /* Actual name from object file. */
+        secdata->dss_standard_name = standard_section_name;
         secdata->dss_number = obj_sec_num;
         secdata->dss_requires_decompress = havezdebug;
         debug_section->ds_duperr = duperr;
@@ -314,17 +317,20 @@ all_sig8_bits_zero(Dwarf_Sig8 *val)
 /* Return DW_DLV_OK etc. */
 static int
 set_up_section(Dwarf_Debug dbg,
-   /* Section name from object format. */
-   const char *secname,
-   /* Section number from object format  */
-   unsigned obj_sec_num,
-   /* The name associated with this secdata in libdwarf */
-   const char *targname,
-   /* DW_GROUPNUMBER_ANY or BASE or DWO or some other group num */
-   unsigned  groupnum_of_sec,
-   struct Dwarf_Section_s *secdata,
-   int duperr,int emptyerr,int have_dwarf,
-   int *err)
+    /*  Section name from object format.
+        Might start with .zdebug not .debug if compressed section. */
+    const char *secname,
+    /*  Standard section name, such as .debug_info */
+    const char *sec_standard_name,
+    /*  Section number from object format  */
+    unsigned obj_sec_num,
+    /*  The name associated with this secdata in libdwarf */
+    const char *targname,
+    /*  DW_GROUPNUMBER_ANY or BASE or DWO or some other group num */
+    unsigned  groupnum_of_sec,
+    struct Dwarf_Section_s *secdata,
+    int duperr,int emptyerr,int have_dwarf,
+    int *err)
 {
     /*  Here accomodate the .debug or .zdebug version, (and of
         course non- .debug too, but those never zlib) .
@@ -380,6 +386,7 @@ set_up_section(Dwarf_Debug dbg,
         int sectionerr = 0;
 
         sectionerr = add_debug_section_info(dbg,secname,
+            sec_standard_name,
             obj_sec_num,
             secdata,
             groupnum_of_sec,
@@ -396,7 +403,9 @@ set_up_section(Dwarf_Debug dbg,
 #define SET_UP_SECTION(mdbg,mname,mtarg,mgrp,minfo,me1,me2,mdw,mer) \
     {                                           \
     int lerr = 0;                               \
-    lerr =  set_up_section(mdbg, mname,         \
+    lerr =  set_up_section(mdbg,                \
+        mname,  /* actual section name */       \
+        mtarg,    /* std section name */        \
         /* scn_number from macro use context */ \
         scn_number,mtarg,mgrp,                  \
         minfo,                                  \
@@ -797,6 +806,7 @@ insert_sht_list_in_group_map(Dwarf_Debug dbg,
     secdata.dss_group_number = 1; /* arbitrary. */
     secdata.dss_index = section_number;
     secdata.dss_name = ".group";
+    secdata.dss_standard_name = ".group";
     secdata.dss_number = section_number;
     res = _dwarf_load_section(dbg,&secdata,error);
     if (res != DW_DLV_OK) {

@@ -33,6 +33,7 @@
 #include "globals.h"
 #include "naming.h"
 #include "dwconf.h"
+#include "sanitized.h"
 #include "esb.h"
 
 #include "print_sections.h"
@@ -78,7 +79,14 @@ print_abbrevs(Dwarf_Debug dbg)
     glflags.current_section_id = DEBUG_ABBREV;
 
     if (glflags.gf_do_print_dwarf) {
-        printf("\n.debug_abbrev\n");
+        struct esb_s truename;
+        char buf[40];
+        
+        esb_constructor_fixed(&truename,buf,sizeof(buf));
+        get_true_section_name(dbg,".debug_abbrev", 
+            &truename,TRUE);
+        printf("\n%s\n",sanitized(esb_get_string(&truename)));
+        esb_destructor(&truename);
     }
     while ((abres = dwarf_get_abbrev(dbg, offset, &ab,
         &length, &abbrev_entry_count, &paerr)) == DW_DLV_OK) {

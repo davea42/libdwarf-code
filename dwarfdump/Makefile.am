@@ -175,6 +175,7 @@ sanitized.h \
 section_bitmaps.c \
 section_bitmaps.h \
 strstrnocase.c \
+true_section_name.c \
 uri.c \
 uri.h \
 warningcontrol.h
@@ -182,7 +183,7 @@ warningcontrol.h
 dwarfdump_CPPFLAGS =  -I$(top_srcdir)/libdwarf \
 -I$(top_builddir)/libdwarf
 
-dwarfdump_CFLAGS =  
+dwarfdump_CFLAGS = "-DCONFPREFIX=@prefix@/share/dwarfdump" 
 
 dwarfdump_LDADD = \
 $(top_builddir)/libdwarf/libdwarf.la \
@@ -191,6 +192,9 @@ $(top_builddir)/libdwarf/libdwarf.la \
 TESTS = ./runtests.sh
 
 man_MANS = dwarfdump.1
+
+dwarfdumpdevdir = $(datadir)/dwarfdump
+dwarfdumpdev_DATA = dwarfdump.conf
 
 EXTRA_DIST = \
 $(man_MANS) \

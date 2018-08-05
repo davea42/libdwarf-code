@@ -1,3 +1,13 @@
+2018-08-05 David Anderson
+    * libdwarf_version.h: Updated version string.
+    * dwarf_errmsg_list.h: Support the new error code.
+    * dwarf_opaque.h: Fields to support dwarf_get_real_section_name().
+    * dwarf_die_deliv.c: Implements dwarf_get_real_section_name().
+    * dwarf_init_finish.c: Changes to support dwarf_get_real_section_name().
+    * libdwarf.h.in: Declare dwarf_get_real_section_name(). Add
+      a new error code.
+    * libdwarf2.1.mm: Document dwarf_get_real_section_name().
+    * libdwarf2.1.pdf: Regenerate. Version 2.65.
 2018-08-04 David Anderson
     * dwarf_util.h: Remove trailing whitespace.
     * pro_dnames.h: Preliminary structs for writing .debug_names

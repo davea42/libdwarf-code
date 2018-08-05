@@ -29,6 +29,7 @@
 #include "naming.h"
 #include "dwconf.h"
 #include "esb.h"
+#include "sanitized.h"
 
 #include "print_sections.h"
 
@@ -50,9 +51,16 @@ print_weaknames(Dwarf_Debug dbg)
     if (!glflags.gf_do_print_dwarf) {
         return;
     }
-    /*  No need to get the real section name, this
-        section not used in modern compilers. */
-    printf("\n.debug_weaknames\n");
+    {
+        struct esb_s truename;
+        char buf[40];
+
+        esb_constructor_fixed(&truename,buf,sizeof(buf));
+        get_true_section_name(dbg,".debug_weaknames",
+            &truename,TRUE);
+        printf("\n%s\n",sanitized(esb_get_string(&truename)));
+        esb_destructor(&truename);
+    }
     wkres = dwarf_get_weaks(dbg, &weaknamebuf, &count, &err);
     if (wkres == DW_DLV_ERROR) {
         print_error(dbg, "dwarf_get_weaks", wkres, err);

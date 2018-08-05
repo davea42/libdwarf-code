@@ -30,6 +30,7 @@ v Portions Copyright 2009-2011 SN Systems Ltd. All rights reserved.
 #include "dwconf.h"
 #include "esb.h"
 #include "print_sections.h"
+#include "sanitized.h"
 
 /*  This unifies the code for some error checks to
     avoid code duplication.
@@ -185,9 +186,13 @@ print_pubnames(Dwarf_Debug dbg)
 
     glflags.current_section_id = DEBUG_PUBNAMES;
     if (glflags.gf_do_print_dwarf) {
-        /*  No need to get the real section name, this
-            section not used in modern compilers. */
-        printf("\n.debug_pubnames\n");
+        struct esb_s truename;
+        char buf[40];
+
+        esb_constructor_fixed(&truename,buf,sizeof(buf));
+        get_true_section_name(dbg,".debug_pubnames",
+            &truename,TRUE);
+        printf("\n%s\n",sanitized(esb_get_string(&truename)));
     }
     get_address_size_and_max(dbg,0,&elf_max_address,&err);
     res = dwarf_get_globals(dbg, &globbuf, &count, &err);

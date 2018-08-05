@@ -1,3 +1,13 @@
+2018-08-05:
+  dwarfdump.conf is now installed by make install
+  in <install prefix>/shared/libdwarf/dwarfdump  .
+  Any  dwarfdump.conf or .dwarfdump.conf in your
+  $HOME directory will be found before the
+  one in shared.  The file is only opened when
+  one wants a more accurate register naming in frame
+  reports (the default is just to name things r54 
+  etc, choosing the right abi with -x abi=<something>
+  can be helpful at times).
 2018-06-24:
   The configure has been completely rewritten to follow
   current standards and practices. For simple builds

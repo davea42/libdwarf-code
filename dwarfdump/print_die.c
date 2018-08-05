@@ -652,31 +652,37 @@ print_one_die_section(Dwarf_Debug dbg,Dwarf_Bool is_info,
     int   cu_count = 0;
     char * cu_short_name = NULL;
     char * cu_long_name = NULL;
-    const char * section_name = 0;
     int res = 0;
     Dwarf_Off dieprint_cu_goffset = 0;
 
     glflags.current_section_id = is_info?DEBUG_INFO:DEBUG_TYPES;
-    res = dwarf_get_die_section_name(dbg, is_info,
-        &section_name,pod_err);
-    if (res == DW_DLV_NO_ENTRY) {
-        /*  The section is absent. Print nothing for now  FIXME
-            unless is_info (just to match previous practice) FIXME . */
-        if (!is_info) {
-            return DW_DLV_NO_ENTRY;
-        }
-    }
-    if (res != DW_DLV_OK) {
-        if(!section_name || !strlen(section_name)) {
-            if (is_info) {
-                section_name = ".debug_info";
-            } else  {
-                section_name = ".debug_types";
-            }
+    {
+        const char * test_section_name = 0;
+        res = dwarf_get_die_section_name(dbg,is_info,
+            &test_section_name,pod_err);
+        if (res == DW_DLV_NO_ENTRY) {
+           if(!is_info) {
+               /*  No .debug_types. Do not print .debug_types
+                   name */
+               return DW_DLV_NO_ENTRY;
+           }
         }
     }
     if (print_as_info_or_cu() && glflags.gf_do_print_dwarf) {
-        printf("\n%s\n",sanitized(section_name));
+        const char * section_name = 0;
+        struct esb_s truename;
+        char buf[40];
+
+        if (is_info) {
+            section_name = ".debug_info";
+        } else  {
+            section_name = ".debug_types";
+        }
+        esb_constructor_fixed(&truename,buf,sizeof(buf));
+        get_true_section_name(dbg,section_name,
+            &truename,TRUE);
+        printf("\n%s\n",sanitized(esb_get_string(&truename)));
+        esb_destructor(&truename);
     }
 
     /* Loop until it fails.  */
@@ -1754,14 +1760,14 @@ print_ranges_list_to_extra(Dwarf_Debug dbg,
     const char * sec_name = 0;
     Dwarf_Signed i = 0;
     Dwarf_Error err =0;
+    struct esb_s truename;
+    char buf[40];
 
-
-    res = dwarf_get_ranges_section_name(dbg,&sec_name,&err);
-    if(res != DW_DLV_OK ||  !sec_name || !strlen(sec_name)) {
-        sec_name = ".debug_ranges";
-    }
-
-   if (glflags.dense) {
+    esb_constructor_fixed(&truename,buf,sizeof(buf));
+    get_true_section_name(dbg,".debug_ranges",
+            &truename,TRUE);
+    sec_name = esb_get_string(&truename);
+    if (glflags.dense) {
 #ifdef ORIGINAL_SPRINTF
         snprintf(tmp,sizeof(tmp),
             "< ranges: %" DW_PR_DSd " ranges at %s offset %"
@@ -1839,6 +1845,7 @@ print_ranges_list_to_extra(Dwarf_Debug dbg,
 #endif
         }
     }
+    esb_destructor(&truename);
 }
 
 static void

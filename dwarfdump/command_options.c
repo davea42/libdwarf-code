@@ -174,6 +174,13 @@ static const char *usage_debug_text[] = {
     The HOME strings here are transformed in
     dwconf.c to reference the environment
     variable $HOME .
+
+    As of August 2018 CONFPREFIX is always set as it
+    comes from autoconf --prefix, aka  $prefix
+    which defaults to /usr/local
+
+    The install puts the .conf file in
+    CONFPREFIX/dwarfdump/
 */
 static char *config_file_defaults[] = {
     "dwarfdump.conf",
@@ -181,14 +188,16 @@ static char *config_file_defaults[] = {
     "HOME/.dwarfdump.conf",
     "HOME/dwarfdump.conf",
 #ifdef CONFPREFIX
-/* See Makefile.in  "libdir"  and CFLAGS  */
+/* See Makefile.am dwarfdump_CFLAGS. This prefix
+    is the --prefix option (defaults to /usr/local
+    and Makefile.am adds /share/dwarfdump ) */
 /* We need 2 levels of macro to get the name turned into
    the string we want. */
 #define STR2(s) # s
 #define STR(s)  STR2(s)
-    STR(CONFPREFIX)
-        "/dwarfdump.conf",
+    STR(CONFPREFIX) "/dwarfdump.conf",
 #else
+    /*  This no longer used as of August 2018. */
     "/usr/lib/dwarfdump.conf",
 #endif
     0
@@ -1133,7 +1142,8 @@ process_args(int argc, char *argv[])
     }
     if (config_file_abi &&
         (glflags.gf_frame_flag || glflags.gf_eh_frame_flag)) {
-        int res = find_conf_file_and_read_config(
+        int res = 0;
+        res = find_conf_file_and_read_config(
             esb_get_string(glflags.config_file_path),
             config_file_abi,
             config_file_defaults,

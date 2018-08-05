@@ -29,6 +29,7 @@
 #include "naming.h"
 #include "dwconf.h"
 #include "esb.h"
+#include "sanitized.h"
 
 /* print data in .debug_str_offsets.
    There is no guarantee this will work because
@@ -86,7 +87,14 @@ print_str_offsets_section(Dwarf_Debug dbg)
             return;
         }
         if (tabnum == 0) {
-            printf("\n.debug_str_offsets\n");
+            struct esb_s truename;
+            char buf[40];
+
+            esb_constructor_fixed(&truename,buf,sizeof(buf));
+            get_true_section_name(dbg,".debug_str_offsets",
+                &truename,TRUE);
+            printf("\n%s\n",sanitized(esb_get_string(&truename)));
+            esb_destructor(&truename);
         } else {
             printf("\n");
         }

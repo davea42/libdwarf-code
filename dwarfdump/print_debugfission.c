@@ -102,7 +102,16 @@ print_debugfission_index(Dwarf_Debug dbg,const char *type)
     if(!section_name || !*section_name) {
         section_name = (is_cu?".debug_cu_index":".debug_tu_index");
     }
-    printf("\n%s\n",sanitized(section_name));
+    {
+        struct esb_s truename;
+        char buf[40];
+
+        esb_constructor_fixed(&truename,buf,sizeof(buf));
+        get_true_section_name(dbg,section_name,
+            &truename,TRUE);
+        printf("\n%s\n",sanitized(esb_get_string(&truename)));
+        esb_destructor(&truename);
+    }
     printf("  Version:           %" DW_PR_DUu "\n",
         version_number);
     printf("  Number of columns: %" DW_PR_DUu "\n",

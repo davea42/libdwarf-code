@@ -38,7 +38,6 @@ print_debug_names(Dwarf_Debug dbg)
     Dwarf_Unsigned dn_count = 0;
     Dwarf_Unsigned dnindex = 0;
     Dwarf_Error error = 0;
-    const char * section_name = ".debug_names";
     int res = 0;
 
     if(!dbg) {
@@ -55,14 +54,22 @@ print_debug_names(Dwarf_Debug dbg)
     if (res == DW_DLV_NO_ENTRY) {
         return;
     }
-    /* Do nothing if not printing. */
-    if (glflags.gf_do_print_dwarf) {
-        printf("\n%s\n",sanitized(section_name));
-    }
     if (res == DW_DLV_ERROR) {
         const char *msg = "Section .debug_names is not openable"; 
         print_error(dbg,msg, res, error);
         return;
+    }
+    /* Do nothing if not printing. */
+    if (glflags.gf_do_print_dwarf) {
+        const char * section_name = ".debug_names";
+        struct esb_s truename;
+        char buf[40];
+
+        esb_constructor_fixed(&truename,buf,sizeof(buf));
+        get_true_section_name(dbg,".debug_abbrev",
+            &truename,TRUE);
+        printf("\n%s\n",sanitized(esb_get_string(&truename)));
+        esb_destructor(&truename);
     }
     if (glflags.gf_do_print_dwarf) {
         printf("names tables: %" DW_PR_DUu "\n",dn_count);

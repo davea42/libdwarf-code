@@ -338,9 +338,10 @@ struct Dwarf_Section_s {
     /*  Pointer to the elf symtab, used for elf .rela. Leave it 0
         if not relevant. */
     struct Dwarf_Section_s *dss_symtab;
-    /*  dss_name must never be freed, it is a quoted string
-        in libdwarf. */
+    /*  dss_name, dss_standard_name must never be freed, 
+        they are static strings in libdwarf. */
     const char * dss_name;
+    const char * dss_standard_name;
 
     /* Object section number in object file. */
     unsigned dss_number;
@@ -351,6 +352,7 @@ struct Dwarf_Section_s {
         Dwarf_Obj_Access_Section_s.  */
     Dwarf_Word  dss_flags;
     Dwarf_Word  dss_addralign;
+    Dwarf_Small dss_shf_compressed;
 };
 
 /*  Overview: if next_to_use== first, no error slots are used.

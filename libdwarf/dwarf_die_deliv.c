@@ -2199,6 +2199,57 @@ dwarf_die_abbrev_global_offset(Dwarf_Die die,
 }
 
 
+/*  New August 2018.
+    Because some real compressed sections
+    have .zdebug instead
+    of .debug as the leading characters.
+    actual_sec_name_out points to a static
+    string so so not free it. */
+int
+dwarf_get_real_section_name(Dwarf_Debug dbg,
+    const char  *std_section_name,
+    const char **actual_sec_name_out,
+    Dwarf_Small *marked_compressed,
+    Dwarf_Small *marked_shf_compressed,
+    Dwarf_Error *error)
+{
+    struct Dwarf_dbg_sect_s *secdata;
+    struct Dwarf_Section_s *ds_secdata;
+    unsigned i = 0;
+    unsigned array_used = 0;
+    char tbuf[50];
+    unsigned std_sec_name_len = strlen(std_section_name);
+
+    /*  std_section_name never has the .dwo on the end,
+        so allow for that and allow one (arbitrarily) more. */
+    if ((std_sec_name_len + 5) < sizeof(tbuf)) {
+        strcpy(tbuf,std_section_name);
+        strcpy(tbuf+std_sec_name_len,".dwo");
+    }
+    if (dbg == NULL) {
+        _dwarf_error(NULL, error, DW_DLE_DBG_NULL);
+        return (DW_DLV_ERROR);
+    }
+    for (i=0; i < dbg->de_debug_sections_total_entries; i++) {
+        struct Dwarf_dbg_sect_s *sdata = &dbg->de_debug_sections[i];
+        struct Dwarf_Section_s *section = sdata->ds_secdata;
+        const char *std = section->dss_standard_name;
+
+        if (!strcmp(std,std_section_name) ||
+            !strcmp(std,tbuf)) {
+            const char *used = section->dss_name;
+            *actual_sec_name_out = used;
+            if (sdata->ds_have_zdebug) {
+                *marked_compressed = TRUE;
+            }
+            if (section->dss_shf_compressed) {
+                *marked_shf_compressed;
+            }
+            return DW_DLV_OK;
+        }
+    }
+    return DW_DLV_NO_ENTRY;
+}
 /*  This is useful when printing DIE data.
     The string pointer returned must not be freed.
     With non-elf objects it is possible the

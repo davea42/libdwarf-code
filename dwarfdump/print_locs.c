@@ -32,6 +32,7 @@
 
 #include "print_sections.h"
 #include "print_frames.h"
+#include "sanitized.h"
 
 /* print data in .debug_loc
    There is no guarantee this will work because we are assuming
@@ -86,10 +87,19 @@ print_locs(Dwarf_Debug dbg)
     }
     /*  No need to get the real section name, this
         print code not needed as cannot be safely used
-        and uses old interface. */
-    printf("\n.debug_loc");
+        and uses old interface. But we get the real one anyway. */
+    {
+        struct esb_s truename;
+        char buf[40];
 
-    printf("\nFormat <i o b e l>: "
+        esb_constructor_fixed(&truename,buf,sizeof(buf));
+        get_true_section_name(dbg,".debug_loc",
+            &truename,TRUE);
+        printf("\n%s\n",sanitized(esb_get_string(&truename)));
+        esb_destructor(&truename);
+    }
+
+    printf("Format <i o b e l>: "
         "index section-offset begin-addr end-addr length-of-block-entry\n");
     /*  Pre=October 2015 version. */
     while ((lres = dwarf_get_loclist_entry(dbg, offset,

@@ -45,15 +45,16 @@ print_strings(Dwarf_Debug dbg)
     Dwarf_Error err = 0;
 
     glflags.current_section_id = DEBUG_STR;
-    sres = dwarf_get_string_section_name(dbg,
-        &sec_name,&err);
-    if (sres == DW_DLV_ERROR) {
-        dwarf_dealloc(dbg,err,DW_DLA_ERROR);
+    {
+        struct esb_s truename;
+        char buf[40];
+
+        esb_constructor_fixed(&truename,buf,sizeof(buf));
+        get_true_section_name(dbg,".debug_str",
+            &truename,TRUE);
+        printf("\n%s\n",sanitized(esb_get_string(&truename)));
+        esb_destructor(&truename);
     }
-    if (sres != DW_DLV_OK ||  !sec_name || !strlen(sec_name)) {
-        sec_name = ".debug_str";
-    }
-    printf("\n%s\n",sanitized(sec_name));
     while ((sres = dwarf_get_str(dbg, offset, &name, &length, &err))
         == DW_DLV_OK) {
         if (glflags.gf_display_offsets) {

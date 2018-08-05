@@ -733,13 +733,22 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
     if (lres != DW_DLV_OK || !sec_name || !strlen(sec_name)) {
         sec_name = ".debug_line";
     }
+
     /* The offsets will be zero if it fails. Let it pass. */
     atres = dwarf_die_offsets(cu_die,&dieprint_cu_goffset,
         &cudie_local_offset,&err);
     DROP_ERROR_INSTANCE(dbg,atres,err);
 
     if (glflags.gf_do_print_dwarf) {
-        printf("\n%s: line number info for a single cu\n", sec_name);
+        struct esb_s truename;
+        char buf[40];
+
+        esb_constructor_fixed(&truename,buf,sizeof(buf));
+        get_true_section_name(dbg,".debug_line",
+            &truename,TRUE);
+        printf("\n%s: line number info for a single cu\n",
+            sanitized(esb_get_string(&truename)));
+        esb_destructor(&truename);
     } else {
         /* We are checking, not printing. */
         Dwarf_Half tag = 0;

@@ -25,13 +25,13 @@
 #include "naming.h"
 #include "dwconf.h"
 #include "esb.h"
-#include "sanitized.h"
 #include "uri.h"
 #include <ctype.h>
 #include <time.h>
 
 #include "print_sections.h"
 #include "macrocheck.h"
+#include "sanitized.h"
 
 static void
 print_source_intro(Dwarf_Die cu_die)
@@ -265,7 +265,6 @@ print_macros_5style_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die,
     int by_offset, Dwarf_Unsigned offset)
 {
     int lres = 0;
-    const char *sec_name = 0;
     Dwarf_Unsigned version = 0;
     Dwarf_Macro_Context macro_context = 0;
     Dwarf_Unsigned macro_unit_offset = 0;
@@ -308,19 +307,27 @@ print_macros_5style_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die,
     DROP_ERROR_INSTANCE(dbg,atres,err);
     add_macro_import(&macro_check_tree,is_primary, offset);
     add_macro_area_len(&macro_check_tree,offset,ops_total_byte_len);
-    lres = dwarf_get_macro_section_name(dbg,&sec_name,&err);
-    if (lres != DW_DLV_OK || !sec_name || !strlen(sec_name)) {
-        sec_name = ".debug_macro";
-    }
+
     if (glflags.gf_do_print_dwarf) {
+        struct esb_s truename;
+        char buf[40];
+
+        esb_constructor_fixed(&truename,buf,sizeof(buf));
+        get_true_section_name(dbg,".debug_macro",
+            &truename,TRUE);
+
         if(!by_offset) {
-            printf("\n%s: Macro info for a single cu\n", sec_name);
+            printf("\n%s: Macro info for a single cu\n", 
+                sanitized(esb_get_string(&truename)));
             print_source_intro(cu_die);
         } else {
             printf("\n%s: Macro info for imported CU at offset "
                 "0x%" DW_PR_XZEROS DW_PR_DUx
-                "\n", sec_name,offset);
+                "\n",
+                sanitized(esb_get_string(&truename)),
+                offset);
         }
+        esb_destructor(&truename);
     } else {
         /* We are checking, not printing. */
         Dwarf_Half tag = 0;

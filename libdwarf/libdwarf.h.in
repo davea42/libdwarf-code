@@ -1319,9 +1319,10 @@ struct Dwarf_Obj_Access_Interface_s {
 #define DW_DLE_STR_OFFSETS_ARRAY_INDEX_WRONG   407
 #define DW_DLE_STR_OFFSETS_EXTRA_BYTES         408
 #define DW_DLE_DUP_ATTR_ON_DIE                 409
+#define DW_DLE_SECTION_NAME_BIG                410
 
     /* LAST MUST EQUAL LAST ERROR NUMBER */
-#define DW_DLE_LAST        409
+#define DW_DLE_LAST        410
 
 #define DW_DLE_LO_USER     0x10000
 
@@ -1498,10 +1499,20 @@ dwarf_get_die_section_name(Dwarf_Debug /*dbg*/,
     Dwarf_Bool    /*is_info*/,
     const char ** /*sec_name*/,
     Dwarf_Error * /*error*/);
+
 int
 dwarf_get_die_section_name_b(Dwarf_Die /*die*/,
     const char ** /*sec_name*/,
     Dwarf_Error * /*error*/);
+
+int
+dwarf_get_real_section_name(Dwarf_Debug /*dbg*/,
+    const char * /*std_section_name*/,
+    const char ** /*actual_sec_name_out*/,
+    Dwarf_Small * /*marked_compressed*/,
+    Dwarf_Small * /*marked_shf_compressed*/,
+    Dwarf_Error * /*error*/);
+
 
 
 /*  dwarf_next_cu_header_d() traverses debug_types CU headers.

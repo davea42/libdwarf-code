@@ -1,3 +1,18 @@
+2018-08-05 David Anderson
+    * Makefile.am: Fixed dwarfdump_CFLAGS to set
+      CONFPREFIX 
+    * command_options.c Fixed config_file_defaults[]
+      to honor CONFPREFIX sensibly.
+    * globals.h: Declares get_true_section_name(), 
+      a new function/refactoring so section names print more
+      usefully.
+    * true_section_name.c: New. Implements get_true_section_name().
+    * print_abbrevs.c, print_aranges.c, print_debugfission.c,
+      print_die.c, print_dnames.c, print_frames.c, print_gdbindex.c,
+      print_lines.c, print_locs.c, print_macro.c, print_macros.c,
+      print_pubnames.c, print_ranges.c, print_static_funcs.c,
+      print_static_vars.c, print_str_offsets.c, print_strings.c,
+      print_types.c, print_weaknames.c.
 2018-08-02 David Anderson
     * Makefile.am: Removed unused variables and references
       to them.

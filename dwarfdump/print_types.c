@@ -32,6 +32,7 @@
 
 #include "print_sections.h"
 #include "print_frames.h"
+#include "sanitized.h"
 
 /* Get all the data in .debug_typenames or debug_pubtypes. */
 extern void
@@ -87,7 +88,6 @@ print_types(Dwarf_Debug dbg, enum type_type_e type_type)
         dealloctype = dwarf_types_dealloc;
     }
 
-
     gtres = get_types(dbg, &typebuf, &count, &err);
     if (gtres == DW_DLV_ERROR) {
         print_error(dbg, section_open_name, gtres, err);
@@ -95,11 +95,17 @@ print_types(Dwarf_Debug dbg, enum type_type_e type_type)
         /* no types */
     } else {
         Dwarf_Unsigned maxoff = get_info_max_offset(dbg);
+        struct esb_s truename;
+        char buf[40];
 
         /*  Before July 2005, the section name was printed
             unconditionally, now only prints if non-empty section really
             exists. */
-        printf("\n%s\n", section_name);
+        esb_constructor_fixed(&truename,buf,sizeof(buf));
+        get_true_section_name(dbg,section_name,
+            &truename,TRUE);
+        printf("\n%s\n",sanitized(esb_get_string(&truename)));
+        esb_destructor(&truename);
 
         for (i = 0; i < count; i++) {
             int tnres = 0;

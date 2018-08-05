@@ -17,6 +17,7 @@
 ###Copyright (C) 2018 Vincent Torri <vincent dot torri at gmail dot com
 ###This code is public domain and can be freely used or copied.
 
+
 VPATH = @srcdir@
 am__is_gnu_make = { \
   if test -z '$(MAKELEVEL)'; then \
@@ -107,7 +108,8 @@ mkinstalldirs = $(install_sh) -d
 CONFIG_HEADER = $(top_builddir)/config.h
 CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
-am__installdirs = "$(DESTDIR)$(bindir)" "$(DESTDIR)$(man1dir)"
+am__installdirs = "$(DESTDIR)$(bindir)" "$(DESTDIR)$(man1dir)" \
+	"$(DESTDIR)$(dwarfdumpdevdir)"
 PROGRAMS = $(bin_PROGRAMS) $(noinst_PROGRAMS)
 am_dwarfdump_OBJECTS = dwarfdump-addrmap.$(OBJEXT) \
 	dwarfdump-checkutil.$(OBJEXT) \
@@ -141,7 +143,8 @@ am_dwarfdump_OBJECTS = dwarfdump-addrmap.$(OBJEXT) \
 	dwarfdump-print_weaknames.$(OBJEXT) \
 	dwarfdump-sanitized.$(OBJEXT) \
 	dwarfdump-section_bitmaps.$(OBJEXT) \
-	dwarfdump-strstrnocase.$(OBJEXT) dwarfdump-uri.$(OBJEXT)
+	dwarfdump-strstrnocase.$(OBJEXT) \
+	dwarfdump-true_section_name.$(OBJEXT) dwarfdump-uri.$(OBJEXT)
 dwarfdump_OBJECTS = $(am_dwarfdump_OBJECTS)
 dwarfdump_DEPENDENCIES = $(top_builddir)/libdwarf/libdwarf.la
 AM_V_lt = $(am__v_lt_@AM_V@)
@@ -253,6 +256,7 @@ am__uninstall_files_from_dir = { \
 man1dir = $(mandir)/man1
 NROFF = nroff
 MANS = $(man_MANS)
+DATA = $(dwarfdumpdev_DATA)
 am__tagged_files = $(HEADERS) $(SOURCES) $(TAGS_FILES) $(LISP)
 # Read a list of newline-separated strings from the standard input,
 # and print each of them once, without duplicates.  Input order is
@@ -715,6 +719,7 @@ sanitized.h \
 section_bitmaps.c \
 section_bitmaps.h \
 strstrnocase.c \
+true_section_name.c \
 uri.c \
 uri.h \
 warningcontrol.h
@@ -722,13 +727,15 @@ warningcontrol.h
 dwarfdump_CPPFLAGS = -I$(top_srcdir)/libdwarf \
 -I$(top_builddir)/libdwarf
 
-dwarfdump_CFLAGS = 
+dwarfdump_CFLAGS = "-DCONFPREFIX=@prefix@/share/dwarfdump" 
 dwarfdump_LDADD = \
 $(top_builddir)/libdwarf/libdwarf.la \
 @DWARF_LIBS@
 
 TESTS = ./runtests.sh
 man_MANS = dwarfdump.1
+dwarfdumpdevdir = $(datadir)/dwarfdump
+dwarfdumpdev_DATA = dwarfdump.conf
 EXTRA_DIST = \
 $(man_MANS) \
 COPYING \
@@ -923,6 +930,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dwarfdump-sanitized.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dwarfdump-section_bitmaps.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dwarfdump-strstrnocase.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dwarfdump-true_section_name.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dwarfdump-uri.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tag_attr_build-common.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tag_attr_build-dwarf_names.Po@am__quote@
@@ -1528,6 +1536,20 @@ dwarfdump-strstrnocase.obj: strstrnocase.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dwarfdump_CPPFLAGS) $(CPPFLAGS) $(dwarfdump_CFLAGS) $(CFLAGS) -c -o dwarfdump-strstrnocase.obj `if test -f 'strstrnocase.c'; then $(CYGPATH_W) 'strstrnocase.c'; else $(CYGPATH_W) '$(srcdir)/strstrnocase.c'; fi`
 
+dwarfdump-true_section_name.o: true_section_name.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dwarfdump_CPPFLAGS) $(CPPFLAGS) $(dwarfdump_CFLAGS) $(CFLAGS) -MT dwarfdump-true_section_name.o -MD -MP -MF $(DEPDIR)/dwarfdump-true_section_name.Tpo -c -o dwarfdump-true_section_name.o `test -f 'true_section_name.c' || echo '$(srcdir)/'`true_section_name.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dwarfdump-true_section_name.Tpo $(DEPDIR)/dwarfdump-true_section_name.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='true_section_name.c' object='dwarfdump-true_section_name.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dwarfdump_CPPFLAGS) $(CPPFLAGS) $(dwarfdump_CFLAGS) $(CFLAGS) -c -o dwarfdump-true_section_name.o `test -f 'true_section_name.c' || echo '$(srcdir)/'`true_section_name.c
+
+dwarfdump-true_section_name.obj: true_section_name.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dwarfdump_CPPFLAGS) $(CPPFLAGS) $(dwarfdump_CFLAGS) $(CFLAGS) -MT dwarfdump-true_section_name.obj -MD -MP -MF $(DEPDIR)/dwarfdump-true_section_name.Tpo -c -o dwarfdump-true_section_name.obj `if test -f 'true_section_name.c'; then $(CYGPATH_W) 'true_section_name.c'; else $(CYGPATH_W) '$(srcdir)/true_section_name.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dwarfdump-true_section_name.Tpo $(DEPDIR)/dwarfdump-true_section_name.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='true_section_name.c' object='dwarfdump-true_section_name.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dwarfdump_CPPFLAGS) $(CPPFLAGS) $(dwarfdump_CFLAGS) $(CFLAGS) -c -o dwarfdump-true_section_name.obj `if test -f 'true_section_name.c'; then $(CYGPATH_W) 'true_section_name.c'; else $(CYGPATH_W) '$(srcdir)/true_section_name.c'; fi`
+
 dwarfdump-uri.o: uri.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dwarfdump_CPPFLAGS) $(CPPFLAGS) $(dwarfdump_CFLAGS) $(CFLAGS) -MT dwarfdump-uri.o -MD -MP -MF $(DEPDIR)/dwarfdump-uri.Tpo -c -o dwarfdump-uri.o `test -f 'uri.c' || echo '$(srcdir)/'`uri.c
 @am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dwarfdump-uri.Tpo $(DEPDIR)/dwarfdump-uri.Po
@@ -1856,6 +1878,27 @@ uninstall-man1:
 	} | sed -e 's,.*/,,;h;s,.*\.,,;s,^[^1][0-9a-z]*$$,1,;x' \
 	      -e 's,\.[0-9a-z]*$$,,;$(transform);G;s,\n,.,'`; \
 	dir='$(DESTDIR)$(man1dir)'; $(am__uninstall_files_from_dir)
+install-dwarfdumpdevDATA: $(dwarfdumpdev_DATA)
+	@$(NORMAL_INSTALL)
+	@list='$(dwarfdumpdev_DATA)'; test -n "$(dwarfdumpdevdir)" || list=; \
+	if test -n "$$list"; then \
+	  echo " $(MKDIR_P) '$(DESTDIR)$(dwarfdumpdevdir)'"; \
+	  $(MKDIR_P) "$(DESTDIR)$(dwarfdumpdevdir)" || exit 1; \
+	fi; \
+	for p in $$list; do \
+	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
+	  echo "$$d$$p"; \
+	done | $(am__base_list) | \
+	while read files; do \
+	  echo " $(INSTALL_DATA) $$files '$(DESTDIR)$(dwarfdumpdevdir)'"; \
+	  $(INSTALL_DATA) $$files "$(DESTDIR)$(dwarfdumpdevdir)" || exit $$?; \
+	done
+
+uninstall-dwarfdumpdevDATA:
+	@$(NORMAL_UNINSTALL)
+	@list='$(dwarfdumpdev_DATA)'; test -n "$(dwarfdumpdevdir)" || list=; \
+	files=`for p in $$list; do echo $$p; done | sed -e 's|^.*/||'`; \
+	dir='$(DESTDIR)$(dwarfdumpdevdir)'; $(am__uninstall_files_from_dir)
 
 ID: $(am__tagged_files)
 	$(am__define_uniq_tagged_files); mkid -fID $$unique
@@ -2106,9 +2149,9 @@ check-am: all-am
 	$(MAKE) $(AM_MAKEFLAGS) check-TESTS
 check: $(BUILT_SOURCES)
 	$(MAKE) $(AM_MAKEFLAGS) check-am
-all-am: Makefile $(PROGRAMS) $(MANS)
+all-am: Makefile $(PROGRAMS) $(MANS) $(DATA)
 installdirs:
-	for dir in "$(DESTDIR)$(bindir)" "$(DESTDIR)$(man1dir)"; do \
+	for dir in "$(DESTDIR)$(bindir)" "$(DESTDIR)$(man1dir)" "$(DESTDIR)$(dwarfdumpdevdir)"; do \
 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
 	done
 install: $(BUILT_SOURCES)
@@ -2171,7 +2214,7 @@ info: info-am
 
 info-am:
 
-install-data-am: install-man
+install-data-am: install-dwarfdumpdevDATA install-man
 
 install-dvi: install-dvi-am
 
@@ -2217,7 +2260,8 @@ ps: ps-am
 
 ps-am:
 
-uninstall-am: uninstall-binPROGRAMS uninstall-man
+uninstall-am: uninstall-binPROGRAMS uninstall-dwarfdumpdevDATA \
+	uninstall-man
 
 uninstall-man: uninstall-man1
 
@@ -2229,15 +2273,16 @@ uninstall-man: uninstall-man1
 	distclean-compile distclean-generic distclean-libtool \
 	distclean-tags distdir dvi dvi-am html html-am info info-am \
 	install install-am install-binPROGRAMS install-data \
-	install-data-am install-dvi install-dvi-am install-exec \
-	install-exec-am install-html install-html-am install-info \
-	install-info-am install-man install-man1 install-pdf \
-	install-pdf-am install-ps install-ps-am install-strip \
-	installcheck installcheck-am installdirs maintainer-clean \
-	maintainer-clean-generic mostlyclean mostlyclean-compile \
-	mostlyclean-generic mostlyclean-libtool pdf pdf-am ps ps-am \
-	recheck tags tags-am uninstall uninstall-am \
-	uninstall-binPROGRAMS uninstall-man uninstall-man1
+	install-data-am install-dvi install-dvi-am \
+	install-dwarfdumpdevDATA install-exec install-exec-am \
+	install-html install-html-am install-info install-info-am \
+	install-man install-man1 install-pdf install-pdf-am install-ps \
+	install-ps-am install-strip installcheck installcheck-am \
+	installdirs maintainer-clean maintainer-clean-generic \
+	mostlyclean mostlyclean-compile mostlyclean-generic \
+	mostlyclean-libtool pdf pdf-am ps ps-am recheck tags tags-am \
+	uninstall uninstall-am uninstall-binPROGRAMS \
+	uninstall-dwarfdumpdevDATA uninstall-man uninstall-man1
 
 .PRECIOUS: Makefile
 

@@ -2429,7 +2429,21 @@ print_frames(Dwarf_Debug dbg,
         } else {                /* DW_DLV_OK */
             /* Do not print if in check mode */
             if (glflags.gf_do_print_dwarf) {
-                printf("\n%s\n", frame_section_name);
+                struct esb_s truename;
+                char buf[40];
+                const char *stdsecname = 0;
+
+                if (framed == 0) {
+                    stdsecname=".debug_frame";
+                } else {
+                    stdsecname=".eh_frame";
+                }
+        
+                esb_constructor_fixed(&truename,buf,sizeof(buf));
+                get_true_section_name(dbg,stdsecname,
+                    &truename,TRUE);
+                printf("\n%s\n",sanitized(esb_get_string(&truename)));
+                esb_destructor(&truename);
                 printf("\nfde:\n");
             }
 
