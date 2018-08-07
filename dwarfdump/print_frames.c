@@ -2430,7 +2430,7 @@ print_frames(Dwarf_Debug dbg,
             /* Do not print if in check mode */
             if (glflags.gf_do_print_dwarf) {
                 struct esb_s truename;
-                char buf[40];
+                char buf[DWARF_SECNAME_BUFFER_SIZE];
                 const char *stdsecname = 0;
 
                 if (framed == 0) {
@@ -2438,7 +2438,6 @@ print_frames(Dwarf_Debug dbg,
                 } else {
                     stdsecname=".eh_frame";
                 }
-        
                 esb_constructor_fixed(&truename,buf,sizeof(buf));
                 get_true_section_name(dbg,stdsecname,
                     &truename,TRUE);

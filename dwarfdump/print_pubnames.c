@@ -185,17 +185,17 @@ print_pubnames(Dwarf_Debug dbg)
     int res = 0;
 
     glflags.current_section_id = DEBUG_PUBNAMES;
+    get_address_size_and_max(dbg,0,&elf_max_address,&err);
+    res = dwarf_get_globals(dbg, &globbuf, &count, &err);
     if (glflags.gf_do_print_dwarf) {
         struct esb_s truename;
-        char buf[40];
+        char buf[DWARF_SECNAME_BUFFER_SIZE];
 
         esb_constructor_fixed(&truename,buf,sizeof(buf));
         get_true_section_name(dbg,".debug_pubnames",
             &truename,TRUE);
         printf("\n%s\n",sanitized(esb_get_string(&truename)));
     }
-    get_address_size_and_max(dbg,0,&elf_max_address,&err);
-    res = dwarf_get_globals(dbg, &globbuf, &count, &err);
     if (res == DW_DLV_ERROR) {
         print_error(dbg, "dwarf_get_globals", res, err);
     } else if (res == DW_DLV_NO_ENTRY) {

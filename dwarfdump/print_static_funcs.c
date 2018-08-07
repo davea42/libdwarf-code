@@ -54,9 +54,10 @@ print_static_funcs(Dwarf_Debug dbg)
     if (!glflags.gf_do_print_dwarf) {
         return;
     }
+    gfres = dwarf_get_funcs(dbg, &funcbuf, &count, &err);
     {
         struct esb_s truename;
-        char buf[40];
+        char buf[DWARF_SECNAME_BUFFER_SIZE];
 
         esb_constructor_fixed(&truename,buf,sizeof(buf));
         get_true_section_name(dbg,".debug_static_func",
@@ -65,7 +66,6 @@ print_static_funcs(Dwarf_Debug dbg)
         esb_destructor(&truename);
     }
 
-    gfres = dwarf_get_funcs(dbg, &funcbuf, &count, &err);
     if (gfres == DW_DLV_ERROR) {
         print_error(dbg, "dwarf_get_funcs", gfres, err);
     } else if (gfres == DW_DLV_NO_ENTRY) {

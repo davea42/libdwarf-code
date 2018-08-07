@@ -161,7 +161,7 @@ print_macinfo_by_offset(Dwarf_Debug dbg,Dwarf_Unsigned offset)
     memset(&counts, 0, sizeof(counts));
     if (glflags.gf_do_print_dwarf) {
         struct esb_s truename;
-        char buf[40];
+        char buf[DWARF_SECNAME_BUFFER_SIZE];
 
         esb_constructor_fixed(&truename,buf,sizeof(buf));
         get_true_section_name(dbg,".debug_macinfo",

@@ -2209,8 +2209,11 @@ int
 dwarf_get_real_section_name(Dwarf_Debug dbg,
     const char  *std_section_name,
     const char **actual_sec_name_out,
-    Dwarf_Small *marked_compressed,
-    Dwarf_Small *marked_shf_compressed,
+    Dwarf_Small *marked_zcompressed, /* zdebug */
+    Dwarf_Small *marked_zlib_compressed, /* ZLIB string */
+    Dwarf_Small *marked_shf_compressed, /* SHF_COMPRESSED */
+    Dwarf_Unsigned *compressed_length,
+    Dwarf_Unsigned *uncompressed_length,
     Dwarf_Error *error)
 {
     struct Dwarf_dbg_sect_s *secdata;
@@ -2240,10 +2243,29 @@ dwarf_get_real_section_name(Dwarf_Debug dbg,
             const char *used = section->dss_name;
             *actual_sec_name_out = used;
             if (sdata->ds_have_zdebug) {
-                *marked_compressed = TRUE;
+                *marked_zcompressed = TRUE;
+            }
+            if (section->dss_ZLIB_compressed) {
+                *marked_zlib_compressed = TRUE;
+                if (uncompressed_length) {
+                    *uncompressed_length =
+                        section->dss_uncompressed_length;
+                }
+                if (compressed_length) {
+                    *compressed_length =
+                        section->dss_compressed_length;
+                }
             }
             if (section->dss_shf_compressed) {
-                *marked_shf_compressed;
+                *marked_shf_compressed = TRUE;
+                if (uncompressed_length) {
+                    *uncompressed_length =
+                        section->dss_uncompressed_length;
+                }
+                if (compressed_length) {
+                    *compressed_length =
+                        section->dss_compressed_length;
+                }
             }
             return DW_DLV_OK;
         }

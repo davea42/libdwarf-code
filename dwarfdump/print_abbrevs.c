@@ -55,6 +55,24 @@
    that any bytes at an offset referred to from
    .debug_info are legal sequences.
 */
+
+static void
+print_secname(Dwarf_Debug dbg,const char *secname)
+{
+    if (glflags.gf_do_print_dwarf) {
+        struct esb_s truename;
+        char buf[DWARF_SECNAME_BUFFER_SIZE];
+
+        esb_constructor_fixed(&truename,buf,sizeof(buf));
+        get_true_section_name(dbg,secname,
+            &truename,TRUE);
+        printf("\n%s\n",sanitized(esb_get_string(&truename)));
+        esb_destructor(&truename);
+    }
+}
+
+
+
 extern void
 print_abbrevs(Dwarf_Debug dbg)
 {
@@ -75,25 +93,21 @@ print_abbrevs(Dwarf_Debug dbg)
     int acres = 0;
     Dwarf_Unsigned abbrev_code = 0;
     Dwarf_Error paerr = 0;
+    unsigned loopct = 0;
 
     glflags.current_section_id = DEBUG_ABBREV;
 
-    if (glflags.gf_do_print_dwarf) {
-        struct esb_s truename;
-        char buf[40];
-        
-        esb_constructor_fixed(&truename,buf,sizeof(buf));
-        get_true_section_name(dbg,".debug_abbrev", 
-            &truename,TRUE);
-        printf("\n%s\n",sanitized(esb_get_string(&truename)));
-        esb_destructor(&truename);
-    }
-    while ((abres = dwarf_get_abbrev(dbg, offset, &ab,
-        &length, &abbrev_entry_count, &paerr)) == DW_DLV_OK) {
+    for (loopct = 0;
+        (abres = dwarf_get_abbrev(dbg, offset, &ab,
+        &length, &abbrev_entry_count, &paerr)) == DW_DLV_OK;
+        ++loopct) {
         const char *tagname = "";
         unsigned *abbrev_table_check = 0;
         unsigned abbrev_table_used = 0;
 
+        if (!loopct) {
+            print_secname(dbg,".debug_abbrev");
+        }
         /*  Here offset is the global offset in .debug_abbrev.
             The abbrev_num is a relatively worthless counter
             of all abbreviations.  */
@@ -235,6 +249,9 @@ print_abbrevs(Dwarf_Debug dbg)
         if (glflags.gf_do_print_dwarf && glflags.dense) {
             printf("\n");
         }
+    }
+    if (!loopct) {
+        print_secname(dbg,".debug_abbrev");
     }
     if (abres == DW_DLV_ERROR) {
         print_error(dbg, "dwarf_get_abbrev", abres, paerr);

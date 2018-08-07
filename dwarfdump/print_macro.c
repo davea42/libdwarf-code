@@ -310,14 +310,14 @@ print_macros_5style_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die,
 
     if (glflags.gf_do_print_dwarf) {
         struct esb_s truename;
-        char buf[40];
+        char buf[DWARF_SECNAME_BUFFER_SIZE];
 
         esb_constructor_fixed(&truename,buf,sizeof(buf));
         get_true_section_name(dbg,".debug_macro",
             &truename,TRUE);
 
         if(!by_offset) {
-            printf("\n%s: Macro info for a single cu\n", 
+            printf("\n%s: Macro info for a single cu\n",
                 sanitized(esb_get_string(&truename)));
             print_source_intro(cu_die);
         } else {

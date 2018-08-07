@@ -207,9 +207,10 @@ get_basic_section_data(Dwarf_Debug dbg,
         secdata->dss_flags = flags;
         secdata->dss_addralign = addralign;
         if (flags & SHF_COMPRESSED) {
-            secdata->dss_requires_decompress = TRUE;
             secdata->dss_shf_compressed = TRUE;
         }
+        /*  We are not looking at section bytes so we
+            do not know if the first 4 bytes are ZLIB */
     }
     return DW_DLV_OK;
 }
@@ -269,7 +270,8 @@ add_debug_section_info(Dwarf_Debug dbg,
         secdata->dss_name = name; /* Actual name from object file. */
         secdata->dss_standard_name = standard_section_name;
         secdata->dss_number = obj_sec_num;
-        secdata->dss_requires_decompress = havezdebug;
+        secdata->dss_zdebug_requires_decompress = havezdebug;
+        /* We don't yet know about SHF_COMPRESSED */
         debug_section->ds_duperr = duperr;
         debug_section->ds_emptyerr = emptyerr;
         debug_section->ds_have_dwarf = have_dwarf;
@@ -1558,6 +1560,7 @@ do_decompress_zlib(Dwarf_Debug dbg,
     if ((src + 12) >endsection) {
         DWARF_DBG_ERROR(dbg, DW_DLE_ZLIB_SECTION_SHORT, DW_DLV_ERROR);
     }
+    section->dss_compressed_length = section->dss_size;
     if(!strncmp("ZLIB",(const char *)src,4)) {
         unsigned i = 0;
         unsigned l = 8;
@@ -1568,6 +1571,8 @@ do_decompress_zlib(Dwarf_Debug dbg,
         }
         src = src + 12;
         srclen -= 12;
+        section->dss_uncompressed_length = uncompressed_len;
+        section->dss_ZLIB_compressed = TRUE;
     } else  if (flags & SHF_COMPRESSED) {
         /*  The prefix is a struct:
             unsigned int type; followed by pad if following are 64bit!
@@ -1593,11 +1598,10 @@ do_decompress_zlib(Dwarf_Debug dbg,
                 DW_DLV_ERROR);
         }
         uncompressed_len = size;
-        /*  Not using addralign.
-            READ_UNALIGNED(dbg,addralign,Dwarf_Unsigned,ptr,fldsize); */
-
+        section->dss_uncompressed_length = uncompressed_len;
         src    += structsize;
         srclen -= structsize;
+        section->dss_shf_compressed = TRUE;
     } else {
         DWARF_DBG_ERROR(dbg, DW_DLE_ZDEBUG_INPUT_FORMAT_ODD,
             DW_DLV_ERROR);
@@ -1652,7 +1656,7 @@ do_decompress_zlib(Dwarf_Debug dbg,
     section->dss_data = dest;
     section->dss_size = destlen;
     section->dss_data_was_malloc = TRUE;
-    section->dss_requires_decompress = FALSE;
+    section->dss_did_decompress = TRUE;
     return DW_DLV_OK;
 }
 #endif /* HAVE_ZLIB */
@@ -1699,7 +1703,10 @@ _dwarf_load_section(Dwarf_Debug dbg,
             no DWARF related section could possbly be bss. */
         return res;
     }
-    if (section->dss_requires_decompress) {
+    if ((section->dss_zdebug_requires_decompress ||
+        section->dss_shf_compressed ||
+        section->dss_ZLIB_compressed) &&
+        !section->dss_did_decompress) {
         if (!section->dss_data) {
             /*  Impossible. This makes no sense.
                 Corrupt object. */
@@ -1710,6 +1717,7 @@ _dwarf_load_section(Dwarf_Debug dbg,
         if (res != DW_DLV_OK) {
             return res;
         }
+        section->dss_did_decompress = TRUE;
 #else
         DWARF_DBG_ERROR(dbg,DW_DLE_ZDEBUG_REQUIRES_ZLIB, DW_DLV_ERROR);
 #endif

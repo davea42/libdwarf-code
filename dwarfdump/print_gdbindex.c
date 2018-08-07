@@ -409,7 +409,7 @@ print_gdb_index(Dwarf_Debug dbg)
     }
     {
         struct esb_s truename;
-        char buf[40];
+        char buf[DWARF_SECNAME_BUFFER_SIZE];
 
         esb_constructor_fixed(&truename,buf,sizeof(buf));
         get_true_section_name(dbg,".gdb_index",

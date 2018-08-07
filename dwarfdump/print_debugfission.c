@@ -104,7 +104,7 @@ print_debugfission_index(Dwarf_Debug dbg,const char *type)
     }
     {
         struct esb_s truename;
-        char buf[40];
+        char buf[DWARF_SECNAME_BUFFER_SIZE];
 
         esb_constructor_fixed(&truename,buf,sizeof(buf));
         get_true_section_name(dbg,section_name,

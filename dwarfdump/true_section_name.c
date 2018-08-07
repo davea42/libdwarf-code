@@ -44,34 +44,61 @@ void get_true_section_name(Dwarf_Debug dbg,
     Dwarf_Bool add_compr)
 {
     Dwarf_Small marked_compressed = 0;
+    Dwarf_Small marked_zlib_compressed = 0;
     Dwarf_Small marked_shf_compressed = 0;
+    Dwarf_Unsigned compressed_length = 0;
+    Dwarf_Unsigned uncompressed_length = 0;
     const char *stdname =  standard_name;
     const char *actualname = 0;
     int cres = 0;
     Dwarf_Error tnameerr = 0;
 
     cres = dwarf_get_real_section_name(dbg,
-            stdname, &actualname, &marked_compressed,
-            &marked_shf_compressed,&tnameerr);
+        stdname, &actualname, &marked_compressed,
+        &marked_zlib_compressed,
+        &marked_shf_compressed,
+        &compressed_length,&uncompressed_length,
+        &tnameerr);
     if (cres == DW_DLV_OK) {
         esb_append(name_out,actualname);
         if (add_compr) {
+            Dwarf_Bool compr = FALSE;
             if (marked_compressed) {
-                esb_append(name_out," compressed");
+                esb_append(name_out," .zdebug");
+                compr = TRUE;
+            }
+            if (marked_zlib_compressed) {
+                esb_append(name_out," ZLIB-initial-bytes");
+                compr = TRUE;
             }
             if (marked_shf_compressed) {
                 esb_append(name_out," SHF_COMPRESSED");
+                compr = TRUE;
+            }
+            if (compr) {
+                char floatbuf[40];
+                double comprfactor = 0.0;
+                if (compressed_length > 0) {
+                    comprfactor = (double)uncompressed_length /
+                        (double)compressed_length;
+                }
+                esb_append_printf_u(name_out," CompLen=%"
+                    DW_PR_DUu, compressed_length);
+                esb_append_printf_u(name_out," Uncomp=%"
+                    DW_PR_DUu, uncompressed_length);
+                sprintf(floatbuf," compression=%.1f",comprfactor);
+                esb_append(name_out, floatbuf);
             }
         }
         return;
     } else if (cres == DW_DLV_NO_ENTRY) {
         esb_append(name_out,stdname);
         return;
-    }  
+    }
     /* DW_DLV_ERROR */
     esb_append(name_out,stdname);
     /* avoid error leak */
-    dwarf_dealloc(dbg,tnameerr,DW_DLA_ERROR); 
+    dwarf_dealloc(dbg,tnameerr,DW_DLA_ERROR);
     tnameerr = 0;
     esb_append(name_out," (Error accessing section name)");
     return;

@@ -88,7 +88,7 @@ print_str_offsets_section(Dwarf_Debug dbg)
         }
         if (tabnum == 0) {
             struct esb_s truename;
-            char buf[40];
+            char buf[DWARF_SECNAME_BUFFER_SIZE];
 
             esb_constructor_fixed(&truename,buf,sizeof(buf));
             get_true_section_name(dbg,".debug_str_offsets",

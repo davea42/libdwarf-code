@@ -1509,8 +1509,11 @@ int
 dwarf_get_real_section_name(Dwarf_Debug /*dbg*/,
     const char * /*std_section_name*/,
     const char ** /*actual_sec_name_out*/,
-    Dwarf_Small * /*marked_compressed*/,
-    Dwarf_Small * /*marked_shf_compressed*/,
+    Dwarf_Small * /*marked_compressed*/,  /* .zdebug... */
+    Dwarf_Small * /*marked_zlib_compressed */, /* ZLIB string */
+    Dwarf_Small * /*marked_shf_compressed*/, /* SHF_COMPRESSED */
+    Dwarf_Unsigned * /*compressed_length*/,
+    Dwarf_Unsigned * /*uncompressed_length*/,
     Dwarf_Error * /*error*/);
 
 

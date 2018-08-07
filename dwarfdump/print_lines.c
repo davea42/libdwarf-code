@@ -741,11 +741,11 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
 
     if (glflags.gf_do_print_dwarf) {
         struct esb_s truename;
-        char buf[40];
+        char buf[DWARF_SECNAME_BUFFER_SIZE];
 
         esb_constructor_fixed(&truename,buf,sizeof(buf));
         get_true_section_name(dbg,".debug_line",
-            &truename,TRUE);
+            &truename,FALSE); /* Ignore the COMPRESSED flags */
         printf("\n%s: line number info for a single cu\n",
             sanitized(esb_get_string(&truename)));
         esb_destructor(&truename);

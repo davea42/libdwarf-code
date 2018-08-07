@@ -51,9 +51,10 @@ print_weaknames(Dwarf_Debug dbg)
     if (!glflags.gf_do_print_dwarf) {
         return;
     }
+    wkres = dwarf_get_weaks(dbg, &weaknamebuf, &count, &err);
     {
         struct esb_s truename;
-        char buf[40];
+        char buf[DWARF_SECNAME_BUFFER_SIZE];
 
         esb_constructor_fixed(&truename,buf,sizeof(buf));
         get_true_section_name(dbg,".debug_weaknames",
@@ -61,7 +62,6 @@ print_weaknames(Dwarf_Debug dbg)
         printf("\n%s\n",sanitized(esb_get_string(&truename)));
         esb_destructor(&truename);
     }
-    wkres = dwarf_get_weaks(dbg, &weaknamebuf, &count, &err);
     if (wkres == DW_DLV_ERROR) {
         print_error(dbg, "dwarf_get_weaks", wkres, err);
     } else if (wkres == DW_DLV_NO_ENTRY) {

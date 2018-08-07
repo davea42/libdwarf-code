@@ -96,7 +96,7 @@ print_types(Dwarf_Debug dbg, enum type_type_e type_type)
     } else {
         Dwarf_Unsigned maxoff = get_info_max_offset(dbg);
         struct esb_s truename;
-        char buf[40];
+        char buf[DWARF_SECNAME_BUFFER_SIZE];
 
         /*  Before July 2005, the section name was printed
             unconditionally, now only prints if non-empty section really

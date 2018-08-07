@@ -34,6 +34,18 @@
 #include "print_frames.h"
 #include "sanitized.h"
 
+static void
+print_secname(Dwarf_Debug dbg, const char *secname)
+{
+    struct esb_s truename;
+    char buf[DWARF_SECNAME_BUFFER_SIZE];
+
+    esb_constructor_fixed(&truename,buf,sizeof(buf));
+    get_true_section_name(dbg,secname,
+        &truename,TRUE);
+    printf("\n%s\n",sanitized(esb_get_string(&truename)));
+    esb_destructor(&truename);
+}
 /* print data in .debug_loc
    There is no guarantee this will work because we are assuming
    that all bytes are valid loclist data, that there are no
@@ -63,6 +75,7 @@ print_locs(Dwarf_Debug dbg)
     Dwarf_Half version = 2; /* FAKE */
     Dwarf_Error err = 0;
     struct esb_s  exprstring;
+    unsigned loopct = 0;
 
     esb_constructor(&exprstring);
     glflags.current_section_id = DEBUG_LOC;
@@ -85,12 +98,12 @@ print_locs(Dwarf_Debug dbg)
     if (fres != DW_DLV_OK) {
         print_error(dbg, "dwarf_get_address_size", fres, err);
     }
-    /*  No need to get the real section name, this
-        print code not needed as cannot be safely used
-        and uses old interface. But we get the real one anyway. */
+#if 0
+    /*  This print code not needed as cannot be safely used
+        and uses old interface. */
     {
         struct esb_s truename;
-        char buf[40];
+        char buf[DWARF_SECNAME_BUFFER_SIZE];
 
         esb_constructor_fixed(&truename,buf,sizeof(buf));
         get_true_section_name(dbg,".debug_loc",
@@ -98,20 +111,28 @@ print_locs(Dwarf_Debug dbg)
         printf("\n%s\n",sanitized(esb_get_string(&truename)));
         esb_destructor(&truename);
     }
+#endif
 
     printf("Format <i o b e l>: "
         "index section-offset begin-addr end-addr length-of-block-entry\n");
     /*  Pre=October 2015 version. */
-    while ((lres = dwarf_get_loclist_entry(dbg, offset,
+    for (loopct = 0;
+        (lres = dwarf_get_loclist_entry(dbg, offset,
         &hipc_offset, &lopc_offset,
         &data, &entry_len,
         &next_entry,
-        &err)) == DW_DLV_OK) {
+        &err)) == DW_DLV_OK;
+        ++loopct) {
         get_string_from_locs(dbg,data,entry_len,address_size,
             offset_size,
             version,
             &exprstring);
         /* Display offsets */
+        if (!loopct) {
+            /*  This print code not needed as cannot be safely used
+                and uses old interface. */
+            print_secname(dbg,".debug_loc");
+        }
         if (glflags.gf_display_offsets) {
             ++index;
             printf("  <iobel> [%8d] 0x%" DW_PR_XZEROS DW_PR_DUx,
@@ -129,6 +150,11 @@ print_locs(Dwarf_Debug dbg)
             esb_get_string(&exprstring));
         esb_empty_string(&exprstring);
         offset = next_entry;
+    }
+    if (!loopct) {
+        /*  This print code not needed as cannot be safely used
+            and uses old interface. */
+        print_secname(dbg,".debug_loc");
     }
     esb_destructor(&exprstring);
     if (lres == DW_DLV_ERROR) {

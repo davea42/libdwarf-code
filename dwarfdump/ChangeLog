@@ -1,3 +1,46 @@
+2018-08-07 David Anderson
+    * dwconf.c: Removed trailing whitespace.
+    * globals.h: Added DWARF_SECNAME_BUFFER_SIZE define
+      (space for a small string) so if it need change
+      there is just one place to change it. Used in many
+      files with esb_constructor_fixed()..
+    * print_abbrevs.c,print_die.c,print_locs.c,print_strings.c: 
+      Refactored the section name printing
+      into a function and call after calling libdwarf
+      so the interesting section compression info
+      is available to print.
+    * print_aranges.c,print_pubnames.c, print_ranges.c,
+      print_static_funcs.c,print_static_vars.c,print_weaknames.c: 
+      Moved a libdwarf call above the
+      section name print
+      so the interesting section compression info
+      is available to print.
+    * print_dnames.c,print_frames.c: Removed trailing whitespace, use
+      DWARF_SECNAME_BUFFER_SIZE.
+    * print_gdbindex.c,print_lines.c,print_macro.c,
+      print_macros.c,print_str_offsets.c: 
+      Use  DWARF_SECNAME_BUFFER_SIZE .
+    * true_section_name.c: Now prints compression values.
+2018-08-06 David Anderson
+    * globals.h: Added  DWARF_SECNAME_BUFFER_SIZE 
+      for the esb preallocation of section names.
+    * print_abbrevs.c,print_aranges.c,print_debugfission.c,
+      print_die.c,print_dnames.c,print_frames.c,
+      print_gdbindex.c,print_lines.c,print_locs.c,print_macro.c,
+      print_macros.c,print_pubnames.c,print_ranges.c,
+      print_static_funcs.c,print_static_vars.c,print_str_offsets.c,
+      print_strings.c,print_types.c,print_weaknames.c:
+      Now uses DWARF_SECNAME_BUFFER_SIZE instead of plain 40.
+    * print_die.c: In print_ranges_list_to_extra() we do not want
+      the section name to have the compressed-notes appear.
+    * print_lines.c: In print_line_numbers_this_cu() we do not want
+      the section name to have the compressed-notes appear.
+    * print_ranges.c: In check_ranges_list() we do not want
+      the section name to have the compressed-notes appear.
+    * true_section_name.c: Added a pointer argument to 
+      get_true_section_name() so it returns three distinct
+      compression flags. one for .zdebug*, one for SHF_COMPRESSED,
+      and one for a ZLIB initial byte group in the section.
 2018-08-05 David Anderson
     * Makefile.am: Fixed dwarfdump_CFLAGS to set
       CONFPREFIX 

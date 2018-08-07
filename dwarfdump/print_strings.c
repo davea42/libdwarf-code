@@ -33,6 +33,20 @@
 
 #include "print_sections.h"
 
+static void
+print_secname(Dwarf_Debug dbg,const char *secname)
+{
+    struct esb_s truename;
+    char buf[DWARF_SECNAME_BUFFER_SIZE];
+
+    esb_constructor_fixed(&truename,buf,sizeof(buf));
+    get_true_section_name(dbg,".debug_str",
+        &truename,TRUE);
+    printf("\n%s\n",sanitized(esb_get_string(&truename)));
+    esb_destructor(&truename);
+
+}
+
 /* print data in .debug_str */
 extern void
 print_strings(Dwarf_Debug dbg)
@@ -43,11 +57,13 @@ print_strings(Dwarf_Debug dbg)
     int sres = 0;
     const char *sec_name = 0;
     Dwarf_Error err = 0;
+    unsigned loopct = 0;
 
     glflags.current_section_id = DEBUG_STR;
+#if 0
     {
         struct esb_s truename;
-        char buf[40];
+        char buf[DWARF_SECNAME_BUFFER_SIZE];
 
         esb_constructor_fixed(&truename,buf,sizeof(buf));
         get_true_section_name(dbg,".debug_str",
@@ -55,8 +71,15 @@ print_strings(Dwarf_Debug dbg)
         printf("\n%s\n",sanitized(esb_get_string(&truename)));
         esb_destructor(&truename);
     }
-    while ((sres = dwarf_get_str(dbg, offset, &name, &length, &err))
-        == DW_DLV_OK) {
+#endif
+    for (loopct = 0;
+        (sres = dwarf_get_str(dbg, offset, &name, &length, &err))
+            == DW_DLV_OK;
+        ++loopct) {
+        if (!loopct) {
+            print_secname(dbg,".debug_str");
+        }
+
         if (glflags.gf_display_offsets) {
             printf("name at offset 0x%" DW_PR_XZEROS DW_PR_DUx
                 ", length %4" DW_PR_DSd " is '%s'\n",
@@ -66,6 +89,9 @@ print_strings(Dwarf_Debug dbg)
                 length, name);
         }
         offset += length + 1;
+    }
+    if (!loopct) {
+        print_secname(dbg,".debug_str");
     }
     /*  An inability to find the section is not necessarily
         a real error, so do not report error unless we've

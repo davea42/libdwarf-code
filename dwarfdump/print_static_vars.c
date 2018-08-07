@@ -52,9 +52,10 @@ print_static_vars(Dwarf_Debug dbg)
     if (!glflags.gf_do_print_dwarf) {
         return;
     }
+    gvres = dwarf_get_vars(dbg, &varbuf, &count, &err);
     {
         struct esb_s truename;
-        char buf[40];
+        char buf[DWARF_SECNAME_BUFFER_SIZE];
 
         esb_constructor_fixed(&truename,buf,sizeof(buf));
         get_true_section_name(dbg,".debug_static_vars",
@@ -62,7 +63,6 @@ print_static_vars(Dwarf_Debug dbg)
         printf("\n%s\n",sanitized(esb_get_string(&truename)));
         esb_destructor(&truename);
     }
-    gvres = dwarf_get_vars(dbg, &varbuf, &count, &err);
     if (gvres == DW_DLV_ERROR) {
         print_error(dbg, "dwarf_get_vars", gvres, err);
     } else if (gvres == DW_DLV_NO_ENTRY) {

@@ -8,7 +8,7 @@
 .nr Hb 5
 \." ==============================================
 \." Put current date in the following at each rev
-.ds vE rev 2.65, August 5, 2018
+.ds vE rev 2.67, August 7, 2018
 \." ==============================================
 \." ==============================================
 .ds | |
@@ -1984,7 +1984,10 @@ fully handled.
     const char  * std_section_name,
     const char ** actual_sec_name_out,
     Dwarf_Small * marked_compressed,
+    Dwarf_Small * marked_zlib_compressed,
     Dwarf_Small * marked_shf_compressed,
+    Dwarf_Unsigned * compressed_length,
+    Dwarf_Unsigned * uncompressed_length,
     Dwarf_Error * error);
 .DE
 FIXME
@@ -2011,9 +2014,46 @@ the Elf section flag SHF_COMPRESSED set.
 The caller must ensure that the memory pointed to
 by 
 \f(CWactual_sec_name_out\fP, 
-\f(CWmarked_compressed\fP, and 
-\f(CWmarked_shf_compressed\fP 
+\f(CWmarked_zcompressed\fP, and 
+\f(CWmarked_zlib_compressed\fP,
+\f(CWmarked_shf_compressed\fP,
+\f(CWcompressed_length\fP,
+\f(CWuncompressed_length\fP, 
 is zero at the point of call.
+.P
+The flag
+\f(CW*marked_compressed\fP,
+if non-zero,
+means the section name started
+with .zdebug (indicating compression
+was done). 
+.P
+The flag
+\f(CWmarked_zlib_compressed\fP, 
+if non-zero means the
+initial bytes of the section starte
+with the ASCII characters ZLIB
+and the section was compressed.
+.P
+The flag
+\f(CWmarked_shf_compressed\fP 
+if non-zero means the Elf section
+sh_flag SHF_COMPRESSED is set
+and the section was compressed..
+The flag value in an elf section
+header is (1<<11) (0x800).
+.P
+The value
+\f(CWcompressed_length\fP 
+is passed back through the pointer
+if and only if the section is compressed
+and the pointer is non-null.
+.P
+The value
+\f(CWuncompressed_length\fP 
+is passed back through the pointer
+if and only if the section is compressed
+and the pointer is non-null.
 .P
 If the section name passed in is not used by libdwarf
 for this object file

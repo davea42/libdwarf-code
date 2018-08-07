@@ -1,3 +1,30 @@
+2018-08-07 David Anderson
+    * libdwarf2.1.mm: Revised the argument list of 
+      dwarf_get_real_section_name() to add compression
+      size information.
+    * libdwarf2.1.pdf: Regenerated version 2.67.
+    * dwarf_die_deliv.c: Added compression-size arguments
+      to call to
+      dwarf_get_real_section_name() and updated the string
+      additions to match.
+    * dwarf_init_finish.c: Update compression before/after
+      sizes in new fields dss_compressed_length 
+      dss_uncompressed_length..
+    * dwarf_opaque.h: Add the new dss_ fields.
+    * libdwarf.h.in: Revised prototype of
+      dwarf_get_real_section_name()
+2018-08-06 David Anderson
+    * libdwarf2.1.mm: Revised the argument list of 
+      dwarf_get_real_section_name()
+      so it works properly.
+    * libdwarf2.1.pdf: Regenerated version 2.66.
+    * dwarf_die_deliv.c: Added third argument to call to
+      dwarf_get_real_section_name() and updated the string
+    * dwarf_opaque.h: Added flag dss_ZLIB_compressed so we can report
+      compression more accurately.
+2018-08-05 David Anderson
+    * dwarf_die_deliv.c: Was failing to report SHF_COMPRESSED in dwarfdump
+      do to mistake here (statement with no side effect!).
 2018-08-05 David Anderson
     * libdwarf_version.h: Updated version string.
     * dwarf_errmsg_list.h: Support the new error code.

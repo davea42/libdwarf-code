@@ -135,9 +135,10 @@ print_aranges(Dwarf_Debug dbg)
     glflags.need_CU_high_address = TRUE;
 
     glflags.current_section_id = DEBUG_ARANGES;
+    ares = dwarf_get_aranges(dbg, &arange_buf, &count, &pa_error);
     if (glflags.gf_do_print_dwarf) {
         struct esb_s truename;
-        char buf[40];
+        char buf[DWARF_SECNAME_BUFFER_SIZE];
 
         esb_constructor_fixed(&truename,buf,sizeof(buf));
         get_true_section_name(dbg,".debug_aranges",
@@ -145,7 +146,6 @@ print_aranges(Dwarf_Debug dbg)
         printf("\n%s\n",sanitized(esb_get_string(&truename)));
         esb_destructor(&truename);
     }
-    ares = dwarf_get_aranges(dbg, &arange_buf, &count, &pa_error);
     if (ares == DW_DLV_ERROR) {
         print_error(dbg, "dwarf_get_aranges", ares, pa_error);
     } else if (ares == DW_DLV_NO_ENTRY) {

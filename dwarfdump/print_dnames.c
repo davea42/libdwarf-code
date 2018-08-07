@@ -55,7 +55,7 @@ print_debug_names(Dwarf_Debug dbg)
         return;
     }
     if (res == DW_DLV_ERROR) {
-        const char *msg = "Section .debug_names is not openable"; 
+        const char *msg = "Section .debug_names is not openable";
         print_error(dbg,msg, res, error);
         return;
     }
@@ -63,7 +63,7 @@ print_debug_names(Dwarf_Debug dbg)
     if (glflags.gf_do_print_dwarf) {
         const char * section_name = ".debug_names";
         struct esb_s truename;
-        char buf[40];
+        char buf[DWARF_SECNAME_BUFFER_SIZE];
 
         esb_constructor_fixed(&truename,buf,sizeof(buf));
         get_true_section_name(dbg,".debug_abbrev",
@@ -82,4 +82,3 @@ print_debug_names(Dwarf_Debug dbg)
     dwarf_dealloc(dbg,dnhead,DW_DLA_DNAMES_HEAD);
     return;
 }
-  

@@ -302,18 +302,29 @@ struct Dwarf_Section_s {
         an example. */
     Dwarf_Word     dss_group_number;
 
+    /* These for reporting compression */
+    Dwarf_Unsigned dss_uncompressed_length;
+    Dwarf_Unsigned dss_compressed_length;
+
     /*  If this is zdebug, to start  data/size are the
         raw section bytes.
         Initially for all sections dss_data_was_malloc set FALSE
             and dss_requires_decompress set FALSE.
-        For zdebug dss_requires_decompress then set TRUE
+        For zdebug set dss_zdebug_requires_decompress set TRUE
+            In that case it is likely ZLIB compressed but
+            we do not know that just scanning section headers.
+        If not .zdebug but it is SHF_COMPRESSED
+            then decompress is required.
 
         On translation (ie zlib use and malloc)
         Set dss_data dss_size to point to malloc space and
             malloc size.
-        Set dss_requires_decompress FALSE
+        Set dss_did_decompress FALSE
         Set dss_was_malloc  TRUE */
-    Dwarf_Small    dss_requires_decompress;
+    Dwarf_Small    dss_zdebug_requires_decompress;
+    Dwarf_Small    dss_did_decompress;
+    Dwarf_Small dss_shf_compressed;  /* section flag SHF_COMPRESS */
+    Dwarf_Small dss_ZLIB_compressed; /* Section compression starts with ZLIB chars*/
 
     /*  For non-elf, leaving the following fields zero
         will mean they are ignored. */
@@ -338,7 +349,7 @@ struct Dwarf_Section_s {
     /*  Pointer to the elf symtab, used for elf .rela. Leave it 0
         if not relevant. */
     struct Dwarf_Section_s *dss_symtab;
-    /*  dss_name, dss_standard_name must never be freed, 
+    /*  dss_name, dss_standard_name must never be freed,
         they are static strings in libdwarf. */
     const char * dss_name;
     const char * dss_standard_name;
@@ -352,7 +363,6 @@ struct Dwarf_Section_s {
         Dwarf_Obj_Access_Section_s.  */
     Dwarf_Word  dss_flags;
     Dwarf_Word  dss_addralign;
-    Dwarf_Small dss_shf_compressed;
 };
 
 /*  Overview: if next_to_use== first, no error slots are used.
@@ -419,7 +429,7 @@ struct Dwarf_dbg_sect_s {
     int ds_duperr;                     /* Error code for duplicated section */
     int ds_emptyerr;                   /* Error code for empty section */
     int ds_have_dwarf;                 /* Section contains DWARF */
-    int ds_have_zdebug;                /* Section compressed. */
+    int ds_have_zdebug;                /* Section compressed: .zdebug name */
 };
 
 /*  As the number of debug sections does not change very often, in the case a
