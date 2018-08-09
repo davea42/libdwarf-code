@@ -40,7 +40,8 @@ EXTRA_DIST = \
 CMakeLists.txt \
 README.md \
 appveyor.yml \
-runtests.sh \
+dwarfdump/runtests.sh \
+libdwarf/runtests.sh \
 bugxml \
 cmake \
 codingstyle.txt \

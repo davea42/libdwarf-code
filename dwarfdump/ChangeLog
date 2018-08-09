@@ -1,3 +1,6 @@
+2018-08-08 David Anderson
+    * Makefile.am: corrected dwarfdump_DATA 
+      reference to be dwarfdumpdev_DATA
 2018-08-07 David Anderson
     * dwconf.c: Removed trailing whitespace.
     * globals.h: Added DWARF_SECNAME_BUFFER_SIZE define

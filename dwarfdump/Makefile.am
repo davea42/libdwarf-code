@@ -218,7 +218,7 @@ CMakeLists.txt \
 NEWS \
 README \
 configure.cmake \
-$(dwarfdump_DATA) \
+$(dwarfdumpdev_DATA) \
 tag_attr.list \
 tag_attr_ext.list \
 tag_tree.list \
