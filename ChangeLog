@@ -1,3 +1,6 @@
+2018-08-09  David Anderson
+    * configure.ac: Version 20180809
+    * configure: Regenerated.
 2018-08-06  David Anderson
     * configure.ac: Version now 20180808.
     * Makefile.am: Corrected references to runtest.sh

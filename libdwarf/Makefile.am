@@ -189,6 +189,9 @@ libdwarf_la_LDFLAGS = -fPIC -no-undefined -version-info @version_info@ @release_
 # checkexamples.c
 # dwarf_stubs.c
 
+TESTS = runtests.sh
+AM_TESTS_ENVIRONMENT = DWTOPSRCDIR='$(top_srcdir)'; export DWTOPSRCDIR;
+
 include_HEADERS = $(top_srcdir)/libdwarf/dwarf.h libdwarf.h
 
 libdwarfdevdir = $(datadir)/libdwarf/libdwarf-devel

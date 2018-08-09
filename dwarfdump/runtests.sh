@@ -5,10 +5,16 @@
 # Run only after config.h created in a configure
 # in the source directory
 
-srcdir=`pwd`
-top_srcdir=$srcdir/..
-cd $top_srcdir/dwarfdump
+top_blddir=`pwd`/..
+if [ x$DWTOPSRCDIR = "x" ]
+then
+  top_srcdir=$top_blddir
+else
+  top_srcdir=$DWTOPSRCDIR
+fi
+srcdir=$top_srcdir/dwarfdump
 
+echo "TOP topsrc $top_srcdir topbld $top_blddir localsrc $srcdir"
 chkres() {
 r=$1
 m=$2
@@ -20,16 +26,16 @@ fi
 }
 
 CC=cc
-CFLAGS="-g -O2 -I$top_srcdir -I$top_srcdir/libdwarf"
+CFLAGS="-g -O2 -I$top_blddir -I$top_srcdir/libdwarf  -I$top_blddir/libdwarf"
 
 echo "dwgetopt test"
-$CC $CFLAGS -o getopttest getopttest.c dwgetopt.c
+$CC $CFLAGS -o getopttest $srcdir/getopttest.c $srcdir/dwgetopt.c
 chkres $? "compiling getopttest test"
 ./getopttest
 chkres $? "running getopttest"
 rm ./getopttest
 echo "Now use system getopt to validate our tests"
-$CC $CFLAGS -DGETOPT_FROM_SYSTEM -o getopttestnat $srcdir/getopttest.c dwgetopt.c
+$CC $CFLAGS -DGETOPT_FROM_SYSTEM -o getopttestnat $srcdir/getopttest.c $srcdir/dwgetopt.c
 chkres $? "compiling getopttestnat "
 ./getopttestnat -c 1
 chkres $? "running getopttestnat -c 1 "
@@ -84,14 +90,14 @@ chkres $? "running selfesb "
 rm  ./selfesb
 
 echo "start selfsetion_bitmaps"
-$CC -DSELFTEST $CFLAGS -g section_bitmaps.c -o selfsection_bitmaps
+$CC -DSELFTEST $CFLAGS -g $srcdir/section_bitmaps.c -o selfsection_bitmaps
 chkres $? "compiling bitmaps.c section_bitmaps"
 ./selfsection_bitmaps
 chkres $? "running selfsection_bitmaps "
 rm  ./selfsection_bitmaps
 
 echo "start selfprint_reloc"
-$CC -DSELFTEST $CFLAGS print_reloc.c esb.o -o selfprint_reloc
+$CC -DSELFTEST $CFLAGS $srcdir/print_reloc.c esb.o -o selfprint_reloc
 chkres $? "compiling print_reloc.c selfprint_reloc"
 ./selfprint_reloc
 chkres $? "running selfprint_reloc "

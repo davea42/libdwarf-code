@@ -190,6 +190,7 @@ $(top_builddir)/libdwarf/libdwarf.la \
 @DWARF_LIBS@
 
 TESTS = ./runtests.sh
+AM_TESTS_ENVIRONMENT = DWTOPSRCDIR='$(top_srcdir)'; export DWTOPSRCDIR;
 
 man_MANS = dwarfdump.1
 

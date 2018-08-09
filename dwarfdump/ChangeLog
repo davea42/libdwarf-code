@@ -1,3 +1,8 @@
+2018-08-09 David Anderson
+    * Makefile.am: Added AM_TESTS_ENVIRONMENT enabling
+      make check from any build directory.
+    * runtests.sh: Handle the environment variable
+      AM_TESTS_ENVIRONMENT sets: DWTOPSRCDIR
 2018-08-08 David Anderson
     * Makefile.am: corrected dwarfdump_DATA 
       reference to be dwarfdumpdev_DATA
