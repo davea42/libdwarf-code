@@ -758,6 +758,8 @@ ChangeLog2017 \
 CMakeLists.txt \
 NEWS \
 README \
+getopttest.c \
+testesb.c \
 configure.cmake \
 $(dwarfdumpdev_DATA) \
 tag_attr.list \

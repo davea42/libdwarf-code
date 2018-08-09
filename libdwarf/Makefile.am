@@ -12,7 +12,7 @@ gennames.c \
 dwgetopt.c \
 dwgetopt.h
 
-gennames_CFLAGS = 
+gennames_CFLAGS = -I$(top_builddir)/libdwarf -I$(top_builddir) -I$(top_srcdir)/libdwarf
 
 BUILT_SOURCES = \
 dwarf_names.c
@@ -31,7 +31,7 @@ dwarf_names.c: gennames$(BUILD_EXEEXT)
 	$(gn_verbose)./gennames$(BUILD_EXEEXT) @dwarf_namestable@ -i $(srcdir) -o .
 
 gennames$(BUILD_EXEEXT): $(top_srcdir)/libdwarf/gennames.c $(top_srcdir)/libdwarf/dwgetopt.c $(top_srcdir)/libdwarf/dwgetopt.h
-	$(cc_verbose)$(CC_FOR_BUILD) $(top_srcdir)/libdwarf/gennames.c $(top_srcdir)/libdwarf/dwgetopt.c -o $@
+	$(cc_verbose)$(CC_FOR_BUILD) $(gennames_CFLAGS) $(top_srcdir)/libdwarf/gennames.c $(top_srcdir)/libdwarf/dwgetopt.c -o $@
 
 ### errmsg_check
 
@@ -218,6 +218,7 @@ ChangeLog2015 \
 ChangeLog2016 \
 ChangeLog2017 \
 CODINGSTYLE \
+dwarf_test_errmsg_list.c \
 libdwarf2.1.mm \
 libdwarf2p.1.mm \
 mips_extensions.mm \
