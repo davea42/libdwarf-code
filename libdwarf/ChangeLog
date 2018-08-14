@@ -1,3 +1,10 @@
+2018-08-14 David Anderson
+    * libdwarf.h.in: DW_HARMLESS_ERROR_MSG_STRING_SIZE now
+      300, c compiler noted 200 was too small for a 
+      harmless-error sprintf string in dwarf_frame2.c (line 192).
+    * Makefile.am.  Added CPPFLAGS_FOR_BUILD where it was
+      accidentally omitted.
+    * libdwarf_version.h: Updated the version date string.
 2018-08-09 David Anderson
     * Makefile.am: Added AM_TESTS_ENVIRONMENT enabling
       make check from any build directory. 

@@ -1,3 +1,7 @@
+2018-08-14  David Anderson
+    * configure.ac: Version 20180814. Fixed small Makefile.am
+      omissions in dwarfdump and libdwarf.
+    * configure: Regenerated.
 2018-08-09  David Anderson
     * configure.ac: Version 20180809
     * configure: Regenerated.

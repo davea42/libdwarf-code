@@ -31,7 +31,7 @@ dwarf_names.c: gennames$(BUILD_EXEEXT)
 	$(gn_verbose)./gennames$(BUILD_EXEEXT) @dwarf_namestable@ -i $(srcdir) -o .
 
 gennames$(BUILD_EXEEXT): $(top_srcdir)/libdwarf/gennames.c $(top_srcdir)/libdwarf/dwgetopt.c $(top_srcdir)/libdwarf/dwgetopt.h
-	$(cc_verbose)$(CC_FOR_BUILD) $(gennames_CFLAGS) $(top_srcdir)/libdwarf/gennames.c $(top_srcdir)/libdwarf/dwgetopt.c -o $@
+	$(cc_verbose)$(CC_FOR_BUILD) $(gennames_CFLAGS) $(CFLAGS_FOR_BUILD) $(CPPFLAGS_FOR_BUILD) $(top_srcdir)/libdwarf/gennames.c $(top_srcdir)/libdwarf/dwgetopt.c -o $@
 
 ### errmsg_check
 
@@ -46,7 +46,7 @@ BUILT_SOURCES += \
 errmsg_check_list
 
 errmsg_check$(BUILD_EXEEXT): $(top_srcdir)/libdwarf/dwarf_test_errmsg_list.c $(top_srcdir)/libdwarf/dwarf_errmsg_list.h
-	$(CC_FOR_BUILD) $(errmsg_check_CFLAGS) $(top_srcdir)/libdwarf/dwarf_test_errmsg_list.c  -o $@
+	$(CC_FOR_BUILD) $(errmsg_check_CFLAGS) $(CFLAGS_FOR_BUILD) $(CPPFLAGS_FOR_BUILD) $(top_srcdir)/libdwarf/dwarf_test_errmsg_list.c  -o $@
 
 errmsg_check_list: errmsg_check$(BUILD_EXEEXT)
 	$(AM_V_at)grep DW_DLE libdwarf.h >errmsg_check_list

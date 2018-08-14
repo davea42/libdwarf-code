@@ -4260,7 +4260,7 @@ int dwarf_str_offsets_statistics(Dwarf_Str_Offsets_Table /*table_data*/,
    can report such inconsequential errors without causing
    anything to stop early. */
 #define DW_HARMLESS_ERROR_CIRCULAR_LIST_DEFAULT_SIZE 4
-#define DW_HARMLESS_ERROR_MSG_STRING_SIZE   200
+#define DW_HARMLESS_ERROR_MSG_STRING_SIZE   300
 /* User code supplies size of array of pointers errmsg_ptrs_array
     in count and the array of pointers (the pointers themselves
     need not be initialized).

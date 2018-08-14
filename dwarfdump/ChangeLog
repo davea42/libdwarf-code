@@ -1,3 +1,6 @@
+2018-08-14 David Anderson
+    * Makefile.am: CPPFLAGS_FOR_BUILD a few places it
+      was accidentally omitted.
 2018-08-09 David Anderson
     * Makefile.am: Added AM_TESTS_ENVIRONMENT enabling
       make check from any build directory. Also,add
