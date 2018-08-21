@@ -16,7 +16,7 @@ m4_define([lt_age], [v_min])
 
 ### Sets the release name. 
 ###m4_define([v_date], [m4_esyscmd_s([date "+%Y%m%d"])])
-m4_define([v_date], [20180814])])
+m4_define([v_date], [20180821])])
 
 AC_PREREQ([2.52])
 ### 2nd arg to AC_INIT is the version 'number'.
@@ -764,7 +764,7 @@ echo "  dwarfexample.........: ${enable_dwarfexample}"
 echo
 echo "Compilation............: make (or gmake)"
 echo "  CPPFLAGS.............: $CPPFLAGS"
-echo "  CFLAGS...............: $CFLAGS"
+echo "  CFLAGS...............: $CFLAGS ${c_compiler_flags}"
 echo "  LDFLAGS..............: $LDFLAGS"
 echo "  LIBS.................: $LIBS"
 echo "  DWARF_LIBS used in linking libdwarf"
@@ -773,7 +773,7 @@ echo "  *FOR_BUILD used building executables built and run to generate"
 echo "  C source). Motivated by cross-compilation. "
 echo "  Executables not part of the final products."
 echo "  CPPFLAGS_FOR_BUILD...: $CPPFLAGS_FOR_BUILD"
-echo "  CFLAGS_FOR_BUILD.....: $CFLAGS_FOR_BUILD"
+echo "  CFLAGS_FOR_BUILD.....: $CFLAGS_FOR_BUILD ${c_compiler_flags}"
 echo "  LDFLAGS_FOR_BUILD....: $LDLAGS_FOR_BUILD"
 echo
 echo "Installation...........: make install (as root if needed, with 'su' or 'sudo')"
