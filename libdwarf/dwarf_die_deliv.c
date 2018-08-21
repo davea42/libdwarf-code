@@ -2216,10 +2216,7 @@ dwarf_get_real_section_name(Dwarf_Debug dbg,
     Dwarf_Unsigned *uncompressed_length,
     Dwarf_Error *error)
 {
-    struct Dwarf_dbg_sect_s *secdata;
-    struct Dwarf_Section_s *ds_secdata;
     unsigned i = 0;
-    unsigned array_used = 0;
     char tbuf[50];
     unsigned std_sec_name_len = strlen(std_section_name);
 

@@ -12,7 +12,7 @@ gennames.c \
 dwgetopt.c \
 dwgetopt.h
 
-gennames_CFLAGS = -I$(top_builddir)/libdwarf -I$(top_builddir) -I$(top_srcdir)/libdwarf
+gennames_CFLAGS = $(DWARF_CFLAGS_WARN) -I$(top_builddir)/libdwarf -I$(top_builddir) -I$(top_srcdir)/libdwarf
 
 BUILT_SOURCES = \
 dwarf_names.c
@@ -40,7 +40,10 @@ dwarf_test_errmsg_list.c \
 dwarf_errmsg_list.h
 
 # config.h is in top_builddir  
-errmsg_check_CFLAGS = -I$(top_builddir)/libdwarf -I$(top_builddir) -I$(top_srcdir)/libdwarf
+errmsg_check_CFLAGS =  $(DWARF_CFLAGS_WARN) \
+-I$(top_builddir)/libdwarf \
+-I$(top_builddir) \
+-I$(top_srcdir)/libdwarf
 
 BUILT_SOURCES += \
 errmsg_check_list
@@ -180,7 +183,7 @@ pro_util.h \
 pro_vars.c \
 pro_weaks.c
 
-libdwarf_la_CFLAGS = 
+libdwarf_la_CFLAGS = $(DWARF_CFLAGS_WARN) 
 
 libdwarf_la_LIBADD = @DWARF_LIBS@
 

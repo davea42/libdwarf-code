@@ -193,6 +193,7 @@ dump_bytes(char * msg,Dwarf_Small * start, long len)
 }
 #endif
 
+#if 0
 static void
 print_single_abbrev(Dwarf_P_Abbrev c, unsigned idx)
 {
@@ -210,7 +211,6 @@ print_single_abbrev(Dwarf_P_Abbrev c, unsigned idx)
             (unsigned)c->abb_forms[j]);
     }
 }
-#if 0
 static void
 print_curabbrev(const char *where,
     Dwarf_P_Abbrev curabbrev)
@@ -3070,7 +3070,6 @@ _dwarf_pro_generate_debuginfo(Dwarf_P_Debug dbg,
         char *space = 0;
         int cres = 0;
         char buff1[ENCODE_SPACE_NEEDED];
-        int i = 0;
 
         curdie->di_offset = die_off;
 

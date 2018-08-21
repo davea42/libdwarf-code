@@ -1,3 +1,6 @@
+2018-08-21 David Anderson
+    * Makefile.am: Now honors --enable-wall.
+    * dwarf_die_deliv.c,pro_section.c: Removed unused local variables.
 2018-08-14 David Anderson
     * libdwarf.h.in: DW_HARMLESS_ERROR_MSG_STRING_SIZE now
       300, c compiler noted 200 was too small for a 
