@@ -616,7 +616,7 @@ tag_attr.c \
 tag_common.c \
 tag_common.h
 
-tag_attr_build_CFLAGS = 
+tag_attr_build_CFLAGS = $(DWARF_CFLAGS_WARN)
 tag_attr_build_CPPFLAGS = -DTRIVIAL_NAMING \
 -I$(top_builddir) \
 -I$(top_srcdir)/libdwarf  \
@@ -642,7 +642,7 @@ tag_common.c \
 tag_common.h \
 tag_tree.c
 
-tag_tree_build_CFLAGS = 
+tag_tree_build_CFLAGS = $(DWARF_CFLAGS_WARN) 
 tag_tree_build_CPPFLAGS = @CPPFLAGS@ -DTRIVIAL_NAMING \
 -I$(top_builddir) \
 -I$(top_srcdir)/libdwarf \
@@ -727,7 +727,7 @@ warningcontrol.h
 dwarfdump_CPPFLAGS = -I$(top_srcdir)/libdwarf \
 -I$(top_builddir)/libdwarf
 
-dwarfdump_CFLAGS = "-DCONFPREFIX=@prefix@/share/dwarfdump" 
+dwarfdump_CFLAGS = $(DWARF_CFLAGS_WARN) "-DCONFPREFIX=@prefix@/share/dwarfdump" 
 dwarfdump_LDADD = \
 $(top_builddir)/libdwarf/libdwarf.la \
 @DWARF_LIBS@

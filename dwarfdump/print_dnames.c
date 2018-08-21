@@ -66,7 +66,7 @@ print_debug_names(Dwarf_Debug dbg)
         char buf[DWARF_SECNAME_BUFFER_SIZE];
 
         esb_constructor_fixed(&truename,buf,sizeof(buf));
-        get_true_section_name(dbg,".debug_abbrev",
+        get_true_section_name(dbg,section_name,
             &truename,TRUE);
         printf("\n%s\n",sanitized(esb_get_string(&truename)));
         esb_destructor(&truename);

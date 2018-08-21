@@ -1762,13 +1762,11 @@ print_ranges_list_to_extra(Dwarf_Debug dbg,
     Dwarf_Unsigned bytecount,
     struct esb_s *stringbuf)
 {
-    int res = 0;
 #ifdef ORIGINAL_SPRINTF
     char tmp[200];
 #endif
     const char * sec_name = 0;
     Dwarf_Signed i = 0;
-    Dwarf_Error err =0;
     struct esb_s truename;
     char buf[DWARF_SECNAME_BUFFER_SIZE];
 

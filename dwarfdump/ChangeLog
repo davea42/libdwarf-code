@@ -1,3 +1,9 @@
+2018-08-21 David Anderson
+    * Makefile.am
+    * print_die.c,print_ranges.c,print_strings.c: Removed
+      unused variables.
+    * print_dnames.c: Removed unused variables and fixed the section-name
+      print (.debug_str-> .debug_names).
 2018-08-14 David Anderson
     * Makefile.am: CPPFLAGS_FOR_BUILD a few places it
       was accidentally omitted.

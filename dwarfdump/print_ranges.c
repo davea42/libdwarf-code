@@ -46,7 +46,6 @@ print_ranges(Dwarf_Debug dbg)
     Dwarf_Unsigned off = 0;
     int group_number = 0;
     int wasdense = 0;
-    int res  = 0;
     Dwarf_Error pr_err = 0;
     struct esb_s truename;
     char buf[DWARF_SECNAME_BUFFER_SIZE];
@@ -133,7 +132,6 @@ check_ranges_list(Dwarf_Debug dbg,
     Dwarf_Addr elf_max_address = 0;
     Dwarf_Error rlerr = 0;
     static boolean do_print = TRUE;
-    int res = 0;
     const char *sec_name = 0;
     struct esb_s truename;
     char buf[DWARF_SECNAME_BUFFER_SIZE];
