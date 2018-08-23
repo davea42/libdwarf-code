@@ -1,3 +1,5 @@
+2018-08-23 David Anderson
+    * CMakeLists.txt: Adjusted to fit new/changed file names.
 2018-08-21 David Anderson
     * Makefile.am: Now honors --enable-wall.
     * dwarf_die_deliv.c,pro_section.c: Removed unused local variables.

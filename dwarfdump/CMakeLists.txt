@@ -16,7 +16,7 @@ set_source_group(SOURCES "Source Files" addrmap.c checkutil.c dwarfdump.c dwconf
 	print_lines.c print_locs.c print_macro.c print_macros.c print_pubnames.c print_ranges.c print_reloc.c 
 	print_str_offsets.c
 	print_sections.c  print_section_groups.c print_static_funcs.c  print_static_vars.c print_strings.c print_types.c print_weaknames.c  
-	sanitized.c section_bitmaps.c strstrnocase.c uri.c dwgetopt.c makename.c naming.c common.c $<TARGET_OBJECTS:esb_and_tsearchbal>)
+	sanitized.c section_bitmaps.c strstrnocase.c true_section_name.c uri.c dwgetopt.c makename.c naming.c common.c $<TARGET_OBJECTS:esb_and_tsearchbal>)
 	
 set_source_group(HEADERS "Header Files" checkutil.h common.h dwconf.h
   command_options.h compiler_info.h
@@ -25,7 +25,7 @@ set_source_group(HEADERS "Header Files" checkutil.h common.h dwconf.h
 
 set_source_group(CONFIGURATION_FILES "Configuration Files" configure.cmake config.h.in.cmake ${CMAKE_CURRENT_BINARY_DIR}/config.h)
 	
-set_source_group(TAG_GENERATED "Generated Files" tmp-tt-table.c tmp-ta-table.c tmp-ta-ext-table.c tmp-tt-ext-table.c)
+set_source_group(TAG_GENERATED "Generated Files" tmp-tt-table.h tmp-ta-table.h tmp-ta-ext-table.h tmp-tt-ext-table.h)
 
 add_executable(dwarfdump ${SOURCES} ${HEADERS} ${TAG_GENERATED} ${CONFIGURATION_FILES})
 
@@ -40,7 +40,6 @@ target_link_libraries(dwarfdump PRIVATE ${dwarf-target} ${dwfzlib})
 # We need this as naming.o has external references we cannot have
 # in the tree builds.
 configure_file(naming.c trivial_naming.c COPYONLY)
-
 set_source_files_properties(trivial_naming.c PROPERTIES COMPILE_DEFINITIONS TRIVIAL_NAMING)
 
 set(TAG_TREE_SOURCES tag_tree.c tag_common.c common.c makename.c trivial_naming.c dwgetopt.c dwarf_tsearchbal.c sanitized.c esb.c)
@@ -142,18 +141,18 @@ add_test(NAME selfhelpertree COMMAND selfhelpertree)
 #
 #add_test(NAME selfmc COMMAND selfmc)
 	
-set_source_group(SELFESB_SOURCES "Source Files" esb.c)
+#set_source_group(SELFESB_SOURCES "Source Files" esb.c)
+#
+#add_executable(selfesb ${SELFESB_SOURCES})
+#
+#set_folder(selfesb dwarfdump/tests)
+#
+#target_compile_definitions(selfesb PRIVATE SELFTEST)
 
-add_executable(selfesb ${SELFESB_SOURCES})
+#target_include_directories(selfesb PRIVATE
+#    $<TARGET_PROPERTY:${dwarf-target},INTERFACE_INCLUDE_DIRECTORIES>)
 
-set_folder(selfesb dwarfdump/tests)
-
-target_compile_definitions(selfesb PRIVATE SELFTEST)
-
-target_include_directories(selfesb PRIVATE
-    $<TARGET_PROPERTY:${dwarf-target},INTERFACE_INCLUDE_DIRECTORIES>)
-
-add_test(NAME selfesb COMMAND selfesb)
+#add_test(NAME selfesb COMMAND selfesb)
 
 if(${CMAKE_SIZEOF_VOID_P} EQUAL 8)
 	set(SUFFIX 64)

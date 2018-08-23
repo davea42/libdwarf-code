@@ -1,6 +1,6 @@
-At the present time using cmake to build fails, so the
-following that worked in November 2016 fails at least as of
-March 2018.  Sorry.
+As of 23 August 2018 cmake again works.
+Files had been deleted, added, and renamed so
+adjustments have now been made.
 
 Standard builds are done by configure/make as described below.
 Cross-Compiles are described below, see CROSS COMPILES.
