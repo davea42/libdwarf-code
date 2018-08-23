@@ -2,6 +2,25 @@ As of 23 August 2018 cmake again works.
 Files had been deleted, added, and renamed so
 adjustments have now been made.
 
+========== ACLOCAL MISSING BUILD PROBLEM
+
+If you encounter a configure or build problem 
+mentioning something about aclocal 1.15 being missing:
+  The problem is because the git repository does not
+  maintain file timestamps so configure or make fails.
+  Nor does "cp -r" (missing the p option) maintain 
+  the file timestamps of the files.
+
+  From the top-level source do
+    sh scripts/FIX-CONFIGURE-TIMES
+  to fix the timestamps.
+  The command is safe to run at any time.
+  The command checks that it is being run 
+  from an appropriate libdwarf top-level 
+  directory before doing anything.
+
+========= End of aclocal issue...
+
 Standard builds are done by configure/make as described below.
 Cross-Compiles are described below, see CROSS COMPILES.
 
