@@ -4,48 +4,64 @@ adjustments have now been made.
 
 ========== ACLOCAL MISSING BUILD PROBLEM
 
-If you encounter a configure or build problem 
-mentioning something about aclocal 1.15 being missing:
+If you encounter a configure or build problem
+"WARNING: 'aclocal-1.15' is missing on your system."
   The problem is because the git repository does not
   maintain file timestamps so configure or make fails.
-  Nor does "cp -r" (missing the p option) maintain 
+  Nor does "cp -r" (missing the p option) maintain
   the file timestamps of the files.
 
   From the top-level source do
     sh scripts/FIX-CONFIGURE-TIMES
-  to fix the timestamps.
+  to fix the important timestamps.
   The command is safe to run at any time.
-  The command checks that it is being run 
-  from an appropriate libdwarf top-level 
+  The command checks that it is being run
+  from an appropriate libdwarf top-level
   directory before doing anything.
 
 ========= End of aclocal issue...
+========== CONFUSING BUILD PROBLEM
+If you do a full or partial in-source-tree build
+(see below) and then attempt an out-of-source-tree
+build you will get very confusing messages
+about build problems.
+
+Just ensure that the source tree is 'clean'
+(as by 'make distclean' or other means)
+before you attempt an out-of-source-tree build
+(see below for details).
+
+========= End of confusing build problem
 
 Standard builds are done by configure/make as described below.
 Cross-Compiles are described below, see CROSS COMPILES.
 
 BUILDING IN SOURCE TREE
 To just build libdwarf and dwarfdump if the source tree is
-in /a/b/libdwarf-1 one might do:
-    cd /a/b/libdwarf-1 ./configure make
+in /a/b/dwarf-20180809 one might do:
+    cd /a/b/dwarf-20180809
+    ./configure
+    make
 
-LIBRARY REQUIREMENTS
-libelf and zlib have to be installed to build libdwarf and
-dwarfdump.  For example, in Ubuntu 16.04, install using:
-   sudo apt-get install zlib1g zlib1g-dev libelf1 libelf-dev
+LIBRARY AND HEADER REQUIREMENTS
+libelf and zlib and elf.h have to be installed
+to build libdwarf and dwarfdump.  For example,
+in Ubuntu 16.04, install using:
+    sudo apt-get install zlib1g zlib1g-dev libelf1 libelf-dev
 
-zlib is available in source from http://zlib.net
+zlib is available in source from
+    http://zlib.net
 
-libelf is available in source from  
-http://www.mr511.de/software/
+libelf is available in source from
+    http://www.mr511.de/software/
 and
-https://github.com/vtorri/libelf
+    https://github.com/vtorri/libelf
 
 BUILDING OUT OF SOURCE TREE
 Or one could  create a new directory, for example,
     mkdir /var/tmp/dwarfex
     cd /var/tmp/dwarfex
-    /a/b/libdwarf-1/configure (other options as required)
+    /a/b/dwarf-20180809/configure (other options as required)
     make
 In this case the source directory is not written-to and all
 objects and files created are under /var/tmp/dwarfex
@@ -55,8 +71,9 @@ be cleaned of any files created by a build in the source tree
 (just in case you tried that) before doing the out-of-source
 build.
 
+BUILDING ALL THE TOOLS
 To build all the tools (including dwarfgen and dwarfexample)
-use  a different configure command..
+use  a different configure command:
     ./configure --enable-dwarfgen --enable-dwarfexample make
 
 To see all the available options to configure do
@@ -64,28 +81,16 @@ To see all the available options to configure do
 
 By default configure compiles and uses libdwarf.a.
 
-With 
+With
     ./configure --enable-shared
 both libdwarf.a and libdwarf.so are built. The runtimes built
 will reference libdwarf.so.
 
-With 
+With
     ./configure --enable-shared --disable-nonshared
 libdwarf.so is built and used; libdwarf.a is not built.
 
-BUILD FAILURE
-If the 'make' step fails with the message
-"WARNING: 'aclocal-1.15' is missing on your system."
-then the timestamps of the source tree are not in the proper
-relationships.  Creating a source copy using  'cp -r' can
-caus this. Much better to use 'cp -rp'.  Change directory to
-the top of the source tree and do
-   sh scripts/FIX-CONFIGURE-TIMES
-to  update the relevant timestamps.
-Then redo the configure and the make should work.
-
 THE USUAL ENVIRONMENT VARIABLES
-
 The following default to sensible values
 you may set environment variables as usual
 with GNU configure.
@@ -98,7 +103,7 @@ values used in building helper executables (at build time)
 that are run at build time to build C source
 to be compiled into libdwarf and dwarfdump.
 It's not likely you will have any need to
-set your own values for these. 
+set your own values for these.
 These helper executables are ignored
 by 'make install'.
 
@@ -173,7 +178,7 @@ On build machine:
 sudo apt-get install gcc-arm-linux-gnueabihf
 #  Install libelf and zlib (libz) into
 #  the gcc cross-build tree too.
-#  I cheated: copied from arm machine into 
+#  I cheated: copied from arm machine into
 #  gcc-arm-linux-gnueabihf.
 
 mkdir emptycross
@@ -189,17 +194,17 @@ make
 To update configure after hand updating a Makefile.am or
 the configure.ac do the following command at the top level
 (where this file is):
-  autoreconf -vif
+    autoreconf -vif
 You will need the autotools installed including autoconf,
 automake, and libtool to run autoreconf.
 
 If, for some reason, you wish to run the small
 basic checks of individual source files, first
 do
-  ./configure
-  make
-Then 
-  make check
+    ./configure
+    make
+Then
+    make check
 will run the special test scripts: dwarfdump/runtests.sh
 libdwarf/runtests.sh (each must be run in its directory,
 neither requires any arguments, just run each).
@@ -208,15 +213,15 @@ in the source directory, it does not currently
 work if running the configure in a build directory.
 
 To create a release file do:
-  ./configure --enable-dwarfexample --enable-dwarfgen
-  make
-  make dist
+    ./configure --enable-dwarfexample --enable-dwarfgen
+    make
+    make dist
 will generate a libdwarf-yyyymmdd.tar.gz file with the files
 needed in a release
-  scripts/CPTARTOWEBDIR is an example of generating 
+    scripts/CPTARTOWEBDIR is an example of generating
 fingerprints for the release file and copying the file.
 
-See the configure.ac for the version used.  
+See the configure.ac for the version used.
 For example: 'm4_define([v_date], [20180730])])'
 
 
