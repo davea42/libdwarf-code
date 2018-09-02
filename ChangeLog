@@ -1,3 +1,9 @@
+2018-09-02  David Anderson
+    * README: noted the example install commands for libelf and zlib
+      work on 18.04 Ubuntu as well as 16.04.
+    * configure.ac: Updated version to 20180901.
+      Corrected a couple of typos in the summary output of configure.
+    * configure: Regenerated.
 2018-08-24  David Anderson
     * README: Moved comments about common build problems
       to the beginning of the text. 

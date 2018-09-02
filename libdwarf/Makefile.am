@@ -14,6 +14,14 @@ dwgetopt.h
 
 gennames_CFLAGS = $(DWARF_CFLAGS_WARN) -I$(top_builddir)/libdwarf -I$(top_builddir) -I$(top_srcdir)/libdwarf
 
+$(gennames_OBJECTS): CC=$(CC_FOR_BUILD)
+$(gennames_OBJECTS): CFLAGS=$(CFLAGS_FOR_BUILD)
+$(gennames_OBJECTS): CPPFLAGS=$(CPPFLAGS_FOR_BUILD)
+gennames$(BUILD_EXEEXT): CC=$(CC_FOR_BUILD)
+gennames$(BUILD_EXEEXT): CFLAGS=$(CFLAGS_FOR_BUILD)
+gennames$(BUILD_EXEEXT): LDFLAGS=$(LDFLAGS_FOR_BUILD)
+gennames$(BUILD_EXEEXT): CPPFLAGS=$(CPPFLAGS_FOR_BUILD)
+
 BUILT_SOURCES = \
 dwarf_names.c
 
@@ -30,9 +38,6 @@ dwarf_names.c: gennames$(BUILD_EXEEXT)
 	$(AM_V_at)rm -f dwarf_names.c dwarf_names.h dwarf_names_enum.h dwarf_names_new.h
 	$(gn_verbose)./gennames$(BUILD_EXEEXT) @dwarf_namestable@ -i $(srcdir) -o .
 
-gennames$(BUILD_EXEEXT): $(top_srcdir)/libdwarf/gennames.c $(top_srcdir)/libdwarf/dwgetopt.c $(top_srcdir)/libdwarf/dwgetopt.h
-	$(cc_verbose)$(CC_FOR_BUILD) $(gennames_CFLAGS) $(CFLAGS_FOR_BUILD) $(CPPFLAGS_FOR_BUILD) $(top_srcdir)/libdwarf/gennames.c $(top_srcdir)/libdwarf/dwgetopt.c -o $@
-
 ### errmsg_check
 
 errmsg_check_SOURCES = \
@@ -48,8 +53,10 @@ errmsg_check_CFLAGS =  $(DWARF_CFLAGS_WARN) \
 BUILT_SOURCES += \
 errmsg_check_list
 
-errmsg_check$(BUILD_EXEEXT): $(top_srcdir)/libdwarf/dwarf_test_errmsg_list.c $(top_srcdir)/libdwarf/dwarf_errmsg_list.h
-	$(CC_FOR_BUILD) $(errmsg_check_CFLAGS) $(CFLAGS_FOR_BUILD) $(CPPFLAGS_FOR_BUILD) $(top_srcdir)/libdwarf/dwarf_test_errmsg_list.c  -o $@
+$(errmsg_check_OBJECTS): CC=$(CC_FOR_BUILD)
+$(errmsg_check_OBJECTS): CFLAGS=$(CFLAGS_FOR_BUILD)
+$(errmsg_check_OBJECTS): CPPFLAGS=$(CPPFLAGS_FOR_BUILD)
+errmsg_check$(BUILD_EXEEXT): CC=$(CC_FOR_BUILD)
 
 errmsg_check_list: errmsg_check$(BUILD_EXEEXT)
 	$(AM_V_at)grep DW_DLE libdwarf.h >errmsg_check_list

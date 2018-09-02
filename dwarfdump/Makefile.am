@@ -40,8 +40,13 @@ tag_attr_build_CPPFLAGS = -DTRIVIAL_NAMING \
 -I$(top_srcdir)/libdwarf  \
 -I$(top_builddir)/libdwarf
 
-tag_attr_build$(BUILD_EXEEXT): $(top_srcdir)/dwarfdump/tag_attr.c $(top_builddir)/libdwarf/dwarf_names.c $(top_srcdir)/dwarfdump/common.c $(top_srcdir)/dwarfdump/dwarf_tsearchbal.c $(top_srcdir)/dwarfdump/dwgetopt.c $(top_srcdir)/dwarfdump/esb.c $(top_srcdir)/dwarfdump/makename.c $(top_srcdir)/dwarfdump/naming.c $(top_srcdir)/dwarfdump/sanitized.c $(top_srcdir)/dwarfdump/tag_common.c
-	$(CC_FOR_BUILD) $(tag_attr_build_CPPFLAGS) $(tag_attr_build_CFLAGS) $(CFLAGS_FOR_BUILD) $(CPP_FLAGS_FOR_BUILD) $(top_srcdir)/dwarfdump/tag_attr.c $(top_builddir)/libdwarf/dwarf_names.c  $(top_srcdir)/dwarfdump/common.c $(top_srcdir)/dwarfdump/dwarf_tsearchbal.c $(top_srcdir)/dwarfdump/dwgetopt.c $(top_srcdir)/dwarfdump/esb.c $(top_srcdir)/dwarfdump/makename.c $(top_srcdir)/dwarfdump/naming.c $(top_srcdir)/dwarfdump/sanitized.c $(top_srcdir)/dwarfdump/tag_common.c -o $@
+$(tag_attr_build_OBJECTS):CC=$(CC_FOR_BUILD)
+$(tag_attr_build_OBJECTS):CFLAGS=$(CFLAGS_FOR_BUILD)
+$(tag_attr_build_OBJECTS):CPPFLAGS=$(CPPFLAGS_FOR_BUILD)
+tag_attr_build$(BUILD_EXEEXT):LDFLAGS=$(LDFLAGS_FOR_BUILD)
+tag_attr_build$(BUILD_EXEEXT):CC=$(CC_FOR_BUILD)
+tag_attr_build$(BUILD_EXEEXT):CFLAGS=$(CFLAGS_FOR_BUILD)
+tag_attr_build$(BUILD_EXEEXT):CPPFLAGS=$(CPPFLAGS_FOR_BUILD)
 
 ### tag_tree_build
 
@@ -70,8 +75,13 @@ tag_tree_build_CPPFLAGS = @CPPFLAGS@ -DTRIVIAL_NAMING \
 -I$(top_srcdir)/libdwarf \
 -I$(top_builddir)/libdwarf
 
-tag_tree_build$(BUILD_EXEEXT): $(top_srcdir)/dwarfdump/tag_tree.c $(top_builddir)/libdwarf/dwarf_names.c $(top_srcdir)/dwarfdump/common.c $(top_srcdir)/dwarfdump/dwarf_tsearchbal.c $(top_srcdir)/dwarfdump/dwgetopt.c $(top_srcdir)/dwarfdump/esb.c $(top_srcdir)/dwarfdump/makename.c $(top_srcdir)/dwarfdump/naming.c $(top_srcdir)/dwarfdump/sanitized.c $(top_srcdir)/dwarfdump/tag_common.c
-	$(CC_FOR_BUILD) $(CFLAGS_FOR_BUILD) $(tag_tree_build_CPPFLAGS) $(tag_tree_build_CFLAGS) $(CPP_FLAGS_FOR_BUILD) $(top_srcdir)/dwarfdump/tag_tree.c $(top_builddir)/libdwarf/dwarf_names.c $(top_srcdir)/dwarfdump/common.c $(top_srcdir)/dwarfdump/dwarf_tsearchbal.c $(top_srcdir)/dwarfdump/dwgetopt.c $(top_srcdir)/dwarfdump/esb.c $(top_srcdir)/dwarfdump/makename.c $(top_srcdir)/dwarfdump/naming.c $(top_srcdir)/dwarfdump/sanitized.c $(top_srcdir)/dwarfdump/tag_common.c -o $@
+$(tag_tree_build_OBJECTS):CC=$(CC_FOR_BUILD) 
+$(tag_tree_build_OBJECTS):CFLAGS=$(CFLAGS_FOR_BUILD)
+$(tag_tree_build_OBJECTS):CPPFLAGS=$(CPPFLAGS_FOR_BUILD)
+tag_tree_build$(BUILD_EXEEXT):CC=$(CC_FOR_BUILD)
+tag_tree_build$(BUILD_EXEEXT):LDFLAGS=$(LDFLAGS_FOR_BUILD)
+tag_tree_build$(BUILD_EXEEXT):CFLAGS=$(CFLAGS_FOR_BUILD)
+tag_tree_build$(BUILD_EXEEXT):CPPFLAGS=$(CPPFLAGS_FOR_BUILD)
 
 
 BUILT_SOURCES = \

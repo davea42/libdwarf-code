@@ -46,7 +46,7 @@ in /a/b/dwarf-20180809 one might do:
 LIBRARY AND HEADER REQUIREMENTS
 libelf and zlib and elf.h have to be installed
 to build libdwarf and dwarfdump.  For example,
-in Ubuntu 16.04, install using:
+in Ubuntu 16.04 and 18.04, install using:
     sudo apt-get install zlib1g zlib1g-dev libelf1 libelf-dev
 
 zlib is available in source from

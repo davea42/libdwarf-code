@@ -1,3 +1,8 @@
+2018-09-02 David Anderson
+    * Makefile.am: Changed the way to build gennames
+      executable to the automake way, eliminating make warnings
+      when building.
+    * Makefile.in: regenerated.
 2018-08-23 David Anderson
     * CMakeLists.txt: Adjusted to fit new/changed file names.
 2018-08-21 David Anderson
