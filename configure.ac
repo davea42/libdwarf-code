@@ -16,7 +16,7 @@ m4_define([lt_age], [v_min])
 
 ### Sets the release name. 
 ###m4_define([v_date], [m4_esyscmd_s([date "+%Y%m%d"])])
-m4_define([v_date], [20180901])])
+m4_define([v_date], [20180910])])
 
 AC_PREREQ([2.52])
 ### 2nd arg to AC_INIT is the version 'number'.
@@ -120,6 +120,15 @@ AC_ARG_ENABLE([wall],
         [enable_wall="no"])
    ],
    [enable_wall="no"])
+
+AC_ARG_ENABLE(nonstandardprintf,AS_HELP_STRING([--enable-nonstandardprintf],
+        [Use a special printf format for 64bit (default is NO)]),
+        [ AC_DEFINE([HAVE_NONSTANDARD_PRINTF_64_FORMAT],[1],
+           [Define 1 if need nonstandard printf format for  64bit] )
+           [enable_nonstandardprintf="yes"]
+        ],
+        [enable_nonstandardprintf="no"])
+
 
 
 
@@ -755,6 +764,7 @@ echo "    Elf64_Rela.........: ${have_elf64_rela}"
 echo "    Elf64_Sym..........: ${have_elf64_sym}"
 echo "    Elf spelled........: ${struct_elf}"
 echo "    Windows path corr..: ${enable_windowspath}"
+echo "    Nonstandardprintf..: ${enable_nonstandardprintf}"
 echo "  dwarfdump............: always"
 echo "    elf64_getehdr......: ${have_getehdr}"
 echo "    Elf64_Rel (r_info).: ${have_elf64_rel}"

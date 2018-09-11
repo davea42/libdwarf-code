@@ -1,3 +1,7 @@
+2018-09-11  David Anderson
+    * libdwarf.h.in: Restored use of
+      HAVE_NONSTANDARD_PRINTF_64_FORMAT
+      for those needing that feature.
 2018-09-02 David Anderson
     * Makefile.am: Changed the way to build gennames
       executable to the automake way, eliminating make warnings

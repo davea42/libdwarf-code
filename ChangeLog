@@ -1,3 +1,10 @@
+2018-09-11  David Anderson
+    * configure.ac: Restored the configure option
+      --enable-nonstandardprintf which sets the
+      config.h HAVE_NONSTANDARD_PRINTF_64_FORMAT
+      variable for those needing it.
+      See libdwarf/libdwarf.h.in for its use.
+    * configure. Regenerated. Version now 20180910
 2018-09-02  David Anderson
     * README: noted the example install commands for libelf and zlib
       work on 18.04 Ubuntu as well as 16.04.
