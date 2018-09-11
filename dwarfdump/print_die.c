@@ -2940,7 +2940,7 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
                 to one, or a mistake. */
         }
         /*  FALL THRU to location description */
-    case DW_AT_location:
+    case DW_AT_location: /* IMPLICIT FALLTHRU TO HERE OK. */
     case DW_AT_vtable_elem_location:
     case DW_AT_string_length:
     case DW_AT_return_addr:

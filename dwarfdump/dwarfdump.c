@@ -197,17 +197,20 @@ main(int argc, char *argv[])
         - We can also disable buffering on stdout by using setbuf:
             setbuf(stdout,NULL);
             Make stdout unbuffered; this seems to work for all cases.
+        The problem is no longer present. September 2018.
     */
 
-    setbuf(stdout,NULL);
-    /* Windows specific. */
-    /* Redirect stderr to stdout. */
-    /* Tried to use SetStdHandle, but it does not work properly. */
-#if 0
-    BOOL bbb = SetStdHandle(STD_ERROR_HANDLE,GetStdHandle(STD_OUTPUT_HANDLE));
-    _iob[2]._file = _iob[1]._file;
-    stderr->_file = stdout->_file;
-#endif
+    /*  Calling setbuf() with NULL argument, it turns off
+        all buffering for the specified stream.
+        Then writing to and/or reading from the stream
+        will be exactly as directed by the program.
+        But if dwarfdump is used over a network drive,
+        it shows a dramatic
+        slowdown when sending the output to a file.
+        An operation that takes
+        couple of seconds, it was taking few hours. */
+    /*  setbuf(stdout,NULL); */
+    /*  Redirect stderr to stdout. */
     dup2(fileno(stdout),fileno(stderr));
 #endif /* _WIN32 */
 
@@ -486,9 +489,9 @@ print_object_header(UNUSEDARG Elf *elf,
         printf("e_machine  : 0x%x (%s) (%s)\n",eh32->e_machine,
             eh_literals.e_machine_s,eh_literals.e_machine_l);
         printf("e_version  : 0x%x\n", eh32->e_version);
-        printf("e_entry    : 0x%" DW_PR_XZEROS DW_PR_DUx "\n",eh32->e_entry);
-        printf("e_phoff    : 0x%" DW_PR_XZEROS DW_PR_DUx "\n",eh32->e_phoff);
-        printf("e_shoff    : 0x%" DW_PR_XZEROS DW_PR_DUx "\n",eh32->e_shoff);
+        printf("e_entry    : 0x%08x\n",eh32->e_entry);
+        printf("e_phoff    : 0x%08x\n",eh32->e_phoff);
+        printf("e_shoff    : 0x%08x\n",eh32->e_shoff);
         printf("e_flags    : 0x%x\n",eh32->e_flags);
         printf("e_ehsize   : 0x%x\n",eh32->e_ehsize);
         printf("e_phentsize: 0x%x\n",eh32->e_phentsize);

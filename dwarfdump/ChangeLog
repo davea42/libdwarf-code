@@ -1,3 +1,12 @@
+2018-09-11 David Anderson & Carlos Alberto Enciso
+    * dwarfdump.c: Simplify the WIN32 code redirecting
+      stderr to stdout as earlier workarounds no longer needed.
+      Printing of parts of an Elf32 header had the wrong
+      printf format-- fixed.
+    * print_die.c: An implicit fallthrough to case DW_AT_LOCATION
+      about line 2943 generates a warning with --enable-wall 
+      so added a comment to make it clear to readers 
+      this is intended.
 2018-09-02 David Anderson
     * Makefile.am: Changed the way to build tag_tree and tag_attr
       executables to the automake way, eliminating make warnings
