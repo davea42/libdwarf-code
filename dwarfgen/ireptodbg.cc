@@ -292,7 +292,6 @@ HandleOneDieAndChildren(Dwarf_P_Debug dbg,
             // Link as first child.
             res  = dwarf_die_link(chp,gendie,NULL,NULL, NULL,&error);
         }
-        // Bad cast here, FIXME
         if (reinterpret_cast<Dwarf_Addr>(res) == DW_DLV_BADADDR) {
             cerr << "Die link failure.  "<< endl;
             exit(1);

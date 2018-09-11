@@ -33,7 +33,7 @@
 #if defined(_WIN32) && defined(HAVE_WINDOWS_H)
 #include <windows.h>
 #define BOOLEAN_TYPEDEFED 1
-#endif /* HAVE_STDAFX_H */
+#endif /* HAVE_WINDOWS_H */
 
 #include "globals.h"
 #include "dwarf.h"

@@ -1,4 +1,12 @@
 2018-09-11 David Anderson & Carlos Alberto Enciso
+    * dwconf.c: Fixed typo in a comment.
+    * dwarf_tsearchbal.c: int->size_t three places.
+      A couple too-long lines indented. Matches
+      tsearch directory version now.
+    * esb.c: The test for _WIN32 in looking
+      at printf formats  also allows
+      config.h define HAVE_NONSTANDARD_PRINTF_64_FORMAT.
+2018-09-11 David Anderson & Carlos Alberto Enciso
     * dwarfdump.c: Simplify the WIN32 code redirecting
       stderr to stdout as earlier workarounds no longer needed.
       Printing of parts of an Elf32 header had the wrong

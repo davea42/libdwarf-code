@@ -72,7 +72,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     From public sources of prime numbers, arbitrarily chosen
     to approximately double in size at each step.
 */
-static unsigned long long primes[] =
+static unsigned long primes[] =
 {
 #if 0 /* for testing only */
 5,11, 17,23, 31, 47, 53,
@@ -174,7 +174,7 @@ dwarf_initialize_search_hash( void **treeptr,
     DW_TSHASHTYPE(*hashfunc)(const void *key),
     unsigned long size_estimate)
 {
-    unsigned long prime_to_use =primes[0];
+    unsigned long prime_to_use = primes[0];
     unsigned entry_index = 0;
     unsigned k = 0;
     struct hs_base *base = 0;

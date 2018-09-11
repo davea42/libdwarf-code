@@ -1,3 +1,8 @@
+2018-09-11  David Anderson & Carlos Alberto Enciso
+     * dwarf_tsearchhash.c: Remove trailing blank.
+       Now matches version in libdwarf.
+     * dwarf_tsearchbal.c: Change int to size_t where applicable.
+       Fix too-long lines in a couple places
 2018-07-20  David Anderson
      * dwarf_tsearchhash.c: Added UNUSEDARG
        where appropriate.

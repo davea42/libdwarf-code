@@ -162,7 +162,8 @@ tdump_inner(struct ts_entry *t,
     Returns the depth.
 */
 int
-dwarf_check_balance_inner(struct ts_entry *t,int level,int maxdepth,int *founderror,const char *prefix)
+dwarf_check_balance_inner(struct ts_entry *t,int level,int maxdepth,
+    int *founderror,const char *prefix)
 {
     int l = 0;
     int r = 0;
@@ -182,8 +183,10 @@ dwarf_check_balance_inner(struct ts_entry *t,int level,int maxdepth,int *founder
         }
         return 1;
     }
-    l = dwarf_check_balance_inner(t->llink,level+1,maxdepth,founderror,prefix);
-    r = dwarf_check_balance_inner(t->rlink,level+1,maxdepth,founderror,prefix);
+    l = dwarf_check_balance_inner(t->llink,level+1,maxdepth,
+        founderror,prefix);
+    r = dwarf_check_balance_inner(t->rlink,level+1,maxdepth,
+        founderror,prefix);
     if (l ==r && t->balance != 0) {
         printf("%s Balance at 0x%lx d should be 0 is %d.\n",
             prefix,(unsigned long)t,t->balance);
@@ -229,7 +232,7 @@ dwarf_check_balance(struct ts_entry *head,int finalprefix)
 {
     const char *prefix = 0;
     int maxdepth = 0;
-    int headdepth = 0;
+    size_t headdepth = 0;
     int errcount = 0;
     int depth = 0;
     struct ts_entry*root = 0;
@@ -255,9 +258,9 @@ dwarf_check_balance(struct ts_entry *head,int finalprefix)
     headdepth++;
     depth = dwarf_check_balance_inner(root,depth,maxdepth,&errcount,prefix);
     if (depth != headdepth) {
-        printf("%s Head node says depth %d, it is really %d\n",
+        printf("%s Head node says depth %lu, it is really %d\n",
             prefix,
-            headdepth,depth);
+            (unsigned long)headdepth,depth);
         ++errcount;
     }
     if(errcount) {
@@ -275,15 +278,15 @@ dwarf_tdump(const void*headp_in,
 {
     struct ts_entry *head = (struct ts_entry *)headp_in;
     struct ts_entry *root = 0;
-    int headdepth = 0;
+    size_t headdepth = 0;
     if(!head) {
         printf("dumptree null tree ptr : %s\n",msg);
         return;
     }
     headdepth = head->llink - (struct ts_entry *)0;
-    printf("dumptree head ptr : 0x%08lx tree-depth %d: %s\n",
+    printf("dumptree head ptr : 0x%08lx tree-depth %lu: %s\n",
         (unsigned long)head,
-        headdepth,
+        (unsigned long)headdepth,
         msg);
     root = head->rlink;
     if(!root) {
@@ -682,7 +685,7 @@ tdelete_inner(const void *key,
     struct ts_entry *p        = 0;
     struct ts_entry *pp       = 0;
     struct pkrecord * pkarray = 0;
-    int depth                 = head->llink - (struct ts_entry *)0;
+    size_t depth              = head->llink - (struct ts_entry *)0;
     unsigned k                = 0;
 
     /*  Allocate extra, head is on the stack we create

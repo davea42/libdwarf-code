@@ -538,7 +538,7 @@ esb_append_printf_u(struct esb_s *data,const char *format,esb_unsigned v)
     next = (endptr - format);
     /*  Following is lx lu or u or llx llu , we take
         all this to mean 64 bits, */
-#ifdef _WIN32
+#if defined( _WIN32) || defined(HAVE_NONSTANDARD_PRINTF_64_FORMAT)
     if (format[next] == 'I') {
         /*lcount++;*/
         next++;
@@ -717,7 +717,7 @@ esb_append_printf_i(struct esb_s *data,const char *format,esb_int v)
     next = (endptr - format);
     /*  Following is lx lu or u or llx llu , we take
         all this to mean 64 bits, */
-#ifdef _WIN32
+#if defined( _WIN32) || defined(HAVE_NONSTANDARD_PRINTF_64_FORMAT)
     if (format[next] == 'I') {
         /*lcount++;*/
         next++;
@@ -870,9 +870,9 @@ void
 esb_append_printf(struct esb_s *data,const char *in_string, ...)
 {
     va_list ap;
-    int len = 0;
-    int len2 = 0;
-    int remaining = 0;
+    size_t len = 0;
+    size_t len2 = 0;
+    size_t remaining = 0;
 
     if (!null_device_handle) {
         if(!esb_open_null_device()) {
@@ -888,7 +888,7 @@ esb_append_printf(struct esb_s *data,const char *in_string, ...)
     if (data->esb_allocated_size == 0) {
         init_esb_string(data, alloc_size);
     }
-    remaining = data->esb_allocated_size - data->esb_used_bytes -1;
+    remaining = data->esb_allocated_size - data->esb_used_bytes - 1;
     if (remaining < len) {
         if (data->esb_rigid) {
             /* No room, give up. */
