@@ -1,3 +1,7 @@
+
+2018-09-12  David Anderson
+    * configure.ac: Updated version to 20180912
+    * configure. Regenerated. Version now 20180912
 2018-09-11  David Anderson
     * configure.ac: Restored the configure option
       --enable-nonstandardprintf which sets the

@@ -57,7 +57,7 @@ static size_t alloc_size = INITIAL_ALLOC;
 
 /* NULL device used when printing formatted strings */
 static FILE *null_device_handle = 0;
-#if _WIN32
+#ifdef _WIN32
 #define NULL_DEVICE_NAME "NUL"
 #else
 #define NULL_DEVICE_NAME "/dev/null"
@@ -538,7 +538,7 @@ esb_append_printf_u(struct esb_s *data,const char *format,esb_unsigned v)
     next = (endptr - format);
     /*  Following is lx lu or u or llx llu , we take
         all this to mean 64 bits, */
-#if defined( _WIN32) || defined(HAVE_NONSTANDARD_PRINTF_64_FORMAT)
+#if defined(_WIN32) && defined(HAVE_NONSTANDARD_PRINTF_64_FORMAT)
     if (format[next] == 'I') {
         /*lcount++;*/
         next++;
@@ -551,7 +551,7 @@ esb_append_printf_u(struct esb_s *data,const char *format,esb_unsigned v)
         /*lcount++;*/
         next++;
     }
-#endif /* _WIN32 */
+#endif /* HAVE_NONSTANDARD_PRINTF_64_FORMAT */
     if (format[next] == 'l') {
         lcount++;
         next++;
@@ -717,7 +717,7 @@ esb_append_printf_i(struct esb_s *data,const char *format,esb_int v)
     next = (endptr - format);
     /*  Following is lx lu or u or llx llu , we take
         all this to mean 64 bits, */
-#if defined( _WIN32) || defined(HAVE_NONSTANDARD_PRINTF_64_FORMAT)
+#if defined(_WIN32) && defined(HAVE_NONSTANDARD_PRINTF_64_FORMAT)
     if (format[next] == 'I') {
         /*lcount++;*/
         next++;
@@ -730,7 +730,7 @@ esb_append_printf_i(struct esb_s *data,const char *format,esb_int v)
         /*lcount++;*/
         next++;
     }
-#endif
+#endif /* HAVE_NONSTANDARD_PRINTF_64_FORMAT */
     if (format[next] == 'l') {
         lcount++;
         next++;

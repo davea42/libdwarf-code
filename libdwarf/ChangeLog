@@ -1,3 +1,7 @@
+2018-09-12  David Anderson
+    * dwarf_version.h: Updated date string.
+    * libdwarf.h.in: Corrected the use of
+      HAVE_NONSTANDARD_PRINTF_64_FORMAT.
 2018-09-11  David Anderson
     * libdwarf.h.in: Restored use of
       HAVE_NONSTANDARD_PRINTF_64_FORMAT
