@@ -98,6 +98,7 @@ dwarf_funcs.c \
 dwarf_funcs.h \
 dwarf_gdbindex.c \
 dwarf_gdbindex.h \
+dwarf_generic_init.c \
 dwarf_global.c \
 dwarf_global.h \
 dwarf_groups.c \

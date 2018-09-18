@@ -52,81 +52,6 @@
 #define FALSE  0
 #define TRUE   1
 
-static int
-dwarf_elf_init_file_ownership(dwarf_elf_handle elf_file_pointer,
-    int libdwarf_owns_elf,
-    unsigned groupnumber,
-    Dwarf_Unsigned access,
-    Dwarf_Handler errhand,
-    Dwarf_Ptr errarg,
-    Dwarf_Debug * ret_dbg,
-    Dwarf_Error * error);
-
-
-/*  The basic dwarf initializer function for consumers using
-    libelf.
-    Return a libdwarf error code on error, return DW_DLV_OK
-    if this succeeds.  */
-int
-dwarf_init(int fd,
-    Dwarf_Unsigned access,
-    Dwarf_Handler errhand,
-    Dwarf_Ptr errarg, Dwarf_Debug * ret_dbg, Dwarf_Error * error)
-{
-    return dwarf_init_b(fd,access, DW_GROUPNUMBER_ANY,
-        errhand,errarg,ret_dbg,error);
-}
-
-/* New March 2017 */
-int
-dwarf_init_b(int fd,
-    Dwarf_Unsigned access,
-    unsigned  group_number,
-    Dwarf_Handler errhand,
-    Dwarf_Ptr errarg, Dwarf_Debug * ret_dbg, Dwarf_Error * error)
-{
-    struct stat fstat_buf;
-    dwarf_elf_handle elf_file_pointer = 0;
-    /* ELF_C_READ is a portable value */
-    Elf_Cmd what_kind_of_elf_read = ELF_C_READ;
-
-#if !defined(S_ISREG)
-#define S_ISREG(mode) (((mode) & S_IFMT) == S_IFREG)
-#endif
-    if (fstat(fd, &fstat_buf) != 0) {
-        DWARF_DBG_ERROR(NULL, DW_DLE_FSTAT_ERROR, DW_DLV_ERROR);
-    }
-    if (!S_ISREG(fstat_buf.st_mode)) {
-        DWARF_DBG_ERROR(NULL, DW_DLE_FSTAT_MODE_ERROR, DW_DLV_ERROR);
-    }
-
-    if (access != DW_DLC_READ) {
-        DWARF_DBG_ERROR(NULL, DW_DLE_INIT_ACCESS_WRONG, DW_DLV_ERROR);
-    }
-
-    elf_version(EV_CURRENT);
-    /*  Changed to mmap request per bug 281217. 6/95 */
-#ifdef HAVE_ELF_C_READ_MMAP
-    /*  ELF_C_READ_MMAP is an SGI IRIX specific enum value from IRIX
-        libelf.h meaning read but use mmap.
-        It is never necessary -- it is just a convenience.
-        HAVE_ELF_C_READ_MMAP has not been in config.h via
-        configure since 2004 at least. */
-    what_kind_of_elf_read = ELF_C_READ_MMAP;
-#endif /* !HAVE_ELF_C_READ_MMAP */
-
-    elf_file_pointer = elf_begin(fd, what_kind_of_elf_read, 0);
-    if (elf_file_pointer == NULL) {
-        DWARF_DBG_ERROR(NULL, DW_DLE_ELF_BEGIN_ERROR, DW_DLV_ERROR);
-    }
-    return dwarf_elf_init_file_ownership(elf_file_pointer,
-        TRUE, group_number, access, errhand, errarg, ret_dbg, error);
-}
-
-/*  An alternate dwarf setup call for consumers using
-    libelf.
-    When the caller has opened libelf already, so the
-    caller must free libelf.  */
 /* New March 2017 */
 int
 dwarf_elf_init_b(dwarf_elf_handle elf_file_pointer,
@@ -136,7 +61,7 @@ dwarf_elf_init_b(dwarf_elf_handle elf_file_pointer,
     Dwarf_Ptr errarg,
     Dwarf_Debug * ret_dbg, Dwarf_Error * error)
 {
-    return dwarf_elf_init_file_ownership(elf_file_pointer,
+    return _dwarf_elf_init_file_ownership(elf_file_pointer,
         FALSE, group_number,access, errhand, errarg, ret_dbg, error);
 }
 
@@ -147,15 +72,15 @@ dwarf_elf_init(dwarf_elf_handle elf_file_pointer,
     Dwarf_Ptr errarg,
     Dwarf_Debug * ret_dbg, Dwarf_Error * error)
 {
-    return dwarf_elf_init_file_ownership(elf_file_pointer,
+    return _dwarf_elf_init_file_ownership(elf_file_pointer,
         FALSE, DW_GROUPNUMBER_ANY,
         access, errhand, errarg, ret_dbg, error);
 }
 
 
 /* Initialize the ELF object access for libdwarf.  */
-static int
-dwarf_elf_init_file_ownership(dwarf_elf_handle elf_file_pointer,
+int
+_dwarf_elf_init_file_ownership(dwarf_elf_handle elf_file_pointer,
     int libdwarf_owns_elf,
     unsigned groupnumber,
     Dwarf_Unsigned access,

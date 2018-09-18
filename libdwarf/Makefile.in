@@ -148,11 +148,11 @@ am_libdwarf_la_OBJECTS = libdwarf_la-dwarf_abbrev.lo \
 	libdwarf_la-dwarf_error.lo libdwarf_la-dwarf_form.lo \
 	libdwarf_la-dwarf_frame.lo libdwarf_la-dwarf_frame2.lo \
 	libdwarf_la-dwarf_funcs.lo libdwarf_la-dwarf_gdbindex.lo \
-	libdwarf_la-dwarf_global.lo libdwarf_la-dwarf_groups.lo \
-	libdwarf_la-dwarf_harmless.lo libdwarf_la-dwarf_init_finish.lo \
-	libdwarf_la-dwarf_leb.lo libdwarf_la-dwarf_line.lo \
-	libdwarf_la-dwarf_loc.lo libdwarf_la-dwarf_macro.lo \
-	libdwarf_la-dwarf_macro5.lo \
+	libdwarf_la-dwarf_generic_init.lo libdwarf_la-dwarf_global.lo \
+	libdwarf_la-dwarf_groups.lo libdwarf_la-dwarf_harmless.lo \
+	libdwarf_la-dwarf_init_finish.lo libdwarf_la-dwarf_leb.lo \
+	libdwarf_la-dwarf_line.lo libdwarf_la-dwarf_loc.lo \
+	libdwarf_la-dwarf_macro.lo libdwarf_la-dwarf_macro5.lo \
 	libdwarf_la-dwarf_original_elf_init.lo \
 	libdwarf_la-dwarf_print_lines.lo libdwarf_la-dwarf_pubtypes.lo \
 	libdwarf_la-dwarf_query.lo libdwarf_la-dwarf_ranges.lo \
@@ -644,6 +644,7 @@ dwarf_funcs.c \
 dwarf_funcs.h \
 dwarf_gdbindex.c \
 dwarf_gdbindex.h \
+dwarf_generic_init.c \
 dwarf_global.c \
 dwarf_global.h \
 dwarf_groups.c \
@@ -902,6 +903,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdwarf_la-dwarf_frame2.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdwarf_la-dwarf_funcs.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdwarf_la-dwarf_gdbindex.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdwarf_la-dwarf_generic_init.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdwarf_la-dwarf_global.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdwarf_la-dwarf_groups.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdwarf_la-dwarf_harmless.Plo@am__quote@
@@ -1061,6 +1063,13 @@ libdwarf_la-dwarf_gdbindex.lo: dwarf_gdbindex.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='dwarf_gdbindex.c' object='libdwarf_la-dwarf_gdbindex.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdwarf_la_CFLAGS) $(CFLAGS) -c -o libdwarf_la-dwarf_gdbindex.lo `test -f 'dwarf_gdbindex.c' || echo '$(srcdir)/'`dwarf_gdbindex.c
+
+libdwarf_la-dwarf_generic_init.lo: dwarf_generic_init.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdwarf_la_CFLAGS) $(CFLAGS) -MT libdwarf_la-dwarf_generic_init.lo -MD -MP -MF $(DEPDIR)/libdwarf_la-dwarf_generic_init.Tpo -c -o libdwarf_la-dwarf_generic_init.lo `test -f 'dwarf_generic_init.c' || echo '$(srcdir)/'`dwarf_generic_init.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libdwarf_la-dwarf_generic_init.Tpo $(DEPDIR)/libdwarf_la-dwarf_generic_init.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='dwarf_generic_init.c' object='libdwarf_la-dwarf_generic_init.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdwarf_la_CFLAGS) $(CFLAGS) -c -o libdwarf_la-dwarf_generic_init.lo `test -f 'dwarf_generic_init.c' || echo '$(srcdir)/'`dwarf_generic_init.c
 
 libdwarf_la-dwarf_global.lo: dwarf_global.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdwarf_la_CFLAGS) $(CFLAGS) -MT libdwarf_la-dwarf_global.lo -MD -MP -MF $(DEPDIR)/libdwarf_la-dwarf_global.Tpo -c -o libdwarf_la-dwarf_global.lo `test -f 'dwarf_global.c' || echo '$(srcdir)/'`dwarf_global.c
