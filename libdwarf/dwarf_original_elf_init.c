@@ -122,26 +122,6 @@ _dwarf_elf_init_file_ownership(dwarf_elf_handle elf_file_pointer,
     return res;
 }
 
-
-/*
-    Frees all memory that was not previously freed
-    by dwarf_dealloc.
-    Aside from certain categories.
-
-    This is only applicable when dwarf_init() or dwarf_elf_init()
-    was used to init 'dbg'.
-*/
-int
-dwarf_finish(Dwarf_Debug dbg, Dwarf_Error * error)
-{
-    if(!dbg) {
-        DWARF_DBG_ERROR(NULL, DW_DLE_DBG_NULL, DW_DLV_ERROR);
-    }
-    dwarf_elf_object_access_finish(dbg->de_obj_file);
-
-    return dwarf_object_finish(dbg, error);
-}
-
 /*
     tieddbg should be the executable or .o
     that has the .debug_addr section that

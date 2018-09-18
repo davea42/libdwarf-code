@@ -1504,7 +1504,7 @@ dwarf_object_init_b(Dwarf_Obj_Access_Interface* obj, Dwarf_Handler errhand,
 
     Frees all memory that was not previously freed by
     dwarf_dealloc.
-    Aside frmo certain categories.  */
+    Aside from certain categories.  */
 int
 dwarf_object_finish(Dwarf_Debug dbg, Dwarf_Error * error)
 {

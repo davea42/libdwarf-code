@@ -1,6 +1,12 @@
 2018-09-18  David Anderson
+    * dwarf_generic_init.c: Moved dwarf_finish() here
+      from dwarf_original_elf_init.c.
+    * dwarf_original_elf.c: Moved dwarf_finish() out of
+      this file.
+    * dwarf_init_finish.c: Corrected a comment. frmo->from
+2018-09-18  David Anderson
     * dwarf_generic_init.c: Moved dwarf_init() and dwarf_init_b()
-      to this new file. From of dwarf_original_elf_init.c.
+      to this new file. From dwarf_original_elf_init.c.
       These functions will allow handling non-elf object DWARF
       in the future.
     * dwarf_original_elf_init.c: Functions moved to dwarf_generic_init.c

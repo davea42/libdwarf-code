@@ -46,7 +46,7 @@
 #include "dwarf_elf_access.h"
 
 /*  This is the initialization set intended to
-    handle multiple object formats. 
+    handle multiple object formats.
     Created September 2018  */
 
 
@@ -128,3 +128,21 @@ dwarf_init_b(int fd,
         TRUE, group_number, access, errhand, errarg, ret_dbg, error);
 }
 
+/*
+    Frees all memory that was not previously freed
+    by dwarf_dealloc.
+    Aside from certain categories.
+
+    Applicable when dwarf_init() or dwarf_elf_init()
+    or the -b() form was used to init 'dbg'.
+*/
+int
+dwarf_finish(Dwarf_Debug dbg, Dwarf_Error * error)
+{
+    if(!dbg) {
+        DWARF_DBG_ERROR(NULL, DW_DLE_DBG_NULL, DW_DLV_ERROR);
+    }
+    dwarf_elf_object_access_finish(dbg->de_obj_file);
+
+    return dwarf_object_finish(dbg, error);
+}
