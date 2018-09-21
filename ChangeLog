@@ -1,4 +1,8 @@
-
+2018-09-21  David Anderson
+    * configure.ac: Updated version to 20180920
+    * Makefile.am: Added tsearch (directory) and configure.cmake
+      to the files put in a 'make dist' distribution so
+      cmake works with a released tar.gz.
 2018-09-12  David Anderson
     * configure.ac: Updated version to 20180912
     * configure. Regenerated. Version now 20180912

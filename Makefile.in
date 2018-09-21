@@ -383,7 +383,9 @@ appveyor.yml \
 dwarfdump/runtests.sh \
 libdwarf/runtests.sh \
 bugxml \
+tsearch \
 cmake \
+configure.cmake \
 codingstyle.txt \
 scripts/BLDLIBDWARF \
 scripts/BLDLIBDWARFTAR \
