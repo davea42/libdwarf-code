@@ -1,3 +1,8 @@
+2018-09-21  David Anderson
+    * CMakeLists.txt: Add dwarf_generic_init.c into 
+      sources list.
+    * Makefile.am: Ensure all cmake files get into
+      releases.
 2018-09-18  David Anderson
     * dwarf_generic_init.c: Moved dwarf_finish() here
       from dwarf_original_elf_init.c.
@@ -9,8 +14,9 @@
       to this new file. From dwarf_original_elf_init.c.
       These functions will allow handling non-elf object DWARF
       in the future.
-    * dwarf_original_elf_init.c: Functions moved to dwarf_generic_init.c
-      and _dwarf_elf_init_file_ownership no longer static so
+    * dwarf_original_elf_init.c: Functions moved to 
+      dwarf_generic_init.c and _dwarf_elf_init_file_ownership 
+      no longer static so
       it can be called from dwarf_generic_init.c.
     * Makefile.am: Add the new source file to the sources list.
 2018-09-12  David Anderson

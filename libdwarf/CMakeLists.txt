@@ -1,7 +1,7 @@
 include(configure.cmake)
 
 set_source_group(SOURCES "Source Files" dwarf_abbrev.c dwarf_alloc.c dwarf_arange.c dwarf_die_deliv.c dwarf_dnames.c dwarf_dsc.c dwarf_elf_access.c dwarf_error.c 
-dwarf_form.c dwarf_frame.c dwarf_frame2.c dwarf_funcs.c dwarf_gdbindex.c dwarf_global.c dwarf_groups.c dwarf_harmless.c dwarf_init_finish.c dwarf_leb.c 
+dwarf_form.c dwarf_frame.c dwarf_frame2.c dwarf_funcs.c dwarf_gdbindex.c dwarf_global.c dwarf_groups.c dwarf_harmless.c dwarf_generic_init.c dwarf_init_finish.c dwarf_leb.c 
 dwarf_line.c dwarf_loc.c dwarf_macro.c dwarf_macro5.c dwarf_original_elf_init.c dwarf_pubtypes.c dwarf_query.c dwarf_ranges.c dwarf_string.c dwarf_tied.c 
 dwarf_str_offsets.c
 dwarf_tsearchhash.c dwarf_types.c dwarf_util.c dwarf_vars.c dwarf_weaks.c dwarf_xu_index.c dwarf_print_lines.c malloc_check.c pro_alloc.c pro_arange.c 
