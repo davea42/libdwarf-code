@@ -383,8 +383,10 @@ ChangeLog2017 \
 CMakeLists.txt \
 NEWS \
 README \
+dwarfgen.1 \
 TESTmallocfail \
 configure.cmake \
+config.h.in.cmake \
 $(dwarfgen_DATA) \
 dwarf-generator.txt \
 fakemalloc.in

@@ -1,3 +1,10 @@
+2018-09-21 David Anderson
+    * dwarfgen.cc: S_IRUSR was defined incorrectly
+      (when not provided by system headers). Fixed.
+    * CMakeLists.txt: Updated headers list to include all 
+      the local headers.
+    * Makefile.am: Ensured config.h.in.cmake and
+      dwarfgen.1 get into releases.
 2018-09-11 David Anderson
     * ireptodbg.cc: Removed pointless comment.
 2018-08-02 David Anderson

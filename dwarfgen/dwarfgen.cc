@@ -134,8 +134,8 @@
 #endif
 /* open modes S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH */
 #ifndef S_IRUSR
-#define S_IREAD _S_IREAD
-#endif
+#define S_IRUSR _S_IREAD
+#endif /* S_IRUSR */
 #ifndef S_IWUSR
 #define S_IWUSR _S_IWRITE
 #endif
