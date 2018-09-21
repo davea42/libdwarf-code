@@ -1,7 +1,7 @@
 #!/bin/sh
 #  A script verifying the distribution gets all needed files
 #  for building, including 'make check'
-v=20180809
+v=20180920
 rm -rf /tmp/dwbld
 rm -rf /tmp/dwinstall
 rm -rf /tmp/dwinstallrel
@@ -9,6 +9,7 @@ rm -rf /tmp/dwinstallrelbld
 rm -rf /tmp/dwinstallrelbldall
 rm -f  /tmp/dwrelease.tar.gz
 rm -f  /tmp/dwreleasebld
+rm -f  /tmp/cmakebld
 mkdir  /tmp/dwbld
 if [ $? -ne 0 ] 
 then
@@ -36,7 +37,13 @@ fi
 mkdir /tmp/dwinstallrelbldall
 if [ $? -ne 0 ] 
 then
-   echo FAIL A3c mkdir
+   echo FAIL A3c mkdir /tmp/dwinstallrelbldall
+   exit 1
+fi
+mkdir /tmp/cmakebld
+if [ $? -ne 0 ] 
+then
+   echo FAIL A3d mkdir /tmp/cmakebld
    exit 1
 fi
 
@@ -108,4 +115,35 @@ then
       exit 1
 fi
 /tmp/libdwarf-$v/configure --enable-dwarfexample --enable-dwarfgen
+if [ $? -ne 0 ]
+then
+  echo FAIL C9  /tmp/libdwarf-$v/configure 
+      exit 1
+fi
 make
+if [ $? -ne 0 ]
+then
+  echo FAIL C9  /tmp/libdwarf-$v/configure  make
+      exit 1
+fi
+cd /tmp/cmakebld
+if [ $? -ne 0 ]
+then
+  echo FAIL C10  cd /tmp/cmakebld
+      exit 1
+fi
+cmake /tmp/libdwarf-$v/
+if [ $? -ne 0 ]
+then
+  echo FAIL C10b  cmake in /tmp/cmakebld
+      exit 1
+fi
+make
+if [ $? -ne 0 ]
+then
+  echo FAIL C10c  cmake make in /tmp/cmakebld
+      exit 1
+fi
+
+
+

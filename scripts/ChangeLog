@@ -1,3 +1,9 @@
+2018-09-21 David Anderson
+    * buildandreleasetest.sh: Now uses the 2nd-generation
+      release as source and does a cmake to verify cmake
+      works. The new test lines added at the end (about line
+      129) but /tmp/cmakebld directory setup occurs early
+      in this script.
 2018-08-02 David Anderson
     * FIX-CONFIGURE-TIMES: Added another cautionary
       check before doing anything.
