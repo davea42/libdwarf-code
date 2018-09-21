@@ -228,9 +228,11 @@ ChangeLog2017 \
 CMakeLists.txt \
 NEWS \
 README \
+CODINGSTYLE \
 getopttest.c \
 testesb.c \
 configure.cmake \
+config.h.in.cmake \
 $(dwarfdumpdev_DATA) \
 tag_attr.list \
 tag_attr_ext.list \
