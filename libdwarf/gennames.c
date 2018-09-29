@@ -470,8 +470,8 @@ GenerateOneSet(void)
         }
         prev_value = group_array[u].value;
 
-        /* Generate entries for 'dwarf_names_enum.h'.
-           The 39 just makes nice formatting in the output. */
+        /*  Generate entries for 'dwarf_names_enum.h'.
+            The 39 just makes nice formatting in the output. */
         len = 39 - strlen(prefix);
         fprintf(f_names_enum_h,"    %s_%-*s = 0x%04x",
             prefix,(int)len,group_array[u].name,group_array[u].value);

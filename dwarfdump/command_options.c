@@ -870,8 +870,8 @@ enum longopts_vals {
 static struct dwoption longopts[] =  {
 
   /* Check DWARF Integrity. */
-  {"check-abbrev",         dwno_argument, 0, OPT_CHECK_ABBREV        },      
-  {"check-all",            dwno_argument, 0, OPT_CHECK_ALL           },      
+  {"check-abbrev",         dwno_argument, 0, OPT_CHECK_ABBREV        },
+  {"check-all",            dwno_argument, 0, OPT_CHECK_ALL           },
   {"check-aranges",        dwno_argument, 0, OPT_CHECK_ARANGES       },
   {"check-attr-dup",       dwno_argument, 0, OPT_CHECK_ATTR_DUP      },
   {"check-attr-encodings", dwno_argument, 0, OPT_CHECK_ATTR_ENCODINGS},
@@ -1318,7 +1318,7 @@ void arg_h_multiple_selection(void)
         default: arg_usage_error = TRUE; break;
         }
     } else {
-      arg_help();
+        arg_help();
     }
 }
 
@@ -1640,7 +1640,7 @@ void arg_ku_multiple_selection(void)
         default: arg_usage_error = TRUE;      break;
         }
     } else {
-      arg_check_usage();
+        arg_check_usage();
     }
 }
 
@@ -1682,7 +1682,7 @@ void arg_kx_multiple_selection(void)
         default: arg_usage_error = TRUE;      break;
         }
     } else {
-      arg_check_frame_basic();
+        arg_check_frame_basic();
     }
 }
 
@@ -1727,7 +1727,7 @@ void arg_l_multiple_selection(void)
         default: arg_usage_error = TRUE;   break;
         }
     } else {
-      arg_print_lines();
+        arg_print_lines();
     }
 }
 
@@ -2196,7 +2196,7 @@ void arg_x_multiple_selection(void)
 }
 
 /*  Option '-x abi=' */
-static void 
+static void
 arg_file_abi(void)
 {
     const char *ctx = arg_option > OPT_BEGIN ? "--file-abi=" : "-x abi=";
@@ -2212,7 +2212,7 @@ arg_file_abi(void)
 }
 
 /*  Option '-x groupnumber=' */
-static void 
+static void
 arg_format_groupnumber(void)
 {
     /*  By default prints the lowest groupnumber in the object.
@@ -2232,7 +2232,7 @@ arg_format_groupnumber(void)
 }
 
 /*  Option '-x line5=' */
-static void 
+static void
 arg_file_line5(void)
 {
     if (!strcmp(dwoptarg,"std")) {

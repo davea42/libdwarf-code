@@ -1,3 +1,5 @@
+2018-09-29  David Anderson
+     * gennames.c:  Fixed an indent issue in a comment.
 2018-09-28  Carlos Alberto Enciso
      * dwgetopt: Use size_t to remove conversion warning 
        on Windows platform.

@@ -1,3 +1,5 @@
+2018-09-29 David Anderson
+    * command_options.c: Fixed indent issues.
 2018-09-26 Carlos Alberto Enciso
     * command_options.c: At this point, the regression test pass,
       with the exception of 2 test cases, that verify the output
