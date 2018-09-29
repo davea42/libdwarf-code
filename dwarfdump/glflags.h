@@ -246,6 +246,7 @@ struct glflags_s {
     Dwarf_Off fde_offset_for_cu_high;
 
     const char *program_name;
+    const char *program_fullname;
 
     const char *search_any_text;
     const char *search_match_text;

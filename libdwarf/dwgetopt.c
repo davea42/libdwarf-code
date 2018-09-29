@@ -94,8 +94,8 @@ dwoptnamematches(
 {
 
     const char *eq = 0;
-    unsigned namelen = 0;
-    unsigned arglen = 0;
+    size_t namelen = 0;
+    size_t arglen = 0;
     int d = 0;
 
     for(eq = iplace; *eq; ++eq) {

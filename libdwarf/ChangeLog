@@ -1,3 +1,9 @@
+2018-09-28  Carlos Alberto Enciso
+     * dwgetopt: Use size_t to remove conversion warning 
+       on Windows platform.
+     * getnames.c: Generate '#ifdef __cplusplus/#endif' 
+       include guards to
+       allow the inclusion of header files by C++ code.
 2018-09-21  David Anderson
     * CMakeLists.txt: Add dwarf_generic_init.c into 
       sources list.
@@ -453,7 +459,7 @@
 2018-05-14 David Anderson
     * libdwarf.h.in: Declare new frame function,
       next commit will have the code in dwarf_frame.c.
-2018-05-01 Carlos Enciso
+2018-05-01 Carlos Alberto Enciso
     * gennames.c: Reversed the order of calling process_args()
       vs print_args(). There is no visible difference for
       linux/unix, and is just to match the convention

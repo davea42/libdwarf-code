@@ -202,6 +202,7 @@ init_global_flags(void)
     glflags.fde_offset_for_cu_high = DW_DLV_BADOFFSET;
 
     glflags.program_name = NULL;
+    glflags.program_fullname = NULL;
 
     /* Able to generate report on search */
     glflags.search_any_text = 0;

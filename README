@@ -1,3 +1,9 @@
+As of September 29, 2018 you will find difficulties
+on FreeBSD 11.2 running make, as default make is not
+gnu-make compatible. The 2018 configure change
+to fully use autoconf/automake requires GNU make
+to build executables.
+
 As of 23 August 2018 cmake again works.
 Files had been deleted, added, and renamed so
 adjustments have now been made.

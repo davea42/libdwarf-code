@@ -1,3 +1,35 @@
+2018-09-26 Carlos Alberto Enciso
+    * command_options.c: At this point, the regression test pass,
+      with the exception of 2 test cases, that verify the output
+      from the '-h' option,
+      which fails due to missing options in the usage data.
+2018-09-25 Carlos Alberto Enciso
+    * command_options.c: Add support for long name options that expect
+      an argument by using the same code from the short options.
+2018-09-25 Carlos Alberto Enciso
+    * command_options.c: Add -he and --help-extended to display 
+      usage for
+      the long name options.
+2018-09-24 Carlos Alberto Enciso
+    * command_options.c: Add support for long name options.
+2018-09-24 Carlos Alberto Enciso
+    * command_options.c: Add missing desriptions in the 
+      usage message for
+      -q, -U, -x line5 and -x noprintsettinggroups.
+2018-09-24 Carlos Alberto Enciso
+    * command_options.c: Add missing desriptions in the 
+      usage message for
+      -EI, -Em and -kw.
+2018-09-20 Carlos Alberto Enciso
+    * command_options.c: Move the code associated with each
+      sub-option, to an individual function. Preliminary work for
+      the implementation of long name options.
+2018-09-19 Carlos Alberto Enciso
+    * command_options.c: Move the code associated with each
+      option, to an individual function. Preliminary work for
+      the implementation of long name options.
+    * glflags.h, glflags.c: New field to record the full program
+      name. It is used by the '-V' option.
 2018-09-21  David Anderson
     * Makefile.am: Ensured cmake files get into distributions.
       and the CODINGSTYLE text too.

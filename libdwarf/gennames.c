@@ -322,6 +322,12 @@ GenerateInitialFileLines(void)
         DW_VERSION_DATE_STR);
     fprintf(f_names_h,"\n/* BEGIN FILE */\n\n");
 
+    fprintf(f_names_h,"#ifndef DWARF_NAMES_H\n");
+    fprintf(f_names_h,"#define DWARF_NAMES_H\n\n");
+    fprintf(f_names_h,"#ifdef __cplusplus\n");
+    fprintf(f_names_h,"extern \"C\" {\n");
+    fprintf(f_names_h,"#endif /* __cplusplus */\n\n");
+
     /* Generate entries for 'dwarf_names.c' */
     fprintf(f_names_c,"/* Generated routines, do not edit. */\n");
     fprintf(f_names_c,"/* Generated sourcedate %s */\n",
@@ -385,6 +391,11 @@ WriteFileTrailers(void)
     fprintf(f_names_new_h,"\n/* END FILE */\n");
 
     /* Generate entries for 'dwarf_names.h' */
+
+    fprintf(f_names_h,"\n#ifdef __cplusplus\n");
+    fprintf(f_names_h,"}\n");
+    fprintf(f_names_h,"#endif /* __cplusplus */\n\n");
+    fprintf(f_names_h,"#endif /* DWARF_NAMES_H */\n");
     fprintf(f_names_h,"\n/* END FILE */\n");
 
     /* Generate entries for 'dwarf_names.c' */
@@ -459,6 +470,8 @@ GenerateOneSet(void)
         }
         prev_value = group_array[u].value;
 
+        /* Generate entries for 'dwarf_names_enum.h'.
+           The 39 just makes nice formatting in the output. */
         len = 39 - strlen(prefix);
         fprintf(f_names_enum_h,"    %s_%-*s = 0x%04x",
             prefix,(int)len,group_array[u].name,group_array[u].value);
