@@ -1,15 +1,15 @@
 #!/bin/sh
 #  A script verifying the distribution gets all needed files
 #  for building, including 'make check'
-v=20180920
+v=20180928
 rm -rf /tmp/dwbld
 rm -rf /tmp/dwinstall
 rm -rf /tmp/dwinstallrel
 rm -rf /tmp/dwinstallrelbld
 rm -rf /tmp/dwinstallrelbldall
-rm -f  /tmp/dwrelease.tar.gz
-rm -f  /tmp/dwreleasebld
-rm -f  /tmp/cmakebld
+rm -f /tmp/dwrelease.tar.gz
+rm -rf /tmp/dwreleasebld
+rm -rf /tmp/cmakebld
 mkdir  /tmp/dwbld
 if [ $? -ne 0 ] 
 then
