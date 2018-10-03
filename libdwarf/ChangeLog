@@ -1,4 +1,7 @@
 2018-10-02  David Anderson
+     * dwarf_generic_init.c,dwarf_original_elf_init.c:
+       Fixed remaining indent issues.
+2018-10-02  David Anderson
      * Makefile.am: Tweaks for the object detector files.
      * dwarf_errmsg_list.h,libdwarf.h.in: New error codes.
      * dwarf_generic_init.c,dwarf_original_elf_init.c:

@@ -154,25 +154,24 @@ int dwarf_init_path(const char *path,
     }
     switch(ftype) {
     case DW_FTYPE_ELF: {
-         fd = open(true_path_out_buffer,O_RDONLY); 
-         if(fd < 0) {
-             DWARF_DBG_ERROR(NULL, DW_DLE_FILE_UNAVAILABLE, 
-                 DW_DLV_ERROR);
-         }
-         res = _dwarf_elf_setup(fd,
-             true_path_out_buffer,
-             ftype,endian,offsetsize,filesize,
-             access,groupnumber,errhand,errarg,dbg,error);
-         return res;
+        fd = open(true_path_out_buffer,O_RDONLY);
+        if(fd < 0) {
+            DWARF_DBG_ERROR(NULL, DW_DLE_FILE_UNAVAILABLE,
+                DW_DLV_ERROR);
+        }
+        res = _dwarf_elf_setup(fd,
+            true_path_out_buffer,
+            ftype,endian,offsetsize,filesize,
+            access,groupnumber,errhand,errarg,dbg,error);
+        return res;
     }
     case DW_FTYPE_MACH_O: {
-         return res;
+        return res;
     }
     case DW_FTYPE_PE:
     default:
         DWARF_DBG_ERROR(NULL, DW_DLE_FILE_WRONG_TYPE, DW_DLV_ERROR);
     }
- 
     return DW_DLV_NO_ENTRY; /* placeholder for now */
 }
 
@@ -184,8 +183,8 @@ dwarf_init_b(int fd,
     Dwarf_Unsigned access,
     unsigned  group_number,
     Dwarf_Handler errhand,
-    Dwarf_Ptr errarg, 
-    Dwarf_Debug * ret_dbg, 
+    Dwarf_Ptr errarg,
+    Dwarf_Debug * ret_dbg,
     Dwarf_Error * error)
 {
     unsigned ftype = 0;
@@ -196,7 +195,7 @@ dwarf_init_b(int fd,
     int errcode = 0;
 
     res = dwarf_object_detector_fd(fd, &ftype,
-        &endian,&offsetsize,&filesize,&errcode); 
+        &endian,&offsetsize,&filesize,&errcode);
     if (res == DW_DLV_NO_ENTRY) {
         return res;
     } else if (res == DW_DLV_ERROR) {
@@ -204,11 +203,11 @@ dwarf_init_b(int fd,
     }
     switch(ftype) {
     case DW_FTYPE_ELF: {
-         res = _dwarf_elf_setup(fd,
-             "",
-             ftype,endian,offsetsize,filesize,
-             access,group_number,errhand,errarg,ret_dbg,error);
-         return res;
+        res = _dwarf_elf_setup(fd,
+            "",
+            ftype,endian,offsetsize,filesize,
+            access,group_number,errhand,errarg,ret_dbg,error);
+        return res;
         }
     case DW_FTYPE_MACH_O: {
         /* FIXME: temporary */

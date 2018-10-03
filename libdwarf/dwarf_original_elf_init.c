@@ -83,7 +83,7 @@ dwarf_elf_init_b(dwarf_elf_handle elf_file_pointer,
         }
         DWARF_DBG_ERROR(NULL, localerrnum, DW_DLV_ERROR);
     }
-     /* allocates and initializes Dwarf_Debug */
+    /* allocates and initializes Dwarf_Debug */
     res = dwarf_object_init_b(binary_interface, errhand, errarg,
         group_number,
         ret_dbg, error);
