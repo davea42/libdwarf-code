@@ -112,15 +112,24 @@ createIrepFromBinary(const std::string &infile,
         exit(1);
     }
     // All reader error handling is via the err argument.
-    int res = dwarf_init(fd,DW_DLC_READ,
+    int res = dwarf_init_b(fd,
+        DW_GROUPNUMBER_ANY,
+        DW_DLC_READ,
         0,
         0,
         &dbg,
         &err);
-    if(res != DW_DLV_OK) {
+    if(res == DW_DLV_NO_ENTRY) {
         close_a_file(fd);
         cerr << "Error init-ing " << infile <<
-            " for reading." << endl;
+            " for reading. dwarf_init_b(). Not object file." << endl;
+        exit(1);
+    } else if(res == DW_DLV_ERROR) {
+        close_a_file(fd);
+        cerr << "Error init-ing " << infile <<
+            " for reading. dwarf_init_b() failed. " 
+            << dwarf_errmsg(err)
+            << endl;
         exit(1);
     }
 

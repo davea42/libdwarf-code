@@ -1,3 +1,6 @@
+2018-10-03 David Anderson
+    * dwarfgen.cc: Now uses dwarf_init_b() instead
+      of the original dwarf_init().
 2018-09-21 David Anderson
     * dwarfgen.cc: S_IRUSR was defined incorrectly
       (when not provided by system headers). Fixed.
