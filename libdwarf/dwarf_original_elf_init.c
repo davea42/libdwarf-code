@@ -44,6 +44,7 @@
 #include "dwarf_incl.h"
 #include "dwarf_error.h"
 #include "dwarf_elf_access.h"
+#include "dwarf_object_detector.h"
 
 
 #define DWARF_DBG_ERROR(dbg,errval,retval) \
@@ -61,38 +62,10 @@ dwarf_elf_init_b(dwarf_elf_handle elf_file_pointer,
     Dwarf_Ptr errarg,
     Dwarf_Debug * ret_dbg, Dwarf_Error * error)
 {
-    return _dwarf_elf_init_file_ownership(elf_file_pointer,
-        FALSE, group_number,access, errhand, errarg, ret_dbg, error);
-}
-
-int
-dwarf_elf_init(dwarf_elf_handle elf_file_pointer,
-    Dwarf_Unsigned access,
-    Dwarf_Handler errhand,
-    Dwarf_Ptr errarg,
-    Dwarf_Debug * ret_dbg, Dwarf_Error * error)
-{
-    return _dwarf_elf_init_file_ownership(elf_file_pointer,
-        FALSE, DW_GROUPNUMBER_ANY,
-        access, errhand, errarg, ret_dbg, error);
-}
-
-
-/* Initialize the ELF object access for libdwarf.  */
-int
-_dwarf_elf_init_file_ownership(dwarf_elf_handle elf_file_pointer,
-    int libdwarf_owns_elf,
-    unsigned groupnumber,
-    Dwarf_Unsigned access,
-    Dwarf_Handler errhand,
-    Dwarf_Ptr errarg,
-    Dwarf_Debug * ret_dbg,
-    Dwarf_Error * error)
-{
-    /* ELF is no longer tied to libdwarf. */
     Dwarf_Obj_Access_Interface *binary_interface = 0;
     int res = DW_DLV_OK;
     int localerrnum = 0;
+    int libdwarf_owns_elf = FALSE;
 
     if (access != DW_DLC_READ) {
         DWARF_DBG_ERROR(NULL, DW_DLE_INIT_ACCESS_WRONG, DW_DLV_ERROR);
@@ -110,15 +83,30 @@ _dwarf_elf_init_file_ownership(dwarf_elf_handle elf_file_pointer,
         }
         DWARF_DBG_ERROR(NULL, localerrnum, DW_DLV_ERROR);
     }
-
-    /*  This mallocs space and returns pointer thru ret_dbg,
-        saving  the binary interface in 'ret-dbg' */
+     /* allocates and initializes Dwarf_Debug */
     res = dwarf_object_init_b(binary_interface, errhand, errarg,
-        groupnumber,
+        group_number,
         ret_dbg, error);
     if (res != DW_DLV_OK){
         dwarf_elf_object_access_finish(binary_interface);
     }
+
+/* DBG known */
+
+    return res;
+}
+
+int
+dwarf_elf_init(dwarf_elf_handle elf_file_pointer,
+    Dwarf_Unsigned access,
+    Dwarf_Handler errhand,
+    Dwarf_Ptr errarg,
+    Dwarf_Debug * ret_dbg, Dwarf_Error * error)
+{
+    int res = 0;
+    res = dwarf_elf_init_b(elf_file_pointer,
+        DW_GROUPNUMBER_ANY,
+        access,errhand,errarg,ret_dbg,error);
     return res;
 }
 

@@ -42,11 +42,11 @@ extern "C" {
     you consider reasonable,
     where the final path used is recorded.
     outpath_len must be larger than strlen(path);
-    
+
     This matters as for mach-o if the path is a directory
     name the function will look in the standard macho-place
     for the object file (useful for dSYM) and return the
-    constructed path in oupath.  
+    constructed path in oupath.
     returns DW_DLV_OK, DW_DLV_ERROR, or DW_DLV_NO_ENTRY */
 
 #ifndef DW_FTYPE_UNKNOWN
@@ -72,7 +72,14 @@ int dwarf_object_detector_path(const char  *path,
     unsigned *endian,
     unsigned *offsetsize,
     size_t   *filesize,
-    int * errcode;);
+    int * errcode);
+
+int dwarf_object_detector_f(FILE *f,
+    unsigned *ftype,
+    unsigned *endian,
+    unsigned *offsetsize,
+    size_t   *filesize,
+    int *errcode);
 
 int dwarf_object_detector_fd(int fd,
     unsigned *ftype,

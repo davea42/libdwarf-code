@@ -153,6 +153,7 @@ am_libdwarf_la_OBJECTS = libdwarf_la-dwarf_abbrev.lo \
 	libdwarf_la-dwarf_init_finish.lo libdwarf_la-dwarf_leb.lo \
 	libdwarf_la-dwarf_line.lo libdwarf_la-dwarf_loc.lo \
 	libdwarf_la-dwarf_macro.lo libdwarf_la-dwarf_macro5.lo \
+	libdwarf_la-dwarf_object_detector.lo \
 	libdwarf_la-dwarf_original_elf_init.lo \
 	libdwarf_la-dwarf_print_lines.lo libdwarf_la-dwarf_pubtypes.lo \
 	libdwarf_la-dwarf_query.lo libdwarf_la-dwarf_ranges.lo \
@@ -663,6 +664,8 @@ dwarf_macro.c \
 dwarf_macro.h \
 dwarf_macro5.c \
 dwarf_macro5.h \
+dwarf_object_detector.c \
+dwarf_object_detector.h \
 dwarf_opaque.h \
 dwarf_original_elf_init.c \
 dwarf_print_lines.c \
@@ -916,6 +919,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdwarf_la-dwarf_macro.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdwarf_la-dwarf_macro5.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdwarf_la-dwarf_names.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdwarf_la-dwarf_object_detector.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdwarf_la-dwarf_original_elf_init.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdwarf_la-dwarf_print_lines.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdwarf_la-dwarf_pubtypes.Plo@am__quote@
@@ -1135,6 +1139,13 @@ libdwarf_la-dwarf_macro5.lo: dwarf_macro5.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='dwarf_macro5.c' object='libdwarf_la-dwarf_macro5.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdwarf_la_CFLAGS) $(CFLAGS) -c -o libdwarf_la-dwarf_macro5.lo `test -f 'dwarf_macro5.c' || echo '$(srcdir)/'`dwarf_macro5.c
+
+libdwarf_la-dwarf_object_detector.lo: dwarf_object_detector.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdwarf_la_CFLAGS) $(CFLAGS) -MT libdwarf_la-dwarf_object_detector.lo -MD -MP -MF $(DEPDIR)/libdwarf_la-dwarf_object_detector.Tpo -c -o libdwarf_la-dwarf_object_detector.lo `test -f 'dwarf_object_detector.c' || echo '$(srcdir)/'`dwarf_object_detector.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libdwarf_la-dwarf_object_detector.Tpo $(DEPDIR)/libdwarf_la-dwarf_object_detector.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='dwarf_object_detector.c' object='libdwarf_la-dwarf_object_detector.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdwarf_la_CFLAGS) $(CFLAGS) -c -o libdwarf_la-dwarf_object_detector.lo `test -f 'dwarf_object_detector.c' || echo '$(srcdir)/'`dwarf_object_detector.c
 
 libdwarf_la-dwarf_original_elf_init.lo: dwarf_original_elf_init.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdwarf_la_CFLAGS) $(CFLAGS) -MT libdwarf_la-dwarf_original_elf_init.lo -MD -MP -MF $(DEPDIR)/libdwarf_la-dwarf_original_elf_init.Tpo -c -o libdwarf_la-dwarf_original_elf_init.lo `test -f 'dwarf_original_elf_init.c' || echo '$(srcdir)/'`dwarf_original_elf_init.c

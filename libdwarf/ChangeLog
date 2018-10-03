@@ -1,4 +1,15 @@
 2018-10-02  David Anderson
+     * Makefile.am: Tweaks for the object detector files.
+     * dwarf_errmsg_list.h,libdwarf.h.in: New error codes.
+     * dwarf_generic_init.c,dwarf_original_elf_init.c:
+     * Removed a function that just caused confusion,
+       it was doing two jobs. Now each job called where
+       needed.
+     * dwarf_object_detector.c,dwarf_object_detector.h:
+       tweeks for better error codes and trailing 
+       spaces and indent issues.
+     * dwarf_opaque.h: Removed deleted function.
+2018-10-02  David Anderson
      * dwarf_object_detector.h,dwarf_object_detector.c:
        To be used soon.
 2018-09-29  David Anderson

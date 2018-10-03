@@ -117,6 +117,8 @@ dwarf_macro.c \
 dwarf_macro.h \
 dwarf_macro5.c \
 dwarf_macro5.h \
+dwarf_object_detector.c \
+dwarf_object_detector.h \
 dwarf_opaque.h \
 dwarf_original_elf_init.c \
 dwarf_print_lines.c \

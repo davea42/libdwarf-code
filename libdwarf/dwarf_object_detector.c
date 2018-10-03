@@ -58,22 +58,21 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define DW_DLV_OK        0
 #define DW_DLV_ERROR     1
 
-#define RO_ERR_SEEK   2
 /* Must match dwarf_reading.h list */
-#define RO_ERR_READ   3
-#define RO_ERR_MALLOC 4
-#define RO_ERR_OTHER  5
+#define RO_ERR_SEEK             2
+#define RO_ERR_READ             3
+#define RO_ERR_MALLOC           4
+#define RO_ERR_OTHER            5
 #define RO_ERR_BADOFFSETSIZE    6
 #define RO_ERR_LOADSEGOFFSETBAD 7
 #define RO_ERR_FILEOFFSETBAD    8
-#define RO_ERR_BADTYPESIZE    9 
-#define RO_ERR_TOOSMALL    10
-#define RO_ERR_ELF_VERSION    11
-#define RO_ERR_ELF_CLASS    12
-#define RO_ERR_ELF_ENDIAN    13
-#define RO_ERR_OPEN_FAIL    14
-#define RO_ERR_PATH_SIZE    15
-
+#define RO_ERR_BADTYPESIZE      9
+#define RO_ERR_TOOSMALL        10
+#define RO_ERR_ELF_VERSION     11
+#define RO_ERR_ELF_CLASS       12
+#define RO_ERR_ELF_ENDIAN      13
+#define RO_ERR_OPEN_FAIL       14
+#define RO_ERR_PATH_SIZE       15
 
 
 #ifndef EI_NIDENT
@@ -105,6 +104,22 @@ typedef unsigned t32;
 #define MH_CIGAM_64 0xcffaedfe
 #endif /*  MH_MAGIC_64 */
 
+#ifdef WORDS_BIGENDIAN
+#define ASSIGN(func,t,s)                        \
+    do {                                        \
+        unsigned tbyte = sizeof(t) - sizeof(s); \
+        t = 0;                                  \
+        func(((char *)t)+tbyte ,&s,sizeof(s));  \
+    } while (0)
+#else /* LITTLE ENDIAN */
+#define ASSIGN(func,t,s)                        \
+    do {                                        \
+        t = 0;                                  \
+        func(&t,&s,sizeof(s));                  \
+    } while (0)
+#endif /* end LITTLE- BIG-ENDIAN */
+
+
 #define EI_NIDENT 16
 /* An incomplete elf header, good for 32 and 64bit elf */
 struct elf_header {
@@ -114,14 +129,51 @@ struct elf_header {
     t32 e_version;
 };
 
+static void *
+memcpy_swap_bytes(void *s1, const void *s2, size_t len)
+{
+    void *orig_s1 = s1;
+    unsigned char *targ = (unsigned char *) s1;
+    const unsigned char *src = (const unsigned char *) s2;
+
+    if (len == 4) {
+        targ[3] = src[0];
+        targ[2] = src[1];
+        targ[1] = src[2];
+        targ[0] = src[3];
+    } else if (len == 8) {
+        targ[7] = src[0];
+        targ[6] = src[1];
+        targ[5] = src[2];
+        targ[4] = src[3];
+        targ[3] = src[4];
+        targ[2] = src[5];
+        targ[1] = src[6];
+        targ[0] = src[7];
+    } else if (len == 2) {
+        targ[1] = src[0];
+        targ[0] = src[1];
+    }
+/* should NOT get below here: is not the intended use */
+    else if (len == 1) {
+        targ[0] = src[0];
+    } else {
+        memcpy(s1, s2, len);
+    }
+    return orig_s1;
+}
+
+
 /*  For following MacOS file naming convention */
 static const char *
 getseparator (const char *f)
 {
-    const char *p, *q;
+    const char *p = 0;
+    const char *q = 0;
+    char c = 0;;
+
     p = NULL;
     q = f;
-    char c;
     do  {
         c = *q++;
         if (c == '\\' || c == '/' || c == ':') {
@@ -169,11 +221,9 @@ fill_in_elf_fields(struct elf_header *h,
 {
     unsigned locendian = 0;
     unsigned locoffsetsize = 0;
+    unsigned version = 0;
+    void *(*word_swap) (void *, const void *, size_t);
 
-    if (h->e_version != 1 /* EV_CURRENT */) {
-        *errcode = RO_ERR_ELF_VERSION;
-        return DW_DLV_ERROR;
-    }
     switch(h->e_ident[EI_CLASS]) {
     case ELFCLASS32:
         locoffsetsize = 32;
@@ -188,14 +238,31 @@ fill_in_elf_fields(struct elf_header *h,
     switch(h->e_ident[EI_DATA]) {
     case ELFDATA2LSB:
         locendian = DW_ENDIAN_LITTLE;
+#ifdef WORDS_BIGENDIAN
+        word_swap = memcpy_swap_bytes;
+#else  /* LITTLE ENDIAN */
+        word_swap = memcpy;
+#endif /* LITTLE- BIG-ENDIAN */
         break;
     case ELFDATA2MSB:
         locendian = DW_ENDIAN_BIG;
+#ifdef WORDS_BIGENDIAN
+        word_swap = memcpy;
+#else  /* LITTLE ENDIAN */
+        word_swap = memcpy_swap_bytes;
+#endif /* LITTLE- BIG-ENDIAN */
         break;
     default:
         *errcode = RO_ERR_ELF_ENDIAN;
         return DW_DLV_ERROR;
     }
+    ASSIGN(word_swap,version,h->e_version);
+    /* e_machine, e_type need swap too if used. */
+    if (version != 1 /* EV_CURRENT */) {
+        *errcode = RO_ERR_ELF_VERSION;
+        return DW_DLV_ERROR;
+    }
+
     *endian = locendian;
     *objoffsetsize = locoffsetsize;
     return DW_DLV_OK;
@@ -251,7 +318,6 @@ dwarf_object_detector_fd(int fd,
     size_t   *filesize,
     int *errcode)
 {
-    size_t resf = 0;
     struct elf_header h;
     size_t readlen = sizeof(h);
     int res = 0;
@@ -268,7 +334,7 @@ dwarf_object_detector_fd(int fd,
         *errcode = RO_ERR_SEEK;
         return DW_DLV_ERROR;
     }
-    if (fsize <= readlen) {
+    if (fsize <= (off_t)readlen) {
         /* Not a real object file */
         *errcode = RO_ERR_TOOSMALL;
         return DW_DLV_ERROR;
@@ -279,7 +345,7 @@ dwarf_object_detector_fd(int fd,
         return DW_DLV_ERROR;
     }
     readval = read(fd,&h,readlen);
-    if (readval != readlen) {
+    if (readval != (ssize_t)readlen) {
         *errcode = RO_ERR_READ;
         return DW_DLV_ERROR;
     }
@@ -288,6 +354,7 @@ dwarf_object_detector_fd(int fd,
         h.e_ident[2] == 'L' &&
         h.e_ident[3] == 'F') {
         /* is ELF */
+
         res = fill_in_elf_fields(&h,endian,offsetsize,errcode);
         if (res != DW_DLV_OK) {
             return res;
@@ -318,10 +385,8 @@ dwarf_object_detector_path(const char  *path,
     size_t plen = strlen(path);
     size_t dsprefixlen = sizeof(DSYM_SUFFIX);
     struct stat statbuf;
-    size_t finallen = outpath_len;
     int fd = -1;
     int res = 0;
-    char *basename = 0;
 
 #if !defined(S_ISREG)
 #define S_ISREG(mode) (((mode) & S_IFMT) == S_IFREG)

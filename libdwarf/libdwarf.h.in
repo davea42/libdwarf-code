@@ -1320,9 +1320,11 @@ struct Dwarf_Obj_Access_Interface_s {
 #define DW_DLE_STR_OFFSETS_EXTRA_BYTES         408
 #define DW_DLE_DUP_ATTR_ON_DIE                 409
 #define DW_DLE_SECTION_NAME_BIG                410
+#define DW_DLE_FILE_UNAVAILABLE                411
+#define DW_DLE_FILE_WRONG_TYPE                 412
 
     /* LAST MUST EQUAL LAST ERROR NUMBER */
-#define DW_DLE_LAST        410
+#define DW_DLE_LAST        412
 
 #define DW_DLE_LO_USER     0x10000
 
@@ -1422,7 +1424,26 @@ enum Dwarf_Form_Class {
 /*===========================================================================*/
 /*  Dwarf consumer interface initialization and termination operations */
 
-/*  Initialization based on Unix open fd (using libelf internally). */
+/*  Initialization based on path. This is new October 2018. 
+    The path actually used is copied to true_path_out
+    and in the case of MacOS dSYM may not match path. 
+    So consider the value put in true_path_out the
+    actual file name. reserved1,2,3 should all be passed
+    as zero. */
+int dwarf_init_path(const char * /*path*/,
+    char *            /*true_path_out_buffer*/,
+    unsigned          /*true_path_bufferlen*/,
+    Dwarf_Unsigned    /*access*/,
+    unsigned          /*groupnumber*/,
+    Dwarf_Handler     /*errhand*/,
+    Dwarf_Ptr         /*errarg*/,
+    Dwarf_Debug*      /*dbg*/,
+    const char *      /* reserved1 */,
+    Dwarf_Unsigned    /* reserved2 */,
+    Dwarf_Unsigned  * /* reserved3 */,
+    Dwarf_Error*      /*error*/);
+
+/*  Initialization based on Unix(etc) open fd */
 /*  New March 2017 */
 int dwarf_init_b(int    /*fd*/,
     Dwarf_Unsigned    /*access*/,
@@ -1439,6 +1460,9 @@ int dwarf_init(int    /*fd*/,
     Dwarf_Debug*      /*dbg*/,
     Dwarf_Error*      /*error*/);
 
+/*  The dwarf_elf_init*() functions continue to be supported,
+    but should be considered deprecated as they can ONLY
+    be used on Elf files. */
 /*  Initialization based on libelf/sgi-fastlibelf open pointer. */
 /*  New March 2017 */
 int dwarf_elf_init_b(dwarf_elf_handle /*elf*/,

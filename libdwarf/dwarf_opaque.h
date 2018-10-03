@@ -892,15 +892,6 @@ int _dwarf_extract_local_debug_str_string_given_offset(Dwarf_Debug dbg,
     char ** return_str,
     Dwarf_Error *  error);
 
-int _dwarf_elf_init_file_ownership(dwarf_elf_handle elf_file_pointer,
-    int libdwarf_owns_elf,
-    unsigned groupnumber,
-    Dwarf_Unsigned access,
-    Dwarf_Handler errhand,
-    Dwarf_Ptr errarg,
-    Dwarf_Debug * ret_dbg,
-    Dwarf_Error * error);
-
 int _dwarf_file_name_is_full_path(Dwarf_Small  *fname);
 
 /*  This is an elf-only extension to get SHF_COMPRESSED flag from sh_flags.

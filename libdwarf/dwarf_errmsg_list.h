@@ -482,5 +482,7 @@ const char *_dwarf_errmsgs[] = {
     "DW_DLE_STR_OFFSETS_EXTRA_BYTES(408) Unused non-zero bytes end section",
     "DW_DLE_DUP_ATTR_ON_DIE(409) Compiler error, object improper DWARF",
     "DW_DLE_SECTION_NAME_BIG(410) Caller provided insufficient room for section name",
+    "DW_DLE_FILE_UNAVAILABLE(411). Unable find/read object file",
+    "DW_DLE_FILE_WRONG_TYPE(412). Not an object type we recognize.",
 };
 #endif /* DWARF_ERRMSG_LIST_H */
