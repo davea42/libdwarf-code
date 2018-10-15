@@ -1,3 +1,6 @@
+2018-10-14  David Anderson
+    * configure.ac: Updated version to 20181014.
+    * configure: Regenerated.
 2018-09-21  David Anderson
     * configure.ac: Updated version to 20180920
     * Makefile.am: Added tsearch (directory) and configure.cmake

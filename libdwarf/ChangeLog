@@ -1,3 +1,10 @@
+2018-10-14  David Anderson
+     * dwarf_version.h: Updated date string.
+     * pro_section.c: An extra 0-byte was being added
+       in generated DWARF
+       at the end of section as if the top level
+       was a sibling chain, and GNU readelf
+       noticed the wasted byte. No longer added.
 2018-10-02  David Anderson
      * dwarf_generic_init.c,dwarf_original_elf_init.c:
        Fixed remaining indent issues.

@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2000,2004,2006 Silicon Graphics, Inc.  All Rights Reserved.
-  Portions Copyright (C) 2007-2017 David Anderson. All Rights Reserved.
+  Portions Copyright (C) 2007-2018 David Anderson. All Rights Reserved.
   Portions Copyright 2002-2010 Sun Microsystems, Inc. All rights reserved.
   Portions Copyright 2012 SN Systems Ltd. All rights reserved.
 
@@ -3190,9 +3190,10 @@ _dwarf_pro_generate_debuginfo(Dwarf_P_Debug dbg,
         } else {
             while (curdie != NULL && curdie->di_right == NULL) {
                 curdie = curdie->di_parent;
-                die_off++; /* since we are writing a
-                    null die at the end of each
-                    sibling chain */
+                /* See -nonrootsibling- below */
+                if (curdie != NULL) {
+                    die_off++;
+                }
             }
             if (curdie != NULL) {
                 curdie = curdie->di_right;
@@ -3329,10 +3330,21 @@ _dwarf_pro_generate_debuginfo(Dwarf_P_Debug dbg,
         }
 
         /* depth first search */
-        if (curdie->di_child)
+        if (curdie->di_child) {
             curdie = curdie->di_child;
-        else {
+        } else {
             while (curdie != NULL && curdie->di_right == NULL) {
+                /*  -nonrootsibling-
+                    A null die should only be written for terminating
+                    siblings, not the root.  Adding a terminating die
+                    for the root will cause, after object files are 
+                    linked, warnings to be generated with newer 
+                    versions of readelf. */
+                if (!curdie->di_parent) {
+                    /*  The parent is not a DIE so ending a sibling
+                        chain makes no sense (wastes a byte). */
+                    break;
+                }
                 GET_CHUNK_ERR(dbg, elfsectno_of_debug_info, data, 1, error);
                 *data = '\0';
                 curdie = curdie->di_parent;
