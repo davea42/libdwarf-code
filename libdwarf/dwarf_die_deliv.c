@@ -1620,10 +1620,14 @@ _dwarf_next_die_info_ptr(Dwarf_Byte_Ptr die_info_ptr,
                 at die_info_end means 1-past-cu-end and simply means we
                 are at the end, do not return error. Higher level
                 will detect that we are at the end. */
-            if (cu_info_start + offset > die_info_end) {
-                /* Error case, bad DWARF. */
-                _dwarf_error(dbg, error, DW_DLE_NEXT_DIE_PAST_END);
-                return DW_DLV_ERROR;
+            {   /*  Care required here. Offset can be garbage. */
+                ptrdiff_t plen = die_info_end - cu_info_start;
+                ptrdiff_t signdoffset = (ptrdiff_t)offset;
+                if (signdoffset > plen || signdoffset < 0) {
+                    /* Error case, bad DWARF. */
+                    _dwarf_error(dbg, error,DW_DLE_SIBLING_OFFSET_WRONG);
+                    return DW_DLV_ERROR;
+                }
             }
             /* At or before end-of-cu */
             *next_die_ptr_out = cu_info_start + offset;

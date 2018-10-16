@@ -484,5 +484,6 @@ const char *_dwarf_errmsgs[] = {
     "DW_DLE_SECTION_NAME_BIG(410) Caller provided insufficient room for section name",
     "DW_DLE_FILE_UNAVAILABLE(411). Unable find/read object file",
     "DW_DLE_FILE_WRONG_TYPE(412). Not an object type we recognize.",
+    "DW_DLE_SIBLING_OFFSET_WRONG(413). Corrupt dwarf.",
 };
 #endif /* DWARF_ERRMSG_LIST_H */
