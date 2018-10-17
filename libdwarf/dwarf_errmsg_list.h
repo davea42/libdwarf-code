@@ -485,5 +485,11 @@ const char *_dwarf_errmsgs[] = {
     "DW_DLE_FILE_UNAVAILABLE(411). Unable find/read object file",
     "DW_DLE_FILE_WRONG_TYPE(412). Not an object type we recognize.",
     "DW_DLE_SIBLING_OFFSET_WRONG(413). Corrupt dwarf.",
+    "DW_DLE_OPEN_FAIL(414) Unable to open, possibly a bad filename",
+    "DW_DLE_OFFSET_SIZE(415) Offset size is neither 32 nor 64",
+    "DW_DLE_MACH_O_SEGOFFSET_BAD(416) corrupt object",
+    "DW_DLE_FILE_OFFSET_BAD(417) corrupt object",
+    "DW_DLE_SEEK_ERROR(418). Seek in object file failed",
+    "DW_DLE_READ_ERROR(419). Read from object file failed.",
 };
 #endif /* DWARF_ERRMSG_LIST_H */

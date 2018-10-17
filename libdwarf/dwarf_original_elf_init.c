@@ -141,3 +141,51 @@ dwarf_get_tied_dbg(Dwarf_Debug dbg, Dwarf_Debug *tieddbg_out,
     *tieddbg_out = dbg->de_tied_data.td_tied_object;
     return DW_DLV_OK;
 }
+
+int
+_dwarf_elf_setup(int fd,
+    UNUSEDARG char *true_path_out_buffer,
+    UNUSEDARG unsigned ftype,
+    UNUSEDARG unsigned endian,
+    UNUSEDARG unsigned offsetsize,
+    UNUSEDARG size_t filesize,
+    UNUSEDARG Dwarf_Unsigned access,
+    unsigned groupnumber,
+    Dwarf_Handler errhand,
+    Dwarf_Ptr errarg,
+    Dwarf_Debug *dbg,Dwarf_Error *error)
+{
+    Elf_Cmd what_kind_of_elf_read = ELF_C_READ;
+    Dwarf_Obj_Access_Interface *binary_interface = 0;
+    int res = DW_DLV_OK;
+    int localerrnum = 0;
+    int libdwarf_owns_elf = TRUE;
+    dwarf_elf_handle elf_file_pointer = 0;
+
+    elf_version(EV_CURRENT);
+    elf_file_pointer = elf_begin(fd, what_kind_of_elf_read, 0);
+    if (elf_file_pointer == NULL) {
+        DWARF_DBG_ERROR(NULL, DW_DLE_ELF_BEGIN_ERROR, DW_DLV_ERROR);
+    }
+    /* Sets up elf access function pointers. */
+    res = dwarf_elf_object_access_init(
+        elf_file_pointer,
+        libdwarf_owns_elf,
+        &binary_interface,
+        &localerrnum);
+    if (res != DW_DLV_OK) {
+        if (res == DW_DLV_NO_ENTRY) {
+            return res;
+        }
+        DWARF_DBG_ERROR(NULL, localerrnum, DW_DLV_ERROR);
+    }
+    /* allocates and initializes Dwarf_Debug */
+    res = dwarf_object_init_b(binary_interface, errhand, errarg,
+        groupnumber,
+        dbg, error);
+    if (res != DW_DLV_OK){
+        dwarf_elf_object_access_finish(binary_interface);
+    }
+    return res;
+}
+

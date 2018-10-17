@@ -904,6 +904,28 @@ typedef int (*_dwarf_get_elf_flags_func_ptr_type)(
     Dwarf_Unsigned *addralign_out,
     int *error);
 extern _dwarf_get_elf_flags_func_ptr_type _dwarf_get_elf_flags_func_ptr;
+extern int _dwarf_elf_setup(int fd,
+    char *true_path_out_buffer,
+    unsigned ftype,
+    unsigned endian,
+    unsigned offsetsize,
+    size_t filesize,
+    Dwarf_Unsigned access,
+    unsigned groupnumber,
+    Dwarf_Handler errhand,
+    Dwarf_Ptr errarg,
+    Dwarf_Debug *dbg,Dwarf_Error *error);
+extern int _dwarf_macho_setup(int fd,
+    char *true_path,
+    unsigned ftype,
+    unsigned endian,
+    unsigned offsetsize,
+    size_t filesize,
+    Dwarf_Unsigned access,
+    unsigned groupnumber,
+    Dwarf_Handler errhand,
+    Dwarf_Ptr errarg,
+    Dwarf_Debug *dbg,Dwarf_Error *error);
 
 extern Dwarf_Bool _dwarf_allow_formudata(unsigned form);
 extern int _dwarf_formudata_internal(Dwarf_Debug dbg,

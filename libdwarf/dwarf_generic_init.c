@@ -73,52 +73,6 @@ dwarf_init(int fd,
         errhand,errarg,ret_dbg,error);
 }
 
-static int
-_dwarf_elf_setup(int fd,
-    UNUSEDARG char *true_path_out_buffer,
-    UNUSEDARG unsigned ftype,
-    UNUSEDARG unsigned endian,
-    UNUSEDARG unsigned offsetsize,
-    UNUSEDARG size_t filesize,
-    UNUSEDARG Dwarf_Unsigned access,
-    unsigned groupnumber,
-    Dwarf_Handler errhand,
-    Dwarf_Ptr errarg,
-    Dwarf_Debug *dbg,Dwarf_Error *error)
-{
-    Elf_Cmd what_kind_of_elf_read = ELF_C_READ;
-    Dwarf_Obj_Access_Interface *binary_interface = 0;
-    int res = DW_DLV_OK;
-    int localerrnum = 0;
-    int libdwarf_owns_elf = TRUE;
-    dwarf_elf_handle elf_file_pointer = 0;
-
-    elf_version(EV_CURRENT);
-    elf_file_pointer = elf_begin(fd, what_kind_of_elf_read, 0);
-    if (elf_file_pointer == NULL) {
-        DWARF_DBG_ERROR(NULL, DW_DLE_ELF_BEGIN_ERROR, DW_DLV_ERROR);
-    }
-    /* Sets up elf access function pointers. */
-    res = dwarf_elf_object_access_init(
-        elf_file_pointer,
-        libdwarf_owns_elf,
-        &binary_interface,
-        &localerrnum);
-    if (res != DW_DLV_OK) {
-        if (res == DW_DLV_NO_ENTRY) {
-            return res;
-        }
-        DWARF_DBG_ERROR(NULL, localerrnum, DW_DLV_ERROR);
-    }
-    /* allocates and initializes Dwarf_Debug */
-    res = dwarf_object_init_b(binary_interface, errhand, errarg,
-        groupnumber,
-        dbg, error);
-    if (res != DW_DLV_OK){
-        dwarf_elf_object_access_finish(binary_interface);
-    }
-    return res;
-}
 
 int dwarf_init_path(const char *path,
     char *true_path_out_buffer,
@@ -127,7 +81,7 @@ int dwarf_init_path(const char *path,
     unsigned          groupnumber,
     Dwarf_Handler     errhand,
     Dwarf_Ptr         errarg,
-    Dwarf_Debug*      dbg,
+    Dwarf_Debug*      ret_dbg,
     UNUSEDARG const char *       reserved1,
     UNUSEDARG Dwarf_Unsigned     reserved2,
     UNUSEDARG Dwarf_Unsigned  *  reserved3,
@@ -141,6 +95,7 @@ int dwarf_init_path(const char *path,
     int res = 0;
     int errcode = 0;
     int fd = -1;
+    int lib_owns_fd = TRUE;
 
     res = dwarf_object_detector_path(path,
         true_path_out_buffer,
@@ -162,10 +117,14 @@ int dwarf_init_path(const char *path,
         res = _dwarf_elf_setup(fd,
             true_path_out_buffer,
             ftype,endian,offsetsize,filesize,
-            access,groupnumber,errhand,errarg,dbg,error);
+            access,groupnumber,errhand,errarg,ret_dbg,error);
         return res;
     }
     case DW_FTYPE_MACH_O: {
+        res = _dwarf_macho_setup(fd,true_path_out_buffer,
+            lib_owns_fd,
+            ftype,endian,offsetsize,filesize,
+            access,group_number,errhand,errarg,ret_dbg,error);
         return res;
     }
     case DW_FTYPE_PE:
@@ -193,6 +152,7 @@ dwarf_init_b(int fd,
     size_t   filesize = 0;
     int res = 0;
     int errcode = 0;
+    int lib_owns_fd = FALSE;
 
     res = dwarf_object_detector_fd(fd, &ftype,
         &endian,&offsetsize,&filesize,&errcode);
@@ -210,8 +170,11 @@ dwarf_init_b(int fd,
         return res;
         }
     case DW_FTYPE_MACH_O: {
-        /* FIXME: temporary */
-        break;
+        res = _dwarf_macho_setup(fd,"",
+            lib_owns_fd,
+            ftype,endian,offsetsize,filesize,
+            access,group_number,errhand,errarg,ret_dbg,error);
+        return res;
         }
 
     case DW_FTYPE_PE: {

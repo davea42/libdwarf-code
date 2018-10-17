@@ -1393,7 +1393,8 @@ load_debugfission_tables(Dwarf_Debug dbg,Dwarf_Error *error)
     wishes.
 */
 int
-dwarf_object_init(Dwarf_Obj_Access_Interface* obj, Dwarf_Handler errhand,
+dwarf_object_init(Dwarf_Obj_Access_Interface* obj, 
+    Dwarf_Handler errhand,
     Dwarf_Ptr errarg, Dwarf_Debug* ret_dbg,
     Dwarf_Error* error)
 {

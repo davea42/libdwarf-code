@@ -1323,9 +1323,15 @@ struct Dwarf_Obj_Access_Interface_s {
 #define DW_DLE_FILE_UNAVAILABLE                411
 #define DW_DLE_FILE_WRONG_TYPE                 412
 #define DW_DLE_SIBLING_OFFSET_WRONG            413
+#define DW_DLE_OPEN_FAIL                       414
+#define DW_DLE_OFFSET_SIZE                     415
+#define DW_DLE_MACH_O_SEGOFFSET_BAD            416
+#define DW_DLE_FILE_OFFSET_BAD                 417
+#define DW_DLE_SEEK_ERROR                      418
+#define DW_DLE_READ_ERROR                      419
 
     /* LAST MUST EQUAL LAST ERROR NUMBER */
-#define DW_DLE_LAST        413
+#define DW_DLE_LAST        419
 
 #define DW_DLE_LO_USER     0x10000
 

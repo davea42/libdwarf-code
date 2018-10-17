@@ -200,7 +200,10 @@ extern Elf64_Shdr *elf64_getshdr(Elf_Scn *);
 
 
 
+/*   ident[0] == 'E' for elf. ident[1] = 1 */
 typedef struct {
+    char             ident[8];
+    const char *     path;
     dwarf_elf_handle elf;
     int              is_64bit;
     Dwarf_Small      length_size;
@@ -293,6 +296,8 @@ dwarf_elf_object_access_internals_init(void* obj_in,
         one calculation, and an approximate one at that. */
     obj->length_size = obj->is_64bit ? 8 : 4;
     obj->pointer_size = obj->is_64bit ? 8 : 4;
+    obj->ident[0] = 'E';
+    obj->ident[1] = 1;
 
 #ifdef _WIN32
     if (obj->is_64bit && machine == EM_PPC64) {

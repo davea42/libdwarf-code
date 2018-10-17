@@ -70,6 +70,8 @@ nodist_libdwarf_la_SOURCES = \
 dwarf_names.h \
 dwarf_names.c
 
+
+
 libdwarf_la_SOURCES = \
 dwarf.h \
 dwarf_abbrev.c \
@@ -113,18 +115,23 @@ dwarf_line_table_reader_common.h \
 dwarf_loc.c \
 dwarf_loc.h \
 dwarf_loc2.h \
+dwarf_machoread.c \
+dwarf_machoread.h \
 dwarf_macro.c \
 dwarf_macro.h \
 dwarf_macro5.c \
 dwarf_macro5.h \
 dwarf_object_detector.c \
 dwarf_object_detector.h \
+dwarf_object_read_common.c \
+dwarf_object_read_common.h \
 dwarf_opaque.h \
 dwarf_original_elf_init.c \
 dwarf_print_lines.c \
 dwarf_pubtypes.c \
 dwarf_query.c \
 dwarf_ranges.c \
+dwarf_reading.h \
 dwarf_reloc_386.h \
 dwarf_reloc_arm.h \
 dwarf_reloc_mips.h \
