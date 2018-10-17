@@ -124,7 +124,7 @@ int dwarf_init_path(const char *path,
         res = _dwarf_macho_setup(fd,true_path_out_buffer,
             lib_owns_fd,
             ftype,endian,offsetsize,filesize,
-            access,group_number,errhand,errarg,ret_dbg,error);
+            access,groupnumber,errhand,errarg,ret_dbg,error);
         return res;
     }
     case DW_FTYPE_PE:
@@ -200,7 +200,20 @@ dwarf_finish(Dwarf_Debug dbg, Dwarf_Error * error)
     if(!dbg) {
         DWARF_DBG_ERROR(NULL, DW_DLE_DBG_NULL, DW_DLV_ERROR);
     }
-    dwarf_elf_object_access_finish(dbg->de_obj_file);
+    if (dbg->de_obj_file) {
+        char otype  = *(char *)(dbg->de_obj_file->object);
 
+        if (otype == 'E') {
+            dwarf_elf_object_access_finish(dbg->de_obj_file);
+        } else if (otype == 'M') {
+            _dwarf_destruct_macho_access(dbg->de_obj_file);
+#if 0
+        } else if (otype == 'P') {
+            /* PE files not yet dealt with */
+#endif
+        } else {
+            /*  Do nothing. A serious internal error */
+        }
+    }
     return dwarf_object_finish(dbg, error);
 }

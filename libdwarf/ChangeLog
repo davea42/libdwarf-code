@@ -1,3 +1,15 @@
+2018-10-17  David Anderson
+     * macho-loader.h: A header for reading mach-o dsym objects.
+     * dwarf_generic_init.c,dwarf_init_finish.c: Now modified to
+       support reading mach-o.
+     * dwarf_machoread.c,dwarf_machoread.h: Contains
+       the mach-o specific details.
+     * dwarf_object_read_common.c: New, has a 
+     * dwarf_opaque.h
+     * dwarf_original_elf_init.c: now allows elf or mach-o objects
+       and calls the appropriate setup code.
+     * dwarf_reading.h: new common header for reading without libelf.
+     * pro_section.c: Fix trailing whitespace.
 2018-10-15  David Anderson
      * dwarf_version.h: Updated date string.
      * dwarf_die_deliv.c: Now a sibling-offset error

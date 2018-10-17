@@ -35,7 +35,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <string.h> /* memcpy */
 #include <sys/types.h> /* lseek and read */
 #ifdef HAVE_UNISTD_H
-#include <unistd.h> /* /* lseek read close */
+#include <unistd.h> /* lseek read close */
 #endif /* HAVE_UNISTD_H */
 #include "libdwarf.h" /* For error codes. */
 #include "dwarf_object_read_common.h"

@@ -3337,8 +3337,8 @@ _dwarf_pro_generate_debuginfo(Dwarf_P_Debug dbg,
                 /*  -nonrootsibling-
                     A null die should only be written for terminating
                     siblings, not the root.  Adding a terminating die
-                    for the root will cause, after object files are 
-                    linked, warnings to be generated with newer 
+                    for the root will cause, after object files are
+                    linked, warnings to be generated with newer
                     versions of readelf. */
                 if (!curdie->di_parent) {
                     /*  The parent is not a DIE so ending a sibling

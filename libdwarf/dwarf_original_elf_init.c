@@ -188,4 +188,3 @@ _dwarf_elf_setup(int fd,
     }
     return res;
 }
-

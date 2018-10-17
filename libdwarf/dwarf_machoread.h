@@ -90,7 +90,7 @@ struct generic_section {
     /* Larger than in file, room for NUL guaranteed */
     char          sectname[24];
     char          segname[24];
-    char *        dwarfsectname; /* May be null. */
+    const char *  dwarfsectname; /* May be null. */
     Dwarf_Unsigned  addr;
     Dwarf_Unsigned  size;
     Dwarf_Unsigned  offset;
@@ -112,7 +112,7 @@ struct generic_section {
     Other bytes in ident not defined, should be zero. */
 typedef struct {
     char             mo_ident[8];
-    const char *     mo_path;
+    const char *     mo_path; /* libdwarf must free.*/
     int              mo_fd;
     int              mo_destruct_close_fd; /*aka: lib owns fd */
     int              mo_is_64bit;
@@ -122,8 +122,6 @@ typedef struct {
     int              mo_ftype;
     Dwarf_Endianness mo_byteorder;
     /*Dwarf_Small      mo_machine; */
-
-    Dwarf_Unsigned mo_pointersize;
     void *(*mo_copy_word) (void *, const void *, size_t);
 
     /* Used to hold 32 and 64 header data */
@@ -139,19 +137,12 @@ typedef struct {
 
     Dwarf_Unsigned mo_dwarf_sectioncount;
     struct generic_section *mo_dwarf_sections;
-    
 } dwarf_macho_object_access_internals_t;
 
-typedef struct macho_filedata_s * macho_filedata;
-
-int dwarf_construct_macho_access_path(const char *path,
-    macho_filedata *mp, int *errcode);
-int dwarf_construct_macho_access(int fd,const
-    char *path, macho_filedata *mp,
+int dwarf_load_macho_header(dwarf_macho_object_access_internals_t * mfp,
     int *errcode);
-int dwarf_load_macho_header(macho_filedata mfp,int *errcode);
-int dwarf_load_macho_commands(macho_filedata mfp,int *errcode);
-int dwarf_destruct_macho_access(macho_filedata mp,int *errcode);
+int dwarf_load_macho_commands(dwarf_macho_object_access_internals_t * mfp,
+    int *errcode);
 
 
 

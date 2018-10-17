@@ -49,67 +49,19 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #ifdef HAVE_UNISTD_H
 #include <unistd.h> /* lseek read close */
 #endif /* HAVE_UNISTD_H */
+#include "libdwarf.h"
+#include "dwarf_base_types.h"
+#include "libdwarfdefs.h"
+#include "dwarf_opaque.h"
+#include "dwarf_error.h" /* for _dwarf_error() declaration */
 #include "dwarf_reading.h"
 #include "dwarf_object_read_common.h"
 #include "dwarf_machoread.h"
 #include "dwarf_object_detector.h"
 #include "macho-loader.h"
 
-
-static char tru_path_buffer[BUFFERSIZE];
-
-static void destructmacho(dwarf_macho_object_access_internals_t *mp);
-
-static struct commands_text_s {
-   const char *name;
-   unsigned long val;
-} commandname [] = {
-{"LC_SEGMENT",    0x1},
-{"LC_SYMTAB",     0x2},
-{"LC_SYMSEG",     0x3},
-{"LC_THREAD",     0x4 },
-{"LC_UNIXTHREAD", 0x5},
-{"LC_LOADFVMLIB", 0x6},
-{"LC_IDFVMLIB",   0x7  },
-{"LC_IDENT",      0x8  },
-{"LC_FVMFILE",    0x9  },
-{"LC_PREPAGE",    0xa  },
-{"LC_DYSYMTAB",   0xb  },
-{"LC_LOAD_DYLIB", 0xc  },
-{"LC_ID_DYLIB",   0xd  },
-{"LC_LOAD_DYLINKER", 0xe },
-{"LC_ID_DYLINKER",0xf },
-{"LC_PREBOUND_DYLIB", 0x10 },
-{"LC_ROUTINES",   0x11 },
-{"LC_SUB_FRAMEWORK", 0x12 },
-{"LC_SUB_UMBRELLA", 0x13  },
-{"LC_SUB_CLIENT", 0x14  },
-{"LC_SUB_LIBRARY",0x15  },
-{"LC_TWOLEVEL_HINTS", 0x16 },
-{"LC_PREBIND_CKSUM",  0x17 },
-{"LC_LOAD_WEAK_DYLIB", (0x18 | LC_REQ_DYLD)},
-{"LC_SEGMENT_64",   0x19 },
-{"LC_ROUTINES_64",  0x1a    },
-{"LC_UUID",         0x1b    },
-{"LC_RPATH",       (0x1c | LC_REQ_DYLD) },
-{"LC_CODE_SIGNATURE", 0x1d },
-{"LC_SEGMENT_SPLIT_INFO", 0x1e},
-{"LC_REEXPORT_DYLIB", (0x1f | LC_REQ_DYLD)},
-{"LC_LAZY_LOAD_DYLIB", 0x20},
-{"LC_ENCRYPTION_INFO", 0x21},
-{"LC_DYLD_INFO",    0x22   },
-{"LC_DYLD_INFO_ONLY", (0x22|LC_REQ_DYLD)},
-{"LC_LOAD_UPWARD_DYLIB", (0x23 | LC_REQ_DYLD) },
-{"LC_VERSION_MIN_MACOSX", 0x24   },
-{"LC_VERSION_MIN_IPHONEOS", 0x25},
-{"LC_FUNCTION_STARTS", 0x26 },
-{"LC_DYLD_ENVIRONMENT", 0x27 },
-{"LC_MAIN", (0x28|LC_REQ_DYLD)},
-{0,0}
-};
-
 /* MACH-O and dwarf section names */
-static struct macho_sect_names_s {  
+static struct macho_sect_names_s {
     char const *ms_moname;
     char const *ms_dwname;
 } const SectionNames [] = {
@@ -129,10 +81,22 @@ static struct macho_sect_names_s {
     { "__debug_gdb_scri",       ".debug_gdb_scripts" }
 };
 
-FIXME
+static int
+_dwarf_macho_object_access_init(
+    int  fd,
+    int   lib_owns_fd,
+    unsigned ftype,
+    unsigned endian,
+    unsigned offsetsize,
+    size_t filesize,
+    Dwarf_Unsigned access,
+    Dwarf_Obj_Access_Interface **binary_interface,
+    int *localerrnum);
+
+
 static Dwarf_Endianness macho_get_byte_order (void *obj)
 {
-    dwarf_macho_object_access_internals_t *macho = 
+    dwarf_macho_object_access_internals_t *macho =
         (dwarf_macho_object_access_internals_t*)(obj);
     return macho->mo_byteorder;
 }
@@ -140,7 +104,7 @@ static Dwarf_Endianness macho_get_byte_order (void *obj)
 
 static Dwarf_Small macho_get_length_size (void *obj)
 {
-    dwarf_macho_object_access_internals_t *macho = 
+    dwarf_macho_object_access_internals_t *macho =
         (dwarf_macho_object_access_internals_t*)(obj);
     return macho->mo_offsetsize;
 }
@@ -148,7 +112,7 @@ static Dwarf_Small macho_get_length_size (void *obj)
 
 static Dwarf_Small macho_get_pointer_size (void *obj)
 {
-    dwarf_macho_object_access_internals_t *macho = 
+    dwarf_macho_object_access_internals_t *macho =
         (dwarf_macho_object_access_internals_t*)(obj);
     return macho->mo_pointersize;
 }
@@ -156,19 +120,21 @@ static Dwarf_Small macho_get_pointer_size (void *obj)
 
 static Dwarf_Unsigned macho_get_section_count (void *obj)
 {
-    dwarf_macho_object_access_internals_t *macho = 
+    dwarf_macho_object_access_internals_t *macho =
         (dwarf_macho_object_access_internals_t*)(obj);
-FIXME
-    return macho->mo_dwarf_section_count;
+    return macho->mo_dwarf_sectioncount;
 }
 
-static int macho_get_section_info (void *obj, Dwarf_Half section_index, Dwarf_Obj_Access_Section *return_section, int *error)
+static int macho_get_section_info (void *obj,
+    Dwarf_Half section_index,
+    Dwarf_Obj_Access_Section *return_section,
+    UNUSEDARG int *error)
 {
-    dwarf_macho_object_access_internals_t *macho = 
+    dwarf_macho_object_access_internals_t *macho =
         (dwarf_macho_object_access_internals_t*)(obj);
 
 
-    if (section_index < macho->mo_dwarf_section_count) {
+    if (section_index < macho->mo_dwarf_sectioncount) {
         struct generic_section *sp = 0;
 
         sp = macho->mo_dwarf_sections + section_index;
@@ -184,23 +150,25 @@ static int macho_get_section_info (void *obj, Dwarf_Half section_index, Dwarf_Ob
     return DW_DLV_NO_ENTRY;
 }
 
-static int 
-macho_load_section (void *obj, Dwarf_Half section_index, 
+static int
+macho_load_section (void *obj, Dwarf_Half section_index,
     Dwarf_Small **return_data, int *error)
 {
-    dwarf_macho_object_access_internals_t *macho = 
+    dwarf_macho_object_access_internals_t *macho =
         (dwarf_macho_object_access_internals_t*)(obj);
 
     if (0 < section_index &&
         section_index < macho->mo_dwarf_sectioncount) {
-        struct generic_section *sp = 
+        int res = 0;
+
+        struct generic_section *sp =
             macho->mo_dwarf_sections + section_index;
         if(sp->loaded_data) {
-            *return_data = sp->loaded_data; 
+            *return_data = sp->loaded_data;
             return DW_DLV_OK;
         }
-        if (!sp->size) { 
-             return DW_DLV_NO_ENTRY:
+        if (!sp->size) {
+            return DW_DLV_NO_ENTRY;
         }
         sp->loaded_data = malloc(sp->size);
         if(!sp->loaded_data) {
@@ -215,105 +183,24 @@ macho_load_section (void *obj, Dwarf_Half section_index,
             sp->loaded_data = 0;
             return res;
         }
-        *return_data = sp->loaded_data; 
+        *return_data = sp->loaded_data;
         return DW_DLV_OK;
     }
     return DW_DLV_NO_ENTRY;
 }
 
-
-
-
-/* was get_command_name */
-int
-dwarf_get_macho_command_name(Dwarf_Unsigned v,const char ** name,int *errcode)
+void
+_dwarf_destruct_macho_access(
+    struct Dwarf_Obj_Access_Interface_s *aip)
 {
-    unsigned i = 0;
+    dwarf_macho_object_access_internals_t *mp =
+        (dwarf_macho_object_access_internals_t *)aip->object;
+    Dwarf_Unsigned i = 0;
 
-    for( ; commandname[i].name; i++) {
-        if (v==commandname[i].val) {
-            *name = commandname[i].name;
-            return DW_DLV_OK;
-        }
-    }
-    *name = "";
-    return DW_DLV_NO_ENTRY;
-}
-
-int
-dwarf_construct_macho_access_path(const char *path,
-     dwarf_macho_object_access_internals_t **mp,int *errcode)
-{
-    int fd = -1;
-    int res = 0;
-     dwarf_macho_object_access_internals_t *mymp = 0;
-
-    fd = open(path, O_RDONLY);
-    if (fd < 0) {
-        *errcode = DW_DLE_OPEN_FAIL;
-        return DW_DLV_ERROR;
-    }
-    res = dwarf_construct_macho_access(fd,
-        path,&mymp,errcode);
-    if (res != DW_DLV_OK) {
-        close(fd);
-        return res;
-    }
-    mymp->mo_destruct_close_fd = TRUE;
-    *mp = mymp;
-    return res;
-}
-
-/* Here path is not essential. Pass in with "" if unknown. */
-int
-dwarf_construct_macho_access(int fd,
-    const char *path,
-     dwarf_macho_object_access_internals_t **mp,int *errcode)
-{
-    unsigned ftype = 0;
-    unsigned endian = 0;
-    unsigned offsetsize = 0;
-    size_t   filesize;
-     dwarf_macho_object_access_internals_t *mfp = 0;
-    int      res = 0;
-
-    res = dwarf_object_detector_fd(fd,
-        &ftype,&endian,&offsetsize, &filesize, errcode);
-    if (res != DW_DLV_OK) {
-        return res;
-    }
-
-    mfp = calloc(1,sizeof( dwarf_macho_object_access_internals_t));
-    if (!mfp) {
-        *errcode = DW_DLE_ALLOC_FAIL;
-        return DW_DLV_ERROR;
-    }
-    mfp->mo_fd = fd;
-    mfp->mo_ident[0] = 'M';
-    mfp->mo_ident[1] = 1;
-    mfp->mo_offsetsize = offsetsize;
-    mfp->mo_filesize = filesize;
-    mfp->mo_endian = endian;
-    mfp->mo_destruct_close_fd = FALSE;
-    *mp = mfp;
-    return DW_DLV_OK;
-}
-
-
-/* destructmacho(dwarf_macho_object_access_internals_t *mp) */
-int
-dwarf_destruct_macho_access(dwarf_macho_object_access_internals_t *mp,int *errcode)
-{
     if (mp->mo_destruct_close_fd) {
         close(mp->mo_fd);
         mp->mo_fd = -1;
     }
-#if 0
-    if (mp->mo_file) {
-        fclose(mp->mo_file);
-        mp->mo_file = 0;
-    }
-#endif
     if (mp->mo_commands){
         free(mp->mo_commands);
         mp->mo_commands = 0;
@@ -322,8 +209,22 @@ dwarf_destruct_macho_access(dwarf_macho_object_access_internals_t *mp,int *errco
         free(mp->mo_segment_commands);
         mp->mo_segment_commands = 0;
     }
+    free((char *)mp->mo_path);
+    if (mp->mo_dwarf_sections) {
+        struct generic_section *sp = 0;
+
+        sp = mp->mo_dwarf_sections;
+        for( i=0; i < mp->mo_dwarf_sectioncount; ++i,++sp) {
+            if (sp->loaded_data) {
+                free(sp->loaded_data);
+                sp->loaded_data = 0;
+            }
+        }
+        free(mp->mo_dwarf_sections);
+        mp->mo_dwarf_sections = 0;
+    }
     memset(mp,0,sizeof(*mp));
-    return DW_DLV_OK;
+    return;
 }
 
 /* load_macho_header32(dwarf_macho_object_access_internals_t *mfp)*/
@@ -377,9 +278,8 @@ load_macho_header64(dwarf_macho_object_access_internals_t *mfp,
     return DW_DLV_OK;
 }
 
-/* int load_macho_header(dwarf_macho_object_access_internals_t *mfp) */
 int
-dwarf_load_macho_header(dwarf_macho_object_access_internals_t *mfp, 
+dwarf_load_macho_header(dwarf_macho_object_access_internals_t *mfp,
     int *errcode)
 {
     int res = 0;
@@ -436,7 +336,7 @@ load_segment_command_content32(
     }
     if ((msp->fileoff+msp->filesize ) > filesize) {
         /* corrupt */
-        *errcode = DW_DLE_FILE_OFFSET_BAD
+        *errcode = DW_DLE_FILE_OFFSET_BAD;
         return DW_DLV_ERROR;
     }
     ASSIGNMO(mfp->mo_copy_word,msp->maxprot,sc.maxprot);
@@ -543,7 +443,6 @@ dwarf_macho_load_dwarf_section_details32(
 {
     Dwarf_Unsigned seci = 0;
     Dwarf_Unsigned seccount = segp->nsects;
-    struct generic_section * secp = 0;
     Dwarf_Unsigned secalloc = seccount+1;
     Dwarf_Unsigned curoff = segp->sectionsoffset;
     Dwarf_Unsigned shdrlen = sizeof(struct section);
@@ -604,7 +503,6 @@ dwarf_macho_load_dwarf_section_details64(
 {
     Dwarf_Unsigned seci = 0;
     Dwarf_Unsigned seccount = segp->nsects;
-    struct generic_section * secp = 0;
     Dwarf_Unsigned secalloc = seccount+1;
     Dwarf_Unsigned curoff = segp->sectionsoffset;
     Dwarf_Unsigned shdrlen = sizeof(struct section_64);
@@ -662,16 +560,18 @@ dwarf_macho_load_dwarf_section_details(
     struct generic_segment_command *segp,
     Dwarf_Unsigned segi,int *errcode)
 {
-    Dwarf_Unsigned seci = 0;
-    Dwarf_Unsigned seccount = segp->nsects;
-    struct generic_section * secp = 0;
-    Dwarf_Unsigned secalloc = seccount+1;
     int res = 0;
 
     if (mfp->mo_offsetsize == 32) {
         res = dwarf_macho_load_dwarf_section_details32(mfp,segp,segi,errcode);
+        if (res != DW_DLV_OK) {
+            return res;
+        }
     } else if (mfp->mo_offsetsize == 64) {
         res = dwarf_macho_load_dwarf_section_details64(mfp,segp,segi,errcode);
+        if (res != DW_DLV_OK) {
+            return res;
+        }
     } else {
         *errcode = DW_DLE_OFFSET_SIZE;
         return DW_DLV_ERROR;
@@ -686,7 +586,6 @@ dwarf_macho_load_dwarf_sections(
     Dwarf_Unsigned segi = 0;
 
     struct generic_segment_command *segp = mfp->mo_segment_commands;
-    struct generic_section * secp = 0;
     for ( ; segi < mfp->mo_segment_count; ++segi,++segp) {
         int res = 0;
 
@@ -697,7 +596,7 @@ dwarf_macho_load_dwarf_sections(
         res = dwarf_macho_load_dwarf_section_details(mfp,segp,segi,errcode);
         return res;
     }
-    return RO_NO_ENTRY;
+    return DW_DLV_OK;
 }
 
 /* Works the same, 32 or 64 bit */
@@ -729,8 +628,6 @@ dwarf_load_macho_commands(
     }
     mcp = mfp->mo_commands;
     for ( ; cmdi < mfp->mo_header.ncmds; ++cmdi,++mcp ) {
-        int res = 0;
-
         res = RRMOA(mfp->mo_fd,&mc,curoff,sizeof(mc),errcode);
         if (res != DW_DLV_OK) {
             return res;
@@ -758,7 +655,7 @@ dwarf_load_macho_commands(
     res = dwarf_macho_load_dwarf_sections(mfp,errcode);
     return res;
 }
-int 
+int
 _dwarf_macho_setup(int fd,
     char *true_path,
     int lib_owns_fd,
@@ -773,47 +670,49 @@ _dwarf_macho_setup(int fd,
     Dwarf_Debug *dbg,Dwarf_Error *error)
 {
     Dwarf_Obj_Access_Interface *binary_interface = 0;
+    dwarf_macho_object_access_internals_t *intfc = 0;
     int res = DW_DLV_OK;
     int localerrnum = 0;
 
-FIXME
-    res = dwarf_macho_object_access_init(
+    res = _dwarf_macho_object_access_init(
         fd,
         lib_owns_fd,
-        ftype,endia,offsetsize,filesize,access,
+        ftype,endian,offsetsize,filesize,access,
         &binary_interface,
         &localerrnum);
     if (res != DW_DLV_OK) {
         if (res == DW_DLV_NO_ENTRY) {
             return res;
         }
-        DWARF_DBG_ERROR(NULL, localerrnum, DW_DLV_ERROR);
+        _dwarf_error(NULL, error, localerrnum);
+        return DW_DLV_ERROR;
     }
     /*  allocates and initializes Dwarf_Debug,
         generic code */
-FIXME
     res = dwarf_object_init_b(binary_interface, errhand, errarg,
         groupnumber, dbg, error);
     if (res != DW_DLV_OK){
-        dwarf_macho_object_access_finish(binary_interface);
+        _dwarf_destruct_macho_access(binary_interface);
     }
+    intfc = binary_interface->object;
+    intfc->mo_path = strdup(true_path);
     return res;
-
 }
 
 
 static Dwarf_Obj_Access_Methods const macho_methods = {
-    get_section_info = macho_get_section_info,
-    get_byte_order = macho_get_byte_order,
-    get_length_size = macho_get_length_size,
-    get_pointer_size = macho_get_pointer_size,
-    get_section_count = macho_get_section_count,
-    load_section = macho_load_section,
-    relocate_a_section = NULL
+    macho_get_section_info,
+    macho_get_byte_order,
+    macho_get_length_size,
+    macho_get_pointer_size,
+    macho_get_section_count,
+    macho_load_section,
+    /*  We do not do macho relocations. dsym files do not require it. */
+    NULL
 };
 
 static int
-dwarf_macho_object_access_internals_init(
+_dwarf_macho_object_access_internals_init(
     dwarf_macho_object_access_internals_t * internals,
     int  fd,
     int   lib_owns_fd,
@@ -821,23 +720,24 @@ dwarf_macho_object_access_internals_init(
     unsigned endian,
     unsigned offsetsize,
     size_t filesize,
-    Dwarf_Unsigned access,
-    Dwarf_Obj_Access_Interface **binary_interface,
+    UNUSEDARG Dwarf_Unsigned access,
     int *errcode)
 {
     dwarf_macho_object_access_internals_t * intfc = internals;
     Dwarf_Unsigned i  = 0;
     struct generic_section *sp = 0;
+    struct Dwarf_Obj_Access_Interface_s localdoas;
+    int res = 0;
 
-    intfc->mo_ident[0] = 'M';
-    intfc->mo_ident[1] = '1';
-    intfc->mo_fd = fd;
+    intfc->mo_ident[0]    = 'M';
+    intfc->mo_ident[1]    = '1';
+    intfc->mo_fd          = fd;
     intfc->mo_destruct_close_fd = lib_owns_fd;
-    intfc->mo_is_64bit = ((offsetsize==64)?TRUE:FALSE);
-    intfc->mo_offsetsize = = offsetsize;
-    intfc->mo_pointersize = = offsetsize;
-    intfc->mo_filesize = = filesize;
-    intfc->mo_ftype = ftype;
+    intfc->mo_is_64bit    = ((offsetsize==64)?TRUE:FALSE);
+    intfc->mo_offsetsize  = offsetsize;
+    intfc->mo_pointersize = offsetsize;
+    intfc->mo_filesize    = filesize;
+    intfc->mo_ftype       = ftype;
 
 #ifdef WORDS_BIGENDIAN
     if (endian == DW_ENDIAN_LITTLE || endian == DW_ENDIAN_OPPOSITE ) {
@@ -853,20 +753,22 @@ dwarf_macho_object_access_internals_init(
         intfc->mo_byteorder = DW_OBJECT_LSB;
     } else {
         intfc->mo_copy_word = _dwarf_memcpy_swap_bytes;
-        intfc->mo_byteorder = DW_ENDIAN_MSB;
+        intfc->mo_byteorder = DW_OBJECT_MSB;
     }
 #endif /* LITTLE- BIG-ENDIAN */
-    res = dwarf_load_macho_header(internals,errcode);
+    res = dwarf_load_macho_header(intfc,errcode);
     if (res != DW_DLV_OK) {
-        int localerrcode = 0;
-        dwarf_destruct_macho_access(intfc,localerrcode);
+        localdoas.object = intfc;
+        localdoas.methods = 0;
+        _dwarf_destruct_macho_access(&localdoas);
         return res;
     }
     /* Load sections */
     res = dwarf_load_macho_commands(intfc,errcode);
     if (res != DW_DLV_OK) {
-        int localerrcode = 0;
-        dwarf_destruct_macho_access(intfc,&localerrcode);
+        localdoas.methods = 0;
+        localdoas.object = intfc;
+        _dwarf_destruct_macho_access(&localdoas);
         return res;
     }
     sp = intfc->mo_dwarf_sections;
@@ -875,18 +777,18 @@ dwarf_macho_object_access_internals_init(
         int lim = sizeof(SectionNames)/sizeof(SectionNames[0]);
         sp->dwarfsectname = "";
         for( ; j < lim; ++j) {
-            if(!strcmp(sp->sectname,SectionNames[j].moname)) {
-                 sp->dwarfsectname = SectionNames[j].dwname;
-                 break;
+            if(!strcmp(sp->sectname,SectionNames[j].ms_moname)) {
+                sp->dwarfsectname = SectionNames[j].ms_dwname;
+                break;
             }
         }
     }
-FIXME
-    
+    return DW_DLV_OK;
 }
 
 
-int dwarf_macho_object_access_init(
+static int
+_dwarf_macho_object_access_init(
     int  fd,
     int   lib_owns_fd,
     unsigned ftype,
@@ -904,17 +806,17 @@ int dwarf_macho_object_access_init(
 
     internals = malloc(sizeof(dwarf_macho_object_access_internals_t));
     if (!internals) {
-        *err = DW_DLE_ALLOC_FAIL;
+        *localerrnum = DW_DLE_ALLOC_FAIL;
         /* Impossible case, we hope. Give up. */
         return DW_DLV_ERROR;
     }
     memset(internals,0,sizeof(*internals));
-    res = dwarf_macho_object_access_internals_init(internals, 
+    res = _dwarf_macho_object_access_internals_init(internals,
         fd,
         lib_owns_fd,
         ftype, endian, offsetsize, filesize,
         access,
-        err);
+        localerrnum);
     if (res != DW_DLV_OK){
         /* *err is already set. */
         free(internals);
@@ -923,25 +825,15 @@ int dwarf_macho_object_access_init(
     internals->mo_destruct_close_fd = lib_owns_fd;
 
     intfc = malloc(sizeof(Dwarf_Obj_Access_Interface));
-    if (!intfc) {
+    if (!internals) {
         /* Impossible case, we hope. Give up. */
-        *err = DW_DLE_ALLOC_FAIL;
         free(internals);
+        *localerrnum = DW_DLE_ALLOC_FAIL;
         return DW_DLV_ERROR;
     }
     /* Initialize the interface struct */
     intfc->object = internals;
-    intfc->methods = &macho_methods
-
-    /*  An access method hidden from non-elf. Needed to
-        handle new-ish SHF_COMPRESSED flag in elf.  */
-    _dwarf_get_elf_flags_func_ptr = _dwarf_get_elf_flags_func;
-
-
-    
-
+    intfc->methods = &macho_methods;
+    *binary_interface = intfc;
+    return DW_DLV_OK;
 }
-
-
-
-

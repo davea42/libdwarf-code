@@ -76,7 +76,7 @@ extern "C" {
 #define P printf
 #define F fflush(stdout)
 
-#define RRMOA(f,buf,loc,siz,errc) dwarf_object_read_random(f, \
+#define RRMOA(f,buf,loc,siz,errc) _dwarf_object_read_random(f, \
     (char *)buf,loc,siz,errc);
 
 #ifdef WORDS_BIGENDIAN
@@ -86,28 +86,11 @@ extern "C" {
         t = 0;                                  \
         func(((char *)t)+tbyte ,&s,sizeof(s)); \
     } while (0)
-#define SIGN_EXTEND(dest, length)           \
-    do {                                    \
-        if (*(signed char *)((char *)&dest +\
-            sizeof(dest) - length) < 0) {   \
-            memcpy((char *)&dest, "\xff\xff\xff\xff\xff\xff\xff\xff", \
-                sizeof(dest) - length);     \
-        }                                   \
-    } while (0)
-
 #else /* LITTLE ENDIAN */
 #define ASSIGN(func,t,s)                             \
     do {                                        \
         t = 0;                                  \
         func(&t,&s,sizeof(s));    \
-    } while (0)
-#define SIGN_EXTEND(dest, length)                               \
-    do {                                                        \
-        if (*(signed char *)((char *)&dest + (length-1)) < 0) { \
-            memcpy((char *)&dest+length,                        \
-                "\xff\xff\xff\xff\xff\xff\xff\xff",             \
-                sizeof(dest) - length);                         \
-        }                                                       \
     } while (0)
 #endif /* end LITTLE- BIG-ENDIAN */
 
