@@ -1,4 +1,4 @@
-
+#!/bin/sh
 # This is meant to be done by hand
 # when changes made. Not done during build or install.
 # Just use the built pdf to install.
@@ -17,5 +17,3 @@ $PSTOPDF libdwarf2p.1.ps libdwarf2p.1.pdf
 
 rm libdwarf2.1.ps
 rm libdwarf2p.1.ps
-
-

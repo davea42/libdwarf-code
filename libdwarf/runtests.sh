@@ -39,5 +39,3 @@ chkres $? "compiling dwarftied test"
 chkres $? "Running dwarftiedtest test"
 rm ./dwarftied
 exit 0
-
-
