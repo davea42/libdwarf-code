@@ -97,7 +97,8 @@ static struct esb_s esb_short_cu_name;
 static struct esb_s esb_long_cu_name;
 static struct esb_s dwarf_error_line;
 
-static int process_one_file(Elf * elf, Elf *elftied,
+static int process_one_file(int fd, int tiedfd,
+    Elf *efp, Elf * tiedfp,
     const char * file_name,
     const char * tied_file_name,
     int archive,
@@ -107,7 +108,7 @@ static int
 open_a_file(const char * name)
 {
     /* Set to a file number that cannot be legal. */
-    int f = -1;
+    int fd = -1;
 
 #if HAVE_ELF_OPEN
     /*  It is not possible to share file handles
@@ -115,17 +116,20 @@ open_a_file(const char * name)
         file-handle table. For two applications to use the same file
         using a DLL, they must both open the file individually.
         Let the 'libelf' dll open and close the file.  */
-    f = elf_open(name, O_RDONLY | O_BINARY);
+    fd = elf_open(name, O_RDONLY | O_BINARY);
 #else
-    f = open(name, O_RDONLY | O_BINARY);
+    fd = open(name, O_RDONLY | O_BINARY);
 #endif
-    return f;
+    return fd;
 
 }
 static void
 close_a_file(int f)
 {
-    close(f);
+    if (f != -1) {
+        close(f);
+        f = -1;
+    }
 }
 
 static int
@@ -150,6 +154,61 @@ is_it_known_elf_header(Elf *elf)
     /* Not something we can handle. */
     return 0;
 }
+static void
+flag_data_pre_allocation(void)
+{
+    memset(glflags.section_high_offsets_global,0,
+        sizeof(*glflags.section_high_offsets_global));
+    /*  If we are checking .debug_line, .debug_ranges, .debug_aranges,
+        or .debug_loc build the tables containing
+        the pairs LowPC and HighPC. It is safer  (and not
+        expensive) to build all
+        of these at once so mistakes in options do not lead
+        to coredumps (like -ka -p did once). */
+    if (glflags.gf_check_decl_file || glflags.gf_check_ranges ||
+        glflags.gf_check_locations ||
+        glflags.gf_do_check_dwarf ||
+        glflags.gf_check_self_references) {
+        glflags.pRangesInfo = AllocateBucketGroup(KIND_RANGES_INFO);
+        glflags.pLinkonceInfo = AllocateBucketGroup(KIND_SECTIONS_INFO);
+        glflags.pVisitedInfo = AllocateBucketGroup(KIND_VISITED_INFO);
+    }
+    /* Create the unique error table */
+    if (glflags.gf_print_unique_errors) {
+        allocate_unique_errors_table();
+    }
+    /* Allocate range array to be used by all CUs */
+    if (glflags.gf_check_ranges) {
+        allocate_range_array_info();
+    }
+}
+
+static void flag_data_post_cleanup(void)
+{
+    clean_up_syms_malloc_data();
+    if (glflags.pRangesInfo) {
+        ReleaseBucketGroup(glflags.pRangesInfo);
+        glflags.pRangesInfo = 0;
+    }
+    if (glflags.pLinkonceInfo) {
+        ReleaseBucketGroup(glflags.pLinkonceInfo);
+        glflags.pLinkonceInfo = 0;
+    }
+    if (glflags.pVisitedInfo) {
+        ReleaseBucketGroup(glflags.pVisitedInfo);
+        glflags.pVisitedInfo = 0;
+    }
+    /* Release range array to be used by all CUs */
+    if (glflags.gf_check_ranges) {
+        release_range_array_info();
+    }
+    /* Delete the unique error set */
+    if (glflags.gf_print_unique_errors) {
+        release_unique_errors_table();
+    }
+    clean_up_compilers_detected();
+    destruct_abbrev_array();
+}
 
 /*
    Iterate through dwarf and print all info.
@@ -159,14 +218,22 @@ main(int argc, char *argv[])
 {
     const char * file_name = 0;
     const char * tied_file_name = 0;
-    int f = 0;
-    int ftied = 0;
+    int fd = -1;
+    int tiedfd = -1;
     Elf_Cmd cmd = 0;
     Elf *arf = 0;
     Elf *elf = 0;
     Elf *elftied = 0;
-    int archive = 0;
     int archmemnum = 0;
+    unsigned         ftype = 0;
+    unsigned         endian = 0;
+    unsigned         offsetsize = 0;
+    Dwarf_Unsigned   filesize = 0;
+    int      errcode = 0;
+    char *out_path_buf = 0;
+    unsigned out_path_buf_len = 0;
+    int res = 0;
+    int archive = 0;
 
 #ifdef _WIN32
     /*  Open the null device used during formatting printing */
@@ -247,147 +314,180 @@ main(int argc, char *argv[])
         wcmd.check_verbose_mode = glflags.gf_check_verbose_mode;
         dwarf_record_cmdline_options(wcmd);
     }
+    /*  The 100+2 etc is more than suffices for the expansion that a
+        MacOS dsym might need. */
+    out_path_buf_len = strlen(file_name)*2 + 100 + 2;
+    out_path_buf = malloc(out_path_buf_len);
+    if(!out_path_buf) {
+        fprintf(stderr, "%s ERROR:  Unable to malloc %lu bytes "
+            "for possible path string %s.\n",
+            glflags.program_name,(unsigned long)out_path_buf_len,
+            file_name);
+        return (FAILED);
+    }
+    res = dwarf_object_detector_path(file_name,
+        out_path_buf,out_path_buf_len,
+        &ftype,&endian,&offsetsize,&filesize,&errcode);
+    if ( res != DW_DLV_OK) {
+        fprintf(stderr, "%s ERROR:  can't open %s\n", glflags.program_name,
+            file_name);
+        return (FAILED);
+    }
+    if (strcmp(file_name,out_path_buf)) {
+        /* We have a MacOS dsym, file_name altered */
+        file_name = makename(out_path_buf);
+    }
 
-
-    f = open_a_file(file_name);
-    if (f == -1) {
+    fd = open_a_file(file_name);
+    if (fd == -1) {
         fprintf(stderr, "%s ERROR:  can't open %s\n", glflags.program_name,
             file_name);
         return (FAILED);
     }
 
-    cmd = ELF_C_READ;
-    arf = elf_begin(f, cmd, (Elf *) 0);
-    if (!arf) {
-        fprintf(stderr, "%s ERROR:  Unable to obtain ELF descriptor for %s\n",
-            glflags.program_name,
-            file_name);
-        return (FAILED);
-    }
-    if (elf_kind(arf) == ELF_K_AR) {
-        /* This option is never tested and may not work sensibly. */
-        archive = 1;
-    }
-
     if (esb_string_len(glflags.config_file_tiedpath) > 0) {
-        int isknown = 0;
+        unsigned         tftype = 0;
+        unsigned         tendian = 0;
+        unsigned         toffsetsize = 0;
+        Dwarf_Unsigned   tfilesize = 0;
+
         tied_file_name = esb_get_string(glflags.config_file_tiedpath);
-        ftied = open_a_file(tied_file_name);
-        if (ftied == -1) {
+        res = dwarf_object_detector_path(file_name,
+            out_path_buf,out_path_buf_len,
+            &tftype,&tendian,&toffsetsize,&tfilesize,&errcode);
+        if ( res != DW_DLV_OK) {
+            fprintf(stderr, "%s ERROR: tied file not an object file '%s'.\n",
+                glflags.program_name, tied_file_name);
+            return (FAILED);
+        }
+        if (ftype != tftype || endian != tendian ||
+            offsetsize != toffsetsize) {
+            fprintf(stderr, "%s ERROR:  tied file \'%s\' and "
+                "main file \'%s\' not "
+                "the same kind of object!\n",
+                glflags.program_name, tied_file_name,out_path_buf);
+            return (FAILED);
+        }
+        if (strcmp(file_name,out_path_buf)) {
+            /*  We have a MacOS dsym, file_name altered.
+                Can this really happen with a tied file? */
+            esb_empty_string(glflags.config_file_tiedpath);
+            esb_append(glflags.config_file_tiedpath,out_path_buf);
+            tied_file_name = out_path_buf;
+        }
+        tiedfd = open_a_file(tied_file_name);
+        if (tiedfd == -1) {
             fprintf(stderr, "%s ERROR:  can't open tied file %s\n",
                 glflags.program_name,
                 tied_file_name);
             return (FAILED);
         }
-        elftied = elf_begin(ftied, cmd, (Elf *) 0);
-        if (elf_kind(elftied) == ELF_K_AR) {
-            fprintf(stderr, "%s ERROR:  tied file  %s is "
-                "an archive. Not allowed. Giving up.\n",
+    }
+    if (ftype == DW_FTYPE_ELF || ftype == DW_FTYPE_ARCHIVE) {
+
+        /*  We will use libelf to process an archive
+            so long as is convienient.
+            we don't intend to ever write our own
+            archive reader.  Archive support was never
+            tested and may disappear. */
+        cmd = ELF_C_READ;
+        arf = elf_begin(fd, cmd, (Elf *) 0);
+        if (!arf) {
+            fprintf(stderr, "%s ERROR:  Unable to obtain ELF descriptor for %s\n",
                 glflags.program_name,
-                tied_file_name);
+                file_name);
             return (FAILED);
         }
-        isknown = is_it_known_elf_header(elftied);
-        if (!isknown) {
-            fprintf(stderr,
-                "Cannot process tied file %s: unknown format\n",
-                tied_file_name);
-            return FAILED;
+        if (ftype ==  DW_FTYPE_ARCHIVE) {
+            archive = 1;
         }
-    }
 
+        if (esb_string_len(glflags.config_file_tiedpath) > 0) {
+            int isknown = 0;
+            if (tiedfd == -1) {
+                fprintf(stderr, "%s ERROR:  can't open tied file %s\n",
+                    glflags.program_name,
+                    tied_file_name);
+                return (FAILED);
+            }
+            elftied = elf_begin(tiedfd, cmd, (Elf *) 0);
+            if (elf_kind(elftied) == ELF_K_AR) {
+                fprintf(stderr, "%s ERROR:  tied file  %s is "
+                    "an archive. Not allowed. Giving up.\n",
+                    glflags.program_name,
+                    tied_file_name);
+                return (FAILED);
+            }
+            isknown = is_it_known_elf_header(elftied);
+            if (!isknown) {
+                fprintf(stderr,
+                    "Cannot process tied file %s: unknown format\n",
+                    tied_file_name);
+                return FAILED;
+            }
+        }
+        while ((elf = elf_begin(fd, cmd, arf)) != 0) {
+            int isknown = is_it_known_elf_header(elf);
 
-    while ((elf = elf_begin(f, cmd, arf)) != 0) {
-        int isknown = is_it_known_elf_header(elf);
-        if (!isknown) {
-            /* not a 64-bit obj either! */
-            /* dwarfdump is almost-quiet when not an object */
-            if (archive) {
-                Elf_Arhdr *mem_header = elf_getarhdr(elf);
-                const char *memname =
-                    (mem_header && mem_header->ar_name)?
-                    mem_header->ar_name:"";
+            if (!isknown) {
+                /* not a 64-bit obj either! */
+                /* dwarfdump is almost-quiet when not an object */
+                if (archive) {
+                    Elf_Arhdr *mem_header = elf_getarhdr(elf);
+                    const char *memname =
+                        (mem_header && mem_header->ar_name)?
+                        mem_header->ar_name:"";
 
-                /*  / and // archive entries are not archive
-                    objects, but are not errors. */
-                if (strcmp(memname,"/") && strcmp(memname,"//")) {
-                    fprintf(stderr, "Can't process archive member "
-                        "%d %s of %s: unknown format\n",
-                        archmemnum,
-                        sanitized(memname),
+                    /*  / and // archive entries are not archive
+                        objects, but are not errors.
+                        For the ATT/USL type of archive. */
+                    if (strcmp(memname,"/") && strcmp(memname,"//")) {
+                        fprintf(stderr, "Can't process archive member "
+                            "%d %s of %s: unknown format\n",
+                            archmemnum,
+                            sanitized(memname),
+                            file_name);
+                    }
+                } else {
+                    fprintf(stderr, "Can't process %s: unknown format\n",
                         file_name);
                 }
-            } else {
-                fprintf(stderr, "Can't process %s: unknown format\n",
-                    file_name);
+                glflags.check_error = 1;
+                cmd = elf_next(elf);
+                elf_end(elf);
+                continue;
             }
-            glflags.check_error = 1;
+            flag_data_pre_allocation();
+            process_one_file(fd,tiedfd,
+                elf,elftied,
+                file_name,
+                tied_file_name,
+                archive,
+                glflags.config_file_data);
+            flag_data_post_cleanup();
             cmd = elf_next(elf);
             elf_end(elf);
-            continue;
+            archmemnum += 1;
         }
-        memset(glflags.section_high_offsets_global,0,
-            sizeof(*glflags.section_high_offsets_global));
-            /*  If we are checking .debug_line, .debug_ranges, .debug_aranges,
-            or .debug_loc build the tables containing
-            the pairs LowPC and HighPC. It is safer  (and not
-            expensive) to build all
-            of these at once so mistakes in options do not lead
-            to coredumps (like -ka -p did once). */
-        if (glflags.gf_check_decl_file || glflags.gf_check_ranges ||
-            glflags.gf_check_locations ||
-            glflags.gf_do_check_dwarf ||
-            glflags.gf_check_self_references) {
-            glflags.pRangesInfo = AllocateBucketGroup(KIND_RANGES_INFO);
-            glflags.pLinkonceInfo = AllocateBucketGroup(KIND_SECTIONS_INFO);
-            glflags.pVisitedInfo = AllocateBucketGroup(KIND_VISITED_INFO);
+        elf_end(arf);
+        if (elftied) {
+            elf_end(elftied);
+            elftied = 0;
         }
+    } else if (ftype == DW_FTYPE_MACH_O) {
+        int mach_o_archive = 0; /* archives not supported. */
 
-        /* Create the unique error table */
-        if (glflags.gf_print_unique_errors) {
-            allocate_unique_errors_table();
-        }
-
-        /* Allocate range array to be used by all CUs */
-        if (glflags.gf_check_ranges) {
-            allocate_range_array_info();
-        }
-        process_one_file(elf,elftied,
-            file_name, tied_file_name,
-            archive, glflags.config_file_data);
-        /* Now cleanup object-specific allocations. */
-        /* Trivial malloc space cleanup. */
-        clean_up_syms_malloc_data();
-        if (glflags.pRangesInfo) {
-            ReleaseBucketGroup(glflags.pRangesInfo);
-            glflags.pRangesInfo = 0;
-        }
-        if (glflags.pLinkonceInfo) {
-            ReleaseBucketGroup(glflags.pLinkonceInfo);
-            glflags.pLinkonceInfo = 0;
-        }
-        if (glflags.pVisitedInfo) {
-            ReleaseBucketGroup(glflags.pVisitedInfo);
-            glflags.pVisitedInfo = 0;
-        }
-        /* Release range array to be used by all CUs */
-        if (glflags.gf_check_ranges) {
-            release_range_array_info();
-        }
-        /* Delete the unique error set */
-        if (glflags.gf_print_unique_errors) {
-            release_unique_errors_table();
-        }
-        clean_up_compilers_detected();
-        destruct_abbrev_array();
-        cmd = elf_next(elf);
-        elf_end(elf);
-        archmemnum += 1;
-    }
-    elf_end(arf);
-    if (elftied) {
-        elf_end(elftied);
-        elftied = 0;
+        flag_data_pre_allocation();
+        process_one_file(fd,tiedfd,
+            elf,elftied,
+            file_name,
+            tied_file_name,
+            mach_o_archive,
+            glflags.config_file_data);
+        flag_data_post_cleanup();
+    } else {
+        fprintf(stderr, "Can't process %s: unhandled format\n",
+            file_name);
     }
 
     /*  These cleanups only necessary once all
@@ -407,7 +507,8 @@ main(int argc, char *argv[])
     /*  Global flags initialization and esb-buffers destruction. */
     reset_global_flags();
 
-    close_a_file(f);
+    close_a_file(fd);
+    close_a_file(tiedfd);
 
 #ifdef _WIN32
     /* Close the null device used during formatting printing */
@@ -708,7 +809,8 @@ set_global_section_sizes(Dwarf_Debug dbg)
 
 */
 static int
-process_one_file(Elf * elf,Elf *elftied,
+process_one_file(int fd, int tiedfd,
+    Elf *elf, Elf *tiedelf,
     const char * file_name,
     const char * tied_file_name,
     int archive,
@@ -724,8 +826,13 @@ process_one_file(Elf * elf,Elf *elftied,
     /*  If using a tied file group number should be 2 DW_GROUPNUMBER_DWO
         but in a dwp or separate-split-dwarf object then
         0 will find the .dwo data automatically. */
-    dres = dwarf_elf_init_b(elf, DW_DLC_READ,glflags.group_number,
-        NULL, NULL, &dbg, &onef_err);
+    if (elf) {
+        dres = dwarf_elf_init_b(elf, DW_DLC_READ,glflags.group_number,
+            NULL, NULL, &dbg, &onef_err);
+    } else {
+        dres = dwarf_init_b(fd, DW_DLC_READ,glflags.group_number,
+            NULL, NULL, &dbg, &onef_err);
+    }
     if (dres == DW_DLV_NO_ENTRY) {
         if (glflags.group_number > 0) {
             printf("No DWARF information present in %s "
@@ -739,11 +846,17 @@ process_one_file(Elf * elf,Elf *elftied,
         print_error(dbg, "dwarf_elf_init", dres, onef_err);
     }
 
-    if (elftied) {
-        /*  The tied file we define as group 1, BASE. */
-        dres = dwarf_elf_init_b(elftied, DW_DLC_READ,
-            DW_GROUPNUMBER_BASE, NULL, NULL, &dbgtied,
-            &onef_err);
+    if (tiedelf || tiedfd >= 0) {
+        if (tiedelf) {
+            dres = dwarf_elf_init_b(tiedelf, DW_DLC_READ,
+                DW_GROUPNUMBER_BASE, NULL, NULL, &dbgtied,
+                &onef_err);
+        } else {
+            /*  The tied file we define as group 1, BASE. */
+            dres = dwarf_init_b(tiedfd, DW_DLC_READ,
+                DW_GROUPNUMBER_BASE, NULL, NULL, &dbgtied,
+                &onef_err);
+        }
         if (dres == DW_DLV_NO_ENTRY) {
             printf("No DWARF information present in tied file: %s\n",
                 tied_file_name);
@@ -762,8 +875,9 @@ process_one_file(Elf * elf,Elf *elftied,
     }
     memset(&printfcallbackdata,0,sizeof(printfcallbackdata));
 
-
-
+    dbgsetup(dbg,l_config_file_data);
+    dbgsetup(dbgtied,l_config_file_data);
+    get_address_size_and_max(dbg,&elf_address_size,0,&onef_err);
     if (archive) {
         Elf_Arhdr *mem_header = elf_getarhdr(elf);
         const char *memname =
@@ -772,9 +886,6 @@ process_one_file(Elf * elf,Elf *elftied,
 
         printf("\narchive member \t%s\n",sanitized(memname));
     }
-    dbgsetup(dbg,l_config_file_data);
-    dbgsetup(dbgtied,l_config_file_data);
-    get_address_size_and_max(dbg,&elf_address_size,0,&onef_err);
 
     /*  Ok for dbgtied to be NULL. */
     dres = dwarf_set_tied_dbg(dbg,dbgtied,&onef_err);
@@ -802,7 +913,7 @@ process_one_file(Elf * elf,Elf *elftied,
         build_linkonce_info(dbg);
     }
 
-    if (glflags.gf_header_flag) {
+    if (glflags.gf_header_flag && elf) {
         print_object_header(elf,dbg);
     }
 
@@ -906,7 +1017,7 @@ process_one_file(Elf * elf,Elf *elftied,
         reset_overall_CU_error_data();
         print_weaknames(dbg);
     }
-    if (glflags.gf_reloc_flag) {
+    if (glflags.gf_reloc_flag && elf) {
         reset_overall_CU_error_data();
         print_relocinfo(dbg);
     }

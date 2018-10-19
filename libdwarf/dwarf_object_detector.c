@@ -40,6 +40,8 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #ifdef HAVE_STRING_H
 #include <string.h> /* memcpy, strcpy */
 #endif /* HAVE_STRING_H */
+#include "libdwarf.h"
+#include "dwarf_object_read_common.h"
 #include "dwarf_object_detector.h"
 
 /* This is the main() program for the object_detector executable. */
@@ -58,23 +60,6 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define DW_DLV_OK        0
 #define DW_DLV_ERROR     1
 
-/* Must match dwarf_reading.h list */
-#define RO_ERR_SEEK             2
-#define RO_ERR_READ             3
-#define RO_ERR_MALLOC           4
-#define RO_ERR_OTHER            5
-#define RO_ERR_BADOFFSETSIZE    6
-#define RO_ERR_LOADSEGOFFSETBAD 7
-#define RO_ERR_FILEOFFSETBAD    8
-#define RO_ERR_BADTYPESIZE      9
-#define RO_ERR_TOOSMALL        10
-#define RO_ERR_ELF_VERSION     11
-#define RO_ERR_ELF_CLASS       12
-#define RO_ERR_ELF_ENDIAN      13
-#define RO_ERR_OPEN_FAIL       14
-#define RO_ERR_PATH_SIZE       15
-
-
 #ifndef EI_NIDENT
 #define EI_NIDENT 16
 #define EI_CLASS  4
@@ -90,8 +75,9 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define PATHSIZE 2000
 
 /*  Assuming short 16 bits, unsigned 32 bits */
-typedef unsigned short t16;
-typedef unsigned t32;
+
+typedef unsigned DW_TYPEOF_16BIT t16;
+typedef unsigned DW_TYPEOF_32BIT t32;
 
 #ifndef  MH_MAGIC
 /* mach-o 32bit */
@@ -128,6 +114,52 @@ struct elf_header {
     t16 e_machine;
     t32 e_version;
 };
+
+/*  Windows. Certain PE objects.
+    The following references may be of interest.
+https://msdn.microsoft.com/library/windows/desktop/ms680547(v=vs.85).aspx       #PE format overview and various machine magic numbers
+
+https://msdn.microsoft.com/en-us/library/ms809762.aspx  # describes some details of PE headers, basically an overview
+
+https://msdn.microsoft.com/en-us/library/windows/desktop/aa383751(v=vs.85).aspx #defines sizes of various types
+
+https://msdn.microsoft.com/fr-fr/library/windows/desktop/ms680313(v=vs.85).aspx #defines IMAGE_FILE_HEADER and Machine fields (32/64)
+
+https://msdn.microsoft.com/fr-fr/library/windows/desktop/ms680305(v=vs.85).aspx #defines IMAGE_DATA_DIRECTORY
+
+https://msdn.microsoft.com/en-us/library/windows/desktop/ms680339(v=vs.85).aspx #Defines IMAGE_OPTIONAL_HEADER and some magic numbers
+
+https://msdn.microsoft.com/fr-fr/library/windows/desktop/ms680336(v=vs.85).aspx # defines _IMAGE_NT_HEADERS 32 64
+
+https://msdn.microsoft.com/en-us/library/windows/desktop/ms680341(v=vs.85).aspx # defines _IMAGE_SECTION_HEADER
+
+*/
+
+/* ===== START pe structures */
+
+struct dos_header {
+    t16  dh_mz;
+    char dh_dos_data[58];
+    t32  dh_image_offset;
+};
+
+#define IMAGE_DOS_SIGNATURE      0x5A4D
+#define IMAGE_DOS_REVSIGNATURE   0x4D5A
+#define IMAGE_NT_SIGNATURE       0x00004550
+#define IMAGE_FILE_MACHINE_I386  0x14c
+#define IMAGE_FILE_MACHINE_IA64  0x200
+#define IMAGE_FILE_MACHINE_AMD64 0x8886
+
+
+struct pe_image_file_header {
+    t16 im_machine;
+    t16 im_sectioncount;
+    t32 im_ignoring[3];
+    t16 im_opt_header_size;
+    t16 im_ignoringb;
+};
+
+/* ===== END pe structures */
 
 static void *
 memcpy_swap_bytes(void *s1, const void *s2, size_t len)
@@ -221,8 +253,9 @@ fill_in_elf_fields(struct elf_header *h,
 {
     unsigned locendian = 0;
     unsigned locoffsetsize = 0;
-    unsigned version = 0;
+#if 0
     void *(*word_swap) (void *, const void *, size_t);
+#endif
 
     switch(h->e_ident[EI_CLASS]) {
     case ELFCLASS32:
@@ -232,40 +265,158 @@ fill_in_elf_fields(struct elf_header *h,
         locoffsetsize = 64;
         break;
     default:
-        *errcode = RO_ERR_ELF_CLASS;
+        *errcode = DW_DLE_ELF_CLASS_BAD;
         return DW_DLV_ERROR;
     }
     switch(h->e_ident[EI_DATA]) {
     case ELFDATA2LSB:
         locendian = DW_ENDIAN_LITTLE;
+#if 0
 #ifdef WORDS_BIGENDIAN
         word_swap = memcpy_swap_bytes;
 #else  /* LITTLE ENDIAN */
         word_swap = memcpy;
 #endif /* LITTLE- BIG-ENDIAN */
+#endif
         break;
     case ELFDATA2MSB:
+        locendian = DW_ENDIAN_BIG;
+#if 0
+#ifdef WORDS_BIGENDIAN
+        word_swap = memcpy;
+#else  /* LITTLE ENDIAN */
+        word_swap = memcpy_swap_bytes;
+#endif /* LITTLE- BIG-ENDIAN */
+#endif
+        break;
+    default:
+        *errcode = DW_DLE_ELF_ENDIAN_BAD;
+        return DW_DLV_ERROR;
+    }
+    if (h->e_ident[EI_VERSION] != 1 /* EV_CURRENT */) {
+        *errcode = DW_DLE_ELF_VERSION_BAD;
+        return DW_DLV_ERROR;
+    }
+    *endian = locendian;
+    *objoffsetsize = locoffsetsize;
+    return DW_DLV_OK;
+}
+static char archive_magic[8] = {
+'!','<','a','r','c','h','>',0x0a
+};
+static int
+is_archive_magic(struct elf_header *h) {
+    int i = 0;
+    int len = sizeof(archive_magic);
+    const char *cp = (const char *)h;
+    for( ; i < len; ++i) {
+        if (cp[i] != archive_magic[i]) {
+            return FALSE;
+        }
+    }
+    return TRUE;
+}
+
+/*  A bit unusual in that it always sets *is_pe_flag
+    Return of DW_DLV_OK  it is a PE file we recognize. */
+static int
+is_pe_object(int fd,
+    unsigned long filesize,
+    unsigned *endian,
+    unsigned *offsetsize,
+    int *errcode)
+{
+    t16 dos_sig;
+    unsigned locendian = 0;
+    void *(*word_swap) (void *, const void *, size_t);
+    t32 nt_address = 0;
+    struct dos_header dhinmem;
+    t16 nt_sig = 0;
+    struct pe_image_file_header ifh;
+    int res = 0;
+
+    if (filesize < (sizeof (struct dos_header) +
+        sizeof(t32) + sizeof(struct pe_image_file_header))) {
+        *errcode = DW_DLE_FILE_TOO_SMALL;
+        return DW_DLV_ERROR;
+    }
+    res = _dwarf_object_read_random(fd,(char *)&dhinmem,
+        0,sizeof(dhinmem),errcode);
+    if (res != DW_DLV_OK) {
+        return res;
+    }
+    dos_sig = dhinmem.dh_mz;
+    if (dos_sig == IMAGE_DOS_SIGNATURE) {
+#ifdef WORDS_BIGENDIAN
+        word_swap = memcpy_swap_bytes;
+#else  /* LITTLE ENDIAN */
+        word_swap = memcpy;
+#endif /* LITTLE- BIG-ENDIAN */
+        locendian = DW_ENDIAN_LITTLE;
+    } else if (dos_sig == IMAGE_DOS_REVSIGNATURE) {
         locendian = DW_ENDIAN_BIG;
 #ifdef WORDS_BIGENDIAN
         word_swap = memcpy;
 #else  /* LITTLE ENDIAN */
         word_swap = memcpy_swap_bytes;
 #endif /* LITTLE- BIG-ENDIAN */
-        break;
-    default:
-        *errcode = RO_ERR_ELF_ENDIAN;
+    } else {
+        /* Not dos header not a PE file we recognize */
+        *errcode = DW_DLE_FILE_WRONG_TYPE;
         return DW_DLV_ERROR;
     }
-    ASSIGN(word_swap,version,h->e_version);
-    /* e_machine, e_type need swap too if used. */
-    if (version != 1 /* EV_CURRENT */) {
-        *errcode = RO_ERR_ELF_VERSION;
+    ASSIGN(word_swap,nt_address, dhinmem.dh_image_offset);
+    if (filesize < nt_address) {
+        /* Not dos header not a PE file we recognize */
+        *errcode = DW_DLE_FILE_TOO_SMALL;
         return DW_DLV_ERROR;
     }
+    if (filesize < (nt_address + sizeof(t32) +
+        sizeof(struct pe_image_file_header))) {
+        *errcode = DW_DLE_FILE_TOO_SMALL;
+        /* Not dos header not a PE file we recognize */
+        return DW_DLV_ERROR;
+    }
+    res =  _dwarf_object_read_random(fd,(char *)&nt_sig,nt_address,
+        sizeof(nt_sig),errcode);
+    if (res != DW_DLV_OK) {
+        return res;
+    }
+    {   t32 lsig = 0;
+        ASSIGN(word_swap,lsig,nt_sig);
+        nt_sig = lsig;
+    }
+    if (nt_sig != IMAGE_NT_SIGNATURE) {
+        *errcode = DW_DLE_FILE_WRONG_TYPE;
+        return DW_DLV_ERROR;
+    }
+    res = _dwarf_object_read_random(fd,(char *)&ifh,
+        nt_address + sizeof(t32),
+        sizeof(struct pe_image_file_header),
+        errcode);
+    if (res != DW_DLV_OK) {
+        return res;
+    }
+    {
+        t32 machine = 0;
 
-    *endian = locendian;
-    *objoffsetsize = locoffsetsize;
-    return DW_DLV_OK;
+        ASSIGN(word_swap,machine,ifh.im_machine);
+        switch(machine) {
+        case IMAGE_FILE_MACHINE_I386:
+            *offsetsize = 32;
+            *endian = locendian;
+            return DW_DLV_OK;
+        case IMAGE_FILE_MACHINE_IA64:
+        case IMAGE_FILE_MACHINE_AMD64:
+            *offsetsize = 64;
+            *endian = locendian;
+            return DW_DLV_OK;
+        }
+    }
+    /*  There are lots more machines,
+        we are unsure which are of interest. */
+    *errcode = DW_DLE_FILE_WRONG_TYPE;
+    return DW_DLV_ERROR;
 }
 
 static int
@@ -299,23 +450,11 @@ is_mach_o_magic(struct elf_header *h,
 }
 
 int
-dwarf_object_detector_f(FILE *f,
-    unsigned *ftype,
-    unsigned *endian,
-    unsigned *offsetsize,
-    size_t   *filesize,
-    int *errcode)
-{
-    return dwarf_object_detector_fd(fileno(f),
-        ftype,endian,offsetsize,filesize,errcode);
-}
-
-int
 dwarf_object_detector_fd(int fd,
     unsigned *ftype,
     unsigned *endian,
     unsigned *offsetsize,
-    size_t   *filesize,
+    Dwarf_Unsigned  *filesize,
     int *errcode)
 {
     struct elf_header h;
@@ -326,27 +465,27 @@ dwarf_object_detector_fd(int fd,
     ssize_t readval = 0;
 
     if (sizeof(t32) != 4 || sizeof(t16)!= 2) {
-        *errcode = RO_ERR_BADTYPESIZE;
+        *errcode = DW_DLE_BAD_TYPE_SIZE;
         return DW_DLV_ERROR;
     }
     fsize = lseek(fd,0L,SEEK_END);
     if(fsize < 0) {
-        *errcode = RO_ERR_SEEK;
+        *errcode = DW_DLE_SEEK_ERROR;
         return DW_DLV_ERROR;
     }
     if (fsize <= (off_t)readlen) {
         /* Not a real object file */
-        *errcode = RO_ERR_TOOSMALL;
+        *errcode = DW_DLE_FILE_TOO_SMALL;
         return DW_DLV_ERROR;
     }
     lsval  = lseek(fd,0L,SEEK_SET);
     if(lsval < 0) {
-        *errcode = RO_ERR_SEEK;
+        *errcode = DW_DLE_SEEK_ERROR;
         return DW_DLV_ERROR;
     }
     readval = read(fd,&h,readlen);
     if (readval != (ssize_t)readlen) {
-        *errcode = RO_ERR_READ;
+        *errcode = DW_DLE_READ_ERROR;
         return DW_DLV_ERROR;
     }
     if (h.e_ident[0] == 0x7f &&
@@ -368,6 +507,17 @@ dwarf_object_detector_fd(int fd,
         *filesize = (size_t)fsize;
         return DW_DLV_OK;
     }
+    if (is_archive_magic(&h)) {
+        *ftype = DW_FTYPE_ARCHIVE;
+        *filesize = (size_t)fsize;
+        return DW_DLV_OK;
+    }
+    res = is_pe_object(fd,fsize,endian,offsetsize,errcode);
+    if (res == DW_DLV_OK ) {
+        *ftype = DW_FTYPE_PE;
+        *filesize = (size_t)fsize;
+        return DW_DLV_OK;
+    }
     /* CHECK FOR  PE object. */
     return DW_DLV_NO_ENTRY;
 }
@@ -378,7 +528,7 @@ dwarf_object_detector_path(const char  *path,
     unsigned *ftype,
     unsigned *endian,
     unsigned *offsetsize,
-    size_t   *filesize,
+    Dwarf_Unsigned  *filesize,
     int *errcode)
 {
     char *cp = 0;
@@ -400,7 +550,7 @@ dwarf_object_detector_path(const char  *path,
         return DW_DLV_NO_ENTRY;
     }
     if ((2*plen + dsprefixlen +2) >= outpath_len) {
-        *errcode = RO_ERR_PATH_SIZE;
+        *errcode =  DW_DLE_PATH_SIZE_TOO_SMALL;
         return DW_DLV_ERROR;
     }
     cp = dw_stpcpy(outpath,path);

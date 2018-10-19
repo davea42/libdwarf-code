@@ -1,3 +1,22 @@
+2018-10-19  David Anderson
+     * dwarf_errmsg_list.h: New errors DW_DLE_ELF_CLASS_BAD(420),
+       DW_DLE_ELF_ENDIAN_BAD(421), DW_DLE_ELF_VERSION_BAD(422),
+       DW_DLE_FILE_TOO_SMALL(423),DW_DLE_PATH_SIZE_TOO_SMALL(424),
+       DW_DLE_BAD_TYPE_SIZE(425) for new checks for object
+       correctness.  Of more than one object type.
+     * dwarf_generic_init.c: The new function
+       dwarf_init_path has a new type for the call to
+       dwarf_object_detector.
+     * dwarf_object_detector.c: Now works in the libdwarf context.
+       Contains checks for Elf, Mach-o and PE object files as well
+       as recognizing archives ( such as <filename>.a).
+     * dwarf_object_detector.h: Tweaked into final form.
+     * dwarf_opaque.h:  Added de_filesize field as we usually
+       now know the file size for checking offsets.
+     * libdwarf.h.in: Added the DW_DLE named above. 
+       declared  dwarf_object_detector_path() and
+       dwarf_object_detector_fd() as public functions.
+     * pro_alloc.c: #ifdefd the include of malloc.h.
 2018-10-17  David Anderson
      * macho-loader.h: A header for reading mach-o dsym objects.
      * dwarf_generic_init.c,dwarf_init_finish.c: Now modified to

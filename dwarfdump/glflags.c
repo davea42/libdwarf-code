@@ -115,6 +115,7 @@ init_global_flags(void)
 
     /* lots of checks make no sense on a dwp debugfission object. */
     glflags.gf_suppress_checking_on_dwp = FALSE;
+    glflags.gf_file_use_no_libelf = FALSE;
 
     /*  suppress_nested_name_search is a band-aid.
         A workaround. A real fix for N**2 behavior is needed.  */

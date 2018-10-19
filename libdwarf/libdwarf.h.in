@@ -1329,9 +1329,15 @@ struct Dwarf_Obj_Access_Interface_s {
 #define DW_DLE_FILE_OFFSET_BAD                 417
 #define DW_DLE_SEEK_ERROR                      418
 #define DW_DLE_READ_ERROR                      419
+#define DW_DLE_ELF_CLASS_BAD                   420
+#define DW_DLE_ELF_ENDIAN_BAD                  421
+#define DW_DLE_ELF_VERSION_BAD                 422
+#define DW_DLE_FILE_TOO_SMALL                  423
+#define DW_DLE_PATH_SIZE_TOO_SMALL             424
+#define DW_DLE_BAD_TYPE_SIZE                   425
 
     /* LAST MUST EQUAL LAST ERROR NUMBER */
-#define DW_DLE_LAST        419
+#define DW_DLE_LAST        425
 
 #define DW_DLE_LO_USER     0x10000
 
@@ -1431,9 +1437,9 @@ enum Dwarf_Form_Class {
 /*===========================================================================*/
 /*  Dwarf consumer interface initialization and termination operations */
 
-/*  Initialization based on path. This is new October 2018. 
+/*  Initialization based on path. This is new October 2018.
     The path actually used is copied to true_path_out
-    and in the case of MacOS dSYM may not match path. 
+    and in the case of MacOS dSYM may not match path.
     So consider the value put in true_path_out the
     actual file name. reserved1,2,3 should all be passed
     as zero. */
@@ -4513,6 +4519,38 @@ int dwarf_pro_get_string_stats(Dwarf_P_Debug /*dbg*/,
     Dwarf_Unsigned * /*reused_count*/,
     Dwarf_Unsigned * /*reused_len*/,
     Dwarf_Error    * /*error*/);
+
+#ifndef DW_FTYPE_UNKNOWN
+#define DW_FTYPE_UNKNOWN 0
+#define DW_FTYPE_ELF     1  /* Unix/Linux/etc */
+#define DW_FTYPE_MACH_O  2  /* MacOS. */
+#define DW_FTYPE_PE      3  /* Windows */
+#define DW_FTYPE_ARCHIVE 4  /* unix archive */
+#endif /* DW_FTYPE_UNKNOWN */
+
+#ifndef DW_ENDIAN_UNKNOWN
+#define DW_ENDIAN_UNKNOWN  0
+#define DW_ENDIAN_BIG      1
+#define DW_ENDIAN_LITTLE   2
+#define DW_ENDIAN_SAME     3  /* Same as host */
+#define DW_ENDIAN_OPPOSITE 4  /* Opposite of host */
+#endif /* DW_ENDIAN_UNKNOWN */
+
+int dwarf_object_detector_path(const char  *path,
+    char *outpath,
+    unsigned long,
+    unsigned *ftype,
+    unsigned *endian,
+    unsigned *offsetsize,
+    Dwarf_Unsigned  *filesize,
+    int * errcode);
+
+int dwarf_object_detector_fd(int fd,
+    unsigned *ftype,
+    unsigned *endian,
+    unsigned *offsetsize,
+    Dwarf_Unsigned  *filesize,
+    int * errcode);
 
 #ifdef __cplusplus
 }

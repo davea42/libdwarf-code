@@ -1,3 +1,9 @@
+2018-10-19 David Anderson
+    * command_options.c,glflags.c,glflags.h: New option
+      --file-use-no-libelf, function arg_file_use_no_libelf(),
+      glflags.gf_file_use_no_libelf now exist.
+    * dwarfdump.c: process_one_file() and main()
+      are refactored to allow additional object files.
 2018-09-29 David Anderson
     * command_options.c: Fixed indent issues.
 2018-09-26 Carlos Alberto Enciso

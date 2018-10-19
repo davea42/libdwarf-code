@@ -308,6 +308,7 @@ static void arg_file_line5(void);
 static void arg_file_name(void);
 static void arg_file_output(void);
 static void arg_file_tied(void);
+static void arg_file_use_no_libelf(void);
 
 static void arg_format_attr_name(void);
 static void arg_format_dense(void);
@@ -692,6 +693,8 @@ static const char *usage_long_text[] = {
 "-O file=<path>   --file-output=<path>  Name the output file",
 "-x tied=<path>   --file-tied=<path>    Name an associated object file",
 "                                         (Split DWARF)",
+"                 --file-use-no-libelf  Use non-libelf to read objects",
+"                                         (as much as possible)",
 " ",
 "-----------------------------------------------------------------------------",
 "Search text in attributes",
@@ -781,6 +784,7 @@ enum longopts_vals {
   OPT_FILE_NAME,                /* -x name=<path>  --file-name=<path>        */
   OPT_FILE_OUTPUT,              /* -O file=<path>  --file-output=<path>      */
   OPT_FILE_TIED,                /* -x tied=<path>  --file-tied=<path>        */
+  OPT_FILE_USE_NO_LIBELF,       /* --file-use-no-libelf=<path>        */
 
   /* Print Output Qualifiers                                                 */
   OPT_FORMAT_ATTR_NAME,         /* -M   --format-attr-name                   */
@@ -924,6 +928,7 @@ static struct dwoption longopts[] =  {
   {"file-name",   dwrequired_argument, 0, OPT_FILE_NAME  },
   {"file-output", dwrequired_argument, 0, OPT_FILE_OUTPUT},
   {"file-tied",   dwrequired_argument, 0, OPT_FILE_TIED  },
+  {"file-use-no-libelf",   dwno_argument, 0, OPT_FILE_USE_NO_LIBELF  },
 
   /* Print Output Qualifiers. */
   {"format-attr-name",         dwno_argument, 0, OPT_FORMAT_ATTR_NAME        },
@@ -2289,6 +2294,14 @@ static void arg_file_tied(void)
     }
 }
 
+/*  Option '--file-use-no-libelf' */
+static void arg_file_use_no_libelf(void)
+{
+    glflags.gf_file_use_no_libelf = TRUE;
+}
+
+/*  Option '-y' */
+
 /*  Option '-y' */
 static void arg_print_types(void)
 {
@@ -2442,6 +2455,7 @@ set_command_options(int argc, char *argv[])
         case OPT_FILE_NAME:   arg_file_name();   break;
         case OPT_FILE_OUTPUT: arg_file_output(); break;
         case OPT_FILE_TIED:   arg_file_tied();   break;
+        case OPT_FILE_USE_NO_LIBELF:   arg_file_use_no_libelf();   break;
 
         /* Print Output Qualifiers. */
         case OPT_FORMAT_ATTR_NAME:        arg_format_attr_name();        break;

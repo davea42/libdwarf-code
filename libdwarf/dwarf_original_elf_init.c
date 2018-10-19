@@ -90,8 +90,7 @@ dwarf_elf_init_b(dwarf_elf_handle elf_file_pointer,
     if (res != DW_DLV_OK){
         dwarf_elf_object_access_finish(binary_interface);
     }
-
-/* DBG known */
+    /* DBG known */
 
     return res;
 }
@@ -148,7 +147,7 @@ _dwarf_elf_setup(int fd,
     UNUSEDARG unsigned ftype,
     UNUSEDARG unsigned endian,
     UNUSEDARG unsigned offsetsize,
-    UNUSEDARG size_t filesize,
+    size_t filesize,
     UNUSEDARG Dwarf_Unsigned access,
     unsigned groupnumber,
     Dwarf_Handler errhand,
@@ -186,5 +185,6 @@ _dwarf_elf_setup(int fd,
     if (res != DW_DLV_OK){
         dwarf_elf_object_access_finish(binary_interface);
     }
+    (*dbg)->de_filesize = filesize;
     return res;
 }

@@ -87,11 +87,10 @@ int dwarf_init_path(const char *path,
     UNUSEDARG Dwarf_Unsigned  *  reserved3,
     Dwarf_Error*      error)
 {
-    /* FIXME: incomplete. */
-    unsigned ftype = 0;
-    unsigned endian = 0;
-    unsigned offsetsize = 0;
-    size_t   filesize = 0;
+    unsigned       ftype = 0;
+    unsigned       endian = 0;
+    unsigned       offsetsize = 0;
+    Dwarf_Unsigned filesize = 0;
     int res = 0;
     int errcode = 0;
     int fd = -1;
@@ -149,7 +148,7 @@ dwarf_init_b(int fd,
     unsigned ftype = 0;
     unsigned endian = 0;
     unsigned offsetsize = 0;
-    size_t   filesize = 0;
+    Dwarf_Unsigned   filesize = 0;
     int res = 0;
     int errcode = 0;
     int lib_owns_fd = FALSE;

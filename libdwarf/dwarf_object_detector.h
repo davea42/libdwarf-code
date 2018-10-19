@@ -66,7 +66,7 @@ extern "C" {
 #endif /* DW_ENDIAN_UNKNOWN */
 
 /*  offsetsize refers to the object-file-format.
-    Elf 32 or macho-32 or PE 32, for example. 
+    Elf 32 or macho-32 or PE 32, for example.
     Not to DWARF offset sizes.  */
 
 /*  Path means look(first) for an dynsym object
@@ -79,28 +79,29 @@ extern "C" {
     For non-MacOS outpath will contain the string
     taken from path.
 
-    If DW_DLV_NO_ENTRY or DW_DLV_ERROR returned 
+    If DW_DLV_NO_ENTRY or DW_DLV_ERROR returned
     the argument values other than path
     must be considered to be in an unknown state. */
 
 /*  The errcode is a small integer distinct from libdwarf
     and simply printing the integer (returned through
-    *errcode when the function returns DW_DLV_ERROR) 
+    *errcode when the function returns DW_DLV_ERROR)
     will hopefully suffice for most purposes. */
 
 int dwarf_object_detector_path(const char  *path,
-    char *outpath,size_t outpath_len,
+    char *outpath,
+    unsigned long outpath_len,
     unsigned *ftype,
     unsigned *endian,
     unsigned *offsetsize,
-    size_t   *filesize,
+    Dwarf_Unsigned  *filesize,
     int * errcode);
 
 int dwarf_object_detector_fd(int fd,
     unsigned *ftype,
     unsigned *endian,
     unsigned *offsetsize,
-    size_t   *filesize,
+    Dwarf_Unsigned  *filesize,
     int * errcode);
 
 #ifdef __cplusplus

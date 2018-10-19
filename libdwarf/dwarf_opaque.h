@@ -589,6 +589,10 @@ struct Dwarf_Debug_s {
         de_offset_size would be a more appropos name. */
     Dwarf_Small de_length_size;
 
+    /*  Size of the object file in bytes. If Unknown
+        leave this zero. */
+    Dwarf_Unsigned de_filesize;
+
     /*  number of bytes in a pointer of the target in various .debug_
         sections. 4 in 32bit, 8 in MIPS 64, ia64. */
     Dwarf_Small de_pointer_size;

@@ -491,5 +491,11 @@ const char *_dwarf_errmsgs[] = {
     "DW_DLE_FILE_OFFSET_BAD(417) corrupt object",
     "DW_DLE_SEEK_ERROR(418). Seek in object file failed",
     "DW_DLE_READ_ERROR(419). Read from object file failed.",
+    "DW_DLE_ELF_CLASS_BAD(420) Corrupt object.",
+    "DW_DLE_ELF_ENDIAN_BAD(421) Corrupt object.",
+    "DW_DLE_ELF_VERSION_BAD(422) Corrupt object.",
+    "DW_DLE_FILE_TOO_SMALL(423) File is too small to be an object file.",
+    "DW_DLE_PATH_SIZE_TOO_SMALL(424) buffer passed to dwarf_object_detector_path is too small.",
+    "DW_DLE_BAD_TYPE_SIZE(425) At compile time the build configured itself improperly.",
 };
 #endif /* DWARF_ERRMSG_LIST_H */

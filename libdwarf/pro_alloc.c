@@ -31,7 +31,9 @@
 #ifdef HAVE_STDLIB_H
 #include <stdlib.h>
 #else
+#ifdef HAVE_MALLOC_H
 #include <malloc.h>
+#endif /* HAVE_MALLOC_H */
 #endif /* HAVE_STDLIB_H */
 #ifdef HAVE_STRING_H
 #include <string.h>
