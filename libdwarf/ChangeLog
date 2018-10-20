@@ -1,3 +1,11 @@
+2018-10-20  David Anderson
+     * dwarf_machoread.c,dwarf_machoread.h: Moved macros from the .h
+       to the .c.
+     * dwarf_object_detector: Removed the need to know the correct
+       type of fields in object-defined headers. We know the lengths
+       and layouts and that suffices because we copy everything
+       anyway to deal with endianness. No more need to define t16
+       or t32 as the 'right' type.
 2018-10-19  David Anderson
      * dwarf_version.h: Updated date string.
      * dwarf_errmsg_list.h: New errors DW_DLE_ELF_CLASS_BAD(420),

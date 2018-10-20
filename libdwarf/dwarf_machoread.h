@@ -38,21 +38,6 @@ extern "C" {
 #endif /* __cplusplus */
 
 int cur_read_loc(FILE *fin, long* fileoffset);
-#ifdef WORDS_BIGENDIAN
-#define ASSIGNMO(cpfunc,t,s)                    \
-    do {                                        \
-        unsigned tbyte = sizeof(t) - sizeof(s); \
-        t = 0;                                  \
-        cpfunc(((char *)t)+tbyte ,&s,sizeof(s)); \
-    } while (0)
-#else /* LITTLE ENDIAN */
-#define ASSIGNMO(cpfunc,t,s)               \
-    do {                                   \
-        t = 0;                             \
-        cpfunc(&t,&s,sizeof(s)); \
-    } while (0)
-#endif /* end LITTLE- BIG-ENDIAN */
-
 
 struct generic_macho_header {
     Dwarf_Unsigned   magic;
