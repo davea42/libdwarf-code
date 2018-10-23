@@ -855,8 +855,8 @@ insert_sht_list_in_group_map(Dwarf_Debug dbg,
 
         data = data + doas->entrysize;
         for (i = 1 ; i < count ; ++i) {
-
             Dwarf_Unsigned  val = 0;
+
             READ_UNALIGNED_CK(dbg,val,Dwarf_Unsigned,
                 data,
                 DWARF_32BIT_SIZE,

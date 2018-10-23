@@ -1,3 +1,8 @@
+2018-10-22:
+  dwarfdump can now dump mach-o (MacOS) dSYM dwarf.
+  All the usual libdwarf interfaces work.
+  A new libdwarf initialization call dwarf_init_path()
+  may be convenient for you to use.
 2018-08-05:
   dwarfdump.conf is now installed by make install
   in <install prefix>/shared/libdwarf/dwarfdump  .

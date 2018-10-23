@@ -1,3 +1,15 @@
+2018-10-23  David Anderson
+     * dw_elfstructs.h: Adding this for use with object readers.
+     * dwarf_init_finish.c: Fixed placement of blank line to
+       match standard source formatting.
+     * macho-loader.h: Now avoids direct use of integral
+       types. Uses macro to setup each member.
+     * dwarf_machoread.c: New macro ASNAR handles endianness
+       and uses the new struct member format in macho-loader.h
+     * dwarf_object_detector.c
+     * dwarf_reading.h: Simplified as a result of the new ASNAR
+       macro and the structs it helps with.
+     * libdwarf_version.h: New version string.
 2018-10-20  David Anderson
      * dwarf_machoread.c,dwarf_machoread.h: Moved macros from the .h
        to the .c.

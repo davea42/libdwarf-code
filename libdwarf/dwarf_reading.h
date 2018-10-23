@@ -37,11 +37,6 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 extern "C" {
 #endif /* __cplusplus */
 
-/* uint*_t are for macho-loader.h */
-#define uint16_t  unsigned DW_TYPEOF_16BIT
-#define uint32_t  unsigned DW_TYPEOF_32BIT
-#define uint8_t  unsigned char
-
 #ifndef DW_DLV_OK
 /* DW_DLV_OK  must match libdwarf.h */
 /* DW_DLV_NO_ENTRY  must match libdwarf.h  */
@@ -49,12 +44,6 @@ extern "C" {
 #define DW_DLV_NO_ENTRY -1
 #define DW_DLV_ERROR 1
 #endif /* DW_DLV_OK */
-
-#if (SIZEOF_UNSIGNED_LONG < 8) && (SIZEOF_UNSIGNED_LONG_LONG == 8)
-#define uint64_t  unsigned long long
-#else
-#define uint64_t  unsigned long
-#endif
 
 #define TRUE 1
 #define FALSE 0
@@ -78,22 +67,6 @@ extern "C" {
 
 #define RRMOA(f,buf,loc,siz,errc) _dwarf_object_read_random(f, \
     (char *)buf,loc,siz,errc);
-
-#ifdef WORDS_BIGENDIAN
-#define ASSIGN(func,t,s)                             \
-    do {                                        \
-        unsigned tbyte = sizeof(t) - sizeof(s); \
-        t = 0;                                  \
-        func(((char *)t)+tbyte ,&s,sizeof(s)); \
-    } while (0)
-#else /* LITTLE ENDIAN */
-#define ASSIGN(func,t,s)                             \
-    do {                                        \
-        t = 0;                                  \
-        func(&t,&s,sizeof(s));    \
-    } while (0)
-#endif /* end LITTLE- BIG-ENDIAN */
-
 
 #ifdef __cplusplus
 }

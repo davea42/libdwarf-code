@@ -105,18 +105,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         t = 0;                                  \
         func(((char *)t)+tbyte ,&s[0],sizeof(s));  \
     } while (0)
-#define ASSIGN(func,t,s)                        \
-    do {                                        \
-        unsigned tbyte = sizeof(t) - sizeof(s); \
-        t = 0;                                  \
-        func(((char *)t)+tbyte ,&s,sizeof(s));  \
-    } while (0)
 #else /* LITTLE ENDIAN */
-#define ASSIGN(func,t,s)                        \
-    do {                                        \
-        t = 0;                                  \
-        func(&t,&s,sizeof(s));                  \
-    } while (0)
 #define ASNAR(func,t,s)                         \
     do {                                        \
         t = 0;                                  \
@@ -366,7 +355,7 @@ is_pe_object(int fd,
         return res;
     }
     /* No swap here, want it as in the file */
-    ASSIGN(memcpy,dos_sig,dhinmem.dh_mz);
+    ASNAR(memcpy,dos_sig,dhinmem.dh_mz);
     if (dos_sig == IMAGE_DOS_SIGNATURE) {
 #ifdef WORDS_BIGENDIAN
         word_swap = memcpy_swap_bytes;
@@ -429,7 +418,7 @@ is_pe_object(int fd,
             *endian = locendian;
             return DW_DLV_OK;
         case IMAGE_FILE_MACHINE_IA64:
-
+        case IMAGE_FILE_MACHINE_AMD64:
             *offsetsize = 64;
             *endian = locendian;
             return DW_DLV_OK;

@@ -11,15 +11,6 @@
 /* Define to 1 if using `alloca.c'. */
 #undef C_ALLOCA
 
-/* int is 16bit */
-#undef DW_TYPEOF_16BIT
-
-/* long is 32bit */
-#undef DW_TYPEOF_32BIT
-
-/* long is 64bit */
-#undef DW_TYPEOF_64BIT
-
 /* Define to 1 if you have `alloca', as a function or macro. */
 #undef HAVE_ALLOCA
 
@@ -173,18 +164,6 @@
 
 /* Define to the version of this package. */
 #undef PACKAGE_VERSION
-
-/* The size of `int', as computed by sizeof. */
-#undef SIZEOF_INT
-
-/* The size of `long', as computed by sizeof. */
-#undef SIZEOF_LONG
-
-/* The size of `long long', as computed by sizeof. */
-#undef SIZEOF_LONG_LONG
-
-/* The size of `short', as computed by sizeof. */
-#undef SIZEOF_SHORT
 
 /* If using the C implementation of alloca, define if you know the
    direction of stack growth for your system; otherwise it will be
