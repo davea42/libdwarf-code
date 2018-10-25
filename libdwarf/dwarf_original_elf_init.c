@@ -143,7 +143,7 @@ dwarf_get_tied_dbg(Dwarf_Debug dbg, Dwarf_Debug *tieddbg_out,
 
 int
 _dwarf_elf_setup(int fd,
-    UNUSEDARG char *true_path_out_buffer,
+    UNUSEDARG char *path,
     UNUSEDARG unsigned ftype,
     UNUSEDARG unsigned endian,
     UNUSEDARG unsigned offsetsize,

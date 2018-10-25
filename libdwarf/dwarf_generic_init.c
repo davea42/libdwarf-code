@@ -108,19 +108,24 @@ int dwarf_init_path(const char *path,
     }
     switch(ftype) {
     case DW_FTYPE_ELF: {
-        fd = open(true_path_out_buffer,O_RDONLY);
+        if (true_path_out_buffer) {
+            fd = open(true_path_out_buffer,O_RDONLY);
+        } else {
+            fd = open(path,O_RDONLY);
+        }
         if(fd < 0) {
             DWARF_DBG_ERROR(NULL, DW_DLE_FILE_UNAVAILABLE,
                 DW_DLV_ERROR);
         }
         res = _dwarf_elf_setup(fd,
-            true_path_out_buffer,
+            true_path_out_buffer?true_path_out_buffer:"",
             ftype,endian,offsetsize,filesize,
             access,groupnumber,errhand,errarg,ret_dbg,error);
         return res;
     }
     case DW_FTYPE_MACH_O: {
-        res = _dwarf_macho_setup(fd,true_path_out_buffer,
+        res = _dwarf_macho_setup(fd,
+            true_path_out_buffer?true_path_out_buffer:"",
             lib_owns_fd,
             ftype,endian,offsetsize,filesize,
             access,groupnumber,errhand,errarg,ret_dbg,error);

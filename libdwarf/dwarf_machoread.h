@@ -55,10 +55,10 @@ struct generic_macho_command {
     Dwarf_Unsigned   offset_this_command;
 };
 
-struct generic_segment_command {
+struct generic_macho_segment_command {
     Dwarf_Unsigned   cmd;
     Dwarf_Unsigned   cmdsize;
-    char segname[16];
+    char             segname[24];
     Dwarf_Unsigned   vmaddr;
     Dwarf_Unsigned   vmsize;
     Dwarf_Unsigned   fileoff;
@@ -67,15 +67,17 @@ struct generic_segment_command {
     Dwarf_Unsigned   initprot;
     Dwarf_Unsigned   nsects;
     Dwarf_Unsigned   flags;
-    Dwarf_Unsigned   macho_command_index; /* our index into mo_commands */
+
+    /* our index into mo_commands */
+    Dwarf_Unsigned   macho_command_index;
     Dwarf_Unsigned   sectionsoffset;
 };
 
-struct generic_section {
+struct generic_macho_section {
     /* Larger than in file, room for NUL guaranteed */
     char          sectname[24];
     char          segname[24];
-    const char *  dwarfsectname; /* May be null. */
+    const char *  dwarfsectname;
     Dwarf_Unsigned  addr;
     Dwarf_Unsigned  size;
     Dwarf_Unsigned  offset;
@@ -95,7 +97,7 @@ struct generic_section {
 /*  ident[0] == 'M' means this is a macho header.
     ident[1] will be 1 indicating version 1.
     Other bytes in ident not defined, should be zero. */
-typedef struct {
+typedef struct dwarf_macho_filedata_s {
     char             mo_ident[8];
     const char *     mo_path; /* libdwarf must free.*/
     int              mo_fd;
@@ -115,13 +117,13 @@ typedef struct {
     unsigned mo_command_count;
     Dwarf_Unsigned  mo_command_start_offset;
     struct generic_macho_command *mo_commands;
-    Dwarf_Unsigned  mo_offset_after_commands; /* properly aligned value */
+    Dwarf_Unsigned  mo_offset_after_commands;
 
     Dwarf_Unsigned mo_segment_count;
-    struct generic_segment_command *mo_segment_commands;
+    struct generic_macho_segment_command *mo_segment_commands;
 
     Dwarf_Unsigned mo_dwarf_sectioncount;
-    struct generic_section *mo_dwarf_sections;
+    struct generic_macho_section *mo_dwarf_sections;
 } dwarf_macho_object_access_internals_t;
 
 int dwarf_load_macho_header(dwarf_macho_object_access_internals_t * mfp,
@@ -129,10 +131,7 @@ int dwarf_load_macho_header(dwarf_macho_object_access_internals_t * mfp,
 int dwarf_load_macho_commands(dwarf_macho_object_access_internals_t * mfp,
     int *errcode);
 
-
-
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */
-
 #endif /* DWARF_MACHOREAD_H */

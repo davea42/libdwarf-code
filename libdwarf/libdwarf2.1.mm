@@ -434,6 +434,10 @@ exceptional conditions like failures and 'no more data' indications.
 
 .H 2 "Revision History"
 .VL 15
+.LI "October 2018"
+Added support for reading MacOS dSYM object files.
+.LI "2017"
+Added support for nearly all of DWARF5.
 .LI "July 2014"
 Added support for the .gdb_index section and
 started support for the .debug_cu_index and .debug_tu_index
@@ -552,10 +556,10 @@ or a location expression.
 
 .DS
 \f(CWtypedef struct {
-        Dwarf_Small        lr_atom;
-        Dwarf_Unsigned     lr_number;
-        Dwarf_Unsigned     lr_number2;
-        Dwarf_Unsigned     lr_offset;
+    Dwarf_Small        lr_atom;
+    Dwarf_Unsigned     lr_number;
+    Dwarf_Unsigned     lr_number2;
+    Dwarf_Unsigned     lr_offset;
 } Dwarf_Loc;\fP
 .DE
 
@@ -609,10 +613,10 @@ calculated at runtime of the associated program.
 
 .DS
 \f(CWtypedef struct {
-        Dwarf_Addr        ld_lopc;
-        Dwarf_Addr        ld_hipc;
-        Dwarf_Unsigned    ld_cents;
-        Dwarf_Loc*        ld_s;
+    Dwarf_Addr        ld_lopc;
+    Dwarf_Addr        ld_hipc;
+    Dwarf_Unsigned    ld_cents;
+    Dwarf_Loc*        ld_s;
 } Dwarf_Locdesc;\fP
 .DE
 
@@ -641,8 +645,8 @@ forms.
 
 .DS
 \f(CWtypedef struct {
-        Dwarf_Unsigned     bl_len;
-        Dwarf_Ptr          bl_data;
+    Dwarf_Unsigned     bl_len;
+    Dwarf_Ptr          bl_data;
 } Dwarf_Block;\fP
 .DE
 
@@ -681,11 +685,11 @@ Internal-level Consumers trying to print everything in detail.
 
 .DS
 \f(CWtypedef struct {
-	Dwarf_Small  fp_base_op;
-	Dwarf_Small  fp_extended_op;
-	Dwarf_Half   fp_register;
-	Dwarf_Signed fp_offset;
-	Dwarf_Offset fp_instr_offset;
+    Dwarf_Small  fp_base_op;
+    Dwarf_Small  fp_extended_op;
+    Dwarf_Half   fp_register;
+    Dwarf_Signed fp_offset;
+    Dwarf_Offset fp_instr_offset;
 } Dwarf_Frame_Op;
 .DE
 
@@ -810,16 +814,15 @@ PC value.
 Normally used by debuggers.
 .DS
 \f(CWtypedef struct Dwarf_Regtable_Entry3_s {
-        Dwarf_Small         dw_offset_relevant;
-        Dwarf_Small         dw_value_type;
-        Dwarf_Half          dw_regnum;
-        Dwarf_Unsigned      dw_offset_or_block_len;
-        Dwarf_Ptr           dw_block_ptr;
+    Dwarf_Small         dw_offset_relevant;
+    Dwarf_Small         dw_value_type;
+    Dwarf_Half          dw_regnum;
+    Dwarf_Unsigned      dw_offset_or_block_len;
+    Dwarf_Ptr           dw_block_ptr;
 }Dwarf_Regtable_Entry3;
 
 typedef struct Dwarf_Regtable3_s {
     struct Dwarf_Regtable_Entry3_s   rt3_cfa_rule;
-
     Dwarf_Half                       rt3_reg_table_size;
     struct Dwarf_Regtable_Entry3_s * rt3_rules;
 } Dwarf_Regtable3;\fP
@@ -1635,8 +1638,8 @@ DW_DLA_FRAME_BLOCK      :     Dwarf_Frame Block (not used)
 DW_DLA_FUNC_CONTEXT     :     Dwarf_Func
 DW_DLA_TYPENAME_CONTEXT :     Dwarf_Type
 DW_DLA_VAR_CONTEXT      :     Dwarf_Var
-DW_DLA_WEAK_CONTEXT	:     Dwarf_Weak
-DW_DLA_PUBTYPES_CONTEXT	:     Dwarf_Type
+DW_DLA_WEAK_CONTEXT     :     Dwarf_Weak
+DW_DLA_PUBTYPES_CONTEXT :     Dwarf_Type
 .TE
 .FG "Allocation/Deallocation Identifiers"
 .DE
@@ -1775,13 +1778,13 @@ error code.
 .H 3 "dwarf_init_b()"
 .DS
 \f(CWint dwarf_init_b(
-        int fd,
-        Dwarf_Unsigned access,
-        unsigned group_number,
-        Dwarf_Handler errhand,
-        Dwarf_Ptr errarg,
-	Dwarf_Debug * dbg,
-        Dwarf_Error *error)\fP
+int fd,
+    Dwarf_Unsigned access,
+    unsigned group_number,
+    Dwarf_Handler errhand,
+    Dwarf_Ptr errarg,
+    Dwarf_Debug * dbg,
+    Dwarf_Error *error)\fP
 .DE
 When it returns
 \f(CWDW_DLV_OK\fP,
@@ -1859,12 +1862,12 @@ unless the default actions are appropriate.
 
 .DS
 \f(CWint dwarf_init(
-        int fd,
-        Dwarf_Unsigned access,
-        Dwarf_Handler errhand,
-        Dwarf_Ptr errarg,
-	Dwarf_Debug * dbg,
-        Dwarf_Error *error)\fP
+    int fd,
+    Dwarf_Unsigned access,
+    Dwarf_Handler errhand,
+    Dwarf_Ptr errarg,
+    Dwarf_Debug * dbg,
+    Dwarf_Error *error)\fP
 .DE
 This identical to dwarf_init()
 \f(CWdwarf_init_b()\fP
@@ -1917,13 +1920,13 @@ as in the sample given above.
 .H 3 "dwarf_elf_init_b() [deprecated]"
 .DS
 \f(CWint dwarf_elf_init_b(
-        Elf * elf_file_pointer,
-        Dwarf_Unsigned access,
-        unsigned groupnumber,
-        Dwarf_Handler errhand,
-        Dwarf_Ptr errarg,
-	Dwarf_Debug * dbg,
-        Dwarf_Error *error)\fP
+    Elf * elf_file_pointer,
+    Dwarf_Unsigned access,
+    unsigned groupnumber,
+    Dwarf_Handler errhand,
+    Dwarf_Ptr errarg,
+    Dwarf_Debug * dbg,
+    Dwarf_Error *error)\fP
 .DE
 We recommend you change to calling
 \f(CWdwarf_init_b()\fP
@@ -1959,12 +1962,12 @@ pointer till after  \f(CWdwarf_finish\fP is called.
 .H 3 "dwarf_elf_init()"
 .DS
 \f(CWint dwarf_elf_init(
-        Elf * elf_file_pointer,
-        Dwarf_Unsigned access,
-        Dwarf_Handler errhand,
-        Dwarf_Ptr errarg,
-        Dwarf_Debug * dbg,
-        Dwarf_Error *error)\fP
+    Elf * elf_file_pointer,
+    Dwarf_Unsigned access,
+    Dwarf_Handler errhand,
+    Dwarf_Ptr errarg,
+    Dwarf_Debug * dbg,
+    Dwarf_Error *error)\fP
 .DE
 The function \f(CWdwarf_elf_init()\fP is identical to \f(CWdwarf_init()\fP
 except that an open \f(CWElf *\fP pointer is passed instead of a file
@@ -1974,9 +1977,9 @@ descriptor.
 .H 3 "dwarf_get_elf()"
 .DS
 \f(CWint dwarf_get_elf(
-        Dwarf_Debug dbg,
-        Elf **      elf,
-        Dwarf_Error *error)\fP
+    Dwarf_Debug dbg,
+    Elf **      elf,
+    Dwarf_Error *error)\fP
 .DE
 When it returns \f(CWDW_DLV_OK\fP,
 the function \f(CWdwarf_get_elf()\fP returns through the
@@ -1996,9 +1999,9 @@ Elf format for objects.
 .H 3 "dwarf_set_tied_dbg()"
 .DS
 \f(CWint dwarf_set_tied_dbg(
-        Dwarf_Debug dbg,
-        Dwarf_Debug tieddbg,
-	Dwarf_Error *error)\fP
+    Dwarf_Debug dbg,
+    Dwarf_Debug tieddbg,
+    Dwarf_Error *error)\fP
 .DE
 The function
 \f(CWdwarf_set_tied_dbg()\fP
@@ -2067,9 +2070,9 @@ before finishing on the dbg and tieddbg.
 .H 3 "dwarf_get_tied_dbg()"
 .DS
 \f(CWint dwarf_get_tied_dbg(
-        Dwarf_Debug   /*dbg*/,
-        Dwarf_Debug * /*tieddbg_out*/,
-	Dwarf_Error * /*error*/)\fP
+    Dwarf_Debug   /*dbg*/,
+    Dwarf_Debug * /*tieddbg_out*/,
+    Dwarf_Error * /*error*/)\fP
 .DE
 \f(CWdwarf_get_tied_dbg\fP returns
 \f(CWDW_DLV_OK\fP and sets
@@ -2087,8 +2090,8 @@ It never returns
 .H 3 "dwarf_finish()"
 .DS
 \f(CWint dwarf_finish(
-        Dwarf_Debug dbg,
-	Dwarf_Error *error)\fP
+    Dwarf_Debug dbg,
+    Dwarf_Error *error)\fP
 .DE
 The function
 \f(CWdwarf_finish()\fP releases all \fILibdwarf\fP internal resources
@@ -2150,7 +2153,7 @@ It seems unlikely anyone will need to call this function.
 .H 3 "dwarf_record_cmdline_options()"
 .DS
 \f(CWint dwarf_record_cmdline_options(
-        Dwarf_Cmdline_Options options)\fP
+    Dwarf_Cmdline_Options options)\fP
 .DE
 The function
 \f(CWint dwarf_record_cmdline_options()\fP
@@ -2993,19 +2996,19 @@ function returns \f(CWDW_DLV_ERROR\fP and sets the
 .H 3 "dwarf_next_cu_header_d()"
 .DS
 \f(CWint dwarf_next_cu_header_d(
-        Dwarf_debug dbg,
-        Dwarf_Bool is_info,
-        Dwarf_Unsigned *cu_header_length,
-        Dwarf_Half     *version_stamp,
-        Dwarf_Unsigned *abbrev_offset,
-        Dwarf_Half     *address_size,
-        Dwarf_Half     *offset_size,
-        Dwarf_Half     *extension_size,
-        Dwarf_Sig8     *signature,
-        Dwarf_Unsigned *typeoffset
-        Dwarf_Unsigned *next_cu_header,
-        Dwarf_Half     *header_cu_type,
-        Dwarf_Error    *error);
+    Dwarf_debug dbg,
+    Dwarf_Bool is_info,
+    Dwarf_Unsigned *cu_header_length,
+    Dwarf_Half     *version_stamp,
+    Dwarf_Unsigned *abbrev_offset,
+    Dwarf_Half     *address_size,
+    Dwarf_Half     *offset_size,
+    Dwarf_Half     *extension_size,
+    Dwarf_Sig8     *signature,
+    Dwarf_Unsigned *typeoffset
+    Dwarf_Unsigned *next_cu_header,
+    Dwarf_Half     *header_cu_type,
+    Dwarf_Error    *error);
 .DE
 The function
 \f(CWdwarf_next_cu_header_d()\fP operates on
@@ -3115,18 +3118,18 @@ and the Debug Fission \f(CW.debug_info.dwo\fP .
 .H 3 "dwarf_next_cu_header_c()"
 .DS
 \f(CWint dwarf_next_cu_header_c(
-        Dwarf_debug dbg,
-        Dwarf_Bool is_info,
-        Dwarf_Unsigned *cu_header_length,
-        Dwarf_Half     *version_stamp,
-        Dwarf_Unsigned *abbrev_offset,
-        Dwarf_Half     *address_size,
-        Dwarf_Half     *offset_size,
-        Dwarf_Half     *extension_size,
-        Dwarf_Sig8     *signature,
-        Dwarf_Unsigned *typeoffset
-        Dwarf_Unsigned *next_cu_header,
-        Dwarf_Error    *error);
+    Dwarf_debug dbg,
+    Dwarf_Bool is_info,
+    Dwarf_Unsigned *cu_header_length,
+    Dwarf_Half     *version_stamp,
+    Dwarf_Unsigned *abbrev_offset,
+    Dwarf_Half     *address_size,
+    Dwarf_Half     *offset_size,
+    Dwarf_Half     *extension_size,
+    Dwarf_Sig8     *signature,
+    Dwarf_Unsigned *typeoffset
+    Dwarf_Unsigned *next_cu_header,
+    Dwarf_Error    *error);
 .DE
 The function
 \f(CWdwarf_next_cu_header_c()\fP operates on
@@ -3147,15 +3150,15 @@ All code using this should be changed to use
 .H 3 "dwarf_next_cu_header_b()"
 .DS
 \f(CWint dwarf_next_cu_header_b(
-        Dwarf_debug dbg,
-        Dwarf_Unsigned *cu_header_length,
-        Dwarf_Half     *version_stamp,
-        Dwarf_Unsigned *abbrev_offset,
-        Dwarf_Half     *address_size,
-        Dwarf_Half     *offset_size,
-        Dwarf_Half     *extension_size,
-        Dwarf_Unsigned *next_cu_header,
-        Dwarf_Error    *error);
+    Dwarf_debug dbg,
+    Dwarf_Unsigned *cu_header_length,
+    Dwarf_Half     *version_stamp,
+    Dwarf_Unsigned *abbrev_offset,
+    Dwarf_Half     *address_size,
+    Dwarf_Half     *offset_size,
+    Dwarf_Half     *extension_size,
+    Dwarf_Unsigned *next_cu_header,
+    Dwarf_Error    *error);
 .DE
 .P
 This is obsolete as of October 2011 though supported.
@@ -3183,23 +3186,23 @@ All code using this should be changed to use
 \f(CWdwarf_next_cu_header_c()\fP
 .DS
 \f(CWint dwarf_next_cu_header(
-        Dwarf_debug dbg,
-        Dwarf_Unsigned *cu_header_length,
-        Dwarf_Half     *version_stamp,
-        Dwarf_Unsigned *abbrev_offset,
-        Dwarf_Half     *address_size,
-        Dwarf_Unsigned *next_cu_header,
-        Dwarf_Error    *error);
+    Dwarf_debug dbg,
+    Dwarf_Unsigned *cu_header_length,
+    Dwarf_Half     *version_stamp,
+    Dwarf_Unsigned *abbrev_offset,
+    Dwarf_Half     *address_size,
+    Dwarf_Unsigned *next_cu_header,
+    Dwarf_Error    *error);
 .DE
 
 .H 3 "dwarf_siblingof_b()"
 .DS
 \f(CWint dwarf_siblingof_b(
-        Dwarf_Debug dbg,
-        Dwarf_Die die,
-        Dwarf_Bool is_info,
-	Dwarf_Die *return_sib,
-        Dwarf_Error *error)\fP
+    Dwarf_Debug dbg,
+    Dwarf_Die die,
+    Dwarf_Bool is_info,
+    Dwarf_Die *return_sib,
+    Dwarf_Error *error)\fP
 .DE
 The function \f(CWdwarf_siblingof_b()\fP
 returns \f(CWDW_DLV_ERROR\fP and sets the \f(CWerror\fP pointer on error.
@@ -3260,10 +3263,10 @@ void example4(Dwarf_Debug dbg,Dwarf_Die in_die,Dwarf_Bool is_info)
 .H 3 "dwarf_siblingof()"
 .DS
 \f(CWint dwarf_siblingof(
-        Dwarf_Debug dbg,
-        Dwarf_Die die,
-        Dwarf_Die *return_sib,
-        Dwarf_Error *error)\fP
+    Dwarf_Debug dbg,
+    Dwarf_Die die,
+    Dwarf_Die *return_sib,
+    Dwarf_Error *error)\fP
 .DE
 .P
 \f(CWint dwarf_siblingof()\fP operates exactly the same as
@@ -3275,9 +3278,9 @@ DIEs.
 .H 3 "dwarf_child()"
 .DS
 \f(CWint dwarf_child(
-        Dwarf_Die die,
-	Dwarf_Die *return_kid,
-        Dwarf_Error *error)\fP
+    Dwarf_Die die,
+    Dwarf_Die *return_kid,
+    Dwarf_Error *error)\fP
 .DE
 The function \f(CWdwarf_child()\fP
 returns \f(CWDW_DLV_ERROR\fP and sets the \f(CWerror\fP die on error.
@@ -3317,11 +3320,11 @@ void example5(Dwarf_Debug dbg,Dwarf_Die in_die)
 .H 3 "dwarf_offdie_b()"
 .DS
 \f(CWint dwarf_offdie_b(
-        Dwarf_Debug dbg,
-        Dwarf_Off offset,
-        Dwarf_Bool is_info,
-	Dwarf_Die *return_die,
-        Dwarf_Error *error)\fP
+    Dwarf_Debug dbg,
+    Dwarf_Off offset,
+    Dwarf_Bool is_info,
+    Dwarf_Die *return_die,
+    Dwarf_Error *error)\fP
 .DE
 The function \f(CWdwarf_offdie_b()\fP
 returns \f(CWDW_DLV_ERROR\fP and sets the \f(CWerror\fP die on error.
@@ -3385,10 +3388,10 @@ void example6(Dwarf_Debug dbg,Dwarf_Off die_offset,Dwarf_Bool is_info)
 .H 3 "dwarf_offdie()"
 .DS
 \f(CWint dwarf_offdie(
-        Dwarf_Debug dbg,
-        Dwarf_Off offset,
-	Dwarf_Die *return_die,
-        Dwarf_Error *error)\fP
+    Dwarf_Debug dbg,
+    Dwarf_Off offset,
+    Dwarf_Die *return_die,
+    Dwarf_Error *error)\fP
 .DE
 .P
 The function \f(CWdwarf_offdie()\fP is obsolete, use
@@ -3400,8 +3403,8 @@ references the .debug_info section.
 .H 3 "dwarf_validate_die_sibling()"
 .DS
 \f(CWint validate_die_sibling(
-        Dwarf_Die sibling,
-        Dwarf_Off *offset)\fP
+    Dwarf_Die sibling,
+    Dwarf_Off *offset)\fP
 .DE
 When used correctly in a depth-first walk of a DIE tree this
 function validates that any DW_AT_sibling attribute gives
@@ -3474,9 +3477,9 @@ originates from the .debug_types section.
 .H 3 "dwarf_tag()"
 .DS
 \f(CWint dwarf_tag(
-        Dwarf_Die die,
-	Dwarf_Half *tagval,
-        Dwarf_Error *error)\fP
+    Dwarf_Die die,
+    Dwarf_Half *tagval,
+    Dwarf_Error *error)\fP
 .DE
 The function \f(CWdwarf_tag()\fP returns the \f(CWtag\fP of \f(CWdie\fP
 through the pointer  \f(CWtagval\fP if it succeeds.
@@ -3486,9 +3489,9 @@ It returns \f(CWDW_DLV_ERROR\fP on error.
 .H 3 "dwarf_dieoffset()"
 .DS
 \f(CWint dwarf_dieoffset(
-        Dwarf_Die die,
-	Dwarf_Off * return_offset,
-        Dwarf_Error *error)\fP
+    Dwarf_Die die,
+    Dwarf_Off * return_offset,
+    Dwarf_Error *error)\fP
 .DE
 When it succeeds,
 the function \f(CWdwarf_dieoffset()\fP returns
@@ -3532,9 +3535,9 @@ may return \f(CWDW_DLV_NO_ENTRY\fP.
 .H 3 "dwarf_die_CU_offset()"
 .DS
 \f(CWint dwarf_die_CU_offset(
-        Dwarf_Die die,
-  	Dwarf_Off *return_offset,
-        Dwarf_Error *error)\fP
+    Dwarf_Die die,
+    Dwarf_Off *return_offset,
+    Dwarf_Error *error)\fP
 .DE
 The function \f(CWdwarf_die_CU_offset()\fP is similar to
 \f(CWdwarf_dieoffset()\fP, except that it puts the offset of the DIE
@@ -3545,10 +3548,10 @@ of .debug_info (the \f(CWreturn_offset\fP is a CU-relative offset).
 .H 3 "dwarf_die_offsets()"
 .DS
 \f(CWint dwarf_die_offsets(
-        Dwarf_Die die,
-        Dwarf_Off *global_off,
-        Dwarf_Off *cu_off,
-        Dwarf_Error *error)\fP
+    Dwarf_Die die,
+    Dwarf_Off *global_off,
+    Dwarf_Off *cu_off,
+    Dwarf_Error *error)\fP
 .DE
 The function \f(CWdwarf_die_offsets()\fP is a combination of
 \f(CWdwarf_dieoffset()\fP and \f(CWdwarf_die_cu_offset()\fP
@@ -3559,9 +3562,9 @@ the CU-relative offset of the \f(CWdie\fP in a single call.
 .H 3 "dwarf_ptr_CU_offset()"
 .DS
 \f(CWint dwarf_ptr_CU_offset(
-        Dwarf_CU_Context cu_context,
-  	Dwarf_Byte_ptr di_ptr ,
-        Dwarf_Off *cu_off)\fP
+    Dwarf_CU_Context cu_context,
+    Dwarf_Byte_ptr di_ptr ,
+    Dwarf_Off *cu_off)\fP
 .DE
 Given a valid CU context pointer and a pointer into that CU
 context,
@@ -3573,9 +3576,9 @@ in that CU.
 .H 3 "dwarf_CU_dieoffset_given_die()"
 .DS
 \f(CWint dwarf_CU_dieoffset_given_die(
-        Dwarf_Die given_die,
-  	Dwarf_Off *return_offset,
-        Dwarf_Error *error)\fP
+    Dwarf_Die given_die,
+    Dwarf_Off *return_offset,
+    Dwarf_Error *error)\fP
 .DE
 The function \f(CWdwarf_CU_dieoffset_given_die()\fP is similar to
 \f(CWdwarf_die_CU_offset()\fP, except that it puts the
@@ -3630,10 +3633,10 @@ void example7(Dwarf_Debug dbg, Dwarf_Die in_die,Dwarf_Bool is_info)
 .H 3 "dwarf_die_CU_offset_range()"
 .DS
 \f(CWint dwarf_die_CU_offset_range(
-        Dwarf_Die die,
-        Dwarf_Off *cu_global_offset,
-        Dwarf_Off *cu_length,
-        Dwarf_Error *error)\fP
+    Dwarf_Die die,
+    Dwarf_Off *cu_global_offset,
+    Dwarf_Off *cu_length,
+    Dwarf_Error *error)\fP
 .DE
 The function \f(CWdwarf_die_CU_offset_range()\fP
 returns the offset of the beginning of the CU and the length of the CU.
@@ -3646,9 +3649,9 @@ Most applications will have no reason to call this function.
 .H 3 "dwarf_diename()"
 .DS
 \f(CWint dwarf_diename(
-        Dwarf_Die die,
-	char  ** return_name,
-        Dwarf_Error *error)\fP
+    Dwarf_Die die,
+    char  ** return_name,
+    Dwarf_Error *error)\fP
 .DE
 When it succeeds,
 the function \f(CWdwarf_diename()\fP returns
@@ -3675,10 +3678,10 @@ an error occurred.
 .H 3 "dwarf_die_text()"
 .DS
 \f(CWint dwarf_die_text(
-        Dwarf_Die die,
-        Dwarf_Half attrnum,
-	char  ** return_name,
-        Dwarf_Error *error)\fP
+    Dwarf_Die die,
+    Dwarf_Half attrnum,
+    char  ** return_name,
+    Dwarf_Error *error)\fP
 .DE
 When it succeeds,
 the function
@@ -3797,10 +3800,10 @@ two arguments to  dwarf_get_form_class() requires.
 .H 3 "dwarf_attrlist()"
 .DS
 \f(CWint dwarf_attrlist(
-        Dwarf_Die die,
-        Dwarf_Attribute** attrbuf,
-	Dwarf_Signed *attrcount,
-        Dwarf_Error *error)\fP
+    Dwarf_Die die,
+    Dwarf_Attribute** attrbuf,
+    Dwarf_Signed *attrcount,
+    Dwarf_Error *error)\fP
 .DE
 When it returns \f(CWDW_DLV_OK\fP,
 the function \f(CWdwarf_attrlist()\fP sets \f(CWattrbuf\fP to point
@@ -3847,10 +3850,10 @@ void example8(Dwarf_Debug dbg, Dwarf_Die somedie)
 .H 3 "dwarf_hasattr()"
 .DS
 \f(CWint dwarf_hasattr(
-        Dwarf_Die die,
-        Dwarf_Half attr,
-	Dwarf_Bool *return_bool,
-        Dwarf_Error *error)\fP
+    Dwarf_Die die,
+    Dwarf_Half attr,
+    Dwarf_Bool *return_bool,
+    Dwarf_Error *error)\fP
 .DE
 When it succeeds, the
 function \f(CWdwarf_hasattr()\fP returns \f(CWDW_DLV_OK\fP
@@ -3861,10 +3864,10 @@ If it fails, it returns \f(CWDW_DLV_ERROR\fP.
 .H 3 "dwarf_attr()"
 .DS
 \f(CWint dwarf_attr(
-        Dwarf_Die die,
-        Dwarf_Half attr,
-	Dwarf_Attribute *return_attr,
-        Dwarf_Error *error)\fP
+    Dwarf_Die die,
+    Dwarf_Half attr,
+    Dwarf_Attribute *return_attr,
+    Dwarf_Error *error)\fP
 .DE
 .P
 When it returns \f(CWDW_DLV_OK\fP,
@@ -3880,9 +3883,9 @@ It returns \f(CWDW_DLV_ERROR\fP if an error occurred.
 .H 3 "dwarf_lowpc()"
 .DS
 \f(CWint dwarf_lowpc(
-        Dwarf_Die     die,
-	Dwarf_Addr  * return_lowpc,
-        Dwarf_Error * error)\fP
+    Dwarf_Die     die,
+    Dwarf_Addr  * return_lowpc,
+    Dwarf_Error * error)\fP
 .DE
 The function \f(CWdwarf_lowpc()\fP returns
 \f(CWDW_DLV_OK\fP and sets \f(CW*return_lowpc\fP
@@ -3897,11 +3900,11 @@ It returns \f(CWDW_DLV_ERROR\fP if an error occurred.
 .H 3 "dwarf_highpc_b()"
 .DS
 \f(CWint dwarf_highpc_b(
-        Dwarf_Die               die,
-        Dwarf_Addr  *           return_highpc,
-        Dwarf_Half  *           return_form*/,
-        enum Dwarf_Form_Class * return_class*/,
-        Dwarf_Error *error)\fP
+    Dwarf_Die               die,
+    Dwarf_Addr  *           return_highpc,
+    Dwarf_Half  *           return_form*/,
+    enum Dwarf_Form_Class * return_class*/,
+    Dwarf_Error *error)\fP
 .DE
 The function \f(CWdwarf_highpc_b()\fP returns
 \f(CWDW_DLV_OK\fP and sets \f(CW*return_highpc\fP
@@ -3927,9 +3930,9 @@ It returns \f(CWDW_DLV_ERROR\fP if an error occurred.
 .H 3 "dwarf_highpc()"
 .DS
 \f(CWint dwarf_highpc(
-        Dwarf_Die die,
-	Dwarf_Addr  * return_highpc,
-        Dwarf_Error *error)\fP
+    Dwarf_Die die,
+    Dwarf_Addr  * return_highpc,
+    Dwarf_Error *error)\fP
 .DE
 The function \f(CWdwarf_highpc()\fP returns
 \f(CWDW_DLV_OK\fP and sets \f(CW*return_highpc\fP
@@ -4045,9 +4048,9 @@ void exampleoffset_list(Dwarf_Debug dbg, Dwarf_Off dieoffset,
 .H 3 "dwarf_bytesize()"
 .DS
 \f(CWDwarf_Signed dwarf_bytesize(
-        Dwarf_Die        die,
-	Dwarf_Unsigned  *return_size,
-        Dwarf_Error     *error)\fP
+    Dwarf_Die        die,
+    Dwarf_Unsigned  *return_size,
+    Dwarf_Error     *error)\fP
 .DE
 When it succeeds,
 \f(CWdwarf_bytesize()\fP returns
@@ -4063,9 +4066,9 @@ an error occurred.
 .H 3 "dwarf_bitsize()"
 .DS
 \f(CWint dwarf_bitsize(
-        Dwarf_Die die,
-	Dwarf_Unsigned  *return_size,
-        Dwarf_Error *error)\fP
+    Dwarf_Die die,
+    Dwarf_Unsigned  *return_size,
+    Dwarf_Error *error)\fP
 .DE
 When it succeeds,
 \f(CWdwarf_bitsize()\fP returns
@@ -4082,9 +4085,9 @@ an error occurred.
 .H 3 "dwarf_bitoffset()"
 .DS
 \f(CWint dwarf_bitoffset(
-        Dwarf_Die die,
-	Dwarf_Unsigned  *return_size,
-        Dwarf_Error *error)\fP
+    Dwarf_Die die,
+    Dwarf_Unsigned  *return_size,
+    Dwarf_Error *error)\fP
 .DE
 When it succeeds,
 \f(CWdwarf_bitoffset()\fP returns
@@ -4104,9 +4107,9 @@ an error occurred.
 .H 3 "dwarf_srclang()"
 .DS
 \f(CWint dwarf_srclang(
-        Dwarf_Die die,
-	Dwarf_Unsigned  *return_lang,
-        Dwarf_Error *error)\fP
+    Dwarf_Die die,
+    Dwarf_Unsigned  *return_lang,
+    Dwarf_Error *error)\fP
 .DE
 When it succeeds,
 \f(CWdwarf_srclang()\fP returns
@@ -4124,9 +4127,9 @@ an error occurred.
 .H 3 "dwarf_arrayorder()"
 .DS
 \f(CWint dwarf_arrayorder(
-        Dwarf_Die die,
-	Dwarf_Unsigned  *return_order,
-        Dwarf_Error *error)\fP
+    Dwarf_Die die,
+    Dwarf_Unsigned  *return_order,
+    Dwarf_Error *error)\fP
 .DE
 When it succeeds,
 \f(CWdwarf_arrayorder()\fP returns
@@ -4158,10 +4161,10 @@ implicitly associated with a specific die.
 .H 3 "dwarf_hasform()"
 .DS
 \f(CWint dwarf_hasform(
-        Dwarf_Attribute attr,
-        Dwarf_Half form,
-        Dwarf_Bool  *return_hasform,
-        Dwarf_Error *error)\fP
+    Dwarf_Attribute attr,
+    Dwarf_Half form,
+    Dwarf_Bool  *return_hasform,
+    Dwarf_Error *error)\fP
 .DE
 The function \f(CWdwarf_hasform()\fP returns
 \f(CWDW_DLV_OK\fP and  and puts a
@@ -4177,9 +4180,9 @@ is put into \f(CW*return_hasform\fP.
 .H 3 "dwarf_whatform()"
 .DS
 \f(CWint dwarf_whatform(
-        Dwarf_Attribute attr,
-        Dwarf_Half     *return_form,
-        Dwarf_Error *error)\fP
+    Dwarf_Attribute attr,
+    Dwarf_Half     *return_form,
+    Dwarf_Error *error)\fP
 .DE
 When it succeeds,
 \f(CWdwarf_whatform()\fP returns
@@ -4197,9 +4200,9 @@ what most applications will want to call.
 .H 3 "dwarf_whatform_direct()"
 .DS
 \f(CWint dwarf_whatform_direct(
-        Dwarf_Attribute attr,
-        Dwarf_Half     *return_form,
-        Dwarf_Error *error)\fP
+    Dwarf_Attribute attr,
+    Dwarf_Half     *return_form,
+    Dwarf_Error *error)\fP
 .DE
 When it succeeds,
 \f(CWdwarf_whatform_direct()\fP returns
@@ -4225,9 +4228,9 @@ form unless the initial form is \f(CWDW_FORM_indirect\fP.
 .H 3 "dwarf_whatattr()"
 .DS
 \f(CWint dwarf_whatattr(
-        Dwarf_Attribute attr,
-        Dwarf_Half     *return_attr,
-        Dwarf_Error *error)\fP
+    Dwarf_Attribute attr,
+    Dwarf_Half     *return_attr,
+    Dwarf_Error *error)\fP
 .DE
 When it succeeds,
 \f(CWdwarf_whatattr()\fP returns
@@ -4239,9 +4242,9 @@ It returns  \f(CWDW_DLV_ERROR\fP  on error.
 .H 3 "dwarf_formref()"
 .DS
 \f(CWint dwarf_formref(
-        Dwarf_Attribute attr,
-	Dwarf_Off     *return_offset,
-        Dwarf_Error *error)\fP
+    Dwarf_Attribute attr,
+    Dwarf_Off     *return_offset,
+    Dwarf_Error *error)\fP
 .DE
 When it succeeds,
 \f(CWdwarf_formref()\fP returns
@@ -4269,9 +4272,9 @@ See also \f(CWdwarf_global_formref\fP below.
 .H 3 "dwarf_global_formref()"
 .DS
 \f(CWint dwarf_global_formref(
-        Dwarf_Attribute attr,
-	Dwarf_Off     *return_offset,
-        Dwarf_Error *error)\fP
+    Dwarf_Attribute attr,
+    Dwarf_Off     *return_offset,
+    Dwarf_Error *error)\fP
 .DE
 When it succeeds,
 \f(CWdwarf_global_formref()\fP returns
@@ -4418,9 +4421,9 @@ function returns
 .H 3 "dwarf_formflag()"
 .DS
 \f(CWint dwarf_formflag(
-	Dwarf_Attribute attr,
-	Dwarf_Bool * return_bool,
-	Dwarf_Error *error)\fP
+    Dwarf_Attribute attr,
+    Dwarf_Bool * return_bool,
+    Dwarf_Error *error)\fP
 .DE
 When it succeeds,
 \f(CWdwarf_formflag()\fP returns
@@ -4441,9 +4444,9 @@ does not have form flag.
 .H 3 "dwarf_formudata()"
 .DS
 \f(CWint dwarf_formudata(
-        Dwarf_Attribute   attr,
-	Dwarf_Unsigned  * return_uvalue,
-        Dwarf_Error     * error)\fP
+    Dwarf_Attribute   attr,
+    Dwarf_Unsigned  * return_uvalue,
+    Dwarf_Error     * error)\fP
 .DE
 The function
 \f(CWdwarf_formudata()\fP returns
@@ -11231,10 +11234,10 @@ void examplev(Dwarf_Debug dbg,Dwarf_Unsigned offset,Dwarf_Die die)
 .H 3 "dwarf_ranges_dealloc()"
 .DS
 \f(CWint dwarf_ranges_dealloc(
-        Dwarf_Debug dbg,
-        Dwarf_Ranges *ranges,
-        Dwarf_Signed  range_count,
-        );\fP
+    Dwarf_Debug dbg,
+    Dwarf_Ranges *ranges,
+    Dwarf_Signed  range_count,
+    );\fP
 .DE
 The function \f(CWdwarf_ranges_dealloc()\fP takes as input a pointer
 to a block of \f(CWDwarf_Ranges\fP array and the
@@ -11907,11 +11910,11 @@ struct Dwarf_Debug_Fission_Per_CU_s  {
     /*  If this is not set (ie, not a CU/TU in  DWP Package File)
         then pcu_type will be NULL.  */
     const char   * pcu_type;
-    /* pcu_index is the index (range 1 to N )
-       into the tu/cu table of offsets and the table
-       of sizes.  1 to N as the zero index is reserved
-       for special purposes.  Not a value one
-       actually needs. */
+    /*  pcu_index is the index (range 1 to N )
+        into the tu/cu table of offsets and the table
+        of sizes.  1 to N as the zero index is reserved
+        for special purposes.  Not a value one
+        actually needs. */
     Dwarf_Unsigned pcu_index;
     Dwarf_Sig8     pcu_hash;  /* 8 byte  */
     /*  [0] has offset and size 0.
@@ -12423,9 +12426,9 @@ The general form is
 .in +2
 .DS
 \f(CWint dwarf_get_<something>_name(
-        unsigned value,
-        char **s_out,
-        );\fP
+    unsigned value,
+    char **s_out,
+    );\fP
 .DE
 .in -2
 
@@ -12642,7 +12645,7 @@ internal LEB function.
 .H 3 "dwarf_errno()"
 .DS
 \f(CWDwarf_Unsigned dwarf_errno(
-        Dwarf_Error error)\fP
+    Dwarf_Error error)\fP
 .DE
 The function
 \f(CWdwarf_errno()\fP returns the error number corresponding

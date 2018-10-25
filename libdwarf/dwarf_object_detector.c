@@ -538,7 +538,7 @@ dwarf_object_detector_fd(int fd,
 
 int
 dwarf_object_detector_path(const char  *path,
-    char *outpath,size_t outpath_len,
+    char *outpath,unsigned long outpath_len,
     unsigned *ftype,
     unsigned *endian,
     unsigned *offsetsize,
@@ -551,6 +551,7 @@ dwarf_object_detector_path(const char  *path,
     struct stat statbuf;
     int fd = -1;
     int res = 0;
+    int have_outpath = outpath && outpath_len;
 
 #if !defined(S_ISREG)
 #define S_ISREG(mode) (((mode) & S_IFMT) == S_IFREG)
@@ -563,27 +564,32 @@ dwarf_object_detector_path(const char  *path,
     if(res) {
         return DW_DLV_NO_ENTRY;
     }
-    if ((2*plen + dsprefixlen +2) >= outpath_len) {
-        *errcode =  DW_DLE_PATH_SIZE_TOO_SMALL;
-        return DW_DLV_ERROR;
-    }
-    cp = dw_stpcpy(outpath,path);
-    cp = dw_stpcpy(cp,DSYM_SUFFIX);
-    dw_stpcpy(cp,getbasename(path));
-
-    fd = open(outpath,O_RDONLY);
-    if (fd < 0) {
-        *outpath = 0;
+    if (have_outpath) {
+        if ((2*plen + dsprefixlen +2) >= outpath_len) {
+            *errcode =  DW_DLE_PATH_SIZE_TOO_SMALL;
+            return DW_DLV_ERROR;
+        }
+        cp = dw_stpcpy(outpath,path);
+        cp = dw_stpcpy(cp,DSYM_SUFFIX);
+        dw_stpcpy(cp,getbasename(path));
+        fd = open(outpath,O_RDONLY);
+        if (fd < 0) {
+            *outpath = 0;
+            fd = open(path,O_RDONLY);
+            dw_stpcpy(outpath,path);
+        }
+    } else {
         fd = open(path,O_RDONLY);
-        dw_stpcpy(outpath,path);
     }
     if (fd < 0) {
-        *outpath = 0;
+        if (have_outpath) {
+            *outpath = 0;
+        }
         return DW_DLV_NO_ENTRY;
     }
     res = dwarf_object_detector_fd(fd,
         ftype,endian,offsetsize,filesize,errcode);
-    if (res != DW_DLV_OK) {
+    if (res != DW_DLV_OK && have_outpath) {
         *outpath = 0;
     }
     close(fd);

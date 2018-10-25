@@ -1,7 +1,7 @@
 #!/bin/sh
 #  A script verifying the distribution gets all needed files
 #  for building, including 'make check'
-v=20180928
+v=20181024
 rm -rf /tmp/dwbld
 rm -rf /tmp/dwinstall
 rm -rf /tmp/dwinstallrel

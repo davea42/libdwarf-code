@@ -115,6 +115,7 @@ dwarf_line_table_reader_common.h \
 dwarf_loc.c \
 dwarf_loc.h \
 dwarf_loc2.h \
+dwarf_macho_loader.h \
 dwarf_machoread.c \
 dwarf_machoread.h \
 dwarf_macro.c \

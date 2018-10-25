@@ -1,3 +1,20 @@
+2018-10-24  David Anderson
+     * libdwarf2.1.mm: Added documentation on
+       new functions dwarf_object_detector_fd(),
+       dwarf_object_detector_path(), and dwarf_init_path().
+       Fixed indentation many places (many still to fix).
+     * libdwarf2.1.pdf: Regenerated Reg 2.68.
+     * dwarf_macho_loader.h: Renamed from macho-loader.h
+     * Makefile.am: reflects name change. 
+     * dwarf_machoread.c: Uses renamed macho structs.
+     * dwarf_machoread.h: Renames a couple macho structs.
+       Aligns fieldnames with the similar item in libdwarf.h.
+     * dwarf_object_detector.c: A build on 32bit machine
+       noticed a function-prototype inconsistency
+       in declaring dwarf_object_detector_path(). Fixed.
+       Now allows outpath, outlen
+       of the dwarf_object_detector_path() call to be zero,
+       suppressing macho dSYM subdirectory checks.
 2018-10-23  David Anderson
      * dw_elfstructs.h: Adding this for use with object readers.
      * dwarf_init_finish.c: Fixed placement of blank line to

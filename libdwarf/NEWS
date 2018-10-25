@@ -1,7 +1,11 @@
+October 24, 2018
+  Now supports reading MacOS dSYM object files. 
 May 17, 2017
-  Now supports COMDAT groups as well as split-dwarf.
+  Now supports some COMDAT groups as well as split-dwarf.
   Some new functions added so consumer code can know
   what the sections and groups contain.
+  Some compilers emit groups findable only with relocation
+  data: libdwarf does not understand those groups.
 April 02, 2017
   The consumer code now reads DWARF5 split-dwarf sections.
   The functions dwarf_init_b() and dwarf_elf_init_b()

@@ -58,7 +58,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "dwarf_object_read_common.h"
 #include "dwarf_machoread.h"
 #include "dwarf_object_detector.h"
-#include "macho-loader.h"
+#include "dwarf_macho_loader.h"
 
 #ifndef TYP
 #define TYP(n,l) char n[l]
@@ -155,7 +155,7 @@ static int macho_get_section_info (void *obj,
 
 
     if (section_index < macho->mo_dwarf_sectioncount) {
-        struct generic_section *sp = 0;
+        struct generic_macho_section *sp = 0;
 
         sp = macho->mo_dwarf_sections + section_index;
         return_section->addr = 0;
@@ -181,7 +181,7 @@ macho_load_section (void *obj, Dwarf_Half section_index,
         section_index < macho->mo_dwarf_sectioncount) {
         int res = 0;
 
-        struct generic_section *sp =
+        struct generic_macho_section *sp =
             macho->mo_dwarf_sections + section_index;
         if(sp->loaded_data) {
             *return_data = sp->loaded_data;
@@ -231,7 +231,7 @@ _dwarf_destruct_macho_access(
     }
     free((char *)mp->mo_path);
     if (mp->mo_dwarf_sections) {
-        struct generic_section *sp = 0;
+        struct generic_macho_section *sp = 0;
 
         sp = mp->mo_dwarf_sections;
         for( i=0; i < mp->mo_dwarf_sectioncount; ++i,++sp) {
@@ -321,7 +321,7 @@ static int
 load_segment_command_content32(
     dwarf_macho_object_access_internals_t *mfp,
     struct generic_macho_command *mmp,
-    struct generic_segment_command *msp,
+    struct generic_macho_segment_command *msp,
     Dwarf_Unsigned mmpindex,
     int *errcode)
 {
@@ -344,7 +344,7 @@ load_segment_command_content32(
     ASNAR(mfp->mo_copy_word,msp->cmd,sc.cmd);
     ASNAR(mfp->mo_copy_word,msp->cmdsize,sc.cmdsize);
     strncpy(msp->segname,sc.segname,16);
-    msp->segname[16] =0;
+    msp->segname[15] =0;
     ASNAR(mfp->mo_copy_word,msp->vmaddr,sc.vmaddr);
     ASNAR(mfp->mo_copy_word,msp->vmsize,sc.vmsize);
     ASNAR(mfp->mo_copy_word,msp->fileoff,sc.fileoff);
@@ -372,7 +372,7 @@ static int
 load_segment_command_content64(
     dwarf_macho_object_access_internals_t *mfp,
     struct generic_macho_command *mmp,
-    struct generic_segment_command *msp,
+    struct generic_macho_segment_command *msp,
     Dwarf_Unsigned mmpindex,int *errcode)
 {
     struct segment_command_64 sc;
@@ -425,13 +425,13 @@ dwarf_macho_load_segment_commands(
 {
     Dwarf_Unsigned i = 0;
     struct generic_macho_command *mmp = 0;
-    struct generic_segment_command *msp = 0;
+    struct generic_macho_segment_command *msp = 0;
 
     if(mfp->mo_segment_count < 1) {
         return DW_DLV_OK;
     }
-    mfp->mo_segment_commands = (struct generic_segment_command *)
-        calloc(sizeof(struct generic_segment_command),mfp->mo_segment_count);
+    mfp->mo_segment_commands = (struct generic_macho_segment_command *)
+        calloc(sizeof(struct generic_macho_segment_command),mfp->mo_segment_count);
     if(!mfp->mo_segment_commands) {
         *errcode = DW_DLE_ALLOC_FAIL;
         return DW_DLV_ERROR;
@@ -460,7 +460,7 @@ dwarf_macho_load_segment_commands(
 static int
 dwarf_macho_load_dwarf_section_details32(
     dwarf_macho_object_access_internals_t *mfp,
-    struct generic_segment_command *segp,
+    struct generic_macho_segment_command *segp,
     Dwarf_Unsigned segi,int *errcode)
 {
     Dwarf_Unsigned seci = 0;
@@ -469,9 +469,10 @@ dwarf_macho_load_dwarf_section_details32(
     Dwarf_Unsigned curoff = segp->sectionsoffset;
     Dwarf_Unsigned shdrlen = sizeof(struct section);
 
-    struct generic_section *secs = 0;
+    struct generic_macho_section *secs = 0;
 
-    secs = (struct generic_section *)calloc(sizeof(struct generic_section),
+    secs = (struct generic_macho_section *)calloc(
+        sizeof(struct generic_macho_section),
         secalloc);
     if(!secs) {
         *errcode = DW_DLE_ALLOC_FAIL;
@@ -521,7 +522,7 @@ dwarf_macho_load_dwarf_section_details32(
 static int
 dwarf_macho_load_dwarf_section_details64(
     dwarf_macho_object_access_internals_t *mfp,
-    struct generic_segment_command *segp,
+    struct generic_macho_segment_command *segp,
     Dwarf_Unsigned segi,
     int *errcode)
 {
@@ -530,9 +531,10 @@ dwarf_macho_load_dwarf_section_details64(
     Dwarf_Unsigned secalloc = seccount+1;
     Dwarf_Unsigned curoff = segp->sectionsoffset;
     Dwarf_Unsigned shdrlen = sizeof(struct section_64);
-    struct generic_section *secs = 0;
+    struct generic_macho_section *secs = 0;
 
-    secs = (struct generic_section *)calloc(sizeof(struct generic_section),
+    secs = (struct generic_macho_section *)calloc(
+        sizeof(struct generic_macho_section),
         secalloc);
     if(!secs) {
         *errcode = DW_DLE_ALLOC_FAIL;
@@ -583,26 +585,22 @@ dwarf_macho_load_dwarf_section_details64(
 static int
 dwarf_macho_load_dwarf_section_details(
     dwarf_macho_object_access_internals_t *mfp,
-    struct generic_segment_command *segp,
+    struct generic_macho_segment_command *segp,
     Dwarf_Unsigned segi,int *errcode)
 {
     int res = 0;
 
     if (mfp->mo_offsetsize == 32) {
-        res = dwarf_macho_load_dwarf_section_details32(mfp,segp,segi,errcode);
-        if (res != DW_DLV_OK) {
-            return res;
-        }
+        res = dwarf_macho_load_dwarf_section_details32(mfp,
+            segp,segi,errcode);
     } else if (mfp->mo_offsetsize == 64) {
-        res = dwarf_macho_load_dwarf_section_details64(mfp,segp,segi,errcode);
-        if (res != DW_DLV_OK) {
-            return res;
-        }
+        res = dwarf_macho_load_dwarf_section_details64(mfp,
+            segp,segi,errcode);
     } else {
         *errcode = DW_DLE_OFFSET_SIZE;
         return DW_DLV_ERROR;
     }
-    return DW_DLV_OK;
+    return res;
 }
 
 static int
@@ -611,7 +609,8 @@ dwarf_macho_load_dwarf_sections(
 {
     Dwarf_Unsigned segi = 0;
 
-    struct generic_segment_command *segp = mfp->mo_segment_commands;
+    struct generic_macho_segment_command *segp =
+        mfp->mo_segment_commands;
     for ( ; segi < mfp->mo_segment_count; ++segi,++segp) {
         int res = 0;
 
@@ -751,7 +750,7 @@ _dwarf_macho_object_access_internals_init(
 {
     dwarf_macho_object_access_internals_t * intfc = internals;
     Dwarf_Unsigned i  = 0;
-    struct generic_section *sp = 0;
+    struct generic_macho_section *sp = 0;
     struct Dwarf_Obj_Access_Interface_s localdoas;
     int res = 0;
 
