@@ -1,7 +1,8 @@
 #!/bin/sh
 #  A script verifying the distribution gets all needed files
 #  for building, including 'make check'
-v=20181024
+# First, get the current configure.ac version into v:
+v=`grep -o '201[0-9][0-9][0-9][0-9][0-9]'< ../configure.ac | head -n 1`
 rm -rf /tmp/dwbld
 rm -rf /tmp/dwinstall
 rm -rf /tmp/dwinstallrel
