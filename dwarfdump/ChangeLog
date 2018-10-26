@@ -1,3 +1,8 @@
+2018-10-26 David Anderson
+    * dwarfdump.c: A single instance of a malloc
+      in main() had no associated free(). 
+      Memory Leak of a couple hundred bytes 
+      exactly once per run of dwarfdump.  Now we free().
 2018-10-19 David Anderson
     * command_options.c,glflags.c,glflags.h: New option
       --file-use-no-libelf, function arg_file_use_no_libelf(),

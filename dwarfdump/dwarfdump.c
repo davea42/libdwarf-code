@@ -331,6 +331,7 @@ main(int argc, char *argv[])
     if ( res != DW_DLV_OK) {
         fprintf(stderr, "%s ERROR:  can't open %s\n", glflags.program_name,
             file_name);
+        free(out_path_buf);
         return (FAILED);
     }
     if (strcmp(file_name,out_path_buf)) {
@@ -342,6 +343,7 @@ main(int argc, char *argv[])
     if (fd == -1) {
         fprintf(stderr, "%s ERROR:  can't open %s\n", glflags.program_name,
             file_name);
+        free(out_path_buf);
         return (FAILED);
     }
 
@@ -358,6 +360,7 @@ main(int argc, char *argv[])
         if ( res != DW_DLV_OK) {
             fprintf(stderr, "%s ERROR: tied file not an object file '%s'.\n",
                 glflags.program_name, tied_file_name);
+            free(out_path_buf);
             return (FAILED);
         }
         if (ftype != tftype || endian != tendian ||
@@ -366,6 +369,7 @@ main(int argc, char *argv[])
                 "main file \'%s\' not "
                 "the same kind of object!\n",
                 glflags.program_name, tied_file_name,out_path_buf);
+            free(out_path_buf);
             return (FAILED);
         }
         if (strcmp(file_name,out_path_buf)) {
@@ -380,6 +384,7 @@ main(int argc, char *argv[])
             fprintf(stderr, "%s ERROR:  can't open tied file %s\n",
                 glflags.program_name,
                 tied_file_name);
+            free(out_path_buf);
             return (FAILED);
         }
     }
@@ -396,6 +401,7 @@ main(int argc, char *argv[])
             fprintf(stderr, "%s ERROR:  Unable to obtain ELF descriptor for %s\n",
                 glflags.program_name,
                 file_name);
+            free(out_path_buf);
             return (FAILED);
         }
         if (ftype ==  DW_FTYPE_ARCHIVE) {
@@ -408,6 +414,7 @@ main(int argc, char *argv[])
                 fprintf(stderr, "%s ERROR:  can't open tied file %s\n",
                     glflags.program_name,
                     tied_file_name);
+                free(out_path_buf);
                 return (FAILED);
             }
             elftied = elf_begin(tiedfd, cmd, (Elf *) 0);
@@ -416,6 +423,7 @@ main(int argc, char *argv[])
                     "an archive. Not allowed. Giving up.\n",
                     glflags.program_name,
                     tied_file_name);
+                free(out_path_buf);
                 return (FAILED);
             }
             isknown = is_it_known_elf_header(elftied);
@@ -423,6 +431,7 @@ main(int argc, char *argv[])
                 fprintf(stderr,
                     "Cannot process tied file %s: unknown format\n",
                     tied_file_name);
+                free(out_path_buf);
                 return FAILED;
             }
         }
@@ -489,6 +498,8 @@ main(int argc, char *argv[])
         fprintf(stderr, "Can't process %s: unhandled format\n",
             file_name);
     }
+    free(out_path_buf);
+    out_path_buf = 0;
 
     /*  These cleanups only necessary once all
         objects processed. */
