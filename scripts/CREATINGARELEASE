@@ -1,5 +1,5 @@
 
-This is an checlist of the steps in creating a new release.
+This is an checklist of the steps in creating a new release.
 In hopes this will prevent omissions.
 
 DavidA. 30 November 2012
@@ -41,7 +41,7 @@ RUNALL.sh
 
 The notion of keeping baseline test output and simply
 comparing output of a previous release vs the new 
-candiate release would involve saving some really large files.
+candidate release would involve saving some really large files.
 So the present test suite instead runs each test with
 two dwarfdump* versions and compares the output.
 
@@ -66,28 +66,40 @@ In case all tests pass:
     dwarfdump for the next test run.
 
 In the Source:
-    sh UPDATEDWARFDUMPVERSION.sh #updates the version string in 4 places
-    update dwarfdump[2]/ChangeLog files to reflect the new version.
+    sh UPDATEDWARFDUMPVERSION.sh #updates the version string
+    a libdwarf header file (libdwarf/dwarf_version.h).
+
+    Update dwarfdump[2]/ChangeLog files to reflect the new version.
     commit the new version string. If this has been done recently
     enough that users won't see the current version string 
     it need not be done at this time.
 
-    sh BLD #to verify it still builds
+    The release version is in configure.ac. 
+    Currently 20181024
+
     git push origin master  # Push to sourceforge.
-    # We use 20121130 as an example below, use the current date.
-    sh CPTOPUBLIC # To copy relevant Source to a temp directory
-    sh BLDLIBDWARFTAR 20121130 # (use current date) to create a tar.gz
-                               # like libdwarf-20121130.tar.gz
-    md5sum libdwarf-20121130.tar.gz
-    sha512sum libdwarf-20121130.tar.gz
+    # We use 20181024 as an example below, use the current date.
+
+    mkdir /tmp/bld
+    cd /tmp/bld
+    <sourcelocation>/configure
+    make dist
+
+    md5sum libdwarf-20181024.tar.gz
+    sha512sum libdwarf-20181024.tar.gz | fold -w 32
              # To get unforgeable checksums for the tar.gz file
-    git tag -a 20121130  -m 'Release 20121130'
-    git push origin 20121130   # push the tag
+             # md5sum is weak, but the pair should be
+             # a strong confirmation.
+             # The fold(1) is just to make the web
+             # release page easier to work with.
+
+    git tag -a 20181024  -m 'Release 20181024'
+    git push origin 20181024   # push the tag
 
 In the Tests:
     git push origin master
-    git tag -a 20121130  -m 'Release 20121130'
-    git push origin 20121130   # push the tag
+    git tag -a 20181024  -m 'Release 20181024'
+    git push origin 20181024   # push the tag
 
-Update web pages so that the new release is visble to users
+Update web pages so that the new release is visible to users
 and copy the tar.gz to the appropriate web site.
