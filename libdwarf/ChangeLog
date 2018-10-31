@@ -1,3 +1,5 @@
+2018-10-30  David Anderson
+     * dwarf_version.h: Updated date string.
 2018-10-24  David Anderson
      * libdwarf2.1.mm: Added documentation on
        new functions dwarf_object_detector_fd(),
