@@ -548,7 +548,7 @@ dwarf_macho_load_dwarf_section_details64(
     secs->dwarfsectname = "";
     ++secs;
     seci = 1;
-    for (; seci < seccount; ++seci,++secs,curoff += shdrlen ) {
+    for (; seci < secalloc; ++seci,++secs,curoff += shdrlen ) {
         int res = 0;
         struct section_64 mosec;
 

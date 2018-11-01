@@ -1,3 +1,10 @@
+2018-11-01  David Anderson
+     * dwarf_version.h: Updated date string.
+     * dwarf_machoread.c(dwarf_macho_load_dwarf_section_details64):
+       Had an off-by-one error (which was already corrected
+       in the *details32 function). If the last section
+       was DWARF related this bug caused a DWARF section to
+       appear unavailable.
 2018-10-30  David Anderson
      * dwarf_version.h: Updated date string.
 2018-10-24  David Anderson

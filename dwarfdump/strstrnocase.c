@@ -49,7 +49,7 @@ strstrnocase.c
 */
 #include <ctype.h>
 #include <stdio.h>
-#include <globals.h>
+#include "globals.h"
 
 boolean
 is_strstrnocase(const char * container, const char * contained)

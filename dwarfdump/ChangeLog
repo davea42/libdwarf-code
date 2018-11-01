@@ -1,3 +1,7 @@
+2018-11-01 David Anderson
+    * strstrnocase.c had include <globals.h>
+      which is now  "globals.h" as it was always
+      supposed to be.
 2018-10-30 David Anderson
     * dwarfdump.1: Now shows long and short options.
       For a few options it references the help file.
