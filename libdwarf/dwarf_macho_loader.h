@@ -79,7 +79,10 @@ struct mach_header {
     TYP(flags,4); /* flags */
 };
 
-/* Constant for the magic field of the mach_header (32-bit architectures) */
+/*  Constant for the magic field of the
+    mach_header (32-bit architectures)
+    MH_MAGIC MH_MAGIC_64 appear in big-endian objects
+    MH_CIGAM MH_CIGAM_64 appear in little-endian objects */
 #define    MH_MAGIC    0xfeedface    /* the mach magic number */
 #define MH_CIGAM    0xcefaedfe    /* NXSwapInt(MH_MAGIC) */
 

@@ -637,6 +637,11 @@ dwarf_load_macho_commands(
     unsigned segment_command_count = 0;
     int res = 0;
 
+    if (mfp->mo_command_count >= mfp->mo_filesize) {
+        /* corrupt object. */
+        *errcode = DW_DLE_MACH_O_SEGOFFSET_BAD;
+        return DW_DLV_ERROR;
+    }
     if ((curoff + mfp->mo_command_count * sizeof(mc)) >=
         mfp->mo_filesize) {
         /* corrupt object. */
@@ -751,9 +756,18 @@ _dwarf_macho_object_access_internals_init(
     dwarf_macho_object_access_internals_t * intfc = internals;
     Dwarf_Unsigned i  = 0;
     struct generic_macho_section *sp = 0;
-    struct Dwarf_Obj_Access_Interface_s localdoas;
+    struct Dwarf_Obj_Access_Interface_s *localdoas;
     int res = 0;
 
+    /*  Must malloc as _dwarf_destruct_macho_access()
+        forces that due to other uses. */
+    localdoas = (struct Dwarf_Obj_Access_Interface_s *)
+        malloc(sizeof(struct Dwarf_Obj_Access_Interface_s));
+    if (!localdoas) {
+        *errcode = DW_DLE_ALLOC_FAIL;
+        return DW_DLV_ERROR;
+    }
+    memset(localdoas,0,sizeof(struct Dwarf_Obj_Access_Interface_s));
     intfc->mo_ident[0]    = 'M';
     intfc->mo_ident[1]    = '1';
     intfc->mo_fd          = fd;
@@ -765,7 +779,7 @@ _dwarf_macho_object_access_internals_init(
     intfc->mo_ftype       = ftype;
 
 #ifdef WORDS_BIGENDIAN
-    if (endian == DW_ENDIAN_LITTLE || endian == DW_ENDIAN_OPPOSITE ) {
+    if (endian == DW_ENDIAN_LITTLE ) {
         intfc->mo_copy_word = _dwarf_memcpy_swap_bytes;
         intfc->mo_byteorder = DW_OBJECT_LSB;
     } else {
@@ -773,7 +787,7 @@ _dwarf_macho_object_access_internals_init(
         intfc->mo_byteorder = DW_OBJECT_MSB;
     }
 #else  /* LITTLE ENDIAN */
-    if (endian == DW_ENDIAN_LITTLE || endian == DW_ENDIAN_SAME ) {
+    if (endian == DW_ENDIAN_LITTLE ) {
         intfc->mo_copy_word = memcpy;
         intfc->mo_byteorder = DW_OBJECT_LSB;
     } else {
@@ -783,17 +797,17 @@ _dwarf_macho_object_access_internals_init(
 #endif /* LITTLE- BIG-ENDIAN */
     res = dwarf_load_macho_header(intfc,errcode);
     if (res != DW_DLV_OK) {
-        localdoas.object = intfc;
-        localdoas.methods = 0;
-        _dwarf_destruct_macho_access(&localdoas);
+        localdoas->object = intfc;
+        localdoas->methods = 0;
+        _dwarf_destruct_macho_access(localdoas);
         return res;
     }
     /* Load sections */
     res = dwarf_load_macho_commands(intfc,errcode);
     if (res != DW_DLV_OK) {
-        localdoas.methods = 0;
-        localdoas.object = intfc;
-        _dwarf_destruct_macho_access(&localdoas);
+        localdoas->methods = 0;
+        localdoas->object = intfc;
+        _dwarf_destruct_macho_access(localdoas);
         return res;
     }
     sp = intfc->mo_dwarf_sections+1;
@@ -808,6 +822,7 @@ _dwarf_macho_object_access_internals_init(
             }
         }
     }
+    free(localdoas);
     return DW_DLV_OK;
 }
 

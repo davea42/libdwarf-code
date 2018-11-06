@@ -61,8 +61,6 @@ extern "C" {
 #define DW_ENDIAN_UNKNOWN 0
 #define DW_ENDIAN_BIG     1
 #define DW_ENDIAN_LITTLE  2
-#define DW_ENDIAN_SAME    3
-#define DW_ENDIAN_OPPOSITE 4
 #endif /* DW_ENDIAN_UNKNOWN */
 
 /*  offsetsize refers to the object-file-format.

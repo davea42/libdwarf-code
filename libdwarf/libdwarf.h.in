@@ -4532,8 +4532,6 @@ int dwarf_pro_get_string_stats(Dwarf_P_Debug /*dbg*/,
 #define DW_ENDIAN_UNKNOWN  0
 #define DW_ENDIAN_BIG      1
 #define DW_ENDIAN_LITTLE   2
-#define DW_ENDIAN_SAME     3  /* Same as host */
-#define DW_ENDIAN_OPPOSITE 4  /* Opposite of host */
 #endif /* DW_ENDIAN_UNKNOWN */
 
 int dwarf_object_detector_path(const char  *path,

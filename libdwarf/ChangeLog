@@ -1,12 +1,29 @@
+2018-11-05  David Anderson
+     * dwarf_machoread.c: Added a sanity check on mo_command_count
+       before adding it to anything.
+       Now malloc a Dwarf_Obj_Access_Interface_s so we
+       use a local function consistently.
+       We were freeing on an address of a local variable...
+       But only if a mach-o object was seriously corrupted.
+     * dwarf_object_detector.c: We now know we misinterpreted
+       a comment in the macho-loader header. DW_ENDIAN_SAME
+       (and _OPPOSITE) were inappropriate.
+       Endianness detection for PE and mach-o objects are fixed.
+     * libdwarf.h.in,dwarf_object_detector.h: Dropping 
+       DW_ENDIAN_SAME and DW_ENDIAN_OPPOSITE as we 
+       no longer use them.
+     * dwarf_macho_loader.h: Added commentary about
+       the MH_MAGIC etc values.
+     * libdwarf_version.h: Updated date string.
 2018-11-01  David Anderson
-     * dwarf_version.h: Updated date string.
+     * libdwarf_version.h: Updated date string.
      * dwarf_machoread.c(dwarf_macho_load_dwarf_section_details64):
        Had an off-by-one error (which was already corrected
        in the *details32 function). If the last section
        was DWARF related this bug caused a DWARF section to
        appear unavailable.
 2018-10-30  David Anderson
-     * dwarf_version.h: Updated date string.
+     * libdwarf_version.h: Updated date string.
 2018-10-24  David Anderson
      * libdwarf2.1.mm: Added documentation on
        new functions dwarf_object_detector_fd(),

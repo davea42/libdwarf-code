@@ -98,6 +98,21 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define MH_CIGAM_64 0xcffaedfe
 #endif /*  MH_MAGIC_64 */
 
+static unsigned long
+magic_copy(unsigned char *d, unsigned len)
+{
+    unsigned i = 0;
+    unsigned long v = 0;
+
+    v = d[0];
+    for(i = 1 ; i < len; ++i) {
+        v <<= 8;
+        v |=  d[i];
+    }
+    return v;
+}
+
+
 #ifdef WORDS_BIGENDIAN
 #define ASNAR(func,t,s)                         \
     do {                                        \
@@ -355,21 +370,27 @@ is_pe_object(int fd,
         return res;
     }
     /* No swap here, want it as in the file */
-    ASNAR(memcpy,dos_sig,dhinmem.dh_mz);
+    dos_sig = magic_copy((unsigned char *)dhinmem.dh_mz,
+        sizeof(dhinmem.dh_mz));
     if (dos_sig == IMAGE_DOS_SIGNATURE) {
+       /*  IMAGE_DOS_SIGNATURE assumes bytes reversed by little-endian
+           load, so we intrepet a match the other way. */
+       /* BIG ENDIAN. From looking at hex characters in object  */
+#ifdef WORDS_BIGENDIAN
+        word_swap = memcpy;
+#else  /* LITTLE ENDIAN */
+        word_swap = memcpy_swap_bytes;
+#endif /* LITTLE- BIG-ENDIAN */
+        locendian = DW_ENDIAN_BIG;
+    } else if (dos_sig == IMAGE_DOS_REVSIGNATURE) {
+       /* raw load, so  intrepet a match the other way. */
+       /* LITTLE ENDIAN */
 #ifdef WORDS_BIGENDIAN
         word_swap = memcpy_swap_bytes;
 #else  /* LITTLE ENDIAN */
         word_swap = memcpy;
 #endif /* LITTLE- BIG-ENDIAN */
         locendian = DW_ENDIAN_LITTLE;
-    } else if (dos_sig == IMAGE_DOS_REVSIGNATURE) {
-        locendian = DW_ENDIAN_BIG;
-#ifdef WORDS_BIGENDIAN
-        word_swap = memcpy;
-#else  /* LITTLE ENDIAN */
-        word_swap = memcpy_swap_bytes;
-#endif /* LITTLE- BIG-ENDIAN */
     } else {
         /* Not dos header not a PE file we recognize */
         *errcode = DW_DLE_FILE_WRONG_TYPE;
@@ -438,26 +459,21 @@ is_mach_o_magic(struct elf_header *h,
     unsigned long magicval = 0;
     unsigned locendian = 0;
     unsigned locoffsetsize = 0;
-    char t[4];
 
-    t[0] = h->e_ident[0];
-    t[1] = h->e_ident[1];
-    t[2] = h->e_ident[2];
-    t[3] = h->e_ident[3];
-    /*  No swapping here. Need t to match size of
+    /*  No swapping here. Need to match size of
         Mach-o magic field. */
-    ASNAR(memcpy,magicval,t);
+    magicval = magic_copy(h->e_ident,4);
     if (magicval == MH_MAGIC) {
-        locendian = DW_ENDIAN_SAME;
+        locendian = DW_ENDIAN_BIG;
         locoffsetsize = 32;
     } else if (magicval == MH_CIGAM) {
-        locendian = DW_ENDIAN_OPPOSITE;
+        locendian = DW_ENDIAN_LITTLE;
         locoffsetsize = 32;
     }else if (magicval == MH_MAGIC_64) {
-        locendian = DW_ENDIAN_SAME;
+        locendian = DW_ENDIAN_BIG;
         locoffsetsize = 64;
     } else if (magicval == MH_CIGAM_64) {
-        locendian = DW_ENDIAN_OPPOSITE;
+        locendian = DW_ENDIAN_LITTLE;
         locoffsetsize = 64;
     } else {
         return FALSE;
