@@ -1,3 +1,7 @@
+2018-11-06  David Anderson
+     * dwarf_machoread.c(_dwarf_macho_object_access_init):
+       Following a malloc the null
+       check referenced the wrong variable!
 2018-11-05  David Anderson
      * dwarf_machoread.c: Added a sanity check on mo_command_count
        before adding it to anything.

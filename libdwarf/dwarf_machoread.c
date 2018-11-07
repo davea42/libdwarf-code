@@ -865,7 +865,7 @@ _dwarf_macho_object_access_init(
     internals->mo_destruct_close_fd = lib_owns_fd;
 
     intfc = malloc(sizeof(Dwarf_Obj_Access_Interface));
-    if (!internals) {
+    if (!intfc) {
         /* Impossible case, we hope. Give up. */
         free(internals);
         *localerrnum = DW_DLE_ALLOC_FAIL;
