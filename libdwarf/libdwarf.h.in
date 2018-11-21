@@ -1335,9 +1335,12 @@ struct Dwarf_Obj_Access_Interface_s {
 #define DW_DLE_FILE_TOO_SMALL                  423
 #define DW_DLE_PATH_SIZE_TOO_SMALL             424
 #define DW_DLE_BAD_TYPE_SIZE                   425
+#define DW_DLE_PE_SIZE_SMALL                   426
+#define DW_DLE_PE_OFFSET_BAD                   427
+#define DW_DLE_PE_STRING_TOO_LONG              428
 
     /* LAST MUST EQUAL LAST ERROR NUMBER */
-#define DW_DLE_LAST        425
+#define DW_DLE_LAST        428
 
 #define DW_DLE_LO_USER     0x10000
 

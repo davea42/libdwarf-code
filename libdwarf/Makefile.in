@@ -1929,6 +1929,9 @@ $(errmsg_check_OBJECTS): CC=$(CC_FOR_BUILD)
 $(errmsg_check_OBJECTS): CFLAGS=$(CFLAGS_FOR_BUILD)
 $(errmsg_check_OBJECTS): CPPFLAGS=$(CPPFLAGS_FOR_BUILD)
 errmsg_check$(BUILD_EXEEXT): CC=$(CC_FOR_BUILD)
+errmsg_check$(BUILD_EXEEXT): CFLAGS=$(CFLAGS_FOR_BUILD)
+errmsg_check$(BUILD_EXEEXT): LDFLAGS=$(LDFLAGS_FOR_BUILD)
+errmsg_check$(BUILD_EXEEXT): CPPFLAGS=$(CPPFLAGS_FOR_BUILD)
 
 errmsg_check_list: errmsg_check$(BUILD_EXEEXT)
 	$(AM_V_at)grep DW_DLE libdwarf.h >errmsg_check_list

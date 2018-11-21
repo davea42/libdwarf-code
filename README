@@ -195,6 +195,35 @@ cd code
 make
 # done
 
+Doing a build on Ubuntu 18.04 (X86_64 environment)
+of a 32-bit libdwarf/dwarfdump requires some care.
+
+Doing
+  sudo apt install gcc-6-multilib
+helps.
+
+It is a requirement that the build and host machines match
+with respect to the existence of system headers
+and of libraries.
+It seems necessary, in /usr/lib/i386-linux-gnu/ , to 
+    sudo cp libelf.so.1 libelf.so
+so the linker can find 32-bit libelf.
+
+In addition, one must build zlib for the host
+(if you have zlib in the build environment)
+(see above for the zlib source link)
+with
+CFLAGS=-m32 ./configure
+make
+sudo cp libz.a /usr/lib/i386-linux-gnu/
+sudo cp libz.so /usr/lib/i386-linux-gnu/
+
+#building libdwarf/dwarfdump in the source for no good reason:
+./configure  --host=i386-linux-gnu \
+ --build=x86_64-pc-linux-gnu \
+ CFLAGS_FOR_BUILD="-O2 -m64" \
+ CFLAGS="-O2 -m32" 
+
 ------------------ notes on updating ------
 
 To update configure after hand updating a Makefile.am or

@@ -32,6 +32,32 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 /*  This file reads the parts of an Apple mach-o object
     file appropriate to reading DWARF debugging data.
+
+    Overview:
+    _dwarf_macho_setup() Does all macho setup.
+      calls _dwarf_macho_access_init()
+         calls _dwarf_macho_object_access_internals_init()
+            Creates internals record 'M',
+               dwarf_macho_object_access_internals_t
+            Sets flags/data in internals record
+            Loads macho object data needed later.
+         Sets methods struct to access macho object. 
+      calls _dwarf_object_init_b() Creates Dwarf_Debug, independent
+        of any macho code.
+      Sets internals record into dbg.
+    ----------------------
+    _dwarf_destruct_macho_access(). This frees
+      the macho internals record created in
+      _dwarf_macho_object_access_internals_init()
+      in case of errors during setup or when
+      dwarf_finish() is called.  Works safely for
+      partially or fully set-up macho internals record.
+
+    Other than in _dwarf_macho_setup() the macho code
+    knows nothing about Dwarf_Debug, and the rest of
+    libdwarf knows nothing about the content of the
+    macho internals record.
+
 */
 
 #include "config.h"

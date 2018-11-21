@@ -1,3 +1,18 @@
+2018-11-20  David Anderson
+     * Makefile.am: The setup for cross-builds
+       was incomplete for errmsg_check. Fixed.
+     * dwarf_base_types.h: Removed a
+       nested include of libdwarfdefs.h.
+     * dwarf_incl.h: Moved the include of libdwarfdefs.h
+       to here.
+     * dwarf_errmsg_list.h: Added new (as yet
+       unused) error messages.
+     * dwarf_machoread.c: Added overview commentary.
+     * dwarf_test_errmsg_list.c: Improved error messages
+       in a few cases so errors detected are more
+       self-explanatory.
+     * libdwarf.h.in: Added new (as yet unused) error
+       message defines.
 2018-11-06  David Anderson
      * dwarf_machoread.c(_dwarf_macho_object_access_init):
        Following a malloc the null

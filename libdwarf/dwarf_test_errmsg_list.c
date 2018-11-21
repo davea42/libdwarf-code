@@ -130,7 +130,7 @@ check_dle_list(const char *path)
 
     fin = fopen(path, "r");
     if(!fin) {
-        printf("Unable to open define list %s\n",path);
+        printf("Unable to open define list to read %s\n",path);
         exit(1);
     }
     for(;;++linenum) {
@@ -167,7 +167,8 @@ check_dle_list(const char *path)
             pastname = curdefname +curdefname_len;
             if (!*pastname) {
                 /* At end of line. Missing value. */
-                printf("define line %u has no number value!\n",linenum);
+                printf("define line %u of %s: has no number value!\n",
+                    linenum,path);
                 exit(1);
             }
             if (*pastname == ' ') {
@@ -186,8 +187,10 @@ check_dle_list(const char *path)
             exit(1);
         }
         if (v == 0 && endptr == numstart) {
-            printf("define line %u: number value missing.\n",
-                linenum);
+            printf("define line %u of %s: number value missing.\n",
+                linenum,path);
+            printf("Leaving a space as in #define A B 3"
+                " in libdwarf.h.in will cause this.\n");
             exit(1);
         }
         if (*endptr != ' ' && *endptr != '\n') {

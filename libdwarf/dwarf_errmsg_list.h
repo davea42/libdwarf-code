@@ -497,5 +497,8 @@ const char *_dwarf_errmsgs[] = {
     "DW_DLE_FILE_TOO_SMALL(423) File is too small to be an object file.",
     "DW_DLE_PATH_SIZE_TOO_SMALL(424) buffer passed to dwarf_object_detector_path is too small.",
     "DW_DLE_BAD_TYPE_SIZE(425) At compile time the build configured itself improperly.",
+    "DW_DLE_PE_SIZE_SMALL(426) File too small to be valid PE object.",
+    "DW_DLE_PE_OFFSET_BAD(427) Calculated offset too large. Corrupt object.",
+    "DW_DLE_PE_STRING_TOO_LONG(428) Increase size for call.",
 };
 #endif /* DWARF_ERRMSG_LIST_H */
