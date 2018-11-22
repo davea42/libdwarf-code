@@ -1,3 +1,7 @@
+2018-11-22  David Anderson
+     * dwarf_machoread.c: A bug in the ASNAR macro
+       for big-endian hosts lead to coredump reading
+       mach-o objects (of any endianness) on such hosts.
 2018-11-20  David Anderson
      * Makefile.am: The setup for cross-builds
        was incomplete for errmsg_check. Fixed.
