@@ -1,3 +1,7 @@
+2018-11-24  David Anderson
+     * dwarf_object_detector.c: The same ASNAR bug
+       fixed here now.
+     * libdwarf_version.h: Updated date string.
 2018-11-22  David Anderson
      * dwarf_machoread.c: A bug in the ASNAR macro
        for big-endian hosts lead to coredump reading
