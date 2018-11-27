@@ -338,7 +338,6 @@ main(int argc, char *argv[])
         /* We have a MacOS dsym, file_name altered */
         file_name = makename(out_path_buf);
     }
-
     fd = open_a_file(file_name);
     if (fd == -1) {
         fprintf(stderr, "%s ERROR:  can't open %s\n", glflags.program_name,
@@ -492,6 +491,17 @@ main(int argc, char *argv[])
             file_name,
             tied_file_name,
             mach_o_archive,
+            glflags.config_file_data);
+        flag_data_post_cleanup();
+    } else if (ftype == DW_FTYPE_PE) {
+        int pe_archive = 0; /* archives not supported. */
+
+        flag_data_pre_allocation();
+        process_one_file(fd,tiedfd,
+            elf,elftied,
+            file_name,
+            tied_file_name,
+            pe_archive,
             glflags.config_file_data);
         flag_data_post_cleanup();
     } else {

@@ -934,6 +934,20 @@ extern int _dwarf_macho_setup(int fd,
     Dwarf_Debug *dbg,Dwarf_Error *error);
 void _dwarf_destruct_macho_access(struct Dwarf_Obj_Access_Interface_s *aip);
 
+extern int _dwarf_pe_setup(int fd,
+    char *path,
+    int lib_owns_fd,
+    unsigned ftype,
+    unsigned endian,
+    unsigned offsetsize,
+    size_t filesize,
+    Dwarf_Unsigned access,
+    unsigned groupnumber,
+    Dwarf_Handler errhand,
+    Dwarf_Ptr errarg,
+    Dwarf_Debug *dbg,Dwarf_Error *error);
+void _dwarf_destruct_pe_access(struct Dwarf_Obj_Access_Interface_s *aip);
+
 extern Dwarf_Bool _dwarf_allow_formudata(unsigned form);
 extern int _dwarf_formudata_internal(Dwarf_Debug dbg,
     unsigned form,

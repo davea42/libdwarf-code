@@ -132,6 +132,12 @@ int dwarf_init_path(const char *path,
         return res;
     }
     case DW_FTYPE_PE:
+        res = _dwarf_pe_setup(fd,
+            true_path_out_buffer?true_path_out_buffer:"",
+            lib_owns_fd,
+            ftype,endian,offsetsize,filesize,
+            access,groupnumber,errhand,errarg,ret_dbg,error);
+        return res;
     default:
         DWARF_DBG_ERROR(NULL, DW_DLE_FILE_WRONG_TYPE, DW_DLV_ERROR);
     }
@@ -161,6 +167,7 @@ dwarf_init_b(int fd,
     res = dwarf_object_detector_fd(fd, &ftype,
         &endian,&offsetsize,&filesize,&errcode);
     if (res == DW_DLV_NO_ENTRY) {
+
         return res;
     } else if (res == DW_DLV_ERROR) {
         DWARF_DBG_ERROR(NULL, DW_DLE_FILE_WRONG_TYPE, DW_DLV_ERROR);
@@ -182,8 +189,14 @@ dwarf_init_b(int fd,
         }
 
     case DW_FTYPE_PE: {
-        /* FIXME: temporary */
-        break;
+        res = _dwarf_pe_setup(fd,
+            "",
+            lib_owns_fd,
+            ftype,endian,offsetsize,filesize,
+            access,group_number,errhand,errarg,ret_dbg,error);
+    if (res == DW_DLV_NO_ENTRY) {
+    }
+        return res;
         }
     }
     DWARF_DBG_ERROR(NULL, DW_DLE_FILE_WRONG_TYPE, DW_DLV_ERROR);
@@ -211,10 +224,8 @@ dwarf_finish(Dwarf_Debug dbg, Dwarf_Error * error)
             dwarf_elf_object_access_finish(dbg->de_obj_file);
         } else if (otype == 'M') {
             _dwarf_destruct_macho_access(dbg->de_obj_file);
-#if 0
         } else if (otype == 'P') {
-            /* PE files not yet dealt with */
-#endif
+            _dwarf_destruct_pe_access(dbg->de_obj_file);
         } else {
             /*  Do nothing. A serious internal error */
         }

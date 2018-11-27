@@ -32,7 +32,6 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 /*  This file reads the parts of an Apple mach-o object
     file appropriate to reading DWARF debugging data.
-
     Overview:
     _dwarf_macho_setup() Does all macho setup.
       calls _dwarf_macho_access_init()
@@ -216,6 +215,12 @@ macho_load_section (void *obj, Dwarf_Half section_index,
         if (!sp->size) {
             return DW_DLV_NO_ENTRY;
         }
+        if ((sp->size + sp->offset) >
+            macho->mo_filesize) {
+            *error = DW_DLE_FILE_TOO_SMALL;
+            return DW_DLV_ERROR;
+        }
+
         sp->loaded_data = malloc(sp->size);
         if(!sp->loaded_data) {
             *error = DW_DLE_ALLOC_FAIL;
@@ -239,10 +244,13 @@ void
 _dwarf_destruct_macho_access(
     struct Dwarf_Obj_Access_Interface_s *aip)
 {
-    dwarf_macho_object_access_internals_t *mp =
-        (dwarf_macho_object_access_internals_t *)aip->object;
+    dwarf_macho_object_access_internals_t *mp = 0;
     Dwarf_Unsigned i = 0;
 
+    if(!aip) {
+        return;
+    }
+    mp = (dwarf_macho_object_access_internals_t *)aip->object;
     if (mp->mo_destruct_close_fd) {
         close(mp->mo_fd);
         mp->mo_fd = -1;
@@ -281,6 +289,10 @@ load_macho_header32(dwarf_macho_object_access_internals_t *mfp, int *errcode)
     struct mach_header mh32;
     int res = 0;
 
+    if (sizeof(mh32) > mfp->mo_filesize) {
+          *errcode = DW_DLE_FILE_TOO_SMALL;
+          return DW_DLV_ERROR;
+    }
     res = RRMOA(mfp->mo_fd,&mh32,0,sizeof(mh32),errcode);
     if (res != DW_DLV_OK) {
         return res;
@@ -307,6 +319,10 @@ load_macho_header64(dwarf_macho_object_access_internals_t *mfp,
     struct mach_header_64 mh64;
     int res = 0;
 
+    if (sizeof(mh64) > mfp->mo_filesize) {
+          *errcode = DW_DLE_FILE_TOO_SMALL;
+          return DW_DLV_ERROR;
+    }
     res = RRMOA(mfp->mo_fd,&mh64,0,sizeof(mh64),errcode);
     if (res != DW_DLV_OK) {
         return res;
@@ -506,6 +522,14 @@ dwarf_macho_load_dwarf_section_details32(
     }
     mfp->mo_dwarf_sections = secs;
     mfp->mo_dwarf_sectioncount = secalloc;
+    
+    if ((curoff  > mfp->mo_filesize) ||
+        (seccount > mfp->mo_filesize) ||  
+        (curoff+(seccount*sizeof(struct section)) > 
+            mfp->mo_filesize)) {
+          *errcode = DW_DLE_FILE_TOO_SMALL;
+          return DW_DLV_ERROR;
+    }
     secs->offset_of_sec_rec = curoff;
     /*  Leave 0 section all zeros except our offset,
         elf-like in a sense */
@@ -573,6 +597,13 @@ dwarf_macho_load_dwarf_section_details64(
         elf-like in a sense */
     secs->dwarfsectname = "";
     ++secs;
+    if ((curoff  > mfp->mo_filesize) ||
+        (seccount > mfp->mo_filesize) ||  
+        (curoff+(seccount*sizeof(struct section_64)) > 
+            mfp->mo_filesize)) {
+          *errcode = DW_DLE_FILE_TOO_SMALL;
+          return DW_DLV_ERROR;
+    }
     seci = 1;
     for (; seci < secalloc; ++seci,++secs,curoff += shdrlen ) {
         int res = 0;
@@ -749,6 +780,7 @@ _dwarf_macho_setup(int fd,
         groupnumber, dbg, error);
     if (res != DW_DLV_OK){
         _dwarf_destruct_macho_access(binary_interface);
+        return res;
     }
     intfc = binary_interface->object;
     intfc->mo_path = strdup(true_path);

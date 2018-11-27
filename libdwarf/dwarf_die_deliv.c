@@ -439,6 +439,11 @@ _dwarf_make_CU_Context(Dwarf_Debug dbg,
     READ_AREA_LENGTH_CK(dbg, length, Dwarf_Unsigned,
         cu_ptr, local_length_size, local_extension_size,
         error,section_size,section_end_ptr);
+    if (!length) { 
+        dwarf_dealloc(dbg, cu_context, DW_DLA_CU_CONTEXT);
+        return DW_DLV_NO_ENTRY;
+    }
+
     cu_context->cc_length_size = local_length_size;
     cu_context->cc_extension_size = local_extension_size;
 

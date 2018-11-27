@@ -130,10 +130,17 @@ dwarf_get_aranges_list(Dwarf_Debug dbg,
             _dwarf_error(dbg, error,DW_DLE_ARANGES_HEADER_ERROR);
             return DW_DLV_ERROR;
         }
+        if (!area_length) {
+            /*  We read 4 bytes of zero, so area-length zero. 
+                Keep scanning. First seen Nov 27, 2018
+                in GNU-cc in windows dll. */
+            continue;
+        }
 
         READ_UNALIGNED_CK(dbg, version, Dwarf_Half,
             arange_ptr, DWARF_HALF_SIZE,
             error,end_this_arange);
+
         arange_ptr += DWARF_HALF_SIZE;
         if (arange_ptr >= end_this_arange) {
             _dwarf_error(dbg, error, DW_DLE_ARANGES_HEADER_ERROR);
@@ -220,7 +227,7 @@ dwarf_get_aranges_list(Dwarf_Debug dbg,
                 currently with no way to do that.
                 So we just hope no one using
                 segment_selectors, really. FIXME */
-            if ( segment_size) {
+            if (segment_size) {
                 /*  Only applies if cu_version >= 4. */
                 READ_UNALIGNED_CK(dbg, segment_selector, Dwarf_Unsigned,
                     arange_ptr, segment_size,

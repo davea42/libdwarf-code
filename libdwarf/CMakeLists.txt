@@ -5,7 +5,9 @@ dwarf_form.c dwarf_frame.c dwarf_frame2.c dwarf_funcs.c dwarf_gdbindex.c dwarf_g
 dwarf_line.c dwarf_loc.c 
 dwarf_machoread.c dwarf_macro.c dwarf_macro5.c
 dwarf_object_read_common.c dwarf_object_detector.c
-dwarf_original_elf_init.c dwarf_pubtypes.c dwarf_query.c dwarf_ranges.c dwarf_string.c dwarf_tied.c 
+dwarf_original_elf_init.c 
+dwarf_pe_descr.h dwarf_peread.c dwarf_peread.h
+dwarf_pubtypes.c dwarf_query.c dwarf_ranges.c dwarf_string.c dwarf_tied.c 
 dwarf_str_offsets.c
 dwarf_tsearchhash.c dwarf_types.c dwarf_util.c dwarf_vars.c dwarf_weaks.c dwarf_xu_index.c dwarf_print_lines.c malloc_check.c pro_alloc.c pro_arange.c 
 pro_die.c pro_dnames.c pro_encode_nm.c pro_error.c pro_expr.c pro_finish.c pro_forms.c pro_funcs.c pro_frame.c pro_init.c pro_line.c pro_reloc.c pro_reloc_stream.c 

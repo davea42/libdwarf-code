@@ -1438,7 +1438,6 @@ dwarf_object_init_b(Dwarf_Obj_Access_Interface* obj, Dwarf_Handler errhand,
 
     dbg->de_obj_file = obj;
     dbg->de_groupnumber = groupnumber;
-
     setup_result = _dwarf_setup(dbg, error);
     if (setup_result == DW_DLV_OK) {
         int fission_result = load_debugfission_tables(dbg,error);

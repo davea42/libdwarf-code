@@ -181,20 +181,20 @@ typedef Dwarf_Unsigned BIGGEST_UINT;
 
 #ifdef WORDS_BIGENDIAN
 #define READ_UNALIGNED_CK(dbg,dest,desttype, source, length,error,endptr) \
-    do {                                                                  \
-        BIGGEST_UINT _ltmp = 0;                                           \
-        Dwarf_Byte_Ptr readend = source+length;                           \
-        if (readend <  source) {                                          \
-            _dwarf_error(dbg, error, DW_DLE_READ_LITTLEENDIAN_ERROR);     \
-            return DW_DLV_ERROR;                                          \
-        }                                                                 \
-        if (readend > endptr) {                                           \
-            _dwarf_error(dbg, error, DW_DLE_READ_LITTLEENDIAN_ERROR);     \
-            return DW_DLV_ERROR;                                          \
-        }                                                                 \
-        dbg->de_copy_word( (((char *)(&_ltmp)) + sizeof(_ltmp) - length), \
-            source, length) ;                                             \
-        dest = (desttype)_ltmp;                                           \
+    do {                                                         \
+        BIGGEST_UINT _ltmp = 0;                                  \
+        Dwarf_Byte_Ptr readend = source+length;                  \
+        if (readend <  source) {                                 \
+            _dwarf_error(dbg, error, DW_DLE_READ_BIGENDIAN_ERROR); \
+            return DW_DLV_ERROR;                                 \
+        }                                                        \
+        if (readend > endptr) {                                  \
+            _dwarf_error(dbg, error, DW_DLE_READ_BIGENDIAN_ERROR); \
+            return DW_DLV_ERROR;                                 \
+        }                                                        \
+        dbg->de_copy_word( (((char *)(&_ltmp)) +                 \
+            sizeof(_ltmp) - length),source, length) ;            \
+        dest = (desttype)_ltmp;                                  \
     } while (0)
 
 
@@ -206,18 +206,23 @@ typedef Dwarf_Unsigned BIGGEST_UINT;
     on host endianness, not object file endianness.
     The memcpy args are the issue.
 */
-#define SIGN_EXTEND(dest, length)                                          \
-    do {                                                                   \
-        if (*(Dwarf_Sbyte *)((char *)&dest + sizeof(dest) - length) < 0) { \
-            memcpy((char *)&dest, "\xff\xff\xff\xff\xff\xff\xff\xff",      \
-                sizeof(dest) - length);                                    \
-        }                                                                  \
+#define SIGN_EXTEND(dest, length)                                 \
+    do {                                                          \
+        if (*(Dwarf_Sbyte *)((char *)&dest +                      \
+            sizeof(dest) - length) < 0) {                         \
+            memcpy((char *)&dest, "\xff\xff\xff\xff\xff\xff\xff\xff",\
+                sizeof(dest) - length);                           \
+        }                                                         \
     } while (0)
 #else /* LITTLE ENDIAN */
 #define READ_UNALIGNED_CK(dbg,dest,desttype, source, length,error,endptr) \
     do  {                                                 \
         BIGGEST_UINT _ltmp = 0;                           \
         Dwarf_Byte_Ptr readend = source+length;           \
+        if (readend < source) {                           \
+            _dwarf_error(dbg, error, DW_DLE_READ_LITTLEENDIAN_ERROR);\
+            return DW_DLV_ERROR;                          \
+        }                                                 \
         if (readend > endptr) {                           \
             _dwarf_error(dbg, error, DW_DLE_READ_LITTLEENDIAN_ERROR);\
             return DW_DLV_ERROR;                          \

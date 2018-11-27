@@ -1,3 +1,24 @@
+2018-11-26  David Anderson
+     * Makefile.am: Added new files
+     * dwarf_pe_descr.h,dwarf_peread.c,dwarf_peread.h:
+       New files implementing reading DWARF from PE
+       object files.
+     * dwarf_arange.c: Notice some zero length
+       things in .debug_aranges and ignore them.
+       Only ever seen in a PE dll with DWARF .
+       Odd. Needs further checking.
+     * dwarf_die_deliv.c: Here too, check for zero length
+       CU and just move along. Same dll.
+       Odd. Needs further checking.
+     * dwarf_generic_init.c: Call the pe setup code.
+     * dwarf_init_finish.c: Delete useless blank line.
+     * dwarf_machoread.c: Add checks to catch
+       corrupted object files.
+     * dwarf_opaque.h: Add _dwarf_pe_setup().
+     * dwarf_util.h: Some macro lines were too long.
+       Shortened so they are easier to read/verify.
+     * libdwarf_version.h: Updated version string.
+     * CMakeLists.txt: Added new pe files.
 2018-11-24  David Anderson
      * dwarf_object_detector.c: The same ASNAR bug
        fixed here now.
