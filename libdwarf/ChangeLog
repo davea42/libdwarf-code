@@ -1,3 +1,8 @@
+2018-11-28  David Anderson
+     * CMakeLists.txt: The previous change failed to
+       deal with the new pe .h files properly. Fixed.
+       And, the SOURCES and HEADERS lists are now
+       on shorter lines so they fit in 70 characters.
 2018-11-26  David Anderson
      * Makefile.am: Added new files
      * dwarf_pe_descr.h,dwarf_peread.c,dwarf_peread.h:

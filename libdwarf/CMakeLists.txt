@@ -1,24 +1,49 @@
 include(configure.cmake)
 
-set_source_group(SOURCES "Source Files" dwarf_abbrev.c dwarf_alloc.c dwarf_arange.c dwarf_die_deliv.c dwarf_dnames.c dwarf_dsc.c dwarf_elf_access.c dwarf_error.c 
-dwarf_form.c dwarf_frame.c dwarf_frame2.c dwarf_funcs.c dwarf_gdbindex.c dwarf_global.c dwarf_groups.c dwarf_harmless.c dwarf_generic_init.c dwarf_init_finish.c dwarf_leb.c 
+set_source_group(SOURCES "Source Files" dwarf_abbrev.c 
+dwarf_alloc.c dwarf_arange.c dwarf_die_deliv.c 
+dwarf_dnames.c dwarf_dsc.c dwarf_elf_access.c dwarf_error.c 
+dwarf_form.c dwarf_frame.c dwarf_frame2.c dwarf_funcs.c 
+dwarf_gdbindex.c dwarf_global.c dwarf_groups.c 
+dwarf_harmless.c dwarf_generic_init.c dwarf_init_finish.c 
+dwarf_leb.c 
 dwarf_line.c dwarf_loc.c 
 dwarf_machoread.c dwarf_macro.c dwarf_macro5.c
 dwarf_object_read_common.c dwarf_object_detector.c
 dwarf_original_elf_init.c 
-dwarf_pe_descr.h dwarf_peread.c dwarf_peread.h
-dwarf_pubtypes.c dwarf_query.c dwarf_ranges.c dwarf_string.c dwarf_tied.c 
+dwarf_peread.c 
+dwarf_pubtypes.c dwarf_query.c dwarf_ranges.c dwarf_string.c
+dwarf_tied.c 
 dwarf_str_offsets.c
-dwarf_tsearchhash.c dwarf_types.c dwarf_util.c dwarf_vars.c dwarf_weaks.c dwarf_xu_index.c dwarf_print_lines.c malloc_check.c pro_alloc.c pro_arange.c 
-pro_die.c pro_dnames.c pro_encode_nm.c pro_error.c pro_expr.c pro_finish.c pro_forms.c pro_funcs.c pro_frame.c pro_init.c pro_line.c pro_reloc.c pro_reloc_stream.c 
-pro_reloc_symbolic.c pro_pubnames.c pro_section.c pro_types.c pro_vars.c pro_macinfo.c pro_weaks.c)
+dwarf_tsearchhash.c dwarf_types.c dwarf_util.c 
+dwarf_vars.c dwarf_weaks.c dwarf_xu_index.c dwarf_print_lines.c 
+malloc_check.c pro_alloc.c pro_arange.c 
+pro_die.c pro_dnames.c pro_encode_nm.c pro_error.c pro_expr.c 
+pro_finish.c pro_forms.c pro_funcs.c pro_frame.c 
+pro_init.c pro_line.c pro_reloc.c pro_reloc_stream.c 
+pro_reloc_symbolic.c pro_pubnames.c pro_section.c 
+pro_types.c pro_vars.c pro_macinfo.c pro_weaks.c)
 
-set_source_group(HEADERS "Header Files" dwarf.h dwarf_abbrev.h dwarf_alloc.h dwarf_arange.h dwarf_base_types.h dwarf_die_deliv.h dwarf_dnames.h dwarf_dsc.h 
-dwarf_elf_access.h dwarf_error.h dwarf_frame.h dwarf_funcs.h dwarf_gdbindex.h dwarf_global.h dwarf_harmless.h dwarf_incl.h dwarf_line.h dwarf_loc.h 
-dwarf_machoread.h dwarf_macro.h dwarf_macro5.h dwarf_object_detector.h dwarf_opaque.h dwarf_reading.h dwarf_reloc_arm.h dwarf_reloc_mips.h dwarf_reloc_ppc.h dwarf_reloc_ppc64.h dwarf_reloc_x86_64.h dwarf_tsearch.h 
+set_source_group(HEADERS "Header Files" dwarf.h dwarf_abbrev.h
+dwarf_alloc.h dwarf_arange.h dwarf_base_types.h dwarf_die_deliv.h 
+dwarf_dnames.h dwarf_dsc.h 
+dwarf_elf_access.h dwarf_error.h dwarf_frame.h 
+dwarf_funcs.h dwarf_gdbindex.h dwarf_global.h dwarf_harmless.h 
+dwarf_incl.h dwarf_line.h dwarf_loc.h 
+dwarf_machoread.h dwarf_macro.h dwarf_macro5.h 
+dwarf_object_detector.h dwarf_opaque.h 
+dwarf_pe_descr.h dwarf_peread.h
+dwarf_reading.h dwarf_reloc_arm.h dwarf_reloc_mips.h 
+dwarf_reloc_ppc.h dwarf_reloc_ppc64.h dwarf_reloc_x86_64.h 
+dwarf_tsearch.h 
 dwarf_str_offsets.h
-dwarf_types.h dwarf_util.h dwarf_vars.h dwarf_weaks.h dwarf_xu_index.h dwgetopt.h libdwarfdefs.h dwarf_macho_loader.h malloc_check.h pro_alloc.h pro_arange.h pro_die.h 
-pro_encode_nm.h pro_error.h pro_expr.h pro_frame.h pro_incl.h pro_line.h pro_macinfo.h pro_opaque.h pro_reloc.h pro_reloc_stream.h pro_reloc_symbolic.h 
+dwarf_types.h dwarf_util.h dwarf_vars.h dwarf_weaks.h 
+dwarf_xu_index.h dwgetopt.h libdwarfdefs.h 
+dwarf_macho_loader.h malloc_check.h 
+pro_alloc.h pro_arange.h pro_die.h 
+pro_encode_nm.h pro_error.h pro_expr.h pro_frame.h 
+pro_incl.h pro_line.h pro_macinfo.h pro_opaque.h 
+pro_reloc.h pro_reloc_stream.h pro_reloc_symbolic.h 
 pro_section.h pro_types.h pro_util.h)
 
 set_source_group(GENNAMES_SOURCES "Source Files" gennames.c dwgetopt.c dwarf.h)
