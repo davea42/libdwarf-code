@@ -151,6 +151,20 @@ AddAttrToDie(Dwarf_P_Debug dbg,
                 " res "<<res << endl;
             }
             break;
+        } else if (formv == DW_FORM_implicit_const) {
+            int res = 0;
+            Dwarf_Signed sval = f->getSignedVal();
+
+            res = dwarf_add_AT_implicit_const(outdie,attrnum,
+                sval,&a,&error);
+            if (res != DW_DLV_OK) {
+                cerr <<
+                    "ERROR AddAttrToDie: "
+                    "dwarf_add_AT_implicit_const fails,"
+                    " attrnum " << attrnum <<
+                    " res "<<res << endl;
+            }
+            break;
         }
         if (sn == IRFormConstant::SIGNED) {
             Dwarf_Signed sval = f->getSignedVal();
@@ -334,6 +348,7 @@ AddAttrToDie(Dwarf_P_Debug dbg,
         // FIXME: handle indirect form (libdwarf needs feature).
         // FIXME: rel type ok?
         char *mystr = const_cast<char *>(f->getString().c_str());
+
         switch(attrnum) {
         case DW_AT_name:
             a = dwarf_add_AT_name(outdie,mystr,&error);

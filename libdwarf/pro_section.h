@@ -99,11 +99,20 @@ int _dwarf_transform_arange_to_disk(Dwarf_P_Debug dbg,
     Dwarf_Signed *nbufs,
     Dwarf_Error * error);
 
-/* These are for creating ELF section type codes.
+/*  These are for creating ELF section type codes.
+    We are not trying to match any particulare
+    ABI's settings for section type.
+    In the producer, see de_callback_func() calls.
+
+    If SHT_MIPS_DWARF was defined sometimes
+    that was the value taken:  0x7000001e
+    If it's important to someone then
+    passing in a string like SHT=0x7000001e
+    to the 'extra' argument of dwarf_producer_init()
+    would work nicely (leading/trailing spaces
+    are allowed, as is a NULL pointer instead
+    of a string).
+    One is a convenient default for testing purposes.
 */
-#if defined(linux) || defined(__BEOS__) || !defined(SHT_MIPS_DWARF)
-/* Intel's SoftSdv accepts only this */
-#define SECTION_TYPE            SHT_PROGBITS
-#else
-#define SECTION_TYPE            SHT_MIPS_DWARF
-#endif
+#define SECTION_TYPE 1  /* SHT_PROGBITS in Elf. */
+

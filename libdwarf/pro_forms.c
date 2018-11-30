@@ -1148,6 +1148,47 @@ dwarf_add_AT_const_value_signedint(Dwarf_P_Die ownerdie,
         error);
 }
 
+int
+dwarf_add_AT_implicit_const(Dwarf_P_Die ownerdie,
+    Dwarf_Half attrnum,
+    Dwarf_Signed signed_value,
+    Dwarf_P_Attribute *outattr,
+    Dwarf_Error * error)
+{
+    Dwarf_P_Attribute new_attr = 0;
+    Dwarf_P_Debug dbg = 0;
+
+    if (ownerdie == NULL) {
+        _dwarf_p_error(dbg, error, DW_DLE_DIE_NULL);
+        return DW_DLV_ERROR;
+    }
+    dbg = ownerdie->di_dbg;
+
+    new_attr = (Dwarf_P_Attribute)
+        _dwarf_p_get_alloc(dbg, sizeof(struct Dwarf_P_Attribute_s));
+    if (new_attr == NULL) {
+        _dwarf_p_error(dbg, error, DW_DLE_ALLOC_FAIL);
+        return DW_DLV_ERROR;
+    }
+
+    new_attr->ar_attribute = attrnum;
+    new_attr->ar_attribute_form = DW_FORM_implicit_const;
+    new_attr->ar_rel_type = R_MIPS_NONE;
+    new_attr->ar_reloc_len = 0; /* unused for R_MIPS_NONE */
+    new_attr->ar_next = 0;
+
+    /*  The value will go in the abbrev section.
+        Not the DIE. Encoding done with abbrev generation. */
+    new_attr->ar_data = 0;
+    new_attr->ar_nbytes = 0;
+    new_attr->ar_implicit_const = signed_value;
+
+    /* add attribute to the die */
+    _dwarf_pro_add_at_to_die(ownerdie, new_attr);
+    *outattr = new_attr;
+    return DW_DLV_OK;
+}
+
 Dwarf_P_Attribute
 dwarf_add_AT_any_value_sleb(Dwarf_P_Die ownerdie,
     Dwarf_Half attrnum,

@@ -40,6 +40,9 @@ struct Dwarf_P_Abbrev_s {
     Dwarf_Ubyte abb_children; /* if children are present */
     Dwarf_ufixed *abb_attrs;  /* holds names of attrs */
     Dwarf_ufixed *abb_forms;  /* forms of attributes */
+
+    /* 0 but if DW_FORM_implicit_value is value */
+    Dwarf_Signed *abb_implicits;
     int abb_n_attr;           /* num of attrs = # of forms */
     Dwarf_P_Abbrev abb_next;
 };

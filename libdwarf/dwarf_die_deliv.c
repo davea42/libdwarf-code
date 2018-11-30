@@ -439,7 +439,7 @@ _dwarf_make_CU_Context(Dwarf_Debug dbg,
     READ_AREA_LENGTH_CK(dbg, length, Dwarf_Unsigned,
         cu_ptr, local_length_size, local_extension_size,
         error,section_size,section_end_ptr);
-    if (!length) { 
+    if (!length) {
         dwarf_dealloc(dbg, cu_context, DW_DLA_CU_CONTEXT);
         return DW_DLV_NO_ENTRY;
     }
@@ -1572,6 +1572,12 @@ _dwarf_next_die_info_ptr(Dwarf_Byte_Ptr die_info_ptr,
             attr_form = (Dwarf_Half) utmp6;
 
         }
+        if (attr_form == DW_FORM_implicit_const) {
+            UNUSEDARG Dwarf_Signed cval = 0;
+
+            DECODE_LEB128_SWORD_CK(abbrev_ptr, cval,dbg,error,
+                abbrev_end);
+        }
 
         if (want_AT_sibling && attr == DW_AT_sibling) {
             switch (attr_form) {
@@ -1640,10 +1646,11 @@ _dwarf_next_die_info_ptr(Dwarf_Byte_Ptr die_info_ptr,
         }
 
         no_sibling_attr:
-        if (attr_form != 0) {
+        if (attr_form != 0 && attr_form != DW_FORM_implicit_const) {
             int res = 0;
             Dwarf_Unsigned sizeofval = 0;
             ptrdiff_t  sizeb = 0;
+
             res = _dwarf_get_size_of_val(cu_context->cc_dbg,
                 attr_form,
                 cu_context->cc_version_stamp,

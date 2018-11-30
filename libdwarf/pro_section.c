@@ -67,6 +67,7 @@
 struct Dwarf_Sort_Abbrev_s {
     unsigned dsa_attr;
     unsigned dsa_form;
+    Dwarf_Signed dsa_implicitvalue;
     Dwarf_P_Attribute dsa_attrp;
 };
 
@@ -185,7 +186,7 @@ dump_bytes(char * msg,Dwarf_Small * start, long len)
     Dwarf_Small *end = start + len;
     Dwarf_Small *cur = start;
 
-    printf("%s ",msg);
+    printf("%s len %ld ",msg,len);
     for (; cur < end; cur++) {
         printf("%02x ", *cur);
     }
@@ -205,10 +206,11 @@ print_single_abbrev(Dwarf_P_Abbrev c, unsigned idx)
         (unsigned)c->abb_n_attr);
 
     for ( ; j < (unsigned)c->abb_n_attr; ++j) {
-        printf("  %2u attr 0x%2x  form 0x%2x\n",
+        printf("  %2u attr 0x%2x  form 0x%2x impl val %" DW_PR_DSd "\n",
             j,
             (unsigned)c->abb_attrs[j],
             (unsigned)c->abb_forms[j]);
+            (unsigned)c->abb_implicits[j]);
     }
 }
 static void
@@ -2497,6 +2499,22 @@ _dwarf_pro_match_attr(Dwarf_P_Attribute attr,
             curatp->ar_attribute_form != abbrev->abb_forms[i]) {
             return 0;
         }
+        /*  If either is implicit_const need special
+            check for matching val. */
+        if (curatp->ar_attribute_form == DW_FORM_implicit_const) {
+            if (abbrev->abb_forms[i] == DW_FORM_implicit_const) {
+                if (curatp->ar_implicit_const !=
+                    abbrev->abb_implicits[i]) {
+                    return 0;
+                }
+            } else {
+                return 0;
+            }
+        } else {
+            if (abbrev->abb_forms[i] == DW_FORM_implicit_const) {
+                return 0;
+            }
+        }
     }
     return 1;
 }
@@ -2562,6 +2580,7 @@ _dwarf_pro_getabbrev(Dwarf_P_Debug dbg,
     int match = 0;
     Dwarf_ufixed *forms = 0;
     Dwarf_ufixed *attrs = 0;
+    Dwarf_Signed *implicits = 0;
     int attrcount = die->di_n_attr;
 
     curabbrev = head;
@@ -2606,6 +2625,12 @@ _dwarf_pro_getabbrev(Dwarf_P_Debug dbg,
         if (attrs == NULL) {
             DWARF_P_DBG_ERROR(dbg, DW_DLE_ABBREV_ALLOC, DW_DLV_ERROR);
         }
+        implicits = (Dwarf_Signed *)
+            _dwarf_p_get_alloc(die->di_dbg,
+                sizeof(Dwarf_Signed) * attrcount);
+        if (implicits == NULL) {
+            DWARF_P_DBG_ERROR(dbg, DW_DLE_ABBREV_ALLOC, DW_DLV_ERROR);
+        }
     }
     curattr = die->di_attrs;
     if (forms && attrs && attrcount) {
@@ -2624,6 +2649,7 @@ _dwarf_pro_getabbrev(Dwarf_P_Debug dbg,
         for(; curattr; ++ap, curattr = curattr->ar_next) {
             ap->dsa_attr = curattr->ar_attribute;
             ap->dsa_form = curattr->ar_attribute_form;
+            ap->dsa_implicitvalue = curattr->ar_implicit_const;
             ap->dsa_attrp = 0;
         }
 
@@ -2638,6 +2664,7 @@ _dwarf_pro_getabbrev(Dwarf_P_Debug dbg,
         for( ; k < attrcount; ++k,++ap) {
             attrs[k] = ap->dsa_attr;
             forms[k] = ap->dsa_form;
+            implicits[k] = ap->dsa_implicitvalue;
         }
         free(sortab);
     }
@@ -2656,6 +2683,7 @@ _dwarf_pro_getabbrev(Dwarf_P_Debug dbg,
     curabbrev->abb_tag = die->di_tag;
     curabbrev->abb_attrs = attrs;
     curabbrev->abb_forms = forms;
+    curabbrev->abb_implicits = implicits;
     curabbrev->abb_n_attr = attrcount;
     curabbrev->abb_idx = 0;
     curabbrev->abb_next = NULL;
@@ -2861,6 +2889,14 @@ write_out_debug_abbrev(Dwarf_P_Debug dbg,
                 &lebcount,error);
             if (res != DW_DLV_OK) {
                 return res;
+            }
+            if (curabbrev->abb_forms[idx] == DW_FORM_implicit_const){
+                res =write_sval(curabbrev->abb_implicits[idx],
+                    dbg,abbrevsectno,
+                    &lebcount,error);
+                if (res != DW_DLV_OK) {
+                    return res;
+                }
             }
         }
         /* Two zeros, for last entry, see dwarf2 sec 7.5.3 */

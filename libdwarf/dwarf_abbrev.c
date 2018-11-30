@@ -146,6 +146,12 @@ dwarf_get_abbrev(Dwarf_Debug dbg,
             _dwarf_error(dbg, error, DW_DLE_UNKNOWN_FORM);
             return (DW_DLV_ERROR);
         }
+        if (attr_form ==  DW_FORM_implicit_const) {
+            UNUSEDARG Dwarf_Signed implicit_const = 0;
+            /* The value is here, not in a DIE. */
+            DECODE_LEB128_SWORD_CK(abbrev_ptr, implicit_const,
+                dbg,error,abbrev_section_end);
+        }
         if (attr != 0) {
             labbr_count++;
         }
@@ -260,6 +266,12 @@ dwarf_get_abbrev_entry(Dwarf_Abbrev abbrev,
         DECODE_LEB128_UWORD_CK(abbrev_ptr, utmp4,abbrev->dab_dbg,
             error,abbrev_end);
         attr_form = (Dwarf_Half) utmp4;
+        if (attr_form ==  DW_FORM_implicit_const) {
+            UNUSEDARG Dwarf_Signed implicit_const;
+            /* The value is here, not in a DIE. */
+            DECODE_LEB128_SWORD_CK( abbrev_ptr, implicit_const,
+                abbrev->dab_dbg,error,abbrev_end);
+        }
     }
 
     if (abbrev_ptr >= abbrev_end) {

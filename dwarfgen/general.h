@@ -41,6 +41,7 @@ extern struct CmdOptions {
     int  defaultInfoStringForm;
     bool showrelocdetails;
     bool adddata16;
+    bool addimplicitconst;
 } cmdoptions;
 
 template <typename T >

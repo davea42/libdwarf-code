@@ -254,6 +254,97 @@ addData16DataItem(Dwarf_P_Debug dbg UNUSEDARG,
     alreadydone = true;
 }
 
+int testvals[3] = {
+-2018,
+-2019,
+-2018
+};
+const char *testnames[3] = {
+"myimplicitconst1",
+"myimplicitconst2newabbrev",
+"myimplicitconst3share1abbrev"
+};
+
+static void
+addImplicitConstItem(Dwarf_P_Debug dbg UNUSEDARG,
+    IRepresentation & Irep UNUSEDARG,
+    Dwarf_P_Die ourdie UNUSEDARG,
+    IRDie &inDie,
+    IRDie &inParent,
+    list<IRAttr>& attrs,
+    unsigned level)
+{
+    static int alreadydone = 0;
+
+    if (alreadydone > 2) {
+        // The limit here MUST be below the size of
+        // testvals[] and testnames[] above.
+        // Some abbrevs should match
+        // if the test case is right. Others not.
+        return;
+    }
+    if(!cmdoptions.addimplicitconst) {
+        // No transformation of this sort requested.
+        return;
+    }
+    if (level < 2) {
+        return;
+    }
+
+    Dwarf_Half dietag = inDie.getTag();
+    Dwarf_Half parenttag = inParent.getTag();
+    if(dietag != DW_TAG_variable || parenttag != DW_TAG_subprogram) {
+        return;
+    }
+    list<IRAttr> revisedattrs;
+    for (list<IRAttr>::iterator it = attrs.begin();
+        it != attrs.end();
+        it++) {
+        IRAttr & attr = *it;
+        Dwarf_Half attrnum = attr.getAttrNum();
+        if(attrnum == DW_AT_name){
+            continue;
+        }
+        if(attrnum == DW_AT_const_value){
+            continue;
+        }
+        revisedattrs.push_back(attr);
+    }
+
+
+    //    add two new attrs.
+    Dwarf_Half attrnum = DW_AT_name;
+    const char *attrname(testnames[alreadydone]);
+    IRAttr attr2(attrnum,
+        DW_FORM_string,
+        DW_FORM_string);
+    attr2.setFormClass(DW_FORM_CLASS_STRING);
+    IRFormString *f = new IRFormString();
+    f->setInitialForm(DW_FORM_implicit_const);
+    f->setFinalForm(DW_FORM_implicit_const);
+    f->setString(attrname);
+
+    attr2.setFormData(f);
+    revisedattrs.push_back(attr2);
+
+    Dwarf_Signed myconstval = testvals[alreadydone];
+
+    IRAttr attrc(DW_AT_const_value,
+        DW_FORM_implicit_const,DW_FORM_implicit_const);
+    attrc.setFormClass(DW_FORM_CLASS_CONSTANT);
+    IRFormConstant *fc = new IRFormConstant(
+        DW_FORM_implicit_const,
+        DW_FORM_implicit_const,
+        DW_FORM_CLASS_CONSTANT,
+        IRFormConstant::SIGNED,
+        0,myconstval);
+    attrc.setFormData(fc);
+    revisedattrs.push_back(attrc);
+    attrs = revisedattrs;
+    ++alreadydone;
+}
+
+
 
 // Here we emit all the DIEs for a single Die and
 // its children.  When level == 0 the inDie is
@@ -303,6 +394,7 @@ HandleOneDieAndChildren(Dwarf_P_Debug dbg,
     // Now any special transformations to the attrs list.
     specialAttrTransformations(dbg,Irep,gendie,inDie,attrs,level);
     addData16DataItem(dbg,Irep,gendie,inDie,inParent,attrs,level);
+    addImplicitConstItem(dbg,Irep,gendie,inDie,inParent,attrs,level);
 
     // Now we add attributes (content), if any, to the
     // output die 'gendie'.

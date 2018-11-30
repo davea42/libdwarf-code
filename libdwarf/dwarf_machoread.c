@@ -1,7 +1,7 @@
 /*
 Copyright (c) 2018, David Anderson
 All rights reserved.
-
+cc
 Redistribution and use in source and binary forms, with
 or without modification, are permitted provided that the
 following conditions are met:
@@ -34,23 +34,23 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     file appropriate to reading DWARF debugging data.
     Overview:
     _dwarf_macho_setup() Does all macho setup.
-      calls _dwarf_macho_access_init()
-         calls _dwarf_macho_object_access_internals_init()
-            Creates internals record 'M',
-               dwarf_macho_object_access_internals_t
-            Sets flags/data in internals record
-            Loads macho object data needed later.
-         Sets methods struct to access macho object. 
-      calls _dwarf_object_init_b() Creates Dwarf_Debug, independent
-        of any macho code.
-      Sets internals record into dbg.
+        calls _dwarf_macho_access_init()
+            calls _dwarf_macho_object_access_internals_init()
+                Creates internals record 'M',
+                    dwarf_macho_object_access_internals_t
+                Sets flags/data in internals record
+                Loads macho object data needed later.
+                Sets methods struct to access macho object.
+        calls _dwarf_object_init_b() Creates Dwarf_Debug, independent
+            of any macho code.
+        Sets internals record into dbg.
     ----------------------
     _dwarf_destruct_macho_access(). This frees
-      the macho internals record created in
-      _dwarf_macho_object_access_internals_init()
-      in case of errors during setup or when
-      dwarf_finish() is called.  Works safely for
-      partially or fully set-up macho internals record.
+        the macho internals record created in
+        _dwarf_macho_object_access_internals_init()
+        in case of errors during setup or when
+        dwarf_finish() is called.  Works safely for
+        partially or fully set-up macho internals record.
 
     Other than in _dwarf_macho_setup() the macho code
     knows nothing about Dwarf_Debug, and the rest of
@@ -290,8 +290,8 @@ load_macho_header32(dwarf_macho_object_access_internals_t *mfp, int *errcode)
     int res = 0;
 
     if (sizeof(mh32) > mfp->mo_filesize) {
-          *errcode = DW_DLE_FILE_TOO_SMALL;
-          return DW_DLV_ERROR;
+        *errcode = DW_DLE_FILE_TOO_SMALL;
+        return DW_DLV_ERROR;
     }
     res = RRMOA(mfp->mo_fd,&mh32,0,sizeof(mh32),errcode);
     if (res != DW_DLV_OK) {
@@ -320,8 +320,8 @@ load_macho_header64(dwarf_macho_object_access_internals_t *mfp,
     int res = 0;
 
     if (sizeof(mh64) > mfp->mo_filesize) {
-          *errcode = DW_DLE_FILE_TOO_SMALL;
-          return DW_DLV_ERROR;
+        *errcode = DW_DLE_FILE_TOO_SMALL;
+        return DW_DLV_ERROR;
     }
     res = RRMOA(mfp->mo_fd,&mh64,0,sizeof(mh64),errcode);
     if (res != DW_DLV_OK) {
@@ -522,13 +522,12 @@ dwarf_macho_load_dwarf_section_details32(
     }
     mfp->mo_dwarf_sections = secs;
     mfp->mo_dwarf_sectioncount = secalloc;
-    
     if ((curoff  > mfp->mo_filesize) ||
-        (seccount > mfp->mo_filesize) ||  
-        (curoff+(seccount*sizeof(struct section)) > 
+        (seccount > mfp->mo_filesize) ||
+        (curoff+(seccount*sizeof(struct section)) >
             mfp->mo_filesize)) {
-          *errcode = DW_DLE_FILE_TOO_SMALL;
-          return DW_DLV_ERROR;
+        *errcode = DW_DLE_FILE_TOO_SMALL;
+        return DW_DLV_ERROR;
     }
     secs->offset_of_sec_rec = curoff;
     /*  Leave 0 section all zeros except our offset,
@@ -598,11 +597,11 @@ dwarf_macho_load_dwarf_section_details64(
     secs->dwarfsectname = "";
     ++secs;
     if ((curoff  > mfp->mo_filesize) ||
-        (seccount > mfp->mo_filesize) ||  
-        (curoff+(seccount*sizeof(struct section_64)) > 
+        (seccount > mfp->mo_filesize) ||
+        (curoff+(seccount*sizeof(struct section_64)) >
             mfp->mo_filesize)) {
-          *errcode = DW_DLE_FILE_TOO_SMALL;
-          return DW_DLV_ERROR;
+        *errcode = DW_DLE_FILE_TOO_SMALL;
+        return DW_DLV_ERROR;
     }
     seci = 1;
     for (; seci < secalloc; ++seci,++secs,curoff += shdrlen ) {

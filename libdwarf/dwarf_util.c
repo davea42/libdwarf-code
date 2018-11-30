@@ -177,6 +177,7 @@ _dwarf_get_size_of_val(Dwarf_Debug dbg,
 
 
     case 0:  return DW_DLV_OK;
+
     case DW_FORM_GNU_ref_alt:
     case DW_FORM_GNU_strp_alt:
     case DW_FORM_strp_sup:
@@ -330,7 +331,7 @@ _dwarf_get_size_of_val(Dwarf_Debug dbg,
         {
             Dwarf_Word indir_len = 0;
             int res = 0;
-            Dwarf_Unsigned real_form_len = 0;
+            Dwarf_Unsigned info_data_len = 0;
 
             DECODE_LEB128_UWORD_LEN_CK(val_ptr,form_indirect,indir_len,
                 dbg,error,section_end_ptr);
@@ -342,19 +343,21 @@ _dwarf_get_size_of_val(Dwarf_Debug dbg,
                 _dwarf_error(dbg,error,DW_DLE_NESTED_FORM_INDIRECT_ERROR);
                 return DW_DLV_ERROR;
             }
+            /*  If form_indirect  is DW_FORM_implicit_const then
+                the following call will set info_data_len 0 */
             res = _dwarf_get_size_of_val(dbg,
                 form_indirect,
                 cu_version,
                 address_size,
                 val_ptr + indir_len,
                 v_length_size,
-                &real_form_len,
+                &info_data_len,
                 section_end_ptr,
                 error);
             if(res != DW_DLV_OK) {
                 return res;
             }
-            *size_out = indir_len + real_form_len;
+            *size_out = indir_len + info_data_len;
             return DW_DLV_OK;
         }
 
@@ -374,7 +377,13 @@ _dwarf_get_size_of_val(Dwarf_Debug dbg,
         *size_out = 8;
         return DW_DLV_OK;
 
+    /*  DW_FORM_implicit_const  is a value in the
+        abbreviations, not in the DIEs and this
+        functions measures DIE size. */
     case DW_FORM_implicit_const:
+        *size_out = 0;
+        return DW_DLV_OK;
+
     case DW_FORM_sdata: {
         /*  Discard the decoded value, we just want the length
             of the value. */
@@ -707,6 +716,12 @@ _dwarf_get_abbrev_for_code(Dwarf_CU_Context cu_context, Dwarf_Unsigned code,
                     dbg,error,end_abbrev_ptr);
                 DECODE_LEB128_UWORD_CK(abbrev_ptr, attr_form,
                     dbg,error,end_abbrev_ptr);
+                if (attr_form == DW_FORM_implicit_const) {
+                    UNUSEDARG Dwarf_Signed implicit_const = 0;
+                    /* The value is here, not in a DIE. */
+                    DECODE_LEB128_SWORD_CK(abbrev_ptr, implicit_const,
+                        dbg,error,end_abbrev_ptr);
+                }
                 if (!_dwarf_valid_form_we_know(
                     dbg,attr_form,attr_name)) {
                     _dwarf_error(dbg,error,DW_DLE_UNKNOWN_FORM);

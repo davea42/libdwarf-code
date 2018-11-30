@@ -131,7 +131,7 @@ dwarf_get_aranges_list(Dwarf_Debug dbg,
             return DW_DLV_ERROR;
         }
         if (!area_length) {
-            /*  We read 4 bytes of zero, so area-length zero. 
+            /*  We read 4 bytes of zero, so area-length zero.
                 Keep scanning. First seen Nov 27, 2018
                 in GNU-cc in windows dll. */
             continue;

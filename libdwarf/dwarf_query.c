@@ -370,11 +370,17 @@ dwarf_attrlist(Dwarf_Die die,
 
     do {
         Dwarf_Unsigned utmp2;
+        Dwarf_Signed implicit_const = 0;
 
         DECODE_LEB128_UWORD_CK(abbrev_ptr, utmp2,dbg,error,abbrev_end);
         attr = (Dwarf_Half) utmp2;
         DECODE_LEB128_UWORD_CK(abbrev_ptr, utmp2,dbg,error,abbrev_end);
         attr_form = (Dwarf_Half) utmp2;
+        if (attr_form == DW_FORM_implicit_const) {
+            /* The value is here, not in a DIE. */
+            DECODE_LEB128_SWORD_CK(abbrev_ptr, implicit_const,
+                dbg,error,abbrev_end);
+        }
 
         if (!_dwarf_valid_form_we_know(dbg,attr_form,attr)) {
             _dwarf_error(dbg, error, DW_DLE_UNKNOWN_FORM);
@@ -406,11 +412,13 @@ dwarf_attrlist(Dwarf_Die die,
                 attr_form = (Dwarf_Half) utmp6;
                 new_attr->ar_attribute_form = attr_form;
             }
-            /*  Here the final address must be *inside* the section, as we
-                will read from there, and read at least one byte, we think.
-                We do not want info_ptr to point past end so we add 1 to
-                the end-pointer.  */
-            if (_dwarf_reference_outside_section(die,
+            /*  Here the final address must be *inside* the
+                section, as we will read from there, and read
+                at least one byte, we think.
+                We do not want info_ptr to point past end so
+                we add 1 to the end-pointer.  */
+            if ( attr_form != DW_FORM_implicit_const &&
+                _dwarf_reference_outside_section(die,
                 (Dwarf_Small*) info_ptr,
                 ((Dwarf_Small*) info_ptr )+1)) {
                 _dwarf_error(dbg, error,DW_DLE_ATTR_OUTSIDE_SECTION);
@@ -419,9 +427,15 @@ dwarf_attrlist(Dwarf_Die die,
             new_attr->ar_cu_context = die->di_cu_context;
             new_attr->ar_debug_ptr = info_ptr;
             new_attr->ar_die = die;
-            {
+            if (attr_form == DW_FORM_implicit_const) {
+                /*  The value is here, not in a DIE.
+                    Do not increment info_ptr */
+                new_attr->ar_implicit_const = implicit_const;
+            } else {
                 Dwarf_Unsigned sov = 0;
-                int res = _dwarf_get_size_of_val(dbg,
+                int res = 0;
+
+                res = _dwarf_get_size_of_val(dbg,
                     attr_form,
                     die->di_cu_context->cc_version_stamp,
                     die->di_cu_context->cc_address_size,
@@ -477,6 +491,11 @@ dwarf_attrlist(Dwarf_Die die,
     the given die in the .debug_info section.  The form
     is returned in *attr_form.
 
+    If the attr_form is DW_FORM_implicit_const
+    (known signed, so most callers)
+    that is fine, but in that case we do not
+    need to actually set the *ptr_to_value.
+
     Returns NULL on error, or if attr is not found.
     However, *attr_form is 0 on error, and positive
     otherwise.
@@ -486,6 +505,7 @@ _dwarf_get_value_ptr(Dwarf_Die die,
     Dwarf_Half attr,
     Dwarf_Half * attr_form,
     Dwarf_Byte_Ptr * ptr_to_value,
+    Dwarf_Signed *implicit_const_out,
     Dwarf_Error *error)
 {
     Dwarf_Byte_Ptr abbrev_ptr = 0;
@@ -526,14 +546,17 @@ _dwarf_get_value_ptr(Dwarf_Die die,
     SKIP_LEB128_WORD_CK(info_ptr,dbg,error,die_info_end);
 
     do {
-        Dwarf_Unsigned utmp3 = 0;
+        Dwarf_Unsigned formtmp3 = 0;
+        Dwarf_Unsigned atmp3 = 0;
         Dwarf_Unsigned value_size=0;
+        Dwarf_Signed implicit_const = 0;
         int res = 0;
 
-        DECODE_LEB128_UWORD_CK(abbrev_ptr, utmp3,dbg,error,abbrev_end);
-        curr_attr = (Dwarf_Half) utmp3;
-        DECODE_LEB128_UWORD_CK(abbrev_ptr, utmp3,dbg,error,abbrev_end);
-        curr_attr_form = (Dwarf_Half) utmp3;
+        DECODE_LEB128_UWORD_CK(abbrev_ptr, atmp3,dbg,error,abbrev_end);
+        curr_attr = (Dwarf_Half) atmp3;
+        DECODE_LEB128_UWORD_CK(abbrev_ptr,formtmp3,
+            dbg,error,abbrev_end);
+        curr_attr_form = (Dwarf_Half) formtmp3;
         if (curr_attr_form == DW_FORM_indirect) {
             Dwarf_Unsigned utmp6;
 
@@ -541,13 +564,19 @@ _dwarf_get_value_ptr(Dwarf_Die die,
             DECODE_LEB128_UWORD_CK(info_ptr, utmp6,dbg,error,die_info_end);
             curr_attr_form = (Dwarf_Half) utmp6;
         }
-
+        if (curr_attr_form == DW_FORM_implicit_const) {
+            /* The value is here, not in a DIE. */
+            DECODE_LEB128_SWORD_CK(abbrev_ptr, implicit_const,
+                dbg,error,abbrev_end);
+        }
         if (curr_attr == attr) {
             *attr_form = curr_attr_form;
+            if(implicit_const_out) {
+                *implicit_const_out = implicit_const;
+            }
             *ptr_to_value = info_ptr;
             return DW_DLV_OK;
         }
-
         res = _dwarf_get_size_of_val(dbg,
             curr_attr_form,
             die->di_cu_context->cc_version_stamp,
@@ -620,10 +649,12 @@ dwarf_hasattr(Dwarf_Die die,
     Dwarf_Half attr_form = 0;
     Dwarf_Byte_Ptr info_ptr = 0;
     int res = 0;
+    Dwarf_Signed implicit_const;
 
     CHECK_DIE(die, DW_DLV_ERROR);
 
-    res = _dwarf_get_value_ptr(die, attr, &attr_form,&info_ptr,error);
+    res = _dwarf_get_value_ptr(die, attr, &attr_form,&info_ptr,
+        &implicit_const,error);
     if(res == DW_DLV_ERROR) {
         return res;
     }
@@ -645,18 +676,19 @@ dwarf_attr(Dwarf_Die die,
     Dwarf_Byte_Ptr info_ptr = 0;
     Dwarf_Debug dbg = 0;
     int res = 0;
+    Dwarf_Signed implicit_const = 0;
 
     CHECK_DIE(die, DW_DLV_ERROR);
     dbg = die->di_cu_context->cc_dbg;
 
-    res = _dwarf_get_value_ptr(die, attr, &attr_form,&info_ptr,error);
+    res = _dwarf_get_value_ptr(die, attr, &attr_form,&info_ptr,
+        &implicit_const,error);
     if(res == DW_DLV_ERROR) {
         return res;
     }
     if(res == DW_DLV_NO_ENTRY) {
         return res;
     }
-
 
     attrib = (Dwarf_Attribute) _dwarf_get_alloc(dbg, DW_DLA_ATTR, 1);
     if (attrib == NULL) {
@@ -668,6 +700,10 @@ dwarf_attr(Dwarf_Die die,
     attrib->ar_attribute_form = attr_form;
     attrib->ar_attribute_form_direct = attr_form;
     attrib->ar_cu_context = die->di_cu_context;
+
+    /*  Only nonzero if DW_FORM_implicit_const */
+    attrib->ar_implicit_const = implicit_const;
+    /*  Only nonnull if not DW_FORM_implicit_const */
     attrib->ar_debug_ptr = info_ptr;
     attrib->ar_die = die;
     *ret_attr = (attrib);
@@ -848,7 +884,8 @@ dwarf_lowpc(Dwarf_Die die,
     dbg = context->cc_dbg;
     address_size = context->cc_address_size;
     offset_size = context->cc_length_size;
-    res = _dwarf_get_value_ptr(die, DW_AT_low_pc, &attr_form,&info_ptr,error);
+    res = _dwarf_get_value_ptr(die, DW_AT_low_pc,
+        &attr_form,&info_ptr,0,error);
     if(res == DW_DLV_ERROR) {
         return res;
     }
@@ -1196,14 +1233,16 @@ dwarf_highpc_b(Dwarf_Die die,
     dbg = die->di_cu_context->cc_dbg;
     address_size = die->di_cu_context->cc_address_size;
 
-    res = _dwarf_get_value_ptr(die, DW_AT_high_pc, &attr_form,&info_ptr,error);
+    res = _dwarf_get_value_ptr(die, DW_AT_high_pc,
+        &attr_form,&info_ptr,0,error);
     if(res == DW_DLV_ERROR) {
         return res;
     }
     if(res == DW_DLV_NO_ENTRY) {
         return res;
     }
-    die_info_end = _dwarf_calculate_info_section_end_ptr(die->di_cu_context);
+    die_info_end = _dwarf_calculate_info_section_end_ptr(
+        die->di_cu_context);
 
     version = die->di_cu_context->cc_version_stamp;
     offset_size = die->di_cu_context->cc_length_size;
@@ -1275,8 +1314,9 @@ dwarf_highpc_b(Dwarf_Die die,
             &v,error);
         if(res3 != DW_DLV_OK) {
             Dwarf_Byte_Ptr info_ptr2 = 0;
+
             res3 = _dwarf_get_value_ptr(die, DW_AT_high_pc,
-                &attr_form,&info_ptr2,error);
+                &attr_form,&info_ptr2,0,error);
             if(res3 == DW_DLV_ERROR) {
                 return res3;
             }
@@ -1442,7 +1482,7 @@ _dwarf_die_attr_unsigned_constant(Dwarf_Die die,
     die_info_end = _dwarf_calculate_info_section_end_ptr(die->di_cu_context);
     dbg = die->di_cu_context->cc_dbg;
     res = _dwarf_get_value_ptr(die,attr,&attr_form,
-        &info_ptr,error);
+        &info_ptr,0,error);
     if(res != DW_DLV_OK) {
         return res;
     }

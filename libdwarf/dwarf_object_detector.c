@@ -373,23 +373,23 @@ is_pe_object(int fd,
     dos_sig = magic_copy((unsigned char *)dhinmem.dh_mz,
         sizeof(dhinmem.dh_mz));
     if (dos_sig == IMAGE_DOS_SIGNATURE) {
-       /*  IMAGE_DOS_SIGNATURE assumes bytes reversed by little-endian
-           load, so we intrepet a match the other way. */
-       /* BIG ENDIAN. From looking at hex characters in object  */
-#ifdef WORDS_BIGENDIAN
+        /*  IMAGE_DOS_SIGNATURE assumes bytes reversed by little-endian
+            load, so we intrepet a match the other way. */
+        /* BIG ENDIAN. From looking at hex characters in object  */
+#ifdef  WORDS_BIGENDIAN
         word_swap = memcpy;
-#else  /* LITTLE ENDIAN */
+#else   /* LITTLE ENDIAN */
         word_swap = memcpy_swap_bytes;
-#endif /* LITTLE- BIG-ENDIAN */
+#endif  /* LITTLE- BIG-ENDIAN */
         locendian = DW_ENDIAN_BIG;
     } else if (dos_sig == IMAGE_DOS_REVSIGNATURE) {
-       /* raw load, so  intrepet a match the other way. */
-       /* LITTLE ENDIAN */
-#ifdef WORDS_BIGENDIAN
+        /* raw load, so  intrepet a match the other way. */
+        /* LITTLE ENDIAN */
+#ifdef  WORDS_BIGENDIAN
         word_swap = memcpy_swap_bytes;
-#else  /* LITTLE ENDIAN */
+#else   /* LITTLE ENDIAN */
         word_swap = memcpy;
-#endif /* LITTLE- BIG-ENDIAN */
+#endif  /* LITTLE- BIG-ENDIAN */
         locendian = DW_ENDIAN_LITTLE;
     } else {
         /* Not dos header not a PE file we recognize */

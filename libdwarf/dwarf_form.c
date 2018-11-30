@@ -1183,7 +1183,12 @@ dwarf_formsdata(Dwarf_Attribute attr,
         return DW_DLV_OK;
         }
 
+    /*  DW_FORM_implicit_const  is a value in the
+        abbreviations, not in the DIEs. */
     case DW_FORM_implicit_const:
+        *return_sval = attr->ar_implicit_const;
+        return DW_DLV_OK;
+
     case DW_FORM_sdata: {
         Dwarf_Byte_Ptr tmp = attr->ar_debug_ptr;
 

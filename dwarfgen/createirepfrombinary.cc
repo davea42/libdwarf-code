@@ -127,7 +127,7 @@ createIrepFromBinary(const std::string &infile,
     } else if(res == DW_DLV_ERROR) {
         close_a_file(fd);
         cerr << "Error init-ing " << infile <<
-            " for reading. dwarf_init_b() failed. " 
+            " for reading. dwarf_init_b() failed. "
             << dwarf_errmsg(err)
             << endl;
         exit(1);

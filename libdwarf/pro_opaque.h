@@ -230,6 +230,8 @@ struct Dwarf_P_Attribute_s {
         be 0 if if ar_rel_type is
         R_MIPS_NONE */
     Dwarf_P_Attribute ar_next;
+    /*  set if form = DW_FORM_implicit_const; */
+    Dwarf_Signed  ar_implicit_const;
 };
 
 /* A block of .debug_macinfo data: this forms a series of blocks.

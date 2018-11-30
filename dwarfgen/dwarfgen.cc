@@ -164,7 +164,7 @@ static int CallbackFunc(
     Dwarf_Unsigned*     sect_name_symbol_index,
     void *              user_data,
     int*                error);
-} 
+}
 // End extern "C"
 
 static void write_object_file(Dwarf_P_Debug dbg, IRepresentation &irep);
@@ -196,6 +196,7 @@ CmdOptions cmdoptions = {
     DW_FORM_string, // defaultInfoStringForm
     false, //showrelocdetails
     false, //adddata16
+    false, //addimplicitconst
 };
 
 // loff_t is signed for some reason (strange) but we make offsets unsigned.
@@ -455,6 +456,7 @@ main(int argc, char **argv)
         static struct dwoption longopts[] = {
             {"adddata16",dwno_argument,0,1000},
             {"force-empty-dnames",dwno_argument,0,1001},
+            {"add-implicit-const",dwno_argument,0,1002},
             {0,0,0,0},
         };
 
@@ -473,6 +475,9 @@ main(int argc, char **argv)
                 break;
             case 1001:
                 force_empty_dnames = true;
+                break;
+            case 1002:
+                cmdoptions.addimplicitconst = true;
                 break;
             case 'c':
                 // At present we can only create a single
@@ -884,14 +889,14 @@ write_generated_dbg(Dwarf_P_Debug dbg,Elf * elf_w,
 
     int res = dwarf_transform_to_disk_form_a(dbg,&sectioncount,&err);
     if (res != DW_DLV_OK) {
-       if (res == DW_DLV_ERROR) {
-           string msg(dwarf_errmsg(err));
-           cerr << "Dwarfgen fails: " << msg << endl;
-           exit(1);
-       }
-       /* ASSERT: rex == DW_DLV_NO_ENTRY */
-       cerr << "Dwarfgen fails, some internal error " << endl;
-       exit(1);
+        if (res == DW_DLV_ERROR) {
+            string msg(dwarf_errmsg(err));
+            cerr << "Dwarfgen fails: " << msg << endl;
+            exit(1);
+        }
+        /* ASSERT: rex == DW_DLV_NO_ENTRY */
+        cerr << "Dwarfgen fails, some internal error " << endl;
+        exit(1);
     }
     Dwarf_Signed d = 0;
     for(d = 0; d < sectioncount ; ++d) {

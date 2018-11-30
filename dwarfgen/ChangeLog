@@ -1,3 +1,15 @@
+2018-11-29 David Anderson
+    * createirepfrombinary.cc: Removed trailing whitespace.
+    * dwarfgen.cc: Added option --add-implicit-const to
+      create an object with DW_FORM_implicit_const.
+    * general.h: Added bool addimplicitconst flag for the
+      new option.
+    * irepattrtodbg.cc: For DW_FORM_implicit_const
+      add a call to new libdwarf function
+      dwarf_add_AT_implicit_const().
+    * ireptodbg.cc: New static function addImplicitConstItem()
+      deals with replacing parts of existing variables
+      with DW_FORM_implicit_const when the new option used.
 2018-10-03 David Anderson
     * dwarfgen.cc: Now uses dwarf_init_b() instead
       of the original dwarf_init().

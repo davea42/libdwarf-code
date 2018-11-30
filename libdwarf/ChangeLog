@@ -1,3 +1,38 @@
+2018-11-29  David Anderson
+     * dwarf_abbrev.c: Now deals with DW_FORM_implicit_const
+       properly.
+     * dwarf_arange.c: Remove trailing whitespace.
+     * dwarf_die_deliv.c: Now deals with DW_FORM_implicit_const
+       properly.
+     * dwarf_machoread.c,dwarf_object_detector.c,
+       dwarf_peread.c: Remove 
+       trailing whitespace and fix indentation.
+     * dwarf_opaque.h: Add ar_implicit_const to
+       Dwarf_Attribute_s to deal with the implicit const
+       FORM.
+     * dwarf_query.c: Now deals with DW_FORM_implicit_const
+       properly.
+     * dwarf_util.c: Remove trailing whitespace and 
+       fix indentation.  Now deals with DW_FORM_implicit_const
+       properly.
+     * libdwarf.h.in: Declare new function
+       dwarf_add_AT_implicit_const().
+     * libdwarf_version.h: Updated version string.
+     * pro_die.h: Add abb_implicits to 
+       Dwarf_P_Abbrev_s deal with the implicit const FORM.
+     * pro_forms.c: Implement dwarf_add_AT_implicit_const().
+     * pro_opaque.h: Add Dwarf_Signed dsa_implicitvalue
+       to Dwarf_Sort_Abbrev_s for implicit value(s).
+     * pro_section.c: Now deals with DW_FORM_implicit_const
+       properly.
+     * pro_section.h: Now SECTION_TYPE defaults to 1
+       as the suggested section type,
+       which is SHT_PROGBITS in Elf. See the comments
+       there.  Used to depend on a #ifdef and sometimes
+       was defined SHT_MIPS_DWARF.
+     * libdwarf2p.1.mm: Document the new implicit
+       const function.
+     * libdwarf2p.1.pdf: Regenerate. Version 1.47.
 2018-11-28  David Anderson
      * CMakeLists.txt: The previous change failed to
        deal with the new pe .h files properly. Fixed.

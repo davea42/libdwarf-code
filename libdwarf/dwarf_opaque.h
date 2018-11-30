@@ -94,6 +94,9 @@ struct Dwarf_Attribute_s {
         /*  The following points to either debug_info or debug_types
             depending on if context is cc_is_info  or not. */
     Dwarf_Small *ar_debug_ptr;
+        /*  If DW_FORM_implicit const, the value is here, not
+            in the DIE. */
+    Dwarf_Signed ar_implicit_const;
 
     Dwarf_Die ar_die;/* Access to the DIE owning the attribute */
     Dwarf_Attribute ar_next;

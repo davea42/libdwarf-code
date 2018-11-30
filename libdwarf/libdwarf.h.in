@@ -3692,6 +3692,13 @@ int dwarf_add_AT_data16(Dwarf_P_Die /*ownerdie*/,
     Dwarf_P_Attribute * /* return_attr */,
     Dwarf_Error * /*error*/);
 
+/*  November 2018. DW_AT_implicit const generation. */
+int dwarf_add_AT_implicit_const(Dwarf_P_Die ownerdie,
+    Dwarf_Half attrnum,
+    Dwarf_Signed signed_value,
+    Dwarf_P_Attribute *outattr,
+    Dwarf_Error * error);
+
 /* August 2013 sleb creator. For any attribute. */
 Dwarf_P_Attribute dwarf_add_AT_any_value_sleb(Dwarf_P_Die /*ownerdie*/,
     Dwarf_Half    /*attrnum*/,

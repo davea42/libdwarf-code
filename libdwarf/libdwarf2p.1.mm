@@ -11,7 +11,7 @@
 .nr Hb 5
 \." ==============================================
 \." Put current date in the following at each rev
-.ds vE Rev 1.46, 7 October 2016
+.ds vE Rev 1.47, 29 November 2018
 \." ==============================================
 \." ==============================================
 .ds | |
@@ -1793,6 +1793,44 @@ It returns the
 \f(CWDwarf_P_Attribute\fP descriptor for this attribute on success.  
 
 On error, it returns \f(CWDW_DLV_BADADDR\fP.
+
+
+.H 3 "dwarf_add_AT_implicit_const()"
+.DS
+\f(CW int dwarf_add_AT_implicit_const(Dwarf_P_Die ownerdie,
+    Dwarf_Half attrnum,
+    Dwarf_Signed signed_value,
+    Dwarf_P_Attribute *outattr,
+    Dwarf_Error * error); \fP
+.DE
+The function
+\f(CWdwarf_add_AT_implicit_const()\fP
+creates a new attribute and
+adds the signed value to the abbreviation entry
+for this new attribute and attaches the new attribute
+to the DIE passed in.
+.P
+The new attribute has
+ \f(CWattrnum\fP attribute for the \f(CWDIE\fP described
+by the given \f(CWownerdie\fP.
+The
+\f(CWform\fP in the generated attribute is
+\f(CWDW_FORM_implicit_const.\fP
+The
+\f(CWsigned_value\fP argument will be inserted
+in the abbreviation table as a signed leb
+value.
+.P
+For a successfull call the function returns
+\f(CWDW_DLV_OK.\fP
+and a pointer to the created argument is returned
+through the pointer 
+\f(CWoutaddr.\fP
+
+.P
+In case of error the function returns
+\f(CWDW_DLV_ERROR\fP
+and no attribute is created.
 
 .H 3 "dwarf_add_AT_any_value_uleb()"
 .DS

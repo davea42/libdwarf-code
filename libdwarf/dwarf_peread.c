@@ -221,7 +221,7 @@ load_optional_header32(dwarf_pe_object_access_internals_t *pep,
 
     pep->pe_optional_header_size = sizeof(IMAGE_OPTIONAL_HEADER32);
 
-    if ((pep->pe_optional_header_size + offset) > 
+    if ((pep->pe_optional_header_size + offset) >
         pep->pe_filesize) {
         *errcode = DW_DLE_FILE_TOO_SMALL;
         return DW_DLV_ERROR;
@@ -257,7 +257,7 @@ load_optional_header64(dwarf_pe_object_access_internals_t *pep,
     int res = 0;
 
     pep->pe_optional_header_size = sizeof(IMAGE_OPTIONAL_HEADER64);
-    if ((pep->pe_optional_header_size + offset) > 
+    if ((pep->pe_optional_header_size + offset) >
         pep->pe_filesize) {
         *errcode = DW_DLE_FILE_TOO_SMALL;
         return DW_DLV_ERROR;
@@ -450,10 +450,10 @@ dwarf_pe_load_dwarf_section_headers(
         ASNAR(pep->pe_copy_word,sec_outp->PointerToRawData,
             filesect.PointerToRawData);
         if(sec_outp->SizeOfRawData > pep->pe_filesize ||
-           sec_outp->PointerToRawData > pep->pe_filesize ||
-           (sec_outp->SizeOfRawData+
-               sec_outp->PointerToRawData > pep->pe_filesize)) {
-            *errcode = DW_DLE_FILE_TOO_SMALL; 
+            sec_outp->PointerToRawData > pep->pe_filesize ||
+            (sec_outp->SizeOfRawData+
+                sec_outp->PointerToRawData > pep->pe_filesize)) {
+            *errcode = DW_DLE_FILE_TOO_SMALL;
             return DW_DLV_ERROR;
         }
         ASNAR(pep->pe_copy_word,sec_outp->PointerToRelocations,
@@ -555,7 +555,7 @@ dwarf_load_pe_sections(
 
     pep->pe_nt_header_offset = nt_address  + SIZEOFT32;
     if (pep->pe_filesize < (pep->pe_nt_header_offset +
-            sizeof(ifh))) {
+        sizeof(ifh))) {
         *errcode = DW_DLE_FILE_TOO_SMALL;
         /* Not image header not a PE file we recognize */
         return DW_DLV_ERROR;
