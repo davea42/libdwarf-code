@@ -45,7 +45,24 @@ dwarf_add_weakname(Dwarf_P_Debug dbg,
     Dwarf_P_Die die,
     char *weak_name, Dwarf_Error * error)
 {
-    return
-        _dwarf_add_simple_name_entry(dbg, die, weak_name,
-            dwarf_snk_weakname, error);
+    int res = 0;
+
+    res = _dwarf_add_simple_name_entry(dbg, die, weak_name,
+        dwarf_snk_weakname, error);
+    if (res != DW_DLV_OK) {
+        return 0;
+    }
+    return 1;
+}
+
+int
+dwarf_add_weakname_a(Dwarf_P_Debug dbg,
+    Dwarf_P_Die die,
+    char *weak_name, Dwarf_Error * error)
+{
+    int res = 0;
+
+    res = _dwarf_add_simple_name_entry(dbg, die, weak_name,
+        dwarf_snk_weakname, error);
+    return res;
 }

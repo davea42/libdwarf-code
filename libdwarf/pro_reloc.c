@@ -180,7 +180,8 @@ _dwarf_pro_reloc_get_a_slot(Dwarf_P_Debug dbg,
 
     No errors are possible.
 */
-/*ARGSUSED*/ int
+/*ARGSUSED*/
+int
 dwarf_get_relocation_info_count(Dwarf_P_Debug dbg,
     Dwarf_Unsigned *
     count_of_relocation_sections,

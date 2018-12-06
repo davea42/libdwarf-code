@@ -45,11 +45,30 @@
 Dwarf_Unsigned
 dwarf_add_typename(Dwarf_P_Debug dbg,
     Dwarf_P_Die die,
-    char *type_name, Dwarf_Error * error)
+    char *type_name,
+    Dwarf_Error * error)
 {
-    return
-        _dwarf_add_simple_name_entry(dbg, die, type_name,
-            dwarf_snk_typename, error);
+    int res = 0;
+
+    res = _dwarf_add_simple_name_entry(dbg, die, type_name,
+        dwarf_snk_typename, error);
+    if (res != DW_DLV_OK) {
+        return 0;
+    }
+    return 1;
+
+}
+int
+dwarf_add_typename_a(Dwarf_P_Debug dbg,
+    Dwarf_P_Die die,
+    char *type_name,
+    Dwarf_Error * error)
+{
+    int res = 0;
+
+    res = _dwarf_add_simple_name_entry(dbg, die, type_name,
+        dwarf_snk_typename, error);
+    return res;
 }
 
 /*
@@ -59,7 +78,7 @@ dwarf_add_typename(Dwarf_P_Debug dbg,
   See enum dwarf_sn_kind in pro_opaque.h
 
 */
-Dwarf_Unsigned
+int
 _dwarf_add_simple_name_entry(Dwarf_P_Debug dbg,
     Dwarf_P_Die die,
     char *entry_name,
@@ -73,12 +92,12 @@ _dwarf_add_simple_name_entry(Dwarf_P_Debug dbg,
 
     if (dbg == NULL) {
         _dwarf_p_error(NULL, error, DW_DLE_DBG_NULL);
-        return (0);
+        return DW_DLV_ERROR;
     }
 
     if (die == NULL) {
         _dwarf_p_error(NULL, error, DW_DLE_DIE_NULL);
-        return (0);
+        return DW_DLV_ERROR;
     }
 
 
@@ -87,13 +106,13 @@ _dwarf_add_simple_name_entry(Dwarf_P_Debug dbg,
             sizeof(struct Dwarf_P_Simple_nameentry_s));
     if (nameentry == NULL) {
         _dwarf_p_error(dbg, error, DW_DLE_ALLOC_FAIL);
-        return (0);
+        return DW_DLV_ERROR;
     }
 
     name = _dwarf_p_get_alloc(dbg, strlen(entry_name) + 1);
     if (name == NULL) {
         _dwarf_p_error(dbg, error, DW_DLE_ALLOC_FAIL);
-        return (0);
+        return DW_DLV_ERROR;
     }
     strcpy(name, entry_name);
 
@@ -112,7 +131,7 @@ _dwarf_add_simple_name_entry(Dwarf_P_Debug dbg,
     hdr->sn_count++;
     hdr->sn_net_len += uword_size + nameentry->sne_name_len + 1;
 
-    return (1);
+    return DW_DLV_OK;
 }
 
 

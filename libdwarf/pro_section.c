@@ -2132,11 +2132,13 @@ _dwarf_pro_generate_debugframe(Dwarf_P_Debug dbg,
 
         if (curfde->fde_die) {
             /*  IRIX/MIPS extension:
-                Using fde offset, generate DW_AT_MIPS_fde attribute for the
+                Using fde offset, generate DW_AT_MIPS_fde
+                attribute for the
                 die corresponding to this fde.  */
-            if (_dwarf_pro_add_AT_fde(dbg, curfde->fde_die, cur_off,
-                error) < 0) {
-                return DW_DLV_ERROR;
+            res = _dwarf_pro_add_AT_fde(dbg, curfde->fde_die, cur_off,
+                error);
+            if (res != DW_DLV_OK) {
+                return res;
             }
         }
 
@@ -2321,10 +2323,10 @@ marker_init(Dwarf_P_Debug dbg,
             sizeof(struct Dwarf_P_Marker_s) * dbg->de_marker_n_alloc);
         if (dbg->de_markers == NULL) {
             dbg->de_marker_n_alloc = 0;
-            return -1;
+            return DW_DLV_ERROR;
         }
     }
-    return 0;
+    return DW_DLV_OK;
 }
 
 static int
@@ -2336,10 +2338,9 @@ marker_add(Dwarf_P_Debug dbg,
         unsigned n = dbg->de_marker_n_used++;
         dbg->de_markers[n].ma_offset = offset;
         dbg->de_markers[n].ma_marker = marker;
-        return 0;
+        return DW_DLV_OK;
     }
-
-    return -1;
+    return DW_DLV_ERROR;
 }
 
 Dwarf_Signed
@@ -2348,11 +2349,27 @@ dwarf_get_die_markers(Dwarf_P_Debug dbg,
     Dwarf_Unsigned * marker_count,
     Dwarf_Error * error)
 {
+    int res = 0;
+
+    res = dwarf_get_die_markers_a(dbg,marker_list,marker_count,
+        error);
+    if (res == DW_DLV_ERROR) {
+        return DW_DLV_BADADDR;
+    }
+    return 0;
+}
+
+int
+dwarf_get_die_markers_a(Dwarf_P_Debug dbg,
+    Dwarf_P_Marker * marker_list, /* pointer to a pointer */
+    Dwarf_Unsigned * marker_count,
+    Dwarf_Error * error)
+{
     if (marker_list == NULL || marker_count == NULL) {
-        DWARF_P_DBG_ERROR(dbg, DW_DLE_IA, DW_DLV_BADADDR);
+        DWARF_P_DBG_ERROR(dbg, DW_DLE_IA, DW_DLV_ERROR);
     }
     if (dbg->de_marker_n_used != dbg->de_marker_n_alloc) {
-        DWARF_P_DBG_ERROR(dbg, DW_DLE_MAF, DW_DLV_BADADDR);
+        DWARF_P_DBG_ERROR(dbg, DW_DLE_MAF, DW_DLV_ERROR);
     }
 
     *marker_list = dbg->de_markers;
@@ -3239,7 +3256,7 @@ _dwarf_pro_generate_debuginfo(Dwarf_P_Debug dbg,
     } /* end while (curdie != NULL), the per-die loop */
 
     res = marker_init(dbg, marker_count);
-    if (res == -1) {
+    if (res == DW_DLV_ERROR) {
         DWARF_P_DBG_ERROR(dbg, DW_DLE_REL_ALLOC, DW_DLV_ERROR);
     }
     res = string_attr_init(dbg, DEBUG_INFO, string_attr_count);
@@ -3255,7 +3272,7 @@ _dwarf_pro_generate_debuginfo(Dwarf_P_Debug dbg,
 
         if (curdie->di_marker != 0) {
             res = marker_add(dbg, curdie->di_offset, curdie->di_marker);
-            if (res == -1) {
+            if (res == DW_DLV_ERROR) {
                 DWARF_P_DBG_ERROR(dbg, DW_DLE_REL_ALLOC, DW_DLV_ERROR);
             }
         }

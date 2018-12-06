@@ -1,3 +1,20 @@
+2018-12-05  David Anderson
+     * dwarf_query.c: Removed useless blank lines.
+     * libdwarf.h.in: Many new producer functions so
+       the better return values of DW_DLV_OK/DW_DLV_ERROR
+       are available for every producer call.
+       The older functions are present and continue to work.
+
+     * libdwarf2p.1.mm: Document the old (a couple
+       got left out earlier) and new producer
+       functions.
+     * libdwarf2p.1.pdf: Regenerated. Version 1.48.
+     * pro_arange.c, pro_die.c, pro_expr.c, pro_forms.c,
+       pro_frame.c,pro_funcs.c,pro_line.c,pro_opaque.h,
+       pro_pubnames.c,pro_reloc.c,pro_section.c,pro_types.c,
+       pro_vars.c,pro_weaks.c: New functions provided
+       so caller code is easier to read. The new
+       interfaces are more type-safe than before.
 2018-11-29  David Anderson
      * dwarf_abbrev.c: Now deals with DW_FORM_implicit_const
        properly.

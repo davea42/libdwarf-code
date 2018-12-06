@@ -588,7 +588,7 @@ struct Dwarf_P_Debug_s {
 
 #define CURRENT_VERSION_STAMP   2
 
-Dwarf_Unsigned _dwarf_add_simple_name_entry(Dwarf_P_Debug dbg,
+int _dwarf_add_simple_name_entry(Dwarf_P_Debug dbg,
     Dwarf_P_Die die,
     char *entry_name,
     enum dwarf_sn_kind

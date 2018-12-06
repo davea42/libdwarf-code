@@ -44,6 +44,8 @@ static void _dwarf_pro_add_to_fde(Dwarf_P_Fde fde,
     data_align: alignment of data
     init_bytes: byts having initial instructions
     init_n_bytes: number of bytes of initial instructions */
+
+
 Dwarf_Unsigned
 dwarf_add_frame_cie(Dwarf_P_Debug dbg,
     char *augmenter,
@@ -51,7 +53,33 @@ dwarf_add_frame_cie(Dwarf_P_Debug dbg,
     Dwarf_Small data_align,
     Dwarf_Small return_reg,
     Dwarf_Ptr init_bytes,
-    Dwarf_Unsigned init_n_bytes, Dwarf_Error * error)
+    Dwarf_Unsigned init_n_bytes,
+    Dwarf_Error * error)
+{
+    Dwarf_Unsigned index = 0;
+    int res = 0;
+
+    res = dwarf_add_frame_cie_a(dbg,augmenter, code_align,
+        data_align,return_reg,init_bytes,
+        init_n_bytes,
+        &index,error);
+    if (res != DW_DLV_OK) {
+        return DW_DLV_NOCOUNT;
+    }
+    return index;
+}
+
+
+int
+dwarf_add_frame_cie_a(Dwarf_P_Debug dbg,
+    char *augmenter,
+    Dwarf_Small code_align,
+    Dwarf_Small data_align,
+    Dwarf_Small return_reg,
+    Dwarf_Ptr init_bytes,
+    Dwarf_Unsigned init_n_bytes,
+    Dwarf_Unsigned * cie_index_out,
+    Dwarf_Error * error)
 {
     Dwarf_P_Cie curcie;
     char *tmpaug = 0;
@@ -60,7 +88,7 @@ dwarf_add_frame_cie(Dwarf_P_Debug dbg,
         dbg->de_frame_cies = (Dwarf_P_Cie)
             _dwarf_p_get_alloc(dbg, sizeof(struct Dwarf_P_Cie_s));
         if (dbg->de_frame_cies == NULL) {
-            DWARF_P_DBG_ERROR(dbg, DW_DLE_CIE_ALLOC, DW_DLV_NOCOUNT);
+            DWARF_P_DBG_ERROR(dbg, DW_DLE_CIE_ALLOC, DW_DLV_ERROR);
         }
         curcie = dbg->de_frame_cies;
         dbg->de_n_cie = 1;
@@ -70,7 +98,7 @@ dwarf_add_frame_cie(Dwarf_P_Debug dbg,
         curcie->cie_next = (Dwarf_P_Cie)
             _dwarf_p_get_alloc(dbg, sizeof(struct Dwarf_P_Cie_s));
         if (curcie->cie_next == NULL) {
-            DWARF_P_DBG_ERROR(dbg, DW_DLE_CIE_ALLOC, DW_DLV_NOCOUNT);
+            DWARF_P_DBG_ERROR(dbg, DW_DLE_CIE_ALLOC, DW_DLV_ERROR);
         }
         curcie = curcie->cie_next;
         dbg->de_n_cie++;
@@ -86,7 +114,7 @@ dwarf_add_frame_cie(Dwarf_P_Debug dbg,
     }
     tmpaug = (char *)_dwarf_p_get_alloc(dbg,strlen(augmenter)+1);
     if (!tmpaug) {
-        DWARF_P_DBG_ERROR(dbg, DW_DLE_CIE_ALLOC, DW_DLV_NOCOUNT);
+        DWARF_P_DBG_ERROR(dbg, DW_DLE_CIE_ALLOC, DW_DLV_ERROR);
     }
     strcpy(tmpaug,augmenter);
     curcie->cie_aug = tmpaug;
@@ -96,7 +124,8 @@ dwarf_add_frame_cie(Dwarf_P_Debug dbg,
     curcie->cie_inst = (char *) init_bytes;
     curcie->cie_inst_bytes = (long) init_n_bytes;
     curcie->cie_next = NULL;
-    return dbg->de_n_cie;
+    *cie_index_out =  dbg->de_n_cie;
+    return DW_DLV_OK;
 }
 
 
@@ -117,10 +146,18 @@ dwarf_add_frame_fde(Dwarf_P_Debug dbg,
     Dwarf_Unsigned code_len,
     Dwarf_Unsigned symidx, Dwarf_Error * error)
 {
-    return dwarf_add_frame_fde_b(dbg, fde, die, cie, virt_addr,
-        code_len, symidx, 0, 0, error);
+    Dwarf_Unsigned index = 0;
+    int res = 0;
+
+    res = dwarf_add_frame_fde_c(dbg, fde, die, cie, virt_addr,
+        code_len, symidx, 0, 0,&index, error);
+    if (res != DW_DLV_OK) {
+        return DW_DLV_NOCOUNT;
+    }
+    return index;
 }
 
+/*  There is no dwarf_add_frame_fde_a */
 /*ARGSUSED10*/
 Dwarf_Unsigned
 dwarf_add_frame_fde_b(Dwarf_P_Debug dbg,
@@ -132,6 +169,32 @@ dwarf_add_frame_fde_b(Dwarf_P_Debug dbg,
     Dwarf_Unsigned symidx,
     Dwarf_Unsigned symidx_of_end,
     Dwarf_Addr offset_from_end_sym,
+    Dwarf_Error * error)
+{
+    Dwarf_Unsigned index = 0;
+    int res = 0;
+
+    res = dwarf_add_frame_fde_c(dbg,fde,die,cie,
+        virt_addr,code_len,symidx,symidx_of_end,
+        offset_from_end_sym,&index,error);
+    if (res != DW_DLV_OK) {
+        return DW_DLV_NOCOUNT;
+    }
+    return index;
+}
+
+/*  New December 2018 */
+int
+dwarf_add_frame_fde_c(Dwarf_P_Debug dbg,
+    Dwarf_P_Fde fde,
+    Dwarf_P_Die die,
+    Dwarf_Unsigned cie,
+    Dwarf_Unsigned virt_addr,
+    Dwarf_Unsigned code_len,
+    Dwarf_Unsigned symidx,
+    Dwarf_Unsigned symidx_of_end,
+    Dwarf_Addr offset_from_end_sym,
+    Dwarf_Unsigned *index_to_fde,
     UNUSEDARG Dwarf_Error * error)
 {
     Dwarf_P_Fde curfde;
@@ -157,7 +220,8 @@ dwarf_add_frame_fde_b(Dwarf_P_Debug dbg,
         dbg->de_last_fde = fde;
         dbg->de_n_fde++;
     }
-    return dbg->de_n_fde;
+    *index_to_fde = dbg->de_n_fde;
+    return DW_DLV_OK;
 }
 
 /*  This function adds information to an fde. The fde is
@@ -191,14 +255,20 @@ dwarf_add_frame_info(Dwarf_P_Debug dbg,
     Dwarf_Unsigned exception_table_symbol,
     Dwarf_Error * error)
 {
+    Dwarf_Unsigned fde_index = 0;
+    int res = 0;
 
-    return dwarf_add_frame_info_b(dbg, fde, die, cie, virt_addr,
+    res = dwarf_add_frame_info_c(dbg, fde, die, cie, virt_addr,
         code_len, symidx,
         /* end_symbol */ 0,
         /* offset_from_end */ 0,
         offset_into_exception_tables,
-        exception_table_symbol, error);
-
+        exception_table_symbol,
+        &fde_index, error);
+    if (res != DW_DLV_OK) {
+        return DW_DLV_NOCOUNT;
+    }
+    return fde_index;
 }
 
 /*ARGSUSED*/                   /* pretend all args used */
@@ -214,6 +284,36 @@ dwarf_add_frame_info_b(Dwarf_P_Debug dbg,
     Dwarf_Unsigned offset_from_end_symbol,
     Dwarf_Signed offset_into_exception_tables,
     Dwarf_Unsigned exception_table_symbol,
+    UNUSEDARG Dwarf_Error * error)
+{
+    Dwarf_Unsigned fde_index = 0;
+    int res = 0;
+
+    res = dwarf_add_frame_info_c(dbg, fde, die, cie, virt_addr,
+        code_len, symidx, end_symidx,
+        offset_from_end_symbol,
+        offset_into_exception_tables,
+        exception_table_symbol,
+        &fde_index, error);
+    if (res != DW_DLV_OK) {
+        return DW_DLV_NOCOUNT;
+    }
+    return fde_index;
+}
+
+int
+dwarf_add_frame_info_c(Dwarf_P_Debug dbg,
+    Dwarf_P_Fde fde,
+    Dwarf_P_Die die,
+    Dwarf_Unsigned cie,
+    Dwarf_Unsigned virt_addr,
+    Dwarf_Unsigned code_len,
+    Dwarf_Unsigned symidx,
+    Dwarf_Unsigned end_symidx,
+    Dwarf_Unsigned offset_from_end_symbol,
+    Dwarf_Signed offset_into_exception_tables,
+    Dwarf_Unsigned exception_table_symbol,
+    Dwarf_Unsigned *fde_index_out,
     UNUSEDARG Dwarf_Error * error)
 {
     Dwarf_P_Fde curfde;
@@ -240,7 +340,8 @@ dwarf_add_frame_info_b(Dwarf_P_Debug dbg,
         dbg->de_last_fde = fde;
         dbg->de_n_fde++;
     }
-    return dbg->de_n_fde;
+    *fde_index_out = dbg->de_n_fde;
+    return DW_DLV_OK;
 }
 
 /* This is an alternate to inserting frame instructions
@@ -256,7 +357,7 @@ dwarf_insert_fde_inst_bytes(Dwarf_P_Debug dbg,
     }
     if (fde->fde_block || fde->fde_inst) {
         DWARF_P_DBG_ERROR(dbg, DW_DLE_DUPLICATE_INST_BLOCK,
-            (int)DW_DLV_BADADDR);
+            DW_DLV_ERROR);
     }
     fde->fde_block = (Dwarf_Ptr)_dwarf_p_get_alloc(dbg, len);
     memcpy(fde->fde_block,ibytes,len);
@@ -271,16 +372,30 @@ dwarf_insert_fde_inst_bytes(Dwarf_P_Debug dbg,
 Dwarf_P_Fde
 dwarf_new_fde(Dwarf_P_Debug dbg, Dwarf_Error * error)
 {
+    Dwarf_P_Fde fde = 0;
+    int res = 0;
+
+    res = dwarf_new_fde_a(dbg,&fde,error);
+    if (res != DW_DLV_OK) {
+        return (Dwarf_P_Fde) DW_DLV_BADADDR;
+    }
+    return fde;
+}
+int
+dwarf_new_fde_a(Dwarf_P_Debug dbg,
+    Dwarf_P_Fde *fde_out,
+    Dwarf_Error * error)
+{
     Dwarf_P_Fde fde;
 
     fde = (Dwarf_P_Fde)
         _dwarf_p_get_alloc(dbg, sizeof(struct Dwarf_P_Fde_s));
     if (fde == NULL) {
-        DWARF_P_DBG_ERROR(dbg, DW_DLE_FDE_ALLOC,
-            (Dwarf_P_Fde) DW_DLV_BADADDR);
+        DWARF_P_DBG_ERROR(dbg, DW_DLE_FDE_ALLOC, DW_DLV_ERROR);
     }
     fde->fde_uwordb_size = dbg->de_offset_size;
-    return fde;
+    *fde_out = fde;
+    return DW_DLV_OK;
 }
 
 
@@ -288,7 +403,24 @@ dwarf_new_fde(Dwarf_P_Debug dbg, Dwarf_Error * error)
 Dwarf_P_Fde
 dwarf_fde_cfa_offset(Dwarf_P_Fde fde,
     Dwarf_Unsigned reg,
-    Dwarf_Signed offset, Dwarf_Error * error)
+    Dwarf_Signed offset,
+    Dwarf_Error * error)
+{
+    int res = 0;
+
+    res = dwarf_fde_cfa_offset_a(fde,reg,offset,error);
+    if (res != DW_DLV_OK) {
+        return (Dwarf_P_Fde) DW_DLV_BADADDR;
+    }
+    return fde;
+}
+
+
+int
+dwarf_fde_cfa_offset_a(Dwarf_P_Fde fde,
+    Dwarf_Unsigned reg,
+    Dwarf_Signed offset,
+    Dwarf_Error * error)
 {
     Dwarf_Ubyte opc, regno;
     char *ptr = 0;
@@ -301,14 +433,12 @@ dwarf_fde_cfa_offset(Dwarf_P_Fde fde,
     curinst = (Dwarf_P_Frame_Pgm)
         _dwarf_p_get_alloc(dbg, sizeof(struct Dwarf_P_Frame_Pgm_s));
     if (curinst == NULL) {
-        DWARF_P_DBG_ERROR(dbg, DW_DLE_FPGM_ALLOC,
-            (Dwarf_P_Fde) DW_DLV_BADADDR);
+        DWARF_P_DBG_ERROR(dbg, DW_DLE_FPGM_ALLOC, DW_DLV_ERROR);
     }
     opc = DW_CFA_offset;
     regno = reg;
     if (regno & 0xc0) {
-        DWARF_P_DBG_ERROR(dbg, DW_DLE_REGNO_OVFL,
-            (Dwarf_P_Fde) DW_DLV_BADADDR);
+        DWARF_P_DBG_ERROR(dbg, DW_DLE_REGNO_OVFL,DW_DLV_ERROR);
     }
     opc = opc | regno;          /* lower 6 bits are register number */
     curinst->dfp_opcode = opc;
@@ -316,12 +446,12 @@ dwarf_fde_cfa_offset(Dwarf_P_Fde fde,
         buff1, sizeof(buff1));
     if (res != DW_DLV_OK) {
         _dwarf_p_error(dbg, error, DW_DLE_STRING_ALLOC);
-        return ((Dwarf_P_Fde) DW_DLV_BADADDR);
+        return DW_DLV_ERROR;
     }
     ptr = (char *) _dwarf_p_get_alloc(dbg, nbytes);
     if (ptr == NULL) {
         _dwarf_p_error(dbg, error, DW_DLE_STRING_ALLOC);
-        return ((Dwarf_P_Fde) DW_DLV_BADADDR);
+        return DW_DLV_ERROR;
     }
     memcpy(ptr, buff1, nbytes);
 
@@ -330,7 +460,7 @@ dwarf_fde_cfa_offset(Dwarf_P_Fde fde,
     curinst->dfp_next = NULL;
 
     _dwarf_pro_add_to_fde(fde, curinst);
-    return fde;
+    return DW_DLV_OK;
 }
 
 /*  Generic routine to add opcode to fde instructions. val1 and
@@ -358,6 +488,23 @@ dwarf_add_fde_inst(Dwarf_P_Fde fde,
     Dwarf_Unsigned val1,
     Dwarf_Unsigned val2, Dwarf_Error * error)
 {
+    int res = 0;
+
+    res = dwarf_add_fde_inst_a(fde,op,val1,val2,error);
+    if (res != DW_DLV_OK) {
+        return ((Dwarf_P_Fde) DW_DLV_BADADDR);
+    }
+    return fde;
+}
+
+/*  December 2018. A more sensible return value. */
+int
+dwarf_add_fde_inst_a(Dwarf_P_Fde fde,
+    Dwarf_Small op,
+    Dwarf_Unsigned val1,
+    Dwarf_Unsigned val2,
+    Dwarf_Error * error)
+{
     Dwarf_P_Frame_Pgm curinst;
     int nbytes, nbytes1, nbytes2;
     Dwarf_Ubyte db;
@@ -381,7 +528,7 @@ dwarf_add_fde_inst(Dwarf_P_Fde fde,
         _dwarf_p_get_alloc(dbg, sizeof(struct Dwarf_P_Frame_Pgm_s));
     if (curinst == NULL) {
         _dwarf_p_error(dbg, error, DW_DLE_FPGM_ALLOC);
-        return ((Dwarf_P_Fde) DW_DLV_BADADDR);
+        return DW_DLV_ERROR;
     }
 
     switch (op) {
@@ -398,7 +545,7 @@ dwarf_add_fde_inst(Dwarf_P_Fde fde,
             ptr = (char *) _dwarf_p_get_alloc(dbg, 1);
             if (ptr == NULL) {
                 _dwarf_p_error(dbg, error, DW_DLE_STRING_ALLOC);
-                return ((Dwarf_P_Fde) DW_DLV_BADADDR);
+                return DW_DLV_ERROR;
             }
             memcpy((void *) ptr, (const void *) &db, 1);
             nbytes = 1;
@@ -410,7 +557,7 @@ dwarf_add_fde_inst(Dwarf_P_Fde fde,
             ptr = (char *) _dwarf_p_get_alloc(dbg, 2);
             if (ptr == NULL) {
                 _dwarf_p_error(dbg, error, DW_DLE_STRING_ALLOC);
-                return ((Dwarf_P_Fde) DW_DLV_BADADDR);
+                return DW_DLV_ERROR;
             }
             memcpy((void *) ptr, (const void *) &dh, 2);
             nbytes = 2;
@@ -422,7 +569,7 @@ dwarf_add_fde_inst(Dwarf_P_Fde fde,
             ptr = (char *) _dwarf_p_get_alloc(dbg, 4);
             if (ptr == NULL) {
                 _dwarf_p_error(dbg, error, DW_DLE_STRING_ALLOC);
-                return ((Dwarf_P_Fde) DW_DLV_BADADDR);
+                return DW_DLV_ERROR;
             }
             memcpy((void *) ptr, (const void *) &dw, 4);
             nbytes = 4;
@@ -434,7 +581,7 @@ dwarf_add_fde_inst(Dwarf_P_Fde fde,
                     sizeof(Dwarf_Unsigned));
             if (ptr == NULL) {
                 _dwarf_p_error(dbg, error, DW_DLE_STRING_ALLOC);
-                return ((Dwarf_P_Fde) DW_DLV_BADADDR);
+                return DW_DLV_ERROR;
             }
             memcpy((void *) ptr, (const void *) &du, 8);
             nbytes = 8;
@@ -449,12 +596,12 @@ dwarf_add_fde_inst(Dwarf_P_Fde fde,
                 buff1, sizeof(buff1));
             if (res != DW_DLV_OK) {
                 _dwarf_p_error(dbg, error, DW_DLE_STRING_ALLOC);
-                return ((Dwarf_P_Fde) DW_DLV_BADADDR);
+                return DW_DLV_ERROR;
             }
             ptr = (char *) _dwarf_p_get_alloc(dbg, nbytes);
             if (ptr == NULL) {
                 _dwarf_p_error(dbg, error, DW_DLE_STRING_ALLOC);
-                return ((Dwarf_P_Fde) DW_DLV_BADADDR);
+                return DW_DLV_ERROR;
             }
             memcpy(ptr, buff1, nbytes);
 
@@ -488,7 +635,7 @@ dwarf_add_fde_inst(Dwarf_P_Fde fde,
             buff1, sizeof(buff1));
         if (res != DW_DLV_OK) {
             _dwarf_p_error(dbg, error, DW_DLE_STRING_ALLOC);
-            return ((Dwarf_P_Fde) DW_DLV_BADADDR);
+            return DW_DLV_ERROR;
         }
         if (!signed_second) {
             res = _dwarf_pro_encode_leb128_nm(val2, &nbytes2,
@@ -500,20 +647,20 @@ dwarf_add_fde_inst(Dwarf_P_Fde fde,
         }
         if (res != DW_DLV_OK) {
             _dwarf_p_error(dbg, error, DW_DLE_STRING_ALLOC);
-            return ((Dwarf_P_Fde) DW_DLV_BADADDR);
+            return DW_DLV_ERROR;
         }
 
         res = _dwarf_pro_encode_leb128_nm(val2, &nbytes2,
             buff2, sizeof(buff2));
         if (res != DW_DLV_OK) {
             _dwarf_p_error(dbg, error, DW_DLE_STRING_ALLOC);
-            return ((Dwarf_P_Fde) DW_DLV_BADADDR);
+            return DW_DLV_ERROR;
         }
 
         ptr = (char *) _dwarf_p_get_alloc(dbg, nbytes1 + nbytes2);
         if (ptr == NULL) {
             _dwarf_p_error(dbg, error, DW_DLE_STRING_ALLOC);
-            return ((Dwarf_P_Fde) DW_DLV_BADADDR);
+            return DW_DLV_ERROR;
         }
         memcpy(ptr, buff1, nbytes1);
         memcpy(ptr + nbytes1, buff2, nbytes2);
@@ -536,12 +683,12 @@ dwarf_add_fde_inst(Dwarf_P_Fde fde,
         }
         if (res != DW_DLV_OK) {
             _dwarf_p_error(dbg, error, DW_DLE_STRING_ALLOC);
-            return ((Dwarf_P_Fde) DW_DLV_BADADDR);
+            return DW_DLV_ERROR;
         }
         ptr = (char *) _dwarf_p_get_alloc(dbg, nbytes);
         if (ptr == NULL) {
             _dwarf_p_error(dbg, error, DW_DLE_STRING_ALLOC);
-            return ((Dwarf_P_Fde) DW_DLV_BADADDR);
+            return DW_DLV_ERROR;
         }
         memcpy(ptr, buff1, nbytes);
         break;
@@ -555,7 +702,7 @@ dwarf_add_fde_inst(Dwarf_P_Fde fde,
             FIXME: not handled yet. */
     default:
         _dwarf_p_error(dbg, error, DW_DLE_DEBUGFRAME_ERROR);
-        return ((Dwarf_P_Fde) DW_DLV_BADADDR);
+        return DW_DLV_ERROR;
     }
 
     curinst->dfp_opcode = op;
@@ -564,7 +711,7 @@ dwarf_add_fde_inst(Dwarf_P_Fde fde,
     curinst->dfp_next = NULL;
 
     _dwarf_pro_add_to_fde(fde, curinst);
-    return fde;
+    return DW_DLV_OK;
 }
 
 

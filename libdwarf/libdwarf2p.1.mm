@@ -11,7 +11,7 @@
 .nr Hb 5
 \." ==============================================
 \." Put current date in the following at each rev
-.ds vE Rev 1.47, 29 November 2018
+.ds vE Rev 1.48, 01 December 2018
 \." ==============================================
 \." ==============================================
 .ds | |
@@ -64,7 +64,7 @@ information.
 .H 2 "Copyright"
 Copyright 1993-2006 Silicon Graphics, Inc.
 
-Copyright 2007-2016 David Anderson.
+Copyright 2007-2018 David Anderson.
 
 Permission is hereby granted to
 copy or republish or use any or all of this document without
@@ -75,19 +75,26 @@ please acknowledge Silicon Graphics, Inc and David Anderson.
 This document is distributed in the hope that it would be useful, but
 WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
 .H 2 "Purpose and Scope"
 The purpose of this document is to propose a library of functions to 
-create DWARF debugging information.  Reading (consuming) of such records 
+create DWARF debugging information.
+Reading (consuming) of such records 
 is discussed in a separate document.
 
 The functions in this document have mostly been implemented at 
 Silicon Graphics
-and are being used by the code generator to provide debugging information.
+and used by the SGI code generator
+to provide debugging information.
 Some functions (and support for some extensions) were provided
 by Sun Microsystems.
 
 Example code showing one use of the functionality
-may be found in the dwarfgen \f(CWdwarfgen\fP application
+may be found in the dwarfgen 
+\f(CWdwarfgen\fP
+and
+\f(CWsimpleexample\fP
+application
 (provided in the source distribution along with libdwarf).
 
 .P
@@ -96,17 +103,32 @@ and as such, implementation and optimization issues are
 intentionally ignored.
 
 .P
-Error handling, error codes, and certain \f(CWLibdwarf\fP codes are discussed
-in the "\fIA Consumer Library Interface to DWARF\fP", which should 
+Error handling, error codes, and certain 
+\f(CWLibdwarf\fP codes are discussed
+in the "\fIA Consumer Library Interface to DWARF\fP",
+which should 
 be read before reading this document.
 .P
-A very few functions in the Producer Library follow the error-returns
+Before December 2018 
+very few functions in the Producer Library follow the error-returns
 as defined in "\fIA Consumer Library Interface to DWARF\fP".
 .P
-However the general style of functions here 
+As of December 2018 every Producer Library call has
+a version that supports that Consumer Library Interface
+and returns DW_DLV_OK or DW_DLV_ERROR (the Producer Library
+has no use of DW_DLV_NO_ENTRY).
+The table of contents of this document lists the latest
+version of each function. However, all the earlier
+documentation is present here immediately following
+the documentation of the latest, and preferred, interface. 
+All the earlier interfaces are supported in the library.
+.P
+Early interfaces (before December 2018)
+The general style of functions here 
 in the producer library is rather C-traditional
 with various types as return values (quite different
-from the consumer library interfaces).   The style
+from the consumer library interfaces).
+The style
 generally follows the style of the original DWARF1 reader
 proposed as an interface to DWARF.
 When the style of the reader interfaces was changed (1994) in the
@@ -118,6 +140,10 @@ the interface!  So this interface remains in the traditional C style
 of returning various data types with various (somewhat inconsistent)
 means of indicating failure.
 .P
+December 2018 and later function interfaces
+all return either DW_DLV_OK or DW_DLV_ERROR
+in a simple int.
+.P
 The error handling code in the library may either
 return a value or abort. 
 The library user can provide a function that the producer code
@@ -125,7 +151,6 @@ will call on errors (which would allow callers avoid testing
 for error returns if the user function exits or aborts).
 See the  \f(CWdwarf_producer_init()\fP
 description below for more details.
-
 
 .H 2 "Document History"
 This document originally prominently referenced
@@ -219,6 +244,16 @@ calls (as is done in the consumer library).
 The old interfaces are kept and supported so
 we have binary and source compatibility with
 old code.
+.LI "December 01, 2018"
+All function interfaces now have a version
+that returns only DW_DLV_OK or DW_DLV_ERROR
+and pointer and other values are returned
+through pointer arguments.
+For example, dwarf_add_frame_info_c()
+is the December 2018 version, while
+dwarf_add_frame_info(), 
+dwarf_add_frame_info_b()
+are earlier versions (which are still supported).
 .LE
 
 .H 1 "Type Definitions"
@@ -247,10 +282,15 @@ or
 as these are reserved to dwarf and libdwarf.
 
 .H 1 "libdwarf and Elf and relocations"
-Much of the description below presumes that Elf is the object
+Much of the description below presumes that 
+Elf is the object
 format in use.
 The library is probably usable with other object formats
 that allow arbitrary sections to be created.
+The library does not write anything to disk.
+Instead it provides access so that callers
+can do that.
+
 
 .H 2 "binary or assembler output"
 With 
@@ -347,10 +387,10 @@ it does not write them to disk).
 The following applies to calls that
 pass in symbol indices, addresses, and offsets, such
 as
-\f(CWdwarf_add_AT_targ_address() \fP 
+\f(CWdwarf_add_AT_targ_address_c() \fP 
 \f(CWdwarf_add_arange_b()\fP 
 and
-\f(CWdwarf_add_frame_fde_b()\fP.
+\f(CWdwarf_add_frame_fde_c()\fP.
 
 With 
 \f(CWDW_DLC_STREAM_RELOCATIONS\fP 
@@ -369,8 +409,6 @@ or to turn the binary stream into
 a text stream (for input to an assembler, if appropriate)
 the application has complete control of the interpretation
 of the symbol handles.
-
-
 
 .H 1 "Memory Management"
 
@@ -417,6 +455,7 @@ if it was actually a -1 meaning there was an error.
 Beginning in September 2016 additional interfaces
 are being added to eliminate the necessity for callers
 to do this ugly casting of results.
+In December 2018 that process has reached completion.
 The revised functions return
 \f(CWDW_DLV_OK\fP,
 or
@@ -434,20 +473,6 @@ can also return
 The original interfaces will remain.
 Binary and source compatibility for old
 code using the older interfaces is retained.
-.P
-The list of new functions added to create interfaces
-with the simpler return value is:
-.DS
-dwarf_add_die_to_debug_a()
-dwarf_new_die_a()
-dwarf_die_link_a()
-dwarf_transform_to_disk_form_a()
-dwarf_get_section_bytes_a()
-dwarf_producer_finish_a()
-(More to be added as time permits).
-.DE
-
-
 
 .H 1 "Functional Interface"
 This section describes the functions available in the \fILibdwarf\fP
@@ -525,12 +550,14 @@ The details are mentioned in the text.
 .DE
 .P
 The function \f(CWdwarf_producer_init() \fP returns a new 
-\f(CWDwarf_P_Debug\fP descriptor that can be used to add \f(CWDwarf\fP 
+\f(CWDwarf_P_Debug\fP descriptor that can be used to add
+\f(CWDwarf\fP 
 information to the object.  
 On success it returns \f(CWDW_DLV_OK\fP.  
 On error it returns \f(CWDW_DLV_ERROR\fP.  
 \f(CWflags\fP determine whether the target object is 64-bit or 32-bit.  
-\f(CWfunc\fP is a pointer to a function called-back from \f(CWLibdwarf\fP 
+\f(CWfunc\fP
+is a pointer to a function called-back from \f(CWLibdwarf\fP 
 whenever \f(CWLibdwarf\fP needs to create a new object section (as it will 
 for each .debug_* section and related relocation section).  
 
@@ -559,8 +586,6 @@ Indicates the target has a 32 bit (4 byte) address size.
 If none of these pointer sizes is passed in 
 \f(CWDW_DLC_POINTER32\fP 
 is assumed.
-
-
 
 The flag bit
 \f(CWDW_DLC_OFFSET32\fP
@@ -626,7 +651,8 @@ but through an array of structures.
 .in -4
 
 .P
-The function \f(CWfunc\fP 
+The function 
+\f(CWfunc\fP 
 must be provided by the user of this library.
 Its prototype is:
 .DS
@@ -735,7 +761,8 @@ as mentioned just above) indicating there is an error.
 Second,
 if the  Dwarf_Error argument to any specific producer function 
 (see the functions documented below)  is NULL and the
-\f(CWerrarg\fP  to \f(CWdwarf_producer_init() \fP is non-NULL
+\f(CWerrarg\fP
+to \f(CWdwarf_producer_init()\fP is non-NULL
 then on an error in the producer code the Dwarf_Handler function is called
 and if that called function returns the producer code returns
 a specific value (for dwarf_producer_init it is DW_DLV_OK
@@ -744,7 +771,8 @@ as mentioned just above) indicating there is an error.
 Third,
 if the  Dwarf_Error argument to any specific producer function
 (see the functions documented below)  is NULL and the
-\f(CWerrarg\fP  to \f(CWdwarf_producer_init()\fP is NULL
+\f(CWerrarg\fP
+to \f(CWdwarf_producer_init()\fP is NULL
 then on an error \f(CWabort()\fP is called.
 
 .P
@@ -877,15 +905,13 @@ the \f(CWDwarf_P_Debug\fP by calls to
 \f(CWdwarf_get_section_bytes_a()\fP (see below).
 .P
 In case of error
-\f(CWdwarf_transform_to_disk_form()\fP 
+\f(CWdwarf_transform_to_disk_form_a()\fP 
 returns
-\f(CWDW_DLV_NOCOUNT\fP.
+\f(CWDW_DLV_ERROR\fP.
 .P
-When successful
-\f(CWdwarf_transform_to_disk_form()\fP 
-returns
-the number of chunks of section data to be
-accessed by
+The number of chunks
+is used to access data 
+by
 \f(CWdwarf_get_section_bytes_a()\fP
 (see below) and the section data
 provided your code will insert
@@ -899,7 +925,7 @@ and a length as well as a pointer to a block of data
 ).
 .P
 For each unique section being produced 
-\f(CWdwarf_transform_to_disk_form()\fP 
+\f(CWdwarf_transform_to_disk_form_a()\fP 
 calls the
 \f(CWDwarf_Callback_Func\fP exactly once. 
 The callback provides the connection
@@ -915,7 +941,7 @@ a call to
 by libdwarf for each relocation section.
 Calls to \f(CWdwarf_get_section_bytes_a()\fP (see below).
 allow the 
-\f(CWdwarf_transform_to_disk_form()\fP  caller
+\f(CWdwarf_transform_to_disk_form_a()\fP  caller
 to get byte streams and write them to
 an object file as desired, just as with
 the other sections of the object being created.
@@ -937,7 +963,7 @@ and returns an error pointer through
 \f(CW*error\fP .
 
 
-.H 3 "dwarf_transform_to_disk_form()"
+.H 4 "dwarf_transform_to_disk_form()"
 .DS
 \f(CWDwarf_Signed dwarf_transform_to_disk_form(
         Dwarf_P_Debug dbg,
@@ -1022,7 +1048,9 @@ by the \f(CWdwarf_producer_finish_a() \fP call
 was actually correct), along
 with all the other space in use with that Dwarf_P_Debug.
 
-.H 3 "dwarf_get_section_bytes()"
+Function created 01 December 2018.
+
+.H 4 "dwarf_get_section_bytes()"
 .DS
 \f(CWDwarf_Ptr dwarf_get_section_bytes(
         Dwarf_P_Debug dbg,
@@ -1099,7 +1127,7 @@ with all the other space in use with that Dwarf_P_Debug.
 
 .H 3 "dwarf_get_relocation_info_count()"
 .DS
-\f(CWint  dwarf_get_relocation_info_count(
+\f(CWint dwarf_get_relocation_info_count(
         Dwarf_P_Debug dbg,
         Dwarf_Unsigned *count_of_relocation_sections ,
 	int            *drd_buffer_version,
@@ -1239,10 +1267,12 @@ The relocation type means either
 (R_MIPS_64) or (R_MIPS_32) (or the like for
 the particular ABI.
 \f(CWdrd_length\fP gives the length of the field to be relocated.
-\f(CWdrd_offset\fP is an offset (of the
+\f(CWdrd_offset\fP
+is an offset (of the
 value to be relocated) in
 the section this relocation stuff is linked to.
-\f(CWdrd_symbol_index\fP is the symbol index (if elf symbol
+\f(CWdrd_symbol_index\fP
+is the symbol index (if elf symbol
 indices were provided) or the handle to arbitrary
 information (if that is what the caller passed in 
 to the relocation-creating dwarf calls) of the symbol
@@ -1262,7 +1292,8 @@ should contain a symbolic pair like
 to generate a length.
 \f(CWdrd_length\fP gives the length of the field to be relocated.
 
-\f(CWdrt_segment_rel\fP means (R_MIPS_SCN_DISP)
+\f(CWdrt_segment_rel\fP
+means (R_MIPS_SCN_DISP)
 is the real relocation (R_MIPS_SCN_DISP applies to
 exception tables and this part may need further work).
 \f(CWdrd_length\fP gives the length of the field to be relocated.
@@ -1279,7 +1310,7 @@ with all the other space in use with that Dwarf_P_Debug.
 .DS
 \f(CWvoid dwarf_reset_section_bytes(
         Dwarf_P_Debug dbg
-        ) \fP
+        )\fP
 .DE
 The function \f(CWdwarf_reset_section_bytes() \fP 
 is used to reset the internal information so that
@@ -1374,7 +1405,7 @@ and sets
 \f(CWerror\fP 
 through the pointer.
 
-.H 3 "dwarf_producer_finish()"
+.H 4 "dwarf_producer_finish()"
 .DS
 \f(CWDwarf_Unsigned dwarf_producer_finish(
         Dwarf_P_Debug dbg,
@@ -1428,14 +1459,17 @@ the root
 \f(CWDIE\fP graph that has been built so far.  
 It is intended to mark the compilation-unit \f(CWDIE\fP for the 
 object represented by \f(CWdbg\fP.  
-The root \f(CWDIE\fP is specified 
+The root \f(CWDIE\fP
+is specified 
 by \f(CWfirst_die\fP.
 .P
 It returns 
 \f(CWDW_DLV_OK\fP on success, and 
 \f(CWDW_DLV_error\fP on error.
 
-.H 3 "dwarf_add_die_to_debug()"
+Function created 2016.
+
+.H 4 "dwarf_add_die_to_debug()"
 .DS
 \f(CWDwarf_Unsigned dwarf_add_die_to_debug(
         Dwarf_P_Debug dbg,
@@ -1467,31 +1501,49 @@ returns DW_DLV_OK
 and
 creates a new \f(CWDIE\fP with
 its parent, child, left sibling, and right sibling \f(CWDIE\fPs
-specified by \f(CWparent\fP, \f(CWchild\fP, \f(CWleft_sibling\fP,
+specified by 
+\f(CWparent\fP, 
+\f(CWchild\fP, 
+\f(CWleft_sibling\fP,
 and \f(CWright_sibling\fP, respectively.  
 The new die is passed to the caller via the
 argument
 \f(CWdie_out() \fP .
 There is no requirement
-that all of these \f(CWDIE\fPs be specified, i.e. any of these
+that all of these \f(CWDIE\fPs
+be specified, i.e. any of these
 descriptors may be \f(CWNULL\fP.  
 If none is specified, this will
 be an isolated \f(CWDIE\fP.  
 A \f(CWDIE\fP is 
 transformed to disk form by \f(CWdwarf_transform_to_disk_form() \fP 
 only if there is a path from
-the \f(CWDIE\fP specified by \f(CWdwarf_add_die_to_debug\fP to it.
+the 
+\f(CWDIE\fP
+specified by 
+\f(CWdwarf_add_die_to_debug\fP to it.
 .P
 The value of
-\f(CWnew_tag\fP is the tag which is given to the new \f(CWDIE\fP.
-\f(CWparent\fP, \f(CWchild\fP, \f(CWleft_sibling\fP, and
+\f(CWnew_tag\fP
+is the tag which is given to the new
+\f(CWDIE\fP.
+\f(CWparent\fP,
+\f(CWchild\fP, 
+\f(CWleft_sibling\fP, and
 \f(CWright_sibling\fP are pointers to establish links to existing 
-\f(CWDIE\fPs.  Only one of \f(CWparent\fP, \f(CWchild\fP, 
-\f(CWleft_sibling\fP, and \f(CWright_sibling\fP may be non-NULL.
-If \f(CWparent\fP (\f(CWchild\fP) is given, the \f(CWDIE\fP is 
+\f(CWDIE\fPs.
+Only one of 
+\f(CWparent\fP, 
+\f(CWchild\fP, 
+\f(CWleft_sibling\fP, and 
+\f(CWright_sibling\fP may be non-NULL.
+If \f(CWparent\fP
+(\f(CWchild\fP) is given, the \f(CWDIE\fP is 
 linked into the list after (before) the \f(CWDIE\fP pointed to.  
-If \f(CWleft_sibling\fP (\f(CWright_sibling\fP) is given, the 
-\f(CWDIE\fP is linked into the list after (before) the \f(CWDIE\fP 
+If \f(CWleft_sibling\fP
+(\f(CWright_sibling\fP) is given, the 
+\f(CWDIE\fP
+is linked into the list after (before) the \f(CWDIE\fP 
 pointed to.
 .P
 To add attributes to the new \f(CWDIE\fP, 
@@ -1503,7 +1555,9 @@ On failure
 returns DW_DLV_ERROR and sets 
 \f(CW*error\fP. 
 
-.H 3 "dwarf_new_die()"
+Function created 01 December 2018.
+
+.H 4 "dwarf_new_die()"
 .DS
 \f(CWDwarf_P_Die dwarf_new_die(
         Dwarf_P_Debug dbg, 
@@ -1524,7 +1578,7 @@ for details (both functions do the same thing).
 
 .H 3 "dwarf_die_link_a()"
 .DS
-\f(CWDwarf_P_Die dwarf_die_link_a(
+\f(CWint dwarf_die_link_a(
         Dwarf_P_Die die, 
         Dwarf_P_Die parent,
         Dwarf_P_Die child,
@@ -1541,9 +1595,15 @@ returns
 and
 links an existing 
 \f(CWDIE\fP
-described by the given \f(CWdie\fP to other existing \f(CWDIE\fPs.
-The given \f(CWdie\fP can be linked to a parent \f(CWDIE\fP, a child
-\f(CWDIE\fP, a left sibling \f(CWDIE\fP, or a right sibling \f(CWDIE\fP
+described by the given
+\f(CWdie\fP to other existing 
+\f(CWDIE\fPs.
+The given
+\f(CWdie\fP can be linked to a parent
+\f(CWDIE\fP, a child
+\f(CWDIE\fP, a left sibling
+\f(CWDIE\fP, or a right sibling
+\f(CWDIE\fP
 by specifying non-NULL 
 \f(CWparent\fP, 
 \f(CWchild\fP, 
@@ -1552,7 +1612,9 @@ and \f(CWright_sibling\fP
 \f(CWDwarf_P_Die\fP
 descriptors.  
 
-Only one of \f(CWparent\fP, \f(CWchild\fP, \f(CWleft_sibling\fP,
+Only one of \f(CWparent\fP,
+\f(CWchild\fP,
+\f(CWleft_sibling\fP,
 and \f(CWright_sibling\fP may be non-NULL.  
 If \f(CWparent\fP
 (\f(CWchild\fP) is given, the \f(CWDIE\fP is linked into the list 
@@ -1576,7 +1638,7 @@ and sets
 with the specific applicable error code.
 
 
-.H 3 "dwarf_die_link()"
+.H 4 "dwarf_die_link()"
 .DS
 \f(CWDwarf_P_Die dwarf_die_link(
         Dwarf_P_Die die, 
@@ -1613,8 +1675,29 @@ call
 which has the offsets where the marked DIEs were written
 in the generated .debug_info data.
 
+.H 3 "dwarf_add_die_marker_a()"
+.DS
+\f(CWint dwarf_add_die_marker_a(
+        Dwarf_P_Debug dbg,
+        Dwarf_P_Die die,
+        Dwarf_Unsigned marker,
+        Dwarf_Error *error) \fP
+.DE
+This is preferred over
+\f(CWdwarf_add_die_marker()\fP.
+The function 
+\f(CWdwarf_add_die_marker_a()\fP 
+writes the
+value 
+\f(CWmarker\fP
+to the \f(CWDIE\fP descriptor given by
+\f(CWdie\fP.  
+Passing in a marker of 0 means 'there is no marker'
+(zero is the default in DIEs).
 
-.H 3 "dwarf_add_die_marker()"
+It returns \f(CWDW_DLV_OK\fP, on success.  
+On error it returns \f(CWDW_DLV_ERROR\fP.
+.H 4 "dwarf_add_die_marker()"
 .DS
 \f(CWDwarf_Unsigned dwarf_add_die_marker(
         Dwarf_P_Debug dbg,
@@ -1622,16 +1705,38 @@ in the generated .debug_info data.
         Dwarf_Unsigned marker,
         Dwarf_Error *error) \fP
 .DE
-The function \f(CWdwarf_add_die_marker() \fP writes the
-value \f(CWmarker\fP to the \f(CWDIE\fP descriptor given by
-\f(CWdie\fP.  
+This is preferred over
+\f(CWdwarf_add_die_marker()\fP.
+The function
+\f(CWdwarf_add_die_marker_a()\fP
+writes the
+value
+\f(CWmarker\fP
+to the \f(CWDIE\fP descriptor given by
+\f(CWdie\fP.
 Passing in a marker of 0 means 'there is no marker'
 (zero is the default in DIEs).
 
-It returns \f(CW0\fP, on success.  
+It returns \f(CW0\fP, on success.
 On error it returns \f(CWDW_DLV_NOCOUNT\fP.
 
-.H 3 "dwarf_get_die_marker()"
+.H 4 "dwarf_get_die_marker_a()"
+.DS
+\f(CWint dwarf_get_die_marker_a(
+        Dwarf_P_Debug dbg,
+        Dwarf_P_Die die,
+        Dwarf_Unsigned *marker,
+        Dwarf_Error *error) \fP
+.DE
+The function \f(CWdwarf_get_die_marker() \fP returns the
+current marker value for this DIE
+through the pointer \f(CWmarker\fP.
+A marker value of 0 means 'no marker was set'.
+
+It returns \f(CWDW_DLV_OK\fP, on success.  
+On error it returns \f(CWDW_DLV_ERROR\fP.
+
+.H 4 "dwarf_get_die_marker()"
 .DS
 \f(CWDwarf_Unsigned dwarf_get_die_marker(
         Dwarf_P_Debug dbg,
@@ -1647,15 +1752,45 @@ A marker value of 0 means 'no marker was set'.
 It returns \f(CW0\fP, on success.  
 On error it returns \f(CWDW_DLV_NOCOUNT\fP.
 
-.H 3 "dwarf_get_die_markers()"
+.H 3 "dwarf_get_die_markers_a()"
 .DS
-\f(CWDwarf_Unsigned dwarf_get_die_markers(
+\f(CWint dwarf_get_die_markers_a(
+        Dwarf_P_Debug dbg,
+        Dwarf_P_Marker * marker_list,
+        Dwarf_Unsigned *marker_count,
+        Dwarf_Error *error) \fP
+.DE 
+The function \f(CWdwarf_get_die_markers_a()\fP returns
+a pointer to an array of \f(CWDwarf_P_Marker\fP pointers to
+\f(CWstruct Dwarf_P_Marker_s\fP structures through
+the pointer \f(CWmarker_list\fP.
+The array length is returned through the
+pointer \f(CWmarker_count\fP.
+    
+The call is only meaningful after 
+a call to \f(CWdwarf_transform_to_disk_form()\fP as the
+transform call creates the \f(CWstruct Dwarf_P_Marker_s\fP
+structures, one for each DIE generated for .debug_info
+(but only for DIEs that had a non-zero marker value).
+The field \f(CWma_offset\fP in the structure is set
+during generation of the .debug_info byte stream.
+The field \f(CWma_marker\fP in the structure is a copy
+of the DIE marker of the DIE given that offset.
+
+It returns \f(CWDW_DLV_OK\fP, on success.
+On error it returns \f(CWDW_DLV_ERROR\fP (if there are no
+markers it returns \f(CWDW_DLV_ERROR\fP).
+
+
+.H 4 "dwarf_get_die_markers()"
+.DS
+\f(CWDwarf_Signed dwarf_get_die_markers(
         Dwarf_P_Debug dbg,
         Dwarf_P_Marker * marker_list,
         Dwarf_Unsigned *marker_count,
         Dwarf_Error *error) \fP
 .DE
-The function \f(CWdwarf_get_die_marker() \fP returns
+The function \f(CWdwarf_get_die_marker()\fP returns
 a pointer to an array of \f(CWDwarf_P_Marker\fP pointers to
 \f(CWstruct Dwarf_P_Marker_s\fP structures through
 the pointer \f(CWmarker_list\fP.
@@ -1691,7 +1826,42 @@ This symbol is specified by means of an index into
 the Elf symbol table for the object
 (of course, the symbol index can be more general than an index).
 
-.H 3 "dwarf_add_AT_location_expr()"
+.H 3 "dwarf_add_AT_location_expr_a()"
+.DS
+\f(CWint dwarf_add_AT_location_expr_a(
+        Dwarf_P_Debug dbg,
+        Dwarf_P_Die ownerdie,
+        Dwarf_Half attr,
+        Dwarf_P_Expr loc_expr,
+        Dwarf_P_Attr *attr_out,
+        Dwarf_Error *error) \fP
+.DE
+On success the function
+\f(CWdwarf_add_AT_location_expr()\fP
+returns
+\f(CWDW_DLV_OK\fP
+and adds the attribute
+specified by
+\f(CWattr\fP
+to the
+\f(CWDIE\fP descriptor given by
+\f(CWownerdie\fP.
+The new attribute is passed back
+to the caller through the pointer
+\f(CWattr_out\fP.
+
+The attribute should be one that has a location
+expression as its value.
+The location expression that is the value
+is represented by the
+\f(CWDwarf_P_Expr\fP descriptor
+\f(CWloc_expr\fP.
+
+On error it returns 
+\f(CWDW_DLV_ERROR\fP.
+
+
+.H 4 "dwarf_add_AT_location_expr()"
 .DS
 \f(CWDwarf_P_Attribute dwarf_add_AT_location_expr(
         Dwarf_P_Debug dbg,
@@ -1700,41 +1870,142 @@ the Elf symbol table for the object
         Dwarf_P_Expr loc_expr,
         Dwarf_Error *error) \fP
 .DE
-The function \f(CWdwarf_add_AT_location_expr() \fP adds the attribute
-specified by \f(CWattr\fP to the \f(CWDIE\fP descriptor given by
-\f(CWownerdie\fP.  The attribute should be one that has a location
-expression as its value.  The location expression that is the value
-is represented by the \f(CWDwarf_P_Expr\fP descriptor \f(CWloc_expr\fP.
-It returns the \f(CWDwarf_P_Attribute\fP descriptor for the attribute
-given, on success.  On error it returns \f(CWDW_DLV_BADADDR\fP.
+The function 
+\f(CWdwarf_add_AT_location_expr()\fP adds the attribute
+specified by 
+\f(CWattr\fP to the 
+\f(CWDIE\fP descriptor given by
+\f(CWownerdie\fP.
+The attribute should be one that has a location
+expression as its value.
+The location expression that is the value
+is represented by the 
+\f(CWDwarf_P_Expr\fP descriptor 
+\f(CWloc_expr\fP.
 
-.H 3 "dwarf_add_AT_name()"
+It returns the 
+\f(CWDwarf_P_Attribute\fP descriptor for the attribute
+given, on success.  
+
+On error it returns 
+\f(CWDW_DLV_BADADDR\fP.
+
+.H 3 "dwarf_add_AT_name_a()"
+.DS
+\f(CWint dwarf_add_AT_name_a(
+        Dwarf_P_Die ownerdie, 
+        char *name,
+        Dwarf_P_Attribute * attr_out,
+        Dwarf_Error *error) \fP
+.DE
+New November 2018, a better alternative to
+\f(CWdwarf_add_AT_name()\fP.
+
+The function \f(CWdwarf_add_AT_name_a() \fP adds
+the string specified by
+\f(CWname\fP as the
+value of the \f(CWDW_AT_name\fP attribute for the
+given \f(CWDIE\fP, \f(CWownerdie\fP.  It returns
+DW_DLV_OK on success and assignes the new
+attribute descriptor to
+\f(CW*attr_out\fP.
+
+On error it returns
+\f(CWDW_DLV_ERROR\fP
+and does not set
+\f(CW*attr_out\fP.
+
+.H 4 "dwarf_add_AT_name()"
 .DS
 \f(CWDwarf_P_Attribute dwarf_add_AT_name(
         Dwarf_P_Die ownerdie, 
         char *name,
         Dwarf_Error *error) \fP
 .DE
-The function \f(CWdwarf_add_AT_name() \fP adds the string specified
-by \f(CWname\fP as the value of the \f(CWDW_AT_name\fP attribute
-for the given \f(CWDIE\fP, \f(CWownerdie\fP.  It returns the 
-\f(CWDwarf_P_attribute\fP descriptor for the \f(CWDW_AT_name\fP 
-attribute on success.  On error, it returns \f(CWDW_DLV_BADADDR\fP.
+The function 
+\f(CWdwarf_add_AT_name()\fP 
+adds
+the string specified by 
+\f(CWname\fP as the
+value of the
+\f(CWDW_AT_name\fP attribute for the
+given \f(CWDIE\fP, \f(CWownerdie\fP.  It returns
+the \f(CWDwarf_P_attribute\fP descriptor for the
+\f(CWDW_AT_name\fP attribute on success.  On error,
+it returns \f(CWDW_DLV_BADADDR\fP.
 
-.H 3 "dwarf_add_AT_comp_dir()"
+.H 3 "dwarf_add_AT_comp_dir_a()"
+.DS
+\f(CWint dwarf_add_AT_comp_dir_a(
+        Dwarf_P_Die ownerdie,
+        char *current_working_directory,
+        Dwarf_P_Attribute *attr_out,
+        Dwarf_Error *error) \fP
+.DE
+The function 
+\f(CWdwarf_add_AT_comp_dir_a\fP adds the string given by
+\f(CWcurrent_working_directory\fP as the value of the
+\f(CWDW_AT_comp_dir\fP
+attribute for the
+\f(CWDIE\fP described by the given 
+\f(CWownerdie\fP.  
+On success it returns 
+\f(CWDW_DLV_OK\fP
+and sets
+\f(CW*attr_out\fP to the new attribute.
+.P
+On error, it returns 
+\f(CWDW_DLV_ERROR\fP
+and does not touch \f(CWattr_out\fP .
+
+.H 4 "dwarf_add_AT_comp_dir()"
 .DS
 \f(CWDwarf_P_Attribute dwarf_add_AT_comp_dir(
         Dwarf_P_Die ownerdie,
         char *current_working_directory,
         Dwarf_Error *error) \fP
 .DE
-The function \f(CWdwarf_add_AT_comp_dir() \fP adds the string given by
-\f(CWcurrent_working_directory\fP as the value of the \f(CWDW_AT_comp_dir\fP
-attribute for the \f(CWDIE\fP described by the given \f(CWownerdie\fP.  
+The function \f(CWint dwarf_add_AT_comp_dir\fP
+adds the string given by
+\f(CWcurrent_working_directory\fP
+as the value of the 
+\f(CWDW_AT_comp_dir\fP
+attribute for the 
+\f(CWDIE\fP described by the given
+\f(CWownerdie\fP.  
 It returns the \f(CWDwarf_P_Attribute\fP for this attribute on success.
-On error, it returns \f(CWDW_DLV_BADADDR\fP.
+On error, it returns
+\f(CWDW_DLV_BADADDR\fP.
 
-.H 3 "dwarf_add_AT_producer()"
+.H 3 "dwarf_add_AT_producer_a()"
+.DS
+\f(CWint dwarf_add_AT_producer_a(
+        Dwarf_P_Die ownerdie,
+        char *producer_string,
+        Dwarf_P_Attribute *attr_out,
+        Dwarf_Error *error) \fP
+.DE
+The function 
+\f(CWdwarf_add_AT_producer()\fP
+adds the string given by
+\f(CWproducer_string\fP as the value of the 
+\f(CWDW_AT_producer\fP
+attribute for the 
+\f(CWDIE\fP given by 
+\f(CWownerdie\fP.
+
+On success it returns
+\f(CWDW_DLV_OK\fP
+and returns the new attribute descriptor 
+representing this attribute
+through the pointer argument
+\f(CWattr_out\fP.
+
+On error, it returns 
+\f(CWDW_DLV_ERROR\fP.
+
+
+.H 4 "dwarf_add_AT_producer()"
 .DS
 \f(CWDwarf_P_Attribute dwarf_add_AT_producer(
         Dwarf_P_Die ownerdie,
@@ -1742,12 +2013,49 @@ On error, it returns \f(CWDW_DLV_BADADDR\fP.
         Dwarf_Error *error) \fP
 .DE
 The function \f(CWdwarf_add_AT_producer() \fP adds the string given by
-\f(CWproducer_string\fP as the value of the \f(CWDW_AT_producer\fP
-attribute for the \f(CWDIE\fP given by \f(CWownerdie\fP.  It returns
+\f(CWproducer_string\fP
+as the value of the 
+\f(CWDW_AT_producer\fP
+attribute for the \f(CWDIE\fP given by 
+\f(CWownerdie\fP.  It returns
 the \f(CWDwarf_P_Attribute\fP descriptor representing this attribute
-on success.  On error, it returns \f(CWDW_DLV_BADADDR\fP.
+on success.  On error, it returns 
+\f(CWDW_DLV_BADADDR\fP.
 
-.H 3 "dwarf_add_AT_any_value_sleb()"
+.H 3 "dwarf_add_AT_any_value_sleb_a()"
+.DS
+\f(CWint dwarf_add_AT_any_value_sleb_a(
+        Dwarf_P_Die ownerdie,
+        Dwarf_Half  attrnum,
+        Dwarf_Signed signed_value,
+        Dwarf_P_Attribute *out_attr,
+        Dwarf_Error *error) \fP
+.DE
+The function 
+\f(CWdwarf_add_AT_any_value_sleb_a()\fP adds the
+given 
+\f(CWDwarf_Signed\fP value 
+\f(CWsigned_value\fP as the value
+of the 
+\f(CWDW_AT_const_value\fP attribute for the 
+\f(CWDIE\fP
+described by the given \f(CWownerdie\fP.
+
+The FORM of the output value is 
+\f(CWDW_FORM_sdata\fP (signed leb number)
+and the attribute will be \f(CWDW_AT_const_value\fP.
+
+On success it returns
+\f(CWDW_DLV_OK\fP
+and sets
+\f(CW*out_attr\fP to the created attribute.
+
+On error, it returns \f(CWDW_DLV_ERROR\fP.
+
+The function was created 01 December 2018.
+
+
+.H 4 "dwarf_add_AT_any_value_sleb()"
 .DS
 \f(CWDwarf_P_Attribute dwarf_add_AT_any_value_sleb(
         Dwarf_P_Die ownerdie,
@@ -1770,14 +2078,44 @@ On error, it returns \f(CWDW_DLV_BADADDR\fP.
 
 The function was created 13 August 2013.
 
-.H 3 "dwarf_add_AT_const_value_signedint()"
+.H 3 "dwarf_add_AT_const_value_signedint_a()"
+.DS
+\f(CWint dwarf_add_AT_const_value_signedint_a(
+        Dwarf_P_Die ownerdie,
+        Dwarf_Signed signed_value,
+        Dwarf_P_Attribute *attr_out,
+        Dwarf_Error *error) \fP
+.DE
+The function 
+\f(CWdwarf_add_AT_const_value_signedint_a\fP adds the
+given 
+\f(CWDwarf_Signed\fP value 
+\f(CWsigned_value\fP as the value
+of the \f(CWDW_AT_const_value\fP attribute for the \f(CWDIE\fP
+described by the given \f(CWownerdie\fP.
+
+The FORM of the output value is 
+\f(CWDW_FORM_data<n>\fP (signed leb number)
+and the attribute will be \f(CWDW_AT_const_value\fP.
+
+With this interface and output, there is no way for consumers
+to know from the FORM that the value is signed.
+
+
+On success it returns \f(CWDW_DLV_OK\fP
+and sets *attr_out to the created attribute.
+
+On error, it returns \f(CWDW_DLV_ERROR\fP.
+
+
+.H 4 "dwarf_add_AT_const_value_signedint()"
 .DS
 \f(CWDwarf_P_Attribute dwarf_add_AT_const_value_signedint(
         Dwarf_P_Die ownerdie,
         Dwarf_Signed signed_value,
         Dwarf_Error *error) \fP
 .DE
-The function \f(CWdwarf_add_AT_const_value_signedint() \fP adds the
+The function \f(CWdwarf_add_AT_const_value_signedint\fP adds the
 given \f(CWDwarf_Signed\fP value \f(CWsigned_value\fP as the value
 of the \f(CWDW_AT_const_value\fP attribute for the \f(CWDIE\fP
 described by the given \f(CWownerdie\fP.  
@@ -1797,14 +2135,14 @@ On error, it returns \f(CWDW_DLV_BADADDR\fP.
 
 .H 3 "dwarf_add_AT_implicit_const()"
 .DS
-\f(CW int dwarf_add_AT_implicit_const(Dwarf_P_Die ownerdie,
+\f(CWint dwarf_add_AT_implicit_const(Dwarf_P_Die ownerdie,
     Dwarf_Half attrnum,
     Dwarf_Signed signed_value,
     Dwarf_P_Attribute *outattr,
     Dwarf_Error * error); \fP
 .DE
 The function
-\f(CWdwarf_add_AT_implicit_const()\fP
+\f(CWdwarf_add_AT_implicit_const\fP
 creates a new attribute and
 adds the signed value to the abbreviation entry
 for this new attribute and attaches the new attribute
@@ -1832,7 +2170,41 @@ In case of error the function returns
 \f(CWDW_DLV_ERROR\fP
 and no attribute is created.
 
-.H 3 "dwarf_add_AT_any_value_uleb()"
+.H 3 "dwarf_add_AT_any_value_uleb_a()"
+.DS
+\f(CWint dwarf_add_AT_any_value_uleb_a(
+        Dwarf_P_Die ownerdie,
+        Dwarf_Half  attrnum,
+        Dwarf_Unsigned unsigned_value,
+        Dwarf_P_Attribute *attr_out,
+        Dwarf_Error *error) \fP
+.DE
+The function 
+\f(CWdwarf_add_AT_any_value_uleb_a\fP adds the
+given 
+\f(CWDwarf_Unsigned\fP value 
+\f(CWunsigned_value\fP as the value
+of the 
+\f(CWattrnum\fP attribute for the 
+\f(CWDIE\fP described
+by the given \f(CWownerdie\fP.
+
+The FORM of the output value is 
+\f(CWDW_FORM_udata\fP (unsigned leb number)
+and the attribute is \f(CWattrnum\fP.
+
+On success it returns
+\f(CWDW_DLV_OK\fP
+and sets
+\f(CW*attr_out\fP
+to the newly created attribute.
+
+On error, it returns \f(CWDW_DLV_ERROR\fP.
+
+The function was created 01 December 2018.
+
+
+.H 4 "dwarf_add_AT_any_value_uleb()"
 .DS
 \f(CWDwarf_P_Attribute dwarf_add_AT_any_value_uleb(
         Dwarf_P_Die ownerdie,
@@ -1840,7 +2212,7 @@ and no attribute is created.
         Dwarf_Unsigned unsigned_value,
         Dwarf_Error *error) \fP
 .DE
-The function \f(CWdwarf_add_AT_any_value_uleb() \fP adds the
+The function \f(CWdwarf_add_AT_any_value_uleb\fP adds the
 given \f(CWDwarf_Unsigned\fP value \f(CWunsigned_value\fP as the value
 of the \f(CWattrnum\fP attribute for the \f(CWDIE\fP described
 by the given \f(CWownerdie\fP.
@@ -1855,14 +2227,49 @@ On error, it returns \f(CWDW_DLV_BADADDR\fP.
 
 The function was created 13 August 2013.
 
-.H 3 "dwarf_add_AT_const_value_unsignedint()"
+.H 3 "dwarf_add_AT_const_value_unsignedint_a()"
+.DS
+\f(CWint dwarf_add_AT_const_value_unsignedint_a(
+        Dwarf_P_Die ownerdie,
+        Dwarf_Unsigned unsigned_value,
+        Dwarf_P_Attribute *attr_out,
+        Dwarf_Error *error)\fP
+.DE
+The function 
+\f(CWdwarf_add_AT_const_value_unsignedint_a\fP adds the
+given 
+\f(CWDwarf_Unsigned\fP value 
+\f(CWunsigned_value\fP as the value
+of the 
+\f(CWDW_AT_const_value\fP attribute for the 
+\f(CWDIE\fP described
+by the given 
+\f(CWownerdie\fP.
+
+The FORM of the output value is 
+\f(CWDW_FORM_data<n>\fP
+and the attribute will be 
+\f(CWDW_AT_const_value\fP.
+
+With this interface and output, there is no way for consumers
+to know from the FORM that the value is signed.
+
+On success it returns
+\f(CWDW_DLV_OK\fP.
+and sets \f(CW*attr_out\fP
+to the newly created attribute.
+
+On error, it returns \f(CWDW_DLV_ERROR\fP.
+Created 01 December 2018.
+
+.H 4 "dwarf_add_AT_const_value_unsignedint()"
 .DS
 \f(CWDwarf_P_Attribute dwarf_add_AT_const_value_unsignedint(
         Dwarf_P_Die ownerdie,
         Dwarf_Unsigned unsigned_value,
         Dwarf_Error *error) \fP
 .DE
-The function \f(CWdwarf_add_AT_const_value_unsignedint() \fP adds the
+The function \f(CWdwarf_add_AT_const_value_unsignedint\fP adds the
 given \f(CWDwarf_Unsigned\fP value \f(CWunsigned_value\fP as the value
 of the \f(CWDW_AT_const_value\fP attribute for the \f(CWDIE\fP described 
 by the given \f(CWownerdie\fP.  
@@ -1878,21 +2285,112 @@ descriptor for this attribute on success.
 
 On error, it returns \f(CWDW_DLV_BADADDR\fP.
 
-.H 3 "dwarf_add_AT_const_value_string()"
+.H 3 "dwarf_add_AT_const_value_string_a()"
+.DS
+\f(CWint dwarf_add_AT_const_value_string_a(
+    Dwarf_P_Die ownerdie,
+    char *string_value,
+    Dwarf_P_Attribute *attr_out,
+    Dwarf_Error *error) \fP
+.DE
+The function 
+\f(CWdwarf_add_AT_const_value_string_afP adds the
+string value given by 
+\f(CWstring_value\fP as the value of the
+\f(CWDW_AT_const_value\fP attribute for the 
+\f(CWDIE\fP described
+by the given 
+\f(CWownerdie\fP.  
+.P
+On success it returns 
+\f(CWDW_DLV_OK\fP
+\f(CW*attr_out\fP
+to a newly created attribute.
+.P
+On error, it returns
+\f(CWDW_DLV_ERROR\fP.
+
+Function created 01 December 2018.
+
+.H 4 "dwarf_add_AT_const_value_string()"
 .DS
 \f(CWDwarf_P_Attribute dwarf_add_AT_const_value_string(
         Dwarf_P_Die ownerdie,
         char *string_value,
         Dwarf_Error *error) \fP
 .DE
-The function \f(CWdwarf_add_AT_const_value_string() \fP adds the 
-string value given by \f(CWstring_value\fP as the value of the 
-\f(CWDW_AT_const_value\fP attribute for the \f(CWDIE\fP described 
-by the given \f(CWownerdie\fP.  It returns the \f(CWDwarf_P_Attribute\fP
+The function 
+\f(CWdwarf_add_AT_const_value_stringfP adds the 
+string value given by 
+\f(CWstring_value\fP as the value of the 
+\f(CWDW_AT_const_value\fP attribute for the 
+\f(CWDIE\fP described 
+by the given 
+\f(CWownerdie\fP.  
+.P
+It returns the 
+\f(CWDwarf_P_Attribute\fP
 descriptor for this attribute on success.  On error, it returns
 \f(CWDW_DLV_BADADDR\fP.
 
-.H 3 "dwarf_add_AT_targ_address()"
+.H 3 "dwarf_add_AT_targ_address_c()"
+.DS
+\f(CWint dwarf_add_AT_targ_address_c(
+        Dwarf_P_Debug dbg,
+        Dwarf_P_Die ownerdie,
+        Dwarf_Half attr,
+        Dwarf_Unsigned pc_value,
+        Dwarf_Unsigned sym_index,  
+        Dwarf_P_Attribute *attr_out,
+        Dwarf_Error *error) \fP
+.DE
+The function 
+\f(CWdwarf_add_AT_targ_address_cfP 
+is identical to 
+\f(CWdwarf_add_AT_targ_address_bfP
+except for the return value and an added argument.
+Because this is type-safe use this instead of
+\f(CWdwarf_add_AT_targ_address_bfP.
+
+.P
+\f(CWsym_index\fP is guaranteed to
+be large enough that it can contain a pointer to
+arbitrary data (so the caller can pass in a real elf
+symbol index, an arbitrary number, or a pointer
+to arbitrary data).
+The ability to pass in a pointer through 
+\f(CWsym_index\fP
+is only usable with
+\f(CWDW_DLC_SYMBOLIC_RELOCATIONS\fP.
+
+On success the function returns
+\f(CWDW_DLV_OK\fP
+\f(CWDwarf_P_Attribute\fP
+and
+\f(CWpc_value\fP
+is put into the section stream output and
+the 
+\f(CWsym_index\fP is applied to the relocation
+information.
+
+On failure it returns
+\f(CWDW_DLV_ERROR\fP.
+
+Do not use this function for attr 
+\f(CWDW_AT_high_pc\fP
+if the value to be recorded is an offset (not a pc)
+[ use 
+\f(CWdwarf_add_AT_unsigned_const_afP
+or  
+\f(CWdwarf_add_AT_any_value_uleb_afP
+instead].
+
+On failure the function returns
+\f(CWDW_DLV_ERROR\fP
+
+Function created 01 December 2018.
+
+.H 4 "dwarf_add_AT_targ_address()"
 .DS
 \f(CWDwarf_P_Attribute dwarf_add_AT_targ_address(
         Dwarf_P_Debug dbg,
@@ -1902,19 +2400,29 @@ descriptor for this attribute on success.  On error, it returns
         Dwarf_Signed sym_index,
         Dwarf_Error *error) \fP
 .DE
-The function \f(CWdwarf_add_AT_targ_address() \fP adds an attribute that
-belongs to the "address" class to the die specified by \f(CWownerdie\fP.  
-The attribute is specified by \f(CWattr\fP, and the object that the 
-\f(CWDIE\fP belongs to is specified by \f(CWdbg\fP.  The relocatable 
-address that is the value of the attribute is specified by \f(CWpc_value\fP. 
-The symbol to be used for relocation is specified by the \f(CWsym_index\fP,
+The function 
+\f(CWdwarf_add_AT_targ_address\fP
+adds an attribute that
+belongs to the "address" class to the die specified by 
+\f(CWownerdie\fP.  
+The attribute is specified by 
+\f(CWattr\fP, and the object that the 
+\f(CWDIE\fP belongs to is specified by 
+\f(CWdbg\fP.  The relocatable 
+address that is the value of the attribute is specified by 
+\f(CWpc_value\fP. 
+The symbol to be used for relocation is specified by the 
+\f(CWsym_index\fP,
 which is the index of the symbol in the Elf symbol table.
 
-It returns the \f(CWDwarf_P_Attribute\fP descriptor for the attribute
-on success, and \f(CWDW_DLV_BADADDR\fP on error.
+It returns the 
+\f(CWDwarf_P_Attribute\fP descriptor for the attribute
+on success, and 
+\f(CWDW_DLV_BADADDR\fP on error.
 
 
-.H 3 "dwarf_add_AT_targ_address_b()"
+
+.H 4 "dwarf_add_AT_targ_address_b()"
 .DS
 \f(CWDwarf_P_Attribute dwarf_add_AT_targ_address_b(
         Dwarf_P_Debug dbg,
@@ -1924,29 +2432,151 @@ on success, and \f(CWDW_DLV_BADADDR\fP on error.
         Dwarf_Unsigned sym_index,
         Dwarf_Error *error) \fP
 .DE
-The function \f(CWdwarf_add_AT_targ_address_b() \fP 
-is identical to \f(CWdwarf_add_AT_targ_address() \fP
-except that \f(CWsym_index() \fP is guaranteed to 
+Please use
+\f(CWdwarf_add_AT_targ_address_c\fP 
+instead of
+\f(CWdwarf_add_AT_targ_address_b\fP 
+or
+\f(CWdwarf_add_AT_targ_address\fP 
+when is is convient for you.
+The function 
+\f(CWdwarf_add_AT_targ_address_b\fP 
+is identical to 
+\f(CWdwarf_add_AT_targ_address\fP
+except that 
+\f(CWsym_index\fP is guaranteed to 
 be large enough that it can contain a pointer to
 arbitrary data (so the caller can pass in a real elf
 symbol index, an arbitrary number, or a pointer
 to arbitrary data).  
-The ability to pass in a pointer through \f(CWsym_index() \fP
+The ability to pass in a pointer through 
+\f(CWsym_index\fP
 is only usable with 
 \f(CWDW_DLC_SYMBOLIC_RELOCATIONS\fP.
 
-The \f(CWpc_value\fP
+The 
+\f(CWpc_value\fP
 is put into the section stream output and
-the \f(CWsym_index\fP is applied to the relocation
+the 
+\f(CWsym_index\fP is applied to the relocation
 information.
 
-Do not use this function for attr \f(CWDW_AT_high_pc\fP
+Do not use this function for attr 
+\f(CWDW_AT_high_pc\fP
 if the value to be recorded is an offset (not a pc)
-[ use \f(CWdwarf_add_AT_unsigned_const()\fP  
-or  \f(CWdwarf_add_AT_any_value_uleb()\fP 
+[ use 
+\f(CWdwarf_add_AT_unsigned_const_a\fP  
+or  
+\f(CWdwarf_add_AT_any_value_uleb_a\fP 
 instead].
 
-.H 3 "dwarf_add_AT_dataref()"
+.H 3 "dwarf_add_AT_block_a()"
+.DS
+\f(CWint dwarf_add_AT_block_a(
+    Dwarf_P_Debug       dbg,
+    Dwarf_P_Die         ownerdie,
+    Dwarf_Half          attr,
+    Dwarf_Small         *block_data,
+    Dwarf_Unsigned      block_size,
+    Dwarf_P_Attribute*  attr_out,
+    Dwarf_Error         *error)
+.DE
+On success this returns 
+\f(CWDW_DLV_OK\fP
+an attribute
+with a
+\f(CWDW_FORM_block\fP
+instance
+(does not create 
+\f(CWDW_FORM_block1\fP,
+\f(CWDW_FORM_block2\fP, or
+\f(CWDW_FORM_block4\fP
+at present)
+and returns a pointer to the new attribute
+through the pointer
+\f(CWattr_out\fP.
+
+On failure this returns
+\f(CWDW_DLV_ERROR\fP
+
+/*  New December 2018. Preferred version. */
+
+.H 4 "dwarf_add_AT_block()"
+.DS
+\f(CWDwarf_P_Attribute dwarf_add_AT_block(
+    Dwarf_P_Debug       dbg,
+    Dwarf_P_Die         ownerdie,
+    Dwarf_Half          attr,
+    Dwarf_Small         *block_data,
+    Dwarf_Unsigned      block_size,
+    Dwarf_Error         *error)
+.DE
+On success this returns 
+an attribute pointer
+just as
+\f(CWdwarf_add_AT_block_a\fP
+ does
+and returns the attribute.
+
+On failure it returns
+\f(CWDW_DLV_BADADDR\fP.
+
+jjk
+
+
+.H 3 "dwarf_add_AT_dataref_a()"
+.DS
+\f(CWint dwarf_add_AT_dataref_a(
+        Dwarf_P_Debug dbg,
+        Dwarf_P_Die ownerdie,
+        Dwarf_Half attr,
+        Dwarf_Unsigned pc_value,
+        Dwarf_Unsigned sym_index,
+        Dwarf_P_Attribute *attr_out,
+        Dwarf_Error *error) \fP
+.DE
+This is very similar to 
+\f(CWdwarf_add_AT_targ_address_b\fP
+but results in a different FORM (results in DW_FORM_data4
+or DW_FORM_data8).
+
+Useful for adding relocatable addresses in location lists.
+
+\f(CWsym_index\fP is guaranteed to
+be large enough that it can contain a pointer to
+arbitrary data (so the caller can pass in a real elf
+symbol index, an arbitrary number, or a pointer
+to arbitrary data).
+The ability to pass in a pointer through 
+\f(CWsym_index\fP
+is only usable with
+\f(CWDW_DLC_SYMBOLIC_RELOCATIONS\fP.
+
+On success it returns 
+\f(CWDW_DLV_OK\fP
+and
+the 
+\f(CWpc_value\fP
+is put into the section stream output and
+the 
+\f(CWsym_index\fP is applied to the relocation
+information.
+
+Do not use this function for 
+\f(CWDW_AT_high_pc\fP, use
+\f(CWdwarf_add_AT_unsigned_const\fP
+or 
+\f(CWdwarf_add_AT_any_value_uleb\fP
+[ if the value to be recorded is
+an offset of 
+\f(CWDW_AT_low_pc\fP]
+or 
+\f(CWdwarf_add_AT_targ_address_b\fP [ if the value
+to be recorded is an address].
+
+Function created 01 December 2018.
+
+.H 4 "dwarf_add_AT_dataref()"
 .DS
 \f(CWDwarf_P_Attribute dwarf_add_AT_dataref(
         Dwarf_P_Debug dbg,
@@ -1956,11 +2586,63 @@ instead].
         Dwarf_Unsigned sym_index,
         Dwarf_Error *error) \fP
 .DE
-This is very similar to \f(CWdwarf_add_AT_targ_address_b() \fP
+This is very similar to 
+\f(CWdwarf_add_AT_targ_address_b\fP
 but results in a different FORM (results in DW_FORM_data4
 or DW_FORM_data8).
 
 Useful for adding relocatable addresses in location lists.
+
+\f(CWsym_index\fP is guaranteed to
+be large enough that it can contain a pointer to
+arbitrary data (so the caller can pass in a real elf
+symbol index, an arbitrary number, or a pointer
+to arbitrary data).
+The ability to pass in a pointer through 
+\f(CWsym_index\fP
+is only usable with
+\f(CWDW_DLC_SYMBOLIC_RELOCATIONS\fP.
+
+The 
+\f(CWpc_value\fP
+is put into the section stream output and
+the 
+\f(CWsym_index\fP is applied to the relocation
+information.
+
+Do not use this function for 
+\f(CWDW_AT_high_pc\fP, use
+\f(CWdwarf_add_AT_unsigned_const\fP 
+or 
+\f(CWdwarf_add_AT_any_value_uleb\fP 
+[ if the value to be recorded is
+an offset of 
+\f(CWDW_AT_low_pc\fP]
+or 
+\f(CWdwarf_add_AT_targ_address_b\fP [ if the value
+to be recorded is an address].
+
+.H 3 "dwarf_add_AT_ref_address_a"
+.DS
+\f(CWint dwarf_add_AT_ref_address_a(
+        Dwarf_P_Debug dbg,
+        Dwarf_P_Die ownerdie,
+        Dwarf_Half attr,
+        Dwarf_Unsigned pc_value,
+        Dwarf_Unsigned sym_index,
+        Dwarf_P_Attribute *attr_out,
+        Dwarf_Error *error) \fP
+.DE
+
+This is very similar to 
+\f(CWdwarf_add_AT_targ_address_c\fP
+but results in a different FORM (results in 
+\f(CWDW_FORM_ref_addr\fP
+being generated).
+
+Useful for  
+\f(CWDW_AT_type\fP and 
+\f(CWDW_AT_import\fP attributes.
 
 \f(CWsym_index() \fP is guaranteed to
 be large enough that it can contain a pointer to
@@ -1971,20 +2653,23 @@ The ability to pass in a pointer through \f(CWsym_index() \fP
 is only usable with
 \f(CWDW_DLC_SYMBOLIC_RELOCATIONS\fP.
 
-The \f(CWpc_value\fP
+On success the function returns
+\f(CWDW_DLV_OK\fP and
+\f(CWpc_value\fP
 is put into the section stream output and
-the \f(CWsym_index\fP is applied to the relocation
+the 
+\f(CWsym_index\fP is applied to the relocation
 information.
 
-Do not use this function for \f(CWDW_AT_high_pc\fP, use
-\f(CWdwarf_add_AT_unsigned_const()\fP 
-or \f(CWdwarf_add_AT_any_value_uleb()\fP 
-[ if the value to be recorded is
-an offset of \f(CWDW_AT_low_pc\fP]
-or \f(CWdwarf_add_AT_targ_address_b()\fP [ if the value
-to be recorded is an address].
+On failure the function returns
+\f(CWDW_DLV_ERROR\fP.
 
-.H 3 "dwarf_add_AT_ref_address()"
+Do not use this function for 
+\f(CWDW_AT_high_pc\fP.  
+
+Function created 01 December 2018.
+
+.H 4 "dwarf_add_AT_ref_address()"
 .DS
 \f(CWDwarf_P_Attribute dwarf_add_AT_ref_address(
         Dwarf_P_Debug dbg,
@@ -2006,19 +2691,59 @@ be large enough that it can contain a pointer to
 arbitrary data (so the caller can pass in a real elf
 symbol index, an arbitrary number, or a pointer
 to arbitrary data).
-The ability to pass in a pointer through \f(CWsym_index() \fP
+The ability to pass in a pointer through 
+\f(CWsym_index()\fP
 is only usable with
 \f(CWDW_DLC_SYMBOLIC_RELOCATIONS\fP.
 
-The \f(CWpc_value\fP
+The 
+\f(CWpc_value\fP
 is put into the section stream output and
-the \f(CWsym_index\fP is applied to the relocation
+the 
+\f(CWsym_index\fP is applied to the relocation
 information.
 
 Do not use this function for \f(CWDW_AT_high_pc\fP.
 
+.H 3 "dwarf_add_AT_unsigned_const_a()"
+.DS
+\f(CWint dwarf_add_AT_unsigned_const_a(
+        Dwarf_P_Debug dbg,
+        Dwarf_P_Die ownerdie,
+        Dwarf_Half attr,
+        Dwarf_Unsigned value,
+        Dwarf_P_Attribute *attr_out,
+        Dwarf_Error *error) \fP
+.DE
+The function 
+\f(CWdwarf_add_AT_unsigned_const_a()\fP adds an attribute
+with a 
+\f(CWDwarf_Unsigned\fP value belonging to the "constant" class,
+to the 
+\f(CWDIE\fP specified by 
+\f(CWownerdie\fP.  The object that
+the 
+\f(CWDIE\fP belongs to is specified by 
+\f(CWdbg\fP.  The attribute
+is specified by 
+\f(CWattr\fP, and its value is specified by 
+\f(CWvalue\fP.
 
-.H 3 "dwarf_add_AT_unsigned_const()"
+The FORM of the output will be one of the 
+\f(CWDW_FORM_data<n>\fP forms.
+
+
+On success it returns 
+\f(CWDW_DLV_OK\fP
+and sets
+\f(CW*attr_out\fP to the newly created attribute.
+
+It returns
+\f(CWDW_DLV_ERROR\fP on error.
+
+Function created 01 December 2018.
+
+.H 4 "dwarf_add_AT_unsigned_const()"
 .DS
 \f(CWDwarf_P_Attribute dwarf_add_AT_unsigned_const(
         Dwarf_P_Debug dbg,
@@ -2027,18 +2752,63 @@ Do not use this function for \f(CWDW_AT_high_pc\fP.
         Dwarf_Unsigned value,
         Dwarf_Error *error) \fP
 .DE
-The function \f(CWdwarf_add_AT_unsigned_const() \fP adds an attribute
-with a \f(CWDwarf_Unsigned\fP value belonging to the "constant" class, 
-to the \f(CWDIE\fP specified by \f(CWownerdie\fP.  The object that
-the \f(CWDIE\fP belongs to is specified by \f(CWdbg\fP.  The attribute
-is specified by \f(CWattr\fP, and its value is specified by \f(CWvalue\fP.
+The function 
+\f(CWdwarf_add_AT_unsigned_const()\fP adds an attribute
+with a 
+\f(CWDwarf_Unsigned\fP value belonging to the "constant" class, 
+to the 
+\f(CWDIE\fP specified by 
+\f(CWownerdie\fP.  The object that
+the 
+\f(CWDIE\fP belongs to is specified by 
+\f(CWdbg\fP.  The attribute
+is specified by 
+\f(CWattr\fP, and its value is specified by 
+\f(CWvalue\fP.
 
-The FORM of the output will be one of the \f(CWDW_FORM_data<n>\fP forms.
+The FORM of the output will be one of the 
+\f(CWDW_FORM_data<n>\fP forms.
 
-It returns the \f(CWDwarf_P_Attribute\fP descriptor for the attribute
-on success, and \f(CWDW_DLV_BADADDR\fP on error.
+It returns the 
+\f(CWDwarf_P_Attribute\fP descriptor for the attribute
+on success, and 
+\f(CWDW_DLV_BADADDR\fP on error.
 
-.H 3 "dwarf_add_AT_signed_const()"
+.H 3 "dwarf_add_AT_signed_const_a()"
+.DS
+\f(CWint dwarf_add_AT_signed_const_a(
+        Dwarf_P_Debug dbg,
+        Dwarf_P_Die ownerdie,
+        Dwarf_Half attr,
+        Dwarf_Signed value,
+        Dwarf_P_Attribute *out_addr,
+        Dwarf_Error *error) \fP
+.DE
+The function 
+\f(CWdwarf_add_AT_signed_const_a()\fP adds an attribute
+with a 
+\f(CWDwarf_Signed\fP value belonging to the "constant" class,
+to the 
+\f(CWDIE\fP specified by 
+\f(CWownerdie\fP.  The object that
+the 
+\f(CWDIE\fP belongs to is specified by 
+\f(CWdbg\fP.  The attribute
+is specified by 
+\f(CWattr\fP, and its value is specified by 
+\f(CWvalue\fP.
+
+On success it returns
+\f(CWDW_DLV_OK\fP and sets
+\f(CW*out_addr\fP
+with a pointer to the new attribute.
+
+On error it returns
+\f(CWDW_DLV_ERROR\fP.
+
+Function created 01 December 2018.
+
+.H 4 "dwarf_add_AT_signed_const()"
 .DS
 \f(CWDwarf_P_Attribute dwarf_add_AT_signed_const(
         Dwarf_P_Debug dbg,
@@ -2047,16 +2817,65 @@ on success, and \f(CWDW_DLV_BADADDR\fP on error.
         Dwarf_Signed value,
         Dwarf_Error *error) \fP
 .DE
-The function \f(CWdwarf_add_AT_signed_const() \fP adds an attribute
-with a \f(CWDwarf_Signed\fP value belonging to the "constant" class,
-to the \f(CWDIE\fP specified by \f(CWownerdie\fP.  The object that
-the \f(CWDIE\fP belongs to is specified by \f(CWdbg\fP.  The attribute
-is specified by \f(CWattr\fP, and its value is specified by \f(CWvalue\fP.
+The function 
+\f(CWdwarf_add_AT_signed_const()\fP adds an attribute
+with a 
+\f(CWDwarf_Signed\fP value belonging to the "constant" class,
+to the 
+\f(CWDIE\fP specified by 
+\f(CWownerdie\fP.  The object that
+the 
+\f(CWDIE\fP belongs to is specified by 
 
-It returns the \f(CWDwarf_P_Attribute\fP descriptor for the attribute
-on success, and \f(CWDW_DLV_BADADDR\fP on error.
+\f(CWdbg\fP.  The attribute
+is specified by 
+\f(CWattr\fP, and its value is specified by 
+\f(CWvalue\fP.
 
-.H 3 "dwarf_add_AT_reference()"
+It returns the 
+\f(CWDwarf_P_Attribute\fP descriptor for the attribute
+on success, and 
+\f(CWDW_DLV_BADADDR\fP on error.
+
+.H 3 "dwarf_add_AT_reference_c()"
+.DS
+\f(CWint dwarf_add_AT_reference_c(
+        Dwarf_P_Debug dbg,
+        Dwarf_Half attr,
+        Dwarf_P_Die ownerdie,
+        Dwarf_P_Die otherdie,
+        Dwarf_P_Attribute *attr_out,
+        Dwarf_Error *error)\fP
+.DE
+The function 
+\f(CWdwarf_add_AT_reference_c()\fP
+is the same as  
+\f(CWdwarf_add_AT_reference_b()\fP
+except that 
+\f(CWdwarf_add_AT_reference_c()\fP
+returns a simple error code.
+
+\f(CWdwarf_add_AT_reference_c()\fP
+accepts a NULL 
+\f(CWotherdie\fP with the assumption
+that 
+\f(CWdwarf_fixup_AT_reference_die()\fP
+will be called by user code
+to fill in the missing 
+\f(CWotherdie\fP
+before the DIEs are transformed to disk form.
+
+On success it returns
+\f(CWDW_DLV_OK\fP
+and returns a pointer to the new attribute
+through \f(CW*attr_out\fP.
+
+On failure it returns
+\f(CWDW_DLV_ERROR\fP.
+
+Function created 01 December 2018.
+
+.H 4 "dwarf_add_AT_reference()"
 .DS
 \f(CWDwarf_P_Attribute dwarf_add_AT_reference(
         Dwarf_P_Debug dbg,
@@ -2080,7 +2899,7 @@ This cannot generate DW_FORM_ref_addr references to
 It returns the \f(CWDwarf_P_Attribute\fP descriptor for the attribute
 on success, and \f(CWDW_DLV_BADADDR\fP on error.
 
-.H 3 "dwarf_add_AT_reference_b()"
+.H 4 "dwarf_add_AT_reference_b()"
 .DS
 \f(CWDwarf_P_Attribute dwarf_add_AT_reference_b(
         Dwarf_P_Debug dbg,
@@ -2106,20 +2925,24 @@ before the DIEs are transformed to disk form.
         Dwarf_P_Die otherdie,
         Dwarf_Error *error)\fP
 .DE
-The function \f(CWdwarf_fixup_AT_reference_die()\fP
+The function 
+\f(CWdwarf_fixup_AT_reference_die()\fP
 is provided to set the NULL \f(CWotherdie\fP
-that  \f(CWdwarf_add_AT_reference_b()\fP allows
+that  
+\f(CWdwarf_add_AT_reference_c()\fP allows
 to the reference target DIE.
 This must be done before transforming to disk form.
 \f(CWattrnum()\fP should be the 
 attribute number of the attribute of \fCWownerdie\fP which is
-to be updated.  For example, if a local forward reference
+to be updated.
+For example, if a local forward reference
 was in a \fCWDW_AT_sibling\fP attribute in ownerdie, pass
 the value \fCWDW_AT_sibling\fP as attrnum.
 .P
 Since no attribute number can appear more than once on a
 given DIE
-the \f(CWattrnum()\fP suffices to uniquely identify which
+the 
+\f(CWattrnum()\fP suffices to uniquely identify which
 attribute of \fCWownerdie\fP to update
 .P
 It returns either \f(CWDW_DLV_OK\fP (on success) 
@@ -2127,8 +2950,44 @@ or \f(CWDW_DLV_ERROR\fP (on error).
 Calling this on an attribute where \f(CWotherdie\fP
 was already set is an error.
 
+New 22 October, 2013.
 
-.H 3 "dwarf_add_AT_flag()"
+.H 3 "dwarf_add_AT_flag_a()"
+.DS
+\f(CWint dwarf_add_AT_flag_a(
+        Dwarf_P_Debug dbg,
+        Dwarf_P_Die ownerdie,
+        Dwarf_Half attr,
+        Dwarf_Small flag,
+        Dwarf_P_Attribute *attr_out, 
+        Dwarf_Error *error)\fP
+.DE
+The function 
+\f(CWdwarf_add_AT_flag_a()\fP adds an attribute with
+a 
+\f(CWDwarf_Small\fP value belonging to the "flag" class, to the
+\f(CWDIE\fP specified by 
+\f(CWownerdie\fP.
+The object that the
+\f(CWDIE\fP belongs to is specified by 
+\f(CWdbg\fP.
+The attribute
+is specified by 
+\f(CWattr\fP, and its value is specified by 
+\f(CWflag\fP.
+
+On success it returns
+\f(CWDW_DLV_OK\fP
+and passes back a pointer to the new attribute
+through
+\f(CW*attr_out\fP.
+
+On error it returns
+\f(CWDW_DLV_ERROR\fP.
+
+Function created 01 December 2018.
+
+.H 4 "dwarf_add_AT_flag()"
 .DS
 \f(CWDwarf_P_Attribute dwarf_add_AT_flag(
         Dwarf_P_Debug dbg,
@@ -2139,14 +2998,49 @@ was already set is an error.
 .DE
 The function \f(CWdwarf_add_AT_flag()\fP adds an attribute with 
 a \f(CWDwarf_Small\fP value belonging to the "flag" class, to the 
-\f(CWDIE\fP specified by \f(CWownerdie\fP.  The object that the 
-\f(CWDIE\fP belongs to is specified by \f(CWdbg\fP.  The attribute
+\f(CWDIE\fP specified by 
+\f(CWownerdie\fP.  The object that the 
+\f(CWDIE\fP belongs to is specified by 
+\f(CWdbg\fP.  The attribute
 is specified by \f(CWattr\fP, and its value is specified by \f(CWflag\fP.
 
 It returns the \f(CWDwarf_P_Attribute\fP descriptor for the attribute
 on success, and \f(CWDW_DLV_BADADDR\fP on error.
 
-.H 3 "dwarf_add_AT_string()"
+.H 3 "dwarf_add_AT_string_a()"
+.DS
+\f(CWint dwarf_add_AT_string_a(
+        Dwarf_P_Debug dbg,
+        Dwarf_P_Die ownerdie,
+        Dwarf_Half attr,
+        char *string,
+        Dwarf_P_Attribute *attr_out,
+        Dwarf_Error *error)\fP
+.DE
+The function 
+\f(CWdwarf_add_AT_string()\fP adds an attribute with a
+value that is a character string to the 
+\f(CWDIE\fP specified by
+\f(CWownerdie\fP.  The object that the 
+\f(CWDIE\fP belongs to is
+specified by 
+\f(CWdbg\fP.  The attribute is specified by 
+\f(CWattr\fP,
+and its value is pointed to by 
+\f(CWstring\fP.
+
+On success
+it returns 
+\f(CWDW_DLV_OK\fP
+and set \f(CW*attr_out\fP
+with a pointer to the new attribute.
+
+On failure it returns 
+\f(CWDW_DLV_ERROR\fP.
+
+Function created 01 December 2018.
+
+.H 4 "dwarf_add_AT_string()"
 .DS
 \f(CWDwarf_P_Attribute dwarf_add_AT_string(
         Dwarf_P_Debug dbg,
@@ -2155,14 +3049,127 @@ on success, and \f(CWDW_DLV_BADADDR\fP on error.
         char *string,
         Dwarf_Error *error)\fP
 .DE
-The function \f(CWdwarf_add_AT_string()\fP adds an attribute with a 
-value that is a character string to the \f(CWDIE\fP specified by 
-\f(CWownerdie\fP.  The object that the \f(CWDIE\fP belongs to is 
-specified by \f(CWdbg\fP.  The attribute is specified by \f(CWattr\fP, 
-and its value is pointed to by \f(CWstring\fP.
+The function 
+\f(CWdwarf_add_AT_string()\fP adds an attribute with a 
+value that is a character string to the 
+\f(CWDIE\fP specified by 
+\f(CWownerdie\fP.  The object that the 
+\f(CWDIE\fP belongs to is 
+specified by 
+\f(CWdbg\fP.  
+The attribute is specified by 
+\f(CWattr\fP, 
+and its value is pointed to by 
+\f(CWstring\fP.
 
-It returns the \f(CWDwarf_P_Attribute\fP descriptor for the attribute
-on success, and \f(CWDW_DLV_BADADDR\fP on error.
+It returns the 
+\f(CWDwarf_P_Attribute\fP descriptor for the attribute
+on success, and 
+\f(CWDW_DLV_BADADDR\fP on error.
+
+.H 3 "dwarf_add_AT_with_ref_sig8_a()"
+.DS
+\f(CWint dwarf_add_AT_with_ref_sig8_a(
+        Dwarf_P_Die ownerdie,
+        Dwarf_Half attrnum,
+        const Dwarf_Sig8 *sig8_in,
+        Dwarf_P_Attribute *attr_out,
+        Dwarf_Error * error)\fP
+.DE
+The function
+\f(CWdwarf_add_AT_with_sig8_a\fP
+creates an attribute containing
+the 8-byte signature block
+pointed to by 
+\f(CWsig8_in\fP
+\f(CWDW_FORM_ref_sig8\fP
+with form
+\f(CWDW_FORM_ref_sig8\fP.
+
+
+On success it returns 
+\f(CWDW_DLV_OK\fP
+and sets *attr_out
+\f(CW*attr_out\fP 
+to the newly created
+attribute.
+
+On failure it returns 
+\f(CWDW_DLV_ERROR\fP.
+
+Function created 01 December 2018.
+
+.H 4 "dwarf_add_AT_with_ref_sig8()"
+.DS
+\f(CWDwarf_P_Attribute dwarf_add_AT_with_ref_sig8(
+        Dwarf_P_Die ownerdie,
+        Dwarf_Half attrnum,
+        const Dwarf_Sig8 *sig8_in,
+        Dwarf_Error * error)\fP
+.DE
+The function
+\f(CWdwarf_add_AT_with_sig8\fP
+creates an attribute containing
+the 8-byte signature block
+pointed to by 
+\f(CWsig8_in\fP
+\f(CWDW_FORM_ref_sig8\fP
+with form
+\f(CWDW_FORM_ref_sig8\fP.
+
+
+It returns the
+\f(CWDwarf_P_Attribute\fP descriptor for the 
+new attribute
+on success, and
+\f(CWDW_DLV_BADADDR\fP on error.
+
+.H 3 "dwarf_add_AT_data16()"
+.DS
+\f(CWint dwarf_add_AT_data16(
+        Dwarf_P_Die ownerdie,
+        Dwarf_Half attrnum,
+        Dwarf_Form_Data16 *ptr_to_val,
+        Dwarf_P_Attribute * attr_out,
+        Dwarf_Error * error)\fP
+.DE
+The
+DWARF5
+standard refers to 16 byte as simply data.
+It is up to the eventual reader of the 
+DWARF
+entry this call creates 
+to understand what the sixteen
+bytes mean.
+.P
+On success it returns
+\f(CWDW_DLV_OK\fP
+and returns the new attribute through
+the pointer
+\f(CWattr_out\fP.
+
+
+On failure it returns 
+\f(CWDW_DLV_ERROR\fP.
+
+
+.H 3 "dwarf_compress_integer_block()"
+.DS
+\f(CWvoid* dwarf_compress_integer_block(
+    Dwarf_P_Debug    dbg,
+    Dwarf_Bool       unit_is_signed,
+    Dwarf_Small      unit_length_in_bits,
+    void*            input_block,
+    Dwarf_Unsigned   input_length_in_units,
+    Dwarf_Unsigned*  output_length_in_bytes_ptr,
+    Dwarf_Error*     error)
+.DE
+This was created in 2016 in support of the attribute
+DW_AT_SUN_func_offsets but the particular DWARF project
+involving this seems to have died. 
+We have not provided a way to create
+the attribute.
+So this is pretty useless at this time.
 
 .H 2 "Expression Creation"
 The following functions are used to convert location expressions into
@@ -2177,18 +3184,101 @@ the expression in prefix order (exactly the order they would be
 interpreted in in an expression interpreter).  The bytes of the 
 expression are then built-up as specified by the user.
 
-.H 3 "dwarf_new_expr()"
+.H 3 "dwarf_new_expr_a()"
 .DS
-\f(CWDwarf_Expr dwarf_new_expr(
+\f(CWint dwarf_new_expr_a(
+        Dwarf_P_Debug dbg,
+        Dwarf_P_Expr *expr_out,
+        Dwarf_Error *error)\fP
+.DE
+The function 
+\f(CWdwarf_new_expra()\fP creates a new expression area 
+in which a location expression stream can be created.
+
+On success
+it returns
+\f(CWDW_DLV_OK\fP
+and returns a 
+Dwarf_Expr
+\f(CWDwarf_Expr\fP
+through
+the pointer 
+which can be used to add operators
+a to build up a location expression.
+
+On failure it returns
+\f(CWDW_DLV_OK\fP.
+
+Function created 01 December 2018.
+
+.H 4 "dwarf_new_expr()"
+.DS
+\f(CWDwarf_P_Expr dwarf_new_expr(
         Dwarf_P_Debug dbg,
         Dwarf_Error *error)\fP
 .DE
-The function \f(CWdwarf_new_expr()\fP creates a new expression area 
-in which a location expression stream can be created.  It returns
-a \f(CWDwarf_P_Expr\fP descriptor that can be used to add operators
-to build up a location expression.  It returns \f(CWNULL\fP on error.
+The function 
+\f(CWdwarf_new_expr()\fP creates a new expression area 
+in which a location expression stream can be created.
+It returns
+a 
+\f(CWDwarf_P_Expr\fP descriptor that can be used to add operators
+to build up a location expression.
+It returns 
+\f(CWNULL\fP on error.
 
-.H 3 "dwarf_add_expr_gen()"
+.H 3 "dwarf_add_expr_gen_a()"
+.DS
+\f(CWint dwarf_add_expr_gen_a(
+        Dwarf_P_Expr expr,
+        Dwarf_Small opcode,
+        Dwarf_Unsigned val1,
+        Dwarf_Unsigned val2,
+        Dwarf_Unsigned *stream_length_out,
+        Dwarf_Error *error)\fP
+.DE
+The function 
+\f(CWdwarf_add_expr_gen()\fP takes an operator specified
+by 
+\f(CWopcode\fP, along with up to 2 operands specified by 
+\f(CWval1\fP,
+and 
+\f(CWval2\fP, converts it into the 
+\f(CWDwarf\fP representation and
+appends the bytes to the byte stream being assembled for the location
+expression represented by 
+\f(CWexpr\fP.
+The first operand, if present,
+to 
+\f(CWopcode\fP is in 
+\f(CWval1\fP, and the second operand, if present,
+is in 
+\f(CWval2\fP.  Both the operands may actually be signed or unsigned
+depending on 
+\f(CWopcode\fP.
+
+On success it returns 
+\f(CWDW_DLV_OK\fP and sets
+\f(CW*stream_length_out\fP
+to
+the number of bytes in the byte
+stream for 
+\f(CWexpr\fP currently generated, i.e. after the addition of
+\f(CWopcode\fP.
+
+It returns
+\f(CWDW_DLV_ERROR\fP on error.
+
+The function 
+\f(CWdwarf_add_expr_gen_a()\fP works for all opcodes except
+those that have a target address as an operand.  This is because 
+the function cannot
+not set up a relocation record that is needed when target addresses are
+involved.
+
+Function created 01 December 2018.
+
+.H 4 "dwarf_add_expr_gen()"
 .DS
 \f(CWDwarf_Unsigned dwarf_add_expr_gen(
         Dwarf_P_Expr expr,
@@ -2197,23 +3287,79 @@ to build up a location expression.  It returns \f(CWNULL\fP on error.
         Dwarf_Unsigned val2,
         Dwarf_Error *error)\fP
 .DE
-The function \f(CWdwarf_add_expr_gen()\fP takes an operator specified
-by \f(CWopcode\fP, along with up to 2 operands specified by \f(CWval1\fP,
-and \f(CWval2\fP, converts it into the \f(CWDwarf\fP representation and 
+The function 
+\f(CWdwarf_add_expr_gen()\fP takes an operator specified
+by 
+\f(CWopcode\fP, along with up to 2 operands specified by 
+\f(CWval1\fP,
+and 
+\f(CWval2\fP, converts it into the 
+\f(CWDwarf\fP representation and 
 appends the bytes to the byte stream being assembled for the location
-expression represented by \f(CWexpr\fP.  The first operand, if present,
-to \f(CWopcode\fP is in \f(CWval1\fP, and the second operand, if present,
-is in \f(CWval2\fP.  Both the operands may actually be signed or unsigned
-depending on \f(CWopcode\fP.  It returns the number of bytes in the byte
-stream for \f(CWexpr\fP currently generated, i.e. after the addition of
-\f(CWopcode\fP.  It returns \f(CWDW_DLV_NOCOUNT\fP on error.
+expression represented by 
+\f(CWexpr\fP.
+The first operand, if present,
+to 
+\f(CWopcode\fP is in 
+\f(CWval1\fP, and the second operand, if present,
+is in 
+\f(CWval2\fP.  Both the operands may actually be signed or unsigned
+depending on 
+\f(CWopcode\fP.  It returns the number of bytes in the byte
+stream for 
+\f(CWexpr\fP currently generated, i.e. after the addition of
+\f(CWopcode\fP.
 
-The function \f(CWdwarf_add_expr_gen()\fP works for all opcodes except
-those that have a target address as an operand.  This is because it does
+It returns 
+\f(CWDW_DLV_NOCOUNT\fP on error.
+
+The function 
+\f(CWdwarf_add_expr_gen()\fP works for all opcodes except
+those that have a target address as an operand.  This is because 
+the function cannot
 not set up a relocation record that is needed when target addresses are
 involved.
 
-.H 3 "dwarf_add_expr_addr()"
+.H 3 "dwarf_add_expr_addr_c()"
+.DS
+\f(CWint dwarf_add_expr_addr_c(
+        Dwarf_P_Expr expr,
+        Dwarf_Unsigned address,
+        Dwarf_Unsigned sym_index,
+        Dwarf_Unsigned *stream_length_out,
+        Dwarf_Error *error)\fP
+.DE
+The function 
+\f(CWdwarf_add_expr_addr_c()\fP is
+identical to 
+\f(CWdwarf_add_expr_addr_b()\fP
+except that 
+\f(CWdwarf_add_expr_addr_c()\fP 
+returns a simple integer code.
+.P
+\f(CWsym_index() \fP is guaranteed to
+be large enough that it can contain a pointer to
+arbitrary data (so the caller can pass in a real elf
+symbol index, an arbitrary number, or a pointer
+to arbitrary data).
+The ability to pass in a pointer through 
+\f(CWsym_index() \fP
+is only usable with
+\f(CWDW_DLC_SYMBOLIC_RELOCATIONS\fP.
+
+On success the function returns
+\f(CWDW_DLV_OK\fP and sets
+\f(CW*stream_length_out\fP
+to to the total length of the expression stream
+in
+\f(CWexpr\fP.
+
+On failure the function returns
+\f(CWDW_DLV_ERROR\fP.
+
+Function created 01 December 2018.
+
+.H 4 "dwarf_add_expr_addr()"
 .DS
 \f(CWDwarf_Unsigned dwarf_add_expr_addr(
         Dwarf_P_Expr expr,
@@ -2231,7 +3377,7 @@ the number of bytes in the byte stream for \f(CWexpr\fP currently
 generated, i.e. after the addition of the \f(CWDW_OP_addr\fP operator.  
 It returns \f(CWDW_DLV_NOCOUNT\fP on error.
 
-.H 3 "dwarf_add_expr_addr_b()"
+.H 4 "dwarf_add_expr_addr_b()"
 .DS
 \f(CWDwarf_Unsigned dwarf_add_expr_addr_b(
         Dwarf_P_Expr expr,
@@ -2239,42 +3385,119 @@ It returns \f(CWDW_DLV_NOCOUNT\fP on error.
         Dwarf_Unsigned sym_index,
         Dwarf_Error *error)\fP 
 .DE
-The function \f(CWdwarf_add_expr_addr_f()\fP is
-identical to \f(CWdwarf_add_expr_addr()\fP
-except that \f(CWsym_index() \fP is guaranteed to
+The function 
+\f(CWdwarf_add_expr_addr_b()\fP is
+identical to 
+\f(CWdwarf_add_expr_addr()\fP
+except that 
+\f(CWsym_index() \fP is guaranteed to
 be large enough that it can contain a pointer to
 arbitrary data (so the caller can pass in a real elf
 symbol index, an arbitrary number, or a pointer
 to arbitrary data).
-The ability to pass in a pointer through \f(CWsym_index() \fP
+The ability to pass in a pointer through 
+\f(CWsym_index() \fP
 is only usable with
 \f(CWDW_DLC_SYMBOLIC_RELOCATIONS\fP.
 
 
 
-.H 3 "dwarf_expr_current_offset()"
+.H 3 "dwarf_expr_current_offset_a()"
+.DS
+\f(CWint dwarf_expr_current_offset_a(
+        Dwarf_P_Expr expr, 
+        Dwarf_Unsigned *stream_offset_out,
+        Dwarf_Error *error)\fP
+.DE
+On success
+the function 
+\f(CWdwarf_expr_current_offset_a()\fP
+returns
+\f(CWDW_DLV_OK\fP
+and sets 
+\f(CW*stream_offset_out\fP
+to the current length in bytes of the expression
+stream.
+
+On failure the function returns
+\f(CWDW_DLV_ERROR\fP.
+
+Function created 01 December 2018.
+
+.H 4 "dwarf_expr_current_offset()"
 .DS
 \f(CWDwarf_Unsigned dwarf_expr_current_offset(
         Dwarf_P_Expr expr, 
         Dwarf_Error *error)\fP
 .DE
-The function \f(CWdwarf_expr_current_offset()\fP returns the number
+The function 
+\f(CWdwarf_expr_current_offset()\fP returns the number
 of bytes currently in the byte stream for the location expression
-represented by the given \fCW(Dwarf_P_Expr\fP descriptor, \f(CWexpr\fP.
-It returns \f(CWDW_DLV_NOCOUNT\fP on error.
+represented by the given 
+\fCW(Dwarf_P_Expr\fP descriptor, 
+\f(CWexpr\fP.
+It returns 
+\f(CWDW_DLV_NOCOUNT\fP on error.
 
-.H 3 "dwarf_expr_into_block()"
+.H 3 "dwarf_expr_into_block_a()"
+.DS
+\f(CWint dwarf_expr_into_block_a(
+        Dwarf_P_Expr expr,
+        Dwarf_Unsigned *length,
+        Dwarf_Small    **address,
+        Dwarf_Error *error)\fP
+.DE
+On success
+the function 
+\f(CWdwarf_expr_into_block_a()\fP
+returns
+\f(CWDW_DLV_OK\fP
+and sets the length of the
+\f(CWexpr\fP expression
+into 
+\f(CW*length\fP
+and sets the value of a pointer
+into memory where the expression
+is currently held in the executing libdwarf into
+\f(CW*address\fP.
+.P
+On failure it returns
+\f(CWDW_DLV_ERROR\fP.
+
+Function created 01 December 2018.
+
+.H 4 "dwarf_expr_into_block()"
 .DS
 \f(CWDwarf_Addr dwarf_expr_into_block(
         Dwarf_P_Expr expr,
         Dwarf_Unsigned *length,
         Dwarf_Error *error)\fP 
 .DE
-The function \f(CWdwarf_expr_into_block()\fP returns the address
+The function 
+\f(CWdwarf_expr_into_block()\fP returns the address
 of the start of the byte stream generated for the location expression
-represented by the given \f(CWDwarf_P_Expr\fP descriptor, \f(CWexpr\fP.
-The length of the byte stream is returned in the location pointed to
-by \f(CWlength\fP.  It returns \f(CWDW_DLV_BADADDR\fP on error.
+represented by the given 
+\f(CWDwarf_P_Expr\fP descriptor, 
+\f(CWexpr\fP.
+The address is a pointer into the current application memory
+known to libdwarf (stored in a Dwarf_Addr).
+
+The length of the byte stream is returned 
+in the location pointed to
+by 
+\f(CWlength\fP.  It returns 
+f(CWDW_DLV_BADADDR\fP on error.
+
+.H 3 "dwarf_expr_reset()"
+.DS
+\f(CWvoid dwarf_expr_reset(
+        Dwarf_P_Expr expr,
+        Dwarf_Error *error)\fP
+.DE
+This resets the expression content of
+\f(CWexpr()\fP
+to be empty.
+
 
 .H 2 "Line Number Operations"
 These are operations on the .debug_line section.  
@@ -2299,7 +3522,33 @@ a contiguous block is indicated by calling the function
 Line number operations do not support
 \f(CWDW_DLC_SYMBOLIC_RELOCATIONS\fP.
 
-.H 3 "dwarf_add_line_entry_b()"
+.H 3 "dwarf_add_line_entry_c()"
+.DS
+\f(CWint dwarf_add_line_entry_c(
+        Dwarf_P_Debug dbg,
+        Dwarf_Unsigned file_index, 
+        Dwarf_Addr code_offset,
+        Dwarf_Unsigned lineno, 
+        Dwarf_Signed column_number,
+        Dwarf_Bool is_source_stmt_begin, 
+        Dwarf_Bool is_basic_block_begin,
+        Dwarf_Bool is_epilogue_begin,
+        Dwarf_Bool is_prologue_end,
+        Dwarf_Unsigned  isa,
+        Dwarf_Unsigned  discriminator,
+        Dwarf_Error *error)\fP
+.DE
+This is the same as 
+\f(CWdwarf_add_line_entry_b()\fP
+except that it returns
+\f(CWDW_DLV_OK\fP
+on success and
+\f(CWDW_DLV_ERROR\fP
+on error.
+
+Function created 01 December 2018.
+
+.H 4 "dwarf_add_line_entry_b()"
 .DS
 \f(CWDwarf_Unsigned dwarf_add_line_entry_b(
         Dwarf_P_Debug dbg,
@@ -2315,7 +3564,8 @@ Line number operations do not support
         Dwarf_Unsigned  discriminator,
         Dwarf_Error *error)\fP
 .DE
-The function \f(CWdwarf_add_line_entry()\fP adds an entry to the
+The function \f(CWdwarf_add_line_entry_b()\fP
+adds an entry to the
 section containing information about source lines.  
 It specifies
 in \f(CWcode_offset\fP, the address of this line.
@@ -2364,7 +3614,7 @@ It returns \f(CW0\fP on success, and \f(CWDW_DLV_NOCOUNT\fP on error.
 
 This function is defined as of December 2011.
 
-.H 3 "dwarf_add_line_entry()"
+.H 4 "dwarf_add_line_entry()"
 .DS
 \f(CWDwarf_Unsigned dwarf_add_line_entry(
         Dwarf_P_Debug dbg,
@@ -2380,7 +3630,42 @@ This function is the same as \f(CWdwarf_add_line_entry_b()\fP
 except this older version is missing the new 
 DWARF3/4 line table fields.
 
-.H 3 "dwarf_lne_set_address()"
+.H 3 "dwarf_lne_set_address_a()"
+.DS
+\f(CWint dwarf_lne_set_address_a(
+        Dwarf_P_Debug dbg,
+        Dwarf_Addr offs,
+        Dwarf_Unsigned symidx,
+        Dwarf_Error *error)\fP
+.DE
+The function 
+\f(CWdwarf_lne_set_address_a()\fP sets the target address
+at which a contiguous block of instructions begin.
+Information about
+the instructions in the block is added to .debug_line using calls to
+\f(CWdwarfdwarf_add_line_entry_c()\fP
+which specifies the offset of each
+instruction in the block relative to the start of the block.  
+This is
+done so that a single relocation record can be used to obtain the final
+target address of every instruction in the block.
+
+The relocatable address of the start of the block of instructions is
+specified by 
+\f(CWoffs\fP.
+The symbol used to relocate the address
+is given by 
+\f(CWsymidx\fP, which is normally the index of the symbol in the
+Elf symbol table.
+
+It returns 
+\f(CWDW_DLV_OK\fP on success, and 
+\f(CWDW_DLV_ERROR\fP on error.
+
+Function created 01 December 2018.
+
+
+.H 4 "dwarf_lne_set_address()"
 .DS
 \f(CWDwarf_Unsigned dwarf_lne_set_address(
         Dwarf_P_Debug dbg,
@@ -2403,7 +3688,37 @@ Elf symbol table.
 
 It returns \f(CW0\fP on success, and \f(CWDW_DLV_NOCOUNT\fP on error.
 
-.H 3 "dwarf_lne_end_sequence()"
+.H 3 "dwarf_lne_end_sequence_a()"
+.DS
+\f(CWint dwarf_lne_end_sequence_a(
+        Dwarf_P_Debug dbg,
+        Dwarf_Addr    address;
+        Dwarf_Error *error)\fP
+.DE
+The function \f(CWdwarf_lne_end_sequence_a()\fP
+indicates the end of a
+contiguous block of instructions.
+\f(CWaddress()\fP
+should be just higher than the end of the last address in the
+sequence of instructions.
+Before the next
+block of instructions (if any) a call to 
+\f(CWdwarf_lne_set_address_a()\fP will
+have to be made to set the address of the start of the target address
+of the block, followed by calls to 
+\f(CWdwarf_add_line_entry_a()\fP for
+each of the instructions in the block.
+
+It returns 
+\f(CWDW_DLV_OK\fP
+on success and
+\f(CWDW_DLV_ERROR\fP
+on error.
+
+Function created 01 December 2018.
+
+
+.H 4 "dwarf_lne_end_sequence()"
 .DS
 \f(CWDwarf_Unsigned dwarf_lne_end_sequence(
         Dwarf_P_Debug dbg,
@@ -2423,7 +3738,43 @@ each of the instructions in the block.
 
 It returns \f(CW0\fP on success, and \f(CWDW_DLV_NOCOUNT\fP on error.
 
-.H 3 "dwarf_add_directory_decl()"
+.H 3 "dwarf_add_directory_decl_a()"
+.DS
+\f(CWint dwarf_add_directory_decl_a(
+        Dwarf_P_Debug dbg,
+        char *name,
+        Dwarf_Unsigned *index_in_directories,
+        Dwarf_Error *error)\fP
+.DE
+The function \f(CWdwarf_add_directory_decl()\fP adds the string
+specified by \f(CWname\fP to the list of include directories in
+the statement program prologue of the .debug_line section.
+The
+string should therefore name a directory from which source files
+have been used to create the present object.
+
+On success it returns 
+\f(CWDW_DLV_OK\fP
+and
+sets the index of the string just added, in the list of include
+directories for the object.
+This index is then used to refer to this
+string.
+The index is passed back through
+the pointer argument
+\f(CWindex_in_directories\fP
+
+The first successful call of this function
+returns one, not zero, to be consistent with the directory indices
+that \f(CWdwarf_add_file_decl()\fP (below) expects..
+DWARF5 is a bit different.
+TBD FIXME
+
+It returns 
+\f(CWDW_DLV_ERROR\fP on error.
+
+
+.H 4 "dwarf_add_directory_decl()"
 .DS
 \f(CWDwarf_Unsigned dwarf_add_directory_decl(
         Dwarf_P_Debug dbg,
@@ -2447,7 +3798,64 @@ that \f(CWdwarf_add_file_decl()\fP (below) expects..
 \f(CWdwarf_add_directory_decl()\fP
 returns \f(CWDW_DLV_NOCOUNT\fP on error.
 
-.H 3 "dwarf_add_file_decl()"
+
+.H 3 "dwarf_add_file_decl_a()"
+.DS
+\f(CWint dwarf_add_file_decl_a(
+        Dwarf_P_Debug dbg,
+        char *name,
+        Dwarf_Unsigned dir_idx,
+        Dwarf_Unsigned time_mod,
+        Dwarf_Unsigned length,
+        Dwarf_Unsigned *file_entry_count_out,
+        Dwarf_Error *error)\fP
+.DE
+The function \f(CWdwarf_add_file_decl_a()\fP adds the name of a source
+file that contributed to the present object.
+The name of the file is
+specified by \f(CWname\fP (which must not be the empty string
+or a null pointer, it must point to
+a string with length greater than 0).
+
+In case the name is not a fully-qualified
+pathname, it is
+considered prefixed with the name of the directory specified by
+\f(CWdir_idx\fP
+(which does not mean the 
+\f(CWname\fP
+is changed or physically prefixed by
+this producer function, we simply describe the meaning here).
+\f(CWdir_idx\fP
+is the index of the directory to be
+prefixed in the list builtup using 
+\f(CWdwarf_add_directory_decl_a()\fP.
+As specified by the DWARF spec, a
+\f(CWdir_idx\fP
+of zero will be
+interpreted as meaning the directory of the compilation and
+another index must refer to a valid directory as
+FIXME
+
+.P
+\f(CWtime_mod\fP
+gives the time at which the file was last modified,
+and 
+\f(CWlength\fP gives the length of the file in bytes.
+.P
+On success,
+it returns
+\f(CWDW_DLV_OK\fP
+and returns the index of the source file in the list built up so far
+through the pointer
+\f(CWfile_entry_count_out\fP.
+This index can then be used to
+refer to this source file in calls to 
+\f(CWdwarf_add_line_entry_a()\fP.
+
+On error, it returns \f(CWDW_DLV_ERROR\fP.
+
+
+.H 4 "dwarf_add_file_decl()"
 .DS
 \f(CWDwarf_Unsigned dwarf_add_file_decl(
         Dwarf_P_Debug dbg,
@@ -2467,7 +3875,9 @@ a string with length greater than 0).
 In case the name is not a fully-qualified
 pathname, it is 
 considered prefixed with the name of the directory specified by
-\f(CWdir_idx\fP (which does not mean the \f(CWname\fP
+\f(CWdir_idx\fP
+(which does not mean the
+\f(CWname\fP
 is changed or physically prefixed by 
 this producer function, we simply describe the meaning here).
 \f(CWdir_idx\fP is the index of the directory to be
@@ -2490,7 +3900,107 @@ On error, it returns \f(CWDW_DLV_NOCOUNT\fP.
 .H 2 "Fast Access (aranges) Operations"
 These functions operate on the .debug_aranges section.  
 
-.H 3 "dwarf_add_arange()"
+.H 3 "dwarf_add_arange_c()"
+.DS
+\f(CWint dwarf_add_arange_c(
+        Dwarf_P_Debug dbg,
+        Dwarf_Addr begin_address,
+        Dwarf_Unsigned length,
+        Dwarf_Unsigned symbol_index,
+        Dwarf_Unsigned end_symbol_index,
+        Dwarf_Addr     offset_from_end_symbol,
+        Dwarf_Error *error)\fP
+.DE
+The function 
+\f(CWdwarf_add_arange_c()\fP adds another address range
+to be added to the section containing
+address range information, .debug_aranges.
+
+If
+\f(CWend_symbol_index is not zero\fP
+we are using two symbols to create a length
+(must be \f(CWDW_DLC_SYMBOLIC_RELOCATIONS\fP to be useful)
+.sp
+.in +2
+\f(CWbegin_address\fP
+is the offset from the symbol specified by
+\f(CWsymbol_index\fP .
+\f(CWoffset_from_end_symbol\fP
+is the offset from the symbol specified by
+\f(CWend_symbol_index\fP.
+\f(CWlength\fP is ignored.
+This begin-end pair will be show up in the
+relocation array returned by
+\f(CWdwarf_get_relocation_info() \fP
+as a
+\f(CWdwarf_drt_first_of_length_pair\fP
+and
+\f(CWdwarf_drt_second_of_length_pair\fP
+pair of relocation records.
+The consuming application will turn that pair into
+something conceptually identical to
+.sp
+.nf
+.in +4
+ .word end_symbol + offset_from_end - \\
+   ( start_symbol + begin_address)
+.in -4
+.fi
+.sp
+The reason offsets are allowed on the begin and end symbols
+is to allow the caller to re-use existing labels
+when the labels are available
+and the corresponding offset is known  
+(economizing on the number of labels in use).
+The  'offset_from_end - begin_address'
+will actually be in the binary stream, not the relocation
+record, so the app processing the relocation array
+must read that stream value into (for example)
+net_offset and actually emit something like
+.sp
+.nf
+.in +4
+ .word end_symbol - start_symbol + net_offset
+.in -4
+.fi
+.sp
+.in -2
+
+If
+\f(CWend_symbol_index\fP is zero
+we must be given a length
+(either
+\f(CWDW_DLC_STREAM_RELOCATIONS\fP
+or
+\f(CWDW_DLC_SYMBOLIC_RELOCATIONS\fP
+):
+.sp
+.in +2
+The relocatable start address of the range is
+specified by \f(CWbegin_address\fP, and the length of the address
+range is specified by \f(CWlength\fP.  
+The relocatable symbol to be
+used to relocate the start of the address range is specified by
+\f(CWsymbol_index\fP, which is normally
+the index of the symbol in the Elf
+symbol table.
+The 
+\f(CWoffset_from_end_symbol\fP
+is ignored.
+.in -2
+
+The function returns
+\f(CWDW_DLV_OK\fP
+on success and
+\f(CWDW_DLV_ERROR\fP
+on error.
+
+
+
+Function created 01 December 2018.
+
+
+.H 4 "dwarf_add_arange()"
 .DS
 \f(CWDwarf_Unsigned dwarf_add_arange(
         Dwarf_P_Debug dbg,
@@ -2499,12 +4009,15 @@ These functions operate on the .debug_aranges section.
         Dwarf_Signed symbol_index,
         Dwarf_Error *error)\fP
 .DE
-The function \f(CWdwarf_add_arange()\fP adds another address range 
+The function 
+\f(CWdwarf_add_arange()\fP adds another address range 
 to be added to the section 
 containing address range information, .debug_aranges.  
 The relocatable start address of the range is 
-specified by \f(CWbegin_address\fP, and the length of the address 
-range is specified by \f(CWlength\fP.  
+specified by 
+\f(CWbegin_address\fP, and the length of the address 
+range is specified by 
+\f(CWlength\fP.  
 The relocatable symbol to be 
 used to relocate the start of the address range is specified by 
 \f(CWsymbol_index\fP, which is normally 
@@ -2513,7 +4026,7 @@ symbol table.
 
 It returns a non-zero value on success, and \f(CW0\fP on error.
 
-.H 3 "dwarf_add_arange_b()"
+.H 4 "dwarf_add_arange_b()"
 .DS
 \f(CWDwarf_Unsigned dwarf_add_arange_b(
         Dwarf_P_Debug dbg,
@@ -2524,7 +4037,8 @@ It returns a non-zero value on success, and \f(CW0\fP on error.
 	Dwarf_Addr     offset_from_end_symbol,
         Dwarf_Error *error)\fP
 .DE
-The function \f(CWdwarf_add_arange_b()\fP adds another address range
+The function 
+\f(CWdwarf_add_arange_b()\fP adds another address range
 to be added to the section containing 
 address range information, .debug_aranges.  
 
@@ -2608,7 +4122,23 @@ It returns a non-zero value on success, and \f(CW0\fP on error.
 .H 2 "Fast Access (pubnames) Operations"
 These functions operate on the .debug_pubnames section.
 .sp
-.H 3 "dwarf_add_pubname()"
+.H 3 "dwarf_add_pubname_a()"
+.DS
+\f(CWint dwarf_add_pubname_a(
+        Dwarf_P_Debug dbg,
+        Dwarf_P_Die die,
+        char *pubname_name,
+        Dwarf_Error *error)\fP
+.DE
+It returns
+\f(CWDW_DLV_OK\fP
+on success and
+\f(CWDW_DLV_ERROR\fP
+on error.
+
+Function created 01 December 2018.
+
+.H 4 "dwarf_add_pubname()"
 .DS
 \f(CWDwarf_Unsigned dwarf_add_pubname(
         Dwarf_P_Debug dbg,
@@ -2623,10 +4153,66 @@ being named is specified by \f(CWdie\fP.
 
 It returns a non-zero value on success, and \f(CW0\fP on error.
 
+.H 2 "Fast Access (pubtypes) Operations"
+These functions operate on the .debug_pubtypes section.
+An SGI-defined extension.
+Not part of standard DWARF.
+.sp
+.H 3 "dwarf_add_pubtype_a()"
+.DS
+\f(CWint dwarf_add_pubtype_a(
+        Dwarf_P_Debug dbg,
+        Dwarf_P_Die die,
+        char *pubname_name,
+        Dwarf_Error *error)\fP
+.DE
+It returns
+\f(CWDW_DLV_OK\fP
+on success and
+\f(CWDW_DLV_ERROR\fP
+on error.
+
+Function created 01 December 2018.
+
+.H 4 "dwarf_add_pubtype()"
+.DS
+\f(CWDwarf_Unsigned dwarf_add_pubtype(
+        Dwarf_P_Debug dbg,
+        Dwarf_P_Die die,
+        char *pubname_name,
+        Dwarf_Error *error)\fP
+.DE
+The function \f(CWdwarf_add_pubtype()\fP adds the pubtype specified
+by \f(CWpubtype_name\fP to the section containing 
+pubtypes, i.e.  .debug_pubtypes.
+The \f(CWDIE\fP that represents the function
+being named is specified by \f(CWdie\fP.
+
+It returns a non-zero value on success, and \f(CW0\fP on error.
+
+
 .H 2 "Fast Access (weak names) Operations"
 These functions operate on the .debug_weaknames section.
+An SGI-defined extension.
+Not part of standard DWARF.
 
-.H 3 "dwarf_add_weakname()"
+.H 3 "dwarf_add_weakname_a()"
+.DS
+\f(CWint dwarf_add_weakname_a(
+        Dwarf_P_Debug dbg,
+        Dwarf_P_Die die,
+        char *weak_name,
+        Dwarf_Error *error)\fP
+.DE
+It returns
+\f(CWDW_DLV_OK\fP
+on success and
+\f(CWDW_DLV_ERROR\fP
+on error.
+
+Function created 01 December 2018.
+
+.H 4 "dwarf_add_weakname()"
 .DS
 \f(CWDwarf_Unsigned dwarf_add_weakname(
         Dwarf_P_Debug dbg,
@@ -2646,8 +4232,36 @@ The .debug_funcnames section contains the names of static function
 names defined in the object, and also the offsets of the \f(CWDIE\fPs
 that represent the definitions of the functions in the .debug_info 
 section.
+An SGI-defined extension.
+Not part of standard DWARF.
 
-.H 3 "dwarf_add_funcname()"
+.H 3 "dwarf_add_funcname_a()"
+.DS
+\f(CWint dwarf_add_funcname_a(
+        Dwarf_P_Debug dbg,
+        Dwarf_P_Die die,
+        char *func_name,
+        Dwarf_Error *error)\fP
+.DE
+The function 
+\f(CWdwarf_add_funcname_a()\fP adds the name of a static
+function specified by 
+\f(CWfunc_name\fP to the section containing the
+names of static functions defined in the object represented by \f(CWdbg\fP.
+The 
+\f(CWDIE\fP that represents the definition of the function is
+specified by 
+\f(CWdie\fP.
+.P
+It returns 
+\f(CWDW_DLV_OK\fP on success.
+.P
+It returns 
+\f(CWDW_DLV_ERROR\fP on error.
+
+Function created 01 December 2018.
+
+.H 4 "dwarf_add_funcname()"
 .DS
 \f(CWDwarf_Unsigned dwarf_add_funcname(
         Dwarf_P_Debug dbg,
@@ -2655,21 +4269,46 @@ section.
         char *func_name,
         Dwarf_Error *error)\fP
 .DE
-The function \f(CWdwarf_add_funcname()\fP adds the name of a static
-function specified by \f(CWfunc_name\fP to the section containing the
-names of static functions defined in the object represented by \f(CWdbg\fP.
-The \f(CWDIE\fP that represents the definition of the function is
-specified by \f(CWdie\fP.
+The function 
+\f(CWdwarf_add_funcname()\fP adds the name of a static
+function specified by 
+\f(CWfunc_name\fP to the section containing the
+names of static functions defined in the object represented by 
+\f(CWdbg\fP.
+The 
+\f(CWDIE\fP that represents the definition of the function is
+specified by 
+\f(CWdie\fP.
 
-It returns a non-zero value on success, and \f(CW0\fP on error.
+It returns a non-zero value on success, and 
+\f(CW0\fP on error.
 
 .H 2 "File-scope User-defined Type Names Operations"
 The .debug_typenames section contains the names of file-scope
 user-defined types in the given object, and also the offsets 
 of the \f(CWDIE\fPs that represent the definitions of the types 
 in the .debug_info section.
+An SGI-defined extension.
+Not part of standard DWARF.
 
-.H 3 "dwarf_add_typename()"
+.H 3 "dwarf_add_typename_a()"
+.DS
+\f(CWint dwarf_add_typename_a(
+        Dwarf_P_Debug dbg,
+        Dwarf_P_Die die,
+        char *type_name,
+        Dwarf_Error *error)\fP
+.DE
+This the same as
+\f(CWdwarf_add_typename()\fP
+except that on success this returns
+\f(CWDW_DLV_OK\fP
+and on failure this returns
+\f(CWDW_DLV_ERROR\fP.
+
+Function created 01 December 2018.
+
+.H 4 "dwarf_add_typename()"
 .DS
 \f(CWDwarf_Unsigned dwarf_add_typename(
         Dwarf_P_Debug dbg,
@@ -2677,21 +4316,46 @@ in the .debug_info section.
         char *type_name,
         Dwarf_Error *error)\fP
 .DE
-The function \f(CWdwarf_add_typename()\fP adds the name of a file-scope
-user-defined type specified by \f(CWtype_name\fP to the section that 
+The function 
+\f(CWdwarf_add_typename()\fP
+adds the name of a file-scope
+user-defined type specified by
+\f(CWtype_name\fP to the section that 
 contains the names of file-scope user-defined type.  The object that 
-this section belongs to is specified by \f(CWdbg\fP.  The \f(CWDIE\fP 
-that represents the definition of the type is specified by \f(CWdie\fP.
+this section belongs to is specified by 
+\f(CWdbg\fP.
+The \f(CWDIE\fP 
+that represents the definition of the type is specified by 
+\f(CWdie\fP.
 
 It returns a non-zero value on success, and \f(CW0\fP on error.
 
 .H 2 "File-scope Static Variable Names Operations"
 The .debug_varnames section contains the names of file-scope static
-variables in the given object, and also the offsets of the \f(CWDIE\fPs
+variables in the given object, and also the offsets of the 
+\f(CWDIE\fPs
 that represent the definition of the variables in the .debug_info
 section.
+An SGI-defined section.
 
-.H 3 "dwarf_add_varname()"
+.H 3 "dwarf_add_varname_a()"
+.DS
+\f(CWint dwarf_add_varname_a(
+        Dwarf_P_Debug dbg,
+        Dwarf_P_Die die,
+        char *var_name,
+        Dwarf_Error *error)\fP
+.DE
+This the same as
+\f(CWdwarf_add_varname()\fP
+except that on success this returns
+\f(CWDW_DLV_OK\fP
+and on failure this returns
+\f(CWDW_DLV_ERROR\fP.
+
+Function created 01 December 2018.
+
+.H 4 "dwarf_add_varname()"
 .DS
 \f(CWDwarf_Unsigned dwarf_add_varname(
         Dwarf_P_Debug dbg,
@@ -2699,13 +4363,20 @@ section.
         char *var_name,
         Dwarf_Error *error)\fP
 .DE
-The function \f(CWdwarf_add_varname()\fP adds the name of a file-scope
-static variable specified by \f(CWvar_name\fP to the section that 
+The function 
+\f(CWdwarf_add_varname()\fP adds the name of a file-scope
+static variable specified by 
+\f(CWvar_name\fP to the section that 
 contains the names of file-scope static variables defined by the 
-object represented by \f(CWdbg\fP.  The \f(CWDIE\fP that represents
-the definition of the static variable is specified by \f(CWdie\fP.
+object represented by 
+\f(CWdbg\fP.  
+The 
+\f(CWDIE\fP that represents
+the definition of the static variable is specified by 
+\f(CWdie\fP.
 
-It returns a non-zero value on success, and \f(CW0\fP on error.
+It returns a non-zero value on success, and 
+\f(CW0\fP on error.
 
 .H 2 "Macro Information Creation"
 All strings passed in by the caller are copied by these
@@ -2806,10 +4477,38 @@ Returns \f(CWDW_DLV_OK\fP if the call was successful.
 
 .H 2 "Low Level (.debug_frame) operations"
 These functions operate on the .debug_frame section.  Refer to 
-\f(CWlibdwarf.h\fP for the register names and register assignment 
-mapping.  Both of these are necessarily machine dependent.
+\f(CWlibdwarf.h\fP for the register names 
+and register assignment 
+mapping.  
+Both of these are necessarily machine dependent.
 
-.H 3 "dwarf_new_fde()"
+.H 3 "dwarf_new_fde_a()"
+.DS
+\f(CWint dwarf_new_fde_a(
+        Dwarf_P_Debug dbg, 
+        Dwarf_P_Fde *fde_out,
+        Dwarf_Error *error)\fP
+.DE
+On success the function 
+\f(CWdwarf_new_fde_a()\fP returns
+\f(CWDW_DLV_OK\fP
+and returns a pointer to the fde
+through
+\f(CWfde_out\fP.
+The
+descriptor should be used to build a complete 
+\f(CWFDE\fP.  
+Subsequent calls to routines that build up the 
+\f(CWFDE\fP should use
+the same 
+\f(CWDwarf_P_Fde\fP descriptor.
+.P
+It returns
+\f(CWDW_DLV_ERROR\fP on error.
+
+Function created 01 December 2018.
+
+.H 4 "dwarf_new_fde()"
 .DS
 \f(CWDwarf_P_Fde dwarf_new_fde(
         Dwarf_P_Debug dbg, 
@@ -2823,7 +4522,68 @@ the same \f(CWDwarf_P_Fde\fP descriptor.
 It returns a valid \f(CWDwarf_P_Fde\fP descriptor on success, and
 \f(CWDW_DLV_BADADDR\fP on error.
 
-.H 3 "dwarf_add_frame_cie()"
+.H 3 "dwarf_add_frame_cie_a()"
+.DS
+\f(CWint dwarf_add_frame_cie_a(
+        Dwarf_P_Debug dbg,
+        char *augmenter,
+        Dwarf_Small code_align,
+        Dwarf_Small data_align,
+        Dwarf_Small ret_addr_reg,
+        Dwarf_Ptr init_bytes,
+        Dwarf_Unsigned init_bytes_len,
+        Dwarf_Unsigned *cie_index_out,
+        Dwarf_Error *error);\fP
+.DE
+On success
+The function
+\f(CWdwarf_add_frame_cie_a()\fP
+returns 
+\f(CWDW_DLV_OK\fP,
+creates a 
+\f(CWCIE\fP,
+and returns an index to it
+through the pointer
+\f(CWcie_index_out\fP.
+.P
+\f(CWCIE\fPs are used by 
+\f(CWFDE\fPs to setup
+initial values for frames. 
+The augmentation string for the 
+\f(CWCIE\fP
+is specified by 
+\f(CWaugmenter\fP. 
+The code alignment factor,
+data alignment factor, and the return address register for the
+\f(CWCIE\fP are specified by 
+\f(CWcode_align\fP, 
+\f(CWdata_align\fP,
+and 
+\f(CWret_addr_reg\fP respectively.
+\f(CWinit_bytes\fP points
+to the bytes that represent the instructions for the 
+\f(CWCIE\fP
+being created, and 
+\f(CWinit_bytes_len\fP specifies the number
+of bytes of instructions.
+.P
+There is no convenient way to generate the  
+\f(CWinit_bytes\fP
+stream.
+One just
+has to calculate it by hand or separately
+generate something with the
+correct sequence and use dwarfdump -v and readelf (or objdump)
+and some
+kind of hex dumper to see the bytes.
+This is a serious inconvenience!
+
+On error it returns 
+\f(CWDW_DLV_ERROR\fP.
+
+Function created 01 December 2018.
+
+.H 4 "dwarf_add_frame_cie()"
 .DS
 \f(CWDwarf_Unsigned dwarf_add_frame_cie(
         Dwarf_P_Debug dbg,
@@ -2836,24 +4596,33 @@ It returns a valid \f(CWDwarf_P_Fde\fP descriptor on success, and
         Dwarf_Error *error);\fP
 .DE
 The function 
-\f(CWdwarf_add_frame_cie()\fP 
+\f(CWDwarf_Unsigned dwarf_add_frame_cie()\fP 
 creates a \f(CWCIE\fP,
-and returns an index to it, that should be used to refer to this
+and returns an index to it, that 
+should be used to refer to this
 \f(CWCIE\fP.  
-\f(CWCIE\fPs are used by \f(CWFDE\fPs to setup
+\f(CWCIE\fPs are used by
+\f(CWFDE\fPs to setup
 initial values for frames.  
 The augmentation string for the \f(CWCIE\fP
 is specified by \f(CWaugmenter\fP.  
 The code alignment factor,
-data alignment factor, and the return address register for the
-\f(CWCIE\fP are specified by \f(CWcode_align\fP, \f(CWdata_align\fP,
-and \f(CWret_addr_reg\fP respectively.  
+data alignment factor, and 
+the return address register for the
+\f(CWCIE\fP are specified by 
+\f(CWcode_align\fP, 
+\f(CWdata_align\fP,
+and 
+\f(CWret_addr_reg\fP respectively.  
 \f(CWinit_bytes\fP points
-to the bytes that represent the instructions for the \f(CWCIE\fP
-being created, and \f(CWinit_bytes_len\fP specifies the number
+to the bytes that represent the 
+instructions for the \f(CWCIE\fP
+being created, and 
+\f(CWinit_bytes_len\fP specifies the number
 of bytes of instructions.
 
-There is no convenient way to generate the  \f(CWinit_bytes\fP
+There is no convenient way to generate the  
+\f(CWinit_bytes\fP
 stream. 
 One just
 has to calculate it by hand or separately
@@ -2866,7 +4635,145 @@ This is a serious inconvenience!
 It returns an index to the \f(CWCIE\fP just created on success.
 On error it returns \f(CWDW_DLV_NOCOUNT\fP.
 
-.H 3 "dwarf_add_frame_fde()"
+.H 3 "dwarf_add_frame_fde_c()"
+.DS
+\f(CWint dwarf_add_frame_fde_c(
+    Dwarf_P_Debug dbg,
+    Dwarf_P_Fde fde,
+    Dwarf_P_Die die,
+    Dwarf_Unsigned cie,
+    Dwarf_Addr virt_addr,
+    Dwarf_Unsigned  code_len,
+    Dwarf_Unsigned sym_idx,
+    Dwarf_Unsigned sym_idx_of_end,
+    Dwarf_Addr     offset_from_end_sym,
+    Dwarf_Unsigned *index_to_fde,
+    Dwarf_Error* error)\fP
+.DE
+
+This function is like 
+\f(CWdwarf_add_frame_fde()\fP 
+except that 
+\f(CWdwarf_add_frame_fde_c()\fP 
+has new arguments to allow use
+with
+\f(CWDW_DLC_SYMBOLIC_RELOCATIONS\fP
+and a new argument to return the fde index..
+
+The function \f(CWdwarf_add_frame_fde_c()\fP 
+adds the 
+\f(CWFDE\fP
+specified by \f(CWfde\fP to the list of 
+\f(CWFDE\fPs for the
+object represented by the given 
+\f(CWdbg\fP.  
+
+\f(CWdie\fP specifies
+the 
+\f(CWDIE\fP that represents the function
+whose frame information
+is specified by the given 
+\f(CWfde\fP.  
+If the MIPS/IRIX specific DW_AT_MIPS_fde attribute is not
+needed  in .debug_info pass in 0 as the \f(CWdie\fP argument.
+
+\f(CWcie\fP specifies the
+index of the 
+\f(CWCIE\fP that should be used to setup the initial
+conditions for the given frame.  
+\f(CWvirt_addr\fP represents the
+relocatable address at which the code
+for the given function begins,
+and 
+\f(CWsym_idx\fP gives the index of the relocatable symbol to
+be used to relocate this address (\f(CWvirt_addr\fP that is).
+\f(CWcode_len\fP specifies the 
+size in bytes of the machine instructions
+for the given function.
+
+If \f(CWsym_idx_of_end\fP is zero 
+(may  be 
+\f(CWDW_DLC_STREAM_RELOCATIONS\fP 
+or
+\f(CWDW_DLC_SYMBOLIC_RELOCATIONS\fP 
+):
+.sp
+.in +2
+\f(CWvirt_addr\fP represents the
+relocatable address at which the code for the given function begins,
+and \f(CWsym_idx\fP gives the index of the relocatable symbol to
+be used to relocate this address (\f(CWvirt_addr\fP that is).
+\f(CWcode_len\fP 
+specifies the size in bytes of the machine instructions
+for the given function.
+\f(CWsym_idx_of_end\fP
+and
+\f(CWoffset_from_end_sym\fP
+are unused.
+.in -2
+.sp
+
+
+If \f(CWsym_idx_of_end\fP is non-zero 
+(must be \f(CWDW_DLC_SYMBOLIC_RELOCATIONS\fP to be useful):
+.sp
+.in +2
+\f(CWvirt_addr\fP
+is the offset from the symbol specified by
+\f(CWsym_idx\fP .
+\f(CWoffset_from_end_sym\fP
+is the offset from the symbol specified by
+\f(CWsym_idx_of_end\fP.
+\f(CWcode_len\fP is ignored.
+This begin-end pair will be show up in the
+relocation array returned by
+\f(CWdwarf_get_relocation_info() \fP
+as a
+\f(CWdwarf_drt_first_of_length_pair\fP
+and
+\f(CWdwarf_drt_second_of_length_pair\fP
+pair of relocation records.
+The consuming application will turn that pair into
+something conceptually identical to
+.sp
+.nf
+.in +4
+ .word end_symbol + begin - \\
+   ( start_symbol + offset_from_end)
+.in -4
+.fi
+.sp
+The reason offsets are allowed on the begin and end symbols
+is to allow the caller to re-use existing labels
+when the labels are available
+and the corresponding offset is known
+(economizing on the number of labels in use).
+The  'offset_from_end - begin_address'
+will actually be in the binary stream, not the relocation
+record, so the app processing the relocation array
+must read that stream value into (for example)
+net_offset and actually emit something like
+.sp
+.nf
+.in +4
+ .word end_symbol - start_symbol + net_offset
+.in -4
+.fi
+.sp
+.in -2
+
+On success it
+returns
+\f(CWDW_DLV_OK\fP
+and returns index to the given \f(CWfde\fP
+through the pointer
+\f(CWindex_to_fde\fP.
+
+On error, it returns \f(CWDW_DLV_ERROR\fP.
+
+Function created 01 December 2018.
+
+.H 4 "dwarf_add_frame_fde()"
 .DS
 \f(CWDwarf_Unsigned dwarf_add_frame_fde(
         Dwarf_P_Debug dbg,
@@ -2894,7 +4801,7 @@ needed  in .debug_info pass in 0 as the \f(CWdie\fP argument.
 It returns an index to the given \f(CWfde\fP.
 
 
-.H 3 "dwarf_add_frame_fde_b()"
+.H 4 "dwarf_add_frame_fde_b()"
 .DS
 \f(CWDwarf_Unsigned dwarf_add_frame_fde_b(
         Dwarf_P_Debug dbg,
@@ -3013,7 +4920,54 @@ It returns an index to the given \f(CWfde\fP.
 
 On error, it returns \f(CWDW_DLV_NOCOUNT\fP.
 
-.H 3 "dwarf_add_frame_info_b()"
+.H 3 "dwarf_add_frame_info_c()"
+.DS
+\f(CWint dwarf_add_frame_info_c(
+        Dwarf_P_Debug   dbg,
+        Dwarf_P_Fde     fde,    
+        Dwarf_P_Die     die,    
+        Dwarf_Unsigned  cie,
+        Dwarf_Addr      virt_addr,
+        Dwarf_Unsigned  code_len,
+        Dwarf_Unsigned  sym_idx,
+        Dwarf_Unsigned  end_symbol_index,
+        Dwarf_Addr      offset_from_end_symbol,
+        Dwarf_Signed    offset_into_exception_tables,
+        Dwarf_Unsigned  exception_table_symbol,
+        Dwarf_Unsigned *index_to_fde,
+        Dwarf_Error*    error)\fP
+.DE
+New December 2018, this function has
+a simpler return value so checking for
+failure is easier. 
+Otherwise
+\f(CWdwarf_add_frame_fde_c()\fP
+is essentially similar to
+\f(CWdwarf_add_frame_fde_b()\fP.
+
+.P
+On success 
+The function 
+\f(CWdwarf_add_frame_fde_c()\fP
+returns 
+\f(CWDW_DLV_OK\fP,
+adds the 
+\f(CWFDE\fP
+specified by 
+\f(CWfde\fP to the list of 
+\f(CWFDE\fPs for the 
+object represented by the given 
+\f(CWdbg\fP, and.
+passes the index of the fde back through 
+the pointer 
+\f(CWindex_to_fde\fP
+
+On failure it returns 
+\f(CWDW_DLV_ERROR\fP.
+
+Function created 01 December 2018.
+
+.H 4 "dwarf_add_frame_info_b()"
 .DS
 \f(CWDwarf_Unsigned dwarf_add_frame_info_b(
         Dwarf_P_Debug   dbg,
@@ -3133,9 +5087,7 @@ It returns an index to the given \f(CWfde\fP.
 
 On error, it returns \f(CWDW_DLV_NOCOUNT\fP.
 
-
-.H 3 "dwarf_add_frame_info()"
-
+.H 4 "dwarf_add_frame_info()"
 .DS
 \f(CWDwarf_Unsigned dwarf_add_frame_info(
         Dwarf_P_Debug dbg,
@@ -3149,7 +5101,9 @@ On error, it returns \f(CWDW_DLV_NOCOUNT\fP.
 	Dwarf_Unsigned exception_table_symbol,
         Dwarf_Error* error)\fP
 .DE
-The function \f(CWdwarf_add_frame_fde()\fP adds the \f(CWFDE\fP
+The function 
+\f(CWdwarf_add_frame_info()\fP
+adds the \f(CWFDE\fP
 specified by \f(CWfde\fP to the list of \f(CWFDE\fPs for the
 object represented by the given \f(CWdbg\fP.  
 
@@ -3176,9 +5130,45 @@ the relocatable symbol to be used to relocate this offset.
 These arguments are MIPS/IRIX specific, pass in 0 for
 other targets.
 
-It returns an index to the given \f(CWfde\fP.
+On success
+it returns an index to the given \f(CWfde\fP.
 
-.H 3 "dwarf_fde_cfa_offset()"
+On failure it returns DW_DLV_NOCOUNT.
+
+
+.H 3 "dwarf_fde_cfa_offset_a()"
+.DS
+\f(CWint dwarf_fde_cfa_offset_a( Dwarf_P_Fde fde,
+        Dwarf_Unsigned reg,
+        Dwarf_Signed offset,
+        Dwarf_Error *error)\fP
+.DE
+New December 2018, this function has
+a simpler return value so checking for
+failure is easier. 
+.P
+The function 
+\f(CWdwarf_fde_cfa_offset()\fP appends a 
+\f(CWDW_CFA_offset\fP
+operation to the 
+\f(CWFDE\fP, specified by 
+\f(CWfde\fP,  being constructed.
+The first operand of the 
+\f(CWDW_CFA_offset\fP operation is specified by
+\f(CWreg\P.  
+The register specified should not exceed 6 bits.  
+The second
+operand of the 
+\f(CWDW_CFA_offset\fP operation is specified by 
+\f(CWoffset\fP.
+.P
+It returns \f(CWDW_DLV_OK\fP on success.
+.P
+It returns \f(CWDW_DLV_ERROR\fP on error.
+
+Function created 01 December 2018.
+
+.H 4 "dwarf_fde_cfa_offset()"
 .DS
 \f(CWDwarf_P_Fde dwarf_fde_cfa_offset(
         Dwarf_P_Fde fde,
@@ -3196,7 +5186,44 @@ It returns the given \f(CWfde\fP on success.
 
 It returns \f(CWDW_DLV_BADADDR\fP on error.
 
-.H 3 "dwarf_add_fde_inst()"
+.H 3 "dwarf_add_fde_inst_a()"
+.DS
+\f(CWint dwarf_add_fde_inst_a(
+        Dwarf_P_Fde fde,
+        Dwarf_Small op,
+        Dwarf_Unsigned val1,
+        Dwarf_Unsigned val2,
+        Dwarf_Error *error)\fP
+.DE
+The function 
+\f(CWdwarf_add_fde_inst()\fP adds the operation specified
+by 
+\f(CWop\fP to the 
+\f(CWFDE\fP specified by 
+\f(CWfde\fP.  Up to two
+operands can be specified in 
+\f(CWval1\fP, and 
+\f(CWval2\fP.  Based on
+the operand specified 
+\f(CWLibdwarf\fP decides how many operands are
+meaningful for the operand.
+It also converts the operands to the
+appropriate datatypes (they are passed to 
+\f(CWdwarf_add_fde_inst\fP
+as 
+\f(CWDwarf_Unsigned\fP).
+.P
+It returns
+\f(CWDW_DLV_OK\fP on success.
+
+It returns
+\f(CWDW_DLV_ERROR\fP
+on error.
+
+Function created 01 December 2018.
+
+
+.H 4 "dwarf_add_fde_inst()"
 .DS
 \f(CWDwarf_P_Fde dwarf_add_fde_inst(
         Dwarf_P_Fde fde,
@@ -3234,7 +5261,7 @@ At present it may only be called once on a given \f(CWfde\fP.
 The \f(CWlen\fP bytes \f(CWibytes\fP may be constructed in any way, but
 the assumption is they were copied from an object file
 such as is returned by the libdwarf consumer function
-\f(CWdwarf_get_fde_instr_bytes()\fP.
+\f(CWdwarf_get_fde_instr_bytes\fP.
 
 It returns \f(CWDW_DLV_OK\fP on success, and \f(CWDW_DLV_ERROR\fP
 on error.

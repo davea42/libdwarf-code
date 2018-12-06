@@ -1,3 +1,25 @@
+December 05, 2018
+  Many new producer functions provided. Now no matter
+  what producer task is to be done there is a version
+  that returns DW_DLV_OK/DW_DLV_ERROR and no ugly
+  casting of return values is needed to check for success/failure.
+  All the old interfaces continue to work.
+  One can switch from
+    Dwarf_P_Attribute dwarf_add_AT_name(Dwarf_P_Die die,
+    char*        name,
+    Dwarf_Error* error);
+    (requires a cast to check return code DW_DLV_BADADDR)
+  to
+    int dwarf_add_AT_comp_dir_a(Dwarf_P_Die ownerdie,
+    char*             current_working_directory,
+    Dwarf_P_Attribute * outattr,
+    Dwarf_Error*    error);
+    (no cast,type safe)
+  for example.
+  The libdwarf2p.1.mm document table-of-contents
+  lists only the latest functions, but all the documentation
+  of all the earlier versions remain in the document as
+  subsections.
 October 24, 2018
   Now supports reading MacOS dSYM object files. 
 May 17, 2017
