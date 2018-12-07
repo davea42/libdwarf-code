@@ -16,11 +16,7 @@ where the .debug_info section refers to those sections).
 .PP
 All options are available in the traditional (single-letter)
 form and in a long-options form with meaningful names.
-.PP
-To print the options showing short and long form use
-.BR \--help-extended\ (\-he)
-and note the various sections of that output (we will
-refer to such below).
+
 .PP
 As of June 2011 the printing options and the checking options
 are mutually exclusive (if checking options are selected the
@@ -185,10 +181,6 @@ Print the .debug_frame section.
 .TP
 .BR \--print-eh-frame\ (\-F)
 Print the GNU .eh_frame section.
-
-.TP
-.BR \--help-extended\ (\-he)
-Print the dwarfdump options list.
 
 .TP
 .BR \--print-info\ (\-i)
@@ -673,6 +665,8 @@ original and translated option strings.
 
 .TP
 .B \-E 
+.TP
+.B \--elf
 Turns on printing object-internal header data for some
 systems.
 
@@ -698,6 +692,12 @@ Turn off the URI interpretation of the command line
 strings entirely. Must be be on the command line before
 any URI strings encountered to be fully effective.
 Likely something no one needs to do.
+
+.TP
+.B \-h
+.TP
+.B \--help
+Show this man page.
 
 .SH FILES
 dwarfdump

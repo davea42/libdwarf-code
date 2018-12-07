@@ -1,3 +1,6 @@
+2018-12-07 David Anderson
+    * dwarfdump.1: -E missed its long-form (--elf)
+      and -h (--help) was improperly documented.
 2018-11-26 David Anderson
     * dwarfdump.c: Now dumps DWARF from PE objects.
 2018-11-01 David Anderson
