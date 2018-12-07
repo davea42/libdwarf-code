@@ -332,9 +332,11 @@ dwarf_add_directory_decl_a(Dwarf_P_Debug dbg,
 {
     if (dbg->de_inc_dirs == NULL) {
         dbg->de_inc_dirs = (Dwarf_P_F_Entry)
-            _dwarf_p_get_alloc(dbg, sizeof(struct Dwarf_P_F_Entry_s));
+            _dwarf_p_get_alloc(dbg,
+            sizeof(struct Dwarf_P_F_Entry_s));
         if (dbg->de_inc_dirs == NULL) {
-            DWARF_P_DBG_ERROR(dbg, DW_DLE_INCDIR_ALLOC, DW_DLV_ERROR);
+            DWARF_P_DBG_ERROR(dbg, DW_DLE_INCDIR_ALLOC,
+                DW_DLV_ERROR);
         }
         dbg->de_last_inc_dir = dbg->de_inc_dirs;
         dbg->de_n_inc_dirs = 1;
@@ -342,7 +344,8 @@ dwarf_add_directory_decl_a(Dwarf_P_Debug dbg,
         dbg->de_last_inc_dir->dfe_next = (Dwarf_P_F_Entry)
             _dwarf_p_get_alloc(dbg, sizeof(struct Dwarf_P_F_Entry_s));
         if (dbg->de_last_inc_dir->dfe_next == NULL) {
-            DWARF_P_DBG_ERROR(dbg, DW_DLE_INCDIR_ALLOC, DW_DLV_ERROR);
+            DWARF_P_DBG_ERROR(dbg, DW_DLE_INCDIR_ALLOC,
+                DW_DLV_ERROR);
         }
         dbg->de_last_inc_dir = dbg->de_last_inc_dir->dfe_next;
         dbg->de_n_inc_dirs++;

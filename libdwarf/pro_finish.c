@@ -39,7 +39,7 @@
 dwarf_producer_finish(Dwarf_P_Debug dbg, Dwarf_Error * error)
 {
     int res = dwarf_producer_finish_a(dbg,error);
-    if (res == DW_DLV_ERROR) {
+    if (res != DW_DLV_OK) {
         return DW_DLV_NOCOUNT;
     }
     return 0;

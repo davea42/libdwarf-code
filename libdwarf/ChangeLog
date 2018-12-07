@@ -1,3 +1,9 @@
+2018-12-07  David Anderson
+     * pro_die.c pro_finish.c pro_forms.c pro_line.c:
+       Some lines were too long and one test for error
+       (from the last set of changes)
+       was written in a usable but non-standard way so
+       that's now done in the standard way.
 2018-12-05  David Anderson
      * dwarf_query.c: Removed useless blank lines.
      * libdwarf.h.in: Many new producer functions so

@@ -269,6 +269,9 @@ local_add_AT_address_a(Dwarf_P_Debug dbg,
     Extend these functions as needed to handle wider input
     variety.  Return values should be freed with _dwarf_p_dealloc
     after they aren't needed any more.  */
+/*  It is not clear there is any use to this function
+    as it was contributed by SUN but may not have ever
+    been needed in any released SUN compiler. */
 
 /* return value points to an array of LEB number */
 
