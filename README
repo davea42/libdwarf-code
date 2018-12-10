@@ -39,6 +39,12 @@ before you attempt an out-of-source-tree build
 
 ========= End of confusing build problem
 
+========= gcc under MinGW on windows
+Under MinGW the gcc CFLAGS 
+ -DHAVE_WINDOWS_H -DHAVE_NONSTANDARD_PRINTF_64_FORMAT -fno-dwarf2-cfi-asm
+seem to be essential.
+=========
+
 Standard builds are done by configure/make as described below.
 Cross-Compiles are described below, see CROSS COMPILES.
 
