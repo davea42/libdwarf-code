@@ -109,7 +109,6 @@ typedef unsigned long long  __uint64_t;
 #include "glflags.h"
 
 struct dwconf_s;
-struct esb_s;
 
 /* Used to try to avoid leakage when we hide errors. */
 #define DROP_ERROR_INSTANCE(d,r,e)       \
@@ -167,12 +166,6 @@ extern void record_range_array_info_entry(Dwarf_Off die_off,
     Dwarf_Off range_off);
 extern void check_range_array_info(Dwarf_Debug dbg);
 
-extern void print_ranges_list_to_extra(Dwarf_Debug dbg,
-    Dwarf_Unsigned off,
-    Dwarf_Ranges *rangeset,
-    Dwarf_Signed rangecount,
-    Dwarf_Unsigned bytecount,
-    struct esb_s *stringbuf);
 boolean should_skip_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die);
 
 void get_address_size_and_max(Dwarf_Debug dbg,
@@ -184,9 +177,6 @@ void get_address_size_and_max(Dwarf_Debug dbg,
 int get_cu_name(Dwarf_Debug dbg,Dwarf_Die cu_die,
     Dwarf_Off  dieprint_cu_offset,
     char **short_name,char **long_name);
-int get_producer_name(Dwarf_Debug dbg,Dwarf_Die cu_die,
-    Dwarf_Off  dieprint_cu_offset,
-    struct esb_s *producername);
 
 /* Get number of abbreviations for a CU */
 extern void get_abbrev_array_info(Dwarf_Debug dbg,Dwarf_Unsigned offset);
@@ -244,35 +234,16 @@ extern void printreg(Dwarf_Unsigned reg,struct dwconf_s *config_data);
 int get_proc_name(Dwarf_Debug dbg, Dwarf_Die die, Dwarf_Addr low_pc,
     char *proc_name_buf, int proc_name_buf_len, void **pcMap);
 
-void get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
-    Dwarf_Die die,
-    Dwarf_Off die_cu_offset,
-    Dwarf_Attribute attrib,
-    char **srcfiles,
-    Dwarf_Signed cnt, struct esb_s *esbp,
-    int show_form,int local_verbose);
-
 extern void dump_block(char *prefix, char *data, Dwarf_Signed len);
-
-extern void format_sig8_string(Dwarf_Sig8 *data,struct esb_s *out);
 
 extern void print_gdb_index(Dwarf_Debug dbg);
 extern void print_debugfission_index(Dwarf_Debug dbg,const char *type);
 
-void dwarfdump_print_one_locdesc(Dwarf_Debug dbg,
-    Dwarf_Locdesc * llbuf, /* 2014 interface */
-    Dwarf_Locdesc_c  locs, /* 2015 interface */
-    Dwarf_Unsigned llent, /* Which locdesc is this */
-    Dwarf_Unsigned entrycount, /* count of DW_OP operators */
-    Dwarf_Addr baseaddr,
-    struct esb_s *string_out);
 void clean_up_die_esb(void);
 void safe_strcpy(char *out, long outlen, const char *in, long inlen);
 
 void print_macros_5style_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die,
     Dwarf_Bool in_import_list, Dwarf_Unsigned offset);
-
-void format_sig8_string(Dwarf_Sig8*data, struct esb_s *out);
 
 /* Detailed attributes encoding space */
 void print_attributes_encoding(Dwarf_Debug dbg);
@@ -287,10 +258,6 @@ void groups_restore_subsidiary_flags(void);
 void print_str_offsets_section(Dwarf_Debug dbg);
 
 void print_any_harmless_errors(Dwarf_Debug dbg);
-void get_true_section_name(Dwarf_Debug dbg,
-    const char *standard_name,
-    struct esb_s *name_out,
-    Dwarf_Bool add_compr);
 
 #ifdef __cplusplus
 }

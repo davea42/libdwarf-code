@@ -35,6 +35,7 @@
 #include "dwconf.h"
 #include "sanitized.h"
 #include "esb.h"
+#include "esb_using_functions.h"
 
 #include "print_sections.h"
 

@@ -29,6 +29,7 @@ v Portions Copyright 2009-2011 SN Systems Ltd. All rights reserved.
 #include "naming.h"
 #include "dwconf.h"
 #include "esb.h"
+#include "esb_using_functions.h"
 #include "print_sections.h"
 #include "sanitized.h"
 

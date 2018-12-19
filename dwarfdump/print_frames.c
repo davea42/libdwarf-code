@@ -38,6 +38,8 @@
 #include "print_frames.h"
 #include "dwconf.h"
 #include "esb.h"
+#include "esb_using_functions.h"
+
 #include "sanitized.h"
 #include "addrmap.h"
 #include "naming.h"

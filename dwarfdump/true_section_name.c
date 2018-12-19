@@ -32,11 +32,7 @@
 
 #include "globals.h"
 #include "esb.h"
-
-#define TRUE  1
-#define FALSE 0
-
-
+#include "esb_using_functions.h"
 
 void get_true_section_name(Dwarf_Debug dbg,
     const char *standard_name,

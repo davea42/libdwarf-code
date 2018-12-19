@@ -33,6 +33,7 @@
 #include "globals.h"
 #include "naming.h"
 #include "esb.h"                /* For flexible string buffer. */
+#include "esb_using_functions.h"
 #include "sanitized.h"
 #include "print_frames.h"       /* for get_string_from_locs() . */
 #include "macrocheck.h"

@@ -29,6 +29,7 @@
 #include "naming.h"
 #include "dwconf.h"
 #include "esb.h"
+#include "esb_using_functions.h"
 #include "sanitized.h"
 #include "uri.h"
 #include <ctype.h>

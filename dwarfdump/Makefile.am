@@ -24,6 +24,7 @@ dwgetopt.c \
 dwgetopt.h \
 esb.c \
 esb.h \
+esb_using_functions.h \
 makename.c \
 makename.h \
 naming.c \

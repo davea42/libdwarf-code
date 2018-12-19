@@ -29,6 +29,7 @@
 #include "naming.h"
 #include "dwconf.h"
 #include "esb.h"
+#include "esb_using_functions.h"
 
 #include "print_sections.h"
 #include "print_frames.h"
