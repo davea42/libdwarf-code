@@ -1466,7 +1466,9 @@ dwarf_elf_object_access_finish(Dwarf_Obj_Access_Interface* obj)
 /*  This function returns the Elf * pointer
     associated with a Dwarf_Debug.
 
-    This function only makes sense if ELF is implied.  */
+    This function only makes sense if ELF is implied
+    and there actually is an Elf * pointer available.  
+*/
 int
 dwarf_get_elf(Dwarf_Debug dbg, dwarf_elf_handle * elf,
     Dwarf_Error * error)
@@ -1478,16 +1480,21 @@ dwarf_get_elf(Dwarf_Debug dbg, dwarf_elf_handle * elf,
     }
 
     obj = dbg->de_obj_file;
-    if (obj) {
-        dwarf_elf_object_access_internals_t *internals =
-            (dwarf_elf_object_access_internals_t*)obj->object;
+    if (obj && obj->object) {
+        dwarf_elf_object_access_internals_t *internals = 0;
+        char typeletter = *(char *)(obj->object);
+   
+        if (typeletter != 'E') {
+            /* Not Elf */
+            return DW_DLV_NO_ENTRY;
+        }
+        internals = (dwarf_elf_object_access_internals_t*)obj->object;
         if (internals->elf == NULL) {
             _dwarf_error(dbg, error, DW_DLE_FNO);
             return (DW_DLV_ERROR);
         }
         *elf = internals->elf;
         return DW_DLV_OK;
-
     }
     _dwarf_error(dbg, error, DW_DLE_FNO);
     return DW_DLV_ERROR;

@@ -1,4 +1,8 @@
 2018-12-19  David Anderson
+     * dwarf_elf_access.c(dwarf_get_elf): Now uses the new
+       format per-object-type to quickly figure out if there is
+       an Elf * open.
+2018-12-19  David Anderson
      * dwarf_errmsg_list.h: Added DW_DLE_IMAGE_FILE_UNKNOWN_TYPE.
      * dwarf_error.c: Added dwarf_errmsg_by_number()
        so one can get more complete messages when all we have

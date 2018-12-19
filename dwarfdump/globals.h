@@ -147,7 +147,6 @@ extern void print_locs (Dwarf_Debug dbg);
 extern void print_abbrevs (Dwarf_Debug dbg);
 extern void print_strings (Dwarf_Debug dbg);
 extern void print_aranges (Dwarf_Debug dbg);
-extern void print_relocinfo (Dwarf_Debug dbg);
 extern void print_static_funcs(Dwarf_Debug dbg);
 extern void print_static_vars(Dwarf_Debug dbg);
 enum type_type_e {SGI_TYPENAME, DWARF_PUBTYPES} ;
@@ -155,6 +154,11 @@ extern void print_types(Dwarf_Debug dbg,enum type_type_e type_type);
 extern void print_weaknames(Dwarf_Debug dbg);
 extern void print_exception_tables(Dwarf_Debug dbg);
 extern void print_debug_names(Dwarf_Debug dbg);
+
+/*  These three ELF only */
+extern void print_object_header(Dwarf_Debug dbg);
+extern void print_relocinfo (Dwarf_Debug dbg);
+void clean_up_syms_malloc_data(void);
 
 /*  Space used to record range information */
 extern void allocate_range_array_info(void);
@@ -263,7 +267,6 @@ void dwarfdump_print_one_locdesc(Dwarf_Debug dbg,
     Dwarf_Addr baseaddr,
     struct esb_s *string_out);
 void clean_up_die_esb(void);
-void clean_up_syms_malloc_data(void);
 void safe_strcpy(char *out, long outlen, const char *in, long inlen);
 
 void print_macros_5style_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die,
