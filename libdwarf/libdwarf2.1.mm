@@ -8,7 +8,7 @@
 .nr Hb 5
 \." ==============================================
 \." Put current date in the following at each rev
-.ds vE rev 2.68, October 23, 2018
+.ds vE rev 2.69, December 19, 2018
 \." ==============================================
 \." ==============================================
 .ds | |
@@ -202,6 +202,12 @@ The following is a brief mention of the changes in this libdwarf from
 the libdwarf draft for DWARF Version 1 and recent changes.
 
 .H 2 "Items Changed"
+.P
+Added a libdwarf interface dwarf_errmsg_by_number()
+so that places in the code that can have errors but
+do not want the Dwarf_Error complexities
+can report more details than just an error number.
+(December 19, 2018)
 .P
 Now Mach-o dSYM files containing dwarf
 are readable by libdwarf and their DWARF
@@ -12677,6 +12683,31 @@ So copy the errmsg string ( or print
 it) but do not depend on the pointer remaining valid
 past other libdwarf calls to the
 \f(CWDwarf_Debug\fP instance that detected an error.
+
+.H 3 "dwarf_errmsg_by_number()"
+.DS
+\f(CWconst char* dwarf_errmsg_by_number(
+    Dwarf_Unside errcode)\fP
+.DE
+The function 
+\f(CWdwarf_errmsg_by_number()\fP returns a pointer to a
+null-terminated error message string
+corresponding to the error number specified by
+\f(CWerrcode\fP.
+The string
+should not be deallocated or freed.
+If the 
+\f(CWerrcode\fP
+is too large for the table of static error strings
+a string reflecting that fact is returned.
+.P
+For some places in the code a 
+\f(CWDwarf_Error()\fP
+is inconvenient and this function
+lets dwarfdump report better information
+in those cases.
+
+Function new December 19, 2018.
 
 .H 3 "dwarf_get_harmless_error_list()"
 .DS
