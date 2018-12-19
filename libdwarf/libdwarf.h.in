@@ -587,13 +587,12 @@ Projects using dwarf_elf_init() or dwarf_init() can ignore
 the Dwarf_Obj_Access* structures entirely as all these details
 are completed for you.
 
-As of March 2017 additional 
-functions dwarf_elf_init_b 
+As of March 2017 additional
+functions dwarf_elf_init_b
 and dwarf_init_b
 and dwarf_object_init_b
 add a groupnumber argument so DWARF5
 split-dwarf sections can be accessed.
-
 */
 
 typedef struct Dwarf_Obj_Access_Interface_s   Dwarf_Obj_Access_Interface;
@@ -1341,9 +1340,10 @@ struct Dwarf_Obj_Access_Interface_s {
 #define DW_DLE_PE_SIZE_SMALL                   426
 #define DW_DLE_PE_OFFSET_BAD                   427
 #define DW_DLE_PE_STRING_TOO_LONG              428
+#define DW_DLE_IMAGE_FILE_UNKNOWN_TYPE         429
 
     /* LAST MUST EQUAL LAST ERROR NUMBER */
-#define DW_DLE_LAST        428
+#define DW_DLE_LAST        429
 
 #define DW_DLE_LO_USER     0x10000
 
@@ -3430,6 +3430,7 @@ int dwarf_get_debugfission_for_key(Dwarf_Debug /*dbg*/,
 Dwarf_Unsigned dwarf_errno(Dwarf_Error     /*error*/);
 
 char* dwarf_errmsg(Dwarf_Error    /*error*/);
+char* dwarf_errmsg_by_number(Dwarf_Unsigned /* errornum */);
 
 /*  stringcheck zero is default and means do all
     string length validity checks.
@@ -4090,11 +4091,11 @@ int dwarf_insert_fde_inst_bytes(
     Dwarf_Ptr      /*ibytes*/,
     Dwarf_Error*   /*error*/);
 
-Dwarf_P_Fde dwarf_new_fde(Dwarf_P_Debug    /*dbg*/, 
+Dwarf_P_Fde dwarf_new_fde(Dwarf_P_Debug    /*dbg*/,
     Dwarf_Error* /*error*/);
 
 /*  New December 2018. Preferred version. */
-int dwarf_new_fde_a(Dwarf_P_Debug    /*dbg*/, 
+int dwarf_new_fde_a(Dwarf_P_Debug    /*dbg*/,
     Dwarf_P_Fde * /*fde_out*/,
     Dwarf_Error* /*error*/);
 
@@ -4235,11 +4236,11 @@ void * dwarf_uncompress_integer_block(
 );
 
 /* Operations to create location expressions. */
-Dwarf_P_Expr dwarf_new_expr(Dwarf_P_Debug /*dbg*/, 
+Dwarf_P_Expr dwarf_new_expr(Dwarf_P_Debug /*dbg*/,
     Dwarf_Error* /*error*/);
 
 /*  New December 2018. Preferred version. */
-int dwarf_new_expr_a(Dwarf_P_Debug /*dbg*/, 
+int dwarf_new_expr_a(Dwarf_P_Debug /*dbg*/,
     Dwarf_P_Expr * /*expr_out*/,
     Dwarf_Error* /*error*/);
 

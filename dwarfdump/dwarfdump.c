@@ -329,8 +329,16 @@ main(int argc, char *argv[])
         out_path_buf,out_path_buf_len,
         &ftype,&endian,&offsetsize,&filesize,&errcode);
     if ( res != DW_DLV_OK) {
-        fprintf(stderr, "%s ERROR:  can't open %s\n", glflags.program_name,
-            file_name);
+        if (res == DW_DLV_ERROR) {
+            char *errmsg = dwarf_errmsg_by_number(errcode);
+            fprintf(stderr, "%s ERROR:  can't open %s:"
+                " %s\n",
+                glflags.program_name, file_name,
+                errmsg);
+        } else {
+            fprintf(stderr, "%s ERROR:  can't open %s\n",
+                glflags.program_name, file_name);
+        }
         free(out_path_buf);
         return (FAILED);
     }
@@ -340,7 +348,8 @@ main(int argc, char *argv[])
     }
     fd = open_a_file(file_name);
     if (fd == -1) {
-        fprintf(stderr, "%s ERROR:  can't open %s\n", glflags.program_name,
+        fprintf(stderr, "%s ERROR:  can't open %s\n",
+            glflags.program_name,
             file_name);
         free(out_path_buf);
         return (FAILED);
@@ -357,8 +366,17 @@ main(int argc, char *argv[])
             out_path_buf,out_path_buf_len,
             &tftype,&tendian,&toffsetsize,&tfilesize,&errcode);
         if ( res != DW_DLV_OK) {
-            fprintf(stderr, "%s ERROR: tied file not an object file '%s'.\n",
-                glflags.program_name, tied_file_name);
+            if (res == DW_DLV_ERROR) {
+                char *errmsg = dwarf_errmsg_by_number(errcode);
+                fprintf(stderr, "%s ERROR:  can't open tied file %s:"
+                    " %s\n",
+                    glflags.program_name, tied_file_name,
+                    errmsg);
+            } else {
+                fprintf(stderr,
+                    "%s ERROR: tied file not an object file '%s'.\n",
+                    glflags.program_name, tied_file_name);
+            }
             free(out_path_buf);
             return (FAILED);
         }

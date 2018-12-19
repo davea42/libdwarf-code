@@ -1,3 +1,7 @@
+2018-12-19 David Anderson
+    * dwarfdump.c: Now uses the new libdwarf function
+      dwarf_errmsg_by_number() so we get more specific
+      messages about problems when all we have is an errorcode.
 2018-12-07 David Anderson
     * dwarfdump.1: -E missed its long-form (--elf)
       and -h (--help) was improperly documented.

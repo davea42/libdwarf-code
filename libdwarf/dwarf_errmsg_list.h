@@ -500,5 +500,6 @@ const char *_dwarf_errmsgs[] = {
     "DW_DLE_PE_SIZE_SMALL(426) File too small to be valid PE object.",
     "DW_DLE_PE_OFFSET_BAD(427) Calculated offset too large. Corrupt object.",
     "DW_DLE_PE_STRING_TOO_LONG(428) Increase size for call.",
+    "DW_DLE_IMAGE_FILE_UNKNOWN_TYPE(429) a PE object has an unknown machine type, not 0x14c, 0x200 or 0x8664",
 };
 #endif /* DWARF_ERRMSG_LIST_H */

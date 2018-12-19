@@ -115,4 +115,3 @@ int _dwarf_transform_arange_to_disk(Dwarf_P_Debug dbg,
     One is a convenient default for testing purposes.
 */
 #define SECTION_TYPE 1  /* SHT_PROGBITS in Elf. */
-

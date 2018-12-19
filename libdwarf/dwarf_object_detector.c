@@ -171,7 +171,7 @@ struct dos_header {
 #define IMAGE_NT_SIGNATURE       0x00004550
 #define IMAGE_FILE_MACHINE_I386  0x14c
 #define IMAGE_FILE_MACHINE_IA64  0x200
-#define IMAGE_FILE_MACHINE_AMD64 0x8886
+#define IMAGE_FILE_MACHINE_AMD64 0x8664
 
 
 struct pe_image_file_header {
@@ -445,9 +445,7 @@ is_pe_object(int fd,
             return DW_DLV_OK;
         }
     }
-    /*  There are lots more machines,
-        we are unsure which are of interest. */
-    *errcode = DW_DLE_FILE_WRONG_TYPE;
+    *errcode = DW_DLE_IMAGE_FILE_UNKNOWN_TYPE;
     return DW_DLV_ERROR;
 }
 
