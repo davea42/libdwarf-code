@@ -1,4 +1,9 @@
 2018-12-19 David Anderson
+    * globals.h: Removed an include of section_bitmaps.h
+      and duplicate lines about UNUSEDARG.
+    * command_options.c: Now includes section_bitmaps.h.
+    * section_bitmaps.c: Now includes section_bitmaps.h.
+2018-12-19 David Anderson
     * dwarfdump.c: Moved elf-header printing to print_reloc.c
       (print_object_header()).
       Removed elf argument from print_object_header().

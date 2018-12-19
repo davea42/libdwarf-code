@@ -292,16 +292,6 @@ void get_true_section_name(Dwarf_Debug dbg,
     struct esb_s *name_out,
     Dwarf_Bool add_compr);
 
-
-#include "section_bitmaps.h"
-
-
-#ifdef HAVE_UNUSED_ATTRIBUTE
-#define  UNUSEDARG __attribute__ ((unused))
-#else
-#define  UNUSEDARG
-#endif
-
 #ifdef __cplusplus
 }
 #endif

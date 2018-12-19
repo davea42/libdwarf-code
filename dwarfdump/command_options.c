@@ -31,7 +31,7 @@
 #include "esb.h"                /* For flexible string buffer. */
 #include "sanitized.h"
 #include "tag_common.h"
-
+#include "section_bitmaps.h"
 #include "command_options.h"
 #include "compiler_info.h"
 

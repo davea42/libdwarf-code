@@ -27,9 +27,7 @@
     but now the 'maps' are simple byte arrays.
     See reloc_map and section_map in command_options.c */
 
-
-#define TRUE  1
-#define FALSE 0
+#include "section_bitmaps.h"
 
 struct section_map_s
 map_sectnames[DW_HDR_ARRAY_SIZE] = {
