@@ -69,6 +69,4 @@ void get_true_section_name(Dwarf_Debug dbg,
 #ifdef __cplusplus
 }
 #endif
-
 #endif /* ESB_USING_FUNCTIONS_H */
-

@@ -29,7 +29,7 @@
 /*  The numbers here are almost all 32 bits.
     Not long  long ever.
     In the public function interfaces we'll use Dwarf_Unsigned though,
-    for call consistency with everything else.  
+    for call consistency with everything else.
     Here we use Dwarf_Unsigned to avoid having to
     even know what is or is not 32 bits. */
 

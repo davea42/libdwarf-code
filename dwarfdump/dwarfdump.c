@@ -49,7 +49,7 @@
 #include "common.h"
 #include "helpertree.h"
 #include "esb.h"                /* For flexible string buffer. */
-#include "esb_using_functions.h" 
+#include "esb_using_functions.h"
 #include "sanitized.h"
 #include "tag_common.h"
 #include "libdwarf_version.h" /* for DW_VERSION_DATE_STR */

@@ -1,4 +1,7 @@
 2018-12-20  David Anderson
+     * dwarf_elf_access.c,memcpy_swap.h,pro_alloc.h,pro_dnames.h:
+       Removing trailing whitespace, trailing blank lines.
+2018-12-20  David Anderson
      * dwarf_dnames.c,pro_dnames.h,pro_die.h: Remove some 
        uses of Dwarf_ufixed.
      * pro_section.c: Remove some uses of Dwarf_ufixed

@@ -37,6 +37,4 @@ void printreg(Dwarf_Unsigned reg,struct dwconf_s *config_data);
 #ifdef __cplusplus
 }
 #endif
-
 #endif /* DWCONF_USING_FUNCTIONS_H */
-

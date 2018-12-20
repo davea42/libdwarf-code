@@ -1467,7 +1467,7 @@ dwarf_elf_object_access_finish(Dwarf_Obj_Access_Interface* obj)
     associated with a Dwarf_Debug.
 
     This function only makes sense if ELF is implied
-    and there actually is an Elf * pointer available.  
+    and there actually is an Elf * pointer available.
 */
 int
 dwarf_get_elf(Dwarf_Debug dbg, dwarf_elf_handle * elf,
@@ -1483,7 +1483,7 @@ dwarf_get_elf(Dwarf_Debug dbg, dwarf_elf_handle * elf,
     if (obj && obj->object) {
         dwarf_elf_object_access_internals_t *internals = 0;
         char typeletter = *(char *)(obj->object);
-   
+
         if (typeletter != 'E') {
             /* Not Elf */
             return DW_DLV_NO_ENTRY;
