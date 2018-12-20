@@ -27,7 +27,6 @@
 
 #include "globals.h"
 #include "naming.h"
-#include "dwconf.h"
 #include "esb.h"
 
 #include "print_sections.h"

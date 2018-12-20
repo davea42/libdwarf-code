@@ -25,7 +25,6 @@
 #include "globals.h"
 #include "sanitized.h"
 #include "naming.h"
-#include "dwconf.h"
 
 /*  Two purposes here related to COMDAT:
     A)  get and print the data on sections and groups.

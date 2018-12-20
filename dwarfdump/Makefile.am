@@ -24,7 +24,6 @@ dwgetopt.c \
 dwgetopt.h \
 esb.c \
 esb.h \
-esb_using_functions.h \
 makename.c \
 makename.h \
 naming.c \
@@ -141,10 +140,12 @@ dwarf_tsearchbal.c \
 dwarf_tsearch.h \
 dwconf.c \
 dwconf.h \
+dwconf_using_functions.h \
 dwgetopt.c \
 dwgetopt.h \
 esb.c \
 esb.h \
+esb_using_functions.h \
 glflags.c \
 glflags.h \
 globals.h \

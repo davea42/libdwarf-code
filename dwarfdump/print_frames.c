@@ -37,6 +37,7 @@
 #include "globals.h"
 #include "print_frames.h"
 #include "dwconf.h"
+#include "dwconf_using_functions.h"
 #include "esb.h"
 #include "esb_using_functions.h"
 

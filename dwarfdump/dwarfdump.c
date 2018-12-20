@@ -45,6 +45,7 @@
 #include "makename.h"
 #include "macrocheck.h"
 #include "dwconf.h"
+#include "dwconf_using_functions.h"
 #include "common.h"
 #include "helpertree.h"
 #include "esb.h"                /* For flexible string buffer. */

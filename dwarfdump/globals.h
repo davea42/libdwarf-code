@@ -108,8 +108,6 @@ typedef unsigned long long  __uint64_t;
 #include "defined_types.h"
 #include "glflags.h"
 
-struct dwconf_s;
-
 /* Used to try to avoid leakage when we hide errors. */
 #define DROP_ERROR_INSTANCE(d,r,e)       \
     if (r == DW_DLV_ERROR) {             \
@@ -138,6 +136,7 @@ extern void print_line_numbers_this_cu (Dwarf_Debug dbg, Dwarf_Die in_die);
 
 extern void print_frames (Dwarf_Debug dbg, int print_debug_frame,
     int print_eh_frame,struct dwconf_s *);
+extern void printreg(Dwarf_Unsigned reg,struct dwconf_s *config_data);
 extern void print_ranges (Dwarf_Debug dbg);
 extern void print_pubnames (Dwarf_Debug dbg);
 extern void print_macinfo (Dwarf_Debug dbg);
@@ -229,7 +228,6 @@ extern Dwarf_Die current_cu_die_for_print_frames; /* This is
 /* defined in print_sections.c, die for the current compile unit,
    used in get_fde_proc_name() */
 
-extern void printreg(Dwarf_Unsigned reg,struct dwconf_s *config_data);
 
 int get_proc_name(Dwarf_Debug dbg, Dwarf_Die die, Dwarf_Addr low_pc,
     char *proc_name_buf, int proc_name_buf_len, void **pcMap);
