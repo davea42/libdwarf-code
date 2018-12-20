@@ -2,7 +2,29 @@
 #  A script verifying the distribution gets all needed files
 #  for building, including 'make check'
 # First, get the current configure.ac version into v:
-v=`grep -o '201[0-9][0-9][0-9][0-9][0-9]'< ../configure.ac | head -n 1`
+
+if [ -f ./configure.ac ]
+then
+  f=./configure.ac
+else
+  if [ -f ../configure.ac ]
+  then 
+    f=../configure.ac
+  else
+    echo FAIL Running distribution test from the wrong place.
+    exit 
+  fi
+fi
+v=`grep -o '201[0-9][0-9][0-9][0-9][0-9]'< $f | head -n 1`
+
+if [ x$v = "x" ]
+then
+   echo FAIL did not get configure.ac version
+   exit 1
+fi
+configloc=/home/davea/dwarf/code/configure
+
+
 rm -rf /tmp/dwbld
 rm -rf /tmp/dwinstall
 rm -rf /tmp/dwinstallrel
@@ -57,7 +79,7 @@ then
       exit 1
 fi
 echo "now initial install, prefix /tmp/dwinstall"
-/home/davea/dwarf/code/configure --prefix=/tmp/dwinstall
+$configloc --prefix=/tmp/dwinstall
 if [ $? -ne 0 ]
 then
   echo FAIL A4a configure fail

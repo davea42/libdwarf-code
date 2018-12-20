@@ -1,4 +1,6 @@
 2018-12-19 David Anderson
+    * CMakeLists.txt: Now has dwconf_using_functions.h and
+      esb_using_functions.h listed so cmake works.
     * Makefile.am: Added new header dwconf_using_functions.h
     * dwarfdump.c: Includes new header.
     * globals.h: Remove dwconf_s forward decl, remove

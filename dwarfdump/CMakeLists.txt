@@ -20,8 +20,9 @@ set_source_group(SOURCES "Source Files" addrmap.c checkutil.c dwarfdump.c dwconf
 	
 set_source_group(HEADERS "Header Files" checkutil.h common.h dwconf.h
   command_options.h compiler_info.h
-	dwgetopt.h esb.h glflags.h globals.h macrocheck.h defined_types.h
-	makename.h dwarf_tsearch.h print_frames.h section_bitmaps.h uri.h)
+  dwconf_using_functions.h esb_using_functions.h
+  dwgetopt.h esb.h glflags.h globals.h macrocheck.h defined_types.h
+  makename.h dwarf_tsearch.h print_frames.h section_bitmaps.h uri.h)
 
 set_source_group(CONFIGURATION_FILES "Configuration Files" configure.cmake config.h.in.cmake ${CMAKE_CURRENT_BINARY_DIR}/config.h)
 	
