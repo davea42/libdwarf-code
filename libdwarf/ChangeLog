@@ -1,3 +1,37 @@
+2018-12-20  David Anderson
+     * Makefile.am: Adding new header memcpy_swap.h 
+       to the headers list.
+     * dwarf_gdbindex.c,dwarf_init_finish.c,dwarf_machoread.c,
+       dwarf_object_detector.c, dwarf_peread.c:
+       Include memcpy_swap.h. 
+       Use the new _dwarf_memcpy_noswap_bytes instead
+       of memcpy directly.
+     * pro_init.c: Include memcpy_swap.h. 
+       Use the new _dwarf_memcpy_noswap_bytes instead
+       of memcpy directly. Delete local declaration
+       now memcpy_swap.h used here.
+     * dwarf_machoread.h,dwarf_peread.h: 
+       mo_copy_word declaration adjustment
+       to match  the new _dwarf_memcpy_noswap_bytes
+     * dwarf_incl.h: Put <stddef.h> before "dwarf.h" and
+       "libdwarf.h" includes (and don't use <> on dwarf.h
+       or libdwarf.h as they may only be locally defined)
+     * dwarf_opaque.h: void return on de_copy_word now.
+       Delete ugly redeclaration of _dwarf_memcpy_swap_bytes.
+     * dwarf_util.c: Implement dwarf_get_endian_copy_function
+       so dwarfdump can swap bytes where it needs to (as in
+       printing frame instruction bytes).
+       And implement _dwarf_memcpy_noswap_bytes with
+       a void return. _dwarf_memcpy_swap_bytes now
+       also with void return.
+     * libdwarf.h.in: Declare the new function
+       dwarf_get_endian_copy_function().
+     * pro_alloc.h: Add idempotency and ifdef __cplusplus.
+     * pro_incl.h: Delete pointless blank lines in the macro
+       definition area. 
+     * pro_opaque.h: delete <stddef.h> include. 
+       No longer needed as de_copy_word no longer uses
+       size_t.
 2018-12-19  David Anderson
      * dwarf_elf_access.c(dwarf_get_elf): Now uses the new
        format per-object-type to quickly figure out if there is

@@ -128,7 +128,7 @@ typedef struct pe_filedata_s {
     int              pe_ftype;
     unsigned         pe_byteorder;
     /*Dwarf_Small      pe_machine; */
-    void *(*pe_copy_word) (void *, const void *, size_t);
+    void (*pe_copy_word) (void *, const void *, unsigned long);
     Dwarf_Unsigned   pe_nt_header_offset;
     Dwarf_Unsigned   pe_optional_header_offset;
     Dwarf_Unsigned   pe_optional_header_size;

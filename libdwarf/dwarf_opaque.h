@@ -688,7 +688,7 @@ struct Dwarf_Debug_s {
     Dwarf_Xu_Index_Header  de_cu_hashindex_data;
     Dwarf_Xu_Index_Header  de_tu_hashindex_data;
 
-    void *(*de_copy_word) (void *, const void *, size_t);
+    void (*de_copy_word) (void *, const void *, unsigned long);
     unsigned char de_same_endian;
     unsigned char de_elf_must_close; /* If non-zero, then
         it was dwarf_init (not dwarf_elf_init)
@@ -742,8 +742,6 @@ struct Dwarf_Chain_o {
 
     /* Size of cu header address size field. */
 #define CU_ADDRESS_SIZE_SIZE    sizeof(Dwarf_Small)
-
-void *_dwarf_memcpy_swap_bytes(void *s1, const void *s2, size_t len);
 
 #define ORIGINAL_DWARF_OFFSET_SIZE  4
 #define DISTINGUISHED_VALUE  0xffffffff

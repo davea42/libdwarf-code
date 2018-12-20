@@ -166,6 +166,7 @@ libdwarf_version.h \
 libdwarfdefs.h \
 malloc_check.c \
 malloc_check.h \
+memcpy_swap.h \
 pro_alloc.c \
 pro_alloc.h \
 pro_arange.c \

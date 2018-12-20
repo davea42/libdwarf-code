@@ -45,6 +45,21 @@
 #include "addrmap.h"
 #include "naming.h"
 
+#ifdef WORDS_BIGENDIAN
+#define ASNAR(func,t,s)                         \
+    do {                                        \
+        unsigned tbyte = sizeof(t) - sizeof(s); \
+        t = 0;                                  \
+        func(((char *)&t)+tbyte ,&s[0],sizeof(s));  \
+    } while (0)
+#else /* LITTLE ENDIAN */
+#define ASNAR(func,t,s)                         \
+    do {                                        \
+        t = 0;                                  \
+        func(&t,&s[0],sizeof(s));               \
+    } while (0)
+#endif /* end LITTLE- BIG-ENDIAN */
+
 #define true 1
 #define false 0
 
@@ -1439,15 +1454,23 @@ print_frame_inst_bytes(Dwarf_Debug dbg,
     unsigned int uleblen = 0;
     unsigned int off = 0;
     unsigned int loff = 0;
-    unsigned short u16 = 0;
+    unsigned u16 = 0;
     unsigned int u32 = 0;
-    unsigned long long u64 = 0;
+    Dwarf_Unsigned u64 = 0;
     int res = 0;
     Dwarf_Small *endpoint = 0;
     Dwarf_Signed len = 0;
     int lastop = 0;
     char exprstr_buf[200];
+    void (*copy_word) (void *, const void *, unsigned long) = 0;
 
+
+    copy_word = dwarf_get_endian_copy_function(dbg);
+    if (!copy_word) {
+        printf("ERROR: Unable to print frame instruction bytes. "
+            "Missing the word-copy function\n");
+        return;
+    }
     if (len_in <= 0) {
         return;
     }
@@ -1527,15 +1550,21 @@ print_frame_inst_bytes(Dwarf_Debug dbg,
                 switch (addr_size) {
                 case 4:
                     {
-                        __uint32_t v32 = 0;
-                        memcpy(&v32, instp + 1, addr_size);
+                        Dwarf_Unsigned v32 = 0;
+                        char b32[4];
+
+                        memcpy(b32,instp+1,4);
+                        ASNAR(copy_word,v32, b32);
                         uval = v32;
                     }
                     break;
                 case 8:
                     {
-                        __uint64_t v64 = 0;
-                        memcpy(&v64, instp + 1, addr_size);
+                        Dwarf_Unsigned v64 = 0;
+                        char b64[8];
+
+                        memcpy(b64,instp+1,8);
+                        ASNAR(copy_word,v64, b64);
                         uval = v64;
                     }
                     break;
@@ -1574,7 +1603,11 @@ print_frame_inst_bytes(Dwarf_Debug dbg,
                     "DW_CFA_advance_loc2") != DW_DLV_OK) {
                     return;
                 }
-                memcpy(&u16, instp + 1, 2);
+                {
+                    char u2[2];
+                    memcpy(u2,instp+1,2);
+                    ASNAR(copy_word,u16,u2);
+                }
                 uval2 = u16;
                 instp += 2;
                 len -= 2;
@@ -1589,7 +1622,11 @@ print_frame_inst_bytes(Dwarf_Debug dbg,
                     "DW_CFA_advance_loc4") != DW_DLV_OK) {
                     return;
                 }
-                memcpy(&u32, instp + 1, 4);
+                {
+                    char u4[4];
+                    memcpy(u4,instp+1,4);
+                    ASNAR(copy_word,u32,u4);
+                }
                 uval2 = u32;
                 instp += 4;
                 len -= 4;
@@ -1604,7 +1641,11 @@ print_frame_inst_bytes(Dwarf_Debug dbg,
                     "DW_CFA_MIPS_advance_loc8") != DW_DLV_OK) {
                     return;
                 }
-                memcpy(&u64, instp + 1, 8);
+                {
+                    char u8[8];
+                    memcpy(u8,instp+1,8);
+                    ASNAR(copy_word,u64,u8);
+                }
                 uval2 = u64;
                 instp += 8;
                 len -= 8;

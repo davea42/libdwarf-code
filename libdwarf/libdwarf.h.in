@@ -4841,6 +4841,8 @@ int dwarf_sec_group_map(Dwarf_Debug /*dbg*/,
     const char    ** /*sec_names_array*/,
     Dwarf_Error    * /*error*/);
 
+/*  dwarf_get_endian_copy_function new. December 2019. */
+void (*dwarf_get_endian_copy_function(Dwarf_Debug /*dbg*/))(void *, const void * /*src*/, unsigned long /*srclen*/);
 
 /*  These make the  LEB encoding routines visible to libdwarf
     callers. Added November, 2012. */
@@ -4868,6 +4870,7 @@ extern Dwarf_Cmdline_Options dwarf_cmdline_options;
 
 /* Set libdwarf to reflect some application command line options. */
 void dwarf_record_cmdline_options(Dwarf_Cmdline_Options /*options*/);
+
 
 int dwarf_pro_get_string_stats(Dwarf_P_Debug /*dbg*/,
     Dwarf_Unsigned * /*str_count*/,

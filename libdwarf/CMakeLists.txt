@@ -40,6 +40,7 @@ dwarf_str_offsets.h
 dwarf_types.h dwarf_util.h dwarf_vars.h dwarf_weaks.h 
 dwarf_xu_index.h dwgetopt.h libdwarfdefs.h 
 dwarf_macho_loader.h malloc_check.h 
+memcpy_swap.h
 pro_alloc.h pro_arange.h pro_die.h 
 pro_encode_nm.h pro_error.h pro_expr.h pro_frame.h 
 pro_incl.h pro_line.h pro_macinfo.h pro_opaque.h 

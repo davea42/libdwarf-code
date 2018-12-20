@@ -41,6 +41,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <string.h> /* memcpy, strcpy */
 #endif /* HAVE_STRING_H */
 #include "libdwarf.h"
+#include "memcpy_swap.h"
 #include "dwarf_object_read_common.h"
 #include "dwarf_object_detector.h"
 
@@ -184,40 +185,6 @@ struct pe_image_file_header {
 
 /* ===== END pe structures */
 
-static void *
-memcpy_swap_bytes(void *s1, const void *s2, size_t len)
-{
-    void *orig_s1 = s1;
-    unsigned char *targ = (unsigned char *) s1;
-    const unsigned char *src = (const unsigned char *) s2;
-
-    if (len == 4) {
-        targ[3] = src[0];
-        targ[2] = src[1];
-        targ[1] = src[2];
-        targ[0] = src[3];
-    } else if (len == 8) {
-        targ[7] = src[0];
-        targ[6] = src[1];
-        targ[5] = src[2];
-        targ[4] = src[3];
-        targ[3] = src[4];
-        targ[2] = src[5];
-        targ[1] = src[6];
-        targ[0] = src[7];
-    } else if (len == 2) {
-        targ[1] = src[0];
-        targ[0] = src[1];
-    }
-/* should NOT get below here: is not the intended use */
-    else if (len == 1) {
-        targ[0] = src[0];
-    } else {
-        memcpy(s1, s2, len);
-    }
-    return orig_s1;
-}
-
 
 /*  For following MacOS file naming convention */
 static const char *
@@ -276,9 +243,6 @@ fill_in_elf_fields(struct elf_header *h,
 {
     unsigned locendian = 0;
     unsigned locoffsetsize = 0;
-#if 0
-    void *(*word_swap) (void *, const void *, size_t);
-#endif
 
     switch(h->e_ident[EI_CLASS]) {
     case ELFCLASS32:
@@ -294,23 +258,9 @@ fill_in_elf_fields(struct elf_header *h,
     switch(h->e_ident[EI_DATA]) {
     case ELFDATA2LSB:
         locendian = DW_ENDIAN_LITTLE;
-#if 0
-#ifdef WORDS_BIGENDIAN
-        word_swap = memcpy_swap_bytes;
-#else  /* LITTLE ENDIAN */
-        word_swap = memcpy;
-#endif /* LITTLE- BIG-ENDIAN */
-#endif
         break;
     case ELFDATA2MSB:
         locendian = DW_ENDIAN_BIG;
-#if 0
-#ifdef WORDS_BIGENDIAN
-        word_swap = memcpy;
-#else  /* LITTLE ENDIAN */
-        word_swap = memcpy_swap_bytes;
-#endif /* LITTLE- BIG-ENDIAN */
-#endif
         break;
     default:
         *errcode = DW_DLE_ELF_ENDIAN_BAD;
@@ -351,7 +301,7 @@ is_pe_object(int fd,
 {
     unsigned dos_sig = 0;
     unsigned locendian = 0;
-    void *(*word_swap) (void *, const void *, size_t);
+    void (*word_swap) (void *, const void *, unsigned long);
     unsigned long nt_address = 0;
     struct dos_header dhinmem;
     char nt_sig_array[4];
@@ -377,18 +327,18 @@ is_pe_object(int fd,
             load, so we intrepet a match the other way. */
         /* BIG ENDIAN. From looking at hex characters in object  */
 #ifdef  WORDS_BIGENDIAN
-        word_swap = memcpy;
+        word_swap = _dwarf_memcpy_noswap_bytes;
 #else   /* LITTLE ENDIAN */
-        word_swap = memcpy_swap_bytes;
+        word_swap =  _dwarf_memcpy_swap_bytes;
 #endif  /* LITTLE- BIG-ENDIAN */
         locendian = DW_ENDIAN_BIG;
     } else if (dos_sig == IMAGE_DOS_REVSIGNATURE) {
         /* raw load, so  intrepet a match the other way. */
         /* LITTLE ENDIAN */
 #ifdef  WORDS_BIGENDIAN
-        word_swap = memcpy_swap_bytes;
+        word_swap =  _dwarf_memcpy_swap_bytes;
 #else   /* LITTLE ENDIAN */
-        word_swap = memcpy;
+        word_swap = _dwarf_memcpy_noswap_bytes;
 #endif  /* LITTLE- BIG-ENDIAN */
         locendian = DW_ENDIAN_LITTLE;
     } else {

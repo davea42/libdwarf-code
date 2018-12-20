@@ -33,6 +33,7 @@
 #include "dwarf_alloc.h"
 #include "dwarf_error.h"
 #include "dwarf_util.h"
+#include "memcpy_swap.h"
 #include "dwarf_die_deliv.h"
 #include "pro_encode_nm.h"
 
@@ -46,6 +47,21 @@
 #else
 #define NULL_DEVICE_NAME "/dev/null"
 #endif /* _WIN32 */
+
+/*  The function returned allows dwarfdump and other callers to
+    do an endian-sensitive copy-word with a chosen
+    source-length.  */
+typedef void (*endian_funcp_type)(void *, const void *,unsigned long);
+
+endian_funcp_type
+dwarf_get_endian_copy_function(Dwarf_Debug dbg)
+{
+    if (dbg) {
+        return dbg->de_copy_word;
+    }
+    return 0;
+}
+
 
 Dwarf_Bool
 _dwarf_file_has_debug_fission_cu_index(Dwarf_Debug dbg)
@@ -839,10 +855,15 @@ _dwarf_reference_outside_section(Dwarf_Die die,
   for cross-endian use.
   Only 2,4,8 should be lengths passed in.
 */
-void *
-_dwarf_memcpy_swap_bytes(void *s1, const void *s2, size_t len)
+void
+_dwarf_memcpy_noswap_bytes(void *s1, const void *s2, unsigned long len)
 {
-    void *orig_s1 = s1;
+    memcpy(s1,s2,(size_t)len);
+    return;
+}
+void
+_dwarf_memcpy_swap_bytes(void *s1, const void *s2, unsigned long len)
+{
     unsigned char *targ = (unsigned char *) s1;
     const unsigned char *src = (const unsigned char *) s2;
 
@@ -868,10 +889,9 @@ _dwarf_memcpy_swap_bytes(void *s1, const void *s2, size_t len)
     else if (len == 1) {
         targ[0] = src[0];
     } else {
-        memcpy(s1, s2, len);
+        memcpy(s1, s2, (size_t)len);
     }
-
-    return orig_s1;
+    return;
 }
 
 

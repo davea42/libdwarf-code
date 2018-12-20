@@ -26,9 +26,6 @@
 
 */
 
-
-#include <stddef.h>
-
 /*
     Sgidefs included to define __uint32_t,
     a guaranteed 4-byte quantity.
@@ -567,7 +564,7 @@ struct Dwarf_P_Debug_s {
     unsigned long de_compose_used_len;
 
     unsigned char de_same_endian;
-    void *(*de_copy_word) (void *, const void *, size_t);
+    void (*de_copy_word) (void *, const void *, unsigned long);
 
     /*  Add new fields at the END of this struct to preserve some hope
         of sensible behavior on dbg passing between DSOs linked with

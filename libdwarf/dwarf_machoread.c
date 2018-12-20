@@ -80,6 +80,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "dwarf_opaque.h"
 #include "dwarf_error.h" /* for _dwarf_error() declaration */
 #include "dwarf_reading.h"
+#include "memcpy_swap.h"
 #include "dwarf_object_read_common.h"
 #include "dwarf_machoread.h"
 #include "dwarf_object_detector.h"
@@ -840,12 +841,12 @@ _dwarf_macho_object_access_internals_init(
         intfc->mo_copy_word = _dwarf_memcpy_swap_bytes;
         intfc->mo_byteorder = DW_OBJECT_LSB;
     } else {
-        intfc->mo_copy_word = memcpy;
+        intfc->mo_copy_word = _dwarf_memcpy_noswap_bytes;
         intfc->mo_byteorder = DW_OBJECT_MSB;
     }
 #else  /* LITTLE ENDIAN */
     if (endian == DW_ENDIAN_LITTLE ) {
-        intfc->mo_copy_word = memcpy;
+        intfc->mo_copy_word = _dwarf_memcpy_noswap_bytes;
         intfc->mo_byteorder = DW_OBJECT_LSB;
     } else {
         intfc->mo_copy_word = _dwarf_memcpy_swap_bytes;

@@ -109,7 +109,7 @@ typedef struct dwarf_macho_filedata_s {
     int              mo_ftype;
     Dwarf_Endianness mo_byteorder;
     /*Dwarf_Small      mo_machine; */
-    void *(*mo_copy_word) (void *, const void *, size_t);
+    void (*mo_copy_word) (void *, const void *, unsigned long);
 
     /* Used to hold 32 and 64 header data */
     struct generic_macho_header mo_header;

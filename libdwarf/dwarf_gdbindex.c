@@ -31,6 +31,7 @@
 #include "dwarf_alloc.h"
 #include "dwarf_error.h"
 #include "dwarf_util.h"
+#include "memcpy_swap.h"
 #include "dwarf_gdbindex.h"
 
 #define TRUE 1

@@ -33,6 +33,7 @@
 #include <string.h>
 #include "pro_incl.h"
 #include "pro_line.h"
+#include "memcpy_swap.h"
 #include "pro_section.h"        /* for MAGIC_SECT_NO */
 #include "pro_reloc_symbolic.h"
 #include "pro_reloc_stream.h"
@@ -92,8 +93,6 @@ static struct isa_relocs_s isa_relocs[] = {
 static int common_init(Dwarf_P_Debug dbg, Dwarf_Unsigned flags,
     const char *abiname, const char *dwarf_version,
     int *error_ret);
-
-void *_dwarf_memcpy_swap_bytes(void *s1, const void *s2, size_t len);
 
 /*  This function sets up a new dwarf producing region.
     flags: Indicates type of access method, one of DW_DLC* macros
@@ -388,7 +387,7 @@ common_init(Dwarf_P_Debug dbg, Dwarf_Unsigned flags, const char *abiname,
     }
     /* First assume host, target same endianness */
     dbg->de_same_endian = 1;
-    dbg->de_copy_word = memcpy;
+    dbg->de_copy_word =  _dwarf_memcpy_noswap_bytes;
 #ifdef WORDS_BIGENDIAN
     /* host is big endian, so what endian is target? */
     if (flags & DW_DLC_TARGET_LITTLEENDIAN) {

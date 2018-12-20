@@ -53,6 +53,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "dwarf_base_types.h"
 #include "libdwarfdefs.h"
 #include "dwarf_opaque.h"
+#include "memcpy_swap.h"
 #include "dwarf_error.h" /* for _dwarf_error() declaration */
 #include "dwarf_reading.h"
 #include "dwarf_object_read_common.h"
@@ -478,7 +479,7 @@ dwarf_load_pe_sections(
 {
     struct dos_header dhinmem;
     IMAGE_FILE_HEADER ifh;
-    void *(*word_swap) (void *, const void *, size_t);
+    void (*word_swap) (void *, const void *, unsigned long);
     unsigned locendian = 0;
     int res = 0;
     Dwarf_Unsigned dos_sig = 0;
@@ -503,7 +504,7 @@ dwarf_load_pe_sections(
             load, so we intrepet a match the other way. */
         /* BIG ENDIAN. From looking at hex characters in object  */
 #ifdef WORDS_BIGENDIAN
-        word_swap = memcpy;
+        word_swap = _dwarf_memcpy_noswap_bytes;
 #else  /* LITTLE ENDIAN */
         word_swap = _dwarf_memcpy_swap_bytes;
 #endif /* LITTLE- BIG-ENDIAN */
@@ -514,7 +515,7 @@ dwarf_load_pe_sections(
 #ifdef WORDS_BIGENDIAN
         word_swap = _dwarf_memcpy_swap_bytes;
 #else   /* LITTLE ENDIAN */
-        word_swap = memcpy;
+        word_swap = _dwarf_memcpy_noswap_bytes;
 #endif  /* LITTLE- BIG-ENDIAN */
         locendian = DW_ENDIAN_LITTLE;
     } else {
@@ -759,12 +760,12 @@ _dwarf_pe_object_access_internals_init(
         intfc->pe_copy_word = _dwarf_memcpy_swap_bytes;
         intfc->pe_byteorder = DW_ENDIAN_LITTLE;
     } else {
-        intfc->pe_copy_word = memcpy;
+        intfc->pe_copy_word = _dwarf_memcpy_noswap_bytes;
         intfc->pe_byteorder = DW_ENDIAN_BIG;
     }
 #else  /* LITTLE ENDIAN */
     if (endian == DW_ENDIAN_LITTLE ) {
-        intfc->pe_copy_word = memcpy;
+        intfc->pe_copy_word = _dwarf_memcpy_noswap_bytes;
         intfc->pe_byteorder = DW_ENDIAN_LITTLE;
     } else {
         intfc->pe_copy_word = _dwarf_memcpy_swap_bytes;

@@ -37,6 +37,7 @@
 #include "dwarf_alloc.h"
 #include "dwarf_error.h"
 #include "dwarf_util.h"
+#include "memcpy_swap.h"
 #include "dwarf_harmless.h"
 
 /* For consistency, use the HAVE_LIBELF_H symbol */
@@ -1119,7 +1120,7 @@ _dwarf_setup(Dwarf_Debug dbg, Dwarf_Error * error)
 
     dbg->de_assume_string_in_bounds = _dwarf_assume_string_in_bounds;
     dbg->de_same_endian = 1;
-    dbg->de_copy_word = memcpy;
+    dbg->de_copy_word = _dwarf_memcpy_noswap_bytes;
     obj = dbg->de_obj_file;
     endianness = obj->methods->get_byte_order(obj->object);
 #ifdef WORDS_BIGENDIAN

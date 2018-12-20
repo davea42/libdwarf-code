@@ -43,9 +43,9 @@
 
 #include "libdwarfdefs.h"
 #include <string.h>  /* strcpy() strlen() */
-#include <dwarf.h>
-#include <libdwarf.h>
 #include <stddef.h>
+#include "dwarf.h"
+#include "libdwarf.h"
 
 #include "libdwarfdefs.h"
 #include "dwarf_base_types.h"

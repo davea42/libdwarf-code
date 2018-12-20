@@ -8,7 +8,7 @@
 .nr Hb 5
 \." ==============================================
 \." Put current date in the following at each rev
-.ds vE rev 2.69, December 19, 2018
+.ds vE rev 2.70, December 20, 2018
 \." ==============================================
 \." ==============================================
 .ds | |
@@ -12708,6 +12708,31 @@ lets dwarfdump report better information
 in those cases.
 
 Function new December 19, 2018.
+
+.H 3 "dwarf_get_endian_copy_function()"
+.DS
+\f(CWvoid (*dwarf_get_endian_copy_function(Dwarf_Debug /*dbg*/))
+    (void *, const void * /*src*/, unsigned long /*srclen*/)\fP
+.DE
+When reader client code wants to extract endian-dependent
+integers from dwarf and the existing interfaces won't do
+that (for example in printing frame instructions as
+done by dwarfdump) 
+\f(CWdwarf_get_endian_copy_function\fP
+helps by returning the proper copy function
+needed, the one libdwarf itself uses.
+The client code needs a bit of glue to finish the job,
+as demonstrated by the ASNAR macro in 
+dwarfdump/print_frames.c
+.P
+On success this returns a pointer to the correct copy function.
+.P
+On failure it returns the null pointer.
+It's up to the client code to decide how to deal
+with the situation.
+In no reasonable case will the null pointer be returned.
+.P
+New December 2018.
 
 .H 3 "dwarf_get_harmless_error_list()"
 .DS
