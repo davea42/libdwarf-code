@@ -1,4 +1,7 @@
 2018-12-20 David Anderson
+    * globals.h: Removed include of <stdarg.h>
+    * esb.c: Now includes <stdarg.h>
+2018-12-20 David Anderson
     * print_frames.c: Now properly deals with endian mismatch
       in printing frame instruction details and avoids
       requiring we have a precise definiion of type lengths.

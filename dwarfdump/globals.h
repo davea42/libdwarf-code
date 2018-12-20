@@ -79,7 +79,6 @@ typedef unsigned long long  __uint64_t;
 #define DWARF_SECNAME_BUFFER_SIZE 50
 
 #include <stdio.h>
-#include <stdarg.h>   /* For va_start va_arg va_list */
 #include <stdlib.h>
 #include <string.h>
 

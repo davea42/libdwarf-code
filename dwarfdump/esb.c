@@ -38,6 +38,7 @@
 */
 
 #include "config.h"
+#include <stdarg.h>
 #include "esb.h"
 #define TRUE 1
 
