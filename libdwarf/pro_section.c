@@ -65,8 +65,8 @@
 #endif
 
 struct Dwarf_Sort_Abbrev_s {
-    unsigned dsa_attr;
-    unsigned dsa_form;
+    Dwarf_Unsigned dsa_attr;
+    Dwarf_Unsigned dsa_form;
     Dwarf_Signed dsa_implicitvalue;
     Dwarf_P_Attribute dsa_attrp;
 };
@@ -968,11 +968,11 @@ determine_file_content_size(Dwarf_P_Debug dbg,
                     }
                     break;
                 case DW_FORM_data2:
-                    calculated_size += 2;
+                    calculated_size += DWARF_HALF_SIZE;
                     if (write_out) {
                         Dwarf_Half uh = cur->dfe_index;
-                        memcpy(data,&uh,2);
-                        data += 2;
+                        memcpy(data,&uh,DWARF_HALF_SIZE);
+                        data += DWARF_HALF_SIZE;
                     }
                     break;
                 case DW_FORM_udata: {
@@ -1020,11 +1020,11 @@ determine_file_content_size(Dwarf_P_Debug dbg,
                     }
                     break;
                 case DW_FORM_data4: {
-                    calculated_size += 4;
+                    calculated_size += DWARF_32BIT_SIZE;
                     if (write_out) {
                         Dwarf_ufixed u4 = cur->dfe_timestamp;
-                        memcpy(data,&u4,4);
-                        data += 4;
+                        memcpy(data,&u4,DWARF_32BIT_SIZE);
+                        data += DWARF_32BIT_SIZE;
                     }
                     }
                     break;
@@ -1032,13 +1032,13 @@ determine_file_content_size(Dwarf_P_Debug dbg,
                     /*  As of 2017 there is no 8 byte timestamp
                         defined, though it does have to happen.
                         before 2038. */
-                    calculated_size += 8;
+                    calculated_size += DWARF_64BIT_SIZE;
                     if (write_out) {
                         Dwarf_Unsigned u8 = cur->dfe_index;
                         WRITE_UNALIGNED(dbg, (void *) data,
                             (const void *) &u8,
-                            sizeof(u8), 8);
-                        data += 8;
+                            sizeof(u8), DWARF_64BIT_SIZE);
+                        data += DWARF_64BIT_SIZE;
                     }
                     break;
                 case DW_FORM_block:
@@ -1059,29 +1059,29 @@ determine_file_content_size(Dwarf_P_Debug dbg,
                     }
                     break;
                 case DW_FORM_data2:
-                    calculated_size += 2;
+                    calculated_size += DWARF_HALF_SIZE;
                     if (write_out) {
                         Dwarf_Half uh = cur->dfe_index;
-                        memcpy(data,&uh,2);
+                        memcpy(data,&uh,DWARF_HALF_SIZE);
 
                     }
                     break;
                 case DW_FORM_data4:
-                    calculated_size += 4;
+                    calculated_size += DWARF_32BIT_SIZE;
                     if (write_out) {
                         Dwarf_ufixed u4 = cur->dfe_index;
-                        memcpy(data,&u4,4);
-                        data += 4;
+                        memcpy(data,&u4,DWARF_32BIT_SIZE);
+                        data += DWARF_32BIT_SIZE;
                     }
                     break;
                 case DW_FORM_data8:
-                    calculated_size += 8;
+                    calculated_size += DWARF_64BIT_SIZE;
                     if (write_out) {
                         Dwarf_Unsigned u8 = cur->dfe_index;
                         WRITE_UNALIGNED(dbg, (void *) data,
                             (const void *) &u8,
-                            sizeof(u8), 8);
-                        data += 8;
+                            sizeof(u8), DWARF_64BIT_SIZE);
+                        data += DWARF_64BIT_SIZE;
                     }
                     break;
                 case DW_FORM_udata: {
@@ -2595,8 +2595,8 @@ _dwarf_pro_getabbrev(Dwarf_P_Debug dbg,
     Dwarf_P_Abbrev curabbrev = 0;
     Dwarf_P_Attribute curattr = 0;
     int match = 0;
-    Dwarf_ufixed *forms = 0;
-    Dwarf_ufixed *attrs = 0;
+    Dwarf_Unsigned *forms = 0;
+    Dwarf_Unsigned *attrs = 0;
     Dwarf_Signed *implicits = 0;
     int attrcount = die->di_n_attr;
 
@@ -2630,15 +2630,15 @@ _dwarf_pro_getabbrev(Dwarf_P_Debug dbg,
     }
     /* no match, create new abbreviation */
     if (attrcount) {
-        forms = (Dwarf_ufixed *)
+        forms = (Dwarf_Unsigned *)
             _dwarf_p_get_alloc(die->di_dbg,
-                sizeof(Dwarf_ufixed) * attrcount);
+                sizeof(Dwarf_Unsigned) * attrcount);
         if (forms == NULL) {
             DWARF_P_DBG_ERROR(dbg, DW_DLE_ABBREV_ALLOC, DW_DLV_ERROR);
         }
-        attrs = (Dwarf_ufixed *)
+        attrs = (Dwarf_Unsigned *)
             _dwarf_p_get_alloc(die->di_dbg,
-                sizeof(Dwarf_ufixed) * attrcount);
+                sizeof(Dwarf_Unsigned) * attrcount);
         if (attrs == NULL) {
             DWARF_P_DBG_ERROR(dbg, DW_DLE_ABBREV_ALLOC, DW_DLV_ERROR);
         }
@@ -3340,14 +3340,14 @@ _dwarf_pro_generate_debuginfo(Dwarf_P_Debug dbg,
                     dw = (Dwarf_Word) curattr->ar_ref_die->di_offset;
                     WRITE_UNALIGNED(dbg, (void *) data,
                         (const void *) &dw,
-                        sizeof(dw), sizeof(Dwarf_ufixed));
+                        sizeof(dw), DWARF_32BIT_SIZE);
                     break;
                 }
             case DW_FORM_ref8:
                 du = curattr->ar_ref_die->di_offset;
                 WRITE_UNALIGNED(dbg, (void *) data,
                     (const void *) &du,
-                    sizeof(du), sizeof(Dwarf_Unsigned));
+                    sizeof(du), DWARF_64BIT_SIZE);
                 break;
             case DW_FORM_ref_udata:
                 {               /* unsigned leb128 offset */

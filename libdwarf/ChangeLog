@@ -1,4 +1,10 @@
 2018-12-20  David Anderson
+     * dwarf_dnames.c,pro_dnames.h,pro_die.h: Remove some 
+       uses of Dwarf_ufixed.
+     * pro_section.c: Remove some uses of Dwarf_ufixed
+       and instead of 2,4,8 use DWARF_HALF_SIZE,
+       DWARF_23BIT_SIZE or DWARF_64BIT_SIZE as appropriate.
+2018-12-20  David Anderson
      * Makefile.am: Adding new header memcpy_swap.h 
        to the headers list.
      * dwarf_gdbindex.c,dwarf_init_finish.c,dwarf_machoread.c,

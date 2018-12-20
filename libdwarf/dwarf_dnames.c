@@ -234,7 +234,7 @@ read_uword_val(Dwarf_Debug dbg,
     Dwarf_Unsigned val = 0;
     Dwarf_Small *ptr = *ptr_in;
 
-    READ_UNALIGNED_CK(dbg, val, Dwarf_ufixed,
+    READ_UNALIGNED_CK(dbg, val, Dwarf_Unsigned,
         ptr, DWARF_32BIT_SIZE,
         error,endptr);
     ptr += DWARF_32BIT_SIZE;
