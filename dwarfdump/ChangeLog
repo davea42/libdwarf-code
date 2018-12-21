@@ -1,3 +1,6 @@
+2018-12-21 David Anderson
+    * command_options.c: Reformat a few lines of the usage text
+      so it all prints in around 70 characters without overlap.
 2018-12-20 David Anderson
     * dwarfdump.1: Clarifying: the abi=ppc etc options
       are only made use of if -a, -F, or -f (or the long
