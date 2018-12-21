@@ -40,10 +40,13 @@ Frame information (.debug_frame and .eh_frame) is heavily
 dependent on the ABI/ISA of the object file. 
 By default we use a generic set of register names
 handling up to 100 registers named r0-100.
+
 The 
 .BR \--format-registers\ (\-R)
 option uses a built-in generic register name set
 handling up to 1200 registers named r0-r1199.
+.PP
+
 The 
 .BR \-file-abi=<abi>\ (\-x\ abi=<abi>)
 description below shows how to name
@@ -53,6 +56,17 @@ the
 or
 .BR \--print-eh-frame\ (\-F)
 processing.
+.PP
+Unless one of
+.BR \--print-frame\ (\-f)
+or
+.B \--print-eh-frame\ (\-F) 
+or
+.BR \--print-all\ (\-a)
+is used any abi reference is ignored
+because no frame data will be printed.
+
+.PP
 Unless the cpu for the object file being dumped has many registers,
 do not use 
 .B \--format-registers
@@ -66,10 +80,17 @@ as
 or
 .B \--file-abi=abi=generic500 
  .
-To get MIPS/IRIX register names names and 
-call the old version 2 libdwarf
-frame interface use the option 
-.B \--file-abi=abi=mips 
+.PP
+The most useful abi choices are likely
+.B mips
+or
+.B x86
+or
+.B x86_64
+or
+.B ppc
+or 
+.B arm
  .
 Without 
 .BR \--format-registers\ (\-R)

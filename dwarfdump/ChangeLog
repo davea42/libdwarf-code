@@ -1,4 +1,8 @@
 2018-12-20 David Anderson
+    * dwarfdump.1: Clarifying: the abi=ppc etc options
+      are only made use of if -a, -F, or -f (or the long
+      versions of these) are used.
+2018-12-20 David Anderson
     * dwarfdump.c,dwconf_using_functions.h,esb_using_functions.h:
       Removing trailing whitespace,empty last lines.
 2018-12-20 David Anderson
