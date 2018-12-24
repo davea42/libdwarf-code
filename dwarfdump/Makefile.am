@@ -7,10 +7,6 @@ AUTOMAKE_OPTIONS = subdir-objects
 
 bin_PROGRAMS = dwarfdump
 
-
-dwarf_names.c: 
-	cp $(top_builddir)/libdwarf/dwarf_names.c .
-
 dwarfdump_SOURCES = \
 addrmap.c \
 addrmap.h \
@@ -28,6 +24,8 @@ dwarfdump-tt-table.h\
 dwarfdump-ta-table.h\
 dwarfdump-tt-ext-table.h\
 dwarfdump-ta-ext-table.h\
+dwarf_names.c \
+dwarf_names.h \
 dwarf_tsearchbal.c \
 dwarf_tsearch.h \
 dwconf.c \
@@ -133,5 +131,5 @@ tag_attr_ext.list \
 tag_tree.list \
 tag_tree_ext.list
 
-CLEANFILES = dwarf_names.c
+CLEANFILES = 
 

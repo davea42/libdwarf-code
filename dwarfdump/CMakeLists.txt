@@ -11,6 +11,7 @@ msvc_posix(esb_and_tsearchbal)
 
 set_source_group(SOURCES "Source Files" addrmap.c checkutil.c dwarfdump.c dwconf.c helpertree.c 
 	glflags.c command_options.c compiler_info.c
+        dwarf_names.c
 	macrocheck.c print_abbrevs.c print_aranges.c print_debugfission.c print_die.c 
 	print_dnames.c print_frames.c  print_gdbindex.c
 	print_lines.c print_locs.c print_macro.c print_macros.c print_pubnames.c print_ranges.c print_reloc.c 
@@ -38,51 +39,9 @@ target_compile_definitions(dwarfdump PRIVATE "CONFPREFIX=${CMAKE_INSTALL_PREFIX}
 
 target_link_libraries(dwarfdump PRIVATE ${dwarf-target} ${dwfzlib}) 
 
-# We need this as naming.o has external references we cannot have
-# in the tree builds.
-configure_file(naming.c trivial_naming.c COPYONLY)
-set_source_files_properties(trivial_naming.c PROPERTIES COMPILE_DEFINITIONS TRIVIAL_NAMING)
-
-set(TAG_TREE_SOURCES tag_tree.c tag_common.c common.c makename.c trivial_naming.c dwgetopt.c dwarf_tsearchbal.c sanitized.c esb.c)
-
-add_executable(tag_tree_build ${TAG_TREE_SOURCES})
-
-set_folder(tag_tree_build dwarfdump/generators)
-
-target_link_libraries(tag_tree_build PRIVATE ${dwarf-target})
-
-set(TAG_ATTR_SOURCES tag_attr.c tag_common.c common.c makename.c trivial_naming.c dwgetopt.c dwarf_tsearchbal.c sanitized.c esb.c)
- 
-add_executable(tag_attr_build ${TAG_ATTR_SOURCES}) 
-
-set_folder(tag_attr_build dwarfdump/generators)
-
-target_link_libraries(tag_attr_build PRIVATE ${dwarf-target})
-
 # Plain GNU C dash E does not work on a .list, 
 # so copy to a .c name to run
 # the following four table creations.
-set(TAG_LIST_FILES tag_tree.list tag_attr.list tag_attr_ext.list tag_tree_ext.list)
-set(TAG_SWITCH -s -s -e -e)
-set(TAG_TOOL tag_tree_build tag_attr_build tag_attr_build tag_tree_build)
-foreach(i RANGE 0 3)
-    list(GET TAG_GENERATED ${i} generatedFile)
-    list(GET TAG_LIST_FILES ${i} listFile)
-    list(GET TAG_SWITCH ${i} tagSwitch)
-    list(GET TAG_TOOL ${i} tagTool)
-    
-    math(EXPR j "${i} + 1")
-    
-    set(tmpSouce tmp-t${j})
-	set(tmpDest tmp-tag-build${j}.tmp)
-    
-    configure_file(${listFile} ${tmpSouce}.c COPYONLY)
-    
-    add_custom_command(OUTPUT ${generatedFile}
-		COMMAND ${CMAKE_C_COMPILER} -E -I${CMAKE_CURRENT_SOURCE_DIR}/../libdwarf -DCONFPREFIX=${CMAKE_INSTALL_PREFIX}/lib ${tmpSouce}.c > ${tmpDest}
-        COMMAND ${tagTool} ${tagSwitch} -i ${tmpDest} -o ${generatedFile}
-        DEPENDS ${tagTool} ${listFile})
-endforeach()
 	
 set_source_group(TESTESB_SOURCES "Source Files" esb.c testesb.c)
 

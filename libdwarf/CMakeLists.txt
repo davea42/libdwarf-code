@@ -9,6 +9,7 @@ dwarf_harmless.c dwarf_generic_init.c dwarf_init_finish.c
 dwarf_leb.c 
 dwarf_line.c dwarf_loc.c 
 dwarf_machoread.c dwarf_macro.c dwarf_macro5.c
+dwarf_names.c
 dwarf_object_read_common.c dwarf_object_detector.c
 dwarf_original_elf_init.c 
 dwarf_peread.c 
@@ -31,6 +32,7 @@ dwarf_elf_access.h dwarf_error.h dwarf_frame.h
 dwarf_funcs.h dwarf_gdbindex.h dwarf_global.h dwarf_harmless.h 
 dwarf_incl.h dwarf_line.h dwarf_loc.h 
 dwarf_machoread.h dwarf_macro.h dwarf_macro5.h 
+dwarf_names.h
 dwarf_object_detector.h dwarf_opaque.h 
 dwarf_pe_descr.h dwarf_peread.h
 dwarf_reading.h dwarf_reloc_arm.h dwarf_reloc_mips.h 
@@ -47,21 +49,9 @@ pro_incl.h pro_line.h pro_macinfo.h pro_opaque.h
 pro_reloc.h pro_reloc_stream.h pro_reloc_symbolic.h 
 pro_section.h pro_types.h pro_util.h)
 
-set_source_group(GENNAMES_SOURCES "Source Files" gennames.c dwgetopt.c dwarf.h)
 
 set_source_group(CONFIGURATION_FILES "Configuration Files" configure.cmake config.h.in.cmake ${CMAKE_CURRENT_BINARY_DIR}/config.h)
 
-add_executable(gennames ${GENNAMES_SOURCES})
-
-set_folder(gennames libdwarf/generators)
-
-msvc_posix(gennames)
-
-set(GENNAMES_OUTPUT dwarf_names.c dwarf_names.h dwarf_names_enum.h dwarf_names_new.h)
-
-add_custom_command(OUTPUT ${GENNAMES_OUTPUT}
-    COMMAND gennames ${dwarf_namestable} -i ${CMAKE_CURRENT_SOURCE_DIR} -o .
-    DEPENDS gennames libdwarf.h.in)
 	
 list(LENGTH DWARF_TARGETS targetCount)
 math(EXPR targetCount "${targetCount} - 1")

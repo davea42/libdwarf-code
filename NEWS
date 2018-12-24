@@ -1,3 +1,13 @@
+2018-12-22:
+  The complicated process of building certain .c and .h
+  files has been relegated to the few people updating
+  files libdwarf/libdwarf.h.in, libdwarf/dwarf_errmsg_list.h,
+  dwarfdump/tag_attr_ext.list,dwarfdump/tag_attr.list,
+  dwarfdump/tag_tree_ext.list, and dwarfdump/tag_tree.list.
+  For everyone else the build is simply compiling
+  the .c and .h files in the distribution. Simpler.
+    sh scripts/buildstandardsource.sh
+  creates these files.
 2018-10-22:
   dwarfdump can now dump mach-o (MacOS) dSYM dwarf.
   All the usual libdwarf interfaces work.

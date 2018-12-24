@@ -113,7 +113,7 @@ am_dwarfdump_OBJECTS = dwarfdump-addrmap.$(OBJEXT) \
 	dwarfdump-checkutil.$(OBJEXT) \
 	dwarfdump-command_options.$(OBJEXT) dwarfdump-common.$(OBJEXT) \
 	dwarfdump-compiler_info.$(OBJEXT) \
-	dwarfdump-dwarfdump.$(OBJEXT) \
+	dwarfdump-dwarfdump.$(OBJEXT) dwarfdump-dwarf_names.$(OBJEXT) \
 	dwarfdump-dwarf_tsearchbal.$(OBJEXT) \
 	dwarfdump-dwconf.$(OBJEXT) dwarfdump-dwgetopt.$(OBJEXT) \
 	dwarfdump-esb.$(OBJEXT) dwarfdump-glflags.$(OBJEXT) \
@@ -572,6 +572,8 @@ dwarfdump-tt-table.h\
 dwarfdump-ta-table.h\
 dwarfdump-tt-ext-table.h\
 dwarfdump-ta-ext-table.h\
+dwarf_names.c \
+dwarf_names.h \
 dwarf_tsearchbal.c \
 dwarf_tsearch.h \
 dwconf.c \
@@ -673,7 +675,7 @@ tag_attr_ext.list \
 tag_tree.list \
 tag_tree_ext.list
 
-CLEANFILES = dwarf_names.c
+CLEANFILES = 
 all: all-am
 
 .SUFFIXES:
@@ -772,6 +774,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dwarfdump-command_options.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dwarfdump-common.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dwarfdump-compiler_info.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dwarfdump-dwarf_names.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dwarfdump-dwarf_tsearchbal.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dwarfdump-dwarfdump.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dwarfdump-dwconf.Po@am__quote@
@@ -917,6 +920,20 @@ dwarfdump-dwarfdump.obj: dwarfdump.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='dwarfdump.c' object='dwarfdump-dwarfdump.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dwarfdump_CPPFLAGS) $(CPPFLAGS) $(dwarfdump_CFLAGS) $(CFLAGS) -c -o dwarfdump-dwarfdump.obj `if test -f 'dwarfdump.c'; then $(CYGPATH_W) 'dwarfdump.c'; else $(CYGPATH_W) '$(srcdir)/dwarfdump.c'; fi`
+
+dwarfdump-dwarf_names.o: dwarf_names.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dwarfdump_CPPFLAGS) $(CPPFLAGS) $(dwarfdump_CFLAGS) $(CFLAGS) -MT dwarfdump-dwarf_names.o -MD -MP -MF $(DEPDIR)/dwarfdump-dwarf_names.Tpo -c -o dwarfdump-dwarf_names.o `test -f 'dwarf_names.c' || echo '$(srcdir)/'`dwarf_names.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dwarfdump-dwarf_names.Tpo $(DEPDIR)/dwarfdump-dwarf_names.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='dwarf_names.c' object='dwarfdump-dwarf_names.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dwarfdump_CPPFLAGS) $(CPPFLAGS) $(dwarfdump_CFLAGS) $(CFLAGS) -c -o dwarfdump-dwarf_names.o `test -f 'dwarf_names.c' || echo '$(srcdir)/'`dwarf_names.c
+
+dwarfdump-dwarf_names.obj: dwarf_names.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dwarfdump_CPPFLAGS) $(CPPFLAGS) $(dwarfdump_CFLAGS) $(CFLAGS) -MT dwarfdump-dwarf_names.obj -MD -MP -MF $(DEPDIR)/dwarfdump-dwarf_names.Tpo -c -o dwarfdump-dwarf_names.obj `if test -f 'dwarf_names.c'; then $(CYGPATH_W) 'dwarf_names.c'; else $(CYGPATH_W) '$(srcdir)/dwarf_names.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dwarfdump-dwarf_names.Tpo $(DEPDIR)/dwarfdump-dwarf_names.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='dwarf_names.c' object='dwarfdump-dwarf_names.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dwarfdump_CPPFLAGS) $(CPPFLAGS) $(dwarfdump_CFLAGS) $(CFLAGS) -c -o dwarfdump-dwarf_names.obj `if test -f 'dwarf_names.c'; then $(CYGPATH_W) 'dwarf_names.c'; else $(CYGPATH_W) '$(srcdir)/dwarf_names.c'; fi`
 
 dwarfdump-dwarf_tsearchbal.o: dwarf_tsearchbal.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dwarfdump_CPPFLAGS) $(CPPFLAGS) $(dwarfdump_CFLAGS) $(CFLAGS) -MT dwarfdump-dwarf_tsearchbal.o -MD -MP -MF $(DEPDIR)/dwarfdump-dwarf_tsearchbal.Tpo -c -o dwarfdump-dwarf_tsearchbal.o `test -f 'dwarf_tsearchbal.c' || echo '$(srcdir)/'`dwarf_tsearchbal.c
@@ -1873,9 +1890,6 @@ uninstall-man: uninstall-man1
 
 .PRECIOUS: Makefile
 
-
-dwarf_names.c: 
-	cp $(top_builddir)/libdwarf/dwarf_names.c .
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

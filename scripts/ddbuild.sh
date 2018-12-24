@@ -5,8 +5,17 @@
 # This script is by David Anderson and hereby put into the public domain
 # for anyone to use in any way.
 
-
 # Requires a basic config.h at top level
+
+d=`pwd`
+db=`basename $d`
+
+if [ x$db != "xdwarfdump" ]
+then
+   echo FAIL Run this in the dwarfdump directory.
+   exit 1
+fi
+
 
 set -x
 top_builddir=..
@@ -15,6 +24,7 @@ CC="gcc -g  -I.. -I../libdwarf"
 EXEXT=.exe
 
 cp $top_builddir/libdwarf/dwarf_names.c .
+cp $top_builddir/libdwarf/dwarf_names.h .
 $CC -DTRIVIAL_NAMING dwarf_names.c common.c \
 dwarf_tsearchbal.c \
 dwgetopt.c \
@@ -95,5 +105,4 @@ rm -f tmp-t4.c
 rm -f tag_attr_build$EXEXT
 rm -f tag_tree_build$EXEXT
 
-rm -f dwarf_names.c
 exit 0
