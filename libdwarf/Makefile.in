@@ -729,6 +729,8 @@ libdwarf2.1.mm \
 libdwarf2p.1.mm \
 mips_extensions.mm \
 mips_extensions.pdf  \
+dwgetopt.h \
+dwgetopt.c \
 CMakeLists.txt \
 libdwarf.h.in \
 pdfbld.sh \

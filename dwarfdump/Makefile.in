@@ -626,6 +626,7 @@ section_bitmaps.c \
 section_bitmaps.h \
 strstrnocase.c \
 true_section_name.c \
+tag_common.h \
 uri.c \
 uri.h \
 warningcontrol.h
@@ -666,6 +667,7 @@ NEWS \
 README \
 CODINGSTYLE \
 getopttest.c \
+tag_common.c \
 testesb.c \
 configure.cmake \
 config.h.in.cmake \

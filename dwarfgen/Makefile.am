@@ -26,7 +26,8 @@ ireptodbg.cc \
 ireptodbg.h \
 strtabdata.h
 
-dwarfgen_CPPFLAGS = -I$(top_srcdir)/libdwarf -I$(top_builddir)/libdwarf
+# dwarfdump here is so we find dwgetopt.h
+dwarfgen_CPPFLAGS = -I$(top_srcdir)/libdwarf -I$(top_srcdir)/dwarfdump -I$(top_builddir)/libdwarf
 
 dwarfgen_CXXFLAGS = $(DWARF_CXXFLAGS_WARN)
 
