@@ -45,4 +45,8 @@ then
    echo errmsg check fail
    exit 1
 fi
+
+rm -f gennames 
+rm -f errmsg_check_list
+rm -f errmsg_check
 exit 0

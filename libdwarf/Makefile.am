@@ -3,77 +3,9 @@
 
 MAINTAINERCLEANFILES = Makefile.in
 
-noinst_PROGRAMS = gennames errmsg_check
-
-### gennames
-
-gennames_SOURCES = \
-gennames.c \
-dwgetopt.c \
-dwgetopt.h
-
-gennames_CFLAGS = $(DWARF_CFLAGS_WARN) -I$(top_builddir)/libdwarf -I$(top_builddir) -I$(top_srcdir)/libdwarf
-
-$(gennames_OBJECTS): CC=$(CC_FOR_BUILD)
-$(gennames_OBJECTS): CFLAGS=$(CFLAGS_FOR_BUILD)
-$(gennames_OBJECTS): CPPFLAGS=$(CPPFLAGS_FOR_BUILD)
-gennames$(BUILD_EXEEXT): CC=$(CC_FOR_BUILD)
-gennames$(BUILD_EXEEXT): CFLAGS=$(CFLAGS_FOR_BUILD)
-gennames$(BUILD_EXEEXT): LDFLAGS=$(LDFLAGS_FOR_BUILD)
-gennames$(BUILD_EXEEXT): CPPFLAGS=$(CPPFLAGS_FOR_BUILD)
-
-BUILT_SOURCES = \
-dwarf_names.c
-
-gn_verbose = $(gn_verbose_@AM_V@)
-gn_verbose_ = $(gn_verbose_@AM_DEFAULT_V@)
-gn_verbose_0 = @echo "  GEN     " $@;
-
-cc_verbose = $(cc_verbose_@AM_V@)
-cc_verbose_ = $(cc_verbose_@AM_DEFAULT_V@)
-cc_verbose_0 = @echo "  CC     " $@;
-
-dwarf_names.h: dwarf_names.c
-dwarf_names.c: gennames$(BUILD_EXEEXT)
-	$(AM_V_at)rm -f dwarf_names.c dwarf_names.h dwarf_names_enum.h dwarf_names_new.h
-	$(gn_verbose)./gennames$(BUILD_EXEEXT) @dwarf_namestable@ -i $(srcdir) -o .
-
-### errmsg_check
-
-errmsg_check_SOURCES = \
-dwarf_test_errmsg_list.c \
-dwarf_errmsg_list.h
-
-# config.h is in top_builddir  
-errmsg_check_CFLAGS =  $(DWARF_CFLAGS_WARN) \
--I$(top_builddir)/libdwarf \
--I$(top_builddir) \
--I$(top_srcdir)/libdwarf
-
-BUILT_SOURCES += \
-errmsg_check_list
-
-$(errmsg_check_OBJECTS): CC=$(CC_FOR_BUILD)
-$(errmsg_check_OBJECTS): CFLAGS=$(CFLAGS_FOR_BUILD)
-$(errmsg_check_OBJECTS): CPPFLAGS=$(CPPFLAGS_FOR_BUILD)
-errmsg_check$(BUILD_EXEEXT): CC=$(CC_FOR_BUILD)
-errmsg_check$(BUILD_EXEEXT): CFLAGS=$(CFLAGS_FOR_BUILD)
-errmsg_check$(BUILD_EXEEXT): LDFLAGS=$(LDFLAGS_FOR_BUILD)
-errmsg_check$(BUILD_EXEEXT): CPPFLAGS=$(CPPFLAGS_FOR_BUILD)
-
-errmsg_check_list: errmsg_check$(BUILD_EXEEXT)
-	$(AM_V_at)grep DW_DLE libdwarf.h >errmsg_check_list
-	$(gn_verbose)./errmsg_check$(BUILD_EXEEXT) -f errmsg_check_list
-
 ### libdwarf
 
 lib_LTLIBRARIES = libdwarf.la
-
-nodist_libdwarf_la_SOURCES = \
-dwarf_names.h \
-dwarf_names.c
-
-
 
 libdwarf_la_SOURCES = \
 dwarf.h \
@@ -125,6 +57,8 @@ dwarf_macro.c \
 dwarf_macro.h \
 dwarf_macro5.c \
 dwarf_macro5.h \
+dwarf_names.c \
+dwarf_names.h \
 dwarf_object_detector.c \
 dwarf_object_detector.h \
 dwarf_object_read_common.c \
@@ -246,6 +180,7 @@ ChangeLog2015 \
 ChangeLog2016 \
 ChangeLog2017 \
 CODINGSTYLE \
+dwarf_names_new.h \
 dwarf_test_errmsg_list.c \
 libdwarf2.1.mm \
 libdwarf2p.1.mm \
@@ -262,9 +197,4 @@ config.h.in.cmake \
 $(libdwarf_DATA) \
 $(libdwarfdev_DATA)
 
-CLEANFILES = \
-dwarf_names.c \
-dwarf_names.h \
-dwarf_names_enum.h \
-dwarf_names_new.h \
-errmsg_check_list
+CLEANFILES = 

@@ -7,121 +7,9 @@ AUTOMAKE_OPTIONS = subdir-objects
 
 bin_PROGRAMS = dwarfdump
 
-noinst_PROGRAMS = tag_attr_build tag_tree_build
-
-### tag_attr_build
 
 dwarf_names.c: 
 	cp $(top_builddir)/libdwarf/dwarf_names.c .
-
-tag_attr_build_SOURCES = \
-dwarf_names.c \
-common.c \
-common.h \
-dwarf_tsearchbal.c \
-dwarf_tsearch.h \
-dwgetopt.c \
-dwgetopt.h \
-esb.c \
-esb.h \
-makename.c \
-makename.h \
-naming.c \
-naming.h \
-sanitized.c \
-sanitized.h \
-tag_attr.c \
-tag_common.c \
-tag_common.h
-
-tag_attr_build_CFLAGS = $(DWARF_CFLAGS_WARN)
-tag_attr_build_CPPFLAGS = -DTRIVIAL_NAMING \
--I$(top_builddir) \
--I$(top_srcdir)/libdwarf  \
--I$(top_builddir)/libdwarf
-
-$(tag_attr_build_OBJECTS):CC=$(CC_FOR_BUILD)
-$(tag_attr_build_OBJECTS):CFLAGS=$(CFLAGS_FOR_BUILD)
-$(tag_attr_build_OBJECTS):CPPFLAGS=$(CPPFLAGS_FOR_BUILD)
-tag_attr_build$(BUILD_EXEEXT):LDFLAGS=$(LDFLAGS_FOR_BUILD)
-tag_attr_build$(BUILD_EXEEXT):CC=$(CC_FOR_BUILD)
-tag_attr_build$(BUILD_EXEEXT):CFLAGS=$(CFLAGS_FOR_BUILD)
-tag_attr_build$(BUILD_EXEEXT):CPPFLAGS=$(CPPFLAGS_FOR_BUILD)
-
-### tag_tree_build
-
-tag_tree_build_SOURCES = \
-dwarf_names.c \
-common.c \
-common.h \
-dwarf_tsearchbal.c \
-dwarf_tsearch.h \
-dwgetopt.c \
-dwgetopt.h \
-esb.c \
-esb.h \
-makename.c \
-makename.h \
-sanitized.c \
-sanitized.h \
-tag_common.c \
-tag_common.h \
-tag_tree.c
-
-tag_tree_build_CFLAGS = $(DWARF_CFLAGS_WARN) 
-
-tag_tree_build_CPPFLAGS = @CPPFLAGS@ -DTRIVIAL_NAMING \
--I$(top_builddir) \
--I$(top_srcdir)/libdwarf \
--I$(top_builddir)/libdwarf
-
-$(tag_tree_build_OBJECTS):CC=$(CC_FOR_BUILD) 
-$(tag_tree_build_OBJECTS):CFLAGS=$(CFLAGS_FOR_BUILD)
-$(tag_tree_build_OBJECTS):CPPFLAGS=$(CPPFLAGS_FOR_BUILD)
-tag_tree_build$(BUILD_EXEEXT):CC=$(CC_FOR_BUILD)
-tag_tree_build$(BUILD_EXEEXT):LDFLAGS=$(LDFLAGS_FOR_BUILD)
-tag_tree_build$(BUILD_EXEEXT):CFLAGS=$(CFLAGS_FOR_BUILD)
-tag_tree_build$(BUILD_EXEEXT):CPPFLAGS=$(CPPFLAGS_FOR_BUILD)
-
-
-BUILT_SOURCES = \
-tmp-ta-table.h \
-tmp-ta-ext-table.h \
-tmp-tt-table.h \
-tmp-tt-ext-table.h
-
-gn_verbose = $(gn_verbose_@AM_V@)
-gn_verbose_ = $(gn_verbose_@AM_DEFAULT_V@)
-gn_verbose_0 = @echo "  GEN     " $@;
-
-tag_attr.list:
-tag_attr_ext.list:
-tag_tree.list:
-tag_tree_ext.list:
-
-tmp-tt-table.h: tag_tree.list tag_tree_build$(BUILD_EXEEXT)
-	$(AM_V_at)rm -f tmp-t1.c
-	$(AM_V_at)cp $(top_srcdir)/dwarfdump/tag_tree.list tmp-t1.c
-	$(AM_V_at)$(CC) $(CFLAGS) $(CPPFLAGS) -I$(top_srcdir)/libdwarf -E tmp-t1.c > tmp-tag-tree-build1.tmp
-	$(gn_verbose)./tag_tree_build$(BUILD_EXEEXT) -s -i tmp-tag-tree-build1.tmp -o tmp-tt-table.h
-
-tmp-ta-table.h: tag_attr.list tag_attr_build$(BUILD_EXEEXT)
-	$(AM_V_at)rm -f tmp-t2.c
-	$(AM_V_at)cp $(top_srcdir)/dwarfdump/tag_attr.list tmp-t2.c
-	$(AM_V_at)$(CC) $(CFLAGS) $(CPPFLAGS) -I$(top_srcdir)/libdwarf  -E tmp-t2.c > tmp-tag-attr-build2.tmp
-	$(gn_verbose)./tag_attr_build$(BUILD_EXEEXT) -s -i tmp-tag-attr-build2.tmp -o tmp-ta-table.h
-
-tmp-ta-ext-table.h: tag_attr_ext.list tag_attr_build$(BUILD_EXEEXT)
-	$(AM_V_at)rm -f tmp-t3.c
-	$(AM_V_at)cp $(top_srcdir)/dwarfdump/tag_attr_ext.list tmp-t3.c
-	$(AM_V_at)$(CC) $(CFLAGS) $(CPPFLAGS) -I$(top_srcdir)/libdwarf -E tmp-t3.c > tmp-tag-attr-build3.tmp
-	$(gn_verbose)./tag_attr_build$(BUILD_EXEEXT) -e -i tmp-tag-attr-build3.tmp -o tmp-ta-ext-table.h
-
-tmp-tt-ext-table.h: tag_tree_ext.list tag_tree_build$(EXEEXT)
-	$(AM_V_at)rm -f tmp-t4.c
-	$(AM_V_at)cp $(top_srcdir)/dwarfdump/tag_tree_ext.list tmp-t4.c
-	$(AM_V_at)$(CC) $(CFLAGS) $(CPPFLAGS) -I$(top_srcdir)/libdwarf  -E tmp-t4.c > tmp-tag-tree-build4.tmp
-	$(gn_verbose)./tag_tree_build$(BUILD_EXEEXT) -e -i tmp-tag-tree-build4.tmp -o tmp-tt-ext-table.h
 
 dwarfdump_SOURCES = \
 addrmap.c \
@@ -136,6 +24,10 @@ compiler_info.c \
 compiler_info.h \
 defined_types.h \
 dwarfdump.c \
+dwarfdump-tt-table.h\
+dwarfdump-ta-table.h\
+dwarfdump-tt-ext-table.h\
+dwarfdump-ta-ext-table.h\
 dwarf_tsearchbal.c \
 dwarf_tsearch.h \
 dwconf.c \
@@ -241,18 +133,4 @@ tag_attr_ext.list \
 tag_tree.list \
 tag_tree_ext.list
 
-CLEANFILES = \
-dwarf_names.c \
-tmp-ta-table.h \
-tmp-ta-ext-table.h \
-tmp-tt-table.h \
-tmp-tt-ext-table.h \
-tmp-t1.c \
-tmp-t2.c \
-tmp-t3.c \
-tmp-t4.c \
-tmp-tag-tree-build1.tmp \
-tmp-tag-attr-build2.tmp \
-tmp-tag-attr-build3.tmp \
-tmp-tag-tree-build4.tmp
-
+CLEANFILES = 

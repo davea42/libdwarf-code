@@ -91,4 +91,7 @@ then
 fi
 rm -f tmp-tag-tree-build4.tmp 
 rm -f tmp-t4.c
+
+rm -f tag_attr_build$EXEXT
+rm -f tag_tree_build$EXEXT
 exit 0

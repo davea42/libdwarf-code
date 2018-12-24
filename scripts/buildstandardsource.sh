@@ -5,12 +5,23 @@
 # This script is by David Anderson and hereby put into the public domain
 # for anyone to use in any way.
 #
+cp scripts/baseconfig.h config.h
+if [ $? -ne 0 ]
+then
+    echo "FAIL getting base config.h for .c .h builing.Runningfrom wrong place?"
+    exit 1
+fi
+
 cd libdwarf
+# We do not need to consider struct _Elf. Use standard version.
 if [ $? -ne 0 ]
 then
     echo "FAIL cd to libdwarf. Running buildstandardsource.sh from the wrong place"
     exit 1
 fi
+
+cp libdwarf.h.in libdwarf.h
+
 sh ../scripts/libbuild.sh
 if [ $? -ne 0 ]
 then
