@@ -148,9 +148,6 @@ libdwarf_la_LIBADD = @DWARF_LIBS@
 
 libdwarf_la_LDFLAGS = -fPIC -no-undefined -version-info @version_info@ @release_info@
 
-# checkexamples.c
-# dwarf_stubs.c
-
 TESTS = runtests.sh
 AM_TESTS_ENVIRONMENT = DWTOPSRCDIR='$(top_srcdir)'; export DWTOPSRCDIR;
 
@@ -181,6 +178,7 @@ ChangeLog2016 \
 ChangeLog2017 \
 CODINGSTYLE \
 dwarf_names_new.h \
+dwarf_names_enum.h \
 dwarf_test_errmsg_list.c \
 libdwarf2.1.mm \
 libdwarf2p.1.mm \

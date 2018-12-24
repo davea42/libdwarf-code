@@ -21,15 +21,15 @@ set_source_group(SOURCES "Source Files" addrmap.c checkutil.c dwarfdump.c dwconf
 	
 set_source_group(HEADERS "Header Files" checkutil.h common.h dwconf.h
   command_options.h compiler_info.h
+  dwarf_names.h
   dwconf_using_functions.h esb_using_functions.h
+  dwarfdump-ta-ext-table.h dwarfdump-ta-table.h dwarfdump-tt-ext-table.h dwarfdump-tt-table.h
   dwgetopt.h esb.h glflags.h globals.h macrocheck.h defined_types.h
   makename.h dwarf_tsearch.h print_frames.h section_bitmaps.h uri.h)
 
 set_source_group(CONFIGURATION_FILES "Configuration Files" configure.cmake config.h.in.cmake ${CMAKE_CURRENT_BINARY_DIR}/config.h)
 	
-set_source_group(TAG_GENERATED "Generated Files" tmp-tt-table.h tmp-ta-table.h tmp-ta-ext-table.h tmp-tt-ext-table.h)
-
-add_executable(dwarfdump ${SOURCES} ${HEADERS} ${TAG_GENERATED} ${CONFIGURATION_FILES})
+add_executable(dwarfdump ${SOURCES} ${HEADERS} ${CONFIGURATION_FILES})
 
 set_folder(dwarfdump dwarfdump)
 
