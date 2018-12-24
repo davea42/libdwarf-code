@@ -19,7 +19,6 @@
 
 
 
-
 VPATH = @srcdir@
 am__is_gnu_make = { \
   if test -z '$(MAKELEVEL)'; then \
@@ -94,14 +93,12 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-noinst_PROGRAMS = gennames$(EXEEXT) errmsg_check$(EXEEXT)
 subdir = libdwarf
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
-am__aclocal_m4_deps = $(top_srcdir)/m4/ax_prog_cc_for_build.m4 \
-	$(top_srcdir)/m4/dw_compiler.m4 $(top_srcdir)/m4/libtool.m4 \
-	$(top_srcdir)/m4/ltoptions.m4 $(top_srcdir)/m4/ltsugar.m4 \
-	$(top_srcdir)/m4/ltversion.m4 $(top_srcdir)/m4/lt~obsolete.m4 \
-	$(top_srcdir)/configure.ac
+am__aclocal_m4_deps = $(top_srcdir)/m4/dw_compiler.m4 \
+	$(top_srcdir)/m4/libtool.m4 $(top_srcdir)/m4/ltoptions.m4 \
+	$(top_srcdir)/m4/ltsugar.m4 $(top_srcdir)/m4/ltversion.m4 \
+	$(top_srcdir)/m4/lt~obsolete.m4 $(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 DIST_COMMON = $(srcdir)/Makefile.am $(include_HEADERS) \
@@ -153,7 +150,7 @@ am_libdwarf_la_OBJECTS = libdwarf_la-dwarf_abbrev.lo \
 	libdwarf_la-dwarf_init_finish.lo libdwarf_la-dwarf_leb.lo \
 	libdwarf_la-dwarf_line.lo libdwarf_la-dwarf_loc.lo \
 	libdwarf_la-dwarf_machoread.lo libdwarf_la-dwarf_macro.lo \
-	libdwarf_la-dwarf_macro5.lo \
+	libdwarf_la-dwarf_macro5.lo libdwarf_la-dwarf_names.lo \
 	libdwarf_la-dwarf_object_detector.lo \
 	libdwarf_la-dwarf_object_read_common.lo \
 	libdwarf_la-dwarf_original_elf_init.lo \
@@ -176,9 +173,7 @@ am_libdwarf_la_OBJECTS = libdwarf_la-dwarf_abbrev.lo \
 	libdwarf_la-pro_reloc_symbolic.lo libdwarf_la-pro_section.lo \
 	libdwarf_la-pro_types.lo libdwarf_la-pro_vars.lo \
 	libdwarf_la-pro_weaks.lo
-nodist_libdwarf_la_OBJECTS = libdwarf_la-dwarf_names.lo
-libdwarf_la_OBJECTS = $(am_libdwarf_la_OBJECTS) \
-	$(nodist_libdwarf_la_OBJECTS)
+libdwarf_la_OBJECTS = $(am_libdwarf_la_OBJECTS)
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
 am__v_lt_0 = --silent
@@ -186,21 +181,6 @@ am__v_lt_1 =
 libdwarf_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(libdwarf_la_CFLAGS) \
 	$(CFLAGS) $(libdwarf_la_LDFLAGS) $(LDFLAGS) -o $@
-PROGRAMS = $(noinst_PROGRAMS)
-am_errmsg_check_OBJECTS =  \
-	errmsg_check-dwarf_test_errmsg_list.$(OBJEXT)
-errmsg_check_OBJECTS = $(am_errmsg_check_OBJECTS)
-errmsg_check_LDADD = $(LDADD)
-errmsg_check_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
-	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(errmsg_check_CFLAGS) \
-	$(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
-am_gennames_OBJECTS = gennames-gennames.$(OBJEXT) \
-	gennames-dwgetopt.$(OBJEXT)
-gennames_OBJECTS = $(am_gennames_OBJECTS)
-gennames_LDADD = $(LDADD)
-gennames_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
-	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(gennames_CFLAGS) \
-	$(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
 am__v_P_0 = false
@@ -235,10 +215,8 @@ AM_V_CCLD = $(am__v_CCLD_@AM_V@)
 am__v_CCLD_ = $(am__v_CCLD_@AM_DEFAULT_V@)
 am__v_CCLD_0 = @echo "  CCLD    " $@;
 am__v_CCLD_1 = 
-SOURCES = $(libdwarf_la_SOURCES) $(nodist_libdwarf_la_SOURCES) \
-	$(errmsg_check_SOURCES) $(gennames_SOURCES)
-DIST_SOURCES = $(libdwarf_la_SOURCES) $(errmsg_check_SOURCES) \
-	$(gennames_SOURCES)
+SOURCES = $(libdwarf_la_SOURCES)
+DIST_SOURCES = $(libdwarf_la_SOURCES)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -455,17 +433,11 @@ AUTOCONF = @AUTOCONF@
 AUTOHEADER = @AUTOHEADER@
 AUTOMAKE = @AUTOMAKE@
 AWK = @AWK@
-BUILD_EXEEXT = @BUILD_EXEEXT@
-BUILD_OBJEXT = @BUILD_OBJEXT@
 CC = @CC@
 CCDEPMODE = @CCDEPMODE@
-CC_FOR_BUILD = @CC_FOR_BUILD@
 CFLAGS = @CFLAGS@
-CFLAGS_FOR_BUILD = @CFLAGS_FOR_BUILD@
 CPP = @CPP@
 CPPFLAGS = @CPPFLAGS@
-CPPFLAGS_FOR_BUILD = @CPPFLAGS_FOR_BUILD@
-CPP_FOR_BUILD = @CPP_FOR_BUILD@
 CXX = @CXX@
 CXXCPP = @CXXCPP@
 CXXDEPMODE = @CXXDEPMODE@
@@ -493,7 +465,6 @@ INSTALL_SCRIPT = @INSTALL_SCRIPT@
 INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
 LD = @LD@
 LDFLAGS = @LDFLAGS@
-LDFLAGS_FOR_BUILD = @LDFLAGS_FOR_BUILD@
 LIBOBJS = @LIBOBJS@
 LIBS = @LIBS@
 LIBTOOL = @LIBTOOL@
@@ -530,7 +501,6 @@ abs_top_builddir = @abs_top_builddir@
 abs_top_srcdir = @abs_top_srcdir@
 ac_ct_AR = @ac_ct_AR@
 ac_ct_CC = @ac_ct_CC@
-ac_ct_CC_FOR_BUILD = @ac_ct_CC_FOR_BUILD@
 ac_ct_CXX = @ac_ct_CXX@
 ac_ct_DUMPBIN = @ac_ct_DUMPBIN@
 am__include = @am__include@
@@ -585,40 +555,8 @@ top_srcdir = @top_srcdir@
 version_info = @version_info@
 MAINTAINERCLEANFILES = Makefile.in
 
-### gennames
-gennames_SOURCES = \
-gennames.c \
-dwgetopt.c \
-dwgetopt.h
-
-gennames_CFLAGS = $(DWARF_CFLAGS_WARN) -I$(top_builddir)/libdwarf -I$(top_builddir) -I$(top_srcdir)/libdwarf
-BUILT_SOURCES = dwarf_names.c errmsg_check_list
-gn_verbose = $(gn_verbose_@AM_V@)
-gn_verbose_ = $(gn_verbose_@AM_DEFAULT_V@)
-gn_verbose_0 = @echo "  GEN     " $@;
-cc_verbose = $(cc_verbose_@AM_V@)
-cc_verbose_ = $(cc_verbose_@AM_DEFAULT_V@)
-cc_verbose_0 = @echo "  CC     " $@;
-
-### errmsg_check
-errmsg_check_SOURCES = \
-dwarf_test_errmsg_list.c \
-dwarf_errmsg_list.h
-
-
-# config.h is in top_builddir  
-errmsg_check_CFLAGS = $(DWARF_CFLAGS_WARN) \
--I$(top_builddir)/libdwarf \
--I$(top_builddir) \
--I$(top_srcdir)/libdwarf
-
-
 ### libdwarf
 lib_LTLIBRARIES = libdwarf.la
-nodist_libdwarf_la_SOURCES = \
-dwarf_names.h \
-dwarf_names.c
-
 libdwarf_la_SOURCES = \
 dwarf.h \
 dwarf_abbrev.c \
@@ -669,6 +607,8 @@ dwarf_macro.c \
 dwarf_macro.h \
 dwarf_macro5.c \
 dwarf_macro5.h \
+dwarf_names.c \
+dwarf_names.h \
 dwarf_object_detector.c \
 dwarf_object_detector.h \
 dwarf_object_read_common.c \
@@ -785,6 +725,7 @@ ChangeLog2015 \
 ChangeLog2016 \
 ChangeLog2017 \
 CODINGSTYLE \
+dwarf_names_new.h \
 dwarf_test_errmsg_list.c \
 libdwarf2.1.mm \
 libdwarf2p.1.mm \
@@ -801,15 +742,8 @@ config.h.in.cmake \
 $(libdwarf_DATA) \
 $(libdwarfdev_DATA)
 
-CLEANFILES = \
-dwarf_names.c \
-dwarf_names.h \
-dwarf_names_enum.h \
-dwarf_names_new.h \
-errmsg_check_list
-
-all: $(BUILT_SOURCES)
-	$(MAKE) $(AM_MAKEFLAGS) all-am
+CLEANFILES = 
+all: all-am
 
 .SUFFIXES:
 .SUFFIXES: .c .lo .log .o .obj .test .test$(EXEEXT) .trs
@@ -881,32 +815,12 @@ clean-libLTLIBRARIES:
 libdwarf.la: $(libdwarf_la_OBJECTS) $(libdwarf_la_DEPENDENCIES) $(EXTRA_libdwarf_la_DEPENDENCIES) 
 	$(AM_V_CCLD)$(libdwarf_la_LINK) -rpath $(libdir) $(libdwarf_la_OBJECTS) $(libdwarf_la_LIBADD) $(LIBS)
 
-clean-noinstPROGRAMS:
-	@list='$(noinst_PROGRAMS)'; test -n "$$list" || exit 0; \
-	echo " rm -f" $$list; \
-	rm -f $$list || exit $$?; \
-	test -n "$(EXEEXT)" || exit 0; \
-	list=`for p in $$list; do echo "$$p"; done | sed 's/$(EXEEXT)$$//'`; \
-	echo " rm -f" $$list; \
-	rm -f $$list
-
-errmsg_check$(EXEEXT): $(errmsg_check_OBJECTS) $(errmsg_check_DEPENDENCIES) $(EXTRA_errmsg_check_DEPENDENCIES) 
-	@rm -f errmsg_check$(EXEEXT)
-	$(AM_V_CCLD)$(errmsg_check_LINK) $(errmsg_check_OBJECTS) $(errmsg_check_LDADD) $(LIBS)
-
-gennames$(EXEEXT): $(gennames_OBJECTS) $(gennames_DEPENDENCIES) $(EXTRA_gennames_DEPENDENCIES) 
-	@rm -f gennames$(EXEEXT)
-	$(AM_V_CCLD)$(gennames_LINK) $(gennames_OBJECTS) $(gennames_LDADD) $(LIBS)
-
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
 
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/errmsg_check-dwarf_test_errmsg_list.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gennames-dwgetopt.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gennames-gennames.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdwarf_la-dwarf_abbrev.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdwarf_la-dwarf_alloc.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdwarf_la-dwarf_arange.Plo@am__quote@
@@ -1161,6 +1075,13 @@ libdwarf_la-dwarf_macro5.lo: dwarf_macro5.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='dwarf_macro5.c' object='libdwarf_la-dwarf_macro5.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdwarf_la_CFLAGS) $(CFLAGS) -c -o libdwarf_la-dwarf_macro5.lo `test -f 'dwarf_macro5.c' || echo '$(srcdir)/'`dwarf_macro5.c
+
+libdwarf_la-dwarf_names.lo: dwarf_names.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdwarf_la_CFLAGS) $(CFLAGS) -MT libdwarf_la-dwarf_names.lo -MD -MP -MF $(DEPDIR)/libdwarf_la-dwarf_names.Tpo -c -o libdwarf_la-dwarf_names.lo `test -f 'dwarf_names.c' || echo '$(srcdir)/'`dwarf_names.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libdwarf_la-dwarf_names.Tpo $(DEPDIR)/libdwarf_la-dwarf_names.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='dwarf_names.c' object='libdwarf_la-dwarf_names.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdwarf_la_CFLAGS) $(CFLAGS) -c -o libdwarf_la-dwarf_names.lo `test -f 'dwarf_names.c' || echo '$(srcdir)/'`dwarf_names.c
 
 libdwarf_la-dwarf_object_detector.lo: dwarf_object_detector.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdwarf_la_CFLAGS) $(CFLAGS) -MT libdwarf_la-dwarf_object_detector.lo -MD -MP -MF $(DEPDIR)/libdwarf_la-dwarf_object_detector.Tpo -c -o libdwarf_la-dwarf_object_detector.lo `test -f 'dwarf_object_detector.c' || echo '$(srcdir)/'`dwarf_object_detector.c
@@ -1441,55 +1362,6 @@ libdwarf_la-pro_weaks.lo: pro_weaks.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='pro_weaks.c' object='libdwarf_la-pro_weaks.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdwarf_la_CFLAGS) $(CFLAGS) -c -o libdwarf_la-pro_weaks.lo `test -f 'pro_weaks.c' || echo '$(srcdir)/'`pro_weaks.c
-
-libdwarf_la-dwarf_names.lo: dwarf_names.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdwarf_la_CFLAGS) $(CFLAGS) -MT libdwarf_la-dwarf_names.lo -MD -MP -MF $(DEPDIR)/libdwarf_la-dwarf_names.Tpo -c -o libdwarf_la-dwarf_names.lo `test -f 'dwarf_names.c' || echo '$(srcdir)/'`dwarf_names.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libdwarf_la-dwarf_names.Tpo $(DEPDIR)/libdwarf_la-dwarf_names.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='dwarf_names.c' object='libdwarf_la-dwarf_names.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdwarf_la_CFLAGS) $(CFLAGS) -c -o libdwarf_la-dwarf_names.lo `test -f 'dwarf_names.c' || echo '$(srcdir)/'`dwarf_names.c
-
-errmsg_check-dwarf_test_errmsg_list.o: dwarf_test_errmsg_list.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(errmsg_check_CFLAGS) $(CFLAGS) -MT errmsg_check-dwarf_test_errmsg_list.o -MD -MP -MF $(DEPDIR)/errmsg_check-dwarf_test_errmsg_list.Tpo -c -o errmsg_check-dwarf_test_errmsg_list.o `test -f 'dwarf_test_errmsg_list.c' || echo '$(srcdir)/'`dwarf_test_errmsg_list.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/errmsg_check-dwarf_test_errmsg_list.Tpo $(DEPDIR)/errmsg_check-dwarf_test_errmsg_list.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='dwarf_test_errmsg_list.c' object='errmsg_check-dwarf_test_errmsg_list.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(errmsg_check_CFLAGS) $(CFLAGS) -c -o errmsg_check-dwarf_test_errmsg_list.o `test -f 'dwarf_test_errmsg_list.c' || echo '$(srcdir)/'`dwarf_test_errmsg_list.c
-
-errmsg_check-dwarf_test_errmsg_list.obj: dwarf_test_errmsg_list.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(errmsg_check_CFLAGS) $(CFLAGS) -MT errmsg_check-dwarf_test_errmsg_list.obj -MD -MP -MF $(DEPDIR)/errmsg_check-dwarf_test_errmsg_list.Tpo -c -o errmsg_check-dwarf_test_errmsg_list.obj `if test -f 'dwarf_test_errmsg_list.c'; then $(CYGPATH_W) 'dwarf_test_errmsg_list.c'; else $(CYGPATH_W) '$(srcdir)/dwarf_test_errmsg_list.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/errmsg_check-dwarf_test_errmsg_list.Tpo $(DEPDIR)/errmsg_check-dwarf_test_errmsg_list.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='dwarf_test_errmsg_list.c' object='errmsg_check-dwarf_test_errmsg_list.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(errmsg_check_CFLAGS) $(CFLAGS) -c -o errmsg_check-dwarf_test_errmsg_list.obj `if test -f 'dwarf_test_errmsg_list.c'; then $(CYGPATH_W) 'dwarf_test_errmsg_list.c'; else $(CYGPATH_W) '$(srcdir)/dwarf_test_errmsg_list.c'; fi`
-
-gennames-gennames.o: gennames.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(gennames_CFLAGS) $(CFLAGS) -MT gennames-gennames.o -MD -MP -MF $(DEPDIR)/gennames-gennames.Tpo -c -o gennames-gennames.o `test -f 'gennames.c' || echo '$(srcdir)/'`gennames.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gennames-gennames.Tpo $(DEPDIR)/gennames-gennames.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='gennames.c' object='gennames-gennames.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(gennames_CFLAGS) $(CFLAGS) -c -o gennames-gennames.o `test -f 'gennames.c' || echo '$(srcdir)/'`gennames.c
-
-gennames-gennames.obj: gennames.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(gennames_CFLAGS) $(CFLAGS) -MT gennames-gennames.obj -MD -MP -MF $(DEPDIR)/gennames-gennames.Tpo -c -o gennames-gennames.obj `if test -f 'gennames.c'; then $(CYGPATH_W) 'gennames.c'; else $(CYGPATH_W) '$(srcdir)/gennames.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gennames-gennames.Tpo $(DEPDIR)/gennames-gennames.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='gennames.c' object='gennames-gennames.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(gennames_CFLAGS) $(CFLAGS) -c -o gennames-gennames.obj `if test -f 'gennames.c'; then $(CYGPATH_W) 'gennames.c'; else $(CYGPATH_W) '$(srcdir)/gennames.c'; fi`
-
-gennames-dwgetopt.o: dwgetopt.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(gennames_CFLAGS) $(CFLAGS) -MT gennames-dwgetopt.o -MD -MP -MF $(DEPDIR)/gennames-dwgetopt.Tpo -c -o gennames-dwgetopt.o `test -f 'dwgetopt.c' || echo '$(srcdir)/'`dwgetopt.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gennames-dwgetopt.Tpo $(DEPDIR)/gennames-dwgetopt.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='dwgetopt.c' object='gennames-dwgetopt.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(gennames_CFLAGS) $(CFLAGS) -c -o gennames-dwgetopt.o `test -f 'dwgetopt.c' || echo '$(srcdir)/'`dwgetopt.c
-
-gennames-dwgetopt.obj: dwgetopt.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(gennames_CFLAGS) $(CFLAGS) -MT gennames-dwgetopt.obj -MD -MP -MF $(DEPDIR)/gennames-dwgetopt.Tpo -c -o gennames-dwgetopt.obj `if test -f 'dwgetopt.c'; then $(CYGPATH_W) 'dwgetopt.c'; else $(CYGPATH_W) '$(srcdir)/dwgetopt.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gennames-dwgetopt.Tpo $(DEPDIR)/gennames-dwgetopt.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='dwgetopt.c' object='gennames-dwgetopt.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(gennames_CFLAGS) $(CFLAGS) -c -o gennames-dwgetopt.obj `if test -f 'dwgetopt.c'; then $(CYGPATH_W) 'dwgetopt.c'; else $(CYGPATH_W) '$(srcdir)/dwgetopt.c'; fi`
 
 mostlyclean-libtool:
 	-rm -f *.lo
@@ -1786,15 +1658,13 @@ distdir: $(DISTFILES)
 	done
 check-am: all-am
 	$(MAKE) $(AM_MAKEFLAGS) check-TESTS
-check: $(BUILT_SOURCES)
-	$(MAKE) $(AM_MAKEFLAGS) check-am
-all-am: Makefile $(LTLIBRARIES) $(PROGRAMS) $(DATA) $(HEADERS)
+check: check-am
+all-am: Makefile $(LTLIBRARIES) $(DATA) $(HEADERS)
 installdirs:
 	for dir in "$(DESTDIR)$(libdir)" "$(DESTDIR)$(libdwarfdevdir)" "$(DESTDIR)$(includedir)"; do \
 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
 	done
-install: $(BUILT_SOURCES)
-	$(MAKE) $(AM_MAKEFLAGS) install-am
+install: install-am
 install-exec: install-exec-am
 install-data: install-data-am
 uninstall: uninstall-am
@@ -1828,12 +1698,11 @@ distclean-generic:
 maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"
 	@echo "it deletes files that may require special tools to rebuild."
-	-test -z "$(BUILT_SOURCES)" || rm -f $(BUILT_SOURCES)
 	-test -z "$(MAINTAINERCLEANFILES)" || rm -f $(MAINTAINERCLEANFILES)
 clean: clean-am
 
 clean-am: clean-generic clean-libLTLIBRARIES clean-libtool \
-	clean-noinstPROGRAMS mostlyclean-am
+	mostlyclean-am
 
 distclean: distclean-am
 	-rm -rf ./$(DEPDIR)
@@ -1902,52 +1771,27 @@ ps-am:
 uninstall-am: uninstall-includeHEADERS uninstall-libLTLIBRARIES \
 	uninstall-libdwarfdevDATA
 
-.MAKE: all check check-am install install-am install-strip
+.MAKE: check-am install-am install-strip
 
 .PHONY: CTAGS GTAGS TAGS all all-am check check-TESTS check-am clean \
-	clean-generic clean-libLTLIBRARIES clean-libtool \
-	clean-noinstPROGRAMS cscopelist-am ctags ctags-am distclean \
-	distclean-compile distclean-generic distclean-libtool \
-	distclean-tags distdir dvi dvi-am html html-am info info-am \
-	install install-am install-data install-data-am install-dvi \
-	install-dvi-am install-exec install-exec-am install-html \
-	install-html-am install-includeHEADERS install-info \
-	install-info-am install-libLTLIBRARIES install-libdwarfdevDATA \
-	install-man install-pdf install-pdf-am install-ps \
-	install-ps-am install-strip installcheck installcheck-am \
-	installdirs maintainer-clean maintainer-clean-generic \
-	mostlyclean mostlyclean-compile mostlyclean-generic \
-	mostlyclean-libtool pdf pdf-am ps ps-am recheck tags tags-am \
-	uninstall uninstall-am uninstall-includeHEADERS \
-	uninstall-libLTLIBRARIES uninstall-libdwarfdevDATA
+	clean-generic clean-libLTLIBRARIES clean-libtool cscopelist-am \
+	ctags ctags-am distclean distclean-compile distclean-generic \
+	distclean-libtool distclean-tags distdir dvi dvi-am html \
+	html-am info info-am install install-am install-data \
+	install-data-am install-dvi install-dvi-am install-exec \
+	install-exec-am install-html install-html-am \
+	install-includeHEADERS install-info install-info-am \
+	install-libLTLIBRARIES install-libdwarfdevDATA install-man \
+	install-pdf install-pdf-am install-ps install-ps-am \
+	install-strip installcheck installcheck-am installdirs \
+	maintainer-clean maintainer-clean-generic mostlyclean \
+	mostlyclean-compile mostlyclean-generic mostlyclean-libtool \
+	pdf pdf-am ps ps-am recheck tags tags-am uninstall \
+	uninstall-am uninstall-includeHEADERS uninstall-libLTLIBRARIES \
+	uninstall-libdwarfdevDATA
 
 .PRECIOUS: Makefile
 
-
-$(gennames_OBJECTS): CC=$(CC_FOR_BUILD)
-$(gennames_OBJECTS): CFLAGS=$(CFLAGS_FOR_BUILD)
-$(gennames_OBJECTS): CPPFLAGS=$(CPPFLAGS_FOR_BUILD)
-gennames$(BUILD_EXEEXT): CC=$(CC_FOR_BUILD)
-gennames$(BUILD_EXEEXT): CFLAGS=$(CFLAGS_FOR_BUILD)
-gennames$(BUILD_EXEEXT): LDFLAGS=$(LDFLAGS_FOR_BUILD)
-gennames$(BUILD_EXEEXT): CPPFLAGS=$(CPPFLAGS_FOR_BUILD)
-
-dwarf_names.h: dwarf_names.c
-dwarf_names.c: gennames$(BUILD_EXEEXT)
-	$(AM_V_at)rm -f dwarf_names.c dwarf_names.h dwarf_names_enum.h dwarf_names_new.h
-	$(gn_verbose)./gennames$(BUILD_EXEEXT) @dwarf_namestable@ -i $(srcdir) -o .
-
-$(errmsg_check_OBJECTS): CC=$(CC_FOR_BUILD)
-$(errmsg_check_OBJECTS): CFLAGS=$(CFLAGS_FOR_BUILD)
-$(errmsg_check_OBJECTS): CPPFLAGS=$(CPPFLAGS_FOR_BUILD)
-errmsg_check$(BUILD_EXEEXT): CC=$(CC_FOR_BUILD)
-errmsg_check$(BUILD_EXEEXT): CFLAGS=$(CFLAGS_FOR_BUILD)
-errmsg_check$(BUILD_EXEEXT): LDFLAGS=$(LDFLAGS_FOR_BUILD)
-errmsg_check$(BUILD_EXEEXT): CPPFLAGS=$(CPPFLAGS_FOR_BUILD)
-
-errmsg_check_list: errmsg_check$(BUILD_EXEEXT)
-	$(AM_V_at)grep DW_DLE libdwarf.h >errmsg_check_list
-	$(gn_verbose)./errmsg_check$(BUILD_EXEEXT) -f errmsg_check_list
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

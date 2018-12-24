@@ -1,7 +1,11 @@
 #
 # Use to build the .c and .h source based on static information
-# in libdwarf.h.in and the dwarfdump *.list files.
-# Perhaps cp scripts/baseconfig.h config.h
+# in libdwarf.h.in and dwarf_errmsg_list.h and the dwarfdump *.list files.
+# If you change any of those you should run this script
+# (which, for non-linux non-unix may mean some changes of this script
+# or of scripts/libbuild.sh or scripts.ddbuild.sh or baseconfig.h)
+#
+
 # This script is by David Anderson and hereby put into the public domain
 # for anyone to use in any way.
 #
@@ -46,5 +50,18 @@ then
     echo "FAIL building dwarfdump .c .h source"
     exit 1
 fi
+
+cd ..
+if [ $? -ne 0 ]
+then
+    echo "FAIL second cd back to top-level"
+    exit 1
+fi
+
+rm -f config.h
+rm -f libdwarf/libdwarf.h
+
 echo "PASS. The .c and .h files are built"
+
+
 exit 0

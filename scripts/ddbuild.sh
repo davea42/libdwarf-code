@@ -94,4 +94,6 @@ rm -f tmp-t4.c
 
 rm -f tag_attr_build$EXEXT
 rm -f tag_tree_build$EXEXT
+
+rm -f dwarf_names.c
 exit 0

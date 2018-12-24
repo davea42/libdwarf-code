@@ -93,14 +93,12 @@ POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
 bin_PROGRAMS = dwarfdump$(EXEEXT)
-noinst_PROGRAMS = tag_attr_build$(EXEEXT) tag_tree_build$(EXEEXT)
 subdir = dwarfdump
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
-am__aclocal_m4_deps = $(top_srcdir)/m4/ax_prog_cc_for_build.m4 \
-	$(top_srcdir)/m4/dw_compiler.m4 $(top_srcdir)/m4/libtool.m4 \
-	$(top_srcdir)/m4/ltoptions.m4 $(top_srcdir)/m4/ltsugar.m4 \
-	$(top_srcdir)/m4/ltversion.m4 $(top_srcdir)/m4/lt~obsolete.m4 \
-	$(top_srcdir)/configure.ac
+am__aclocal_m4_deps = $(top_srcdir)/m4/dw_compiler.m4 \
+	$(top_srcdir)/m4/libtool.m4 $(top_srcdir)/m4/ltoptions.m4 \
+	$(top_srcdir)/m4/ltsugar.m4 $(top_srcdir)/m4/ltversion.m4 \
+	$(top_srcdir)/m4/lt~obsolete.m4 $(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 DIST_COMMON = $(srcdir)/Makefile.am $(am__DIST_COMMON)
@@ -110,7 +108,7 @@ CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)" "$(DESTDIR)$(man1dir)" \
 	"$(DESTDIR)$(dwarfdumpdevdir)"
-PROGRAMS = $(bin_PROGRAMS) $(noinst_PROGRAMS)
+PROGRAMS = $(bin_PROGRAMS)
 am_dwarfdump_OBJECTS = dwarfdump-addrmap.$(OBJEXT) \
 	dwarfdump-checkutil.$(OBJEXT) \
 	dwarfdump-command_options.$(OBJEXT) dwarfdump-common.$(OBJEXT) \
@@ -154,35 +152,6 @@ am__v_lt_1 =
 dwarfdump_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(dwarfdump_CFLAGS) \
 	$(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
-am_tag_attr_build_OBJECTS = tag_attr_build-dwarf_names.$(OBJEXT) \
-	tag_attr_build-common.$(OBJEXT) \
-	tag_attr_build-dwarf_tsearchbal.$(OBJEXT) \
-	tag_attr_build-dwgetopt.$(OBJEXT) tag_attr_build-esb.$(OBJEXT) \
-	tag_attr_build-makename.$(OBJEXT) \
-	tag_attr_build-naming.$(OBJEXT) \
-	tag_attr_build-sanitized.$(OBJEXT) \
-	tag_attr_build-tag_attr.$(OBJEXT) \
-	tag_attr_build-tag_common.$(OBJEXT)
-tag_attr_build_OBJECTS = $(am_tag_attr_build_OBJECTS)
-tag_attr_build_LDADD = $(LDADD)
-tag_attr_build_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC \
-	$(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(CCLD) \
-	$(tag_attr_build_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o \
-	$@
-am_tag_tree_build_OBJECTS = tag_tree_build-dwarf_names.$(OBJEXT) \
-	tag_tree_build-common.$(OBJEXT) \
-	tag_tree_build-dwarf_tsearchbal.$(OBJEXT) \
-	tag_tree_build-dwgetopt.$(OBJEXT) tag_tree_build-esb.$(OBJEXT) \
-	tag_tree_build-makename.$(OBJEXT) \
-	tag_tree_build-sanitized.$(OBJEXT) \
-	tag_tree_build-tag_common.$(OBJEXT) \
-	tag_tree_build-tag_tree.$(OBJEXT)
-tag_tree_build_OBJECTS = $(am_tag_tree_build_OBJECTS)
-tag_tree_build_LDADD = $(LDADD)
-tag_tree_build_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC \
-	$(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(CCLD) \
-	$(tag_tree_build_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o \
-	$@
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
 am__v_P_0 = false
@@ -217,10 +186,8 @@ AM_V_CCLD = $(am__v_CCLD_@AM_V@)
 am__v_CCLD_ = $(am__v_CCLD_@AM_DEFAULT_V@)
 am__v_CCLD_0 = @echo "  CCLD    " $@;
 am__v_CCLD_1 = 
-SOURCES = $(dwarfdump_SOURCES) $(tag_attr_build_SOURCES) \
-	$(tag_tree_build_SOURCES)
-DIST_SOURCES = $(dwarfdump_SOURCES) $(tag_attr_build_SOURCES) \
-	$(tag_tree_build_SOURCES)
+SOURCES = $(dwarfdump_SOURCES)
+DIST_SOURCES = $(dwarfdump_SOURCES)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -466,17 +433,11 @@ AUTOCONF = @AUTOCONF@
 AUTOHEADER = @AUTOHEADER@
 AUTOMAKE = @AUTOMAKE@
 AWK = @AWK@
-BUILD_EXEEXT = @BUILD_EXEEXT@
-BUILD_OBJEXT = @BUILD_OBJEXT@
 CC = @CC@
 CCDEPMODE = @CCDEPMODE@
-CC_FOR_BUILD = @CC_FOR_BUILD@
 CFLAGS = @CFLAGS@
-CFLAGS_FOR_BUILD = @CFLAGS_FOR_BUILD@
 CPP = @CPP@
 CPPFLAGS = @CPPFLAGS@
-CPPFLAGS_FOR_BUILD = @CPPFLAGS_FOR_BUILD@
-CPP_FOR_BUILD = @CPP_FOR_BUILD@
 CXX = @CXX@
 CXXCPP = @CXXCPP@
 CXXDEPMODE = @CXXDEPMODE@
@@ -504,7 +465,6 @@ INSTALL_SCRIPT = @INSTALL_SCRIPT@
 INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
 LD = @LD@
 LDFLAGS = @LDFLAGS@
-LDFLAGS_FOR_BUILD = @LDFLAGS_FOR_BUILD@
 LIBOBJS = @LIBOBJS@
 LIBS = @LIBS@
 LIBTOOL = @LIBTOOL@
@@ -541,7 +501,6 @@ abs_top_builddir = @abs_top_builddir@
 abs_top_srcdir = @abs_top_srcdir@
 ac_ct_AR = @ac_ct_AR@
 ac_ct_CC = @ac_ct_CC@
-ac_ct_CC_FOR_BUILD = @ac_ct_CC_FOR_BUILD@
 ac_ct_CXX = @ac_ct_CXX@
 ac_ct_DUMPBIN = @ac_ct_DUMPBIN@
 am__include = @am__include@
@@ -596,67 +555,6 @@ top_srcdir = @top_srcdir@
 version_info = @version_info@
 MAINTAINERCLEANFILES = Makefile.in
 AUTOMAKE_OPTIONS = subdir-objects
-tag_attr_build_SOURCES = \
-dwarf_names.c \
-common.c \
-common.h \
-dwarf_tsearchbal.c \
-dwarf_tsearch.h \
-dwgetopt.c \
-dwgetopt.h \
-esb.c \
-esb.h \
-makename.c \
-makename.h \
-naming.c \
-naming.h \
-sanitized.c \
-sanitized.h \
-tag_attr.c \
-tag_common.c \
-tag_common.h
-
-tag_attr_build_CFLAGS = $(DWARF_CFLAGS_WARN)
-tag_attr_build_CPPFLAGS = -DTRIVIAL_NAMING \
--I$(top_builddir) \
--I$(top_srcdir)/libdwarf  \
--I$(top_builddir)/libdwarf
-
-
-### tag_tree_build
-tag_tree_build_SOURCES = \
-dwarf_names.c \
-common.c \
-common.h \
-dwarf_tsearchbal.c \
-dwarf_tsearch.h \
-dwgetopt.c \
-dwgetopt.h \
-esb.c \
-esb.h \
-makename.c \
-makename.h \
-sanitized.c \
-sanitized.h \
-tag_common.c \
-tag_common.h \
-tag_tree.c
-
-tag_tree_build_CFLAGS = $(DWARF_CFLAGS_WARN) 
-tag_tree_build_CPPFLAGS = @CPPFLAGS@ -DTRIVIAL_NAMING \
--I$(top_builddir) \
--I$(top_srcdir)/libdwarf \
--I$(top_builddir)/libdwarf
-
-BUILT_SOURCES = \
-tmp-ta-table.h \
-tmp-ta-ext-table.h \
-tmp-tt-table.h \
-tmp-tt-ext-table.h
-
-gn_verbose = $(gn_verbose_@AM_V@)
-gn_verbose_ = $(gn_verbose_@AM_DEFAULT_V@)
-gn_verbose_0 = @echo "  GEN     " $@;
 dwarfdump_SOURCES = \
 addrmap.c \
 addrmap.h \
@@ -670,6 +568,10 @@ compiler_info.c \
 compiler_info.h \
 defined_types.h \
 dwarfdump.c \
+dwarfdump-tt-table.h\
+dwarfdump-ta-table.h\
+dwarfdump-tt-ext-table.h\
+dwarfdump-ta-ext-table.h\
 dwarf_tsearchbal.c \
 dwarf_tsearch.h \
 dwconf.c \
@@ -771,23 +673,8 @@ tag_attr_ext.list \
 tag_tree.list \
 tag_tree_ext.list
 
-CLEANFILES = \
-dwarf_names.c \
-tmp-ta-table.h \
-tmp-ta-ext-table.h \
-tmp-tt-table.h \
-tmp-tt-ext-table.h \
-tmp-t1.c \
-tmp-t2.c \
-tmp-t3.c \
-tmp-t4.c \
-tmp-tag-tree-build1.tmp \
-tmp-tag-attr-build2.tmp \
-tmp-tag-attr-build3.tmp \
-tmp-tag-tree-build4.tmp
-
-all: $(BUILT_SOURCES)
-	$(MAKE) $(AM_MAKEFLAGS) all-am
+CLEANFILES = dwarf_names.c
+all: all-am
 
 .SUFFIXES:
 .SUFFIXES: .c .lo .log .o .obj .test .test$(EXEEXT) .trs
@@ -870,26 +757,9 @@ clean-binPROGRAMS:
 	echo " rm -f" $$list; \
 	rm -f $$list
 
-clean-noinstPROGRAMS:
-	@list='$(noinst_PROGRAMS)'; test -n "$$list" || exit 0; \
-	echo " rm -f" $$list; \
-	rm -f $$list || exit $$?; \
-	test -n "$(EXEEXT)" || exit 0; \
-	list=`for p in $$list; do echo "$$p"; done | sed 's/$(EXEEXT)$$//'`; \
-	echo " rm -f" $$list; \
-	rm -f $$list
-
 dwarfdump$(EXEEXT): $(dwarfdump_OBJECTS) $(dwarfdump_DEPENDENCIES) $(EXTRA_dwarfdump_DEPENDENCIES) 
 	@rm -f dwarfdump$(EXEEXT)
 	$(AM_V_CCLD)$(dwarfdump_LINK) $(dwarfdump_OBJECTS) $(dwarfdump_LDADD) $(LIBS)
-
-tag_attr_build$(EXEEXT): $(tag_attr_build_OBJECTS) $(tag_attr_build_DEPENDENCIES) $(EXTRA_tag_attr_build_DEPENDENCIES) 
-	@rm -f tag_attr_build$(EXEEXT)
-	$(AM_V_CCLD)$(tag_attr_build_LINK) $(tag_attr_build_OBJECTS) $(tag_attr_build_LDADD) $(LIBS)
-
-tag_tree_build$(EXEEXT): $(tag_tree_build_OBJECTS) $(tag_tree_build_DEPENDENCIES) $(EXTRA_tag_tree_build_DEPENDENCIES) 
-	@rm -f tag_tree_build$(EXEEXT)
-	$(AM_V_CCLD)$(tag_tree_build_LINK) $(tag_tree_build_OBJECTS) $(tag_tree_build_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -939,25 +809,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dwarfdump-strstrnocase.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dwarfdump-true_section_name.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dwarfdump-uri.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tag_attr_build-common.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tag_attr_build-dwarf_names.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tag_attr_build-dwarf_tsearchbal.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tag_attr_build-dwgetopt.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tag_attr_build-esb.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tag_attr_build-makename.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tag_attr_build-naming.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tag_attr_build-sanitized.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tag_attr_build-tag_attr.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tag_attr_build-tag_common.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tag_tree_build-common.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tag_tree_build-dwarf_names.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tag_tree_build-dwarf_tsearchbal.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tag_tree_build-dwgetopt.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tag_tree_build-esb.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tag_tree_build-makename.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tag_tree_build-sanitized.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tag_tree_build-tag_common.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tag_tree_build-tag_tree.Po@am__quote@
 
 .c.o:
 @am__fastdepCC_TRUE@	$(AM_V_CC)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.o$$||'`;\
@@ -1571,272 +1422,6 @@ dwarfdump-uri.obj: uri.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(dwarfdump_CPPFLAGS) $(CPPFLAGS) $(dwarfdump_CFLAGS) $(CFLAGS) -c -o dwarfdump-uri.obj `if test -f 'uri.c'; then $(CYGPATH_W) 'uri.c'; else $(CYGPATH_W) '$(srcdir)/uri.c'; fi`
 
-tag_attr_build-dwarf_names.o: dwarf_names.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tag_attr_build_CPPFLAGS) $(CPPFLAGS) $(tag_attr_build_CFLAGS) $(CFLAGS) -MT tag_attr_build-dwarf_names.o -MD -MP -MF $(DEPDIR)/tag_attr_build-dwarf_names.Tpo -c -o tag_attr_build-dwarf_names.o `test -f 'dwarf_names.c' || echo '$(srcdir)/'`dwarf_names.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/tag_attr_build-dwarf_names.Tpo $(DEPDIR)/tag_attr_build-dwarf_names.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='dwarf_names.c' object='tag_attr_build-dwarf_names.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tag_attr_build_CPPFLAGS) $(CPPFLAGS) $(tag_attr_build_CFLAGS) $(CFLAGS) -c -o tag_attr_build-dwarf_names.o `test -f 'dwarf_names.c' || echo '$(srcdir)/'`dwarf_names.c
-
-tag_attr_build-dwarf_names.obj: dwarf_names.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tag_attr_build_CPPFLAGS) $(CPPFLAGS) $(tag_attr_build_CFLAGS) $(CFLAGS) -MT tag_attr_build-dwarf_names.obj -MD -MP -MF $(DEPDIR)/tag_attr_build-dwarf_names.Tpo -c -o tag_attr_build-dwarf_names.obj `if test -f 'dwarf_names.c'; then $(CYGPATH_W) 'dwarf_names.c'; else $(CYGPATH_W) '$(srcdir)/dwarf_names.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/tag_attr_build-dwarf_names.Tpo $(DEPDIR)/tag_attr_build-dwarf_names.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='dwarf_names.c' object='tag_attr_build-dwarf_names.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tag_attr_build_CPPFLAGS) $(CPPFLAGS) $(tag_attr_build_CFLAGS) $(CFLAGS) -c -o tag_attr_build-dwarf_names.obj `if test -f 'dwarf_names.c'; then $(CYGPATH_W) 'dwarf_names.c'; else $(CYGPATH_W) '$(srcdir)/dwarf_names.c'; fi`
-
-tag_attr_build-common.o: common.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tag_attr_build_CPPFLAGS) $(CPPFLAGS) $(tag_attr_build_CFLAGS) $(CFLAGS) -MT tag_attr_build-common.o -MD -MP -MF $(DEPDIR)/tag_attr_build-common.Tpo -c -o tag_attr_build-common.o `test -f 'common.c' || echo '$(srcdir)/'`common.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/tag_attr_build-common.Tpo $(DEPDIR)/tag_attr_build-common.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='common.c' object='tag_attr_build-common.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tag_attr_build_CPPFLAGS) $(CPPFLAGS) $(tag_attr_build_CFLAGS) $(CFLAGS) -c -o tag_attr_build-common.o `test -f 'common.c' || echo '$(srcdir)/'`common.c
-
-tag_attr_build-common.obj: common.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tag_attr_build_CPPFLAGS) $(CPPFLAGS) $(tag_attr_build_CFLAGS) $(CFLAGS) -MT tag_attr_build-common.obj -MD -MP -MF $(DEPDIR)/tag_attr_build-common.Tpo -c -o tag_attr_build-common.obj `if test -f 'common.c'; then $(CYGPATH_W) 'common.c'; else $(CYGPATH_W) '$(srcdir)/common.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/tag_attr_build-common.Tpo $(DEPDIR)/tag_attr_build-common.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='common.c' object='tag_attr_build-common.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tag_attr_build_CPPFLAGS) $(CPPFLAGS) $(tag_attr_build_CFLAGS) $(CFLAGS) -c -o tag_attr_build-common.obj `if test -f 'common.c'; then $(CYGPATH_W) 'common.c'; else $(CYGPATH_W) '$(srcdir)/common.c'; fi`
-
-tag_attr_build-dwarf_tsearchbal.o: dwarf_tsearchbal.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tag_attr_build_CPPFLAGS) $(CPPFLAGS) $(tag_attr_build_CFLAGS) $(CFLAGS) -MT tag_attr_build-dwarf_tsearchbal.o -MD -MP -MF $(DEPDIR)/tag_attr_build-dwarf_tsearchbal.Tpo -c -o tag_attr_build-dwarf_tsearchbal.o `test -f 'dwarf_tsearchbal.c' || echo '$(srcdir)/'`dwarf_tsearchbal.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/tag_attr_build-dwarf_tsearchbal.Tpo $(DEPDIR)/tag_attr_build-dwarf_tsearchbal.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='dwarf_tsearchbal.c' object='tag_attr_build-dwarf_tsearchbal.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tag_attr_build_CPPFLAGS) $(CPPFLAGS) $(tag_attr_build_CFLAGS) $(CFLAGS) -c -o tag_attr_build-dwarf_tsearchbal.o `test -f 'dwarf_tsearchbal.c' || echo '$(srcdir)/'`dwarf_tsearchbal.c
-
-tag_attr_build-dwarf_tsearchbal.obj: dwarf_tsearchbal.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tag_attr_build_CPPFLAGS) $(CPPFLAGS) $(tag_attr_build_CFLAGS) $(CFLAGS) -MT tag_attr_build-dwarf_tsearchbal.obj -MD -MP -MF $(DEPDIR)/tag_attr_build-dwarf_tsearchbal.Tpo -c -o tag_attr_build-dwarf_tsearchbal.obj `if test -f 'dwarf_tsearchbal.c'; then $(CYGPATH_W) 'dwarf_tsearchbal.c'; else $(CYGPATH_W) '$(srcdir)/dwarf_tsearchbal.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/tag_attr_build-dwarf_tsearchbal.Tpo $(DEPDIR)/tag_attr_build-dwarf_tsearchbal.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='dwarf_tsearchbal.c' object='tag_attr_build-dwarf_tsearchbal.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tag_attr_build_CPPFLAGS) $(CPPFLAGS) $(tag_attr_build_CFLAGS) $(CFLAGS) -c -o tag_attr_build-dwarf_tsearchbal.obj `if test -f 'dwarf_tsearchbal.c'; then $(CYGPATH_W) 'dwarf_tsearchbal.c'; else $(CYGPATH_W) '$(srcdir)/dwarf_tsearchbal.c'; fi`
-
-tag_attr_build-dwgetopt.o: dwgetopt.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tag_attr_build_CPPFLAGS) $(CPPFLAGS) $(tag_attr_build_CFLAGS) $(CFLAGS) -MT tag_attr_build-dwgetopt.o -MD -MP -MF $(DEPDIR)/tag_attr_build-dwgetopt.Tpo -c -o tag_attr_build-dwgetopt.o `test -f 'dwgetopt.c' || echo '$(srcdir)/'`dwgetopt.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/tag_attr_build-dwgetopt.Tpo $(DEPDIR)/tag_attr_build-dwgetopt.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='dwgetopt.c' object='tag_attr_build-dwgetopt.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tag_attr_build_CPPFLAGS) $(CPPFLAGS) $(tag_attr_build_CFLAGS) $(CFLAGS) -c -o tag_attr_build-dwgetopt.o `test -f 'dwgetopt.c' || echo '$(srcdir)/'`dwgetopt.c
-
-tag_attr_build-dwgetopt.obj: dwgetopt.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tag_attr_build_CPPFLAGS) $(CPPFLAGS) $(tag_attr_build_CFLAGS) $(CFLAGS) -MT tag_attr_build-dwgetopt.obj -MD -MP -MF $(DEPDIR)/tag_attr_build-dwgetopt.Tpo -c -o tag_attr_build-dwgetopt.obj `if test -f 'dwgetopt.c'; then $(CYGPATH_W) 'dwgetopt.c'; else $(CYGPATH_W) '$(srcdir)/dwgetopt.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/tag_attr_build-dwgetopt.Tpo $(DEPDIR)/tag_attr_build-dwgetopt.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='dwgetopt.c' object='tag_attr_build-dwgetopt.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tag_attr_build_CPPFLAGS) $(CPPFLAGS) $(tag_attr_build_CFLAGS) $(CFLAGS) -c -o tag_attr_build-dwgetopt.obj `if test -f 'dwgetopt.c'; then $(CYGPATH_W) 'dwgetopt.c'; else $(CYGPATH_W) '$(srcdir)/dwgetopt.c'; fi`
-
-tag_attr_build-esb.o: esb.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tag_attr_build_CPPFLAGS) $(CPPFLAGS) $(tag_attr_build_CFLAGS) $(CFLAGS) -MT tag_attr_build-esb.o -MD -MP -MF $(DEPDIR)/tag_attr_build-esb.Tpo -c -o tag_attr_build-esb.o `test -f 'esb.c' || echo '$(srcdir)/'`esb.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/tag_attr_build-esb.Tpo $(DEPDIR)/tag_attr_build-esb.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='esb.c' object='tag_attr_build-esb.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tag_attr_build_CPPFLAGS) $(CPPFLAGS) $(tag_attr_build_CFLAGS) $(CFLAGS) -c -o tag_attr_build-esb.o `test -f 'esb.c' || echo '$(srcdir)/'`esb.c
-
-tag_attr_build-esb.obj: esb.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tag_attr_build_CPPFLAGS) $(CPPFLAGS) $(tag_attr_build_CFLAGS) $(CFLAGS) -MT tag_attr_build-esb.obj -MD -MP -MF $(DEPDIR)/tag_attr_build-esb.Tpo -c -o tag_attr_build-esb.obj `if test -f 'esb.c'; then $(CYGPATH_W) 'esb.c'; else $(CYGPATH_W) '$(srcdir)/esb.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/tag_attr_build-esb.Tpo $(DEPDIR)/tag_attr_build-esb.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='esb.c' object='tag_attr_build-esb.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tag_attr_build_CPPFLAGS) $(CPPFLAGS) $(tag_attr_build_CFLAGS) $(CFLAGS) -c -o tag_attr_build-esb.obj `if test -f 'esb.c'; then $(CYGPATH_W) 'esb.c'; else $(CYGPATH_W) '$(srcdir)/esb.c'; fi`
-
-tag_attr_build-makename.o: makename.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tag_attr_build_CPPFLAGS) $(CPPFLAGS) $(tag_attr_build_CFLAGS) $(CFLAGS) -MT tag_attr_build-makename.o -MD -MP -MF $(DEPDIR)/tag_attr_build-makename.Tpo -c -o tag_attr_build-makename.o `test -f 'makename.c' || echo '$(srcdir)/'`makename.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/tag_attr_build-makename.Tpo $(DEPDIR)/tag_attr_build-makename.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='makename.c' object='tag_attr_build-makename.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tag_attr_build_CPPFLAGS) $(CPPFLAGS) $(tag_attr_build_CFLAGS) $(CFLAGS) -c -o tag_attr_build-makename.o `test -f 'makename.c' || echo '$(srcdir)/'`makename.c
-
-tag_attr_build-makename.obj: makename.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tag_attr_build_CPPFLAGS) $(CPPFLAGS) $(tag_attr_build_CFLAGS) $(CFLAGS) -MT tag_attr_build-makename.obj -MD -MP -MF $(DEPDIR)/tag_attr_build-makename.Tpo -c -o tag_attr_build-makename.obj `if test -f 'makename.c'; then $(CYGPATH_W) 'makename.c'; else $(CYGPATH_W) '$(srcdir)/makename.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/tag_attr_build-makename.Tpo $(DEPDIR)/tag_attr_build-makename.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='makename.c' object='tag_attr_build-makename.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tag_attr_build_CPPFLAGS) $(CPPFLAGS) $(tag_attr_build_CFLAGS) $(CFLAGS) -c -o tag_attr_build-makename.obj `if test -f 'makename.c'; then $(CYGPATH_W) 'makename.c'; else $(CYGPATH_W) '$(srcdir)/makename.c'; fi`
-
-tag_attr_build-naming.o: naming.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tag_attr_build_CPPFLAGS) $(CPPFLAGS) $(tag_attr_build_CFLAGS) $(CFLAGS) -MT tag_attr_build-naming.o -MD -MP -MF $(DEPDIR)/tag_attr_build-naming.Tpo -c -o tag_attr_build-naming.o `test -f 'naming.c' || echo '$(srcdir)/'`naming.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/tag_attr_build-naming.Tpo $(DEPDIR)/tag_attr_build-naming.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='naming.c' object='tag_attr_build-naming.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tag_attr_build_CPPFLAGS) $(CPPFLAGS) $(tag_attr_build_CFLAGS) $(CFLAGS) -c -o tag_attr_build-naming.o `test -f 'naming.c' || echo '$(srcdir)/'`naming.c
-
-tag_attr_build-naming.obj: naming.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tag_attr_build_CPPFLAGS) $(CPPFLAGS) $(tag_attr_build_CFLAGS) $(CFLAGS) -MT tag_attr_build-naming.obj -MD -MP -MF $(DEPDIR)/tag_attr_build-naming.Tpo -c -o tag_attr_build-naming.obj `if test -f 'naming.c'; then $(CYGPATH_W) 'naming.c'; else $(CYGPATH_W) '$(srcdir)/naming.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/tag_attr_build-naming.Tpo $(DEPDIR)/tag_attr_build-naming.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='naming.c' object='tag_attr_build-naming.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tag_attr_build_CPPFLAGS) $(CPPFLAGS) $(tag_attr_build_CFLAGS) $(CFLAGS) -c -o tag_attr_build-naming.obj `if test -f 'naming.c'; then $(CYGPATH_W) 'naming.c'; else $(CYGPATH_W) '$(srcdir)/naming.c'; fi`
-
-tag_attr_build-sanitized.o: sanitized.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tag_attr_build_CPPFLAGS) $(CPPFLAGS) $(tag_attr_build_CFLAGS) $(CFLAGS) -MT tag_attr_build-sanitized.o -MD -MP -MF $(DEPDIR)/tag_attr_build-sanitized.Tpo -c -o tag_attr_build-sanitized.o `test -f 'sanitized.c' || echo '$(srcdir)/'`sanitized.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/tag_attr_build-sanitized.Tpo $(DEPDIR)/tag_attr_build-sanitized.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='sanitized.c' object='tag_attr_build-sanitized.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tag_attr_build_CPPFLAGS) $(CPPFLAGS) $(tag_attr_build_CFLAGS) $(CFLAGS) -c -o tag_attr_build-sanitized.o `test -f 'sanitized.c' || echo '$(srcdir)/'`sanitized.c
-
-tag_attr_build-sanitized.obj: sanitized.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tag_attr_build_CPPFLAGS) $(CPPFLAGS) $(tag_attr_build_CFLAGS) $(CFLAGS) -MT tag_attr_build-sanitized.obj -MD -MP -MF $(DEPDIR)/tag_attr_build-sanitized.Tpo -c -o tag_attr_build-sanitized.obj `if test -f 'sanitized.c'; then $(CYGPATH_W) 'sanitized.c'; else $(CYGPATH_W) '$(srcdir)/sanitized.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/tag_attr_build-sanitized.Tpo $(DEPDIR)/tag_attr_build-sanitized.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='sanitized.c' object='tag_attr_build-sanitized.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tag_attr_build_CPPFLAGS) $(CPPFLAGS) $(tag_attr_build_CFLAGS) $(CFLAGS) -c -o tag_attr_build-sanitized.obj `if test -f 'sanitized.c'; then $(CYGPATH_W) 'sanitized.c'; else $(CYGPATH_W) '$(srcdir)/sanitized.c'; fi`
-
-tag_attr_build-tag_attr.o: tag_attr.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tag_attr_build_CPPFLAGS) $(CPPFLAGS) $(tag_attr_build_CFLAGS) $(CFLAGS) -MT tag_attr_build-tag_attr.o -MD -MP -MF $(DEPDIR)/tag_attr_build-tag_attr.Tpo -c -o tag_attr_build-tag_attr.o `test -f 'tag_attr.c' || echo '$(srcdir)/'`tag_attr.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/tag_attr_build-tag_attr.Tpo $(DEPDIR)/tag_attr_build-tag_attr.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='tag_attr.c' object='tag_attr_build-tag_attr.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tag_attr_build_CPPFLAGS) $(CPPFLAGS) $(tag_attr_build_CFLAGS) $(CFLAGS) -c -o tag_attr_build-tag_attr.o `test -f 'tag_attr.c' || echo '$(srcdir)/'`tag_attr.c
-
-tag_attr_build-tag_attr.obj: tag_attr.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tag_attr_build_CPPFLAGS) $(CPPFLAGS) $(tag_attr_build_CFLAGS) $(CFLAGS) -MT tag_attr_build-tag_attr.obj -MD -MP -MF $(DEPDIR)/tag_attr_build-tag_attr.Tpo -c -o tag_attr_build-tag_attr.obj `if test -f 'tag_attr.c'; then $(CYGPATH_W) 'tag_attr.c'; else $(CYGPATH_W) '$(srcdir)/tag_attr.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/tag_attr_build-tag_attr.Tpo $(DEPDIR)/tag_attr_build-tag_attr.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='tag_attr.c' object='tag_attr_build-tag_attr.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tag_attr_build_CPPFLAGS) $(CPPFLAGS) $(tag_attr_build_CFLAGS) $(CFLAGS) -c -o tag_attr_build-tag_attr.obj `if test -f 'tag_attr.c'; then $(CYGPATH_W) 'tag_attr.c'; else $(CYGPATH_W) '$(srcdir)/tag_attr.c'; fi`
-
-tag_attr_build-tag_common.o: tag_common.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tag_attr_build_CPPFLAGS) $(CPPFLAGS) $(tag_attr_build_CFLAGS) $(CFLAGS) -MT tag_attr_build-tag_common.o -MD -MP -MF $(DEPDIR)/tag_attr_build-tag_common.Tpo -c -o tag_attr_build-tag_common.o `test -f 'tag_common.c' || echo '$(srcdir)/'`tag_common.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/tag_attr_build-tag_common.Tpo $(DEPDIR)/tag_attr_build-tag_common.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='tag_common.c' object='tag_attr_build-tag_common.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tag_attr_build_CPPFLAGS) $(CPPFLAGS) $(tag_attr_build_CFLAGS) $(CFLAGS) -c -o tag_attr_build-tag_common.o `test -f 'tag_common.c' || echo '$(srcdir)/'`tag_common.c
-
-tag_attr_build-tag_common.obj: tag_common.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tag_attr_build_CPPFLAGS) $(CPPFLAGS) $(tag_attr_build_CFLAGS) $(CFLAGS) -MT tag_attr_build-tag_common.obj -MD -MP -MF $(DEPDIR)/tag_attr_build-tag_common.Tpo -c -o tag_attr_build-tag_common.obj `if test -f 'tag_common.c'; then $(CYGPATH_W) 'tag_common.c'; else $(CYGPATH_W) '$(srcdir)/tag_common.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/tag_attr_build-tag_common.Tpo $(DEPDIR)/tag_attr_build-tag_common.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='tag_common.c' object='tag_attr_build-tag_common.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tag_attr_build_CPPFLAGS) $(CPPFLAGS) $(tag_attr_build_CFLAGS) $(CFLAGS) -c -o tag_attr_build-tag_common.obj `if test -f 'tag_common.c'; then $(CYGPATH_W) 'tag_common.c'; else $(CYGPATH_W) '$(srcdir)/tag_common.c'; fi`
-
-tag_tree_build-dwarf_names.o: dwarf_names.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tag_tree_build_CPPFLAGS) $(CPPFLAGS) $(tag_tree_build_CFLAGS) $(CFLAGS) -MT tag_tree_build-dwarf_names.o -MD -MP -MF $(DEPDIR)/tag_tree_build-dwarf_names.Tpo -c -o tag_tree_build-dwarf_names.o `test -f 'dwarf_names.c' || echo '$(srcdir)/'`dwarf_names.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/tag_tree_build-dwarf_names.Tpo $(DEPDIR)/tag_tree_build-dwarf_names.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='dwarf_names.c' object='tag_tree_build-dwarf_names.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tag_tree_build_CPPFLAGS) $(CPPFLAGS) $(tag_tree_build_CFLAGS) $(CFLAGS) -c -o tag_tree_build-dwarf_names.o `test -f 'dwarf_names.c' || echo '$(srcdir)/'`dwarf_names.c
-
-tag_tree_build-dwarf_names.obj: dwarf_names.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tag_tree_build_CPPFLAGS) $(CPPFLAGS) $(tag_tree_build_CFLAGS) $(CFLAGS) -MT tag_tree_build-dwarf_names.obj -MD -MP -MF $(DEPDIR)/tag_tree_build-dwarf_names.Tpo -c -o tag_tree_build-dwarf_names.obj `if test -f 'dwarf_names.c'; then $(CYGPATH_W) 'dwarf_names.c'; else $(CYGPATH_W) '$(srcdir)/dwarf_names.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/tag_tree_build-dwarf_names.Tpo $(DEPDIR)/tag_tree_build-dwarf_names.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='dwarf_names.c' object='tag_tree_build-dwarf_names.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tag_tree_build_CPPFLAGS) $(CPPFLAGS) $(tag_tree_build_CFLAGS) $(CFLAGS) -c -o tag_tree_build-dwarf_names.obj `if test -f 'dwarf_names.c'; then $(CYGPATH_W) 'dwarf_names.c'; else $(CYGPATH_W) '$(srcdir)/dwarf_names.c'; fi`
-
-tag_tree_build-common.o: common.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tag_tree_build_CPPFLAGS) $(CPPFLAGS) $(tag_tree_build_CFLAGS) $(CFLAGS) -MT tag_tree_build-common.o -MD -MP -MF $(DEPDIR)/tag_tree_build-common.Tpo -c -o tag_tree_build-common.o `test -f 'common.c' || echo '$(srcdir)/'`common.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/tag_tree_build-common.Tpo $(DEPDIR)/tag_tree_build-common.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='common.c' object='tag_tree_build-common.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tag_tree_build_CPPFLAGS) $(CPPFLAGS) $(tag_tree_build_CFLAGS) $(CFLAGS) -c -o tag_tree_build-common.o `test -f 'common.c' || echo '$(srcdir)/'`common.c
-
-tag_tree_build-common.obj: common.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tag_tree_build_CPPFLAGS) $(CPPFLAGS) $(tag_tree_build_CFLAGS) $(CFLAGS) -MT tag_tree_build-common.obj -MD -MP -MF $(DEPDIR)/tag_tree_build-common.Tpo -c -o tag_tree_build-common.obj `if test -f 'common.c'; then $(CYGPATH_W) 'common.c'; else $(CYGPATH_W) '$(srcdir)/common.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/tag_tree_build-common.Tpo $(DEPDIR)/tag_tree_build-common.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='common.c' object='tag_tree_build-common.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tag_tree_build_CPPFLAGS) $(CPPFLAGS) $(tag_tree_build_CFLAGS) $(CFLAGS) -c -o tag_tree_build-common.obj `if test -f 'common.c'; then $(CYGPATH_W) 'common.c'; else $(CYGPATH_W) '$(srcdir)/common.c'; fi`
-
-tag_tree_build-dwarf_tsearchbal.o: dwarf_tsearchbal.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tag_tree_build_CPPFLAGS) $(CPPFLAGS) $(tag_tree_build_CFLAGS) $(CFLAGS) -MT tag_tree_build-dwarf_tsearchbal.o -MD -MP -MF $(DEPDIR)/tag_tree_build-dwarf_tsearchbal.Tpo -c -o tag_tree_build-dwarf_tsearchbal.o `test -f 'dwarf_tsearchbal.c' || echo '$(srcdir)/'`dwarf_tsearchbal.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/tag_tree_build-dwarf_tsearchbal.Tpo $(DEPDIR)/tag_tree_build-dwarf_tsearchbal.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='dwarf_tsearchbal.c' object='tag_tree_build-dwarf_tsearchbal.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tag_tree_build_CPPFLAGS) $(CPPFLAGS) $(tag_tree_build_CFLAGS) $(CFLAGS) -c -o tag_tree_build-dwarf_tsearchbal.o `test -f 'dwarf_tsearchbal.c' || echo '$(srcdir)/'`dwarf_tsearchbal.c
-
-tag_tree_build-dwarf_tsearchbal.obj: dwarf_tsearchbal.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tag_tree_build_CPPFLAGS) $(CPPFLAGS) $(tag_tree_build_CFLAGS) $(CFLAGS) -MT tag_tree_build-dwarf_tsearchbal.obj -MD -MP -MF $(DEPDIR)/tag_tree_build-dwarf_tsearchbal.Tpo -c -o tag_tree_build-dwarf_tsearchbal.obj `if test -f 'dwarf_tsearchbal.c'; then $(CYGPATH_W) 'dwarf_tsearchbal.c'; else $(CYGPATH_W) '$(srcdir)/dwarf_tsearchbal.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/tag_tree_build-dwarf_tsearchbal.Tpo $(DEPDIR)/tag_tree_build-dwarf_tsearchbal.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='dwarf_tsearchbal.c' object='tag_tree_build-dwarf_tsearchbal.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tag_tree_build_CPPFLAGS) $(CPPFLAGS) $(tag_tree_build_CFLAGS) $(CFLAGS) -c -o tag_tree_build-dwarf_tsearchbal.obj `if test -f 'dwarf_tsearchbal.c'; then $(CYGPATH_W) 'dwarf_tsearchbal.c'; else $(CYGPATH_W) '$(srcdir)/dwarf_tsearchbal.c'; fi`
-
-tag_tree_build-dwgetopt.o: dwgetopt.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tag_tree_build_CPPFLAGS) $(CPPFLAGS) $(tag_tree_build_CFLAGS) $(CFLAGS) -MT tag_tree_build-dwgetopt.o -MD -MP -MF $(DEPDIR)/tag_tree_build-dwgetopt.Tpo -c -o tag_tree_build-dwgetopt.o `test -f 'dwgetopt.c' || echo '$(srcdir)/'`dwgetopt.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/tag_tree_build-dwgetopt.Tpo $(DEPDIR)/tag_tree_build-dwgetopt.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='dwgetopt.c' object='tag_tree_build-dwgetopt.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tag_tree_build_CPPFLAGS) $(CPPFLAGS) $(tag_tree_build_CFLAGS) $(CFLAGS) -c -o tag_tree_build-dwgetopt.o `test -f 'dwgetopt.c' || echo '$(srcdir)/'`dwgetopt.c
-
-tag_tree_build-dwgetopt.obj: dwgetopt.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tag_tree_build_CPPFLAGS) $(CPPFLAGS) $(tag_tree_build_CFLAGS) $(CFLAGS) -MT tag_tree_build-dwgetopt.obj -MD -MP -MF $(DEPDIR)/tag_tree_build-dwgetopt.Tpo -c -o tag_tree_build-dwgetopt.obj `if test -f 'dwgetopt.c'; then $(CYGPATH_W) 'dwgetopt.c'; else $(CYGPATH_W) '$(srcdir)/dwgetopt.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/tag_tree_build-dwgetopt.Tpo $(DEPDIR)/tag_tree_build-dwgetopt.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='dwgetopt.c' object='tag_tree_build-dwgetopt.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tag_tree_build_CPPFLAGS) $(CPPFLAGS) $(tag_tree_build_CFLAGS) $(CFLAGS) -c -o tag_tree_build-dwgetopt.obj `if test -f 'dwgetopt.c'; then $(CYGPATH_W) 'dwgetopt.c'; else $(CYGPATH_W) '$(srcdir)/dwgetopt.c'; fi`
-
-tag_tree_build-esb.o: esb.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tag_tree_build_CPPFLAGS) $(CPPFLAGS) $(tag_tree_build_CFLAGS) $(CFLAGS) -MT tag_tree_build-esb.o -MD -MP -MF $(DEPDIR)/tag_tree_build-esb.Tpo -c -o tag_tree_build-esb.o `test -f 'esb.c' || echo '$(srcdir)/'`esb.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/tag_tree_build-esb.Tpo $(DEPDIR)/tag_tree_build-esb.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='esb.c' object='tag_tree_build-esb.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tag_tree_build_CPPFLAGS) $(CPPFLAGS) $(tag_tree_build_CFLAGS) $(CFLAGS) -c -o tag_tree_build-esb.o `test -f 'esb.c' || echo '$(srcdir)/'`esb.c
-
-tag_tree_build-esb.obj: esb.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tag_tree_build_CPPFLAGS) $(CPPFLAGS) $(tag_tree_build_CFLAGS) $(CFLAGS) -MT tag_tree_build-esb.obj -MD -MP -MF $(DEPDIR)/tag_tree_build-esb.Tpo -c -o tag_tree_build-esb.obj `if test -f 'esb.c'; then $(CYGPATH_W) 'esb.c'; else $(CYGPATH_W) '$(srcdir)/esb.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/tag_tree_build-esb.Tpo $(DEPDIR)/tag_tree_build-esb.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='esb.c' object='tag_tree_build-esb.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tag_tree_build_CPPFLAGS) $(CPPFLAGS) $(tag_tree_build_CFLAGS) $(CFLAGS) -c -o tag_tree_build-esb.obj `if test -f 'esb.c'; then $(CYGPATH_W) 'esb.c'; else $(CYGPATH_W) '$(srcdir)/esb.c'; fi`
-
-tag_tree_build-makename.o: makename.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tag_tree_build_CPPFLAGS) $(CPPFLAGS) $(tag_tree_build_CFLAGS) $(CFLAGS) -MT tag_tree_build-makename.o -MD -MP -MF $(DEPDIR)/tag_tree_build-makename.Tpo -c -o tag_tree_build-makename.o `test -f 'makename.c' || echo '$(srcdir)/'`makename.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/tag_tree_build-makename.Tpo $(DEPDIR)/tag_tree_build-makename.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='makename.c' object='tag_tree_build-makename.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tag_tree_build_CPPFLAGS) $(CPPFLAGS) $(tag_tree_build_CFLAGS) $(CFLAGS) -c -o tag_tree_build-makename.o `test -f 'makename.c' || echo '$(srcdir)/'`makename.c
-
-tag_tree_build-makename.obj: makename.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tag_tree_build_CPPFLAGS) $(CPPFLAGS) $(tag_tree_build_CFLAGS) $(CFLAGS) -MT tag_tree_build-makename.obj -MD -MP -MF $(DEPDIR)/tag_tree_build-makename.Tpo -c -o tag_tree_build-makename.obj `if test -f 'makename.c'; then $(CYGPATH_W) 'makename.c'; else $(CYGPATH_W) '$(srcdir)/makename.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/tag_tree_build-makename.Tpo $(DEPDIR)/tag_tree_build-makename.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='makename.c' object='tag_tree_build-makename.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tag_tree_build_CPPFLAGS) $(CPPFLAGS) $(tag_tree_build_CFLAGS) $(CFLAGS) -c -o tag_tree_build-makename.obj `if test -f 'makename.c'; then $(CYGPATH_W) 'makename.c'; else $(CYGPATH_W) '$(srcdir)/makename.c'; fi`
-
-tag_tree_build-sanitized.o: sanitized.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tag_tree_build_CPPFLAGS) $(CPPFLAGS) $(tag_tree_build_CFLAGS) $(CFLAGS) -MT tag_tree_build-sanitized.o -MD -MP -MF $(DEPDIR)/tag_tree_build-sanitized.Tpo -c -o tag_tree_build-sanitized.o `test -f 'sanitized.c' || echo '$(srcdir)/'`sanitized.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/tag_tree_build-sanitized.Tpo $(DEPDIR)/tag_tree_build-sanitized.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='sanitized.c' object='tag_tree_build-sanitized.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tag_tree_build_CPPFLAGS) $(CPPFLAGS) $(tag_tree_build_CFLAGS) $(CFLAGS) -c -o tag_tree_build-sanitized.o `test -f 'sanitized.c' || echo '$(srcdir)/'`sanitized.c
-
-tag_tree_build-sanitized.obj: sanitized.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tag_tree_build_CPPFLAGS) $(CPPFLAGS) $(tag_tree_build_CFLAGS) $(CFLAGS) -MT tag_tree_build-sanitized.obj -MD -MP -MF $(DEPDIR)/tag_tree_build-sanitized.Tpo -c -o tag_tree_build-sanitized.obj `if test -f 'sanitized.c'; then $(CYGPATH_W) 'sanitized.c'; else $(CYGPATH_W) '$(srcdir)/sanitized.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/tag_tree_build-sanitized.Tpo $(DEPDIR)/tag_tree_build-sanitized.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='sanitized.c' object='tag_tree_build-sanitized.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tag_tree_build_CPPFLAGS) $(CPPFLAGS) $(tag_tree_build_CFLAGS) $(CFLAGS) -c -o tag_tree_build-sanitized.obj `if test -f 'sanitized.c'; then $(CYGPATH_W) 'sanitized.c'; else $(CYGPATH_W) '$(srcdir)/sanitized.c'; fi`
-
-tag_tree_build-tag_common.o: tag_common.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tag_tree_build_CPPFLAGS) $(CPPFLAGS) $(tag_tree_build_CFLAGS) $(CFLAGS) -MT tag_tree_build-tag_common.o -MD -MP -MF $(DEPDIR)/tag_tree_build-tag_common.Tpo -c -o tag_tree_build-tag_common.o `test -f 'tag_common.c' || echo '$(srcdir)/'`tag_common.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/tag_tree_build-tag_common.Tpo $(DEPDIR)/tag_tree_build-tag_common.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='tag_common.c' object='tag_tree_build-tag_common.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tag_tree_build_CPPFLAGS) $(CPPFLAGS) $(tag_tree_build_CFLAGS) $(CFLAGS) -c -o tag_tree_build-tag_common.o `test -f 'tag_common.c' || echo '$(srcdir)/'`tag_common.c
-
-tag_tree_build-tag_common.obj: tag_common.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tag_tree_build_CPPFLAGS) $(CPPFLAGS) $(tag_tree_build_CFLAGS) $(CFLAGS) -MT tag_tree_build-tag_common.obj -MD -MP -MF $(DEPDIR)/tag_tree_build-tag_common.Tpo -c -o tag_tree_build-tag_common.obj `if test -f 'tag_common.c'; then $(CYGPATH_W) 'tag_common.c'; else $(CYGPATH_W) '$(srcdir)/tag_common.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/tag_tree_build-tag_common.Tpo $(DEPDIR)/tag_tree_build-tag_common.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='tag_common.c' object='tag_tree_build-tag_common.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tag_tree_build_CPPFLAGS) $(CPPFLAGS) $(tag_tree_build_CFLAGS) $(CFLAGS) -c -o tag_tree_build-tag_common.obj `if test -f 'tag_common.c'; then $(CYGPATH_W) 'tag_common.c'; else $(CYGPATH_W) '$(srcdir)/tag_common.c'; fi`
-
-tag_tree_build-tag_tree.o: tag_tree.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tag_tree_build_CPPFLAGS) $(CPPFLAGS) $(tag_tree_build_CFLAGS) $(CFLAGS) -MT tag_tree_build-tag_tree.o -MD -MP -MF $(DEPDIR)/tag_tree_build-tag_tree.Tpo -c -o tag_tree_build-tag_tree.o `test -f 'tag_tree.c' || echo '$(srcdir)/'`tag_tree.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/tag_tree_build-tag_tree.Tpo $(DEPDIR)/tag_tree_build-tag_tree.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='tag_tree.c' object='tag_tree_build-tag_tree.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tag_tree_build_CPPFLAGS) $(CPPFLAGS) $(tag_tree_build_CFLAGS) $(CFLAGS) -c -o tag_tree_build-tag_tree.o `test -f 'tag_tree.c' || echo '$(srcdir)/'`tag_tree.c
-
-tag_tree_build-tag_tree.obj: tag_tree.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tag_tree_build_CPPFLAGS) $(CPPFLAGS) $(tag_tree_build_CFLAGS) $(CFLAGS) -MT tag_tree_build-tag_tree.obj -MD -MP -MF $(DEPDIR)/tag_tree_build-tag_tree.Tpo -c -o tag_tree_build-tag_tree.obj `if test -f 'tag_tree.c'; then $(CYGPATH_W) 'tag_tree.c'; else $(CYGPATH_W) '$(srcdir)/tag_tree.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/tag_tree_build-tag_tree.Tpo $(DEPDIR)/tag_tree_build-tag_tree.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='tag_tree.c' object='tag_tree_build-tag_tree.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tag_tree_build_CPPFLAGS) $(CPPFLAGS) $(tag_tree_build_CFLAGS) $(CFLAGS) -c -o tag_tree_build-tag_tree.obj `if test -f 'tag_tree.c'; then $(CYGPATH_W) 'tag_tree.c'; else $(CYGPATH_W) '$(srcdir)/tag_tree.c'; fi`
-
 mostlyclean-libtool:
 	-rm -f *.lo
 
@@ -2154,15 +1739,13 @@ distdir: $(DISTFILES)
 	done
 check-am: all-am
 	$(MAKE) $(AM_MAKEFLAGS) check-TESTS
-check: $(BUILT_SOURCES)
-	$(MAKE) $(AM_MAKEFLAGS) check-am
+check: check-am
 all-am: Makefile $(PROGRAMS) $(MANS) $(DATA)
 installdirs:
 	for dir in "$(DESTDIR)$(bindir)" "$(DESTDIR)$(man1dir)" "$(DESTDIR)$(dwarfdumpdevdir)"; do \
 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
 	done
-install: $(BUILT_SOURCES)
-	$(MAKE) $(AM_MAKEFLAGS) install-am
+install: install-am
 install-exec: install-exec-am
 install-data: install-data-am
 uninstall: uninstall-am
@@ -2196,12 +1779,10 @@ distclean-generic:
 maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"
 	@echo "it deletes files that may require special tools to rebuild."
-	-test -z "$(BUILT_SOURCES)" || rm -f $(BUILT_SOURCES)
 	-test -z "$(MAINTAINERCLEANFILES)" || rm -f $(MAINTAINERCLEANFILES)
 clean: clean-am
 
-clean-am: clean-binPROGRAMS clean-generic clean-libtool \
-	clean-noinstPROGRAMS mostlyclean-am
+clean-am: clean-binPROGRAMS clean-generic clean-libtool mostlyclean-am
 
 distclean: distclean-am
 	-rm -rf ./$(DEPDIR)
@@ -2272,15 +1853,14 @@ uninstall-am: uninstall-binPROGRAMS uninstall-dwarfdumpdevDATA \
 
 uninstall-man: uninstall-man1
 
-.MAKE: all check check-am install install-am install-strip
+.MAKE: check-am install-am install-strip
 
 .PHONY: CTAGS GTAGS TAGS all all-am check check-TESTS check-am clean \
-	clean-binPROGRAMS clean-generic clean-libtool \
-	clean-noinstPROGRAMS cscopelist-am ctags ctags-am distclean \
-	distclean-compile distclean-generic distclean-libtool \
-	distclean-tags distdir dvi dvi-am html html-am info info-am \
-	install install-am install-binPROGRAMS install-data \
-	install-data-am install-dvi install-dvi-am \
+	clean-binPROGRAMS clean-generic clean-libtool cscopelist-am \
+	ctags ctags-am distclean distclean-compile distclean-generic \
+	distclean-libtool distclean-tags distdir dvi dvi-am html \
+	html-am info info-am install install-am install-binPROGRAMS \
+	install-data install-data-am install-dvi install-dvi-am \
 	install-dwarfdumpdevDATA install-exec install-exec-am \
 	install-html install-html-am install-info install-info-am \
 	install-man install-man1 install-pdf install-pdf-am install-ps \
@@ -2294,55 +1874,8 @@ uninstall-man: uninstall-man1
 .PRECIOUS: Makefile
 
 
-### tag_attr_build
-
 dwarf_names.c: 
 	cp $(top_builddir)/libdwarf/dwarf_names.c .
-
-$(tag_attr_build_OBJECTS):CC=$(CC_FOR_BUILD)
-$(tag_attr_build_OBJECTS):CFLAGS=$(CFLAGS_FOR_BUILD)
-$(tag_attr_build_OBJECTS):CPPFLAGS=$(CPPFLAGS_FOR_BUILD)
-tag_attr_build$(BUILD_EXEEXT):LDFLAGS=$(LDFLAGS_FOR_BUILD)
-tag_attr_build$(BUILD_EXEEXT):CC=$(CC_FOR_BUILD)
-tag_attr_build$(BUILD_EXEEXT):CFLAGS=$(CFLAGS_FOR_BUILD)
-tag_attr_build$(BUILD_EXEEXT):CPPFLAGS=$(CPPFLAGS_FOR_BUILD)
-
-$(tag_tree_build_OBJECTS):CC=$(CC_FOR_BUILD) 
-$(tag_tree_build_OBJECTS):CFLAGS=$(CFLAGS_FOR_BUILD)
-$(tag_tree_build_OBJECTS):CPPFLAGS=$(CPPFLAGS_FOR_BUILD)
-tag_tree_build$(BUILD_EXEEXT):CC=$(CC_FOR_BUILD)
-tag_tree_build$(BUILD_EXEEXT):LDFLAGS=$(LDFLAGS_FOR_BUILD)
-tag_tree_build$(BUILD_EXEEXT):CFLAGS=$(CFLAGS_FOR_BUILD)
-tag_tree_build$(BUILD_EXEEXT):CPPFLAGS=$(CPPFLAGS_FOR_BUILD)
-
-tag_attr.list:
-tag_attr_ext.list:
-tag_tree.list:
-tag_tree_ext.list:
-
-tmp-tt-table.h: tag_tree.list tag_tree_build$(BUILD_EXEEXT)
-	$(AM_V_at)rm -f tmp-t1.c
-	$(AM_V_at)cp $(top_srcdir)/dwarfdump/tag_tree.list tmp-t1.c
-	$(AM_V_at)$(CC) $(CFLAGS) $(CPPFLAGS) -I$(top_srcdir)/libdwarf -E tmp-t1.c > tmp-tag-tree-build1.tmp
-	$(gn_verbose)./tag_tree_build$(BUILD_EXEEXT) -s -i tmp-tag-tree-build1.tmp -o tmp-tt-table.h
-
-tmp-ta-table.h: tag_attr.list tag_attr_build$(BUILD_EXEEXT)
-	$(AM_V_at)rm -f tmp-t2.c
-	$(AM_V_at)cp $(top_srcdir)/dwarfdump/tag_attr.list tmp-t2.c
-	$(AM_V_at)$(CC) $(CFLAGS) $(CPPFLAGS) -I$(top_srcdir)/libdwarf  -E tmp-t2.c > tmp-tag-attr-build2.tmp
-	$(gn_verbose)./tag_attr_build$(BUILD_EXEEXT) -s -i tmp-tag-attr-build2.tmp -o tmp-ta-table.h
-
-tmp-ta-ext-table.h: tag_attr_ext.list tag_attr_build$(BUILD_EXEEXT)
-	$(AM_V_at)rm -f tmp-t3.c
-	$(AM_V_at)cp $(top_srcdir)/dwarfdump/tag_attr_ext.list tmp-t3.c
-	$(AM_V_at)$(CC) $(CFLAGS) $(CPPFLAGS) -I$(top_srcdir)/libdwarf -E tmp-t3.c > tmp-tag-attr-build3.tmp
-	$(gn_verbose)./tag_attr_build$(BUILD_EXEEXT) -e -i tmp-tag-attr-build3.tmp -o tmp-ta-ext-table.h
-
-tmp-tt-ext-table.h: tag_tree_ext.list tag_tree_build$(EXEEXT)
-	$(AM_V_at)rm -f tmp-t4.c
-	$(AM_V_at)cp $(top_srcdir)/dwarfdump/tag_tree_ext.list tmp-t4.c
-	$(AM_V_at)$(CC) $(CFLAGS) $(CPPFLAGS) -I$(top_srcdir)/libdwarf  -E tmp-t4.c > tmp-tag-tree-build4.tmp
-	$(gn_verbose)./tag_tree_build$(BUILD_EXEEXT) -e -i tmp-tag-tree-build4.tmp -o tmp-tt-ext-table.h
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

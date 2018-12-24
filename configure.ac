@@ -16,7 +16,7 @@ m4_define([lt_age], [v_min])
 
 ### Sets the release name. 
 ###m4_define([v_date], [m4_esyscmd_s([date "+%Y%m%d"])])
-m4_define([v_date], [20181219])])
+m4_define([v_date], [20181223])])
 
 AC_PREREQ([2.52])
 ### 2nd arg to AC_INIT is the version 'number'.
@@ -161,7 +161,6 @@ AC_SUBST([version_info])
 AC_SUBST([release_info])
 
 AC_PROG_CC
-AX_PROG_CC_FOR_BUILD
 AC_PROG_CXX
 AC_PROG_CC_C_O
 
@@ -780,12 +779,6 @@ echo "  LDFLAGS..............: $LDFLAGS"
 echo "  LIBS.................: $LIBS"
 echo "  DWARF_LIBS used in linking libdwarf"
 echo "  DWARF_LIBS...........: $DWARF_LIBS"
-echo "  *FOR_BUILD used building executables built and run to generate" 
-echo "  C source. Motivated by cross-compilation. "
-echo "  Executables not part of the final products."
-echo "  CPPFLAGS_FOR_BUILD...: $CPPFLAGS_FOR_BUILD"
-echo "  CFLAGS_FOR_BUILD.....: $CFLAGS_FOR_BUILD ${c_compiler_flags}"
-echo "  LDFLAGS_FOR_BUILD....: $LDFLAGS_FOR_BUILD"
 echo
 echo "Installation...........: make install (as root if needed, with 'su' or 'sudo')"
 echo "  prefix...............: $prefix"

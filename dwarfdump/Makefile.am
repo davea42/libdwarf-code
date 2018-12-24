@@ -133,4 +133,5 @@ tag_attr_ext.list \
 tag_tree.list \
 tag_tree_ext.list
 
-CLEANFILES = 
+CLEANFILES = dwarf_names.c
+

@@ -5999,8 +5999,8 @@ show_form_itself(int local_show_form,
     }
 }
 
-#include "dwarf-ta-table.h"
-#include "dwarf-ta-ext-table.h"
+#include "dwarfdump-ta-table.h"
+#include "dwarfdump-ta-ext-table.h"
 
 static int
 legal_tag_attr_combination(Dwarf_Half tag, Dwarf_Half attr)
@@ -6051,8 +6051,8 @@ legal_tag_attr_combination(Dwarf_Half tag, Dwarf_Half attr)
     return (FALSE);
 }
 
-#include "dwarf-tt-table.h"
-#include "dwarf-tt-ext-table.h"
+#include "dwarfdump-tt-table.h"
+#include "dwarfdump-tt-ext-table.h"
 
 /*  Look only at valid table entries
     The check here must match the building-logic in
