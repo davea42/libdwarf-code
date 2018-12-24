@@ -18,6 +18,18 @@ All options are available in the traditional (single-letter)
 form and in a long-options form with meaningful names.
 
 .PP
+With no options 
+.B dwarfdump
+prints a basic set of DWARF section information. 
+If any option is given on the command line the
+basic set is ignored and one must tell 
+.B dwarfdump
+what to print or check (for example by adding
+the 
+.B \-a
+option).
+
+.PP
 As of June 2011 the printing options and the checking options
 are mutually exclusive (if checking options are selected the
 section details are not printed). When errors are encountered
@@ -39,7 +51,7 @@ unwise to depend too heavily on the format.
 Frame information (.debug_frame and .eh_frame) is heavily
 dependent on the ABI/ISA of the object file. 
 By default we use a generic set of register names
-handling up to 100 registers named r0-100.
+handling up to 100 registers named r0-r99.
 
 The 
 .BR \--format-registers\ (\-R)

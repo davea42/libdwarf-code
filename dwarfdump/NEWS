@@ -1,3 +1,12 @@
+December 24, 2018
+  Any - or -- option on the dwarfdump command line turns off the
+  default set of things to print.  So, for example, instead
+  of 'dwarfdump -v a.out' or 'dwarfdump -x abi=mips a.out'
+  (which do nothing)
+  do 'dwarfdump -v -a a.out' or 'dwarfdump -f -x abi=mips a.out'.
+  Or maybe  'dwarfdump a.out' suffices for you.
+  Or use other print or check options depending
+  on your needs.
 June 14, 2018
   A small simplification of build options simplifies building
   across different environments.  If your environment needs

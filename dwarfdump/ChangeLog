@@ -1,3 +1,6 @@
+2018-12-24 David Anderson
+    * dwarfdump.1: Clarifying the effect of any - or -- option
+      on the output of dwarfdump.
 2018-12-21 David Anderson
     * command_options.c: Reformat a few lines of the usage text
       so it all prints in around 70 characters without overlap.
