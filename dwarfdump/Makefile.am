@@ -128,6 +128,8 @@ testesb.c \
 configure.cmake \
 config.h.in.cmake \
 $(dwarfdumpdev_DATA) \
+tag_attr.c \
+tag_tree.c \
 tag_attr.list \
 tag_attr_ext.list \
 tag_tree.list \

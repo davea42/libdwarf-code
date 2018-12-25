@@ -179,6 +179,7 @@ ChangeLog2017 \
 CODINGSTYLE \
 dwarf_names_new.h \
 dwarf_names_enum.h \
+gennames.c \
 dwarf_test_errmsg_list.c \
 libdwarf2.1.mm \
 libdwarf2p.1.mm \
