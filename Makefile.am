@@ -47,18 +47,14 @@ tsearch \
 cmake \
 configure.cmake \
 codingstyle.txt \
-scripts/BLDLIBDWARF \
-scripts/BLDLIBDWARFTAR \
-scripts/BLDTESTDIR \
-scripts/CLEANUP \
-scripts/CPTARTOWEBDIR \
-scripts/CPTOPUBLIC \
-scripts/CREATINGARELEASE \
-scripts/GETTOTOP \
-scripts/fixlibdwarfelf.sh \
-scripts/REBLDLIBDWARF \
-scripts/SETUP_MASTER_TREE \
-scripts/UPD.awk \
-scripts/UPDATEDWARFDUMPVERSION.sh
+scripts/baseconfig.h           scripts/CPTARTOWEBDIR       scripts/funcfindersrcs.py \
+scripts/BLDLIBDWARF            scripts/CPTOPUBLIC          scripts/GETTOTOP \
+scripts/BLDLIBDWARFTAR         scripts/CREATINGARELEASE    scripts/libbuild.sh \
+scripts/BLDTESTDIR             scripts/dateorder           scripts/REBLDLIBDWARF \
+scripts/buildandreleasetest.sh scripts/ddbuild.sh          scripts/RUNPY \
+scripts/buildstandardsource.sh scripts/FIX-CONFIGURE-TIMES scripts/SETUP_MASTER_TREE \
+scripts/ChangeLog              scripts/fixlibdwarfelf.sh   scripts/UPDATEDWARFDUMPVERSION.sh \
+scripts/CLEANUP	               scripts/funcfinderhdr.py    scripts/UPD.awk \
+scripts/conddef.py             scripts/funcfindermm.py
 
 # AUTHORS, ChangeLog and COPYING must be present
