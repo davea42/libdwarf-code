@@ -59,11 +59,6 @@ for i in                 \
  dwarfgen/Makefile.am    \
  libdwarf/Makefile.am    \
  configure               \
- autom4te.cache/output.0 \
- autom4te.cache/traces.0 \
- autom4te.cache/traces.1 \
- autom4te.cache/output.1 \
- autom4te.cache/requests \
  config.h.in  \
  ar-lib       \
  compile      \
