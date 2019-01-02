@@ -45,6 +45,7 @@ ChangeLog2014 \
 ChangeLog2015 \
 ChangeLog2016 \
 ChangeLog2017 \
+ChangeLog2018 \
 CMakeLists.txt \
 NEWS \
 README \

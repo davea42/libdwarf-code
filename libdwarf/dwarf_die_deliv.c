@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2000-2006 Silicon Graphics, Inc.  All Rights Reserved.
-  Portions Copyright (C) 2007-2018 David Anderson. All Rights Reserved.
+  Portions Copyright (C) 2007-2019 David Anderson. All Rights Reserved.
   Portions Copyright 2012 SN Systems Ltd. All rights reserved.
 
   This program is free software; you can redistribute it and/or modify it
@@ -2236,6 +2236,7 @@ dwarf_get_real_section_name(Dwarf_Debug dbg,
     char tbuf[50];
     unsigned std_sec_name_len = strlen(std_section_name);
 
+    tbuf[0] = 0;
     /*  std_section_name never has the .dwo on the end,
         so allow for that and allow one (arbitrarily) more. */
     if ((std_sec_name_len + 5) < sizeof(tbuf)) {

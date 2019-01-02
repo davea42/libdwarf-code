@@ -45,8 +45,12 @@ libdwarf/runtests.sh \
 bugxml \
 tsearch \
 cmake \
+ChangeLog \
+ChangeLog2018 \
 configure.cmake \
 codingstyle.txt \
+scripts/ChangeLog \
+scripts/ChangeLog2018 \
 scripts/BLDLIBDWARF \
 scripts/BLDLIBDWARFTAR \
 scripts/BLDTESTDIR \
@@ -59,6 +63,31 @@ scripts/fixlibdwarfelf.sh \
 scripts/REBLDLIBDWARF \
 scripts/SETUP_MASTER_TREE \
 scripts/UPD.awk \
-scripts/UPDATEDWARFDUMPVERSION.sh
+scripts/UPDATEDWARFDUMPVERSION.sh \
+tsearch/ChangeLog \
+tsearch/ChangeLog2014 \
+tsearch/ChangeLog2015 \
+tsearch/ChangeLog2016 \
+tsearch/ChangeLog2017 \
+tsearch/ChangeLog2018 \
+tsearch/config.h \
+tsearch/dwarf_incl.h \
+tsearch/dwarf_tsearchbal.c \
+tsearch/dwarf_tsearchbin.c \
+tsearch/dwarf_tsearch.c \
+tsearch/dwarf_tsearchepp.c \
+tsearch/dwarf_tsearch.h \
+tsearch/dwarf_tsearchhash.c \
+tsearch/dwarf_tsearchred.c \
+tsearch/ESSAY.txt \
+tsearch/Makefile \
+tsearch/README \
+tsearch/RUNTEST \
+tsearch/scripts \
+tsearch/tsearch.c \
+tsearch/tsearchlibtimes.csv \
+tsearch/tsearchlibtimes.ods \
+tsearch/tsearch_tester.c 
+
 
 # AUTHORS, ChangeLog and COPYING must be present
