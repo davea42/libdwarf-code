@@ -1,3 +1,14 @@
+2019-01-03   David Anderson
+     * dwarf_object_detector.c: Had a pointless call to stat()
+       which was noticed by Coverity CID  190601
+       as a possible race condition. Deleted the call.
+     * dwarf_generic_init(dwarf_init_path):
+       Serious bugs introduced yesterday.
+       Coverity CID 190600.
+       Coverity CID 190599 is a false positive,
+       the fd is remembered in the Dwarf_Debug
+       being created and will eventually be closed
+       when the Dwarf_Debug is closed.
 2019-01-02   David Anderson
      * dwarf_die_deliv.c(dwarf_get_real_section_name): 
        Uninitialized local char array
@@ -17,9 +28,7 @@
      * dwarf_generic_init.c(dwarf_init_path): 
        We clarify the use of fd and in case
        of failure ensure we close the fd if
-       it is open (fd >= 0). Coverity CID 190599
-       Also deals with Coverity CID 190600.
+       it is open (fd >= 0). 
      * dwarf_object_detector.c(dwarf_object_detector_path):
-       Explicitly test for -1 (rather than non-zero) to
-       avoid Coverity warning CID 190601.
+       Mistaken 'fix'
      * libdwarf_version.h: Updated version string.
