@@ -6,3 +6,20 @@
        Coverity CID CID 190598.
      * ChangeLog: Renamed ChangeLog2018. New ChangeLog created.
      * Makefile.am: Added ChangeLog2018 to files in dist.
+     * gennames.c(GenerateOneSet): Fixing Coverity CID 190603
+       by removing an unused (unusable) value. 
+     * dwarf_machoread.c.The include order
+       is now libdwarfdefs.h then dwarf_base_types.h
+     * dwarf_peread.c: The include order
+       is now libdwarfdefs.h then dwarf_base_types.h
+       Was leaking memory re-malloc into local var
+       localdoas. Coverity CID 190602.
+     * dwarf_generic_init.c(dwarf_init_path): 
+       We clarify the use of fd and in case
+       of failure ensure we close the fd if
+       it is open (fd >= 0). Coverity CID 190599
+       Also deals with Coverity CID 190600.
+     * dwarf_object_detector.c(dwarf_object_detector_path):
+       Explicitly test for -1 (rather than non-zero) to
+       avoid Coverity warning CID 190601.
+     * libdwarf_version.h: Updated version string.

@@ -479,8 +479,6 @@ GenerateOneSet(void)
 
         /* Generate entries for 'dwarf_names.c' */
         if (use_tables) {
-            /* The 20 just makes nice formatting in the output. */
-            len = 20 - strlen(group_array[u].name);
             fprintf(f_names_c,"    {/* %3u */ \"%s_%s\", ",
                 actual_array_count,prefix,group_array[u].name);
             fprintf(f_names_c," %s_%s}", prefix,group_array[u].name);

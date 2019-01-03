@@ -43,6 +43,9 @@
 #ifdef HAVE_STDLIB_H
 #include <stdlib.h>
 #endif /* HAVE_STDLIB_H */
+#ifdef HAVE_UNISTD_H
+#include <unistd.h>
+#endif /* HAVE_UNISTD_H */
 
 #include "dwarf_incl.h"
 #include "dwarf_error.h"
@@ -93,7 +96,6 @@ int dwarf_init_path(const char *path,
     Dwarf_Unsigned filesize = 0;
     int res = 0;
     int errcode = 0;
-    int fd = -1;
     int lib_owns_fd = TRUE;
 
     res = dwarf_object_detector_path(path,
@@ -108,12 +110,13 @@ int dwarf_init_path(const char *path,
     }
     switch(ftype) {
     case DW_FTYPE_ELF: {
+        int fd = -1;
         if (true_path_out_buffer) {
             fd = open(true_path_out_buffer,O_RDONLY);
         } else {
             fd = open(path,O_RDONLY);
         }
-        if(fd < 0) {
+        if(fd == -1) {
             DWARF_DBG_ERROR(NULL, DW_DLE_FILE_UNAVAILABLE,
                 DW_DLV_ERROR);
         }
@@ -121,9 +124,14 @@ int dwarf_init_path(const char *path,
             true_path_out_buffer?true_path_out_buffer:"",
             ftype,endian,offsetsize,filesize,
             access,groupnumber,errhand,errarg,ret_dbg,error);
+        if (res != DW_DLV_OK) {
+            close(fd);
+            fd = -1;
+        } /* else the ret_dbg remembers fd as necessary. */
         return res;
     }
     case DW_FTYPE_MACH_O: {
+        int fd = -1;
         res = _dwarf_macho_setup(fd,
             true_path_out_buffer?true_path_out_buffer:"",
             lib_owns_fd,
@@ -131,13 +139,15 @@ int dwarf_init_path(const char *path,
             access,groupnumber,errhand,errarg,ret_dbg,error);
         return res;
     }
-    case DW_FTYPE_PE:
+    case DW_FTYPE_PE: {
+        int fd = -1;
         res = _dwarf_pe_setup(fd,
             true_path_out_buffer?true_path_out_buffer:"",
             lib_owns_fd,
             ftype,endian,offsetsize,filesize,
             access,groupnumber,errhand,errarg,ret_dbg,error);
         return res;
+    }
     default:
         DWARF_DBG_ERROR(NULL, DW_DLE_FILE_WRONG_TYPE, DW_DLV_ERROR);
     }
