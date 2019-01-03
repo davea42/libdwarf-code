@@ -37,24 +37,67 @@ $(distdir).tar.gz \
 $(distdir).tar.xz
 
 EXTRA_DIST = \
-CMakeLists.txt \
-README.md \
 appveyor.yml \
+bugxml \
+ChangeLog \
+ChangeLog2018 \
+cmake \
+CMakeLists.txt \
+codingstyle.txt \
+configure.cmake \
 dwarfdump/runtests.sh \
 libdwarf/runtests.sh \
-bugxml \
-tsearch \
-cmake \
-configure.cmake \
-codingstyle.txt \
-scripts/baseconfig.h           scripts/CPTARTOWEBDIR       scripts/funcfindersrcs.py \
-scripts/BLDLIBDWARF            scripts/CPTOPUBLIC          scripts/GETTOTOP \
-scripts/BLDLIBDWARFTAR         scripts/CREATINGARELEASE    scripts/libbuild.sh \
-scripts/BLDTESTDIR             scripts/dateorder           scripts/REBLDLIBDWARF \
-scripts/buildandreleasetest.sh scripts/ddbuild.sh          scripts/RUNPY \
-scripts/buildstandardsource.sh scripts/FIX-CONFIGURE-TIMES scripts/SETUP_MASTER_TREE \
-scripts/ChangeLog              scripts/fixlibdwarfelf.sh   scripts/UPDATEDWARFDUMPVERSION.sh \
-scripts/CLEANUP	               scripts/funcfinderhdr.py    scripts/UPD.awk \
-scripts/conddef.py             scripts/funcfindermm.py
+README.md \
+scripts/baseconfig.h  \
+scripts/BLDLIBDWARF \
+scripts/BLDLIBDWARFTAR \
+scripts/BLDTESTDIR \
+scripts/buildandreleasetest.sh \
+scripts/buildstandardsource.sh \
+scripts/ChangeLog \
+scripts/ChangeLog2018 \
+scripts/CLEANUP \
+scripts/conddef.py  \
+scripts/CPTARTOWEBDIR \
+scripts/CPTOPUBLIC \
+scripts/CREATINGARELEASE \
+scripts/dateorder   \
+scripts/ddbuild.sh  \
+scripts/FIX-CONFIGURE-TIMES \
+scripts/fixlibdwarfelf.sh \
+scripts/funcfinderhdr.py \
+scripts/funcfindermm.py \
+scripts/funcfindersrcs.py \
+scripts/GETTOTOP \
+scripts/libbuild.sh \
+scripts/REBLDLIBDWARF \
+scripts/RUNPY \
+scripts/SETUP_MASTER_TREE \
+scripts/UPDATEDWARFDUMPVERSION.sh \
+scripts/UPD.awk \
+tsearch/ChangeLog \
+tsearch/ChangeLog2014 \
+tsearch/ChangeLog2015 \
+tsearch/ChangeLog2016 \
+tsearch/ChangeLog2017 \
+tsearch/ChangeLog2018 \
+tsearch/config.h \
+tsearch/dwarf_incl.h \
+tsearch/dwarf_tsearchbal.c \
+tsearch/dwarf_tsearchbin.c \
+tsearch/dwarf_tsearch.c \
+tsearch/dwarf_tsearchepp.c \
+tsearch/dwarf_tsearch.h \
+tsearch/dwarf_tsearchhash.c \
+tsearch/dwarf_tsearchred.c \
+tsearch/ESSAY.txt \
+tsearch/Makefile \
+tsearch/README \
+tsearch/RUNTEST \
+tsearch/scripts \
+tsearch/tsearch.c \
+tsearch/tsearchlibtimes.csv \
+tsearch/tsearchlibtimes.ods \
+tsearch/tsearch_tester.c 
 
 # AUTHORS, ChangeLog and COPYING must be present

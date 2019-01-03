@@ -50,8 +50,8 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <unistd.h> /* lseek read close */
 #endif /* HAVE_UNISTD_H */
 #include "libdwarf.h"
-#include "dwarf_base_types.h"
 #include "libdwarfdefs.h"
+#include "dwarf_base_types.h"
 #include "dwarf_opaque.h"
 #include "memcpy_swap.h"
 #include "dwarf_error.h" /* for _dwarf_error() declaration */
@@ -732,7 +732,7 @@ _dwarf_pe_object_access_internals_init(
     int *errcode)
 {
     dwarf_pe_object_access_internals_t * intfc = internals;
-    struct Dwarf_Obj_Access_Interface_s *localdoas;
+    struct Dwarf_Obj_Access_Interface_s *localdoas = 0;
     int res = 0;
 
     /*  Must malloc as _dwarf_destruct_pe_access()
@@ -774,18 +774,14 @@ _dwarf_pe_object_access_internals_init(
 #endif /* LITTLE- BIG-ENDIAN */
     res = dwarf_load_pe_sections(intfc,errcode);
     if (res != DW_DLV_OK) {
-        localdoas = (struct Dwarf_Obj_Access_Interface_s *)
-            malloc(sizeof(struct Dwarf_Obj_Access_Interface_s));
-        if (!localdoas) {
-            *errcode = DW_DLE_ALLOC_FAIL;
-            return DW_DLV_ERROR;
-        }
         localdoas->object = intfc;
         localdoas->methods = 0;
         _dwarf_destruct_pe_access(localdoas);
+        localdoas = 0;
         return res;
     }
     free(localdoas);
+    localdoas = 0;
     return DW_DLV_OK;
 }
 

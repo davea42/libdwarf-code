@@ -75,8 +75,8 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <unistd.h> /* lseek read close */
 #endif /* HAVE_UNISTD_H */
 #include "libdwarf.h"
-#include "dwarf_base_types.h"
 #include "libdwarfdefs.h"
+#include "dwarf_base_types.h"
 #include "dwarf_opaque.h"
 #include "dwarf_error.h" /* for _dwarf_error() declaration */
 #include "dwarf_reading.h"

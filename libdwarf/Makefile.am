@@ -176,6 +176,7 @@ ChangeLog2014 \
 ChangeLog2015 \
 ChangeLog2016 \
 ChangeLog2017 \
+ChangeLog2018 \
 CODINGSTYLE \
 dwarf_names_new.h \
 dwarf_names_enum.h \

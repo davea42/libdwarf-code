@@ -525,7 +525,9 @@ dwarf_object_detector_path(const char  *path,
 #endif
 
     res = stat(path,&statbuf);
-    if(res) {
+    if(res == -1) {
+        /*  Test for the only value other than 0 possible.
+            -1 means error.*/
         return DW_DLV_NO_ENTRY;
     }
     if (have_outpath) {
