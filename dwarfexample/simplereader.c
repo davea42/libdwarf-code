@@ -139,8 +139,6 @@ static void get_die_and_siblings(Dwarf_Debug dbg, Dwarf_Die in_die,
 static void resetsrcfiles(Dwarf_Debug dbg,struct srcfilesdata *sf);
 
 /*  Use a generic call to open the file, due to issues with Windows */
-int open_a_file(const char * name);
-void close_a_file(int f);
 
 static int namesoptionon = 0;
 static int checkoptionon = 0;
@@ -372,8 +370,7 @@ int
 main(int argc, char **argv)
 {
     Dwarf_Debug dbg = 0;
-    int fd = -1;
-    const char *filepath = "<stdin>";
+    const char *filepath = 0;
     int res = DW_DLV_ERROR;
     Dwarf_Error error;
     Dwarf_Handler errhand = 0;
@@ -381,67 +378,57 @@ main(int argc, char **argv)
     Dwarf_Sig8 hash8;
     Dwarf_Error *errp  = 0;
     int simpleerrhand = 0;
+    int i = 0;
 
-    if(argc < 2) {
-        fd = 0; /* stdin */
-    } else {
-        int i = 0;
-        for(i = 1; i < (argc-1) ; ++i) {
-            if(strcmp(argv[i],"--names") == 0) {
-                namesoptionon=1;
-            } else if(startswithextractstring(argv[1],"--dumpallnames=",
-                &dumpallnamespath)) {
-                dumpallnames=1;
-            } else if(strcmp(argv[i],"--check") == 0) {
-                checkoptionon=1;
-            } else if(startswithextractstring(argv[i],"--tuhash=",&tuhash)) {
-                /* done */
-            } else if(startswithextractstring(argv[i],"--cuhash=",&cuhash)) {
-                /* done */
-            } else if(startswithextractstring(argv[i],"--tufissionhash=",
-                &tufissionhash)) {
-                /* done */
-            } else if(startswithextractstring(argv[i],"--cufissionhash=",
-                &cufissionhash)) {
-                /* done */
-            } else if(strcmp(argv[i],"--passnullerror") == 0) {
-                passnullerror=1;
-            } else if(strcmp(argv[i],"--simpleerrhand") == 0) {
-                simpleerrhand=1;
-            } else if(startswithextractnum(argv[i],"--isinfo=",&g_is_info)) {
-                /* done */
-            } else if(startswithextractnum(argv[i],"--type=",&unittype)) {
-                /* done */
-            } else if(startswithextractnum(argv[i],"--fissionfordie=",
-                &fissionfordie)) {
-                /* done */
-            } else {
-                printf("Unknown argument \"%s\", give up \n",argv[i]);
-                exit(1);
-            }
+    for(i = 1; i < (argc-1) ; ++i) {
+        if(strcmp(argv[i],"--names") == 0) {
+            namesoptionon=1;
+        } else if(startswithextractstring(argv[1],"--dumpallnames=",
+            &dumpallnamespath)) {
+            dumpallnames=1;
+        } else if(strcmp(argv[i],"--check") == 0) {
+            checkoptionon=1;
+        } else if(startswithextractstring(argv[i],"--tuhash=",&tuhash)) {
+            /* done */
+        } else if(startswithextractstring(argv[i],"--cuhash=",&cuhash)) {
+            /* done */
+        } else if(startswithextractstring(argv[i],"--tufissionhash=",
+            &tufissionhash)) {
+            /* done */
+        } else if(startswithextractstring(argv[i],"--cufissionhash=",
+            &cufissionhash)) {
+            /* done */
+        } else if(strcmp(argv[i],"--passnullerror") == 0) {
+            passnullerror=1;
+        } else if(strcmp(argv[i],"--simpleerrhand") == 0) {
+            simpleerrhand=1;
+        } else if(startswithextractnum(argv[i],"--isinfo=",&g_is_info)) {
+            /* done */
+        } else if(startswithextractnum(argv[i],"--type=",&unittype)) {
+            /* done */
+        } else if(startswithextractnum(argv[i],"--fissionfordie=",
+            &fissionfordie)) {
+            /* done */
+        } else {
+            printf("Unknown argument \"%s\", give up \n",argv[i]);
+            exit(1);
         }
-        filepath = argv[i];
-        if (dumpallnames) {
-            if (!strcmp(dumpallnamespath,filepath)) {
-                printf("Using --dumpallnames with the same path  "
-                    "(%s) "
-                    "as the file to read is not allowed. giving up.\n",
-                    filepath);
-                exit(1);
-            }
-            dumpallnamesfile = fopen(dumpallnamespath,"w");
-            if(!dumpallnamesfile) {
-                printf("Cannot open %s. Giving up.\n",
-                    dumpallnamespath);
-                exit(1);
-            }
+    }
+    filepath = argv[i];
+    if (dumpallnames) {
+        if (!strcmp(dumpallnamespath,filepath)) {
+            printf("Using --dumpallnames with the same path  "
+                "(%s) "
+                "as the file to read is not allowed. giving up.\n",
+                filepath);
+            exit(1);
         }
-        fd = open_a_file(filepath);
-    }
-    if(argc > 2) {
-    }
-    if(fd < 0) {
-        printf("Failure attempting to open \"%s\"\n",filepath);
+        dumpallnamesfile = fopen(dumpallnamespath,"w");
+        if(!dumpallnamesfile) {
+            printf("Cannot open %s. Giving up.\n",
+                dumpallnamespath);
+            exit(1);
+        }
     }
     if(passnullerror) {
         errp = 0;
@@ -453,7 +440,9 @@ main(int argc, char **argv)
         /* Not a very useful errarg... */
         errarg = (Dwarf_Ptr)1;
     }
-    res = dwarf_init(fd,DW_DLC_READ,errhand,errarg, &dbg,errp);
+    res = dwarf_init_path(filepath,0,0,DW_DLC_READ,
+        DW_GROUPNUMBER_ANY,errhand,errarg,&dbg,
+        0,0,0,errp);
     if(res != DW_DLV_OK) {
         printf("Giving up, cannot do DWARF processing\n");
         cleanupstr();
@@ -559,7 +548,6 @@ main(int argc, char **argv)
     if (dumpallnamesfile) {
         fclose(dumpallnamesfile);
     }
-    close_a_file(fd);
     cleanupstr();
     return 0;
 }
@@ -1136,29 +1124,4 @@ print_die_data(Dwarf_Debug dbg, Dwarf_Die print_me,
     }
     print_die_data_i(dbg,print_me,level,sf);
     dienumber++;
-}
-
-int
-open_a_file(const char * name)
-{
-    /* Set to a file number that cannot be legal. */
-    int f = -1;
-
-#if HAVE_ELF_OPEN
-    /*  It is not possible to share file handles
-        between applications or DLLs. Each application has its own
-        file-handle table. For two applications to use the same file
-        using a DLL, they must both open the file individually.
-        Let the 'libelf' dll open and close the file.  */
-    f = elf_open(name, O_RDONLY | O_BINARY);
-#else
-    f = open(name, O_RDONLY |O_BINARY);
-#endif
-    return f;
-}
-
-void
-close_a_file(int f)
-{
-    close(f);
 }
