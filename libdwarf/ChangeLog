@@ -1,4 +1,7 @@
 2019-01-04   David Anderson
+     * dwarf_object_detector.c: Ensure the configure
+       can set O_BINARY if necessary so open() will use it.
+2019-01-04   David Anderson
      * dwarf_elf_access.c,dwarf_generic_init.c,dwarf_machoread.c,
        dwarf_opaque.h,dwarf_peread.c: Simplified and unified
        the requirement that dwarf_finish() close the fd
