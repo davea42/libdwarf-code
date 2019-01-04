@@ -80,7 +80,6 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 static int _dwarf_pe_object_access_init(
     int  fd,
-    int   lib_owns_fd,
     unsigned ftype,
     unsigned endian,
     unsigned offsetsize,
@@ -667,7 +666,6 @@ dwarf_load_pe_sections(
 int
 _dwarf_pe_setup(int fd,
     char *true_path,
-    int lib_owns_fd,
     unsigned ftype,
     unsigned endian,
     unsigned offsetsize,
@@ -685,7 +683,6 @@ _dwarf_pe_setup(int fd,
 
     res = _dwarf_pe_object_access_init(
         fd,
-        lib_owns_fd,
         ftype,endian,offsetsize,filesize,access,
         &binary_interface,
         &localerrnum);
@@ -723,7 +720,6 @@ static int
 _dwarf_pe_object_access_internals_init(
     dwarf_pe_object_access_internals_t * internals,
     int  fd,
-    int   lib_owns_fd,
     unsigned ftype,
     unsigned endian,
     unsigned offsetsize,
@@ -747,7 +743,6 @@ _dwarf_pe_object_access_internals_init(
     intfc->pe_ident[0]    = 'P';
     intfc->pe_ident[1]    = '1';
     intfc->pe_fd          = fd;
-    intfc->pe_destruct_close_fd = lib_owns_fd;
     intfc->pe_is_64bit    = ((offsetsize==64)?TRUE:FALSE);
     intfc->pe_offsetsize  = offsetsize;
     intfc->pe_pointersize = offsetsize;
@@ -789,7 +784,6 @@ _dwarf_pe_object_access_internals_init(
 static int
 _dwarf_pe_object_access_init(
     int  fd,
-    int   lib_owns_fd,
     unsigned ftype,
     unsigned endian,
     unsigned offsetsize,
@@ -812,7 +806,6 @@ _dwarf_pe_object_access_init(
     memset(internals,0,sizeof(*internals));
     res = _dwarf_pe_object_access_internals_init(internals,
         fd,
-        lib_owns_fd,
         ftype, endian, offsetsize, filesize,
         access,
         localerrnum);
@@ -821,7 +814,6 @@ _dwarf_pe_object_access_init(
         free(internals);
         return DW_DLV_ERROR;
     }
-    internals->pe_destruct_close_fd = lib_owns_fd;
 
     intfc = malloc(sizeof(Dwarf_Obj_Access_Interface));
     if (!intfc) {

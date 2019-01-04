@@ -67,9 +67,11 @@
 
 #define FALSE  0
 #define TRUE   1
-/*  The basic dwarf initializer functions for consumers.
+/*  An original basic dwarf initializer function for consumers.
     Return a libdwarf error code on error, return DW_DLV_OK
-    if this succeeds.  */
+    if this succeeds.  
+    dwarf_init_b() is a better choice where there
+    are section groups in an object file. */
 int
 dwarf_init(int fd,
     Dwarf_Unsigned access,
@@ -99,8 +101,7 @@ open_a_file(const char * name)
     return fd;
 }
 
-
-
+/* New in December 2018. */
 int dwarf_init_path(const char *path,
     char *true_path_out_buffer,
     unsigned true_path_bufferlen,
@@ -120,8 +121,8 @@ int dwarf_init_path(const char *path,
     Dwarf_Unsigned filesize = 0;
     int res = 0;
     int errcode = 0;
-    int lib_owns_fd = TRUE;
     int fd = -1;
+    Dwarf_Debug dbg = 0;
 
     res = dwarf_object_detector_path(path,
         true_path_out_buffer,
@@ -148,45 +149,47 @@ int dwarf_init_path(const char *path,
             true_path_out_buffer?
                 true_path_out_buffer:(char *)path,
             ftype,endian,offsetsize,filesize,
-            access,groupnumber,errhand,errarg,ret_dbg,error);
+            access,groupnumber,errhand,errarg,&dbg,error);
         if (res != DW_DLV_OK) {
             close(fd);
             fd = -1;
-        } 
-        res = _dwarf_elf_record_owned_fd(*ret_dbg,fd,error);
-        /*  Else the ret_dbg remembers fd (closed later) .
-              Coverity finds CID 190599 which is a false positive. */
-        if (res != DW_DLV_OK) {
-            close(fd);
+        } else { 
+            dbg->de_fd = fd;
+            dbg->de_owns_fd = TRUE;
         }
+        *ret_dbg = dbg;
         return res;
     }
     case DW_FTYPE_MACH_O: {
         res = _dwarf_macho_setup(fd,
             true_path_out_buffer?
                 true_path_out_buffer:(char *)path,
-            lib_owns_fd,
             ftype,endian,offsetsize,filesize,
-            access,groupnumber,errhand,errarg,ret_dbg,error);
+            access,groupnumber,errhand,errarg,&dbg,error);
         if (res != DW_DLV_OK) {
             close(fd);
             fd = -1;
-        } /*  Else the ret_dbg remembers fd (closed later) .
-              Coverity finds CID 190599 which is a false positive. */
+        } else {
+            dbg->de_fd = fd;
+            dbg->de_owns_fd = TRUE;
+        }
+        *ret_dbg = dbg;
         return res;
     }
     case DW_FTYPE_PE: {
         res = _dwarf_pe_setup(fd,
             true_path_out_buffer?
                 true_path_out_buffer:(char *)path,
-            lib_owns_fd,
             ftype,endian,offsetsize,filesize,
-            access,groupnumber,errhand,errarg,ret_dbg,error);
+            access,groupnumber,errhand,errarg,&dbg,error);
         if (res != DW_DLV_OK) {
             close(fd);
             fd = -1;
-        } /*  Else the ret_dbg remembers fd (closed later) .
-              Coverity finds CID 190599 which is a false positive. */
+        } else {
+            dbg->de_fd = fd;
+            dbg->de_owns_fd = TRUE;
+        }
+        *ret_dbg = dbg;
         return res;
     }
     default:
@@ -197,8 +200,8 @@ int dwarf_init_path(const char *path,
 }
 
 
-/* To be revised to not use libelf. */
-/* New March 2017 */
+/*  New March 2017, this provides for readinng
+    object files with multiple elf section groups.  */
 int
 dwarf_init_b(int fd,
     Dwarf_Unsigned access,
@@ -214,7 +217,6 @@ dwarf_init_b(int fd,
     Dwarf_Unsigned   filesize = 0;
     int res = 0;
     int errcode = 0;
-    int lib_owns_fd = FALSE;
 
     res = dwarf_object_detector_fd(fd, &ftype,
         &endian,&offsetsize,&filesize,&errcode);
@@ -234,7 +236,6 @@ dwarf_init_b(int fd,
         }
     case DW_FTYPE_MACH_O: {
         res = _dwarf_macho_setup(fd,"",
-            lib_owns_fd,
             ftype,endian,offsetsize,filesize,
             access,group_number,errhand,errarg,ret_dbg,error);
         return res;
@@ -243,11 +244,8 @@ dwarf_init_b(int fd,
     case DW_FTYPE_PE: {
         res = _dwarf_pe_setup(fd,
             "",
-            lib_owns_fd,
             ftype,endian,offsetsize,filesize,
             access,group_number,errhand,errarg,ret_dbg,error);
-    if (res == DW_DLV_NO_ENTRY) {
-    }
         return res;
         }
     }
@@ -270,6 +268,9 @@ dwarf_finish(Dwarf_Debug dbg, Dwarf_Error * error)
         DWARF_DBG_ERROR(NULL, DW_DLE_DBG_NULL, DW_DLV_ERROR);
     }
     if (dbg->de_obj_file) {
+        /*  The initial character of a valid 
+            dbg->de_obj_file->object struct is a letter:
+            E, M, or P */
         char otype  = *(char *)(dbg->de_obj_file->object);
 
         if (otype == 'E') {
@@ -281,6 +282,9 @@ dwarf_finish(Dwarf_Debug dbg, Dwarf_Error * error)
         } else {
             /*  Do nothing. A serious internal error */
         }
+    }
+    if (dbg->de_owns_fd) {
+        close(dbg->de_fd);
     }
     return dwarf_object_finish(dbg, error);
 }

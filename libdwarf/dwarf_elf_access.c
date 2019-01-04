@@ -213,11 +213,8 @@ typedef struct {
     Dwarf_Unsigned   section_count;
     Dwarf_Endianness endianness;
     Dwarf_Small      machine;
-
-    dwarf_elf_handle elf;
-    int              elf_internals_fd;
-    char             libdwarf_owns_fd;
     char             libdwarf_owns_elf;
+    dwarf_elf_handle elf;
 
     Elf32_Ehdr *ehdr32;
 #ifdef HAVE_ELF64_GETEHDR
@@ -324,31 +321,6 @@ dwarf_elf_object_access_internals_init(void* obj_in,
     }
     return DW_DLV_OK;
 }
-
-/*  When libdwarf owns the fd record that here so it can
-    be closed after Elf closed (Elf is already
-    marked owned by libdwarf at this point). */
-int
-_dwarf_elf_record_owned_fd(Dwarf_Debug dbg,
-   int fd,
-   UNUSEDARG Dwarf_Error *error)
-{
-    struct Dwarf_Obj_Access_Interface_s * doai = 0;
-    dwarf_elf_object_access_internals_t* obj = 0;
-
-    doai = dbg->de_obj_file;
-    if (!doai) {
-        return DW_DLV_OK;
-    }
-    obj = (dwarf_elf_object_access_internals_t*)doai->object;
-    if (!obj) {
-        return DW_DLV_OK;
-    }
-    obj->elf_internals_fd = fd;
-    obj->libdwarf_owns_fd = TRUE;
-    return DW_DLV_OK;
-}
-
 
 /* dwarf_elf_object_access_get_byte_order */
 static
@@ -1491,11 +1463,6 @@ dwarf_elf_object_access_finish(Dwarf_Obj_Access_Interface* obj)
                 dwarf_init(), or dwarf_init_b()
                 interfaces. */
             elf_end(internals->elf);
-        }
-        if (internals->libdwarf_owns_fd){
-            /*  Only happens with dwarf_init_path()
-                interface. */
-            close(internals->elf_internals_fd);
         }
     }
     free(obj->object);
