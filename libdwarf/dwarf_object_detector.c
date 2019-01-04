@@ -31,8 +31,10 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "config.h"
 #include <stdio.h>
+#if 0
 #include <sys/types.h> /* fstat */
 #include <sys/stat.h> /* fstat */
+#endif
 #include <fcntl.h> /* O_RDONLY */
 #ifdef HAVE_UNISTD_H
 #include <unistd.h> /* lseek read close */

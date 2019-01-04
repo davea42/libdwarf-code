@@ -920,6 +920,8 @@ extern int _dwarf_elf_setup(int fd,
     Dwarf_Handler errhand,
     Dwarf_Ptr errarg,
     Dwarf_Debug *dbg,Dwarf_Error *error);
+extern int _dwarf_elf_record_owned_fd(Dwarf_Debug dbg,
+   int fd,Dwarf_Error *error);
 
 extern int _dwarf_macho_setup(int fd,
     char *true_path,

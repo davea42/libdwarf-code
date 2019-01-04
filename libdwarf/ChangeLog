@@ -1,3 +1,24 @@
+2019-01-04   David Anderson
+     * configure.ac: Version 20190104
+     * dwarf_elf_access.c: Now records that libdwarf owns
+       its fd in the elf case and arranges to close it
+       when the Dwarf_Debug is being closed.
+       This is the case of dwarf_init_path().
+       Hopefully will address Coverity CID 190599.
+     * dwarf_object_detector.c: Now that struct stat
+       is not in use delete the sys/types.h and sys/stat.h
+       includes as they are no longer needed.
+     * dwarf_generic_init(dwarf_init_path): When libdwarf 
+       owns the fd, call _dwarf_elf_record_owned_fd()
+       to record that information.
+       In the default case (not a known object type)
+       we also now close the fd.
+     * dwarf_opaque.h: Add prototype for 
+       _dwarf_elf_record_owned_fd, a new internal function
+       so the fd can be closed by libdwarf only when 
+       libdwarf owns it.
+     * libdwarf_version.h: New date string.
+
 2019-01-03   David Anderson
      * dwarf_object_detector.c: Had a pointless call to stat()
        which was noticed by Coverity CID  190601
@@ -5,7 +26,6 @@
      * dwarf_generic_init(dwarf_init_path):
        Serious bugs introduced yesterday.
        Coverity CID 190600.
-       Coverity CID 190599 is a false positive,
        the fd is remembered in the Dwarf_Debug
        being created and will eventually be closed
        when the Dwarf_Debug is closed.

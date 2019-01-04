@@ -152,8 +152,13 @@ int dwarf_init_path(const char *path,
         if (res != DW_DLV_OK) {
             close(fd);
             fd = -1;
-        } /*  Else the ret_dbg remembers fd (closed later) .
+        } 
+        res = _dwarf_elf_record_owned_fd(*ret_dbg,fd,error);
+        /*  Else the ret_dbg remembers fd (closed later) .
               Coverity finds CID 190599 which is a false positive. */
+        if (res != DW_DLV_OK) {
+            close(fd);
+        }
         return res;
     }
     case DW_FTYPE_MACH_O: {
@@ -185,6 +190,7 @@ int dwarf_init_path(const char *path,
         return res;
     }
     default:
+        close(fd);
         DWARF_DBG_ERROR(NULL, DW_DLE_FILE_WRONG_TYPE, DW_DLV_ERROR);
     }
     return DW_DLV_NO_ENTRY; /* placeholder for now */
