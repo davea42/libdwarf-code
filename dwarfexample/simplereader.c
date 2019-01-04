@@ -379,7 +379,10 @@ main(int argc, char **argv)
     Dwarf_Error *errp  = 0;
     int simpleerrhand = 0;
     int i = 0;
+    #define MACHO_PATH_LEN 2000
+    char macho_real_path[MACHO_PATH_LEN];
 
+    macho_real_path[0] = 0;
     for(i = 1; i < (argc-1) ; ++i) {
         if(strcmp(argv[i],"--names") == 0) {
             namesoptionon=1;
@@ -440,7 +443,10 @@ main(int argc, char **argv)
         /* Not a very useful errarg... */
         errarg = (Dwarf_Ptr)1;
     }
-    res = dwarf_init_path(filepath,0,0,DW_DLC_READ,
+    res = dwarf_init_path(filepath,
+        macho_real_path,
+        MACHO_PATH_LEN,
+        DW_DLC_READ,
         DW_GROUPNUMBER_ANY,errhand,errarg,&dbg,
         0,0,0,errp);
     if(res != DW_DLV_OK) {
