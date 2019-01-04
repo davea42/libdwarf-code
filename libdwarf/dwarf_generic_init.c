@@ -152,7 +152,8 @@ int dwarf_init_path(const char *path,
         if (res != DW_DLV_OK) {
             close(fd);
             fd = -1;
-        } /* else the ret_dbg remembers fd (closed later) . */
+        } /*  Else the ret_dbg remembers fd (closed later) .
+              Coverity finds CID 190599 which is a false positive. */
         return res;
     }
     case DW_FTYPE_MACH_O: {
@@ -165,7 +166,8 @@ int dwarf_init_path(const char *path,
         if (res != DW_DLV_OK) {
             close(fd);
             fd = -1;
-        } /* else the ret_dbg remembers fd (closed later) . */
+        } /*  Else the ret_dbg remembers fd (closed later) .
+              Coverity finds CID 190599 which is a false positive. */
         return res;
     }
     case DW_FTYPE_PE: {
@@ -178,7 +180,8 @@ int dwarf_init_path(const char *path,
         if (res != DW_DLV_OK) {
             close(fd);
             fd = -1;
-        } /* else the ret_dbg remembers fd (closed later) . */
+        } /*  Else the ret_dbg remembers fd (closed later) .
+              Coverity finds CID 190599 which is a false positive. */
         return res;
     }
     default:
