@@ -285,6 +285,7 @@ dwarf_finish(Dwarf_Debug dbg, Dwarf_Error * error)
     }
     if (dbg->de_owns_fd) {
         close(dbg->de_fd);
+        dbg->de_owns_fd = FALSE;
     }
     return dwarf_object_finish(dbg, error);
 }

@@ -1,4 +1,7 @@
 2019-01-04   David Anderson
+     * dwarf_generic_init.c: After closing de_fd,
+       set de_owns_fd FALSE as an extra guard.
+2019-01-04   David Anderson
      * dwarf_object_detector.c: Ensure the configure
        can set O_BINARY if necessary so open() will use it.
 2019-01-04   David Anderson
