@@ -1,3 +1,5 @@
+2019-01-05   David Anderson
+     * dwarf_generic_init.c: Removed trailing whitespace.
 2019-01-04   David Anderson
      * dwarf_generic_init.c: After closing de_fd,
        set de_owns_fd FALSE as an extra guard.

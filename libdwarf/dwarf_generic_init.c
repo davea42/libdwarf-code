@@ -69,7 +69,7 @@
 #define TRUE   1
 /*  An original basic dwarf initializer function for consumers.
     Return a libdwarf error code on error, return DW_DLV_OK
-    if this succeeds.  
+    if this succeeds.
     dwarf_init_b() is a better choice where there
     are section groups in an object file. */
 int
@@ -153,7 +153,7 @@ int dwarf_init_path(const char *path,
         if (res != DW_DLV_OK) {
             close(fd);
             fd = -1;
-        } else { 
+        } else {
             dbg->de_fd = fd;
             dbg->de_owns_fd = TRUE;
         }
@@ -268,7 +268,7 @@ dwarf_finish(Dwarf_Debug dbg, Dwarf_Error * error)
         DWARF_DBG_ERROR(NULL, DW_DLE_DBG_NULL, DW_DLV_ERROR);
     }
     if (dbg->de_obj_file) {
-        /*  The initial character of a valid 
+        /*  The initial character of a valid
             dbg->de_obj_file->object struct is a letter:
             E, M, or P */
         char otype  = *(char *)(dbg->de_obj_file->object);
