@@ -2,7 +2,7 @@
   Copyright (C) 2000-2006 Silicon Graphics, Inc.  All Rights Reserved.
   Portions Copyright 2007-2010 Sun Microsystems, Inc. All rights reserved.
   Portions Copyright 2008-2010 Arxan Technologies, Inc. All rights reserved.
-  Portions Copyright 2011-2015 David Anderson. All rights reserved.
+  Portions Copyright 2011-2019 David Anderson. All rights reserved.
   Portions Copyright 2012 SN Systems Ltd. All rights reserved.
 
   This program is free software; you can redistribute it and/or modify it
@@ -52,6 +52,10 @@
 #include "dwarf_object_detector.h"
 #include "dwarf_elf_access.h" /* Needed while libelf in use */
 
+#ifndef O_BINARY
+#define O_BINARY 0
+#endif /* O_BINARY */
+
 /*  This is the initialization set intended to
     handle multiple object formats.
     Created September 2018  */
@@ -63,9 +67,11 @@
 
 #define FALSE  0
 #define TRUE   1
-/*  The basic dwarf initializer functions for consumers.
+/*  An original basic dwarf initializer function for consumers.
     Return a libdwarf error code on error, return DW_DLV_OK
-    if this succeeds.  */
+    if this succeeds.  
+    dwarf_init_b() is a better choice where there
+    are section groups in an object file. */
 int
 dwarf_init(int fd,
     Dwarf_Unsigned access,
@@ -76,7 +82,26 @@ dwarf_init(int fd,
         errhand,errarg,ret_dbg,error);
 }
 
+static int
+open_a_file(const char * name)
+{
+    /* Set to a file number that cannot be legal. */
+    int fd = -1;
 
+#if HAVE_ELF_OPEN
+    /*  It is not possible to share file handles
+        between applications or DLLs. Each application has its own
+        file-handle table. For two applications to use the same file
+        using a DLL, they must both open the file individually.
+        Let the 'libelf' dll open and close the file.  */
+    fd = elf_open(name, O_RDONLY | O_BINARY);
+#else
+    fd = open(name, O_RDONLY | O_BINARY);
+#endif
+    return fd;
+}
+
+/* New in December 2018. */
 int dwarf_init_path(const char *path,
     char *true_path_out_buffer,
     unsigned true_path_bufferlen,
@@ -96,7 +121,8 @@ int dwarf_init_path(const char *path,
     Dwarf_Unsigned filesize = 0;
     int res = 0;
     int errcode = 0;
-    int lib_owns_fd = TRUE;
+    int fd = -1;
+    Dwarf_Debug dbg = 0;
 
     res = dwarf_object_detector_path(path,
         true_path_out_buffer,
@@ -108,55 +134,74 @@ int dwarf_init_path(const char *path,
     if (res == DW_DLV_ERROR) {
         DWARF_DBG_ERROR(NULL, DW_DLE_FILE_UNAVAILABLE, DW_DLV_ERROR);
     }
+    if (true_path_out_buffer) {
+        fd = open_a_file(true_path_out_buffer);
+    } else {
+        fd = open_a_file(path);
+    }
+    if(fd == -1) {
+        DWARF_DBG_ERROR(NULL, DW_DLE_FILE_UNAVAILABLE,
+            DW_DLV_ERROR);
+    }
     switch(ftype) {
     case DW_FTYPE_ELF: {
-        int fd = -1;
-        if (true_path_out_buffer) {
-            fd = open(true_path_out_buffer,O_RDONLY);
-        } else {
-            fd = open(path,O_RDONLY);
-        }
-        if(fd == -1) {
-            DWARF_DBG_ERROR(NULL, DW_DLE_FILE_UNAVAILABLE,
-                DW_DLV_ERROR);
-        }
         res = _dwarf_elf_setup(fd,
-            true_path_out_buffer?true_path_out_buffer:"",
+            true_path_out_buffer?
+                true_path_out_buffer:(char *)path,
             ftype,endian,offsetsize,filesize,
-            access,groupnumber,errhand,errarg,ret_dbg,error);
+            access,groupnumber,errhand,errarg,&dbg,error);
         if (res != DW_DLV_OK) {
             close(fd);
             fd = -1;
-        } /* else the ret_dbg remembers fd as necessary. */
+        } else { 
+            dbg->de_fd = fd;
+            dbg->de_owns_fd = TRUE;
+        }
+        *ret_dbg = dbg;
         return res;
     }
     case DW_FTYPE_MACH_O: {
-        int fd = -1;
         res = _dwarf_macho_setup(fd,
-            true_path_out_buffer?true_path_out_buffer:"",
-            lib_owns_fd,
+            true_path_out_buffer?
+                true_path_out_buffer:(char *)path,
             ftype,endian,offsetsize,filesize,
-            access,groupnumber,errhand,errarg,ret_dbg,error);
+            access,groupnumber,errhand,errarg,&dbg,error);
+        if (res != DW_DLV_OK) {
+            close(fd);
+            fd = -1;
+        } else {
+            dbg->de_fd = fd;
+            dbg->de_owns_fd = TRUE;
+        }
+        *ret_dbg = dbg;
         return res;
     }
     case DW_FTYPE_PE: {
-        int fd = -1;
         res = _dwarf_pe_setup(fd,
-            true_path_out_buffer?true_path_out_buffer:"",
-            lib_owns_fd,
+            true_path_out_buffer?
+                true_path_out_buffer:(char *)path,
             ftype,endian,offsetsize,filesize,
-            access,groupnumber,errhand,errarg,ret_dbg,error);
+            access,groupnumber,errhand,errarg,&dbg,error);
+        if (res != DW_DLV_OK) {
+            close(fd);
+            fd = -1;
+        } else {
+            dbg->de_fd = fd;
+            dbg->de_owns_fd = TRUE;
+        }
+        *ret_dbg = dbg;
         return res;
     }
     default:
+        close(fd);
         DWARF_DBG_ERROR(NULL, DW_DLE_FILE_WRONG_TYPE, DW_DLV_ERROR);
     }
     return DW_DLV_NO_ENTRY; /* placeholder for now */
 }
 
 
-/* To be revised to not use libelf. */
-/* New March 2017 */
+/*  New March 2017, this provides for readinng
+    object files with multiple elf section groups.  */
 int
 dwarf_init_b(int fd,
     Dwarf_Unsigned access,
@@ -172,7 +217,6 @@ dwarf_init_b(int fd,
     Dwarf_Unsigned   filesize = 0;
     int res = 0;
     int errcode = 0;
-    int lib_owns_fd = FALSE;
 
     res = dwarf_object_detector_fd(fd, &ftype,
         &endian,&offsetsize,&filesize,&errcode);
@@ -192,7 +236,6 @@ dwarf_init_b(int fd,
         }
     case DW_FTYPE_MACH_O: {
         res = _dwarf_macho_setup(fd,"",
-            lib_owns_fd,
             ftype,endian,offsetsize,filesize,
             access,group_number,errhand,errarg,ret_dbg,error);
         return res;
@@ -201,11 +244,8 @@ dwarf_init_b(int fd,
     case DW_FTYPE_PE: {
         res = _dwarf_pe_setup(fd,
             "",
-            lib_owns_fd,
             ftype,endian,offsetsize,filesize,
             access,group_number,errhand,errarg,ret_dbg,error);
-    if (res == DW_DLV_NO_ENTRY) {
-    }
         return res;
         }
     }
@@ -228,6 +268,9 @@ dwarf_finish(Dwarf_Debug dbg, Dwarf_Error * error)
         DWARF_DBG_ERROR(NULL, DW_DLE_DBG_NULL, DW_DLV_ERROR);
     }
     if (dbg->de_obj_file) {
+        /*  The initial character of a valid 
+            dbg->de_obj_file->object struct is a letter:
+            E, M, or P */
         char otype  = *(char *)(dbg->de_obj_file->object);
 
         if (otype == 'E') {
@@ -239,6 +282,10 @@ dwarf_finish(Dwarf_Debug dbg, Dwarf_Error * error)
         } else {
             /*  Do nothing. A serious internal error */
         }
+    }
+    if (dbg->de_owns_fd) {
+        close(dbg->de_fd);
+        dbg->de_owns_fd = FALSE;
     }
     return dwarf_object_finish(dbg, error);
 }

@@ -31,8 +31,8 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "config.h"
 #include <stdio.h>
-#include <sys/types.h> /* fstat */
-#include <sys/stat.h> /* fstat */
+#include <sys/types.h> /* open() */
+#include <sys/stat.h> /* open() */
 #include <fcntl.h> /* O_RDONLY */
 #ifdef HAVE_UNISTD_H
 #include <unistd.h> /* lseek read close */
@@ -44,6 +44,10 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "memcpy_swap.h"
 #include "dwarf_object_read_common.h"
 #include "dwarf_object_detector.h"
+
+#ifndef O_BINARY
+#define O_BINARY 0
+#endif /* O_BINARY */
 
 /* This is the main() program for the object_detector executable. */
 
@@ -512,7 +516,6 @@ dwarf_object_detector_path(const char  *path,
     char *cp = 0;
     size_t plen = strlen(path);
     size_t dsprefixlen = sizeof(DSYM_SUFFIX);
-    struct stat statbuf;
     int fd = -1;
     int res = 0;
     int have_outpath = outpath && outpath_len;
@@ -524,12 +527,6 @@ dwarf_object_detector_path(const char  *path,
 #define S_ISDIR(mode) (((mode) & S_IFMT) == S_IFDIR)
 #endif
 
-    res = stat(path,&statbuf);
-    if(res == -1) {
-        /*  Test for the only value other than 0 possible.
-            -1 means error.*/
-        return DW_DLV_NO_ENTRY;
-    }
     if (have_outpath) {
         if ((2*plen + dsprefixlen +2) >= outpath_len) {
             *errcode =  DW_DLE_PATH_SIZE_TOO_SMALL;
@@ -538,14 +535,14 @@ dwarf_object_detector_path(const char  *path,
         cp = dw_stpcpy(outpath,path);
         cp = dw_stpcpy(cp,DSYM_SUFFIX);
         dw_stpcpy(cp,getbasename(path));
-        fd = open(outpath,O_RDONLY);
+        fd = open(outpath,O_RDONLY|O_BINARY);
         if (fd < 0) {
             *outpath = 0;
-            fd = open(path,O_RDONLY);
+            fd = open(path,O_RDONLY|O_BINARY);
             dw_stpcpy(outpath,path);
         }
     } else {
-        fd = open(path,O_RDONLY);
+        fd = open(path,O_RDONLY|O_BINARY);
     }
     if (fd < 0) {
         if (have_outpath) {

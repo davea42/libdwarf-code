@@ -574,6 +574,15 @@ struct Dwarf_Debug_s {
     Dwarf_Handler de_errhand;
     Dwarf_Ptr de_errarg;
 
+    /*  Enabling us to close an fd if we own it,
+        as in the case of dwarf_init_path(). 
+        de_fd is only meaningful
+        if de_owns_fd is set.  Each object
+        file type has any necessary fd recorded
+        under de_obj_file. */
+    int  de_fd;
+    char de_owns_fd;
+
     struct Dwarf_Debug_InfoTypes_s de_info_reading;
     struct Dwarf_Debug_InfoTypes_s de_types_reading;
 
@@ -920,10 +929,8 @@ extern int _dwarf_elf_setup(int fd,
     Dwarf_Handler errhand,
     Dwarf_Ptr errarg,
     Dwarf_Debug *dbg,Dwarf_Error *error);
-
 extern int _dwarf_macho_setup(int fd,
     char *true_path,
-    int lib_owns_fd,
     unsigned ftype,
     unsigned endian,
     unsigned offsetsize,
@@ -937,7 +944,6 @@ void _dwarf_destruct_macho_access(struct Dwarf_Obj_Access_Interface_s *aip);
 
 extern int _dwarf_pe_setup(int fd,
     char *path,
-    int lib_owns_fd,
     unsigned ftype,
     unsigned endian,
     unsigned offsetsize,

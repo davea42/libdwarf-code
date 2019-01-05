@@ -70,6 +70,9 @@
 #include <stdio.h>
 #include <sys/stat.h>
 #include <sys/types.h>
+#ifdef HAVE_UNISTD_H
+#include <unistd.h> /* for close */
+#endif /* HAVE_UNISTD_H */
 #include <string.h>
 #include <stdlib.h>
 
@@ -204,16 +207,16 @@ extern Elf64_Shdr *elf64_getshdr(Elf_Scn *);
 typedef struct {
     char             ident[8];
     const char *     path;
-    dwarf_elf_handle elf;
     int              is_64bit;
     Dwarf_Small      length_size;
     Dwarf_Small      pointer_size;
     Dwarf_Unsigned   section_count;
     Dwarf_Endianness endianness;
     Dwarf_Small      machine;
-    int              libdwarf_owns_elf;
-    Elf32_Ehdr *ehdr32;
+    char             libdwarf_owns_elf;
+    dwarf_elf_handle elf;
 
+    Elf32_Ehdr *ehdr32;
 #ifdef HAVE_ELF64_GETEHDR
     Elf64_Ehdr *ehdr64;
 #endif
@@ -1456,6 +1459,9 @@ dwarf_elf_object_access_finish(Dwarf_Obj_Access_Interface* obj)
         dwarf_elf_object_access_internals_t *internals =
             (dwarf_elf_object_access_internals_t *)obj->object;
         if (internals->libdwarf_owns_elf){
+            /*  Happens with dwarf_init_path(),
+                dwarf_init(), or dwarf_init_b()
+                interfaces. */
             elf_end(internals->elf);
         }
     }
