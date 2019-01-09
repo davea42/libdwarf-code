@@ -89,9 +89,9 @@ dwarf_elf_init_b(dwarf_elf_handle elf_file_pointer,
         ret_dbg, error);
     if (res != DW_DLV_OK){
         dwarf_elf_object_access_finish(binary_interface);
+        return res;
     }
     /* DBG known */
-
     return res;
 }
 
@@ -184,7 +184,8 @@ _dwarf_elf_setup(int fd,
         dbg, error);
     if (res != DW_DLV_OK){
         dwarf_elf_object_access_finish(binary_interface);
+    } else {
+        (*dbg)->de_filesize = filesize;
     }
-    (*dbg)->de_filesize = filesize;
     return res;
 }

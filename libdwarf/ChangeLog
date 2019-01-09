@@ -1,3 +1,9 @@
+2019-01-09   David Anderson
+     * dwarf_original_elf_init.c: One of the calls to
+       dwarf_object_init_b() was checking the result code
+       then doing a statment that will crash the caller unless
+       the result code was DW_DLV_OK.
+     * dwarf_generic_init.c: Removed trailing whitespace.
 2019-01-04   David Anderson
      * dwarf_generic_init.c: After closing de_fd,
        set de_owns_fd FALSE as an extra guard.
