@@ -1,3 +1,10 @@
+2019-01-10   David Anderson
+     * libdwarf_version.h: New date string.
+2019-01-09   David Anderson
+     * dwarf_original_elf_init.c: One of the calls to
+       dwarf_object_init_b() was checking the result code
+       then doing a statment that will crash the caller unless
+       the result code was DW_DLV_OK.
 2019-01-05   David Anderson
      * dwarf_generic_init.c: Removed trailing whitespace.
 2019-01-04   David Anderson

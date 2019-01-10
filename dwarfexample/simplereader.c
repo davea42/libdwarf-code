@@ -78,6 +78,12 @@
         it accesses the CU/TU DIE and then
         uses that DIE to get the fission data.
 
+    New January 2019:
+        --use-init-fd
+        Instead of using dwarf_init_path(), use
+        dwarf_init_fd() to make particular
+        tests of that interface.
+
     To use, try
         make
         ./simplereader simplereader
@@ -371,6 +377,8 @@ main(int argc, char **argv)
 {
     Dwarf_Debug dbg = 0;
     const char *filepath = 0;
+    int use_init_fd = FALSE;
+    int my_init_fd = 0;
     int res = DW_DLV_ERROR;
     Dwarf_Error error;
     Dwarf_Handler errhand = 0;
@@ -412,6 +420,9 @@ main(int argc, char **argv)
         } else if(startswithextractnum(argv[i],"--fissionfordie=",
             &fissionfordie)) {
             /* done */
+        } else if(!strcmp(argv[i],"--use-init-fd")) {
+            use_init_fd = TRUE;
+            /* done */
         } else {
             printf("Unknown argument \"%s\", give up \n",argv[i]);
             exit(1);
@@ -443,12 +454,30 @@ main(int argc, char **argv)
         /* Not a very useful errarg... */
         errarg = (Dwarf_Ptr)1;
     }
-    res = dwarf_init_path(filepath,
-        macho_real_path,
-        MACHO_PATH_LEN,
-        DW_DLC_READ,
-        DW_GROUPNUMBER_ANY,errhand,errarg,&dbg,
-        0,0,0,errp);
+    if (use_init_fd) {
+        /*  For testing a libdwarf init function.
+            We are not finding the true dSYM Macho-object
+            here if that applies, so it's up to the user
+            of simplereader to pass in the correct
+            dSYM object in the dSYM case. 
+            dwarf_object_detector_path() could do
+            the dSYM object finding, but to keep this simple
+            we leave that to the reader.  */ 
+        my_init_fd = open(filepath,O_RDONLY|O_BINARY);
+        if (my_init_fd == -1) {
+            printf("Giving up, cannot open %s\n",filepath);
+            exit(1);
+        }
+        res = dwarf_init(my_init_fd,DW_DLC_READ,
+            errhand,errarg,&dbg,errp);
+    } else {
+        res = dwarf_init_path(filepath,
+            macho_real_path,
+            MACHO_PATH_LEN,
+            DW_DLC_READ,
+            DW_GROUPNUMBER_ANY,errhand,errarg,&dbg,
+            0,0,0,errp);
+    }
     if(res != DW_DLV_OK) {
         printf("Giving up, cannot do DWARF processing\n");
         cleanupstr();
@@ -550,6 +579,9 @@ main(int argc, char **argv)
     res = dwarf_finish(dbg,errp);
     if(res != DW_DLV_OK) {
         printf("dwarf_finish failed!\n");
+    }
+    if (use_init_fd) {
+        close(my_init_fd);
     }
     if (dumpallnamesfile) {
         fclose(dumpallnamesfile);
