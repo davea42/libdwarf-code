@@ -777,7 +777,6 @@ echo "  CPPFLAGS.............: $CPPFLAGS"
 echo "  CFLAGS...............: $CFLAGS ${c_compiler_flags}"
 echo "  LDFLAGS..............: $LDFLAGS"
 echo "  LIBS.................: $LIBS"
-echo "  DWARF_LIBS used in linking libdwarf"
 echo "  DWARF_LIBS...........: $DWARF_LIBS"
 echo
 echo "Installation...........: make install (as root if needed, with 'su' or 'sudo')"
