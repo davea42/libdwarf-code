@@ -116,15 +116,6 @@
     Only used with malloc_check.c and that is basically obsolete. */
 #define MAX_DW_DLA		0x3a
 
-/*Dwarf_Word  is unsigned word usable for index, count in memory */
-/*Dwarf_Sword is   signed word usable for index, count in memory */
-/*  They are 32 or 64 bits depending if 64 bit longs or not, which
-    fits the  ILP32 and LP64 models
-    These work equally well with ILP64.  */
-
-typedef unsigned long Dwarf_Word;
-typedef signed long Dwarf_Sword;
-
 typedef signed char Dwarf_Sbyte;
 typedef unsigned char Dwarf_Ubyte;
 typedef signed short Dwarf_Shalf;

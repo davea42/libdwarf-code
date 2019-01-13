@@ -49,7 +49,7 @@ typedef struct Dwarf_Global_Context_s *Dwarf_Global_Context;
 struct Dwarf_Global_Context_s {
 
     /*  Length in .debug_pubnames (etc) of a set of names for a
-        compilation-unit. Dwarf_Word pu_length; The value is not made
+        compilation-unit. Dwarf_Unsigned pu_length; The value is not made
         available outside libdwarf and not used inside, so no need to
         record it. */
 

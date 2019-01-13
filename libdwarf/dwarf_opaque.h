@@ -287,7 +287,7 @@ struct Dwarf_Section_s {
     Dwarf_Unsigned dss_entrysize;
     /*  dss_index is the section index as things are numbered in
         an object file being read.   An Elf section number. */
-    Dwarf_Word     dss_index;
+    Dwarf_Unsigned     dss_index;
     /*  dss_addr is the 'section address' which is only
         non-zero for a GNU eh section.
         Purpose: to handle DW_EH_PE_pcrel encoding. Leaving
@@ -303,7 +303,7 @@ struct Dwarf_Section_s {
         group sections filled in when the corresponding is
         not in the COMDAT group list.  .debug_abbrev is
         an example. */
-    Dwarf_Word     dss_group_number;
+    Dwarf_Unsigned     dss_group_number;
 
     /* These for reporting compression */
     Dwarf_Unsigned dss_uncompressed_length;
@@ -334,7 +334,7 @@ struct Dwarf_Section_s {
     /*  dss_link should be zero unless a section has a link
         to another (sh_link).  Used to access relocation data for
         a section (and for symtab section, access its strtab). */
-    Dwarf_Word     dss_link;
+    Dwarf_Unsigned     dss_link;
     /*  The following is used when reading .rela sections
         (such sections appear in some .o files). */
     Dwarf_Half     dss_reloc_index; /* Zero means ignore the reloc fields. */
@@ -348,7 +348,7 @@ struct Dwarf_Section_s {
     /*  dss_reloc_link should be zero unless a reloc section has a link
         to another (sh_link).  Used to access the symtab for relocations
         a section. */
-    Dwarf_Word     dss_reloc_link;
+    Dwarf_Unsigned     dss_reloc_link;
     /*  Pointer to the elf symtab, used for elf .rela. Leave it 0
         if not relevant. */
     struct Dwarf_Section_s *dss_symtab;
@@ -364,8 +364,8 @@ struct Dwarf_Section_s {
         just leave these fields zero. Which is essentially
         automatic as they are not in
         Dwarf_Obj_Access_Section_s.  */
-    Dwarf_Word  dss_flags;
-    Dwarf_Word  dss_addralign;
+    Dwarf_Unsigned  dss_flags;
+    Dwarf_Unsigned  dss_addralign;
 };
 
 /*  Overview: if next_to_use== first, no error slots are used.
@@ -753,8 +753,11 @@ struct Dwarf_Chain_o {
 #define CU_ADDRESS_SIZE_SIZE    sizeof(Dwarf_Small)
 
 #define ORIGINAL_DWARF_OFFSET_SIZE  4
+/*  The DISTINGUISHED VALUE is 4 byte value defined by DWARF
+    since DWARF3. */
 #define DISTINGUISHED_VALUE  0xffffffff
 #define DISTINGUISHED_VALUE_OFFSET_SIZE 8
+#define DISTINGUISHED_VALUE_ARRAY(x)  char x[4] = { 0xff,0xff,0xff,0xff }
 
 /*  We don't load the sections until they are needed. This function is
     used to load the section.  */

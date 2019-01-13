@@ -36,6 +36,7 @@
 #include "pro_section.h"
 #include "pro_types.h"
 
+#define SIZEOFT32 4
 
 /*
     This function adds another type name to the
@@ -214,10 +215,10 @@ _dwarf_transform_simplename_to_disk(Dwarf_P_Debug dbg,
     cur_stream_bytes_ptr = stream_bytes;
 
     if (extension_size) {
-        Dwarf_Unsigned x = DISTINGUISHED_VALUE;
+        DISTINGUISHED_VALUE_ARRAY(v4);
 
         WRITE_UNALIGNED(dbg, cur_stream_bytes_ptr,
-            (const void *) &x, sizeof(x), extension_size);
+            (const void *)&v4[0],SIZEOFT32 , extension_size);
         cur_stream_bytes_ptr += extension_size;
 
     }

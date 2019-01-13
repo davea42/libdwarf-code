@@ -129,7 +129,7 @@ _dwarf_read_loc_expr_op(Dwarf_Debug dbg,
     Dwarf_Unsigned operand2 = 0;
     Dwarf_Unsigned operand3 = 0;
     Dwarf_Small atom = 0;
-    Dwarf_Word leb128_length = 0;
+    Dwarf_Unsigned leb128_length = 0;
 
     if (offset > loc_block->bl_len) {
         _dwarf_error(dbg,error,DW_DLE_LOCEXPR_OFF_SECTION_END);

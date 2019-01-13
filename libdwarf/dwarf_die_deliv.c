@@ -1521,7 +1521,7 @@ _dwarf_next_die_info_ptr(Dwarf_Byte_Ptr die_info_ptr,
 {
     Dwarf_Byte_Ptr info_ptr = 0;
     Dwarf_Byte_Ptr abbrev_ptr = 0;
-    Dwarf_Word abbrev_code = 0;
+    Dwarf_Unsigned abbrev_code = 0;
     Dwarf_Abbrev_List abbrev_list = 0;
     Dwarf_Half attr = 0;
     Dwarf_Half attr_form = 0;
@@ -1533,7 +1533,7 @@ _dwarf_next_die_info_ptr(Dwarf_Byte_Ptr die_info_ptr,
 
     info_ptr = die_info_ptr;
     DECODE_LEB128_UWORD_CK(info_ptr, utmp,dbg,error,die_info_end);
-    abbrev_code = (Dwarf_Word) utmp;
+    abbrev_code = (Dwarf_Unsigned) utmp;
     if (abbrev_code == 0) {
         /*  Should never happen. Tested before we got here. */
         _dwarf_error(dbg, error, DW_DLE_NEXT_DIE_PTR_NULL);
@@ -1744,7 +1744,7 @@ dwarf_siblingof_b(Dwarf_Debug dbg,
 
     /* die_info_end points 1-past end of die (once set) */
     Dwarf_Byte_Ptr die_info_end = 0;
-    Dwarf_Word abbrev_code = 0;
+    Dwarf_Unsigned abbrev_code = 0;
     Dwarf_Unsigned utmp = 0;
     int lres = 0;
     /* Since die may be NULL, we rely on the input argument. */
@@ -1797,7 +1797,7 @@ dwarf_siblingof_b(Dwarf_Debug dbg,
     } else {
         /* Find sibling die. */
         Dwarf_Bool has_child = false;
-        Dwarf_Sword child_depth = 0;
+        Dwarf_Signed child_depth = 0;
         Dwarf_CU_Context context=0;
 
         /*  We cannot have a legal die unless debug_info was loaded, so
@@ -1920,7 +1920,7 @@ dwarf_siblingof_b(Dwarf_Debug dbg,
         _dwarf_error(dbg, error, DW_DLE_ABBREV_DECODE_ERROR);
         return (DW_DLV_ERROR);
     }
-    abbrev_code = (Dwarf_Word) utmp;
+    abbrev_code = (Dwarf_Unsigned) utmp;
     if (abbrev_code == 0) {
         /* Zero means a null DIE */
         dwarf_dealloc(dbg, ret_die, DW_DLA_DIE);
@@ -1962,7 +1962,7 @@ dwarf_child(Dwarf_Die die,
     Dwarf_Die ret_die = 0;
     Dwarf_Bool has_die_child = 0;
     Dwarf_Debug dbg;
-    Dwarf_Word abbrev_code = 0;
+    Dwarf_Unsigned abbrev_code = 0;
     Dwarf_Unsigned utmp = 0;
     Dwarf_Debug_InfoTypes dis = 0;
     int res = 0;
@@ -2025,7 +2025,7 @@ dwarf_child(Dwarf_Die die,
 
     DECODE_LEB128_UWORD_CK(die_info_ptr, utmp,
         dbg,error,die_info_end);
-    abbrev_code = (Dwarf_Word) utmp;
+    abbrev_code = (Dwarf_Unsigned) utmp;
 
     dis->de_last_di_ptr = die_info_ptr;
 

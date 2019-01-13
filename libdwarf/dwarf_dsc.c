@@ -56,7 +56,7 @@ get_dsc_leb_entries(Dwarf_Debug dbg,
             Dwarf_Unsigned dsc = 0;
             Dwarf_Unsigned low = 0;
             Dwarf_Unsigned high = 0;
-            UNUSEDARG Dwarf_Word leblen = 0;
+            UNUSEDARG Dwarf_Unsigned leblen = 0;
 
             if (ary && (larraycount >= *arraycount)) {
                 _dwarf_error(dbg, error, DW_DLE_DISCR_ARRAY_ERROR);
@@ -90,7 +90,7 @@ get_dsc_leb_entries(Dwarf_Debug dbg,
             Dwarf_Signed dsc = 0;
             Dwarf_Signed low = 0;
             Dwarf_Signed high = 0;
-            UNUSEDARG Dwarf_Word leblen = 0;
+            UNUSEDARG Dwarf_Unsigned leblen = 0;
 
             if (ary && (larraycount >= *arraycount)) {
                 _dwarf_error(dbg, error, DW_DLE_DISCR_ARRAY_ERROR);

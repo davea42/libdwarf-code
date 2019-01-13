@@ -38,6 +38,7 @@
 #include "pro_reloc.h"
 
 
+#define SIZEOFT32 4
 
 /*  This function adds another address range
     to the list of address ranges for the
@@ -185,11 +186,10 @@ _dwarf_transform_arange_to_disk(Dwarf_P_Debug dbg,
         arange, (unsigned long) arange_num_bytes, error);
     arange_ptr = arange;
     if (extension_word_size) {
-        Dwarf_Word x = DISTINGUISHED_VALUE;
-
+        DISTINGUISHED_VALUE_ARRAY(v4);
         WRITE_UNALIGNED(dbg, (void *) arange_ptr,
-            (const void *) &x,
-            sizeof(x), extension_word_size);
+            (const void *)&v4[0] ,
+            SIZEOFT32, extension_word_size);
         arange_ptr += extension_word_size;
     }
 

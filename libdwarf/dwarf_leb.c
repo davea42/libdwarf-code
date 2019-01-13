@@ -54,12 +54,12 @@
 /* Decode ULEB with checking */
 int
 _dwarf_decode_u_leb128_chk(Dwarf_Small * leb128,
-    Dwarf_Word * leb128_length,
+    Dwarf_Unsigned * leb128_length,
     Dwarf_Unsigned *outval,
     Dwarf_Byte_Ptr endptr)
 {
     Dwarf_Unsigned byte     = 0;
-    Dwarf_Word word_number = 0;
+    Dwarf_Unsigned word_number = 0;
     Dwarf_Unsigned number  = 0;
     unsigned shift      = 0;
     /*  The byte_length value will be a small non-negative integer. */
@@ -135,13 +135,13 @@ _dwarf_decode_u_leb128_chk(Dwarf_Small * leb128,
 #define BITSINBYTE 8
 
 int
-_dwarf_decode_s_leb128_chk(Dwarf_Small * leb128, Dwarf_Word * leb128_length,
+_dwarf_decode_s_leb128_chk(Dwarf_Small * leb128, Dwarf_Unsigned * leb128_length,
     Dwarf_Signed *outval,Dwarf_Byte_Ptr endptr)
 {
     Dwarf_Unsigned byte   = 0;
     Dwarf_Signed number  = 0;
     Dwarf_Bool sign      = 0;
-    Dwarf_Word shift     = 0;
+    Dwarf_Unsigned shift     = 0;
     /*  The byte_length value will be a small non-negative integer. */
     unsigned byte_length = 1;
 
@@ -282,7 +282,7 @@ signedtest(unsigned len)
     for ( ; t < len; ++t) {
         int res = 0;
         int encodelen = 0;
-        Dwarf_Word decodelen = 0;
+        Dwarf_Unsigned decodelen = 0;
         Dwarf_Signed decodeval = 0;
 
         res = _dwarf_pro_encode_signed_leb128_nm(
@@ -307,7 +307,7 @@ signedtest(unsigned len)
                 t,stest[t],decodeval);
             ++errcnt;
         }
-        if ((Dwarf_Word)encodelen != decodelen) {
+        if ((Dwarf_Unsigned)encodelen != decodelen) {
             printf("FAIL signed decodelen val index %u val 0x%llx\n",
                 t,stest[t]);
             ++errcnt;
@@ -326,7 +326,7 @@ unsignedtest(unsigned len)
     for ( ; t < len; ++t) {
         int res = 0;
         int encodelen = 0;
-        Dwarf_Word decodelen = 0;
+        Dwarf_Unsigned decodelen = 0;
         Dwarf_Unsigned decodeval = 0;
 
         res = _dwarf_pro_encode_leb128_nm(
@@ -351,7 +351,7 @@ unsignedtest(unsigned len)
                 t,utest[t],decodeval);
             ++errcnt;
         }
-        if ((Dwarf_Word)encodelen != decodelen) {
+        if ((Dwarf_Unsigned)encodelen != decodelen) {
             printf("FAIL signed decodelen val index %u val 0x%llx\n",
                 t,utest[t]);
             ++errcnt;
@@ -401,7 +401,7 @@ specialtests(void)
 {
     unsigned errcnt = 0;
     unsigned vlen = 0;
-    Dwarf_Word decodelen = 0;
+    Dwarf_Unsigned decodelen = 0;
     Dwarf_Signed decodeval = 0;
     Dwarf_Unsigned udecodeval = 0;
     int res;

@@ -64,6 +64,8 @@
 #define FALSE 0
 #endif
 
+#define SIZEOFT32 4
+
 struct Dwarf_Sort_Abbrev_s {
     Dwarf_Unsigned dsa_attr;
     Dwarf_Unsigned dsa_form;
@@ -1329,10 +1331,10 @@ _dwarf_pro_generate_debugline(Dwarf_P_Debug dbg,
     /* total_length */
     du = 0;
     if (extension_size) {
-        Dwarf_Word x = DISTINGUISHED_VALUE;
+        DISTINGUISHED_VALUE_ARRAY(v4);
 
-        WRITE_UNALIGNED(dbg, (void *) data, (const void *) &x,
-        sizeof(x), extension_size);
+        WRITE_UNALIGNED(dbg, (void *) data, (const void *) &v4[0],
+        SIZEOFT32, extension_size);
         data += extension_size;
     }
 
@@ -2003,11 +2005,11 @@ _dwarf_pro_generate_debugframe(Dwarf_P_Debug dbg,
             OFFSET_PLUS_EXTENSION_SIZE,
             error);
         if (extension_size) {
-            Dwarf_Unsigned x = DISTINGUISHED_VALUE;
+            DISTINGUISHED_VALUE_ARRAY(v4);
 
             WRITE_UNALIGNED(dbg, (void *) data,
-                (const void *) &x,
-                sizeof(x), extension_size);
+                (const void *) &v4[0],
+                SIZEOFT32, extension_size);
             data += extension_size;
 
         }
@@ -2085,9 +2087,9 @@ _dwarf_pro_generate_debugframe(Dwarf_P_Debug dbg,
         long fde_length = 0;
         int pad2 = 0;
         Dwarf_P_Cie cie_ptr = 0;
-        Dwarf_Word cie_index = 0;
+        Dwarf_Unsigned cie_index = 0;
         /* index is a global in string.h, so don't name anything index. */
-        Dwarf_Word indx = 0;
+        Dwarf_Unsigned indx = 0;
         int oet_length = 0;
         int afl_length = 0;
         int res = 0;
@@ -2195,11 +2197,11 @@ _dwarf_pro_generate_debugframe(Dwarf_P_Debug dbg,
         du = fde_length;
         {
             if (extension_size) {
-                Dwarf_Word x = DISTINGUISHED_VALUE;
+                DISTINGUISHED_VALUE_ARRAY(v4);
 
                 WRITE_UNALIGNED(dbg, (void *) data,
-                    (const void *) &x,
-                    sizeof(x), extension_size);
+                    (const void *) &v4[0],
+                    SIZEOFT32, extension_size);
                 data += extension_size;
             }
             /* length */
@@ -2743,9 +2745,10 @@ generate_debuginfo_header_2(Dwarf_P_Debug dbg,
         error);
     if (extension_size) {
         /* This for a dwarf-standard 64bit offset. */
-        du = DISTINGUISHED_VALUE;
+        DISTINGUISHED_VALUE_ARRAY(v4);
+
         WRITE_UNALIGNED(dbg, (void *) data,
-            (const void *) &du, sizeof(du), extension_size);
+            (const void *) &v4[0], SIZEOFT32, extension_size);
         data += extension_size;
     }
     abbr_off_ptr = data;
@@ -2815,9 +2818,10 @@ generate_debuginfo_header_5(Dwarf_P_Debug dbg,
         error);
     if (extension_size) {
         /* Impossible in DW5, really, is for IRIX64. But we allow it. */
-        du = DISTINGUISHED_VALUE;
+        DISTINGUISHED_VALUE_ARRAY(v4);
+
         WRITE_UNALIGNED(dbg, (void *) data,
-            (const void *) &du, sizeof(du), extension_size);
+            (const void *) &v4[0], SIZEOFT32, extension_size);
         data += extension_size;
     }
     abbr_off_ptr = data;
@@ -3005,7 +3009,7 @@ _dwarf_pro_generate_debuginfo(Dwarf_P_Debug dbg,
     Dwarf_P_Abbrev abbrev_tail = 0;
     Dwarf_P_Die curdie = 0;
     Dwarf_P_Die first_child = 0;
-    Dwarf_Word dw = 0;
+    Dwarf_Unsigned dw = 0;
     Dwarf_Unsigned du = 0;
     Dwarf_Half dh = 0;
     Dwarf_Unsigned die_off = 0; /* Offset of die in debug_info. */
@@ -3337,7 +3341,7 @@ _dwarf_pro_generate_debuginfo(Dwarf_P_Debug dbg,
                         DWARF_P_DBG_ERROR(dbg, DW_DLE_OFFSET_UFLW,
                             DW_DLV_ERROR);
                     }
-                    dw = (Dwarf_Word) curattr->ar_ref_die->di_offset;
+                    dw = (Dwarf_Unsigned) curattr->ar_ref_die->di_offset;
                     WRITE_UNALIGNED(dbg, (void *) data,
                         (const void *) &dw,
                         sizeof(dw), DWARF_32BIT_SIZE);

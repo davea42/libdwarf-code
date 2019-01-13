@@ -32,6 +32,10 @@
 #include "pro_incl.h"
 #include "pro_expr.h"
 
+#define SIZEOFT16 2
+#define SIZEOFT32 4
+#define SIZEOFT64 8
+
 /*
     This function creates a new expression
     struct that can be used to build up a
@@ -269,8 +273,9 @@ dwarf_add_expr_gen_a(Dwarf_P_Expr expr,
     case DW_OP_const4u:
     case DW_OP_const4s:
         operand = (Dwarf_Small *) & operand_buffer[0];
-        WRITE_UNALIGNED(dbg, operand, &val1, sizeof(val1), 4);
-        operand_size = 4;
+        WRITE_UNALIGNED(dbg, operand, &val1, sizeof(val1), 
+            SIZEOFT32);
+        operand_size = SIZEOFT32;
         break;
 
     case DW_OP_const8u:
@@ -420,14 +425,14 @@ dwarf_add_expr_gen_a(Dwarf_P_Expr expr,
         break;
     case DW_OP_call2:           /* DWARF3 */
         operand = (Dwarf_Small *) & operand_buffer[0];
-        WRITE_UNALIGNED(dbg, operand, &val1, sizeof(val1), 2);
-        operand_size = 2;
+        WRITE_UNALIGNED(dbg, operand, &val1, sizeof(val1), SIZEOFT16);
+        operand_size = SIZEOFT16;
         break;
 
     case DW_OP_call4:           /* DWARF3 */
         operand = (Dwarf_Small *) & operand_buffer[0];
-        WRITE_UNALIGNED(dbg, operand, &val1, sizeof(val1), 4);
-        operand_size = 4;
+        WRITE_UNALIGNED(dbg, operand, &val1, sizeof(val1), SIZEOFT32);
+        operand_size = SIZEOFT32;
         break;
 
     case DW_OP_call_ref:        /* DWARF3 */

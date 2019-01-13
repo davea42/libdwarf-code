@@ -33,7 +33,7 @@
     Make sure ptr is a pointer to a 1-byte type.
     In 2003 and earlier this was a hand-inlined
     version of _dwarf_decode_u_leb128() which did
-    not work correctly if Dwarf_Word was 64 bits.
+    not work correctly if Dwarf_Unsigned was 64 bits.
 
     April 2016: now uses a reader that is careful.
     'return' only in case of error
@@ -41,7 +41,7 @@
 */
 #define DECODE_LEB128_UWORD_CK(ptr, value,dbg,errptr,endptr) \
     do {                                              \
-        Dwarf_Word lu_leblen = 0;                     \
+        Dwarf_Unsigned lu_leblen = 0;                     \
         Dwarf_Unsigned lu_local = 0;                  \
         int lu_res = 0;                               \
         lu_res = _dwarf_decode_u_leb128_chk(ptr,&lu_leblen,&lu_local,endptr); \
@@ -55,7 +55,7 @@
 
 #define DECODE_LEB128_UWORD_LEN_CK(ptr, value,leblen,dbg,errptr,endptr) \
     do {                                              \
-        Dwarf_Word lu_leblen = 0;                     \
+        Dwarf_Unsigned lu_leblen = 0;                     \
         Dwarf_Unsigned lu_local = 0;                  \
         int lu_res = 0;                               \
         lu_res = _dwarf_decode_u_leb128_chk(ptr,&lu_leblen,&lu_local,endptr); \
@@ -73,12 +73,12 @@
     Make sure ptr is a pointer to a 1-byte type.
     In 2003 and earlier this was a hand-inlined
     version of _dwarf_decode_s_leb128() which did
-    not work correctly if Dwarf_Word was 64 bits.
+    not work correctly if Dwarf_Unsigned was 64 bits.
 
 */
 #define DECODE_LEB128_SWORD_CK(ptr, value,dbg,errptr,endptr) \
     do {                                              \
-        Dwarf_Word uleblen = 0;                       \
+        Dwarf_Unsigned uleblen = 0;                       \
         Dwarf_Signed local = 0;                       \
         int lu_res = 0;                               \
         lu_res = _dwarf_decode_s_leb128_chk(ptr,&uleblen,&local,endptr); \
@@ -91,7 +91,7 @@
     } while (0)
 #define DECODE_LEB128_SWORD_LEN_CK(ptr, value,leblen,dbg,errptr,endptr) \
     do {                                              \
-        Dwarf_Word lu_leblen = 0;                     \
+        Dwarf_Unsigned lu_leblen = 0;                     \
         Dwarf_Signed lu_local = 0;                    \
         int lu_res = 0;                               \
         lu_res = _dwarf_decode_s_leb128_chk(ptr,&lu_leblen,\
@@ -361,11 +361,11 @@ typedef Dwarf_Unsigned BIGGEST_UINT;
 /* Fuller checking. Returns DW_DLV_ERROR or DW_DLV_OK
    Caller must set Dwarf_Error */
 int _dwarf_decode_u_leb128_chk(Dwarf_Small * leb128,
-    Dwarf_Word * leb128_length,
+    Dwarf_Unsigned * leb128_length,
     Dwarf_Unsigned *outval,Dwarf_Byte_Ptr endptr);
 
 int _dwarf_decode_s_leb128_chk(Dwarf_Small * leb128,
-    Dwarf_Word * leb128_length,
+    Dwarf_Unsigned * leb128_length,
     Dwarf_Signed *outval, Dwarf_Byte_Ptr endptr);
 
 int

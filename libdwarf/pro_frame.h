@@ -75,7 +75,7 @@ struct Dwarf_P_Fde_s {
     Dwarf_P_Die fde_die;
 
     /* index to asso. cie */
-    Dwarf_Word fde_cie;
+    Dwarf_Unsigned fde_cie;
 
     /*  Address of first location of the code this frame applies to If
         fde_end_symbol non-zero, this represents the offset from the

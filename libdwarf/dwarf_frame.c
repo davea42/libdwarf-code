@@ -193,7 +193,7 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
     Dwarf_Cie cie,
     Dwarf_Debug dbg,
     Dwarf_Half reg_num_of_cfa,
-    Dwarf_Sword * returned_count,
+    Dwarf_Signed * returned_count,
     Dwarf_Bool * has_more_rows,
     Dwarf_Addr * subsequent_pc,
     Dwarf_Error *error)
@@ -250,7 +250,7 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
         dbg->de_pointer_size;
 
     /*  Counts the number of frame instructions executed.  */
-    Dwarf_Word instr_count = 0;
+    Dwarf_Unsigned instr_count = 0;
 
     /*  These contain the current fields of the current frame
         instruction. */
@@ -285,8 +285,8 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
     /*  These are the alignment_factors taken from the Cie provided.
         When no input Cie is provided they are set to 1, because only
         factored offsets are required. */
-    Dwarf_Sword code_alignment_factor = 1;
-    Dwarf_Sword data_alignment_factor = 1;
+    Dwarf_Signed code_alignment_factor = 1;
+    Dwarf_Signed data_alignment_factor = 1;
 
     /*  This flag indicates when an actual alignment factor is needed.
         So if a frame instruction that computes an offset using an
@@ -294,7 +294,7 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
         is returned because the Cie did not have a valid augmentation. */
     Dwarf_Bool need_augmentation = false;
 
-    Dwarf_Word i;
+    Dwarf_Unsigned i;
 
     /*  Initialize first row from associated Cie. Using temp regs
         explicity */
@@ -1106,7 +1106,7 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
             dwarf_dealloc(dbg, dealloc_instr_item, DW_DLA_CHAIN);
         }
         *ret_frame_instr = head_instr_block;
-        *returned_count = (Dwarf_Sword) instr_count;
+        *returned_count = (Dwarf_Signed) instr_count;
     } else {
         *returned_count = 0;
     }
@@ -1130,7 +1130,7 @@ _dwarf_get_return_address_reg(Dwarf_Small *frame_ptr,
     Dwarf_Error *error)
 {
     Dwarf_Unsigned uvalue = 0;
-    Dwarf_Word leb128_length = 0;
+    Dwarf_Unsigned leb128_length = 0;
 
     if (version == 1) {
         if (frame_ptr >= section_end) {
@@ -1556,7 +1556,7 @@ _dwarf_get_fde_info_for_a_pc_row(Dwarf_Fde fde,
 {
     Dwarf_Debug dbg = 0;
     Dwarf_Cie cie = 0;
-    Dwarf_Sword icount = 0;
+    Dwarf_Signed icount = 0;
     int res = 0;
 
     if (fde == NULL) {
@@ -1677,7 +1677,7 @@ dwarf_get_fde_info_for_all_regs(Dwarf_Fde fde,
 
     /* Table size: DW_REG_TABLE_SIZE */
     struct Dwarf_Frame_s fde_table;
-    Dwarf_Sword i = 0;
+    Dwarf_Signed i = 0;
     struct Dwarf_Reg_Rule_s *rule = NULL;
     struct Dwarf_Regtable_Entry_s *out_rule = NULL;
     int res = 0;
@@ -1750,7 +1750,7 @@ dwarf_get_fde_info_for_all_regs3(Dwarf_Fde fde,
 {
 
     struct Dwarf_Frame_s fde_table;
-    Dwarf_Sword i = 0;
+    Dwarf_Signed i = 0;
     int res = 0;
     struct Dwarf_Reg_Rule_s *rule = NULL;
     struct Dwarf_Regtable_Entry3_s *out_rule = NULL;
@@ -2274,7 +2274,7 @@ dwarf_expand_frame_instructions(Dwarf_Cie cie,
     Dwarf_Signed * returned_op_count,
     Dwarf_Error * error)
 {
-    Dwarf_Sword instr_count;
+    Dwarf_Signed instr_count;
     int res = DW_DLV_ERROR;
     Dwarf_Debug dbg = 0;
     Dwarf_Small * instr_start = instruction;

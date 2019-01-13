@@ -113,7 +113,7 @@ dwarf_get_abbrev(Dwarf_Debug dbg,
 
     DECODE_LEB128_UWORD_CK(abbrev_ptr, utmp,
         dbg,error,abbrev_section_end);
-    ret_abbrev->dab_code = (Dwarf_Word) utmp;
+    ret_abbrev->dab_code = utmp;
     if (ret_abbrev->dab_code == 0) {
         *returned_abbrev = ret_abbrev;
         *abbr_count = 0;

@@ -152,7 +152,7 @@ dwarf_uncompress_integer_block(
     remain = input_length_in_bytes;
     ptr = input_block;
     while (remain > 0) {
-        Dwarf_Word len = 0;
+        Dwarf_Unsigned len = 0;
         Dwarf_Signed value = 0;
         int rres = 0;
 
@@ -189,7 +189,7 @@ dwarf_uncompress_integer_block(
     ptr = input_block;
     for (i=0; i<output_length_in_units && remain>0; i++) {
         Dwarf_Signed num;
-        Dwarf_Word len;
+        Dwarf_Unsigned len;
         int sres = 0;
 
         sres = _dwarf_decode_s_leb128_chk((unsigned char *)ptr,
@@ -1080,7 +1080,7 @@ _dwarf_formudata_internal(Dwarf_Debug dbg,
     /* real udata */
     case DW_FORM_loclistx:
     case DW_FORM_udata: {
-        Dwarf_Word leblen = 0;
+        Dwarf_Unsigned leblen = 0;
         DECODE_LEB128_UWORD_LEN_CK(data, ret_value,leblen,
             dbg,error,section_end);
         *return_uval = ret_value;
@@ -1255,7 +1255,7 @@ dwarf_formblock(Dwarf_Attribute attr,
 
     case DW_FORM_block: {
         Dwarf_Byte_Ptr tmp = attr->ar_debug_ptr;
-        Dwarf_Word leblen = 0;
+        Dwarf_Unsigned leblen = 0;
 
         DECODE_LEB128_UWORD_LEN_CK(tmp, length, leblen,
             dbg,error,section_end);
@@ -1666,7 +1666,7 @@ dwarf_formexprloc(Dwarf_Attribute attr,
     }
     if (attr->ar_attribute_form == DW_FORM_exprloc ) {
         Dwarf_Die die = 0;
-        Dwarf_Word leb_len = 0;
+        Dwarf_Unsigned leb_len = 0;
         Dwarf_Byte_Ptr section_start = 0;
         Dwarf_Unsigned section_len = 0;
         Dwarf_Byte_Ptr section_end = 0;

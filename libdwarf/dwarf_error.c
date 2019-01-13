@@ -60,7 +60,7 @@
     a Dwarf_Error struct creation.
 */
 void
-_dwarf_error(Dwarf_Debug dbg, Dwarf_Error * error, Dwarf_Sword errval)
+_dwarf_error(Dwarf_Debug dbg, Dwarf_Error * error, Dwarf_Signed errval)
 {
     Dwarf_Error errptr;
 

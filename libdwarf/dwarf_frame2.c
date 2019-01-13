@@ -306,7 +306,7 @@ _dwarf_get_fde_list_internal(Dwarf_Debug dbg, Dwarf_Cie ** cie_data,
     Dwarf_Cie head_cie_ptr = NULL;
     Dwarf_Cie cur_cie_ptr = NULL;
     Dwarf_Cie tail_cie_ptr = NULL;
-    Dwarf_Word cie_count = 0;
+    Dwarf_Unsigned cie_count = 0;
 
     /*  Points to a list of contiguous pointers to Dwarf_Cie structures.
     */
@@ -317,13 +317,13 @@ _dwarf_get_fde_list_internal(Dwarf_Debug dbg, Dwarf_Cie ** cie_data,
         cur_fde_ptr are used to chain them up. */
     Dwarf_Fde head_fde_ptr = NULL;
     Dwarf_Fde cur_fde_ptr = NULL;
-    Dwarf_Word fde_count = 0;
+    Dwarf_Unsigned fde_count = 0;
 
     /*  Points to a list of contiguous pointers to Dwarf_Fde structures.
     */
     Dwarf_Fde *fde_list_ptr = NULL;
 
-    Dwarf_Word i = 0;
+    Dwarf_Unsigned i = 0;
     int res = DW_DLV_ERROR;
 
     if (frame_ptr == 0) {
@@ -584,10 +584,10 @@ dwarf_create_cie_from_after_start(Dwarf_Debug dbg,
     Dwarf_Small *augmentation = 0;
     Dwarf_Half segment_size = 0;
     Dwarf_Signed data_alignment_factor = -1;
-    Dwarf_Word code_alignment_factor = 4;
+    Dwarf_Unsigned code_alignment_factor = 4;
     Dwarf_Unsigned return_address_register = 31;
     int local_length_size = 0;
-    Dwarf_Word leb128_length = 0;
+    Dwarf_Unsigned leb128_length = 0;
     Dwarf_Unsigned cie_aug_data_len = 0;
     Dwarf_Small *cie_aug_data = 0;
     Dwarf_Addr gnu_personality_handler_addr = 0;
@@ -686,8 +686,8 @@ dwarf_create_cie_from_after_start(Dwarf_Debug dbg,
             return DW_DLV_ERROR;
         }
         DECODE_LEB128_UWORD_CK(frame_ptr, lreg,dbg,error,section_ptr_end);
-        code_alignment_factor = (Dwarf_Word) lreg;
-        res = (Dwarf_Sword) _dwarf_decode_s_leb128_chk(frame_ptr,
+        code_alignment_factor = (Dwarf_Unsigned) lreg;
+        res = (Dwarf_Signed) _dwarf_decode_s_leb128_chk(frame_ptr,
             &leb128_length,&data_alignment_factor,section_ptr_end);
         if(res != DW_DLV_OK) {
             return res;
@@ -720,11 +720,11 @@ dwarf_create_cie_from_after_start(Dwarf_Debug dbg,
         break;
     case aug_irix_exception_table:{
         Dwarf_Unsigned lreg = 0;
-        Dwarf_Word length_of_augmented_fields;
+        Dwarf_Unsigned length_of_augmented_fields;
 
         /* Decode the length of augmented fields. */
         DECODE_LEB128_UWORD_CK(frame_ptr, lreg,dbg,error,section_ptr_end);
-        length_of_augmented_fields = (Dwarf_Word) lreg;
+        length_of_augmented_fields = (Dwarf_Unsigned) lreg;
         /* set the frame_ptr to point at the instruction start. */
         frame_ptr += length_of_augmented_fields;
         }
@@ -822,7 +822,7 @@ dwarf_create_cie_from_after_start(Dwarf_Debug dbg,
 
     new_cie->ci_cie_version_number = version;
     new_cie->ci_initial_table = NULL;
-    new_cie->ci_length = (Dwarf_Word) prefix->cf_length;
+    new_cie->ci_length = (Dwarf_Unsigned) prefix->cf_length;
     new_cie->ci_length_size = prefix->cf_local_length_size;
     new_cie->ci_extension_size = prefix->cf_local_extension_size;
     new_cie->ci_augmentation = (char *) augmentation;
@@ -983,11 +983,11 @@ dwarf_create_fde_from_after_start(Dwarf_Debug dbg,
         break;
     case aug_irix_exception_table:{
         Dwarf_Unsigned lreg = 0;
-        Dwarf_Word length_of_augmented_fields = 0;
+        Dwarf_Unsigned length_of_augmented_fields = 0;
 
         DECODE_LEB128_UWORD_CK(frame_ptr, lreg,
             dbg,error,section_ptr_end);
-        length_of_augmented_fields = (Dwarf_Word) lreg;
+        length_of_augmented_fields = (Dwarf_Unsigned) lreg;
 
         saved_frame_ptr = frame_ptr;
         /*  The first word is an offset into exception tables.
@@ -1667,7 +1667,7 @@ get_gcc_eh_augmentation(Dwarf_Debug dbg, Dwarf_Small * frame_ptr,
     if (augtype == aug_gcc_eh_z) {
         /* Has leading 'z'. */
         UNUSEDARG Dwarf_Unsigned val = 0;
-        Dwarf_Word leb128_length = 0;
+        Dwarf_Unsigned leb128_length = 0;
 
         /* Dwarf_Unsigned eh_value = */
         DECODE_LEB128_UWORD_LEN_CK(frame_ptr,val,leb128_length,

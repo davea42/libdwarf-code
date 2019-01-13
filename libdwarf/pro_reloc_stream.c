@@ -125,7 +125,7 @@ _dwarf_pro_reloc_name_stream32(Dwarf_P_Debug dbg, int base_sec_index,
 
     elf32_reloc = (REL32*)relrec_to_fill;
     elf32_reloc->r_offset = (Elf32_Addr) offset;
-    Set_REL32_info(*elf32_reloc, (Dwarf_Word) symidx, rel_type);
+    Set_REL32_info(*elf32_reloc, symidx, rel_type);
     return DW_DLV_OK;
 
     /* get a slot, fill in the slot entry */

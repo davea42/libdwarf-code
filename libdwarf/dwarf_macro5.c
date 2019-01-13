@@ -127,7 +127,7 @@ _dwarf_skim_forms(Dwarf_Debug dbg,
     Dwarf_Unsigned ret_value = 0;
     Dwarf_Unsigned length;
     Dwarf_Small *mdata = mdata_start;
-    Dwarf_Word leb128_length = 0;
+    Dwarf_Unsigned leb128_length = 0;
 
     for( ; i < formcount; ++i) {
         curform = forms[i];

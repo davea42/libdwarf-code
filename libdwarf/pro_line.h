@@ -78,13 +78,13 @@ struct Dwarf_P_Line_s {
     Dwarf_Addr dpl_address;
 
     /* file index, index into file entry */
-    Dwarf_Word dpl_file;
+    Dwarf_Unsigned dpl_file;
 
     /* line number */
-    Dwarf_Word dpl_line;
+    Dwarf_Unsigned dpl_line;
 
     /* column number */
-    Dwarf_Word dpl_column;
+    Dwarf_Unsigned dpl_column;
 
     /* whether its a beginning of a stmt */
     Dwarf_Ubyte dpl_is_stmt;

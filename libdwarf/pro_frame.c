@@ -34,6 +34,38 @@
 #include "pro_incl.h"
 #include "pro_frame.h"
 
+#define SIZEOFT16 2
+#define SIZEOFT32 4
+#define SIZEOFT64 8
+
+/* Assuming endianness of t, s match...! FIXME */
+#ifdef WORDS_BIGENDIAN
+#define ASNOUT(t,s,l)                       \
+    do {                                    \
+        unsigned sbyte = 0;                 \
+        char *p = 0;                        \
+        if (l > sizeof(s)) {                \
+            _dwarf_p_error(dbg, error, DW_DLE_DEBUG_FRAME_LENGTH_BAD);\
+            return DW_DLV_ERROR;            \
+        }                                   \
+        sbyte = sizeof(s) - l;              \
+        p = (const char *)(&s);             \
+        memcpy(t,(const void *)(p+sbyte),l);\
+    } while (0)
+#else /* LITTLEENDIAN */
+#define ASNOUT(t,s,l)                       \
+    do {                                    \
+        const char *p = 0;                  \
+        if (l > sizeof(s)) {                \
+            _dwarf_p_error(dbg, error, DW_DLE_DEBUG_FRAME_LENGTH_BAD);\
+            return DW_DLV_ERROR;            \
+        }                                   \
+        p = (const char *)(&s);             \
+        memcpy(t,(const void *)p,l);        \
+    } while (0)
+#endif /* ENDIANNESS */
+
+
 static void _dwarf_pro_add_to_fde(Dwarf_P_Fde fde,
     Dwarf_P_Frame_Pgm inst);
 
@@ -506,13 +538,14 @@ dwarf_add_fde_inst_a(Dwarf_P_Fde fde,
     Dwarf_Error * error)
 {
     Dwarf_P_Frame_Pgm curinst;
-    int nbytes, nbytes1, nbytes2;
-    Dwarf_Ubyte db;
-    Dwarf_Half dh;
-    Dwarf_Word dw;
-    Dwarf_Unsigned du;
-    char *ptr;
-    int res;
+    int nbytes = 0;
+    int nbytes1 = 0;
+    int nbytes2 = 0;
+    Dwarf_Ubyte db = 0;
+    Dwarf_Half dh = 0;
+    Dwarf_Unsigned du = 0;
+    char *ptr = 0;
+    int res = 0;
     char buff1[ENCODE_SPACE_NEEDED];
     char buff2[ENCODE_SPACE_NEEDED];
     Dwarf_P_Debug dbg = fde->fde_dbg;
@@ -522,8 +555,8 @@ dwarf_add_fde_inst_a(Dwarf_P_Fde fde,
     int signed_first = 0;
 
 
-    nbytes = 0;
-    ptr = NULL;
+    buff1[0] = 0;
+    buff2[0] = 0;
     curinst = (Dwarf_P_Frame_Pgm)
         _dwarf_p_get_alloc(dbg, sizeof(struct Dwarf_P_Frame_Pgm_s));
     if (curinst == NULL) {
@@ -533,61 +566,69 @@ dwarf_add_fde_inst_a(Dwarf_P_Fde fde,
 
     switch (op) {
 
-    case DW_CFA_advance_loc:
+    case DW_CFA_advance_loc: {
         if (val1 <= 0x3f) {
             db = val1;
             op |= db;
-        }
-        /* test not portable FIX */
-        else if (val1 <= UCHAR_MAX) {
+        } else if (!(val1& ~0xff)) {
             op = DW_CFA_advance_loc1;
             db = val1;
             ptr = (char *) _dwarf_p_get_alloc(dbg, 1);
             if (ptr == NULL) {
-                _dwarf_p_error(dbg, error, DW_DLE_STRING_ALLOC);
-                return DW_DLV_ERROR;
+               _dwarf_p_error(dbg, error, DW_DLE_STRING_ALLOC);
+               return DW_DLV_ERROR;
             }
             memcpy((void *) ptr, (const void *) &db, 1);
             nbytes = 1;
-        }
-        /* test not portable FIX */
-        else if (val1 <= USHRT_MAX) {
-            op = DW_CFA_advance_loc2;
-            dh = val1;
-            ptr = (char *) _dwarf_p_get_alloc(dbg, 2);
-            if (ptr == NULL) {
-                _dwarf_p_error(dbg, error, DW_DLE_STRING_ALLOC);
-                return DW_DLV_ERROR;
-            }
-            memcpy((void *) ptr, (const void *) &dh, 2);
-            nbytes = 2;
-        }
-        /* test not portable FIX */
-        else if (val1 <= ULONG_MAX) {
-            op = DW_CFA_advance_loc4;
-            dw = (Dwarf_Word) val1;
-            ptr = (char *) _dwarf_p_get_alloc(dbg, 4);
-            if (ptr == NULL) {
-                _dwarf_p_error(dbg, error, DW_DLE_STRING_ALLOC);
-                return DW_DLV_ERROR;
-            }
-            memcpy((void *) ptr, (const void *) &dw, 4);
-            nbytes = 4;
+        } else if (!(val1& (~(Dwarf_Unsigned)0xffff))) {
+           if (sizeof(dh) < SIZEOFT16) {
+               _dwarf_p_error(dbg, error, DW_DLE_DEBUG_FRAME_LENGTH_BAD);
+               return DW_DLV_ERROR;
+           }
+           op = DW_CFA_advance_loc2;
+           dh = val1;
+           ptr = (char *) _dwarf_p_get_alloc(dbg, SIZEOFT16);
+           if (ptr == NULL) {
+               _dwarf_p_error(dbg, error, DW_DLE_STRING_ALLOC);
+               return DW_DLV_ERROR;
+           }
+           /*  No byte swapping, assuming running at target endianness. */
+           ASNOUT((void *) ptr, dh, SIZEOFT16);
+           nbytes = SIZEOFT16;
+    
+        } else if (!(val1& ~(Dwarf_Unsigned)0xffffffff)) {
+           if (sizeof(du) < SIZEOFT32) {
+               _dwarf_p_error(dbg, error, DW_DLE_DEBUG_FRAME_LENGTH_BAD);
+               return DW_DLV_ERROR;
+           }
+           op = DW_CFA_advance_loc4;
+           du = val1;
+           ptr = (char *) _dwarf_p_get_alloc(dbg, SIZEOFT32);
+           if (ptr == NULL) {
+               _dwarf_p_error(dbg, error, DW_DLE_STRING_ALLOC);
+               return DW_DLV_ERROR;
+           }
+           ASNOUT((void *) ptr, du, SIZEOFT32);
+           nbytes = SIZEOFT32;
         } else {
-            op = DW_CFA_MIPS_advance_loc8;
-            du = val1;
-            ptr =
-                (char *) _dwarf_p_get_alloc(dbg,
-                    sizeof(Dwarf_Unsigned));
-            if (ptr == NULL) {
-                _dwarf_p_error(dbg, error, DW_DLE_STRING_ALLOC);
-                return DW_DLV_ERROR;
-            }
-            memcpy((void *) ptr, (const void *) &du, 8);
-            nbytes = 8;
+           if (sizeof(du) < SIZEOFT64) {
+               _dwarf_p_error(dbg, error, DW_DLE_DEBUG_FRAME_LENGTH_BAD);
+               return DW_DLV_ERROR;
+           }
+           op = DW_CFA_MIPS_advance_loc8;
+           du = val1;
+           ptr = (char *) _dwarf_p_get_alloc(dbg,
+               SIZEOFT64);
+           if (ptr == NULL) {
+               _dwarf_p_error(dbg, error, DW_DLE_STRING_ALLOC);
+               return DW_DLV_ERROR;
+           }
+           /*  No byte swapping, assuming running at target endianness. */
+           ASNOUT((void *) ptr, du, SIZEOFT64);
+           nbytes = SIZEOFT64;
         }
         break;
-
+    }
     case DW_CFA_offset:
         if (val1 <= MAX_6_BIT_VALUE) {
             db = val1;

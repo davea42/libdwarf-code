@@ -174,7 +174,7 @@ _dwarf_get_size_of_val(Dwarf_Debug dbg,
     Dwarf_Error*error)
 {
     Dwarf_Unsigned length = 0;
-    Dwarf_Word leb128_length = 0;
+    Dwarf_Unsigned leb128_length = 0;
     Dwarf_Unsigned form_indirect = 0;
     Dwarf_Unsigned ret_value = 0;
 
@@ -345,7 +345,7 @@ _dwarf_get_size_of_val(Dwarf_Debug dbg,
 
     case DW_FORM_indirect:
         {
-            Dwarf_Word indir_len = 0;
+            Dwarf_Unsigned indir_len = 0;
             int res = 0;
             Dwarf_Unsigned info_data_len = 0;
 
@@ -576,7 +576,7 @@ _dwarf_get_abbrev_for_code(Dwarf_CU_Context cu_context, Dwarf_Unsigned code,
     Dwarf_Hash_Table hash_table_base = cu_context->cc_abbrev_hash_table;
     Dwarf_Hash_Table_Entry entry_base = 0;
     Dwarf_Hash_Table_Entry entry_cur = 0;
-    Dwarf_Word hash_num = 0;
+    Dwarf_Unsigned hash_num = 0;
     Dwarf_Unsigned abbrev_code = 0;
     Dwarf_Unsigned abbrev_tag  = 0;
     Dwarf_Abbrev_List hash_abbrev_entry = 0;

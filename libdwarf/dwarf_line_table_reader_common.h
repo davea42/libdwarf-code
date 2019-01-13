@@ -476,7 +476,7 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
             }
             line_ptr = line_ptr + strlen((char *) line_ptr) + 1;
             DECODE_LEB128_UWORD_CK(line_ptr, utmp,dbg,err,line_ptr_end);
-            dir_index = (Dwarf_Word) utmp;
+            dir_index = (Dwarf_Unsigned) utmp;
             if (dir_index > line_context->lc_include_directories_count) {
                 _dwarf_error(dbg, err, DW_DLE_DIR_INDEX_BAD);
                 return (DW_DLV_ERROR);
@@ -1042,7 +1042,7 @@ read_line_table_program(Dwarf_Debug dbg,
     Dwarf_Error *error,
     UNUSEDARG int *err_count_out)
 {
-    Dwarf_Word i = 0;
+    Dwarf_Unsigned i = 0;
     Dwarf_File_Entry cur_file_entry = 0;
     Dwarf_Line *logicals = line_context->lc_linebuf_logicals;
     Dwarf_Unsigned logicals_count = line_context->lc_linecount_logicals;
@@ -1056,18 +1056,18 @@ read_line_table_program(Dwarf_Debug dbg,
     /*  These variables are used to decode leb128 numbers. Leb128_num
         holds the decoded number, and leb128_length is its length in
         bytes. */
-    Dwarf_Word leb128_num = 0;
-    Dwarf_Sword advance_line = 0;
+    Dwarf_Unsigned leb128_num = 0;
+    Dwarf_Signed advance_line = 0;
 
     /*  This is the operand of the latest fixed_advance_pc extended
         opcode. */
     Dwarf_Half fixed_advance_pc = 0;
 
     /*  Counts the number of lines in the line matrix. */
-    Dwarf_Word line_count = 0;
+    Dwarf_Unsigned line_count = 0;
 
     /*  This is the length of an extended opcode instr.  */
-    Dwarf_Word instr_length = 0;
+    Dwarf_Unsigned instr_length = 0;
 
 
     /*  Used to chain together pointers to line table entries that are
@@ -1187,9 +1187,9 @@ read_line_table_program(Dwarf_Debug dbg,
 
                 curr_line->li_address = regs.lr_address;
                 curr_line->li_addr_line.li_l_data.li_file =
-                    (Dwarf_Sword) regs.lr_file;
+                    (Dwarf_Signed) regs.lr_file;
                 curr_line->li_addr_line.li_l_data.li_line =
-                    (Dwarf_Sword) regs.lr_line;
+                    (Dwarf_Signed) regs.lr_line;
                 curr_line->li_addr_line.li_l_data.li_column =
                     (Dwarf_Half) regs.lr_column;
                 curr_line->li_addr_line.li_l_data.li_is_stmt =
@@ -1252,9 +1252,9 @@ read_line_table_program(Dwarf_Debug dbg,
 
                     curr_line->li_address = regs.lr_address;
                     curr_line->li_addr_line.li_l_data.li_file =
-                        (Dwarf_Sword) regs.lr_file;
+                        (Dwarf_Signed) regs.lr_file;
                     curr_line->li_addr_line.li_l_data.li_line =
-                        (Dwarf_Sword) regs.lr_line;
+                        (Dwarf_Signed) regs.lr_line;
                     curr_line->li_addr_line.li_l_data.li_column =
                         (Dwarf_Half) regs.lr_column;
                     curr_line->li_addr_line.li_l_data.li_is_stmt =
@@ -1306,10 +1306,10 @@ read_line_table_program(Dwarf_Debug dbg,
                     "DW_LNS_advance_pc val %"
                     DW_PR_DSd " 0x%"
                     DW_PR_XZEROS DW_PR_DUx "\n",
-                    (Dwarf_Signed) (Dwarf_Word) utmp2,
-                    (Dwarf_Unsigned) (Dwarf_Word) utmp2);
+                    (Dwarf_Signed) utmp2,
+                    (Dwarf_Unsigned)utmp2);
 #endif /* PRINTING_DETAILS */
-                leb128_num = (Dwarf_Word) utmp2;
+                leb128_num = utmp2;
                 regs.lr_address = regs.lr_address +
                     line_context->lc_minimum_instruction_length *
                     leb128_num;
@@ -1320,7 +1320,7 @@ read_line_table_program(Dwarf_Debug dbg,
 
                 DECODE_LEB128_SWORD_CK(line_ptr, stmp,
                     dbg,error,line_ptr_end);
-                advance_line = (Dwarf_Sword) stmp;
+                advance_line = (Dwarf_Signed) stmp;
 
 #ifdef PRINTING_DETAILS
                 dwarf_printf(dbg,
@@ -1337,7 +1337,7 @@ read_line_table_program(Dwarf_Debug dbg,
 
                 DECODE_LEB128_UWORD_CK(line_ptr, utmp2,
                     dbg,error,line_ptr_end);
-                regs.lr_file = (Dwarf_Word) utmp2;
+                regs.lr_file = utmp2;
 #ifdef PRINTING_DETAILS
                 dwarf_printf(dbg,
                     "DW_LNS_set_file  %ld\n", (long) regs.lr_file);
@@ -1349,7 +1349,7 @@ read_line_table_program(Dwarf_Debug dbg,
 
                 DECODE_LEB128_UWORD_CK(line_ptr, utmp2,
                     dbg,error,line_ptr_end);
-                regs.lr_column = (Dwarf_Word) utmp2;
+                regs.lr_column = utmp2;
 #ifdef PRINTING_DETAILS
                 dwarf_printf(dbg,
                     "DW_LNS_set_column val %" DW_PR_DSd " 0x%"
@@ -1478,7 +1478,7 @@ read_line_table_program(Dwarf_Debug dbg,
 
                     DECODE_LEB128_SWORD_CK(line_ptr, stmp,
                         dbg,error,line_ptr_end);
-                    advance_line = (Dwarf_Sword) stmp;
+                    advance_line = (Dwarf_Signed) stmp;
                     regs.lr_line = regs.lr_line + advance_line;
                     if (regs.lr_line >= 1 &&
                         regs.lr_line - 1 < logicals_count) {
@@ -1508,7 +1508,7 @@ read_line_table_program(Dwarf_Debug dbg,
                     regs.lr_call_context = 0;
                     DECODE_LEB128_UWORD_CK(line_ptr, utmp2,
                         dbg,error,line_ptr_end);
-                    regs.lr_subprogram = (Dwarf_Word) utmp2;
+                    regs.lr_subprogram = utmp2;
 #ifdef PRINTING_DETAILS
                     dwarf_printf(dbg,"DW_LNS_set_subprogram "
                         "%" DW_PR_DSd " 0x%" DW_PR_XZEROS DW_PR_DSx "\n",
@@ -1587,7 +1587,7 @@ read_line_table_program(Dwarf_Debug dbg,
 
             DECODE_LEB128_UWORD_CK(line_ptr, utmp3,
                 dbg,error,line_ptr_end);
-            instr_length = (Dwarf_Word) utmp3;
+            instr_length =  utmp3;
             /*  Dwarf_Small is a ubyte and the extended opcode is a
                 ubyte, though not stated as clearly in the 2.0.0 spec as
                 one might hope. */
@@ -1623,9 +1623,9 @@ read_line_table_program(Dwarf_Debug dbg,
 #endif /* PRINTING_DETAILS */
                     curr_line->li_address = regs.lr_address;
                     curr_line->li_addr_line.li_l_data.li_file =
-                        (Dwarf_Sword) regs.lr_file;
+                        (Dwarf_Signed) regs.lr_file;
                     curr_line->li_addr_line.li_l_data.li_line =
-                        (Dwarf_Sword) regs.lr_line;
+                        (Dwarf_Signed) regs.lr_line;
                     curr_line->li_addr_line.li_l_data.li_column =
                         (Dwarf_Half) regs.lr_column;
                     curr_line->li_addr_line.li_l_data.li_is_stmt =
@@ -1739,7 +1739,7 @@ read_line_table_program(Dwarf_Debug dbg,
                     line_ptr = line_ptr + strlen((char *) line_ptr) + 1;
                     DECODE_LEB128_UWORD_CK(line_ptr,value,
                         dbg,error,line_ptr_end);
-                    cur_file_entry->fi_dir_index = (Dwarf_Sword)value;
+                    cur_file_entry->fi_dir_index = (Dwarf_Signed)value;
                     DECODE_LEB128_UWORD_CK(line_ptr,value,
                         dbg,error,line_ptr_end);
                     cur_file_entry->fi_time_last_mod = value;
@@ -1772,7 +1772,7 @@ read_line_table_program(Dwarf_Debug dbg,
 
                 DECODE_LEB128_UWORD_CK(line_ptr, utmp2,
                     dbg,error,line_ptr_end);
-                regs.lr_discriminator = (Dwarf_Word) utmp2;
+                regs.lr_discriminator = utmp2;
 
 #ifdef PRINTING_DETAILS
                 dwarf_printf(dbg,

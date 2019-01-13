@@ -219,7 +219,7 @@ dwarf_offset_list(Dwarf_Debug dbg,
     Dwarf_Die sib_die = 0;
     Dwarf_Die cur_die = 0;
     Dwarf_Off cur_off = 0;
-    Dwarf_Word off_count = 0;
+    Dwarf_Unsigned off_count = 0;
     int res = 0;
 
     /* Temporary counter. */
@@ -321,8 +321,8 @@ dwarf_attrlist(Dwarf_Die die,
     Dwarf_Attribute ** attrbuf,
     Dwarf_Signed * attrcnt, Dwarf_Error * error)
 {
-    Dwarf_Word attr_count = 0;
-    Dwarf_Word i = 0;
+    Dwarf_Unsigned attr_count = 0;
+    Dwarf_Unsigned i = 0;
     Dwarf_Half attr = 0;
     Dwarf_Half attr_form = 0;
     Dwarf_Byte_Ptr abbrev_ptr = 0;

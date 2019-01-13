@@ -1,3 +1,20 @@
+2019-01-12   David Anderson
+     * dwarf_abbrev.c,dwarf_abbrev.h,dwarf_base_types.h,
+       dwarf_die_deliv.c, dwarf_dsc.c,dwarf_error.c,
+       dwarf_error.h,dwarf_form.c,dwarf_frame.c,
+       dwarf_frame.h,dwarf_frame2.c,dwarf_global.h,
+       dwarf_leb.c,dwarf_line.c,dwarf_line.h,
+       dwarf_line_table_reader_common.h,dwarf_loc.c,
+       dwarf_loc2.h,dwarf_macro5.c,dwarf_macro5.h,dwarf_opaque.h,
+       dwarf_print_lines.c,dwarf_query.c,dwarf_util.c,dwarf_util.h,
+       pro_arange.c,pro_error.c,pro_error.h,pro_expr.c,
+       pro_forms.c,pro_frame.c,pro_frame.h,pro_line.h,
+       pro_opaque.h,pro_reloc_stream.c,pro_section.c,
+       pro_types.c: Removed all instances of use of
+       Dwarf_Word, Dwarf_Sword, __int32_t (and other such).
+       In nearly all cases the use was gratuitous. In a few
+       cases some very old code was problematic (dwarf_frame2.c)
+       and is fixed.
 2019-01-10   David Anderson
      * libdwarf_version.h: New date string.
 2019-01-09   David Anderson

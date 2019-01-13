@@ -907,7 +907,7 @@ dwarf_add_AT_location_expr_a(Dwarf_P_Debug dbg,
     }
     new_attr->ar_rel_symidx = loc_expr->ex_reloc_sym_index;
     new_attr->ar_rel_offset =
-        (Dwarf_Word) loc_expr->ex_reloc_offset + len_size;
+        loc_expr->ex_reloc_offset + len_size;
 
     new_attr->ar_nbytes = block_size + len_size;
 

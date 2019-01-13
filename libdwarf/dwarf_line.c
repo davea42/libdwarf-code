@@ -38,9 +38,9 @@
 /* Line Register Set initial conditions. */
 static struct Dwarf_Line_Registers_s _dwarf_line_table_regs_default_values = {
     /* Dwarf_Addr lr_address */ 0,
-    /* Dwarf_Word lr_file */ 1,
-    /* Dwarf_Word lr_line */  1,
-    /* Dwarf_Word lr_column */  0,
+    /* Dwarf_Unsigned lr_file */ 1,
+    /* Dwarf_Unsigned lr_line */  1,
+    /* Dwarf_Unsigned lr_column */  0,
     /* Dwarf_Bool lr_is_stmt */  false,
     /* Dwarf_Bool lr_basic_block */  false,
     /* Dwarf_Bool lr_end_sequence */  false,
@@ -1272,7 +1272,7 @@ dwarf_srclines_include_dir_data(Dwarf_Line_Context line_context,
     /*  It never made sense that the srclines used a signed count.
         But that cannot be fixed in interfaces for compatibility.
         So we adjust here. */
-    Dwarf_Word index = index_in;
+    Dwarf_Unsigned index = index_in;
 
     if (!line_context || line_context->lc_magic != DW_CONTEXT_MAGIC) {
         _dwarf_error(NULL, error, DW_DLE_LINE_CONTEXT_BOTCH);
@@ -1478,7 +1478,7 @@ dwarf_lineoff_b(Dwarf_Line line,
 
 static int
 dwarf_filename(Dwarf_Line_Context context,
-    Dwarf_Sword fileno_in,
+    Dwarf_Signed fileno_in,
     char **ret_filename, Dwarf_Error *error)
 {
     Dwarf_Signed i = 0;

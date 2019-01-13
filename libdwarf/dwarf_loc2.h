@@ -250,7 +250,7 @@ _dwarf_read_loc_section_dwo(Dwarf_Debug dbg,
         Dwarf_Unsigned addr_indexs = 0;
         Dwarf_Unsigned addr_indexe= 0;
         Dwarf_Unsigned exprlen = 0;
-        Dwarf_Word leb128_length = 0;
+        Dwarf_Unsigned leb128_length = 0;
 
         DECODE_LEB128_UWORD_LEN_CK(locptr,addr_indexs,
             leb128_length,
@@ -287,7 +287,7 @@ _dwarf_read_loc_section_dwo(Dwarf_Debug dbg,
         Dwarf_Unsigned addr_index = 0;
         Dwarf_Unsigned  range_length = 0;
         Dwarf_Unsigned exprlen = 0;
-        Dwarf_Word leb128_length = 0;
+        Dwarf_Unsigned leb128_length = 0;
 
         DECODE_LEB128_UWORD_LEN_CK(locptr,addr_index,
             leb128_length,
