@@ -1,3 +1,7 @@
+January 15, 2019
+  All references to C data types spelled *int16* *int32* or
+  *int64* have been removed.  Dwarf_Unsigned is used instead.
+  This simplifies builds in certain environments.
 December 05, 2018
   Many new producer functions provided. Now no matter
   what producer task is to be done there is a version

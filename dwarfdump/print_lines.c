@@ -236,7 +236,7 @@ process_line_table(Dwarf_Debug dbg,
                 found_line_error = TRUE;
             }
             if (lires == DW_DLV_NO_ENTRY) {
-                logicalno = -1LL;
+                logicalno = 0;
             }
             column = 0;
         } else {
@@ -248,7 +248,7 @@ process_line_table(Dwarf_Debug dbg,
                 found_line_error = TRUE;
             }
             if (lires == DW_DLV_NO_ENTRY) {
-                lineno = -1LL;
+                lineno = 0;
             }
             cores = dwarf_lineoff_b(line, &column, &lt_err);
             if (cores == DW_DLV_ERROR) {
@@ -782,7 +782,8 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
             DWARF_CHECK_COUNT(lines_result,(errcount-1));
         }
         if (lres == DW_DLV_ERROR) {
-            print_error(dbg, "dwarf_srclines details", lres, err);
+            print_error_and_continue(dbg,
+                "dwarf_srclines details", lres, err);
         }
         return;
     }
@@ -854,7 +855,8 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
                 dwarf_errmsg(err));
             glflags.gf_record_dwarf_error = FALSE;  /* Clear error condition */
         } else {
-            print_error(dbg, "dwarf_srclines", lres, err);
+            print_error_and_continue(dbg,
+                "dwarf_srclines", lres, err);
         }
     } else if (lres == DW_DLV_NO_ENTRY) {
         /* no line information is included */

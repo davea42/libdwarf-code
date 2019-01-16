@@ -1,3 +1,23 @@
+2019-01-14 David Anderson
+     * createirepfrombinary.cc: Made a partial step toward
+       being able to read eh_frame, but those few lines
+       are ignored for now.
+     * dwarfgen.cc,general.h: Adding --add-frame-advance-loc option
+       which causes testing of the new DW_CFA_advance_loc
+       emitting code (better portability of the code).
+     * irepframe.h: Changed index results from signed
+       to unsigned. Negative values never meant anything.
+     * irepresentation.h: Added code for eh_frame.
+     * ireptodbg.cc: We now use the improved DW_DLV_OK
+       producer calls so we changed away from allowing
+       indexes to be negative, we do not need to allow
+       that any longer.  Now uses the latest libdwarf
+       producer calls for frame data.
+       If --add-frame-advance-loc then emit particular
+       values of advance_loc to test the code paths
+       in the DW_CFA_advance_loc* logic.
+       We create a whole new cie/fde pair for  the new
+       fde testing output.
 2019-01-02 David Anderson
      * ChangeLog: Renamed ChangeLog2018
      * Makefile.am: Addec ChangeLog2018 to dist files.

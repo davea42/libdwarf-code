@@ -273,7 +273,7 @@ dwarf_add_expr_gen_a(Dwarf_P_Expr expr,
     case DW_OP_const4u:
     case DW_OP_const4s:
         operand = (Dwarf_Small *) & operand_buffer[0];
-        WRITE_UNALIGNED(dbg, operand, &val1, sizeof(val1), 
+        WRITE_UNALIGNED(dbg, operand, &val1, sizeof(val1),
             SIZEOFT32);
         operand_size = SIZEOFT32;
         break;

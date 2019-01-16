@@ -50,6 +50,21 @@
 
 #define MIN(a,b)  (((a) < (b))? a:b)
 
+#if 0
+static void
+dump_bytes(const char *msg,Dwarf_Small * start, long len)
+{
+    Dwarf_Small *end = start + len;
+    Dwarf_Small *cur = start;
+    printf("%s (0x%lx) ",msg,(unsigned long)start);
+    for (; cur < end; cur++) {
+        printf("%02x", *cur);
+    }
+    printf("\n");
+}
+#endif /* 0 */
+
+
 static int dwarf_initialize_fde_table(Dwarf_Debug dbg,
     struct Dwarf_Frame_s *fde_table,
     unsigned table_real_data_size,
@@ -342,7 +357,6 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
     } else {
         need_augmentation = !make_instr;
     }
-
     instr_ptr = start_instr_ptr;
     while ((instr_ptr < final_instr_ptr) && (!search_over)) {
         Dwarf_Small instr = 0;
@@ -512,6 +526,28 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
                     instr_ptr, DWARF_32BIT_SIZE,
                     error,final_instr_ptr);
                 instr_ptr += DWARF_32BIT_SIZE;
+                fp_offset = adv_loc;
+
+                if (need_augmentation) {
+                    SIMPLE_ERROR_RETURN(DW_DLE_DF_NO_CIE_AUGMENTATION);
+                }
+                adv_loc *= code_alignment_factor;
+
+                possible_subsequent_pc =  current_loc + adv_loc;
+                search_over = search_pc &&
+                    (possible_subsequent_pc > search_pc_val);
+                /* If gone past pc needed, retain old pc.  */
+                if (!search_over) {
+                    current_loc = possible_subsequent_pc;
+                }
+                break;
+            }
+        case DW_CFA_MIPS_advance_loc8:
+            {
+                READ_UNALIGNED_CK(dbg, adv_loc, Dwarf_Unsigned,
+                    instr_ptr, DWARF_64BIT_SIZE,
+                    error,final_instr_ptr);
+                instr_ptr += DWARF_64BIT_SIZE;
                 fp_offset = adv_loc;
 
                 if (need_augmentation) {
@@ -1248,7 +1284,6 @@ dwarf_get_fde_list(Dwarf_Debug dbg,
         DW_CIE_ID,
         /* use_gnu_cie_calc= */ 0,
         error);
-
     return res;
 }
 
@@ -1323,8 +1358,9 @@ dwarf_get_fde_for_die(Dwarf_Debug dbg,
     if (res == DW_DLV_ERROR) {
         return res;
     }
-    if (res == DW_DLV_NO_ENTRY)
+    if (res == DW_DLV_NO_ENTRY) {
         return res;
+    }
     fde_ptr = prefix.cf_addr_after_prefix;
     cie_id = prefix.cf_cie_id;
     /*  Pass NULL, not section pointer, for 3rd argument.
@@ -1597,7 +1633,8 @@ _dwarf_get_fde_info_for_a_pc_row(Dwarf_Fde fde,
             return DW_DLV_ERROR;
         }
         dwarf_init_reg_rules_ru(cie->ci_initial_table->fr_reg,
-            0, cie->ci_initial_table->fr_reg_count,dbg->de_frame_rule_initial_value);
+            0, cie->ci_initial_table->fr_reg_count,
+            dbg->de_frame_rule_initial_value);
         dwarf_init_reg_rules_ru(&cie->ci_initial_table->fr_cfa_rule,
             0,1,dbg->de_frame_rule_initial_value);
         res = _dwarf_exec_frame_instr( /* make_instr= */ false,

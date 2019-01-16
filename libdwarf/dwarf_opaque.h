@@ -575,7 +575,7 @@ struct Dwarf_Debug_s {
     Dwarf_Ptr de_errarg;
 
     /*  Enabling us to close an fd if we own it,
-        as in the case of dwarf_init_path(). 
+        as in the case of dwarf_init_path().
         de_fd is only meaningful
         if de_owns_fd is set.  Each object
         file type has any necessary fd recorded

@@ -1,3 +1,14 @@
+2019-01-15:
+  The pre-build dwarf_names.[hc] and the tag related
+  files are now part of the standard build so there is
+  no longer any two-stage aspect of the build. 
+  The build simply compiles files in the distribution.
+  If you use git to access the source be sure to
+  sh scripts/FIX-CONFIGURE-TIMES
+  to adjust the file timestamps as having timestamps
+  in the right relationships is vital and git
+  does not maintain timestamps.
+  The script is always safe to run. It takes about 30 seconds.
 2018-12-22:
   The complicated process of building certain .c and .h
   files has been relegated to the few people updating

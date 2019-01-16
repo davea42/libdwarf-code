@@ -101,9 +101,9 @@ public:
             }
         };
     ~IRFde() {};
-    Dwarf_Signed cie_index() { return cie_index_; };
+    Dwarf_Unsigned cie_index() { return cie_index_; };
     void get_fde_base_data(Dwarf_Addr *lowpc, Dwarf_Unsigned * funclen,
-        Dwarf_Signed *cie_index_input) {
+        Dwarf_Unsigned *cie_index_input) {
             *lowpc = low_pc_;
             *funclen = func_length_;
             *cie_index_input = cie_index_;

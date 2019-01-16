@@ -1,3 +1,22 @@
+2019-01-14   David Anderson
+     * dwarf_frame.c: Add support for DW_CFA_MIPS_advance_loc8
+       (though pointless, really) so we can test all the code
+       paths of advance_loc production. 
+     * dwarf_frame2.c: Minor formatting cleanup.
+     * dwarf_line_table_reader_common.h: Now tests for
+       negative line numbers in the table and returns an error
+       with the new error code DW_DLE_LINE_TABLE_LINENO_ERROR
+       (which indicates a corrupted line table).
+     * dwarf_names.c, dwarf_names.h, dwarf_names_enum.h,
+       dwarf_names_new.h: Regenerated. Just an update of
+       the sourcedate comment.
+     * dwarf_opaque.h: Delete a trailing whitespace character.
+     * libdwarf.h.in: Add error DW_DLE_LINE_TABLE_LINENO_ERROR.
+     * pro_expr.c: Remove trailing whitespace.
+     * pro_frame.c( dwarf_add_fde_inst_a): A new simpler 
+       more portable implementation of the DW_CFA_advance_loc
+       code.
+     * pro_opaque.h: Delete blank last line.
 2019-01-12   David Anderson
      * dwarf_abbrev.c,dwarf_abbrev.h,dwarf_base_types.h,
        dwarf_die_deliv.c, dwarf_dsc.c,dwarf_error.c,

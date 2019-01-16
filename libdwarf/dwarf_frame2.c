@@ -53,6 +53,22 @@
 #define TRUE 1
 #define FALSE 0
 
+#if 0  /* FOR DEBUGGING */
+/* For debugging only. */
+static void
+dump_bytes(const char *msg,Dwarf_Small * start, long len)
+{
+    Dwarf_Small *end = start + len;
+    Dwarf_Small *cur = start;
+    printf("%s (0x%lx) ",msg,(unsigned long)start);
+    for (; cur < end; cur++) {
+        printf("%02x", *cur);
+    }
+    printf("\n");
+}
+
+#endif
+
 static int dwarf_find_existing_cie_ptr(Dwarf_Small * cie_ptr,
     Dwarf_Cie cur_cie_ptr,
     Dwarf_Cie * cie_ptr_to_use_out,
@@ -216,23 +232,24 @@ static void
 print_prefix(struct cie_fde_prefix_s *prefix, int line)
 {
     printf("prefix-print, prefix at 0x%lx, line %d\n",
-        (long) prefix, line);
+        (unsigned long) prefix, line);
     printf("  start addr 0x%lx after prefix 0x%lx\n",
-        (long) prefix->cf_start_addr,
-        (long) prefix->cf_addr_after_prefix);
-    printf("  length 0x%" DW_PR_DUx ", len size %d ext size %d\n",
-        (Dwarf_Unsigned) prefix->cf_length,
-        prefix->cf_local_length_size,
-        prefix->cf_local_extension_size);
-    printf("  cie_id 0x%" DW_PR_DUx " cie_id  cie_id_addr 0x%lx\n",
-        (Dwarf_Unsigned) prefix->cf_cie_id,
-        (long) prefix->cf_cie_id_addr);
-    printf
-        ("  sec ptr 0x%lx sec index %" DW_PR_DSd " sec len 0x%" DW_PR_DUx " sec past end 0x%lx\n",
-        (long) prefix->cf_section_ptr,
-        (Dwarf_Signed) prefix->cf_section_index,
-        (Dwarf_Unsigned) prefix->cf_section_length,
-        (long) prefix->cf_section_ptr + prefix->cf_section_length);
+        (unsigned long) prefix->cf_start_addr,
+        (unsigned long) prefix->cf_addr_after_prefix);
+    printf("  length 0x%lx, len size %d ext size %d\n",
+        (unsigned long) prefix->cf_length,
+        (int)prefix->cf_local_length_size,
+        (int)prefix->cf_local_extension_size);
+    printf("  cie_id 0x%lx cie_id  cie_id_addr 0x%lx\n",
+        (unsigned long) prefix->cf_cie_id,
+        (unsigned long) prefix->cf_cie_id_addr);
+    printf("  sec ptr 0x%lx sec index %ld sec len 0x%lx "
+        "sec past end 0x%lx\n",
+        (unsigned long) prefix->cf_section_ptr,
+        (long) prefix->cf_section_index,
+        (unsigned long) prefix->cf_section_length,
+        (unsigned long) prefix->cf_section_ptr +
+        (unsigned long)prefix->cf_section_length);
 }
 #endif
 
@@ -361,8 +378,9 @@ _dwarf_get_fde_list_internal(Dwarf_Debug dbg, Dwarf_Cie ** cie_data,
         if (prefix.cf_cie_id == cie_id_value) {
             /* This is a CIE.  */
             Dwarf_Cie cie_ptr_to_use = 0;
+            int resc = 0;
 
-            int resc = dwarf_find_existing_cie_ptr(prefix.cf_start_addr,
+            resc = dwarf_find_existing_cie_ptr(prefix.cf_start_addr,
                 cur_cie_ptr,
                 &cie_ptr_to_use,
                 head_cie_ptr);
@@ -410,13 +428,12 @@ _dwarf_get_fde_list_internal(Dwarf_Debug dbg, Dwarf_Cie ** cie_data,
             int resf = DW_DLV_ERROR;
             Dwarf_Cie cie_ptr_to_use = 0;
             Dwarf_Fde fde_ptr_to_use = 0;
+            Dwarf_Small *cieptr_val = 0;
 
-            Dwarf_Small *cieptr_val =
-                get_cieptr_given_offset(prefix.cf_cie_id,
-                    use_gnu_cie_calc,
-                    section_ptr,
-                    prefix.cf_cie_id_addr);
-
+            cieptr_val = get_cieptr_given_offset(prefix.cf_cie_id,
+                use_gnu_cie_calc,
+                section_ptr,
+                prefix.cf_cie_id_addr);
             resf = dwarf_find_existing_cie_ptr(cieptr_val,
                 cur_cie_ptr,
                 &cie_ptr_to_use,
@@ -1307,20 +1324,6 @@ dwarf_create_cie_from_start(Dwarf_Debug dbg,
    aug_data_len - length of areas aug_data points to.
 
 */
-#if 0  /* FOR DEBUGGING */
-/* For debugging only. */
-void
-dump_bytes(Dwarf_Small * start, long len)
-{
-    Dwarf_Small *end = start + len;
-    Dwarf_Small *cur = start;
-
-    for (; cur < end; cur++) {
-        printf(" byte %d, data %02x\n", (int) (cur - start), *cur);
-    }
-
-}
-#endif
 
 /*  It is not clear if this is entirely correct. */
 static int

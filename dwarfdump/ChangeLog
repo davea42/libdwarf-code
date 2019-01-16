@@ -1,3 +1,14 @@
+2019-01-14 David Anderson
+    * dwarf_names.c, dwarf_names.h,dwarfdump-ta-ext-table.h,
+      dwarfdump-ta-table.h,dwarfdump-tt-ext-table.h,
+      dwarfdump-tt-table.h: Regenerated.
+    * print_lines.c: If missing a line number do not
+      supply a meaningless -1, supply 0.
+      If line table access gets an error, print the error
+      and attempt to continue.
+    * dwarfdump.c: We try to continue after major errors
+      in more places. If any major errors were seen
+      a final line of text is reported to standard-out.
 2019-01-02 David Anderson
     * ChangeLog: renamed ChangeLog 2018.
     * Makefile.am: Added ChangeLog2018 to distribution files.  

@@ -599,4 +599,3 @@ _dwarf_insert_or_find_in_debug_str(Dwarf_P_Debug dbg,
     unsigned slen, /* includes space for trailing NUL */
     Dwarf_Unsigned *offset_in_debug_str,
     Dwarf_Error *error);
-

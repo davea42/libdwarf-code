@@ -197,6 +197,7 @@ CmdOptions cmdoptions = {
     false, //showrelocdetails
     false, //adddata16
     false, //addimplicitconst
+    false, //addframeadvanceloc
 };
 
 // loff_t is signed for some reason (strange) but we make offsets unsigned.
@@ -457,6 +458,7 @@ main(int argc, char **argv)
             {"adddata16",dwno_argument,0,1000},
             {"force-empty-dnames",dwno_argument,0,1001},
             {"add-implicit-const",dwno_argument,0,1002},
+            {"add-frame-advance-loc",dwno_argument,0,1003},
             {0,0,0,0},
         };
 
@@ -466,6 +468,9 @@ main(int argc, char **argv)
             switch(opt) {
             case 1000:
                 if(longindex == 0) {
+                    // To test adding the DWARF5
+                    // DW_FORM_data16 
+                    // libdwarf reading is thus testable.
                     cmdoptions.adddata16 = true;
                 } else {
                     cerr << "dwarfgen: Invalid lnogoption input " <<
@@ -474,10 +479,21 @@ main(int argc, char **argv)
                 }
                 break;
             case 1001:
+                // To test having an empty .debug_dnames
+                // section.
+                // libdwarf reading is thus testable.
                 force_empty_dnames = true;
                 break;
             case 1002:
+                // To test creating DWARF5
+                // DW_FORM_implicit_const.
+                // libdwarf reading is thus testable.
                 cmdoptions.addimplicitconst = true;
+                break;
+            case 1003:
+                // To test dwarf_add_fde_inst_a().
+                // libdwarf reading is thus testable.
+                cmdoptions.addframeadvanceloc = true;
                 break;
             case 'c':
                 // At present we can only create a single

@@ -156,6 +156,22 @@ is_it_known_elf_header(Elf *elf)
     /* Not something we can handle. */
     return 0;
 }
+
+static void
+check_for_major_errors(void)
+{
+    if (glflags.gf_count_major_errors) {
+#if 0
+causes hundreds of test mismatches, so not reporting this.
+        printf("There were %ld DWARF errors reported: "
+            "see ERROR above\n",
+           glflags.gf_count_major_errors);
+#endif /* 0 */
+        exit(FAILED);
+    }
+    return;
+}
+
 static void
 flag_data_pre_allocation(void)
 {
@@ -556,9 +572,17 @@ main(int argc, char *argv[])
     esb_close_null_device();
 #endif /* _WIN32 */
 
+    check_for_major_errors();
+    if (glflags.gf_count_major_errors) {
+        printf("There were %ld DWARF errors reported: " 
+            "see ERROR above\n",
+           glflags.gf_count_major_errors);
+        exit(FAILED);
+    }
     /*  As the tool have reached this point, it means there are
         no internal errors and we should return an OKAY condition,
-        regardless if the file being processed has errors. */
+        regardless if the file being processed has 
+        minor errors. */
     return OKAY;
 }
 
@@ -993,8 +1017,8 @@ print_error_maybe_continue(UNUSEDARG Dwarf_Debug dbg,
     Dwarf_Error lerr,
     Dwarf_Bool do_continue)
 {
+    unsigned long realmajorerr = glflags.gf_count_major_errors;
     printf("\n");
-
     if (dwarf_code == DW_DLV_ERROR) {
         char * errmsg = dwarf_errmsg(lerr);
 
@@ -1020,6 +1044,7 @@ print_error_maybe_continue(UNUSEDARG Dwarf_Debug dbg,
 
     /* Display compile unit name */
     PRINT_CU_INFO();
+    glflags.gf_count_major_errors = realmajorerr;
 }
 
 void
@@ -1038,6 +1063,7 @@ print_error(Dwarf_Debug dbg,
             dwarf_dealloc(dbg,lerr,DW_DLA_ERROR);
         }
         dwarf_finish(dbg, &ignored_err);
+        check_for_major_errors();
     }
     exit(FAILED);
 }
@@ -1048,6 +1074,7 @@ print_error_and_continue(Dwarf_Debug dbg,
     int dwarf_code,
     Dwarf_Error lerr)
 {
+    glflags.gf_count_major_errors++;
     print_error_maybe_continue(dbg,
         msg,dwarf_code,lerr,TRUE);
 }

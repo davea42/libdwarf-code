@@ -575,57 +575,61 @@ dwarf_add_fde_inst_a(Dwarf_P_Fde fde,
             db = val1;
             ptr = (char *) _dwarf_p_get_alloc(dbg, 1);
             if (ptr == NULL) {
-               _dwarf_p_error(dbg, error, DW_DLE_STRING_ALLOC);
-               return DW_DLV_ERROR;
+                _dwarf_p_error(dbg, error, DW_DLE_STRING_ALLOC);
+                return DW_DLV_ERROR;
             }
             memcpy((void *) ptr, (const void *) &db, 1);
             nbytes = 1;
         } else if (!(val1& (~(Dwarf_Unsigned)0xffff))) {
-           if (sizeof(dh) < SIZEOFT16) {
-               _dwarf_p_error(dbg, error, DW_DLE_DEBUG_FRAME_LENGTH_BAD);
-               return DW_DLV_ERROR;
-           }
-           op = DW_CFA_advance_loc2;
-           dh = val1;
-           ptr = (char *) _dwarf_p_get_alloc(dbg, SIZEOFT16);
-           if (ptr == NULL) {
-               _dwarf_p_error(dbg, error, DW_DLE_STRING_ALLOC);
-               return DW_DLV_ERROR;
-           }
-           /*  No byte swapping, assuming running at target endianness. */
-           ASNOUT((void *) ptr, dh, SIZEOFT16);
-           nbytes = SIZEOFT16;
-    
+            if (sizeof(dh) < SIZEOFT16) {
+                _dwarf_p_error(dbg, error,
+                    DW_DLE_DEBUG_FRAME_LENGTH_BAD);
+                return DW_DLV_ERROR;
+            }
+            op = DW_CFA_advance_loc2;
+            dh = val1;
+            ptr = (char *) _dwarf_p_get_alloc(dbg, SIZEOFT16);
+            if (ptr == NULL) {
+                _dwarf_p_error(dbg, error, DW_DLE_STRING_ALLOC);
+                return DW_DLV_ERROR;
+            }
+            /*  No byte swapping, assuming running at
+                target endianness. */
+            ASNOUT((void *) ptr, dh, SIZEOFT16);
+            nbytes = SIZEOFT16;
         } else if (!(val1& ~(Dwarf_Unsigned)0xffffffff)) {
-           if (sizeof(du) < SIZEOFT32) {
-               _dwarf_p_error(dbg, error, DW_DLE_DEBUG_FRAME_LENGTH_BAD);
-               return DW_DLV_ERROR;
-           }
-           op = DW_CFA_advance_loc4;
-           du = val1;
-           ptr = (char *) _dwarf_p_get_alloc(dbg, SIZEOFT32);
-           if (ptr == NULL) {
-               _dwarf_p_error(dbg, error, DW_DLE_STRING_ALLOC);
-               return DW_DLV_ERROR;
-           }
-           ASNOUT((void *) ptr, du, SIZEOFT32);
-           nbytes = SIZEOFT32;
+            if (sizeof(du) < SIZEOFT32) {
+                _dwarf_p_error(dbg, error,
+                    DW_DLE_DEBUG_FRAME_LENGTH_BAD);
+                return DW_DLV_ERROR;
+            }
+            op = DW_CFA_advance_loc4;
+            du = val1;
+            ptr = (char *) _dwarf_p_get_alloc(dbg, SIZEOFT32);
+            if (ptr == NULL) {
+                _dwarf_p_error(dbg, error, DW_DLE_STRING_ALLOC);
+                return DW_DLV_ERROR;
+            }
+            ASNOUT((void *) ptr, du, SIZEOFT32);
+            nbytes = SIZEOFT32;
         } else {
-           if (sizeof(du) < SIZEOFT64) {
-               _dwarf_p_error(dbg, error, DW_DLE_DEBUG_FRAME_LENGTH_BAD);
-               return DW_DLV_ERROR;
-           }
-           op = DW_CFA_MIPS_advance_loc8;
-           du = val1;
-           ptr = (char *) _dwarf_p_get_alloc(dbg,
-               SIZEOFT64);
-           if (ptr == NULL) {
-               _dwarf_p_error(dbg, error, DW_DLE_STRING_ALLOC);
-               return DW_DLV_ERROR;
-           }
-           /*  No byte swapping, assuming running at target endianness. */
-           ASNOUT((void *) ptr, du, SIZEOFT64);
-           nbytes = SIZEOFT64;
+            if (sizeof(du) < SIZEOFT64) {
+                _dwarf_p_error(dbg, error,
+                    DW_DLE_DEBUG_FRAME_LENGTH_BAD);
+                return DW_DLV_ERROR;
+            }
+            op = DW_CFA_MIPS_advance_loc8;
+            du = val1;
+            ptr = (char *) _dwarf_p_get_alloc(dbg,
+                SIZEOFT64);
+            if (ptr == NULL) {
+                _dwarf_p_error(dbg, error, DW_DLE_STRING_ALLOC);
+                return DW_DLV_ERROR;
+            }
+            /*  No byte swapping, assuming running at
+                target endianness. */
+            ASNOUT((void *) ptr, du, SIZEOFT64);
+            nbytes = SIZEOFT64;
         }
         break;
     }

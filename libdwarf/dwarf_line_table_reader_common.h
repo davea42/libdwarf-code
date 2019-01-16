@@ -1166,6 +1166,13 @@ read_line_table_program(Dwarf_Debug dbg,
 
             regs.lr_line = regs.lr_line + line_context->lc_line_base +
                 opcode % line_context->lc_line_range;
+            if ((Dwarf_Signed)regs.lr_line < 0) {
+                /* Something is badly wrong */
+                regs.lr_line = 0;
+                _dwarf_error(dbg, error,
+                    DW_DLE_LINE_TABLE_LINENO_ERROR);
+                return DW_DLV_ERROR;
+            }
 #ifdef PRINTING_DETAILS
             sprintf(special, "Specialop %3u", origop);
             print_line_detail(dbg,special,
@@ -1330,6 +1337,13 @@ read_line_table_program(Dwarf_Debug dbg,
                     (Dwarf_Signed) advance_line);
 #endif /* PRINTING_DETAILS */
                 regs.lr_line = regs.lr_line + advance_line;
+                if ((Dwarf_Signed)regs.lr_line < 0) {
+                    /* Something is badly wrong */
+                    regs.lr_line = 0;
+                    _dwarf_error(dbg, error,
+                        DW_DLE_LINE_TABLE_LINENO_ERROR);
+                    return DW_DLV_ERROR;
+                }
                 }
                 break;
             case DW_LNS_set_file:{
@@ -1480,6 +1494,13 @@ read_line_table_program(Dwarf_Debug dbg,
                         dbg,error,line_ptr_end);
                     advance_line = (Dwarf_Signed) stmp;
                     regs.lr_line = regs.lr_line + advance_line;
+                    if ((Dwarf_Signed)regs.lr_line < 0) {
+                        /* Something is badly wrong */
+                        regs.lr_line = 0;
+                        _dwarf_error(dbg, error,
+                            DW_DLE_LINE_TABLE_LINENO_ERROR);
+                        return DW_DLV_ERROR;
+                    }
                     if (regs.lr_line >= 1 &&
                         regs.lr_line - 1 < logicals_count) {
                         regs.lr_address =

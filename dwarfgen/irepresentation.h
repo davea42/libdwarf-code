@@ -137,6 +137,7 @@ public:
     IRepresentation() {};
     ~IRepresentation(){};
     IRFrame &framedata() { return framedata_; };
+    IRFrame &ehframedata() { return ehframedata_; };
     IRMacro &macrodata() { return macrodata_; };
     IRDInfo &infodata() { return debuginfodata_; };
     IRPubsData &pubnamedata() {return pubnamedata_;};
@@ -148,6 +149,7 @@ private:
     ElfSymbols elfSymbols_;
 
     IRFrame  framedata_;
+    IRFrame  ehframedata_;
     IRMacro  macrodata_;
     IRPubsData  pubnamedata_;
 

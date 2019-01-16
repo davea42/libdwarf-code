@@ -42,6 +42,7 @@ extern struct CmdOptions {
     bool showrelocdetails;
     bool adddata16;
     bool addimplicitconst;
+    bool addframeadvanceloc;
 } cmdoptions;
 
 template <typename T >

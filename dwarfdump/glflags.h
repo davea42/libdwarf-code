@@ -215,6 +215,8 @@ struct glflags_s {
     boolean gf_display_offsets;
     boolean gf_print_str_offsets;
 
+    unsigned long gf_count_major_errors;
+
     /*  Base address has a special meaning in DWARF4 relative to address ranges. */
     boolean seen_PU;                  /* Detected a PU */
     boolean seen_CU;                  /* Detected a CU */
@@ -326,6 +328,7 @@ struct glflags_s {
     struct esb_s *config_file_tiedpath;
     struct dwconf_s *config_file_data;
 
+    
     /*  Check errors. */
     int check_error;
 };

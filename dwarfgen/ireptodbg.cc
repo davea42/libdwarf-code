@@ -585,12 +585,15 @@ transform_cie_fde(Dwarf_P_Debug dbg,
     std::vector<IRFde> &fde_vec =
         Irep.framedata().get_fde_vec();
 
-    // cievecsize Signed as dwarf_add_frame_cie
-    // returns signed to accomodate its error
-    // value return
-    Dwarf_Signed cievecsize = cie_vec.size();
-
-    for(Dwarf_Signed i = 0; i < cievecsize ; ++i) {
+    Dwarf_Unsigned cievecsize = cie_vec.size();
+    if (!cievecsize) {
+        // If debug_frame missing try for eh_frame.
+        // Just do one section, not both, for now.
+        cie_vec = Irep.ehframedata().get_cie_vec();
+        fde_vec = Irep.ehframedata().get_fde_vec();
+        cievecsize = cie_vec.size();
+    }
+    for(Dwarf_Unsigned i = 0; i < cievecsize ; ++i) {
         IRCie &ciein = cie_vec[i];
         Dwarf_Unsigned version = 0;
         string aug;
@@ -598,19 +601,21 @@ transform_cie_fde(Dwarf_P_Debug dbg,
         Dwarf_Signed data_align = 0;
         Dwarf_Half ret_addr_reg = -1;
         void * bytes = 0;
-        Dwarf_Unsigned bytes_len;
+        Dwarf_Unsigned bytes_len = 0;
+        Dwarf_Unsigned out_cie_index = 0;
+
         ciein.get_basic_cie_data(&version, &aug,
             &code_align, &data_align, &ret_addr_reg);
         ciein.get_init_instructions(&bytes_len,&bytes);
         // version implied: FIXME, need to let user code set output
         // frame version.
         char *str = const_cast<char *>(aug.c_str());
-        Dwarf_Signed out_cie_index =
-            dwarf_add_frame_cie(dbg, str,
+        int res = dwarf_add_frame_cie_a(dbg, str,
             code_align, data_align, ret_addr_reg,
             bytes,bytes_len,
+            &out_cie_index,
             &err);
-        if(out_cie_index == DW_DLV_NOCOUNT) {
+        if(res != DW_DLV_OK) {
             cerr << "Error creating cie from input cie " << i << endl;
             exit(1);
         }
@@ -620,7 +625,7 @@ transform_cie_fde(Dwarf_P_Debug dbg,
             IRFde &fdein = fde_vec[j];
             Dwarf_Unsigned code_len = 0;
             Dwarf_Addr code_virt_addr = 0;
-            Dwarf_Signed cie_input_index = 0;
+            Dwarf_Unsigned cie_input_index = 0;
 
             fdein.get_fde_base_data(&code_virt_addr,
                 &code_len, &cie_input_index);
@@ -630,8 +635,10 @@ transform_cie_fde(Dwarf_P_Debug dbg,
             }
 
 
-            Dwarf_P_Fde fdeout = dwarf_new_fde(dbg,&err);
-            if(reinterpret_cast<Dwarf_Addr>(fdeout) == DW_DLV_BADADDR) {
+            Dwarf_P_Fde fdeout =  0;
+
+            res = dwarf_new_fde_a(dbg,&fdeout,&err);
+            if(res != DW_DLV_OK) {
                 cerr << "Error creating new fde " << j << endl;
                 exit(1);
             }
@@ -639,7 +646,7 @@ transform_cie_fde(Dwarf_P_Debug dbg,
             void *instrs = 0;
             fdein.get_fde_instructions(&ilen, &instrs);
 
-            int res = dwarf_insert_fde_inst_bytes(dbg,
+            res = dwarf_insert_fde_inst_bytes(dbg,
                 fdeout, ilen, instrs,&err);
             if(res != DW_DLV_OK) {
                 cerr << "Error inserting frame instr block " << j << endl;
@@ -651,18 +658,105 @@ transform_cie_fde(Dwarf_P_Debug dbg,
             Dwarf_Unsigned irix_excep_sym = 0;
             Dwarf_Unsigned code_virt_addr_symidx =
                 Irep.getBaseTextSymbol();
-            Dwarf_Unsigned fde_index = dwarf_add_frame_info(
+            Dwarf_Unsigned fde_index =  0;
+            Dwarf_Unsigned end_symbol_index = 0;
+            Dwarf_Unsigned offset_from_end_symbol = 0;
+
+            res = dwarf_add_frame_info_c(
                 dbg, fdeout,irix_die,
                 out_cie_index, code_virt_addr,
-                code_len,code_virt_addr_symidx,
+                code_len,
+                code_virt_addr_symidx,
+                end_symbol_index,
+                offset_from_end_symbol,
                 irix_table_offset,irix_excep_sym,
+                &fde_index,
                 &err);
-            if(fde_index == DW_DLV_BADADDR) {
+            if(res != DW_DLV_OK) {
                 cerr << "Error creating new fde " << j << endl;
                 exit(1);
             }
         }
     }
+    if (cmdoptions.addframeadvanceloc) {
+        // Add a whole new fde, cie, and some instructions
+        Dwarf_Unsigned code_align = 1;
+        Dwarf_Signed data_align = 1;
+        Dwarf_Half ret_addr_reg = 2; // fake, of course.
+        void * bytes = 0;
+        Dwarf_Unsigned bytes_len = 0;
+        Dwarf_Unsigned out_cie_index = 0;
+
+
+        const char *augstr = "";
+        int res = dwarf_add_frame_cie_a(dbg, 
+            (char *)augstr,
+            code_align, 
+            data_align, 
+            ret_addr_reg,
+            bytes,bytes_len,
+            &out_cie_index,
+            &err);
+        if(res != DW_DLV_OK) {
+            cerr << "Error creating made-up addframeadvanceloc cie "
+                << endl;
+            exit(1);
+        }
+        Dwarf_P_Fde fdeout =  0;
+
+        res = dwarf_new_fde_a(dbg,&fdeout,&err);
+        if(res != DW_DLV_OK) {
+            cerr << "Error creating addframeadvance fde " << endl;
+            exit(1);
+        }
+        // These lead to a set of adv_loc ops values in the output
+        // for the fde which looks odd in -f
+        // output (-vvv -f makes more sense), might be 
+        // better to have some additional frame instrs in there
+        // so plain -f looks more sensible.
+        std::list<Dwarf_Unsigned> adval = {48,64,
+            17219,4408131,18308350787ull };
+        // 0x30 0x40 0x4343 0x434343 0x434343434
+        for( list<Dwarf_Unsigned>::iterator it =
+            adval.begin();
+            it != adval.end();it++ ) {
+
+            Dwarf_Unsigned v = *it;
+            res = dwarf_add_fde_inst_a(fdeout,
+                DW_CFA_advance_loc,v,0,&err);
+            if (res != DW_DLV_OK) {
+                cerr << "Error adding advance_loc" << v << endl;
+                exit(1);
+            }
+        }
+        Dwarf_P_Die irix_die = 0;
+        Dwarf_Signed irix_table_offset = 0;
+        Dwarf_Unsigned irix_excep_sym = 0;
+        Dwarf_Unsigned code_virt_addr_symidx =
+                Irep.getBaseTextSymbol();
+        Dwarf_Unsigned fde_index =  0;
+        Dwarf_Unsigned end_symbol_index = 0;
+        Dwarf_Unsigned offset_from_end_symbol = 0;
+        Dwarf_Addr code_virt_addr = 0;
+        Dwarf_Addr code_len = 12000000;
+
+        res = dwarf_add_frame_info_c(
+            dbg, fdeout,irix_die,
+            out_cie_index, code_virt_addr,
+            code_len,
+            code_virt_addr_symidx,
+            end_symbol_index,
+            offset_from_end_symbol,
+            irix_table_offset,irix_excep_sym,
+            &fde_index,
+            &err);
+        if(res != DW_DLV_OK) {
+                cerr << "Error creating advance_loc fde " << endl;
+                exit(1);
+        }
+
+    }
+
 }
 
 static void
