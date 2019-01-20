@@ -1,3 +1,23 @@
+2019-01-20   David Anderson
+      * dwarf_base_types.h: Remove Dwarf_ufixed and 
+        Dwarf_sfixed and all __int32_t and __uint32_t use.
+        __uint64_t Dwarf_ufixed64 and __int64_t Dwarf_sfixed64
+        have also been removed.
+      * dwarf_elf_access.c: Remove use of those types here too.
+      * dwarf_form.c: Remove references to those types here
+        too.
+      * dwarf_gdbindex.c, dwarf_gdbindex.h: Replace 
+        gdbindex_offset_type headerval[6]
+        by char gfs[4][6] (replacing dependence on the  int32
+        sorts of types.
+      * dwarf_macho_loader.h: Clarified that the uint32_t sorts
+        of things are just comments.
+      * libdwarf.h.in: Fixed a too-long comment line.
+      * libdwarfdefs.h: Removed all the *UINT32* and
+        *uint64* use.
+      * pro_forms.c,pro_opaque, pro_section.c: 
+        Removed all the Dwarf_sfixed and ufixed
+        stuff here too.
 2019-01-14   David Anderson
      * dwarf_frame.c: Add support for DW_CFA_MIPS_advance_loc8
        (though pointless, really) so we can test all the code

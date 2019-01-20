@@ -1,3 +1,10 @@
+2019-01-20 David Anderson
+    * globals.h: Remove the code for *UINT* and
+      all the ifdefs involved. No longer needed.
+    * print_die.c(get_FLAG_BLOCK_string): Remove 
+      the__int32_t from this function (associated with
+      DW_AT_SUN_func_offsets).  Simplify the printing
+      of these offsets. 
 2019-01-14 David Anderson
     * dwarf_names.c, dwarf_names.h,dwarfdump-ta-ext-table.h,
       dwarfdump-ta-table.h,dwarfdump-tt-ext-table.h,

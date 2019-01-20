@@ -1,3 +1,6 @@
+2019-01-20 David Anderson
+     * dwarfgen.cc: Remove use of uint32_t and uint64_t
+       and use Dwarf_Unsigned for arithmetic.
 2019-01-14 David Anderson
      * createirepfrombinary.cc: Made a partial step toward
        being able to read eh_frame, but those few lines

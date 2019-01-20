@@ -47,7 +47,7 @@
     We simply assume unsigned int is 32 bits FIXME.
 */
 
-typedef __uint32_t gdbindex_offset_type;
+typedef unsigned int gdbindex_offset_type;
 typedef Dwarf_Unsigned gdbindex_64;
 
 enum gdbindex_type_e {

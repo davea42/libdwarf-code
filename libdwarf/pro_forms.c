@@ -43,6 +43,71 @@
 /* Indicates no relocation needed. */
 #define NO_ELF_SYM_INDEX        0
 
+
+#ifdef WORDS_BIGENDIAN
+#define ASNAR(t,s,l)                   \
+    do {                                    \
+        unsigned tbyte = sizeof(t) - l;     \
+        t = 0;                              \
+        memcpy(((char *)&t)+tbyte ,&s[0],l);\
+    } while (0)
+#else /* LITTLE ENDIAN */
+#define ASNAR(t,s,l)                 \
+    do {                                \
+        t = 0;                          \
+        memcpy(&t,&s[0],l);             \
+    } while (0)
+#endif /* end LITTLE- BIG-ENDIAN */
+
+
+#ifdef WORDS_BIGENDIAN
+#define ASNOUT(t,s,l)                       \
+    do {                                    \
+        unsigned sbyte = 0;                 \
+        char *p = 0;                        \
+        if (l > sizeof(s)) {                \
+            _dwarf_p_error(dbg, error, DW_DLE_DEBUG_FRAME_LENGTH_BAD);\
+            return DW_DLV_ERROR;            \
+        }                                   \
+        sbyte = sizeof(s) - l;              \
+        p = (const char *)(&s);             \
+        memcpy(t,(const void *)(p+sbyte),l);\
+    } while (0)
+#else /* LITTLEENDIAN */
+#define ASNOUT(t,s,l)                       \
+    do {                                    \
+        const char *p = 0;                  \
+        if (l > sizeof(s)) {                \
+            _dwarf_p_error(dbg, error, DW_DLE_DEBUG_FRAME_LENGTH_BAD);\
+            return DW_DLV_ERROR;            \
+        }                                   \
+        p = (const char *)(&s);             \
+        memcpy(t,(const void *)p,l);        \
+    } while (0)
+#endif /* ENDIANNESS */
+
+#ifdef WORDS_BIGENDIAN
+#define SIGN_EXTEND(dest, length)                                 \
+    do {                                                          \
+        if (*(Dwarf_Sbyte *)((char *)&dest +                      \
+            sizeof(dest) - length) < 0) {                         \
+            memcpy((char *)&dest, "\xff\xff\xff\xff\xff\xff\xff\xff",\
+                sizeof(dest) - length);                           \
+        }                                                         \
+    } while (0)
+#else /* LITTLE ENDIAN */
+#define SIGN_EXTEND(dest, length)                               \
+    do {                                                        \
+        if (*(Dwarf_Sbyte *)((char *)&dest + (length-1)) < 0) { \
+            memcpy((char *)&dest+length,                        \
+                "\xff\xff\xff\xff\xff\xff\xff\xff",             \
+                sizeof(dest) - length);                         \
+        }                                                       \
+    } while (0)
+
+#endif /* ! LITTLE_ENDIAN */
+
+
 /*  This function adds an attribute whose value is
     a target address to the given die.  The attribute
     is given the name provided by attr.  The address
@@ -293,6 +358,7 @@ dwarf_compress_integer_block(
     char * ptr = 0;
     int remain = 0;
     int result = 0;
+    char *inptr = 0;
 
     if (dbg == NULL) {
         _dwarf_p_error(NULL, error, DW_DLE_DBG_NULL);
@@ -313,19 +379,22 @@ dwarf_compress_integer_block(
     /* First compress everything to find the total size. */
 
     output_length_in_bytes = 0;
+    inptr = input_block;
     for (u=0; u<input_length_in_units; u++) {
         int unit_encoded_size;
-        Dwarf_sfixed unit; /* this is fixed at signed-32-bits */
+        Dwarf_Signed unit = 0; 
 
-        unit = ((Dwarf_sfixed*)input_block)[u];
-
-        result = _dwarf_pro_encode_signed_leb128_nm(unit, &unit_encoded_size,
+        ASNAR(unit,inptr,DWARF_32BIT_SIZE); 
+        SIGN_EXTEND(unit,DWARF_32BIT_SIZE);
+        result = _dwarf_pro_encode_signed_leb128_nm(
+            unit, &unit_encoded_size,
             encode_buffer,sizeof(encode_buffer));
         if (result !=  DW_DLV_OK) {
             _dwarf_p_error(dbg, error, DW_DLE_ALLOC_FAIL);
             return((Dwarf_P_Attribute)DW_DLV_BADADDR);
         }
         output_length_in_bytes += unit_encoded_size;
+        inptr += DWARF_32BIT_SIZE;
     }
 
 
@@ -341,14 +410,16 @@ dwarf_compress_integer_block(
     /* Then compress again and copy into new buffer */
 
     ptr = output_block;
+    inptr = input_block;
     remain = output_length_in_bytes;
     for (u=0; u<input_length_in_units; u++) {
         int unit_encoded_size;
-        Dwarf_sfixed unit; /* this is fixed at signed-32-bits */
+        Dwarf_Signed unit = 0;
 
-        unit = ((Dwarf_sfixed*)input_block)[u];
-
-        result = _dwarf_pro_encode_signed_leb128_nm(unit, &unit_encoded_size,
+        ASNAR(unit,inptr,DWARF_32BIT_SIZE); 
+        SIGN_EXTEND(unit,DWARF_32BIT_SIZE);
+        result = _dwarf_pro_encode_signed_leb128_nm(unit, 
+            &unit_encoded_size,
             ptr, remain);
         if (result !=  DW_DLV_OK) {
             _dwarf_p_error(dbg, error, DW_DLE_ALLOC_FAIL);
@@ -356,6 +427,7 @@ dwarf_compress_integer_block(
         }
         remain -= unit_encoded_size;
         ptr += unit_encoded_size;
+        inptr += DWARF_32BIT_SIZE;
     }
 
     if (remain != 0) {

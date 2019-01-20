@@ -4198,7 +4198,8 @@ void dwarf_dealloc_compressed_block(
     void *
 );
 
-/*  Call this passing in return value from dwarf_uncompress_integer_block()
+/*  Call this passing in return value from 
+    dwarf_uncompress_integer_block()
     to free the space the decompression allocated. */
 void dwarf_dealloc_uncompressed_block(
     Dwarf_Debug,

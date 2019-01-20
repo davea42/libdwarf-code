@@ -121,23 +121,9 @@ typedef unsigned char Dwarf_Ubyte;
 typedef signed short Dwarf_Shalf;
 typedef Dwarf_Small *Dwarf_Byte_Ptr;
 
-/*  These 2 are fixed sizes which must not vary with the
-    ILP32/LP64 model. Between these two, stay at 32 bit.  */
-typedef __uint32_t Dwarf_ufixed;
-typedef __int32_t Dwarf_sfixed;
-
-/*  In various places the code mistakenly associates
-    forms 8 bytes long with Dwarf_Signed or Dwarf_Unsigned
-    This is not a very portable assumption.
-    The following should be used instead for 64 bit integers.
-*/
-typedef __uint64_t Dwarf_ufixed64;
-typedef __int64_t Dwarf_sfixed64;
-
 #define DWARF_HALF_SIZE 2
 #define DWARF_32BIT_SIZE 4
 #define DWARF_64BIT_SIZE 8
-
 
 typedef struct Dwarf_Abbrev_List_s *Dwarf_Abbrev_List;
 typedef struct Dwarf_File_Entry_s *Dwarf_File_Entry;

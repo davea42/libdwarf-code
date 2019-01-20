@@ -64,6 +64,33 @@
 #define FALSE 0
 #endif
 
+#ifdef WORDS_BIGENDIAN
+#define ASNOUT(t,s,l)                       \
+    do {                                    \
+        unsigned sbyte = 0;                 \
+        char *p = 0;                        \
+        if (l > sizeof(s)) {                \
+            _dwarf_p_error(dbg, error, DW_DLE_DEBUG_FRAME_LENGTH_BAD);\
+            return DW_DLV_ERROR;            \
+        }                                   \
+        sbyte = sizeof(s) - l;              \
+        p = (const char *)(&s);             \
+        memcpy(t,(const void *)(p+sbyte),l);\
+    } while (0)
+#else /* LITTLEENDIAN */
+#define ASNOUT(t,s,l)                       \
+    do {                                    \
+        const char *p = 0;                  \
+        if (l > sizeof(s)) {                \
+            _dwarf_p_error(dbg, error, DW_DLE_DEBUG_FRAME_LENGTH_BAD);\
+            return DW_DLV_ERROR;            \
+        }                                   \
+        p = (const char *)(&s);             \
+        memcpy(t,(const void *)p,l);        \
+    } while (0)
+#endif /* ENDIANNESS */
+
+
 #define SIZEOFT32 4
 
 struct Dwarf_Sort_Abbrev_s {
@@ -1024,8 +1051,8 @@ determine_file_content_size(Dwarf_P_Debug dbg,
                 case DW_FORM_data4: {
                     calculated_size += DWARF_32BIT_SIZE;
                     if (write_out) {
-                        Dwarf_ufixed u4 = cur->dfe_timestamp;
-                        memcpy(data,&u4,DWARF_32BIT_SIZE);
+                        ASNOUT(data,cur->dfe_timestamp,
+                            DWARF_32BIT_SIZE);
                         data += DWARF_32BIT_SIZE;
                     }
                     }
@@ -1071,8 +1098,8 @@ determine_file_content_size(Dwarf_P_Debug dbg,
                 case DW_FORM_data4:
                     calculated_size += DWARF_32BIT_SIZE;
                     if (write_out) {
-                        Dwarf_ufixed u4 = cur->dfe_index;
-                        memcpy(data,&u4,DWARF_32BIT_SIZE);
+                        ASNOUT(data,cur->dfe_index,
+                            DWARF_32BIT_SIZE);
                         data += DWARF_32BIT_SIZE;
                     }
                     break;
@@ -1885,7 +1912,6 @@ _dwarf_pro_generate_debugframe(Dwarf_P_Debug dbg,
     Dwarf_P_Cie curcie = 0;
     Dwarf_P_Fde curfde = 0;
     unsigned char *data = 0;
-    Dwarf_sfixed dsw = 0;
     Dwarf_Unsigned du = 0;
     Dwarf_Ubyte db = 0;
     long *cie_offs = 0;   /* Holds byte offsets for links to fde's */
@@ -2117,7 +2143,7 @@ _dwarf_pro_generate_debugframe(Dwarf_P_Debug dbg,
             strcmp(cie_ptr->cie_aug, DW_CIE_AUGMENTER_STRING_V0) == 0) {
 
             v0_augmentation = 1;
-            oet_length = sizeof(Dwarf_sfixed);
+            oet_length = DWARF_32BIT_SIZE;
             /* encode the length of augmented fields. */
             res = _dwarf_pro_encode_leb128_nm(oet_length,
                 &afl_length, afl_buff,
@@ -2179,7 +2205,7 @@ _dwarf_pro_generate_debugframe(Dwarf_P_Debug dbg,
                     afl_length,
                 curfde->fde_exception_table_symbol,
                 dwarf_drt_segment_rel,
-                sizeof(Dwarf_sfixed));
+                DWARF_32BIT_SIZE);
             if (res != DW_DLV_OK) {
                 DWARF_P_DBG_ERROR(dbg, DW_DLE_CHUNK_ALLOC, res);
             }
@@ -2266,14 +2292,16 @@ _dwarf_pro_generate_debugframe(Dwarf_P_Debug dbg,
         if (v0_augmentation) {
             /* IRIX only. */
             /* write the encoded augmented field length. */
+            Dwarf_Signed dsw = 0;
+
             memcpy((void *) data, (const void *) afl_buff, afl_length);
             data += afl_length;
             /* write the offset_into_exception_tables field. */
-            dsw =
-                (Dwarf_sfixed) curfde->fde_offset_into_exception_tables;
-            WRITE_UNALIGNED(dbg, (void *) data, (const void *) &dsw,
-                sizeof(dsw), sizeof(Dwarf_sfixed));
-            data += sizeof(Dwarf_sfixed);
+            dsw = (Dwarf_Signed)curfde->fde_offset_into_exception_tables;
+            WRITE_UNALIGNED(dbg, (void *) data, 
+                (const void *) &dsw,
+                sizeof(dsw), DWARF_32BIT_SIZE);
+            data += DWARF_32BIT_SIZE;
         }
 
         curinst = curfde->fde_inst;

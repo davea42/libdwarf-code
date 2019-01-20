@@ -125,7 +125,10 @@ dwarf_uncompress_integer_block(
     unsigned i = 0;
     char * ptr = 0;
     int remain = 0;
-    Dwarf_sfixed * array = 0;
+    /*  This only applies to Sun and there an unsigned
+        is 4 bytes so this works.  As with 
+        most linux. */
+    unsigned * array = 0;
     Dwarf_Byte_Ptr endptr = (Dwarf_Byte_Ptr)input_block+
         input_length_in_bytes;
 
@@ -184,7 +187,7 @@ dwarf_uncompress_integer_block(
 
     /* then uncompress again and copy into new buffer */
 
-    array = (Dwarf_sfixed *) output_block;
+    array = (unsigned *) output_block;
     remain = input_length_in_bytes;
     ptr = input_block;
     for (i=0; i<output_length_in_units && remain>0; i++) {

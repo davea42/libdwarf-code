@@ -131,6 +131,60 @@ attributes of a function. It's misnamed, it really means
 seems bogus. */
 static Dwarf_Bool in_valid_code = TRUE;
 
+#if 0
+static void
+dump_bytes(const char *msg,Dwarf_Small * start, long len)
+{
+    Dwarf_Small *end = start + len;
+    Dwarf_Small *cur = start;
+    printf("%s (0x%lx) ",msg,(unsigned long)start);
+    for (; cur < end; cur++) {
+        printf("%02x", *cur);
+    }
+    printf("\n");
+}
+#endif /* 0 */
+
+/* s1, s2 may point to same place. Hence use a temp array here. */
+static void
+_dwarf_memcpy_swap_bytes(void *s1, const void *s2, unsigned long len)
+{
+    unsigned char *targ = (unsigned char *) s1;
+    char temptarg[8];
+    const unsigned char *src = (const unsigned char *) s2;
+
+    if (len == 4) {
+        temptarg[3] = src[0];
+        temptarg[2] = src[1];
+        temptarg[1] = src[2];
+        temptarg[0] = src[3];
+        memcpy(s1,temptarg,4);
+    } else if (len == 8) {
+        temptarg[7] = src[0];
+        temptarg[6] = src[1];
+        temptarg[5] = src[2];
+        temptarg[4] = src[3];
+        temptarg[3] = src[4];
+        temptarg[2] = src[5];
+        temptarg[1] = src[6];
+        temptarg[0] = src[7];
+        memcpy(s1,temptarg,8);
+    } else if (len == 2) {
+        temptarg[1] = src[0];
+        temptarg[0] = src[1];
+        memcpy(s1,temptarg,2);
+    }
+/* should NOT get below here: is not the intended use */
+    else if (len == 1) {
+        targ[0] = src[0];
+    } else {
+        memcpy(s1, s2, (size_t)len);
+    }
+    return;
+}
+
+
+
 struct operation_descr_s {
     int op_code;
     int op_count;
@@ -1653,9 +1707,11 @@ get_small_encoding_integer_and_name(Dwarf_Debug dbg,
 
 
 
-/*  We need a 32-bit signed number here, but there's no portable
-    way of getting that.  So use __uint32_t instead.  It's supplied
-    in a reliable way by the autoconf infrastructure.  */
+/*  Called for DW_AT_SUN_func_offsets
+    We need a 32-bit signed number here.
+    But we're getting rid of the __[u]int[n]_t
+    dependence so lets use plain characters. 
+    */
 
 static void
 get_FLAG_BLOCK_string(Dwarf_Debug dbg, Dwarf_Attribute attrib,
@@ -1663,13 +1719,15 @@ get_FLAG_BLOCK_string(Dwarf_Debug dbg, Dwarf_Attribute attrib,
 {
     int fres = 0;
     Dwarf_Block *tempb = 0;
-    __uint32_t * array = 0;
     Dwarf_Unsigned array_len = 0;
-    __uint32_t * array_ptr;
+    char * array = 0;
+    char * array_ptr = 0;
     Dwarf_Unsigned array_remain = 0;
 #ifdef ORIGINAL_SPRINTF
     char linebuf[100];
 #endif
+    unsigned unit_length = 4; /* Matching the 32bit arg below,
+        we only handle 32bit quantities here.  */
     Dwarf_Error  fblkerr = 0;
 
     /* first get compressed block data */
@@ -1679,7 +1737,10 @@ get_FLAG_BLOCK_string(Dwarf_Debug dbg, Dwarf_Attribute attrib,
         return;
     }
 
-    /* uncompress block into int array */
+    /*  uncompress block into 32bit signed int array.  
+        It's really a block of sleb numbers so the
+        compression is minor unless the values
+        are close to zero.  */
     array = dwarf_uncompress_integer_block(dbg,
         1, /* 'true' (meaning signed ints)*/
         32, /* bits per unit */
@@ -1697,46 +1758,28 @@ get_FLAG_BLOCK_string(Dwarf_Debug dbg, Dwarf_Attribute attrib,
     }
 
     /* fill in string buffer */
-    array_remain = array_len;
+    array_remain = array_len*unit_length;
     array_ptr = array;
-    while (array_remain > 8) {
+    while (array_remain > 0) {
         unsigned i = 0;
         /*  Print a full line */
-        /*  If you touch this string, update the magic number 8 in
-            the  += and -= below! */
-#ifdef ORIGINAL_SPRINTF
-        snprintf(linebuf, sizeof(linebuf),
-            "\n  0x%08x 0x%08x 0x%08x 0x%08x 0x%08x 0x%08x 0x%08x 0x%08x",
-            array_ptr[0],           array_ptr[1],
-            array_ptr[2],           array_ptr[3],
-            array_ptr[4],           array_ptr[5],
-            array_ptr[6],           array_ptr[7]);
-        esb_append(esbp, linebuf);
-#else
-        esb_append_printf_u(esbp,"\n  0x%08x",array_ptr[0]);
-        for(i = 1 ; i < 8; ++i) {
-            esb_append_printf_u(esbp,"  0x%08x",array_ptr[i]);
-        }
-#endif
-        array_ptr += 8;
-        array_remain -= 8;
-    }
-
-    /* now do the last line */
-    if (array_remain > 0) {
-        esb_append(esbp, "\n ");
-        while (array_remain > 0) {
-#ifdef ORIGINAL_SPRINTF
-            snprintf(linebuf, sizeof(linebuf), " 0x%08x", *array_ptr);
-            esb_append(esbp, linebuf);
-#else
-            esb_append_printf_u(esbp," 0x%08x",*array_ptr);
-#endif
-            array_remain--;
-            array_ptr++;
+        esb_append(esbp,"\n  ");
+        for(i = 0 ; i < 8 && array_remain > 0; ++i) {
+            unsigned j;
+            esb_append(esbp,"0x");
+#ifdef WORDS_BIGENDIAN
+           /*  So host is bigendian. Print as is. */
+#else /* LITTLE ENDIAN */
+           /*  Host little-endian so we swap to big-endian
+               (which feels a bit strange) to print as bytes. */
+           _dwarf_memcpy_swap_bytes(array_ptr,array_ptr,unit_length);
+#endif /* end LITTLE- BIG-ENDIAN */
+            for (j = 0; j < unit_length && array_remain >0;
+                ++j,++array_ptr,--array_remain) {
+                esb_append_printf_u(esbp,"%02x",(*array_ptr) & 0xff);
+            }
         }
     }
-
     /* free array buffer */
     dwarf_dealloc_uncompressed_block(dbg, array);
 

@@ -135,7 +135,7 @@
 /* open modes S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH */
 #ifndef S_IRUSR
 #define S_IRUSR _S_IREAD
-#endif /* S_IRUSR */
+#endif // S_IRUSR
 #ifndef S_IWUSR
 #define S_IWUSR _S_IWRITE
 #endif
@@ -147,6 +147,36 @@
 #endif
 #endif /* _WIN32 */
 
+//  There are issues 32/64 here, but both are host endianness,
+//  no byte swapping called for.
+//  op and ol aread MUST NOT overlap.
+//  ip and il should be 2,4,or 8. Nothing else.
+//  These could perfectly well be functions.
+#ifdef WORDS_BIGENDIAN
+#define ASNX(op,ol,ip,il)           \
+    do {                            \
+        if( ol > il) {              \
+            memset(op,0,ol);        \
+            memcpy(((char *)(op))+sbyte,(const void *)(ip),il);\
+        } else {                    \
+            unsigned sbyte = 0;     \
+            sbyte = il - ol;        \
+            memcpy((char *)(op),      \
+               (const void *)(((const char *)(ip))+sbyte),ol);\
+        }                           \
+    } while (0)
+#else // LITTLEENDIAN 
+#define ASNX(op,ol,ip,il)           \
+    do {                            \
+        if( ol > il) {              \
+            memset(op,0,ol);        \
+            memcpy(((char *)(op)),(const void *)(ip),il);\
+        } else {                    \
+            memcpy((char *)(op),      \
+               (const void *)(((const char *)(ip))),ol);\
+        }                           \
+    } while (0)
+#endif // ENDIANNESS
 
 using std::string;
 using std::cout;
@@ -841,14 +871,14 @@ bitreplace(char *buf, Dwarf_Unsigned newval,
     int length)
 {
     if(length == 4) {
-        uint32_t my4 = newval;
-        uint32_t oldval = 0;
-        memcpy(&oldval,buf,length);
+        Dwarf_Unsigned my4 = newval;
+        Dwarf_Unsigned oldval = 0;
+        ASNX(&oldval,sizeof(oldval),buf,(unsigned)length);
         oldval += my4;
-        memcpy(buf,&oldval,length);
+        ASNX(buf,(unsigned)length,&oldval,sizeof(oldval));
     } else if (length == 8) {
-        uint64_t my8 = newval;
-        uint64_t oldval = 0;
+        Dwarf_Unsigned my8 = newval;
+        Dwarf_Unsigned oldval = 0;
         memcpy(&oldval,buf,length);
         oldval += my8;
         memcpy(buf,&oldval,length);

@@ -229,11 +229,11 @@ typedef struct {
 } dwarf_elf_object_access_internals_t;
 
 struct Dwarf_Elf_Rela {
-    Dwarf_ufixed64 r_offset;
-    /*Dwarf_ufixed64 r_info; */
-    Dwarf_ufixed64 r_type;
-    Dwarf_ufixed64 r_symidx;
-    Dwarf_ufixed64 r_addend;
+    Dwarf_Unsigned r_offset;
+    /*Dwarf_Unsigned r_info; */
+    Dwarf_Unsigned r_type;
+    Dwarf_Unsigned r_symidx;
+    Dwarf_Unsigned r_addend;
 };
 
 
@@ -1049,8 +1049,8 @@ update_entry(Dwarf_Debug dbg,
     Elf32_Sym *sym = 0;
 #endif
     Elf32_Sym *sym32 = 0;
-    Dwarf_ufixed64 offset = 0;
-    Dwarf_sfixed64 addend = 0;
+    Dwarf_Unsigned offset = 0;
+    Dwarf_Signed addend = 0;
     Dwarf_Unsigned reloc_size = 0;
     Dwarf_Unsigned symtab_entry_count = 0;
 

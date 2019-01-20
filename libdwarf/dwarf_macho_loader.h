@@ -1106,8 +1106,8 @@ struct dylib_module_64 {
 */
 #if 0 /* dwarf readers not using this */
 struct dylib_reference {
-    uint32_t isym:24,        /* index into the symbol table */
-    flags:8;    /* flags to indicate the type of reference */
+    UNUSED uint32_t isym:24,        /* index into the symbol table */
+    UNUSED flags:8;    /* flags to indicate the type of reference */
 };
 #endif /* 0 */
 
@@ -1141,7 +1141,7 @@ struct twolevel_hints_command {
 #if 0
 /* Not used by dwarf readers. */
 struct twolevel_hint {
-    uint32_t
+    UNUSED uint32_t
     isub_image:8,    /* index into the sub images */
     itoc:24;    /* index into the table of contents */
 };
