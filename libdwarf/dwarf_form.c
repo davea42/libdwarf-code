@@ -126,7 +126,7 @@ dwarf_uncompress_integer_block(
     char * ptr = 0;
     int remain = 0;
     /*  This only applies to Sun and there an unsigned
-        is 4 bytes so this works.  As with 
+        is 4 bytes so this works.  As with
         most linux. */
     unsigned * array = 0;
     Dwarf_Byte_Ptr endptr = (Dwarf_Byte_Ptr)input_block+

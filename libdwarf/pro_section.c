@@ -2298,7 +2298,7 @@ _dwarf_pro_generate_debugframe(Dwarf_P_Debug dbg,
             data += afl_length;
             /* write the offset_into_exception_tables field. */
             dsw = (Dwarf_Signed)curfde->fde_offset_into_exception_tables;
-            WRITE_UNALIGNED(dbg, (void *) data, 
+            WRITE_UNALIGNED(dbg, (void *) data,
                 (const void *) &dsw,
                 sizeof(dsw), DWARF_32BIT_SIZE);
             data += DWARF_32BIT_SIZE;

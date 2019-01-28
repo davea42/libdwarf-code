@@ -1,4 +1,7 @@
 2019-01-27   David Anderson
+      * dwarf_form.c,dwarf_gdbindex.c,dwarf_object_read_common.c,
+        pro_forms.c,pro_section.c: Remove trailing whitespace.
+2019-01-27   David Anderson
       * dwarf_object_read_common.c,dwarf_object_read_common.h:
         Now uses the ISO (1990) datatypes off_t and size_t and
         ssize_t for lseek, read.

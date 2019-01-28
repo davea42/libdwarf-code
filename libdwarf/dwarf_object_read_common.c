@@ -42,7 +42,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 /*  Neither off_t nor ssize_t is in C90.
     However, both are in Posix:
-    IEEE Std 1003.1-1990, aka 
+    IEEE Std 1003.1-1990, aka
     ISO/IEC 9954-1:1990. */
 int
 _dwarf_object_read_random(int fd,char *buf,off_t loc,

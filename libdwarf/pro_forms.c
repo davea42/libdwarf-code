@@ -382,9 +382,9 @@ dwarf_compress_integer_block(
     inptr = input_block;
     for (u=0; u<input_length_in_units; u++) {
         int unit_encoded_size;
-        Dwarf_Signed unit = 0; 
+        Dwarf_Signed unit = 0;
 
-        ASNAR(unit,inptr,DWARF_32BIT_SIZE); 
+        ASNAR(unit,inptr,DWARF_32BIT_SIZE);
         SIGN_EXTEND(unit,DWARF_32BIT_SIZE);
         result = _dwarf_pro_encode_signed_leb128_nm(
             unit, &unit_encoded_size,
@@ -397,9 +397,7 @@ dwarf_compress_integer_block(
         inptr += DWARF_32BIT_SIZE;
     }
 
-
     /* Then alloc */
-
     output_block = (void *)
         _dwarf_p_get_alloc(dbg, output_length_in_bytes);
     if (output_block == NULL) {
@@ -408,7 +406,6 @@ dwarf_compress_integer_block(
     }
 
     /* Then compress again and copy into new buffer */
-
     ptr = output_block;
     inptr = input_block;
     remain = output_length_in_bytes;
@@ -416,9 +413,9 @@ dwarf_compress_integer_block(
         int unit_encoded_size;
         Dwarf_Signed unit = 0;
 
-        ASNAR(unit,inptr,DWARF_32BIT_SIZE); 
+        ASNAR(unit,inptr,DWARF_32BIT_SIZE);
         SIGN_EXTEND(unit,DWARF_32BIT_SIZE);
-        result = _dwarf_pro_encode_signed_leb128_nm(unit, 
+        result = _dwarf_pro_encode_signed_leb128_nm(unit,
             &unit_encoded_size,
             ptr, remain);
         if (result !=  DW_DLV_OK) {

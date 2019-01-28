@@ -152,7 +152,7 @@ dwarf_gdbindex_header(Dwarf_Debug dbg,
         }
     }
 
-    if (dbg->de_debug_gdbindex.dss_size < 
+    if (dbg->de_debug_gdbindex.dss_size <
         sizeof(struct gi_fileheader_s) ) {
         _dwarf_error(dbg, error, DW_DLE_ERRONEOUS_GDB_INDEX_SECTION);
         return (DW_DLV_ERROR);
