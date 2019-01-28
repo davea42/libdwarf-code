@@ -1,3 +1,7 @@
+2019-01-27   David Anderson
+      * dwarf_object_read_common.c,dwarf_object_read_common.h:
+        Now uses the ISO (1990) datatypes off_t and size_t and
+        ssize_t for lseek, read.
 2019-01-20   David Anderson
       * dwarf_base_types.h: Remove Dwarf_ufixed and 
         Dwarf_sfixed and all __int32_t and __uint32_t use.

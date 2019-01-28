@@ -40,20 +40,25 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "libdwarf.h" /* For error codes. */
 #include "dwarf_object_read_common.h"
 
+/*  Neither off_t nor ssize_t is in C90.
+    However, both are in Posix:
+    IEEE Std 1003.1-1990, aka 
+    ISO/IEC 9954-1:1990. */
 int
-_dwarf_object_read_random(int fd,char *buf,long loc,
+_dwarf_object_read_random(int fd,char *buf,off_t loc,
     size_t size,int *errc)
 {
-    int scode = 0;
-    size_t rcode = 0;
+    off_t scode = 0;
+    ssize_t rcode = 0;
 
     scode = lseek(fd,loc,SEEK_SET);
-    if (scode < 0) {
+    if (scode == (off_t)-1) {
         *errc = DW_DLE_SEEK_ERROR;
         return DW_DLV_ERROR;
     }
     rcode = read(fd,buf,size);
-    if (rcode != size) {
+    if (rcode == -1 ||
+        (size_t)rcode != size) {
         *errc = DW_DLE_READ_ERROR;
         return DW_DLV_ERROR;
     }

@@ -37,7 +37,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 extern "C" {
 #endif /* __cplusplus */
 
-int _dwarf_object_read_random(int fd,char *buf,long loc,
+int _dwarf_object_read_random(int fd,char *buf,off_t loc,
     size_t size,int *errc);
 
 void  _dwarf_safe_strcpy(char *out, long outlen,
