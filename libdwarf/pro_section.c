@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2000,2004,2006 Silicon Graphics, Inc.  All Rights Reserved.
-  Portions Copyright (C) 2007-2018 David Anderson. All Rights Reserved.
+  Portions Copyright (C) 2007-2019 David Anderson. All Rights Reserved.
   Portions Copyright 2002-2010 Sun Microsystems, Inc. All rights reserved.
   Portions Copyright 2012 SN Systems Ltd. All rights reserved.
 
@@ -1860,6 +1860,9 @@ _dwarf_pro_generate_debugline(Dwarf_P_Debug dbg,
                         elfsectno,
                         &writelen,
                         error);
+                    if (res != DW_DLV_OK) {
+                        return res;
+                    }
                     sum_bytes += writelen;
                     res = write_sval(line_adv,dbg,
                         elfsectno,
@@ -1927,7 +1930,6 @@ _dwarf_pro_generate_debugframe(Dwarf_P_Debug dbg,
 
     curcie = dbg->de_frame_cies;
     cie_length = 0;
-    cur_off = 0;
     cie_offs = (long *)
         _dwarf_p_get_alloc(dbg, sizeof(long) * dbg->de_n_cie);
     if (cie_offs == NULL) {
@@ -2753,8 +2755,8 @@ generate_debuginfo_header_2(Dwarf_P_Debug dbg,
     Dwarf_Ubyte address_size,
     Dwarf_Error * error)
 {
-    unsigned abbrev_offset = *abbrev_offset_io;
-    unsigned char * data = *data_io;
+    unsigned abbrev_offset = 0;
+    unsigned char * data = 0;
     int offset_size = dbg->de_offset_size;
     int elfsectno_of_debug_info = dbg->de_elf_sects[DEBUG_INFO];
     int cu_header_size = 0;
@@ -2826,8 +2828,8 @@ generate_debuginfo_header_5(Dwarf_P_Debug dbg,
     Dwarf_Error    *error)
 {
     int offset_size = dbg->de_offset_size;
-    unsigned abbrev_offset = *abbrev_offset_io;
-    unsigned char * data = *data_io;
+    unsigned abbrev_offset = 0;
+    unsigned char * data = 0;
     int elfsectno_of_debug_info = dbg->de_elf_sects[DEBUG_INFO];
     int cu_header_size = 0;
     Dwarf_Unsigned du = 0;
@@ -3205,7 +3207,6 @@ _dwarf_pro_generate_debuginfo(Dwarf_P_Debug dbg,
         curdie->di_abbrev_nbytes = nbytes;
         die_off += nbytes;
 
-        curattr = curdie->di_attrs;
         /*  The abbrev and DIE attr lists match, so the die
             abbrevs are in the correct order,
             curdie->di_attrs.  */

@@ -1,5 +1,5 @@
 /*
-  Portions Copyright (C) 2017-2017 David Anderson. All Rights Reserved.
+  Portions Copyright (C) 2017-2019 David Anderson. All Rights Reserved.
 
   This program is free software; you can redistribute it and/or modify it
   under the terms of version 2.1 of the GNU Lesser General Public License
@@ -157,10 +157,10 @@ fill_in_abbrevs_table(struct Dwarf_Dnames_index_header_s * dn,
         curdab->da_pairs_count = idxcount;
         abcur = inner +1;
         if (!firstdab) {
-            firstdab  = curdab;
+            firstdab = curdab;
             lastdab  = curdab;
         } else {
-            firstdab  = curdab;
+            /* Add new on the end, last */
             lastdab->da_next = curdab;
         }
     }
@@ -183,7 +183,7 @@ fill_in_abbrevs_table(struct Dwarf_Dnames_index_header_s * dn,
         }
         dn->din_abbrev_list_count = abcount;
         tmpa = firstdab;
-        for(ct = 0; ct < abcount; ++ct) {
+        for(ct = 0; tmpa && ct < abcount; ++ct) {
             struct Dwarf_D_Abbrev_s *tmpb =tmpa->da_next;
             /*  da_next no longer means anything */
             dn->din_abbrev_list[ct] = *tmpa;
@@ -1300,6 +1300,9 @@ int dwarf_debugnames_entrypool_values(Dwarf_Dnames_Head dn,
             Dwarf_Unsigned bytesread = 0;
             res = _dwarf_formudata_internal(dbg,form,poolptr,
                 endpool,&val,&bytesread,error);
+            if(res != DW_DLV_OK) {
+                return res;
+            }
             poolptr += bytesread;
             pooloffset += bytesread;
             array_of_offsets[n] = val;

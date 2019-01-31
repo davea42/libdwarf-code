@@ -1,7 +1,7 @@
 /*
   Copyright (C) 2000,2004 Silicon Graphics, Inc.  All Rights Reserved.
   Portions Copyright 2002-2010 Sun Microsystems, Inc. All rights reserved.
-  Portions Copyright 2011-2018 David Anderson.  All Rights Reserved.
+  Portions Copyright 2011-2019. David Anderson.  All Rights Reserved.
 
   This program is free software; you can redistribute it and/or modify it
   under the terms of version 2.1 of the GNU Lesser General Public License
@@ -134,21 +134,32 @@ void
 _dwarf_p_dealloc(UNUSEDARG Dwarf_P_Debug dbg,
     Dwarf_Small * ptr) /* ARGSUSED */
 {
-  memory_list_t *lp;
-  lp = BLOCK_TO_LIST(ptr);
+    memory_list_t *lp;
+    lp = BLOCK_TO_LIST(ptr);
 
-  /*
-    Remove from a doubly linked, circular list.
-    Read carefully, use a white board if necessary.
-    If this is an empty list, the following statements are no-ops, and
-    will write to the same memory location they read from.
-    This should only happen when we deallocate the dbg structure itself.
-  */
-
-  lp->prev->next = lp->next;
-  lp->next->prev = lp->prev;
-
-  free((void*)lp);
+    /*  Remove from a doubly linked, circular list.
+        Read carefully, use a white board if necessary.
+        If this is an empty list, the following statements are no-ops, and
+        will write to the same memory location they read from.
+        This should only happen when we deallocate the dbg structure itself.
+    */
+    if (lp == lp->next) {
+        /*  The list has a single item, itself. */
+        lp->prev = 0;
+        lp->next = 0;
+    } else if (lp->next == lp->prev) {
+        /*  List had exactly two entries. Reduce it to one,
+            cutting lp out. */
+        memory_list_t * remaining = lp->next;
+        remaining->next = remaining;
+        remaining->prev = remaining;
+    } else  {
+        /*  Multi=entry. Just cut lp out. */
+        lp->prev->next = lp->next;
+        lp->next->prev = lp->prev;
+        lp->prev = lp->next = 0;
+    }
+    free((void*)lp);
 }
 
 
@@ -168,26 +179,25 @@ void
 _dwarf_p_dealloc_all(Dwarf_P_Debug dbg)
 {
     memory_list_t *dbglp;
+    memory_list_t *base_dbglp;
 
     if (dbg == NULL) {
         /* should throw an error */
         return;
     }
 
-    dbglp = BLOCK_TO_LIST(dbg);
-    while (dbglp->next != dbglp) {
-        _dwarf_p_dealloc(dbg, LIST_TO_BLOCK(dbglp->next));
-    }
-    if (dbglp->next != dbglp ||
-        dbglp->prev != dbglp) {
+    base_dbglp = BLOCK_TO_LIST(dbg);
+    dbglp = base_dbglp->next;
 
-        /* should throw error */
-        /* For some reason we couldn't free all the blocks? */
-        return;
+    while (dbglp != base_dbglp) {
+        memory_list_t*next = dbglp->next;
+
+        _dwarf_p_dealloc(dbg, LIST_TO_BLOCK(dbglp));
+        dbglp = next;
     }
     dwarf_tdestroy(dbg->de_debug_str_hashtab,
         _dwarf_str_hashtab_freenode);
     dwarf_tdestroy(dbg->de_debug_line_str_hashtab,
         _dwarf_str_hashtab_freenode);
-    _dwarf_p_dealloc(NULL, (void*)dbg);
+    free((void *)base_dbglp);
 }

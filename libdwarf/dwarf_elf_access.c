@@ -2,7 +2,7 @@
   Copyright (C) 2000-2005 Silicon Graphics, Inc.  All Rights Reserved.
   Portions Copyright 2007-2010 Sun Microsystems, Inc. All rights reserved.
   Portions Copyright 2008-2010 Arxan Technologies, Inc. All Rights Reserved.
-  Portions Copyright 2009-2018 David Anderson. All rights reserved.
+  Portions Copyright 2009-2019 David Anderson. All rights reserved.
   Portions Copyright 2009-2010 Novell Inc. All rights reserved.
   Portions Copyright 2012 SN Systems Ltd. All rights reserved.
 
@@ -1218,12 +1218,12 @@ loop_through_relocations(
             space returned by the elf library */
         mspace = malloc(relocatablesec->dss_size);
         if (!mspace) {
+            free(relas);
             *error = DW_DLE_RELOC_SECTION_MALLOC_FAIL;
             return DW_DLV_ERROR;
         }
         memcpy(mspace,relocatablesec->dss_data,relocatablesec->dss_size);
         relocatablesec->dss_data = mspace;
-        target_section = relocatablesec->dss_data;
         relocatablesec->dss_data_was_malloc = TRUE;
     }
     target_section = relocatablesec->dss_data;

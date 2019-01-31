@@ -1,4 +1,4 @@
-/* Copyright (c) 2013-2018, David Anderson
+/* Copyright (c) 2013-2019, David Anderson
 All rights reserved.
 
 Redistribution and use in source and binary forms, with
@@ -174,7 +174,7 @@ dwarf_initialize_search_hash( void **treeptr,
     DW_TSHASHTYPE(*hashfunc)(const void *key),
     unsigned long size_estimate)
 {
-    unsigned long prime_to_use = primes[0];
+    unsigned long prime_to_use = 0;
     unsigned entry_index = 0;
     unsigned k = 0;
     struct hs_base *base = 0;

@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2000-2004 Silicon Graphics, Inc.  All Rights Reserved.
-  Portions Copyright (C) 2007-2017 David Anderson. All Rights Reserved.
+  Portions Copyright (C) 2007-2018 David Anderson. All Rights Reserved.
   Portions Copyright (C) 2010-2012 SN Systems Ltd. All Rights Reserved.
 
   This program is free software; you can redistribute it and/or modify it
@@ -1249,8 +1249,6 @@ dwarf_loclist_n(Dwarf_Attribute attr,
             return (DW_DLV_ERROR);
         }
 
-        loc_section_end = dbg->de_debug_loc.dss_data+
-            dbg->de_debug_loc.dss_size;
         for (lli = 0; lli < loclist_count; ++lli) {
             int lres = 0;
 

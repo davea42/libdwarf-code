@@ -522,7 +522,6 @@ _dwarf_make_CU_Context(Dwarf_Debug dbg,
         }
         case DW_UT_compile: /*  No additional fields */
         case DW_UT_partial: /*  No additional fields */
-            types_extra_len = 0;
             break;
         default:
             dwarf_dealloc(dbg, cu_context, DW_DLA_CU_CONTEXT);
@@ -589,9 +588,6 @@ _dwarf_make_CU_Context(Dwarf_Debug dbg,
     switch(unit_type) {
     case DW_UT_split_type:
     case DW_UT_type: {
-        types_extra_len = sizeof(Dwarf_Sig8)/* 8 */ +
-            local_length_size /*type_offset size*/;
-
         /*  Now read the debug_types extra header fields of
             the signature (8 bytes) and the typeoffset.
             This can be in executable, ordinary object,
@@ -615,13 +611,11 @@ _dwarf_make_CU_Context(Dwarf_Debug dbg,
         memcpy(&signaturedata,cu_ptr,sizeof(signaturedata));
         cu_context->cc_type_signature = signaturedata;
         cu_context->cc_signature_present = TRUE;
-        cu_ptr += sizeof(Dwarf_Sig8);
 
         break;
         }
     case DW_UT_compile: /*  No additional fields */
     case DW_UT_partial: /*  No additional fields */
-        types_extra_len = 0;
         break;
     default:
         dwarf_dealloc(dbg, cu_context, DW_DLA_CU_CONTEXT);
@@ -1103,7 +1097,6 @@ _dwarf_next_cu_header_internal(Dwarf_Debug dbg,
                         strcpy(msg_buf+prefixlen,dwerrmsg);
                     }
                     dwarf_insert_harmless_error(dbg,msg_buf);
-                    resd = DW_DLV_OK;
                     /*  Fall thru to use the newly loaded section.
                         even though it might not be adequately
                         relocated. */

@@ -1,7 +1,7 @@
 /*
   Copyright (C) 2000,2004,2006 Silicon Graphics, Inc.  All Rights Reserved.
   Portions Copyright 2007-2010 Sun Microsystems, Inc. All rights reserved.
-  Portions Copyright 2011 David Anderson. All rights reserved.
+  Portions Copyright 2011-2019 David Anderson. All rights reserved.
 
   This program is free software; you can redistribute it and/or modify it
   under the terms of version 2.1 of the GNU Lesser General Public License
@@ -482,7 +482,9 @@ dwarf_add_expr_gen_a(Dwarf_P_Expr expr,
 
     *next_byte_ptr = opcode;
     next_byte_ptr++;
-    memcpy(next_byte_ptr, operand, operand_size);
+    if (operand) {
+        memcpy(next_byte_ptr, operand, operand_size);
+    }
 
     expr->ex_next_byte_offset = next_byte_offset;
     *stream_length_out = next_byte_offset;

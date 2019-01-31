@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2000-2005 Silicon Graphics, Inc.  All Rights Reserved.
-  Portions Copyright (C) 2007-2018 David Anderson. All Rights Reserved.
+  Portions Copyright (C) 2007-2019 David Anderson. All Rights Reserved.
   Portions Copyright 2012 SN Systems Ltd. All rights reserved.
 
   This program is free software; you can redistribute it and/or modify it
@@ -929,18 +929,14 @@ _dwarf_length_of_cu_header(Dwarf_Debug dbg,
         cuptr, local_length_size, local_extension_size,
         error,section_length,section_end_ptr);
 
-
     READ_UNALIGNED_CK(dbg, version, Dwarf_Half,
         cuptr, DWARF_HALF_SIZE,error,section_end_ptr);
     cuptr += DWARF_HALF_SIZE;
-
     if (version == 5) {
         Dwarf_Ubyte unit_type = 0;
 
         READ_UNALIGNED_CK(dbg, unit_type, Dwarf_Ubyte,
             cuptr, sizeof(Dwarf_Ubyte),error,section_end_ptr);
-        cuptr += sizeof(Dwarf_Ubyte);
-
         switch (unit_type) {
         case DW_UT_compile:
             final_size = local_extension_size +

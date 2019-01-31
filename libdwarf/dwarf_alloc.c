@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2000-2005 Silicon Graphics, Inc.  All Rights Reserved.
-  Portions Copyright (C) 2007-2018  David Anderson. All Rights Reserved.
+  Portions Copyright (C) 2007-2019  David Anderson. All Rights Reserved.
 
   This program is free software; you can redistribute it and/or modify it
   under the terms of version 2.1 of the GNU Lesser General Public License
@@ -717,11 +717,12 @@ _dwarf_special_no_dbg_error_malloc(void)
 {
     Dwarf_Error e = 0;
     /* The union unused things are to guarantee proper alignment */
-    char *mem = malloc(sizeof(struct Dwarf_Error_s));
+    Dwarf_Unsigned len = sizeof(struct Dwarf_Error_s);
+    char *mem = (char *)malloc(len);
     if (mem == 0) {
         return 0;
     }
-    memset(mem, 0, sizeof(struct Dwarf_Error_s));
+    memset(mem, 0, len);
     e = (Dwarf_Error)mem;
     e->er_static_alloc = DE_MALLOC;
     return e;

@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2000-2006 Silicon Graphics, Inc.  All Rights Reserved.
-  Portions Copyright (C) 2007-2018 David Anderson. All Rights Reserved.
+  Portions Copyright (C) 2007-2019 David Anderson. All Rights Reserved.
   Portions Copyright (C) 2010-2012 SN Systems Ltd. All Rights Reserved.
 
   This program is free software; you can redistribute it and/or modify it
@@ -190,11 +190,17 @@ validate_length(Dwarf_Debug dbg,
     Dwarf_Small * ciefde_start,
     const char * cieorfde)
 {
-    Dwarf_Unsigned address_size = cieptr->ci_address_size;
+    Dwarf_Unsigned address_size = 0;
     Dwarf_Unsigned length_field_summed = length_size + extension_size;
     Dwarf_Unsigned total_len = length + length_field_summed;
-    Dwarf_Unsigned mod = total_len % address_size;
+    Dwarf_Unsigned mod = 0;
 
+    if (cieptr) {
+        address_size = cieptr->ci_address_size;
+    } else {
+        address_size = dbg->de_pointer_size;
+    }
+    mod = total_len % address_size;
     if (mod != 0) {
         static char msg[DW_HARMLESS_ERROR_MSG_STRING_SIZE];
         Dwarf_Unsigned sectionoffset = ciefde_start - section_ptr;
@@ -398,13 +404,11 @@ _dwarf_get_fde_list_internal(Dwarf_Debug dbg, Dwarf_Cie ** cie_data,
                     use_gnu_cie_calc,
                     &cie_ptr_to_use,
                     error);
-                /* ASSERT: res==DW_DLV_NO_ENTRY impossible. */
-                if (resc == DW_DLV_ERROR) {
+                if (resc != DW_DLV_OK) {
                     dealloc_fde_cie_list_internal(head_fde_ptr,
                         head_cie_ptr);
                     return resc;
                 }
-                /* ASSERT res != DW_DLV_NO_ENTRY */
                 cie_count++;
                 chain_up_cie(cie_ptr_to_use, &head_cie_ptr,
                     &tail_cie_ptr);
@@ -481,14 +485,17 @@ _dwarf_get_fde_list_internal(Dwarf_Debug dbg, Dwarf_Cie ** cie_data,
                 error);
             if (resf == DW_DLV_ERROR) {
                 return resf;
+            } else if (resf == DW_DLV_NO_ENTRY) {
+                /* impossible. */
+                return resf;
             }
             chain_up_fde(fde_ptr_to_use, &head_fde_ptr, &cur_fde_ptr);
             fde_count++;
             /* ASSERT: DW_DLV_OK. */
-            frame_ptr = fde_ptr_to_use->fd_fde_start +
-                fde_ptr_to_use->fd_length +
-                fde_ptr_to_use->fd_length_size +
-                fde_ptr_to_use->fd_extension_size;
+            frame_ptr = cur_fde_ptr->fd_fde_start +
+                cur_fde_ptr->fd_length +
+                cur_fde_ptr->fd_length_size +
+                cur_fde_ptr->fd_extension_size;
             if (frame_ptr  <  fde_ptr_to_use->fd_fde_instr_start) {
                 /*  Sanity check. With a really short fde instruction
                     set and address_size we think is 8
@@ -500,8 +507,6 @@ _dwarf_get_fde_list_internal(Dwarf_Debug dbg, Dwarf_Cie ** cie_data,
                     DW_DLE_DEBUG_FRAME_POSSIBLE_ADDRESS_BOTCH);
                 return DW_DLV_ERROR;
             }
-
-
             continue;
         }
     }
@@ -522,6 +527,11 @@ _dwarf_get_fde_list_internal(Dwarf_Debug dbg, Dwarf_Cie ** cie_data,
     if (cie_list_ptr == NULL) {
         dealloc_fde_cie_list_internal(head_fde_ptr, head_cie_ptr);
         _dwarf_error(dbg, error, DW_DLE_ALLOC_FAIL);
+        return DW_DLV_ERROR;
+    }
+    if (!head_cie_ptr) {
+        /*  Should be impossible. */
+        _dwarf_error(dbg, error,DW_DLE_DEBUGFRAME_ERROR);
         return DW_DLV_ERROR;
     }
     cur_cie_ptr = head_cie_ptr;
@@ -893,7 +903,8 @@ dwarf_create_cie_from_after_start(Dwarf_Debug dbg,
 
 /*  Internal function, not called by consumer code.
     'prefix' has accumulated the info up thru the cie-id
-    and now we consume the rest and build a Dwarf_Fde_s structure.  */
+    and now we consume the rest and build a Dwarf_Fde_s structure.
+    Can be called with cie_ptr_in NULL from dwarf_frame.c  */
 
 int
 dwarf_create_fde_from_after_start(Dwarf_Debug dbg,
@@ -907,12 +918,11 @@ dwarf_create_fde_from_after_start(Dwarf_Debug dbg,
     Dwarf_Error * error)
 {
     Dwarf_Fde new_fde = 0;
-    Dwarf_Cie cieptr = cie_ptr_in;
+    Dwarf_Cie cieptr = 0;
     Dwarf_Small *saved_frame_ptr = 0;
 
     Dwarf_Small *initloc = frame_ptr;
     Dwarf_Signed offset_into_exception_tables
-        /* must be min dwarf_sfixed in size */
         = (Dwarf_Signed) DW_DLX_NO_EH_OFFSET;
     Dwarf_Small *fde_aug_data = 0;
     Dwarf_Unsigned fde_aug_data_len = 0;
@@ -921,11 +931,17 @@ dwarf_create_fde_from_after_start(Dwarf_Debug dbg,
         bytes in size */
     Dwarf_Addr address_range = 0;       /* must be min de_pointer_size
         bytes in size */
-    Dwarf_Half address_size = cie_ptr_in->ci_address_size;
+    Dwarf_Half address_size = 0;
     Dwarf_Unsigned eh_table_value = 0;
     Dwarf_Bool eh_table_value_set = FALSE;
+    /* Temporary assumption.  */
+    enum Dwarf_augmentation_type augt = aug_empty_string;
 
-    enum Dwarf_augmentation_type augt = cieptr->ci_augmentation_type;
+    if (cie_ptr_in) {
+        cieptr = cie_ptr_in;
+        address_size = cieptr->ci_address_size;
+        augt = cieptr->ci_augmentation_type;
+    }
 
     if (augt == aug_gcc_eh_z) {
         /*  If z augmentation this is eh_frame, and initial_location and
@@ -1077,7 +1093,9 @@ dwarf_create_fde_from_after_start(Dwarf_Debug dbg,
     new_fde->fd_extension_size = prefix->cf_local_extension_size;
     new_fde->fd_is_eh = use_gnu_cie_calc;
     new_fde->fd_cie_offset = cie_base_offset;
-    new_fde->fd_cie_index = cieptr->ci_index;
+    if (cieptr) {
+        new_fde->fd_cie_index = cieptr->ci_index;
+    }
     new_fde->fd_cie = cieptr;
     new_fde->fd_initial_location = initial_location;
     new_fde->fd_initial_loc_pos = initloc;
@@ -1112,8 +1130,6 @@ dwarf_create_fde_from_after_start(Dwarf_Debug dbg,
     validate_length(dbg,cieptr,new_fde->fd_length,
         new_fde->fd_length_size, new_fde->fd_extension_size,
         new_fde->fd_section_ptr,new_fde->fd_fde_start,"fde");
-
-
     *fde_ptr_out = new_fde;
     return DW_DLV_OK;
 }

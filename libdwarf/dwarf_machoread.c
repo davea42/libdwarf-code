@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2018, David Anderson
+Copyright (c) 2019, David Anderson
 All rights reserved.
 cc
 Redistribution and use in source and binary forms, with
@@ -796,6 +796,7 @@ static Dwarf_Obj_Access_Methods const macho_methods = {
     NULL
 };
 
+/*  On any error this frees internals argument. */
 static int
 _dwarf_macho_object_access_internals_init(
     dwarf_macho_object_access_internals_t * internals,
@@ -818,6 +819,7 @@ _dwarf_macho_object_access_internals_init(
     localdoas = (struct Dwarf_Obj_Access_Interface_s *)
         malloc(sizeof(struct Dwarf_Obj_Access_Interface_s));
     if (!localdoas) {
+        free(internals);
         *errcode = DW_DLE_ALLOC_FAIL;
         return DW_DLV_ERROR;
     }
@@ -909,8 +911,7 @@ _dwarf_macho_object_access_init(
         access,
         localerrnum);
     if (res != DW_DLV_OK){
-        /* *err is already set. */
-        free(internals);
+        /* *err is already set and the call freed internals. */
         return DW_DLV_ERROR;
     }
 

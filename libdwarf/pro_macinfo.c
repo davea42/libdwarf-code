@@ -1,7 +1,6 @@
 /*
-
   Copyright (C) 2000,2004 Silicon Graphics, Inc.  All Rights Reserved.
-  Portions Copyright 2011 David Anderson.  All Rights Reserved.
+  Portions Copyright 2011-2019 David Anderson.  All Rights Reserved.
 
   This program is free software; you can redistribute it and/or modify it
   under the terms of version 2.1 of the GNU Lesser General Public License
@@ -338,12 +337,16 @@ dwarf_end_macro_file(Dwarf_P_Debug dbg, Dwarf_Error * error)
     length_est = COMMAND_LEN;
     res = libdwarf_compose_begin(dbg, DW_MACINFO_end_file, length_est,
         &compose_error_type);
-    if (res != DW_DLV_OK) {
-        _dwarf_p_error(NULL, error, compose_error_type);
+    if (res == DW_DLV_ERROR) {
+        _dwarf_p_error(dbg, error, compose_error_type);
         return (DW_DLV_ERROR);
     }
     res = libdwarf_compose_complete(dbg, &compose_error_type);
-    return DW_DLV_OK;
+    if (res == DW_DLV_ERROR) {
+        _dwarf_p_error(dbg, error, compose_error_type);
+        return res;
+    }
+    return res;
 }
 
 int

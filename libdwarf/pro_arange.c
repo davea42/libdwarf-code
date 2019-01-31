@@ -1,7 +1,7 @@
 /*
 
   Copyright (C) 2000,2004 Silicon Graphics, Inc.  All Rights Reserved.
-  Portions Copyright 2011-2017 David Anderson.  All Rights Reserved.
+  Portions Copyright 2011-2019 David Anderson.  All Rights Reserved.
 
   This program is free software; you can redistribute it and/or modify it
   under the terms of version 2.1 of the GNU Lesser General Public License
@@ -248,6 +248,13 @@ _dwarf_transform_arange_to_disk(Dwarf_P_Debug dbg,
         offset_size + DWARF_HALF_SIZE,
         dbg->de_sect_name_idx[DEBUG_INFO],
         dwarf_drt_data_reloc, offset_size);
+    if (res == DW_DLV_NO_ENTRY) {
+        return res;
+    }
+    if (res == DW_DLV_ERROR) {
+        _dwarf_p_error(dbg, error,DW_DLE_RELOCS_ERROR);
+        return res;
+    }
 
     /* Write the size of addresses. */
     *arange_ptr = dbg->de_pointer_size;

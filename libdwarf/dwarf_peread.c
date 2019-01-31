@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2018, David Anderson All rights reserved.
+Copyright (c) 2019, David Anderson All rights reserved.
 
 Redistribution and use in source and binary forms, with
 or without modification, are permitted provided that the
@@ -716,6 +716,7 @@ static Dwarf_Obj_Access_Methods pe_methods = {
     0 /* ignore pe relocations. */
 };
 
+/* On any error this frees internals. */
 static int
 _dwarf_pe_object_access_internals_init(
     dwarf_pe_object_access_internals_t * internals,
@@ -736,6 +737,7 @@ _dwarf_pe_object_access_internals_init(
     localdoas = (struct Dwarf_Obj_Access_Interface_s *)
         malloc(sizeof(struct Dwarf_Obj_Access_Interface_s));
     if (!localdoas) {
+        free(internals);
         *errcode = DW_DLE_ALLOC_FAIL;
         return DW_DLV_ERROR;
     }
@@ -810,8 +812,7 @@ _dwarf_pe_object_access_init(
         access,
         localerrnum);
     if (res != DW_DLV_OK){
-        /* *err is already set. */
-        free(internals);
+        /* *err is already set. and the call freed internals */
         return DW_DLV_ERROR;
     }
 

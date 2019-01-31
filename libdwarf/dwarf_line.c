@@ -1,6 +1,6 @@
 /*
    Copyright (C) 2000-2006 Silicon Graphics, Inc.  All Rights Reserved.
-   Portions Copyright (C) 2007-2018 David Anderson. All Rights Reserved.
+   Portions Copyright (C) 2007-2019 David Anderson. All Rights Reserved.
    Portions Copyright (C) 2010-2012 SN Systems Ltd. All Rights Reserved.
    Portions Copyright (C) 2015-2015 Google, Inc. All Rights Reserved.
 
@@ -285,11 +285,11 @@ dwarf_srcfiles(Dwarf_Die die,
 {
     /*  This pointer is used to scan the portion of the .debug_line
         section for the current cu. */
-    Dwarf_Small *line_ptr;
+    Dwarf_Small *line_ptr = 0;
 
     /*  Pointer to a DW_AT_stmt_list attribute in case it exists in the
         die. */
-    Dwarf_Attribute stmt_list_attr;
+    Dwarf_Attribute stmt_list_attr = 0;
 
     const char * const_comp_name = 0;
     /*  Pointer to name of compilation directory. */
@@ -424,7 +424,6 @@ dwarf_srcfiles(Dwarf_Die die,
             line_context = 0;
             return dres;
         }
-        line_ptr = line_ptr_out;
     }
     /*  For DWARF5, use of DW_AT_comp_dir not needed.
         Line table file names and directories
@@ -432,8 +431,8 @@ dwarf_srcfiles(Dwarf_Die die,
     line_context->lc_compilation_directory = comp_dir;
     /* We are in dwarf_srcfiles() */
     {
-        Dwarf_File_Entry fe = line_context->lc_file_entries;
-        Dwarf_File_Entry fe2 = fe;
+        Dwarf_File_Entry fe = 0;
+        Dwarf_File_Entry fe2 =line_context->lc_file_entries;
         Dwarf_Signed baseindex = 0;
         Dwarf_Signed file_count = 0;
         Dwarf_Signed endindex = 0;
@@ -443,7 +442,6 @@ dwarf_srcfiles(Dwarf_Die die,
         if (res != DW_DLV_OK) {
             return res;
         }
-        fe = line_context->lc_file_entries;
         for (i = baseindex; i < endindex; ++i,fe2 = fe->fi_next ) {
             int sres = 0;
             char *name_out = 0;
@@ -472,13 +470,19 @@ dwarf_srcfiles(Dwarf_Die die,
             }
         }
     }
+    if (!head_chain) {
+        dwarf_dealloc(dbg, line_context, DW_DLA_LINE_CONTEXT);
+        *srcfiles = NULL;
+        *srcfilecount = 0;
+        return DW_DLV_NO_ENTRY;
+    }
 
     /* We are in dwarf_srcfiles() */
     if (line_context->lc_file_entry_count == 0) {
         dwarf_dealloc(dbg, line_context, DW_DLA_LINE_CONTEXT);
         *srcfiles = NULL;
         *srcfilecount = 0;
-        return (DW_DLV_NO_ENTRY);
+        return DW_DLV_NO_ENTRY;
     }
 
     ret_files = (char **)
@@ -788,8 +792,9 @@ _dwarf_internal_srclines(Dwarf_Die die,
             }
         }
     }
-    if (!is_new_interface &&
-        (*linecount == 0 && (linecount_actuals == NULL || *linecount_actuals == 0))) {
+    if (!is_new_interface && linecount &&
+        (linecount == 0 ||*linecount == 0) &&
+        (linecount_actuals == 0  || *linecount_actuals == 0)) {
         /*  Here we have no actual lines of any kind. In other words,
             it looks like a debugfission line table skeleton or
             a caller not prepared for skeletons or two-level reading..

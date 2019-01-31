@@ -1,7 +1,6 @@
 /*
-
   Copyright (C) 2000,2004 Silicon Graphics, Inc.  All Rights Reserved.
-  Portions Copyright 2011-2017 David Anderson. All Rights Reserved.
+  Portions Copyright 2011-2019 David Anderson. All Rights Reserved.
 
   This program is free software; you can redistribute it and/or modify it
   under the terms of version 2.1 of the GNU Lesser General Public License
@@ -430,15 +429,21 @@ dwarf_add_file_decl_a(Dwarf_P_Debug dbg,
     res = _dwarf_pro_encode_leb128_nm(dir_idx, &nbytes_idx,
         buffidx, sizeof(buffidx));
     if (res != DW_DLV_OK) {
-        DWARF_P_DBG_ERROR(dbg, DW_DLE_ALLOC_FAIL, DW_DLV_ERROR);
+        /* DW_DLV_NO_ENTRY impossible */
+        DWARF_P_DBG_ERROR(dbg, DW_DLE_LEB_OUT_ERROR, DW_DLV_ERROR);
     }
     res = _dwarf_pro_encode_leb128_nm(time_mod, &nbytes_time,
         bufftime, sizeof(bufftime));
     if (res != DW_DLV_OK) {
-        DWARF_P_DBG_ERROR(dbg, DW_DLE_ALLOC_FAIL, DW_DLV_ERROR);
+        /* DW_DLV_NO_ENTRY impossible */
+        DWARF_P_DBG_ERROR(dbg, DW_DLE_LEB_OUT_ERROR, DW_DLV_ERROR);
     }
     res = _dwarf_pro_encode_leb128_nm(length, &nbytes_len,
         bufflen, sizeof(bufflen));
+    if (res != DW_DLV_OK) {
+        /* DW_DLV_NO_ENTRY impossible */
+        DWARF_P_DBG_ERROR(dbg,DW_DLE_LEB_OUT_ERROR,DW_DLV_ERROR);
+    }
     cur->dfe_args = (char *)
         _dwarf_p_get_alloc(dbg, nbytes_idx + nbytes_time + nbytes_len);
     if (cur->dfe_args == NULL) {
@@ -450,10 +455,8 @@ dwarf_add_file_decl_a(Dwarf_P_Debug dbg,
     memcpy((void *) ptr, bufftime, nbytes_time);
     ptr += nbytes_time;
     memcpy((void *) ptr, bufflen, nbytes_len);
-    ptr += nbytes_len;
     cur->dfe_nbytes = nbytes_idx + nbytes_time + nbytes_len;
     cur->dfe_next = NULL;
-
     *file_entry_count_out = dbg->de_n_file_entries;
     return DW_DLV_OK;
 }

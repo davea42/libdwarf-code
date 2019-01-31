@@ -1,5 +1,5 @@
 /*
-  Copyright (C) 2014-2018 David Anderson. All Rights Reserved.
+  Copyright (C) 2014-2019 David Anderson. All Rights Reserved.
 
   This program is free software; you can redistribute it and/or modify it
   under the terms of version 2.1 of the GNU Lesser General Public License
@@ -123,7 +123,6 @@ dwarf_get_xu_index_header(Dwarf_Debug dbg,
     READ_UNALIGNED_CK(dbg,num_slots, Dwarf_Unsigned,
         data,datalen32,
         error,section_end);
-    data += datalen32;
     hash_tab_offset = datalen32*4;
     indexes_tab_offset = hash_tab_offset + (num_slots * HASHSIGNATURELEN);
     /*  Look for corrupt section data. */

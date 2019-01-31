@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2000-2005 Silicon Graphics, Inc.  All Rights Reserved.
-  Portions Copyright (C) 2007-2018 David Anderson. All Rights Reserved.
+  Portions Copyright (C) 2007-2019 David Anderson. All Rights Reserved.
   Portions Copyright (C) 2008-2010 Arxan Technologies, Inc. All Rights Reserved.
 
   This program is free software; you can redistribute it and/or modify it
@@ -366,6 +366,11 @@ struct Dwarf_Section_s {
         Dwarf_Obj_Access_Section_s.  */
     Dwarf_Unsigned  dss_flags;
     Dwarf_Unsigned  dss_addralign;
+
+    /*  Set when loading .group section as those are special and
+        neither compressed nor have relocations so never malloc
+        space for libdwarf.  */
+    Dwarf_Small     dss_ignore_reloc_group_sec;
 };
 
 /*  Overview: if next_to_use== first, no error slots are used.

@@ -1,3 +1,13 @@
+2019-01-31   David Anderson
+      * dwarf_alloc.c, dwarf_die_deliv.c,dwarf_dnames.c, dwarf_dsc.c,
+        dwarf_elf_access.c,dwarf_frame.c,dwarf_frame2.c,
+        dwarf_gdbindex.c,dwarf_generic_init.c,dwarf_init_finish.c,
+        dwarf_line.c,dwarf_loc.c,dwarf_loc2.h,dwarf_machoread.c,
+        dwarf_macro.c,dwarf_macro5.c,dwarf_opaque.h,dwarf_peread.c,
+        dwarf_tsearchhash.c,dwarf_util.c,dwarf_xu_index.c,pro_alloc.c,
+        pro_arange.c,pro_expr.c,pro_line.c,pro_macinfo.c,
+        pro_section.c,pro_types.c: Fixed 56 bugs found
+        by llvm's scan-build tool.
 2019-01-27   David Anderson
       * dwarf_form.c,dwarf_gdbindex.c,dwarf_object_read_common.c,
         pro_forms.c,pro_section.c: Remove trailing whitespace.

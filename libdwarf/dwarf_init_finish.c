@@ -1,7 +1,7 @@
 /*
   Copyright (C) 2000,2002,2003,2004,2005 Silicon Graphics, Inc. All Rights Reserved.
   Portions Copyright (C) 2008-2010 Arxan Technologies, Inc. All Rights Reserved.
-  Portions Copyright (C) 2009-2017 David Anderson. All Rights Reserved.
+  Portions Copyright (C) 2009-2019 David Anderson. All Rights Reserved.
   Portions Copyright (C) 2010-2012 SN Systems Ltd. All Rights Reserved.
 
   This program is free software; you can redistribute it and/or modify it
@@ -811,15 +811,22 @@ insert_sht_list_in_group_map(Dwarf_Debug dbg,
     secdata.dss_name = ".group";
     secdata.dss_standard_name = ".group";
     secdata.dss_number = section_number;
+    secdata.dss_ignore_reloc_group_sec = TRUE;
     res = _dwarf_load_section(dbg,&secdata,error);
     if (res != DW_DLV_OK) {
+        if (secdata.dss_data_was_malloc) {
+            free(secdata.dss_data);
+        }
         return res;
     }
-    if (doas->entrysize != 4) {
+    if (!secdata.dss_data) {
         _dwarf_error(dbg,error,DW_DLE_GROUP_INTERNAL_ERROR);
         return DW_DLV_ERROR;
     }
-    if (!secdata.dss_data) {
+    if (doas->entrysize != 4) {
+        if (secdata.dss_data_was_malloc) {
+            free(secdata.dss_data);
+        }
         _dwarf_error(dbg,error,DW_DLE_GROUP_INTERNAL_ERROR);
         return DW_DLV_ERROR;
     }
@@ -843,6 +850,13 @@ insert_sht_list_in_group_map(Dwarf_Debug dbg,
             reader to byte swap and then fix things.
             At least one test case has big-endian
             data but little-endian SHT_GROUP data. */
+        if ((data+DWARF_32BIT_SIZE) > secend) {
+            /* Duplicates the check in READ_UNALIGNED_CK
+                so we can free allocated memory bere. */
+            free(secdata.dss_data);
+            _dwarf_error(dbg,error,DW_DLE_GROUP_INTERNAL_ERROR);
+            return DW_DLV_ERROR;
+        }
         READ_UNALIGNED_CK(dbg,fval,Dwarf_Unsigned,
             data,
             DWARF_32BIT_SIZE,
@@ -850,6 +864,9 @@ insert_sht_list_in_group_map(Dwarf_Debug dbg,
             secend);
         if (fval != 1 && fval != 0x1000000) {
             /*  Could be corrupted elf object. */
+            if (secdata.dss_data_was_malloc) {
+                free(secdata.dss_data);
+            }
             _dwarf_error(dbg,error,DW_DLE_GROUP_INTERNAL_ERROR);
             return DW_DLV_ERROR;
         }
@@ -858,6 +875,15 @@ insert_sht_list_in_group_map(Dwarf_Debug dbg,
         for (i = 1 ; i < count ; ++i) {
             Dwarf_Unsigned  val = 0;
 
+            if ((data+DWARF_32BIT_SIZE) > secend) {
+                /* Duplicates the check in READ_UNALIGNED_CK
+                    so we can free allocated memory bere. */
+                if (secdata.dss_data_was_malloc) {
+                    free(secdata.dss_data);
+                }
+                _dwarf_error(dbg,error,DW_DLE_GROUP_INTERNAL_ERROR);
+                return DW_DLV_ERROR;
+            }
             READ_UNALIGNED_CK(dbg,val,Dwarf_Unsigned,
                 data,
                 DWARF_32BIT_SIZE,
@@ -871,6 +897,9 @@ insert_sht_list_in_group_map(Dwarf_Debug dbg,
                 _dwarf_memcpy_swap_bytes(&valr,&val,
                     DWARF_32BIT_SIZE);
                 if (valr > section_count) {
+                    if (secdata.dss_data_was_malloc) {
+                        free(secdata.dss_data);
+                    }
                     _dwarf_error(dbg,error,DW_DLE_GROUP_INTERNAL_ERROR);
                     return DW_DLV_ERROR;
                 }
@@ -892,6 +921,9 @@ insert_sht_list_in_group_map(Dwarf_Debug dbg,
                     /*  Should we really ignore this? */
                     continue;
                 } else if (resx == DW_DLV_ERROR){
+                    if (secdata.dss_data_was_malloc) {
+                        free(secdata.dss_data);
+                    }
                     _dwarf_error(dbg,error,err);
                     return resx;
                 }
@@ -906,10 +938,14 @@ insert_sht_list_in_group_map(Dwarf_Debug dbg,
                     doasx.name,
                     error);
                 if (res != DW_DLV_OK) {
+                    free(secdata.dss_data);
                     return res;
                 }
             }
         }
+    }
+    if (secdata.dss_data_was_malloc) {
+        free(secdata.dss_data);
     }
     return DW_DLV_OK;
 }
@@ -1194,6 +1230,7 @@ _dwarf_setup(Dwarf_Debug dbg, Dwarf_Error * error)
             /* groupnumber is set. Fall through */
             mapgroupnumber = groupnumber;
         } else if (res == DW_DLV_ERROR) {
+            free(sections);
             return res;
         } else { /* DW_DLV_NO_ENTRY */
             /* fall through, a BASE or DWO group, possibly */
@@ -1593,7 +1630,6 @@ do_decompress_zlib(Dwarf_Debug dbg,
         ptr += fldsize;
         READ_UNALIGNED_CK(dbg,size,Dwarf_Unsigned,ptr,fldsize,
             error,endsection);
-        ptr += fldsize;
         if (type != ELFCOMPRESS_ZLIB) {
             DWARF_DBG_ERROR(dbg, DW_DLE_ZDEBUG_INPUT_FORMAT_ODD,
                 DW_DLV_ERROR);
@@ -1694,6 +1730,12 @@ _dwarf_load_section(Dwarf_Debug dbg,
     if (res == DW_DLV_ERROR) {
         DWARF_DBG_ERROR(dbg, err, DW_DLV_ERROR);
     }
+    /*  For PE and mach-o all section data was always
+        malloc'd. We do not need to set dss_data_was_malloc
+        though as the o->object data will eventually free
+        the original section data.
+        The first character of any o->object struct gives the type. */
+
     if (res == DW_DLV_NO_ENTRY) {
         /*  Gets this for section->dss_index 0.
             Which by ELF definition is a section index
@@ -1702,6 +1744,10 @@ _dwarf_load_section(Dwarf_Debug dbg,
             Otherwise NULL dss_data gets error.
             BSS would legitimately have no data, but
             no DWARF related section could possbly be bss. */
+        return res;
+    }
+    if (section->dss_ignore_reloc_group_sec) {
+        /* Neither zdebug nor reloc apply to .group sections. */
         return res;
     }
     if ((section->dss_zdebug_requires_decompress ||

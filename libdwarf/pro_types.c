@@ -1,7 +1,6 @@
 /*
-
   Copyright (C) 2000,2004 Silicon Graphics, Inc.  All Rights Reserved.
-  Portions Copyright 2011  David Anderson. All Rights Reserved.
+  Portions Copyright 2011-2019 David Anderson. All Rights Reserved.
 
   This program is free software; you can redistribute it and/or modify it
   under the terms of version 2.1 of the GNU Lesser General Public License
@@ -202,7 +201,6 @@ _dwarf_transform_simplename_to_disk(Dwarf_P_Debug dbg,
 
 
     nameentry_original = hdr->sn_head;
-    nameentry = nameentry_original;
     /* add in the content size */
     stream_bytes_count += hdr->sn_net_len;
 

@@ -1,6 +1,6 @@
 /*
 
-  Copyright (C) 2014-2014 David Anderson. All Rights Reserved.
+  Copyright (C) 2014-2019 David Anderson. All Rights Reserved.
 
   This program is free software; you can redistribute it and/or modify it
   under the terms of version 2.1 of the GNU Lesser General Public License
@@ -193,24 +193,36 @@ dwarf_gdbindex_header(Dwarf_Debug dbg,
         2*sizeof(gdbindex_64),
         sizeof(gdbindex_64),
         git_std,error);
+    if (res == DW_DLV_ERROR) {
+        return res;
+    }
     res = set_base(dbg,&indexptr->gi_typesculisthdr,
         dbg->de_debug_gdbindex.dss_data + indexptr->gi_types_cu_list_offset,
         dbg->de_debug_gdbindex.dss_data + indexptr->gi_address_area_offset,
         3*sizeof(gdbindex_64),
         sizeof(gdbindex_64),
         git_std,error);
+    if (res == DW_DLV_ERROR) {
+        return res;
+    }
     res = set_base(dbg,&indexptr->gi_addressareahdr,
         dbg->de_debug_gdbindex.dss_data + indexptr->gi_address_area_offset,
         dbg->de_debug_gdbindex.dss_data + indexptr->gi_symbol_table_offset,
         3*sizeof(gdbindex_64),
         sizeof(gdbindex_64),
         git_address,error);
+    if (res == DW_DLV_ERROR) {
+        return res;
+    }
     res = set_base(dbg,&indexptr->gi_symboltablehdr,
         dbg->de_debug_gdbindex.dss_data + indexptr->gi_symbol_table_offset,
         dbg->de_debug_gdbindex.dss_data + indexptr->gi_constant_pool_offset,
         2*DWARF_32BIT_SIZE,
         DWARF_32BIT_SIZE,
         git_std,error);
+    if (res == DW_DLV_ERROR) {
+        return res;
+    }
     res = set_base(dbg,&indexptr->gi_cuvectorhdr,
         dbg->de_debug_gdbindex.dss_data + indexptr->gi_constant_pool_offset,
         /*  There is no real single vector size.
@@ -219,11 +231,13 @@ dwarf_gdbindex_header(Dwarf_Debug dbg,
         DWARF_32BIT_SIZE,
         DWARF_32BIT_SIZE,
         git_cuvec,error);
+    if (res == DW_DLV_ERROR) {
+        return res;
+    }
 
     /* Really just pointing to constant pool area. */
     indexptr->gi_string_pool = dbg->de_debug_gdbindex.dss_data +
         indexptr->gi_constant_pool_offset;
-
     *gdbindexptr          = indexptr;
     *version              = indexptr->gi_version;
     *cu_list_offset       = indexptr->gi_cu_list_offset;
@@ -234,7 +248,6 @@ dwarf_gdbindex_header(Dwarf_Debug dbg,
     *section_size         = indexptr->gi_section_length;
     *unused_reserved = 0;
     *section_name  =        dbg->de_debug_gdbindex.dss_name;
-
     return DW_DLV_OK;
 
 

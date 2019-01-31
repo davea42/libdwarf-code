@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2000-2004 Silicon Graphics, Inc.  All Rights Reserved.
-  Portions Copyright (C) 2007-2012 David Anderson. All Rights Reserved.
+  Portions Copyright (C) 2007-2019 David Anderson. All Rights Reserved.
   Portions Copyright (C) 2010-2012 SN Systems Ltd. All Rights Reserved.
 
   This program is free software; you can redistribute it and/or modify it
@@ -146,8 +146,6 @@ _dwarf_get_locdesc_op_c(Dwarf_Debug dbg,
         new_loc->lc_number2 = temp_loc.lr_number2;
         new_loc->lc_number3 = temp_loc.lr_number3;
         new_loc->lc_offset  = temp_loc.lr_offset;
-        offset = nextoffset;
-
         if (head_loc == NULL)
             head_loc = prev_loc = new_loc;
         else {
@@ -480,11 +478,9 @@ dwarf_get_loclist_c(Dwarf_Attribute attr,
             if (count_res != DW_DLV_OK) {
                 return count_res;
             }
-            listlen = loclist_count;
             if (loclist_count == 0) {
                 return DW_DLV_NO_ENTRY;
             }
-
             llhead = (Dwarf_Loc_Head_c)_dwarf_get_alloc(dbg,
                 DW_DLA_LOC_HEAD_C, 1);
             if (!llhead) {
@@ -566,7 +562,6 @@ dwarf_get_loclist_c(Dwarf_Attribute attr,
             }
             count_res = _dwarf_get_loclist_count(dbg, loclist_offset,
                 address_size, &loclist_count, error);
-            listlen = loclist_count;
             if (count_res != DW_DLV_OK) {
                 return count_res;
             }

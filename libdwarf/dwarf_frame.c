@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2000-2006 Silicon Graphics, Inc.  All Rights Reserved.
-  Portions Copyright (C) 2007-2018 David Anderson. All Rights Reserved.
+  Portions Copyright (C) 2007-2019 David Anderson. All Rights Reserved.
   Portions Copyright 2012 SN Systems Ltd. All rights reserved.
 
   This program is free software; you can redistribute it and/or modify it
@@ -1023,11 +1023,16 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
                 register exists yet to save this in */
         case DW_CFA_GNU_args_size:
             {
-                Dwarf_Unsigned lreg;
+                UNUSEDARG Dwarf_Unsigned lreg = 0;
 
                 DECODE_LEB128_UWORD_CK(instr_ptr, lreg,
                     dbg,error,final_instr_ptr);
-                reg_no = (reg_num_type) lreg;
+                /*  We have nowhere to store lreg.
+                    FIXME
+                    This is the total size of arguments pushed on
+                    the stack.
+                    https://refspecs.linuxfoundation.org/LSB_3.0.0/LSB-PDA/LSB-PDA.junk/dwarfext.html
+                    */
 
                 break;
             }
@@ -1803,6 +1808,9 @@ dwarf_get_fde_info_for_all_regs3(Dwarf_Fde fde,
     res = dwarf_initialize_fde_table(dbg, &fde_table,
         output_table_real_data_size,
         error);
+    if (res != DW_DLV_OK) {
+        return res;
+    }
 
     /* _dwarf_get_fde_info_for_a_pc_row will perform more sanity checks
     */

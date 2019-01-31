@@ -1,5 +1,5 @@
 /*
-  Copyright (C) 2016-2018 David Anderson. All Rights Reserved.
+  Copyright (C) 2016-2019 David Anderson. All Rights Reserved.
 
   This program is free software; you can redistribute it and/or modify it
   under the terms of version 2.1 of the GNU Lesser General Public License
@@ -38,6 +38,11 @@
 #define FALSE 0
 #define TRUE 1
 
+/*  When called with ary and *arraycount 0
+    this just counts the elements found.
+    Otherwise it records the values in ary and
+    recounts. The arraycount pointer must be
+    passed-in non-null always. */
 static int
 get_dsc_leb_entries(Dwarf_Debug dbg,
     Dwarf_Small    * blockpointer,
@@ -50,7 +55,21 @@ get_dsc_leb_entries(Dwarf_Debug dbg,
     Dwarf_Small *p = blockpointer;
     Dwarf_Small *endp = blockpointer + blocklen;
     size_t larraycount = 0;
+    size_t iarraycount = *arraycount;
 
+    if (!ary) {
+        if (iarraycount) {
+            /* Internal botch calling this static function. */
+            _dwarf_error(dbg, error, DW_DLE_DISCR_ARRAY_ERROR);
+            return DW_DLV_ERROR;
+        }
+    } else {
+        if (!iarraycount) {
+            /* Internal botch calling this static function. */
+            _dwarf_error(dbg, error, DW_DLE_DISCR_ARRAY_ERROR);
+            return DW_DLV_ERROR;
+        }
+    }
     if (dounsigned) {
         while (p < endp)  {
             Dwarf_Unsigned dsc = 0;
@@ -58,7 +77,7 @@ get_dsc_leb_entries(Dwarf_Debug dbg,
             Dwarf_Unsigned high = 0;
             UNUSEDARG Dwarf_Unsigned leblen = 0;
 
-            if (ary && (larraycount >= *arraycount)) {
+            if (ary && (larraycount >= iarraycount)) {
                 _dwarf_error(dbg, error, DW_DLE_DISCR_ARRAY_ERROR);
                 return DW_DLV_ERROR;
             }
@@ -92,7 +111,7 @@ get_dsc_leb_entries(Dwarf_Debug dbg,
             Dwarf_Signed high = 0;
             UNUSEDARG Dwarf_Unsigned leblen = 0;
 
-            if (ary && (larraycount >= *arraycount)) {
+            if (ary && (larraycount >= iarraycount)) {
                 _dwarf_error(dbg, error, DW_DLE_DISCR_ARRAY_ERROR);
                 return DW_DLV_ERROR;
             }
@@ -120,11 +139,18 @@ get_dsc_leb_entries(Dwarf_Debug dbg,
             larraycount++;
         }
     }
-    if (ary && (*arraycount != larraycount)) {
-        _dwarf_error(dbg, error, DW_DLE_DISCR_ARRAY_ERROR);
-        return DW_DLV_ERROR;
+    if (ary) {
+        /*  Just verify this recount matches original */
+        if(iarraycount != larraycount) {
+            _dwarf_error(dbg, error, DW_DLE_DISCR_ARRAY_ERROR);
+            return DW_DLV_ERROR;
+        }
+    } else {
+        /*  This matters for first call with
+            ary 0 and iarraycount 0 as we are generating the
+            count. */
+        *arraycount = larraycount;
     }
-    *arraycount = larraycount;
     return DW_DLV_OK;
 }
 
@@ -160,10 +186,8 @@ int dwarf_discr_list(Dwarf_Debug dbg,
 
     res = get_dsc_leb_entries(dbg,dscblockp,dscblocklen,
         /*  TRUE or FALSE here is not important, the arraycount
-            will be identical either way. */
-        TRUE,
-        0,
-        &arraycount,error);
+            returned to us will be identical either way. */
+        FALSE, 0, &arraycount,error);
     if (res != DW_DLV_OK) {
         free(dscblockp);
         return res;
@@ -217,7 +241,8 @@ int dwarf_discr_entry_u(Dwarf_Dsc_Head  dsh ,
     if (!dsh->dsh_set_unsigned) {
         int res =0;
         int dounsigned = 1;
-        size_t count = dsh->dsh_count;;
+        size_t count = dsh->dsh_count;
+
         res = get_dsc_leb_entries(dsh->dsh_debug,
             dsh->dsh_block,
             dsh->dsh_block_len,
@@ -230,8 +255,12 @@ int dwarf_discr_entry_u(Dwarf_Dsc_Head  dsh ,
         }
         dsh->dsh_set_unsigned = TRUE;
     }
-    dse = dsh->dsh_array +entrynum;
-    *out_type = dse->dsc_type;
+    if (!dsh->dsh_array) {
+        _dwarf_error(dsh->dsh_debug, error, DW_DLE_DISCR_ARRAY_ERROR);
+        return DW_DLV_ERROR;
+    }
+    dse = dsh->dsh_array + entrynum;
+    *out_type       = dse->dsc_type;
     *out_discr_low  = dse->dsc_low_u;
     *out_discr_high = dse->dsc_high_u;
     return DW_DLV_OK;
@@ -254,7 +283,8 @@ int dwarf_discr_entry_s(Dwarf_Dsc_Head  dsh,
     if (!dsh->dsh_set_signed) {
         int res =0;
         int dounsigned = 0;
-        size_t count = dsh->dsh_count;;
+        size_t count = dsh->dsh_count;
+
         res = get_dsc_leb_entries(dsh->dsh_debug,
             dsh->dsh_block,
             dsh->dsh_block_len,
@@ -267,8 +297,12 @@ int dwarf_discr_entry_s(Dwarf_Dsc_Head  dsh,
         }
         dsh->dsh_set_signed = TRUE;
     }
-    dse = dsh->dsh_array +entrynum;
-    *out_type = dse->dsc_type;
+    if (!dsh->dsh_array) {
+        _dwarf_error(dsh->dsh_debug, error, DW_DLE_DISCR_ARRAY_ERROR);
+        return DW_DLV_ERROR;
+    }
+    dse = dsh->dsh_array + entrynum;
+    *out_type       = dse->dsc_type;
     *out_discr_low  = dse->dsc_low_s;
     *out_discr_high = dse->dsc_high_s;
     return DW_DLV_OK;
@@ -283,4 +317,5 @@ _dwarf_dsc_destructor(void *m)
     h->dsh_array = 0;
     free(h->dsh_block);
     h->dsh_block = 0;
+    h->dsh_count = 0;
 }

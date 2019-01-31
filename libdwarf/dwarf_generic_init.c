@@ -152,7 +152,6 @@ int dwarf_init_path(const char *path,
             access,groupnumber,errhand,errarg,&dbg,error);
         if (res != DW_DLV_OK) {
             close(fd);
-            fd = -1;
         } else {
             dbg->de_fd = fd;
             dbg->de_owns_fd = TRUE;
@@ -168,7 +167,6 @@ int dwarf_init_path(const char *path,
             access,groupnumber,errhand,errarg,&dbg,error);
         if (res != DW_DLV_OK) {
             close(fd);
-            fd = -1;
         } else {
             dbg->de_fd = fd;
             dbg->de_owns_fd = TRUE;
@@ -184,7 +182,6 @@ int dwarf_init_path(const char *path,
             access,groupnumber,errhand,errarg,&dbg,error);
         if (res != DW_DLV_OK) {
             close(fd);
-            fd = -1;
         } else {
             dbg->de_fd = fd;
             dbg->de_owns_fd = TRUE;
