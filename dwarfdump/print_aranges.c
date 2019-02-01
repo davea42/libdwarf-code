@@ -2,7 +2,7 @@
   Copyright (C) 2000-2006 Silicon Graphics, Inc.  All Rights Reserved.
   Portions Copyright 2007-2010 Sun Microsystems, Inc. All rights reserved.
   Portions Copyright 2009-2018 SN Systems Ltd. All rights reserved.
-  Portions Copyright 2008-2018 David Anderson. All rights reserved.
+  Portions Copyright 2008-2019 David Anderson. All rights reserved.
 
   This program is free software; you can redistribute it and/or modify it
   under the terms of version 2 of the GNU General Public License as
@@ -61,7 +61,6 @@ do_checking(Dwarf_Debug dbg, Dwarf_Arange *arange_buf,Dwarf_Signed i,
 
         /* Get the CU offset for easy error reporting */
         if (first_cu || cu_die_offset != cu_die_offset_prev) {
-            cu_die_offset_prev = cu_die_offset;
             dres = dwarf_die_offsets(cu_die,&glflags.DIE_overall_offset,
                 &glflags.DIE_offset,&checking_err);
             glflags.DIE_CU_overall_offset = glflags.DIE_overall_offset;

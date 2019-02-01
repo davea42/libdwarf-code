@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2000,2004,2005 Silicon Graphics, Inc.  All Rights Reserved.
-  Portions Copyright (C) 2007-2012 David Anderson. All Rights Reserved.
+  Portions Copyright (C) 2007-2019 David Anderson. All Rights Reserved.
   Portions Copyright (C) 2011-2012 SN Systems Ltd. All Rights Reserved
 
   This program is free software; you can redistribute it and/or modify it
@@ -471,8 +471,6 @@ print_relocinfo_64(Dwarf_Debug dbg, Elf * elf)
     }
     free(printable_sects);
     free(scn_names);
-    scn_names = 0;
-    scn_names_cnt = 0;
 #endif
 }
 
@@ -577,8 +575,6 @@ print_relocinfo_32(Dwarf_Debug dbg, Elf * elf)
     }
     free(printable_sects);
     free(scn_names);
-    scn_names = 0;
-    scn_names_cnt = 0;
 }
 
 #if HAVE_ELF64_R_INFO
@@ -621,36 +617,22 @@ print_reloc_information_64(int section_no, Dwarf_Small * buf,
         Elf64_Rel *p = (Elf64_Rel *) (buf + off);
         char *name = 0;
 
-        /*  We subtract 1 from sym indexes since we left
-            symtab entry 0 out of the sym_data[_64] array */
-        if (sym_data ) {
-            size_t index = ELF64_R_SYM(p->r_info) - 1;
-            if (index < sym_data_entry_count) {
-                name = sym_data[index].name;
-            }
-        } else if (sym_data_64) {
+        if (sym_data_64) {
             size_t index = ELF64_R_SYM(p->r_info) - 1;
             if (index < sym_data_64_entry_count) {
                 name = sym_data_64[index].name;
-            }
-        }
-
-        /*  When the name is not available, use the
-            section name as a reference for the name.*/
-        if (!name || !name[0]) {
-            size_t index = ELF64_R_SYM(p->r_info) - 1;
-            if (index < sym_data_64_entry_count) {
-                SYM64 *sym_64 = &sym_data_64[index];
-                if (sym_64->type == STT_SECTION &&
-                    sym_64->shndx < scn_names_count) {
-                    name = scn_names[sym_64->shndx];
+                if (!name || !name[0]){
+                    SYM64 *sym_64 = &sym_data_64[index];
+                    if (sym_64->type == STT_SECTION &&
+                        sym_64->shndx < scn_names_count) {
+                        name = scn_names[sym_64->shndx];
+                    }
                 }
             }
         }
         if (!name || !name[0]) {
             name = "<no name>";
         }
-
         if (SHT_RELA == type) {
             Elf64_Rela *pa = (Elf64_Rela *)p;
             add = pa->r_addend;
@@ -668,7 +650,7 @@ print_reloc_information_64(int section_no, Dwarf_Small * buf,
             sanitized(name));
         esb_destructor(&tempesb);
         esb_destructor(&tempesc);
-#else
+#else  /* ! R_INFO */
         /*  sgi/mips -64 does not have r_info in the 64bit relocations,
             but seperate fields, with 3 types, actually. Only one of
             which prints here, as only one really used with dwarf */
@@ -677,12 +659,7 @@ print_reloc_information_64(int section_no, Dwarf_Small * buf,
 
         /*  We subtract 1 from sym indexes since we left
             symtab entry 0 out of the sym_data[_64] array */
-        if (sym_data ) {
-            size_t index = p->r_sym - 1;
-            if (index < sym_data_entry_count) {
-                name = sym_data[index].name;
-            }
-        } else if (sym_data_64) {
+        if (sym_data_64) {
             size_t index = p->r_sym - 1;
             if (index < sym_data_64_entry_count) {
                 name = sym_data_64[index].name;
@@ -691,7 +668,6 @@ print_reloc_information_64(int section_no, Dwarf_Small * buf,
         if (!name || !name[0]) {
             name = "<no name>";
         }
-
         esb_constructor(&tempesb);
         esb_constructor(&tempesc);
         get_reloc_type_names(p->r_type,&tempesc));
@@ -734,20 +710,15 @@ print_reloc_information_32(int section_no, Dwarf_Small * buf,
             symtab entry 0 out of the sym_data[_64] array */
         if (sym_data) {
             size_t index = ELF32_R_SYM(p->r_info) - 1;
-            if (index < sym_data_entry_count) {
-                name = sym_data[index].name;
-            }
-        }
 
-        /*  When the name is not available, use the
-            section name as a reference for the name. */
-        if (!name || !name[0]) {
-            size_t index = ELF32_R_SYM(p->r_info) - 1;
-            if (index < sym_data_entry_count) {
-                SYM *sym = &sym_data[index];
-                if (sym->type == STT_SECTION&&
-                    sym->shndx < scn_names_count) {
-                    name = scn_names[sym->shndx];
+            if(index < sym_data_entry_count) {
+                name = sym_data[index].name;
+                if ((!name || !name[0]) && sym_data) {
+                    SYM *sym = &sym_data[index];
+                    if (sym->type == STT_SECTION&&
+                        sym->shndx < scn_names_count) {
+                        name = scn_names[sym->shndx];
+                    }
                 }
             }
         }

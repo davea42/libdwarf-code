@@ -2,7 +2,7 @@
   Copyright (C) 2000-2006 Silicon Graphics, Inc.  All Rights Reserved.
   Portions Copyright 2007-2010 Sun Microsystems, Inc. All rights reserved.
   Portions Copyright 2009-2018 SN Systems Ltd. All rights reserved.
-  Portions Copyright 2007-2018 David Anderson. All rights reserved.
+  Portions Copyright 2007-2019 David Anderson. All rights reserved.
 
   This program is free software; you can redistribute it and/or modify it
   under the terms of version 2 of the GNU General Public License as
@@ -775,14 +775,12 @@ print_one_die_section(Dwarf_Debug dbg,Dwarf_Bool is_info,
         }
         if (cu_count >= glflags.break_after_n_units) {
             printf("Break at %d\n",cu_count);
-            dieprint_cu_goffset = 0;
             break;
         }
         /*  Regardless of any options used, get basic
             information about the current CU: producer, name */
         sres = dwarf_siblingof_b(dbg, NULL,is_info, &cu_die, pod_err);
         if (sres != DW_DLV_OK) {
-            dieprint_cu_goffset = 0;
             print_error(dbg, "siblingof cu header", sres, *pod_err);
         }
         /* Get the CU offset for easy error reporting */
@@ -798,7 +796,6 @@ print_one_die_section(Dwarf_Debug dbg,Dwarf_Bool is_info,
                 dwarf_dealloc(dbg, cu_die, DW_DLA_DIE);
                 cu_die = 0;
                 ++cu_count;
-                dieprint_cu_goffset = next_cu_offset;
                 continue;
             }
         }
@@ -829,7 +826,6 @@ print_one_die_section(Dwarf_Debug dbg,Dwarf_Bool is_info,
         if (!checking_this_compiler()) {
             dwarf_dealloc(dbg, cu_die, DW_DLA_DIE);
             ++cu_count;
-            dieprint_cu_goffset = next_cu_offset;
             cu_die = 0;
             continue;
         }
@@ -994,9 +990,7 @@ print_one_die_section(Dwarf_Debug dbg,Dwarf_Bool is_info,
             print_error(dbg, "Regetting cu_die", sres, *pod_err);
         }
         ++cu_count;
-        dieprint_cu_goffset = next_cu_offset;
     }
-    dieprint_cu_goffset = 0;
     return nres;
 }
 
@@ -3686,7 +3680,6 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
                 }
             }
         }
-        bTextFound = FALSE;
     }
     esb_destructor(&valname);
     esb_destructor(&esb_extra);
@@ -6207,7 +6200,6 @@ print_tag_attributes_usage(UNUSEDARG Dwarf_Debug dbg)
                 printf("%6d %s\n",
                     tag_usage[tag],
                     get_TAG_name(tag,pd_dwarf_names_print_on_error));
-                print_header = FALSE;
             }
             while (usage_tag_attr_ptr && usage_tag_attr_ptr->attr) {
                 if ( glflags.gf_print_usage_tag_attr_full || usage_tag_attr_ptr->count) {

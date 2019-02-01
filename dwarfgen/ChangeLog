@@ -1,3 +1,6 @@
+2019-01-31 David Anderson
+     * dwarfgen.cc,dwarfgen/ireptodbg.cc: Fixing issues
+       reported by the llvm scan-build tool. 
 2019-01-20 David Anderson
      * dwarfgen.cc: Remove use of uint32_t and uint64_t
        and use Dwarf_Unsigned for arithmetic.

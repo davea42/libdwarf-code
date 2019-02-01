@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2006 Silicon Graphics, Inc.  All Rights Reserved.
-  Portions Copyright 2011-2012 David Anderson. All Rights Reserved.
+  Portions Copyright 2011-2019 David Anderson. All Rights Reserved.
   Portions Copyright 2012 SN Systems Ltd. All rights reserved.
 
   This program is free software; you can redistribute it and/or modify it
@@ -197,7 +197,7 @@ find_conf_file_and_read_config_inner(const char *named_file,
     conf_internal->conf_name_used = name_used;
 
     res = find_abi_start(conf_stream, named_abi, &offset, &lineno);
-    if (errcount > 0) {
+    if (errcount > 0 || res == FALSE) {
         ++errcount;
         printf("dwarfdump found no ABI %s in file %s.\n",
             named_abi, name_used);
@@ -468,7 +468,7 @@ ensure_has_no_more_tokens(char *cp, const char *fname, unsigned long lineno)
 {
     struct token_s tok;
 
-    cp = get_token(cp, &tok);
+    get_token(cp, &tok);
     if (tok.tk_len > 0) {
         printf("dwarfdump.conf error: "
             "extra characters after command operands, found "

@@ -1,3 +1,8 @@
+2019-01-31 David Anderson
+     * dwarfdump.c,dwconf.c,esb.c,print_abbrevs.c,
+       print_aranges.c,print_die.c,print_macro.c,
+       print_reloc.c,print_str_offsets.c: Fix warnings
+       emitted by llvm's scan-build tool.
 2019-01-20 David Anderson
     * globals.h: Remove the code for *UINT* and
       all the ifdefs involved. No longer needed.

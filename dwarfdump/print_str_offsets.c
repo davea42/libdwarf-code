@@ -1,5 +1,5 @@
 /*
-    Copyright 2018-2018 David Anderson. All rights reserved.
+    Copyright 2018-2019 David Anderson. All rights reserved.
 
     This program is free software; you can redistribute it
     and/or modify it
@@ -138,7 +138,6 @@ print_str_offsets_section(Dwarf_Debug dbg)
         }
         if (count_in_row) {
             printf("\n");
-            count_in_row = 0;
         }
         res = dwarf_str_offsets_statistics(sot,&wasted_byte_count,
             &table_count,&error);

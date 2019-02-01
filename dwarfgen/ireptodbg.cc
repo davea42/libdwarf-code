@@ -1,26 +1,35 @@
 /*
-  Copyright (C) 2010-2013 David Anderson.  All rights reserved.
+  Copyright (C) 2010-2019 David Anderson.  All rights reserved.
 
-  Redistribution and use in source and binary forms, with or without
-  modification, are permitted provided that the following conditions are met:
-  * Redistributions of source code must retain the above copyright
-    notice, this list of conditions and the following disclaimer.
-  * Redistributions in binary form must reproduce the above copyright
-    notice, this list of conditions and the following disclaimer in the
-    documentation and/or other materials provided with the distribution.
-  * Neither the name of the example nor the
-    names of its contributors may be used to endorse or promote products
-    derived from this software without specific prior written permission.
+  Redistribution and use in source and binary forms, with
+  or without modification, are permitted provided that the
+  following conditions are met:
+
+  * Redistributions of source code must retain the above
+  copyright notice, this list of conditions and the following
+  disclaimer.
+
+  * Redistributions in binary form must reproduce the above
+  copyright notice, this list of conditions and the following
+  disclaimer in the documentation and/or other materials
+  provided with the distribution.
+
+  * Neither the name of the example nor the names of its
+  contributors may be used to endorse or promote products
+  derived from this software without specific prior written
+  permission.
 
   THIS SOFTWARE IS PROVIDED BY David Anderson ''AS IS'' AND ANY
-  EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-  WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-  DISCLAIMED. IN NO EVENT SHALL David Anderson BE LIABLE FOR ANY
-  DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
-  (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
-  ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+  EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+  THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
+  PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL David
+  Anderson BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+  HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+  CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
+  OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
   SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 */
@@ -157,11 +166,9 @@ specialAttrTransformations(Dwarf_P_Debug dbg UNUSEDARG,
                 0);
             attr2.setFormData(f);
             revisedattrs.push_back(attr2);
-            foundhipc = true;
             continue;
         }
         if(attrnum == DW_AT_low_pc) {
-            foundlopc = true;
             revisedattrs.push_back(attr);
             continue;
         }
@@ -689,10 +696,10 @@ transform_cie_fde(Dwarf_P_Debug dbg,
 
 
         const char *augstr = "";
-        int res = dwarf_add_frame_cie_a(dbg, 
+        int res = dwarf_add_frame_cie_a(dbg,
             (char *)augstr,
-            code_align, 
-            data_align, 
+            code_align,
+            data_align,
             ret_addr_reg,
             bytes,bytes_len,
             &out_cie_index,
@@ -711,7 +718,7 @@ transform_cie_fde(Dwarf_P_Debug dbg,
         }
         // These lead to a set of adv_loc ops values in the output
         // for the fde which looks odd in -f
-        // output (-vvv -f makes more sense), might be 
+        // output (-vvv -f makes more sense), might be
         // better to have some additional frame instrs in there
         // so plain -f looks more sensible.
         std::list<Dwarf_Unsigned> adval = {48,64,
@@ -733,7 +740,7 @@ transform_cie_fde(Dwarf_P_Debug dbg,
         Dwarf_Signed irix_table_offset = 0;
         Dwarf_Unsigned irix_excep_sym = 0;
         Dwarf_Unsigned code_virt_addr_symidx =
-                Irep.getBaseTextSymbol();
+            Irep.getBaseTextSymbol();
         Dwarf_Unsigned fde_index =  0;
         Dwarf_Unsigned end_symbol_index = 0;
         Dwarf_Unsigned offset_from_end_symbol = 0;
@@ -751,8 +758,8 @@ transform_cie_fde(Dwarf_P_Debug dbg,
             &fde_index,
             &err);
         if(res != DW_DLV_OK) {
-                cerr << "Error creating advance_loc fde " << endl;
-                exit(1);
+            cerr << "Error creating advance_loc fde " << endl;
+            exit(1);
         }
 
     }

@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2005 Silicon Graphics, Inc.  All Rights Reserved.
-  Portions Copyright (C) 2013-2018 David Anderson. All Rights Reserved.
+  Portions Copyright (C) 2013-2019 David Anderson. All Rights Reserved.
   This program is free software; you can redistribute it and/or modify it
   under the terms of version 2 of the GNU General Public License as
   published by the Free Software Foundation.
@@ -143,10 +143,6 @@ esb_allocate_more(struct esb_s *data, size_t len)
         new_size = alloc_size;
     }
     if (data->esb_fixed) {
-        size_t copylen = data->esb_used_bytes;
-        if ((new_size-1) < copylen) {
-            copylen = new_size -1;
-        }
         newd = malloc(new_size);
 #ifdef MALLOC_COUNT
         ++malloc_count;
