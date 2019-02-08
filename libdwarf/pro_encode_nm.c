@@ -28,7 +28,9 @@
 #include "config.h"
 #include "libdwarfdefs.h"
 #include <string.h>
-#include "pro_incl.h"
+#include "dwarf.h"
+#include "libdwarf.h"
+#include "pro_encode_nm.h"
 
 #define MORE_BYTES      0x80
 #define DATA_MASK       0x7f

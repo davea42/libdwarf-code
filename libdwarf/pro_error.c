@@ -26,6 +26,7 @@
 */
 
 #include "config.h"
+#ifdef HAVE_ELF_H
 #include "libdwarfdefs.h"
 
 #include <stdio.h>
@@ -90,3 +91,4 @@ _dwarf_p_error(Dwarf_P_Debug dbg,
 
     abort();
 }
+#endif /* HAVE_ELF_H */

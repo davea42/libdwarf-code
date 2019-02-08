@@ -27,6 +27,7 @@
 */
 
 #include "config.h"
+#ifdef HAVE_ELF_H
 #include "libdwarfdefs.h"
 #include <stdio.h>
 #include <string.h>
@@ -779,3 +780,4 @@ _dwarf_pro_add_to_fde(Dwarf_P_Fde fde, Dwarf_P_Frame_Pgm curinst)
             (long) (curinst->dfp_nbytes + sizeof(Dwarf_Ubyte));
     }
 }
+#endif /* HAVE_ELF_H */

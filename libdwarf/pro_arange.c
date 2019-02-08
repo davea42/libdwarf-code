@@ -26,6 +26,7 @@
 */
 
 #include "config.h"
+#ifdef HAVE_ELF_H
 #include "libdwarfdefs.h"
 #include <stdio.h>
 #include <string.h>
@@ -346,3 +347,4 @@ _dwarf_transform_arange_to_disk(Dwarf_P_Debug dbg,
     *nbufs =  dbg->de_n_debug_sect;
     return DW_DLV_OK;
 }
+#endif /* HAVE_ELF_H */

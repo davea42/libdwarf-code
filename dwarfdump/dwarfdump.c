@@ -136,6 +136,7 @@ close_a_file(int f)
 static int
 is_it_known_elf_header(Elf *elf)
 {
+#ifdef HAVE_ELF_H
     Elf32_Ehdr *eh32;
 
     eh32 = elf32_getehdr(elf);
@@ -152,6 +153,7 @@ is_it_known_elf_header(Elf *elf)
         }
     }
 #endif /* HAVE_ELF64_GETEHDR */
+#endif /* HAVE_ELF_H */
     /* Not something we can handle. */
     return 0;
 }
@@ -202,7 +204,9 @@ flag_data_pre_allocation(void)
 
 static void flag_data_post_cleanup(void)
 {
+#ifdef HAVE_ELF_H
     clean_up_syms_malloc_data();
+#endif /* HAVE_ELF_H */
     if (glflags.pRangesInfo) {
         ReleaseBucketGroup(glflags.pRangesInfo);
         glflags.pRangesInfo = 0;
@@ -237,10 +241,12 @@ main(int argc, char *argv[])
     const char * tied_file_name = 0;
     int fd = -1;
     int tiedfd = -1;
+#ifdef HAVE_ELF_H
     Elf_Cmd cmd = 0;
     Elf *arf = 0;
     Elf *elf = 0;
     Elf *elftied = 0;
+#endif /* HAVE_ELF_H */
     int archmemnum = 0;
     unsigned         ftype = 0;
     unsigned         endian = 0;
@@ -300,11 +306,13 @@ main(int argc, char *argv[])
 
     print_version_details(argv[0],FALSE);
 
+#ifdef HAVE_ELF_H
     (void) elf_version(EV_NONE);
     if (elf_version(EV_CURRENT) == EV_NONE) {
         (void) fprintf(stderr, "dwarfdump: libelf.a out of date.\n");
         exit(FAILED);
     }
+#endif /* HAVE_ELF_H */
 
     file_name = process_args(argc, argv);
     print_args(argc,argv);
@@ -423,6 +431,7 @@ main(int argc, char *argv[])
         }
     }
     if (ftype == DW_FTYPE_ELF || ftype == DW_FTYPE_ARCHIVE) {
+#ifdef HAVE_ELF_H
 
         /*  We will use libelf to process an archive
             so long as is convienient.
@@ -517,12 +526,20 @@ main(int argc, char *argv[])
             elf_end(elftied);
             elftied = 0;
         }
+#else /* HAVE_ELF_H */
+        fprintf(stderr, "Can't process %s: allowing only non-elf.\n",
+            file_name);
+#endif /* HAVE_ELF_H */
     } else if (ftype == DW_FTYPE_MACH_O) {
         int mach_o_archive = 0; /* archives not supported. */
 
         flag_data_pre_allocation();
         process_one_file(fd,tiedfd,
+#ifdef HAVE_ELF_H
             elf,elftied,
+#else /* HAVE_ELF_H */
+            0,0,
+#endif /* HAVE_ELF_H */
             file_name,
             tied_file_name,
             mach_o_archive,
@@ -533,7 +550,11 @@ main(int argc, char *argv[])
 
         flag_data_pre_allocation();
         process_one_file(fd,tiedfd,
+#ifdef HAVE_ELF_H
             elf,elftied,
+#else /* HAVE_ELF_H */
+            0,0,
+#endif /* HAVE_ELF_H */
             file_name,
             tied_file_name,
             pe_archive,
@@ -800,6 +821,7 @@ process_one_file(int fd, int tiedfd,
     dbgsetup(dbg,l_config_file_data);
     dbgsetup(dbgtied,l_config_file_data);
     get_address_size_and_max(dbg,&elf_address_size,0,&onef_err);
+#ifdef HAVE_ELF_H
     if (archive) {
         Elf_Arhdr *mem_header = elf_getarhdr(elf);
         const char *memname =
@@ -808,6 +830,7 @@ process_one_file(int fd, int tiedfd,
 
         printf("\narchive member \t%s\n",sanitized(memname));
     }
+#endif /* HAVE_ELF_H */
 
     /*  Ok for dbgtied to be NULL. */
     dres = dwarf_set_tied_dbg(dbg,dbgtied,&onef_err);
@@ -836,7 +859,9 @@ process_one_file(int fd, int tiedfd,
     }
 
     if (glflags.gf_header_flag && elf) {
+#ifdef HAVE_ELF_H
         print_object_header(dbg);
+#endif /* HAVE_ELF_H */
     }
 
     if (glflags.gf_section_groups_flag) {
@@ -941,7 +966,9 @@ process_one_file(int fd, int tiedfd,
     }
     if (glflags.gf_reloc_flag && elf) {
         reset_overall_CU_error_data();
+#ifdef HAVE_ELF_H
         print_relocinfo(dbg);
+#endif /* HAVE_ELF_H */
     }
     if (glflags.gf_debug_names_flag) {
         reset_overall_CU_error_data();
@@ -993,7 +1020,9 @@ process_one_file(int fd, int tiedfd,
         dbg = 0;
     }
     printf("\n");
+#ifdef HAVE_ELF_H
     clean_up_syms_malloc_data();
+#endif /* HAVE_ELF_H */
     destruct_abbrev_array();
     esb_close_null_device();
     helpertree_clear_statistics(&helpertree_offsets_base_info);

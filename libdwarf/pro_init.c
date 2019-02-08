@@ -28,6 +28,7 @@
 */
 
 #include "config.h"
+#ifdef HAVE_ELF_H
 #include "libdwarfdefs.h"
 #include <stdio.h>
 #include <string.h>
@@ -403,3 +404,4 @@ common_init(Dwarf_P_Debug dbg, Dwarf_Unsigned flags, const char *abiname,
 #endif /* !WORDS_BIGENDIAN */
     return DW_DLV_OK;
 }
+#endif /* HAVE_ELF_H */

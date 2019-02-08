@@ -30,6 +30,7 @@
 */
 
 #include "config.h"
+#ifdef HAVE_ELF_H
 #include "libdwarfdefs.h"
 #include <stdio.h>
 #include <string.h>
@@ -3678,3 +3679,4 @@ _dwarf_pro_buffer(Dwarf_P_Debug dbg,
         return space_for_caller;
     }
 }
+#endif /* HAVE_ELF_H */

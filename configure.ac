@@ -16,7 +16,7 @@ m4_define([lt_age], [v_min])
 
 ### Sets the release name. 
 ###m4_define([v_date], [m4_esyscmd_s([date "+%Y%m%d"])])
-m4_define([v_date], [20190112])])
+m4_define([v_date], [20190201])])
 
 AC_PREREQ([2.52])
 ### 2nd arg to AC_INIT is the version 'number'.
@@ -185,9 +185,9 @@ CPPFLAGS_save=${CPPFLAGS}
 
 # test libelf.h header. exits if not found
 AC_CHECK_HEADERS([libelf.h libelf/libelf.h])
-AS_IF(
-    [test "x${ac_cv_header_libelf_h}" != "xyes" -a "x${ac_cv_header_libelf_libelf_h}" != "xyes"],
-    [AC_MSG_ERROR([libelf.h not found, exiting...])])
+#AS_IF(
+#    [test "x${ac_cv_header_libelf_h}" != "xyes" -a "x${ac_cv_header_libelf_libelf_h}" != "xyes"],
+#    [AC_MSG_ERROR([libelf.h not found, exiting...])])
 
 AC_CHECK_HEADERS([zlib.h])
 AS_IF(
@@ -205,13 +205,13 @@ CPPFLAGS=${CPPFLAGS_save}
 #    [AC_CHECK_HEADERS([zlib.h], [have_zlib="yes"], [have_zlib="no"])])
 
 ### Using header setings, add to DWARF_LIBS
-
+### if no zlib or elf.h add no -l at all. 
 AS_IF(
     [test "x${have_pc_zlib}" = "xyes"],
     [DWARF_LIBS="${DWARF_LIBS} -lelf -lz"],
-    [DWARF_LIBS="${DWARF_LIBS} -lelf"])
-    
-
+    [AS_IF([test "x${ac_cv_header_elf_h}" == "xyes"],
+      [DWARF_LIBS="${DWARF_LIBS} -lelf"],
+      [])])
 
 ### Checks for types
 

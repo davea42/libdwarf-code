@@ -62,6 +62,9 @@ dwarf_elf_init_b(dwarf_elf_handle elf_file_pointer,
     Dwarf_Ptr errarg,
     Dwarf_Debug * ret_dbg, Dwarf_Error * error)
 {
+#ifndef HAVE_ELF_H
+    DWARF_DBG_ERROR(NULL, DW_DLE_INIT_ACCESS_WRONG, DW_DLV_ERROR);
+#else /* HAVE_ELF_H */
     Dwarf_Obj_Access_Interface *binary_interface = 0;
     int res = DW_DLV_OK;
     int localerrnum = 0;
@@ -93,6 +96,7 @@ dwarf_elf_init_b(dwarf_elf_handle elf_file_pointer,
     }
     /* DBG known */
     return res;
+#endif /* HAVE_ELF_H */
 }
 
 int
@@ -102,43 +106,15 @@ dwarf_elf_init(dwarf_elf_handle elf_file_pointer,
     Dwarf_Ptr errarg,
     Dwarf_Debug * ret_dbg, Dwarf_Error * error)
 {
+#ifndef HAVE_ELF_H
+    DWARF_DBG_ERROR(NULL, DW_DLE_INIT_ACCESS_WRONG, DW_DLV_ERROR);
+#else /* HAVE_ELF_H */
     int res = 0;
     res = dwarf_elf_init_b(elf_file_pointer,
         DW_GROUPNUMBER_ANY,
         access,errhand,errarg,ret_dbg,error);
     return res;
-}
-
-/*
-    tieddbg should be the executable or .o
-    that has the .debug_addr section that
-    the base dbg refers to. See Split Objects in DWARF5.
-
-    Allows setting to NULL (NULL is the default
-    of  de_tied_data.td_tied_object).
-    New September 2015.
-*/
-int
-dwarf_set_tied_dbg(Dwarf_Debug dbg, Dwarf_Debug tieddbg,Dwarf_Error*error)
-{
-    if(!dbg) {
-        DWARF_DBG_ERROR(NULL, DW_DLE_DBG_NULL, DW_DLV_ERROR);
-    }
-    dbg->de_tied_data.td_tied_object = tieddbg;
-    if (tieddbg) {
-        tieddbg->de_tied_data.td_is_tied_object = TRUE;
-    }
-    return DW_DLV_OK;
-}
-
-/*  Unsure of the use-case of this.
-    New September 2015. */
-int
-dwarf_get_tied_dbg(Dwarf_Debug dbg, Dwarf_Debug *tieddbg_out,
-    UNUSEDARG Dwarf_Error*error)
-{
-    *tieddbg_out = dbg->de_tied_data.td_tied_object;
-    return DW_DLV_OK;
+#endif /* HAVE_ELF_H */
 }
 
 int
@@ -154,6 +130,9 @@ _dwarf_elf_setup(int fd,
     Dwarf_Ptr errarg,
     Dwarf_Debug *dbg,Dwarf_Error *error)
 {
+#ifndef HAVE_ELF_H
+    DWARF_DBG_ERROR(NULL, DW_DLE_INIT_ACCESS_WRONG, DW_DLV_ERROR);
+#else /* HAVE_ELF_H */
     Elf_Cmd what_kind_of_elf_read = ELF_C_READ;
     Dwarf_Obj_Access_Interface *binary_interface = 0;
     int res = DW_DLV_OK;
@@ -188,4 +167,5 @@ _dwarf_elf_setup(int fd,
         (*dbg)->de_filesize = filesize;
     }
     return res;
+#endif /* HAVE_ELF_H */
 }

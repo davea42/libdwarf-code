@@ -29,6 +29,7 @@
 */
 
 #include "config.h"
+#ifdef HAVE_ELF_H
 #include "dwarf_incl.h"
 #include "dwarf_error.h"
 #include "dwarf_elf_access.h"
@@ -1505,3 +1506,4 @@ dwarf_get_elf(Dwarf_Debug dbg, dwarf_elf_handle * elf,
     _dwarf_error(dbg, error, DW_DLE_FNO);
     return DW_DLV_ERROR;
 }
+#endif /* HAVE_ELF_H */

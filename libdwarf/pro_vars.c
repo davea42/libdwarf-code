@@ -26,6 +26,7 @@
 */
 
 #include "config.h"
+#ifdef HAVE_ELF_H
 #include "libdwarfdefs.h"
 #include <stdio.h>
 #include <string.h>
@@ -63,3 +64,4 @@ dwarf_add_varname_a(Dwarf_P_Debug dbg,
         dwarf_snk_varname, error);
     return res;
 }
+#endif /* HAVE_ELF_H */

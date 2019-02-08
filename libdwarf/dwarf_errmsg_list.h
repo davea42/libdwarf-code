@@ -502,5 +502,6 @@ const char *_dwarf_errmsgs[] = {
     "DW_DLE_PE_STRING_TOO_LONG(428) Increase size for call.",
     "DW_DLE_IMAGE_FILE_UNKNOWN_TYPE(429) a PE object has an unknown machine type, not 0x14c, 0x200 or 0x8664",
     "DW_DLE_LINE_TABLE_LINENO_ERROR(430) Negative line number impossible. Corrupted line table.",
+    "DW_DLE_PRODUCER_CODE_ONLY_ELF(431) Without elf.h the producer code is not available.", 
 };
 #endif /* DWARF_ERRMSG_LIST_H */

@@ -27,6 +27,7 @@
 */
 
 #include "config.h"
+#ifdef HAVE_ELF_H
 #include "libdwarfdefs.h"
 #include <stdio.h>
 #include <string.h>
@@ -247,3 +248,4 @@ _dwarf_stream_relocs_to_disk(Dwarf_P_Debug dbg,
     *new_sec_count = sec_count;
     return DW_DLV_OK;
 }
+#endif /* HAVE_ELF_H */

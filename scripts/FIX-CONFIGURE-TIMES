@@ -51,29 +51,37 @@ l=`pwd`
 echo "Now touch files to get timestamps usable."
 
 for i in                 \
- ltmain.sh               \
- aclocal.m4              \
- Makefile.am             \
- dwarfdump/Makefile.am   \
- dwarfexample/Makefile.am \
- dwarfgen/Makefile.am    \
- libdwarf/Makefile.am    \
- configure               \
- config.h.in  \
- ar-lib       \
- compile      \
- config.guess \
- config.sub   \
- install-sh   \
- missing      \
- INSTALL      \
- Makefile.in  \
- test-driver  \
- dwarfdump/Makefile.in    \
- dwarfgen/Makefile.in     \
- libdwarf/Makefile.in     \
- dwarfexample/Makefile.in \
- depcomp
+m4/ax_prog_cc_for_build.m4 \
+m4/dw_compiler.m4 \
+dwarfexample/Makefile.am \
+dwarfdump/Makefile.am \
+Makefile.am \
+dwarfgen/Makefile.am \
+libdwarf/Makefile.am \
+configure.ac \
+ltmain.sh \
+m4/libtool.m4 \
+m4/ltoptions.m4 \
+m4/ltsugar.m4 \
+m4/ltversion.m4 \
+m4/lt~obsolete.m4 \
+aclocal.m4 \
+configure \
+config.h.in \
+ar-lib \
+compile \
+config.guess \
+config.sub \
+install-sh \
+missing \
+INSTALL \
+Makefile.in \
+dwarfdump/Makefile.in \
+dwarfexample/Makefile.in \
+dwarfgen/Makefile.in \
+depcomp \
+test-driver \
+libdwarf/Makefile.in 
 do
    sleep 1
    echo "now touch $i"

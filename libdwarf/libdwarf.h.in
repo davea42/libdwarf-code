@@ -1342,9 +1342,10 @@ struct Dwarf_Obj_Access_Interface_s {
 #define DW_DLE_PE_STRING_TOO_LONG              428
 #define DW_DLE_IMAGE_FILE_UNKNOWN_TYPE         429
 #define DW_DLE_LINE_TABLE_LINENO_ERROR         430
+#define DW_DLE_PRODUCER_CODE_ONLY_ELF          431
 
     /* LAST MUST EQUAL LAST ERROR NUMBER */
-#define DW_DLE_LAST        430
+#define DW_DLE_LAST        431
 
 #define DW_DLE_LO_USER     0x10000
 
