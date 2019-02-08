@@ -721,8 +721,12 @@ transform_cie_fde(Dwarf_P_Debug dbg,
         // output (-vvv -f makes more sense), might be
         // better to have some additional frame instrs in there
         // so plain -f looks more sensible.
-        std::list<Dwarf_Unsigned> adval = {48,64,
-            17219,4408131,18308350787ull };
+        std::list<Dwarf_Unsigned> adval;
+        adval.push_back(48);
+        adval.push_back(64);
+        adval.push_back(17219);
+        adval.push_back(4408131);
+        adval.push_back(18308350787ull);
         // 0x30 0x40 0x4343 0x434343 0x434343434
         for( list<Dwarf_Unsigned>::iterator it =
             adval.begin();

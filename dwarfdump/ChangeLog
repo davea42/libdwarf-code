@@ -1,3 +1,9 @@
+2019-02-07 David Anderson
+     * dwarfdump.c: Use ifdef HAVE_ELF_H so non-elf
+       builds work.
+     * print_reloc.c: ifdef HAVE_ELF_H, eliminating
+       the entire file of elf-header printing if elf.h
+       missing.
 2019-01-31 David Anderson
      * dwarfdump.c,dwconf.c,esb.c,print_abbrevs.c,
        print_aranges.c,print_die.c,print_macro.c,

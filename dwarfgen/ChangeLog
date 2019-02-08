@@ -1,3 +1,7 @@
+2019-02-08 David Anderson
+     * ireptodbg.cc: std::list<Dwarf_Unsigned> adval
+       was using a non-portable initializer. Now using
+       standard C++ list initializer.
 2019-01-31 David Anderson
      * dwarfgen.cc,dwarfgen/ireptodbg.cc: Fixing issues
        reported by the llvm scan-build tool. 

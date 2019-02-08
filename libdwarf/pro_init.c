@@ -1,5 +1,4 @@
 /*
-
   Copyright (C) 2000,2004 Silicon Graphics, Inc.  All Rights Reserved.
   Portions Copyright 2002-2010 Sun Microsystems, Inc. All rights reserved.
   Portions Copyright 2008-2017 David Anderson, Inc. All rights reserved.

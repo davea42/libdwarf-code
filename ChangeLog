@@ -1,3 +1,9 @@
+2019-02-07  David Anderson
+    * configure.ac. Version 20190201. Now allows lack of
+      elf.h libelf.h and if those and zlib.h missing
+      then the link line shows neither -lelf nor -lz
+      (libdwarf and dwarfdump will then support PE
+      and mach-o objects but not elf)
 2019-01-15  David Anderson
     * configure.ac: Version 20190112
 2019-01-10  David Anderson

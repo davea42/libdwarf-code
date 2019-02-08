@@ -1,3 +1,6 @@
+2018-02-07 David Anderson
+    * FIX-CONFIGURE-TIMES: Recreated the list
+      of files, now it works better.
 2018-01-02 David Anderson
     * ChangeLog: Renamed ChangeLog2018
     * Makefile.am: Added ChangeLog2018 to dist files.1:w
