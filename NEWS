@@ -1,3 +1,27 @@
+2019-02-08:
+  If one has a standard Bourne shell (sh) available
+  (such as sh on MacOS and sh in MinGW on Windows)
+  one may be able to build libdwarf and dwarfdump natively
+  and they can read Mach-o dSYM and PE object files
+  to access DWARF information. 
+  This has NOT been tested under MacOS, so will likely
+  fail on MacOS.
+  No elf.h, libelf.h or zlib.h should be present. 
+  For example, the following
+  is known to work under MinGW:
+    mkdir test
+    cd test
+    #(copy the source tree into test, if from git
+    #the name of the top level will likely be 'code')
+    cd code
+    sh -x scripts/FIX-CONFIGURE-TIMES
+    cd ..
+    mkdir bld
+    cd bld
+    ../code/configure
+    make
+    # dwarfdump/dwarfdup.exe is the executable on Windows
+  
 2019-01-15:
   The pre-build dwarf_names.[hc] and the tag related
   files are now part of the standard build so there is
