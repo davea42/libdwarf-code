@@ -1,3 +1,7 @@
+2019-02-10   David Anderson
+      * dwarf_names.c,dwarf_names.h,dwarf_names_enum.h,
+	dwarf_names_new.h: Datestring update.
+      * libdwarf_version.h: Updated date string
 2019-02-07   David Anderson
       * dwarf_elf_access.c, pro_alloc.c, pro_arange,c,pro_die.c,
         pro_dnames.c,pro_error.c,pro_xpr.c,pro_finish.c,

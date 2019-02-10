@@ -1,4 +1,8 @@
 2019-02-07 David Anderson
+     * dwarf_names.c,dwarf_names.h,dwarfdump-ta-table.h,
+       dwarfdump-tt-ext-table.h, dwarfdump-tt-table.h:
+       Just a changed version string.
+2019-02-07 David Anderson
      * dwarfdump.c: Use ifdef HAVE_ELF_H so non-elf
        builds work.
      * print_reloc.c: ifdef HAVE_ELF_H, eliminating
