@@ -1,4 +1,9 @@
 2019-02-10   David Anderson
+      * dwarf_errmsg_list.h,dwarf_generic_init.c:
+        Removed trailing whitespace on one line.
+      * dwarf_incl.h: Removed blank line
+        and a duplicated include statement.
+2019-02-10   David Anderson
       * pro_alloc.c,pro_arange.c,pro_die.c,pro_dnames.c,
         pro_error.c,pro_expr.c,pro_finish.c,pro_forms.c,
         pro_frame.c,pro_funcs.c,pro_incl.h,pro_init.c,

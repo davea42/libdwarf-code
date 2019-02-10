@@ -320,4 +320,3 @@ dwarf_get_tied_dbg(Dwarf_Debug dbg, Dwarf_Debug *tieddbg_out,
     *tieddbg_out = dbg->de_tied_data.td_tied_object;
     return DW_DLV_OK;
 }
-
