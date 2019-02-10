@@ -39,6 +39,12 @@
 #define Set_REL64_info(r,s,t) ((r).r_info = ELF64_R_INFO(s,t))
 #endif
 #include "pro_incl.h"
+#include <stddef.h>
+#include "dwarf.h"
+#include "libdwarf.h"
+#include "pro_opaque.h"
+#include "pro_error.h"
+#include "pro_alloc.h"
 #include "pro_section.h"
 #include "pro_reloc.h"
 #include "pro_reloc_stream.h"

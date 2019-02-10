@@ -33,8 +33,11 @@
 #ifdef HAVE_ELFACCESS_H
 #include <elfaccess.h>
 #endif
-#include "pro_incl.h"
-#include "pro_section.h"
+#include <stddef.h>
+#include "dwarf.h"
+#include "libdwarf.h"
+#include "pro_opaque.h"
+#include "pro_error.h"
 
 /*
     This function adds another weak name to the

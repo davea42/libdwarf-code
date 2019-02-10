@@ -31,6 +31,13 @@
 #include <string.h>
 
 #include "pro_incl.h"
+#include <stddef.h>
+#include "dwarf.h"
+#include "libdwarf.h"
+#include "pro_opaque.h"
+#include "pro_error.h"
+#include "pro_alloc.h"
+#include "pro_encode_nm.h"
 #include "pro_line.h"
 
 static int _dwarf_pro_add_line_entry(Dwarf_P_Debug,

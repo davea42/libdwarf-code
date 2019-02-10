@@ -34,6 +34,12 @@
 #include <elfaccess.h>
 #endif
 #include "pro_incl.h"
+#include <stddef.h>
+#include "dwarf.h"
+#include "libdwarf.h"
+#include "pro_opaque.h"
+#include "pro_error.h"
+#include "pro_alloc.h"
 #include "pro_arange.h"
 #include "pro_section.h"
 #include "pro_reloc.h"

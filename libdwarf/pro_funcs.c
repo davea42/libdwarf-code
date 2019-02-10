@@ -34,6 +34,10 @@
 #include <elfaccess.h>
 #endif
 #include "pro_incl.h"
+#include <stddef.h>
+#include "dwarf.h"
+#include "libdwarf.h"
+#include "pro_opaque.h"
 #include "pro_section.h"
 
 /*  This function adds another function name to the

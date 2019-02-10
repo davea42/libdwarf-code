@@ -34,7 +34,14 @@
 #include <stdlib.h>
 #endif
 #include <string.h>
+#include <stddef.h>
 #include "pro_incl.h"
+#include "dwarf.h"
+#include "libdwarf.h"
+#include "pro_opaque.h"
+#include "pro_error.h"
+#include "pro_util.h"
+#include "pro_alloc.h"
 #include "pro_die.h"
 #include "pro_section.h"
 #include "dwarf_tsearch.h"

@@ -77,12 +77,3 @@
 #define REL64 Elf64_Rel
 #define REL_SEC_PREFIX ".rel"
 #endif
-
-#include <stddef.h>
-#include "dwarf.h"
-#include "libdwarf.h"
-#include "pro_opaque.h"
-#include "pro_error.h"
-#include "pro_util.h"
-#include "pro_encode_nm.h"
-#include "pro_alloc.h"

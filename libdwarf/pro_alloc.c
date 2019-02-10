@@ -28,6 +28,10 @@
 #include "config.h"
 #ifdef HAVE_ELF_H
 #include "pro_incl.h"
+#include <stddef.h>
+#include "dwarf.h"
+#include "libdwarf.h"
+#include "pro_opaque.h"
 #include "pro_alloc.h"
 #ifdef HAVE_STDLIB_H
 #include <stdlib.h>

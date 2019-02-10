@@ -29,6 +29,12 @@
 #ifdef HAVE_ELF_H
 #include "libdwarfdefs.h"
 #include "pro_incl.h"
+#include <stddef.h>
+#include "dwarf.h"
+#include "libdwarf.h"
+#include "pro_opaque.h"
+#include "pro_error.h"
+#include "pro_alloc.h"
 
 
 /*  This routine deallocates all memory, and does some
