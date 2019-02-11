@@ -504,5 +504,6 @@ const char *_dwarf_errmsgs[] = {
     "DW_DLE_LINE_TABLE_LINENO_ERROR(430) Negative line number impossible. Corrupted line table.",
     "DW_DLE_PRODUCER_CODE_NOT_AVAILABLE(431) Without elf.h the producer code is not available.",
     "DW_DLE_NO_ELF_SUPPORT(432) libdwarf was compiled without Elf object support.",
+    "DW_DLE_NO_STREAM_RELOC_SUPPORT(433) no elf.h so cannot generate STREAM relocations",
 };
 #endif /* DWARF_ERRMSG_LIST_H */

@@ -27,7 +27,6 @@
 */
 
 #include "config.h"
-#ifdef HAVE_ELF_H
 #include "libdwarfdefs.h"
 #include <stdio.h>
 #ifdef HAVE_STDLIB_H
@@ -879,4 +878,3 @@ _dwarf_pro_add_at_to_die(Dwarf_P_Die die, Dwarf_P_Attribute attr)
         die->di_attrs = die->di_last_attr = attr;
     }
 }
-#endif /* HAVE_ELF_H */

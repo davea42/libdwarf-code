@@ -25,7 +25,6 @@
 */
 
 #include "config.h"
-#ifdef HAVE_ELF_H
 #include "libdwarfdefs.h"
 #include <stdio.h>
 #include <string.h>
@@ -253,4 +252,3 @@ dwarf_get_relocation_info(Dwarf_P_Debug dbg,
     }
     return DW_DLV_NO_ENTRY;
 }
-#endif /* HAVE_ELF_H */

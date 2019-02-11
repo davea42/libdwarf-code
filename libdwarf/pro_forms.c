@@ -27,7 +27,6 @@
 */
 
 #include "config.h"
-#ifdef HAVE_ELF_H
 #include "libdwarfdefs.h"
 #include <stdio.h>
 #include <string.h>
@@ -1814,4 +1813,3 @@ dwarf_add_AT_any_value_uleb_a(Dwarf_P_Die ownerdie,
     *attr_out = new_attr;
     return DW_DLV_OK;
 }
-#endif /* HAVE_ELF_H */

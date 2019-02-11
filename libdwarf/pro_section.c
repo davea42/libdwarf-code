@@ -30,7 +30,6 @@
 */
 
 #include "config.h"
-#ifdef HAVE_ELF_H
 #include "libdwarfdefs.h"
 #include <stdio.h>
 #include <string.h>
@@ -57,6 +56,10 @@
 #include "pro_types.h"
 #include "pro_dnames.h"
 
+
+#ifndef SHN_UNDEF
+#define SHN_UNDEF 0
+#endif /* SHN_UNDEF */
 
 #ifndef SHF_MIPS_NOSTRIP
 /* if this is not defined, we probably don't need it: just use 0 */
@@ -3687,4 +3690,3 @@ _dwarf_pro_buffer(Dwarf_P_Debug dbg,
         return space_for_caller;
     }
 }
-#endif /* HAVE_ELF_H */

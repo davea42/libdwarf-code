@@ -26,7 +26,6 @@
 */
 
 #include "config.h"
-#ifdef HAVE_ELF_H
 #include "libdwarfdefs.h"
 #include <stdio.h>
 #include <string.h>
@@ -41,6 +40,13 @@
 #include "pro_section.h"
 #include "pro_reloc.h"
 #include "pro_reloc_symbolic.h"
+
+#ifndef SHT_REL
+#define SHT_REL 9
+#endif /* SHT_REL */
+#ifndef SHN_UNDEF
+#define SHN_UNDEF 0
+#endif /* SHN_UNDEF */
 
 /*  Return DW_DLV_ERROR on malloc error.
     Return DW_DLV_OK otherwise */
@@ -263,4 +269,3 @@ _dwarf_symbolic_relocs_to_disk(Dwarf_P_Debug dbg,
     *new_sec_count = 0;
     return DW_DLV_OK;
 }
-#endif /* HAVE_ELF_H */

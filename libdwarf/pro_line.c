@@ -25,7 +25,6 @@
 */
 
 #include "config.h"
-#ifdef HAVE_ELF_H
 #include "libdwarfdefs.h"
 #include <stdio.h>
 #include <string.h>
@@ -488,4 +487,3 @@ _dwarf_pro_reg_init(Dwarf_P_Debug dbg, Dwarf_P_Line cur_line)
     cur_line->dpl_discriminator = 0;
     cur_line->dpl_opc = 0;
 }
-#endif /* HAVE_ELF_H */

@@ -26,7 +26,6 @@
 */
 
 #include "config.h"
-#ifdef HAVE_ELF_H
 #include "pro_incl.h"
 #include <stddef.h>
 #include "dwarf.h"
@@ -206,4 +205,3 @@ _dwarf_p_dealloc_all(Dwarf_P_Debug dbg)
         _dwarf_str_hashtab_freenode);
     free((void *)base_dbglp);
 }
-#endif /* HAVE_ELF_H */

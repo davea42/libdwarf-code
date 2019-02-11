@@ -24,8 +24,7 @@
 
 */
 
-
-
+#ifdef HAVE_ELF_H
 
 int _dwarf_pro_reloc_name_stream64(Dwarf_P_Debug dbg,
     int base_sec_index,
@@ -50,3 +49,4 @@ int _dwarf_pro_reloc_length_stream(Dwarf_P_Debug dbg,
 
 int _dwarf_stream_relocs_to_disk(Dwarf_P_Debug dbg,
     Dwarf_Signed * new_sec_count);
+#endif /* HAVE_ELF_H */

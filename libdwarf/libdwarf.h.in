@@ -1344,9 +1344,10 @@ struct Dwarf_Obj_Access_Interface_s {
 #define DW_DLE_LINE_TABLE_LINENO_ERROR         430
 #define DW_DLE_PRODUCER_CODE_NOT_AVAILABLE     431
 #define DW_DLE_NO_ELF_SUPPORT                  432
+#define DW_DLE_NO_STREAM_RELOC_SUPPORT         433
 
     /* LAST MUST EQUAL LAST ERROR NUMBER */
-#define DW_DLE_LAST        432
+#define DW_DLE_LAST        433
 
 #define DW_DLE_LO_USER     0x10000
 

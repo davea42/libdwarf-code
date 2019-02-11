@@ -26,7 +26,6 @@
 */
 
 #include "config.h"
-#ifdef HAVE_ELF_H
 #include "libdwarfdefs.h"
 #include "pro_incl.h"
 #include <stddef.h>
@@ -94,4 +93,3 @@ dwarf_pro_get_string_stats(Dwarf_P_Debug dbg,
     *strp_reused_len      = ps->ps_strp_reused_len;
     return DW_DLV_OK;
 }
-#endif /* HAVE_ELF_H */

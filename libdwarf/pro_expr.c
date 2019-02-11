@@ -26,7 +26,6 @@
 */
 
 #include "config.h"
-#ifdef HAVE_ELF_H
 #include "libdwarfdefs.h"
 #include <stdio.h>
 #include <string.h>
@@ -670,4 +669,3 @@ dwarf_expr_into_block_a(Dwarf_P_Expr expr,
     *address = &(expr->ex_byte_stream[0]);
     return DW_DLV_OK;
 }
-#endif /* HAVE_ELF_H */

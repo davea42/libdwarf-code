@@ -27,7 +27,6 @@
 */
 
 #include "config.h"
-#ifdef HAVE_ELF_H
 #include "libdwarfdefs.h"
 #include <stdio.h>
 #include <string.h>
@@ -75,4 +74,3 @@ dwarf_force_debug_names(Dwarf_P_Debug dbg,
 
     return DW_DLV_OK;
 }
-#endif /* HAVE_ELF_H */
