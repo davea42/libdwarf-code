@@ -237,6 +237,7 @@ CmdOptions cmdoptions = {
     false, //adddata16
     false, //addimplicitconst
     false, //addframeadvanceloc
+    false, //addSUNfuncoffsets
 };
 
 // loff_t is signed for some reason (strange) but we make offsets unsigned.
@@ -498,6 +499,7 @@ main(int argc, char **argv)
             {"force-empty-dnames",dwno_argument,0,1001},
             {"add-implicit-const",dwno_argument,0,1002},
             {"add-frame-advance-loc",dwno_argument,0,1003},
+            {"add-sun-func-offsets",dwno_argument,0,1004},
             {0,0,0,0},
         };
 
@@ -533,6 +535,12 @@ main(int argc, char **argv)
                 // To test dwarf_add_fde_inst_a().
                 // libdwarf reading is thus testable.
                 cmdoptions.addframeadvanceloc = true;
+                break;
+            case 1004:
+                // To test creating DWARF5
+                // DW_AT_SUN_func_offsets.
+                // libdwarf reading is thus testable.
+                cmdoptions.addSUNfuncoffsets = true;
                 break;
             case 'c':
                 // At present we can only create a single

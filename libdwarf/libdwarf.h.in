@@ -4209,6 +4209,23 @@ void dwarf_dealloc_uncompressed_block(
     void *
 );
 
+/*  dwarf_compress_integer_block_a( new 11 February 2019. 
+    Like the earlier version this turns an array of signed
+    integers into a block of sleb values (and if the
+    values are small enough it might be a compression!
+    Or it could be an expansion...). Return DW_DLV_OK
+    on success. Supercedes dwarf_compress_integer_block():
+    as no ugly cast needed to know if 
+    dwarf_compress_integer_block_a() succeeds or not. */
+int
+dwarf_compress_integer_block_a(
+    Dwarf_P_Debug    /*dbg*/,
+    Dwarf_Unsigned   /*input_array_length*/,
+    Dwarf_Signed   * /*input_array*/,
+    Dwarf_Unsigned * /*output_block_len*/,
+    void          ** /*output_block_returned*/,
+    Dwarf_Error    * /*error */);
+/*  The following should be avoided as of February 2019. */
 void * dwarf_compress_integer_block(
     Dwarf_P_Debug,    /*dbg*/
     Dwarf_Bool,       /*signed==true (or unsigned)*/
@@ -4218,6 +4235,21 @@ void * dwarf_compress_integer_block(
     Dwarf_Unsigned*,  /*number of bytes in output block*/
     Dwarf_Error*      /*error*/
 );
+
+/*  New February 2019.  On success returns DW_DLV_OK
+    and creates an array of Dwarf_Signed values
+    from the block of sleb numbers.
+    This interface supercedes
+    dwarf_uncompress_integer_block(). No ugly
+    cast needed to know if 
+    dwarf_uncompress_integer_block_a() succeeds or not. */
+int
+dwarf_uncompress_integer_block_a(Dwarf_Debug /*dbg*/,
+    Dwarf_Unsigned     /*input_length_in_bytes*/,
+    void             * /*input_block*/,
+    Dwarf_Unsigned   * /*value_count*/,
+    Dwarf_Signed    ** /*value_array*/,
+    Dwarf_Error      * /*error*/);
 
 /*  Decode an array of signed leb integers (so of course the
     array is not composed of fixed length values, but is instead
@@ -4229,7 +4261,8 @@ void * dwarf_compress_integer_block(
     Size of integer units must be 32 (32 bits each) at this time.
     Number of bytes in block is a byte count (not array count).
     Returns number of units in output block (ie, number of elements
-    of the array that the return value points to) thru the argument.  */
+    of the array that the return value points to) thru the 
+    argument.  */
 void * dwarf_uncompress_integer_block(
     Dwarf_Debug,      /*dbg */
     Dwarf_Bool,       /*signed==true (or unsigned) */

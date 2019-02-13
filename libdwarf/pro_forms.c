@@ -336,16 +336,95 @@ local_add_AT_address_a(Dwarf_P_Debug dbg,
     return DW_DLV_OK;
 }
 
+/*  Pass in array (ie a pointer to) of Dwarf_Signed 
+    with input_array_length elements.
+
+    A block of bytes is created
+    with the sleb data in it.
+
+    A pointer to the glob of bytes is returned
+    through the output_block pointer and its length
+    through output_block_len pointer. */
+int
+dwarf_compress_integer_block_a(
+    Dwarf_P_Debug    dbg,
+    Dwarf_Unsigned  input_array_length,
+    Dwarf_Signed *  input_array,
+    Dwarf_Unsigned *output_block_len,
+    void         ** output_block_returned,
+    Dwarf_Error*     error
+)
+{
+    Dwarf_Unsigned output_length_in_bytes = 0;
+    char * output_block = 0;
+    char encode_buffer[ENCODE_SPACE_NEEDED];
+    unsigned u = 0;
+    char * ptr = 0;
+    int remain = 0;
+    int result = 0;
+
+    if (dbg == NULL) {
+        _dwarf_p_error(NULL, error, DW_DLE_DBG_NULL);
+        return DW_DLV_ERROR;
+    }
+    /* First compress everything to find the total size. */
+
+    output_length_in_bytes = 0;
+    for (u=0; u<input_array_length; u++) {
+        int unit_encoded_size;
+        Dwarf_Signed unit = 0;
+
+        unit = input_array[u];
+        result = _dwarf_pro_encode_signed_leb128_nm(
+            unit, &unit_encoded_size,
+            encode_buffer,sizeof(encode_buffer));
+        if (result !=  DW_DLV_OK) {
+            _dwarf_p_error(NULL, error, DW_DLE_LEB_IMPROPER);
+            return DW_DLV_ERROR;
+        }
+        output_length_in_bytes += unit_encoded_size;
+    }
+    output_block = (void *)
+        _dwarf_p_get_alloc(dbg, output_length_in_bytes);
+    if (output_block == NULL) {
+        _dwarf_p_error(dbg, error, DW_DLE_ALLOC_FAIL);
+        return DW_DLV_ERROR;
+    }
+
+    /* Then compress again and copy into new buffer */
+    ptr = output_block;
+    remain = output_length_in_bytes;
+    for (u=0; u<input_array_length; u++) {
+        int unit_encoded_size;
+        Dwarf_Signed unit = 0;
+
+        unit = input_array[u];
+        result = _dwarf_pro_encode_signed_leb128_nm(unit,
+            &unit_encoded_size,
+            ptr, remain);
+        if (result !=  DW_DLV_OK) {
+            _dwarf_p_error(NULL, error, DW_DLE_LEB_IMPROPER);
+            return DW_DLV_ERROR;
+        }
+        remain -= unit_encoded_size;
+        ptr += unit_encoded_size;
+    }
+
+    *output_block_len = output_length_in_bytes;
+    *output_block_returned = output_block;
+    return DW_DLV_OK;
+}
 /*  Functions to compress and uncompress data from normal
     arrays of integral types into arrays of LEB128 numbers.
     Extend these functions as needed to handle wider input
     variety.  Return values should be freed with _dwarf_p_dealloc
-    after they aren't needed any more.  */
-/*  It is not clear there is any use to this function
+    after they aren't needed any more.
+
+    It is not clear there is any use to this function
     as it was contributed by SUN but may not have ever
     been needed in any released SUN compiler. */
 
-/* return value points to an array of LEB number */
+/* return value points to an array of LEB numbers */
 
 void *
 dwarf_compress_integer_block(
@@ -531,7 +610,6 @@ dwarf_add_AT_block(
     }
     return new_attr;
 }
-
 int
 dwarf_add_AT_block_a(
     Dwarf_P_Debug       dbg,

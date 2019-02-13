@@ -1,3 +1,8 @@
+2019-02-12 David Anderson
+     * print_die.c: Delete _dwarf_memcpy_swap_bytes() as it
+       is no longer needed. Use the new 
+       dwarf_uncompress_integer_block_a() interface as it
+       is easier to use.
 2019-02-07 David Anderson
      * dwarf_names.c,dwarf_names.h,dwarfdump-ta-table.h,
        dwarfdump-tt-ext-table.h, dwarfdump-tt-table.h:

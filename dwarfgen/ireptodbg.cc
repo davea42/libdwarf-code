@@ -273,6 +273,64 @@ const char *testnames[3] = {
 };
 
 static void
+addSUNfuncoffsets(Dwarf_P_Debug dbg ,
+    IRepresentation & Irep UNUSEDARG,
+    UNUSEDARG Dwarf_P_Die ourdie,
+    IRDie &inDie,
+    UNUSEDARG IRDie &inParent,
+    list<IRAttr>& attrs,
+    UNUSEDARG unsigned level)
+{
+    if(!cmdoptions.addSUNfuncoffsets) {
+        // No transformation of this sort requested.
+        return;
+    }
+    Dwarf_Half dietag = inDie.getTag();
+    if (dietag == DW_TAG_compile_unit) {
+    }
+    if (dietag != DW_TAG_compile_unit) {
+        return;
+    }
+    //    add new attr.
+
+    Dwarf_Half attrnum = DW_AT_SUN_func_offsets;
+    IRFormBlock *f = new IRFormBlock();
+
+    Dwarf_Signed signar[5] = {-1,2000,-2500000000ll,60000000000ll,-2};
+    Dwarf_Unsigned block_len = 0;
+    void *block_ptr;
+
+    int res = dwarf_compress_integer_block_a(dbg,
+         5,signar, &block_len,&block_ptr,&error);
+    if (res == DW_DLV_ERROR) {
+        cerr << " FAIL: Unable to generate via "   <<
+            "dwarf_compress_integer_block_a: err " <<
+            dwarf_errmsg(error) << endl;
+        return;
+    } else if (res == DW_DLV_NO_ENTRY) {
+        cerr << " FAIL: NO_ENTRY impossible but got it" <<
+            " from dwarf_compress_integer_block_a: err " << endl;
+        return;
+    }
+    f->setInitialForm(DW_FORM_block);
+    f->setFinalForm(DW_FORM_block);
+
+    Dwarf_Block bl;
+    bl.bl_len = block_len;
+    bl.bl_data = block_ptr;
+    bl.bl_from_loclist = false;
+    bl.bl_section_offset = 0; // FAKE
+    f->insertBlock(&bl);
+
+    IRAttr attr1(attrnum,
+        DW_FORM_block,
+        DW_FORM_block);
+    attr1.setFormClass(DW_FORM_CLASS_BLOCK);
+    attr1.setFormData(f);
+    attrs.push_back(attr1);
+}
+
+static void
 addImplicitConstItem(Dwarf_P_Debug dbg UNUSEDARG,
     IRepresentation & Irep UNUSEDARG,
     Dwarf_P_Die ourdie UNUSEDARG,
@@ -402,6 +460,7 @@ HandleOneDieAndChildren(Dwarf_P_Debug dbg,
     specialAttrTransformations(dbg,Irep,gendie,inDie,attrs,level);
     addData16DataItem(dbg,Irep,gendie,inDie,inParent,attrs,level);
     addImplicitConstItem(dbg,Irep,gendie,inDie,inParent,attrs,level);
+    addSUNfuncoffsets(dbg,Irep,gendie,inDie,inParent,attrs,level);
 
     // Now we add attributes (content), if any, to the
     // output die 'gendie'.

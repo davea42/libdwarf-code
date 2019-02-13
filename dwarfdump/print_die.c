@@ -145,46 +145,6 @@ dump_bytes(const char *msg,Dwarf_Small * start, long len)
 }
 #endif /* 0 */
 
-/* s1, s2 may point to same place. Hence use a temp array here. */
-static void
-_dwarf_memcpy_swap_bytes(void *s1, const void *s2, unsigned long len)
-{
-    unsigned char *targ = (unsigned char *) s1;
-    char temptarg[8];
-    const unsigned char *src = (const unsigned char *) s2;
-
-    if (len == 4) {
-        temptarg[3] = src[0];
-        temptarg[2] = src[1];
-        temptarg[1] = src[2];
-        temptarg[0] = src[3];
-        memcpy(s1,temptarg,4);
-    } else if (len == 8) {
-        temptarg[7] = src[0];
-        temptarg[6] = src[1];
-        temptarg[5] = src[2];
-        temptarg[4] = src[3];
-        temptarg[3] = src[4];
-        temptarg[2] = src[5];
-        temptarg[1] = src[6];
-        temptarg[0] = src[7];
-        memcpy(s1,temptarg,8);
-    } else if (len == 2) {
-        temptarg[1] = src[0];
-        temptarg[0] = src[1];
-        memcpy(s1,temptarg,2);
-    }
-/* should NOT get below here: is not the intended use */
-    else if (len == 1) {
-        targ[0] = src[0];
-    } else {
-        memcpy(s1, s2, (size_t)len);
-    }
-    return;
-}
-
-
-
 struct operation_descr_s {
     int op_code;
     int op_count;
@@ -1714,35 +1674,27 @@ get_FLAG_BLOCK_string(Dwarf_Debug dbg, Dwarf_Attribute attrib,
     int fres = 0;
     Dwarf_Block *tempb = 0;
     Dwarf_Unsigned array_len = 0;
-    char * array = 0;
-    char * array_ptr = 0;
-    Dwarf_Unsigned array_remain = 0;
-#ifdef ORIGINAL_SPRINTF
-    char linebuf[100];
-#endif
-    unsigned unit_length = 4; /* Matching the 32bit arg below,
-        we only handle 32bit quantities here.  */
+    Dwarf_Signed *array = 0;
+    Dwarf_Unsigned next = 0;
     Dwarf_Error  fblkerr = 0;
 
     /* first get compressed block data */
     fres = dwarf_formblock (attrib,&tempb, &fblkerr);
     if (fres != DW_DLV_OK) {
-        print_error(dbg,"DW_FORM_blockn cannot get block\n",fres,fblkerr);
+        print_error(dbg,"DW_FORM_blockn cannot get block\n",
+        fres,fblkerr);
         return;
     }
 
+    fres = dwarf_uncompress_integer_block_a(dbg,
+        tempb->bl_len,
+        (void *)tempb->bl_data,
+        &array_len,&array,&fblkerr);
     /*  uncompress block into 32bit signed int array.  
         It's really a block of sleb numbers so the
         compression is minor unless the values
         are close to zero.  */
-    array = dwarf_uncompress_integer_block(dbg,
-        1, /* 'true' (meaning signed ints)*/
-        32, /* bits per unit */
-        (void *)tempb->bl_data,
-        tempb->bl_len,
-        &array_len, /* len of out array */
-        &fblkerr);
-    if (array == (void*) DW_DLV_BADOFFSET) {
+    if (fres != DW_DLV_OK) {
         print_error(dbg,"DW_AT_SUN_func_offsets cannot uncompress data\n",0,fblkerr);
         return;
     }
@@ -1752,26 +1704,21 @@ get_FLAG_BLOCK_string(Dwarf_Debug dbg, Dwarf_Attribute attrib,
     }
 
     /* fill in string buffer */
-    array_remain = array_len*unit_length;
-    array_ptr = array;
-    while (array_remain > 0) {
+    next = 0;
+    while (next < array_len) {
         unsigned i = 0;
         /*  Print a full line */
         esb_append(esbp,"\n  ");
-        for(i = 0 ; i < 8 && array_remain > 0; ++i) {
-            unsigned j;
-            esb_append(esbp,"0x");
-#ifdef WORDS_BIGENDIAN
-           /*  So host is bigendian. Print as is. */
-#else /* LITTLE ENDIAN */
-           /*  Host little-endian so we swap to big-endian
-               (which feels a bit strange) to print as bytes. */
-           _dwarf_memcpy_swap_bytes(array_ptr,array_ptr,unit_length);
-#endif /* end LITTLE- BIG-ENDIAN */
-            for (j = 0; j < unit_length && array_remain >0;
-                ++j,++array_ptr,--array_remain) {
-                esb_append_printf_u(esbp,"%02x",(*array_ptr) & 0xff);
+        for(i = 0 ; i < 2 && next < array_len; ++i,++next) {
+            Dwarf_Signed vs = array[next];
+            Dwarf_Unsigned vu = (Dwarf_Unsigned)vs;
+
+            if (i== 1) {
+                esb_append(esbp," ");
             }
+            esb_append_printf_i(esbp,"%6" DW_PR_DSd " ",vs); 
+            esb_append_printf_u(esbp,
+               "(0x%"  DW_PR_XZEROS DW_PR_DUx ")",vu); 
         }
     }
     /* free array buffer */

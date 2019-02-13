@@ -83,7 +83,7 @@ AddAttrToDie(Dwarf_P_Debug dbg,
     IRepresentation & Irep,
     IRCUdata  &cu,
     Dwarf_P_Die outdie,
-    IRDie & irdie, //UNUSEDARG
+    UNUSEDARG IRDie & irdie, 
     IRAttr &irattr)
 {
     int attrnum = irattr.getAttrNum();
@@ -128,7 +128,29 @@ AddAttrToDie(Dwarf_P_Debug dbg,
         break;
     case DW_FORM_CLASS_BLOCK:
         {
-        //FIXME
+        IRFormBlock *f = dynamic_cast<IRFormBlock *>(form_a);
+        // FIXME: Handle form indirect
+        // DW_FORM_block2
+        // DW_FORM_block
+        // DW_FORM_block4
+        // DW_FORM_block1
+
+        Dwarf_Unsigned block_len = f->getBlockLen();
+        Dwarf_Small * block_data = f->getBlockBytes();
+        Dwarf_P_Attribute attrb =0;
+
+        int res = dwarf_add_AT_block_a(dbg,outdie,attrnum,
+            block_data,
+            block_len,
+            &attrb,
+            &error);
+        if (res != DW_DLV_OK) {
+            cerr <<
+                "ERROR dwarf_add_AT_block_a: "
+                " fails,"
+                " attrnum " << attrnum <<
+                " res "<< res << endl;
+        }
         }
         break;
     case DW_FORM_CLASS_CONSTANT:

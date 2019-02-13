@@ -1,3 +1,12 @@
+2019-02-12 David Anderson
+     * dwarfgen.cc: The new option --add-sun-func-offsets
+       tests whether the DW_AT_SUN_func_offsets data can
+       be written (and later read) properly.
+     * general.h: Added bool addSUNfuncoffsets.
+     * irepattrtodbg.cc: Now we handle DW_FORM_CLASS_BLOCK.
+     * irepform.h: Refine IRFormBlock to make it usable.
+     * ireptodbg.cc: When requested, add a 
+       DW_AT_SUN_func_offsets attribute to a compile unit.
 2019-02-08 David Anderson
      * ireptodbg.cc: std::list<Dwarf_Unsigned> adval
        was using a non-portable initializer. Now using

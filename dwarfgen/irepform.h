@@ -161,26 +161,29 @@ public:
     void setFinalForm(Dwarf_Half v) { finalform_ = v;}
     Dwarf_Half getInitialForm() { return initialform_;}
     Dwarf_Half getFinalForm() {return finalform_;}
-
+    Dwarf_Unsigned getBlockLen() {return blockdata_.size();}
+    Dwarf_Small* getBlockBytes() {   
+            // Standard guarantees vector content is simply array.
+            return &blockdata_[0]; 
+        }
     enum Dwarf_Form_Class getFormClass() const { return formclass_; };
-private:
-    Dwarf_Half finalform_;
-    // In most cases directform == indirect form.
-    // Otherwise, directform == DW_FORM_indirect.
-    Dwarf_Half initialform_;
-    enum Dwarf_Form_Class formclass_;
-    std::vector<char> blockdata_;
-    Dwarf_Small fromloclist_;
-    Dwarf_Unsigned sectionoffset_;
-
     void insertBlock(Dwarf_Block *bl) {
-        char *d = static_cast<char *>(bl->bl_data);
+        Dwarf_Small *d = static_cast<Dwarf_Small *>(bl->bl_data);
         Dwarf_Unsigned len = bl->bl_len;
         blockdata_.clear();
         blockdata_.insert(blockdata_.end(),d+0,d+len);
         fromloclist_ = bl->bl_from_loclist;
         sectionoffset_ = bl->bl_section_offset;
     };
+private:
+    Dwarf_Half finalform_;
+    // In most cases directform == indirect form.
+    // Otherwise, directform == DW_FORM_indirect.
+    Dwarf_Half initialform_;
+    enum Dwarf_Form_Class formclass_;
+    std::vector<Dwarf_Small> blockdata_;
+    Dwarf_Small fromloclist_;
+    Dwarf_Unsigned sectionoffset_;
 };
 class IRFormConstant : public IRForm {
 public:

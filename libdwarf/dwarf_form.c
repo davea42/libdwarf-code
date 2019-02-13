@@ -100,11 +100,94 @@ dwarf_whatform_direct(Dwarf_Attribute attr,
     return (DW_DLV_OK);
 }
 
+/*  Pass in the content of a block and the length of that
+    content. On success return DW_DLV_OK and set *value_count
+    to the size of the array returned through value_array. */
+int 
+dwarf_uncompress_integer_block_a(Dwarf_Debug dbg,
+    Dwarf_Unsigned     input_length_in_bytes,
+    void             * input_block,
+    Dwarf_Unsigned   * value_count, 
+    Dwarf_Signed    ** value_array,
+    Dwarf_Error      * error)
+{
+    Dwarf_Unsigned output_length_in_units = 0;
+    Dwarf_Signed * output_block = 0;
+    unsigned i = 0;
+    char * ptr = 0;
+    int remain = 0;
+    Dwarf_Signed * array = 0;
+    Dwarf_Byte_Ptr endptr = (Dwarf_Byte_Ptr)input_block+
+        input_length_in_bytes;
 
-/*  This code was contributed some time ago
-    and the return value is in the wrong form,
-    but we are not fixing it.
-    As of 2016 it is not clear that Sun Sparc
+    output_length_in_units = 0;
+    remain = input_length_in_bytes;
+    ptr = input_block;
+    while (remain > 0) {
+        Dwarf_Unsigned len = 0;
+        Dwarf_Signed value = 0;
+        int rres = 0;
+
+        rres = _dwarf_decode_s_leb128_chk((unsigned char *)ptr,
+            &len, &value,endptr);
+        if (rres != DW_DLV_OK) {
+            _dwarf_error(NULL, error, DW_DLE_LEB_IMPROPER);
+            return DW_DLV_ERROR;
+        }
+        ptr += len;
+        remain -= len;
+        output_length_in_units++;
+    }
+    if (remain != 0) {
+        _dwarf_error(NULL, error, DW_DLE_ALLOC_FAIL);
+        return DW_DLV_ERROR;
+    }
+
+    output_block = (Dwarf_Signed*)
+        _dwarf_get_alloc(dbg,
+            DW_DLA_STRING,
+            output_length_in_units * sizeof(Dwarf_Signed));
+    if (!output_block) {
+        _dwarf_error(dbg, error, DW_DLE_ALLOC_FAIL);
+        return DW_DLV_ERROR;
+    }
+    array = output_block;
+    remain = input_length_in_bytes;
+    ptr = input_block;
+    for (i=0; i<output_length_in_units && remain>0; i++) {
+        Dwarf_Signed num;
+        Dwarf_Unsigned len;
+        int sres = 0;
+
+        sres = _dwarf_decode_s_leb128_chk((unsigned char *)ptr,
+            &len, &num,endptr);
+        if (sres != DW_DLV_OK) {
+            dwarf_dealloc(dbg,output_block,DW_DLA_STRING);
+            _dwarf_error(NULL, error, DW_DLE_LEB_IMPROPER);
+            return DW_DLV_ERROR;
+        }
+        ptr += len;
+        remain -= len;
+        array[i] = num;
+    }
+
+    if (remain != 0) {
+        dwarf_dealloc(dbg, (unsigned char *)output_block, 
+            DW_DLA_STRING);
+        _dwarf_error(dbg, error, DW_DLE_ALLOC_FAIL);
+        return DW_DLV_ERROR;
+    }
+
+    *value_count = output_length_in_units;
+    *value_array = output_block;
+    return DW_DLV_OK;
+}
+
+/*  This code was contributed around 2007
+    and the return value is in the wrong form.
+    See dwarf_uncompress_integer_block_a() above.
+    
+    As of 2019 it is not clear that Sun Sparc
     compilers are in current use, nor whether
     there is a reason to make reads of
     this data format safe from corrupted object files.
@@ -136,6 +219,7 @@ dwarf_uncompress_integer_block(
         _dwarf_error(NULL, error, DW_DLE_DBG_NULL);
         return((void *)DW_DLV_BADADDR);
     }
+
 
     if (unit_is_signed == false ||
         unit_length_in_bits != 32 ||

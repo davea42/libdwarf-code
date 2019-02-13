@@ -1,3 +1,10 @@
+2019-02-12   David Anderson
+      * dwarf_form.c: Implement dwarf_uncompress_integer_block_a()
+        with the proper return type (int). Use this instead
+        of the old dwarf_uncompress_integer_block().
+      * libdwarf.h.in: Declare dwarf_uncompress_integer_block_a()
+        and dwarf_uncompress_integer_block_a().
+      * pro_forms.c: Implment the two new functions.
 2019-02-10   David Anderson
       * dwarf_errmsg_list.h,libdwarf.h.in: Adding
         DW_DLE_NO_STREAM_RELOC_SUPPORT error code.
