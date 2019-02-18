@@ -1,3 +1,6 @@
+2019-02-18   David Anderson
+      * pro_reloc_stream.h: Was testing ifdef HAVE_ELF_H, which
+        is unnecessary as it does not use any elf.h types.
 2019-02-12   David Anderson
       * dwarf_form.c: Implement dwarf_uncompress_integer_block_a()
         with the proper return type (int). Use this instead
