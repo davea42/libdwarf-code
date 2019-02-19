@@ -16,7 +16,7 @@ m4_define([lt_age], [v_min])
 
 ### Sets the release name. 
 ###m4_define([v_date], [m4_esyscmd_s([date "+%Y%m%d"])])
-m4_define([v_date], [20190201])])
+m4_define([v_date], [20190217])])
 
 AC_PREREQ([2.52])
 ### 2nd arg to AC_INIT is the version 'number'.
@@ -93,10 +93,22 @@ AC_ARG_ENABLE([namestable],
    ],
    [enable_namestable="no"])
 
+
 AS_IF(
     [test "x${enable_namestable}" = "xyes"],
     [AC_SUBST([dwarf_namestable], [-s])],
     [AC_SUBST([dwarf_namestable], [-t])])
+
+AC_ARG_ENABLE([libelf],
+   [AS_HELP_STRING([--disable-libelf],
+                   [disable use of libelf (default is enable) @<:@default=yes@:>@])],
+   [ AS_IF(
+        [test "x${enableval}" = "xyes"],
+        [dwarf_with_libelf="yes"],
+        [dwarf_with_libelf="no"])
+   ],
+   [dwarf_with_libelf="yes"])
+
 
 AC_ARG_ENABLE([windowspath],
    [AS_HELP_STRING([--enable-windowspath],
@@ -180,38 +192,34 @@ AC_CHECK_HEADERS([sgidefs.h])
 AC_CHECK_HEADERS([windows.h])
 
 # test Elf headers in the preprocessor path search
-
 CPPFLAGS_save=${CPPFLAGS}
 
-# test libelf.h header. exits if not found
 AC_CHECK_HEADERS([libelf.h libelf/libelf.h])
-#AS_IF(
-#    [test "x${ac_cv_header_libelf_h}" != "xyes" -a "x${ac_cv_header_libelf_libelf_h}" != "xyes"],
-#    [AC_MSG_ERROR([libelf.h not found, exiting...])])
+AC_CHECK_HEADERS([elf.h elfaccess.h sys/elf_386.h sys/elf_amd64.h sys/elf_SPARC.h sys/ia64/elf.h])
+
+### we set $dwarf_with_libelf above.
+### Using header settings, add to DWARF_LIBS
+### if no libelf.h add no -lelf and turn off libelf recognition, if any 
+### Unsure how to undo HAVE_ELF_H set by AC_CHECK_HEADERS
+AS_IF([test "x${ac_cv_header_libelf_h}" != "xyes" -a "x${ac_cv_header_libelf_libelf_h}" != "xyes" ],
+    [ dwarf_with_libelf="no" ; echo "no libelf headers, no libelf" ],
+    [ AS_IF( [test "x${dwarf_with_libelf}" = "xno" ], 
+      [ echo "disabled libelf, no libelf" ],
+      [ DWARF_LIBS="${DWARF_LIBS} -lelf"  
+        dwarf_with_libelf="yes" 
+        echo "Allowing use of libelf."
+        AC_DEFINE([DWARF_WITH_LIBELF],[1],
+          [Set to 1 as we are building with libelf]) 
+      ])
+    ])
 
 AC_CHECK_HEADERS([zlib.h])
 AS_IF(
     [test "x${ac_cv_header_zlib_h}" = "xyes"],
-    [ have_pc_zlib="yes" ; echo "have zlib" ],
+    [ have_pc_zlib="yes" ; echo "have zlib" ; 
+      DWARF_LIBS="${DWARF_LIBS} -lz" ],
     [ have_pc_zlib="no" ; echo "no zlib" ])
 
-AC_CHECK_HEADERS([elf.h elfaccess.h sys/elf_386.h sys/elf_amd64.h sys/elf_SPARC.h sys/ia64/elf.h])
-
-CPPFLAGS=${CPPFLAGS_save}
-
-## test if zlib.h is in the preprocessor path search
-#AS_IF(
-#    [test "x${have_pc_zlib}" = "xno"],
-#    [AC_CHECK_HEADERS([zlib.h], [have_zlib="yes"], [have_zlib="no"])])
-
-### Using header setings, add to DWARF_LIBS
-### if no zlib or elf.h add no -l at all. 
-AS_IF(
-    [test "x${have_pc_zlib}" = "xyes"],
-    [DWARF_LIBS="${DWARF_LIBS} -lelf -lz"],
-    [AS_IF([test "x${ac_cv_header_elf_h}" == "xyes"],
-      [DWARF_LIBS="${DWARF_LIBS} -lelf"],
-      [])])
 
 ### Checks for types
 
@@ -568,9 +576,7 @@ struct _Elf *a = 0;
 
 AC_MSG_CHECKING([whether struct _Elf is used])
 AC_MSG_RESULT([${have_struct__elf}])
-
 AC_SUBST([struct_elf])
-
 
 ### Checks for compiler characteristics
 
@@ -763,6 +769,7 @@ echo "    elf64_getshdr......: ${have_getshdr}"
 echo "    Elf64_Rela.........: ${have_elf64_rela}"
 echo "    Elf64_Sym..........: ${have_elf64_sym}"
 echo "    Elf spelled........: ${struct_elf}"
+echo "    libelf.............: ${dwarf_with_libelf}"
 echo "    Windows path corr..: ${enable_windowspath}"
 echo "    Nonstandardprintf..: ${enable_nonstandardprintf}"
 echo "  dwarfdump............: always"

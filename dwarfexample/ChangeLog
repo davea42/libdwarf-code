@@ -1,3 +1,6 @@
+2019-02-18 David Anderson
+    * configure.cmake: Now defines DWARF_WITH_LIBELF for
+      consistency with other cmake files.
 2019-01-09 David Anderson
     * simplereader.c: Added comments about the dwarf_init()
       case and dSYM objects.

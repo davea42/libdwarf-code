@@ -15,3 +15,5 @@ set(dwfwall $<$<BOOL:${wall}>:"-Wall -O0 -Wpointer-arith -Wmissing-declarations 
 option(nonstandardprintf "Use a special printf format for 64bit (default is NO)" FALSE)
 set(HAVE_NONSTANDARD_PRINTF_64_FORMAT ${nonstandardprintf})
 message(STATUS "Checking enable nonstandardprintf... ${HAVE_NONSTANDARD_PRINTF_64_FORMAT}")
+
+set(DWARF_WITH_LIBELF 1)

@@ -32,7 +32,8 @@
 #include "stdafx.h"
 #endif /* HAVE_STDAFX_H */
 
-#ifdef HAVE_ELF_H
+#ifdef DWARF_WITH_LIBELF
+#ifdef HAVE_ELF_H /* does includes of elf.h libelf.h here. */
 #include <elf.h>
 #elif defined(HAVE_LIBELF_H)
 /* On one platform without elf.h this gets Elf32_Rel
@@ -41,7 +42,8 @@
 /* Consider the other known directory too */
 #elif defined(HAVE_LIBELF_LIBELF_H)
 #include <libelf/libelf.h>
-#endif
+#endif /* HAVE_ELF_H or HAVE_LIBELF*H */
+#endif /* DWARF_WITH_LIBELF */
 
 #if defined(sun)
 #include <sys/elf_SPARC.h>

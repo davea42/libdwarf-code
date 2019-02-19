@@ -1,3 +1,9 @@
+2019-02-19 David Anderson
+     * configure.cmake: Now defines DWARF_WITH_LIBELF
+       so builds work as always.
+     * dwarfdump.c,globals.h,print_reloc.c: Now uses
+       DWARF_WITH_LIBELF to determine how to build
+       with or without libelf.
 2019-02-12 David Anderson
      * print_die.c: Delete _dwarf_memcpy_swap_bytes() as it
        is no longer needed. Use the new 

@@ -29,7 +29,7 @@
 */
 
 #include "config.h"
-#ifdef HAVE_ELF_H
+#ifdef DWARF_WITH_LIBELF
 #include "dwarf_incl.h"
 #include "dwarf_error.h"
 #include "dwarf_elf_access.h"
@@ -44,19 +44,21 @@
 #include "dwarf_reloc_386.h"
 #endif /* _WIN32 */
 
+#ifdef DWARF_WITH_LIBELF /*  For relocation definitions */
 #ifdef HAVE_ELF_H
 #include <elf.h>
+#endif /* HAVE_ELF_H */
 /* Relocation definitions are in sys/elf_{mach}.h on Solaris.  */
 #ifdef HAVE_SYS_ELF_AMD64_H
 #include <sys/elf_amd64.h>
-#endif
+#endif /* HAVE_SYS_ELF_AMD64_H */
 #ifdef HAVE_SYS_ELF_386_H
 #include <sys/elf_386.h>
-#endif
+#endif /* HAVE_SYS_ELF_386_H */
 #ifdef HAVE_SYS_ELF_SPARC_H
 #include <sys/elf_SPARC.h>
-#endif
-#endif
+#endif /* HAVE_SYS_ELF_SPARC_H */
+#endif /* DWARF_WITH_LIBELF */
 
 #ifdef HAVE_LIBELF_H
 #include <libelf.h>
@@ -1506,4 +1508,6 @@ dwarf_get_elf(Dwarf_Debug dbg, dwarf_elf_handle * elf,
     _dwarf_error(dbg, error, DW_DLE_FNO);
     return DW_DLV_ERROR;
 }
-#endif /* HAVE_ELF_H */
+#else
+int dwarf_elf_access_dummy_var_avoid_warn = 0;
+#endif /* DWARF_WITH_LIBELF */

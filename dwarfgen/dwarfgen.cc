@@ -93,7 +93,7 @@
 #include "general.h"
 #include "dwgetopt.h"
 #ifdef HAVE_LIBELF_H
-//  gelf.h is a GNU-only elf header. FIXME
+//  gelf.h is a GNU-only elf header, so not using it.
 #include "libelf.h"
 #elif HAVE_LIBELF_LIBELF_H
 #include "libelf/libelf.h"

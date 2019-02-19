@@ -131,4 +131,6 @@ int main()
 HAVE_LIBELF_OFF64_OK)
 message(STATUS "Checking is off64_t type supported... ${HAVE_LIBELF_OFF64_OK}")
 
+set(DWARF_WITH_LIBELF 1)
+
 configure_file(config.h.in.cmake config.h)

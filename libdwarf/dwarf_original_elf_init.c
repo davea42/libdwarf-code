@@ -62,9 +62,9 @@ dwarf_elf_init_b(dwarf_elf_handle elf_file_pointer,
     Dwarf_Ptr errarg,
     Dwarf_Debug * ret_dbg, Dwarf_Error * error)
 {
-#ifndef HAVE_ELF_H
+#ifndef DWARF_WITH_LIBELF
     DWARF_DBG_ERROR(NULL, DW_DLE_NO_ELF_SUPPORT, DW_DLV_ERROR);
-#else /* HAVE_ELF_H */
+#else /* DWARF_WITH_LIBELF */
     Dwarf_Obj_Access_Interface *binary_interface = 0;
     int res = DW_DLV_OK;
     int localerrnum = 0;
@@ -96,7 +96,7 @@ dwarf_elf_init_b(dwarf_elf_handle elf_file_pointer,
     }
     /* DBG known */
     return res;
-#endif /* HAVE_ELF_H */
+#endif /* DWARF_WITH_LIBELF */
 }
 
 int
@@ -106,15 +106,15 @@ dwarf_elf_init(dwarf_elf_handle elf_file_pointer,
     Dwarf_Ptr errarg,
     Dwarf_Debug * ret_dbg, Dwarf_Error * error)
 {
-#ifndef HAVE_ELF_H
+#ifndef DWARF_WITH_LIBELF
     DWARF_DBG_ERROR(NULL, DW_DLE_NO_ELF_SUPPORT, DW_DLV_ERROR);
-#else /* HAVE_ELF_H */
+#else /* DWARF_WITH_LIBELF */
     int res = 0;
     res = dwarf_elf_init_b(elf_file_pointer,
         DW_GROUPNUMBER_ANY,
         access,errhand,errarg,ret_dbg,error);
     return res;
-#endif /* HAVE_ELF_H */
+#endif /* DWARF_WITH_LIBELF */
 }
 
 int
@@ -130,9 +130,9 @@ _dwarf_elf_setup(int fd,
     Dwarf_Ptr errarg,
     Dwarf_Debug *dbg,Dwarf_Error *error)
 {
-#ifndef HAVE_ELF_H
+#ifndef DWARF_WITH_LIBELF
     DWARF_DBG_ERROR(NULL, DW_DLE_PRODUCER_CODE_NOT_AVAILABLE, DW_DLV_ERROR);
-#else /* HAVE_ELF_H */
+#else /* DWARF_WITH_LIBELF */
     Elf_Cmd what_kind_of_elf_read = ELF_C_READ;
     Dwarf_Obj_Access_Interface *binary_interface = 0;
     int res = DW_DLV_OK;
@@ -167,5 +167,5 @@ _dwarf_elf_setup(int fd,
         (*dbg)->de_filesize = filesize;
     }
     return res;
-#endif /* HAVE_ELF_H */
+#endif /* DWARF_WITH_LIBELF */
 }

@@ -1,4 +1,16 @@
 2019-02-18   David Anderson
+      * configure.cmake: Now always defines DWARF_WITH_LIBELF
+        so builds work as always.
+      *	dwarf_elf_access.c,dwarf_generic_init.c,
+        dwarf_original_elf_init.c,
+	pro_incl.h,pro_init.c,pro_reloc_stream.c: Now these use
+        DWARF_WITH_LIBELF tests to build properly when 
+        libelf is to be used.
+2019-02-18   David Anderson
+      * pro_incl.h: Added comments on tests of HAVE_ELF_H
+        and the LIBELF_H macros and the #include of 
+        the Elf/libelf headers.
+2019-02-18   David Anderson
       * pro_reloc_stream.h: Was testing ifdef HAVE_ELF_H, which
         is unnecessary as it does not use any elf.h types.
 2019-02-12   David Anderson

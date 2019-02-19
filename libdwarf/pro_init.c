@@ -340,17 +340,17 @@ common_init(Dwarf_P_Debug dbg, Dwarf_Unsigned flags, const char *abiname,
     } else {
         /*  This is only going to work when the HOST == TARGET,
             surely? */
-#ifdef HAVE_ELF_H
+#ifdef DWARF_WITH_LIBELF
 #if HAVE_ELF64_GETEHDR
         dbg->de_relocation_record_size =
             ((dbg->de_pointer_size == 8)? sizeof(REL64) : sizeof(REL32));
 #else
         dbg->de_relocation_record_size = sizeof(REL32);
 #endif
-#else /* HAVE_ELF_H */
+#else /* DWARF_WITH_LIBELF */
        *err_ret = DW_DLE_NO_STREAM_RELOC_SUPPORT;
        return DW_DLV_ERROR;
-#endif /* HAVE_ELF_H */
+#endif /* DWARF_WITH_LIBELF */
 
 
     }
@@ -381,7 +381,7 @@ common_init(Dwarf_P_Debug dbg, Dwarf_Unsigned flags, const char *abiname,
         dbg->de_transform_relocs_to_disk =
             _dwarf_symbolic_relocs_to_disk;
     } else {
-#ifdef HAVE_ELF_H
+#ifdef DWARF_WITH_LIBELF
         if (IS_64BITPTR(dbg)) {
             dbg->de_relocate_by_name_symbol =
                 _dwarf_pro_reloc_name_stream64;
@@ -391,10 +391,10 @@ common_init(Dwarf_P_Debug dbg, Dwarf_Unsigned flags, const char *abiname,
         }
         dbg->de_relocate_pair_by_symbol = 0;
         dbg->de_transform_relocs_to_disk = _dwarf_stream_relocs_to_disk;
-#else /* HAVE_ELF_H */
+#else /* DWARF_WITH_LIBELF */
        *err_ret = DW_DLE_NO_STREAM_RELOC_SUPPORT;
        return DW_DLV_ERROR;
-#endif /* HAVE_ELF_H */
+#endif /* DWARF_WITH_LIBELF */
     }
     for (k = 0; k < NUM_DEBUG_SECTIONS; ++k) {
 

@@ -24,7 +24,7 @@
 
 */
 #include "globals.h"
-#ifdef HAVE_ELF_H
+#ifdef DWARF_WITH_LIBELF
 #define DWARF_RELOC_MIPS
 #define DWARF_RELOC_PPC
 #define DWARF_RELOC_PPC64
@@ -1015,4 +1015,4 @@ main()
     return 0;
 }
 #endif /* SELFTEST*/
-#endif /* HAVE_ELF_H */
+#endif /* DWARF_WITH_LIBELF */

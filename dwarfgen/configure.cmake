@@ -60,4 +60,5 @@ if(HAVE_ZLIB)
     set(dwfzlib "z")
 endif()
 
+set(DWARF_WITH_LIBELF 1)
 configure_file(config.h.in.cmake config.h)

@@ -1,3 +1,11 @@
+2019-02-18  David Anderson
+    * configure.ac: One can build forcing a non-elf build with
+      --disable-libelf . If libelf is missing or will not compile
+      the disable is automatic.  Now zlib is separated so
+      -lz is added to the link line with or without libelf.
+      Version is 20190217
+    * configure.cmake: Now always defines DWARF_WITH_LIBELF
+      so cmake builds continue to work as always.
 2019-02-07  David Anderson
     * configure.ac. Version 20190201. Now allows lack of
       elf.h libelf.h and if those and zlib.h missing

@@ -4,26 +4,30 @@ gnu-make compatible. The 2018 configure change
 to fully use autoconf/automake requires GNU make
 to build executables.
 
-As of 23 August 2018 cmake again works.
-Files had been deleted, added, and renamed so
-adjustments have now been made.
+========== sh scripts/FIX-CONFIGURE-TIMES
+Because git does not record timestamps and sometimes
+a copy will lose the timestamps on the build files,
+it is usually necessary to
+   sh scripts/FIX-CONFIGURE-TIMES
+at the top of the source tree before using configure.
 
-========== ACLOCAL MISSING BUILD PROBLEM
+========== BUILD PROBLEM SOLUTION: FIX-CONFIGURE-TIMES
+Because git does not record timestamps and sometimes
+a copy will lose the timestamps on the build files,
+the advice here is something you are likely to need
+to follow.
 
-If you encounter a configure or build problem
-"WARNING: 'aclocal-1.15' is missing on your system."
-  The problem is because the git repository does not
-  maintain file timestamps so configure or make fails.
-  Nor does "cp -r" (missing the p option) maintain
-  the file timestamps of the files.
-
-  From the top-level source do
+From the top-level source do
     sh scripts/FIX-CONFIGURE-TIMES
-  to fix the important timestamps.
-  The command is safe to run at any time.
-  The command checks that it is being run
-  from an appropriate libdwarf top-level
-  directory before doing anything.
+(before running configure) to fix the important timestamps.
+The command is safe to run at any time.
+The command checks that it is being run
+from an appropriate libdwarf top-level
+directory before doing anything.
+
+One clue the script is needed is the following
+warning.
+"WARNING: 'aclocal-1.15' is missing on your system."
 
 ========= End of aclocal issue...
 ========== CONFUSING BUILD PROBLEM
@@ -40,9 +44,16 @@ before you attempt an out-of-source-tree build
 ========= End of confusing build problem
 
 ========= gcc under MinGW on windows
+The configure option --disable-libelf
+is a good idea (new in February 2019),
+if you encounter build problems (which
+will happen if you have libelf.h visible).
+
 Under MinGW the gcc CFLAGS 
  -DHAVE_WINDOWS_H -DHAVE_NONSTANDARD_PRINTF_64_FORMAT -fno-dwarf2-cfi-asm
-seem to be essential.
+have helped some people, though for my MinGW tests
+these are not necessary or appropriate.
+
 =========
 
 Standard builds are done by configure/make as described below.
@@ -57,7 +68,8 @@ in /a/b/dwarf-20180809 one might do:
 
 LIBRARY AND HEADER REQUIREMENTS
 libelf and zlib and elf.h have to be installed
-to build libdwarf and dwarfdump.  For example,
+to build libdwarf and dwarfdump if one
+wishes to read Elf object files.  For example,
 in Ubuntu 16.04 and 18.04, install using:
     sudo apt-get install zlib1g zlib1g-dev libelf1 libelf-dev
 

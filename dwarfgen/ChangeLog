@@ -1,3 +1,7 @@
+2019-02-18 David Anderson
+     * configure.cmake: Now defines DWARF_WITH_LIBELF
+       for consistency with other cmake files.
+     * dwarfgen.cc: Trivial comment correction.
 2019-02-12 David Anderson
      * dwarfgen.cc: The new option --add-sun-func-offsets
        tests whether the DW_AT_SUN_func_offsets data can

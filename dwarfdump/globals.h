@@ -50,16 +50,18 @@ extern "C" {
 #include "stdafx.h"
 #endif /* HAVE_STDAFX_H */
 
+#ifdef DWARF_WITH_LIBELF
 #ifdef HAVE_ELF_H
 #include <elf.h>
-#endif
+#endif /* HAVE_ELF_H */
 #ifdef HAVE_LIBELF_H
-#include <libelf.h>
-#else
-#ifdef HAVE_LIBELF_LIBELF_H
-#include <libelf/libelf.h>
-#endif
-#endif
+# include <libelf.h>
+#else /* !HAVE_LIBELF_H */
+# ifdef HAVE_LIBELF_LIBELF_H
+# include <libelf/libelf.h>
+# endif /* HAVE_LIBELF_LIBELF_H */
+#endif /* HAVE_LIB_ELF */
+#endif /* DWARF_WITH_LIBELF */
 #include <dwarf.h>
 #include <libdwarf.h>
 

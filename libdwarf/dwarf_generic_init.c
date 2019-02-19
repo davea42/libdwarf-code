@@ -271,9 +271,9 @@ dwarf_finish(Dwarf_Debug dbg, Dwarf_Error * error)
         char otype  = *(char *)(dbg->de_obj_file->object);
 
         if (otype == 'E') {
-#ifdef HAVE_ELF_H
+#ifdef DWARF_WITH_LIBELF
             dwarf_elf_object_access_finish(dbg->de_obj_file);
-#endif /* HAVE_ELF_H */
+#endif /* DWARF_WITH_LIBELF */
         } else if (otype == 'M') {
             _dwarf_destruct_macho_access(dbg->de_obj_file);
         } else if (otype == 'P') {
