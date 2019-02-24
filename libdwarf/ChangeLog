@@ -1,3 +1,7 @@
+2019-02-24   David Anderson
+      * libdwarf_version.h: Updated date string.
+      * dwarf_names.c,dwarf_names.h, dwarf_names_enum.h,
+        dwarf_names_new.h: Regenerated with latest date string.
 2019-02-18   David Anderson
       * configure.cmake: Now always defines DWARF_WITH_LIBELF
         so builds work as always.

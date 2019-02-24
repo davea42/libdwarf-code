@@ -1,3 +1,8 @@
+2019-02-24  David Anderson
+    * configure.ac. Version 20190223. With --disable-libelf
+      most header checking is unnecessary and suppressed. 
+      All the checks for int32 and the like removed 
+      as we no longer use such types.
 2019-02-18  David Anderson
     * configure.ac: One can build forcing a non-elf build with
       --disable-libelf . If libelf is missing or will not compile
