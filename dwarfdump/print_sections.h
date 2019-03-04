@@ -31,22 +31,7 @@ extern "C" {
 
 extern int dwarf_names_print_on_error;
 
-void deal_with_name_offset_err(Dwarf_Debug dbg,
-    char *err_loc,
-    char *name,
-    Dwarf_Unsigned die_off,
-    int nres,
-    Dwarf_Error err);
-
 Dwarf_Unsigned get_info_max_offset(Dwarf_Debug dbg);
-
-void print_pubname_style_entry(Dwarf_Debug dbg,
-    char *line_title,
-    char *name,
-    Dwarf_Unsigned die_off,
-    Dwarf_Unsigned cu_off,
-    Dwarf_Unsigned global_cu_off,
-    Dwarf_Unsigned maxoff);
 
 #ifdef __cplusplus
 }

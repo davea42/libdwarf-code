@@ -1,3 +1,38 @@
+2019-03-04 David Anderson
+     * dwarf_names.c,dwarf_names.h,dwarfdump-ta-ext-table.h,
+       dwarfdump-ta-table.h,dwarfdump-tt-ext-table.h,
+       dwarfdump-tt-table.h,dwarf_names_enum.h,
+       dwarf_names_new.h: Regenerated with latest date string
+       and version.
+     * dwarfdump.c: Corrected indent mistakes.
+     * glflags.h: Removed blank line.
+     * globals.h: Added print_all_pubnames_style_records() declaration
+       so all the pubnames-like sections are printed by just one
+       function.
+     * print_die.c: Fixed indents. Removed trailing whitespace.
+     * print_pubnames.c: Now has the print code for all the
+       pubnames-like sections. The pubnames-like section
+       names only print if there is some data.  We now
+       also (for those sections) print the section CU-headers
+       if dwarfdump -v.   Some error messages modified slightly
+       to show the correct section name (as opposed to leaving it
+       off). Now can do the coded checks instead of ignoring them.  
+     * print_sections.c: Moved deal_with_name_offset_err() over
+       to print_pubnames.c, where it is now a static function.
+     * print_sections.h: Removed declarations of deal_with_name_offset_err()
+       and print_pubname_style_entry() as those are now static functions
+       in print_pubnames.c.
+     * print_static_funcs.c, print_static_vars.c: Now only print 
+       section name if there
+       is content. Corrected a long-incorrect section name of this
+       SGI-extension section you most likely have never seen.
+       Deleted the old printing code, do it via call into
+       print_pubnames.c.
+     * print_types.c,print_weaknames.c: Now only prints 
+       section name if there is content.
+       Deleted the old printing code, do it via call into
+       print_pubnames.c.
+
 2019-02-24 David Anderson
      * dwarf_names.c,dwarf_names.h,dwarfdump-ta-ext-table.h,
        dwarfdump-ta-table.h,dwarfdump-tt-ext-table.h,

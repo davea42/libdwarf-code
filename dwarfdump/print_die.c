@@ -1664,7 +1664,7 @@ get_small_encoding_integer_and_name(Dwarf_Debug dbg,
 /*  Called for DW_AT_SUN_func_offsets
     We need a 32-bit signed number here.
     But we're getting rid of the __[u]int[n]_t
-    dependence so lets use plain characters. 
+    dependence so lets use plain characters.
     */
 
 static void
@@ -1690,7 +1690,7 @@ get_FLAG_BLOCK_string(Dwarf_Debug dbg, Dwarf_Attribute attrib,
         tempb->bl_len,
         (void *)tempb->bl_data,
         &array_len,&array,&fblkerr);
-    /*  uncompress block into 32bit signed int array.  
+    /*  uncompress block into 32bit signed int array.
         It's really a block of sleb numbers so the
         compression is minor unless the values
         are close to zero.  */
@@ -1716,9 +1716,9 @@ get_FLAG_BLOCK_string(Dwarf_Debug dbg, Dwarf_Attribute attrib,
             if (i== 1) {
                 esb_append(esbp," ");
             }
-            esb_append_printf_i(esbp,"%6" DW_PR_DSd " ",vs); 
+            esb_append_printf_i(esbp,"%6" DW_PR_DSd " ",vs);
             esb_append_printf_u(esbp,
-               "(0x%"  DW_PR_XZEROS DW_PR_DUx ")",vu); 
+                "(0x%"  DW_PR_XZEROS DW_PR_DUx ")",vu);
         }
     }
     /* free array buffer */

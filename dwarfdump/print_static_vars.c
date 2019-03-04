@@ -34,65 +34,62 @@
 #include "print_frames.h"
 #include "sanitized.h"
 
-/* Get all the data in .debug_static_vars */
+/*  Get all the data in .debug_varnames
+    (an SGI extension)
+    For a long time erroneously called .debug_static_vars bere. */
 extern void
 print_static_vars(Dwarf_Debug dbg)
 {
-    Dwarf_Var *varbuf = NULL;
+    Dwarf_Var *globbuf = NULL;
     Dwarf_Signed count = 0;
-    Dwarf_Signed i = 0;
-    Dwarf_Off die_off = 0;
-    Dwarf_Off cu_off = 0;
-    char *name = 0;
-    int gvres = 0;
+    int res = 0;
     Dwarf_Error err = 0;
+    struct esb_s truename;
+    char buf[DWARF_SECNAME_BUFFER_SIZE];
+    struct esb_s sanitname;
 
     glflags.current_section_id = DEBUG_STATIC_VARS;
 
-    if (!glflags.gf_do_print_dwarf) {
-        return;
-    }
-    gvres = dwarf_get_vars(dbg, &varbuf, &count, &err);
+    esb_constructor_fixed(&truename,buf,sizeof(buf));
+    get_true_section_name(dbg,".debug_varnames",
+        &truename,TRUE);
     {
-        struct esb_s truename;
-        char buf[DWARF_SECNAME_BUFFER_SIZE];
-
-        esb_constructor_fixed(&truename,buf,sizeof(buf));
-        get_true_section_name(dbg,".debug_static_vars",
-            &truename,TRUE);
-        printf("\n%s\n",sanitized(esb_get_string(&truename)));
-        esb_destructor(&truename);
+        esb_constructor(&sanitname);
+        /*  Sanitized cannot be safely reused,there is a static buffer,
+            so we make a safe copy. */
+        esb_append(&sanitname,sanitized(esb_get_string(&truename)));
     }
-    if (gvres == DW_DLV_ERROR) {
-        print_error(dbg, "dwarf_get_vars", gvres, err);
-    } else if (gvres == DW_DLV_NO_ENTRY) {
-        /* no static vars */
-    } else {
-        Dwarf_Unsigned maxoff = get_info_max_offset(dbg);
-
-        for (i = 0; i < count; i++) {
-            int vnres = 0;
-            int cures3 = 0;
-            Dwarf_Off global_cu_off = 0;
-
-            vnres = dwarf_var_name_offsets(varbuf[i], &name, &die_off,
-                &cu_off, &err);
-            deal_with_name_offset_err(dbg,
-                "dwarf_var_name_offsets",
-                name, die_off, vnres, err);
-            cures3 = dwarf_var_cu_offset(varbuf[i],
-                &global_cu_off, &err);
-            if (cures3 != DW_DLV_OK) {
-                print_error(dbg, "dwarf_global_cu_offset", cures3, err);
-            }
-
-            print_pubname_style_entry(dbg,
-                "static-var",
-                name, die_off, cu_off,
-                global_cu_off, maxoff);
-
-            /* print associated die too? */
+    esb_destructor(&truename);
+    if (glflags.verbose) {
+        /* For best testing! */
+        res = dwarf_return_empty_pubnames(dbg,1,&err);
+        if (res != DW_DLV_OK) {
+            printf("FAIL: Erroneous libdwarf call "
+                "of dwarf_return_empty_pubnames: Fix dwarfdump");
+            return;
         }
-        dwarf_vars_dealloc(dbg, varbuf, count);
     }
-}                               /* print_static_vars */
+    res = dwarf_get_vars(dbg, &globbuf, &count, &err);
+    if (res == DW_DLV_ERROR) {
+        print_error(dbg, "dwarf_get_vars", res, err);
+    } else if (res == DW_DLV_NO_ENTRY) {
+        /* no static vars */
+        esb_destructor(&sanitname);
+        dwarf_return_empty_pubnames(dbg,0,&err);
+        return;
+    } else {
+        if (glflags.gf_do_print_dwarf && count > 0) {
+            /* SGI specific so only mention if present. */
+            printf("\n%s\n",esb_get_string(&sanitname));
+        }
+        print_all_pubnames_style_records(dbg,
+            "static-var",
+            esb_get_string(&sanitname),
+            (Dwarf_Global *)globbuf, count,
+            &err);
+        esb_destructor(&sanitname);
+        dwarf_vars_dealloc(dbg, globbuf, count);
+    }
+    dwarf_return_empty_pubnames(dbg,0,&err);
+    esb_destructor(&sanitname);
+}   /* print_static_vars */

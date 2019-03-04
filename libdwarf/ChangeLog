@@ -1,3 +1,51 @@
+2019-03-04   David Anderson
+      * dwarf.h:  Adding go-specifig type attributes
+        DW_AT_go_kind,DW_AT_go_key,DW_AT_go_elem,
+        DW_AT_go_embedded_field,DW_AT_go_runtime_type.
+        Added error code DW_DLE_RETURN_EMPTY_PUBNAMES_ERROR.
+      * dwarf_errmsg_list.h:
+        Added error code DW_DLE_RETURN_EMPTY_PUBNAMES_ERROR.
+      * dwarf_global.c: Updates new fields in the hidden struct
+        with pubnames(etc) context data and makes it possible
+        to see the CU headers there, even if there are no
+        actual variables listed for a CU (a fake record
+        returned in that case). The change in output
+        records (the fake records) only appear if
+        the caller has requested such by a call to
+        xxxxx
+        Implements dwarf_get_globals_header() so a caller
+        like dwarfdump can print such section headers.
+        Implements dwarf_return_empty_pubnames()
+        which just sets a flag so a caller
+        like dwarfdump can request such empty sections
+        return a useful fake entry.
+      * dwarf_global.h: Adds fields like pu_length, pu_version
+        so pubnames(etc) sections can have  their cu header
+        data returned.
+      * dwarf_line.c:  Adds explicit calls to dwarf_dealloc
+        in error cases to avoid leaving the allocated memory
+        hanging around until dwarf_finish().
+      * dwarf_names.c,dwarf_names.h, dwarf_names_enum.h,
+        dwarf_names_new.h: Regenerated to create the new attributes
+        for the Go language.
+      * dwarf_opaque.h: Adds  flag de_return_empty_pubnames to
+        Dwarf_Debug_s struct so libdwarf can know when fake
+        records for CUs with no entries are wanted by
+        callers.
+      * libdwarf.h.in: Added error code DW_DLE_RETURN_EMPTY_PUBNAMES_ERROR.
+        Declares dwarf_return_empty_pubnames() and
+        dwarf_get_globals_header() so callers (like dwarfdump)
+        can see and access all pubnames(etc)section CU headers.
+      * libdwarf2.1.mm: Version 2.71. Documents the new functions.
+        Revises the contest structure a little so all the pubnames-like
+        sections are documented as a related group of functions.
+      * libdwarf2.1.pdf: Regenerated. Version 2.71.
+      * libdwarf_version.h: New date string.
+2019-02-26   David Anderson
+      * dwarf.h: Added go language specific attributes.
+      * dwarf_line.c(dwarf_srcfiles): Dealloc stmt_list_attr 
+        as soon as we lose interest in it instead of waiting
+        for dwarf_finish() to be called.
 2019-02-24   David Anderson
       * libdwarf_version.h: Updated date string.
       * dwarf_names.c,dwarf_names.h, dwarf_names_enum.h,

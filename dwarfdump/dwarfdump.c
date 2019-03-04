@@ -163,10 +163,10 @@ check_for_major_errors(void)
 {
     if (glflags.gf_count_major_errors) {
 #if 0
-causes hundreds of test mismatches, so not reporting this.
+        causes hundreds of test mismatches, so not reporting this.
         printf("There were %ld DWARF errors reported: "
             "see ERROR above\n",
-           glflags.gf_count_major_errors);
+            glflags.gf_count_major_errors);
 #endif /* 0 */
         exit(FAILED);
     }
@@ -594,14 +594,14 @@ main(int argc, char *argv[])
 
     check_for_major_errors();
     if (glflags.gf_count_major_errors) {
-        printf("There were %ld DWARF errors reported: " 
+        printf("There were %ld DWARF errors reported: "
             "see ERROR above\n",
-           glflags.gf_count_major_errors);
+            glflags.gf_count_major_errors);
         exit(FAILED);
     }
     /*  As the tool have reached this point, it means there are
         no internal errors and we should return an OKAY condition,
-        regardless if the file being processed has 
+        regardless if the file being processed has
         minor errors. */
     return OKAY;
 }

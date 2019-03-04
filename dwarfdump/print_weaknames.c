@@ -37,62 +37,56 @@
 extern void
 print_weaknames(Dwarf_Debug dbg)
 {
-    Dwarf_Weak *weaknamebuf = NULL;
+    Dwarf_Weak *globbuf = NULL;
     Dwarf_Signed count = 0;
-    Dwarf_Signed i = 0;
-    Dwarf_Off die_off = 0;
-    Dwarf_Off cu_off = 0;
-    char *name = NULL;
     int wkres = 0;
     Dwarf_Error err = 0;
+    struct esb_s sanitname;
+    struct esb_s truename;
+    char buf[DWARF_SECNAME_BUFFER_SIZE];
 
     glflags.current_section_id = DEBUG_WEAKNAMES;
-
-    if (!glflags.gf_do_print_dwarf) {
-        return;
-    }
-    wkres = dwarf_get_weaks(dbg, &weaknamebuf, &count, &err);
+    esb_constructor_fixed(&truename,buf,sizeof(buf));
+    get_true_section_name(dbg,".debug_weaknames",
+        &truename,TRUE);
     {
-        struct esb_s truename;
-        char buf[DWARF_SECNAME_BUFFER_SIZE];
-
-        esb_constructor_fixed(&truename,buf,sizeof(buf));
-        get_true_section_name(dbg,".debug_weaknames",
-            &truename,TRUE);
-        printf("\n%s\n",sanitized(esb_get_string(&truename)));
-        esb_destructor(&truename);
+        esb_constructor(&sanitname);
+        /*  Sanitized cannot be safely reused,there is a static buffer,
+            so we make a safe copy. */
+        esb_append(&sanitname,sanitized(esb_get_string(&truename)));
     }
+    esb_destructor(&truename);
+    if (glflags.verbose) {
+        /* For best testing! */
+        int res = 0;
+
+        res = dwarf_return_empty_pubnames(dbg,1,&err);
+        if (res != DW_DLV_OK) {
+            printf("FAIL: Erroneous libdwarf call "
+                "of dwarf_return_empty_pubnames: Fix dwarfdump");
+            return;
+        }
+    }
+    wkres = dwarf_get_weaks(dbg, &globbuf, &count, &err);
     if (wkres == DW_DLV_ERROR) {
         print_error(dbg, "dwarf_get_weaks", wkres, err);
     } else if (wkres == DW_DLV_NO_ENTRY) {
+        esb_destructor(&sanitname);
+        dwarf_return_empty_pubnames(dbg,0,&err);
         /* no weaknames */
+        return;
     } else {
-        Dwarf_Unsigned maxoff = get_info_max_offset(dbg);
-
-        for (i = 0; i < count; i++) {
-            int tnres = 0;
-            int cures3 = 0;
-            Dwarf_Unsigned global_cu_off = 0;
-
-            tnres = dwarf_weak_name_offsets(weaknamebuf[i],
-                &name, &die_off, &cu_off,
-                &err);
-            deal_with_name_offset_err(dbg,
-                "dwarf_weak_name_offsets",
-                name, die_off, tnres, err);
-            cures3 = dwarf_weak_cu_offset(weaknamebuf[i],
-                &global_cu_off, &err);
-            if (cures3 != DW_DLV_OK) {
-                print_error(dbg, "dwarf_weakname_cu_offset",
-                    cures3, err);
-            }
-            print_pubname_style_entry(dbg,
-                "weakname",
-                name, die_off, cu_off,
-                global_cu_off, maxoff);
-
-            /* print associated die too? */
+        if (glflags.gf_do_print_dwarf && count > 0) {
+            /* SGI specific so only mention if present. */
+            printf("\n%s\n",esb_get_string(&sanitname));
         }
-        dwarf_weaks_dealloc(dbg, weaknamebuf, count);
+        print_all_pubnames_style_records(dbg,
+            "weakname",
+            esb_get_string(&sanitname),
+            (Dwarf_Global *)globbuf, count,
+            &err);
+        dwarf_weaks_dealloc(dbg, globbuf, count);
     }
-}   /* print_weaknames() */
+    esb_destructor(&sanitname);
+    dwarf_return_empty_pubnames(dbg,0,&err);
+}

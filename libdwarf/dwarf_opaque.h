@@ -721,6 +721,18 @@ struct Dwarf_Debug_s {
     unsigned char de_big_endian_object; /* Non-zero if big-endian
         object opened. */
 
+    /*  Non-zero if dwarf_get_globals(), dwarf_get_funcs,
+        dwarf_get_types,dwarf_get_pubtypes,
+        dwarf_get_vars,dwarf_get_weaks should create
+        and return a special zero-die-offset for the
+        corresponding pubnames-style section CU header with
+        zero pubnames-style named DIEs.  In that case the
+        list returned will have an entry with a zero for
+        the die-offset (which is an impossible debug_info
+        die_offset). New March 2019. 
+        See dwarf_return_empty_pubnames() */
+    unsigned char de_return_empty_pubnames;
+
     struct Dwarf_dbg_sect_s de_debug_sections[DWARF_MAX_DEBUG_SECTIONS];
     unsigned de_debug_sections_total_entries; /* Number actually used. */
 

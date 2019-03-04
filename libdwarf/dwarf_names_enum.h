@@ -1,5 +1,5 @@
 /* Automatically generated, do not edit. */
-/* Generated sourcedate  2019-02-24 14:24:02-08:00   */
+/* Generated sourcedate  2019-03-02 12:43:32-08:00   */
 
 /* BEGIN FILE */
 
@@ -409,6 +409,11 @@ enum Dwarf_AT_e {
     DW_AT_GNU_numerator                      = 0x2303,
     DW_AT_GNU_denominator                    = 0x2304,
     DW_AT_GNU_bias                           = 0x2305,
+    DW_AT_go_kind                            = 0x2900,
+    DW_AT_go_key                             = 0x2901,
+    DW_AT_go_elem                            = 0x2902,
+    DW_AT_go_embedded_field                  = 0x2903,
+    DW_AT_go_runtime_type                    = 0x2904,
     DW_AT_upc_threads_scaled                 = 0x3210,
     DW_AT_PGI_lbase                          = 0x3a00,
     DW_AT_PGI_soffset                        = 0x3a01,

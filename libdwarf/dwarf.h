@@ -566,6 +566,13 @@ extern "C" {
 #define DW_AT_use_GNAT_descriptive_type         0x2301 /* GNAT */
 #define DW_AT_GNAT_descriptive_type             0x2302 /* GNAT */
 
+/* Go-specific type attributes */
+#define DW_AT_go_kind                           0x2900
+#define DW_AT_go_key                            0x2901
+#define DW_AT_go_elem                           0x2902
+#define DW_AT_go_embedded_field                 0x2903 /* Attribute for DW_TAG_member of a struct type. Nonzero value indicates the struct field is an embedded field. */
+#define DW_AT_go_runtime_type                   0x2904
+
 /* UPC extension */
 #define DW_AT_upc_threads_scaled                0x3210 /* UPC */
 

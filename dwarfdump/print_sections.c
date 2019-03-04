@@ -44,28 +44,6 @@ int dwarf_names_print_on_error = 1;
 /* referred in dwarfdump.c */
 Dwarf_Die current_cu_die_for_print_frames;
 
-void
-deal_with_name_offset_err(Dwarf_Debug dbg,
-    char *err_loc,
-    char *name, Dwarf_Unsigned die_off,
-    int nres, Dwarf_Error aerr)
-{
-    if (nres == DW_DLV_ERROR) {
-        Dwarf_Unsigned myerr = dwarf_errno(aerr);
-
-        if (myerr == DW_DLE_OFFSET_BAD) {
-            printf("Error: bad offset %s, %s %" DW_PR_DUu
-                " (0x%08" DW_PR_DUx ")\n",
-                err_loc,
-                name,
-                die_off,
-                die_off);
-        }
-        print_error(dbg, err_loc, nres, aerr);
-    }
-}
-
-
 
 /* The April 2005 dwarf_get_section_max_offsets()
    in libdwarf returns all max-offsets, but we only

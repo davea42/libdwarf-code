@@ -8,7 +8,7 @@
 .nr Hb 5
 \." ==============================================
 \." Put current date in the following at each rev
-.ds vE rev 2.70, December 20, 2018
+.ds vE rev 2.71, 01 March 2091
 \." ==============================================
 \." ==============================================
 .ds | |
@@ -202,6 +202,12 @@ The following is a brief mention of the changes in this libdwarf from
 the libdwarf draft for DWARF Version 1 and recent changes.
 
 .H 2 "Items Changed"
+.P
+Added support for MacOS dSYM objects and
+PE object files as well as an initialization
+function allowing a path instead of a
+Posix/Unix fd or a libelf Elf*.
+(January 2019)
 .P
 Added a libdwarf interface dwarf_errmsg_by_number()
 so that places in the code that can have errors but
@@ -440,6 +446,8 @@ exceptional conditions like failures and 'no more data' indications.
 
 .H 2 "Revision History"
 .VL 15
+.LI "January 2019"
+Added support for reading DWARF in PE object files.
 .LI "October 2018"
 Added support for reading MacOS dSYM object files.
 .LI "2017"
@@ -2256,7 +2264,6 @@ fully handled.
     Dwarf_Unsigned * uncompressed_length,
     Dwarf_Error * error);
 .DE
-FIXME
 Elf sections are sometimes compressed to reduce the disk
 footprint of the sections.
 It's sometimes interesting to library users
@@ -6726,19 +6733,133 @@ It never returns \f(CWDW_DLV_NO_ENTRY\fP.
 This function is new in December 2011.
 
 
-.H 2 "Global Name Space Operations"
-These operations operate on the .debug_pubnames section of the debugging
-information.
+.H 2 "Accelerated Access By Name operations"
+These operations operate on the .debug_pubnames section
+as well as all the other sections with this
+specific format and purpose:
+ .debug_pubtypes,
+ .debug_typenames,
+ .debug_varnames,
+ .debug_funcnames,
+ and .debug_weaknames.
+The first in the list is generic DWARF 2,3,4.
+The second in the list is generic DWARF 3,4.
+The rest are SGI specific and rarely used.
+.P
+The interface types are Dwarf_Global
+Dwarf_Type,Dwarf_Weak,Dwarf_Func, and Dwarf_Var.
+Only Dwarf_Global is a real type. The others
+are opaque pointers with no actual
+definition or instantiation and can be converted
+to Dwarf_Global with a simple cast.
+.P
+In hindsight it would have been simpler to
+write a single set of interfaces for Accelerated
+Access By Name.
 
-.H 3 "Debugger Interface Operations"
+.H 3 "Fine Tuning Accelerated Access"
+By default the various dwarf_get*() functions
+here return an array of pointers to opaque records
+with a .debug_info DIE offset and a string
+(the fields are accessible by function calls).
+While the actual .debug_pubnames (etc) section
+contains CU-local DIE offsets for the named
+things the accelerated access functions below
+return a .debug_info (or .debug_types)
+global section offset.
+.P
+
+.H 4 "dwarf_return_empty_pubnames"
+New March 2019. Mostly special for dwarfdump.
+If called with a flag value of one (1)
+it tells libdwarf, for any pubnames(etc)
+section list returned to add to the list
+an entry with a global-DIE-offset of zero (0)
+for any section Compilation Unit entry with no pubnames(etc)
+name( ie, an empty list for the Compilation Unit).
+.P
+If called with a value of zero(0) (zero is the default
+set by any 
+\f(CWdwarf_init*()\fP
+call) it causes such empty lists to be omitted from
+the array of pointers returned, which
+is the standard behavior of libdwarf since libdwarf
+was first written.
+.P
+Since zero is never a valid DIE offset in .debug_info
+(or .debug_types) consumers requesting such
+can detect the special Dwarf_Global entries.
+.P
+For example, calling
+\f(CW dwarf_global_name_offsets()\fP
+on one of the special global records
+sets
+\f(CW*die_offset\fP
+to 0,
+\f(CW*return_name\fP 
+to a pointer to an empty string,
+and
+\f(CW*cu_offset\fP
+to the offset of the compilation
+unit die in the .debug_info 
+(or .debug_types if applicable) section.
+
+.DS
+\f(CWint dwarf_return_empty_pubnames(Dwarf_Debug dbg,
+    int          flag ,
+    Dwarf_Error* error)\fP
+.DE
+Callers should pass in one (1) or zero(0), no other value.
+On success it returns DW_DLV_OK.
+On failure it returns DW_DLV_ERROR;
+.P
+The assumption is that programs calling this with
+value one (1) will be calling 
+dwarf_get_globals_header()
+to retrieve the relevant pubnames(etc)
+section Compilation Unit
+header.
+ 
+.H 4 "dwarf_get_globals_header"
+New February 2019. 
+For more complete dwarfdump printing.
+For each CU represented in .debug_pubnames, etc,
+there is a .debug_pubnames header.  For any given
+Dwarf_Global this returns the content of the applicable
+header.
+.P
+This allows dwarfdump, or any DWARF dumper,
+to print pubnames(etc) specific CU header
+data.
+
+.DS
+\f(CWint dwarf_get_globals_header(Dwarf_Global global,
+    Dwarf_Off      * offset_pub_header,
+    Dwarf_Unsigned * length_size,
+    Dwarf_Unsigned * length_pub,
+    Dwarf_Unsigned * version,
+    Dwarf_Unsigned * header_info_offset,
+    Dwarf_Unsigned * info_length,
+    Dwarf_Error*   error)\fP
+.DE
+On success it returns DW_DLV_OK and
+it returns the header data (and calculated values)
+though the pointers.
+Casting Dwarf_Type (etc) to Dwarf_Global
+for a call to this function allows this to
+be used for any of these accelerated-access
+types.
+
+.H 3 "Accelerated Access Pubnames"
 
 .H 4 "dwarf_get_globals()"
+This is .debug_pubnames and is standard DWARF2, DWARF3, and DWARF4.
 .DS
 \f(CWint dwarf_get_globals(
-        Dwarf_Debug dbg,
-        Dwarf_Global **globals,
-        Dwarf_Signed * return_count,
-        Dwarf_Error *error)\fP
+    Dwarf_Debug dbg,
+    Dwarf_Global **globals,
+    Dwarf_Signed * return_count,
+    Dwarf_Error *error)\fP
 .DE
 The function \f(CWdwarf_get_globals()\fP returns
 \f(CWDW_DLV_OK\fP and sets \f(CW*return_count\fP to
@@ -6909,33 +7030,32 @@ only in .debug_info by definition.
 .H 4 "dwarf_get_cu_die_offset_given_cu_header_offset()"
 .DS
 \f(CWint dwarf_get_cu_die_offset_given_cu_header_offset(
-	Dwarf_Debug dbg,
-	Dwarf_Off   in_cu_header_offset,
-        Dwarf_Off * out_cu_die_offset,
-        Dwarf_Error *error)\fP
+    Dwarf_Debug dbg,
+    Dwarf_Off   in_cu_header_offset,
+    Dwarf_Off * out_cu_die_offset,
+    Dwarf_Error *error)\fP
 .DE
 This function is superseded by
 \f(CWdwarf_get_cu_die_offset_given_cu_header_offset_b()\fP,
 a function which is still supported thought it refers only
 to the .debug_info section.
-
-
+.P
 \f(CWdwarf_get_cu_die_offset_given_cu_header_offset()\fP
 added Rev 1.45, June, 2001.
-
-This function is declared as 'optional' in libdwarf.h
+.P
+This function was declared as 'optional' in libdwarf.h
 on IRIX systems so the _MIPS_SYMBOL_PRESENT
-predicate may be used at run time to determine if the version of
+predicate could be used at run time to determine if the version of
 libdwarf linked into an application has this function.
 
 .H 4 "dwarf_global_name_offsets()"
 .DS
 \f(CWint dwarf_global_name_offsets(
-        Dwarf_Global global,
-        char     **return_name,
-        Dwarf_Off *die_offset,
-        Dwarf_Off *cu_offset,
-        Dwarf_Error *error)\fP
+    Dwarf_Global global,
+    char       **return_name,
+    Dwarf_Off   *die_offset,
+    Dwarf_Off   *cu_die_offset,
+    Dwarf_Error *error)\fP
 .DE
 The function \f(CWdwarf_global_name_offsets()\fP returns
 \f(CWDW_DLV_OK\fP and sets \f(CW*return_name\fP to
@@ -6946,7 +7066,7 @@ It returns \f(CWDW_DLV_ERROR\fP on error.
 It never returns \f(CWDW_DLV_NO_ENTRY\fP.
 It also returns in the locations
 pointed to by \f(CWdie_offset\fP, and \f(CWcu_offset\fP,
-the offset of the DIE representing the pubname,
+the global offset of the DIE representing the pubname,
 and
 the offset of the DIE representing the compilation-unit
 containing the
@@ -6956,10 +7076,18 @@ successful return from \f(CWdwarf_global_name_offsets()\fP the storage
 pointed to by \f(CWreturn_name\fP
 should be freed using \f(CWdwarf_dealloc()\fP,
 with the allocation type \f(CWDW_DLA_STRING\fP when no longer of interest.
+.P
+If a portion of .debug_pubnames ( or .debug_types etc)
+represents a compilation unit with no names there
+is a .debug_pubnames header there with no content.
+In that case a single Dwarf_Global record is
+created with the value of *die_offset zero
+and the name-pointer returned points to the empty string. 
+A zero is never a valid DIE offset, so zero always
+means this is an uninteresting (Dwarf_Global).
 
-
-.H 2 "DWARF3 Type Names Operations"
-Section ".debug_pubtypes" is new in DWARF3.
+.H 3 "Accelerated Access Pubtypes"
+Section ".debug_pubtypes" is in DWARF3 and DWARF4.
 .P
 These functions operate on the .debug_pubtypes section of the debugging
 information.  The .debug_pubtypes section contains the names of file-scope
@@ -6967,15 +7095,14 @@ user-defined types, the offsets of the \f(CWDIE\fPs that represent the
 definitions of those types, and the offsets of the compilation-units
 that contain the definitions of those types.
 
-.H 3 "Debugger Interface Operations"
-
 .H 4 "dwarf_get_pubtypes()"
+This is standard DWARF3 and DWARF4. 
 .DS
 \f(CWint dwarf_get_pubtypes(
-        Dwarf_Debug dbg,
-        Dwarf_Type **types,
-        Dwarf_Signed *typecount,
-        Dwarf_Error *error)\fP
+    Dwarf_Debug dbg,
+    Dwarf_Type **types,
+    Dwarf_Signed *typecount,
+    Dwarf_Error *error)\fP
 .DE
 The function \f(CWdwarf_get_pubtypes()\fP returns
 \f(CWDW_DLV_OK\fP and sets \f(CW*typecount\fP to
@@ -7107,8 +7234,8 @@ be freed using
 when no longer of interest.
 
 
-.H 2 "User Defined Static Variable Names Operations"
-This section is SGI specific and is not part of standard DWARF version 2.
+.H 3 "Accelerated Access Weaknames"
+This section is SGI specific and is not part of standard DWARF.
 .P
 These functions operate on the .debug_varnames section of the debugging
 information.  The .debug_varnames section contains the names of file-scope
@@ -7116,16 +7243,9 @@ static variables, the offsets of the \f(CWDIE\fPs that represent the
 definitions of those variables, and the offsets of the compilation-units
 that contain the definitions of those variables.
 .P
-
-
-.H 2 "Weak Name Space Operations"
 These operations operate on the .debug_weaknames section of the debugging
 information.
-.P
-These operations are SGI specific, not part of standard DWARF.
-.P
 
-.H 3 "Debugger Interface Operations"
 
 .H 4 "dwarf_get_weaks()"
 .DS
@@ -7294,8 +7414,8 @@ pointed to by \f(CWweak_name\fP
 should be freed using \f(CWdwarf_dealloc()\fP,
 with the allocation type \f(CWDW_DLA_STRING\fP when no longer of interest.
 
-.H 2 "Static Function Names Operations"
-This section is SGI specific and is not part of standard DWARF version 2.
+.H 3 "Accelerated Access Funcnames"
+This section is SGI specific and is not part of standard DWARF.
 .P
 These function operate on the .debug_funcnames section of the debugging
 information.  The .debug_funcnames section contains the names of static
@@ -7303,8 +7423,6 @@ functions defined in the object, the offsets of the \f(CWDIE\fPs that
 represent the definitions of the corresponding functions, and the offsets
 of the start of the compilation-units that contain the definitions of
 those functions.
-
-.H 3 "Debugger Interface Operations"
 
 .H 4 "dwarf_get_funcs()"
 .DS
@@ -7477,9 +7595,9 @@ the storage pointed to by  \f(CWfunc_name\fP should be freed using
 \f(CWdwarf_dealloc()\fP, with the allocation type \f(CWDW_DLA_STRING\fP
 when no longer of interest.
 
-.H 2 "User Defined Type Names Operations"
+.H 3 "Accelerated Access Typenames"
 Section "debug_typenames" is SGI specific
-and is not part of standard DWARF version 2.
+and is not part of standard DWARF.
 (However, an identical section is part of DWARF version 3
 named ".debug_pubtypes", see  \f(CWdwarf_get_pubtypes()\fP above.)
 .P
@@ -7488,8 +7606,6 @@ information.  The .debug_typenames section contains the names of file-scope
 user-defined types, the offsets of the \f(CWDIE\fPs that represent the
 definitions of those types, and the offsets of the compilation-units
 that contain the definitions of those types.
-
-.H 3 "Debugger Interface Operations"
 
 .H 4 "dwarf_get_types()"
 .DS
@@ -7667,20 +7783,16 @@ be freed using
 when no longer of interest.
 
 
-.H 2 "User Defined Static Variable Names Operations"
-This section is SGI specific and is not part of standard DWARF version 2.
+.H 3 "Accelerated Access varnames"
+This section is SGI specific and is not part of standard DWARF.
 .P
 These functions operate on the .debug_varnames section of the debugging
 information.  The .debug_varnames section contains the names of file-scope
 static variables, the offsets of the \f(CWDIE\fPs that represent the
 definitions of those variables, and the offsets of the compilation-units
 that contain the definitions of those variables.
-.P
-
-.H 3 "Debugger Interface Operations"
 
 .H 4 "dwarf_get_vars()"
-
 .DS
 \f(CWint dwarf_get_vars(
         Dwarf_Debug dbg,

@@ -34,99 +34,64 @@
 #include "sanitized.h"
 
 
-/* Get all the data in .debug_static_funcs
+/* Get all the data in .debug_funcnames
+   An SGI extension.
+   (For a long time, erroneously called .debug_static_funcs here).
    On error, this allows some dwarf memory leaks.
 */
 extern void
 print_static_funcs(Dwarf_Debug dbg)
 {
-    Dwarf_Func *funcbuf = NULL;
+    Dwarf_Func *globbuf = NULL;
     Dwarf_Signed count = 0;
-    Dwarf_Signed i = 0;
-    Dwarf_Off die_off = 0;
-    Dwarf_Off cu_off = 0;
     int gfres = 0;
     Dwarf_Error err = 0;
+    char buf[DWARF_SECNAME_BUFFER_SIZE];
+    struct esb_s truename;
+    struct esb_s sanitname;
 
     glflags.current_section_id = DEBUG_STATIC_FUNC;
-
-    if (!glflags.gf_do_print_dwarf) {
-        return;
-    }
-    gfres = dwarf_get_funcs(dbg, &funcbuf, &count, &err);
+    esb_constructor_fixed(&truename,buf,sizeof(buf));
+    get_true_section_name(dbg,".debug_funcnames",
+        &truename,TRUE);
     {
-        struct esb_s truename;
-        char buf[DWARF_SECNAME_BUFFER_SIZE];
+        esb_constructor(&sanitname);
+        /*  Sanitized cannot be safely reused,there is a static buffer,
+            so we make a safe copy. */
+        esb_append(&sanitname,sanitized(esb_get_string(&truename)));
+    }
+    esb_destructor(&truename);
+    if (glflags.verbose) {
+        /* For best testing! */
+        int res = 0;
 
-        esb_constructor_fixed(&truename,buf,sizeof(buf));
-        get_true_section_name(dbg,".debug_static_func",
-            &truename,TRUE);
-        printf("\n%s\n",sanitized(esb_get_string(&truename)));
-        esb_destructor(&truename);
+        res = dwarf_return_empty_pubnames(dbg,1,&err);
+        if (res != DW_DLV_OK) {
+            printf("FAIL: Erroneous libdwarf call "
+                "of dwarf_return_empty_pubnames: Fix dwarfdump");
+            return;
+        }
     }
 
+    gfres = dwarf_get_funcs(dbg, &globbuf, &count, &err);
     if (gfres == DW_DLV_ERROR) {
         print_error(dbg, "dwarf_get_funcs", gfres, err);
     } else if (gfres == DW_DLV_NO_ENTRY) {
-        /* no static funcs */
+        dwarf_return_empty_pubnames(dbg,0,&err);
+        esb_destructor(&sanitname);
+        return;
     } else {
-        Dwarf_Unsigned maxoff = get_info_max_offset(dbg);
-
-        for (i = 0; i < count; i++) {
-            int fnres = 0;
-            int cures3 = 0;
-            Dwarf_Unsigned global_cu_off = 0;
-            char *name = 0;
-
-            fnres = dwarf_func_name_offsets(funcbuf[i], &name, &die_off,
-                &cu_off, &err);
-            deal_with_name_offset_err(dbg, "dwarf_func_name_offsets",
-                name, die_off, fnres, err);
-            cures3 = dwarf_func_cu_offset(funcbuf[i],
-                &global_cu_off, &err);
-            if (cures3 != DW_DLV_OK) {
-                print_error(dbg, "dwarf_global_cu_offset", cures3, err);
-            }
-
-            if (glflags.gf_check_pubname_attr) {
-                Dwarf_Bool has_attr;
-                int ares;
-                int dres;
-                Dwarf_Die die;
-
-                /* get die at die_off */
-                dres = dwarf_offdie(dbg, die_off, &die, &err);
-                if (dres != DW_DLV_OK) {
-                    print_error(dbg, "dwarf_offdie", dres, err);
-                }
-
-
-                ares =
-                    dwarf_hasattr(die, DW_AT_external, &has_attr, &err);
-                if (ares == DW_DLV_ERROR) {
-                    print_error(dbg, "hassattr on DW_AT_external", ares,
-                        err);
-                }
-                if (checking_this_compiler()) {
-                    DWARF_CHECK_COUNT(pubname_attr_result,1);
-                    if (ares == DW_DLV_OK && has_attr) {
-                        /* Should the value of flag be examined? */
-                    } else {
-                        DWARF_CHECK_ERROR2(pubname_attr_result,name,
-                            "pubname (in static funcs section) does not have DW_AT_external");
-                    }
-                }
-                dwarf_dealloc(dbg, die, DW_DLA_DIE);
-            }
-
-            if (glflags.gf_do_print_dwarf ||
-                glflags.gf_record_dwarf_error) {
-                print_pubname_style_entry(dbg,
-                    "static-func", name, die_off,
-                    cu_off, global_cu_off, maxoff);
-                glflags.gf_record_dwarf_error = FALSE;
-            }
+        if (glflags.gf_do_print_dwarf && count > 0) {
+            /* SGI specific so only mention if present. */
+            printf("\n%s\n",esb_get_string(&sanitname));
         }
-        dwarf_funcs_dealloc(dbg, funcbuf, count);
+        print_all_pubnames_style_records(dbg,
+            "static-func",
+            esb_get_string(&sanitname),
+            (Dwarf_Global *)globbuf, count,
+            &err);
+        dwarf_funcs_dealloc(dbg,globbuf,count);
     }
+    dwarf_return_empty_pubnames(dbg,0,&err);
+    esb_destructor(&sanitname);
 }   /* print_static_funcs() */

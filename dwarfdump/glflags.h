@@ -328,7 +328,6 @@ struct glflags_s {
     struct esb_s *config_file_tiedpath;
     struct dwconf_s *config_file_data;
 
-    
     /*  Check errors. */
     int check_error;
 };

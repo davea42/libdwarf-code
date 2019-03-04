@@ -1,5 +1,5 @@
 /* Generated routines, do not edit. */
-/* Generated sourcedate  2019-02-24 14:24:02-08:00   */
+/* Generated sourcedate  2019-03-02 12:43:32-08:00   */
 
 /* BEGIN FILE */
 
@@ -1230,6 +1230,21 @@ dwarf_get_AT_name (unsigned int val,const char ** s_out)
         return DW_DLV_OK;
     case DW_AT_GNU_bias:
         *s_out = "DW_AT_GNU_bias";
+        return DW_DLV_OK;
+    case DW_AT_go_kind:
+        *s_out = "DW_AT_go_kind";
+        return DW_DLV_OK;
+    case DW_AT_go_key:
+        *s_out = "DW_AT_go_key";
+        return DW_DLV_OK;
+    case DW_AT_go_elem:
+        *s_out = "DW_AT_go_elem";
+        return DW_DLV_OK;
+    case DW_AT_go_embedded_field:
+        *s_out = "DW_AT_go_embedded_field";
+        return DW_DLV_OK;
+    case DW_AT_go_runtime_type:
+        *s_out = "DW_AT_go_runtime_type";
         return DW_DLV_OK;
     case DW_AT_upc_threads_scaled:
         *s_out = "DW_AT_upc_threads_scaled";

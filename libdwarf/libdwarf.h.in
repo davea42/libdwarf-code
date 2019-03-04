@@ -1345,9 +1345,10 @@ struct Dwarf_Obj_Access_Interface_s {
 #define DW_DLE_PRODUCER_CODE_NOT_AVAILABLE     431
 #define DW_DLE_NO_ELF_SUPPORT                  432
 #define DW_DLE_NO_STREAM_RELOC_SUPPORT         433
+#define DW_DLE_RETURN_EMPTY_PUBNAMES_ERROR     434
 
     /* LAST MUST EQUAL LAST ERROR NUMBER */
-#define DW_DLE_LAST        433
+#define DW_DLE_LAST        434
 
 #define DW_DLE_LO_USER     0x10000
 
@@ -2470,9 +2471,15 @@ int dwarf_debugnames_entrypool_values(Dwarf_Dnames_Head /*dn*/,
 /* end of .debug_names interfaces. */
 
 
-/*  global name space operations (.debug_pubnames access) */
-/*  The pubnames and similar sections are rarely used. Few compilers
+/*  global name space operations (.debug_pubnames access)
+ *  The pubnames and similar sections are rarely used. Few compilers
     emit them. They are DWARF 2,3,4 only., not DWARF 5.  */
+
+/*  New March 2019. Mostly special for dwarfdump. */
+int dwarf_return_empty_pubnames(Dwarf_Debug /*dbg*/,
+    int /* flag */,
+    Dwarf_Error*     /*error*/);
+
 int dwarf_get_globals(Dwarf_Debug /*dbg*/,
     Dwarf_Global**   /*globals*/,
     Dwarf_Signed *   /*number_of_globals*/,
@@ -2520,6 +2527,20 @@ int dwarf_global_name_offsets(Dwarf_Global /*global*/,
     Dwarf_Off*       /*die_offset*/,
     Dwarf_Off*       /*cu_offset*/,
     Dwarf_Error*     /*error*/);
+
+/*  New February 2019. For more complete dwarfdump printing.
+    For each CU represented in .debug_pubnames, etc,
+    there is a .debug_pubnames header.  For any given
+    Dwarf_Global this returns the content of the applicable
+    header. */
+int dwarf_get_globals_header(Dwarf_Global /*global*/,
+    Dwarf_Off      * /*offset_pub_header*/,
+    Dwarf_Unsigned * /*length_size*/,
+    Dwarf_Unsigned * /*length_pub*/,
+    Dwarf_Unsigned * /*version*/,
+    Dwarf_Unsigned * /*header_info_offset*/,
+    Dwarf_Unsigned * /*info_length*/,
+    Dwarf_Error*   /*error*/);
 
 /* Static function name operations.  */
 int dwarf_get_funcs(Dwarf_Debug    /*dbg*/,

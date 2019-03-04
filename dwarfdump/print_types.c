@@ -37,97 +37,75 @@
 extern void
 print_types(Dwarf_Debug dbg, enum type_type_e type_type)
 {
-    Dwarf_Type *typebuf = NULL;
+    Dwarf_Type *globbuf = 0;
     Dwarf_Signed count = 0;
-    Dwarf_Signed i = 0;
-    char *name = NULL;
+    char *name = 0;
     int gtres = 0;
     Dwarf_Error err = 0;
-
-    char *section_name = NULL;
-    char *offset_err_name = NULL;
-    char *section_open_name = NULL;
-    char *print_name_prefix = NULL;
+    struct esb_s truename;
+    char buf[DWARF_SECNAME_BUFFER_SIZE];
+    struct esb_s sanitname;
     int (*get_types) (Dwarf_Debug, Dwarf_Type **, Dwarf_Signed *,
         Dwarf_Error *) = 0;
-    int (*get_offset) (Dwarf_Type, char **, Dwarf_Off *, Dwarf_Off *,
-        Dwarf_Error *) = NULL;
-    int (*get_cu_offset) (Dwarf_Type, Dwarf_Off *, Dwarf_Error *) =
-        NULL;
     void (*dealloctype) (Dwarf_Debug, Dwarf_Type *, Dwarf_Signed) =
         NULL;
-
-    /* Do nothing if in check mode */
-    if (!glflags.gf_do_print_dwarf) {
-        return;
-    }
+    const char *linetitle = 0;
+    /* We will, now only list either section when there is content. */
 
     if (type_type == DWARF_PUBTYPES) {
-        /*  No need to get the real section name, this
-            section not used in modern compilers. */
-        section_name = ".debug_pubtypes";
-        offset_err_name = "dwarf_pubtype_name_offsets";
-        section_open_name = "dwarf_get_pubtypes";
-        print_name_prefix = "pubtype";
+        name = ".debug_pubtypes";
         get_types = dwarf_get_pubtypes;
-        get_offset = dwarf_pubtype_name_offsets;
-        get_cu_offset = dwarf_pubtype_cu_offset;
         dealloctype = dwarf_pubtypes_dealloc;
+        linetitle = "pubtype";
     } else {
         /* SGI_TYPENAME */
         /*  No need to get the real section name, this
             section not used in modern compilers. */
-        section_name = ".debug_typenames";
-        offset_err_name = "dwarf_type_name_offsets";
-        section_open_name = "dwarf_get_types";
-        print_name_prefix = "type";
+        name = ".debug_typenames";
         get_types = dwarf_get_types;
-        get_offset = dwarf_type_name_offsets;
-        get_cu_offset = dwarf_type_cu_offset;
         dealloctype = dwarf_types_dealloc;
+        linetitle = "type";
     }
+    esb_constructor_fixed(&truename,buf,sizeof(buf));
+    get_true_section_name(dbg,name,
+        &truename,TRUE);
+    {
+        esb_constructor(&sanitname);
+        /*  Sanitized cannot be safely reused,there is a static buffer,
+            so we make a safe copy. */
+        esb_append(&sanitname,sanitized(esb_get_string(&truename)));
+    }
+    esb_destructor(&truename);
+    if (glflags.verbose) {
+        /* For best testing! */
+        int res = 0;
 
-    gtres = get_types(dbg, &typebuf, &count, &err);
+        res = dwarf_return_empty_pubnames(dbg,1,&err);
+        if (res != DW_DLV_OK) {
+            printf("FAIL: Erroneous libdwarf call "
+                "of dwarf_return_empty_pubnames: Fix dwarfdump");
+            return;
+        }
+    }
+    gtres = get_types(dbg, &globbuf, &count, &err);
     if (gtres == DW_DLV_ERROR) {
-        print_error(dbg, section_open_name, gtres, err);
+        print_error(dbg, sanitized(esb_get_string(&truename)), gtres, err);
     } else if (gtres == DW_DLV_NO_ENTRY) {
         /* no types */
+        esb_destructor(&sanitname);
+        dwarf_return_empty_pubnames(dbg,0,&err);
+        return;
     } else {
-        Dwarf_Unsigned maxoff = get_info_max_offset(dbg);
-        struct esb_s truename;
-        char buf[DWARF_SECNAME_BUFFER_SIZE];
-
-        /*  Before July 2005, the section name was printed
-            unconditionally, now only prints if non-empty section really
-            exists. */
-        esb_constructor_fixed(&truename,buf,sizeof(buf));
-        get_true_section_name(dbg,section_name,
-            &truename,TRUE);
-        printf("\n%s\n",sanitized(esb_get_string(&truename)));
-        esb_destructor(&truename);
-
-        for (i = 0; i < count; i++) {
-            int tnres = 0;
-            int cures3 = 0;
-            Dwarf_Off die_off = 0;
-            Dwarf_Off cu_off = 0;
-            Dwarf_Off global_cu_off = 0;
-
-            tnres =
-                get_offset(typebuf[i], &name, &die_off, &cu_off, &err);
-            deal_with_name_offset_err(dbg, offset_err_name, name,
-                die_off, tnres, err);
-            cures3 = get_cu_offset(typebuf[i], &global_cu_off, &err);
-            if (cures3 != DW_DLV_OK) {
-                print_error(dbg, "dwarf_var_cu_offset", cures3, err);
-            }
-            print_pubname_style_entry(dbg,
-                print_name_prefix,
-                name, die_off, cu_off,
-                global_cu_off, maxoff);
-
-            /* print associated die too? */
+        if (glflags.gf_do_print_dwarf && count > 0) {
+            printf("\n%s\n",esb_get_string(&sanitname));
         }
-        dealloctype(dbg, typebuf, count);
+        print_all_pubnames_style_records(dbg,
+            linetitle,
+            esb_get_string(&sanitname),
+            (Dwarf_Global *)globbuf, count,
+            &err);
+        dealloctype(dbg, globbuf, count);
     }
+    esb_destructor(&sanitname);
+    dwarf_return_empty_pubnames(dbg,0,&err);
 }   /* print_types() */

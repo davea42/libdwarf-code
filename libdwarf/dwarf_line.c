@@ -337,34 +337,41 @@ dwarf_srcfiles(Dwarf_Die die,
     }
 
     if (dbg->de_debug_line.dss_index == 0) {
+        dwarf_dealloc(dbg, stmt_list_attr, DW_DLA_ATTR);
         _dwarf_error(dbg, error, DW_DLE_DEBUG_LINE_NULL);
         return (DW_DLV_ERROR);
     }
 
     res = _dwarf_load_section(dbg, &dbg->de_debug_line,error);
     if (res != DW_DLV_OK) {
+        dwarf_dealloc(dbg, stmt_list_attr, DW_DLA_ATTR);
         return res;
     }
     if (!dbg->de_debug_line.dss_size) {
+        dwarf_dealloc(dbg, stmt_list_attr, DW_DLA_ATTR);
         return (DW_DLV_NO_ENTRY);
     }
     section_start = dbg->de_debug_line.dss_data;
 
     lres = dwarf_whatform(stmt_list_attr,&attrform,error);
     if (lres != DW_DLV_OK) {
+        dwarf_dealloc(dbg, stmt_list_attr, DW_DLA_ATTR);
         return lres;
     }
     if (attrform != DW_FORM_data4 && attrform != DW_FORM_data8 &&
         attrform != DW_FORM_sec_offset  &&
         attrform != DW_FORM_GNU_ref_alt) {
+        dwarf_dealloc(dbg, stmt_list_attr, DW_DLA_ATTR);
         _dwarf_error(dbg, error, DW_DLE_LINE_OFFSET_WRONG_FORM);
         return (DW_DLV_ERROR);
     }
     lres = dwarf_global_formref(stmt_list_attr, &line_offset, error);
     if (lres != DW_DLV_OK) {
+        dwarf_dealloc(dbg, stmt_list_attr, DW_DLA_ATTR);
         return lres;
     }
     if (line_offset >= dbg->de_debug_line.dss_size) {
+        dwarf_dealloc(dbg, stmt_list_attr, DW_DLA_ATTR);
         _dwarf_error(dbg, error, DW_DLE_LINE_OFFSET_BAD);
         return (DW_DLV_ERROR);
     }
@@ -375,11 +382,13 @@ dwarf_srcfiles(Dwarf_Die die,
         int resl = _dwarf_get_fission_addition_die(die, DW_SECT_LINE,
             &fission_offset,&fission_size,error);
         if(resl != DW_DLV_OK) {
+            dwarf_dealloc(dbg, stmt_list_attr, DW_DLA_ATTR);
             return resl;
         }
         line_ptr += fission_offset;
         if (line_ptr > dbg->de_debug_line.dss_data +
             dbg->de_debug_line.dss_size) {
+            dwarf_dealloc(dbg, stmt_list_attr, DW_DLA_ATTR);
             _dwarf_error(dbg, error, DW_DLE_FISSION_ADDITION_ERROR);
             return DW_DLV_ERROR;
         }
@@ -610,10 +619,12 @@ _dwarf_internal_srclines(Dwarf_Die die,
     }
     lres = dwarf_global_formref(stmt_list_attr, &line_offset, error);
     if (lres != DW_DLV_OK) {
+        dwarf_dealloc(dbg, stmt_list_attr, DW_DLA_ATTR);
         return lres;
     }
 
     if (line_offset >= dbg->de_debug_line.dss_size) {
+        dwarf_dealloc(dbg, stmt_list_attr, DW_DLA_ATTR);
         _dwarf_error(dbg, error, DW_DLE_LINE_OFFSET_BAD);
         return (DW_DLV_ERROR);
     }
@@ -624,6 +635,7 @@ _dwarf_internal_srclines(Dwarf_Die die,
         int resf = _dwarf_get_fission_addition_die(die, DW_SECT_LINE,
             &fission_offset,&fission_size,error);
         if(resf != DW_DLV_OK) {
+            dwarf_dealloc(dbg, stmt_list_attr, DW_DLA_ATTR);
             return resf;
         }
         line_ptr += fission_offset;
