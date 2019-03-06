@@ -336,7 +336,7 @@ local_add_AT_address_a(Dwarf_P_Debug dbg,
     return DW_DLV_OK;
 }
 
-/*  Pass in array (ie a pointer to) of Dwarf_Signed 
+/*  Pass in array (ie a pointer to) of Dwarf_Signed
     with input_array_length elements.
 
     A block of bytes is created
@@ -1855,8 +1855,9 @@ dwarf_add_AT_any_value_uleb_a(Dwarf_P_Die ownerdie,
 
     if (ownerdie == NULL) {
         _dwarf_p_error(dbg, error, DW_DLE_DIE_NULL);
+        return DW_DLV_ERROR;
     }
-
+    dbg = ownerdie->di_dbg;
     new_attr = (Dwarf_P_Attribute)
         _dwarf_p_get_alloc(dbg, sizeof(struct Dwarf_P_Attribute_s));
     if (new_attr == NULL) {

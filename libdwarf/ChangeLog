@@ -1,3 +1,11 @@
+2019-03-06   David Anderson
+      * dwarf_form.c: Removed trailing whitespace.
+      * pro_init.c: Removed trailing whitespace and fixed indents.
+      * pro_forms.c(dwarf_add_AT_any_value_uleb_a): Accidentally
+        leftout dbg = ownerdie->di_dbg, resulting in a memory
+        leak.
+      * pro_frame.c(dwarf_new_fde_a): Accidentally left out
+        setting fde_dbg, resulting in a memory leak.
 2019-03-04   David Anderson
       * dwarf.h:  Adding go-specifig type attributes
         DW_AT_go_kind,DW_AT_go_key,DW_AT_go_elem,

@@ -348,8 +348,8 @@ common_init(Dwarf_P_Debug dbg, Dwarf_Unsigned flags, const char *abiname,
         dbg->de_relocation_record_size = sizeof(REL32);
 #endif
 #else /* DWARF_WITH_LIBELF */
-       *err_ret = DW_DLE_NO_STREAM_RELOC_SUPPORT;
-       return DW_DLV_ERROR;
+        *err_ret = DW_DLE_NO_STREAM_RELOC_SUPPORT;
+        return DW_DLV_ERROR;
 #endif /* DWARF_WITH_LIBELF */
 
 
@@ -392,8 +392,8 @@ common_init(Dwarf_P_Debug dbg, Dwarf_Unsigned flags, const char *abiname,
         dbg->de_relocate_pair_by_symbol = 0;
         dbg->de_transform_relocs_to_disk = _dwarf_stream_relocs_to_disk;
 #else /* DWARF_WITH_LIBELF */
-       *err_ret = DW_DLE_NO_STREAM_RELOC_SUPPORT;
-       return DW_DLV_ERROR;
+        *err_ret = DW_DLE_NO_STREAM_RELOC_SUPPORT;
+        return DW_DLV_ERROR;
 #endif /* DWARF_WITH_LIBELF */
     }
     for (k = 0; k < NUM_DEBUG_SECTIONS; ++k) {

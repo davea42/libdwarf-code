@@ -103,11 +103,11 @@ dwarf_whatform_direct(Dwarf_Attribute attr,
 /*  Pass in the content of a block and the length of that
     content. On success return DW_DLV_OK and set *value_count
     to the size of the array returned through value_array. */
-int 
+int
 dwarf_uncompress_integer_block_a(Dwarf_Debug dbg,
     Dwarf_Unsigned     input_length_in_bytes,
     void             * input_block,
-    Dwarf_Unsigned   * value_count, 
+    Dwarf_Unsigned   * value_count,
     Dwarf_Signed    ** value_array,
     Dwarf_Error      * error)
 {
@@ -172,7 +172,7 @@ dwarf_uncompress_integer_block_a(Dwarf_Debug dbg,
     }
 
     if (remain != 0) {
-        dwarf_dealloc(dbg, (unsigned char *)output_block, 
+        dwarf_dealloc(dbg, (unsigned char *)output_block,
             DW_DLA_STRING);
         _dwarf_error(dbg, error, DW_DLE_ALLOC_FAIL);
         return DW_DLV_ERROR;
@@ -186,7 +186,7 @@ dwarf_uncompress_integer_block_a(Dwarf_Debug dbg,
 /*  This code was contributed around 2007
     and the return value is in the wrong form.
     See dwarf_uncompress_integer_block_a() above.
-    
+
     As of 2019 it is not clear that Sun Sparc
     compilers are in current use, nor whether
     there is a reason to make reads of

@@ -432,6 +432,7 @@ dwarf_new_fde_a(Dwarf_P_Debug dbg,
     if (fde == NULL) {
         DWARF_P_DBG_ERROR(dbg, DW_DLE_FDE_ALLOC, DW_DLV_ERROR);
     }
+    fde->fde_dbg = dbg;
     fde->fde_uwordb_size = dbg->de_offset_size;
     *fde_out = fde;
     return DW_DLV_OK;
