@@ -1,3 +1,18 @@
+2019-03-19 David Anderson
+     * dwarfgen.cc: Updated the comment about the libdwarf interface
+       call return values.
+     * irepattrtodbg.cc: Changed the libdwarf producer function calls
+       to be the newer version returning an int as that version
+       is simpler to work with. The old interfaces still exist
+       and work the same as always.
+     * irepdie.h: setFormData() was failing to account for
+       a replacement value of formdata_, which could leak
+       memory.
+     * ireptodbg.cc: Replaced calls to libdwarf producer that
+       returned DW_DLV_NOCOUNT or DW_DLV_BADADDR with the ones
+       returning an int for improved readability of the code.
+       The old functions still exist and work as always but
+       we're not using them here.
 2019-02-18 David Anderson
      * configure.cmake: Now defines DWARF_WITH_LIBELF
        for consistency with other cmake files.

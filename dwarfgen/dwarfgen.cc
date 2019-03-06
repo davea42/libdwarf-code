@@ -630,7 +630,11 @@ main(int argc, char **argv)
         }
 
         // Example will return error value thru 'err' pointer
-        // and return DW_DLV_BADADDR if there is an error.
+        // and return DW_DLV_ERROR if there is an error.
+        // We no longer use the libdwarf interfaces returning
+        // DW_DLV_BADADDR (though they still exist in libdwarf)
+        // as that sort of return (mixing returned-pointer with
+        // an error value) was ugly.
         Dwarf_Ptr errarg = 0;
         Dwarf_Error err = 0;
         void *user_data = 0;

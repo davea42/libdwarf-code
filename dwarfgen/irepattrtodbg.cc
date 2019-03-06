@@ -90,6 +90,7 @@ AddAttrToDie(Dwarf_P_Debug dbg,
     enum Dwarf_Form_Class formclass = irattr.getFormClass();
     // IRForm is an abstract base class.
     IRForm *form_a = irattr.getFormData();
+    int res = 0;
 
     switch(formclass) {
     case DW_FORM_CLASS_UNKNOWN:
@@ -117,9 +118,11 @@ AddAttrToDie(Dwarf_P_Debug dbg,
 
         // FIXME: we should  allow for DW_FORM_indirect here.
         // Relocation later will fix value.
-        Dwarf_P_Attribute a = dwarf_add_AT_targ_address_b(dbg,
-            outdie,attrnum,0,sym_index,&error);
-        if( reinterpret_cast<Dwarf_Addr>(a) == DW_DLV_BADADDR) {
+        Dwarf_P_Attribute a = 0;
+
+        res = dwarf_add_AT_targ_address_c(dbg,
+            outdie,attrnum,0,sym_index,&a,&error);
+        if(res != DW_DLV_OK) {
             cerr << "ERROR dwarf_add_AT_targ_address fails, attrnum "
                 <<attrnum << endl;
 
@@ -139,7 +142,7 @@ AddAttrToDie(Dwarf_P_Debug dbg,
         Dwarf_Small * block_data = f->getBlockBytes();
         Dwarf_P_Attribute attrb =0;
 
-        int res = dwarf_add_AT_block_a(dbg,outdie,attrnum,
+        res = dwarf_add_AT_block_a(dbg,outdie,attrnum,
             block_data,
             block_len,
             &attrb,
@@ -163,7 +166,8 @@ AddAttrToDie(Dwarf_P_Debug dbg,
 
         if (formv == DW_FORM_data16) {
             Dwarf_Form_Data16 val = f->getData16Val();
-            int res = dwarf_add_AT_data16(outdie,
+
+            res = dwarf_add_AT_data16(outdie,
                 attrnum,&val,&a,&error);
             if (res != DW_DLV_OK) {
                 cerr <<
@@ -174,7 +178,6 @@ AddAttrToDie(Dwarf_P_Debug dbg,
             }
             break;
         } else if (formv == DW_FORM_implicit_const) {
-            int res = 0;
             Dwarf_Signed sval = f->getSignedVal();
 
             res = dwarf_add_AT_implicit_const(outdie,attrnum,
@@ -191,33 +194,34 @@ AddAttrToDie(Dwarf_P_Debug dbg,
         if (sn == IRFormConstant::SIGNED) {
             Dwarf_Signed sval = f->getSignedVal();
             if (formv == DW_FORM_sdata) {
-                a = dwarf_add_AT_any_value_sleb(
+                res = dwarf_add_AT_any_value_sleb_a(
                     outdie,attrnum,
-                    sval,&error);
+                    sval,&a,&error);
             } else {
                 //cerr << "ERROR how can we know "
                 //    "a non-sdata const is signed?, attrnum " <<
                 //    attrnum <<endl;
-                a = dwarf_add_AT_signed_const(dbg,
+                res = dwarf_add_AT_signed_const_a(dbg,
                     outdie,attrnum,
-                    sval,&error);
+                    sval,&a,&error);
             }
         } else {
             Dwarf_Unsigned uval_i = f->getUnsignedVal();
             if (formv == DW_FORM_udata) {
-                a = dwarf_add_AT_any_value_uleb(
+                res = dwarf_add_AT_any_value_uleb_a(
                     outdie,attrnum,
-                    uval_i,&error);
+                    uval_i,&a,&error);
             } else {
-                a = dwarf_add_AT_unsigned_const(dbg,
+                res = dwarf_add_AT_unsigned_const_a(dbg,
                     outdie,attrnum,
-                    uval_i,&error);
+                    uval_i,&a,&error);
             }
         }
-        if( reinterpret_cast<Dwarf_Addr>(a) == DW_DLV_BADADDR) {
-            cerr << "ERROR dwarf_add_AT_ class constant fails,"
-                " BADATTR on attrnum "
-                << attrnum << " Continuing" << endl;
+        if(res != DW_DLV_OK) {
+            cerr << "ERROR dwarf_add_AT_ class constant fails," <<
+                dwarf_errmsg(error) <<
+                " attrnum " << attrnum << 
+                " Continuing" << endl;
 
         }
         }
@@ -238,9 +242,9 @@ AddAttrToDie(Dwarf_P_Debug dbg,
         // FIXME: handle indirect form (libdwarf needs feature).
         // FIXME: handle implicit flag (libdwarf needs feature).
         // FIXME: rel type ok?
-        Dwarf_P_Attribute a =
-            dwarf_add_AT_flag(dbg,outdie,attrnum,f->getFlagVal(),&error);
-        if( reinterpret_cast<Dwarf_Addr>(a) == DW_DLV_BADADDR) {
+        Dwarf_P_Attribute a = 0;
+        res = dwarf_add_AT_flag_a(dbg,outdie,attrnum,f->getFlagVal(),&a,&error);
+        if(res != DW_DLV_OK) {
             cerr << "ERROR dwarf_add_AT_flag fails, attrnum "
                 <<attrnum << endl;
         }
@@ -319,35 +323,41 @@ AddAttrToDie(Dwarf_P_Debug dbg,
                 // could be difficult.
                 // Another option would be two-pass: first create
                 // all the DIEs then all the attributes for each.
-                Dwarf_P_Attribute a =
-                    dwarf_add_AT_reference_b(dbg,outdie,attrnum,
-                    /*targetoutdie */NULL,&error);
-                if( reinterpret_cast<Dwarf_Addr>(a) == DW_DLV_BADADDR) {
+                Dwarf_P_Attribute a = 0;
+      
+                res = dwarf_add_AT_reference_c(dbg,outdie,attrnum,
+                    /*targetoutdie */NULL,&a,&error);
+                if(res != DW_DLV_OK) {
                     cerr << "ERROR dwarf_add_AT_reference fails, "
                         "attrnum with not yet known targetoutdie "
-                        << IToHex(attrnum) << endl;
+                        << IToHex(attrnum) << 
+                        " " << dwarf_errmsg(error) <<
+                        endl;
                 } else {
                     ClassReferenceFixupData x(dbg,attrnum,outdie,targetofref);
                     cu.insertClassReferenceFixupData(x);
                 }
                 break;
             }
-            Dwarf_P_Attribute a =
-                dwarf_add_AT_reference(dbg,outdie,attrnum,
-                targetoutdie,&error);
-            if( reinterpret_cast<Dwarf_Addr>(a) == DW_DLV_BADADDR) {
+            Dwarf_P_Attribute a = 0;
+
+            res = dwarf_add_AT_reference_c(dbg,outdie,attrnum,
+                targetoutdie,&a,&error);
+            if(res != DW_DLV_OK) { 
                 cerr << "ERROR dwarf_add_AT_reference fails, "
-                    "attrnum with known targetoutdie "
-                    << IToHex(attrnum) << endl;
+                    "attrnum with known targetoutdie " << 
+                    IToHex(attrnum) << 
+                    " " << dwarf_errmsg(error) <<
+                    endl;
             }
             }
             break;
         case IRFormReference::RT_SIG:
             {
-            Dwarf_P_Attribute a =
-                dwarf_add_AT_with_ref_sig8(outdie,attrnum,
-                r->getSignature(),&error);
-            if( reinterpret_cast<Dwarf_Addr>(a) == DW_DLV_BADADDR) {
+            Dwarf_P_Attribute a = 0;
+            res = dwarf_add_AT_with_ref_sig8_a(outdie,attrnum,
+                r->getSignature(),&a,&error);
+            if( res != DW_DLV_OK) {
                 cerr << "ERROR dwarf_add_AT_ref_sig8 fails, attrnum "
                     << IToHex(attrnum) << endl;
             }
@@ -373,22 +383,23 @@ AddAttrToDie(Dwarf_P_Debug dbg,
 
         switch(attrnum) {
         case DW_AT_name:
-            a = dwarf_add_AT_name(outdie,mystr,&error);
+            res = dwarf_add_AT_name_a(outdie,mystr,&a,&error);
             break;
         case DW_AT_producer:
-            a = dwarf_add_AT_producer(outdie,mystr,&error);
+            res = dwarf_add_AT_producer_a(outdie,mystr,&a,&error);
             break;
         case DW_AT_comp_dir:
-            a = dwarf_add_AT_comp_dir(outdie,mystr,&error);
+            res = dwarf_add_AT_comp_dir_a(outdie,mystr,&a,&error);
             break;
         default:
-            a = dwarf_add_AT_string(dbg,outdie,attrnum,mystr,
-                &error);
+            res = dwarf_add_AT_string_a(dbg,outdie,attrnum,mystr,
+                &a,&error);
             break;
         }
-        if( reinterpret_cast<Dwarf_Addr>(a) == DW_DLV_BADADDR) {
+        if(res != DW_DLV_OK) {
             cerr << "ERROR dwarf_add_AT_string fails, attrnum "
                 <<attrnum << endl;
+   
         }
         }
         break;
@@ -414,16 +425,16 @@ IRCUdata::updateClassReferenceTargets()
         classReferenceFixupList_.begin();
         it != classReferenceFixupList_.end();
         ++it) {
-            IRDie* d = it->target_;
-            Dwarf_P_Die sourcedie = it->sourcedie_;
-            Dwarf_P_Die targetdie = d->getGeneratedDie();
-            Dwarf_Error lerror = 0;
+        IRDie* d = it->target_;
+        Dwarf_P_Die sourcedie = it->sourcedie_;
+        Dwarf_P_Die targetdie = d->getGeneratedDie();
+        Dwarf_Error lerror = 0;
 
-            int res = dwarf_fixup_AT_reference_die(it->dbg_,
-                it->attrnum_,sourcedie,targetdie,&lerror);
-            if(res != DW_DLV_OK) {
-                cerr << "Improper dwarf_fixup_AT_reference_die call"
-                    << endl;
-            }
+        int res = dwarf_fixup_AT_reference_die(it->dbg_,
+            it->attrnum_,sourcedie,targetdie,&lerror);
+        if(res != DW_DLV_OK) {
+            cerr << "Improper dwarf_fixup_AT_reference_die call"
+                << endl;
         }
+    }
 }

@@ -425,9 +425,10 @@ HandleOneDieAndChildren(Dwarf_P_Debug dbg,
     list<IRDie>& children = inDie.getChildren();
     // We create our target DIE first so we can link
     // children to it, but add no content yet.
-    Dwarf_P_Die gendie = dwarf_new_die(dbg,inDie.getTag(),NULL,NULL,
-        NULL,NULL,&error);
-    if (reinterpret_cast<Dwarf_Addr>(gendie) == DW_DLV_BADADDR) {
+    Dwarf_P_Die gendie =  0;
+    int res  =dwarf_new_die_a(dbg,inDie.getTag(),NULL,NULL,
+        NULL,NULL,&gendie,&error);
+    if (res != DW_DLV_OK) {
         cerr << "Die creation failure.  "<< endl;
         exit(1);
     }
@@ -440,15 +441,16 @@ HandleOneDieAndChildren(Dwarf_P_Debug dbg,
         IRDie & ch = *it;
         Dwarf_P_Die chp = HandleOneDieAndChildren(dbg,Irep,
             cu,ch,inDie,level+1);
-        Dwarf_P_Die res = 0;
+        int res2 = 0;
+       
         if(lastch) {
             // Link to right of earlier sibling.
-            res = dwarf_die_link(chp,NULL,NULL,lastch,NULL,&error);
+            res2 = dwarf_die_link_a(chp,NULL,NULL,lastch,NULL,&error);
         } else {
             // Link as first child.
-            res  = dwarf_die_link(chp,gendie,NULL,NULL, NULL,&error);
+            res2  = dwarf_die_link_a(chp,gendie,NULL,NULL, NULL,&error);
         }
-        if (reinterpret_cast<Dwarf_Addr>(res) == DW_DLV_BADADDR) {
+        if (res2 != DW_DLV_OK) {
             cerr << "Die link failure.  "<< endl;
             exit(1);
         }
@@ -504,10 +506,11 @@ HandleLineData(Dwarf_P_Debug dbg,
 
         if(it == pathmap.end()) {
             Dwarf_Error l2error = 0;
-            Dwarf_Unsigned idx = dwarf_add_file_decl(
+            Dwarf_Unsigned idx = 0;
+            int res = dwarf_add_file_decl_a(
                 dbg,const_cast<char *>(path.c_str()),
-                0,0,0,&l2error);
-            if((Dwarf_Signed)idx == DW_DLV_NOCOUNT) {
+                0,0,0,&idx,&l2error);
+            if(res != DW_DLV_OK) {
                 cerr << "Error from dwarf_add_file_decl() on " <<
                     path << endl;
                 exit(1);
@@ -528,9 +531,9 @@ HandleLineData(Dwarf_P_Debug dbg,
                     endl;
                 exit(1);
             }
-            Dwarf_Unsigned res = dwarf_lne_set_address(dbg,
+            int res = dwarf_lne_set_address_a(dbg,
                 a,elfsymidx,&lerror);
-            if((Dwarf_Signed)res == DW_DLV_NOCOUNT) {
+            if(res != DW_DLV_OK) {
                 cerr << "Error building line, dwarf_lne_set_address" <<
                     endl;
                 exit(1);
@@ -538,9 +541,9 @@ HandleLineData(Dwarf_P_Debug dbg,
             addrsetincu = true;
             firstline = false;
         } else if( endsequence) {
-            Dwarf_Unsigned esres = dwarf_lne_end_sequence(dbg,
+            int res = dwarf_lne_end_sequence_a(dbg,
                 a,&lerror);
-            if((Dwarf_Signed)esres == DW_DLV_NOCOUNT) {
+            if(res != DW_DLV_OK) {
                 cerr << "Error building line, dwarf_lne_end_sequence" <<
                     endl;
                 exit(1);
@@ -562,7 +565,8 @@ HandleLineData(Dwarf_P_Debug dbg,
         Dwarf_Bool isprologueend = li.getprologueend()?1:0;
         Dwarf_Unsigned isa = li.getisa();
         Dwarf_Unsigned discriminator = li.getdiscriminator();
-        Dwarf_Unsigned lires = dwarf_add_line_entry_b(dbg,
+
+        int lires = dwarf_add_line_entry_c(dbg,
             pathindex,
             code_offset,
             lineno,
@@ -574,7 +578,7 @@ HandleLineData(Dwarf_P_Debug dbg,
             isa,
             discriminator,
             &lerror);
-        if((Dwarf_Signed)lires == DW_DLV_NOCOUNT) {
+        if(lires != DW_DLV_OK) {
             cerr << "Error building line, dwarf_add_line_entry" <<
                 endl;
             exit(1);

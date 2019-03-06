@@ -79,7 +79,13 @@ public:
         formclass_ = cl;
     };
     enum Dwarf_Form_Class getFormClass() const {return formclass_; };
-    void setFormData(IRForm *f) { formdata_ = f; };
+    void setFormData(IRForm *f) {
+        if (formdata_) {
+           delete formdata_;
+           formdata_ = 0;
+        }
+        formdata_ = f;
+        }
     Dwarf_Half getFinalForm() const { return initialform_; };
     Dwarf_Half getDirectForm() const { return finalform_; };
     Dwarf_Half getAttrNum() const { return attr_; };
