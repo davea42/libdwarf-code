@@ -1,5 +1,5 @@
 2019-03-06   David Anderson
-      * dwarf_form.c: Removed trailing whitespace.
+      * dwarf_form.c,dwarf_global.c: Removed trailing whitespace.
       * pro_init.c: Removed trailing whitespace and fixed indents.
       * pro_forms.c(dwarf_add_AT_any_value_uleb_a): Accidentally
         leftout dbg = ownerdie->di_dbg, resulting in a memory

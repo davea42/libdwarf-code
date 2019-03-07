@@ -232,8 +232,7 @@ _dwarf_internal_get_pubnames_like_data(Dwarf_Debug dbg,
         pubnames_context->pu_length = length;
         pubnames_context->pu_extension_size = local_extension_size;
         pubnames_context->pu_dbg = dbg;
-        pubnames_context->pu_pub_offset = pubnames_section_offset; 
- 
+        pubnames_context->pu_pub_offset = pubnames_section_offset;
         pubnames_ptr_past_end_cu = pubnames_like_ptr + length;
 
         READ_UNALIGNED_CK(dbg, version, Dwarf_Half,
@@ -296,7 +295,6 @@ _dwarf_internal_get_pubnames_like_data(Dwarf_Debug dbg,
                 request the empty-cu records get created
                 to test that feature.
                 see dwarf_get_globals_header()  */
-               
             global =
                 (Dwarf_Global) _dwarf_get_alloc(dbg, global_code, 1);
             if (global == NULL) {
@@ -394,7 +392,7 @@ _dwarf_internal_get_pubnames_like_data(Dwarf_Debug dbg,
             compilers, pubnames_like_ptr == pubnames_ptr_past_end_cu at
             this point */
         {
-            Dwarf_Unsigned increment = 
+            Dwarf_Unsigned increment =
                 pubnames_context->pu_length_size +
                 pubnames_context->pu_length +
                 pubnames_context->pu_extension_size;
@@ -560,12 +558,12 @@ dwarf_global_name_offsets(Dwarf_Global global,
         return (DW_DLV_ERROR);
     }
 #undef MIN_CU_HDR_SIZE
-    /*  If global->gl_named_die_offset_within_cu 
+    /*  If global->gl_named_die_offset_within_cu
         is zero then this is a fake global for
         a pubnames CU with no pubnames. The offset is from the
         start of the CU header, so no die can have a zero
         offset, all valid offsets are positive numbers */
-    if (die_offset) { 
+    if (die_offset) {
         if(global->gl_named_die_offset_within_cu) {
             *die_offset = global->gl_named_die_offset_within_cu + cuhdr_off;
         } else {
@@ -610,7 +608,7 @@ dwarf_global_name_offsets(Dwarf_Global global,
     CU group exactly the same data will be returned.
 
 */
-int 
+int
 dwarf_get_globals_header(Dwarf_Global global,
     Dwarf_Off      *pub_section_hdr_offset,
     Dwarf_Unsigned *pub_offset_size,
@@ -632,7 +630,6 @@ dwarf_get_globals_header(Dwarf_Global global,
         _dwarf_error(NULL, error, DW_DLE_GLOBAL_CONTEXT_NULL);
         return DW_DLV_ERROR;
     }
-    
     dbg = con->pu_dbg;
     if (dbg == NULL) {
         _dwarf_error(NULL, error, DW_DLE_DBG_NULL);
