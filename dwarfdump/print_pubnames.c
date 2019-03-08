@@ -317,9 +317,7 @@ print_all_pubnames_style_records(Dwarf_Debug dbg,
         Dwarf_Off prev_cu_off = elf_max_address;
         Dwarf_Off global_cu_off = 0;
         char *name = 0;
-        struct esb_s msg;
 
-        esb_constructor(&msg);
         /*  Turns the cu-local die_off in globbuf
             entry into a global die_off.  The cu_off
             returned is the offset of the CU DIE,
@@ -327,7 +325,6 @@ print_all_pubnames_style_records(Dwarf_Debug dbg,
         nres = dwarf_global_name_offsets(globbuf[i],
             &name, &die_off, &cu_die_off,
             err);
-        esb_append(&msg,section_true_name);
         deal_with_name_offset_err(dbg,
             "dwarf_global_name_offsets in ",
             section_true_name,

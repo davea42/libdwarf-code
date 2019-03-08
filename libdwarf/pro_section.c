@@ -3325,15 +3325,14 @@ _dwarf_pro_generate_debuginfo(Dwarf_P_Debug dbg,
         /* Index to abbreviation table */
         GET_CHUNK_ERR(dbg, elfsectno_of_debug_info,
             data, curdie->di_abbrev_nbytes, error);
-
         memcpy((void *) data,
             (const void *) curdie->di_abbrev,
             curdie->di_abbrev_nbytes);
 
         /* Attribute values - need to fill in all form attributes */
         curattr = curdie->di_attrs;
-        string_attr_offset = curdie->di_offset + curdie->di_abbrev_nbytes;
-
+        string_attr_offset = curdie->di_offset + 
+            curdie->di_abbrev_nbytes;
         while (curattr) {
             GET_CHUNK_ERR(dbg, elfsectno_of_debug_info, data,
                 (unsigned long) curattr->ar_nbytes, error);
@@ -3395,29 +3394,30 @@ _dwarf_pro_generate_debuginfo(Dwarf_P_Debug dbg,
                     sizeof(du), DWARF_64BIT_SIZE);
                 break;
             case DW_FORM_ref_udata:
-                {               /* unsigned leb128 offset */
+                {   /* unsigned leb128 offset */
 
-                    int nbytes;
+                    int nbytesx;
                     char buff1[ENCODE_SPACE_NEEDED];
 
                     res =
                         _dwarf_pro_encode_leb128_nm(curattr->
                             ar_ref_die->
-                            di_offset, &nbytes,
+                            di_offset, &nbytesx,
                             buff1,
                             sizeof(buff1));
                     if (res != DW_DLV_OK) {
                         DWARF_P_DBG_ERROR(dbg, DW_DLE_ABBREV_ALLOC,
                             DW_DLV_ERROR);
                     }
-
-                    memcpy(data, buff1, nbytes);
+                    memcpy(data, buff1, nbytesx);
                     break;
-                }
+                } 
             default:
-                memcpy((void *) data,
-                    (const void *) curattr->ar_data,
-                    curattr->ar_nbytes);
+                if(curattr->ar_nbytes) {
+                    memcpy((void *) data,
+                        (const void *) curattr->ar_data,
+                        curattr->ar_nbytes);
+                }
                 break;
             }
             if (curattr->ar_attribute_form == DW_FORM_string) {

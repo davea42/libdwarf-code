@@ -75,6 +75,7 @@ using std::map;
 using std::list;
 using std::map;
 
+
 static Dwarf_Error error;
 
 typedef std::map<std::string,unsigned> pathToUnsignedType;
@@ -166,6 +167,8 @@ specialAttrTransformations(Dwarf_P_Debug dbg UNUSEDARG,
                 0);
             attr2.setFormData(f);
             revisedattrs.push_back(attr2);
+            // Avoid memoryleak
+            attr.dropFormData();
             continue;
         }
         if(attrnum == DW_AT_low_pc) {
@@ -175,7 +178,6 @@ specialAttrTransformations(Dwarf_P_Debug dbg UNUSEDARG,
         revisedattrs.push_back(attr);
         continue;
     }
-    // Now we make the attr list have the revised attribute.
     attrs = revisedattrs;
 }
 
@@ -214,9 +216,13 @@ addData16DataItem(Dwarf_P_Debug dbg UNUSEDARG,
         IRAttr & attr = *it;
         Dwarf_Half attrnum = attr.getAttrNum();
         if(attrnum == DW_AT_name){
+            // Avoid memoryleak
+            attr.dropFormData();
             continue;
         }
         if(attrnum == DW_AT_const_value){
+            // Avoid memoryleak
+            attr.dropFormData();
             continue;
         }
         revisedattrs.push_back(attr);
@@ -368,9 +374,13 @@ addImplicitConstItem(Dwarf_P_Debug dbg UNUSEDARG,
         IRAttr & attr = *it;
         Dwarf_Half attrnum = attr.getAttrNum();
         if(attrnum == DW_AT_name){
+            // Avoid memory leak.
+            attr.dropFormData();
             continue;
         }
         if(attrnum == DW_AT_const_value){
+            // Avoid memory leak.
+            attr.dropFormData();
             continue;
         }
         revisedattrs.push_back(attr);
@@ -456,6 +466,7 @@ HandleOneDieAndChildren(Dwarf_P_Debug dbg,
         }
         lastch = chp;
     }
+    {
     list<IRAttr>& attrs = inDie.getAttributes();
 
     // Now any special transformations to the attrs list.
@@ -473,6 +484,7 @@ HandleOneDieAndChildren(Dwarf_P_Debug dbg,
 
         AddAttrToDie(dbg,Irep,cu,gendie,inDie,attr);
     }
+   }
     return gendie;
 }
 

@@ -42,7 +42,7 @@ public:
         attr_(attr),finalform_(finalform),initialform_(initialform),
         formclass_(DW_FORM_CLASS_UNKNOWN),formdata_(0) {
     };
-    IRAttr(const IRAttr &r) {
+    IRAttr(const IRAttr &r) { // copy constructor
         attr_ = r.attr_;
         finalform_ = r.finalform_;
         initialform_ = r.initialform_;
@@ -53,7 +53,8 @@ public:
             formdata_ = 0;
         }
     };
-    ~IRAttr() { delete formdata_; };
+    ~IRAttr() {  
+        delete formdata_; };
     IRAttr & operator=( const IRAttr &r) {
         if(this == &r) {
             return *this;
@@ -62,10 +63,11 @@ public:
         finalform_ = r.finalform_;
         initialform_ = r.initialform_;
         formclass_ = r.formclass_;
-        if(r.formdata_) {
+        if(formdata_) {
+            delete formdata_;
             formdata_ =  r.formdata_->clone();
         } else {
-            formdata_ = 0;
+            formdata_ = r.formdata_->clone();
         }
         return *this;
     }
@@ -79,13 +81,17 @@ public:
         formclass_ = cl;
     };
     enum Dwarf_Form_Class getFormClass() const {return formclass_; };
+    void dropFormData() {
+        if(formdata_) 
+        {delete formdata_; formdata_ = 0; };
+        }
     void setFormData(IRForm *f) {
-        if (formdata_) {
+        if (formdata_) { 
            delete formdata_;
            formdata_ = 0;
         }
         formdata_ = f;
-        }
+    };
     Dwarf_Half getFinalForm() const { return initialform_; };
     Dwarf_Half getDirectForm() const { return finalform_; };
     Dwarf_Half getAttrNum() const { return attr_; };

@@ -1,4 +1,13 @@
-2019-03-19 David Anderson
+2019-03-07 David Anderson
+     * irepdie.h: The IRAttr assignment constructor
+       had a memory leak. Fixed.
+     * general.h: Added #ifndef GENERAL_H to make inclusion
+       idempotent.
+     * ireptodbg.cc: Using new IRAattr member function
+       dropFormData to ensure immediate delete of formdata_.
+       Not really needed since it would eventually be
+       delete-d anyway by the destructor.
+2019-03-04 David Anderson
      * dwarfgen.cc: Updated the comment about the libdwarf interface
        call return values.
      * irepattrtodbg.cc: Changed the libdwarf producer function calls

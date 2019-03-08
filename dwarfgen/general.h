@@ -32,6 +32,8 @@
 */
 // general.h
 // The following needed in code using this.
+#ifndef GENERAL_H
+#define GENERAL_H
 #include <sstream>
 #include <iomanip> // iomanip for setw etc
 
@@ -76,3 +78,4 @@ std::string  BldName(const std::string & prefix, T v)
     s << v;
     return s.str();
 }
+#endif /* GENERAL_H */

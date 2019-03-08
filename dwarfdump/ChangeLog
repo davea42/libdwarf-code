@@ -1,3 +1,8 @@
+2019-03-07 David Anderson
+     * print_pubnames.c(print_all_pubnames_style_records): A
+       struct esb_s was constructed and filled but then never
+       destructed, leading to a memory leak. Eliminated it 
+       entirely.
 2019-03-04 David Anderson
      * dwarf_names.c,dwarf_names.h,dwarfdump-ta-ext-table.h,
        dwarfdump-ta-table.h,dwarfdump-tt-ext-table.h,
