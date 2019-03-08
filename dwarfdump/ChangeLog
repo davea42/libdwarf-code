@@ -1,3 +1,5 @@
+2019-03-08 David Anderson
+     * print_pubnames.c: Remove trailing whitespace.
 2019-03-07 David Anderson
      * print_pubnames.c(print_all_pubnames_style_records): A
        struct esb_s was constructed and filled but then never

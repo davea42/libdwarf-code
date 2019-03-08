@@ -409,7 +409,7 @@ print_all_pubnames_style_records(Dwarf_Debug dbg,
                 dres = dwarf_offdie(dbg, cu_die_off, &die, err);
                 if (dres != DW_DLV_OK) {
                     struct esb_s msgb;
- 
+
                     esb_constructor(&msgb);
                     esb_append(&msgb,"Printing ");
                     esb_append(&msgb,section_true_name);
@@ -443,7 +443,6 @@ print_all_pubnames_style_records(Dwarf_Debug dbg,
                 esb_append(&msgc," dwarf_offdie b");
                 print_error(dbg, esb_get_string(&msgc), dres, *err);
                 esb_destructor(&msgc);
-        
             }
             ares =
                 dwarf_hasattr(die, DW_AT_external, &has_attr, err);

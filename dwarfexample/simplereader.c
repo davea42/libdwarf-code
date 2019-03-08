@@ -1,5 +1,5 @@
 /*
-  Copyright (c) 2009-2016 David Anderson.  All rights reserved.
+  Copyright (c) 2009-2019 David Anderson.  All rights reserved.
 
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions are met:
@@ -459,10 +459,10 @@ main(int argc, char **argv)
             We are not finding the true dSYM Macho-object
             here if that applies, so it's up to the user
             of simplereader to pass in the correct
-            dSYM object in the dSYM case. 
+            dSYM object in the dSYM case.
             dwarf_object_detector_path() could do
             the dSYM object finding, but to keep this simple
-            we leave that to the reader.  */ 
+            we leave that to the reader.  */
         my_init_fd = open(filepath,O_RDONLY|O_BINARY);
         if (my_init_fd == -1) {
             printf("Giving up, cannot open %s\n",filepath);

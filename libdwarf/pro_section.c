@@ -3331,7 +3331,7 @@ _dwarf_pro_generate_debuginfo(Dwarf_P_Debug dbg,
 
         /* Attribute values - need to fill in all form attributes */
         curattr = curdie->di_attrs;
-        string_attr_offset = curdie->di_offset + 
+        string_attr_offset = curdie->di_offset +
             curdie->di_abbrev_nbytes;
         while (curattr) {
             GET_CHUNK_ERR(dbg, elfsectno_of_debug_info, data,
@@ -3411,7 +3411,7 @@ _dwarf_pro_generate_debuginfo(Dwarf_P_Debug dbg,
                     }
                     memcpy(data, buff1, nbytesx);
                     break;
-                } 
+                }
             default:
                 if(curattr->ar_nbytes) {
                     memcpy((void *) data,
