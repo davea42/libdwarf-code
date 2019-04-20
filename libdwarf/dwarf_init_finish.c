@@ -1715,14 +1715,17 @@ _dwarf_load_section(Dwarf_Debug dbg,
         return DW_DLV_OK;
     }
     o = dbg->de_obj_file;
-    /*  There is an elf convention that section index 0  is reserved,
-        and that section is always empty.
-        Non-elf object formats must honor that by ensuring that
-        (when they assign numbers to 'sections' or 'section-like-things')
-        they never assign a real section section-number  0 to dss_index.
+    /*  There is an elf convention that section index 0
+        is reserved, and that section is always empty.
+        Non-elf object formats must honor
+        that by ensuring that (when they
+        assign numbers to 'sections' or
+        'section-like-things') they never
+        assign a real section section-number
+        0 to dss_index.
 
-        There is also a convention for 'bss' that that section and its
-        like sections have no data but do have a size.
+        There is also a convention for 'bss' that that section
+        and its like sections have no data but do have a size.
         That is never true of DWARF sections */
     res = o->methods->load_section(
         o->object, section->dss_index,

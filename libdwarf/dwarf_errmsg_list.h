@@ -489,8 +489,8 @@ const char *_dwarf_errmsgs[] = {
     "DW_DLE_OFFSET_SIZE(415) Offset size is neither 32 nor 64",
     "DW_DLE_MACH_O_SEGOFFSET_BAD(416) corrupt object",
     "DW_DLE_FILE_OFFSET_BAD(417) corrupt object",
-    "DW_DLE_SEEK_ERROR(418). Seek in object file failed",
-    "DW_DLE_READ_ERROR(419). Read from object file failed.",
+    "DW_DLE_SEEK_ERROR(418). Seek failed, corrupt object",
+    "DW_DLE_READ_ERROR(419). Read failed, corrupt object",
     "DW_DLE_ELF_CLASS_BAD(420) Corrupt object.",
     "DW_DLE_ELF_ENDIAN_BAD(421) Corrupt object.",
     "DW_DLE_ELF_VERSION_BAD(422) Corrupt object.",
@@ -506,5 +506,16 @@ const char *_dwarf_errmsgs[] = {
     "DW_DLE_NO_ELF_SUPPORT(432) libdwarf was compiled without Elf object support.",
     "DW_DLE_NO_STREAM_RELOC_SUPPORT(433) no elf.h so cannot generate STREAM relocations",
     "DW_DLE_RETURN_EMPTY_PUBNAMES_ERROR(434) Flag value passed in not allowed.",
+    "DW_DLE_SECTION_SIZE_ERROR(435) Corrupt Elf. Section size not a multiple of section entry size",
+    "DW_DLE_INTERNAL_NULL_POINTER(436) Internal libdwarf call:null pointer",
+    "DW_DLE_SECTION_STRING_OFFSET_BAD(437) Corrupt Elf, an offset to section name is invalid",
+    "DW_DLE_SECTION_INDEX_BAD(438) Corrupt Elf, a section index is incorrect",
+    "DW_DLE_INTEGER_TOO_SMALL(439) Build does not allow reading Elf64",
+    "DW_DLE_ELF_SECTION_LINK_ERROR(440) Corrupt Elf, section links in error",
+    "DW_DLE_ELF_SECTION_GROUP_ERROR(441) Corrupt Elf, section group information problem",
+    "DW_DLE_ELF_SECTION_COUNT_MISMATCH(442) Corrupt Elf or libdwarf bug.",
+    "DW_DLE_ELF_STRING_SECTION_MISSING(443) Corrupt Elf, string section wrong type",
+    "DW_DLE_SEEK_OFF_END(444) Corrupt Elf. Seek past the end not allowed",
+    "DW_DLE_READ_OFF_END(445) Corrupt Elf. A read would read past end of object"
 };
 #endif /* DWARF_ERRMSG_LIST_H */

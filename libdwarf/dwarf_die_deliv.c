@@ -726,15 +726,17 @@ reloc_incomplete(int res,Dwarf_Error err)
         return FALSE;
     }
     e = dwarf_errno(err);
-    if (e == DW_DLE_RELOC_MISMATCH_INDEX       ||
+    if (e == DW_DLE_RELOC_MISMATCH_INDEX        ||
         e == DW_DLE_RELOC_MISMATCH_RELOC_INDEX  ||
         e == DW_DLE_RELOC_MISMATCH_STRTAB_INDEX ||
         e == DW_DLE_RELOC_SECTION_MISMATCH      ||
-        e == DW_DLE_RELOC_SECTION_MISSING_INDEX  ||
-        e == DW_DLE_RELOC_SECTION_LENGTH_ODD     ||
-        e == DW_DLE_RELOC_SECTION_PTR_NULL        ||
-        e == DW_DLE_RELOC_SECTION_MALLOC_FAIL      ||
-        e == DW_DLE_RELOC_SECTION_SYMBOL_INDEX_BAD  ) {
+        e == DW_DLE_RELOC_SECTION_MISSING_INDEX ||
+        e == DW_DLE_RELOC_SECTION_LENGTH_ODD    ||
+        e == DW_DLE_RELOC_SECTION_PTR_NULL      ||
+        e == DW_DLE_RELOC_SECTION_MALLOC_FAIL   ||
+        e == DW_DLE_SEEK_OFF_END                ||
+        e == DW_DLE_RELOC_INVALID               ||
+        e == DW_DLE_RELOC_SECTION_SYMBOL_INDEX_BAD ) {
         return TRUE;
     }
     return FALSE;
@@ -1256,7 +1258,7 @@ _dwarf_next_cu_header_internal(Dwarf_Debug dbg,
     new_offset = new_offset + cu_context->cc_length +
         cu_context->cc_length_size + cu_context->cc_extension_size;
     *next_cu_offset = new_offset;
-    return (DW_DLV_OK);
+    return DW_DLV_OK;
 }
 
 /*  This involves data in a split dwarf or package file.

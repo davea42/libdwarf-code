@@ -729,7 +729,7 @@ struct Dwarf_Debug_s {
         zero pubnames-style named DIEs.  In that case the
         list returned will have an entry with a zero for
         the die-offset (which is an impossible debug_info
-        die_offset). New March 2019. 
+        die_offset). New March 2019.
         See dwarf_return_empty_pubnames() */
     unsigned char de_return_empty_pubnames;
 
@@ -928,7 +928,8 @@ int _dwarf_extract_local_debug_str_string_given_offset(Dwarf_Debug dbg,
 
 int _dwarf_file_name_is_full_path(Dwarf_Small  *fname);
 
-/*  This is an elf-only extension to get SHF_COMPRESSED flag from sh_flags.
+/*  This is an elf-only extension to
+    get SHF_COMPRESSED flag from sh_flags.
     if pointer not set (which is normal for non-elf objects)
     it is fine.  */
 typedef int (*_dwarf_get_elf_flags_func_ptr_type)(
@@ -938,6 +939,8 @@ typedef int (*_dwarf_get_elf_flags_func_ptr_type)(
     Dwarf_Unsigned *addralign_out,
     int *error);
 extern _dwarf_get_elf_flags_func_ptr_type _dwarf_get_elf_flags_func_ptr;
+
+/* This is libelf access to Elf object. */
 extern int _dwarf_elf_setup(int fd,
     char *true_path_out_buffer,
     unsigned ftype,
@@ -949,6 +952,22 @@ extern int _dwarf_elf_setup(int fd,
     Dwarf_Handler errhand,
     Dwarf_Ptr errarg,
     Dwarf_Debug *dbg,Dwarf_Error *error);
+
+/*  This is non-libelf Elf access */
+extern int
+_dwarf_elf_nlsetup(int fd,
+    char *true_path,
+    unsigned ftype,
+    unsigned endian,
+    unsigned offsetsize,
+    size_t filesize,
+    Dwarf_Unsigned access,
+    unsigned groupnumber,
+    Dwarf_Handler errhand,
+    Dwarf_Ptr errarg,
+    Dwarf_Debug *dbg,Dwarf_Error *error);
+void _dwarf_destruct_elf_nlaccess(struct Dwarf_Obj_Access_Interface_s *aip);
+
 extern int _dwarf_macho_setup(int fd,
     char *true_path,
     unsigned ftype,

@@ -58,7 +58,13 @@
 
 /*  This is the initialization set intended to
     handle multiple object formats.
-    Created September 2018  */
+    Created September 2018
+
+    The init functions here cannot process archives.
+    For archives the libelf-only dwarf_elf_init*()
+    functions are used if present, else archives
+    cannot be read.
+*/
 
 
 #define DWARF_DBG_ERROR(dbg,errval,retval) \
@@ -145,7 +151,7 @@ int dwarf_init_path(const char *path,
     }
     switch(ftype) {
     case DW_FTYPE_ELF: {
-        res = _dwarf_elf_setup(fd,
+        res = _dwarf_elf_nlsetup(fd,
             true_path_out_buffer?
                 true_path_out_buffer:(char *)path,
             ftype,endian,offsetsize,filesize,
@@ -197,7 +203,7 @@ int dwarf_init_path(const char *path,
 }
 
 
-/*  New March 2017, this provides for readinng
+/*  New March 2017, this provides for reading
     object files with multiple elf section groups.  */
 int
 dwarf_init_b(int fd,
@@ -225,8 +231,7 @@ dwarf_init_b(int fd,
     }
     switch(ftype) {
     case DW_FTYPE_ELF: {
-        res = _dwarf_elf_setup(fd,
-            "",
+        res = _dwarf_elf_nlsetup(fd,"",
             ftype,endian,offsetsize,filesize,
             access,group_number,errhand,errarg,ret_dbg,error);
         return res;
@@ -267,19 +272,28 @@ dwarf_finish(Dwarf_Debug dbg, Dwarf_Error * error)
     if (dbg->de_obj_file) {
         /*  The initial character of a valid
             dbg->de_obj_file->object struct is a letter:
-            E, M, or P */
+            E, F, M, or P */
         char otype  = *(char *)(dbg->de_obj_file->object);
 
-        if (otype == 'E') {
+        switch(otype) {
+        case 'E':
 #ifdef DWARF_WITH_LIBELF
             dwarf_elf_object_access_finish(dbg->de_obj_file);
 #endif /* DWARF_WITH_LIBELF */
-        } else if (otype == 'M') {
+            break;
+        case 'F':
+            /* Non-libelf elf access */
+            _dwarf_destruct_elf_nlaccess(dbg->de_obj_file);
+            break;
+        case 'M':
             _dwarf_destruct_macho_access(dbg->de_obj_file);
-        } else if (otype == 'P') {
+            break;
+        case 'P':
             _dwarf_destruct_pe_access(dbg->de_obj_file);
-        } else {
+            break;
+        default:
             /*  Do nothing. A serious internal error */
+            break;
         }
     }
     if (dbg->de_owns_fd) {

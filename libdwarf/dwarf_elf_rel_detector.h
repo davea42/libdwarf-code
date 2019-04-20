@@ -1,5 +1,4 @@
-/*
-Copyright (c) 2018, David Anderson
+/* Copyright (c) 2019, David Anderson
 All rights reserved.
 
 Redistribution and use in source and binary forms, with
@@ -28,23 +27,21 @@ HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
 CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
 OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
 EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-*/
 
-#ifndef  DWARF_OBJECT_READ_COMMON_H
-#define  DWARF_OBJECT_READ_COMMON_H
+*/
+#ifndef DWARF_ELF_REL_DETECTOR_H
+#define DWARF_ELF_REL_DETECTOR_H
 
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
 
-int _dwarf_object_read_random(int fd,char *buf,off_t loc,
-    size_t size,off_t filesize,int *errc);
 
-void  _dwarf_safe_strcpy(char *out, long outlen,
-    const char *in, long inlen);
+unsigned _dwarf_is_32bit_abs_reloc(unsigned int type, unsigned machine);
+unsigned _dwarf_is_64bit_abs_reloc(unsigned int type, unsigned machine);
 
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */
 
-#endif /*  DWARF_OBJECT_READ_COMMON_H */
+#endif /* DWARF_ELF_REL_DETECTOR_H */

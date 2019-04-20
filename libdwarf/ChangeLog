@@ -1,3 +1,94 @@
+2019-04-19   David Anderson
+      * CMakeLists.txt: Add new files to the files to build.
+      * Makefile.am: add the new .h and .c files.
+      * dwarf_die_deliv.c(reloc_incomplete): Reformat
+        the long 'if' to make it easier to read.
+      * dwarf_elf_access.c: Remove the full list of
+        relocations header files as no longer needed,
+        include dwarf_elf_defines.h instead.
+        Remove the
+        is_??bit_abs_reloc() predicate functions. Move
+        to  dwarf_elf_rel_detector. (renamed the functions).
+      * dwarf_errmsg_list.h: Added 
+        DW_DLE_SECTION_SIZE_ERROR,
+        DW_DLE_INTERNAL_NULL_POINTER,
+        DW_DLE_SECTION_STRING_OFFSET_BAD,
+        DW_DLE_SECTION_INDEX_BAD, DW_DLE_INTEGER_TOO_SMALL,
+        DW_DLE_ELF_SECTION_LINK_ERROR,DW_DLE_ELF_SECTION_GROUP_ERROR,
+        DW_DLE_ELF_SECTION_COUNT_MISMATCH,
+        DW_DLE_ELF_STRING_SECTION_MISSING,DW_DLE_SEEK_OFF_END,
+        DW_DLE_READ_OFF_END for use by the nolibelf
+        elf reader.
+      * dwarf_generic_init.c: Now separates  
+        archive access (using libelf) from non-archive (using
+        no libelf).
+      * dwarf_init_finish.c: Revamp commentary about 
+        _dwarf_load_section.
+      * dwarf_machoread.c: Renamed mo_byteorder to mo_endian
+        for consistency. Added filesize to seek/read
+        (RRMOA macro)for better checking of offset/size.
+      * dwarf_machoread.h: Renamed mo_byteorder to mo_endian.
+      * dwarf_object_detector.c: Added filesize to seek/read
+        (_dwarf_object_read_random())
+        for better checking of offset/size.
+      * dwarf_object_read_common.c: Added additional checks
+        of seek/read to ensure offset correctness.
+        Seek itself allows seeking past end, which we
+        do not want.
+      * dwarf_object_read_common.h: Added filesize to
+        _dwarf_object_read_random argument list.
+      * dwarf_opaque.h: Removed trailing whitespace.
+        Added _dwarf_elf_nlsetup() declaration for non-libelf.
+      * dwarf_original_elf_init.c: Added ifdef so calls
+        do not get warnings when only non-libelf.
+      * dwarf_peread.c: Renamed pe_byteorder to pe_endian
+        forconsistency.  Added filesize arg to
+        _dwarf_object_read_random calls.
+      * dwarf_peread.h: Renamed pe_byteorder to pe_endian
+        for consistency.
+      * dwarf_reading.h: Now RRMOA macro adds filesize
+        argument.
+      * libdwarf.h.in: Added error codes DW_DLE_SECTION_SIZE_ERROR,
+        DW_DLE_INTERNAL_NULL_POINTER,DW_DLE_SECTION_STRING_OFFSET_BAD,
+        DW_DLE_SECTION_INDEX_BAD,DW_DLE_INTEGER_TOO_SMALL,
+        DW_DLE_ELF_SECTION_LINK_ERROR,DW_DLE_ELF_SECTION_GROUP_ERROR,
+        DW_DLE_ELF_SECTION_COUNT_MISMATCH,
+        DW_DLE_ELF_STRING_SECTION_MISSING,DW_DLE_SEEK_OFF_END,
+        DW_DLE_READ_OFF_END          
+      * memcpy_swap.h: Returned the function declarations
+        to be a single long line each.
+      * dwarf_elf_rel_detector.h, dwarf_elf_rel_detector.c:
+        Refactored relocation tests determing whether
+        the relocation was 32bit or 64bit.
+      * dwarf_elf_reloc_386.h,
+        dwarf_elf_reloc_aarch64.h,dwarf_elf_reloc_arm.h,
+        dwarf_elf_reloc_mips.h,dwarf_elf_reloc_ppc64.h,
+        dwarf_elf_reloc_ppc.h,dwarf_elf_reloc_sparc.h,
+        dwarf_elf_reloc_x86_64.h: Complete lists
+        of relocation types. 
+        These are no longer needed by libdwarf, but
+        for now remain here.  They were once needed
+        for builds lacking a sufficiently complete
+        elf.h.
+      * dwarf_elfstructs.h: struct declarations for
+        the standard Elf structs, but using character
+        arrays, not integers. Assures we always have the
+        correct lengths independent of integer sizes.
+      * dwarf_elf_defines.h:  A basic set of Elf defines
+        so the producer code has all it needs.
+        Used by the Elf readers (libelf and nolibelf).
+      * dwarf_elfread.h: The internally-used set of
+        structures that hold nolibelf Elf data.
+        The fields are sized to hold 64bit and used for
+        both 32bit and 64bit elf. Some extra fields exist
+        so aspects that differ by 32/64 are recorded
+        by 32/64 specific code so 
+      * dwarf_elf_load_headers.c: Actually reads 32 and 64
+        Elf and inserts the values into the structures
+        declared in dwarf_elfread.h. 
+      *	dwarf_elfread.c: This does the nolibelf setup
+        and calls dwarf_elf_load_headers.c interfaces
+        to help with setup.
 2019-03-08   David Anderson
       * pro_section.c: Remove trailing whitespace.
 2019-03-07   David Anderson

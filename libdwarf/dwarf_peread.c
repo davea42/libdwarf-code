@@ -157,7 +157,7 @@ pe_get_byte_order (void *obj)
 {
     dwarf_pe_object_access_internals_t *pep =
         (dwarf_pe_object_access_internals_t*)(obj);
-    return pep->pe_byteorder;
+    return pep->pe_endian;
 }
 
 
@@ -229,7 +229,9 @@ load_optional_header32(dwarf_pe_object_access_internals_t *pep,
 
     res =  _dwarf_object_read_random(pep->pe_fd,
         (char *)&hdr,
-        offset, sizeof(IMAGE_OPTIONAL_HEADER32), errcode);
+        offset, sizeof(IMAGE_OPTIONAL_HEADER32),
+        pep->pe_filesize,
+        errcode);
     if (res != DW_DLV_OK) {
         return res;
     }
@@ -264,7 +266,9 @@ load_optional_header64(dwarf_pe_object_access_internals_t *pep,
     }
     res =  _dwarf_object_read_random(pep->pe_fd,
         (char *)&hdr,
-        offset, sizeof(IMAGE_OPTIONAL_HEADER64), errcode);
+        offset, sizeof(IMAGE_OPTIONAL_HEADER64),
+        pep->pe_filesize,
+        errcode);
     if (res != DW_DLV_OK) {
         return res;
     }
@@ -317,7 +321,9 @@ pe_load_section (void *obj, Dwarf_Half section_index,
         }
         res = _dwarf_object_read_random(pep->pe_fd,
             (char *)sp->loaded_data,
-            sp->PointerToRawData, sp->SizeOfRawData, error);
+            sp->PointerToRawData, sp->SizeOfRawData,
+            pep->pe_filesize,
+            error);
         if (res != DW_DLV_OK) {
             free(sp->loaded_data);
             sp->loaded_data = 0;
@@ -422,7 +428,9 @@ dwarf_pe_load_dwarf_section_headers(
 
         res =  _dwarf_object_read_random(pep->pe_fd,
             (char *)&filesect,cur_offset,
-            sizeof(filesect),errcode);
+            sizeof(filesect),
+            pep->pe_filesize,
+            errcode);
         if (res != DW_DLV_OK) {
             return res;
         }
@@ -492,7 +500,7 @@ dwarf_load_pe_sections(
         return DW_DLV_ERROR;
     }
     res = _dwarf_object_read_random(pep->pe_fd,(char *)&dhinmem,
-        0, sizeof(dhinmem), errcode);
+        0, sizeof(dhinmem),pep->pe_filesize, errcode);
     if (res != DW_DLV_OK) {
         return res;
     }
@@ -522,7 +530,7 @@ dwarf_load_pe_sections(
         *errcode = DW_DLE_FILE_WRONG_TYPE;
         return DW_DLV_ERROR;
     }
-    if (locendian != pep->pe_byteorder) {
+    if (locendian != pep->pe_endian) {
         /*  Really this is a coding botch somewhere here,
             not an object corruption. */
         *errcode = DW_DLE_FILE_WRONG_TYPE;
@@ -539,7 +547,8 @@ dwarf_load_pe_sections(
 
     res =  _dwarf_object_read_random(pep->pe_fd,
         (char *)&nt_sig_array[0],
-        nt_address, sizeof(nt_sig_array),errcode);
+        nt_address, sizeof(nt_sig_array),
+        pep->pe_filesize,errcode);
     if (res != DW_DLV_OK) {
         return res;
     }
@@ -561,7 +570,8 @@ dwarf_load_pe_sections(
         return DW_DLV_ERROR;
     }
     res = _dwarf_object_read_random(pep->pe_fd,(char *)&ifh,
-        pep->pe_nt_header_offset, sizeof(ifh), errcode);
+        pep->pe_nt_header_offset, sizeof(ifh),
+        pep->pe_filesize,errcode);
     if (res != DW_DLV_OK) {
         return res;
     }
@@ -631,7 +641,8 @@ dwarf_load_pe_sections(
         memset(size_field,0,sizeof(size_field));
         res =  _dwarf_object_read_random(pep->pe_fd,
             (char *)size_field, pep->pe_string_table_offset,
-            sizeof(size_field), errcode);
+            sizeof(size_field),
+            pep->pe_filesize,errcode);
         if (res != DW_DLV_OK) {
             return res;
         }
@@ -654,7 +665,8 @@ dwarf_load_pe_sections(
         }
         res = _dwarf_object_read_random(pep->pe_fd,
             (char *)pep->pe_string_table, pep->pe_string_table_offset,
-            pep->pe_string_table_size,errcode);
+            pep->pe_string_table_size,
+            pep->pe_filesize,errcode);
         if (res != DW_DLV_OK) {
             return res;
         }
@@ -755,18 +767,18 @@ _dwarf_pe_object_access_internals_init(
 #ifdef WORDS_BIGENDIAN
     if (endian == DW_ENDIAN_LITTLE ) {
         intfc->pe_copy_word = _dwarf_memcpy_swap_bytes;
-        intfc->pe_byteorder = DW_ENDIAN_LITTLE;
+        intfc->pe_endian = DW_ENDIAN_LITTLE;
     } else {
         intfc->pe_copy_word = _dwarf_memcpy_noswap_bytes;
-        intfc->pe_byteorder = DW_ENDIAN_BIG;
+        intfc->pe_endian = DW_ENDIAN_BIG;
     }
 #else  /* LITTLE ENDIAN */
     if (endian == DW_ENDIAN_LITTLE ) {
         intfc->pe_copy_word = _dwarf_memcpy_noswap_bytes;
-        intfc->pe_byteorder = DW_ENDIAN_LITTLE;
+        intfc->pe_endian = DW_ENDIAN_LITTLE;
     } else {
         intfc->pe_copy_word = _dwarf_memcpy_swap_bytes;
-        intfc->pe_byteorder = DW_ENDIAN_BIG;
+        intfc->pe_endian = DW_ENDIAN_BIG;
     }
 #endif /* LITTLE- BIG-ENDIAN */
     res = dwarf_load_pe_sections(intfc,errcode);

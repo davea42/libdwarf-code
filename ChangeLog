@@ -1,3 +1,8 @@
+2019-04-19  David Anderson
+    * NEWS: Now --disable-libelf just disables linking
+      with libelf.  Elf files are read (libdwarf) and
+      printf(dwarfdump). As always. The Elf reader detects
+      corrupted Elf early on. 
 2019-02-24  David Anderson
     * configure.ac. Version 20190223. With --disable-libelf
       most header checking is unnecessary and suppressed. 

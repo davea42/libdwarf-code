@@ -1346,9 +1346,20 @@ struct Dwarf_Obj_Access_Interface_s {
 #define DW_DLE_NO_ELF_SUPPORT                  432
 #define DW_DLE_NO_STREAM_RELOC_SUPPORT         433
 #define DW_DLE_RETURN_EMPTY_PUBNAMES_ERROR     434
+#define DW_DLE_SECTION_SIZE_ERROR              435
+#define DW_DLE_INTERNAL_NULL_POINTER           436
+#define DW_DLE_SECTION_STRING_OFFSET_BAD       437
+#define DW_DLE_SECTION_INDEX_BAD               438
+#define DW_DLE_INTEGER_TOO_SMALL               439
+#define DW_DLE_ELF_SECTION_LINK_ERROR          440
+#define DW_DLE_ELF_SECTION_GROUP_ERROR         441
+#define DW_DLE_ELF_SECTION_COUNT_MISMATCH      442
+#define DW_DLE_ELF_STRING_SECTION_MISSING      443
+#define DW_DLE_SEEK_OFF_END                    444
+#define DW_DLE_READ_OFF_END                    445
 
-    /* LAST MUST EQUAL LAST ERROR NUMBER */
-#define DW_DLE_LAST        434
+    /* LAST MUST EQUAL LAST ERROR NUMBER */   
+#define DW_DLE_LAST        445
 
 #define DW_DLE_LO_USER     0x10000
 

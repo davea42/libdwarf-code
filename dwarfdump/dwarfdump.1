@@ -207,6 +207,8 @@ prints,
 for Elf objects, object file details.
 See the "Print ELF sections header" section of
 the help file for additional choices on elf printing.
+If libdwarf or dwarfdump is built without libelf
+this option is unavailable.
 
 .TP
 .BR \--print-frame\ (\-f)
@@ -288,6 +290,8 @@ additional relocation printing choices.
 .TP
 .BR \--reloc\ (\-o)    
 Print all relocation records as well as we can manage.
+If libdwarf or dwarfdump were built without libelf
+this option is unavailable.
 
 .TP
 .BR \--version\ (\-V)  
@@ -695,13 +699,6 @@ When a URI is found and translated while reading
 the command line, be quiet about
 the URI translation. That is, don't print the
 original and translated option strings.
-
-.TP
-.B \-E 
-.TP
-.B \--elf
-Turns on printing object-internal header data for some
-systems.
 
 .TP
 .B \-u cuname 

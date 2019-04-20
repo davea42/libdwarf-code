@@ -46,11 +46,25 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     ISO/IEC 9954-1:1990. */
 int
 _dwarf_object_read_random(int fd,char *buf,off_t loc,
-    size_t size,int *errc)
+    size_t size,off_t filesize,int *errc)
 {
     off_t scode = 0;
     ssize_t rcode = 0;
+    off_t endpoint = 0;
 
+    if (loc >= filesize) {
+        /*  Seek can seek off the end. Lets not allow that.
+            The object is corrupt. */
+        *errc = DW_DLE_SEEK_OFF_END;
+        return DW_DLV_ERROR;
+    }
+    endpoint = loc+size;
+    if (endpoint > filesize) {
+        /*  Let us -not- try to read past end of object.
+            The object is corrupt. */
+        *errc = DW_DLE_READ_OFF_END;
+        return DW_DLV_ERROR;
+    }
     scode = lseek(fd,loc,SEEK_SET);
     if (scode == (off_t)-1) {
         *errc = DW_DLE_SEEK_ERROR;

@@ -6,60 +6,48 @@
   Portions Copyright 2009-2010 Novell Inc. All rights reserved.
   Portions Copyright 2012 SN Systems Ltd. All rights reserved.
 
-  This program is free software; you can redistribute it and/or modify it
-  under the terms of version 2.1 of the GNU Lesser General Public License
-  as published by the Free Software Foundation.
+  This program is free software; you can redistribute it
+  and/or modify it under the terms of version 2.1 of the
+  GNU Lesser General Public License as published by the Free
+  Software Foundation.
 
-  This program is distributed in the hope that it would be useful, but
-  WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+  This program is distributed in the hope that it would be
+  useful, but WITHOUT ANY WARRANTY; without even the implied
+  warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+  PURPOSE.
 
-  Further, this software is distributed without any warranty that it is
-  free of the rightful claim of any third person regarding infringement
-  or the like.  Any license provided herein, whether implied or
-  otherwise, applies only to this software file.  Patent licenses, if
-  any, provided herein do not apply to combinations of this program with
-  other software, or any other product whatsoever.
+  Further, this software is distributed without any warranty
+  that it is free of the rightful claim of any third person
+  regarding infringement or the like.  Any license provided
+  herein, whether implied or otherwise, applies only to this
+  software file.  Patent licenses, if any, provided herein
+  do not apply to combinations of this program with other
+  software, or any other product whatsoever.
 
-  You should have received a copy of the GNU Lesser General Public
-  License along with this program; if not, write the Free Software
-  Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston MA 02110-1301,
-  USA.
+  You should have received a copy of the GNU Lesser General
+  Public License along with this program; if not, write the
+  Free Software Foundation, Inc., 51 Franklin Street - Fifth
+  Floor, Boston MA 02110-1301, USA.
 
 */
+
+/*  This file is ONLY used for libelf and with libelf
+    For */
 
 #include "config.h"
 #ifdef DWARF_WITH_LIBELF
 #include "dwarf_incl.h"
 #include "dwarf_error.h"
 #include "dwarf_elf_access.h"
+#include "dwarf_elf_defines.h"
+#include "dwarf_elf_rel_detector.h"
 
-/* Include Relocation definitions in the case of Windows */
-#ifdef _WIN32
-#include "dwarf_reloc_arm.h"
-#include "dwarf_reloc_mips.h"
-#include "dwarf_reloc_ppc.h"
-#include "dwarf_reloc_ppc64.h"
-#include "dwarf_reloc_x86_64.h"
-#include "dwarf_reloc_386.h"
-#endif /* _WIN32 */
-
-#ifdef DWARF_WITH_LIBELF /*  For relocation definitions */
 #ifdef HAVE_ELF_H
 #include <elf.h>
 #endif /* HAVE_ELF_H */
-/* Relocation definitions are in sys/elf_{mach}.h on Solaris.  */
-#ifdef HAVE_SYS_ELF_AMD64_H
-#include <sys/elf_amd64.h>
-#endif /* HAVE_SYS_ELF_AMD64_H */
-#ifdef HAVE_SYS_ELF_386_H
-#include <sys/elf_386.h>
-#endif /* HAVE_SYS_ELF_386_H */
-#ifdef HAVE_SYS_ELF_SPARC_H
-#include <sys/elf_SPARC.h>
-#endif /* HAVE_SYS_ELF_SPARC_H */
-#endif /* DWARF_WITH_LIBELF */
 
+/*  Relocation definitions are in sys/elf_{mach}.h
+    on Solaris.  */
 #ifdef HAVE_LIBELF_H
 #include <libelf.h>
 #else
@@ -82,109 +70,13 @@
 #define FALSE 0
 #define TRUE  1
 
-#ifndef EM_MIPS
-/* This is the standard elf value EM_MIPS. */
-#define EM_MIPS 8
-#endif
-
-#ifndef EM_K10M
-#define EM_K10M 181  /* Intel K10M */
-#endif
-#ifndef EM_L10M
-#define EM_L10M 180  /* Intel L10M */
-#endif
-#ifndef EM_AARCH64
-#define EM_AARCH64 183  /* Arm 64 */
-#endif
-#ifndef R_AARCH64_ABS64
-#define R_AARCH64_ABS64 0x101
-#endif
-#ifndef R_AARCH64_ABS32
-#define R_AARCH64_ABS32 0x102
-#endif
-#ifndef R_MIPS_64
-#define R_MIPS_64   18
-#endif
-#ifndef R_MIPS_TLS_TPREL64
-#define R_MIPS_TLS_TPREL64	48
-#endif
-
-#ifndef EM_IA_64
-#define EM_IA_64            50
-#endif
-#ifndef R_IA64_SECREL32LSB
-#define R_IA64_SECREL32LSB 0x65
-#endif
-#ifndef R_IA64_DIR32MSB
-#define R_IA64_DIR32MSB    0x24
-#endif
-#ifndef R_IA64_DIR32LSB
-#define R_IA64_DIR32LSB    0x25
-#endif
-#ifndef R_IA64_DIR64MSB
-#define R_IA64_DIR64MSB    0x26
-#endif
-#ifndef R_IA64_DIR64LSB
-#define R_IA64_DIR64LSB    0x27
-#endif
-#ifndef R_IA64_SECREL64LSB
-#define R_IA64_SECREL64LSB 0x67
-#endif
-#ifndef R_IA64_SECREL64MSB
-#define R_IA64_SECREL64MSB 0x66
-#endif
-#ifndef R_IA64_DTPREL32LSB
-#define  R_IA64_DTPREL32LSB 0xb5
-#endif
-#ifndef R_IA64_DTPREL32MSB
-#define  R_IA64_DTPREL32MSB 0xb4
-#endif
-#ifndef R_IA64_DTPREL64LSB
-#define  R_IA64_DTPREL64LSB  0xb7
-#endif
-#ifndef R_IA64_DTPREL64MSB
-#define  R_IA64_DTPREL64MSB  0xb6
-#endif
-
-#ifndef EM_S390
-#define EM_S390             22
-#endif
-#ifndef R_390_TLS_LDO32
-#define R_390_TLS_LDO32         52
-#endif
-#ifndef R_390_TLS_LDO64
-#define R_390_TLS_LDO64         53
-#endif
-
-#ifndef R_390_32
-#define R_390_32                4
-#endif
-#ifndef  R_390_64
-#define  R_390_64                22
-#endif
-
-#ifndef EM_SH
-#define EM_SH                42
-#endif
-#ifndef R_SH_DIR32
-#define R_SH_DIR32           1
-#endif
-#ifndef R_SH_TLS_DTPOFF32
-#define R_SH_TLS_DTPOFF32    150
-#endif
-
-
-
-
-
-
-
 #ifdef HAVE_ELF64_GETEHDR
 extern Elf64_Ehdr *elf64_getehdr(Elf *);
 #endif
 #ifdef HAVE_ELF64_GETSHDR
 extern Elf64_Shdr *elf64_getshdr(Elf_Scn *);
 #endif
+
 #ifdef WORDS_BIGENDIAN
 #define WRITE_UNALIGNED(dbg,dest,source, srclength,len_out) \
     {                                             \
@@ -192,21 +84,18 @@ extern Elf64_Shdr *elf64_getshdr(Elf_Scn *);
             ((char *)source) +srclength-len_out,  \
             len_out) ;                            \
     }
-
-
 #else /* LITTLE ENDIAN */
-
 #define WRITE_UNALIGNED(dbg,dest,source, srclength,len_out) \
     {                               \
         dbg->de_copy_word( (dest) , \
             ((char *)source) ,      \
             len_out) ;              \
     }
-#endif
+#endif /* *-ENDIAN */
 
 
 
-/*   ident[0] == 'E' for elf. ident[1] = 1 */
+/*   ident[0] == 'E' for elf when using libelf. ident[1] = 1 */
 typedef struct {
     char             ident[8];
     const char *     path;
@@ -695,338 +584,6 @@ get_relocation_entries(Dwarf_Bool is_64bit,
     return(DW_DLV_OK);
 }
 
-/*  We have a EM_QUALCOMM_DSP6 relocatable object
-    test case in dwarf regression tests, atefail/ig_server.
-    Values for QUALCOMM were derived from this executable.
-
-    The r = 0 in the function will get optimized away
-    when not needed.
-
-*/
-
-#define EM_QUALCOMM_DSP6 0xa4
-#define QUALCOMM_REL32   6
-
-static Dwarf_Bool
-is_32bit_abs_reloc(unsigned int type, Dwarf_Half machine)
-{
-    Dwarf_Bool r = 0;
-    switch (machine) {
-#if defined(EM_MIPS) && defined (R_MIPS_32)
-    case EM_MIPS:
-        r =  (0
-#if defined (R_MIPS_32)
-            | (type == R_MIPS_32)
-#endif
-#if defined (R_MIPS_TLS_DTPREL32)
-            | (type == R_MIPS_TLS_DTPREL32)
-#endif /* DTPREL32 */
-            );
-        break;
-#endif /* MIPS case */
-#if defined(EM_SPARC32PLUS)  && defined (R_SPARC_UA32)
-    case EM_SPARC32PLUS:
-        r = (0
-#if defined(R_SPARC_UA32)
-            | (type == R_SPARC_UA32)
-#endif
-#if defined(R_SPARC_TLS_DTPOFF32)
-            | (type == R_SPARC_TLS_DTPOFF32)
-#endif
-            );
-        break;
-#endif
-#if defined(EM_SPARCV9)  && defined (R_SPARC_UA32)
-    case EM_SPARCV9:
-        r =  (type == R_SPARC_UA32);
-        break;
-#endif
-#if defined(EM_SPARC) && defined (R_SPARC_UA32)
-    case EM_SPARC:
-        r =  (0
-#if defined(R_SPARC_UA32)
-            | (type == R_SPARC_UA32)
-#endif
-#if (R_SPARC_TLS_DTPOFF32)
-            | (type == R_SPARC_TLS_DTPOFF32)
-#endif
-            );
-        break;
-#endif /* EM_SPARC */
-#if defined(EM_386) && defined (R_386_32)
-    case EM_386:
-        r = (0
-#if defined (R_386_32)
-            |  (type == R_386_32)
-#endif
-#if defined (R_386_TLS_LDO_32)
-            | (type == R_386_TLS_LDO_32)
-#endif
-#if defined (R_386_TLS_DTPOFF32)
-            | (type == R_386_TLS_DTPOFF32)
-#endif
-            );
-        break;
-#endif /* EM_386 */
-
-#if defined (EM_SH) && defined (R_SH_DIR32)
-    case EM_SH:
-        r = (0
-#if defined (R_SH_DIR32)
-            | (type == R_SH_DIR32)
-#endif
-#if defined (R_SH_DTPOFF32)
-            | (type == R_SH_TLS_DTPOFF32)
-#endif
-            );
-        break;
-#endif /* SH */
-
-#if defined(EM_IA_64) && defined (R_IA64_SECREL32LSB)
-    case EM_IA_64:  /* 32bit? ! */
-        r = (0
-#if defined (R_IA64_SECREL32LSB)
-            | (type == R_IA64_SECREL32LSB)
-#endif
-#if defined (R_IA64_DIR32LSB)
-            | (type == R_IA64_DIR32LSB)
-#endif
-#if defined (R_IA64_DTPREL32LSB)
-            | (type == R_IA64_DTPREL32LSB)
-#endif
-            );
-        break;
-#endif /* EM_IA_64 */
-
-#if defined(EM_ARM) && defined (R_ARM_ABS32)
-    case EM_ARM:
-    case EM_AARCH64:
-        r = (0
-#if defined (R_ARM_ABS32)
-            | ( type == R_ARM_ABS32)
-#endif
-#if defined (R_AARCH64_ABS32)
-            | ( type == R_AARCH64_ABS32)
-#endif
-#if defined (R_ARM_TLS_LDO32)
-            | ( type == R_ARM_TLS_LDO32)
-#endif
-            );
-        break;
-#endif /* EM_ARM */
-
-/*  On FreeBSD R_PPC64_ADDR32 not defined
-    so we use the R_PPC_ names which
-    have the proper value.
-    Our headers have:
-    R_PPC64_ADDR64   38
-    R_PPC_ADDR32     1 so we use this one
-    R_PPC64_ADDR32   R_PPC_ADDR32
-
-    R_PPC64_DTPREL32 110  which may be wrong/unavailable
-    R_PPC64_DTPREL64 78
-    R_PPC_DTPREL32   78
-    */
-#if defined(EM_PPC64) && defined (R_PPC_ADDR32)
-    case EM_PPC64:
-        r = (0
-#if defined(R_PPC_ADDR32)
-            | (type == R_PPC_ADDR32)
-#endif
-#if defined(R_PPC64_DTPREL32)
-            | (type == R_PPC64_DTPREL32)
-#endif
-            );
-        break;
-#endif /* EM_PPC64 */
-
-
-#if defined(EM_PPC) && defined (R_PPC_ADDR32)
-    case EM_PPC:
-        r = (0
-#if defined (R_PPC_ADDR32)
-            | (type == R_PPC_ADDR32)
-#endif
-#if defined (R_PPC_DTPREL32)
-            | (type == R_PPC_DTPREL32)
-#endif
-            );
-        break;
-#endif /* EM_PPC */
-
-#if defined(EM_S390) && defined (R_390_32)
-    case EM_S390:
-        r = (0
-#if defined (R_390_32)
-            | (type == R_390_32)
-#endif
-#if defined (R_390_TLS_LDO32)
-            | (type == R_390_TLS_LDO32)
-#endif
-            );
-        break;
-#endif /* EM_S390 */
-
-#if defined(EM_X86_64) && ( defined(R_X86_64_32) || defined(R_X86_64_PC32) || defined(R_X86_64_DTPOFF32) )
-#if defined(EM_K10M)
-    case EM_K10M:
-#endif
-#if defined(EM_L10M)
-    case EM_L10M:
-#endif
-    case EM_X86_64:
-        r = (0
-#if defined (R_X86_64_PC32)
-            | (type == R_X86_64_PC32)
-#endif
-#if defined (R_X86_64_32)
-            | (type == R_X86_64_32)
-#endif
-#if defined (R_X86_64_DTPOFF32)
-            | (type ==  R_X86_64_DTPOFF32)
-#endif
-            );
-        break;
-#endif /* EM_X86_64 */
-
-    case  EM_QUALCOMM_DSP6:
-        r = (type == QUALCOMM_REL32);
-        break;
-    }
-    return r;
-}
-
-static Dwarf_Bool
-is_64bit_abs_reloc(unsigned int type, Dwarf_Half machine)
-{
-    Dwarf_Bool r = 0;
-    switch (machine) {
-#if defined(EM_MIPS) && defined (R_MIPS_64)
-    case EM_MIPS:
-        r = (0
-#if defined (R_MIPS_64)
-            | (type == R_MIPS_64)
-#endif
-#if defined (R_MIPS_32)
-            | (type == R_MIPS_32)
-#endif
-#if defined(R_MIPS_TLS_DTPREL64)
-            | (type == R_MIPS_TLS_DTPREL64)
-#endif
-            );
-        break;
-#endif /* EM_MIPS */
-#if defined(EM_SPARC32PLUS) && defined (R_SPARC_UA64)
-    case EM_SPARC32PLUS:
-        r =  (type == R_SPARC_UA64);
-        break;
-#endif
-#if defined(EM_SPARCV9) && defined (R_SPARC_UA64)
-    case EM_SPARCV9:
-        r = (0
-#if defined (R_SPARC_UA64)
-            | (type == R_SPARC_UA64)
-#endif
-#if defined (R_SPARC_TLS_DTPOFF64)
-            | (type == R_SPARC_TLS_DTPOFF64)
-#endif
-            );
-        break;
-#endif
-#if defined(EM_SPARC) && defined (R_SPARC_UA64)
-    case EM_SPARC:
-        r = (0
-#if defined(R_SPARC_UA64)
-            | (type == R_SPARC_UA64)
-#endif
-#if defined (R_SPARC_TLS_DTPOFF64)
-            | (type == R_SPARC_TLS_DTPOFF64)
-#endif
-            );
-        break;
-#endif /* EM_SPARC */
-
-#if defined(EM_IA_64) && defined (R_IA64_SECREL64LSB)
-    case EM_IA_64: /* 64bit */
-        r = (0
-#if defined (R_IA64_SECREL64LSB)
-            | (type == R_IA64_SECREL64LSB)
-#endif
-#if defined (R_IA64_SECREL32LSB)
-            | (type == R_IA64_SECREL32LSB)
-#endif
-#if defined (R_IA64_DIR64LSB)
-            | (type == R_IA64_DIR64LSB)
-#endif
-#if defined (R_IA64_DTPREL64LSB)
-            | (type == R_IA64_DTPREL64LSB)
-#endif
-#if defined (R_IA64_REL32LSB)
-            | (type == R_IA64_REL32LSB)
-#endif
-            );
-        break;
-#endif /* EM_IA_64 */
-
-#if defined(EM_PPC64) && defined (R_PPC64_ADDR64)
-    case EM_PPC64:
-        r = (0
-#if defined(R_PPC64_ADDR64)
-            | (type == R_PPC64_ADDR64)
-#endif
-#if defined(R_PPC64_DTPREL64)
-            | (type == R_PPC64_DTPREL64)
-#endif
-            );
-        break;
-#endif /* EM_PPC64 */
-
-#if defined(EM_S390) && defined (R_390_64)
-    case EM_S390:
-        r = (0
-#if defined(R_390_64)
-            | (type == R_390_64)
-#endif
-#if defined(R_390_TLS_LDO64)
-            | (type == R_390_TLS_LDO64)
-#endif
-            );
-        break;
-#endif /* EM_390 */
-
-#if defined(EM_X86_64) && defined (R_X86_64_64)
-#if defined(EM_K10M)
-    case EM_K10M:
-#endif
-#if defined(EM_L10M)
-    case EM_L10M:
-#endif
-    case EM_X86_64:
-        r = (0
-#if defined (R_X86_64_64)
-            | (type == R_X86_64_64)
-#endif
-#if defined (R_X86_64_DTPOFF32)
-            | (type == R_X86_64_DTPOFF64)
-#endif
-            );
-        break;
-#endif /* EM_X86_64 */
-#if defined(EM_AARCH64) && defined (R_AARCH64_ABS64)
-    case EM_AARCH64:
-        r = (0
-#if defined (R_AARCH64_ABS64)
-            | ( type == R_AARCH64_ABS64)
-#endif
-            );
-        break;
-#endif /* EM_AARCH64 */
-
-    }
-    return r;
-}
-
-
 /*  Returns DW_DLV_OK if it works, else DW_DLV_ERROR.
     The caller may decide to ignore the errors or report them. */
 static int
@@ -1102,9 +659,9 @@ update_entry(Dwarf_Debug dbg,
     }
 
     /* Determine relocation size */
-    if (is_32bit_abs_reloc(type, machine)) {
+    if (_dwarf_is_32bit_abs_reloc(type, machine)) {
         reloc_size = 4;
-    } else if (is_64bit_abs_reloc(type, machine)) {
+    } else if (_dwarf_is_64bit_abs_reloc(type, machine)) {
         reloc_size = 8;
     } else {
         *error = DW_DLE_RELOC_SECTION_RELOC_TARGET_SIZE_UNKNOWN;
@@ -1494,7 +1051,7 @@ dwarf_get_elf(Dwarf_Debug dbg, dwarf_elf_handle * elf,
         char typeletter = *(char *)(obj->object);
 
         if (typeletter != 'E') {
-            /* Not Elf */
+            /* Not libelf Elf */
             return DW_DLV_NO_ENTRY;
         }
         internals = (dwarf_elf_object_access_internals_t*)obj->object;

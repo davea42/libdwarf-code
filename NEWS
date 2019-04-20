@@ -1,3 +1,18 @@
+2019-04-16:
+  Now a --disable-libelf configure/build of libdwarf/dwarfdump
+  can read elf, mach-o DSYM, and PE executable/dll object files.
+  Such a build will not need or use libelf or elf.h .
+  The dwarfdump options that display Elf section headers
+  or relocation record data are not available in a 
+  --disable-libelf build.
+  This libdwarf detects corrupt Elf object files much sooner
+  than before, but does not explain what the corruption
+  really is. Use GNU readelf (or readelfobj, a project
+  on sourceforge) to get more detail about the problems found.  
+  See https://www.prevanders.net/dwarf.html for the git clone
+  command for readelfobj.
+  With --disable-libelf the --enable-dwarfgen option
+  does not work: the dwarfgen build will fail.
 2019-02-18:
   For building on machines without a usable elf.h or libelf
   but possibly with a libelf.h visible, --disable-libelf

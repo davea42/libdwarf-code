@@ -126,7 +126,7 @@ typedef struct pe_filedata_s {
     Dwarf_Small      pe_offsetsize; /* 32 or 64 section data */
     Dwarf_Small      pe_pointersize;
     int              pe_ftype;
-    unsigned         pe_byteorder;
+    unsigned         pe_endian;
     /*Dwarf_Small      pe_machine; */
     void (*pe_copy_word) (void *, const void *, unsigned long);
     Dwarf_Unsigned   pe_nt_header_offset;

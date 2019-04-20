@@ -55,12 +55,23 @@
 
 /* New March 2017 */
 int
-dwarf_elf_init_b(dwarf_elf_handle elf_file_pointer,
+dwarf_elf_init_b(
+#ifndef DWARF_WITH_LIBELF
+    UNUSEDARG dwarf_elf_handle elf_file_pointer,
+    UNUSEDARG Dwarf_Unsigned access,
+    UNUSEDARG unsigned group_number,
+    UNUSEDARG Dwarf_Handler errhand,
+    UNUSEDARG Dwarf_Ptr errarg,
+    UNUSEDARG Dwarf_Debug * ret_dbg,
+#else
+    dwarf_elf_handle elf_file_pointer,
     Dwarf_Unsigned access,
     unsigned group_number,
     Dwarf_Handler errhand,
     Dwarf_Ptr errarg,
-    Dwarf_Debug * ret_dbg, Dwarf_Error * error)
+    Dwarf_Debug * ret_dbg,
+#endif /* DWARF_WITH_LIBELF */
+    Dwarf_Error * error)
 {
 #ifndef DWARF_WITH_LIBELF
     DWARF_DBG_ERROR(NULL, DW_DLE_NO_ELF_SUPPORT, DW_DLV_ERROR);
@@ -100,11 +111,21 @@ dwarf_elf_init_b(dwarf_elf_handle elf_file_pointer,
 }
 
 int
-dwarf_elf_init(dwarf_elf_handle elf_file_pointer,
+dwarf_elf_init(
+#ifndef DWARF_WITH_LIBELF
+    UNUSEDARG dwarf_elf_handle elf_file_pointer,
+    UNUSEDARG Dwarf_Unsigned access,
+    UNUSEDARG Dwarf_Handler errhand,
+    UNUSEDARG Dwarf_Ptr errarg,
+    UNUSEDARG Dwarf_Debug * ret_dbg,
+#else
+    dwarf_elf_handle elf_file_pointer,
     Dwarf_Unsigned access,
     Dwarf_Handler errhand,
     Dwarf_Ptr errarg,
-    Dwarf_Debug * ret_dbg, Dwarf_Error * error)
+    Dwarf_Debug * ret_dbg,
+#endif
+    Dwarf_Error * error)
 {
 #ifndef DWARF_WITH_LIBELF
     DWARF_DBG_ERROR(NULL, DW_DLE_NO_ELF_SUPPORT, DW_DLV_ERROR);
@@ -118,7 +139,21 @@ dwarf_elf_init(dwarf_elf_handle elf_file_pointer,
 }
 
 int
-_dwarf_elf_setup(int fd,
+_dwarf_elf_setup(
+#ifndef  DWARF_WITH_LIBELF
+    UNUSEDARG int fd,
+    UNUSEDARG char *path,
+    UNUSEDARG unsigned ftype,
+    UNUSEDARG unsigned endian,
+    UNUSEDARG unsigned offsetsize,
+    UNUSEDARG size_t filesize,
+    UNUSEDARG Dwarf_Unsigned access,
+    UNUSEDARG unsigned groupnumber,
+    UNUSEDARG Dwarf_Handler errhand,
+    UNUSEDARG Dwarf_Ptr errarg,
+    UNUSEDARG Dwarf_Debug *dbg,
+#else
+    int fd,
     UNUSEDARG char *path,
     UNUSEDARG unsigned ftype,
     UNUSEDARG unsigned endian,
@@ -128,7 +163,9 @@ _dwarf_elf_setup(int fd,
     unsigned groupnumber,
     Dwarf_Handler errhand,
     Dwarf_Ptr errarg,
-    Dwarf_Debug *dbg,Dwarf_Error *error)
+    Dwarf_Debug *dbg,
+#endif /* DWARF_WITH_LIBELF */
+    Dwarf_Error *error)
 {
 #ifndef DWARF_WITH_LIBELF
     DWARF_DBG_ERROR(NULL, DW_DLE_PRODUCER_CODE_NOT_AVAILABLE, DW_DLV_ERROR);

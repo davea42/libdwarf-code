@@ -65,8 +65,8 @@ extern "C" {
 #define P printf
 #define F fflush(stdout)
 
-#define RRMOA(f,buf,loc,siz,errc) _dwarf_object_read_random(f, \
-    (char *)buf,loc,siz,errc);
+#define RRMOA(f,buf,loc,siz,fsiz,errc) _dwarf_object_read_random(f, \
+    (char *)buf,loc,siz,fsiz,errc);
 
 #ifdef __cplusplus
 }

@@ -85,7 +85,7 @@ print_strings(Dwarf_Debug dbg)
                 (Dwarf_Unsigned)offset, length, sanitized(name));
         } else {
             printf("name: length %4" DW_PR_DSd " is '%s'\n",
-                length, name);
+                length, sanitized(name));
         }
         offset += length + 1;
     }

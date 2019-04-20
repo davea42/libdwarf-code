@@ -2,7 +2,11 @@ include(configure.cmake)
 
 set_source_group(SOURCES "Source Files" dwarf_abbrev.c 
 dwarf_alloc.c dwarf_arange.c dwarf_die_deliv.c 
-dwarf_dnames.c dwarf_dsc.c dwarf_elf_access.c dwarf_error.c 
+dwarf_dnames.c dwarf_dsc.c dwarf_elf_access.c 
+dwarf_elf_load_headers.c 
+dwarf_elfread.c 
+dwarf_elf_rel_detector.c 
+dwarf_error.c 
 dwarf_form.c dwarf_frame.c dwarf_frame2.c dwarf_funcs.c 
 dwarf_gdbindex.c dwarf_global.c dwarf_groups.c 
 dwarf_harmless.c dwarf_generic_init.c dwarf_init_finish.c 
@@ -28,7 +32,15 @@ pro_types.c pro_vars.c pro_macinfo.c pro_weaks.c)
 set_source_group(HEADERS "Header Files" dwarf.h dwarf_abbrev.h
 dwarf_alloc.h dwarf_arange.h dwarf_base_types.h dwarf_die_deliv.h 
 dwarf_dnames.h dwarf_dsc.h 
-dwarf_elf_access.h dwarf_error.h dwarf_frame.h 
+dwarf_elf_access.h dwarf_elf_defines.h dwarf_elfread.h 
+dwarf_elf_rel_detector.h 
+dwarf_elf_reloc_386.h dwarf_elf_reloc_aarch64.h 
+dwarf_elf_reloc_arm.h dwarf_elf_reloc_mips.h 
+dwarf_elf_reloc_ppc64.h dwarf_elf_reloc_ppc.h 
+dwarf_elf_reloc_sparc.h 
+dwarf_elf_reloc_x86_64.h 
+dwarf_elfstructs.h 
+dwarf_error.h dwarf_frame.h 
 dwarf_funcs.h dwarf_gdbindex.h dwarf_global.h dwarf_harmless.h 
 dwarf_incl.h dwarf_line.h dwarf_loc.h 
 dwarf_machoread.h dwarf_macro.h dwarf_macro5.h 

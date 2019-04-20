@@ -319,7 +319,7 @@ is_pe_object(int fd,
         return DW_DLV_ERROR;
     }
     res = _dwarf_object_read_random(fd,(char *)&dhinmem,
-        0,sizeof(dhinmem),errcode);
+        0,sizeof(dhinmem),filesize,errcode);
     if (res != DW_DLV_OK) {
         return res;
     }
@@ -363,7 +363,7 @@ is_pe_object(int fd,
         return DW_DLV_ERROR;
     }
     res =  _dwarf_object_read_random(fd,(char *)&nt_sig_array[0],
-        nt_address, sizeof(nt_sig_array),errcode);
+        nt_address, sizeof(nt_sig_array),filesize,errcode);
     if (res != DW_DLV_OK) {
         return res;
     }
@@ -379,6 +379,7 @@ is_pe_object(int fd,
     res = _dwarf_object_read_random(fd,(char *)&ifh,
         nt_address + SIZEOFT32,
         sizeof(struct pe_image_file_header),
+        filesize,
         errcode);
     if (res != DW_DLV_OK) {
         return res;

@@ -103,7 +103,9 @@ static int process_one_file(int fd, int tiedfd,
     Elf *efp, Elf * tiedfp,
     const char * file_name,
     const char * tied_file_name,
+#ifdef DWARF_WITH_LIBELF
     int archive,
+#endif
     struct dwconf_s *conf);
 
 static int
@@ -231,6 +233,123 @@ static void flag_data_post_cleanup(void)
     destruct_abbrev_array();
 }
 
+#ifdef DWARF_WITH_LIBELF
+static int
+process_using_libelf(int fd, int tiedfd,
+    const char *file_name,
+    char       *out_path_buf,
+    const char *tied_file_name,
+    int archive)
+{
+    Elf_Cmd cmd = 0;
+    Elf *arf = 0;
+    Elf *elf = 0;
+    Elf *elftied = 0;
+    int archmemnum = 0;
+
+    (void) elf_version(EV_NONE);
+    if (elf_version(EV_CURRENT) == EV_NONE) {
+        (void) fprintf(stderr,
+            "dwarfdump: libelf.a out of date.\n");
+        exit(FAILED);
+    }
+
+    /*  We will use libelf to process an archive
+        so long as is convienient.
+        we don't intend to ever write our own
+        archive reader.  Archive support was never
+        tested and may disappear. */
+    cmd = ELF_C_READ;
+    arf = elf_begin(fd, cmd, (Elf *) 0);
+    if (!arf) {
+        fprintf(stderr, "%s ERROR:  "
+            "Unable to obtain ELF descriptor for %s\n",
+            glflags.program_name,
+            file_name);
+        free(out_path_buf);
+        return (FAILED);
+    }
+    if (esb_string_len(glflags.config_file_tiedpath) > 0) {
+        int isknown = 0;
+        if (tiedfd == -1) {
+            fprintf(stderr, "%s ERROR:  "
+                "can't open tied file %s\n",
+                glflags.program_name,
+                tied_file_name);
+            free(out_path_buf);
+            return (FAILED);
+        }
+        elftied = elf_begin(tiedfd, cmd, (Elf *) 0);
+        if (elf_kind(elftied) == ELF_K_AR) {
+            fprintf(stderr, "%s ERROR:  tied file  %s is "
+                "an archive. Not allowed. Giving up.\n",
+                glflags.program_name,
+                tied_file_name);
+            free(out_path_buf);
+            return (FAILED);
+        }
+        isknown = is_it_known_elf_header(elftied);
+        if (!isknown) {
+            fprintf(stderr,
+                "Cannot process tied file %s: unknown format\n",
+                tied_file_name);
+            free(out_path_buf);
+            return FAILED;
+        }
+    }
+    while ((elf = elf_begin(fd, cmd, arf)) != 0) {
+        int isknown = is_it_known_elf_header(elf);
+
+        if (!isknown) {
+            /* not a 64-bit obj either! */
+            /* dwarfdump is almost-quiet when not an object */
+            if (archive) {
+                Elf_Arhdr *mem_header = elf_getarhdr(elf);
+                const char *memname =
+                    (mem_header && mem_header->ar_name)?
+                    mem_header->ar_name:"";
+
+                /*  / and // archive entries are not archive
+                    objects, but are not errors.
+                    For the ATT/USL type of archive. */
+                if (strcmp(memname,"/") && strcmp(memname,"//")) {
+                    fprintf(stderr, "Can't process archive member "
+                        "%d %s of %s: unknown format\n",
+                        archmemnum,
+                        sanitized(memname),
+                        file_name);
+                }
+            } else {
+                fprintf(stderr, "Can't process %s: unknown format\n",
+                    file_name);
+            }
+            glflags.check_error = 1;
+            cmd = elf_next(elf);
+            elf_end(elf);
+            continue;
+        }
+        flag_data_pre_allocation();
+        process_one_file(fd,tiedfd,
+            elf,elftied,
+            file_name,
+            tied_file_name,
+            archive,
+            glflags.config_file_data);
+        flag_data_post_cleanup();
+        cmd = elf_next(elf);
+        elf_end(elf);
+        archmemnum += 1;
+    }
+    elf_end(arf);
+    if (elftied) {
+        elf_end(elftied);
+        elftied = 0;
+    }
+    return 0; /* normal return. */
+}
+#endif /* DWARF_WITH_LIBELF */
+
+
 /*
    Iterate through dwarf and print all info.
 */
@@ -241,13 +360,6 @@ main(int argc, char *argv[])
     const char * tied_file_name = 0;
     int fd = -1;
     int tiedfd = -1;
-#ifdef DWARF_WITH_LIBELF
-    Elf_Cmd cmd = 0;
-    Elf *arf = 0;
-    Elf *elf = 0;
-    Elf *elftied = 0;
-#endif /* DWARF_WITH_LIBELF */
-    int archmemnum = 0;
     unsigned         ftype = 0;
     unsigned         endian = 0;
     unsigned         offsetsize = 0;
@@ -256,7 +368,6 @@ main(int argc, char *argv[])
     char *out_path_buf = 0;
     unsigned out_path_buf_len = 0;
     int res = 0;
-    int archive = 0;
 
 #ifdef _WIN32
     /*  Open the null device used during formatting printing */
@@ -305,15 +416,6 @@ main(int argc, char *argv[])
 #endif /* _WIN32 */
 
     print_version_details(argv[0],FALSE);
-
-#ifdef DWARF_WITH_LIBELF
-    (void) elf_version(EV_NONE);
-    if (elf_version(EV_CURRENT) == EV_NONE) {
-        (void) fprintf(stderr, "dwarfdump: libelf.a out of date.\n");
-        exit(FAILED);
-    }
-#endif /* DWARF_WITH_LIBELF */
-
     file_name = process_args(argc, argv);
     print_args(argc,argv);
 
@@ -430,134 +532,57 @@ main(int argc, char *argv[])
             return (FAILED);
         }
     }
-    if (ftype == DW_FTYPE_ELF || ftype == DW_FTYPE_ARCHIVE) {
+    if ( (ftype == DW_FTYPE_ELF && (glflags.gf_reloc_flag ||
+        glflags.gf_header_flag)) ||
+        ftype == DW_FTYPE_ARCHIVE) {
 #ifdef DWARF_WITH_LIBELF
+        int excode = 0;
 
-        /*  We will use libelf to process an archive
-            so long as is convienient.
-            we don't intend to ever write our own
-            archive reader.  Archive support was never
-            tested and may disappear. */
-        cmd = ELF_C_READ;
-        arf = elf_begin(fd, cmd, (Elf *) 0);
-        if (!arf) {
-            fprintf(stderr, "%s ERROR:  Unable to obtain ELF descriptor for %s\n",
-                glflags.program_name,
-                file_name);
+        excode = process_using_libelf(fd,tiedfd,file_name,
+            out_path_buf, tied_file_name,
+            (ftype == DW_FTYPE_ARCHIVE)? TRUE:FALSE);
+        if (excode) {
             free(out_path_buf);
-            return (FAILED);
+            exit(excode);
         }
-        if (ftype ==  DW_FTYPE_ARCHIVE) {
-            archive = 1;
-        }
-
-        if (esb_string_len(glflags.config_file_tiedpath) > 0) {
-            int isknown = 0;
-            if (tiedfd == -1) {
-                fprintf(stderr, "%s ERROR:  can't open tied file %s\n",
-                    glflags.program_name,
-                    tied_file_name);
-                free(out_path_buf);
-                return (FAILED);
-            }
-            elftied = elf_begin(tiedfd, cmd, (Elf *) 0);
-            if (elf_kind(elftied) == ELF_K_AR) {
-                fprintf(stderr, "%s ERROR:  tied file  %s is "
-                    "an archive. Not allowed. Giving up.\n",
-                    glflags.program_name,
-                    tied_file_name);
-                free(out_path_buf);
-                return (FAILED);
-            }
-            isknown = is_it_known_elf_header(elftied);
-            if (!isknown) {
-                fprintf(stderr,
-                    "Cannot process tied file %s: unknown format\n",
-                    tied_file_name);
-                free(out_path_buf);
-                return FAILED;
-            }
-        }
-        while ((elf = elf_begin(fd, cmd, arf)) != 0) {
-            int isknown = is_it_known_elf_header(elf);
-
-            if (!isknown) {
-                /* not a 64-bit obj either! */
-                /* dwarfdump is almost-quiet when not an object */
-                if (archive) {
-                    Elf_Arhdr *mem_header = elf_getarhdr(elf);
-                    const char *memname =
-                        (mem_header && mem_header->ar_name)?
-                        mem_header->ar_name:"";
-
-                    /*  / and // archive entries are not archive
-                        objects, but are not errors.
-                        For the ATT/USL type of archive. */
-                    if (strcmp(memname,"/") && strcmp(memname,"//")) {
-                        fprintf(stderr, "Can't process archive member "
-                            "%d %s of %s: unknown format\n",
-                            archmemnum,
-                            sanitized(memname),
-                            file_name);
-                    }
-                } else {
-                    fprintf(stderr, "Can't process %s: unknown format\n",
-                        file_name);
-                }
-                glflags.check_error = 1;
-                cmd = elf_next(elf);
-                elf_end(elf);
-                continue;
-            }
-            flag_data_pre_allocation();
-            process_one_file(fd,tiedfd,
-                elf,elftied,
-                file_name,
-                tied_file_name,
-                archive,
-                glflags.config_file_data);
-            flag_data_post_cleanup();
-            cmd = elf_next(elf);
-            elf_end(elf);
-            archmemnum += 1;
-        }
-        elf_end(arf);
-        if (elftied) {
-            elf_end(elftied);
-            elftied = 0;
-        }
-#else /* DWARF_WITH_LIBELF */
-        fprintf(stderr, "Can't process %s: allowing only non-elf.\n",
+#else /* !DWARF_WITH_LIBELF */
+        fprintf(stderr, "Can't process %s: archives and "
+            "printing elf headers not supported in this dwarfdump "
+            "--disable-libelf build.\n",
             file_name);
 #endif /* DWARF_WITH_LIBELF */
-    } else if (ftype == DW_FTYPE_MACH_O) {
-        int mach_o_archive = 0; /* archives not supported. */
-
+    } else if (ftype == DW_FTYPE_ELF) {
         flag_data_pre_allocation();
         process_one_file(fd,tiedfd,
-#ifdef DWARF_WITH_LIBELF
-            elf,elftied,
-#else /* DWARF_WITH_LIBELF */
             0,0,
-#endif /* DWARF_WITH_LIBELF */
             file_name,
             tied_file_name,
-            mach_o_archive,
+#ifdef DWARF_WITH_LIBELF
+            0 /* elf_archive */,
+#endif
+            glflags.config_file_data);
+        flag_data_post_cleanup();
+    } else if (ftype == DW_FTYPE_MACH_O) {
+        flag_data_pre_allocation();
+        process_one_file(fd,tiedfd,
+            0,0,
+            file_name,
+            tied_file_name,
+#ifdef DWARF_WITH_LIBELF
+            0 /* mach_o_archive */,
+#endif
             glflags.config_file_data);
         flag_data_post_cleanup();
     } else if (ftype == DW_FTYPE_PE) {
-        int pe_archive = 0; /* archives not supported. */
 
         flag_data_pre_allocation();
         process_one_file(fd,tiedfd,
-#ifdef DWARF_WITH_LIBELF
-            elf,elftied,
-#else /* DWARF_WITH_LIBELF */
             0,0,
-#endif /* DWARF_WITH_LIBELF */
             file_name,
             tied_file_name,
-            pe_archive,
+#ifdef DWARF_WITH_LIBELF
+            0/* pe_archive */,
+#endif
             glflags.config_file_data);
         flag_data_post_cleanup();
     } else {
@@ -756,7 +781,9 @@ process_one_file(int fd, int tiedfd,
     Elf *elf, Elf *tiedelf,
     const char * file_name,
     const char * tied_file_name,
+#ifdef DWARF_WITH_LIBELF
     int archive,
+#endif
     struct dwconf_s *l_config_file_data)
 {
     Dwarf_Debug dbg = 0;

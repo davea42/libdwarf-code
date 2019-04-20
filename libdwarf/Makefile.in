@@ -142,6 +142,9 @@ am_libdwarf_la_OBJECTS = libdwarf_la-dwarf_abbrev.lo \
 	libdwarf_la-dwarf_alloc.lo libdwarf_la-dwarf_arange.lo \
 	libdwarf_la-dwarf_die_deliv.lo libdwarf_la-dwarf_dnames.lo \
 	libdwarf_la-dwarf_dsc.lo libdwarf_la-dwarf_elf_access.lo \
+	libdwarf_la-dwarf_elf_load_headers.lo \
+	libdwarf_la-dwarf_elfread.lo \
+	libdwarf_la-dwarf_elf_rel_detector.lo \
 	libdwarf_la-dwarf_error.lo libdwarf_la-dwarf_form.lo \
 	libdwarf_la-dwarf_frame.lo libdwarf_la-dwarf_frame2.lo \
 	libdwarf_la-dwarf_funcs.lo libdwarf_la-dwarf_gdbindex.lo \
@@ -574,6 +577,21 @@ dwarf_dsc.c \
 dwarf_dsc.h \
 dwarf_elf_access.c \
 dwarf_elf_access.h \
+dwarf_elf_defines.h \
+dwarf_elf_load_headers.c \
+dwarf_elfread.c \
+dwarf_elfread.h \
+dwarf_elf_rel_detector.c \
+dwarf_elf_rel_detector.h \
+dwarf_elf_reloc_386.h \
+dwarf_elf_reloc_aarch64.h \
+dwarf_elf_reloc_arm.h \
+dwarf_elf_reloc_mips.h \
+dwarf_elf_reloc_ppc64.h \
+dwarf_elf_reloc_ppc.h \
+dwarf_elf_reloc_sparc.h \
+dwarf_elf_reloc_x86_64.h \
+dwarf_elfstructs.h \
 dwarf_errmsg_list.h \
 dwarf_error.c \
 dwarf_error.h \
@@ -830,6 +848,9 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdwarf_la-dwarf_dnames.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdwarf_la-dwarf_dsc.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdwarf_la-dwarf_elf_access.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdwarf_la-dwarf_elf_load_headers.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdwarf_la-dwarf_elf_rel_detector.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdwarf_la-dwarf_elfread.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdwarf_la-dwarf_error.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdwarf_la-dwarf_form.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdwarf_la-dwarf_frame.Plo@am__quote@
@@ -958,6 +979,27 @@ libdwarf_la-dwarf_elf_access.lo: dwarf_elf_access.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='dwarf_elf_access.c' object='libdwarf_la-dwarf_elf_access.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdwarf_la_CFLAGS) $(CFLAGS) -c -o libdwarf_la-dwarf_elf_access.lo `test -f 'dwarf_elf_access.c' || echo '$(srcdir)/'`dwarf_elf_access.c
+
+libdwarf_la-dwarf_elf_load_headers.lo: dwarf_elf_load_headers.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdwarf_la_CFLAGS) $(CFLAGS) -MT libdwarf_la-dwarf_elf_load_headers.lo -MD -MP -MF $(DEPDIR)/libdwarf_la-dwarf_elf_load_headers.Tpo -c -o libdwarf_la-dwarf_elf_load_headers.lo `test -f 'dwarf_elf_load_headers.c' || echo '$(srcdir)/'`dwarf_elf_load_headers.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libdwarf_la-dwarf_elf_load_headers.Tpo $(DEPDIR)/libdwarf_la-dwarf_elf_load_headers.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='dwarf_elf_load_headers.c' object='libdwarf_la-dwarf_elf_load_headers.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdwarf_la_CFLAGS) $(CFLAGS) -c -o libdwarf_la-dwarf_elf_load_headers.lo `test -f 'dwarf_elf_load_headers.c' || echo '$(srcdir)/'`dwarf_elf_load_headers.c
+
+libdwarf_la-dwarf_elfread.lo: dwarf_elfread.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdwarf_la_CFLAGS) $(CFLAGS) -MT libdwarf_la-dwarf_elfread.lo -MD -MP -MF $(DEPDIR)/libdwarf_la-dwarf_elfread.Tpo -c -o libdwarf_la-dwarf_elfread.lo `test -f 'dwarf_elfread.c' || echo '$(srcdir)/'`dwarf_elfread.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libdwarf_la-dwarf_elfread.Tpo $(DEPDIR)/libdwarf_la-dwarf_elfread.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='dwarf_elfread.c' object='libdwarf_la-dwarf_elfread.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdwarf_la_CFLAGS) $(CFLAGS) -c -o libdwarf_la-dwarf_elfread.lo `test -f 'dwarf_elfread.c' || echo '$(srcdir)/'`dwarf_elfread.c
+
+libdwarf_la-dwarf_elf_rel_detector.lo: dwarf_elf_rel_detector.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdwarf_la_CFLAGS) $(CFLAGS) -MT libdwarf_la-dwarf_elf_rel_detector.lo -MD -MP -MF $(DEPDIR)/libdwarf_la-dwarf_elf_rel_detector.Tpo -c -o libdwarf_la-dwarf_elf_rel_detector.lo `test -f 'dwarf_elf_rel_detector.c' || echo '$(srcdir)/'`dwarf_elf_rel_detector.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libdwarf_la-dwarf_elf_rel_detector.Tpo $(DEPDIR)/libdwarf_la-dwarf_elf_rel_detector.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='dwarf_elf_rel_detector.c' object='libdwarf_la-dwarf_elf_rel_detector.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdwarf_la_CFLAGS) $(CFLAGS) -c -o libdwarf_la-dwarf_elf_rel_detector.lo `test -f 'dwarf_elf_rel_detector.c' || echo '$(srcdir)/'`dwarf_elf_rel_detector.c
 
 libdwarf_la-dwarf_error.lo: dwarf_error.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdwarf_la_CFLAGS) $(CFLAGS) -MT libdwarf_la-dwarf_error.lo -MD -MP -MF $(DEPDIR)/libdwarf_la-dwarf_error.Tpo -c -o libdwarf_la-dwarf_error.lo `test -f 'dwarf_error.c' || echo '$(srcdir)/'`dwarf_error.c

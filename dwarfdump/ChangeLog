@@ -1,3 +1,18 @@
+2019-04-19 David Anderson
+     * Apology. This enhances pubnames-like printing
+       and uses non-libelf elf access as much as possible
+       (even if libelf present). With --disable-libelf
+       it allows all but printing Elf section headers
+       and relocation records.  It's excessively large
+       for one commit. Sorry.
+     * command_options.c: Conditionalize the help message
+       so the Elf section printing is not shown if
+       --disable-libelf chosen at configure time.
+     * dwarfdump.1: Mention that --disable-libelf removes
+       certain elf section header printing options.
+     * dwarfdump.c: Implements the elf reading changes.
+     * print_strings.c: Fixed a printf to use sanitized()
+       so we don't print non-ascii (we use uri form instead).
 2019-03-08 David Anderson
      * print_pubnames.c: Remove trailing whitespace.
 2019-03-07 David Anderson

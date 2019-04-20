@@ -453,6 +453,7 @@ static const char *usage_long_text[] = {
 "----------------------------------------------------------------------",
 "Print Relocations Info",
 "----------------------------------------------------------------------",
+#ifdef DWARF_WITH_LIBELF
 "-o   --reloc           Print relocation info [afiloprR]",
 "-oa  --reloc-abbrev    Print relocation .debug_abbrev section",
 "-or  --reloc-aranges   Print relocation .debug_aranges section",
@@ -462,10 +463,15 @@ static const char *usage_long_text[] = {
 "-oo  --reloc-loc       Print relocation .debug_loc section",
 "-op  --reloc-pubnames  Print relocation .debug_pubnames section",
 "-oR  --reloc-ranges    Print relocation .debug_ranges section",
+#else
+"  libelf not present, use GNU readelf or readelfobj",
+"  to see relocations",
+#endif /* DWARF_WITH_LIBELF */
 " ",
 "----------------------------------------------------------------------",
 "Print ELF sections header",
 "----------------------------------------------------------------------",
+#ifdef DWARF_WITH_LIBELF
 "-E   --elf           Print object Header and/or section information",
 "                     Same as -E[adfhiIlmoprRstx]",
 "-Ea  --elf-abbrev    Print .debug_abbrev header",
@@ -484,6 +490,10 @@ static const char *usage_long_text[] = {
 "-ER  --elf-ranges    Print .debug_ranges header",
 "-Es  --elf-strings   Print .debug_string header",
 "-Ex  --elf-text      Print .text header",
+#else
+"  libelf not present, use GNU readelf or readelfobj",
+"  to see elf file details",
+#endif /* DWARF_WITH_LIBELF */
 " ",
 "----------------------------------------------------------------------",
 "Check DWARF Integrity",
