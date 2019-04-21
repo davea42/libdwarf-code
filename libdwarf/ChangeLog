@@ -1,8 +1,11 @@
 2019-04-21   David Anderson
+      * dwarf_pe_descr.h: Added a comment specifying
+        a MS web page describing
+        how  the section data length and content is 
+        calculated and handled.
       * dwarf_peread.c(pe_get_section_info): The understanding
         of the length of section data was overly simplistic.
-        Hopefully correct now. And with all the appropriate
-        bytes filled in properly in this function.
+        Now with all the bytes filled in properly in this function.
 2019-04-21   David Anderson
       * dwarf_peread.c: Now getting pe section
         data returns a meaningful section virtual address.
