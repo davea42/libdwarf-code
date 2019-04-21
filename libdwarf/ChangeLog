@@ -1,3 +1,6 @@
+2019-04-21   David Anderson
+      * dwarf_peread.c: Now getting pe section
+        data returns a meaningful section virtual address.
 2019-04-19   David Anderson
       * CMakeLists.txt: Add new files to the files to build.
       * Makefile.am: add the new .h and .c files.
