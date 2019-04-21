@@ -16,7 +16,7 @@ m4_define([lt_age], [v_min])
 
 ### Sets the release name. 
 ###m4_define([v_date], [m4_esyscmd_s([date "+%Y%m%d"])])
-m4_define([v_date], [20190223])])
+m4_define([v_date], [20190421])])
 
 AC_PREREQ([2.52])
 ### 2nd arg to AC_INIT is the version 'number'.
@@ -444,8 +444,8 @@ AC_C_BIGENDIAN
 
 # gcc accepts even totally bogus -Wno flags. Other compilers..no
 # -Wno-long-long suppresses warnings on 'long long'
-# -Wno-pedantic-ms-format
-# compiler flags
+# -Wno-pedantic-ms-format (which only exists in mingw)
+# suppresses warnings about I64 printf format.
 AS_IF(
     [ test "x$enable_wall" = "xyes" ],
     [ 
@@ -453,10 +453,13 @@ AS_IF(
 
        c_compiler_flags="${cxx_compiler_flags} -Wmissing-prototypes -Wdeclaration-after-statement -Wbad-function-cast -Wmissing-parameter-type -Wnested-externs"
     ]
-    ,
+    )
+AS_IF(
+    [ test "x$enable_nonstandardprintf" = "xyes" ],
     [
-       c_compiler_flags=""
-       cxx_compiler_flags=""
+       cxx_compiler_flags="$cxx_compiler_flags -Wno-pedantic-ms-format"
+
+       c_compiler_flags="$c_compiler_flags -Wno-pedantic-ms-format"
     ]
     )
 

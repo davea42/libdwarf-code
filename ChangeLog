@@ -1,3 +1,10 @@
+2019-04-21  David Anderson
+    * configure.ac: Version 20190421. Now --enable-nonstandardprintf
+      (build with some non-standard printf formats allowed)
+      adds -Wno-pedantic-ms-format so gcc will not warn
+      about the non-standard formats. Only affects mingw.
+      Otherwise the -Wno-pedantic-ms-format option
+      (which nothing but mingw has) gets dropped.
 2019-04-19  David Anderson
     * NEWS: Now --disable-libelf just disables linking
       with libelf.  Elf files are read (libdwarf) and
