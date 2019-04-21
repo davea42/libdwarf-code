@@ -202,7 +202,10 @@ pe_get_section_info (void *obj,
         return_section->addr = pep->pe_OptionalHeader.ImageBase + 
             sp->VirtualAddress; ;
         return_section->type = 0;
-        return_section->size = sp->SizeOfRawData;
+        /*  SizeOfRawData can be rounded or truncated,
+            use VirtualSize for the real analog of Elf
+            section size. */
+        return_section->size = sp->VirtualSize;
         return_section->name = sp->dwarfsectname;
         return_section->link = 0;
         return_section->info = 0;
@@ -302,17 +305,23 @@ pe_load_section (void *obj, Dwarf_Half section_index,
     if (0 < section_index &&
         section_index < pep->pe_section_count) {
         int res = 0;
-
         struct dwarf_pe_generic_image_section_header *sp =
             pep->pe_sectionptr + section_index;
+        Dwarf_Unsigned read_length = 0;
+
         if(sp->loaded_data) {
             *return_data = sp->loaded_data;
             return DW_DLV_OK;
         }
-        if (!sp->SizeOfRawData) {
+        if (!sp->VirtualSize) {
             return DW_DLV_NO_ENTRY;
         }
-        if ((sp->SizeOfRawData + sp->PointerToRawData) >
+        read_length = sp->SizeOfRawData;
+        if(sp->VirtualSize < read_length) {
+            /* Don't read padding that wasn't allocated in memory */
+            read_length = sp->VirtualSize;
+        }
+        if ((read_length + sp->PointerToRawData) >
             pep->pe_filesize) {
             *error = DW_DLE_FILE_TOO_SMALL;
             return DW_DLV_ERROR;
@@ -324,7 +333,7 @@ pe_load_section (void *obj, Dwarf_Half section_index,
         }
         res = _dwarf_object_read_random(pep->pe_fd,
             (char *)sp->loaded_data,
-            sp->PointerToRawData, sp->SizeOfRawData,
+            sp->PointerToRawData, read_length,
             pep->pe_filesize,
             error);
         if (res != DW_DLV_OK) {
@@ -332,6 +341,12 @@ pe_load_section (void *obj, Dwarf_Half section_index,
             sp->loaded_data = 0;
             return res;
         }
+        if(sp->VirtualSize > read_length) {
+            /* Zero space that was allocated but 
+               truncated from the file */
+            memset(sp->loaded_data + read_length, 0, 
+                (sp->VirtualSize - read_length));
+         }
         *return_data = sp->loaded_data;
         return DW_DLV_OK;
     }
