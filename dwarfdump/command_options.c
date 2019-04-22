@@ -96,17 +96,23 @@ do_all(void)
         glflags.gf_abbrev_flag = TRUE;
         glflags.gf_ranges_flag = TRUE;
         because nothing in
-        the DWARF spec guarantees the sections are free of random bytes
-        in areas not referenced by .debug_info */
+        the DWARF spec guarantees the sections are free of 
+        random bytes in areas not referenced by .debug_info */
     glflags.gf_string_flag = TRUE;
     /*  Do not do
         glflags.gf_reloc_flag = TRUE;
         as print_relocs makes no sense for non-elf dwarfdump users.  */
     glflags.gf_static_func_flag = TRUE; /* SGI only*/
     glflags.gf_static_var_flag = TRUE; /* SGI only*/
-    glflags.gf_pubtypes_flag = TRUE;  /* both SGI typenames and dwarf_pubtypes. */
+    glflags.gf_pubtypes_flag = TRUE;  /* both SGI typenames 
+                                         and dwarf_pubtypes. */
     glflags.gf_weakname_flag = TRUE; /* SGI only*/
-    glflags.gf_header_flag = TRUE; /* Dump header info */
+#if 0
+    glflags.gf_header_flag = TRUE;
+    /*  Setting this flag without saying what sections to print
+        means no section headers print. So the above
+        gf_header_flag setting here has long been a no-op. */
+#endif
     glflags.gf_debug_names_flag = TRUE;
 }
 

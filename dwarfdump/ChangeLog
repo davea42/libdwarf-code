@@ -1,4 +1,9 @@
 2019-04-22 David Anderson
+     * dwarfdump.c: Prevent the -a option from requesting
+       Elf section data printing (no section
+       data was printed anyway as the request was
+       incomplete).
+2019-04-22 David Anderson
      * dwarfdump.c: Add test for _MSC_VER for Windows MSVC.
      * print_die.c: Using uintptr_t to suppress a warning.
 2019-04-22 David Anderson
