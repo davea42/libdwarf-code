@@ -40,6 +40,8 @@
 #include <limits.h>
 #ifdef HAVE_UNISTD_H
 #include <unistd.h> /* for dup2() */
+#elif defined(_WIN32) && defined(_MSC_VER)
+#include <io.h>
 #endif
 
 #include "makename.h"

@@ -65,12 +65,10 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #endif
 #include "stdlib.h" /* for free() */
 #ifdef HAVE_STDINT_H
-/* For uintptr_t */
-#include <stdint.h>
+#include <stdint.h> /* For uintptr_t */
 #endif /* HAVE_STDINT_H */
 #ifdef HAVE_INTTYPES_H
-/* For uintptr_t */
-#include <inttypes.h>
+#include <inttypes.h> /* For uintptr_t */
 #endif /* HAVE_INTTYPES_H */
 #include <stdio.h> /* for printf */
 #include "dwarf_tsearch.h"

@@ -1,3 +1,5 @@
+2019-04-22 David Anderson
+     * createirepfrombinary.cc: Add test for _MSC_VER for Windows MSVC.
 2019-03-07 David Anderson
      * irepdie.h: The IRAttr assignment constructor
        had a memory leak. Fixed.

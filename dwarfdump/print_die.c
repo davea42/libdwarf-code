@@ -31,6 +31,12 @@
 
 
 #include "globals.h"
+#ifdef HAVE_STDINT_H
+#include <stdint.h> /* For uintptr_t */
+#endif /* HAVE_STDINT_H */
+#ifdef HAVE_INTTYPES_H
+#include <inttypes.h> /* For uintptr_t */
+#endif /* HAVE_INTTYPES_H */
 #include "naming.h"
 #include "esb.h"                /* For flexible string buffer. */
 #include "esb_using_functions.h"
@@ -3853,7 +3859,7 @@ _dwarf_print_one_expr_op(Dwarf_Debug dbg,
                     /*  This is a really ugly cast, a way
                         to implement DW_OP_implicit value in
                         this libdwarf context. */
-                    bp = (const unsigned char *) opd2;
+                    bp = (const unsigned char *)(uintptr_t) opd2;
                     show_contents(string_out,print_len,bp);
                 }
             }
@@ -3890,7 +3896,7 @@ _dwarf_print_one_expr_op(Dwarf_Debug dbg,
 
             length = opd1;
             bracket_hex(" ",opd1,"",string_out);
-            bp = (Dwarf_Small *) opd2;
+            bp = (Dwarf_Small *)(uintptr_t) opd2;
             if (!bp) {
                 esb_append(string_out,
                     "ERROR: Null databyte pointer DW_OP_entry_value ");
@@ -3916,9 +3922,8 @@ _dwarf_print_one_expr_op(Dwarf_Debug dbg,
             esb_append_printf_u(string_out,
                 "%u" , length);
 #endif
-
             /* Now point to the data bytes of the const. */
-            bp = (Dwarf_Small *) opd3;
+            bp = (Dwarf_Small *)(uintptr_t)opd3;
             if (!bp) {
                 esb_append(string_out,
                     "ERROR: Null databyte pointer DW_OP_const_type ");

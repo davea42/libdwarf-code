@@ -1,4 +1,7 @@
 2019-04-22 David Anderson
+     * dwarfdump.c: Add test for _MSC_VER for Windows MSVC.
+     * print_die.c: Using uintptr_t to suppress a warning.
+2019-04-22 David Anderson
      * checkutil.c: Now uses uintptr_t so we can avoid
        compile-time warnings about converting pointer to
        integer.
@@ -17,7 +20,7 @@
        (even if libelf present). With --disable-libelf
        it allows all but printing Elf section headers
        and relocation records.  It's excessively large
-       for one commit. Sorry.
+       for one commit(mainly in libdwarf). Sorry.
      * command_options.c: Conditionalize the help message
        so the Elf section printing is not shown if
        --disable-libelf chosen at configure time.

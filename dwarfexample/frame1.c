@@ -48,7 +48,15 @@
 #include <stdlib.h>     /* For exit() */
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>     /* For close() */
+#elif defined(_WIN32) && defined(_MSC_VER)
+#include <io.h>
 #endif
+#ifdef HAVE_STDINT_H
+#include <stdint.h> /* For uintptr_t */
+#endif /* HAVE_STDINT_H */
+#ifdef HAVE_INTTYPES_H
+#include <inttypes.h> /* For uintptr_t */
+#endif /* HAVE_INTTYPES_H */
 #include <string.h>     /* For strcmp* */
 #include <stdio.h>
 #include <errno.h>
@@ -343,7 +351,8 @@ print_fde_col(Dwarf_Signed k,
         print_reg(rule_id);
         printf("=");
         printf("expr-block-len=%" DW_PR_DSd , offset_or_block_len);
-        printf(" block-ptr=%" DW_PR_DUx , (Dwarf_Unsigned)block_ptr);
+        printf(" block-ptr=%" DW_PR_DUx , 
+            (Dwarf_Unsigned)(uintptr_t)block_ptr);
 #if 0
         {
             char pref[40];

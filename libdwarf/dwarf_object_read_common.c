@@ -36,6 +36,10 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <sys/types.h> /* lseek and read */
 #ifdef HAVE_UNISTD_H
 #include <unistd.h> /* lseek read close */
+#elif defined(_WIN32) && defined(_MSC_VER)
+#include <io.h>
+#include <basetsd.h>
+typedef SSIZE_T ssizet /* MSVC does not have POSIX ssize_t */
 #endif /* HAVE_UNISTD_H */
 #include "libdwarf.h" /* For error codes. */
 #include "dwarf_object_read_common.h"
