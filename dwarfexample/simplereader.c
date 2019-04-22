@@ -101,16 +101,20 @@
 #include <stdlib.h>     /* For exit() */
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>     /* For close() */
+#elif defined(_WIN32) && defined(_MSC_VER)
+#include <io.h>
 #endif
 #include <stdio.h>
 #include <errno.h>
 #include <string.h>
+#ifdef HAVE_STDINT_H
+#include <stdint.h> /* For uintptr_t */
+#endif /* HAVE_STDINT_H */
+#ifdef HAVE_INTTYPES_H
+#include <inttypes.h> /* For uintptr_t */
+#endif /* HAVE_INTTYPES_H */
 #include "dwarf.h"
 #include "libdwarf.h"
-#ifdef _WIN32
-#include <stdint.h>
-#include <io.h>
-#endif
 
 #ifndef O_RDONLY
 /*  This is for a Windows environment */
@@ -363,7 +367,7 @@ print_debug_fission_header(struct Dwarf_Debug_Fission_Per_CU_s *fsd)
 static void
 simple_error_handler(Dwarf_Error error, Dwarf_Ptr errarg)
 {
-    Dwarf_Unsigned unused =  (Dwarf_Unsigned)errarg;
+    Dwarf_Unsigned unused =  (Dwarf_Unsigned)(uintptr_t)errarg;
     printf("\nlibdwarf error detected: 0x%" DW_PR_DUx " %s\n",
         dwarf_errno(error),dwarf_errmsg(error));
     printf("libdwarf errarg. Not really used here %" DW_PR_DUu "\n",

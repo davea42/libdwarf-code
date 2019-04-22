@@ -1,6 +1,7 @@
 2019-04-22 David Anderson
      * frame1.c: Add use of uintptr_t to suppress
-       compiler warning.
+       compiler warning. Fix _WIN32 #includes for _MSC_VER
+       and io.h to the usual way we do that.
 2019-04-22 David Anderson
      * frame1.c: Add test for _MSC_VER for Windows MSVC.
 2019-03-08 David Anderson
