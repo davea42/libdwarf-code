@@ -27,6 +27,12 @@
 
 #include "config.h"
 #include <stdio.h> /* for debugging only. */
+#ifdef HAVE_STDINT_H
+#include <stdint.h> /* For uintptr_t */
+#endif /* HAVE_STDINT_H */
+#ifdef HAVE_INTTYPES_H
+#include <inttypes.h> /* For uintptr_t */
+#endif /* HAVE_INTTYPES_H */
 #include "dwarf_incl.h"
 #include "dwarf_alloc.h"
 #include "dwarf_error.h"
@@ -577,7 +583,7 @@ _dwarf_read_loc_expr_op(Dwarf_Debug dbg,
         /*  This using the second operand as a pointer
             is quite ugly. */
         /*  This gets an ugly compiler warning. Sorry. */
-        operand2 = (Dwarf_Unsigned)loc_ptr;
+        operand2 = (Dwarf_Unsigned)(uintptr_t)loc_ptr;
         offset = offset + operand1;
         loc_ptr = loc_ptr + operand1;
         if (loc_ptr > section_end) {
@@ -661,7 +667,7 @@ _dwarf_read_loc_expr_op(Dwarf_Debug dbg,
         /*  This using the second operand as a pointer
             is quite ugly. */
         /*  This gets an ugly compiler warning. Sorry. */
-        operand2 = (Dwarf_Unsigned)loc_ptr;
+        operand2 = (Dwarf_Unsigned)(uintptr_t)loc_ptr;
         offset = offset + operand1;
         loc_ptr = loc_ptr + operand1;
         if (loc_ptr > section_end) {
@@ -685,7 +691,7 @@ _dwarf_read_loc_expr_op(Dwarf_Debug dbg,
         /*  Operand 3 points to a value in the block of size
             just gotten as operand2. */
         /*  This gets an ugly compiler warning. Sorry. */
-        operand3 = (Dwarf_Unsigned) loc_ptr;
+        operand3 = (Dwarf_Unsigned)(uintptr_t)loc_ptr;
         loc_ptr = loc_ptr + operand2;
         if (loc_ptr > section_end) {
             _dwarf_error(dbg,error,DW_DLE_LOCEXPR_OFF_SECTION_END);

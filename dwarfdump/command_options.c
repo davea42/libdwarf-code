@@ -369,8 +369,10 @@ static void arg_search_any(void);
 static void arg_search_any_count(void);
 static void arg_search_match(void);
 static void arg_search_match_count(void);
+#ifdef HAVE_REGEX
 static void arg_search_regex(void);
 static void arg_search_regex_count(void);
+#endif /* HAVE_REGEX */
 static void arg_search_count(void);
 static void arg_search_invalid(void);
 

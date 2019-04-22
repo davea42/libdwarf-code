@@ -29,8 +29,14 @@
 #include "libdwarfdefs.h"
 #include <stdio.h>
 #include <string.h>
-#include "pro_incl.h"
 #include <stddef.h>
+#ifdef HAVE_STDINT_H
+#include <stdint.h> /* For uintptr_t */
+#endif /* HAVE_STDINT_H */
+#ifdef HAVE_INTTYPES_H
+#include <inttypes.h> /* For uintptr_t */
+#endif /* HAVE_INTTYPES_H */
+#include "pro_incl.h"
 #include "dwarf.h"
 #include "libdwarf.h"
 #include "pro_opaque.h"
@@ -644,7 +650,7 @@ dwarf_expr_into_block(Dwarf_P_Expr expr,
     if (res != DW_DLV_OK) {
         return (DW_DLV_BADADDR);
     }
-    return (Dwarf_Addr)addr;
+    return (Dwarf_Addr)(uintptr_t)addr;
 }
 
 

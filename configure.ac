@@ -16,7 +16,7 @@ m4_define([lt_age], [v_min])
 
 ### Sets the release name. 
 ###m4_define([v_date], [m4_esyscmd_s([date "+%Y%m%d"])])
-m4_define([v_date], [20190421])])
+m4_define([v_date], [20190422])])
 
 AC_PREREQ([2.52])
 ### 2nd arg to AC_INIT is the version 'number'.
@@ -141,9 +141,6 @@ AC_ARG_ENABLE(nonstandardprintf,AS_HELP_STRING([--enable-nonstandardprintf],
         ],
         [enable_nonstandardprintf="no"])
 
-
-
-
 ### Default options with respect to host
 
 AC_CANONICAL_HOST
@@ -188,6 +185,8 @@ AC_ARG_VAR([DWARF_LIBS], [linker flags when linking libdwarf])
 
 ### MacOS does not have malloc.h
 AC_CHECK_HEADERS([unistd.h sys/types.h regex.h malloc.h])
+### for uintptr_t 
+AC_CHECK_HEADERS([stdint.h inttypes.h])
 AC_CHECK_HEADERS([windows.h])
 
 AC_CHECK_HEADERS([zlib.h])
@@ -196,6 +195,10 @@ AS_IF(
     [ have_pc_zlib="yes" ; echo "have zlib" ; 
       DWARF_LIBS="${DWARF_LIBS} -lz" ],
     [ have_pc_zlib="no" ; echo "no zlib" ])
+
+### for use in casts to uint to avoid 32bit warnings.
+AC_TYPE_UINTPTR_T
+
 
 # test Elf headers in the preprocessor path search
 CPPFLAGS_save=${CPPFLAGS}

@@ -26,9 +26,17 @@
 
 #include "config.h"
 #include "dwarf_incl.h"
-#include "dwarf_tsearch.h"
+#ifdef HAVE_STDLIB_H
 #include <stdlib.h> /* for free(). */
+#endif /* HAVE_STDLIB_H */
 #include <stdio.h> /* For debugging. */
+#ifdef HAVE_STDINT_H
+#include <stdint.h> /* For uintptr_t */
+#endif /* HAVE_STDINT_H */
+#ifdef HAVE_INTTYPES_H
+#include <inttypes.h> /* For uintptr_t */
+#endif /* HAVE_INTTYPES_H */
+#include "dwarf_tsearch.h"
 
 #define TRUE  1
 #define FALSE 0

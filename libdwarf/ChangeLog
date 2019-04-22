@@ -1,3 +1,18 @@
+2019-04-22   David Anderson
+      * dwarf_frame.c: Add ifdef/include of stdint.h
+        and inttypes.h and add casts using uintptr_t
+        so we avoid some compiler warnings.
+      * dwarf_groups.c,dwarf_tied.c,
+        pro_alloc.c,pro_die.c,pro_init.c: Add ifdef/include
+        of stdint.h
+        and inttypes.h as the updated dwarf_tsearch.h
+        requires uintptr_t.
+      * dwarf_loc.c,pro_expr.c: Add ifdef/include of stdint.h
+        and inttypes.h  so we can use uintptr_t
+        in casts and avoid compiler warnings.
+      * dwarf_tsearchhash.c: Add ifdef/include of stdint.h
+        and inttypes.h for dwarf_tsearch.h so we can use uintptr_t
+        in casts and avoid compiler warnings.
 2019-04-21   David Anderson
       * dwarf_pe_descr.h: Added a comment specifying
         a MS web page describing

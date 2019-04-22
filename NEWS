@@ -4,7 +4,9 @@
   Such a build will not need or use libelf or elf.h .
   The dwarfdump options that display Elf section headers
   or relocation record data are not available in a 
-  --disable-libelf build.
+  --disable-libelf build. 
+  Nor is dwarfdump's support of reading archive files
+  available in a --disable-libelf build. 
   This libdwarf detects corrupt Elf object files much sooner
   than before, but does not explain what the corruption
   really is. Use GNU readelf (or readelfobj, a project

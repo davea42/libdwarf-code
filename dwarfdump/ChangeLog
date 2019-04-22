@@ -1,3 +1,16 @@
+2019-04-22 David Anderson
+     * checkutil.c: Now uses uintptr_t so we can avoid
+       compile-time warnings about converting pointer to
+       integer.
+     * command_options.h: Ifdef a couple of static
+       function prototypes so, when regex missing,
+       we do not get warnings of undefined static functions.
+     * dwarf_tsearchbal.c: Add ifdef-d stdint.h and
+       inttypes.h so we can avoid some conversion warnings
+       from printf calls.
+     * dwarf_alloc.c:  Add ifdef-d stdint.h and
+       inttypes.h so we can avoid some conversion warnings
+       from printf calls.
 2019-04-19 David Anderson
      * Apology. This enhances pubnames-like printing
        and uses non-libelf elf access as much as possible

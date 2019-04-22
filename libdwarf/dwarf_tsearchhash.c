@@ -66,6 +66,13 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #endif
 #include "stdlib.h" /* for free() etc */
 #include <stdio.h>  /* for printf() */
+#ifdef HAVE_STDINT_H
+#include <stdint.h> /* For uintptr_t */
+#endif /* HAVE_STDINT_H */
+#ifdef HAVE_INTTYPES_H
+#include <inttypes.h> /* For uintptr_t */
+#endif /* HAVE_INTTYPES_H */
+
 #include "dwarf_tsearch.h"
 
 /*  A table of primes used to size  and resize the hash table.
@@ -223,6 +230,7 @@ dwarf_initialize_search_hash( void **treeptr,
 }
 
 
+/* For debugging */
 static void print_entry(struct ts_entry *t,const char *descr,
     char *(* keyprint)(const void *),
     unsigned long hashpos,
@@ -236,8 +244,8 @@ static void print_entry(struct ts_entry *t,const char *descr,
     printf(
         "[%4lu.%02lu] 0x%08lx <keyptr 0x%08lx> <key %s> %s\n",
         hashpos,chainpos,
-        (unsigned long)t,
-        (unsigned long)t->keyptr,
+        (unsigned long)(uintptr_t)t,
+        (unsigned long)(uintptr_t)t->keyptr,
         v,
         descr);
 }
@@ -255,7 +263,7 @@ dumptree_inner(const struct hs_base *h,
     unsigned long maxchainlength = 0;
     unsigned long chainsgt1 = 0;
     printf("dumptree head ptr : 0x%08lx size %lu entries %lu allowed %lu %s\n",
-        (unsigned long)h,
+        (unsigned long)(uintptr_t)h,
         (unsigned long)h->tablesize_,
         (unsigned long)h->record_count_,
         (unsigned long)h->allowed_fill_,

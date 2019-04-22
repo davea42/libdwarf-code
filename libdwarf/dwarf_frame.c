@@ -28,6 +28,12 @@
 #include "config.h"
 #include <stdio.h>
 #include <stdlib.h>
+#ifdef HAVE_STDINT_H
+#include <stdint.h> /* For uintptr_t */
+#endif /* HAVE_STDINT_H */
+#ifdef HAVE_INTTYPES_H
+#include <inttypes.h> /* For uintptr_t */
+#endif /* HAVE_INTTYPES_H */
 #include "dwarf_incl.h"
 #include "dwarf_alloc.h"
 #include "dwarf_error.h"
@@ -808,7 +814,7 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
                 cfa_reg.ru_value_type = DW_EXPR_EXPRESSION;
                 cfa_reg.ru_offset_or_block_len = block_len;
                 cfa_reg.ru_block = instr_ptr;
-                fp_offset = (Dwarf_Unsigned) instr_ptr;
+                fp_offset = (Dwarf_Unsigned)(uintptr_t)instr_ptr;
                 instr_ptr += block_len;
             }
             break;
@@ -833,7 +839,7 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
                 localregtab[lreg].ru_value_type = DW_EXPR_EXPRESSION;
                 localregtab[lreg].ru_offset_or_block_len = block_len;
                 localregtab[lreg].ru_block = instr_ptr;
-                fp_offset = (Dwarf_Unsigned) instr_ptr;
+                fp_offset = (Dwarf_Unsigned)(uintptr_t)instr_ptr;
                 fp_register = reg_no;
                 instr_ptr += block_len;
             }
@@ -998,7 +1004,7 @@ _dwarf_exec_frame_instr(Dwarf_Bool make_instr,
                 localregtab[lreg].ru_value_type = DW_EXPR_VAL_EXPRESSION;
                 localregtab[lreg].ru_offset_or_block_len = block_len;
                 localregtab[lreg].ru_block = instr_ptr;
-                fp_offset = (Dwarf_Unsigned) instr_ptr;
+                fp_offset = (Dwarf_Unsigned)(uintptr_t)instr_ptr;
 
                 instr_ptr += block_len;
                 fp_register = reg_no;

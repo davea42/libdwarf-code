@@ -49,10 +49,10 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 */
 
-/*  The hashfunc return is now easily changed with
-    cc -Duintptr_t or something. */
+/*  configure ensures uintptr_t defined, but if not,
+    possibly  "-Duintptr_t=unsigned long" might help  */
 #ifndef DW_TSHASHTYPE
-#define DW_TSHASHTYPE unsigned long
+#define DW_TSHASHTYPE uintptr_t
 #endif
 
 /*  The DW_VISIT values passed back to you through

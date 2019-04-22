@@ -30,8 +30,14 @@
 #include "libdwarfdefs.h"
 #include <stdio.h>
 #include <string.h>
-#include "pro_incl.h"
 #include <stddef.h>
+#ifdef HAVE_STDINT_H
+#include <stdint.h> /* For uintptr_t */
+#endif /* HAVE_STDINT_H */
+#ifdef HAVE_INTTYPES_H
+#include <inttypes.h> /* For uintptr_t */
+#endif /* HAVE_INTTYPES_H */
+#include "pro_incl.h"
 #include "dwarf.h"
 #include "libdwarf.h"
 #include "pro_opaque.h"

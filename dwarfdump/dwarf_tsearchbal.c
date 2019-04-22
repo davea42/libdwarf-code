@@ -64,6 +64,14 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define  UNUSEDARG
 #endif
 #include "stdlib.h" /* for free() */
+#ifdef HAVE_STDINT_H
+/* For uintptr_t */
+#include <stdint.h>
+#endif /* HAVE_STDINT_H */
+#ifdef HAVE_INTTYPES_H
+/* For uintptr_t */
+#include <inttypes.h>
+#endif /* HAVE_INTTYPES_H */
 #include <stdio.h> /* for printf */
 #include "dwarf_tsearch.h"
 
@@ -147,12 +155,13 @@ tdump_inner(struct ts_entry *t,
         keyv = keyprint(t->keyptr);
     }
     printf("0x%08lx <keyptr 0x%08lx> <%s %s> <bal %3d> <l 0x%08lx> <r 0x%08lx> %s\n",
-        (unsigned long)t,
-        (unsigned long)t->keyptr,
+        (unsigned long)(uintptr_t)t,
+        (unsigned long)(uintptr_t)t->keyptr,
         t->keyptr?"key ":"null",
         keyv,
         t->balance,
-        (unsigned long)t->llink,(unsigned long)t->rlink,
+        (unsigned long)(uintptr_t)t->llink,
+        (unsigned long)(uintptr_t)t->rlink,
         descr);
     tdump_inner(t->llink,keyprint,"left ",level+1);
 }
@@ -285,7 +294,7 @@ dwarf_tdump(const void*headp_in,
     }
     headdepth = head->llink - (struct ts_entry *)0;
     printf("dumptree head ptr : 0x%08lx tree-depth %lu: %s\n",
-        (unsigned long)head,
+        (unsigned long)(uintptr_t)head,
         (unsigned long)headdepth,
         msg);
     root = head->rlink;

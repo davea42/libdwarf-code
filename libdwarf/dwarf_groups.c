@@ -25,10 +25,16 @@
 
 #include "config.h"
 #include <stdio.h>
+#include <stdlib.h>
+#ifdef HAVE_STDINT_H
+#include <stdint.h> /* For uintptr_t */
+#endif /* HAVE_STDINT_H */
+#ifdef HAVE_INTTYPES_H
+#include <inttypes.h> /* For uintptr_t */
+#endif /* HAVE_INTTYPES_H */
 #include "dwarf_incl.h"
 #include "dwarf_error.h"
 #include "dwarf_tsearch.h"
-#include <stdlib.h>
 
 #define TRUE  1
 #define FALSE 0

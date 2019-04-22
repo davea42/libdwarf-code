@@ -1,3 +1,8 @@
+2019-04-22  David Anderson
+    * configure.ac: Version 20190422. Now tests for
+      stdint.h and inttypes.h. Uses AC_TYPE_UINTPTR_T
+      so we can avoid a lot of warnings in 32bit and
+      mingw builds.
 2019-04-21  David Anderson
     * configure.ac: Version 20190421. Now --enable-nonstandardprintf
       (build with some non-standard printf formats allowed)

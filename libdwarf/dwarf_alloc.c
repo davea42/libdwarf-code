@@ -31,6 +31,12 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#ifdef HAVE_STDINT_H
+#include <stdint.h> /* For uintptr_t */
+#endif /* HAVE_STDINT_H */
+#ifdef HAVE_INTTYPES_H
+#include <inttypes.h> /* For uintptr_t */
+#endif /* HAVE_INTTYPES_H */
 
 #include "dwarf_incl.h"
 #include "dwarf_error.h"
@@ -287,7 +293,7 @@ struct ial_s alloc_instance_basics[ALLOC_AREA_INDEX_TABLE_MAX] = {
 static DW_TSHASHTYPE
 simple_value_hashfunc(const void *keyp)
 {
-    DW_TSHASHTYPE up = (DW_TSHASHTYPE)keyp;
+    DW_TSHASHTYPE up = (DW_TSHASHTYPE)(uintptr_t)keyp;
     return up;
 }
 /*  We did alloc something but not a fixed-length thing.
@@ -326,8 +332,8 @@ tdestroy_free_node(void *nodep)
 static int
 simple_compare_function(const void *l, const void *r)
 {
-    DW_TSHASHTYPE lp = (DW_TSHASHTYPE)l;
-    DW_TSHASHTYPE rp = (DW_TSHASHTYPE)r;
+    DW_TSHASHTYPE lp = (DW_TSHASHTYPE)(uintptr_t)l;
+    DW_TSHASHTYPE rp = (DW_TSHASHTYPE)(uintptr_t)r;
     if(lp < rp) {
         return -1;
     }

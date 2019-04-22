@@ -31,8 +31,14 @@
 
 */
 
-#include "globals.h"
+#include "globals.h" /* It includes config.h  */
 #include <assert.h>
+#ifdef HAVE_STDINT_H
+#include <stdint.h> /* For uintptr_t */
+#endif /* HAVE_STDINT_H */
+#ifdef HAVE_INTTYPES_H
+#include <inttypes.h> /* For uintptr_t */
+#endif /* HAVE_INTTYPES_H */
 #include "esb.h"
 
 /* Private function */
@@ -138,14 +144,14 @@ DumpFullBucketGroup(Bucket_Group *pBucketGroup)
 
     assert(pBucketGroup);
     printf("\nBucket Group at 0x%lx [lower 0x%lx upper 0x%lx]\n",
-        (unsigned long)pBucketGroup,
+        (unsigned long)(uintptr_t)pBucketGroup,
         (unsigned long)pBucketGroup->lower,
         (unsigned long)pBucketGroup->upper);
     for (pBucket = pBucketGroup->pHead; pBucket && pBucket->nEntries;
         pBucket = pBucket->pNext) {
 
         printf("LowPC & HighPC records for bucket %d, at 0x%08lx\n",
-            nBucketNo++,(unsigned long)pBucket);
+            nBucketNo++,(unsigned long)(uintptr_t)pBucket);
         for (nIndex = 0; nIndex < pBucket->nEntries; ++nIndex) {
             pBucketData = &pBucket->Entries[nIndex];
             printf("[%06d] Key = 0x%08" DW_PR_DUx ", Base = 0x%08" DW_PR_DUx
