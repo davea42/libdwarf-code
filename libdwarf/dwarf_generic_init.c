@@ -45,6 +45,8 @@
 #endif /* HAVE_STDLIB_H */
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
+#elif defined(_WIN32) && defined(_MSC_VER)
+#include <io.h>
 #endif /* HAVE_UNISTD_H */
 
 #include "dwarf_incl.h"

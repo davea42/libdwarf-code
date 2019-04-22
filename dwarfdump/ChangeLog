@@ -1,10 +1,12 @@
+2019-04-22 David Anderson
+     * dwarfdump.c: Add test for _MSC_VER for Windows MSVC.
 2019-04-19 David Anderson
      * Apology. This enhances pubnames-like printing
        and uses non-libelf elf access as much as possible
        (even if libelf present). With --disable-libelf
        it allows all but printing Elf section headers
        and relocation records.  It's excessively large
-       for one commit. Sorry.
+       for one commit(mainly in libdwarf). Sorry.
      * command_options.c: Conditionalize the help message
        so the Elf section printing is not shown if
        --disable-libelf chosen at configure time.
