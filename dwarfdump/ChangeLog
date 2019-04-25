@@ -1,3 +1,8 @@
+2019-04-25 David Anderson
+     * common.c,dwconf.c: Tiny changes to
+       avoid compiler warnings.
+     * print_die.c: Refactored to avoid annoying
+       compiler warning about a fall-through.
 2019-04-24 David Anderson
      * command_options.c: Remove trailing space, fold a long line
      * dwarfdump.c: If init failed the message listed

@@ -2618,6 +2618,38 @@ tag_type_is_addressable_cu(int tag)
     return FALSE;
 }
 
+static void
+handle_location_description(Dwarf_Debug dbg,
+    Dwarf_Attribute attrib,
+    Dwarf_Die die,
+    Dwarf_Half attr,
+    struct esb_s *valname)
+{
+    /*  The value is a location description
+                or location list. */
+
+    struct esb_s framebasestr;
+    Dwarf_Half theform = 0;
+    Dwarf_Half directform = 0;
+
+    esb_constructor(&framebasestr);
+    get_form_values(dbg,attrib,&theform,&directform);
+    if (is_location_form(theform)) {
+        get_location_list(dbg, die, attrib, &framebasestr);
+        show_form_itself(glflags.show_form_used, glflags.verbose,
+            theform, directform, &framebasestr);
+    } else if (theform == DW_FORM_exprloc)  {
+        int showhextoo = 1;
+        print_exprloc_content(dbg,die,attrib,showhextoo,&framebasestr);
+    } else {
+        show_attr_form_error(dbg,attr,theform,&framebasestr);
+    }
+    esb_empty_string(valname);
+    esb_append(valname, esb_get_string(&framebasestr));
+    esb_destructor(&framebasestr);
+}
+
+
 
 static boolean
 print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
@@ -2930,38 +2962,18 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
                 a location description, or a reference
                 to one, or a mistake. */
         }
-        /*  FALL THRU to location description */
-    case DW_AT_location: /* IMPLICIT FALLTHRU TO HERE OK. */
+        handle_location_description(dbg,attrib,die,
+            attr,&valname); 
+        break;
+    case DW_AT_location:
     case DW_AT_vtable_elem_location:
     case DW_AT_string_length:
     case DW_AT_return_addr:
     case DW_AT_use_location:
     case DW_AT_static_link:
     case DW_AT_frame_base:
-        {
-            /*  The value is a location description
-                or location list. */
-
-            struct esb_s framebasestr;
-            Dwarf_Half theform = 0;
-            Dwarf_Half directform = 0;
-
-            esb_constructor(&framebasestr);
-            get_form_values(dbg,attrib,&theform,&directform);
-            if (is_location_form(theform)) {
-                get_location_list(dbg, die, attrib, &framebasestr);
-                show_form_itself(glflags.show_form_used, glflags.verbose,
-                    theform, directform, &framebasestr);
-            } else if (theform == DW_FORM_exprloc)  {
-                int showhextoo = 1;
-                print_exprloc_content(dbg,die,attrib,showhextoo,&framebasestr);
-            } else {
-                show_attr_form_error(dbg,attr,theform,&framebasestr);
-            }
-            esb_empty_string(&valname);
-            esb_append(&valname, esb_get_string(&framebasestr));
-            esb_destructor(&framebasestr);
-        }
+        handle_location_description(dbg,attrib,die,
+            attr,&valname); 
         break;
     case DW_AT_SUN_func_offsets:
         {

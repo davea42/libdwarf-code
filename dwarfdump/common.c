@@ -44,7 +44,11 @@
 /* The Linux/Unix version does not want a version string to print
    unless -V is on the command line. */
 void
-print_version_details(UNUSEDARG const char * name,int alwaysprint)
+print_version_details(UNUSEDARG const char * name,
+#ifdef _WIN32
+    UNUSEDARG /* we don't use this arg with Windows */
+#endif
+    int alwaysprint)
 {
 #ifdef _WIN32
 #ifdef _DEBUG

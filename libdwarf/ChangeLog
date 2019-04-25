@@ -1,4 +1,8 @@
 2019-04-25 David Anderson
+      * dwarf_peread.c: Change the way an strncpy
+        is handled to avoid a compiler warning
+        as well as create hopefully clearer code.
+2019-04-25 David Anderson
       * dwarf_elf_load_headers.c,dwarf_elfread.c,
         dwarf_object_read_common.c: Added missing
         Windows-specific includes.

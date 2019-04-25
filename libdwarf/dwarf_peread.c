@@ -443,7 +443,7 @@ dwarf_pe_load_dwarf_section_headers(
 
         int res = 0;
         IMAGE_SECTION_HEADER filesect;
-        char safe_name[9];
+        char safe_name[IMAGE_SIZEOF_SHORT_NAME +1];
         const char *expname = 0;
 
         res =  _dwarf_object_read_random(pep->pe_fd,
@@ -454,8 +454,12 @@ dwarf_pe_load_dwarf_section_headers(
         if (res != DW_DLV_OK) {
             return res;
         }
-        strncpy(safe_name,filesect.Name,sizeof(filesect.Name));
-        safe_name[8] = 0;
+        /*  The following is safe. filesect.Name is
+            IMAGE_SIZEOF_SHORT_NAME bytes long and may
+            not (not sure) have a NUL terminator. */
+        strncpy(safe_name,filesect.Name,IMAGE_SIZEOF_SHORT_NAME);
+        /*  Then add NUL terminator. */
+        safe_name[IMAGE_SIZEOF_SHORT_NAME] = 0;
         sec_outp->name = strdup(safe_name);
         res = pe_section_name_get(pep,
             safe_name,&expname,errcode);

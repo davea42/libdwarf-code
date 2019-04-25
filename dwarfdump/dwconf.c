@@ -240,6 +240,7 @@ find_conf_file_and_read_config(const char *named_file,
     is to appear between the two 'input strings' when
     creating the output.
 */
+#if defined(BUILD_FOR_TEST) || !defined(_WIN32)
 static char *
 canonical_append(char *target, unsigned int target_size,
     const char *first_string, const char *second_string)
@@ -268,6 +269,7 @@ canonical_append(char *target, unsigned int target_size,
     strcat(target, second_string);
     return target;
 }
+#endif /* defined(BUILD_FOR_TEST) || !defined(_WIN32) */
 
 #ifdef BUILD_FOR_TEST
 #define CANBUF 25
