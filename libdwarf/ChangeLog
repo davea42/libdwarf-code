@@ -1,3 +1,8 @@
+2019-04-25 David Anderson
+      * dwarf_elf_load_headers.c,dwarf_elfread.c,
+        dwarf_object_read_common.c: Added missing
+        Windows-specific includes.
+      * libdwarf_version.h: Updated version date string.
 2019-04-24 David Anderson
       * dwarf_die_deliv.c(_dwarf_next_cu_internal):
         Allow a null as the next_cu_offset pointer 

@@ -46,6 +46,7 @@
 #if HAVE_UNISTD_H
 #include <unistd.h>
 #elif defined(_WIN32) && defined(_MSC_VER)
+#include <io.h>
 #endif
 #include <stdlib.h> // for exit
 #include <iostream>

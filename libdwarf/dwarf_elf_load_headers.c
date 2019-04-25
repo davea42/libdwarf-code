@@ -43,6 +43,8 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <fcntl.h>   /* for open() */
 #ifdef HAVE_UNISTD_H
 #include <unistd.h> /* lseek read close */
+#elif defined(_WIN32) && defined(_MSC_VER)
+#include <io.h>
 #endif /* HAVE_UNISTD_H */
 #ifdef HAVE_ELF_H
 #include <elf.h>

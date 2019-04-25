@@ -1,3 +1,7 @@
+2019-04-25  David Anderson
+    * configure.ac: Version 20190425. Updated 
+      to recognize recent changes. And some
+      #include/define updates for Windows.
 2019-04-22  David Anderson
     * configure.ac: Version 20190422. Now tests for
       stdint.h and inttypes.h. Uses AC_TYPE_UINTPTR_T
