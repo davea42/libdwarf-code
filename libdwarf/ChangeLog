@@ -1,4 +1,9 @@
 2019-04-25 David Anderson
+      * dwarf_pe_descr.h, dwarf_peread.c: All the Windows PE
+        structs have been renamed, adding a trailing _dw,
+        to make them distinct from the standard Windows
+        names.
+2019-04-25 David Anderson
       * dwarf_elfread.c, dwarf_object_read_common.c: Removed
         trailing whitespace.
 2019-04-25 David Anderson

@@ -51,13 +51,13 @@ extern "C" {
 
 #define IMAGE_SIZEOF_SYMBOL 18
 
-struct dos_header {
+struct dos_header_dw {
     TYP(dh_mz,2);
     TYP(dh_dos_data,58);
     TYP(dh_image_offset,4);
 };
 
-/*  IMAGE_FILE_HEADER
+/*  IMAGE_FILE_HEADER_dw
     see https://msdn.microsoft.com/fr-fr/library/windows/desktop/ms680313(v=vs.85).aspx */
 
 typedef struct
@@ -69,16 +69,16 @@ typedef struct
     TYP(NumberOfSymbols,4);
     TYP(SizeOfOptionalHeader,2);
     TYP(Characteristics,2);
-} IMAGE_FILE_HEADER;
+} IMAGE_FILE_HEADER_dw;
 
-/*  IMAGE_DATA_DIRECTORY
+/*  IMAGE_DATA_DIRECTORY_dw
     see https://msdn.microsoft.com/fr-fr/library/windows/desktop/ms680305(v=vs.85).aspx */
 
 typedef struct
 {
     TYP(VirtualAddress,4);
     TYP(Size,4);
-} IMAGE_DATA_DIRECTORY;
+} IMAGE_DATA_DIRECTORY_dw;
 
 /*  IMAGE_OPTIONAL_HEADER
     see https://msdn.microsoft.com/en-us/library/windows/desktop/ms680339(v=vs.85).aspx */
@@ -117,8 +117,8 @@ typedef struct
     TYP(SizeOfHeapCommit,4);
     TYP(LoaderFlags,4);
     TYP(NumberOfRvaAndSizes,4);
-    IMAGE_DATA_DIRECTORY DataDirectory[IMAGE_NUMBEROF_DIRECTORY_ENTRIES];
-} IMAGE_OPTIONAL_HEADER32;
+    IMAGE_DATA_DIRECTORY_dw DataDirectory[IMAGE_NUMBEROF_DIRECTORY_ENTRIES];
+} IMAGE_OPTIONAL_HEADER32_dw;
 
 typedef struct
 {
@@ -151,8 +151,8 @@ typedef struct
     TYP(SizeOfHeapCommit,8);
     TYP(LoaderFlags,4);
     TYP(NumberOfRvaAndSizes,4);
-    IMAGE_DATA_DIRECTORY DataDirectory[IMAGE_NUMBEROF_DIRECTORY_ENTRIES];
-} IMAGE_OPTIONAL_HEADER64;
+    IMAGE_DATA_DIRECTORY_dw DataDirectory[IMAGE_NUMBEROF_DIRECTORY_ENTRIES];
+} IMAGE_OPTIONAL_HEADER64_dw;
 
 /*  IMAGE_NT_HEADERS
     see https://msdn.microsoft.com/fr-fr/library/windows/desktop/ms680336(v=vs.85).aspx */
@@ -164,19 +164,19 @@ typedef struct
 typedef struct
 {
     TYP(Signature,4);
-    IMAGE_FILE_HEADER FileHeader;
-    IMAGE_OPTIONAL_HEADER64 OptionalHeader;
-} IMAGE_NT_HEADERS64, *PIMAGE_NT_HEADERS64;
+    IMAGE_FILE_HEADER_dw FileHeader;
+    IMAGE_OPTIONAL_HEADER64_dw OptionalHeader;
+} IMAGE_NT_HEADERS64_dw, *PIMAGE_NT_HEADERS64_dw;
 
 typedef struct
 {
     TYP(Signature,4);
-    IMAGE_FILE_HEADER FileHeader;
-    IMAGE_OPTIONAL_HEADER32 OptionalHeader;
-} IMAGE_NT_HEADERS32, *PIMAGE_NT_HEADERS32;
+    IMAGE_FILE_HEADER_dw FileHeader;
+    IMAGE_OPTIONAL_HEADER32_dw OptionalHeader;
+} IMAGE_NT_HEADERS32_dw, *PIMAGE_NT_HEADERS32_dw;
 
 
-/*  IMAGE_SECTION_HEADER
+/*  IMAGE_SECTION_HEADER_dw
     see:
     https://msdn.microsoft.com/en-us/library/windows/desktop/ms680341(v=vs.85).aspx 
     and, for details on VirtualSize and SizeOfRawData:
@@ -199,7 +199,7 @@ typedef struct
     TYP(NumberOfRelocations,2);
     TYP(NumberOfLinenumbers,2);
     TYP(Characteristics,4);
-} IMAGE_SECTION_HEADER, *PIMAGE_SECTION_HEADER;
+} IMAGE_SECTION_HEADER_dw, *PIMAGE_SECTION_HEADER_dw;
 
 #define IMAGE_SCN_SCALE_INDEX            0x00000001 // Tls index is scaled
 #define IMAGE_SCN_TYPE_NO_PAD            0x00000008 // Reserved.

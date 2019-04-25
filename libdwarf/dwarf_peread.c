@@ -223,9 +223,9 @@ load_optional_header32(dwarf_pe_object_access_internals_t *pep,
     Dwarf_Unsigned offset, int*errcode)
 {
     int res = 0;
-    IMAGE_OPTIONAL_HEADER32 hdr;
+    IMAGE_OPTIONAL_HEADER32_dw hdr;
 
-    pep->pe_optional_header_size = sizeof(IMAGE_OPTIONAL_HEADER32);
+    pep->pe_optional_header_size = sizeof(IMAGE_OPTIONAL_HEADER32_dw);
 
     if ((pep->pe_optional_header_size + offset) >
         pep->pe_filesize) {
@@ -235,7 +235,7 @@ load_optional_header32(dwarf_pe_object_access_internals_t *pep,
 
     res =  _dwarf_object_read_random(pep->pe_fd,
         (char *)&hdr,
-        offset, sizeof(IMAGE_OPTIONAL_HEADER32),
+        offset, sizeof(IMAGE_OPTIONAL_HEADER32_dw),
         pep->pe_filesize,
         errcode);
     if (res != DW_DLV_OK) {
@@ -256,17 +256,17 @@ load_optional_header32(dwarf_pe_object_access_internals_t *pep,
     ASNAR(pep->pe_copy_word,pep->pe_OptionalHeader.SizeOfHeaders,
         hdr.SizeOfHeaders);
     pep->pe_OptionalHeader.SizeOfDataDirEntry =
-        sizeof(IMAGE_DATA_DIRECTORY);
+        sizeof(IMAGE_DATA_DIRECTORY_dw);
     return DW_DLV_OK;
 }
 static int
 load_optional_header64(dwarf_pe_object_access_internals_t *pep,
     Dwarf_Unsigned offset, int*errcode )
 {
-    IMAGE_OPTIONAL_HEADER64 hdr;
+    IMAGE_OPTIONAL_HEADER64_dw hdr;
     int res = 0;
 
-    pep->pe_optional_header_size = sizeof(IMAGE_OPTIONAL_HEADER64);
+    pep->pe_optional_header_size = sizeof(IMAGE_OPTIONAL_HEADER64_dw);
     if ((pep->pe_optional_header_size + offset) >
         pep->pe_filesize) {
         *errcode = DW_DLE_FILE_TOO_SMALL;
@@ -274,7 +274,7 @@ load_optional_header64(dwarf_pe_object_access_internals_t *pep,
     }
     res =  _dwarf_object_read_random(pep->pe_fd,
         (char *)&hdr,
-        offset, sizeof(IMAGE_OPTIONAL_HEADER64),
+        offset, sizeof(IMAGE_OPTIONAL_HEADER64_dw),
         pep->pe_filesize,
         errcode);
     if (res != DW_DLV_OK) {
@@ -293,7 +293,7 @@ load_optional_header64(dwarf_pe_object_access_internals_t *pep,
     ASNAR(pep->pe_copy_word,pep->pe_OptionalHeader.SizeOfHeaders,
         hdr.SizeOfHeaders);
     pep->pe_OptionalHeader.SizeOfDataDirEntry =
-        sizeof(IMAGE_DATA_DIRECTORY);
+        sizeof(IMAGE_DATA_DIRECTORY_dw);
     return DW_DLV_OK;
 }
 
@@ -405,7 +405,7 @@ dwarf_pe_load_dwarf_section_headers(
     Dwarf_Unsigned input_count =
         pep->pe_FileHeader.NumberOfSections;
     Dwarf_Unsigned offset_in_input = pep->pe_section_table_offset;
-    Dwarf_Unsigned section_hdr_size = sizeof(IMAGE_SECTION_HEADER);
+    Dwarf_Unsigned section_hdr_size = sizeof(IMAGE_SECTION_HEADER_dw);
     struct dwarf_pe_generic_image_section_header *sec_outp = 0;
     Dwarf_Unsigned cur_offset = offset_in_input;
     Dwarf_Unsigned past_end_hdrs = offset_in_input +
@@ -442,7 +442,7 @@ dwarf_pe_load_dwarf_section_headers(
         ++i, cur_offset += section_hdr_size, sec_outp++) {
 
         int res = 0;
-        IMAGE_SECTION_HEADER filesect;
+        IMAGE_SECTION_HEADER_dw filesect;
         char safe_name[IMAGE_SIZEOF_SHORT_NAME +1];
         const char *expname = 0;
 
@@ -508,8 +508,8 @@ static int
 dwarf_load_pe_sections(
     dwarf_pe_object_access_internals_t *pep,int *errcode)
 {
-    struct dos_header dhinmem;
-    IMAGE_FILE_HEADER ifh;
+    struct dos_header_dw dhinmem;
+    IMAGE_FILE_HEADER_dw ifh;
     void (*word_swap) (void *, const void *, unsigned long);
     unsigned locendian = 0;
     int res = 0;
@@ -618,11 +618,11 @@ dwarf_load_pe_sections(
     if (pep->pe_offsetsize == 32) {
         res = load_optional_header32(pep,
             pep->pe_optional_header_offset,errcode);
-        pep->pe_optional_header_size = sizeof(IMAGE_OPTIONAL_HEADER32);
+        pep->pe_optional_header_size = sizeof(IMAGE_OPTIONAL_HEADER32_dw);
     } else if (pep->pe_offsetsize == 64) {
         res = load_optional_header64(pep,
             pep->pe_optional_header_offset,errcode);
-        pep->pe_optional_header_size = sizeof(IMAGE_OPTIONAL_HEADER64);
+        pep->pe_optional_header_size = sizeof(IMAGE_OPTIONAL_HEADER64_dw);
     } else {
         *errcode = DW_DLE_OFFSET_SIZE;
         return DW_DLV_ERROR;
