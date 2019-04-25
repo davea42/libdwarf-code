@@ -794,14 +794,17 @@ process_one_file(int fd, int tiedfd,
     struct Dwarf_Printf_Callback_Info_s printfcallbackdata;
     Dwarf_Half elf_address_size = 0;      /* Target pointer size */
     Dwarf_Error onef_err = 0;
+    const char *title = 0;
 
     /*  If using a tied file group number should be 2 DW_GROUPNUMBER_DWO
         but in a dwp or separate-split-dwarf object then
         0 will find the .dwo data automatically. */
     if (elf) {
+        title = "dwarf_elf_init_b";
         dres = dwarf_elf_init_b(elf, DW_DLC_READ,glflags.group_number,
             NULL, NULL, &dbg, &onef_err);
     } else {
+        title = "dwarf_init_b";
         dres = dwarf_init_b(fd, DW_DLC_READ,glflags.group_number,
             NULL, NULL, &dbg, &onef_err);
     }
@@ -815,7 +818,7 @@ process_one_file(int fd, int tiedfd,
         return 0;
     }
     if (dres != DW_DLV_OK) {
-        print_error(dbg, "dwarf_elf_init", dres, onef_err);
+        print_error(dbg, title, dres, onef_err);
     }
 
     if (tiedelf || tiedfd >= 0) {

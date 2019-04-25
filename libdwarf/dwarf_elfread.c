@@ -216,7 +216,7 @@ elf_load_nolibelf_section (void *obj, Dwarf_Half section_index,
         }
         if ((sp->gh_size + sp->gh_offset) >
             elf->f_filesize) {
-            *error = DW_DLE_FILE_TOO_SMALL;
+            *error = DW_DLE_ELF_SECTION_ERROR;
             return DW_DLV_ERROR;
         }
 
@@ -746,8 +746,7 @@ _dwarf_elf_object_access_init(
         access,
         localerrnum);
     if (res != DW_DLV_OK){
-        /* *err is already set and the call freed internals. */
-        return DW_DLV_ERROR;
+        return res;
     }
 
     intfc = malloc(sizeof(Dwarf_Obj_Access_Interface));

@@ -226,7 +226,6 @@ dwarf_init_b(int fd,
     res = dwarf_object_detector_fd(fd, &ftype,
         &endian,&offsetsize,&filesize,&errcode);
     if (res == DW_DLV_NO_ENTRY) {
-
         return res;
     } else if (res == DW_DLV_ERROR) {
         DWARF_DBG_ERROR(NULL, DW_DLE_FILE_WRONG_TYPE, DW_DLV_ERROR);

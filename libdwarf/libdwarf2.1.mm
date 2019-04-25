@@ -8,7 +8,7 @@
 .nr Hb 5
 \." ==============================================
 \." Put current date in the following at each rev
-.ds vE rev 2.71, 01 March 2091
+.ds vE rev 2.72, 22 April 2019
 \." ==============================================
 \." ==============================================
 .ds | |
@@ -202,6 +202,48 @@ The following is a brief mention of the changes in this libdwarf from
 the libdwarf draft for DWARF Version 1 and recent changes.
 
 .H 2 "Items Changed"
+.P
+dwarf_next_cu_header_d() (and the other earlier
+versions of this) now allow a null
+in place of a pointer for next_cu_offset.
+dwarf_hipc_b() now allows a null
+in place of the return_form and/or
+return_class arguments.
+Unless you know a sufficiently recent
+libdwarf is to be used it is not safe to
+pass those arguments as null pointers.
+This allowance of null is because
+we've become aware that the relevant
+NetBSD man pages 
+on these functions incorrectly specified that
+null was allowed.
+(April 22,2019)
+.P
+The dwarf_elf_init() and dwarf_elf_init_b()
+are now deprecated as they require the use
+of elf.h and libelf.h and libelf. 
+Use dwarf_init_path()
+or
+dwarf_init_b()
+instead.
+The new non-libelf reader code checks
+elf header values more thoroughly
+than libelf and detects corrupted Elf
+earlier and in more cases than libelf.
+Since the reports of elf corruption
+from libdwarf/dwarfdump
+are not detailed we suggest
+one use an object dumper to
+check the object file in question.
+Two useful 
+object dumpers are GNU readelf (part
+of GNU binutils) and readelfobj
+(part of the readelfobj project
+on sourceforge.net).
+readelfobj uses essentially the same
+algorithms as libdwarf does and
+should report something meaningful.
+(April 20,2019)
 .P
 Added support for MacOS dSYM objects and
 PE object files as well as an initialization
@@ -1931,7 +1973,7 @@ Or the application could simply give up and call
 \f(CWexit()\fP
 as in the sample given above.
 
-.H 3 "dwarf_elf_init_b() [deprecated]"
+.H 3 "dwarf_elf_init_b() [deprecated 2019]"
 .DS
 \f(CWint dwarf_elf_init_b(
     Elf * elf_file_pointer,
@@ -1949,7 +1991,7 @@ or
 instead.
 The
 \f(CW
-dwarf_elf_init_b()
+dwarf_elf_init()
 \fP
 and
 \f(CW
@@ -1958,24 +2000,24 @@ dwarf_elf_init_b()
 interfaces give no benefit
 over the other interfaces.
 .P
-The function \f(CWdwarf_elf_init_b()\fP is identical to \f(CWdwarf_init_b()\fP
-except that an open \f(CWElf *\fP pointer is passed instead of a file
+The function 
+\f(CWdwarf_elf_init_b()\fP is identical to 
+\f(CWdwarf_init_b()\fP
+except that an open 
+\f(CWElf *\fP pointer is passed instead of a file
 descriptor.
 .P
-In systems supporting \f(CWElf\fP object files this may be
-more space or time-efficient than using \f(CWdwarf_init_b()\fP,
-see that function for more detailed description of the
-arguments here..
-.P
-The client is allowed to use the \f(CWElf *\fP pointer
+The client is allowed to use the 
+\f(CWElf *\fP pointer
 for its own purposes without restriction during the time the
 \f(CWDwarf_Debug\fP
 is open, except that the client should not  \f(CWelf_end()\fP the
-pointer till after  \f(CWdwarf_finish\fP is called.
+pointer till after
+\f(CWdwarf_finish\fP is called.
 
-.H 3 "dwarf_elf_init()"
+.H 3 "dwarf_elf_init() [deprecated 2019]"
 .DS
-\f(CWint dwarf_elf_init(
+\f(CWint dwarf_elf_init( 
     Elf * elf_file_pointer,
     Dwarf_Unsigned access,
     Dwarf_Handler errhand,
@@ -1983,9 +2025,18 @@ pointer till after  \f(CWdwarf_finish\fP is called.
     Dwarf_Debug * dbg,
     Dwarf_Error *error)\fP
 .DE
-The function \f(CWdwarf_elf_init()\fP is identical to \f(CWdwarf_init()\fP
+The function 
+\f(CWdwarf_elf_init()\fP is identical to 
+\f(CWdwarf_init()\fP
 except that an open \f(CWElf *\fP pointer is passed instead of a file
 descriptor.
+.P
+Code using 
+\f(CWdwarf_elf_init()\fP
+or
+\f(CWdwarf_elf_init_b()\fP
+should be switched to calling
+\f(CWdwarf_init_b()\fP.
 
 
 .H 3 "dwarf_get_elf()"
@@ -3038,6 +3089,17 @@ the offset in the .debug_info section of the next
 compilation-unit header if it succeeds.  On reading the last
 compilation-unit header in the .debug_info section it contains
 the size of the .debug_info or debug_types section.
+Beginning 22 April 2019
+\f(CWnext_cu_header\fP
+will not be used to return the offset
+if 
+\f(CWnext_cu_header\fP
+is null.
+Be cautious using a null argument
+unless you know that only a suitably
+recent version of libdwarf will be used.
+
+.P
 The next call to
 \f(CWdwarf_next_cu_header_b()\fP returns \f(CWDW_DLV_NO_ENTRY\fP
 without reading a
@@ -3222,7 +3284,8 @@ returns \f(CWDW_DLV_ERROR\fP and sets the \f(CWerror\fP pointer on error.
 If there is no sibling it returns \f(CWDW_DLV_NO_ENTRY\fP.
 When it succeeds,
 \f(CWdwarf_siblingof_b()\fP returns
-\f(CWDW_DLV_OK\fP  and sets \f(CW*return_sib\fP to the \f(CWDwarf_Die\fP
+\f(CWDW_DLV_OK\fP  and sets 
+\f(CW*return_sib\fP to the \f(CWDwarf_Die\fP
 descriptor of the sibling of \f(CWdie\fP.
 
 If \f(CWis_info\fP is non-zero then the  \f(CWdie\fP
@@ -3922,10 +3985,34 @@ It returns \f(CWDW_DLV_ERROR\fP if an error occurred.
 The function \f(CWdwarf_highpc_b()\fP returns
 \f(CWDW_DLV_OK\fP and sets \f(CW*return_highpc\fP
 to the value of the \f(CWDW_AT_high_pc\fP attribute.
-It also sets \f(CWreturn_form\fP to the FORM
+
+It also sets 
+\f(CW*return_form\fP
+to the FORM
 of the attribute.
-It also sets \f(CWreturn_class\fP to the form class
+Beginning 22 April 2019 
+\f(CWreturn_form\fP 
+will not be used to return the form class
+if 
+\f(CWreturn_form\fP 
+is null.
+Be cautious using a null argument
+unless you know that only a suitably
+recent version of libdwarf will be used.
+
+It sets 
+\f(CW*return_class\fP
+to the form class
 of the attribute.
+Beginning 22 April 2019 
+\f(CWreturn_class\fP 
+will not be used to return the form class
+if 
+\f(CWreturn_class\fP 
+is null.
+Be cautious using a null argument
+unless you know that only a suitably
+recent version of libdwarf will be used.
 
 If the form class  returned is \f(CWDW_FORM_CLASS_ADDRESS\fP
 the \f(CWreturn_highpc\fP is an actual pc address (1 higher
@@ -3934,6 +4021,8 @@ If the form class  returned is \f(CWDW_FORM_CLASS_CONSTANT\fP
 the \f(CWreturn_highpc\fP is an offset from the value of
 the the DIE's  low PC address (see DWARF4 section 2.17.2 Contiguous
 Address Range).
+
+
 
 It returns \f(CWDW_DLV_NO_ENTRY\fP if \f(CWdie\fP does not have
 the \f(CWDW_AT_high_pc\fP attribute.

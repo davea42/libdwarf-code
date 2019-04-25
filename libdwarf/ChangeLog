@@ -1,3 +1,24 @@
+2019-04-24 David Anderson
+      * dwarf_die_deliv.c(_dwarf_next_cu_internal):
+        Allow a null as the next_cu_offset pointer 
+        passed in.
+      * dwarf_elf_load_headers.c: Correct the check
+        for a dwarf-related section.  Correct
+        the error code returned in several places.
+      * dwarf_elfread.c:a Correct the error code
+        returned and one return value.
+      * dwarf_errmsg_list.h: Add specific errors relating
+        to nolibelf elf reading.
+      * dwarf_generaic_init.c: Remove trailing whitespace.
+      * dwarf_query.c(dwarf_highpc_b): Allow a couple
+        of pointer args to be null in case clients
+        are uninterested in returning values.
+      * libdwarf.h.in: Added DW_DLE_ELF_SECTION_ERROR,
+        DW_DLE_ELF_STRING_SECTION_ERROR.
+      * libdwarf2.1.mm: Version 2.72. Documented that
+        dwarf_next_cu_header_d() and dwarf_hipc_b()
+        allow specific arguments to be null.
+      * libdwarf2.1.pdf: Regenerated
 2019-04-22 David Anderson
       * dwarf_generic_init.c, dwarf_machoread.c,
         dwarf_object_detector.c,

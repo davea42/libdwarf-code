@@ -351,7 +351,7 @@ print_fde_col(Dwarf_Signed k,
         print_reg(rule_id);
         printf("=");
         printf("expr-block-len=%" DW_PR_DSd , offset_or_block_len);
-        printf(" block-ptr=%" DW_PR_DUx , 
+        printf(" block-ptr=%" DW_PR_DUx,
             (Dwarf_Unsigned)(uintptr_t)block_ptr);
 #if 0
         {

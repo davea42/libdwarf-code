@@ -201,7 +201,7 @@ pe_get_section_info (void *obj,
     if (section_index < pep->pe_section_count) {
         struct dwarf_pe_generic_image_section_header *sp = 0;
         sp = pep->pe_sectionptr + section_index;
-        return_section->addr = pep->pe_OptionalHeader.ImageBase + 
+        return_section->addr = pep->pe_OptionalHeader.ImageBase +
             sp->VirtualAddress; ;
         return_section->type = 0;
         /*  SizeOfRawData can be rounded or truncated,
@@ -344,11 +344,11 @@ pe_load_section (void *obj, Dwarf_Half section_index,
             return res;
         }
         if(sp->VirtualSize > read_length) {
-            /* Zero space that was allocated but 
-               truncated from the file */
-            memset(sp->loaded_data + read_length, 0, 
+            /*  Zero space that was allocated but
+                truncated from the file */
+            memset(sp->loaded_data + read_length, 0,
                 (sp->VirtualSize - read_length));
-         }
+        }
         *return_data = sp->loaded_data;
         return DW_DLV_OK;
     }

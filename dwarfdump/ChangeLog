@@ -1,3 +1,7 @@
+2019-04-24 David Anderson
+     * command_options.c: Remove trailing space, fold a long line
+     * dwarfdump.c: If init failed the message listed
+       the wrong function name.
 2019-04-22 David Anderson
      * dwarfdump.c: Prevent the -a option from requesting
        Elf section data printing (no section

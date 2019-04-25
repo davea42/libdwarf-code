@@ -1257,7 +1257,10 @@ _dwarf_next_cu_header_internal(Dwarf_Debug dbg,
     /*  Determine the offset of the next CU. */
     new_offset = new_offset + cu_context->cc_length +
         cu_context->cc_length_size + cu_context->cc_extension_size;
-    *next_cu_offset = new_offset;
+    /*  Allowing null argument starting 22 April 2019. */
+    if (next_cu_offset) {
+        *next_cu_offset = new_offset;
+    }
     return DW_DLV_OK;
 }
 

@@ -516,6 +516,8 @@ const char *_dwarf_errmsgs[] = {
     "DW_DLE_ELF_SECTION_COUNT_MISMATCH(442) Corrupt Elf or libdwarf bug.",
     "DW_DLE_ELF_STRING_SECTION_MISSING(443) Corrupt Elf, string section wrong type",
     "DW_DLE_SEEK_OFF_END(444) Corrupt Elf. Seek past the end not allowed",
-    "DW_DLE_READ_OFF_END(445) Corrupt Elf. A read would read past end of object"
+    "DW_DLE_READ_OFF_END(445) Corrupt Elf. A read would read past end of object",
+    "DW_DLE_ELF_SECTION_ERROR(446) Section offset or size is too large. Corrupt elf object.",
+    "DW_DLE_ELF_STRING_SECTION_ERROR(447) String section missing. Corrupt Elf",
 };
 #endif /* DWARF_ERRMSG_LIST_H */

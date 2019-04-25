@@ -1357,9 +1357,11 @@ struct Dwarf_Obj_Access_Interface_s {
 #define DW_DLE_ELF_STRING_SECTION_MISSING      443
 #define DW_DLE_SEEK_OFF_END                    444
 #define DW_DLE_READ_OFF_END                    445
+#define DW_DLE_ELF_SECTION_ERROR               446
+#define DW_DLE_ELF_STRING_SECTION_ERROR        447
 
     /* LAST MUST EQUAL LAST ERROR NUMBER */   
-#define DW_DLE_LAST        445
+#define DW_DLE_LAST        447
 
 #define DW_DLE_LO_USER     0x10000
 

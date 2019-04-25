@@ -1409,7 +1409,8 @@ _dwarf_elf_load_rela_64(
 }
 
 /*  Is this rela section related to dwarf at all?
-    set oksecnum zero if not. Else set targ secnum. */
+    set oksecnum zero if not. Else set targ secnum.
+    Never returns DW_DLV_NO_ENTRY. */
 static int
 this_is_a_section_dwarf_related(
     dwarf_elf_object_access_internals_t *ep,
@@ -1418,6 +1419,7 @@ this_is_a_section_dwarf_related(
     int *errcode)
 {
     unsigned oksecnum = 0;
+    struct generic_shdr *gstarg = 0;
 
     if (gshdr->gh_type != SHT_RELA ) {
         *oksecnum_out = 0;
@@ -1426,9 +1428,15 @@ this_is_a_section_dwarf_related(
     oksecnum = gshdr->gh_reloc_target_secnum;
     if (oksecnum >= ep->f_loc_shdr.g_count) {
         *oksecnum_out = 0;
-        *errcode = DW_DLE_ELF_SECTION_COUNT_MISMATCH;
+        *errcode = DW_DLE_ELF_SECTION_ERROR;
         return DW_DLV_ERROR;
     }
+    gstarg = ep->f_shdr+oksecnum;
+    if (!gstarg->gh_is_dwarf) {
+        *oksecnum_out = 0; /* no reloc needed. */
+        return DW_DLV_OK;
+    }
+
     *oksecnum_out = oksecnum;
     return DW_DLV_OK;
 }
@@ -1441,7 +1449,7 @@ _dwarf_load_elf_rela(
     int *errcode)
 {
     struct generic_shdr *gshdr = 0;
-    Dwarf_Unsigned generic_count = 0;
+    Dwarf_Unsigned seccount = 0;
     unsigned offsetsize = 0;
     struct generic_rela *grp = 0;
     Dwarf_Unsigned count_read = 0;
@@ -1453,9 +1461,9 @@ _dwarf_load_elf_rela(
         return DW_DLV_ERROR;
     }
     offsetsize = ep->f_offsetsize;
-    generic_count = ep->f_loc_shdr.g_count;
-    if (secnum >= generic_count) {
-        *errcode = DW_DLE_ELF_SECTION_COUNT_MISMATCH;
+    seccount = ep->f_loc_shdr.g_count;
+    if (secnum >= seccount) {
+        *errcode = DW_DLE_ELF_SECTION_ERROR;
         return DW_DLV_ERROR;
     }
     gshdr = ep->f_shdr +secnum;
@@ -1512,7 +1520,7 @@ _dwarf_load_elf_rel(
     offsetsize = ep->f_offsetsize;
     generic_count = ep->f_loc_shdr.g_count;
     if (secnum >= generic_count) {
-        *errcode = DW_DLE_ELF_SECTION_COUNT_MISMATCH;
+        *errcode = DW_DLE_ELF_SECTION_ERROR;
         return DW_DLV_ERROR;
     }
     gshdr = ep->f_shdr +secnum;
@@ -1619,7 +1627,7 @@ validate_struct_sizes(
 #else
     UNUSEDARG int*errcode
 #endif
-                 )
+    )
 {
 #ifdef HAVE_ELF_H
     /*  This is a sanity check when we have an elf.h
@@ -1716,7 +1724,7 @@ validate_links(
         return DW_DLV_OK;
     }
     if (!string_sect) {
-        *errcode = DW_DLE_ELF_SECTION_LINK_ERROR;
+        *errcode = DW_DLE_ELF_STRING_SECTION_ERROR;
         return DW_DLV_ERROR;
     }
     pshk = ep->f_shdr + knownsect;

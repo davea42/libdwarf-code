@@ -1297,8 +1297,13 @@ dwarf_highpc_b(Dwarf_Die die,
                 }
             }
             *return_value = addr_out;
-            *return_form = attr_form;
-            *return_class = class;
+            /*  Allow null args starting 22 April 2019. */
+            if(return_form) {
+                *return_form = attr_form;
+            }
+            if(return_class) {
+                *return_class = class;
+            }
             return (DW_DLV_OK);
         }
 
@@ -1338,8 +1343,13 @@ dwarf_highpc_b(Dwarf_Die die,
             *return_value = v;
         }
     }
-    *return_form = attr_form;
-    *return_class = class;
+    /*  Allow null args starting 22 April 2019. */
+    if(return_form) {
+        *return_form = attr_form;
+    }
+    if(return_class) {
+        *return_class = class;
+    }
     return DW_DLV_OK;
 }
 
