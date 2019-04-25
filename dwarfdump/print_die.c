@@ -2626,7 +2626,7 @@ handle_location_description(Dwarf_Debug dbg,
     struct esb_s *valname)
 {
     /*  The value is a location description
-                or location list. */
+        or location list. */
 
     struct esb_s framebasestr;
     Dwarf_Half theform = 0;
@@ -2963,7 +2963,7 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
                 to one, or a mistake. */
         }
         handle_location_description(dbg,attrib,die,
-            attr,&valname); 
+            attr,&valname);
         break;
     case DW_AT_location:
     case DW_AT_vtable_elem_location:
@@ -2973,7 +2973,7 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
     case DW_AT_static_link:
     case DW_AT_frame_base:
         handle_location_description(dbg,attrib,die,
-            attr,&valname); 
+            attr,&valname);
         break;
     case DW_AT_SUN_func_offsets:
         {

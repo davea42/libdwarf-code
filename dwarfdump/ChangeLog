@@ -1,4 +1,6 @@
 2019-04-25 David Anderson
+     * print_die.c: Removed trailing whitespace.
+2019-04-25 David Anderson
      * common.c,dwconf.c: Tiny changes to
        avoid compiler warnings.
      * print_die.c: Refactored to avoid annoying

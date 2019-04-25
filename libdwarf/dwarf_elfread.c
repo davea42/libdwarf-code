@@ -74,7 +74,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #ifdef HAVE_UNISTD_H
 #include <unistd.h> /* lseek read close */
 #elif defined(_WIN32) && defined(_MSC_VER)
-#include <io.h> 
+#include <io.h>
 #endif /* HAVE_UNISTD_H */
 #include "libdwarf.h"
 #include "libdwarfdefs.h"

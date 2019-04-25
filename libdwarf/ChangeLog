@@ -1,4 +1,7 @@
 2019-04-25 David Anderson
+      * dwarf_elfread.c, dwarf_object_read_common.c: Removed
+        trailing whitespace.
+2019-04-25 David Anderson
       * dwarf_peread.c: Change the way an strncpy
         is handled to avoid a compiler warning
         as well as create hopefully clearer code.
