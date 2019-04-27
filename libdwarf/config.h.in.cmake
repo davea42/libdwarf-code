@@ -55,6 +55,9 @@
 /* Define 1 if need nonstandard printf format for 64bit */
 #cmakedefine HAVE_NONSTANDARD_PRINTF_64_FORMAT 1
 
+/* Define 1 if building with libelf */
+#cmakedefine DWARF_WITH_LIBELF 1
+
 /* Define 1 to default to old DW_FRAME_CFA_COL */
 #cmakedefine HAVE_OLD_FRAME_CFA_COL 1
 

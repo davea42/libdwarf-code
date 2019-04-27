@@ -13,7 +13,17 @@ option(wall "Add -Wall" FALSE)
 set(dwfwall $<$<BOOL:${wall}>:"-Wall -O0 -Wpointer-arith -Wmissing-declarations -Wmissing-prototypes -Wdeclaration-after-statement -Wextra -Wcomment -Wformat -Wpedantic -Wuninitialized -Wno-long-long -Wshadow">)
 
 option(nonstandardprintf "Use a special printf format for 64bit (default is NO)" FALSE)
-set(HAVE_NONSTANDARD_PRINTF_64_FORMAT ${nonstandardprintf})
+set(HAVE_NONSTANDARD_PRINTF_64_FORMAT ${nonstandardprintf} )
 message(STATUS "Checking enable nonstandardprintf... ${HAVE_NONSTANDARD_PRINTF_64_FORMAT}")
 
-set(DWARF_WITH_LIBELF 1)
+option(libelf "Use libelf (default is YES)" TRUE)
+set(DWARF_WITH_LIBELF ${libelf} )
+message(STATUS "Building using libelf... ${DWARF_WITH_LIBELF}")
+
+option(dodwarfgen "Build dwarfgen (default is NO)" FALSE)
+set(BUILD_DWARFGEN ${dodwarfgen} )
+message(STATUS "Building dwarfgen    ... ${BUILD_DWARFGEN}")
+
+option(dodwarfexample "Build dwarfexample (default is NO)" FALSE)
+set(BUILD_DWARFEXAMPLE ${dodwarfexample} )
+message(STATUS "Building dwarfexample... ${BUILD_DWARFEXAMPLE}")

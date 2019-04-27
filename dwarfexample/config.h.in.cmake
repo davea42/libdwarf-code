@@ -42,6 +42,9 @@
 /* Define to 1 if you have the <unistd.h> header file. */
 #cmakedefine HAVE_UNISTD_H 1
 
+/* Define 1 if building with libelf */
+#cmakedefine DWARF_WITH_LIBELF 1
+
 /* Define 1 if zlib (decompression library) seems available. */
 #cmakedefine HAVE_ZLIB 1
 

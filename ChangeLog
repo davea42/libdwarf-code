@@ -1,3 +1,8 @@
+2019-04-26  David Anderson
+    * README.cmake. New. Describes cmake use and options.
+    * CMakeLists.txt,cmake/FindLibElf.cmake,configure.cmake:
+      Revised to be closer to configure as to what
+      it does.
 2019-04-25  David Anderson
     * configure.ac: Version 20190425. Updated 
       to recognize recent changes. And some

@@ -1,3 +1,6 @@
+2019-04-26 David Anderson
+      * CMakeLists.txt,config.h.in.cmake,configure.cmake:
+        Revised to work with the updated use of cmake.   
 2019-04-25 David Anderson
       * dwarf_pe_descr.h, dwarf_peread.c: All the Windows PE
         structs have been renamed, adding a trailing _dw,

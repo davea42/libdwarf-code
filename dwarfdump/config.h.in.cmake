@@ -30,6 +30,9 @@
 /* Define 1 if need nonstandard printf format for 64bit */
 #cmakedefine HAVE_NONSTANDARD_PRINTF_64_FORMAT 1
 
+/* Define 1 if building with libelf */
+#cmakedefine DWARF_WITH_LIBELF 1
+
 /* Define 1 if plain libelf builds. */
 #cmakedefine HAVE_RAW_LIBELF_OK 1
 

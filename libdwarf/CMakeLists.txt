@@ -105,11 +105,11 @@ if(UNIX)
 # Calling it pdfbld or bldpdf is arbitrary, so allow both.
 
 #Oriented to using gsroff now.
-set(TROFF /usr/bin/groff)
-#set(TROFFDEV "-T ps")
-set(TROFFDEV)
-set(PSTOPDF /usr/bin/ps2pdf)
-set(BUILD_BASE .)
+#set(TROFF /usr/bin/groff)
+##set(TROFFDEV "-T ps")
+#set(TROFFDEV)
+#set(PSTOPDF /usr/bin/ps2pdf)
+#set(BUILD_BASE .)
 # pr expands tabs to spaces: this avoids problems with tab
 # interpretation
 
@@ -117,35 +117,35 @@ set(BUILD_BASE .)
 # in the table of contents.
 # All pr does here is change each tab to spaces.
 # Ignore the warning (and those like it).
-add_custom_command(OUTPUT libdwarf2.1.pdf
-    COMMAND -pr -t -e ${BUILD_BASE}/libdwarf2.1.mm | tbl | ${TROFF} ${TROFFDEV} -mm >libdwarf2.1.ps
-    COMMAND ${PSTOPDF} libdwarf2.1.ps ${CMAKE_CURRENT_BINARY_DIR}/libdwarf2.1.pdf
-    DEPENDS ${BUILD_BASE}/libdwarf2.1.mm)
-    
-add_custom_command(OUTPUT libdwarf2p.1.pdf
-    COMMAND -pr -t -e ${BUILD_BASE}/libdwarf2p.1.mm | tbl | ${TROFF} ${TROFFDEV} -mm >libdwarf2p.1.ps
-    COMMAND ${PSTOPDF} libdwarf2p.1.ps ${CMAKE_CURRENT_BINARY_DIR}/libdwarf2p.1.pdf
-    DEPENDS ${BUILD_BASE}/libdwarf2p.1.mm)
-    
-add_custom_command(OUTPUT mips_extensions.pdf
-    COMMAND -pr ${TROFFDEV} -e ${BUILD_BASE}/mips_extensions.mm | tbl | ${TROFF} ${TROFFDEV} -mm >mips_extensions.ps
-    COMMAND ${PSTOPDF} mips_extensions.ps ${CMAKE_CURRENT_BINARY_DIR}/mips_extensions.pdf
-    DEPENDS ${BUILD_BASE}/mips_extensions.mm)
-    
-add_custom_target(pdfbld
-    DEPENDS libdwarf2.1.pdf libdwarf2p.1.pdf mips_extensions.pdf)
+#add_custom_command(OUTPUT libdwarf2.1.pdf
+#    COMMAND -pr -t -e ${BUILD_BASE}/libdwarf2.1.mm | tbl | ${TROFF} ${TROFFDEV} -mm >libdwarf2.1.ps
+#    COMMAND ${PSTOPDF} libdwarf2.1.ps ${CMAKE_CURRENT_BINARY_DIR}/libdwarf2.1.pdf
+#    DEPENDS ${BUILD_BASE}/libdwarf2.1.mm)
+#    
+#add_custom_command(OUTPUT libdwarf2p.1.pdf
+#    COMMAND -pr -t -e ${BUILD_BASE}/libdwarf2p.1.mm | tbl | ${TROFF} ${TROFFDEV} -mm >libdwarf2p.1.ps
+#    COMMAND ${PSTOPDF} libdwarf2p.1.ps ${CMAKE_CURRENT_BINARY_DIR}/libdwarf2p.1.pdf
+#    DEPENDS ${BUILD_BASE}/libdwarf2p.1.mm)
+#    
+#add_custom_command(OUTPUT mips_extensions.pdf
+#    COMMAND -pr ${TROFFDEV} -e ${BUILD_BASE}/mips_extensions.mm | tbl | ${TROFF} ${TROFFDEV} -mm >mips_extensions.ps
+#    COMMAND ${PSTOPDF} mips_extensions.ps ${CMAKE_CURRENT_BINARY_DIR}/mips_extensions.pdf
+#    DEPENDS ${BUILD_BASE}/mips_extensions.mm)
+#    
+#add_custom_target(pdfbld
+#    DEPENDS libdwarf2.1.pdf libdwarf2p.1.pdf mips_extensions.pdf)
+#
+#set_folder(pdfbld libdwarf/documentation)
+#    
+#add_custom_target(bldpdf
+#    DEPENDS pdfbld)
 
-set_folder(pdfbld libdwarf/documentation)
+#set_folder(bldpdf libdwarf/documentation)
     
-add_custom_target(bldpdf
-    DEPENDS pdfbld)
+#add_custom_target(docbld
+#    DEPENDS pdfbld)
 
-set_folder(bldpdf libdwarf/documentation)
-    
-add_custom_target(docbld
-    DEPENDS pdfbld)
-
-set_folder(docbld libdwarf/documentation)
+#set_folder(docbld libdwarf/documentation)
 
 endif()
 

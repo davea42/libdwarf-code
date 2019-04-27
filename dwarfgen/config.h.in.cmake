@@ -48,6 +48,9 @@
 /* Define 1 if zlib (decompression library) seems available. */
 #cmakedefine HAVE_ZLIB 1
 
+/* Define 1 if building with libelf */
+#cmakedefine DWARF_WITH_LIBELF 1
+
 /* Define 1 if __uint32_t is in sgidefs.h. */
 #cmakedefine HAVE___UINT32_T_IN_SGIDEFS_H 1
 
