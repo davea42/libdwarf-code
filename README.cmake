@@ -1,4 +1,5 @@
 Created 26 April 2019 
+Updated 28 April 2019
 
 The configure script scripts/FIX-COMPILE-TIMES does not apply
 to cmake. Don't bother to use it if you build with cmake.
@@ -33,13 +34,13 @@ default build,
 
 The default build is identical to
 
-    cmake -Dlibelf:BOOL=yes \
-        -Ddodwarfgen:BOOL=NO \
-        -Ddodwarfexample:BOOL=NO \
-        -Dstatic:BOOL=YES \
-        -Dshared:BOOL=NO \
-        -Dwall:BOOL=NO \
-        -Dnonstandardprintf:BOOL=NO
+    cmake -Dlibelf=YES \
+        -Ddodwarfgen=NO \
+        -Ddodwarfexample=NO \
+        -Dstatic=YES \
+        -Dshared=NO \
+        -Dwall=NO \
+        -Dnonstandardprintf=NO
     make
 
 The short form, doing the same as the default:
@@ -50,15 +51,15 @@ The short form, doing the same as the default:
 The short form, nolibelf, for when you wish to build without
 libelf even if libelf.h and libelf are present:
 
-    cmake -Dlibelf:BOOL=NO /path/to/code
+    cmake -Dlibelf=NO /path/to/code
 
 For this case any attempt to compile dwarfgen will be
 overridden: dwarfgen requires libelf.
 
 For dwarfexample:
 
-    cmake -Ddodwarfexample:BOOL=YES /path/to/code
+    cmake -Ddodwarfexample=YES /path/to/code
     make
 
-If libelf is missing -Ddodwarfgen:BOOL=YES will not be honored
+If libelf is missing -Ddodwarfgen=YES will not be honored
 as dwarfgen will not build without libelf.
