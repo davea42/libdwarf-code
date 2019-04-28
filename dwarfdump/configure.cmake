@@ -23,44 +23,6 @@ int main()
 }"
 HAVE_ELF64_R_INFO)
 
-ac_try_compile("
-int main()
-{
-    __uint32_t p; 
-    p = 3;
-    return 0;
-}" 
-HAVE___UINT32_T)
-
-ac_try_compile("
-int main()
-{
-    __uint64_t p; 
-    p = 3;
-    return 0;
-}" 
-HAVE___UINT64_T)
-
-ac_try_compile("
-#include <sys/types.h>
-int main()
-{
-    __uint32_t p; 
-    p = 3;
-    return 0;
-}" 
-HAVE___UINT32_T_IN_SYS_TYPES_H)
-
-ac_try_compile("
-#include <sys/types.h>
-int main()
-{
-    __uint64_t p; 
-    p = 3;
-    return 0;
-}" 
-HAVE___UINT64_T_IN_SYS_TYPES_H)
-
 ac_try_compile([=[
 #include <sys/types.h>
 #include <regex.h>

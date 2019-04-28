@@ -1,3 +1,6 @@
+2019-04-28 David Anderson
+     * config.h.in.cmake, configure.cmake: Deleted all reference to
+       INT32 and INT64 as no longer needed.
 2019-04-24 David Anderson
      * frame1.c, remove accidental space.
 2019-04-22 David Anderson

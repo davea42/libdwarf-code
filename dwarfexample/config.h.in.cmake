@@ -48,12 +48,6 @@
 /* Define 1 if zlib (decompression library) seems available. */
 #cmakedefine HAVE_ZLIB 1
 
-/* Define 1 if __uint32_t is in sgidefs.h. */
-#cmakedefine HAVE___UINT32_T_IN_SGIDEFS_H 1
-
-/* Define 1 if is in sgidefs.h. */
-#cmakedefine HAVE___UINT64_T_IN_SGIDEFS_H 1
-
 /* Define to the address where bug reports for this package should be sent. */
 #cmakedefine PACKAGE_BUGREPORT @PACKAGE_BUGREPORT@
 

@@ -1,7 +1,9 @@
+2018-04-28 David Anderson
+    * baseconfig.h: Deleted all reference to INT32 or INT64.
 2018-02-07 David Anderson
     * FIX-CONFIGURE-TIMES: Recreated the list
       of files, now it works better.
 2018-01-02 David Anderson
     * ChangeLog: Renamed ChangeLog2018
-    * Makefile.am: Added ChangeLog2018 to dist files.1:w
+    * Makefile.am: Added ChangeLog2018 to dist files.
  

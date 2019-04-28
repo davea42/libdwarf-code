@@ -78,24 +78,6 @@
 /* Define to 1 if you have the <zlib.h> header file. */
 #define HAVE_ZLIB_H 1
 
-/* Set to 1 if the OS defines __uint32_t. */
-/* #undef HAVE___UINT32_T */
-
-/* Set to 1 if sgidefs.h defines __uint32_t. */
-/* #undef HAVE___UINT32_T_IN_SGIDEFS_H */
-
-/* Set to 1 if sys/types.h defines __uint32_t. */
-#define HAVE___UINT32_T_IN_SYS_TYPES_H 1
-
-/* Set to 1 if the OS defines __uint64_t. */
-/* #undef HAVE___UINT64_T */
-
-/* Set to 1 if sgidefs.h defines __uint64_t. */
-/* #undef HAVE___UINT64_T_IN_SGIDEFS_H */
-
-/* Set to 1 if sys/types.h defines __uint64_t. */
-#define HAVE___UINT64_T_IN_SYS_TYPES_H 1
-
 /* Define to the sub-directory where libtool stores uninstalled libraries. */
 #define LT_OBJDIR ".libs/"
 

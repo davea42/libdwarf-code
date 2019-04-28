@@ -75,18 +75,6 @@
 /* Define 1 if zlib (decompression library) seems available. */
 #cmakedefine HAVE_ZLIB 1
 
-/* See if __uint32_t is predefined in the compiler. */
-#cmakedefine HAVE___UINT32_T 1
-
-/* Define 1 if sys/types.h defines __uint32_t. */
-#cmakedefine HAVE___UINT32_T_IN_SYS_TYPES_H 1
-
-/* See if __uint64_t is predefined in the compiler. */
-#cmakedefine HAVE___UINT64_T 1
-
-/* Define 1 if sys/types.h defines __uint64_t. */
-#cmakedefine HAVE___UINT64_T_IN_SYS_TYPES_H 1
-
 /* Define to header that first defines elf. */
 #cmakedefine LOCATION_OF_LIBELFHEADER @LOCATION_OF_LIBELFHEADER@
 
