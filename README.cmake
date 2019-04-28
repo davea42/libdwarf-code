@@ -34,13 +34,13 @@ default build,
 
 The default build is identical to
 
-    cmake -Dlibelf=YES \
-        -Ddodwarfgen=NO \
-        -Ddodwarfexample=NO \
-        -Dstatic=YES \
-        -Dshared=NO \
-        -Dwall=NO \
-        -Dnonstandardprintf=NO
+    cmake -Dlibelf=ON \
+        -Dstatic=ON \
+        -Dshared=OFF \
+        -Ddodwarfgen=OFF \
+        -Ddodwarfexample=OFF \
+        -Dwall=OFF \
+        -Dnonstandardprintf=OFF
     make
 
 The short form, doing the same as the default:
@@ -51,15 +51,16 @@ The short form, doing the same as the default:
 The short form, nolibelf, for when you wish to build without
 libelf even if libelf.h and libelf are present:
 
-    cmake -Dlibelf=NO /path/to/code
+    cmake -Dlibelf=OFF /path/to/code
+    make
 
 For this case any attempt to compile dwarfgen will be
 overridden: dwarfgen requires libelf.
 
 For dwarfexample:
 
-    cmake -Ddodwarfexample=YES /path/to/code
+    cmake -Ddodwarfexample=ON /path/to/code
     make
 
-If libelf is missing -Ddodwarfgen=YES will not be honored
+If libelf is missing -Ddodwarfgen=ON will not be honored
 as dwarfgen will not build without libelf.
