@@ -46,6 +46,9 @@
 /* Common DWARF extensions */
 
 0xffffffff
+DW_TAG_class_type
+DW_AT_containing_type
+0xffffffff
 DW_TAG_compile_unit
 DW_AT_APPLE_optimized /* Used by LLVM */
 DW_AT_GNU_dwo_id

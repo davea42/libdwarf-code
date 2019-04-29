@@ -1,14 +1,16 @@
 /* Generated code, do not edit. */
-/* Generated sourcedate  2019-03-02 12:43:32-08:00   */
+/* Generated sourcedate  2019-04-25 07:43:50-07:00   */
 
 /* BEGIN FILE */
 
 /* Common extensions */
-#define ATTR_TREE_EXT_ROW_COUNT 14
+#define ATTR_TREE_EXT_ROW_COUNT 15
 
 #define ATTR_TREE_EXT_COLUMN_COUNT 10
 
 static unsigned int tag_attr_combination_ext_table[ATTR_TREE_EXT_ROW_COUNT][ATTR_TREE_EXT_COLUMN_COUNT] = {
+/* 0x02 - DW_TAG_class_type                    */
+    { 0x00000002,0x0000001d,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,},
 /* 0x11 - DW_TAG_compile_unit                  */
     { 0x00000011,0x00003fe1,0x00002131,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,},
 /* 0x0d - DW_TAG_member                        */

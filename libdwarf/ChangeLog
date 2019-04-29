@@ -1,3 +1,7 @@
+2019-04-29 David Anderson
+     * dwarf_names.c,dwarf_names.h,dwarf_names_enum.h,
+       dwarf_names_new.h: Regenerated.
+       Version date update.
 2019-04-28 David Anderson
       * config.h.in.cmake, configure.cmake: Deleted all reference to
         INT32 and INT64 as no longer needed.
