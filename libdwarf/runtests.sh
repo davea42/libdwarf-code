@@ -27,13 +27,13 @@ fi
 
 CC=cc
 CFLAGS="-g -O2 -I$top_blddir -I$top_srcdir/libdwarf -I$top_blddir/libdwarf"
-$CC $CFLAGS -DTESTING  $srcdir/dwarf_leb.c $srcdir/pro_encode_nm.c -o dwarfleb
+$CC $CFLAGS $srcdir/dwarf_leb_test.c $srcdir/dwarf_leb.c $srcdir/pro_encode_nm.c -o dwarfleb
 chkres $? "compiling dwarfleb test"
 ./dwarfleb
 chkres $? "Running dwarfleb test"
 rm ./dwarfleb
 
-$CC $CFLAGS -DTESTING $srcdir/dwarf_tied.c $srcdir/dwarf_tsearchhash.c -o dwarftied
+$CC $CFLAGS $srcdir/dwarf_tied_test.c $srcdir/dwarf_tied.c $srcdir/dwarf_tsearchhash.c -o dwarftied
 chkres $? "compiling dwarftied test"
 ./dwarftied
 chkres $? "Running dwarftiedtest test"
