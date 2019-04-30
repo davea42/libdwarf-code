@@ -123,6 +123,7 @@ CMakeLists.txt \
 NEWS \
 README \
 CODINGSTYLE \
+print_reloc_decls.h \
 getopttest.c \
 tag_common.c \
 testesb.c \
