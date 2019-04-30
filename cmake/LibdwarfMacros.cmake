@@ -17,3 +17,4 @@ macro(set_source_group list_name group_name)
 	set(${list_name} ${ARGN})
 	source_group(${group_name} FILES ${ARGN})
 endmacro()
+

@@ -1,4 +1,7 @@
 2019-04-30 David Anderson
+     * CMakeLists.txt: Added the new files. Revised the
+       testing area the tests can be run and pass.
+2019-04-30 David Anderson
      * libdwarf2.1.mm: Increased font size for better
        legibility in the pdf on a computer monitor
        Using the .S mm control. Rev 2.73.

@@ -1,3 +1,8 @@
+2019-04-30  David Anderson
+    * README.cmake: New, describes use of cmake.
+    * cmake/LibdwarfMacros.cmake: Added a final newline
+      charcter as such is expected.
+    * configure.cmake: Added testing lines.
 2019-04-26  David Anderson
     * README.cmake. New. Describes cmake use and options.
     * CMakeLists.txt,cmake/FindLibElf.cmake,configure.cmake:

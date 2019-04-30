@@ -1,4 +1,7 @@
 2019-04-30 David Anderson
+     * CMakeLists.txt: Added the new files. Revised the
+       testing area the tests can be run and pass.
+2019-04-30 David Anderson
      * helpertree_test.c,makename_test.c,print_reloc_decls.h,
        print_reloc_test.c,section_bitmaps_test.c: New
        source which separates the internal-api test code

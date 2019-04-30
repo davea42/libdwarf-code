@@ -18,21 +18,18 @@ directory named 'code' inside the directory '/path/to/' Always
 arrange to issue the cmake command in an empty directory.
 For example:
 
-    mkdir /tmp/bld
-    cd /tmp/bld
+    mkdir /tmp/cmbld
+    cd /tmp/cmbld
     cmake /path/to/code
     make
 
-
-Will build libdwarf (a static library, a libdwarf.a) and
+The above will build libdwarf (a static library, a libdwarf.a) and
 dwarfdump (linking to that static library).  If there is no
 libelf.h present during cmake/build then dwarfdump won't read
 archives or honor requests to print elf headers.
 
 To show all the available cmake options we'll show the
-default build,
-
-The default build is identical to
+default build next:
 
     cmake -Dlibelf=ON \
         -Dstatic=ON \
@@ -40,7 +37,9 @@ The default build is identical to
         -Ddodwarfgen=OFF \
         -Ddodwarfexample=OFF \
         -Dwall=OFF \
-        -Dnonstandardprintf=OFF
+        -DTEST=OFF\
+        -Dnonstandardprintf=OFF \
+        /path/to/code
     make
 
 The short form, doing the same as the default:
@@ -64,3 +63,19 @@ For dwarfexample:
 
 If libelf is missing -Ddodwarfgen=ON will not be honored
 as dwarfgen will not build without libelf.
+
+If you wish to run the selftests  (which just test
+a few internal interfaces, not dwarfdump or libdwarf):
+
+    cmake -Dtest=ON /path/to/code
+    make
+    ctest -N
+    ctest -R self
+
+On Unix/Linux cmake 'make install' will install to
+"/usr/local".  To set another install target set
+CMAKE_INSTALL_PREFIX.  Example:
+
+   mkdir /tmp/cmitest
+   cmake -DCMAKE_INSTALL_PREFIX=/tmp/cmitest
+   make install

@@ -49,6 +49,7 @@ dwarf_object_detector.h dwarf_opaque.h
 dwarf_pe_descr.h dwarf_peread.h
 dwarf_reading.h dwarf_reloc_arm.h dwarf_reloc_mips.h 
 dwarf_reloc_ppc.h dwarf_reloc_ppc64.h dwarf_reloc_x86_64.h 
+dwarf_tied_decls.h 
 dwarf_tsearch.h 
 dwarf_str_offsets.h
 dwarf_types.h dwarf_util.h dwarf_vars.h dwarf_weaks.h 
@@ -62,20 +63,21 @@ pro_reloc.h pro_reloc_stream.h pro_reloc_symbolic.h
 pro_section.h pro_types.h pro_util.h)
 
 
-set_source_group(CONFIGURATION_FILES "Configuration Files" configure.cmake config.h.in.cmake ${CMAKE_CURRENT_BINARY_DIR}/config.h)
-
+set_source_group(CONFIGURATION_FILES "Configuration Files" 
+    configure.cmake config.h.in.cmake 
+    ${CMAKE_CURRENT_BINARY_DIR}/config.h)
 	
 list(LENGTH DWARF_TARGETS targetCount)
 math(EXPR targetCount "${targetCount} - 1")
 foreach(i RANGE ${targetCount})
 	list(GET DWARF_TARGETS ${i} target)
 	list(GET DWARF_TYPES ${i} type)
-	add_library(${target} ${type} ${SOURCES} ${HEADERS} ${GENNAMES_OUTPUT} ${CONFIGURATION_FILES})
+	add_library(${target} ${type} ${SOURCES} ${HEADERS}
+            ${GENNAMES_OUTPUT} ${CONFIGURATION_FILES})
 
 	set_folder(${target} libdwarf)
-
-	target_include_directories(${target} PUBLIC ${LIBELF_INCLUDE_DIRS})
-
+	target_include_directories(${target} PUBLIC 
+            ${LIBELF_INCLUDE_DIRS})
 	msvc_posix(${target})
 
 	target_link_libraries(${target} PUBLIC ${LIBELF_LIBRARIES})
@@ -96,56 +98,21 @@ if(UNIX AND shared)
 	target_link_libraries(dwarf-shared PUBLIC z)
 endif()
 		
-if(UNIX)
 
-#
-# The following are very SGI-centric
-# psroff is just a troff formatter.
-# the .mm files are in ATT/USL/USG mm form.
-# Calling it pdfbld or bldpdf is arbitrary, so allow both.
-
-#Oriented to using gsroff now.
-#set(TROFF /usr/bin/groff)
-##set(TROFFDEV "-T ps")
-#set(TROFFDEV)
-#set(PSTOPDF /usr/bin/ps2pdf)
-#set(BUILD_BASE .)
-# pr expands tabs to spaces: this avoids problems with tab
-# interpretation
-
-# The warning about 'cant break line' is a too-long line used
-# in the table of contents.
-# All pr does here is change each tab to spaces.
-# Ignore the warning (and those like it).
-#add_custom_command(OUTPUT libdwarf2.1.pdf
-#    COMMAND -pr -t -e ${BUILD_BASE}/libdwarf2.1.mm | tbl | ${TROFF} ${TROFFDEV} -mm >libdwarf2.1.ps
-#    COMMAND ${PSTOPDF} libdwarf2.1.ps ${CMAKE_CURRENT_BINARY_DIR}/libdwarf2.1.pdf
-#    DEPENDS ${BUILD_BASE}/libdwarf2.1.mm)
-#    
-#add_custom_command(OUTPUT libdwarf2p.1.pdf
-#    COMMAND -pr -t -e ${BUILD_BASE}/libdwarf2p.1.mm | tbl | ${TROFF} ${TROFFDEV} -mm >libdwarf2p.1.ps
-#    COMMAND ${PSTOPDF} libdwarf2p.1.ps ${CMAKE_CURRENT_BINARY_DIR}/libdwarf2p.1.pdf
-#    DEPENDS ${BUILD_BASE}/libdwarf2p.1.mm)
-#    
-#add_custom_command(OUTPUT mips_extensions.pdf
-#    COMMAND -pr ${TROFFDEV} -e ${BUILD_BASE}/mips_extensions.mm | tbl | ${TROFF} ${TROFFDEV} -mm >mips_extensions.ps
-#    COMMAND ${PSTOPDF} mips_extensions.ps ${CMAKE_CURRENT_BINARY_DIR}/mips_extensions.pdf
-#    DEPENDS ${BUILD_BASE}/mips_extensions.mm)
-#    
-#add_custom_target(pdfbld
-#    DEPENDS libdwarf2.1.pdf libdwarf2p.1.pdf mips_extensions.pdf)
-#
-#set_folder(pdfbld libdwarf/documentation)
-#    
-#add_custom_target(bldpdf
-#    DEPENDS pdfbld)
-
-#set_folder(bldpdf libdwarf/documentation)
-    
-#add_custom_target(docbld
-#    DEPENDS pdfbld)
-
-#set_folder(docbld libdwarf/documentation)
-
+if (DO_TESTING)
+    set_source_group(TESTLEB "Source Files" dwarf_leb_test.c 
+        dwarf_leb.c pro_encode_nm.c )
+    add_executable(selfleb ${TESTLEB})
+    target_compile_options(selfleb PRIVATE ${dwfwall})
+    add_test(NAME selfleb COMMAND selfleb)
 endif()
+if (DO_TESTING)
+    set_source_group(TESTTIED "Source Files" 
+        dwarf_tied_test.c dwarf_tied.c dwarf_tsearchhash.c )
+    add_executable(selftied ${TESTTIED})
+    target_compile_options(selftied PRIVATE ${dwfwall})
+    add_test(NAME selftied COMMAND selftied)
+endif()
+
+
 

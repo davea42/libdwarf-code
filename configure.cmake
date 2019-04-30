@@ -9,6 +9,8 @@ option(shared "build shared library libdwarf.so and use it if present" FALSE)
 option(nonshared "build archive library libdwarf.a" TRUE)
 
 #  This adds compiler option -Wall (gcc compiler warnings)
+#  'set' here uses $< introducing what is called 
+#  a 'generator expression' in cmake documentation.
 option(wall "Add -Wall" FALSE)
 set(dwfwall $<$<BOOL:${wall}>:"-Wall -O0 -Wpointer-arith -Wmissing-declarations -Wmissing-prototypes -Wdeclaration-after-statement -Wextra -Wcomment -Wformat -Wpedantic -Wuninitialized -Wno-long-long -Wshadow">)
 
@@ -27,3 +29,7 @@ message(STATUS "Building dwarfgen    ... ${BUILD_DWARFGEN}")
 option(dodwarfexample "Build dwarfexample (default is NO)" FALSE)
 set(BUILD_DWARFEXAMPLE ${dodwarfexample} )
 message(STATUS "Building dwarfexample... ${BUILD_DWARFEXAMPLE}")
+
+option(test "Do certain api tests (default is NO)" FALSE)
+set(DO_TESTING ${test} )
+message(STATUS "Building api tests   ... ${DOTESTS}")

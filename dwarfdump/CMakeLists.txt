@@ -1,33 +1,35 @@
 include(configure.cmake)
 
-add_library(esb_and_tsearchbal OBJECT esb.c dwarf_tsearchbal.c)
-
-set_folder(esb_and_tsearchbal dwarfdump)
-
-target_include_directories(esb_and_tsearchbal PRIVATE
-    $<TARGET_PROPERTY:${dwarf-target},INTERFACE_INCLUDE_DIRECTORIES>)
-
-msvc_posix(esb_and_tsearchbal)
-
-set_source_group(SOURCES "Source Files" addrmap.c checkutil.c dwarfdump.c dwconf.c helpertree.c 
+set_source_group(SOURCES "Source Files" addrmap.c 
+        checkutil.c dwarfdump.c dwconf.c helpertree.c 
 	glflags.c command_options.c compiler_info.c
         dwarf_names.c
-	macrocheck.c print_abbrevs.c print_aranges.c print_debugfission.c print_die.c 
+	macrocheck.c print_abbrevs.c print_aranges.c
+        print_debugfission.c print_die.c 
 	print_dnames.c print_frames.c  print_gdbindex.c
-	print_lines.c print_locs.c print_macro.c print_macros.c print_pubnames.c print_ranges.c print_reloc.c 
+	print_lines.c print_locs.c print_macro.c 
+        print_macros.c print_pubnames.c print_ranges.c print_reloc.c 
 	print_str_offsets.c
-	print_sections.c  print_section_groups.c print_static_funcs.c  print_static_vars.c print_strings.c print_types.c print_weaknames.c  
-	sanitized.c section_bitmaps.c strstrnocase.c true_section_name.c uri.c dwgetopt.c makename.c naming.c common.c $<TARGET_OBJECTS:esb_and_tsearchbal>)
+	print_sections.c  print_section_groups.c print_static_funcs.c
+        print_static_vars.c print_strings.c print_types.c 
+        print_weaknames.c  
+	sanitized.c section_bitmaps.c strstrnocase.c 
+        true_section_name.c uri.c dwgetopt.c makename.c 
+        naming.c common.c esb.c dwarf_tsearchbal.c)
 	
 set_source_group(HEADERS "Header Files" checkutil.h common.h dwconf.h
   command_options.h compiler_info.h
   dwarf_names.h
   dwconf_using_functions.h esb_using_functions.h
-  dwarfdump-ta-ext-table.h dwarfdump-ta-table.h dwarfdump-tt-ext-table.h dwarfdump-tt-table.h
+  dwarfdump-ta-ext-table.h dwarfdump-ta-table.h 
+  dwarfdump-tt-ext-table.h dwarfdump-tt-table.h
   dwgetopt.h esb.h glflags.h globals.h macrocheck.h defined_types.h
-  makename.h dwarf_tsearch.h print_frames.h section_bitmaps.h uri.h)
+  makename.h dwarf_tsearch.h print_frames.h 
+  print_reloc.h print_reloc_decls.h section_bitmaps.h uri.h)
 
-set_source_group(CONFIGURATION_FILES "Configuration Files" configure.cmake config.h.in.cmake ${CMAKE_CURRENT_BINARY_DIR}/config.h)
+set_source_group(CONFIGURATION_FILES "Configuration Files"
+  configure.cmake config.h.in.cmake 
+  ${CMAKE_CURRENT_BINARY_DIR}/config.h)
 	
 add_executable(dwarfdump ${SOURCES} ${HEADERS} ${CONFIGURATION_FILES})
 
@@ -35,84 +37,104 @@ set_folder(dwarfdump dwarfdump)
 
 target_compile_options(dwarfdump PRIVATE ${dwfwall})
 
-target_compile_definitions(dwarfdump PRIVATE "CONFPREFIX=${CMAKE_INSTALL_PREFIX}/lib")
+target_compile_definitions(dwarfdump PRIVATE 
+    "CONFPREFIX=${CMAKE_INSTALL_PREFIX}/lib")
 
 target_link_libraries(dwarfdump PRIVATE ${dwarf-target} ${dwfzlib}) 
 
 # Plain GNU C dash E does not work on a .list, 
 # so copy to a .c name to run
 # the following four table creations.
+set(SELFTEST "-DSELFTEST")
 	
-set_source_group(TESTESB_SOURCES "Source Files" esb.c testesb.c)
-
-add_executable(testesb ${TESTESB_SOURCES})
-
-set_folder(testesb dwarfdump/tests)
-
-target_include_directories(testesb PRIVATE
-    $<TARGET_PROPERTY:${dwarf-target},INTERFACE_INCLUDE_DIRECTORIES>)
-
-add_test(NAME test COMMAND testesb)
-
-set_source_group(GETOPTEST_SOURCES "Source Files" getopttest.c dwgetopt.c)
-
-add_executable(getopttest ${GETOPTEST_SOURCES})
-
-set_folder(getopttest dwarfdump/tests)
-
-add_test(NAME getopttest COMMAND getopttest)
-
-add_executable(getopttestnat ${GETOPTEST_SOURCES})
-
-set_folder(getopttestnat dwarfdump/tests)
-
-if(UNIX)
-	target_compile_definitions(getopttestnat PRIVATE GETOPT_FROM_SYSTEM)
+if (DO_TESTING) 
+    set_source_group(GETOPTEST_SOURCES "Source Files" 
+      getopttest.c dwgetopt.c)
+    add_executable(selfgetopttest ${GETOPTEST_SOURCES})
+    target_compile_options(selfgetopttest PRIVATE ${dwfwall})
+    add_test(NAME selfgetopttest COMMAND selfgetopttest)
+endif()    
+    
+if (DO_TESTING) 
+    set_source_group(TESTESB_SOURCES "Source Files" esb.c testesb.c
+       dwarf_tsearchbal.c)
+    add_executable(selftestesb ${TESTESB_SOURCES})
+    target_compile_options(selftestesb PRIVATE ${SELFTEST} )
+    target_compile_options(selftestesb PRIVATE ${dwfwall})
+    add_test(NAME selftestesb COMMAND selftestesb)
 endif()
 
-foreach(i 1 2 3 5 6 7 8)
-	add_test(NAME getopttestnat${i} COMMAND getopttestnat -c ${i})
-endforeach()
-	
-set_source_group(SELFHELPERTREE_SOURCES "Source Files" helpertree.c)
+if (DO_TESTING) 
+    set_source_group(TESTESB_SOURCES "Source Files" getopttest.c
+        dwgetopt.c)
+    add_executable(selfgetopttestnat ${GETOPTEST_SOURCES})
+    target_compile_options(selfgetopttestnat PRIVATE ${dwfwall})
+    if(UNIX)
+	    target_compile_definitions(selfgetopttestnat 
+            PRIVATE GETOPT_FROM_SYSTEM)
+    endif()
+    foreach(i 1 2 3 5 6 7 8 9 10)
+	    add_test(NAME selfgetopttestnat${i} 
+                COMMAND selfgetopttestnat -c ${i})
+    endforeach()
+endif()
 
-add_executable(selfhelpertree ${SELFHELPERTREE_SOURCES} $<TARGET_OBJECTS:esb_and_tsearchbal>)
+if (DO_TESTING) 
+    set_source_group(MAKENAME_SOURCES "Source Files"
+       makename_test.c esb.c dwarf_tsearchbal.c makename.c)
+    add_executable(selfmakename ${MAKENAME_SOURCES})
+    target_compile_options(selfmakename PRIVATE ${dwfwall})
+    add_test(NAME selfmakename COMMAND selfmakename)
+endif()
 
-set_folder(selfhelpertree dwarfdump/tests)
 
-target_compile_definitions(selfhelpertree PRIVATE SELFTEST)
+if (DO_TESTING) 
+    set_source_group(HELPERTREE_SOURCES "Source Files"
+       helpertree_test.c helpertree.c dwarf_tsearchbal.c)
+    add_executable(selfhelpertree ${HELPERTREE_SOURCES})
+    target_compile_options(selfhelpertree PRIVATE ${dwfwall})
+    add_test(NAME selfhelpertree COMMAND selfhelpertree)
+endif()
 
-target_include_directories(selfhelpertree PRIVATE
-    $<TARGET_PROPERTY:${dwarf-target},INTERFACE_INCLUDE_DIRECTORIES>)
+if (DO_TESTING) 
+    set_source_group(SELFMC_SOURCES "Source Files" macrocheck.c
+        esb.c dwarf_tsearchbal.c)
+    add_executable(selfmc ${SELFMC_SOURCES} )
+    target_compile_options(selfmc PRIVATE ${SELFTEST} )
+    target_compile_options(selfmc PRIVATE ${dwfwall})
+    add_test(NAME selfmc COMMAND selfmc)
+endif()
 
-add_test(NAME selfhelpertree COMMAND selfhelpertree)
+if (DO_TESTING) 
+    set_source_group(SELFESB_SOURCES "Source Files"
+        testesb.c esb.c)
+    add_executable(selfesb ${SELFESB_SOURCES})
+    target_compile_options(selfesb PRIVATE ${SELFTEST} )
+    target_compile_options(selfesb PRIVATE ${dwfwall})
+    add_test(NAME selfesb COMMAND selfesb)
+endif()
 
-#doesn't compile	
-#set_source_group(SELFMC_SOURCES "Source Files" macrocheck.c $<TARGET_OBJECTS:esb_and_tsearchbal>)
-#
-#add_executable(selfmc ${SELFMC_SOURCES})
-#
-# set_folder(selfmc dwarfdump/tests)
-#
-#target_compile_definitions(selfmc PRIVATE SELFTEST)
-#
-#target_include_directories(selfmc PRIVATE
-#    $<TARGET_PROPERTY:${dwarf-target},INTERFACE_INCLUDE_DIRECTORIES>)
-#
-#add_test(NAME selfmc COMMAND selfmc)
-	
-#set_source_group(SELFESB_SOURCES "Source Files" esb.c)
-#
-#add_executable(selfesb ${SELFESB_SOURCES})
-#
-#set_folder(selfesb dwarfdump/tests)
-#
-#target_compile_definitions(selfesb PRIVATE SELFTEST)
+if (DO_TESTING) 
+    set_source_group(SECTIONBITMAPS_SOURCES "Source Files" 
+        section_bitmaps.c section_bitmaps_test.c )
+    add_executable(selfsectionbitmaps ${SECTIONBITMAPS_SOURCES})
+    target_compile_options(selfsectionbitmaps PRIVATE 
+        ${SELFTEST} )
+    target_compile_options(selfsectionbitmaps PRIVATE ${dwfwall})
+    add_test(NAME selfsectionbitmaps COMMAND selfsectionbitmaps)
+endif()
 
-#target_include_directories(selfesb PRIVATE
-#    $<TARGET_PROPERTY:${dwarf-target},INTERFACE_INCLUDE_DIRECTORIES>)
-
-#add_test(NAME selfesb COMMAND selfesb)
+if (DO_TESTING) 
+    set_source_group(SELFPRINTRELOC_SOURCES "Source Files" 
+        esb.c print_reloc_test.c)
+    add_executable(selfprintreloc ${SELFPRINTRELOC_SOURCES})
+    # We need access to a few relocation-data libdwarf headers
+    target_compile_options(selfprintreloc PRIVATE 
+        "-I${CMAKE_SOURCE_DIR}/libdwarf")
+    target_compile_options(selfprintreloc PRIVATE ${SELFTEST} )
+    target_compile_options(selfprintreloc PRIVATE ${dwfwall})
+    add_test(NAME selfprintreloc COMMAND selfprintreloc)
+endif()
 
 if(${CMAKE_SIZEOF_VOID_P} EQUAL 8)
 	set(SUFFIX 64)

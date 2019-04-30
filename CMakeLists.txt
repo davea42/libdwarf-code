@@ -12,8 +12,7 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 # used when finding libelf
 set_property(GLOBAL PROPERTY FIND_LIBRARY_USE_LIB64_PATHS TRUE)
 
-# this project has tests, but not essential here.
-# enable_testing()
+enable_testing()
 
 # always include project's folder to includes
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -43,12 +42,12 @@ if ( BUILD_DWARFGEN )
 	if ( DWARF_WITH_LIBELF )
 	    add_subdirectory(dwarfgen)
         else ()
-            message( "-- Not building dwarfgen because libelf is not available" )
+            message(STATUS "Not building dwarfgen because libelf is not available" )
         endif ()
 endif()
 if ( BUILD_DWARFEXAMPLE )
 	add_subdirectory(dwarfexample)
 endif()
 
-add_custom_target(dd
-	DEPENDS ${DWARF_TARGETS} dwarfdump)
+message(STATUS "Install to ... ${CMAKE_INSTALL_PREFIX}" )
+add_custom_target(dd DEPENDS ${DWARF_TARGETS} dwarfdump)
