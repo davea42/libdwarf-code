@@ -1,3 +1,11 @@
+2019-04-30 David Anderson
+     * Makefile.am: Altered the lists of headers/source
+       to account for  the new 'make check' details.
+     * dwarf_leb.c,dwarf_tied.c: Removed testing-related
+       source. Moved to the respective _test.c
+     * dwarf_leb_test.c,dwarf_tied_decls.h,dwarf_tied_test.c:
+       New files so we isolate test code without ifdefs.
+     * runtests.sh: Now reflects the new test sourcefiles.
 2019-04-29 David Anderson
      * dwarf_names.c,dwarf_names.h,dwarf_names_enum.h,
        dwarf_names_new.h: Regenerated.
