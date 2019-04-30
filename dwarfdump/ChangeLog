@@ -1,3 +1,14 @@
+2019-04-30 David Anderson
+     * helpertree_test.c,makename_test.c,print_reloc_decls.h,
+       print_reloc_test.c,section_bitmaps_test.c: New
+       source which separates the internal-api test code
+       from the code dwarfdump actually uses.
+       Removing most need of -DSELFTEST.
+     * helpertree.c,makename.c,print_reloc.c,section_bitmaps.c,
+       section_bitmaps.h: Now with just the code needed for
+       dwarfdump itself.
+     * runtests.sh: Reflects the refactoring of the internal
+       api test code.
 2019-04-29 David Anderson
      * dwarf_names.c,dwarf_names.h: Regenerated.
        Version date update.

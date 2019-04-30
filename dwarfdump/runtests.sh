@@ -58,18 +58,16 @@ chkres $? "running getopttestnat -c 10 "
 rm  ./getopttestnat
 
 echo "start selfmakename"
-$CC $CFLAGS -DSELFTEST  -c $srcdir/esb.c
-chkres $? "compiling esb.c test"
-$CC -c $CFLAGS $srcdir/dwarf_tsearchbal.c
-chkres $? "compiling dwarf_tsearchbal.c test"
-$CC -g -DSELFTEST  $CFLAGS $srcdir/makename.c dwarf_tsearchbal.o -o selfmakename
+$CC $CFLAGS  -c $srcdir/esb.c $srcdir/dwarf_tsearchbal.c 
+chkres $? "compiling makename test"
+$CC -g $CFLAGS $srcdir/makename.c $srcdir/makename_test.c dwarf_tsearchbal.o esb.o -o selfmakename
 chkres $? "compiling selfmakename test"
 ./selfmakename
 chkres $? "running selfmakename "
 rm  ./selfmakename
 
 echo "start selfhelpertree"
-$CC -DSELFTEST $CFLAGS -g $srcdir/helpertree.c esb.o dwarf_tsearchbal.o -o selfhelpertree
+$CC $CFLAGS -g $srcdir/helpertree_test.c $srcdir/helpertree.c esb.o dwarf_tsearchbal.o -o selfhelpertree
 chkres $? "compiling helpertree.c selfhelpertree"
 ./selfhelpertree
 chkres $? "running selfhelpertree "
@@ -82,22 +80,22 @@ chkres $? "compiling macrocheck.c selfmc"
 chkres $? "running selfmc "
 rm -f ./selfmc
 
-echo "start selfesb"
-$CC -DSELFTEST $CFLAGS $srcdir/testesb.c esb.o -o selfesb
-chkres $? "compiling selfesb.c selfesb"
-./selfesb
-chkres $? "running selfesb "
-rm  ./selfesb
+#echo "start selfesb"
+#$CC  $CFLAGS $srcdir/testesb.c esb.o -o selfesb
+#chkres $? "compiling selfesb.c selfesb"
+#./selfesb
+#chkres $? "running selfesb "
+#rm  ./selfesb
 
 echo "start selfsetion_bitmaps"
-$CC -DSELFTEST $CFLAGS -g $srcdir/section_bitmaps.c -o selfsection_bitmaps
+$CC  $CFLAGS -g $srcdir/section_bitmaps_test.c  $srcdir/section_bitmaps.c -o selfsection_bitmaps
 chkres $? "compiling bitmaps.c section_bitmaps"
 ./selfsection_bitmaps
 chkres $? "running selfsection_bitmaps "
 rm  ./selfsection_bitmaps
 
 echo "start selfprint_reloc"
-$CC -DSELFTEST $CFLAGS $srcdir/print_reloc.c esb.o -o selfprint_reloc
+$CC $CFLAGS $srcdir/print_reloc_test.c esb.o -o selfprint_reloc
 chkres $? "compiling print_reloc.c selfprint_reloc"
 ./selfprint_reloc
 chkres $? "running selfprint_reloc "

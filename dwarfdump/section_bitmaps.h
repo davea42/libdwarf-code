@@ -171,6 +171,7 @@ extern struct section_map_s  map_sectnames[] ;
 
 
 boolean section_name_is_debug_and_wanted(const char *section_name);
+unsigned section_bitmap_array_size(void);
 
 void set_all_section_defaults(void);
 

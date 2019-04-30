@@ -53,61 +53,45 @@ static void * makename_data;
 #define VALTYPE char *
 #define DW_TSHASHTYPE char *
 
-static int
-value_compare_func(const void *l, const void *r)
-{
-    VALTYPE ml = (VALTYPE)l;
-    VALTYPE mr = (VALTYPE)r;
-    return strcmp(ml,mr);
-}
-/* Nothing to free for the 'value' example. */
-static void
-value_node_free(void *valp)
-{
-   VALTYPE v = (VALTYPE)valp;
-   free(v);
-}
 
-void
-makename_destructor(void)
+char *samples[]  = {
+"abcd",
+"efgh",
+"a",
+"abcd",
+0
+};
+
+int main()
 {
-    dwarf_tdestroy(makename_data,value_node_free);
-    makename_data = 0;
-}
+    char *e1 = 0;
+    char *e2= 0;
+    char *e3= 0;
+    char *e4= 0;
+    int j = 0;
+    int errct = 0;
 
-/*  WARNING: the tree walk functions will, if presented **tree
-    when *tree is wanted, simply find nothing. No error,
-    just bad results. So when a walk produces nothing
-    suspect a code mistake here.
-    The basic problem is void* is a terrible way to
-    pass in a pointer. But it's how tsearch was defined
-    long ago.
-*/
 
-char *
-makename(const char *s)
-{
-    char *newstr = 0;
-    VALTYPE re = 0;
-    void *retval = 0;
+    e1 = makename(samples[0]);
+    e2 = makename(samples[1]);
+    e3 = makename(samples[2]);
+    e4 = makename(samples[3]);
 
-    if (!s) {
-        return "";
+    if (e1 != e4) {
+        printf(" FAIL. mismatch  pointers\n");
+        ++errct;
     }
-    newstr = (char *)strdup(s);
-    retval = dwarf_tfind(newstr,&makename_data, value_compare_func);
-    if (retval) {
-        /* We found our string, it existed already. */
-        re = *(VALTYPE *)retval;
-        free(newstr);
-        return re;
+    if (e1 == e2 ) {
+        printf(" FAIL. match  pointers\n");
+        ++errct;
     }
-    retval = dwarf_tsearch(newstr,&makename_data, value_compare_func);
-    if (!retval) {
-        /*  Out of memory, lets just use the string we dup'd and
-            let it leak. Things will surely fail anyway. */
-        return newstr;
+    if ( e1 == e3) {
+        printf(" FAIL. match  pointers\n");
+        ++errct;
     }
-    re = *(VALTYPE *)retval;
-    return re;
+    if (errct) {
+        exit(1);
+    }
+    printf("PASS makename test\n");
+    return 0;
 }

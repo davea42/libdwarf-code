@@ -72,6 +72,12 @@ static char section_map[DW_HDR_ARRAY_SIZE];
 
 static boolean all_sections_on;
 
+unsigned section_bitmap_array_size(void)
+{
+    unsigned len = sizeof(map_sectnames)/sizeof(struct section_map_s);
+    return len;
+}
+
 boolean
 section_name_is_debug_and_wanted(const char *section_name)
 {
@@ -160,44 +166,3 @@ enable_reloc_map_entry(unsigned index)
         reloc_map[index] = TRUE;
     }
 }
-
-#ifdef SELFTEST
-
-int main()
-{
-    unsigned i = 1;
-
-    unsigned arraycount = sizeof(map_sectnames)/
-        sizeof (struct section_map_s);;
-
-    if (arraycount  !=  DW_HDR_ARRAY_SIZE) {
-        printf("FAIL map_sections.c sections array wrong size "
-            "%u vs %u\n",
-            arraycount,DW_HDR_ARRAY_SIZE);
-        exit(1);
-    }
-    for ( ; i < DW_HDR_ARRAY_SIZE; ++i) {
-
-        struct section_map_s * mp = map_sectnames+i;
-        if (mp->value != i) {
-            printf("FAIL map_sections.c at entry %s we have "
-            "0x%x vs 0x%x"
-                " mismatch\n",
-                mp->name?mp->name:"<no name",
-                mp->value,
-                i);
-            exit(1);
-        }
-        if (!mp->name) {
-            printf("FAIL map_sections.c at entry %u we have no name!\n",i);
-            exit(1);
-        }
-    }
-    printf("PASS section maps\n");
-    return 0;
-}
-
-
-
-
-#endif /* SELFTEST */
