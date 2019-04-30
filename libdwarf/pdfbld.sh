@@ -17,7 +17,7 @@ fi
 for i in $*
 do
   case $i in
-    -a) c="y" ; p = "y"
+    -a) c="y" ; p="y"
        shift ;;
     -c) c="y"
        shift ;;

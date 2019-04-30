@@ -1,14 +1,17 @@
 \."
-\." the following line may be removed if the ff ligature works on your machine
+\." the following line may be removed if the 
+\." ff ligature works on your machine
 .lg 0
 \." set up heading formats
 .ds HF 3 3 3 3 3 2 2
 .ds HP +2 +2 +1 +0 +0
 .nr Hs 5
 .nr Hb 5
+\." Increment body point size
+.S +2
 \." ==============================================
 \." Put current date in the following at each rev
-.ds vE rev 2.72, 22 April 2019
+.ds vE Rev 2.73, 30 April 2019
 \." ==============================================
 \." ==============================================
 .ds | |
@@ -88,7 +91,7 @@ and a copy of the standard.
 .H 2 "Copyright"
 Copyright 1993-2006 Silicon Graphics, Inc.
 
-Copyright 2007-2018 David Anderson.
+Copyright 2007-2019 David Anderson.
 
 Permission is hereby granted to
 copy or republish or use any or all of this document without
@@ -5120,7 +5123,8 @@ Return value
 \f(CW*loclist_source_out\fP
 is critical as it identifies the sort of entry we have.
 If its value is zero (0) it identifies the location description
-is a location expression.  In that case
+is a location expression.  
+In that case
 \f(CW*lle_value_out\fP,
 \f(CW*lowpc_out\fP, and
 \f(CW*hipc_out\fP are not really interesting.
@@ -11459,7 +11463,11 @@ section.
 The section is of sufficient complexity that a number of function
 interfaces are needed.
 For additional information see
-"https://sourceware.org/gdb/onlinedocs/gdb/Index-Section-Format.html#Index-Section-Format".
+"https://sourceware.org/gdb/onlinedocs/gdb/"
+"Index-Section-Format.html#Index-Section-Format".
+(We split the url to two pieces so it can fit
+on the printed page
+join the pieces to make a usable url).
 
 
 .H 3 "dwarf_gdbindex_header()"

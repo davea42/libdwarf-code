@@ -9,9 +9,11 @@
 .ds HP +2 +2 +1 +0 +0
 .nr Hs 5
 .nr Hb 5
+\." Increment body point size
+.S +2
 \." ==============================================
 \." Put current date in the following at each rev
-.ds vE Rev 1.48, 01 December 2018
+.ds vE Rev 1.49, 30 April 2019
 \." ==============================================
 \." ==============================================
 .ds | |
@@ -46,9 +48,9 @@ described in this document should be implemented nor does it
 suggest possible optimizations. 
 .P
 The document is oriented to creating DWARF version 2.
-Support for creating DWARF3 is intended but such support
-is not yet fully present.
-DWARF4 support is also intended.
+Support for creating DWARF3 and DWARF4
+and DWARF5 is only partial: various features
+since DWARF2 cannot be created.
 .P
 \*(vE 
 .AE
@@ -64,7 +66,7 @@ information.
 .H 2 "Copyright"
 Copyright 1993-2006 Silicon Graphics, Inc.
 
-Copyright 2007-2018 David Anderson.
+Copyright 2007-2019 David Anderson.
 
 Permission is hereby granted to
 copy or republish or use any or all of this document without
