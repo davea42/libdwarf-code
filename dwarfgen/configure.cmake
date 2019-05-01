@@ -1,11 +1,5 @@
 include(AutoconfHelper)
 
-ac_init()
-
-ac_c_bigendian()
-
-ac_check_headers(elf.h libelf.h sgidefs.h sys/types.h)
-
 ac_try_compile([=[
 #include <stdint.h>
 int main()

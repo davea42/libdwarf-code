@@ -1,3 +1,6 @@
+2019-05-01 David Anderson
+     * configure.cmake: Removed some lines, placing them in
+       base directory configure.cmake.
 2019-04-28 David Anderson
      * config.h.in.cmake, configure.cmake: Deleted all reference to
        INT32 and INT64 as no longer needed.

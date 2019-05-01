@@ -1,23 +1,8 @@
 include(AutoconfHelper)
 
-ac_init()
-ac_check_headers(alloca.h elf.h elfaccess.h libelf.h libelf/libelf.h  sys/types.h sys/elf_386.h sys/elf_amd64.h sys/elf_sparc.h sys/ia64/elf.h)
-
 #  The default libdwarf is the one with struct Elf
 message(STATUS "Assuming struct Elf for the default libdwarf.h")
 configure_file(libdwarf.h.in libdwarf.h COPYONLY)
-
-ac_check_lib(${LIBELF_LIBRARIES} elf elf64_getehdr)
-ac_check_lib(${LIBELF_LIBRARIES} elf elf64_getshdr)
-
-# Find out where the elf header is.
-if(HAVE_ELF_H)
-    set(HAVE_LOCATION_OF_LIBELFHEADER "<elf.h>")
-elseif(HAVE_LIBELF_H)
-    set(HAVE_LOCATION_OF_LIBELFHEADER "<libelf.h>")
-elseif(HAVE_LIBELF_LIBELF_H)
-    set(HAVE_LOCATION_OF_LIBELFHEADER "<libelf/libelf.h>")
-endif()
 
 check_c_source_runs("
 static unsigned foo( unsigned x, __attribute__ ((unused)) int y)
@@ -177,7 +162,4 @@ set(HAVE_STRICT_DWARF2_32BIT_OFFSET ${dwarf_format_strict_32bit})
 set(HAVE_DWARF2_99_EXTENSION NOT ${dwarf_format_strict_32bit})
 message(STATUS "Checking producer generates only 32bit... ${HAVE_STRICT_DWARF2_32BIT_OFFSET}")
 
-if ( NOT HAVE_LIBELF_H AND NOT HAVE_LIBELF_LIBELF_H)
-   set(DWARF_WITH_LIBELF OFF )
-endif ()
 configure_file(config.h.in.cmake config.h)

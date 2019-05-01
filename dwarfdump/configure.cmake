@@ -1,19 +1,5 @@
 include(AutoconfHelper)
 
-ac_init()
-ac_check_headers(elf.h libelf.h libelf/libelf.h sgidefs.h sys/types.h stdafx.h Windows.h)
-ac_check_lib(${LIBELF_LIBRARIES} elf elf32_getehdr)
-ac_check_lib(${LIBELF_LIBRARIES} elf elf64_getehdr)
-
-# Find out where the elf header is.
-if(HAVE_ELF_H)
-    set(HAVE_LOCATION_OF_LIBELFHEADER "<elf.h>")
-elseif(HAVE_LIBELF_H)
-    set(HAVE_LOCATION_OF_LIBELFHEADER "<libelf.h>")
-elseif(HAVE_LIBELF_LIBELF_H)
-    set(HAVE_LOCATION_OF_LIBELFHEADER "<libelf/libelf.h>")
-endif()
-
 ac_try_compile("
 #include ${HAVE_LOCATION_OF_LIBELFHEADER}
 int main()
@@ -51,7 +37,7 @@ int main(void) {
     return 0;
 }" 
 HAVE_UNUSED_ATTRIBUTE)
-message("Checking if __attribute__ unused compiles ok... ${HAVE_UNUSED_ATTRIBUTE}")
+message(STATUS "Checking if __attribute__ unused compiles ok... ${HAVE_UNUSED_ATTRIBUTE}")
 
 ac_try_compile([=[
 #include "zlib.h"
@@ -92,9 +78,5 @@ int main()
 }" 
 HAVE_LIBELF_OFF64_OK)
 message(STATUS "Checking is off64_t type supported... ${HAVE_LIBELF_OFF64_OK}")
-
-if ( NOT HAVE_LIBELF_H AND NOT HAVE_LIBELF_LIBELF_H)
-	set(DWARF_WITH_LIBELF OFF)
-endif ()
 
 configure_file(config.h.in.cmake config.h)

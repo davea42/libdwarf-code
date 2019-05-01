@@ -1,3 +1,13 @@
+2019-05-01  David Anderson
+    * CMakeLists.txt: Corrected a mistake in reporting install
+      prefix.
+    * cmake/AutoconfHelper.cmake: Removed unused functions,
+      and for some functions changed to native cmake
+      in configure.cmake.
+    * configure.cmake: Now does a lot more setup here and
+      using cmake (replacing some autoconf-like functions)
+      And this now sets many things for each build directory,
+      reducing the size of */configure.cmake files. 
 2019-04-30  David Anderson
     * README.cmake: New, describes use of cmake.
     * cmake/LibdwarfMacros.cmake: Added a final newline
