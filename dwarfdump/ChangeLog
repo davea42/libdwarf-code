@@ -1,4 +1,7 @@
 2019-05-01 David Anderson
+     * dwarfdump.1: A stray letter 'i' was
+       in the --format-extensions wording.
+2019-05-01 David Anderson
      * configure.cmake: deleted.
      * globals.h: Corrected typo in comment.
      * CMakeLists.txt: Now does its configure_file on its own.
