@@ -1,4 +1,18 @@
 2019-05-01  David Anderson
+    * CMakeLists.txt: Sets language C
+    * cmake/AutoconfHelper.cmake: deleted, nothing here
+      used any more.
+    * cmake/FindLibElf.cmake: Now does C source test, not c++.
+    * configure.cmake: moved the cmake macro includes to
+      the first lines in the file.  Added a JUST_LIBELF
+      variable to correctly test for off64_t
+      Does checking/setting for essentially all the needed HAVE_
+      etc variables.
+      
+2019-05-01  David Anderson
+    * README.cmake: Made more complete.
+    * configure.cmake: Even more setup here.
+2019-05-01  David Anderson
     * CMakeLists.txt: Corrected a mistake in reporting install
       prefix.
     * cmake/AutoconfHelper.cmake: Removed unused functions,

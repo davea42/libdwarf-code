@@ -37,10 +37,21 @@ default build next:
         -Ddodwarfgen=OFF \
         -Ddodwarfexample=OFF \
         -Dwall=OFF \
-        -DTEST=OFF\
+        -Dtest=OFF\
         -Dnonstandardprintf=OFF \
+        -Dwindowspath=OFF \
+        -Doldframecol=OFF \
+        -Ddwarf_format_sgi_irix=OFF \
+        -Ddwarf_format_strict_32bit=OFF \
         /path/to/code
     make
+
+The options after -Dwindows path should not normally be used,
+they are for testing old features and not relevant
+to modern usage.
+
+The nonstandardprintf and windowspath options are MSWindows
+related and should not be used with Unix/Linux.
 
 The short form, doing the same as the default:
 

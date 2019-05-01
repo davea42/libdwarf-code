@@ -1,4 +1,9 @@
 2019-05-01 David Anderson
+     * configure.cmake: Removed some more lines.
+       Mainly leaving options declarations (which
+       will be moved later).
+     * dwarf_incl.h: Fixed a typo in a comment.
+2019-05-01 David Anderson
      * configure.cmake: Removed some lines, placing them in
        base directory configure.cmake.
 2019-04-30 David Anderson

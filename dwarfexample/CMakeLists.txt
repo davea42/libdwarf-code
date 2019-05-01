@@ -1,8 +1,9 @@
-include(configure.cmake)
+
+configure_file(config.h.in.cmake config.h)
 
 set_source_group(SIMPLE_READER_SOURCES "Source Files" simplereader.c)
 
-set_source_group(CONFIGURATION_FILES "Configuration Files" configure.cmake config.h.in.cmake ${CMAKE_CURRENT_BINARY_DIR}/config.h)
+set_source_group(CONFIGURATION_FILES "Configuration Files" config.h.in.cmake ${CMAKE_CURRENT_BINARY_DIR}/config.h)
 
 add_executable(simplereader ${SIMPLE_READER_SOURCES} ${SIMPLE_READER_HEADERS} ${CONFIGURATION_FILES})
 

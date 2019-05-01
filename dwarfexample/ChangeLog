@@ -1,4 +1,7 @@
 2019-05-01 David Anderson
+     * configure.cmake: deleted.
+     * CMakeLists.txt: Now does its configure_file on its own.
+2019-05-01 David Anderson
      * configure.cmake: Removed some lines, placing them in
        base directory configure.cmake.
 2019-04-28 David Anderson

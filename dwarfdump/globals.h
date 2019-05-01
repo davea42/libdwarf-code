@@ -32,7 +32,7 @@ extern "C" {
 #include "config.h"
 #if (!defined(HAVE_RAW_LIBELF_OK) && defined(HAVE_LIBELF_OFF64_OK) )
 /* At a certain point libelf.h requires _GNU_SOURCE.
-   here we assume the criteria in configure determine that
+   here we assume the criteria in configure determined that
    usefully.
 */
 #define _GNU_SOURCE 1

@@ -61,8 +61,8 @@ FIND_PACKAGE_HANDLE_STANDARD_ARGS(LibElf DEFAULT_MSG
   LIBELF_INCLUDE_DIRS)
 
 set(CMAKE_REQUIRED_LIBRARIES elf)
-include(CheckCXXSourceCompiles)
-check_cxx_source_compiles("#include <libelf.h>
+include(CheckCSourceCompiles)
+check_c_source_compiles("#include <libelf.h>
 int main() {
   Elf *e = (Elf*)0;
   size_t sz;
