@@ -4,13 +4,11 @@
 /* BEGIN FILE */
 
 /* Common extensions */
-#define ATTR_TREE_EXT_ROW_COUNT 16
+#define ATTR_TREE_EXT_ROW_COUNT 15
 
 #define ATTR_TREE_EXT_COLUMN_COUNT 10
 
 static unsigned int tag_attr_combination_ext_table[ATTR_TREE_EXT_ROW_COUNT][ATTR_TREE_EXT_COLUMN_COUNT] = {
-/* 0x02 - DW_TAG_class_type                    */
-    { 0x00000002,0x0000001d,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,},
 /* 0x13 - DW_TAG_structure_type                */
     { 0x00000013,0x0000001d,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,0x00000000,},
 /* 0x11 - DW_TAG_compile_unit                  */
