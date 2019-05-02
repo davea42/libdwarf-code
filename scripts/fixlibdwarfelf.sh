@@ -14,7 +14,7 @@ if [ x$yorn = "xno" ]
 then
   cp $srcdir/libdwarf.h.in $builddir/libdwarf.h
 else
-  sed 's/struct Elf/struct _Elf/g' <$srcdir/libdwarf.h.in >$builddir/libdwarf.h
+  cp $srcdir/generated_libdwarf.h.in $builddir/libdwarf.h
 fi
 exit 0
 

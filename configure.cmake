@@ -122,22 +122,31 @@ if (DWARF_WITH_LIBELF)
   }"  HAVE_LIBELF_OFF64_OK)
 
   check_c_source_compiles("
-  #include ${HAVE_LOCATION_OF_LIBELFHEADER}
+  #include ${JUST_LIBELF}
+  /* This must be at global scope */
+  struct _Elf;
+  typedef struct _Elf Elf;
+  struct _Elf *a = 0;
   int main()
-  {     
-      struct _Elf a; int i; i = 0;
-      return 0;
+  {
+   int i = 12;
+   return 0;
   }" HAVE_STRUCT_UNDERSCORE_ELF)
 endif()
 message(STATUS "Assuming struct Elf for the default libdwarf.h")
-configure_file(libdwarf/libdwarf.h.in libdwarf/libdwarf.h COPYONLY)
+# Because cmake treats ; in an interesting way attempting
+# to read/update/write Elf to _Elf fails badly: semicolons vanish.
+# So for _Elf use a pre-prepared version.
 if(HAVE_STRUCT_UNDERSCORE_ELF AND DWARF_WITH_LIBELF)
-   message(STATUS "Found struct _Elf in ${HAVE_LOCATION_OF_LIBELFHEADER}, using it in libdwarf.h")
-   file(READ libdwarf/libdwarf.h.in CONTENT)
-   string(REPLACE "struct Elf" "struct _Elf" CONTENT ${CONTENT})
-   file(WRITE libdwarf/libdwarf.h ${CONTENT})
+   message(STATUS "Found struct _Elf in ${JUST_LIBELF}")
+   message(STATUS "Using struct _Elf in libdwarf.h")
+   configure_file(libdwarf/generated_libdwarf.h.in 
+       libdwarf/libdwarf.h COPYONLY)
 else()
-   message(STATUS "${HAVE_LOCATION_OF_LIBELFHEADER} does not have struct _Elf")
+   configure_file(libdwarf/libdwarf.h.in 
+       libdwarf/libdwarf.h COPYONLY)
+   message(STATUS "${JUST_LIBELF} does not have struct _Elf")
+   message(STATUS "Using struct Elf in libdwarf.h")
 endif()
 
 check_c_source_runs("

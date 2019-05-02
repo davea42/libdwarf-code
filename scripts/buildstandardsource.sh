@@ -17,7 +17,6 @@ then
 fi
 
 cd libdwarf
-# We do not need to consider struct _Elf. Use standard version.
 if [ $? -ne 0 ]
 then
     echo "FAIL cd to libdwarf. Running buildstandardsource.sh from the wrong place"
@@ -25,6 +24,18 @@ then
 fi
 
 cp libdwarf.h.in libdwarf.h
+
+sed 's/struct Elf/struct _Elf/g' <libdwarf.h.in >ub_temp
+cmp ub_temp generated_libdwarf.h.in
+if [ $? -ne 0 ]
+then
+    # Since cmake does not copy ; sensibly we will
+    # provide a unique version for _Elf platforms.
+    # libdwarf.h.in differs from generated_libdwarf.h.in:
+    * update the latter.
+    mv ub_temp generated_libdwarf.h.in
+fi
+rm ub_temp
 
 sh ../scripts/libbuild.sh
 if [ $? -ne 0 ]

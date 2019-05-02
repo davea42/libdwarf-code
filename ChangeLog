@@ -1,4 +1,17 @@
 2019-05-02  David Anderson
+    * scripts/buildstandardsource.sh: cmake has serious trouble
+      with semicolons so now this copies the base 
+      libdwarf.h.in to generated_libdwarf.in while changing
+      struct Elf to struct _Elf. cmake can do a simple copy.
+    * configure.cmake: Now just copies the right file with
+      Elf or _Elf to libdwarf.h.
+    * scripts/buildstandardsource.sh: Now creates
+      generated_libdwarf.h.in from libdwarf.h.in.
+      using sed. Run by developer, not library users.
+    * scripts/fixlibdwarfelf.sh Now just copies the 
+      right file with Elf or _Elf to libdwarf.h
+      (used by configure, not cmake).
+2019-05-02  David Anderson
     * Makefile.in: regenerated.
 2019-05-01  David Anderson
     * CMakeLists.txt: Sets language C
