@@ -1,3 +1,5 @@
+2019-05-02  David Anderson
+    * Makefile.in: regenerated.
 2019-05-01  David Anderson
     * CMakeLists.txt: Sets language C
     * cmake/AutoconfHelper.cmake: deleted, nothing here

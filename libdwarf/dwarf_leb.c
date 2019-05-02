@@ -35,7 +35,7 @@
     many of the test items
     only make sense if Dwarf_Unsigned (and Dwarf_Signed)
     are 64 bits.  The encode/decode logic should
-    be fine whether those types are 64 or 32 bits. 
+    be fine whether those types are 64 or 32 bits.
     See runtests.sh */
 
 /*  10 bytes of leb, 7 bits each part of the number, gives

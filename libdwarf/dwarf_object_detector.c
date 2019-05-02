@@ -175,12 +175,12 @@ struct dos_header {
     TYP(dh_image_offset,4);
 };
 
-#define IMAGE_DOS_SIGNATURE      0x5A4D
-#define IMAGE_DOS_REVSIGNATURE   0x4D5A
-#define IMAGE_NT_SIGNATURE       0x00004550
-#define IMAGE_FILE_MACHINE_I386  0x14c
-#define IMAGE_FILE_MACHINE_IA64  0x200
-#define IMAGE_FILE_MACHINE_AMD64 0x8664
+#define IMAGE_DOS_SIGNATURE_dw      0x5A4D
+#define IMAGE_DOS_REVSIGNATURE_dw   0x4D5A
+#define IMAGE_NT_SIGNATURE_dw       0x00004550
+#define IMAGE_FILE_MACHINE_I386_dw  0x14c
+#define IMAGE_FILE_MACHINE_IA64_dw  0x200
+#define IMAGE_FILE_MACHINE_AMD64_dw 0x8664
 
 
 struct pe_image_file_header {
@@ -330,8 +330,8 @@ is_pe_object(int fd,
     /* No swap here, want it as in the file */
     dos_sig = magic_copy((unsigned char *)dhinmem.dh_mz,
         sizeof(dhinmem.dh_mz));
-    if (dos_sig == IMAGE_DOS_SIGNATURE) {
-        /*  IMAGE_DOS_SIGNATURE assumes bytes reversed by little-endian
+    if (dos_sig == IMAGE_DOS_SIGNATURE_dw) {
+        /*  IMAGE_DOS_SIGNATURE_dw assumes bytes reversed by little-endian
             load, so we intrepet a match the other way. */
         /* BIG ENDIAN. From looking at hex characters in object  */
 #ifdef  WORDS_BIGENDIAN
@@ -340,7 +340,7 @@ is_pe_object(int fd,
         word_swap =  _dwarf_memcpy_swap_bytes;
 #endif  /* LITTLE- BIG-ENDIAN */
         locendian = DW_ENDIAN_BIG;
-    } else if (dos_sig == IMAGE_DOS_REVSIGNATURE) {
+    } else if (dos_sig == IMAGE_DOS_REVSIGNATURE_dw) {
         /* raw load, so  intrepet a match the other way. */
         /* LITTLE ENDIAN */
 #ifdef  WORDS_BIGENDIAN
@@ -376,7 +376,7 @@ is_pe_object(int fd,
         ASNAR(word_swap,lsig,nt_sig_array);
         nt_sig = lsig;
     }
-    if (nt_sig != IMAGE_NT_SIGNATURE) {
+    if (nt_sig != IMAGE_NT_SIGNATURE_dw) {
         *errcode = DW_DLE_FILE_WRONG_TYPE;
         return DW_DLV_ERROR;
     }
@@ -393,12 +393,12 @@ is_pe_object(int fd,
 
         ASNAR(word_swap,machine,ifh.im_machine);
         switch(machine) {
-        case IMAGE_FILE_MACHINE_I386:
+        case IMAGE_FILE_MACHINE_I386_dw:
             *offsetsize = 32;
             *endian = locendian;
             return DW_DLV_OK;
-        case IMAGE_FILE_MACHINE_IA64:
-        case IMAGE_FILE_MACHINE_AMD64:
+        case IMAGE_FILE_MACHINE_IA64_dw:
+        case IMAGE_FILE_MACHINE_AMD64_dw:
             *offsetsize = 64;
             *endian = locendian;
             return DW_DLV_OK;

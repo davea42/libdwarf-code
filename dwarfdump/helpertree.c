@@ -146,5 +146,3 @@ helpertree_clear_statistics(struct Helpertree_Base_s *base)
     helpertree_map_destroy(base->hb_base);
     base->hb_base = 0;
 }
-
-

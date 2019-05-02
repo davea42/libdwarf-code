@@ -1,3 +1,19 @@
+2019-05-02 David Anderson
+     * helpertree.c: Deleted trailing blank line.
+     * tag_attr_ext.list: Added gcc common extension
+       of DW_TAG_structure_type having a DW_AT_containing type.
+     * tag_common.h: Incremented EXT_ATTR_TABLE_ROWS to 16
+       for the change in tag_attr_ext.list.
+     * dwarfdump-ta-ext-table.h: Regenerated.
+     * dwarf_leb.c: Removed trailing whitespace on one line.
+     * dwarf_object_detector.c,dwarf_pe_descriptor.h,
+       dwarf_pe_read.c: Using the updated names
+       of some Windows types, adding _dw at the end to avoid
+       conflicts with Windows.
+     * dwarf_tied.c: Removed blank last line of the file.
+     * dwarf_tied_decls.h: Removed several blank lines
+       at the end of the file.
+     * dwarf_tied_test.c: Removed trailing whitespace.
 2019-05-01 David Anderson
      * dwarfdump.1: A stray letter 'i' was
        in the --format-extensions wording.

@@ -1,3 +1,10 @@
+2019-05-02 David Anderson
+     * dwarf_leb.c,dwarf_tied.c,dwarf_tied_decls.h,
+       dwarf_tied_test.c: Removing trailing whitespace
+       and final blank lines.
+     * dwarf_object_detector.c,dwarf_pe_descr.h,dwarf_peread.c:
+       Adding _dw to the names of more Windows things to avoid
+       compilation conflicts with Windows names.
 2019-05-01 David Anderson
      * configure.cmake: Removed some more lines.
        Mainly leaving options declarations (which

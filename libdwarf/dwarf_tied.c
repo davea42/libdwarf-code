@@ -265,4 +265,3 @@ _dwarf_search_for_signature(Dwarf_Debug tieddbg,
     }
     return DW_DLV_NO_ENTRY;
 }
-

@@ -35,9 +35,9 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 extern "C" {
 #endif /* __cplusplus */
 
-#define IMAGE_DOS_SIGNATURE    0x5a4d /* le on disk 'M' 'Z' */
-#define IMAGE_DOS_REVSIGNATURE 0x4d5a /* be on disk */
-#define IMAGE_NT_SIGNATURE     0x00004550
+#define IMAGE_DOS_SIGNATURE_dw    0x5a4d /* le on disk 'M' 'Z' */
+#define IMAGE_DOS_REVSIGNATURE_dw 0x4d5a /* be on disk */
+#define IMAGE_NT_SIGNATURE_dw     0x00004550
 
 #ifndef TYP
 #define TYP(n,l) char n[l]
@@ -178,7 +178,7 @@ typedef struct
 
 /*  IMAGE_SECTION_HEADER_dw
     see:
-    https://msdn.microsoft.com/en-us/library/windows/desktop/ms680341(v=vs.85).aspx 
+    https://msdn.microsoft.com/en-us/library/windows/desktop/ms680341(v=vs.85).aspx
     and, for details on VirtualSize and SizeOfRawData:
     https://docs.microsoft.com/en-us/windows/desktop/api/winnt/ns-winnt-_image_section_header */
 

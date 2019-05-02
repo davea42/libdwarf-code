@@ -530,8 +530,8 @@ dwarf_load_pe_sections(
     }
     dos_sig = magic_copy((char *)dhinmem.dh_mz,
         sizeof(dhinmem.dh_mz));
-    if (dos_sig == IMAGE_DOS_SIGNATURE) {
-        /*  IMAGE_DOS_SIGNATURE assumes bytes reversed by little-endian
+    if (dos_sig == IMAGE_DOS_SIGNATURE_dw) {
+        /*  IMAGE_DOS_SIGNATURE_dw assumes bytes reversed by little-endian
             load, so we intrepet a match the other way. */
         /* BIG ENDIAN. From looking at hex characters in object  */
 #ifdef WORDS_BIGENDIAN
@@ -540,7 +540,7 @@ dwarf_load_pe_sections(
         word_swap = _dwarf_memcpy_swap_bytes;
 #endif /* LITTLE- BIG-ENDIAN */
         locendian = DW_ENDIAN_BIG;
-    } else if (dos_sig == IMAGE_DOS_REVSIGNATURE) {
+    } else if (dos_sig == IMAGE_DOS_REVSIGNATURE_dw) {
         /* raw load, so  intrepet a match the other way. */
         /* LITTLE ENDIAN */
 #ifdef WORDS_BIGENDIAN
@@ -581,7 +581,7 @@ dwarf_load_pe_sections(
         ASNAR(word_swap,lsig,nt_sig_array);
         nt_signature = lsig;
     }
-    if (nt_signature != IMAGE_NT_SIGNATURE) {
+    if (nt_signature != IMAGE_NT_SIGNATURE_dw) {
         *errcode = DW_DLE_FILE_WRONG_TYPE;
         return DW_DLV_ERROR;
     }

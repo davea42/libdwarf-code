@@ -46,7 +46,7 @@
 /* Common DWARF extensions */
 
 0xffffffff
-DW_TAG_class_type
+DW_TAG_structure_type
 DW_AT_containing_type
 0xffffffff
 DW_TAG_compile_unit
