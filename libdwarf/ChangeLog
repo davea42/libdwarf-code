@@ -1,3 +1,8 @@
+2019-05-04 David Anderson
+     * dwarf_elf_load_headers.c: A corrupt Elf .shstring
+       section (lacking trailing NUL) is now detected.
+     * dwarf_elfread.h: Removed an unused struct
+       and an unused struct field.
 2019-05-02 David Anderson
      * dwarf_leb.c,dwarf_tied.c,dwarf_tied_decls.h,
        dwarf_tied_test.c: Removing trailing whitespace

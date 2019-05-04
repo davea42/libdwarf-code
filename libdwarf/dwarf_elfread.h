@@ -83,7 +83,6 @@ struct generic_shdr {
     Dwarf_Unsigned gh_name;
     const char * gh_namestring;
     Dwarf_Unsigned gh_type;
-    const char * gh_typestring;
     Dwarf_Unsigned gh_flags;
     Dwarf_Unsigned gh_addr;
     Dwarf_Unsigned gh_offset;
@@ -158,15 +157,6 @@ struct location {
     Dwarf_Unsigned g_totalsize;
 };
 
-struct in_use_s {
-    struct in_use_s *u_next;
-    const char *u_name;
-    Dwarf_Unsigned u_offset;
-    Dwarf_Unsigned u_align;
-    Dwarf_Unsigned u_length;
-    Dwarf_Unsigned u_lastbyte;
-};
-
 typedef struct elf_filedata_s {
     /*  f_ident[0] == 'E' means it is elf and
         elf_filedata_s is the struct involved.
@@ -190,10 +180,6 @@ typedef struct elf_filedata_s {
     Dwarf_Unsigned f_max_progdata_offset;
 
     void (*f_copy_word) (void *, const void *, unsigned long);
-
-    struct in_use_s * f_in_use;
-    struct in_use_s * f_in_use_tail;
-    Dwarf_Unsigned f_in_use_count;
 
     struct location      f_loc_ehdr;
     struct generic_ehdr* f_ehdr;
