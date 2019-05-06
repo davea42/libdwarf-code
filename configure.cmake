@@ -6,7 +6,7 @@ include(CheckCSourceRuns)
 include(CheckSymbolExists)
 
 set(PACKAGE_NAME "libdwarf" )
-set(PACKAGE_VERSION "20190430"  )
+set(PACKAGE_VERSION "20190505"  )
 set(VERSION ${PACKAGE_VERSION} )
 set(PACKAGE_STRING "\"${PACKAGE_NAME} ${VERSION}\"")
 string(REGEX REPLACE "[\"]" "" tarname1 "${PACKAGE_STRING}" )

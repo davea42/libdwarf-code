@@ -1,3 +1,8 @@
+2019-05-05 David Anderson
+     * dwarf_names.c,dwarf_names.h, dwarfdump-ta-ext-table.h,
+       dwarfdump-ta-table.h,dwarfdump-tt-ext-table.h,
+       dwarfdump-tt-table.h: Regenerated with latest
+       libdwarf version string.
 2019-05-02 David Anderson
      * dwarfdump-ta-ext-table.h: Regenerated.
      * tag_common.h: 16-> 15. Deleted a duplicate extension 

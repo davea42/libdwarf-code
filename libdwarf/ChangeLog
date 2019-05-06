@@ -1,3 +1,8 @@
+2019-05-05 David Anderson
+     * dwarf_names.c,dwarf_names.h,dwarf_names_enum.h,
+       dwarf_names_new.h: Updated with latest version
+       string (in a comment).
+     * libdwarf_version.h: New version string.
 2019-05-04 David Anderson
      * dwarf_elf_load_headers.c: A corrupt Elf .shstring
        section (lacking trailing NUL) is now detected.

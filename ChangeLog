@@ -1,3 +1,6 @@
+2019-05-05  David Anderson
+    * configure.ac,configure.cmake: Version 20190505
+    * configure: regenerated
 2019-05-02  David Anderson
     * scripts/buildstandardsource.sh: cmake has serious trouble
       with semicolons so now this copies the base 
