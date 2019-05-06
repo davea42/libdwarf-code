@@ -127,7 +127,6 @@ print_reloc_decls.h \
 getopttest.c \
 tag_common.c \
 testesb.c \
-configure.cmake \
 config.h.in.cmake \
 $(dwarfdumpdev_DATA) \
 tag_attr.c \

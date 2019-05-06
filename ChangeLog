@@ -1,4 +1,12 @@
 2019-05-05  David Anderson
+    * Makefile.am, dwarfdump/Makefile.am, dwarfexample/Makefile.am,
+      dwarfgen/Makefile.am: cmake and configure
+      needed to agree on the list of files. Specifically
+      configure.ac etc lists just cmake files that
+      exist so it can generate a complete
+      release, while CmakeLists.txt etc will not currently
+      generate a complete release.  Regenerated configure.in.
+2019-05-05  David Anderson
     * configure.ac,configure.cmake: Version 20190505
     * configure: regenerated
 2019-05-02  David Anderson

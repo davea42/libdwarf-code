@@ -52,7 +52,6 @@ NEWS \
 README \
 dwarfgen.1 \
 TESTmallocfail \
-configure.cmake \
 config.h.in.cmake \
 $(dwarfgen_DATA) \
 dwarf-generator.txt \
