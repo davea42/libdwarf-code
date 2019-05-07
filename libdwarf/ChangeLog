@@ -1,3 +1,6 @@
+2019-05-07 David Anderson
+     * configure.cmake: Moved into CMakeLists.txt.
+     * CMakeLists.txt: no longer needs configure.cmake
 2019-05-05 David Anderson
      * dwarf_names.c,dwarf_names.h,dwarf_names_enum.h,
        dwarf_names_new.h: Updated with latest version
