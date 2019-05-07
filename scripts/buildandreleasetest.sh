@@ -11,7 +11,7 @@ else
   then 
     f=../configure.ac
   else
-    echo FAIL Running distribution test from the wrong place.
+    echo "FAIL Running distribution test from the wrong place."
     exit 
   fi
 fi
@@ -85,7 +85,7 @@ then
   echo FAIL A4a configure fail
       exit 1
 fi
-echo "initial (dwinstall) make install"
+echo "TEST: initial (dwinstall) make install"
 make install
 if [ $? -ne 0 ]
 then
@@ -106,22 +106,22 @@ then
 fi
 tar -zxf /tmp/dwrelease.tar.gz
 ls -d *dw*
-echo "now cd libdwarf-$v for second build install"
+echo "TEST: now cd libdwarf-$v for second build install"
 cd /tmp/dwinstallrelbld
 if [ $? -ne 0 ]
 then
   echo FAIL C cd /tmp/dwinstallrelbld
       exit 1
 fi
-echo "now second install install, prefix /tmp/dwinstallrel"
-echo "Expecting src in /tmp/libdwarf-$v"
+echo "TEST: now second install install, prefix /tmp/dwinstallrel"
+echo "TEST: Expecting src in /tmp/libdwarf-$v"
 /tmp/libdwarf-$v/configure --prefix=/tmp/dwinstallrel
 if [ $? -ne 0 ]
 then
   echo FAIL C2  configure fail
       exit 1
 fi
-echo "In dwinstallrelbld make install from /tmp/libdwarf-$v/configure"
+echo "TEST: In dwinstallrelbld make install from /tmp/libdwarf-$v/configure"
 make install
 if [ $? -ne 0 ]
 then
@@ -129,7 +129,7 @@ then
       exit 1
 fi
 ls -lR /tmp/dwinstallrel
-echo Now lets see if check works
+echo "TEST: Now lets see if check works"
 make check
 cd /tmp/dwinstallrelbldall
 if [ $? -ne 0 ]
@@ -137,6 +137,7 @@ then
   echo FAIL Ca cd /dwinstallrelbldall
       exit 1
 fi
+echo "TEST: Now configure from source dir /tmp/libdwarf-$v/ in build dir /tmp/dwinstallrelbldall"
 /tmp/libdwarf-$v/configure --enable-dwarfexample --enable-dwarfgen
 if [ $? -ne 0 ]
 then
@@ -155,7 +156,8 @@ then
   echo FAIL C10  cd /tmp/cmakebld
       exit 1
 fi
-cmake /tmp/libdwarf-$v/
+echo "TEST: Now cmake from source dir /tmp/libdwarf-$v/ in build dir /tmp/cmakebld"
+cmake -Ddodwarfgen=ON -Ddodwarfexample=ON -Dtest=ON /tmp/libdwarf-$v/
 if [ $? -ne 0 ]
 then
   echo FAIL C10b  cmake in /tmp/cmakebld
@@ -167,6 +169,9 @@ then
   echo FAIL C10c  cmake make in /tmp/cmakebld
       exit 1
 fi
-
-
-
+make test
+if [ $? -ne 0 ]
+then
+  echo FAIL C10d  cmake make test in /tmp/cmakebld
+      exit 1
+fi

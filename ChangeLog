@@ -1,3 +1,9 @@
+2019-05-07  David Anderson
+    * CMakeLists.txt: Added CXX to the project languages
+      so dwarfgen will build with cmake. Version 20190507.
+    * Makefile.am: Removed a file name: not needed.
+    * configure: regenerated
+    * configure.ac: Version 20190507
 2019-05-05  David Anderson
     * Makefile.am, dwarfdump/Makefile.am, dwarfexample/Makefile.am,
       dwarfgen/Makefile.am: cmake and configure

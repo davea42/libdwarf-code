@@ -93,7 +93,7 @@ pro_section.h pro_types.h pro_util.h)
 
 
 set_source_group(CONFIGURATION_FILES "Configuration Files" 
-    configure.cmake config.h.in.cmake 
+    config.h.in.cmake 
     ${CMAKE_CURRENT_BINARY_DIR}/config.h)
 	
 list(LENGTH DWARF_TARGETS targetCount)

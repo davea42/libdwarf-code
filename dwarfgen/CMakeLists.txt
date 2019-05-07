@@ -1,17 +1,22 @@
 
 configure_file(config.h.in.cmake config.h)
 
-set_source_group(SOURCES "Source Files" createirepformfrombinary.cc createirepfrombinary.cc
+set_source_group(SOURCES "Source Files" createirepformfrombinary.cc
+    createirepfrombinary.cc
     dwarfgen.cc irepattrtodbg.cc ireptodbg.cc
     ../libdwarf/dwgetopt.c)
     
-set_source_group(HEADERS "Header Files" createirepfrombinary.h general.h irepattrtodbg.h 
+set_source_group(HEADERS "Header Files" createirepfrombinary.h
+    general.h irepattrtodbg.h 
     irepdie.h irepform.h irepframe.h 
-    irepline.h irepmacro.h ireppubnames.h irepresentation.h ireptodbg.h 
+    irepline.h irepmacro.h ireppubnames.h 
+    irepresentation.h ireptodbg.h 
     strtabdata.h ../libdwarf/dwgetopt.h)
 
-set_source_group(CONFIGURATION_FILES "Configuration Files" config.h.in.cmake ${CMAKE_CURRENT_BINARY_DIR}/config.h)
+set_source_group(CONFIGURATION_FILES "Configuration Files" 
+    config.h.in.cmake ${CMAKE_CURRENT_BINARY_DIR}/config.h)
     
+message(STATUS "dadebug sources  ${SOURCES}")
 add_executable(dwarfgen ${SOURCES} ${HEADERS} ${CONFIGURATION_FILES})
 
 set_folder(dwarfgen dwarfgen)

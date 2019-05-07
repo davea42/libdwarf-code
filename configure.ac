@@ -16,7 +16,7 @@ m4_define([lt_age], [v_min])
 
 ### Sets the release name. 
 ###m4_define([v_date], [m4_esyscmd_s([date "+%Y%m%d"])])
-m4_define([v_date], [20190505])])
+m4_define([v_date], [20190507])])
 
 AC_PREREQ([2.52])
 ### 2nd arg to AC_INIT is the version 'number'.

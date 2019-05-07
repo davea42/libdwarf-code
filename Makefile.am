@@ -43,7 +43,6 @@ ChangeLog \
 ChangeLog2018 \
 cmake \
 CMakeLists.txt \
-configure.cmake \
 codingstyle.txt \
 dwarfdump/runtests.sh \
 libdwarf/runtests.sh \

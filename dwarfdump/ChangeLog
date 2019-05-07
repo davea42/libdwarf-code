@@ -1,3 +1,14 @@
+2019-05-07 David Anderson
+     * CMakeLists.txt: Now the code from configure.cmake
+       is here. Previously there were two includes of
+       configure.cmake, which was a mistake.
+     * Makefile.am: Added the *_test.c so tar distributions
+       can run 'make check'.
+     * scripts/buildandreleasetest.sh: Now adds in cmake
+       build of dwarfgen and dwarfexample and test
+       so those are tested.
+     * configure.cmake: Deleted. It's all in
+       CMakeLists.txt now.
 2019-05-05 David Anderson
      * dwarf_names.c,dwarf_names.h, dwarfdump-ta-ext-table.h,
        dwarfdump-ta-table.h,dwarfdump-tt-ext-table.h,
