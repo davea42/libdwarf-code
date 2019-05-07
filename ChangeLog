@@ -1,4 +1,9 @@
 2019-05-07  David Anderson
+    * CMakeLists.txt: Added comment on how the find_package()
+      command works. See cmake documentation.
+    * cmake/FindLibElf.cmake: Added comment mentioning how
+      and where this is referenced. 
+2019-05-07  David Anderson
     * CMakeLists.txt: Added CXX to the project languages
       so dwarfgen will build with cmake. Version 20190507.
     * Makefile.am: Removed a file name: not needed.

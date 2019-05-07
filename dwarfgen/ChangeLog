@@ -1,3 +1,5 @@
+2019-05-07 David Anderson
+     * CMakeLists.txt: Deleted a debugging message().
 2019-05-01 David Anderson
      * configure.cmake: Deleted.
      * CMakeLists.txt: Now does its configure_file on its own.

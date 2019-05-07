@@ -38,9 +38,6 @@ enable_testing()
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_INCLUDE_CURRENT_DIR_IN_INTERFACE ON)
 
-find_package(LibElf REQUIRED)
-list(APPEND CMAKE_REQUIRED_INCLUDES ${LIBELF_INCLUDE_DIRS})
-
 ### begin what was configure.cmake
 # cmake macros
 include(TestBigEndian)
@@ -257,7 +254,6 @@ check_c_source_compiles( [=[
       }
       return 0;
   } ]=]  HAVE_ZLIB )
-#message(STATUS "dadebug Checking zlib.h usability... ${HAVE_ZLIB}")
 set(CMAKE_REQUIRED_LIBRARIES)
 if (HAVE_ZLIB) 
   # For linking in libz
@@ -305,6 +301,7 @@ set(DO_TESTING ${test} )
 message(STATUS "Building api tests   ... ${DOTESTS}")
 ### end what was configure.cmake
 
+# This references cmake/FindLibElf.cmake. See cmake documentation.
 find_package(LibElf REQUIRED)
 list(APPEND CMAKE_REQUIRED_INCLUDES ${LIBELF_INCLUDE_DIRS})
 

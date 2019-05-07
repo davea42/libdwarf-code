@@ -16,7 +16,6 @@ set_source_group(HEADERS "Header Files" createirepfrombinary.h
 set_source_group(CONFIGURATION_FILES "Configuration Files" 
     config.h.in.cmake ${CMAKE_CURRENT_BINARY_DIR}/config.h)
     
-message(STATUS "dadebug sources  ${SOURCES}")
 add_executable(dwarfgen ${SOURCES} ${HEADERS} ${CONFIGURATION_FILES})
 
 set_folder(dwarfgen dwarfgen)

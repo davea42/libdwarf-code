@@ -1,4 +1,6 @@
 # - Try to find libelf
+# Referenced by the find_package() command from the top-level
+# CMakeLists.txt.
 # Once done this will define
 #
 #  LIBELF_FOUND - system has libelf
