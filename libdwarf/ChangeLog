@@ -1,3 +1,7 @@
+2019-05-13 David Anderson
+     * pro_section.c,pro_frame.c: A bug in a macro shows up only
+       on big-endian systems (causes a compiler warning).
+       This fixes it.
 2019-05-07 David Anderson
      * configure.cmake: Moved into CMakeLists.txt.
      * Makefile.am: Deleted reference to configure.cmake.

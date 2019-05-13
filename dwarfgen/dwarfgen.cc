@@ -165,7 +165,9 @@
 #define ASNX(op,ol,ip,il)           \
     do {                            \
         if( ol > il) {              \
+            unsigned sbyte = 0;     \
             memset(op,0,ol);        \
+            sbyte = ol - il;        \
             memcpy(((char *)(op))+sbyte,(const void *)(ip),il);\
         } else {                    \
             unsigned sbyte = 0;     \

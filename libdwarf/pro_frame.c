@@ -50,7 +50,7 @@
 #define ASNOUT(t,s,l)                       \
     do {                                    \
         unsigned sbyte = 0;                 \
-        char *p = 0;                        \
+        const char *p = 0;                        \
         if (l > sizeof(s)) {                \
             _dwarf_p_error(dbg, error, DW_DLE_DEBUG_FRAME_LENGTH_BAD);\
             return DW_DLV_ERROR;            \
