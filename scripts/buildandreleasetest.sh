@@ -29,6 +29,7 @@ rm -rf /tmp/dwbld
 rm -rf /tmp/dwinstall
 rm -rf /tmp/dwinstallrel
 rm -rf /tmp/dwinstallrelbld
+rm -rf /tmp/dwbigendianbld
 rm -rf /tmp/dwinstallrelbldall
 rm -f /tmp/dwrelease.tar.gz
 rm -rf /tmp/dwreleasebld
@@ -63,6 +64,14 @@ then
    echo FAIL A3c mkdir /tmp/dwinstallrelbldall
    exit 1
 fi
+
+mkdir /tmp/dwbigendianbld
+if [ $? -ne 0 ] 
+then
+   echo FAIL A3bigend mkdir /tmp/dwbigendianbld
+   exit 1
+fi
+
 mkdir /tmp/cmakebld
 if [ $? -ne 0 ] 
 then
@@ -106,6 +115,7 @@ then
 fi
 tar -zxf /tmp/dwrelease.tar.gz
 ls -d *dw*
+################
 echo "TEST: now cd libdwarf-$v for second build install"
 cd /tmp/dwinstallrelbld
 if [ $? -ne 0 ]
@@ -131,6 +141,37 @@ fi
 ls -lR /tmp/dwinstallrel
 echo "TEST: Now lets see if check works"
 make check
+################
+
+################
+echo "TEST: now cd libdwarf-$v for big-endian build (not runnable) "
+
+cd /tmp/dwbigendianbld
+if [ $? -ne 0 ]
+then
+  echo FAIL C be1 /tmp/dwbigendianbld
+      exit 1
+fi
+echo "TEST: now second install install, prefix /tmp/dwinstallrel"
+echo "TEST: Expecting src in /tmp/libdwarf-$v"
+/tmp/libdwarf-$v/configure --enable-dwarfgen --enable-wall --enable-dwarfexample --prefix=/tmp/dwinstallrel
+if [ $? -ne 0 ]
+then
+  echo FAIL be2  configure fail
+      exit 1
+fi
+echo "#define WORDS_BIGENDIAN 1" >> config.h
+echo "TEST: Compile In dwbigendianbld make from /tmp/libdwarf-$v/configure"
+make
+if [ $? -ne 0 ]
+then
+  echo FAIL be3  Build failed
+      exit 1
+fi
+################
+
+
+
 cd /tmp/dwinstallrelbldall
 if [ $? -ne 0 ]
 then

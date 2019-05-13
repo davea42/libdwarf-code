@@ -1,3 +1,9 @@
+2019-05-13  David Anderson
+    * scripts/buildandreleasetest.sh: Now does a 
+      full compile with WORDS_BIGENDIAN forced on.
+      Since most testing is little-endian this forces
+      a compile testing that the code
+      actually builds with WORDS_BIGENDIAN 1.
 2019-05-07  David Anderson
     * CMakeLists.txt: Added comment on how the find_package()
       command works. See cmake documentation.
