@@ -281,7 +281,12 @@ option(nonshared "build archive library libdwarf.a" TRUE)
 #  'set' here uses $< introducing what is called 
 #  a 'generator expression' in cmake documentation.
 option(wall "Add -Wall" FALSE)
-set(dwfwall $<$<BOOL:${wall}>:"-Wall -O0 -Wpointer-arith -Wmissing-declarations -Wmissing-prototypes -Wdeclaration-after-statement -Wextra -Wcomment -Wformat -Wpedantic -Wuninitialized -Wno-long-long -Wshadow">)
+set(dwfwall $<$<BOOL:${wall}>:"-Wall -O0 -Wpointer-arith -Wmissing-declarations -Wmissing-prototypes -Wdeclaration-after-statement -Wextra -Wcomment -Wformat -Wpedantic -Wuninitialized -Wno-long-long -Wshadow -Werror">)
+if ( ${wall} )
+  message(STATUS "Compiler warning options... YES ${dwfwall}")
+else()
+  message(STATUS "Compiler warning options... NO")
+endif()
 
 option(nonstandardprintf "Use a special printf format for 64bit (default is NO)" FALSE)
 set(HAVE_NONSTANDARD_PRINTF_64_FORMAT ${nonstandardprintf} )

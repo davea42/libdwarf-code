@@ -1,4 +1,10 @@
 2019-05-13  David Anderson
+    * CmakeLists.txt: Now -Dwall=ON adds -Werror
+      and reports the warning/error options.
+    * configure.ac: Now version 20190513. --enable-wall
+      now adds -Werror so warnings are considered errors
+      by gcc.
+    * configure: regenerated.
     * scripts/buildandreleasetest.sh: Now does a 
       full compile with WORDS_BIGENDIAN forced on.
       Since most testing is little-endian this forces
