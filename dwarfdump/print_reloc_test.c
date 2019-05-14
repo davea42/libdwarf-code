@@ -58,4 +58,12 @@ main()
     printf("PASS print_reloc selftest\n");
     return 0;
 }
+#else
+/*  Without libelf we don't care about this as
+    we will not try to print relocation data. Pretend ok. */
+int
+main()
+{
+    return 0;
+}
 #endif /* DWARF_WITH_LIBELF */

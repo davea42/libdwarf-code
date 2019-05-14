@@ -1,3 +1,9 @@
+2019-05-14 David Anderson
+     * print_reloc_test.c: Without libelf (in which case
+       dwarfdump is not interested in printing relocations)
+       we now compile a main program returning 0 (success).
+       With libelf we examine the relocation name tables
+       as usual to exit with success or failure.
 2019-05-07 David Anderson
      * CMakeLists.txt: Now the code from configure.cmake
        is here. Previously there were two includes of
