@@ -90,9 +90,9 @@ public:
         fde_offset_(0)  {};
     IRFde(Dwarf_Addr low_pc,Dwarf_Unsigned func_length,
         Dwarf_Ptr fde_bytes, Dwarf_Unsigned fde_length,
-        Dwarf_Off cie_offset,Dwarf_Signed cie_index,
+        Dwarf_Off cie_offset,Dwarf_Signed cie_index_in,
         Dwarf_Off fde_offset): low_pc_(low_pc), func_length_(func_length),
-        cie_offset_(cie_offset), cie_index_(cie_index),
+        cie_offset_(cie_offset), cie_index_(cie_index_in),
         fde_offset_(fde_offset)  {
             const Dwarf_Small *x =
                 reinterpret_cast<const Dwarf_Small *>(fde_bytes);

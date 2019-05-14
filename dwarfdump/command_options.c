@@ -776,7 +776,7 @@ enum longopts_vals {
   /* Trace                                                                   */
   OPT_TRACE,                    /* -# --trace=<num>                           */
 
-  OPT_END,
+  OPT_END
 };
 
 static struct dwoption longopts[] =  {
