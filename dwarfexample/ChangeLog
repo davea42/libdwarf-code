@@ -1,3 +1,9 @@
+2019-05-20 David Anderson
+     * CMakeLists.txt: Reflects renamed options.
+       Adds use of compiler-warning options.
+     * config.h.in.cmake: Adds needed standard cmakedefine
+       lines, such as DWARF_WITH_LIBELF.
+     * frame1.c: Adding a Windows-related ifdef set.
 2019-05-01 David Anderson
      * configure.cmake: deleted.
      * CMakeLists.txt: Now does its configure_file on its own.

@@ -30,6 +30,10 @@ OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
 EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+#ifdef _WIN32
+#define _CRT_SECURE_NO_WARNINGS
+#endif /* _WIN32 */
+
 #include "config.h"
 #include <stdio.h>
 #include <string.h> /* memcpy */
@@ -41,6 +45,12 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <basetsd.h>
 typedef SSIZE_T ssize_t; /* MSVC does not have POSIX ssize_t */
 #endif /* HAVE_UNISTD_H */
+
+/* Windows specific header files */
+#if defined(_WIN32) && defined(HAVE_STDAFX_H)
+#include "stdafx.h"
+#endif /* HAVE_STDAFX_H */
+
 #include "libdwarf.h" /* For error codes. */
 #include "dwarf_object_read_common.h"
 
@@ -49,8 +59,8 @@ typedef SSIZE_T ssize_t; /* MSVC does not have POSIX ssize_t */
     IEEE Std 1003.1-1990, aka
     ISO/IEC 9954-1:1990. */
 int
-_dwarf_object_read_random(int fd,char *buf,off_t loc,
-    size_t size,off_t filesize,int *errc)
+_dwarf_object_read_random(int fd, char *buf, off_t loc,
+    size_t size, off_t filesize, int *errc)
 {
     off_t scode = 0;
     ssize_t rcode = 0;

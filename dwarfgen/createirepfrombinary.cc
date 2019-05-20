@@ -38,11 +38,11 @@
 #define  UNUSEDARG
 #endif
 
-
 /* Windows specific header files */
 #if defined(_WIN32) && defined(HAVE_STDAFX_H)
 #include "stdafx.h"
 #endif /* HAVE_STDAFX_H */
+
 #if HAVE_UNISTD_H
 #include <unistd.h>
 #elif defined(_WIN32) && defined(_MSC_VER)

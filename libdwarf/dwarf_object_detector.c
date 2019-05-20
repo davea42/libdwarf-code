@@ -44,6 +44,12 @@ typedef SSIZE_T ssize_t; /* MSVC does not have POSIX ssize_t */
 #ifdef HAVE_STRING_H
 #include <string.h> /* memcpy, strcpy */
 #endif /* HAVE_STRING_H */
+
+/* Windows specific header files */
+#if defined(_WIN32) && defined(HAVE_STDAFX_H)
+#include "stdafx.h"
+#endif /* HAVE_STDAFX_H */
+
 #include "libdwarf.h"
 #include "memcpy_swap.h"
 #include "dwarf_object_read_common.h"
@@ -145,6 +151,10 @@ struct elf_header {
     TYP(e_type,2);
     TYP(e_machine,2);
     TYP(e_version,4);
+#ifdef HAVE_CUSTOM_LIBELF
+    /* In the case of custom ELF, use extra space */
+    TYP(e_custom,64);
+#endif /* HAVE_CUSTOM_LIBELF */
 };
 
 /*  Windows. Certain PE objects.
@@ -505,7 +515,17 @@ dwarf_object_detector_fd(int fd,
         *filesize = (size_t)fsize;
         return DW_DLV_OK;
     }
-    /* CHECK FOR  PE object. */
+    /* Check for custom ELF format. */
+#ifdef HAVE_CUSTOM_LIBELF
+    res = elf_is_custom_format(&h,readlen,&fsize,endian,offsetsize,errcode);
+    if (res == DW_DLV_OK) {
+        *ftype = DW_FTYPE_CUSTOM_ELF;
+        *filesize = (size_t)fsize;
+        return res;
+    }
+#endif /* HAVE_CUSTOM_LIBELF */
+
+    /* Unknown object format. */
     return DW_DLV_NO_ENTRY;
 }
 

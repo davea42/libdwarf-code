@@ -50,38 +50,47 @@ DW_TAG_variable  /* GNU gcc usage. */
 DW_TAG_GNU_template_template_parameter /* template instantiations */
 DW_TAG_GNU_template_parameter_pack /* variadic templates */
 DW_TAG_GNU_formal_parameter_pack /* variadic templates */
+
 0xffffffff
 DW_TAG_class_type
 DW_TAG_variable  /* GNU gcc usage. */
 DW_TAG_GNU_template_template_parameter /* template instantiations */
 DW_TAG_GNU_template_parameter_pack /* variadic templates */
 DW_TAG_GNU_formal_parameter_pack /* variadic templates */
+
 0xffffffff
 DW_TAG_lexical_block
 DW_TAG_GNU_call_site
+
 0xffffffff
 DW_TAG_subprogram
 DW_TAG_GNU_call_site
 DW_TAG_GNU_template_template_parameter /* template instantiations */
 DW_TAG_GNU_template_parameter_pack /* variadic templates */
 DW_TAG_GNU_formal_parameter_pack /* variadic templates */
+
 0xffffffff
 DW_TAG_union_type
 DW_TAG_GNU_template_template_parameter /* template instantiations */
 DW_TAG_GNU_template_parameter_pack /* variadic templates */
 DW_TAG_GNU_formal_parameter_pack /* variadic templates */
+
 0xffffffff
 DW_TAG_inlined_subroutine
 DW_TAG_GNU_call_site
+
 0xffffffff
 DW_TAG_GNU_call_site
 DW_TAG_GNU_call_site_parameter
+
 0xffffffff
 DW_TAG_GNU_template_parameter_pack
 DW_TAG_template_type_parameter
 DW_TAG_template_value_parameter
 DW_TAG_GNU_template_template_parameter
+
 0xffffffff
 DW_TAG_GNU_formal_parameter_pack
 DW_TAG_formal_parameter
+
 0xffffffff

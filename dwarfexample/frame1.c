@@ -42,6 +42,12 @@
     below instead of dwarf_get_fde_list() .
 */
 #include "config.h"
+
+/* Windows specific header files */
+#if defined(_WIN32) && defined(HAVE_STDAFX_H)
+#include "stdafx.h"
+#endif /* HAVE_STDAFX_H */
+
 #include <sys/types.h> /* For open() */
 #include <sys/stat.h>  /* For open() */
 #include <fcntl.h>     /* For open() */

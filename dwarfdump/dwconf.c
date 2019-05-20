@@ -26,9 +26,10 @@
 /* Windows specific */
 #include "config.h"
 
-#if defined(_WIN32) && defined(_HAVE_STDAFX_H)
+/* Windows specific header files */
+#if defined(_WIN32) && defined(HAVE_STDAFX_H)
 #include "stdafx.h"
-#endif
+#endif /* HAVE_STDAFX_H */
 
 #if defined(_WIN32) && defined(HAVE_WINDOWS_H)
 #include <windows.h>

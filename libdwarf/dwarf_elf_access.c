@@ -39,24 +39,10 @@
 #include "dwarf_incl.h"
 #include "dwarf_error.h"
 #include "dwarf_elf_access.h"
-#include "dwarf_elf_defines.h"
 #include "dwarf_elf_rel_detector.h"
 
-#ifdef HAVE_ELF_H
-#include <elf.h>
-#endif /* HAVE_ELF_H */
-
-/*  Relocation definitions are in sys/elf_{mach}.h
-    on Solaris.  */
-#ifdef HAVE_LIBELF_H
-#include <libelf.h>
-#else
-#ifdef HAVE_LIBELF_LIBELF_H
-#include <libelf/libelf.h>
-#else
-#error Without libelf.h dwarf_elf_access.c cannot compile, so giving up.
-#endif
-#endif
+/* Include the ELF definitions depending on system headers if any. */
+#include "dwarf_elf_defines.h"
 
 #include <stdio.h>
 #include <sys/stat.h>

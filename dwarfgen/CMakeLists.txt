@@ -1,4 +1,3 @@
-
 configure_file(config.h.in.cmake config.h)
 
 set_source_group(SOURCES "Source Files" createirepformfrombinary.cc
@@ -20,7 +19,9 @@ add_executable(dwarfgen ${SOURCES} ${HEADERS} ${CONFIGURATION_FILES})
 
 set_folder(dwarfgen dwarfgen)
 
-target_link_libraries(dwarfgen PRIVATE ${dwarf-target} ${dwfzlib})
+target_compile_options(dwarfgen PRIVATE ${DW_FWALL})
+
+target_link_libraries(dwarfgen PRIVATE ${dwarf-target} ${DW_FZLIB})
 
 set(SUFFIX $<$<EQUAL:${CMAKE_SIZEOF_VOID_P},8>:64>)
 set(LIBDIR lib${SUFFIX})

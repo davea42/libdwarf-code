@@ -48,19 +48,23 @@
 0xffffffff
 DW_TAG_structure_type
 DW_AT_containing_type
+
 0xffffffff
 DW_TAG_compile_unit
 DW_AT_APPLE_optimized /* Used by LLVM */
 DW_AT_GNU_dwo_id
+
 0xffffffff
 DW_TAG_member
 DW_AT_GNU_guarded_by    /* gcc.gnu.org/wiki/ThreadSafetyAnnotationsInDWARF */
 DW_AT_GNU_pt_guarded_by /* gcc.gnu.org/wiki/ThreadSafetyAnnotationsInDWARF */
 DW_AT_GNU_guarded       /* gcc.gnu.org/wiki/ThreadSafetyAnnotationsInDWARF */
 DW_AT_GNU_pt_guarded    /* gcc.gnu.org/wiki/ThreadSafetyAnnotationsInDWARF */
+
 0xffffffff
 DW_TAG_array_type
 DW_AT_GNU_vector
+
 0xffffffff
 DW_TAG_subprogram
 DW_AT_MIPS_linkage_name  /* Used by GNU, SGI-IRIX, and others. */
@@ -72,6 +76,7 @@ DW_AT_APPLE_omit_frame_ptr  /* Used by LLVM */
 DW_AT_APPLE_optimized /* Used by LLVM */
 DW_AT_GNU_all_tail_call_sites
 DW_AT_GNU_all_call_sites
+
 0xffffffff
 DW_TAG_variable
 DW_AT_MIPS_linkage_name   /* Used by GNU, SGI-IRIX, and others. */
@@ -79,6 +84,7 @@ DW_AT_GNU_guarded_by
 DW_AT_GNU_pt_guarded_by
 DW_AT_GNU_guarded
 DW_AT_GNU_pt_guarded
+
 0xffffffff
 DW_TAG_GNU_template_template_parameter
 DW_AT_decl_column
@@ -87,39 +93,48 @@ DW_AT_decl_line
 DW_AT_name
 DW_AT_GNU_template_name
 DW_AT_GNU_guarded_by /* GNU changed the name of 0x2108! */
+
 0xffffffff
 DW_TAG_GNU_template_parameter_pack
 DW_AT_decl_column
 DW_AT_decl_file
 DW_AT_decl_line
 DW_AT_name
+
 0xffffffff
 DW_TAG_GNU_formal_parameter_pack
 DW_AT_decl_column
 DW_AT_decl_file
 DW_AT_decl_line
 DW_AT_name
+
 0xffffffff
 DW_TAG_GNU_call_site
 DW_AT_abstract_origin
 DW_AT_low_pc
 DW_AT_sibling
 DW_AT_GNU_tail_call
+
 0xffffffff
 DW_TAG_GNU_call_site_parameter
 DW_AT_GNU_call_site_value
 DW_AT_abstract_origin
 DW_AT_location
+
 0xffffffff
 DW_TAG_constant
 DW_AT_GNU_numerator
 DW_AT_GNU_denominator
+
 0xffffffff
 DW_TAG_subrange_type
 DW_AT_GNU_bias
+
 0xffffffff
 DW_TAG_inlined_subroutine
 DW_AT_GNU_discriminator  /* Used by LLVM */
+
 0xffffffff
 DW_TAG_lexical_block
+
 0xffffffff

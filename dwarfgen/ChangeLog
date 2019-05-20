@@ -1,3 +1,10 @@
+2019-05-20 David Anderson
+     * CMakeLists.txt: Reflects new option naming. Adds
+       compiler warning options.
+     * config.h.in.cmake: Adds needed standard defines such
+       as cmakedefine DWARF_WITH_LIBELF.
+     * createirepformfrombinary.cc,createirepfrombinary.cc:
+       Add/remove comments for readability.
 2019-05-14 David Anderson
      * irepframe.h: Modified an argument name to avoid
        shadowing a class-local function name. Avoiding

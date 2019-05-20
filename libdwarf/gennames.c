@@ -24,6 +24,10 @@
 
 */
 
+#ifdef _WIN32
+#define _CRT_SECURE_NO_WARNINGS
+#endif /* _WIN32 */
+
 #include <stdio.h>
 #include <stdlib.h>  /* For exit() declaration etc. */
 #include <errno.h>   /* For errno declaration. */

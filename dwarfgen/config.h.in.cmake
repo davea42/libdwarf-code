@@ -3,6 +3,12 @@
 /* Define if building universal (internal helper macro) */
 #cmakedefine AC_APPLE_UNIVERSAL_BUILD 1
 
+/* Define 1 if building with libelf. */
+#cmakedefine DWARF_WITH_LIBELF 1
+
+/* Define to 1 as we are including a custom libelf library. */
+#cmakedefine HAVE_CUSTOM_LIBELF 1
+
 /* Define to 1 if you have the <elf.h> header file. */
 #cmakedefine HAVE_ELF_H 1
 
@@ -45,11 +51,21 @@
 /* Define to 1 if you have the <unistd.h> header file. */
 #cmakedefine HAVE_UNISTD_H 1
 
+/* Set to 1 if __attribute__ ((unused)) is available. */
+#cmakedefine HAVE_UNUSED_ATTRIBUTE 1
+
+/* Define to 1 if you have the <windows.h> header file. */
+#cmakedefine HAVE_WINDOWS_H 1
+
+/* Define 1 if want to allow Windows full path detection */
+#cmakedefine HAVE_WINDOWS_PATH 1
+
 /* Define 1 if zlib (decompression library) seems available. */
 #cmakedefine HAVE_ZLIB 1
 
-/* Define 1 if building with libelf */
-#cmakedefine DWARF_WITH_LIBELF 1
+/* Define to 1 if you have the <zlib.h> header file. */
+#cmakedefine HAVE_ZLIB_H 1
+
 
 /* Define to the address where bug reports for this package should be sent. */
 #cmakedefine PACKAGE_BUGREPORT @PACKAGE_BUGREPORT@

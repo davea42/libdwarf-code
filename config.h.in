@@ -21,6 +21,9 @@
    */
 #undef HAVE_ALLOCA_H
 
+/* Define 1 if including a custom libelf library */
+#undef HAVE_CUSTOM_LIBELF
+
 /* Define to 1 if you have the <dlfcn.h> header file. */
 #undef HAVE_DLFCN_H
 

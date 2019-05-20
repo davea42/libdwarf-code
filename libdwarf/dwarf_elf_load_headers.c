@@ -46,9 +46,8 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #elif defined(_WIN32) && defined(_MSC_VER)
 #include <io.h>
 #endif /* HAVE_UNISTD_H */
-#ifdef HAVE_ELF_H
-#include <elf.h>
-#endif /* HAVE_ELF_H */
+
+/* Windows specific header files */
 #if defined(_WIN32) && defined(HAVE_STDAFX_H)
 #include "stdafx.h"
 #endif /* HAVE_STDAFX_H */

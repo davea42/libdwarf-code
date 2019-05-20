@@ -23,35 +23,37 @@ For example:
     cmake /path/to/code
     make
 
-The above will build libdwarf (a static library, a libdwarf.a) and
-dwarfdump (linking to that static library).  If there is no
-libelf.h present during cmake/build then dwarfdump won't read
-archives or honor requests to print elf headers.
+The above will build libdwarf (a static library, a libdwarf.a)
+and dwarfdump (linking to that static library).  If there is
+no libelf.h present during cmake/build then dwarfdump won't
+read archives or honor requests to print elf headers.
 
 To show all the available cmake options we'll show the
 default build next:
 
-    cmake -Dlibelf=ON \
-        -Dstatic=ON \
-        -Dshared=OFF \
-        -Ddodwarfgen=OFF \
-        -Ddodwarfexample=OFF \
-        -Dwall=OFF \
-        -Dtest=OFF\
-        -Dnonstandardprintf=OFF \
-        -Dwindowspath=OFF \
-        -Doldframecol=OFF \
-        -Ddwarf_format_sgi_irix=OFF \
-        -Ddwarf_format_strict_32bit=OFF \
+    cmake -DDWARF_WITH_LIBELF=ON \
+        -DBUILD_NON_SHARED=ON \
+        -DBUILD_SHARED=OFF \
+        -DBUILD_DWARFGEN=OFF \
+        -DBUILD_DWARFEXAMPLE=OFF \
+        -DWALL=OFF \
+        -DDO_TESTING=OFF\
+        -DHAVE_CUSTOM_LIBELF=OFF \
+        -DHAVE_NONSTANDARD_PRINTF_64_FORMAT=OFF \
+        -DHAVE_WINDOWS_PATH=OFF \
+        -DHAVE_OLD_FRAME_CFA_COL=OFF \
+        -DHAVE_SGI_IRIX_OFFSETS=OFF \
+        -DHAVE_STRICT_DWARF2_32BIT_OFFSET=OFF \
         /path/to/code
     make
 
-The options after -Dwindows path should not normally be used,
-they are for testing old features and not relevant
-to modern usage.
+Ignore the -DHAVE_CUSTOM_LIBELF line, that option is not
+intended for you :-) .
 
-The nonstandardprintf and windowspath options are MSWindows
-related and should not be used with Unix/Linux.
+The options after -DHAVE_WINDOWS_PATH should not normally be
+used, they are for testing old features and not relevant to
+modern usage.
+
 
 The short form, doing the same as the default:
 
@@ -61,7 +63,7 @@ The short form, doing the same as the default:
 The short form, nolibelf, for when you wish to build without
 libelf even if libelf.h and libelf are present:
 
-    cmake -Dlibelf=OFF /path/to/code
+    cmake -DDWARF_WITH_LIBELF=OFF /path/to/code
     make
 
 For this case any attempt to compile dwarfgen will be
@@ -69,19 +71,25 @@ overridden: dwarfgen requires libelf.
 
 For dwarfexample:
 
-    cmake -Ddodwarfexample=ON /path/to/code
+    cmake -DBUILD_DWARFEXAMPLE=ON /path/to/code
     make
 
-If libelf is missing -Ddodwarfgen=ON will not be honored
+If libelf is missing -DBUILD_DWARFGEN=ON will not be honored
 as dwarfgen will not build without libelf.
 
 If you wish to run the selftests  (which just test
 a few internal interfaces, not dwarfdump or libdwarf):
 
-    cmake -Dtest=ON /path/to/code
+    cmake -DDO_TESTING=ON /path/to/code
     make
     ctest -N
     ctest -R self
+
+In case one wishes to see the exact compilation/linking options
+passed at compile time use
+    make VERBOSE=1
+instead of plain
+    make
 
 On Unix/Linux cmake 'make install' will install to
 "/usr/local".  To set another install target set

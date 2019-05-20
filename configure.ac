@@ -16,7 +16,7 @@ m4_define([lt_age], [v_min])
 
 ### Sets the release name. 
 ###m4_define([v_date], [m4_esyscmd_s([date "+%Y%m%d"])])
-m4_define([v_date], [20190513])])
+m4_define([v_date], [20190520])])
 
 AC_PREREQ([2.52])
 ### 2nd arg to AC_INIT is the version 'number'.
@@ -136,10 +136,18 @@ AC_ARG_ENABLE([wall],
 AC_ARG_ENABLE(nonstandardprintf,AS_HELP_STRING([--enable-nonstandardprintf],
         [Use a special printf format for 64bit (default is NO)]),
         [ AC_DEFINE([HAVE_NONSTANDARD_PRINTF_64_FORMAT],[1],
-           [Define 1 if need nonstandard printf format for  64bit] )
+           [Define 1 if need nonstandard printf format for 64bit] )
            [enable_nonstandardprintf="yes"]
         ],
         [enable_nonstandardprintf="no"])
+
+AC_ARG_ENABLE(havecustomlibelf,AS_HELP_STRING([--enable-havecustomlibelf],
+        [including a custom libelf library (default is NO)]),
+        [ AC_DEFINE([HAVE_CUSTOM_LIBELF],[1],
+           [Define 1 if including a custom libelf library] )
+           [enable_havecustomlibelf="yes"]
+        ],
+        [enable_havecustomlibelf="no"])
 
 ### Default options with respect to host
 
@@ -643,6 +651,7 @@ echo "    Elf spelled........: ${struct_elf}"
 echo "    libelf.............: ${dwarf_with_libelf}"
 echo "    Windows path corr..: ${enable_windowspath}"
 echo "    Nonstandardprintf..: ${enable_nonstandardprintf}"
+echo "    Custom libelf......: ${enable_havecustomlibelf}"
 echo "  dwarfdump............: always"
 echo "    elf64_getehdr......: ${have_getehdr}"
 echo "    Elf64_Rel (r_info).: ${have_elf64_rel}"

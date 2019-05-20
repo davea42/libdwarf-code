@@ -66,7 +66,7 @@ _dwarf_pro_encode_leb128_nm(Dwarf_Unsigned val, int *nbytes,
         *a = uc;
         a++;
     } while (val);
-    *nbytes = a - space;
+    *nbytes = (int)(a - space);
     return DW_DLV_OK;
 }
 
@@ -105,6 +105,6 @@ _dwarf_pro_encode_signed_leb128_nm(Dwarf_Signed value, int *nbytes,
         *str = byte;
         str++;
     } while (more);
-    *nbytes = str - space;
+    *nbytes = (int)(str - space);
     return DW_DLV_OK;
 }

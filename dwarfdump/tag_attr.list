@@ -74,6 +74,7 @@ DW_AT_accessibility
 DW_AT_description
 DW_AT_name
 DW_AT_sibling
+
 0xffffffff
 DW_TAG_array_type
 DW_AT_decl_column
@@ -98,11 +99,13 @@ DW_AT_specification
 DW_AT_start_scope
 DW_AT_type
 DW_AT_visibility
+
 0xffffffff
 DW_TAG_atomic_type /* DWARF5 */
 DW_AT_alignment
 DW_AT_sibling
 DW_AT_type
+
 0xffffffff
 DW_TAG_base_type
 DW_AT_alignment
@@ -125,6 +128,7 @@ DW_AT_name
 DW_AT_picture_string
 DW_AT_sibling
 DW_AT_small
+
 0xffffffff
 DW_TAG_call_site /* DWARF5 */
 DW_AT_call_column
@@ -137,6 +141,7 @@ DW_AT_call_tail_call
 DW_AT_call_target
 DW_AT_call_target_clobbered
 DW_AT_type
+
 0xffffffff
 DW_TAG_call_site_parameter /* DWARF5 */
 DW_AT_call_data_location
@@ -147,6 +152,7 @@ DW_AT_location
 DW_AT_name
 DW_AT_sibling
 DW_AT_type
+
 0xffffffff
 DW_TAG_catch_block
 DW_AT_decl_column
@@ -159,6 +165,7 @@ DW_AT_low_pc
 DW_AT_ranges
 DW_AT_segment
 DW_AT_sibling
+
 0xffffffff
 DW_TAG_class_type
 DW_AT_decl_column
@@ -181,6 +188,7 @@ DW_AT_signature
 DW_AT_specification
 DW_AT_start_scope
 DW_AT_visibility
+
 0xffffffff
 DW_TAG_coarray_type /* DWARF5 */
 DW_AT_decl_column
@@ -189,6 +197,7 @@ DW_AT_decl_line
 DW_AT_alignment
 DW_AT_sibling
 DW_AT_type
+
 0xffffffff
 DW_TAG_common_block
 DW_AT_decl_column
@@ -202,6 +211,7 @@ DW_AT_name
 DW_AT_segment
 DW_AT_sibling
 DW_AT_visibility
+
 0xffffffff
 DW_TAG_common_inclusion
 DW_AT_decl_column
@@ -211,6 +221,7 @@ DW_AT_common_reference
 DW_AT_declaration
 DW_AT_sibling
 DW_AT_visibility
+
 0xffffffff
 DW_TAG_compile_unit
 DW_AT_addr_base
@@ -234,6 +245,7 @@ DW_AT_segment
 DW_AT_stmt_list
 DW_AT_str_offsets_base
 DW_AT_use_UTF8
+
 0xffffffff
 DW_TAG_condition
 DW_AT_decl_column
@@ -241,6 +253,7 @@ DW_AT_decl_file
 DW_AT_decl_line
 DW_AT_name
 DW_AT_sibling
+
 0xffffffff
 DW_TAG_const_type
 DW_AT_decl_column
@@ -250,6 +263,7 @@ DW_AT_alignment
 DW_AT_name
 DW_AT_sibling
 DW_AT_type
+
 0xffffffff
 DW_TAG_constant
 DW_AT_decl_column
@@ -267,9 +281,11 @@ DW_AT_sibling
 DW_AT_start_scope
 DW_AT_type
 DW_AT_visibility
+
 0xffffffff
 DW_TAG_dwarf_procedure
 DW_AT_location
+
 0xffffffff
 DW_TAG_dynamic_type
 DW_AT_decl_column
@@ -284,6 +300,7 @@ DW_AT_description
 DW_AT_name
 DW_AT_type
 DW_AT_sibling
+
 0xffffffff
 DW_TAG_entry_point
 DW_AT_decl_column
@@ -300,6 +317,7 @@ DW_AT_segment
 DW_AT_sibling
 DW_AT_static_link
 DW_AT_type
+
 0xffffffff
 DW_TAG_enumeration_type
 DW_AT_decl_column
@@ -325,6 +343,7 @@ DW_AT_specification
 DW_AT_start_scope
 DW_AT_type
 DW_AT_visibility
+
 0xffffffff
 DW_TAG_enumerator
 DW_AT_decl_column
@@ -334,6 +353,7 @@ DW_AT_const_value
 DW_AT_description
 DW_AT_name
 DW_AT_sibling
+
 0xffffffff
 DW_TAG_file_type
 DW_AT_decl_column
@@ -352,6 +372,7 @@ DW_AT_sibling
 DW_AT_start_scope
 DW_AT_type
 DW_AT_visibility
+
 0xffffffff
 DW_TAG_formal_parameter
 DW_AT_decl_column
@@ -370,6 +391,7 @@ DW_AT_segment
 DW_AT_sibling
 DW_AT_type
 DW_AT_variable_parameter
+
 0xffffffff
 DW_TAG_friend
 DW_AT_decl_column
@@ -378,6 +400,7 @@ DW_AT_decl_line
 DW_AT_abstract_origin
 DW_AT_friend
 DW_AT_sibling
+
 0xffffffff
 DW_TAG_generic_subrange
 DW_AT_decl_column
@@ -401,6 +424,7 @@ DW_AT_threads_scaled
 DW_AT_type
 DW_AT_upper_bound
 DW_AT_visibility
+
 0xffffffff
 DW_TAG_imported_declaration
 DW_AT_decl_column
@@ -412,6 +436,7 @@ DW_AT_import
 DW_AT_name
 DW_AT_sibling
 DW_AT_start_scope
+
 0xffffffff
 DW_TAG_imported_module
 DW_AT_decl_column
@@ -420,9 +445,11 @@ DW_AT_decl_line
 DW_AT_import
 DW_AT_sibling
 DW_AT_start_scope
+
 0xffffffff
 DW_TAG_imported_unit
 DW_AT_import
+
 0xffffffff
 DW_TAG_inheritance
 DW_AT_decl_column
@@ -433,6 +460,7 @@ DW_AT_data_member_location
 DW_AT_sibling
 DW_AT_type
 DW_AT_virtuality
+
 0xffffffff
 DW_TAG_inlined_subroutine
 DW_AT_abstract_origin
@@ -449,6 +477,7 @@ DW_AT_segment
 DW_AT_sibling
 DW_AT_start_scope
 DW_AT_trampoline
+
 0xffffffff
 DW_TAG_interface_type
 DW_AT_decl_column
@@ -461,6 +490,7 @@ DW_AT_name
 DW_AT_sibling
 DW_AT_signature
 DW_AT_start_scope
+
 0xffffffff
 DW_TAG_label
 DW_AT_decl_column
@@ -473,6 +503,7 @@ DW_AT_name
 DW_AT_segment
 DW_AT_sibling
 DW_AT_start_scope
+
 0xffffffff
 DW_TAG_lexical_block
 DW_AT_decl_column
@@ -487,6 +518,7 @@ DW_AT_name
 DW_AT_ranges
 DW_AT_segment
 DW_AT_sibling
+
 0xffffffff
 DW_TAG_member
 DW_AT_decl_column
@@ -509,6 +541,7 @@ DW_AT_name
 DW_AT_sibling
 DW_AT_type
 DW_AT_visibility
+
 0xffffffff
 DW_TAG_module
 DW_AT_decl_column
@@ -527,6 +560,7 @@ DW_AT_segment
 DW_AT_sibling
 DW_AT_specification
 DW_AT_visibility
+
 0xffffffff
 DW_TAG_namelist
 DW_AT_decl_column
@@ -538,6 +572,7 @@ DW_AT_declaration
 DW_AT_name
 DW_AT_sibling
 DW_AT_visibility
+
 0xffffffff
 DW_TAG_namelist_item
 DW_AT_decl_column
@@ -545,6 +580,7 @@ DW_AT_decl_file
 DW_AT_decl_line
 DW_AT_namelist_item
 DW_AT_sibling
+
 0xffffffff
 DW_TAG_namespace
 DW_AT_decl_column
@@ -556,6 +592,7 @@ DW_AT_extension
 DW_AT_name
 DW_AT_sibling
 DW_AT_start_scope
+
 0xffffffff
 DW_TAG_packed_type
 DW_AT_decl_column
@@ -565,6 +602,7 @@ DW_AT_alignment
 DW_AT_name
 DW_AT_sibling
 DW_AT_type
+
 0xffffffff
 DW_TAG_partial_unit
 DW_AT_addr_base
@@ -589,6 +627,7 @@ DW_AT_segment
 DW_AT_stmt_list
 DW_AT_str_offsets_base
 DW_AT_use_UTF8
+
 0xffffffff
 DW_TAG_pointer_type
 DW_AT_decl_column
@@ -601,6 +640,7 @@ DW_AT_byte_size
 DW_AT_name
 DW_AT_sibling
 DW_AT_type
+
 0xffffffff
 DW_TAG_ptr_to_member_type
 DW_AT_decl_column
@@ -804,6 +844,7 @@ DW_AT_threads_scaled
 DW_AT_type
 DW_AT_upper_bound
 DW_AT_visibility
+
 0xffffffff
 DW_TAG_subroutine_type
 DW_AT_decl_column
@@ -844,7 +885,6 @@ DW_AT_start_scope
 DW_AT_type
 DW_AT_visibility
 
-
 0xffffffff
 DW_TAG_template_type_parameter
 DW_AT_decl_column
@@ -855,6 +895,7 @@ DW_AT_description
 DW_AT_name
 DW_AT_sibling
 DW_AT_type
+
 0xffffffff
 DW_TAG_template_value_parameter
 DW_AT_decl_column
@@ -867,6 +908,7 @@ DW_AT_location
 DW_AT_name
 DW_AT_sibling
 DW_AT_type
+
 0xffffffff
 DW_TAG_thrown_type
 DW_AT_decl_column
@@ -878,6 +920,7 @@ DW_AT_associated
 DW_AT_data_location
 DW_AT_sibling
 DW_AT_type
+
 0xffffffff
 DW_TAG_try_block
 DW_AT_decl_column
@@ -890,6 +933,7 @@ DW_AT_low_pc
 DW_AT_ranges
 DW_AT_segment
 DW_AT_sibling
+
 0xffffffff
 DW_TAG_typedef
 DW_AT_decl_column
@@ -938,6 +982,7 @@ DW_AT_signature
 DW_AT_specification
 DW_AT_start_scope
 DW_AT_visibility
+
 0xffffffff
 DW_TAG_unspecified_parameters
 DW_AT_decl_column
@@ -946,6 +991,7 @@ DW_AT_decl_line
 DW_AT_abstract_origin
 DW_AT_artificial
 DW_AT_sibling
+
 0xffffffff
 DW_TAG_unspecified_type
 DW_AT_decl_column
@@ -1032,4 +1078,5 @@ DW_AT_segment
 DW_AT_sibling
 DW_AT_type
 DW_AT_visibility
+
 0xffffffff

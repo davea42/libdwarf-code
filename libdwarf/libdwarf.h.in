@@ -4604,7 +4604,6 @@ int dwarf_get_section_max_offsets_d(Dwarf_Debug /*dbg*/,
     Dwarf_Unsigned * /*debug_loclists_size*/,
     Dwarf_Unsigned * /*debug_rnglists_size*/);
 
-
 /*  The 'set' calls here return the original (before any change
     by these set routines) of the respective fields. */
 /*  Multiple releases spelled 'initial' as 'inital' .
@@ -4718,8 +4717,6 @@ int dwarf_str_offsets_statistics(Dwarf_Str_Offsets_Table /*table_data*/,
     Dwarf_Unsigned * /*wasted_byte_count*/,
     Dwarf_Unsigned * /*table_count*/,
     Dwarf_Error    * /*error*/);
-
-
 
 /* The harmless error list is a circular buffer of
    errors we note but which do not stop us from processing
@@ -4854,15 +4851,12 @@ int dwarf_get_section_info_by_index(Dwarf_Debug      /*dbg*/,
 /*  Get section count, of object file sections. */
 int dwarf_get_section_count(Dwarf_Debug /*dbg*/);
 
-
-
 /*  Get the version and offset size of a CU context.
     This is useful as a precursor to
     calling dwarf_get_form_class() at times.  */
 int dwarf_get_version_of_die(Dwarf_Die /*die*/,
     Dwarf_Half * /*version*/,
     Dwarf_Half * /*offset_size*/);
-
 
 int dwarf_discr_list(Dwarf_Debug /*dbg*/,
     Dwarf_Small    * /*blockpointer*/,
@@ -4943,7 +4937,6 @@ extern Dwarf_Cmdline_Options dwarf_cmdline_options;
 /* Set libdwarf to reflect some application command line options. */
 void dwarf_record_cmdline_options(Dwarf_Cmdline_Options /*options*/);
 
-
 int dwarf_pro_get_string_stats(Dwarf_P_Debug /*dbg*/,
     Dwarf_Unsigned * /*str_count*/,
     Dwarf_Unsigned * /*str_total_length*/,
@@ -4954,11 +4947,12 @@ int dwarf_pro_get_string_stats(Dwarf_P_Debug /*dbg*/,
     Dwarf_Error    * /*error*/);
 
 #ifndef DW_FTYPE_UNKNOWN
-#define DW_FTYPE_UNKNOWN 0
-#define DW_FTYPE_ELF     1  /* Unix/Linux/etc */
-#define DW_FTYPE_MACH_O  2  /* MacOS. */
-#define DW_FTYPE_PE      3  /* Windows */
-#define DW_FTYPE_ARCHIVE 4  /* unix archive */
+#define DW_FTYPE_UNKNOWN    0
+#define DW_FTYPE_ELF        1  /* Unix/Linux/etc */
+#define DW_FTYPE_MACH_O     2  /* MacOS. */
+#define DW_FTYPE_PE         3  /* Windows */
+#define DW_FTYPE_ARCHIVE    4  /* unix archive */
+#define DW_FTYPE_CUSTOM_ELF 5  /* Custom ELF format. Ignore this. */
 #endif /* DW_FTYPE_UNKNOWN */
 
 #ifndef DW_ENDIAN_UNKNOWN

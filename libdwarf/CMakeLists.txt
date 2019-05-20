@@ -1,30 +1,26 @@
 #  This changes the gennames option from -s  to -t
 #  though in  2019 builds we no longer run gennames.
-option(namestable "string functions implemented as binary search (default is with C switch)" TRUE)
-if(namestable)
+option(NAMES_TABLE "string functions implemented as binary search (default is with C switch)" TRUE)
+if(NAMES_TABLE)
     set(dwarf_namestable "-s")
 else()
     set(dwarf_namestable "-t")
 endif()
 
-option(windowspath "Detect certain Windows paths as full paths (default is NO)" FALSE)
-set(HAVE_WINDOWS_PATH ${windowspath})
-message(STATUS "Checking enable  windowspath... ${HAVE_WINDOWS_PATH}")
+option(HAVE_WINDOWS_PATH "Detect certain Windows paths as full paths (default is NO)" FALSE)
+message(STATUS "Checking enable windows path... ${HAVE_WINDOWS_PATH}")
 
-option(oldframecol "Use HAVE_OLD_FRAME_CFA_COL (default is to use new DW_FRAME_CFA_COL3)" FALSE)
-set(HAVE_OLD_FRAME_CFA_COL ${oldframecol})
+option(HAVE_OLD_FRAME_CFA_COL "Use HAVE_OLD_FRAME_CFA_COL (default is to use new DW_FRAME_CFA_COL3)" FALSE)
 message(STATUS "Checking enable old frame columns... ${HAVE_OLD_FRAME_CFA_COL}")
 
 #  See pro_init(), HAVE_DWARF2_99_EXTENSION also generates
 #  32bit offset dwarf unless DW_DLC_OFFSET_SIZE_64 flag passed to
 #  pro_init.
-option(dwarf_format_sgi_irix "Force producer to SGI IRIX offset dwarf" FALSE)
-set(HAVE_SGI_IRIX_OFFSETS ${dwarf_format_sgi_irix})
+option(HAVE_SGI_IRIX_OFFSETS "Force producer to SGI IRIX offset dwarf" FALSE)
 message(STATUS "Checking  producer generates SGI IRIX output... ${HAVE_SGI_IRIX_OFFSETS}")
 
-option(dwarf_format_strict_32bit "Force producer to generate only DWARF format 32bit" FALSE)
-set(HAVE_STRICT_DWARF2_32BIT_OFFSET ${dwarf_format_strict_32bit})
-set(HAVE_DWARF2_99_EXTENSION NOT ${dwarf_format_strict_32bit})
+option(HAVE_STRICT_DWARF2_32BIT_OFFSET "Force producer to generate only DWARF format 32bit" FALSE)
+set(HAVE_DWARF2_99_EXTENSION NOT ${HAVE_STRICT_DWARF2_32BIT_OFFSET})
 message(STATUS "Checking producer generates only 32bit... ${HAVE_STRICT_DWARF2_32BIT_OFFSET}")
 
 configure_file(config.h.in.cmake config.h)
@@ -91,10 +87,11 @@ pro_incl.h pro_line.h pro_macinfo.h pro_opaque.h
 pro_reloc.h pro_reloc_stream.h pro_reloc_symbolic.h 
 pro_section.h pro_types.h pro_util.h)
 
-
 set_source_group(CONFIGURATION_FILES "Configuration Files" 
     config.h.in.cmake 
     ${CMAKE_CURRENT_BINARY_DIR}/config.h)
+
+
 	
 list(LENGTH DWARF_TARGETS targetCount)
 math(EXPR targetCount "${targetCount} - 1")
@@ -107,6 +104,7 @@ foreach(i RANGE ${targetCount})
 	set_folder(${target} libdwarf)
 	target_include_directories(${target} PUBLIC 
             ${LIBELF_INCLUDE_DIRS})
+        target_compile_options(${target} PRIVATE ${DW_FWALL})
 	msvc_posix(${target})
 
 	target_link_libraries(${target} PUBLIC ${LIBELF_LIBRARIES})
@@ -123,25 +121,21 @@ foreach(i RANGE ${targetCount})
 		ARCHIVE DESTINATION ${LIBDIR})
 endforeach()
 
-if(UNIX AND shared)
+if(UNIX AND BUILD_SHARED)
 	target_link_libraries(dwarf-shared PUBLIC z)
 endif()
 		
-
 if (DO_TESTING)
     set_source_group(TESTLEB "Source Files" dwarf_leb_test.c 
         dwarf_leb.c pro_encode_nm.c )
     add_executable(selfleb ${TESTLEB})
-    target_compile_options(selfleb PRIVATE ${dwfwall})
+    target_compile_options(selfleb PRIVATE ${DW_FWALL})
     add_test(NAME selfleb COMMAND selfleb)
 endif()
 if (DO_TESTING)
     set_source_group(TESTTIED "Source Files" 
         dwarf_tied_test.c dwarf_tied.c dwarf_tsearchhash.c )
     add_executable(selftied ${TESTTIED})
-    target_compile_options(selftied PRIVATE ${dwfwall})
+    target_compile_options(selftied PRIVATE ${DW_FWALL})
     add_test(NAME selftied COMMAND selftied)
 endif()
-
-
-

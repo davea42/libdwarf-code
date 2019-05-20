@@ -1,3 +1,26 @@
+2019-05-20  David Anderson
+    * CmakeLists.txt: The checks for elf64_getehdr and
+      elf64_getshdr were written incorrectly.
+      The library options changed to be consistent
+      with standard practice:
+      nonshared->BUILD_NON_SHARED
+      shared->BUILD_SHARED
+      wall->WALL (and the option generator expression corrected)
+      nonstandardprintf->HAVE_NONSTANDARD_PRINTF_64_FORMAT
+      HAVE_CUSTOM_LIBELF (new, not of general interest)
+      dodwarfexample->BUILD_DWARFEXAMPLE
+      dodwarfgen->BUILD_DWARFGEN
+      test->DO_TESTING
+      Version 20190520
+    * README.cmake: updated to match the new option names,
+    * appveyor.yml: Updated to match cmake new option names.
+    * config.h.in: Adding HAVE_CUSTOM_LIBELF line.
+    * configure.ac: Typo correction and addition of
+      --enable-havecustomlibelf
+      Version 20190520
+    * scripts/buildandreleasetest.sh. Now reflects
+      the new cmake option names, such as dodwarfgen=ON
+      becoming DWARFGEN=ON.
 2019-05-13  David Anderson
     * CmakeLists.txt: Now -Dwall=ON adds -Werror
       and reports the warning/error options.

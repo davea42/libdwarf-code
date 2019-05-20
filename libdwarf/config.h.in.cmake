@@ -3,8 +3,14 @@
 /* Define if building universal (internal helper macro) */
 #cmakedefine AC_APPLE_UNIVERSAL_BUILD 1
 
+/* Define 1 if building with libelf. */
+#cmakedefine DWARF_WITH_LIBELF 1
+
 /* Define to 1 if you have the <alloca.h> header file. */
 #cmakedefine HAVE_ALLOCA_H 1
+
+/* Define to 1 as we are including a custom libelf library. */
+#cmakedefine HAVE_CUSTOM_LIBELF 1
 
 /* Define 1 if want to allow producer to build with 32/64bit section offsets
    per dwarf3 */
@@ -52,11 +58,8 @@
 /* Define to 1 if you have the <memory.h> header file. */
 #cmakedefine HAVE_MEMORY_H 1
 
-/* Define 1 if need nonstandard printf format for 64bit */
+/* Define 1 if need nonstandard printf format for 64bit. */
 #cmakedefine HAVE_NONSTANDARD_PRINTF_64_FORMAT 1
-
-/* Define 1 if building with libelf */
-#cmakedefine DWARF_WITH_LIBELF 1
 
 /* Define 1 to default to old DW_FRAME_CFA_COL */
 #cmakedefine HAVE_OLD_FRAME_CFA_COL 1

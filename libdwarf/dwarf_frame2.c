@@ -242,18 +242,18 @@ print_prefix(struct cie_fde_prefix_s *prefix, int line)
     printf("  start addr 0x%lx after prefix 0x%lx\n",
         (unsigned long) prefix->cf_start_addr,
         (unsigned long) prefix->cf_addr_after_prefix);
-    printf("  length 0x%lx, len size %d ext size %d\n",
-        (unsigned long) prefix->cf_length,
-        (int)prefix->cf_local_length_size,
-        (int)prefix->cf_local_extension_size);
-    printf("  cie_id 0x%lx cie_id  cie_id_addr 0x%lx\n",
-        (unsigned long) prefix->cf_cie_id,
-        (unsigned long) prefix->cf_cie_id_addr);
-    printf("  sec ptr 0x%lx sec index %ld sec len 0x%lx "
-        "sec past end 0x%lx\n",
+    printf("  length 0x%" DW_PR_DUx ", len size %d ext size %d\n",
+        (Dwarf_Unsigned) prefix->cf_length,
+        prefix->cf_local_length_size,
+        prefix->cf_local_extension_size);
+    printf("  cie_id 0x%" DW_PR_DUx " cie_id  cie_id_addr 0x%lx\n",
+        (Dwarf_Unsigned) prefix->cf_cie_id,
+        (long) prefix->cf_cie_id_addr);
+    printf
+        ("  sec ptr 0x%lx sec index %" DW_PR_DSd " sec len 0x%" DW_PR_DUx " sec past end 0x%lx\n",
         (unsigned long) prefix->cf_section_ptr,
-        (long) prefix->cf_section_index,
-        (unsigned long) prefix->cf_section_length,
+        (Dwarf_Signed) prefix->cf_section_index,
+        (Dwarf_Unsigned) prefix->cf_section_length,
         (unsigned long) prefix->cf_section_ptr +
         (unsigned long)prefix->cf_section_length);
 }

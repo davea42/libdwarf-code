@@ -76,6 +76,12 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #elif defined(_WIN32) && defined(_MSC_VER)
 #include <io.h>
 #endif /* HAVE_UNISTD_H */
+
+/* Windows specific header files */
+#if defined(_WIN32) && defined(HAVE_STDAFX_H)
+#include "stdafx.h"
+#endif /* HAVE_STDAFX_H */
+
 #include "libdwarf.h"
 #include "libdwarfdefs.h"
 #include "dwarf_base_types.h"
@@ -209,7 +215,7 @@ elf_load_nolibelf_section (void *obj, Dwarf_Half section_index,
 
         struct generic_shdr *sp =
             elf->f_shdr + section_index;
-        if(sp->gh_content) {
+        if (sp->gh_content) {
             *return_data = (Dwarf_Small *)sp->gh_content;
             return DW_DLV_OK;
         }
@@ -222,14 +228,14 @@ elf_load_nolibelf_section (void *obj, Dwarf_Half section_index,
             return DW_DLV_ERROR;
         }
 
-        sp->gh_content = malloc(sp->gh_size);
+        sp->gh_content = malloc((size_t)sp->gh_size);
         if(!sp->gh_content) {
             *error = DW_DLE_ALLOC_FAIL;
             return DW_DLV_ERROR;
         }
-        res =RRMOA(elf->f_fd,
-            sp->gh_content, sp->gh_offset,
-            sp->gh_size,elf->f_filesize,error);
+        res = RRMOA(elf->f_fd,
+            sp->gh_content, (off_t)sp->gh_offset,
+            (size_t)sp->gh_size, (off_t)elf->f_filesize, error);
         if (res != DW_DLV_OK) {
             free(sp->gh_content);
             sp->gh_content = 0;
@@ -331,8 +337,8 @@ update_entry(Dwarf_Debug dbg,
 
     offset = rela->gr_offset;
     addend = rela->gr_addend;
-    type = rela->gr_type;
-    sym_idx = rela->gr_sym;
+    type = (unsigned int)rela->gr_type;
+    sym_idx = (unsigned int)rela->gr_sym;
     if (sym_idx >= obj->f_loc_symtab.g_count) {
         *error = DW_DLE_RELOC_SECTION_SYMBOL_INDEX_BAD;
         return DW_DLV_ERROR;
@@ -370,8 +376,8 @@ update_entry(Dwarf_Debug dbg,
             but if some do then which ones? */
         Dwarf_Unsigned outval = symp->gs_value + addend;
         /*  The 0th byte goes at offset. */
-        WRITE_UNALIGNED(dbg,target_section + offset,
-            &outval,sizeof(outval),reloc_size);
+        WRITE_UNALIGNED(dbg, target_section + offset,
+            &outval, sizeof(outval), (unsigned long)reloc_size);
     }
     return DW_DLV_OK;
 }
@@ -456,7 +462,7 @@ elf_relocations_nolibelf(void* obj_in,
         to a de_debug_info or other  section record in
         Dwarf_Debug. */
     res = find_section_to_relocate(dbg, section_index,
-        &relocatablesec,error);
+        &relocatablesec, error);
     if (res != DW_DLV_OK) {
         return res;
     }

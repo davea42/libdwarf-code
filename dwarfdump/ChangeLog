@@ -1,3 +1,20 @@
+2019-05-20 David Anderson
+     * CMakeLists.txt: Added addrmap.h to the HEADERS list.
+       Reflects new names for the options and adds the
+       compiler warning options. 
+     * config.h.in.cmake: Adding in the necessary HAVE_*
+       option defaults.
+     * dwarfdump.c: Adds part of the HAVE_CUSTOM_LIBELF
+       and DW_FTYPE_CUSTOM_ELF
+       support (for the one environment wanting that).
+       Drops the accidental print of date/time with -O <file>
+       option to dwarfdump.
+     * esb.c: Adding a Windows-specific define for Windows
+       builds.
+     * globals.h: Adding a comment.
+     * tag_attr.list, tag_attr_ext.list,tag_tree.list,
+       tag_tree_ext.list: Adding blank lines judiciously
+       makes the table easier for humans to read.
 2019-05-14 David Anderson
      * command_options.c: Removed unneeded trailing ',' 
        in initializer as it caused a warning in compile.

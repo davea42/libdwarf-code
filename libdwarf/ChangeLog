@@ -1,3 +1,38 @@
+2019-05-20 David Anderson
+     * CMakeLists.txt: Reflects revised cmake option names.
+       Adds compiler warning options when -DWALL selected.
+     * config.h.in.cmake: Reflects the set of defines
+       needed now, such as cmakedefine DWARF_WITH_LIBELF.
+     * dwarf_elf_access.c: Removes some messy HAVE_LIBELF_H
+       etc to dwarf_elf_defines.h so the test/define 
+       is reusable
+     * dwarf_elf_defines.h: Now has the messy HAVE_LIBELF_H
+       etc tests.
+     * dwarf_elf_load_headers.c: Removes unwanted include  of elf.h
+     * dwarf_elfread.c: Add Windows-related ifdef.
+       A couple if () reformatted slightly. a few casts
+       added to ensure compiler warnings eliminated.
+     * dwarf_frame2.c: Using Dwarf_Unsigned a bit more
+       so the output can use DW_PR_DUx for the printf.
+     * dwarf_incl.h: Small comment change for readability.
+     * dwarf_machoread.c: Add Windows-related ifdef/define/include.
+       Minor if() revision for consistency. Some casts
+       added to avoid compiler warnings and communicate intent.
+     * dwarf_object_detector.c: Added Windows specific ifdef/include
+       and accomodation of HAVE_CUSTOM_LIBELF.
+     * dwarf_object_read_common.c: Added Windows specific 
+       ifdef/include and a slight reformatting of argument
+       lists.
+     * dwarf_peread.c: Added Windows specific ifdef/include.
+       Added casts to avoid compiler warnings.
+     * dwarf_query.c: Reformat some if() for consistency.
+     * gennames.c: Added Windows specific ifdef/include.
+     * libdwarf.h.in: Deleted excessive blank lines.
+       Added DW_FTYPE_CUSTOM_ELF 5.
+     * pro_encode_nm.c: Added casts to avoid certain compiler
+       warnings.
+     * pro_incl.h: Made a comment more consistent with
+       other uses of that comment.
 2019-05-14 David Anderson
      * dwarf_pe_descr.h: Several // C++ comments
        present, now all such comments deleted.
@@ -481,7 +516,6 @@
        so the fd can be closed by libdwarf only when 
        libdwarf owns it.
      * libdwarf_version.h: New date string.
-
 2019-01-03   David Anderson
      * dwarf_object_detector.c: Had a pointless call to stat()
        which was noticed by Coverity CID  190601

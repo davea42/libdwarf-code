@@ -36,6 +36,20 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 extern "C" {
 #endif /* __cplusplus */
 
+/*  Use the system headers if they are available. */
+#ifdef HAVE_ELF_H
+#include <elf.h>
+#endif /* HAVE_ELF_H */
+
+/*  Relocation definitions are in sys/elf_{mach}.h on Solaris.  */
+#ifdef HAVE_LIBELF_H
+#include <libelf.h>
+#else
+#ifdef HAVE_LIBELF_LIBELF_H
+#include <libelf/libelf.h>
+#endif /* HAVE_LIBELF_LIBELF_H */
+#endif /* HAVE_LIBELF_H */
+
 /* Standard Elf section types. */
 #ifndef SHT_NULL
 #define SHT_NULL 0
@@ -1090,7 +1104,6 @@ extern "C" {
 #ifndef R_X86_64_PC32
 #define R_X86_64_PC32                          2
 #endif /* R_X86_64_PC32 */
-
 
 #ifdef __cplusplus
 }

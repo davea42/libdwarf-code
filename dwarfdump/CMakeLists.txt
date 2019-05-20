@@ -18,7 +18,8 @@ set_source_group(SOURCES "Source Files" addrmap.c
         true_section_name.c uri.c dwgetopt.c makename.c 
         naming.c common.c esb.c dwarf_tsearchbal.c)
 	
-set_source_group(HEADERS "Header Files" checkutil.h common.h dwconf.h
+set_source_group(HEADERS "Header Files" 
+  addrmap.h checkutil.h common.h dwconf.h
   command_options.h compiler_info.h
   dwarf_names.h
   dwconf_using_functions.h esb_using_functions.h
@@ -36,12 +37,12 @@ add_executable(dwarfdump ${SOURCES} ${HEADERS} ${CONFIGURATION_FILES})
 
 set_folder(dwarfdump dwarfdump)
 
-target_compile_options(dwarfdump PRIVATE ${dwfwall})
 
 target_compile_definitions(dwarfdump PRIVATE 
     "CONFPREFIX=${CMAKE_INSTALL_PREFIX}/lib")
+target_compile_options(dwarfdump PRIVATE ${DW_FWALL})
 
-target_link_libraries(dwarfdump PRIVATE ${dwarf-target} ${dwfzlib}) 
+target_link_libraries(dwarfdump PRIVATE ${dwarf-target} ${DW_FZLIB}) 
 
 # Plain GNU C dash E does not work on a .list, 
 # so copy to a .c name to run
@@ -52,7 +53,7 @@ if (DO_TESTING)
     set_source_group(GETOPTEST_SOURCES "Source Files" 
       getopttest.c dwgetopt.c)
     add_executable(selfgetopttest ${GETOPTEST_SOURCES})
-    target_compile_options(selfgetopttest PRIVATE ${dwfwall})
+    target_compile_options(selfgetopttest PRIVATE ${DW_FWALL})
     add_test(NAME selfgetopttest COMMAND selfgetopttest)
 endif()    
     
@@ -61,7 +62,7 @@ if (DO_TESTING)
        dwarf_tsearchbal.c)
     add_executable(selftestesb ${TESTESB_SOURCES})
     target_compile_options(selftestesb PRIVATE ${SELFTEST} )
-    target_compile_options(selftestesb PRIVATE ${dwfwall})
+    target_compile_options(selftestesb PRIVATE ${DW_FWALL})
     add_test(NAME selftestesb COMMAND selftestesb)
 endif()
 
@@ -69,7 +70,7 @@ if (DO_TESTING)
     set_source_group(TESTESB_SOURCES "Source Files" getopttest.c
         dwgetopt.c)
     add_executable(selfgetopttestnat ${GETOPTEST_SOURCES})
-    target_compile_options(selfgetopttestnat PRIVATE ${dwfwall})
+    target_compile_options(selfgetopttestnat PRIVATE ${DW_FWALL})
     if(UNIX)
 	    target_compile_definitions(selfgetopttestnat 
             PRIVATE GETOPT_FROM_SYSTEM)
@@ -84,7 +85,7 @@ if (DO_TESTING)
     set_source_group(MAKENAME_SOURCES "Source Files"
        makename_test.c esb.c dwarf_tsearchbal.c makename.c)
     add_executable(selfmakename ${MAKENAME_SOURCES})
-    target_compile_options(selfmakename PRIVATE ${dwfwall})
+    target_compile_options(selfmakename PRIVATE ${DW_FWALL})
     add_test(NAME selfmakename COMMAND selfmakename)
 endif()
 
@@ -93,7 +94,7 @@ if (DO_TESTING)
     set_source_group(HELPERTREE_SOURCES "Source Files"
        helpertree_test.c helpertree.c dwarf_tsearchbal.c)
     add_executable(selfhelpertree ${HELPERTREE_SOURCES})
-    target_compile_options(selfhelpertree PRIVATE ${dwfwall})
+    target_compile_options(selfhelpertree PRIVATE ${DW_FWALL})
     add_test(NAME selfhelpertree COMMAND selfhelpertree)
 endif()
 
@@ -102,7 +103,7 @@ if (DO_TESTING)
         esb.c dwarf_tsearchbal.c)
     add_executable(selfmc ${SELFMC_SOURCES} )
     target_compile_options(selfmc PRIVATE ${SELFTEST} )
-    target_compile_options(selfmc PRIVATE ${dwfwall})
+    target_compile_options(selfmc PRIVATE ${DW_FWALL})
     add_test(NAME selfmc COMMAND selfmc)
 endif()
 
@@ -111,7 +112,7 @@ if (DO_TESTING)
         testesb.c esb.c)
     add_executable(selfesb ${SELFESB_SOURCES})
     target_compile_options(selfesb PRIVATE ${SELFTEST} )
-    target_compile_options(selfesb PRIVATE ${dwfwall})
+    target_compile_options(selfesb PRIVATE ${DW_FWALL})
     add_test(NAME selfesb COMMAND selfesb)
 endif()
 
@@ -121,7 +122,7 @@ if (DO_TESTING)
     add_executable(selfsectionbitmaps ${SECTIONBITMAPS_SOURCES})
     target_compile_options(selfsectionbitmaps PRIVATE 
         ${SELFTEST} )
-    target_compile_options(selfsectionbitmaps PRIVATE ${dwfwall})
+    target_compile_options(selfsectionbitmaps PRIVATE ${DW_FWALL})
     add_test(NAME selfsectionbitmaps COMMAND selfsectionbitmaps)
 endif()
 
@@ -133,7 +134,7 @@ if (DO_TESTING)
     target_compile_options(selfprintreloc PRIVATE 
         "-I${CMAKE_SOURCE_DIR}/libdwarf")
     target_compile_options(selfprintreloc PRIVATE ${SELFTEST} )
-    target_compile_options(selfprintreloc PRIVATE ${dwfwall})
+    target_compile_options(selfprintreloc PRIVATE ${DW_FWALL})
     add_test(NAME selfprintreloc COMMAND selfprintreloc)
 endif()
 

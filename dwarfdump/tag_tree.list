@@ -63,25 +63,29 @@
 
 0xffffffff
 DW_TAG_access_declaration
+
 0xffffffff
 DW_TAG_array_type
 DW_TAG_subrange_type
 DW_TAG_dynamic_type
 DW_TAG_generic_subrange
 DW_TAG_enumeration_type
+
 0xffffffff
 DW_TAG_base_type
+
 0xffffffff
 DW_TAG_call_site
 DW_TAG_call_site_parameter
+
 0xffffffff
 DW_TAG_call_site_parameter
+
 0xffffffff
 DW_TAG_catch_block
 DW_TAG_formal_parameter
 DW_TAG_unspecified_parameters
 DW_TAG_array_type
-
 DW_TAG_class_type
 DW_TAG_enumeration_type
 DW_TAG_pointer_type
@@ -104,6 +108,7 @@ DW_TAG_packed_type
 DW_TAG_subprogram
 DW_TAG_variable
 DW_TAG_volatile_type
+
 0xffffffff
 DW_TAG_class_type
 DW_TAG_member
@@ -127,6 +132,7 @@ DW_TAG_structure_type   /* Nested structures */
 DW_TAG_enumeration_type /* Nested enums */
 DW_TAG_imported_declaration
 DW_TAG_template_alias  /* C++ 2010 template alias */
+
 0xffffffff
 DW_TAG_coarray_type
 DW_TAG_subrange_type
@@ -138,8 +144,10 @@ DW_TAG_base_type
 0xffffffff
 DW_TAG_common_block
 DW_TAG_variable
+
 0xffffffff
 DW_TAG_common_inclusion
+
 0xffffffff
 DW_TAG_compile_unit
 DW_TAG_array_type
@@ -179,6 +187,7 @@ DW_TAG_volatile_type
 DW_TAG_imported_module
 DW_TAG_template_alias  /* C++ 2010 template alias */
 DW_TAG_unspecified_type
+
 0xffffffff
 DW_TAG_type_unit
 DW_TAG_array_type
@@ -214,42 +223,58 @@ DW_TAG_variable
 DW_TAG_volatile_type
 DW_TAG_imported_module
 DW_TAG_template_alias  /* C++ 2010 template alias */
+
 0xffffffff
 DW_TAG_condition /* COBOL */
 DW_TAG_constant
 DW_TAG_subrange_type
+
 0xffffffff
 DW_TAG_atomic_type
+
 0xffffffff
 DW_TAG_const_type
+
 0xffffffff
 DW_TAG_constant
+
 0xffffffff
 DW_TAG_dwarf_procedure
+
 0xffffffff
 DW_TAG_entry_point
 DW_TAG_formal_parameter
 DW_TAG_unspecified_parameters
 DW_TAG_common_inclusion
+
 0xffffffff
 DW_TAG_enumeration_type
 DW_TAG_enumerator
+
 0xffffffff
 DW_TAG_enumerator
+
 0xffffffff
 DW_TAG_file_type
+
 0xffffffff
 DW_TAG_formal_parameter
+
 0xffffffff
 DW_TAG_friend
+
 0xffffffff
 DW_TAG_imported_declaration
+
 0xffffffff
 DW_TAG_imported_module
+
 0xffffffff
 DW_TAG_imported_unit
+
 0xffffffff
 DW_TAG_inheritance
+
 0xffffffff
 DW_TAG_inlined_subroutine
 DW_TAG_formal_parameter
@@ -282,12 +307,15 @@ DW_TAG_packed_type
 DW_TAG_subprogram
 DW_TAG_variable
 DW_TAG_volatile_type
+
 0xffffffff
 DW_TAG_interface_type
 DW_TAG_member
 DW_TAG_subprogram
+
 0xffffffff
 DW_TAG_label
+
 0xffffffff
 DW_TAG_lexical_block
 DW_TAG_array_type
@@ -322,15 +350,20 @@ DW_TAG_subprogram
 DW_TAG_variable
 DW_TAG_volatile_type
 DW_TAG_formal_parameter
+
 0xffffffff
 DW_TAG_member
+
 0xffffffff
 DW_TAG_module
+
 0xffffffff
 DW_TAG_namelist
 DW_TAG_namelist_item
+
 0xffffffff
 DW_TAG_namelist_item
+
 0xffffffff
 DW_TAG_namespace
 DW_TAG_array_type
@@ -364,8 +397,10 @@ DW_TAG_variable
 DW_TAG_volatile_type
 DW_TAG_namespace        /* Allow a nested namespace */
 DW_TAG_imported_module  /* Allow imported module */
+
 0xffffffff
 DW_TAG_packed_type
+
 0xffffffff
 DW_TAG_partial_unit
 DW_TAG_array_type
@@ -398,6 +433,7 @@ DW_TAG_packed_type
 DW_TAG_subprogram
 DW_TAG_variable
 DW_TAG_volatile_type
+
 0xffffffff
 DW_TAG_pointer_type
 DW_TAG_atomic_type
@@ -447,6 +483,7 @@ DW_TAG_volatile_type
 
 0xffffffff
 DW_TAG_set_type
+
 0xffffffff
 DW_TAG_shared_type
 DW_TAG_atomic_type
@@ -461,6 +498,7 @@ DW_TAG_volatile_type
 
 0xffffffff
 DW_TAG_string_type
+
 0xffffffff
 DW_TAG_structure_type
 DW_TAG_member
@@ -484,6 +522,7 @@ DW_TAG_enumeration_type /* nested enums */
 DW_TAG_class_type /* nested classes */
 DW_TAG_imported_declaration /* References to namespaces */
 DW_TAG_template_alias  /* C++ 2010 template alias */
+
 0xffffffff
 DW_TAG_subprogram
 DW_TAG_formal_parameter
@@ -524,25 +563,34 @@ DW_TAG_volatile_type
 DW_TAG_label
 DW_TAG_imported_module      /* References to namespaces */
 DW_TAG_imported_declaration /* References to namespaces */
+
 0xffffffff
 DW_TAG_subrange_type
+
 0xffffffff
 DW_TAG_generic_subrange
+
 0xffffffff
 DW_TAG_subroutine_type
 DW_TAG_formal_parameter
 DW_TAG_typedef
 DW_TAG_unspecified_parameters
+
 0xffffffff
 DW_TAG_template_type_parameter
+
 0xffffffff
 DW_TAG_template_value_parameter
+
 0xffffffff
 DW_TAG_thrown_type
+
 0xffffffff
 DW_TAG_try_block
+
 0xffffffff
 DW_TAG_typedef
+
 0xffffffff
 DW_TAG_union_type
 DW_TAG_friend
@@ -555,23 +603,32 @@ DW_TAG_subprogram
 DW_TAG_template_type_parameter /* template instantiations */
 DW_TAG_template_value_parameter /* template instantiations */
 DW_TAG_union_type  /* Nested unions */
+
 0xffffffff
 DW_TAG_template_alias
 DW_TAG_template_type_parameter
 DW_TAG_template_value_parameter
+
 0xffffffff
 DW_TAG_unspecified_parameters
+
 0xffffffff
 DW_TAG_unspecified_type
+
 0xffffffff
 DW_TAG_variable
+
 0xffffffff
 DW_TAG_variant
 DW_TAG_variant_part
+
 0xffffffff
 DW_TAG_variant_part
+
 0xffffffff
 DW_TAG_volatile_type
+
 0xffffffff
 DW_TAG_with_stmt
+
 0xffffffff
