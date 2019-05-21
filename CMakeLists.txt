@@ -281,10 +281,12 @@ option(BUILD_NON_SHARED "build archive library libdwarf.a" TRUE)
 #  a 'generator expression' in cmake documentation.
 #  DO NOT put quotes in the generator expression.
 option(WALL "Add -Wall" FALSE)
-set(DW_FWALL $<$<BOOL:${WALL}>:-Wall -O0 -Wpointer-arith -Wmissing-declarations -Wmissing-prototypes -Wdeclaration-after-statement -Wextra -Wcomment -Wformat -Wpedantic -Wuninitialized -Wno-long-long -Wshadow -Werror>)
+
 if (WALL)
+  set(DW_FWALL -Wall -O0 -Wpointer-arith -Wmissing-declarations -Wmissing-prototypes -Wdeclaration-after-statement -Wextra -Wcomment -Wformat -Wpedantic -Wuninitialized -Wno-long-long -Wshadow -Werror )
   message(STATUS "Compiler warning options... YES ${DW_FWALL}")
 else()
+  unset(DW_FWALL )
   message(STATUS "Compiler warning options... NO")
 endif()
 
