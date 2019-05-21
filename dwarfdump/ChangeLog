@@ -1,4 +1,7 @@
 2019-05-20 David Anderson
+     * dwarf_tsearchbal.c: Add windows-only #define intended
+       to suppress warnings from particular compilers.
+2019-05-20 David Anderson
      * CMakeLists.txt: No longer generates a local-build-dir
        config.h
      * config.h.in.cmake: Deleted.
