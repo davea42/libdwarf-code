@@ -1,30 +1,3 @@
-#  This changes the gennames option from -s  to -t
-#  though in  2019 builds we no longer run gennames.
-option(NAMES_TABLE "string functions implemented as binary search (default is with C switch)" TRUE)
-if(NAMES_TABLE)
-    set(dwarf_namestable "-s")
-else()
-    set(dwarf_namestable "-t")
-endif()
-
-option(HAVE_WINDOWS_PATH "Detect certain Windows paths as full paths (default is NO)" FALSE)
-message(STATUS "Checking enable windows path... ${HAVE_WINDOWS_PATH}")
-
-option(HAVE_OLD_FRAME_CFA_COL "Use HAVE_OLD_FRAME_CFA_COL (default is to use new DW_FRAME_CFA_COL3)" FALSE)
-message(STATUS "Checking enable old frame columns... ${HAVE_OLD_FRAME_CFA_COL}")
-
-#  See pro_init(), HAVE_DWARF2_99_EXTENSION also generates
-#  32bit offset dwarf unless DW_DLC_OFFSET_SIZE_64 flag passed to
-#  pro_init.
-option(HAVE_SGI_IRIX_OFFSETS "Force producer to SGI IRIX offset dwarf" FALSE)
-message(STATUS "Checking  producer generates SGI IRIX output... ${HAVE_SGI_IRIX_OFFSETS}")
-
-option(HAVE_STRICT_DWARF2_32BIT_OFFSET "Force producer to generate only DWARF format 32bit" FALSE)
-set(HAVE_DWARF2_99_EXTENSION NOT ${HAVE_STRICT_DWARF2_32BIT_OFFSET})
-message(STATUS "Checking producer generates only 32bit... ${HAVE_STRICT_DWARF2_32BIT_OFFSET}")
-
-configure_file(config.h.in.cmake config.h)
-
 set_source_group(SOURCES "Source Files" dwarf_abbrev.c 
 dwarf_alloc.c dwarf_arange.c dwarf_die_deliv.c 
 dwarf_dnames.c dwarf_dsc.c dwarf_elf_access.c 
@@ -88,8 +61,8 @@ pro_reloc.h pro_reloc_stream.h pro_reloc_symbolic.h
 pro_section.h pro_types.h pro_util.h)
 
 set_source_group(CONFIGURATION_FILES "Configuration Files" 
-    config.h.in.cmake 
-    ${CMAKE_CURRENT_BINARY_DIR}/config.h)
+    ${CMAKE_SOURCE_DIR}/config.h.in.cmake 
+    ${CMAKE_BINARY_DIR}/config.h)
 
 
 	

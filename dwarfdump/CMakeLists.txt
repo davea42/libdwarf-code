@@ -1,6 +1,4 @@
 
-configure_file(config.h.in.cmake config.h)
-
 set_source_group(SOURCES "Source Files" addrmap.c 
         checkutil.c dwarfdump.c dwconf.c helpertree.c 
 	glflags.c command_options.c compiler_info.c
@@ -30,8 +28,8 @@ set_source_group(HEADERS "Header Files"
   print_reloc.h print_reloc_decls.h section_bitmaps.h uri.h)
 
 set_source_group(CONFIGURATION_FILES "Configuration Files"
-  config.h.in.cmake 
-  ${CMAKE_CURRENT_BINARY_DIR}/config.h)
+  ${CMAKE_SOURCE_DIR}/config.h.in.cmake
+  ${CMAKE_BINARY_DIR}/config.h)
 	
 add_executable(dwarfdump ${SOURCES} ${HEADERS} ${CONFIGURATION_FILES})
 

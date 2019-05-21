@@ -1,4 +1,8 @@
 2019-05-20 David Anderson
+     * CMakeLists.txt: No longer generates a local-build-dir
+       config.h
+     * config.h.in.cmake: Deleted.
+2019-05-20 David Anderson
      * CMakeLists.txt: Reflects revised cmake option names.
        Adds compiler warning options when -DWALL selected.
      * config.h.in.cmake: Reflects the set of defines

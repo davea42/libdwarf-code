@@ -1,4 +1,7 @@
 2019-05-20  David Anderson
+    * CmakeLlists.txt: Now generates config.h at top binary level.
+    * config.h.in.cmake: New, now the only config.h.in present
+2019-05-20  David Anderson
     * CmakeLists.txt: The checks for elf64_getehdr and
       elf64_getshdr were written incorrectly.
       The library options changed to be consistent

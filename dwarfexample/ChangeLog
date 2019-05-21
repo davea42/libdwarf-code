@@ -1,4 +1,8 @@
 2019-05-20 David Anderson
+     * CMakeLists.txt: No longer generates a local-build-dir
+       config.h
+     * config.h.in.cmake: Deleted.
+2019-05-20 David Anderson
      * CMakeLists.txt: Reflects renamed options.
        Adds use of compiler-warning options.
      * config.h.in.cmake: Adds needed standard cmakedefine

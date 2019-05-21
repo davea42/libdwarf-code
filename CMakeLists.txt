@@ -3,6 +3,7 @@ cmake_minimum_required(VERSION 3.2)
 project(libdwarf C CXX)
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
+include_directories( ${CMAKE_BINARY_DIR} )
 
 # used to compile on MSVC upto 2013 where snprintf is not available
 macro(msvc_posix target)
@@ -303,9 +304,37 @@ option(DO_TESTING "Do certain api tests (default is NO)" FALSE)
 message(STATUS "Building api tests   ... ${DOTESTS}")
 ### end what was configure.cmake
 
+#  This changes the gennames option from -s  to -t
+#  though in  2019 builds we no longer run gennames.
+option(NAMES_TABLE "string functions implemented as binary search (default is with C switch)" TRUE)
+if(NAMES_TABLE)
+    set(dwarf_namestable "-s")
+else()
+    set(dwarf_namestable "-t")
+endif()
+    
+option(HAVE_WINDOWS_PATH "Detect certain Windows paths as full paths (default is NO)" FALSE)
+message(STATUS "Checking enable windows path... ${HAVE_WINDOWS_PATH}")
+    
+option(HAVE_OLD_FRAME_CFA_COL "Use HAVE_OLD_FRAME_CFA_COL (default is to use new DW_FRAME_CFA_COL3)" FALSE)
+message(STATUS "Checking enable old frame columns... ${HAVE_OLD_FRAME_CFA_COL}")
+
+#  See pro_init(), HAVE_DWARF2_99_EXTENSION also generates
+#  32bit offset dwarf unless DW_DLC_OFFSET_SIZE_64 flag passed to
+#  pro_init.
+option(HAVE_SGI_IRIX_OFFSETS "Force producer to SGI IRIX offset dwarf" FALSE)
+message(STATUS "Checking  producer generates SGI IRIX output... ${HAVE_SGI_IRIX_OFFSETS}")
+
+option(HAVE_STRICT_DWARF2_32BIT_OFFSET "Force producer to generate only DWARF format 32bit" FALSE)
+set(HAVE_DWARF2_99_EXTENSION NOT ${HAVE_STRICT_DWARF2_32BIT_OFFSET})
+message(STATUS "Checking producer generates only 32bit... ${HAVE_STRICT_DWARF2_32BIT_OFFSET}")
+
+
 # This references cmake/FindLibElf.cmake. See cmake documentation.
 find_package(LibElf REQUIRED)
 list(APPEND CMAKE_REQUIRED_INCLUDES ${LIBELF_INCLUDE_DIRS})
+
+configure_file(config.h.in.cmake config.h)
 
 if(BUILD_NON_SHARED)
 	set(DWARF_TARGETS dwarf-static)
