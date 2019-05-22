@@ -105,9 +105,11 @@
 #include "ireptodbg.h"
 #include "createirepfrombinary.h"
 #ifdef _WIN32
+#ifdef HAVE_STDINT_H
 #include <stdint.h>
+#endif /* HAVE_STDINT_H */
 #include <io.h>
-#endif
+#endif /* _WIN32 */
 
 #ifdef _WIN32
 #ifndef O_RDONLY

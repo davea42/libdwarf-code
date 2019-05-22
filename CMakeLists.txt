@@ -272,6 +272,8 @@ int main()
     return 0;
 }]=] HAVE_INTPTR_T)
 
+message(STATUS "CMAKE_SIZEOF_VOID_P ... " ${CMAKE_SIZEOF_VOID_P} )
+
 # libdwarf default-disabled shared
 option(BUILD_SHARED "build shared library libdwarf.so and use it if present" FALSE)
 option(BUILD_NON_SHARED "build archive library libdwarf.a" TRUE)
