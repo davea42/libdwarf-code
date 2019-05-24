@@ -1,4 +1,7 @@
 2019-05-24 David Anderson
+     * checkutil.c: Change %lx to instead use "%" DW_PR_DUx
+       so it adapts without compiler warnings.
+2019-05-24 David Anderson
      * Makefile.am: Delete mention of config.h.in.cmake.
      * Makefile.in: Regenerate.
 2019-05-20 David Anderson

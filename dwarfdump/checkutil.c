@@ -37,7 +37,7 @@
 #include <stdint.h> /* For uintptr_t */
 #endif /* HAVE_STDINT_H */
 #ifdef HAVE_INTTYPES_H
-#include <inttypes.h> /* For uintptr_t */
+#include <inttypes.h> 
 #endif /* HAVE_INTTYPES_H */
 #include "esb.h"
 
@@ -143,15 +143,18 @@ DumpFullBucketGroup(Bucket_Group *pBucketGroup)
     Bucket_Data *pBucketData = 0;
 
     assert(pBucketGroup);
-    printf("\nBucket Group at 0x%lx [lower 0x%lx upper 0x%lx]\n",
-        (unsigned long)(uintptr_t)pBucketGroup,
-        (unsigned long)pBucketGroup->lower,
-        (unsigned long)pBucketGroup->upper);
+    printf("\nBucket Group at 0x%" DW_PR_DUx 
+        " [lower 0x%" DW_PR_DUx " upper 0x%" DW_PR_DUx "]\n",
+        (Dwarf_Unsigned)(uintptr_t)pBucketGroup,
+        (Dwarf_Unsigned)pBucketGroup->lower,
+        (Dwarf_Unsigned)pBucketGroup->upper);
     for (pBucket = pBucketGroup->pHead; pBucket && pBucket->nEntries;
         pBucket = pBucket->pNext) {
 
-        printf("LowPC & HighPC records for bucket %d, at 0x%08lx\n",
-            nBucketNo++,(unsigned long)(uintptr_t)pBucket);
+        printf("LowPC & HighPC records for bucket %d, at 0x%08"
+            DW_PR_DUx "\n",
+            nBucketNo++,
+            (Dwarf_Unsigned)(uintptr_t)pBucket);
         for (nIndex = 0; nIndex < pBucket->nEntries; ++nIndex) {
             pBucketData = &pBucket->Entries[nIndex];
             printf("[%06d] Key = 0x%08" DW_PR_DUx ", Base = 0x%08" DW_PR_DUx
