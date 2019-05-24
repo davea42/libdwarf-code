@@ -1,3 +1,6 @@
+2019-05-24 David Anderson
+     * Makefile.am: Delete mention of config.h.in.cmake.
+     * Makefile.in: Regenerate.
 2019-05-20 David Anderson
      * dwarf_tsearchbal.c: Add windows-only #define intended
        to suppress warnings from particular compilers.

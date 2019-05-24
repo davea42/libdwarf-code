@@ -52,7 +52,6 @@ NEWS \
 README \
 dwarfgen.1 \
 TESTmallocfail \
-config.h.in.cmake \
 $(dwarfgen_DATA) \
 dwarf-generator.txt \
 fakemalloc.in

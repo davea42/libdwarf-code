@@ -78,9 +78,8 @@ typedef unsigned long long Dwarf_Addr;
 typedef int                Dwarf_Bool;   /* boolean type */
 typedef unsigned short     Dwarf_Half;   /* 2 byte unsigned value */
 typedef unsigned char      Dwarf_Small;  /* 1 byte unsigned value */
-/*  If sizeof(Dwarf_Half) is greater than  2
-    we intend libdwarf should work anyway, but
-    as of June 14, 2018 it only mostly works. */
+/*  If sizeof(Dwarf_Half) is greater than 2
+    we believe libdwarf still works properly. */
 
 #if defined(_WIN32) && defined(HAVE_NONSTANDARD_PRINTF_64_FORMAT)
 #define DW_PR_DUx "I64x"

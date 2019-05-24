@@ -375,6 +375,7 @@ ChangeLog2018 \
 cmake \
 CMakeLists.txt \
 codingstyle.txt \
+config.h.in.cmake \
 dwarfdump/runtests.sh \
 libdwarf/runtests.sh \
 README.md \

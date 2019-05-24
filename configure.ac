@@ -205,8 +205,11 @@ AS_IF(
     [ have_pc_zlib="no" ; echo "no zlib" ])
 
 ### for use in casts to uint to avoid 32bit warnings.
+### Also needed by C++ cstdint
 AC_TYPE_UINTPTR_T
-
+AC_TYPE_INTPTR_T
+### Now we know uintptr_t is either in stdint.h or
+### is defined in config.h by configure.
 
 # test Elf headers in the preprocessor path search
 CPPFLAGS_save=${CPPFLAGS}

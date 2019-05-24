@@ -34,5 +34,4 @@ ChangeLog2016 \
 ChangeLog2017 \
 CMakeLists.txt \
 NEWS \
-config.h.in.cmake \
 $(dwarfexample_DATA)

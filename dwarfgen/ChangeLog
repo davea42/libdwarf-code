@@ -1,3 +1,6 @@
+2019-05-24 David Anderson
+     * Makefile.am: Delete mention of config.h.in.cmake.
+     * Makefile.in: Regenerate.
 2019-05-22 David Anderson
      * dwarfgen.cc: Add ifdef/endif around include <stdint.h>
 2019-05-20 David Anderson

@@ -1,5 +1,21 @@
+2019-05-24  David Anderson
+    * CMakeLists.txt: Ensure there is a reasonable
+      definition of uintptr_t even if stdint.h missing.
+    * Makefile.am:Add config.h.in.cmake to the list
+      of files. 
+    * Makefile.in:Regenerate
+    * config.h.in: Add HAVE_INTPTR_T and intptr_t.
+    * config.h.in.cmake: Add the 1 to several HAV_*
+      config variables that lacked it.
+    * Add PACKAGE_NAME etc via cmakedefine.
+    * configure.ac: Add AC_TYPE_INTPTR_T, add comments
+      about the *INTPTR_T stuff.
+    * configure: Regenerated.
+    * scripts/buildandreleasetest.sh. Add --nodwarfgen
+      option to enable building with no stdint.h
+      (c++ finds the #define of uintptr_t useless).
 2019-05-22  David Anderson
-    * CMakeLists.txt :check_include_file( "sys/elf_386.h" 
+    * CMakeLists.txt: check_include_file( "sys/elf_386.h" 
       and check_include_file( "stdint.h" both had badly
       spelled (erronous) target variables.
 2019-05-21  David Anderson

@@ -1,3 +1,10 @@
+2019-05-24 David Anderson
+     * Makefile.am: Delete mention of config.h.in.cmake.
+     * Makefile.in: Regenerate.
+     * dwarf_tied_test.c: Delete the comment on uintptr_t
+       on the intypes.h line.
+     * libdwarf.h.in: Refine commentary a little.
+     * generated_libdwarf.h.in: Regenerated.
 2019-05-20 David Anderson
      * CMakeLists.txt: No longer generates a local-build-dir
        config.h

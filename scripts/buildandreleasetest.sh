@@ -3,6 +3,19 @@
 #  for building, including 'make check'
 # First, get the current configure.ac version into v:
 
+# if stdint.h does not define uintptr_t and intptr_t
+# Then dwarfgen (being c++) will not build
+# Use --nodwarfgen on this script to turn off dwarfgen builds
+genopta="--enable-dwarfgen"
+genoptb="-DDWARFGEN=ON"
+if [ $# -gt 0 ]
+then
+  case $1 in
+   --nodwarfgen ) genopta='' ; genoptb='' ; shift ;;
+   * ) echo "Unknown option $v. Error." ; exit 1 ;;
+  esac
+fi
+
 if [ -f ./configure.ac ]
 then
   f=./configure.ac
@@ -154,7 +167,7 @@ then
 fi
 echo "TEST: now second install install, prefix /tmp/dwinstallrel"
 echo "TEST: Expecting src in /tmp/libdwarf-$v"
-/tmp/libdwarf-$v/configure --enable-dwarfgen --enable-wall --enable-dwarfexample --prefix=/tmp/dwinstallrel
+/tmp/libdwarf-$v/configure $genopta --enable-wall --enable-dwarfexample --prefix=/tmp/dwinstallrel
 if [ $? -ne 0 ]
 then
   echo FAIL be2  configure fail
@@ -179,7 +192,7 @@ then
       exit 1
 fi
 echo "TEST: Now configure from source dir /tmp/libdwarf-$v/ in build dir /tmp/dwinstallrelbldall"
-/tmp/libdwarf-$v/configure --enable-dwarfexample --enable-dwarfgen
+/tmp/libdwarf-$v/configure --enable-dwarfexample $genopta
 if [ $? -ne 0 ]
 then
   echo FAIL C9  /tmp/libdwarf-$v/configure 
@@ -198,7 +211,7 @@ then
       exit 1
 fi
 echo "TEST: Now cmake from source dir /tmp/libdwarf-$v/ in build dir /tmp/cmakebld"
-cmake -DDWARFGEN=ON -DDWARFEXAMPLE=ON -DDO_TESTING=ON /tmp/libdwarf-$v/
+cmake $genoptb -DDWARFEXAMPLE=ON -DDO_TESTING=ON /tmp/libdwarf-$v/
 if [ $? -ne 0 ]
 then
   echo FAIL C10b  cmake in /tmp/cmakebld

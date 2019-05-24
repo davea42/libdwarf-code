@@ -48,6 +48,9 @@
 /* Define to 1 if you have the <elf.h> header file. */
 #undef HAVE_ELF_H
 
+/* Define to 1 if the system has the type `intptr_t'. */
+#undef HAVE_INTPTR_T
+
 /* Define to 1 if you have the <inttypes.h> header file. */
 #undef HAVE_INTTYPES_H
 
@@ -181,6 +184,10 @@
 #  undef WORDS_BIGENDIAN
 # endif
 #endif
+
+/* Define to the type of a signed integer type wide enough to hold a pointer,
+   if such a type exists, and if the system does not define it. */
+#undef intptr_t
 
 /* Define to `unsigned int' if <sys/types.h> does not define. */
 #undef size_t

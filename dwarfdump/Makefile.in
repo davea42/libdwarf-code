@@ -675,7 +675,6 @@ print_reloc_test.c \
 getopttest.c \
 tag_common.c \
 testesb.c \
-config.h.in.cmake \
 $(dwarfdumpdev_DATA) \
 tag_attr.c \
 tag_tree.c \

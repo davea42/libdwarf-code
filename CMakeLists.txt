@@ -82,9 +82,52 @@ check_include_file( "sys/elf_amd64.h" HAVE_SYS_ELF_AMD64_H)
 check_include_file( "sys/elf_sparc.h" HAVE_SYS_ELF_SPARC_H)
 check_include_file( "sys/ia64/elf.h"  HAVE_SYS_IA64_ELF_H )
 
+if(HAVE_STDINT_H)
+  check_c_source_compiles("
+  #include <stdint.h>
+  int main()
+  {
+      uintptr_t i; i = 12;
+      return (int)i;
+  }" HAVE_UINTPTR_T)
+  check_c_source_compiles("
+  #include <stdint.h>
+  int main()
+  {
+      intptr_t i; i = 12;
+      return (int)i;
+  }" HAVE_INTPTR_T)
+endif()
+if (HAVE_UINTPTR_T)
+  message(STATUS "HAVE_UINTPTR_T 1: uintptr_t defined in stdint.h... YES")
+else()
+  message(STATUS "uintptr_t defined in stdint.h... NO")
+  set(uintptr_t "unsigned long long int" )
+  message(STATUS "Setting #define uintptr_t " ${uintptr_t})
+endif()
+if (uintptr_t) 
+  message(STATUS "uintptr_t value considered YES ")
+else()
+  message(STATUS "uintptr_t value considered NO ")
+endif()
+if (HAVE_INTPTR_T)
+  message(STATUS "HAVE_INTPTR_T 1: intptr_t defined in stdint.h... YES")
+else()
+  message(STATUS "intptr_t defined in stdint.h... NO")
+  set(uintptr_t "long long int" )
+  message(STATUS "Setting #define intptr_t " ${intptr_t})
+endif()
+if (intptr_t) 
+  message(STATUS "intptr_t value considered YES ")
+else()
+  message(STATUS "intptr_t value considered NO ")
+endif()
+
+
 #  It's not really setting the location of libelfheader, 
 #  it is really #  either elf.h, or if that is missing 
 #  it is assuming  elf.h data is in the supplied libelf.
+
 if(HAVE_ELF_H)
     set(HAVE_LOCATION_OF_LIBELFHEADER "<elf.h>")
 elseif(HAVE_LIBELF_H)

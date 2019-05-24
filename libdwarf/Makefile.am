@@ -212,7 +212,6 @@ pdfbld.sh \
 NEWS \
 README \
 CODINGSTYLE \
-config.h.in.cmake \
 $(libdwarf_DATA) \
 $(libdwarfdev_DATA)
 
