@@ -1,4 +1,6 @@
-/* Nothing here, really, a placeholder. */
+/* Nothing here, really, a placeholder to enable testing. */
+
+#define HAVE_CONFIG_H 1
 
 /* Define to 1 if tsearch is based on the AVL algorithm. */
 /* #define TSEARCH_USE_BAL 1 */
