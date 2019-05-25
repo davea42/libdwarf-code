@@ -1,5 +1,11 @@
 
-EXTRA=-Wsign-compare -Wno-format-y2k -W -Wno-unused-parameter -Wstrict-prototypes -Wmissing-prototypes -Wpointer-arith -Wreturn-type -Wcast-qual -Wwrite-strings -Wswitch -Wshadow -Wunused-parameter -Wcast-align -Wchar-subscripts -Winline -Wnested-externs  -Wold-style-definition -Wno-pointer-sign
+EXTRA=-Wsign-compare -Wno-format-y2k -W -Wno-unused-parameter -Wstrict-prototypes -Wmissing-prototypes -Wpointer-arith -Wreturn-type -Wwrite-strings -Wswitch -Wshadow -Wunused-parameter -Wcast-align -Wchar-subscripts -Winline -Wnested-externs  -Wold-style-definition -Wno-pointer-sign 
+
+# -Wcast-qual causes issue. We cast away const with
+# respect to create keyptr in places as we will actually eventually
+# request (calling code we do not control) that data possibly
+# be freed (and hence is changed). 
+
 OPTS= -g -Wall $(EXTRA) -Wextra -Wpointer-arith -Wmissing-declarations -Wcomment -Wformat -Wpedantic -Wuninitialized -Wshadow -Wno-long-long -Wmissing-prototypes -Wdeclaration-after-statement -Wbad-function-cast -Wmissing-parameter-type -Wnested-externs
 
 

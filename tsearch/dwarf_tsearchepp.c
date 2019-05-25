@@ -95,8 +95,8 @@ struct ts_entry {
 /* Not needed for this set of functions. */
 void *
 dwarf_initialize_search_hash( void **treeptr,
-    DW_TSHASHTYPE(*hashfunc)(const void *key),
-    unsigned long size_estimate)
+    UNUSEDARG DW_TSHASHTYPE(*hashfunc)(const void *key),
+    UNUSEDARG unsigned long size_estimate)
 {
     return *treeptr;
 }
@@ -125,7 +125,7 @@ dumptree_inner(const struct ts_entry *t,
     char *(* keyprint)(const void *),
     const char *descr, int level)
 {
-    char *v = "";
+    const char *v = "";
     if(!t) {
         return;
     }
@@ -172,11 +172,11 @@ dwarf_tdump(const void*rootin,
         printf("dwarf_tdump empty tree : %s\n",msg);
         return;
     }
-    printf("dwarf_tdump tree head : 0x%08" DW_PR_DUx 
+    printf("dwarf_tdump tree head : 0x%08" DW_PR_DUx
         " %s\n",
         (Dwarf_Unsigned)(uintptr_t)head,
         msg);
-    printf("dwarf_tdump tree root : 0x%08" DW_PR_DUx 
+    printf("dwarf_tdump tree root : 0x%08" DW_PR_DUx
         " %s\n",
         (Dwarf_Unsigned)(uintptr_t)root,
         msg);

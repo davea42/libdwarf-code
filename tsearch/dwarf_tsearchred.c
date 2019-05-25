@@ -127,8 +127,8 @@ struct ts_entry {
 /* Not needed for this set of functions. */
 void *
 dwarf_initialize_search_hash( void **treeptr,
-    DW_TSHASHTYPE (*hashfunc)(const void *key),
-    unsigned long size_estimate)
+    UNUSEDARG DW_TSHASHTYPE (  * hashfunc)(const void *key),
+    UNUSEDARG unsigned long size_estimate)
 {
     return *treeptr;
 }
@@ -213,7 +213,7 @@ dumptree_inner(const struct ts_entry *t,
     char *(* keyprint)(const void *),
     const char *descr, int level)
 {
-    char *v = "";
+    const char *v = "";
     if(!t) {
         return;
     }
@@ -222,8 +222,8 @@ dumptree_inner(const struct ts_entry *t,
         v = keyprint(t->keyptr);
     }
     printlevel(level);
-    printf("0x%08" DW_PR_DUx " <keyptr 0x%08" DW_PR_DUx 
-        "> <%s %s> <2-node %d red %u> <l 0x%08" DW_PR_DUx 
+    printf("0x%08" DW_PR_DUx " <keyptr 0x%08" DW_PR_DUx
+        "> <%s %s> <2-node %d red %u> <l 0x%08" DW_PR_DUx
         "> <r 0x%08" DW_PR_DUx "> %s\n",
         (Dwarf_Unsigned)(uintptr_t)t,
         (Dwarf_Unsigned)(uintptr_t)t->keyptr,
@@ -295,8 +295,8 @@ check_or_set(struct ts_entry*t,
     if(balcount->blackcount_ == linkcount) {
         return;
     }
-    printf("%s Black link count does not match: node 0x%" DW_PR_DUx 
-        " %d vs 0x%" DW_PR_DUx 
+    printf("%s Black link count does not match: node 0x%" DW_PR_DUx
+        " %d vs 0x%" DW_PR_DUx
         " %d\n",
         prefix,
         Dwarf_Unsigned(uintptr_t)t,
@@ -327,7 +327,7 @@ dwarf_check_balance_inner(struct ts_entry *t,
     }
     redcount = isred(t) + isred(t->llink) + isred(t->rlink);
     if (redcount > 1) {
-        printf("%s red count error error at node 0x%" DW_PR_DUx 
+        printf("%s red count error error at node 0x%" DW_PR_DUx
             ": %d\n",
             prefix,
             (Dwarf_Unsigned)(uintptr_t)t,
@@ -335,7 +335,8 @@ dwarf_check_balance_inner(struct ts_entry *t,
         (*founderror)++;
     }
     if(isred(t->rlink)) {
-        printf("%s red right link an error at node 0x%" DW_PR_DUx "\n",
+        printf("%s red right link an error at node 0x%" DW_PR_DUx
+        "\n",
             prefix,
             (Dwarf_Unsigned)(uintptr_t)t)
         (*founderror)++;
@@ -714,7 +715,7 @@ tdelete_inner(const void *key,
         kc = compar(key,h->keyptr);
         if (!kc && !h->rlink) {
             struct ts_entry *l = h->llink;
-            /*  This is a case where h is deleted 
+            /*  This is a case where h is deleted
                 (it matches our key value)
                 and no rlink means it is end of chain at right,
                 so it is replaced with left (corrected

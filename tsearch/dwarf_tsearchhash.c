@@ -249,8 +249,8 @@ static void print_entry(struct ts_entry *t,const char *descr,
     }
     v = keyprint(t->keyptr);
     printf(
-        "[%4lu.%02lu] 0x%08" DW_PR_DUx 
-        " <keyptr 0x%08" DW_PR_DUx 
+        "[%4lu.%02lu] 0x%08" DW_PR_DUx
+        " <keyptr 0x%08" DW_PR_DUx
         "> <key %s> %s\n",
         hashpos,chainpos,
         (Dwarf_Unsigned)(uintptr_t)t,
@@ -271,9 +271,9 @@ dumptree_inner(const struct hs_base *h,
     unsigned long hashused = 0;
     unsigned long maxchainlength = 0;
     unsigned long chainsgt1 = 0;
-    printf("dumptree head ptr : 0x%08" DW_PR_DUx 
-        " size %"    DW_PR_DUu 
-        " entries %" DW_PR_DUu 
+    printf("dumptree head ptr : 0x%08" DW_PR_DUx
+        " size %"    DW_PR_DUu
+        " entries %" DW_PR_DUu
         " allowed %" DW_PR_DUu " %s\n",
         (Dwarf_Unsigned)(uintptr_t)h,
         (Dwarf_Unsigned)h->tablesize_,

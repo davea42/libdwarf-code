@@ -57,10 +57,14 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 */
 
+#include "config.h"
 #include <stdio.h>
 #include <unistd.h>
 #include <stdlib.h>
 #include <string.h>
+#ifdef HAVE_STDINT_H
+#include <stdint.h>
+#endif /* HAVE_STDINT_H */
 #include <errno.h>
 #include "dwarf_tsearch.h"
 
@@ -415,7 +419,7 @@ walk_entry(const void *mt_data,DW_VISIT x,int level)
 static void
 value_only_walk_entry(const void *data,DW_VISIT x,int level)
 {
-    VALTYPE val =  (VALTYPE)data;
+    VALTYPE val =  (VALTYPE)(uintptr_t)data;
     printlevel(level);
     printf("Walk on node %s 0x%lu\n",
         x == dwarf_preorder?"preorder":
@@ -441,7 +445,7 @@ mt_keyprint(const void *v)
 static char *
 value_keyprint(const void *v)
 {
-    VALTYPE val = (VALTYPE)v;
+    VALTYPE val = (VALTYPE)(uintptr_t)v;
     static char buf[50];
     buf[0] = 0;
     snprintf(buf,sizeof(buf),"0x%08lx",(unsigned long)val);
@@ -515,10 +519,11 @@ findrecsbypointer(int max,int findexpected,
     for(indx = 0 ; indx < max ; ++indx) {
         char kbuf[40];
         char dbuf[60];
-        dbuf[0] = 0;
         struct example_tentry *mt = 0;
         struct example_tentry *retval = 0;
         int i = 0;
+        dbuf[0] = 0;
+        kbuf[0] = 0;
 
         i = get_record_id(order,indx);
         snprintf(kbuf,sizeof(kbuf),"%u",i);
@@ -726,8 +731,8 @@ static int
 applybypointer(struct myacts *m,
     const char *msg,
     int hideactions,
-    int printwalk,
-    int dumpeverystage)
+    UNUSEDARG int printwalk,
+    UNUSEDARG int dumpeverystage)
 {
 
     unsigned ct = 1;
@@ -763,15 +768,15 @@ applybypointer(struct myacts *m,
 static DW_TSHASHTYPE
 value_hashfunc(const void *keyp)
 {
-    VALTYPE up = (VALTYPE )keyp;
+    VALTYPE up = (VALTYPE )(uintptr_t)keyp;
     return up;
 }
 #endif /* HASHFUNC */
 static int
 value_compare_func(const void *l, const void *r)
 {
-    VALTYPE lp = (VALTYPE)l;
-    VALTYPE rp = (VALTYPE)r;
+    VALTYPE lp = (VALTYPE)(uintptr_t)l;
+    VALTYPE rp = (VALTYPE)(uintptr_t)r;
     if(lp < rp) {
         return -1;
     }
@@ -783,7 +788,7 @@ value_compare_func(const void *l, const void *r)
 
 /* Nothing to free for the 'value' example. */
 static void
-value_node_free(void *valp)
+value_node_free(UNUSEDARG void *valp)
 {
 
 }
@@ -796,7 +801,8 @@ insertbyvalue(void **tree, VALTYPE addr,int ct)
     /*  Since in this test we do not malloc anything there is no free needed either.
         Instead we just let tsearch store the value in the pointer in the tree.   */
     VALTYPE  newval = addr;
-    retval = dwarf_tsearch((void *)newval,tree, value_compare_func  );
+    retval = dwarf_tsearch((void *)(uintptr_t)newval,
+        tree, value_compare_func  );
     if(retval == 0) {
         printf("FAIL ENOMEM in search  on item %d, value %lu, "
             "error in insertbyvalue\n",
@@ -809,7 +815,8 @@ insertbyvalue(void **tree, VALTYPE addr,int ct)
         {
             /* For debugging. */
             VALTYPE mt2 = addr;
-            retval = dwarf_tfind((void *)mt2,tree,value_compare_func);
+            retval = dwarf_tfind((void *)(uintptr_t)mt2,
+                tree,value_compare_func);
             if(!retval) {
                 printf("insertone record %d value 0x%lu failed to add"
                     " as desired, error\n",
@@ -831,9 +838,11 @@ deletebyvalue(void **tree, unsigned  addr,int ct)
 
     VALTYPE newval = addr;
     /* We are not mallocing, so nothing to free he tree holds simple values for us. */
-    r = dwarf_tfind((void *)newval,(void *const*)tree,value_compare_func);
+    r = dwarf_tfind((void *)(uintptr_t)newval,
+        (void *const*)tree,value_compare_func);
     if (r) {
-        void *r2 = dwarf_tdelete((void *)newval,tree,value_compare_func);
+        void *r2 = dwarf_tdelete((void *)(uintptr_t)newval,
+            tree,value_compare_func);
         if(r2) {
             /* tdelete returned parent */
         } else {
