@@ -1,3 +1,12 @@
+2019-05-25  David Anderson
+     * Makefile: Added warning flags.
+     * config.h: Updated as we want to include stdint.h
+     * dwarf_tsearch.h
+     * dwarf_tsearchbal.c,dwarf_tsearchbin.c,dwarf_tsearchepp.c,
+       dwarf_tsearchhash.c,dwarf_tsearchred.c:
+       Now include stdint.h and define Dwarf_Unsigned
+       for printf purposes and define DW_PR_DUx for print
+       portability.
 2019-01-02  David Anderson
      * ChangeLog: Renamed ChangeLog2018
      * Makefile.am: Now with ChangeLog2018 in dist files list.

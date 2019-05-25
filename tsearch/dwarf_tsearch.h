@@ -1,6 +1,6 @@
-#ifndef DWARF_TSEARCH
-#define DWARF_TSEARCH
-/* Copyright (c) 2013, David Anderson
+#ifndef DWARF_TSEARCH_H
+#define DWARF_TSEARCH_H
+/* Copyright (c) 2013-2019, David Anderson
 All rights reserved.
 
 Redistribution and use in source and binary forms, with
@@ -122,4 +122,4 @@ void dwarf_tdump(const void*root,
 void * dwarf_initialize_search_hash( void **treeptr,
     DW_TSHASHTYPE (*hashfunc)(const void *key),
     unsigned long size_estimate);
-#endif /* DWARF_TSEARCH */
+#endif /* DWARF_TSEARCH_H */

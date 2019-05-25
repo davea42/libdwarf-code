@@ -1,6 +1,7 @@
 
-OPTS= -g -O -std=gnu90 -Wsystem-headers -Wall  -Wsign-compare -Wno-format-y2k -W -Wno-unused-parameter -Wstrict-prototypes -Wmissing-prototypes -Wpointer-arith -Wreturn-type -Wcast-qual -Wwrite-strings -Wswitch -Wshadow -Wunused-parameter -Wcast-align -Wchar-subscripts -Winline -Wnested-externs  -Wold-style-definition -Wno-pointer-sign
-OPTS= -g  -Wall -O
+EXTRA=-Wsign-compare -Wno-format-y2k -W -Wno-unused-parameter -Wstrict-prototypes -Wmissing-prototypes -Wpointer-arith -Wreturn-type -Wcast-qual -Wwrite-strings -Wswitch -Wshadow -Wunused-parameter -Wcast-align -Wchar-subscripts -Winline -Wnested-externs  -Wold-style-definition -Wno-pointer-sign
+OPTS= -g -Wall $(EXTRA) -Wextra -Wpointer-arith -Wmissing-declarations -Wcomment -Wformat -Wpedantic -Wuninitialized -Wshadow -Wno-long-long -Wmissing-prototypes -Wdeclaration-after-statement -Wbad-function-cast -Wmissing-parameter-type -Wnested-externs
+
 
 CC = gcc
 

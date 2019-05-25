@@ -16,5 +16,10 @@
 /* Define to 1 if tsearch is based on the red-black algorithm. */
 /* #define TSEARCH_USE_RED 1 */
 
+/* Assuming we have stdint.h and it has uintptr_t. 
+    Not intended to work everywhere, the tsearch
+    directory stands a bit outside of libdwarf/dwarfdump.  */
+#define HAVE_STDINT_H 1
+
 /* Define 1 if we have the Windows specific header stdafx.h */
 #undef HAVE_STDAFX_H
