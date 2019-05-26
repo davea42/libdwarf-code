@@ -488,9 +488,10 @@ dwarf_macho_load_segment_commands(
     if (mfp->mo_segment_count < 1) {
         return DW_DLV_OK;
     }
-    mfp->mo_segment_commands = (struct generic_macho_segment_command *)
+    mfp->mo_segment_commands =
+        (struct generic_macho_segment_command *)
         calloc(sizeof(struct generic_macho_segment_command),
-               (size_t)mfp->mo_segment_count);
+        (size_t)mfp->mo_segment_count);
     if (!mfp->mo_segment_commands) {
         *errcode = DW_DLE_ALLOC_FAIL;
         return DW_DLV_ERROR;

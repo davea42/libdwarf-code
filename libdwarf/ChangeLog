@@ -1,3 +1,25 @@
+2019-05-26 David Anderson
+     * dwarf_alloc.c,dwarf_frame.c: Reformat comment lines
+       to shorten them.
+       Include inttypes.h for tsearch.h.
+     * elf_load_headers.c: Remove trailing whitespace.
+     * dwarf_groups.c,dwarf_loc.c,dwarf_tied.c: Reformat 
+       comment lines to shorten them. 
+       Remove small erroneous comment.
+     * dwarf_machoread.c: Shorten too-long lines.
+     * dwarf_tied_test.c: Reformat 
+       comment lines to shorten them. Remove trailing whitespace.
+     * dwarf_tsearch.h: Make idempotent include with 
+       ifndef DWARF_TSEARCH_H . Delete a blank line.
+     * dwarf_tsearchhash.c: Add and use DW_PR_DUx and
+       DW_PR_DUu and uintptr_t, refining casts to avoid
+       compiler warnings.
+     * pro_alloc.c,pro_die.c:  Reformat comment lines
+       to shorten them.
+       Remove small erroneous comment.
+     * pro_expr.c,pro_init.c:  Reformat comment lines
+       to shortent them.
+       Remove small erroneous comment.
 2019-05-24 David Anderson
      * Makefile.am: Delete mention of config.h.in.cmake.
      * Makefile.in: Regenerate.

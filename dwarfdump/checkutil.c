@@ -1,26 +1,28 @@
 /*
-  Copyright (C) 2011 SN Systems Ltd. All Rights Reserved.
-  Portions Copyright (C) 2011-2012 David Anderson. All Rights Reserved.
-  Portions Copyright 2012 SN Systems Ltd. All rights reserved.
+  Copyright (C) 2011-2012 SN Systems Ltd. All Rights Reserved.
+  Portions Copyright (C) 2011-2019 David Anderson. All Rights Reserved.
 
-  This program is free software; you can redistribute it and/or modify it
-  under the terms of version 2 of the GNU General Public License as
-  published by the Free Software Foundation.
+  This program is free software; you can redistribute it and/or
+  modify it under the terms of version 2 of the GNU General
+  Public License as published by the Free Software Foundation.
 
-  This program is distributed in the hope that it would be useful, but
-  WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+  This program is distributed in the hope that it would be
+  useful, but WITHOUT ANY WARRANTY; without even the implied
+  warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+  PURPOSE.
 
-  Further, this software is distributed without any warranty that it is
-  free of the rightful claim of any third person regarding infringement
-  or the like.  Any license provided herein, whether implied or
-  otherwise, applies only to this software file.  Patent licenses, if
-  any, provided herein do not apply to combinations of this program with
-  other software, or any other product whatsoever.
+  Further, this software is distributed without any warranty
+  that it is free of the rightful claim of any third person
+  regarding infringement or the like.  Any license provided
+  herein, whether implied or otherwise, applies only to this
+  software file.  Patent licenses, if any, provided herein
+  do not apply to combinations of this program with other
+  software, or any other product whatsoever.
 
-  You should have received a copy of the GNU General Public License along
-  with this program; if not, write the Free Software Foundation, Inc., 51
-  Franklin Street - Fifth Floor, Boston MA 02110-1301, USA.
+  You should have received a copy of the GNU General Public
+  License along with this program; if not, write the Free
+  Software Foundation, Inc., 51 Franklin Street - Fifth Floor,
+  Boston MA 02110-1301, USA.
 
 */
 /*
@@ -36,9 +38,6 @@
 #ifdef HAVE_STDINT_H
 #include <stdint.h> /* For uintptr_t */
 #endif /* HAVE_STDINT_H */
-#ifdef HAVE_INTTYPES_H
-#include <inttypes.h> 
-#endif /* HAVE_INTTYPES_H */
 #include "esb.h"
 
 /* Private function */
@@ -143,7 +142,7 @@ DumpFullBucketGroup(Bucket_Group *pBucketGroup)
     Bucket_Data *pBucketData = 0;
 
     assert(pBucketGroup);
-    printf("\nBucket Group at 0x%" DW_PR_DUx 
+    printf("\nBucket Group at 0x%" DW_PR_DUx
         " [lower 0x%" DW_PR_DUx " upper 0x%" DW_PR_DUx "]\n",
         (Dwarf_Unsigned)(uintptr_t)pBucketGroup,
         (Dwarf_Unsigned)pBucketGroup->lower,

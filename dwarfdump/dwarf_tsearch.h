@@ -1,4 +1,6 @@
-/* Copyright (c) 2013, David Anderson
+#ifndef DWARF_TSEARCH_H
+#define DWARF_TSEARCH_H
+/* Copyright (c) 2013-2019, David Anderson
 All rights reserved.
 
 Redistribution and use in source and binary forms, with
@@ -44,8 +46,13 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     interface here, but to avoid interfering with
     libc implementations or code using libc
     implementations, we change all the names.
-
 */
+
+/*  The hashfunc return is now easily changed with
+    cc -Duintptr_t or something. */
+#ifndef DW_TSHASHTYPE
+#define DW_TSHASHTYPE uintptr_t
+#endif
 
 /*  The DW_VISIT values passed back to you through
     the callback function in dwarf_twalk();
@@ -64,7 +71,6 @@ DW_VISIT;
    once to get a key you passed in.
 
 */
-
 
 void *dwarf_tsearch(const void * /*key*/, void ** /*rootp*/,
     int (* /*compar*/)(const void *, const void *));
@@ -94,7 +100,6 @@ void dwarf_twalk(const void * /*root*/,
 void dwarf_tdestroy(void * /*root*/,
     void (* /*free_node*/)(void * /*nodep*/));
 
-
 /*  Prints  a simple tree representation to stdout. For debugging.
 */
 void dwarf_tdump(const void*root,
@@ -104,5 +109,6 @@ void dwarf_tdump(const void*root,
 /* Returns NULL  and does nothing
    unless the implemenation used uses a hash tree. */
 void * dwarf_initialize_search_hash( void **treeptr,
-    unsigned long(*hashfunc)(const void *key),
+    DW_TSHASHTYPE (*hashfunc)(const void *key),
     unsigned long size_estimate);
+#endif /* DWARF_TSEARCH_H */

@@ -1,3 +1,6 @@
+2019-05-26 David Anderson
+     * frame1.c, simplereader.c: Reformat comments for a shorter
+       line length. Remove an incorrect comment.
 2019-05-24 David Anderson
      * Makefile.am: Delete mention of config.h.in.cmake.
      * Makefile.in: Regenerate.

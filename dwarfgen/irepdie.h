@@ -53,7 +53,7 @@ public:
             formdata_ = 0;
         }
     };
-    ~IRAttr() {  
+    ~IRAttr() {
         delete formdata_; };
     IRAttr & operator=( const IRAttr &r) {
         if(this == &r) {
@@ -82,13 +82,13 @@ public:
     };
     enum Dwarf_Form_Class getFormClass() const {return formclass_; };
     void dropFormData() {
-        if(formdata_) 
+        if(formdata_)
         {delete formdata_; formdata_ = 0; };
         }
     void setFormData(IRForm *f) {
-        if (formdata_) { 
-           delete formdata_;
-           formdata_ = 0;
+        if (formdata_) {
+            delete formdata_;
+            formdata_ = 0;
         }
         formdata_ = f;
     };

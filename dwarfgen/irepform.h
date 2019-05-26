@@ -162,11 +162,13 @@ public:
     Dwarf_Half getInitialForm() { return initialform_;}
     Dwarf_Half getFinalForm() {return finalform_;}
     Dwarf_Unsigned getBlockLen() {return blockdata_.size();}
-    Dwarf_Small* getBlockBytes() {   
-            // Standard guarantees vector content is simply array.
-            return &blockdata_[0]; 
-        }
-    enum Dwarf_Form_Class getFormClass() const { return formclass_; };
+    Dwarf_Small* getBlockBytes() {
+        // Standard guarantees vector content is simply array.
+        return &blockdata_[0];
+    };
+    enum Dwarf_Form_Class getFormClass() const {
+        return formclass_;
+    };
     void insertBlock(Dwarf_Block *bl) {
         Dwarf_Small *d = static_cast<Dwarf_Small *>(bl->bl_data);
         Dwarf_Unsigned len = bl->bl_len;

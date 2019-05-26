@@ -1,7 +1,11 @@
+2019-05-26  David Anderson
+     * dwarf_tsearch.h: Always include config.h.
+       Make DW_TSHASHTYPE uintptr_t. 
+       Delete a blank line.
 2019-05-25  David Anderson
      * Makefile : adding more warning checks, leaving one
        out with an explanation.
-     * config.h: Now creates ARGSUSED.
+     * config.h: Now creates ARGSUSED. Define HAVE_CONFIG_H 1
      * dwarf_tsearchbal.c,dwarf_tsearchbin.c,dwarf_tsearchepp.c,
        dwarf_tsearchred.c,tsearch_tester.c:
        Now with more places using (uintptr_t) to avoid

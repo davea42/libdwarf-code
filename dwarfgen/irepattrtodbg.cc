@@ -83,7 +83,7 @@ AddAttrToDie(Dwarf_P_Debug dbg,
     IRepresentation & Irep,
     IRCUdata  &cu,
     Dwarf_P_Die outdie,
-    UNUSEDARG IRDie & irdie, 
+    UNUSEDARG IRDie & irdie,
     IRAttr &irattr)
 {
     int attrnum = irattr.getAttrNum();
@@ -220,7 +220,7 @@ AddAttrToDie(Dwarf_P_Debug dbg,
         if(res != DW_DLV_OK) {
             cerr << "ERROR dwarf_add_AT_ class constant fails," <<
                 dwarf_errmsg(error) <<
-                " attrnum " << attrnum << 
+                " attrnum " << attrnum <<
                 " Continuing" << endl;
 
         }
@@ -324,13 +324,13 @@ AddAttrToDie(Dwarf_P_Debug dbg,
                 // Another option would be two-pass: first create
                 // all the DIEs then all the attributes for each.
                 Dwarf_P_Attribute a = 0;
-      
+
                 res = dwarf_add_AT_reference_c(dbg,outdie,attrnum,
                     /*targetoutdie */NULL,&a,&error);
                 if(res != DW_DLV_OK) {
                     cerr << "ERROR dwarf_add_AT_reference fails, "
                         "attrnum with not yet known targetoutdie "
-                        << IToHex(attrnum) << 
+                        << IToHex(attrnum) <<
                         " " << dwarf_errmsg(error) <<
                         endl;
                 } else {
@@ -343,10 +343,10 @@ AddAttrToDie(Dwarf_P_Debug dbg,
 
             res = dwarf_add_AT_reference_c(dbg,outdie,attrnum,
                 targetoutdie,&a,&error);
-            if(res != DW_DLV_OK) { 
+            if(res != DW_DLV_OK) {
                 cerr << "ERROR dwarf_add_AT_reference fails, "
-                    "attrnum with known targetoutdie " << 
-                    IToHex(attrnum) << 
+                    "attrnum with known targetoutdie " <<
+                    IToHex(attrnum) <<
                     " " << dwarf_errmsg(error) <<
                     endl;
             }
@@ -399,7 +399,6 @@ AddAttrToDie(Dwarf_P_Debug dbg,
         if(res != DW_DLV_OK) {
             cerr << "ERROR dwarf_add_AT_string fails, attrnum "
                 <<attrnum << endl;
-   
         }
         }
         break;

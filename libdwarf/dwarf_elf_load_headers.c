@@ -1575,7 +1575,7 @@ validate_section_name_string(Dwarf_Unsigned section_length,
 
 static int
 _dwarf_elf_load_sect_namestring(
-    dwarf_elf_object_access_internals_t *ep, 
+    dwarf_elf_object_access_internals_t *ep,
     int *errcode)
 {
     struct generic_shdr *gshdr = 0;
@@ -1587,7 +1587,7 @@ _dwarf_elf_load_sect_namestring(
     gshdr = ep->f_shdr;
     generic_count = ep->f_loc_shdr.g_count;
     for(i = 0; i < generic_count; i++, ++gshdr) {
-        const char *namestr = 
+        const char *namestr =
             "<Invalid sh_name value. Corrupt Elf.>";
         int res = 0;
 

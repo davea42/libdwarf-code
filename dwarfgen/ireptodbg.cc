@@ -307,7 +307,7 @@ addSUNfuncoffsets(Dwarf_P_Debug dbg ,
     void *block_ptr;
 
     int res = dwarf_compress_integer_block_a(dbg,
-         5,signar, &block_len,&block_ptr,&error);
+        5,signar, &block_len,&block_ptr,&error);
     if (res == DW_DLV_ERROR) {
         cerr << " FAIL: Unable to generate via "   <<
             "dwarf_compress_integer_block_a: err " <<
@@ -452,7 +452,7 @@ HandleOneDieAndChildren(Dwarf_P_Debug dbg,
         Dwarf_P_Die chp = HandleOneDieAndChildren(dbg,Irep,
             cu,ch,inDie,level+1);
         int res2 = 0;
-       
+
         if(lastch) {
             // Link to right of earlier sibling.
             res2 = dwarf_die_link_a(chp,NULL,NULL,lastch,NULL,&error);

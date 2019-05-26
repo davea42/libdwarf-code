@@ -49,9 +49,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 */
 
-#if HAVE_CONFIG_H
 #include "config.h"
-#endif /* HAVE_CONFIG_H */
 
 /* SN-Carlos: Windows specific */
 #if defined(_WIN32) && defined(HAVE_STDAFX_H)
@@ -61,7 +59,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 /*  The hashfunc return is now easily changed with
     cc -Duintptr_t or something. */
 #ifndef DW_TSHASHTYPE
-#define DW_TSHASHTYPE unsigned long
+#define DW_TSHASHTYPE uintptr_t
 #endif
 
 /*  The DW_VISIT values passed back to you through
@@ -109,7 +107,6 @@ void dwarf_twalk(const void * /*root*/,
    so on return from dwarf_tdestroy(). */
 void dwarf_tdestroy(void * /*root*/,
     void (* /*free_node*/)(void * /*nodep*/));
-
 
 /*  Prints  a simple tree representation to stdout. For debugging.
 */

@@ -1,6 +1,6 @@
-#ifndef DWARF_TSEARCH
-#define DWARF_TSEARCH
-/* Copyright (c) 2013, David Anderson
+#ifndef DWARF_TSEARCH_H
+#define DWARF_TSEARCH_H
+/* Copyright (c) 2013-2019, David Anderson
 All rights reserved.
 
 Redistribution and use in source and binary forms, with
@@ -49,7 +49,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 */
 
-/*  configure ensures uintptr_t defined, but if not,
+/*  configure/cmake ensure uintptr_t defined, but if not,
     possibly  "-Duintptr_t=unsigned long" might help  */
 #ifndef DW_TSHASHTYPE
 #define DW_TSHASHTYPE uintptr_t
@@ -110,7 +110,6 @@ void dwarf_twalk(const void * /*root*/,
 void dwarf_tdestroy(void * /*root*/,
     void (* /*free_node*/)(void * /*nodep*/));
 
-
 /*  Prints  a simple tree representation to stdout. For debugging.
 */
 void dwarf_tdump(const void*root,
@@ -122,4 +121,4 @@ void dwarf_tdump(const void*root,
 void * dwarf_initialize_search_hash( void **treeptr,
     DW_TSHASHTYPE (*hashfunc)(const void *key),
     unsigned long size_estimate);
-#endif /* DWARF_TSEARCH */
+#endif /* DWARF_TSEARCH_H */
