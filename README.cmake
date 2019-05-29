@@ -92,7 +92,9 @@ instead of plain
     make
 
 On Unix/Linux cmake 'make install' will install to
-"/usr/local".  To set another install target set
+"/usr/local".  The cmake 'make install' here is not
+guaranteed to do everything one might hope with libdwarf.
+To set another install target set
 CMAKE_INSTALL_PREFIX.  Example:
 
    mkdir /tmp/cmitest
