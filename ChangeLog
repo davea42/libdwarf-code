@@ -1,3 +1,6 @@
+2019-05-29  David Anderson
+    * CMakeLists.txt, configure.ac: Version 20190529
+    * configure: regenerated.
 2019-05-24  David Anderson
     * CMakeLists.txt: Ensure there is a reasonable
       definition of uintptr_t even if stdint.h missing.

@@ -1,3 +1,7 @@
+2019-05-29 David Anderson
+     * libdwarf_version.h: Updated version string.
+     * dwarf_names.c,dwarf_names.h,dwarf_names_enum.h,
+       dwarf_names_new.h: regenerated.
 2019-05-26 David Anderson
      * dwarf_alloc.c,dwarf_frame.c: Reformat comment lines
        to shorten them.
