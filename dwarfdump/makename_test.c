@@ -35,9 +35,13 @@
 
 */
 
+#include "config.h"
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#ifdef HAVE_STDINT_H
+#include <stdint.h>
+#endif /* HAVE_STDINT_H */
 #include "dwarf_tsearch.h"
 #include "makename.h"
 #include "globals.h"
@@ -51,7 +55,7 @@
 
 static void * makename_data;
 #define VALTYPE char *
-#define DW_TSHASHTYPE char *
+#define DW_TSHASHTYPE uintptr_t
 
 
 char *samples[]  = {
