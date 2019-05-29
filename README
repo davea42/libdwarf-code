@@ -45,14 +45,23 @@ before you attempt an out-of-source-tree build
 
 ========= gcc under MinGW on windows
 The configure option --disable-libelf
-is a good idea (new in February 2019),
-if you encounter build problems (which
-will happen if you have libelf.h visible).
+is no longer needed (but is allowed).
 
 Under MinGW the gcc CFLAGS 
  -DHAVE_WINDOWS_H -DHAVE_NONSTANDARD_PRINTF_64_FORMAT -fno-dwarf2-cfi-asm
 have helped some people, though for my MinGW tests
 these are not necessary or appropriate.
+
+We have had success with mingw without setting CFLAGS with
+(to save space in this example we do not show checking for errors):
+    cd code
+    sh scripts/FIX-CONFIGURE-TIMES
+    cd ..
+    rm -rf bld
+    mkdir bld
+    cd bld
+    ../code/configure --enable-nonstandardprintf
+    make
 
 =========
 
@@ -61,17 +70,18 @@ Cross-Compiles are described below, see CROSS COMPILES.
 
 BUILDING IN SOURCE TREE
 To just build libdwarf and dwarfdump if the source tree is
-in /a/b/dwarf-20180809 one might do:
-    cd /a/b/dwarf-20180809
+in /a/b/dwarf-20190505 one might do:
+    cd /a/b/dwarf-20190505
+    sh scripts/FIX-CONFIGURE-TIMES
     ./configure
     make
 
 LIBRARY AND HEADER REQUIREMENTS
-libelf and zlib and elf.h have to be installed
-to build libdwarf and dwarfdump if one
-wishes to read Elf object files.  For example,
+zlib has to be installed
+to handle zlib compressed sections
+(common in linux, not normally found with Windows).
 in Ubuntu 16.04 and 18.04, install using:
-    sudo apt-get install zlib1g zlib1g-dev libelf1 libelf-dev
+    sudo apt-get install zlib1g zlib1g-dev
 
 zlib is available in source from
     http://zlib.net
@@ -80,12 +90,16 @@ libelf is available in source from
     http://www.mr511.de/software/
 and
     https://github.com/vtorri/libelf
+though libelf is not (as of May 2019)
+not needed.
 
 BUILDING OUT OF SOURCE TREE
 Or one could  create a new directory, for example,
+    cd /a/b/dwarf-20190505
+    sh scripts/FIX-CONFIGURE-TIMES
     mkdir /var/tmp/dwarfex
     cd /var/tmp/dwarfex
-    /a/b/dwarf-20180809/configure (other options as required)
+    /a/b/dwarf-20190505/configure (other options as required)
     make
 In this case the source directory is not written-to and all
 objects and files created are under /var/tmp/dwarfex
@@ -121,27 +135,6 @@ with GNU configure.
 CPPFLAGS
 CFLAGS
 LDFLAGS
-
-The following environment variables (if set) override
-values used in building helper executables (at build time)
-that are run at build time to build C source
-to be compiled into libdwarf and dwarfdump.
-It's not likely you will have any need to
-set your own values for these.
-These helper executables are ignored
-by 'make install'.
-
-CFLAGS_FOR_BUILD
-CPPFLAGS_FOR_BUILD
-LDFLAGS_FOR_BUILD
-
-Normally the simple defaults for these will work
-and will suffice.
-
-Having separate variables for the build-time
-is necessary to support cross-building. For example
-if compiling on x86_64 and building libdwarf for Arm7.
-
 
 DEBUGGING MAKE
 
@@ -239,7 +232,6 @@ sudo cp libz.so /usr/lib/i386-linux-gnu/
 #building libdwarf/dwarfdump in the source for no good reason:
 ./configure  --host=i386-linux-gnu \
  --build=x86_64-pc-linux-gnu \
- CFLAGS_FOR_BUILD="-O2 -m64" \
  CFLAGS="-O2 -m32" 
 
 ------------------ notes on updating ------
@@ -275,7 +267,6 @@ needed in a release
 fingerprints for the release file and copying the file.
 
 See the configure.ac for the version used.
-For example: 'm4_define([v_date], [20180730])])'
+For example: 'm4_define([v_date], [20190505])])'
 
-
-David Anderson.  Updated August 2, 2018
+David Anderson.  Updated May 29,2019
