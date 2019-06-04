@@ -34,9 +34,6 @@
 #ifdef HAVE_STDINT_H
 #include <stdint.h> /* For uintptr_t */
 #endif /* HAVE_STDINT_H */
-#ifdef HAVE_INTTYPES_H
-#include <inttypes.h>
-#endif /* HAVE_INTTYPES_H */
 #include "naming.h"
 #include "esb.h"                /* For flexible string buffer. */
 #include "esb_using_functions.h"

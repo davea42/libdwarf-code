@@ -48,9 +48,6 @@
 /* Define to 1 if you have the <elf.h> header file. */
 #cmakedefine HAVE_ELF_H 1
 
-/* Define to 1 if you have the <inttypes.h> header file. */
-#cmakedefine HAVE_INTTYPES_H 1
-
 /* Define to 1 if you have the <libelf.h> header file. */
 #cmakedefine HAVE_LIBELF_H 1
 

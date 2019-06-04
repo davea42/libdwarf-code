@@ -1,3 +1,8 @@
+2019-06-04 David Anderson
+     * dwarf_alloc.c,dwarf_frame.c,dwarf_groups.c,
+       dwarf_loc.c,dwarf_tied.c,dwarf_tied_test.c,
+       pro_die.c,pro_expr.c,pro_init.c: Removed inttypes.h
+       include as nothing in it is referenced.
 2019-05-29 David Anderson
      * libdwarf_version.h: Updated version string.
      * dwarf_names.c,dwarf_names.h,dwarf_names_enum.h,
