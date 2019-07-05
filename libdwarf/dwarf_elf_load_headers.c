@@ -1835,17 +1835,16 @@ read_gs_section_group(
             return DW_DLV_ERROR;
         }
         dp = data;
+        if (psh->gh_entsize != DWARF_32BIT_SIZE) {
+            *errcode = DW_DLE_ELF_SECTION_GROUP_ERROR;
+            free(data);
+            return DW_DLV_ERROR;
+        }
         count = seclen/psh->gh_entsize;
         if (count > ep->f_loc_shdr.g_count) {
             /* Impossible */
             free(data);
             *errcode = DW_DLE_ELF_SECTION_GROUP_ERROR;
-            return DW_DLV_ERROR;
-        }
-
-        if (psh->gh_entsize != DWARF_32BIT_SIZE) {
-            *errcode = DW_DLE_ELF_SECTION_GROUP_ERROR;
-            free(data);
             return DW_DLV_ERROR;
         }
         res = RRMOA(ep->f_fd,data,psh->gh_offset,seclen,
