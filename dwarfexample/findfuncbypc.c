@@ -122,7 +122,7 @@ static int examine_comp_dir(Dwarf_Debug dbg,Dwarf_Die die,
     int level, struct target_data_s *td,Dwarf_Error *errp);
 static int get_die_and_siblings(Dwarf_Debug dbg, 
     Dwarf_Die in_die,
-    int is_info, int in_level,
+    int is_info, int in_level,int cu_number,
     struct target_data_s *td, Dwarf_Error *errp);
 
 #if 0
@@ -143,13 +143,23 @@ startswithextractnum(const char *arg,const char *lookfor, Dwarf_Unsigned *numout
     const char *s = 0;
     unsigned prefixlen = strlen(lookfor);
     Dwarf_Unsigned v = 0;
+    char *endptr = 0;
+
+printf("arg %s lookfor %s\n",arg,lookfor);
     if(strncmp(arg,lookfor,prefixlen)) {
+printf("No target_pc value\n");
         return FALSE;
     }
     s = arg+prefixlen;
+printf("s %s \n",s);
     /*  We are not making any attempt to deal with garbage.
         Pass in good data... */
-    v = atol(s);
+    v = strtoul(s,&endptr,0);
+    if (!*s || *endptr) {
+        printf("Incoming argument in error: \"%s\"\n",arg);
+        return FALSE;
+    }
+printf("target_pc value 0x%" DW_PR_DUx "\n",v);
     *numout = v;
     return TRUE;
 }
@@ -259,6 +269,7 @@ read_cu_list(Dwarf_Debug dbg,Dwarf_Unsigned target_pc,
     int cu_number = 0;
     struct target_data_s target_data;
 
+    memset(&target_data,0, sizeof(target_data));
     target_data.td_target_pc = target_pc;
     for(;;++cu_number) {
         Dwarf_Die no_die = 0;
@@ -300,7 +311,7 @@ read_cu_list(Dwarf_Debug dbg,Dwarf_Unsigned target_pc,
         }
 
         target_data.td_cu_die = cu_die;
-        res = get_die_and_siblings(dbg,cu_die,is_info,0,
+        res = get_die_and_siblings(dbg,cu_die,is_info,0,cu_number,
             &target_data,errp);
         if (res == FOUND_SUBPROG) {
             print_target_info(dbg,&target_data);
@@ -334,7 +345,7 @@ read_cu_list(Dwarf_Debug dbg,Dwarf_Unsigned target_pc,
 */
 static int
 get_die_and_siblings(Dwarf_Debug dbg, Dwarf_Die in_die,
-    int is_info,int in_level,
+    int is_info,int in_level,int cu_number,
     struct target_data_s *td,
     Dwarf_Error *errp)
 {
@@ -342,14 +353,14 @@ get_die_and_siblings(Dwarf_Debug dbg, Dwarf_Die in_die,
     Dwarf_Die cur_die=in_die;
     Dwarf_Die child = 0;
 
+printf("Cu %d, level %d\n",cu_number,in_level);
     res = examine_die_data(dbg,in_die,in_level,td,errp);
     if (res == DW_DLV_ERROR) {
         printf("Error in die access , level %d \n",in_level);
         exit(1);
     }
     else if (res == DW_DLV_NO_ENTRY) {
-        printf("Error in die access NO ENTRY? , level %d \n",in_level);
-        exit(1);
+        return res;
     }
     else if ( res == NOT_THIS_CU) { 
         return res;
@@ -375,7 +386,7 @@ get_die_and_siblings(Dwarf_Debug dbg, Dwarf_Die in_die,
         if(res == DW_DLV_OK) {
             int res2 = 0;
             res2 = get_die_and_siblings(dbg,child,is_info,
-                in_level+1,td,errp);
+                in_level+1,cu_number,td,errp);
             if (child != td->td_cu_die && 
                 child != td->td_subprog_die) {
             
@@ -416,7 +427,11 @@ get_die_and_siblings(Dwarf_Debug dbg, Dwarf_Die in_die,
         }
         /* res == DW_DLV_OK */
         if(cur_die != in_die) {
-            dwarf_dealloc(dbg,cur_die,DW_DLA_DIE);
+            if (child != td->td_cu_die && 
+                child != td->td_subprog_die) {
+            
+                dwarf_dealloc(dbg,cur_die,DW_DLA_DIE);
+            }
             cur_die = 0;
         }
         cur_die = sib_die;
@@ -504,8 +519,11 @@ getlowhighpc( UNUSEDARG Dwarf_Debug dbg,
           if (formclass == DW_FORM_CLASS_CONSTANT) {
               hipc += *lowpc_out;
           }
+printf("dadebug have low and hi pc 0x%" DW_PR_DUx "  0x%" DW_PR_DUx
+"\n",*lowpc_out,hipc); 
           *highpc_out = hipc;
           *found_hi_low = TRUE;
+          return DW_DLV_OK;
       }
     }
     return res;
@@ -525,8 +543,11 @@ check_subprog(Dwarf_Debug dbg,Dwarf_Die die,
 
     res = getlowhighpc(dbg,die,&have_pc_range,&lowpc,&highpc,errp);
     if (res != DW_DLV_OK) {
+printf("No hi/low pc\n");
         return res;
     }
+printf("dadebug subprog targetpc 0x%" DW_PR_DUx " have range %d lowpc 0x%" DW_PR_DUx
+" highpc 0x%" DW_PR_DUx "\n",td->td_target_pc,have_pc_range ,lowpc, highpc);
     if (have_pc_range) {
         if (td->td_target_pc < lowpc || 
             td->td_target_pc >= highpc) {
@@ -543,6 +564,11 @@ check_subprog(Dwarf_Debug dbg,Dwarf_Die die,
             res2 = dwarf_diename(die,&name,errp);
             if (res2 == DW_DLV_OK) {
                td->td_subprog_name = name;
+printf("Found low and hi pc lo 0x%" DW_PR_DUx 
+"  hi 0x%" DW_PR_DUx "  name %s\n",lowpc, highpc,name);
+            } else {
+printf("Found low and hi pc lo 0x%" DW_PR_DUx 
+"  hi 0x%" DW_PR_DUx "  \n",lowpc, highpc);
             }
             return FOUND_SUBPROG;
         }
@@ -562,6 +588,8 @@ examine_comp_dir(Dwarf_Debug dbg,Dwarf_Die die,
 
     res = getlowhighpc(dbg,die,&have_pc_range,
             &lowpc,&highpc,errp);
+printf("dadebug comp dir targetpc 0x%" DW_PR_DUx " have range %d lowpc 0x%" DW_PR_DUx
+" highpc 0x%" DW_PR_DUx "\n",td->td_target_pc,have_pc_range ,lowpc, highpc);
     if (res == DW_DLV_OK) {
         if (have_pc_range) {
             if (td->td_target_pc < lowpc ||
