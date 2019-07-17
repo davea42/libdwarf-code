@@ -87,23 +87,6 @@ struct srcfilesdata {
     Dwarf_Signed srcfilescount;
     int srcfilesres;
 };
-
-#define TRUE 1
-#define FALSE 0
-
-static void read_cu_list(Dwarf_Debug dbg);
-static int examine_die_data(Dwarf_Debug dbg, Dwarf_Die die,
-    int level,
-    struct target_data_s *td,
-    Dwarf_Error *errp);
-static int examine_comp_dir(Dwarf_Debug dbg,Dwarf_Die die,
-    int level, struct target_data_s *td,Dwarf_Error *errp)
-static int get_die_and_siblings(Dwarf_Debug dbg, 
-    Dwarf_Die in_die,
-    int is_info, int in_level,
-    struct target_data_s *td,
-    Dwarf_Error *errp);
-
 struct target_data_s {
     Dwarf_Unsigned td_target_pc;
 
@@ -117,15 +100,30 @@ struct target_data_s {
     /*  DIE data of appropriate DIE */
     /*  From DW_AT_name */
     char *         td_subprog_name;
-    Dwarf_Die      td_suprog_die;
+    Dwarf_Die      td_subprog_die;
     Dwarf_Unsigned td_subprog_lowpc;
     Dwarf_Unsigned td_subprog_highpc;
     int            td_subprog_haslowhighpc;
-} target_data;
+};
 /* Adding return codes to DW_DLV, relevant to our purposes here. */
 #define NOT_THIS_CU 10
 #define IN_THIS_CU 11
 #define FOUND_SUBPROG 12
+
+
+#define TRUE 1
+#define FALSE 0
+
+static void read_cu_list(Dwarf_Debug dbg,Dwarf_Unsigned target,
+    Dwarf_Error *errp);
+static int examine_die_data(Dwarf_Debug dbg, Dwarf_Die die,
+    int level, struct target_data_s *td, Dwarf_Error *errp);
+static int examine_comp_dir(Dwarf_Debug dbg,Dwarf_Die die,
+    int level, struct target_data_s *td,Dwarf_Error *errp);
+static int get_die_and_siblings(Dwarf_Debug dbg, 
+    Dwarf_Die in_die,
+    int is_info, int in_level,
+    struct target_data_s *td, Dwarf_Error *errp);
 
 #if 0
 DW_UT_compile                   0x01  /* DWARF5 */
@@ -167,13 +165,14 @@ main(int argc, char **argv)
     Dwarf_Ptr errarg = 0;
     Dwarf_Error *errp  = 0;
     int i = 0;
+    Dwarf_Unsigned target_pc = 0;
     #define MACHO_PATH_LEN 2000
     char macho_real_path[MACHO_PATH_LEN];
 
     macho_real_path[0] = 0;
     for(i = 1; i < (argc-1) ; ++i) {
         if(startswithextractnum(argv[i],"--pc=",
-            &target_data.td_target_pc)) {
+            &target_pc)) {
             /* done */
         } else {
             printf("Unknown argument \"%s\", give up \n",argv[i]);
@@ -192,7 +191,7 @@ main(int argc, char **argv)
         printf("Giving up, cannot do DWARF processing\n");
         exit(1);
     }
-    read_cu_list(dbg);
+    read_cu_list(dbg,target_pc,errp);
     res = dwarf_finish(dbg,errp);
     if(res != DW_DLV_OK) {
         printf("dwarf_finish failed!\n");
@@ -212,34 +211,41 @@ resetsrcfiles(Dwarf_Debug dbg,struct srcfilesdata *sf)
     sf->srcfiles = 0;
     sf->srcfilescount = 0;
 }
-static void resetsubprog(struct target_data_s *td)
+static void resetsubprog(Dwarf_Debug dbg,struct target_data_s *td)
 {
     td->td_subprog_haslowhighpc = FALSE;
     if (td->td_subprog_name) {
         dwarf_dealloc(dbg,td->td_subprog_name,DW_DLA_STRING);
-        td->subprog_name  = 0;
+        td->td_subprog_name  = 0;
     }
-    if (td->tc_subprog_die) {
-        dwarf_dealloc(dbg,td->tc_subprog_die,DW_DLA_DIE);
-        td->tc_subprog_die = 0;
+    if (td->td_subprog_die) {
+        dwarf_dealloc(dbg,td->td_subprog_die,DW_DLA_DIE);
+        td->td_subprog_die = 0;
     }
 
 }
 static void
 reset_target_data(Dwarf_Debug dbg,struct target_data_s *td)
 {
-    if (td->tc_cu_die) {
-        dwarf_dealloc(dbg,td->tc_cu_die,DW_DLA_DIE);
-        td->tc_cu_die = 0;
+    if (td->td_cu_die) {
+        dwarf_dealloc(dbg,td->td_cu_die,DW_DLA_DIE);
+        td->td_cu_die = 0;
     }
     td->td_cu_haslowhighpc = FALSE;
     resetsrcfiles(dbg,&td->td_cu_srcfiles);
     resetsubprog(dbg,td);
-FIXME
 }
 
 static void
-read_cu_list(Dwarf_Debug dbg)
+print_target_info( UNUSEDARG Dwarf_Debug dbg, 
+    struct target_data_s *td)
+{
+    printf("FOUND target pc=0x%" DW_PR_XZEROS DW_PR_DUx " \n",td->td_target_pc);
+}
+
+static void
+read_cu_list(Dwarf_Debug dbg,Dwarf_Unsigned target_pc,
+    Dwarf_Error *errp)
 {
     Dwarf_Unsigned cu_header_length = 0;
     Dwarf_Unsigned abbrev_offset = 0;
@@ -250,12 +256,10 @@ read_cu_list(Dwarf_Debug dbg)
     Dwarf_Unsigned typeoffset = 0;
     Dwarf_Half     header_cu_type = unittype;
     Dwarf_Bool     is_info = g_is_info;
-    Dwarf_Error error;
     int cu_number = 0;
-    Dwarf_Error *errp  = 0;
     struct target_data_s target_data;
 
-    errp = &error;
+    target_data.td_target_pc = target_pc;
     for(;;++cu_number) {
         Dwarf_Die no_die = 0;
         Dwarf_Die cu_die = 0;
@@ -271,7 +275,7 @@ read_cu_list(Dwarf_Debug dbg)
             &typeoffset, 0,
             &header_cu_type,errp);
         if(res == DW_DLV_ERROR) {
-            char *em = errp?dwarf_errmsg(error):"An error next cu her";
+            char *em = dwarf_errmsg(*errp);
             printf("Error in dwarf_next_cu_header: %s\n",em);
             exit(1);
         }
@@ -285,7 +289,7 @@ read_cu_list(Dwarf_Debug dbg)
         res = dwarf_siblingof_b(dbg,no_die,is_info,
             &cu_die,errp);
         if(res == DW_DLV_ERROR) {
-            char *em = errp?dwarf_errmsg(error):"An error";
+            char *em = dwarf_errmsg(*errp);
             printf("Error in dwarf_siblingof_b on CU die: %s\n",em);
             exit(1);
         }
@@ -295,23 +299,26 @@ read_cu_list(Dwarf_Debug dbg)
             exit(1);
         }
 
-        target_data.td_cu_die = cudie;
-        res = get_die_and_siblings(dbg,cu_die,is_info,0,&sf,errp);
+        target_data.td_cu_die = cu_die;
+        res = get_die_and_siblings(dbg,cu_die,is_info,0,
+            &target_data,errp);
         if (res == FOUND_SUBPROG) {
             print_target_info(dbg,&target_data);
             reset_target_data(dbg,&target_data);
             return;
         }
         else if (res == IN_THIS_CU) {
-            /* This should not happen. Something wrong. */
-            FIXME
+            char *em = dwarf_errmsg(*errp);
+            printf("Impossible return code in reading DIEs: %s\n",em);
+            exit(1);
         }
         else if (res == NOT_THIS_CU) {
             /* This is normal. Keep looking */
         }
         else if (res == DW_DLV_ERROR) {
-            /* Lets give up, something badly wrong. */
-            FIXME
+            char *em = dwarf_errmsg(*errp);
+            printf("Error in reading DIEs: %s\n",em);
+            exit(1);
         }
         else if (res == DW_DLV_NO_ENTRY) {
             /* This is odd. Assume normal. */
@@ -357,6 +364,7 @@ get_die_and_siblings(Dwarf_Debug dbg, Dwarf_Die in_die,
         /*  Fall through to examine details. */
     }
      
+    /*  Now look at the children of the incoming DIE */
     for(;;) {
         Dwarf_Die sib_die = 0;
         res = dwarf_child(cur_die,&child,errp);
@@ -365,16 +373,39 @@ get_die_and_siblings(Dwarf_Debug dbg, Dwarf_Die in_die,
             exit(1);
         }
         if(res == DW_DLV_OK) {
-            get_die_and_siblings(dbg,child,is_info,
+            int res2 = 0;
+            res2 = get_die_and_siblings(dbg,child,is_info,
                 in_level+1,td,errp);
-            /* No longer need 'child' die. */
-            dwarf_dealloc(dbg,child,DW_DLA_DIE);
+            if (child != td->td_cu_die && 
+                child != td->td_subprog_die) {
+            
+                /* No longer need 'child' die. */
+                dwarf_dealloc(dbg,child,DW_DLA_DIE);
+            }
+            if (res2 == FOUND_SUBPROG) {
+                return res2;
+            }
+            else if (res2 == IN_THIS_CU) {
+                 /* fall thru */
+            }
+            else if (res2 == NOT_THIS_CU) {
+                 return res2;
+            }
+            else if (res2 == DW_DLV_ERROR) {
+                return res2;
+            }
+            else if (res2 == DW_DLV_NO_ENTRY) {
+                 /* fall thru */
+            }
+            else { /* DW_DLV_OK */
+                 /* fall thru */
+            }
             child = 0;
         }
-        /* res == DW_DLV_NO_ENTRY or DW_DLV_OK */
+
         res = dwarf_siblingof_b(dbg,cur_die,is_info,&sib_die,errp);
         if(res == DW_DLV_ERROR) {
-            char *em = errp?dwarf_errmsg(error):"Error siblingof_b";
+            char *em = dwarf_errmsg(*errp);
             printf("Error in dwarf_siblingof_b , level %d :%s \n",
                 in_level,em);
             exit(1);
@@ -390,9 +421,28 @@ get_die_and_siblings(Dwarf_Debug dbg, Dwarf_Die in_die,
         }
         cur_die = sib_die;
         res = examine_die_data(dbg,cur_die,in_level,td,errp);
+        if (res == DW_DLV_ERROR) {
+            return res;
+        }
+        else if (res == DW_DLV_OK) {
+            /* fall through */
+        }
+        else if (res == FOUND_SUBPROG) {
+            return res;
+        }
+        else if (res == NOT_THIS_CU) {
+            /* impossible */
+        }
+        else if (res == IN_THIS_CU) {
+            /* impossible */
+        } else  {/* res == DW_DLV_NO_ENTRY */
+            /* impossible */
+            /* fall through */
+        }
     }
-    return;
+    return DW_DLV_OK;
 }
+#if 0
 static void
 get_addr(Dwarf_Attribute attr,Dwarf_Addr *val)
 {
@@ -431,15 +481,21 @@ get_number(Dwarf_Attribute attr,Dwarf_Unsigned *val)
     }
     return;
 }
+#endif
 
 static int
-getlowhighpc(Dwarf_Debug dbg,Dwarf_Die die,
+getlowhighpc( UNUSEDARG Dwarf_Debug dbg,
+    Dwarf_Die die,
     int  *found_hi_low,
     Dwarf_Addr *lowpc_out,
     Dwarf_Addr *highpc_out,
     Dwarf_Error*error)
 {
     Dwarf_Addr hipc = 0;
+    int res = 0;
+    Dwarf_Half form = 0;
+    enum Dwarf_Form_Class formclass = 0;
+
     *found_hi_low = FALSE;
     res = dwarf_lowpc(die,lowpc_out,error);  
     if (res == DW_DLV_OK) {
@@ -448,7 +504,7 @@ getlowhighpc(Dwarf_Debug dbg,Dwarf_Die die,
           if (formclass == DW_FORM_CLASS_CONSTANT) {
               hipc += *lowpc_out;
           }
-          *hipc_out = hipc;
+          *highpc_out = hipc;
           *found_hi_low = TRUE;
       }
     }
@@ -456,31 +512,15 @@ getlowhighpc(Dwarf_Debug dbg,Dwarf_Die die,
 }
 
 
-static int,
+static int
 check_subprog(Dwarf_Debug dbg,Dwarf_Die die,
     UNUSEDARG int level,
     struct target_data_s *td,
-    char **name_out,
-    Dwarf_Addr * lowpc_out,
-    Dwarf_Addr * highpc_out,
-    Dwarf_Unsigned *linenum_out,
     Dwarf_Error *errp)
 {
-    int res;
-    Dwarf_Error error = 0;
-    Dwarf_Attribute *attrbuf = 0;
+    int res = 0;
     Dwarf_Addr lowpc = 0;
     Dwarf_Addr highpc = 0;
-    Dwarf_Signed attrcount = 0;
-    Dwarf_Signed i;
-    Dwarf_Unsigned filenum = 0;
-    Dwarf_Unsigned linenum = 0;
-    char *filename = 0;
-    Dwarf_Error *errp = 0;
-    Dwarf_Addr highpc = 0;
-    Dwarf_Half form = 0;
-    Dwarf_Addr lowpc = 0;
-    enum Dwarf_Form_Class formclass;
     int have_pc_range = FALSE;
 
     res = getlowhighpc(dbg,die,&have_pc_range,&lowpc,&highpc,errp);
@@ -488,20 +528,22 @@ check_subprog(Dwarf_Debug dbg,Dwarf_Die die,
         return res;
     }
     if (have_pc_range) {
-        if (target_data.td_target_pc < lowpc || 
-            target_data.td_target_pc >= highpc) {
+        if (td->td_target_pc < lowpc || 
+            td->td_target_pc >= highpc) {
             /* We have no interest in this subprogram */
             return DW_DLV_OK;
         } else {
             int res2 = DW_DLV_OK;
-            target_data.td_subprog_lowpc = lowpc;
-            target_data.td_subprog_highpc = highpc;
-            target_data.td_subprog_haslowhighpc = have_pc_range;
-            res2 = dwarf_diename(die,name_out,errp);
+            char *name = 0;
+
+            td->td_subprog_die = die;
+            td->td_subprog_lowpc = lowpc;
+            td->td_subprog_highpc = highpc;
+            td->td_subprog_haslowhighpc = have_pc_range;
+            res2 = dwarf_diename(die,&name,errp);
             if (res2 == DW_DLV_OK) {
-               target_data.td_subprog_name = *name_out;
+               td->td_subprog_name = name;
             }
-             
             return FOUND_SUBPROG;
         }
     }
@@ -510,43 +552,34 @@ check_subprog(Dwarf_Debug dbg,Dwarf_Die die,
 
 static int
 examine_comp_dir(Dwarf_Debug dbg,Dwarf_Die die,
-    int level, struct target_data_s *td,Dwarf_Error *errp)
+    UNUSEDARG int level, 
+    struct target_data_s *td,Dwarf_Error *errp)
 {
     int res = 0;
-    int res2 = 0;
-    Dwarf_Attribute *attrbuf = 0;
-    Dwarf_Signed attrcount = 0;
-    Dwarf_Signed i = 0;
     int have_pc_range = FALSE;
     Dwarf_Addr lowpc = 0;
     Dwarf_Addr highpc = 0;
-    Dwarf_Unsigned version = 0;
-    Dwarf_Small table_count = 0;
-    Dwarf_Line_Context linecontext = 0;
-    Dwarf_Line * linebuf = 0;
-    Dwarf_Signed linecount = 0;
-    Dwarf_Signed baseindex = 0;
-    Dwarf_Signed filescount = 0;
-    Dwarf_Signed endindex = 0;
 
     res = getlowhighpc(dbg,die,&have_pc_range,
             &lowpc,&highpc,errp);
     if (res == DW_DLV_OK) {
         if (have_pc_range) {
-            if (target_data.td_target_pc < lowpc ||
-               target_data.td_target_pc >= highpc) {
+            if (td->td_target_pc < lowpc ||
+               td->td_target_pc >= highpc) {
                /* We have no interest in this CU */
                res =  NOT_THIS_CU;
                return res;
+            }
         } else {
-            target_data.td_cu_lowpc = lowpc;
-            target_data.td_cu_highpc = highpc;
-            target_data.td_cu_haslowhighpc =
-                have_pc_range;
+            td->td_cu_lowpc = lowpc;
+            td->td_cu_highpc = highpc;
+            td->td_cu_haslowhighpc = have_pc_range;
             res = IN_THIS_CU;
         }
     }
+    return res;
 
+#if 0
     /* dwarf pdf page 101 */
     sf->srcfilesres = dwarf_srcfiles(die,&sf->srcfiles,
         &sf->srcfilescount,
@@ -573,7 +606,6 @@ FIXME
         &baseindex,
         &filescount,&endindex,errp);
 
-#if 0
     res2 = dwarf_attrlist(die,&attrbuf,&attrcount,errp);
     if(res2 != DW_DLV_OK) {
         return;
@@ -601,45 +633,39 @@ FIXME
 #endif
 }
 
-static void
-examine_die_data(Dwarf_Debug dbg, Dwarf_Die die,
+static int
+examine_die_data(Dwarf_Debug dbg, 
+    Dwarf_Die die,
     int level,
     struct target_data_s *td,
     Dwarf_Error *errp)
 {
-    char *name = 0;
-    Dwarf_Error error = 0;
     Dwarf_Half tag = 0;
-    const char *tagname = 0;
     int res = 0;
-    Dwarf_Attribute attr = 0;
-    Dwarf_Half formnum = 0;
-    const char *formname = 0;
 
-    errp = &error;
     res = dwarf_tag(die,&tag,errp);
     if(res != DW_DLV_OK) {
         printf("Error in dwarf_tag , level %d \n",level);
         exit(1);
     }
     if( tag == DW_TAG_subprogram) {
-        res = check_subprog(dbg,die,level,sf,0,0,0,0,errp);
+        res = check_subprog(dbg,die,level,td,errp);
         if (res == FOUND_SUBPROG) {
-            td->td_subprog_die == die;
+            td->td_subprog_die = die;
             return res;
         } 
-        else if (res = DW_DLV_ERROR)  {
+        else if (res == DW_DLV_ERROR)  {
             return res;
         }
-        else if (res =  DW_DLV_NO_ENTRY) {
+        else if (res ==  DW_DLV_NO_ENTRY) {
             /* impossible? */
             return res;
         }
-        else if (res =  NOT_THIS_CU) {
+        else if (res ==  NOT_THIS_CU) {
             /* impossible */
             return res;
         }
-        else if (res =  IN_THIS_CU) {
+        else if (res ==  IN_THIS_CU) {
             /* impossible */
             return res;
         } else {
@@ -649,29 +675,13 @@ examine_die_data(Dwarf_Debug dbg, Dwarf_Die die,
     } else if(tag == DW_TAG_compile_unit ||
         tag == DW_TAG_partial_unit ||
         tag == DW_TAG_type_unit) {
-        int have_pc_range = FALSE;
-        Dwarf_Addr lowpc = 0;
-        Dwarf_Addr highpc = 0;
 
-        res = examine_comp_dir(dbg,die,sf);
-        res = getlowhighpc(dbg,die,&have_pc_range,
-            &lowpc,&highpc,errp);
-        if (res == DW_DLV_OK) {
-            if (have_pc_range) {
-                if (target_data.td_target_pc < lowpc || 
-                    target_data.td_target_pc >= highpc) {
-                    /* We have no interest in this CU */
-                    res =  NOT_THIS_CU;
-                } else {
-                   target_data.td_cu_die = die;
-                   target_data.td_cu_lowpc = lowpc;
-                   target_data.td_cu_highpc = highpc;
-                   target_data.td_cu_haslowhighpc = 
-                       have_pc_range;
-                   res = IN_THIS_CU;
-                }
-            }
+        if (level) {
+             /*  Something badly wrong, CU DIEs are only
+                 at level 0. */
+             return NOT_THIS_CU;
         }
+        res = examine_comp_dir(dbg,die,level,td,errp);
         return res;
     }
     /*  Keep looking */
