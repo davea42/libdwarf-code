@@ -97,8 +97,13 @@ struct target_data_s {
     Dwarf_Die      td_cu_die;
     struct srcfilesdata td_cu_srcfiles;
     /*  Help deal with DW_AT_ranges */
+    /* This is base offset of ranges, the value from
+       DW_AT_rnglists_base. */
     Dwarf_Unsigned td_cu_ranges_base;
 
+    /*  Following subprog related. Offset has
+        tc_cu_ranges_base added in.   */
+    Dwarf_Off      td_ranges_offset;
     /*  DIE data of appropriate DIE */
     /*  From DW_AT_name */
     char *         td_subprog_name;
@@ -512,11 +517,6 @@ getlowhighpc( UNUSEDARG Dwarf_Debug dbg,
     int res = 0;
     Dwarf_Half form = 0;
     enum Dwarf_Form_Class formclass = 0;
-    Dwarf_Bool hasattr = False;
-    Dwarf_Signed atcount = 0;
-    Dwarf_Attribute *atlist = 0;
-    Dwarf_Signed i = 0;
-
 
     *found_hi_low = FALSE;
     res = dwarf_lowpc(die,lowpc_out,error);  
@@ -534,37 +534,72 @@ printf("dadebug have low and hi pc 0x%" DW_PR_DUx "  0x%" DW_PR_DUx
       }
     }
 
-    res = dwarf_hasattr(die,DW_AT_ranges,&hasattr,errp);
-    if (res == DW_DLV_ERROR || res == DW_DLV_NO_ENTRY) {
-        return res;
-    }
-    if (!hasattr) {
-        return DW_DLV_OK;
-    }
+    return res;
+}
+static int
+check_subprog_ranges_for_match(Dwarf_Debug dbg,
+    Dwarf_Die die,
+    struct target_data_s *td,
+    Dwarf_Error *errp)
+{
+    int res = 0;
+    Dwarf_Ranges *ranges;
+    Dwarf_Signed  ranges_count;
+    Dwarf_Unsigned  byte_count;
+    Dwarf_Signed i = 0;
+    Dwarf_Addr baseaddr = 0;
+    int done = FALSE;
+   
 
-    res = dwarf_attrlist(die,&atlist,&atcount,errp);
-    if(res != DW_DLV_OK) {
+    /* Check libdwarf to ensure ranges_base not added
+       again. FIXME */
+    res = dwarf_get_ranges_a(dbg,td->td_ranges_offset,
+        die,
+        &ranges,
+        &ranges_count,
+        &byte_count,
+        errp);
+    if (res != DW_DLV_OK) {
         return res;
     }
-    for(i = 0; i < attrcount ; ++i) {
-        Dwarf_Half atr;
-        res = dwarf_whatattr(attrbuf[i],&atr,errp);
-        if(res == DW_DLV_OK) {
-            if(atr == DW_AT_ranges) {
-                FIXME
+    for (i=0; i < ranges_count && !done; ++i) {
+        Dwarf_Ranges *cur = ranges+i;
+        Dwarf_Addr lowpc = 0;
+        Dwarf_Addr highpc = 0;
+
+        switch(cur->dwr_type) {
+        case DW_RANGES_ENTRY:
+            lowpc = cur->dwr_addr1 +baseaddr;
+            highpc = cur->dwr_addr2 +baseaddr;
+            if (td->td_target_pc < lowpc ||
+                td->td_target_pc >= highpc) {
+                /* We have no interest in this CU */
+                break;
             }
+            td->td_cu_lowpc = lowpc;
+            td->td_cu_highpc = highpc;
+            td->td_cu_haslowhighpc = TRUE;
+            done = TRUE;
+            res = FOUND_SUBPROG;
+            break;
+        case DW_RANGES_ADDRESS_SELECTION:
+            baseaddr = cur->dwr_addr2;
+            break;
+        case DW_RANGES_END:
+            break;
+        default:
+            printf("Impossible debug_ranges content!"
+                " enum val %d \n",(int)cur->dwr_type);
+            exit(1);
         }
-        dwarf_dealloc(dbg,attrbuf[i],DW_DLA_ATTR);
     }
-    dwarf_dealloc(dbg,attrbuf,DW_DLA_LIST);
-
-
+    dwarf_ranges_dealloc(dbg,ranges,ranges_count);
     return res;
 }
 
-
 static int
-check_if_address_fits(Dwarf_Debug dbg, Dwarf_Die dbg,
+check_subprog(Dwarf_Debug dbg,Dwarf_Die die,
+    UNUSEDARG int level,
     struct target_data_s *td,
     Dwarf_Error *errp)
 {
@@ -572,10 +607,15 @@ check_if_address_fits(Dwarf_Debug dbg, Dwarf_Die dbg,
     Dwarf_Addr lowpc = 0;
     Dwarf_Addr highpc = 0;
     int have_pc_range = FALSE;
+    int done = FALSE;
+    Dwarf_Bool hasattr =FALSE;
+    Dwarf_Signed i = 0;
+    Dwarf_Signed atcount = 0;
+    Dwarf_Attribute *atlist = 0;
 
     res = getlowhighpc(dbg,die,&have_pc_range,&lowpc,&highpc,errp);
     if (res == DW_DLV_OK) {
-printf("dadebug subprog targetpc 0x%" DW_PR_DUx " have range %d lowpc 0x%" DW_PR_DUx
+printf("dadebug subprog targetpc 0x%" DW_PR_DUx " have range? %d lowpc 0x%" DW_PR_DUx
 " highpc 0x%" DW_PR_DUx "\n",td->td_target_pc,have_pc_range ,lowpc, highpc);
         if (have_pc_range) {
             int res2 = DW_DLV_OK;
@@ -596,6 +636,7 @@ printf("dadebug subprog targetpc 0x%" DW_PR_DUx " have range %d lowpc 0x%" DW_PR
 printf("Found low and hi pc lo 0x%" DW_PR_DUx 
     "  hi 0x%" DW_PR_DUx "  name %s\n",lowpc, highpc,name);
             } else {
+/* FIXME if  DW_TAG_inlined_subroutine use DW_AT_abstract_origin to find the name */
 printf("Found low and hi pc lo 0x%" DW_PR_DUx 
     "  hi 0x%" DW_PR_DUx "  \n",lowpc, highpc);
             }
@@ -603,18 +644,64 @@ printf("Found low and hi pc lo 0x%" DW_PR_DUx
             return FOUND_SUBPROG;
         }
     }
-    return DW_DLV_OK;
+printf("dadebug check for AT_ranges\n");
+    res = dwarf_hasattr(die,DW_AT_ranges,&hasattr,errp);
+    if (res == DW_DLV_ERROR || res == DW_DLV_NO_ENTRY) {
+        return res;
+    }
+    if (!hasattr) {
+        return DW_DLV_OK;
+    }
+
+printf("dadebug read for from .debug_ranges\n");
+    res = dwarf_attrlist(die,&atlist,&atcount,errp);
+    if(res != DW_DLV_OK) {
+        return res;
+    }
+    for(i = 0; i < atcount ; ++i) {
+        Dwarf_Half atr = 0;
+       
+        if (done) {
+            dwarf_dealloc(dbg,atlist[i],DW_DLA_ATTR);
+            continue;
+        }
+        res = dwarf_whatattr(atlist[i],&atr,errp);
+        if(res == DW_DLV_OK) {
+            if(atr == DW_AT_ranges ||
+                atr == DW_AT_GNU_ranges_base) {
+                int res2 = 0;
+                Dwarf_Off ret_offset = 0;
+            
+                res2 = dwarf_global_formref(atlist[i],
+                    &ret_offset,errp);
+                if (res2 != DW_DLV_OK) {
+                    return res2;
+                }
+                td->td_ranges_offset = ret_offset +
+                    td->td_cu_ranges_base;
+                res = check_subprog_ranges_for_match(dbg,
+                    die,td,
+                    errp);
+                if (res == DW_DLV_OK) {
+                    continue;
+                } else if (res == DW_DLV_OK) {
+                    continue;
+                } else if (res == DW_DLV_NO_ENTRY) {
+                    continue;
+                } else if (res == FOUND_SUBPROG) {
+                    done = TRUE;
+                    continue;
+                } else {
+                    return res;
+                }
+            }
+        }
+        dwarf_dealloc(dbg,atlist[i],DW_DLA_ATTR);
+    }
+    dwarf_dealloc(dbg,atlist,DW_DLA_LIST);
+    return res;
 }
 
-static int
-check_subprog(Dwarf_Debug dbg,Dwarf_Die die,
-    UNUSEDARG int level,
-    struct target_data_s *td,
-    Dwarf_Error *errp)
-{
-    res = check_if_hl_address_fits(dbg,die,td,errp);
-    FIXME
-}
 
 static int
 check_comp_dir(Dwarf_Debug dbg,Dwarf_Die die,
@@ -626,7 +713,7 @@ check_comp_dir(Dwarf_Debug dbg,Dwarf_Die die,
     int have_pc_range = FALSE;
     Dwarf_Addr lowpc = 0;
     Dwarf_Addr highpc = 0;
-    Dwarf_Bool hasattr = False;
+    Dwarf_Bool hasattr = FALSE;
     Dwarf_Signed atcount = 0;
     Dwarf_Attribute *atlist = 0;
 
@@ -634,47 +721,82 @@ check_comp_dir(Dwarf_Debug dbg,Dwarf_Die die,
             &lowpc,&highpc,errp);
 printf("dadebug comp dir targetpc 0x%" DW_PR_DUx " have range %d lowpc 0x%" DW_PR_DUx
 " highpc 0x%" DW_PR_DUx "\n",td->td_target_pc,have_pc_range ,lowpc, highpc);
+#if 0
+    Inlined routines are outside the range of low/high
+    in the CU. We need to ignore the hi/lo noted here.
+    But we remember it anyway.
+#endif
     if (res == DW_DLV_OK) {
         if (have_pc_range) {
             if (td->td_target_pc < lowpc ||
                td->td_target_pc >= highpc) {
                /* We have no interest in this CU */
                res =  NOT_THIS_CU;
-               return res;
+            } else {
+                td->td_cu_lowpc = lowpc;
+                td->td_cu_highpc = highpc;
+                /* td->td_cu_haslowhighpc = have_pc_range; */
+                res = IN_THIS_CU;
             }
-            td->td_cu_lowpc = lowpc;
-            td->td_cu_highpc = highpc;
-            td->td_cu_haslowhighpc = have_pc_range;
-            res = IN_THIS_CU;
-            return res;
         }
     }
-    resb = dwarf_hasattr(die,DW_AT_ranges_base,&hasattr,errp);
-    if (resb == DW_DLV_ERROR )
-        return res;
+    res = IN_THIS_CU;
+    resb = dwarf_hasattr(die,DW_AT_rnglists_base,&hasattr,errp);
+printf("dadebug return hasattr DW_AT_rnglists_base %d %d\n",resb,hasattr);
+    if (resb == DW_DLV_ERROR ) {
+        return resb;
+    }
+    if (!hasattr ){ /* GNU */
+        resb = dwarf_hasattr(die,DW_AT_GNU_ranges_base,&hasattr,errp);
+printf("dadebug return hasattr DW_AT_GNU_ranges_base %d %d\n",resb,hasattr);
+        if (resb == DW_DLV_ERROR ) {
+            return resb;
+        }
+    }
+    if (!hasattr){ /* dwarf4 */
+        resb = dwarf_hasattr(die,DW_AT_ranges,&hasattr,errp);
+printf("dadebug return hasattr DW_AT_ranges %d %d\n",resb,hasattr);
+        if (resb == DW_DLV_ERROR ) {
+            return resb;
+        }
     }
     if (resb == DW_DLV_OK ) {
         Dwarf_Signed i = 0;
+        int done = FALSE;
+
         resb = dwarf_attrlist(die,&atlist,&atcount,errp);
         if(resb != DW_DLV_OK) {
             return resb;
         }
-        for(i = 0; i < attrcount ; ++i) {
-            Dwarf_Half atr;
-            resb = dwarf_whatattr(attrbuf[i],&atr,errp);
+        for(i = 0; i < atcount ; ++i) {
+            Dwarf_Half atr = 0;
+            Dwarf_Attribute attrp = 0;
+
+            attrp = atlist[i];
+            if(done) {
+                dwarf_dealloc(dbg,attrp,DW_DLA_ATTR);
+                continue;
+            }
+            resb = dwarf_whatattr(attrp,&atr,errp);
             if(resb == DW_DLV_OK) {
-                if(atr == DW_AT_ranges_base) {
-                    FIXME
+                if(atr == DW_AT_rnglists_base ||
+                    atr == DW_AT_GNU_ranges_base ||
+                    atr == DW_AT_ranges) {
+                    Dwarf_Off rbase = 0;
+   
+                    resb = dwarf_global_formref(attrp,&rbase,errp);
+                    if (resb != DW_DLV_OK) {
+                        return resb;
+                    }
+                    td->td_cu_ranges_base = rbase;
+                    done = TRUE;
                 }
             }
-            dwarf_dealloc(dbg,attrbuf[i],DW_DLA_ATTR);
+            dwarf_dealloc(dbg,attrp,DW_DLA_ATTR);
         }
-        dwarf_dealloc(dbg,attrbuf,DW_DLA_LIST);
+        dwarf_dealloc(dbg,atlist,DW_DLA_LIST);
     }
-FIXME
-    
     return res;
-
 #if 0
     /* dwarf pdf page 101 */
     sf->srcfilesres = dwarf_srcfiles(die,&sf->srcfiles,
@@ -720,7 +842,8 @@ examine_die_data(Dwarf_Debug dbg,
         printf("Error in dwarf_tag , level %d \n",level);
         exit(1);
     }
-    if( tag == DW_TAG_subprogram) {
+    if( tag == DW_TAG_subprogram ||
+        tag == DW_TAG_inlined_subroutine) {
         res = check_subprog(dbg,die,level,td,errp);
         if (res == FOUND_SUBPROG) {
             td->td_subprog_die = die;
