@@ -35,7 +35,7 @@ Dwarf5 Section 3
 DW_UT_compile
   DW_TAG_compile_unit 
   No type signature in header.
-  DW_AT_signature refers to a type unit via
+  DW_AT_signature refers to a type_unit CU via
      DW_FORM_ref_sig8
   DW4:If DW_AT_GNU_dwo_id here it refers to  DW_UT_type
      signature? Or some other header DW_AT_GNU_dwo_id?
@@ -54,7 +54,7 @@ DW_UT_type
   DW4: .debug_types
   DW5: .debug_info
 
-Normal DWARF adding partial.
+Normal DWARF adding partial. New in DW5
 DW_UT_partial
   These must not exist as a split CU.
   These are part of space compression and duplicate elimination
@@ -77,15 +77,23 @@ These sections have no relocations In a Package File there
 will be signature lookup sections .debug_cu_index 
 and .debug_tu_index .
 
+New in DW5 with GNU cc in DW4 using
+DW_AT_GNU_dwo_id, following a draft version of DW5.
+In DW4 gcc places  types in .debug_types.dwo split
+
 
 DW_UT_skeleton
 Skeleton CU A:
-  DW_TAG_skeleton_unit
-  DW_AT_signature refers to a type unit via
+  DW5: DW_TAG_skeleton_unit
+  DW5: DW_AT_signature refers to a type unit via
      DW_FORM_ref_sig8. DW5 section 2.13.2
-  DW4: DW_AT_GNU_dwo_id (need to check)
-  DW5: has CU header signature
-  .debug_info
+  DW4: DW_TAG_compile_unit in .debug_info,  
+     DW_AT_GNU_dwo_id in CU Die, 
+     and the CU_die has no children.
+  DW4: DW_TAG_type_unit in .debug_types,
+     DW_AT_GNU_dwo_id in CU Die, 
+     and the CU_die has no children.
+  DW5: has CU header signature .debug_info
 
 
 DW_UT_split_compile
@@ -93,14 +101,15 @@ Split CU for A:
   DW_TAG_compile_unit
   DW5: has CU header signature
   DW4:If DW_AT_GNU_dwo_id, target of some
-      .debug_info 
-  .debug_info.dwo 
+      .debug_info skeleton unit
+  DW5: .debug_info.dwo 
 
 DW_UT_split_type
-  DW_TAG_split_type
-  .debug_info.dwo
+  DW5: DW_TAG_split_type
+  DW5: .debug_info.dwo
   DW5: has CU header signature
-  DW4:If DW_AT_GNU_dwo_id, target of some
-    thing elsewherre
+  DW4: If DW_AT_GNU_dwo_id, target of some
+    thing elsewhere, .debug_info or .debug_types
+    or .debug_info.dwo or .debug_types.dwo. 
+  DW4:  in .debug_types.dwo, a target.
   
-
