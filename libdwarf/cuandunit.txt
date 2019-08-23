@@ -104,8 +104,8 @@ Split CU for A:
       .debug_info skeleton unit
   DW5: .debug_info.dwo 
 
-DW_UT_split_type
-  DW5: DW_TAG_split_type
+DW_UT_split_type 
+  DW5: DW_TAG_type_unit
   DW5: .debug_info.dwo
   DW5: has CU header signature
   DW4: If DW_AT_GNU_dwo_id, target of some
