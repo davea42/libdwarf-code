@@ -1033,7 +1033,7 @@ _dwarf_get_string_base_attr_value(Dwarf_Debug dbg,
 }
 /*  Goes to the CU die and finds the DW_AT_GNU_addr_base
     (or DW_AT_addr_base ) and gets the value from that CU die
-    and returns it thou abase_out. If we cannot find the value
+    and returns it through abase_out. If we cannot find the value
     it is a serious error in the DWARF.
     */
 static int
@@ -1386,7 +1386,7 @@ _dwarf_get_addr_from_tied(Dwarf_Debug dbg,
         return  DW_DLV_ERROR;
     }
     res = _dwarf_search_for_signature(tieddbg,
-        context->cc_type_signature,
+        context->cc_signature,
         &tiedcontext,
         error);
     if ( res == DW_DLV_ERROR) {
@@ -1416,7 +1416,8 @@ _dwarf_get_addr_from_tied(Dwarf_Debug dbg,
 int
 _dwarf_get_ranges_base_attr_from_tied(Dwarf_Debug dbg,
     Dwarf_CU_Context context,
-    Dwarf_Unsigned *tiedbase_out,
+    Dwarf_Unsigned * ranges_base_out,
+    Dwarf_Unsigned * addr_base_out,
     Dwarf_Error*error)
 {
     Dwarf_Debug tieddbg = 0;
@@ -1438,7 +1439,7 @@ _dwarf_get_ranges_base_attr_from_tied(Dwarf_Debug dbg,
         return  DW_DLV_ERROR;
     }
     res = _dwarf_search_for_signature(tieddbg,
-        context->cc_type_signature,
+        context->cc_signature,
         &tiedcontext,
         error);
     if ( res == DW_DLV_ERROR) {
@@ -1455,7 +1456,8 @@ _dwarf_get_ranges_base_attr_from_tied(Dwarf_Debug dbg,
         _dwarf_error_mv_s_to_t(tieddbg,error,dbg,error);
         return res;
     }
-    *tiedbase_out = tiedbase;
+    *ranges_base_out = tiedbase;
+    *addr_base_out =  tiedcontext->cc_addr_base;
     return DW_DLV_OK;
 }
 

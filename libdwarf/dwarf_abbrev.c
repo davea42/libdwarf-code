@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2000-2005 Silicon Graphics, Inc.  All Rights Reserved.
-  Portions Copyright (C) 2009-2018 David Anderson. All Rights Reserved.
+  Portions Copyright (C) 2009-2019 David Anderson. All Rights Reserved.
 
   This program is free software; you can redistribute it and/or modify it
   under the terms of version 2.1 of the GNU Lesser General Public License
@@ -57,19 +57,69 @@
 */
 
 int
+_dwarf_count_abbrev_entries(Dwarf_Debug dbg,
+    Dwarf_Byte_Ptr abbrev_ptr,
+    Dwarf_Byte_Ptr abbrev_section_end,
+    Dwarf_Unsigned *abbrev_count_out,
+    Dwarf_Byte_Ptr *abbrev_ptr_out,
+    Dwarf_Error *error)
+{
+    Dwarf_Unsigned abbrev_count = 0;
+    Dwarf_Unsigned attr_name = 0;
+    Dwarf_Unsigned attr_form = 0;
+    UNUSEDARG Dwarf_Unsigned implicit_const = 0;
+
+    /*  The abbreviations table ends with an entry with a single
+        byte of zero for the abbreviation code.
+        Padding bytes following that zero are allowed, but
+        here we simply stop looking past that zero abbrev.
+
+        We also stop looking if the block/section ends,
+        though the DWARF2 and later standards do not specifically
+        allow section/block end to terminate an abbreviations
+        list. */
+
+    do {
+        DECODE_LEB128_UWORD_CK(abbrev_ptr, attr_name,
+            dbg,error,abbrev_section_end);
+        if (attr_name > DW_AT_hi_user) {
+            _dwarf_error(dbg, error,DW_DLE_ATTR_CORRUPT);
+            return DW_DLV_ERROR;
+        }
+        DECODE_LEB128_UWORD_CK(abbrev_ptr, attr_form,
+            dbg,error,abbrev_section_end);
+        if (!_dwarf_valid_form_we_know(dbg,attr_form,attr_name)) {
+            _dwarf_error(dbg, error, DW_DLE_UNKNOWN_FORM);
+            return (DW_DLV_ERROR);
+        }
+        if (attr_form ==  DW_FORM_implicit_const) {
+            /* The value is here, not in a DIE. */
+            DECODE_LEB128_SWORD_CK(abbrev_ptr, implicit_const,
+                dbg,error,abbrev_section_end);
+        }
+        abbrev_count++;
+    } while ((abbrev_ptr < abbrev_section_end) &&
+        (attr_name != 0 || attr_form != 0));
+    /* We counted one too high,we included the 0,0 */
+    *abbrev_count_out = abbrev_count-1;
+    *abbrev_ptr_out = abbrev_ptr;
+    return DW_DLV_OK;
+}
+
+int
 dwarf_get_abbrev(Dwarf_Debug dbg,
     Dwarf_Unsigned offset,
     Dwarf_Abbrev * returned_abbrev,
     Dwarf_Unsigned * length,
     Dwarf_Unsigned * abbr_count, Dwarf_Error * error)
 {
-    Dwarf_Small *abbrev_ptr = 0;
-    Dwarf_Small *abbrev_section_end = 0;
-    Dwarf_Half attr         = 0;
-    Dwarf_Half attr_form    = 0;
+    Dwarf_Byte_Ptr abbrev_ptr = 0;
+    Dwarf_Byte_Ptr abbrev_ptr_out = 0;
+    Dwarf_Byte_Ptr abbrev_section_end = 0;
     Dwarf_Abbrev ret_abbrev = 0;
     Dwarf_Unsigned labbr_count = 0;
     Dwarf_Unsigned utmp     = 0;
+    int res = 0;
 
     if (!dbg) {
         _dwarf_error(NULL, error, DW_DLE_DBG_NULL);
@@ -78,7 +128,7 @@ dwarf_get_abbrev(Dwarf_Debug dbg,
     if (dbg->de_debug_abbrev.dss_data == 0) {
         /*  Loads abbrev section (and .debug_info as we do those
             together). */
-        int res = _dwarf_load_debug_info(dbg, error);
+        res = _dwarf_load_debug_info(dbg, error);
 
         if (res != DW_DLV_OK) {
             return res;
@@ -125,6 +175,11 @@ dwarf_get_abbrev(Dwarf_Debug dbg,
 
     DECODE_LEB128_UWORD_CK(abbrev_ptr, utmp,
         dbg,error,abbrev_section_end);
+    if (utmp > DW_TAG_hi_user) {
+        _dwarf_error(dbg, error,DW_DLE_TAG_CORRUPT);
+        return DW_DLV_ERROR;
+    }
+
     ret_abbrev->dab_tag = utmp;
     if (abbrev_ptr >= abbrev_section_end) {
         _dwarf_error(dbg, error, DW_DLE_ABBREV_DECODE_ERROR);
@@ -133,30 +188,13 @@ dwarf_get_abbrev(Dwarf_Debug dbg,
     ret_abbrev->dab_has_child = *(abbrev_ptr++);
     ret_abbrev->dab_abbrev_ptr = abbrev_ptr;
 
-    do {
-        Dwarf_Unsigned utmp2 = 0;
+    res = _dwarf_count_abbrev_entries(dbg,abbrev_ptr,
+        abbrev_section_end,&labbr_count,&abbrev_ptr_out,error);
+    if (res == DW_DLV_ERROR) {
+        return res;
+    }
+    abbrev_ptr = abbrev_ptr_out;
 
-        DECODE_LEB128_UWORD_CK(abbrev_ptr, utmp2,
-            dbg,error,abbrev_section_end);
-        attr = (Dwarf_Half) utmp2;
-        DECODE_LEB128_UWORD_CK(abbrev_ptr, utmp2,
-            dbg,error,abbrev_section_end);
-        attr_form = (Dwarf_Half) utmp2;
-        if (!_dwarf_valid_form_we_know(dbg,attr_form,attr)) {
-            _dwarf_error(dbg, error, DW_DLE_UNKNOWN_FORM);
-            return (DW_DLV_ERROR);
-        }
-        if (attr_form ==  DW_FORM_implicit_const) {
-            UNUSEDARG Dwarf_Signed implicit_const = 0;
-            /* The value is here, not in a DIE. */
-            DECODE_LEB128_SWORD_CK(abbrev_ptr, implicit_const,
-                dbg,error,abbrev_section_end);
-        }
-        if (attr != 0) {
-            labbr_count++;
-        }
-    } while (abbrev_ptr < abbrev_section_end &&
-        (attr != 0 || attr_form != 0));
     /* Global section offset. */
     ret_abbrev->dab_goffset = offset;
     ret_abbrev->dab_count = labbr_count;
@@ -218,6 +256,13 @@ dwarf_get_abbrev_children_flag(Dwarf_Abbrev abbrev,
 }
 
 
+/*  This does not return the implicit const, nor
+    does it return all bits of the uleb attribute
+    nor does it return all bits of the uleb form
+    value.
+    Ugh. FIXME by providing a better function.
+*/
+
 int
 dwarf_get_abbrev_entry(Dwarf_Abbrev abbrev,
     Dwarf_Signed indx,
@@ -230,6 +275,7 @@ dwarf_get_abbrev_entry(Dwarf_Abbrev abbrev,
     Dwarf_Byte_Ptr mark_abbrev_ptr = 0;
     Dwarf_Half attr = 0;
     Dwarf_Half attr_form = 0;
+    Dwarf_Debug dbg = 0;
 
     if (indx < 0)
         return (DW_DLV_NO_ENTRY);
@@ -247,35 +293,43 @@ dwarf_get_abbrev_entry(Dwarf_Abbrev abbrev,
         _dwarf_error(NULL, error, DW_DLE_DBG_NULL);
         return (DW_DLV_ERROR);
     }
-
+    dbg = abbrev->dab_dbg;
     abbrev_ptr = abbrev->dab_abbrev_ptr;
-    abbrev_end =
-        abbrev->dab_dbg->de_debug_abbrev.dss_data +
-        abbrev->dab_dbg->de_debug_abbrev.dss_size;
+    abbrev_end = dbg->de_debug_abbrev.dss_data +
+        dbg->de_debug_abbrev.dss_size;
 
     for (attr = 1, attr_form = 1;
         indx >= 0 && abbrev_ptr < abbrev_end && (attr != 0 ||
             attr_form != 0);
         indx--) {
-        Dwarf_Unsigned utmp4;
+        Dwarf_Unsigned utmp_at;
+        Dwarf_Unsigned utmp_fo;
 
         mark_abbrev_ptr = abbrev_ptr;
-        DECODE_LEB128_UWORD_CK(abbrev_ptr, utmp4,abbrev->dab_dbg,
+        DECODE_LEB128_UWORD_CK(abbrev_ptr, utmp_at,dbg,
             error,abbrev_end);
-        attr = (Dwarf_Half) utmp4;
-        DECODE_LEB128_UWORD_CK(abbrev_ptr, utmp4,abbrev->dab_dbg,
+        if (utmp_at > DW_AT_hi_user) {
+            _dwarf_error(dbg, error,DW_DLE_ATTR_CORRUPT);
+            return DW_DLV_ERROR;
+        }
+        attr = (Dwarf_Half) utmp_at;
+        DECODE_LEB128_UWORD_CK(abbrev_ptr, utmp_fo,dbg,
             error,abbrev_end);
-        attr_form = (Dwarf_Half) utmp4;
+        if (!_dwarf_valid_form_we_know(dbg,utmp_fo,utmp_at)) {
+            _dwarf_error(dbg, error, DW_DLE_UNKNOWN_FORM);
+            return (DW_DLV_ERROR);
+        }
+        attr_form = (Dwarf_Half) utmp_fo;
         if (attr_form ==  DW_FORM_implicit_const) {
             UNUSEDARG Dwarf_Signed implicit_const;
             /* The value is here, not in a DIE. */
             DECODE_LEB128_SWORD_CK( abbrev_ptr, implicit_const,
-                abbrev->dab_dbg,error,abbrev_end);
+                dbg,error,abbrev_end);
         }
     }
 
     if (abbrev_ptr >= abbrev_end) {
-        _dwarf_error(abbrev->dab_dbg, error, DW_DLE_ABBREV_DECODE_ERROR);
+        _dwarf_error(dbg, error, DW_DLE_ABBREV_DECODE_ERROR);
         return (DW_DLV_ERROR);
     }
 
@@ -287,7 +341,7 @@ dwarf_get_abbrev_entry(Dwarf_Abbrev abbrev,
         *form = attr_form;
     }
     if (offset != NULL) {
-        *offset = mark_abbrev_ptr - abbrev->dab_dbg->de_debug_abbrev.dss_data;
+        *offset = mark_abbrev_ptr - dbg->de_debug_abbrev.dss_data;
     }
     *returned_attr_num = (attr);
     return DW_DLV_OK;
@@ -301,7 +355,8 @@ dwarf_get_abbrev_entry(Dwarf_Abbrev abbrev,
     leave unreferenced garbage bytes in .debug_abbrev, so this may
     work for most objects.
     In case of error could return a bogus value, there is
-    no documented way to detect error. */
+    no documented way to detect error.
+*/
 int
 dwarf_get_abbrev_count(Dwarf_Debug dbg)
 {

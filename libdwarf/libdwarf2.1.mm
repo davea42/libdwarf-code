@@ -11,7 +11,7 @@
 .S +2
 \." ==============================================
 \." Put current date in the following at each rev
-.ds vE Rev 2.73, 30 April 2019
+.ds vE Rev 2.74, 21 July 2019
 \." ==============================================
 \." ==============================================
 .ds | |
@@ -11072,9 +11072,15 @@ apparently-valid table data
 is in fact useless.
 
 .H 2 "Address Range Operations"
-These functions provide information about address ranges.  Address
+These functions provide information about address ranges.
+The content is in the 
+\f(CW.debug_aranges\fP
+section.
+Address
 ranges map ranges of pc values to the corresponding compilation-unit
 die that covers the address range.
+In the DWARF Standard this is described under 
+"Accelerated Access" "Lookup by Address".
 
 .H 3 "dwarf_get_aranges_section_name()"
 .DS
@@ -11130,6 +11136,11 @@ descriptors, one for each address range.
 It returns \f(CWDW_DLV_ERROR\fP on error.
 It returns \f(CWDW_DLV_NO_ENTRY\fP if there is no .debug_aranges
 section.
+.P
+This not only reads all the ranges, it also reads
+the per-compilation-unit headers in .debug_aranges
+and verifies they make sense.
+
 
 .in +2
 .FG "Exampleu dwarf_get_aranges()"
@@ -11178,7 +11189,7 @@ the descriptor.
 It returns \f(CWDW_DLV_ERROR\fP on error.
 It returns \f(CWDW_DLV_NO_ENTRY\fP if there is no .debug_aranges
 entry covering that address.
-
+.P
 
 
 
@@ -11224,6 +11235,34 @@ libdwarf linked into an application has this function.
 
 
 
+.H 3 "dwarf_get_arange_info_b()"
+.DS
+\f(CWint dwarf_get_arange_info_b(
+        Dwarf_Arange arange,
+        Dwarf_Unsigned *segment,
+        Dwarf_Unsigned *segment_entry_size;
+        Dwarf_Addr *start,
+        Dwarf_Unsigned *length,
+        Dwarf_Off *cu_die_offset,
+        Dwarf_Error *error)\fP
+.DE
+The function 
+\f(CWdwarf_get_arange_info_b()\fP
+returns
+\f(CWDW_DLV_OK\fP
+and
+stores 
+segment number of the 
+FIXME
+FIXME
+The 
+the starting value of the address range in the location pointed
+to by \f(CWstart\fP, the length of the address range in the location
+pointed to by \f(CWlength\fP, and the offset in the .debug_info section
+of the compilation-unit DIE for the compilation-unit represented by the
+address range.
+It returns \f(CWDW_DLV_ERROR\fP on error.
+
 .H 3 "dwarf_get_arange_info()"
 .DS
 \f(CWint dwarf_get_arange_info(
@@ -11233,15 +11272,10 @@ libdwarf linked into an application has this function.
         Dwarf_Off *cu_die_offset,
         Dwarf_Error *error)\fP
 .DE
-The function \f(CWdwarf_get_arange_info()\fP returns
-\f(CWDW_DLV_OK\fP
-and
-stores the starting value of the address range in the location pointed
-to by \f(CWstart\fP, the length of the address range in the location
-pointed to by \f(CWlength\fP, and the offset in the .debug_info section
-of the compilation-unit DIE for the compilation-unit represented by the
-address range.
-It returns \f(CWDW_DLV_ERROR\fP on error.
+This is the same as 
+\f(CWdwarf_get_arange_info_b()\fP
+except that this earlier function does not
+have a way to return the segment information.
 
 .H 2 "General Low Level Operations"
 This function is low-level and intended for use only
@@ -11319,6 +11353,32 @@ or \f(CWdwarf_get_ranges()\fP
 returns a an array
 of Dwarf_Ranges structs, each of which represents a single ranges
 entry.   The struct is defined in  \f(CWlibdwarf.h\fP.
+.P
+New in DWARF3,
+for DWARF3, and DWARF4 the section contained
+just ranges.
+The ranges are referenced by
+\f(CWDW_AT_ranges\fP
+attributes in various DIEs.
+.P
+For DWARF5 the section 
+requires that each group of ranges
+has a header and the compilation unit
+may have a
+\f(CWDW_AT_ranges_base\fP
+attribute that must be added to
+the \f(CWDW_AT_ranges\fP attribute value
+to get the true ranges offset.
+.P
+(A compiler generating
+\f(CWDW_AT_ranges_base\fP
+will add a relocation for that attribute value
+but will not have to make the 
+\f(CWDW_AT_ranges\fP
+attributes relocatable and will thus save space
+in the object (ie, .o) file
+and link time.)
+
 
 .H 3 "dwarf_get_ranges_section_name()"
 .DS
@@ -11380,7 +11440,20 @@ number of address ranges in the group of ranges
 in the .debug_ranges section at offset  \f(CWoffset\fP
 (which ends with a pair of zeros of pointer-size).
 This function is new as of 27 April 2009.
-
+.P
+This function is normally used when one has
+a DIE
+with the 
+\f(CWDW_AT_ranges\fP
+attribute (whose value is the offset needed).
+The ranges thus apply to the DIE involved.
+This function never sees the per-compilation-unit
+headers in the .debug_ranges section so 
+of course any errors in those headers are ignored.
+.P
+See also 
+\f(CWdwarf_get_aranges()\fP,
+.P
 The
 \f(CWoffset\fP argument should be the value of
 a \f(CWDW_AT_ranges\fP attribute of a Debugging Information Entry.

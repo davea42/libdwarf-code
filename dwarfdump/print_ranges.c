@@ -143,24 +143,6 @@ check_ranges_list(Dwarf_Debug dbg,
     sec_name = esb_get_string(&truename);
     get_address_size_and_max(dbg,&elf_address_size,&elf_max_address,&rlerr);
 
-#if 0
-{
-/* START -> Just for debugging */
-struct esb_s rangesstr;
-esb_constructor(&rangesstr);
-printf("\n**** START ****\n");
-printf("\tGLB_OFF: (0x%" DW_PR_XZEROS DW_PR_DUx ") ",die_off);
-printf("\tRGN_OFF: (0x%" DW_PR_XZEROS DW_PR_DUx ")\n",original_off);
-print_ranges_list_to_extra(dbg,original_off,
-    rangeset,rangecount,bytecount,
-    &rangesstr);
-printf("%s\n", esb_get_string(&rangesstr));
-printf("**** END ****\n");
-/* END <- Just for debugging */
-}
-#endif /* 0 */
-
-
     /* Ignore last entry, is the end-of-list */
     for (index = 0; index < rangecount - 1; index++) {
         Dwarf_Ranges *r = rangeset + index;

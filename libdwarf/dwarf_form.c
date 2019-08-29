@@ -997,6 +997,14 @@ dwarf_formdata16(Dwarf_Attribute attr,
 }
 
 
+#if 0
+case DW_FORM_GNU_addr_index:
+    case DW_FORM_addrx:
+    case DW_FORM_addrx1    :  /* DWARF5 */
+    case DW_FORM_addrx2    :  /* DWARF5 */
+    case DW_FORM_addrx3    :  /* DWARF5 */
+    case DW_FORM_addrx4    :  /* DWARF5 */
+#endif
 
 
 int
@@ -1763,7 +1771,8 @@ dwarf_formexprloc(Dwarf_Attribute attr,
 
         info_ptr = addr;
         section_start =
-            _dwarf_calculate_info_section_start_ptr(cu_context,&section_len);
+            _dwarf_calculate_info_section_start_ptr(cu_context,
+            &section_len);
         section_end = section_start + section_len;
 
         DECODE_LEB128_UWORD_LEN_CK(info_ptr, exprlen, leb_len,
@@ -1778,7 +1787,8 @@ dwarf_formexprloc(Dwarf_Attribute attr,
             there bug somewhere?
             Here the final addr may be 1 past end of section. */
         if (_dwarf_reference_outside_section(die,
-            (Dwarf_Small *)addr, ((Dwarf_Small *)addr)+exprlen +leb_len)) {
+            (Dwarf_Small *)addr,
+            ((Dwarf_Small *)addr)+exprlen +leb_len)) {
             _dwarf_error(dbg, error,DW_DLE_ATTR_OUTSIDE_SECTION);
             return DW_DLV_ERROR;
         }

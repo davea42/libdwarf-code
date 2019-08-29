@@ -33,6 +33,7 @@
 #include "dwarf_alloc.h"
 #include "dwarf_error.h"
 #include "dwarf_util.h"
+#include "dwarf_abbrev.h"
 #include "memcpy_swap.h"
 #include "dwarf_die_deliv.h"
 #include "pro_encode_nm.h"
@@ -52,6 +53,22 @@
     do an endian-sensitive copy-word with a chosen
     source-length.  */
 typedef void (*endian_funcp_type)(void *, const void *,unsigned long);
+
+#if 0
+static void
+dump_bytes(char * msg,Dwarf_Small * start, long len)
+{
+    Dwarf_Small *end = start + len;
+    Dwarf_Small *cur = start;
+
+    printf("%s ",msg);
+    for (; cur < end; cur++) {
+        printf("%02x ", *cur);
+    }
+    printf("\n");
+}
+#endif
+
 
 endian_funcp_type
 dwarf_get_endian_copy_function(Dwarf_Debug dbg)
@@ -568,7 +585,8 @@ _dwarf_valid_form_we_know(UNUSEDARG Dwarf_Debug dbg,
 
     Returns DW_DLV_ERROR on error.  */
 int
-_dwarf_get_abbrev_for_code(Dwarf_CU_Context cu_context, Dwarf_Unsigned code,
+_dwarf_get_abbrev_for_code(Dwarf_CU_Context cu_context,
+    Dwarf_Unsigned code,
     Dwarf_Abbrev_List *list_out,
     Dwarf_Error *error)
 {
@@ -654,8 +672,11 @@ _dwarf_get_abbrev_for_code(Dwarf_CU_Context cu_context, Dwarf_Unsigned code,
             /*  In a DWP the abbrevs
                 for this context are known quite precisely. */
             Dwarf_Unsigned size = 0;
-            /* Ignore the offset returned. Already in cc_abbrev_offset. */
-            _dwarf_get_dwp_extra_offset(&cu_context->cc_dwp_offsets,
+
+            /*  Ignore the offset returned.
+                Already in cc_abbrev_offset. */
+            _dwarf_get_dwp_extra_offset(
+                &cu_context->cc_dwp_offsets,
                 DW_SECT_ABBREV,&size);
             /*  ASSERT: size != 0 */
             end_abbrev_ptr = abbrev_ptr + size;
@@ -685,12 +706,18 @@ _dwarf_get_abbrev_for_code(Dwarf_CU_Context cu_context, Dwarf_Unsigned code,
         unsigned new_hashable_val = 0;
         Dwarf_Off  abb_goff = 0;
         Dwarf_Unsigned atcount = 0;
+        Dwarf_Byte_Ptr abbrev_ptr2 = 0;
+        int res = 0;
 
         abb_goff = abbrev_ptr - dbg->de_debug_abbrev.dss_data;
         DECODE_LEB128_UWORD_CK(abbrev_ptr, abbrev_code,
             dbg,error,end_abbrev_ptr);
         DECODE_LEB128_UWORD_CK(abbrev_ptr, abbrev_tag,
             dbg,error,end_abbrev_ptr);
+        if (abbrev_tag > DW_TAG_hi_user) {
+            _dwarf_error(dbg, error,DW_DLE_TAG_CORRUPT);
+            return DW_DLV_ERROR;
+        }
 
         if (abbrev_ptr >= end_abbrev_ptr) {
             _dwarf_error(dbg, error, DW_DLE_ABBREV_OFF_END);
@@ -724,42 +751,13 @@ _dwarf_get_abbrev_for_code(Dwarf_CU_Context cu_context, Dwarf_Unsigned code,
 
         /*  Cycle thru the abbrev content, ignoring the content except
             to find the end of the content. */
-        {
-            Dwarf_Unsigned attr_name = 0;
-            Dwarf_Unsigned attr_form = 0;
-            do {
-                DECODE_LEB128_UWORD_CK(abbrev_ptr, attr_name,
-                    dbg,error,end_abbrev_ptr);
-                DECODE_LEB128_UWORD_CK(abbrev_ptr, attr_form,
-                    dbg,error,end_abbrev_ptr);
-                if (attr_form == DW_FORM_implicit_const) {
-                    UNUSEDARG Dwarf_Signed implicit_const = 0;
-                    /* The value is here, not in a DIE. */
-                    DECODE_LEB128_SWORD_CK(abbrev_ptr, implicit_const,
-                        dbg,error,end_abbrev_ptr);
-                }
-                if (!_dwarf_valid_form_we_know(
-                    dbg,attr_form,attr_name)) {
-                    _dwarf_error(dbg,error,DW_DLE_UNKNOWN_FORM);
-                    return DW_DLV_ERROR;
-                }
-                atcount++;
-            } while (attr_name != 0 && attr_form != 0);
+        res = _dwarf_count_abbrev_entries(dbg,abbrev_ptr,
+            end_abbrev_ptr,&atcount,&abbrev_ptr2,error);
+        if (res != DW_DLV_OK) {
+            return res;
         }
-        /*  We counted one too high, by counting the NUL
-            byte pair at end of list. So decrement. */
-        inner_list_entry->abl_count = atcount-1;
-
-        /*  The abbreviations table ends with an entry with a single
-            byte of zero for the abbreviation code.
-            Padding bytes following that zero are allowed, but
-            here we simply stop looking past that zero abbrev.
-
-            We also stop looking if the block/section ends,
-            though the DWARF2 and later standards do not specifically
-            allow section/block end to terminate an abbreviations
-            list. */
-
+        abbrev_ptr = abbrev_ptr2;
+        inner_list_entry->abl_count = atcount;
     } while ((abbrev_ptr < end_abbrev_ptr) &&
         *abbrev_ptr != 0 && abbrev_code != code);
 
@@ -769,6 +767,9 @@ _dwarf_get_abbrev_for_code(Dwarf_CU_Context cu_context, Dwarf_Unsigned code,
         *list_out = inner_list_entry;
         return DW_DLV_OK;
     }
+    /*  We cannot find an abbrev_code  matching code. ERROR
+        will be declared eventually.  Might be better to declare
+        specific errors here? */
     return DW_DLV_NO_ENTRY;
 }
 

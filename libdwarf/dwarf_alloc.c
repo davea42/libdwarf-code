@@ -236,13 +236,16 @@ struct ial_s alloc_instance_basics[ALLOC_AREA_INDEX_TABLE_MAX] = {
 
     /* 44 0x2c DW_DLA_HASH_TABLE_ENTRY */
     {sizeof(struct Dwarf_Hash_Table_Entry_s),MULTIPLY_CT,0,0 },
-    /* 0x2d - 0x2f, reserved for future internal use. */
 
-    /* 45 0x2d  DW_DLA_FISSION_PERCU  */
-    {sizeof(struct Dwarf_Fission_Per_CU_s),MULTIPLY_CT,  0, 0},
+    /* 45 0x2d  reserved for future use  */
+    {sizeof(int),MULTIPLY_NO,  0, 0},
 
+    /* 46 0x2e  reserved for future use  */
     {sizeof(int),MULTIPLY_NO,  0, 0}, /* reserved for future internal  types*/
+
+    /* 47 0x2f  reserved for future use  */
     {sizeof(int),MULTIPLY_NO,  0, 0}, /* reserved for future internal  types*/
+
     /* 0x30-0x36 reserved for future internal use. */
     {sizeof(int),MULTIPLY_NO,  0, 0}, /* reserved for future internal  types*/
     {sizeof(int),MULTIPLY_NO,  0, 0}, /* reserved for future internal  types*/

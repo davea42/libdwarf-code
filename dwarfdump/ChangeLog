@@ -1,3 +1,11 @@
+2019-08-29 David Anderson
+     * print_die.c: Minor corrections including printing
+       DW_AT_GNU_odr_signature more sensibly.
+       Corrected checks for signature consistency in
+       CU vs the .debug_[tc]u_ index section.
+       Some reformatting for consistency.
+     * print_lines.c: Remove a blank line.
+     * print_ranges.c: Remove some debugging-only code.
 2019-06-04 David Anderson
      * print_die.c: Removed inttypes.h include as nothing in it
        is referenced.

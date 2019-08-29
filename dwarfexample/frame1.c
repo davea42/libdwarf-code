@@ -62,6 +62,14 @@
 #ifdef HAVE_STDINT_H
 #include <stdint.h> /* For uintptr_t */
 #endif /* HAVE_STDINT_H */
+#ifdef _O_BINARY
+/*  This is for a Windows environment */
+#define O_BINARY _O_BINARY
+#else
+# ifndef O_BINARY
+# define O_BINARY 0  /* So it does nothing in Linux/Unix */
+# endif
+#endif /* O_BINARY */
 #include <string.h>     /* For strcmp* */
 #include <stdio.h>
 #include <errno.h>
@@ -120,7 +128,7 @@ main(int argc, char **argv)
         fd = 0; /* stdin */
     } else if (curopt == (argc-1)) {
         filepath = argv[curopt];
-        fd = open(filepath,O_RDONLY);
+        fd = open(filepath,O_RDONLY|O_BINARY);
     } else {
         printf("Too many args, giving up. \n");
         exit(1);

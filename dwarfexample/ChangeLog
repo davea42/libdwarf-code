@@ -1,3 +1,16 @@
+2019-09-29 David Anderson
+     * CMakeLists.txt: Adding findfuncbypc.c for cmake.
+     * Makefile.am: Adding findfuncbypc.c for build.
+       It builds, but ignore it it is not yet useful.
+     * Makefile.in: Regenerated
+     * frame1.c: Add O_BINARY so reads work ok
+       in Windows.
+2019-07-07 David Anderson
+     * findfuncbypc.c: New example. Which compiles
+       but as yet does absolutely nothing.
+     * CMakeLists.txt: cmake build of the new program.
+     * Makefile.am: For findfuncbypc build.
+     * Makefile.in: For findfuncbypc.
 2019-06-04 David Anderson
      * frame1.c,simplereader.c: Removed inttypes.h
        include as nothing in it is referenced.

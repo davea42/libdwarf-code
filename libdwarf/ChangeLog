@@ -1,3 +1,80 @@
+2019-08-29 David Anderson
+     * dwarf_abbrev.c: Added private function 
+       _dwarf_count_abbrev_entries() to eliminate some
+       duplicated code.
+       Added sanity checks for badly corrupted uleb
+       values.
+     * dwarf_abbrev.h: Reformatted LGPL text to fit
+       on lines better. No change to the text.
+       Added explanatory comments about the intent.
+       Added declaration of _dwarf_count_abbrev_entries().
+     * dwarf_alloc.c: Removed the never-used Dwarf_Fission_Per_CU_s
+       allocation type, marked that index as reserved.
+     * dwarf_base_types.h: Reformatted LGPL text to fit
+       on lines better. No change to the text.
+     * dwarf_die_deliv.c:  Reformatted LGPL text to fit
+       on lines better. No change to the text.
+       Removed some pointless/incorrect comments.
+       Refactored the _dwarf_make_CU_Context() code
+       with new called functions doing the major activities.
+       Now deals with DWARF5 everywhere (as well as
+       making it easier to understand split-dwarf support
+       (called 'fission' in libdwarf). Synthesize the
+       correct unit_type for all compilation units 
+       with version < 5. Fix mistaken/missing fission support.
+       Now GNU signatures are dealt with internally just
+       like DWARF5 signatures (by reading the CU die
+       up front as necessary). Deals with all the
+       base fields defined in DWARF5.
+       Fixed some small errors hiding real problems
+       in reporting corrupt DWARF.
+     * dwarf_errmsg_list.h: Added error codes
+       DW_DLE_MIXING_SPLIT_DWARF_VERSIONS,
+       DW_DLE_TAG_CORRUPT,DW_DLE_FORM_CORRUPT,
+       DW_DLE_ATTR_CORRUPT,
+       DW_DLE_ABBREV_ATTR_DUPLICATION,
+       DW_DLE_DWP_SIGNATURE_MISMATCH.
+       DW_DLE_CU_UT_TYPE_VALUE.
+     * dwarf_error.c:Reformatted a line.
+     * dwarf_form.c: Removed a pointless multi-line comment.
+       Reformatted a couple too-long lines.
+     * dwarf_loc.c: Simplified static function
+       context_is_cu_not_tu() dramatically.
+     * dwarf_loc2.h: Change reflects
+       context_is_cu_not_tu() simplification.
+     * dwarf_opaque.h:   Reformatted LGPL text to fit
+       on lines better. No change to the text.
+       Removed a three line useless comment.
+       Now refer to 'signature' not type_signature
+       to match DWARF5 usage. Added loclists_base
+       and cu_die_has_children to simplify some logic
+       elsewhere.
+       Removed unused *Fission* structs.
+       Added _dwarf_siblingof_internal() declaration.
+     * dwarf_query.c: Renaming some fields to match
+       changes in dwarf_opaque.h
+     * dwarf_ranges.c: Improve resilence in
+       dwarf_get_ranges_a().
+     * dwarf_tied.c: Rename to match dwarf_opaque.h
+       name changes.
+     * dwarf_util.c: Reformat a couple lines to fit better.
+       Add sanity check for the value of an abbrev TAG.
+       Calls _dwarf_count_abbrev_entries() instead of counting
+       itself.
+     * dwarf_xu_index.c: Fix internal functions
+       by adding an extra argument to 
+       _dwarf_get_debugfission_for_offset() so it can work
+       with DWARF4 or DWARF5.
+     * generated_libdwarf.h.in: Regenerated reflecting
+       libdwarf.h.in changes.
+     * libdwarf.h.in: Added the defines for the DW_DLE*
+       error values listed above.
+     * libdwarf2.1.mm: Clarified wording in
+       Address Range Operations section. Other minor
+       clarifications.
+     * libdwarf2.1.pdf: Version 2.74. Regenerated. 
+
+     
 2019-06-04 David Anderson
      * dwarf_alloc.c,dwarf_frame.c,dwarf_groups.c,
        dwarf_loc.c,dwarf_tied.c,dwarf_tied_test.c,

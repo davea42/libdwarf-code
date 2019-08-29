@@ -671,6 +671,15 @@ print_secname(Dwarf_Debug dbg,int is_info)
     }
 }
 
+static Dwarf_Bool
+empty_signature(const Dwarf_Sig8 *sigp)
+{
+    static const Dwarf_Sig8 zerosig;
+    if (memcmp(sigp,&zerosig,sizeof(zerosig))) {
+        return FALSE ; /* empty */
+    }
+    return TRUE;
+}
 
 /*   */
 static int
@@ -715,6 +724,10 @@ print_one_die_section(Dwarf_Debug dbg,Dwarf_Bool is_info,
         int fission_data_result = 0;
         Dwarf_Half cu_type = 0;
 
+        /*  glflags.DIE_overall_offset: in case
+            dwarf_next_cu_header_d fails due
+            to corrupt dwarf. */
+        glflags.DIE_overall_offset = dieprint_cu_goffset;
         memset(&fission_data,0,sizeof(fission_data));
         nres = dwarf_next_cu_header_d(dbg,
             is_info,
@@ -732,8 +745,10 @@ print_one_die_section(Dwarf_Debug dbg,Dwarf_Bool is_info,
         if (nres == DW_DLV_NO_ENTRY) {
             return nres;
         }
-
-        if (nres != DW_DLV_OK) {
+        if (nres == DW_DLV_ERROR) {
+            /*  With corrupt DWARF due to a bad CU die
+                we won't know much. */
+            print_error_and_continue(dbg, "Failure reading CU header or DIE, corrupt DWARF", nres, *pod_err);
             return nres;
         }
         if (cu_count >= glflags.break_after_n_units) {
@@ -835,14 +850,14 @@ print_one_die_section(Dwarf_Debug dbg,Dwarf_Bool is_info,
                 print_cu_hdr_std(cu_header_length,abbrev_offset,
                     version_stamp,address_size,length_size,
                     fission_data_result,cu_type,&fission_data);
-                if (cu_type == DW_UT_type) {
+                if (!empty_signature(&signature)) {
                     print_cu_hdr_signature(&signature,typeoffset);
                 }
                 if (glflags.dense) {
                     printf("\n");
                 }
             } else {
-                if (cu_type == DW_UT_type) {
+                if (!empty_signature(&signature)) {
                     if (glflags.dense) {
                         printf("<%s>", "cu_header");
                     } else {
@@ -867,7 +882,9 @@ print_one_die_section(Dwarf_Debug dbg,Dwarf_Bool is_info,
                 Dwarf_Signed cnt = 0;
                 char **srcfiles = 0;
                 Dwarf_Error srcerr = 0;
-                int srcf = dwarf_srcfiles(cu_die,
+                int srcf =  0;
+
+                srcf = dwarf_srcfiles(cu_die,
                     &srcfiles, &cnt, &srcerr);
                 if (srcf == DW_DLV_ERROR) {
                     print_error_and_continue(dbg, "dwarf_srcfiles",
@@ -876,10 +893,12 @@ print_one_die_section(Dwarf_Debug dbg,Dwarf_Bool is_info,
                     srcerr = 0;
                     srcfiles = 0;
                     cnt = 0;
-                } /*DW_DLV_NO_ENTRY generally means there
+                } else if (srcf == DW_DLV_NO_ENTRY) {
+                    /*DW_DLV_NO_ENTRY generally means there
                     there is no dW_AT_stmt_list attribute.
                     and we do not want to print anything
                     about statements in that case */
+                }
 
                 /* Get the CU offset for easy error reporting */
                 dwarf_die_offsets(cu_die,&glflags.DIE_overall_offset,
@@ -911,6 +930,7 @@ print_one_die_section(Dwarf_Debug dbg,Dwarf_Bool is_info,
             /*  Traverse the line section if in check mode
                 or if line-printing requested */
             if (glflags.gf_line_flag || glflags.gf_check_decl_file) {
+
                 int oldsection = glflags.current_section_id;
                 print_line_numbers_this_cu(dbg, cu_die);
                 glflags.current_section_id = oldsection;
@@ -1031,6 +1051,8 @@ print_die_and_children_internal(Dwarf_Debug dbg,
                     DWARF_CHECK_ERROR(tag_tree_result,
                         "Tag-tree root tag unavailable: "
                         "is not DW_TAG_compile_unit");
+                } else if (tag == DW_TAG_skeleton_unit) {
+                    /* OK */
                 } else if (tag == DW_TAG_compile_unit) {
                     /* OK */
                 } else if (tag == DW_TAG_partial_unit) {
@@ -2227,10 +2249,9 @@ print_range_attribute(Dwarf_Debug dbg,
             } else if ( glflags.gf_do_print_dwarf) {
                 printf("\ndwarf_get_ranges() "
                     "cannot find DW_AT_ranges at offset 0x%"
-                    DW_PR_XZEROS DW_PR_DUx
-                    " (0x%" DW_PR_XZEROS DW_PR_DUx ").",
+                    DW_PR_XZEROS DW_PR_DUx "). %s\n",
                     original_off,
-                    original_off);
+                    dwarf_errmsg(raerr));
             } else {
                 DWARF_CHECK_COUNT(ranges_result,1);
                 DWARF_CHECK_ERROR2(ranges_result,
@@ -3493,17 +3514,21 @@ print_attribute(Dwarf_Debug dbg, Dwarf_Die die,
                 Dwarf_Die ref_die = 0;
 
                 ResetBucketGroup(glflags.pVisitedInfo);
-                AddEntryIntoBucketGroup(glflags.pVisitedInfo,die_goff,0,0,0,
+                AddEntryIntoBucketGroup(glflags.pVisitedInfo,
+                    die_goff,0,0,0,
                     NULL,FALSE);
 
-                /* Follow reference chain, looking for self references */
-                res = dwarf_offdie_b(dbg,ref_goff,is_info,&ref_die,&paerr);
+                /*  Follow reference chain, looking for
+                    self references */
+                res = dwarf_offdie_b(dbg,ref_goff,is_info,
+                    &ref_die,&paerr);
                 if (res == DW_DLV_OK) {
                     Dwarf_Off ref_die_cu_goff = 0;
                     Dwarf_Off die_loff = 0; /* CU-relative. */
 
                     if (dump_visited_info) {
-                        res = dwarf_die_CU_offset(die, &die_loff, &paerr);
+                        res = dwarf_die_CU_offset(die, &die_loff,
+                            &paerr);
                         DROP_ERROR_INSTANCE(dbg,res,paerr);
                         do_dump_visited_info(die_indent_level,
                             die_loff,die_goff,
@@ -5430,7 +5455,8 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
         }
 
         if (glflags.gf_check_type_offset) {
-            if (attr == DW_AT_type && form_refers_local_info(theform)) {
+            if (attr == DW_AT_type &&
+                form_refers_local_info(theform)) {
                 dres = dwarf_offdie_b(dbg, goff,
                     is_info,
                     &die_for_check, &referr);
@@ -5642,6 +5668,7 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
                 }
                 break;
             case DW_AT_GNU_dwo_id:
+            case DW_AT_GNU_odr_signature:
             case DW_AT_dwo_id:
                 {
                 Dwarf_Sig8 v;

@@ -130,7 +130,7 @@ _dwarf_loop_reading_debug_info_for_cu(
     /*  We will not find tied signatures
         for .debug_addr (or line tables) in .debug_types.
         it seems. Those signatures point from
-        'normal' to 'dwo/dwp'  */
+        'normal' to 'dwo/dwp'  (DWARF4) */
     int is_info = TRUE;
     Dwarf_CU_Context startingcontext = 0;
     Dwarf_Unsigned next_cu_offset = 0;
@@ -179,7 +179,7 @@ _dwarf_loop_reading_debug_info_for_cu(
         if (has_signature) {
             void *retval = 0;
             Dwarf_Sig8 consign =
-                latestcontext->cc_type_signature;
+                latestcontext->cc_signature;
             void *entry =
                 _dwarf_tied_make_entry(&consign,latestcontext);
 
@@ -253,7 +253,6 @@ _dwarf_search_for_signature(Dwarf_Debug tieddbg,
     if (res == DW_DLV_ERROR) {
         return res;
     }
-
     entry2 = dwarf_tfind(&entry,
         &tied->td_tied_search,
         _dwarf_tied_compare_function);

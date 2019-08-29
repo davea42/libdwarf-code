@@ -29,12 +29,13 @@
 
     This is DebugFission, part of DWARF5.
 
-    It allows properly reading a .dwp object file
-    with debug-information (no code).
+    It allows fast section access in a .dwp object file
+    with debug-information to locate offsets
+    within and between sections.
+
+    See the DWARF5 Standard: section 7.3.5 and
+    examples in Appendix F.3.
 */
-
-
-
 #include "config.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -54,6 +55,35 @@
 /* zerohashkey used as all-zero-bits for comparison. */
 static Dwarf_Sig8 zerohashkey;
 
+#if 0
+static void
+dump_bytes(char * msg,Dwarf_Small * start, long len)
+{
+    Dwarf_Small *end = start + len;
+    Dwarf_Small *cur = start;
+
+    printf("%s ",msg);
+    for (; cur < end; cur++) {
+        printf("%02x ", *cur);
+    }
+    printf("\n");
+}
+#endif
+
+
+/*  Read in a cu or tu section and
+    return overview information.
+    dwarf_init*() calls
+    dwarf_get_xu_index_header() when
+    the object file is opened, there is
+    no need for users to do this.
+
+    The loaded data is kept in Dwarf_Debug
+    de_cu_hashindex_data/de_tu_hashindex_data.
+
+    dwarf_finish() calls dwarf_xu_header_free()
+    users should not.
+*/
 int
 dwarf_get_xu_index_header(Dwarf_Debug dbg,
     /* Pass in section_type "tu" or "cu" */
@@ -421,6 +451,9 @@ _dwarf_search_fission_for_key(UNUSEDARG Dwarf_Debug dbg,
 
 /* Slow. Consider tsearch. */
 /* For type units and for CUs. */
+/* We're finding an index entry refers
+   to a global offset in some CU
+   and hence is unique in the target. */
 static int
 _dwarf_search_fission_for_offset(Dwarf_Debug dbg,
     Dwarf_Xu_Index_Header xuhdr,
@@ -558,6 +591,7 @@ transform_xu_to_dfp(Dwarf_Xu_Index_Header xuhdr,
 int
 _dwarf_get_debugfission_for_offset(Dwarf_Debug dbg,
     Dwarf_Off    offset_wanted,
+    const char * key_type, /*  "cu" or "tu" */
     struct Dwarf_Debug_Fission_Per_CU_s *  percu_out,
     Dwarf_Error *error)
 {
@@ -565,11 +599,11 @@ _dwarf_get_debugfission_for_offset(Dwarf_Debug dbg,
     int sres = 0;
     Dwarf_Unsigned percu_index = 0;
     Dwarf_Unsigned sect_index_base = 0;
-    const char * key_type = "cu";
     Dwarf_Sig8 key;
 
     sect_index_base = DW_SECT_INFO;
 
+    memset(&key,0,sizeof(key));
     sres = _dwarf_get_xuhdr(dbg,key_type, &xuhdr,error);
     if (sres != DW_DLV_OK) {
         return sres;
@@ -607,11 +641,13 @@ dwarf_get_debugfission_for_key(Dwarf_Debug dbg,
         return sres;
     }
 
+    /*  Returns already existing xuhdr */
     sres = _dwarf_get_xuhdr(dbg,key_type, &xuhdr,error);
     if (sres != DW_DLV_OK) {
         return sres;
     }
 
+    /*  Search in that xu data. */
     sres = _dwarf_search_fission_for_key(dbg,
         xuhdr,key,&percu_index,error);
     if (sres != DW_DLV_OK) {

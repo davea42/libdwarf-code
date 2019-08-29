@@ -91,7 +91,8 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-bin_PROGRAMS = simplereader$(EXEEXT) frame1$(EXEEXT)
+bin_PROGRAMS = simplereader$(EXEEXT) frame1$(EXEEXT) \
+	findfuncbypc$(EXEEXT)
 subdir = dwarfexample
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/dw_compiler.m4 \
@@ -107,15 +108,22 @@ CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)"
 PROGRAMS = $(bin_PROGRAMS)
-am_frame1_OBJECTS = frame1-frame1.$(OBJEXT)
-frame1_OBJECTS = $(am_frame1_OBJECTS)
+am_findfuncbypc_OBJECTS = findfuncbypc-findfuncbypc.$(OBJEXT)
+findfuncbypc_OBJECTS = $(am_findfuncbypc_OBJECTS)
 am__DEPENDENCIES_1 =
-frame1_DEPENDENCIES = $(top_builddir)/libdwarf/libdwarf.la \
+findfuncbypc_DEPENDENCIES = $(top_builddir)/libdwarf/libdwarf.la \
 	$(am__DEPENDENCIES_1)
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
 am__v_lt_0 = --silent
 am__v_lt_1 = 
+findfuncbypc_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(findfuncbypc_CFLAGS) \
+	$(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
+am_frame1_OBJECTS = frame1-frame1.$(OBJEXT)
+frame1_OBJECTS = $(am_frame1_OBJECTS)
+frame1_DEPENDENCIES = $(top_builddir)/libdwarf/libdwarf.la \
+	$(am__DEPENDENCIES_1)
 frame1_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(frame1_CFLAGS) $(CFLAGS) \
 	$(AM_LDFLAGS) $(LDFLAGS) -o $@
@@ -160,8 +168,10 @@ AM_V_CCLD = $(am__v_CCLD_@AM_V@)
 am__v_CCLD_ = $(am__v_CCLD_@AM_DEFAULT_V@)
 am__v_CCLD_0 = @echo "  CCLD    " $@;
 am__v_CCLD_1 = 
-SOURCES = $(frame1_SOURCES) $(simplereader_SOURCES)
-DIST_SOURCES = $(frame1_SOURCES) $(simplereader_SOURCES)
+SOURCES = $(findfuncbypc_SOURCES) $(frame1_SOURCES) \
+	$(simplereader_SOURCES)
+DIST_SOURCES = $(findfuncbypc_SOURCES) $(frame1_SOURCES) \
+	$(simplereader_SOURCES)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -337,6 +347,14 @@ frame1_CFLAGS = $(DWARF_CFLAGS_WARN)
 frame1_LDADD = $(top_builddir)/libdwarf/libdwarf.la \
 $(DWARF_LIBS)
 
+findfuncbypc_SOURCES = findfuncbypc.c
+findfuncbypc_CPPFLAGS = -I$(top_srcdir)/libdwarf \
+  -I$(top_builddir)/libdwarf
+
+findfuncbypc_CFLAGS = $(DWARF_CFLAGS_WARN)
+findfuncbypc_LDADD = $(top_builddir)/libdwarf/libdwarf.la \
+$(DWARF_LIBS)
+
 EXTRA_DIST = \
 ChangeLog \
 ChangeLog2009 \
@@ -348,6 +366,7 @@ ChangeLog2014 \
 ChangeLog2015 \
 ChangeLog2016 \
 ChangeLog2017 \
+ChangeLog2018 \
 CMakeLists.txt \
 NEWS \
 $(dwarfexample_DATA)
@@ -435,6 +454,10 @@ clean-binPROGRAMS:
 	echo " rm -f" $$list; \
 	rm -f $$list
 
+findfuncbypc$(EXEEXT): $(findfuncbypc_OBJECTS) $(findfuncbypc_DEPENDENCIES) $(EXTRA_findfuncbypc_DEPENDENCIES) 
+	@rm -f findfuncbypc$(EXEEXT)
+	$(AM_V_CCLD)$(findfuncbypc_LINK) $(findfuncbypc_OBJECTS) $(findfuncbypc_LDADD) $(LIBS)
+
 frame1$(EXEEXT): $(frame1_OBJECTS) $(frame1_DEPENDENCIES) $(EXTRA_frame1_DEPENDENCIES) 
 	@rm -f frame1$(EXEEXT)
 	$(AM_V_CCLD)$(frame1_LINK) $(frame1_OBJECTS) $(frame1_LDADD) $(LIBS)
@@ -449,6 +472,7 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/findfuncbypc-findfuncbypc.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/frame1-frame1.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/simplereader-simplereader.Po@am__quote@
 
@@ -475,6 +499,20 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LTCOMPILE) -c -o $@ $<
+
+findfuncbypc-findfuncbypc.o: findfuncbypc.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(findfuncbypc_CPPFLAGS) $(CPPFLAGS) $(findfuncbypc_CFLAGS) $(CFLAGS) -MT findfuncbypc-findfuncbypc.o -MD -MP -MF $(DEPDIR)/findfuncbypc-findfuncbypc.Tpo -c -o findfuncbypc-findfuncbypc.o `test -f 'findfuncbypc.c' || echo '$(srcdir)/'`findfuncbypc.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/findfuncbypc-findfuncbypc.Tpo $(DEPDIR)/findfuncbypc-findfuncbypc.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='findfuncbypc.c' object='findfuncbypc-findfuncbypc.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(findfuncbypc_CPPFLAGS) $(CPPFLAGS) $(findfuncbypc_CFLAGS) $(CFLAGS) -c -o findfuncbypc-findfuncbypc.o `test -f 'findfuncbypc.c' || echo '$(srcdir)/'`findfuncbypc.c
+
+findfuncbypc-findfuncbypc.obj: findfuncbypc.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(findfuncbypc_CPPFLAGS) $(CPPFLAGS) $(findfuncbypc_CFLAGS) $(CFLAGS) -MT findfuncbypc-findfuncbypc.obj -MD -MP -MF $(DEPDIR)/findfuncbypc-findfuncbypc.Tpo -c -o findfuncbypc-findfuncbypc.obj `if test -f 'findfuncbypc.c'; then $(CYGPATH_W) 'findfuncbypc.c'; else $(CYGPATH_W) '$(srcdir)/findfuncbypc.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/findfuncbypc-findfuncbypc.Tpo $(DEPDIR)/findfuncbypc-findfuncbypc.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='findfuncbypc.c' object='findfuncbypc-findfuncbypc.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(findfuncbypc_CPPFLAGS) $(CPPFLAGS) $(findfuncbypc_CFLAGS) $(CFLAGS) -c -o findfuncbypc-findfuncbypc.obj `if test -f 'findfuncbypc.c'; then $(CYGPATH_W) 'findfuncbypc.c'; else $(CYGPATH_W) '$(srcdir)/findfuncbypc.c'; fi`
 
 frame1-frame1.o: frame1.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(frame1_CPPFLAGS) $(CPPFLAGS) $(frame1_CFLAGS) $(CFLAGS) -MT frame1-frame1.o -MD -MP -MF $(DEPDIR)/frame1-frame1.Tpo -c -o frame1-frame1.o `test -f 'frame1.c' || echo '$(srcdir)/'`frame1.c

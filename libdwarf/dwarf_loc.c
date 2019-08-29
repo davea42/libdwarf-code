@@ -1138,25 +1138,16 @@ _dwarf_cleanup_llbuf(Dwarf_Debug dbg, Dwarf_Locdesc ** llbuf, int count)
 
 static int
 context_is_cu_not_tu(Dwarf_CU_Context context,
-    Dwarf_Bool *r,Dwarf_Error *err)
+    Dwarf_Bool *r)
 {
-    Dwarf_Debug dbg = 0;
-    if(context->cc_unit_type == DW_UT_type) {
+    int ut = context->cc_unit_type;
+
+    if (ut == DW_UT_type || ut == DW_UT_split_type ) {
         *r =FALSE;
         return DW_DLV_OK;
     }
-    if(context->cc_unit_type == DW_UT_compile) {
-        *r = TRUE;
-        return DW_DLV_OK;
-    }
-    if(context->cc_unit_type == DW_UT_partial) {
-        *r = TRUE;
-        return DW_DLV_OK;
-    }
-    /* This should be impossible */
-    dbg = context->cc_dbg;
-    _dwarf_error(dbg,err, DW_DLE_NO_TIED_FILE_AVAILABLE);
-    return DW_DLV_ERROR;
+    *r = TRUE;
+    return DW_DLV_OK;
 }
 
 /*  Handles simple location entries and loclists.
@@ -1228,7 +1219,7 @@ dwarf_loclist_n(Dwarf_Attribute attr,
         int loclist_count = 0;
         int lli = 0;
 
-        setup_res = context_is_cu_not_tu(cucontext,&is_cu,error);
+        setup_res = context_is_cu_not_tu(cucontext,&is_cu);
         if(setup_res != DW_DLV_OK) {
             return setup_res;
         }

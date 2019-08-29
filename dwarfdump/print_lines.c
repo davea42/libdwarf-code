@@ -727,7 +727,6 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
 
     /* line_flag is TRUE */
 
-
     lres = dwarf_get_line_section_name_from_die(cu_die,
         &sec_name,&err);
     if (lres != DW_DLV_OK || !sec_name || !strlen(sec_name)) {

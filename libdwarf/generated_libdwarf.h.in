@@ -214,10 +214,13 @@ typedef struct {
         where loc-expr begins*/
 } Dwarf_Locdesc;
 
-/*  First appears in DWARF3.
+/*  First appears in DWARF3, and only ranges entries exist.
     The dwr_addr1/addr2 data is either an offset (DW_RANGES_ENTRY)
     or an address (dwr_addr2 in DW_RANGES_ADDRESS_SELECTION) or
     both are zero (DW_RANGES_END).
+    For DWARF5 each table starts with a header
+    followed by range list entries defined
+    as here.
 */
 enum Dwarf_Ranges_Entry_Type { DW_RANGES_ENTRY,
     DW_RANGES_ADDRESS_SELECTION,
@@ -1358,9 +1361,16 @@ struct Dwarf_Obj_Access_Interface_s {
 #define DW_DLE_READ_OFF_END                    445
 #define DW_DLE_ELF_SECTION_ERROR               446
 #define DW_DLE_ELF_STRING_SECTION_ERROR        447
+#define DW_DLE_MIXING_SPLIT_DWARF_VERSIONS     448
+#define DW_DLE_TAG_CORRUPT                     449
+#define DW_DLE_FORM_CORRUPT                    450
+#define DW_DLE_ATTR_CORRUPT                    451
+#define DW_DLE_ABBREV_ATTR_DUPLICATION         452
+#define DW_DLE_DWP_SIGNATURE_MISMATCH          453
+#define DW_DLE_CU_UT_TYPE_VALUE                454
 
-    /* LAST MUST EQUAL LAST ERROR NUMBER */   
-#define DW_DLE_LAST        447
+    /* LAST MUST EQUAL LAST ERROR NUMBER */
+#define DW_DLE_LAST        454
 
 #define DW_DLE_LO_USER     0x10000
 
@@ -2484,7 +2494,7 @@ int dwarf_debugnames_entrypool_values(Dwarf_Dnames_Head /*dn*/,
 
 
 /*  global name space operations (.debug_pubnames access)
- *  The pubnames and similar sections are rarely used. Few compilers
+    The pubnames and similar sections are rarely used. Few compilers
     emit them. They are DWARF 2,3,4 only., not DWARF 5.  */
 
 /*  New March 2019. Mostly special for dwarfdump. */
@@ -4234,7 +4244,7 @@ void dwarf_dealloc_compressed_block(
     void *
 );
 
-/*  Call this passing in return value from 
+/*  Call this passing in return value from
     dwarf_uncompress_integer_block()
     to free the space the decompression allocated. */
 void dwarf_dealloc_uncompressed_block(
@@ -4242,13 +4252,13 @@ void dwarf_dealloc_uncompressed_block(
     void *
 );
 
-/*  dwarf_compress_integer_block_a( new 11 February 2019. 
+/*  dwarf_compress_integer_block_a( new 11 February 2019.
     Like the earlier version this turns an array of signed
     integers into a block of sleb values (and if the
     values are small enough it might be a compression!
     Or it could be an expansion...). Return DW_DLV_OK
     on success. Supercedes dwarf_compress_integer_block():
-    as no ugly cast needed to know if 
+    as no ugly cast needed to know if
     dwarf_compress_integer_block_a() succeeds or not. */
 int
 dwarf_compress_integer_block_a(
@@ -4274,7 +4284,7 @@ void * dwarf_compress_integer_block(
     from the block of sleb numbers.
     This interface supercedes
     dwarf_uncompress_integer_block(). No ugly
-    cast needed to know if 
+    cast needed to know if
     dwarf_uncompress_integer_block_a() succeeds or not. */
 int
 dwarf_uncompress_integer_block_a(Dwarf_Debug /*dbg*/,
@@ -4294,7 +4304,7 @@ dwarf_uncompress_integer_block_a(Dwarf_Debug /*dbg*/,
     Size of integer units must be 32 (32 bits each) at this time.
     Number of bytes in block is a byte count (not array count).
     Returns number of units in output block (ie, number of elements
-    of the array that the return value points to) thru the 
+    of the array that the return value points to) thru the
     argument.  */
 void * dwarf_uncompress_integer_block(
     Dwarf_Debug,      /*dbg */
