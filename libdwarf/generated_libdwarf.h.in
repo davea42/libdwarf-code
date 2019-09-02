@@ -2730,6 +2730,7 @@ int dwarf_get_abbrev_tag(Dwarf_Abbrev /*abbrev*/,
 int dwarf_get_abbrev_code(Dwarf_Abbrev /*abbrev*/,
     Dwarf_Unsigned*  /*return_code_number*/,
     Dwarf_Error*     /*error*/);
+
 /* See comments in dwarf_abbrev.c. Not an entirely safe function. */
 int dwarf_get_abbrev_count(Dwarf_Debug /*dbg*/);
 
@@ -2737,6 +2738,23 @@ int dwarf_get_abbrev_children_flag(Dwarf_Abbrev /*abbrev*/,
     Dwarf_Signed*    /*return_flag*/,
     Dwarf_Error*     /*error*/);
 
+/*  New August 2019. 
+    Most uses will call with filter_outliers non-zero.
+    In that case impossible values return DW_DLV_ERROR.
+    Those doing extra things (like dwarfdump) will
+    call with filter_outliers zero to get the raw data
+    (effectively); */
+int dwarf_get_abbrev_entry_b(Dwarf_Abbrev abbrev,
+    Dwarf_Unsigned indx,
+    Dwarf_Bool     filter_outliers,
+    Dwarf_Unsigned * returned_attr_num,
+    Dwarf_Unsigned * returned_form,
+    Dwarf_Signed   * returned_implict_const,
+    Dwarf_Off      * offset,
+    Dwarf_Error    * error);
+
+/*  Obsolete because it cannot return the DW_FORM_implicit_const 
+    value. */
 int dwarf_get_abbrev_entry(Dwarf_Abbrev /*abbrev*/,
     Dwarf_Signed     /*index*/,
     Dwarf_Half  *    /*returned_attr_num*/,

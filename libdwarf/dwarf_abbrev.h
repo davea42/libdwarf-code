@@ -53,6 +53,12 @@ struct Dwarf_Abbrev_s {
     Dwarf_Off    dab_goffset;
     /* dab_count is the number of attr/form uleb pairs */
     Dwarf_Off    dab_count;
+
+    /*  When the caller cycles through attr/form pairs
+        by index from zero this lets the code read just one
+        pair to work. */
+    Dwarf_Byte_Ptr dab_next_ptr;
+    Dwarf_Unsigned dab_next_index;
 };
 
 int _dwarf_count_abbrev_entries(Dwarf_Debug dbg,

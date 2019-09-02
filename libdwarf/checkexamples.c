@@ -1619,3 +1619,13 @@ void examplezb(void)
             uninitialized.  Do not use it. */
     }
 }
+
+
+void exampleab(Dwarf_Debug dbg)
+{
+
+    
+
+
+}
+

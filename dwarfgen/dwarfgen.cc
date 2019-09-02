@@ -158,39 +158,6 @@
 #endif
 #endif /* _WIN32 */
 
-//  There are issues 32/64 here, but both are host endianness,
-//  no byte swapping called for.
-//  op and ol aread MUST NOT overlap.
-//  ip and il should be 2,4,or 8. Nothing else.
-//  These could perfectly well be functions.
-#ifdef WORDS_BIGENDIAN
-#define ASNX(op,ol,ip,il)           \
-    do {                            \
-        if( ol > il) {              \
-            unsigned sbyte = 0;     \
-            memset(op,0,ol);        \
-            sbyte = ol - il;        \
-            memcpy(((char *)(op))+sbyte,(const void *)(ip),il);\
-        } else {                    \
-            unsigned sbyte = 0;     \
-            sbyte = il - ol;        \
-            memcpy((char *)(op),      \
-                (const void *)(((const char *)(ip))+sbyte),ol);\
-        }                           \
-    } while (0)
-#else // LITTLEENDIAN
-#define ASNX(op,ol,ip,il)           \
-    do {                            \
-        if( ol > il) {              \
-            memset(op,0,ol);        \
-            memcpy(((char *)(op)),(const void *)(ip),il);\
-        } else {                    \
-            memcpy((char *)(op),      \
-                (const void *)(((const char *)(ip))),ol);\
-        }                           \
-    } while (0)
-#endif // ENDIANNESS
-
 using std::string;
 using std::cout;
 using std::cerr;
@@ -209,6 +176,81 @@ static int CallbackFunc(
     int*                error);
 }
 // End extern "C"
+
+// FIXME. This is incomplete. See FIXME just below here.
+#ifdef WORDS_BIGENDIAN
+static void
+_dwarf_memcpy_swap_bytes(void *s1, const void *s2, unsigned long len)
+{
+    unsigned char *targ = (unsigned char *) s1;
+    const unsigned char *src = (const unsigned char *) s2;
+
+    if (len == 4) {
+        targ[3] = src[0];
+        targ[2] = src[1];
+        targ[1] = src[2];
+        targ[0] = src[3];
+    } else if (len == 8) {
+        targ[7] = src[0];
+        targ[6] = src[1];
+        targ[5] = src[2];
+        targ[4] = src[3];
+        targ[3] = src[4];
+        targ[2] = src[5];
+        targ[1] = src[6];
+        targ[0] = src[7];
+    } else if (len == 2) {
+        targ[1] = src[0];
+        targ[0] = src[1];
+    }
+/* should NOT get below here: is not the intended use */
+    else if (len == 1) {
+        targ[0] = src[0];
+    } else {
+        memcpy(s1, s2, (size_t)len);
+    }
+    return;
+}
+#endif /* WORDS_BIGENDIAN */
+
+//  There are issues 32/64 here, and endianness.
+//  We are asserting here in dwarfgen that the target
+//  object created is to be DW_DLC_TARGET_LITTLEENDIAN.
+//  FIXME. not general.
+//  op and ol aread MUST NOT overlap.
+//  ip and il should be 2,4,or 8. Nothing else.
+//  These could perfectly well be functions.
+#ifdef WORDS_BIGENDIAN
+#define ASNX(op,ol,ip,il)           \
+    do {                            \
+        if( ol > il) {              \
+            unsigned sbyte = 0;     \
+            memset(op,0,ol);        \
+            sbyte = ol - il;        \
+            _dwarf_memcpy_swap_bytes(((char *)(op))+sbyte,\
+                (const void *)(ip),il);\
+        } else {                    \
+            unsigned sbyte = 0;     \
+            sbyte = il - ol;        \
+            _dwarf_memcpy_swap_bytes((char *)(op),      \
+                (const void *)(((const char *)(ip))+sbyte),ol);\
+        }                           \
+    } while (0)
+#else // LITTLEENDIAN
+#define ASNX(op,ol,ip,il)           \
+    do {                            \
+        if( ol > il) {              \
+            memset(op,0,ol);        \
+            memcpy(((char *)(op)),(const void *)(ip),il);\
+        } else {                    \
+            memcpy((char *)(op),      \
+                (const void *)(((const char *)(ip))),ol);\
+        }                           \
+    } while (0)
+#endif // ENDIANNESS
+
+
+
 
 static void write_object_file(Dwarf_P_Debug dbg, IRepresentation &irep);
 static void write_text_section(Elf * elf);
@@ -893,6 +935,21 @@ FindSymbolValue(ElfSymIndex symi,IRepresentation &irep)
     Dwarf_Unsigned symv = es.getSymbolValue();
     return symv;
 }
+
+#if 0
+static int
+dump_bytes(const char *msg,void *val,int len)
+{
+    char *p = (char *)val;
+    int i = 0;
+    cout << msg << " ";
+    for (; i < len; ++i) {
+        char x = *(p+i);
+        cout << IToHex(x,2) <<" ";
+    }
+    cout << endl;
+}
+#endif
 
 /* Lets not assume that the quantities are aligned. */
 static void

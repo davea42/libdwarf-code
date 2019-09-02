@@ -854,8 +854,7 @@ int _dwarf_get_ranges_base_attr_from_tied(Dwarf_Debug dbg,
 int _dwarf_get_string_from_tied(Dwarf_Debug dbg, Dwarf_Unsigned offset,
     char **return_str, Dwarf_Error*error);
 
-int _dwarf_valid_form_we_know(Dwarf_Debug dbg,
-    Dwarf_Unsigned at_form,
+int _dwarf_valid_form_we_know(Dwarf_Unsigned at_form,
     Dwarf_Unsigned at_name);
 int _dwarf_extract_local_debug_str_string_given_offset(Dwarf_Debug dbg,
     unsigned attrform,

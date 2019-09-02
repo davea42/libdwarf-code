@@ -32,6 +32,9 @@
 #include "dwarf_error.h"
 #include "dwarf_util.h"
 
+#define TRUE 1
+#define FALSE 0
+
 /*  This is used to print a .debug_abbrev section without
     knowing about the DIEs that use the abbrevs.
 
@@ -88,7 +91,7 @@ _dwarf_count_abbrev_entries(Dwarf_Debug dbg,
         }
         DECODE_LEB128_UWORD_CK(abbrev_ptr, attr_form,
             dbg,error,abbrev_section_end);
-        if (!_dwarf_valid_form_we_know(dbg,attr_form,attr_name)) {
+        if (!_dwarf_valid_form_we_know(attr_form,attr_name)) {
             _dwarf_error(dbg, error, DW_DLE_UNKNOWN_FORM);
             return (DW_DLV_ERROR);
         }
@@ -187,6 +190,9 @@ dwarf_get_abbrev(Dwarf_Debug dbg,
     }
     ret_abbrev->dab_has_child = *(abbrev_ptr++);
     ret_abbrev->dab_abbrev_ptr = abbrev_ptr;
+    ret_abbrev->dab_next_ptr = abbrev_ptr;
+    ret_abbrev->dab_next_index = 0;
+    
 
     res = _dwarf_count_abbrev_entries(dbg,abbrev_ptr,
         abbrev_section_end,&labbr_count,&abbrev_ptr_out,error);
@@ -266,25 +272,76 @@ dwarf_get_abbrev_children_flag(Dwarf_Abbrev abbrev,
 int
 dwarf_get_abbrev_entry(Dwarf_Abbrev abbrev,
     Dwarf_Signed indx,
-    Dwarf_Half * returned_attr_num,
-    Dwarf_Signed * form,
-    Dwarf_Off * offset, Dwarf_Error * error)
+    Dwarf_Half   * returned_attr_num,
+    Dwarf_Signed * returned_form,
+    Dwarf_Off    * returned_offset, 
+    Dwarf_Error * error)
+{
+    int res;
+    Dwarf_Unsigned attr = 0;
+    Dwarf_Unsigned form = 0;
+    Dwarf_Signed implicitconst = 0;
+    Dwarf_Unsigned uindex = (Dwarf_Unsigned)indx;
+    Dwarf_Bool filter_outliers = TRUE;
+  
+    res = dwarf_get_abbrev_entry_b(abbrev,
+          uindex,
+          filter_outliers,
+          &attr,
+          &form,
+          &implicitconst,
+          returned_offset,
+          error);
+    if (res != DW_DLV_OK) {
+        return res;
+    }
+    /* returned_offset already set by dwarf_get_abbrev_entry_b; */
+    if (returned_attr_num) {
+        *returned_attr_num = (Dwarf_Half)attr;
+    }
+    if (returned_form) {
+        *returned_form = (Dwarf_Signed)form;
+    }
+    return DW_DLV_OK;
+}
+
+/*  If filter_outliers is non-zero then
+    the routine will return DW_DLV_ERROR
+    if the leb reading generates a number that
+    is so large it cannot be correct.
+
+    If filter_outliers is 0 the uleb/sleb
+    values read are returned, even if
+    the values are unreasonable. This is
+    a useful option if one wishes to 
+    have callers examine the return values
+    in greater detail than the checking here
+    provides.
+
+*/
+int
+dwarf_get_abbrev_entry_b(Dwarf_Abbrev abbrev,
+    Dwarf_Unsigned indx,
+    Dwarf_Bool     filter_outliers,
+    Dwarf_Unsigned * returned_attr_num,
+    Dwarf_Unsigned * returned_form,
+    Dwarf_Signed   * returned_implicitconst,
+    Dwarf_Off      * offset, 
+    Dwarf_Error    * error)
 {
     Dwarf_Byte_Ptr abbrev_ptr = 0;
     Dwarf_Byte_Ptr abbrev_end = 0;
     Dwarf_Byte_Ptr mark_abbrev_ptr = 0;
-    Dwarf_Half attr = 0;
-    Dwarf_Half attr_form = 0;
+    Dwarf_Unsigned attr = 0;
+    Dwarf_Unsigned form = 0;
+    Dwarf_Unsigned implicitconst = 0;
     Dwarf_Debug dbg = 0;
-
-    if (indx < 0)
-        return (DW_DLV_NO_ENTRY);
+    Dwarf_Signed local_indx = (Dwarf_Signed)indx;
 
     if (abbrev == NULL) {
         _dwarf_error(NULL, error, DW_DLE_DWARF_ABBREV_NULL);
         return (DW_DLV_ERROR);
     }
-
     if (abbrev->dab_code == 0) {
         return (DW_DLV_NO_ENTRY);
     }
@@ -297,53 +354,66 @@ dwarf_get_abbrev_entry(Dwarf_Abbrev abbrev,
     abbrev_ptr = abbrev->dab_abbrev_ptr;
     abbrev_end = dbg->de_debug_abbrev.dss_data +
         dbg->de_debug_abbrev.dss_size;
+    if ((Dwarf_Unsigned)local_indx >=  abbrev->dab_next_index) {
+        /*  We want a part not yet scanned ,
+            so we can start closer to the desired value. */
+        abbrev_ptr   = abbrev->dab_next_ptr;
+        local_indx -= abbrev->dab_next_index;
+    }
 
-    for (attr = 1, attr_form = 1;
-        indx >= 0 && abbrev_ptr < abbrev_end && (attr != 0 ||
-            attr_form != 0);
-        indx--) {
-        Dwarf_Unsigned utmp_at;
-        Dwarf_Unsigned utmp_fo;
+    for (attr = 1, form = 1;
+        local_indx >= 0 && abbrev_ptr < abbrev_end && 
+        (attr != 0 || form != 0);
+        local_indx--) {
 
         mark_abbrev_ptr = abbrev_ptr;
-        DECODE_LEB128_UWORD_CK(abbrev_ptr, utmp_at,dbg,
+        DECODE_LEB128_UWORD_CK(abbrev_ptr, attr,dbg,
             error,abbrev_end);
-        if (utmp_at > DW_AT_hi_user) {
+        if (filter_outliers && attr > DW_AT_hi_user) {
             _dwarf_error(dbg, error,DW_DLE_ATTR_CORRUPT);
             return DW_DLV_ERROR;
         }
-        attr = (Dwarf_Half) utmp_at;
-        DECODE_LEB128_UWORD_CK(abbrev_ptr, utmp_fo,dbg,
+        DECODE_LEB128_UWORD_CK(abbrev_ptr, form,dbg,
             error,abbrev_end);
-        if (!_dwarf_valid_form_we_know(dbg,utmp_fo,utmp_at)) {
+        if (filter_outliers && 
+            !_dwarf_valid_form_we_know(form,attr)) {
             _dwarf_error(dbg, error, DW_DLE_UNKNOWN_FORM);
             return (DW_DLV_ERROR);
         }
-        attr_form = (Dwarf_Half) utmp_fo;
-        if (attr_form ==  DW_FORM_implicit_const) {
-            UNUSEDARG Dwarf_Signed implicit_const;
+        if (form ==  DW_FORM_implicit_const) {
             /* The value is here, not in a DIE. */
-            DECODE_LEB128_SWORD_CK( abbrev_ptr, implicit_const,
+            DECODE_LEB128_SWORD_CK( abbrev_ptr, implicitconst,
                 dbg,error,abbrev_end);
+        } else {
+            implicitconst = 0;
         }
     }
 
     if (abbrev_ptr >= abbrev_end) {
         _dwarf_error(dbg, error, DW_DLE_ABBREV_DECODE_ERROR);
-        return (DW_DLV_ERROR);
+        return DW_DLV_ERROR;
     }
 
-    if (indx >= 0) {
-        return (DW_DLV_NO_ENTRY);
+    if (local_indx >= 0) {
+        return DW_DLV_NO_ENTRY;
     }
 
-    if (form != NULL) {
-        *form = attr_form;
+    if (returned_form != NULL) {
+        *returned_form = form;
     }
     if (offset != NULL) {
         *offset = mark_abbrev_ptr - dbg->de_debug_abbrev.dss_data;
     }
-    *returned_attr_num = (attr);
+    if (returned_attr_num) {
+        *returned_attr_num = attr;
+    }
+    if (returned_implicitconst) {
+        /*  Callers should only examine implict const value
+            if the form is DW_FORM_implicit_const.  */
+        *returned_implicitconst = implicitconst;
+    }
+    abbrev->dab_next_ptr = abbrev_ptr;
+    abbrev->dab_next_index = (Dwarf_Unsigned)local_indx ;
     return DW_DLV_OK;
 }
 

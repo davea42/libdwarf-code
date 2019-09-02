@@ -372,8 +372,16 @@ dwarf_attrlist(Dwarf_Die die,
         Dwarf_Signed implicit_const = 0;
 
         DECODE_LEB128_UWORD_CK(abbrev_ptr, utmp2,dbg,error,abbrev_end);
+        if (utmp2 > DW_AT_hi_user) {
+            _dwarf_error(dbg, error,DW_DLE_ATTR_CORRUPT);
+            return DW_DLV_ERROR;
+        }
         attr = (Dwarf_Half) utmp2;
         DECODE_LEB128_UWORD_CK(abbrev_ptr, utmp2,dbg,error,abbrev_end);
+        if (!_dwarf_valid_form_we_know(utmp2,attr)) {
+            _dwarf_error(dbg, error, DW_DLE_UNKNOWN_FORM);
+            return (DW_DLV_ERROR);
+        }
         attr_form = (Dwarf_Half) utmp2;
         if (attr_form == DW_FORM_implicit_const) {
             /* The value is here, not in a DIE. */
@@ -381,7 +389,7 @@ dwarf_attrlist(Dwarf_Die die,
                 dbg,error,abbrev_end);
         }
 
-        if (!_dwarf_valid_form_we_know(dbg,attr_form,attr)) {
+        if (!_dwarf_valid_form_we_know(attr_form,attr)) {
             _dwarf_error(dbg, error, DW_DLE_UNKNOWN_FORM);
             return DW_DLV_ERROR;
         }
@@ -552,9 +560,19 @@ _dwarf_get_value_ptr(Dwarf_Die die,
         int res = 0;
 
         DECODE_LEB128_UWORD_CK(abbrev_ptr, atmp3,dbg,error,abbrev_end);
+        if (atmp3 > DW_AT_hi_user) {
+            _dwarf_error(dbg, error,DW_DLE_ATTR_CORRUPT);
+            return DW_DLV_ERROR;
+        }
         curr_attr = (Dwarf_Half) atmp3;
+
         DECODE_LEB128_UWORD_CK(abbrev_ptr,formtmp3,
             dbg,error,abbrev_end);
+        if (!_dwarf_valid_form_we_know(formtmp3,curr_attr)) {
+            _dwarf_error(dbg, error, DW_DLE_UNKNOWN_FORM);
+            return (DW_DLV_ERROR);
+        }
+
         curr_attr_form = (Dwarf_Half) formtmp3;
         if (curr_attr_form == DW_FORM_indirect) {
             Dwarf_Unsigned utmp6;

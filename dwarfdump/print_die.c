@@ -1546,9 +1546,11 @@ print_one_die(Dwarf_Debug dbg, Dwarf_Die die,
         ares = dwarf_whatattr(atlist[i], &attr, &podie_err);
 
         if (ares == DW_DLV_OK) {
-            /*  Check duplicated attributes; use brute force as the number of
-                attributes is quite small; the problem was detected with the
-                LLVM toolchain, generating more than 12 repeated attributes */
+            /*  Check duplicated attributes; use brute force
+                as the number of attributes is quite small;
+                the problem was detected with the
+                LLVM toolchain, generating more than 12
+                repeated attributes */
             if (glflags.gf_check_duplicated_attributes) {
                 Dwarf_Half attr_next;
                 DWARF_CHECK_COUNT(duplicated_attributes_result,1);

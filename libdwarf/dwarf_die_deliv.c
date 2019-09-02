@@ -1812,9 +1812,17 @@ _dwarf_next_die_info_ptr(Dwarf_Byte_Ptr die_info_ptr,
 
         DECODE_LEB128_UWORD_CK(abbrev_ptr, utmp2,dbg,error,
             abbrev_end);
+        if (utmp2 > DW_AT_hi_user) {
+            _dwarf_error(dbg, error, DW_DLE_ATTR_CORRUPT);
+            return DW_DLV_ERROR;
+        }
         attr = (Dwarf_Half) utmp2;
         DECODE_LEB128_UWORD_CK(abbrev_ptr, utmp2,dbg,error,
             abbrev_end);
+        if (!_dwarf_valid_form_we_know(utmp2,attr)) {
+            _dwarf_error(dbg, error, DW_DLE_UNKNOWN_FORM);
+            return DW_DLV_ERROR;
+        }
         attr_form = (Dwarf_Half) utmp2;
         if (attr_form == DW_FORM_indirect) {
             Dwarf_Unsigned utmp6;
@@ -1823,7 +1831,6 @@ _dwarf_next_die_info_ptr(Dwarf_Byte_Ptr die_info_ptr,
             DECODE_LEB128_UWORD_CK(info_ptr, utmp6,dbg,error,
                 die_info_end);
             attr_form = (Dwarf_Half) utmp6;
-
         }
         if (attr_form == DW_FORM_implicit_const) {
             UNUSEDARG Dwarf_Signed cval = 0;

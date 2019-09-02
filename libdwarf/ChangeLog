@@ -1,3 +1,28 @@
+2019-09-02 David Anderson
+     * checkexample.c: Starting work on an abbreviations-reading
+       example (not yet useful).
+     * dwarf_abbrev.c: Now does simpler, faster, and better
+       attr/form checking. Implements dwarf_get_abbrev_entry_b()
+       which adds any DW_FORM_implicit_const value to the
+       return value set, and avoids hiding corrupt
+       large values from callers.
+     * dwarf_abbrev.h: Adds new fields dab_next* to allow  
+       dwarf_abbrev.c to sequence through entries
+       withless overhead.
+     * dwarf_die_deliv.c: Improve error checking on reading
+       values from the abbreviation section.
+     * dwarf_die_deliv.h: Move the fields in Dwarf_Abbrev_list_s
+       so the order reads betterr. Improved the comments.
+     * dwarf_opaque.h: Simplified the argument list of
+       _dwarf_valid_form_we_know().
+     * dwarf_query.c: Improve the error checking in reading
+       abbreviation section attr/form pairs.
+     * dwarf_util.c(_dwarf_valid_form_we_know): Now reflects
+       the simpler argument list. 
+     * libdwarf.h.in: Added declaration of new function
+       dwarf_get_abbrev_entry_b().
+     * generated_libdwarf.h.in: Updated to match the
+       libdwarf.h.in change. (regenerated)
 2019-08-29 David Anderson
      * dwarf_abbrev.c: Added private function 
        _dwarf_count_abbrev_entries() to eliminate some

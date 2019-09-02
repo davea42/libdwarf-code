@@ -171,10 +171,6 @@ specialAttrTransformations(Dwarf_P_Debug dbg UNUSEDARG,
             attr.dropFormData();
             continue;
         }
-        if(attrnum == DW_AT_low_pc) {
-            revisedattrs.push_back(attr);
-            continue;
-        }
         revisedattrs.push_back(attr);
         continue;
     }

@@ -1,3 +1,10 @@
+2019-09-02 David Anderson
+     * dwarfgen.cc: Now running it on a big-endian machine
+       (reading and writing little-endian objects) works
+       properly.  Arbitrary endian combinations not
+       fully supported.
+     * ireptodbg.cc(specialAttrTransformations): Removed
+       four lines of useless code.
 2019-05-26 David Anderson
      * irepattrtodbg.cc,irepdie.h: Remove trailing whitespace.
      * irepform.h: Reformat a few lines to shorten them.

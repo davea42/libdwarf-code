@@ -1,3 +1,8 @@
+2019-09-02 David Anderson
+     * print_abbrevs.c: Improved .debug_abbrev error checking.
+       Now uses dwarf_get_abbrev_entry_b() which ensures
+       most (possibly all) corruptions can be detected.
+     * print_die.c: Reformatted a long comment.
 2019-08-29 David Anderson
      * print_die.c: Minor corrections including printing
        DW_AT_GNU_odr_signature more sensibly.

@@ -535,8 +535,7 @@ copy_abbrev_table_to_new_table(Dwarf_Hash_Table htin,
 
 /*  We allow zero form here, end of list. */
 int
-_dwarf_valid_form_we_know(UNUSEDARG Dwarf_Debug dbg,
-    Dwarf_Unsigned at_form,
+_dwarf_valid_form_we_know(Dwarf_Unsigned at_form,
     Dwarf_Unsigned at_name)
 {
     if(at_form == 0 && at_name == 0) {
@@ -746,7 +745,6 @@ _dwarf_get_abbrev_for_code(Dwarf_CU_Context cu_context,
         inner_list_entry->abl_has_child = *(abbrev_ptr++);
         inner_list_entry->abl_abbrev_ptr = abbrev_ptr;
         inner_list_entry->abl_goffset =  abb_goff;
-
         hash_table_base->tb_total_abbrev_count++;
 
         /*  Cycle thru the abbrev content, ignoring the content except
