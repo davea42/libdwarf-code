@@ -1,3 +1,8 @@
+2019-09-03 David Anderson
+     * esb.h, esb.c: Reformat copyright for shorter lines.
+       No change in the text.
+     * print_abbrevs.c: Fix indents and remove trailing
+       whitespace.
 2019-09-02 David Anderson
      * print_abbrevs.c: Improved .debug_abbrev error checking.
        Now uses dwarf_get_abbrev_entry_b() which ensures

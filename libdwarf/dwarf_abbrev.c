@@ -192,7 +192,6 @@ dwarf_get_abbrev(Dwarf_Debug dbg,
     ret_abbrev->dab_abbrev_ptr = abbrev_ptr;
     ret_abbrev->dab_next_ptr = abbrev_ptr;
     ret_abbrev->dab_next_index = 0;
-    
 
     res = _dwarf_count_abbrev_entries(dbg,abbrev_ptr,
         abbrev_section_end,&labbr_count,&abbrev_ptr_out,error);
@@ -274,7 +273,7 @@ dwarf_get_abbrev_entry(Dwarf_Abbrev abbrev,
     Dwarf_Signed indx,
     Dwarf_Half   * returned_attr_num,
     Dwarf_Signed * returned_form,
-    Dwarf_Off    * returned_offset, 
+    Dwarf_Off    * returned_offset,
     Dwarf_Error * error)
 {
     int res;
@@ -283,15 +282,15 @@ dwarf_get_abbrev_entry(Dwarf_Abbrev abbrev,
     Dwarf_Signed implicitconst = 0;
     Dwarf_Unsigned uindex = (Dwarf_Unsigned)indx;
     Dwarf_Bool filter_outliers = TRUE;
-  
+
     res = dwarf_get_abbrev_entry_b(abbrev,
-          uindex,
-          filter_outliers,
-          &attr,
-          &form,
-          &implicitconst,
-          returned_offset,
-          error);
+        uindex,
+        filter_outliers,
+        &attr,
+        &form,
+        &implicitconst,
+        returned_offset,
+        error);
     if (res != DW_DLV_OK) {
         return res;
     }
@@ -313,7 +312,7 @@ dwarf_get_abbrev_entry(Dwarf_Abbrev abbrev,
     If filter_outliers is 0 the uleb/sleb
     values read are returned, even if
     the values are unreasonable. This is
-    a useful option if one wishes to 
+    a useful option if one wishes to
     have callers examine the return values
     in greater detail than the checking here
     provides.
@@ -326,7 +325,7 @@ dwarf_get_abbrev_entry_b(Dwarf_Abbrev abbrev,
     Dwarf_Unsigned * returned_attr_num,
     Dwarf_Unsigned * returned_form,
     Dwarf_Signed   * returned_implicitconst,
-    Dwarf_Off      * offset, 
+    Dwarf_Off      * offset,
     Dwarf_Error    * error)
 {
     Dwarf_Byte_Ptr abbrev_ptr = 0;
@@ -362,7 +361,7 @@ dwarf_get_abbrev_entry_b(Dwarf_Abbrev abbrev,
     }
 
     for (attr = 1, form = 1;
-        local_indx >= 0 && abbrev_ptr < abbrev_end && 
+        local_indx >= 0 && abbrev_ptr < abbrev_end &&
         (attr != 0 || form != 0);
         local_indx--) {
 
@@ -375,7 +374,7 @@ dwarf_get_abbrev_entry_b(Dwarf_Abbrev abbrev,
         }
         DECODE_LEB128_UWORD_CK(abbrev_ptr, form,dbg,
             error,abbrev_end);
-        if (filter_outliers && 
+        if (filter_outliers &&
             !_dwarf_valid_form_we_know(form,attr)) {
             _dwarf_error(dbg, error, DW_DLE_UNKNOWN_FORM);
             return (DW_DLV_ERROR);

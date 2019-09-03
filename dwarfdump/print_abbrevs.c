@@ -206,7 +206,7 @@ print_abbrevs(Dwarf_Debug dbg)
             print_secname(dbg,".debug_abbrev");
         }
         if (abres == DW_DLV_ERROR) {
-            print_error_and_continue(dbg, 
+            print_error_and_continue(dbg,
                 "Error reading abbreviations", abres, paerr);
             return;
         }
@@ -290,8 +290,8 @@ print_abbrevs(Dwarf_Debug dbg)
                     printf("\n");
                 }
                 if (!length) {
-                   dwarf_dealloc(dbg, ab, DW_DLA_ABBREV);
-                   break;
+                    dwarf_dealloc(dbg, ab, DW_DLA_ABBREV);
+                    break;
                 }
             }
             /* printed null abrev name above */
@@ -299,7 +299,7 @@ print_abbrevs(Dwarf_Debug dbg)
             dwarf_dealloc(dbg, ab, DW_DLA_ABBREV);
             continue;
         }
-        /*  Abbrev contains the format of a die, 
+        /*  Abbrev contains the format of a die,
             which debug_info then points to with the
             real data. So here we just print the
             given format. */
@@ -310,7 +310,7 @@ print_abbrevs(Dwarf_Debug dbg)
             printf( "%s ERROR:  Malloc of %u abbrev_entry_s"
                 " structs failed. Near section global offset 0x%"
                 DW_PR_DUx "  .\n",
-            glflags.program_name,entryarray_size,offset);  
+            glflags.program_name,entryarray_size,offset);
             entryarray_size = 0;
         }
         for (i = 0; i < abbrev_entry_count ; i++) {
@@ -321,7 +321,7 @@ print_abbrevs(Dwarf_Debug dbg)
             Dwarf_Unsigned attr = 0;
             Dwarf_Signed impl_const = 0;
 
-            aeres = dwarf_get_abbrev_entry_b(ab, i, 
+            aeres = dwarf_get_abbrev_entry_b(ab, i,
                 dofilter,&attr, &form,&impl_const, &off,
                 &paerr);
             if (aeres == DW_DLV_ERROR) {
@@ -339,8 +339,8 @@ print_abbrevs(Dwarf_Debug dbg)
                 const_integer_string[0] = 0;
                 if (form == DW_FORM_implicit_const) {
                     sprintf(const_integer_string,
-                        " <%" DW_PR_DSd 
-                        " (0x%" DW_PR_DUx 
+                        " <%" DW_PR_DSd
+                        " (0x%" DW_PR_DUx
                         ")>",impl_const,impl_const);
                 }
                 if (glflags.dense) {
@@ -374,7 +374,7 @@ print_abbrevs(Dwarf_Debug dbg)
 
             DWARF_CHECK_COUNT(abbreviations_result,1);
             qsort((void *)entryarray,entryarray_size,
-               sizeof(struct abbrev_entry_s),ab_compare);
+                sizeof(struct abbrev_entry_s),ab_compare);
 
             for(l = 0; l < entryarray_size ; ++l) {
                 struct abbrev_entry_s *aep = entryarray+l;
@@ -384,16 +384,16 @@ print_abbrevs(Dwarf_Debug dbg)
 
                     esb_constructor(&msg);
                     esb_append_printf_u(&msg,
-                            "Attribute "
-                            "0x%"  DW_PR_XZEROS DW_PR_DUx ,
-                            aep->ae_attr);
+                        "Attribute "
+                        "0x%"  DW_PR_XZEROS DW_PR_DUx ,
+                        aep->ae_attr);
                     esb_append_printf_u(&msg,
-                            " near offset "
-                            "0x%"  DW_PR_XZEROS DW_PR_DUx "." ,
-                            aep->ae_offset);
+                        " near offset "
+                        "0x%"  DW_PR_XZEROS DW_PR_DUx "." ,
+                        aep->ae_offset);
                     DWARF_CHECK_ERROR2(abbreviations_result,
-                       "Attr number unknown",
-                       esb_get_string(&msg));
+                        "Attr number unknown",
+                        esb_get_string(&msg));
                     esb_destructor(&msg);
                 }
                 if (!is_valid_form_we_know(aep->ae_form)){
@@ -401,16 +401,16 @@ print_abbrevs(Dwarf_Debug dbg)
 
                     esb_constructor(&msg);
                     esb_append_printf_u(&msg,
-                            "Form "
-                            "0x%"  DW_PR_XZEROS DW_PR_DUx,
-                            aep->ae_form);
+                        "Form "
+                        "0x%"  DW_PR_XZEROS DW_PR_DUx,
+                        aep->ae_form);
                     esb_append_printf_u(&msg,
-                            " near offset "
-                            "0x%"  DW_PR_XZEROS DW_PR_DUx ".",
-                            aep->ae_offset);
+                        " near offset "
+                        "0x%"  DW_PR_XZEROS DW_PR_DUx ".",
+                        aep->ae_offset);
                     DWARF_CHECK_ERROR2(abbreviations_result,
-                       "Form number unknown",
-                       esb_get_string(&msg));
+                        "Form number unknown",
+                        esb_get_string(&msg));
                     esb_destructor(&msg);
                 }
                 if (l == 0) {

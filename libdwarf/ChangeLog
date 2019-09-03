@@ -1,3 +1,17 @@
+2019-09-03 David Anderson
+     * dwarf_abbrev.c: Fixed indents and removed
+       trailing whitespace.
+     * pro_line.h: Added a temporary accomodation of
+       the MIN_INST_LENGTH for s390 for dwarfgen. 
+       This is a hack and needs a fix to dwarfgen.
+       Reformatted copyright for shorter lines with
+       no change in its text.
+     * pro_frame.c: Added a comment, the code is not
+       properly dealing with generating frame data when
+       the build host is different from the target
+       object the producer is generating.
+       Reformatted copyright for shorter lines with
+       no change in its text.
 2019-09-02 David Anderson
      * checkexample.c: Starting work on an abbreviations-reading
        example (not yet useful).
