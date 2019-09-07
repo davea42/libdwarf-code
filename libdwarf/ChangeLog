@@ -1,3 +1,25 @@
+2019-09-07 David Anderson
+     * checkexamples.c: Remove some useless blank lines.
+       This is not used by libdwarf.
+     * dwarf_alloc.c: Ensure dbg->de_path is freed.
+     * dwarf_die_deliv.h: Delete trailing space.
+     * dwarf_errmsg_list.h: Add DW_DLE_DUPLICATE_GNU_DEBUGLINK
+       and DW_DLE_CORRUPT_GNU_DEBUGLINK error names.
+     * dwarf_generic_init.c: Simplified the code slightly,
+       avoiding some duplication. Ensure dbg->de_path
+       is set where it would not otherwise be set here
+       in initialization.
+     * dwarf_init_finish.c: Ensure .gnu_debuglink will be
+       available to load if it exists in the object.
+     * dwarf_opaque.h: Add de_path to struct Dwarf_Debug_s.
+     * dwarf_util.c: Add includes and define O_BINARY
+       so we can do an open when looking for a file
+       that section .gnu_debuglink refers to.
+     * libdwarf.h.in: Added new error defines mentioned
+       above.
+     * generated_libdwarf.h.in: Regenerated
+     * libdwarf2.1.mm: Added dwarf_add_file_path() documentation.
+     * libdwarf2.1.pdf: Regenerated. Version 2.76.
 2019-09-03 David Anderson
      * dwarf_abbrev.c: Fixed indents and removed
        trailing whitespace.

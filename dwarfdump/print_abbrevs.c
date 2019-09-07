@@ -1,4 +1,4 @@
-/*
+   /*
   Copyright (C) 2000-2006 Silicon Graphics, Inc.  All Rights Reserved.
   Portions Copyright 2007-2010 Sun Microsystems, Inc. All rights reserved.
   Portions Copyright 2009-2011 SN Systems Ltd. All rights reserved.
@@ -56,21 +56,6 @@
    .debug_info are legal sequences.
 */
 
-static void
-print_secname(Dwarf_Debug dbg,const char *secname)
-{
-    if (glflags.gf_do_print_dwarf) {
-        struct esb_s truename;
-        char buf[DWARF_SECNAME_BUFFER_SIZE];
-
-        esb_constructor_fixed(&truename,buf,sizeof(buf));
-        get_true_section_name(dbg,secname,
-            &truename,TRUE);
-        printf("\n%s\n",sanitized(esb_get_string(&truename)));
-        esb_destructor(&truename);
-    }
-}
-
 struct abbrev_entry_s {
     Dwarf_Unsigned ae_number;
     Dwarf_Unsigned ae_offset;
@@ -79,7 +64,6 @@ struct abbrev_entry_s {
     Dwarf_Unsigned ae_impl_const;
     unsigned ae_dupcount;
 };
-
 
 static int
 ab_compare(const void *lin, const void *rin)

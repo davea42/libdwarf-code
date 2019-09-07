@@ -1621,11 +1621,7 @@ void examplezb(void)
 }
 
 
-void exampleab(Dwarf_Debug dbg)
+/*  Do something here. */
+void exampleabrev(Dwarf_Debug dbg)
 {
-
-    
-
-
 }
-

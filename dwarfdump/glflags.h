@@ -114,6 +114,7 @@ struct glflags_s {
     boolean gf_eh_frame_flag;   /* GNU .eh_frame section. */
     boolean gf_frame_flag;      /* .debug_frame section. */
     boolean gf_gdbindex_flag;   /* .gdbindex section. */
+    boolean gf_gnu_debuglink_flag;   /* .gnu_debuglink section. */
     boolean gf_info_flag;  /* .debug_info */
     boolean gf_line_flag;
     boolean gf_line_print_pc;

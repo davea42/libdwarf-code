@@ -526,5 +526,7 @@ const char *_dwarf_errmsgs[] = {
     "DW_DLE_ABBREV_ATTR_DUPLICATION(452) Abbreviation list corruption.",
     "DW_DLE_DWP_SIGNATURE_MISMATCH(453) Impossible signature mismatch. Corrupted Dwarf?",
     "DW_DLE_CU_UT_TYPE_VALUE(454) Internal libdwarf data corruption",
+    "DW_DLE_DUPLICATE_GNU_DEBUGLINK(455) Duplicated section .gnu_debuglink",
+    "DW_DLE_CORRUPT_GNU_DEBUGLINK(456) Section length wrong",
 };
 #endif /* DWARF_ERRMSG_LIST_H */

@@ -33,20 +33,6 @@
 
 #include "print_sections.h"
 
-static void
-print_secname(Dwarf_Debug dbg,const char *secname)
-{
-    struct esb_s truename;
-    char buf[DWARF_SECNAME_BUFFER_SIZE];
-
-    esb_constructor_fixed(&truename,buf,sizeof(buf));
-    get_true_section_name(dbg,secname,
-        &truename,TRUE);
-    printf("\n%s\n",sanitized(esb_get_string(&truename)));
-    esb_destructor(&truename);
-
-}
-
 /* print data in .debug_str */
 extern void
 print_strings(Dwarf_Debug dbg)

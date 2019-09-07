@@ -1,3 +1,16 @@
+2019-09-09 David Anderson
+     * command_options.c: Added --print-gnu-debuglink and set
+       gf_gnu_debuglink_flag as appropriate.
+     * dwarfdump.1: Document --print-gnu-debuglink.
+     * dwarfdump.c: Implement debuglink printing.
+     * glflags.h: Added boolean gf_gnu_debuglink_flag.
+     * globals.h: Added prototype of print_secname()
+       and now it is shared across dwarfdump.
+     * print_abbrevs.c,print_locs.c,print_strings.c: Deleted local 
+       print_secname(), call
+       the shared one instead.
+     * print_die.c: Make this print_secname() the
+       single shared version.
 2019-09-03 David Anderson
      * esb.h, esb.c: Reformat copyright for shorter lines.
        No change in the text.

@@ -44,7 +44,7 @@ struct Dwarf_Abbrev_List_s {
         hash. */
     struct Dwarf_Abbrev_List_s *abl_next;
 
-    /*  Points to start of attribute/form pairs in 
+    /*  Points to start of attribute/form pairs in
         the .debug_abbrev section for the abbrev. */
     Dwarf_Byte_Ptr abl_abbrev_ptr;
 

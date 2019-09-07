@@ -115,6 +115,10 @@ static int process_one_file(int fd, int tiedfd,
 #endif
     struct dwconf_s *conf);
 
+static void
+print_gnu_debuglink(Dwarf_Debug dbg);
+
+
 static int
 open_a_file(const char * name)
 {
@@ -812,6 +816,7 @@ process_one_file(int fd, int tiedfd,
         dres = dwarf_elf_init_b(elf, DW_DLC_READ,glflags.group_number,
             NULL, NULL, &dbg, &onef_err);
     } else {
+
         title = "dwarf_init_b";
         dres = dwarf_init_b(fd, DW_DLC_READ,glflags.group_number,
             NULL, NULL, &dbg, &onef_err);
@@ -827,6 +832,11 @@ process_one_file(int fd, int tiedfd,
     }
     if (dres != DW_DLV_OK) {
         print_error(dbg, title, dres, onef_err);
+    }
+
+    dres = dwarf_add_file_path(dbg,file_name,&onef_err);
+    if (dres != DW_DLV_OK) {
+        print_error(dbg,"Unable to add file path to object file data", dres, onef_err);
     }
 
     if (tiedelf || tiedfd >= 0) {
@@ -847,6 +857,10 @@ process_one_file(int fd, int tiedfd,
         }
         if (dres != DW_DLV_OK) {
             print_error(dbg, "dwarf_elf_init on tied_file", dres, onef_err);
+        }
+        dres = dwarf_add_file_path(dbgtied,tied_file_name,&onef_err);
+        if (dres != DW_DLV_OK) {
+            print_error(dbg, "Unable to add tied file name to tied file", dres, onef_err);
         }
     }
 
@@ -1043,6 +1057,13 @@ process_one_file(int fd, int tiedfd,
     if (glflags.gf_print_str_offsets) {
         /*  print the .debug_str_offsets section, if any. */
         print_str_offsets_section(dbg);
+    }
+
+    /*  prints nothing unless section .gnu_debuglink is present.
+        Lets print for a few critical sections.  */
+    if( glflags.gf_info_flag || glflags.gf_line_flag ||
+        glflags.gf_types_flag || glflags.gf_gnu_debuglink_flag) {
+        print_gnu_debuglink(dbg);
     }
 
     /*  Could finish dbg first. Either order ok. */
@@ -1307,6 +1328,70 @@ get_producer_name(Dwarf_Debug dbg, Dwarf_Die cu_die,
         which is safe when calling dealloc(). */
     dwarf_dealloc(dbg, producer_attr, DW_DLA_ATTR);
     return ares;
+}
+
+void
+print_secname(Dwarf_Debug dbg,const char *secname)
+{
+    if (glflags.gf_do_print_dwarf) {
+        struct esb_s truename;
+        char buf[DWARF_SECNAME_BUFFER_SIZE];
+
+        esb_constructor_fixed(&truename,buf,sizeof(buf));
+        get_true_section_name(dbg,secname,
+            &truename,TRUE);
+        printf("\n%s\n",sanitized(esb_get_string(&truename)));
+        esb_destructor(&truename);
+    }
+}
+
+/*  We'll check for errors when checking. 
+    print only if printing. */
+static void
+print_gnu_debuglink(Dwarf_Debug dbg)
+{
+    int         res = 0;
+    Dwarf_Error linkerror = 0;
+    char *      name = 0;
+    char *      crcbytes = 0;
+    char *      link_name = 0;
+    unsigned    link_name_len = 0;
+
+    res = dwarf_gnu_debuglink(dbg,
+        &name,
+        &crcbytes,
+        &link_name,&link_name_len,
+        &linkerror);
+    if (res == DW_DLV_NO_ENTRY) {
+        return;
+    }
+    print_secname(dbg,".gnu_debuglink");
+    if (res == DW_DLV_ERROR) {
+        print_error_and_continue(dbg,
+            "Error reading .gnu_debuglink",
+            res, linkerror);
+        return;
+    }
+    /* Done with error checking, so print if we are printing. */
+    if (glflags.gf_do_print_dwarf)  { 
+        printf(" Debuglink name  : %s",sanitized(name));
+        {
+            char *crc = 0;
+            char *end = 0;
+    
+            crc = crcbytes;
+            end = crcbytes +4;
+            printf("   crc 0X: ");
+            for (; crc < end; crc++) {
+                printf("%02x ", (unsigned char)*crc);
+            }
+        }
+        printf("\n");
+        if (link_name_len) {
+            printf(" Debuglink target: %s\n",sanitized(link_name));
+        }
+        free(link_name);
+    }
 }
 
 /* GCC linkonce names */

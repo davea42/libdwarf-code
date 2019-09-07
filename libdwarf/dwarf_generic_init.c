@@ -131,6 +131,7 @@ int dwarf_init_path(const char *path,
     int errcode = 0;
     int fd = -1;
     Dwarf_Debug dbg = 0;
+    char *file_path = 0;
 
     res = dwarf_object_detector_path(path,
         true_path_out_buffer,
@@ -143,8 +144,10 @@ int dwarf_init_path(const char *path,
         DWARF_DBG_ERROR(NULL, DW_DLE_FILE_UNAVAILABLE, DW_DLV_ERROR);
     }
     if (true_path_out_buffer) {
+        file_path = true_path_out_buffer;
         fd = open_a_file(true_path_out_buffer);
     } else {
+        file_path = (char *)path;
         fd = open_a_file(path);
     }
     if(fd == -1) {
@@ -154,13 +157,13 @@ int dwarf_init_path(const char *path,
     switch(ftype) {
     case DW_FTYPE_ELF: {
         res = _dwarf_elf_nlsetup(fd,
-            true_path_out_buffer?
-                true_path_out_buffer:(char *)path,
+            file_path,
             ftype,endian,offsetsize,filesize,
             access,groupnumber,errhand,errarg,&dbg,error);
         if (res != DW_DLV_OK) {
             close(fd);
         } else {
+            dbg->de_path = strdup(file_path);
             dbg->de_fd = fd;
             dbg->de_owns_fd = TRUE;
         }
@@ -169,13 +172,13 @@ int dwarf_init_path(const char *path,
     }
     case DW_FTYPE_MACH_O: {
         res = _dwarf_macho_setup(fd,
-            true_path_out_buffer?
-                true_path_out_buffer:(char *)path,
+            file_path,
             ftype,endian,offsetsize,filesize,
             access,groupnumber,errhand,errarg,&dbg,error);
         if (res != DW_DLV_OK) {
             close(fd);
         } else {
+            dbg->de_path = strdup(file_path);
             dbg->de_fd = fd;
             dbg->de_owns_fd = TRUE;
         }
@@ -184,13 +187,13 @@ int dwarf_init_path(const char *path,
     }
     case DW_FTYPE_PE: {
         res = _dwarf_pe_setup(fd,
-            true_path_out_buffer?
-                true_path_out_buffer:(char *)path,
+            file_path,
             ftype,endian,offsetsize,filesize,
             access,groupnumber,errhand,errarg,&dbg,error);
         if (res != DW_DLV_OK) {
             close(fd);
         } else {
+            dbg->de_path = strdup(file_path);
             dbg->de_fd = fd;
             dbg->de_owns_fd = TRUE;
         }
@@ -301,6 +304,13 @@ dwarf_finish(Dwarf_Debug dbg, Dwarf_Error * error)
         close(dbg->de_fd);
         dbg->de_owns_fd = FALSE;
     }
+    free((void *)dbg->de_path);
+    dbg->de_path = 0;
+    /*  dwarf_object_finish() also frees de_path, but that is safe
+        because we set it to zero here so no duplicate free will
+        occur.  
+        Not all code uses libdwarf exactly as we do hence the extra
+        free() there. */
     return dwarf_object_finish(dbg, error);
 }
 

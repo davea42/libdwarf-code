@@ -229,6 +229,8 @@ void print_str_offsets_section(Dwarf_Debug dbg);
 
 void print_any_harmless_errors(Dwarf_Debug dbg);
 
+void print_secname(Dwarf_Debug dbg,const char *secname);
+
 #ifdef __cplusplus
 }
 #endif

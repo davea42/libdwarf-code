@@ -651,7 +651,7 @@ get_macinfo_offset(Dwarf_Debug dbg,
 }
 
 static void
-print_secname(Dwarf_Debug dbg,int is_info)
+print_die_secname(Dwarf_Debug dbg,int is_info)
 {
     if (print_as_info_or_cu() && glflags.gf_do_print_dwarf) {
         const char * section_name = 0;
@@ -740,7 +740,7 @@ print_one_die_section(Dwarf_Debug dbg,Dwarf_Bool is_info,
         if (!loop_count) {
             /*  So compress flags show, we waited till
                 section loaded. */
-            print_secname(dbg,is_info);
+            print_die_secname(dbg,is_info);
         }
         if (nres == DW_DLV_NO_ENTRY) {
             return nres;

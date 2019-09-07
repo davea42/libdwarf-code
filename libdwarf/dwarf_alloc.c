@@ -708,6 +708,8 @@ _dwarf_free_all_of_one_debug(Dwarf_Debug dbg)
         dbg->de_tied_data.td_tied_search = 0;
     }
     memset(dbg, 0, sizeof(*dbg)); /* Prevent accidental use later. */
+    free((void *)dbg->de_path);
+    dbg->de_path = 0;
     free(dbg);
     return (DW_DLV_OK);
 }

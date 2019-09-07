@@ -1368,9 +1368,11 @@ struct Dwarf_Obj_Access_Interface_s {
 #define DW_DLE_ABBREV_ATTR_DUPLICATION         452
 #define DW_DLE_DWP_SIGNATURE_MISMATCH          453
 #define DW_DLE_CU_UT_TYPE_VALUE                454
+#define DW_DLE_DUPLICATE_GNU_DEBUGLINK         455
+#define DW_DLE_CORRUPT_GNU_DEBUGLINK           456
 
     /* LAST MUST EQUAL LAST ERROR NUMBER */
-#define DW_DLE_LAST        454
+#define DW_DLE_LAST        456
 
 #define DW_DLE_LO_USER     0x10000
 
@@ -1523,6 +1525,13 @@ int dwarf_elf_init(dwarf_elf_handle /*elf*/,
     Dwarf_Handler     /*errhand*/,
     Dwarf_Ptr         /*errarg*/,
     Dwarf_Debug*      /*dbg*/,
+    Dwarf_Error*      /*error*/);
+
+/*  New September 2019.
+    When using dwarf_elf_init[_b]() we still want the file path
+    in the record. So we add it after the init phase. */
+int  dwarf_add_file_path(Dwarf_Debug /*dbg*/,
+    const char * /*file_name*/,
     Dwarf_Error*      /*error*/);
 
 /* Undocumented function for memory allocator. */
@@ -2492,6 +2501,21 @@ int dwarf_debugnames_entrypool_values(Dwarf_Dnames_Head /*dn*/,
 
 /* end of .debug_names interfaces. */
 
+/*  New September 2019.  Access to the GNU section named
+    .gnu_debuglink  .
+    Do not free the name_out or crc_out returned.
+    If *debuglink_path_size_returned non-zero
+    then callers must free(*debuglink_path_returned)
+    as a path to the linked-to object was found.
+    See
+    https://sourceware.org/gdb/onlinedocs/gdb/Separate-Debug-Files.html
+*/
+int dwarf_gnu_debuglink(Dwarf_Debug /*dbg*/,
+    char **      /*name_returned*/, 
+    char **      /*crc_returned*/, 
+    char **      /*debuglink_path_returned*/, 
+    unsigned *   /*debuglink_path_size_returned*/,
+    Dwarf_Error* /*error*/);
 
 /*  global name space operations (.debug_pubnames access)
     The pubnames and similar sections are rarely used. Few compilers
@@ -2500,7 +2524,7 @@ int dwarf_debugnames_entrypool_values(Dwarf_Dnames_Head /*dn*/,
 /*  New March 2019. Mostly special for dwarfdump. */
 int dwarf_return_empty_pubnames(Dwarf_Debug /*dbg*/,
     int /* flag */,
-    Dwarf_Error*     /*error*/);
+    Dwarf_Error* /*error*/);
 
 int dwarf_get_globals(Dwarf_Debug /*dbg*/,
     Dwarf_Global**   /*globals*/,
@@ -2738,7 +2762,7 @@ int dwarf_get_abbrev_children_flag(Dwarf_Abbrev /*abbrev*/,
     Dwarf_Signed*    /*return_flag*/,
     Dwarf_Error*     /*error*/);
 
-/*  New August 2019. 
+/*  New August 2019.
     Most uses will call with filter_outliers non-zero.
     In that case impossible values return DW_DLV_ERROR.
     Those doing extra things (like dwarfdump) will
@@ -2753,8 +2777,8 @@ int dwarf_get_abbrev_entry_b(Dwarf_Abbrev abbrev,
     Dwarf_Off      * offset,
     Dwarf_Error    * error);
 
-/*  Obsolete because it cannot return the DW_FORM_implicit_const 
-    value. */
+/*  Obsolete because it cannot return the
+    DW_FORM_implicit_const value. */
 int dwarf_get_abbrev_entry(Dwarf_Abbrev /*abbrev*/,
     Dwarf_Signed     /*index*/,
     Dwarf_Half  *    /*returned_attr_num*/,

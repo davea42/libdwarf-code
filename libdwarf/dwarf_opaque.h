@@ -511,6 +511,10 @@ struct Dwarf_Debug_s {
         under de_obj_file. */
     int  de_fd;
     char de_owns_fd;
+    /*  de_path is only set if dwarf_init_path()
+        was used to initialize things. 
+        Used with the .gnu_debuglink section. */
+    const char *de_path;
 
     struct Dwarf_Debug_InfoTypes_s de_info_reading;
     struct Dwarf_Debug_InfoTypes_s de_types_reading;
@@ -580,6 +584,7 @@ struct Dwarf_Debug_s {
     struct Dwarf_Section_s de_debug_loclists; /* New in DWARF5 */
     struct Dwarf_Section_s de_debug_rnglists; /* New in DWARF5 */
     struct Dwarf_Section_s de_debug_frame;
+    struct Dwarf_Section_s de_gnu_debuglink;
 
     /* gnu: the g++ eh_frame section */
     struct Dwarf_Section_s de_debug_frame_eh_gnu;

@@ -107,6 +107,7 @@ do_all(void)
     glflags.gf_pubtypes_flag = TRUE;  /* both SGI typenames
         and dwarf_pubtypes. */
     glflags.gf_weakname_flag = TRUE; /* SGI only*/
+    glflags.gf_gnu_debuglink_flag = TRUE;
 #if 0
     glflags.gf_header_flag = TRUE;
     /*  Setting this flag without saying what sections to print
@@ -343,6 +344,7 @@ static void arg_print_abbrev(void);
 static void arg_print_aranges(void);
 static void arg_print_debug_frame(void);
 static void arg_print_debug_names(void);
+static void arg_print_gnu_debuglink(void);
 static void arg_print_fission(void);
 static void arg_print_gnu_frame(void);
 static void arg_print_info(void);
@@ -441,6 +443,7 @@ static const char *usage_long_text[] = {
 "                         .debug_tu_index, .debug_tu_index, .gdb_index,",
 "                         .debug_cu_index, .debug_tu_index",
 "-f   --print-frame       Print dwarf frame section",
+"     --print-gnu-debuglink Print .gnu_debuglink section",
 "-i   --print-info        Print info section",
 "-l   --print-lines       Print line section",
 "-ls  --print-lines-short Print line section, but do not",
@@ -455,7 +458,7 @@ static const char *usage_long_text[] = {
 "-tv  --print-static-var  Print static var section",
 "-s   --print-strings     Print string section",
 "     --print-str-offsets Print the .debug_str_offsets section",
-"-y   --print-type        Print type section",
+"-y   --print-type        Print pubtypes section",
 "-w   --print-weakname    Print weakname section",
 " ",
 "----------------------------------------------------------------------",
@@ -669,90 +672,91 @@ enum longopts_vals {
   OPT_CHECK_USAGE_EXTENDED,     /* -kuf --check-usage-extended               */
 #endif /* HAVE_USAGE_TAG_ATTR */
 
-  /* Print ELF sections header                                               */
-  OPT_ELF,                      /* -E   --elf                                */
-  OPT_ELF_ABBREV,               /* -Ea  --elf-abbrev                         */
-  OPT_ELF_ARANGES,              /* -Er  --elf-aranges                        */
-  OPT_ELF_DEFAULT,              /* -Ed  --elf-default                        */
-  OPT_ELF_FISSION,              /* -EI  --elf-fission                        */
-  OPT_ELF_FRAMES,               /* -Ef  --elf-frames                         */
-  OPT_ELF_HEADER,               /* -Eh  --elf-header                         */
-  OPT_ELF_INFO,                 /* -Ei  --elf-info                           */
-  OPT_ELF_LINE,                 /* -El  --elf-line                           */
-  OPT_ELF_LOC,                  /* -Eo  --elf-loc                            */
-  OPT_ELF_MACINFO,              /* -Em  --elf-macinfo                        */
-  OPT_ELF_PUBNAMES,             /* -Ep  --elf-pubnames                       */
-  OPT_ELF_PUBTYPES,             /* -Et  --elf-pubtypes                       */
-  OPT_ELF_RANGES,               /* -ER  --elf-ranges                         */
-  OPT_ELF_STRINGS,              /* -Es  --elf-strings                        */
-  OPT_ELF_TEXT,                 /* -Ex  --elf-text                           */
+  /* Print ELF sections header                                          */
+  OPT_ELF,                      /* -E   --elf                           */
+  OPT_ELF_ABBREV,               /* -Ea  --elf-abbrev                    */
+  OPT_ELF_ARANGES,              /* -Er  --elf-aranges                   */
+  OPT_ELF_DEFAULT,              /* -Ed  --elf-default                   */
+  OPT_ELF_FISSION,              /* -EI  --elf-fission                   */
+  OPT_ELF_FRAMES,               /* -Ef  --elf-frames                    */
+  OPT_ELF_HEADER,               /* -Eh  --elf-header                    */
+  OPT_ELF_INFO,                 /* -Ei  --elf-info                      */
+  OPT_ELF_LINE,                 /* -El  --elf-line                      */
+  OPT_ELF_LOC,                  /* -Eo  --elf-loc                       */
+  OPT_ELF_MACINFO,              /* -Em  --elf-macinfo                   */
+  OPT_ELF_PUBNAMES,             /* -Ep  --elf-pubnames                  */
+  OPT_ELF_PUBTYPES,             /* -Et  --elf-pubtypes                  */
+  OPT_ELF_RANGES,               /* -ER  --elf-ranges                    */
+  OPT_ELF_STRINGS,              /* -Es  --elf-strings                   */
+  OPT_ELF_TEXT,                 /* -Ex  --elf-text                      */
 
-  /* File Specifications                                                     */
-  OPT_FILE_ABI,                 /* -x abi=<abi>    --file-abi=<abi>          */
-  OPT_FILE_LINE5,               /* -x line5=<val>  --file-line5=<val>        */
-  OPT_FILE_NAME,                /* -x name=<path>  --file-name=<path>        */
-  OPT_FILE_OUTPUT,              /* -O file=<path>  --file-output=<path>      */
-  OPT_FILE_TIED,                /* -x tied=<path>  --file-tied=<path>        */
+  /* File Specifications                                                */
+  OPT_FILE_ABI,                 /* -x abi=<abi>    --file-abi=<abi>     */
+  OPT_FILE_LINE5,               /* -x line5=<val>  --file-line5=<val>   */
+  OPT_FILE_NAME,                /* -x name=<path>  --file-name=<path>   */
+  OPT_FILE_OUTPUT,              /* -O file=<path>  --file-output=<path> */
+  OPT_FILE_TIED,                /* -x tied=<path>  --file-tied=<path>   */
   OPT_FILE_USE_NO_LIBELF,       /* --file-use-no-libelf=<path>        */
 
-  /* Print Output Qualifiers                                                 */
-  OPT_FORMAT_ATTR_NAME,         /* -M   --format-attr-name                   */
-  OPT_FORMAT_DENSE,             /* -d   --format-dense                       */
-  OPT_FORMAT_ELLIPSIS,          /* -e   --format-ellipsis                    */
-  OPT_FORMAT_EXTENSIONS,        /* -C   --format-extensions                  */
-  OPT_FORMAT_GLOBAL_OFFSETS,    /* -G   --format-global-offsets              */
-  OPT_FORMAT_LOC,               /* -g   --format-loc                         */
-  OPT_FORMAT_REGISTERS,         /* -R   --format-registers                   */
-  OPT_FORMAT_SUPPRESS_DATA,     /* -Q   --format-suppress-data               */
-  OPT_FORMAT_SUPPRESS_GROUP  ,  /* -x   --format-suppress-group              */
-  OPT_FORMAT_SUPPRESS_LOOKUP,   /* -n   --format-suppress-lookup             */
-  OPT_FORMAT_SUPPRESS_OFFSETS,  /* -D   --format-suppress-offsets            */
-  OPT_FORMAT_SUPPRESS_SANITIZE, /* -x?? --format-suppress-sanitize           */
-  OPT_FORMAT_SUPPRESS_URI,      /* -U   --format-suppress-uri                */
-  OPT_FORMAT_SUPPRESS_URI_MSG,  /* -q   --format-suppress-uri-msg            */
+  /* Print Output Qualifiers                                         */
+  OPT_FORMAT_ATTR_NAME,         /* -M   --format-attr-name           */
+  OPT_FORMAT_DENSE,             /* -d   --format-dense               */
+  OPT_FORMAT_ELLIPSIS,          /* -e   --format-ellipsis            */
+  OPT_FORMAT_EXTENSIONS,        /* -C   --format-extensions          */
+  OPT_FORMAT_GLOBAL_OFFSETS,    /* -G   --format-global-offsets      */
+  OPT_FORMAT_LOC,               /* -g   --format-loc                 */
+  OPT_FORMAT_REGISTERS,         /* -R   --format-registers           */
+  OPT_FORMAT_SUPPRESS_DATA,     /* -Q   --format-suppress-data       */
+  OPT_FORMAT_SUPPRESS_GROUP  ,  /* -x   --format-suppress-group      */
+  OPT_FORMAT_SUPPRESS_LOOKUP,   /* -n   --format-suppress-lookup     */
+  OPT_FORMAT_SUPPRESS_OFFSETS,  /* -D   --format-suppress-offsets    */
+  OPT_FORMAT_SUPPRESS_SANITIZE, /* -x?? --format-suppress-sanitize   */
+  OPT_FORMAT_SUPPRESS_URI,      /* -U   --format-suppress-uri        */
+  OPT_FORMAT_SUPPRESS_URI_MSG,  /* -q   --format-suppress-uri-msg    */
 
-  /* Print Output Limiters                                                   */
-  OPT_FORMAT_FILE,              /* -u<file> --format-file=<file>             */
-  OPT_FORMAT_GCC,               /* -cg      --format-gcc                     */
-  OPT_FORMAT_GROUP_NUMBER,      /* -x<n>    --format-group-number=<n>        */
-  OPT_FORMAT_LIMIT,             /* -H<num>  --format-limit=<num>             */
-  OPT_FORMAT_PRODUCER,          /* -c<str>  --format-producer=<str>          */
-  OPT_FORMAT_SNC,               /* -cs      --format-snc                     */
+  /* Print Output Limiters                                            */
+  OPT_FORMAT_FILE,              /* -u<file> --format-file=<file>    */
+  OPT_FORMAT_GCC,               /* -cg      --format-gcc            */
+  OPT_FORMAT_GROUP_NUMBER,      /* -x<n>    --format-group-number=<n>  */
+  OPT_FORMAT_LIMIT,             /* -H<num>  --format-limit=<num>       */
+  OPT_FORMAT_PRODUCER,          /* -c<str>  --format-producer=<str>    */
+  OPT_FORMAT_SNC,               /* -cs      --format-snc               */
 
-  /* Print Debug Sections                                                    */
-  OPT_PRINT_ABBREV,             /* -b   --print-abbrev                       */
-  OPT_PRINT_ALL,                /* -a   --print-all                          */
-  OPT_PRINT_ARANGES,            /* -r   --print-aranges                      */
-  OPT_PRINT_DEBUG_NAMES,        /*      --print-debug-name                   */
-  OPT_PRINT_EH_FRAME,           /* -F   --print-eh-frame                     */
-  OPT_PRINT_FISSION,            /* -I   --print-fission                      */
-  OPT_PRINT_FRAME,              /* -f   --print-frame                        */
-  OPT_PRINT_INFO,               /* -i   --print-info                         */
-  OPT_PRINT_LINES,              /* -l   --print-lines                        */
-  OPT_PRINT_LINES_SHORT,        /* -ls  --print-lines-short                  */
-  OPT_PRINT_LOC,                /* -c   --print-loc                          */
-  OPT_PRINT_MACINFO,            /* -m   --print-macinfo                      */
-  OPT_PRINT_PRODUCERS,          /* -P   --print-producers                    */
-  OPT_PRINT_PUBNAMES,           /* -p   --print-pubnames                     */
-  OPT_PRINT_RANGES,             /* -N   --print-ranges                       */
-  OPT_PRINT_STATIC,             /* -ta  --print-static                       */
-  OPT_PRINT_STATIC_FUNC,        /* -tf  --print-static-func                  */
-  OPT_PRINT_STATIC_VAR,         /* -tv  --print-static-var                   */
-  OPT_PRINT_STRINGS,            /* -s   --print-strings                      */
-  OPT_PRINT_STR_OFFSETS,        /*      --print-str-offsets                  */
-  OPT_PRINT_TYPE,               /* -y   --print-type                         */
-  OPT_PRINT_WEAKNAME,           /* -w   --print-weakname                     */
+  /* Print Debug Sections                                   */
+  OPT_PRINT_ABBREV,             /* -b   --print-abbrev      */
+  OPT_PRINT_ALL,                /* -a   --print-all         */
+  OPT_PRINT_ARANGES,            /* -r   --print-aranges     */
+  OPT_PRINT_DEBUG_NAMES,        /*      --print-debug-name  */
+  OPT_PRINT_GNU_DEBUGLINK,      /*      --print-gnu-debuglink  */
+  OPT_PRINT_EH_FRAME,           /* -F   --print-eh-frame    */
+  OPT_PRINT_FISSION,            /* -I   --print-fission     */
+  OPT_PRINT_FRAME,              /* -f   --print-frame       */
+  OPT_PRINT_INFO,               /* -i   --print-info        */
+  OPT_PRINT_LINES,              /* -l   --print-lines       */
+  OPT_PRINT_LINES_SHORT,        /* -ls  --print-lines-short */
+  OPT_PRINT_LOC,                /* -c   --print-loc         */
+  OPT_PRINT_MACINFO,            /* -m   --print-macinfo     */
+  OPT_PRINT_PRODUCERS,          /* -P   --print-producers   */
+  OPT_PRINT_PUBNAMES,           /* -p   --print-pubnames    */
+  OPT_PRINT_RANGES,             /* -N   --print-ranges      */
+  OPT_PRINT_STATIC,             /* -ta  --print-static      */
+  OPT_PRINT_STATIC_FUNC,        /* -tf  --print-static-func */
+  OPT_PRINT_STATIC_VAR,         /* -tv  --print-static-var  */
+  OPT_PRINT_STRINGS,            /* -s   --print-strings     */
+  OPT_PRINT_STR_OFFSETS,        /*      --print-str-offsets */
+  OPT_PRINT_TYPE,               /* -y   --print-type        */
+  OPT_PRINT_WEAKNAME,           /* -w   --print-weakname    */
 
-  /* Print Relocations Info                                                  */
-  OPT_RELOC,                    /* -o   --reloc                              */
-  OPT_RELOC_ABBREV,             /* -oa  --reloc-abbrev                       */
-  OPT_RELOC_ARANGES,            /* -or  --reloc-aranges                      */
-  OPT_RELOC_FRAMES,             /* -of  --reloc-frames                       */
-  OPT_RELOC_INFO,               /* -oi  --reloc-info                         */
-  OPT_RELOC_LINE,               /* -ol  --reloc-line                         */
-  OPT_RELOC_LOC,                /* -oo  --reloc-loc                          */
-  OPT_RELOC_PUBNAMES,           /* -op  --reloc-pubnames                     */
-  OPT_RELOC_RANGES,             /* -oR  --reloc-ranges                       */
+  /* Print Relocations Info                                 */
+  OPT_RELOC,                    /* -o   --reloc             */
+  OPT_RELOC_ABBREV,             /* -oa  --reloc-abbrev      */
+  OPT_RELOC_ARANGES,            /* -or  --reloc-aranges     */
+  OPT_RELOC_FRAMES,             /* -of  --reloc-frames      */
+  OPT_RELOC_INFO,               /* -oi  --reloc-info        */
+  OPT_RELOC_LINE,               /* -ol  --reloc-line        */
+  OPT_RELOC_LOC,                /* -oo  --reloc-loc         */
+  OPT_RELOC_PUBNAMES,           /* -op  --reloc-pubnames    */
+  OPT_RELOC_RANGES,             /* -oR  --reloc-ranges      */
 
   /* Search text in attributes                                               */
   OPT_SEARCH_ANY,               /* -S any=<text>   --search-any=<text>       */
@@ -767,14 +771,14 @@ enum longopts_vals {
   OPT_SEARCH_REGEX_COUNT,       /* -Svregex=<text> --search-regex-count<text>*/
 #endif /* HAVE_REGEX */
 
-  /* Help & Version                                                          */
-  OPT_HELP,                     /* -h  --help                                */
-  OPT_VERBOSE,                  /* -v  --verbose                             */
-  OPT_VERBOSE_MORE,             /* -vv --verbose-more                        */
-  OPT_VERSION,                  /* -V  --version                             */
+  /* Help & Version                                            */
+  OPT_HELP,                     /* -h  --help                  */
+  OPT_VERBOSE,                  /* -v  --verbose               */
+  OPT_VERBOSE_MORE,             /* -vv --verbose-more          */
+  OPT_VERSION,                  /* -V  --version               */
 
-  /* Trace                                                                   */
-  OPT_TRACE,                    /* -# --trace=<num>                           */
+  /* Trace                                                     */
+  OPT_TRACE,                    /* -# --trace=<num>            */
 
   OPT_END
 };
@@ -867,6 +871,7 @@ static struct dwoption longopts[] =  {
   {"print-all",         dwno_argument, 0, OPT_PRINT_ALL        },
   {"print-aranges",     dwno_argument, 0, OPT_PRINT_ARANGES    },
   {"print-debug-names", dwno_argument, 0, OPT_PRINT_DEBUG_NAMES},
+  {"print-gnu-debuglink", dwno_argument, 0, OPT_PRINT_GNU_DEBUGLINK},
   {"print-eh-frame",    dwno_argument, 0, OPT_PRINT_EH_FRAME   },
   {"print-fission",     dwno_argument, 0, OPT_PRINT_FISSION    },
   {"print-frame",       dwno_argument, 0, OPT_PRINT_FRAME      },
@@ -928,6 +933,11 @@ static struct dwoption longopts[] =  {
 void arg_print_debug_names(void)
 {
     glflags.gf_debug_names_flag = TRUE;
+}
+/*  Option 'print_gnu_debuglink' */
+void arg_print_gnu_debuglink(void)
+{
+    glflags.gf_gnu_debuglink_flag = TRUE;
 }
 
 /*  Option '--print_str_offsets' */
@@ -1252,6 +1262,7 @@ void arg_print_info(void)
 {
     glflags.gf_info_flag = TRUE;
     glflags.gf_types_flag = TRUE;
+    glflags.gf_gnu_debuglink_flag = TRUE;
     suppress_check_dwarf();
 }
 
@@ -1259,6 +1270,7 @@ void arg_print_info(void)
 void arg_print_fission(void)
 {
     glflags.gf_gdbindex_flag = TRUE;
+    glflags.gf_gnu_debuglink_flag = TRUE;
     suppress_check_dwarf();
 }
 
@@ -1305,6 +1317,7 @@ void arg_check_all(void)
     glflags.gf_check_attr_tag = TRUE;
     glflags.gf_check_tag_tree = TRUE;
     glflags.gf_check_type_offset = TRUE;
+    glflags.gf_gnu_debuglink_flag = FALSE;
     glflags.gf_check_names = TRUE;
     glflags.gf_pubnames_flag = TRUE;
     glflags.gf_info_flag = TRUE;
@@ -1638,6 +1651,7 @@ void arg_print_lines(void)
 {
     /* Enable to suppress offsets printing */
     glflags.gf_line_flag = TRUE;
+    glflags.gf_gnu_debuglink_flag = TRUE;
     suppress_check_dwarf();
 }
 
@@ -2197,9 +2211,7 @@ static void arg_file_use_no_libelf(void)
     glflags.gf_file_use_no_libelf = TRUE;
 }
 
-/*  Option '-y' */
-
-/*  Option '-y' */
+/* -y */
 static void arg_print_types(void)
 {
     /* .debug_pubtypes */
@@ -2383,6 +2395,7 @@ set_command_options(int argc, char *argv[])
         case OPT_PRINT_ALL:         arg_print_all();         break;
         case OPT_PRINT_ARANGES:     arg_print_aranges();     break;
         case OPT_PRINT_DEBUG_NAMES: arg_print_debug_names(); break;
+        case OPT_PRINT_GNU_DEBUGLINK: arg_print_gnu_debuglink(); break;
         case OPT_PRINT_EH_FRAME:    arg_print_gnu_frame();   break;
         case OPT_PRINT_FISSION:     arg_print_fission();     break;
         case OPT_PRINT_FRAME:       arg_print_debug_frame(); break;

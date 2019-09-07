@@ -11,7 +11,7 @@ e."
 .S +2
 \." ==============================================
 \." Put current date in the following at each rev
-.ds vE Rev 2.75, 3 September 2019
+.ds vE Rev 2.76, 7 September 2019
 \." ==============================================
 \." ==============================================
 .ds | |
@@ -2393,6 +2393,35 @@ On error the function returns
 The string pointed to by
 \f(CW*actual_sec_name_out\fP
 must not be free()d.
+
+.H 3 "dwarf_add_file_path()"
+This function is new as of September 2019.
+For those not using
+\f(CWdwarf_init_path()\fP and wanting 
+\f(CWdwarf_gnu_debuglink()\fP
+calls to work fully
+it is advisable to call 
+\f(CWdwarf_add_file_path\fP
+immediately after the dwarf_init() function returns.
+.DS
+\f(CWint dwarf_add_file_path(Dwarf_Debug dbg,
+    const char * file_name,
+    Dwarf_Error* error);\fP
+.DE
+On success this adds a copy of the pointed-to string
+into the Dwarf_Debug record and returns
+\f(CWDW_DLV_OK\fP.
+.P
+It might return
+\f(CWDW_DLV_NO_ENTRY\fP
+though the initial implementation
+never does this.
+.P
+It might return
+\f(CWDW_DLV_ERROR\fP,
+though the initial implementation
+never does this.
+
 
 .H 2 "Object Type Detectors"
 These are used by
@@ -12218,18 +12247,20 @@ See the example above which uses this function.
 
 .H 3 "dwarf_gdbindex_string_by_offset()"
 .DS
-int dwarf_gdbindex_string_by_offset(
+\f(CWint dwarf_gdbindex_string_by_offset(
     Dwarf_Gdbindex   gdbindexptr,
     Dwarf_Unsigned   stringoffset,
     const char    ** string_ptr,
-    Dwarf_Error   *  error);
+    Dwarf_Error   *  error);\fP
 .DE
 The function \f(CWdwarf_gdbindex_string_by_offset()\fP
 takes as input
 valid Dwarf_Gdbindex pointer and
 a \f(CWstringoffset\fP
-If it returns DW_DLV_NO_ENTRY there is a coding error.
-If it returns DW_DLV_ERROR there is an error of some kind.
+If it returns 
+\f(CWDW_DLV_NO_ENTRY\fP there is a coding error.
+If it returns 
+\f(CWDW_DLV_ERROR\fP there is an error of some kind.
 and the  error is indicated by
 the value returned through the \f(CWerror\fP pointer.
 .P
@@ -12238,6 +12269,68 @@ from the 'constant pool' through the \f(CWstring_ptr\fP.
 The string pointed to must never be free()d.
 .P
 See the example above which uses this function.
+
+.H 2 "GNU debuglink (.gnu_debuglink) operations"
+This section is a way GNU tools
+allow creation of DWARF separated from the
+executable file involved.
+See
+https://sourceware.org/gdb/onlinedocs/gdb/Separate-Debug-Files.html
+for more information.
+The function here is new in September 2019.
+.H 3 "dwarf_gnu_debuglink()"
+.DS
+.int dwarf_gnu_debuglink(Dwarf_Debug /*dbg*/,
+    char **      /*name_returned*/,
+    char **      /*crc_returned from the debuglink section*/,
+    char **      /*debuglink_path_returned*/,
+    unsigned *   /*debuglink_path_size_returned*/,
+    Dwarf_Error* /*error*/);\fP
+.DE
+This returns 
+\f(CWDW_DLV_NO_ENTRY\fP
+if there is no .gnu_debuglink object-file section.
+.P
+If it returns
+\f(CWDW_DLV_OK\fP
+a pointer to the target-file name in the section is returned
+through the pointer
+\f(CWname_returned\fP
+and a pointer to a 4-byte CRC value is returned
+through the pointer
+\f(CWcrc_returned\fP.
+If the function finds a file corresponding
+to the target-file a pointer to that
+is returned 
+through the pointer
+\f(CWdebuglink_path_returned\fP
+and the string length is returned
+through the pointer
+\f(CWdebuglink_path_size_returned\fP.
+If the function does not find a
+file corresponding the the target-file
+a zero is returned
+through the pointer
+\f(CWdebuglink_path_size_returned\fP
+and debuglink_path_returned is ignored.
+.P
+When the function reports a file 
+in
+\f(CWdebuglink_path_returned\fP
+it
+verifies the file in one of the documented
+places exists and prints its name,
+but the function does not, at this time,
+verify that the CRC in the file
+matches the CRC in the .gnu_debuglink
+section.
+.P
+In case of error the function returns
+\f(CWDW_DLV_ERROR\fP
+and returns the error value through
+\f(CWerror\fP
+like
+other functions in the library.
 
 
 .H 2 "Debug Fission (.debug_tu_index, .debug_cu_index) operations"
@@ -12306,7 +12399,6 @@ so applications usually won't need to use these
 operations at all.
 
 .H 3 "Dwarf_Debug_Fission_Per_CU"
-
 .DS
 #define DW_FISSION_SECT_COUNT 12
 struct Dwarf_Debug_Fission_Per_CU_s  {
