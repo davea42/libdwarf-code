@@ -1,3 +1,7 @@
+2019-09-08 David Anderson
+     * dwarf_util.c: a .gnu_debuglink lacking
+       a / in the section content would coredump
+       in libdwarf. No longer crashes.
 2019-09-07 David Anderson
      * checkexamples.c: Remove some useless blank lines.
        This is not used by libdwarf.

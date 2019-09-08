@@ -1467,7 +1467,8 @@ pathjoinl(char *target, size_t tsize,char *input)
     size_t targused = strlen(target);
     size_t inputsize = strlen(input);
     if (!input) {
-        return DW_DLV_ERROR;
+        /* Nothing to do. Ok. */
+        return DW_DLV_OK;
     }
     if ((targused+inputsize+3) > tsize) {
         return DW_DLV_ERROR;
@@ -1619,7 +1620,11 @@ construct_linkedto_path(Dwarf_Debug dbg,
     }
     /*  We need to be sure there is no accidental match with the file we opened. */
     /* wd suffices to build strings. */
-    res = pathjoinl(joind.js_wd,joind.js_wdlen,joind.js_dirname);
+    if (joind.js_dirname) {
+       res = pathjoinl(joind.js_wd,joind.js_wdlen,joind.js_dirname);
+    } else {
+       res = DW_DLV_OK;
+    }
     /* Now js_wd is a leading / directory name. */
     joinbaselen = strlen(joind.js_wd);
     if (res == DW_DLV_OK) {
