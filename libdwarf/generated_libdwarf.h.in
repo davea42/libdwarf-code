@@ -2512,7 +2512,7 @@ int dwarf_debugnames_entrypool_values(Dwarf_Dnames_Head /*dn*/,
 */
 int dwarf_gnu_debuglink(Dwarf_Debug /*dbg*/,
     char **      /*name_returned*/, 
-    char **      /*crc_returned*/, 
+    char **      /*crc_returned from the debuglink section*/, 
     char **      /*debuglink_path_returned*/, 
     unsigned *   /*debuglink_path_size_returned*/,
     Dwarf_Error* /*error*/);
