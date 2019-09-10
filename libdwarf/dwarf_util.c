@@ -1768,3 +1768,82 @@ int  dwarf_add_file_path(
     }
     return DW_DLV_OK;
 }
+
+
+/*  The definition of .note.gnu.buildid contents (also
+    used for other GNU .note.gnu.  sections too. */
+struct buildid_s {
+    char bu_ownernamesize[4];
+    char bu_buildidsize[4];
+    char bu_type[4];
+    char bu_owner[1];
+};
+
+int
+dwarf_gnu_buildid(Dwarf_Debug dbg,
+    Dwarf_Unsigned * type_returned,
+    const char     **owner_name_returned,
+    Dwarf_Unsigned * build_id_length_returned,
+    const unsigned char  **build_id_returned,
+    Dwarf_Error*   error)
+{
+    Dwarf_Byte_Ptr ptr = 0;
+    Dwarf_Byte_Ptr endptr = 0;
+    int res = DW_DLV_ERROR;
+    struct buildid_s *bu = 0;
+    Dwarf_Unsigned namesize = 0;
+    Dwarf_Unsigned descrsize = 0;
+    Dwarf_Unsigned type = 0;
+
+    if (!dbg->de_note_gnu_buildid.dss_data) {
+        res = _dwarf_load_section(dbg,
+            &dbg->de_note_gnu_buildid,error);
+        if (res != DW_DLV_OK) {
+            return res;
+        }
+    }
+    ptr = (Dwarf_Byte_Ptr)dbg->de_note_gnu_buildid.dss_data;
+    endptr = ptr + dbg->de_note_gnu_buildid.dss_size;
+ 
+    if (dbg->de_note_gnu_buildid.dss_size < sizeof(struct buildid_s)) {
+        _dwarf_error(dbg,error,DW_DLE_CORRUPT_NOTE_GNU_DEBUGID);
+        return DW_DLV_ERROR;
+    }
+
+    bu = (struct buildid_s *)ptr;
+    READ_UNALIGNED_CK(dbg,namesize,Dwarf_Unsigned,(Dwarf_Byte_Ptr)&bu->bu_ownernamesize[0], 4,
+         error,endptr);
+    READ_UNALIGNED_CK(dbg,descrsize,Dwarf_Unsigned,(Dwarf_Byte_Ptr)&bu->bu_buildidsize[0], 4,
+         error,endptr);
+    READ_UNALIGNED_CK(dbg,type,Dwarf_Unsigned,(Dwarf_Byte_Ptr)&bu->bu_type[0], 4,
+         error,endptr);
+
+    if (descrsize != 20) {
+        _dwarf_error(dbg,error,DW_DLE_CORRUPT_NOTE_GNU_DEBUGID);
+        return DW_DLV_ERROR;
+    }
+    res = _dwarf_check_string_valid(dbg,&bu->bu_owner[0],
+            &bu->bu_owner[0],
+            endptr,
+            DW_DLE_CORRUPT_GNU_DEBUGID_STRING,
+            error);
+    if ( res != DW_DLV_OK) {
+        return res;
+    }
+    if ((strlen(bu->bu_owner) +1) != namesize) {
+        _dwarf_error(dbg,error,DW_DLE_CORRUPT_GNU_DEBUGID_STRING);
+        return DW_DLV_ERROR;
+    }
+
+    if ((sizeof(struct buildid_s)-1 + namesize + descrsize) > 
+        dbg->de_note_gnu_buildid.dss_size) {
+        _dwarf_error(dbg,error,DW_DLE_CORRUPT_GNU_DEBUGID_SIZE);
+        return DW_DLV_ERROR;
+    }
+    
+    *type_returned = type;
+    *owner_name_returned = &bu->bu_owner[0];
+    *build_id_length_returned = descrsize;
+    *build_id_returned = ptr + sizeof(struct buildid_s)-1 + namesize;
+    return DW_DLV_OK;
+}

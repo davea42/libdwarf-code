@@ -229,12 +229,14 @@ that exist in the object.
 
 .TP
 .BR \--print-gnu-debuglink\
+If the .gnu_debuglink section
+is present its content is printed.
+If the .note.gnu.build-id section
+is present its content is printed.
 If a DWARF containing file
 named by the content
 of the .gnu_debuglink section
 exists the name will be printed.
-At this time the 4 byte CRC of the
-named file is not checked.
 
 .TP
 .BR \--print-lines\ (\-l)

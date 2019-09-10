@@ -1061,8 +1061,8 @@ process_one_file(int fd, int tiedfd,
 
     /*  prints nothing unless section .gnu_debuglink is present.
         Lets print for a few critical sections.  */
-    if( glflags.gf_info_flag || glflags.gf_line_flag ||
-        glflags.gf_types_flag || glflags.gf_gnu_debuglink_flag) {
+    if( glflags.gf_info_flag || glflags.gf_types_flag || 
+        glflags.gf_gnu_debuglink_flag) {
         print_gnu_debuglink(dbg);
     }
 
@@ -1346,7 +1346,7 @@ print_secname(Dwarf_Debug dbg,const char *secname)
 }
 
 /*  We'll check for errors when checking. 
-    print only if printing. */
+    print only if printing (as opposed to checking). */
 static void
 print_gnu_debuglink(Dwarf_Debug dbg)
 {
@@ -1356,6 +1356,10 @@ print_gnu_debuglink(Dwarf_Debug dbg)
     char *      crcbytes = 0;
     char *      link_name = 0;
     unsigned    link_name_len = 0;
+    Dwarf_Unsigned idtype = 0;
+    const char * idowner = 0;
+    Dwarf_Unsigned idlength = 0;
+    const unsigned char *idbyteptr = 0;
 
     res = dwarf_gnu_debuglink(dbg,
         &name,
@@ -1363,35 +1367,76 @@ print_gnu_debuglink(Dwarf_Debug dbg)
         &link_name,&link_name_len,
         &linkerror);
     if (res == DW_DLV_NO_ENTRY) {
-        return;
-    }
-    print_secname(dbg,".gnu_debuglink");
-    if (res == DW_DLV_ERROR) {
-        print_error_and_continue(dbg,
-            "Error reading .gnu_debuglink",
-            res, linkerror);
-        return;
-    }
-    /* Done with error checking, so print if we are printing. */
-    if (glflags.gf_do_print_dwarf)  { 
-        printf(" Debuglink name  : %s",sanitized(name));
-        {
-            char *crc = 0;
-            char *end = 0;
-    
-            crc = crcbytes;
-            end = crcbytes +4;
-            printf("   crc 0X: ");
-            for (; crc < end; crc++) {
-                printf("%02x ", (unsigned char)*crc);
+        /* pass down to id section */
+    } else {
+        print_secname(dbg,".gnu_debuglink");
+        if (res == DW_DLV_ERROR) {
+            print_error_and_continue(dbg,
+                "Error reading .gnu_debuglink",
+                res, linkerror);
+        } else {
+        /* Done with error checking, so print if we are printing. */
+            if (glflags.gf_do_print_dwarf)  { 
+                printf(" Debuglink name  : %s",sanitized(name));
+                {
+                    char *crc = 0;
+                    char *end = 0;
+            
+                    crc = crcbytes;
+                    end = crcbytes +4;
+                    printf("   crc 0X: ");
+                    for (; crc < end; crc++) {
+                        printf("%02x ", (unsigned char)*crc);
+                    }
+                }
+                printf("\n");
+                if (link_name_len) {
+                    printf(" Debuglink target: %s\n",sanitized(link_name));
+                }
+                free(link_name);
+                link_name = 0;
             }
         }
-        printf("\n");
-        if (link_name_len) {
-            printf(" Debuglink target: %s\n",sanitized(link_name));
-        }
-        free(link_name);
     }
+
+    res =  dwarf_gnu_buildid(dbg,
+        &idtype,
+        &idowner,
+        &idlength,
+        &idbyteptr,
+        &linkerror);
+    if (res == DW_DLV_NO_ENTRY) {
+        return;
+    }
+    {
+        print_secname(dbg,".note.gnu.build-id");
+        if (res == DW_DLV_ERROR) {
+            print_error_and_continue(dbg,
+                "Error reading .note.gnu.build-id",
+                res, linkerror);
+            return;
+        }
+        /* Done with error checking, so print if we are printing. */
+        if (glflags.gf_do_print_dwarf)  {
+            printf(" Build-id  type     : %" DW_PR_DUu "\n",idtype);
+            printf(" Build-id  ownername: %s\n",sanitized(idowner));
+            printf(" Build-id  length   : %" DW_PR_DUu "\n",idlength);
+            printf(" Build-id           : ");
+            {
+                const unsigned char *cur = 0;
+                const unsigned char *end = 0;
+      
+                cur = idbyteptr;
+                end = cur + idlength;
+                for (; cur < end; cur++) {
+                    printf("%02x", (unsigned char)*cur);
+                }
+            }
+            printf("\n");
+        }
+    }   
+
+
 }
 
 /* GCC linkonce names */

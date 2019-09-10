@@ -11,7 +11,7 @@ e."
 .S +2
 \." ==============================================
 \." Put current date in the following at each rev
-.ds vE Rev 2.76, 7 September 2019
+.ds vE Rev 2.77, 10 September 2019
 \." ==============================================
 \." ==============================================
 .ds | |
@@ -205,6 +205,14 @@ The following is a brief mention of the changes in this libdwarf from
 the libdwarf draft for DWARF Version 1 and recent changes.
 
 .H 2 "Items Changed"
+.P
+New functions  dwarf_gnu_buildid()
+and  dwarf_gnu_debuglink()
+allow callers to access fields that
+GNU compilers create and use to link an
+executable to its separate
+DWARF debugging content object file.
+(September 9, 2019)
 .P
 dwarf_next_cu_header_d() (and the other earlier
 versions of this) now allow a null
@@ -1240,6 +1248,7 @@ or .debug_tu_index section.
 These sections are used
 to make possible access to .dwo sections gathered
 into a .dwp object as part of the DebugFission
+(ie Split Dwarf)
 project allowing separation of an executable from
 most of its DWARF debugging information.
 As of May
@@ -3220,7 +3229,8 @@ and identifies the header type of this CU.
 In \f(CWDWARF4\fP a \f(CWDW_UT_type\fP
 will be in \f(CW.debug_types\fP, but in
 \f(CWDWARF5\fP these compilation units are in \f(CW.debug_info\fP
-and the Debug Fission \f(CW.debug_info.dwo\fP .
+and the Debug Fission (ie Split Dwarf) \f(CW.debug_info.dwo\fP
+sections .
 
 .H 3 "dwarf_next_cu_header_c()"
 .DS
@@ -12270,22 +12280,22 @@ The string pointed to must never be free()d.
 .P
 See the example above which uses this function.
 
-.H 2 "GNU debuglink (.gnu_debuglink) operations"
-This section is a way GNU tools
+.H 2 "GNU linking (.gnu_debuglink, .note.gnu.build-id) operations"
+This section deals with the way GNU tools
 allow creation of DWARF separated from the
 executable file involved.
 See
 https://sourceware.org/gdb/onlinedocs/gdb/Separate-Debug-Files.html
 for more information.
-The function here is new in September 2019.
+The functions here are new in September 2019.
 .H 3 "dwarf_gnu_debuglink()"
 .DS
-.int dwarf_gnu_debuglink(Dwarf_Debug /*dbg*/,
-    char **      /*name_returned*/,
-    char **      /*crc_returned from the debuglink section*/,
-    char **      /*debuglink_path_returned*/,
-    unsigned *   /*debuglink_path_size_returned*/,
-    Dwarf_Error* /*error*/);\fP
+\f(CWint dwarf_gnu_debuglink(Dwarf_Debug dbg,
+    char **      name_returned,
+    char **      crc_returned from the debuglink section,
+    char **      debuglink_path_returned,
+    unsigned *   debuglink_path_size_returned,
+    Dwarf_Error* error);\fP
 .DE
 This returns 
 \f(CWDW_DLV_NO_ENTRY\fP
@@ -12324,6 +12334,7 @@ but the function does not, at this time,
 verify that the CRC in the file
 matches the CRC in the .gnu_debuglink
 section.
+Callers must free() the path returned.
 .P
 In case of error the function returns
 \f(CWDW_DLV_ERROR\fP
@@ -12332,16 +12343,76 @@ and returns the error value through
 like
 other functions in the library.
 
+.H 3 "dwarf_gnu_buildid()"
+.DS
+\f(CWint dwarf_gnu_buildid(Dwarf_Debug dbg,
+    Dwarf_Unsigned *  type_returned,
+    const char     ** owner_name_returned,
+    Dwarf_Unsigned *  build_id_length_returned,
+    const unsigned char  ** build_id_returned,
+    Dwarf_Error    *  error);\fP
+.DE
+This function looks for the GNU section 
+\f(CW.note.gnu.buildid\fP
+and, if the section is absent, returns 
+\f(CWDW_DLV_NO_ENTRY\fP. 
+.P
+On failure it returns
+\f(CWDW_DLV_ERROR\fP
+and sets the
+\f(CWerror\fP pointer to point to an
+error item.
+.P
+On success it returns
+\f(CWDW_DLV_OK\fP and returns
+value through the pointers
+as described just below.
+.P
+Both pointers returned point
+to static storage and callers
+should not free() either one.
+.P
+\f(CWtype_returned\fP
+returns a type number of 3.
+It's symbolic name is 
+\f(CWNT_GNU_BUILD_ID\fP.
+
+\f(CWowner_name_returned\fP returns
+a pointer to a static string.
+If GNU tools built the object file
+being read the string will be "GNU"
+(without the quotes).  Note that in
+the section the owner name length
+shown counts the terminating NUL
+byte (the count is not returned
+as it's not needed by callers).
+.P
+\f(CWbuild_id_length\fP returns
+the length in bytes of the build id.
+This is always 20 bytes.
+.P
+\f(CWbuild_id_returned\fP
+returns a pointer to the build id 
+byte array.  
+It is neither a string
+nor printable
+and there is no NUL terminator.
+Print it as an array or 
+list of hex digits.
+
+
 
 .H 2 "Debug Fission (.debug_tu_index, .debug_cu_index) operations"
 We name things "xu" as these sections have the same format
 so we let "x" stand for either section.
+The DWARF5 standard refers to Split Dwarf while
+libdwarf tends to refer to this as "Fission".
+.P
 These functions get access to the  index functions needed
 to access and print the contents of an object file
 which is an aggregate of .dwo objects.
-These
-sections are implemented in gcc/gdb and are proposed
-to be part of DWARF5 (As of July 2014 DWARF5 is not finished).
+These sections are implemented in gcc/gdb and are
+DWARF5.
 The idea is that much debug information can be separated
 off into individual .dwo Elf objects and then aggregated
 simply into a single .dwp object so the executable need not
@@ -12353,10 +12424,10 @@ For additional information, see
 "https://gcc.gnu.org/wiki/DebugFission",
 and
 "http://www.bayarea.net/~cary/dwarf/Accelerated%20Access%20Diagram.png"
-and sometime in 2015, the DWARF5 standard.
+and as of 17 February 2017, the DWARF5 standard.
 .P
 There are FORM access functions related
-to Debug Fission.
+to Debug Fission (Split Dwarf).
 See
 \f(CWdwarf_formaddr()\fP
 and

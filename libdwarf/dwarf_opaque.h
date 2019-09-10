@@ -584,7 +584,9 @@ struct Dwarf_Debug_s {
     struct Dwarf_Section_s de_debug_loclists; /* New in DWARF5 */
     struct Dwarf_Section_s de_debug_rnglists; /* New in DWARF5 */
     struct Dwarf_Section_s de_debug_frame;
-    struct Dwarf_Section_s de_gnu_debuglink;
+    struct Dwarf_Section_s de_gnu_debuglink;  /* New September 2019 */
+    struct Dwarf_Section_s de_note_gnu_buildid; /* New September 2019 */
+
 
     /* gnu: the g++ eh_frame section */
     struct Dwarf_Section_s de_debug_frame_eh_gnu;

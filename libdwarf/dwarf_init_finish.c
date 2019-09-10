@@ -680,10 +680,17 @@ enter_section_in_de_debug_sections_array(Dwarf_Debug dbg,
         DW_DLE_DUPLICATE_TU_INDEX,0,
         FALSE,err);
 
-    /* GNU added this. It is not in standard DWARF */
+    /* GNU added this. It is not part of DWARF */
     SET_UP_SECTION(dbg,scn_name,".gnu_debuglink",
         DW_GROUPNUMBER_DWO,
         &dbg->de_gnu_debuglink,
+        DW_DLE_DUPLICATE_GNU_DEBUGLINK,0,
+        FALSE,err);
+
+    /* GNU added this. It is not part of DWARF */
+    SET_UP_SECTION(dbg,scn_name,".note.gnu.build-id",
+        DW_GROUPNUMBER_DWO,
+        &dbg->de_note_gnu_buildid,
         DW_DLE_DUPLICATE_GNU_DEBUGLINK,0,
         FALSE,err);
     return DW_DLV_NO_ENTRY;
@@ -778,6 +785,11 @@ this_section_dwarf_relevant(const char *scn_name,int type)
         return TRUE;
     }
     if (!strcmp(scn_name, ".gnu_debuglink")) {
+        /*  This is not a group or DWARF related file, but
+            it is useful for split dwarf. */
+        return TRUE;
+    }
+    if (!strcmp(scn_name, ".note.gnu.build-id")) {
         /*  This is not a group or DWARF related file, but
             it is useful for split dwarf. */
         return TRUE;
