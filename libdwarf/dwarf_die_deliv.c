@@ -1451,12 +1451,10 @@ _dwarf_next_cu_header_internal(Dwarf_Debug dbg,
             cu_context,error);
         if (res == DW_DLV_ERROR) {
             dwarf_dealloc(dbg, cu_context, DW_DLA_CU_CONTEXT);
-            dis->de_cu_context = NULL;
             return res;
         }
         if (res == DW_DLV_NO_ENTRY) {
             dwarf_dealloc(dbg, cu_context, DW_DLA_CU_CONTEXT);
-            dis->de_cu_context = NULL;
             return res;
         }
 

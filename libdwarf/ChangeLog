@@ -1,4 +1,10 @@
 2019-09-10 David Anderson
+     * dwarf_die_deliv.c(_dwarf_next_cu_header_internal):
+       Two lines assigning
+       NULL to de_cu_context were added in 
+       early September and that was a mistake.
+       Removing them in this change.
+2019-09-10 David Anderson
      * dwarf_errmsg_list.h: New error codes
        DW_DLE_CORRUPT_NOTE_GNU_DEBUGID,
        DW_DLE_CORRUPT_GNU_DEBUGID_SIZE, and 
