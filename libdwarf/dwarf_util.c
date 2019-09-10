@@ -1390,29 +1390,11 @@ static int
 does_file_exist(char *f)
 {
     int fd = 0;
-    
+
     fd = open(f,O_RDONLY|O_BINARY);
     if (fd < 0) {
         return DW_DLV_NO_ENTRY;
     }
-#if 0
-    res = fstat(fd,&statbuf);
-    if (res != 0) {
-        close(fd);
-        return DW_DLV_NO_ENTRY;
-    }
-    size = statbuf.st_size;
-    filecontent = malloc(size);
-    if(!filecontent) {
-        close(fd);
-        return DW_DLV_NO_ENTRY;
-    }
-    resr = read(fd,filecontent,size);
-    if (resr <= 0  || resr != size) {
-        close(fd);
-        return DW_DLV_NO_ENTRY;
-    }
-#endif /* 0 */
     /* Here we could derive the crc to validate the file. */
     close(fd);
     return DW_DLV_OK;
@@ -1430,7 +1412,8 @@ struct joins_s {
     char * js_originalfullpath;
     size_t js_originalfullpathlen;
 };
-static void 
+
+static void
 construct_js(struct joins_s * js)
 {
     memset(js,0,sizeof(struct joins_s));
@@ -1473,7 +1456,7 @@ pathjoinl(char *target, size_t tsize,char *input)
     if ((targused+inputsize+3) > tsize) {
         return DW_DLV_ERROR;
     }
- 
+
     if (!*target) {
         if (*input != joinchar) {
             target[0] = joinchar;
@@ -1505,7 +1488,7 @@ mydirlen(char *s)
     char *cp = 0;
     char *lastjoinchar = 0;
     size_t count =0;
-    
+
     for(cp = s ; *cp ; ++cp,++count)  {
         if (*cp == joinchar) {
             lastjoinchar = cp;
@@ -1515,7 +1498,7 @@ mydirlen(char *s)
         /* we know diff is postive in all cases */
         ptrdiff_t diff =  lastjoinchar - s;
         /* count the last join charn mydirlen. */
-        return (size_t)(diff+1); 
+        return (size_t)(diff+1);
     }
     return 0;
 }
@@ -1538,13 +1521,12 @@ construct_linkedto_path(Dwarf_Debug dbg,
     char * basename = 0;
     size_t basenamelen = 0;
     size_t wdretlen = 0;
-    size_t buflen =2000; 
+    size_t buflen =2000;
     size_t maxlen = 0;
     char * tname = 0;
-
     int res = 0;
     struct joins_s joind;
-  
+
     construct_js(&joind);
     joind.js_dirnamelen = mydirlen(depath);
     if (joind.js_dirnamelen) {
@@ -1595,7 +1577,7 @@ construct_linkedto_path(Dwarf_Debug dbg,
         free(joind.js_wd);
         joind.js_wd = newwd;
         joind.js_wdlen = maxlen;
-    } 
+    }
     {
         char *opath = 0;
 
@@ -1606,7 +1588,7 @@ construct_linkedto_path(Dwarf_Debug dbg,
             return;
         }
         opath[0] = 0;
-        joind.js_originalfullpath = opath; 
+        joind.js_originalfullpath = opath;
         joind.js_originalfullpathlen = maxlen;
         opath = 0;
         strcpy(joind.js_originalfullpath,joind.js_wd);
@@ -1621,9 +1603,10 @@ construct_linkedto_path(Dwarf_Debug dbg,
     /*  We need to be sure there is no accidental match with the file we opened. */
     /* wd suffices to build strings. */
     if (joind.js_dirname) {
-       res = pathjoinl(joind.js_wd,joind.js_wdlen,joind.js_dirname);
+        res = pathjoinl(joind.js_wd,joind.js_wdlen,
+            joind.js_dirname);
     } else {
-       res = DW_DLV_OK;
+        res = DW_DLV_OK;
     }
     /* Now js_wd is a leading / directory name. */
     joinbaselen = strlen(joind.js_wd);
@@ -1631,7 +1614,7 @@ construct_linkedto_path(Dwarf_Debug dbg,
         /* If we add basename do we find what we look for? */
         res = pathjoinl(joind.js_wd,joind.js_wdlen,basename);
         if (!strcmp(joind.js_originalfullpath,joind.js_wd)) {
-            /* duplicated name. spurious match. */ 
+            /* duplicated name. spurious match. */
         } else if (res == DW_DLV_OK) {
             res = does_file_exist(joind.js_wd);
             if (res == DW_DLV_OK) {
@@ -1652,7 +1635,7 @@ construct_linkedto_path(Dwarf_Debug dbg,
     if (res == DW_DLV_OK) {
         res = pathjoinl(joind.js_wd,joind.js_wdlen,basename);
         if (!strcmp(joind.js_originalfullpath,joind.js_wd)) {
-            /* duplicated name. spurious match. */ 
+            /* duplicated name. spurious match. */
         } else if(res == DW_DLV_OK) {
             res = does_file_exist(joind.js_wd);
             if (res == DW_DLV_OK) {
@@ -1683,7 +1666,7 @@ construct_linkedto_path(Dwarf_Debug dbg,
     if (res == DW_DLV_OK) {
         res = pathjoinl(joind.js_wd2,joind.js_wd2len,basename);
         if (!strcmp(joind.js_originalfullpath,joind.js_wd2)) {
-            /* duplicated name. spurious match. */ 
+            /* duplicated name. spurious match. */
         } else if (res == DW_DLV_OK) {
             res = does_file_exist(joind.js_wd2);
             if (res == DW_DLV_OK) {
@@ -1747,8 +1730,8 @@ dwarf_gnu_debuglink(Dwarf_Debug dbg,
         return DW_DLV_ERROR;
     }
     if (dbg->de_path) {
-         construct_linkedto_path(dbg,ptr,debuglink_path_returned,
-             debuglink_path_size_returned);
+        construct_linkedto_path(dbg,ptr,debuglink_path_returned,
+            debuglink_path_size_returned);
     } else {
         *debuglink_path_size_returned  = 0;
     }
@@ -1764,7 +1747,7 @@ int  dwarf_add_file_path(
     UNUSEDARG Dwarf_Error* error)
 {
     if (!dbg->de_path) {
-         dbg->de_path = strdup(file_name);
+        dbg->de_path = strdup(file_name);
     }
     return DW_DLV_OK;
 }
@@ -1804,29 +1787,34 @@ dwarf_gnu_buildid(Dwarf_Debug dbg,
     }
     ptr = (Dwarf_Byte_Ptr)dbg->de_note_gnu_buildid.dss_data;
     endptr = ptr + dbg->de_note_gnu_buildid.dss_size;
- 
-    if (dbg->de_note_gnu_buildid.dss_size < sizeof(struct buildid_s)) {
-        _dwarf_error(dbg,error,DW_DLE_CORRUPT_NOTE_GNU_DEBUGID);
+
+    if (dbg->de_note_gnu_buildid.dss_size <
+        sizeof(struct buildid_s)) {
+        _dwarf_error(dbg,error,
+            DW_DLE_CORRUPT_NOTE_GNU_DEBUGID);
         return DW_DLV_ERROR;
     }
 
     bu = (struct buildid_s *)ptr;
-    READ_UNALIGNED_CK(dbg,namesize,Dwarf_Unsigned,(Dwarf_Byte_Ptr)&bu->bu_ownernamesize[0], 4,
-         error,endptr);
-    READ_UNALIGNED_CK(dbg,descrsize,Dwarf_Unsigned,(Dwarf_Byte_Ptr)&bu->bu_buildidsize[0], 4,
-         error,endptr);
-    READ_UNALIGNED_CK(dbg,type,Dwarf_Unsigned,(Dwarf_Byte_Ptr)&bu->bu_type[0], 4,
-         error,endptr);
+    READ_UNALIGNED_CK(dbg,namesize,Dwarf_Unsigned,
+        (Dwarf_Byte_Ptr)&bu->bu_ownernamesize[0], 4,
+        error,endptr);
+    READ_UNALIGNED_CK(dbg,descrsize,Dwarf_Unsigned,
+        (Dwarf_Byte_Ptr)&bu->bu_buildidsize[0], 4,
+        error,endptr);
+    READ_UNALIGNED_CK(dbg,type,Dwarf_Unsigned,
+        (Dwarf_Byte_Ptr)&bu->bu_type[0], 4,
+        error,endptr);
 
     if (descrsize != 20) {
         _dwarf_error(dbg,error,DW_DLE_CORRUPT_NOTE_GNU_DEBUGID);
         return DW_DLV_ERROR;
     }
     res = _dwarf_check_string_valid(dbg,&bu->bu_owner[0],
-            &bu->bu_owner[0],
-            endptr,
-            DW_DLE_CORRUPT_GNU_DEBUGID_STRING,
-            error);
+        &bu->bu_owner[0],
+        endptr,
+        DW_DLE_CORRUPT_GNU_DEBUGID_STRING,
+        error);
     if ( res != DW_DLV_OK) {
         return res;
     }
@@ -1835,12 +1823,11 @@ dwarf_gnu_buildid(Dwarf_Debug dbg,
         return DW_DLV_ERROR;
     }
 
-    if ((sizeof(struct buildid_s)-1 + namesize + descrsize) > 
+    if ((sizeof(struct buildid_s)-1 + namesize + descrsize) >
         dbg->de_note_gnu_buildid.dss_size) {
         _dwarf_error(dbg,error,DW_DLE_CORRUPT_GNU_DEBUGID_SIZE);
         return DW_DLV_ERROR;
     }
-    
     *type_returned = type;
     *owner_name_returned = &bu->bu_owner[0];
     *build_id_length_returned = descrsize;

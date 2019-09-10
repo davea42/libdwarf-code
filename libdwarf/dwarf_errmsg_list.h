@@ -530,6 +530,6 @@ const char *_dwarf_errmsgs[] = {
     "DW_DLE_CORRUPT_GNU_DEBUGLINK(456) Section length wrong",
     "DW_DLE_CORRUPT_NOTE_GNU_DEBUGID(457) Data corruption in .note.gnu.debugid section",
     "DW_DLE_CORRUPT_GNU_DEBUGID_SIZE(458) Section .note.gnu.debugid size incorrect",
-    "DW_DLE_CORRUPT_GNU_DEBUGID_STRING(459) Section .note.gnu.debugid ownder string not terminated properly",    
+    "DW_DLE_CORRUPT_GNU_DEBUGID_STRING(459) Section .note.gnu.debugid ownder string not terminated properly",
 };
 #endif /* DWARF_ERRMSG_LIST_H */

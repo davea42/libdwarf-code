@@ -2514,13 +2514,13 @@ int dwarf_debugnames_entrypool_values(Dwarf_Dnames_Head /*dn*/,
     https://sourceware.org/gdb/onlinedocs/gdb/Separate-Debug-Files.html
 */
 int dwarf_gnu_debuglink(Dwarf_Debug /*dbg*/,
-    char **      /*name_returned*/, 
-    char **      /*crc_returned from the debuglink section*/, 
-    char **      /*debuglink_path_returned*/, 
+    char **      /*name_returned*/,
+    char **      /*crc_returned from the debuglink section*/,
+    char **      /*debuglink_path_returned*/,
     unsigned *   /*debuglink_path_size_returned*/,
     Dwarf_Error* /*error*/);
 
-/*  The pointers returned refer to strings in 
+/*  The pointers returned refer to strings in
     static space in the
     object file so must not be free()d,
     Though build_id_returned has no NUL

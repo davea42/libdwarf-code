@@ -1061,7 +1061,7 @@ process_one_file(int fd, int tiedfd,
 
     /*  prints nothing unless section .gnu_debuglink is present.
         Lets print for a few critical sections.  */
-    if( glflags.gf_info_flag || glflags.gf_types_flag || 
+    if( glflags.gf_info_flag || glflags.gf_types_flag ||
         glflags.gf_gnu_debuglink_flag) {
         print_gnu_debuglink(dbg);
     }
@@ -1345,7 +1345,7 @@ print_secname(Dwarf_Debug dbg,const char *secname)
     }
 }
 
-/*  We'll check for errors when checking. 
+/*  We'll check for errors when checking.
     print only if printing (as opposed to checking). */
 static void
 print_gnu_debuglink(Dwarf_Debug dbg)
@@ -1376,12 +1376,12 @@ print_gnu_debuglink(Dwarf_Debug dbg)
                 res, linkerror);
         } else {
         /* Done with error checking, so print if we are printing. */
-            if (glflags.gf_do_print_dwarf)  { 
+            if (glflags.gf_do_print_dwarf)  {
                 printf(" Debuglink name  : %s",sanitized(name));
                 {
                     char *crc = 0;
                     char *end = 0;
-            
+
                     crc = crcbytes;
                     end = crcbytes +4;
                     printf("   crc 0X: ");
@@ -1425,7 +1425,7 @@ print_gnu_debuglink(Dwarf_Debug dbg)
             {
                 const unsigned char *cur = 0;
                 const unsigned char *end = 0;
-      
+
                 cur = idbyteptr;
                 end = cur + idlength;
                 for (; cur < end; cur++) {
@@ -1434,9 +1434,7 @@ print_gnu_debuglink(Dwarf_Debug dbg)
             }
             printf("\n");
         }
-    }   
-
-
+    }
 }
 
 /* GCC linkonce names */

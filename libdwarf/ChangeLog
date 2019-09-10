@@ -1,4 +1,9 @@
 2019-09-10 David Anderson
+     * dwarf_errmsg_list.h,dwarf_generic_init.c,dwarf_opaque.h,
+       dwarf_util.h, libdwarf.h.in: Fix indents and
+       remove trailing whitespace.
+     * generated_libdwarf.h.in: Regenerated.
+2019-09-10 David Anderson
      * dwarf_die_deliv.c(_dwarf_next_cu_header_internal):
        Two lines assigning
        NULL to de_cu_context were added in 

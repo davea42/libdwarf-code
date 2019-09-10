@@ -512,7 +512,7 @@ struct Dwarf_Debug_s {
     int  de_fd;
     char de_owns_fd;
     /*  de_path is only set if dwarf_init_path()
-        was used to initialize things. 
+        was used to initialize things.
         Used with the .gnu_debuglink section. */
     const char *de_path;
 

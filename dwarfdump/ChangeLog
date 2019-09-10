@@ -1,4 +1,6 @@
 2019-09-10 David Anderson
+     * dwarfdump.c: Fix indents and remove trailing whitespace.
+2019-09-10 David Anderson
      * dwarfdump.c: Now --print-gnu-debuglink prints
        the  .note.gnu.build-id and .gnu_debuglink sections
        (does both if both exist).

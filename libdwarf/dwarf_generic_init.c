@@ -308,7 +308,7 @@ dwarf_finish(Dwarf_Debug dbg, Dwarf_Error * error)
     dbg->de_path = 0;
     /*  dwarf_object_finish() also frees de_path, but that is safe
         because we set it to zero here so no duplicate free will
-        occur.  
+        occur.
         Not all code uses libdwarf exactly as we do hence the extra
         free() there. */
     return dwarf_object_finish(dbg, error);
