@@ -1988,9 +1988,11 @@ dwarf_siblingof(Dwarf_Debug dbg,
 {
     int res = 0;
     Dwarf_Bool is_info = TRUE;
+    Dwarf_Debug_InfoTypes dis = 0;
 
+    dis = &dbg->de_info_reading;
     res = _dwarf_siblingof_internal(dbg,die,
-        dbg->de_info_reading.de_cu_context,
+        die?die->di_cu_context:dis->de_cu_context,
         is_info,caller_ret_die,error);
     return res;
 }
@@ -2010,7 +2012,8 @@ dwarf_siblingof_b(Dwarf_Debug dbg,
         &dbg->de_types_reading;
 
     res = _dwarf_siblingof_internal(dbg,die,
-        dis->de_cu_context,is_info,caller_ret_die,error);
+        die?die->di_cu_context:dis->de_cu_context,
+        is_info,caller_ret_die,error);
     return res;
 }
 int
@@ -2082,6 +2085,7 @@ _dwarf_siblingof_internal(Dwarf_Debug dbg,
         if (*die_info_ptr == 0) {
             return (DW_DLV_NO_ENTRY);
         }
+        context = die->di_cu_context;
         cu_info_start = dataptr+ context->cc_debug_offset;
         die_info_end = _dwarf_calculate_info_section_end_ptr(context);
 
