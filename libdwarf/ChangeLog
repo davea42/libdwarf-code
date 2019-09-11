@@ -1,6 +1,8 @@
 2019-09-11 David Anderson
      * dwarf_die_deliv.c: Being more careful about what context to use
-       in dwarf_siblingof.
+       in dwarf_siblingof: if DIE argument is non-null, take
+       context pointer from it, else use global context from 
+       Dwarf_Debug record.
 2019-09-10 David Anderson
      * dwarf_errmsg_list.h,dwarf_generic_init.c,dwarf_opaque.h,
        dwarf_util.h, libdwarf.h.in: Fix indents and
