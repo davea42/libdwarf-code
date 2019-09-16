@@ -11,7 +11,7 @@ e."
 .S +2
 \." ==============================================
 \." Put current date in the following at each rev
-.ds vE Rev 2.77, 10 September 2019
+.ds vE Rev 2.78, 15 September 2019
 \." ==============================================
 \." ==============================================
 .ds | |
@@ -6021,7 +6021,12 @@ void examplec(Dwarf_Die cu_die)
         return;
     }
     if (table_count == 0) {
-        /*  A line table with no actual lines.  */
+        /*  A line table with no actual lines.
+            This occurs in a DWARF5  or DWARF5
+            DW_TAG_type_unit
+            as such has no lines of code
+            but needs data for
+            DW_AT_decl_file attributes. */
         /*...do something, see dwarf_srclines_files_count()
             etc below. */
 
@@ -6214,6 +6219,9 @@ line table in
 \f(CW*compilation_directory\fP.
 That compilation string may be NULL or the empty
 string.
+The string pointer is valid until the
+\f(CWline_context\fP has been deallocated.
+
 .P
 In case of error,
 \f(CWDW_DLV_ERROR\fP
