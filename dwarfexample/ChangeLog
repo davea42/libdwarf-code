@@ -1,4 +1,9 @@
-2019-09-29 David Anderson
+2019-09-16 David Anderson
+     * findfuncbypc.c: A new example showing
+       how, in fairly simple cases, one can find the source file
+       line number given a  address in the code.
+       It is not pleasantly organized yet.
+2019-08-29 David Anderson
      * CMakeLists.txt: Adding findfuncbypc.c for cmake.
      * Makefile.am: Adding findfuncbypc.c for build.
        It builds, but ignore it it is not yet useful.

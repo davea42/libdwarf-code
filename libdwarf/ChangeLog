@@ -1,3 +1,6 @@
+2019-09-16 David Anderson
+     * dwarf_die_deliv.c: Reformatted one line so it
+       was less long.
 2019-09-15 David Anderson
      * libdwarf2.1.mm: Improved comments in examplec.
      * libdwarf2.1.pdf: Regenerated. v2.78

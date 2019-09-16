@@ -2271,7 +2271,8 @@ dwarf_child(Dwarf_Die die,
     context = die->di_cu_context;
     die_info_end = _dwarf_calculate_info_section_end_ptr(context);
 
-    res = _dwarf_next_die_info_ptr(die_info_ptr, die->di_cu_context,
+    res = _dwarf_next_die_info_ptr(die_info_ptr,
+        die->di_cu_context,
         die_info_end,
         NULL, false,
         &has_die_child,
