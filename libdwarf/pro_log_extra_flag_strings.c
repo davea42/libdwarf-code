@@ -41,6 +41,7 @@
 #include "dwarf.h"
 #include "libdwarf.h"
 #include "pro_opaque.h"
+#include "dwarfstring.h"
 
 
 
@@ -103,6 +104,11 @@ translatetosigned(char *s,Dwarf_Signed *v, UNUSEDARG int *err)
                 l += 15;
                 break;
             default:
+#ifdef TESTING
+                printf("ERROR in hex string \"%s\" "
+                    "bad character 0x%x, line %d %s\n",
+                    s,*cp,__LINE__,__FILE__);
+#endif
                 *err = DW_DLE_HEX_STRING_ERROR;
                 return DW_DLV_ERROR;
             }
@@ -132,6 +138,11 @@ translatetosigned(char *s,Dwarf_Signed *v, UNUSEDARG int *err)
             l +=  (*cp - '0');
             break;
         default:
+#ifdef TESTING
+            printf("ERROR in decimal string \"%s\", "
+                "bad character 0x%x, line %d %s\n",
+                s,*cp,__LINE__,__FILE__);
+#endif
             *err = DW_DLE_DECIMAL_STRING_ERROR;
             return DW_DLV_ERROR;
         }
@@ -179,6 +190,10 @@ update_named_field(Dwarf_P_Debug dbg, dwarfstring *cmsname,dwarfstring *cmsvalue
          dbg->de_line_inits.pi_segment_size = (unsigned)v;
      } else {
          /* FIXME *err */
+#ifdef TESTING
+         printf("ERROR  due to unknown string \"%s\", line %d %s\n",
+             name,__LINE__,__FILE__);
+#endif
          *err = DW_DLE_PRO_INIT_EXTRAS_UNKNOWN;
          return DW_DLV_ERROR;
      }
@@ -207,15 +222,18 @@ update_named_value(Dwarf_P_Debug dbg, dwarfstring*cms,
          return DW_DLV_NO_ENTRY; 
      }
      if (*cp == ' ') { 
-         /* Ignore this, trailing spaces, no = is a typo */
+         /* Trailing spaces, no = is an input bug. */
          dwarfstring_destructor(&cmsname);
          dwarfstring_destructor(&cmsvalue);
+#ifdef TESTING
+         printf("ERROR due to  trailing spaces before = in \"%s\", line %d %s\n",
+             cp,__LINE__,__FILE__);
+#endif
          *err = DW_DLE_PRO_INIT_EXTRAS_ERR;
          return DW_DLV_ERROR; 
      }
      slen = cp - str;
      dwarfstring_append_length(&cmsname,str,slen);
-
      cp++;
      value_start = cp;
      for ( ; *cp && *cp != ' '; cp++) { }
@@ -234,6 +252,22 @@ update_named_value(Dwarf_P_Debug dbg, dwarfstring*cms,
      return res; 
 }
 
+static int
+find_next_comma(const char *base,const char **nextcomma)
+{
+     const char *cp = base;
+     for( ; *cp ; ++cp) {
+         if (*cp == ',') {
+            *nextcomma = cp;
+            return DW_DLV_OK;
+         }
+     }
+     /*  Encountered end of string, should not happen as
+         we ensured a last string. */
+     *nextcomma = cp;
+     return DW_DLV_OK;
+}
+
 /*  Publicly visible in in libdwarf to enable easy testing
     of the code here. */
 int
@@ -241,53 +275,48 @@ _dwarf_log_extra_flagstrings(Dwarf_P_Debug dbg,
   const char *extra,
   int *err)
 {
-    unsigned comma_count = 0;
-    const char *cstart = extra;
-    unsigned curcomma = 0;
-    const char *cp = 0;
     int res = 0;
+    const char *nextcharloc = 0;
+    const char *nextcomma = 0;
+    dwarfstring cms;
+    dwarfstring input;
 
     if (!extra || !*extra) {
+        /* Nothing to do. */
         return DW_DLV_NO_ENTRY;
     }
-    for (cp = extra; *cp;cp++) {
-        if (*cp == ',') {
-             ++comma_count;
-        }
-    }
 
-    for ( ; curcomma <= comma_count; ) {
-        dwarfstring cms;
-        dwarfstring_constructor(&cms);
-        for (cp = cstart; *cp;cp++) {
-            if (*cp == ' ') {
-               ++cstart;
-               continue;
-            }
-            if (*cp == 0 || *cp == ',') {
-                /* end of a control string */
-                unsigned len = cp - cstart;
-                if (len == 0) { 
-                    /* empty comma phrase */
-                    if (*cp  == ',') {
-                        cstart = cp+1;
-                    }
-                    break;
-                } else {
-                    dwarfstring_append_length(&cms,(char *)cstart,len);
-                    if (*cp  == ',') {
-                        cstart = cp+1;
-                    }
-                    res = update_named_value(dbg,&cms,err);
-                    if (res == DW_DLV_ERROR) {
-                        dwarfstring_destructor(&cms);
-                        return res;
-                    }
-                }
-            }
-        }
-        dwarfstring_destructor(&cms);
+    dwarfstring_constructor(&cms);
+    dwarfstring_constructor(&input);
+    dwarfstring_append(&input,(char *)extra);
+    /*  Adding a final , simplifies logic here. */
+    dwarfstring_append(&input,(char *)",");
+    nextcharloc = dwarfstring_string(&input);
+    while (1) {
+       dwarfstring_reset(&cms);
+       find_next_comma(nextcharloc,&nextcomma);
+       {
+           unsigned len = nextcomma - nextcharloc;
+           if (len > 0) {
+               dwarfstring_append_length(&cms,(char *)nextcharloc,len);
+               res = update_named_value(dbg,&cms,err);
+               if (res == DW_DLV_ERROR) {
+                   dwarfstring_destructor(&cms);
+                   dwarfstring_destructor(&input);
+                   return res;
+               } 
+           }  else {/* else empty, */
+           }
+           if (!(nextcomma[1])) {
+               dwarfstring_destructor(&cms);
+               dwarfstring_destructor(&input);
+               return DW_DLV_OK;
+           }
+           nextcharloc = nextcomma+1;
+       }
     }
+    dwarfstring_destructor(&input);
+    dwarfstring_destructor(&cms);
     return DW_DLV_OK;
 }
 

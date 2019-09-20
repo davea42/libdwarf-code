@@ -72,7 +72,7 @@ _dwarf_pro_reloc_name_stream64(Dwarf_P_Debug dbg,
 
 
     if (type == dwarf_drt_data_reloc) {
-        if (reltarget_length == dbg->de_offset_size) {
+        if (reltarget_length == dbg->de_dwarf_offset_size) {
             rel_type = dbg->de_offset_reloc;
         } else if (reltarget_length == dbg->de_pointer_size) {
             rel_type = dbg->de_ptr_reloc;
@@ -115,7 +115,7 @@ _dwarf_pro_reloc_name_stream32(Dwarf_P_Debug dbg, int base_sec_index,
     if (res != DW_DLV_OK)
         return res;
     if (type == dwarf_drt_data_reloc) {
-        if (reltarget_length == dbg->de_offset_size) {
+        if (reltarget_length == dbg->de_dwarf_offset_size) {
             rel_type = dbg->de_offset_reloc;
         } else if (reltarget_length == dbg->de_pointer_size) {
             rel_type = dbg->de_ptr_reloc;
