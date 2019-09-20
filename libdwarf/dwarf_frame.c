@@ -2157,8 +2157,10 @@ dwarf_get_fde_info_for_cfa_reg3_b(Dwarf_Fde fde,
         table_real_data_size, error);
     if (res != DW_DLV_OK)
         return res;
-    res = _dwarf_get_fde_info_for_a_pc_row(fde, pc_requested, &fde_table,
-        dbg->de_frame_cfa_col_number,has_more_rows,subsequent_pc,error);
+    res = _dwarf_get_fde_info_for_a_pc_row(fde, pc_requested,
+        &fde_table,
+        dbg->de_frame_cfa_col_number,has_more_rows,
+        subsequent_pc,error);
     if (res != DW_DLV_OK) {
         dwarf_free_fde_table(&fde_table);
         return res;

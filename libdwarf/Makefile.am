@@ -96,7 +96,9 @@ dwarf_reloc_ppc64.h \
 dwarf_reloc_x86_64.h \
 dwarf_str_offsets.c \
 dwarf_str_offsets.h \
-dwarf_string.c \
+dwarfstring.c       \
+dwarfstring.h       \
+dwarf_stringsection.c \
 dwarf_tied.c \
 dwarf_tied_decls.h \
 dwarf_tsearchhash.c \
@@ -140,6 +142,7 @@ pro_incl.h \
 pro_init.c \
 pro_line.c \
 pro_line.h \
+pro_log_extra_flag_strings.c \
 pro_macinfo.c \
 pro_macinfo.h \
 pro_opaque.h \
@@ -164,8 +167,9 @@ libdwarf_la_LIBADD = @DWARF_LIBS@
 
 libdwarf_la_LDFLAGS = -fPIC -no-undefined -version-info @version_info@ @release_info@
 
-TESTS = runtests.sh
+TESTS = $(check_PROGRAMS)
 AM_TESTS_ENVIRONMENT = DWTOPSRCDIR='$(top_srcdir)'; export DWTOPSRCDIR;
+
 
 include_HEADERS = $(top_srcdir)/libdwarf/dwarf.h libdwarf.h
 
@@ -173,6 +177,22 @@ libdwarfdevdir = $(datadir)/libdwarf/libdwarf-devel
 libdwarfdev_DATA = \
 libdwarf2.1.pdf \
 libdwarf2p.1.pdf 
+
+check_PROGRAMS = test_dwarfstring test_extra_flag_strings
+
+test_dwarfstring_SOURCES = test_dwarfstring.c \
+   dwarfstring.h dwarfstring.c
+test_dwarfstring_CFLAGS = $(CFLAGS_WARN)
+test_dwarfstring_CPPFLAGS = \
+-I$(top_srcdir) -I$(top_builddir) -I$(top_srcdir)/src
+
+test_extra_flag_strings_SOURCES = test_extra_flag_strings.c \
+   pro_log_extra_flag_strings.c \
+   dwarfstring.h dwarfstring.c
+test_extra_flag_strings_CFLAGS = $(CFLAGS_WARN)
+test_extra_flag_strings_CPPFLAGS =  -DTESTING \
+-I$(top_srcdir) -I$(top_builddir) -I$(top_srcdir)/src
+
 
 EXTRA_DIST = \
 COPYING \

@@ -50,6 +50,7 @@
 #include "pro_reloc_symbolic.h"
 #include "pro_reloc_stream.h"
 #include "dwarf_tsearch.h"
+#include "dwarfstring.h"
 
 #define IS_64BITPTR(dbg) ((dbg)->de_flags & DW_DLC_POINTER64 ? 1 : 0)
 #define ISA_IA64(dbg) ((dbg)->de_flags & DW_DLC_ISA_IA64 ? 1 : 0)
@@ -60,6 +61,13 @@ struct isa_relocs_s {
    int         reloc64_;
    int         segrel_; /* only used if IRIX */
 };
+
+#ifndef TRUE
+#define TRUE 1
+#endif /*TRUE*/
+#ifndef FALSE
+#define FALSE 0
+#endif /*FALSE*/
 
 /*  Some of these may be the wrong relocation for DWARF
     relocations. FIXME. Most will be unusable without
@@ -104,6 +112,7 @@ static struct isa_relocs_s isa_relocs[] = {
 
 static int common_init(Dwarf_P_Debug dbg, Dwarf_Unsigned flags,
     const char *abiname, const char *dwarf_version,
+    const char *extrainfo,
     int *error_ret);
 
 /*  This function sets up a new dwarf producing region.
@@ -177,7 +186,8 @@ dwarf_producer_init(Dwarf_Unsigned flags,
     dbg->de_errhand = errhand;
     dbg->de_errarg = errarg;
     dbg->de_user_data = user_data;
-    res = common_init(dbg, flags,isa_name,dwarf_version,&err_ret);
+    res = common_init(dbg, flags,isa_name,dwarf_version,
+        extra,&err_ret);
     if (res != DW_DLV_OK) {
         DWARF_P_DBG_ERROR(dbg, err_ret, DW_DLV_ERROR);
     }
@@ -219,7 +229,7 @@ set_reloc_numbers(Dwarf_P_Debug dbg,
             } else {
                 dbg->de_ptr_reloc = isap->reloc64_;
             }
-            if (dbg->de_offset_size == 4) {
+            if (dbg->de_dwarf_offset_size == 4) {
                 dbg->de_offset_reloc = isap->reloc32_;
             } else {
                 dbg->de_offset_reloc = isap->reloc64_;
@@ -271,10 +281,260 @@ key_simple_string_hashfunc(const void *keyp)
     return _dwarf_string_hashfunc(str);
 }
 
+/* ===== START  Initialization using string=value,string2=valu2 (etc) */
+/*  in the producer_init extras string.
+    Handles hex and decimal. Not octal.
+    Used a very small number of times, so performance
+    not an issue. */
+
+/*  err will be used...shortly */
+static int
+translatetosigned(char *s,Dwarf_Signed *v, UNUSEDARG int *err)
+{
+    unsigned char *cp = (unsigned char *)s;
+    unsigned char *digits = (unsigned char *)s;
+    int signmult = 1;
+    Dwarf_Signed l = 0;
+
+    if (*cp == '0' && 
+        (*(cp+1) == 'x'|| (*(cp+1) == 'X'))) {
+        digits += 2;
+        cp = digits;
+        for( ; *cp; cp++) {
+            l = l << 4;
+            switch (*cp) {
+            case '0':
+            case '1':
+            case '2':
+            case '3':
+            case '4':
+            case '5':
+            case '6':
+            case '7':
+            case '8':
+            case '9':
+                l += (*cp - '0');
+                break; 
+            case 'a':
+            case 'A':
+                l += 10;
+                break;
+            case 'b':
+            case 'B':
+                l += 11;
+                break;
+            case 'c':
+            case 'C':
+                l += 12;
+                break;
+            case 'd':
+            case 'D':
+                l += 13;
+                break;
+            case 'e':
+            case 'E':
+                l += 14;
+                break;
+            case 'f':
+            case 'F':
+                l += 15;
+                break;
+            default:
+                /* FIXME *err */
+                return DW_DLV_ERROR;
+            }
+        }
+        *v = l;
+        return DW_DLV_OK;
+    } else if (*cp == '-') {
+        signmult = -1;
+        digits += 1;
+    }
+
+    cp = digits;
+    for( ; *cp; cp++) {
+        l = l * 10;
+        /* Duff's Device */
+        switch (*cp) {
+        case '9': 
+        case '8': 
+        case '7': 
+        case '6':
+        case '5':
+        case '4':
+        case '3':
+        case '2':
+        case '1':
+        case '0':
+            l +=  (*cp - '0');
+            break;
+        default:
+            /* FIXME *err */
+            return DW_DLV_ERROR;
+        }
+    }
+    *v = signmult * l;
+    return DW_DLV_OK;
+}
+
+static int
+update_named_field(Dwarf_P_Debug dbg, dwarfstring *cmsname,dwarfstring *cmsvalue,
+    int *err)
+{
+     char *name = dwarfstring_string(cmsname);
+     char *value = dwarfstring_string(cmsvalue);
+     Dwarf_Signed v = 0; 
+     int res;
+
+     res = translatetosigned(value,&v,err);
+     if (res != DW_DLV_OK) {
+         return res;
+     }
+     if ( dwarfstring_strlen(cmsvalue) == 0) {
+         return DW_DLV_NO_ENTRY;
+     }
+ 
+     /*  The value in the string is a number,
+         but always quite a small number. */
+     if (!strcmp(name,"default_is_stmt")) {
+         dbg->de_line_inits.pi_default_is_stmt = (unsigned)v; 
+     } else if (!strcmp(name,"minimum_instruction_length")) { 
+         dbg->de_line_inits.pi_minimum_instruction_length = (unsigned)v;
+     } else if (!strcmp(name,"maximum_operations_per_instruction")) { 
+         dbg->de_line_inits.pi_maximum_operations_per_instruction = (unsigned)v;
+     } else if (!strcmp(name,"maximum_opcode_base")) { 
+         dbg->de_line_inits.pi_opcode_base = (unsigned)v;
+     } else if (!strcmp(name,"line_base")) { 
+         dbg->de_line_inits.pi_line_base = (int)v;
+     } else if (!strcmp(name,"line_range")) { 
+         dbg->de_line_inits.pi_line_range = (int)v;
+     } else if (!strcmp(name,"linetable_version")) { 
+         dbg->de_line_inits.pi_linetable_version = (unsigned)v;
+     } else if (!strcmp(name,"segment_selector_size")) { 
+         dbg->de_line_inits.pi_segment_selector_size = (unsigned)v;
+     } else if (!strcmp(name,"segment_size")) { 
+         dbg->de_line_inits.pi_segment_size = (unsigned)v;
+     } else {
+         /* FIXME *err */
+         return DW_DLV_ERROR;
+     }
+     return DW_DLV_OK;
+}
+static int
+update_named_value(Dwarf_P_Debug dbg, dwarfstring*cms,
+    int *err)
+{
+     char * str = dwarfstring_string(cms);
+     char *cp = str;
+     char * value_start = 0;
+     dwarfstring cmsname;
+     dwarfstring cmsvalue;
+     unsigned slen = 0;
+     int res = 0;
+
+     dwarfstring_constructor(&cmsname);
+     dwarfstring_constructor(&cmsvalue);
+     for ( ; *cp && *cp != '=' && *cp != ' '; cp++) { }
+     if (! *cp) {
+         /* Ignore this, it's empty or has no =value clause */
+         dwarfstring_destructor(&cmsname);
+         dwarfstring_destructor(&cmsvalue);
+         /* FIXME *err */
+         return DW_DLV_ERROR; 
+     }
+     if (*cp == ' ') { 
+         /* Ignore this, trailing spaces, no = is a typo */
+         dwarfstring_destructor(&cmsname);
+         dwarfstring_destructor(&cmsvalue);
+         /* FIXME *err */
+         return DW_DLV_ERROR; 
+     }
+     slen = cp - str;
+     dwarfstring_append_length(&cmsname,str,slen);
+
+     cp++;
+     value_start = cp;
+     for ( ; *cp && *cp != ' '; cp++) { }
+     slen = cp - value_start;
+     if (slen) {
+         dwarfstring_append_length(&cmsvalue,value_start,slen);
+     } else {
+         dwarfstring_destructor(&cmsname);
+         dwarfstring_destructor(&cmsvalue);
+         /* Missing its value */
+         /* FIXME *err */
+         return DW_DLV_ERROR;
+     }
+
+     res = update_named_field(dbg,&cmsname,&cmsvalue,err);
+     dwarfstring_destructor(&cmsname);
+     dwarfstring_destructor(&cmsvalue);
+     return res; 
+}
+
+/*  Publicly visible in in libdwarf to enable easy testing
+    of the code here. */
+int
+_dwarf_log_extra_flagstrings(Dwarf_P_Debug dbg,
+  const char *extra,
+  int *err)
+{
+    unsigned comma_count = 0;
+    const char *cstart = extra;
+    unsigned curcomma = 0;
+    const char *cp = 0;
+    int res = 0;
+
+    if (!extra || !*extra) {
+        return DW_DLV_NO_ENTRY;
+    }
+    for (cp = extra; *cp;cp++) {
+        if (*cp == ',') {
+             ++comma_count;
+        }
+    }
+
+    for ( ; curcomma <= comma_count; ) {
+        dwarfstring cms;
+        dwarfstring_constructor(&cms);
+        for (cp = cstart; *cp;cp++) {
+            if (*cp == ' ') {
+               ++cstart;
+               continue;
+            }
+            if (*cp == 0 || *cp == ',') {
+                /* end of a control string */
+                unsigned len = cp - cstart;
+                if (len == 0) { 
+                    /* empty comma phrase */
+                    if (*cp  == ',') {
+                        cstart = cp+1;
+                    }
+                    break;
+                } else {
+                    dwarfstring_append_length(&cms,(char *)cstart,len);
+                    if (*cp  == ',') {
+                        cstart = cp+1;
+                    }
+                    res = update_named_value(dbg,&cms,err);
+                    if (res == DW_DLV_ERROR) {
+                        dwarfstring_destructor(&cms);
+                        return res;
+                    }
+                }
+            }
+        }
+        dwarfstring_destructor(&cms);
+    }
+    return DW_DLV_OK;
+}
+
+/* ===== end  Initialization using string=value,string2=valu2 (etc) */
 
 static int
 common_init(Dwarf_P_Debug dbg, Dwarf_Unsigned flags, const char *abiname,
     const char *dwarf_version,
+    const char *extra,
     int *err_ret)
 {
     unsigned int k = 0;
@@ -289,27 +549,39 @@ common_init(Dwarf_P_Debug dbg, Dwarf_Unsigned flags, const char *abiname,
     dbg->de_flags = flags;
 
 
+    /* DW_DLC_POINTER32 assumed. */
+    dbg->de_pointer_size = 4;
+    /* Standard DWARF 64bit offset, length field 12 bytes */
+    dbg->de_dwarf_offset_size = 4;
+    dbg->de_elf_offset_size = 4;
+    dbg->de_64bit_extension = 0;
+
+    dbg->de_big_endian = (dbg->de_flags&DW_DLC_TARGET_BIGENDIAN)?
+        TRUE:FALSE;
+    /*  DW_DLC_POINTER64 is identical to DW_DLC_SIZE_64 */
     if(dbg->de_flags & DW_DLC_POINTER64) {
         dbg->de_pointer_size = 8;
-    } else {
-        /* DW_DLC_POINTER32 assumed. */
-        dbg->de_pointer_size = 4;
     }
     if(dbg->de_flags & DW_DLC_OFFSET64) {
-        /* Standard DWARF 64bit offset, length field 12 bytes */
-        dbg->de_offset_size = 8;
+        dbg->de_pointer_size = 8;
+        dbg->de_dwarf_offset_size = 4;
         dbg->de_64bit_extension = 1;
+        dbg->de_elf_offset_size = 8;
     } else {
         if(dbg->de_flags & DW_DLC_IRIX_OFFSET64) {
-            dbg->de_offset_size = 8;
+            dbg->de_pointer_size = 8;
+            dbg->de_big_endian = TRUE;
+            dbg->de_dwarf_offset_size = 8;
             dbg->de_64bit_extension = 0;
-        } else {
-            /*  offset size 4 assumed, it is
-                by far the most frequent case.. */
-            dbg->de_offset_size = 4;
-            dbg->de_64bit_extension = 0;
+            dbg->de_elf_offset_size = 8;
         }
     }
+    _dwarf_init_default_line_header_vals(dbg);
+    res = _dwarf_log_extra_flagstrings(dbg,extra,err_ret);
+    if (res == DW_DLV_ERROR) {
+       return res;
+    }
+
     if(abiname && (!strcmp(abiname,"irix"))) {
         dbg->de_irix_exc_augmentation = 1;
     } else {
@@ -360,7 +632,6 @@ common_init(Dwarf_P_Debug dbg, Dwarf_Unsigned flags, const char *abiname,
 
 
     }
-    _dwarf_init_default_line_header_vals(dbg);
 
     /* For .debug_str creation. */
     dwarf_initialize_search_hash(&dbg->de_debug_str_hashtab,
@@ -371,7 +642,7 @@ common_init(Dwarf_P_Debug dbg, Dwarf_Unsigned flags, const char *abiname,
 
     /* FIXME: conditional on the DWARF version target,
         dbg->de_output_version. */
-    if (dbg->de_offset_size == 8) {
+    if (dbg->de_dwarf_offset_size == 8) {
         dbg->de_ar_data_attribute_form = DW_FORM_data8;
         dbg->de_ar_ref_attr_form = DW_FORM_ref8;
     } else {
@@ -408,7 +679,7 @@ common_init(Dwarf_P_Debug dbg, Dwarf_Unsigned flags, const char *abiname,
 
         prel->pr_slots_per_block_to_alloc = DEFAULT_SLOTS_PER_BLOCK;
     }
-    /* First assume host, target same endianness */
+    /* First assume host, target same endianness  FIXME */
     dbg->de_same_endian = 1;
     dbg->de_copy_word =  _dwarf_memcpy_noswap_bytes;
 #ifdef WORDS_BIGENDIAN

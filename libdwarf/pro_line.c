@@ -158,8 +158,7 @@ dwarf_add_line_entry(Dwarf_P_Debug dbg,
 void
 _dwarf_init_default_line_header_vals(Dwarf_P_Debug dbg)
 {
-    dbg->de_line_inits.pi_version = dbg->de_output_version;
-
+    dbg->de_line_inits.pi_linetable_version = dbg->de_output_version;
     dbg->de_line_inits.pi_default_is_stmt = DEFAULT_IS_STMT;
     dbg->de_line_inits.pi_minimum_instruction_length = MIN_INST_LENGTH;
     dbg->de_line_inits.pi_maximum_operations_per_instruction = 1;

@@ -451,8 +451,8 @@ dwarf_add_expr_gen_a(Dwarf_P_Expr expr,
     case DW_OP_call_ref:        /* DWARF3 */
         operand = (Dwarf_Small *) & operand_buffer[0];
         WRITE_UNALIGNED(dbg, operand, &val1, sizeof(val1),
-            dbg->de_offset_size);
-        operand_size = dbg->de_offset_size;
+            dbg->de_dwarf_offset_size);
+        operand_size = dbg->de_dwarf_offset_size;
         break;
     case DW_OP_form_tls_address:        /* DWARF3f */
         break;

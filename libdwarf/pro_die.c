@@ -321,7 +321,7 @@ _dwarf_pro_add_AT_stmt_list(Dwarf_P_Debug dbg,
     Dwarf_P_Die first_die, Dwarf_Error * error)
 {
     Dwarf_P_Attribute new_attr;
-    int uwordb_size = dbg->de_offset_size;
+    int uwordb_size = dbg->de_dwarf_offset_size;
 
     /* Add AT_stmt_list attribute */
     new_attr = (Dwarf_P_Attribute)
@@ -616,7 +616,7 @@ int _dwarf_pro_set_string_attr(Dwarf_P_Attribute new_attr,
     unsigned slen = strlen(name)+1;
 
     if (form == DW_FORM_string ||
-        slen <= dbg->de_offset_size) {
+        slen <= dbg->de_dwarf_offset_size) {
         new_attr->ar_nbytes = slen;
         new_attr->ar_next = 0;
 
@@ -636,7 +636,7 @@ int _dwarf_pro_set_string_attr(Dwarf_P_Attribute new_attr,
         return DW_DLV_OK;
     }
     if (form == DW_FORM_strp) {
-        int uwordb_size = dbg->de_offset_size;
+        int uwordb_size = dbg->de_dwarf_offset_size;
         Dwarf_Unsigned offset_in_debug_str = 0;
         int res = 0;
 
@@ -792,7 +792,7 @@ _dwarf_pro_add_AT_fde(Dwarf_P_Debug dbg,
     Dwarf_Unsigned offset, Dwarf_Error * error)
 {
     Dwarf_P_Attribute new_attr;
-    int uwordb_size = dbg->de_offset_size;
+    int uwordb_size = dbg->de_dwarf_offset_size;
 
     if (die == NULL) {
         DWARF_P_DBG_ERROR(NULL, DW_DLE_DIE_NULL, DW_DLV_ERROR);
@@ -832,7 +832,7 @@ _dwarf_pro_add_AT_macro_info(Dwarf_P_Debug dbg,
     Dwarf_Unsigned offset, Dwarf_Error * error)
 {
     Dwarf_P_Attribute new_attr;
-    int uwordb_size = dbg->de_offset_size;
+    int uwordb_size = dbg->de_dwarf_offset_size;
 
     if (die == NULL) {
         DWARF_P_DBG_ERROR(NULL, DW_DLE_DIE_NULL, DW_DLV_ERROR);

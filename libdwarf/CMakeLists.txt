@@ -15,7 +15,9 @@ dwarf_names.c
 dwarf_object_read_common.c dwarf_object_detector.c
 dwarf_original_elf_init.c 
 dwarf_peread.c 
-dwarf_pubtypes.c dwarf_query.c dwarf_ranges.c dwarf_string.c
+dwarf_pubtypes.c dwarf_query.c dwarf_ranges.c 
+dwarfstring.h dwarfstring.c
+dwarf_stringsection.c
 dwarf_tied.c 
 dwarf_str_offsets.c
 dwarf_tsearchhash.c dwarf_types.c dwarf_util.c 
@@ -56,7 +58,9 @@ dwarf_macho_loader.h malloc_check.h
 memcpy_swap.h
 pro_alloc.h pro_arange.h pro_die.h 
 pro_encode_nm.h pro_error.h pro_expr.h pro_frame.h 
-pro_incl.h pro_line.h pro_macinfo.h pro_opaque.h 
+pro_incl.h pro_line.h 
+pro_log_extra_flag_strings.c
+pro_macinfo.h pro_opaque.h 
 pro_reloc.h pro_reloc_stream.h pro_reloc_symbolic.h 
 pro_section.h pro_types.h pro_util.h)
 
@@ -111,4 +115,10 @@ if (DO_TESTING)
     add_executable(selftied ${TESTTIED})
     target_compile_options(selftied PRIVATE ${DW_FWALL})
     add_test(NAME selftied COMMAND selftied)
+
+    set_source_group(TESTSTRING "Source Files" 
+        test_dwarfstring.c dwarfstring.c dwarfstring.h)
+    add_executable(teststring ${TESTSTRING})
+    target_compile_options(selftied PRIVATE ${DW_FWALL})
+    add_test(NAME teststring COMMAND teststring)
 endif()

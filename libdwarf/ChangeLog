@@ -1,3 +1,46 @@
+2019-09-19 David Anderson
+     * CMakeLists.txt: Adding pro_log_extra_flag_strings.c 
+       and dwarfstrings.h and dwarfstrings.c 
+       test_dwarfstring.c, test_extra_flag_strings 
+       source and 'make check' for
+       the testcode.
+     * Makefile.am: Added make check code here too,
+       as well as the new source files.
+     * Makefile.in: regenerated
+     * pro_log_extra_flag_strings.c: Giving producer-code users
+       a way to control frame and line constants without
+       reqiring a change to libdwarf.h.in or other
+       header files.
+     * dwarfstring.h, dwarstring.c: Adding flexible
+       string buffers to libdwarf.
+     * test_dwarfstring.c,test_extra_flag_strings. Added
+       make check test code.
+     * dwarf_errmsg_list.h: New error codes for the
+       new producer code logic on initializations.
+     * dwarf_frame.c: Reformat too-long line.
+     * pro_section.c,pro_opaque.h: Renamed de_offset_size
+       for clarity to de_dwarf_offset_size as the DWARF offset
+       size can be 4 when elf offset size is 8..
+     * dwarf_names.c,dwarf_names.h,dwarf_names_enum.h,
+       dwarf_names_new.h: Regenerated for updated version
+       string.
+     * generated_libdwarf.h.in: Generated. New error codes.
+     * libdwarf.h.in: New error codes.
+     * pro_arange.c,pro_die.c,pro_expr.c,pro_forms.c,
+       pro_frame.c: Renamed de_offset_size 
+       for clarity to de_dwarf_offset_size.
+     * pro_frame.h: made dfp_nbytes, fde_n_inst,
+       dfp_n_bytes larger types.
+     * pro_init.c: included dwarfstring.h. Added code
+       to process any 'extra' argument string.
+     * pro_line.c,pro_opaque.h: Renamed 
+       pi_version to pi_linetable_version
+       for clarity.
+       Renamed de_offset_size to de_dwarf_offset_size
+       and added de_elf_offset_size. Added de_big_endian
+       flag.
+     * pro_reloc_stream.c,pro_section.c,pro_types.c: Reflects
+       renamings.
 2019-09-16 David Anderson
      * dwarf_die_deliv.c: Reformatted one line so it
        was less long.

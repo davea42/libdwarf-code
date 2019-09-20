@@ -93,6 +93,8 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
+check_PROGRAMS = test_dwarfstring$(EXEEXT) \
+	test_extra_flag_strings$(EXEEXT)
 subdir = libdwarf
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/dw_compiler.m4 \
@@ -160,17 +162,19 @@ am_libdwarf_la_OBJECTS = libdwarf_la-dwarf_abbrev.lo \
 	libdwarf_la-dwarf_peread.lo libdwarf_la-dwarf_print_lines.lo \
 	libdwarf_la-dwarf_pubtypes.lo libdwarf_la-dwarf_query.lo \
 	libdwarf_la-dwarf_ranges.lo libdwarf_la-dwarf_str_offsets.lo \
-	libdwarf_la-dwarf_string.lo libdwarf_la-dwarf_tied.lo \
-	libdwarf_la-dwarf_tsearchhash.lo libdwarf_la-dwarf_types.lo \
-	libdwarf_la-dwarf_util.lo libdwarf_la-dwarf_vars.lo \
-	libdwarf_la-dwarf_weaks.lo libdwarf_la-dwarf_xu_index.lo \
-	libdwarf_la-malloc_check.lo libdwarf_la-pro_alloc.lo \
-	libdwarf_la-pro_arange.lo libdwarf_la-pro_die.lo \
-	libdwarf_la-pro_dnames.lo libdwarf_la-pro_encode_nm.lo \
-	libdwarf_la-pro_error.lo libdwarf_la-pro_expr.lo \
-	libdwarf_la-pro_finish.lo libdwarf_la-pro_forms.lo \
-	libdwarf_la-pro_frame.lo libdwarf_la-pro_funcs.lo \
-	libdwarf_la-pro_init.lo libdwarf_la-pro_line.lo \
+	libdwarf_la-dwarfstring.lo libdwarf_la-dwarf_stringsection.lo \
+	libdwarf_la-dwarf_tied.lo libdwarf_la-dwarf_tsearchhash.lo \
+	libdwarf_la-dwarf_types.lo libdwarf_la-dwarf_util.lo \
+	libdwarf_la-dwarf_vars.lo libdwarf_la-dwarf_weaks.lo \
+	libdwarf_la-dwarf_xu_index.lo libdwarf_la-malloc_check.lo \
+	libdwarf_la-pro_alloc.lo libdwarf_la-pro_arange.lo \
+	libdwarf_la-pro_die.lo libdwarf_la-pro_dnames.lo \
+	libdwarf_la-pro_encode_nm.lo libdwarf_la-pro_error.lo \
+	libdwarf_la-pro_expr.lo libdwarf_la-pro_finish.lo \
+	libdwarf_la-pro_forms.lo libdwarf_la-pro_frame.lo \
+	libdwarf_la-pro_funcs.lo libdwarf_la-pro_init.lo \
+	libdwarf_la-pro_line.lo \
+	libdwarf_la-pro_log_extra_flag_strings.lo \
 	libdwarf_la-pro_macinfo.lo libdwarf_la-pro_pubnames.lo \
 	libdwarf_la-pro_reloc.lo libdwarf_la-pro_reloc_stream.lo \
 	libdwarf_la-pro_reloc_symbolic.lo libdwarf_la-pro_section.lo \
@@ -184,6 +188,26 @@ am__v_lt_1 =
 libdwarf_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(libdwarf_la_CFLAGS) \
 	$(CFLAGS) $(libdwarf_la_LDFLAGS) $(LDFLAGS) -o $@
+am_test_dwarfstring_OBJECTS =  \
+	test_dwarfstring-test_dwarfstring.$(OBJEXT) \
+	test_dwarfstring-dwarfstring.$(OBJEXT)
+test_dwarfstring_OBJECTS = $(am_test_dwarfstring_OBJECTS)
+test_dwarfstring_LDADD = $(LDADD)
+test_dwarfstring_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC \
+	$(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(CCLD) \
+	$(test_dwarfstring_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) \
+	-o $@
+am_test_extra_flag_strings_OBJECTS =  \
+	test_extra_flag_strings-test_extra_flag_strings.$(OBJEXT) \
+	test_extra_flag_strings-pro_log_extra_flag_strings.$(OBJEXT) \
+	test_extra_flag_strings-dwarfstring.$(OBJEXT)
+test_extra_flag_strings_OBJECTS =  \
+	$(am_test_extra_flag_strings_OBJECTS)
+test_extra_flag_strings_LDADD = $(LDADD)
+test_extra_flag_strings_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC \
+	$(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(CCLD) \
+	$(test_extra_flag_strings_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
+	$(LDFLAGS) -o $@
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
 am__v_P_0 = false
@@ -218,8 +242,10 @@ AM_V_CCLD = $(am__v_CCLD_@AM_V@)
 am__v_CCLD_ = $(am__v_CCLD_@AM_DEFAULT_V@)
 am__v_CCLD_0 = @echo "  CCLD    " $@;
 am__v_CCLD_1 = 
-SOURCES = $(libdwarf_la_SOURCES)
-DIST_SOURCES = $(libdwarf_la_SOURCES)
+SOURCES = $(libdwarf_la_SOURCES) $(test_dwarfstring_SOURCES) \
+	$(test_extra_flag_strings_SOURCES)
+DIST_SOURCES = $(libdwarf_la_SOURCES) $(test_dwarfstring_SOURCES) \
+	$(test_extra_flag_strings_SOURCES)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -649,7 +675,9 @@ dwarf_reloc_ppc64.h \
 dwarf_reloc_x86_64.h \
 dwarf_str_offsets.c \
 dwarf_str_offsets.h \
-dwarf_string.c \
+dwarfstring.c       \
+dwarfstring.h       \
+dwarf_stringsection.c \
 dwarf_tied.c \
 dwarf_tied_decls.h \
 dwarf_tsearchhash.c \
@@ -693,6 +721,7 @@ pro_incl.h \
 pro_init.c \
 pro_line.c \
 pro_line.h \
+pro_log_extra_flag_strings.c \
 pro_macinfo.c \
 pro_macinfo.h \
 pro_opaque.h \
@@ -714,13 +743,28 @@ pro_weaks.c
 libdwarf_la_CFLAGS = $(DWARF_CFLAGS_WARN) 
 libdwarf_la_LIBADD = @DWARF_LIBS@
 libdwarf_la_LDFLAGS = -fPIC -no-undefined -version-info @version_info@ @release_info@
-TESTS = runtests.sh
+TESTS = $(check_PROGRAMS)
 AM_TESTS_ENVIRONMENT = DWTOPSRCDIR='$(top_srcdir)'; export DWTOPSRCDIR;
 include_HEADERS = $(top_srcdir)/libdwarf/dwarf.h libdwarf.h
 libdwarfdevdir = $(datadir)/libdwarf/libdwarf-devel
 libdwarfdev_DATA = \
 libdwarf2.1.pdf \
 libdwarf2p.1.pdf 
+
+test_dwarfstring_SOURCES = test_dwarfstring.c \
+   dwarfstring.h dwarfstring.c
+
+test_dwarfstring_CFLAGS = $(CFLAGS_WARN)
+test_dwarfstring_CPPFLAGS = \
+-I$(top_srcdir) -I$(top_builddir) -I$(top_srcdir)/src
+
+test_extra_flag_strings_SOURCES = test_extra_flag_strings.c \
+   pro_log_extra_flag_strings.c \
+   dwarfstring.h dwarfstring.c
+
+test_extra_flag_strings_CFLAGS = $(CFLAGS_WARN)
+test_extra_flag_strings_CPPFLAGS = -DTESTING \
+-I$(top_srcdir) -I$(top_builddir) -I$(top_srcdir)/src
 
 EXTRA_DIST = \
 COPYING \
@@ -836,6 +880,23 @@ clean-libLTLIBRARIES:
 libdwarf.la: $(libdwarf_la_OBJECTS) $(libdwarf_la_DEPENDENCIES) $(EXTRA_libdwarf_la_DEPENDENCIES) 
 	$(AM_V_CCLD)$(libdwarf_la_LINK) -rpath $(libdir) $(libdwarf_la_OBJECTS) $(libdwarf_la_LIBADD) $(LIBS)
 
+clean-checkPROGRAMS:
+	@list='$(check_PROGRAMS)'; test -n "$$list" || exit 0; \
+	echo " rm -f" $$list; \
+	rm -f $$list || exit $$?; \
+	test -n "$(EXEEXT)" || exit 0; \
+	list=`for p in $$list; do echo "$$p"; done | sed 's/$(EXEEXT)$$//'`; \
+	echo " rm -f" $$list; \
+	rm -f $$list
+
+test_dwarfstring$(EXEEXT): $(test_dwarfstring_OBJECTS) $(test_dwarfstring_DEPENDENCIES) $(EXTRA_test_dwarfstring_DEPENDENCIES) 
+	@rm -f test_dwarfstring$(EXEEXT)
+	$(AM_V_CCLD)$(test_dwarfstring_LINK) $(test_dwarfstring_OBJECTS) $(test_dwarfstring_LDADD) $(LIBS)
+
+test_extra_flag_strings$(EXEEXT): $(test_extra_flag_strings_OBJECTS) $(test_extra_flag_strings_DEPENDENCIES) $(EXTRA_test_extra_flag_strings_DEPENDENCIES) 
+	@rm -f test_extra_flag_strings$(EXEEXT)
+	$(AM_V_CCLD)$(test_extra_flag_strings_LINK) $(test_extra_flag_strings_OBJECTS) $(test_extra_flag_strings_LDADD) $(LIBS)
+
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
 
@@ -879,7 +940,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdwarf_la-dwarf_query.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdwarf_la-dwarf_ranges.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdwarf_la-dwarf_str_offsets.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdwarf_la-dwarf_string.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdwarf_la-dwarf_stringsection.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdwarf_la-dwarf_tied.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdwarf_la-dwarf_tsearchhash.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdwarf_la-dwarf_types.Plo@am__quote@
@@ -887,6 +948,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdwarf_la-dwarf_vars.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdwarf_la-dwarf_weaks.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdwarf_la-dwarf_xu_index.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdwarf_la-dwarfstring.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdwarf_la-malloc_check.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdwarf_la-pro_alloc.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdwarf_la-pro_arange.Plo@am__quote@
@@ -901,6 +963,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdwarf_la-pro_funcs.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdwarf_la-pro_init.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdwarf_la-pro_line.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdwarf_la-pro_log_extra_flag_strings.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdwarf_la-pro_macinfo.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdwarf_la-pro_pubnames.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdwarf_la-pro_reloc.Plo@am__quote@
@@ -910,6 +973,11 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdwarf_la-pro_types.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdwarf_la-pro_vars.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libdwarf_la-pro_weaks.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_dwarfstring-dwarfstring.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_dwarfstring-test_dwarfstring.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_extra_flag_strings-dwarfstring.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_extra_flag_strings-pro_log_extra_flag_strings.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_extra_flag_strings-test_extra_flag_strings.Po@am__quote@
 
 .c.o:
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
@@ -1191,12 +1259,19 @@ libdwarf_la-dwarf_str_offsets.lo: dwarf_str_offsets.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdwarf_la_CFLAGS) $(CFLAGS) -c -o libdwarf_la-dwarf_str_offsets.lo `test -f 'dwarf_str_offsets.c' || echo '$(srcdir)/'`dwarf_str_offsets.c
 
-libdwarf_la-dwarf_string.lo: dwarf_string.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdwarf_la_CFLAGS) $(CFLAGS) -MT libdwarf_la-dwarf_string.lo -MD -MP -MF $(DEPDIR)/libdwarf_la-dwarf_string.Tpo -c -o libdwarf_la-dwarf_string.lo `test -f 'dwarf_string.c' || echo '$(srcdir)/'`dwarf_string.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libdwarf_la-dwarf_string.Tpo $(DEPDIR)/libdwarf_la-dwarf_string.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='dwarf_string.c' object='libdwarf_la-dwarf_string.lo' libtool=yes @AMDEPBACKSLASH@
+libdwarf_la-dwarfstring.lo: dwarfstring.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdwarf_la_CFLAGS) $(CFLAGS) -MT libdwarf_la-dwarfstring.lo -MD -MP -MF $(DEPDIR)/libdwarf_la-dwarfstring.Tpo -c -o libdwarf_la-dwarfstring.lo `test -f 'dwarfstring.c' || echo '$(srcdir)/'`dwarfstring.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libdwarf_la-dwarfstring.Tpo $(DEPDIR)/libdwarf_la-dwarfstring.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='dwarfstring.c' object='libdwarf_la-dwarfstring.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdwarf_la_CFLAGS) $(CFLAGS) -c -o libdwarf_la-dwarf_string.lo `test -f 'dwarf_string.c' || echo '$(srcdir)/'`dwarf_string.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdwarf_la_CFLAGS) $(CFLAGS) -c -o libdwarf_la-dwarfstring.lo `test -f 'dwarfstring.c' || echo '$(srcdir)/'`dwarfstring.c
+
+libdwarf_la-dwarf_stringsection.lo: dwarf_stringsection.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdwarf_la_CFLAGS) $(CFLAGS) -MT libdwarf_la-dwarf_stringsection.lo -MD -MP -MF $(DEPDIR)/libdwarf_la-dwarf_stringsection.Tpo -c -o libdwarf_la-dwarf_stringsection.lo `test -f 'dwarf_stringsection.c' || echo '$(srcdir)/'`dwarf_stringsection.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libdwarf_la-dwarf_stringsection.Tpo $(DEPDIR)/libdwarf_la-dwarf_stringsection.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='dwarf_stringsection.c' object='libdwarf_la-dwarf_stringsection.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdwarf_la_CFLAGS) $(CFLAGS) -c -o libdwarf_la-dwarf_stringsection.lo `test -f 'dwarf_stringsection.c' || echo '$(srcdir)/'`dwarf_stringsection.c
 
 libdwarf_la-dwarf_tied.lo: dwarf_tied.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdwarf_la_CFLAGS) $(CFLAGS) -MT libdwarf_la-dwarf_tied.lo -MD -MP -MF $(DEPDIR)/libdwarf_la-dwarf_tied.Tpo -c -o libdwarf_la-dwarf_tied.lo `test -f 'dwarf_tied.c' || echo '$(srcdir)/'`dwarf_tied.c
@@ -1345,6 +1420,13 @@ libdwarf_la-pro_line.lo: pro_line.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdwarf_la_CFLAGS) $(CFLAGS) -c -o libdwarf_la-pro_line.lo `test -f 'pro_line.c' || echo '$(srcdir)/'`pro_line.c
 
+libdwarf_la-pro_log_extra_flag_strings.lo: pro_log_extra_flag_strings.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdwarf_la_CFLAGS) $(CFLAGS) -MT libdwarf_la-pro_log_extra_flag_strings.lo -MD -MP -MF $(DEPDIR)/libdwarf_la-pro_log_extra_flag_strings.Tpo -c -o libdwarf_la-pro_log_extra_flag_strings.lo `test -f 'pro_log_extra_flag_strings.c' || echo '$(srcdir)/'`pro_log_extra_flag_strings.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libdwarf_la-pro_log_extra_flag_strings.Tpo $(DEPDIR)/libdwarf_la-pro_log_extra_flag_strings.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='pro_log_extra_flag_strings.c' object='libdwarf_la-pro_log_extra_flag_strings.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdwarf_la_CFLAGS) $(CFLAGS) -c -o libdwarf_la-pro_log_extra_flag_strings.lo `test -f 'pro_log_extra_flag_strings.c' || echo '$(srcdir)/'`pro_log_extra_flag_strings.c
+
 libdwarf_la-pro_macinfo.lo: pro_macinfo.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdwarf_la_CFLAGS) $(CFLAGS) -MT libdwarf_la-pro_macinfo.lo -MD -MP -MF $(DEPDIR)/libdwarf_la-pro_macinfo.Tpo -c -o libdwarf_la-pro_macinfo.lo `test -f 'pro_macinfo.c' || echo '$(srcdir)/'`pro_macinfo.c
 @am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libdwarf_la-pro_macinfo.Tpo $(DEPDIR)/libdwarf_la-pro_macinfo.Plo
@@ -1407,6 +1489,76 @@ libdwarf_la-pro_weaks.lo: pro_weaks.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='pro_weaks.c' object='libdwarf_la-pro_weaks.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libdwarf_la_CFLAGS) $(CFLAGS) -c -o libdwarf_la-pro_weaks.lo `test -f 'pro_weaks.c' || echo '$(srcdir)/'`pro_weaks.c
+
+test_dwarfstring-test_dwarfstring.o: test_dwarfstring.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(test_dwarfstring_CPPFLAGS) $(CPPFLAGS) $(test_dwarfstring_CFLAGS) $(CFLAGS) -MT test_dwarfstring-test_dwarfstring.o -MD -MP -MF $(DEPDIR)/test_dwarfstring-test_dwarfstring.Tpo -c -o test_dwarfstring-test_dwarfstring.o `test -f 'test_dwarfstring.c' || echo '$(srcdir)/'`test_dwarfstring.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/test_dwarfstring-test_dwarfstring.Tpo $(DEPDIR)/test_dwarfstring-test_dwarfstring.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='test_dwarfstring.c' object='test_dwarfstring-test_dwarfstring.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(test_dwarfstring_CPPFLAGS) $(CPPFLAGS) $(test_dwarfstring_CFLAGS) $(CFLAGS) -c -o test_dwarfstring-test_dwarfstring.o `test -f 'test_dwarfstring.c' || echo '$(srcdir)/'`test_dwarfstring.c
+
+test_dwarfstring-test_dwarfstring.obj: test_dwarfstring.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(test_dwarfstring_CPPFLAGS) $(CPPFLAGS) $(test_dwarfstring_CFLAGS) $(CFLAGS) -MT test_dwarfstring-test_dwarfstring.obj -MD -MP -MF $(DEPDIR)/test_dwarfstring-test_dwarfstring.Tpo -c -o test_dwarfstring-test_dwarfstring.obj `if test -f 'test_dwarfstring.c'; then $(CYGPATH_W) 'test_dwarfstring.c'; else $(CYGPATH_W) '$(srcdir)/test_dwarfstring.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/test_dwarfstring-test_dwarfstring.Tpo $(DEPDIR)/test_dwarfstring-test_dwarfstring.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='test_dwarfstring.c' object='test_dwarfstring-test_dwarfstring.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(test_dwarfstring_CPPFLAGS) $(CPPFLAGS) $(test_dwarfstring_CFLAGS) $(CFLAGS) -c -o test_dwarfstring-test_dwarfstring.obj `if test -f 'test_dwarfstring.c'; then $(CYGPATH_W) 'test_dwarfstring.c'; else $(CYGPATH_W) '$(srcdir)/test_dwarfstring.c'; fi`
+
+test_dwarfstring-dwarfstring.o: dwarfstring.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(test_dwarfstring_CPPFLAGS) $(CPPFLAGS) $(test_dwarfstring_CFLAGS) $(CFLAGS) -MT test_dwarfstring-dwarfstring.o -MD -MP -MF $(DEPDIR)/test_dwarfstring-dwarfstring.Tpo -c -o test_dwarfstring-dwarfstring.o `test -f 'dwarfstring.c' || echo '$(srcdir)/'`dwarfstring.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/test_dwarfstring-dwarfstring.Tpo $(DEPDIR)/test_dwarfstring-dwarfstring.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='dwarfstring.c' object='test_dwarfstring-dwarfstring.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(test_dwarfstring_CPPFLAGS) $(CPPFLAGS) $(test_dwarfstring_CFLAGS) $(CFLAGS) -c -o test_dwarfstring-dwarfstring.o `test -f 'dwarfstring.c' || echo '$(srcdir)/'`dwarfstring.c
+
+test_dwarfstring-dwarfstring.obj: dwarfstring.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(test_dwarfstring_CPPFLAGS) $(CPPFLAGS) $(test_dwarfstring_CFLAGS) $(CFLAGS) -MT test_dwarfstring-dwarfstring.obj -MD -MP -MF $(DEPDIR)/test_dwarfstring-dwarfstring.Tpo -c -o test_dwarfstring-dwarfstring.obj `if test -f 'dwarfstring.c'; then $(CYGPATH_W) 'dwarfstring.c'; else $(CYGPATH_W) '$(srcdir)/dwarfstring.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/test_dwarfstring-dwarfstring.Tpo $(DEPDIR)/test_dwarfstring-dwarfstring.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='dwarfstring.c' object='test_dwarfstring-dwarfstring.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(test_dwarfstring_CPPFLAGS) $(CPPFLAGS) $(test_dwarfstring_CFLAGS) $(CFLAGS) -c -o test_dwarfstring-dwarfstring.obj `if test -f 'dwarfstring.c'; then $(CYGPATH_W) 'dwarfstring.c'; else $(CYGPATH_W) '$(srcdir)/dwarfstring.c'; fi`
+
+test_extra_flag_strings-test_extra_flag_strings.o: test_extra_flag_strings.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(test_extra_flag_strings_CPPFLAGS) $(CPPFLAGS) $(test_extra_flag_strings_CFLAGS) $(CFLAGS) -MT test_extra_flag_strings-test_extra_flag_strings.o -MD -MP -MF $(DEPDIR)/test_extra_flag_strings-test_extra_flag_strings.Tpo -c -o test_extra_flag_strings-test_extra_flag_strings.o `test -f 'test_extra_flag_strings.c' || echo '$(srcdir)/'`test_extra_flag_strings.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/test_extra_flag_strings-test_extra_flag_strings.Tpo $(DEPDIR)/test_extra_flag_strings-test_extra_flag_strings.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='test_extra_flag_strings.c' object='test_extra_flag_strings-test_extra_flag_strings.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(test_extra_flag_strings_CPPFLAGS) $(CPPFLAGS) $(test_extra_flag_strings_CFLAGS) $(CFLAGS) -c -o test_extra_flag_strings-test_extra_flag_strings.o `test -f 'test_extra_flag_strings.c' || echo '$(srcdir)/'`test_extra_flag_strings.c
+
+test_extra_flag_strings-test_extra_flag_strings.obj: test_extra_flag_strings.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(test_extra_flag_strings_CPPFLAGS) $(CPPFLAGS) $(test_extra_flag_strings_CFLAGS) $(CFLAGS) -MT test_extra_flag_strings-test_extra_flag_strings.obj -MD -MP -MF $(DEPDIR)/test_extra_flag_strings-test_extra_flag_strings.Tpo -c -o test_extra_flag_strings-test_extra_flag_strings.obj `if test -f 'test_extra_flag_strings.c'; then $(CYGPATH_W) 'test_extra_flag_strings.c'; else $(CYGPATH_W) '$(srcdir)/test_extra_flag_strings.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/test_extra_flag_strings-test_extra_flag_strings.Tpo $(DEPDIR)/test_extra_flag_strings-test_extra_flag_strings.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='test_extra_flag_strings.c' object='test_extra_flag_strings-test_extra_flag_strings.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(test_extra_flag_strings_CPPFLAGS) $(CPPFLAGS) $(test_extra_flag_strings_CFLAGS) $(CFLAGS) -c -o test_extra_flag_strings-test_extra_flag_strings.obj `if test -f 'test_extra_flag_strings.c'; then $(CYGPATH_W) 'test_extra_flag_strings.c'; else $(CYGPATH_W) '$(srcdir)/test_extra_flag_strings.c'; fi`
+
+test_extra_flag_strings-pro_log_extra_flag_strings.o: pro_log_extra_flag_strings.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(test_extra_flag_strings_CPPFLAGS) $(CPPFLAGS) $(test_extra_flag_strings_CFLAGS) $(CFLAGS) -MT test_extra_flag_strings-pro_log_extra_flag_strings.o -MD -MP -MF $(DEPDIR)/test_extra_flag_strings-pro_log_extra_flag_strings.Tpo -c -o test_extra_flag_strings-pro_log_extra_flag_strings.o `test -f 'pro_log_extra_flag_strings.c' || echo '$(srcdir)/'`pro_log_extra_flag_strings.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/test_extra_flag_strings-pro_log_extra_flag_strings.Tpo $(DEPDIR)/test_extra_flag_strings-pro_log_extra_flag_strings.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='pro_log_extra_flag_strings.c' object='test_extra_flag_strings-pro_log_extra_flag_strings.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(test_extra_flag_strings_CPPFLAGS) $(CPPFLAGS) $(test_extra_flag_strings_CFLAGS) $(CFLAGS) -c -o test_extra_flag_strings-pro_log_extra_flag_strings.o `test -f 'pro_log_extra_flag_strings.c' || echo '$(srcdir)/'`pro_log_extra_flag_strings.c
+
+test_extra_flag_strings-pro_log_extra_flag_strings.obj: pro_log_extra_flag_strings.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(test_extra_flag_strings_CPPFLAGS) $(CPPFLAGS) $(test_extra_flag_strings_CFLAGS) $(CFLAGS) -MT test_extra_flag_strings-pro_log_extra_flag_strings.obj -MD -MP -MF $(DEPDIR)/test_extra_flag_strings-pro_log_extra_flag_strings.Tpo -c -o test_extra_flag_strings-pro_log_extra_flag_strings.obj `if test -f 'pro_log_extra_flag_strings.c'; then $(CYGPATH_W) 'pro_log_extra_flag_strings.c'; else $(CYGPATH_W) '$(srcdir)/pro_log_extra_flag_strings.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/test_extra_flag_strings-pro_log_extra_flag_strings.Tpo $(DEPDIR)/test_extra_flag_strings-pro_log_extra_flag_strings.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='pro_log_extra_flag_strings.c' object='test_extra_flag_strings-pro_log_extra_flag_strings.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(test_extra_flag_strings_CPPFLAGS) $(CPPFLAGS) $(test_extra_flag_strings_CFLAGS) $(CFLAGS) -c -o test_extra_flag_strings-pro_log_extra_flag_strings.obj `if test -f 'pro_log_extra_flag_strings.c'; then $(CYGPATH_W) 'pro_log_extra_flag_strings.c'; else $(CYGPATH_W) '$(srcdir)/pro_log_extra_flag_strings.c'; fi`
+
+test_extra_flag_strings-dwarfstring.o: dwarfstring.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(test_extra_flag_strings_CPPFLAGS) $(CPPFLAGS) $(test_extra_flag_strings_CFLAGS) $(CFLAGS) -MT test_extra_flag_strings-dwarfstring.o -MD -MP -MF $(DEPDIR)/test_extra_flag_strings-dwarfstring.Tpo -c -o test_extra_flag_strings-dwarfstring.o `test -f 'dwarfstring.c' || echo '$(srcdir)/'`dwarfstring.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/test_extra_flag_strings-dwarfstring.Tpo $(DEPDIR)/test_extra_flag_strings-dwarfstring.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='dwarfstring.c' object='test_extra_flag_strings-dwarfstring.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(test_extra_flag_strings_CPPFLAGS) $(CPPFLAGS) $(test_extra_flag_strings_CFLAGS) $(CFLAGS) -c -o test_extra_flag_strings-dwarfstring.o `test -f 'dwarfstring.c' || echo '$(srcdir)/'`dwarfstring.c
+
+test_extra_flag_strings-dwarfstring.obj: dwarfstring.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(test_extra_flag_strings_CPPFLAGS) $(CPPFLAGS) $(test_extra_flag_strings_CFLAGS) $(CFLAGS) -MT test_extra_flag_strings-dwarfstring.obj -MD -MP -MF $(DEPDIR)/test_extra_flag_strings-dwarfstring.Tpo -c -o test_extra_flag_strings-dwarfstring.obj `if test -f 'dwarfstring.c'; then $(CYGPATH_W) 'dwarfstring.c'; else $(CYGPATH_W) '$(srcdir)/dwarfstring.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/test_extra_flag_strings-dwarfstring.Tpo $(DEPDIR)/test_extra_flag_strings-dwarfstring.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='dwarfstring.c' object='test_extra_flag_strings-dwarfstring.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(test_extra_flag_strings_CPPFLAGS) $(CPPFLAGS) $(test_extra_flag_strings_CFLAGS) $(CFLAGS) -c -o test_extra_flag_strings-dwarfstring.obj `if test -f 'dwarfstring.c'; then $(CYGPATH_W) 'dwarfstring.c'; else $(CYGPATH_W) '$(srcdir)/dwarfstring.c'; fi`
 
 mostlyclean-libtool:
 	-rm -f *.lo
@@ -1638,7 +1790,7 @@ check-TESTS:
 	log_list=`echo $$log_list`; trs_list=`echo $$trs_list`; \
 	$(MAKE) $(AM_MAKEFLAGS) $(TEST_SUITE_LOG) TEST_LOGS="$$log_list"; \
 	exit $$?;
-recheck: all 
+recheck: all $(check_PROGRAMS)
 	@test -z "$(TEST_SUITE_LOG)" || rm -f $(TEST_SUITE_LOG)
 	@set +e; $(am__set_TESTS_bases); \
 	bases=`for i in $$bases; do echo $$i; done \
@@ -1649,9 +1801,16 @@ recheck: all
 	        am__force_recheck=am--force-recheck \
 	        TEST_LOGS="$$log_list"; \
 	exit $$?
-runtests.sh.log: runtests.sh
-	@p='runtests.sh'; \
-	b='runtests.sh'; \
+test_dwarfstring.log: test_dwarfstring$(EXEEXT)
+	@p='test_dwarfstring$(EXEEXT)'; \
+	b='test_dwarfstring'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+test_extra_flag_strings.log: test_extra_flag_strings$(EXEEXT)
+	@p='test_extra_flag_strings$(EXEEXT)'; \
+	b='test_extra_flag_strings'; \
 	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
@@ -1702,6 +1861,7 @@ distdir: $(DISTFILES)
 	  fi; \
 	done
 check-am: all-am
+	$(MAKE) $(AM_MAKEFLAGS) $(check_PROGRAMS)
 	$(MAKE) $(AM_MAKEFLAGS) check-TESTS
 check: check-am
 all-am: Makefile $(LTLIBRARIES) $(DATA) $(HEADERS)
@@ -1746,8 +1906,8 @@ maintainer-clean-generic:
 	-test -z "$(MAINTAINERCLEANFILES)" || rm -f $(MAINTAINERCLEANFILES)
 clean: clean-am
 
-clean-am: clean-generic clean-libLTLIBRARIES clean-libtool \
-	mostlyclean-am
+clean-am: clean-checkPROGRAMS clean-generic clean-libLTLIBRARIES \
+	clean-libtool mostlyclean-am
 
 distclean: distclean-am
 	-rm -rf ./$(DEPDIR)
@@ -1819,21 +1979,21 @@ uninstall-am: uninstall-includeHEADERS uninstall-libLTLIBRARIES \
 .MAKE: check-am install-am install-strip
 
 .PHONY: CTAGS GTAGS TAGS all all-am check check-TESTS check-am clean \
-	clean-generic clean-libLTLIBRARIES clean-libtool cscopelist-am \
-	ctags ctags-am distclean distclean-compile distclean-generic \
-	distclean-libtool distclean-tags distdir dvi dvi-am html \
-	html-am info info-am install install-am install-data \
-	install-data-am install-dvi install-dvi-am install-exec \
-	install-exec-am install-html install-html-am \
-	install-includeHEADERS install-info install-info-am \
-	install-libLTLIBRARIES install-libdwarfdevDATA install-man \
-	install-pdf install-pdf-am install-ps install-ps-am \
-	install-strip installcheck installcheck-am installdirs \
-	maintainer-clean maintainer-clean-generic mostlyclean \
-	mostlyclean-compile mostlyclean-generic mostlyclean-libtool \
-	pdf pdf-am ps ps-am recheck tags tags-am uninstall \
-	uninstall-am uninstall-includeHEADERS uninstall-libLTLIBRARIES \
-	uninstall-libdwarfdevDATA
+	clean-checkPROGRAMS clean-generic clean-libLTLIBRARIES \
+	clean-libtool cscopelist-am ctags ctags-am distclean \
+	distclean-compile distclean-generic distclean-libtool \
+	distclean-tags distdir dvi dvi-am html html-am info info-am \
+	install install-am install-data install-data-am install-dvi \
+	install-dvi-am install-exec install-exec-am install-html \
+	install-html-am install-includeHEADERS install-info \
+	install-info-am install-libLTLIBRARIES install-libdwarfdevDATA \
+	install-man install-pdf install-pdf-am install-ps \
+	install-ps-am install-strip installcheck installcheck-am \
+	installdirs maintainer-clean maintainer-clean-generic \
+	mostlyclean mostlyclean-compile mostlyclean-generic \
+	mostlyclean-libtool pdf pdf-am ps ps-am recheck tags tags-am \
+	uninstall uninstall-am uninstall-includeHEADERS \
+	uninstall-libLTLIBRARIES uninstall-libdwarfdevDATA
 
 .PRECIOUS: Makefile
 

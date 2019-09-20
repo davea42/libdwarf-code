@@ -1181,8 +1181,8 @@ _dwarf_add_AT_reference_internal_a(Dwarf_P_Debug dbg,
 
     new_attr->ar_attribute = attr;
     new_attr->ar_attribute_form = dbg->de_ar_ref_attr_form;
-    new_attr->ar_nbytes = dbg->de_offset_size;
-    new_attr->ar_reloc_len = dbg->de_offset_size;
+    new_attr->ar_nbytes = dbg->de_dwarf_offset_size;
+    new_attr->ar_reloc_len = dbg->de_dwarf_offset_size;
     new_attr->ar_ref_die = otherdie;
     new_attr->ar_rel_type = R_MIPS_NONE;
     new_attr->ar_next = 0;

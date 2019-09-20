@@ -1,3 +1,6 @@
+2019-09-19 David Anderson
+     * configure.ac: Now version 20190919
+     * configure: regenerated. Version 20190919
 2019-07-05 David Anderson
      * dwarf_elf_load_headers.c(read_gs_section_group): The
        check for an invalid gh_entsize of an SHT_GROUP

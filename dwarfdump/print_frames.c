@@ -51,7 +51,7 @@
         unsigned tbyte = sizeof(t) - sizeof(s); \
         t = 0;                                  \
         func(((char *)&t)+tbyte ,&s[0],sizeof(s));  \
-    } while (0)
+  } while (0)
 #else /* LITTLE ENDIAN */
 #define ASNAR(func,t,s)                         \
     do {                                        \
@@ -765,6 +765,7 @@ print_one_fde(Dwarf_Debug dbg,
     Dwarf_Addr j = 0;
     Dwarf_Addr low_pc = 0;
     Dwarf_Unsigned func_length = 0;
+    Dwarf_Addr end_func_addr = 0;
     Dwarf_Ptr fde_bytes = NULL;
     Dwarf_Unsigned fde_bytes_length = 0;
     Dwarf_Off cie_offset = 0;
@@ -929,11 +930,12 @@ print_one_fde(Dwarf_Debug dbg,
             printf("\n");
         }
     }
-    for (j = low_pc; j < low_pc + func_length; j++) {
+    end_func_addr = low_pc + func_length;
+    for (j = low_pc; j < end_func_addr; j++) {
         Dwarf_Half k = 0;
-        Dwarf_Addr jsave = 0;
+        Dwarf_Addr cur_pc_in_table = 0;
 
-        jsave = j;
+        cur_pc_in_table = j;
         if (config_data->cf_interface_number == 3) {
             Dwarf_Signed reg = 0;
             Dwarf_Signed offset_relevant = 0;
@@ -972,12 +974,13 @@ print_one_fde(Dwarf_Debug dbg,
                     /*  Loop head will increment j to make up
                         for -1 here. */
                     j = subsequent_pc -1;
+
                 }
             }
             /* Do not print if in check mode */
             if (!printed_intro_addr && glflags.gf_do_print_dwarf) {
                 printf("        0x%" DW_PR_XZEROS DW_PR_DUx
-                    ": ", (Dwarf_Unsigned)jsave);
+                    ": ", (Dwarf_Unsigned)cur_pc_in_table);
                 printed_intro_addr = 1;
             }
             print_one_frame_reg_col(dbg, config_data->cf_cfa_reg,
@@ -1001,7 +1004,7 @@ print_one_fde(Dwarf_Debug dbg,
             if (config_data->cf_interface_number == 3) {
                 fires = dwarf_get_fde_info_for_reg3(fde,
                     k,
-                    jsave,
+                    cur_pc_in_table,
                     &value_type,
                     &offset_relevant,
                     &reg,
@@ -1016,7 +1019,7 @@ print_one_fde(Dwarf_Debug dbg,
                 value_type = DW_EXPR_OFFSET;
                 fires = dwarf_get_fde_info_for_reg(fde,
                     k,
-                    jsave,
+                    cur_pc_in_table,
                     &offset_relevant,
                     &reg,
                     &offset, &row_pc,
@@ -1030,8 +1033,8 @@ print_one_fde(Dwarf_Debug dbg,
             if (fires == DW_DLV_NO_ENTRY) {
                 continue;
             }
-            if (row_pc != jsave) {
-                /*  row_pc < jsave means this pc has no
+            if (row_pc != cur_pc_in_table) {
+                /*  row_pc < cur_pc_in_table means this pc has no
                     new register value, the last one found still applies
                     hence this is a duplicate row.
                     row_pc > j cannot happen, the libdwarf function
@@ -2268,6 +2271,14 @@ print_one_frame_reg_col(Dwarf_Debug dbg,
     char *type_title = "";
     int print_type_title = 1;
 
+    if (reg_used == config_data->cf_initial_rule_value &&
+        (value_type == DW_EXPR_OFFSET ||
+        value_type == DW_EXPR_VAL_OFFSET) ) {
+        /*  This is really an empty column. Nothing to do.
+            Would be great if we could tell the caller
+            the *next* column used here or something. */
+        return;
+    }
     if (!glflags.gf_do_print_dwarf) {
         return;
     }
@@ -2283,9 +2294,6 @@ print_one_frame_reg_col(Dwarf_Debug dbg,
         type_title = "valoff";
 
         preg2:
-        if (reg_used == config_data->cf_initial_rule_value) {
-            break;
-        }
         if (print_type_title)
             printf("<%s ", type_title);
         printreg(rule_id, config_data);

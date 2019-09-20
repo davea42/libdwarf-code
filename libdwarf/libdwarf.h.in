@@ -1372,10 +1372,14 @@ struct Dwarf_Obj_Access_Interface_s {
 #define DW_DLE_CORRUPT_GNU_DEBUGLINK           456
 #define DW_DLE_CORRUPT_NOTE_GNU_DEBUGID        457
 #define DW_DLE_CORRUPT_GNU_DEBUGID_SIZE        458
-#define DW_DLE_CORRUPT_GNU_DEBUGID_STRING       459
+#define DW_DLE_CORRUPT_GNU_DEBUGID_STRING      459
+#define DW_DLE_HEX_STRING_ERROR                460
+#define DW_DLE_DECIMAL_STRING_ERROR            461
+#define DW_DLE_PRO_INIT_EXTRAS_UNKNOWN         462
+#define DW_DLE_PRO_INIT_EXTRAS_ERR             463
 
     /* LAST MUST EQUAL LAST ERROR NUMBER */
-#define DW_DLE_LAST        459
+#define DW_DLE_LAST        463
 
 #define DW_DLE_LO_USER     0x10000
 
@@ -4684,8 +4688,10 @@ Dwarf_Half dwarf_set_frame_rule_inital_value(Dwarf_Debug /*dbg*/,
     to tailor handling of pseudo-registers needed to turn
     frame operation references into simpler forms and to
     reflect ABI specific data.  Of course altering libdwarf.h
-    and dwarf.h allow the same capabilities, but such header changes
-    do not let one change these values at runtime. */
+    and dwarf.h allow the same capabilities, but header changes
+    in the distribution would require you re-integrate your 
+    libdwarf.h changes into the distributed libdwarf.h ... 
+    so use the following functions instead.*/
 Dwarf_Half dwarf_set_frame_rule_initial_value(Dwarf_Debug /*dbg*/,
     Dwarf_Half /*value*/);
 Dwarf_Half dwarf_set_frame_rule_table_size(Dwarf_Debug /*dbg*/,

@@ -1,5 +1,11 @@
+2019-09-19 David Anderson
 2019-09-10 David Anderson
      * dwarfdump.c: Fix indents and remove trailing whitespace.
+     * dwarf_names.c,dwarf_names.h,dwarfdump-ta-ext-table.h,
+       dwarfdump-ta-table.h,dwarfdump-tt-ext-table.h,
+       dwarfdump-tt-table.h: version string update, regenerated
+       these.
+     * print_frames.c: Small clarifications of the logic.
 2019-09-10 David Anderson
      * dwarfdump.c: Now --print-gnu-debuglink prints
        the  .note.gnu.build-id and .gnu_debuglink sections
