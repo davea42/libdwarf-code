@@ -64,7 +64,7 @@ resetdbg(Dwarf_P_Debug dbg)
 "default_is_stmt"
 "minimum_instruction_length"
 "maximum_operations_per_instruction"
-"maximum_opcode_base"
+"opcode_base"
 "line_base"
 "line_range"
 "linetable_version"
@@ -121,6 +121,7 @@ test1(Dwarf_P_Debug dbg)
     res = _dwarf_log_extra_flagstrings(dbg,"default_is_stmt=1",&err);
     check_expected(DW_DLV_OK,res,0,err,1,dbg->de_line_inits.pi_default_is_stmt,
         __LINE__);
+
     err = 0;
     res = _dwarf_log_extra_flagstrings(dbg,0,&err);
     check_expected(DW_DLV_NO_ENTRY,res,0,err,0,0,
@@ -149,6 +150,93 @@ test1(Dwarf_P_Debug dbg)
         __LINE__);
 
 }
+static void
+test2(Dwarf_P_Debug dbg)
+{
+    int res = 0;
+    int err = 0;
+
+    resetdbg(dbg);
+    err = 0;
+
+    res = _dwarf_log_extra_flagstrings(dbg,
+        "default_is_stmt=1,line_base=2",&err);
+    check_expected(DW_DLV_OK,res,err,0,
+        dbg->de_line_inits.pi_default_is_stmt,1,
+        __LINE__);
+    check_expected(DW_DLV_OK,res,err,0,
+        dbg->de_line_inits.pi_line_base,2,
+        __LINE__);
+
+    resetdbg(dbg);
+    err = 0;
+    /* intentional typo here */
+    res = _dwarf_log_extra_flagstrings(dbg,
+        "minimum_instruction_lengty=3,"
+        "maximum_operations_per_instruction=4",&err);
+    check_expected(DW_DLV_ERROR,res,
+        err,DW_DLE_PRO_INIT_EXTRAS_UNKNOWN,
+        dbg->de_line_inits.pi_minimum_instruction_length,
+        0,
+        __LINE__);
+    check_expected(DW_DLV_ERROR,res,
+        err,DW_DLE_PRO_INIT_EXTRAS_UNKNOWN,
+        dbg->de_line_inits.pi_maximum_operations_per_instruction,
+        0,
+        __LINE__);
+
+    resetdbg(dbg);
+    err = 0;
+
+    res = _dwarf_log_extra_flagstrings(dbg,
+        "default_is_stmt=1,"
+        "minimum_instruction_length=2,"
+        "maximum_operations_per_instruction=3,"
+        "opcode_base=4,"
+        "line_base=5,"
+        "line_range=6,"
+        "linetable_version=7,"
+        "segment_selector_size=8,"
+        "segment_size=9",
+        &err);
+
+        
+    check_expected(DW_DLV_OK,res,err,0,
+        dbg->de_line_inits.pi_default_is_stmt,1,
+        __LINE__);
+    check_expected(DW_DLV_OK,res,err,0,
+        dbg->de_line_inits.pi_minimum_instruction_length,2,
+        __LINE__);
+    check_expected(DW_DLV_OK,res,err,0,
+        dbg->de_line_inits.pi_maximum_operations_per_instruction,3,
+        __LINE__);
+    check_expected(DW_DLV_OK,res,err,0,
+        dbg->de_line_inits.pi_opcode_base,4,
+        __LINE__);
+    check_expected(DW_DLV_OK,res,err,0,
+        dbg->de_line_inits.pi_line_base,5,
+        __LINE__);
+    check_expected(DW_DLV_OK,res,err,0,
+        dbg->de_line_inits.pi_line_range,6,
+        __LINE__);
+    check_expected(DW_DLV_OK,res,err,0,
+        dbg->de_line_inits.pi_linetable_version,7,
+        __LINE__);
+
+    check_expected(DW_DLV_OK,res,err,0,
+        dbg->de_line_inits.pi_segment_selector_size,8,
+        __LINE__);
+
+    check_expected(DW_DLV_OK,res,err,0,
+        dbg->de_line_inits.pi_segment_size,9,
+        __LINE__);
+
+
+
+
+
+
+}
 
 
 
@@ -164,6 +252,7 @@ int main()
 
     resetdbg(dbg);
 
+    test2(dbg);
 
     if (errcount) {
         return 1;

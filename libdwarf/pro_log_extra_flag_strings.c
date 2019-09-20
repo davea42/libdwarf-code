@@ -176,7 +176,7 @@ update_named_field(Dwarf_P_Debug dbg, dwarfstring *cmsname,dwarfstring *cmsvalue
          dbg->de_line_inits.pi_minimum_instruction_length = (unsigned)v;
      } else if (!strcmp(name,"maximum_operations_per_instruction")) { 
          dbg->de_line_inits.pi_maximum_operations_per_instruction = (unsigned)v;
-     } else if (!strcmp(name,"maximum_opcode_base")) { 
+     } else if (!strcmp(name,"opcode_base")) { 
          dbg->de_line_inits.pi_opcode_base = (unsigned)v;
      } else if (!strcmp(name,"line_base")) { 
          dbg->de_line_inits.pi_line_base = (int)v;

@@ -1,3 +1,12 @@
+2019-09-20 David Anderson
+     * libdwarf2.1.mm: Fixing a couple document errors.
+     * libdwarf2.1.pdf: Regenerated. Version 2.79.
+     * pro_log_extra_flag_strings.c: Correct a typo
+       in the code giving producer users easy
+       access to control data.
+     * test_extra_flag_strings.c: Several additional tests
+       added to test pro_log_extra_flag_strings.c.
+       Try 'make check'.
 2019-09-19 David Anderson
      * CMakeLists.txt: Adding pro_log_extra_flag_strings.c 
        and dwarfstrings.h and dwarfstrings.c 

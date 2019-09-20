@@ -11,7 +11,7 @@ e."
 .S +2
 \." ==============================================
 \." Put current date in the following at each rev
-.ds vE Rev 2.78, 15 September 2019
+.ds vE Rev 2.79, 19 September 2019
 \." ==============================================
 \." ==============================================
 .ds | |
@@ -3150,7 +3150,8 @@ repeat the cycle by reading the first compilation-unit and so on.
 .P
 The other
 values returned through pointers are the values in the compilation-unit
-header.  If any of \f(CWcu_header_length\fP, \f(CWversion_stamp\fP,
+header.  If any of \f(CWcu_header_length\fP, 
+\f(CWversion_stamp\fP,
 \f(CWabbrev_offset\fP, \f(CWaddress_size\fP,
 \f(CWoffset_size\fP, \f(CWextension_size\fP,
 \f(CWsignature\fP, or \f(CWtypeoffset\fP,
@@ -3162,8 +3163,8 @@ argument is ignored (meaning it is not an error to provide a
 unit header.
 .P
 \f(CWversion_stamp\fP returns the section version, which
-would be (for .debug_info) 2 for DWARF2, 3 for DWARF4, or
-4 for DWARF4.
+would be (for .debug_info) 2 for DWARF2, 3 for DWARF3,
+4 for DWARF4, or 5 for DWARF5..
 .P
 \f(CWabbrev_offset\fP returns the .debug_abbrev
 section offset of the abbreviations
@@ -9956,7 +9957,8 @@ rule table when using the 'reg3' interfaces (these interfaces
 are strongly preferred over the older 'reg' interfaces).
 It should be at least as large as the
 number of real registers in the ABI which is to be read in
-for the dwarf_get_fde_info_for_reg3() or dwarf_get_fde_info_for_all_regs3()
+for the dwarf_get_fde_info_for_reg3() or 
+dwarf_get_fde_info_for_all_regs3()
 functions to work properly.
 
 The frame rule table size must be less than the marker values
@@ -10118,19 +10120,19 @@ of the additional setup that requires of the caller).
 
 .DS
 \f(CWint dwarf_get_fde_info_for_reg3(
-        Dwarf_Fde fde,
-        Dwarf_Half table_column,
-        Dwarf_Addr pc_requested,
-	Dwarf_Small  *value_type,
-	Dwarf_Signed *offset_relevant,
-        Dwarf_Signed *register_num,
-        Dwarf_Signed *offset_or_block_len,
-	Dwarf_Ptr    *block_ptr,
-        Dwarf_Addr   *row_pc,
-        Dwarf_Error  *error);\fP
+    Dwarf_Fde fde,
+    Dwarf_Half table_column,
+    Dwarf_Addr pc_requested,
+    Dwarf_Small  *value_type,
+    Dwarf_Signed *offset_relevant,
+    Dwarf_Signed *register_num,
+    Dwarf_Signed *offset_or_block_len,
+    Dwarf_Ptr    *block_ptr,
+    Dwarf_Addr   *row_pc,
+    Dwarf_Error  *error);\fP
 .DE
 See also the nearly identical function
-\f(CWdwarf_get_fde_info_for_reg3_b().
+\f(CWdwarf_get_fde_info_for_reg3_b()\fP.
 .P
 \f(CWdwarf_get_fde_info_for_reg3()\fP returns
 \f(CWDW_DLV_OK\fP on success.
