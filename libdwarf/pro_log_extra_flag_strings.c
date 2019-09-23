@@ -117,13 +117,12 @@ translatetosigned(char *s,Dwarf_Signed *v, UNUSEDARG int *err)
         return DW_DLV_OK;
     } else if (*cp == '-') {
         signmult = -1;
-        digits += 1;
+        digits ++;
     }
 
     cp = digits;
     for( ; *cp; cp++) {
         l = l * 10;
-        /* Duff's Device */
         switch (*cp) {
         case '9': 
         case '8': 
@@ -184,12 +183,15 @@ update_named_field(Dwarf_P_Debug dbg, dwarfstring *cmsname,dwarfstring *cmsvalue
          dbg->de_line_inits.pi_line_range = (int)v;
      } else if (!strcmp(name,"linetable_version")) { 
          dbg->de_line_inits.pi_linetable_version = (unsigned)v;
+         dbg->de_output_version = (unsigned)v;
      } else if (!strcmp(name,"segment_selector_size")) { 
          dbg->de_line_inits.pi_segment_selector_size = (unsigned)v;
      } else if (!strcmp(name,"segment_size")) { 
          dbg->de_line_inits.pi_segment_size = (unsigned)v;
+     } else if (!strcmp(name,"address_size")) { 
+         dbg->de_line_inits.pi_address_size = (unsigned)v;
+         dbg->de_pointer_size = (unsigned)v;
      } else {
-         /* FIXME *err */
 #ifdef TESTING
          printf("ERROR  due to unknown string \"%s\", line %d %s\n",
              name,__LINE__,__FILE__);

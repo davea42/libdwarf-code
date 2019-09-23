@@ -183,7 +183,6 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
     READ_AREA_LENGTH_CK(dbg, total_length, Dwarf_Unsigned,
         line_ptr, local_length_size, local_extension_size,
         err, section_length,section_end);
-
     line_ptr_end = line_ptr + total_length;
     line_context->lc_line_ptr_end = line_ptr_end;
     line_context->lc_length_field_length = local_length_size +

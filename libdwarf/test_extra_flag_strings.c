@@ -238,6 +238,32 @@ test2(Dwarf_P_Debug dbg)
 
 }
 
+static void
+test3(Dwarf_P_Debug dbg)
+{
+    int res = 0;
+    int err = 0;
+
+    /*  The following identical to a current dwarfgen.cc use. */
+    res = _dwarf_log_extra_flagstrings(dbg,
+        "opcode_base=13,"
+        "minimum_instruction_length=1,"
+        "line_base=-1,"
+        "line_range=4",&err);
+    check_expected(DW_DLV_OK,res,err,0,
+        dbg->de_line_inits.pi_opcode_base,13,
+        __LINE__);
+    check_expected(DW_DLV_OK,res,err,0,
+        dbg->de_line_inits.pi_minimum_instruction_length,1,
+        __LINE__);
+    check_expected(DW_DLV_OK,res,err,0,
+        dbg->de_line_inits.pi_line_base,-1,
+        __LINE__);
+    check_expected(DW_DLV_OK,res,err,0,
+        dbg->de_line_inits.pi_line_range,4,
+        __LINE__);
+
+}
 
 
 int main()
@@ -253,6 +279,8 @@ int main()
     resetdbg(dbg);
 
     test2(dbg);
+    resetdbg(dbg);
+    test3(dbg);
 
     if (errcount) {
         return 1;

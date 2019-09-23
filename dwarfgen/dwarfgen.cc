@@ -252,8 +252,14 @@ _dwarf_memcpy_swap_bytes(void *s1, const void *s2, unsigned long len)
 
 
 
-static void write_object_file(Dwarf_P_Debug dbg, IRepresentation &irep);
-static void write_text_section(Elf * elf);
+static void write_object_file(Dwarf_P_Debug dbg, 
+    IRepresentation &irep,
+    unsigned machine,
+    unsigned endian,
+    unsigned long dwbitflags,
+    void * user_data);
+
+static void write_text_section(Elf * elf,unsigned elfclass);
 static void write_generated_dbg(Dwarf_P_Debug dbg,Elf * elf,
     IRepresentation &irep);
 
@@ -273,7 +279,6 @@ void close_a_file(int f);
 static IRepresentation Irep;
 
 static Elf * elf = 0;
-static Elf32_Ehdr * ehp = 0;
 static strtabdata secstrtab;
 
 CmdOptions cmdoptions = {
@@ -343,7 +348,7 @@ public:
 
 vector<SectionFromDwarf> dwsectab;
 
-static ElfSectIndex create_dw_elf(SectionFromDwarf  &ds);
+static ElfSectIndex create_dw_elf(SectionFromDwarf  &ds,unsigned elfclass);
 
 static SectionFromDwarf & FindMySection(const ElfSectIndex & elf_section_index)
 {
@@ -374,7 +379,7 @@ static int FindMySectionNum(const ElfSectIndex & elf_section_index)
 }
 
 static unsigned
-createnamestr(unsigned strtabstroff)
+createnamestr(unsigned strtabstroff,unsigned elfclass)
 {
     Elf_Scn * strscn =elf_newscn(elf);
     if(!strscn) {
@@ -392,22 +397,42 @@ createnamestr(unsigned strtabstroff)
     shstr->d_off = 0;
     shstr->d_align = 1;
     shstr->d_version = EV_CURRENT;
-
-    Elf32_Shdr * strshdr = elf32_getshdr(strscn);
-    if(!strshdr) {
-        cerr << "dwarfgen: Unable to elf_getshdr() on " << outfile << endl;
-        exit(1);
+ 
+    if (elfclass == ELFCLASS32) {
+        Elf32_Shdr * strshdr = elf32_getshdr(strscn);
+        if(!strshdr) {
+            cerr << "dwarfgen: Unable to elf32_getshdr() on " << outfile << endl;
+            exit(1);
+        }
+        strshdr->sh_name =  strtabstroff;
+        strshdr->sh_type= SHT_STRTAB;
+        strshdr->sh_flags = SHF_STRINGS;
+        strshdr->sh_addr = 0;
+        strshdr->sh_offset = 0;
+        strshdr->sh_size = 0;
+        strshdr->sh_link  = 0;
+        strshdr->sh_info = 0;
+        strshdr->sh_addralign = 1;
+        strshdr->sh_entsize = 0;
+    } else {
+#ifdef HAVE_ELF64_GETSHDR
+        Elf64_Shdr * strshdr = elf64_getshdr(strscn);
+        if(!strshdr) {
+            cerr << "dwarfgen: Unable to elf64_getshdr() on " << outfile << endl;
+            exit(1);
+        }
+        strshdr->sh_name =  strtabstroff;
+        strshdr->sh_type= SHT_STRTAB;
+        strshdr->sh_flags = SHF_STRINGS;
+        strshdr->sh_addr = 0;
+        strshdr->sh_offset = 0;
+        strshdr->sh_size = 0;
+        strshdr->sh_link  = 0;
+        strshdr->sh_info = 0;
+        strshdr->sh_addralign = 1;
+        strshdr->sh_entsize = 0;
+#endif // HAVE_ELF64_GETSHDR
     }
-    strshdr->sh_name =  strtabstroff;
-    strshdr->sh_type= SHT_STRTAB;
-    strshdr->sh_flags = SHF_STRINGS;
-    strshdr->sh_addr = 0;
-    strshdr->sh_offset = 0;
-    strshdr->sh_size = 0;
-    strshdr->sh_link  = 0;
-    strshdr->sh_info = 0;
-    strshdr->sh_addralign = 1;
-    strshdr->sh_entsize = 0;
     return  elf_ndxscn(strscn);
 }
 
@@ -426,7 +451,7 @@ static int CallbackFunc(
     Dwarf_Unsigned      link,
     Dwarf_Unsigned      info,
     Dwarf_Unsigned*     sect_name_symbol_index,
-    void *              user_data UNUSEDARG,
+    void *              user_data,
     int*                error UNUSEDARG)
 {
     // Create an elf section.
@@ -439,6 +464,14 @@ static int CallbackFunc(
     // The section name appears both in the section strings
     // .shstrtab and
     // in the elf symtab .symtab and its strings .strtab.
+    unsigned elfclass = 0;
+    if (user_data) {
+        elfclass = *(unsigned *)user_data;
+    } else {
+        cerr << "We created an internal-to-dwarfgen bug here. " <<
+           " line " << __LINE__ << " " <<__FILE__ << endl;
+        exit(1);
+    }
 
     if (0 == strncmp(name,".rel",4))  {
         // It is relocation, create no section!
@@ -455,7 +488,7 @@ static int CallbackFunc(
     // libdwarf the index to put into relocation records for the
     // section newly defined here.
     *sect_name_symbol_index = ds.getSectionNameSymidx();
-    ElfSectIndex createdsec = create_dw_elf(ds);
+    ElfSectIndex createdsec = create_dw_elf(ds,elfclass);
 
     // Do all the data creation before pushing
     // (copying) ds onto dwsectab!
@@ -469,28 +502,48 @@ static int CallbackFunc(
 // This never happens for relocations in dwarfgen,
 // only a few sections are created by dwarfgen.
 static ElfSectIndex
-create_dw_elf(SectionFromDwarf  &ds)
+create_dw_elf(SectionFromDwarf  &ds,unsigned elfclass)
 {
     Elf_Scn * scn =elf_newscn(elf);
     if(!scn) {
         cerr << "dwarfgen: Unable to elf_newscn() on " << ds.name_  << endl;
         exit(1);
     }
-    Elf32_Shdr * shdr = elf32_getshdr(scn);
-    if(!shdr) {
-        cerr << "dwarfgen: Unable to elf_getshdr() on " << ds.name_ << endl;
-        exit(1);
+    if (elfclass == ELFCLASS32) {
+        Elf32_Shdr * shdr = elf32_getshdr(scn);
+        if(!shdr) {
+            cerr << "dwarfgen: Unable to elf32_getshdr() on " << ds.name_ << endl;
+            exit(1);
+        }
+        shdr->sh_name   = ds.section_name_itself_;
+        shdr->sh_type   = ds.type_;
+        shdr->sh_flags  = ds.flags_;
+        shdr->sh_addr   = 0;
+        shdr->sh_offset = 0;
+        shdr->sh_size   = ds.size_;
+        shdr->sh_link   = ds.link_;
+        shdr->sh_info   = ds.info_;
+        shdr->sh_addralign = 1;
+        shdr->sh_entsize = 0;
+    } else {
+#ifdef HAVE_ELF64_GETSHDR
+        Elf64_Shdr * shdr = elf64_getshdr(scn);
+        if(!shdr) {
+            cerr << "dwarfgen: Unable to elf64_getshdr() on " << ds.name_ << endl;
+            exit(1);
+        }
+        shdr->sh_name   = ds.section_name_itself_;
+        shdr->sh_type   = ds.type_;
+        shdr->sh_flags  = ds.flags_;
+        shdr->sh_addr   = 0;
+        shdr->sh_offset = 0;
+        shdr->sh_size   = ds.size_;
+        shdr->sh_link   = ds.link_;
+        shdr->sh_info   = ds.info_;
+        shdr->sh_addralign = 1;
+        shdr->sh_entsize = 0;
+#endif // HAVE_ELF64_GETSHDR
     }
-    shdr->sh_name   = ds.section_name_itself_;
-    shdr->sh_type   = ds.type_;
-    shdr->sh_flags  = ds.flags_;
-    shdr->sh_addr   = 0;
-    shdr->sh_offset = 0;
-    shdr->sh_size   = ds.size_;
-    shdr->sh_link   = ds.link_;
-    shdr->sh_info   = ds.info_;
-    shdr->sh_addralign = 1;
-    shdr->sh_entsize = 0;
     ElfSectIndex si(elf_ndxscn(scn));
 
     ds.setSectIndex(si);
@@ -533,12 +586,29 @@ main(int argc, char **argv)
         int opt;
         bool pathrequired(false);
         long cu_of_input_we_output = -1;
-        int ptrsizeflagbit = DW_DLC_POINTER32;
-        int offsetsizeflagbit = DW_DLC_OFFSET32;
-        const char * isa_name = "x86";
         bool force_empty_dnames = false;
-        const char *dwarf_version = "V2";
+
+        // Overriding macro constants from pro_line.h
+        // so we can choose at runtime
+        // and avoid modifying header files.
+        // This is the original set of constants
+        // used for testing.
+        // see also output_v4_test (--output-v4-test 
+        // longopt).
+        const char *dwarf_extras ="opcode_base=10,"
+            "minimum_instruction_length=1,"
+            "line_base=-1,"
+            "line_range=4";
         int endian =  DW_DLC_TARGET_LITTLEENDIAN;
+        const char *dwarf_version = "V2";
+        const char * isa_name = "x86";
+        unsigned long ptrsizeflagbit = DW_DLC_POINTER32;
+        unsigned long offsetsizeflagbit = DW_DLC_OFFSET32;
+        unsigned machine = EM_386; /* from elf.h */
+        int output_v4_test = 0;
+
+        unsigned global_elfclass = 0;
+
         int longindex;
         static struct dwoption longopts[] = {
             {"adddata16",dwno_argument,0,1000},
@@ -546,8 +616,18 @@ main(int argc, char **argv)
             {"add-implicit-const",dwno_argument,0,1002},
             {"add-frame-advance-loc",dwno_argument,0,1003},
             {"add-sun-func-offsets",dwno_argument,0,1004},
+            {"output-pointer-size",dwrequired_argument,0,'p'},
+            {"output-offset-size",dwrequired_argument,0,'f'},
+            {"output-dwarf-version",dwrequired_argument,0,'v'},
+            {"output-v4-test",dwno_argument,0,1005},
+            {"default-form-strp",dwno_argument,0,'s'},
+            {"show-reloc-details",dwno_argument,0,'r'},
+            {"high-pc-as-const",dwno_argument,0,'h'},
             {0,0,0,0},
         };
+        // -p is pointer size
+        // -f is offset size, overriding the above
+        // -v is version number for dwarf output
 
         while((opt=dwgetopt_long(argc,argv,
             "o:t:c:hsrv:p:f:",
@@ -588,6 +668,10 @@ main(int argc, char **argv)
                 // libdwarf reading is thus testable.
                 cmdoptions.addSUNfuncoffsets = true;
                 break;
+            case 1005:
+                //{"output-v4-test",dwno_argument,0,1005}
+                output_v4_test = 1;
+                break;
             case 'c':
                 // At present we can only create a single
                 // cu in the output of the libdwarf producer.
@@ -596,7 +680,7 @@ main(int argc, char **argv)
             case 'r':
                 cmdoptions.showrelocdetails=true;
                 break;
-            case 's':
+            case 's': // --default-form-strp
                 cmdoptions.defaultInfoStringForm = DW_FORM_strp;
                 break;
             case 'p': /* pointer size: value 4 or 8. */
@@ -654,18 +738,32 @@ main(int argc, char **argv)
             }
         }
         if ( (dwoptind >= argc) && pathrequired) {
-            cerr << "dwarfgen: Expected argument after options! Giving up."
+            cerr << "dwarfgen: Expected argument after options!"
+                " Giving up."
                 << endl;
             exit(EXIT_FAILURE);
         }
         if(pathrequired) {
             infile = argv[dwoptind];
         }
+        if (output_v4_test) {
+            dwarf_extras ="opcode_base=13,"
+                "minimum_instruction_length=1,"
+                "line_base=-1,"
+                "line_range=4";
+            endian =  DW_DLC_TARGET_LITTLEENDIAN;
+            dwarf_version = "V4";
+            isa_name = "x86_64";
+            ptrsizeflagbit = DW_DLC_POINTER64;
+            offsetsizeflagbit = DW_DLC_OFFSET64;
+            machine = EM_X86_64; /* from elf.h */
+        }
 
         if(whichinput == OptReadBin) {
             createIrepFromBinary(infile,Irep);
         } else if (whichinput == OptReadText) {
-            cerr << "dwarfgen: dwarfgen: text read not supported yet" << endl;
+            cerr << "dwarfgen: dwarfgen: text read not supported yet"
+                << endl;
             exit(EXIT_FAILURE);
         } else if (whichinput == OptPredefined) {
             cerr << "dwarfgen: predefined not supported yet" << endl;
@@ -675,35 +773,50 @@ main(int argc, char **argv)
             exit(EXIT_FAILURE);
         }
 
-        // Example will return error value thru 'err' pointer
-        // and return DW_DLV_ERROR if there is an error.
         // We no longer use the libdwarf interfaces returning
         // DW_DLV_BADADDR (though they still exist in libdwarf)
         // as that sort of return (mixing returned-pointer with
         // an error value) was ugly.
+        // We use the latest calls instead, returning
+        // DW_DLV_OK, DW_DLV_NO_ENTRY, or DW_DLV_ERROR
+        // as an int.
         Dwarf_Ptr errarg = 0;
         Dwarf_Error err = 0;
-        void *user_data = 0;
+
+        // The point of user_data is, as here, to
+        // have crucial data available to the callback
+        // function implementation.
+        void *user_data = &global_elfclass;
+
         Dwarf_P_Debug dbg = 0;
+        unsigned long dwbitflags = DW_DLC_WRITE|
+            ptrsizeflagbit|
+            offsetsizeflagbit|
+            DW_DLC_SYMBOLIC_RELOCATIONS;
 
         // We use DW_DLC_SYMBOLIC_RELOCATIONS so we can
         // read the relocations and do our own relocating.
         // See calls of dwarf_get_relocation_info().
         int res = dwarf_producer_init(
-            DW_DLC_WRITE|ptrsizeflagbit|
-            offsetsizeflagbit|DW_DLC_SYMBOLIC_RELOCATIONS|
-            endian,
+            dwbitflags,
             CallbackFunc,
             0, // errhand
             errarg,
             user_data,
             isa_name,
             dwarf_version,
-            0, // No extra identifying strings.
+            dwarf_extras, 
             &dbg,
             &err);
-        if(res != DW_DLV_OK) {
-            cerr << "dwarfgen: Failed init_b" << endl;
+        if(res == DW_DLV_NO_ENTRY) {
+            cerr << "dwarfgen: Failed dwarf_producer_init() NO_ENTRY"
+                << endl;
+            exit(EXIT_FAILURE);
+        }
+        if(res == DW_DLV_ERROR) {
+            cerr << "dwarfgen: Failed dwarf_producer_init() ERROR"
+                << endl;
+            cerr << "dwarfgen errmsg " << dwarf_errmsg(err)<<endl;
             exit(EXIT_FAILURE);
         }
         res = dwarf_pro_set_default_string_form(dbg,
@@ -723,10 +836,9 @@ main(int argc, char **argv)
             }
         }
         transform_irep_to_dbg(dbg,Irep,cu_of_input_we_output);
-        write_object_file(dbg,Irep);
-        // Example calls ErrorHandler if there is an error
-        // (which does not return, see above)
-        // so no need to test for error.
+        write_object_file(dbg,Irep,machine,endian, dwbitflags,
+            user_data);
+
         Dwarf_Unsigned str_count = 0;
         Dwarf_Unsigned str_len = 0;
         Dwarf_Unsigned debug_str_count = 0;
@@ -769,9 +881,24 @@ main(int argc, char **argv)
 }
 
 static void
-write_object_file(Dwarf_P_Debug dbg, IRepresentation &irep UNUSEDARG)
+write_object_file(Dwarf_P_Debug dbg,
+    IRepresentation &irep,
+    unsigned machine,
+    unsigned endian,
+    unsigned long dwbitflags,
+    void *user_data)
 {
-    int fd = create_a_file(outfile.c_str());
+    unsigned elfclass = (dwbitflags & DW_DLC_OFFSET64)?
+             ELFCLASS64:
+             ELFCLASS32;
+    unsigned elfendian = (endian&DW_DLC_TARGET_LITTLEENDIAN)?
+             ELFDATA2LSB:
+             ELFDATA2MSB;
+    int fd = 0;
+
+    *(unsigned *)user_data = elfclass;
+    fd = create_a_file(outfile.c_str());
+
     if(fd < 0 ) {
         cerr << "dwarfgen: Unable to open " << outfile <<
             " for writing." << endl;
@@ -789,35 +916,69 @@ write_object_file(Dwarf_P_Debug dbg, IRepresentation &irep UNUSEDARG)
         cerr << "dwarfgen: Unable to elf_begin() on " << outfile << endl;
         exit(1);
     }
-    ehp = elf32_newehdr(elf);
-    if(!ehp) {
-        cerr << "dwarfgen: Unable to elf_newehdr() on " << outfile << endl;
-        exit(1);
+    if (elfclass == ELFCLASS32) {
+        static Elf32_Ehdr * ehp = 0;
+        ehp = elf32_newehdr(elf);
+        if(!ehp) {
+                cerr << "dwarfgen: Unable to elf32_newehdr() on " << outfile << endl;
+                exit(1);
+        }
+        ehp->e_ident[EI_MAG0] = ELFMAG0;
+        ehp->e_ident[EI_MAG1] = ELFMAG1;
+        ehp->e_ident[EI_MAG2] = ELFMAG2;
+        ehp->e_ident[EI_MAG3] = ELFMAG3;
+        ehp->e_ident[EI_CLASS] = elfclass;
+        ehp->e_ident[EI_DATA] = elfendian;
+        ehp->e_ident[EI_VERSION] = EV_CURRENT;
+        ehp->e_machine = machine;
+        //  We do not bother to create program headers, so
+        //  mark this as ET_REL.
+        ehp->e_type = ET_REL;
+        ehp->e_version = EV_CURRENT;
+        unsigned  strtabstroff = secstrtab.addString(".shstrtab");
+
+        // an object section with fake .text data (just as an example).
+        write_text_section(elf,elfclass);
+    
+        write_generated_dbg(dbg,elf,irep);
+    
+        // Create the section name string section.
+        unsigned shstrindex = createnamestr(strtabstroff,elfclass);
+        ehp->e_shstrndx = shstrindex;
+    } else {
+#ifdef   HAVE_ELF64_GETEHDR
+        static Elf64_Ehdr * ehp = 0;
+        ehp = elf64_newehdr(elf);
+        if(!ehp) {
+            cerr << "dwarfgen: Unable to elf64_newehdr() on " << outfile << endl;
+            exit(1);
+        }
+        ehp->e_ident[EI_MAG0] = ELFMAG0;
+        ehp->e_ident[EI_MAG1] = ELFMAG1;
+        ehp->e_ident[EI_MAG2] = ELFMAG2;
+        ehp->e_ident[EI_MAG3] = ELFMAG3;
+        ehp->e_ident[EI_CLASS] = elfclass;
+        ehp->e_ident[EI_DATA] = elfendian;
+        ehp->e_ident[EI_VERSION] = EV_CURRENT;
+        ehp->e_machine = machine;
+        //  We do not bother to create program headers, so
+        //  mark this as ET_REL.
+        ehp->e_type = ET_REL;
+        ehp->e_version = EV_CURRENT;
+        unsigned  strtabstroff = secstrtab.addString(".shstrtab");
+
+        // an object section with fake .text data (just as an example).
+        write_text_section(elf,elfclass);
+    
+        write_generated_dbg(dbg,elf,irep);
+
+        // Create the section name string section.
+        unsigned shstrindex = createnamestr(strtabstroff,elfclass);
+        ehp->e_shstrndx = shstrindex;
+#endif //  HAVE_ELF64_GETEHDR
     }
-    ehp->e_ident[EI_MAG0] = ELFMAG0;
-    ehp->e_ident[EI_MAG1] = ELFMAG1;
-    ehp->e_ident[EI_MAG2] = ELFMAG2;
-    ehp->e_ident[EI_MAG3] = ELFMAG3;
-    ehp->e_ident[EI_CLASS] = ELFCLASS32;
-    ehp->e_ident[EI_DATA] = ELFDATA2LSB;
-    ehp->e_ident[EI_VERSION] = EV_CURRENT;
-    ehp->e_machine = EM_386;
-    //  We do not bother to create program headers, so
-    //  mark this as ET_REL.
-    ehp->e_type = ET_REL;
-    ehp->e_version = EV_CURRENT;
 
-    unsigned  strtabstroff = secstrtab.addString(".shstrtab");
-
-    // an object section with fake .text data (just as an example).
-    write_text_section(elf);
-
-    write_generated_dbg(dbg,elf,Irep);
-
-    // Now create section name string section.
-    unsigned shstrindex = createnamestr(strtabstroff);
-    ehp->e_shstrndx = shstrindex;
-
+    // Get it all written to the output file.
     off_t ures = elf_update(elf,cmd);
     if(ures == (off_t)(-1LL)) {
         cerr << "dwarfgen: Unable to elf_update() on " << outfile << endl;
@@ -834,7 +995,7 @@ write_object_file(Dwarf_P_Debug dbg, IRepresentation &irep UNUSEDARG)
 
 // an object section with fake .text data (just as an example).
 static void
-write_text_section(Elf * elf_w)
+write_text_section(Elf * elf_w,unsigned elfclass)
 {
     unsigned  osecnameoff = secstrtab.addString(".text");
     Elf_Scn * scn1 =elf_newscn(elf_w);
@@ -855,21 +1016,42 @@ write_text_section(Elf * elf_w)
     ed1->d_off = 0;
     ed1->d_align = 4;
     ed1->d_version = EV_CURRENT;
-    Elf32_Shdr * shdr1 = elf32_getshdr(scn1);
-    if(!shdr1) {
-        cerr << "dwarfgen: Unable to elf_getshdr() on " << outfile << endl;
-        exit(1);
+
+    if (elfclass == ELFCLASS32) {
+        Elf32_Shdr * shdr1 = elf32_getshdr(scn1);
+        if(!shdr1) {
+            cerr << "dwarfgen: Unable to elf32_getshdr() on " << outfile << endl;
+            exit(1);
+        }
+        shdr1->sh_name =  osecnameoff;
+        shdr1->sh_type= SHT_PROGBITS;
+        shdr1->sh_flags = 0;
+        shdr1->sh_addr = 0;
+        shdr1->sh_offset = 0;
+        shdr1->sh_size = 0;
+        shdr1->sh_link  = 0;
+        shdr1->sh_info = 0;
+        shdr1->sh_addralign = 1;
+        shdr1->sh_entsize = 0;
+    } else {
+#ifdef HAVE_ELF64_GETSHDR
+        Elf64_Shdr * shdr1 = elf64_getshdr(scn1);
+        if(!shdr1) {
+            cerr << "dwarfgen: Unable to elf32_getshdr() on " << outfile << endl;
+            exit(1);
+        }
+        shdr1->sh_name =  osecnameoff;
+        shdr1->sh_type= SHT_PROGBITS;
+        shdr1->sh_flags = 0;
+        shdr1->sh_addr = 0;
+        shdr1->sh_offset = 0;
+        shdr1->sh_size = 0;
+        shdr1->sh_link  = 0;
+        shdr1->sh_info = 0;
+        shdr1->sh_addralign = 1;
+        shdr1->sh_entsize = 0;
+#endif // HAVE_ELF64_GETSHDR
     }
-    shdr1->sh_name =  osecnameoff;
-    shdr1->sh_type= SHT_PROGBITS;
-    shdr1->sh_flags = 0;
-    shdr1->sh_addr = 0;
-    shdr1->sh_offset = 0;
-    shdr1->sh_size = 0;
-    shdr1->sh_link  = 0;
-    shdr1->sh_info = 0;
-    shdr1->sh_addralign = 1;
-    shdr1->sh_entsize = 0;
 }
 static void
 InsertDataIntoElf(Dwarf_Signed d,Dwarf_P_Debug dbg,Elf *elf_i)

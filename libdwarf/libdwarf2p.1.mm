@@ -13,7 +13,7 @@
 .S +2
 \." ==============================================
 \." Put current date in the following at each rev
-.ds vE Rev 1.49, 30 April 2019
+.ds vE Rev 1.50, 20 September 2019
 \." ==============================================
 \." ==============================================
 .ds | |
@@ -814,17 +814,59 @@ should be one of
 to indicate which DWARF version is the overall format
 to be emitted.  Individual section version numbers will obey
 the standard for that overall DWARF version.
-Initially only "V2" is supported.
 .P
 The \f(CWextra\fP argument 
-is intended to support a comma-separated
-list of as-yet-undefined options.
+is supports a comma-separated
+list of options.
 Passing in a null pointer or an empty string
 is acceptable if no such options are needed 
-or used.  All-lowercase option names are reserved to
+or used.  
+All-lowercase option names are reserved to
 the libdwarf implementation itself (specific implementations
 may want to use a leading upper-case letter for
 additional options).
+.P
+The available options are
+.DS
+"default_is_stmt",
+"address_size",
+"minimum_instruction_length",
+"maximum_operations_per_instruction",
+"opcode_base",
+"line_base",
+"line_range",
+"linetable_version",
+"segment_selector_size",
+and
+"segment_size".
+.DE
+.P
+For example, to set the line-table generation
+default value of is_stmt to 0
+pass in 
+.DS
+"default_is_stmt=0".
+.DE
+To also set the minimum_instruction_length
+used in calculating line table address-advance
+values to one one would pass 
+in 
+.DS
+"default_is_stmt=0,minimum_instruction_length=1".
+.DE
+It's appropriate to add 
+.DS
+"opcode_base=13"
+.DE
+for
+DWARF3 through DWARF5.
+All these default to something, but the something
+depends on environment what macro names 
+are set by the envirnment or a just constants
+which makes it difficult to alter these values.
+See pro_line.h for the use of line-table related
+constants (which will vary depending on the target ISA
+and ABI and compilers).
 
 .P
 The \f(CWerror\fP argument 
@@ -837,9 +879,9 @@ will be passed back through this pointer argument.
 
 .DS
 \f(CWint dwarf_pro_set_default_string_form(
-        Dwarf_P_Debug *dbg,
-        int            desired_form,
-        Dwarf_Error *error) \fP
+    Dwarf_P_Debug *dbg,
+    int            desired_form,
+    Dwarf_Error *error) \fP
 .DE
 .P
 The function 

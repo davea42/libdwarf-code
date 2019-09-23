@@ -299,7 +299,6 @@ get_basic_attr_data_one_attr(Dwarf_Debug dbg,
         cerr << "Unable to get attr form " << endl;
         exit(1);
     }
-
     res = dwarf_whatform_direct(attr,&initialform,&error);
     if(res != DW_DLV_OK) {
         errprint(error);
@@ -362,6 +361,7 @@ get_attrs_of_die(Dwarf_Die in_die,IRDie &irdie,
     Dwarf_Signed atcnt = 0;
     std::list<IRAttr> &attrlist = irdie.getAttributes();
     int res = dwarf_attrlist(in_die, &atlist,&atcnt,&error);
+    std::map<unsigned,unsigned> attrmap; 
     if(res == DW_DLV_NO_ENTRY) {
         return;
     }
@@ -372,6 +372,23 @@ get_attrs_of_die(Dwarf_Die in_die,IRDie &irdie,
     }
     for (Dwarf_Signed i = 0; i < atcnt; ++i) {
         Dwarf_Attribute attr = atlist[i];
+        Dwarf_Half attrnum = 0;
+       
+        res = dwarf_whatattr(attr,&attrnum,&error);
+        if (res != DW_DLV_OK) {
+            cout << "ERROR FAIL: unable to get attrnum from attr!" 
+                <<endl;
+            return;
+        }
+        std::map<unsigned,unsigned>::iterator m =
+            attrmap.find(attrnum);
+
+        if (m != attrmap.end()) {
+            //  A duplicate! ignore. Compiler bug
+            //  in some gcc versions.
+            continue;
+        }
+        attrmap[attrnum] = i;
         // Use an empty attr to get a placeholder on
         // the attr list for this IRDie.
         IRAttr irattr;

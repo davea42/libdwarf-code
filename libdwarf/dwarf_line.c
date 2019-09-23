@@ -323,6 +323,7 @@ dwarf_srcfiles(Dwarf_Die die,
 
     /*  ***** BEGIN CODE ***** */
     /*  Reset error. */
+
     if (error != NULL) {
         *error = NULL;
     }
@@ -413,7 +414,9 @@ dwarf_srcfiles(Dwarf_Die die,
     /*  We are in dwarf_srcfiles() */
     {
         Dwarf_Small *line_ptr_out = 0;
-        int dres = _dwarf_read_line_table_header(dbg,
+        int dres = 0;
+
+        dres = _dwarf_read_line_table_header(dbg,
             context,
             section_start,
             line_ptr,
@@ -495,7 +498,8 @@ dwarf_srcfiles(Dwarf_Die die,
     }
 
     ret_files = (char **)
-        _dwarf_get_alloc(dbg, DW_DLA_LIST, line_context->lc_file_entry_count);
+        _dwarf_get_alloc(dbg, DW_DLA_LIST, 
+        line_context->lc_file_entry_count);
     if (ret_files == NULL) {
         dwarf_dealloc(dbg, line_context, DW_DLA_LINE_CONTEXT);
         _dwarf_error(dbg, error, DW_DLE_ALLOC_FAIL);

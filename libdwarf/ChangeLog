@@ -1,3 +1,36 @@
+2019-09-22 David Anderson
+     * libdwarf2p.1.mm: Documented the new support
+       of using the 'extras' argument (previously
+       anything it pointed to was ignored) so
+       producer-callers have 
+     * libdwarf2p.1.pdf: Regenerated. Rev 1.50.
+     * dwarf_form.c: Now deals with correct use of
+       DW_FORM_data8/4 for DWARF4 and 5.
+     * dwarf_line.c: Minor readability improvements.
+       No change in the code.
+     * dwarf_line_table_reader_common.h: Removed a pointless
+       blank line.
+     * dwarf_util.h: Moved the trailing \ to the left
+       making most lines much more readable with a 70
+       character wide window.
+     * pro_init.c: Implemented support for using the 'extra'
+       string argument to flexibly set the line-table
+       constants, avoiding any need to change pro_line.h
+       macro content.
+       Removed many lines of code that is now in
+       pro_log_extra_flag_strings.c. (should have been
+       removed 2 days ago).
+       Fixed the FORM for reference/offset attributes to 
+       DW_FORM_sec_offset for DWARF4,5.
+     * pro_line.c: Added comments explaining de_line_inits
+       structure for clarity.
+     * pro_log_extra_flag_strings.c: Added address_size
+       to what these can read-in.
+     * pro_opaque.h: Deleted two of a set of 3 blank lines
+     * pro_section.c: Revised the line table opc calculation
+       by using more lines for clarity.
+     * test_extra_flag_strings.c: Added new tests of
+       _dwarf_log_extra_flagstrings().
 2019-09-20 David Anderson
      * libdwarf2.1.mm: Fixing a couple document errors.
      * libdwarf2.1.pdf: Regenerated. Version 2.79.

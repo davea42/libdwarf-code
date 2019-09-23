@@ -146,8 +146,6 @@ struct Dwarf_P_Line_Inits_s {
     /* Size of the smallest instruction, in bytes. */
     unsigned pi_minimum_instruction_length;
 
-
-
     /*  Normally opcode_base is determined by pi_version, but we
         allow manual setting here so we can generate data like
         GNU with a DWARF3 opcode base in a DWARF2 section.

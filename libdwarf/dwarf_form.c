@@ -687,7 +687,7 @@ dwarf_global_formref(Dwarf_Attribute attr,
         That was first clearly documented in DWARF3.
         In DWARF4 these two forms are no longer references. */
     case DW_FORM_data4:
-        if (context_version == DW_CU_VERSION4) {
+        if (context_version >= DW_CU_VERSION4) {
             _dwarf_error(dbg, error, DW_DLE_NOT_REF_FORM);
             return (DW_DLV_ERROR);
         }
@@ -697,7 +697,7 @@ dwarf_global_formref(Dwarf_Attribute attr,
         /* The offset is global. */
         break;
     case DW_FORM_data8:
-        if (context_version == DW_CU_VERSION4) {
+        if (context_version >= DW_CU_VERSION4) {
             _dwarf_error(dbg, error, DW_DLE_NOT_REF_FORM);
             return (DW_DLV_ERROR);
         }

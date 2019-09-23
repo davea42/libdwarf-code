@@ -1,3 +1,13 @@
+2019-09-22 David Anderson
+     * createirepfrombinary.cc: Delete pointless empty lines
+       and add code to recognize and correct for a broken gcc
+       that duplicated an attribute (by dropping the duplicate).
+     * dwarfgen.cc: Adds the ability to choose the output
+       target size/endian/etc at runtime and gathers
+       the choices conveniently together so it is
+       legible. Adds a choice of generating DWARF4 
+       with 64bit pointers, showing by example.
+       Now supports generating 64bit offset elf.
 2019-09-02 David Anderson
      * dwarfgen.cc: Now running it on a big-endian machine
        (reading and writing little-endian objects) works

@@ -293,7 +293,10 @@ _dwarf_pro_get_opc(
         return OPC_INCS_ZERO;
     }
     if (line_adv >= line_base && line_adv < line_base + line_range) {
-        int opc = (line_adv - line_base) + (factored_adv * line_range) +
+        int opc = 0; 
+
+        opc = (line_adv - line_base) + 
+            (factored_adv * line_range) +
             inits->pi_opcode_base;
         if (opc > 255) {
             return OPC_OUT_OF_RANGE;
