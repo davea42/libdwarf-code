@@ -1,5 +1,6 @@
 set_source_group(SOURCES "Source Files" dwarf_abbrev.c 
-dwarf_alloc.c dwarf_arange.c dwarf_die_deliv.c 
+dwarf_alloc.c dwarf_arange.c 
+dwarf_debuglink.c dwarf_die_deliv.c 
 dwarf_dnames.c dwarf_dsc.c dwarf_elf_access.c 
 dwarf_elf_load_headers.c 
 dwarf_elfread.c 

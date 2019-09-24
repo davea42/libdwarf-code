@@ -16,6 +16,7 @@ dwarf_alloc.h \
 dwarf_arange.c \
 dwarf_arange.h \
 dwarf_base_types.h \
+dwarf_debuglink.c \
 dwarf_die_deliv.c \
 dwarf_die_deliv.h \
 dwarf_dnames.c \
