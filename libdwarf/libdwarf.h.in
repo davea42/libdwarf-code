@@ -2510,6 +2510,7 @@ int dwarf_debugnames_entrypool_values(Dwarf_Dnames_Head /*dn*/,
 
 /*  New September 2019.  Access to the GNU section named
     .gnu_debuglink  .
+    DO NOT USE. It will change. 
     Do not free the name_out or crc_out returned.
     If *debuglink_path_size_returned non-zero
     then callers must free(*debuglink_path_returned)
@@ -2526,8 +2527,10 @@ int dwarf_gnu_debuglink(Dwarf_Debug /*dbg*/,
 
 /*  The pointers returned refer to strings in
     static space in the
-    object file so must not be free()d,
-    Though build_id_returned has no NUL
+    object file so must not be free()d.
+    New September 2019
+    DO NOT USE. It will change. 
+    The build_id_returned has no NUL
     terminator character and should be
     printed as a hex byte string. */
 int

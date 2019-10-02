@@ -1,3 +1,7 @@
+2019-10-01 David Anderson
+     * frame1.c: Now uses dwarf_init_b() instead
+       of dwarf_init(). Better reporting of error
+       returns from dwarf_init_b().
 2019-09-16 David Anderson
      * findfuncbypc.c: A new example showing
        how, in fairly simple cases, one can find the source file

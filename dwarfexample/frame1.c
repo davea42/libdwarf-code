@@ -133,13 +133,16 @@ main(int argc, char **argv)
         printf("Too many args, giving up. \n");
         exit(1);
     }
-
     if(fd < 0) {
         printf("Failure attempting to open %s\n",filepath);
     }
-    res = dwarf_init(fd,DW_DLC_READ,errhand,errarg, &dbg,&error);
+    res = dwarf_init_b(fd,DW_DLC_READ,DW_GROUPNUMBER_ANY,
+        errhand,errarg, &dbg,&error);
     if(res != DW_DLV_OK) {
         printf("Giving up, dwarf_init failed, cannot do DWARF processing\n");
+        if (res == DW_DLV_ERROR) {
+            printf("Error code %s\n",dwarf_errmsg(error));
+        }
         exit(1);
     }
     /*  Do this setting after init before any real operations.

@@ -1,3 +1,13 @@
+2019-10-01 David Anderson
+     * dwarf_debuglink.c,dwarf_util.c: Removed dwarf_add_file_path()
+       and put it into dwarf_util.c.
+     * libdwarf.h.in: Added warning not to use
+       dwarf_gnu_debuglink() [which is new]
+       as it is not in final form.
+     * libdwarf2.1.mm: Improving the documentation of
+       dwarf_get_macro_details by adding a little bit
+       to the example.
+     * libdwarf2.1.pdf: Regenerated. Version 2.80.
 2019-09-22 David Anderson
      * libdwarf2p.1.mm: Documented the new support
        of using the 'extras' argument (previously

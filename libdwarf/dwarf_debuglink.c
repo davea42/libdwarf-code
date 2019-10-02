@@ -415,19 +415,6 @@ dwarf_gnu_debuglink(Dwarf_Debug dbg,
     return DW_DLV_OK;
 }
 
-/* New September 2019. */
-int  dwarf_add_file_path(
-    UNUSEDARG Dwarf_Debug dbg,
-    const char *          file_name,
-    UNUSEDARG Dwarf_Error* error)
-{
-    if (!dbg->de_path) {
-        dbg->de_path = strdup(file_name);
-    }
-    return DW_DLV_OK;
-}
-
-
 /*  The definition of .note.gnu.buildid contents (also
     used for other GNU .note.gnu.  sections too. */
 struct buildid_s {

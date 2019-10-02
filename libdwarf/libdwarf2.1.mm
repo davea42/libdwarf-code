@@ -11,7 +11,7 @@ e."
 .S +2
 \." ==============================================
 \." Put current date in the following at each rev
-.ds vE Rev 2.79, 19 September 2019
+.ds vE Rev 2.80, 26 September 2019
 \." ==============================================
 \." ==============================================
 .ds | |
@@ -9167,7 +9167,9 @@ void examplep2(Dwarf_Debug dbg, Dwarf_Off cur_off)
         &count,&maclist,&error);
     if (errv == DW_DLV_OK) {
         for (i = 0; i < count; ++i) {
-            /* use maclist[i] */
+            Dwarf_Macro_Details * mdp = maclist +i;
+            /* example of use */
+            Dwarf_Signed lineno = mdp->dmd_lineno;
         }
         dwarf_dealloc(dbg, maclist, DW_DLA_STRING);
     }
@@ -9181,7 +9183,9 @@ void examplep2(Dwarf_Debug dbg, Dwarf_Off cur_off)
     while((errv = dwarf_get_macro_details(dbg, cur_off,max,
         &count,&maclist,&error))== DW_DLV_OK) {
         for (i = 0; i < count; ++i) {
-            /* use maclist[i] */
+            Dwarf_Macro_Details * mdp = maclist +i;
+            /* example of use */
+            Dwarf_Signed lineno = mdp->dmd_lineno;
         }
         cur_off = maclist[count-1].dmd_offset + 1;
         dwarf_dealloc(dbg, maclist, DW_DLA_STRING);
