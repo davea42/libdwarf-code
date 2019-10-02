@@ -329,7 +329,7 @@ typedef Dwarf_Unsigned BIGGEST_UINT;
                     /* would check if the target was IRIX.  */  \
                     READ_UNALIGNED_CK(r_dbg,w_target,r_targtype,\
                         rw_src_data_p,                          \
-                         DISTINGUISHED_VALUE_OFFSET_SIZE,      \
+                        DISTINGUISHED_VALUE_OFFSET_SIZE,      \
                         w_error,r_endptr);                     \
                     if (w_target > r_sectionlen) {             \
                         _dwarf_error(r_dbg,w_error,            \

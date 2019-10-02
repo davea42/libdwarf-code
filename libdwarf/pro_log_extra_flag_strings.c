@@ -1,19 +1,19 @@
 /*  Copyright (c) 2019-2019, David Anderson
-    All rights reserved. 
-   
+    All rights reserved.
+
     Redistribution and use in source and binary forms, with
     or without modification, are permitted provided that the
     following conditions are met:
-   
+
     Redistributions of source code must retain the above
     copyright notice, this list of conditions and the following
     disclaimer.
-   
+
     Redistributions in binary form must reproduce the above
     copyright notice, this list of conditions and the following
     disclaimer in the documentation and/or other materials
     provided with the distribution.
-   
+
     THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
     CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
     INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
@@ -60,7 +60,7 @@ translatetosigned(char *s,Dwarf_Signed *v, UNUSEDARG int *err)
     int signmult = 1;
     Dwarf_Signed l = 0;
 
-    if (*cp == '0' && 
+    if (*cp == '0' &&
         (*(cp+1) == 'x'|| (*(cp+1) == 'X'))) {
         digits += 2;
         cp = digits;
@@ -78,7 +78,7 @@ translatetosigned(char *s,Dwarf_Signed *v, UNUSEDARG int *err)
             case '8':
             case '9':
                 l += (*cp - '0');
-                break; 
+                break;
             case 'a':
             case 'A':
                 l += 10;
@@ -124,9 +124,9 @@ translatetosigned(char *s,Dwarf_Signed *v, UNUSEDARG int *err)
     for( ; *cp; cp++) {
         l = l * 10;
         switch (*cp) {
-        case '9': 
-        case '8': 
-        case '7': 
+        case '9':
+        case '8':
+        case '7':
         case '6':
         case '5':
         case '4':
@@ -154,120 +154,119 @@ static int
 update_named_field(Dwarf_P_Debug dbg, dwarfstring *cmsname,dwarfstring *cmsvalue,
     int *err)
 {
-     char *name = dwarfstring_string(cmsname);
-     char *value = dwarfstring_string(cmsvalue);
-     Dwarf_Signed v = 0; 
-     int res;
+    char *name = dwarfstring_string(cmsname);
+    char *value = dwarfstring_string(cmsvalue);
+    Dwarf_Signed v = 0;
+    int res;
 
-     res = translatetosigned(value,&v,err);
-     if (res != DW_DLV_OK) {
-         return res;
-     }
-     if ( dwarfstring_strlen(cmsvalue) == 0) {
-         return DW_DLV_NO_ENTRY;
-     }
- 
-     /*  The value in the string is a number,
-         but always quite a small number. */
-     if (!strcmp(name,"default_is_stmt")) {
-         dbg->de_line_inits.pi_default_is_stmt = (unsigned)v; 
-     } else if (!strcmp(name,"minimum_instruction_length")) { 
-         dbg->de_line_inits.pi_minimum_instruction_length = (unsigned)v;
-     } else if (!strcmp(name,"maximum_operations_per_instruction")) { 
-         dbg->de_line_inits.pi_maximum_operations_per_instruction = (unsigned)v;
-     } else if (!strcmp(name,"opcode_base")) { 
-         dbg->de_line_inits.pi_opcode_base = (unsigned)v;
-     } else if (!strcmp(name,"line_base")) { 
-         dbg->de_line_inits.pi_line_base = (int)v;
-     } else if (!strcmp(name,"line_range")) { 
-         dbg->de_line_inits.pi_line_range = (int)v;
-     } else if (!strcmp(name,"linetable_version")) { 
-         dbg->de_line_inits.pi_linetable_version = (unsigned)v;
-         dbg->de_output_version = (unsigned)v;
-     } else if (!strcmp(name,"segment_selector_size")) { 
-         dbg->de_line_inits.pi_segment_selector_size = (unsigned)v;
-     } else if (!strcmp(name,"segment_size")) { 
-         dbg->de_line_inits.pi_segment_size = (unsigned)v;
-     } else if (!strcmp(name,"address_size")) { 
-         dbg->de_line_inits.pi_address_size = (unsigned)v;
-         dbg->de_pointer_size = (unsigned)v;
-     } else {
+    res = translatetosigned(value,&v,err);
+    if (res != DW_DLV_OK) {
+        return res;
+    }
+    if ( dwarfstring_strlen(cmsvalue) == 0) {
+        return DW_DLV_NO_ENTRY;
+    }
+
+    /*  The value in the string is a number,
+        but always quite a small number. */
+    if (!strcmp(name,"default_is_stmt")) {
+        dbg->de_line_inits.pi_default_is_stmt = (unsigned)v;
+    } else if (!strcmp(name,"minimum_instruction_length")) {
+        dbg->de_line_inits.pi_minimum_instruction_length = (unsigned)v;
+    } else if (!strcmp(name,"maximum_operations_per_instruction")) {
+        dbg->de_line_inits.pi_maximum_operations_per_instruction = (unsigned)v;
+    } else if (!strcmp(name,"opcode_base")) {
+        dbg->de_line_inits.pi_opcode_base = (unsigned)v;
+    } else if (!strcmp(name,"line_base")) {
+        dbg->de_line_inits.pi_line_base = (int)v;
+    } else if (!strcmp(name,"line_range")) {
+        dbg->de_line_inits.pi_line_range = (int)v;
+    } else if (!strcmp(name,"linetable_version")) {
+        dbg->de_line_inits.pi_linetable_version = (unsigned)v;
+        dbg->de_output_version = (unsigned)v;
+    } else if (!strcmp(name,"segment_selector_size")) {
+        dbg->de_line_inits.pi_segment_selector_size = (unsigned)v;
+    } else if (!strcmp(name,"segment_size")) {
+        dbg->de_line_inits.pi_segment_size = (unsigned)v;
+    } else if (!strcmp(name,"address_size")) {
+        dbg->de_line_inits.pi_address_size = (unsigned)v;
+        dbg->de_pointer_size = (unsigned)v;
+    } else {
 #ifdef TESTING
-         printf("ERROR  due to unknown string \"%s\", line %d %s\n",
-             name,__LINE__,__FILE__);
+        printf("ERROR  due to unknown string \"%s\", line %d %s\n",
+            name,__LINE__,__FILE__);
 #endif
-         *err = DW_DLE_PRO_INIT_EXTRAS_UNKNOWN;
-         return DW_DLV_ERROR;
-     }
-     return DW_DLV_OK;
+        *err = DW_DLE_PRO_INIT_EXTRAS_UNKNOWN;
+        return DW_DLV_ERROR;
+    }
+    return DW_DLV_OK;
 }
 static int
 update_named_value(Dwarf_P_Debug dbg, dwarfstring*cms,
     int *err)
 {
-     char * str = dwarfstring_string(cms);
-     char *cp = str;
-     char * value_start = 0;
-     dwarfstring cmsname;
-     dwarfstring cmsvalue;
-     unsigned slen = 0;
-     int res = 0;
+    char * str = dwarfstring_string(cms);
+    char *cp = str;
+    char * value_start = 0;
+    dwarfstring cmsname;
+    dwarfstring cmsvalue;
+    unsigned slen = 0;
+    int res = 0;
 
-     dwarfstring_constructor(&cmsname);
-     dwarfstring_constructor(&cmsvalue);
-     for ( ; *cp && *cp != '=' && *cp != ' '; cp++) { }
-     if (! *cp) {
-         /* Ignore this, it's empty or has no =value clause */
-         dwarfstring_destructor(&cmsname);
-         dwarfstring_destructor(&cmsvalue);
-         /* FIXME *err */
-         return DW_DLV_NO_ENTRY; 
-     }
-     if (*cp == ' ') { 
-         /* Trailing spaces, no = is an input bug. */
-         dwarfstring_destructor(&cmsname);
-         dwarfstring_destructor(&cmsvalue);
+    dwarfstring_constructor(&cmsname);
+    dwarfstring_constructor(&cmsvalue);
+    for ( ; *cp && *cp != '=' && *cp != ' '; cp++) { }
+    if (! *cp) {
+        /* Ignore this, it's empty or has no =value clause */
+        dwarfstring_destructor(&cmsname);
+        dwarfstring_destructor(&cmsvalue);
+        /* FIXME *err */
+        return DW_DLV_NO_ENTRY;
+    }
+    if (*cp == ' ') {
+        /* Trailing spaces, no = is an input bug. */
+        dwarfstring_destructor(&cmsname);
+        dwarfstring_destructor(&cmsvalue);
 #ifdef TESTING
-         printf("ERROR due to  trailing spaces before = in \"%s\", line %d %s\n",
-             cp,__LINE__,__FILE__);
+        printf("ERROR due to  trailing spaces before = in \"%s\", line %d %s\n",
+            cp,__LINE__,__FILE__);
 #endif
-         *err = DW_DLE_PRO_INIT_EXTRAS_ERR;
-         return DW_DLV_ERROR; 
-     }
-     slen = cp - str;
-     dwarfstring_append_length(&cmsname,str,slen);
-     cp++;
-     value_start = cp;
-     for ( ; *cp && *cp != ' '; cp++) { }
-     slen = cp - value_start;
-     if (slen) {
-         dwarfstring_append_length(&cmsvalue,value_start,slen);
-     } else {
-         dwarfstring_destructor(&cmsname);
-         dwarfstring_destructor(&cmsvalue);
-         return DW_DLV_NO_ENTRY;
-     }
-
-     res = update_named_field(dbg,&cmsname,&cmsvalue,err);
-     dwarfstring_destructor(&cmsname);
-     dwarfstring_destructor(&cmsvalue);
-     return res; 
+        *err = DW_DLE_PRO_INIT_EXTRAS_ERR;
+        return DW_DLV_ERROR;
+    }
+    slen = cp - str;
+    dwarfstring_append_length(&cmsname,str,slen);
+    cp++;
+    value_start = cp;
+    for ( ; *cp && *cp != ' '; cp++) { }
+    slen = cp - value_start;
+    if (slen) {
+        dwarfstring_append_length(&cmsvalue,value_start,slen);
+    } else {
+        dwarfstring_destructor(&cmsname);
+        dwarfstring_destructor(&cmsvalue);
+        return DW_DLV_NO_ENTRY;
+    }
+    res = update_named_field(dbg,&cmsname,&cmsvalue,err);
+    dwarfstring_destructor(&cmsname);
+    dwarfstring_destructor(&cmsvalue);
+    return res;
 }
 
 static int
 find_next_comma(const char *base,const char **nextcomma)
 {
-     const char *cp = base;
-     for( ; *cp ; ++cp) {
-         if (*cp == ',') {
+    const char *cp = base;
+    for( ; *cp ; ++cp) {
+        if (*cp == ',') {
             *nextcomma = cp;
             return DW_DLV_OK;
-         }
-     }
-     /*  Encountered end of string, should not happen as
-         we ensured a last string. */
-     *nextcomma = cp;
-     return DW_DLV_OK;
+        }
+    }
+    /*  Encountered end of string, should not happen as
+        we ensured a last string. */
+    *nextcomma = cp;
+    return DW_DLV_OK;
 }
 
 /*  Publicly visible in in libdwarf to enable easy testing
@@ -295,27 +294,28 @@ _dwarf_log_extra_flagstrings(Dwarf_P_Debug dbg,
     dwarfstring_append(&input,(char *)",");
     nextcharloc = dwarfstring_string(&input);
     while (1) {
-       dwarfstring_reset(&cms);
-       find_next_comma(nextcharloc,&nextcomma);
-       {
-           unsigned len = nextcomma - nextcharloc;
-           if (len > 0) {
-               dwarfstring_append_length(&cms,(char *)nextcharloc,len);
-               res = update_named_value(dbg,&cms,err);
-               if (res == DW_DLV_ERROR) {
-                   dwarfstring_destructor(&cms);
-                   dwarfstring_destructor(&input);
-                   return res;
-               } 
-           }  else {/* else empty, */
-           }
-           if (!(nextcomma[1])) {
-               dwarfstring_destructor(&cms);
-               dwarfstring_destructor(&input);
-               return DW_DLV_OK;
-           }
-           nextcharloc = nextcomma+1;
-       }
+        dwarfstring_reset(&cms);
+        find_next_comma(nextcharloc,&nextcomma);
+        {
+            unsigned len = nextcomma - nextcharloc;
+            if (len > 0) {
+                dwarfstring_append_length(&cms,(char *)nextcharloc,
+                    len);
+                res = update_named_value(dbg,&cms,err);
+                if (res == DW_DLV_ERROR) {
+                    dwarfstring_destructor(&cms);
+                    dwarfstring_destructor(&input);
+                    return res;
+                }
+            }  else {/* else empty, */
+            }
+            if (!(nextcomma[1])) {
+                dwarfstring_destructor(&cms);
+                dwarfstring_destructor(&input);
+                return DW_DLV_OK;
+            }
+            nextcharloc = nextcomma+1;
+        }
     }
     dwarfstring_destructor(&input);
     dwarfstring_destructor(&cms);

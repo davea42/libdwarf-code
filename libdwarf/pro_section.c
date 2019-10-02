@@ -293,9 +293,9 @@ _dwarf_pro_get_opc(
         return OPC_INCS_ZERO;
     }
     if (line_adv >= line_base && line_adv < line_base + line_range) {
-        int opc = 0; 
+        int opc = 0;
 
-        opc = (line_adv - line_base) + 
+        opc = (line_adv - line_base) +
             (factored_adv * line_range) +
             inits->pi_opcode_base;
         if (opc > 255) {
@@ -1419,7 +1419,7 @@ _dwarf_pro_generate_debugline(Dwarf_P_Debug dbg,
         sizeof(db), sizeof(Dwarf_Ubyte));
     data += sizeof(Dwarf_Ubyte);
 
-    if (inits->pi_linetable_version == 4 || 
+    if (inits->pi_linetable_version == 4 ||
         inits->pi_linetable_version == 5) {
         db =  inits->pi_maximum_operations_per_instruction;
         WRITE_UNALIGNED(dbg, (void *) data, (const void *) &db,

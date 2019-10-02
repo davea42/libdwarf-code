@@ -589,5 +589,3 @@ _dwarf_insert_or_find_in_debug_str(Dwarf_P_Debug dbg,
 int _dwarf_log_extra_flagstrings(Dwarf_P_Debug dbg,
   const char *extra,
   int *err);
-
-

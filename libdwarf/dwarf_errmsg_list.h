@@ -531,7 +531,7 @@ const char *_dwarf_errmsgs[] = {
     "DW_DLE_CORRUPT_NOTE_GNU_DEBUGID(457) Data corruption in .note.gnu.debugid section",
     "DW_DLE_CORRUPT_GNU_DEBUGID_SIZE(458) Section .note.gnu.debugid size incorrect",
     "DW_DLE_CORRUPT_GNU_DEBUGID_STRING(459) Section .note.gnu.debugid ownder string not terminated properly",
-    "DW_DLE_HEX_STRING_ERROR(460).  dwarf_producer_init() extras string has a bad hex string", 
+    "DW_DLE_HEX_STRING_ERROR(460).  dwarf_producer_init() extras string has a bad hex string",
     "DW_DLE_DECIMAL_STRING_ERROR(461) dwarf_producer_init() extras string has a bad decimal string",
     "DW_DLE_PRO_INIT_EXTRAS_UNKNOWN(462) dwarf_producer_init() extras string has an unknown string",
     "DW_DLE_PRO_INIT_EXTRAS_ERR(463) dwarf_producer_init() extras string has an unexpected space character",

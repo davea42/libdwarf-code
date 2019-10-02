@@ -59,7 +59,7 @@ struct dwarfstring_s {
 };
 */
 
-int 
+int
 dwarfstring_constructor(struct dwarfstring_s *g)
 {
     g->s_data = "";
@@ -73,12 +73,12 @@ static int
 dwarfstring_resize_to(struct dwarfstring_s *g,unsigned long newlen)
 {
     char *b = 0;
-    unsigned long lastpos = 
+    unsigned long lastpos =
         g->s_size - g->s_avail;
     unsigned long malloclen = newlen+1;
-    
+
     if(malloclen < minimumnewlen) {
-         malloclen = minimumnewlen;
+        malloclen = minimumnewlen;
     }
     b = malloc(malloclen);
     if (!b) {
@@ -99,7 +99,7 @@ dwarfstring_resize_to(struct dwarfstring_s *g,unsigned long newlen)
     return TRUE;
 }
 
-int 
+int
 dwarfstring_reset(struct dwarfstring_s *g)
 {
     if (!g->s_size) {
@@ -111,7 +111,7 @@ dwarfstring_reset(struct dwarfstring_s *g)
     return TRUE;
 }
 
-int 
+int
 dwarfstring_constructor_fixed(struct dwarfstring_s *g,unsigned long len)
 {
     int r = FALSE;
@@ -127,7 +127,7 @@ dwarfstring_constructor_fixed(struct dwarfstring_s *g,unsigned long len)
     return TRUE;
 }
 
-int 
+int
 dwarfstring_constructor_static(struct dwarfstring_s *g,
     char * space,
     unsigned long len)
@@ -141,7 +141,7 @@ dwarfstring_constructor_static(struct dwarfstring_s *g,
     return TRUE;
 }
 
-void 
+void
 dwarfstring_destructor(struct dwarfstring_s *g)
 {
     if (g->s_malloc) {
@@ -155,7 +155,7 @@ dwarfstring_destructor(struct dwarfstring_s *g)
     characters of 'str'. NUL terminator provided
     for you in s_data.
 */
-int 
+int
 dwarfstring_append_length(struct dwarfstring_s *g,char *str,
     unsigned long slen)
 {
@@ -180,7 +180,7 @@ dwarfstring_append_length(struct dwarfstring_s *g,char *str,
     return TRUE;
 }
 
-int 
+int
 dwarfstring_append(struct dwarfstring_s *g,char *str)
 {
     unsigned long dlen = 0;
@@ -192,7 +192,7 @@ dwarfstring_append(struct dwarfstring_s *g,char *str)
     return dwarfstring_append_length(g,str,dlen);
 }
 
-char * 
+char *
 dwarfstring_string(struct dwarfstring_s *g)
 {
     return g->s_data;
@@ -203,4 +203,3 @@ dwarfstring_strlen(struct dwarfstring_s *g)
 {
     return g->s_size - g->s_avail;
 }
-

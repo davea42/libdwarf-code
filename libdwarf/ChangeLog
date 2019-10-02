@@ -1,3 +1,9 @@
+2019-10-02 David Anderson
+     * dwarf_errmsg_list.h,dwarf_line.c,dwarf_util.c,
+       dwarf_util.h,dwarfstring.c,dwarfstring.h,pro_init.c,
+       pro_line.c,pro_log_extra_flag_strings.c,pro_opaque.h,
+       pro_section.c,test_dwarfstring.c,test_extra_flag_strings.c:
+       Fixed indents and trailing whitespace.
 2019-10-01 David Anderson
      * dwarf_debuglink.c,dwarf_util.c: Removed dwarf_add_file_path()
        and put it into dwarf_util.c.

@@ -283,8 +283,8 @@ key_simple_string_hashfunc(const void *keyp)
 
 
 static int
-common_init(Dwarf_P_Debug dbg, 
-    Dwarf_Unsigned flags, 
+common_init(Dwarf_P_Debug dbg,
+    Dwarf_Unsigned flags,
     const char *abiname,
     const char *dwarf_version,
     const char *extra,
@@ -320,7 +320,7 @@ common_init(Dwarf_P_Debug dbg,
         dbg->de_dwarf_offset_size = 4;
         dbg->de_64bit_extension = 0;
         /*  When dwarf_offset_size == 8 then for
-            standard dwarf set 
+            standard dwarf set
             de_64bit_extension to 1. */
         dbg->de_elf_offset_size = 8;
     } else {
@@ -366,7 +366,7 @@ common_init(Dwarf_P_Debug dbg,
     _dwarf_init_default_line_header_vals(dbg);
     res = _dwarf_log_extra_flagstrings(dbg,extra,err_ret);
     if (res == DW_DLV_ERROR) {
-       return res;
+        return res;
     }
 
     if (flags & DW_DLC_SYMBOLIC_RELOCATIONS) {
@@ -378,7 +378,7 @@ common_init(Dwarf_P_Debug dbg,
 #ifdef DWARF_WITH_LIBELF
 #if HAVE_ELF64_GETEHDR
         dbg->de_relocation_record_size =
-            ((dbg->de_pointer_size == 8)? 
+            ((dbg->de_pointer_size == 8)?
             sizeof(REL64) : sizeof(REL32));
 #else
         dbg->de_relocation_record_size = sizeof(REL32);

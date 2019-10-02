@@ -1397,4 +1397,3 @@ int  dwarf_add_file_path(
     }
     return DW_DLV_OK;
 }
-

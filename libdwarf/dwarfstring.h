@@ -42,7 +42,7 @@ struct dwarfstring_s {
    unsigned char s_malloc;
 };
 
-typedef struct dwarfstring_s dwarfstring; 
+typedef struct dwarfstring_s dwarfstring;
 
 int dwarfstring_constructor(struct dwarfstring_s *g);
 int dwarfstring_constructor_fixed(struct dwarfstring_s *g,
@@ -63,4 +63,3 @@ int dwarfstring_append_length(struct dwarfstring_s *g,
 
 char * dwarfstring_string(struct dwarfstring_s *g);
 unsigned long dwarfstring_strlen(struct dwarfstring_s *g);
-

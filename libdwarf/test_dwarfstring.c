@@ -74,14 +74,13 @@ test1(int tnum)
     int res = 0;
     unsigned long biglen = 0;
     char *bigstr = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-                   "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
-                   "ccccccbbbbbbbbbbbbbbbbbbbbbccc"
-                   "ccccccbbbbbbbbbbbbbbbbbbbbbccc"
-                   "ccccccbbbbbbbbbbbbbbbbbbbbbccc"
-                   "ccccccbbbbbyyyybbbbbbbbbbbbccc";
+        "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+        "ccccccbbbbbbbbbbbbbbbbbbbbbccc"
+        "ccccccbbbbbbbbbbbbbbbbbbbbbccc"
+        "ccccccbbbbbbbbbbbbbbbbbbbbbccc"
+        "ccccccbbbbbyyyybbbbbbbbbbbbccc";
 
     dwarfstring_constructor(&g);
-    
     d = dwarfstring_string(&g);
     check_string("expected empty string",(char *)expstr,d,__LINE__);
 
@@ -110,7 +109,7 @@ test1(int tnum)
     biglen = dwarfstring_strlen(&g);
     check_value("expected 123  ",strlen(bigstr)+3,biglen,__LINE__);
     dwarfstring_destructor(&g);
-    
+
 }
 
 static int
@@ -122,11 +121,11 @@ test2(int tnum)
     int res = 0;
     unsigned long biglen = 0;
     char *bigstr = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-                   "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
-                   "ccccccbbbbbbbbbbbbbbbbbbbbbccc"
-                   "ccccccbbbbbbbbbbbbbbbbbbbbbccc"
-                   "ccccccbbbbbbbbbbbbbbbbbbbbbccc"
-                   "ccccccbbbbbyyyybbbbbbbbbbbbccc";
+        "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+        "ccccccbbbbbbbbbbbbbbbbbbbbbccc"
+        "ccccccbbbbbbbbbbbbbbbbbbbbbccc"
+        "ccccccbbbbbbbbbbbbbbbbbbbbbccc"
+        "ccccccbbbbbyyyybbbbbbbbbbbbccc";
 
     dwarfstring_constructor_fixed(&g,10);
 

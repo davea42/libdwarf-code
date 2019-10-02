@@ -498,7 +498,7 @@ dwarf_srcfiles(Dwarf_Die die,
     }
 
     ret_files = (char **)
-        _dwarf_get_alloc(dbg, DW_DLA_LIST, 
+        _dwarf_get_alloc(dbg, DW_DLA_LIST,
         line_context->lc_file_entry_count);
     if (ret_files == NULL) {
         dwarf_dealloc(dbg, line_context, DW_DLA_LINE_CONTEXT);

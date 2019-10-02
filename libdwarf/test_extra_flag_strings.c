@@ -1,19 +1,19 @@
 /*  Copyright (c) 2019-2019, David Anderson
-    All rights reserved. 
-   
+    All rights reserved.
+
     Redistribution and use in source and binary forms, with
     or without modification, are permitted provided that the
     following conditions are met:
-   
+
     Redistributions of source code must retain the above
     copyright notice, this list of conditions and the following
     disclaimer.
-   
+
     Redistributions in binary form must reproduce the above
     copyright notice, this list of conditions and the following
     disclaimer in the documentation and/or other materials
     provided with the distribution.
-   
+
     THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
     CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
     INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
@@ -92,7 +92,7 @@ returnvalstr(int res)
 
 
 static void
-check_expected(int exp, int got, int err_exp, int err_got, 
+check_expected(int exp, int got, int err_exp, int err_got,
     Dwarf_Signed exp_val, Dwarf_Signed got_val, int line)
 {
     if ( exp != got) {
@@ -200,7 +200,6 @@ test2(Dwarf_P_Debug dbg)
         "segment_size=9",
         &err);
 
-        
     check_expected(DW_DLV_OK,res,err,0,
         dbg->de_line_inits.pi_default_is_stmt,1,
         __LINE__);
