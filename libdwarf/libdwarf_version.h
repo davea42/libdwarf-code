@@ -4,4 +4,4 @@
     and is modified from time to time.
 */
 
-#define DW_VERSION_DATE_STR " 2019-09-20 08:20:30-07:00  "
+#define DW_VERSION_DATE_STR " 2019-10-02 19:32:44-07:00  "

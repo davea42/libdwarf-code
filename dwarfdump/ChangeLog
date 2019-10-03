@@ -1,4 +1,10 @@
 2019-10-02 David Anderson
+     * Makefile.am: New test data for make check (runtests.sh)
+     * dwarf_names.c,dwarf_names.h: new date string.
+     * dwarfdump-ta-ext-table.h,dwarfdump/dwarfdump-ta-table.h,
+       dwarfdump-tt-ext-table.h,dwarfdump-tt-table.h:
+       new date string.
+2019-10-02 David Anderson
      * runtests.sh: Now runs dwarfdump on an elf and a PE
        object to show things basically work.
      * testobjPE.base,testobjPE.exe:  New

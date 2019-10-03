@@ -131,6 +131,10 @@ print_reloc_test.c \
 getopttest.c \
 tag_common.c \
 testesb.c \
+testobjPE.exe \
+testuriBE64ELf.obj \
+testobjPE.base \
+testuriBE64ELf.base \
 $(dwarfdumpdev_DATA) \
 tag_attr.c \
 tag_tree.c \

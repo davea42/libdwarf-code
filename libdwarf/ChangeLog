@@ -1,4 +1,7 @@
 2019-10-02 David Anderson
+     * dwarf_names.c,dwarf_names.h,dwarf_names_enum.h,
+       dwarf_names_new.h,libdwarf_version.h: New date string
+2019-10-02 David Anderson
      * dwarf_errmsg_list.h: Added DW_DLE_NULL_ARGS_DWARF_ADD_PATH. 
      * dwarf_util.c: Check arguments and return
        DW_DLV_ERROR with error DW_DLE_NULL_ARGS_DWARF_ADD_PATH
