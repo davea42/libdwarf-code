@@ -535,5 +535,6 @@ const char *_dwarf_errmsgs[] = {
     "DW_DLE_DECIMAL_STRING_ERROR(461) dwarf_producer_init() extras string has a bad decimal string",
     "DW_DLE_PRO_INIT_EXTRAS_UNKNOWN(462) dwarf_producer_init() extras string has an unknown string",
     "DW_DLE_PRO_INIT_EXTRAS_ERR(463) dwarf_producer_init() extras string has an unexpected space character",
+    "DW_DLE_NULL_ARGS_DWARF_ADD_PATH(464) either Dwarf_Debug or file_path argument to dwarf_add_file_path is NULL.",
 };
 #endif /* DWARF_ERRMSG_LIST_H */

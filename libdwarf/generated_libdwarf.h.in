@@ -1377,9 +1377,10 @@ struct Dwarf_Obj_Access_Interface_s {
 #define DW_DLE_DECIMAL_STRING_ERROR            461
 #define DW_DLE_PRO_INIT_EXTRAS_UNKNOWN         462
 #define DW_DLE_PRO_INIT_EXTRAS_ERR             463
+#define DW_DLE_NULL_ARGS_DWARF_ADD_PATH        464
 
     /* LAST MUST EQUAL LAST ERROR NUMBER */
-#define DW_DLE_LAST        463
+#define DW_DLE_LAST        464
 
 #define DW_DLE_LO_USER     0x10000
 

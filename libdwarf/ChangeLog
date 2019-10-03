@@ -1,4 +1,11 @@
 2019-10-02 David Anderson
+     * dwarf_errmsg_list.h: Added DW_DLE_NULL_ARGS_DWARF_ADD_PATH. 
+     * dwarf_util.c: Check arguments and return
+       DW_DLV_ERROR with error DW_DLE_NULL_ARGS_DWARF_ADD_PATH
+       if either of the critical ones is NULL.
+     * libdwarf.h.in: Add the new error
+     * generated_libdwarf.h.in: regenerated.
+2019-10-02 David Anderson
      * dwarf_errmsg_list.h,dwarf_line.c,dwarf_util.c,
        dwarf_util.h,dwarfstring.c,dwarfstring.h,pro_init.c,
        pro_line.c,pro_log_extra_flag_strings.c,pro_opaque.h,
