@@ -30,6 +30,7 @@ extern "C" {
 #endif
 
 #include "config.h"
+#ifdef DWARF_WITH_LIBELF  /* Without libelf no need for _GNU_SOURCE */
 #if (!defined(HAVE_RAW_LIBELF_OK) && defined(HAVE_LIBELF_OFF64_OK) )
 /* At a certain point libelf.h requires _GNU_SOURCE.
    here we assume the criteria in configure determined that
@@ -37,6 +38,7 @@ extern "C" {
 */
 #define _GNU_SOURCE 1
 #endif
+#endif /* DWARF_WITH_LIBELF */
 
 #include "warningcontrol.h"
 

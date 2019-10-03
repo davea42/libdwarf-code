@@ -1,4 +1,23 @@
 2019-10-02 David Anderson
+     * addrmap.c: The include of addrmap.h was in the wrong
+       line. Noved down 4 lines.
+     * globals.h: Refined the setup as the requirement for
+       _GNU_SOURCE to be set does not apply when
+       we have no libelf at all.
+     * helpertree.c: Removed pointless include of esb.h.
+     * helpertree_test.c: Added include of <stdint.h>
+       so we are guaranteed uintptr_t for TSEARCHASH.
+     * macrocheck.c: Removed a pointless include of esb.h.
+     * runtests.sh: Removed useless tests of the native
+       getopt as we never use it. 
+       Ensure we get cc or gcc if at least one
+       of them exists.
+       Use rm -f and name with and without trailing .exe
+       for portability to Windows/Mingw.
+       Now verifies that dwarfdump on a PE file and
+       an Elf file worked correctly as a
+       sanity check.
+2019-10-02 David Anderson
      * testobjPE.base -> testobjLE32PE.base
      * testobjPE.exe ->  testobjLE32PE.exe
      * testuriBE64ELf.base -> testuriLE64ELf.base

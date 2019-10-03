@@ -28,10 +28,10 @@
 
 #include "globals.h"
 #include <stdio.h>
-#include "addrmap.h"
 #ifdef HAVE_STDINT_H
 #include <stdint.h> /* For uintptr_t */
 #endif /* HAVE_STDINT_H */
+#include "addrmap.h"
 #include "dwarf_tsearch.h"
 
 
