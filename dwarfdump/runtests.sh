@@ -102,17 +102,23 @@ chkres $? "compiling print_reloc.c selfprint_reloc"
 chkres $? "running selfprint_reloc "
 rm ./selfprint_reloc
 
-echo "start  dwarfdump sanity check on pe $srcdir/testobjPE.exe"
-./dwarfdump $srcdir/testobjPE.exe >junk.testsmallpe
-chkres $? "Running dwarfdump on $srcdir/testobjPE.exe"
-echo "if update required, mv junk.testsmallpe $srcdir/testobjPE.base"
-diff  $srcdir/testobjPE.base junk.testsmallpe
-chkres $? "diff of  $srcdir/testobjPE.base"
+f=$srcdir/testobjLE32PE.exe
+b=$srcdir/testobjLE32PE.base
+t=junk.testsmallpe
+echo "start  dwarfdump sanity check on pe $f"
+./dwarfdump $f > $t
+chkres $? "Running dwarfdump on $f"
+echo "if update required, mv $t $b"
+diff  $b $t
+chkres $? "diff of $b"
 
-echo "start  dwarfdump sanity check on $srcdir/testuriBE64ELf.base"
-./dwarfdump $srcdir/testuriBE64ELf.obj >junk.smallBE64ELF
-chkres $? "Running dwarfdump on $srcdir/testobjPE.exe"
-echo "if update required, mv junk.smallBE64ELF $srcdir/testuriBE64ELf.base"
-diff $srcdir/testuriBE64ELf.base junk.smallBE64ELF
-chkres $? "diff of  $srcdir/testuriBE64ELf.base"
+f=$srcdir/testuriLE64ELf.obj
+b=$srcdir/testuriLE64ELf.base
+t=junk.smallLE64ELf
+echo "start  dwarfdump sanity check on $f"
+./dwarfdump $f > $t
+chkres $? "Running dwarfdump on $f"
+echo "if update required, mv $t $b"
+diff $b $t
+chkres $? "diff of $b"
 

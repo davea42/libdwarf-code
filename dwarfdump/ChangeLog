@@ -1,4 +1,11 @@
 2019-10-02 David Anderson
+     * testobjPE.base -> testobjLE32PE.base
+     * testobjPE.exe ->  testobjLE32PE.exe
+     * testuriBE64ELf.base -> testuriLE64ELf.base
+     * testuriBE64ELf.obj ->  testuriLE64ELf.obj
+     * Makefile.am: Reflects the revised names.
+
+2019-10-02 David Anderson
      * Makefile.am: New test data for make check (runtests.sh)
      * dwarf_names.c,dwarf_names.h: new date string.
      * dwarfdump-ta-ext-table.h,dwarfdump/dwarfdump-ta-table.h,
