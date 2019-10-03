@@ -87,6 +87,7 @@ rm -f ./selfmc
 #chkres $? "running selfesb "
 #rm  ./selfesb
 
+
 echo "start selfsetion_bitmaps"
 $CC  $CFLAGS -g $srcdir/section_bitmaps_test.c  $srcdir/section_bitmaps.c -o selfsection_bitmaps
 chkres $? "compiling bitmaps.c section_bitmaps"
@@ -100,4 +101,18 @@ chkres $? "compiling print_reloc.c selfprint_reloc"
 ./selfprint_reloc
 chkres $? "running selfprint_reloc "
 rm ./selfprint_reloc
+
+echo "start  dwarfdump sanity check on pe $srcdir/testobjPE.exe"
+./dwarfdump $srcdir/testobjPE.exe >junk.testsmallpe
+chkres $? "Running dwarfdump on $srcdir/testobjPE.exe"
+echo "if update required, mv junk.testsmallpe $srcdir/testobjPE.base"
+diff  $srcdir/testobjPE.base junk.testsmallpe
+chkres $? "diff of  $srcdir/testobjPE.base"
+
+echo "start  dwarfdump sanity check on $srcdir/testuriBE64ELf.base"
+./dwarfdump $srcdir/testuriBE64ELf.obj >junk.smallBE64ELF
+chkres $? "Running dwarfdump on $srcdir/testobjPE.exe"
+echo "if update required, mv junk.smallBE64ELF $srcdir/testuriBE64ELf.base"
+diff $srcdir/testuriBE64ELf.base junk.smallBE64ELF
+chkres $? "diff of  $srcdir/testuriBE64ELf.base"
 

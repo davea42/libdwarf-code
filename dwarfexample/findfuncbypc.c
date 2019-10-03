@@ -161,6 +161,21 @@ static Dwarf_Bool g_is_info = TRUE;
 int cu_version_stamp = 0;
 int cu_offset_size = 0;
 
+static void
+printusage(void)
+{
+    printf("Usage example: "
+        "./findfuncbypc --pc=0x10000 ./findfuncbypc\n");
+    printf(" options list:\n");
+    printf(" --pc=(hex or decimal pc address)\n");
+    printf(" --printdetails  \n");
+    printf("   prints some details of the discovery process\n");
+    printf(" --allinstances\n");
+    printf("   reports but does does not stop processing\n"); 
+    printf("   on finding pc address\n");
+    printf(" --help or -h prints this usage message an stops.\n");
+}
+
 static void target_data_destructor( struct target_data_s *td);
 
 static int
@@ -212,10 +227,20 @@ main(int argc, char **argv)
             target_data.td_print_details = TRUE;
         } else if (!strcmp(argv[i],"--allinstances")){
             target_data.td_reportallfound = TRUE;
+        } else if (!strcmp(argv[i],"-h")){
+            printusage();
+            exit(0);
+        } else if (!strcmp(argv[i],"--help")){
+            printusage();
+            exit(0);
         } else {
             printf("Unknown argument \"%s\", give up \n",argv[i]);
             exit(1);
         }
+    }
+    if (i >= (argc-1)) {
+        printusage();
+        exit(1);
     }
     filepath = argv[i];
     res = dwarf_init_path(filepath,

@@ -1,3 +1,6 @@
+2019-10-02 David Anderson
+     * findfuncbypc.c: Now lists options if no
+       options presented (instead of dumping core!).
 2019-10-01 David Anderson
      * frame1.c: Now uses dwarf_init_b() instead
        of dwarf_init(). Better reporting of error

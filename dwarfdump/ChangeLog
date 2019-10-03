@@ -1,3 +1,8 @@
+2019-10-02 David Anderson
+     * runtests.sh: Now runs dwarfdump on an elf and a PE
+       object to show things basically work.
+     * testobjPE.base,testobjPE.exe:  New
+     * testuriBE64ELf.base,testuriBE64ELf.obj  : New
 2019-09-19 David Anderson
      * dwarfdump.c: Fix indents and remove trailing whitespace.
      * dwarf_names.c,dwarf_names.h,dwarfdump-ta-ext-table.h,
