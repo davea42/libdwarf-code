@@ -1,5 +1,5 @@
 Created 26 April 2019 
-Updated 28 April 2019
+Updated 03 October 2019
 
 The configure script scripts/FIX-COMPILE-TIMES does not apply
 to cmake. Don't bother to use it if you build with cmake.
@@ -7,11 +7,6 @@ The FIX-COMPILE-TIMES script is irrelevant to cmake.
 
 The cmake build has been revised somewhat.  By default the
 build builds just libdwarf and dwarfdump.
-
-cmake testing is not enabled (for now). The testing only tests
-various internal interfaces, not libdwarf interfaces. Neither
-'make test' nor 'make install' have been verified to work
-properly with Makefiles created by cmake (27 April 2019)
 
 Lets assume the base directory of the the libdwarf source in a
 directory named 'code' inside the directory '/path/to/' Always
@@ -77,13 +72,22 @@ For dwarfexample:
 If libelf is missing -DBUILD_DWARFGEN=ON will not be honored
 as dwarfgen will not build without libelf.
 
-If you wish to run the selftests  (which just test
-a few internal interfaces, not dwarfdump or libdwarf):
+If you wish to run the selftests (both internal tests and
+runs of dwarfdump on a couple selected object files):
 
     cmake -DDO_TESTING=ON /path/to/code
     make
+    # To list the tests
     ctest -N
+    # To run all the tests (their names start with 
+    # the letters 'self').
     ctest -R self
+
+By default ctest just shows success or failure with no details.
+To debug a cmake test, for example if test 22 fails and you
+want to know what the test output is, use the following:
+
+    ctest --verbose -I 22
 
 In case one wishes to see the exact compilation/linking options
 passed at compile time use

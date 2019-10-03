@@ -1,4 +1,9 @@
 2019-10-02 David Anderson
+     * README.cmake: Updated and improved the comments
+       about ctest. ctest now tests that dwarfdump
+       and libdwarf basically work (as well as
+       testing internal interfaces).
+2019-10-02 David Anderson
      * configure.ac: Now version 20191002
      * configure: regenerated. Version 20191002
 2019-10-01 David Anderson
