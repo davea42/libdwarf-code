@@ -169,3 +169,20 @@ dos2unix $t
 diff $b $t > $t.diff
 chkres $? "diff of $b $t"
 
+test-mach-o-32.base  test-mach-o-32.dSYM
+
+f=$srcdir/test-mach-o-32.dSYM
+b=$srcdir/test-mach-o-32.base
+t=junk.macho-object32
+echo "start  dwarfdump sanity check on $f"
+./dwarfdump -i $f | head -n 400 > $t
+if [ x$win = "xy" ]
+then
+  echo "drop two lines"
+  droptwoifwin $t
+fi
+chkres $? "Running dwarfdump on $f"
+echo "if update required, mv $t $b"
+dos2unix $t
+diff $b $t > $t.diff
+chkres $? "diff of $b $t"
