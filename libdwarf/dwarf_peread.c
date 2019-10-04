@@ -801,10 +801,10 @@ _dwarf_pe_object_access_internals_init(
 #ifdef WORDS_BIGENDIAN
     if (endian == DW_ENDIAN_LITTLE ) {
         intfc->pe_copy_word = _dwarf_memcpy_swap_bytes;
-        intfc->pe_endian = DW_ENDIAN_LITTLE;
+        intfc->pe_endian = DW_OBJECT_LSB;
     } else {
         intfc->pe_copy_word = _dwarf_memcpy_noswap_bytes;
-        intfc->pe_endian = DW_ENDIAN_BIG;
+        intfc->pe_endian = DW_OBJECT_MSB;
     }
 #else  /* LITTLE ENDIAN */
     if (endian == DW_ENDIAN_LITTLE ) {
