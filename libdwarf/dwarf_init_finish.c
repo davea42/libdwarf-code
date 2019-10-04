@@ -1178,11 +1178,14 @@ _dwarf_setup(Dwarf_Debug dbg, Dwarf_Error * error)
     unsigned foundDwarf = FALSE;
     unsigned obj_section_index = 0;
 
-    dbg->de_assume_string_in_bounds = _dwarf_assume_string_in_bounds;
+    dbg->de_assume_string_in_bounds = 
+        _dwarf_assume_string_in_bounds;
+    /* First make an arbitrary assumption. */
     dbg->de_same_endian = 1;
     dbg->de_copy_word = _dwarf_memcpy_noswap_bytes;
     obj = dbg->de_obj_file;
     endianness = obj->methods->get_byte_order(obj->object);
+    /* Then adjust any changes we need. */
 #ifdef WORDS_BIGENDIAN
     dbg->de_big_endian_object = 1;
     if (endianness == DW_OBJECT_LSB ) {

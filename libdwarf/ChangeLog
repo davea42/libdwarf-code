@@ -1,3 +1,13 @@
+2019-10-04 David Anderson
+     * dwarf_opaque.h: Revised a comment about
+       de_big_endian_object for clarity.
+     * dwarf_peread.c: Now we translate from DW_ENDIAN_BIG
+       to DW_OBJECT_MSB (similar for little-endian) 
+       so the normal libdwarf works right.
+       Lets us read little-endian PE object on a
+       big-endian host properly.
+     * dwarf_init_finish.c: Just reformatting a long line
+       and adding short comments.
 2019-10-02 David Anderson
      * dwarf_names.c,dwarf_names.h,dwarf_names_enum.h,
        dwarf_names_new.h,libdwarf_version.h: New date string

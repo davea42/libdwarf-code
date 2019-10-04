@@ -649,8 +649,8 @@ struct Dwarf_Debug_s {
     Dwarf_Half de_frame_same_value_number;
     Dwarf_Half de_frame_undefined_value_number;
 
-    unsigned char de_big_endian_object; /* Non-zero if big-endian
-        object opened. */
+    unsigned char de_big_endian_object; /* Non-zero if
+        object being read is big-endian. */
 
     /*  Non-zero if dwarf_get_globals(), dwarf_get_funcs,
         dwarf_get_types,dwarf_get_pubtypes,

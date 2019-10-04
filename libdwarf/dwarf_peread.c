@@ -549,7 +549,7 @@ dwarf_load_pe_sections(
 #else  /* LITTLE ENDIAN */
         word_swap = _dwarf_memcpy_swap_bytes;
 #endif /* LITTLE- BIG-ENDIAN */
-        locendian = DW_ENDIAN_BIG;
+        locendian = DW_OBJECT_MSB;
     } else if (dos_sig == IMAGE_DOS_REVSIGNATURE_dw) {
         /* raw load, so  intrepet a match the other way. */
         /* LITTLE ENDIAN */
@@ -558,7 +558,7 @@ dwarf_load_pe_sections(
 #else   /* LITTLE ENDIAN */
         word_swap = _dwarf_memcpy_noswap_bytes;
 #endif  /* LITTLE- BIG-ENDIAN */
-        locendian = DW_ENDIAN_LITTLE;
+        locendian = DW_OBJECT_LSB;
     } else {
         /* Not dos header not a PE file we recognize */
         *errcode = DW_DLE_FILE_WRONG_TYPE;
@@ -809,10 +809,10 @@ _dwarf_pe_object_access_internals_init(
 #else  /* LITTLE ENDIAN */
     if (endian == DW_ENDIAN_LITTLE ) {
         intfc->pe_copy_word = _dwarf_memcpy_noswap_bytes;
-        intfc->pe_endian = DW_ENDIAN_LITTLE;
+        intfc->pe_endian = DW_OBJECT_LSB;
     } else {
         intfc->pe_copy_word = _dwarf_memcpy_swap_bytes;
-        intfc->pe_endian = DW_ENDIAN_BIG;
+        intfc->pe_endian = DW_OBJECT_MSB;
     }
 #endif /* LITTLE- BIG-ENDIAN */
     res = dwarf_load_pe_sections(intfc,errcode);
