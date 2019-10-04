@@ -137,11 +137,14 @@ then
 fi
 }
 
+# The following stop after 400 lines to limit the size
+# of the data here.  
+# It is a sanity check, not a full check.
 f=$srcdir/testobjLE32PE.exe
 b=$srcdir/testobjLE32PE.base
 t=junk.testsmallpe
 echo "start  dwarfdump sanity check on pe $f"
-./dwarfdump $f > $t
+./dwarfdump $f | head -n 500 > $t
 if [ x$win = "xy" ]
 then
   echo "drop two lines"
@@ -157,7 +160,7 @@ f=$srcdir/testuriLE64ELf.obj
 b=$srcdir/testuriLE64ELf.base
 t=junk.smallLE64ELf
 echo "start  dwarfdump sanity check on $f"
-./dwarfdump $f > $t
+./dwarfdump $f | head -n 500 > $t
 if [ x$win = "xy" ]
 then
   echo "drop two lines"
@@ -169,13 +172,11 @@ dos2unix $t
 diff $b $t > $t.diff
 chkres $? "diff of $b $t"
 
-test-mach-o-32.base  test-mach-o-32.dSYM
-
 f=$srcdir/test-mach-o-32.dSYM
 b=$srcdir/test-mach-o-32.base
 t=junk.macho-object32
 echo "start  dwarfdump sanity check on $f"
-./dwarfdump -i $f | head -n 400 > $t
+./dwarfdump $f | head -n 500 > $t
 if [ x$win = "xy" ]
 then
   echo "drop two lines"

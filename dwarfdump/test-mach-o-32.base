@@ -398,3 +398,103 @@ LOCAL_SYMBOLS:
 < 1><0x000003c5>    DW_TAG_enumeration_type
                       DW_AT_name                  Dwarf_Form_Class
                       DW_AT_byte_size             0x00000004
+                      DW_AT_decl_file             0x00000005 /tmp/c/tmp/dwarf-20170709/libdwarf/libdwarf.h
+                      DW_AT_decl_line             0x00000596
+< 2><0x000003ce>      DW_TAG_enumerator
+                        DW_AT_name                  DW_FORM_CLASS_UNKNOWN
+                        DW_AT_const_value           0x00000000
+< 2><0x000003d4>      DW_TAG_enumerator
+                        DW_AT_name                  DW_FORM_CLASS_ADDRESS
+                        DW_AT_const_value           0x00000001
+< 2><0x000003da>      DW_TAG_enumerator
+                        DW_AT_name                  DW_FORM_CLASS_BLOCK
+                        DW_AT_const_value           0x00000002
+< 2><0x000003e0>      DW_TAG_enumerator
+                        DW_AT_name                  DW_FORM_CLASS_CONSTANT
+                        DW_AT_const_value           0x00000003
+< 2><0x000003e6>      DW_TAG_enumerator
+                        DW_AT_name                  DW_FORM_CLASS_EXPRLOC
+                        DW_AT_const_value           0x00000004
+< 2><0x000003ec>      DW_TAG_enumerator
+                        DW_AT_name                  DW_FORM_CLASS_FLAG
+                        DW_AT_const_value           0x00000005
+< 2><0x000003f2>      DW_TAG_enumerator
+                        DW_AT_name                  DW_FORM_CLASS_LINEPTR
+                        DW_AT_const_value           0x00000006
+< 2><0x000003f8>      DW_TAG_enumerator
+                        DW_AT_name                  DW_FORM_CLASS_LOCLISTPTR
+                        DW_AT_const_value           0x00000007
+< 2><0x000003fe>      DW_TAG_enumerator
+                        DW_AT_name                  DW_FORM_CLASS_MACPTR
+                        DW_AT_const_value           0x00000008
+< 2><0x00000404>      DW_TAG_enumerator
+                        DW_AT_name                  DW_FORM_CLASS_RANGELISTPTR
+                        DW_AT_const_value           0x00000009
+< 2><0x0000040a>      DW_TAG_enumerator
+                        DW_AT_name                  DW_FORM_CLASS_REFERENCE
+                        DW_AT_const_value           0x0000000a
+< 2><0x00000410>      DW_TAG_enumerator
+                        DW_AT_name                  DW_FORM_CLASS_STRING
+                        DW_AT_const_value           0x0000000b
+< 2><0x00000416>      DW_TAG_enumerator
+                        DW_AT_name                  DW_FORM_CLASS_FRAMEPTR
+                        DW_AT_const_value           0x0000000c
+< 2><0x0000041c>      DW_TAG_enumerator
+                        DW_AT_name                  DW_FORM_CLASS_MACROPTR
+                        DW_AT_const_value           0x0000000d
+< 2><0x00000422>      DW_TAG_enumerator
+                        DW_AT_name                  DW_FORM_CLASS_ADDRPTR
+                        DW_AT_const_value           0x0000000e
+< 2><0x00000428>      DW_TAG_enumerator
+                        DW_AT_name                  DW_FORM_CLASS_LOCLIST
+                        DW_AT_const_value           0x0000000f
+< 2><0x0000042e>      DW_TAG_enumerator
+                        DW_AT_name                  DW_FORM_CLASS_LOCLISTSPTR
+                        DW_AT_const_value           0x00000010
+< 2><0x00000434>      DW_TAG_enumerator
+                        DW_AT_name                  DW_FORM_CLASS_RNGLIST
+                        DW_AT_const_value           0x00000011
+< 2><0x0000043a>      DW_TAG_enumerator
+                        DW_AT_name                  DW_FORM_CLASS_RNGLISTSPTR
+                        DW_AT_const_value           0x00000012
+< 2><0x00000440>      DW_TAG_enumerator
+                        DW_AT_name                  DW_FORM_CLASS_STROFFSETSPTR
+                        DW_AT_const_value           0x00000013
+< 1><0x00000447>    DW_TAG_typedef
+                      DW_AT_type                  <0x000001a8>
+                      DW_AT_name                  Dwarf_Ptr
+                      DW_AT_decl_file             0x00000005 /tmp/c/tmp/dwarf-20170709/libdwarf/libdwarf.h
+                      DW_AT_decl_line             0x00000076
+< 1><0x00000452>    DW_TAG_typedef
+                      DW_AT_type                  <0x0000045d>
+                      DW_AT_name                  Dwarf_Unsigned
+                      DW_AT_decl_file             0x00000005 /tmp/c/tmp/dwarf-20170709/libdwarf/libdwarf.h
+                      DW_AT_decl_line             0x00000060
+< 1><0x0000045d>    DW_TAG_base_type
+                      DW_AT_name                  long long unsigned int
+                      DW_AT_encoding              DW_ATE_unsigned
+                      DW_AT_byte_size             0x00000008
+< 1><0x00000464>    DW_TAG_subprogram
+                      DW_AT_low_pc                0x000025c0
+                      DW_AT_high_pc               0x000034d6
+                      DW_AT_frame_base            DW_OP_reg5
+                      DW_AT_name                  main
+                      DW_AT_decl_file             0x00000004 /tmp/c/tmp/dwarf-20170709/libdwarf/../dwarfexample/simplereader.c
+                      DW_AT_decl_line             0x00000164
+                      DW_AT_prototyped            yes(1)
+                      DW_AT_type                  <0x00000175>
+                      DW_AT_external              yes(1)
+< 2><0x0000047c>      DW_TAG_formal_parameter
+                        DW_AT_location              DW_OP_fbreg -496
+                        DW_AT_name                  argc
+                        DW_AT_decl_file             0x00000004 /tmp/c/tmp/dwarf-20170709/libdwarf/../dwarfexample/simplereader.c
+                        DW_AT_decl_line             0x00000164
+                        DW_AT_type                  <0x00000175>
+< 2><0x0000048c>      DW_TAG_formal_parameter
+                        DW_AT_location              DW_OP_fbreg -500
+                        DW_AT_name                  argv
+                        DW_AT_decl_file             0x00000004 /tmp/c/tmp/dwarf-20170709/libdwarf/../dwarfexample/simplereader.c
+                        DW_AT_decl_line             0x00000164
+                        DW_AT_type                  <0x000012c8>
+< 2><0x0000049c>      DW_TAG_variable
+                        DW_AT_location              DW_OP_fbreg -504

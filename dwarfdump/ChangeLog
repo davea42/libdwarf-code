@@ -1,4 +1,9 @@
 2019-10-02 David Anderson
+     * runtests.sh: Added mach-o sanity test case.
+     * test-mach-o-32.base,testobjLE32PE.base,testuriLE64ELf.base:
+       each is limited to 500 lines to keep the space in use
+       with non-source a bit constrained.
+2019-10-02 David Anderson
      * addrmap.c: The include of addrmap.h was in the wrong
        line. Noved down 4 lines.
      * globals.h: Refined the setup as the requirement for
