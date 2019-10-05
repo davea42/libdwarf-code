@@ -790,6 +790,7 @@ main(int argc, char **argv)
 
         Dwarf_P_Debug dbg = 0;
         unsigned long dwbitflags = DW_DLC_WRITE|
+            endian |
             ptrsizeflagbit|
             offsetsizeflagbit|
             DW_DLC_SYMBOLIC_RELOCATIONS;

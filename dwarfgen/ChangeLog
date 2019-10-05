@@ -1,3 +1,12 @@
+2019-10-04 David Anderson
+     * ireptodbg.cc: Corrected the code implementing
+       the dwarfgen.cc option --add-frame-advance-loc.
+       It's always been a bit wrong.
+     * dwarfgen.cc: Forgot to set the output-endianness flag bit
+       in the call to dwarf_producer_init() which meant
+       it defaulted to host endianness. Oops. Not the intent.
+       Now set as intended (to little-endian in the test cases
+       existing so far).
 2019-09-22 David Anderson
      * createirepfrombinary.cc: Delete pointless empty lines
        and add code to recognize and correct for a broken gcc

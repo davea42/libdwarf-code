@@ -799,9 +799,10 @@ transform_cie_fde(Dwarf_P_Debug dbg,
         adval.push_back(4408131);
         adval.push_back(18308350787ull);
         // 0x30 0x40 0x4343 0x434343 0x434343434
+        unsigned i = 3;
         for( list<Dwarf_Unsigned>::iterator it =
             adval.begin();
-            it != adval.end();it++ ) {
+            it != adval.end();it++ , ++i ) {
 
             Dwarf_Unsigned v = *it;
             res = dwarf_add_fde_inst_a(fdeout,
@@ -810,7 +811,15 @@ transform_cie_fde(Dwarf_P_Debug dbg,
                 cerr << "Error adding advance_loc" << v << endl;
                 exit(1);
             }
+            res = dwarf_add_fde_inst_a(fdeout,
+                DW_CFA_same_value,i,0,&err);
+            if (res != DW_DLV_OK) {
+                cerr << "Error adding dummy same_value op" << v << endl;
+                exit(1);
+            }
         }
+        // We increase code len to account for the
+        // big advance_loc values inserted above.
         Dwarf_P_Die irix_die = 0;
         Dwarf_Signed irix_table_offset = 0;
         Dwarf_Unsigned irix_excep_sym = 0;
@@ -820,7 +829,7 @@ transform_cie_fde(Dwarf_P_Debug dbg,
         Dwarf_Unsigned end_symbol_index = 0;
         Dwarf_Unsigned offset_from_end_symbol = 0;
         Dwarf_Addr code_virt_addr = 0;
-        Dwarf_Addr code_len = 12000000;
+        Dwarf_Addr code_len = 0x444343434;
 
         res = dwarf_add_frame_info_c(
             dbg, fdeout,irix_die,
