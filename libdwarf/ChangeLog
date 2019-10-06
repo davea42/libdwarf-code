@@ -1,4 +1,13 @@
 2019-10-05 David Anderson
+     * pro_forms.c,pro_frame.c,pro_section.c: All now
+       use dbg->de_copy_word instead of memcpy 
+       in the ASNOUT and ASNAR macros so
+       host and target need not have same endianness.
+     * dwarf_xu_index.c: The way the initial index
+       in hashing on the signature is done we must
+       be sensitive to host/object being different
+       endianness for hash keys to be found.
+2019-10-05 David Anderson
      * libdwarf.h.in: Added DW_DLC_ELF_OFFSET_SIZE_64
        so dwarfgen can easily generate ELFCLASS64
        with offsets 32bits in DWARF.  Rearranged the comments

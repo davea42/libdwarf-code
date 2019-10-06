@@ -56,13 +56,13 @@
     do {                                    \
         unsigned tbyte = sizeof(t) - l;     \
         t = 0;                              \
-        memcpy(((char *)&t)+tbyte ,&s[0],l);\
+        dbg->de_copy_word(((char *)&t)+tbyte ,&s[0],l);\
     } while (0)
 #else /* LITTLE ENDIAN */
 #define ASNAR(t,s,l)                 \
     do {                                \
         t = 0;                          \
-        memcpy(&t,&s[0],l);             \
+        dbg->de_copy_word(&t,&s[0],l);             \
     } while (0)
 #endif /* end LITTLE- BIG-ENDIAN */
 
@@ -78,7 +78,7 @@
         }                                   \
         sbyte = sizeof(s) - l;              \
         p = (const char *)(&s);             \
-        memcpy(t,(const void *)(p+sbyte),l);\
+        dbg->de_copy_word(t,(const void *)(p+sbyte),l);\
     } while (0)
 #else /* LITTLEENDIAN */
 #define ASNOUT(t,s,l)                       \
@@ -90,6 +90,7 @@
         }                                   \
         p = (const char *)(&s);             \
         memcpy(t,(const void *)p,l);        \
+        dbg->de_copy_word(t,(const void *)p,l); \
     } while (0)
 #endif /* ENDIANNESS */
 

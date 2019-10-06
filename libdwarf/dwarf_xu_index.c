@@ -52,6 +52,21 @@
 #define TRUE 1
 #define FALSE 0
 
+#ifdef WORDS_BIGENDIAN
+#define ASNAR(t,s,l)                   \
+    do {                                    \
+        unsigned tbyte = sizeof(t) - l;     \
+        t = 0;                              \
+        dbg->de_copy_word(((char *)&t)+tbyte ,&s[0],l);\
+    } while (0)
+#else /* LITTLE ENDIAN */
+#define ASNAR(t,s,l)                 \
+    do {                                \
+        t = 0;                          \
+        dbg->de_copy_word(&t,&s[0],l);  \
+    } while (0)
+#endif /* end LITTLE- BIG-ENDIAN */
+
 /* zerohashkey used as all-zero-bits for comparison. */
 static Dwarf_Sig8 zerohashkey;
 
@@ -212,7 +227,6 @@ dwarf_get_xu_index_header(Dwarf_Debug dbg,
     indexptr->gx_index_table_offset  = indexes_tab_offset;
     indexptr->gx_section_offsets_offset  = section_offsets_tab_offset;
     indexptr->gx_section_sizes_offset  = section_sizes_tab_offset;
-
     *xuptr             =     indexptr;
     *version           = indexptr->gx_version;
     *number_of_columns = indexptr->gx_column_count_sections;
@@ -424,11 +438,18 @@ _dwarf_search_fission_for_key(UNUSEDARG Dwarf_Debug dbg,
         _dwarf_error(dbg, error, DW_DLE_ERRONEOUS_XU_INDEX_SECTION);
         return (DW_DLV_ERROR);
     }
-    key = *(Dwarf_Unsigned *)(key_in);
+    if (sizeof (key) != sizeof(key_in)) {
+        /* The hash won't work right in this case */
+        _dwarf_error(dbg, error, DW_DLE_XU_HASH_ROW_ERROR);
+    }
+    ASNAR(key,key_in,sizeof(key_in));
+
     primary_hash = key & mask;
     hashprime =  (((key >>32) &mask) |1);
     while (1) {
-        int res = dwarf_get_xu_hash_entry(xuhdr,
+        int res = 0;
+
+        res = dwarf_get_xu_hash_entry(xuhdr,
             primary_hash,&hashentry_key,
             &percu_index,error);
         if (res != DW_DLV_OK) {
@@ -640,13 +661,11 @@ dwarf_get_debugfission_for_key(Dwarf_Debug dbg,
     if (sres == DW_DLV_ERROR) {
         return sres;
     }
-
     /*  Returns already existing xuhdr */
     sres = _dwarf_get_xuhdr(dbg,key_type, &xuhdr,error);
     if (sres != DW_DLV_OK) {
         return sres;
     }
-
     /*  Search in that xu data. */
     sres = _dwarf_search_fission_for_key(dbg,
         xuhdr,key,&percu_index,error);

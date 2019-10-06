@@ -48,8 +48,6 @@
 #define SIZEOFT32 4
 #define SIZEOFT64 8
 
-/*  Assuming endianness of t, s match...! FIXME
-    Issues of host vs output object too. */
 #ifdef WORDS_BIGENDIAN
 #define ASNOUT(t,s,l)                       \
     do {                                    \
@@ -61,7 +59,7 @@
         }                                   \
         sbyte = sizeof(s) - l;              \
         p = (const char *)(&s);             \
-        memcpy(t,(const void *)(p+sbyte),l);\
+        dbg->de_copy_word(t,(const void *)(p+sbyte),l);\
     } while (0)
 #else /* LITTLEENDIAN */
 #define ASNOUT(t,s,l)                       \
@@ -72,7 +70,7 @@
             return DW_DLV_ERROR;            \
         }                                   \
         p = (const char *)(&s);             \
-        memcpy(t,(const void *)p,l);        \
+        dbg->de_copy_word(t,(const void *)p,l);  \
     } while (0)
 #endif /* ENDIANNESS */
 
