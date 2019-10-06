@@ -1,3 +1,7 @@
+2019-10-05 David Anderson
+     * dwarfgen.cc: Now it has the tools (with a little
+       help in libdwarf.h) to properly create an object file
+       that is ELFCLASS64 but has 32 bit offsets in DWARF.
 2019-10-04 David Anderson
      * ireptodbg.cc: Corrected the code implementing
        the dwarfgen.cc option --add-frame-advance-loc.

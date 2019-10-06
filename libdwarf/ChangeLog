@@ -1,3 +1,9 @@
+2019-10-05 David Anderson
+     * libdwarf.h.in: Added DW_DLC_ELF_OFFSET_SIZE_64
+       so dwarfgen can easily generate ELFCLASS64
+       with offsets 32bits in DWARF.  Rearranged the comments
+       on the bit flags in the area so easier to read.
+     * generated_libdwarf.h.in: regenerated.
 2019-10-04 David Anderson
      * dwarf_opaque.h: Revised a comment about
        de_big_endian_object for clarity.

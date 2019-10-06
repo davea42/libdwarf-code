@@ -595,7 +595,7 @@ main(int argc, char **argv)
         // used for testing.
         // see also output_v4_test (--output-v4-test 
         // longopt).
-        const char *dwarf_extras ="opcode_base=10,"
+        const char *dwarf_extras ="opcode_base=13,"
             "minimum_instruction_length=1,"
             "line_base=-1,"
             "line_range=4";
@@ -603,7 +603,10 @@ main(int argc, char **argv)
         const char *dwarf_version = "V2";
         const char * isa_name = "x86";
         unsigned long ptrsizeflagbit = DW_DLC_POINTER32;
-        unsigned long offsetsizeflagbit = DW_DLC_OFFSET32;
+        unsigned long dwarfoffsetsizeflagbit = DW_DLC_OFFSET32;
+        /*  DW_DLC_ELF_OFFSET_SIZE 32/64 winds up determining
+            the ELFCLASS 32/64 in write_object_file() */
+        unsigned long elfoffsetsizeflagbit = DW_DLC_ELF_OFFSET_SIZE_32;
         unsigned machine = EM_386; /* from elf.h */
         int output_v4_test = 0;
 
@@ -686,19 +689,21 @@ main(int argc, char **argv)
             case 'p': /* pointer size: value 4 or 8. */
                 if (!strcmp("4",dwoptarg)) {
                     ptrsizeflagbit = DW_DLC_POINTER32;
+                    elfoffsetsizeflagbit = DW_DLC_ELF_OFFSET_SIZE_32;
                 } else if (!strcmp("8",dwoptarg)) {
                     ptrsizeflagbit = DW_DLC_POINTER64;
+                    elfoffsetsizeflagbit = DW_DLC_ELF_OFFSET_SIZE_64;
                 } else {
                     cerr << "dwarfgen: Invalid p option input " <<
                         dwoptarg << endl;
                     exit(1);
                 }
                 break;
-            case 'f': /* offset size: value 4 or 8. */
+            case 'f': /*  offset size for DWARF: value 4 or 8. */
                 if (!strcmp("4",dwoptarg)) {
-                    offsetsizeflagbit = DW_DLC_OFFSET32;
+                    dwarfoffsetsizeflagbit = DW_DLC_OFFSET32;
                 } else if (!strcmp("8",dwoptarg)) {
-                    offsetsizeflagbit = DW_DLC_OFFSET64;
+                    dwarfoffsetsizeflagbit = DW_DLC_OFFSET64;
                 } else {
                     cerr << "dwarfgen: Invalid f option input " <<
                         dwoptarg << endl;
@@ -755,7 +760,8 @@ main(int argc, char **argv)
             dwarf_version = "V4";
             isa_name = "x86_64";
             ptrsizeflagbit = DW_DLC_POINTER64;
-            offsetsizeflagbit = DW_DLC_OFFSET64;
+            dwarfoffsetsizeflagbit = DW_DLC_OFFSET32;
+            elfoffsetsizeflagbit = DW_DLC_ELF_OFFSET_SIZE_64;
             machine = EM_X86_64; /* from elf.h */
         }
 
@@ -792,7 +798,8 @@ main(int argc, char **argv)
         unsigned long dwbitflags = DW_DLC_WRITE|
             endian |
             ptrsizeflagbit|
-            offsetsizeflagbit|
+            elfoffsetsizeflagbit|
+            dwarfoffsetsizeflagbit|
             DW_DLC_SYMBOLIC_RELOCATIONS;
 
         // We use DW_DLC_SYMBOLIC_RELOCATIONS so we can
@@ -889,10 +896,10 @@ write_object_file(Dwarf_P_Debug dbg,
     unsigned long dwbitflags,
     void *user_data)
 {
-    unsigned elfclass = (dwbitflags & DW_DLC_OFFSET64)?
+    unsigned elfclass = (dwbitflags & DW_DLC_ELF_OFFSET_SIZE_64)?
              ELFCLASS64:
              ELFCLASS32;
-    unsigned elfendian = (endian&DW_DLC_TARGET_LITTLEENDIAN)?
+    unsigned elfendian = (endian & DW_DLC_TARGET_LITTLEENDIAN)?
              ELFDATA2LSB:
              ELFDATA2MSB;
     int fd = 0;

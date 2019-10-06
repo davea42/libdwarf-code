@@ -868,9 +868,20 @@ struct Dwarf_Obj_Access_Interface_s {
     These names still work.
     Newer names below.
 */
-#define DW_DLC_SIZE_64              0x40000000 /* 64-bit address-size target */
-#define DW_DLC_SIZE_32              0x20000000 /* 32-bit address-size target */
-#define DW_DLC_OFFSET_SIZE_64       0x10000000 /* 64-bit offset-size DWARF */
+/* 64-bit address-size target */
+#define DW_DLC_SIZE_64              0x40000000 
+
+/* 32-bit address-size target */
+#define DW_DLC_SIZE_32              0x20000000
+
+/* 64-bit offset-size DWARF offsets (else 32bit) */
+#define DW_DLC_OFFSET_SIZE_64       0x10000000 
+
+/* 32-bit offset-size ELF object (ELFCLASS32) */
+#define DW_DLC_ELF_OFFSET_SIZE_32   0x00400000 
+
+/* 64-bit offset-size ELF object (ELFCLASS64)  */
+#define DW_DLC_ELF_OFFSET_SIZE_64   0x00020000 
 
 /* dwarf_producer_init* access flag modifiers
    Some new April 2014.
@@ -881,13 +892,23 @@ struct Dwarf_Obj_Access_Interface_s {
 /* Old style Elf binary relocation (.rel) records. The default. */
 #define DW_DLC_STREAM_RELOCATIONS   0x02000000
 
-#define DW_DLC_OFFSET32             0x00010000 /* use 32-bit sec offsets */
-/* The following 3 are new sensible names. Old names above with same values. */
-#define DW_DLC_OFFSET64             0x10000000 /* use 64-bit sec offsets */
-#define DW_DLC_POINTER32            0x20000000 /* use 4 for address_size */
-#define DW_DLC_POINTER64            0x40000000 /* use 8 for address_size */
+/* use 32-bit  sec  offsets */
+#define DW_DLC_OFFSET32             0x00010000
+
+/* The following 3 are new sensible names. 
+Old names above with same values. */
+/* use 64-bit sec offsets in ELF */
+#define DW_DLC_OFFSET64             0x10000000 
+
+/* use 4 for address_size */
+#define DW_DLC_POINTER32            0x20000000 
+
+/* use 8 for address_size */
+#define DW_DLC_POINTER64            0x40000000 
+
 /* Special for IRIX only */
-#define DW_DLC_IRIX_OFFSET64        0x00200000 /* use non-std IRIX 64bitoffset headers  */
+/* use Elf 64bit offset headers and non-std IRIX 64bitoffset headers */
+#define DW_DLC_IRIX_OFFSET64        0x00200000 
 
 /*  Usable with assembly output because it is up to the producer to
     deal with locations in whatever manner the calling producer
