@@ -171,7 +171,7 @@ printusage(void)
     printf(" --printdetails  \n");
     printf("   prints some details of the discovery process\n");
     printf(" --allinstances\n");
-    printf("   reports but does does not stop processing\n"); 
+    printf("   reports but does does not stop processing\n");
     printf("   on finding pc address\n");
     printf(" --help or -h prints this usage message an stops.\n");
 }

@@ -1,3 +1,6 @@
+2019-10-06 David Anderson
+     * createirepfrombinary.cc,dwarfgen.cc: Removed
+       trailing whitespace.
 2019-10-05 David Anderson
      * dwarfgen.cc: Now it has the tools (with a little
        help in libdwarf.h) to properly create an object file

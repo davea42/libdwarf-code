@@ -1178,7 +1178,7 @@ _dwarf_setup(Dwarf_Debug dbg, Dwarf_Error * error)
     unsigned foundDwarf = FALSE;
     unsigned obj_section_index = 0;
 
-    dbg->de_assume_string_in_bounds = 
+    dbg->de_assume_string_in_bounds =
         _dwarf_assume_string_in_bounds;
     /* First make an arbitrary assumption. */
     dbg->de_same_endian = 1;

@@ -252,7 +252,7 @@ _dwarf_memcpy_swap_bytes(void *s1, const void *s2, unsigned long len)
 
 
 
-static void write_object_file(Dwarf_P_Debug dbg, 
+static void write_object_file(Dwarf_P_Debug dbg,
     IRepresentation &irep,
     unsigned machine,
     unsigned endian,
@@ -397,7 +397,6 @@ createnamestr(unsigned strtabstroff,unsigned elfclass)
     shstr->d_off = 0;
     shstr->d_align = 1;
     shstr->d_version = EV_CURRENT;
- 
     if (elfclass == ELFCLASS32) {
         Elf32_Shdr * strshdr = elf32_getshdr(strscn);
         if(!strshdr) {
@@ -469,7 +468,7 @@ static int CallbackFunc(
         elfclass = *(unsigned *)user_data;
     } else {
         cerr << "We created an internal-to-dwarfgen bug here. " <<
-           " line " << __LINE__ << " " <<__FILE__ << endl;
+            " line " << __LINE__ << " " <<__FILE__ << endl;
         exit(1);
     }
 
@@ -593,7 +592,7 @@ main(int argc, char **argv)
         // and avoid modifying header files.
         // This is the original set of constants
         // used for testing.
-        // see also output_v4_test (--output-v4-test 
+        // see also output_v4_test (--output-v4-test
         // longopt).
         const char *dwarf_extras ="opcode_base=13,"
             "minimum_instruction_length=1,"
@@ -813,7 +812,7 @@ main(int argc, char **argv)
             user_data,
             isa_name,
             dwarf_version,
-            dwarf_extras, 
+            dwarf_extras,
             &dbg,
             &err);
         if(res == DW_DLV_NO_ENTRY) {
@@ -897,11 +896,11 @@ write_object_file(Dwarf_P_Debug dbg,
     void *user_data)
 {
     unsigned elfclass = (dwbitflags & DW_DLC_ELF_OFFSET_SIZE_64)?
-             ELFCLASS64:
-             ELFCLASS32;
+        ELFCLASS64:
+        ELFCLASS32;
     unsigned elfendian = (endian & DW_DLC_TARGET_LITTLEENDIAN)?
-             ELFDATA2LSB:
-             ELFDATA2MSB;
+        ELFDATA2LSB:
+        ELFDATA2MSB;
     int fd = 0;
 
     *(unsigned *)user_data = elfclass;
@@ -928,8 +927,9 @@ write_object_file(Dwarf_P_Debug dbg,
         static Elf32_Ehdr * ehp = 0;
         ehp = elf32_newehdr(elf);
         if(!ehp) {
-                cerr << "dwarfgen: Unable to elf32_newehdr() on " << outfile << endl;
-                exit(1);
+            cerr << "dwarfgen: Unable to elf32_newehdr() on " <<
+                outfile << endl;
+            exit(1);
         }
         ehp->e_ident[EI_MAG0] = ELFMAG0;
         ehp->e_ident[EI_MAG1] = ELFMAG1;
@@ -947,9 +947,7 @@ write_object_file(Dwarf_P_Debug dbg,
 
         // an object section with fake .text data (just as an example).
         write_text_section(elf,elfclass);
-    
         write_generated_dbg(dbg,elf,irep);
-    
         // Create the section name string section.
         unsigned shstrindex = createnamestr(strtabstroff,elfclass);
         ehp->e_shstrndx = shstrindex;
@@ -977,9 +975,7 @@ write_object_file(Dwarf_P_Debug dbg,
 
         // an object section with fake .text data (just as an example).
         write_text_section(elf,elfclass);
-    
         write_generated_dbg(dbg,elf,irep);
-
         // Create the section name string section.
         unsigned shstrindex = createnamestr(strtabstroff,elfclass);
         ehp->e_shstrndx = shstrindex;

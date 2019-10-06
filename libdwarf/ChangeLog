@@ -1,3 +1,5 @@
+2019-10-06 David Anderson
+     * dwarf_init_finish.c: Removed trailing whitespace.
 2019-10-05 David Anderson
      * pro_forms.c,pro_frame.c,pro_section.c: All now
        use dbg->de_copy_word instead of memcpy 

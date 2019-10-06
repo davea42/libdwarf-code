@@ -1,3 +1,5 @@
+2019-10-06 David Anderson
+     * findfuncbypc.c: Removed trailing whitespace.
 2019-10-02 David Anderson
      * findfuncbypc.c: Now lists options if no
        options presented (instead of dumping core!).

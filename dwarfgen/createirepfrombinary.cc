@@ -361,7 +361,7 @@ get_attrs_of_die(Dwarf_Die in_die,IRDie &irdie,
     Dwarf_Signed atcnt = 0;
     std::list<IRAttr> &attrlist = irdie.getAttributes();
     int res = dwarf_attrlist(in_die, &atlist,&atcnt,&error);
-    std::map<unsigned,unsigned> attrmap; 
+    std::map<unsigned,unsigned> attrmap;
     if(res == DW_DLV_NO_ENTRY) {
         return;
     }
@@ -373,10 +373,10 @@ get_attrs_of_die(Dwarf_Die in_die,IRDie &irdie,
     for (Dwarf_Signed i = 0; i < atcnt; ++i) {
         Dwarf_Attribute attr = atlist[i];
         Dwarf_Half attrnum = 0;
-       
+
         res = dwarf_whatattr(attr,&attrnum,&error);
         if (res != DW_DLV_OK) {
-            cout << "ERROR FAIL: unable to get attrnum from attr!" 
+            cout << "ERROR FAIL: unable to get attrnum from attr!"
                 <<endl;
             return;
         }
