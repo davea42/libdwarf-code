@@ -1558,7 +1558,9 @@ int dwarf_elf_init(dwarf_elf_handle /*elf*/,
 
 /*  New September 2019.
     When using dwarf_elf_init[_b]() we still want the file path
-    in the record. So we add it after the init phase. */
+    in the record. So we add it after the init phase. 
+    Path is needed for buildid and debuglink to fully work.
+*/
 int  dwarf_add_file_path(Dwarf_Debug /*dbg*/,
     const char * /*file_name*/,
     Dwarf_Error*      /*error*/);
@@ -2530,38 +2532,47 @@ int dwarf_debugnames_entrypool_values(Dwarf_Dnames_Head /*dn*/,
 
 /* end of .debug_names interfaces. */
 
-/*  New September 2019.  Access to the GNU section named
-    .gnu_debuglink  .
-    DO NOT USE. It will change. 
-    Do not free the name_out or crc_out returned.
-    If *debuglink_path_size_returned non-zero
-    then callers must free(*debuglink_path_returned)
-    as a path to the linked-to object was found.
+/*  New October 2019.  Access to the GNU section named
+    .gnu_debuglink  and/or the section .note.gnu.build-id.
     See
     https://sourceware.org/gdb/onlinedocs/gdb/Separate-Debug-Files.html
+    The dbg argument provides data access and relies on
+    fields de_path,de_debuglink_globals, de_debuglink_globals_length
+    If no debuglink then name_returned,crc_returned and
+    debuglink_path_returned will get set 0 through the pointers.
+    If no .note.gnu.build-id then  buildid_length_returned,
+    and buildid_returned will be set 0 through the pointers.
+    See libdwarf2.1.mm for additional important details.
+    see dwarf_add_file_path() 
+    and dwarf_add_debuglink_global_path().
 */
+
 int dwarf_gnu_debuglink(Dwarf_Debug /*dbg*/,
-    char **      /*name_returned*/,
-    char **      /*crc_returned from the debuglink section*/,
-    char **      /*debuglink_path_returned*/,
-    unsigned *   /*debuglink_path_size_returned*/,
+    char     **  /*name_returned*/,
+    unsigned char **  /*crc_returned from the debuglink section*/,
+    char     **  /*debuglink_path_returned*/,
+    unsigned *   /*debuglink_path_count_returned*/,
+    unsigned *   /*buildid_type_returned */,
+    char     **  /*buildid_owner_name_returned*/,
+    unsigned char ** /*buildid_returned*/,
+    unsigned *   /*buildid_length_returned*/,
+    char     *** /*paths_returned*/,
+    unsigned *   /*paths_length_returned*/,
     Dwarf_Error* /*error*/);
 
-/*  The pointers returned refer to strings in
-    static space in the
-    object file so must not be free()d.
-    New September 2019
-    DO NOT USE. It will change. 
-    The build_id_returned has no NUL
-    terminator character and should be
-    printed as a hex byte string. */
-int
-dwarf_gnu_buildid(Dwarf_Debug /*dbg*/,
-    Dwarf_Unsigned *  /*type_returned */,
-    const char     ** /*owner_name_returned*/,
-    Dwarf_Unsigned *  /*build_id_length_returned*/,
-    const unsigned char  ** /*build_id_returned*/,
-    Dwarf_Error    *  /*error*/);
+/* See
+   https://sourceware.org/gdb/onlinedocs/gdb/Separate-Debug-Files.html
+   and dwarf_gnu_debuglink()
+   pathname is a path-prefix to be added to a list of path-prefixes,
+   The default "/usr/lib/debug" is built-in and is the first
+   such in the list held in dbg.
+   The path prefix should start with / .
+   It can just end or end with / , either choice will work.
+*/
+int dwarf_add_debuglink_global_path(Dwarf_Debug /*dbg*/,
+    const char *pathname,
+    Dwarf_Error* /*error*/);
+
 
 /*  global name space operations (.debug_pubnames access)
     The pubnames and similar sections are rarely used. Few compilers

@@ -1,3 +1,49 @@
+2019-10-14 David Anderson
+     * CMakeLists.txt: Addded dwarf_debuglink.h to sourcefiles.
+     * Added tests of the debuglink stuff.
+     * Makefile.in: regenerated.
+     * baseline.ltp: Added correct test baseline output.
+     * checkexamples.c: Added debuglink call as an example
+       to show how it is used.
+     * dwarf_alloc.c: Reformatted too long lines
+       and more importantly moved the memset to clear
+       the Dwarf_Debug down where lit belonged after
+       clearing de_gnu_global_paths.
+     * dwarf_debuglink.c: Significant rewrite to 
+       implement the reading etc of .gnu_debuglink
+       and .note.gnu.build-id sections.
+     * dwarf_debuglink.b: Added ifdef __cplusplus
+       and ifndef DWARF_DEBUGLINK_H. And now handles
+       data from both sections.
+     * dwarf_generic_init.c: Now adds the 
+       default debuglink global path
+       "/usr/lib/debug".
+     * dwarf_init_finish.c: Separated declaration of
+       local from its use to allow a debugging printf
+       when and as such is needed.
+     * dwarf_opaque.h: Added de_gnu_global_paths and
+       de_gnu_global_path_count to Dwarf_Debug_s.
+     * dwarf_original_elf_init: Now adds the 
+       default debuglink global path
+       "/usr/lib/debug".
+     * dwarf_util.h: split apart a tool-long line.
+     * dwarf_xu_index.c: Corrected the use of ASNAR 
+       to be sizeof(*key_in) and added a check to
+       that macro so if something that won't work
+       is requested the attempt is caught as an error.
+     * dwarfstring.h: Added  Added ifdef __cplusplus
+       and ifndef DWARFSTRING_H.
+     * generated_libdwarf.h.in: Regenerated.
+     * libdwarf.h.in: The debuglink interface
+       now has the arguments it needs. The dwarf_gnu_buildid()
+       is gone.
+     * libdwarf2.1.mm: Version 2.81. Documents the debuglink
+       and global_path functions dwarf_add_debuglink_global_path()
+       and dwarf_gnu_debuglink() and removes the bogus
+       dwarf_add_file_path().
+     * libdwarf2.1.pdf: Regenerated. Version 2.81.
+     * test_linkedtopath.c: New test code use for 'make check'.
+     * test_debuglink.sh.c: New test code use for 'make check'.
 2019-10-06 David Anderson
      * dwarf_init_finish.c: Removed trailing whitespace.
 2019-10-05 David Anderson

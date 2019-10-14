@@ -17,6 +17,7 @@ dwarf_arange.c \
 dwarf_arange.h \
 dwarf_base_types.h \
 dwarf_debuglink.c \
+dwarf_debuglink.h \
 dwarf_die_deliv.c \
 dwarf_die_deliv.h \
 dwarf_dnames.c \
@@ -168,7 +169,7 @@ libdwarf_la_LIBADD = @DWARF_LIBS@
 
 libdwarf_la_LDFLAGS = -fPIC -no-undefined -version-info @version_info@ @release_info@
 
-TESTS = $(check_PROGRAMS)
+TESTS = $(check_PROGRAMS) $(check_TESTS)
 AM_TESTS_ENVIRONMENT = DWTOPSRCDIR='$(top_srcdir)'; export DWTOPSRCDIR;
 
 
@@ -179,7 +180,8 @@ libdwarfdev_DATA = \
 libdwarf2.1.pdf \
 libdwarf2p.1.pdf 
 
-check_PROGRAMS = test_dwarfstring test_extra_flag_strings
+check_PROGRAMS = test_dwarfstring test_extra_flag_strings \
+  test_linkedtopath
 
 test_dwarfstring_SOURCES = test_dwarfstring.c \
    dwarfstring.h dwarfstring.c
@@ -194,6 +196,15 @@ test_extra_flag_strings_CFLAGS = $(CFLAGS_WARN)
 test_extra_flag_strings_CPPFLAGS =  -DTESTING \
 -I$(top_srcdir) -I$(top_builddir) -I$(top_srcdir)/src
 
+test_linkedtopath_SOURCES = test_linkedtopath.c \
+   dwarfstring.h dwarfstring.c \
+   dwarf_debuglink.h dwarf_debuglink.c \
+   dwarf_error.h 
+test_linkedtopath_CFLAGS = $(RO_CFLAGS_WARN) -DTESTING
+test_linkedtopath_CPPFLAGS = -DTESTING \
+-I$(top_srcdir) -I$(top_builddir) -I$(top_srcdir)/src
+
+check_TESTS = testdebuglink.sh
 
 EXTRA_DIST = \
 COPYING \
@@ -215,6 +226,7 @@ ChangeLog2016 \
 ChangeLog2017 \
 ChangeLog2018 \
 CODINGSTYLE \
+baseline.ltp  \
 dwarf_leb_test.c \
 dwarf_tied_test.c \
 dwarf_names_new.h \

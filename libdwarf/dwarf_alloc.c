@@ -642,12 +642,14 @@ freecontextlist(Dwarf_Debug dbg, Dwarf_Debug_InfoTypes dis)
 int
 _dwarf_free_all_of_one_debug(Dwarf_Debug dbg)
 {
+    unsigned g = 0;
+
     if (dbg == NULL) {
         return (DW_DLV_ERROR);
     }
-
-    /*  To do complete validation that we have no surprising missing or
-        erroneous deallocs it is advisable to do the dwarf_deallocs here
+    /*  To do complete validation that we have no surprising
+        missing or erroneous deallocs it is advisable to do
+        the dwarf_deallocs here
         that are not things the user can otherwise request.
         Housecleaning.  */
     if (dbg->de_cu_hashindex_data) {
@@ -707,9 +709,16 @@ _dwarf_free_all_of_one_debug(Dwarf_Debug dbg)
             _dwarf_tied_destroy_free_node);
         dbg->de_tied_data.td_tied_search = 0;
     }
-    memset(dbg, 0, sizeof(*dbg)); /* Prevent accidental use later. */
     free((void *)dbg->de_path);
     dbg->de_path = 0;
+    for (g = 0; g < dbg->de_gnu_global_path_count; ++g) {
+        free((char *)dbg->de_gnu_global_paths[g]);
+        dbg->de_gnu_global_paths[g] = 0;
+    }
+    free((void*)dbg->de_gnu_global_paths);
+    dbg->de_gnu_global_paths = 0;
+    dbg->de_gnu_global_path_count = 0;
+    memset(dbg, 0, sizeof(*dbg)); /* Prevent accidental use later. */
     free(dbg);
     return (DW_DLV_OK);
 }

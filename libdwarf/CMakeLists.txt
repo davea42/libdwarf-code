@@ -31,7 +31,8 @@ pro_reloc_symbolic.c pro_pubnames.c pro_section.c
 pro_types.c pro_vars.c pro_macinfo.c pro_weaks.c)
 
 set_source_group(HEADERS "Header Files" dwarf.h dwarf_abbrev.h
-dwarf_alloc.h dwarf_arange.h dwarf_base_types.h dwarf_die_deliv.h 
+dwarf_alloc.h dwarf_arange.h dwarf_base_types.h 
+dwarf_debuglink.h dwarf_die_deliv.h 
 dwarf_dnames.h dwarf_dsc.h 
 dwarf_elf_access.h dwarf_elf_defines.h dwarf_elfread.h 
 dwarf_elf_rel_detector.h 

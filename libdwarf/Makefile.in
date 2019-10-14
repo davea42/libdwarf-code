@@ -94,7 +94,7 @@ POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
 check_PROGRAMS = test_dwarfstring$(EXEEXT) \
-	test_extra_flag_strings$(EXEEXT)
+	test_extra_flag_strings$(EXEEXT) test_linkedtopath$(EXEEXT)
 subdir = libdwarf
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/dw_compiler.m4 \
@@ -209,6 +209,16 @@ test_extra_flag_strings_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC \
 	$(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(CCLD) \
 	$(test_extra_flag_strings_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
 	$(LDFLAGS) -o $@
+am_test_linkedtopath_OBJECTS =  \
+	test_linkedtopath-test_linkedtopath.$(OBJEXT) \
+	test_linkedtopath-dwarfstring.$(OBJEXT) \
+	test_linkedtopath-dwarf_debuglink.$(OBJEXT)
+test_linkedtopath_OBJECTS = $(am_test_linkedtopath_OBJECTS)
+test_linkedtopath_LDADD = $(LDADD)
+test_linkedtopath_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC \
+	$(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(CCLD) \
+	$(test_linkedtopath_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) \
+	-o $@
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
 am__v_P_0 = false
@@ -244,9 +254,11 @@ am__v_CCLD_ = $(am__v_CCLD_@AM_DEFAULT_V@)
 am__v_CCLD_0 = @echo "  CCLD    " $@;
 am__v_CCLD_1 = 
 SOURCES = $(libdwarf_la_SOURCES) $(test_dwarfstring_SOURCES) \
-	$(test_extra_flag_strings_SOURCES)
+	$(test_extra_flag_strings_SOURCES) \
+	$(test_linkedtopath_SOURCES)
 DIST_SOURCES = $(libdwarf_la_SOURCES) $(test_dwarfstring_SOURCES) \
-	$(test_extra_flag_strings_SOURCES)
+	$(test_extra_flag_strings_SOURCES) \
+	$(test_linkedtopath_SOURCES)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -597,6 +609,7 @@ dwarf_arange.c \
 dwarf_arange.h \
 dwarf_base_types.h \
 dwarf_debuglink.c \
+dwarf_debuglink.h \
 dwarf_die_deliv.c \
 dwarf_die_deliv.h \
 dwarf_dnames.c \
@@ -745,7 +758,7 @@ pro_weaks.c
 libdwarf_la_CFLAGS = $(DWARF_CFLAGS_WARN) 
 libdwarf_la_LIBADD = @DWARF_LIBS@
 libdwarf_la_LDFLAGS = -fPIC -no-undefined -version-info @version_info@ @release_info@
-TESTS = $(check_PROGRAMS)
+TESTS = $(check_PROGRAMS) $(check_TESTS)
 AM_TESTS_ENVIRONMENT = DWTOPSRCDIR='$(top_srcdir)'; export DWTOPSRCDIR;
 include_HEADERS = $(top_srcdir)/libdwarf/dwarf.h libdwarf.h
 libdwarfdevdir = $(datadir)/libdwarf/libdwarf-devel
@@ -768,6 +781,16 @@ test_extra_flag_strings_CFLAGS = $(CFLAGS_WARN)
 test_extra_flag_strings_CPPFLAGS = -DTESTING \
 -I$(top_srcdir) -I$(top_builddir) -I$(top_srcdir)/src
 
+test_linkedtopath_SOURCES = test_linkedtopath.c \
+   dwarfstring.h dwarfstring.c \
+   dwarf_debuglink.h dwarf_debuglink.c \
+   dwarf_error.h 
+
+test_linkedtopath_CFLAGS = $(RO_CFLAGS_WARN) -DTESTING
+test_linkedtopath_CPPFLAGS = -DTESTING \
+-I$(top_srcdir) -I$(top_builddir) -I$(top_srcdir)/src
+
+check_TESTS = testdebuglink.sh
 EXTRA_DIST = \
 COPYING \
 LGPL.txt \
@@ -788,6 +811,7 @@ ChangeLog2016 \
 ChangeLog2017 \
 ChangeLog2018 \
 CODINGSTYLE \
+baseline.ltp  \
 dwarf_leb_test.c \
 dwarf_tied_test.c \
 dwarf_names_new.h \
@@ -899,6 +923,10 @@ test_extra_flag_strings$(EXEEXT): $(test_extra_flag_strings_OBJECTS) $(test_extr
 	@rm -f test_extra_flag_strings$(EXEEXT)
 	$(AM_V_CCLD)$(test_extra_flag_strings_LINK) $(test_extra_flag_strings_OBJECTS) $(test_extra_flag_strings_LDADD) $(LIBS)
 
+test_linkedtopath$(EXEEXT): $(test_linkedtopath_OBJECTS) $(test_linkedtopath_DEPENDENCIES) $(EXTRA_test_linkedtopath_DEPENDENCIES) 
+	@rm -f test_linkedtopath$(EXEEXT)
+	$(AM_V_CCLD)$(test_linkedtopath_LINK) $(test_linkedtopath_OBJECTS) $(test_linkedtopath_LDADD) $(LIBS)
+
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
 
@@ -981,6 +1009,9 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_extra_flag_strings-dwarfstring.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_extra_flag_strings-pro_log_extra_flag_strings.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_extra_flag_strings-test_extra_flag_strings.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_linkedtopath-dwarf_debuglink.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_linkedtopath-dwarfstring.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_linkedtopath-test_linkedtopath.Po@am__quote@
 
 .c.o:
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
@@ -1570,6 +1601,48 @@ test_extra_flag_strings-dwarfstring.obj: dwarfstring.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(test_extra_flag_strings_CPPFLAGS) $(CPPFLAGS) $(test_extra_flag_strings_CFLAGS) $(CFLAGS) -c -o test_extra_flag_strings-dwarfstring.obj `if test -f 'dwarfstring.c'; then $(CYGPATH_W) 'dwarfstring.c'; else $(CYGPATH_W) '$(srcdir)/dwarfstring.c'; fi`
 
+test_linkedtopath-test_linkedtopath.o: test_linkedtopath.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(test_linkedtopath_CPPFLAGS) $(CPPFLAGS) $(test_linkedtopath_CFLAGS) $(CFLAGS) -MT test_linkedtopath-test_linkedtopath.o -MD -MP -MF $(DEPDIR)/test_linkedtopath-test_linkedtopath.Tpo -c -o test_linkedtopath-test_linkedtopath.o `test -f 'test_linkedtopath.c' || echo '$(srcdir)/'`test_linkedtopath.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/test_linkedtopath-test_linkedtopath.Tpo $(DEPDIR)/test_linkedtopath-test_linkedtopath.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='test_linkedtopath.c' object='test_linkedtopath-test_linkedtopath.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(test_linkedtopath_CPPFLAGS) $(CPPFLAGS) $(test_linkedtopath_CFLAGS) $(CFLAGS) -c -o test_linkedtopath-test_linkedtopath.o `test -f 'test_linkedtopath.c' || echo '$(srcdir)/'`test_linkedtopath.c
+
+test_linkedtopath-test_linkedtopath.obj: test_linkedtopath.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(test_linkedtopath_CPPFLAGS) $(CPPFLAGS) $(test_linkedtopath_CFLAGS) $(CFLAGS) -MT test_linkedtopath-test_linkedtopath.obj -MD -MP -MF $(DEPDIR)/test_linkedtopath-test_linkedtopath.Tpo -c -o test_linkedtopath-test_linkedtopath.obj `if test -f 'test_linkedtopath.c'; then $(CYGPATH_W) 'test_linkedtopath.c'; else $(CYGPATH_W) '$(srcdir)/test_linkedtopath.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/test_linkedtopath-test_linkedtopath.Tpo $(DEPDIR)/test_linkedtopath-test_linkedtopath.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='test_linkedtopath.c' object='test_linkedtopath-test_linkedtopath.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(test_linkedtopath_CPPFLAGS) $(CPPFLAGS) $(test_linkedtopath_CFLAGS) $(CFLAGS) -c -o test_linkedtopath-test_linkedtopath.obj `if test -f 'test_linkedtopath.c'; then $(CYGPATH_W) 'test_linkedtopath.c'; else $(CYGPATH_W) '$(srcdir)/test_linkedtopath.c'; fi`
+
+test_linkedtopath-dwarfstring.o: dwarfstring.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(test_linkedtopath_CPPFLAGS) $(CPPFLAGS) $(test_linkedtopath_CFLAGS) $(CFLAGS) -MT test_linkedtopath-dwarfstring.o -MD -MP -MF $(DEPDIR)/test_linkedtopath-dwarfstring.Tpo -c -o test_linkedtopath-dwarfstring.o `test -f 'dwarfstring.c' || echo '$(srcdir)/'`dwarfstring.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/test_linkedtopath-dwarfstring.Tpo $(DEPDIR)/test_linkedtopath-dwarfstring.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='dwarfstring.c' object='test_linkedtopath-dwarfstring.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(test_linkedtopath_CPPFLAGS) $(CPPFLAGS) $(test_linkedtopath_CFLAGS) $(CFLAGS) -c -o test_linkedtopath-dwarfstring.o `test -f 'dwarfstring.c' || echo '$(srcdir)/'`dwarfstring.c
+
+test_linkedtopath-dwarfstring.obj: dwarfstring.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(test_linkedtopath_CPPFLAGS) $(CPPFLAGS) $(test_linkedtopath_CFLAGS) $(CFLAGS) -MT test_linkedtopath-dwarfstring.obj -MD -MP -MF $(DEPDIR)/test_linkedtopath-dwarfstring.Tpo -c -o test_linkedtopath-dwarfstring.obj `if test -f 'dwarfstring.c'; then $(CYGPATH_W) 'dwarfstring.c'; else $(CYGPATH_W) '$(srcdir)/dwarfstring.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/test_linkedtopath-dwarfstring.Tpo $(DEPDIR)/test_linkedtopath-dwarfstring.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='dwarfstring.c' object='test_linkedtopath-dwarfstring.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(test_linkedtopath_CPPFLAGS) $(CPPFLAGS) $(test_linkedtopath_CFLAGS) $(CFLAGS) -c -o test_linkedtopath-dwarfstring.obj `if test -f 'dwarfstring.c'; then $(CYGPATH_W) 'dwarfstring.c'; else $(CYGPATH_W) '$(srcdir)/dwarfstring.c'; fi`
+
+test_linkedtopath-dwarf_debuglink.o: dwarf_debuglink.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(test_linkedtopath_CPPFLAGS) $(CPPFLAGS) $(test_linkedtopath_CFLAGS) $(CFLAGS) -MT test_linkedtopath-dwarf_debuglink.o -MD -MP -MF $(DEPDIR)/test_linkedtopath-dwarf_debuglink.Tpo -c -o test_linkedtopath-dwarf_debuglink.o `test -f 'dwarf_debuglink.c' || echo '$(srcdir)/'`dwarf_debuglink.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/test_linkedtopath-dwarf_debuglink.Tpo $(DEPDIR)/test_linkedtopath-dwarf_debuglink.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='dwarf_debuglink.c' object='test_linkedtopath-dwarf_debuglink.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(test_linkedtopath_CPPFLAGS) $(CPPFLAGS) $(test_linkedtopath_CFLAGS) $(CFLAGS) -c -o test_linkedtopath-dwarf_debuglink.o `test -f 'dwarf_debuglink.c' || echo '$(srcdir)/'`dwarf_debuglink.c
+
+test_linkedtopath-dwarf_debuglink.obj: dwarf_debuglink.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(test_linkedtopath_CPPFLAGS) $(CPPFLAGS) $(test_linkedtopath_CFLAGS) $(CFLAGS) -MT test_linkedtopath-dwarf_debuglink.obj -MD -MP -MF $(DEPDIR)/test_linkedtopath-dwarf_debuglink.Tpo -c -o test_linkedtopath-dwarf_debuglink.obj `if test -f 'dwarf_debuglink.c'; then $(CYGPATH_W) 'dwarf_debuglink.c'; else $(CYGPATH_W) '$(srcdir)/dwarf_debuglink.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/test_linkedtopath-dwarf_debuglink.Tpo $(DEPDIR)/test_linkedtopath-dwarf_debuglink.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='dwarf_debuglink.c' object='test_linkedtopath-dwarf_debuglink.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(test_linkedtopath_CPPFLAGS) $(CPPFLAGS) $(test_linkedtopath_CFLAGS) $(CFLAGS) -c -o test_linkedtopath-dwarf_debuglink.obj `if test -f 'dwarf_debuglink.c'; then $(CYGPATH_W) 'dwarf_debuglink.c'; else $(CYGPATH_W) '$(srcdir)/dwarf_debuglink.c'; fi`
+
 mostlyclean-libtool:
 	-rm -f *.lo
 
@@ -1821,6 +1894,20 @@ test_dwarfstring.log: test_dwarfstring$(EXEEXT)
 test_extra_flag_strings.log: test_extra_flag_strings$(EXEEXT)
 	@p='test_extra_flag_strings$(EXEEXT)'; \
 	b='test_extra_flag_strings'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+test_linkedtopath.log: test_linkedtopath$(EXEEXT)
+	@p='test_linkedtopath$(EXEEXT)'; \
+	b='test_linkedtopath'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
+testdebuglink.sh.log: testdebuglink.sh
+	@p='testdebuglink.sh'; \
+	b='testdebuglink.sh'; \
 	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \

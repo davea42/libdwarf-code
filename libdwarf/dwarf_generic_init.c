@@ -109,6 +109,16 @@ open_a_file(const char * name)
     return fd;
 }
 
+static int
+set_global_paths_init(Dwarf_Debug dbg, Dwarf_Error* error)
+{
+    int res = 0;
+
+    res = dwarf_add_debuglink_global_path(dbg,
+        "/usr/lib/debug",error);
+    return res;
+}
+
 /* New in December 2018. */
 int dwarf_init_path(const char *path,
     char *true_path_out_buffer,
@@ -161,12 +171,14 @@ int dwarf_init_path(const char *path,
             ftype,endian,offsetsize,filesize,
             access,groupnumber,errhand,errarg,&dbg,error);
         if (res != DW_DLV_OK) {
+            *ret_dbg = dbg;
             close(fd);
-        } else {
-            dbg->de_path = strdup(file_path);
-            dbg->de_fd = fd;
-            dbg->de_owns_fd = TRUE;
+            return res;
         }
+        dbg->de_path = strdup(file_path);
+        dbg->de_fd = fd;
+        dbg->de_owns_fd = TRUE;
+        res = set_global_paths_init(dbg,error);
         *ret_dbg = dbg;
         return res;
     }
@@ -177,11 +189,13 @@ int dwarf_init_path(const char *path,
             access,groupnumber,errhand,errarg,&dbg,error);
         if (res != DW_DLV_OK) {
             close(fd);
-        } else {
-            dbg->de_path = strdup(file_path);
-            dbg->de_fd = fd;
-            dbg->de_owns_fd = TRUE;
+            *ret_dbg = dbg;
+            return res;
         }
+        dbg->de_path = strdup(file_path);
+        dbg->de_fd = fd;
+        dbg->de_owns_fd = TRUE;
+        set_global_paths_init(dbg,error);
         *ret_dbg = dbg;
         return res;
     }
@@ -192,11 +206,12 @@ int dwarf_init_path(const char *path,
             access,groupnumber,errhand,errarg,&dbg,error);
         if (res != DW_DLV_OK) {
             close(fd);
-        } else {
-            dbg->de_path = strdup(file_path);
-            dbg->de_fd = fd;
-            dbg->de_owns_fd = TRUE;
+            *ret_dbg = dbg;
         }
+        dbg->de_path = strdup(file_path);
+        dbg->de_fd = fd;
+        dbg->de_owns_fd = TRUE;
+        set_global_paths_init(dbg,error);
         *ret_dbg = dbg;
         return res;
     }
@@ -235,24 +250,42 @@ dwarf_init_b(int fd,
     }
     switch(ftype) {
     case DW_FTYPE_ELF: {
-        res = _dwarf_elf_nlsetup(fd,"",
+        int res2 = 0;
+
+        res2 = _dwarf_elf_nlsetup(fd,"",
             ftype,endian,offsetsize,filesize,
             access,group_number,errhand,errarg,ret_dbg,error);
-        return res;
+        if (res2 != DW_DLV_OK) {
+            return res2;
+        }
+        set_global_paths_init(*ret_dbg,error);
+        return res2;
         }
     case DW_FTYPE_MACH_O: {
-        res = _dwarf_macho_setup(fd,"",
+        int resm = 0;
+
+        resm = _dwarf_macho_setup(fd,"",
             ftype,endian,offsetsize,filesize,
             access,group_number,errhand,errarg,ret_dbg,error);
-        return res;
+        if (resm != DW_DLV_OK) {
+            return resm;
+        }
+        set_global_paths_init(*ret_dbg,error);
+        return resm;
         }
 
     case DW_FTYPE_PE: {
-        res = _dwarf_pe_setup(fd,
+        int resp = 0;
+
+        resp = _dwarf_pe_setup(fd,
             "",
             ftype,endian,offsetsize,filesize,
             access,group_number,errhand,errarg,ret_dbg,error);
-        return res;
+        if (resp != DW_DLV_OK) {
+            return resp;
+        }
+        set_global_paths_init(*ret_dbg,error);
+        return resp;
         }
     }
     DWARF_DBG_ERROR(NULL, DW_DLE_FILE_WRONG_TYPE, DW_DLV_ERROR);
@@ -306,11 +339,11 @@ dwarf_finish(Dwarf_Debug dbg, Dwarf_Error * error)
     }
     free((void *)dbg->de_path);
     dbg->de_path = 0;
-    /*  dwarf_object_finish() also frees de_path, but that is safe
-        because we set it to zero here so no duplicate free will
-        occur.
-        Not all code uses libdwarf exactly as we do hence the extra
-        free() there. */
+    /*  dwarf_object_finish() also frees de_path, 
+        but that is safe because we set it to zero
+        here so no duplicate free will occur.
+        Not all code uses libdwarf exactly as we do
+        hence the free() there. */
     return dwarf_object_finish(dbg, error);
 }
 

@@ -21,11 +21,11 @@ cc -c -Wall -O0 -Wpointer-arith  -Wdeclaration-after-statement \
     are nothing of interest.
 */
 
-
+#include <stdio.h> /* for printf */
+#include <stdlib.h> /* for free() */
+#include <string.h> /* for memcmp() */
 #include "dwarf.h"
 #include "libdwarf.h"
-#include "stdlib.h" /* for free() */
-#include "string.h" /* for memcmp() */
 
 #define FALSE 0
 #define TRUE 1
@@ -1625,7 +1625,79 @@ void examplezb(void)
 }
 
 
-/*  Do something here. */
-void exampleabrev(Dwarf_Debug dbg)
+
+void exampledebuglink(Dwarf_Debug dbg)
 {
+    int      res = 0;
+    char    *debuglink_path = 0;
+    unsigned char *crc = 0;
+    char    *debuglink_fullpath = 0;
+    unsigned debuglink_fullpath_strlen = 0;
+    unsigned buildid_type = 0;
+    char *   buildidowner_name = 0;
+    unsigned char *buildid_itself = 0;
+    unsigned buildid_length = 0;
+    char **  paths = 0;
+    unsigned paths_count = 0;
+    Dwarf_Error error = 0;
+    unsigned i = 0;
+
+    /*  This is just an example if one knows
+        of another place full-DWARF objects
+        may be. "/usr/lib/debug" is automatically
+        set. */
+    res = dwarf_add_debuglink_global_path(dbg,
+        "/some/path/debug",&error);
+    if (res != DW_DLV_OK) {
+        /*  Something is wrong, but we'll ignore that 
+            here. */
+    }
+    res = dwarf_gnu_debuglink(dbg,
+        &debuglink_path,
+        &crc,
+        &debuglink_fullpath,
+        &debuglink_fullpath_strlen,
+        &buildid_type,
+        &buildidowner_name,
+        &buildid_itself,
+        &buildid_length,
+        &paths,
+        &paths_count,
+        &error);
+    if (res == DW_DLV_ERROR) {
+        /* Do something with the error */
+        return;
+    }
+    if (res == DW_DLV_NO_ENTRY) {
+        /*  No such sections as .note.gnu.build-id
+            or .gnu_debuglink  */
+        return;
+    }
+    if (debuglink_fullpath_strlen) {
+        printf("debuglink     path: %s\n",debuglink_path);
+        printf("crc length        : %u  crc: ",4);
+        for (i = 0; i < 4;++i ) {
+           printf("%02x",crc[i]);
+        }
+        printf("\n");
+        printf("debuglink fullpath: %s\n",debuglink_fullpath);
+    }
+    if(buildid_length) {
+        printf("buildid type      : %u\n",buildid_type);
+        printf("Buildid owner     : %s\n",buildidowner_name);
+        printf("buildid byte count: %u\n",buildid_length);
+        printf(" ");
+        /*   buildid_length should be 20. */
+        for (i = 0; i < buildid_length;++i) {
+           printf("%02x",buildid_itself[i]);
+        }
+        printf("\n");
+    }
+    printf("Possible paths count %u\n",paths_count);
+    for ( ; i < paths_count; ++i ){
+         printf("%2u: %s\n",i,paths[i]);
+    }
+    free(debuglink_fullpath);
+    free(paths);
+    return;
 }

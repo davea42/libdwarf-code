@@ -1061,8 +1061,7 @@ process_one_file(int fd, int tiedfd,
 
     /*  prints nothing unless section .gnu_debuglink is present.
         Lets print for a few critical sections.  */
-    if( glflags.gf_info_flag || glflags.gf_types_flag ||
-        glflags.gf_gnu_debuglink_flag) {
+    if( glflags.gf_gnu_debuglink_flag) {
         print_gnu_debuglink(dbg);
     }
 
@@ -1351,83 +1350,72 @@ static void
 print_gnu_debuglink(Dwarf_Debug dbg)
 {
     int         res = 0;
-    Dwarf_Error linkerror = 0;
     char *      name = 0;
-    char *      crcbytes = 0;
-    char *      link_name = 0;
-    unsigned    link_name_len = 0;
-    Dwarf_Unsigned idtype = 0;
-    const char * idowner = 0;
-    Dwarf_Unsigned idlength = 0;
-    const unsigned char *idbyteptr = 0;
+    unsigned char *crcbytes = 0;
+    char *      link_path = 0;
+    unsigned    link_path_len = 0;
+    unsigned    buildidtype = 0;
+    char       *buildidowner = 0;
+    unsigned char *buildidbyteptr = 0;
+    unsigned    buildidlength = 0;
+    char      **paths_array = 0;
+    unsigned    paths_array_length = 0;
+    Dwarf_Error linkerror = 0;
 
     res = dwarf_gnu_debuglink(dbg,
         &name,
         &crcbytes,
-        &link_name,&link_name_len,
-        &linkerror);
-    if (res == DW_DLV_NO_ENTRY) {
-        /* pass down to id section */
-    } else {
-        print_secname(dbg,".gnu_debuglink");
-        if (res == DW_DLV_ERROR) {
-            print_error_and_continue(dbg,
-                "Error reading .gnu_debuglink",
-                res, linkerror);
-        } else {
-        /* Done with error checking, so print if we are printing. */
-            if (glflags.gf_do_print_dwarf)  {
-                printf(" Debuglink name  : %s",sanitized(name));
-                {
-                    char *crc = 0;
-                    char *end = 0;
-
-                    crc = crcbytes;
-                    end = crcbytes +4;
-                    printf("   crc 0X: ");
-                    for (; crc < end; crc++) {
-                        printf("%02x ", (unsigned char)*crc);
-                    }
-                }
-                printf("\n");
-                if (link_name_len) {
-                    printf(" Debuglink target: %s\n",sanitized(link_name));
-                }
-                free(link_name);
-                link_name = 0;
-            }
-        }
-    }
-
-    res =  dwarf_gnu_buildid(dbg,
-        &idtype,
-        &idowner,
-        &idlength,
-        &idbyteptr,
+        &link_path,     /* free this */
+        &link_path_len,
+        &buildidtype,
+        &buildidowner,
+        &buildidbyteptr, &buildidlength,
+        &paths_array,  /* free this */
+        &paths_array_length,
         &linkerror);
     if (res == DW_DLV_NO_ENTRY) {
         return;
+    } else if (res == DW_DLV_ERROR) {
+        print_error_and_continue(dbg,
+            "Error accessing debuglink or note section",
+            res,linkerror);
     }
-    {
-        print_secname(dbg,".note.gnu.build-id");
-        if (res == DW_DLV_ERROR) {
-            print_error_and_continue(dbg,
-                "Error reading .note.gnu.build-id",
-                res, linkerror);
-            return;
-        }
+    if (crcbytes) {
+        print_secname(dbg,".gnu_debuglink");
         /* Done with error checking, so print if we are printing. */
         if (glflags.gf_do_print_dwarf)  {
-            printf(" Build-id  type     : %" DW_PR_DUu "\n",idtype);
-            printf(" Build-id  ownername: %s\n",sanitized(idowner));
-            printf(" Build-id  length   : %" DW_PR_DUu "\n",idlength);
+            printf(" Debuglink name  : %s",sanitized(name));
+            {
+                unsigned char *crc = 0;
+                unsigned char *end = 0;
+
+                crc = crcbytes;
+                end = crcbytes +4;
+                printf("   crc 0X: ");
+                for (; crc < end; crc++) {
+                    printf("%02x ", *crc);
+                }
+            }
+            printf("\n");
+            if (link_path_len) {
+                printf(" Debuglink target: %s\n",sanitized(link_path));
+            }
+        }
+    }
+    if (buildidlength) {
+        print_secname(dbg,".note.gnu.build-id");
+        if (glflags.gf_do_print_dwarf)  {
+            printf(" Build-id  type     : %u\n", buildidtype);
+            printf(" Build-id  ownername: %s\n",
+                sanitized(buildidowner));
+            printf(" Build-id  length   : %u\n",buildidlength);
             printf(" Build-id           : ");
             {
                 const unsigned char *cur = 0;
                 const unsigned char *end = 0;
 
-                cur = idbyteptr;
-                end = cur + idlength;
+                cur = buildidbyteptr;
+                end = cur + buildidlength;
                 for (; cur < end; cur++) {
                     printf("%02x", (unsigned char)*cur);
                 }
@@ -1435,6 +1423,20 @@ print_gnu_debuglink(Dwarf_Debug dbg)
             printf("\n");
         }
     }
+    if (paths_array_length) {
+        unsigned i = 0;
+
+        printf(" Possible "
+            ".gnu_debuglink/.note.gnu.build-id pathnames for\n");
+        printf(" an alternate object file with more detailed DWARF\n");
+        for( ; i < paths_array_length; ++i) {
+            char *path = paths_array[i];
+            printf("  [%u] %s\n",i,sanitized(path));
+        }
+        printf("\n");
+    }
+    free(link_path);
+    free(paths_array);
 }
 
 /* GCC linkonce names */

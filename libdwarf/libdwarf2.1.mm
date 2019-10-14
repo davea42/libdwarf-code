@@ -11,7 +11,7 @@ e."
 .S +2
 \." ==============================================
 \." Put current date in the following at each rev
-.ds vE Rev 2.80, 26 September 2019
+.ds vE Rev 2.81, 14 October 2019
 \." ==============================================
 \." ==============================================
 .ds | |
@@ -2402,35 +2402,6 @@ On error the function returns
 The string pointed to by
 \f(CW*actual_sec_name_out\fP
 must not be free()d.
-
-.H 3 "dwarf_add_file_path()"
-This function is new as of September 2019.
-For those not using
-\f(CWdwarf_init_path()\fP and wanting 
-\f(CWdwarf_gnu_debuglink()\fP
-calls to work fully
-it is advisable to call 
-\f(CWdwarf_add_file_path\fP
-immediately after the dwarf_init() function returns.
-.DS
-\f(CWint dwarf_add_file_path(Dwarf_Debug dbg,
-    const char * file_name,
-    Dwarf_Error* error);\fP
-.DE
-On success this adds a copy of the pointed-to string
-into the Dwarf_Debug record and returns
-\f(CWDW_DLV_OK\fP.
-.P
-It might return
-\f(CWDW_DLV_NO_ENTRY\fP
-though the initial implementation
-never does this.
-.P
-It might return
-\f(CWDW_DLV_ERROR\fP,
-though the initial implementation
-never does this.
-
 
 .H 2 "Object Type Detectors"
 These are used by
@@ -12299,120 +12270,215 @@ This section deals with the way GNU tools
 allow creation of DWARF separated from the
 executable file involved.
 See
-https://sourceware.org/gdb/onlinedocs/gdb/Separate-Debug-Files.html
-for more information.
-The functions here are new in September 2019.
+https://sourceware.org/gdb/onlinedocs
+/gdb/Separate-Debug-Files.html
+for more information 
+(the line break is just
+to make this url print nicely, there is no space).
+The function here is new in September 2019, revised
+in October 2019.
+An example of use follows the description
+of arguments.
 .H 3 "dwarf_gnu_debuglink()"
 .DS
 \f(CWint dwarf_gnu_debuglink(Dwarf_Debug dbg,
-    char **      name_returned,
-    char **      crc_returned from the debuglink section,
-    char **      debuglink_path_returned,
-    unsigned *   debuglink_path_size_returned,
+    char    **debuglink_path_returned,
+    unsigned char **crc_returned,
+    char    **debuglink_fullpath_returned,
+    unsigned *buildid_type returned,
+    char    **builid_returned,
+    unsigned *builid_length_returned,
+    char   ***paths_returned,
+    unsigned *paths_count_returned,
     Dwarf_Error* error);\fP
 .DE
 This returns 
 \f(CWDW_DLV_NO_ENTRY\fP
-if there is no .gnu_debuglink object-file section.
+if there is neither a \f(CW.gnu_debuglink\fP object-file section
+nor a \f(CW.note.gnu.build-id\fP section in the object file.
 .P
-If it returns
-\f(CWDW_DLV_OK\fP
-a pointer to the target-file name in the section is returned
-through the pointer
-\f(CWname_returned\fP
-and a pointer to a 4-byte CRC value is returned
-through the pointer
-\f(CWcrc_returned\fP.
-If the function finds a file corresponding
-to the target-file a pointer to that
-is returned 
-through the pointer
-\f(CWdebuglink_path_returned\fP
-and the string length is returned
-through the pointer
-\f(CWdebuglink_path_size_returned\fP.
-If the function does not find a
-file corresponding the the target-file
-a zero is returned
-through the pointer
-\f(CWdebuglink_path_size_returned\fP
-and debuglink_path_returned is ignored.
-.P
-When the function reports a file 
-in
-\f(CWdebuglink_path_returned\fP
-it
-verifies the file in one of the documented
-places exists and prints its name,
-but the function does not, at this time,
-verify that the CRC in the file
-matches the CRC in the .gnu_debuglink
-section.
-Callers must free() the path returned.
-.P
-In case of error the function returns
+If there is an error it returns
 \f(CWDW_DLV_ERROR\fP
-and returns the error value through
-\f(CWerror\fP
-like
-other functions in the library.
-
-.H 3 "dwarf_gnu_buildid()"
-.DS
-\f(CWint dwarf_gnu_buildid(Dwarf_Debug dbg,
-    Dwarf_Unsigned *  type_returned,
-    const char     ** owner_name_returned,
-    Dwarf_Unsigned *  build_id_length_returned,
-    const unsigned char  ** build_id_returned,
-    Dwarf_Error    *  error);\fP
-.DE
-This function looks for the GNU section 
-\f(CW.note.gnu.buildid\fP
-and, if the section is absent, returns 
-\f(CWDW_DLV_NO_ENTRY\fP. 
-.P
-On failure it returns
-\f(CWDW_DLV_ERROR\fP
-and sets the
-\f(CWerror\fP pointer to point to an
-error item.
+and sets
+\f(CW*error\fP to point to the error value.
 .P
 On success it returns
-\f(CWDW_DLV_OK\fP and returns
-value through the pointers
-as described just below.
-.P
-Both pointers returned point
-to static storage and callers
-should not free() either one.
-.P
-\f(CWtype_returned\fP
-returns a type number of 3.
-It's symbolic name is 
-\f(CWNT_GNU_BUILD_ID\fP.
+\f(CWDW_DLV_OK\fP and 
+sets the fields through the pointers as described below.
+Two fields must be free()d to avoid a memory leak.
+None of the other fields should be freed.
 
-\f(CWowner_name_returned\fP returns
-a pointer to a static string.
-If GNU tools built the object file
-being read the string will be "GNU"
-(without the quotes).  Note that in
-the section the owner name length
-shown counts the terminating NUL
-byte (the count is not returned
-as it's not needed by callers).
 .P
-\f(CWbuild_id_length\fP returns
-the length in bytes of the build id.
-This is always 20 bytes.
+If there is a
+\f(CW.gnu_debuglink\fP
+section the first four fields will be set.
 .P
-\f(CWbuild_id_returned\fP
-returns a pointer to the build id 
-byte array.  
-It is neither a string
-nor printable
-and there is no NUL terminator.
-Print it as an array or 
-list of hex digits.
+\f(CW*debuglink_path_returned\fP
+points to the null-terminated string
+in the section.
+It must not be free()d.
+.P
+\f(CW*crc_returned\fP points
+to a 4-byte CRC value. The
+bytes pointed to are not a string.
+.P
+\f(CW*debuglink_fullpath_returned\fP
+points to a full pathname derived from
+the 
+\f(CW*debuglink_fullpath_returned\fP
+string.
+And then 
+\f(CW*debuglink_fullpath_strlen\fP
+is set to the length of
+\f(CW*debuglink_fullpath_returned\fP
+just as
+\f(CWstrlen()\fP would count the length.
+Callers must
+free() \f(CW*debuglink_fullpath_returned\fP.
+.P
+If there is a
+\f(CW.note.gnu.build-id\fP
+section the buildid fields will be set
+through the pointers.
+.P
+\f(CW*buildid_type_returned\fP will be set to 
+the value 3.
+.P
+\f(CW*buildid_owner_name_returned\fP will be set to 
+point to the null-terminated string which will
+be  "GNU".
+Do not free() this.
+.P
+\f(CW*buildid_returned\fP will be set to 
+point to the group of bytes
+of length
+\f(CW*buildid_length_returned\fP.
+This is not a string and is not null-terminated.
+It is normally a 20-byte field to be used
+in its ascii-hex form.
+Do not free() this.
+.P
+The following fields,
+\f(CW*paths_returned\fP
+\f(CW*paths_count_returned\fP
+provide an array of pointers-to-strings
+(with the actual strings following
+the array) and the count of the
+pointers in the array.
+When the strings are no longer needed
+free()
+\f(CW*paths_returned\fP.
+The number of paths returned will depend
+on which (of the two) sections exist and on
+how many global paths have been set
+by 
+\f(CWdwarf_add_debuglink_global_path()\fP.
+and defined by the rules described in the
+web page mentioned above.
+The default global path is "/usr/lib/debug"
+and that is set by libdwarf as 
+\f(CWpaths_returned[0]\fP.
+.P
+An example of calling this function follows
+.DS
+.FG "Exampley dwarf_get_xu_index_header()"
+\f(CWvoid exampledebuglink(Dwarf_Debug dbg)
+{
+    int      res = 0;
+    char    *debuglink_path = 0;
+    unsigned char *crc = 0;
+    char    *debuglink_fullpath = 0;
+    unsigned debuglink_fullpath_strlen = 0;
+    unsigned buildid_type = 0;
+    char *   buildidowner_name = 0;
+    unsigned char *buildid_itself = 0;
+    unsigned buildid_length = 0;
+    char **  paths = 0;
+    unsigned paths_count = 0;
+    Dwarf_Error error = 0;
+    unsigned i = 0;
+
+    /*  This is just an example if one knows
+        of another place full-DWARF objects
+        may be. "/usr/lib/debug" is automatically
+        set. */
+    res = dwarf_add_debuglink_global_path(dbg,
+        "/some/path/debug",&error);
+    if (res != DW_DLV_OK) {
+        /*  Something is wrong, but we'll ignore
+            that. */
+    } 
+
+    res = dwarf_gnu_debuglink(dbg,
+        &debuglink_path,
+        &crc,
+        &debuglink_fullpath,
+        &debuglink_fullpath_strlen,
+        &buildid_type,
+        &buildidowner_name,
+        &buildid_itself,
+        &buildid_length,
+        &paths,
+        &paths_count,
+        &error);
+    if (res == DW_DLV_ERROR) {
+        /* Do something with the error */
+        return;
+    }
+    if (res == DW_DLV_NO_ENTRY) {
+        /*  No such sections as .note.gnu.build-id
+            or .gnu_debuglink  */
+        return;
+    }
+    if (debuglink_fullpath_strlen) {
+        printf("debuglink     path: %s\n",debuglink_path);
+        printf("crc length        : %u  crc: ",4);
+        for (i = 0; i < 4;++i ) {
+           printf("%02x",crc[i]);
+        }
+        printf("\n");
+        printf("debuglink fullpath: %s\n",debuglink_fullpath);
+    }
+    if(buildid_length) {
+        printf("buildid type      : %u\n",buildid_type);
+        printf("Buildid owner     : %s\n",buildidowner_name);
+        printf("buildid byte count: %u\n",buildid_length);
+        printf(" ");
+        /*   buildid_length should be 20. */
+        for (i = 0; i < buildid_length;++i) {
+           printf("%02x",buildid_itself[i]);
+        }
+        printf("\n");
+    }
+    printf("Possible paths count %u\n",paths_count);
+    for ( ; i < paths_count; ++i ){
+         printf("%2u: %s\n",i,paths[i]);
+    }
+    free(debuglink_fullpath);
+    free(paths);
+    return;
+}
+\fP
+.DE
+
+.H 3 "dwarf_add_debuglink_global_path()"
+.DS
+\f(CWint dwarf_add_debuglink_global_path(Dwarf_Debug dbg,
+    const char * path,
+    Dwarf_Error* error);\fP
+.DE
+This is unlikely to return 
+\f(CWDW_DLV_ERROR\fP
+unless one passes in a NULL instead of an open 
+\f(CWDwarf_Debug\fP.
+It cannot return 
+\f(CWDW_DLV_NO_ENTRY\fP.
+.P
+On success it returns
+\f(CWDW_DLV_OK\fP
+after adding the path
+to the global list recorded in the
+\f(CWDwarf_Debug\fP.
 
 
 

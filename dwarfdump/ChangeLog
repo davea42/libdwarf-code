@@ -1,3 +1,11 @@
+2019-10-14 David Anderson
+     * command_options.c: Revised the settings of
+       glflags.gf_gnu_debuglink_flag.
+     * dwarfdump.c: Now we only print debuglink etc
+       on request via --print-gnu-debuglink.
+       Now call the latest, best version of 
+       dwarf_gnu_debuglink() handling both .gnu_debuglink
+       and .note.gnu.build-id sections.
 2019-10-02 David Anderson
      * runtests.sh: Added mach-o sanity test case.
      * test-mach-o-32.base,testobjLE32PE.base,testuriLE64ELf.base:

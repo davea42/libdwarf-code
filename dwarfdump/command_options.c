@@ -107,7 +107,7 @@ do_all(void)
     glflags.gf_pubtypes_flag = TRUE;  /* both SGI typenames
         and dwarf_pubtypes. */
     glflags.gf_weakname_flag = TRUE; /* SGI only*/
-    glflags.gf_gnu_debuglink_flag = TRUE;
+    glflags.gf_gnu_debuglink_flag = FALSE;
 #if 0
     glflags.gf_header_flag = TRUE;
     /*  Setting this flag without saying what sections to print
@@ -1262,7 +1262,6 @@ void arg_print_info(void)
 {
     glflags.gf_info_flag = TRUE;
     glflags.gf_types_flag = TRUE;
-    glflags.gf_gnu_debuglink_flag = TRUE;
     suppress_check_dwarf();
 }
 
@@ -1651,7 +1650,6 @@ void arg_print_lines(void)
 {
     /* Enable to suppress offsets printing */
     glflags.gf_line_flag = TRUE;
-    glflags.gf_gnu_debuglink_flag = TRUE;
     suppress_check_dwarf();
 }
 

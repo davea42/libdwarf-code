@@ -511,10 +511,13 @@ struct Dwarf_Debug_s {
         under de_obj_file. */
     int  de_fd;
     char de_owns_fd;
-    /*  de_path is only set if dwarf_init_path()
+    /*  de_path is only set automatically if dwarf_init_path()
         was used to initialize things.
         Used with the .gnu_debuglink section. */
     const char *de_path;
+
+    const char ** de_gnu_global_paths;
+    unsigned      de_gnu_global_path_count;
 
     struct Dwarf_Debug_InfoTypes_s de_info_reading;
     struct Dwarf_Debug_InfoTypes_s de_types_reading;

@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2019-2019, David Anderson
+Copyright (c) 2019, David Anderson
 All rights reserved.
 
 Redistribution and use in source and binary forms, with
@@ -27,46 +27,29 @@ LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
 HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
 CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
 OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
-EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-*/
+EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.  */
 
-/*  A lightly generalized string buffer for libdwarf.
-*/
-#ifndef DWARFSTRING_H
-#define DWARFSTRING_H
+#ifndef DWARF_DEBUGLINK_H
+#define DWARF_DEBUGLINK_H
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
 
-struct dwarfstring_s {
-   char *        s_data;
-   unsigned long s_size;
-   unsigned long s_avail;
-   unsigned char s_malloc;
-};
+int _dwarf_pathjoinl(dwarfstring *target,dwarfstring * input);
 
-typedef struct dwarfstring_s dwarfstring;
-
-int dwarfstring_constructor(struct dwarfstring_s *g);
-int dwarfstring_constructor_fixed(struct dwarfstring_s *g,
-    unsigned long len);
-int dwarfstring_constructor_static(struct dwarfstring_s *g,
-    char * space,
-    unsigned long len);
-void dwarfstring_destructor(struct dwarfstring_s *g);
-int dwarfstring_reset(struct dwarfstring_s *g);
-
-
-int dwarfstring_append(struct dwarfstring_s *g,char *str);
-
-/*  When one wants the first 'len' characters of str
-    appended. NUL termination is provided by dwarfstrings. */
-int dwarfstring_append_length(struct dwarfstring_s *g,
-    char *str,unsigned long len);
-
-char * dwarfstring_string(struct dwarfstring_s *g);
-unsigned long dwarfstring_strlen(struct dwarfstring_s *g);
+int _dwarf_construct_linkedto_path(
+   char         **global_prefixes_in,
+   unsigned       length_global_prefixes_in,
+   char          *pathname_in,
+   char          *link_string_in, /* from debug link */
+   dwarfstring   *link_string_fullpath,
+   unsigned char *crc_in, /* from debug_link, 4 bytes */
+   unsigned char *buildid, /* from gnu buildid */
+   unsigned       buildid_length, /* from gnu buildid */
+   char        ***paths_out,
+   unsigned      *paths_out_length,
+   int *errcode);
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */
-#endif /* DWARFSTRING_H */
+#endif /* DWARF_DEBUGLINK_H */

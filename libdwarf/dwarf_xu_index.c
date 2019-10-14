@@ -52,10 +52,17 @@
 #define TRUE 1
 #define FALSE 0
 
+/* The following actually assumes (as used here)
+    that t is 8 bytes (integer) while s is
+    also 8 bytes (Dwarf_Sig8 struct). */
 #ifdef WORDS_BIGENDIAN
 #define ASNAR(t,s,l)                   \
     do {                                    \
         unsigned tbyte = sizeof(t) - l;     \
+        if (sizeof(t) < l) {                \
+           _dwarf_error(dbg,error,DW_DLE_XU_HASH_INDEX_ERROR); \
+           return DW_DLV_ERROR;             \
+        }                                   \
         t = 0;                              \
         dbg->de_copy_word(((char *)&t)+tbyte ,&s[0],l);\
     } while (0)
@@ -63,6 +70,10 @@
 #define ASNAR(t,s,l)                 \
     do {                                \
         t = 0;                          \
+        if (sizeof(t) < l) {            \
+           _dwarf_error(dbg,error,DW_DLE_XU_HASH_INDEX_ERROR); \
+           return DW_DLV_ERROR;         \
+        }                               \
         dbg->de_copy_word(&t,&s[0],l);  \
     } while (0)
 #endif /* end LITTLE- BIG-ENDIAN */
@@ -442,8 +453,7 @@ _dwarf_search_fission_for_key(UNUSEDARG Dwarf_Debug dbg,
         /* The hash won't work right in this case */
         _dwarf_error(dbg, error, DW_DLE_XU_HASH_ROW_ERROR);
     }
-    ASNAR(key,key_in,sizeof(key_in));
-
+    ASNAR(key,key_in,sizeof(*key_in));
     primary_hash = key & mask;
     hashprime =  (((key >>32) &mask) |1);
     while (1) {

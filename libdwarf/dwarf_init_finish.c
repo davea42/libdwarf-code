@@ -1573,7 +1573,9 @@ dwarf_object_init_b(Dwarf_Obj_Access_Interface* obj, Dwarf_Handler errhand,
 int
 dwarf_object_finish(Dwarf_Debug dbg, Dwarf_Error * error)
 {
-    int res = _dwarf_free_all_of_one_debug(dbg);
+    int res = 0;
+
+    res = _dwarf_free_all_of_one_debug(dbg);
     if (res == DW_DLV_ERROR) {
         DWARF_DBG_ERROR(dbg, DW_DLE_DBG_ALLOC, DW_DLV_ERROR);
     }

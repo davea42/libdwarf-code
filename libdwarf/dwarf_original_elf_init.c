@@ -105,6 +105,12 @@ dwarf_elf_init_b(
         dwarf_elf_object_access_finish(binary_interface);
         return res;
     }
+    res = dwarf_add_debuglink_global_path(*ret_dbg,
+        "/usr/lib/debug",error);
+    if (res != DW_DLV_OK){
+        dwarf_elf_object_access_finish(binary_interface);
+        return res;
+    }
     /* DBG known */
     return res;
 #endif /* DWARF_WITH_LIBELF */
@@ -200,8 +206,13 @@ _dwarf_elf_setup(
         dbg, error);
     if (res != DW_DLV_OK){
         dwarf_elf_object_access_finish(binary_interface);
-    } else {
-        (*dbg)->de_filesize = filesize;
+        return res;
+    }
+    (*dbg)->de_filesize = filesize;
+    res = dwarf_add_debuglink_global_path(*dbg,
+        "/usr/lib/debug",error);
+    if (res != DW_DLV_OK){
+        dwarf_elf_object_access_finish(binary_interface);
     }
     return res;
 #endif /* DWARF_WITH_LIBELF */
