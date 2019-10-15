@@ -1,4 +1,8 @@
 2019-10-14 David Anderson
+     * dwarf_names.c,dwarf_names.h,dwarfdump-ta-ext-table.h,
+       dwarfdump-ta-table.h,dwarfdump-tt-ext-table.h,
+       dwarfdump-tt-table.h : new version string.
+2019-10-14 David Anderson
      * command_options.c: Revised the settings of
        glflags.gf_gnu_debuglink_flag.
      * dwarfdump.c: Now we only print debuglink etc

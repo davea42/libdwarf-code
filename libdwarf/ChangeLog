@@ -1,4 +1,8 @@
 2019-10-14 David Anderson
+     * dwarf_names.c,dwarf_names.h, dwarf_names_enum.h,
+       dwarf_names_new.h: regenerated with new version string.
+     * libdwarf_version.h: updated version string.
+2019-10-14 David Anderson
      * CMakeLists.txt: Addded dwarf_debuglink.h to sourcefiles.
      * Added tests of the debuglink stuff.
      * Makefile.in: regenerated.
