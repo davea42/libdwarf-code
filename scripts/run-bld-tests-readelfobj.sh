@@ -3,113 +3,175 @@ start=`date`
 echo start at 
 date
 here=`pwd`
+
+ddsrc=$here/dwarfdump
+rosrc=$here/../readelfobj
+rtestsrc=$here/../regressiontests
+
+ddbld=/tmp/vaddbld
+robld=/tmp/varobld
+
 echo run from $here
-if [ ! -d dwarfdump ]
+if [ ! -d $here/dwarfdump ]
 then
-   echo "A: This is not the libdwarf 'code' directory"
-   echo Giving up.
+   echo "A FAIL: This is not the libdwarf 'code' directory "
+   echo "A FAIL: $here/dwarfdump missing. Run from 'code'"
+   echo FAIL Giving up.
    exit 1
 fi
-if [ ! -d libdwarf ]
+if [ ! -d $here/libdwarf ]
 then
-  echo "B: This is not the libdwarf 'code' directory "
-  echo Giving up.
+  echo "B FAIL: This is not the libdwarf 'code' directory "
+  echo "B FAIL: $here/libdwarf missing"
+  echo FAIL Giving up.
   exit 1
 fi
-if [ ! -d dwarfexample ]
+if [ ! -d $here/dwarfexample ]
 then
-  echo "C: This is not the libdwarf 'code' directory"
-  echo Giving up.
-  exit 1
-fi
-
-oac=/tmp/overallcheck
-rm -rf $oac
-mkdir $oac
-if [ $? -ne 0  ]
-then
-  echo "D: unable to create $oac, giving up."
-  exit 1
-fi
-cd $oac
-if [ $? -ne 0  ]
-then
-  echo "E: unable to cd to $oac, giving up."
-  exit 1
-fi
-$here/configure --enable-wall --enable-dwarfgen --enable-dwarfexample
-if [ $? -ne 0  ]
-then
-  echo "F: configure failed in $oac giving up."
-  exit 1
-fi
-make check
-if [ $? -ne 0  ]
-then
-  echo "G: make check failed in $oac, giving up."
-  exit 1
-fi
-echo "PASS doing make check on $here"
-
-#=======now readelfobj
-rodir=$here/../readelfobj
-if [ $? -ne 0  ]
-then
-  echo "K: cd  $rodir failed, giving up."
-  exit 1
-fi
-robld=/tmp/robld
-rm -rf $robld
-mkdir $robld
-echo "Now run readelfobj in $robld from readelfobj source $rodir"
-if [ $? -ne 0  ]
-then
-  echo "L: $robld mkdir failed, giving up."
-  exit 1
-fi
-cd $robld
-if [ $? -ne 0  ]
-then
-  echo "M: cd $robld failed, giving up."
-  exit 1
-fi
-$rodir/configure --enable-wall
-if [ $? -ne 0  ]
-then
-  echo "N: configure $rodir/configure failed, giving up."
-  exit 1
-fi
-make check
-if [ $? -ne 0  ]
-then
-  echo "O: make check in $rodir failed, giving up."
+  echo "C FAIL: This is not the libdwarf 'code' directory"
+  echo "C FAIL: $here/dwarfexample missing"
+  echo FAIL Giving up.
   exit 1
 fi
 
-#=================now run tests
+# ========
+builddwarfdump() {
+  oac=$ddbld
+  rm -rf $oac
+  mkdir $oac
+  if [ $? -ne 0  ]
+  then
+    echo "D FAIL: unable to create $oac, giving up."
+    exit 1
+  fi
+  cd $oac
+  if [ $? -ne 0  ]
+  then
+    echo "E FAIL: unable to cd to $oac, giving up."
+    exit 1
+  fi
+  $here/configure --enable-wall --enable-dwarfgen --enable-dwarfexample
+  if [ $? -ne 0  ]
+  then
+    echo "F FAIL: configure failed in $oac giving up."
+    exit 1
+  fi
+  make check
+  if [ $? -ne 0  ]
+  then
+    echo "G FAIL: make check failed in $oac, giving up."
+    exit 1
+  fi
+  echo "PASS doing make check on $here, build in $oac"
+}
 
-ddtestdir=$here/../regressiontests
-echo "now run regressiontests in $ddtestdir"
-cd $ddtestdir
-if [ $? -ne 0  ]
+rundistcheck()
+{
+  sh scripts/buildandreleasetest.sh
+  if [ $? -ne 0 ]
+  then
+     echo "P FAIL: scripts/buildandreleasetest.sh FAIL"
+  fi
+  echo PASS scripts/buildandreleasetest.sh
+}
+
+#======= readelfobj, readobjpe, readobjmacho etc tests
+# with make check
+buildreadelfobj() {
+  rodir=$rosrc
+  if [ $? -ne 0  ]
+  then
+    echo "K FAIL: cd  $rodir failed, giving up."
+    exit 1
+  fi
+  rm -rf $robld
+  mkdir $robld
+  echo "Now run readelfobj in $robld from readelfobj source $rodir"
+  if [ $? -ne 0  ]
+  then
+    echo "L FAIL: $robld mkdir failed, giving up."
+    exit 1
+  fi
+  cd $robld
+  if [ $? -ne 0  ]
+  then
+    echo "M FAIL: cd $robld failed, giving up."
+    exit 1
+  fi
+  $rodir/configure --enable-wall
+  if [ $? -ne 0  ]
+  then
+    echo "N FAIL: configure $rodir/configure failed, giving up."
+    exit 1
+  fi
+  make check
+  if [ $? -ne 0  ]
+  then
+    echo "O FAIL: make check in $rodir failed, giving up."
+    exit 1
+  fi
+}
+
+#=================now run tests, meaning regressiontests
+
+runfullddtest() {
+  ddtestdir=$rtestsrc
+  echo "now run regressiontests in $ddtestdir"
+  cd $ddtestdir
+  if [ $? -ne 0  ]
+  then
+    echo "H FAIL: cd $ddtestdir failed , giving up."
+    exit 1
+  fi
+  # Ensure no leftovers, ok if it fails
+  make distclean
+  ./configure
+  if [ $? -ne 0  ]
+  then
+    echo "I FAIL: configure in $ddtestdir failed , giving up."
+    exit 1
+  fi
+  make
+  if [ $? -ne 0  ]
+  then
+    echo "J FAIL: tests failed in $ddtestdir , giving up."
+    exit 1
+  fi
+  grep FAIL <$ddtestdir/ALLdd
+  grep "FAIL 0" $ddtestdir/ALLdd
+  if [ $? -ne 0 ]
+  then
+    echo "Q FAIL: something failed in $ddtestdir."
+    exit 1
+  fi
+  tail -40 $ddtestdir/ALLdd
+  echo "PASS full regressiontests"
+}
+
+
+#========actually run tests
+if [ -d $ddsrc ]
 then
-  echo "H: cd $ddtestdir failed , giving up."
-  exit 1
+  builddwarfdump
+  rundistcheck
+else
+  echo "dwarfdump make check etc not run"
 fi
-./configure
-if [ $? -ne 0  ]
+if [ -d $rosrc ]
 then
-  echo "I: configure in $ddtestdir failed , giving up."
-  exit 1
+  buildreadelfobj
+else
+  echo "readelfobj make check etc not run"
 fi
-make
-if [ $? -ne 0  ]
+if [ -d $rtestsrc ]
 then
-  echo "J: tests failed in $ddtestdir , giving up."
-  exit 1
+  runfullddtest
+else
+  echo "dwarfdump regressiontests not run"
 fi
+
+
 echo "Done with all tests"
-
 echo "PASS"
 echo "started at $start"
 don=`$date`
