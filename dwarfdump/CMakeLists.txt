@@ -84,6 +84,10 @@ if (DO_TESTING)
        makename_test.c esb.c dwarf_tsearchbal.c makename.c)
     add_executable(selfmakename ${MAKENAME_SOURCES})
     target_compile_options(selfmakename PRIVATE ${DW_FWALL})
+    target_compile_options(selfmakename PRIVATE 
+        "-I${CMAKE_SOURCE_DIR}/libdwarf")
+    target_compile_options(selfmakename PRIVATE 
+        "-I${CMAKE_BINARY_DIR}/libdwarf")
     add_test(NAME selfmakename COMMAND selfmakename)
 endif()
 
@@ -93,6 +97,12 @@ if (DO_TESTING)
        helpertree_test.c helpertree.c dwarf_tsearchbal.c)
     add_executable(selfhelpertree ${HELPERTREE_SOURCES})
     target_compile_options(selfhelpertree PRIVATE ${DW_FWALL})
+    target_compile_options(selfhelpertree PRIVATE 
+        "-I${CMAKE_SOURCE_DIR}/dwarfdump")
+    target_compile_options(selfhelpertree PRIVATE 
+        "-I${CMAKE_SOURCE_DIR}/libdwarf")
+    target_compile_options(selfhelpertree PRIVATE 
+        "-I${CMAKE_BINARY_DIR}/libdwarf")
     add_test(NAME selfhelpertree COMMAND selfhelpertree)
 endif()
 
@@ -102,6 +112,10 @@ if (DO_TESTING)
     add_executable(selfmc ${SELFMC_SOURCES} )
     target_compile_options(selfmc PRIVATE ${SELFTEST} )
     target_compile_options(selfmc PRIVATE ${DW_FWALL})
+    target_compile_options(selfmc PRIVATE 
+        "-I${CMAKE_SOURCE_DIR}/libdwarf")
+    target_compile_options(selfmc PRIVATE 
+        "-I${CMAKE_BINARY_DIR}/libdwarf")
     add_test(NAME selfmc COMMAND selfmc)
 endif()
 
@@ -111,6 +125,10 @@ if (DO_TESTING)
     add_executable(selfesb ${SELFESB_SOURCES})
     target_compile_options(selfesb PRIVATE ${SELFTEST} )
     target_compile_options(selfesb PRIVATE ${DW_FWALL})
+    target_compile_options(selfmakename PRIVATE 
+        "-I${CMAKE_SOURCE_DIR}/libdwarf")
+    target_compile_options(selfmakename PRIVATE 
+        "-I${CMAKE_BINARY_DIR}/libdwarf")
     add_test(NAME selfesb COMMAND selfesb)
 endif()
 
@@ -121,6 +139,10 @@ if (DO_TESTING)
     target_compile_options(selfsectionbitmaps PRIVATE 
         ${SELFTEST} )
     target_compile_options(selfsectionbitmaps PRIVATE ${DW_FWALL})
+    target_compile_options(selfsectionbitmaps PRIVATE 
+        "-I${CMAKE_SOURCE_DIR}/libdwarf")
+    target_compile_options(selfsectionbitmaps PRIVATE 
+        "-I${CMAKE_BINARY_DIR}/libdwarf")
     add_test(NAME selfsectionbitmaps COMMAND selfsectionbitmaps)
 endif()
 
@@ -129,10 +151,12 @@ if (DO_TESTING)
         esb.c print_reloc_test.c)
     add_executable(selfprintreloc ${SELFPRINTRELOC_SOURCES})
     # We need access to a few relocation-data libdwarf headers
-    target_compile_options(selfprintreloc PRIVATE 
-        "-I${CMAKE_SOURCE_DIR}/libdwarf")
     target_compile_options(selfprintreloc PRIVATE ${SELFTEST} )
     target_compile_options(selfprintreloc PRIVATE ${DW_FWALL})
+    target_compile_options(selfprintreloc PRIVATE 
+        "-I${CMAKE_SOURCE_DIR}/libdwarf")
+    target_compile_options(selfprintreloc PRIVATE 
+        "-I${CMAKE_BINARY_DIR}/libdwarf")
     add_test(NAME selfprintreloc COMMAND selfprintreloc)
 endif()
 if (DO_TESTING) 

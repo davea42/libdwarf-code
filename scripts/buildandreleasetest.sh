@@ -229,3 +229,9 @@ then
   echo FAIL C10d  cmake make test in /tmp/cmakebld
       exit 1
 fi
+ctest -R self
+if [ $? -ne 0 ]
+then
+  echo FAIL C10e  ctest -R self in /tmp/cmakebld
+      exit 1
+fi

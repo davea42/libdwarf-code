@@ -1,3 +1,9 @@
+2019-10-16 David Anderson
+     * CMakeLists.txt: Now sets -I so the ctest results pass.
+     * dwarfdump.c: Altered a spelling to make a distinction
+       between various places that say 'could not open the file'.
+     * globals.h: Now #include use "" not <> on dwarf.h and libdwarf.h
+       so they match everything else in dwarfdump and libdwarf.
 2019-10-14 David Anderson
      * dwarf_names.c,dwarf_names.h,dwarfdump-ta-ext-table.h,
        dwarfdump-ta-table.h,dwarfdump-tt-ext-table.h,

@@ -454,7 +454,7 @@ AC_SUBST([struct_elf])
 
 ### Checks for compiler characteristics
 
-AC_C_BIGENDIAN
+AC_C_BIGENDIAN([AC_DEFINE([WORDS_BIGENDIAN], [1], [Set to 1 if bigendian build])],,)
 
 # gcc accepts even totally bogus -Wno flags. Other compilers..no
 # -Wno-long-long suppresses warnings on 'long long'
@@ -463,7 +463,7 @@ AC_C_BIGENDIAN
 AS_IF(
     [ test "x$enable_wall" = "xyes" ],
     [ 
-       cxx_compiler_flags="-Wall -Wextra -Wpointer-arith -Wmissing-declarations -Wcomment -Wformat -Wpedantic -Wuninitialized -Wshadow -Wno-long-long -Werror"
+       cxx_compiler_flags="-Wall -Wextra -Wno-unused-private-field -Wpointer-arith -Wmissing-declarations -Wcomment -Wformat -Wpedantic -Wuninitialized -Wshadow -Wno-long-long -Werror"
 
        c_compiler_flags="${cxx_compiler_flags} -Wmissing-prototypes -Wdeclaration-after-statement -Wbad-function-cast -Wmissing-parameter-type -Wnested-externs -Werror"
     ]
@@ -642,6 +642,7 @@ echo "  static library.......: ${enable_static}"
 echo
 echo "  zlib support.........: ${have_zlib}"
 echo "  sanitize support.....: ${enable_sanitize}"
+echo "  BuildOS-BigEndian....: ${ac_cv_c_bigendian}"
 echo
 echo "  libdwarf.............: always"
 echo "    old frame column...: ${enable_oldframecol}"

@@ -474,7 +474,7 @@ main(int argc, char *argv[])
                 glflags.program_name, file_name,
                 errmsg);
         } else {
-            fprintf(stderr, "%s ERROR:  can't open %s\n",
+            fprintf(stderr, "%s ERROR:  Can't open %s\n",
                 glflags.program_name, file_name);
         }
         free(out_path_buf);

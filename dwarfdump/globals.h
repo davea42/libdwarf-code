@@ -65,8 +65,8 @@ extern "C" {
 # endif /* HAVE_LIBELF_LIBELF_H */
 #endif /* HAVE_LIB_ELF */
 #endif /* DWARF_WITH_LIBELF */
-#include <dwarf.h>
-#include <libdwarf.h>
+#include "dwarf.h"
+#include "libdwarf.h"
 
 #ifdef HAVE_REGEX
 #include <regex.h>

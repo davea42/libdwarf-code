@@ -241,6 +241,8 @@ dwgetopt.h \
 dwgetopt.c \
 CMakeLists.txt \
 libdwarf.h.in \
+testdebuglink.sh \
+generated_libdwarf.h.in \
 pdfbld.sh \
 NEWS \
 README \

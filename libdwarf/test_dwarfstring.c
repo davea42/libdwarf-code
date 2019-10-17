@@ -109,7 +109,7 @@ test1(int tnum)
     biglen = dwarfstring_strlen(&g);
     check_value("expected 123  ",strlen(bigstr)+3,biglen,__LINE__);
     dwarfstring_destructor(&g);
-
+    return 0;
 }
 
 static int
@@ -152,7 +152,7 @@ test2(int tnum)
     biglen = dwarfstring_strlen(&g);
     check_value("expected 120  ",strlen(bigstr),biglen,__LINE__);
     dwarfstring_destructor(&g);
-
+    return 0;
 }
 
 static int
@@ -186,6 +186,7 @@ test3(int tnum)
     check_string("expected a012345xy ",
         (char *)targetbigstr,d,__LINE__);
     dwarfstring_destructor(&g);
+    return 0;
 }
 
 static int
@@ -226,6 +227,7 @@ test4(int tnum)
         ++errcount;
     }
     dwarfstring_destructor(&g);
+    return 0;
 }
 
 
