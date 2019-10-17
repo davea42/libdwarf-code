@@ -49,40 +49,19 @@ then
   echo "G: make check failed in $oac, giving up."
   exit 1
 fi
-
-#=================now run tests
-
-ddtestdir=$oac/../regressiontests
-cd $ddtestdir
-if [ $? -ne 0  ]
-then
-  echo "H: cd $ddtestdir failed , giving up."
-  exit 1
-fi
-./configure
-if [ $? -ne 0  ]
-then
-  echo "I: configure in $ddtestdir failed , giving up."
-  exit 1
-fi
-make
-if [ $? -ne 0  ]
-then
-  echo "J: tests failed in $ddtestdir , giving up."
-  exit 1
-fi
+echo "PASS doing make check on $here"
 
 #=======now readelfobj
-rodir = $oac/../readelfobj
+rodir=$here/../readelfobj
 if [ $? -ne 0  ]
 then
   echo "K: cd  $rodir failed, giving up."
   exit 1
 fi
-
 robld=/tmp/robld
 rm -rf $robld
-mkdir $roblg
+mkdir $robld
+echo "Now run readelfobj in $robld from readelfobj source $rodir"
 if [ $? -ne 0  ]
 then
   echo "L: $robld mkdir failed, giving up."
@@ -106,6 +85,31 @@ then
   echo "O: make check in $rodir failed, giving up."
   exit 1
 fi
+
+#=================now run tests
+
+ddtestdir=$here/../regressiontests
+echo "now run regressiontests in $ddtestdir"
+cd $ddtestdir
+if [ $? -ne 0  ]
+then
+  echo "H: cd $ddtestdir failed , giving up."
+  exit 1
+fi
+./configure
+if [ $? -ne 0  ]
+then
+  echo "I: configure in $ddtestdir failed , giving up."
+  exit 1
+fi
+make
+if [ $? -ne 0  ]
+then
+  echo "J: tests failed in $ddtestdir , giving up."
+  exit 1
+fi
+echo "Done with all tests"
+
 echo "PASS"
 echo "started at $start"
 don=`$date`
