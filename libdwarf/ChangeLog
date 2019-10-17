@@ -2,6 +2,8 @@
      * Makefile.am: Accidentally left out generated_libdwarf.h.in .
        and test_linktopath.sh as things to be in the distribution.
      * Makefile.in: Regenerated
+     * test_dwarfstring.c: Added missing return statements to
+       avoid a warning.
 2019-10-14 David Anderson
      * dwarf_names.c,dwarf_names.h, dwarf_names_enum.h,
        dwarf_names_new.h: regenerated with new version string.
