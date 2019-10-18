@@ -92,7 +92,7 @@ dwarfdump_LDADD = \
 $(top_builddir)/libdwarf/libdwarf.la \
 @DWARF_LIBS@
 
-TESTS = ./runtests.sh
+TESTS = runtests.sh
 AM_TESTS_ENVIRONMENT = DWTOPSRCDIR='$(top_srcdir)'; export DWTOPSRCDIR;
 
 man_MANS = dwarfdump.1
@@ -131,6 +131,8 @@ print_reloc_test.c \
 getopttest.c \
 tag_common.c \
 testesb.c \
+test-mach-o-32.dSYM \ 
+test-mach-o-32.base \
 testobjLE32PE.exe \
 testuriLE64ELf.obj \
 testobjLE32PE.base \

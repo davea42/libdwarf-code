@@ -67,10 +67,15 @@ builddwarfdump() {
 
 rundistcheck()
 {
+  cd $here
+  if [ $? -ne 0 ]
+  then
+     echo "Q FAIL: scripts/buildandreleasetest.sh FAIL"
+  fi
   sh scripts/buildandreleasetest.sh
   if [ $? -ne 0 ]
   then
-     echo "P FAIL: scripts/buildandreleasetest.sh FAIL"
+     echo "R FAIL: scripts/buildandreleasetest.sh FAIL"
   fi
   echo PASS scripts/buildandreleasetest.sh
 }
@@ -104,10 +109,16 @@ buildreadelfobj() {
     echo "N FAIL: configure $rodir/configure failed, giving up."
     exit 1
   fi
+  make 
+  if [ $? -ne 0  ]
+  then
+    echo "Oa FAIL: make in $rodir failed, giving up."
+    exit 1
+  fi
   make check
   if [ $? -ne 0  ]
   then
-    echo "O FAIL: make check in $rodir failed, giving up."
+    echo "Ob FAIL: make check in $rodir failed, giving up."
     exit 1
   fi
 }
@@ -125,6 +136,12 @@ runfullddtest() {
   fi
   # Ensure no leftovers, ok if it fails
   make distclean
+  sha=~/SHALIAS.sh
+  if [ -f $sha ]
+  then
+    # so we get any needed local alias settings.
+    cp $sha SHALIAS.sh
+  fi
   ./configure
   if [ $? -ne 0  ]
   then
@@ -169,8 +186,6 @@ then
 else
   echo "dwarfdump regressiontests not run"
 fi
-
-
 echo "Done with all tests"
 echo "PASS"
 echo "started at $start"

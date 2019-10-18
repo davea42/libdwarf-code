@@ -1,3 +1,8 @@
+2019-10-17 David Anderson
+     * buildandreleasetest.sh:  The cmake test had misspellings
+       in the cmake command options.
+     * run-all-tests.sh: Renamed from run-bld-tests-readelfobj.sh
+       and with small corrections. It now works in one environment!
 2019-10-16 David Anderson
      * run-bld-tests-readelfobj.sh: New runs all the make check
        and the overall tests.

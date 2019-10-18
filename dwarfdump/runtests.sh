@@ -145,13 +145,13 @@ b=$srcdir/testobjLE32PE.base
 t=junk.testsmallpe
 echo "start  dwarfdump sanity check on pe $f"
 ./dwarfdump $f | head -n 500 > $t
+chkres $? "Running dwarfdump $f output to $t base $b"
 if [ x$win = "xy" ]
 then
   echo "drop two lines"
   droptwoifwin $t
 fi
-chkres $? "Running dwarfdump on $f"
-echo "if update required, mv $t $b"
+echo "if update required, mv $top_blddir/dwarfdump/$t $b"
 dos2unix $t
 diff  $b $t > $t.diffjunk.testsmallpe.diff
 chkres $? "diff of $b $t"
@@ -161,13 +161,13 @@ b=$srcdir/testuriLE64ELf.base
 t=junk.smallLE64ELf
 echo "start  dwarfdump sanity check on $f"
 ./dwarfdump $f | head -n 500 > $t
+chkres $? "running ./dwarfdump $f otuput to $t base $b "
 if [ x$win = "xy" ]
 then
   echo "drop two lines"
   droptwoifwin $t
 fi
-chkres $? "Running dwarfdump on $f"
-echo "if update required, mv $t $b"
+echo "if update required, mv $top_blddir/dwarfdump/$t $b"
 dos2unix $t
 diff $b $t > $t.diff
 chkres $? "diff of $b $t"
@@ -177,13 +177,14 @@ b=$srcdir/test-mach-o-32.base
 t=junk.macho-object32
 echo "start  dwarfdump sanity check on $f"
 ./dwarfdump $f | head -n 500 > $t
+chkres $? "FAIL ./dwarfdump $f to $t base $b "
 if [ x$win = "xy" ]
 then
   echo "drop two lines"
   droptwoifwin $t
 fi
 chkres $? "Running dwarfdump on $f"
-echo "if update required, mv $t $b"
+echo "if update required, mv $top_blddir/dwarfdump/$t $b"
 dos2unix $t
 diff $b $t > $t.diff
 chkres $? "diff of $b $t"

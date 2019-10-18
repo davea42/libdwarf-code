@@ -1,3 +1,10 @@
+2019-10-17 David Anderson
+     * Makefile.am: A couple test files got left out of
+       the list of critical files, so doing dist
+       and then testing the result would fail 'make check'
+     * Makefile.in: Regenerated.
+     * runtests.sh: Small tweaks so 'make check'
+       from outside the source tree works now.
 2019-10-16 David Anderson
      * CMakeLists.txt: Now sets -I so the ctest results pass.
      * dwarfdump.c: Altered a spelling to make a distinction

@@ -7,7 +7,7 @@
 # Then dwarfgen (being c++) will not build
 # Use --nodwarfgen on this script to turn off dwarfgen builds
 genopta="--enable-dwarfgen"
-genoptb="-DDWARFGEN=ON"
+genoptb="-DBUILD_DWARFGEN=ON"
 if [ $# -gt 0 ]
 then
   case $1 in
@@ -211,7 +211,7 @@ then
       exit 1
 fi
 echo "TEST: Now cmake from source dir /tmp/libdwarf-$v/ in build dir /tmp/cmakebld"
-cmake $genoptb -DDWARFEXAMPLE=ON -DDO_TESTING=ON /tmp/libdwarf-$v/
+cmake $genoptb -DBUILD_DWARFEXAMPLE=ON -DDO_TESTING=ON /tmp/libdwarf-$v/
 if [ $? -ne 0 ]
 then
   echo FAIL C10b  cmake in /tmp/cmakebld
