@@ -1,3 +1,5 @@
+2019-10-18 David Anderson
+     * runtests.sh: Improving some message test so context makes sense.
 2019-10-16 David Anderson
      * Makefile.am: Accidentally left out generated_libdwarf.h.in .
        and test_linktopath.sh as things to be in the distribution.

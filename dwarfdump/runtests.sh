@@ -14,30 +14,35 @@ else
 fi
 srcdir=$top_srcdir/dwarfdump
 
+goodcount=0
+failcount=0
+
 echo "TOP topsrc $top_srcdir topbld $top_blddir localsrc $srcdir"
 chkres() {
 r=$1
 m=$2
 if [ $r -ne 0 ]
 then
-   echo "FAIL $m.  Exit status $r"
-   exit 1
+  echo "FAIL $m.  Exit status for the test $r"
+  failcount=`expr $failcount + 1`
+else 
+  goodcount=`expr $goodcount + 1`
 fi
 }
 
 which cc
 if [ $? -eq 0 ]
 then
-CC=cc
+  CC=cc
 else
-which gcc
-if [ $? -eq 0 ]
-then
-CC=gcc
-else
-# we will fail
-CC=cc
-fi
+  which gcc
+  if [ $? -eq 0 ]
+  then
+    CC=gcc
+  else
+    # we will fail
+    CC=cc
+  fi
 fi
 CFLAGS="-g -O2 -I$top_blddir -I$top_srcdir/libdwarf  -I$top_blddir/libdwarf"
 
@@ -177,7 +182,7 @@ b=$srcdir/test-mach-o-32.base
 t=junk.macho-object32
 echo "start  dwarfdump sanity check on $f"
 ./dwarfdump $f | head -n 500 > $t
-chkres $? "FAIL ./dwarfdump $f to $t base $b "
+chkres $? "FAIL dwarfdump/runtests.sh ./dwarfdump $f to $t base $b "
 if [ x$win = "xy" ]
 then
   echo "drop two lines"
@@ -187,4 +192,10 @@ chkres $? "Running dwarfdump on $f"
 echo "if update required, mv $top_blddir/dwarfdump/$t $b"
 dos2unix $t
 diff $b $t > $t.diff
-chkres $? "diff of $b $t"
+chkres $? "dwarfdump/runtests.sh diff of $b $t"
+if [ $failcount -ne 0 ]
+then
+   echo "FAIL $failcount dwarfdump/runtests.sh"
+   exit 1
+fi
+exit 0

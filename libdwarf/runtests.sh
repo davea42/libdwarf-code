@@ -14,14 +14,19 @@ else
 fi
 srcdir=$top_srcdir/libdwarf
 
+goodcount=0
+failcount=0
+
 echo "TOP topsrc $top_srcdir topbld $top_blddir localsrc $srcdir"
 chkres() {
 r=$1
 m=$2
 if [ $r -ne 0 ]
 then
-   echo "FAIL $m.  Exit status $r"
-   exit 1
+   echo "FAIL $m.  Exit status was $r"
+   failcount=`expr $failcount + 1`
+else
+   goodcount=`expr $goodcount + 1`
 fi
 }
 
@@ -38,4 +43,10 @@ chkres $? "compiling dwarftied test"
 ./dwarftied
 chkres $? "Running dwarftiedtest test"
 rm ./dwarftied
+
+if [ $failcount -ne 0 ]
+then
+   echo "FAIL $failcount in libdwarf/runtests.sh"
+   exit 1
+fi
 exit 0
