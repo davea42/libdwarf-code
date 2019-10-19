@@ -902,7 +902,7 @@ dwarf_add_debuglink_global_path(Dwarf_Debug dbg,
     }
     if (glpath_count_in) {
         memcpy(glpaths, dbg->de_gnu_global_paths,
-            sizeof(char *)*glpath_count_in); 
+            sizeof(char *)*glpath_count_in);
     }
     path1 = strdup(pathname);
     if (!path1) {

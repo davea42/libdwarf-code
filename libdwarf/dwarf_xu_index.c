@@ -60,8 +60,8 @@
     do {                                    \
         unsigned tbyte = sizeof(t) - l;     \
         if (sizeof(t) < l) {                \
-           _dwarf_error(dbg,error,DW_DLE_XU_HASH_INDEX_ERROR); \
-           return DW_DLV_ERROR;             \
+            _dwarf_error(dbg,error,DW_DLE_XU_HASH_INDEX_ERROR); \
+            return DW_DLV_ERROR;             \
         }                                   \
         t = 0;                              \
         dbg->de_copy_word(((char *)&t)+tbyte ,&s[0],l);\
@@ -71,8 +71,8 @@
     do {                                \
         t = 0;                          \
         if (sizeof(t) < l) {            \
-           _dwarf_error(dbg,error,DW_DLE_XU_HASH_INDEX_ERROR); \
-           return DW_DLV_ERROR;         \
+            _dwarf_error(dbg,error,DW_DLE_XU_HASH_INDEX_ERROR); \
+            return DW_DLV_ERROR;         \
         }                               \
         dbg->de_copy_word(&t,&s[0],l);  \
     } while (0)

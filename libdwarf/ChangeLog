@@ -1,4 +1,8 @@
 2019-10-18 David Anderson
+     * checkexamples.c,dwarf_debuglink.c,dwarf_generic_init.c,
+       dwarf_xu_index.c,test_linkedtopath.c: Fixed indents
+       and removed trailing whitespace.
+2019-10-18 David Anderson
      * runtests.sh: Improving some message test so context makes sense.
 2019-10-16 David Anderson
      * Makefile.am: Accidentally left out generated_libdwarf.h.in .

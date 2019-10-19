@@ -459,7 +459,6 @@ test3(Dwarf_Debug dbg)
     free(global_prefix);
     paths_returned = 0;
     paths_returned_count = 0;
-    
     for (i = 0; i < dbg->de_gnu_global_path_count; ++i) {
         free((char *) dbg->de_gnu_global_paths[i]);
         dbg->de_gnu_global_paths[i] = 0;

@@ -1649,7 +1649,7 @@ void exampledebuglink(Dwarf_Debug dbg)
     res = dwarf_add_debuglink_global_path(dbg,
         "/some/path/debug",&error);
     if (res != DW_DLV_OK) {
-        /*  Something is wrong, but we'll ignore that 
+        /*  Something is wrong, but we'll ignore that
             here. */
     }
     res = dwarf_gnu_debuglink(dbg,
@@ -1677,7 +1677,7 @@ void exampledebuglink(Dwarf_Debug dbg)
         printf("debuglink     path: %s\n",debuglink_path);
         printf("crc length        : %u  crc: ",4);
         for (i = 0; i < 4;++i ) {
-           printf("%02x",crc[i]);
+            printf("%02x",crc[i]);
         }
         printf("\n");
         printf("debuglink fullpath: %s\n",debuglink_fullpath);
@@ -1689,13 +1689,13 @@ void exampledebuglink(Dwarf_Debug dbg)
         printf(" ");
         /*   buildid_length should be 20. */
         for (i = 0; i < buildid_length;++i) {
-           printf("%02x",buildid_itself[i]);
+            printf("%02x",buildid_itself[i]);
         }
         printf("\n");
     }
     printf("Possible paths count %u\n",paths_count);
     for ( ; i < paths_count; ++i ){
-         printf("%2u: %s\n",i,paths[i]);
+        printf("%2u: %s\n",i,paths[i]);
     }
     free(debuglink_fullpath);
     free(paths);
