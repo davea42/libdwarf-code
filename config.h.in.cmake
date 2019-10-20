@@ -69,6 +69,9 @@
 /* Set to 1 if regex is usable. */
 #cmakedefine HAVE_REGEX 1
 
+/* Set to 1 if big endian . */
+#cmakedefine WORDS_BIGENDIAN 1
+
 /* Define to 1 if you have the <regex.h> header file. */
 #cmakedefine HAVE_REGEX_H 1
 

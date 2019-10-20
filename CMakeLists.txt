@@ -56,7 +56,7 @@ string(REGEX REPLACE "[^a-zA-Z0-9_]" "-" tarname "${tarname1}" )
 set(PACKAGE_TARNAME "\"${tarname}\"" )
 
 test_big_endian(isBigEndian)
-if (isBigEndian)
+if (${isBigEndian})
   set ( WORDS_BIGENDIAN 1 )
 endif()
 

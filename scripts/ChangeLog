@@ -1,4 +1,7 @@
 2019-10-18 David Anderson
+     * buildandreleasetest.sh: Reference $HOME, not
+       a hard coded home dir.
+2019-10-18 David Anderson
      * run-all-tests.sh: using a small function to check for failure
        reduces the file size by more than 40 lines and improves
        readability.

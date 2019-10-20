@@ -35,7 +35,7 @@ then
    echo FAIL did not get configure.ac version
    exit 1
 fi
-configloc=/home/davea/dwarf/code/configure
+configloc=$HOME/dwarf/code/configure
 
 
 rm -rf /tmp/dwbld

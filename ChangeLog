@@ -1,3 +1,6 @@
+2019-10-18 David Anderson
+     * CMakeLists.txt: Code the isBigEndian test correctly.
+     * config.h.in.cmake: Code the #cmakedefine for WORDS_BIGENDIAN
 2019-10-16 David Anderson
      * configure.ac: The use of AC_C_BIGENDIAN was incorrect
        and a revised use works properly so config.h has WORDS_BIGENDIAN
