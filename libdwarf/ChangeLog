@@ -1,3 +1,13 @@
+2019-10-20 David Anderson
+     * dwarf_alloc.c,dwarf_debuglink.c,dwarf_dnames.c,
+       dwarf_dsc.c,dwarf_elf_access.c,dwarf_elf_load_headers.c,
+       dwarf_elfread.c,dwarf_error.c,dwarf_frame.c,dwarf_frame2.c,
+       dwarf_gdbindex.c,dwarf_generic_init.c,dwarf_groups.c,
+       dwarf_harmless.c,dwarf_init_finish.c,dwarf_line.c:
+       Be much more thorough and consistent in checking for
+       standard C headers as set in config.h. Also, add
+       in #include of malloc.h for non-standard compilers
+       not putting malloc prototypes in stdlib.h
 2019-10-18 David Anderson
      * checkexamples.c,dwarf_debuglink.c,dwarf_generic_init.c,
        dwarf_xu_index.c,test_linkedtopath.c: Fixed indents

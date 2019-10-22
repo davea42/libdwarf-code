@@ -1,3 +1,7 @@
+2019-10-21 David Anderson
+     * findfuncbypc.c,frame1.c,simplereader.c: Be more
+       thorough in using config.h contents to check for
+       for headers before including them.
 2019-10-06 David Anderson
      * findfuncbypc.c: Removed trailing whitespace.
 2019-10-02 David Anderson

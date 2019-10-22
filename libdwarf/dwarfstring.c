@@ -41,6 +41,10 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <stdio.h> /* for malloc */
 #include <stdlib.h> /* for malloc */
 #include <string.h> /* for strlen */
+#ifdef HAVE_MALLOC_H
+/* Useful include for some Windows compilers. */
+#include <malloc.h>
+#endif /* HAVE_MALLOC_H */
 #include "dwarfstring.h"
 #ifndef TRUE
 #define TRUE 1

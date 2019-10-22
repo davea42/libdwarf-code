@@ -31,8 +31,13 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <string.h>
+#ifdef HAVE_STDLIB_H
 #include <stdlib.h>
-
+#endif /* HAVE_STDLIB_H */
+#ifdef HAVE_MALLOC_H
+/* Useful include for some Windows compilers. */
+#include <malloc.h>
+#endif /* HAVE_MALLOC_H */
 #include "dwarf_incl.h"
 #include "dwarf_alloc.h"
 #include "dwarf_error.h"

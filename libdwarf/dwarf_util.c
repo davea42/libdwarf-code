@@ -31,6 +31,10 @@
 #ifdef HAVE_STDLIB_H
 #include <stdlib.h> /* For free() and emergency abort() */
 #endif /* HAVE_STDLIB_H */
+#ifdef HAVE_MALLOC_H
+/* Useful include for some Windows compilers. */
+#include <malloc.h>
+#endif /* HAVE_MALLOC_H */
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
 #elif defined(_WIN32) && defined(_MSC_VER)

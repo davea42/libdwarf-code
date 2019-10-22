@@ -40,8 +40,12 @@
 
 #include "config.h"
 #include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
+#ifdef HAVE_STRING_H
+#include <string.h> /* for strchr etc */
+#endif /* HAVE_STRING_H */
+#ifdef HAVE_STDLIB_H
+#include <stdlib.h> /* for exit() */
+#endif /* HAVE_STDLIB_H */
 #ifdef HAVE_STDINT_H
 #include <stdint.h>
 #endif /* HAVE_STDINT_H */

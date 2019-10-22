@@ -32,6 +32,10 @@
 #ifdef HAVE_STDLIB_H
 #include <stdlib.h> /* for free(). */
 #endif /* HAVE_STDLIB_H */
+#ifdef HAVE_MALLOC_H
+/* Useful include for some Windows compilers. */
+#include <malloc.h>
+#endif /* HAVE_MALLOC_H */
 #include <stdio.h> /* For debugging. */
 #ifdef HAVE_STDINT_H
 #include <stdint.h> /* For uintptr_t */

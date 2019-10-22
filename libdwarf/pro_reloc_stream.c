@@ -30,7 +30,6 @@
 #ifdef DWARF_WITH_LIBELF
 #include "libdwarfdefs.h"
 #include <stdio.h>
-#include <string.h>
 #ifdef HAVE_ELFACCESS_H
 #include <elfaccess.h>
 #else
@@ -38,8 +37,13 @@
 #define Set_REL32_info(r,s,t) ((r).r_info = ELF32_R_INFO(s,t))
 #define Set_REL64_info(r,s,t) ((r).r_info = ELF64_R_INFO(s,t))
 #endif
-#include "pro_incl.h"
+#ifdef HAVE_STRING_H
+#include <string.h> 
+#endif /* HAVE_STRING_H */
+#ifdef HAVE_STDDEF_H
 #include <stddef.h>
+#endif /* HAVE_STDDEF_H */
+#include "pro_incl.h"
 #include "dwarf.h"
 #include "libdwarf.h"
 #include "pro_opaque.h"

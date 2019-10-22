@@ -55,10 +55,16 @@
 #include "stdafx.h"
 #endif /* HAVE_STDAFX_H */
 
+#ifdef HAVE_SYS_TYPES_H
 #include <sys/types.h> /* For open() */
+#endif /* HAVE_SYS_TYPES_H */
+#ifdef HAVE_SYS_STAT_H
 #include <sys/stat.h>  /* For open() */
+#endif /* HAVE_SYS_STAT_H */
 #include <fcntl.h>     /* For open() */
-#include <stdlib.h>     /* For exit() */
+#ifdef HAVE_STDLIB_H
+#include <stdlib.h> /* for exit() */
+#endif /* HAVE_STDLIB_H */
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>     /* For close() */
 #elif defined(_WIN32) && defined(_MSC_VER)
@@ -66,6 +72,9 @@
 #endif
 #include <stdio.h>
 #include <errno.h>
+#ifdef HAVE_STRING_H
+#include <string.h> /* for strchr etc */
+#endif /* HAVE_STRING_H */
 #include <string.h>
 #ifdef HAVE_STDINT_H
 #include <stdint.h> /* For uintptr_t */

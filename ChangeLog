@@ -1,10 +1,14 @@
+2019-10-21 David Anderson
+     * configure.ac : Added additional AC_CHECK_HEADERS.  
+       Version 20191021
+     * config.h.in, configure: Regenerated
 2019-10-18 David Anderson
      * CMakeLists.txt: Code the isBigEndian test correctly.
      * config.h.in.cmake: Code the #cmakedefine for WORDS_BIGENDIAN
 2019-10-16 David Anderson
      * configure.ac: The use of AC_C_BIGENDIAN was incorrect
-       and a revised use works properly so config.h has WORDS_BIGENDIAN
-       when it should.
+       and a revised use works properly so config.h 
+       has WORDS_BIGENDIAN when it should.
      * configure: regenerated.
      * config.h.in: regenerated.
 2019-10-14 David Anderson

@@ -79,7 +79,9 @@
 #if HAVE_UNISTD_H
 #include <unistd.h>
 #endif
-#include <stdlib.h> // for exit
+#ifdef HAVE_STDLIB_H
+#include <stdlib.h> /* for exit() */
+#endif /* HAVE_STDLIB_H */
 #include <iostream>
 #include <sstream>
 #include <iomanip>
@@ -87,8 +89,12 @@
 #include <list>
 #include <map>
 #include <vector>
-#include <string.h> // For memset etc
-#include <sys/stat.h> //open
+#ifdef HAVE_STRING_H
+#include <string.h> /* for strchr etc */
+#endif /* HAVE_STRING_H */
+#ifdef HAVE_SYS_STAT_H
+#include <sys/stat.h>  /* For open() */
+#endif /* HAVE_SYS_STAT_H */
 #include <fcntl.h> //open
 #include "general.h"
 #include "dwgetopt.h"

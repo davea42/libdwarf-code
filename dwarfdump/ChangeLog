@@ -1,3 +1,8 @@
+2019-10-21 David Anderson
+     * dwarfdump.c,dwgetopt.c,esb.c,esb.h,getopttest.c,
+       globals.h,makename.c,makename_test.c: Be much more
+       thorough in using config.h to check for headers before
+       including them.
 2019-10-18 David Anderson
      * runtests.sh: Improving some message test so context makes sense.
 2019-10-17 David Anderson

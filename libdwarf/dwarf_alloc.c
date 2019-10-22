@@ -30,8 +30,13 @@
 
 #include "config.h"
 #include <sys/types.h>
-
+#ifdef HAVE_STDLIB_H
 #include <stdlib.h>
+#endif /* HAVE_STDLIB_H */
+#ifdef HAVE_MALLOC_H
+/* Useful include for some Windows compilers. */
+#include <malloc.h>
+#endif /* HAVE_MALLOC_H */
 #include <stdio.h>
 #ifdef HAVE_STDINT_H
 #include <stdint.h> /* For uintptr_t */

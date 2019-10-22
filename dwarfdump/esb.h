@@ -39,8 +39,16 @@
 #include "config.h"
 #include <stdio.h>
 #include <stdarg.h>   /* For va_start va_arg va_list */
-#include <stdlib.h>
-#include <string.h>
+#ifdef HAVE_STDLIB_H
+#include <stdlib.h> /* for exit(), C89 malloc */
+#endif /* HAVE_STDLIB_H */
+#ifdef HAVE_MALLOC_H
+/* Useful include for some Windows compilers. */
+#include <malloc.h>
+#endif /* HAVE_MALLOC_H */
+#ifdef HAVE_STRING_H
+#include <string.h> /* for strchr etc */
+#endif /* HAVE_STRING_H */
 
 #ifdef __cplusplus
 extern "C" {

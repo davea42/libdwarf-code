@@ -41,11 +41,13 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "config.h"
 #include <stdio.h>
 #ifdef HAVE_MALLOC_H
+/* Useful include for some Windows compilers. */
 #include <malloc.h>
 #endif /* HAVE_MALLOC_H */
+#ifdef HAVE_STDLIB_H
 #include <stdlib.h>
+#endif /* HAVE_STDLIB_H */
 #include <string.h> /* memcpy */
-#include <stdlib.h>
 #include <sys/types.h> /* open() */
 #include <sys/stat.h> /* open() */
 #include <fcntl.h> /* open() */

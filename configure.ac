@@ -16,7 +16,7 @@ m4_define([lt_age], [v_min])
 
 ### Sets the release name. 
 ###m4_define([v_date], [m4_esyscmd_s([date "+%Y%m%d"])])
-m4_define([v_date], [20191014])])
+m4_define([v_date], [20191021])])
 
 AC_PREREQ([2.52])
 ### 2nd arg to AC_INIT is the version 'number'.
@@ -194,7 +194,7 @@ AC_ARG_VAR([DWARF_LIBS], [linker flags when linking libdwarf])
 ### MacOS does not have malloc.h
 AC_CHECK_HEADERS([unistd.h sys/types.h regex.h malloc.h])
 ### for uintptr_t 
-AC_CHECK_HEADERS([stdint.h inttypes.h])
+AC_CHECK_HEADERS([stdint.h inttypes.h stddef.h])
 AC_CHECK_HEADERS([windows.h])
 
 AC_CHECK_HEADERS([zlib.h])

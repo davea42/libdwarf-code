@@ -48,7 +48,9 @@
 #elif defined(_WIN32) && defined(_MSC_VER)
 #include <io.h>
 #endif
-#include <stdlib.h> // for exit
+#ifdef HAVE_STDLIB_H
+#include <stdlib.h> /* for exit() */
+#endif /* HAVE_STDLIB_H */
 #include <iostream>
 #include <string>
 #include <list>

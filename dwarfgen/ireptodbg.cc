@@ -51,7 +51,9 @@
 #if HAVE_UNISTD_H
 #include <unistd.h>
 #endif
-#include <stdlib.h> // for exit
+#ifdef HAVE_STDLIB_H
+#include <stdlib.h> /* for exit() */
+#endif /* HAVE_STDLIB_H */
 #include <iostream>
 #include <string>
 #include <list>

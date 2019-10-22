@@ -14,8 +14,12 @@
 #endif
 
 #include <stdio.h>
-#include <stdlib.h>
-#include <string.h> /* for strcmp */
+#ifdef HAVE_STRING_H
+#include <string.h> /* for strchr etc */
+#endif /* HAVE_STRING_H */
+#ifdef HAVE_STDLIB_H
+#include <stdlib.h> /* for exit() */
+#endif /* HAVE_STDLIB_H */
 #include "dwgetopt.h" /* for dwgetopt */
 char *argv1[20];
 

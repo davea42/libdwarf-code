@@ -36,7 +36,13 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "config.h"
 #include <stdio.h>
 #include <string.h> /* For memcpy etc */
+#ifdef HAVE_STDLIB_H
 #include <stdlib.h>
+#endif /* HAVE_STDLIB_H */
+#ifdef HAVE_MALLOC_H
+/* Useful include for some Windows compilers. */
+#include <malloc.h>
+#endif /* HAVE_MALLOC_H */
 #include <stddef.h>
 #include <sys/types.h>   /* for open() */
 #include <sys/stat.h>   /* for open() */

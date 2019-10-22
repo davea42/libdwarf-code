@@ -51,7 +51,13 @@
 #include <unistd.h> /* for close */
 #endif /* HAVE_UNISTD_H */
 #include <string.h>
+#ifdef HAVE_STDLIB_H
 #include <stdlib.h>
+#endif /* HAVE_STDLIB_H */
+#ifdef HAVE_MALLOC_H
+/* Useful include for some Windows compilers. */
+#include <malloc.h>
+#endif /* HAVE_MALLOC_H */
 
 #define FALSE 0
 #define TRUE  1

@@ -97,10 +97,16 @@
 #include "stdafx.h"
 #endif /* HAVE_STDAFX_H */
 
+#ifdef HAVE_SYS_TYPES_H
 #include <sys/types.h> /* For open() */
+#endif /* HAVE_SYS_TYPES_H */
+#ifdef HAVE_SYS_STAT_H
 #include <sys/stat.h>  /* For open() */
+#endif /* HAVE_SYS_STAT_H */
 #include <fcntl.h>     /* For open() */
-#include <stdlib.h>     /* For exit() */
+#ifdef HAVE_STDLIB_H
+#include <stdlib.h> /* for exit() */
+#endif /* HAVE_STDLIB_H */
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>     /* For close() */
 #elif defined(_WIN32) && defined(_MSC_VER)

@@ -29,7 +29,9 @@
 #endif /* _WIN32 */
 
 #include <stdio.h>
-#include <stdlib.h>  /* For exit() declaration etc. */
+#ifdef HAVE_STDLIB_H
+#include <stdlib.h>
+#endif /* HAVE_STDLIB_H */
 #include <errno.h>   /* For errno declaration. */
 #include <ctype.h>
 #include <string.h>

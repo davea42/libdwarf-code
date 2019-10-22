@@ -33,8 +33,12 @@
 #include "libdwarfdefs.h"
 #include <stdio.h>
 #ifdef HAVE_STDLIB_H
-#include <stdlib.h>
-#endif
+#include <stdlib.h> /* for exit(), C89 malloc */
+#endif /* HAVE_STDLIB_H */
+#ifdef HAVE_MALLOC_H
+/* Useful include for some Windows compilers. */
+#include <malloc.h>
+#endif /* HAVE_MALLOC_H */
 #ifdef HAVE_STDINT_H
 #include <stdint.h> /* For uintptr_t */
 #endif /* HAVE_STDINT_H */

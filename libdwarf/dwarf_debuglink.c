@@ -37,9 +37,10 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.  */
 #ifdef HAVE_STDDEF_H
 #include <stddef.h> /* ptrdiff_t */
 #endif /* HAVE_STDDEF_H */
+#ifdef HAVE_STDLIB_H
 #include <stdlib.h>
+#endif /* HAVE_STDLIB_H */
 #include <string.h>
-#include <stdlib.h>
 #ifdef HAVE_ELF_H
 #include <elf.h>
 #endif /* HAVE_ELF_H */
