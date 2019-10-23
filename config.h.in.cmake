@@ -1,4 +1,3 @@
-/* config.h.in.  Generated from configure.ac by autoheader.  */
 
 /* Define if building universal (internal helper macro) */
 #cmakedefine AC_APPLE_UNIVERSAL_BUILD 1
@@ -7,6 +6,7 @@
    systems. This function is required for `alloca.c' support on those systems.
    */
 #cmakedefine CRAY_STACKSEG_END 1
+
 
 /* Define to 1 if using `alloca.c'. */
 #cmakedefine C_ALLOCA 1
@@ -154,7 +154,7 @@
 #cmakedefine PACKAGE_NAME libdwarf
 
 /* Define to the full name and version of this package. */
-#cmakedefine PACKAGE_STRING "${PACKAGE_NAME} ${VERSION}"
+#cmakedefine PACKAGE_STRING "${PACKAGE_NAME}  ${VERSION}"
 
 /* Define to the one symbol short name of this package. */
 #cmakedefine PACKAGE_TARNAME
@@ -162,8 +162,6 @@
 /* Define to the home page for this package. */
 #cmakedefine PACKAGE_URL "${tarname}" )
 
-/* Define to the version of this package. */
-#cmakedefine PACKAGE_VERSION
 
 /* If using the C implementation of alloca, define if you know the
    direction of stack growth for your system; otherwise it will be
@@ -176,8 +174,11 @@
 /* Define to 1 if you have the ANSI C header files. */
 #cmakedefine STDC_HEADERS 1
 
+/* Define to the version of this package. */
+#cmakedefine PACKAGE_VERSION ${PACKAGE_VERSION}
+
 /* Version number of package */
-#cmakedefine VERSION   ${PACKAGE_VERSION} 
+#cmakedefine VERSION   ${VERSION} 
 
 /* Define WORDS_BIGENDIAN to 1 if your processor stores words with the most
    significant byte first (like Motorola and SPARC, unlike Intel). */

@@ -27,13 +27,12 @@
 #include <dwarf.h>
 #include <stdio.h>
 #include <stdarg.h>   /* For va_start va_arg va_list */
-#include <stdlib.h>             /* For exit() declaration etc. */
 #include <errno.h>              /* For errno declaration. */
+#include "globals.h"
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
 #endif
-
-#include "globals.h"
+#include <stdlib.h>             /* For exit() declaration etc. */
 #include "libdwarf.h"
 #include "common.h"
 #include "esb.h"

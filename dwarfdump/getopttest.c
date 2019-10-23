@@ -13,6 +13,7 @@
     as 0,1,2 as that matches system getopt.h */
 #endif
 
+#include "config.h"
 #include <stdio.h>
 #ifdef HAVE_STRING_H
 #include <string.h> /* for strchr etc */

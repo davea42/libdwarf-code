@@ -2,7 +2,8 @@
 # A primitive build.
 # Intended for simple non-elf builds on systems
 # with no libelf, no elf.h, no libz.
-# This script is by David Anderson and hereby put into the public domain
+# This script is by David Anderson and hereby 
+# put into the public domain
 # for anyone to use in any way.
 
 # Requires a basic config.h at top level

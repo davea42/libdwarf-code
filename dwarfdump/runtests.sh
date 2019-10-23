@@ -44,10 +44,10 @@ else
     CC=cc
   fi
 fi
-CFLAGS="-g -O2 -I$top_blddir -I$top_srcdir/libdwarf  -I$top_blddir/libdwarf"
+CFLAGS="-g -O2 -I$top_blddir -I$top_srcdir/libdwarf  -I$top_blddir/libdwarf -Wall -Wextra -Wno-unused-private-field -Wpointer-arith -Wmissing-declarations -Wcomment -Wformat -Wpedantic -Wuninitialized -Wshadow -Wno-long-long -Werror"
 
 echo "dwgetopt test"
-$CC $CFLAGS -o getopttest $srcdir/getopttest.c $srcdir/dwgetopt.c
+$CC $CFLAGS  -o getopttest $srcdir/getopttest.c $srcdir/dwgetopt.c
 chkres $? "compiling getopttest test"
 ./getopttest
 chkres $? "running getopttest"
@@ -124,7 +124,7 @@ chkres $? "running selfsection_bitmaps "
 rm -f ./selfsection_bitmaps selfsection_bitmaps.exe
 
 echo "start selfprint_reloc"
-$CC $CFLAGS $srcdir/print_reloc_test.c esb.o -o selfprint_reloc
+$CC $CFLAGS -DSELFTEST=1 -DTESTING=1 $srcdir/print_reloc_test.c esb.o -o selfprint_reloc
 chkres $? "compiling print_reloc.c selfprint_reloc"
 ./selfprint_reloc
 chkres $? "running selfprint_reloc "

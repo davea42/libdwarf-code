@@ -27,6 +27,7 @@
 
 #include "config.h"
 
+
 /* Windows specific header files */
 #if defined(_WIN32) && defined(HAVE_STDAFX_H)
 #include "stdafx.h"
@@ -39,7 +40,14 @@
 #include "libdwarf_version.h" /* for DW_VERSION_DATE_STR */
 #include <stdio.h>
 
-#define RELEASE_DATE      "20180416"
+#ifndef BUILD_STANDARD_SOURCE
+/*  Must match libdwarf.h.in declaration. */
+const char * dwarf_package_version(void);
+#endif /* BUILD_STANDARD_SOURCE */
+
+/*#define RELEASE_DATE      "20180416" */
+
+/* PACKAGE_VERSION is from config.h */
 
 /* The Linux/Unix version does not want a version string to print
    unless -V is on the command line. */
@@ -64,19 +72,27 @@ print_version_details(UNUSEDARG const char * name,
 #ifdef ORIGINAL_SPRINTF
     static char acVersion[64];
     snprintf(acVersion,sizeof(acVersion),
-        "[%s %s %s Win%s (%s)]",__DATE__,__TIME__,acType,bits,RELEASE_DATE);
+        "[%s %s %s Win%s (%s)]",__DATE__,__TIME__,acType,bits,
+        PACKAGE_VERSION);
     printf("%s %s\n", sanitized(name),acVersion);
 #else
     printf("%s [%s %s %s Win%s (%s)]\n",
-        sanitized(name),__DATE__,__TIME__,acType,bits,RELEASE_DATE);
+        sanitized(name),__DATE__,__TIME__,acType,bits,
+        PACKAGE_VERSION);
 #endif /* !ORIGINAL_SPRINTF */
 #else  /* !_WIN32 */
     if (alwaysprint) {
+#ifdef BUILD_STANDARD_SOURCE
+        /*  Used by scripts/buildstandardsource.sh */
         printf("%s\n",DW_VERSION_DATE_STR);
+#else
+        const char *pv = dwarf_package_version();
+        printf("%s Package Version \"%s\"\n",DW_VERSION_DATE_STR,
+            pv);
+#endif
     }
 #endif /* _WIN32 */
 }
-
 
 void
 print_args(UNUSEDARG int argc, UNUSEDARG char *argv[])

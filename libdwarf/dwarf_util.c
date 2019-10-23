@@ -73,6 +73,12 @@
     source-length.  */
 typedef void (*endian_funcp_type)(void *, const void *,unsigned long);
 
+const char *
+dwarf_package_version(void)
+{
+    return PACKAGE_VERSION;
+}
+
 #if 0
 static void
 dump_bytes(char * msg,Dwarf_Small * start, long len)

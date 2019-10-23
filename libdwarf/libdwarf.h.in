@@ -1601,6 +1601,10 @@ int dwarf_get_tied_dbg(Dwarf_Debug /*dbg*/,
 int dwarf_object_finish(Dwarf_Debug /*dbg*/,
     Dwarf_Error* /*error*/);
 
+/*  Returns the version string. Example: "20190922"
+    which is in ISO date format. */
+const char * dwarf_package_version(void);
+
 /*  Section name access.  Because sections might
     now end with .dwo or be .zdebug  or might not.
 */

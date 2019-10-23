@@ -211,7 +211,7 @@ then
       exit 1
 fi
 echo "TEST: Now cmake from source dir /tmp/libdwarf-$v/ in build dir /tmp/cmakebld"
-cmake $genoptb -DBUILD_DWARFEXAMPLE=ON -DDO_TESTING=ON /tmp/libdwarf-$v/
+cmake $genoptb -DWALL=ON -DBUILD_DWARFEXAMPLE=ON -DDO_TESTING=ON /tmp/libdwarf-$v/
 if [ $? -ne 0 ]
 then
   echo FAIL C10b  cmake in /tmp/cmakebld

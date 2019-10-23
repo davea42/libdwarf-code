@@ -1,3 +1,19 @@
+2019-10-22 David Anderson
+    * common.c: Now -V prints both the date/time string
+      and the PACKAGE_VERSION string from the top level
+      configure.ac/CMakeLists.txt.
+    * dwarf_names.c,dwarf_names.h,dwarfdump-ta-ext-table.h,
+      dwarfdump-ta-table.h,dwarfdump-tt-ext-table.h,
+      dwarfdump-tt-table.h: Regenerated.
+    * tag_attr.c: The #include ordering was a bit wrong
+      as it checkded HAVE_UNISTD_H before config.h was
+      included (from globals.h). Fixed.
+    * getopttest.c: Added #include of config.h so
+      the #ifdef around standard headers compiles.
+    * print_reloc_decls.h,print_reloc_test.c,testesb.c: With 
+      full warnings this needed ifdefs to the simple
+      testcode will build. And removal of unused
+      variables.
 2019-10-21 David Anderson
      * dwarfdump.c,dwgetopt.c,esb.c,esb.h,getopttest.c,
        globals.h,makename.c,makename_test.c: Be much more

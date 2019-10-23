@@ -78,15 +78,6 @@ struct test_data_s {
 
 /* We don't test this here, referenced from dwarf_tied.c. */
 int
-_dwarf_loop_reading_debug_info_for_cu(
-    UNUSEDARG Dwarf_Debug tieddbg,
-    UNUSEDARG Dwarf_Sig8 sig,
-    UNUSEDARG Dwarf_Error *error)
-{
-    return DW_DLV_NO_ENTRY;
-}
-/* We don't test this here, referenced from dwarf_tied.c. */
-int
 _dwarf_next_cu_header_internal(
     UNUSEDARG Dwarf_Debug dbg,
     UNUSEDARG Dwarf_Bool is_info,

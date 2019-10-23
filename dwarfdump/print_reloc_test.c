@@ -25,6 +25,7 @@
 */
 #include "globals.h"
 #ifdef DWARF_WITH_LIBELF
+#ifndef SELFTEST
 #define DWARF_RELOC_MIPS
 #define DWARF_RELOC_PPC
 #define DWARF_RELOC_PPC64
@@ -33,6 +34,7 @@
 #define DWARF_RELOC_386
 
 #include "print_reloc.h"
+#endif /* SELFTEST */
 #include "print_reloc_decls.h"
 #include "section_bitmaps.h"
 #include "esb.h"

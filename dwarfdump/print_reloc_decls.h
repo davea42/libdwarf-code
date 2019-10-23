@@ -32,7 +32,9 @@
 #define DWARF_RELOC_X86_64
 #define DWARF_RELOC_386
 
+#ifndef SELFTEST
 #include "print_reloc.h"
+#endif /* SELFTEST */
 #include "section_bitmaps.h"
 #include "esb.h"
 #include "sanitized.h"
@@ -51,8 +53,9 @@ struct sect_data_s {
     const char *name;   /* Section name */
     Elf64_Xword type;   /* To cover 32 and 64 records types */
 };
+#ifndef SELFTEST
 static struct sect_data_s sect_data[DW_SECTION_REL_ARRAY_SIZE];
-
+#endif /* SELFTEST */
 
 typedef size_t indx_type;
 
@@ -78,7 +81,7 @@ typedef struct {
     unsigned char other;
     unsigned short shndx;
 } SYM64;
-
+#ifndef SELFTEST
 static void print_reloc_information_64(int section_no,
     Dwarf_Small * buf,
     Dwarf_Unsigned size,
@@ -127,6 +130,7 @@ static unsigned long   sym_data_64_entry_count;
 /* Record the relocation table name information */
 static const char **reloc_type_names = NULL;
 static int   number_of_reloc_type_names = 0;
+#endif /*  SELFTEST */
 
 
 typedef struct {

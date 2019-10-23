@@ -124,7 +124,7 @@ _dwarf_tied_destroy_free_node(void*nodep)
     Currently it reads all the tied CUs at once, unless
     there is an error..
     */
-static int
+int
 _dwarf_loop_reading_debug_info_for_cu(
     Dwarf_Debug tieddbg,
     Dwarf_Sig8 sig,

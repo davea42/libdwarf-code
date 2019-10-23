@@ -57,7 +57,9 @@
 #define TRUE 1
 #define FALSE 0
 
+#if 0
 static void * makename_data;
+#endif
 #define VALTYPE char *
 #define DW_TSHASHTYPE uintptr_t
 
@@ -76,7 +78,6 @@ int main()
     char *e2= 0;
     char *e3= 0;
     char *e4= 0;
-    int j = 0;
     int errct = 0;
 
 

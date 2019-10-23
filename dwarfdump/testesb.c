@@ -32,7 +32,7 @@
 
 static int failcount = 0;
 
-void
+static void
 validate_esb(int instance,
    struct esb_s* d,
    size_t explen,
@@ -73,9 +73,7 @@ int main()
         cases of interest. */
         struct esb_s d5;
         char bufs[4];
-        char bufl[60];
         esb_int i = -33;
-        esb_unsigned u = 0;
 
         /* After static alloc we add len, ie, 11 */
         esb_constructor_fixed(&d5,bufs,sizeof(bufs));
@@ -210,10 +208,10 @@ int main()
     {
         struct esb_s d;
         struct esb_s e;
+        char* result = NULL;
         esb_constructor(&d);
         esb_constructor(&e);
 
-        char* result = NULL;
         esb_append(&d,"abcde fghij klmno pqrst");
         validate_esb(15,&d,23,24,"abcde fghij klmno pqrst",__LINE__);
 
@@ -248,7 +246,6 @@ int main()
     {
         struct esb_s d5;
         char bufs[4];
-        char bufl[60];
         const char * s = "insert me";
 
         esb_constructor_fixed(&d5,bufs,sizeof(bufs));
@@ -271,7 +268,6 @@ int main()
     {
         struct esb_s d5;
         char bufs[4];
-        char bufl[60];
         esb_int i = -33;
         esb_unsigned u = 0;
 
@@ -340,7 +336,6 @@ int main()
     {
         struct esb_s d5;
         char bufs[4];
-        char bufl[60];
         esb_unsigned u = 0;
 
         u = 37;
@@ -368,9 +363,7 @@ int main()
     {
         struct esb_s d5;
         char bufs[4];
-        char bufl[60];
         esb_int i = -33;
-        esb_unsigned u = 0;
 
         esb_constructor_fixed(&d5,bufs,sizeof(bufs));
         esb_append_printf_i(&d5,"aaa %+d bbb",i);

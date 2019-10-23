@@ -11,7 +11,7 @@ e."
 .S +2
 \." ==============================================
 \." Put current date in the following at each rev
-.ds vE Rev 2.81, 14 October 2019
+.ds vE Rev 2.82, 22 October 2019
 \." ==============================================
 \." ==============================================
 .ds | |
@@ -2202,6 +2202,7 @@ checks.
 The global flag is really just 8 bits long, upperbits are not noticed
 or recorded.
 
+
 .H 3 "dwarf_set_reloc_application()"
 .DS
 \f(CWint dwarf_set_reloc_application(
@@ -2402,6 +2403,22 @@ On error the function returns
 The string pointed to by
 \f(CW*actual_sec_name_out\fP
 must not be free()d.
+
+.H 3 "dwarf_package_version()"
+.DS
+\f(CWconst char * dwarf_package_version(void); \fP
+.DE
+The package version is set in config.h (from
+its value in configure.ac and in CMakeLists.txt
+in the source tree) at the 
+build time of the library.
+A pointer to a static string is returned by this
+function.
+The format is standard ISO date format. 
+For example "20180718".
+It's not entirely clear how this actually helps.
+But there is a request for this and we provide it
+as of 23 October 2019.
 
 .H 2 "Object Type Detectors"
 These are used by

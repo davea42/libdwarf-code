@@ -1,3 +1,11 @@
+2019-10-22 David Anderson
+     * configure.ac:   Package Version 20191022.
+     * configure: regenerated.
+     * CMakeLists.txt: Package Version 20191022.
+       Revised the settings so PACKAGE_VERSION winds up
+       in string quotes in config.h.
+     * config.h.in.cmake: Revisions so PACKAGE_VERSION winds up 
+       in string quotes in config.h.
 2019-10-21 David Anderson
      * configure.ac : Added additional AC_CHECK_HEADERS.  
        Version 20191021

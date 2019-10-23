@@ -1,3 +1,10 @@
+2019-10-22 David Anderson
+     * baseconfig.h: Now has a fake PACKAGE_VERSION
+       and defines BUILD_STANDARD_SOURCE, both for use
+       by buildstandardsource.sh
+     * ddbuild.sh: One comment line was long for no
+       good reason. Made it into two lines.
+     * buildandreleasetest.sh: now the cmake is with -DWALL
 2019-10-18 David Anderson
      * buildandreleasetest.sh: Reference $HOME, not
        a hard coded home dir.

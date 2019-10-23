@@ -47,13 +47,15 @@ include(CheckCSourceCompiles)
 include(CheckCSourceRuns)
 include(CheckSymbolExists)
 
+set(VERSION 20191022)
+set(PACKAGE_VERSION "\"${VERSION}\"") 
 set(PACKAGE_NAME "libdwarf" )
-set(PACKAGE_VERSION "20190604"  )
-set(VERSION ${PACKAGE_VERSION} )
+###set(VERSION ${PACKAGE_VERSION} )
 set(PACKAGE_STRING "\"${PACKAGE_NAME} ${VERSION}\"")
 string(REGEX REPLACE "[\"]" "" tarname1 "${PACKAGE_STRING}" )
 string(REGEX REPLACE "[^a-zA-Z0-9_]" "-" tarname "${tarname1}" )
 set(PACKAGE_TARNAME "\"${tarname}\"" )
+###set(PACKAGE_VERSION  "\"${PACKAGE_VERSION}\"")
 
 test_big_endian(isBigEndian)
 if (${isBigEndian})
@@ -321,11 +323,9 @@ option(BUILD_SHARED "build shared library libdwarf.so and use it if present" FAL
 option(BUILD_NON_SHARED "build archive library libdwarf.a" TRUE)
 
 #  This adds compiler option -Wall (gcc compiler warnings)
-#  'set' here uses $< introducing what is called 
-#  a 'generator expression' in cmake documentation.
-#  DO NOT put quotes in the generator expression.
 option(WALL "Add -Wall" FALSE)
 
+# Some of these warnings are not appropriate for C++.
 if (WALL)
   set(DW_FWALL -Wall -O0 -Wpointer-arith -Wmissing-declarations -Wmissing-prototypes -Wdeclaration-after-statement -Wextra -Wcomment -Wformat -Wpedantic -Wuninitialized -Wno-long-long -Wshadow -Werror )
   message(STATUS "Compiler warning options... YES ${DW_FWALL}")
