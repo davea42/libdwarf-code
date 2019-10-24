@@ -43,6 +43,7 @@ fi
 
 # ========
 builddwarfdump() {
+  echo "Build dwarfdump source: $here builddir: $ddbld"
   oac=$ddbld
   rm -rf $oac
   mkdir $oac
@@ -55,7 +56,7 @@ builddwarfdump() {
   chkres $? "G FAIL: make check failed in $oac, giving up."
   if [ $failcount -eq 0 ]
   then
-      echo PASS builddwarfdump
+      echo "PASS Build dwarfdump"
   fi
 }
 
@@ -74,14 +75,15 @@ rundistcheck()
 #======= readelfobj, readobjpe, readobjmacho etc tests
 # with make check
 buildreadelfobj() {
+  rm -rf $robld
+  mkdir $robld
   rodir=$rosrc
+  echo "Build readelfobj source: $rosrc builddir: $robld"
   if [ ! -d $rodir  ]
   then
     echo "K FAIL: cd  $rodir not a directory, giving up."
     exit 1
   fi
-  rm -rf $robld
-  mkdir $robld
   echo "Now run readelfobj in $robld from readelfobj source $rodir"
   chkres $? "L FAIL: $robld mkdir failed, giving up."
   cd $robld
@@ -102,7 +104,7 @@ buildreadelfobj() {
 
 runfullddtest() {
   ddtestdir=$rtestsrc
-  echo "now run regressiontests in $ddtestdir"
+  echo "Run regressiontests in $ddtestdir"
   cd $ddtestdir
   chkres $? "H FAIL: cd $ddtestdir failed , giving up."
   # Ensure no leftovers, ok if it fails
@@ -155,12 +157,12 @@ else
   echo "dwarfdump regressiontests not run"
 fi
 echo "Done with all tests"
-echo FAIL $failcount
+echo "FAIL $failcount in run-all-tests.sh"
 if [ $failcount -ne 0 ]
 then
-   echo "FAIL $failcount"
+   echo "FAIL $failcount as known to run-all-tests.sh"
 else
-   echo "PASS"
+   echo "PASS run-all-tests.sh"
 fi
 echo "run-all-tests.sh started at $start"
 don=`date`

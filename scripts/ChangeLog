@@ -1,3 +1,8 @@
+2019-10-24 David Anderson
+     * run-all-tests.sh: Improving the precision of
+       (meaning adding words to) the
+       status messages so it's easier to interpret
+       the output text.
 2019-10-23 David Anderson
      * buildandreleasetest.sh: Do --enable-wall or cmake
        equivalent for every build.
