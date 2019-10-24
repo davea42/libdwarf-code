@@ -138,7 +138,7 @@ then
 fi
 echo "TEST: now second install install, prefix /tmp/dwinstallrel"
 echo "TEST: Expecting src in /tmp/libdwarf-$v"
-/tmp/libdwarf-$v/configure --prefix=/tmp/dwinstallrel
+/tmp/libdwarf-$v/configure --enable-wall --prefix=/tmp/dwinstallrel
 if [ $? -ne 0 ]
 then
   echo FAIL C2  configure fail
@@ -192,7 +192,7 @@ then
       exit 1
 fi
 echo "TEST: Now configure from source dir /tmp/libdwarf-$v/ in build dir /tmp/dwinstallrelbldall"
-/tmp/libdwarf-$v/configure --enable-dwarfexample $genopta
+/tmp/libdwarf-$v/configure --enable-wall --enable-dwarfexample $genopta
 if [ $? -ne 0 ]
 then
   echo FAIL C9  /tmp/libdwarf-$v/configure 

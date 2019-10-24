@@ -325,9 +325,10 @@ option(BUILD_NON_SHARED "build archive library libdwarf.a" TRUE)
 #  This adds compiler option -Wall (gcc compiler warnings)
 option(WALL "Add -Wall" FALSE)
 
-# Some of these warnings are not appropriate for C++.
+#  DW_FWALLXX are gnu C++ options.
 if (WALL)
-  set(DW_FWALL -Wall -O0 -Wpointer-arith -Wmissing-declarations -Wmissing-prototypes -Wdeclaration-after-statement -Wextra -Wcomment -Wformat -Wpedantic -Wuninitialized -Wno-long-long -Wshadow -Werror )
+  set(DW_FWALLXX -Wall -Wextra -Wno-unused-private-field -Wpointer-arith -Wmissing-declarations -Wcomment -Wformat -Wpedantic -Wuninitialized -Wshadow -Wno-long-long -Werror)
+  set(DW_FWALL ${DW_FWALLXX} -Wpointer-arith -Wmissing-declarations -Wmissing-prototypes -Wdeclaration-after-statement -Wextra -Wcomment -Wformat -Wpedantic -Wuninitialized -Wno-long-long -Wshadow -Werror )
   message(STATUS "Compiler warning options... YES ${DW_FWALL}")
 else()
   unset(DW_FWALL )

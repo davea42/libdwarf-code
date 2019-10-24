@@ -1,3 +1,6 @@
+2019-10-23 David Anderson
+     * buildandreleasetest.sh: Do --enable-wall or cmake
+       equivalent for every build.
 2019-10-22 David Anderson
      * baseconfig.h: Now has a fake PACKAGE_VERSION
        and defines BUILD_STANDARD_SOURCE, both for use

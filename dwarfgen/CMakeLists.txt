@@ -18,7 +18,7 @@ add_executable(dwarfgen ${SOURCES} ${HEADERS} ${CONFIGURATION_FILES})
 
 set_folder(dwarfgen dwarfgen)
 
-target_compile_options(dwarfgen PRIVATE ${DW_FWALL})
+target_compile_options(dwarfgen PRIVATE ${DW_FWALLXX})
 
 target_link_libraries(dwarfgen PRIVATE ${dwarf-target} ${DW_FZLIB})
 
