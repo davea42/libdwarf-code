@@ -1,3 +1,6 @@
+2019-10-24 David Anderson
+    * esb.h: Removed the bogus and unnecessary test
+      of _MIPS_SZLONG. Just go with long long.
 2019-10-22 David Anderson
     * common.c: Now -V prints both the date/time string
       and the PACKAGE_VERSION string from the top level

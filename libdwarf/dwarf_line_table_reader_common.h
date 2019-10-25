@@ -1031,7 +1031,7 @@ read_line_table_program(Dwarf_Debug dbg,
     Dwarf_Small *line_ptr,
     Dwarf_Small *line_ptr_end,
     UNUSEDARG Dwarf_Small *orig_line_ptr,
-    UNUSEDARG Dwarf_Small *section_start,
+    Dwarf_Small *section_start,
     Dwarf_Line_Context line_context,
     Dwarf_Half address_size,
     Dwarf_Bool doaddrs, /* Only true if SGI IRIX rqs calling. */
@@ -1420,8 +1420,21 @@ read_line_table_program(Dwarf_Debug dbg,
                     line_ptr, DWARF_HALF_SIZE,error,line_ptr_end);
                 line_ptr += DWARF_HALF_SIZE;
                 if (line_ptr > line_ptr_end) {
-                    _dwarf_error(dbg, error,
-                        DW_DLE_LINE_TABLE_BAD);
+                    dwarfstring g;
+                    ptrdiff_t d = 0;
+
+                    d = line_ptr - section_start;
+                    dwarfstring_constructor(&g);
+                    dwarfstring_append_printf_u(&g,
+                        "DW_DLE_LINE_TABLE_BAD reading "
+                        "DW_LNS_fixed_advance_pc we are "
+                        "off this line table at section "
+                        "offset. 0x%x .",
+                        d);
+                    _dwarf_error_string(dbg, error,
+                        DW_DLE_LINE_TABLE_BAD,
+                        dwarfstring_string(&g));
+                    dwarfstring_destructor(&g);
                     return DW_DLV_ERROR;
                 }
                 regs.lr_address = regs.lr_address + fixed_advance_pc;
@@ -1609,18 +1622,44 @@ read_line_table_program(Dwarf_Debug dbg,
                 dbg,error,line_ptr_end);
             instr_length =  utmp3;
             /*  Dwarf_Small is a ubyte and the extended opcode is a
-                ubyte, though not stated as clearly in the 2.0.0 spec as
-                one might hope. */
+                ubyte, though not stated as clearly in the 
+                2.0.0 spec as one might hope. */
             if (line_ptr >= line_ptr_end) {
-                _dwarf_error(dbg, error,
-                    DW_DLE_LINE_TABLE_BAD);
+                dwarfstring g;
+                ptrdiff_t d = 0;
+
+                d = line_ptr - section_start;
+                dwarfstring_constructor(&g);
+                dwarfstring_append_printf_u(&g,
+                    "DW_DLE_LINE_TABLE_BAD reading "
+                    "extended op we are "
+                    "off this line table at section "
+                    "offset 0x%x .",
+                    d);
+                _dwarf_error_string(dbg, error,
+                    DW_DLE_LINE_TABLE_BAD,
+                    dwarfstring_string(&g));
+                dwarfstring_destructor(&g);
                 return DW_DLV_ERROR;
             }
             ext_opcode = *(Dwarf_Small *) line_ptr;
             line_ptr++;
             if (line_ptr > line_ptr_end) {
-                _dwarf_error(dbg, error,
-                    DW_DLE_LINE_TABLE_BAD);
+                dwarfstring g;
+                ptrdiff_t d = 0;
+
+                d = line_ptr - section_start;
+                dwarfstring_constructor(&g);
+                dwarfstring_append_printf_u(&g,
+                    "DW_DLE_LINE_TABLE_BAD reading "
+                    "extended op opcode we are "
+                    "off this line table at section "
+                    "offset 0x%x .",
+                    d);
+                _dwarf_error_string(dbg, error,
+                    DW_DLE_LINE_TABLE_BAD,
+                    dwarfstring_string(&g));
+                dwarfstring_destructor(&g);
                 return DW_DLV_ERROR;
             }
             switch (ext_opcode) {
@@ -1631,13 +1670,15 @@ read_line_table_program(Dwarf_Debug dbg,
                     curr_line = (Dwarf_Line)
                         _dwarf_get_alloc(dbg, DW_DLA_LINE, 1);
                     if (curr_line == NULL) {
-                        _dwarf_free_chain_entries(dbg,head_chain,line_count);
+                        _dwarf_free_chain_entries(dbg,head_chain,
+                            line_count);
                         _dwarf_error(dbg, error, DW_DLE_ALLOC_FAIL);
                         return (DW_DLV_ERROR);
                     }
 
 #ifdef PRINTING_DETAILS
-                    print_line_detail(dbg,"DW_LNE_end_sequence extended",
+                    print_line_detail(dbg,
+                        "DW_LNE_end_sequence extended",
                         ext_opcode, line_count+1,&regs,
                         is_single_table, is_actuals_table);
 #endif /* PRINTING_DETAILS */
@@ -1729,8 +1770,21 @@ read_line_table_program(Dwarf_Debug dbg,
                 regs.lr_op_index = 0;
                 line_ptr += address_size;
                 if (line_ptr > line_ptr_end) {
-                    _dwarf_error(dbg, error,
-                        DW_DLE_LINE_TABLE_BAD);
+                    dwarfstring g;
+                    ptrdiff_t d = 0;
+
+                    d = line_ptr - section_start;
+                    dwarfstring_constructor(&g);
+                    dwarfstring_append_printf_u(&g,
+                        "DW_DLE_LINE_TABLE_BAD reading "
+                        "DW_LNE_set_address we are "
+                        "off this line table at section "
+                        "offset 0x%x .",
+                        d);
+                    _dwarf_error_string(dbg, error,
+                        DW_DLE_LINE_TABLE_BAD,
+                        dwarfstring_string(&g));
+                    dwarfstring_destructor(&g);
                     return DW_DLV_ERROR;
                 }
                 }
@@ -1806,11 +1860,31 @@ read_line_table_program(Dwarf_Debug dbg,
                     other than we know now many bytes it is
                     and the op code and the bytes of operand. */
                 Dwarf_Unsigned remaining_bytes = instr_length -1;
-                if (instr_length < 1 || remaining_bytes > DW_LNE_LEN_MAX) {
-                    _dwarf_free_chain_entries(dbg,head_chain,line_count);
-                    _dwarf_error(dbg, error,
-                        DW_DLE_LINE_TABLE_BAD);
-                    return (DW_DLV_ERROR);
+                if (instr_length < 1 ||
+                    remaining_bytes > DW_LNE_LEN_MAX) {
+                    dwarfstring g;
+                    ptrdiff_t d = 0;
+
+                    _dwarf_free_chain_entries(dbg,head_chain,
+                        line_count);
+                    d = line_ptr - section_start;
+                    dwarfstring_constructor(&g);
+                    dwarfstring_append_printf_u(&g,
+                        "DW_DLE_LINE_TABLE_BAD reading "
+                        "unknown DW_LNE_extended op opcode 0x%x ",
+                        ext_opcode);
+                    dwarfstring_append_printf_u(&g,
+                        "we are "
+                        "off this line table at section "
+                        "offset 0x%x and ",
+                        d);
+                    dwarfstring_append_printf_u(&g,"instruction length"
+                        "%u.",instr_length);
+                    _dwarf_error_string(dbg, error,
+                        DW_DLE_LINE_TABLE_BAD,
+                        dwarfstring_string(&g));
+                    dwarfstring_destructor(&g);
+                    return DW_DLV_ERROR;
                 }
 
 #ifdef PRINTING_DETAILS
@@ -1826,9 +1900,23 @@ read_line_table_program(Dwarf_Debug dbg,
                             "%02x",(unsigned char)(*(line_ptr)));
                         line_ptr++;
                         if (line_ptr > line_ptr_end) {
-                            _dwarf_error(dbg, error,
-                                DW_DLE_LINE_TABLE_BAD);
-                            return (DW_DLV_ERROR);
+                            dwarfstring g;
+                            ptrdiff_t d = 0;
+
+                            d = line_ptr - section_start;
+                            dwarfstring_constructor(&g);
+                            dwarfstring_append_printf_u(&g,
+                                "DW_DLE_LINE_TABLE_BAD reading "
+                                "DW_LNE extended op remaining bytes "
+                                "we are "
+                                "off this line table at section "
+                                "offset 0x%x .",
+                                d);
+                            _dwarf_error_string(dbg, error,
+                                DW_DLE_LINE_TABLE_BAD,
+                                dwarfstring_string(&g));
+                            dwarfstring_destructor(&g);
+                            return DW_DLV_ERROR;
                         }
                         remaining_bytes--;
                     }
@@ -1836,8 +1924,23 @@ read_line_table_program(Dwarf_Debug dbg,
 #else /* ! PRINTING_DETAILS */
                 line_ptr += remaining_bytes;
                 if (line_ptr > line_ptr_end) {
-                    _dwarf_error(dbg, error, DW_DLE_LINE_TABLE_BAD);
-                    return (DW_DLV_ERROR);
+                    dwarfstring g;
+                    ptrdiff_t d = 0;
+
+                    d = line_ptr - section_start;
+                    dwarfstring_constructor(&g);
+                    dwarfstring_append_printf_u(&g,
+                        "DW_DLE_LINE_TABLE_BAD reading "
+                        "DW_LNE extended op remaining bytes "
+                        "we are "
+                        "off this line table at section "
+                        "offset 0x%x .",
+                        d);
+                    _dwarf_error_string(dbg, error,
+                        DW_DLE_LINE_TABLE_BAD,
+                        dwarfstring_string(&g));
+                    dwarfstring_destructor(&g);
+                    return DW_DLV_ERROR;
                 }
 #endif /* PRINTING_DETAILS */
                 dwarf_printf(dbg,"\n");

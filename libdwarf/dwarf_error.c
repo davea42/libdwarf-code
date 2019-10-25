@@ -34,6 +34,7 @@
 #endif /* HAVE_STDLIB_H */
 #include "dwarf_incl.h"
 #include "dwarf_alloc.h"
+#include "dwarfstring.h"
 #include "dwarf_error.h"
 
 /* Array to hold string representation of errors. Any time a
@@ -64,6 +65,12 @@ void
 _dwarf_error(Dwarf_Debug dbg, Dwarf_Error * error,
     Dwarf_Signed errval)
 {
+    _dwarf_error_string(dbg,error,errval,0);
+}
+void
+_dwarf_error_string(Dwarf_Debug dbg, Dwarf_Error * error,
+    Dwarf_Signed errval,char *msg)
+{
     Dwarf_Error errptr;
 
     /*  Allow NULL dbg on entry, since sometimes that can happen and we
@@ -92,6 +99,14 @@ _dwarf_error(Dwarf_Debug dbg, Dwarf_Error * error,
             }
         }
         errptr->er_errval = errval;
+        if (msg) {
+            dwarfstring *em = 0;
+
+            em = (dwarfstring *)calloc(1,sizeof(dwarfstring));
+            dwarfstring_constructor(em);
+            dwarfstring_append(em,msg);
+            errptr->er_msg = (void*)em;
+        }
         *error = errptr;
         return;
     }
@@ -142,6 +157,9 @@ dwarf_errmsg(Dwarf_Error error)
 {
     if (!error) {
         return "Dwarf_Error is NULL";
+    }
+    if (error->er_msg) {
+        return dwarfstring_string(error->er_msg);
     }
     return  dwarf_errmsg_by_number(error->er_errval);
 }

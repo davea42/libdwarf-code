@@ -1,3 +1,35 @@
+2019-10-24 David Anderson
+     * dwarf_alloc.c: Add include of dwarfstring.h.
+       implement a destructor for Dwarf_Error for the
+       void * member of Dwarf_Error_s (pointer to
+       a dwarfstring, really). Implement _dwarf_error_destructor().
+     * dwarf_alloc.h: Add declaration of _dwarf_error_destructor().
+     * dwarf_error.c: Add include dwarfstring.h.
+       Implement _dwarf_error_string() so we can add any
+       string we want for an error code  so we can have
+       more detailed error messages where we choose
+       to do that.
+     * dwarf_error.h: Add DWARF_ERROR_H idempotency #ifdef etc.   
+       Add #ifdef __cplusplus etc. Add er_msg field to 
+       struct Dwarf_Error_s.
+     * dwarf_form.c,dwarf_line.c: Include dwarfstring.h
+       and create a more
+       detailed message for a couple of error situationss.
+       See _dwarf_error_string() calls.
+     * dwarf_print_lines.c: Add include dwarfstring.h
+     * dwarfstring.c: Include config.h and test HAVE_STDLIB_H.
+       Add UNUSEDARG and DW_DLV_OK(etc) values.
+       Implement new functions  dwarfstring_append_printf_s(),
+       dwarfstring_append_printf_i(), and
+       dwarfstring_append_printf_u().
+     * dwarfstring.h: Declare the types of the value argument
+       to dwarf_append_printf_i/u as long long/unsigned long long.
+       Declare  dwarfstring_append_printf_s(),
+       dwarfstring_append_printf_i(), and
+       dwarfstring_append_printf_u().
+     * test_dwarfstring.c: check_string() was failing to update
+       errcount (bug). Fixed. Added test5() with tests 
+       of the new functions in dwarfstring.h.
 2019-10-22 David Anderson
      * dwarf_util.c: Defines dwarf_package_version().
      * libdwarf.h.in: Declares dwarf_package_version().

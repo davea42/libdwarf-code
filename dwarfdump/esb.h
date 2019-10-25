@@ -87,13 +87,8 @@ struct esb_s {
 };
 
 /*  Mirroring the broken code in libdwarf.h.in  */
-#if (_MIPS_SZLONG == 64)
-typedef long esb_int;
-typedef unsigned long esb_unsigned;
-#else
 typedef long long esb_int;
 typedef unsigned long long esb_unsigned;
-#endif
 
 /* Open/close the null device used during formatting printing */
 FILE *esb_open_null_device(void);

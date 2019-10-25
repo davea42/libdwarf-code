@@ -66,6 +66,7 @@
 #include "dwarf_macro5.h"
 #include "dwarf_dnames.h"
 #include "dwarf_dsc.h"
+#include "dwarfstring.h"
 #include "dwarf_str_offsets.h"
 
 #define TRUE 1
@@ -102,9 +103,23 @@ struct ial_s {
     New in December 2014.*/
 struct Dwarf_Error_s _dwarf_failsafe_error = {
     DW_DLE_FAILSAFE_ERRVAL,
+    0,
     1
 };
 
+void
+_dwarf_error_destructor(void *m) 
+{
+     Dwarf_Error er = (Dwarf_Error)m;
+     dwarfstring *erm = (dwarfstring *)er->er_msg;
+     if (! erm) {
+         return;
+     }
+     dwarfstring_destructor(erm);
+     free(erm);
+     er->er_msg = 0;
+     return; 
+}
 
 /*  To do destructors we need some extra data in every
     _dwarf_get_alloc situation. */
@@ -148,7 +163,8 @@ struct ial_s alloc_instance_basics[ALLOC_AREA_INDEX_TABLE_MAX] = {
     {sizeof(struct Dwarf_Global_s),MULTIPLY_NO,  0, 0},
 
     /* 14 DW_DLA_ERROR */
-    {sizeof(struct Dwarf_Error_s),MULTIPLY_NO,  0, 0},
+    {sizeof(struct Dwarf_Error_s),MULTIPLY_NO,  0,
+       _dwarf_error_destructor},
 
     {sizeof(Dwarf_Ptr),MULTIPLY_CT, 0, 0},  /* 15 DW_DLA_LIST */
     {1,MULTIPLY_NO, 0, 0},    /* not used *//* 16 DW_DLA_LINEBUF */

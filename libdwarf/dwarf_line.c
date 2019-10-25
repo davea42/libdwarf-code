@@ -36,6 +36,7 @@
 #include "dwarf_error.h"
 #include "dwarf_util.h"
 #include "dwarf_line.h"
+#include "dwarfstring.h"
 
 /* Line Register Set initial conditions. */
 static struct Dwarf_Line_Registers_s _dwarf_line_table_regs_default_values = {

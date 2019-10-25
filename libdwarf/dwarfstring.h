@@ -45,6 +45,8 @@ struct dwarfstring_s {
    unsigned char s_malloc;
 };
 
+typedef unsigned long long   dwarfstring_u;
+typedef signed long long     dwarfstring_i;
 typedef struct dwarfstring_s dwarfstring;
 
 int dwarfstring_constructor(struct dwarfstring_s *g);
@@ -63,6 +65,13 @@ int dwarfstring_append(struct dwarfstring_s *g,char *str);
     appended. NUL termination is provided by dwarfstrings. */
 int dwarfstring_append_length(struct dwarfstring_s *g,
     char *str,unsigned long len);
+
+int dwarfstring_append_printf_s(dwarfstring *data,
+    char *format,char *s);
+int dwarfstring_append_printf_i(dwarfstring *data,
+    char *format,dwarfstring_i);
+int dwarfstring_append_printf_u(dwarfstring *data,
+    char *format,dwarfstring_u);
 
 char * dwarfstring_string(struct dwarfstring_s *g);
 unsigned long dwarfstring_strlen(struct dwarfstring_s *g);

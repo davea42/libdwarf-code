@@ -30,6 +30,7 @@
 #include <stdio.h>
 #include "dwarf_incl.h"
 #include "dwarf_alloc.h"
+#include "dwarfstring.h"
 #include "dwarf_error.h"
 #include "dwarf_util.h"
 #include "dwarf_die_deliv.h"
@@ -388,9 +389,21 @@ dwarf_convert_to_global_offset(Dwarf_Attribute attr,
             */
         break;
 
-    default:
-        _dwarf_error(dbg, error, DW_DLE_BAD_REF_FORM);
-        return (DW_DLV_ERROR);
+    default: {
+        dwarfstring m;
+
+        dwarfstring_constructor(&m);
+        dwarfstring_append_printf_u(&m,
+           "DW_DLE_BAD_REF_FORM. The form "
+           "code is 0x%x which cannot be converted to a global "
+           " offset by "
+           "dwarf_convert_to_global_offset()",
+           attr->ar_attribute_form);
+        _dwarf_error_string(dbg, error, DW_DLE_BAD_REF_FORM,
+             dwarfstring_string(&m));
+        dwarfstring_destructor(&m);
+        return DW_DLV_ERROR;
+        }
     }
 
     *ret_offset = (offset);
@@ -494,9 +507,21 @@ dwarf_formref(Dwarf_Attribute attr,
             not a .debug_info CU local offset. */
         _dwarf_error(dbg, error, DW_DLE_REF_SIG8_NOT_HANDLED);
         return (DW_DLV_ERROR);
-    default:
-        _dwarf_error(dbg, error, DW_DLE_BAD_REF_FORM);
-        return (DW_DLV_ERROR);
+    default: {
+        dwarfstring m;
+
+        dwarfstring_constructor(&m);
+        dwarfstring_append_printf_u(&m,
+           "DW_DLE_BAD_REF_FORM. The form "
+           "code is 0x%x which does not have an offset "
+           " for "
+           "dwarf_formref() to return.",
+           attr->ar_attribute_form);
+        _dwarf_error_string(dbg, error, DW_DLE_BAD_REF_FORM,
+             dwarfstring_string(&m));
+        dwarfstring_destructor(&m);
+        return DW_DLV_ERROR;
+        }
     }
 
     /* Check that offset is within current cu portion of .debug_info. */

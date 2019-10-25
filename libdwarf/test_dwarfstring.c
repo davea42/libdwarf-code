@@ -52,6 +52,7 @@ check_string(const char *msg,char *exp,
     }
     printf("FAIL %s expected \"%s\" got \"%s\" test line %d\n",
         msg,exp,actual,line);
+    ++errcount;
 }
 static void
 check_value(const char *msg,unsigned long exp,
@@ -230,6 +231,62 @@ test4(int tnum)
     return 0;
 }
 
+static int
+test5(int tnum)
+{
+    struct dwarfstring_s g;
+    char *d = 0;
+    const char *expstr = "";
+    int res = 0;
+    unsigned long biglen = 0x654a;
+    signed long lminus= -55;
+    char *mystr = "a01234";
+    char *targetmystr = "a01234xyz";
+
+    dwarfstring_constructor(&g);
+    dwarfstring_append_printf_s(&g,"initialstring-%s-finalstring",
+        mystr);
+    d = dwarfstring_string(&g);
+    expstr = "initialstring-a01234-finalstring";
+    check_string("from pct-s",(char *)expstr,d,__LINE__);
+    dwarfstring_destructor(&g);
+
+    dwarfstring_constructor(&g);
+    dwarfstring_append_printf_u(&g,"initialstring--0x%x-finalstring",
+        biglen);
+    d = dwarfstring_string(&g);
+    expstr = "initialstring--0x654a-finalstring";
+    check_string("from pct-s",(char *)expstr,d,__LINE__);
+    dwarfstring_destructor(&g);
+
+    dwarfstring_constructor(&g);
+    dwarfstring_append_printf_i(&g,"initialstring: %d (",
+        lminus);
+    dwarfstring_append_printf_u(&g,"0x%08x) -finalstring",
+        lminus);
+    d = dwarfstring_string(&g);
+    expstr = "initialstring: -55 (0xffffffffffffffc9) -finalstring";
+    check_string("from pct-s",(char *)expstr,d,__LINE__);
+    dwarfstring_destructor(&g);
+
+    dwarfstring_constructor(&g);
+    dwarfstring_append_printf_u(&g,"smallhex (0x%08x) -finalstring",
+        biglen);
+    d = dwarfstring_string(&g);
+    expstr = "smallhex (0x0000654a) -finalstring";
+    check_string("from pct-s",(char *)expstr,d,__LINE__);
+    dwarfstring_destructor(&g);
+
+    dwarfstring_constructor(&g);
+    dwarfstring_append_printf_u(&g,"longlead (%08u) -end",
+        20);
+    d = dwarfstring_string(&g);
+    expstr = "longlead (00000020) -end";
+    check_string("from pct-s",(char *)expstr,d,__LINE__);
+    dwarfstring_destructor(&g);
+    return 0;
+    return 0;
+}   
 
 
 int main()
@@ -238,6 +295,7 @@ int main()
     test2(2);
     test3(3);
     test4(3);
+    test5(3);
     if (errcount) {
         exit(1);
     }

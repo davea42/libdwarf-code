@@ -35,6 +35,7 @@
 #include "dwarf_error.h"
 #include "dwarf_util.h"
 #include "dwarf_line.h"
+#include "dwarfstring.h"
 
 #define PRINTING_DETAILS 1
 
