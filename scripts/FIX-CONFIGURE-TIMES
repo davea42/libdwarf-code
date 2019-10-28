@@ -43,9 +43,11 @@ then
   cd  ..
   echo "Are we in the right directory now?" `pwd`
   rightplace `pwd`
+  echo "Yes, we are in the right directory."
 else
   echo "Are we in the right directory?"
   rightplace `pwd`
+  echo "Yes, we are in the right directory."
 fi
 l=`pwd`
 echo "Now touch files to get timestamps usable."
@@ -84,7 +86,7 @@ test-driver \
 libdwarf/Makefile.in 
 do
    sleep 1
-   echo "now touch $i"
+   #echo "now touch $i"
    touch $i
 done
 
