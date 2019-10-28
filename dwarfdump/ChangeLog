@@ -1,3 +1,9 @@
+2019-10-28 David Anderson
+    * esb.c: Fixed a VSNPRINTF ifdef so it no longer
+      uses ifdef to separate parts of a va-arg.
+      Fixes a compiler warning.
+    * runtests.sh: Instead of assuming esb.o present
+      put $srcdir/esb.c in the test script.
 2019-10-24 David Anderson
     * esb.h: Removed the bogus and unnecessary test
       of _MIPS_SZLONG. Just go with long long.

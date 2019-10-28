@@ -11,7 +11,11 @@ fi
 srcdir=$top_srcdir/libdwarf
 
 ./test_linkedtopath >junk.ltp
-dos2unix junk.ltp
+which dos2unix
+if [ $? -eq 0 ]
+then
+  dos2unix junk.ltp
+fi
 diff $srcdir/baseline.ltp junk.ltp
 if [ $? -ne 0 ] 
 then

@@ -904,11 +904,11 @@ esb_append_printf(struct esb_s *data,const char *in_string, ...)
 #ifdef HAVE_VSNPRINTF
     len2 = vsnprintf(&data->esb_string[data->esb_used_bytes],
         data->esb_allocated_size,
+        in_string,ap);
 #else
     len2 = vsprintf(&data->esb_string[data->esb_used_bytes],
-#endif
         in_string,ap);
-
+#endif
     va_end(ap);
     data->esb_used_bytes += len2;
     if (len2 >  len) {

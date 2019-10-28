@@ -1,3 +1,7 @@
+2019-10-28 David Anderson
+     * testdebuglink.sh: If dos2unix is not available to run
+       we now just assume it's not needed.  The only place it
+       is actually needed is regression testing on Windows.
 2019-10-24 David Anderson
      * dwarf_alloc.c: Add include of dwarfstring.h.
        implement a destructor for Dwarf_Error for the

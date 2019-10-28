@@ -157,7 +157,11 @@ then
   droptwoifwin $t
 fi
 echo "if update required, mv $top_blddir/dwarfdump/$t $b"
-dos2unix $t
+which dos2unix
+if [ $? -eq 0 ]
+then
+  dos2unix $t
+fi
 diff  $b $t > $t.diffjunk.testsmallpe.diff
 chkres $? "diff of $b $t"
 
@@ -173,7 +177,11 @@ then
   droptwoifwin $t
 fi
 echo "if update required, mv $top_blddir/dwarfdump/$t $b"
-dos2unix $t
+which dos2unix
+if [ $? -eq 0 ]
+then
+  dos2unix $t
+fi
 diff $b $t > $t.diff
 chkres $? "diff of $b $t"
 
@@ -190,7 +198,11 @@ then
 fi
 chkres $? "Running dwarfdump on $f"
 echo "if update required, mv $top_blddir/dwarfdump/$t $b"
-dos2unix $t
+which dos2unix
+if [ $? -eq 0 ]
+then
+  dos2unix $t
+fi
 diff $b $t > $t.diff
 chkres $? "dwarfdump/runtests.sh diff of $b $t"
 if [ $failcount -ne 0 ]
