@@ -1,3 +1,10 @@
+2019-11-04 David Anderson
+     * Makefile.am: Removed inproper SUBDIRS if clauses.
+     * Makefile.in: Regenerated.
+     * configure.ac: Removed dist-xz frm AM_INIT_AUTOMAKE
+       as we don't use it and MacOS command line tools
+       do not have xz.
+     * configure: Regenerated.
 2019-10-23 David Anderson
      * CMakeLists.txt: Create a separate compile options
        list DW_FWALLXX from C DW_FWALL.

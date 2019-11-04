@@ -3778,6 +3778,8 @@ unknown)
 esac
 
 
+### We don't use dist-xz *.xz output from make dist,
+### so don't mention it.
 am__api_version='1.15'
 
 # Find a good install program.  We prefer a C program (faster),

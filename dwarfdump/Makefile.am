@@ -131,7 +131,7 @@ print_reloc_test.c \
 getopttest.c \
 tag_common.c \
 testesb.c \
-test-mach-o-32.dSYM \ 
+test-mach-o-32.dSYM \
 test-mach-o-32.base \
 testobjLE32PE.exe \
 testuriLE64ELf.obj \

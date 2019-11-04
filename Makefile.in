@@ -91,6 +91,13 @@ POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
 @HAVE_DWARFGEN_TRUE@am__append_1 = dwarfgen
+
+###if HAVE_LIBELF
+###SUBDIRS += dwarfgen
+###endif
+###if HAVE_LIBELF_LIBELF
+###SUBDIRS += dwarfgen
+###endif
 @HAVE_DWARFEXAMPLE_TRUE@am__append_2 = dwarfexample
 subdir = .
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
@@ -203,9 +210,9 @@ am__relativize = \
     dir1=`echo "$$dir1" | sed -e "$$sed_rest"`; \
   done; \
   reldir="$$dir2"
-DIST_ARCHIVES = $(distdir).tar.gz $(distdir).tar.xz
+DIST_ARCHIVES = $(distdir).tar.gz
 GZIP_ENV = --best
-DIST_TARGETS = dist-xz dist-gzip
+DIST_TARGETS = dist-gzip
 distuninstallcheck_listfiles = find . -type f -print
 am__distuninstallcheck_listfiles = $(distuninstallcheck_listfiles) \
   | sed 's|^\./|$(prefix)/|' | grep -v '$(infodir)/dir$$'
@@ -429,7 +436,7 @@ tsearch/scripts \
 tsearch/tsearch.c \
 tsearch/tsearchlibtimes.csv \
 tsearch/tsearchlibtimes.ods \
-tsearch/tsearch_tester.c 
+tsearch/tsearch_tester.c
 
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
@@ -674,6 +681,7 @@ dist-bzip2: distdir
 dist-lzip: distdir
 	tardir=$(distdir) && $(am__tar) | lzip -c $${LZIP_OPT--9} >$(distdir).tar.lz
 	$(am__post_remove_distdir)
+
 dist-xz: distdir
 	tardir=$(distdir) && $(am__tar) | XZ_OPT=$${XZ_OPT--e} xz -c >$(distdir).tar.xz
 	$(am__post_remove_distdir)

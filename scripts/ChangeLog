@@ -1,3 +1,14 @@
+2019-11-04 David Anderson
+     * buildandreleasetest.sh: Now handles --disable-libelf
+       so we can run this test successfully in more environments.
+       A few fixes to silly indentations.
+       If cmake is not available skip the cmake test.
+     * run-all-tests.sh: Now handles --disable-libelf
+       and when libelf missing avoids checks that could
+       not possibly pass.
+2019-10-29 David Anderson
+     * buildandreleasetest.sh: If cmake is not installed
+       do not attempt to run it.
 2019-10-28 David Anderson
      * FIX-CONFIGURE-TIMES: No longer does echo on every file name,
        that was silly.  Answers the  'are we in the right place?' now.

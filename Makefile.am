@@ -4,9 +4,18 @@
 ACLOCAL_AMFLAGS = -I m4
 
 SUBDIRS = libdwarf dwarfdump
+
 if HAVE_DWARFGEN
 SUBDIRS += dwarfgen
 endif
+
+###if HAVE_LIBELF
+###SUBDIRS += dwarfgen
+###endif
+###if HAVE_LIBELF_LIBELF
+###SUBDIRS += dwarfgen
+###endif
+
 if HAVE_DWARFEXAMPLE
 SUBDIRS += dwarfexample
 endif
@@ -98,6 +107,6 @@ tsearch/scripts \
 tsearch/tsearch.c \
 tsearch/tsearchlibtimes.csv \
 tsearch/tsearchlibtimes.ods \
-tsearch/tsearch_tester.c 
+tsearch/tsearch_tester.c
 
 # AUTHORS, ChangeLog and COPYING must be present

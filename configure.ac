@@ -167,7 +167,9 @@ AM_CONDITIONAL([HAVE_WIN32], [test "x${have_win32}" = "xyes"])
 
 AM_PROG_AR
 
-AM_INIT_AUTOMAKE([1.6 dist-xz])
+### We don't use dist-xz *.xz output from make dist,
+### so don't mention it.
+AM_INIT_AUTOMAKE([1.6])
 m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
 
 LT_INIT([win32-dll disable-shared static])

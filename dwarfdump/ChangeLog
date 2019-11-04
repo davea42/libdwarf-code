@@ -1,3 +1,5 @@
+2019-11-04 David Anderson
+    * Makefile.am: Fixed a trailing blank after a backslash.
 2019-10-28 David Anderson
     * esb.c: Fixed a VSNPRINTF ifdef so it no longer
       uses ifdef to separate parts of a va-arg.

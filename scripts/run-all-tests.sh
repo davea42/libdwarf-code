@@ -1,6 +1,8 @@
 #!/bin/sh
 start=`date`
 echo "start run-all-tests.sh at $start"
+# use --disable-libelf to turn off all reference to
+# libelf and to also eliminate reliance on dwarfgen.
 here=`pwd`
 ddsrc=$here/dwarfdump
 rosrc=$here/../readelfobj
@@ -8,6 +10,7 @@ rtestsrc=$here/../regressiontests
 
 ddbld=/tmp/vaddbld
 robld=/tmp/varobld
+argval=''
 
 goodcount=0
 failcount=0
@@ -21,6 +24,16 @@ chkres () {
     failcount=`expr $failcount + 1`
   fi
 }
+if [ $# -eq 1 ]
+then
+  case $1 in
+   --enable-libelf ) argval=$1 ;;
+   --disable-libelf ) argval=$1 ;;
+   * ) echo "Only --enable-libelf or --disable-libelf allowed"
+       echo "No action taken. Exit"
+       exit 1 ;;
+  esac
+fi
 
 echo run from $here
 if [ ! -d $here/dwarfdump ]
@@ -41,6 +54,8 @@ then
 fi
 
 
+# If we have no libelf we must not attempt to build dwarfgen.
+# FIXME
 # ========
 builddwarfdump() {
   echo "Build dwarfdump source: $here builddir: $ddbld"
@@ -50,7 +65,12 @@ builddwarfdump() {
   chkres $? "D FAIL: unable to create $oac, giving up."
   cd $oac
   chkres $? "E FAIL: unable to cd to $oac, giving up."
-  $here/configure --enable-wall --enable-dwarfgen --enable-dwarfexample
+  if [ x$1 = "x" ]
+  then
+    $here/configure --enable-wall --enable-dwarfgen --enable-dwarfexample
+  else
+    $here/configure --enable-wall $1  --enable-dwarfexample
+  fi
   chkres $? "F FAIL: configure failed in $oac giving up."
   make check
   chkres $? "G FAIL: make check failed in $oac, giving up."
@@ -64,7 +84,12 @@ rundistcheck()
 {
   cd $here
   chkres $? "Q FAIL: scripts/buildandreleasetest.sh FAIL"
-  sh scripts/buildandreleasetest.sh
+  if  [ x$1 = "--disable-libelf" ]
+  then
+      sh scripts/buildandreleasetest.sh --nodwarfgen
+  else
+      sh scripts/buildandreleasetest.sh $1
+  fi
   chkres $? "R FAIL: scripts/buildandreleasetest.sh FAIL"
   if [ $failcount -eq 0 ]
   then
@@ -115,10 +140,11 @@ runfullddtest() {
     # so we get any needed local alias settings.
     cp $sha SHALIAS.sh
   fi
-  ./configure
+  echo " Now configure regressiontests ./configure $1"
+  ./configure $1
   chkres $? "I FAIL: configure in $ddtestdir failed , giving up."
   make
-  chkres $? "J FAIL: tests failed in $ddtestdir , giving up."
+  chkres $? "J FAIL make: tests failed in $ddtestdir. giving up."
   grep FAIL <$ddtestdir/ALLdd
   grep "FAIL 0" $ddtestdir/ALLdd
   chkres $? "Q FAIL: something failed in $ddtestdir."
@@ -136,8 +162,8 @@ runfullddtest() {
 #========actually run tests
 if [ -d $ddsrc ]
 then
-  builddwarfdump
-  rundistcheck
+  builddwarfdump $argval
+  rundistcheck  $argval
   chkres $? "FAIL rundistcheck" 
 else
   echo "dwarfdump make check etc not run"
@@ -151,7 +177,7 @@ else
 fi
 if [ -d $rtestsrc ]
 then
-  runfullddtest
+  runfullddtest $argval
   chkres $? "FAIL runddtest" 
 else
   echo "dwarfdump regressiontests not run"
