@@ -48,12 +48,14 @@ The configure option --disable-libelf
 is no longer needed (but is allowed).
 
 Under MinGW the gcc CFLAGS 
- -DHAVE_WINDOWS_H -DHAVE_NONSTANDARD_PRINTF_64_FORMAT -fno-dwarf2-cfi-asm
+ -DHAVE_WINDOWS_H -DHAVE_NONSTANDARD_PRINTF_64_FORMAT \
+ -fno-dwarf2-cfi-asm
 have helped some people, though for my MinGW tests
 these are not necessary or appropriate.
 
-We have had success with mingw without setting CFLAGS with
-(to save space in this example we do not show checking for errors):
+We have had success with MinGW without setting CFLAGS with (to
+save space in this example we do not show checking for errors):
+
     cd code
     sh scripts/FIX-CONFIGURE-TIMES
     cd ..
@@ -112,7 +114,7 @@ build.
 BUILDING ALL THE TOOLS
 To build all the tools (including dwarfgen and dwarfexample)
 use  a different configure command:
-    ./configure --enable-dwarfgen --enable-dwarfexample make
+    ./configure --enable-dwarfgen --enable-dwarfexample ; make
 
 To see all the available options to configure do
    ./configure --help
@@ -141,6 +143,7 @@ DEBUGGING MAKE
 To see what compile/link commands are actually
 being used by the generated Makefiles try V=1, as in
     make V=1
+
 
 
 INSTALL AND UNINSTALL
@@ -182,7 +185,8 @@ It has been tested with host and target set to an ARM with
 build on X86_64.  See
   https://gcc.gnu.org/onlinedocs/gccint/Configure-Terms.html
 for standard GNU usage of build, host, and target.  See also:
-https://www.gnu.org/software/autoconf/manual/autoconf.html#Specifying-Target-Triplets
+  https://www.gnu.org/software/autoconf/manual/\
+  autoconf.html#Specifying-Target-Triplets
 
 The autoconf documentation strongly suggests adding --build
 to the configure commands and in the example below adding
@@ -230,7 +234,7 @@ sudo cp libz.a /usr/lib/i386-linux-gnu/
 sudo cp libz.so /usr/lib/i386-linux-gnu/
 
 #building libdwarf/dwarfdump in the source for no good reason:
-./configure  --host=i386-linux-gnu \
+ ./configure  --host=i386-linux-gnu \
  --build=x86_64-pc-linux-gnu \
  CFLAGS="-O2 -m32" 
 
@@ -243,19 +247,23 @@ the configure.ac do the following command at the top level
 You will need the autotools installed including autoconf,
 automake, and libtool to run autoreconf.
 
-If, for some reason, you wish to run the small
-basic checks of individual source files, first
+To run the small
+basic checks of libdwarf/dwarfdump, first
 do
     ./configure
     make
 Then
     make check
-will run the special test scripts: dwarfdump/runtests.sh
-libdwarf/runtests.sh (each must be run in its directory,
-neither requires any arguments, just run each).
-As of this writing this must be done (as shown)
-in the source directory, it does not currently
-work if running the configure in a build directory.
+
+A further set of tests is available vi
+    sh scripts/buildandreleasetest.sh
+which does configure, make check, make install (in
+temporary directories), make dist, and cmake.
+
+A full set of tests is
+   sh scripts/run-all-tests.sh
+which requires the regressiontests directory also be
+present. These tests outside the scope of this README.
 
 To create a release file do:
     ./configure --enable-dwarfexample --enable-dwarfgen
