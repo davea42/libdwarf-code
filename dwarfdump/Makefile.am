@@ -122,6 +122,7 @@ ChangeLog2018 \
 CMakeLists.txt \
 NEWS \
 README \
+README.testcases \
 CODINGSTYLE \
 print_reloc_decls.h \
 makename_test.c  \
@@ -137,6 +138,7 @@ testobjLE32PE.exe \
 testuriLE64ELf.obj \
 testobjLE32PE.base \
 testuriLE64ELf.base \
+testobjLE32PE.test.c \
 $(dwarfdumpdev_DATA) \
 tag_attr.c \
 tag_tree.c \

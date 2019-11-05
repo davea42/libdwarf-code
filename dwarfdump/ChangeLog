@@ -1,4 +1,13 @@
 2019-11-05 David Anderson
+    * README.testcases: Documentation of the three binary
+      testcases in the dwarfdump source directory.
+    * testobjLE32PE.test.c: Original source for the
+      testobjLE32PE.exe testcase. Not compiled here, just
+      present as documentation.
+    * Makefile.am: Name README.testcases and testobjLE32PE.test.c 
+      so the get into releases.
+    * Makefile.in: Regenerated.
+2019-11-05 David Anderson
     * dwarf_names.c,dwarf_names.h,dwarfdump-ta-ext-table.h,
        dwarfdump-ta-table.h,dwarfdump-tt-ext-table.h,
        dwarfdump-tt-table.h : new version string.
