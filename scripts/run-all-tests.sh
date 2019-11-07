@@ -1,8 +1,10 @@
-#!/bin/sh
+ nonstdprintf $nonstdprintf#!/bin/sh
 start=`date`
 echo "start run-all-tests.sh at $start"
-# use --disable-libelf to turn off all reference to
+# Use --disable-libelf to turn off all reference to
 # libelf and to also eliminate reliance on dwarfgen.
+# Use --enable-nonstandardprintf to use Windows specific long long
+# printf formats.
 here=`pwd`
 ddsrc=$here/dwarfdump
 rosrc=$here/../readelfobj
@@ -11,6 +13,7 @@ rtestsrc=$here/../regressiontests
 ddbld=/tmp/vaddbld
 robld=/tmp/varobld
 argval=''
+nonstdprintf=
 
 goodcount=0
 failcount=0
@@ -24,15 +27,21 @@ chkres () {
     failcount=`expr $failcount + 1`
   fi
 }
-if [ $# -eq 1 ]
-then
+while [ $# -ne 0 ]
+do
   case $1 in
-   --enable-libelf ) argval=$1 ;;
-   --disable-libelf ) argval=$1 ;;
-   * ) echo "Only --enable-libelf or --disable-libelf allowed"
+   --enable-libelf ) argval=$1 ; shift ;;
+   --disable-libelf ) argval=$1 ; shift ;;
+   --enable-nonstandardprintf ) nonstdprintf=$1 ; shift ;;
+   * ) echo "Only --enable-libelf or --disable-libelf "
+       echo "or --enable-nonstandardprintf allowed."
        echo "No action taken. Exit"
        exit 1 ;;
   esac
+done
+if [ x$nonstdprintf != "x" ]
+then
+  echo "Use nonstandardprintf. $nonstdprintf"
 fi
 
 echo run from $here
@@ -58,7 +67,7 @@ fi
 # FIXME
 # ========
 builddwarfdump() {
-  echo "Build dwarfdump source: $here builddir: $ddbld"
+  echo "Build dwarfdump source: $here builddir: $ddbld nonstdprintf $nonstdprintf"
   oac=$ddbld
   rm -rf $oac
   mkdir $oac
@@ -67,9 +76,9 @@ builddwarfdump() {
   chkres $? "E FAIL: unable to cd to $oac, giving up."
   if [ x$1 = "x" ]
   then
-    $here/configure --enable-wall --enable-dwarfgen --enable-dwarfexample
+    $here/configure --enable-wall $nonstdprintf --enable-dwarfgen --enable-dwarfexample
   else
-    $here/configure --enable-wall $1  --enable-dwarfexample
+    $here/configure --enable-wall $1  $nonstdprintf --enable-dwarfexample
   fi
   chkres $? "F FAIL: configure failed in $oac giving up."
   make check
@@ -86,9 +95,9 @@ rundistcheck()
   chkres $? "Q FAIL: scripts/buildandreleasetest.sh FAIL"
   if  [ x$1 = "--disable-libelf" ]
   then
-      sh scripts/buildandreleasetest.sh --nodwarfgen
+      sh scripts/buildandreleasetest.sh $1 --disable-dwarfgen $nonstdprintf
   else
-      sh scripts/buildandreleasetest.sh $1
+      sh scripts/buildandreleasetest.sh $1 $nonstdprintf
   fi
   chkres $? "R FAIL: scripts/buildandreleasetest.sh FAIL"
   if [ $failcount -eq 0 ]
@@ -113,7 +122,7 @@ buildreadelfobj() {
   chkres $? "L FAIL: $robld mkdir failed, giving up."
   cd $robld
   chkres $? "M FAIL: cd $robld failed, giving up."
-  $rodir/configure --enable-wall
+  $rodir/configure --enable-wall $nonstdprintf
   chkres $? "N FAIL: configure $rodir/configure failed, giving up."
   make 
   chkres $? "Oa FAIL: make in $rodir failed, giving up."
@@ -140,8 +149,8 @@ runfullddtest() {
     # so we get any needed local alias settings.
     cp $sha SHALIAS.sh
   fi
-  echo " Now configure regressiontests ./configure $1"
-  ./configure $1
+  echo " Now configure regressiontests ./configure $1 $nonstdprintf"
+  ./configure $1 $nonstdprintf
   chkres $? "I FAIL: configure in $ddtestdir failed , giving up."
   make
   chkres $? "J FAIL make: tests failed in $ddtestdir. giving up."
@@ -162,8 +171,8 @@ runfullddtest() {
 #========actually run tests
 if [ -d $ddsrc ]
 then
-  builddwarfdump $argval
-  rundistcheck  $argval
+  builddwarfdump $argval $nonstdprintf
+  rundistcheck  $argval $nonstdprintf
   chkres $? "FAIL rundistcheck" 
 else
   echo "dwarfdump make check etc not run"
@@ -177,7 +186,7 @@ else
 fi
 if [ -d $rtestsrc ]
 then
-  runfullddtest $argval
+  runfullddtest $argval $nonstdprintf
   chkres $? "FAIL runddtest" 
 else
   echo "dwarfdump regressiontests not run"

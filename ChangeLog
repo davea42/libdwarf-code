@@ -1,3 +1,9 @@
+2019-11-06 David Anderson
+     * configure.ac: Version 20191106. separating
+       cxx_compiler flags from c_compiler_flags
+       as C does not understand -Wno-unused-private-field
+       and we have -Werror set at times.
+     * configure: Regenerated
 2019-11-05 David Anderson
      * configure.ac: Version 20191104
      * configure: Regenerated

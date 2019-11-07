@@ -50,7 +50,7 @@
 #include "makename.h"
 #include "globals.h"
 
-#ifdef _WIN32
+#if defined(__WIN32) &&  (!defined(__GNUC__) && !defined(__clang__))
 #pragma warning(disable:4996)    /* Warning when migrated to VS2010 */
 #endif /* _WIN32 */
 

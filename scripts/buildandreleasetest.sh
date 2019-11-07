@@ -12,16 +12,18 @@ genopta="--enable-dwarfgen"
 genoptb="-DBUILD_DWARFGEN=ON"
 libelfopt=''
 wd=`pwd`
-if [ $# -gt 0 ]
-then
+nonstdprintf=
+while [ $# -ne 0 ]
+do
   case $1 in
    --disable-libelf ) genopta='' ; genoptb='' 
         libelfopt=$1 ; shift ;;
    --enable-libelf )  shift  ;;
    --disable-dwarfgen ) genopta='' ; genoptb='' ; shift  ;;
-   * ) echo "Unknown option $v. Error." ; exit 1 ;;
+   --enable-nonstandardprintf ) nonstdprintf=$1 ; shift  ;;
+   * ) echo "Unknown buildandreleasetest.sh option $1. Error." ; exit 1 ;;
   esac
-fi
+done
 
 if [ -f ./configure.ac ]
 then
@@ -107,8 +109,8 @@ then
   echo FAIL A cd $v
       exit 1
 fi
-echo "now: $configloc --prefix=/tmp/dwinstall $libelfopt"
-$configloc --prefix=/tmp/dwinstall $libelfopt
+echo "now: $configloc --prefix=/tmp/dwinstall $libelfopt $nonstdprintf"
+$configloc --prefix=/tmp/dwinstall $libelfopt $nonstdprintf
 if [ $? -ne 0 ]
 then
   echo FAIL A4a configure fail
@@ -145,7 +147,7 @@ then
 fi
 echo "TEST: now second install install, prefix /tmp/dwinstallrel"
 echo "TEST: Expecting src in /tmp/libdwarf-$v"
-/tmp/libdwarf-$v/configure --enable-wall --prefix=/tmp/dwinstallrel $libelfopt
+/tmp/libdwarf-$v/configure --enable-wall --prefix=/tmp/dwinstallrel $libelfopt $nonstdprintf
 if [ $? -ne 0 ]
 then
   echo FAIL C2  configure fail
@@ -179,8 +181,8 @@ then
 fi
 echo "TEST: now second install install, prefix /tmp/dwinstallrel"
 echo "TEST: Expecting src in /tmp/libdwarf-$v"
-echo "TEST: /tmp/libdwarf-$v/configure $genopta --enable-wall --enable-dwarfexample --prefix=/tmp/dwinstallrel $libelfopt"
-/tmp/libdwarf-$v/configure $genopta --enable-wall --enable-dwarfexample --prefix=/tmp/dwinstallrel $libelfopt
+echo "TEST: /tmp/libdwarf-$v/configure $genopta --enable-wall --enable-dwarfexample --prefix=/tmp/dwinstallrel $libelfopt $nonstdprintf"
+/tmp/libdwarf-$v/configure $genopta --enable-wall --enable-dwarfexample --prefix=/tmp/dwinstallrel $libelfopt $nonstdprintf
 if [ $? -ne 0 ]
 then
   echo FAIL be2  configure fail
@@ -206,6 +208,7 @@ then
 fi
 echo "TEST: Now configure from source dir /tmp/libdwarf-$v/ in build dir /tmp/dwinstallrelbldall"
 /tmp/libdwarf-$v/configure --enable-wall --enable-dwarfexample $genopta
+$nonstdprintf
 if [ $? -ne 0 ]
 then
   echo FAIL C9  /tmp/libdwarf-$v/configure 

@@ -4,6 +4,9 @@
 # Run in the dwarfdump directory
 # Run only after config.h created in a configure
 # in the source directory
+# Assumes env vars DWTOPSRCDIR set to the path to source.
+# Assumes CFLAGS warning stuff set in env var DWCOMPILERFLAGS 
+# Assumes we run the script in the dwarfdump directory.
 
 top_blddir=`pwd`/..
 if [ x$DWTOPSRCDIR = "x" ]
@@ -13,6 +16,14 @@ else
   top_srcdir=$DWTOPSRCDIR
 fi
 srcdir=$top_srcdir/dwarfdump
+if [ x"$DWCOMPILERFLAGS" = 'x' ]
+then
+  CFLAGS="-g -O2 -I$top_blddir -I$top_srcdir/libdwarf  -I$top_blddir/libdwarf -Wall -Wextra"
+  echo "CFLAGS basic default default  $CFLAGS"
+else
+  CFLAGS="-g -O2 -I$top_blddir -I$top_srcdir/libdwarf  -I$top_blddir/libdwarf $DWCOMPILERFLAGS"
+  echo "CFLAGS via configure $CFLAGS"
+fi
 
 goodcount=0
 failcount=0
@@ -44,7 +55,8 @@ else
     CC=cc
   fi
 fi
-CFLAGS="-g -O2 -I$top_blddir -I$top_srcdir/libdwarf  -I$top_blddir/libdwarf -Wall -Wextra -Wno-unused-private-field -Wpointer-arith -Wmissing-declarations -Wcomment -Wformat -Wpedantic -Wuninitialized -Wshadow -Wno-long-long -Werror"
+#echo "dadebug cflags before runtests.sh sets it $CFLAGS"
+#CFLAGS="-g -O2 -I$top_blddir -I$top_srcdir/libdwarf  -I$top_blddir/libdwarf -Wall -Wextra -Wpointer-arith -Wmissing-declarations -Wcomment -Wformat -Wpedantic -Wuninitialized -Wshadow -Wno-long-long -Werror"
 
 echo "dwgetopt test"
 $CC $CFLAGS  -o getopttest $srcdir/getopttest.c $srcdir/dwgetopt.c
@@ -115,7 +127,6 @@ rm -f ./selfmc selfmc.exe
 #chkres $? "running selfesb "
 #rm -f ./selfesb  selfesb.exe
 
-
 echo "start selfsetion_bitmaps"
 $CC  $CFLAGS -g $srcdir/section_bitmaps_test.c  $srcdir/section_bitmaps.c -o selfsection_bitmaps
 chkres $? "compiling bitmaps.c section_bitmaps"
@@ -130,7 +141,9 @@ chkres $? "compiling print_reloc.c selfprint_reloc"
 chkres $? "running selfprint_reloc "
 rm -f ./selfprint_reloc selfprint_reloc.exe
 
-
+# Remove the leading two lines for windows
+# as windows dwarfdump emits two leading lines
+# as compared to non-windows dwarfdump
 droptwoifwin() {
 i=$1
 l=`wc -l < $i`
@@ -149,7 +162,16 @@ f=$srcdir/testobjLE32PE.exe
 b=$srcdir/testobjLE32PE.base
 t=junk.testsmallpe
 echo "start  dwarfdump sanity check on pe $f"
-./dwarfdump $f | head -n 500 > $t
+# Windows dwarfdump emits a couple prefix lines
+#we do not want. 
+# So let dwarfdump emit more then trim.
+if [ x$win = "xy" ]
+then
+  textlim=502
+else
+  textlim=500
+fi
+./dwarfdump $f | head -n $textlim > $t
 chkres $? "Running dwarfdump $f output to $t base $b"
 if [ x$win = "xy" ]
 then
@@ -169,7 +191,7 @@ f=$srcdir/testuriLE64ELf.obj
 b=$srcdir/testuriLE64ELf.base
 t=junk.smallLE64ELf
 echo "start  dwarfdump sanity check on $f"
-./dwarfdump $f | head -n 500 > $t
+./dwarfdump $f | head -n $textlim > $t
 chkres $? "running ./dwarfdump $f otuput to $t base $b "
 if [ x$win = "xy" ]
 then
@@ -189,7 +211,7 @@ f=$srcdir/test-mach-o-32.dSYM
 b=$srcdir/test-mach-o-32.base
 t=junk.macho-object32
 echo "start  dwarfdump sanity check on $f"
-./dwarfdump $f | head -n 500 > $t
+./dwarfdump $f | head -n $textlim > $t
 chkres $? "FAIL dwarfdump/runtests.sh ./dwarfdump $f to $t base $b "
 if [ x$win = "xy" ]
 then

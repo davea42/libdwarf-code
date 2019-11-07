@@ -1,9 +1,14 @@
+2019-11-07 David Anderson
+     * run-all-tests.sh,buildandreleasetest.sh: Now handle 
+       --enable-nonstandardprintf
+       though that's not sufficient to let these work everywhere.
 2019-11-04 David Anderson
      * buildandreleasetest.sh: Now handles --disable-libelf
        so we can run this test successfully in more environments.
        A few fixes to silly indentations.
        If cmake is not available skip the cmake test.
      * run-all-tests.sh: Now handles --disable-libelf
+       and --enable-nonstandardprintf
        and when libelf missing avoids checks that could
        not possibly pass.
 2019-10-29 David Anderson
