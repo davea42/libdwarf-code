@@ -10,6 +10,7 @@ a copy will lose the timestamps on the build files,
 it is usually necessary to
    sh scripts/FIX-CONFIGURE-TIMES
 at the top of the source tree before using configure.
+See the example scripts below.
 
 ========== BUILD PROBLEM SOLUTION: FIX-CONFIGURE-TIMES
 Because git does not record timestamps and sometimes
@@ -55,28 +56,47 @@ these are not necessary or appropriate.
 
 We have had success with MinGW without setting CFLAGS with (to
 save space in this example we do not show checking for errors):
+The option --enable-wall is optional.
 
-    cd code
+    src=/path/to/code
+    cd $src
     sh scripts/FIX-CONFIGURE-TIMES
-    cd ..
-    rm -rf bld
-    mkdir bld
-    cd bld
-    ../code/configure --enable-nonstandardprintf
-    make
+    make distclean
+    bld=/tmp/dwbld
+    rm -rf $bld
+    mkdir $bld
+    cd $bld
+    $src/configure --enable-wall \
+      --disable-libelf --enable-nonstandardprintf
+    make check
+========= End ofgcc under MinGW on windows
 
-=========
-
+========= Standard Builds non-Windows
 Standard builds are done by configure/make as described below.
 Cross-Compiles are described below, see CROSS COMPILES.
+One need not --enable-dwarfgen --enable-dwarfexample.
+The option --enable-wall is also optional.
 
-BUILDING IN SOURCE TREE
-To just build libdwarf and dwarfdump if the source tree is
-in /a/b/dwarf-20190505 one might do:
-    cd /a/b/dwarf-20190505
+BUILDING in UNIX/Linux
+    src=/path/to/code
+    cd $src
     sh scripts/FIX-CONFIGURE-TIMES
-    ./configure
-    make
+    make distclean
+    bld=/tmp/dwbld
+    rm -rf $bld
+    mkdir $bld
+    cd $bld
+    $src/configure --enable-wall --enable-dwarfgen --enable-dwarfexample
+    make check
+ 
+BUILDING in MacOS (tried on Catalina)
+    Same as linux but as standard the Apple
+    Command Line Tools provide no libelf (we don't need it).
+    So the final two steps are:
+    $src/configure --enable-wall --disable-libelf
+    make check
+========= End of Standard Builds non-Windows
+    
 
 LIBRARY AND HEADER REQUIREMENTS
 zlib has to be installed
@@ -95,21 +115,11 @@ and
 though libelf is not (as of May 2019)
 not needed.
 
-BUILDING OUT OF SOURCE TREE
-Or one could  create a new directory, for example,
-    cd /a/b/dwarf-20190505
-    sh scripts/FIX-CONFIGURE-TIMES
-    mkdir /var/tmp/dwarfex
-    cd /var/tmp/dwarfex
-    /a/b/dwarf-20190505/configure (other options as required)
-    make
-In this case the source directory is not written-to and all
-objects and files created are under /var/tmp/dwarfex
 
 NOTE: When building out of source tree the source tree must
 be cleaned of any files created by a build in the source tree
 (just in case you tried that) before doing the out-of-source
-build.
+build. That's whe examples above do a 'make distclean'.
 
 BUILDING ALL THE TOOLS
 To build all the tools (including dwarfgen and dwarfexample)
@@ -247,8 +257,7 @@ the configure.ac do the following command at the top level
 You will need the autotools installed including autoconf,
 automake, and libtool to run autoreconf.
 
-To run the small
-basic checks of libdwarf/dwarfdump, first
+To run the basic checks of libdwarf/dwarfdump, first
 do
     ./configure
     make
@@ -259,13 +268,17 @@ A further set of tests is available vi
     sh scripts/buildandreleasetest.sh
 which does configure, make check, make install (in
 temporary directories), make dist, and cmake.
+This script will not work on Windows.
 
 A full set of tests is
    sh scripts/run-all-tests.sh
 which requires the regressiontests directory also be
-present. These tests outside the scope of this README.
+present and if readelfobj is present
+will run its 'make check'.
+These tests outside the scope of this README.
+This script will not work on Windows.
 
-To create a release file do:
+To create a release file on Linux do:
     ./configure --enable-dwarfexample --enable-dwarfgen
     make
     make dist
@@ -277,4 +290,4 @@ fingerprints for the release file and copying the file.
 See the configure.ac for the version used.
 For example: 'm4_define([v_date], [20190505])])'
 
-David Anderson.  Updated May 29,2019
+David Anderson.  Updated 7 November 2019
