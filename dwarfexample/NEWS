@@ -1,3 +1,12 @@
+November 11, 2019
+  Added getdebuglink.c to show how to use libdwarf to find a GNU alternate
+  DWARF file.
+  Add dummyexample.c as a trivial C test case, compiled into 
+  the file dummyexample.  Compiled as
+  cc -g dummyexample.c -o dummyexample
+  This dummyexample (the executable) is a static, unchanging, file
+  that getdebuglink can use in runtests.sh to verify getdebuglink
+  works.
 September 05, 2016
   simplereader.c: Added the --dumpallnames option so one can
   get all the strings from debug_info,_types into a file.
