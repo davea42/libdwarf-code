@@ -1,3 +1,6 @@
+2019-11-10 David Anderson
+     * configure.ac: Version 20191108.
+     * configure: Regenerated
 2019-11-06 David Anderson
      * configure.ac: Version 20191106. separating
        cxx_compiler flags from c_compiler_flags

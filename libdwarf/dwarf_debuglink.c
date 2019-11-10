@@ -599,7 +599,6 @@ int _dwarf_construct_linkedto_path(
         }
     }
 
-    /* Now use the list, if any, to make the output area. */
     {
         struct dwarfstring_list_s *cur = 0;
         char **resultfullstring = 0;
@@ -848,7 +847,7 @@ int dwarf_gnu_debuglink(Dwarf_Debug dbg,
 
     dwarfstring_constructor(&debuglink_fullpath);
     pathname = (char *)dbg->de_path;
-    if (pathname) {
+    if (pathname && paths_returned) {
         res =  _dwarf_construct_linkedto_path(
             (char **)dbg->de_gnu_global_paths,
             dbg->de_gnu_global_path_count,
@@ -871,7 +870,7 @@ int dwarf_gnu_debuglink(Dwarf_Debug dbg,
             *debuglink_fullpath_length_returned =
                 dwarfstring_strlen(&debuglink_fullpath);
         }
-    } else {
+    } else if (paths_count_returned) {
         *paths_count_returned = 0;
     }
     dwarfstring_destructor(&debuglink_fullpath);

@@ -1,0 +1,8 @@
+There is no such file as "a"
+There is no such file as "b"
+ Section .note.gnu.buildid
+ Build-id  type     : 3
+ Build-id  ownername: GNU
+ Build-id  length   : 20
+ Build-id           : 8ad280007cde31cb0b3f24fe8d78cadcfae4537b
+Path [ 0] /usr/lib/debug/8a/d280007cde31cb0b3f24fe8d78cadcfae4537b.debug

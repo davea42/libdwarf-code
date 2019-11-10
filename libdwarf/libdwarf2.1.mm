@@ -11,7 +11,7 @@ e."
 .S +2
 \." ==============================================
 \." Put current date in the following at each rev
-.ds vE Rev 2.82, 22 October 2019
+.ds vE Rev 2.83, 9 November 2019
 \." ==============================================
 \." ==============================================
 .ds | |
@@ -206,13 +206,13 @@ the libdwarf draft for DWARF Version 1 and recent changes.
 
 .H 2 "Items Changed"
 .P
-New functions  dwarf_gnu_buildid()
-and  dwarf_gnu_debuglink()
+New function  
+dwarf_gnu_debuglink()
 allow callers to access fields that
 GNU compilers create and use to link an
 executable to its separate
 DWARF debugging content object file.
-(September 9, 2019)
+(September 9, 2019, updated October 2019)
 .P
 dwarf_next_cu_header_d() (and the other earlier
 versions of this) now allow a null
@@ -12375,8 +12375,17 @@ It is normally a 20-byte field to be used
 in its ascii-hex form.
 Do not free() this.
 .P
-The following fields,
+If \f(CW*paths_returned\fP
+is passed as NULL then no paths
+calculation will be made and
+\f(CW*paths_count_returned\fP
+is not referenced by libdwarf.
+.P
+If \f(CW*paths_returned\fP
+is
+passed in non-NULL then
 \f(CW*paths_returned\fP
+and
 \f(CW*paths_count_returned\fP
 provide an array of pointers-to-strings
 (with the actual strings following

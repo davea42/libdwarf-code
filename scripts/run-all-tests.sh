@@ -1,4 +1,4 @@
- nonstdprintf $nonstdprintf#!/bin/sh
+#!/bin/sh
 start=`date`
 echo "start run-all-tests.sh at $start"
 # Use --disable-libelf to turn off all reference to
@@ -164,6 +164,8 @@ runfullddtest() {
       echo "..."
       head -n 30 ALLdd
       echo "PASS full run-all-tests.sh regressiontests"
+  else
+      echo "FAIL count $failcount full run-all-tests.sh regressiontests"
   fi
 }
 
@@ -210,7 +212,10 @@ showminutes() {
 showminutes $stsecs $ndsecs
 if [ $failcount -ne 0 ]
 then
+   echo "run-all-tests.sh FAIL count $failcount"
    exit 1
+else
+   echo "run-all-tests.sh all PASS"
 fi
 exit 0
 

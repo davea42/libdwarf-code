@@ -1,3 +1,19 @@
+2019-11-10 David Anderson
+     * dwarf_debuglink.c: Now if paths_returned is
+       a null pointer the code skips the phase of
+       generating a list of paths (assuming the caller
+       will generate a list itself).
+     * dwarf_errmsg_list.h: New error DW_DLE_DWARF_INIT_DBG_NULL.
+     * dwarf_generic_init.c,dwarf_original_elf_init: Now check
+       for a null pointer-to-dbg
+       and return error DW_DLE_DWARF_INIT_DBG_NULL
+       instead of segfaulting.
+     * libdwarf.h.in,generated_libdwarf.h.in: Add the new
+       error code.
+     * libdwarf2.1.mm: Version 2.83. Documents the allowance
+       of a null passed in to dwarf_gnu_debuglink instead
+       of a valid pointer.
+     * libdwarf2.1.pdf: Regenerated 2.83.
 2019-11-05 David Anderson
      * dwarf_names.c,dwarf_names.h,dwarf_names_enum.h,
        dwarf_names_new.h,generated_libdwarf.h.in,gennames.c:

@@ -536,5 +536,8 @@ const char *_dwarf_errmsgs[] = {
     "DW_DLE_PRO_INIT_EXTRAS_UNKNOWN(462) dwarf_producer_init() extras string has an unknown string",
     "DW_DLE_PRO_INIT_EXTRAS_ERR(463) dwarf_producer_init() extras string has an unexpected space character",
     "DW_DLE_NULL_ARGS_DWARF_ADD_PATH(464) either Dwarf_Debug or file_path argument to dwarf_add_file_path is NULL.",
+    "DW_DLE_DWARF_INIT_DBG_NULL(465) a dwarf_init*() call the return-dbg argument is null",
+
+
 };
 #endif /* DWARF_ERRMSG_LIST_H */

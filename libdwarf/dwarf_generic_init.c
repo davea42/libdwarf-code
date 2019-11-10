@@ -147,6 +147,9 @@ int dwarf_init_path(const char *path,
     Dwarf_Debug dbg = 0;
     char *file_path = 0;
 
+    if (!ret_dbg) {
+        DWARF_DBG_ERROR(NULL,DW_DLE_DWARF_INIT_DBG_NULL,DW_DLV_ERROR);
+    }
     res = dwarf_object_detector_path(path,
         true_path_out_buffer,
         true_path_bufferlen,
@@ -155,7 +158,7 @@ int dwarf_init_path(const char *path,
         return res;
     }
     if (res == DW_DLV_ERROR) {
-        DWARF_DBG_ERROR(NULL, DW_DLE_FILE_UNAVAILABLE, DW_DLV_ERROR);
+        DWARF_DBG_ERROR(NULL, errcode, DW_DLV_ERROR);
     }
     if (true_path_out_buffer) {
         file_path = true_path_out_buffer;
@@ -245,6 +248,9 @@ dwarf_init_b(int fd,
     int res = 0;
     int errcode = 0;
 
+    if (!ret_dbg) {
+        DWARF_DBG_ERROR(NULL,DW_DLE_DWARF_INIT_DBG_NULL,DW_DLV_ERROR);
+    }
     res = dwarf_object_detector_fd(fd, &ftype,
         &endian,&offsetsize,&filesize,&errcode);
     if (res == DW_DLV_NO_ENTRY) {
@@ -252,6 +258,7 @@ dwarf_init_b(int fd,
     } else if (res == DW_DLV_ERROR) {
         DWARF_DBG_ERROR(NULL, DW_DLE_FILE_WRONG_TYPE, DW_DLV_ERROR);
     }
+
     switch(ftype) {
     case DW_FTYPE_ELF: {
         int res2 = 0;

@@ -1,3 +1,18 @@
+2019-11-10 David Anderson
+     * Makefile.am: Added debuglink example.
+       Added a small executable. Added test code.
+     * Makefile.in: Regenerated.
+     * debuglink.base: Baseline output of getdebuglink.
+     * dummyexecutable.c: A tiny C source to create
+       an executable via "cc -g dummyexecutable.c"
+     * dummyexecutable: The output of the compile.
+       This is included in the distribution as a binary
+       testcase for getdebuglink.
+     * getdebuglink.c: A new example showing how one
+       can use libdwarf to find the external gnu
+       DWARF object.
+     * runtests.sh: Use 'make check' to run this
+       test case shell.
 2019-11-07 David Anderson
      * simplereader.c: It was using %llx for printf
        (wrong) and is now using the DW_PR_DUx macros

@@ -83,6 +83,9 @@ dwarf_elf_init_b(
     int localerrnum = 0;
     int libdwarf_owns_elf = FALSE;
 
+    if (!ret_dbg) {
+        DWARF_DBG_ERROR(NULL,DW_DLE_DWARF_INIT_DBG_NULL,DW_DLV_ERROR);
+    }
     if (access != DW_DLC_READ) {
         DWARF_DBG_ERROR(NULL, DW_DLE_INIT_ACCESS_WRONG, DW_DLV_ERROR);
     }
