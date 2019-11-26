@@ -1,3 +1,11 @@
+2019-11-26 David Anderson
+     * libdwarf2.1.mm: Version 2.84. Documents that
+       dwarf_get_elf() can succeed only if
+       dwarf_elf_init() or dwarf_elf_init_b()
+       was used to initialize the Dwarf_Debug involved.
+       And fixed the formatting printf examples
+       by escaping backslashes with a second backslash.
+     * libdwarf2.1.pdf: Regenerated 2.84.
 2019-11-10 David Anderson
      * dwarf_debuglink.c: Now if paths_returned is
        a null pointer the code skips the phase of

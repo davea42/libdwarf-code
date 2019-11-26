@@ -1,3 +1,10 @@
+November 26, 2019
+  The dwarf_init*() functions no longer use libelf
+  so calling dwarf_get_elf() cannot succeed unless
+  dwarf_elf_init() or dwarf_elf_init_b() was used
+  to open a Dwarf_Debug on an object file.
+  This change actually happened around  5 May 2019
+  but was not documented properly till  26 November.
 January 15, 2019
   All references to C data types spelled *int16* *int32* or
   *int64* have been removed.  Dwarf_Unsigned is used instead.

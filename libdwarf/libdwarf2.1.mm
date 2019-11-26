@@ -11,7 +11,7 @@ e."
 .S +2
 \." ==============================================
 \." Put current date in the following at each rev
-.ds vE Rev 2.83, 9 November 2019
+.ds vE Rev 2.84, 26 November 2019
 \." ==============================================
 \." ==============================================
 .ds | |
@@ -205,6 +205,15 @@ The following is a brief mention of the changes in this libdwarf from
 the libdwarf draft for DWARF Version 1 and recent changes.
 
 .H 2 "Items Changed"
+.P
+Now we document here
+that if one uses dwarf_init() or
+dwarf_init_b() or dwarf_init_path()
+that the function dwarf_get_elf() 
+cannot succeed as there is no longer
+any Elf pointer (from libelf)
+to return.
+(November 26, 2019)
 .P
 New function  
 dwarf_gnu_debuglink()
@@ -1927,7 +1936,6 @@ to bypass the default actions during initialization
 unless the default actions are appropriate.
 
 .H 3 "dwarf_init()"
-
 .DS
 \f(CWint dwarf_init(
     int fd,
@@ -1937,12 +1945,26 @@ unless the default actions are appropriate.
     Dwarf_Debug * dbg,
     Dwarf_Error *error)\fP
 .DE
-This identical to dwarf_init()
+\f(CWdwarf_init()\fP
+is identical to
 \f(CWdwarf_init_b()\fP
-except that it is missing the groupnumber
+except that 
+\f(CWdwarf_init()\fP
+is missing the groupnumber
 argument so access to an object file containing
 both dwo and non-dwo DWARF5 object sections will
 access only group one (and will ignore the dwo sections).
+.P
+The \f(CWdwarf_get_elf()\fP
+function 
+cannot succeed when using
+\f(CWdwarf_init()\fP
+or
+\f(CWdwarf_init_b()\fP
+or
+\f(CWdwarf_init_path()\fP
+to
+open an object file.
 
 .H 3 "Dwarf_Handler function"
 This is an example of a valid error handler function.
@@ -1955,7 +1977,7 @@ or
 \f(CWstatic void
 simple_error_handler(Dwarf_Error error, Dwarf_Ptr errarg)
 {
-    printf("libdwarf error: %d  %s\n",
+    printf("libdwarf error: %d  %s\\n",
         dwarf_errno(error), dwarf_errmsg(error));
     exit(1);
 }\fP
@@ -2010,14 +2032,18 @@ and
 dwarf_elf_init_b()
 \fP
 interfaces give no benefit
-over the other interfaces.
+over the other interfaces
+(other than allowing \f(CWdwarf_get_elf()\fP
+to succeed).
 .P
 The function 
-\f(CWdwarf_elf_init_b()\fP is identical to 
+\f(CWdwarf_elf_init_b()\fP is similar to 
 \f(CWdwarf_init_b()\fP
-except that an open 
-\f(CWElf *\fP pointer is passed instead of a file
-descriptor.
+but
+an open \f(CWElf *\fP pointer is passed instead of a file
+descriptor so
+\f(CWdwarf_get_elf()\fP
+can succeed.
 .P
 The client is allowed to use the 
 \f(CWElf *\fP pointer
@@ -2039,17 +2065,17 @@ pointer till after
 .DE
 The function 
 \f(CWdwarf_elf_init()\fP is identical to 
-\f(CWdwarf_init()\fP
-except that an open \f(CWElf *\fP pointer is passed instead of a file
-descriptor.
+\f(CWdwarf_init[_b]()\fP
+except
+an open \f(CWElf *\fP pointer is passed instead of a file
+descriptor so
+\f(CWdwarf_get_elf()\fP
+can succeed.
 .P
 Code using 
-\f(CWdwarf_elf_init()\fP
-or
-\f(CWdwarf_elf_init_b()\fP
+\f(CWdwarf_elf_init[_b]()\fP
 should be switched to calling
 \f(CWdwarf_init_b()\fP.
-
 
 .H 3 "dwarf_get_elf()"
 .DS
@@ -2058,20 +2084,28 @@ should be switched to calling
     Elf **      elf,
     Dwarf_Error *error)\fP
 .DE
+.P
+The function \f(CWdwarf_get_elf()\fP
+is only meaningful if a
+\f(CWdwarf_elf_init[_b]()\fP
+function was used to initialize the pointer 
+\f(CWdbg\fP.
+None of the other dwarf*init*() functions here
+ever use libelf, so
+there is no elf pointer to return through
+the pointer, so
+and the call will return
+\f(CWDW_DLV_NO_ENTRY\fP.
+In addition,
+this function is also not meaningful for an object file
+that is not in the Elf format.
+.P
 When it returns \f(CWDW_DLV_OK\fP,
 the function \f(CWdwarf_get_elf()\fP returns through the
 pointer \f(CWelf\fP the \f(CWElf *\fP handle
 used to access the object represented by the \f(CWDwarf_Debug\fP
-descriptor \f(CWdbg\fP.  It returns \f(CWDW_DLV_ERROR\fP on error.
-.P
-Because \f(CWint dwarf_init()\fP opens an Elf descriptor
-on its fd and \f(CWdwarf_finish()\fP does not close that
-descriptor, an app should use \f(CWdwarf_get_elf\fP
-and should call \f(CWelf_end\fP with the pointer returned
-through the \f(CWElf**\fP handle created by \f(CWint dwarf_init()\fP.
-.P
-This function is not meaningful for a system that does not use the
-Elf format for objects.
+descriptor \f(CWdbg\fP.
+It returns \f(CWDW_DLV_ERROR\fP on error.
 
 .H 3 "dwarf_set_tied_dbg()"
 .DS
@@ -12457,18 +12491,18 @@ An example of calling this function follows
         return;
     }
     if (debuglink_fullpath_strlen) {
-        printf("debuglink     path: %s\n",debuglink_path);
+        printf("debuglink     path: %s\\n",debuglink_path);
         printf("crc length        : %u  crc: ",4);
         for (i = 0; i < 4;++i ) {
            printf("%02x",crc[i]);
         }
         printf("\n");
-        printf("debuglink fullpath: %s\n",debuglink_fullpath);
+        printf("debuglink fullpath: %s\\n",debuglink_fullpath);
     }
     if(buildid_length) {
-        printf("buildid type      : %u\n",buildid_type);
-        printf("Buildid owner     : %s\n",buildidowner_name);
-        printf("buildid byte count: %u\n",buildid_length);
+        printf("buildid type      : %u\\n",buildid_type);
+        printf("Buildid owner     : %s\\n",buildidowner_name);
+        printf("buildid byte count: %u\\n",buildid_length);
         printf(" ");
         /*   buildid_length should be 20. */
         for (i = 0; i < buildid_length;++i) {
@@ -12476,9 +12510,9 @@ An example of calling this function follows
         }
         printf("\n");
     }
-    printf("Possible paths count %u\n",paths_count);
+    printf("Possible paths count %u\\n",paths_count);
     for ( ; i < paths_count; ++i ){
-         printf("%2u: %s\n",i,paths[i]);
+         printf("%2u: %s\\n",i,paths[i]);
     }
     free(debuglink_fullpath);
     free(paths);
