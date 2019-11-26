@@ -11,7 +11,7 @@ e."
 .S +2
 \." ==============================================
 \." Put current date in the following at each rev
-.ds vE Rev 2.84, 26 November 2019
+.ds vE Rev 2.85, 26 November 2019
 \." ==============================================
 \." ==============================================
 .ds | |
@@ -12496,7 +12496,7 @@ An example of calling this function follows
         for (i = 0; i < 4;++i ) {
            printf("%02x",crc[i]);
         }
-        printf("\n");
+        printf("\\n");
         printf("debuglink fullpath: %s\\n",debuglink_fullpath);
     }
     if(buildid_length) {
@@ -12508,7 +12508,7 @@ An example of calling this function follows
         for (i = 0; i < buildid_length;++i) {
            printf("%02x",buildid_itself[i]);
         }
-        printf("\n");
+        printf("\\n");
     }
     printf("Possible paths count %u\\n",paths_count);
     for ( ; i < paths_count; ++i ){

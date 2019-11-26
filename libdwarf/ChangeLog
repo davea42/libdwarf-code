@@ -1,4 +1,8 @@
 2019-11-26 David Anderson
+     * libdwarf2.1.mm: Version 2.85.  Found two more \n
+       that did not look right in pdf. Fixed.
+     * libdwarf2.1.pdf: Regenerated 2.85.
+2019-11-26 David Anderson
      * libdwarf2.1.mm: Version 2.84. Documents that
        dwarf_get_elf() can succeed only if
        dwarf_elf_init() or dwarf_elf_init_b()
