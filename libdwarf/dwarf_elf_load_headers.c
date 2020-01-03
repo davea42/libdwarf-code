@@ -1194,6 +1194,7 @@ _dwarf_elf_load_rela_32(
     sizeg = count*sizeof(struct generic_rela);
     grel = (struct generic_rela *)malloc(sizeg);
     if (!grel) {
+        free(relp);
         *errcode = DW_DLE_ALLOC_FAIL;
         return DW_DLV_ERROR;
     }
@@ -1261,6 +1262,7 @@ _dwarf_elf_load_rel_32(
     sizeg = count *sizeof(struct generic_rela);
     grel = (struct generic_rela *)malloc(sizeg);
     if (!grel) {
+        free(relp);
         *errcode = DW_DLE_ALLOC_FAIL;
         return DW_DLV_ERROR;
     }
