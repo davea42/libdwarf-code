@@ -110,14 +110,14 @@ do_sanity_insert( const char *s,struct esb_s *mesb)
     for( ; *cp; cp++) {
         unsigned c = *cp & 0xff ;
 
-        if (c >= 0x20 && c <=0x7e) {
-            /* Usual case, ASCII printable characters. */
-            esb_appendn(mesb,cp,1);
-            continue;
-        }
         if (c == '%') {
             /* %xx for this too. Simple and unambiguous */
             esb_append_printf(mesb, "%%%02x",c & 0xff);
+            continue;
+        }
+        if (c >= 0x20 && c <=0x7e) {
+            /* Usual case, ASCII printable characters. */
+            esb_appendn(mesb,cp,1);
             continue;
         }
 #ifdef _WIN32
@@ -130,12 +130,9 @@ do_sanity_insert( const char *s,struct esb_s *mesb)
             esb_append_printf(mesb, "%%%02x",c & 0xff);
             continue;
         }
-        if (c >= 0x7f) {
-            /* ISO-8859 or UTF-8. Not handled well yet. */
-            esb_append_printf(mesb, "%%%02x",c & 0xff);
-            continue;
-        }
-        esb_appendn(mesb,cp,1);
+        /* ASSERT:  (c >= 0x7f)  */
+        /* ISO-8859 or UTF-8. Not handled well yet. */
+        esb_append_printf(mesb, "%%%02x",c & 0xff);
     }
 }
 
@@ -151,6 +148,10 @@ no_questionable_chars(const char *s) {
 
     for( ; *cp; cp++) {
         unsigned c = *cp & 0xff ;
+        if (c == '%') {
+            /* Always sanitize a % ASCII char. */
+            return FALSE;
+        }
         if (c >= 0x20 && c <=0x7e) {
             /* Usual case, ASCII printable characters */
             continue;
@@ -162,10 +163,6 @@ no_questionable_chars(const char *s) {
 #endif /* _WIN32 */
         if (c == 0x0A || c == 0x09 ) {
             continue;
-        }
-        if (c == '%') {
-            /* Always sanitize a % ASCII char. */
-            return FALSE;
         }
         if (c < 0x20) {
             return FALSE;

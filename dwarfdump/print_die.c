@@ -2122,6 +2122,7 @@ traverse_one_die(Dwarf_Debug dbg,
         Dwarf_Half attr = 0;
         struct esb_s bucketgroupstr;
         const char *atname = NULL;
+        int wres = 0;
 
         esb_constructor(&bucketgroupstr);
         get_attr_value(dbg, tag, die,
@@ -2130,9 +2131,18 @@ traverse_one_die(Dwarf_Debug dbg,
             cnt, &bucketgroupstr, glflags.show_form_used, glflags.verbose);
         localvaln = esb_get_string(&bucketgroupstr);
 
-        dwarf_whatattr(attrib, &attr, &err);
-        atname = get_AT_name(attr,pd_dwarf_names_print_on_error);
-
+        wres  = dwarf_whatattr(attrib, &attr, &err);
+        if (wres == DW_DLV_ERROR) {
+            /*  Lets not attempt to deal with the error, just 
+                lets not look for atname */
+            dwarf_dealloc(dbg,err,DW_DLA_ERROR);
+            atname = "<dwarf_whatattr failed. Name unknown";
+        } else if (wres == DW_DLV_NO_ENTRY) {
+            atname = "<dwarf_whatattr found nothing. Name unknown";
+        } else {
+            atname = get_AT_name(attr,pd_dwarf_names_print_on_error);
+        }
+         
         /* We have a self reference */
         DWARF_CHECK_ERROR3(self_references_result,
             "Invalid self reference to DIE: ",atname,localvaln);

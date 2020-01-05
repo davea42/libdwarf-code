@@ -200,6 +200,7 @@ find_conf_file_and_read_config_inner(const char *named_file,
     res = find_abi_start(conf_stream, named_abi, &offset, &lineno);
     if (errcount > 0 || res == FALSE) {
         ++errcount;
+        fclose(conf_stream);
         printf("dwarfdump found no ABI %s in file %s.\n",
             named_abi, name_used);
         return errcount;
@@ -207,6 +208,7 @@ find_conf_file_and_read_config_inner(const char *named_file,
     res = fseek(conf_stream, offset, SEEK_SET);
     if (res != 0) {
         ++errcount;
+        fclose(conf_stream);
         printf("dwarfdump seek to %ld offset in %s failed!\n",
             offset, name_used);
         return errcount;

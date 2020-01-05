@@ -212,13 +212,13 @@ dwarf_tag(Dwarf_Die die, Dwarf_Half * tag, Dwarf_Error * error)
 int
 dwarf_offset_list(Dwarf_Debug dbg,
     Dwarf_Off offset, Dwarf_Bool is_info,
-    Dwarf_Off **offbuf, Dwarf_Unsigned *offcnt, Dwarf_Error * error)
+    Dwarf_Off **offbuf, Dwarf_Unsigned *offcnt,
+    Dwarf_Error * error)
 {
     Dwarf_Die die = 0;
     Dwarf_Die child = 0;
     Dwarf_Die sib_die = 0;
     Dwarf_Die cur_die = 0;
-    Dwarf_Off cur_off = 0;
     Dwarf_Unsigned off_count = 0;
     int res = 0;
 
@@ -250,11 +250,26 @@ dwarf_offset_list(Dwarf_Debug dbg,
     cur_die = child;
     for (;;) {
         if (DW_DLV_OK == res) {
-            /* Get Global offset for current die */
-            dwarf_dieoffset(cur_die,&cur_off,error);
+            int dres = 0;
+            Dwarf_Off cur_off = 0;
 
+            /* Get Global offset for current die */
+            dres = dwarf_dieoffset(cur_die,&cur_off,error);
+            if (dres == DW_DLV_OK) {
+                /* Normal. use cur_off. */
+            } else if (dres == DW_DLV_ERROR) {
+                /* Should be impossible unless... */
+                /* avoid leak. */
+                /*  Just leave cur_off as zero. */
+                /* dwarf_dealloc(dbg,*error,DW_DLA_ERROR); */
+                /* *error = NULL; */
+                return DW_DLV_ERROR;
+            } else { /* DW_DLV_NO_ENTRY */
+                /* Impossible, dwarf_dieoffset never returns this */
+            }
             /* Record offset in current entry chain */
-            curr_chain = (Dwarf_Chain_2)_dwarf_get_alloc(dbg,DW_DLA_CHAIN_2,1);
+            curr_chain = (Dwarf_Chain_2)_dwarf_get_alloc(
+                dbg,DW_DLA_CHAIN_2,1);
             if (curr_chain == NULL) {
                 _dwarf_error(dbg, error, DW_DLE_ALLOC_FAIL);
                 return (DW_DLV_ERROR);
@@ -291,13 +306,15 @@ dwarf_offset_list(Dwarf_Debug dbg,
     }
 
     /* Points to contiguous block of Dwarf_Off's. */
-    ret_offsets = (Dwarf_Off *) _dwarf_get_alloc(dbg, DW_DLA_ADDR, off_count);
+    ret_offsets = (Dwarf_Off *) _dwarf_get_alloc(dbg, 
+        DW_DLA_ADDR, off_count);
     if (ret_offsets == NULL) {
         _dwarf_error(dbg, error, DW_DLE_ALLOC_FAIL);
         return (DW_DLV_ERROR);
     }
 
-    /*  Store offsets in contiguous block, and deallocate the chain. */
+    /*  Store offsets in contiguous block, 
+        and deallocate the chain. */
     curr_chain = head_chain;
     for (i = 0; i < off_count; i++) {
         *(ret_offsets + i) = curr_chain->ch_item;

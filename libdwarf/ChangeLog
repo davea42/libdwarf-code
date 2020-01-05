@@ -1,3 +1,7 @@
+2020-01-05: David Anderson
+    * dwarf_query.c(dwarf_offset_list): Coverity Scan CID 206598.
+      Now checks for DW_DLV_ERROR where it failed to do so before,
+      and returns an error instead of letting it slip through.
 2020-01-03: David Anderson
     * dwarf_load_elf_headers.c(dwarf_elf_load_rela_32):
       Coverity Scan uncovered a memory leak in one
