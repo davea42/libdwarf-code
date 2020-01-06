@@ -11,7 +11,7 @@ e."
 .S +2
 \." ==============================================
 \." Put current date in the following at each rev
-.ds vE Rev 2.85, 26 November 2019
+.ds vE Rev 2.86, 6 January 2020
 \." ==============================================
 \." ==============================================
 .ds | |
@@ -1775,21 +1775,33 @@ the
 \f(CWpath\fP
 argument.
 .P
-To
-\f(CWtrue_path_out_buffer\fP
-pass in a pointer big enough to hold the passed-in
+For MacOS 
+pass in a pointer 
+to \f(CWtrue_path_out_buffer\fP
+big pointing to a buffer
+large enough to hold the passed-in
 path if that were doubled plus adding 100 characters.
 Then pass that length in the
 \f(CWtrue_path_bufferlen\fP argument.
-The path will be copied to true_path_out_buffer.
-In the case of certain MacOS dSYM
-object files the final true path
-of the dSYM file (with MacOS conventional
-directories added) is copied into
+If a file is found (the dSYM
+path or if not that the original path)
+the final path
+is copied into
 \f(CWtrue_path_out_buffer\fP.
-
-To entirely skip the MacOS special treatment
-pass 0 as arguments to
+In any case, 
+This is harmless with non-MacOS
+executables, but 
+for non-MacOS
+\f(CWtrue_path_out_buffer\fP
+will just match
+\f(CWpath\fP.
+.P
+When
+you know you won't be
+reading MacOS executables
+you could
+skip the MacOS special treatment
+by passing 0 as arguments to
 \f(CWtrue_path_out_buffer\fP
 and
 \f(CWtrue_path_bufferlen\fP.
@@ -1799,7 +1811,7 @@ instead  of
 \f(CWdwarf_init_path()\fP
 .P
 Pass in the usual DW_DLC_READ
-(which only ever applied to libelf, really)
+(which only ever applied to libelf)
 to
 \f(CWaccess\fP.
 Currently no other value is allowed.
@@ -2506,8 +2518,12 @@ In the case of certain MacOS dSYM
 object files the final outpath
 of the dSYM file (with MacOS conventional
 directories added) is copied into
-\f(CWoutpath\fP.
-
+\f(CWoutpath\fP. Where the MacOS
+local directory tree is missing
+or incomplete
+\f(CWoutpath\fP
+will be left as a zero-lengh string.
+.P
 To entirely skip the MacOS special treatment
 pass 0 as arguments to
 \f(CWoutpath\fP
