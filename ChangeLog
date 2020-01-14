@@ -1,1 +1,3 @@
-2020-01-05 placeholder.
+2020-01-05  David Anderson
+    * configure.ac: Version string now 20200114
+    * configure: Regenerated.
