@@ -287,7 +287,7 @@ int dwarf_get_xu_hash_entry(Dwarf_Xu_Index_Header xuhdr,
     Dwarf_Small *section_end = xuhdr->gx_section_data +
         xuhdr->gx_section_length;
 
-    memset(&hashval,0,sizeof(hashval));
+    hashval  = zerohashkey;
     if (xuhdr->gx_slots_in_hash > 0) {
         if (index >= xuhdr->gx_slots_in_hash) {
             _dwarf_error(dbg, err,  DW_DLE_XU_HASH_ROW_ERROR);
@@ -439,6 +439,7 @@ _dwarf_search_fission_for_key(UNUSEDARG Dwarf_Debug dbg,
     Dwarf_Sig8 hashentry_key;
     Dwarf_Unsigned percu_index = 0;
 
+    hashentry_key = zerohashkey;
     /*  Look for corrupt section data. */
     if (slots > xuhdr->gx_section_length) {
         /* Something is badly wrong here. */
@@ -635,7 +636,7 @@ _dwarf_get_debugfission_for_offset(Dwarf_Debug dbg,
 
     sect_index_base = DW_SECT_INFO;
 
-    memset(&key,0,sizeof(key));
+    key = zerohashkey;
     sres = _dwarf_get_xuhdr(dbg,key_type, &xuhdr,error);
     if (sres != DW_DLV_OK) {
         return sres;

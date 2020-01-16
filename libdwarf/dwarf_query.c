@@ -306,14 +306,14 @@ dwarf_offset_list(Dwarf_Debug dbg,
     }
 
     /* Points to contiguous block of Dwarf_Off's. */
-    ret_offsets = (Dwarf_Off *) _dwarf_get_alloc(dbg, 
+    ret_offsets = (Dwarf_Off *) _dwarf_get_alloc(dbg,
         DW_DLA_ADDR, off_count);
     if (ret_offsets == NULL) {
         _dwarf_error(dbg, error, DW_DLE_ALLOC_FAIL);
         return (DW_DLV_ERROR);
     }
 
-    /*  Store offsets in contiguous block, 
+    /*  Store offsets in contiguous block,
         and deallocate the chain. */
     curr_chain = head_chain;
     for (i = 0; i < off_count; i++) {

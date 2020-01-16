@@ -394,13 +394,13 @@ dwarf_convert_to_global_offset(Dwarf_Attribute attr,
 
         dwarfstring_constructor(&m);
         dwarfstring_append_printf_u(&m,
-           "DW_DLE_BAD_REF_FORM. The form "
-           "code is 0x%x which cannot be converted to a global "
-           " offset by "
-           "dwarf_convert_to_global_offset()",
-           attr->ar_attribute_form);
+            "DW_DLE_BAD_REF_FORM. The form "
+            "code is 0x%x which cannot be converted to a global "
+            " offset by "
+            "dwarf_convert_to_global_offset()",
+            attr->ar_attribute_form);
         _dwarf_error_string(dbg, error, DW_DLE_BAD_REF_FORM,
-             dwarfstring_string(&m));
+            dwarfstring_string(&m));
         dwarfstring_destructor(&m);
         return DW_DLV_ERROR;
         }
@@ -512,13 +512,13 @@ dwarf_formref(Dwarf_Attribute attr,
 
         dwarfstring_constructor(&m);
         dwarfstring_append_printf_u(&m,
-           "DW_DLE_BAD_REF_FORM. The form "
-           "code is 0x%x which does not have an offset "
-           " for "
-           "dwarf_formref() to return.",
-           attr->ar_attribute_form);
+            "DW_DLE_BAD_REF_FORM. The form "
+            "code is 0x%x which does not have an offset "
+            " for "
+            "dwarf_formref() to return.",
+            attr->ar_attribute_form);
         _dwarf_error_string(dbg, error, DW_DLE_BAD_REF_FORM,
-             dwarfstring_string(&m));
+            dwarfstring_string(&m));
         dwarfstring_destructor(&m);
         return DW_DLV_ERROR;
         }

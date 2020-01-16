@@ -33,7 +33,7 @@
 #include "libdwarfdefs.h"
 #include <stdio.h>
 #ifdef HAVE_STRING_H
-#include <string.h> 
+#include <string.h>
 #endif /* HAVE_STRING_H */
 #ifdef   HAVE_ELFACCESS_H
 #include <elfaccess.h>

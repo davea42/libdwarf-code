@@ -359,7 +359,7 @@ print_debug_fission_header(struct Dwarf_Debug_Fission_Per_CU_s *fsd)
             nstring = "Unknown SECT";
         }
         off = fsd->pcu_offset[i];
-        printf("  %-19s = 0x%" DW_PR_XZEROS DW_PR_DUx 
+        printf("  %-19s = 0x%" DW_PR_XZEROS DW_PR_DUx
             " 0x%" DW_PR_XZEROS DW_PR_DUx " %2u\n",
             nstring,
             off,

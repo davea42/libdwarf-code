@@ -696,6 +696,7 @@ _dwarf_make_CU_Context(Dwarf_Debug dbg,
     Dwarf_Small *    dataptr = 0;
     int              res = 0;
 
+    memset(&signaturedata,0,sizeof(signaturedata));
     cu_context =
         (Dwarf_CU_Context) _dwarf_get_alloc(dbg, DW_DLA_CU_CONTEXT, 1);
     if (cu_context == NULL) {
@@ -1078,6 +1079,7 @@ find_cu_die_base_fields(Dwarf_Debug dbg,
     Dwarf_Half        has_children = TRUE;
     int chres = 0;
 
+    memset(&signature,0,sizeof(signature));
     cu_context = cudie->di_cu_context;
     version_stamp = cu_context->cc_version_stamp;
 
@@ -1272,6 +1274,7 @@ finish_up_cu_context_from_cudie(Dwarf_Debug dbg,
     int res = 0;
 
 
+    memset(&signaturedata,0,sizeof(signaturedata));
     signaturedata = cu_context->cc_signature;
 
     res = fill_in_dwp_offsets_if_present(dbg,

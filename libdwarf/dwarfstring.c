@@ -561,7 +561,7 @@ int dwarfstring_append_printf_i(dwarfstring *data,
         size_t trailinglen = strlen(format+next);
         res = dwarfstring_append_length(data,format+next,trailinglen);
     }
-    return res; 
+    return res;
 }
 
 #if 0
@@ -570,21 +570,21 @@ int dwarfstring_append_printf_i(dwarfstring *data,
 static unsigned
 trimleadingzeros(char *ptr,unsigned digits,unsigned keepcount)
 {
-     char *cp = ptr;
-     unsigned leadzeroscount = 0;
-     unsigned trimoff = 0;
+    char *cp = ptr;
+    unsigned leadzeroscount = 0;
+    unsigned trimoff = 0;
 
-     for(; *cp; ++cp) { 
-         if (*cp == '0') {
+    for(; *cp; ++cp) {
+        if (*cp == '0') {
             leadzeroscount++;
             continue;
-         }
-     }
-     trimoff = keepcount - digits;
-     if (trimoff&1) {
+        }
+    }
+    trimoff = keepcount - digits;
+    if (trimoff&1) {
         trimoff--;
-     }
-     return trimoff;
+    }
+    return trimoff;
 }
 #endif /* 0 */
 
@@ -767,4 +767,3 @@ int dwarfstring_append_printf_u(dwarfstring *data,
     }
     return DW_DLV_OK;
 }
-

@@ -286,7 +286,7 @@ test5(int tnum)
     dwarfstring_destructor(&g);
     return 0;
     return 0;
-}   
+}
 
 
 int main()

@@ -108,17 +108,17 @@ struct Dwarf_Error_s _dwarf_failsafe_error = {
 };
 
 void
-_dwarf_error_destructor(void *m) 
+_dwarf_error_destructor(void *m)
 {
-     Dwarf_Error er = (Dwarf_Error)m;
-     dwarfstring *erm = (dwarfstring *)er->er_msg;
-     if (! erm) {
-         return;
-     }
-     dwarfstring_destructor(erm);
-     free(erm);
-     er->er_msg = 0;
-     return; 
+    Dwarf_Error er = (Dwarf_Error)m;
+    dwarfstring *erm = (dwarfstring *)er->er_msg;
+    if (! erm) {
+        return;
+    }
+    dwarfstring_destructor(erm);
+    free(erm);
+    er->er_msg = 0;
+    return;
 }
 
 /*  To do destructors we need some extra data in every
@@ -164,7 +164,7 @@ struct ial_s alloc_instance_basics[ALLOC_AREA_INDEX_TABLE_MAX] = {
 
     /* 14 DW_DLA_ERROR */
     {sizeof(struct Dwarf_Error_s),MULTIPLY_NO,  0,
-       _dwarf_error_destructor},
+        _dwarf_error_destructor},
 
     {sizeof(Dwarf_Ptr),MULTIPLY_CT, 0, 0},  /* 15 DW_DLA_LIST */
     {1,MULTIPLY_NO, 0, 0},    /* not used *//* 16 DW_DLA_LINEBUF */

@@ -134,6 +134,9 @@ attributes of a function. It's misnamed, it really means
 seems bogus. */
 static Dwarf_Bool in_valid_code = TRUE;
 
+
+static const Dwarf_Sig8 zerosig;
+
 #if 0
 static void
 dump_bytes(const char *msg,Dwarf_Small * start, long len)
@@ -674,7 +677,6 @@ print_die_secname(Dwarf_Debug dbg,int is_info)
 static Dwarf_Bool
 empty_signature(const Dwarf_Sig8 *sigp)
 {
-    static const Dwarf_Sig8 zerosig;
     if (memcmp(sigp,&zerosig,sizeof(zerosig))) {
         return FALSE ; /* empty */
     }
@@ -703,6 +705,7 @@ print_one_die_section(Dwarf_Debug dbg,Dwarf_Bool is_info,
     int res = 0;
     Dwarf_Off dieprint_cu_goffset = 0;
 
+    signature = zerosig;
     glflags.current_section_id = is_info?DEBUG_INFO:DEBUG_TYPES;
     {
         const char * test_section_name = 0;
@@ -2128,12 +2131,12 @@ traverse_one_die(Dwarf_Debug dbg,
         get_attr_value(dbg, tag, die,
             dieprint_cu_goffset,
             attrib, srcfiles,
-            cnt, &bucketgroupstr, glflags.show_form_used, glflags.verbose);
+            cnt, &bucketgroupstr, glflags.show_form_used,
+            glflags.verbose);
         localvaln = esb_get_string(&bucketgroupstr);
-
         wres  = dwarf_whatattr(attrib, &attr, &err);
         if (wres == DW_DLV_ERROR) {
-            /*  Lets not attempt to deal with the error, just 
+            /*  Lets not attempt to deal with the error, just
                 lets not look for atname */
             dwarf_dealloc(dbg,err,DW_DLA_ERROR);
             atname = "<dwarf_whatattr failed. Name unknown";
@@ -2142,7 +2145,6 @@ traverse_one_die(Dwarf_Debug dbg,
         } else {
             atname = get_AT_name(attr,pd_dwarf_names_print_on_error);
         }
-         
         /* We have a self reference */
         DWARF_CHECK_ERROR3(self_references_result,
             "Invalid self reference to DIE: ",atname,localvaln);
@@ -2155,7 +2157,6 @@ traverse_one_die(Dwarf_Debug dbg,
         /* Add current DIE */
         AddEntryIntoBucketGroup(glflags.pVisitedInfo,overall_offset,
             0,0,0,NULL,FALSE);
-
         res = dwarf_attrlist(die, &atlist, &atcnt, &err);
         if (res == DW_DLV_ERROR) {
             print_error(dbg, "dwarf_attrlist", res, err);
@@ -5684,7 +5685,8 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
             case DW_AT_dwo_id:
                 {
                 Dwarf_Sig8 v;
-                memset(&v,0,sizeof(v));
+
+                v = zerosig;
                 wres = dwarf_formsig8_const(attrib,&v,&err);
                 if (wres == DW_DLV_OK){
                     struct esb_s t;
@@ -5888,6 +5890,8 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
         break;
     case DW_FORM_ref_sig8: {  /* DWARF4 */
         Dwarf_Sig8 sig8data;
+
+        sig8data = zerosig;
         wres = dwarf_formsig8(attrib,&sig8data,&err);
         if (wres != DW_DLV_OK) {
             /* Show nothing? */

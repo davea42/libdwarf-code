@@ -38,7 +38,7 @@
 #define Set_REL64_info(r,s,t) ((r).r_info = ELF64_R_INFO(s,t))
 #endif
 #ifdef HAVE_STRING_H
-#include <string.h> 
+#include <string.h>
 #endif /* HAVE_STRING_H */
 #ifdef HAVE_STDDEF_H
 #include <stddef.h>
