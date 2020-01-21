@@ -740,6 +740,11 @@ is_section_name_known_already(Dwarf_Debug dbg, const char *scn_name)
     referencing section value is already correct for
     the object itself.  In other words, we do it because
     of the definition of .rela relocations in Elf.
+
+    However!  In some cases clang emits  a .rel section (at least
+    for .rel.debug_info) where symtab entries have an st_value
+    that must be treated like an addend: the compiler did not
+    bother to backpatch the DWARF information for these.
 */
 
 
@@ -749,9 +754,12 @@ is_section_name_known_already(Dwarf_Debug dbg, const char *scn_name)
     of the section name. So check the
     section name but test section type. */
 static int
-is_a_rela_section(const char *scn_name,int type)
+is_a_relx_section(const char *scn_name,int type)
 {
     if(startswith(scn_name,".rela.")) {
+        return TRUE;
+    }
+    if(startswith(scn_name,".rel.")) {
         return TRUE;
     }
     if (type == SHT_RELA) {
@@ -1104,7 +1112,7 @@ determine_target_group(Dwarf_Unsigned section_count,
                 groupnumber = DW_GROUPNUMBER_BASE;
             }
         }
-        if (is_a_rela_section(scn_name,doas.type)) {
+        if (is_a_relx_section(scn_name,doas.type)) {
             unsigned linkgroup = 0;
             res = _dwarf_section_get_target_group_from_map(dbg,
                 doas.info,
@@ -1291,7 +1299,7 @@ _dwarf_setup(Dwarf_Debug dbg, Dwarf_Error * error)
         if (!this_section_dwarf_relevant(scn_name,doas.type) ) {
             continue;
         }
-        if (!is_a_rela_section(scn_name,doas.type)
+        if (!is_a_relx_section(scn_name,doas.type)
             && !is_a_special_section_semi_dwarf(scn_name)) {
             /*  We do these actions only for group-related
                 sections.  Do for  .debug_info etc,
@@ -1369,7 +1377,7 @@ _dwarf_setup(Dwarf_Debug dbg, Dwarf_Error * error)
                     of the section name. If the current section
                     is a RELA one and the 'sh_info'
                     refers to a debug section, add the relocation data. */
-                if (is_a_rela_section(scn_name,doas.type)) {
+                if (is_a_relx_section(scn_name,doas.type)) {
                     if ( doas.info < section_count) {
                         if (sections[doas.info]) {
                             add_rela_data_to_secdata(sections[doas.info],
