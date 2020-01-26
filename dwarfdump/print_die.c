@@ -1712,7 +1712,7 @@ get_FLAG_BLOCK_string(Dwarf_Debug dbg, Dwarf_Attribute attrib,
     fres = dwarf_formblock (attrib,&tempb, &fblkerr);
     if (fres != DW_DLV_OK) {
         print_error(dbg,"DW_FORM_blockn cannot get block\n",
-        fres,fblkerr);
+            fres,fblkerr);
         return;
     }
 
@@ -1936,11 +1936,7 @@ show_attr_form_error(Dwarf_Debug dbg,unsigned attr,
     esb_append_printf_u(out,"%u",form);
 #endif
     esb_append(out," (");
-    res = dwarf_get_FORM_name(form,&n);
-    if (res != DW_DLV_OK) {
-        n = "UknownForm";
-    }
-    esb_append(out,n);
+    esb_append(out,get_FORM_name(form,FALSE));
     esb_append(out,"), a form which is not appropriate");
     print_error_and_continue(dbg,esb_get_string(out), DW_DLV_OK,formerr);
 }
@@ -5557,8 +5553,13 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
             dwarf_dealloc(dbg, tempb, DW_DLA_BLOCK);
             tempb = 0;
         } else {
-            print_error(dbg, "DW_FORM_blockn cannot get block\n", fres,
-                err);
+            struct esb_s lstr;
+            esb_constructor(&lstr);
+            esb_append(&lstr,get_FORM_name(theform,FALSE));
+            esb_append(&lstr," cannot get block");
+            print_error(dbg, esb_get_string(&lstr),
+                fres, err);
+            esb_destructor(&lstr);
         }
         break;
     case DW_FORM_data1:
@@ -5825,11 +5826,25 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
                 theform == DW_FORM_strx2 ||
                 theform == DW_FORM_strx3 ||
                 theform == DW_FORM_strx4 ) {
-                print_error(dbg, "Cannot get an indexed string....",
+                struct esb_s lstr;
+
+                esb_constructor(&lstr);
+                esb_append(&lstr,"Cannot get an indexed string on ");
+                esb_append(&lstr,get_FORM_name(theform,FALSE));
+                esb_append(&lstr,"....");
+                print_error(dbg, esb_get_string(&lstr),
                     sres, err);
+                esb_destructor(&lstr);
             } else {
-                print_error(dbg, "Cannot get a formstr (or a formstrp)....",
+                struct esb_s lstr;
+
+                esb_constructor(&lstr);
+                esb_append(&lstr,"Cannot get the form on ");
+                esb_append(&lstr,get_FORM_name(theform,FALSE));
+                esb_append(&lstr,"....");
+                print_error(dbg, esb_get_string(&lstr),
                     sres, err);
+                esb_destructor(&lstr);
             }
         }
         }
@@ -5937,8 +5952,14 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
         } else if (wres == DW_DLV_NO_ENTRY) {
             /* nothing? */
         } else {
-            print_error(dbg, "Cannot get formudata"
-                " on DW_FORM_loclistx....", wres, err);
+            struct esb_s lstr;
+            esb_constructor(&lstr);
+            esb_append(&lstr,"Cannot get formudata on ");
+            esb_append(&lstr,get_FORM_name(theform,FALSE));
+            esb_append(&lstr,"....");
+            print_error(dbg, esb_get_string(&lstr),
+                wres, err);
+            esb_destructor(&lstr);
         }
         }
         break;
@@ -5949,15 +5970,26 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
         if (bres == DW_DLV_OK) {
             bracket_hex("",off,"",esbp);
         } else {
-            print_error(dbg,
-                "DW_FORM_GNU_ref_alt form with no reference?!",
+            struct esb_s lstr;
+            esb_constructor(&lstr);
+            esb_append(&lstr,get_FORM_name(theform,FALSE));
+            esb_append(&lstr," form with no reference?!");
+            print_error(dbg, esb_get_string(&lstr),
                 bres, err);
+            esb_destructor(&lstr);
         }
         }
         break;
-    default:
-        print_error(dbg, "dwarf_whatform unexpected value", DW_DLV_OK,
-            err);
+    default: {
+        struct esb_s lstr;
+
+        esb_constructor(&lstr);
+        esb_append_printf(&lstr,"dwarf_whatform unexpected value, form code 0x%04x",
+            theform);
+        print_error(dbg, esb_get_string(&lstr),
+            DW_DLV_OK, err);
+        esb_destructor(&lstr);
+        }
     }
     show_form_itself(show_form,local_verbose,theform, direct_form,esbp);
 }
