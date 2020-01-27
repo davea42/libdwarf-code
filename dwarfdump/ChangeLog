@@ -1,3 +1,6 @@
+2020-01-25:   David Anderson
+    * print_die.c: Now attributes the correct actual form
+      name (as opposed to a vaguely generic FORM name)
 2020-01-16:   David Anderson
     * print_die.c: Now ensures local Dwarf_Sig8
       variables are always initialized with zero bytes.

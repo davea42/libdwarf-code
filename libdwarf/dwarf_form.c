@@ -1199,6 +1199,7 @@ _dwarf_formudata_internal(Dwarf_Debug dbg,
         break;
     /* real udata */
     case DW_FORM_loclistx:
+    case DW_FORM_rnglistx:
     case DW_FORM_udata: {
         Dwarf_Unsigned leblen = 0;
         DECODE_LEB128_UWORD_LEN_CK(data, ret_value,leblen,
