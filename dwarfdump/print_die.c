@@ -5941,7 +5941,6 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
         }
         }
         break;
-
     case DW_FORM_loclistx:   /* DWARF5, index into .debug_loclists */
     case DW_FORM_rnglistx: { /* DWARF5, index into .debug_rnglists */
         /* FIXME: print loclist or rnglist  info */
