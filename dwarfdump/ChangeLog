@@ -1,3 +1,7 @@
+2020-01-27:   David Anderson
+    * print_die.c: Now attributes the correct actual form
+      in more places (meaning in error messages, here and
+      in the previous commit)..
 2020-01-25:   David Anderson
     * print_die.c: Now attributes the correct actual form
       name (as opposed to a vaguely generic FORM name)
