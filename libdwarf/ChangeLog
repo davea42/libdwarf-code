@@ -1,3 +1,9 @@
+2020-02-10: David Anderson
+    * dwarf_elf_access.c: Now allows for .rel and .rela.
+    * dwarf_elf_defines.h: Now allows for .rel and .rela.
+    * dwarf_init_finish.c: Now allows for .rel and .rela.
+    * dwarf_opaque.h: Adding dss_is_rela so we can
+      process .rel. sections too.
 2020-01-25: David Anderson
     * dwarf_form.c: DW_FORM_rnglistx was ommitted from a switch statement.
       Adding it in fixed the resulting errors in a DWARF5 object file

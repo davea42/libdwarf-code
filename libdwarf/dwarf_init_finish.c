@@ -71,6 +71,9 @@
 #ifndef SHT_RELA
 #define SHT_RELA 4
 #endif
+#ifndef SHT_REL
+#define SHT_REL 9
+# endif
 /*  For COMDAT GROUPS. Guarantees we can compile. We hope. */
 #ifndef SHT_GROUP
 #define SHT_GROUP 17
@@ -223,9 +226,9 @@ get_basic_section_data(Dwarf_Debug dbg,
 
 
 static void
-add_rela_data_to_secdata( struct Dwarf_Section_s *secdata,
+add_relx_data_to_secdata( struct Dwarf_Section_s *secdata,
     struct Dwarf_Obj_Access_Section_s *doas,
-    Dwarf_Half section_index)
+    Dwarf_Half section_index,int is_rela)
 {
     secdata->dss_reloc_index = section_index;
     secdata->dss_reloc_size = doas->size;
@@ -233,6 +236,7 @@ add_rela_data_to_secdata( struct Dwarf_Section_s *secdata,
     secdata->dss_reloc_addr = doas->addr;
     secdata->dss_reloc_symtab = doas->link;
     secdata->dss_reloc_link = doas->link;
+    secdata->dss_is_rela = is_rela;
 }
 
 
@@ -734,7 +738,7 @@ is_section_name_known_already(Dwarf_Debug dbg, const char *scn_name)
     This does not allow for section-groups in object files,
     for which many .debug_info (and other DWARF) sections may exist.
 
-    We process. .rela (SHT_RELA) but not .rel (SHT_REL)
+    We process. .rela (SHT_RELA) and .rel (SHT_REL)
     sections because with .rela the referencing section
     offset value is zero whereas with .rel the
     referencing section value is already correct for
@@ -754,17 +758,25 @@ is_section_name_known_already(Dwarf_Debug dbg, const char *scn_name)
     of the section name. So check the
     section name but test section type. */
 static int
-is_a_relx_section(const char *scn_name,int type)
+is_a_relx_section(const char *scn_name,int type,int *is_rela)
 {
     if(startswith(scn_name,".rela.")) {
+        *is_rela = TRUE;
         return TRUE;
     }
     if(startswith(scn_name,".rel.")) {
+        *is_rela = FALSE;
         return TRUE;
     }
     if (type == SHT_RELA) {
+        *is_rela = TRUE;
         return TRUE;
     }
+    if (type == SHT_REL) {
+        *is_rela = FALSE;
+        return TRUE;
+    }
+    *is_rela = FALSE;
     return FALSE;
 }
 
@@ -776,13 +788,16 @@ is_a_special_section_semi_dwarf(const char *scn_name)
         !strcmp(scn_name,".symtab")) {
         return TRUE;
     }
+#if 0
+printf("dadebug %s not special semi-dwarf line %d\n",scn_name,__LINE__);
+#endif
     /*  It's not one of these special sections referenced in
         the test. */
     return FALSE;
 }
 
 static int
-this_section_dwarf_relevant(const char *scn_name,int type)
+this_section_dwarf_relevant(const char *scn_name,int type, int *is_rela)
 {
     /* A small helper function for _dwarf_setup(). */
     if (startswith(scn_name, ".zdebug_") ||
@@ -813,7 +828,10 @@ this_section_dwarf_relevant(const char *scn_name,int type)
     if(is_a_special_section_semi_dwarf(scn_name)) {
         return TRUE;
     }
-    if(is_a_rela_section(scn_name,type)) {
+    if(is_a_relx_section(scn_name,type,is_rela)) {
+#if 0
+printf("dadebug relx relevant %s %d\n",scn_name,*is_rela);
+#endif
         return TRUE;
     }
     /*  All sorts of sections are of no interest: .text
@@ -949,12 +967,16 @@ insert_sht_list_in_group_map(Dwarf_Debug dbg,
                 struct Dwarf_Obj_Access_Section_s doasx;
                 int resx = DW_DLV_ERROR;
                 int err = 0;
+                int is_rela = FALSE;
 
                 memset(&doasx,0,sizeof(doasx));
                 resx = obj->methods->get_section_info(obj->object,
                     val,
                     &doasx, &err);
                 if (resx == DW_DLV_NO_ENTRY){
+#if 0
+printf("dadebug no insert in group map %s  line %d\n",doasx.name,__LINE__);
+#endif
                     /*  Should we really ignore this? */
                     continue;
                 } else if (resx == DW_DLV_ERROR){
@@ -965,11 +987,17 @@ insert_sht_list_in_group_map(Dwarf_Debug dbg,
                     return resx;
                 }
                 if (!this_section_dwarf_relevant(doasx.name,
-                    doasx.type) ) {
+                    doasx.type,&is_rela) ) {
+#if 0
+printf("dadebug no insert, not relevant not in group map %s  line %d\n",doasx.name,__LINE__);
+#endif
                     continue;
                 }
                 data += DWARF_32BIT_SIZE;
                 *did_add_map = TRUE;
+#if 0
+printf("dadebug insert in group map %s  line %d\n",doasx.name,__LINE__);
+#endif
                 res = _dwarf_insert_in_group_map(dbg,
                     comdat_group_number,val,
                     doasx.name,
@@ -1042,6 +1070,7 @@ determine_target_group(Dwarf_Unsigned section_count,
         const char *scn_name = 0;
         unsigned groupnumber = 0;
         unsigned mapgroupnumber = 0;
+        int is_rela = FALSE;
 
         memset(&doas,0,sizeof(doas));
         res = obj->methods->get_section_info(obj->object,
@@ -1079,7 +1108,7 @@ determine_target_group(Dwarf_Unsigned section_count,
             continue;
         }
         scn_name = doas.name;
-        if (!this_section_dwarf_relevant(scn_name,doas.type) ) {
+        if (!this_section_dwarf_relevant(scn_name,doas.type,&is_rela) ) {
             continue;
         }
 
@@ -1112,17 +1141,21 @@ determine_target_group(Dwarf_Unsigned section_count,
                 groupnumber = DW_GROUPNUMBER_BASE;
             }
         }
-        if (is_a_relx_section(scn_name,doas.type)) {
+        if (is_a_relx_section(scn_name,doas.type,&is_rela)) {
+#if 0
             unsigned linkgroup = 0;
             res = _dwarf_section_get_target_group_from_map(dbg,
                 doas.info,
                 &linkgroup,error);
             if (res == DW_DLV_OK ) {
+printf("dadebug %s isrela %d OK FALL THROUGH in group map line %d\n",scn_name,is_rela,__LINE__);
                 /*  Fall through.
                     linkgroup is in group map already. */
             } else if (res == DW_DLV_ERROR) {
+printf("dadebug %s isrela %d ERROR in group map line %d\n",scn_name,is_rela,__LINE__);
                 return res;
             } else { /* DW_DLV_NO_ENTRY */
+printf("dadebug %s isrela %d NO ENTRY in group map insert line %d\n",scn_name,is_rela,__LINE__);
                 res = _dwarf_insert_in_group_map(dbg,
                     linkgroup,obj_section_index,
                     scn_name,
@@ -1131,16 +1164,23 @@ determine_target_group(Dwarf_Unsigned section_count,
                     return res;
                 }
             }
+#endif
             continue;
         }
 
         /*  ASSERT: groupnumber non-zero now */
         if (!is_a_special_section_semi_dwarf(scn_name)) {
             if (mapgroupnumber) {
+#if 0
+printf("dadebug %s  already has group map insert line %d\n",scn_name,__LINE__);
+#endif
                 /* Already in group map */
                 continue;
             }
             /* !mapgroupnumber */
+#if 0
+printf("dadebug %s  insert in group map insert line %d\n",scn_name,__LINE__);
+#endif
             res = _dwarf_insert_in_group_map(dbg,
                 groupnumber,obj_section_index,
                 scn_name,
@@ -1263,6 +1303,7 @@ _dwarf_setup(Dwarf_Debug dbg, Dwarf_Error * error)
         int err = 0;
         unsigned groupnumber = 0;
         unsigned mapgroupnumber = 0;
+        int is_rela = FALSE;
 
         res = _dwarf_section_get_target_group_from_map(dbg,obj_section_index,
             &groupnumber,error);
@@ -1296,10 +1337,10 @@ _dwarf_setup(Dwarf_Debug dbg, Dwarf_Error * error)
                 groupnumber = DW_GROUPNUMBER_BASE;
             }
         }
-        if (!this_section_dwarf_relevant(scn_name,doas.type) ) {
+        if (!this_section_dwarf_relevant(scn_name,doas.type,&is_rela) ) {
             continue;
         }
-        if (!is_a_relx_section(scn_name,doas.type)
+        if (!is_a_relx_section(scn_name,doas.type,&is_rela)
             && !is_a_special_section_semi_dwarf(scn_name)) {
             /*  We do these actions only for group-related
                 sections.  Do for  .debug_info etc,
@@ -1371,18 +1412,18 @@ _dwarf_setup(Dwarf_Debug dbg, Dwarf_Error * error)
             }
 
             if (!found_match) {
-                /*  For an object file with incorrect rela section name,
+                /*  For an object file with incorrect rel[a] section name,
                     the 'readelf' tool, prints correct debug information,
                     as the tool takes the section type instead
                     of the section name. If the current section
                     is a RELA one and the 'sh_info'
                     refers to a debug section, add the relocation data. */
-                if (is_a_relx_section(scn_name,doas.type)) {
+                if (is_a_relx_section(scn_name,doas.type,&is_rela)) {
                     if ( doas.info < section_count) {
                         if (sections[doas.info]) {
-                            add_rela_data_to_secdata(sections[doas.info],
+                            add_relx_data_to_secdata(sections[doas.info],
                                 &doas,
-                                obj_section_index);
+                                obj_section_index,is_rela);
                         }
                     } else {
                         /* Something is wrong with the ELF file. */

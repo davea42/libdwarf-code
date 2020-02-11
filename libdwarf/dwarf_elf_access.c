@@ -443,29 +443,35 @@ static void
 get_rela_elf32(Dwarf_Small *data, unsigned int i,
   UNUSEDARG int endianness,
   UNUSEDARG int machine,
-  is_rela,
   struct Dwarf_Elf_Rela *relap)
 {
     Elf32_Rela *relp = 0;
 
-    if (is_rela)
-         relp = (Elf32_Rela*)(data + (i * sizeof(Elf32_Rela)));
-    else {
-         relp = (Elf32_Rel*)(data + (i * sizeof(Elf32_Rel)));
-    }
+    relp = (Elf32_Rela*)(data + (i * sizeof(Elf32_Rela)));
     relap->r_offset = relp->r_offset;
     /* relap->r_info = relp->r_info; */
     relap->r_type = ELF32_R_TYPE(relp->r_info);
     relap->r_symidx = ELF32_R_SYM(relp->r_info);
-    if (is_rela) {
-      relap->is_rela = TRUE;
-      relap->r_addend = relp->r_addend;
-    } else {
-      relap->is_rela = False;
-      relap->r_addend = 0;
-    }
-   
+    relap->is_rela = TRUE;
+    relap->r_addend = relp->r_addend;
 }
+static void
+get_rel_elf32(Dwarf_Small *data, unsigned int i,
+  UNUSEDARG int endianness,
+  UNUSEDARG int machine,
+  struct Dwarf_Elf_Rela *relap)
+{
+    Elf32_Rel *relp = 0;
+
+    relp = (Elf32_Rel*)(data + (i * sizeof(Elf32_Rel)));
+    relap->r_offset = relp->r_offset;
+    /* relap->r_info = relp->r_info; */
+    relap->r_type = ELF32_R_TYPE(relp->r_info);
+    relap->r_symidx = ELF32_R_SYM(relp->r_info);
+    relap->is_rela = FALSE;
+    relap->r_addend = 0;
+}
+
 
 static void
 get_rela_elf64(Dwarf_Small *data, unsigned int i,
@@ -475,11 +481,7 @@ get_rela_elf64(Dwarf_Small *data, unsigned int i,
 {
 #ifdef HAVE_ELF64_RELA
     Elf64_Rela * relp = 0;
-    if (is_rela)
-         relp = (Elf64_Rela*)(data + (i * sizeof(Elf64_Rela)));
-    else {
-         relp = (Elf64_Rel*)(data + (i * sizeof(Elf64_Rel)));
-    }
+    relp = (Elf64_Rela*)(data + (i * sizeof(Elf64_Rela)));
     relap->r_offset = relp->r_offset;
     /* relap->r_info = relp->r_info; */
 #define ELF64MIPS_REL_SYM(i) ((i) & 0xffffffff)
@@ -508,15 +510,53 @@ get_rela_elf64(Dwarf_Small *data, unsigned int i,
         relap->r_type = ELF64_R_TYPE(relp->r_info);
         relap->r_symidx = ELF64_R_SYM(relp->r_info);
     }
-    if (is_rela) {
-        relap->r_addend = relp->r_addend;
-        relap-is_rela = TRUE;
-    } else {
-        relap->r_addend = 0;
-        relap-is_rela = FALSE;
-    }
+    relap->r_addend = relp->r_addend;
+    relap->is_rela = TRUE;
 #endif
 }
+
+static void
+get_rel_elf64(Dwarf_Small *data, unsigned int i,
+  int endianness,
+  int machine,
+  struct Dwarf_Elf_Rela *relap)
+{
+#ifdef HAVE_ELF64_RELA
+    Elf64_Rel * relp = 0;
+    relp = (Elf64_Rel*)(data + (i * sizeof(Elf64_Rel)));
+    relap->r_offset = relp->r_offset;
+    /* relap->r_info = relp->r_info; */
+#define ELF64MIPS_REL_SYM(i) ((i) & 0xffffffff)
+#define ELF64MIPS_REL_TYPE(i) ((i >> 56) &0xff)
+    if (machine == EM_MIPS && endianness == DW_OBJECT_LSB ){
+        /*  This is really wierd. Treat this very specially.
+            The Elf64 LE MIPS object used for
+            testing (that has rela) wants the
+            values as  sym  ssym type3 type2 type, treating
+            each value as independent value. But libelf xlate
+            treats it as something else so we fudge here.
+            It is unclear
+            how to precisely characterize where these relocations
+            were used.
+            SGI MIPS on IRIX never used .rela relocations.
+            The BE 64bit elf MIPS test object with rela uses traditional
+            elf relocation layouts, not this special case.  */
+        /*  We ignore the special TYPE2 and TYPE3, they should be
+            value R_MIPS_NONE in rela. */
+        relap->r_type = ELF64MIPS_REL_TYPE(relp->r_info);
+        relap->r_symidx = ELF64MIPS_REL_SYM(relp->r_info);
+#undef MIPS64SYM
+#undef MIPS64TYPE
+    } else
+    {
+        relap->r_type = ELF64_R_TYPE(relp->r_info);
+        relap->r_symidx = ELF64_R_SYM(relp->r_info);
+    }
+    relap->r_addend = 0;
+    relap->is_rela = FALSE;
+#endif
+}
+
 
 static void
 get_relocations_array(Dwarf_Bool is_64bit,
@@ -535,14 +575,21 @@ get_relocations_array(Dwarf_Bool is_64bit,
 
     /* Handle 32/64 bit issue */
     if (is_64bit) {
-        get_relocations = get_rela_elf64;
+        if ( is_rela) {
+            get_relocations = get_rela_elf64;
+        } else {
+            get_relocations = get_rel_elf64;
+        }
     } else {
-        get_relocations = get_rela_elf32;
+        if ( is_rela) {
+            get_relocations = get_rela_elf32;
+        } else {
+            get_relocations = get_rel_elf32;
+        }
     }
 
     for (i=0; i < num_relocations; i++) {
         get_relocations(data, i,endianness,machine,
-            is_rela,
             &(relap[i]));
     }
 
@@ -557,11 +604,10 @@ get_relocation_entries(Dwarf_Bool is_64bit,
     Dwarf_Unsigned relocation_section_entrysize,
     struct Dwarf_Elf_Rela **relas,
     unsigned int *nrelas,
+    int is_rela,
     int *error)
 {
     unsigned int relocation_size = 0;
-
-FIXME:  is_rela
 
     if (is_64bit) {
 #ifdef HAVE_ELF64_RELA
@@ -600,6 +646,7 @@ FIXME:  is_rela
         }
         memset(*relas,0,bytescount);
         get_relocations_array(is_64bit,endianness,machine,
+            is_rela,
             relocation_section,
             *nrelas, *relas);
     }
@@ -780,15 +827,15 @@ loop_through_relocations(
     struct Dwarf_Elf_Rela *relas = 0;
     unsigned int nrelas = 0;
     Dwarf_Small *mspace = 0;
+    int is_rela = relocatablesec->dss_is_rela;
 
-FIXME: is_rela
     ret = get_relocation_entries(obj->is_64bit,
         obj->endianness,
         obj->machine,
         relocation_section,
         relocation_section_size,
         relocation_section_entrysize,
-        &relas, &nrelas, error);
+        &relas, &nrelas, is_rela,error);
     if (ret != DW_DLV_OK) {
         free(relas);
         return ret;
