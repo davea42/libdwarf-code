@@ -112,8 +112,8 @@ typedef struct {
 
 } dwarf_elf_object_access_internals_t;
 
-/*  Using this for rel and rela. 
-    For Rel, r_addend is left zero and not used. 
+/*  Using this for rel and rela.
+    For Rel, r_addend is left zero and not used.
 */
 struct Dwarf_Elf_Rela {
     Dwarf_Unsigned r_offset;
@@ -122,7 +122,7 @@ struct Dwarf_Elf_Rela {
     Dwarf_Unsigned r_symidx;
     Dwarf_Unsigned r_addend;
     /* if is_rela is non-zero r_addend is meaningless */
-    char  is_rela; 
+    char  is_rela;
 };
 
 

@@ -54,4 +54,3 @@ _dwarf_loop_reading_debug_info_for_cu(
     Dwarf_Debug tieddbg,
     Dwarf_Sig8 sig,
     Dwarf_Error *error);
-

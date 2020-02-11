@@ -1,4 +1,8 @@
 2020-02-11: David Anderson
+     * dwarf_elf_access.c,dwarf_line_table_reader_common.h, dwarf_tied_decls.h:
+       removed trailing whitespace and final blank line.
+
+2020-02-11: David Anderson
     * dwarf_init_finish.c: Removed code that was #if 0 #endif
 2020-02-10: David Anderson
     * dwarf_elf_access.c: Now allows for .rel and .rela.

@@ -1622,7 +1622,7 @@ read_line_table_program(Dwarf_Debug dbg,
                 dbg,error,line_ptr_end);
             instr_length =  utmp3;
             /*  Dwarf_Small is a ubyte and the extended opcode is a
-                ubyte, though not stated as clearly in the 
+                ubyte, though not stated as clearly in the
                 2.0.0 spec as one might hope. */
             if (line_ptr >= line_ptr_end) {
                 dwarfstring g;
