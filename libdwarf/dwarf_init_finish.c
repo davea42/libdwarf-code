@@ -788,9 +788,6 @@ is_a_special_section_semi_dwarf(const char *scn_name)
         !strcmp(scn_name,".symtab")) {
         return TRUE;
     }
-#if 0
-printf("dadebug %s not special semi-dwarf line %d\n",scn_name,__LINE__);
-#endif
     /*  It's not one of these special sections referenced in
         the test. */
     return FALSE;
@@ -829,9 +826,6 @@ this_section_dwarf_relevant(const char *scn_name,int type, int *is_rela)
         return TRUE;
     }
     if(is_a_relx_section(scn_name,type,is_rela)) {
-#if 0
-printf("dadebug relx relevant %s %d\n",scn_name,*is_rela);
-#endif
         return TRUE;
     }
     /*  All sorts of sections are of no interest: .text
@@ -974,9 +968,6 @@ insert_sht_list_in_group_map(Dwarf_Debug dbg,
                     val,
                     &doasx, &err);
                 if (resx == DW_DLV_NO_ENTRY){
-#if 0
-printf("dadebug no insert in group map %s  line %d\n",doasx.name,__LINE__);
-#endif
                     /*  Should we really ignore this? */
                     continue;
                 } else if (resx == DW_DLV_ERROR){
@@ -988,16 +979,10 @@ printf("dadebug no insert in group map %s  line %d\n",doasx.name,__LINE__);
                 }
                 if (!this_section_dwarf_relevant(doasx.name,
                     doasx.type,&is_rela) ) {
-#if 0
-printf("dadebug no insert, not relevant not in group map %s  line %d\n",doasx.name,__LINE__);
-#endif
                     continue;
                 }
                 data += DWARF_32BIT_SIZE;
                 *did_add_map = TRUE;
-#if 0
-printf("dadebug insert in group map %s  line %d\n",doasx.name,__LINE__);
-#endif
                 res = _dwarf_insert_in_group_map(dbg,
                     comdat_group_number,val,
                     doasx.name,
@@ -1142,45 +1127,16 @@ determine_target_group(Dwarf_Unsigned section_count,
             }
         }
         if (is_a_relx_section(scn_name,doas.type,&is_rela)) {
-#if 0
-            unsigned linkgroup = 0;
-            res = _dwarf_section_get_target_group_from_map(dbg,
-                doas.info,
-                &linkgroup,error);
-            if (res == DW_DLV_OK ) {
-printf("dadebug %s isrela %d OK FALL THROUGH in group map line %d\n",scn_name,is_rela,__LINE__);
-                /*  Fall through.
-                    linkgroup is in group map already. */
-            } else if (res == DW_DLV_ERROR) {
-printf("dadebug %s isrela %d ERROR in group map line %d\n",scn_name,is_rela,__LINE__);
-                return res;
-            } else { /* DW_DLV_NO_ENTRY */
-printf("dadebug %s isrela %d NO ENTRY in group map insert line %d\n",scn_name,is_rela,__LINE__);
-                res = _dwarf_insert_in_group_map(dbg,
-                    linkgroup,obj_section_index,
-                    scn_name,
-                    error);
-                if (res != DW_DLV_OK ) {
-                    return res;
-                }
-            }
-#endif
             continue;
         }
 
         /*  ASSERT: groupnumber non-zero now */
         if (!is_a_special_section_semi_dwarf(scn_name)) {
             if (mapgroupnumber) {
-#if 0
-printf("dadebug %s  already has group map insert line %d\n",scn_name,__LINE__);
-#endif
                 /* Already in group map */
                 continue;
             }
             /* !mapgroupnumber */
-#if 0
-printf("dadebug %s  insert in group map insert line %d\n",scn_name,__LINE__);
-#endif
             res = _dwarf_insert_in_group_map(dbg,
                 groupnumber,obj_section_index,
                 scn_name,
