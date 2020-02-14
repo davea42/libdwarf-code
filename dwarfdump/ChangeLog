@@ -1,3 +1,8 @@
+2020-02-13:   David Anderson
+    * dwarf_names.c dwarf_names.c,dwarfdump-ta-ext-table.h,
+      dwarfdump-ta-table.h,dwarfdump-tt-ext-table.h,
+      dwarfdump-tt-table.h: regenerated with new
+      date string.
 2020-01-27:   David Anderson
     * print_die.c: Now attributes the correct actual form
       in more places (meaning in error messages, here and

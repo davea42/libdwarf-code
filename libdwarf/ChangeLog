@@ -1,4 +1,9 @@
 2020-02-13: David Anderson
+    *  libdwarf_version.h: New version string 
+    *  dwarf_names.c,dwarf_names.h,dwarf_names_enum.h,
+       dwarf_names_new.h: Regenerated with new
+       version string.
+2020-02-13: David Anderson
      * libdwarf/libdwarf.h.in: Added a new error code to
        properly distinguish between distinct elf section
        header issues related to relocations versus
