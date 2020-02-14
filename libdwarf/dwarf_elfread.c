@@ -389,7 +389,6 @@ update_entry(Dwarf_Debug dbg,
         *error = DW_DLE_RELOC_INVALID;
         return DW_DLV_ERROR;
     }
-    
     /*  Assuming we do not need to do a READ_UNALIGNED here
         at target_section + offset and add its value to
         outval.  Some ABIs say no read (for example MIPS),
