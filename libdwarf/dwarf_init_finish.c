@@ -752,6 +752,81 @@ is_section_name_known_already(Dwarf_Debug dbg, const char *scn_name)
 */
 
 
+/*  These help us ignore some sections that are
+    irrelevant to libdwarf.  Maybe should use a hash
+    table instead of sequential search? */
+int
+_dwarf_ignorethissection(const char *scn_name) {
+    if(!strcmp(scn_name,".bss")) {
+        return TRUE;
+    }
+    if(!strcmp(scn_name,".comment")) {
+        return TRUE;
+    }
+    if(!strcmp(scn_name,".sbss")) {
+        return TRUE;
+    }
+    if(!strcmp(scn_name,".jcr")) {
+        return TRUE;
+    }
+    if(!strcmp(scn_name,".init")) {
+        return TRUE;
+    }
+    if(!strcmp(scn_name,".fini_array")) {
+        return TRUE;
+    }
+    if(!strcmp(scn_name,".fini")) {
+        return TRUE;
+    }
+    if(!strcmp(scn_name,".fini_array")) {
+        return TRUE;
+    }
+    if(!strcmp(scn_name,".interp")) {
+        return TRUE;
+    }
+    if(!strcmp(scn_name,".text")) {
+        return TRUE;
+    }
+    if(!strcmp(scn_name,".rela.text")) {
+        return TRUE;
+    }
+    if(!strcmp(scn_name,".rel.text")) {
+        return TRUE;
+    }
+
+    if(!strcmp(scn_name,".plt")) {
+        return TRUE;
+    }
+    if(!strcmp(scn_name,".rela.plt")) {
+        return TRUE;
+    }
+    if(!strcmp(scn_name,".rel.plt")) {
+        return TRUE;
+    }
+
+    if(!strcmp(scn_name,".data")) {
+        return TRUE;
+    }
+    if(!strcmp(scn_name,".rel.data")) {
+        return TRUE;
+    }
+    if(!strcmp(scn_name,".rela.data")) {
+        return TRUE;
+    }
+
+    if(!strcmp(scn_name,".got")) {
+        return TRUE;
+    }
+    if(!strcmp(scn_name,".rela.got")) {
+        return TRUE;
+    }
+    if(!strcmp(scn_name,".rel.got")) {
+        return TRUE;
+    }
+
+
+    return FALSE;
+}
 /*  For an object file with an incorrect rela section name,
     readelf prints correct debug information,
     as the tool takes the section type instead
@@ -801,6 +876,9 @@ this_section_dwarf_relevant(const char *scn_name,int type, int *is_rela)
         startswith(scn_name, ".debug_")) {
         /* standard debug */
         return TRUE;
+    }
+    if (_dwarf_ignorethissection(scn_name)) {
+        return FALSE;
     }
     /* Now check if a special section could be
         in a section_group, but though seems unlikely. */

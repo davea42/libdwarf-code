@@ -70,14 +70,30 @@ extern Elf64_Shdr *elf64_getshdr(Elf_Scn *);
 #endif
 
 #ifdef WORDS_BIGENDIAN
-#define WRITE_UNALIGNED(dbg,dest,source, srclength,len_out) \
+#define READ_UNALIGNED_SAFE(dbg,dest, source, length) \
+    do {                                             \
+        Dwarf_Unsigned _ltmp = 0;                    \
+        dbg->de_copy_word( (((char *)(&_ltmp)) +     \
+            sizeof(_ltmp) - length),source, length); \
+        dest = _ltmp;                                \
+    } while (0)
+
+#define WRITE_UNALIGNED_LOCAL(dbg,dest,source, srclength,len_out) \
     {                                             \
         dbg->de_copy_word(dest,                   \
             ((char *)source) +srclength-len_out,  \
             len_out) ;                            \
     }
 #else /* LITTLE ENDIAN */
-#define WRITE_UNALIGNED(dbg,dest,source, srclength,len_out) \
+#define READ_UNALIGNED_SAFE(dbg,dest, source, srclength) \
+    do  {                                     \
+        Dwarf_Unsigned _ltmp = 0;             \
+        dbg->de_copy_word( (char *)(&_ltmp),  \
+            source, srclength) ;              \
+        dest = _ltmp;                         \
+    } while (0)
+
+#define WRITE_UNALIGNED_LOCAL(dbg,dest,source, srclength,len_out) \
     {                               \
         dbg->de_copy_word( (dest) , \
             ((char *)source) ,      \
@@ -666,6 +682,7 @@ update_entry(Dwarf_Debug dbg,
     Dwarf_Small *symtab_section_data,
     Dwarf_Unsigned symtab_section_size,
     Dwarf_Unsigned symtab_section_entrysize,
+    int is_rela,
     int *error)
 {
     unsigned int type = 0;
@@ -745,14 +762,24 @@ update_entry(Dwarf_Debug dbg,
         *error = DW_DLE_RELOC_INVALID;
         return DW_DLV_ERROR;
     }
-    {
-        /*  Assuming we do not need to do a READ_UNALIGNED here
-            at target_section + offset and add its value to
-            outval.  Some ABIs say no read (for example MIPS),
-            but if some do then which ones? */
-        Dwarf_Unsigned outval = sym->st_value + addend;
-        /*  The 0th byte goes at offset. */
-        WRITE_UNALIGNED(dbg,target_section + offset,
+    { /* .rel. (addend is zero) or .rela */
+        Dwarf_Small *targ = target_section+offset;
+        Dwarf_Unsigned presentval = 0;
+        Dwarf_Unsigned outval = 0;
+        /*  See also: READ_UNALIGNED_SAFE in
+            dwarf_elfread.c  */
+
+        if (!is_rela) {
+            READ_UNALIGNED_SAFE(dbg,presentval,
+                targ,reloc_size);
+        }
+        /*  There is no addend in .rel.
+            Normally presentval is correct
+            and st_value will be zero.
+            But a few compilers have
+            presentval zero and st_value set. */
+        outval = presentval + sym->st_value + addend ;
+        WRITE_UNALIGNED_LOCAL(dbg,targ,
             &outval,sizeof(outval),reloc_size);
     }
     return DW_DLV_OK;
@@ -773,6 +800,7 @@ apply_rela_entries(Dwarf_Debug dbg,
     Dwarf_Small *symtab_section,
     Dwarf_Unsigned symtab_section_size,
     Dwarf_Unsigned symtab_section_entrysize,
+    int   is_rela,
     struct Dwarf_Elf_Rela *relas, unsigned int nrelas,
     int *error)
 {
@@ -797,6 +825,7 @@ apply_rela_entries(Dwarf_Debug dbg,
                 symtab_section,
                 symtab_section_size,
                 symtab_section_entrysize,
+                is_rela,
                 error);
             if (res != DW_DLV_OK) {
                 return_res = res;
@@ -866,6 +895,7 @@ loop_through_relocations(
         symtab_section,
         symtab_section_size,
         symtab_section_entrysize,
+        is_rela,
         relas, nrelas, error);
     free(relas);
     return ret;
@@ -1014,7 +1044,10 @@ dwarf_elf_object_access_load_section(void* obj_in,
 }
 
 
-/* dwarf_elf_access method table. */
+/*  dwarf_elf_access method table for use with libelf.
+    See also the methods table in dwarf_elfread.c for non-libelf.
+*/
+
 static const struct Dwarf_Obj_Access_Methods_s dwarf_elf_object_access_methods =
 {
     dwarf_elf_object_access_get_section_info,

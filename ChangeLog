@@ -1,3 +1,6 @@
+2020-02-13  David Anderson
+    * configure.ac: Version string now 20200213
+    * configure: Regenerated.
 2020-01-05  David Anderson
-    * configure.ac: Version string now 20200114
+    * configure.ac: Version string now 20200105
     * configure: Regenerated.

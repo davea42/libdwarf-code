@@ -996,6 +996,9 @@ extern "C" {
 #ifndef R_386_32
 #define R_386_32                               1
 #endif /* R_386_32 */
+#ifndef R_386_PC32
+#define R_386_PC32                             2
+#endif /* R_386_PC32 */
 #ifndef R_386_TLS_DTPOFF32
 #define R_386_TLS_DTPOFF32                     36
 #endif /* R_386_TLS_DTPOFF32 */

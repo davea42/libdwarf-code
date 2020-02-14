@@ -1400,9 +1400,10 @@ Old names above with same values. */
 #define DW_DLE_PRO_INIT_EXTRAS_ERR             463
 #define DW_DLE_NULL_ARGS_DWARF_ADD_PATH        464
 #define DW_DLE_DWARF_INIT_DBG_NULL             465
+#define DW_DLE_ELF_RELOC_SECTION_ERROR         466
 
     /* LAST MUST EQUAL LAST ERROR NUMBER */
-#define DW_DLE_LAST        465
+#define DW_DLE_LAST        466
 
 #define DW_DLE_LO_USER     0x10000
 

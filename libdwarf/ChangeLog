@@ -1,7 +1,36 @@
-2020-02-11: David Anderson
-     * dwarf_elf_access.c,dwarf_line_table_reader_common.h, dwarf_tied_decls.h:
-       removed trailing whitespace and final blank line.
+2020-02-13: David Anderson
+     * libdwarf/libdwarf.h.in: Added a new error code to
+       properly distinguish between distinct elf section
+       header issues related to relocations versus
+       other section header issues.
+     * libdwarf/generated_libdwarf.h.in: regenerated
 
+    * dwarf_elf_access.c: Adding local READ_UNALIGNED_SAFE
+      so we can do libelf relocations thoroughly.
+    * dwarf_elf_defines.h: Adding R_386_PC32 to the 
+      applicable relocation sets.
+    * dwarf_elf_load_headers.c: Now we deal with .rel.
+      and .rela. relocations for better completeness.
+      Removed some code duplication and complexity
+      too.
+    * dwarf_elf_rel_detector.c: Deals with R_386_PC32 now.
+    * dwarf_elfread.c: Add READ_UNALIGNED_SAFE so we can
+      do no-libelf relocations thoroghly.
+    * dwarf_elfread.h: Added gr_is_rela field and
+      two enums RelocRela and RelocOffsetSize so we have
+      type-safety in the argument lists.
+    * dwarf_init_finish.c: A new function ensures we
+      skip various sections we know we do not want to
+      look at.
+    * dwarf_opaque.h: Declare _dwarf_ignorethissection()
+      so libelf and non-libelf can ignore the unwanted
+      sections.
+    *  dwarf_errmsg_list.h: Entry added for the new
+       DW_DLE error code.
+2020-02-11: David Anderson
+    * dwarf_elf_access.c,dwarf_line_table_reader_common.h,
+      dwarf_tied_decls.h:
+      removed trailing whitespace and final blank line.
 2020-02-11: David Anderson
     * dwarf_init_finish.c: Removed code that was #if 0 #endif
 2020-02-10: David Anderson
