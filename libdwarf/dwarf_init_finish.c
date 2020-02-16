@@ -824,7 +824,6 @@ _dwarf_ignorethissection(const char *scn_name) {
         return TRUE;
     }
 
-
     return FALSE;
 }
 /*  For an object file with an incorrect rela section name,
@@ -836,6 +835,7 @@ static int
 is_a_relx_section(const char *scn_name,int type,int *is_rela)
 {
     if(startswith(scn_name,".rela.")) {
+
         *is_rela = TRUE;
         return TRUE;
     }

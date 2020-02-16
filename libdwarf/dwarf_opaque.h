@@ -362,8 +362,7 @@ struct Dwarf_Section_s {
         neither compressed nor have relocations so never malloc
         space for libdwarf.  */
     Dwarf_Small     dss_ignore_reloc_group_sec;
-
-    int dss_is_rela;
+    char dss_is_rela;
 };
 
 /*  Overview: if next_to_use== first, no error slots are used.

@@ -138,7 +138,7 @@ struct Dwarf_Elf_Rela {
     Dwarf_Unsigned r_symidx;
     Dwarf_Unsigned r_addend;
     /* if is_rela is non-zero r_addend is meaningless */
-    char  is_rela;
+    char  r_is_rela;
 };
 
 
@@ -468,7 +468,7 @@ get_rela_elf32(Dwarf_Small *data, unsigned int i,
     /* relap->r_info = relp->r_info; */
     relap->r_type = ELF32_R_TYPE(relp->r_info);
     relap->r_symidx = ELF32_R_SYM(relp->r_info);
-    relap->is_rela = TRUE;
+    relap->r_is_rela = TRUE;
     relap->r_addend = relp->r_addend;
 }
 static void
@@ -484,7 +484,7 @@ get_rel_elf32(Dwarf_Small *data, unsigned int i,
     /* relap->r_info = relp->r_info; */
     relap->r_type = ELF32_R_TYPE(relp->r_info);
     relap->r_symidx = ELF32_R_SYM(relp->r_info);
-    relap->is_rela = FALSE;
+    relap->r_is_rela = FALSE;
     relap->r_addend = 0;
 }
 
@@ -527,7 +527,7 @@ get_rela_elf64(Dwarf_Small *data, unsigned int i,
         relap->r_symidx = ELF64_R_SYM(relp->r_info);
     }
     relap->r_addend = relp->r_addend;
-    relap->is_rela = TRUE;
+    relap->r_is_rela = TRUE;
 #endif
 }
 
@@ -569,7 +569,7 @@ get_rel_elf64(Dwarf_Small *data, unsigned int i,
         relap->r_symidx = ELF64_R_SYM(relp->r_info);
     }
     relap->r_addend = 0;
-    relap->is_rela = FALSE;
+    relap->r_is_rela = FALSE;
 #endif
 }
 
@@ -627,17 +627,18 @@ get_relocation_entries(Dwarf_Bool is_64bit,
 
     if (is_64bit) {
 #ifdef HAVE_ELF64_RELA
-        relocation_size = sizeof(Elf64_Rela);
+        relocation_size = is_rela?sizeof(Elf64_Rela):sizeof(Elf64_Rel);
 #else
         *error = DW_DLE_MISSING_ELF64_SUPPORT;
         return DW_DLV_ERROR;
 #endif
     } else {
-        relocation_size = sizeof(Elf32_Rela);
+        relocation_size = is_rela?sizeof(Elf32_Rela):sizeof(Elf32_Rel);
     }
     if (relocation_size != relocation_section_entrysize) {
         /*  Means our struct definition does not match the
             real object. */
+
         *error = DW_DLE_RELOC_SECTION_LENGTH_ODD;
         return DW_DLV_ERROR;
     }
@@ -851,7 +852,6 @@ loop_through_relocations(
     Dwarf_Unsigned relocation_section_size =
         relocatablesec->dss_reloc_size;
     Dwarf_Unsigned relocation_section_entrysize = relocatablesec->dss_reloc_entrysize;
-
     int ret = DW_DLV_ERROR;
     struct Dwarf_Elf_Rela *relas = 0;
     unsigned int nrelas = 0;
@@ -972,6 +972,7 @@ dwarf_elf_object_relocate_a_section(void* obj_in,
             return res;
         }
     }
+
 
     /* We have all the data we need in memory. */
     res = loop_through_relocations(dbg,obj,relocatablesec,error);

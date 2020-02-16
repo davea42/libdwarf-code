@@ -1,3 +1,8 @@
+2020-02-15: David Anderson
+    * dwarf_elf_access.c,dwarf_init_finish.c: With libelf
+      in use there was a mistake that broke dumping some objects that
+      needed relocations.
+    * dwarf_opaque.h: Corrected a is_rela to r_is_rela
 2020-02-13: David Anderson
     * dwarf_elfread.c,dwarf_errmsg_list.h: Removed
       trailing whitespace.
