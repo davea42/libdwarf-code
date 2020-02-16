@@ -43,11 +43,11 @@ then
   cd  ..
   echo "Are we in the right directory now?" `pwd`
   rightplace `pwd`
-  echo "Yes, we are in the right directory."
+  echo "Yes, we are in the right code (libdwarf) directory."
 else
   echo "Are we in the right directory?"
   rightplace `pwd`
-  echo "Yes, we are in the right directory."
+  echo "Yes, we are in the right code (libdwarf) directory."
 fi
 l=`pwd`
 echo "Now touch files to get timestamps usable."
