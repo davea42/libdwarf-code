@@ -382,8 +382,8 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
     if (version < DW_LINE_VERSION5){
         Dwarf_Unsigned directories_count = 0;
         Dwarf_Unsigned directories_malloc = 5;
-        line_context->lc_include_directories = malloc(sizeof(Dwarf_Small *) *
-            directories_malloc);
+        line_context->lc_include_directories =
+            malloc(sizeof(Dwarf_Small *) * directories_malloc);
         if (line_context->lc_include_directories == NULL) {
             _dwarf_error(dbg, err, DW_DLE_ALLOC_FAIL);
             return (DW_DLV_ERROR);
@@ -433,7 +433,7 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
     } else if (version == EXPERIMENTAL_LINE_TABLES_VERSION) {
         /* Empty old style dir entry list. */
         line_ptr++;
-    } else if (version == 5) {
+    } else if (version == DW_LINE_VERSION5) {
         /* handled below */
     } else {
         /* No old style directory entries. */
@@ -481,15 +481,17 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
                 return (DW_DLV_ERROR);
             }
             currfile->fi_dir_index = dir_index;
+            currfile->fi_dir_index_present = TRUE;
 
             DECODE_LEB128_UWORD_CK(line_ptr,lastmod,
                 dbg,err, line_ptr_end);
             currfile->fi_time_last_mod = lastmod;
+            currfile->fi_time_last_mod_present = TRUE;
 
-            /* Skip over file length. */
             DECODE_LEB128_UWORD_CK(line_ptr,file_length,
                 dbg,err, line_ptr_end);
             currfile->fi_file_length = file_length;
+            currfile->fi_file_length_present = TRUE;
             if (line_ptr >= line_ptr_end) {
                 _dwarf_error(dbg, err, DW_DLE_LINE_NUMBER_HEADER_ERROR);
                 return (DW_DLV_ERROR);
@@ -552,8 +554,7 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
         version == EXPERIMENTAL_LINE_TABLES_VERSION) {
         /* DWARF 5.  directory names.*/
         Dwarf_Unsigned directory_format_count = 0;
-        Dwarf_Unsigned *directory_entry_types = 0;
-        Dwarf_Unsigned *directory_entry_forms = 0;
+        struct Dwarf_Unsigned_Pair_s * format_values = 0;
         Dwarf_Unsigned directories_count = 0;
         Dwarf_Unsigned i = 0;
         Dwarf_Unsigned j = 0;
@@ -564,65 +565,54 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
             return (DW_DLV_ERROR);
         }
         directory_format_count = *(unsigned char *) line_ptr;
+        line_context->lc_directory_entry_format_count =
+            directory_format_count;
         line_ptr = line_ptr + sizeof(Dwarf_Small);
         if (directory_format_count > 0) {
-            directory_entry_types = malloc(sizeof(Dwarf_Unsigned) *
+            format_values = malloc(sizeof(struct Dwarf_Unsigned_Pair_s) *
                 directory_format_count);
-            if (directory_entry_types == NULL) {
-                _dwarf_error(dbg, err, DW_DLE_ALLOC_FAIL);
-                return (DW_DLV_ERROR);
-            }
-            directory_entry_forms = malloc(sizeof(Dwarf_Unsigned) *
-                directory_format_count);
-            if (directory_entry_forms == NULL) {
-                free(directory_entry_types);
+            if (format_values == NULL) {
                 _dwarf_error(dbg, err, DW_DLE_ALLOC_FAIL);
                 return (DW_DLV_ERROR);
             }
             for (i = 0; i < directory_format_count; i++) {
-                dres=read_uword_de(&line_ptr,directory_entry_types+i,
+                dres=read_uword_de(&line_ptr,
+                    &format_values[i].up_first,
                     dbg,err,line_ptr_end);
                 if (dres != DW_DLV_OK) {
-                    free(directory_entry_types);
-                    free(directory_entry_forms);
+                    free(format_values);
+                    format_values = 0;
                     return dres;
                 }
-                /* DECODE_LEB128_UWORD_CK(line_ptr,
-                    directory_entry_types[i],
-                    dbg,err,line_ptr_end); */
-                dres=read_uword_de(&line_ptr,directory_entry_forms+i,
+                dres=read_uword_de(&line_ptr,
+                    &format_values[i].up_second,
                     dbg,err,line_ptr_end);
                 if (dres != DW_DLV_OK) {
-                    free(directory_entry_types);
-                    free(directory_entry_forms);
+                    free(format_values);
+                    format_values = 0;
                     return dres;
                 }
-                /* DECODE_LEB128_UWORD_CK(line_ptr,
-                    directory_entry_forms[i],
-                    dbg,err,line_ptr_end); */
             }
         }
         dres = read_uword_de(&line_ptr,&directories_count,
             dbg,err,line_ptr_end);
         if (dres != DW_DLV_OK) {
-            free(directory_entry_types);
-            free(directory_entry_forms);
+            free(format_values);
+            format_values = 0;
             return dres;
         }
-        /* DECODE_LEB128_UWORD_CK(line_ptr, directories_count,
-            dbg,err,line_ptr_end); */
         line_context->lc_include_directories =
             malloc(sizeof(Dwarf_Small *) * directories_count);
         if (line_context->lc_include_directories == NULL) {
-            free(directory_entry_types);
-            free(directory_entry_forms);
+            free(format_values);
+            format_values = 0;
             _dwarf_error(dbg, err, DW_DLE_ALLOC_FAIL);
             return (DW_DLV_ERROR);
         }
-        if (directory_format_count ==0 &&
+        if (directory_format_count == 0 &&
             directories_count > 0) {
-            free(directory_entry_types);
-            free(directory_entry_forms);
+            free(format_values);
+            format_values = 0;
             _dwarf_error(dbg, err,
                 DW_DLE_DIRECTORY_FORMAT_COUNT_VS_DIRECTORIES_MISMATCH);
             return (DW_DLV_ERROR);
@@ -633,19 +623,19 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
         for(i = 0; i < directories_count; i++) {
             for (j = 0; j < directory_format_count; j++) {
 
-                switch (directory_entry_types[j]) {
+                switch (format_values[j].up_first) {
                 case DW_LNCT_path: {
                     char *inc_dir_ptr = 0;
                     res = _dwarf_decode_line_string_form(dbg,
-                        directory_entry_forms[j],
+                        format_values[j].up_second,
                         local_length_size,
                         &line_ptr,
                         line_ptr_end,
                         &inc_dir_ptr,
                         err);
                     if (res != DW_DLV_OK) {
-                        free(directory_entry_types);
-                        free(directory_entry_forms);
+                        free(format_values);
+                        format_values = 0;
                         return res;
                     }
                     line_context->lc_include_directories[i] =
@@ -653,31 +643,30 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
                     break;
                 }
                 default:
-                    free(directory_entry_types);
-                    free(directory_entry_forms);
+                    free(format_values);
+                    format_values = 0;
                     _dwarf_error(dbg, err, DW_DLE_LINE_NUMBER_HEADER_ERROR);
                     return (DW_DLV_ERROR);
                 }
             }
             if (line_ptr > line_ptr_end) {
-                free(directory_entry_types);
-                free(directory_entry_forms);
+                free(format_values);
+                format_values = 0;
                 _dwarf_error(dbg, err,
                     DW_DLE_LINE_NUMBER_HEADER_ERROR);
                 return (DW_DLV_ERROR);
             }
         }
-        free(directory_entry_types);
-        free(directory_entry_forms);
+        line_context->lc_directory_format_values = format_values;
+        format_values = 0;
         line_context->lc_include_directories_count = directories_count;
     }
 
     if (version == DW_LINE_VERSION5 ||
         version == EXPERIMENTAL_LINE_TABLES_VERSION) {
         /* DWARF 5.  file names.*/
+        struct Dwarf_Unsigned_Pair_s * filename_entry_pairs = 0;
         Dwarf_Unsigned filename_format_count = 0;
-        Dwarf_Unsigned *filename_entry_types = 0;
-        Dwarf_Unsigned *filename_entry_forms = 0;
         Dwarf_Unsigned files_count = 0;
         Dwarf_Unsigned i = 0;
         Dwarf_Unsigned j = 0;
@@ -688,45 +677,34 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
             return (DW_DLV_ERROR);
         }
         filename_format_count = *(unsigned char *) line_ptr;
+        line_context->lc_file_name_format_count =
+            filename_format_count;
         line_ptr = line_ptr + sizeof(Dwarf_Small);
-        filename_entry_types = malloc(sizeof(Dwarf_Unsigned) *
+        filename_entry_pairs = malloc(
+            sizeof(struct Dwarf_Unsigned_Pair_s) *
             filename_format_count);
-        if (filename_entry_types == NULL) {
+        if (filename_entry_pairs == NULL) {
             _dwarf_error(dbg, err, DW_DLE_ALLOC_FAIL);
             return DW_DLV_ERROR;
         }
-        filename_entry_forms = malloc(sizeof(Dwarf_Unsigned) *
-            filename_format_count);
-        if (filename_entry_forms == NULL) {
-            free(filename_entry_types);
-            _dwarf_error(dbg, err, DW_DLE_ALLOC_FAIL);
-            return (DW_DLV_ERROR);
-        }
         for (i = 0; i < filename_format_count; i++) {
-            dres=read_uword_de(&line_ptr,filename_entry_types+i,
+            dres=read_uword_de(&line_ptr,&filename_entry_pairs[i].up_first,
                 dbg,err,line_ptr_end);
             if (dres != DW_DLV_OK) {
-                free(filename_entry_types);
-                free(filename_entry_forms);
+                free(filename_entry_pairs);
                 return dres;
             }
-            /* DECODE_LEB128_UWORD_CK(line_ptr, filename_entry_types[i]
-                dbg,err,line_ptr_end); */
-            dres=read_uword_de(&line_ptr,filename_entry_forms+i,
+            dres=read_uword_de(&line_ptr,&filename_entry_pairs[i].up_second,
                 dbg,err,line_ptr_end);
             if (dres != DW_DLV_OK) {
-                free(filename_entry_types);
-                free(filename_entry_forms);
+                free(filename_entry_pairs);
                 return dres;
             }
-            /* DECODE_LEB128_UWORD_CK(line_ptr, filename_entry_forms[i],
-                dbg,err,line_ptr_end); */
         }
         dres=read_uword_de(&line_ptr,&files_count,
             dbg,err,line_ptr_end);
         if (dres != DW_DLV_OK) {
-            free(filename_entry_types);
-            free(filename_entry_forms);
+            free(filename_entry_pairs);
             return dres;
         }
         /* DECODE_LEB128_UWORD_CK(line_ptr, files_count,
@@ -737,8 +715,7 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
             curline = (Dwarf_File_Entry)
                 malloc(sizeof(struct Dwarf_File_Entry_s));
             if (curline == NULL) {
-                free(filename_entry_types);
-                free(filename_entry_forms);
+                free(filename_entry_pairs);
                 _dwarf_error(dbg, err, DW_DLE_ALLOC_FAIL);
                 return (DW_DLV_ERROR);
             }
@@ -746,65 +723,64 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
             _dwarf_add_to_files_list(line_context,curline);
             for(j = 0; j < filename_format_count; j++) {
                 Dwarf_Unsigned dirindex = 0;
-                switch (filename_entry_types[j]) {
+                switch (filename_entry_pairs[j].up_first) {
                 case DW_LNCT_path:
                     res = _dwarf_decode_line_string_form(dbg,
-                        filename_entry_forms[j],
+                        filename_entry_pairs[j].up_second,
                         local_length_size,
                         &line_ptr,
                         line_ptr_end,
                         (char **)&curline->fi_file_name,
                         err);
                     if (res != DW_DLV_OK) {
-                        free(filename_entry_types);
-                        free(filename_entry_forms);
+                        free(filename_entry_pairs);
                         return res;
                     }
                     break;
                 case DW_LNCT_directory_index:
                     res = _dwarf_decode_line_udata_form(dbg,
-                        filename_entry_forms[j],
+                        filename_entry_pairs[j].up_second,
                         &line_ptr,
                         &dirindex,
                         line_ptr_end,
                         err);
                     if (res != DW_DLV_OK) {
-                        free(filename_entry_types);
-                        free(filename_entry_forms);
+                        free(filename_entry_pairs);
                         return res;
                     }
                     curline->fi_dir_index = dirindex;
+                    curline->fi_dir_index_present = TRUE;
                     break;
                 case DW_LNCT_timestamp:
                     res = _dwarf_decode_line_udata_form(dbg,
-                        filename_entry_forms[j],
+                        filename_entry_pairs[j].up_second,
                         &line_ptr,
                         &curline->fi_time_last_mod,
                         line_ptr_end,
                         err);
                     if (res != DW_DLV_OK) {
-                        free(filename_entry_types);
-                        free(filename_entry_forms);
+                        free(filename_entry_pairs);
                         return res;
                     }
+                    curline->fi_time_last_mod_present = TRUE;
                     break;
                 case DW_LNCT_size:
                     res = _dwarf_decode_line_udata_form(dbg,
-                        filename_entry_forms[j],
+                        filename_entry_pairs[j].up_second,
                         &line_ptr,
                         &curline->fi_file_length,
                         line_ptr_end,
                         err);
                     if (res != DW_DLV_OK) {
-                        free(filename_entry_types);
-                        free(filename_entry_forms);
+                        free(filename_entry_pairs);
                         return res;
                     }
+                    curline->fi_file_length_present = TRUE;
                     break;
                 case DW_LNCT_MD5: { /* form DW_FORM_data16 */
-                    if (filename_entry_forms[j] != DW_FORM_data16) {
-                        free(filename_entry_types);
-                        free(filename_entry_forms);
+                    if (filename_entry_pairs[j].up_second !=
+                        DW_FORM_data16) {
+                        free(filename_entry_pairs);
                         _dwarf_error(dbg, err,DW_DLE_LNCT_MD5_WRONG_FORM);
                         return  DW_DLV_ERROR;
                     }
@@ -815,8 +791,7 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
                         &curline->fi_md5_value,
                         err);
                     if (res != DW_DLV_OK) {
-                        free(filename_entry_types);
-                        free(filename_entry_forms);
+                        free(filename_entry_pairs);
                         return res;
                     }
                     curline->fi_md5_present = TRUE;
@@ -825,21 +800,19 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
                     break;
 
                 default:
-                    free(filename_entry_types);
-                    free(filename_entry_forms);
+                    free(filename_entry_pairs);
                     _dwarf_error(dbg, err,DW_DLE_LINE_NUMBER_HEADER_ERROR);
                     return (DW_DLV_ERROR);
                 }
                 if (line_ptr > line_ptr_end) {
-                    free(filename_entry_types);
-                    free(filename_entry_forms);
+                    free(filename_entry_pairs);
                     _dwarf_error(dbg, err, DW_DLE_LINE_NUMBER_HEADER_ERROR);
                     return (DW_DLV_ERROR);
                 }
             }
         }
-        free(filename_entry_types);
-        free(filename_entry_forms);
+        line_context->lc_file_format_values = filename_entry_pairs;
+        filename_entry_pairs = 0;
     }
     /* For two-level line tables, read the subprograms table. */
     if (version == EXPERIMENTAL_LINE_TABLES_VERSION) {
@@ -1814,19 +1787,26 @@ read_line_table_program(Dwarf_Debug dbg,
                     DECODE_LEB128_UWORD_CK(line_ptr,value,
                         dbg,error,line_ptr_end);
                     cur_file_entry->fi_dir_index = (Dwarf_Signed)value;
+                    cur_file_entry->fi_dir_index_present = TRUE;
                     DECODE_LEB128_UWORD_CK(line_ptr,value,
                         dbg,error,line_ptr_end);
                     cur_file_entry->fi_time_last_mod = value;
                     DECODE_LEB128_UWORD_CK(line_ptr,value,
                         dbg,error,line_ptr_end);
                     cur_file_entry->fi_file_length = value;
+                    cur_file_entry->fi_dir_index_present = TRUE;
+                    cur_file_entry->fi_time_last_mod_present = TRUE;
+                    cur_file_entry->fi_file_length_present = TRUE;
 #ifdef PRINTING_DETAILS
                     dwarf_printf(dbg,
-                        "DW_LNE_define_file %s \n", cur_file_entry->fi_file_name);
+                        "DW_LNE_define_file %s \n",
+                        cur_file_entry->fi_file_name);
                     dwarf_printf(dbg,
-                        "    dir index %d\n", (int) cur_file_entry->fi_dir_index);
+                        "    dir index %d\n",
+                        (int) cur_file_entry->fi_dir_index);
                     {
-                        time_t tt3 = (time_t) cur_file_entry->fi_time_last_mod;
+                        time_t tt3 = (time_t) cur_file_entry->
+                            fi_time_last_mod;
 
                         /* ctime supplies newline */
                         dwarf_printf(dbg,

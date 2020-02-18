@@ -1,3 +1,12 @@
+2020-02-16:   David Anderson
+    * globals.h: Adds DWVERSION5 to use with testing for
+      version number details (which matters when calling 
+      dwarf_srcfiles())
+    * print_die.c: Now recognizes that DWARF5 is different
+      from earlier versions in the way dwarf_srcfiles()
+      array of string pointers is to be used.
+      Refactored the srcfiles checking to its own
+      function to simplify reading the code.
 2020-02-13:   David Anderson
     * dwarf_names.c dwarf_names.c,dwarfdump-ta-ext-table.h,
       dwarfdump-ta-table.h,dwarfdump-tt-ext-table.h,

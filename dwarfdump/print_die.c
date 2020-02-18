@@ -5226,6 +5226,46 @@ print_attributes_encoding(Dwarf_Debug dbg)
     }
 }
 
+static void
+check_decl_file_only(char **srcfiles,
+    Dwarf_Unsigned tempud,Dwarf_Signed cnt,int attr)
+{
+    /*  Zero is always a legal index for
+        DWARF2,3,4,5, it means
+        no source name provided. */
+
+    DWARF_CHECK_COUNT(decl_file_result,1);
+    /* zero means no file applicable */
+    if (tempud  &&
+        tempud > ((Dwarf_Unsigned)cnt)) {
+        struct esb_s msgb;
+
+        esb_constructor(&msgb);
+        if (!srcfiles) {
+            esb_append(&msgb,
+                "There is a file number=");
+            esb_append_printf_u(&msgb,"%" DW_PR_DUu,tempud);
+            esb_append(&msgb," but no source files");
+            /*  Extra space char here to avoid pointless
+                regression test issues with older versions. */
+            esb_append(&msgb,"  are known.");
+        } else {
+            esb_append(&msgb,"Does not index to valid file name ");
+            esb_append(&msgb,"filenum=");
+            esb_append_printf_u(&msgb,"%" DW_PR_DUu,tempud);
+            esb_append(&msgb," arraysize=");
+            esb_append_printf_i(&msgb,"%" DW_PR_DSd,cnt);
+            esb_append(&msgb,".");
+        }
+        DWARF_CHECK_ERROR2(decl_file_result,
+            get_AT_name(attr,
+                pd_dwarf_names_print_on_error),
+            esb_get_string(&msgb));
+        esb_destructor(&msgb);
+    }
+}
+
+
 /*  Fill buffer with attribute value.
     We pass in tag so we can try to do the right thing with
     broken compiler DW_TAG_enumerator
@@ -5586,7 +5626,7 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
             unsigned u = 0;
 
             for (u = 0; u < tempb->bl_len; u++) {
-                snprintf(small_buf, sizeof(small_buf), "%02x",
+                sprintf(small_buf, "%02x",
                     *(u + (unsigned char *) tempb->bl_data));
                 esb_append(esbp, small_buf);
             }
@@ -5659,55 +5699,57 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
 
                 if (wres == DW_DLV_OK) {
                     Dwarf_Bool hex_format = TRUE;
+                    Dwarf_Half dwversion = 0;
+
                     formx_unsigned(tempud,esbp,hex_format);
                     /* Check attribute encoding */
                     if (glflags.gf_check_attr_encoding) {
                         check_attributes_encoding(attr,theform,tempud);
                     }
                     if (attr == DW_AT_decl_file || attr == DW_AT_call_file) {
-                        if (srcfiles && tempud > 0 &&
-                            /* ASSERT: cnt >= 0 */
-                            tempud <= (Dwarf_Unsigned)cnt) {
-                            /*  added by user request */
+                        Dwarf_Half offset_size=0;
+                        int vres = 0;
+                        struct esb_s declmsg;
+                        char *fname = 0;
+
+                        small_buf[0] = 0;
+                        esb_constructor(&declmsg);
+                        vres = dwarf_get_version_of_die(die,
+                            &dwversion,&offset_size);
+                        if (srcfiles && vres == DW_DLV_OK) {
                             /*  srcfiles is indexed starting at 0, but
                                 DW_AT_decl_file defines that 0 means no
                                 file, so tempud 1 means the 0th entry in
-                                srcfiles, thus tempud-1 is the correct
-                                index into srcfiles.  */
-                            char *fname = srcfiles[tempud - 1];
-
-                            esb_append(esbp, " ");
-                            esb_append(esbp, fname);
-                        }
-
-                        /*  Validate integrity of files
-                            referenced in .debug_line */
-                        if (glflags.gf_check_decl_file) {
-                            DWARF_CHECK_COUNT(decl_file_result,1);
-                            /*  Zero is always a legal index, it means
-                                no source name provided. */
-                            if (tempud != 0 &&
-                                tempud > ((Dwarf_Unsigned)cnt)) {
-                                if (!srcfiles) {
-                                    snprintf(small_buf,sizeof(small_buf),
-                                        "There is a file number=%" DW_PR_DUu
-                                        " but no source files "
-                                        " are known.",tempud);
-                                } else {
-                                    snprintf(small_buf, sizeof(small_buf),
-                                        "Does not point to valid file info "
-                                        " filenum=%"  DW_PR_DUu
-                                        " filecount=%" DW_PR_DUu ".",
-                                        tempud,cnt);
-                                }
-                                DWARF_CHECK_ERROR2(decl_file_result,
-                                    get_AT_name(attr,
-                                        pd_dwarf_names_print_on_error),
-                                    small_buf);
+                                srcfiles, thus tempud-1 is the correct */
+                            if (!tempud) {
+                                /* Just print the number,
+                                    there is noname. */
+                            } else if (tempud > 0 &&
+                                tempud <= (Dwarf_Unsigned)cnt) {
+                                fname = srcfiles[tempud - 1];
+                                esb_append(&declmsg,fname);
+                            } else {
+                                esb_append(&declmsg,
+                                    " <DW_AT_decl_file index ");
+                                esb_append_printf_u(&declmsg,
+                                    "%" DW_PR_DUu,tempud);
+                                esb_append(&declmsg," out of range>");
                             }
                         }
-                    }
-                } else {
+                        if (fname) {
+                            esb_append(esbp, " ");
+                            esb_append(esbp, esb_get_string(&declmsg));
+                        }
+                        esb_destructor(&declmsg);
+
+                        /*  Validate integrity of file indices
+                            referenced in .debug_line */
+                        if (glflags.gf_check_decl_file) {
+                            check_decl_file_only(srcfiles,
+                                tempud,cnt,attr);
+                        }
+                    } /* end decl_file and  call_file  processing */
+                } else { /* not DW_DLV_OK */
                     struct esb_s lstr;
                     esb_constructor(&lstr);
                     esb_append(&lstr,"For form ");
@@ -5736,7 +5778,7 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
                     esb_append(&lstr,get_FORM_name(theform,FALSE));
                     esb_append(&lstr," and attribute ");
                     esb_append(&lstr,get_AT_name(attr,FALSE));
-                    esb_append(&lstr," Cannot get const avalue`");
+                    esb_append(&lstr," Cannot get const value ");
                     print_error(dbg, esb_get_string(&lstr),
                         wres, err);
                     esb_destructor(&lstr);
@@ -5769,7 +5811,7 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
                     esb_append(&lstr,get_FORM_name(theform,FALSE));
                     esb_append(&lstr," and attribute ");
                     esb_append(&lstr,get_AT_name(attr,FALSE));
-                    esb_append(&lstr," Cannot get  Dwarf_Sig8 value`");
+                    esb_append(&lstr," Cannot get  Dwarf_Sig8 value ");
                     print_error(dbg, esb_get_string(&lstr),
                         wres, err);
                     esb_destructor(&lstr);

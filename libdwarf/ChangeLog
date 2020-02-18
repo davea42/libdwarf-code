@@ -1,3 +1,13 @@
+2020-02-16: David Anderson
+    * libdwarf2.1.mm: Now explains how dwarf_srcfiles()
+      name arrays differ in DWARF5 from earlier
+      debug_info versions. So callers can use
+      the srcfiles array properly.
+    * libdwarf2.1.pdf: Now version 2.87, dated 16 February 2020.
+    * dwarf_line.c, dwarf_line.h,dwarf_print_lines.c,
+      dwarf_line_table_reader_common.h: Recording DW5 line table
+      header data more fully so lines print verbose
+      prints more of the actual line table header.
 2020-02-15: David Anderson
     * dwarf_elf_access.c,dwarf_init_finish.c: With libelf
       in use there was a mistake that broke dumping some objects that

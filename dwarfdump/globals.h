@@ -89,6 +89,9 @@ extern "C" {
         e = 0;                           \
     }
 
+/* Version 5 returns DW_AT_decl_file differently than earlier versions */
+#define DWVERSION5  5
+
 /* Calculate wasted space */
 extern void calculate_attributes_usage(Dwarf_Half attr,Dwarf_Half theform,
     Dwarf_Unsigned value);

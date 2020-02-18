@@ -272,15 +272,15 @@ create_fullest_file_path(Dwarf_Debug dbg,
 
     In DWARF2,3,4 the array of sourcefiles is represented
     differently than DWARF5.
-    DWARF 2,3,4:
+    DWARF 2,3,4,:
         Take the line number from macro information or lines data
         and subtract 1 to  index into srcfiles.  Any with line
-        number zero are taken to refer to DW_AT_comp_dir from the
-        CU DIE
+        number zero can be assumed to refer to DW_AT_name from the
+        CU DIE, but zero really means "no file".
     DWARF 5:
-        Index (from macro or lines data) directly into
-        srcfiles. Index zero is the base
-        compilation directory name. */
+        Just like DW4, but  index 1 refers to the
+        same string as DW_AT_name of the CU DIE.
+*/
 int
 dwarf_srcfiles(Dwarf_Die die,
     char ***srcfiles,
@@ -2074,6 +2074,10 @@ _dwarf_line_context_destructor(void *m)
         line_context->lc_file_entry_baseindex   = 0;
         line_context->lc_file_entry_endindex    = 0;
     }
+    free(line_context->lc_directory_format_values);
+    line_context->lc_directory_format_values = 0;
+    free(line_context->lc_file_format_values);
+    line_context->lc_file_format_values = 0;
 
     if (line_context->lc_subprogs) {
         free(line_context->lc_subprogs);

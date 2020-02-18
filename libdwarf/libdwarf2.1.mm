@@ -11,7 +11,7 @@ e."
 .S +2
 \." ==============================================
 \." Put current date in the following at each rev
-.ds vE Rev 2.86, 6 January 2020
+.ds vE Rev 2.87, 16 February 2020
 \." ==============================================
 \." ==============================================
 .ds | |
@@ -6593,7 +6593,9 @@ to fix the problem of incomplete deallocation.
 
 The function returns the names of the source files that have contributed
 to the compilation-unit represented by the given DIE.  Only the source
-files named in the statement program prologue are returned.
+files named in the statement program prologue (which
+in current DWARF standards is referred to as the Line
+Table Header) are returned.
 .H 3 dwarf_srcfiles()
 This works for for all line tables.
 .DS
@@ -6632,6 +6634,36 @@ It returns \f(CWDW_DLV_NO_ENTRY\fP
 if there is no
 corresponding statement program (i.e., 
 if there is no line information).
+.P
+It requires a little care to index into the
+\f(CWsrcfiles\fP
+array
+using the
+\f(CWDW_AT_decl_file\fP
+or 
+\f(CWDW_AT_decl_call_file\fP
+values.
+.P
+The value zero (0) is reserved and means
+such zero-value attributes do not refer to any
+file name.
+.P
+If value is non-zero subtract one (1) from the value
+and use that to index the 
+\f(CWsrcfiles\fP
+array.
+Of course being careful that the index is
+not too large for the array.
+.P
+For DWARF5 an index of 0 (meaning  value-1)
+refers to the compilation unit value identical
+to 
+\f(CWDW_AT_name \fP.
+For earlier DWARF it refers to some file
+referenced in the compilation unit, but not
+any special file.
+
+.P 
 .in +2
 .FG "Exampled dwarf_srcfiles()"
 .DS
