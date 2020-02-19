@@ -683,7 +683,7 @@ _dwarf_read_line_table_header(Dwarf_Debug dbg,
         filename_entry_pairs = malloc(
             sizeof(struct Dwarf_Unsigned_Pair_s) *
             filename_format_count);
-        if (filename_entry_pairs == NULL) {
+        if (!filename_entry_pairs) {
             _dwarf_error(dbg, err, DW_DLE_ALLOC_FAIL);
             return DW_DLV_ERROR;
         }

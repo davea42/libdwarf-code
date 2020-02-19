@@ -1680,6 +1680,7 @@ dwarf_line_subprog(Dwarf_Line line,
     return DW_DLV_OK;
 }
 
+/*  This is another line_context_destructor. */
 static void
 delete_line_context_itself(Dwarf_Line_Context context)
 {
@@ -1708,6 +1709,10 @@ delete_line_context_itself(Dwarf_Line_Context context)
         free(context->lc_subprogs);
         context->lc_subprogs = 0;
     }
+    free(context->lc_directory_format_values);
+    context->lc_directory_format_values = 0;
+    free(context->lc_file_format_values);
+    context->lc_file_format_values = 0;
     if (context->lc_include_directories) {
         free(context->lc_include_directories);
         context->lc_include_directories = 0;
@@ -2046,7 +2051,9 @@ _dwarf_line_context_constructor(Dwarf_Debug dbg, void *m)
     be dealloc'd either manually
     or, at closing the libdwarf dbg,
     automatically.  So we DO NOT
-    touch the lines tables here */
+    touch the lines tables here 
+    See also: delete_line_context_itself()
+*/
 void
 _dwarf_line_context_destructor(void *m)
 {

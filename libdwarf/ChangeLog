@@ -1,3 +1,9 @@
+2020-02-18: David Anderson
+    * dwarf_line.c: Added free() calls to delete_line_context_itself
+      to avoid a leek that was created in last commit..
+    * dwarf_line.h: Deleted a now-spurious comment.
+    * dwarf_line_table_reader_common.h: Removed an == NULL
+      comparison in favor of a !filename_entry_pairs.
 2020-02-16: David Anderson
     * libdwarf2.1.mm: Now explains how dwarf_srcfiles()
       name arrays differ in DWARF5 from earlier

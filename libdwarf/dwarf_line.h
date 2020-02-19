@@ -189,8 +189,6 @@ struct Dwarf_Line_Context_s {
     /* ======== file names =========*/
 
     Dwarf_Unsigned lc_file_name_format_count; /* DWARF5 */
-    /*  An array conceptually of pairs. Twice as many
-        in total as lc_file_name_format_count */
     Dwarf_Unsigned * lc_file_name_format; /* DWARF5 */
     Dwarf_Unsigned lc_file_entry_values_count; /* DWARF5 */
     /*  This must be freed,malloc space, an array of the
