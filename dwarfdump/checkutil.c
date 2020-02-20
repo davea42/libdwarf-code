@@ -566,10 +566,6 @@ Dwarf_Bool IsValidInLinkonce(Bucket_Group *pLo,
     /*  Build the name that represents the linkonce section (.text).
         This is not defined in DWARF so not correct for all
         compilers. */
-#ifdef ORIGINAL_SPRINTF
-    snprintf(section_name,sizeof(section_name),"%s%s",lo_text,name);
-    pBucketData = FindNameInBucketGroup(pLo,section_name);
-#else
     struct esb_s sn;
 
     esb_constructor_fixed(&sn,section_name,sizeof(section_name));
@@ -577,7 +573,6 @@ Dwarf_Bool IsValidInLinkonce(Bucket_Group *pLo,
     esb_append(&sn,name);
     pBucketData = FindNameInBucketGroup(pLo,esb_get_string(&sn));
     esb_destructor(&sn);
-#endif
     if (pBucketData) {
         if (lopc >= pBucketData->low && lopc <= pBucketData->high) {
             if (hipc >= pBucketData->low && hipc <= pBucketData->high) {

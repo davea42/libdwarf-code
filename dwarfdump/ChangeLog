@@ -1,3 +1,10 @@
+2020-02-19:   David Anderson
+    * checkutil.c,common.c,naming.c,print_abbrevs.c,print_die.c,
+      print_lines.c: Removed the ORIGINAL_SPRINTF
+      versions in favor
+      of esb_append_printf_[usi] versions. 
+      We have not been using the s[n]printf
+      versions for a while now. 
 2020-02-16:   David Anderson
     * globals.h: Adds DWVERSION5 to use with testing for
       version number details (which matters when calling 

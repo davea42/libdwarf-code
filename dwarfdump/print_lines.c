@@ -345,18 +345,6 @@ process_line_table(Dwarf_Debug dbg,
                         if ((pc != glflags.PU_high_address) &&
                             (glflags.PU_base_address != elf_max_address)) {
                             char addr_tmp[140];
-#ifdef ORIGINAL_SPRINTF
-                            snprintf(addr_tmp,sizeof(addr_tmp),
-                                "%s: Address"
-                                " 0x%" DW_PR_XZEROS DW_PR_DUx
-                                " DW_LNE_end_sequence address does not"
-                                " exactly match"
-                                " high function addr: "
-                                " 0x%" DW_PR_XZEROS DW_PR_DUx,
-                                sec_name,pc,glflags.PU_high_address);
-                            DWARF_CHECK_ERROR(lines_result,
-                                addr_tmp);
-#else
                             struct esb_s cm;
 
                             esb_constructor_fixed(&cm,addr_tmp,
@@ -374,7 +362,6 @@ process_line_table(Dwarf_Debug dbg,
                             DWARF_CHECK_ERROR(lines_result,
                                 esb_get_string(&cm));
                             esb_destructor(&cm);
-#endif
                         }
                     }
                 }
