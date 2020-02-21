@@ -1,3 +1,7 @@
+2020-02-21: David Anderson
+    * dwarf_arange.c,dwarf_debuglink.c,dwarf_frame2.c:
+      removed the last sprintf, changed to dwarfstring.h
+      functions.
 2020-02-18: David Anderson
     * dwarf_line.c: Added free() calls to delete_line_context_itself
       to avoid a leek that was created in last commit..

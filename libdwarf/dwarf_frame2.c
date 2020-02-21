@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2000-2006 Silicon Graphics, Inc.  All Rights Reserved.
-  Portions Copyright (C) 2007-2019 David Anderson. All Rights Reserved.
+  Portions Copyright (C) 2007-2020 David Anderson. All Rights Reserved.
   Portions Copyright (C) 2010-2012 SN Systems Ltd. All Rights Reserved.
 
   This program is free software; you can redistribute it and/or modify it
@@ -39,6 +39,7 @@
 #include "dwarf_util.h"
 #include "dwarf_frame.h"
 #include "dwarf_arange.h" /* using Arange as a way to build a list */
+#include "dwarfstring.h"
 
 /*  For a little information about .eh_frame see
     https://stackoverflow.com/questions/14091231/what-do-the-eh-frame-and-eh-frame-hdr-sections-store-exactly
@@ -204,31 +205,41 @@ validate_length(Dwarf_Debug dbg,
     }
     mod = total_len % address_size;
     if (mod != 0) {
-        static char msg[DW_HARMLESS_ERROR_MSG_STRING_SIZE];
+        dwarfstring  harm;
         Dwarf_Unsigned sectionoffset = ciefde_start - section_ptr;
 
+        dwarfstring_constructor(&harm);
         if (!cieorfde || (strlen(cieorfde) > 3)) {
             /*  Coding error or memory corruption? */
             cieorfde = "ERROR!";
         }
-
-        sprintf(msg,
+        dwarfstring_append_printf_u(&harm,
             "DW_DLE_DEBUG_FRAME_LENGTH_NOT_MULTIPLE"
-            " len=0x%" DW_PR_XZEROS DW_PR_DUx
-            ", len size=0x%"  DW_PR_XZEROS DW_PR_DUx
-            ", extn size=0x%" DW_PR_XZEROS DW_PR_DUx
-            ", totl length=0x%" DW_PR_XZEROS DW_PR_DUx
-            ", addr size=0x%" DW_PR_XZEROS DW_PR_DUx
-            ", mod=0x%" DW_PR_XZEROS DW_PR_DUx " must be zero"
-            " in %s"
+            " len=0x%" DW_PR_XZEROS DW_PR_DUx,
+            length);
+        dwarfstring_append_printf_u(&harm,
+            ", len size=0x%"  DW_PR_XZEROS DW_PR_DUx,
+            length_size);
+        dwarfstring_append_printf_u(&harm,
+            ", extn size=0x%" DW_PR_XZEROS DW_PR_DUx,
+            extension_size);
+        dwarfstring_append_printf_u(&harm,
+            ", totl length=0x%" DW_PR_XZEROS DW_PR_DUx,
+            total_len);
+        dwarfstring_append_printf_u(&harm,
+            ", addr size=0x%" DW_PR_XZEROS DW_PR_DUx,
+            address_size);
+        dwarfstring_append_printf_u(&harm,
+            ", mod=0x%" DW_PR_XZEROS DW_PR_DUx " must be zero",
+            mod);
+        dwarfstring_append_printf_s(&harm,
+            " in %s",(char *)cieorfde);
+        dwarfstring_append_printf_u(&harm,
             ", offset 0x%" DW_PR_XZEROS DW_PR_DUx ".",
-            length,
-            length_size,
-            extension_size,
-            total_len,address_size, mod,
-            cieorfde,
             sectionoffset);
-        dwarf_insert_harmless_error(dbg,msg);
+        dwarf_insert_harmless_error(dbg,
+            dwarfstring_string(&harm));
+        dwarfstring_destructor(&harm);
     }
     return;
 }

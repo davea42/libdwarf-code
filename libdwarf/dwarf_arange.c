@@ -1,7 +1,7 @@
 /*
 
   Copyright (C) 2000-2004 Silicon Graphics, Inc.  All Rights Reserved.
-  Portions Copyright (C) 2007-2018 David Anderson. All Rights Reserved.
+  Portions Copyright (C) 2007-2020 David Anderson. All Rights Reserved.
   Portions Copyright 2012 SN Systems Ltd. All rights reserved.
 
 
@@ -35,6 +35,7 @@
 #include "dwarf_util.h"
 #include "dwarf_arange.h"
 #include "dwarf_global.h"  /* for _dwarf_fixup_* */
+#include "dwarfstring.h"
 
 
 /*  Common code for two user-visible routines to share.
@@ -294,18 +295,23 @@ dwarf_get_aranges_list(Dwarf_Debug dbg,
             (dwarf4 sec 7.20) does not clearly make extra padding
             bytes illegal. */
         if (end_this_arange < arange_ptr) {
-            char buf[200];
             Dwarf_Unsigned pad_count = arange_ptr - end_this_arange;
             Dwarf_Unsigned offset = arange_ptr - arange_ptr_start;
+            dwarfstring aramsg;
 
+            dwarfstring_constructor(&aramsg);
             /* Safe. Length strictly limited. */
-            sprintf(buf,
+            dwarfstring_append_printf_u(&aramsg,
                 "DW_DLE_ARANGE_LENGTH_BAD."
-                " 0x%" DW_PR_XZEROS DW_PR_DUx
+                " 0x%" DW_PR_XZEROS DW_PR_DUx,
+                pad_count);
+            dwarfstring_append_printf_u(&aramsg,
                 " pad bytes at offset 0x%" DW_PR_XZEROS DW_PR_DUx
                 " in .debug_aranges",
-                pad_count, offset);
-            dwarf_insert_harmless_error(dbg,buf);
+                offset);
+            dwarf_insert_harmless_error(dbg,
+                dwarfstring_string(&aramsg));
+            dwarfstring_destructor(&aramsg);
         }
         /*  For most compilers, arange_ptr == end_this_arange at
             this point. But not if there were padding bytes */

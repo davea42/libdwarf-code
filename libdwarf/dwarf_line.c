@@ -2051,7 +2051,7 @@ _dwarf_line_context_constructor(Dwarf_Debug dbg, void *m)
     be dealloc'd either manually
     or, at closing the libdwarf dbg,
     automatically.  So we DO NOT
-    touch the lines tables here 
+    touch the lines tables here
     See also: delete_line_context_itself()
 */
 void

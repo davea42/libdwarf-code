@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2019, David Anderson
+Copyright (c) 2019-2020, David Anderson
 All rights reserved.
 
 Redistribution and use in source and binary forms, with
@@ -343,13 +343,11 @@ build_buildid_filename(dwarfstring *target,
     dwarfstring tmp;
     unsigned bu = 0;
     unsigned char *cp  = 0;
-    char lbuf[10];
 
     dwarfstring_constructor(&tmp);
     cp = buildid;
     for (bu = 0; bu < buildid_length; ++bu ,++cp) {
-        sprintf(lbuf,"%02x",*cp);
-        dwarfstring_append(&tmp,lbuf);
+        dwarfstring_append_printf_u(&tmp, "%02x",*cp);
         if (bu == 0) {
             dwarfstring_append(&tmp,"/");
         }
