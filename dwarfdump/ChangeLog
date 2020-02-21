@@ -1,3 +1,7 @@
+2020-02-20:   David Anderson
+    * print_die.c: Removed the last snprintf the required
+      fixed spaces and now use esb functions to do the
+      message creation.
 2020-02-19:   David Anderson
     * checkutil.c,common.c,naming.c,print_abbrevs.c,print_die.c,
       print_lines.c: Removed the ORIGINAL_SPRINTF
