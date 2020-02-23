@@ -684,11 +684,9 @@ struct Dwarf_Debug_s {
 
 };
 
-int dwarf_printf(Dwarf_Debug dbg, const char * format, ...)
-#ifdef __GNUC__ /* The following gets us printf-like arg checking. */
-    __attribute__ ((format (__printf__, 2, 3)))
-#endif
-;
+/* New style. takes advantage of dwarfstrings capability. 
+    This not a public function. */
+int _dwarf_printf(Dwarf_Debug dbg, const char * data);
 
 typedef struct Dwarf_Chain_s *Dwarf_Chain;
 struct Dwarf_Chain_s {

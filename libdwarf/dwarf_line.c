@@ -1872,28 +1872,40 @@ _dwarf_print_header_issue(Dwarf_Debug dbg,
     }
     /* Are we in verbose mode */
     if (dwarf_cmdline_options.check_verbose_mode){
-        dwarf_printf(dbg,
+        dwarfstring m1;
+ 
+        dwarfstring_constructor(&m1);
+        dwarfstring_append(&m1,
             "\n*** DWARF CHECK: "
-            ".debug_line: %s %" DW_PR_DSd,
-            specific_msg,value);
+            ".debug_line: ");
+        dwarfstring_append(&m1,(char *)specific_msg);
+        dwarfstring_append_printf_i(&m1,
+            " %" DW_PR_DSd,value);
         if (index || tabv || linetabv) {
-            dwarf_printf(dbg,"; Mismatch index %u stdval %u linetabval %u",
-                index,tabv,linetabv);
+            dwarfstring_append_printf_u(&m1,
+               "; Mismatch index %u",index);
+            dwarfstring_append_printf_u(&m1,
+               " stdval %u",tabv);
+            dwarfstring_append_printf_u(&m1,
+               " linetabval %u",linetabv);
         }
-
         if (data_start >= dbg->de_debug_line.dss_data &&
             (data_start < (dbg->de_debug_line.dss_data +
             dbg->de_debug_line.dss_size))) {
-            Dwarf_Unsigned off = data_start - dbg->de_debug_line.dss_data;
-            dwarf_printf(dbg,
-                " at offset 0x%" DW_PR_XZEROS DW_PR_DUx
-                "  ( %" DW_PR_DUu " ) ",
-                off,off);
+            Dwarf_Unsigned off = 
+                data_start - dbg->de_debug_line.dss_data;
+
+            dwarfstring_append_printf_u(&m1,
+                " at offset 0x%" DW_PR_XZEROS DW_PR_DUx,off);
+            dwarfstring_append_printf_u(&m1,
+                "  ( %" DW_PR_DUu " ) ",off);
         } else {
-            dwarf_printf(dbg,
+            dwarfstring_append(&m1,
                 " (unknown section location) ");
         }
-        dwarf_printf(dbg,"***\n");
+        dwarfstring_append(&m1,"***\n");
+        _dwarf_printf(dbg,dwarfstring_string(&m1));
+        dwarfstring_destructor(&m1);
     }
     *err_count_out += 1;
 }

@@ -1158,6 +1158,7 @@ dwarf_register_printf_callback( Dwarf_Debug dbg,
 }
 
 
+#if 0
 /*  Allocate a bigger buffer if necessary.
     Do not worry about previous content of the buffer.
     Return 0 if we fail here.
@@ -1189,7 +1190,27 @@ static unsigned buffersetsize(Dwarf_Debug dbg,
     bufdata->dp_buffer_len = len;
     return len;
 }
+#endif
 
+/* No varargs required */
+int
+_dwarf_printf(Dwarf_Debug dbg,
+    const char * data)
+{
+    int nlen = 0;
+    struct Dwarf_Printf_Callback_Info_s *bufdata =
+        &dbg->de_printf_callback;
+
+    dwarf_printf_callback_function_type func = bufdata->dp_fptr;
+    if (!func) {
+        return 0;
+    }
+    nlen =  strlen(data);
+    func(bufdata->dp_user_pointer,data);
+    return nlen;
+}
+
+#if 0
 /*  We are only using C90 facilities, not C99,
     in libdwarf/dwarfdump. */
 int
@@ -1269,6 +1290,7 @@ dwarf_printf(Dwarf_Debug dbg,
     /* Not reached. */
     return 0;
 }
+#endif /* 0 */
 
 /*  Often errs and errt point to the same Dwarf_Error,
     So exercise care.
