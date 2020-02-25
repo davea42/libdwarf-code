@@ -684,7 +684,7 @@ struct Dwarf_Debug_s {
 
 };
 
-/* New style. takes advantage of dwarfstrings capability. 
+/* New style. takes advantage of dwarfstrings capability.
     This not a public function. */
 int _dwarf_printf(Dwarf_Debug dbg, const char * data);
 

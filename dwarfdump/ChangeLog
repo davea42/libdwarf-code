@@ -1,3 +1,13 @@
+2020-02-25:   David Anderson
+    * esb.c: Slight corrections so a %-12s will ignore the -12
+      if the string to be inserted is more than 11 bytes long.
+      Allowed use of UNUSEDARG.
+    * runtests.sh: Restore the running of the testesb.c
+      test program.
+    * testesb.c: Added a new test case specifically for
+      testing the change in esb.c. Eliminated the
+      unneeded tests on allocation-size, that was not
+      helpful, yet was tedious to make meaningful.
 2020-02-20:   David Anderson
     * print_die.c: Removed the last snprintf the required
       fixed spaces and now use esb functions to do the

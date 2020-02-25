@@ -410,14 +410,6 @@ update_entry(Dwarf_Debug dbg,
             But a few compilers have
             presentval zero and st_value set. */
         outval = presentval + symp->gs_value + addend;
-#if 0
-printf("dadebug reloc offset 0x%llx pval 0x%llx symv 0x%llx addend 0x%llx finalval 0x%llx\n",
-(unsigned long long)offset,
-(unsigned long long)presentval,
-(unsigned long long)symp->gs_value,
-(unsigned long long)addend,
-(unsigned long long)outval);
-#endif
         WRITE_UNALIGNED_LOCAL(dbg,targ,
             &outval,sizeof(outval),reloc_size);
     }

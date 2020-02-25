@@ -435,25 +435,22 @@ esb_append_printf_s(struct esb_s *data,const char *format,const char *s)
         return;
     }
     next++;
-
+    if (fixedlen && (fixedlen <= stringlen)) {
+        leftjustify = 0;
+    }
     if (leftjustify) {
-        if (fixedlen && fixedlen <= stringlen) {
-            /* This lets us have fixedlen < stringlen */
-            esb_appendn_internal(data,s,fixedlen);
+        esb_appendn_internal(data,s,stringlen);
+        if(fixedlen) {
+            size_t trailingspaces = fixedlen - stringlen;
 
-        } else {
-
-            esb_appendn_internal(data,s,stringlen);
-            if(fixedlen) {
-                size_t trailingspaces = fixedlen - stringlen;
-
-                esb_appendn_internal_spaces(data,trailingspaces);
-            }
+            esb_appendn_internal_spaces(data,trailingspaces);
         }
     } else {
-        if (fixedlen && fixedlen <= stringlen) {
-            /* This lets us have fixedlen < stringlen */
-            esb_appendn_internal(data,s,fixedlen);
+        if (fixedlen && (fixedlen < stringlen)) {
+            /*  This lets us have fixedlen < stringlen by 
+                taking all the chars from s ignoring
+                the fixedlen*/
+            esb_appendn_internal(data,s,stringlen);
         } else {
             if(fixedlen) {
                 size_t leadingspaces = fixedlen - stringlen;

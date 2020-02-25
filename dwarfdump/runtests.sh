@@ -120,12 +120,12 @@ chkres $? "compiling macrocheck.c selfmc"
 chkres $? "running selfmc "
 rm -f ./selfmc selfmc.exe
 
-#echo "start selfesb"
-#$CC  $CFLAGS $srcdir/testesb.c esb.o -o selfesb
-#chkres $? "compiling selfesb.c selfesb"
-#./selfesb
-#chkres $? "running selfesb "
-#rm -f ./selfesb  selfesb.exe
+echo "start selfesb"
+$CC  $CFLAGS $srcdir/testesb.c $srcdir/esb.c -o selfesb
+chkres $? "compiling selfesb.c selfesb"
+./selfesb
+chkres $? "running selfesb "
+rm -f ./selfesb selfesb.exe
 
 echo "start selfsetion_bitmaps"
 $CC  $CFLAGS -g $srcdir/section_bitmaps_test.c  $srcdir/section_bitmaps.c -o selfsection_bitmaps

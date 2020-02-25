@@ -1158,39 +1158,6 @@ dwarf_register_printf_callback( Dwarf_Debug dbg,
 }
 
 
-#if 0
-/*  Allocate a bigger buffer if necessary.
-    Do not worry about previous content of the buffer.
-    Return 0 if we fail here.
-    Else return the requested len value. */
-static unsigned buffersetsize(Dwarf_Debug dbg,
-    struct  Dwarf_Printf_Callback_Info_s *bufdata,
-    int len)
-{
-    char *space = 0;
-
-    if (!dbg->de_printf_callback_null_device_handle) {
-        FILE *de = fopen(NULL_DEVICE_NAME,"w");
-        if(!de) {
-            return 0;
-        }
-        dbg->de_printf_callback_null_device_handle = de;
-    }
-    if (bufdata->dp_buffer_user_provided) {
-        return bufdata->dp_buffer_len;
-    }
-    /* Make big enough for a trailing NUL char. */
-    space = (char *)malloc(len+1);
-    if (!space) {
-        /* Out of space, we cannot do anything. */
-        return 0;
-    }
-    free(bufdata->dp_buffer);
-    bufdata->dp_buffer = space;
-    bufdata->dp_buffer_len = len;
-    return len;
-}
-#endif
 
 /* No varargs required */
 int
@@ -1209,88 +1176,6 @@ _dwarf_printf(Dwarf_Debug dbg,
     func(bufdata->dp_user_pointer,data);
     return nlen;
 }
-
-#if 0
-/*  We are only using C90 facilities, not C99,
-    in libdwarf/dwarfdump. */
-int
-dwarf_printf(Dwarf_Debug dbg,
-    const char * format,
-    ...)
-{
-    va_list ap;
-    unsigned bff = 0;
-    struct Dwarf_Printf_Callback_Info_s *bufdata =
-        &dbg->de_printf_callback;
-    FILE * null_device_handle = 0;
-
-    dwarf_printf_callback_function_type func = bufdata->dp_fptr;
-    if (!func) {
-        return 0;
-    }
-    null_device_handle =
-        (FILE *) dbg->de_printf_callback_null_device_handle;
-    if (!bufdata->dp_buffer || !null_device_handle) {
-        /*  Sets dbg device handle for later use if not
-            set already. */
-        bff = buffersetsize(dbg,bufdata,MINBUFLEN);
-        if (!bff) {
-            /*  Something is wrong. */
-            return 0;
-        }
-        if (!bufdata->dp_buffer) {
-            /*  Something is wrong. Possibly caller
-                set up callback wrong. */
-            return 0;
-        }
-    }
-
-    {
-        int plen = 0;
-        int nlen = 0;
-        null_device_handle =
-            (FILE *) dbg->de_printf_callback_null_device_handle;
-        if (!null_device_handle) {
-            /*  Something is wrong. */
-            return 0;
-        }
-        va_start(ap,format);
-        plen = vfprintf(null_device_handle,format,ap);
-        va_end(ap);
-
-        if (!bufdata->dp_buffer_user_provided) {
-            if (plen >= (int)bufdata->dp_buffer_len) {
-                bff = buffersetsize(dbg,bufdata,plen+2);
-                if (!bff) {
-                    /*  Something is wrong.  */
-                    return 0;
-                }
-            }
-        } else {
-            if (plen >= (int)bufdata->dp_buffer_len) {
-                /*  We are stuck! User did not
-                    give us space needed!  */
-                return 0;
-            }
-        }
-
-        va_start(ap,format);
-        nlen = vsprintf(bufdata->dp_buffer,
-            format,ap);
-        va_end(ap);
-        if ( nlen > plen) {
-            /* Impossible. Memory is corrupted now */
-            fprintf(stderr,"\nlibdwarf impossible sprintf error %s %d\n",
-                __FILE__,__LINE__);
-            exit(1);
-        }
-        func(bufdata->dp_user_pointer,bufdata->dp_buffer);
-        return nlen;
-    }
-    /* Not reached. */
-    return 0;
-}
-#endif /* 0 */
 
 /*  Often errs and errt point to the same Dwarf_Error,
     So exercise care.

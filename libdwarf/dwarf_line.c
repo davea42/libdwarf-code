@@ -1873,7 +1873,7 @@ _dwarf_print_header_issue(Dwarf_Debug dbg,
     /* Are we in verbose mode */
     if (dwarf_cmdline_options.check_verbose_mode){
         dwarfstring m1;
- 
+
         dwarfstring_constructor(&m1);
         dwarfstring_append(&m1,
             "\n*** DWARF CHECK: "
@@ -1883,16 +1883,16 @@ _dwarf_print_header_issue(Dwarf_Debug dbg,
             " %" DW_PR_DSd,value);
         if (index || tabv || linetabv) {
             dwarfstring_append_printf_u(&m1,
-               "; Mismatch index %u",index);
+                "; Mismatch index %u",index);
             dwarfstring_append_printf_u(&m1,
-               " stdval %u",tabv);
+                " stdval %u",tabv);
             dwarfstring_append_printf_u(&m1,
-               " linetabval %u",linetabv);
+                " linetabval %u",linetabv);
         }
         if (data_start >= dbg->de_debug_line.dss_data &&
             (data_start < (dbg->de_debug_line.dss_data +
             dbg->de_debug_line.dss_size))) {
-            Dwarf_Unsigned off = 
+            Dwarf_Unsigned off =
                 data_start - dbg->de_debug_line.dss_data;
 
             dwarfstring_append_printf_u(&m1,

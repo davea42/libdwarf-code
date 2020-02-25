@@ -31,6 +31,14 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 /*  A lightly generalized string buffer for libdwarf.
+    The functions that return anything return either
+    TRUE (nonzero int) or FALSE (zero)
+
+    On return of FALSE the dwarfstring_s struct
+    remains in a usable state.
+
+    It is expected that most users will not check the
+    return value.
 */
 #ifndef DWARFSTRING_H
 #define DWARFSTRING_H

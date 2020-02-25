@@ -1055,6 +1055,7 @@ read_line_table_program(Dwarf_Debug dbg,
     /*  Mark a line record as being DW_LNS_set_address */
     Dwarf_Bool is_addr_set = false;
 
+
     /*  Initialize the one state machine variable that depends on the
         prefix.  */
     _dwarf_set_line_table_regs_default_values(&regs,
@@ -1069,9 +1070,10 @@ read_line_table_program(Dwarf_Debug dbg,
 #ifdef PRINTING_DETAILS
         dwarfstring m9;
         dwarfstring_constructor(&m9);
-        dwarfstring_append_printf_i(&m9,
+        dwarfstring_append_printf_u(&m9,
             " [0x%06" DW_PR_DSx "] ",
-            (Dwarf_Signed) (line_ptr - section_start));
+            (line_ptr - section_start));
+        _dwarf_printf(dbg,dwarfstring_string(&m9));
         dwarfstring_destructor(&m9);
 #endif /* PRINTING_DETAILS */
         opcode = *(Dwarf_Small *) line_ptr;
@@ -1085,7 +1087,7 @@ read_line_table_program(Dwarf_Debug dbg,
             int oc = 0;
             int opcnt = line_context->lc_opcode_length_table[opcode];
 #ifdef PRINTING_DETAILS
-
+            dwarfstring m9;
             dwarfstring_constructor(&m9);
             dwarfstring_append_printf_i(&m9,
                 "*** DWARF CHECK: DISCARD standard opcode %d ",
@@ -1127,9 +1129,9 @@ read_line_table_program(Dwarf_Debug dbg,
                 opcode_base and MAX_LINE_OP_CODE.  (including
                 opcode_base and MAX_LINE_OP_CODE) */
 #ifdef PRINTING_DETAILS
-            char special[50];
             unsigned origop = opcode;
             dwarfstring ma;
+            dwarfstring mb;
 #endif /* PRINTING_DETAILS */
             Dwarf_Unsigned operation_advance = 0;
 
@@ -1159,12 +1161,13 @@ read_line_table_program(Dwarf_Debug dbg,
             }
 #ifdef PRINTING_DETAILS
             dwarfstring_constructor(&ma);
-            dwarfstring_append_printf_u(&ma,"Specialop %3u", origop);
+            dwarfstring_constructor(&mb);
+            dwarfstring_append_printf_u(&mb,"Specialop %3u", origop);
             _dwarf_printf(dbg,dwarfstring_string(&ma));
             dwarfstring_destructor(&ma);
-            print_line_detail(dbg,special,
+            print_line_detail(dbg,dwarfstring_string(&mb),
                 opcode,line_count+1, &regs,is_single_table, is_actuals_table);
-            dwarfstring_destructor(&ma);
+            dwarfstring_destructor(&mb);
 #endif /* PRINTING_DETAILS */
 
             if (dolines) {
@@ -1177,9 +1180,9 @@ read_line_table_program(Dwarf_Debug dbg,
                 }
 
                 /* Mark a line record as being DW_LNS_set_address */
-                curr_line->li_addr_line.li_l_data.li_is_addr_set = is_addr_set;
+                curr_line->li_addr_line.li_l_data.li_is_addr_set =
+                    is_addr_set;
                 is_addr_set = false;
-
                 curr_line->li_address = regs.lr_address;
                 curr_line->li_addr_line.li_l_data.li_file =
                     (Dwarf_Signed) regs.lr_file;
@@ -1222,9 +1225,11 @@ read_line_table_program(Dwarf_Debug dbg,
             regs.lr_prologue_end = false;
             regs.lr_epilogue_begin = false;
             regs.lr_discriminator = 0;
+#ifdef PRINTING_DETAILS
+#endif /* PRINTING_DETAILS */
         } else if (type == LOP_STANDARD) {
 #ifdef PRINTING_DETAILS
-           dwarfstring mb;
+            dwarfstring mb;
 #endif /* PRINTING_DETAILS */
 
             switch (opcode) {
@@ -1303,7 +1308,7 @@ read_line_table_program(Dwarf_Debug dbg,
 #ifdef PRINTING_DETAILS
                 dwarfstring_constructor(&mb);
                 dwarfstring_append_printf_i(&mb,
-                    "DW_LNS_advance_pc val %" DW_PR_DSd, 
+                    "DW_LNS_advance_pc val %" DW_PR_DSd,
                     utmp2);
                 dwarfstring_append_printf_u(&mb,
                     " 0x%" DW_PR_XZEROS DW_PR_DUx "\n",
@@ -1327,9 +1332,9 @@ read_line_table_program(Dwarf_Debug dbg,
 #ifdef PRINTING_DETAILS
                 dwarfstring_constructor(&mb);
                 dwarfstring_append_printf_i(&mb,
-                    "DW_LNS_advance_line val %" DW_PR_DSd, 
+                    "DW_LNS_advance_line val %" DW_PR_DSd,
                     advance_line);
-                dwarfstring_append_printf_i(&mb,
+                dwarfstring_append_printf_u(&mb,
                     " 0x%" DW_PR_XZEROS DW_PR_DSx "\n",
                     advance_line);
                 _dwarf_printf(dbg,dwarfstring_string(&mb));
@@ -1373,9 +1378,9 @@ read_line_table_program(Dwarf_Debug dbg,
                 dwarfstring_append_printf_i(&mb,
                     "DW_LNS_set_column val %" DW_PR_DSd ,
                     regs.lr_column);
-                dwarfstring_append_printf_i(&mb,
+                dwarfstring_append_printf_u(&mb,
                     " 0x%" DW_PR_XZEROS DW_PR_DSx "\n",
-                    (Dwarf_Signed) regs.lr_column);
+                    regs.lr_column);
                 _dwarf_printf(dbg,dwarfstring_string(&mb));
                 dwarfstring_destructor(&mb);
 #endif /* PRINTING_DETAILS */
@@ -1398,7 +1403,7 @@ read_line_table_program(Dwarf_Debug dbg,
                 break;
 
             case DW_LNS_const_add_pc:{
-                opcode = MAX_LINE_OP_CODE - 
+                opcode = MAX_LINE_OP_CODE -
                     line_context->lc_opcode_base;
                 if (line_context->lc_maximum_ops_per_instruction < 2) {
                     Dwarf_Unsigned operation_advance =
@@ -1418,10 +1423,11 @@ read_line_table_program(Dwarf_Debug dbg,
                 }
 #ifdef PRINTING_DETAILS
                 dwarfstring_constructor(&mb);
-                dwarfstring_append_printf_i(&mb,
+                dwarfstring_append_printf_u(&mb,
                     "DW_LNS_const_add_pc new address 0x%"
                     DW_PR_XZEROS DW_PR_DSx "\n",
                     regs.lr_address);
+                _dwarf_printf(dbg,dwarfstring_string(&mb));
                 dwarfstring_destructor(&mb);
 #endif /* PRINTING_DETAILS */
                 }
@@ -1453,13 +1459,13 @@ read_line_table_program(Dwarf_Debug dbg,
 #ifdef PRINTING_DETAILS
                 dwarfstring_constructor(&mb);
                 dwarfstring_append_printf_i(&mb,
-                    "DW_LNS_fixed_advance_pc val %" 
+                    "DW_LNS_fixed_advance_pc val %"
                     DW_PR_DSd, fixed_advance_pc);
-                dwarfstring_append_printf_i(&mb,
+                dwarfstring_append_printf_u(&mb,
                     " 0x%" DW_PR_XZEROS DW_PR_DSx,
                     fixed_advance_pc);
-                dwarfstring_append_printf_i(&mb,
-                    " new address 0x%" 
+                dwarfstring_append_printf_u(&mb,
+                    " new address 0x%"
                     DW_PR_XZEROS DW_PR_DSx "\n",
                     regs.lr_address);
                 _dwarf_printf(dbg,
@@ -1497,14 +1503,14 @@ read_line_table_program(Dwarf_Debug dbg,
                 dwarfstring_append_printf_u(&mb,
                     "DW_LNS_set_isa new value 0x%"
                     DW_PR_XZEROS DW_PR_DUx ".\n",
-                     utmp2);
+                    utmp2);
                 _dwarf_printf(dbg,dwarfstring_string(&mb));
                 dwarfstring_destructor(&mb);
 #endif /* PRINTING_DETAILS */
                 if (regs.lr_isa != utmp2) {
-                    /*  The value of the isa did 
+                    /*  The value of the isa did
                         not fit in our
-                        local so we record it wrong. 
+                        local so we record it wrong.
                         declare an error. */
                     _dwarf_free_chain_entries(dbg,head_chain,line_count);
                     _dwarf_error(dbg, error,
@@ -1543,11 +1549,11 @@ read_line_table_program(Dwarf_Debug dbg,
 #ifdef PRINTING_DETAILS /* block 1 print */
                         dwarfstring_constructor(&mb);
                         dwarfstring_append_printf_i(&mb,
-                            "DW_LNS_set_address_from" 
+                            "DW_LNS_set_address_from"
                             "_logical "
                             "%" DW_PR_DSd,
                             stmp);
-                        dwarfstring_append_printf_i(&mb,
+                        dwarfstring_append_printf_u(&mb,
                             " 0x%" DW_PR_XZEROS DW_PR_DSx,
                             stmp);
                         dwarfstring_append_printf_u(&mb,
@@ -1565,7 +1571,7 @@ read_line_table_program(Dwarf_Debug dbg,
                             "DW_LNS_set_address_from_logical line"
                             " is %" DW_PR_DSd ,
                             regs.lr_line);
-                        dwarfstring_append_printf_i(&mb,
+                        dwarfstring_append_printf_u(&mb,
                             " 0x%" DW_PR_XZEROS DW_PR_DSx ".\n",
                             regs.lr_line);
                         _dwarf_printf(dbg,
@@ -1574,8 +1580,8 @@ read_line_table_program(Dwarf_Debug dbg,
 #endif /* PRINTING_DETAILS */
                     }
                 } else {
-                    /* DW_LNS_set_subprogram, 
-                    building logicals table.  */
+                    /*  DW_LNS_set_subprogram,
+                        building logicals table.  */
                     Dwarf_Unsigned utmp2 = 0;
 
                     regs.lr_call_context = 0;
@@ -1589,7 +1595,7 @@ read_line_table_program(Dwarf_Debug dbg,
                         "DW_LNS_set_subprogram "
                         "%" DW_PR_DSd,
                         utmp2);
-                    dwarfstring_append_printf_i(&mb,
+                    dwarfstring_append_printf_u(&mb,
                         " 0x%" DW_PR_XZEROS DW_PR_DSx "\n",
                         utmp2);
                     _dwarf_printf(dbg,
@@ -1608,23 +1614,23 @@ read_line_table_program(Dwarf_Debug dbg,
                     dbg,error,line_ptr_end);
 
 #ifdef PRINTING_DETAILS
-                dwarfstring_destructor(&mb);
+                dwarfstring_constructor(&mb);
                 dwarfstring_append_printf_i(&mb,
                     "DW_LNS_inlined_call "
                     "%" DW_PR_DSd ,stmp);
-                dwarfstring_append_printf_i(&mb,
-                     " (0x%" DW_PR_XZEROS DW_PR_DSx "),",
-                     stmp);
+                dwarfstring_append_printf_u(&mb,
+                    " (0x%" DW_PR_XZEROS DW_PR_DSx "),",
+                    stmp);
                 dwarfstring_append_printf_i(&mb,
                     "%" DW_PR_DSd,
                     regs.lr_subprogram);
-                dwarfstring_append_printf_i(&mb,
+                dwarfstring_append_printf_u(&mb,
                     " (0x%" DW_PR_XZEROS DW_PR_DSx ")",
                     regs.lr_subprogram);
                 dwarfstring_append_printf_i(&mb,
                     "  callcontext=" "%" DW_PR_DSd ,
                     regs.lr_call_context);
-                dwarfstring_append_printf_i(&mb,
+                dwarfstring_append_printf_u(&mb,
                     " (0x%" DW_PR_XZEROS DW_PR_DSx ")\n",
                     regs.lr_call_context);
                 _dwarf_printf(dbg,
@@ -1660,29 +1666,33 @@ read_line_table_program(Dwarf_Debug dbg,
                     regs.lr_subprogram =
                         logical_line->li_addr_line.li_l_data.li_subprogram;
 #ifdef PRINTING_DETAILS
-                    dwarfstring_constructor(&mb);
-                    dwarfstring_append_printf_u(&mb,
+                    {
+                    dwarfstring pcon;
+                    dwarfstring_constructor(&pcon);
+                    dwarfstring_append_printf_u(&pcon,
                         "DW_LNS_pop_context set"
                         " from logical "
                         "%" DW_PR_DUu ,logical_num);
-                    dwarfstring_append_printf_u(&mb,
+                    dwarfstring_append_printf_u(&pcon,
                         " (0x%" DW_PR_XZEROS DW_PR_DUx ")\n",
                         logical_num);
                     _dwarf_printf(dbg,
-                        dwarfstring_string(&mb));
-                    dwarfstring_destructor(&mb);
+                        dwarfstring_string(&pcon));
+                    dwarfstring_destructor(&pcon);
+                    }
                 } else {
-                    dwarfstring_constructor(&mb);
-                    dwarfstring_append_printf_u(&mb,
+                    dwarfstring pcon;
+                    dwarfstring_constructor(&pcon);
+                    dwarfstring_append_printf_u(&pcon,
                         "DW_LNS_pop_context does nothing, logical"
                         "%" DW_PR_DUu ,
                         logical_num);
-                    dwarfstring_append_printf_u(&mb,
+                    dwarfstring_append_printf_u(&pcon,
                         " (0x%" DW_PR_XZEROS DW_PR_DUx ")\n",
                         logical_num);
                     _dwarf_printf(dbg,
-                        dwarfstring_string(&mb));
-                    dwarfstring_destructor(&mb);
+                        dwarfstring_string(&pcon));
+                    dwarfstring_destructor(&pcon);
 #endif /* PRINTING_DETAILS */
                 }
                 }
@@ -1806,13 +1816,16 @@ read_line_table_program(Dwarf_Debug dbg,
                 /* Mark a line record as being DW_LNS_set_address */
                 is_addr_set = true;
 #ifdef PRINTING_DETAILS
-                dwarfstring_constructor(&m9);
-                dwarfstring_append_printf_u(&m9,
+                {
+                dwarfstring sadd;
+                dwarfstring_constructor(&sadd);
+                dwarfstring_append_printf_u(&sadd,
                     "DW_LNE_set_address address 0x%"
                     DW_PR_XZEROS DW_PR_DUx "\n",
                     regs.lr_address);
-                _dwarf_printf(dbg,dwarfstring_string(&m9));
-                dwarfstring_destructor(&m9);
+                _dwarf_printf(dbg,dwarfstring_string(&sadd));
+                dwarfstring_destructor(&sadd);
+                }
 #endif /* PRINTING_DETAILS */
                 if (doaddrs) {
                     /* SGI IRIX rqs processing only. */
@@ -1842,7 +1855,6 @@ read_line_table_program(Dwarf_Debug dbg,
                         return (DW_DLV_ERROR);
                     }
                     chain_line->ch_item = curr_line;
-
                     _dwarf_update_chain_list(chain_line,&head_chain,&curr_chain);
                 }
                 regs.lr_op_index = 0;
@@ -1870,6 +1882,9 @@ read_line_table_program(Dwarf_Debug dbg,
 
             case DW_LNE_define_file:
                 if (dolines) {
+#ifdef PRINTING_DETAILS
+                    dwarfstring m9;
+#endif
                     int res = 0;
                     Dwarf_Unsigned value = 0;
                     cur_file_entry = (Dwarf_File_Entry)
@@ -1882,7 +1897,7 @@ read_line_table_program(Dwarf_Debug dbg,
                         sizeof(struct Dwarf_File_Entry_s));
                     _dwarf_add_to_files_list(line_context,
                         cur_file_entry);
-                    cur_file_entry->fi_file_name = 
+                    cur_file_entry->fi_file_name =
                         (Dwarf_Small *) line_ptr;
                     res = _dwarf_check_string_valid(dbg,
                         line_ptr,line_ptr,line_ptr_end,
@@ -1893,7 +1908,7 @@ read_line_table_program(Dwarf_Debug dbg,
                         return res;
                     }
                     line_ptr = line_ptr + strlen((char *) line_ptr)
-                         + 1;
+                        + 1;
                     DECODE_LEB128_UWORD_CK(line_ptr,value,
                         dbg,error,line_ptr_end);
                     cur_file_entry->fi_dir_index = (Dwarf_Signed)value;
@@ -1942,6 +1957,9 @@ read_line_table_program(Dwarf_Debug dbg,
             case DW_LNE_set_discriminator:{
                 /* New in DWARF4 */
                 Dwarf_Unsigned utmp2 = 0;
+#ifdef PRINTING_DETAILS
+                dwarfstring m9;
+#endif /* PRINTING_DETAILS */
 
                 DECODE_LEB128_UWORD_CK(line_ptr, utmp2,
                     dbg,error,line_ptr_end);
@@ -1963,6 +1981,10 @@ read_line_table_program(Dwarf_Debug dbg,
                     other than we know now many bytes it is
                     and the op code and the bytes of operand. */
                 Dwarf_Unsigned remaining_bytes = instr_length -1;
+#ifdef PRINTING_DETAILS
+                dwarfstring m9;
+#endif /* PRINTING_DETAILS */
+
                 if (instr_length < 1 ||
                     remaining_bytes > DW_LNE_LEN_MAX) {
                     dwarfstring g;
@@ -1996,7 +2018,7 @@ read_line_table_program(Dwarf_Debug dbg,
                     "DW_LNE extended op 0x%x ",
                     ext_opcode);
                 dwarfstring_append_printf_u(&m9,
-                    "Bytecount: %" DW_PR_DUu , 
+                    "Bytecount: %" DW_PR_DUu ,
                     (Dwarf_Unsigned)instr_length);
                 if (remaining_bytes > 0) {
                     dwarfstring_append(&m9," linedata: 0x");

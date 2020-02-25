@@ -1,27 +1,30 @@
 /*
   Copyright (C) 2000,2002,2004,2005,2006 Silicon Graphics, Inc.  All Rights Reserved.
-  Portions Copyright (C) 2007-2018 David Anderson. All Rights Reserved.
+  Portions Copyright (C) 2007-2020 David Anderson. All Rights Reserved.
   Portions Copyright 2012 SN Systems Ltd. All rights reserved.
 
-  This program is free software; you can redistribute it and/or modify it
-  under the terms of version 2.1 of the GNU Lesser General Public License
-  as published by the Free Software Foundation.
+  This program is free software; you can redistribute it
+  and/or modify it under the terms of version 2.1 of the
+  GNU Lesser General Public License as published by the Free
+  Software Foundation.
 
-  This program is distributed in the hope that it would be useful, but
-  WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+  This program is distributed in the hope that it would be
+  useful, but WITHOUT ANY WARRANTY; without even the implied
+  warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+  PURPOSE.
 
-  Further, this software is distributed without any warranty that it is
-  free of the rightful claim of any third person regarding infringement
-  or the like.  Any license provided herein, whether implied or
-  otherwise, applies only to this software file.  Patent licenses, if
-  any, provided herein do not apply to combinations of this program with
-  other software, or any other product whatsoever.
+  Further, this software is distributed without any warranty
+  that it is free of the rightful claim of any third person
+  regarding infringement or the like.  Any license provided
+  herein, whether implied or otherwise, applies only to this
+  software file.  Patent licenses, if any, provided herein
+  do not apply to combinations of this program with other
+  software, or any other product whatsoever.
 
-  You should have received a copy of the GNU Lesser General Public
-  License along with this program; if not, write the Free Software
-  Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston MA 02110-1301,
-  USA.
+  You should have received a copy of the GNU Lesser General
+  Public License along with this program; if not, write the
+  Free Software Foundation, Inc., 51 Franklin Street - Fifth
+  Floor, Boston MA 02110-1301, USA.
 
 */
 
@@ -45,7 +48,7 @@ print_line_header(Dwarf_Debug dbg,
     Dwarf_Bool is_actuals_tab)
 {
 if (!is_single_tab) {
-    /* Ugly indenting follows, it makes lines shorter to see them better. 
+    /* Ugly indenting follows, it makes lines shorter to see them better.
         Best to use a wider text window to really see how it looks.*/
 if (is_actuals_tab) {
 _dwarf_printf(dbg,"\nActuals Table\n");
@@ -107,13 +110,13 @@ print_line_detail(
         dwarfstring_append_printf_i(&m1,
             "[%3d] "  /* row number */, curr_line);
         dwarfstring_append_printf_s(&m1,
-             "%-15s ",(char *)prefix);
+            "%-15s ",(char *)prefix);
         dwarfstring_append_printf_i(&m1,
-             "%3d ",opcode);
+            "%3d ",opcode);
         dwarfstring_append_printf_u(&m1,
-             "x%" DW_PR_XZEROS DW_PR_DUx, regs->lr_address);
+            "x%" DW_PR_XZEROS DW_PR_DUx, regs->lr_address);
         dwarfstring_append_printf_u(&m1,
-             "/%01u", regs->lr_op_index);
+            "/%01u", regs->lr_op_index);
         dwarfstring_append_printf_u(&m1," %2lu ",regs->lr_file);
         dwarfstring_append_printf_u(&m1,"%4lu  ",regs->lr_line);
         dwarfstring_append_printf_u(&m1,"%1lu",regs->lr_column);
@@ -125,10 +128,7 @@ print_line_detail(
             regs->lr_call_context ||
             regs->lr_subprogram) {
             dwarfstring_append_printf_u(&m1,
-               "   x%02" DW_PR_DUx,regs->lr_discriminator); /* DWARF4 */
-
-            dwarfstring_append_printf_u(&m1,
-                "   x%02" DW_PR_DUx , 
+                "   x%02" DW_PR_DUx ,
                 regs->lr_discriminator); /* DWARF4 */
             dwarfstring_append_printf_u(&m1,
                 "  x%02" DW_PR_DUx , regs->lr_call_context); /* EXPERIMENTAL */
@@ -169,7 +169,7 @@ print_line_detail(
     dwarfstring_append_printf_i(&m1,
         "%1d ", regs->lr_basic_block);
     dwarfstring_append_printf_i(&m1,
-        "%1d ",regs->lr_end_sequence);
+        "%1d",regs->lr_end_sequence);
     if (regs->lr_discriminator ||
         regs->lr_prologue_end ||
         regs->lr_epilogue_begin ||
@@ -243,8 +243,8 @@ print_include_directory_details(Dwarf_Debug dbg,
     }
     /* common print of the files */
     dwarfstring_append_printf_i(&m4,
-            "  include directories count %d\n",
-            (int) line_context->lc_include_directories_count);
+        "  include directories count %d\n",
+        (int) line_context->lc_include_directories_count);
     _dwarf_printf(dbg,dwarfstring_string(&m4));
     dwarfstring_reset(&m4);
     for (u = 0; u < line_context->lc_include_directories_count; ++u) {
@@ -282,6 +282,9 @@ print_just_file_entry_details(Dwarf_Debug dbg,
         tlm2 = fe->fi_time_last_mod;
         filenum = fiu+1;
 
+        /*  The space character at the end of line is silly,
+            but lets leave it there for the moment to avoid
+            changing output.  */
         if (line_context->lc_file_entry_count > 9) {
             dwarfstring_append_printf_u(&m3,
                 "  file[%2u] ",fiu);
@@ -320,7 +323,7 @@ print_just_file_entry_details(Dwarf_Debug dbg,
 
             fl = fe->fi_file_length;
             dwarfstring_append_printf_i(&m3,
-                "    file length %ld  ",fl);
+                "    file length %ld ",fl);
             dwarfstring_append_printf_u(&m3,
                 "0x%lx\n",fl);
         }
@@ -380,7 +383,7 @@ print_file_entry_details(Dwarf_Debug dbg,
                 fname = "<unknown form>";
             }
             dwarfstring_append_printf_u(&m5,
-                "               code 0x%" 
+                "               code 0x%"
                 DW_PR_XZEROS DW_PR_DUx,
                 valpair->up_second);
             dwarfstring_append_printf_s(&m5, " %-20s\n",
@@ -408,7 +411,6 @@ print_experimental_subprograms_list(Dwarf_Debug dbg,
     dwarfstring m6;
 
     dwarfstring_constructor(&m6);
-    
     dwarfstring_append_printf_u(&m6,
         "  subprograms count %" DW_PR_DUu "\n",count);
     if (count > 0) {
@@ -424,7 +426,7 @@ print_experimental_subprograms_list(Dwarf_Debug dbg,
         dwarfstring_append_printf_u(&m6,
             "    %4" DW_PR_DUu ,sub->ds_decl_line);
         dwarfstring_append_printf_s(&m6,
-             " %s\n",(char *)sub->ds_subprog_name);
+            " %s\n",(char *)sub->ds_subprog_name);
         _dwarf_printf(dbg,dwarfstring_string(&m6));
         dwarfstring_reset(&m6);
     }
@@ -439,7 +441,7 @@ static void print_experimental_counts(Dwarf_Debug dbg,
     int line_version,
     Dwarf_Line_Context line_context);
 
-static int print_actuals_and_locals(Dwarf_Debug dbg, 
+static int print_actuals_and_locals(Dwarf_Debug dbg,
     Dwarf_Line_Context line_context,
     Dwarf_Unsigned bogus_bytes_count,
     Dwarf_Small *bogus_bytes_ptr,
@@ -451,7 +453,6 @@ static int print_actuals_and_locals(Dwarf_Debug dbg,
     Dwarf_Half   address_size,
     int *        err_count_out,
     Dwarf_Error *err);
-
 
 /*  return DW_DLV_OK if ok. else DW_DLV_NO_ENTRY or DW_DLV_ERROR
     If err_count_out is non-NULL, this is a special 'check'
@@ -656,7 +657,7 @@ static void
 do_line_print_now(Dwarf_Debug dbg,
     int line_version,
     Dwarf_Small *comp_dir,
-    Dwarf_Line_Context line_context) 
+    Dwarf_Line_Context line_context)
 {
     dwarfstring m7;
     Dwarf_Unsigned i = 0;
@@ -747,7 +748,7 @@ do_line_print_now(Dwarf_Debug dbg,
 
     for (i = 1; i < line_context->lc_opcode_base; i++) {
         dwarfstring_append_printf_i(&m7,
-            "  opcode[%2d] length  ", (int) i);
+            "  opcode[%2d] length", (int) i);
         dwarfstring_append_printf_i(&m7,
             "  %d\n",
             (int) line_context->lc_opcode_length_table[i - 1]);
@@ -757,7 +758,7 @@ do_line_print_now(Dwarf_Debug dbg,
     dwarfstring_destructor(&m7);
 }
 
-static void 
+static void
 print_experimental_counts(Dwarf_Debug dbg, int line_version,
     Dwarf_Line_Context line_context)
 {
@@ -766,8 +767,8 @@ print_experimental_counts(Dwarf_Debug dbg, int line_version,
     }
 }
 
-static int 
-print_actuals_and_locals(Dwarf_Debug dbg, 
+static int
+print_actuals_and_locals(Dwarf_Debug dbg,
     Dwarf_Line_Context line_context,
     Dwarf_Unsigned bogus_bytes_count,
     Dwarf_Small *bogus_bytes_ptr,
@@ -786,30 +787,30 @@ print_actuals_and_locals(Dwarf_Debug dbg,
 
     dwarfstring_constructor(&m8);
     if (bogus_bytes_count > 0) {
-            Dwarf_Unsigned wcount = bogus_bytes_count;
-            Dwarf_Unsigned boffset = bogus_bytes_ptr - section_start;
+        Dwarf_Unsigned wcount = bogus_bytes_count;
+        Dwarf_Unsigned boffset = bogus_bytes_ptr - section_start;
 
-            dwarfstring_append_printf_u(&m8,
-                "*** DWARF CHECK: the line table prologue  header_length "
-                " is %" DW_PR_DUu " too high, we pretend it is smaller.",
-                wcount);
-            dwarfstring_append_printf_u(&m8,
-                "Section offset: 0x%"
-                DW_PR_XZEROS DW_PR_DUx,
-                boffset);
-            dwarfstring_append_printf_u(&m8,
-                " (%" DW_PR_DUu ") ***\n",
-                boffset);
-            *err_count_out += 1;
+        dwarfstring_append_printf_u(&m8,
+            "*** DWARF CHECK: the line table prologue  header_length "
+            " is %" DW_PR_DUu " too high, we pretend it is smaller.",
+            wcount);
+        dwarfstring_append_printf_u(&m8,
+            "Section offset: 0x%"
+            DW_PR_XZEROS DW_PR_DUx,
+            boffset);
+        dwarfstring_append_printf_u(&m8,
+            " (%" DW_PR_DUu ") ***\n",
+            boffset);
+        *err_count_out += 1;
     }
     offset = line_ptr - section_start;
     dwarfstring_append_printf_u(&m8,
         "  statement prog offset in section: 0x%"
         DW_PR_XZEROS DW_PR_DUx,
-        offset); 
+        offset);
     dwarfstring_append_printf_u(&m8,
         " (%" DW_PR_DUu ")\n",
-        offset); 
+        offset);
     _dwarf_printf(dbg,dwarfstring_string(&m8));
     dwarfstring_reset(&m8);
 
@@ -911,7 +912,7 @@ print_actuals_and_locals(Dwarf_Debug dbg,
     It was an accident, but after a short reflection
     this seems like a good idea for -vvv. */
 int
-dwarf_print_lines(Dwarf_Die die, 
+dwarf_print_lines(Dwarf_Die die,
     Dwarf_Error * error,
     int *error_count)
 {

@@ -1,10 +1,30 @@
+2020-02-25: David Anderson
+    * dwarf_elfread.c: Deleted a #if 0 ...#endif few lines.
+    * dwarf_line.c: Fixed trailing whitespace.
+    * dwarf_line_table_reader_common.h: Removed all use of the
+      old dwarf_printf varargs code.  Instead using dwarfstring
+      and dwarfstring_append_printf_i() etc.
+      And a far simpler _dwarf_printf().
+      No longer any sprintf/snprintf/vsnprintf here.
+    * dwarf_opaque.h: Remove trailing whitespace.
+    * dwarf_print_lines.c: Removed all use of the
+      old dwarf_printf varargs code.
+      No longer any sprintf/snprintf/vsnprintf here.
+    * dwarf_util.c: Delete unused buffersetsize function.
+      Delete now-unuised dwarf_printf()
+    * dwarfstring.c: Now using TRUE FALSE, not DW_DLV anything.
+      No one will be testing the integer return value anyway.
+      Fixed the code where %-4s was truncating if the string
+      to be processed was longer than 4 characters.
+    * dwarfstring.h: Added commentary.
+    * test_dwarfstring.c: New testcase for dwarfstring
 2020-02-21: David Anderson
     * dwarf_arange.c,dwarf_debuglink.c,dwarf_frame2.c:
-      removed the last sprintf, changed to dwarfstring.h
-      functions.
+      removed the last sprintf/snprintf, changed to 
+      use dwarfstring.h functions.
 2020-02-18: David Anderson
     * dwarf_line.c: Added free() calls to delete_line_context_itself
-      to avoid a leek that was created in last commit..
+      to avoid a leak that was created in last commit..
     * dwarf_line.h: Deleted a now-spurious comment.
     * dwarf_line_table_reader_common.h: Removed an == NULL
       comparison in favor of a !filename_entry_pairs.

@@ -48,6 +48,7 @@ check_string(const char *msg,char *exp,
     char *actual,int line)
 {
     if(!strcmp(exp,actual)) {
+        printf("PASS got \"%s\" line %d\n",exp,line);
         return;
     }
     printf("FAIL %s expected \"%s\" got \"%s\" test line %d\n",
@@ -55,13 +56,26 @@ check_string(const char *msg,char *exp,
     ++errcount;
 }
 static void
-check_value(const char *msg,unsigned long exp,
+check_value_i(const char *msg,unsigned long exp,
     unsigned long actual,int line)
 {
     if(exp == actual) {
         return;
     }
     printf("FAIL %s expected %lu got %lu test line %d\n",
+        msg,exp,actual,line);
+    ++errcount;
+}
+
+/* Checks the return value of the dwarfstring function. */
+static void
+check_value(const char *msg,unsigned long exp,
+    unsigned long actual,int line)
+{
+    if(exp == actual) {
+        return;
+    }
+    printf("FAIL %s return expected %lu got %lu test line %d\n",
         msg,exp,actual,line);
     ++errcount;
 }
@@ -80,20 +94,76 @@ test1(int tnum)
         "ccccccbbbbbbbbbbbbbbbbbbbbbccc"
         "ccccccbbbbbbbbbbbbbbbbbbbbbccc"
         "ccccccbbbbbyyyybbbbbbbbbbbbccc";
+    char *mediumstr = "1234567890aaaaabbbbbb0123";
 
     dwarfstring_constructor(&g);
     d = dwarfstring_string(&g);
     check_string("expected empty string",(char *)expstr,d,__LINE__);
+
+    /* caller coding error here, works  no % but we call it TRUE anyway */
+    res = dwarfstring_append_printf_i(&g,"\nabc\n",54);
+    check_value_i("expected TRUE  ",TRUE,res,__LINE__);
+    check_string("expected ",(char *)"\nabc\n",dwarfstring_string(&g),__LINE__);
+
+    dwarfstring_reset(&g);
+    res = dwarfstring_append_printf_s(&g,"x%-15sy",mediumstr);
+    check_value_i("expected TRUE  ",TRUE,res,__LINE__);
+    check_string("expected ",(char *)"x1234567890aaaaabbbbbb0123y",
+        dwarfstring_string(&g),__LINE__);
+
+    dwarfstring_reset(&g);
+    res = dwarfstring_append_printf_i(&g,"\nabc%d\n",54);
+    check_value("expected TRUE  ",TRUE,res,__LINE__);
+    check_string("expected ",(char *)"\nabc54\n",dwarfstring_string(&g),__LINE__);
+    dwarfstring_reset(&g);
+
+    res = dwarfstring_append_printf_i(&g,"\nabc%d\n",54);
+    check_value("expected TRUE  ",TRUE,res,__LINE__);
+    check_string("expected ",(char *)"\nabc54\n",dwarfstring_string(&g),__LINE__);
+
+    dwarfstring_destructor(&g);
+    dwarfstring_constructor(&g);
+
+    res = dwarfstring_append_printf_i(&g,"\nabc%lld\n",-54);
+    check_value("expected ok  ",TRUE,res,__LINE__);
+    check_string("expected ",(char *)"\nabc-54\n",dwarfstring_string(&g),__LINE__);
+    dwarfstring_reset(&g);
+
+    /* in this call a %x is not allowed */
+    res = dwarfstring_append_printf_i(&g,"\nabc%x\n",-54);
+    check_value("expected error  ",FALSE,res,__LINE__);
+    check_string("expected ",(char *)"\nabc%x\n",dwarfstring_string(&g),__LINE__);
+    dwarfstring_reset(&g);
+
+    res = dwarfstring_append_printf_u(&g,"\nabc%x\n",-54);
+    check_value("expected error  ",FALSE,res,__LINE__);
+    check_string("expected ",(char *)"\nabcffffffffffffffca\n",dwarfstring_string(&g),__LINE__);
+    dwarfstring_reset(&g);
+
+    res = dwarfstring_append_printf_u(&g,"\nabc 0x%x\n",-54);
+    check_value("expected error  ",FALSE,res,__LINE__);
+    check_string("expected ",(char *)"\nabc 0xffffffffffffffca\n",dwarfstring_string(&g),__LINE__);
+    dwarfstring_reset(&g);
+
+#if 0
+    res = dwarfstring_append_printf_i(&g,"\nabc%x\n",-54);
+    check_value("expected error  ",FALSE,res,__LINE__);
+    check_string("expected ",(char *)"\nabc0xffffffffffffffca\n",dwarfstring_string(&g),__LINE__);
+    dwarfstring_reset(&g);
+#endif
 
     res = dwarfstring_append(&g,"abc");
     check_value("expected TRUE  ",TRUE,res,__LINE__);
     d = dwarfstring_string(&g);
     check_string("expected abc ",(char *)"abc",d,__LINE__);
 
+    dwarfstring_destructor(&g);
+    dwarfstring_constructor(&g);
+
     res = dwarfstring_append(&g,"xy");
     check_value("expected TRUE  ",TRUE,res,__LINE__);
     d = dwarfstring_string(&g);
-    check_string("expected abcxy ",(char *)"abcxy",d,__LINE__);
+    check_string("expected abcxy ",(char *)"xy",d,__LINE__);
 
     dwarfstring_destructor(&g);
 
