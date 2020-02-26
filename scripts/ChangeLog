@@ -1,6 +1,6 @@
 2020-02-25 David Anderson
     * run-all-tests.sh: Added echo statments to make
-      it clearer were we are in the run.c
+      it clearer were we are in the run.
 2020-02-16 David Anderson
     * FIX-CONFIGURE-TIMES: alter the startup message so
       anyone seeing it will understand it is the code (libdwarf etc)
