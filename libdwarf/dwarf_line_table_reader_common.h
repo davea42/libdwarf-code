@@ -1068,13 +1068,15 @@ read_line_table_program(Dwarf_Debug dbg,
         Dwarf_Small opcode = 0;
 
 #ifdef PRINTING_DETAILS
-        dwarfstring m9;
-        dwarfstring_constructor(&m9);
-        dwarfstring_append_printf_u(&m9,
+        {
+        dwarfstring m9a;
+        dwarfstring_constructor(&m9a);
+        dwarfstring_append_printf_u(&m9a,
             " [0x%06" DW_PR_DSx "] ",
             (line_ptr - section_start));
-        _dwarf_printf(dbg,dwarfstring_string(&m9));
-        dwarfstring_destructor(&m9);
+        _dwarf_printf(dbg,dwarfstring_string(&m9a));
+        dwarfstring_destructor(&m9a);
+        }
 #endif /* PRINTING_DETAILS */
         opcode = *(Dwarf_Small *) line_ptr;
         line_ptr++;
@@ -1087,16 +1089,18 @@ read_line_table_program(Dwarf_Debug dbg,
             int oc = 0;
             int opcnt = line_context->lc_opcode_length_table[opcode];
 #ifdef PRINTING_DETAILS
-            dwarfstring m9;
-            dwarfstring_constructor(&m9);
-            dwarfstring_append_printf_i(&m9,
+            {
+            dwarfstring m9b;
+            dwarfstring_constructor(&m9b);
+            dwarfstring_append_printf_i(&m9b,
                 "*** DWARF CHECK: DISCARD standard opcode %d ",
                 opcode);
-            dwarfstring_append_printf_i(&m9,
+            dwarfstring_append_printf_i(&m9b,
                 "with %d operands: not understood.", opcnt);
-            _dwarf_printf(dbg,dwarfstring_string(&m9));
+            _dwarf_printf(dbg,dwarfstring_string(&m9b));
             *err_count_out += 1;
-            dwarfstring_destructor(&m9);
+            dwarfstring_destructor(&m9b);
+            }
 #endif /* PRINTING_DETAILS */
             for (oc = 0; oc < opcnt; oc++) {
                 /*  Read and discard operands we don't
@@ -1108,15 +1112,18 @@ read_line_table_program(Dwarf_Debug dbg,
                 DECODE_LEB128_UWORD_CK(line_ptr, utmp2,
                     dbg,error,line_ptr_end);
 #ifdef PRINTING_DETAILS
-                dwarfstring_constructor(&m9);
-                dwarfstring_append_printf_u(&m9,
+                {
+                dwarfstring m9e;
+                dwarfstring_constructor(&m9e);
+                dwarfstring_append_printf_u(&m9e,
                     " %" DW_PR_DUu,
                     utmp2);
-                dwarfstring_append_printf_u(&m9,
+                dwarfstring_append_printf_u(&m9e,
                     " (0x%" DW_PR_XZEROS DW_PR_DUx ")",
                     utmp2);
-                _dwarf_printf(dbg,dwarfstring_string(&m9));
-                dwarfstring_destructor(&m9);
+                _dwarf_printf(dbg,dwarfstring_string(&m9e));
+                dwarfstring_destructor(&m9e);
+                }
 #endif /* PRINTING_DETAILS */
             }
 #ifdef PRINTING_DETAILS
@@ -1130,8 +1137,6 @@ read_line_table_program(Dwarf_Debug dbg,
                 opcode_base and MAX_LINE_OP_CODE) */
 #ifdef PRINTING_DETAILS
             unsigned origop = opcode;
-            dwarfstring ma;
-            dwarfstring mb;
 #endif /* PRINTING_DETAILS */
             Dwarf_Unsigned operation_advance = 0;
 
@@ -1160,6 +1165,10 @@ read_line_table_program(Dwarf_Debug dbg,
                 return DW_DLV_ERROR;
             }
 #ifdef PRINTING_DETAILS
+            {
+            dwarfstring ma;
+            dwarfstring mb;
+
             dwarfstring_constructor(&ma);
             dwarfstring_constructor(&mb);
             dwarfstring_append_printf_u(&mb,"Specialop %3u", origop);
@@ -1168,6 +1177,8 @@ read_line_table_program(Dwarf_Debug dbg,
             print_line_detail(dbg,dwarfstring_string(&mb),
                 opcode,line_count+1, &regs,is_single_table, is_actuals_table);
             dwarfstring_destructor(&mb);
+            dwarfstring_destructor(&ma);
+            }
 #endif /* PRINTING_DETAILS */
 
             if (dolines) {
@@ -1882,9 +1893,6 @@ read_line_table_program(Dwarf_Debug dbg,
 
             case DW_LNE_define_file:
                 if (dolines) {
-#ifdef PRINTING_DETAILS
-                    dwarfstring m9;
-#endif
                     int res = 0;
                     Dwarf_Unsigned value = 0;
                     cur_file_entry = (Dwarf_File_Entry)
@@ -1923,11 +1931,13 @@ read_line_table_program(Dwarf_Debug dbg,
                     cur_file_entry->fi_time_last_mod_present = TRUE;
                     cur_file_entry->fi_file_length_present = TRUE;
 #ifdef PRINTING_DETAILS
-                    dwarfstring_constructor(&m9);
-                    dwarfstring_append_printf_s(&m9,
+                    {
+                    dwarfstring m9c;
+                    dwarfstring_constructor(&m9c);
+                    dwarfstring_append_printf_s(&m9c,
                         "DW_LNE_define_file %s \n",
                         (char *)cur_file_entry->fi_file_name);
-                    dwarfstring_append_printf_i(&m9,
+                    dwarfstring_append_printf_i(&m9c,
                         "    dir index %d\n",
                         (int) cur_file_entry->fi_dir_index);
 
@@ -1936,43 +1946,44 @@ read_line_table_program(Dwarf_Debug dbg,
                             fi_time_last_mod;
 
                         /* ctime supplies newline */
-                        dwarfstring_append_printf_u(&m9,
+                        dwarfstring_append_printf_u(&m9c,
                             "    last time 0x%x ",
                             (Dwarf_Unsigned)tt3);
-                        dwarfstring_append_printf_s(&m9,
+                        dwarfstring_append_printf_s(&m9c,
                             "%s",
                             ctime(&tt3));
                     }
-                    dwarfstring_append_printf_i(&m9,
+                    dwarfstring_append_printf_i(&m9c,
                         "    file length %ld ",
                         cur_file_entry->fi_file_length);
-                    dwarfstring_append_printf_u(&m9,
+                    dwarfstring_append_printf_u(&m9c,
                         "0x%lx\n",
                         cur_file_entry->fi_file_length);
-                    _dwarf_printf(dbg,dwarfstring_string(&m9));
-                    dwarfstring_destructor(&m9);
+                    _dwarf_printf(dbg,dwarfstring_string(&m9c));
+                    dwarfstring_destructor(&m9c);
+                    }
 #endif /* PRINTING_DETAILS */
                 }
                 break;
             case DW_LNE_set_discriminator:{
                 /* New in DWARF4 */
                 Dwarf_Unsigned utmp2 = 0;
-#ifdef PRINTING_DETAILS
-                dwarfstring m9;
-#endif /* PRINTING_DETAILS */
 
                 DECODE_LEB128_UWORD_CK(line_ptr, utmp2,
                     dbg,error,line_ptr_end);
                 regs.lr_discriminator = utmp2;
 
 #ifdef PRINTING_DETAILS
-                dwarfstring_constructor(&m9);
-                dwarfstring_append_printf_u(&m9,
+                {
+                dwarfstring mk;
+                dwarfstring_constructor(&mk);
+                dwarfstring_append_printf_u(&mk,
                     "DW_LNE_set_discriminator 0x%"
                     DW_PR_XZEROS DW_PR_DUx "\n",
                     utmp2);
-                _dwarf_printf(dbg,dwarfstring_string(&m9));
-                dwarfstring_destructor(&m9);
+                _dwarf_printf(dbg,dwarfstring_string(&mk));
+                dwarfstring_destructor(&mk);
+                }
 #endif /* PRINTING_DETAILS */
                 }
                 break;
@@ -1981,9 +1992,6 @@ read_line_table_program(Dwarf_Debug dbg,
                     other than we know now many bytes it is
                     and the op code and the bytes of operand. */
                 Dwarf_Unsigned remaining_bytes = instr_length -1;
-#ifdef PRINTING_DETAILS
-                dwarfstring m9;
-#endif /* PRINTING_DETAILS */
 
                 if (instr_length < 1 ||
                     remaining_bytes > DW_LNE_LEN_MAX) {
@@ -2013,17 +2021,19 @@ read_line_table_program(Dwarf_Debug dbg,
                 }
 
 #ifdef PRINTING_DETAILS
-                dwarfstring_constructor(&m9);
-                dwarfstring_append_printf_u(&m9,
+                {
+                dwarfstring m9d;
+                dwarfstring_constructor(&m9d);
+                dwarfstring_append_printf_u(&m9d,
                     "DW_LNE extended op 0x%x ",
                     ext_opcode);
-                dwarfstring_append_printf_u(&m9,
+                dwarfstring_append_printf_u(&m9d,
                     "Bytecount: %" DW_PR_DUu ,
                     (Dwarf_Unsigned)instr_length);
                 if (remaining_bytes > 0) {
-                    dwarfstring_append(&m9," linedata: 0x");
+                    dwarfstring_append(&m9d," linedata: 0x");
                     while (remaining_bytes > 0) {
-                        dwarfstring_append_printf_u(&m9,
+                        dwarfstring_append_printf_u(&m9d,
                             "%02x",
                             (unsigned char)(*(line_ptr)));
                         line_ptr++;
@@ -2044,14 +2054,15 @@ read_line_table_program(Dwarf_Debug dbg,
                                 DW_DLE_LINE_TABLE_BAD,
                                 dwarfstring_string(&g));
                             dwarfstring_destructor(&g);
-                            dwarfstring_destructor(&m9);
+                            dwarfstring_destructor(&m9d);
                             return DW_DLV_ERROR;
                         }
                         remaining_bytes--;
                     }
                 }
-                _dwarf_printf(dbg,dwarfstring_string(&m9));
-                dwarfstring_destructor(&m9);
+                _dwarf_printf(dbg,dwarfstring_string(&m9d));
+                dwarfstring_destructor(&m9d);
+                }
 #else /* ! PRINTING_DETAILS */
                 line_ptr += remaining_bytes;
                 if (line_ptr > line_ptr_end) {

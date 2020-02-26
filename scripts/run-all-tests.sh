@@ -44,12 +44,13 @@ then
   echo "Use nonstandardprintf. $nonstdprintf"
 fi
 
+echo "Starting run-all-tests.sh now"
 echo run from $here
 if [ ! -d $here/dwarfdump ]
 then
    chkres 1 "A FAIL: This is not the libdwarf 'code' directory "
    echo "A FAIL: $here/dwarfdump missing. Run from 'code'"
-   
+   exit 0
 fi
 if [ ! -d $here/libdwarf ]
 then
@@ -60,6 +61,7 @@ if [ ! -d $here/dwarfexample ]
 then
   chkres 1 "C FAIL: This is not the libdwarf 'code' directory"
   echo "C FAIL: $here/dwarfexample missing"
+  exit 0
 fi
 
 
@@ -91,6 +93,7 @@ builddwarfdump() {
 
 rundistcheck()
 {
+  echo "Now rundistcheck"
   cd $here
   chkres $? "Q FAIL: scripts/buildandreleasetest.sh FAIL"
   if  [ x$1 = "--disable-libelf" ]
@@ -109,6 +112,7 @@ rundistcheck()
 #======= readelfobj, readobjpe, readobjmacho etc tests
 # with make check
 buildreadelfobj() {
+  echo "Now buildreadelfobj"
   rm -rf $robld
   mkdir $robld
   rodir=$rosrc
@@ -138,7 +142,7 @@ buildreadelfobj() {
 
 runfullddtest() {
   ddtestdir=$rtestsrc
-  echo "Run regressiontests in $ddtestdir"
+  echo "Run: runfulddtest: run regressiontests in $ddtestdir"
   cd $ddtestdir
   chkres $? "H FAIL: cd $ddtestdir failed , giving up."
   # Ensure no leftovers, ok if it fails

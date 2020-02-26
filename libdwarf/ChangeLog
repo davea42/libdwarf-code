@@ -1,4 +1,8 @@
 2020-02-25: David Anderson
+    * dwarf_line_table_reader_common.h: Now with dwarfstring
+      containers in local scopes and easily evaluated
+      as to lifetime and correctness.
+2020-02-25: David Anderson
     * dwarf_elfread.c: Deleted a #if 0 ...#endif few lines.
     * dwarf_line.c: Fixed trailing whitespace.
     * dwarf_line_table_reader_common.h: Removed all use of the
