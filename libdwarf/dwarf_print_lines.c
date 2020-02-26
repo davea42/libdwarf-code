@@ -77,7 +77,7 @@ _dwarf_printf(dbg,
 "                                                         t l s r p s i\n"
 "                                                         m c e o i a s\n"
 " section    op                                       col t k q l l   c\n"
-" offset     code               address     file line umn ? ? ? ? ? \n");
+" offset     code               address     file line umn ? ? ? ? ?\n");
 } /* End of function with ugly indenting. */
 
 static void
@@ -292,7 +292,7 @@ print_just_file_entry_details(Dwarf_Debug dbg,
                 "%-20s ",
                 (char *) fe->fi_file_name);
             dwarfstring_append_printf_u(&m3,
-                "(file-number: %u) \n",
+                "(file-number: %u)\n",
                 filenum);
         } else {
             dwarfstring_append_printf_u(&m3,
@@ -300,7 +300,7 @@ print_just_file_entry_details(Dwarf_Debug dbg,
             dwarfstring_append_printf_s(&m3,
                 "%-20s ",(char *)fe->fi_file_name);
             dwarfstring_append_printf_u(&m3,
-                "(file-number: %u) \n",filenum);
+                "(file-number: %u)\n",filenum);
         }
         _dwarf_printf(dbg,dwarfstring_string(&m3));
         dwarfstring_reset(&m3);
