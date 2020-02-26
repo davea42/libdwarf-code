@@ -1,4 +1,8 @@
 2020-02-25:   David Anderson
+    * dwarf_names.c,dwarf_names.h,dwarfdump-ta-ext-table.h,
+      dwarfdump-ta-table.h dwarfdump-tt-ext-table.h dwarfdump-tt-table.h:
+      updated date string.
+2020-02-25:   David Anderson
     * esb.c: Slight corrections so a %-12s will ignore the -12
       if the string to be inserted is more than 11 bytes long.
       Allowed use of UNUSEDARG.

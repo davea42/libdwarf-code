@@ -1,4 +1,7 @@
 2020-02-25: David Anderson
+    * dwarf_names.c,dwarf_names.h, dwarf_names_enum.h,dwarf_names_new.h:
+      libdwarf_version.h: updated version string.
+2020-02-25: David Anderson
     * dwarf_line_table_reader_common.h: Now with dwarfstring
       containers in local scopes and easily evaluated
       as to lifetime and correctness.

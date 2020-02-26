@@ -1,3 +1,6 @@
+2020-02-25  David Anderson
+    * configure.ac: now 20200225
+    * configure: Regenerated.
 2020-02-15  David Anderson
     * configure.ac: Version string now 20200215 as we now
       deal with libelf-reading-relocation-sections.
