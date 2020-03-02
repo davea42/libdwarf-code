@@ -482,10 +482,6 @@ _dwarf_internal_printlines(Dwarf_Die die,
         attribute. */
     Dwarf_Unsigned line_offset = 0;
 
-#if 0
-    Dwarf_Signed i=0;
-#endif
-
     /*  These variables are used to decode leb128 numbers. Leb128_num
         holds the decoded number, and leb128_length is its length in
         bytes. */

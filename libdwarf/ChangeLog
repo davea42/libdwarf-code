@@ -1,3 +1,6 @@
+2020-03-02: David Anderson
+    * dwarf_print_lines.c: Removed one-line #if 0
+      code that serves no purpose.
 2020-02-25: David Anderson
     * dwarf_print_lines.c: Removed space character just before newline
       as it  has no useful prupose. 3 places.
