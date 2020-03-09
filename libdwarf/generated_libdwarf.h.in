@@ -5077,6 +5077,12 @@ int dwarf_pro_get_string_stats(Dwarf_P_Debug /*dbg*/,
 #define DW_ENDIAN_LITTLE   2
 #endif /* DW_ENDIAN_UNKNOWN */
 
+/*  Defined March 7 2020. Allows a caller to
+    avoid most tracking by the de_alloc_tree hash
+    table if called with v of zero.
+    Returns the value the flag was before this call. */
+int dwarf_set_de_alloc_flag(int v);
+
 int dwarf_object_detector_path(const char  *path,
     char *outpath,
     unsigned long,

@@ -331,6 +331,8 @@ struct glflags_s {
 
     /*  Check errors. */
     int check_error;
+
+    int gf_print_alloc_sums;
 };
 
 extern struct glflags_s glflags;

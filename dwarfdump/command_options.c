@@ -780,6 +780,10 @@ enum longopts_vals {
   /* Trace                                                     */
   OPT_TRACE,                    /* -# --trace=<num>            */
 
+  /* allocation statistics */
+  OPT_ALLOC_PRINT_SUMS,         /* --print-alloc-sums */
+  OPT_ALLOC_TREE_OFF,           /* --suppress-de-alloc-tree */
+
   OPT_END
 };
 
@@ -924,6 +928,10 @@ static struct dwoption longopts[] =  {
   /* Trace. */
   {"trace", dwrequired_argument, 0, OPT_TRACE},
 
+  /* alloc sums. */
+  {"print-alloc-sums", dwno_argument, 0, OPT_ALLOC_PRINT_SUMS},
+  {"suppress-de-alloc-tree",dwno_argument,0,OPT_ALLOC_TREE_OFF},
+
   {0,0,0,0}
 };
 
@@ -946,7 +954,6 @@ void arg_print_str_offsets(void)
     glflags.gf_print_str_offsets = TRUE;
 }
 
-/*  Option '-#' */
 void arg_trace(void)
 {
     int nTraceLevel = atoi(dwoptarg);
@@ -2446,9 +2453,57 @@ set_command_options(int argc, char *argv[])
         /* Trace. */
         case OPT_TRACE: arg_trace(); break;
 
+        case OPT_ALLOC_PRINT_SUMS:
+            glflags.gf_print_alloc_sums = TRUE;
+            break;
+        case OPT_ALLOC_TREE_OFF:
+            /*  Suppress nearly all libdwarf de_alloc_tree
+                record keeping. */
+            dwarf_set_de_alloc_flag(FALSE);
+            break;
+
         default: arg_usage_error = TRUE; break;
         }
     }
+}
+
+/*  This is a hack allowing us to pretend that
+    dwarfdump --print-alloc-sums --suppress-de-alloc-tree foo.o
+    has no arguments.  Because the args here really
+    are special for use by dwarfdump developers and
+    even with these special args we want do_all() to be
+    called by process_args() below if there are no
+    'normal' - or -- args.
+    So regression testing can behave identically
+    with or without the two specials.
+    Function new March 6, 2020  */
+static int
+lacking_normal_args (int argct,char **args)
+{
+    char * curarg = 0;
+    int i = 0;
+
+    for ( i = 0; i < argct ; ++i) {
+        curarg = args[i];
+        if (curarg[0] != '-') {
+            /*  Standard case. */
+            return TRUE;
+        }
+        if (!strcmp(curarg,"--print-alloc-sums")) {
+            /* Ok. One of the specials. Check more. */
+            continue;
+        }
+        if (!strcmp(curarg,"--suppress-de-alloc-tree")) {
+            /* Ok. One of the specials. Check more. */
+            continue;
+        }
+        /*  Not one of the specials, a normal argument,
+            so we have some 'real' args. */
+        return FALSE;
+    }
+    /*  Never found any argument at all, let regular
+        arg processing deal with it. */
+    return TRUE;
 }
 
 /* process arguments and return object filename */
@@ -2459,7 +2514,8 @@ process_args(int argc, char *argv[])
     glflags.program_fullname = argv[0];
 
     suppress_check_dwarf();
-    if (argv[1] != NULL && argv[1][0] != '-') {
+    if (argv[1] && lacking_normal_args(argc-1,argv+1)) {
+        /*  The default setting of what to print or do */
         do_all();
     }
     glflags.gf_section_groups_flag = TRUE;

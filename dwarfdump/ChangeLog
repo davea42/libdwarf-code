@@ -1,3 +1,18 @@
+2020-03-09:   David Anderson
+    * command_options.c: Implements two options primarily for
+      dwarfdump developers: --suppress-de-alloc-tree 
+      and --print-alloc-sums.
+    * dwarf_names.c,dwarf_names.h,dwarfdump-ta-ext-table.h,
+      dwarfdump-ta-table.h,dwarfdump-tt-ext-table.h,
+      dwarfdump-tt-table.h: regenerated with latest
+      version date string.
+    * dwarfdump.c: Implements the two new options.
+    * glflags.c,glflags.h: declares and instantiates
+      a new global flag gf_print_alloc_sums for the new option
+      --print-alloc-sums.
+    * print_die.c: Arranged correct dwarf_dealloc of
+      DW_DLA_ERROR errors when calling dwarf_formudata/sdata
+      and discarding errors.
 2020-02-25:   David Anderson
     * dwarf_names.c,dwarf_names.h,dwarfdump-ta-ext-table.h,
       dwarfdump-ta-table.h dwarfdump-tt-ext-table.h dwarfdump-tt-table.h:

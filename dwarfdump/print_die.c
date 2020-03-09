@@ -1620,23 +1620,34 @@ get_small_encoding_integer_and_name(Dwarf_Debug dbg,
     int show_form)
 {
     Dwarf_Unsigned uval = 0;
-    int vres = dwarf_formudata(attrib, &uval, seierr);
+    Dwarf_Error localerr = 0;
 
+
+    int vres = dwarf_formudata(attrib, &uval, &localerr);
+    if(vres == DW_DLV_ERROR) {
+        dwarf_dealloc(dbg,localerr, DW_DLA_ERROR);
+        localerr = 0;
+    }
     if (vres != DW_DLV_OK) {
         Dwarf_Signed sval = 0;
-        if(vres == DW_DLV_ERROR) {
-            dwarf_dealloc(dbg,*seierr, DW_DLV_ERROR);
-            *seierr = 0;
+        int ires = 0;
+        Dwarf_Error ilocalerr = 0;
+
+        ires = dwarf_formsdata(attrib, &sval, &ilocalerr);
+        if (ires == DW_DLV_ERROR) {
+            dwarf_dealloc(dbg,ilocalerr,DW_DLA_ERROR);
+            ilocalerr = 0;
         }
-        vres = dwarf_formsdata(attrib, &sval, seierr);
-        if (vres != DW_DLV_OK) {
-            vres = dwarf_global_formref(attrib,&uval,seierr);
-            if (vres != DW_DLV_OK) {
+        if (ires != DW_DLV_OK) {
+            int jres = 0;
+
+            jres = dwarf_global_formref(attrib,&uval,seierr);
+            if (jres != DW_DLV_OK) {
                 if (string_out != 0) {
                     esb_append_printf_s(string_out,
                         "%s has a bad form.", attr_name);
                 }
-                return vres;
+                return jres;
             }
             *uval_out = uval;
         } else {
@@ -2180,6 +2191,7 @@ print_range_attribute(Dwarf_Debug dbg,
                         pra_dwarf_names_print_on_error),
                     " cannot find DW_AT_ranges at offset");
             }
+            dwarf_dealloc(dbg,raerr,DW_DLA_ERROR);
         } else {
             /* NO ENTRY */
             if ( glflags.gf_suppress_checking_on_dwp) {
@@ -2216,6 +2228,9 @@ print_range_attribute(Dwarf_Debug dbg,
                 get_AT_name(attr,
                     pra_dwarf_names_print_on_error),
                 " fails to find DW_AT_ranges offset");
+        }
+        if (fres == DW_DLV_ERROR) {
+            dwarf_dealloc(dbg,raerr, DW_DLA_ERROR);
         }
     }
 }

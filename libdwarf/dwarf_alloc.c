@@ -107,6 +107,61 @@ struct Dwarf_Error_s _dwarf_failsafe_error = {
     1
 };
 
+/*  If non-zero (the default) de_alloc_tree (see dwarf_alloc.c)
+    is used normally.  If zero then dwarf allocations
+    are not tracked by libdwarf and dwarf_finish() cannot
+    clean up any per-Dwarf_Debug allocations the
+    caller forgot to dealloc. */
+static signed char global_de_alloc_tree_on = 1;
+static Dwarf_Unsigned global_allocation_count;
+static Dwarf_Unsigned global_allocation_total;
+static Dwarf_Unsigned global_de_alloc_tree_count;
+static Dwarf_Unsigned global_de_alloc_tree_total;
+static Dwarf_Unsigned global_de_alloc_tree_early_dealloc_count;
+static Dwarf_Unsigned global_de_alloc_tree_early_dealloc_size;
+
+void _dwarf_alloc_tree_counts(Dwarf_Unsigned *allocount,
+    Dwarf_Unsigned *allosum,
+    Dwarf_Unsigned *treecount,
+    Dwarf_Unsigned *treesum,
+    Dwarf_Unsigned *earlydealloccount,
+    Dwarf_Unsigned *earlydeallocsize,
+    Dwarf_Unsigned *unused1,
+    Dwarf_Unsigned *unused2,
+    Dwarf_Unsigned *unused3)
+{
+    *allocount = global_allocation_count;
+    *allosum =   global_allocation_total;
+    *treecount = global_de_alloc_tree_count;
+    *treesum =   global_de_alloc_tree_total;
+    *earlydealloccount = 
+        global_de_alloc_tree_early_dealloc_count;
+    *earlydeallocsize = 
+        global_de_alloc_tree_early_dealloc_size;
+    if (unused1) {
+        *unused1 = 0;
+    }
+    if (unused2) {
+        *unused2 = 0;
+    }
+    if (unused3) {
+        *unused3 = 0;
+    }
+}
+
+/*  Defined March 7 2020. Allows a caller to
+    avoid most tracking by the de_alloc_tree hash
+    table if called with v of zero.
+    Returns the value the flag was before this call. */
+int dwarf_set_de_alloc_flag(int v)
+{
+    int ov = global_de_alloc_tree_on;
+    global_de_alloc_tree_on = v;
+    return ov;
+}
+
+
+
 void
 _dwarf_error_destructor(void *m)
 {
@@ -429,19 +484,34 @@ _dwarf_get_alloc(Dwarf_Debug dbg,
         r->rd_type = alloc_type;
         r->rd_length = size;
         if (alloc_instance_basics[type].specialconstructor) {
-            int res =
-                alloc_instance_basics[type].specialconstructor(dbg, ret_mem);
+            int res = alloc_instance_basics[type].
+                specialconstructor(dbg, ret_mem);
             if (res != DW_DLV_OK) {
-                /*  We leak what we allocated in _dwarf_find_memory when
+                /*  We leak what we allocated in
+                    _dwarf_find_memory when
                     constructor fails. */
                 return NULL;
             }
         }
-        result = dwarf_tsearch((void *)key,
-            &dbg->de_alloc_tree,simple_compare_function);
-        if(!result) {
-            /*  Something badly wrong. Out of memory.
-                pretend all is well. */
+        /*  See global flag.
+            If zero then caller choses not
+            to track allocations, so dwarf_finish()
+            is unable to free anything the caller
+            omitted to dealloc. Normally
+            the global flag is non-zero */
+        global_allocation_count++;
+        global_allocation_total += size;
+
+        if (global_de_alloc_tree_on ||
+            alloc_type == DW_DLA_STRING ) {
+            global_de_alloc_tree_total += size;
+            global_de_alloc_tree_count++;
+            result = dwarf_tsearch((void *)key,
+                &dbg->de_alloc_tree,simple_compare_function);
+            if(!result) {
+                /*  Something badly wrong. Out of memory.
+                    pretend all is well. */
+            }
         }
         return (ret_mem);
     }
@@ -511,7 +581,7 @@ dwarf_dealloc(Dwarf_Debug dbg,
     char * malloc_addr = 0;
     struct reserve_data_s * r = 0;
 
-    if (space == NULL) {
+    if (!space) {
         return;
     }
     if (dbg) {
@@ -521,8 +591,8 @@ dwarf_dealloc(Dwarf_Debug dbg,
             string_is_in_debug_section(dbg,space)) {
             /*  A string pointer may point into .debug_info or
                 .debug_string etc.
-                So must not be freed.  And strings have no need of a
-                specialdestructor().
+                So must not be freed.  And strings have
+                no need of a specialdestructor().
                 Mostly a historical mistake here. */
             return;
         }
@@ -535,22 +605,29 @@ dwarf_dealloc(Dwarf_Debug dbg,
     }
     if (alloc_type == DW_DLA_ERROR) {
         Dwarf_Error ep = (Dwarf_Error)space;
+
         if (ep->er_static_alloc == DE_STATIC) {
             /*  This is special, malloc arena
                 was exhausted or a NULL dbg
                 was used for the error because the real
-                dbg was unavailable. There is nothing to delete, really.
-                Set er_errval to signal that the space was dealloc'd. */
-            _dwarf_failsafe_error.er_errval = DW_DLE_FAILSAFE_ERRVAL;
+                dbg was unavailable.
+                There is nothing to delete, really.
+                Set er_errval to signal that the
+                space was dealloc'd. 
+                Not dealing with destructor here. */
+            _dwarf_failsafe_error.er_errval =
+                DW_DLE_FAILSAFE_ERRVAL;
             return;
         }
         if (ep->er_static_alloc == DE_MALLOC) {
             /*  This is special, we had no arena
-                so just malloc'd a Dwarf_Error_s. */
+                so just malloc'd a Dwarf_Error_s.
+                Not dealing with destructor here. */
             free(space);
             return;
         }
         /* Was normal alloc, use normal dealloc. */
+        /* DW_DLA_ERROR has a specialdestructor */
     }
     type = alloc_type;
     malloc_addr = (char *)space - DW_RESERVE;
@@ -564,31 +641,33 @@ dwarf_dealloc(Dwarf_Debug dbg,
         /* internal or user app error */
         return;
     }
-
-
+    global_de_alloc_tree_early_dealloc_count++;
+    global_de_alloc_tree_early_dealloc_size += r->rd_length;
     if (alloc_instance_basics[type].specialdestructor) {
         alloc_instance_basics[type].specialdestructor(space);
     }
     {
-        /*  The 'space' pointer we get points after the reserve space.
-            The key and address to free are just a few bytes before
-            'space'. */
+        /*  The 'space' pointer we get points after the
+            reserve space.  The key is 'space' 
+            and address to free
+            is just a few bytes before 'space'. */
         void *key = space;
-        dwarf_tdelete(key,&dbg->de_alloc_tree,simple_compare_function);
+
+        dwarf_tdelete(key,&dbg->de_alloc_tree,
+            simple_compare_function);
         /*  If dwarf_tdelete returns NULL it might mean
             a) tree is empty.
-            b) If hashsearch, then a single chain might now be empty,
+            b) If hashsearch, then a single chain might
+                now be empty,
                 so we do not know of a 'parent node'.
             c) We did not find that key, we did nothing.
 
             In any case, we simply don't worry about it.
             Not Supposed To Happen. */
-
         free(malloc_addr);
         return;
     }
 }
-
 
 /*
     Allocates space for a Dwarf_Debug_s struct,
@@ -606,9 +685,11 @@ _dwarf_get_debug(void)
     memset(dbg, 0, sizeof(struct Dwarf_Debug_s));
     /* Set up for a dwarf_tsearch hash table */
 
-    dwarf_initialize_search_hash(&dbg->de_alloc_tree,simple_value_hashfunc,0);
-
-
+    /* Leaving initialization on so we can track
+        DW_DLA_STRING even when global_de_alloc_tree_on
+        is zero. */
+    dwarf_initialize_search_hash(&dbg->de_alloc_tree,
+        simple_value_hashfunc,0);
     return (dbg);
 }
 
@@ -723,6 +804,8 @@ _dwarf_free_all_of_one_debug(Dwarf_Debug dbg)
     }
 
     _dwarf_destroy_group_map(dbg);
+    /*  de_alloc_tree might be NULL if
+        global_de_alloc_tree_on is zero. */
     dwarf_tdestroy(dbg->de_alloc_tree,tdestroy_free_node);
     dbg->de_alloc_tree = 0;
     if (dbg->de_tied_data.td_tied_search) {

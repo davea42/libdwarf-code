@@ -103,9 +103,11 @@ _dwarf_error_string(Dwarf_Debug dbg, Dwarf_Error * error,
             dwarfstring *em = 0;
 
             em = (dwarfstring *)calloc(1,sizeof(dwarfstring));
-            dwarfstring_constructor(em);
-            dwarfstring_append(em,msg);
-            errptr->er_msg = (void*)em;
+            if (em) {
+                dwarfstring_constructor(em);
+                dwarfstring_append(em,msg);
+                errptr->er_msg = (void*)em;
+            }
         }
         *error = errptr;
         return;

@@ -275,6 +275,9 @@ init_global_flags(void)
 
     /*  Check errors. */
     glflags.check_error = 0;
+
+    /*  Temporarily lets print always. */
+    glflags.gf_print_alloc_sums = 1;
 }
 
 void
