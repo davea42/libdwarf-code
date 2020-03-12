@@ -192,6 +192,7 @@ print_abbrevs(Dwarf_Debug dbg)
         if (abres == DW_DLV_ERROR) {
             print_error_and_continue(dbg,
                 "Error reading abbreviations", abres, paerr);
+            dwarf_dealloc(dbg,paerr,DW_DLA_ERROR);
             return;
         }
         if (abres == DW_DLV_NO_ENTRY) {
@@ -210,6 +211,9 @@ print_abbrevs(Dwarf_Debug dbg)
             dwarf_dealloc(dbg, ab, DW_DLA_ABBREV);
             print_error_and_continue(dbg, "Error reading abbreviation code",
                 tres, paerr);
+            dwarf_dealloc(dbg,paerr,DW_DLA_ERROR);
+            paerr = 0;
+            abbrev_code = 0;
         }
         if (!tag) {
             tagname = "Abbrev 0: null abbrev entry";

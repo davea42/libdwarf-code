@@ -1,4 +1,7 @@
 2020-03-12:   David Anderson
+    * print_abbrevs.c: Eliminate leaks that relied
+      on de_alloc_tree to clean up.
+2020-03-12:   David Anderson
     * command_options.h, command_options.c: Adds
       uri_data_constructor() and uri_data_destructor()
       to avoid an old memory leak (called from dwarfdump.c).
