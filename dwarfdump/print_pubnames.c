@@ -280,6 +280,8 @@ print_pubnames(Dwarf_Debug dbg)
     }
     if (res == DW_DLV_ERROR) {
         print_error_and_continue(dbg, "dwarf_get_globals", res, err);
+        dwarf_dealloc(dbg,err,DW_DLA_ERROR);
+        err = 0;
     } else if (res == DW_DLV_NO_ENTRY) {
         esb_destructor(&sanitname);
         dwarf_return_empty_pubnames(dbg,0,&err);
