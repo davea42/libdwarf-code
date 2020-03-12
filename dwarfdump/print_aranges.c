@@ -179,7 +179,7 @@ print_aranges(Dwarf_Debug dbg)
                 &start, &length,
                 &cu_die_offset, &pa_error);
             if (aires != DW_DLV_OK) {
-                print_error(dbg, "dwarf_get_arange_info_b error", 
+                print_error(dbg, "dwarf_get_arange_info_b error",
                     aires, pa_error);
             } else {
                 int dres;
@@ -188,7 +188,7 @@ print_aranges(Dwarf_Debug dbg)
                 esb_constructor(&producer_name);
                 /*  Get basic locations for error reporting */
                 dres = dwarf_offdie(dbg, cu_die_offset,
-                     &cu_die, &pa_error);
+                    &cu_die, &pa_error);
                 if (dres != DW_DLV_OK) {
                     if (dres == DW_DLV_ERROR) {
                         aranges_dealloc_now(dbg,count,arange_buf);
@@ -289,7 +289,7 @@ print_aranges(Dwarf_Debug dbg)
                                 (Dwarf_Unsigned)start);
                         }
                         printf("length of 0x%" DW_PR_XZEROS DW_PR_DUx
-                            ", cu_die_offset = 0x%" 
+                            ", cu_die_offset = 0x%"
                             DW_PR_XZEROS DW_PR_DUx,
                             length,
                             (Dwarf_Unsigned)cu_die_offset);
@@ -300,7 +300,7 @@ print_aranges(Dwarf_Debug dbg)
                             (Dwarf_Unsigned)off);
                     }
                 } else {
-                    /*  Must be a range end. 
+                    /*  Must be a range end.
                         We really do want to print
                         this as there is a real record here, an
                         'arange end' record. */
