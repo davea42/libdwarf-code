@@ -1,4 +1,7 @@
 2020-03-12:   David Anderson
+    * print_die.c: Small changes to cleanup DIE allocations
+      so not relying on de_alloc_tree.
+2020-03-12:   David Anderson
     * print_aranges.c:  Fixed trailing whitespace and indents.
 2020-03-12:   David Anderson
     * esb.c, dwarfdump.c: Fixed trailing whitespace and indents.

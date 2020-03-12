@@ -408,6 +408,8 @@ print_infos(Dwarf_Debug dbg,Dwarf_Bool is_info)
                 glflags.program_name, "attempting to print .debug_info",
                 errmsg, (unsigned long) myerr);
             fprintf(stderr, "attempting to continue.\n");
+            dwarf_dealloc(dbg,pi_err,DW_DLA_ERROR);
+            pi_err = 0;
         }
         return;
     }
@@ -421,6 +423,8 @@ print_infos(Dwarf_Debug dbg,Dwarf_Bool is_info)
             glflags.program_name, "attempting to print .debug_types",
             errmsg, (unsigned long) myerr);
         fprintf(stderr, "attempting to continue.\n");
+        dwarf_dealloc(dbg,pi_err,DW_DLA_ERROR);
+        pi_err = 0;
     }
 }
 
@@ -739,7 +743,8 @@ print_one_die_section(Dwarf_Debug dbg,Dwarf_Bool is_info,
         if (nres == DW_DLV_ERROR) {
             /*  With corrupt DWARF due to a bad CU die
                 we won't know much. */
-            print_error_and_continue(dbg, "Failure reading CU header or DIE, corrupt DWARF", nres, *pod_err);
+            print_error_and_continue(dbg, "Failure reading CU header"
+               " or DIE, corrupt DWARF", nres, *pod_err);
             return nres;
         }
         if (cu_count >= glflags.break_after_n_units) {
@@ -801,6 +806,7 @@ print_one_die_section(Dwarf_Debug dbg,Dwarf_Bool is_info,
         fission_data_result = dwarf_get_debugfission_for_die(cu_die,
             &fission_data,pod_err);
         if (fission_data_result == DW_DLV_ERROR) {
+            dwarf_dealloc(dbg, cu_die, DW_DLA_DIE);
             print_error(dbg, "Failure looking for Debug Fission data",
                 fission_data_result, *pod_err);
         }
@@ -834,7 +840,6 @@ print_one_die_section(Dwarf_Debug dbg,Dwarf_Bool is_info,
             to 'dwarf_siblingof' at the top of the main loop. */
         dwarf_dealloc(dbg, cu_die, DW_DLA_DIE);
         cu_die = 0; /* For debugging, stale die should be NULL. */
-
         if ((glflags.gf_info_flag || glflags.gf_types_flag) &&
             glflags.gf_do_print_dwarf) {
             if (glflags.verbose) {
@@ -907,7 +912,6 @@ print_one_die_section(Dwarf_Debug dbg,Dwarf_Bool is_info,
                     dwarf_dealloc(dbg, srcfiles, DW_DLA_LIST);
                 }
             }
-
             /* Dump Ranges Information */
             if (dump_ranges_info) {
                 PrintBucketGroup(glflags.pRangesInfo,TRUE);
@@ -950,6 +954,7 @@ print_one_die_section(Dwarf_Debug dbg,Dwarf_Bool is_info,
                 if (mres == DW_DLV_NO_ENTRY) {
                     /* By far the most likely result. */
                 }else if (mres == DW_DLV_ERROR) {
+                    dwarf_dealloc(dbg, cu_die, DW_DLA_DIE);
                     print_error(dbg, "get_macinfo_offset", mres,*pod_err);
                 } else {
                     print_macinfo_by_offset(dbg,offset);
@@ -1236,7 +1241,6 @@ print_die_and_children_internal(Dwarf_Debug dbg,
         } else if (cdres == DW_DLV_ERROR) {
             print_error(dbg, "dwarf_child", cdres, dacerr);
         }
-
         /* Stop the display of all children */
         if (glflags.gf_display_children_tree &&
             (glflags.gf_info_flag || glflags.gf_types_flag) &&
@@ -1245,7 +1249,6 @@ print_die_and_children_internal(Dwarf_Debug dbg,
             glflags.gf_info_flag = FALSE;
             glflags.gf_types_flag = FALSE;
         }
-
         cdres = dwarf_siblingof_b(dbg, in_die,is_info,
             &sibling, &dacerr);
         if (cdres == DW_DLV_OK) {
@@ -1292,8 +1295,10 @@ print_die_and_children_internal(Dwarf_Debug dbg,
 
         EMPTY_DIE_STACK_ENTRY(die_stack_indent_level);
         if (in_die != in_die_in) {
-            /*  Dealloc our in_die, but not the argument die, it belongs
-                to our caller. Whether the siblingof call worked or not. */
+            /*  Dealloc our in_die, but not the 
+                argument die, it belongs
+                to our caller. Whether the siblingof
+                call worked or not. */
             dwarf_dealloc(dbg, in_die, DW_DLA_DIE);
             in_die = 0;
         }
@@ -4037,6 +4042,8 @@ get_location_list(Dwarf_Debug dbg,
                             " %s>",
                             adexplain(dwarf_errno(llerr),
                             "start-address-unavailable"));
+                        dwarf_dealloc(dbg,llerr,DW_DLA_ERROR);
+                        llerr = 0;
                     } else {
                         esb_append_printf_u(esbp,
                             "<debug_addr index 0x%"
@@ -4887,12 +4894,17 @@ get_attr_value(Dwarf_Debug dbg, Dwarf_Half tag,
             if (DW_DLE_MISSING_NEEDED_DEBUG_ADDR_SECTION ==
                 dwarf_errno(err)) {
                 Dwarf_Unsigned index = 0;
-                int res = dwarf_get_debug_addr_index(attrib,&index,&err);
+                int res = 0;
+
+                dwarf_dealloc(dbg,err,DW_DLA_ERROR);
+                err = 0;
+                res = dwarf_get_debug_addr_index(attrib,&index,&err);
                 if(res != DW_DLV_OK) {
                     struct esb_s lstr;
                     esb_constructor(&lstr);
                     esb_append(&lstr,get_FORM_name(theform,FALSE));
                     esb_append(&lstr," missing index. ?!");
+                    /*  print_error() does not return */
                     print_error(dbg, esb_get_string(&lstr),
                         res, err);
                     esb_destructor(&lstr);
