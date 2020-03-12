@@ -134,9 +134,9 @@ void _dwarf_alloc_tree_counts(Dwarf_Unsigned *allocount,
     *allosum =   global_allocation_total;
     *treecount = global_de_alloc_tree_count;
     *treesum =   global_de_alloc_tree_total;
-    *earlydealloccount = 
+    *earlydealloccount =
         global_de_alloc_tree_early_dealloc_count;
-    *earlydeallocsize = 
+    *earlydeallocsize =
         global_de_alloc_tree_early_dealloc_size;
     if (unused1) {
         *unused1 = 0;
@@ -613,7 +613,7 @@ dwarf_dealloc(Dwarf_Debug dbg,
                 dbg was unavailable.
                 There is nothing to delete, really.
                 Set er_errval to signal that the
-                space was dealloc'd. 
+                space was dealloc'd.
                 Not dealing with destructor here. */
             _dwarf_failsafe_error.er_errval =
                 DW_DLE_FAILSAFE_ERRVAL;
@@ -648,7 +648,7 @@ dwarf_dealloc(Dwarf_Debug dbg,
     }
     {
         /*  The 'space' pointer we get points after the
-            reserve space.  The key is 'space' 
+            reserve space.  The key is 'space'
             and address to free
             is just a few bytes before 'space'. */
         void *key = space;
@@ -726,7 +726,11 @@ freecontextlist(Dwarf_Debug dbg, Dwarf_Debug_InfoTypes dis)
         context; context = nextcontext) {
         Dwarf_Hash_Table hash_table = context->cc_abbrev_hash_table;
         _dwarf_free_abbrev_hash_table_contents(dbg,hash_table);
+        hash_table->tb_entries = 0;
         nextcontext = context->cc_next;
+        context->cc_next = 0;
+        /*  See also  local_dealloc_cu_context() in
+            dwarf_die_deliv.c */
         dwarf_dealloc(dbg, hash_table, DW_DLA_HASH_TABLE);
         context->cc_abbrev_hash_table = 0;
         dwarf_dealloc(dbg, context, DW_DLA_CU_CONTEXT);

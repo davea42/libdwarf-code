@@ -1,4 +1,8 @@
 2020-03-12: David Anderson
+    * dwarf_alloc.c: Minor cleanup that assigns
+      zero after dwarf_dealloc so dead pointers
+      not left around.
+2020-03-12: David Anderson
     * dwarf_str_offsets.c: Improve messages in case of
       a serious DWARF error, reporting what is wrong
       more precisely and allowing a few bytes of all-zero-bits
