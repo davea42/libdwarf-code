@@ -82,6 +82,7 @@ print_macro_ops(Dwarf_Debug dbg,
             k, &section_offset,&macro_operator,
             &forms_count, &formcode_array,&err);
         if (lres != DW_DLV_OK) {
+            dwarf_dealloc_macro_context(mcontext);
             print_error(dbg,
                 "ERROR from  dwarf_get_macro_op()",
                 lres,err);
@@ -148,6 +149,7 @@ print_macro_ops(Dwarf_Debug dbg,
                 &macro_string,
                 &err);
             if (lres != DW_DLV_OK) {
+                dwarf_dealloc_macro_context(mcontext);
                 print_error(dbg,
                     "ERROR from  strp dwarf_get_macro_defundef()",
                     lres,err);
@@ -198,6 +200,7 @@ print_macro_ops(Dwarf_Debug dbg,
                 &macro_string,
                 &err);
             if (lres != DW_DLV_OK) {
+                dwarf_dealloc_macro_context(mcontext);
                 print_error(dbg,
                     "ERROR from sup dwarf_get_macro_defundef()",
                     lres,err);
@@ -217,6 +220,7 @@ print_macro_ops(Dwarf_Debug dbg,
                 &index,
                 &macro_string,&err);
             if (lres != DW_DLV_OK) {
+                dwarf_dealloc_macro_context(mcontext);
                 print_error(dbg,
                     "ERROR from  dwarf_get_macro_startend_file()",
                     lres,err);
@@ -236,6 +240,7 @@ print_macro_ops(Dwarf_Debug dbg,
             lres = dwarf_get_macro_import(mcontext,
                 k,&offset,&err);
             if (lres != DW_DLV_OK) {
+                dwarf_dealloc_macro_context(mcontext);
                 print_error(dbg,
                     "ERROR from  dwarf_get_macro_import()",
                     lres,err);
@@ -251,6 +256,7 @@ print_macro_ops(Dwarf_Debug dbg,
             lres = dwarf_get_macro_import(mcontext,
                 k,&offset,&err);
             if (lres != DW_DLV_OK) {
+                dwarf_dealloc_macro_context(mcontext);
                 print_error(dbg,
                     "ERROR from  dwarf_get_macro_import()(sup)",
                     lres,err);
@@ -303,6 +309,8 @@ print_macros_5style_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die,
         return;
     }
     if(lres == DW_DLV_ERROR) {
+        /* This does not return */
+        dwarf_dealloc_macro_context(macro_context);
         print_error(dbg,"Unable to dwarf_get_macro_context()",
             lres,err);
         return;
@@ -339,11 +347,13 @@ print_macros_5style_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die,
         int tres = dwarf_tag(cu_die, &tag, &err);
         if (tres != DW_DLV_OK) {
             /*  Something broken here. */
+            dwarf_dealloc_macro_context(macro_context);
             print_error(dbg,"Unable to see CU DIE tag "
                 "though we could see it earlier. Something broken.",
                 tres,err);
             return;
         } else if (tag == DW_TAG_type_unit) {
+            dwarf_dealloc_macro_context(macro_context);
             /*  Not checking since type units missing
                 address or range in CU header. */
             return;
@@ -367,6 +377,7 @@ print_macros_5style_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die,
             DWARF_CHECK_COUNT(lines_result,(errcount-1));
         }
         if (lres == DW_DLV_ERROR) {
+            dwarf_dealloc_macro_context(macro_context);
             print_error(dbg, "dwarf_srclines details", lres, err);
         }
 #endif
@@ -391,10 +402,12 @@ print_macros_5style_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die,
             &has_offset_size_64,&has_operands_table,
             &opcode_count,&err);
         if(lres == DW_DLV_NO_ENTRY) {
+            dwarf_dealloc_macro_context(macro_context);
             /* Impossible */
             return;
         }
         if(lres == DW_DLV_ERROR) {
+            dwarf_dealloc_macro_context(macro_context);
             print_error(dbg,"Call to dwarf_macro_context_head() failed",
                 lres,err);
             return;

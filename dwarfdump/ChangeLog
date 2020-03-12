@@ -1,4 +1,8 @@
 2020-03-12:   David Anderson
+    * print_macro.c: Clean up vi doing
+      proper dealloc calls instead of relying
+      on de_alloc_tree to clean up.
+2020-03-12:   David Anderson
     * print_lines.c: Eliminate leaks that relied
       on de_alloc_tree to clean up.
 2020-03-12:   David Anderson
