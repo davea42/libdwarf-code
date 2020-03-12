@@ -395,8 +395,8 @@ void _dwarf_alloc_tree_counts(Dwarf_Unsigned *allocount,
 
 /*  This intended for dwarfdump testing only
     by the developers.  It's quite odd,
-    really. 
-    See regressiontests/scripts/analyzedwalloc.py 
+    really.
+    See regressiontests/scripts/analyzedwalloc.py
     But handy for some performance analysis. */
 static void
 print_libdwarf_alloc_values(const char *file_name,
@@ -612,7 +612,7 @@ main(int argc, char *argv[])
             fprintf(stderr, "%s ERROR:  tied file \'%s\' and "
                 "main file \'%s\' not "
                 "the same kind of object!\n",
-                glflags.program_name, 
+                glflags.program_name,
                 tied_file_name,
                 esb_get_string(&global_file_name));
             global_destructors();
@@ -624,7 +624,7 @@ main(int argc, char *argv[])
                 Can this really happen with a tied file? */
             esb_empty_string(glflags.config_file_tiedpath);
             esb_append(glflags.config_file_tiedpath,
-               temp_path_buf);
+                temp_path_buf);
             esb_append(&global_tied_file_name,temp_path_buf);
         } else {
             esb_append(&global_tied_file_name,tied_file_name);
@@ -687,8 +687,8 @@ main(int argc, char *argv[])
             file_name);
     }
     if (glflags.gf_print_alloc_sums) {
-       print_libdwarf_alloc_values(file_name,argc,argv);
-    } 
+        print_libdwarf_alloc_values(file_name,argc,argv);
+    }
     /* ======= END PROCESSING OBJECT FILES BY TYPE ===== */
 
     /*  These cleanups only necessary once all

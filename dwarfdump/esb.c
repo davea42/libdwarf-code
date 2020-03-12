@@ -447,7 +447,7 @@ esb_append_printf_s(struct esb_s *data,const char *format,const char *s)
         }
     } else {
         if (fixedlen && (fixedlen < stringlen)) {
-            /*  This lets us have fixedlen < stringlen by 
+            /*  This lets us have fixedlen < stringlen by
                 taking all the chars from s ignoring
                 the fixedlen*/
             esb_appendn_internal(data,s,stringlen);
