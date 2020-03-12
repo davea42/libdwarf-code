@@ -1,4 +1,20 @@
 2020-03-12: David Anderson
+    * dwarf_die_deliv.c:  A local function now explicitly
+      static (_dwarf_siblingof_internal). 
+      Following dwarf_dealloc of cudie  we assign 0 to it.`
+      New function local_dealloc_cu_context() enables
+      accurate and full dealloc of a cu context
+      (which means there was some error fount) in
+      an easy and complete way.
+      local_attrlist_dealloc() does similarly for attrlists.
+      A DECODE_LEB128_UWORD_CK now in a wrapper so on error
+      we can dwarf_dealloc a DIE.
+    * dwarf_macro5.c: Now dwarf_dealloc_macro_context() is safe
+      if called with a null argument (and in that case there
+      is nothing to do).
+    * dwarf_opaque.h: Removed _dwarf_siblingof_internal()
+      from the declared functions.
+2020-03-12: David Anderson
     * dwarf_alloc.h, dwarf_opaque.h: Removed trailing whitespace.
       Shortened the lines of the LGPL text (the text
       is unchanged).

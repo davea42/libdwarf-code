@@ -1504,7 +1504,12 @@ int dwarf_get_macro_section_name(Dwarf_Debug dbg,
 void
 dwarf_dealloc_macro_context(Dwarf_Macro_Context mc)
 {
-    Dwarf_Debug dbg = mc->mc_dbg;
+    Dwarf_Debug dbg = 0;
+
+    if (!mc) {
+        return;
+    }
+    dbg = mc->mc_dbg;
     dwarf_dealloc(dbg,mc,DW_DLA_MACRO_CONTEXT);
 }
 

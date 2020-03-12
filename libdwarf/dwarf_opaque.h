@@ -745,14 +745,8 @@ int _dwarf_extract_address_from_debug_addr(Dwarf_Debug dbg,
     Dwarf_Addr *addr_out,
     Dwarf_Error *error);
 
-int _dwarf_siblingof_internal(Dwarf_Debug dbg,
-    Dwarf_Die die,
-    Dwarf_CU_Context context,
-    Dwarf_Bool is_info,
-    Dwarf_Die * caller_ret_die, Dwarf_Error * error);
-
-
-int _dwarf_get_base_and_size_given_signature(Dwarf_CU_Context *context,
+int _dwarf_get_base_and_size_given_signature(
+    Dwarf_CU_Context *context,
     Dwarf_Sig8 *signature_in,
     /* xu_sect_index means DW_SECT_info etc. */
     Dwarf_Unsigned xu_sect_index,
