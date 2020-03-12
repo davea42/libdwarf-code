@@ -57,6 +57,7 @@ print_str_offsets_section(Dwarf_Debug dbg)
         print_error_and_continue(dbg,
             "dwarf_open_str_offsets_table_access",
             res, error);
+        dwarf_dealloc(dbg,error,DW_DLA_ERROR);
         return;
     }
     for(;; ++tabnum) {
@@ -84,6 +85,9 @@ print_str_offsets_section(Dwarf_Debug dbg)
         if (res == DW_DLV_ERROR) {
             print_error_and_continue(dbg,
                 "dwarf_next_str_offsets_table", res,error);
+            dwarf_dealloc(dbg,error,DW_DLA_ERROR);
+            error = 0;
+            dwarf_close_str_offsets_table_access(sot,&error);
             return;
         }
         if (tabnum == 0) {
@@ -122,6 +126,9 @@ print_str_offsets_section(Dwarf_Debug dbg)
             if (res != DW_DLV_OK) {
                 print_error_and_continue(dbg,
                     "dwarf_next_str_offsets_table", res,error);
+                dwarf_dealloc(dbg,error,DW_DLA_ERROR);
+                error = 0;
+                dwarf_close_str_offsets_table_access(sot,&error);
                 return;
             }
             if (!count_in_row) {
@@ -156,6 +163,9 @@ print_str_offsets_section(Dwarf_Debug dbg)
             print_error_and_continue(dbg,
                 "dwarf_open_str_offsets_statistics",
                 res, error);
+            dwarf_dealloc(dbg,error,DW_DLA_ERROR);
+            error = 0;
+            dwarf_close_str_offsets_table_access(sot,&error);
             return;
         }
     }
@@ -164,6 +174,8 @@ print_str_offsets_section(Dwarf_Debug dbg)
         print_error_and_continue(dbg,
             "dwarf_close_str_offsets_table_access",
             res, error);
+        dwarf_dealloc(dbg,error,DW_DLA_ERROR);
+        error = 0;
         return;
     }
     sot = 0;

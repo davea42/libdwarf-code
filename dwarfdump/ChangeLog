@@ -1,4 +1,8 @@
 2020-03-12:   David Anderson
+    * print_str_offsets.c: Clean up by doing
+      proper dealloc calls instead of relying
+      on de_alloc_tree to clean up.
+2020-03-12:   David Anderson
     * print_pubnames.c: Clean up by doing
       proper dealloc calls instead of relying
       on de_alloc_tree to clean up.
