@@ -1,4 +1,9 @@
 2020-03-12: David Anderson
+    * dwarf_query.c: Adds wrapper code around some
+      dwarf_util.h macros
+      so in case of a serious DWARF error we can
+      free locally allocated things.
+2020-03-12: David Anderson
     * dwarf_errmsg_list.h: Corrected DW_DLE_STR_OFFSETS_EXTRA_BYTES
       text. The error messages have more detail due to 
       the dwarf_str_offsets.c changes below, so fixed
