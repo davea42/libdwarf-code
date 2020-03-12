@@ -646,10 +646,10 @@ _dwarf_get_abbrev_for_code(Dwarf_CU_Context cu_context,
         newht.tb_table_entry_count =  hash_table_base->tb_total_abbrev_count;
         newht.tb_total_abbrev_count = 0;
         newht.tb_entries =
-            (struct  Dwarf_Hash_Table_Entry_s *)_dwarf_get_alloc(dbg,
+            (struct  Dwarf_Hash_Table_Entry_s *)
+            _dwarf_get_alloc(dbg,
             DW_DLA_HASH_TABLE_ENTRY,
             newht.tb_table_entry_count);
-
         if (!newht.tb_entries) {
             return DW_DLV_NO_ENTRY;
         }
@@ -675,9 +675,9 @@ _dwarf_get_abbrev_for_code(Dwarf_CU_Context cu_context,
     for (hash_abbrev_entry = entry_cur->at_head;
         hash_abbrev_entry != NULL && hash_abbrev_entry->abl_code != code;
         hash_abbrev_entry = hash_abbrev_entry->abl_next);
-    if (hash_abbrev_entry != NULL) {
-        /*  This returns a pointer to an abbrev list entry, not
-            the list itself. */
+    if (hash_abbrev_entry) {
+        /*  This returns a pointer to an abbrev
+            list entry, not the list itself. */
         *list_out = hash_abbrev_entry;
         return DW_DLV_OK;
     }
@@ -713,14 +713,17 @@ _dwarf_get_abbrev_for_code(Dwarf_CU_Context cu_context,
         This can happen,though it seems wrong.
         Or we are at the end of the data block,
         which we also take as
-        meaning done with abbrevs for this CU. An abbreviations table
-        is supposed to end with a zero byte. Not ended by end
-        of data block.  But we are allowing what is possibly a bit
+        meaning done with abbrevs for this CU.
+        An abbreviations table
+        is supposed to end with a zero byte. 
+        Not ended by end of data block.  
+        But we are allowing what is possibly a bit
         more flexible end policy here. */
     if (abbrev_ptr >= end_abbrev_ptr) {
         return DW_DLV_NO_ENTRY;
     }
-    /*  End of abbrev's for this cu, since abbrev code is 0. */
+    /*  End of abbrev's for this cu, since abbrev code 
+        is 0. */
     if (*abbrev_ptr == 0) {
         return DW_DLV_NO_ENTRY;
     }
@@ -771,7 +774,8 @@ _dwarf_get_abbrev_for_code(Dwarf_CU_Context cu_context,
         inner_list_entry->abl_goffset =  abb_goff;
         hash_table_base->tb_total_abbrev_count++;
 
-        /*  Cycle thru the abbrev content, ignoring the content except
+        /*  Cycle thru the abbrev content, 
+            ignoring the content except
             to find the end of the content. */
         res = _dwarf_count_abbrev_entries(dbg,abbrev_ptr,
             end_abbrev_ptr,&atcount,&abbrev_ptr2,error);
@@ -789,8 +793,9 @@ _dwarf_get_abbrev_for_code(Dwarf_CU_Context cu_context,
         *list_out = inner_list_entry;
         return DW_DLV_OK;
     }
-    /*  We cannot find an abbrev_code  matching code. ERROR
-        will be declared eventually.  Might be better to declare
+    /*  We cannot find an abbrev_code  matching code.
+        ERROR will be declared eventually.
+        Might be better to declare
         specific errors here? */
     return DW_DLV_NO_ENTRY;
 }
@@ -1057,11 +1062,16 @@ _dwarf_load_debug_types(Dwarf_Debug dbg, Dwarf_Error * error)
     return res;
 }
 void
-_dwarf_free_abbrev_hash_table_contents(Dwarf_Debug dbg,Dwarf_Hash_Table hash_table)
+_dwarf_free_abbrev_hash_table_contents(Dwarf_Debug dbg,
+    Dwarf_Hash_Table hash_table)
 {
     /*  A Hash Table is an array with tb_table_entry_count struct
         Dwarf_Hash_Table_s entries in the array. */
     unsigned hashnum = 0;
+    if(!hash_table) {
+        /*  Not fully set up yet. There is nothing to do. */
+        return;
+    }
     for (; hashnum < hash_table->tb_table_entry_count; ++hashnum) {
         struct Dwarf_Abbrev_List_s *abbrev = 0;
         struct Dwarf_Abbrev_List_s *nextabbrev = 0;

@@ -1,3 +1,8 @@
+2020-03-12: David Anderson
+    * dwarf_util.c: Revise too-long lines and checks for NULL
+      pointers for moderm readability.
+      Improve _dwarf_free_abbrev_hash_table_contents() so
+      it can safely free an incompletely set up hash table.
 2020-03-09: David Anderson
     * dwarf_alloc.c: Implements optional (at run time)
       reduced use of the de_alloc_tree search tree
