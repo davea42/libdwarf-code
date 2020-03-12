@@ -113,6 +113,19 @@ do_checking(Dwarf_Debug dbg, Dwarf_Arange *arange_buf,Dwarf_Signed i,
     }
 }
 
+static void
+aranges_dealloc_now(Dwarf_Debug dbg,
+    Dwarf_Signed count,
+    Dwarf_Arange *arange_buf)
+{
+    Dwarf_Signed i = 0;
+
+    for ( ; i < count;  ++i) {
+        dwarf_dealloc(dbg,arange_buf[i],DW_DLA_ARANGE);
+    }
+    dwarf_dealloc(dbg,arange_buf,DW_DLA_LIST);
+}
+
 /* get all the data in .debug_aranges */
 extern void
 print_aranges(Dwarf_Debug dbg)
@@ -125,7 +138,7 @@ print_aranges(Dwarf_Debug dbg)
     Dwarf_Off prev_off = 0; /* Holds previous CU offset */
     Dwarf_Bool first_cu = TRUE;
     Dwarf_Off cu_die_offset_prev = 0;
-    Dwarf_Error pa_error = 0;
+    Dwarf_Error ga_error = 0;
 
     /* Reset the global state, so we can traverse the debug_info */
     glflags.seen_CU = FALSE;
@@ -134,7 +147,7 @@ print_aranges(Dwarf_Debug dbg)
     glflags.need_CU_high_address = TRUE;
 
     glflags.current_section_id = DEBUG_ARANGES;
-    ares = dwarf_get_aranges(dbg, &arange_buf, &count, &pa_error);
+    ares = dwarf_get_aranges(dbg, &arange_buf, &count, &ga_error);
     if (glflags.gf_do_print_dwarf) {
         struct esb_s truename;
         char buf[DWARF_SECNAME_BUFFER_SIZE];
@@ -146,10 +159,12 @@ print_aranges(Dwarf_Debug dbg)
         esb_destructor(&truename);
     }
     if (ares == DW_DLV_ERROR) {
-        print_error(dbg, "dwarf_get_aranges", ares, pa_error);
+        print_error(dbg, "dwarf_get_aranges", ares, ga_error);
     } else if (ares == DW_DLV_NO_ENTRY) {
         /* no arange is included */
     } else {
+        Dwarf_Error pa_error = 0;
+
         for (i = 0; i < count; i++) {
             Dwarf_Unsigned segment = 0;
             Dwarf_Unsigned segment_entry_size = 0;
@@ -157,33 +172,45 @@ print_aranges(Dwarf_Debug dbg)
             Dwarf_Unsigned length = 0;
             Dwarf_Off cu_die_offset = 0;
             Dwarf_Die cu_die = NULL;
+
             aires = dwarf_get_arange_info_b(arange_buf[i],
                 &segment,
                 &segment_entry_size,
                 &start, &length,
                 &cu_die_offset, &pa_error);
             if (aires != DW_DLV_OK) {
-                print_error(dbg, "dwarf_get_arange_info", aires, pa_error);
+                print_error(dbg, "dwarf_get_arange_info_b error", 
+                    aires, pa_error);
             } else {
                 int dres;
                 struct esb_s producer_name;
+
                 esb_constructor(&producer_name);
                 /*  Get basic locations for error reporting */
-                dres = dwarf_offdie(dbg, cu_die_offset, &cu_die, &pa_error);
+                dres = dwarf_offdie(dbg, cu_die_offset,
+                     &cu_die, &pa_error);
                 if (dres != DW_DLV_OK) {
+                    if (dres == DW_DLV_ERROR) {
+                        aranges_dealloc_now(dbg,count,arange_buf);
+                        arange_buf = 0;
+                    }
                     print_error(dbg, "dwarf_offdie", dres, pa_error);
                 }
-
                 if (glflags.gf_cu_name_flag) {
                     if (should_skip_this_cu(dbg,cu_die)) {
+                        dwarf_dealloc(dbg,cu_die,DW_DLA_DIE);
                         continue;
                     }
                 }
-                /* Get producer name for this CU and update compiler list */
-                get_producer_name(dbg,cu_die,cu_die_offset,&producer_name);
+                /*  Get producer name for this CU and update
+                    compiler list */
+                get_producer_name(dbg,cu_die,cu_die_offset,
+                    &producer_name);
                 update_compiler_target(esb_get_string(&producer_name));
                 esb_destructor(&producer_name);
                 if (!checking_this_compiler()) {
+                    dwarf_dealloc(dbg,cu_die,DW_DLA_DIE);
+                    cu_die = 0;
                     continue;
                 }
 
@@ -199,6 +226,16 @@ print_aranges(Dwarf_Debug dbg)
                     int cures3 = dwarf_get_arange_cu_header_offset(
                         arange_buf[i], &off, &pa_error);
                     if (cures3 != DW_DLV_OK) {
+                        dwarf_dealloc(dbg, cu_die, DW_DLA_DIE);
+                        cu_die = 0;
+                        if (cures3 == DW_DLV_ERROR) {
+                            aranges_dealloc_now(dbg,count,arange_buf);
+                            arange_buf = 0;
+                            dwarf_dealloc(dbg,cu_die,DW_DLA_DIE);
+                            cu_die = 0;
+                        }
+                        dwarf_dealloc(dbg,ga_error,DW_DLA_ERROR);
+                        ga_error = 0;
                         print_error(dbg, "dwarf_get_cu_hdr_offset",
                             cures3, pa_error);
                     }
@@ -207,7 +244,8 @@ print_aranges(Dwarf_Debug dbg)
                     if (prev_off != off || first_cu) {
                         first_cu = FALSE;
                         prev_off = off;
-                        /*  We are faking the indent level. We do not know
+                        /*  We are faking the indent level.
+                            We do not know
                             what level it is, really.
 
                             If do_check_dwarf we do not want to do
@@ -251,19 +289,19 @@ print_aranges(Dwarf_Debug dbg)
                                 (Dwarf_Unsigned)start);
                         }
                         printf("length of 0x%" DW_PR_XZEROS DW_PR_DUx
-                            ", cu_die_offset = 0x%" DW_PR_XZEROS DW_PR_DUx,
+                            ", cu_die_offset = 0x%" 
+                            DW_PR_XZEROS DW_PR_DUx,
                             length,
                             (Dwarf_Unsigned)cu_die_offset);
-
                     }
                     if (glflags.verbose && glflags.gf_do_print_dwarf) {
-                        printf(" cuhdr 0x%" DW_PR_XZEROS DW_PR_DUx "\n",
+                        printf(" cuhdr 0x%" DW_PR_XZEROS DW_PR_DUx
+                            "\n",
                             (Dwarf_Unsigned)off);
                     }
-                    dwarf_dealloc(dbg, cu_die, DW_DLA_DIE);
-                    cu_die = 0;
                 } else {
-                    /*  Must be a range end. We really do want to print
+                    /*  Must be a range end. 
+                        We really do want to print
                         this as there is a real record here, an
                         'arange end' record. */
                     if (glflags.gf_do_print_dwarf) {
@@ -271,10 +309,13 @@ print_aranges(Dwarf_Debug dbg)
                     }
                 }/* end start||length test */
             }  /* end aires DW_DLV_OK test */
-
+            dwarf_dealloc(dbg, cu_die, DW_DLA_DIE);
+            cu_die = 0;
             /* print associated die too? */
-            dwarf_dealloc(dbg, arange_buf[i], DW_DLA_ARANGE);
         }
-        dwarf_dealloc(dbg, arange_buf, DW_DLA_LIST);
+        aranges_dealloc_now(dbg,count,arange_buf);
+        arange_buf = 0;
+        dwarf_dealloc(dbg,pa_error,DW_DLA_ERROR);
+        pa_error = 0;
     }
 }
