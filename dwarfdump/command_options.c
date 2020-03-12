@@ -231,6 +231,17 @@ static void suppress_check_dwarf(void)
     set_checks_off();
 }
 
+static struct esb_s uri_esb_data;
+void
+uri_data_constructor(void)
+{
+    esb_constructor(&uri_esb_data);
+}
+void
+uri_data_destructor(void)
+{
+    esb_destructor(&uri_esb_data);
+}
 /*  The strings whose pointers are returned here
     from makename are never destructed, but
     that is ok since there are only about 10 created at most.  */

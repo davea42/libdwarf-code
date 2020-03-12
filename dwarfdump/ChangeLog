@@ -1,4 +1,8 @@
 2020-03-12:   David Anderson
+    * command_options.h, command_options.c: Adds
+      uri_data_constructor() and uri_data_destructor()
+      to avoid an old memory leak (called from dwarfdump.c).
+2020-03-12:   David Anderson
     * dwarfdump.c: Cleans up old and small memory
       leaks and simplifies the code as well.
 2020-03-09:   David Anderson
