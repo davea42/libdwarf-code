@@ -1,3 +1,6 @@
+2020-03-12:   David Anderson
+    * dwarfdump.c: Cleans up old and small memory
+      leaks and simplifies the code as well.
 2020-03-09:   David Anderson
     * command_options.c: Implements two options primarily for
       dwarfdump developers: --suppress-de-alloc-tree 

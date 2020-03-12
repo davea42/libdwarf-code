@@ -4,24 +4,27 @@
   Portions Copyright 2007-2010 Sun Microsystems, Inc. All rights reserved.
   Portions Copyright 2012 SN Systems Ltd. All rights reserved.
 
-  This program is free software; you can redistribute it and/or modify it
-  under the terms of version 2 of the GNU General Public License as
-  published by the Free Software Foundation.
+  This program is free software; you can redistribute it and/or
+  modify it under the terms of version 2 of the GNU General
+  Public License as published by the Free Software Foundation.
 
-  This program is distributed in the hope that it would be useful, but
-  WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+  This program is distributed in the hope that it would be
+  useful, but WITHOUT ANY WARRANTY; without even the implied
+  warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+  PURPOSE.
 
-  Further, this software is distributed without any warranty that it is
-  free of the rightful claim of any third person regarding infringement
-  or the like.  Any license provided herein, whether implied or
-  otherwise, applies only to this software file.  Patent licenses, if
-  any, provided herein do not apply to combinations of this program with
-  other software, or any other product whatsoever.
+  Further, this software is distributed without any warranty
+  that it is free of the rightful claim of any third person
+  regarding infringement or the like.  Any license provided
+  herein, whether implied or otherwise, applies only to this
+  software file.  Patent licenses, if any, provided herein
+  do not apply to combinations of this program with other
+  software, or any other product whatsoever.
 
-  You should have received a copy of the GNU General Public License along
-  with this program; if not, write the Free Software Foundation, Inc., 51
-  Franklin Street - Fifth Floor, Boston MA 02110-1301, USA.
+  You should have received a copy of the GNU General Public
+  License along with this program; if not, write the Free
+  Software Foundation, Inc., 51 Franklin Street - Fifth Floor,
+  Boston MA 02110-1301, USA.
 
 */
 
@@ -104,6 +107,10 @@ static boolean add_to_unique_errors_table(char * error_text);
 static struct esb_s esb_short_cu_name;
 static struct esb_s esb_long_cu_name;
 static struct esb_s dwarf_error_line;
+static int global_basefd = -1;
+static int global_tiedfd = -1;
+static struct esb_s global_file_name;
+static struct esb_s global_tied_file_name;
 
 static int process_one_file(int fd, int tiedfd,
     Elf *efp, Elf * tiedfp,
@@ -114,9 +121,7 @@ static int process_one_file(int fd, int tiedfd,
 #endif
     struct dwconf_s *conf);
 
-static void
-print_gnu_debuglink(Dwarf_Debug dbg);
-
+static void print_gnu_debuglink(Dwarf_Debug dbg);
 
 static int
 open_a_file(const char * name)
@@ -144,6 +149,30 @@ close_a_file(int f)
         close(f);
     }
 }
+
+static void
+global_destructors(void)
+{
+    makename_destructor();
+    uri_data_destructor();
+    esb_destructor(&esb_long_cu_name);
+    esb_destructor(&esb_short_cu_name);
+    esb_destructor(&dwarf_error_line);
+    esb_destructor(glflags.newprogname);
+    esb_destructor(&global_file_name);
+    esb_destructor(&global_tied_file_name);
+    sanitized_string_destructor();
+    ranges_esb_string_destructor();
+    /*  Global flags initialization and esb-buffers destruction. */
+    reset_global_flags();
+    close_a_file(global_basefd);
+    close_a_file(global_tiedfd);
+#ifdef _WIN32
+    /* Close the null device used during formatting printing */
+    esb_close_null_device();
+#endif /* _WIN32 */
+}
+
 
 #ifdef DWARF_WITH_LIBELF
 static int
@@ -174,13 +203,13 @@ static void
 check_for_major_errors(void)
 {
     if (glflags.gf_count_major_errors) {
-#if 0
-        causes hundreds of test mismatches, so not reporting this.
         printf("There were %ld DWARF errors reported: "
             "see ERROR above\n",
             glflags.gf_count_major_errors);
-#endif /* 0 */
+#if  0
+        global_destructors();
         exit(FAILED);
+#endif /* 0 */
     }
     return;
 }
@@ -247,7 +276,6 @@ static void flag_data_post_cleanup(void)
 static int
 process_using_libelf(int fd, int tiedfd,
     const char *file_name,
-    char       *out_path_buf,
     const char *tied_file_name,
     int archive)
 {
@@ -276,7 +304,6 @@ process_using_libelf(int fd, int tiedfd,
             "Unable to obtain ELF descriptor for %s\n",
             glflags.program_name,
             file_name);
-        free(out_path_buf);
         return (FAILED);
     }
     if (esb_string_len(glflags.config_file_tiedpath) > 0) {
@@ -286,7 +313,6 @@ process_using_libelf(int fd, int tiedfd,
                 "can't open tied file %s\n",
                 glflags.program_name,
                 tied_file_name);
-            free(out_path_buf);
             return (FAILED);
         }
         elftied = elf_begin(tiedfd, cmd, (Elf *) 0);
@@ -295,7 +321,6 @@ process_using_libelf(int fd, int tiedfd,
                 "an archive. Not allowed. Giving up.\n",
                 glflags.program_name,
                 tied_file_name);
-            free(out_path_buf);
             return (FAILED);
         }
         isknown = is_it_known_elf_header(elftied);
@@ -303,7 +328,6 @@ process_using_libelf(int fd, int tiedfd,
             fprintf(stderr,
                 "Cannot process tied file %s: unknown format\n",
                 tied_file_name);
-            free(out_path_buf);
             return FAILED;
         }
     }
@@ -424,16 +448,13 @@ int
 main(int argc, char *argv[])
 {
     const char * file_name = 0;
-    const char * tied_file_name = 0;
-    int fd = -1;
-    int tiedfd = -1;
     unsigned         ftype = 0;
     unsigned         endian = 0;
     unsigned         offsetsize = 0;
     Dwarf_Unsigned   filesize = 0;
     int      errcode = 0;
-    char *out_path_buf = 0;
-    unsigned out_path_buf_len = 0;
+    char *temp_path_buf = 0;
+    unsigned temp_path_buf_len = 0;
     int res = 0;
 
 #ifdef _WIN32
@@ -448,6 +469,7 @@ main(int argc, char *argv[])
     init_global_flags();
 
     set_checks_off();
+    uri_data_constructor();
     esb_constructor(&esb_short_cu_name);
     esb_constructor(&esb_long_cu_name);
     esb_constructor(&dwarf_error_line);
@@ -491,6 +513,7 @@ main(int argc, char *argv[])
             fprintf(stderr,
                 "dwarfdump: Unable to redirect output to '%s'\n",
                 glflags.output_file);
+            global_destructors();
             exit(FAILED);
         }
         dup2(fileno(stdout),fileno(stderr));
@@ -507,19 +530,22 @@ main(int argc, char *argv[])
         wcmd.check_verbose_mode = glflags.gf_check_verbose_mode;
         dwarf_record_cmdline_options(wcmd);
     }
+
+    /* ======= BEGIN FINDING NAMES AND OPENING FDs ===== */
     /*  The 100+2 etc is more than suffices for the expansion that a
         MacOS dsym might need. */
-    out_path_buf_len = strlen(file_name)*2 + 100 + 2;
-    out_path_buf = malloc(out_path_buf_len);
-    if(!out_path_buf) {
+    temp_path_buf_len = strlen(file_name)*2 + 100 + 2;
+    temp_path_buf = malloc(temp_path_buf_len);
+    if(!temp_path_buf) {
         fprintf(stderr, "%s ERROR:  Unable to malloc %lu bytes "
             "for possible path string %s.\n",
-            glflags.program_name,(unsigned long)out_path_buf_len,
+            glflags.program_name,(unsigned long)temp_path_buf_len,
             file_name);
         return (FAILED);
     }
+    temp_path_buf[0] = 0;
     res = dwarf_object_detector_path(file_name,
-        out_path_buf,out_path_buf_len,
+        temp_path_buf,temp_path_buf_len,
         &ftype,&endian,&offsetsize,&filesize,&errcode);
     if ( res != DW_DLV_OK) {
         if (res == DW_DLV_ERROR) {
@@ -532,19 +558,24 @@ main(int argc, char *argv[])
             fprintf(stderr, "%s ERROR:  Can't open %s\n",
                 glflags.program_name, file_name);
         }
-        free(out_path_buf);
+        global_destructors();
+        free(temp_path_buf);
         return (FAILED);
     }
-    if (strcmp(file_name,out_path_buf)) {
+    if (strcmp(file_name,temp_path_buf)) {
         /* We have a MacOS dsym, file_name altered */
-        file_name = makename(out_path_buf);
+        esb_append(&global_file_name,temp_path_buf);
+    } else {
+        esb_append(&global_file_name,file_name);
     }
-    fd = open_a_file(file_name);
-    if (fd == -1) {
+    temp_path_buf[0] = 0;
+    global_basefd = open_a_file(esb_get_string(&global_file_name));
+    if (global_basefd == -1) {
         fprintf(stderr, "%s ERROR:  can't open %s\n",
             glflags.program_name,
-            file_name);
-        free(out_path_buf);
+            esb_get_string(&global_file_name));
+        global_destructors();
+        free(temp_path_buf);
         return (FAILED);
     }
 
@@ -553,10 +584,12 @@ main(int argc, char *argv[])
         unsigned         tendian = 0;
         unsigned         toffsetsize = 0;
         Dwarf_Unsigned   tfilesize = 0;
+        const char * tied_file_name = 0;
 
+        temp_path_buf[0] = 0;
         tied_file_name = esb_get_string(glflags.config_file_tiedpath);
-        res = dwarf_object_detector_path(file_name,
-            out_path_buf,out_path_buf_len,
+        res = dwarf_object_detector_path(tied_file_name,
+            temp_path_buf,temp_path_buf_len,
             &tftype,&tendian,&toffsetsize,&tfilesize,&errcode);
         if ( res != DW_DLV_OK) {
             if (res == DW_DLV_ERROR) {
@@ -570,7 +603,8 @@ main(int argc, char *argv[])
                     "%s ERROR: tied file not an object file '%s'.\n",
                     glflags.program_name, tied_file_name);
             }
-            free(out_path_buf);
+            global_destructors();
+            free(temp_path_buf);
             return (FAILED);
         }
         if (ftype != tftype || endian != tendian ||
@@ -578,26 +612,39 @@ main(int argc, char *argv[])
             fprintf(stderr, "%s ERROR:  tied file \'%s\' and "
                 "main file \'%s\' not "
                 "the same kind of object!\n",
-                glflags.program_name, tied_file_name,out_path_buf);
-            free(out_path_buf);
+                glflags.program_name, 
+                tied_file_name,
+                esb_get_string(&global_file_name));
+            global_destructors();
+            free(temp_path_buf);
             return (FAILED);
         }
-        if (strcmp(file_name,out_path_buf)) {
+        if (strcmp(tied_file_name,temp_path_buf)) {
             /*  We have a MacOS dsym, file_name altered.
                 Can this really happen with a tied file? */
             esb_empty_string(glflags.config_file_tiedpath);
-            esb_append(glflags.config_file_tiedpath,out_path_buf);
-            tied_file_name = out_path_buf;
+            esb_append(glflags.config_file_tiedpath,
+               temp_path_buf);
+            esb_append(&global_tied_file_name,temp_path_buf);
+        } else {
+            esb_append(&global_tied_file_name,tied_file_name);
         }
-        tiedfd = open_a_file(tied_file_name);
-        if (tiedfd == -1) {
+        global_tiedfd = open_a_file(esb_get_string(
+            &global_tied_file_name));
+        if (global_tiedfd == -1) {
             fprintf(stderr, "%s ERROR:  can't open tied file %s\n",
                 glflags.program_name,
-                tied_file_name);
-            free(out_path_buf);
+                esb_get_string(&global_tied_file_name));
+            global_destructors();
+            free(temp_path_buf);
             return (FAILED);
         }
     }
+    /* ======= end FINDING NAMES AND OPENING FDs ===== */
+    free(temp_path_buf);
+    temp_path_buf = 0;
+    temp_path_buf_len = 0;
+    /* ======= BEGIN PROCESSING OBJECT FILES BY TYPE ===== */
     if ( (ftype == DW_FTYPE_ELF && (glflags.gf_reloc_flag ||
         glflags.gf_header_flag)) ||
 #ifdef HAVE_CUSTOM_LIBELF
@@ -607,11 +654,13 @@ main(int argc, char *argv[])
 #ifdef DWARF_WITH_LIBELF
         int excode = 0;
 
-        excode = process_using_libelf(fd,tiedfd,file_name,
-            out_path_buf, tied_file_name,
+        excode = process_using_libelf(global_basefd,
+            global_tiedfd,
+            esb_get_string(&global_file_name),
+            esb_get_string(&global_tied_file_name),
             (ftype == DW_FTYPE_ARCHIVE)? TRUE:FALSE);
         if (excode) {
-            free(out_path_buf);
+            global_destructors();
             exit(excode);
         }
 #else /* !DWARF_WITH_LIBELF */
@@ -620,37 +669,16 @@ main(int argc, char *argv[])
             "--disable-libelf build.\n",
             file_name);
 #endif /* DWARF_WITH_LIBELF */
-    } else if (ftype == DW_FTYPE_ELF) {
+    } else if (ftype == DW_FTYPE_ELF ||
+        ftype ==  DW_FTYPE_MACH_O  ||
+        ftype == DW_FTYPE_PE  ) {
         flag_data_pre_allocation();
-        process_one_file(fd,tiedfd,
+        process_one_file(global_basefd,global_tiedfd,
             0,0,
-            file_name,
-            tied_file_name,
+            esb_get_string(&global_file_name),
+            esb_get_string(&global_tied_file_name),
 #ifdef DWARF_WITH_LIBELF
             0 /* elf_archive */,
-#endif
-            glflags.config_file_data);
-        flag_data_post_cleanup();
-    } else if (ftype == DW_FTYPE_MACH_O) {
-        flag_data_pre_allocation();
-        process_one_file(fd,tiedfd,
-            0,0,
-            file_name,
-            tied_file_name,
-#ifdef DWARF_WITH_LIBELF
-            0 /* mach_o_archive */,
-#endif
-            glflags.config_file_data);
-        flag_data_post_cleanup();
-    } else if (ftype == DW_FTYPE_PE) {
-
-        flag_data_pre_allocation();
-        process_one_file(fd,tiedfd,
-            0,0,
-            file_name,
-            tied_file_name,
-#ifdef DWARF_WITH_LIBELF
-            0/* pe_archive */,
 #endif
             glflags.config_file_data);
         flag_data_post_cleanup();
@@ -661,8 +689,7 @@ main(int argc, char *argv[])
     if (glflags.gf_print_alloc_sums) {
        print_libdwarf_alloc_values(file_name,argc,argv);
     } 
-    free(out_path_buf);
-    out_path_buf = 0;
+    /* ======= END PROCESSING OBJECT FILES BY TYPE ===== */
 
     /*  These cleanups only necessary once all
         objects processed. */
@@ -671,31 +698,19 @@ main(int argc, char *argv[])
         regfree(glflags.search_re);
     }
 #endif
-    makename_destructor();
-    esb_destructor(&esb_long_cu_name);
-    esb_destructor(&esb_short_cu_name);
-    esb_destructor(&dwarf_error_line);
-    sanitized_string_destructor();
-    ranges_esb_string_destructor();
-
-    /*  Global flags initialization and esb-buffers destruction. */
-    reset_global_flags();
-
-    close_a_file(fd);
-    close_a_file(tiedfd);
-
-#ifdef _WIN32
-    /* Close the null device used during formatting printing */
-    esb_close_null_device();
-#endif /* _WIN32 */
-
+    /*  In case of a serious DWARF error
+        we never get here, we exit(1)
+        in print_error() */
     check_for_major_errors();
+    global_destructors();
+#if 0
     if (glflags.gf_count_major_errors) {
         printf("There were %ld DWARF errors reported: "
             "see ERROR above\n",
             glflags.gf_count_major_errors);
         exit(FAILED);
     }
+#endif
     /*  As the tool have reached this point, it means there are
         no internal errors and we should return an OKAY condition,
         regardless if the file being processed has
@@ -1166,6 +1181,7 @@ print_error_maybe_continue(UNUSEDARG Dwarf_Debug dbg,
     unsigned long realmajorerr = glflags.gf_count_major_errors;
     printf("\n");
     if (dwarf_code == DW_DLV_ERROR) {
+        /* We do not dwarf_dealloc the error` here. */
         char * errmsg = dwarf_errmsg(lerr);
 
         /*  We now (April 2016) guarantee the
@@ -1211,6 +1227,7 @@ print_error(Dwarf_Debug dbg,
         dwarf_finish(dbg, &ignored_err);
         check_for_major_errors();
     }
+    global_destructors();
     exit(FAILED);
 }
 /* ARGSUSED */
