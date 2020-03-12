@@ -1144,6 +1144,7 @@ _dwarf_internal_macro_context(Dwarf_Die die,
     if (!offset_specified) {
         lres = dwarf_global_formref(macro_attr, &macro_offset, error);
         if (lres != DW_DLV_OK) {
+            dwarf_dealloc(dbg,macro_attr,DW_DLA_ATTR);
             return lres;
         }
     } else {
@@ -1151,6 +1152,7 @@ _dwarf_internal_macro_context(Dwarf_Die die,
     }
     lres = dwarf_srcfiles(die,&srcfiles,&srcfiles_count, error);
     if (lres == DW_DLV_ERROR) {
+        dwarf_dealloc(dbg,macro_attr,DW_DLA_ATTR);
         return lres;
     }
     lres = _dwarf_internal_get_die_comp_dir(die, &comp_dir,
@@ -1162,6 +1164,7 @@ _dwarf_internal_macro_context(Dwarf_Die die,
                 dwarf_dealloc(dbg, srcfiles[i], DW_DLA_STRING);
             }
         }
+        dwarf_dealloc(dbg,macro_attr,DW_DLA_ATTR);
         dwarf_dealloc(dbg, srcfiles, DW_DLA_LIST);
         srcfiles = 0;
         return lres;
@@ -1195,12 +1198,14 @@ _dwarf_internal_macro_context(Dwarf_Die die,
         if (lres == DW_DLV_OK) {
             srcfiles = 0;
         } else {
+            dwarf_dealloc(dbg,macro_attr,DW_DLA_ATTR);
             dealloc_macro_srcfiles(srcfiles2, srcfiles_count);
             _dwarf_error(dbg, error, DW_DLE_ALLOC_FAIL);
             return lres;
         }
     }
 
+    dwarf_dealloc(dbg,macro_attr,DW_DLA_ATTR);
     /*  NO ENTRY or OK we accept, though NO ENTRY means there
         are no source files available. */
     lres = _dwarf_internal_macro_context_by_offset(dbg,

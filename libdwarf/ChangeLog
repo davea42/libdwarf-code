@@ -1,4 +1,8 @@
 2020-03-12: David Anderson
+    * dwarf_macro5.c: Do proper dwarf_dealloc, avoiding
+      a pointless dependency on de_alloc_tree freeing 
+      things.
+2020-03-12: David Anderson
     * dwarf_alloc.c: Minor cleanup that assigns
       zero after dwarf_dealloc so dead pointers
       not left around.
