@@ -220,7 +220,7 @@ is_all_zeroes(Dwarf_Small*start,
     for( ; start < end; ++start) {
         if (!*start) {
             /* There is some garbage here. */
-            return FALSE;  
+            return FALSE;
         }
     }
     /* All just zero bytes. */
@@ -277,7 +277,7 @@ dwarf_next_str_offsets_table(Dwarf_Str_Offsets_Table sot,
             return DW_DLV_NO_ENTRY;
         } else {
             /* bogus table offset. */
-            ptrdiff_t len = table_start_ptr - 
+            ptrdiff_t len = table_start_ptr -
                 sot->so_section_end_ptr;
             dwarfstring m;
 
@@ -293,7 +293,7 @@ dwarf_next_str_offsets_table(Dwarf_Str_Offsets_Table sot,
         }
     }
 
-    if ((table_start_ptr + MIN_HEADER_LENGTH) > 
+    if ((table_start_ptr + MIN_HEADER_LENGTH) >
         sot->so_section_end_ptr) {
 
         /*  We have a too-short section it appears.
@@ -303,21 +303,21 @@ dwarf_next_str_offsets_table(Dwarf_Str_Offsets_Table sot,
         ptrdiff_t len = 0;
         dwarfstring m;
 
-        if (is_all_zeroes(table_start_ptr,sot->so_section_end_ptr)){ 
+        if (is_all_zeroes(table_start_ptr,sot->so_section_end_ptr)){
             return DW_DLV_NO_ENTRY;
         }
         len = sot->so_section_end_ptr -
             table_start_ptr;
         dwarfstring_constructor(&m);
         dwarfstring_append_printf_i(&m,
-                "DW_DLE_STR_OFFSETS_EXTRA_BYTES: "
-                "Table Offset plus a minimal header is %"
-                DW_PR_DSd
-                " bytes past end of section"
-                " and some bytes in-section are non-zero",len);
+            "DW_DLE_STR_OFFSETS_EXTRA_BYTES: "
+            "Table Offset plus a minimal header is %"
+            DW_PR_DSd
+            " bytes past end of section"
+            " and some bytes in-section are non-zero",len);
         _dwarf_error_string(sot->so_dbg,error,
-                DW_DLE_STR_OFFSETS_EXTRA_BYTES,
-                dwarfstring_string(&m));
+            DW_DLE_STR_OFFSETS_EXTRA_BYTES,
+            dwarfstring_string(&m));
         dwarfstring_destructor(&m);
         return DW_DLV_ERROR;
     }

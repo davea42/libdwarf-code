@@ -1,4 +1,7 @@
 2020-03-12: David Anderson
+    * dwarf_str_offsets.c,dwarf_util.c: Removed trailing whitespace
+      and fixed indent mistakes.
+2020-03-12: David Anderson
     * dwarf_query.c: Adds wrapper code around some
       dwarf_util.h macros
       so in case of a serious DWARF error we can

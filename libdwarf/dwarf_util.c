@@ -715,14 +715,14 @@ _dwarf_get_abbrev_for_code(Dwarf_CU_Context cu_context,
         which we also take as
         meaning done with abbrevs for this CU.
         An abbreviations table
-        is supposed to end with a zero byte. 
-        Not ended by end of data block.  
+        is supposed to end with a zero byte.
+        Not ended by end of data block.
         But we are allowing what is possibly a bit
         more flexible end policy here. */
     if (abbrev_ptr >= end_abbrev_ptr) {
         return DW_DLV_NO_ENTRY;
     }
-    /*  End of abbrev's for this cu, since abbrev code 
+    /*  End of abbrev's for this cu, since abbrev code
         is 0. */
     if (*abbrev_ptr == 0) {
         return DW_DLV_NO_ENTRY;
@@ -774,7 +774,7 @@ _dwarf_get_abbrev_for_code(Dwarf_CU_Context cu_context,
         inner_list_entry->abl_goffset =  abb_goff;
         hash_table_base->tb_total_abbrev_count++;
 
-        /*  Cycle thru the abbrev content, 
+        /*  Cycle thru the abbrev content,
             ignoring the content except
             to find the end of the content. */
         res = _dwarf_count_abbrev_entries(dbg,abbrev_ptr,
