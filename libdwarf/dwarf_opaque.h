@@ -410,7 +410,7 @@ struct Dwarf_Debug_InfoTypes_s {
 typedef struct Dwarf_Debug_InfoTypes_s *Dwarf_Debug_InfoTypes;
 
 /*  As the tasks performed on a debug related section is the same,
-    in order to make the process of adding a new section 
+    in order to make the process of adding a new section
     (very unlikely) a little bit easy and to reduce the
     possibility of errors, a simple table
     build dynamically, will contain the relevant information.
