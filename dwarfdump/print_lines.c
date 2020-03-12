@@ -770,6 +770,8 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
         if (lres == DW_DLV_ERROR) {
             print_error_and_continue(dbg,
                 "dwarf_srclines details", lres, err);
+            dwarf_dealloc(dbg,err,DW_DLA_ERROR);
+            err = 0;
         }
         return;
     }
@@ -843,6 +845,8 @@ print_line_numbers_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die)
         } else {
             print_error_and_continue(dbg,
                 "dwarf_srclines", lres, err);
+            dwarf_dealloc(dbg,err,DW_DLA_ERROR);
+            err = 0;
         }
     } else if (lres == DW_DLV_NO_ENTRY) {
         /* no line information is included */
