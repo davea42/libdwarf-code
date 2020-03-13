@@ -1,3 +1,9 @@
+2020-03-13: David Anderson
+    * dwarf_abbrev.c: Remove erroneous dwarf_dealloc
+      introduced yesterday. Caused a coredump
+      in FreeBSD 64bit dwarfdump testing.
+    * dwarfstring.c: Introduced an extra zero initializer in
+      the dwarfstring_destructor() as safe and harmless.
 2020-03-12: David Anderson
     * dwarf_abbrev.c: Use a wrapper on macro
       DECODE_LEB128_UWORD_CK

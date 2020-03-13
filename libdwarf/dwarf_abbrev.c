@@ -230,7 +230,6 @@ dwarf_get_abbrev(Dwarf_Debug dbg,
         abbrev_section_end,&labbr_count,&abbrev_ptr_out,error);
     if (res == DW_DLV_ERROR) {
         dwarf_dealloc(dbg, ret_abbrev, DW_DLA_ABBREV);
-        dwarf_dealloc(dbg,error,DW_DLA_ERROR);
         return res;
     }
     abbrev_ptr = abbrev_ptr_out;
