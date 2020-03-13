@@ -1,4 +1,10 @@
 2020-03-12:   David Anderson
+    * dwarfdump.c: Simplified check_for_major_errors().
+      Deleted some #if 0 code.
+    * print_die.c: Fiexed indent and trailing whitespace.
+    * print_macro.c: Deleted a bogus 
+      dwarf_dealloc_macro_context() call.
+2020-03-12:   David Anderson
     * print_die.c: Small changes to cleanup DIE allocations
       so not relying on de_alloc_tree.
 2020-03-12:   David Anderson

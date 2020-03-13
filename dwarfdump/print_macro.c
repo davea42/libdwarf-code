@@ -310,7 +310,6 @@ print_macros_5style_this_cu(Dwarf_Debug dbg, Dwarf_Die cu_die,
     }
     if(lres == DW_DLV_ERROR) {
         /* This does not return */
-        dwarf_dealloc_macro_context(macro_context);
         print_error(dbg,"Unable to dwarf_get_macro_context()",
             lres,err);
         return;

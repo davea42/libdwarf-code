@@ -744,7 +744,7 @@ print_one_die_section(Dwarf_Debug dbg,Dwarf_Bool is_info,
             /*  With corrupt DWARF due to a bad CU die
                 we won't know much. */
             print_error_and_continue(dbg, "Failure reading CU header"
-               " or DIE, corrupt DWARF", nres, *pod_err);
+                " or DIE, corrupt DWARF", nres, *pod_err);
             return nres;
         }
         if (cu_count >= glflags.break_after_n_units) {
@@ -1295,7 +1295,7 @@ print_die_and_children_internal(Dwarf_Debug dbg,
 
         EMPTY_DIE_STACK_ENTRY(die_stack_indent_level);
         if (in_die != in_die_in) {
-            /*  Dealloc our in_die, but not the 
+            /*  Dealloc our in_die, but not the
                 argument die, it belongs
                 to our caller. Whether the siblingof
                 call worked or not. */

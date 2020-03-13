@@ -202,16 +202,19 @@ is_it_known_elf_header(Elf *elf)
 static void
 check_for_major_errors(void)
 {
-    if (glflags.gf_count_major_errors) {
-        printf("There were %ld DWARF errors reported: "
-            "see ERROR above\n",
-            glflags.gf_count_major_errors);
-#if  0
-        global_destructors();
-        exit(FAILED);
-#endif /* 0 */
+    long int ect = glflags.gf_count_major_errors;
+    const char *w = "was";
+    const char *e = "error";
+    if (!ect) {
+        return;
     }
-    return;
+    if (ect > 1) {
+        w = "were";
+        e = "errors";
+    }
+    printf("There %s %ld DWARF %s reported: "
+        "see ERROR above.\n",
+        w, glflags.gf_count_major_errors,e);
 }
 
 static void
@@ -703,14 +706,6 @@ main(int argc, char *argv[])
         in print_error() */
     check_for_major_errors();
     global_destructors();
-#if 0
-    if (glflags.gf_count_major_errors) {
-        printf("There were %ld DWARF errors reported: "
-            "see ERROR above\n",
-            glflags.gf_count_major_errors);
-        exit(FAILED);
-    }
-#endif
     /*  As the tool have reached this point, it means there are
         no internal errors and we should return an OKAY condition,
         regardless if the file being processed has
