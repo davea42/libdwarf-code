@@ -1,4 +1,10 @@
 2020-03-12: David Anderson
+    * dwarf_abbrev.c: Use a wrapper on macro
+      DECODE_LEB128_UWORD_CK
+      so we can dwarf_dealloc in case of a problem.
+      And be more thorough in various places
+      for those dwarf_dealloc.
+2020-03-12: David Anderson
     * dwarf_die_deliv.c:  A local function now explicitly
       static (_dwarf_siblingof_internal). 
       Following dwarf_dealloc of cudie  we assign 0 to it.`

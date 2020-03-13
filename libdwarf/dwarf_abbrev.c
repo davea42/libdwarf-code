@@ -35,6 +35,22 @@
 #define TRUE 1
 #define FALSE 0
 
+static int
+leb128_uword_wrapper(Dwarf_Debug dbg,
+    Dwarf_Small ** startptr,
+    Dwarf_Small * endptr,
+    Dwarf_Unsigned *out_value,
+    Dwarf_Error * error)
+{
+    Dwarf_Unsigned utmp2 = 0;
+    Dwarf_Small * start = *startptr;
+    DECODE_LEB128_UWORD_CK(start, utmp2,
+        dbg,error,endptr);
+    *out_value = utmp2;
+    *startptr = start;
+    return DW_DLV_OK;
+}
+
 /*  This is used to print a .debug_abbrev section without
     knowing about the DIEs that use the abbrevs.
 
@@ -163,9 +179,16 @@ dwarf_get_abbrev(Dwarf_Debug dbg,
     abbrev_ptr = dbg->de_debug_abbrev.dss_data + offset;
     abbrev_section_end =
         dbg->de_debug_abbrev.dss_data + dbg->de_debug_abbrev.dss_size;
-
+#if 0
     DECODE_LEB128_UWORD_CK(abbrev_ptr, utmp,
         dbg,error,abbrev_section_end);
+#endif
+    res = leb128_uword_wrapper(dbg,&abbrev_ptr,
+        abbrev_section_end,&utmp,error);
+    if (res == DW_DLV_ERROR) {
+        dwarf_dealloc(dbg, ret_abbrev, DW_DLA_ABBREV);
+        return res;
+    }
     ret_abbrev->dab_code = utmp;
     if (ret_abbrev->dab_code == 0) {
         *returned_abbrev = ret_abbrev;
@@ -176,15 +199,25 @@ dwarf_get_abbrev(Dwarf_Debug dbg,
         return DW_DLV_OK;
     }
 
+#if 0
     DECODE_LEB128_UWORD_CK(abbrev_ptr, utmp,
         dbg,error,abbrev_section_end);
+#endif
+    res = leb128_uword_wrapper(dbg,&abbrev_ptr,
+        abbrev_section_end,&utmp,error);
+    if (res == DW_DLV_ERROR) {
+        dwarf_dealloc(dbg, ret_abbrev, DW_DLA_ABBREV);
+        return res;
+    }
     if (utmp > DW_TAG_hi_user) {
+        dwarf_dealloc(dbg, ret_abbrev, DW_DLA_ABBREV);
         _dwarf_error(dbg, error,DW_DLE_TAG_CORRUPT);
         return DW_DLV_ERROR;
     }
 
     ret_abbrev->dab_tag = utmp;
     if (abbrev_ptr >= abbrev_section_end) {
+        dwarf_dealloc(dbg, ret_abbrev, DW_DLA_ABBREV);
         _dwarf_error(dbg, error, DW_DLE_ABBREV_DECODE_ERROR);
         return DW_DLV_ERROR;
     }
@@ -196,6 +229,8 @@ dwarf_get_abbrev(Dwarf_Debug dbg,
     res = _dwarf_count_abbrev_entries(dbg,abbrev_ptr,
         abbrev_section_end,&labbr_count,&abbrev_ptr_out,error);
     if (res == DW_DLV_ERROR) {
+        dwarf_dealloc(dbg, ret_abbrev, DW_DLA_ABBREV);
+        dwarf_dealloc(dbg,error,DW_DLA_ERROR);
         return res;
     }
     abbrev_ptr = abbrev_ptr_out;

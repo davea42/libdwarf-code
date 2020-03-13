@@ -1,4 +1,6 @@
 2020-03-12:   David Anderson
+    * print_abbrevs.c: Add zero of dealloc'd pointer.
+2020-03-12:   David Anderson
     * dwarfdump.c: Simplified check_for_major_errors().
       Deleted some #if 0 code.
     * print_die.c: Fiexed indent and trailing whitespace.

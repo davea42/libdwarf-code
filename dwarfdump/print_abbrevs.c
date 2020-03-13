@@ -193,6 +193,7 @@ print_abbrevs(Dwarf_Debug dbg)
             print_error_and_continue(dbg,
                 "Error reading abbreviations", abres, paerr);
             dwarf_dealloc(dbg,paerr,DW_DLA_ERROR);
+            paerr = 0;
             return;
         }
         if (abres == DW_DLV_NO_ENTRY) {
