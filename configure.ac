@@ -16,7 +16,7 @@ m4_define([lt_age], [v_min])
 
 ### Sets the release name. 
 ###m4_define([v_date], [m4_esyscmd_s([date "+%Y%m%d"])])
-m4_define([v_date], [20200307])])
+m4_define([v_date], [20200315])])
 
 AC_PREREQ([2.52])
 ### 2nd arg to AC_INIT is the version 'number'.
@@ -38,7 +38,6 @@ AC_ARG_ENABLE([dwarfgen],
         [enable_dwarfgen="no"])
    ],
    [enable_dwarfgen="no"])
-
 AM_CONDITIONAL([HAVE_DWARFGEN], [test "x${enable_dwarfgen}" = "xyes"])
 
 AC_ARG_ENABLE([dwarfexample],
@@ -51,8 +50,17 @@ AC_ARG_ENABLE([dwarfexample],
         [enable_dwarfexample="no"])
    ],
    [enable_dwarfexample="no"])
-
 AM_CONDITIONAL([HAVE_DWARFEXAMPLE], [test "x${enable_dwarfexample}" = "xyes"])
+
+### Solely for checking libdwarf allocation counts,sizes
+### Do not use without a good reason . See libdwarf/dwarf_alloc.c
+AC_ARG_ENABLE(globalallocsums,AS_HELP_STRING([--enable-global-alloc-sums],
+        [Enables some allocation counting in dwarf_alloc.c (default is NO)]),
+        [ AC_DEFINE([HAVE_GLOBAL_ALLOC_SUMS],[1],
+           [Define 1 if want some specialized allocation counting] )
+           [enable_globalallocsums="yes"]
+        ],
+        [enable_globalallocsums="no"])
 
 AC_ARG_ENABLE([sanitize],
    [AS_HELP_STRING([--enable-sanitize],

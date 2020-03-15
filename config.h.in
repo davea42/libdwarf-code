@@ -48,6 +48,9 @@
 /* Define to 1 if you have the <elf.h> header file. */
 #undef HAVE_ELF_H
 
+/* Define 1 if want some specialized allocation counting */
+#undef HAVE_GLOBAL_ALLOC_SUMS
+
 /* Define to 1 if the system has the type `intptr_t'. */
 #undef HAVE_INTPTR_T
 

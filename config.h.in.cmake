@@ -24,6 +24,9 @@
 /* Define 1 if including a custom libelf library */
 #cmakedefine HAVE_CUSTOM_LIBELF 1
 
+/* Define 1 if doing specific analasys of libdwarf allocations */
+#cmakedefine HAVE_GLOBAL_ALLOC_SUMS 1
+
 /* Define to 1 if you have the <dlfcn.h> header file. */
 #cmakedefine HAVE_DLFCN_H 1
 
