@@ -1,3 +1,9 @@
+2020-03-15: David Anderson
+    * dwarf_alloc.c: Now with configure-time options
+      for tracking the alloc/dealloc actions in detail.
+2020-03-15: David Anderson
+    * dwarf_alloc.c: Now with the de_alloc_tree tests
+      in final form. Respecting dwarf_set_de_alloc_flag().
 2020-03-14: David Anderson
     * dwarf_alloc.c: Now adds an optional DEBUG
       macro that libdwarf developers may find useful.
