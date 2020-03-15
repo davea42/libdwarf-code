@@ -1,4 +1,9 @@
 2020-03-15:   David Anderson
+    * glflags.c: Now defaults to not printing the global
+      alloc sums. Use --print-alloc-sums option to dwarfdump
+      to print them (ensure GLOBAL_ALLOC_SUMS defined
+      in libdwarf/dwarf_alloc.c). 
+2020-03-15:   David Anderson
     * print_pubnames.c: Reformat a too-long line.
 2020-03-14:   David Anderson
     * dwarfdump.c: Changed an argument name in the print_error*
