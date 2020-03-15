@@ -965,10 +965,13 @@ static void
 resetsrcfiles(Dwarf_Debug dbg,struct srcfilesdata *sf)
 {
     Dwarf_Signed sri = 0;
-    for (sri = 0; sri < sf->srcfilescount; ++sri) {
-        dwarf_dealloc(dbg, sf->srcfiles[sri], DW_DLA_STRING);
+    if (sf->srcfiles) {
+        for (sri = 0; sri < sf->srcfilescount; ++sri) {
+            dwarf_dealloc(dbg, sf->srcfiles[sri], 
+                DW_DLA_STRING);
+        }
+        dwarf_dealloc(dbg, sf->srcfiles, DW_DLA_LIST);
     }
-    dwarf_dealloc(dbg, sf->srcfiles, DW_DLA_LIST);
     sf->srcfilesres = DW_DLV_ERROR;
     sf->srcfiles = 0;
     sf->srcfilescount = 0;
@@ -1055,7 +1058,6 @@ print_die_data_i(Dwarf_Debug dbg, Dwarf_Die print_me,
     Dwarf_Error error = 0;
     Dwarf_Half tag = 0;
     const char *tagname = 0;
-    int localname = 0;
     int res = 0;
     Dwarf_Error *errp = 0;
     Dwarf_Attribute attr = 0;
@@ -1074,7 +1076,6 @@ print_die_data_i(Dwarf_Debug dbg, Dwarf_Die print_me,
     }
     if(res == DW_DLV_NO_ENTRY) {
         name = "<no DW_AT_name attr>";
-        localname = 1;
     }
     res = dwarf_tag(print_me,&tag,errp);
     if(res != DW_DLV_OK) {
@@ -1128,9 +1129,11 @@ print_die_data_i(Dwarf_Debug dbg, Dwarf_Die print_me,
         }
         printf("\n");
     }
-    if(!localname) {
-        dwarf_dealloc(dbg,name,DW_DLA_STRING);
-    }
+    /*  This dwarf_dealloc was always wrong but
+        before March 14, 2020 the documentation said
+        the dwarf_dealloc was necessary. 
+        dwarf_dealloc(dbg,name,DW_DLA_STRING); */
+    
 }
 
 static void
@@ -1155,12 +1158,12 @@ print_die_data(Dwarf_Debug dbg, Dwarf_Die print_me,
             res = dwarf_get_debugfission_for_die(print_me,
                 &percu,errp);
             if(res == DW_DLV_ERROR) {
-                printf("FAIL: Error in dwarf_diename  on fissionfordie %d\n",
+                printf("FAIL: Error in dwarf_get_debugfission_for_die %d\n",
                     fissionfordie);
                 exit(1);
             }
             if(res == DW_DLV_NO_ENTRY) {
-                printf("FAIL: no-entry in dwarf_diename  on fissionfordie %d\n",
+                printf("FAIL: no-entry in dwarf_get_debugfission_for_die %d\n",
                     fissionfordie);
                 exit(1);
             }

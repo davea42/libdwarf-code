@@ -83,7 +83,8 @@ deal_with_name_offset_err(Dwarf_Debug dbg,
         esb_constructor(&fullmsg);
         esb_append(&fullmsg,err_loc);
         esb_append(&fullmsg,name);
-        print_error(dbg, esb_get_string(&fullmsg), nres, aerr);
+        print_error(dbg, esb_get_string(&fullmsg),
+            nres, aerr);
         esb_destructor(&fullmsg);
     }
 }

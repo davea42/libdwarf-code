@@ -1,2 +1,8 @@
+2020-03-14:   David Anderson 
+    * findfuncbypc.c: do not call dwarf_dealloc on a 
+      name that should not be dealloc'd (it is a static
+      string from a .debug section ).
+    * simplereader.c (resetsrcfiles): Only do dealloc
+      calls on non-null pointers. 
 2020-01-16:   David Anderson 
     * simplereader.c: Remove trailing whitespace (1 place).

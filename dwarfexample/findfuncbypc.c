@@ -266,10 +266,6 @@ resetsrcfiles(Dwarf_Debug dbg,struct srcfilesdata *sf)
 static void resetsubprog(Dwarf_Debug dbg,struct target_data_s *td)
 {
     td->td_subprog_haslowhighpc = FALSE;
-    if (td->td_subprog_name) {
-        dwarf_dealloc(dbg,td->td_subprog_name,DW_DLA_STRING);
-        td->td_subprog_name  = 0;
-    }
     if (td->td_subprog_die) {
         dwarf_dealloc(dbg,td->td_subprog_die,DW_DLA_DIE);
         td->td_subprog_die = 0;
@@ -1014,10 +1010,6 @@ check_subprog_details(Dwarf_Debug dbg,
                     get_name_from_abstract_origin(dbg,is_info,
                         die, &name, errp);
                 }
-                if (td->td_subprog_name) {
-                    dwarf_dealloc(dbg,td->td_subprog_name,
-                        DW_DLA_STRING);
-                }
                 td->td_subprog_name = name;
                 name = 0;
                 /* Means this is an address match */
@@ -1272,7 +1264,7 @@ check_comp_dir(Dwarf_Debug dbg,Dwarf_Die die,
         &baseindex,
         &filescount,&endindex,errp);
 
-#endif
+#endif /* 0 */
 }
 
 static int
