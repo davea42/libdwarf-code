@@ -1,4 +1,8 @@
 2020-03-15: David Anderson
+    * dwarf_frame2.c: On an internal error (bad dwarf)
+      the necessary cleanup function was not being called
+      in two places.
+2020-03-15: David Anderson
     * dwarf_alloc.c: Now with configure-time options
       for tracking the alloc/dealloc actions in detail.
 2020-03-15: David Anderson

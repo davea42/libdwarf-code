@@ -497,6 +497,8 @@ _dwarf_get_fde_list_internal(Dwarf_Debug dbg, Dwarf_Cie ** cie_data,
                 &fde_ptr_to_use,
                 error);
             if (resf == DW_DLV_ERROR) {
+                dealloc_fde_cie_list_internal(head_fde_ptr,
+                    head_cie_ptr);
                 return resf;
             } else if (resf == DW_DLV_NO_ENTRY) {
                 /* impossible. */
@@ -516,6 +518,8 @@ _dwarf_get_fde_list_internal(Dwarf_Debug dbg, Dwarf_Cie ** cie_data,
                     really 4, as in DWARF{2,3} where we have
                     no FDE address_size) we emit an error.
                     This error means things will not go well. */
+                dealloc_fde_cie_list_internal(head_fde_ptr,
+                    head_cie_ptr);
                 _dwarf_error(dbg,error,
                     DW_DLE_DEBUG_FRAME_POSSIBLE_ADDRESS_BOTCH);
                 return DW_DLV_ERROR;
