@@ -1169,13 +1169,13 @@ process_one_file(int fd, int tiedfd,
 static void
 print_error_maybe_continue(UNUSEDARG Dwarf_Debug dbg,
     const char * msg,
-    int dwarf_code,
+    int dwarf_ret_val,
     Dwarf_Error lerr,
     Dwarf_Bool do_continue)
 {
     unsigned long realmajorerr = glflags.gf_count_major_errors;
     printf("\n");
-    if (dwarf_code == DW_DLV_ERROR) {
+    if (dwarf_ret_val == DW_DLV_ERROR) {
         /* We do not dwarf_dealloc the error` here. */
         char * errmsg = dwarf_errmsg(lerr);
 
@@ -1184,21 +1184,23 @@ print_error_maybe_continue(UNUSEDARG Dwarf_Debug dbg,
             the error string so we do not need to print
             the dwarf_errno() value to show the number. */
         if (do_continue) {
-            printf( "%s ERROR:  %s:  %s. Attempting to continue.\n",
+            printf(
+                "%s ERROR:  %s:  %s. "
+                "Attempting to continue.\n",
                 glflags.program_name, msg, errmsg);
         } else {
             printf( "%s ERROR:  %s:  %s\n",
                 glflags.program_name, msg, errmsg);
         }
-    } else if (dwarf_code == DW_DLV_NO_ENTRY) {
-        printf("%s NO ENTRY:  %s: \n", glflags.program_name, msg);
-    } else if (dwarf_code == DW_DLV_OK) {
+    } else if (dwarf_ret_val == DW_DLV_NO_ENTRY) {
+        printf("%s NO ENTRY:  %s: \n", 
+            glflags.program_name, msg);
+    } else if (dwarf_ret_val == DW_DLV_OK) {
         printf("%s:  %s \n", glflags.program_name, msg);
     } else {
         printf("%s InternalError:  %s:  code %d\n",
-            glflags.program_name, msg, dwarf_code);
+            glflags.program_name, msg, dwarf_ret_val);
     }
-
     /* Display compile unit name */
     PRINT_CU_INFO();
     glflags.gf_count_major_errors = realmajorerr;
@@ -1207,16 +1209,16 @@ print_error_maybe_continue(UNUSEDARG Dwarf_Debug dbg,
 void
 print_error(Dwarf_Debug dbg,
     const char * msg,
-    int dwarf_code,
+    int dwarf_ret_val,
     Dwarf_Error lerr)
 {
-    print_error_maybe_continue(dbg,msg,dwarf_code,lerr,FALSE);
+    print_error_maybe_continue(dbg,msg,dwarf_ret_val,lerr,FALSE);
     if (dbg) {
         Dwarf_Error ignored_err = 0;
         /*  If dbg was never initialized dwarf_finish
             can do nothing useful. There is no
             global-state for libdwarf to clean up. */
-        if (dwarf_code == DW_DLV_ERROR) {
+        if (dwarf_ret_val == DW_DLV_ERROR) {
             dwarf_dealloc(dbg,lerr,DW_DLA_ERROR);
         }
         dwarf_finish(dbg, &ignored_err);
@@ -1229,12 +1231,12 @@ print_error(Dwarf_Debug dbg,
 void
 print_error_and_continue(Dwarf_Debug dbg,
     const char * msg,
-    int dwarf_code,
+    int dwarf_ret_val,
     Dwarf_Error lerr)
 {
     glflags.gf_count_major_errors++;
     print_error_maybe_continue(dbg,
-        msg,dwarf_code,lerr,TRUE);
+        msg,dwarf_ret_val,lerr,TRUE);
 }
 
 /*  Predicate function. Returns 'true' if the CU should
@@ -1353,9 +1355,9 @@ get_cu_name(Dwarf_Debug dbg, Dwarf_Die cu_die,
             esb_empty_string(&esb_short_cu_name);
             esb_append(&esb_short_cu_name,filename);
             *short_name = esb_get_string(&esb_short_cu_name);
+            dwarf_dealloc(dbg, name_attr, DW_DLA_ATTR);
         }
     }
-    dwarf_dealloc(dbg, name_attr, DW_DLA_ATTR);
     return ares;
 }
 
@@ -1383,19 +1385,16 @@ get_producer_name(Dwarf_Debug dbg, Dwarf_Die cu_die,
         esb_append(producernameout,"\"<CU-missing-DW_AT_producer>\"");
     } else {
         /*  DW_DLV_OK */
-        /*  The string return is valid until the next call to this
-            function; so if the caller needs to keep the returned
-            string, the string must be copied (makename()). */
         get_attr_value(dbg, DW_TAG_compile_unit,
             cu_die, dieprint_cu_offset,
             producer_attr, NULL, 0, producernameout,
             0 /*show_form_used*/,0 /* verbose */);
+        dwarf_dealloc(dbg, producer_attr, DW_DLA_ATTR);
     }
     /*  If ares is error or missing case,
         producer_attr will be left
         NULL by the call,
         which is safe when calling dealloc(). */
-    dwarf_dealloc(dbg, producer_attr, DW_DLA_ATTR);
     return ares;
 }
 

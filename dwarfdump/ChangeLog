@@ -1,3 +1,13 @@
+2020-03-15:   David Anderson
+    * print_pubnames.c: Reformat a too-long line.
+2020-03-14:   David Anderson
+    * dwarfdump.c: Changed an argument name in the print_error*
+      group of functions to reflect the real meaning,
+      dwarf_code -> dwarf_ret_val.
+    * print_aranges.c (print_aranges): Only call dwarf_dealloc() in
+      case pa_error is non-null.
+    * print_die: Initialize no_of_elements at long last.
+    * print_pubnames.c: A code line was ... long. 2 lines now.
 2020-03-12:   David Anderson
     * print_abbrevs.c: Add zero of dealloc'd pointer.
 2020-03-12:   David Anderson

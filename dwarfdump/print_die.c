@@ -3857,7 +3857,7 @@ get_location_list(Dwarf_Debug dbg,
 {
     Dwarf_Locdesc *llbuf = 0;
     Dwarf_Locdesc **llbufarray = 0; /* Only for older interface. */
-    Dwarf_Unsigned no_of_elements;
+    Dwarf_Unsigned no_of_elements = 0;
     Dwarf_Loc_Head_c loclist_head = 0; /* 2015 loclist interface */
     Dwarf_Error llerr = 0;
     Dwarf_Unsigned i = 0;

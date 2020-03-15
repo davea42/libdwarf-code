@@ -315,7 +315,9 @@ print_aranges(Dwarf_Debug dbg)
         }
         aranges_dealloc_now(dbg,count,arange_buf);
         arange_buf = 0;
-        dwarf_dealloc(dbg,pa_error,DW_DLA_ERROR);
-        pa_error = 0;
+        if (pa_error) {
+            dwarf_dealloc(dbg,pa_error,DW_DLA_ERROR);
+            pa_error = 0;
+        }
     }
 }
